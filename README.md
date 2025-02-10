@@ -14,6 +14,8 @@ Below are setup instructions for running the project locally and steps for deplo
 
 ---
 
+
+
 ### Prerequisites
 
 Ensure you have the following installed on your machine:
@@ -22,6 +24,8 @@ Ensure you have the following installed on your machine:
 - **npm** (usually included with Node.js)
 
 ---
+
+
 
 ### Installation
 
@@ -38,6 +42,7 @@ Ensure you have the following installed on your machine:
    Then update the content of the env files accordingly
 
 
+
 ## Running the Project
 
 To start a local development server, use the following command:
@@ -47,11 +52,13 @@ To start a local development server, use the following command:
 This will start the development server, usually accessible at `http://localhost:9000` (check the terminal output to confirm).
 
 
+
 ## Building for Production
 
 To build the project for production, run:
 
 `bash npm run build`
+
 
 
 ## Deploying to Netlify
@@ -73,9 +80,12 @@ To build the project for production, run:
 4. **Deploy**:
    - Click **"Deploy Site"**. Netlify will automatically build and deploy your project.
 
+
+
 ### Netlify Continuous Deployment
 
 After the initial setup, every push to the main branch will automatically trigger a redeployment on Netlify, ensuring your site stays up-to-date.
+
 
 
 ## Tests
@@ -83,9 +93,11 @@ After the initial setup, every push to the main branch will automatically trigge
 tbd...
 
 
+
 ## Contributing
 
 Before you create a pull request, write an issue so we can discuss your changes.
+
 
 
 ## Contributors
@@ -110,7 +122,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
 
----
+
 
 ## Content Licensing
 
@@ -118,7 +130,7 @@ Texts and content available as [CC BY](https://creativecommons.org/licenses/by/3
 
 Illustrations by {tba}, all rights reserved.
 
----
+
 
 ## Credits
 
@@ -140,5 +152,3 @@ Illustrations by {tba}, all rights reserved.
     </td>
   </tr>
 </table>
-
-## Related Projects
