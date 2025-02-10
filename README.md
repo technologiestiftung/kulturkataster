@@ -1,7 +1,9 @@
 ![](https://img.shields.io/badge/Built%20with%20%E2%9D%A4%EF%B8%8F-at%20Technologiestiftung%20Berlin-blue)
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+
 [![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 # Kulturkataster
@@ -10,12 +12,16 @@ Welcome to the **Kulturkataster** repository! This project is built using Next.j
 
 Below are setup instructions for running the project locally and steps for deploying it to Netlify.
 
+---
+
 ### Prerequisites
 
 Ensure you have the following installed on your machine:
 
 - **Node.js** (v18 or higher)
 - **npm** (usually included with Node.js)
+
+---
 
 ### Installation
 
@@ -31,19 +37,25 @@ Ensure you have the following installed on your machine:
 
    Then update the content of the env files accordingly
 
+---
+
 ## Running the Project
 
 To start a local development server, use the following command:
 
-`bash npm run start`
+`bash npm run dev`
 
 This will start the development server, usually accessible at `http://localhost:9000` (check the terminal output to confirm).
+
+---
 
 ## Building for Production
 
 To build the project for production, run:
 
 `bash npm run build`
+
+---
 
 ## Deploying to Netlify
 
@@ -74,9 +86,13 @@ After the initial setup, every push to the main branch will automatically trigge
 
 tbd...
 
+---
+
 ## Contributing
 
 Before you create a pull request, write an issue so we can discuss your changes.
+
+---
 
 ## Contributors
 
@@ -100,11 +116,15 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
 
+---
+
 ## Content Licensing
 
 Texts and content available as [CC BY](https://creativecommons.org/licenses/by/3.0/de/).
 
 Illustrations by {tba}, all rights reserved.
+
+---
 
 ## Credits
 
