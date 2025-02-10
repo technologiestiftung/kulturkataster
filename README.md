@@ -1,29 +1,75 @@
 ![](https://img.shields.io/badge/Built%20with%20%E2%9D%A4%EF%B8%8F-at%20Technologiestiftung%20Berlin-blue)
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-
-[![All Contributors](https://img.shields.io/badge/all_contributors-0-orange.svg?style=flat-square)](#contributors-)
-
+[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-# {repo-template}
+# Kulturkataster
 
-## TODO (after you generated the repo)
+Welcome to the **Kulturkataster** repository! This project is built using Next.js, Supabase and Maplibre. It is designed to visualize and manage cultural data.
 
-- [ ] Review the content of the README.md and adjust to your liking
-- [ ] Read the README.md till the end and adjust the content licensing,
-      logos, etc (I know you stopped at tbd...)
-- [ ] Adjust the file [.github/CODEOWNERS](./.github/CODEOWNERS)
-- [ ] Adjust the files under [.github/ISSUE_TEMPLATE](./.github/ISSUE_TEMPLATE)
-- [ ] If you use staging and main branches use this template for [.github/renovate.json](./.github/renovate.json)
+Below are setup instructions for running the project locally and steps for deploying it to Netlify.
 
-```json
-{
-  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["github>technologiestiftung/renovate-config"],
-  "baseBranches": ["staging"]
-}
-```
+### Prerequisites
+
+Ensure you have the following installed on your machine:
+
+- **Node.js** (v18 or higher)
+- **npm** (usually included with Node.js)
+
+### Installation
+
+1. **Clone the Repository**
+
+   `bash git clone <your-repo-url> && cd <your-repo-name> `
+
+2. **Install Dependencies**
+
+   Run the following command to install all necessary packages and add the .env:
+
+   `bash npm install && npm run setup:env `
+
+   Then update the content of the env files accordingly
+
+## Running the Project
+
+To start a local development server, use the following command:
+
+`bash npm run start`
+
+This will start the development server, usually accessible at `http://localhost:9000` (check the terminal output to confirm).
+
+## Building for Production
+
+To build the project for production, run:
+
+`bash npm run build`
+
+## Deploying to Netlify
+
+### Steps to Deploy
+
+1. **Login to Netlify**: Go to [Netlify](https://www.netlify.com/) and log in to your account (or create one if you haven’t already).
+
+2. **Create a New Site**:
+
+   - Click **"New site from Git"** and connect your GitHub (or other Git provider) account.
+   - Select the repository for **Project Name**.
+
+3. **Configure Build Settings**:
+
+   - **Build Command**: `npm run build`
+   - **Publish Directory**: ``
+
+4. **Deploy**:
+   - Click **"Deploy Site"**. Netlify will automatically build and deploy your project.
+
+### Netlify Continuous Deployment
+
+After the initial setup, every push to the main branch will automatically trigger a redeployment on Netlify, ensuring your site stays up-to-date.
+
+---
+
 
 - [ ] Do you want to honor all kinds of contributions? Use [all-contributors](https://allcontributors.org/)
 
@@ -41,21 +87,6 @@ You can use it on GitHub just by commenting on PRs and issues:
 - [ ] Add your project description
 - [ ] Get fancy shields at https://shields.io
 
-## Prerequisites
-
-tbd...
-
-## Installation
-
-tbd...
-
-## Usage or Deployment
-
-tbd...
-
-## Development
-
-tbd...
 
 ## Tests
 
@@ -73,8 +104,11 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
 <table>
-  <tr>
-  </tr>
+  <tbody>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https:/github.com/LuiseBrandenburger"><img src="https://avatars.githubusercontent.com/u/61413319?s=?s=64" width="64px;" alt="Luise Brandenburger"/><br /><sub><b>Luise Brandenburger</b></sub></a><br /><a href="https://github.com/technologiestiftung/kulturkataster/commits?author=LuiseBrandenburger" title="Code">💻</a></td>
+    </tr>
+  </tbody>
 </table>
 
 <!-- markdownlint-restore -->
