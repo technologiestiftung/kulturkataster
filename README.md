@@ -33,15 +33,27 @@ Ensure you have the following installed on your machine:
 
    Run the following command to install all necessary packages and add the .env:
 
-   `bash npm install && npm run setup:env `
+   ```bash
+   npm npm install
+   # and
+   npm run setup:env
+   ```
 
-   Then update the content of the env files accordingly
+Then update the content of the env files accordingly
 
 ## Running the Project
 
 To start a local development server, use the following command:
 
-`bash npm run dev`
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
 
 This will start the development server, usually accessible at `http://localhost:9000` (check the terminal output to confirm).
 
@@ -49,7 +61,9 @@ This will start the development server, usually accessible at `http://localhost:
 
 To build the project for production, run:
 
-`bash npm run build`
+```bash
+npm run build
+```
 
 ## Deploying to Netlify
 
