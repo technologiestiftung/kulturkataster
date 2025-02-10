@@ -37,7 +37,6 @@ Ensure you have the following installed on your machine:
 
    Then update the content of the env files accordingly
 
----
 
 ## Running the Project
 
@@ -47,7 +46,6 @@ To start a local development server, use the following command:
 
 This will start the development server, usually accessible at `http://localhost:9000` (check the terminal output to confirm).
 
----
 
 ## Building for Production
 
@@ -55,7 +53,6 @@ To build the project for production, run:
 
 `bash npm run build`
 
----
 
 ## Deploying to Netlify
 
@@ -80,19 +77,16 @@ To build the project for production, run:
 
 After the initial setup, every push to the main branch will automatically trigger a redeployment on Netlify, ensuring your site stays up-to-date.
 
----
 
 ## Tests
 
 tbd...
 
----
 
 ## Contributing
 
 Before you create a pull request, write an issue so we can discuss your changes.
 
----
 
 ## Contributors
 
