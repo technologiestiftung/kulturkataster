@@ -8,7 +8,7 @@
 
 # Kulturkataster
 
-Welcome to the **Kulturkataster** repository! This project is built using Next.js, Supabase and Maplibre. It is designed to visualize and manage cultural data.
+Welcome to the **Kulturkataster** repository! This project is built using Next.js, Supabase and Maplibre. It is designed to visualize and manage cultural data in Berlin.
 
 Below are setup instructions for running the project locally and steps for deploying it to Netlify.
 
