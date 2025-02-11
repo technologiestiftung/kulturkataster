@@ -35,8 +35,6 @@ Ensure you have the following installed on your machine:
 
    ```bash
    npm npm install
-   # and
-   npm run setup:env
    ```
 
 Then update the content of the env files accordingly
