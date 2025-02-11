@@ -1,4 +1,3 @@
-// eslintRules.mjs
 export const technologiestiftungRules = {
   files: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
   languageOptions: {
