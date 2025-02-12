@@ -13,7 +13,7 @@ export const technologiestiftungRules = {
 		"no-var": "error",
 		"default-case": ["error", { commentPattern: "^no default$" }],
 		"arrow-parens": "error",
-		"consistent-return": "error",
+		"consistent-return": "warn",
 		"default-param-last": ["error"],
 		eqeqeq: "error",
 		"max-depth": ["error", 4],
