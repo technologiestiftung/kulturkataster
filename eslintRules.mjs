@@ -8,7 +8,7 @@ export const technologiestiftungRules = {
 	rules: {
 		"prefer-const": "error",
 		curly: "error",
-		"no-console": ["error", { allow: ["warn", "error"] }],
+		"no-console": ["warn", { allow: ["warn", "error"] }],
 		"no-undef": "error",
 		"no-var": "error",
 		"default-case": ["error", { commentPattern: "^no default$" }],
