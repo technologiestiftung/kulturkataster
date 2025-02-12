@@ -1,8 +1,11 @@
+import Map from "../components/modules/Map";
+
 export default function Home() {
 	return (
-		<div className="items-center justify-items-center min-h-screen pt-8 bg-slate-100">
+		<div className="items-center justify-items-center min-h-screen pt-8">
+			<h1 className="text-3xl pb-8">Kulturkataster coming soon...</h1>
 			<main>
-				<h1 className="text-3xl">Kulturkataster coming soon...</h1>
+				<Map />
 			</main>
 		</div>
 	);
