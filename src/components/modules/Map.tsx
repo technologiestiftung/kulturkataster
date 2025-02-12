@@ -1,20 +1,16 @@
 "use client";
 
-import { mapStyle } from "@/lib/mapStyle";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { FC, useEffect, useRef, useState } from "react";
+import { StyleSpecification } from "maplibre-gl";
 
 interface MapProps {
-	config?: {
-		center?: [number, number];
-		zoom?: number;
-		style?: string;
-	};
+	mapStyle: StyleSpecification;
 	onMapClick?: (e: maplibregl.MapMouseEvent) => void;
 }
 
-const Map: FC<MapProps> = ({ config, onMapClick }) => {
+const Map: FC<MapProps> = ({ onMapClick, mapStyle }) => {
 	const mapContainer = useRef<HTMLDivElement>(null);
 	const map = useRef<maplibregl.Map | null>(null);
 	const [loading, setLoading] = useState(true);
@@ -26,7 +22,7 @@ const Map: FC<MapProps> = ({ config, onMapClick }) => {
 
 		map.current = new maplibregl.Map({
 			container: mapContainer.current,
-			style: config?.style || mapStyle,
+			style: mapStyle,
 			attributionControl: false,
 		});
 
@@ -54,7 +50,7 @@ const Map: FC<MapProps> = ({ config, onMapClick }) => {
 				map.current.remove();
 			}
 		};
-	}, [config, onMapClick]);
+	}, [onMapClick, mapStyle]);
 
 	return (
 		<div className="relative w-screen h-[600px]">
