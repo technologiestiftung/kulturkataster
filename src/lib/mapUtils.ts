@@ -1,15 +1,20 @@
 import fs from "fs";
 import path from "path";
 
-export async function fetchWFSData(url: string, typeNames: string) {
+export async function fetchWFSData(
+	url: string,
+	typeNames: string,
+	outputFormat?: string,
+	srsName?: string,
+) {
 	const wfsUrl = url;
 	const params = new URLSearchParams({
 		service: "WFS",
 		version: "2.0.0",
 		request: "GetFeature",
 		typeNames: typeNames,
-		outputFormat: "application/json",
-		srsName: "urn:ogc:def:crs:EPSG::25833",
+		outputFormat: outputFormat || "application/json",
+		srsName: srsName || "urn:ogc:def:crs:EPSG::25833",
 	});
 
 	const response = await fetch(`${wfsUrl}?${params.toString()}`);
