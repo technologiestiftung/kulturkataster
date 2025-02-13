@@ -17,7 +17,7 @@ export const technologiestiftungRules = {
 		"default-param-last": ["error"],
 		eqeqeq: "error",
 		"max-depth": ["error", 4],
-		"max-params": ["error", 3],
+		"max-params": ["warn", 3],
 		complexity: ["error", 10],
 		"new-cap": [
 			"error",
