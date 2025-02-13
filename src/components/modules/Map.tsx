@@ -1,9 +1,8 @@
 "use client";
 
-import maplibregl from "maplibre-gl";
+import maplibregl, { StyleSpecification } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { FC, useEffect, useRef, useState } from "react";
-import { StyleSpecification } from "maplibre-gl";
 
 interface MapProps {
 	mapStyle: StyleSpecification;
@@ -31,6 +30,15 @@ const Map: FC<MapProps> = ({ onMapClick, mapStyle }) => {
 
 		// Add navigation controls
 		map.current.addControl(new maplibregl.NavigationControl(), "bottom-left");
+
+		map.current.addControl(
+			new maplibregl.GeolocateControl({
+				positionOptions: {
+					enableHighAccuracy: true,
+				},
+				trackUserLocation: true,
+			}),
+		);
 
 		// Setup map event handlers
 		map.current.on("load", () => {
