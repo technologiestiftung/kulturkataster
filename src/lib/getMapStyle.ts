@@ -2,7 +2,7 @@ import { StyleSpecification } from "maplibre-gl";
 import { getLocalGeojson } from "./mapUtils";
 
 export async function getMapStyle(): Promise<StyleSpecification> {
-	const districtBordersGeoJSON = getLocalGeojson("/maps/district-borders.json");
+	const bezirksgrenzenGeoJSON = getLocalGeojson("/maps/bezirksgrenzen.json");
 	const ortsteileGeoJSON = getLocalGeojson("/maps/ortsteile.json");
 
 	return {
@@ -53,9 +53,9 @@ export async function getMapStyle(): Promise<StyleSpecification> {
 					],
 				},
 			},
-			districtBorders: {
+			bezirksgrenzen: {
 				type: "geojson",
-				data: districtBordersGeoJSON,
+				data: bezirksgrenzenGeoJSON,
 			},
 			ortsteile: {
 				type: "geojson",
@@ -105,9 +105,9 @@ export async function getMapStyle(): Promise<StyleSpecification> {
 				},
 			},
 			{
-				id: "districtBordersLayer",
+				id: "bezirksgrenzenLayer",
 				type: "line",
-				source: "districtBorders",
+				source: "bezirksgrenzen",
 				paint: {
 					"line-color": "#198EC8",
 					"line-width": 2,
