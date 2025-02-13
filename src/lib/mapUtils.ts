@@ -1,3 +1,6 @@
+import fs from "fs";
+import path from "path";
+
 export async function fetchWFSData(url: string, typeNames: string) {
 	const wfsUrl = url;
 	const params = new URLSearchParams({
@@ -17,4 +20,10 @@ export async function fetchWFSData(url: string, typeNames: string) {
 
 	const data = await response.json();
 	return data;
+}
+
+export function getLocalGeojson(url: string) {
+	const filePath = path.join(process.cwd(), "public", url);
+	const geojson = JSON.parse(fs.readFileSync(filePath, "utf-8"));
+	return geojson;
 }
