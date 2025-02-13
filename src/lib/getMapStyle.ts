@@ -20,7 +20,15 @@ export async function getMapStyle(): Promise<StyleSpecification> {
 					"&copy; <a href='https://www.openstreetmap.org/copyright'>Kulturkataster</a> contributors",
 				bounds: [13.076477, 52.340374, 13.760376, 52.664723],
 			},
-			randomPoints: {
+			bezirksgrenzen: {
+				type: "geojson",
+				data: bezirksgrenzenGeoJSON,
+			},
+			ortsteile: {
+				type: "geojson",
+				data: ortsteileGeoJSON,
+			},
+			kukaPoints: {
 				type: "geojson",
 				data: {
 					type: "FeatureCollection",
@@ -53,14 +61,6 @@ export async function getMapStyle(): Promise<StyleSpecification> {
 					],
 				},
 			},
-			bezirksgrenzen: {
-				type: "geojson",
-				data: bezirksgrenzenGeoJSON,
-			},
-			ortsteile: {
-				type: "geojson",
-				data: ortsteileGeoJSON,
-			},
 		},
 		glyphs: "./data/{fontstack}/{range}.pbf",
 		layers: [
@@ -85,17 +85,6 @@ export async function getMapStyle(): Promise<StyleSpecification> {
 				},
 			},
 			{
-				id: "randomPointsLayer",
-				type: "circle",
-				source: "randomPoints",
-				paint: {
-					"circle-radius": 8,
-					"circle-color": ["get", "color"],
-					"circle-stroke-width": 2,
-					"circle-stroke-color": "#ffffff",
-				},
-			},
-			{
 				id: "ortsteileLayer",
 				type: "line",
 				source: "ortsteile",
@@ -111,6 +100,17 @@ export async function getMapStyle(): Promise<StyleSpecification> {
 				paint: {
 					"line-color": "#198EC8",
 					"line-width": 2,
+				},
+			},
+			{
+				id: "kukaPointsLayer",
+				type: "circle",
+				source: "kukaPoints",
+				paint: {
+					"circle-radius": 8,
+					"circle-color": ["get", "color"],
+					"circle-stroke-width": 2,
+					"circle-stroke-color": "#ffffff",
 				},
 			},
 		],
