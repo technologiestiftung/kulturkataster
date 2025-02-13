@@ -7,13 +7,11 @@ export const technologiestiftungRules = {
 	},
 	rules: {
 		"prefer-const": "error",
-		curly: "error",
 		"no-console": ["warn", { allow: ["warn", "error"] }],
 		"no-undef": "error",
 		"no-var": "error",
 		"default-case": ["error", { commentPattern: "^no default$" }],
 		"arrow-parens": "error",
-		"consistent-return": "warn",
 		"default-param-last": ["error"],
 		eqeqeq: "error",
 		"max-depth": ["error", 4],
