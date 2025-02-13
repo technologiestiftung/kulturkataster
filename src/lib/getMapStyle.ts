@@ -1,23 +1,9 @@
 import { StyleSpecification } from "maplibre-gl";
-import fs from "fs";
-import path from "path";
+import { getLocalGeojson } from "./mapUtils";
 
 export async function getMapStyle(): Promise<StyleSpecification> {
-	const filePath = path.join(
-		process.cwd(),
-		"public",
-		"/maps/district-borders.json",
-	);
-	const districtBordersGeoJSON = JSON.parse(fs.readFileSync(filePath, "utf-8"));
-
-	const filePathOrtsteile = path.join(
-		process.cwd(),
-		"public",
-		"/maps/ortsteile.json",
-	);
-	const ortsteileGeoJSON = JSON.parse(
-		fs.readFileSync(filePathOrtsteile, "utf-8"),
-	);
+	const districtBordersGeoJSON = getLocalGeojson("/maps/district-borders.json");
+	const ortsteileGeoJSON = getLocalGeojson("/maps/ortsteile.json");
 
 	return {
 		name: "basemap:grey",
@@ -69,11 +55,11 @@ export async function getMapStyle(): Promise<StyleSpecification> {
 			},
 			districtBorders: {
 				type: "geojson",
-				data: districtBordersGeoJSON, // Add your geojson data here
+				data: districtBordersGeoJSON,
 			},
 			ortsteile: {
 				type: "geojson",
-				data: ortsteileGeoJSON, // Add your geojson data here
+				data: ortsteileGeoJSON,
 			},
 		},
 		glyphs: "./data/{fontstack}/{range}.pbf",
@@ -82,7 +68,7 @@ export async function getMapStyle(): Promise<StyleSpecification> {
 				id: "background",
 				type: "background",
 				paint: {
-					"background-color": "blue",
+					"background-color": "#f0f0f0",
 				},
 			},
 			{
