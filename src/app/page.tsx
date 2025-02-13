@@ -3,6 +3,7 @@ import { getMapStyle } from "@/lib/getMapStyle";
 
 export default async function Home() {
 	const mapStyle = await getMapStyle();
+	// todo: add mapStyle into store and cache it
 
 	return (
 		<div className="items-center justify-items-center min-h-screen pt-8">
