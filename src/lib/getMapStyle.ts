@@ -18,7 +18,7 @@ export async function getMapStyle(): Promise<StyleSpecification> {
 				tileSize: 256,
 				attribution:
 					"&copy; <a href='https://www.openstreetmap.org/copyright'>Kulturkataster</a> contributors",
-				bounds: [13.076477, 52.340374, 13.760376, 52.664723],
+				bounds: [12.911237, 52.314615, 13.895887, 52.710764],
 			},
 			bezirksgrenzen: {
 				type: "geojson",
