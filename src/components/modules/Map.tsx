@@ -1,9 +1,9 @@
 "use client";
 
-import AddressSearch from "@/components/elements/AddressSearch";
 import maplibregl, { StyleSpecification } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { FC, useEffect, useRef, useState } from "react";
+import GeolocationSearch from "../elements/GeolocationSearch";
 
 interface MapProps {
 	mapStyle: StyleSpecification;
@@ -63,9 +63,7 @@ const Map: FC<MapProps> = ({ onMapClick, mapStyle }) => {
 
 	return (
 		<div className="relative w-screen h-[600px]">
-			<div className="absolute top-4 left-10 z-10">
-				<AddressSearch />
-			</div>
+			<GeolocationSearch map={map.current} />
 			<div ref={mapContainer} className="w-full h-full" />
 			{loading && (
 				<div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75">
