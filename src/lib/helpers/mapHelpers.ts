@@ -1,5 +1,5 @@
-import { StyleSpecification } from "maplibre-gl";
 import { getLocalJson } from "@/lib/utils/mapUtils";
+import { StyleSpecification } from "maplibre-gl";
 
 export async function initMapStyle(): Promise<StyleSpecification> {
 	const bezirksgrenzenGeoJSON = getLocalJson("/maps/bezirksgrenzen.json");
