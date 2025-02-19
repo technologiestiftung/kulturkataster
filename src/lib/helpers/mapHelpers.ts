@@ -1,12 +1,12 @@
 import { StyleSpecification } from "maplibre-gl";
-import { getLocalGeojson } from "@/lib/utils/mapUtils";
+import { getLocalJson } from "@/lib/utils/mapUtils";
 
-export async function getMapStyle(): Promise<StyleSpecification> {
-	const bezirksgrenzenGeoJSON = getLocalGeojson("/maps/bezirksgrenzen.json");
-	const ortsteileGeoJSON = getLocalGeojson("/maps/ortsteile.json");
+export async function initMapStyle(): Promise<StyleSpecification> {
+	const bezirksgrenzenGeoJSON = getLocalJson("/maps/bezirksgrenzen.json");
+	const ortsteileGeoJSON = getLocalJson("/maps/ortsteile.json");
 
 	return {
-		name: "basemap:grey",
+		name: "kulturkataster",
 		version: 8,
 		metadata: {},
 		center: [13.404954, 52.520008],
