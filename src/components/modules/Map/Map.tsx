@@ -3,7 +3,7 @@
 import maplibregl, { StyleSpecification } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { FC, useEffect, useRef, useState } from "react";
-import GeolocationSearch from "../elements/GeolocationSearch";
+import GeolocationSearch from "@/components/elements/GeolocationSearch/GeolocationSearch";
 
 interface MapProps {
 	mapStyle: StyleSpecification;
