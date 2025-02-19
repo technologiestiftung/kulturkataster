@@ -1,6 +1,6 @@
 import { Input } from "@/components/ui/input";
 import maplibregl from "maplibre-gl";
-import { FC, useState } from "react";
+import { FC, KeyboardEvent, useRef, useState } from "react";
 
 interface GeoFeature {
 	id: string;
@@ -32,9 +32,16 @@ const GeolocationSearch: FC<GeolocationSearchProps> = ({
 	onLocationSelect,
 	flyToOptions = { zoom: 14, duration: 2000 },
 }) => {
+	// State
 	const [query, setQuery] = useState("");
 	const [results, setResults] = useState<GeoFeature[]>([]);
 	const [isLoading, setIsLoading] = useState(false);
+	const [activeIndex, setActiveIndex] = useState(-1);
+	const [isKeyboardNav, setIsKeyboardNav] = useState(false);
+
+	// Refs
+	const listRef = useRef<HTMLUListElement>(null);
+	const inputRef = useRef<HTMLInputElement>(null);
 
 	const searchAddress = async (searchQuery: string) => {
 		if (!searchQuery) {
@@ -55,7 +62,6 @@ const GeolocationSearch: FC<GeolocationSearchProps> = ({
 		} catch (error) {
 			console.error("Geocoding error:", error);
 			setResults([]);
-			setIsLoading(false);
 		} finally {
 			setIsLoading(false);
 		}
@@ -90,31 +96,91 @@ const GeolocationSearch: FC<GeolocationSearchProps> = ({
 				name: result.place_name,
 			});
 		}
-		setQuery(result.place_name);
-		setResults([]);
 		setQuery("");
+		setResults([]);
+		setActiveIndex(-1);
+		inputRef.current?.focus(); // Ensure focus returns to input
+	};
+
+	const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+		if (!results.length) return;
+		setIsKeyboardNav(true);
+
+		switch (e.key) {
+			case "ArrowDown":
+				e.preventDefault();
+				setActiveIndex((prev) => (prev < results.length - 1 ? prev + 1 : prev));
+				break;
+			case "ArrowUp":
+				e.preventDefault();
+				setActiveIndex((prev) => (prev > 0 ? prev - 1 : prev));
+				break;
+			case "Enter":
+				e.preventDefault();
+				if (activeIndex >= 0) {
+					handleResultClick(results[activeIndex]);
+				}
+				break;
+			case "Escape":
+				e.preventDefault();
+				setResults([]);
+				setActiveIndex(-1);
+				break;
+			default:
+				break;
+		}
 	};
 
 	return (
-		<div className="GeolocationSearch-root absolute top-4 left-10 z-10 w-64">
+		<div
+			className="GeolocationSearch-root absolute top-4 left-10 z-10 w-64"
+			role="search"
+			aria-label="Location search"
+		>
 			<Input
+				ref={inputRef}
 				placeholder={helperText}
 				value={query}
 				onChange={(e) => {
 					const value = e.target.value;
 					setQuery(value);
 					searchAddress(value);
+					setActiveIndex(-1);
 				}}
+				onKeyDown={handleKeyDown}
+				aria-expanded={results.length > 0}
+				aria-controls="search-results"
+				aria-activedescendant={
+					activeIndex >= 0 ? `result-${results[activeIndex]?.id}` : undefined
+				}
+				aria-busy={isLoading}
 				className="w-full bg-white"
 			/>
 
 			{results.length > 0 && (
-				<ul className="absolute w-full mt-2 bg-white rounded-md shadow-lg max-h-60 overflow-y-auto">
-					{results.map((result) => (
+				<ul
+					id="search-results"
+					ref={listRef}
+					role="listbox"
+					className="absolute w-full mt-2 bg-white rounded-md shadow-lg max-h-100 overflow-y-auto"
+					aria-label="Search results"
+				>
+					{results.map((result, index) => (
 						<li
 							key={result.id}
+							id={`result-${result.id}`}
+							role="option"
+							aria-selected={index === activeIndex}
 							onClick={() => handleResultClick(result)}
-							className="p-3 hover:bg-gray-100 cursor-pointer border-b last:border-b-0 text-sm"
+							onMouseEnter={() => {
+								setIsKeyboardNav(false);
+								setActiveIndex(index);
+							}}
+							onMouseDown={(e) => e.preventDefault()}
+							className={`p-3 cursor-pointer border-b last:border-b-0 text-sm 
+                    ${isKeyboardNav && index === activeIndex ? "bg-gray-100" : ""}
+                    ${!isKeyboardNav ? "hover:bg-gray-100" : ""}
+                `}
 						>
 							{result.place_name}
 						</li>
@@ -123,7 +189,7 @@ const GeolocationSearch: FC<GeolocationSearchProps> = ({
 			)}
 
 			{isLoading && (
-				<div className="absolute right-3 top-3">
+				<div className="absolute right-3 top-3" aria-hidden="true">
 					<div className="w-4 h-4 border-2 border-gray-300 border-t-blue-500 rounded-full animate-spin" />
 				</div>
 			)}
