@@ -1,24 +1,31 @@
 "use client";
 
+import GeolocationSearch from "@/components/elements/GeolocationSearch/GeolocationSearch";
+import { useMapStore } from "@/lib/store/mapStore";
 import maplibregl, { StyleSpecification } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { FC, useEffect, useRef, useState } from "react";
-import GeolocationSearch from "@/components/elements/GeolocationSearch/GeolocationSearch";
 
 interface MapProps {
-	mapStyle: StyleSpecification;
+	initialMapStyle: StyleSpecification; // More meaningful name
 	onMapClick?: (e: maplibregl.MapMouseEvent) => void;
 }
 
-const Map: FC<MapProps> = ({ onMapClick, mapStyle }) => {
+const Map: FC<MapProps> = ({ onMapClick, initialMapStyle }) => {
 	const mapContainer = useRef<HTMLDivElement>(null);
 	const map = useRef<maplibregl.Map | null>(null);
 	const [loading, setLoading] = useState(true);
 
+	const { mapStyle, setMapStyle } = useMapStore();
+
 	useEffect(() => {
-		if (!mapContainer.current) {
-			return;
+		if (mapStyle !== initialMapStyle) {
+			setMapStyle(initialMapStyle);
 		}
+	}, [initialMapStyle, mapStyle, setMapStyle]);
+
+	useEffect(() => {
+		if (!mapContainer.current || !mapStyle) return;
 
 		map.current = new maplibregl.Map({
 			container: mapContainer.current,
@@ -26,31 +33,22 @@ const Map: FC<MapProps> = ({ onMapClick, mapStyle }) => {
 			attributionControl: false,
 		});
 
-		// Add scale control
+		// Add controls
 		map.current.addControl(new maplibregl.ScaleControl(), "bottom-right");
-
-		// Add navigation controls
 		map.current.addControl(new maplibregl.NavigationControl(), "bottom-left");
-
 		map.current.addControl(
 			new maplibregl.GeolocateControl({
-				positionOptions: {
-					enableHighAccuracy: true,
-				},
+				positionOptions: { enableHighAccuracy: true },
 				trackUserLocation: true,
 			}),
 		);
 
-		// Setup map event handlers
-		map.current.on("load", () => {
-			setLoading(false);
-		});
+		map.current.on("load", () => setLoading(false));
 
 		if (onMapClick) {
 			map.current.on("click", onMapClick);
 		}
 
-		// Cleanup function
 		return () => {
 			if (map.current) {
 				if (onMapClick) {
@@ -62,7 +60,7 @@ const Map: FC<MapProps> = ({ onMapClick, mapStyle }) => {
 	}, [onMapClick, mapStyle]);
 
 	return (
-		<div className="relative w-screen h-[600px]">
+		<div className="Map-root relative w-screen h-[600px]">
 			<GeolocationSearch map={map.current} />
 			<div ref={mapContainer} className="w-full h-full" />
 			{loading && (
