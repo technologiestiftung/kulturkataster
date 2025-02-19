@@ -28,10 +28,10 @@ export async function fetchWFSData(
 	return data;
 }
 
-export function getLocalGeojson(url: string) {
+export function getLocalJson(url: string) {
 	const filePath = path.join(process.cwd(), "public", url);
-	const geojson = JSON.parse(fs.readFileSync(filePath, "utf-8"));
-	return geojson;
+	const json = JSON.parse(fs.readFileSync(filePath, "utf-8"));
+	return json;
 }
 
 // Define projections
