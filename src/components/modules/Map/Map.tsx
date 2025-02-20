@@ -60,7 +60,7 @@ const Map: FC<MapProps> = ({ onMapClick, initialMapStyle }) => {
 	}, [onMapClick, mapStyle]);
 
 	return (
-		<div className="Map-root relative w-screen h-[600px]">
+		<div className="Map-root relative w-screen h-screen">
 			<GeolocationSearch map={map.current} />
 			<div ref={mapContainer} className="w-full h-full" />
 			{loading && (
