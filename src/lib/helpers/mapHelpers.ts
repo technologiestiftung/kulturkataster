@@ -4,6 +4,7 @@ import { StyleSpecification } from "maplibre-gl";
 export async function initMapStyle(): Promise<StyleSpecification> {
 	const bezirksgrenzenGeoJSON = getLocalJson("/maps/bezirksgrenzen.json");
 	const ortsteileGeoJSON = getLocalJson("/maps/ortsteile.json");
+	const kulturorteGeoJSON = getLocalJson("/maps/kulturorte.json");
 
 	return {
 		name: "kulturkataster",
@@ -20,6 +21,14 @@ export async function initMapStyle(): Promise<StyleSpecification> {
 					"&copy; <a href='https://www.openstreetmap.org/copyright'>Kulturkataster</a> contributors",
 				bounds: [12.911237, 52.314615, 13.895887, 52.710764],
 			},
+			cartoBaseMap: {
+				type: "raster",
+				tiles: ["https://tile.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png"],
+				tileSize: 256,
+				attribution:
+					"&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors, &copy; <a href='https://carto.com/attributions'>CartoDB</a>",
+				bounds: [12.911237, 52.314615, 13.895887, 52.710764],
+			},
 			bezirksgrenzen: {
 				type: "geojson",
 				data: bezirksgrenzenGeoJSON,
@@ -30,36 +39,7 @@ export async function initMapStyle(): Promise<StyleSpecification> {
 			},
 			kukaPoints: {
 				type: "geojson",
-				data: {
-					type: "FeatureCollection",
-					features: [
-						{
-							type: "Feature",
-							properties: { color: "#ff0000" },
-							geometry: { type: "Point", coordinates: [13.405, 52.52] },
-						},
-						{
-							type: "Feature",
-							properties: { color: "#00ff00" },
-							geometry: { type: "Point", coordinates: [13.39, 52.51] },
-						},
-						{
-							type: "Feature",
-							properties: { color: "#0000ff" },
-							geometry: { type: "Point", coordinates: [13.42, 52.515] },
-						},
-						{
-							type: "Feature",
-							properties: { color: "#ff00ff" },
-							geometry: { type: "Point", coordinates: [13.37, 52.525] },
-						},
-						{
-							type: "Feature",
-							properties: { color: "#ffff00" },
-							geometry: { type: "Point", coordinates: [13.43, 52.505] },
-						},
-					],
-				},
+				data: kulturorteGeoJSON,
 			},
 		},
 		glyphs: "./data/{fontstack}/{range}.pbf",
@@ -84,24 +64,20 @@ export async function initMapStyle(): Promise<StyleSpecification> {
 					"raster-opacity": 1,
 				},
 			},
-			{
-				id: "ortsteileLayer",
-				type: "line",
-				source: "ortsteile",
-				paint: {
-					"line-color": "pink",
-					"line-width": 2,
-				},
-			},
-			{
-				id: "bezirksgrenzenLayer",
-				type: "line",
-				source: "bezirksgrenzen",
-				paint: {
-					"line-color": "#198EC8",
-					"line-width": 2,
-				},
-			},
+			// optional background map, uncomment if needed:
+			// {
+			// 	id: "cartoBaseMapLayer",
+			// 	type: "raster",
+			// 	source: "cartoBaseMap",
+			// 	layout: {
+			// 		visibility: "visible",
+			// 	},
+			// 	paint: {
+			// 		"raster-saturation": 0,
+			// 		"raster-contrast": 0,
+			// 		"raster-opacity": 1,
+			// 	},
+			// },
 			{
 				id: "kukaPointsLayer",
 				type: "circle",
@@ -111,6 +87,24 @@ export async function initMapStyle(): Promise<StyleSpecification> {
 					"circle-color": ["get", "color"],
 					"circle-stroke-width": 2,
 					"circle-stroke-color": "#ffffff",
+				},
+			},
+			{
+				id: "ortsteileLayer",
+				type: "line",
+				source: "ortsteile",
+				paint: {
+					"line-color": "#B32580",
+					"line-width": 2,
+				},
+			},
+			{
+				id: "bezirksgrenzenLayer",
+				type: "line",
+				source: "bezirksgrenzen",
+				paint: {
+					"line-color": "#554AF4",
+					"line-width": 2,
 				},
 			},
 		],
