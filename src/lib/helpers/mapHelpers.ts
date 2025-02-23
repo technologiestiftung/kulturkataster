@@ -37,7 +37,7 @@ export async function initMapStyle(): Promise<StyleSpecification> {
 				type: "geojson",
 				data: ortsteileGeoJSON,
 			},
-			kukaPoints: {
+			kulturorte: {
 				type: "geojson",
 				data: kulturorteGeoJSON,
 			},
@@ -78,17 +78,7 @@ export async function initMapStyle(): Promise<StyleSpecification> {
 			// 		"raster-opacity": 1,
 			// 	},
 			// },
-			{
-				id: "kukaPointsLayer",
-				type: "circle",
-				source: "kukaPoints",
-				paint: {
-					"circle-radius": 8,
-					"circle-color": ["get", "color"],
-					"circle-stroke-width": 2,
-					"circle-stroke-color": "#ffffff",
-				},
-			},
+
 			{
 				id: "ortsteileLayer",
 				type: "line",
@@ -105,6 +95,17 @@ export async function initMapStyle(): Promise<StyleSpecification> {
 				paint: {
 					"line-color": "#554AF4",
 					"line-width": 2,
+				},
+			},
+			{
+				id: "kulturorteLayer",
+				type: "circle",
+				source: "kulturorte",
+				paint: {
+					"circle-radius": 8,
+					"circle-color": ["get", "color"],
+					"circle-stroke-width": 2,
+					"circle-stroke-color": "#ffffff",
 				},
 			},
 		],
