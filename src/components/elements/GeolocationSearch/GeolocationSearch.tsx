@@ -1,6 +1,6 @@
 import { Input } from "@/components/ui/input";
 import maplibregl from "maplibre-gl";
-import { FC, KeyboardEvent, useRef, useState } from "react";
+import { ChangeEvent, FC, KeyboardEvent, useRef, useState } from "react";
 
 interface GeoFeature {
 	id: string;
@@ -38,6 +38,9 @@ const GeolocationSearch: FC<GeolocationSearchProps> = ({
 	const [isLoading, setIsLoading] = useState(false);
 	const [activeIndex, setActiveIndex] = useState(-1);
 	const [isKeyboardNav, setIsKeyboardNav] = useState(false);
+	const [debounceTimeout, setDebounceTimeout] = useState<ReturnType<
+		typeof setTimeout
+	> | null>(null);
 
 	// Refs
 	const listRef = useRef<HTMLUListElement>(null);
@@ -49,6 +52,7 @@ const GeolocationSearch: FC<GeolocationSearchProps> = ({
 			return;
 		}
 		setIsLoading(true);
+		// todo wait to fetch data when user has stopped typing
 		try {
 			const res = await fetch(
 				`/api/geocode?searchQuery=${encodeURIComponent(searchQuery)}`,
@@ -61,6 +65,20 @@ const GeolocationSearch: FC<GeolocationSearchProps> = ({
 		} finally {
 			setIsLoading(false);
 		}
+	};
+
+	const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+		const value = e.target.value;
+		setQuery(value);
+
+		if (debounceTimeout) clearTimeout(debounceTimeout);
+
+		const timeout = setTimeout(() => {
+			searchAddress(value);
+		}, 400);
+
+		setDebounceTimeout(timeout);
+		setActiveIndex(-1);
 	};
 
 	const handleResultClick = (result: GeoFeature) => {
@@ -95,7 +113,7 @@ const GeolocationSearch: FC<GeolocationSearchProps> = ({
 		setQuery("");
 		setResults([]);
 		setActiveIndex(-1);
-		inputRef.current?.focus(); // Ensure focus returns to input
+		inputRef.current?.focus();
 	};
 
 	const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -137,12 +155,7 @@ const GeolocationSearch: FC<GeolocationSearchProps> = ({
 				ref={inputRef}
 				placeholder={helperText}
 				value={query}
-				onChange={(e) => {
-					const value = e.target.value;
-					setQuery(value);
-					searchAddress(value);
-					setActiveIndex(-1);
-				}}
+				onChange={handleInputChange}
 				onKeyDown={handleKeyDown}
 				aria-expanded={results.length > 0}
 				aria-controls="search-results"
