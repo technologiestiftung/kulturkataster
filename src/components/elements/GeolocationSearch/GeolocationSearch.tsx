@@ -50,13 +50,9 @@ const GeolocationSearch: FC<GeolocationSearchProps> = ({
 		}
 		setIsLoading(true);
 		try {
-			const bbox = process.env.NEXT_PUBLIC_MAP_BOUNDING_BOX;
-			const apiKey = process.env.NEXT_PUBLIC_MAPTILER_API_KEY;
-			const url = `https://api.maptiler.com/geocoding/${encodeURIComponent(
-				searchQuery,
-			)}.json?key=${apiKey}${bbox ? `&bbox=${bbox}` : ""}`;
-
-			const res = await fetch(url);
+			const res = await fetch(
+				`/api/geocode?searchQuery=${encodeURIComponent(searchQuery)}`,
+			);
 			const data = await res.json();
 			setResults(data.features || []);
 		} catch (error) {
