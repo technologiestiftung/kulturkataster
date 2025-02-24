@@ -41,11 +41,19 @@ const GeolocationSearch: FC<GeolocationSearchProps> = ({
 	const [debounceTimeout, setDebounceTimeout] = useState<ReturnType<
 		typeof setTimeout
 	> | null>(null);
+	const [resultErrorMessage, setResultErrorMessage] = useState<string | null>(
+		null,
+	);
 
 	// Refs
 	const listRef = useRef<HTMLUListElement>(null);
 	const inputRef = useRef<HTMLInputElement>(null);
 
+	const displayResultError = () => {
+		setResultErrorMessage(
+			"Es konnte keine Adresse unter der Suchangabe gefunden werden.",
+		);
+	};
 	const searchAddress = async (searchQuery: string) => {
 		if (!searchQuery) {
 			setResults([]);
@@ -54,14 +62,15 @@ const GeolocationSearch: FC<GeolocationSearchProps> = ({
 
 		setIsLoading(true);
 
-		console.log("[GeolocationSearch] searchQuery::", searchQuery);
 		try {
 			const res = await fetch(
 				`/api/geocode?searchQuery=${encodeURIComponent(searchQuery)}`,
 			);
 			const data = await res.json();
 
-			console.log('[GeolocationSearch] data::', data);
+			if (data.features.length === 0) {
+				displayResultError();
+			}
 
 			setResults(data.features || []);
 		} catch {
@@ -73,6 +82,7 @@ const GeolocationSearch: FC<GeolocationSearchProps> = ({
 
 	const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
 		const value = e.target.value;
+		setResultErrorMessage(null);
 		setQuery(value);
 
 		if (debounceTimeout) clearTimeout(debounceTimeout);
@@ -199,6 +209,15 @@ const GeolocationSearch: FC<GeolocationSearchProps> = ({
 							{result.place_name}
 						</li>
 					))}
+				</ul>
+			)}
+			{resultErrorMessage && (
+				<ul
+					role="listbox"
+					className="absolute w-full mt-2 bg-white rounded-md shadow-lg max-h-100 overflow-y-auto"
+					aria-label="Search results"
+				>
+					<li className="p-3 text-sm text-red-500">{resultErrorMessage}</li>
 				</ul>
 			)}
 
