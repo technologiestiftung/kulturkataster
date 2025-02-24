@@ -64,8 +64,7 @@ const GeolocationSearch: FC<GeolocationSearchProps> = ({
 			console.log('[GeolocationSearch] data::', data);
 
 			setResults(data.features || []);
-		} catch (error) {
-			console.error("Geocoding error:", error.message);
+		} catch {
 			setResults([]);
 		} finally {
 			setIsLoading(false);
