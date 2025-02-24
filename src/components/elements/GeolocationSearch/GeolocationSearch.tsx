@@ -51,16 +51,21 @@ const GeolocationSearch: FC<GeolocationSearchProps> = ({
 			setResults([]);
 			return;
 		}
+
 		setIsLoading(true);
-		// todo wait to fetch data when user has stopped typing
+
+		console.log("[GeolocationSearch] searchQuery::", searchQuery);
 		try {
 			const res = await fetch(
 				`/api/geocode?searchQuery=${encodeURIComponent(searchQuery)}`,
 			);
 			const data = await res.json();
+
+			console.log('[GeolocationSearch] data::', data);
+
 			setResults(data.features || []);
 		} catch (error) {
-			console.error("Geocoding error:", error);
+			console.error("Geocoding error:", error.message);
 			setResults([]);
 		} finally {
 			setIsLoading(false);
@@ -149,7 +154,7 @@ const GeolocationSearch: FC<GeolocationSearchProps> = ({
 		<div
 			className="GeolocationSearch-root absolute top-4 left-10 z-10 w-64"
 			role="search"
-			aria-label="Location search"
+			aria-label="Adressuche auf der Karte"
 		>
 			<Input
 				ref={inputRef}
@@ -159,6 +164,7 @@ const GeolocationSearch: FC<GeolocationSearchProps> = ({
 				onKeyDown={handleKeyDown}
 				aria-expanded={results.length > 0}
 				aria-controls="search-results"
+				aria-label="Sucheeingabefeld"
 				aria-activedescendant={
 					activeIndex >= 0 ? `result-${results[activeIndex]?.id}` : undefined
 				}
