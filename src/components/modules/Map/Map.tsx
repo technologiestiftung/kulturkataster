@@ -1,8 +1,13 @@
 "use client";
 
 import GeolocationSearch from "@/components/elements/GeolocationSearch/GeolocationSearch";
+import VenueOverlay from "@/components/modules/Overlay/VenueOverlay";
 import { useMapStore } from "@/lib/store/mapStore";
-import maplibregl, { StyleSpecification } from "maplibre-gl";
+import maplibregl, {
+	MapGeoJSONFeature,
+	MapMouseEvent,
+	StyleSpecification,
+} from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { FC, useEffect, useRef, useState } from "react";
 
@@ -15,7 +20,14 @@ const Map: FC<MapProps> = ({ initialMapStyle }) => {
 	const mapRef = useRef<maplibregl.Map | null>(null);
 	const [loading, setLoading] = useState(true);
 
-	const { mapStyle, setMapStyle, map, setMap } = useMapStore();
+	const {
+		mapStyle,
+		setMapStyle,
+		map,
+		setMap,
+		venueProperties,
+		setVenueProperties,
+	} = useMapStore();
 
 	useEffect(() => {
 		if (mapStyle !== initialMapStyle) {
@@ -53,6 +65,18 @@ const Map: FC<MapProps> = ({ initialMapStyle }) => {
 			}),
 		);
 
+		map.on("click", "kulturorteLayer", handleVenueClick);
+
+		// Change the cursor to a pointer when the it enters a feature in the 'symbols' layer.
+		map.on("mouseenter", "kulturorteLayer", () => {
+			map.getCanvas().style.cursor = "pointer";
+		});
+
+		// Change it back to a pointer when it leaves.
+		map.on("mouseleave", "kulturorteLayer", () => {
+			map.getCanvas().style.cursor = "";
+		});
+
 		return () => {
 			if (map) {
 				map.remove();
@@ -60,9 +84,31 @@ const Map: FC<MapProps> = ({ initialMapStyle }) => {
 		};
 	}, [map]);
 
+	const handleVenueClick = (
+		e: MapMouseEvent & { features?: MapGeoJSONFeature[] } & object,
+	) => {
+		if (!e.features) return;
+
+		const OFFSET_LNG = 0.0004;
+
+		map?.flyTo({
+			center: [
+				e.features[0].geometry.coordinates[0] + OFFSET_LNG,
+				e.features[0].geometry.coordinates[1],
+			],
+			zoom: 18,
+			duration: 2000,
+			essential: true,
+		});
+
+		setVenueProperties(e.features[0].properties);
+	};
+
 	return (
 		<div className="Map-root relative w-screen h-screen">
 			<GeolocationSearch map={map} />
+			{venueProperties && <VenueOverlay />}
+
 			<div ref={mapContainer} className="w-full h-full" />
 			{loading && (
 				<div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75">
