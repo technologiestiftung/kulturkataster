@@ -1,6 +1,13 @@
 import { Input } from "@/components/ui/input";
 import maplibregl from "maplibre-gl";
-import { ChangeEvent, FC, KeyboardEvent, useRef, useState } from "react";
+import {
+	ChangeEvent,
+	FC,
+	KeyboardEvent,
+	useEffect,
+	useRef,
+	useState,
+} from "react";
 
 interface GeoFeature {
 	id: string;
@@ -54,6 +61,14 @@ const GeolocationSearch: FC<GeolocationSearchProps> = ({
 			"Es konnte keine Adresse unter der Suchangabe gefunden werden.",
 		);
 	};
+
+	useEffect(() => {
+		console.log("[GeolocationSearch] results::", results);
+	}, [results]);
+	useEffect(() => {
+		console.log("[GeolocationSearch] query::", query);
+	}, [query]);
+
 	const searchAddress = async (searchQuery: string) => {
 		if (!searchQuery) {
 			setResults([]);
