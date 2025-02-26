@@ -7,11 +7,10 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { FC, useEffect, useRef, useState } from "react";
 
 interface MapProps {
-	initialMapStyle: StyleSpecification; // More meaningful name
-	onMapClick?: (e: maplibregl.MapMouseEvent) => void;
+	initialMapStyle: StyleSpecification;
 }
 
-const Map: FC<MapProps> = ({ onMapClick, initialMapStyle }) => {
+const Map: FC<MapProps> = ({ initialMapStyle }) => {
 	const mapContainer = useRef<HTMLDivElement>(null);
 	const mapRef = useRef<maplibregl.Map | null>(null);
 	const [loading, setLoading] = useState(true);
@@ -53,12 +52,6 @@ const Map: FC<MapProps> = ({ onMapClick, initialMapStyle }) => {
 				trackUserLocation: true,
 			}),
 		);
-
-		map.current.on("load", () => setLoading(false));
-
-		if (onMapClick) {
-			map.current.on("click", onMapClick);
-		}
 
 		return () => {
 			if (map) {
