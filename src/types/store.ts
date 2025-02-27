@@ -1,53 +1,16 @@
 import maplibregl, { StyleSpecification } from "maplibre-gl";
+import { VenueProperties } from "./venue";
 
 export type MapState = {
 	map: maplibregl.Map | null;
 	setMap: (map: maplibregl.Map) => void;
 	mapStyle: StyleSpecification | null;
 	setMapStyle: (style: StyleSpecification) => void;
-	venueProperties: VenueProperties | null;
-	setVenueProperties: (properties: VenueProperties | null) => void;
-	currentVenue: VenueProperties | null;
-	setCurrentVenue: (venue: VenueProperties | null) => void;
 };
 
-export interface VenueProperties {
-	id: number;
-	venue_name: string;
-	street: string;
-	street_number: string;
-	zip_code: string;
-	city: string;
-	district: string;
-	neighbourhood: string;
-	address_suffix: string;
-	venue_type: string[];
-	size: number;
-	owner_name: string;
-	owner_type: string;
-	rental_contract_type: string;
-	rental_contract_end: string | null;
-	protection_status: string;
-	established_since: string;
-	opening_status: string[];
-	label_id: number[];
-	contact_person_name: string;
-	contact_person_surname: string;
-	contact_person_email: string;
-	contact_person_phone: string;
-	date_added: string;
-	last_updated: string;
-	user_id: number;
-	status: string;
-	source: string;
-	cultural_area: string;
-	closing_reason: string | null;
-}
-
-export interface VenueFeature extends VenueProperties {
-	type: "Feature";
-	geometry: {
-		type: "Point";
-		coordinates: [number, number];
-	};
-}
+export type VenueState = {
+	selectedVenueId: string;
+	setSelectedVenueId: (id: string) => void;
+	selectedVenueProperties: VenueProperties | null;
+	setSelectedVenueProperties: (properties: VenueProperties | null) => void;
+};
