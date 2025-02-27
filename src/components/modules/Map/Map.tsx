@@ -86,11 +86,10 @@ const Map: FC<MapProps> = ({ initialMapStyle }) => {
 
 			if (isPoint(geometry)) {
 				const coordinates = geometry.coordinates.slice();
-				const description = feature.properties.description;
-				const name = feature.properties.name;
+				const name = feature.properties.venue_name;
 
 				const point = map.project(coordinates as [number, number]);
-				setHoverCardData({ x: point.x, y: point.y, description, name });
+				setHoverCardData({ x: point.x, y: point.y, venue_name: name });
 			}
 		});
 

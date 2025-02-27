@@ -4,7 +4,7 @@ import { StyleSpecification } from "maplibre-gl";
 export async function initMapStyle(): Promise<StyleSpecification> {
 	const bezirksgrenzenGeoJSON = getLocalJson("/maps/bezirksgrenzen.json");
 	const ortsteileGeoJSON = getLocalJson("/maps/ortsteile.json");
-	const kulturorteGeoJSON = getLocalJson("/maps/kulturorte.json");
+	const kulturorteGeoJSON = getLocalJson("/maps/venues.json");
 
 	return {
 		name: "kulturkataster",
