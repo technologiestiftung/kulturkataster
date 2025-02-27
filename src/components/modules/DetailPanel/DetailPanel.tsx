@@ -8,7 +8,7 @@ import {
 import { useMapStore } from "@/lib/store/mapStore";
 import { FC, useEffect, useState } from "react";
 
-const VenueOverlay: FC = () => {
+const DetailPanel: FC = ({}) => {
 	const [open, setOpen] = useState(true);
 	const { venueProperties } = useMapStore();
 
@@ -20,7 +20,7 @@ const VenueOverlay: FC = () => {
 	}, [venueProperties]);
 
 	return (
-		<div className="VenuSheet-root">
+		<div className="DetailPanel-root">
 			<Sheet key={"right"} open={open} onOpenChange={setOpen}>
 				<SheetContent>
 					<SheetHeader>
@@ -35,4 +35,4 @@ const VenueOverlay: FC = () => {
 	);
 };
 
-export default VenueOverlay;
+export default DetailPanel;
