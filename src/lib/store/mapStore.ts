@@ -1,3 +1,4 @@
+import { MapState } from "@/types";
 import { create } from "zustand";
 
 export const useMapStore = create<MapState>((set) => ({
