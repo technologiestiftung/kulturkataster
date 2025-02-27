@@ -1,6 +1,6 @@
 "use client";
 
-import GeolocationSearch from "@/components/elements/GeolocationSearch/GeolocationSearch";
+import GeolocationSearch from "@/components/GeolocationSearch/GeolocationSearch";
 import { useMapStore } from "@/lib/store/mapStore";
 import { useVenueStore } from "@/lib/store/venueStore";
 import {
