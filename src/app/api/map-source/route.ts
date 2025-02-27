@@ -1,12 +1,10 @@
 import { NextResponse } from "next/server";
 
 export async function GET(_req: Request) {
-
-  // todo: I would like to fetch all maps from services here
-  // 1. step fetch sources
-  // depending on what sources are there, build layers
-  // if some sources are not available, return error
-
+	// todo: I would like to fetch all maps from services here
+	// 1. step fetch sources
+	// depending on what sources are there, build layers
+	// if some sources are not available, return error
 
 	try {
 		// const bbox = process.env.NEXT_PUBLIC_MAP_BOUNDING_BOX;
@@ -20,6 +18,9 @@ export async function GET(_req: Request) {
 
 		return NextResponse.json({ status: 200 });
 	} catch {
-		return NextResponse.json({ error: "Error fetching map sources" }, { status: 500 });
+		return NextResponse.json(
+			{ error: "Error fetching map sources" },
+			{ status: 500 },
+		);
 	}
 }
