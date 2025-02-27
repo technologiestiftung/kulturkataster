@@ -1,4 +1,4 @@
-import Map from "@/components/modules/Map/Map";
+import Map from "@/components/Map/Map";
 import { initMapStyle } from "@/lib/helpers/mapHelpers";
 
 export default async function Home() {
