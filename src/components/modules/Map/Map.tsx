@@ -1,7 +1,6 @@
 "use client";
 
 import GeolocationSearch from "@/components/elements/GeolocationSearch/GeolocationSearch";
-import VenueOverlay from "@/components/modules/Overlay/VenueOverlay";
 import { useMapStore } from "@/lib/store/mapStore";
 import maplibregl, {
 	MapGeoJSONFeature,
@@ -10,6 +9,7 @@ import maplibregl, {
 } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { FC, useEffect, useRef, useState } from "react";
+import DetailPanel from "../DetailPanel/DetailPanel";
 import HoverCard, { HoverCardData } from "../HoverCard/HoverCard";
 
 interface MapProps {
@@ -124,7 +124,7 @@ const Map: FC<MapProps> = ({ initialMapStyle }) => {
 	return (
 		<div className="Map-root relative w-screen h-screen">
 			<GeolocationSearch map={map} />
-			{venueProperties && <VenueOverlay />}
+			{venueProperties && <DetailPanel />}
 
 			{hoverCardData && <HoverCard data={hoverCardData} />}
 
