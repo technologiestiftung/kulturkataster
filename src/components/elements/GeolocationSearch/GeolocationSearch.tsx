@@ -1,6 +1,6 @@
 import { Input } from "@/components/ui/input";
+import { useMapStore } from "@/lib/store/mapStore";
 import { sanitizeAddressInput } from "@/lib/utils/sanitizerUtils";
-import maplibregl from "maplibre-gl";
 import {
 	ChangeEvent,
 	FC,
@@ -22,7 +22,6 @@ interface GeoFeature {
 
 interface GeolocationSearchProps {
 	helperText?: string;
-	map?: maplibregl.Map | null;
 	onLocationSelect?: (location: {
 		lat: number;
 		lng: number;
@@ -37,7 +36,6 @@ interface GeolocationSearchProps {
 
 const GeolocationSearch: FC<GeolocationSearchProps> = ({
 	helperText = "Enter an address",
-	map,
 	onLocationSelect,
 	flyToOptions = { zoom: 14, duration: 2000 },
 	strictSanitization = false,
@@ -61,11 +59,8 @@ const GeolocationSearch: FC<GeolocationSearchProps> = ({
 	const inputRef = useRef<HTMLInputElement>(null);
 	const statusRef = useRef<HTMLDivElement>(null);
 
-	const displayResultError = () => {
-		setResultErrorMessage(
-			"Es konnte keine Adresse unter der Suchangabe gefunden werden.",
-		);
-	};
+	// Store
+	const { map } = useMapStore();
 
 	useEffect(() => {
 		return () => {
@@ -177,6 +172,7 @@ const GeolocationSearch: FC<GeolocationSearchProps> = ({
 					{
 						padding: 50,
 						duration: flyToOptions.duration,
+						maxZoom: 16,
 					},
 				);
 			} else {
@@ -243,6 +239,12 @@ const GeolocationSearch: FC<GeolocationSearchProps> = ({
 		}
 	};
 
+	const displayResultError = () => {
+		setResultErrorMessage(
+			"Es konnte keine Adresse unter der Suchangabe gefunden werden.",
+		);
+	};
+
 	return (
 		<div
 			className="GeolocationSearch-root absolute top-4 left-10 z-10 w-64 sm:w-80 md:w-96"
@@ -293,7 +295,7 @@ const GeolocationSearch: FC<GeolocationSearchProps> = ({
 					{results.length > 0 ? (
 						results.map((result, index) => (
 							<li
-								key={result.id}
+								key={result.id + index}
 								id={`result-${result.id}`}
 								role="option"
 								aria-selected={index === activeIndex}
