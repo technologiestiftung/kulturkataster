@@ -30,6 +30,10 @@ const Map: FC<MapProps> = ({ initialMapStyle }) => {
 			container: mapContainer.current,
 			style: mapStyle,
 			attributionControl: false,
+			maxBounds: [
+				13.091992716067702, 52.33488609760638, 13.742786470433,
+				52.67626223889507,
+			] as maplibregl.LngLatBoundsLike,
 		});
 
 		mapRef.current.on("load", () => {
