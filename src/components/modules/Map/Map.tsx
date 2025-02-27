@@ -78,25 +78,9 @@ const Map: FC<MapProps> = ({ initialMapStyle }) => {
 		// events
 		map.on("click", "kulturorteLayer", handleVenueClick);
 
-		map.on("mouseenter", "kulturorteLayer", (e: AppMapMouseEvent) => {
-			map.getCanvas().style.cursor = "pointer";
-			if (!e.features?.length) return;
-			const feature = e.features[0];
-			const geometry = feature.geometry;
+		map.on("mouseenter", "kulturorteLayer", handleVenueHoverIn);
 
-			if (isPoint(geometry)) {
-				const coordinates = geometry.coordinates.slice();
-				const name = feature.properties.venue_name;
-
-				const point = map.project(coordinates as [number, number]);
-				setHoverCardData({ x: point.x, y: point.y, venue_name: name });
-			}
-		});
-
-		map.on("mouseleave", "kulturorteLayer", () => {
-			map.getCanvas().style.cursor = "";
-			setHoverCardData(null);
-		});
+		map.on("mouseleave", "kulturorteLayer", handleVenueHoverOut);
 
 		return () => {
 			if (map) {
@@ -126,13 +110,34 @@ const Map: FC<MapProps> = ({ initialMapStyle }) => {
 		}
 	};
 
+	const handleVenueHoverIn = (e: AppMapMouseEvent) => {
+		if (!map || !e.features?.length) return;
+
+		map.getCanvas().style.cursor = "pointer";
+
+		const feature = e.features[0];
+		const geometry = feature.geometry;
+
+		if (isPoint(geometry)) {
+			const coordinates = geometry.coordinates.slice();
+			const name = feature.properties.venue_name;
+			const point = map.project(coordinates as [number, number]);
+
+			setHoverCardData({ x: point.x, y: point.y, venue_name: name });
+		}
+	};
+
+	const handleVenueHoverOut = () => {
+		if (!map) return;
+		map.getCanvas().style.cursor = "";
+		setHoverCardData(null);
+	};
+
 	return (
 		<div className="Map-root relative w-screen h-screen">
 			<GeolocationSearch />
 			{venueProperties && <DetailPanel />}
-
 			{hoverCardData && <HoverCard data={hoverCardData} />}
-
 			<div ref={mapContainer} className="w-full h-full" />
 			{loading && (
 				<div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75">
