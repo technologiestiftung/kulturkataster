@@ -16,7 +16,7 @@ export const technologiestiftungRules = {
 		eqeqeq: "error",
 		"max-depth": ["error", 4],
 		"max-params": ["warn", 3],
-		complexity: ["error", 10],
+		complexity: ["warn", 10],
 		"new-cap": [
 			"error",
 			{
@@ -32,7 +32,7 @@ export const technologiestiftungRules = {
 		"no-loop-func": "error",
 		"no-multi-assign": "error",
 		"no-multi-str": "error",
-		"no-nested-ternary": "error",
+		"no-nested-ternary": "warn",
 		"no-new": "error",
 		"no-param-reassign": "error",
 		"no-return-assign": "error",
