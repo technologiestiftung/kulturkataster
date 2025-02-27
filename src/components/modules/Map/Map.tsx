@@ -2,6 +2,7 @@
 
 import GeolocationSearch from "@/components/elements/GeolocationSearch/GeolocationSearch";
 import { useMapStore } from "@/lib/store/mapStore";
+import { useVenueStore } from "@/lib/store/venueStore";
 import {
 	AppMapMouseEvent,
 	HoverCardData,
@@ -26,14 +27,9 @@ const Map: FC<MapProps> = ({ initialMapStyle }) => {
 		null,
 	);
 
-	const {
-		mapStyle,
-		setMapStyle,
-		map,
-		setMap,
-		venueProperties,
-		setVenueProperties,
-	} = useMapStore();
+	const { mapStyle, setMapStyle, map, setMap } = useMapStore();
+	const { selectedVenueProperties, setSelectedVenueProperties } =
+		useVenueStore();
 
 	useEffect(() => {
 		if (mapStyle !== initialMapStyle) {
@@ -104,7 +100,7 @@ const Map: FC<MapProps> = ({ initialMapStyle }) => {
 				essential: true,
 			});
 
-			setVenueProperties(feature.properties as VenueProperties);
+			setSelectedVenueProperties(feature.properties as VenueProperties);
 		} else {
 			console.warn("Feature geometry is not a Point, skipping flyTo.");
 		}
@@ -136,7 +132,7 @@ const Map: FC<MapProps> = ({ initialMapStyle }) => {
 	return (
 		<div className="Map-root relative w-screen h-screen">
 			<GeolocationSearch />
-			{venueProperties && <DetailPanel />}
+			{selectedVenueProperties && <DetailPanel />}
 			{hoverCardData && <HoverCard data={hoverCardData} />}
 			<div ref={mapContainer} className="w-full h-full" />
 			{loading && (
