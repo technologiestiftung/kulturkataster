@@ -10,6 +10,7 @@ import maplibregl, {
 } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { FC, useEffect, useRef, useState } from "react";
+import HoverCard, { HoverCardData } from "../HoverCard/HoverCard";
 
 interface MapProps {
 	initialMapStyle: StyleSpecification;
@@ -19,6 +20,9 @@ const Map: FC<MapProps> = ({ initialMapStyle }) => {
 	const mapContainer = useRef<HTMLDivElement>(null);
 	const mapRef = useRef<maplibregl.Map | null>(null);
 	const [loading, setLoading] = useState(true);
+	const [hoverCardData, setHoverCardData] = useState<HoverCardData | null>(
+		null,
+	);
 
 	const {
 		mapStyle,
@@ -59,7 +63,7 @@ const Map: FC<MapProps> = ({ initialMapStyle }) => {
 	useEffect(() => {
 		if (!map) return;
 
-		// Add controls
+		// controls
 		map.addControl(new maplibregl.ScaleControl(), "bottom-right");
 		map.addControl(new maplibregl.NavigationControl(), "bottom-left");
 		map.addControl(
@@ -69,16 +73,25 @@ const Map: FC<MapProps> = ({ initialMapStyle }) => {
 			}),
 		);
 
+		// events
 		map.on("click", "kulturorteLayer", handleVenueClick);
 
-		// Change the cursor to a pointer when the it enters a feature in the 'symbols' layer.
-		map.on("mouseenter", "kulturorteLayer", () => {
+		map.on("mouseenter", "kulturorteLayer", (e) => {
 			map.getCanvas().style.cursor = "pointer";
+
+			if (!e.features?.length) return;
+			const feature = e.features[0];
+			const coordinates = feature.geometry.coordinates.slice();
+			const description = feature.properties.description;
+			const name = feature.properties.name;
+
+			const point = map.project(coordinates);
+			setHoverCardData({ x: point.x, y: point.y, description, name });
 		});
 
-		// Change it back to a pointer when it leaves.
 		map.on("mouseleave", "kulturorteLayer", () => {
 			map.getCanvas().style.cursor = "";
+			setHoverCardData(null);
 		});
 
 		return () => {
@@ -112,6 +125,8 @@ const Map: FC<MapProps> = ({ initialMapStyle }) => {
 		<div className="Map-root relative w-screen h-screen">
 			<GeolocationSearch map={map} />
 			{venueProperties && <VenueOverlay />}
+
+			{hoverCardData && <HoverCard data={hoverCardData} />}
 
 			<div ref={mapContainer} className="w-full h-full" />
 			{loading && (
