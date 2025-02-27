@@ -1,14 +1,8 @@
+import { HoverCardData } from "@/types";
 import { FC } from "react";
 
 interface HoverCardProps {
 	data: HoverCardData;
-}
-
-export interface HoverCardData {
-	x: number;
-	y: number;
-	description: string;
-	name: string;
 }
 
 const HoverCard: FC<HoverCardProps> = ({ data }) => {

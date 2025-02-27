@@ -2,6 +2,7 @@
 
 import GeolocationSearch from "@/components/elements/GeolocationSearch/GeolocationSearch";
 import { useMapStore } from "@/lib/store/mapStore";
+import { HoverCardData } from "@/types";
 import maplibregl, {
 	MapGeoJSONFeature,
 	MapMouseEvent,
@@ -10,7 +11,7 @@ import maplibregl, {
 import "maplibre-gl/dist/maplibre-gl.css";
 import { FC, useEffect, useRef, useState } from "react";
 import DetailPanel from "../DetailPanel/DetailPanel";
-import HoverCard, { HoverCardData } from "../HoverCard/HoverCard";
+import HoverCard from "../HoverCard/HoverCard";
 
 interface MapProps {
 	initialMapStyle: StyleSpecification;
