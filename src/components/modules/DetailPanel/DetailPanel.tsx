@@ -5,29 +5,33 @@ import {
 	SheetHeader,
 	SheetTitle,
 } from "@/components/ui/sheet";
-import { useMapStore } from "@/lib/store/mapStore";
+import { useVenueStore } from "@/lib/store/venueStore";
 import { FC, useEffect, useState } from "react";
 
 const DetailPanel: FC = ({}) => {
 	const [open, setOpen] = useState(true);
-	const { venueProperties } = useMapStore();
+	const { selectedVenueProperties } = useVenueStore();
 
 	useEffect(() => {
-		if (!venueProperties) {
+		if (!selectedVenueProperties) {
 			setOpen(false);
 		}
 		setOpen(true);
-	}, [venueProperties]);
+	}, [selectedVenueProperties]);
 
 	return (
 		<div className="DetailPanel-root">
 			<Sheet key={"right"} open={open} onOpenChange={setOpen}>
 				<SheetContent>
 					<SheetHeader>
-						<SheetTitle>{venueProperties?.venue_name}</SheetTitle>
-						<SheetDescription>{venueProperties?.district}</SheetDescription>
+						<SheetTitle>{selectedVenueProperties?.venue_name}</SheetTitle>
+						<SheetDescription>
+							{selectedVenueProperties?.district}
+						</SheetDescription>
 					</SheetHeader>
-					<SheetDescription>{venueProperties?.cultural_area}</SheetDescription>
+					<SheetDescription>
+						{selectedVenueProperties?.cultural_area}
+					</SheetDescription>
 				</SheetContent>
 			</Sheet>
 		</div>
