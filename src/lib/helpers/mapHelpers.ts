@@ -78,7 +78,6 @@ export async function initMapStyle(): Promise<StyleSpecification> {
 			// 		"raster-opacity": 1,
 			// 	},
 			// },
-
 			{
 				id: "ortsteileLayer",
 				type: "line",
@@ -103,9 +102,28 @@ export async function initMapStyle(): Promise<StyleSpecification> {
 				source: "kulturorte",
 				paint: {
 					"circle-radius": 8,
-					"circle-color": ["get", "color"],
+					"circle-color": [
+						"match",
+						["get", "cultural_area"],
+						"visual_arts",
+						"#FF0000", // Red
+						"music",
+						"#0000FF", // Blue
+						"theater",
+						"#FFA500", // Orange
+						"literature",
+						"#008000", // Green
+						"performing_arts",
+						"#800080", // Purple
+						/* default */ "#9D6BCE", // Default color
+					],
 					"circle-stroke-width": 2,
-					"circle-stroke-color": "#ffffff",
+					"circle-stroke-color": [
+						"case",
+						["==", ["get", "owner_type"], "public"],
+						"#00FF00", // Green if public
+						"#ffffff", // Default stroke color
+					],
 				},
 			},
 		],
