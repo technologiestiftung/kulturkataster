@@ -24,11 +24,10 @@ const DetailPanel: FC = ({}) => {
 			<Sheet key={"right"} open={open} onOpenChange={setOpen}>
 				<SheetContent>
 					<SheetHeader>
-						<SheetTitle>{venueProperties?.name}</SheetTitle>
-						<SheetDescription>{venueProperties?.description}</SheetDescription>
-						<SheetDescription>{venueProperties?.address}</SheetDescription>
+						<SheetTitle>{venueProperties?.venue_name}</SheetTitle>
+						<SheetDescription>{venueProperties?.district}</SheetDescription>
 					</SheetHeader>
-					<SheetDescription>{venueProperties?.category}</SheetDescription>
+					<SheetDescription>{venueProperties?.cultural_area}</SheetDescription>
 				</SheetContent>
 			</Sheet>
 		</div>

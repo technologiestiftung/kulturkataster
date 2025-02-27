@@ -15,8 +15,7 @@ const HoverCard: FC<HoverCardProps> = ({ data }) => {
 				transform: "translate(-50%, -110%)",
 			}}
 		>
-			<h1 className="text-lg bold">{data.name}</h1>
-			<p>{data.description}</p>
+			<h1 className="text-lg bold">{data.venue_name}</h1>
 		</div>
 	);
 };
