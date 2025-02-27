@@ -1,4 +1,5 @@
 import { Input } from "@/components/ui/input";
+import { sanitizeAddressInput } from "@/lib/utils/sanitizerUtils";
 import maplibregl from "maplibre-gl";
 import {
 	ChangeEvent,
@@ -33,30 +34,6 @@ interface GeolocationSearchProps {
 	};
 	strictSanitization?: boolean;
 }
-
-/**
- * Sanitizes address input to allow only characters typically found in addresses
- * @param input The raw user input string
- * @param strict If true, only allows alphanumeric characters and spaces
- * @returns Sanitized string with only allowed characters
- */
-const sanitizeAddressInput = (input: string, strict = false): string => {
-	if (!input) return "";
-
-	if (strict) {
-		// Only allow letters, numbers and spaces
-		const strictRegex = /[^a-zA-Z0-9\s]/g;
-		return input.replace(strictRegex, "");
-	}
-	// This regex allows:
-	// - Letters (including accented/international characters)
-	// - Numbers
-	// - Common address punctuation: space, comma, period, hyphen, apostrophe
-	// - Common address symbols: #, &, (, ), /, °
-	// - Plus symbol (for some international formats)
-	const addressRegex = /[^a-zA-Z0-9\u00C0-\u017F\s,.'\-/#&()°+]/g;
-	return input.replace(addressRegex, "");
-};
 
 const GeolocationSearch: FC<GeolocationSearchProps> = ({
 	helperText = "Enter an address",
