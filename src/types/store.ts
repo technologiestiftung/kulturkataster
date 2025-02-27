@@ -7,6 +7,8 @@ export type MapState = {
 	setMapStyle: (style: StyleSpecification) => void;
 	venueProperties: VenueProperties | null;
 	setVenueProperties: (properties: VenueProperties | null) => void;
+	currentVenue: Venue | null;
+	setCurrentVenue: (venue: Venue | null) => void;
 };
 
 export interface VenueProperties {
@@ -14,4 +16,21 @@ export interface VenueProperties {
 	description: string;
 	address: string;
 	category: string;
+}
+
+export interface Venue {
+	id: string;
+	name: string;
+	description: string;
+	address: string;
+	category: string;
+	coordinates: [number, number];
+}
+
+export interface VenueFeature extends Venue {
+	type: "Feature";
+	geometry: {
+		type: "Point";
+		coordinates: [number, number];
+	};
 }
