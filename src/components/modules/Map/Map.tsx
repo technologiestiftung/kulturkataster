@@ -2,12 +2,13 @@
 
 import GeolocationSearch from "@/components/elements/GeolocationSearch/GeolocationSearch";
 import { useMapStore } from "@/lib/store/mapStore";
-import { HoverCardData } from "@/types";
-import maplibregl, {
-	MapGeoJSONFeature,
-	MapMouseEvent,
-	StyleSpecification,
-} from "maplibre-gl";
+import {
+	AppMapMouseEvent,
+	HoverCardData,
+	isPoint,
+	VenueProperties,
+} from "@/types";
+import maplibregl, { StyleSpecification } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { FC, useEffect, useRef, useState } from "react";
 import DetailPanel from "../DetailPanel/DetailPanel";
@@ -77,17 +78,20 @@ const Map: FC<MapProps> = ({ initialMapStyle }) => {
 		// events
 		map.on("click", "kulturorteLayer", handleVenueClick);
 
-		map.on("mouseenter", "kulturorteLayer", (e) => {
+		map.on("mouseenter", "kulturorteLayer", (e: AppMapMouseEvent) => {
 			map.getCanvas().style.cursor = "pointer";
-
 			if (!e.features?.length) return;
 			const feature = e.features[0];
-			const coordinates = feature.geometry.coordinates.slice();
-			const description = feature.properties.description;
-			const name = feature.properties.name;
+			const geometry = feature.geometry;
 
-			const point = map.project(coordinates);
-			setHoverCardData({ x: point.x, y: point.y, description, name });
+			if (isPoint(geometry)) {
+				const coordinates = geometry.coordinates.slice();
+				const description = feature.properties.description;
+				const name = feature.properties.name;
+
+				const point = map.project(coordinates as [number, number]);
+				setHoverCardData({ x: point.x, y: point.y, description, name });
+			}
 		});
 
 		map.on("mouseleave", "kulturorteLayer", () => {
@@ -102,29 +106,30 @@ const Map: FC<MapProps> = ({ initialMapStyle }) => {
 		};
 	}, [map]);
 
-	const handleVenueClick = (
-		e: MapMouseEvent & { features?: MapGeoJSONFeature[] } & object,
-	) => {
-		if (!e.features) return;
+	const handleVenueClick = (e: AppMapMouseEvent) => {
+		if (!e.features || e.features.length === 0) return;
+		const feature = e.features[0];
+		const geometry = feature.geometry;
 
-		const OFFSET_LNG = 0.0004;
+		if (isPoint(geometry)) {
+			const OFFSET_LNG = 0.0004;
 
-		map?.flyTo({
-			center: [
-				e.features[0].geometry.coordinates[0] + OFFSET_LNG,
-				e.features[0].geometry.coordinates[1],
-			],
-			zoom: 18,
-			duration: 2000,
-			essential: true,
-		});
+			map?.flyTo({
+				center: [geometry.coordinates[0] + OFFSET_LNG, geometry.coordinates[1]],
+				zoom: 18,
+				duration: 2000,
+				essential: true,
+			});
 
-		setVenueProperties(e.features[0].properties);
+			setVenueProperties(feature.properties as VenueProperties);
+		} else {
+			console.warn("Feature geometry is not a Point, skipping flyTo.");
+		}
 	};
 
 	return (
 		<div className="Map-root relative w-screen h-screen">
-			<GeolocationSearch map={map} />
+			<GeolocationSearch />
 			{venueProperties && <DetailPanel />}
 
 			{hoverCardData && <HoverCard data={hoverCardData} />}
