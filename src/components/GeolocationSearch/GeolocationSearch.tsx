@@ -292,7 +292,7 @@ const GeolocationSearch: FC<GeolocationSearchProps> = ({
 					className="absolute w-full mt-2 bg-white rounded-md shadow-lg max-h-96 overflow-y-auto"
 					aria-label="Suchergebnisse"
 				>
-					{results.length > 0 ? (
+					{results.length > 0 &&
 						results.map((result, index) => (
 							<li
 								key={result.id + index}
@@ -313,10 +313,10 @@ const GeolocationSearch: FC<GeolocationSearchProps> = ({
 							>
 								{result.place_name}
 							</li>
-						))
-					) : resultErrorMessage ? (
+						))}
+					{resultErrorMessage && (
 						<li className="p-3 text-sm text-red-500">{resultErrorMessage}</li>
-					) : null}
+					)}
 				</ul>
 			)}
 		</div>
