@@ -1,8 +1,9 @@
 import { Input } from "@/components/ui/input";
 import { useMapStore } from "@/lib/store/mapStore";
 import { sanitizeAddressInput } from "@/lib/utils/sanitizerUtils";
-import { ChangeEvent, FC, useEffect, useRef, useState } from "react";
+import { ChangeEvent, FC, useRef } from "react";
 import { useKeyboardNavigation } from "@/lib/hooks/useKeyboardNavigation";
+import { useSearch } from "@/lib/hooks/useSearch";
 
 interface GeoFeature {
 	id: string;
@@ -35,23 +36,35 @@ const GeolocationSearch: FC<GeolocationSearchProps> = ({
 	strictSanitization = false,
 }) => {
 	// State
-	const [query, setQuery] = useState("");
-	const [results, setResults] = useState<GeoFeature[]>([]);
-	const [isLoading, setIsLoading] = useState(false);
-	const [debounceTimeout, setDebounceTimeout] = useState<ReturnType<
-		typeof setTimeout
-	> | null>(null);
-	const [resultErrorMessage, setResultErrorMessage] = useState<string | null>(
-		null,
-	);
-	const [requestId, setRequestId] = useState<number>(0);
-
 	// Refs
 	const inputRef = useRef<HTMLInputElement>(null);
-	const statusRef = useRef<HTMLDivElement>(null);
 
 	// Store
 	const { map } = useMapStore();
+
+	// Setup the search hook
+	const {
+		query,
+		results,
+		isLoading,
+		resultErrorMessage,
+		statusRef,
+		setResults,
+		setQuery,
+	} = useSearch<GeoFeature>({
+		timeoutDuration: 400,
+		searchFunction: async (searchQuery: string) => {
+			const res = await fetch(
+				`/api/geocode?searchQuery=${encodeURIComponent(searchQuery)}&_=${Date.now()}`,
+				{ cache: "no-store" },
+			);
+			if (!res.ok) {
+				throw new Error(`HTTP error! status: ${res.status}`);
+			}
+			const data = await res.json();
+			return data.features || [];
+		},
+	});
 
 	// Setup the keyboard navigation hook
 	const {
@@ -72,66 +85,6 @@ const GeolocationSearch: FC<GeolocationSearchProps> = ({
 		},
 	});
 
-	useEffect(() => {
-		return () => {
-			if (debounceTimeout) clearTimeout(debounceTimeout);
-		};
-	}, [debounceTimeout]);
-
-	const searchAddress = async (searchQuery: string) => {
-		if (!searchQuery.trim()) {
-			setResults([]);
-			return;
-		}
-
-		setIsLoading(true);
-		const currentRequestId = requestId + 1;
-		setRequestId(currentRequestId);
-
-		try {
-			const res = await fetch(
-				`/api/geocode?searchQuery=${encodeURIComponent(searchQuery)}&_=${Date.now()}`,
-				{ cache: "no-store" },
-			);
-
-			if (currentRequestId === requestId + 1) {
-				if (!res.ok) {
-					throw new Error(`HTTP error! status: ${res.status}`);
-				}
-
-				const data = await res.json();
-
-				if (data.features && data.features.length === 0) {
-					displayResultError();
-				} else {
-					setResultErrorMessage(null);
-				}
-
-				setResults(data.features || []);
-
-				// Announce results to screen readers
-				if (statusRef.current) {
-					const resultCount = data.features ? data.features.length : 0;
-					statusRef.current.textContent = `${resultCount} ${
-						resultCount === 1 ? "Ergebnis" : "Ergebnisse"
-					} gefunden.`;
-				}
-			}
-		} catch (error) {
-			if (currentRequestId === requestId + 1) {
-				console.error("Error searching for address:", error);
-				setResults([]);
-				setResultErrorMessage(
-					"Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
-				);
-			}
-		} finally {
-			if (currentRequestId === requestId + 1) {
-				setIsLoading(false);
-			}
-		}
-	};
-
 	const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
 		const rawValue = e.target.value;
 
@@ -141,22 +94,7 @@ const GeolocationSearch: FC<GeolocationSearchProps> = ({
 			e.target.value = sanitizedValue;
 		}
 
-		setResultErrorMessage(null);
 		setQuery(sanitizedValue);
-
-		if (debounceTimeout) clearTimeout(debounceTimeout);
-
-		if (!sanitizedValue.trim()) {
-			setResults([]);
-			setIsLoading(false);
-			return;
-		}
-
-		const timeout = setTimeout(() => {
-			searchAddress(sanitizedValue);
-		}, 400);
-
-		setDebounceTimeout(timeout);
 		resetNavigation();
 	};
 
@@ -207,12 +145,6 @@ const GeolocationSearch: FC<GeolocationSearchProps> = ({
 				setResults([]);
 			}, 100);
 		}
-	};
-
-	const displayResultError = () => {
-		setResultErrorMessage(
-			"Es konnte keine Adresse unter der Suchangabe gefunden werden.",
-		);
 	};
 
 	return (
