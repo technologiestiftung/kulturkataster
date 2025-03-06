@@ -1,14 +1,8 @@
 import { Input } from "@/components/ui/input";
 import { useMapStore } from "@/lib/store/mapStore";
 import { sanitizeAddressInput } from "@/lib/utils/sanitizerUtils";
-import {
-	ChangeEvent,
-	FC,
-	KeyboardEvent,
-	useEffect,
-	useRef,
-	useState,
-} from "react";
+import { ChangeEvent, FC, useEffect, useRef, useState } from "react";
+import { useKeyboardNavigation } from "@/lib/hooks/useKeyboardNavigation";
 
 interface GeoFeature {
 	id: string;
@@ -44,8 +38,6 @@ const GeolocationSearch: FC<GeolocationSearchProps> = ({
 	const [query, setQuery] = useState("");
 	const [results, setResults] = useState<GeoFeature[]>([]);
 	const [isLoading, setIsLoading] = useState(false);
-	const [activeIndex, setActiveIndex] = useState(-1);
-	const [isKeyboardNav, setIsKeyboardNav] = useState(false);
 	const [debounceTimeout, setDebounceTimeout] = useState<ReturnType<
 		typeof setTimeout
 	> | null>(null);
@@ -55,27 +47,36 @@ const GeolocationSearch: FC<GeolocationSearchProps> = ({
 	const [requestId, setRequestId] = useState<number>(0);
 
 	// Refs
-	const listRef = useRef<HTMLUListElement>(null);
 	const inputRef = useRef<HTMLInputElement>(null);
 	const statusRef = useRef<HTMLDivElement>(null);
 
 	// Store
 	const { map } = useMapStore();
 
+	// Setup the keyboard navigation hook
+	const {
+		activeIndex,
+		isKeyboardNav,
+		handleKeyDown,
+		listRef,
+		getItemProps,
+		reset: resetNavigation,
+	} = useKeyboardNavigation({
+		itemCount: results.length,
+		onEnter: (index) => {
+			handleResultClick(results[index]);
+		},
+		onEscape: () => {
+			setResults([]);
+			inputRef.current?.focus();
+		},
+	});
+
 	useEffect(() => {
 		return () => {
 			if (debounceTimeout) clearTimeout(debounceTimeout);
 		};
 	}, [debounceTimeout]);
-
-	useEffect(() => {
-		if (isKeyboardNav && activeIndex >= 0 && listRef.current) {
-			const activeItem = listRef.current.children[activeIndex] as HTMLElement;
-			if (activeItem) {
-				activeItem.scrollIntoView({ block: "nearest" });
-			}
-		}
-	}, [activeIndex, isKeyboardNav]);
 
 	const searchAddress = async (searchQuery: string) => {
 		if (!searchQuery.trim()) {
@@ -156,7 +157,7 @@ const GeolocationSearch: FC<GeolocationSearchProps> = ({
 		}, 400);
 
 		setDebounceTimeout(timeout);
-		setActiveIndex(-1);
+		resetNavigation();
 	};
 
 	const handleResultClick = (result: GeoFeature) => {
@@ -193,41 +194,10 @@ const GeolocationSearch: FC<GeolocationSearchProps> = ({
 		}
 		setQuery("");
 		setResults([]);
-		setActiveIndex(-1);
+		resetNavigation();
 
 		if (statusRef.current) {
 			statusRef.current.textContent = `${result.place_name} ausgewählt.`;
-		}
-	};
-
-	const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-		if (!results.length) return;
-
-		setIsKeyboardNav(true);
-
-		switch (e.key) {
-			case "ArrowDown":
-				e.preventDefault();
-				setActiveIndex((prev) => (prev < results.length - 1 ? prev + 1 : prev));
-				break;
-			case "ArrowUp":
-				e.preventDefault();
-				setActiveIndex((prev) => (prev > 0 ? prev - 1 : prev));
-				break;
-			case "Enter":
-				e.preventDefault();
-				if (activeIndex >= 0) {
-					handleResultClick(results[activeIndex]);
-				}
-				break;
-			case "Escape":
-				e.preventDefault();
-				setResults([]);
-				setActiveIndex(-1);
-				inputRef.current?.focus();
-				break;
-			default:
-				break;
 		}
 	};
 
@@ -263,7 +233,7 @@ const GeolocationSearch: FC<GeolocationSearchProps> = ({
 					aria-controls="search-results"
 					aria-label="Adresse suchen"
 					aria-activedescendant={
-						activeIndex >= 0 ? `result-${results[activeIndex]?.id}` : undefined
+						activeIndex >= 0 ? `keyboard-nav-item-${activeIndex}` : undefined
 					}
 					aria-describedby="search-status"
 					className="w-full bg-white pr-10"
@@ -296,14 +266,8 @@ const GeolocationSearch: FC<GeolocationSearchProps> = ({
 						results.map((result, index) => (
 							<li
 								key={result.id + index}
-								id={`result-${result.id}`}
-								role="option"
-								aria-selected={index === activeIndex}
+								{...getItemProps(index)}
 								onClick={() => handleResultClick(result)}
-								onMouseEnter={() => {
-									setIsKeyboardNav(false);
-									setActiveIndex(index);
-								}}
 								onMouseDown={(e) => e.preventDefault()}
 								className={`p-3 cursor-pointer border-b last:border-b-0 text-sm 
                   ${isKeyboardNav && index === activeIndex ? "bg-gray-100" : ""}
