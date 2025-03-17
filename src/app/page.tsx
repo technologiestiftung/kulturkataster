@@ -1,8 +1,13 @@
-export default function Home() {
+import Map from "@/components/Map/Map";
+import { initMapStyle } from "@/lib/helpers/mapHelpers";
+
+export default async function Home() {
+	const mapStyle = await initMapStyle();
+
 	return (
-		<div className="items-center justify-items-center min-h-screen pt-8 bg-slate-100">
+		<div className="items-center justify-items-center min-h-screen relative">
 			<main>
-				<h1 className="text-3xl">Kulturkataster coming soon...</h1>
+				<Map initialMapStyle={mapStyle} />
 			</main>
 		</div>
 	);
