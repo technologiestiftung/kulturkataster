@@ -212,6 +212,9 @@ const GeolocationSearch: FC<GeolocationSearchProps> = ({
                   ${!isKeyboardNav && index === activeIndex ? "bg-gray-50" : ""}
                   hover:bg-gray-100
                 `}
+								role="option"
+								aria-selected={index === activeIndex}
+								aria-label={result.place_name}
 							>
 								{result.place_name}
 							</li>
