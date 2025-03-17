@@ -78,6 +78,8 @@ const Map: FC<MapProps> = ({ initialMapStyle }) => {
 
 		map.on("mouseleave", "kulturorteLayer", handleVenueHoverOut);
 
+		map.getCanvas().tabIndex = -1;
+
 		return () => {
 			if (map) {
 				map.remove();
