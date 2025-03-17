@@ -199,7 +199,13 @@ const GeolocationSearch: FC<GeolocationSearchProps> = ({
 							<li
 								key={result.id + index}
 								{...getItemProps(index)}
+								tabIndex={0}
 								onClick={() => handleResultClick(result)}
+								onKeyDown={(e) => {
+									if (e.key === "Enter") {
+										handleResultClick(result);
+									}
+								}}
 								onMouseDown={(e) => e.preventDefault()}
 								className={`p-3 cursor-pointer border-b last:border-b-0 text-sm 
                   ${isKeyboardNav && index === activeIndex ? "bg-gray-100" : ""}
