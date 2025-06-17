@@ -14,11 +14,7 @@ interface OlTileLayerProps {
 	zIndex?: number;
 }
 
-const OlTileLayer: FC<OlTileLayerProps> = ({
-	url,
-	params,
-	zIndex = 100,
-}) => {
+const OlTileLayer: FC<OlTileLayerProps> = ({ url, params, zIndex = 100 }) => {
 	const map = useMapStore((state: MapStoreState) => state.map);
 
 	useEffect(() => {
