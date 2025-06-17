@@ -1,11 +1,11 @@
 import { FC } from "react";
 
 interface MapLayersProps {
-  children: React.ReactNode;
+	children: React.ReactNode;
 }
 
 const MapLayers: FC<MapLayersProps> = ({ children }) => {
-  return <>{children}</>;
+	return <>{children}</>;
 };
 
 export default MapLayers;
