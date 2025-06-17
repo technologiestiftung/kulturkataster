@@ -1,7 +1,8 @@
-import fs from "fs";
-import path from "path";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { fromLonLat } from "ol/proj";
 import proj4 from "proj4";
 
+// eslint-disable-next-line max-params
 export async function fetchWFSData(
 	url: string,
 	typeNames: string,
@@ -28,12 +29,6 @@ export async function fetchWFSData(
 	return data;
 }
 
-export function getLocalJson(url: string) {
-	const filePath = path.join(process.cwd(), "public", url);
-	const json = JSON.parse(fs.readFileSync(filePath, "utf-8"));
-	return json;
-}
-
 // Define projections
 proj4.defs("EPSG:25833", "+proj=utm +zone=33 +datum=WGS84 +units=m +no_defs");
 proj4.defs(
@@ -49,4 +44,52 @@ proj4.defs(
  */
 export function convertToWebMercator(x: number, y: number) {
 	return proj4("EPSG:25833", "EPSG:3857", [x, y]);
+}
+
+const targetProjection = "EPSG:25833"; // ETRS89 / UTM zone 33N
+
+function transformCoordinates(coordinates: any) {
+	return fromLonLat(coordinates, targetProjection);
+}
+
+/**
+ * Transform a GeoJSON object from one projection to another.
+ *
+ * @param {any} geojson - The GeoJSON object to be transformed.
+ * @return {void}
+ */
+export function transformGeoJSON(geojson: any) {
+	const transformed = JSON.parse(JSON.stringify(geojson)); // Deep copy
+
+	function transformGeometry(geometry: any) {
+		if (geometry.type === "Point") {
+			geometry.coordinates = transformCoordinates(geometry.coordinates);
+		} else if (
+			geometry.type === "LineString" ||
+			geometry.type === "MultiPoint"
+		) {
+			geometry.coordinates = geometry.coordinates.map(transformCoordinates);
+		} else if (
+			geometry.type === "Polygon" ||
+			geometry.type === "MultiLineString"
+		) {
+			geometry.coordinates = geometry.coordinates.map((ring: any) =>
+				ring.map(transformCoordinates),
+			);
+		} else if (geometry.type === "MultiPolygon") {
+			geometry.coordinates = geometry.coordinates.map((polygon: any) =>
+				polygon.map((ring: any) => ring.map(transformCoordinates)),
+			);
+		}
+	}
+
+	if (transformed.type === "Feature") {
+		transformGeometry(transformed.geometry);
+	} else if (transformed.type === "FeatureCollection") {
+		transformed.features.forEach((feature: any) =>
+			transformGeometry(feature.geometry),
+		);
+	}
+
+	return transformed;
 }
