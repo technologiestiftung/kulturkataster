@@ -1,9 +1,7 @@
 "use client";
 
 import { useMapStore } from "@/lib/store/mapStore";
-import { transformGeoJSON } from "@/lib/utils/mapUtils";
 import { MapStoreState } from "@/types/map";
-import GeoJSON from "ol/format/GeoJSON";
 import VectorLayer from "ol/layer/Vector";
 import { Vector as VectorSource } from "ol/source";
 import { Fill, Stroke, Style } from "ol/style";
@@ -33,9 +31,9 @@ const OlVectorLayer: FC<OlVectorLayerProps> = ({ zIndex = 200 }) => {
 		if (!map || !zIndex || !config) return;
 
 		const vectorSource = new VectorSource({
-			features: new GeoJSON().readFeatures(
-				transformGeoJSON(config?.geojsonObject),
-			),
+			// features: new GeoJSON().readFeatures(
+			// transformGeoJSON(config?.geojsonObject),
+			// ),
 		});
 
 		const vectorLayer = new VectorLayer({

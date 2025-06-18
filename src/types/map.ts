@@ -29,6 +29,7 @@ export interface PortalMapConfig {
 export interface LayerElement {
 	id: string;
 	visibility: boolean;
+	type: "WMS" | "WFS" | "WMTS"
 }
 
 export interface LayerConfig {
@@ -79,7 +80,6 @@ export interface MapConfig {
 		params: { LAYERS: string; Tiled: boolean };
 	}[];
 	layerConfig: LayerConfig;
-	geojsonObject?: any;
 }
 
 export type MapStoreState = {
