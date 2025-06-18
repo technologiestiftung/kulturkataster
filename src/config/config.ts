@@ -6,7 +6,7 @@ export const Config = {
 			"+title=ETRS89/UTM 33N +proj=utm +zone=33 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs",
 		],
 	],
-	layerConf: "./resources/baseLayers.json",
+	layerConf: "./resources/services.json",
 	restConf: "./resources/rest-services-internet.json",
 	styleConf: "./resources/style.json",
 	wfsImgPath: "./resources/img/",
