@@ -64,7 +64,7 @@ const OlMap: FC<OlMapProps> = ({ children }) => {
 
 		try {
 			const map = new Map({
-				target: mapId.current, // Karte an das DOM-Element binden
+				target: mapId.current,
 				layers: [
 					new TileLayer({
 						source: new OSM(),
