@@ -34,8 +34,6 @@ const OlMap: FC<OlMapProps> = ({ children }) => {
 			return;
 		}
 
-		console.log("[OlMap] config::", config);
-
 		// Überprüfen, ob die Projektion in der Konfiguration angegeben ist
 		const projection = config.portalConfig.map.mapView.epsg || "EPSG:25833";
 
