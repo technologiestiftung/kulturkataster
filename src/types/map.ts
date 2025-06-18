@@ -29,7 +29,7 @@ export interface PortalMapConfig {
 export interface LayerElement {
 	id: string;
 	visibility: boolean;
-	type: "WMS" | "WFS" | "WMTS"
+	type: "WMS" | "WFS" | "WMTS";
 }
 
 export interface LayerConfig {
