@@ -29,7 +29,32 @@ export interface PortalMapConfig {
 export interface LayerElement {
 	id: string;
 	visibility: boolean;
-	type: "WMS" | "WFS" | "WMTS";
+	type?: "WMS" | "WFS" | "WMTS";
+	url?: string;
+	service?: Service;
+}
+
+export interface Dataset {
+	md_id: string;
+	rs_id: string;
+	csw_url: string;
+	show_doc_url: string;
+}
+
+export interface Service {
+	id: string;
+	name: string;
+	name_lang: string;
+	capabilitiesUrl: string;
+	url: string;
+	typ: "WMS" | "WFS" | "WMTS";
+	tileMatrixSet?: string;
+	layers: string;
+	optionsFromCapabilities: boolean;
+	crs: string;
+	legend: string[];
+	layerAttribution: string;
+	datasets: Dataset[];
 }
 
 export interface LayerConfig {
@@ -75,10 +100,6 @@ export interface PortalConfig {
 
 export interface MapConfig {
 	portalConfig: PortalConfig;
-	layers?: {
-		url: string;
-		params: { LAYERS: string; Tiled: boolean };
-	}[];
 	layerConfig: LayerConfig;
 }
 

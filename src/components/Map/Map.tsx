@@ -44,7 +44,7 @@ const Map: FC = () => {
 				<MapLayers>
 					{baseLayer &&
 						baseLayer.map((layer, index) => (
-							<MapLayer key={index} type={layer.type} layer={layer} />
+							<MapLayer key={index} layer={layer} />
 						))}
 
 					{/* {config!.layers[0] && (
