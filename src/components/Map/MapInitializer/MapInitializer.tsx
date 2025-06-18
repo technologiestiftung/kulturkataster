@@ -8,7 +8,7 @@ import { FC, useEffect } from "react";
 const MapInitializer: FC = ({}) => {
 	const setConfig = useMapStore((state) => state.setConfig);
 
-  useEffect(() => {
+	useEffect(() => {
 		const servicesMap = new Map(
 			services.map((service) => [service.id, service]),
 		);
