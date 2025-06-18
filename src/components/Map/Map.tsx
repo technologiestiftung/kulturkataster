@@ -10,7 +10,9 @@ import OlMap from "./Map/OlMap";
 
 // TODO:
 
-// config mit layer types
+// add init config logic
+// config mit layer types und allen anderen infos
+// 
 // services müssen via id aus der services json ausgelesen und in die config integriert werden
 // Layer müssen nach type angelegt werden, d.h. es müssen dem wrapper der type und der layer übergeben werden
 // dieser händelt dann welche logik und layer art implementiert werden muss.
