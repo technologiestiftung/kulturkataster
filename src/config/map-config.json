@@ -138,10 +138,10 @@
 	"layerConfig": {
 		"baselayer": {
 			"elements": [
-				{ "id": "hintergrund_default_grau", "visibility": true },
+				{ "id": "hintergrund_default_grau", "visibility": false },
 				{
 					"id": "basemap_raster_farbe",
-					"visibility": false
+					"visibility": true
 				}
 			]
 		},
@@ -152,11 +152,31 @@
 					"visibility": true
 				},
 				{
+					"id": "bplan:b_bp_fs",
+					"visibility": true
+				},
+				{
+					"id": "bplan:c_bp_ak",
+					"visibility": true
+				},
+				{
+					"id": "bplan:wfs:b_bp_fs",
+					"visibility": true
+				},
+				{
 					"id": "bplan:wfs:c_bp_ak",
 					"visibility": true
 				},
 				{
 					"id": "alkis_bezirke:bezirksgrenzen",
+					"visibility": true
+				},
+				{
+					"id": "alkis_bezirke:wfs:bezirksgrenzen",
+					"visibility": true
+				},
+				{
+					"id": "bplan:wfs:a_bp_iv",
 					"visibility": true
 				}
 			]

@@ -1,20 +1,31 @@
-import { createGetMapStatus, createSetMapStatus } from "@/lib/store/mapActions";
-import { MapConfig, MapStoreState } from "@/types/map";
-import Map from "ol/Map";
+import {
+	createGetLayerStatus,
+	createSetLayerStatus,
+} from "@/lib/store/mapActions";
+import { MapStoreState } from "@/types/map";
 import { create } from "zustand";
 
 export const useMapStore = create<MapStoreState>((set, get) => ({
 	map: null,
 	config: null,
+	layers: {},
 
-	setConfig: (config: MapConfig) => {
-		console.log("[mapStore] config::", config);
-		set(() => ({ config }));
-	},
-	populateMap: (map: Map) => set(() => ({ map })),
-	removeMap: () => set(() => ({ map: null })),
+	// Map
+	setConfig: (config) => set({ config }),
+	populateMap: (map) => set({ map }),
+	removeMap: () => set({ map: null }),
 
-	// Injecting set/get into external functions
-	setMapStatus: createSetMapStatus(set, get),
-	getMapStatus: createGetMapStatus(get),
+	// Layers
+	setLayers: (layers) => set({ layers }),
+	addLayer: (id, layer) =>
+		set((state) => ({ layers: { ...state.layers, [id]: layer } })),
+	removeLayer: (id) =>
+		set((state) => {
+			const { [id]: _, ...rest } = state.layers;
+			return { layers: rest };
+		}),
+
+	// Layer Status
+	setLayerStatus: createSetLayerStatus(set, get),
+	getLayerStatus: createGetLayerStatus(get),
 }));
