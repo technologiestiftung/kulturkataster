@@ -1,6 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Map from "ol/Map";
 
+export type LayerType = "WMS" | "WFS" | "WMTS";
+export type LayerStatus = "initial" | "loading" | "loaded";
+
 export interface MapViewOptions {
 	resolution: number;
 	scale: number;
@@ -31,6 +34,7 @@ export interface LayerElement {
 	visibility: boolean;
 	type?: "WMS" | "WFS" | "WMTS";
 	url?: string;
+	status?: LayerStatus;
 	service?: Service;
 }
 
@@ -47,7 +51,7 @@ export interface Service {
 	name_lang: string;
 	capabilitiesUrl: string;
 	url: string;
-	typ: "WMS" | "WFS" | "WMTS";
+	typ: LayerType;
 	tileMatrixSet?: string;
 	layers: string;
 	optionsFromCapabilities: boolean;
