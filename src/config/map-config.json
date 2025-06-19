@@ -148,6 +148,30 @@
 		"subjectlayer": {
 			"elements": [
 				{
+					"id": "lor_2021:a_lor_plr_2021",
+					"visibility": true
+				},
+				{
+					"id": "lor_2021:b_lor_bzr_2021",
+					"visibility": true
+				},
+				{
+					"id": "lor_2021:c_lor_pgr_2021",
+					"visibility": true
+				},
+				{
+					"id": "gemeinschaftsinitiative:gemeinschaftsinitiative",
+					"visibility": true
+				},
+				{
+					"id": "alkis_ortsteile:ortsteile",
+					"visibility": true
+				},
+				{
+					"id": "alkis_ortsteile:wfs:ortsteile",
+					"visibility": true
+				},
+				{
 					"id": "bplan:a_bp_iv",
 					"visibility": true
 				},
