@@ -107,10 +107,12 @@ export interface MapConfig {
 	layerConfig: LayerConfig;
 }
 
-export type MapStoreState = {
+export interface MapStoreState {
 	map: Map | null;
 	config: MapConfig | null;
-	populateMap: (map: Map) => void;
 	setConfig: (config: MapConfig) => void;
+	populateMap: (map: Map) => void;
 	removeMap: () => void;
-};
+	setMapStatus: (id: string, status: LayerStatus) => void;
+	getMapStatus: (id: string) => LayerStatus | undefined;
+}
