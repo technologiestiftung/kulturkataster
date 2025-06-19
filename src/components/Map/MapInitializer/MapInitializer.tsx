@@ -1,4 +1,5 @@
 "use client";
+
 import mapConfig from "@/config/map-config.json";
 import services from "@/config/resources/services.json";
 import { useMapStore } from "@/lib/store/mapStore";
@@ -16,6 +17,7 @@ const MapInitializer: FC = ({}) => {
 		const enrichLayerElements = (elements: LayerElement[]) =>
 			elements.map((layer) => ({
 				...layer,
+				status: "initial",
 				service: servicesMap.get(layer.id) || null,
 			}));
 
@@ -30,7 +32,7 @@ const MapInitializer: FC = ({}) => {
 		);
 
 		setConfig(enrichedConfig);
-	}, []);
+	}, [setConfig]);
 
 	return null;
 };
