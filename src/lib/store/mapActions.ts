@@ -29,7 +29,7 @@ function findAndUpdateLayerById(
 	};
 }
 
-export const createSetMapStatus =
+export const createSetLayerStatus =
 	(
 		set: (fn: (state: MapStoreState) => Partial<MapStoreState>) => void,
 		get: () => MapStoreState,
@@ -46,7 +46,7 @@ export const createSetMapStatus =
 		set(() => ({ config: updatedConfig }));
 	};
 
-export const createGetMapStatus =
+export const createGetLayerStatus =
 	(get: () => MapStoreState) =>
 	(id: string): LayerStatus | undefined => {
 		const config = get().config;

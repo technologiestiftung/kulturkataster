@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Map from "ol/Map";
+import type BaseLayer from "ol/layer/Base";
 
 export type LayerType = "WMS" | "WFS" | "WMTS";
 export type LayerStatus = "initial" | "loading" | "loaded";
@@ -35,7 +36,7 @@ export interface LayerElement {
 	type?: "WMS" | "WFS" | "WMTS";
 	url?: string;
 	status?: LayerStatus;
-	service?: Service;
+	service: LayerService;
 }
 
 export interface Dataset {
@@ -45,20 +46,27 @@ export interface Dataset {
 	show_doc_url: string;
 }
 
-export interface Service {
+export interface LayerService {
 	id: string;
 	name: string;
-	name_lang: string;
-	capabilitiesUrl: string;
+	name_lang?: string;
+	capabilitiesUrl?: string;
 	url: string;
 	typ: LayerType;
 	tileMatrixSet?: string;
-	layers: string;
-	optionsFromCapabilities: boolean;
+	optionsFromCapabilities?: boolean;
 	crs: string;
-	legend: string[];
-	layerAttribution: string;
 	datasets: Dataset[];
+	layers?: string;
+	featureType?: string;
+	featureNS?: string;
+	legend?: string | string[] | boolean;
+	layerAttribution?: string;
+	format?: string;
+	version?: string;
+	transparent?: boolean;
+	singleTile?: boolean;
+	infoFormat?: string;
 }
 
 export interface LayerConfig {
@@ -110,9 +118,20 @@ export interface MapConfig {
 export interface MapStoreState {
 	map: Map | null;
 	config: MapConfig | null;
+	layers: Record<string, BaseLayer>;
+
 	setConfig: (config: MapConfig) => void;
+
+	// Map
 	populateMap: (map: Map) => void;
 	removeMap: () => void;
-	setMapStatus: (id: string, status: LayerStatus) => void;
-	getMapStatus: (id: string) => LayerStatus | undefined;
+
+	// Layers
+	setLayers: (layers: Record<string, BaseLayer>) => void;
+	addLayer: (id: string, layer: BaseLayer) => void;
+	removeLayer: (id: string) => void;
+
+	// Status
+	setLayerStatus: (id: string, status: LayerStatus) => void;
+	getLayerStatus: (id: string) => LayerStatus | undefined;
 }
