@@ -2,7 +2,7 @@
 "use client";
 
 import { useMapStore } from "@/lib/store/mapStore";
-import { LayerElement, LayerService } from "@/types";
+import { LayerElement, LayerService, ManagedLayer } from "@/types"; // Passe den Pfad zu deinen Typen an
 import GeoJSON from "ol/format/GeoJSON";
 import WMTSCapabilities from "ol/format/WMTSCapabilities";
 import { Layer } from "ol/layer";
@@ -19,12 +19,14 @@ import { FC, useCallback, useEffect, useState } from "react";
 const LayerInitializer: FC = () => {
 	const config = useMapStore((state) => state.config);
 	const map = useMapStore((state) => state.map);
+	const setLayersInStore = useMapStore((state) => state.setLayers);
 
 	const [wmtsCapabilities, setWmtsCapabilities] = useState<Record<string, any>>(
 		{},
 	);
 	const [capabilitiesLoaded, setCapabilitiesLoaded] = useState(false);
 
+	// Effekt zum dynamischen Laden aller benötigten WMTS Capabilities
 	useEffect(() => {
 		if (!config) return;
 
@@ -35,7 +37,7 @@ const LayerInitializer: FC = () => {
 			];
 
 			const wmtsServices = allLayers.filter(
-				(l) => l.service.typ === "WMTS" && l.service.capabilitiesUrl,
+				(l) => l.service?.typ === "WMTS" && l.service.capabilitiesUrl,
 			);
 			const uniqueCapabilitiesUrls = [
 				...new Set(wmtsServices.map((l) => l.service.capabilitiesUrl!)),
@@ -57,8 +59,7 @@ const LayerInitializer: FC = () => {
 					if (!response.ok) throw new Error(`Failed to fetch ${url}`);
 					const text = await response.text();
 					const parser = new WMTSCapabilities();
-					const capabilities = parser.read(text);
-					return { url, capabilities };
+					return { url, capabilities: parser.read(text) };
 				});
 
 				const results = await Promise.all(capabilitiesPromises);
@@ -72,10 +73,7 @@ const LayerInitializer: FC = () => {
 				);
 
 				setWmtsCapabilities(capabilitiesMap);
-				console.log(
-					"[LayerInitializer] All WMTS Capabilities loaded:",
-					capabilitiesMap,
-				);
+				console.log("[LayerInitializer] All WMTS Capabilities loaded.");
 			} catch (error) {
 				console.error(
 					"[LayerInitializer] Error loading WMTS capabilities:",
@@ -89,15 +87,14 @@ const LayerInitializer: FC = () => {
 		loadAllWmtsCapabilities();
 	}, [config]);
 
+	// --- Layer Erstellungsfunktionen (mit useCallback für Stabilität) ---
+
 	const createWMTSLayer = useCallback(
-		(
-			serviceConfig: LayerService,
-			layerConfig: LayerElement,
-		): TileLayer<WMTS> | null => {
+		(serviceConfig: LayerService): TileLayer<WMTS> | null => {
 			const capabilities = wmtsCapabilities[serviceConfig.capabilitiesUrl!];
 			if (!capabilities) {
 				console.warn(
-					`[LayerInitializer] WMTS capabilities for ${serviceConfig.capabilitiesUrl} not ready for layer ${layerConfig.id}.`,
+					`[LayerInitializer] WMTS capabilities for ${serviceConfig.capabilitiesUrl} not yet loaded.`,
 				);
 				return null;
 			}
@@ -114,7 +111,7 @@ const LayerInitializer: FC = () => {
 				return new TileLayer({ source: wmtsSource });
 			} catch (error) {
 				console.error(
-					`[LayerInitializer] Error creating WMTS layer ${layerConfig.id}:`,
+					`[LayerInitializer] Error creating WMTS layer for service ${serviceConfig.id}:`,
 					error,
 				);
 				return null;
@@ -133,7 +130,6 @@ const LayerInitializer: FC = () => {
 				TRANSPARENT: serviceConfig.transparent ?? true,
 				VERSION: serviceConfig.version || "1.3.0",
 			};
-
 			if (serviceConfig.singleTile) {
 				const imageSource = new ImageWMS({
 					url: serviceConfig.url,
@@ -170,56 +166,69 @@ const LayerInitializer: FC = () => {
 	useEffect(() => {
 		if (!config || !map || !capabilitiesLoaded) return;
 
-		console.log("[LayerInitializer] Starting to create layers...");
-		const allCreatedLayers: Layer[] = [];
+		console.log("[LayerInitializer] Starting to create layers for store...");
+		const allManagedLayers: ManagedLayer[] = [];
 
 		const processLayerGroup = (
 			layerElements: LayerElement[],
 			layerType: "base" | "subject",
 		) => {
-			layerElements.forEach((layerConfig) => {
-				const { service: serviceConfig } = layerConfig; // serviceConfig extrahieren
+			layerElements.forEach((layerConfig, index) => {
+				const { service: serviceConfig } = layerConfig;
 				if (!serviceConfig) {
 					console.warn(
-						`[LayerInitializer] Layer ${layerConfig.id} has no service configuration. Skipping.`,
+						`[LayerInitializer] Layer ${layerConfig.id} has no service config. Skipping.`,
 					);
 					return;
 				}
 
-				let layer: Layer | null = null;
+				let olLayer: Layer | null = null;
+				let status: ManagedLayer["status"] = "loaded";
+				let error: string | undefined = undefined;
+
 				try {
 					switch (serviceConfig.typ) {
 						case "WMTS":
-							layer = createWMTSLayer(serviceConfig, layerConfig);
+							olLayer = createWMTSLayer(serviceConfig);
 							break;
 						case "WMS":
-							layer = createWMSLayer(serviceConfig);
+							olLayer = createWMSLayer(serviceConfig);
 							break;
 						case "WFS":
-							layer = createWFSLayer(serviceConfig);
+							olLayer = createWFSLayer(serviceConfig);
 							break;
 						default:
-							console.error(
-								`[LayerInitializer] Unsupported layer type: ${serviceConfig.typ} for layer ${layerConfig.id}`,
-							);
-							// TODO: Handle unsupported layer types -> status layer error
-							break;
+							throw new Error(`Unknown layer type: ${serviceConfig.typ}`);
 					}
-
-					if (layer) {
-						layer.set("id", layerConfig.id);
-						layer.set("name", serviceConfig.name);
-						layer.set("type", serviceConfig.typ.toLowerCase());
-						layer.set("layerType", layerType);
-						layer.setVisible(layerConfig.visibility);
-						layer.setOpacity(1); // Standard-Opacity, kann später angepasst werden
-						allCreatedLayers.push(layer);
-					}
-				} catch (error) {
+				} catch (e) {
 					console.error(
 						`[LayerInitializer] Failed to create layer ${layerConfig.id}:`,
-						error,
+						e,
 					);
+					status = "error";
+					error = e instanceof Error ? e.message : String(e);
+				}
+
+				if (olLayer) {
+					const zIndex = (layerType === "base" ? 0 : 100) + index;
+					olLayer.setZIndex(zIndex);
+					olLayer.setVisible(layerConfig.visibility);
+					olLayer.setOpacity(1);
+
+					const managedLayer: ManagedLayer = {
+						id: layerConfig.id,
+						config: layerConfig,
+						olLayer: olLayer,
+						status: status,
+						visibility: layerConfig.visibility,
+						opacity: 1,
+						zIndex: zIndex,
+						layerType: layerType,
+						error: error,
+					};
+
+					allManagedLayers.push(managedLayer);
+					map.addLayer(olLayer);
 				}
 			});
 		};
@@ -227,20 +236,20 @@ const LayerInitializer: FC = () => {
 		processLayerGroup(config.layerConfig.baselayer.elements, "base");
 		processLayerGroup(config.layerConfig.subjectlayer.elements, "subject");
 
-		if (allCreatedLayers.length > 0) {
-			allCreatedLayers.forEach((layer) => map.addLayer(layer));
-			console.log(
-				`[LayerInitializer] Added ${allCreatedLayers.length} layers to the map.`,
-			);
-		}
+		setLayersInStore(allManagedLayers);
+		console.log(
+			`[LayerInitializer] Added ${allManagedLayers.length} layers to map and store.`,
+		);
 
+		// Cleanup-Funktion
 		return () => {
 			console.log(
-				`[LayerInitializer] Cleaning up ${allCreatedLayers.length} layers.`,
+				`[LayerInitializer] Cleaning up ${allManagedLayers.length} layers.`,
 			);
-			allCreatedLayers.forEach((layer) => {
-				map.removeLayer(layer);
+			allManagedLayers.forEach((layer) => {
+				map.removeLayer(layer.olLayer);
 			});
+			setLayersInStore([]);
 		};
 	}, [
 		config,
@@ -249,11 +258,8 @@ const LayerInitializer: FC = () => {
 		createWMTSLayer,
 		createWMSLayer,
 		createWFSLayer,
+		setLayersInStore,
 	]);
-
-	useEffect(() => {
-		console.log("[LayerInitializer] map::", map);
-	}, [map]);
 
 	return null;
 };
