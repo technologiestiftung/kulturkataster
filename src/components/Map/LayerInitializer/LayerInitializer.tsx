@@ -242,7 +242,6 @@ const LayerInitializer: FC = () => {
 				map.removeLayer(layer);
 			});
 		};
-		// NEU: Das Abhängigkeitsarray enthält jetzt die stabilen useCallback-Funktionen
 	}, [
 		config,
 		map,
@@ -251,6 +250,10 @@ const LayerInitializer: FC = () => {
 		createWMSLayer,
 		createWFSLayer,
 	]);
+
+	useEffect(() => {
+		console.log("[LayerInitializer] map::", map);
+	}, [map]);
 
 	return null;
 };
