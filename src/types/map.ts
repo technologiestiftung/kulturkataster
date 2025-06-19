@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Map from "ol/Map";
-import type BaseLayer from "ol/layer/Base";
+import { Layer } from "ol/layer";
 
 export type LayerType = "WMS" | "WFS" | "WMTS";
-export type LayerStatus = "initial" | "loading" | "loaded";
+export type LayerStatus = "initial" | "loading" | "loaded" | "error";
 
 export interface MapViewOptions {
 	resolution: number;
@@ -37,6 +37,18 @@ export interface LayerElement {
 	url?: string;
 	status?: LayerStatus;
 	service: LayerService;
+}
+
+export interface ManagedLayer {
+	id: string;
+	config: LayerElement;
+	olLayer: Layer;
+	status: LayerStatus;
+	visibility: boolean;
+	opacity: number;
+	zIndex: number;
+	layerType: "base" | "subject";
+	error?: string;
 }
 
 export interface Dataset {
@@ -116,20 +128,25 @@ export interface MapConfig {
 }
 
 export interface MapStoreState {
-	map: Map | null;
 	config: MapConfig | null;
-	layers: Record<string, BaseLayer>;
-
 	setConfig: (config: MapConfig) => void;
 
 	// Map
+	map: Map | null;
 	populateMap: (map: Map) => void;
 	removeMap: () => void;
 
 	// Layers
-	setLayers: (layers: Record<string, BaseLayer>) => void;
-	addLayer: (id: string, layer: BaseLayer) => void;
-	removeLayer: (id: string) => void;
+	layers: ManagedLayer[];
+	setLayers: (layers: ManagedLayer[]) => void;
+	addLayer: (layer: ManagedLayer) => void;
+	removeLayer: (layerId: string) => void;
+	updateLayer: (
+		layerId: string,
+		updates: Partial<Omit<ManagedLayer, "id">>,
+	) => void;
+	setLayerVisibility: (layerId: string, visible: boolean) => void;
+	setLayerOrder: (orderedIds: string[]) => void;
 
 	// Status
 	setLayerStatus: (id: string, status: LayerStatus) => void;
