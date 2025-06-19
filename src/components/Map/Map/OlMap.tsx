@@ -6,10 +6,10 @@ import TileLayer from "ol/layer/Tile";
 import { transform } from "ol/proj";
 import { register } from "ol/proj/proj4";
 import { OSM } from "ol/source";
+import proj4 from "proj4";
 import React, { FC, useEffect, useRef } from "react";
 import "../../../../node_modules/ol/ol.css";
 import { useMapStore } from "../../../lib/store/mapStore";
-import proj4 from "proj4";
 
 proj4.defs(
 	"EPSG:25833",
@@ -29,10 +29,7 @@ const OlMap: FC<OlMapProps> = ({ children }) => {
 	const mapId = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
-		if (!config) {
-			console.error("[OlMap] config is not defined");
-			return;
-		}
+		if (!config) return;
 
 		// Überprüfen, ob die Projektion in der Konfiguration angegeben ist
 		const projection = config.portalConfig.map.mapView.epsg || "EPSG:25833";
@@ -87,7 +84,7 @@ const OlMap: FC<OlMapProps> = ({ children }) => {
 		} catch (error) {
 			console.error("[OlMap] Error initializing map:", error);
 		}
-	}, [config]);
+	}, [config, destroyMap, setMap]);
 
 	return (
 		<div ref={mapId} className="w-screen h-screen bg-slate-300">
