@@ -431,5 +431,275 @@
 		"singleTile": true,
 		"infoFormat": "application/json",
 		"layerAttribution": "Für die Nutzung der Daten ist die Datenlizenz Deutschland - Zero - Version 2.0 anzuwenden. Die Lizenz ist über https://www.govdata.de/dl-de/zero-2-0 abrufbar."
+	},
+	{
+		"id": "ua_einwohnerdichte_2022:wfs:einwohnerdichte2022",
+		"name": "Einwohnerdichte 2022",
+		"crs": "urn:ogc:def:crs:EPSG::25833",
+		"url": "https://gdi.berlin.de/services/wfs/ua_einwohnerdichte_2022",
+		"typ": "WFS",
+		"featureType": "ua_einwohnerdichte_2022:einwohnerdichte2022",
+		"featureNS": "ua_einwohnerdichte_2022",
+		"datasets": [
+			{
+				"md_name": "Einwohnerdichte 2022 (Umweltatlas)",
+				"md_id": "92f0d342-c999-4318-98fd-791681e10858",
+				"rs_id": "https://registry.gdi-de.org/id/de.be.csw/ad0d7faa-e016-3b75-974b-0737da5a89f3",
+				"csw_url": "https://gdi.berlin.de/geonetwork/srv/ger/csw"
+			}
+		],
+		"gfiAttributes": "showAll"
+	},
+	{
+		"id": "ua_einwohnerdichte_2022:wfs:einwohnerdichte2022_entw",
+		"name": "Einwohnerentwicklung zwischen 2021 und 2022",
+		"crs": "urn:ogc:def:crs:EPSG::25833",
+		"url": "https://gdi.berlin.de/services/wfs/ua_einwohnerdichte_2022",
+		"typ": "WFS",
+		"featureType": "ua_einwohnerdichte_2022:einwohnerdichte2022_entw",
+		"featureNS": "ua_einwohnerdichte_2022",
+		"datasets": [
+			{
+				"md_name": "Einwohnerdichte 2022 (Umweltatlas)",
+				"md_id": "92f0d342-c999-4318-98fd-791681e10858",
+				"rs_id": "https://registry.gdi-de.org/id/de.be.csw/ad0d7faa-e016-3b75-974b-0737da5a89f3",
+				"csw_url": "https://gdi.berlin.de/geonetwork/srv/ger/csw"
+			}
+		],
+		"gfiAttributes": "showAll"
+	},
+	{
+		"id": "ua_einwohnerdichte_2023:wfs:einwohnerdichte2023",
+		"name": "Einwohnerdichte 2023",
+		"crs": "urn:ogc:def:crs:EPSG::25833",
+		"url": "https://gdi.berlin.de/services/wfs/ua_einwohnerdichte_2023",
+		"typ": "WFS",
+		"featureType": "ua_einwohnerdichte_2023:einwohnerdichte2023",
+		"featureNS": "ua_einwohnerdichte_2023",
+		"datasets": [
+			{
+				"md_name": "Einwohnerdichte 2023 (Umweltatlas)",
+				"md_id": "ca78eb01-db63-4f50-9823-73c2adbc541b",
+				"rs_id": "https://registry.gdi-de.org/id/de.be.csw/d46e6c1e-05fd-3e99-a48f-5699f1140d46",
+				"csw_url": "https://gdi.berlin.de/geonetwork/srv/ger/csw"
+			}
+		],
+		"gfiAttributes": "showAll"
+	},
+	{
+		"id": "ua_einwohnerdichte_2023:wfs:einwohnerdichte2023_entw",
+		"name": "Einwohnerentwicklung zwischen 2022 und 2023",
+		"crs": "urn:ogc:def:crs:EPSG::25833",
+		"url": "https://gdi.berlin.de/services/wfs/ua_einwohnerdichte_2023",
+		"typ": "WFS",
+		"featureType": "ua_einwohnerdichte_2023:einwohnerdichte2023_entw",
+		"featureNS": "ua_einwohnerdichte_2023",
+		"datasets": [
+			{
+				"md_name": "Einwohnerdichte 2023 (Umweltatlas)",
+				"md_id": "ca78eb01-db63-4f50-9823-73c2adbc541b",
+				"rs_id": "https://registry.gdi-de.org/id/de.be.csw/d46e6c1e-05fd-3e99-a48f-5699f1140d46",
+				"csw_url": "https://gdi.berlin.de/geonetwork/srv/ger/csw"
+			}
+		],
+		"gfiAttributes": "showAll"
+	},
+	{
+		"id": "ua_einwohnerdichte_2024:wfs:ua_einwohnerdichte_2024",
+		"name": "Einwohnerdichte 2024",
+		"crs": "urn:ogc:def:crs:EPSG::25833",
+		"url": "https://gdi.berlin.de/services/wfs/ua_einwohnerdichte_2024",
+		"typ": "WFS",
+		"featureType": "ua_einwohnerdichte_2024:ua_einwohnerdichte_2024",
+		"featureNS": "ua_einwohnerdichte_2024",
+		"datasets": [
+			{
+				"md_name": "ua_einwohnerdichte_2024",
+				"md_id": "f2fc9f93-b689-4135-a5e1-e63a0b8204de",
+				"rs_id": "https://registry.gdi-de.org/id/de.be.csw/9b4ae418-78a2-34c6-9f68-b935d67eb16e",
+				"csw_url": "https://gdi.berlin.de/geonetwork/srv/ger/csw"
+			}
+		],
+		"gfiAttributes": "showAll"
+	},
+	{
+		"id": "ua_einwohnerdichte_2024:wfs:ua_einwohnerdichte_2024_entw",
+		"name": "Einwohnerentwicklung zwischen 2023 und 2024",
+		"crs": "urn:ogc:def:crs:EPSG::25833",
+		"url": "https://gdi.berlin.de/services/wfs/ua_einwohnerdichte_2024",
+		"typ": "WFS",
+		"featureType": "ua_einwohnerdichte_2024:ua_einwohnerdichte_2024_entw",
+		"featureNS": "ua_einwohnerdichte_2024",
+		"datasets": [
+			{
+				"md_name": "ua_einwohnerdichte_2024",
+				"md_id": "f2fc9f93-b689-4135-a5e1-e63a0b8204de",
+				"rs_id": "https://registry.gdi-de.org/id/de.be.csw/9b4ae418-78a2-34c6-9f68-b935d67eb16e",
+				"csw_url": "https://gdi.berlin.de/geonetwork/srv/ger/csw"
+			}
+		],
+		"gfiAttributes": "showAll"
+	},
+	{
+		"id": "ua_einwohnerdichte_2022:einwohnerdichte2022",
+		"name": "Einwohnerdichte 2022",
+		"name_lang": "Einwohnerdichte 2022 (Einwohnerdichte 2022 (Umweltatlas))",
+		"crs": "EPSG:25833",
+		"url": "https://gdi.berlin.de/services/wms/ua_einwohnerdichte_2022",
+		"typ": "WMS",
+		"gfiAttributes": "showAll",
+		"layers": "einwohnerdichte2022",
+		"legend": true,
+		"datasets": [
+			{
+				"md_name": "Einwohnerdichte 2022 (Umweltatlas)",
+				"md_id": "92f0d342-c999-4318-98fd-791681e10858",
+				"rs_id": "https://registry.gdi-de.org/id/de.be.csw/ad0d7faa-e016-3b75-974b-0737da5a89f3",
+				"csw_url": "https://gdi.berlin.de/geonetwork/srv/ger/csw"
+			}
+		],
+		"format": "image/png",
+		"version": "1.3.0",
+		"featureCount": "5",
+		"gfiTheme": "default",
+		"transparent": true,
+		"singleTile": true,
+		"infoFormat": "application/json",
+		"layerAttribution": "Der Datenbestand wird unter der Lizenz CC-BY-3.0-Namensnennung veröffentlicht (vgl. https://creativecommons.org/licenses/by/3.0/de/). Als Urheber ist dabei zu nennen: Amt für Statistik Berlin-Brandenburg"
+	},
+	{
+		"id": "ua_einwohnerdichte_2022:einwohnerdichte2022_entw",
+		"name": "Einwohnerentwicklung zwischen 2021 und 2022",
+		"name_lang": "Einwohnerentwicklung zwischen 2021 und 2022 (Einwohnerdichte 2022 (Umweltatlas))",
+		"crs": "EPSG:25833",
+		"url": "https://gdi.berlin.de/services/wms/ua_einwohnerdichte_2022",
+		"typ": "WMS",
+		"gfiAttributes": "showAll",
+		"layers": "einwohnerdichte2022_entw",
+		"legend": true,
+		"datasets": [
+			{
+				"md_name": "Einwohnerdichte 2022 (Umweltatlas)",
+				"md_id": "92f0d342-c999-4318-98fd-791681e10858",
+				"rs_id": "https://registry.gdi-de.org/id/de.be.csw/ad0d7faa-e016-3b75-974b-0737da5a89f3",
+				"csw_url": "https://gdi.berlin.de/geonetwork/srv/ger/csw"
+			}
+		],
+		"format": "image/png",
+		"version": "1.3.0",
+		"featureCount": "5",
+		"gfiTheme": "default",
+		"transparent": true,
+		"singleTile": true,
+		"infoFormat": "application/json",
+		"layerAttribution": "Der Datenbestand wird unter der Lizenz CC-BY-3.0-Namensnennung veröffentlicht (vgl. https://creativecommons.org/licenses/by/3.0/de/). Als Urheber ist dabei zu nennen: Amt für Statistik Berlin-Brandenburg"
+	},
+	{
+		"id": "ua_einwohnerdichte_2023:einwohnerdichte2023",
+		"name": "Einwohnerdichte 2023",
+		"name_lang": "Einwohnerdichte 2023 (Einwohnerdichte 2023 (Umweltatlas))",
+		"crs": "EPSG:25833",
+		"url": "https://gdi.berlin.de/services/wms/ua_einwohnerdichte_2023",
+		"typ": "WMS",
+		"gfiAttributes": "showAll",
+		"layers": "einwohnerdichte2023",
+		"legend": true,
+		"datasets": [
+			{
+				"md_name": "Einwohnerdichte 2023 (Umweltatlas)",
+				"md_id": "ca78eb01-db63-4f50-9823-73c2adbc541b",
+				"rs_id": "https://registry.gdi-de.org/id/de.be.csw/d46e6c1e-05fd-3e99-a48f-5699f1140d46",
+				"csw_url": "https://gdi.berlin.de/geonetwork/srv/ger/csw"
+			}
+		],
+		"format": "image/png",
+		"version": "1.3.0",
+		"featureCount": "5",
+		"gfiTheme": "default",
+		"transparent": true,
+		"singleTile": true,
+		"infoFormat": "application/json",
+		"layerAttribution": "Der Datenbestand wird unter der Lizenz CC-BY-3.0-Namensnennung veröffentlicht (vgl. https://creativecommons.org/licenses/by/3.0/de/). Als Urheber ist dabei zu nennen: Amt für Statistik Berlin-Brandenburg"
+	},
+	{
+		"id": "ua_einwohnerdichte_2023:einwohnerdichte2023_entw",
+		"name": "Einwohnerentwicklung zwischen 2022 und 2023",
+		"name_lang": "Einwohnerentwicklung zwischen 2022 und 2023 (Einwohnerdichte 2023 (Umweltatlas))",
+		"crs": "EPSG:25833",
+		"url": "https://gdi.berlin.de/services/wms/ua_einwohnerdichte_2023",
+		"typ": "WMS",
+		"gfiAttributes": "showAll",
+		"layers": "einwohnerdichte2023_entw",
+		"legend": true,
+		"datasets": [
+			{
+				"md_name": "Einwohnerdichte 2023 (Umweltatlas)",
+				"md_id": "ca78eb01-db63-4f50-9823-73c2adbc541b",
+				"rs_id": "https://registry.gdi-de.org/id/de.be.csw/d46e6c1e-05fd-3e99-a48f-5699f1140d46",
+				"csw_url": "https://gdi.berlin.de/geonetwork/srv/ger/csw"
+			}
+		],
+		"format": "image/png",
+		"version": "1.3.0",
+		"featureCount": "5",
+		"gfiTheme": "default",
+		"transparent": true,
+		"singleTile": true,
+		"infoFormat": "application/json",
+		"layerAttribution": "Der Datenbestand wird unter der Lizenz CC-BY-3.0-Namensnennung veröffentlicht (vgl. https://creativecommons.org/licenses/by/3.0/de/). Als Urheber ist dabei zu nennen: Amt für Statistik Berlin-Brandenburg"
+	},
+	{
+		"id": "ua_einwohnerdichte_2024:ua_einwohnerdichte_2024",
+		"name": "Einwohnerdichte 2024",
+		"name_lang": "Einwohnerdichte 2024 (Einwohnerdichte 2024 (Umweltatlas))",
+		"crs": "EPSG:25833",
+		"url": "https://gdi.berlin.de/services/wms/ua_einwohnerdichte_2024",
+		"typ": "WMS",
+		"gfiAttributes": "showAll",
+		"layers": "ua_einwohnerdichte_2024",
+		"legend": true,
+		"datasets": [
+			{
+				"md_name": "Einwohnerdichte 2024 (Umweltatlas)",
+				"md_id": "f2fc9f93-b689-4135-a5e1-e63a0b8204de",
+				"rs_id": "https://registry.gdi-de.org/id/de.be.csw/9b4ae418-78a2-34c6-9f68-b935d67eb16e",
+				"csw_url": "https://gdi.berlin.de/geonetwork/srv/ger/csw"
+			}
+		],
+		"format": "image/png",
+		"version": "1.3.0",
+		"featureCount": "5",
+		"gfiTheme": "default",
+		"transparent": true,
+		"singleTile": true,
+		"infoFormat": "application/json",
+		"layerAttribution": "Für die Nutzung der Daten ist die Datenlizenz Deutschland - Zero - Version 2.0 anzuwenden. Die Lizenz ist über https://www.govdata.de/dl-de/zero-2-0 abrufbar."
+	},
+	{
+		"id": "ua_einwohnerdichte_2024:ua_einwohnerdichte_2024_entw",
+		"name": "Einwohnerentwicklung zwischen 2023 und 2024",
+		"name_lang": "Einwohnerentwicklung zwischen 2023 und 2024 (Einwohnerdichte 2024 (Umweltatlas))",
+		"crs": "EPSG:25833",
+		"url": "https://gdi.berlin.de/services/wms/ua_einwohnerdichte_2024",
+		"typ": "WMS",
+		"gfiAttributes": "showAll",
+		"layers": "ua_einwohnerdichte_2024_entw",
+		"legend": true,
+		"datasets": [
+			{
+				"md_name": "Einwohnerdichte 2024 (Umweltatlas)",
+				"md_id": "f2fc9f93-b689-4135-a5e1-e63a0b8204de",
+				"rs_id": "https://registry.gdi-de.org/id/de.be.csw/9b4ae418-78a2-34c6-9f68-b935d67eb16e",
+				"csw_url": "https://gdi.berlin.de/geonetwork/srv/ger/csw"
+			}
+		],
+		"format": "image/png",
+		"version": "1.3.0",
+		"featureCount": "5",
+		"gfiTheme": "default",
+		"transparent": true,
+		"singleTile": true,
+		"infoFormat": "application/json",
+		"layerAttribution": "Für die Nutzung der Daten ist die Datenlizenz Deutschland - Zero - Version 2.0 anzuwenden. Die Lizenz ist über https://www.govdata.de/dl-de/zero-2-0 abrufbar."
 	}
 ]
