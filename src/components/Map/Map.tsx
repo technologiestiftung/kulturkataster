@@ -2,10 +2,14 @@
 
 import { FC } from "react";
 import LayerInitializer from "./LayerInitializer/LayerInitializer";
-import { VectorLayer } from "./Layers";
-import MapLayers from "./Layers/MapLayers";
+import { VenueLayer } from "./Layers";
 import LayerTree from "./LayerTree/LayerTree";
 import OlMap from "./Map/OlMap";
+
+// todo: load kuka layer from BE
+// todo: check own basemap integration
+// todo: add hover effects
+// todo: add details card
 
 const Map: FC = () => {
 	return (
@@ -13,11 +17,8 @@ const Map: FC = () => {
 			<LayerTree />
 			<OlMap>
 				<LayerInitializer />
-
-				{/* NOTE: add extra layers if needed */}
-				<MapLayers>
-					<VectorLayer />
-				</MapLayers>
+				{/* venue layer */}
+				<VenueLayer />
 			</OlMap>
 		</div>
 	);
