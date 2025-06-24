@@ -5,20 +5,22 @@ import Geolocation from "ol/Geolocation";
 import { Point } from "ol/geom";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
-import { Fill, Stroke, Style } from "ol/style";
-import CircleStyle from "ol/style/Circle";
-import { FC, useEffect } from "react";
+import { Circle as CircleStyle, Fill, Stroke, Style } from "ol/style"; // Besserer Import
+import { FC, useEffect, useRef } from "react";
 
 const GeolocationControl: FC = ({}) => {
 	const map = useMapStore((state) => state.map);
 	const view = map?.getView();
 
+	const isCenteredRef = useRef(false);
+
 	useEffect(() => {
 		if (!view || !map) return;
-		console.log("[GeolocationControl] view::", view);
+
 		const source = new VectorSource();
 		const layer = new VectorLayer({
 			source: source,
+			zIndex: 100000,
 		});
 		map.addLayer(layer);
 
@@ -47,25 +49,34 @@ const GeolocationControl: FC = ({}) => {
 			projection: view.getProjection(),
 		});
 
-		// listen to changes in position
-		geolocation.on("change", () => {
+		geolocation.on("change:position", () => {
 			const coordinates = geolocation.getPosition();
-			console.log("[GeolocationControl] coordinates::", coordinates);
+			console.log("[GeolocationControl] New coordinates::", coordinates);
+
 			if (coordinates) {
 				positionFeature.setGeometry(new Point(coordinates));
+
+				if (!isCenteredRef.current) {
+					view.setCenter(coordinates);
+					view.setZoom(5);
+					isCenteredRef.current = true;
+				}
 			} else {
 				positionFeature.setGeometry(undefined);
 			}
-			view.setCenter(geolocation.getPosition());
+		});
+
+		geolocation.on("error", (error) => {
+			console.error("[GeolocationControl] Geolocation error:", error.message);
 		});
 
 		return () => {
-			map.removeLayer(layer);
 			geolocation.setTracking(false);
+			map.removeLayer(layer);
 		};
 	}, [view, map]);
 
-	return <div className="GeolocationControl-root"></div>;
+	return null;
 };
 
 export default GeolocationControl;
