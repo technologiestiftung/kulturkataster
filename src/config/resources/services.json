@@ -1,7 +1,7 @@
 [
 	{
 		"id": "hintergrund_default_grau",
-		"name": "Hintergrund Berlin",
+		"name": "Hintergrund Berlin - WTMS",
 		"name_lang": "basemap.de Web Raster Grau",
 		"capabilitiesUrl": "https://sgx.geodatenzentrum.de/wmts_basemapde/1.0.0/WMTSCapabilities.xml",
 		"url": "https://sgx.geodatenzentrum.de/wmts_basemapde/1.0.0/",
@@ -25,7 +25,7 @@
 	},
 	{
 		"id": "basemap_raster_farbe",
-		"name": "basemap.de Web Raster Farbe",
+		"name": "basemap.de Web Raster Farbe - WMTS",
 		"name_lang": "basemap.de Web Raster Farbe",
 		"capabilitiesUrl": "https://sgx.geodatenzentrum.de/wmts_basemapde/1.0.0/WMTSCapabilities.xml",
 		"url": "https://sgx.geodatenzentrum.de/wmts_basemapde/1.0.0/",
@@ -47,7 +47,7 @@
 	},
 	{
 		"id": "bplan:a_bp_iv",
-		"name": "Bebauungspläne, im Verfahren",
+		"name": "Bebauungspläne, im Verfahren - WMS",
 		"name_lang": "Bebauungspläne, im Verfahren (Bebauungsplanverfahren in Berlin)",
 		"crs": "EPSG:25833",
 		"url": "https://gdi.berlin.de/services/wms/bplan",
@@ -74,7 +74,7 @@
 	},
 	{
 		"id": "bplan:b_bp_fs",
-		"name": "Bebauungspläne, festgesetzt",
+		"name": "Bebauungspläne, festgesetzt - WMS",
 		"name_lang": "Bebauungspläne, festgesetzt (Bebauungsplanverfahren in Berlin)",
 		"crs": "EPSG:25833",
 		"url": "https://gdi.berlin.de/services/wms/bplan",
@@ -101,7 +101,7 @@
 	},
 	{
 		"id": "bplan:c_bp_ak",
-		"name": "Bebauungspläne, außer Kraft gesetzt",
+		"name": "Bebauungspläne, außer Kraft gesetzt - WMS",
 		"name_lang": "Bebauungspläne, außer Kraft gesetzt (Bebauungsplanverfahren in Berlin)",
 		"crs": "EPSG:25833",
 		"url": "https://gdi.berlin.de/services/wms/bplan",
@@ -128,7 +128,7 @@
 	},
 	{
 		"id": "bplan:wfs:c_bp_ak",
-		"name": "Bebauungspläne, außer Kraft gesetzt",
+		"name": "Bebauungspläne, außer Kraft gesetzt - WFS",
 		"crs": "urn:ogc:def:crs:EPSG::25833",
 		"url": "https://gdi.berlin.de/services/wfs/bplan",
 		"typ": "WFS",
@@ -146,7 +146,7 @@
 	},
 	{
 		"id": "bplan:wfs:b_bp_fs",
-		"name": "Bebauungspläne, festgesetzt",
+		"name": "Bebauungspläne, festgesetzt - WFS",
 		"crs": "urn:ogc:def:crs:EPSG::25833",
 		"url": "https://gdi.berlin.de/services/wfs/bplan",
 		"typ": "WFS",
@@ -164,7 +164,7 @@
 	},
 	{
 		"id": "bplan:wfs:a_bp_iv",
-		"name": "Bebauungspläne, im Verfahren",
+		"name": "Bebauungspläne, im Verfahren - WFS",
 		"crs": "urn:ogc:def:crs:EPSG::25833",
 		"url": "https://gdi.berlin.de/services/wfs/bplan",
 		"typ": "WFS",
@@ -182,7 +182,7 @@
 	},
 	{
 		"id": "alkis_bezirke:wfs:bezirksgrenzen",
-		"name": "Bezirksgrenzen",
+		"name": "Bezirksgrenzen - WFS",
 		"crs": "urn:ogc:def:crs:EPSG::25833",
 		"url": "https://gdi.berlin.de/services/wfs/alkis_bezirke",
 		"typ": "WFS",
@@ -200,7 +200,7 @@
 	},
 	{
 		"id": "alkis_bezirke:bezirksgrenzen",
-		"name": "Bezirksgrenzen",
+		"name": "Bezirksgrenzen - WMS",
 		"name_lang": "Bezirksgrenzen (ALKIS Berlin Bezirke)",
 		"crs": "EPSG:25833",
 		"url": "https://gdi.berlin.de/services/wms/alkis_bezirke",
@@ -227,7 +227,7 @@
 	},
 	{
 		"id": "alkis_ortsteile:ortsteile",
-		"name": "Ortsteile",
+		"name": "Ortsteile - WMS",
 		"name_lang": "Ortsteile (ALKIS Berlin Ortsteile)",
 		"crs": "EPSG:25833",
 		"url": "https://gdi.berlin.de/services/wms/alkis_ortsteile",
@@ -254,7 +254,7 @@
 	},
 	{
 		"id": "alkis_ortsteile:wfs:ortsteile",
-		"name": "Ortsteile",
+		"name": "Ortsteile - WFS",
 		"crs": "urn:ogc:def:crs:EPSG::25833",
 		"url": "https://gdi.berlin.de/services/wfs/alkis_ortsteile",
 		"typ": "WFS",
@@ -272,7 +272,7 @@
 	},
 	{
 		"id": "lor_2021:wfs:b_lor_bzr_2021",
-		"name": "Bezirksregionen",
+		"name": "Bezirksregionen - WFS",
 		"crs": "urn:ogc:def:crs:EPSG::25833",
 		"url": "https://gdi.berlin.de/services/wfs/lor_2021",
 		"typ": "WFS",
@@ -290,7 +290,7 @@
 	},
 	{
 		"id": "lor_2021:wfs:a_lor_plr_2021",
-		"name": "Planungsräume",
+		"name": "Planungsräume - WFS",
 		"crs": "urn:ogc:def:crs:EPSG::25833",
 		"url": "https://gdi.berlin.de/services/wfs/lor_2021",
 		"typ": "WFS",
@@ -308,7 +308,7 @@
 	},
 	{
 		"id": "lor_2021:wfs:c_lor_pgr_2021",
-		"name": "Prognoseräume",
+		"name": "Prognoseräume - WFS",
 		"crs": "urn:ogc:def:crs:EPSG::25833",
 		"url": "https://gdi.berlin.de/services/wfs/lor_2021",
 		"typ": "WFS",
@@ -326,7 +326,7 @@
 	},
 	{
 		"id": "lor_2021:a_lor_plr_2021",
-		"name": "Planungsräume",
+		"name": "Planungsräume - WMS",
 		"name_lang": "Planungsräume (Lebensweltlich orientierte Räume (LOR) (01.01.2021))",
 		"crs": "EPSG:25833",
 		"url": "https://gdi.berlin.de/services/wms/lor_2021",
@@ -353,7 +353,7 @@
 	},
 	{
 		"id": "lor_2021:b_lor_bzr_2021",
-		"name": "Bezirksregionen",
+		"name": "Bezirksregionen - WMS",
 		"name_lang": "Bezirksregionen (Lebensweltlich orientierte Räume (LOR) (01.01.2021))",
 		"crs": "EPSG:25833",
 		"url": "https://gdi.berlin.de/services/wms/lor_2021",
@@ -380,7 +380,7 @@
 	},
 	{
 		"id": "lor_2021:c_lor_pgr_2021",
-		"name": "Prognoseräume",
+		"name": "Prognoseräume - WMS",
 		"name_lang": "Prognoseräume (Lebensweltlich orientierte Räume (LOR) (01.01.2021))",
 		"crs": "EPSG:25833",
 		"url": "https://gdi.berlin.de/services/wms/lor_2021",
@@ -407,7 +407,7 @@
 	},
 	{
 		"id": "gemeinschaftsinitiative:gemeinschaftsinitiative",
-		"name": "Ressortübergreifende Gemeinschaftsinitiative zur Stärkung sozial benachteiligter Quartiere",
+		"name": "Ressortübergreifende Gemeinschaftsinitiative zur Stärkung sozial benachteiligter Quartiere - WMS",
 		"name_lang": "Ressortübergreifende Gemeinschaftsinitiative zur Stärkung sozial benachteiligter Quartiere (Ressortübergreifende Gemeinschaftsinitiative zur Stärkung sozial benachteiligter Quartiere)",
 		"crs": "EPSG:25833",
 		"url": "https://gdi.berlin.de/services/wms/gemeinschaftsinitiative",
@@ -434,7 +434,7 @@
 	},
 	{
 		"id": "ua_einwohnerdichte_2022:wfs:einwohnerdichte2022",
-		"name": "Einwohnerdichte 2022",
+		"name": "Einwohnerdichte 2022 - WFS",
 		"crs": "urn:ogc:def:crs:EPSG::25833",
 		"url": "https://gdi.berlin.de/services/wfs/ua_einwohnerdichte_2022",
 		"typ": "WFS",
@@ -452,7 +452,7 @@
 	},
 	{
 		"id": "ua_einwohnerdichte_2022:wfs:einwohnerdichte2022_entw",
-		"name": "Einwohnerentwicklung zwischen 2021 und 2022",
+		"name": "Einwohnerentwicklung zwischen 2021 und 2022 - WFS",
 		"crs": "urn:ogc:def:crs:EPSG::25833",
 		"url": "https://gdi.berlin.de/services/wfs/ua_einwohnerdichte_2022",
 		"typ": "WFS",
@@ -470,7 +470,7 @@
 	},
 	{
 		"id": "ua_einwohnerdichte_2023:wfs:einwohnerdichte2023",
-		"name": "Einwohnerdichte 2023",
+		"name": "Einwohnerdichte 2023 - WFS",
 		"crs": "urn:ogc:def:crs:EPSG::25833",
 		"url": "https://gdi.berlin.de/services/wfs/ua_einwohnerdichte_2023",
 		"typ": "WFS",
@@ -488,7 +488,7 @@
 	},
 	{
 		"id": "ua_einwohnerdichte_2023:wfs:einwohnerdichte2023_entw",
-		"name": "Einwohnerentwicklung zwischen 2022 und 2023",
+		"name": "Einwohnerentwicklung zwischen 2022 und 2023 - WFS",
 		"crs": "urn:ogc:def:crs:EPSG::25833",
 		"url": "https://gdi.berlin.de/services/wfs/ua_einwohnerdichte_2023",
 		"typ": "WFS",
@@ -506,7 +506,7 @@
 	},
 	{
 		"id": "ua_einwohnerdichte_2024:wfs:ua_einwohnerdichte_2024",
-		"name": "Einwohnerdichte 2024",
+		"name": "Einwohnerdichte 2024 - WFS",
 		"crs": "urn:ogc:def:crs:EPSG::25833",
 		"url": "https://gdi.berlin.de/services/wfs/ua_einwohnerdichte_2024",
 		"typ": "WFS",
@@ -524,7 +524,7 @@
 	},
 	{
 		"id": "ua_einwohnerdichte_2024:wfs:ua_einwohnerdichte_2024_entw",
-		"name": "Einwohnerentwicklung zwischen 2023 und 2024",
+		"name": "Einwohnerentwicklung zwischen 2023 und 2024 - WFS",
 		"crs": "urn:ogc:def:crs:EPSG::25833",
 		"url": "https://gdi.berlin.de/services/wfs/ua_einwohnerdichte_2024",
 		"typ": "WFS",
@@ -542,7 +542,7 @@
 	},
 	{
 		"id": "ua_einwohnerdichte_2022:einwohnerdichte2022",
-		"name": "Einwohnerdichte 2022",
+		"name": "Einwohnerdichte 2022 - WMS",
 		"name_lang": "Einwohnerdichte 2022 (Einwohnerdichte 2022 (Umweltatlas))",
 		"crs": "EPSG:25833",
 		"url": "https://gdi.berlin.de/services/wms/ua_einwohnerdichte_2022",
@@ -569,7 +569,7 @@
 	},
 	{
 		"id": "ua_einwohnerdichte_2022:einwohnerdichte2022_entw",
-		"name": "Einwohnerentwicklung zwischen 2021 und 2022",
+		"name": "Einwohnerentwicklung zwischen 2021 und 2022 - WMS",
 		"name_lang": "Einwohnerentwicklung zwischen 2021 und 2022 (Einwohnerdichte 2022 (Umweltatlas))",
 		"crs": "EPSG:25833",
 		"url": "https://gdi.berlin.de/services/wms/ua_einwohnerdichte_2022",
@@ -596,7 +596,7 @@
 	},
 	{
 		"id": "ua_einwohnerdichte_2023:einwohnerdichte2023",
-		"name": "Einwohnerdichte 2023",
+		"name": "Einwohnerdichte 2023  - WMS",
 		"name_lang": "Einwohnerdichte 2023 (Einwohnerdichte 2023 (Umweltatlas))",
 		"crs": "EPSG:25833",
 		"url": "https://gdi.berlin.de/services/wms/ua_einwohnerdichte_2023",
@@ -623,7 +623,7 @@
 	},
 	{
 		"id": "ua_einwohnerdichte_2023:einwohnerdichte2023_entw",
-		"name": "Einwohnerentwicklung zwischen 2022 und 2023",
+		"name": "Einwohnerentwicklung zwischen 2022 und 2023  - WMS",
 		"name_lang": "Einwohnerentwicklung zwischen 2022 und 2023 (Einwohnerdichte 2023 (Umweltatlas))",
 		"crs": "EPSG:25833",
 		"url": "https://gdi.berlin.de/services/wms/ua_einwohnerdichte_2023",
@@ -650,7 +650,7 @@
 	},
 	{
 		"id": "ua_einwohnerdichte_2024:ua_einwohnerdichte_2024",
-		"name": "Einwohnerdichte 2024",
+		"name": "Einwohnerdichte 2024  - WMS",
 		"name_lang": "Einwohnerdichte 2024 (Einwohnerdichte 2024 (Umweltatlas))",
 		"crs": "EPSG:25833",
 		"url": "https://gdi.berlin.de/services/wms/ua_einwohnerdichte_2024",
@@ -677,7 +677,7 @@
 	},
 	{
 		"id": "ua_einwohnerdichte_2024:ua_einwohnerdichte_2024_entw",
-		"name": "Einwohnerentwicklung zwischen 2023 und 2024",
+		"name": "Einwohnerentwicklung zwischen 2023 und 2024 - WMS",
 		"name_lang": "Einwohnerentwicklung zwischen 2023 und 2024 (Einwohnerdichte 2024 (Umweltatlas))",
 		"crs": "EPSG:25833",
 		"url": "https://gdi.berlin.de/services/wms/ua_einwohnerdichte_2024",

@@ -1,12 +1,11 @@
 "use client";
 
 import { useMapStore } from "@/lib/store/mapStore";
-import { MapStoreState } from "@/types/map";
 import { FullScreen } from "ol/control";
 import { FC, useEffect } from "react";
 
 const FullScreenControl: FC = () => {
-	const map = useMapStore((state: MapStoreState) => state.map);
+	const map = useMapStore((state) => state.map);
 
 	useEffect(() => {
 		if (!map) return;

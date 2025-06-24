@@ -31,13 +31,10 @@ const OlMap: FC<OlMapProps> = ({ children }) => {
 	useEffect(() => {
 		if (!config) return;
 
-		// Überprüfen, ob die Projektion in der Konfiguration angegeben ist
-		const projection = config.portalConfig.map.mapView.epsg || "EPSG:25833";
+		const mapViewConfig = config.portalConfig.map.mapView;
 
-		// Überprüfen, ob die Koordinaten im EPSG:4326-Format (Längengrad/Breitengrad) vorliegen
-		let center = config.portalConfig.map.mapView.startCenter;
-
-		// const center = fromLonLat(config.portalConfig.map.mapView.startCenter);
+		const projection = mapViewConfig.epsg || "EPSG:25833";
+		let center = mapViewConfig.startCenter;
 
 		if (
 			center.length === 2 &&
@@ -45,13 +42,26 @@ const OlMap: FC<OlMapProps> = ({ children }) => {
 			Math.abs(center[1]) <= 90
 		) {
 			console.log("[OlMap] Converting center from LonLat to", projection);
-			center = transform(center, "EPSG:4326", projection); // Konvertieren zur Zielprojektion
+			center = transform(center, "EPSG:4326", projection);
 		} else if (projection !== "EPSG:25833") {
 			console.log("[OlMap] Transforming center to", projection);
-			center = transform(center, projection, "EPSG:25833"); // Konvertieren von einer anderen Projektion zur Zielprojektion
+			center = transform(center, projection, "EPSG:25833");
 		}
 
-		// Überprüfen, ob mapId.current vorhanden ist
+		const resolutions = mapViewConfig.options
+			.sort((a, b) => a.zoomLevel - b.zoomLevel)
+			.map((option) => option.resolution);
+
+		const startZoomLevel = Math.max(
+			0,
+			Math.min(mapViewConfig.startZoomLevel, resolutions.length - 1),
+		);
+		if (startZoomLevel !== mapViewConfig.startZoomLevel) {
+			console.warn(
+				`[OlMap] Start zoom level ${mapViewConfig.startZoomLevel} is out of range. Using ${startZoomLevel} instead.`,
+			);
+		}
+
 		if (!mapId.current) {
 			console.error("[OlMap] mapId.current is not defined");
 			return;
@@ -67,10 +77,24 @@ const OlMap: FC<OlMapProps> = ({ children }) => {
 				],
 				view: new View({
 					center: center,
-					zoom: config.portalConfig.map.mapView.startZoomLevel,
+					zoom: startZoomLevel,
 					projection: projection,
-					extent: config.portalConfig.map.mapView.extent,
+					extent: mapViewConfig.extent,
+					resolutions: resolutions,
+					minZoom: 0,
+					maxZoom: resolutions.length - 1,
 				}),
+			});
+
+			// Log the actual view configuration for debugging
+			console.log("[OlMap] View configuration:", {
+				center: center,
+				zoom: startZoomLevel,
+				projection: projection,
+				extent: mapViewConfig.extent,
+				resolutions: resolutions,
+				minZoom: 0,
+				maxZoom: resolutions.length - 1,
 			});
 
 			setMap(map);
