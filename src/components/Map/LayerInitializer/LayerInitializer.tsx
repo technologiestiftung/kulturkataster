@@ -48,11 +48,6 @@ const LayerInitializer: FC = () => {
 				return;
 			}
 
-			console.log(
-				"[LayerInitializer] Fetching WMTS capabilities from:",
-				uniqueCapabilitiesUrls,
-			);
-
 			try {
 				const capabilitiesPromises = uniqueCapabilitiesUrls.map(async (url) => {
 					const response = await fetch(url);
@@ -73,7 +68,6 @@ const LayerInitializer: FC = () => {
 				);
 
 				setWmtsCapabilities(capabilitiesMap);
-				console.log("[LayerInitializer] All WMTS Capabilities loaded.");
 			} catch (error) {
 				console.error(
 					"[LayerInitializer] Error loading WMTS capabilities:",
@@ -166,7 +160,6 @@ const LayerInitializer: FC = () => {
 	useEffect(() => {
 		if (!config || !map || !capabilitiesLoaded) return;
 
-		console.log("[LayerInitializer] Starting to create layers for store...");
 		const allManagedLayers: ManagedLayer[] = [];
 
 		const processLayerGroup = (
@@ -235,17 +228,10 @@ const LayerInitializer: FC = () => {
 
 		processLayerGroup(config.layerConfig.baselayer.elements, "base");
 		processLayerGroup(config.layerConfig.subjectlayer.elements, "subject");
-
 		setLayersInStore(allManagedLayers);
-		console.log(
-			`[LayerInitializer] Added ${allManagedLayers.length} layers to map and store.`,
-		);
 
 		// Cleanup-Funktion
 		return () => {
-			console.log(
-				`[LayerInitializer] Cleaning up ${allManagedLayers.length} layers.`,
-			);
 			allManagedLayers.forEach((layer) => {
 				map.removeLayer(layer.olLayer);
 			});
