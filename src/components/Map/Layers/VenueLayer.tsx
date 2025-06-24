@@ -32,7 +32,7 @@ const styles = {
 	}),
 };
 
-const VenueLayer: FC<VenueLayerProps> = ({ zIndex = 300 }) => {
+const VenueLayer: FC<VenueLayerProps> = ({ zIndex = 10000 }) => {
 	const map = useMapStore((state: MapStoreState) => state.map);
 	const config = useMapStore((state) => state.config);
 
