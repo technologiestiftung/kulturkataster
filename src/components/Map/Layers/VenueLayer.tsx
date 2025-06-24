@@ -58,6 +58,8 @@ const VenueLayer: FC<VenueLayerProps> = ({ zIndex = 10000 }) => {
 
 		map.addLayer(vectorLayer);
 		vectorLayer.setZIndex(zIndex);
+		vectorLayer.set("name", "venues");
+		vectorLayer.set("id", "venues");
 
 		return () => {
 			if (map) {

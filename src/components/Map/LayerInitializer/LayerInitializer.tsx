@@ -207,6 +207,7 @@ const LayerInitializer: FC = () => {
 					olLayer.setZIndex(zIndex);
 					olLayer.setVisible(layerConfig.visibility);
 					olLayer.setOpacity(1);
+					olLayer.set("id", layerConfig.id);
 
 					const managedLayer: ManagedLayer = {
 						id: layerConfig.id,
