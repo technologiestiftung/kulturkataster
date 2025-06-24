@@ -35,6 +35,7 @@ const LayerTree: FC = () => {
 
 	return (
 		<Card className="w-80 shadow-lg absolute top-0 left-0 bottom-0 z-50">
+			<div>Close</div>
 			<CardHeader>
 				<CardTitle className="text-lg font-medium">Karten-Ebenen</CardTitle>
 			</CardHeader>

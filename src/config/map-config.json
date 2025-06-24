@@ -9,10 +9,10 @@
 			},
 			"mapView": {
 				"backgroundImage": "",
-				"startCenter": [387481, 5816672],
+				"startCenter": [13.404954, 52.520008],
 				"extent": [310000, 5760000, 440000, 5865000],
 				"epsg": "EPSG:25833",
-				"startZoomLevel": 7,
+				"startZoomLevel": 5,
 				"options": [
 					{
 						"resolution": 52.9,
