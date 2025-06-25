@@ -1,12 +1,35 @@
 [
 	{
+		"id": "basemap",
+		"name": "Basemap",
+		"epsg": "EPSG:3857",
+		"url": "https://sgx.geodatenzentrum.de/gdz_basemapde_vektor/tiles/v2/bm_web_de_3857/{z}/{x}/{y}.pbf",
+		"typ": "VectorTile",
+		"transparency": 0,
+		"visibility": true,
+		"legend": false,
+		"gfiAttributes": "ignore",
+		"gfiTheme": "default",
+		"vtStyles": [
+			{
+				"id": "basemap_style",
+				"name": "Tagesansicht",
+				"url": "resources/basemap_style.json",
+				"defaultStyle": true
+			}
+		],
+		"preview": {
+			"src": "./resources/img/vectortile_preview.png"
+		}
+	},
+	{
 		"id": "hintergrund_default_grau",
 		"name": "Hintergrund Berlin - WTMS",
 		"name_lang": "basemap.de Web Raster Grau",
 		"capabilitiesUrl": "https://sgx.geodatenzentrum.de/wmts_basemapde/1.0.0/WMTSCapabilities.xml",
 		"url": "https://sgx.geodatenzentrum.de/wmts_basemapde/1.0.0/",
 		"typ": "WMTS",
-		"tileMatrixSet": "DE_EPSG_25833_ADV",
+		"tileMatrixSet": "DE_EPSG_3857_ADV",
 		"layers": "de_basemapde_web_raster_grau",
 		"optionsFromCapabilities": true,
 		"crs": "http://www.opengis.net/def/crs/EPSG/0/25833",
@@ -30,7 +53,7 @@
 		"capabilitiesUrl": "https://sgx.geodatenzentrum.de/wmts_basemapde/1.0.0/WMTSCapabilities.xml",
 		"url": "https://sgx.geodatenzentrum.de/wmts_basemapde/1.0.0/",
 		"typ": "WMTS",
-		"tileMatrixSet": "DE_EPSG_25833_ADV",
+		"tileMatrixSet": "DE_EPSG_3857_ADV",
 		"layers": "de_basemapde_web_raster_farbe",
 		"optionsFromCapabilities": true,
 		"crs": "http://www.opengis.net/def/crs/EPSG/0/25833",

@@ -133,6 +133,10 @@ export interface MapStoreState {
 	config: MapConfig | null;
 	setConfig: (config: MapConfig) => void;
 
+	// todo fix type
+	appConfig: any;
+	setAppConfig: (config: any) => void;
+
 	// Map
 	map: Map | null;
 	populateMap: (map: Map) => void;
