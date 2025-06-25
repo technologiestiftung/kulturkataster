@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import {
 	Card,
@@ -9,19 +10,32 @@ import {
 } from "@/components/ui/card";
 import { FC } from "react";
 
-const HoverCard: FC = () => {
+interface HoverCardProps {
+	properties?: any;
+}
+
+const HoverCard: FC<HoverCardProps> = ({ properties }) => {
+	console.log("[HoverCard] properties::", properties);
+
 	return (
 		<div className="HoverCard-root">
 			<Card>
 				<CardHeader>
-					<CardTitle>{"Card Title"}</CardTitle>
-					<CardDescription>Card Description</CardDescription>
+					<CardTitle>{properties && properties["Name der K"]}</CardTitle>
+					<CardDescription>
+						{properties && properties["Name der K"]}
+					</CardDescription>
 				</CardHeader>
 				<CardContent>
-					<p>Card Content</p>
+					<p>{properties && properties.Kulturortk}</p>
 				</CardContent>
 				<CardFooter>
-					<p>Card Footer</p>
+					<div>
+						<p>{properties && properties.Dachorgani}</p>
+					</div>
+					<div>
+						<p>{properties && properties.Datenquell}</p>
+					</div>
 				</CardFooter>
 			</Card>
 		</div>

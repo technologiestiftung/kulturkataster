@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import Feature from "ol/Feature";
+import { Geometry } from "ol/geom";
 import Map from "ol/Map";
 import { Layer } from "ol/layer";
 
@@ -151,4 +153,8 @@ export interface MapStoreState {
 	// Status
 	setLayerStatus: (id: string, status: LayerStatus) => void;
 	getLayerStatus: (id: string) => LayerStatus | undefined;
+
+	// Feature
+	currentFeature: Feature<Geometry> | null;
+	setCurrentFeature: (feature: Feature) => void;
 }
