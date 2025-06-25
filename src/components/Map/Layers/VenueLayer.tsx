@@ -45,10 +45,10 @@ const VenueLayer: FC<VenueLayerProps> = ({ zIndex = 10000 }) => {
 	useEffect(() => {
 		if (!map || !zIndex || !config) return;
 
-		// todo: check highest z-Index and add venues on top
+		const epsg = config.portalConfig.map.mapView.epsg;
 
 		const vectorSource = new VectorSource({
-			features: new GeoJSON().readFeatures(transformGeoJSON(venues)),
+			features: new GeoJSON().readFeatures(transformGeoJSON(venues, epsg)),
 		});
 
 		const vectorLayer = new VectorLayer({
