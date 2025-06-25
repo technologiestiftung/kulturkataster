@@ -1,7 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import appConfig from "@/config/config";
+import { register } from "ol/proj/proj4";
 import { fromLonLat } from "ol/proj";
 import proj4 from "proj4";
 
+if (appConfig) {
+	appConfig.namedProjections.forEach((projection) => {
+		proj4.defs(projection[1]);
+	});
+	register(proj4);
+}
 // eslint-disable-next-line max-params
 export async function fetchWFSData(
 	url: string,
@@ -29,13 +37,6 @@ export async function fetchWFSData(
 	return data;
 }
 
-// Define projections
-proj4.defs("EPSG:25833", "+proj=utm +zone=33 +datum=WGS84 +units=m +no_defs");
-proj4.defs(
-	"EPSG:3857",
-	"+proj=merc +lon_0=0 +k=1 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs",
-);
-
 /**
  * Convert coordinates from EPSG:25833 to EPSG:3857
  * @param {number} x - X coordinate (Easting in EPSG:25833)
@@ -46,9 +47,10 @@ export function convertToWebMercator(x: number, y: number) {
 	return proj4("EPSG:25833", "EPSG:3857", [x, y]);
 }
 
-const targetProjection = "EPSG:25833"; // ETRS89 / UTM zone 33N
-
-function transformCoordinates(coordinates: any) {
+function transformCoordinates(
+	coordinates: any,
+	targetProjection = "EPSG:3857",
+) {
 	return fromLonLat(coordinates, targetProjection);
 }
 
@@ -58,12 +60,12 @@ function transformCoordinates(coordinates: any) {
  * @param {any} geojson - The GeoJSON object to be transformed.
  * @return {void}
  */
-export function transformGeoJSON(geojson: any) {
+export function transformGeoJSON(geojson: any, targetProjection = "EPSG:3857") {
 	const transformed = JSON.parse(JSON.stringify(geojson)); // Deep copy
 
 	function transformGeometry(geometry: any) {
 		if (geometry.type === "Point") {
-			geometry.coordinates = transformCoordinates(geometry.coordinates);
+			geometry.coordinates = transformCoordinates(geometry.coordinates, targetProjection);
 		} else if (
 			geometry.type === "LineString" ||
 			geometry.type === "MultiPoint"
