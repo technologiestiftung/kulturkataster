@@ -1,6 +1,7 @@
 "use client";
 
-import mapConfig from "@/config/map-config.json";
+import config from "@/config/config";
+import mapConfig from "@/config/config.json";
 import services from "@/config/resources/services.json";
 import { useMapStore } from "@/lib/store/mapStore";
 import { LayerElement } from "@/types";
@@ -8,6 +9,11 @@ import { FC, useEffect } from "react";
 
 const MapInitializer: FC = ({}) => {
 	const setConfig = useMapStore((state) => state.setConfig);
+	const setAppConfig = useMapStore((state) => state.setAppConfig);
+
+	useEffect(() => {
+		setAppConfig(config);
+	}, [setAppConfig]);
 
 	useEffect(() => {
 		const servicesMap = new Map(

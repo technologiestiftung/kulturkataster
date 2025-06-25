@@ -1,5 +1,6 @@
 "use client";
 
+import appConfig from "@/config/config";
 import Map from "ol/Map";
 import View from "ol/View";
 import TileLayer from "ol/layer/Tile";
@@ -11,12 +12,12 @@ import React, { FC, useEffect, useRef } from "react";
 import "../../../../node_modules/ol/ol.css";
 import { useMapStore } from "../../../lib/store/mapStore";
 
-proj4.defs(
-	"EPSG:25833",
-	"+title=ETRS89/UTM 33N +proj=utm +zone=33 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs",
-);
-
-register(proj4);
+if (appConfig) {
+	appConfig.namedProjections.forEach((projection) => {
+		proj4.defs(projection[1]);
+	});
+	register(proj4);
+}
 
 interface OlMapProps {
 	children?: React.ReactNode;
@@ -33,7 +34,7 @@ const OlMap: FC<OlMapProps> = ({ children }) => {
 
 		const mapViewConfig = config.portalConfig.map.mapView;
 
-		const projection = mapViewConfig.epsg || "EPSG:25833";
+		const projection = mapViewConfig.epsg;
 		let center = mapViewConfig.startCenter;
 
 		if (
@@ -45,7 +46,6 @@ const OlMap: FC<OlMapProps> = ({ children }) => {
 			center = transform(center, "EPSG:4326", projection);
 		} else if (projection !== "EPSG:25833") {
 			console.log("[OlMap] Transforming center to", projection);
-			center = transform(center, projection, "EPSG:25833");
 		}
 
 		const resolutions = mapViewConfig.options
