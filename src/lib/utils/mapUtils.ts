@@ -65,7 +65,10 @@ export function transformGeoJSON(geojson: any, targetProjection = "EPSG:3857") {
 
 	function transformGeometry(geometry: any) {
 		if (geometry.type === "Point") {
-			geometry.coordinates = transformCoordinates(geometry.coordinates, targetProjection);
+			geometry.coordinates = transformCoordinates(
+				geometry.coordinates,
+				targetProjection,
+			);
 		} else if (
 			geometry.type === "LineString" ||
 			geometry.type === "MultiPoint"
