@@ -1,16 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMapStore } from "@/lib/store/mapStore";
 import Overlay from "ol/Overlay.js";
-import { FC, useEffect, useRef } from "react";
+import { cloneElement, FC, useEffect, useRef, useState } from "react";
 
 interface HoverControlProps {
-	layerId?: string;
-	children: React.ReactNode;
+	layerId: string;
+	children: React.ReactElement;
 }
 
 const HoverControl: FC<HoverControlProps> = ({ layerId, children }) => {
 	const map = useMapStore((state) => state.map);
 	const overlayRef = useRef<HTMLDivElement>(null);
+
+	const [feature, setFeature] = useState<any>();
 
 	useEffect(() => {
 		if (!map || !overlayRef.current) return;
@@ -28,13 +30,14 @@ const HoverControl: FC<HoverControlProps> = ({ layerId, children }) => {
 			const coordinate = evt.coordinate;
 			let featureFound = false;
 
-			map.forEachFeatureAtPixel(pixel, function (feature, layer) {
+			map.forEachFeatureAtPixel(pixel, function (_feature, layer) {
 				const _layerId = layer.get("id");
 
 				if (_layerId === layerId) {
-					console.log("Feature hovered on target layer:", feature);
+					console.log("Feature hovered on target layer:", _feature);
 					overlay.setPosition(coordinate);
 					featureFound = true;
+					setFeature(_feature);
 					return true;
 				}
 			});
@@ -53,7 +56,10 @@ const HoverControl: FC<HoverControlProps> = ({ layerId, children }) => {
 
 	return (
 		<div ref={overlayRef} className="HoverControl-root">
-			{children}
+			{children &&
+				cloneElement(children, {
+					properties: feature?.getProperties(),
+				})}
 		</div>
 	);
 };
