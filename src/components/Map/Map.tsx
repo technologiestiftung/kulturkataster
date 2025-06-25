@@ -15,10 +15,6 @@ import { VenueLayer } from "./Layers";
 import LayerTree from "./LayerTree/LayerTree";
 import OlMap from "./Map/OlMap";
 
-// todo: check own basemap integration
-// todo: add hover effects
-// todo: add details card
-
 const Map: FC = () => {
 	return (
 		<div className="Map-root">
@@ -37,7 +33,7 @@ const Map: FC = () => {
 							<HoverCard />
 						</HoverControl>
 					)}
-					{true && (
+					{false && (
 						<ClickControl layerId="alkis_bezirke:wfs:bezirksgrenzen">
 							<HoverCard />
 						</ClickControl>

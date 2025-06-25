@@ -1,15 +1,17 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMapStore } from "@/lib/store/mapStore";
 import Overlay from "ol/Overlay.js";
-import { FC, useEffect, useRef } from "react";
+import { cloneElement, FC, useEffect, useRef, useState } from "react";
 
 interface ClickControlProps {
-	layerId?: string;
-	children: React.ReactNode;
+	layerId: string;
+	children: React.ReactElement;
 }
 
 const ClickControl: FC<ClickControlProps> = ({ layerId, children }) => {
 	const map = useMapStore((state) => state.map);
 	const overlayRef = useRef<HTMLDivElement>(null);
+	const [feature, setFeature] = useState<any>();
 
 	useEffect(() => {
 		if (!map || !overlayRef.current) return;
@@ -24,14 +26,15 @@ const ClickControl: FC<ClickControlProps> = ({ layerId, children }) => {
 
 		map.on("singleclick", function (evt) {
 			const pixel = evt.pixel;
-			const coordinate = evt.coordinate;
+			const _coordinate = evt.coordinate;
 
-			map.forEachFeatureAtPixel(pixel, function (feature, layer) {
+			map.forEachFeatureAtPixel(pixel, function (_feature, layer) {
 				const _layerId = layer.get("id");
-				
+
 				if (_layerId === layerId) {
-					console.log("Feature clicked on target layer:", feature);
-					overlay.setPosition(coordinate);
+					console.log("Feature clicked on target layer:", _feature);
+					overlay.setPosition(_coordinate);
+					setFeature(_feature);
 					return true;
 				}
 			});
@@ -43,8 +46,10 @@ const ClickControl: FC<ClickControlProps> = ({ layerId, children }) => {
 	}, [map, layerId]);
 	return (
 		<div ref={overlayRef} className="ClickControl-root">
-			{" "}
-			{children}
+			{children &&
+				cloneElement(children, {
+					properties: feature?.getProperties(),
+				})}
 		</div>
 	);
 };

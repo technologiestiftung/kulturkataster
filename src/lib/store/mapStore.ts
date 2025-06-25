@@ -9,6 +9,7 @@ export const useMapStore = create<MapStoreState>((set, get) => ({
 	map: null,
 	config: null,
 	layers: [],
+	currentFeature: null,
 
 	// Map
 	setConfig: (config) => set({ config }),
@@ -55,4 +56,7 @@ export const useMapStore = create<MapStoreState>((set, get) => ({
 	// Layer Status
 	setLayerStatus: createSetLayerStatus(set, get),
 	getLayerStatus: createGetLayerStatus(get),
+
+	// Features
+	setCurrentFeature: (currentFeature) => set({ currentFeature }),
 }));
