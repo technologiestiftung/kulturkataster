@@ -32,7 +32,6 @@ const ClickControl: FC<ClickControlProps> = ({ layerId, children }) => {
 				const _layerId = layer.get("id");
 
 				if (_layerId === layerId) {
-					console.log("Feature clicked on target layer:", _feature);
 					overlay.setPosition(_coordinate);
 					setFeature(_feature);
 					return true;
