@@ -42,10 +42,8 @@ const OlMap: FC<OlMapProps> = ({ children }) => {
 			Math.abs(center[0]) <= 180 &&
 			Math.abs(center[1]) <= 90
 		) {
-			console.log("[OlMap] Converting center from LonLat to", projection);
 			center = transform(center, "EPSG:4326", projection);
 		} else if (projection !== "EPSG:25833") {
-			console.log("[OlMap] Transforming center to", projection);
 		}
 
 		const resolutions = mapViewConfig.options
@@ -84,17 +82,6 @@ const OlMap: FC<OlMapProps> = ({ children }) => {
 					minZoom: 0,
 					maxZoom: resolutions.length - 1,
 				}),
-			});
-
-			// Log the actual view configuration for debugging
-			console.log("[OlMap] View configuration:", {
-				center: center,
-				zoom: startZoomLevel,
-				projection: projection,
-				extent: mapViewConfig.extent,
-				resolutions: resolutions,
-				minZoom: 0,
-				maxZoom: resolutions.length - 1,
 			});
 
 			setMap(map);

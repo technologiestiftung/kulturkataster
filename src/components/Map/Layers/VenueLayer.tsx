@@ -36,8 +36,6 @@ const VenueLayer: FC<VenueLayerProps> = ({ zIndex = 10000 }) => {
 	const map = useMapStore((state: MapStoreState) => state.map);
 	const config = useMapStore((state) => state.config);
 
-	console.log("[OlVectorLayer] venues::", venues);
-
 	const styleFunction = function (feature) {
 		return styles[feature.getGeometry().getType()];
 	};
