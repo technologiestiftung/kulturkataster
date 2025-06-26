@@ -18,11 +18,8 @@ import { FC, useCallback, useEffect, useState } from "react";
 
 const LayerInitializer: FC = () => {
 	const config = useMapStore((state) => state.config);
-	const appConfig = useMapStore((state) => state.appConfig);
 	const map = useMapStore((state) => state.map);
 	const setLayersInStore = useMapStore((state) => state.setLayers);
-
-	console.log("[LayerInitializer] appConfig::", appConfig);
 
 	const [wmtsCapabilities, setWmtsCapabilities] = useState<Record<string, any>>(
 		{},
