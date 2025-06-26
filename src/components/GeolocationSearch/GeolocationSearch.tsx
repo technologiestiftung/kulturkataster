@@ -3,10 +3,9 @@ import { useKeyboardNavigation } from "@/lib/hooks/useKeyboardNavigation";
 import { useSearch } from "@/lib/hooks/useSearch";
 import { useMapStore } from "@/lib/store/mapStore";
 import { sanitizeAddressInput } from "@/lib/utils/sanitizerUtils";
-import { ChangeEvent, FC, useRef } from "react";
-// Import OpenLayers projection utilities
 import { boundingExtent } from "ol/extent";
 import { fromLonLat } from "ol/proj";
+import { ChangeEvent, FC, useRef } from "react";
 
 interface GeoFeature {
 	id: string;
