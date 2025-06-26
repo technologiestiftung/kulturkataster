@@ -1,6 +1,7 @@
 "use client";
 
 import { FC } from "react";
+import GeolocationSearch from "../GeolocationSearch/GeolocationSearch";
 import HoverCard from "../HoverCard/HoverCard";
 import {
 	ClickControl,
@@ -18,7 +19,8 @@ import OlMap from "./Map/OlMap";
 const Map: FC = () => {
 	return (
 		<div className="Map-root">
-			{true && <LayerTree />}
+			{false && <LayerTree />}
+			<GeolocationSearch />
 			<OlMap>
 				<LayerInitializer />
 				{/* venue layer */}
@@ -29,7 +31,12 @@ const Map: FC = () => {
 					<ZoomControl />
 					{false && <GeolocationControl />}
 					{true && (
-						<HoverControl layerId="venues">
+						<HoverControl
+							layerId="venues"
+							// overlayOptions={
+							// 	// { autoPan: true }
+							// }
+						>
 							<HoverCard />
 						</HoverControl>
 					)}
