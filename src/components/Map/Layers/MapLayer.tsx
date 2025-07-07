@@ -7,7 +7,7 @@ interface MapLayerProps {
 
 const MapLayer: FC<MapLayerProps> = ({ layer }) => {
 	// console.log("[MapLayer] type::", layer.type);
-	// console.log("[MapLayer] layer::", layer);
+	console.log("[MapLayer] layer::", layer);
 	return <div className="MapLayer-root"></div>;
 };
 
