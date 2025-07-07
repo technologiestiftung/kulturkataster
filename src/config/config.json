@@ -69,15 +69,10 @@
 	"layerConfig": {
 		"baselayer": {
 			"elements": [
-				{ "id": "hintergrund_default_grau", "visibility": false },
-				{
-					"id": "basemap_raster_farbe",
-					"visibility": false
-				},
 				{
 					"id": "basemap",
 					"name": "Hintergrundkarte",
-					"styleId": "basemap_style",
+					"styleId": "basemap",
 					"visibility": true
 				}
 			]
