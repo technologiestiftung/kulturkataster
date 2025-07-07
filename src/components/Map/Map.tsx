@@ -19,7 +19,7 @@ import OlMap from "./Map/OlMap";
 const Map: FC = () => {
 	return (
 		<div className="Map-root">
-			{false && <LayerTree />}
+			{true && <LayerTree />}
 			<GeolocationSearch />
 			<OlMap>
 				<LayerInitializer />

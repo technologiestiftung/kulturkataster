@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Feature from "ol/Feature";
 import { Geometry } from "ol/geom";
-import Map from "ol/Map";
 import { Layer } from "ol/layer";
+import Map from "ol/Map";
 
-export type LayerType = "WMS" | "WFS" | "WMTS";
+export type LayerType = "WMS" | "WFS" | "WMTS" | "VectorTile";
 export type LayerStatus = "initial" | "loading" | "loaded" | "error";
 
 export interface MapViewOptions {
@@ -81,6 +81,14 @@ export interface LayerService {
 	transparent?: boolean;
 	singleTile?: boolean;
 	infoFormat?: string;
+	vtStyles: VectorTileStyle[];
+}
+
+export interface VectorTileStyle {
+	id: string;
+	name: string;
+	url: string;
+	defaultStyle: boolean;
 }
 
 export interface LayerConfig {
