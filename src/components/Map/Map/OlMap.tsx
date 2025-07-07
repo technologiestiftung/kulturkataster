@@ -3,10 +3,8 @@
 import appConfig from "@/config/config";
 import Map from "ol/Map";
 import View from "ol/View";
-import TileLayer from "ol/layer/Tile";
 import { transform } from "ol/proj";
 import { register } from "ol/proj/proj4";
-import { OSM } from "ol/source";
 import proj4 from "proj4";
 import React, { FC, useEffect, useRef } from "react";
 import "../../../../node_modules/ol/ol.css";
@@ -68,11 +66,6 @@ const OlMap: FC<OlMapProps> = ({ children }) => {
 		try {
 			const map = new Map({
 				target: mapId.current,
-				layers: [
-					new TileLayer({
-						source: new OSM(),
-					}),
-				],
 				view: new View({
 					center: center,
 					zoom: startZoomLevel,
