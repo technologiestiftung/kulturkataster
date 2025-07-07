@@ -14,7 +14,7 @@
 			{
 				"id": "basemap_style",
 				"name": "Tagesansicht",
-				"url": "resources/basemap_style.json",
+				"url": "/resources/basemap-style.json",
 				"defaultStyle": true
 			}
 		],
