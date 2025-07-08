@@ -46,7 +46,7 @@ const ClickControl: FC<ClickControlProps> = ({ layerId, children }) => {
 	return (
 		<div ref={overlayRef} className="ClickControl-root">
 			{children &&
-				cloneElement(children, {
+				cloneElement(children as React.ReactElement<any>, {
 					properties: feature?.getProperties(),
 				})}
 		</div>
