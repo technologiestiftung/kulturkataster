@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { FC } from "react";
 import GeolocationSearch from "../GeolocationSearch/GeolocationSearch";
 import HoverCard from "../HoverCard/HoverCard";
@@ -12,19 +13,26 @@ import {
 	ZoomControl,
 } from "./Controls";
 import LayerInitializer from "./LayerInitializer/LayerInitializer";
-import { VenueLayer } from "./Layers";
+import { Layers, VenueLayer } from "./Layers";
 import LayerTree from "./LayerTree/LayerTree";
-import OlMap from "./Map/OlMap";
+
+const LazyOlMap = dynamic(() => import("./Map/OlMap"), {
+	ssr: false,
+	loading: () => <div>Loading map container...</div>,
+});
 
 const Map: FC = () => {
 	return (
 		<div className="Map-root">
-			{true && <LayerTree />}
+			{false && <LayerTree />}
 			<GeolocationSearch />
-			<OlMap>
+
+			<LazyOlMap>
 				<LayerInitializer />
 				{/* venue layer */}
-				<VenueLayer />
+				<Layers>
+					<VenueLayer />
+				</Layers>
 
 				<MapControls>
 					<FullScreenControl />
@@ -46,7 +54,7 @@ const Map: FC = () => {
 						</ClickControl>
 					)}
 				</MapControls>
-			</OlMap>
+			</LazyOlMap>
 		</div>
 	);
 };
