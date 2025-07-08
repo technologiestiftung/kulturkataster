@@ -32,13 +32,16 @@ export interface PortalMapConfig {
 	mapView: MapViewConfig;
 }
 
-export interface LayerElement {
+export interface LayerElementBase {
 	id: string;
 	visibility: boolean;
+}
+
+export interface LayerElement extends LayerElementBase {
 	type?: "WMS" | "WFS" | "WMTS";
 	url?: string;
 	status?: LayerStatus;
-	service: LayerService;
+	service?: LayerService | null;
 }
 
 export interface ManagedLayer {
@@ -101,8 +104,8 @@ export interface LayerConfig {
 }
 export interface PortalConfig {
 	map: PortalMapConfig;
-	portalFooter: { urls: string[] };
-	tree: {
+	portalFooter?: { urls: string[] };
+	tree?: {
 		addLayerButton: {
 			active: boolean;
 			searchBar: {
@@ -113,7 +116,7 @@ export interface PortalConfig {
 		};
 		highlightedFeatures: { active: boolean };
 	};
-	mainMenu: {
+	mainMenu?: {
 		expanded: boolean;
 		title: {
 			text: string;
@@ -126,7 +129,7 @@ export interface PortalConfig {
 		};
 		sections: any[];
 	};
-	secondaryMenu: {
+	secondaryMenu?: {
 		expanded: boolean;
 		sections: any[];
 	};
