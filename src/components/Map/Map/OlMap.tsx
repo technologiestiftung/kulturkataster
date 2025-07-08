@@ -10,9 +10,9 @@ import React, { FC, useEffect, useRef } from "react";
 import "../../../../node_modules/ol/ol.css";
 import { useMapStore } from "../../../lib/store/mapStore";
 
-if (appConfig) {
-	appConfig.namedProjections.forEach((projection) => {
-		proj4.defs(projection[1]);
+if (appConfig?.namedProjections?.length) {
+	appConfig.namedProjections.forEach(([name, def]) => {
+		proj4.defs(name, def);
 	});
 	register(proj4);
 }
