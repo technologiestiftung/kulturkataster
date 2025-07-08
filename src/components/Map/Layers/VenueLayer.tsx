@@ -41,7 +41,7 @@ const VenueLayer: FC<VenueLayerProps> = ({ zIndex = 10000 }) => {
 	};
 
 	useEffect(() => {
-		if (!map || zIndex == null || !config) return;
+		if (!map || zIndex === null || !config) return;
 
 		const epsg = config.portalConfig.map.mapView.epsg;
 
