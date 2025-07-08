@@ -15,8 +15,6 @@ interface HoverCardProps {
 }
 
 const HoverCard: FC<HoverCardProps> = ({ properties }) => {
-	console.log("[HoverCard] properties::", properties);
-
 	return (
 		<div className="HoverCard-root">
 			<Card>

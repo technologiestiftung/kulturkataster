@@ -5,10 +5,15 @@ import { cloneElement, FC, useEffect, useRef, useState } from "react";
 
 interface HoverControlProps {
 	layerId: string;
+	overlayOptions?: any;
 	children: React.ReactElement;
 }
 
-const HoverControl: FC<HoverControlProps> = ({ layerId, children }) => {
+const HoverControl: FC<HoverControlProps> = ({
+	layerId,
+	overlayOptions,
+	children,
+}) => {
 	const map = useMapStore((state) => state.map);
 	const overlayRef = useRef<HTMLDivElement>(null);
 
@@ -19,8 +24,9 @@ const HoverControl: FC<HoverControlProps> = ({ layerId, children }) => {
 
 		const overlay = new Overlay({
 			element: overlayRef.current,
-			autoPan: true,
+			// autoPan: true,
 			id: "HoverControl-root",
+			...overlayOptions,
 		});
 
 		map.addOverlay(overlay);
@@ -34,7 +40,6 @@ const HoverControl: FC<HoverControlProps> = ({ layerId, children }) => {
 				const _layerId = layer.get("id");
 
 				if (_layerId === layerId) {
-					console.log("Feature hovered on target layer:", _feature);
 					overlay.setPosition(coordinate);
 					featureFound = true;
 					setFeature(_feature);
@@ -52,12 +57,12 @@ const HoverControl: FC<HoverControlProps> = ({ layerId, children }) => {
 			map.un("pointermove", handlePointerMove);
 			map.removeOverlay(overlay);
 		};
-	}, [map, layerId]);
+	}, [map, layerId, overlayOptions]);
 
 	return (
-		<div ref={overlayRef} className="HoverControl-root">
+		<div ref={overlayRef} className="ClickControl-root">
 			{children &&
-				cloneElement(children, {
+				cloneElement(children as React.ReactElement<any>, {
 					properties: feature?.getProperties(),
 				})}
 		</div>
