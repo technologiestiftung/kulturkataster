@@ -70,9 +70,11 @@
 		"baselayer": {
 			"elements": [
 				{
+					"id": "hintergrund_default_grau",
+					"visibility": false
+				},
+				{
 					"id": "basemap",
-					"name": "Hintergrundkarte",
-					"styleId": "basemap",
 					"visibility": true
 				}
 			]
