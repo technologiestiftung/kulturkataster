@@ -9,6 +9,7 @@ import VectorLayer from "ol/layer/Vector";
 import { Vector as VectorSource } from "ol/source";
 import { Fill, Stroke, Style } from "ol/style";
 import CircleStyle from "ol/style/Circle";
+import { FeatureLike } from "ol/Feature";
 import { FC, useEffect } from "react";
 
 interface VenueLayerProps {
@@ -30,14 +31,20 @@ const styles = {
 	MultiPoint: new Style({
 		image: image,
 	}),
-};
+} as const;
 
 const VenueLayer: FC<VenueLayerProps> = ({ zIndex = 10000 }) => {
 	const map = useMapStore((state: MapStoreState) => state.map);
 	const config = useMapStore((state) => state.config);
 
-	const styleFunction = function (feature) {
-		return styles[feature.getGeometry().getType()];
+	const styleFunction = function (feature: FeatureLike) {
+		const geometryType = feature.getGeometry()?.getType();
+
+		if (geometryType && geometryType in styles) {
+			return styles[geometryType as keyof typeof styles];
+		}
+
+		return styles.Point;
 	};
 
 	useEffect(() => {
