@@ -38,10 +38,10 @@ export interface LayerElementBase {
 }
 
 export interface LayerElement extends LayerElementBase {
-	type?: "WMS" | "WFS" | "WMTS";
-	url?: string;
-	status?: LayerStatus;
-	service?: LayerService | null;
+	id: string;
+	visibility: boolean;
+	status: LayerStatus;
+	service: LayerService;
 }
 
 export interface ManagedLayer {
