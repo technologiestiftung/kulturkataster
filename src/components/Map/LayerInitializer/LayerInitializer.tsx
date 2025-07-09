@@ -43,7 +43,7 @@ const LayerInitializer: FC = () => {
 		if (!config) return;
 
 		const loadAllWmtsCapabilities = async () => {
-			const allLayers = [
+			const allLayers: LayerElement[] = [
 				...config.layerConfig.baselayer.elements,
 				...config.layerConfig.subjectlayer.elements,
 			];
