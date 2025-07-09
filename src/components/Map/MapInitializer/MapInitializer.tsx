@@ -4,7 +4,7 @@ import config from "@/config/config";
 import mapConfig from "@/config/config.json";
 import services from "@/config/resources/services.json";
 import { useMapStore } from "@/lib/store/mapStore";
-import { LayerElementBase } from "@/types";
+import { LayerElement, LayerElementBase, MapConfig } from "@/types";
 import { FC, useEffect } from "react";
 
 const MapInitializer: FC = ({}) => {
@@ -21,10 +21,10 @@ const MapInitializer: FC = ({}) => {
 		);
 
 		const enrichLayerElements = (elements: LayerElementBase[]) =>
-			elements.map((layer) => ({
+			(elements as LayerElement[]).map((layer) => ({
 				...layer,
-				status: "initial",
-				service: servicesMap.get(layer.id) || null,
+				status: "initial" as const,
+				service: servicesMap.get(layer.id),
 			}));
 
 		const enrichedConfig = structuredClone(mapConfig);
@@ -37,7 +37,7 @@ const MapInitializer: FC = ({}) => {
 			enrichedConfig.layerConfig.subjectlayer.elements,
 		);
 
-		setConfig(enrichedConfig);
+		setConfig(enrichedConfig as unknown as MapConfig);
 	}, [setConfig]);
 
 	return null;
