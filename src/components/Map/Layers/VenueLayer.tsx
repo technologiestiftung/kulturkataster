@@ -4,62 +4,141 @@ import venues from "@/config/resources/venues.json";
 import { useMapStore } from "@/lib/store/mapStore";
 import { transformGeoJSON } from "@/lib/utils/mapUtils";
 import { MapStoreState } from "@/types/map";
+import { FeatureLike } from "ol/Feature";
 import GeoJSON from "ol/format/GeoJSON";
 import VectorLayer from "ol/layer/Vector";
 import { Vector as VectorSource } from "ol/source";
-import { Fill, Stroke, Style } from "ol/style";
+import Cluster from "ol/source/Cluster";
+import { Fill, Stroke, Style, Text } from "ol/style";
 import CircleStyle from "ol/style/Circle";
-import { FeatureLike } from "ol/Feature";
-import { FC, useEffect } from "react";
+import { FC, useCallback, useEffect } from "react";
 
 interface VenueLayerProps {
 	zIndex?: number;
+	distance?: number;
+	minZoomForClustering?: number;
+	maxZoomForClustering?: number;
 }
 
-const image = new CircleStyle({
-	radius: 5,
-	fill: new Fill({
-		color: "rgba(255, 255, 0, 1)",
-	}),
-	stroke: new Stroke({ color: "red", width: 3 }),
-});
-
-const styles = {
-	Point: new Style({
-		image: image,
-	}),
-	MultiPoint: new Style({
-		image: image,
-	}),
-} as const;
-
-const VenueLayer: FC<VenueLayerProps> = ({ zIndex = 10000 }) => {
+const VenueLayer: FC<VenueLayerProps> = ({
+	zIndex = 10000,
+	distance = 60,
+	minZoomForClustering = 0,
+	maxZoomForClustering = 4,
+}) => {
 	const map = useMapStore((state: MapStoreState) => state.map);
 	const config = useMapStore((state) => state.config);
 
 	const styleFunction = function (feature: FeatureLike) {
-		const geometryType = feature.getGeometry()?.getType();
+		const features = feature.get("features");
+		const size = features ? features.length : 1;
 
-		if (geometryType && geometryType in styles) {
-			return styles[geometryType as keyof typeof styles];
+		if (size === 1) {
+			return new Style({
+				image: new CircleStyle({
+					radius: 8,
+					fill: new Fill({
+						color: "#553C9A",
+					}),
+					stroke: new Stroke({
+						color: "white",
+						width: 2,
+					}),
+				}),
+			});
 		}
 
-		return styles.Point;
+		let radius = 15;
+		let color = "#6B46C1";
+
+		if (size > 1000) {
+			radius = 30;
+			color = "#553C9A";
+		} else if (size > 500) {
+			radius = 27;
+			color = "#6B46C1";
+		} else if (size > 200) {
+			radius = 25;
+			color = "#7C3AED";
+		} else if (size > 100) {
+			radius = 22;
+			color = "#8B5CF6";
+		} else if (size > 50) {
+			radius = 19;
+			color = "#9F7AEA";
+		} else if (size > 20) {
+			radius = 16;
+			color = "#A78BFA";
+		}
+
+		return new Style({
+			image: new CircleStyle({
+				radius: radius,
+				fill: new Fill({
+					color: color,
+				}),
+				stroke: new Stroke({
+					color: "#FFFFFF",
+					width: 2,
+				}),
+			}),
+			text: new Text({
+				text: size.toString(),
+				font: `bold ${Math.min(radius * 0.6, 14)}px sans-serif`,
+				fill: new Fill({
+					color: "#FFFFFF",
+				}),
+				offsetY: 0,
+			}),
+		});
 	};
+
+	const getClusterDistance = useCallback(
+		(zoomLevel: number) => {
+			if (
+				zoomLevel < minZoomForClustering ||
+				zoomLevel > maxZoomForClustering
+			) {
+				return 0;
+			}
+
+			const factor = Math.max(
+				0.1,
+				(maxZoomForClustering - zoomLevel) /
+					(maxZoomForClustering - minZoomForClustering),
+			);
+			return distance * factor;
+		},
+		[distance, minZoomForClustering, maxZoomForClustering],
+	);
 
 	useEffect(() => {
 		if (!map || zIndex === null || !config) return;
 
 		const epsg = config.portalConfig.map.mapView.epsg;
+		const currentZoom = map.getView().getZoom() || 10;
 
 		const vectorSource = new VectorSource({
 			features: new GeoJSON().readFeatures(transformGeoJSON(venues, epsg)),
 		});
 
-		const vectorLayer = new VectorLayer({
+		const clusterSource = new Cluster({
+			distance: getClusterDistance(currentZoom),
 			source: vectorSource,
+		});
+
+		const vectorLayer = new VectorLayer({
+			source: clusterSource,
 			style: styleFunction,
 		});
+
+		const handleZoomChange = () => {
+			const zoomLevel = map.getView().getZoom() || 10;
+			const newDistance = getClusterDistance(zoomLevel);
+			clusterSource.setDistance(newDistance);
+		};
+
+		map.getView().on("change:resolution", handleZoomChange);
 
 		map.addLayer(vectorLayer);
 		vectorLayer.setZIndex(zIndex);
@@ -68,10 +147,11 @@ const VenueLayer: FC<VenueLayerProps> = ({ zIndex = 10000 }) => {
 
 		return () => {
 			if (map) {
+				map.getView().un("change:resolution", handleZoomChange);
 				map.removeLayer(vectorLayer);
 			}
 		};
-	}, [map, zIndex, config]);
+	}, [map, zIndex, config, getClusterDistance]);
 
 	return null;
 };
