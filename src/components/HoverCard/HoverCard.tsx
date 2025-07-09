@@ -8,32 +8,91 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 
 interface HoverCardProps {
-	properties?: any;
+	features?: any;
 }
 
-const HoverCard: FC<HoverCardProps> = ({ properties }) => {
+const HoverCard: FC<HoverCardProps> = ({ features }) => {
+	const [featureProperties, setFeatureProperties] = useState<any>(null);
+
+	useEffect(() => {
+		const feature = features;
+
+		if (!feature) {
+			setFeatureProperties(null);
+			return;
+		}
+		const properties = feature.getProperties();
+		setFeatureProperties(properties.features[0].values_);
+	}, [features]);
+
+	if (!features || !featureProperties) {
+		return null;
+	}
+
 	return (
 		<div className="HoverCard-root">
 			<Card>
 				<CardHeader>
-					<CardTitle>{properties && properties["Name der K"]}</CardTitle>
+					<CardTitle>{featureProperties["Name der K"] || "Unknown"}</CardTitle>
 					<CardDescription>
-						{properties && properties["Name der K"]}
+						{featureProperties["Unterkateg"] || "No category"}
 					</CardDescription>
 				</CardHeader>
 				<CardContent>
-					<p>{properties && properties.Kulturortk}</p>
+					<div className="space-y-2">
+						<p>
+							<strong>Type:</strong> {featureProperties.Kulturortk}
+						</p>
+						<p>
+							<strong>Address:</strong> {featureProperties.Addresse}
+						</p>
+						<p>
+							<strong>District:</strong> {featureProperties["Bezirk (Na)"]}
+						</p>
+						<p>
+							<strong>ZIP:</strong> {featureProperties.PLZ}
+						</p>
+						{featureProperties.Website && (
+							<p>
+								<strong>Website:</strong>
+								<a
+									href={featureProperties.Website}
+									target="_blank"
+									rel="noopener noreferrer"
+									className="text-blue-600 hover:underline ml-1"
+								>
+									{featureProperties.Website}
+								</a>
+							</p>
+						)}
+						{featureProperties.Telefonnum && (
+							<p>
+								<strong>Phone:</strong> {featureProperties.Telefonnum}
+							</p>
+						)}
+						{featureProperties["E-Mail-Adr"] && (
+							<p>
+								<strong>Email:</strong> {featureProperties["E-Mail-Adr"]}
+							</p>
+						)}
+					</div>
 				</CardContent>
-				<CardFooter>
-					<div>
-						<p>{properties && properties.Dachorgani}</p>
-					</div>
-					<div>
-						<p>{properties && properties.Datenquell}</p>
-					</div>
+				<CardFooter className="flex-col items-start space-y-1">
+					{featureProperties.Dachorgani && (
+						<p>
+							<strong>Organization:</strong> {featureProperties.Dachorgani}
+						</p>
+					)}
+					<p>
+						<strong>Data Source:</strong> {featureProperties.Datenquell}
+					</p>
+					<p>
+						<strong>Status:</strong>{" "}
+						{featureProperties["Öffnungs-"] || "Unknown"}
+					</p>
 				</CardFooter>
 			</Card>
 		</div>
