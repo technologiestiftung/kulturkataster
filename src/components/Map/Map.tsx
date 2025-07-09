@@ -42,7 +42,7 @@ const Map: FC = () => {
 						<HoverControl
 							layerId="venues"
 							// overlayOptions={
-							// 	// { autoPan: true }
+							// 	{ autoPan: true }
 							// }
 						>
 							<HoverCard />
