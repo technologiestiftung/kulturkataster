@@ -9,7 +9,7 @@ import GeoJSON from "ol/format/GeoJSON";
 import VectorLayer from "ol/layer/Vector";
 import { Vector as VectorSource } from "ol/source";
 import Cluster from "ol/source/Cluster";
-import { Fill, Stroke, Style, Text } from "ol/style";
+import { Fill, Icon, Stroke, Style, Text } from "ol/style";
 import CircleStyle from "ol/style/Circle";
 import { FC, useCallback, useEffect } from "react";
 
@@ -34,16 +34,15 @@ const VenueLayer: FC<VenueLayerProps> = ({
 		const size = features ? features.length : 1;
 
 		if (size === 1) {
+			const scale = 1.2;
+
 			return new Style({
-				image: new CircleStyle({
-					radius: 8,
-					fill: new Fill({
-						color: "#553C9A",
-					}),
-					stroke: new Stroke({
-						color: "white",
-						width: 2,
-					}),
+				image: new Icon({
+					anchor: [0.5, 1],
+					src: "/icons/test.svg",
+					offset: [0, 0],
+					opacity: 1,
+					scale,
 				}),
 			});
 		}
