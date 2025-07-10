@@ -18,13 +18,12 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 	const [featureProperties, setFeatureProperties] = useState<any>(null);
 
 	useEffect(() => {
-		const feature = features;
-
-		if (!feature) {
+		if (!features) {
 			setFeatureProperties(null);
 			return;
 		}
-		const properties = feature.getProperties();
+
+		const properties = features.getProperties();
 		setFeatureProperties(properties.features[0].values_);
 	}, [features]);
 
