@@ -177,7 +177,9 @@ const HoverControl: FC<HoverControlProps> = ({
 		<div
 			className={`ClickControl-root`}
 			ref={overlayRef}
-			style={{ visibility: overlayReady ? "visible" : "hidden" }}
+			style={{
+				visibility: overlayReady ? "visible" : "hidden",
+			}}
 		>
 			{features &&
 				children &&
