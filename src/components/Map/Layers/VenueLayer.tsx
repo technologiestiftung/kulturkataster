@@ -115,7 +115,7 @@ const VenueLayer: FC<VenueLayerProps> = ({
 		if (!map || zIndex === null || !config) return;
 
 		const epsg = config.portalConfig.map.mapView.epsg;
-		const currentZoom = map.getView().getZoom() || 10;
+		const currentZoom = map.getView().getZoom() || 6;
 
 		const vectorSource = new VectorSource({
 			features: new GeoJSON().readFeatures(transformGeoJSON(venues, epsg)),
@@ -132,7 +132,13 @@ const VenueLayer: FC<VenueLayerProps> = ({
 		});
 
 		const handleZoomChange = () => {
-			const zoomLevel = map.getView().getZoom() || 10;
+			let zoomLevel = map.getView().getZoom() ?? 6;
+
+			// Clamp any negative zoom to 0
+			if (zoomLevel < 0) {
+				zoomLevel = 0;
+			}
+
 			const newDistance = getClusterDistance(zoomLevel);
 			clusterSource.setDistance(newDistance);
 		};
