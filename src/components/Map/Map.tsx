@@ -24,7 +24,7 @@ const LazyOlMap = dynamic(() => import("./OlMap/OlMap"), {
 // TODO: fix performance
 // TODO: fix hover card for zoom level
 // TODO: fix Geolocate
-// 
+//
 
 const Map: FC = () => {
 	return (
