@@ -16,10 +16,15 @@ import LayerInitializer from "./LayerInitializer/LayerInitializer";
 import { Layers, VenueLayer } from "./Layers";
 import LayerTree from "./LayerTree/LayerTree";
 
-const LazyOlMap = dynamic(() => import("./Map/OlMap"), {
+const LazyOlMap = dynamic(() => import("./OlMap/OlMap"), {
 	ssr: false,
 	loading: () => <div>Loading map container...</div>,
 });
+
+// TODO: fix performance
+// TODO: fix hover card for zoom level
+// TODO: fix Geolocate
+// 
 
 const Map: FC = () => {
 	return (
