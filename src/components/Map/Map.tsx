@@ -46,6 +46,7 @@ const Map: FC = () => {
 					{true && (
 						<HoverControl
 							layerId="venues"
+							minZoomForHover={3}
 							// overlayOptions={
 							// 	{ autoPan: true }
 							// }
