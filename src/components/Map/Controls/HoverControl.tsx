@@ -14,6 +14,7 @@ interface HoverControlProps {
 	layerId: string;
 	overlayOptions?: any;
 	children: React.ReactElement;
+	minZoomForHover?: number;
 }
 
 type OverlayPositioning =
@@ -31,6 +32,7 @@ const HoverControl: FC<HoverControlProps> = ({
 	layerId,
 	overlayOptions,
 	children,
+	minZoomForHover = 4,
 }) => {
 	const map = useMapStore((state) => state.map);
 	const overlayRef = useRef<HTMLDivElement>(null);
@@ -96,42 +98,57 @@ const HoverControl: FC<HoverControlProps> = ({
 			...overlayOptions,
 		});
 
-		map.addOverlay(overlay);
+		map.addOverlay(overlay); // Attach once
 
 		const handlePointerMove = (evt: any) => {
+			const zoom = Math.max(0, map.getView().getZoom() ?? 0);
+			if (zoom < minZoomForHover) {
+				overlay.setPosition(undefined);
+				setFeatures(undefined);
+				return;
+			}
+
 			const pixel = evt.pixel;
 			const coordinate = evt.coordinate;
-			let featuresFound = false;
+			let matchedFeature = null;
 
 			const newPositioning = calculatePositioning(pixel);
-
 			if (newPositioning !== cardPosition) {
 				setCardPosition(newPositioning);
 			}
 
-			map.forEachFeatureAtPixel(pixel, function (_features, layer) {
-				const _layerId = layer.get("id");
-
-				if (_layerId === layerId) {
-					overlay.setPosition(coordinate);
-					featuresFound = true;
-
-					if (_features !== features) {
-						setFeatures(_features);
-					}
+			map.forEachFeatureAtPixel(pixel, function (feature, layer) {
+				if (layer && layer.get("id") === layerId) {
+					matchedFeature = feature;
 					return true;
 				}
 			});
-			if (!featuresFound) {
+
+			if (matchedFeature) {
+				overlay.setPosition(coordinate);
+				if (features !== matchedFeature) {
+					setFeatures(matchedFeature);
+				}
+			} else {
+				overlay.setPosition(undefined);
+				setFeatures(undefined);
+			}
+		};
+
+		const handleZoomChange = () => {
+			const zoom = Math.max(0, map.getView().getZoom() ?? 0);
+			if (zoom < minZoomForHover) {
 				overlay.setPosition(undefined);
 				setFeatures(undefined);
 			}
 		};
 
 		map.on("pointermove", handlePointerMove);
+		map.getView().on("change:resolution", handleZoomChange);
 
 		return () => {
 			map.un("pointermove", handlePointerMove);
+			map.getView().un("change:resolution", handleZoomChange);
 			map.removeOverlay(overlay);
 		};
 	}, [
@@ -141,6 +158,7 @@ const HoverControl: FC<HoverControlProps> = ({
 		cardPosition,
 		calculatePositioning,
 		features,
+		minZoomForHover,
 	]);
 
 	useEffect(() => {
