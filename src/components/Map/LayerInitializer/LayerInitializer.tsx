@@ -95,7 +95,7 @@ const LayerInitializer: FC = () => {
 		loadAllWmtsCapabilities();
 	}, [config]);
 
-	// Layer creation functions
+
 	const createWMTSLayer = useCallback(
 		(serviceConfig: LayerService): LayerCreationResult => {
 			const capabilities = wmtsCapabilities[serviceConfig.capabilitiesUrl!];
@@ -140,6 +140,7 @@ const LayerInitializer: FC = () => {
 		},
 		[wmtsCapabilities],
 	);
+
 
 	const createWMSLayer = useCallback(
 		(serviceConfig: LayerService): LayerCreationResult => {
@@ -186,6 +187,7 @@ const LayerInitializer: FC = () => {
 		[],
 	);
 
+
 	const createWFSLayer = useCallback(
 		(serviceConfig: LayerService): LayerCreationResult => {
 			try {
@@ -216,6 +218,7 @@ const LayerInitializer: FC = () => {
 		},
 		[],
 	);
+
 
 	const createVectorTileLayer = useCallback(
 		(serviceConfig: LayerService): LayerCreationResult => {
@@ -352,7 +355,6 @@ const LayerInitializer: FC = () => {
 		// Update store with all managed layers
 		setLayersInStore(allManagedLayers);
 
-		// Cleanup function
 		return () => {
 			allManagedLayers.forEach((layer) => {
 				map.removeLayer(layer.olLayer);
