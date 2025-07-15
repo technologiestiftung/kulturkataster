@@ -14,6 +14,8 @@ interface HoverCardProps {
 	features?: any;
 }
 
+// TODO: fix hovercard props naming
+
 const HoverCard: FC<HoverCardProps> = ({ features }) => {
 	const [featureProperties, setFeatureProperties] = useState<any>(null);
 
