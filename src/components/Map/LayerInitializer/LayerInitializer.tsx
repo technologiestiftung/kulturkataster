@@ -38,7 +38,7 @@ const LayerInitializer: FC = () => {
 	);
 	const [capabilitiesLoaded, setCapabilitiesLoaded] = useState(false);
 
-	// Load WMTS capabilities for all layers that need them
+	// Load WMTS capabilities with server-side caching
 	useEffect(() => {
 		if (!config) return;
 
@@ -64,15 +64,19 @@ const LayerInitializer: FC = () => {
 
 			try {
 				const capabilitiesPromises = uniqueCapabilitiesUrls.map(async (url) => {
-					const response = await fetch(url);
+					// Use cached API route instead of direct fetch
+					const response = await fetch(
+						`/api/wmts-capabilities?url=${encodeURIComponent(url)}`,
+					);
 					if (!response.ok) {
 						throw new Error(
 							`Failed to fetch WMTS capabilities from ${url}: ${response.status}`,
 						);
 					}
-					const text = await response.text();
+
+					const { xml } = await response.json();
 					const parser = new WMTSCapabilities();
-					return { url, capabilities: parser.read(text) };
+					return { url, capabilities: parser.read(xml) };
 				});
 
 				const results = await Promise.all(capabilitiesPromises);
@@ -185,10 +189,10 @@ const LayerInitializer: FC = () => {
 		[],
 	);
 
+	// Enhanced WFS layer with caching
 	const createWFSLayer = useCallback(
 		(serviceConfig: LayerService): LayerCreationResult => {
 			try {
-				// TODO: Make CRS configurable instead of hardcoded
 				const vectorSource = new VectorSource({
 					format: new GeoJSON({
 						dataProjection: "EPSG:25833",
@@ -196,7 +200,8 @@ const LayerInitializer: FC = () => {
 					}),
 					url: (extent) => {
 						const bbox = extent.join(",");
-						return `${serviceConfig.url}?service=WFS&version=1.1.0&request=GetFeature&typename=${serviceConfig.featureType}&outputFormat=application/json&srsname=EPSG:25833&bbox=${bbox},EPSG:3857`;
+						// Use cached WFS API route
+						return `/api/wfs-cache?service=${encodeURIComponent(serviceConfig.url)}&typename=${serviceConfig.featureType}&bbox=${bbox}`;
 					},
 					strategy: bboxStrategy,
 				});
