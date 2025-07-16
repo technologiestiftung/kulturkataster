@@ -1,0 +1,135 @@
+{
+	"portalConfig": {
+		"map": {
+			"controls": {
+				"zoom": true,
+				"orientation": {
+					"zoomMode": "once"
+				}
+			},
+			"mapView": {
+				"backgroundImage": "",
+				"startCenter": [13.404954, 52.520008],
+				"extent": [1444000, 6860000, 1538000, 6925000],
+				"epsg": "EPSG:3857",
+				"startZoomLevel": 1,
+				"options": [
+					{
+						"resolution": 52.9,
+						"scale": 200000,
+						"zoomLevel": 0
+					},
+					{
+						"resolution": 28,
+						"scale": 100000,
+						"zoomLevel": 1
+					},
+					{
+						"resolution": 14,
+						"scale": 50000,
+						"zoomLevel": 2
+					},
+					{
+						"resolution": 7,
+						"scale": 25000,
+						"zoomLevel": 3
+					},
+					{
+						"resolution": 2.8,
+						"scale": 10000,
+						"zoomLevel": 4
+					},
+					{
+						"resolution": 1.4,
+						"scale": 5000,
+						"zoomLevel": 5
+					},
+					{
+						"resolution": 0.7,
+						"scale": 2500,
+						"zoomLevel": 6
+					},
+					{
+						"resolution": 0.28,
+						"scale": 1000,
+						"zoomLevel": 7
+					},
+					{
+						"resolution": 0.14,
+						"scale": 500,
+						"zoomLevel": 8
+					}
+				]
+			}
+		},
+		"portalFooter": {
+			"urls": []
+		}
+	},
+	"layerConfig": {
+		"baselayer": {
+			"elements": [
+				{
+					"id": "basemap",
+					"visibility": true
+				}
+			]
+		},
+		"subjectlayer": {
+			"elements": [
+				{
+					"id": "lor_2021:a_lor_plr_2021",
+					"visibility": false
+				},
+				{
+					"id": "lor_2021:b_lor_bzr_2021",
+					"visibility": false
+				},
+				{
+					"id": "lor_2021:c_lor_pgr_2021",
+					"visibility": false
+				},
+				{
+					"id": "gemeinschaftsinitiative:gemeinschaftsinitiative",
+					"visibility": false
+				},
+				{
+					"id": "alkis_ortsteile:ortsteile",
+					"visibility": false
+				},
+				{
+					"id": "bplan:a_bp_iv",
+					"visibility": false
+				},
+				{
+					"id": "bplan:b_bp_fs",
+					"visibility": false
+				},
+				{
+					"id": "bplan:c_bp_ak",
+					"visibility": false
+				},
+				{
+					"id": "alkis_bezirke:bezirksgrenzen",
+					"visibility": false
+				},
+				{
+					"id": "ua_einwohnerdichte_2024:ua_einwohnerdichte_2024_entw",
+					"visibility": false
+				},
+				{
+					"id": "ua_einwohnerdichte_2024:ua_einwohnerdichte_2024",
+					"visibility": false
+				},
+				{
+					"id": "bplan:wfs:b_bp_fs",
+					"visibility": false
+				},
+				{
+					"id": "bplan:wfs:c_bp_ak",
+					"visibility": false
+				}
+			]
+		}
+	}
+}
