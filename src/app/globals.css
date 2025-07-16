@@ -1,126 +1,180 @@
-@import 'tailwindcss';
-
+@import "tailwindcss";
 @plugin 'tailwindcss-animate';
-
 @custom-variant dark (&:is(.dark *));
+@custom-variant contrast (&:is([data-theme="contrast"] *));
+
+:root {
+	/* Base color definitions from Figma */
+	--white: #ffffff;
+	--black: #161616;
+
+	/* Interaction colors */
+	--interaction-default: #c288ff;
+	--interaction-dark: #924dff;
+	--interaction-light: #d9c1ff;
+
+	/* Highlight colors */
+	--highlight-default: #55d494;
+	--highlight-dark: #4ab780;
+	--highlight-light: #aae9c9;
+	--highlight-alert: #ff8095;
+
+	/* Neutral colors */
+	--neutral-5: #f8f6f2;
+	--neutral-10: #edebe8;
+	--neutral-20: #e2dfdb;
+	--neutral-40: #b9b8b5;
+	--neutral-60: #a09f9d;
+	--neutral-80: #555b54;
+	--neutral-100: #2b3229;
+
+	/* Fachfarben */
+	--fachfarben-yellow: #f5df56;
+	--fachbarben-dark-yellow: #ddc94c;
+	--fachfarben-orange: #ffa054;
+	--fachfarben-dark-orange: #dd8b4a;
+	--fachfarben-pink: #ff8095;
+	--fachfarben-dark-pink: #e17284;
+	--fachfarben-blue: #6394f7;
+	--fachfarben-dark-blue: #527dd5;
+	--fachfarben-green: #6394f7;
+	--fachfarben-dark-green: #4ab780;
+
+	--shadow-200: 0 1px 3px rgba(0, 0, 0, 0.1);
+	--shadow-300: 0 4px 6px rgba(0, 0, 0, 0.1);
+	--shadow-400: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+:root[data-theme="contrast"] {
+	--black: #000000;
+
+	--interaction-default: #d9c1ff;
+	--interaction-dark: #5617ba;
+	--interaction-light: #e7d8ff;
+
+	/* Highlight colors */
+	--highlight-default: #aae9c9;
+	--highlight-dark: #4ab780;
+	--highlight-light: #ddf6e9;
+	--highlight-alert: #ffd9df;
+}
 
 @theme {
-  --color-background: hsl(var(--background));
-  --color-foreground: hsl(var(--foreground));
+	--color-background: var(--white);
+	--color-foreground: var(--black);
 
-  --color-card: hsl(var(--card));
-  --color-card-foreground: hsl(var(--card-foreground));
+	--color-card: var(--white);
+	--color-card-foreground: var(--black);
 
-  --color-popover: hsl(var(--popover));
-  --color-popover-foreground: hsl(var(--popover-foreground));
+	--color-popover: var(--white);
+	--color-popover-foreground: var(--black);
 
-  --color-primary: hsl(var(--primary));
-  --color-primary-foreground: hsl(var(--primary-foreground));
+	--color-primary: var(--interaction-default);
+	--color-primary-foreground: var(--white);
 
-  --color-secondary: hsl(var(--secondary));
-  --color-secondary-foreground: hsl(var(--secondary-foreground));
+	--color-secondary: var(--neutral-5);
+	--color-secondary-foreground: var(--black);
 
-  --color-muted: hsl(var(--muted));
-  --color-muted-foreground: hsl(var(--muted-foreground));
+	--color-muted: var(--neutral-10);
+	--color-muted-foreground: var(--neutral-40);
 
-  --color-accent: hsl(var(--accent));
-  --color-accent-foreground: hsl(var(--accent-foreground));
+	--color-accent: var(--neutral-5);
+	--color-accent-foreground: var(--black);
 
-  --color-destructive: hsl(var(--destructive));
-  --color-destructive-foreground: hsl(var(--destructive-foreground));
+	--color-destructive: var(--highlight-alert);
+	--color-destructive-foreground: var(--white);
 
-  --color-border: hsl(var(--border));
-  --color-input: hsl(var(--input));
-  --color-ring: hsl(var(--ring));
+	--color-border: var(--neutral-20);
+	--color-input: var(--neutral-20);
+	--color-ring: var(--interaction-default);
 
-  --color-chart-1: hsl(var(--chart-1));
-  --color-chart-2: hsl(var(--chart-2));
-  --color-chart-3: hsl(var(--chart-3));
-  --color-chart-4: hsl(var(--chart-4));
-  --color-chart-5: hsl(var(--chart-5));
+	--color-chart-1: var(--fachfarben-yellow);
+	--color-chart-2: var(--fachfarben-orange);
+	--color-chart-3: var(--fachfarben-pink);
+	--color-chart-4: var(--fachfarben-blue);
+	--color-chart-5: var(--fachfarben-green);
 
-  --radius-lg: var(--radius);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-sm: calc(var(--radius) - 4px);
-}
-
-/*
-  The default border color has changed to `currentColor` in Tailwind CSS v4,
-  so we've added these compatibility styles to make sure everything still
-  looks the same as it did with Tailwind CSS v3.
-
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
-*/
-@layer base {
-  *,
-  ::after,
-  ::before,
-  ::backdrop,
-  ::file-selector-button {
-    border-color: var(--color-gray-200, currentColor);
-  }
-}
-
-@layer utilities {
-  body {
-    font-family: Arial, Helvetica, sans-serif;
-  }
+	--radius-lg: var(--radius);
+	--radius-md: calc(var(--radius) - 2px);
+	--radius-sm: calc(var(--radius) - 4px);
 }
 
 @layer base {
-	:root {
-		--background: 0 0% 100%;
-		--foreground: 0 0% 3.9%;
-		--card: 0 0% 100%;
-		--card-foreground: 0 0% 3.9%;
-		--popover: 0 0% 100%;
-		--popover-foreground: 0 0% 3.9%;
-		--primary: 0 0% 9%;
-		--primary-foreground: 0 0% 98%;
-		--secondary: 0 0% 96.1%;
-		--secondary-foreground: 0 0% 9%;
-		--muted: 0 0% 96.1%;
-		--muted-foreground: 0 0% 45.1%;
-		--accent: 0 0% 96.1%;
-		--accent-foreground: 0 0% 9%;
-		--destructive: 0 84.2% 60.2%;
-		--destructive-foreground: 0 0% 98%;
-		--border: 0 0% 89.8%;
-		--input: 0 0% 89.8%;
-		--ring: 0 0% 3.9%;
-		--chart-1: 12 76% 61%;
-		--chart-2: 173 58% 39%;
-		--chart-3: 197 37% 24%;
-		--chart-4: 43 74% 66%;
-		--chart-5: 27 87% 67%;
-		--radius: 0.5rem;
+	*,
+	::after,
+	::before,
+	::backdrop,
+	::file-selector-button {
+		border-color: var(--color-border);
 	}
-	.dark {
-		--background: 0 0% 3.9%;
-		--foreground: 0 0% 98%;
-		--card: 0 0% 3.9%;
-		--card-foreground: 0 0% 98%;
-		--popover: 0 0% 3.9%;
-		--popover-foreground: 0 0% 98%;
-		--primary: 0 0% 98%;
-		--primary-foreground: 0 0% 9%;
-		--secondary: 0 0% 14.9%;
-		--secondary-foreground: 0 0% 98%;
-		--muted: 0 0% 14.9%;
-		--muted-foreground: 0 0% 63.9%;
-		--accent: 0 0% 14.9%;
-		--accent-foreground: 0 0% 98%;
-		--destructive: 0 62.8% 30.6%;
-		--destructive-foreground: 0 0% 98%;
-		--border: 0 0% 14.9%;
-		--input: 0 0% 14.9%;
-		--ring: 0 0% 83.1%;
-		--chart-1: 220 70% 50%;
-		--chart-2: 160 60% 45%;
-		--chart-3: 30 80% 55%;
-		--chart-4: 280 65% 60%;
-		--chart-5: 340 75% 55%;
+
+	body {
+		font-family: "Barlow", Arial, Helvetica, sans-serif;
+		background-color: var(--color-background);
+		color: var(--color-foreground);
+	}
+}
+
+@layer components {
+	.display {
+		@apply font-bold;
+		font-size: 2rem;
+		line-height: 2rem;
+	}
+
+	h1 {
+		@apply font-bold;
+		font-size: 1.5rem;
+		line-height: 2rem;
+	}
+
+	h2 {
+		@apply font-bold;
+		font-size: 1.5rem;
+		line-height: 2rem;
+	}
+
+	.body1 {
+		font-size: 1.25rem;
+		line-height: 1.75rem;
+	}
+
+	.body2 {
+		font-size: 1rem;
+		line-height: 1.5rem;
+	}
+
+	.button {
+		@apply font-bold;
+		font-size: 1rem;
+		line-height: 1.5rem;
+	}
+
+	@screen md {
+		.display {
+			font-size: 3.5rem;
+			line-height: 3.5rem;
+		}
+		h1 {
+			font-size: 2rem;
+			line-height: 2.5rem;
+		}
+		h2 {
+			font-size: 1.5rem;
+			line-height: 2rem;
+		}
+		.body1 {
+			font-size: 1.25rem;
+			line-height: 1.75rem;
+		}
+		.body2 {
+			font-size: 1rem;
+			line-height: 1.5rem;
+		}
+		.button {
+			font-size: 1rem;
+			line-height: 1.5rem;
+		}
 	}
 }
 
