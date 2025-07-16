@@ -1,9 +1,11 @@
 import { Input } from "@/components/ui/input";
-import { useMapStore } from "@/lib/store/mapStore";
-import { sanitizeAddressInput } from "@/lib/utils/sanitizerUtils";
-import { ChangeEvent, FC, useRef } from "react";
 import { useKeyboardNavigation } from "@/lib/hooks/useKeyboardNavigation";
 import { useSearch } from "@/lib/hooks/useSearch";
+import { useMapStore } from "@/lib/store/mapStore";
+import { sanitizeAddressInput } from "@/lib/utils/sanitizerUtils";
+import { boundingExtent } from "ol/extent";
+import { fromLonLat } from "ol/proj";
+import { ChangeEvent, FC, useRef } from "react";
 
 interface GeoFeature {
 	id: string;
@@ -25,6 +27,7 @@ interface GeolocationSearchProps {
 	flyToOptions?: {
 		zoom?: number;
 		duration?: number;
+		padding?: number[];
 	};
 	strictSanitization?: boolean;
 }
@@ -32,14 +35,11 @@ interface GeolocationSearchProps {
 const GeolocationSearch: FC<GeolocationSearchProps> = ({
 	helperText = "Enter an address",
 	onLocationSelect,
-	flyToOptions = { zoom: 14, duration: 2000 },
+	flyToOptions = { zoom: 15, duration: 2000, padding: [50, 50, 50, 50] },
 	strictSanitization = false,
 }) => {
-	// State
-	// Refs
 	const inputRef = useRef<HTMLInputElement>(null);
 
-	// Store
 	const { map } = useMapStore();
 
 	// Setup the search hook
@@ -102,23 +102,24 @@ const GeolocationSearch: FC<GeolocationSearchProps> = ({
 		const [lng, lat] = result.center;
 
 		if (map) {
-			if (result.bbox) {
-				map.fitBounds(
-					[
-						[result.bbox[0], result.bbox[1]],
-						[result.bbox[2], result.bbox[3]],
-					],
-					{
-						padding: 50,
-						duration: flyToOptions.duration,
-						maxZoom: 16,
-					},
-				);
-			} else {
-				map.flyTo({
-					center: [lng, lat],
-					zoom: flyToOptions.zoom,
+			if (result.bbox && result.bbox.length === 4) {
+				// Transform bbox coordinates from EPSG:4326 to EPSG:3857
+				const [minLng, minLat, maxLng, maxLat] = result.bbox;
+				const bottomLeft = fromLonLat([minLng, minLat]);
+				const topRight = fromLonLat([maxLng, maxLat]);
+				const extent = boundingExtent([bottomLeft, topRight]);
+
+				map.getView().fit(extent, {
 					duration: flyToOptions.duration,
+					padding: flyToOptions.padding,
+				});
+			} else {
+				const transformedCoords = fromLonLat([lng, lat]);
+
+				map.getView().animate({
+					center: transformedCoords,
+					duration: flyToOptions.duration,
+					zoom: flyToOptions.zoom || 10,
 				});
 			}
 		}
