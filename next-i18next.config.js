@@ -7,4 +7,5 @@ module.exports = {
 		locales: i18nConfig.supportedLngs,
 	},
 	localePath: i18nConfig.localePath,
+	localeDetection: false,
 };
