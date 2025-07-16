@@ -120,6 +120,14 @@
 				{
 					"id": "ua_einwohnerdichte_2024:ua_einwohnerdichte_2024",
 					"visibility": false
+				},
+				{
+					"id": "bplan:wfs:b_bp_fs",
+					"visibility": false
+				},
+				{
+					"id": "bplan:wfs:c_bp_ak",
+					"visibility": false
 				}
 			]
 		}
