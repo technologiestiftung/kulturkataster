@@ -70,10 +70,6 @@
 		"baselayer": {
 			"elements": [
 				{
-					"id": "hintergrund_default_grau",
-					"visibility": false
-				},
-				{
 					"id": "basemap",
 					"visibility": true
 				}
@@ -102,10 +98,6 @@
 					"visibility": false
 				},
 				{
-					"id": "alkis_ortsteile:wfs:ortsteile",
-					"visibility": false
-				},
-				{
 					"id": "bplan:a_bp_iv",
 					"visibility": false
 				},
@@ -118,23 +110,7 @@
 					"visibility": false
 				},
 				{
-					"id": "bplan:wfs:b_bp_fs",
-					"visibility": false
-				},
-				{
-					"id": "bplan:wfs:c_bp_ak",
-					"visibility": false
-				},
-				{
 					"id": "alkis_bezirke:bezirksgrenzen",
-					"visibility": false
-				},
-				{
-					"id": "alkis_bezirke:wfs:bezirksgrenzen",
-					"visibility": false
-				},
-				{
-					"id": "bplan:wfs:a_bp_iv",
 					"visibility": false
 				},
 				{
