@@ -1,0 +1,211 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useMapStore } from "@/lib/store/mapStore";
+import Overlay from "ol/Overlay.js";
+import {
+	cloneElement,
+	FC,
+	useCallback,
+	useEffect,
+	useRef,
+	useState,
+} from "react";
+
+interface HoverControlProps {
+	layerId: string;
+	overlayOptions?: any;
+	children: React.ReactElement;
+	minZoomForHover?: number;
+}
+
+type OverlayPositioning =
+	| "bottom-left"
+	| "bottom-center"
+	| "bottom-right"
+	| "center-left"
+	| "center-center"
+	| "center-right"
+	| "top-left"
+	| "top-center"
+	| "top-right";
+
+const HoverControl: FC<HoverControlProps> = ({
+	layerId,
+	overlayOptions,
+	children,
+	minZoomForHover = 4,
+}) => {
+	const map = useMapStore((state) => state.map);
+	const overlayRef = useRef<HTMLDivElement>(null);
+	const overlaySizeRef = useRef({ width: 0, height: 0 });
+
+	const [features, setFeatures] = useState<any>();
+	const [cardPosition, setCardPosition] =
+		useState<OverlayPositioning>("bottom-left");
+	const [overlayReady, setOverlayReady] = useState(false);
+
+	// Memoized function to calculate the best position
+	const calculatePositioning = useCallback(
+		// eslint-disable-next-line complexity
+		(pixel: [number, number]): OverlayPositioning => {
+			if (!map) return "top-left";
+
+			const mapSize = map.getSize();
+			if (!mapSize) return "top-left";
+
+			const { width: overlayWidth, height: overlayHeight } =
+				overlaySizeRef.current;
+
+			if (overlayWidth === 0 || overlayHeight === 0) return cardPosition;
+
+			const [mapWidth, mapHeight] = mapSize;
+
+			const [pixelX, pixelY] = pixel;
+			const buffer = 10;
+
+			let vertical: "top" | "center" | "bottom" = "top";
+			let horizontal: "left" | "center" | "right" = "left";
+
+			if (pixelY + overlayHeight + buffer > mapHeight) {
+				vertical = "bottom";
+			} else if (
+				pixelY - overlayHeight / 2 > buffer &&
+				pixelY + overlayHeight / 2 < mapHeight - buffer
+			) {
+				vertical = "center";
+			}
+
+			if (pixelX + overlayWidth + buffer > mapWidth) {
+				horizontal = "right";
+			} else if (
+				pixelX - overlayWidth / 2 > buffer &&
+				pixelX + overlayWidth / 2 < mapWidth - buffer
+			) {
+				horizontal = "center";
+			}
+
+			return `${vertical}-${horizontal}` as OverlayPositioning;
+		},
+		[map, cardPosition],
+	);
+
+	useEffect(() => {
+		if (!map || !overlayRef.current) return;
+
+		const overlay = new Overlay({
+			element: overlayRef.current,
+			id: "HoverControl-root",
+			positioning: cardPosition,
+			...overlayOptions,
+		});
+
+		map.addOverlay(overlay); // Attach once
+
+		const handlePointerMove = (evt: any) => {
+			const zoom = Math.max(0, map.getView().getZoom() ?? 0);
+			if (zoom < minZoomForHover) {
+				overlay.setPosition(undefined);
+				setFeatures(undefined);
+				return;
+			}
+
+			const pixel = evt.pixel;
+			const coordinate = evt.coordinate;
+			let matchedFeature = null;
+
+			const newPositioning = calculatePositioning(pixel);
+			if (newPositioning !== cardPosition) {
+				setCardPosition(newPositioning);
+			}
+
+			map.forEachFeatureAtPixel(pixel, function (feature, layer) {
+				if (layer && layer.get("id") === layerId) {
+					matchedFeature = feature;
+					return true;
+				}
+			});
+
+			if (matchedFeature) {
+				overlay.setPosition(coordinate);
+				if (features !== matchedFeature) {
+					setFeatures(matchedFeature);
+				}
+			} else {
+				overlay.setPosition(undefined);
+				setFeatures(undefined);
+			}
+		};
+
+		const handleZoomChange = () => {
+			const zoom = Math.max(0, map.getView().getZoom() ?? 0);
+			if (zoom < minZoomForHover) {
+				overlay.setPosition(undefined);
+				setFeatures(undefined);
+			}
+		};
+
+		map.on("pointermove", handlePointerMove);
+		map.getView().on("change:resolution", handleZoomChange);
+
+		return () => {
+			map.un("pointermove", handlePointerMove);
+			map.getView().un("change:resolution", handleZoomChange);
+			map.removeOverlay(overlay);
+		};
+	}, [
+		map,
+		layerId,
+		overlayOptions,
+		cardPosition,
+		calculatePositioning,
+		features,
+		minZoomForHover,
+	]);
+
+	useEffect(() => {
+		if (!overlayRef.current) return;
+
+		requestAnimationFrame(() => {
+			const rect = overlayRef.current?.getBoundingClientRect();
+			if (rect) {
+				overlaySizeRef.current = {
+					width: rect.width,
+					height: rect.height,
+				};
+				setOverlayReady(true);
+			}
+		});
+	}, [features]);
+
+	useEffect(() => {
+		const observer = new ResizeObserver((entries) => {
+			for (const entry of entries) {
+				const { width, height } = entry.contentRect;
+				overlaySizeRef.current = { width, height };
+			}
+		});
+
+		if (overlayRef.current) {
+			observer.observe(overlayRef.current);
+		}
+
+		return () => observer.disconnect();
+	}, []);
+
+	return (
+		<div
+			className={`ClickControl-root`}
+			ref={overlayRef}
+			style={{
+				visibility: overlayReady ? "visible" : "hidden",
+			}}
+		>
+			{features &&
+				children &&
+				cloneElement(children as React.ReactElement<any>, {
+					features,
+				})}
+		</div>
+	);
+};
+
+export default HoverControl;
