@@ -11,10 +11,6 @@ export const useMapStore = create<MapStoreState>((set, get) => ({
 	layers: [],
 	currentFeature: null,
 
-	// App Config
-	appConfig: null,
-	setAppConfig: (config) => set({ appConfig: config }),
-
 	// Map
 	setConfig: (config) => set({ config }),
 	populateMap: (map) => set({ map }),
