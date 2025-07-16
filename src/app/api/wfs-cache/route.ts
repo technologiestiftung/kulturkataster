@@ -9,6 +9,9 @@ export async function GET(request: NextRequest) {
 	const service = searchParams.get("service");
 	const typename = searchParams.get("typename");
 	const bbox = searchParams.get("bbox");
+	const dataProjection = searchParams.get("dataProjection") || "EPSG:25833";
+	const featureProjection =
+		searchParams.get("featureProjection") || "EPSG:3857";
 
 	if (!service || !typename || !bbox) {
 		return NextResponse.json(
@@ -17,7 +20,7 @@ export async function GET(request: NextRequest) {
 		);
 	}
 
-	const cacheKey = `${service}:${typename}:${bbox}`;
+	const cacheKey = `${service}:${typename}:${bbox}:${dataProjection}:${featureProjection}`;
 	const cached = wfsCache.get(cacheKey);
 
 	if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
@@ -25,7 +28,7 @@ export async function GET(request: NextRequest) {
 	}
 
 	try {
-		const url = `${service}?service=WFS&version=1.1.0&request=GetFeature&typename=${typename}&outputFormat=application/json&srsname=EPSG:25833&bbox=${bbox},EPSG:3857`;
+		const url = `${service}?service=WFS&version=1.1.0&request=GetFeature&typename=${typename}&outputFormat=application/json&srsname=${dataProjection}&bbox=${bbox},${featureProjection}`;
 
 		const response = await fetch(url);
 		if (!response.ok) {

@@ -2,6 +2,7 @@
 "use client";
 
 import { useMapStore } from "@/lib/store/mapStore";
+import { getEpsgFromCrs } from "@/lib/utils/mapUtils";
 import { LayerElement, LayerService, ManagedLayer } from "@/types";
 import { applyStyle } from "ol-mapbox-style";
 import GeoJSON from "ol/format/GeoJSON";
@@ -193,15 +194,22 @@ const LayerInitializer: FC = () => {
 	const createWFSLayer = useCallback(
 		(serviceConfig: LayerService): LayerCreationResult => {
 			try {
+				const dataProjection = serviceConfig.crs
+					? getEpsgFromCrs(serviceConfig.crs)
+					: "EPSG:25833";
+
+				const featureProjection =
+					config?.portalConfig.map.mapView.epsg || "EPSG:3857";
+
 				const vectorSource = new VectorSource({
 					format: new GeoJSON({
-						dataProjection: "EPSG:25833",
-						featureProjection: "EPSG:3857",
+						dataProjection: dataProjection,
+						featureProjection: featureProjection,
 					}),
 					url: (extent) => {
 						const bbox = extent.join(",");
-						// Use cached WFS API route
-						return `/api/wfs-cache?service=${encodeURIComponent(serviceConfig.url)}&typename=${serviceConfig.featureType}&bbox=${bbox}`;
+						// Use cached WFS API route with dynamic EPSG parameters
+						return `/api/wfs-cache?service=${encodeURIComponent(serviceConfig.url)}&typename=${serviceConfig.featureType}&bbox=${bbox}&dataProjection=${encodeURIComponent(dataProjection)}&featureProjection=${encodeURIComponent(featureProjection)}`;
 					},
 					strategy: bboxStrategy,
 				});
@@ -218,7 +226,7 @@ const LayerInitializer: FC = () => {
 				};
 			}
 		},
-		[],
+		[config],
 	);
 
 	const createVectorTileLayer = useCallback(
@@ -354,6 +362,7 @@ const LayerInitializer: FC = () => {
 		allManagedLayers.push(...subjectLayers);
 
 		// Update store with all managed layers
+		console.log("[LayerInitializer] allManagedLayers::", allManagedLayers);
 		setLayersInStore(allManagedLayers);
 
 		return () => {
