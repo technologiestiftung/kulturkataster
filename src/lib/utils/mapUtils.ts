@@ -51,3 +51,8 @@ export function transformGeoJSON(geojson: any, targetProjection = "EPSG:3857") {
 
 	return transformed;
 }
+
+export function getEpsgFromCrs(crs: string) {
+	const epsgMatch = crs.match(/EPSG[:/](\d+)/i);
+	return epsgMatch ? `EPSG:${epsgMatch[1]}` : crs;
+}
