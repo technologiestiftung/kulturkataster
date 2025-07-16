@@ -30,6 +30,7 @@
 		"@commitlint/cli": "^19.7.1",
 		"@commitlint/config-conventional": "^19.7.1",
 		"@eslint/eslintrc": "^3",
+		"@svgr/webpack": "^8.1.0",
 		"@tailwindcss/postcss": "^4.0.14",
 		"@types/node": "^22.0.0",
 		"@types/proj4": "^2.5.6",
