@@ -1,6 +1,5 @@
 "use client";
 
-// import config from "@/config/config";
 import mapConfig from "@/config/config.json";
 import services from "@/config/resources/services.json";
 import { useMapStore } from "@/lib/store/mapStore";
