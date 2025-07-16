@@ -4,7 +4,12 @@ import config from "@/config/config";
 import mapConfig from "@/config/config.json";
 import services from "@/config/resources/services.json";
 import { useMapStore } from "@/lib/store/mapStore";
-import { LayerElement, LayerElementBase, MapConfig } from "@/types";
+import {
+	LayerElement,
+	LayerElementBase,
+	LayerStatus,
+	MapConfig,
+} from "@/types";
 import { FC, useEffect } from "react";
 
 const MapInitializer: FC = ({}) => {
@@ -23,7 +28,7 @@ const MapInitializer: FC = ({}) => {
 		const enrichLayerElements = (elements: LayerElementBase[]) =>
 			(elements as LayerElement[]).map((layer) => ({
 				...layer,
-				status: "initial" as const,
+				status: "initial" as LayerStatus,
 				service: servicesMap.get(layer.id),
 			}));
 
