@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+"use client";
 import {
 	Card,
 	CardContent,
@@ -6,115 +8,92 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import { HoverCardData } from "@/types";
 import { FC, useEffect, useState } from "react";
 
 interface HoverCardProps {
-	data: HoverCardData;
+	features?: any;
 }
 
-const HoverCard: FC<HoverCardProps> = ({ data }) => {
-	const [windowSize, setWindowSize] = useState({
-		width: window.innerWidth,
-		height: window.innerHeight,
-	});
-	const [position, setPosition] = useState<{
-		top: number;
-		left: number;
-		transform: string;
-	}>({
-		top: data.y,
-		left: data.x,
-		transform: "translate(-50%, -110%)",
-	});
+// TODO: fix hovercard props naming
 
-	const CARD_WIDTH = 320;
-	const CARD_HEIGHT = 240;
-	const BUFFER = 20;
+const HoverCard: FC<HoverCardProps> = ({ features }) => {
+	const [featureProperties, setFeatureProperties] = useState<any>(null);
 
 	useEffect(() => {
-		const calculatePosition = () => {
-			const viewportWidth = windowSize.width;
-			const viewportHeight = windowSize.height;
+		if (!features) {
+			setFeatureProperties(null);
+			return;
+		}
 
-			const spaceAbove = data.y;
-			const spaceBelow = viewportHeight - data.y;
-			const spaceLeft = data.x;
-			const spaceRight = viewportWidth - data.x;
+		const properties = features.getProperties();
+		setFeatureProperties(properties.features[0].values_);
+	}, [features]);
 
-			let newTop = data.y;
-			let newLeft = data.x;
-			let newTransform = "";
-
-			if (spaceAbove > CARD_HEIGHT + BUFFER) {
-				newTransform += "translateY(-100%)";
-				newTop -= BUFFER;
-			} else if (spaceBelow > CARD_HEIGHT + BUFFER) {
-				newTop += BUFFER;
-			} else {
-				newTop = Math.max(
-					BUFFER,
-					Math.min(
-						viewportHeight - CARD_HEIGHT - BUFFER,
-						data.y - CARD_HEIGHT / 2,
-					),
-				);
-			}
-
-			if (
-				spaceRight > CARD_WIDTH / 2 + BUFFER &&
-				spaceLeft > CARD_WIDTH / 2 + BUFFER
-			) {
-				newTransform += " translateX(-50%)";
-			} else if (spaceRight < CARD_WIDTH + BUFFER) {
-				newLeft = Math.max(BUFFER, viewportWidth - CARD_WIDTH - BUFFER);
-			} else if (spaceLeft < CARD_WIDTH + BUFFER) {
-				newLeft = BUFFER + CARD_WIDTH / 2;
-			}
-
-			return {
-				top: newTop,
-				left: newLeft,
-				transform: newTransform,
-			};
-		};
-
-		setPosition(calculatePosition());
-	}, [windowSize, data]);
-
-	useEffect(() => {
-		const handleResize = () => {
-			setWindowSize({
-				width: window.innerWidth,
-				height: window.innerHeight,
-			});
-		};
-		window.addEventListener("resize", handleResize);
-
-		return () => {
-			window.removeEventListener("resize", handleResize);
-		};
-	}, []);
+	if (!features || !featureProperties) {
+		return null;
+	}
 
 	return (
-		<div
-			className="HoverCard-root absolute z-10 w-64"
-			style={{
-				top: position.top,
-				left: position.left,
-				transform: position.transform,
-			}}
-		>
+		<div className="HoverCard-root">
 			<Card>
 				<CardHeader>
-					<CardTitle>{data.venue_name}</CardTitle>
-					<CardDescription>Card Description</CardDescription>
+					<CardTitle>{featureProperties["Name der K"] || "Unknown"}</CardTitle>
+					<CardDescription>
+						{featureProperties["Unterkateg"] || "No category"}
+					</CardDescription>
 				</CardHeader>
 				<CardContent>
-					<p>Card Content</p>
+					<div className="space-y-2">
+						<p>
+							<strong>Type:</strong> {featureProperties.Kulturortk}
+						</p>
+						<p>
+							<strong>Address:</strong> {featureProperties.Addresse}
+						</p>
+						<p>
+							<strong>District:</strong> {featureProperties["Bezirk (Na)"]}
+						</p>
+						<p>
+							<strong>ZIP:</strong> {featureProperties.PLZ}
+						</p>
+						{featureProperties.Website && (
+							<p>
+								<strong>Website:</strong>
+								<a
+									href={featureProperties.Website}
+									target="_blank"
+									rel="noopener noreferrer"
+									className="text-blue-600 hover:underline ml-1"
+								>
+									{featureProperties.Website}
+								</a>
+							</p>
+						)}
+						{featureProperties.Telefonnum && (
+							<p>
+								<strong>Phone:</strong> {featureProperties.Telefonnum}
+							</p>
+						)}
+						{featureProperties["E-Mail-Adr"] && (
+							<p>
+								<strong>Email:</strong> {featureProperties["E-Mail-Adr"]}
+							</p>
+						)}
+					</div>
 				</CardContent>
-				<CardFooter>
-					<p>Card Footer</p>
+				<CardFooter className="flex-col items-start space-y-1">
+					{featureProperties.Dachorgani && (
+						<p>
+							<strong>Organization:</strong> {featureProperties.Dachorgani}
+						</p>
+					)}
+					<p>
+						<strong>Data Source:</strong> {featureProperties.Datenquell}
+					</p>
+					<p>
+						<strong>Status:</strong>{" "}
+						{featureProperties["Öffnungs-"] || "Unknown"}
+					</p>
 				</CardFooter>
 			</Card>
 		</div>
