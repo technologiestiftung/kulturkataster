@@ -55,6 +55,45 @@ bun dev
 
 This will start the development server, usually accessible at `http://localhost:9000` (check the terminal output to confirm).
 
+## Internationalization (i18n)
+
+This project leverages `i18next` for internationalization and localization support, enabling seamless language detection, switching, and modular translation management.
+
+### Features
+
+- **Language Detection and Switching**: Automatically detects and switches between supported languages.
+- **Modular Translation Files**: Translations are organized into namespaces for better maintainability.
+- **Collaborative Translation Management**: Translations are managed via the i18next web editor at [i18next Web Editor](https://translate.i18next.com/).
+
+### Namespaces
+
+Translations are grouped into namespaces, each representing a specific feature or area of the application. This allows for lazy-loading and better organization.
+
+- `common`: General UI labels (e.g., buttons, messages).
+
+Each namespace corresponds to files like:
+
+```
+/locales/en/common.json
+/locales/de/auth.json
+```
+
+### Supported Languages
+
+- **English (en)**
+- **German (de)**
+
+Languages can be switched at runtime, and new ones can be added by creating JSON files under `locales/[lang]/[namespace].json`.
+
+### Working with Translations
+
+1. Open the [i18next Web Editor](https://translate.i18next.com/).
+2. Select your project and namespace (e.g., `dashboard`).
+3. Add or edit translations for supported languages.
+4. Download the updated JSON files and place them in `locales/[lang]/[namespace].json`.
+
+The application will automatically pick up changes on load or via reload.
+
 ## Building for Production
 
 To build the project for production, run:
