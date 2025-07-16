@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import Feature from "ol/Feature";
 import { Geometry } from "ol/geom";
 import { Layer } from "ol/layer";
@@ -105,34 +104,6 @@ export interface LayerConfig {
 export interface PortalConfig {
 	map: PortalMapConfig;
 	portalFooter?: { urls: string[] };
-	tree?: {
-		addLayerButton: {
-			active: boolean;
-			searchBar: {
-				active: boolean;
-				searchInterfaceInstanceId: string;
-				searchCategory: string;
-			};
-		};
-		highlightedFeatures: { active: boolean };
-	};
-	mainMenu?: {
-		expanded: boolean;
-		title: {
-			text: string;
-			logo: string;
-			link: string;
-			toolTip: string;
-		};
-		searchBar: {
-			searchInterfaces: any[];
-		};
-		sections: any[];
-	};
-	secondaryMenu?: {
-		expanded: boolean;
-		sections: any[];
-	};
 }
 
 export interface MapConfig {
@@ -143,10 +114,6 @@ export interface MapConfig {
 export interface MapStoreState {
 	config: MapConfig | null;
 	setConfig: (config: MapConfig) => void;
-
-	// todo fix type
-	appConfig: any;
-	setAppConfig: (config: any) => void;
 
 	// Map
 	map: Map | null;
