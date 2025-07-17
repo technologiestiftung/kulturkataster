@@ -70,7 +70,7 @@
 		"baselayer": {
 			"elements": [
 				{
-					"id": "basemap",
+					"id": "bm_web_gry",
 					"visibility": true
 				}
 			]
