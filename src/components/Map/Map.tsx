@@ -29,7 +29,7 @@ const LazyOlMap = dynamic(() => import("./OlMap/OlMap"), {
 const Map: FC = () => {
 	return (
 		<div className="Map-root">
-			{false && <LayerTree />}
+			{true && <LayerTree />}
 			<GeolocationSearch />
 
 			<LazyOlMap>
