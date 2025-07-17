@@ -36,6 +36,9 @@
 		"tailwindcss-animate": "^1.0.7",
 		"zustand": "^5.0.3"
 	},
+	"optionalDependencies": {
+		"@tailwindcss/oxide-linux-x64-gnu": "^4.1.11"
+	},
 	"devDependencies": {
 		"@commitlint/cli": "^19.7.1",
 		"@commitlint/config-conventional": "^19.7.1",
