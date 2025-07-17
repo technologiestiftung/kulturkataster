@@ -6,6 +6,4 @@ module.exports = {
 		defaultLocale: i18nConfig.defaultLocale,
 		locales: i18nConfig.supportedLngs,
 	},
-	localePath: i18nConfig.localePath,
-	localeDetection: false,
 };
