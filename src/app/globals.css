@@ -70,7 +70,7 @@
 	--color-popover-foreground: var(--black);
 
 	--color-primary: var(--interaction-default);
-	--color-primary-foreground: var(--white);
+	--color-primary-foreground: var(--black);
 
 	--color-secondary: var(--neutral-5);
 	--color-secondary-foreground: var(--black);
@@ -93,10 +93,6 @@
 	--color-chart-3: var(--fachfarben-pink);
 	--color-chart-4: var(--fachfarben-blue);
 	--color-chart-5: var(--fachfarben-green);
-
-	--radius-lg: var(--radius);
-	--radius-md: calc(var(--radius) - 2px);
-	--radius-sm: calc(var(--radius) - 4px);
 }
 
 /*
