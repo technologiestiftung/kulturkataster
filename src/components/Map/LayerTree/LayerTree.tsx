@@ -83,7 +83,7 @@ const LayerTree: FC = () => {
 								{layer.config.service.name}
 							</Label>
 							{/* Additional info */}
-							<div className="text-xs text-gray-500">
+							<div className="text-xs">
 								{layer.config.service.name_lang}
 							</div>
 						</div>
@@ -159,7 +159,7 @@ const LayerTree: FC = () => {
 					{/* Stacked layers effect for multiple visible layers */}
 					{visibleCount > 1 && (
 						<>
-							<div className="absolute -top-1 left-1 w-16 h-16 bg-primary rounded border-primary"></div>
+							<div className="absolute -top-1 left-1 w-16 h-16 bg-primary/30 border-2 rounded border-primary"></div>
 						</>
 					)}
 
