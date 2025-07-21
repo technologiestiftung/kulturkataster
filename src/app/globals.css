@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "../styles/map.css";
 @plugin 'tailwindcss-animate';
 @custom-variant dark (&:is(.dark *));
 @custom-variant contrast (&:is([data-theme="contrast"] *));
@@ -160,7 +161,8 @@
 		line-height: 1.5rem;
 	}
 
-	@screen md {
+	/* Medium screens and up */
+	@media (min-width: 768px) {
 		.display {
 			font-size: 3.5rem;
 			line-height: 3.5rem;
@@ -185,15 +187,6 @@
 			font-size: 1rem;
 			line-height: 1.5rem;
 		}
-	}
-}
-
-@layer base {
-	* {
-		@apply border-border;
-	}
-	body {
-		@apply bg-background text-foreground;
 	}
 }
 
