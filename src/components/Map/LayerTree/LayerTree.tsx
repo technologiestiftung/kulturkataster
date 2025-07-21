@@ -156,15 +156,24 @@ const LayerTree: FC = () => {
 		return (
 			<div className="fixed bottom-4 left-4 z-50">
 				<div className="relative">
+					{/* Stacked layers effect for multiple visible layers */}
+					{visibleCount > 1 && (
+						<>
+							<div className="absolute -top-1 left-1 w-16 h-16 bg-primary rounded border-primary"></div>
+						</>
+					)}
+
 					<div
-						className={`w-16 h-16 p-0 bg-neutral-80 shadow-lg rounded flex items-center justify-center cursor-pointer overflow-hidden ${visibleCount > 0 ? "border-2 border-primary" : ""}`}
+						className={`relative w-16 h-16 p-0 bg-neutral-80 shadow-lg rounded flex items-center justify-center cursor-pointer ${visibleCount > 0 ? "border-2 border-primary" : ""}`}
 						onClick={() => setIsOpen(true)}
 					>
-						{visibleCount === 0 && (
-							<ContextMapIcon className="[&>path]:fill-white" />
-						)}
-						{visibleCount === 1 && renderThumbnail()}
-						{visibleCount > 1 && renderThumbnail()}
+						<div className="w-full h-full overflow-hidden rounded flex items-center justify-center">
+							{visibleCount === 0 && (
+								<ContextMapIcon className="[&>path]:fill-white" />
+							)}
+							{visibleCount === 1 && renderThumbnail()}
+							{visibleCount > 1 && renderThumbnail()}
+						</div>
 					</div>
 
 					{visibleCount > 1 && (
