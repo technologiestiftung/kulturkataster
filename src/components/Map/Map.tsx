@@ -6,7 +6,6 @@ import GeolocationSearch from "../GeolocationSearch/GeolocationSearch";
 import HoverCard from "../HoverCard/HoverCard";
 import {
 	ClickControl,
-	FullScreenControl,
 	GeolocationControl,
 	HoverControl,
 	MapControls,
@@ -40,17 +39,10 @@ const Map: FC = () => {
 				</Layers>
 
 				<MapControls>
-					<FullScreenControl />
 					<ZoomControl />
 					{false && <GeolocationControl />}
 					{true && (
-						<HoverControl
-							layerId="venues"
-							minZoomForHover={3}
-							// overlayOptions={
-							// 	{ autoPan: true }
-							// }
-						>
+						<HoverControl layerId="venues" minZoomForHover={3}>
 							<HoverCard />
 						</HoverControl>
 					)}
