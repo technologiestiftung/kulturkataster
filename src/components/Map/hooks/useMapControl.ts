@@ -17,6 +17,7 @@ export const useMapControl = (options: UseMapControlOptions = {}) => {
 	const map = useMapStore((state) => state.map);
 	const containerRef = useRef<HTMLDivElement | null>(null);
 	const rootRef = useRef<Root | null>(null);
+	const buttonCreatedRef = useRef(false);
 
 	useEffect(() => {
 		if (!map) return;
@@ -35,6 +36,7 @@ export const useMapControl = (options: UseMapControlOptions = {}) => {
 		}
 
 		containerRef.current = container;
+		buttonCreatedRef.current = false; // Reset button creation flag
 		map.getViewport().appendChild(container);
 
 		return () => {
@@ -46,6 +48,7 @@ export const useMapControl = (options: UseMapControlOptions = {}) => {
 				container.parentNode.removeChild(container);
 			}
 			containerRef.current = null;
+			buttonCreatedRef.current = false;
 		};
 	}, [map, options.className, options.position]);
 
@@ -54,7 +57,7 @@ export const useMapControl = (options: UseMapControlOptions = {}) => {
 		onClick: () => void,
 		title: string,
 	) => {
-		if (!containerRef.current) return;
+		if (!containerRef.current || buttonCreatedRef.current) return;
 
 		const button = document.createElement("button");
 		button.type = "button";
@@ -73,6 +76,7 @@ export const useMapControl = (options: UseMapControlOptions = {}) => {
 		}
 
 		containerRef.current.appendChild(button);
+		buttonCreatedRef.current = true; // Mark button as created
 		return button;
 	};
 
