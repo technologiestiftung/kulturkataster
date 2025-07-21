@@ -2,11 +2,12 @@
 
 import dynamic from "next/dynamic";
 import { FC } from "react";
+import ZoomOutIcon from "../../icons/minus.svg";
+import ZoomInIcon from "../../icons/plus.svg";
 import GeolocationSearch from "../GeolocationSearch/GeolocationSearch";
 import HoverCard from "../HoverCard/HoverCard";
 import {
 	ClickControl,
-	FullScreenControl,
 	GeolocationControl,
 	HoverControl,
 	MapControls,
@@ -40,8 +41,10 @@ const Map: FC = () => {
 				</Layers>
 
 				<MapControls>
-					<FullScreenControl />
-					<ZoomControl />
+					<ZoomControl
+						zoomInIcon={<ZoomInIcon />}
+						zoomOutIcon={<ZoomOutIcon />}
+					/>
 					{true && <GeolocationControl />}
 					{true && (
 						<HoverControl
