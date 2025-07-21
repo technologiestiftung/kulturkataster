@@ -22,7 +22,7 @@ import { FC, useMemo, useState } from "react";
 const LayerTree: FC = () => {
 	const layers = useMapStore((state) => state.layers);
 	const setLayerVisibility = useMapStore((state) => state.setLayerVisibility);
-	const [isOpen, setIsOpen] = useState(true);
+	const [isOpen, setIsOpen] = useState(false);
 
 	const subjectLayers = useMemo(
 		() => layers.filter((l) => l.layerType === "subject"),
