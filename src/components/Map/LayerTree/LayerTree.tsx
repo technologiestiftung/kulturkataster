@@ -157,13 +157,14 @@ const LayerTree: FC = () => {
 			<div className="fixed bottom-4 left-4 z-50">
 				<div className="relative">
 					<div
-						className="w-16 h-16 p-0 bg-neutral-80 shadow-lg rounded flex items-center justify-center cursor-pointer overflow-hidden"
+						className={`w-16 h-16 p-0 bg-neutral-80 shadow-lg rounded flex items-center justify-center cursor-pointer overflow-hidden ${visibleCount > 0 ? "border-2 border-primary" : ""}`}
 						onClick={() => setIsOpen(true)}
 					>
 						{visibleCount === 0 && (
 							<ContextMapIcon className="[&>path]:fill-white" />
 						)}
-						{visibleCount === 1 || (visibleCount > 1 && renderThumbnail())}
+						{visibleCount === 1 && renderThumbnail()}
+						{visibleCount > 1 && renderThumbnail()}
 					</div>
 
 					{visibleCount > 1 && (
