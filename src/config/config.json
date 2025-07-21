@@ -70,6 +70,10 @@
 		"baselayer": {
 			"elements": [
 				{
+					"id": "bm_web_gry:contrast",
+					"visibility": false
+				},
+				{
 					"id": "bm_web_gry",
 					"visibility": true
 				}
