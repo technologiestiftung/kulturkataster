@@ -83,9 +83,7 @@ const LayerTree: FC = () => {
 								{layer.config.service.name}
 							</Label>
 							{/* Additional info */}
-							<div className="text-xs">
-								{layer.config.service.name_lang}
-							</div>
+							<div className="text-xs">{layer.config.service.name_lang}</div>
 						</div>
 					</div>
 
