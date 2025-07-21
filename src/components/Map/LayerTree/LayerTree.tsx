@@ -8,6 +8,7 @@ import {
 	AccordionItem,
 	AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -27,6 +28,22 @@ const LayerTree: FC = () => {
 		() => layers.filter((l) => l.layerType === "subject"),
 		[layers],
 	);
+
+	const visibleSubjectLayers = useMemo(
+		() => subjectLayers.filter((l) => l.visibility),
+		[subjectLayers],
+	);
+
+	const topVisibleLayer = useMemo(() => {
+		return visibleSubjectLayers.reduce(
+			(topLayer, currentLayer) => {
+				return !topLayer || currentLayer.zIndex > topLayer.zIndex
+					? currentLayer
+					: topLayer;
+			},
+			null as ManagedLayer | null,
+		);
+	}, [visibleSubjectLayers]);
 
 	const LayerItem = ({ layer }: { layer: ManagedLayer }) => {
 		return (
@@ -115,12 +132,49 @@ const LayerTree: FC = () => {
 	};
 
 	if (!isOpen) {
+		const visibleCount = visibleSubjectLayers.length;
+
+		const renderThumbnail = () => {
+			if (topVisibleLayer?.config.service.preview.src) {
+				return (
+					<Image
+						src={topVisibleLayer.config.service.preview.src}
+						alt={topVisibleLayer.config.service.name}
+						width={64}
+						height={64}
+						className="w-full h-full object-cover"
+					/>
+				);
+			}
+			return (
+				<div className="w-full h-full bg-gradient-to-br from-purple-200 to-purple-300 flex items-center justify-center">
+					<div className="w-6 h-6 border-2 border-purple-400 rounded opacity-50"></div>
+				</div>
+			);
+		};
+
 		return (
-			<div
-				className="fixed w-16 h-16 p-0 bottom-4 left-4 z-50 bg-neutral-80 shadow-sm rounded flex items-center justify-center cursor-pointer"
-				onClick={() => setIsOpen(true)}
-			>
-				<ContextMapIcon className="[&>path]:fill-white" />
+			<div className="fixed bottom-4 left-4 z-50">
+				<div className="relative">
+					<div
+						className="w-16 h-16 p-0 bg-neutral-80 shadow-lg rounded flex items-center justify-center cursor-pointer overflow-hidden"
+						onClick={() => setIsOpen(true)}
+					>
+						{visibleCount === 0 && (
+							<ContextMapIcon className="[&>path]:fill-white" />
+						)}
+						{visibleCount === 1 || (visibleCount > 1 && renderThumbnail())}
+					</div>
+
+					{visibleCount > 1 && (
+						<Badge
+							variant="default"
+							className="absolute -top-2 -right-2 w-6 h-6 p-0 rounded-full border-2 border-white text-xs font-bold"
+						>
+							{visibleCount}
+						</Badge>
+					)}
+				</div>
 			</div>
 		);
 	}

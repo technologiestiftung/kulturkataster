@@ -42,7 +42,7 @@ const Map: FC = () => {
 				<MapControls>
 					<FullScreenControl />
 					<ZoomControl />
-					{true && <GeolocationControl />}
+					{false && <GeolocationControl />}
 					{true && (
 						<HoverControl
 							layerId="venues"
