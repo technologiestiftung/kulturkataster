@@ -54,7 +54,7 @@ const LayerTree: FC = () => {
 					<div className="flex items-center space-x-3 flex-1">
 						{/* Layer thumbnail/icon */}
 						<div className="w-[80px] h-[80px] rounded flex-shrink-0 overflow-hidden relative">
-							{layer.config.service.preview.src ? (
+							{layer.config.service.preview?.src ? (
 								<Image
 									src={layer.config.service.preview.src}
 									alt={layer.config.service.name}
@@ -133,7 +133,7 @@ const LayerTree: FC = () => {
 		const visibleCount = visibleSubjectLayers.length;
 
 		const renderThumbnail = () => {
-			if (topVisibleLayer?.config.service.preview.src) {
+			if (topVisibleLayer?.config.service.preview?.src) {
 				return (
 					<Image
 						src={topVisibleLayer.config.service.preview.src}
