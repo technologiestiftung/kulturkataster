@@ -1,29 +1,67 @@
-/* Simple map zoom controls */
-.map .ol-zoom {
+.map .ol-control {
+	background-color: transparent;
 	position: absolute;
 	bottom: 1rem;
 	right: 1rem;
-	top: unset;
-	left: unset;
-	display: flex;
-	flex-direction: column;
-	gap: 0.25rem;
 }
 
-.map .ol-zoom button {
-	width: 2.5rem;
-	height: 2.5rem;
-	background: rgba(255, 255, 255, 0.9);
-	border: 1px solid #e2dfdb;
-	border-radius: 0.5rem;
+.map .ol-zoom button,
+.map .ol-control button {
+	width: 48px;
+	height: 48px;
+	background-color: white;
+	border: 0;
+	border-radius: 50%;
 	margin: 0;
 	padding: 0;
-	font-size: 0;
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	cursor: pointer;
+	font-size: 0; /* Hide any text */
+	transition: all 0.2s ease;
+	box-shadow: var(--shadow-200);
 }
 
-.map .ol-zoom button:hover {
-	background: white;
+.map .ol-zoom button:hover,
+.map .ol-control button:hover {
+	background-color: white;
+	box-shadow: var(--shadow-300);
+	transform: translateY(-1px);
+}
+
+.map .ol-zoom button:active,
+.map .ol-control button:active {
+	transform: translateY(0);
+	box-shadow: var(--shadow-200);
+}
+
+.map .ol-zoom button svg,
+.map .ol-control button svg {
+	width: 24px;
+	height: 24px;
+	color: var(--black);
+	flex-shrink: 0;
+}
+
+/* Specific positioning for different controls - these need higher specificity */
+.map .ol-control.zoom-in-control {
+	bottom: 4.5rem;
+}
+
+.map .ol-control.zoom-out-control {
+	bottom: 1rem;
+}
+
+.map .ol-control.geolocation-control {
+	bottom: 8.5rem;
+}
+
+/* Ensure icons are properly centered */
+.map .ol-control button > div {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 100%;
 }
