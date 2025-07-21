@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useMapStore } from "@/lib/store/mapStore";
@@ -13,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { ManagedLayer } from "@/types";
 import { X } from "lucide-react";
 import Image from "next/image";
 import { FC, useMemo, useState } from "react";
@@ -27,11 +27,11 @@ const LayerTree: FC = () => {
 		[layers],
 	);
 
-	console.log("[LayerTree] subjectLayers::", subjectLayers);
-
-	const LayerItem = ({ layer }: { layer: any }) => {
+	const LayerItem = ({ layer }: { layer: ManagedLayer }) => {
 		return (
-			<div className="bg-white rounded-sm space-y-2">
+			<div
+				className={`bg-white rounded-sm space-y-2 ${layer.visibility ? "shadow-sm" : ""}`}
+			>
 				<div className="flex items-center justify-between p-3 m-0">
 					<div className="flex items-center space-x-3 flex-1">
 						{/* Layer thumbnail/icon */}
@@ -60,7 +60,7 @@ const LayerTree: FC = () => {
 						<div className="flex flex-col">
 							<Label
 								htmlFor={layer.id}
-								className="text-sm font-medium cursor-pointer flex"
+								className={`text-sm font-medium cursor-pointer flex ${layer.visibility ? "text-primary" : ""}`}
 							>
 								{layer.config.service.name}
 							</Label>
@@ -87,23 +87,28 @@ const LayerTree: FC = () => {
 				</div>
 
 				{/* Legend toggle using Accordion */}
-				{layer.config.service.legend && (
-					<Accordion type="single" collapsible className="bg-neutral-20">
-						<AccordionItem value="legend" className="border-none">
-							<AccordionTrigger className="text-xs px-3 py-2 hover:no-underline">
-								Legende ansehen
-							</AccordionTrigger>
-							<AccordionContent className="px-3 pb-3">
-								<Image
-									src={layer.config.service.legend}
-									alt="legend"
-									width={300}
-									height={200}
-								/>
-							</AccordionContent>
-						</AccordionItem>
-					</Accordion>
-				)}
+				{layer.config.service.legend &&
+					typeof layer.config.service.legend === "string" && (
+						<Accordion
+							type="single"
+							collapsible
+							className="bg-neutral-20 rounded-b-sm"
+						>
+							<AccordionItem value="legend" className="border-none">
+								<AccordionTrigger className="px-3 py-2 hover:no-underline flex justify-end items-center gap-2 [&>svg]:text-black">
+									Legende ansehen
+								</AccordionTrigger>
+								<AccordionContent className="px-3 pb-3 rounded-b-sm">
+									<Image
+										src={layer.config.service.legend}
+										alt="legend"
+										width={300}
+										height={200}
+									/>
+								</AccordionContent>
+							</AccordionItem>
+						</Accordion>
+					)}
 			</div>
 		);
 	};
