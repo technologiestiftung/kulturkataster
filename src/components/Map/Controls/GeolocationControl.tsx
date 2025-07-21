@@ -68,7 +68,7 @@ const GeolocationControl: FC<GeolocationControlProps> = ({
 			title="Go to my location"
 			onClick={handleGeolocate}
 			className="geolocation-control"
-			position={{ bottom: "8.5rem" }}
+			position={{ bottom: "8rem" }}
 		/>
 	);
 };
