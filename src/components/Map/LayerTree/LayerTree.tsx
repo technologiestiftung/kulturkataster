@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import ContextMapIcon from "@/icons/fachkarten.svg";
 import { ManagedLayer } from "@/types";
 import { X } from "lucide-react";
 import Image from "next/image";
@@ -115,14 +116,12 @@ const LayerTree: FC = () => {
 
 	if (!isOpen) {
 		return (
-			<Button
-				variant="outline"
-				size="sm"
-				className="fixed bottom-4 left-4 z-50 bg-white shadow-lg"
+			<div
+				className="fixed w-16 h-16 p-0 bottom-4 left-4 z-50 bg-neutral-80 shadow-sm rounded flex items-center justify-center cursor-pointer"
 				onClick={() => setIsOpen(true)}
 			>
-				Fachkarten
-			</Button>
+				<ContextMapIcon className="[&>path]:fill-white" />
+			</div>
 		);
 	}
 
