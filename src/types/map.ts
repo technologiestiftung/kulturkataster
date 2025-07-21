@@ -86,7 +86,7 @@ export interface LayerService {
 	vtStyles: VectorTileStyle[];
 	preview: {
 		src: string;
-	}
+	};
 }
 
 export interface VectorTileStyle {
