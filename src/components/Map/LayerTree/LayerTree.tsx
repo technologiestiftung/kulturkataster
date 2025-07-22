@@ -120,6 +120,7 @@ const LayerTree: FC = () => {
 										alt="legend"
 										width={300}
 										height={200}
+										style={{ width: "auto", height: "auto", maxWidth: "100%" }}
 									/>
 								</AccordionContent>
 							</AccordionItem>
