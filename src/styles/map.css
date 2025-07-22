@@ -1,69 +1,45 @@
-.map .ol-control {
-	background-color: transparent;
+.map .map-navigation-controls {
 	position: absolute;
-	bottom: 1rem;
-	right: 1rem;
+	bottom: 16px;
+	right: 16px;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	z-index: 1000;
 }
 
-.map .ol-zoom button,
-.map .ol-control button {
+.nav-control-wrapper {
+	position: relative;
+}
+
+.map-navigation-controls .zoom-control,
+.map-navigation-controls .geolocation-control {
+	position: static !important;
+}
+
+.map-navigation-controls .zoom-control {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+/* buttons */
+.map .zoom-in-btn,
+.map .zoom-out-btn,
+.map .geolocation-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	width: 48px;
 	height: 48px;
-	background-color: white;
-	border: 0;
+	background: white;
 	border-radius: 50%;
-	margin: 0;
-	padding: 0;
-	display: flex;
-	align-items: center;
-	justify-content: center;
 	cursor: pointer;
-	font-size: 0; /* Hide any text */
-	transition: all 0.2s ease;
-	box-shadow: var(--shadow-200);
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.map .ol-zoom button:hover,
-.map .ol-control button:hover {
-	background-color: white;
-	box-shadow: var(--shadow-300);
-}
-
-.map .ol-zoom button:active,
-.map .ol-control button:active {
-	box-shadow: var(--shadow-200);
-}
-
-.map .ol-zoom button svg,
-.map .ol-control button svg {
-	width: 24px;
-	height: 24px;
-	color: var(--black);
-	flex-shrink: 0;
-}
-
-/* Specific positioning for different controls - these need higher specificity */
-.map .ol-control.zoom-in-control {
-	bottom: 4.5rem;
-}
-
-.map .ol-control.zoom-out-control {
-	bottom: 1rem;
-}
-
-.map .ol-control.geolocation-control {
-	bottom: 8rem;
-}
-
-.map .ol-control button > div {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	width: 100%;
-	height: 100%;
-}
-
-.map .ol-control button:hover,
-.map .ol-control button:focus {
-	outline: none;
+.map .zoom-in-btn:hover,
+.map .zoom-out-btn:hover,
+.map .geolocation-btn:hover {
+	background: #f5f5f5;
 }
