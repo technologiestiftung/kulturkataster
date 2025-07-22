@@ -2,7 +2,6 @@
 
 import dynamic from "next/dynamic";
 import { FC } from "react";
-import GeolocationSearch from "../GeolocationSearch/GeolocationSearch";
 import HoverCard from "../HoverCard/HoverCard";
 import {
 	ClickControl,
