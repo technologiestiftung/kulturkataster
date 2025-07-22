@@ -150,7 +150,7 @@ const GeolocationSearch: FC<GeolocationSearchProps> = ({
 
 	return (
 		<div
-			className="GeolocationSearch-root absolute top-4 left-10 z-10 w-64 sm:w-80 md:w-96"
+			className="GeolocationSearch-root"
 			role="search"
 			aria-label="Adressuche auf der Karte"
 			onBlur={handleBlur}

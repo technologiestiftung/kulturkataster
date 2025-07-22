@@ -92,7 +92,7 @@ const OlMap: FC<OlMapProps> = ({ children }) => {
 	}, [config, destroyMap, setMap]);
 
 	return (
-		<div ref={mapId} className="w-screen h-screen bg-slate-300">
+		<div ref={mapId} className="w-full h-screen bg-slate-300">
 			{children}
 		</div>
 	);
