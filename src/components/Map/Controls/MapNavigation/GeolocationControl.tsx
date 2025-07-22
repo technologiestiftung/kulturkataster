@@ -63,8 +63,8 @@ const GeolocationControl: FC<GeolocationControlProps> = ({
 
 	return (
 		<Button
-			variant="outline"
-			size="map-icon"
+			variant="map-icon"
+			size="icon-only"
 			title="Go to my location"
 			onClick={handleGeolocate}
 		>
