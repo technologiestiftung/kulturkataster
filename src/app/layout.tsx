@@ -2,6 +2,8 @@ import MapInitializer from "@/components/Map/MapInitializer/MapInitializer";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { SideBar } from "@/components/SideBar/SideBar";
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -28,8 +30,15 @@ export default function RootLayout({
 			<body
 				className={`${geistSans.variable} ${geistMono.variable} antialiased`}
 			>
-				<MapInitializer />
-				{children}
+				<SidebarProvider>
+					<SideBar />
+					<SidebarInset className="flex-1 w-0">
+						<div className="flex flex-1 flex-col gap-4 h-screen w-full">
+							<MapInitializer />
+							{children}
+						</div>
+					</SidebarInset>
+				</SidebarProvider>
 			</body>
 		</html>
 	);
