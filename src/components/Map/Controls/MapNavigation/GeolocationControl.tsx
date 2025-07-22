@@ -3,8 +3,7 @@
 import { useMapStore } from "@/lib/store/mapStore";
 import { transform } from "ol/proj";
 import { FC, ReactNode, useCallback } from "react";
-import LocationIcon from "../../../icons/mark.svg"; // Assuming you have this
-import BaseControl from "./BaseControl";
+import LocationIcon from "../../../../icons/mark.svg";
 
 interface GeolocationControlProps {
 	geolocateIcon?: ReactNode;
@@ -63,13 +62,16 @@ const GeolocationControl: FC<GeolocationControlProps> = ({
 	if (!map) return null;
 
 	return (
-		<BaseControl
-			icon={geolocateIcon}
-			title="Go to my location"
-			onClick={handleGeolocate}
-			className="geolocation-control"
-			position={{ bottom: "8rem" }}
-		/>
+		<div className="geolocation-control">
+			<button
+				type="button"
+				className="geolocation-btn"
+				title="Go to my location"
+				onClick={handleGeolocate}
+			>
+				{geolocateIcon}
+			</button>
+		</div>
 	);
 };
 

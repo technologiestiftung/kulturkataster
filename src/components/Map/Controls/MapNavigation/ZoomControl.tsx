@@ -2,9 +2,8 @@
 
 import { useMapStore } from "@/lib/store/mapStore";
 import { FC, ReactNode, useCallback, useEffect } from "react";
-import MinusIcon from "../../../icons/minus.svg";
-import PlusIcon from "../../../icons/plus.svg";
-import BaseControl from "./BaseControl";
+import MinusIcon from "../../../../icons/minus.svg";
+import PlusIcon from "../../../../icons/plus.svg";
 
 interface ZoomControlProps {
 	zoomInIcon?: ReactNode;
@@ -40,7 +39,6 @@ const ZoomControl: FC<ZoomControlProps> = ({
 		if (!map) return;
 
 		const existingControls = map.getControls().getArray();
-		console.log("[ZoomControl] existingControls::", existingControls);
 		existingControls.forEach((control) => {
 			if (control.constructor.name === "Zoom") {
 				map.removeControl(control);
@@ -51,20 +49,24 @@ const ZoomControl: FC<ZoomControlProps> = ({
 	if (!map) return null;
 
 	return (
-		<>
-			<BaseControl
-				icon={zoomInIcon}
+		<div className="zoom-control">
+			<button
+				type="button"
+				className="zoom-in-btn"
 				title="Zoom in"
 				onClick={handleZoomIn}
-				className="zoom-in-control"
-			/>
-			<BaseControl
-				icon={zoomOutIcon}
+			>
+				{zoomInIcon}
+			</button>
+			<button
+				type="button"
+				className="zoom-out-btn"
 				title="Zoom out"
 				onClick={handleZoomOut}
-				className="zoom-out-control"
-			/>
-		</>
+			>
+				{zoomOutIcon}
+			</button>
+		</div>
 	);
 };
 

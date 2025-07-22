@@ -1,17 +1,17 @@
-import BaseControl from "./BaseControl";
 import ClickControl from "./ClickControl";
 import FullScreenControl from "./FullScreenControl";
-import GeolocationControl from "./GeolocationControl";
 import HoverControl from "./HoverControl";
 import MapControls from "./MapControls";
-import ZoomControl from "./ZoomControl";
+import GeolocationControl from "./MapNavigation/GeolocationControl";
+import ZoomControl from "./MapNavigation/ZoomControl";
+import MapNavigationControls from "./MapNavigation/MapNavigationControls";
 
 export {
-	BaseControl,
 	ClickControl,
 	FullScreenControl,
 	GeolocationControl,
 	HoverControl,
 	MapControls,
 	ZoomControl,
+	MapNavigationControls,
 };
