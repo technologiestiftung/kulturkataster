@@ -1,9 +1,10 @@
 "use client";
 
-import venues from "@/config/resources/venues.json";
 import { useMapStore } from "@/lib/store/mapStore";
+import { getInstitutionsGeoJSON } from "@/lib/supabase/api";
 import { transformGeoJSON } from "@/lib/utils/mapUtils";
 import { MapStoreState } from "@/types/map";
+import type { FeatureCollection, GeoJsonProperties, Geometry } from "geojson";
 import { FeatureLike } from "ol/Feature";
 import GeoJSON from "ol/format/GeoJSON";
 import VectorLayer from "ol/layer/Vector";
@@ -11,7 +12,7 @@ import { Vector as VectorSource } from "ol/source";
 import Cluster from "ol/source/Cluster";
 import { Fill, Icon, Stroke, Style, Text } from "ol/style";
 import CircleStyle from "ol/style/Circle";
-import { FC, useCallback, useEffect } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 
 interface VenueLayerProps {
 	zIndex?: number;
@@ -28,6 +29,37 @@ const VenueLayer: FC<VenueLayerProps> = ({
 }) => {
 	const map = useMapStore((state: MapStoreState) => state.map);
 	const config = useMapStore((state) => state.config);
+	const [venuesData, setVenuesData] = useState<FeatureCollection<
+		Geometry,
+		GeoJsonProperties
+	> | null>(null);
+
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState<string | null>(null);
+
+	// Fetch venues data on component mount
+	useEffect(() => {
+		const fetchVenues = async () => {
+			try {
+				setLoading(true);
+				setError(null);
+				const data = await getInstitutionsGeoJSON();
+
+				console.log("[VenueLayer] data::", data);
+
+				setVenuesData(data);
+			} catch (err) {
+				console.error("Failed to fetch venues data:", err);
+				setError(
+					err instanceof Error ? err.message : "Failed to fetch venues data",
+				);
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		fetchVenues();
+	}, []);
 
 	const styleFunction = function (feature: FeatureLike) {
 		const features = feature.get("features");
@@ -112,13 +144,15 @@ const VenueLayer: FC<VenueLayerProps> = ({
 	);
 
 	useEffect(() => {
-		if (!map || zIndex === null || !config) return;
+		// Don't create the layer until we have data and no errors
+		if (!map || zIndex === null || !config || loading || error || !venuesData)
+			return;
 
 		const epsg = config.portalConfig.map.mapView.epsg;
 		const currentZoom = map.getView().getZoom() || 6;
 
 		const vectorSource = new VectorSource({
-			features: new GeoJSON().readFeatures(transformGeoJSON(venues, epsg)),
+			features: new GeoJSON().readFeatures(transformGeoJSON(venuesData, epsg)),
 		});
 
 		const clusterSource = new Cluster({
@@ -156,7 +190,16 @@ const VenueLayer: FC<VenueLayerProps> = ({
 				map.removeLayer(vectorLayer);
 			}
 		};
-	}, [map, zIndex, config, getClusterDistance]);
+	}, [map, zIndex, config, getClusterDistance, venuesData, loading, error]);
+
+	// Optional: You could add loading/error UI here if needed
+	if (loading) {
+		console.log("Loading venues data...");
+	}
+
+	if (error) {
+		console.error("Venues layer error:", error);
+	}
 
 	return null;
 };
