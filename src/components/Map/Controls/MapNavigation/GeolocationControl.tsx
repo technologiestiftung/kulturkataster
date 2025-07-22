@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { useMapStore } from "@/lib/store/mapStore";
 import { transform } from "ol/proj";
 import { FC, ReactNode, useCallback } from "react";
@@ -46,7 +47,6 @@ const GeolocationControl: FC<GeolocationControlProps> = ({
 				},
 				(error) => {
 					console.error("Geolocation error:", error);
-					// Could add user-facing error handling here
 				},
 				{
 					enableHighAccuracy: true,
@@ -62,16 +62,14 @@ const GeolocationControl: FC<GeolocationControlProps> = ({
 	if (!map) return null;
 
 	return (
-		<div className="geolocation-control">
-			<button
-				type="button"
-				className="geolocation-btn"
-				title="Go to my location"
-				onClick={handleGeolocate}
-			>
-				{geolocateIcon}
-			</button>
-		</div>
+		<Button
+			variant="outline"
+			size="map-icon"
+			title="Go to my location"
+			onClick={handleGeolocate}
+		>
+			{geolocateIcon}
+		</Button>
 	);
 };
 
