@@ -10,7 +10,10 @@ interface InformationModalProps {
 	onOpenChange: (open: boolean) => void;
 }
 
-export function InformationModal({ open, onOpenChange }: InformationModalProps) {
+export function InformationModal({
+	open,
+	onOpenChange,
+}: InformationModalProps) {
 	const { t } = useTranslation(["content", "common"]);
 
 	const content = (
