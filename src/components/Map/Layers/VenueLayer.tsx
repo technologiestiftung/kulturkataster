@@ -13,6 +13,7 @@ import Cluster from "ol/source/Cluster";
 import { Fill, Icon, Stroke, Style, Text } from "ol/style";
 import CircleStyle from "ol/style/Circle";
 import { FC, useCallback, useEffect, useState } from "react";
+import { createIconSvg } from "../MapIcons/createSVGIcon";
 
 interface VenueLayerProps {
 	zIndex?: number;
@@ -45,8 +46,6 @@ const VenueLayer: FC<VenueLayerProps> = ({
 				setError(null);
 				const data = await getInstitutionsGeoJSON();
 
-				console.log("[VenueLayer] data::", data);
-
 				setVenuesData(data);
 			} catch (err) {
 				console.error("Failed to fetch venues data:", err);
@@ -68,10 +67,25 @@ const VenueLayer: FC<VenueLayerProps> = ({
 		if (size === 1) {
 			const scale = 1.2;
 
+			const starIcon = createIconSvg("star", "#FF6B6B", "white");
+			const homeIcon = createIconSvg("home", "#4ECDC4", "#333333");
+
+			console.log("[VenueLayer] starIcon::", starIcon);
+
+			console.log(
+				"[VenueLayer] features[0]::",
+				features[0].values_.categories[0],
+			);
+
+			const iconSVG =
+				features[0].values_.categories[0].category_name === "Buchhandlungen"
+					? starIcon
+					: homeIcon;
+
 			return new Style({
 				image: new Icon({
 					anchor: [0.5, 1],
-					src: "/icons/test.svg",
+					src: iconSVG,
 					offset: [0, 0],
 					opacity: 1,
 					scale,
