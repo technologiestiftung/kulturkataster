@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { useMapStore } from "@/lib/store/mapStore";
 import { FC, ReactNode, useCallback, useEffect } from "react";
 import MinusIcon from "../../../../icons/minus.svg";
@@ -49,23 +50,23 @@ const ZoomControl: FC<ZoomControlProps> = ({
 	if (!map) return null;
 
 	return (
-		<div className="zoom-control">
-			<button
-				type="button"
-				className="zoom-in-btn"
+		<div className="flex flex-col gap-2">
+			<Button
+				variant="outline"
+				size="map-icon"
 				title="Zoom in"
 				onClick={handleZoomIn}
 			>
 				{zoomInIcon}
-			</button>
-			<button
-				type="button"
-				className="zoom-out-btn"
+			</Button>
+			<Button
+				variant="outline"
+				size="map-icon"
 				title="Zoom out"
 				onClick={handleZoomOut}
 			>
 				{zoomOutIcon}
-			</button>
+			</Button>
 		</div>
 	);
 };
