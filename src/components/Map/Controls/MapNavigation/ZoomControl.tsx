@@ -52,16 +52,16 @@ const ZoomControl: FC<ZoomControlProps> = ({
 	return (
 		<div className="hidden sm:flex flex-col gap-2">
 			<Button
-				variant="outline"
-				size="map-icon"
+				variant="map-icon"
+				size="icon-only"
 				title="Zoom in"
 				onClick={handleZoomIn}
 			>
 				{zoomInIcon}
 			</Button>
 			<Button
-				variant="outline"
-				size="map-icon"
+				variant="map-icon"
+				size="icon-only"
 				title="Zoom out"
 				onClick={handleZoomOut}
 			>
