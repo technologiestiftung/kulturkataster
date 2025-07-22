@@ -53,7 +53,7 @@ const LayerTree: FC = () => {
 				<div className="flex items-center justify-between p-3 m-0">
 					<div className="flex items-center space-x-3 flex-1">
 						{/* Layer thumbnail/icon */}
-						<div className="w-[80px] h-[80px] rounded flex-shrink-0 overflow-hidden relative">
+						<div className="w-[80px] h-[80px] rounded overflow-hidden flex-shrink-0 relative">
 							{layer.config.service.preview?.src ? (
 								<Image
 									src={layer.config.service.preview.src}
@@ -70,7 +70,7 @@ const LayerTree: FC = () => {
 
 							{/* Pink overlay when layer is visible */}
 							{layer.visibility && (
-								<div className="absolute inset-0 bg-primary/30 flex items-center justify-center border-2 border-primary"></div>
+								<div className="absolute inset-0 bg-primary/30 flex items-center justify-center border-2 border-primary rounded"></div>
 							)}
 						</div>
 
@@ -157,15 +157,15 @@ const LayerTree: FC = () => {
 					{/* Stacked layers effect for multiple visible layers */}
 					{visibleCount > 1 && (
 						<>
-							<div className="absolute -top-1 left-1 w-16 h-16 bg-primary/30 border-2 rounded border-primary"></div>
+							<div className="absolute -top-1 left-1 w-16 h-16 bg-primary/70 rounded border-primary"></div>
 						</>
 					)}
 
 					<div
-						className={`relative w-16 h-16 p-0 bg-neutral-80 shadow-lg rounded flex items-center justify-center cursor-pointer ${visibleCount > 0 ? "border-2 border-primary" : ""}`}
+						className={`relative w-16 h-16 p-0 bg-neutral-80 shadow-lg rounded overflow-hidden flex items-center justify-center cursor-pointer ${visibleCount > 0 ? "border-2 border-primary" : ""}`}
 						onClick={() => setIsOpen(true)}
 					>
-						<div className="w-full h-full overflow-hidden rounded flex items-center justify-center">
+						<div className="w-full h-full flex items-center justify-center">
 							{visibleCount === 0 && (
 								<ContextMapIcon className="[&>path]:fill-white" />
 							)}
