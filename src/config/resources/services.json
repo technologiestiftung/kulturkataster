@@ -19,7 +19,7 @@
 			}
 		],
 		"preview": {
-			"src": "/maps/preview-img/default.png"
+			"src": "/resources/preview-img/default.png"
 		}
 	},
 	{
@@ -42,7 +42,7 @@
 			}
 		],
 		"preview": {
-			"src": "/maps/preview-img/default.png"
+			"src": "/resources/preview-img/default.png"
 		}
 	},
 	{
@@ -65,7 +65,7 @@
 			}
 		],
 		"preview": {
-			"src": "/maps/preview-img/default.png"
+			"src": "/resources/preview-img/default.png"
 		}
 	},
 	{
@@ -92,7 +92,7 @@
 			}
 		],
 		"preview": {
-			"src": "/maps/preview-img/default.png"
+			"src": "/resources/preview-img/default.png"
 		}
 	},
 	{
@@ -117,7 +117,7 @@
 			}
 		],
 		"preview": {
-			"src": "/maps/preview-img/default.png"
+			"src": "/resources/preview-img/default.png"
 		}
 	},
 	{
@@ -129,7 +129,7 @@
 		"typ": "WMS",
 		"gfiAttributes": "showAll",
 		"layers": "a_bp_iv",
-		"legend": true,
+		"legend": "/resources/legends/Legende-Bebauung-Verfahren.svg",
 		"datasets": [
 			{
 				"md_name": "Bebauungsplanverfahren in Berlin",
@@ -147,7 +147,7 @@
 		"infoFormat": "application/json",
 		"layerAttribution": "Für die Nutzung der Daten ist die Datenlizenz Deutschland - Zero - Version 2.0 anzuwenden. Die Lizenz ist über https://www.govdata.de/dl-de/zero-2-0 abrufbar.",
 		"preview": {
-			"src": "/maps/preview-img/default.png"
+			"src": "/resources/preview-img/preview-img-bebauung-verfahren.png"
 		}
 	},
 	{
@@ -159,7 +159,7 @@
 		"typ": "WMS",
 		"gfiAttributes": "showAll",
 		"layers": "b_bp_fs",
-		"legend": "https://gdi.berlin.de/services/wms/bplan?service=WMS&version=1.3.0&request=GetLegendGraphic&format=image%2Fpng&width=499&height=50&layer=b_bp_fs",
+		"legend": "/resources/legends/Legende-Bebauung-festgesetzt.svg",
 		"datasets": [
 			{
 				"md_name": "Bebauungsplanverfahren in Berlin",
@@ -177,7 +177,7 @@
 		"infoFormat": "application/json",
 		"layerAttribution": "Für die Nutzung der Daten ist die Datenlizenz Deutschland - Zero - Version 2.0 anzuwenden. Die Lizenz ist über https://www.govdata.de/dl-de/zero-2-0 abrufbar.",
 		"preview": {
-			"src": "/maps/preview-img/default.png"
+			"src": "/resources/preview-img/preview-img-bebauung-festgesetzt.png"
 		}
 	},
 	{
@@ -189,7 +189,7 @@
 		"typ": "WMS",
 		"gfiAttributes": "showAll",
 		"layers": "c_bp_ak",
-		"legend": "https://gdi.berlin.de/services/wms/bplan?service=WMS&version=1.3.0&request=GetLegendGraphic&format=image%2Fpng&width=500&height=51&layer=c_bp_ak",
+		"legend": "/resources/legends/Legende-Bebauung-ausser-Kraft.svg",
 		"datasets": [
 			{
 				"md_name": "Bebauungsplanverfahren in Berlin",
@@ -207,7 +207,7 @@
 		"infoFormat": "application/json",
 		"layerAttribution": "Für die Nutzung der Daten ist die Datenlizenz Deutschland - Zero - Version 2.0 anzuwenden. Die Lizenz ist über https://www.govdata.de/dl-de/zero-2-0 abrufbar.",
 		"preview": {
-			"src": "/maps/preview-img/default.png"
+			"src": "/resources/preview-img/preview-img-bebauung-ausser-kraft.png"
 		}
 	},
 	{
@@ -228,7 +228,7 @@
 		],
 		"gfiAttributes": "showAll",
 		"preview": {
-			"src": "/maps/preview-img/default.png"
+			"src": "/resources/preview-img/default.png"
 		}
 	},
 	{
@@ -249,7 +249,7 @@
 		],
 		"gfiAttributes": "showAll",
 		"preview": {
-			"src": "/maps/preview-img/default.png"
+			"src": "/resources/preview-img/default.png"
 		}
 	},
 	{
@@ -270,7 +270,7 @@
 		],
 		"gfiAttributes": "showAll",
 		"preview": {
-			"src": "/maps/preview-img/default.png"
+			"src": "/resources/preview-img/default.png"
 		}
 	},
 	{
@@ -291,7 +291,7 @@
 		],
 		"gfiAttributes": "showAll",
 		"preview": {
-			"src": "/maps/preview-img/default.png"
+			"src": "/resources/preview-img/default.png"
 		}
 	},
 	{
@@ -303,7 +303,7 @@
 		"typ": "WMS",
 		"gfiAttributes": "showAll",
 		"layers": "bezirksgrenzen",
-		"legend": "https://gdi.berlin.de/services/wms/alkis_bezirke?service=WMS&version=1.3.0&request=GetLegendGraphic&format=image%2Fpng&width=256&height=108&layer=bezirksgrenzen",
+		"legend": "/resources/legends/Legende-Bezirksgrenze.svg",
 		"datasets": [
 			{
 				"md_name": "ALKIS Berlin Bezirke",
@@ -321,7 +321,7 @@
 		"infoFormat": "application/json",
 		"layerAttribution": "Für die Nutzung der Daten ist die Datenlizenz Deutschland - Zero - Version 2.0 anzuwenden. Die Lizenz ist über https://www.govdata.de/dl-de/zero-2-0 abrufbar.",
 		"preview": {
-			"src": "/maps/preview-img/default.png"
+			"src": "/resources/preview-img/preview-img-bezirksgrenzen.png"
 		}
 	},
 	{
@@ -333,7 +333,7 @@
 		"typ": "WMS",
 		"gfiAttributes": "showAll",
 		"layers": "ortsteile",
-		"legend": "https://gdi.berlin.de/services/wms/alkis_ortsteile?service=WMS&version=1.3.0&request=GetLegendGraphic&format=image%2Fpng&width=298&height=155&layer=ortsteile",
+		"legend": "/resources/legends/Legende-Ortsteile.svg",
 		"datasets": [
 			{
 				"md_name": "ALKIS Berlin Ortsteile",
@@ -351,7 +351,7 @@
 		"infoFormat": "application/json",
 		"layerAttribution": "Für die Nutzung der Daten ist die Datenlizenz Deutschland - Zero - Version 2.0 anzuwenden. Die Lizenz ist über https://www.govdata.de/dl-de/zero-2-0 abrufbar.",
 		"preview": {
-			"src": "/maps/preview-img/default.png"
+			"src": "/resources/preview-img/preview-img-ortsteile.png"
 		}
 	},
 	{
@@ -372,7 +372,7 @@
 		],
 		"gfiAttributes": "showAll",
 		"preview": {
-			"src": "/maps/preview-img/default.png"
+			"src": "/resources/preview-img/default.png"
 		}
 	},
 	{
@@ -393,7 +393,7 @@
 		],
 		"gfiAttributes": "showAll",
 		"preview": {
-			"src": "/maps/preview-img/default.png"
+			"src": "/resources/preview-img/default.png"
 		}
 	},
 	{
@@ -414,7 +414,7 @@
 		],
 		"gfiAttributes": "showAll",
 		"preview": {
-			"src": "/maps/preview-img/default.png"
+			"src": "/resources/preview-img/default.png"
 		}
 	},
 	{
@@ -435,7 +435,7 @@
 		],
 		"gfiAttributes": "showAll",
 		"preview": {
-			"src": "/maps/preview-img/default.png"
+			"src": "/resources/preview-img/default.png"
 		}
 	},
 	{
@@ -447,7 +447,7 @@
 		"typ": "WMS",
 		"gfiAttributes": "showAll",
 		"layers": "a_lor_plr_2021",
-		"legend": "https://gdi.berlin.de/services/wms/lor_2021?service=WMS&version=1.3.0&request=GetLegendGraphic&format=image%2Fpng&width=380&height=80&layer=a_lor_plr_2021",
+		"legend": "/resources/legends/Legende-Planungsraum.svg",
 		"datasets": [
 			{
 				"md_name": "Lebensweltlich orientierte Räume (LOR) (01.01.2021)",
@@ -465,7 +465,7 @@
 		"infoFormat": "application/json",
 		"layerAttribution": "Der Datenbestand wird unter der Lizenz CC-BY-3.0-Namensnennung veröffentlicht (vgl. https://creativecommons.org/licenses/by/3.0/de/). Als Urheber ist dabei zu nennen: Amt für Statistik Berlin-Brandenburg",
 		"preview": {
-			"src": "/maps/preview-img/default.png"
+			"src": "/resources/preview-img/preview-img-planungsräume.png"
 		}
 	},
 	{
@@ -477,7 +477,7 @@
 		"typ": "WMS",
 		"gfiAttributes": "showAll",
 		"layers": "b_lor_bzr_2021",
-		"legend": "https://gdi.berlin.de/services/wms/lor_2021?service=WMS&version=1.3.0&request=GetLegendGraphic&format=image%2Fpng&width=380&height=76&layer=b_lor_bzr_2021",
+		"legend": "/resources/legends/Legende-Bezirksregion.svg",
 		"datasets": [
 			{
 				"md_name": "Lebensweltlich orientierte Räume (LOR) (01.01.2021)",
@@ -495,7 +495,7 @@
 		"infoFormat": "application/json",
 		"layerAttribution": "Der Datenbestand wird unter der Lizenz CC-BY-3.0-Namensnennung veröffentlicht (vgl. https://creativecommons.org/licenses/by/3.0/de/). Als Urheber ist dabei zu nennen: Amt für Statistik Berlin-Brandenburg",
 		"preview": {
-			"src": "/maps/preview-img/default.png"
+			"src": "/resources/preview-img/preview-img-bezirksregion.png"
 		}
 	},
 	{
@@ -507,7 +507,7 @@
 		"typ": "WMS",
 		"gfiAttributes": "showAll",
 		"layers": "c_lor_pgr_2021",
-		"legend": "https://gdi.berlin.de/services/wms/lor_2021?service=WMS&version=1.3.0&request=GetLegendGraphic&format=image%2Fpng&width=380&height=89&layer=c_lor_pgr_2021",
+		"legend": "/resources/legends/Legende-Prognoseraum.svg",
 		"datasets": [
 			{
 				"md_name": "Lebensweltlich orientierte Räume (LOR) (01.01.2021)",
@@ -525,7 +525,7 @@
 		"infoFormat": "application/json",
 		"layerAttribution": "Der Datenbestand wird unter der Lizenz CC-BY-3.0-Namensnennung veröffentlicht (vgl. https://creativecommons.org/licenses/by/3.0/de/). Als Urheber ist dabei zu nennen: Amt für Statistik Berlin-Brandenburg",
 		"preview": {
-			"src": "/maps/preview-img/default.png"
+			"src": "/resources/preview-img/preview-img-prognoseräume.png"
 		}
 	},
 	{
@@ -537,7 +537,7 @@
 		"typ": "WMS",
 		"gfiAttributes": "showAll",
 		"layers": "gemeinschaftsinitiative",
-		"legend": "https://gdi.berlin.de/services/wms/gemeinschaftsinitiative?service=WMS&version=1.3.0&request=GetLegendGraphic&format=image%2Fpng&width=375&height=70&layer=gemeinschaftsinitiative",
+		"legend": "/resources/legends/Legende-Quartiere.svg",
 		"datasets": [
 			{
 				"md_name": "Ressortübergreifende Gemeinschaftsinitiative zur Stärkung sozial benachteiligter Quartiere",
@@ -555,7 +555,7 @@
 		"infoFormat": "application/json",
 		"layerAttribution": "Für die Nutzung der Daten ist die Datenlizenz Deutschland - Zero - Version 2.0 anzuwenden. Die Lizenz ist über https://www.govdata.de/dl-de/zero-2-0 abrufbar.",
 		"preview": {
-			"src": "/maps/preview-img/default.png"
+			"src": "/resources/preview-img/preview-img-quartiere.png"
 		}
 	},
 	{
@@ -576,7 +576,7 @@
 		],
 		"gfiAttributes": "showAll",
 		"preview": {
-			"src": "/maps/preview-img/default.png"
+			"src": "/resources/preview-img/default.png"
 		}
 	},
 	{
@@ -597,7 +597,7 @@
 		],
 		"gfiAttributes": "showAll",
 		"preview": {
-			"src": "/maps/preview-img/default.png"
+			"src": "/resources/preview-img/default.png"
 		}
 	},
 	{
@@ -618,7 +618,7 @@
 		],
 		"gfiAttributes": "showAll",
 		"preview": {
-			"src": "/maps/preview-img/default.png"
+			"src": "/resources/preview-img/default.png"
 		}
 	},
 	{
@@ -639,7 +639,7 @@
 		],
 		"gfiAttributes": "showAll",
 		"preview": {
-			"src": "/maps/preview-img/default.png"
+			"src": "/resources/preview-img/default.png"
 		}
 	},
 	{
@@ -660,7 +660,7 @@
 		],
 		"gfiAttributes": "showAll",
 		"preview": {
-			"src": "/maps/preview-img/default.png"
+			"src": "/resources/preview-img/default.png"
 		}
 	},
 	{
@@ -681,7 +681,7 @@
 		],
 		"gfiAttributes": "showAll",
 		"preview": {
-			"src": "/maps/preview-img/default.png"
+			"src": "/resources/preview-img/default.png"
 		}
 	},
 	{
@@ -693,7 +693,7 @@
 		"typ": "WMS",
 		"gfiAttributes": "showAll",
 		"layers": "einwohnerdichte2022",
-		"legend": true,
+		"legend": "/resources/legends/Legende-Einwohnerdichte.svg",
 		"datasets": [
 			{
 				"md_name": "Einwohnerdichte 2022 (Umweltatlas)",
@@ -711,7 +711,7 @@
 		"infoFormat": "application/json",
 		"layerAttribution": "Der Datenbestand wird unter der Lizenz CC-BY-3.0-Namensnennung veröffentlicht (vgl. https://creativecommons.org/licenses/by/3.0/de/). Als Urheber ist dabei zu nennen: Amt für Statistik Berlin-Brandenburg",
 		"preview": {
-			"src": "/maps/preview-img/default.png"
+			"src": "/resources/preview-img/preview-img-einwohnerdichte.png"
 		}
 	},
 	{
@@ -723,7 +723,7 @@
 		"typ": "WMS",
 		"gfiAttributes": "showAll",
 		"layers": "einwohnerdichte2022_entw",
-		"legend": true,
+		"legend": "/resources/legends/Legende-Einwohnerentwicklung.svg",
 		"datasets": [
 			{
 				"md_name": "Einwohnerdichte 2022 (Umweltatlas)",
@@ -741,7 +741,7 @@
 		"infoFormat": "application/json",
 		"layerAttribution": "Der Datenbestand wird unter der Lizenz CC-BY-3.0-Namensnennung veröffentlicht (vgl. https://creativecommons.org/licenses/by/3.0/de/). Als Urheber ist dabei zu nennen: Amt für Statistik Berlin-Brandenburg",
 		"preview": {
-			"src": "/maps/preview-img/default.png"
+			"src": "/resources/preview-img/preview-img-einwohnerentwicklung.png"
 		}
 	},
 	{
@@ -753,7 +753,7 @@
 		"typ": "WMS",
 		"gfiAttributes": "showAll",
 		"layers": "einwohnerdichte2023",
-		"legend": true,
+		"legend": "/resources/legends/Legende-Einwohnerdichte.svg",
 		"datasets": [
 			{
 				"md_name": "Einwohnerdichte 2023 (Umweltatlas)",
@@ -771,7 +771,7 @@
 		"infoFormat": "application/json",
 		"layerAttribution": "Der Datenbestand wird unter der Lizenz CC-BY-3.0-Namensnennung veröffentlicht (vgl. https://creativecommons.org/licenses/by/3.0/de/). Als Urheber ist dabei zu nennen: Amt für Statistik Berlin-Brandenburg",
 		"preview": {
-			"src": "/maps/preview-img/default.png"
+			"src": "/resources/preview-img/preview-img-einwohnerdichte.png"
 		}
 	},
 	{
@@ -783,7 +783,7 @@
 		"typ": "WMS",
 		"gfiAttributes": "showAll",
 		"layers": "einwohnerdichte2023_entw",
-		"legend": true,
+		"legend": "/resources/legends/Legende-Einwohnerentwicklung.svg",
 		"datasets": [
 			{
 				"md_name": "Einwohnerdichte 2023 (Umweltatlas)",
@@ -801,7 +801,7 @@
 		"infoFormat": "application/json",
 		"layerAttribution": "Der Datenbestand wird unter der Lizenz CC-BY-3.0-Namensnennung veröffentlicht (vgl. https://creativecommons.org/licenses/by/3.0/de/). Als Urheber ist dabei zu nennen: Amt für Statistik Berlin-Brandenburg",
 		"preview": {
-			"src": "/maps/preview-img/default.png"
+			"src": "/resources/preview-img/preview-img-einwohnerentwicklung.png"
 		}
 	},
 	{
@@ -813,7 +813,7 @@
 		"typ": "WMS",
 		"gfiAttributes": "showAll",
 		"layers": "ua_einwohnerdichte_2024",
-		"legend": "https://gdi.berlin.de/services/wms/ua_einwohnerdichte_2024?service=WMS&version=1.3.0&request=GetLegendGraphic&format=image%2Fpng&width=450&height=455&layer=ua_einwohnerdichte_2024",
+		"legend": "/resources/legends/Legende-Einwohnerdichte.svg",
 		"datasets": [
 			{
 				"md_name": "Einwohnerdichte 2024 (Umweltatlas)",
@@ -831,7 +831,7 @@
 		"infoFormat": "application/json",
 		"layerAttribution": "Für die Nutzung der Daten ist die Datenlizenz Deutschland - Zero - Version 2.0 anzuwenden. Die Lizenz ist über https://www.govdata.de/dl-de/zero-2-0 abrufbar.",
 		"preview": {
-			"src": "/maps/preview-img/default.png"
+			"src": "/resources/preview-img/preview-img-einwohnerdichte.png"
 		}
 	},
 	{
@@ -843,7 +843,7 @@
 		"typ": "WMS",
 		"gfiAttributes": "showAll",
 		"layers": "ua_einwohnerdichte_2024_entw",
-		"legend": "https://gdi.berlin.de/services/wms/ua_einwohnerdichte_2024?service=WMS&version=1.3.0&request=GetLegendGraphic&format=image%2Fpng&width=500&height=144&layer=ua_einwohnerdichte_2024_entw",
+		"legend": "/resources/legends/Legende-Einwohnerentwicklung.svg",
 		"datasets": [
 			{
 				"md_name": "Einwohnerdichte 2024 (Umweltatlas)",
@@ -861,7 +861,7 @@
 		"infoFormat": "application/json",
 		"layerAttribution": "Für die Nutzung der Daten ist die Datenlizenz Deutschland - Zero - Version 2.0 anzuwenden. Die Lizenz ist über https://www.govdata.de/dl-de/zero-2-0 abrufbar.",
 		"preview": {
-			"src": "/maps/preview-img/default.png"
+			"src": "/resources/preview-img/preview-img-einwohnerentwicklung.png"
 		}
 	}
 ]
