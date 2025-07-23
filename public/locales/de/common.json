@@ -5,11 +5,12 @@
 	"search": {
 		"title": "Kulturorte suchen",
 		"description": "Entdecken Sie Berlins Kulturorte ganz einfach über die Suchfunktion – geben Sie eine Adresse oder einen Ort ein, und die Ergebnisse erscheinen direkt auf der Karte.",
-		"hint": "Geben Sie einen Suchbegriff ein, um Kulturorte zu finden.",
+		"hint": "Adresse oder Kulturort eingeben",
 		"placeholder": "Kulturort, Adresse oder Kategorie",
 		"searchButton": "Suchen",
 		"noResults": "Keine Kulturorte gefunden.",
 		"error": "Fehler bei der Suche. Bitte versuchen Sie es später erneut.",
+		"noResultsFound": "Es konnten keine Ergebnisse unter der Suchangabe gefunden werden.",
 		"suggestions": "Vorschläge für Ihre Suche"
 	},
 	"download": {
