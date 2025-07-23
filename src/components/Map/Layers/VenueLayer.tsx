@@ -67,16 +67,19 @@ const VenueLayer: FC<VenueLayerProps> = ({
 		fetchVenues();
 	}, []);
 
-	const getCategoryKey = (feature: FeatureLike, features: any[]) => {
-		if (features && features.length > 0) {
-			// Clustered feature (even if cluster size is 1)
-			return features[0]?.values_?.categories?.[0]?.key;
-		}
-		// Individual feature (no clustering)
-		return feature.get("categories")?.[0]?.key;
-	};
+	const getCategoryKey = useCallback(
+		(feature: FeatureLike, features: any[]) => {
+			if (features && features.length > 0) {
+				// Clustered feature (even if cluster size is 1)
+				return features[0]?.values_?.categories?.[0]?.key;
+			}
+			// Individual feature (no clustering)
+			return feature.get("categories")?.[0]?.key;
+		},
+		[],
+	);
 
-	const createSingleFeatureStyle = (categoryKey: CategoryType) => {
+	const createSingleFeatureStyle = useCallback((categoryKey: CategoryType) => {
 		const iconSvg = createPoiSvg(categoryKey, "#C288FF", "#161616");
 		return new Style({
 			image: new Icon({
@@ -87,9 +90,9 @@ const VenueLayer: FC<VenueLayerProps> = ({
 				scale: 1,
 			}),
 		});
-	};
+	}, []);
 
-	const createClusterStyle = (size: number) => {
+	const createClusterStyle = useCallback((size: number) => {
 		const radius = 15;
 		const color = "#C288FF";
 		const textColor = "#161616";
@@ -106,20 +109,21 @@ const VenueLayer: FC<VenueLayerProps> = ({
 				offsetY: 0,
 			}),
 		});
-	};
+	}, []);
 
-	const styleFunction = function (feature: FeatureLike) {
-		const features = feature.get("features");
-		const size = features ? features.length : 1;
+	const styleFunction = useCallback(
+		function (feature: FeatureLike) {
+			const features = feature.get("features");
+			const size = features ? features.length : 1;
 
-		if (size === 1) {
-			const categoryKey = getCategoryKey(feature, features);
-			return createSingleFeatureStyle(categoryKey);
-		}
-
-		console.log("[VenueLayer] size::", size);
-		return createClusterStyle(size);
-	};
+			if (size === 1) {
+				const categoryKey = getCategoryKey(feature, features);
+				return createSingleFeatureStyle(categoryKey);
+			}
+			return createClusterStyle(size);
+		},
+		[getCategoryKey, createSingleFeatureStyle, createClusterStyle],
+	);
 
 	const shouldCluster = useCallback(
 		(zoomLevel: number) => {
@@ -237,10 +241,10 @@ const VenueLayer: FC<VenueLayerProps> = ({
 		getClusterDistance,
 		shouldCluster,
 		updateLayerSource,
+		styleFunction,
 		venuesData,
 		loading,
 		error,
-		styleFunction,
 	]);
 
 	// Optional: You could add loading/error UI here if needed
