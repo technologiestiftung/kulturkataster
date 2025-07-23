@@ -31,6 +31,14 @@ const nextConfig: NextConfig = {
 				protocol: "https",
 				hostname: "gdi.berlin.de",
 			},
+			{
+				protocol: "https",
+				hostname: "kulturkataster.netlify.app",
+			},
+			{
+				protocol: "https",
+				hostname: "*kulturkataster.netlify.app",
+			},
 		],
 	},
 };
