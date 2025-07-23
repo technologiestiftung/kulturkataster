@@ -19,7 +19,6 @@ export function PageModal({
 	subtitle,
 	content,
 }: PageModalProps) {
-
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
 			<DialogContent
