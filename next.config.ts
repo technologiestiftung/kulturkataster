@@ -9,6 +9,11 @@ const nextConfig: NextConfig = {
 		);
 		config.module.rules.push(
 			{
+				test: /\.svg$/i,
+				resourceQuery: /raw/,
+				type: "asset/source",
+			},
+			{
 				...fileLoaderRule,
 				test: /\.svg$/i,
 				resourceQuery: /url/,
@@ -16,7 +21,7 @@ const nextConfig: NextConfig = {
 			{
 				test: /\.svg$/i,
 				issuer: fileLoaderRule.issuer,
-				resourceQuery: { not: [...fileLoaderRule.resourceQuery.not, /url/] }, // exclude if *.svg?url
+				resourceQuery: { not: [/raw/, /url/] },
 				use: ["@svgr/webpack"],
 			},
 		);
@@ -25,6 +30,7 @@ const nextConfig: NextConfig = {
 	},
 	/* config options here */
 	i18n,
+	devIndicators: false,
 };
 
 export default nextConfig;
