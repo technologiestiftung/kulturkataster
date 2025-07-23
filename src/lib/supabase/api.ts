@@ -61,3 +61,26 @@ export async function getInstitutionsGeoJSON() {
 
 	return validated;
 }
+
+export async function searchInstitutions(query: string) {
+	const supabase = createClient();
+
+	if (!query || query.trim().length === 0) {
+		return [];
+	}
+
+	const trimmedQuery = query.trim();
+
+	// Use the backend RPC function for search
+	const { data, error } = await supabase.rpc('get_public_institutions', {
+		search_term: trimmedQuery,
+		limit_count: 50
+	});
+
+	if (error) {
+		handleError(error, "search institutions");
+	}
+
+	// Return the institutions array directly
+	return data || [];
+}
