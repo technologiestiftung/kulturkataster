@@ -2,8 +2,8 @@
 
 import * as React from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { XIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
+import Close from "@/icons/close.svg";
 
 import { cn } from "@/lib/utils";
 
@@ -60,11 +60,11 @@ function DialogContent({
 	const getVariantStyles = () => {
 		switch (variant) {
 			case "fullScreen":
-				return "fixed inset-0 m-[8rem]";
+				return "fixed z-[70] inset-0 m-[8rem]";
 			case "fullScreenNoBottom":
-				return "fixed inset-0 mt-[8rem] mx-[8rem] mb-0";
+				return "fixed z-[70] top-0 md:top-[5rem] left-1/2 w-full max-w-314 h-full md:h-[calc(100%-5rem)] -translate-x-1/2 overflow-auto rounded-t-lg border";
 			case "medium":
-				return "fixed inset-0 mx-[24rem] my-[8rem]";
+				return "fixed z-[70] top-1/2 left-1/2 w-full max-w-314 h-full md:h-auto md:min-h-198 -translate-x-1/2 -translate-y-1/2 overflow-auto rounded-lg border p-6";
 			case "default":
 			default:
 				return "fixed top-[50%] left-[50%] w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] rounded-lg border p-6 sm:max-w-lg";
@@ -87,9 +87,9 @@ function DialogContent({
 				{showCloseButton && (
 					<DialogPrimitive.Close
 						data-slot="dialog-close"
-						className="ring-offset-background focus:ring-ring data-[state=open]:bg-accent data-[state=open]:text-muted-foreground absolute top-4 right-4 rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
+						className="ring-offset-background focus:ring-ring data-[state=open]:bg-accent data-[state=open]:text-muted-foreground absolute top-12 right-12 rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-6"
 					>
-						<XIcon />
+						<Close className="size-6" />
 						<span className="sr-only">Close</span>
 					</DialogPrimitive.Close>
 				)}
@@ -175,7 +175,7 @@ function InterceptedDialogContent({
 					onClick={onDismiss}
 					className="ring-offset-background focus:ring-ring data-[state=open]:bg-accent data-[state=open]:text-muted-foreground absolute right-4 top-4 rounded-sm opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:pointer-events-none"
 				>
-					<XIcon className="h-4 w-4" />
+					<Close className="h-6 w-6" />
 					<span className="sr-only">Close</span>
 				</button>
 			</DialogPrimitive.Content>

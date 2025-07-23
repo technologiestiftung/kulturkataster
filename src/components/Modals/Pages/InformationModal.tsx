@@ -1,9 +1,9 @@
 "use client";
 
-import { PageModal } from "./PageModal";
+import { PageModal } from "../PageModal";
+import "@/i18n/client";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
-import "@/i18n/client";
 
 interface InformationModalProps {
 	open: boolean;
@@ -57,7 +57,6 @@ export function InformationModal({
 			title={t("informationModal.title", { ns: "content" })}
 			subtitle={t("informationModal.subtitle", { ns: "content" })}
 			content={content}
-			buttonText={t("close", { ns: "common" })}
 		/>
 	);
 }
