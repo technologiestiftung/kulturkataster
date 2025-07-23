@@ -11,13 +11,14 @@ import {
 	default as PotentialLocationsIcon,
 	default as PublicMuseumsIcon,
 	default as SocioculturalCentersIcon,
-} from "@/icons/default.svg";
+} from "@/icons/placeholder.svg";
 import GalleriesIcon from "@/icons/galerien.svg";
 import CinemasIcon from "@/icons/kinos.svg";
 import CulturalDevelopmentSitesIcon from "@/icons/kulturelle-stadtentwicklung.svg";
 import MuseumsIcon from "@/icons/museen.svg";
 import RehearsalSpacesIcon from "@/icons/proberäume.svg";
 import ProjectSpacesAndInitiativesIcon from "@/icons/projekträume.svg";
+import MultiCategoriesIcon from "@/icons/multi-categories.svg";
 import type { FC } from "react";
 import { SVGProps } from "react";
 
@@ -38,7 +39,8 @@ export enum CategoryType {
 	SOCIOCULTURAL_CENTERS = "sociocultural_centers",
 	PERFORMANCE_DANCE_AND_ARTS_VENUES = "performance_dance_and_arts_venues",
 	PUBLIC_MUSEUMS = "public_museums",
-	POTENTIAL_LOCATIONS = "potential_locations",
+  POTENTIAL_LOCATIONS = "potential_locations",
+  MULTI_CATEGORIES = "multi_categories",
 }
 
 type SvgIconComponent = FC<SVGProps<SVGSVGElement>>;
@@ -62,7 +64,8 @@ export const CATEGORY_ICONS: Record<CategoryType, SvgIconComponent> = {
 	[CategoryType.PERFORMANCE_DANCE_AND_ARTS_VENUES]:
 		PerformanceDanceAndArtsVenuesIcon,
 	[CategoryType.PUBLIC_MUSEUMS]: PublicMuseumsIcon,
-	[CategoryType.POTENTIAL_LOCATIONS]: PotentialLocationsIcon,
+  [CategoryType.POTENTIAL_LOCATIONS]: PotentialLocationsIcon,
+  [CategoryType.MULTI_CATEGORIES]: MultiCategoriesIcon
 };
 
 export const GERMAN_TO_ENGLISH_CATEGORIES: Record<string, CategoryType> = {
@@ -84,7 +87,8 @@ export const GERMAN_TO_ENGLISH_CATEGORIES: Record<string, CategoryType> = {
 	"Spielstätten Tanz und darstellende Künste":
 		CategoryType.PERFORMANCE_DANCE_AND_ARTS_VENUES,
 	"Öffentliche Museen": CategoryType.PUBLIC_MUSEUMS,
-	Potenzialorte: CategoryType.POTENTIAL_LOCATIONS,
+  Potenzialorte: CategoryType.POTENTIAL_LOCATIONS,
+  "Mehrere Kategorien": CategoryType.MULTI_CATEGORIES
 };
 
 export function getCategoryIcon(category: CategoryType): SvgIconComponent {
