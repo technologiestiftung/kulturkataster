@@ -13,7 +13,7 @@ import Cluster from "ol/source/Cluster";
 import { Fill, Icon, Stroke, Style, Text } from "ol/style";
 import CircleStyle from "ol/style/Circle";
 import { FC, useCallback, useEffect, useState } from "react";
-import { createIconSvg } from "../MapIcons/createSVGIcon";
+import { createPoiSvg } from "../MapStyles/createPoiSvg";
 
 interface VenueLayerProps {
 	zIndex?: number;
@@ -60,32 +60,21 @@ const VenueLayer: FC<VenueLayerProps> = ({
 		fetchVenues();
 	}, []);
 
+	// eslint-disable-next-line complexity
 	const styleFunction = function (feature: FeatureLike) {
 		const features = feature.get("features");
 		const size = features ? features.length : 1;
 
 		if (size === 1) {
 			const scale = 1.2;
+			const categoryName = features[0]?.values_?.categories?.[0]?.category_name;
 
-			const starIcon = createIconSvg("star", "#FF6B6B", "white");
-			const homeIcon = createIconSvg("home", "#4ECDC4", "#333333");
-
-			console.log("[VenueLayer] starIcon::", starIcon);
-
-			console.log(
-				"[VenueLayer] features[0]::",
-				features[0].values_.categories[0],
-			);
-
-			const iconSVG =
-				features[0].values_.categories[0].category_name === "Buchhandlungen"
-					? starIcon
-					: homeIcon;
+			const iconSvg = createPoiSvg(categoryName, "#C288FF", "#161616");
 
 			return new Style({
 				image: new Icon({
 					anchor: [0.5, 1],
-					src: iconSVG,
+					src: iconSvg,
 					offset: [0, 0],
 					opacity: 1,
 					scale,
@@ -118,21 +107,14 @@ const VenueLayer: FC<VenueLayerProps> = ({
 
 		return new Style({
 			image: new CircleStyle({
-				radius: radius,
-				fill: new Fill({
-					color: color,
-				}),
-				stroke: new Stroke({
-					color: "#FFFFFF",
-					width: 2,
-				}),
+				radius,
+				fill: new Fill({ color }),
+				stroke: new Stroke({ color: "#FFFFFF", width: 2 }),
 			}),
 			text: new Text({
 				text: size.toString(),
 				font: `bold ${Math.min(radius * 0.6, 14)}px sans-serif`,
-				fill: new Fill({
-					color: "#FFFFFF",
-				}),
+				fill: new Fill({ color: "#FFFFFF" }),
 				offsetY: 0,
 			}),
 		});
