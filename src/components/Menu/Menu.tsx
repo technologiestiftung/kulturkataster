@@ -142,7 +142,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 				{/* We disable collapsible and let it fill remaining space */}
 				<Sidebar
 					collapsible="none"
-					className="flex-1 w-full group-data-[collapsible=icon]:hidden"
+					className="flex-1 w-full h-full group-data-[collapsible=icon]:hidden"
 				>
 					<SidebarHeader className="gap-3.5 p-6">
 						<div className="md:hidden flex justify-center pb-2">
@@ -158,9 +158,9 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 						</div>
 					</SidebarHeader>
 					<SidebarContent>
-						<SidebarGroup className="px-0">
+						<SidebarGroup className="px-0 h-full">
 							<SidebarGroupContent>
-								<div className="">
+								<div className="h-full">
 									{activeItem === "filter" && <FilterContent />}
 									{activeItem === "search" && <SearchContent />}
 									{activeItem === "accessibility" && (
