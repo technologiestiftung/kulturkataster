@@ -13,6 +13,15 @@ import { FC, useEffect, useState } from "react";
 interface HoverCardProps {
 	features?: any;
 }
+const getFeatureData = (feature: any) => {
+	const properties = feature.getProperties();
+
+	if (properties.features && properties.features.length > 0) {
+		return properties.features[0].values_;
+	}
+
+	return properties;
+};
 
 const HoverCard: FC<HoverCardProps> = ({ features }) => {
 	const [featureProperties, setFeatureProperties] = useState<any>(null);
@@ -27,8 +36,7 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 			return;
 		}
 
-		const properties = features.getProperties();
-		setFeatureProperties(properties.features[0].values_);
+		setFeatureProperties(getFeatureData(features));
 	}, [features]);
 
 	if (!features || !featureProperties) {
