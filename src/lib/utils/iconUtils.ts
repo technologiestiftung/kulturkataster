@@ -1,31 +1,41 @@
-import AteliersIcon from "@/icons/ateliers.svg";
-import EducationalVenuesIcon from "@/icons/ausbildungsorte.svg";
-import LibrariesIcon from "@/icons/bibliothek.svg";
-import BookStoresIcon from "@/icons/buchhandlung.svg";
-import GalleriesIcon from "@/icons/galerien.svg";
-import CinemasIcon from "@/icons/kinos.svg";
-import CulturalDevelopmentSitesIcon from "@/icons/kulturelle-stadtentwicklung.svg";
+import BookStoresIcon from "@/icons/bookstores.svg";
+import CinemasIcon from "@/icons/cinemas.svg";
+import EducationPlacesIcon from "@/icons/education-places.svg";
+import GalleriesIcon from "@/icons/galleries.svg";
+import LibrariesIcon from "@/icons/libraries.svg";
+import LiteraturePlacesIcon from "@/icons/literature-places.svg";
 import MultiCategoriesIcon from "@/icons/multi-categories.svg";
-import MuseumsIcon from "@/icons/museen.svg";
+import MuseumsIcon from "@/icons/museums.svg";
+import MusicVenuesIcon from "@/icons/music-venues.svg";
+import PerformingArtsIcon from "@/icons/performing-arts.svg";
 import DefaultIcon from "@/icons/placeholder.svg"; // Simplified import
-import RehearsalSpacesIcon from "@/icons/proberäume.svg";
-import ProjectSpacesAndInitiativesIcon from "@/icons/projekträume.svg";
+import PotentialSpacesIcon from "@/icons/potential-spaces.svg";
+import ProjectSpacesIcon from "@/icons/project-spaces.svg";
+import RehearsalRoomsIcon from "@/icons/rehearsal-rooms.svg";
+import SocioculturalCentersIcon from "@/icons/sociocultural-centers.svg";
+import UrbanDevelopmentIcon from "@/icons/urban-development.svg";
+import WorkshopsIcon from "@/icons/workshops.svg";
 import type { FC, SVGProps } from "react";
 
 // Import SVGs as raw strings for the POI generator
 // The `?raw` suffix tells the bundler to import the file content as a string.
-import ateliersRaw from "@/icons/ateliers.svg?raw";
-import educationalVenuesRaw from "@/icons/ausbildungsorte.svg?raw";
-import librariesRaw from "@/icons/bibliothek.svg?raw";
-import bookStoresRaw from "@/icons/buchhandlung.svg?raw";
-import galleriesRaw from "@/icons/galerien.svg?raw";
-import cinemasRaw from "@/icons/kinos.svg?raw";
-import culturalDevelopmentSitesRaw from "@/icons/kulturelle-stadtentwicklung.svg?raw";
+import bookStoresRaw from "@/icons/bookstores.svg?raw";
+import cinemasRaw from "@/icons/cinemas.svg?raw";
+import educationPlacesRaw from "@/icons/education-places.svg?raw";
+import galleriesRaw from "@/icons/galleries.svg?raw";
+import librariesRaw from "@/icons/libraries.svg?raw";
+import literaturePlacesRaw from "@/icons/literature-places.svg?raw";
 import multiCategoriesRaw from "@/icons/multi-categories.svg?raw";
-import museumsRaw from "@/icons/museen.svg?raw";
+import museumsRaw from "@/icons/museums.svg?raw";
+import musicVenuesRaw from "@/icons/music-venues.svg?raw";
+import performingArtsRaw from "@/icons/performing-arts.svg?raw";
 import defaultRaw from "@/icons/placeholder.svg?raw";
-import rehearsalSpacesRaw from "@/icons/proberäume.svg?raw";
-import projectSpacesAndInitiativesRaw from "@/icons/projekträume.svg?raw";
+import potentialSpacesRaw from "@/icons/potential-spaces.svg?raw";
+import projectSpacesRaw from "@/icons/project-spaces.svg?raw";
+import rehearsalRoomsRaw from "@/icons/rehearsal-rooms.svg?raw";
+import socioculturalCentersRaw from "@/icons/sociocultural-centers.svg?raw";
+import urbanDevelopmentRaw from "@/icons/urban-development.svg?raw";
+import workshopsRaw from "@/icons/workshops.svg?raw";
 
 export enum CategoryType {
 	WORKSHOPS = "workshops",
@@ -51,40 +61,40 @@ type SvgIconComponent = FC<SVGProps<SVGSVGElement>>;
 export const CATEGORY_ICON_COMPONENTS: Partial<
 	Record<CategoryType, SvgIconComponent>
 > = {
-	[CategoryType.WORKSHOPS]: AteliersIcon,
-	[CategoryType.EDUCATION_PLACES]: EducationalVenuesIcon,
+	[CategoryType.WORKSHOPS]: WorkshopsIcon,
+	[CategoryType.EDUCATION_PLACES]: EducationPlacesIcon,
 	[CategoryType.LIBRARIES]: LibrariesIcon,
 	[CategoryType.BOOKSTORES]: BookStoresIcon,
-	[CategoryType.MUSIC_VENUES]: CinemasIcon, // Placeholder - you may want to update this
+	[CategoryType.MUSIC_VENUES]: MusicVenuesIcon,
 	[CategoryType.GALLERIES]: GalleriesIcon,
 	[CategoryType.CINEMAS]: CinemasIcon,
-	[CategoryType.LITERATURE_PLACES]: LibrariesIcon, // Placeholder - you may want to update this
+	[CategoryType.LITERATURE_PLACES]: LiteraturePlacesIcon,
 	[CategoryType.MUSEUMS]: MuseumsIcon,
-	[CategoryType.URBAN_DEVELOPMENT]: CulturalDevelopmentSitesIcon,
-	[CategoryType.POTENTIAL_SPACES]: DefaultIcon, // Placeholder - you may want to update this
-	[CategoryType.REHEARSAL_ROOMS]: RehearsalSpacesIcon,
-	[CategoryType.PROJECT_SPACES]: ProjectSpacesAndInitiativesIcon,
-	[CategoryType.SOCIOCULTURAL_CENTERS]: DefaultIcon, // Placeholder - you may want to update this
-	[CategoryType.PERFORMING_ARTS]: DefaultIcon, // Placeholder - you may want to update this
+	[CategoryType.URBAN_DEVELOPMENT]: UrbanDevelopmentIcon,
+	[CategoryType.POTENTIAL_SPACES]: PotentialSpacesIcon,
+	[CategoryType.REHEARSAL_ROOMS]: RehearsalRoomsIcon,
+	[CategoryType.PROJECT_SPACES]: ProjectSpacesIcon,
+	[CategoryType.SOCIOCULTURAL_CENTERS]: SocioculturalCentersIcon,
+	[CategoryType.PERFORMING_ARTS]: PerformingArtsIcon,
 	[CategoryType.OTHER]: MultiCategoriesIcon,
 };
 
 const CATEGORY_ICON_RAW_SVG: Partial<Record<CategoryType, string>> = {
-	[CategoryType.WORKSHOPS]: ateliersRaw,
-	[CategoryType.EDUCATION_PLACES]: educationalVenuesRaw,
+	[CategoryType.WORKSHOPS]: workshopsRaw,
+	[CategoryType.EDUCATION_PLACES]: educationPlacesRaw,
 	[CategoryType.LIBRARIES]: librariesRaw,
 	[CategoryType.BOOKSTORES]: bookStoresRaw,
-	[CategoryType.MUSIC_VENUES]: cinemasRaw, // Placeholder - you may want to update this
+	[CategoryType.MUSIC_VENUES]: musicVenuesRaw,
 	[CategoryType.GALLERIES]: galleriesRaw,
 	[CategoryType.CINEMAS]: cinemasRaw,
-	[CategoryType.LITERATURE_PLACES]: librariesRaw, // Placeholder - you may want to update this
+	[CategoryType.LITERATURE_PLACES]: literaturePlacesRaw,
 	[CategoryType.MUSEUMS]: museumsRaw,
-	[CategoryType.URBAN_DEVELOPMENT]: culturalDevelopmentSitesRaw,
-	[CategoryType.POTENTIAL_SPACES]: defaultRaw, // Placeholder - you may want to update this
-	[CategoryType.REHEARSAL_ROOMS]: rehearsalSpacesRaw,
-	[CategoryType.PROJECT_SPACES]: projectSpacesAndInitiativesRaw,
-	[CategoryType.SOCIOCULTURAL_CENTERS]: defaultRaw, // Placeholder - you may want to update this
-	[CategoryType.PERFORMING_ARTS]: defaultRaw, // Placeholder - you may want to update this
+	[CategoryType.URBAN_DEVELOPMENT]: urbanDevelopmentRaw,
+	[CategoryType.POTENTIAL_SPACES]: potentialSpacesRaw,
+	[CategoryType.REHEARSAL_ROOMS]: rehearsalRoomsRaw,
+	[CategoryType.PROJECT_SPACES]: projectSpacesRaw,
+	[CategoryType.SOCIOCULTURAL_CENTERS]: socioculturalCentersRaw,
+	[CategoryType.PERFORMING_ARTS]: performingArtsRaw,
 	[CategoryType.OTHER]: multiCategoriesRaw,
 };
 
