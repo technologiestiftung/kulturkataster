@@ -1,4 +1,4 @@
-import { getCategoryIconRawSvg } from "@/lib/utils/iconUtils";
+import { CategoryType, getCategoryIconRawSvg } from "@/lib/utils/iconUtils";
 
 function extractSvgContent(svgString: string): {
 	inner: string;
@@ -12,11 +12,11 @@ function extractSvgContent(svgString: string): {
 }
 
 export function createPoiSvg(
-	categoryName: string,
+	categoryKey: CategoryType,
 	fillColor = "#C288FF",
 	iconColor = "#FFFFFF", // Changed default to white for better contrast
 ): string {
-	const iconSvgString = getCategoryIconRawSvg(categoryName);
+	const iconSvgString = getCategoryIconRawSvg(categoryKey);
 	const { inner, viewBox } = extractSvgContent(iconSvgString);
 
 	const svg = `
