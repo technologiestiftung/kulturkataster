@@ -67,9 +67,9 @@ const VenueLayer: FC<VenueLayerProps> = ({
 
 		if (size === 1) {
 			const scale = 1;
-			const categoryName = features[0]?.values_?.categories?.[0]?.category_name;
+			const categoryKey = features[0]?.values_?.categories?.[0]?.key;
 
-			const iconSvg = createPoiSvg(categoryName, "#C288FF", "#161616");
+			const iconSvg = createPoiSvg(categoryKey, "#C288FF", "#161616");
 
 			return new Style({
 				image: new Icon({
