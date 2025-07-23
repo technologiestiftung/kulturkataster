@@ -45,7 +45,7 @@
 	--shadow-400: 0 10px 20px rgba(0, 0, 0, 0.1);
 
 	--sidebar: var(--neutral-5);
-	--sidebar-foreground: hsl(240 5.3% 26.1%);
+	--sidebar-foreground: var(--black);
 	--sidebar-primary: hsl(240 5.9% 10%);
 	--sidebar-primary-foreground: hsl(0 0% 98%);
 	--sidebar-accent: var(--white);
