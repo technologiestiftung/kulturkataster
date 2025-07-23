@@ -8,7 +8,10 @@ import MultiCategoriesIcon from "@/icons/multi-categories.svg";
 import MuseumsIcon from "@/icons/museums.svg";
 import MusicVenuesIcon from "@/icons/music-venues.svg";
 import PerformingArtsIcon from "@/icons/performing-arts.svg";
-import DefaultIcon from "@/icons/placeholder.svg"; // Simplified import
+import {
+	default as DefaultIcon,
+	default as PlaceholderIcon,
+} from "@/icons/placeholder.svg"; // Simplified import
 import PotentialSpacesIcon from "@/icons/potential-spaces.svg";
 import ProjectSpacesIcon from "@/icons/project-spaces.svg";
 import RehearsalRoomsIcon from "@/icons/rehearsal-rooms.svg";
@@ -29,7 +32,10 @@ import multiCategoriesRaw from "@/icons/multi-categories.svg?raw";
 import museumsRaw from "@/icons/museums.svg?raw";
 import musicVenuesRaw from "@/icons/music-venues.svg?raw";
 import performingArtsRaw from "@/icons/performing-arts.svg?raw";
-import defaultRaw from "@/icons/placeholder.svg?raw";
+import {
+	default as defaultRaw,
+	default as placeholderRaw,
+} from "@/icons/placeholder.svg?raw";
 import potentialSpacesRaw from "@/icons/potential-spaces.svg?raw";
 import projectSpacesRaw from "@/icons/project-spaces.svg?raw";
 import rehearsalRoomsRaw from "@/icons/rehearsal-rooms.svg?raw";
@@ -54,6 +60,7 @@ export enum CategoryType {
 	SOCIOCULTURAL_CENTERS = "sociocultural_centers",
 	PERFORMING_ARTS = "performing_arts",
 	OTHER = "other",
+	MULTI_CATEGORIES = "multi_categories",
 }
 
 type SvgIconComponent = FC<SVGProps<SVGSVGElement>>;
@@ -76,7 +83,8 @@ export const CATEGORY_ICON_COMPONENTS: Partial<
 	[CategoryType.PROJECT_SPACES]: ProjectSpacesIcon,
 	[CategoryType.SOCIOCULTURAL_CENTERS]: SocioculturalCentersIcon,
 	[CategoryType.PERFORMING_ARTS]: PerformingArtsIcon,
-	[CategoryType.OTHER]: MultiCategoriesIcon,
+	[CategoryType.OTHER]: PlaceholderIcon,
+	[CategoryType.MULTI_CATEGORIES]: MultiCategoriesIcon,
 };
 
 const CATEGORY_ICON_RAW_SVG: Partial<Record<CategoryType, string>> = {
@@ -95,7 +103,8 @@ const CATEGORY_ICON_RAW_SVG: Partial<Record<CategoryType, string>> = {
 	[CategoryType.PROJECT_SPACES]: projectSpacesRaw,
 	[CategoryType.SOCIOCULTURAL_CENTERS]: socioculturalCentersRaw,
 	[CategoryType.PERFORMING_ARTS]: performingArtsRaw,
-	[CategoryType.OTHER]: multiCategoriesRaw,
+	[CategoryType.OTHER]: placeholderRaw,
+	[CategoryType.MULTI_CATEGORIES]: multiCategoriesRaw,
 };
 
 /**
