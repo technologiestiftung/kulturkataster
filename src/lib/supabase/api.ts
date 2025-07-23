@@ -72,9 +72,9 @@ export async function searchInstitutions(query: string) {
 	const trimmedQuery = query.trim();
 
 	// Use the backend RPC function for search
-	const { data, error } = await supabase.rpc('get_public_institutions', {
+	const { data, error } = await supabase.rpc("get_public_institutions", {
 		search_term: trimmedQuery,
-		limit_count: 50
+		limit_count: 50,
 	});
 
 	if (error) {
