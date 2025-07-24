@@ -30,6 +30,22 @@ const nextConfig: NextConfig = {
 	},
 	/* config options here */
 	i18n,
+	images: {
+		remotePatterns: [
+			{
+				protocol: "https",
+				hostname: "gdi.berlin.de",
+			},
+			{
+				protocol: "https",
+				hostname: "kulturkataster.netlify.app",
+			},
+			{
+				protocol: "https",
+				hostname: "*kulturkataster.netlify.app",
+			},
+		],
+	},
 	devIndicators: false,
 };
 
