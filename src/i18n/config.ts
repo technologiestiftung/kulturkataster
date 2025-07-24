@@ -2,7 +2,7 @@ export const i18nConfig = {
 	defaultLocale: "de",
 	fallbackLng: "de",
 	supportedLngs: ["de"],
-	namespaces: ["common"],
+	namespaces: ["common", "content"],
 	defaultNS: "common",
 	localePath: "./public/locales",
 	loadPath: "/locales/{{lng}}/{{ns}}.json",
