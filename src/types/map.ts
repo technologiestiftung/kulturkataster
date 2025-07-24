@@ -84,6 +84,9 @@ export interface LayerService {
 	singleTile?: boolean;
 	infoFormat?: string;
 	vtStyles: VectorTileStyle[];
+	preview?: {
+		src: string;
+	};
 }
 
 export interface VectorTileStyle {
