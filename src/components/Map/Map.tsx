@@ -16,8 +16,8 @@ const LazyOlMap = dynamic(() => import("./OlMap/OlMap"), {
 
 const Map: FC = () => {
 	return (
-		<div className="Map-root">
-			{true && <LayerTree />}
+		<div className="Map-root  w-full h-full">
+			{false && <LayerTree />}
 
 			<LazyOlMap>
 				<LayerInitializer />

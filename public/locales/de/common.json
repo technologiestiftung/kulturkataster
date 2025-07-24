@@ -1,3 +1,80 @@
 {
-	"hello": "Test"
+	"filter": {
+		"title": "Kulturorte filtern"
+	},
+	"search": {
+		"title": "Kulturorte suchen",
+		"description": "Entdecken Sie Berlins Kulturorte ganz einfach über die Suchfunktion – geben Sie eine Adresse oder einen Ort ein, und die Ergebnisse erscheinen direkt auf der Karte.",
+		"hint": "Geben Sie einen Suchbegriff ein, um Kulturorte zu finden.",
+		"placeholder": "Kulturort, Adresse oder Kategorie",
+		"searchButton": "Suchen",
+		"noResults": "Keine Kulturorte gefunden.",
+		"error": "Fehler bei der Suche. Bitte versuchen Sie es später erneut.",
+		"suggestions": "Vorschläge für Ihre Suche"
+	},
+	"download": {
+		"title": "Daten herunterladen",
+		"description": "Laden Sie die Daten der Kulturorte im JSON-Format herunter. Diese Daten können für eigene Anwendungen oder Analysen verwendet werden.",
+		"downloadButton": "Daten herunterladen"
+	},
+	"accessibility": {
+		"title": "Barrierefreiheit",
+		"signLanguage": {
+			"title": "Deutsche Gebärdensprache",
+			"description": "Dieses Video erklärt die Barrierefreiheit der Website in Gebärdensprache."
+		},
+		"simpleLanguage": {
+			"title": "Leichte Sprache",
+			"description": "Diese Seite bietet Informationen zur Barrierefreiheit in einfacher Sprache."
+		},
+		"fontSize": {
+			"title": "Schriftgröße ändern",
+			"description": "Sie können die Schriftgröße der Website anpassen, um die Lesbarkeit zu verbessern. Nutzen Sie die Schaltflächen unten, um die Schriftgröße zu vergrößern oder zu verkleinern."
+		},
+		"contrast": {
+			"title": "Kontrast anpassen",
+			"description": "Aktivieren Sie den Kontrastmodus, um die Lesbarkeit zu verbessern. Dieser Modus erhöht den Kontrast zwischen Text und Hintergrund."
+		}
+	},
+	"about": "Über",
+	"info": "Info",
+	"add": {
+		"title": "Kulturort hinzufügen",
+		"description": "Fügen Sie einen neuen Kulturort hinzu, indem Sie das Formular ausfüllen. Wir prüfen Ihre Angaben und veröffentlichen den Ort nach Freigabe."
+	},
+	"edit": "Bearbeiten",
+	"delete": "Löschen",
+	"save": "Speichern",
+	"cancel": "Abbrechen",
+	"confirm": "Bestätigen",
+	"close": "Schließen",
+	"loading": "Laden",
+	"error": "Fehler",
+	"success": "Erfolg",
+	"footer": {
+		"title": "Kulturkataster Berlin",
+		"open_source_notice": "Das Kulturkataster ist ein Open-Source-Projekt.",
+		"address": {
+			"suffix": "c/o Kulturraum Berlin gGmbH",
+			"street": "Spandauer Damm 19",
+			"city": "Berlin",
+			"zip": "14059"
+		},
+		"telephone": {
+			"label": "Tel.",
+			"number": "+49 30 3030 444 60"
+		},
+		"email": {
+			"label": "E-Mail",
+			"address": "kontakt@kulturkataster.berlin"
+		},
+		"about": "Über das Projekt",
+		"newsletter": "Newsletter",
+		"imprint": "Impressum",
+		"privacy": "Datenschutz",
+		"accessibility": "Barrierefreiheit",
+		"credit": {
+			"text": "© 2025 - Ein Projekt der Kulturraum Berlin gGmbH, in Zusammenarbeit mit der Technologiestiftung Berlin und gefördert durch den Senat Berlin."
+		}
+	}
 }
