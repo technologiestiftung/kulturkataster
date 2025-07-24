@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/card";
 import { CategoryType, getCategoryIconComponent } from "@/lib/utils/iconUtils"; // Update this import path
 import { FC, useEffect, useState } from "react";
+import { Badge } from "../ui/badge";
 
 interface HoverCardProps {
 	features?: any;
@@ -53,9 +54,18 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 		<div className="HoverCard-root">
 			<Card className="w-80 shadow-lg border-none">
 				<CardHeader className="p-2">
-					<CardTitle className="text-lg font-semibold line-clamp-2">
-						{featureProperties.name}
-					</CardTitle>
+					<div className="flex gap-2 justify-between">
+						<CardTitle className="text-lg font-semibold line-clamp-2 w-full">
+							{featureProperties.name}
+						</CardTitle>
+
+						<Badge
+							variant="default"
+							className="w-6 h-6 p-0 rounded-full text-xs font-bold"
+						>
+							i
+						</Badge>
+					</div>
 				</CardHeader>
 
 				<CardContent className="p-2 pt-0">
@@ -93,7 +103,7 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 					)}
 					{!featureProperties.utilization_status && (
 						<div className=" flex gap-1 items-center justify-between">
-							<span>Nutzungsstatus:</span>
+							<span className="text-md font-semibold">Nutzungsstatus:</span>
 							<span>unbekannt</span>
 						</div>
 					)}
