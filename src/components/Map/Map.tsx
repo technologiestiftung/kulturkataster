@@ -31,7 +31,13 @@ const Map: FC = () => {
 				<MapControls>
 					<MapNavigationControls />
 					{true && (
-						<HoverControl layerId="venues" minZoomForHover={3}>
+						<HoverControl
+							layerId="venues"
+							minZoomForHover={3}
+							overlayOptions={{
+								offset: [8, 8],
+							}}
+						>
 							<HoverCard />
 						</HoverControl>
 					)}
