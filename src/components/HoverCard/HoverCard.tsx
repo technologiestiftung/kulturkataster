@@ -30,12 +30,11 @@ const getFeatureData = (feature: any) => {
 	return properties;
 };
 
+// TODO: add fonts
+// TODO: add names categories and status
+
 const HoverCard: FC<HoverCardProps> = ({ features }) => {
 	const [featureProperties, setFeatureProperties] = useState<any>(null);
-
-	useEffect(() => {
-		console.log("[HoverCard] featureProperties::", featureProperties);
-	}, [featureProperties]);
 
 	useEffect(() => {
 		if (!features) {
