@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { useSidebar } from "@/components/ui/sidebar";
 import ContextMapIcon from "@/icons/fachkarten.svg";
 import { ManagedLayer } from "@/types";
 import { X } from "lucide-react";
@@ -22,6 +23,7 @@ import { FC, useMemo, useState } from "react";
 const LayerTree: FC = () => {
 	const layers = useMapStore((state) => state.layers);
 	const setLayerVisibility = useMapStore((state) => state.setLayerVisibility);
+	const { state: sidebarState, isMobile } = useSidebar();
 	const [isOpen, setIsOpen] = useState(false);
 
 	const subjectLayers = useMemo(
@@ -132,6 +134,15 @@ const LayerTree: FC = () => {
 
 	if (!isOpen) {
 		const visibleCount = visibleSubjectLayers.length;
+		const getLeftPosition = () => {
+			if (isMobile) {
+				return "left-4";
+			}
+			if (sidebarState === "collapsed") {
+				return "left-24";
+			}
+			return "left-[494px]";
+		};
 
 		const renderThumbnail = () => {
 			if (topVisibleLayer?.config.service.preview?.src) {
@@ -153,7 +164,9 @@ const LayerTree: FC = () => {
 		};
 
 		return (
-			<div className="fixed bottom-4 left-4 z-50">
+			<div
+				className={`fixed bottom-4 z-50 transition-all duration-200 ${getLeftPosition()}`}
+			>
 				<div className="relative">
 					{/* Stacked layers effect for multiple visible layers */}
 					{visibleCount > 1 && (
@@ -189,7 +202,9 @@ const LayerTree: FC = () => {
 	}
 
 	return (
-		<Card className="w-[400px] max-h-[70vh] absolute bottom-4 left-4 z-50 flex flex-col bg-neutral-5">
+		<Card
+			className={`w-[400px] max-h-[70vh] absolute bottom-4 z-50 flex flex-col bg-neutral-5 transition-all duration-200 left-4`}
+		>
 			<CardHeader className="shadow-sm p-1 pl-6">
 				<div className="flex items-center justify-between">
 					<CardTitle className="body1">Fachkarten</CardTitle>
