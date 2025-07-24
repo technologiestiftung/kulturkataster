@@ -2,7 +2,6 @@
 
 import dynamic from "next/dynamic";
 import { FC } from "react";
-import GeolocationSearch from "../GeolocationSearch/GeolocationSearch";
 import HoverCard from "../HoverCard/HoverCard";
 import { ClickControl, HoverControl, MapControls } from "./Controls";
 import MapNavigationControls from "./Controls/MapNavigation/MapNavigationControls";
@@ -19,7 +18,6 @@ const Map: FC = () => {
 	return (
 		<div className="Map-root">
 			{true && <LayerTree />}
-			<GeolocationSearch />
 
 			<LazyOlMap>
 				<LayerInitializer />
