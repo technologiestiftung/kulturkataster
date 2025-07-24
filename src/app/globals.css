@@ -93,6 +93,18 @@
 	--color-chart-3: var(--fachfarben-pink);
 	--color-chart-4: var(--fachfarben-blue);
 	--color-chart-5: var(--fachfarben-green);
+
+	--color-neutral-5: var(--neutral-5);
+	--color-neutral-10: var(--neutral-10);
+	--color-neutral-20: var(--neutral-20);
+	--color-neutral-40: var(--neutral-40);
+	--color-neutral-60: var(--neutral-60);
+	--color-neutral-80: var(--neutral-80);
+	--color-neutral-100: var(--neutral-100);
+
+	--shadow-sm: var(--shadow-200);
+	--shadow-md: var(--shadow-300);
+	--shadow-lg: var(--shadow-400);
 }
 
 /*
@@ -160,7 +172,8 @@
 		line-height: 1.5rem;
 	}
 
-	@screen md {
+	/* Medium screens and up */
+	@media (min-width: 768px) {
 		.display {
 			font-size: 3.5rem;
 			line-height: 3.5rem;
@@ -185,15 +198,6 @@
 			font-size: 1rem;
 			line-height: 1.5rem;
 		}
-	}
-}
-
-@layer base {
-	* {
-		@apply border-border;
-	}
-	body {
-		@apply bg-background text-foreground;
 	}
 }
 
