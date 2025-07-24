@@ -6,11 +6,9 @@ import GeolocationSearch from "../GeolocationSearch/GeolocationSearch";
 import HoverCard from "../HoverCard/HoverCard";
 import {
 	ClickControl,
-	FullScreenControl,
-	GeolocationControl,
 	HoverControl,
 	MapControls,
-	ZoomControl,
+	MapNavigationControls,
 } from "./Controls";
 import LayerInitializer from "./LayerInitializer/LayerInitializer";
 import { Layers, VenueLayer } from "./Layers";
@@ -40,9 +38,8 @@ const Map: FC = () => {
 				</Layers>
 
 				<MapControls>
-					<FullScreenControl />
-					<ZoomControl />
-					{true && <GeolocationControl />}
+					<MapNavigationControls />
+
 					{true && (
 						<HoverControl
 							layerId="venues"
