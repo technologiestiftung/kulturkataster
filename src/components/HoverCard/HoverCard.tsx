@@ -3,7 +3,7 @@
 import {
 	Card,
 	CardContent,
-	CardDescription,
+	CardFooter,
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
@@ -49,69 +49,55 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 		return null;
 	}
 
-	const getStatusStyling = (status: string) => {
-		const lowerStatus = status.toLowerCase();
-		if (lowerStatus.includes("nutzung") || lowerStatus.includes("in use")) {
-			return "bg-green-100 text-green-800 border-green-200";
-		} else if (
-			lowerStatus.includes("geschlossen") ||
-			lowerStatus.includes("closed")
-		) {
-			return "bg-red-100 text-red-800 border-red-200";
-		}
-		return "bg-gray-100 text-gray-800 border-gray-200";
-	};
-
 	return (
 		<div className="HoverCard-root">
-			<Card className="w-80 shadow-lg">
-				<CardHeader className="pb-3">
+			<Card className="w-80 shadow-lg border-none">
+				<CardHeader className="p-2">
 					<CardTitle className="text-lg font-semibold line-clamp-2">
 						{featureProperties.name}
 					</CardTitle>
-					<CardDescription>
-						<div className="flex flex-col gap-2 mt-2">
-							{featureProperties.categories?.map((category: Category) => {
-								const IconComponent = getCategoryIconComponent(category.key);
-
-								return (
-									<div
-										key={category.id}
-										className="flex items-center gap-2 px-2 py-1"
-									>
-										<IconComponent className="w-5 h-5" />
-										<span>{category.key}</span>
-									</div>
-								);
-							})}
-						</div>
-					</CardDescription>
 				</CardHeader>
 
-				<CardContent className="pt-0">
-					{featureProperties.description && (
-						<p className="line-clamp-3">{featureProperties.description}</p>
-					)}
+				<CardContent className="p-2 pt-0">
+					<div className="flex flex-col gap-2 ">
+						{featureProperties.categories?.map((category: Category) => {
+							const IconComponent = getCategoryIconComponent(category.key);
 
-					{featureProperties.address && (
-						<div className="mt-2">
-							<p>📍 {featureProperties.address}</p>
-						</div>
-					)}
+							return (
+								<div key={category.id}>
+									<div className="flex items-center gap-2 h-6">
+										<div className="w-6 h-6">
+											<IconComponent />
+										</div>
+										<span className="text-md font-semibold">
+											{/* add category name */}
+											{category.key}
+										</span>
+									</div>
+									<span className="pl-8">Subtitle</span>
+								</div>
+							);
+						})}
+					</div>
 				</CardContent>
 
-				<CardContent className="pt-0">
+				<CardFooter
+					className={`rounded-b-md p-2 ${featureProperties.utilization_status === "in_use" ? "bg-brand-light" : "bg-alert"}`}
+				>
 					{featureProperties.utilization_status && (
-						<div className="flex items-center justify-between">
+						<div className=" flex gap-1 items-center justify-between">
 							<span>Nutzungsstatus:</span>
-							<span
-								className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusStyling(featureProperties.utilization_status)}`}
-							>
-								{featureProperties.utilization_status}
-							</span>
+							{/* todo: add status name */}
+							<span>{featureProperties.utilization_status}</span>
 						</div>
 					)}
-				</CardContent>
+					{!featureProperties.utilization_status && (
+						<div className=" flex gap-1 items-center justify-between">
+							<span>Nutzungsstatus:</span>
+							<span>unbekannt</span>
+						</div>
+					)}
+				</CardFooter>
 			</Card>
 		</div>
 	);
