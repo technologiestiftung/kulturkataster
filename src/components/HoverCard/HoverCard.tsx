@@ -7,9 +7,9 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
+import InfoCircleIcon from "@/icons/info-circle-fill.svg";
 import { CategoryType, getCategoryIconComponent } from "@/lib/utils/iconUtils"; // Update this import path
 import { FC, useEffect, useState } from "react";
-import { Badge } from "../ui/badge";
 
 interface HoverCardProps {
 	features?: any;
@@ -58,13 +58,7 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 						<CardTitle className="text-lg font-semibold line-clamp-2 w-full">
 							{featureProperties.name}
 						</CardTitle>
-
-						<Badge
-							variant="default"
-							className="w-6 h-6 p-0 rounded-full text-xs font-bold"
-						>
-							i
-						</Badge>
+						<InfoCircleIcon />
 					</div>
 				</CardHeader>
 
