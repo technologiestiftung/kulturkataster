@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @plugin 'tailwindcss-animate';
+@import "./map.css";
 @custom-variant dark (&:is(.dark *));
 @custom-variant contrast (&:is([data-theme="contrast"] *));
 
