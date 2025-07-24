@@ -4,12 +4,8 @@ import dynamic from "next/dynamic";
 import { FC } from "react";
 import GeolocationSearch from "../GeolocationSearch/GeolocationSearch";
 import HoverCard from "../HoverCard/HoverCard";
-import {
-	ClickControl,
-	HoverControl,
-	MapControls,
-	MapNavigationControls,
-} from "./Controls";
+import { ClickControl, HoverControl, MapControls } from "./Controls";
+import MapNavigationControls from "./Controls/MapNavigation/MapNavigationControls";
 import LayerInitializer from "./LayerInitializer/LayerInitializer";
 import { Layers, VenueLayer } from "./Layers";
 import LayerTree from "./LayerTree/LayerTree";
@@ -19,15 +15,10 @@ const LazyOlMap = dynamic(() => import("./OlMap/OlMap"), {
 	loading: () => <div>Loading map container...</div>,
 });
 
-// TODO: fix performance
-// TODO: fix hover card for zoom level
-// TODO: fix Geolocate
-//
-
 const Map: FC = () => {
 	return (
 		<div className="Map-root">
-			{false && <LayerTree />}
+			{true && <LayerTree />}
 			<GeolocationSearch />
 
 			<LazyOlMap>
@@ -39,15 +30,8 @@ const Map: FC = () => {
 
 				<MapControls>
 					<MapNavigationControls />
-
 					{true && (
-						<HoverControl
-							layerId="venues"
-							minZoomForHover={3}
-							// overlayOptions={
-							// 	{ autoPan: true }
-							// }
-						>
+						<HoverControl layerId="venues" minZoomForHover={3}>
 							<HoverCard />
 						</HoverControl>
 					)}
