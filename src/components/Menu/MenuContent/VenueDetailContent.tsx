@@ -1,10 +1,342 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useVenueStore } from "@/lib/store/venueStore";
 import { getVenuesGeoJSON } from "@/lib/supabase/api";
-import { VenueProperties } from "@/types";
+import { getCategoryIconComponent } from "@/lib/utils/iconUtils"; // Update this import path
+import { Category, VenueProperties } from "@/types";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+
+function VenueHeader({
+	venueData,
+}: {
+	venueData: VenueProperties;
+	onClose: () => void;
+}) {
+	const { t } = useTranslation("common");
+
+	return (
+		<CardHeader
+			className={`relative p-0 ${venueData.utilization_status === "in_use" ? "bg-brand-default" : "bg-neutral-20"}`}
+		>
+			<CardTitle className="text-xl px-4 pt-4 font-bold">
+				{venueData.name}
+			</CardTitle>
+
+			<div className="flex px-4 items-center gap-2 text-sm">
+				{venueData.categories?.map((category: Category) => {
+					const IconComponent = getCategoryIconComponent(category.key);
+
+					return (
+						<div key={category.id}>
+							<div className="flex items-center gap-2 h-6">
+								<div className="w-6 h-6">
+									<IconComponent />
+								</div>
+								<span className="text-md font-semibold">
+									{/* add category name */}
+									{category.key}
+								</span>
+							</div>
+							<span className="pl-8">Subtitle</span>
+						</div>
+					);
+				})}
+			</div>
+
+			<div
+				className={`${venueData.utilization_status === "in_use" ? "bg-brand-light" : "bg-alert"} p-4`}
+			>
+				{t("venue.utilizationStatus", "Nutzungsstatus")}:{" "}
+				{venueData.utilization_status || venueData.status || "in Nutzung"}
+			</div>
+		</CardHeader>
+	);
+}
+
+function VenueBasicInfo({ venueData }: { venueData: VenueProperties }) {
+	return (
+		<>
+			<div>
+				<h3 className="font-semibold text-lg">{venueData.name}</h3>
+				<div className="text-sm space-y-1">
+					<div>
+						{venueData.street} {venueData.street_number}
+					</div>
+					<div>{venueData.zip_code}</div>
+				</div>
+			</div>
+
+			<div className="rounded space-y-2">
+				{venueData.description && (
+					<div>
+						<span className="font-medium text-sm">Kulturareal:</span>
+						<div className="text-sm">{venueData.description}</div>
+					</div>
+				)}
+
+				{venueData.website && (
+					<div>
+						<span className="font-medium text-sm">Website:</span>
+						<div>
+							<a
+								href={venueData.website}
+								target="_blank"
+								rel="noopener noreferrer"
+								className="text-sm text-purple-600 hover:underline"
+							>
+								{venueData.website}
+							</a>
+						</div>
+					</div>
+				)}
+
+				{venueData.phone && (
+					<div>
+						<span className="font-medium text-sm">Telefonnummer:</span>
+						<div>
+							<a
+								href={`tel:${venueData.phone}`}
+								className="text-sm text-gray-600"
+							>
+								{venueData.phone}
+							</a>
+						</div>
+					</div>
+				)}
+
+				{venueData.email && (
+					<div>
+						<span className="font-medium text-sm">E-Mail-Adresse:</span>
+						<div>
+							<a
+								href={`mailto:${venueData.email}`}
+								className="text-sm text-purple-600 hover:underline"
+							>
+								{venueData.email}
+							</a>
+						</div>
+					</div>
+				)}
+			</div>
+		</>
+	);
+}
+
+function VenueAdministrativeInfo({
+	venueData,
+}: {
+	venueData: VenueProperties;
+}) {
+	return (
+		<div className="space-y-2">
+			{venueData.funding_type && (
+				<div>
+					<span className="font-medium text-sm">Art der Finanzierung:</span>
+					<span className="text-sm text-gray-600 ml-2">
+						{venueData.funding_type}
+					</span>
+				</div>
+			)}
+
+			{venueData.support_type && (
+				<div>
+					<span className="font-medium text-sm">Art der Förderung:</span>
+					<span className="text-sm text-gray-600 ml-2">
+						{venueData.support_type}
+					</span>
+				</div>
+			)}
+
+			<div>
+				<span className="font-medium text-sm">Bezirk:</span>
+				<span className="text-sm text-gray-600 ml-2">Mitte</span>
+			</div>
+
+			<div>
+				<span className="font-medium text-sm">Stadtteil:</span>
+				<span className="text-sm text-gray-600 ml-2">Mitte</span>
+			</div>
+		</div>
+	);
+}
+
+function VenueCapacityInfo({ venueData }: { venueData: VenueProperties }) {
+	return (
+		<div className="space-y-2">
+			{venueData.capacity && (
+				<div>
+					<span className="font-medium text-sm">
+						Größe der Nutzflächen (m²):
+					</span>
+					<span className="text-sm text-gray-600 ml-2">
+						{venueData.capacity}
+					</span>
+				</div>
+			)}
+
+			{venueData.rooms_count && (
+				<div>
+					<span className="font-medium text-sm">Anzahl der Arbeitsräume:</span>
+					<span className="text-sm text-gray-600 ml-2">
+						{venueData.rooms_count}
+					</span>
+				</div>
+			)}
+
+			<div>
+				<span className="font-medium text-sm">Mehrfachnutzung:</span>
+				<span className="text-sm text-gray-600 ml-2">
+					{venueData.shared_use_allowed ? "möglich" : "nicht möglich"}
+				</span>
+			</div>
+
+			{venueData.shared_use_allowed && (
+				<div>
+					<div className="font-medium text-sm">Beschreibung:</div>
+					<div className="text-sm text-gray-600">
+						Beschreibung Räume/Flächen für Mehrfachnutzung
+					</div>
+				</div>
+			)}
+		</div>
+	);
+}
+
+function VenueCategoriesInfo({ venueData }: { venueData: VenueProperties }) {
+	return (
+		<>
+			{venueData.categories && venueData.categories.length > 0 && (
+				<div>
+					<div className="font-medium text-sm mb-2">Kategorien:</div>
+					<div className="flex flex-wrap gap-1">
+						{venueData.categories.map((category) => (
+							<Badge key={category.id} variant="outline" className="text-xs">
+								{category.key}
+							</Badge>
+						))}
+					</div>
+				</div>
+			)}
+
+			{venueData.subcategories && venueData.subcategories.length > 0 && (
+				<div>
+					<div className="font-medium text-sm mb-2">Subkategorien:</div>
+					<div className="flex flex-wrap gap-1">
+						{venueData.subcategories.map((subcategory) => (
+							<Badge key={subcategory.id} variant="outline" className="text-xs">
+								{subcategory.key}
+							</Badge>
+						))}
+					</div>
+				</div>
+			)}
+
+			{venueData.tags && venueData.tags.length > 0 && (
+				<div>
+					<div className="font-medium text-sm mb-2">Tags:</div>
+					<div className="flex flex-wrap gap-1">
+						{venueData.tags.map((tag, index) => (
+							<Badge key={index} variant="secondary" className="text-xs">
+								{tag}
+							</Badge>
+						))}
+					</div>
+				</div>
+			)}
+		</>
+	);
+}
+
+function VenueExtendedInfo({ venueData }: { venueData: VenueProperties }) {
+	return (
+		<div className="bg-gray-50 p-3 rounded space-y-3">
+			<VenueAdministrativeInfo venueData={venueData} />
+			<VenueCapacityInfo venueData={venueData} />
+			<VenueCategoriesInfo venueData={venueData} />
+
+			{venueData.established_since && (
+				<div className="pt-2 border-t">
+					<div>
+						<span className="font-medium text-sm">Stand:</span>
+						<span className="text-sm text-gray-600 ml-2">
+							{venueData.established_since}
+						</span>
+					</div>
+				</div>
+			)}
+		</div>
+	);
+}
+
+function hasExtendedInfo(venueData: VenueProperties): boolean {
+	return !!(
+		venueData.categories?.length ||
+		venueData.subcategories?.length ||
+		venueData.tags?.length ||
+		venueData.parent_organizations?.length ||
+		venueData.established_since
+	);
+}
+
+function VenueToggleButton({
+	showMoreInfo,
+	onToggle,
+}: {
+	showMoreInfo: boolean;
+	onToggle: () => void;
+}) {
+	const { t } = useTranslation("common");
+
+	return (
+		<Button
+			variant="ghost"
+			onClick={onToggle}
+			className="w-full gap-2 justify-start text-primary p-0 h-auto"
+		>
+			{showMoreInfo ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+			<span>
+				{showMoreInfo
+					? t("venue.lessInfo", "Weniger Informationen")
+					: t("venue.moreInfo", "Mehr Informationen")}
+			</span>
+		</Button>
+	);
+}
+
+function VenueCard({
+	venueData,
+	onClose,
+}: {
+	venueData: VenueProperties;
+	onClose: () => void;
+}) {
+	const [showMoreInfo, setShowMoreInfo] = useState(false);
+	const hasExtended = hasExtendedInfo(venueData);
+
+	return (
+		<Card className="w-full rounded-lg overflow-hidden border-none">
+			<VenueHeader venueData={venueData} onClose={onClose} />
+
+			<CardContent className="p-4 space-y-4">
+				<VenueBasicInfo venueData={venueData} />
+
+				{hasExtended && (
+					<VenueToggleButton
+						showMoreInfo={showMoreInfo}
+						onToggle={() => setShowMoreInfo(!showMoreInfo)}
+					/>
+				)}
+
+				{showMoreInfo && <VenueExtendedInfo venueData={venueData} />}
+			</CardContent>
+		</Card>
+	);
+}
 
 export function VenueDetailContent() {
 	const { t } = useTranslation("common");
@@ -22,9 +354,8 @@ export function VenueDetailContent() {
 		const fetchVenueData = async () => {
 			try {
 				setLoading(true);
-				// TODO: add api call to geht single venue
 				const geoJsonData = await getVenuesGeoJSON();
-
+				// Find the venue with the matching ID
 				const venue = geoJsonData.features.find(
 					(feature) => feature.properties?.id === selectedVenueId,
 				);
@@ -80,16 +411,8 @@ export function VenueDetailContent() {
 	}
 
 	return (
-		<div className="p-6 space-y-6">
-			<h1>{venueData.name}</h1>
-			<div className="pt-4 border-t">
-				<button
-					onClick={handleClose}
-					className="text-sm text-primary hover:underline"
-				>
-					← {t("venue.backToMap")}
-				</button>
-			</div>
+		<div className="p-2">
+			<VenueCard venueData={venueData} onClose={handleClose} />
 		</div>
 	);
 }
