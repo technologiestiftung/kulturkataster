@@ -71,23 +71,23 @@ function VenueBasicInfo({ venueData }: { venueData: VenueProperties }) {
 				</div>
 			</div>
 
-			<div className="rounded space-y-2">
+			<div className="rounded space-y-2 bg-neutral-5 p-4">
 				{venueData.description && (
 					<div>
-						<span className="font-medium text-sm">Kulturareal:</span>
+						<span className="font-semibold">Kulturareal:</span>
 						<div className="text-sm">{venueData.description}</div>
 					</div>
 				)}
 
 				{venueData.website && (
 					<div>
-						<span className="font-medium text-sm">Website:</span>
+						<span className="font-semibold">Website:</span>
 						<div>
 							<a
 								href={venueData.website}
 								target="_blank"
 								rel="noopener noreferrer"
-								className="text-sm text-purple-600 hover:underline"
+								className="text-sm text-primary-dark hover:underline"
 							>
 								{venueData.website}
 							</a>
@@ -115,7 +115,7 @@ function VenueBasicInfo({ venueData }: { venueData: VenueProperties }) {
 						<div>
 							<a
 								href={`mailto:${venueData.email}`}
-								className="text-sm text-purple-600 hover:underline"
+								className="text-sm text-primary-dark hover:underline"
 							>
 								{venueData.email}
 							</a>
@@ -296,7 +296,7 @@ function VenueToggleButton({
 		<Button
 			variant="ghost"
 			onClick={onToggle}
-			className="w-full gap-2 justify-start text-primary p-0 h-auto"
+			className="w-full gap-2 justify-start text-primary-dark p-0 h-auto"
 		>
 			{showMoreInfo ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
 			<span>
@@ -402,7 +402,7 @@ export function VenueDetailContent() {
 				<p className="text-muted-foreground">{t("venue.notFound")}</p>
 				<button
 					onClick={handleClose}
-					className="mt-4 text-primary hover:underline"
+					className="mt-4 text-primary-dark hover:underline"
 				>
 					{t("venue.backToMap")}
 				</button>
