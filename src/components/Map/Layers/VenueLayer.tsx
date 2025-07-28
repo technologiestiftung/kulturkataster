@@ -4,7 +4,6 @@
 import { useMapStore } from "@/lib/store/mapStore";
 import { useVenueStore } from "@/lib/store/venueStore";
 import { getVenuesGeoJSON } from "@/lib/supabase/api";
-import { CategoryType } from "@/lib/utils/iconUtils";
 import { transformGeoJSON } from "@/lib/utils/mapUtils";
 import { MapStoreState } from "@/types/map";
 import type { FeatureCollection, GeoJsonProperties, Geometry } from "geojson";
@@ -17,6 +16,7 @@ import { Fill, Icon, Style, Text } from "ol/style";
 import CircleStyle from "ol/style/Circle";
 import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { createPoiSvg } from "../MapStyles/createPoiSvg";
+import { CategoryType } from "@/types";
 
 interface VenueLayerProps {
 	zIndex?: number;
