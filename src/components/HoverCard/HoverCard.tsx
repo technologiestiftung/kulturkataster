@@ -8,16 +8,12 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 import InfoCircleIcon from "@/icons/info-circle-fill.svg";
-import { CategoryType, getCategoryIconComponent } from "@/lib/utils/iconUtils"; // Update this import path
+import { getCategoryIconComponent } from "@/lib/utils/iconUtils"; // Update this import path
+import { Category } from "@/types";
 import { FC, useEffect, useState } from "react";
 
 interface HoverCardProps {
 	features?: any;
-}
-
-interface Category {
-	id: number;
-	key: CategoryType;
 }
 
 const getFeatureData = (feature: any) => {
