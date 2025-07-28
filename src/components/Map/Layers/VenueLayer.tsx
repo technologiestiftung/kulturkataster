@@ -27,7 +27,7 @@ interface VenueLayerProps {
 
 const VenueLayer: FC<VenueLayerProps> = ({
 	zIndex = 10000,
-	distance = 60,
+	distance = 100,
 	minZoomForClustering = 0,
 	maxZoomForClustering = 4,
 }) => {
