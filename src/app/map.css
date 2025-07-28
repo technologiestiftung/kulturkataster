@@ -1,3 +1,4 @@
-.Map-root .ol-attribution, .Map-root .ol-rotate {
+.Map-root .ol-attribution,
+.Map-root .ol-rotate {
 	display: none;
 }
