@@ -42,26 +42,7 @@ import rehearsalRoomsRaw from "@/icons/rehearsal-rooms.svg?raw";
 import socioculturalCentersRaw from "@/icons/sociocultural-centers.svg?raw";
 import urbanDevelopmentRaw from "@/icons/urban-development.svg?raw";
 import workshopsRaw from "@/icons/workshops.svg?raw";
-
-export enum CategoryType {
-	WORKSHOPS = "workshops",
-	EDUCATION_PLACES = "education_places",
-	LIBRARIES = "libraries",
-	BOOKSTORES = "bookstores",
-	MUSIC_VENUES = "music_venues",
-	GALLERIES = "galleries",
-	CINEMAS = "cinemas",
-	LITERATURE_PLACES = "literature_places",
-	MUSEUMS = "museums",
-	URBAN_DEVELOPMENT = "urban_development",
-	POTENTIAL_SPACES = "potential_spaces",
-	REHEARSAL_ROOMS = "rehearsal_rooms",
-	PROJECT_SPACES = "project_spaces",
-	SOCIOCULTURAL_CENTERS = "sociocultural_centers",
-	PERFORMING_ARTS = "performing_arts",
-	OTHER = "other",
-	MULTI_CATEGORIES = "multi_categories",
-}
+import { CategoryType } from "@/types";
 
 type SvgIconComponent = FC<SVGProps<SVGSVGElement>>;
 
