@@ -52,7 +52,6 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	const isLayerTreeOpen = useMapStore((state) => state.isLayerTreeOpen);
 	const setIsLayerTreeOpen = useMapStore((state) => state.setIsLayerTreeOpen);
 
-	// Set active item to layertree when LayerTree is opened from mobile
 	React.useEffect(() => {
 		if (isLayerTreeOpen) {
 			setActiveItem("layertree");
@@ -66,7 +65,6 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 		}
 
 		if (itemName === "layertree") {
-			// If we're already showing LayerTree, close it
 			if (isLayerTreeOpen) {
 				setIsLayerTreeOpen(false);
 				if (isMobile) {
@@ -86,7 +84,6 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			}
 		} else {
 			setActiveItem(itemName);
-			setIsLayerTreeOpen(false); // Close LayerTree when switching to other items
 			if (isMobile) {
 				setOpenMobile(true);
 			} else {
@@ -183,10 +180,9 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 								onClick={() => {
 									setOpen(false);
 									setOpenMobile(false);
-									// Reset LayerTree state when closing
 									if (activeItem === "layertree") {
 										setIsLayerTreeOpen(false);
-										setActiveItem("filter"); // Reset to default
+										setActiveItem("filter");
 									}
 								}}
 								className=""
