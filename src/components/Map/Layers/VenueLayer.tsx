@@ -80,7 +80,7 @@ const VenueLayer: FC<VenueLayerProps> = ({
 
 	const createSingleFeatureStyle = useCallback(
 		(categoryKey: CategoryType, isSelected = false) => {
-			const fillColor = isSelected ? "#22c55e" : "#C288FF"; // Green for selected, purple for normal
+			const fillColor = isSelected ? "#AAE9C9" : "#D9C1FF";
 			const iconSvg = createPoiSvg(categoryKey, fillColor, "#161616");
 			return new Style({
 				image: new Icon({
