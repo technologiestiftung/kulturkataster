@@ -1,5 +1,6 @@
 export interface VenueProperties {
 	id: number;
+	name: string;
 	venue_name: string;
 	street: string;
 	street_number: string;
@@ -37,4 +38,9 @@ export interface VenueFeature extends VenueProperties {
 		type: "Point";
 		coordinates: [number, number];
 	};
+}
+
+export interface VenueStoreState {
+	selectedVenueId: string | null;
+	setSelectedVenueId: (id: string | null) => void;
 }

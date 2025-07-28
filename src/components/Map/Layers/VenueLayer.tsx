@@ -2,7 +2,8 @@
 "use client";
 
 import { useMapStore } from "@/lib/store/mapStore";
-import { getInstitutionsGeoJSON } from "@/lib/supabase/api";
+import { useVenueStore } from "@/lib/store/venueStore";
+import { getVenuesGeoJSON } from "@/lib/supabase/api";
 import { CategoryType } from "@/lib/utils/iconUtils";
 import { transformGeoJSON } from "@/lib/utils/mapUtils";
 import { MapStoreState } from "@/types/map";
@@ -32,6 +33,7 @@ const VenueLayer: FC<VenueLayerProps> = ({
 }) => {
 	const map = useMapStore((state: MapStoreState) => state.map);
 	const config = useMapStore((state) => state.config);
+	const selectedVenueId = useVenueStore((state) => state.selectedVenueId);
 	const [venuesData, setVenuesData] = useState<FeatureCollection<
 		Geometry,
 		GeoJsonProperties
@@ -45,13 +47,12 @@ const VenueLayer: FC<VenueLayerProps> = ({
 	const vectorSourceRef = useRef<VectorSource | null>(null);
 	const clusterSourceRef = useRef<Cluster | null>(null);
 
-	// Fetch venues data on component mount
 	useEffect(() => {
 		const fetchVenues = async () => {
 			try {
 				setLoading(true);
 				setError(null);
-				const data = await getInstitutionsGeoJSON();
+				const data = await getVenuesGeoJSON();
 
 				setVenuesData(data);
 			} catch (err) {
@@ -70,27 +71,29 @@ const VenueLayer: FC<VenueLayerProps> = ({
 	const getCategoryKey = useCallback(
 		(feature: FeatureLike, features: any[]) => {
 			if (features && features.length > 0) {
-				// Clustered feature (even if cluster size is 1)
 				return features[0]?.values_?.categories?.[0]?.key;
 			}
-			// Individual feature (no clustering)
 			return feature.get("categories")?.[0]?.key;
 		},
 		[],
 	);
 
-	const createSingleFeatureStyle = useCallback((categoryKey: CategoryType) => {
-		const iconSvg = createPoiSvg(categoryKey, "#C288FF", "#161616");
-		return new Style({
-			image: new Icon({
-				anchor: [0.5, 1],
-				src: iconSvg,
-				offset: [0, 0],
-				opacity: 1,
-				scale: 1,
-			}),
-		});
-	}, []);
+	const createSingleFeatureStyle = useCallback(
+		(categoryKey: CategoryType, isSelected = false) => {
+			const fillColor = isSelected ? "#22c55e" : "#C288FF"; // Green for selected, purple for normal
+			const iconSvg = createPoiSvg(categoryKey, fillColor, "#161616");
+			return new Style({
+				image: new Icon({
+					anchor: [0.5, 1],
+					src: iconSvg,
+					offset: [0, 0],
+					opacity: 1,
+					scale: 1,
+				}),
+			});
+		},
+		[],
+	);
 
 	const createClusterStyle = useCallback((size: number) => {
 		const radius = 15;
@@ -118,11 +121,21 @@ const VenueLayer: FC<VenueLayerProps> = ({
 
 			if (size === 1) {
 				const categoryKey = getCategoryKey(feature, features);
-				return createSingleFeatureStyle(categoryKey);
+				const featureToCheck = features ? features[0] : feature;
+				const featureId =
+					featureToCheck?.get?.("id") || featureToCheck?.values_?.id;
+				const isSelected = featureId === selectedVenueId;
+
+				return createSingleFeatureStyle(categoryKey, isSelected);
 			}
 			return createClusterStyle(size);
 		},
-		[getCategoryKey, createSingleFeatureStyle, createClusterStyle],
+		[
+			getCategoryKey,
+			createSingleFeatureStyle,
+			createClusterStyle,
+			selectedVenueId,
+		],
 	);
 
 	const shouldCluster = useCallback(
@@ -176,27 +189,23 @@ const VenueLayer: FC<VenueLayerProps> = ({
 	);
 
 	useEffect(() => {
-		// Don't create the layer until we have data and no errors
 		if (!map || zIndex === null || !config || loading || error || !venuesData)
 			return;
 
 		const epsg = config.portalConfig.map.mapView.epsg;
 		const currentZoom = map.getView().getZoom() || 6;
 
-		// Create the base vector source
 		const vectorSource = new VectorSource({
 			features: new GeoJSON().readFeatures(transformGeoJSON(venuesData, epsg)),
 		});
 		vectorSourceRef.current = vectorSource;
 
-		// Create cluster source
 		const clusterSource = new Cluster({
 			distance: getClusterDistance(currentZoom),
 			source: vectorSource,
 		});
 		clusterSourceRef.current = clusterSource;
 
-		// Create the layer with appropriate initial source
 		const initialSource = shouldCluster(currentZoom)
 			? clusterSource
 			: vectorSource;
@@ -209,7 +218,6 @@ const VenueLayer: FC<VenueLayerProps> = ({
 		const handleZoomChange = () => {
 			let zoomLevel = map.getView().getZoom() ?? 6;
 
-			// Clamp any negative zoom to 0
 			if (zoomLevel < 0) {
 				zoomLevel = 0;
 			}
@@ -229,7 +237,6 @@ const VenueLayer: FC<VenueLayerProps> = ({
 				map.getView().un("change:resolution", handleZoomChange);
 				map.removeLayer(vectorLayerRef.current);
 			}
-			// Clean up refs
 			vectorLayerRef.current = null;
 			vectorSourceRef.current = null;
 			clusterSourceRef.current = null;
@@ -247,7 +254,12 @@ const VenueLayer: FC<VenueLayerProps> = ({
 		error,
 	]);
 
-	// Optional: You could add loading/error UI here if needed
+	useEffect(() => {
+		if (vectorLayerRef.current) {
+			vectorLayerRef.current.changed();
+		}
+	}, [selectedVenueId]);
+
 	if (loading) {
 		console.log("Loading venues data...");
 	}

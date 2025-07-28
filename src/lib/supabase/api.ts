@@ -2,6 +2,8 @@
 import { createClient } from "@/lib/supabase/client";
 import type { FeatureCollection } from "geojson";
 
+// NOTE: Venues are called Institutions in Supabase
+
 // Error handling
 export class ApiError extends Error {
 	constructor(
@@ -38,7 +40,7 @@ function validateSingleResponse<T>(data: unknown, context: string): T {
 	return data as T;
 }
 
-export async function getInstitutionsGeoJSON() {
+export async function getVenuesGeoJSON() {
 	const supabase = createClient();
 
 	const { data, error } = await supabase.rpc("get_public_institutions_geojson");
