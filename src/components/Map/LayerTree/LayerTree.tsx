@@ -22,7 +22,6 @@ import { FC, memo, useCallback, useEffect, useMemo, useState } from "react";
 // Constants
 const LAYER_THUMBNAIL_SIZE = 80;
 const FLOATING_BUTTON_SIZE = 64;
-const CARD_WIDTH = 400;
 const SIDEBAR_COLLAPSED_OFFSET = "left-24";
 const SIDEBAR_EXPANDED_OFFSET = "left-[494px]";
 
@@ -133,7 +132,9 @@ const LayerItem = memo<{ layer: ManagedLayer }>(({ layer }) => {
 						</Label>
 						{serviceNameLang && (
 							<div className="text-xs text-muted-foreground">
-								{serviceNameLang}
+								{layer.status === "error"
+									? "Fachkarte nicht verfügbar. Bitte versuchen Sie es später erneut."
+									: serviceNameLang}
 							</div>
 						)}
 					</div>
@@ -147,6 +148,7 @@ const LayerItem = memo<{ layer: ManagedLayer }>(({ layer }) => {
 							onCheckedChange={handleVisibilityChange}
 							className="w-6 h-6 rounded-full"
 							aria-label={`Toggle visibility for ${serviceName}`}
+							disabled={layer.status === "error"}
 						/>
 					</div>
 				</div>
@@ -288,7 +290,7 @@ const LayerTree: FC = () => {
 	// Desktop card view
 	return (
 		<Card
-			className={`flex w-[${CARD_WIDTH}px] max-h-[70vh] absolute bottom-4 z-50 flex-col bg-neutral-5 transition-all duration-200 left-4`}
+			className={`flex w-[400px] max-h-[70vh] absolute bottom-4 z-50 flex-col bg-neutral-5 transition-all duration-200 left-4`}
 			role="dialog"
 			aria-label="Layer tree"
 		>
