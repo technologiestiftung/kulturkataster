@@ -1,6 +1,5 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useVenueStore } from "@/lib/store/venueStore";
@@ -97,12 +96,9 @@ function VenueBasicInfo({ venueData }: { venueData: VenueProperties }) {
 
 				{venueData.phone && (
 					<div>
-						<span className="font-medium text-sm">Telefonnummer:</span>
+						<span className="font-semibold">Telefonnummer:</span>
 						<div>
-							<a
-								href={`tel:${venueData.phone}`}
-								className="text-sm text-gray-600"
-							>
+							<a href={`tel:${venueData.phone}`} className="text-sm">
 								{venueData.phone}
 							</a>
 						</div>
@@ -111,7 +107,7 @@ function VenueBasicInfo({ venueData }: { venueData: VenueProperties }) {
 
 				{venueData.email && (
 					<div>
-						<span className="font-medium text-sm">E-Mail-Adresse:</span>
+						<span className="font-semibold">E-Mail-Adresse:</span>
 						<div>
 							<a
 								href={`mailto:${venueData.email}`}
@@ -137,30 +133,28 @@ function VenueAdministrativeInfo({
 			{venueData.funding_type && (
 				<div>
 					<span className="font-medium text-sm">Art der Finanzierung:</span>
-					<span className="text-sm text-gray-600 ml-2">
-						{venueData.funding_type}
-					</span>
+					<span className="text-sm ml-2">{venueData.funding_type}</span>
 				</div>
 			)}
 
 			{venueData.support_type && (
 				<div>
 					<span className="font-medium text-sm">Art der Förderung:</span>
-					<span className="text-sm text-gray-600 ml-2">
-						{venueData.support_type}
-					</span>
+					<span className="text-sm ml-2">{venueData.support_type}</span>
 				</div>
 			)}
 
 			<div>
 				<span className="font-medium text-sm">Bezirk:</span>
-				<span className="text-sm text-gray-600 ml-2">Mitte</span>
+				{/* todo: add Bezirk */}
+				<span className="text-sm ml-2">{venueData.district_id}</span>
 			</div>
 
-			<div>
+			{/* todo: add Stadtteil */}
+			{/* <div>
 				<span className="font-medium text-sm">Stadtteil:</span>
-				<span className="text-sm text-gray-600 ml-2">Mitte</span>
-			</div>
+				<span className="text-sm text-gray-600 ml-2"></span>
+			</div> */}
 		</div>
 	);
 }
@@ -207,57 +201,11 @@ function VenueCapacityInfo({ venueData }: { venueData: VenueProperties }) {
 	);
 }
 
-function VenueCategoriesInfo({ venueData }: { venueData: VenueProperties }) {
-	return (
-		<>
-			{venueData.categories && venueData.categories.length > 0 && (
-				<div>
-					<div className="font-medium text-sm mb-2">Kategorien:</div>
-					<div className="flex flex-wrap gap-1">
-						{venueData.categories.map((category) => (
-							<Badge key={category.id} variant="outline" className="text-xs">
-								{category.key}
-							</Badge>
-						))}
-					</div>
-				</div>
-			)}
-
-			{venueData.subcategories && venueData.subcategories.length > 0 && (
-				<div>
-					<div className="font-medium text-sm mb-2">Subkategorien:</div>
-					<div className="flex flex-wrap gap-1">
-						{venueData.subcategories.map((subcategory) => (
-							<Badge key={subcategory.id} variant="outline" className="text-xs">
-								{subcategory.key}
-							</Badge>
-						))}
-					</div>
-				</div>
-			)}
-
-			{venueData.tags && venueData.tags.length > 0 && (
-				<div>
-					<div className="font-medium text-sm mb-2">Tags:</div>
-					<div className="flex flex-wrap gap-1">
-						{venueData.tags.map((tag, index) => (
-							<Badge key={index} variant="secondary" className="text-xs">
-								{tag}
-							</Badge>
-						))}
-					</div>
-				</div>
-			)}
-		</>
-	);
-}
-
 function VenueExtendedInfo({ venueData }: { venueData: VenueProperties }) {
 	return (
 		<div className="bg-gray-50 p-3 rounded space-y-3">
 			<VenueAdministrativeInfo venueData={venueData} />
 			<VenueCapacityInfo venueData={venueData} />
-			<VenueCategoriesInfo venueData={venueData} />
 
 			{venueData.established_since && (
 				<div className="pt-2 border-t">
