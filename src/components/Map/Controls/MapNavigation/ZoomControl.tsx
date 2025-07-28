@@ -50,7 +50,7 @@ const ZoomControl: FC<ZoomControlProps> = ({
 	if (!map) return null;
 
 	return (
-		<div className="hidden sm:flex flex-col gap-2">
+		<div className="hidden md:flex flex-col gap-2">
 			<Button
 				variant="map-icon"
 				size="icon-only"
