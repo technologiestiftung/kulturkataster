@@ -18,13 +18,22 @@ import ContextMapIcon from "@/icons/fachkarten.svg";
 import { ManagedLayer } from "@/types";
 import { X } from "lucide-react";
 import Image from "next/image";
-import { FC, useMemo, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 
 const LayerTree: FC = () => {
 	const layers = useMapStore((state) => state.layers);
 	const setLayerVisibility = useMapStore((state) => state.setLayerVisibility);
-	const { state: sidebarState, isMobile } = useSidebar();
+	const setIsLayerTreeOpen = useMapStore((state) => state.setIsLayerTreeOpen);
+	const { state: sidebarState, isMobile, setOpenMobile } = useSidebar();
 	const [isOpen, setIsOpen] = useState(false);
+
+	useEffect(() => {
+		if (isOpen && isMobile) {
+			setIsOpen(false);
+			setIsLayerTreeOpen(true);
+			setOpenMobile(true);
+		}
+	}, [isMobile, isOpen, setIsLayerTreeOpen, setOpenMobile]);
 
 	const subjectLayers = useMemo(
 		() => layers.filter((l) => l.layerType === "subject"),
@@ -217,7 +226,7 @@ const LayerTree: FC = () => {
 	// Desktop card view when open
 	return (
 		<Card
-			className={`w-[400px] max-h-[70vh] absolute bottom-4 z-50 flex flex-col bg-neutral-5 transition-all duration-200 left-4`}
+			className={`flex w-[400px] max-h-[70vh] absolute bottom-4 z-50 flex-col bg-neutral-5 transition-all duration-200 left-4`}
 		>
 			<CardHeader className="shadow-sm p-1 pl-6">
 				<div className="flex items-center justify-between">
