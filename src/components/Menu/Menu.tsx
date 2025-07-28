@@ -1,14 +1,7 @@
 "use client";
 
-import * as React from "react";
-import FilterLines from "@/icons/filter-lines.svg";
-import Search from "@/icons/search.svg";
-import Edit from "@/icons/edit.svg";
-import Download from "@/icons/download.svg";
-import InfoCircle from "@/icons/info-circle.svg";
-import Accessibility from "@/icons/accessibility.svg";
-import KukaMiniLogo from "@/logos/kuka-mini.svg";
-import Close from "@/icons/close.svg";
+import { InformationModal } from "@/components/Modals/Pages/InformationModal";
+import { WelcomeModal } from "@/components/Modals/Pages/WelcomeModal";
 import {
 	Sidebar,
 	SidebarContent,
@@ -21,13 +14,22 @@ import {
 	SidebarMenuItem,
 	useSidebar,
 } from "@/components/ui/sidebar";
-import { WelcomeModal } from "@/components/Modals/Pages/WelcomeModal";
-import { InformationModal } from "@/components/Modals/Pages/InformationModal";
-import { useTranslation } from "react-i18next";
 import "@/i18n/client";
+import Accessibility from "@/icons/accessibility.svg";
+import Close from "@/icons/close.svg";
+import Download from "@/icons/download.svg";
+import Edit from "@/icons/edit.svg";
+import FilterLines from "@/icons/filter-lines.svg";
+import InfoCircle from "@/icons/info-circle.svg";
+import Search from "@/icons/search.svg";
+import { useMapStore } from "@/lib/store/mapStore";
+import KukaMiniLogo from "@/logos/kuka-mini.svg";
+import * as React from "react";
+import { useTranslation } from "react-i18next";
+import { LayerTreeContent } from "../Map/LayerTree/LayerTree";
+import { AccessibilityContent } from "./MenuContent/AccessibilityContent";
 import { FilterContent } from "./MenuContent/FilterContent";
 import { SearchContent } from "./MenuContent/SearchContent";
-import { AccessibilityContent } from "./MenuContent/AccessibilityContent";
 
 const menuItems = [
 	{ id: "filter", icon: FilterLines, label: "filter" },
@@ -47,11 +49,33 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	const [activeItem, setActiveItem] = React.useState("filter");
 	const [dialogOpen, setDialogOpen] = React.useState(false);
 	const [infoModalOpen, setInfoModalOpen] = React.useState(false);
+	const isLayerTreeOpen = useMapStore((state) => state.isLayerTreeOpen);
+	const setIsLayerTreeOpen = useMapStore((state) => state.setIsLayerTreeOpen);
+
+	// Set active item to layertree when LayerTree is opened from mobile
+	React.useEffect(() => {
+		if (isLayerTreeOpen) {
+			setActiveItem("layertree");
+		}
+	}, [isLayerTreeOpen]);
 
 	const handleItemClick = (itemName: string) => {
 		if (itemName === "info") {
 			setInfoModalOpen(true);
 			return;
+		}
+
+		if (itemName === "layertree") {
+			// If we're already showing LayerTree, close it
+			if (isLayerTreeOpen) {
+				setIsLayerTreeOpen(false);
+				if (isMobile) {
+					setOpenMobile(false);
+				} else {
+					setOpen(false);
+				}
+				return;
+			}
 		}
 
 		if (activeItem === itemName) {
@@ -62,6 +86,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			}
 		} else {
 			setActiveItem(itemName);
+			setIsLayerTreeOpen(false); // Close LayerTree when switching to other items
 			if (isMobile) {
 				setOpenMobile(true);
 			} else {
@@ -150,9 +175,22 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 						</div>
 						<div className="flex items-center justify-between w-full">
 							<span className="body1 font-bold">
-								{t(activeItem + ".title") || t(activeItem)}
+								{activeItem === "layertree"
+									? "Fachkarten"
+									: t(activeItem + ".title") || t(activeItem)}
 							</span>
-							<button onClick={() => setOpen(false)} className="">
+							<button
+								onClick={() => {
+									setOpen(false);
+									setOpenMobile(false);
+									// Reset LayerTree state when closing
+									if (activeItem === "layertree") {
+										setIsLayerTreeOpen(false);
+										setActiveItem("filter"); // Reset to default
+									}
+								}}
+								className=""
+							>
 								<Close />
 							</button>
 						</div>
@@ -166,6 +204,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 									{activeItem === "accessibility" && (
 										<AccessibilityContent onItemClick={handleItemClick} />
 									)}
+									{activeItem === "layertree" && <LayerTreeContent />}
 								</div>
 							</SidebarGroupContent>
 						</SidebarGroup>
