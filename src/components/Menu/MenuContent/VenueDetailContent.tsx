@@ -22,11 +22,9 @@ export function VenueDetailContent() {
 		const fetchVenueData = async () => {
 			try {
 				setLoading(true);
+				// TODO: add api call to geht single venue
 				const geoJsonData = await getVenuesGeoJSON();
 
-				console.log("[VenueDetailContent] geoJsonData::", geoJsonData);
-
-				// Find the venue with the matching ID
 				const venue = geoJsonData.features.find(
 					(feature) => feature.properties?.id === selectedVenueId,
 				);
@@ -46,10 +44,6 @@ export function VenueDetailContent() {
 
 		fetchVenueData();
 	}, [selectedVenueId]);
-
-	useEffect(() => {
-		console.log("[VenueDetailContent] venueData::", venueData);
-	}, [venueData]);
 
 	const handleClose = () => {
 		setSelectedVenueId(null);
