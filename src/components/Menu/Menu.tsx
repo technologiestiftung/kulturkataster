@@ -229,7 +229,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 					</SidebarContent>
 				</Sidebar>
 			</Sidebar>
-			<div className="absolute md:hidden block z-[50] top-0 left-0 right-0 h-40">
+			<div className="absolute md:hidden block z-[50] top-0 left-0">
 				<button
 					onClick={handleLogoClick}
 					className="flex flex-col items-center gap-1 p-2"
