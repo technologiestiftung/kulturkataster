@@ -23,6 +23,7 @@ import FilterLines from "@/icons/filter-lines.svg";
 import InfoCircle from "@/icons/info-circle.svg";
 import Search from "@/icons/search.svg";
 import { useMapStore } from "@/lib/store/mapStore";
+import { useVenueStore } from "@/lib/store/venueStore";
 import KukaMiniLogo from "@/logos/kuka-mini.svg";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
@@ -30,6 +31,7 @@ import { LayerTreeContent } from "../Map/LayerTree/LayerTree";
 import { AccessibilityContent } from "./MenuContent/AccessibilityContent";
 import { FilterContent } from "./MenuContent/FilterContent";
 import { SearchContent } from "./MenuContent/SearchContent";
+import { VenueDetailContent } from "./MenuContent/VenueDetailContent";
 
 const menuItems = [
 	{ id: "filter", icon: FilterLines, label: "filter" },
@@ -51,12 +53,24 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	const [infoModalOpen, setInfoModalOpen] = React.useState(false);
 	const isLayerTreeOpen = useMapStore((state) => state.isLayerTreeOpen);
 	const setIsLayerTreeOpen = useMapStore((state) => state.setIsLayerTreeOpen);
+	const selectedVenueId = useVenueStore((state) => state.selectedVenueId);
 
 	React.useEffect(() => {
 		if (isLayerTreeOpen) {
 			setActiveItem("layertree");
 		}
 	}, [isLayerTreeOpen]);
+
+	React.useEffect(() => {
+		if (selectedVenueId) {
+			setActiveItem("venue-detail");
+			if (isMobile) {
+				setOpenMobile(true);
+			} else {
+				setOpen(true);
+			}
+		}
+	}, [selectedVenueId, isMobile, setOpen, setOpenMobile]);
 
 	const handleItemClick = (itemName: string) => {
 		if (itemName === "info") {
@@ -172,9 +186,11 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 						</div>
 						<div className="flex items-center justify-between w-full">
 							<span className="body1 font-bold">
-								{activeItem === "layertree"
-									? "Fachkarten"
-									: t(activeItem + ".title") || t(activeItem)}
+								{(() => {
+									if (activeItem === "layertree") return "Fachkarten";
+									if (activeItem === "venue-detail") return t("venue.details");
+									return t(activeItem + ".title") || t(activeItem);
+								})()}
 							</span>
 							<button
 								onClick={() => {
@@ -182,6 +198,11 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 									setOpenMobile(false);
 									if (activeItem === "layertree") {
 										setIsLayerTreeOpen(false);
+										setActiveItem("filter");
+									} else if (activeItem === "venue-detail") {
+										const setSelectedVenueId =
+											useVenueStore.getState().setSelectedVenueId;
+										setSelectedVenueId(null);
 										setActiveItem("filter");
 									}
 								}}
@@ -201,6 +222,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 										<AccessibilityContent onItemClick={handleItemClick} />
 									)}
 									{activeItem === "layertree" && <LayerTreeContent />}
+									{activeItem === "venue-detail" && <VenueDetailContent />}
 								</div>
 							</SidebarGroupContent>
 						</SidebarGroup>

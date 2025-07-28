@@ -1,3 +1,18 @@
 {
-	"hello": ""
+	"hello": "",
+	"venue": {
+		"details": "Venue Details",
+		"unnamed": "Unnamed Venue",
+		"contact": "Contact",
+		"website": "Website",
+		"phone": "Phone",
+		"email": "Email",
+		"address": "Address",
+		"organization": "Organization",
+		"parent": "Parent Organization",
+		"funding": "Funding Type",
+		"support": "Support Type",
+		"notFound": "Venue not found",
+		"backToMap": "Back to Map"
+	}
 }
