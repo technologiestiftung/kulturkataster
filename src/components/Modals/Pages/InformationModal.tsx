@@ -1,7 +1,6 @@
 "use client";
 
 import { PageModal } from "../PageModal";
-import "@/i18n/client";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 

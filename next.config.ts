@@ -1,5 +1,4 @@
 import type { NextConfig } from "next";
-import { i18n } from "./next-i18next.config.js";
 
 const nextConfig: NextConfig = {
 	webpack(config) {
@@ -29,7 +28,6 @@ const nextConfig: NextConfig = {
 		return config;
 	},
 	/* config options here */
-	i18n,
 	images: {
 		remotePatterns: [
 			{
