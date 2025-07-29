@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import KukaLargeLogo from "@/logos/kuka-large.svg";
 import ArrowNarrowRight from "@/icons/arrow-narrow-right.svg";
-import "@/i18n/client";
 import { Separator } from "@/components/ui/separator";
 
 interface WelcomeModalProps {
