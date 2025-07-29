@@ -202,16 +202,16 @@ function VenueAdministrativeInfo({
 					{tEnum(`funding_type.${venueData.funding_type}`)}
 				</ContentItem>
 			)}
-
 			{venueData.support_type && (
 				<ContentItem label="Art der Förderung">
 					{venueData.support_type}
 				</ContentItem>
 			)}
-
-			<ContentItem label="Bezirk">
-				{tEnum(`berlin_district.${venueData.district_id}`)}
-			</ContentItem>
+			{venueData.district_id && (
+				<ContentItem label="Bezirk">
+					{tEnum(`district_id.${venueData.district_id}`)}
+				</ContentItem>
+			)}
 		</ContentSection>
 	);
 }
