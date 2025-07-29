@@ -40,7 +40,7 @@ function ContentSection({
 	as: Component = "div",
 }: ContentSectionProps) {
 	return (
-		<Component className={`space-y-2 bg-neutral-5 ${className}`}>
+		<Component className={`rounded space-y-2 p-4 bg-neutral-5 ${className}`}>
 			{title && <p className="body2 font-bold">{title}</p>}
 			<dl className="flex flex-col gap-4">{children}</dl>
 		</Component>
@@ -149,42 +149,38 @@ function VenueBasicInfo({ venueData }: { venueData: VenueProperties }) {
 				</div>
 			</address>
 
-			<div className="rounded space-y-2 bg-neutral-5 p-4">
-				<ContentSection className="flex flex-col gap-4">
-					{venueData.description && (
-						<ContentItem label="Kulturareal">
-							{venueData.description}
-						</ContentItem>
-					)}
+			<ContentSection className="flex flex-col gap-4">
+				{venueData.description && (
+					<ContentItem label="Kulturareal">{venueData.description}</ContentItem>
+				)}
 
-					{venueData.website && (
-						<ContentItem label="Website">
-							<ContactLink href={venueData.website} external>
-								{venueData.website}
-							</ContactLink>
-						</ContentItem>
-					)}
+				{venueData.website && (
+					<ContentItem label="Website">
+						<ContactLink href={venueData.website} external>
+							{venueData.website}
+						</ContactLink>
+					</ContentItem>
+				)}
 
-					{venueData.phone && (
-						<ContentItem label="Telefonnummer">
-							<ContactLink href={`tel:${venueData.phone}`} className="body2">
-								{venueData.phone}
-							</ContactLink>
-						</ContentItem>
-					)}
+				{venueData.phone && (
+					<ContentItem label="Telefonnummer">
+						<ContactLink href={`tel:${venueData.phone}`} className="body2">
+							{venueData.phone}
+						</ContactLink>
+					</ContentItem>
+				)}
 
-					{venueData.email && (
-						<ContentItem label="E-Mail-Adresse">
-							<ContactLink
-								href={`mailto:${venueData.email}`}
-								className="body2 text-primary-dark hover:underline"
-							>
-								{venueData.email}
-							</ContactLink>
-						</ContentItem>
-					)}
-				</ContentSection>
-			</div>
+				{venueData.email && (
+					<ContentItem label="E-Mail-Adresse">
+						<ContactLink
+							href={`mailto:${venueData.email}`}
+							className="body2 text-primary-dark hover:underline"
+						>
+							{venueData.email}
+						</ContactLink>
+					</ContentItem>
+				)}
+			</ContentSection>
 		</section>
 	);
 }
@@ -215,7 +211,7 @@ function VenueAdministrativeInfo({
 
 function VenueCapacityInfo({ venueData }: { venueData: VenueProperties }) {
 	return (
-		<ContentSection title="Kapazitätsinformationen" as="section">
+		<ContentSection as="section">
 			{venueData.capacity && (
 				<ContentItem label="Größe der Nutzflächen (m²)">
 					{venueData.capacity}
@@ -243,15 +239,7 @@ function VenueCapacityInfo({ venueData }: { venueData: VenueProperties }) {
 
 function VenueExtendedInfo({ venueData }: { venueData: VenueProperties }) {
 	return (
-		<div
-			className="rounded-lg bg-neutral-5 p-4 flex flex-col gap-4"
-			role="region"
-			aria-labelledby="extended-info-heading"
-		>
-			<h2 id="extended-info-heading" className="sr-only">
-				Erweiterte Informationen
-			</h2>
-
+		<div className="flex flex-col gap-4">
 			<VenueAdministrativeInfo venueData={venueData} />
 			<VenueCapacityInfo venueData={venueData} />
 
@@ -359,6 +347,8 @@ export function VenueDetailContent() {
 			try {
 				setLoading(true);
 				const geoJsonData = await getVenuesGeoJSON();
+
+				console.log("[VenueDetailContent] geoJsonData::", geoJsonData);
 				const venue = geoJsonData.features.find(
 					(feature) => feature.properties?.id === selectedVenueId,
 				);
