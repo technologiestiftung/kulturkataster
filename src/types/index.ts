@@ -3,3 +3,4 @@ export * from "./store";
 export * from "./typeGuards";
 export * from "./map";
 export * from "./venue";
+export * from "./i18n";
