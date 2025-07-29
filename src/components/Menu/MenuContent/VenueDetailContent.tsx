@@ -4,54 +4,129 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useVenueStore } from "@/lib/store/venueStore";
 import { getVenuesGeoJSON } from "@/lib/supabase/api";
-import { getCategoryIconComponent } from "@/lib/utils/iconUtils"; // Update this import path
+import { getCategoryIconComponent } from "@/lib/utils/iconUtils";
 import { Category, VenueProperties } from "@/types";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-function VenueHeader({
-	venueData,
-}: {
-	venueData: VenueProperties;
-	onClose: () => void;
-}) {
+// Reusable content display components
+interface ContentItemProps {
+	label: string;
+	children: React.ReactNode;
+	className?: string;
+}
+
+function ContentItem({ label, children, className = "" }: ContentItemProps) {
+	return (
+		<div className={`${className}`}>
+			<dt className="body2 font-bold">{label}:</dt>
+			<dd className="body2">{children}</dd>
+		</div>
+	);
+}
+
+interface ContentSectionProps {
+	title?: string;
+	children: React.ReactNode;
+	className?: string;
+	as?: "section" | "div";
+}
+
+function ContentSection({
+	title,
+	children,
+	className = "",
+	as: Component = "div",
+}: ContentSectionProps) {
+	return (
+		<Component className={`space-y-2 bg-neutral-5 ${className}`}>
+			{title && <p className="body2 font-bold">{title}</p>}
+			<dl className="flex flex-col gap-4">{children}</dl>
+		</Component>
+	);
+}
+
+interface ContactLinkProps {
+	href: string;
+	children: React.ReactNode;
+	className?: string;
+	external?: boolean;
+}
+
+function ContactLink({
+	href,
+	children,
+	className = "body2 text-primary-dark hover:underline",
+	external = false,
+}: ContactLinkProps) {
+	const props = external
+		? { target: "_blank", rel: "noopener noreferrer" }
+		: {};
+
+	return (
+		<a href={href} className={className} {...props}>
+			{children}
+		</a>
+	);
+}
+
+function VenueHeader({ venueData }: { venueData: VenueProperties }) {
 	const { t } = useTranslation("common");
 
 	return (
 		<CardHeader
-			className={`relative p-0 ${venueData.utilization_status === "in_use" ? "bg-brand-default" : "bg-neutral-20"}`}
+			className={`relative p-0 ${
+				venueData.utilization_status === "in_use"
+					? "bg-brand-default"
+					: "bg-neutral-20"
+			}`}
 		>
-			<CardTitle className="text-xl px-4 pt-4 font-bold">
-				{venueData.name}
+			<p className="body2 p-4 pb-0">Dachorganisation</p>
+			<CardTitle className="px-4">
+				<h1 className="h1">{venueData.name}</h1>
 			</CardTitle>
 
-			<div className="flex px-4 items-center gap-2 text-sm">
-				{venueData.categories?.map((category: Category) => {
-					const IconComponent = getCategoryIconComponent(category.key);
+			{venueData.categories && venueData.categories.length > 0 && (
+				<section className="px-4" aria-labelledby="categories-heading">
+					<h2 id="categories-heading" className="sr-only">
+						{t("venue.categories", "Kategorien")}
+					</h2>
+					<ul className="flex flex-col gap-2">
+						{venueData.categories.map((category: Category) => {
+							const IconComponent = getCategoryIconComponent(category.key);
 
-					return (
-						<div key={category.id}>
-							<div className="flex items-center gap-2 h-6">
-								<div className="w-6 h-6">
-									<IconComponent />
-								</div>
-								<span className="text-md font-semibold">
-									{/* add category name */}
-									{category.key}
-								</span>
-							</div>
-							<span className="pl-8">Subtitle</span>
-						</div>
-					);
-				})}
-			</div>
+							return (
+								<li key={category.id}>
+									<div className="flex items-center gap-2 h-6">
+										<div className="w-6 h-6" aria-hidden="true">
+											<IconComponent />
+										</div>
+										<p className="body2 font-bold">{category.key}</p>
+									</div>
+									<p className="body2 pl-8">Subtitle</p>
+								</li>
+							);
+						})}
+					</ul>
+				</section>
+			)}
 
 			<div
-				className={`${venueData.utilization_status === "in_use" ? "bg-brand-light" : "bg-alert"} p-4`}
+				className={`${
+					venueData.utilization_status === "in_use"
+						? "bg-brand-light"
+						: "bg-alert"
+				} p-4 flex gap-2`}
+				role="status"
+				aria-live="polite"
 			>
-				{t("venue.utilizationStatus", "Nutzungsstatus")}:{" "}
-				{venueData.utilization_status || venueData.status || "in Nutzung"}
+				<span className="body2 font-bold">
+					{t("venue.utilizationStatus", "Nutzungsstatus")}:{" "}
+				</span>
+				<span className="body2">
+					{venueData.utilization_status || venueData.status || "in Nutzung"}
+				</span>
 			</div>
 		</CardHeader>
 	);
@@ -59,67 +134,58 @@ function VenueHeader({
 
 function VenueBasicInfo({ venueData }: { venueData: VenueProperties }) {
 	return (
-		<>
-			<div>
-				<h3 className="font-semibold text-lg">{venueData.name}</h3>
-				<div className="text-sm space-y-1">
-					<div>
+		<section aria-labelledby="basic-info-heading">
+			<h2 id="basic-info-heading" className="sr-only">
+				Grundinformationen
+			</h2>
+
+			<address className="not-italic mb-4">
+				<p className="body1">{venueData.name}</p>
+				<div className="body1">
+					<p>
 						{venueData.street} {venueData.street_number}
-					</div>
-					<div>{venueData.zip_code}</div>
+					</p>
+					<p>{venueData.zip_code}</p>
 				</div>
-			</div>
+			</address>
 
 			<div className="rounded space-y-2 bg-neutral-5 p-4">
-				{venueData.description && (
-					<div>
-						<span className="font-semibold">Kulturareal:</span>
-						<div className="text-sm">{venueData.description}</div>
-					</div>
-				)}
+				<ContentSection className="flex flex-col gap-4">
+					{venueData.description && (
+						<ContentItem label="Kulturareal">
+							{venueData.description}
+						</ContentItem>
+					)}
 
-				{venueData.website && (
-					<div>
-						<span className="font-semibold">Website:</span>
-						<div>
-							<a
-								href={venueData.website}
-								target="_blank"
-								rel="noopener noreferrer"
-								className="text-sm text-primary-dark hover:underline"
-							>
+					{venueData.website && (
+						<ContentItem label="Website">
+							<ContactLink href={venueData.website} external>
 								{venueData.website}
-							</a>
-						</div>
-					</div>
-				)}
+							</ContactLink>
+						</ContentItem>
+					)}
 
-				{venueData.phone && (
-					<div>
-						<span className="font-semibold">Telefonnummer:</span>
-						<div>
-							<a href={`tel:${venueData.phone}`} className="text-sm">
+					{venueData.phone && (
+						<ContentItem label="Telefonnummer">
+							<ContactLink href={`tel:${venueData.phone}`} className="body2">
 								{venueData.phone}
-							</a>
-						</div>
-					</div>
-				)}
+							</ContactLink>
+						</ContentItem>
+					)}
 
-				{venueData.email && (
-					<div>
-						<span className="font-semibold">E-Mail-Adresse:</span>
-						<div>
-							<a
+					{venueData.email && (
+						<ContentItem label="E-Mail-Adresse">
+							<ContactLink
 								href={`mailto:${venueData.email}`}
-								className="text-sm text-primary-dark hover:underline"
+								className="body2 text-primary-dark hover:underline"
 							>
 								{venueData.email}
-							</a>
-						</div>
-					</div>
-				)}
+							</ContactLink>
+						</ContentItem>
+					)}
+				</ContentSection>
 			</div>
-		</>
+		</section>
 	);
 }
 
@@ -129,93 +195,70 @@ function VenueAdministrativeInfo({
 	venueData: VenueProperties;
 }) {
 	return (
-		<div className="space-y-2">
+		<ContentSection as="section">
 			{venueData.funding_type && (
-				<div>
-					<span className="font-medium text-sm">Art der Finanzierung:</span>
-					<span className="text-sm ml-2">{venueData.funding_type}</span>
-				</div>
+				<ContentItem label="Art der Finanzierung">
+					{venueData.funding_type}
+				</ContentItem>
 			)}
 
 			{venueData.support_type && (
-				<div>
-					<span className="font-medium text-sm">Art der Förderung:</span>
-					<span className="text-sm ml-2">{venueData.support_type}</span>
-				</div>
+				<ContentItem label="Art der Förderung">
+					{venueData.support_type}
+				</ContentItem>
 			)}
 
-			<div>
-				<span className="font-medium text-sm">Bezirk:</span>
-				{/* todo: add Bezirk */}
-				<span className="text-sm ml-2">{venueData.district_id}</span>
-			</div>
-
-			{/* todo: add Stadtteil */}
-			{/* <div>
-				<span className="font-medium text-sm">Stadtteil:</span>
-				<span className="text-sm text-gray-600 ml-2"></span>
-			</div> */}
-		</div>
+			<ContentItem label="Bezirk">{venueData.district_id}</ContentItem>
+		</ContentSection>
 	);
 }
 
 function VenueCapacityInfo({ venueData }: { venueData: VenueProperties }) {
 	return (
-		<div className="space-y-2">
+		<ContentSection title="Kapazitätsinformationen" as="section">
 			{venueData.capacity && (
-				<div>
-					<span className="font-medium text-sm">
-						Größe der Nutzflächen (m²):
-					</span>
-					<span className="text-sm text-gray-600 ml-2">
-						{venueData.capacity}
-					</span>
-				</div>
+				<ContentItem label="Größe der Nutzflächen (m²)">
+					{venueData.capacity}
+				</ContentItem>
 			)}
 
 			{venueData.rooms_count && (
-				<div>
-					<span className="font-medium text-sm">Anzahl der Arbeitsräume:</span>
-					<span className="text-sm text-gray-600 ml-2">
-						{venueData.rooms_count}
-					</span>
-				</div>
+				<ContentItem label="Anzahl der Arbeitsräume">
+					{venueData.rooms_count}
+				</ContentItem>
 			)}
 
-			<div>
-				<span className="font-medium text-sm">Mehrfachnutzung:</span>
-				<span className="text-sm text-gray-600 ml-2">
-					{venueData.shared_use_allowed ? "möglich" : "nicht möglich"}
-				</span>
-			</div>
+			<ContentItem label="Mehrfachnutzung">
+				{venueData.shared_use_allowed ? "möglich" : "nicht möglich"}
+			</ContentItem>
 
 			{venueData.shared_use_allowed && (
-				<div>
-					<div className="font-medium text-sm">Beschreibung:</div>
-					<div className="text-sm text-gray-600">
-						Beschreibung Räume/Flächen für Mehrfachnutzung
-					</div>
-				</div>
+				<ContentItem label="Beschreibung">
+					Beschreibung Räume/Flächen für Mehrfachnutzung
+				</ContentItem>
 			)}
-		</div>
+		</ContentSection>
 	);
 }
 
 function VenueExtendedInfo({ venueData }: { venueData: VenueProperties }) {
 	return (
-		<div className="bg-gray-50 p-3 rounded space-y-3">
+		<div
+			className="rounded-lg bg-neutral-5 p-4 flex flex-col gap-4"
+			role="region"
+			aria-labelledby="extended-info-heading"
+		>
+			<h2 id="extended-info-heading" className="sr-only">
+				Erweiterte Informationen
+			</h2>
+
 			<VenueAdministrativeInfo venueData={venueData} />
 			<VenueCapacityInfo venueData={venueData} />
 
 			{venueData.established_since && (
-				<div className="pt-2 border-t">
-					<div>
-						<span className="font-medium text-sm">Stand:</span>
-						<span className="text-sm text-gray-600 ml-2">
-							{venueData.established_since}
-						</span>
-					</div>
-				</div>
+				<ContentSection>
+					<ContentItem label="Stand">{venueData.established_since}</ContentItem>
+				</ContentSection>
 			)}
 		</div>
 	);
@@ -245,9 +288,15 @@ function VenueToggleButton({
 			variant="ghost"
 			onClick={onToggle}
 			className="w-full gap-2 justify-start text-primary-dark p-0 h-auto"
+			aria-expanded={showMoreInfo}
+			aria-controls="extended-info"
 		>
-			{showMoreInfo ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-			<span>
+			{showMoreInfo ? (
+				<ChevronUp size={16} aria-hidden="true" />
+			) : (
+				<ChevronDown size={16} aria-hidden="true" />
+			)}
+			<span className="body2">
 				{showMoreInfo
 					? t("venue.lessInfo", "Weniger Informationen")
 					: t("venue.moreInfo", "Mehr Informationen")}
@@ -258,7 +307,6 @@ function VenueToggleButton({
 
 function VenueCard({
 	venueData,
-	onClose,
 }: {
 	venueData: VenueProperties;
 	onClose: () => void;
@@ -267,11 +315,21 @@ function VenueCard({
 	const hasExtended = hasExtendedInfo(venueData);
 
 	return (
-		<Card className="w-full rounded-lg overflow-hidden border-none">
-			<VenueHeader venueData={venueData} onClose={onClose} />
+		<Card
+			className="w-full rounded-lg overflow-hidden border-none"
+			role="article"
+			aria-labelledby="venue-title"
+		>
+			<VenueHeader venueData={venueData} />
 
 			<CardContent className="p-4 space-y-4">
 				<VenueBasicInfo venueData={venueData} />
+
+				{showMoreInfo && (
+					<div id="extended-info">
+						<VenueExtendedInfo venueData={venueData} />
+					</div>
+				)}
 
 				{hasExtended && (
 					<VenueToggleButton
@@ -279,8 +337,6 @@ function VenueCard({
 						onToggle={() => setShowMoreInfo(!showMoreInfo)}
 					/>
 				)}
-
-				{showMoreInfo && <VenueExtendedInfo venueData={venueData} />}
 			</CardContent>
 		</Card>
 	);
@@ -303,7 +359,6 @@ export function VenueDetailContent() {
 			try {
 				setLoading(true);
 				const geoJsonData = await getVenuesGeoJSON();
-				// Find the venue with the matching ID
 				const venue = geoJsonData.features.find(
 					(feature) => feature.properties?.id === selectedVenueId,
 				);
@@ -334,7 +389,8 @@ export function VenueDetailContent() {
 
 	if (loading) {
 		return (
-			<div className="p-6">
+			<div className="p-6" role="status" aria-live="polite">
+				<span className="sr-only">Laden...</span>
 				<div className="animate-pulse">
 					<div className="h-4 bg-gray-200 rounded w-3/4 mb-4"></div>
 					<div className="h-3 bg-gray-200 rounded w-1/2 mb-2"></div>
@@ -346,21 +402,22 @@ export function VenueDetailContent() {
 
 	if (!venueData) {
 		return (
-			<div className="p-6">
+			<div className="p-6" role="alert">
 				<p className="text-muted-foreground">{t("venue.notFound")}</p>
-				<button
+				<Button
 					onClick={handleClose}
-					className="mt-4 text-primary-dark hover:underline"
+					variant="link"
+					className="mt-4 text-primary-dark hover:underline p-0 h-auto"
 				>
 					{t("venue.backToMap")}
-				</button>
+				</Button>
 			</div>
 		);
 	}
 
 	return (
-		<div className="p-2">
+		<main className="p-2">
 			<VenueCard venueData={venueData} onClose={handleClose} />
-		</div>
+		</main>
 	);
 }
