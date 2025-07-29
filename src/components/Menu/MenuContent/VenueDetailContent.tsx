@@ -83,7 +83,7 @@ function VenueHeader({ venueData }: { venueData: VenueProperties }) {
 					: "bg-neutral-20"
 			}`}
 		>
-			<p className="body2 p-4 pb-0">{venueData.parent_organizations[0].name}</p>
+			<p className="body2 p-4 pb-0">{venueData.parent_organizations[0]?.name || ""}</p>
 			<CardTitle className="px-4">
 				<h1 className="h1">{venueData.name}</h1>
 			</CardTitle>
