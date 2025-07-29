@@ -20,8 +20,8 @@ interface ContentItemProps {
 function ContentItem({ label, children, className = "" }: ContentItemProps) {
 	return (
 		<div className={`${className}`}>
-			<dt className="body2 font-bold">{label}:</dt>
-			<dd className="body2">{children}</dd>
+			<p className="body2 font-bold break-words">{label}:</p>
+			<p className="body2 break-words">{children}</p>
 		</div>
 	);
 }
@@ -42,7 +42,7 @@ function ContentSection({
 	return (
 		<Component className={`rounded space-y-2 p-4 bg-neutral-5 ${className}`}>
 			{title && <p className="body2 font-bold">{title}</p>}
-			<dl className="flex flex-col gap-4">{children}</dl>
+			<p className="flex flex-col gap-4">{children}</p>
 		</Component>
 	);
 }
@@ -57,7 +57,7 @@ interface ContactLinkProps {
 function ContactLink({
 	href,
 	children,
-	className = "body2 text-primary-dark hover:underline",
+	className = "body2 text-primary-dark hover:underline break-all",
 	external = false,
 }: ContactLinkProps) {
 	const props = external
@@ -87,7 +87,7 @@ function VenueHeader({ venueData }: { venueData: VenueProperties }) {
 				{venueData.parent_organizations[0]?.name || ""}
 			</p>
 			<CardTitle className="px-4">
-				<h1 className="h1">{venueData.name}</h1>
+				<h1 className="h1 break-words">{venueData.name}</h1>
 			</CardTitle>
 
 			{venueData.categories && venueData.categories.length > 0 && (
@@ -105,11 +105,13 @@ function VenueHeader({ venueData }: { venueData: VenueProperties }) {
 										<div className="w-6 h-6" aria-hidden="true">
 											<IconComponent />
 										</div>
-										<p className="body2 font-bold">
+										<p className="body2 font-bold break-words">
 											{tEnum(`category.${category.key}`)}
 										</p>
 									</div>
-									<p className="body2 pl-8">{t("venue.subtitle")}</p>
+									<p className="body2 pl-8 break-words">
+										{t("venue.subtitle")}
+									</p>
 								</li>
 							);
 						})}
@@ -147,12 +149,12 @@ function VenueBasicInfo({ venueData }: { venueData: VenueProperties }) {
 			</h2>
 
 			<address className="not-italic mb-4">
-				<p className="body1">{venueData.name}</p>
+				<p className="body1 break-words">{venueData.name}</p>
 				<div className="body1">
-					<p>
+					<p className="break-words">
 						{venueData.street} {venueData.street_number}
 					</p>
-					<p>{venueData.zip_code}</p>
+					<p className="break-words">{venueData.zip_code}</p>
 				</div>
 			</address>
 
@@ -173,7 +175,10 @@ function VenueBasicInfo({ venueData }: { venueData: VenueProperties }) {
 
 				{venueData.phone && (
 					<ContentItem label={t("venue.phoneNumber")}>
-						<ContactLink href={`tel:${venueData.phone}`} className="body2">
+						<ContactLink
+							href={`tel:${venueData.phone}`}
+							className="body2 break-all"
+						>
 							{venueData.phone}
 						</ContactLink>
 					</ContentItem>
@@ -183,7 +188,7 @@ function VenueBasicInfo({ venueData }: { venueData: VenueProperties }) {
 					<ContentItem label={t("venue.emailAddress")}>
 						<ContactLink
 							href={`mailto:${venueData.email}`}
-							className="body2 text-primary-dark hover:underline"
+							className="body2 text-primary-dark hover:underline break-all"
 						>
 							{venueData.email}
 						</ContactLink>
