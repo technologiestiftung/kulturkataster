@@ -83,7 +83,7 @@ function VenueHeader({ venueData }: { venueData: VenueProperties }) {
 					: "bg-neutral-20"
 			}`}
 		>
-			<p className="body2 p-4 pb-0">Dachorganisation</p>
+			<p className="body2 p-4 pb-0">{venueData.parent_organizations[0].name}</p>
 			<CardTitle className="px-4">
 				<h1 className="h1">{venueData.name}</h1>
 			</CardTitle>
@@ -107,7 +107,7 @@ function VenueHeader({ venueData }: { venueData: VenueProperties }) {
 											{tEnum(`category.${category.key}`)}
 										</p>
 									</div>
-									<p className="body2 pl-8">Subtitle</p>
+									<p className="body2 pl-8">{t("venue.subtitle")}</p>
 								</li>
 							);
 						})}
@@ -125,7 +125,7 @@ function VenueHeader({ venueData }: { venueData: VenueProperties }) {
 				aria-live="polite"
 			>
 				<span className="body2 font-bold">
-					{t("venue.utilizationStatus", "Nutzungsstatus")}:{" "}
+					{t("venue.utilizationStatus")}:{" "}
 				</span>
 				<span className="body2">
 					{tEnum(`utilization_status.${venueData.utilization_status}`)}
@@ -136,10 +136,12 @@ function VenueHeader({ venueData }: { venueData: VenueProperties }) {
 }
 
 function VenueBasicInfo({ venueData }: { venueData: VenueProperties }) {
+	const { t } = useTranslation("common");
+
 	return (
 		<section aria-labelledby="basic-info-heading">
 			<h2 id="basic-info-heading" className="sr-only">
-				Grundinformationen
+				{t("venue.basicInfoHeading")}
 			</h2>
 
 			<address className="not-italic mb-4">
@@ -154,11 +156,13 @@ function VenueBasicInfo({ venueData }: { venueData: VenueProperties }) {
 
 			<ContentSection className="flex flex-col gap-4">
 				{venueData.description && (
-					<ContentItem label="Kulturareal">{venueData.description}</ContentItem>
+					<ContentItem label={t("venue.culturalArea")}>
+						{venueData.description}
+					</ContentItem>
 				)}
 
 				{venueData.website && (
-					<ContentItem label="Website">
+					<ContentItem label={t("venue.website")}>
 						<ContactLink href={venueData.website} external>
 							{venueData.website}
 						</ContactLink>
@@ -166,7 +170,7 @@ function VenueBasicInfo({ venueData }: { venueData: VenueProperties }) {
 				)}
 
 				{venueData.phone && (
-					<ContentItem label="Telefonnummer">
+					<ContentItem label={t("venue.phoneNumber")}>
 						<ContactLink href={`tel:${venueData.phone}`} className="body2">
 							{venueData.phone}
 						</ContactLink>
@@ -174,7 +178,7 @@ function VenueBasicInfo({ venueData }: { venueData: VenueProperties }) {
 				)}
 
 				{venueData.email && (
-					<ContentItem label="E-Mail-Adresse">
+					<ContentItem label={t("venue.emailAddress")}>
 						<ContactLink
 							href={`mailto:${venueData.email}`}
 							className="body2 text-primary-dark hover:underline"
@@ -193,23 +197,24 @@ function VenueAdministrativeInfo({
 }: {
 	venueData: VenueProperties;
 }) {
+	const { t } = useTranslation("common");
 	const { t: tEnum } = useTranslation("enumMap");
 
 	return (
 		<ContentSection as="section">
 			{venueData.funding_type && (
-				<ContentItem label="Art der Finanzierung">
+				<ContentItem label={t("venue.fundingType")}>
 					{tEnum(`funding_type.${venueData.funding_type}`)}
 				</ContentItem>
 			)}
 			{venueData.support_type && (
-				<ContentItem label="Art der Förderung">
+				<ContentItem label={t("venue.supportType")}>
 					{venueData.support_type}
 				</ContentItem>
 			)}
 			{venueData.district_id && (
-				<ContentItem label="Bezirk">
-					{tEnum(`district_id.${venueData.district_id}`)}
+				<ContentItem label={t("venue.district")}>
+					{tEnum(`berlin_district.${venueData.district_id}`)}
 				</ContentItem>
 			)}
 		</ContentSection>
@@ -217,27 +222,31 @@ function VenueAdministrativeInfo({
 }
 
 function VenueCapacityInfo({ venueData }: { venueData: VenueProperties }) {
+	const { t } = useTranslation("common");
+
 	return (
 		<ContentSection as="section">
 			{venueData.capacity && (
-				<ContentItem label="Größe der Nutzflächen (m²)">
+				<ContentItem label={t("venue.usableAreaSize")}>
 					{venueData.capacity}
 				</ContentItem>
 			)}
 
 			{venueData.rooms_count && (
-				<ContentItem label="Anzahl der Arbeitsräume">
+				<ContentItem label={t("venue.workspaceCount")}>
 					{venueData.rooms_count}
 				</ContentItem>
 			)}
 
-			<ContentItem label="Mehrfachnutzung">
-				{venueData.shared_use_allowed ? "möglich" : "nicht möglich"}
+			<ContentItem label={t("venue.multipleUse")}>
+				{venueData.shared_use_allowed
+					? t("venue.multipleUsePossible")
+					: t("venue.multipleUseNotPossible")}
 			</ContentItem>
 
 			{venueData.shared_use_allowed && (
-				<ContentItem label="Beschreibung">
-					Beschreibung Räume/Flächen für Mehrfachnutzung
+				<ContentItem label={t("venue.description")}>
+					{t("venue.multipleUseDescription")}
 				</ContentItem>
 			)}
 		</ContentSection>
@@ -245,6 +254,8 @@ function VenueCapacityInfo({ venueData }: { venueData: VenueProperties }) {
 }
 
 function VenueExtendedInfo({ venueData }: { venueData: VenueProperties }) {
+	const { t } = useTranslation("common");
+
 	return (
 		<div className="flex flex-col gap-4">
 			<VenueAdministrativeInfo venueData={venueData} />
@@ -252,7 +263,9 @@ function VenueExtendedInfo({ venueData }: { venueData: VenueProperties }) {
 
 			{venueData.established_since && (
 				<ContentSection>
-					<ContentItem label="Stand">{venueData.established_since}</ContentItem>
+					<ContentItem label={t("venue.status")}>
+						{venueData.established_since}
+					</ContentItem>
 				</ContentSection>
 			)}
 		</div>
@@ -292,9 +305,7 @@ function VenueToggleButton({
 				<ChevronDown size={16} aria-hidden="true" />
 			)}
 			<span className="body2">
-				{showMoreInfo
-					? t("venue.lessInfo", "Weniger Informationen")
-					: t("venue.moreInfo", "Mehr Informationen")}
+				{showMoreInfo ? t("venue.lessInfo") : t("venue.moreInfo")}
 			</span>
 		</Button>
 	);
@@ -355,6 +366,8 @@ export function VenueDetailContent() {
 				setLoading(true);
 				const geoJsonData = await getVenuesGeoJSON();
 
+				console.log("[VenueDetailContent] geoJsonData::", geoJsonData);
+
 				const venue = geoJsonData.features.find(
 					(feature) => feature.properties?.id === selectedVenueId,
 				);
@@ -386,7 +399,7 @@ export function VenueDetailContent() {
 	if (loading) {
 		return (
 			<div className="p-6" role="status" aria-live="polite">
-				<span className="sr-only">Laden...</span>
+				<span className="sr-only">{t("venue.loading")}</span>
 				<div className="animate-pulse">
 					<div className="h-4 bg-gray-200 rounded w-3/4 mb-4"></div>
 					<div className="h-3 bg-gray-200 rounded w-1/2 mb-2"></div>
