@@ -24,7 +24,6 @@ import {
 import { WelcomeModal } from "@/components/Modals/Pages/WelcomeModal";
 import { InformationModal } from "@/components/Modals/Pages/InformationModal";
 import { useTranslation } from "react-i18next";
-import "@/i18n/client";
 import { FilterContent } from "./MenuContent/FilterContent";
 import { SearchContent } from "./MenuContent/SearchContent";
 import { AccessibilityContent } from "./MenuContent/AccessibilityContent";
