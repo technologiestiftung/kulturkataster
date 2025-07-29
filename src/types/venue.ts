@@ -63,6 +63,6 @@ export interface VenueFeature extends VenueProperties {
 }
 
 export interface VenueStoreState {
-	selectedVenueId: string | null;
+	selectedVenueId: number | string | null;
 	setSelectedVenueId: (id: string | null) => void;
 }
