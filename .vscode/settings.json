@@ -12,7 +12,7 @@
 		"titleBar.inactiveForeground": "#e7e7e799"
 	},
 	"peacock.color": "#0f49c3",
-	"cSpell.words": ["maplibregl"],
+	"cSpell.words": ["geolocate", "maplibregl"],
 	"i18n-ally.localesPaths": ["public/locales"],
 	"i18n-ally.keystyle": "nested",
 	"i18n-ally.defaultNamespace": "common",
