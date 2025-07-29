@@ -1,5 +1,5 @@
 import { AllowedLocales, I18NConfig } from "@/types";
-import { createInstance, TFunction } from "i18next";
+import { createInstance, TFunction, i18n, Resource } from "i18next";
 import { initReactI18next } from "react-i18next/initReactI18next";
 import resourcesToBackend from "i18next-resources-to-backend";
 import { Locale } from "../types/i18n";
@@ -19,7 +19,11 @@ export { i18nConfig };
 async function initTranslations(
 	locale: string,
 	namespaces: string[],
-	options?: { keyPrefix?: string; i18nInstance?: any; resources?: any },
+	options?: {
+		keyPrefix?: string;
+		i18nInstance?: i18n;
+		resources?: Record<string, unknown>;
+	},
 ) {
 	const i18nInstance = options?.i18nInstance || createInstance();
 
@@ -36,7 +40,7 @@ async function initTranslations(
 
 	await i18nInstance.init({
 		lng: locale,
-		resources: options?.resources,
+		resources: options?.resources as Resource | undefined,
 		fallbackLng: i18nConfig.defaultLocale,
 		supportedLngs: i18nConfig.locales,
 		defaultNS: namespaces[0],
@@ -60,7 +64,11 @@ async function initTranslations(
 export async function serverSideTranslation(
 	locale: string,
 	namespaces: string[],
-	options?: { keyPrefix?: string; i18nInstance?: any; resources?: any },
+	options?: {
+		keyPrefix?: string;
+		i18nInstance?: i18n;
+		resources?: Record<string, unknown>;
+	},
 ) {
 	return await initTranslations(locale, namespaces, options);
 }
