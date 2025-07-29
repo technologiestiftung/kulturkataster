@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import venues from "@/config/resources/venues.json";
 import { createClient } from "@/lib/supabase/client";
 import type { FeatureCollection } from "geojson";
 
@@ -61,5 +62,7 @@ export async function getVenuesGeoJSON() {
 		throw new Error("Invalid or missing GeoJSON structure in response");
 	}
 
-	return validated;
+	// FIXME: add response from staging
+	// return validated;
+	return venues;
 }
