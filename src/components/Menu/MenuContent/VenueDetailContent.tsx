@@ -73,6 +73,7 @@ function ContactLink({
 
 function VenueHeader({ venueData }: { venueData: VenueProperties }) {
 	const { t } = useTranslation("common");
+	const { t: tEnum } = useTranslation("enumMap");
 
 	return (
 		<CardHeader
@@ -102,7 +103,9 @@ function VenueHeader({ venueData }: { venueData: VenueProperties }) {
 										<div className="w-6 h-6" aria-hidden="true">
 											<IconComponent />
 										</div>
-										<p className="body2 font-bold">{category.key}</p>
+										<p className="body2 font-bold">
+											{tEnum(`category.${category.key}`)}
+										</p>
 									</div>
 									<p className="body2 pl-8">Subtitle</p>
 								</li>
@@ -125,7 +128,7 @@ function VenueHeader({ venueData }: { venueData: VenueProperties }) {
 					{t("venue.utilizationStatus", "Nutzungsstatus")}:{" "}
 				</span>
 				<span className="body2">
-					{venueData.utilization_status || venueData.status || "in Nutzung"}
+					{tEnum(`utilization_status.${venueData.utilization_status}`)}
 				</span>
 			</div>
 		</CardHeader>
@@ -190,11 +193,13 @@ function VenueAdministrativeInfo({
 }: {
 	venueData: VenueProperties;
 }) {
+	const { t: tEnum } = useTranslation("enumMap");
+
 	return (
 		<ContentSection as="section">
 			{venueData.funding_type && (
 				<ContentItem label="Art der Finanzierung">
-					{venueData.funding_type}
+					{tEnum(`funding_type.${venueData.funding_type}`)}
 				</ContentItem>
 			)}
 
@@ -204,7 +209,9 @@ function VenueAdministrativeInfo({
 				</ContentItem>
 			)}
 
-			<ContentItem label="Bezirk">{venueData.district_id}</ContentItem>
+			<ContentItem label="Bezirk">
+				{tEnum(`berlin_district.${venueData.district_id}`)}
+			</ContentItem>
 		</ContentSection>
 	);
 }
@@ -348,7 +355,6 @@ export function VenueDetailContent() {
 				setLoading(true);
 				const geoJsonData = await getVenuesGeoJSON();
 
-				console.log("[VenueDetailContent] geoJsonData::", geoJsonData);
 				const venue = geoJsonData.features.find(
 					(feature) => feature.properties?.id === selectedVenueId,
 				);
