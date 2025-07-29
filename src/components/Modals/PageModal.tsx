@@ -1,7 +1,6 @@
 "use client";
 
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import "@/i18n/client";
 import { ModalFooter } from "./ModalFooter";
 
 interface PageModalProps {
