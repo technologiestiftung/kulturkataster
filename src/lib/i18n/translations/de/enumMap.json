@@ -90,6 +90,20 @@
 		"eu": "EU",
 		"other": "Sonstiges"
 	},
+	"district_id": {
+		"1": "Charlottenburg-Wilmersdorf",
+		"2": "Friedrichshain-Kreuzberg",
+		"3": "Lichtenberg",
+		"4": "Marzahn-Hellersdorf",
+		"5": "Mitte",
+		"6": "Neukölln",
+		"7": "Pankow",
+		"8": "Reinickendorf",
+		"9": "Spandau",
+		"10": "Steglitz-Zehlendorf",
+		"11": "Tempelhof-Schöneberg",
+		"12": "Treptow-Köpenick"
+	},
 	"berlin_district": {
 		"charlottenburg_wilmersdorf": "Charlottenburg-Wilmersdorf",
 		"friedrichshain_kreuzberg": "Friedrichshain-Kreuzberg",
