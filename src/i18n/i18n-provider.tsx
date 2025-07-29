@@ -8,7 +8,7 @@ type Props = {
 	children: React.ReactNode;
 	locale: string;
 	namespaces: string[];
-	resources: any;
+	resources: Record<string, unknown>;
 };
 
 export default function I18NProvider({
