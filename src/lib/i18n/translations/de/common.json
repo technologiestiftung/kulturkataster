@@ -10,7 +10,7 @@
 		"searchButton": "Suchen",
 		"noResults": "Keine Kulturorte gefunden.",
 		"error": "Fehler bei der Suche. Bitte versuchen Sie es später erneut.",
-		"noResultsFound": "Es konnten keine Ergebnisse unter der Suchangabe gefunden werden.",
+		"noResultsFound": "Zu Ihrer Eingabe konnte kein Kulturort oder Adresse gefunden werden. Bitte überprüfen Sie die Angaben und versuchen Sie es erneut.",
 		"suggestions": "Vorschläge für Ihre Suche"
 	},
 	"download": {
