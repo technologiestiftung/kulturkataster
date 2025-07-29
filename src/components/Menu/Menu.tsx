@@ -14,7 +14,6 @@ import {
 	SidebarMenuItem,
 	useSidebar,
 } from "@/components/ui/sidebar";
-import "@/i18n/client";
 import Accessibility from "@/icons/accessibility.svg";
 import Close from "@/icons/close.svg";
 import Download from "@/icons/download.svg";
