@@ -2,10 +2,6 @@
 
 // Temporary debug component - remove after fixing
 export function EnvDebug() {
-	if (process.env.NODE_ENV !== "development") {
-		return null;
-	}
-
 	return (
 		<div className="fixed top-0 right-0 bg-red-100 p-2 text-xs z-[9999] max-w-sm">
 			<h3>Env Debug:</h3>
