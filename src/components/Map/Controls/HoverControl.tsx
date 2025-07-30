@@ -19,13 +19,8 @@ interface HoverControlProps {
 
 type OverlayPositioning =
 	| "bottom-left"
-	| "bottom-center"
 	| "bottom-right"
-	| "center-left"
-	| "center-center"
-	| "center-right"
 	| "top-left"
-	| "top-center"
 	| "top-right";
 
 const HoverControl: FC<HoverControlProps> = ({
@@ -42,10 +37,10 @@ const HoverControl: FC<HoverControlProps> = ({
 	const [cardPosition, setCardPosition] =
 		useState<OverlayPositioning>("bottom-left");
 	const [overlayReady, setOverlayReady] = useState(false);
+	const [isVisible, setIsVisible] = useState(false);
 
 	// Memoized function to calculate the best position
 	const calculatePositioning = useCallback(
-		// eslint-disable-next-line complexity
 		(pixel: [number, number]): OverlayPositioning => {
 			if (!map) return "top-left";
 
@@ -58,30 +53,15 @@ const HoverControl: FC<HoverControlProps> = ({
 			if (overlayWidth === 0 || overlayHeight === 0) return cardPosition;
 
 			const [mapWidth, mapHeight] = mapSize;
-
 			const [pixelX, pixelY] = pixel;
 			const buffer = 10;
 
-			let vertical: "top" | "center" | "bottom" = "top";
-			let horizontal: "left" | "center" | "right" = "left";
+			// Only use corner positions - no center options
+			const vertical: "top" | "bottom" =
+				pixelY + overlayHeight + buffer > mapHeight ? "bottom" : "top";
 
-			if (pixelY + overlayHeight + buffer > mapHeight) {
-				vertical = "bottom";
-			} else if (
-				pixelY - overlayHeight / 2 > buffer &&
-				pixelY + overlayHeight / 2 < mapHeight - buffer
-			) {
-				vertical = "center";
-			}
-
-			if (pixelX + overlayWidth + buffer > mapWidth) {
-				horizontal = "right";
-			} else if (
-				pixelX - overlayWidth / 2 > buffer &&
-				pixelX + overlayWidth / 2 < mapWidth - buffer
-			) {
-				horizontal = "center";
-			}
+			const horizontal: "left" | "right" =
+				pixelX + overlayWidth + buffer > mapWidth ? "right" : "left";
 
 			return `${vertical}-${horizontal}` as OverlayPositioning;
 		},
@@ -105,6 +85,7 @@ const HoverControl: FC<HoverControlProps> = ({
 			if (zoom < minZoomForHover) {
 				overlay.setPosition(undefined);
 				setFeatures(undefined);
+				setIsVisible(false);
 				return;
 			}
 
@@ -129,9 +110,11 @@ const HoverControl: FC<HoverControlProps> = ({
 				if (features !== matchedFeature) {
 					setFeatures(matchedFeature);
 				}
+				setIsVisible(true);
 			} else {
 				overlay.setPosition(undefined);
 				setFeatures(undefined);
+				setIsVisible(false);
 			}
 		};
 
@@ -140,6 +123,7 @@ const HoverControl: FC<HoverControlProps> = ({
 			if (zoom < minZoomForHover) {
 				overlay.setPosition(undefined);
 				setFeatures(undefined);
+				setIsVisible(false);
 			}
 		};
 
@@ -193,10 +177,12 @@ const HoverControl: FC<HoverControlProps> = ({
 
 	return (
 		<div
-			className={`ClickControl-root`}
+			className={`HoverControl-root`}
 			ref={overlayRef}
 			style={{
 				visibility: overlayReady ? "visible" : "hidden",
+				opacity: isVisible ? 1 : 0,
+				transition: "opacity 200ms ease-out",
 			}}
 		>
 			{features &&

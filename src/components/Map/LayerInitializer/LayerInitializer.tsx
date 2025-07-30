@@ -362,7 +362,6 @@ const LayerInitializer: FC = () => {
 		allManagedLayers.push(...subjectLayers);
 
 		// Update store with all managed layers
-		console.log("[LayerInitializer] allManagedLayers::", allManagedLayers);
 		setLayersInStore(allManagedLayers);
 
 		return () => {
