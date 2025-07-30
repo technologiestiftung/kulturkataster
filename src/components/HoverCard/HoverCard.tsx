@@ -11,6 +11,7 @@ import InfoCircleIcon from "@/icons/info-circle-fill.svg";
 import { getCategoryIconComponent } from "@/lib/utils/iconUtils"; // Update this import path
 import { Category } from "@/types";
 import { FC, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface HoverCardProps {
 	features?: any;
@@ -31,6 +32,8 @@ const getFeatureData = (feature: any) => {
 
 const HoverCard: FC<HoverCardProps> = ({ features }) => {
 	const [featureProperties, setFeatureProperties] = useState<any>(null);
+	const { t: tEnum } = useTranslation("enumMap");
+	const { t } = useTranslation("common");
 
 	useEffect(() => {
 		if (!features) {
@@ -70,10 +73,10 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 										</div>
 										<span className="text-md font-semibold">
 											{/* add category name */}
-											{category.key}
+											{tEnum(`category.${category.key}`)}
 										</span>
 									</div>
-									<span className="pl-8">Subtitle</span>
+									<span className="pl-8">{t("venue.subcategory")}</span>
 								</div>
 							);
 						})}
@@ -85,15 +88,21 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 				>
 					{featureProperties.utilization_status && (
 						<div className=" flex gap-1 items-center justify-between">
-							<span>Nutzungsstatus:</span>
+							<span>{t("venue.utilizationStatus")}:</span>
 							{/* todo: add status name */}
-							<span>{featureProperties.utilization_status}</span>
+							<span>
+								{tEnum(
+									`utilization_status.${featureProperties.utilization_status}`,
+								)}
+							</span>
 						</div>
 					)}
 					{!featureProperties.utilization_status && (
 						<div className=" flex gap-1 items-center justify-between">
-							<span className="text-md font-semibold">Nutzungsstatus:</span>
-							<span>unbekannt</span>
+							<span className="text-md font-semibold">
+								{t("venue.utilizationStatus")}:
+							</span>
+							<span>Unbekannt</span>
 						</div>
 					)}
 				</CardFooter>
