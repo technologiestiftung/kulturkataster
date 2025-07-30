@@ -163,13 +163,13 @@
 
 @layer components {
 	.display {
-		@apply font-bold;
+		@apply font-extrabold;
 		font-size: 2rem;
 		line-height: 2rem;
 	}
 
 	h1 {
-		@apply font-bold;
+		@apply font-extrabold;
 		font-size: 1.5rem;
 		line-height: 2rem;
 	}
