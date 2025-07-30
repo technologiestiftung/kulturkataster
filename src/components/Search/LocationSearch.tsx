@@ -14,15 +14,20 @@ import Search from "@/icons/search.svg";
 import { SearchResults } from "./SearchResults";
 import { SearchMessages } from "./SearchMessages";
 import { GeoFeature, Institution, SearchResult } from "@/types/institution";
+import { useVenueStore } from "@/lib/store/venueStore";
 
 export const isGeoFeature = (result: SearchResult): result is GeoFeature => {
 	return "place_name" in result && "center" in result;
 };
 
+const ANIMATION_DURATION = 1000;
+const DEFAULT_ZOOM = 5;
+
 export function LocationSearch() {
 	const { t } = useTranslation("common");
 	const inputRef = useRef<HTMLInputElement>(null);
 	const { map } = useMapStore();
+	const setSelectedVenueId = useVenueStore((state) => state.setSelectedVenueId);
 
 	const {
 		query,
@@ -111,15 +116,15 @@ export function LocationSearch() {
 			const extent = boundingExtent([bottomLeft, topRight]);
 
 			map.getView().fit(extent, {
-				duration: 2000,
+				duration: ANIMATION_DURATION,
 				padding: [50, 50, 50, 50],
 			});
 		} else {
 			const transformedCoords = fromLonLat([lng, lat]);
 			map.getView().animate({
 				center: transformedCoords,
-				duration: 2000,
-				zoom: 15,
+				duration: ANIMATION_DURATION,
+				zoom: DEFAULT_ZOOM,
 			});
 		}
 
@@ -134,10 +139,12 @@ export function LocationSearch() {
 		if (coordinates && map) {
 			map.getView().animate({
 				center: coordinates,
-				duration: 2000,
-				zoom: 15,
+				duration: ANIMATION_DURATION,
+				zoom: DEFAULT_ZOOM,
 			});
 		}
+
+		setSelectedVenueId(result.id as unknown as string);
 
 		if (statusRef.current) {
 			statusRef.current.textContent = `${result.name} ausgewählt.`;
@@ -196,6 +203,7 @@ export function LocationSearch() {
 						className="w-full bg-white"
 						icon={<Search className="w-5 h-5 text-foreground" />}
 						iconPosition="left"
+						aria-invalid={!!resultErrorMessage}
 					/>
 					{isLoading && (
 						<div className="absolute right-3 top-1/2 transform -translate-y-1/2">
