@@ -49,7 +49,7 @@ function ContactLink({
 	return (
 		<a
 			href={normalizedHref}
-			className="body2 text-primary-dark hover:underline break-all"
+			className="body2 text-primary-dark hover:underline break-words"
 			{...props}
 		>
 			{children}
