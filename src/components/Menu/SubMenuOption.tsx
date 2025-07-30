@@ -41,8 +41,8 @@ export function SubMenuOption({
 				<span className="body2 font-bold">{t(titleKey)}</span>
 			</div>
 			{hasSwitch && (
-				<Switch 
-					checked={switchChecked} 
+				<Switch
+					checked={switchChecked}
 					onCheckedChange={onSwitchChange}
 					onClick={(e) => e.stopPropagation()}
 				/>
