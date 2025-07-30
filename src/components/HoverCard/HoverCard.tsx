@@ -72,7 +72,6 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 											<IconComponent />
 										</div>
 										<span className="text-md font-semibold">
-											{/* add category name */}
 											{tEnum(`category.${category.key}`)}
 										</span>
 									</div>
