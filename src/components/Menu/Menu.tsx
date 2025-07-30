@@ -229,7 +229,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 										activeItem === "filter") && (
 										<div className="sticky bottom-0 flex justify-center p-4">
 											<Button variant={"outline"} className="w-full">
-												<Download size={6} />
+												<Download size={6} viewBox="0 0 24 24" />
 												Daten herunterladen
 											</Button>
 										</div>
