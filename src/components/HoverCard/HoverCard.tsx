@@ -3,16 +3,19 @@
 import {
 	Card,
 	CardContent,
-	CardDescription,
 	CardFooter,
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
+import InfoCircleIcon from "@/icons/info-circle-fill.svg";
+import { getCategoryIconComponent } from "@/lib/utils/iconUtils"; // Update this import path
+import { Category } from "@/types";
 import { FC, useEffect, useState } from "react";
 
 interface HoverCardProps {
 	features?: any;
 }
+
 const getFeatureData = (feature: any) => {
 	const properties = feature.getProperties();
 
@@ -23,12 +26,11 @@ const getFeatureData = (feature: any) => {
 	return properties;
 };
 
+// TODO: add fonts
+// TODO: add names categories and status
+
 const HoverCard: FC<HoverCardProps> = ({ features }) => {
 	const [featureProperties, setFeatureProperties] = useState<any>(null);
-
-	useEffect(() => {
-		console.log("[HoverCard] featureProperties::", featureProperties);
-	}, [featureProperties]);
 
 	useEffect(() => {
 		if (!features) {
@@ -45,28 +47,54 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 
 	return (
 		<div className="HoverCard-root">
-			<Card>
-				<CardHeader>
-					<CardTitle>{featureProperties.name}</CardTitle>
-					<CardDescription>
-						{featureProperties.categories.forEach((category: any) => {
+			<Card className="w-80 shadow-lg border-none">
+				<CardHeader className="p-2">
+					<div className="flex gap-2 justify-between">
+						<CardTitle className="text-lg font-semibold line-clamp-2 w-full">
+							{featureProperties.name}
+						</CardTitle>
+						<InfoCircleIcon />
+					</div>
+				</CardHeader>
+
+				<CardContent className="p-2 pt-0">
+					<div className="flex flex-col gap-2 ">
+						{featureProperties.categories?.map((category: Category) => {
+							const IconComponent = getCategoryIconComponent(category.key);
+
 							return (
-								<span key={category} className="mr-2">
-									{category}
-								</span>
+								<div key={category.id}>
+									<div className="flex items-center gap-2 h-6">
+										<div className="w-6 h-6">
+											<IconComponent />
+										</div>
+										<span className="text-md font-semibold">
+											{/* add category name */}
+											{category.key}
+										</span>
+									</div>
+									<span className="pl-8">Subtitle</span>
+								</div>
 							);
 						})}
-					</CardDescription>
-				</CardHeader>
-				<CardContent>
-					<div className="space-y-2"></div>
+					</div>
 				</CardContent>
-				<CardFooter className="flex-col items-start space-y-1">
+
+				<CardFooter
+					className={`rounded-b-md p-2 ${featureProperties.utilization_status === "in_use" ? "bg-brand-light" : "bg-alert"}`}
+				>
 					{featureProperties.utilization_status && (
-						<p>
-							<strong>Status:</strong>
-							{featureProperties.utilization_status}
-						</p>
+						<div className=" flex gap-1 items-center justify-between">
+							<span>Nutzungsstatus:</span>
+							{/* todo: add status name */}
+							<span>{featureProperties.utilization_status}</span>
+						</div>
+					)}
+					{!featureProperties.utilization_status && (
+						<div className=" flex gap-1 items-center justify-between">
+							<span className="text-md font-semibold">Nutzungsstatus:</span>
+							<span>unbekannt</span>
+						</div>
 					)}
 				</CardFooter>
 			</Card>

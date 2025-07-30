@@ -1,65 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { createClient } from "@/lib/supabase/client";
-import type { FeatureCollection } from "geojson";
+import venues from "@/config/resources/venues.json";
+import type { FeatureCollection, GeoJsonProperties, Geometry } from "geojson";
 
-// Error handling
-export class ApiError extends Error {
-	constructor(
-		message: string,
-		public code?: string,
-		public details?: unknown,
-	) {
-		super(message);
-		this.name = "ApiError";
-	}
-}
+// NOTE: Venues are called Institutions in Supabase
 
-// Utility functions
-function handleError(error: any, context: string): never {
-	console.error(`Error in ${context}:`, error);
-	throw new ApiError(
-		`Failed to ${context}: ${error.message}`,
-		error.code,
-		error.details,
-	);
-}
-
-// function validateArrayResponse<T>(data: unknown, context: string): T[] {
-// 	if (!Array.isArray(data)) {
-// 		throw new ApiError(`Invalid data format in ${context}: expected array`);
-// 	}
-// 	return data as T[];
-// }
-
-function validateSingleResponse<T>(data: unknown, context: string): T {
-	if (!data) {
-		throw new ApiError(`No data returned from ${context}`);
-	}
-	return data as T;
-}
-
-export async function getInstitutionsGeoJSON() {
-	const supabase = createClient();
-
-	const { data, error } = await supabase.rpc("get_public_institutions_geojson");
-
-	if (error) {
-		handleError(error, "fetch institutions GeoJSON");
-	}
-
-	const validated = validateSingleResponse<FeatureCollection>(
-		data,
-		"getInstitutionsGeoJSON",
-	);
-
-	if (
-		validated.type !== "FeatureCollection" ||
-		!Array.isArray(validated.features)
-	) {
-		throw new Error("Invalid or missing GeoJSON structure in response");
-	}
-
-	return validated;
+export async function getVenuesGeoJSON() {
+	// FIXME: add response from staging
+	return venues as FeatureCollection<Geometry, GeoJsonProperties>;
 }
 
 export async function searchInstitutions(query: string) {

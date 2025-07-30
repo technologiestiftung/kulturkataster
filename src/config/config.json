@@ -70,7 +70,11 @@
 		"baselayer": {
 			"elements": [
 				{
-					"id": "basemap",
+					"id": "bm_web_gry:contrast",
+					"visibility": false
+				},
+				{
+					"id": "bm_web_gry",
 					"visibility": true
 				}
 			]
@@ -78,19 +82,7 @@
 		"subjectlayer": {
 			"elements": [
 				{
-					"id": "lor_2021:a_lor_plr_2021",
-					"visibility": false
-				},
-				{
-					"id": "lor_2021:b_lor_bzr_2021",
-					"visibility": false
-				},
-				{
-					"id": "lor_2021:c_lor_pgr_2021",
-					"visibility": false
-				},
-				{
-					"id": "gemeinschaftsinitiative:gemeinschaftsinitiative",
+					"id": "alkis_bezirke:bezirksgrenzen",
 					"visibility": false
 				},
 				{
@@ -110,7 +102,19 @@
 					"visibility": false
 				},
 				{
-					"id": "alkis_bezirke:bezirksgrenzen",
+					"id": "lor_2021:a_lor_plr_2021",
+					"visibility": false
+				},
+				{
+					"id": "lor_2021:b_lor_bzr_2021",
+					"visibility": false
+				},
+				{
+					"id": "lor_2021:c_lor_pgr_2021",
+					"visibility": false
+				},
+				{
+					"id": "gemeinschaftsinitiative:gemeinschaftsinitiative",
 					"visibility": false
 				},
 				{
@@ -122,11 +126,7 @@
 					"visibility": false
 				},
 				{
-					"id": "bplan:wfs:b_bp_fs",
-					"visibility": false
-				},
-				{
-					"id": "bplan:wfs:c_bp_ak",
+					"id": "mss_2023:bc_mss2023_i_sdi",
 					"visibility": false
 				}
 			]
