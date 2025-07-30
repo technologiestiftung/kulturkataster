@@ -146,7 +146,7 @@ export function LocationSearch() {
 
 	const handleResultClick = (result: SearchResult) => {
 		console.log("handleResultClick triggered with result:", result);
-		
+
 		if (isGeoFeature(result)) {
 			handleGeoFeatureClick(result);
 		} else {
