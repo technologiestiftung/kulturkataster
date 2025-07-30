@@ -32,7 +32,7 @@ export default async function RootLayout({
 	params: Promise<{ locale: Locale }>;
 }>) {
 	const { locale } = await params;
-	const ns: string[] = ["common", "content"]; // namespace used for this page
+	const ns: string[] = ["common", "content", "enumMap"]; // namespace used for this page
 	const { resources } = await serverSideTranslation(locale, ns);
 
 	return (

@@ -3,18 +3,31 @@
 import {
 	Card,
 	CardContent,
-	CardDescription,
 	CardFooter,
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
+import InfoCircleIcon from "@/icons/info-circle-fill.svg";
+import { getCategoryIconComponent } from "@/lib/utils/iconUtils"; // Update this import path
+import { Category } from "@/types";
 import { FC, useEffect, useState } from "react";
 
 interface HoverCardProps {
 	features?: any;
 }
 
-// TODO: fix hovercard props naming
+const getFeatureData = (feature: any) => {
+	const properties = feature.getProperties();
+
+	if (properties.features && properties.features.length > 0) {
+		return properties.features[0].values_;
+	}
+
+	return properties;
+};
+
+// TODO: add fonts
+// TODO: add names categories and status
 
 const HoverCard: FC<HoverCardProps> = ({ features }) => {
 	const [featureProperties, setFeatureProperties] = useState<any>(null);
@@ -25,8 +38,7 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 			return;
 		}
 
-		const properties = features.getProperties();
-		setFeatureProperties(properties.features[0].values_);
+		setFeatureProperties(getFeatureData(features));
 	}, [features]);
 
 	if (!features || !featureProperties) {
@@ -35,65 +47,55 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 
 	return (
 		<div className="HoverCard-root">
-			<Card>
-				<CardHeader>
-					<CardTitle>{featureProperties["Name der K"] || "Unknown"}</CardTitle>
-					<CardDescription>
-						{featureProperties["Unterkateg"] || "No category"}
-					</CardDescription>
+			<Card className="w-80 shadow-lg border-none">
+				<CardHeader className="p-2">
+					<div className="flex gap-2 justify-between">
+						<CardTitle className="text-lg font-semibold line-clamp-2 w-full">
+							{featureProperties.name}
+						</CardTitle>
+						<InfoCircleIcon />
+					</div>
 				</CardHeader>
-				<CardContent>
-					<div className="space-y-2">
-						<p>
-							<strong>Type:</strong> {featureProperties.Kulturortk}
-						</p>
-						<p>
-							<strong>Address:</strong> {featureProperties.Addresse}
-						</p>
-						<p>
-							<strong>District:</strong> {featureProperties["Bezirk (Na)"]}
-						</p>
-						<p>
-							<strong>ZIP:</strong> {featureProperties.PLZ}
-						</p>
-						{featureProperties.Website && (
-							<p>
-								<strong>Website:</strong>
-								<a
-									href={featureProperties.Website}
-									target="_blank"
-									rel="noopener noreferrer"
-									className="text-blue-600 hover:underline ml-1"
-								>
-									{featureProperties.Website}
-								</a>
-							</p>
-						)}
-						{featureProperties.Telefonnum && (
-							<p>
-								<strong>Phone:</strong> {featureProperties.Telefonnum}
-							</p>
-						)}
-						{featureProperties["E-Mail-Adr"] && (
-							<p>
-								<strong>Email:</strong> {featureProperties["E-Mail-Adr"]}
-							</p>
-						)}
+
+				<CardContent className="p-2 pt-0">
+					<div className="flex flex-col gap-2 ">
+						{featureProperties.categories?.map((category: Category) => {
+							const IconComponent = getCategoryIconComponent(category.key);
+
+							return (
+								<div key={category.id}>
+									<div className="flex items-center gap-2 h-6">
+										<div className="w-6 h-6">
+											<IconComponent />
+										</div>
+										<span className="text-md font-semibold">
+											{/* add category name */}
+											{category.key}
+										</span>
+									</div>
+									<span className="pl-8">Subtitle</span>
+								</div>
+							);
+						})}
 					</div>
 				</CardContent>
-				<CardFooter className="flex-col items-start space-y-1">
-					{featureProperties.Dachorgani && (
-						<p>
-							<strong>Organization:</strong> {featureProperties.Dachorgani}
-						</p>
+
+				<CardFooter
+					className={`rounded-b-md p-2 ${featureProperties.utilization_status === "in_use" ? "bg-brand-light" : "bg-alert"}`}
+				>
+					{featureProperties.utilization_status && (
+						<div className=" flex gap-1 items-center justify-between">
+							<span>Nutzungsstatus:</span>
+							{/* todo: add status name */}
+							<span>{featureProperties.utilization_status}</span>
+						</div>
 					)}
-					<p>
-						<strong>Data Source:</strong> {featureProperties.Datenquell}
-					</p>
-					<p>
-						<strong>Status:</strong>{" "}
-						{featureProperties["Öffnungs-"] || "Unknown"}
-					</p>
+					{!featureProperties.utilization_status && (
+						<div className=" flex gap-1 items-center justify-between">
+							<span className="text-md font-semibold">Nutzungsstatus:</span>
+							<span>unbekannt</span>
+						</div>
+					)}
 				</CardFooter>
 			</Card>
 		</div>
