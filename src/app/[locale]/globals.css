@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @plugin 'tailwindcss-animate';
+@import "./map.css";
 @custom-variant dark (&:is(.dark *));
 @custom-variant contrast (&:is([data-theme="contrast"] *));
 
@@ -27,6 +28,12 @@
 	--neutral-60: #a09f9d;
 	--neutral-80: #555b54;
 	--neutral-100: #2b3229;
+
+	--brand-dark: #924dff;
+	--brand-default: #55d494;
+	--brand-light: #aae9c9;
+
+	--alert: #ff9aab;
 
 	/* Fachfarben */
 	--fachfarben-yellow: #f5df56;
@@ -82,6 +89,12 @@
 
 	--sidebar-width: 25rem;
 	--sidebar-width-icon: 5rem;
+
+	--brand-dark: #4ab780;
+	--brand-default: #aae9c9;
+	--brand-light: #ddf6e9;
+
+	--alert: #ffd9df;
 }
 
 @theme {
@@ -120,6 +133,32 @@
 	--color-chart-3: var(--fachfarben-pink);
 	--color-chart-4: var(--fachfarben-blue);
 	--color-chart-5: var(--fachfarben-green);
+
+	--color-sidebar: var(--sidebar);
+	--color-sidebar-foreground: var(--sidebar-foreground);
+	--color-sidebar-primary: var(--sidebar-primary);
+	--color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+	--color-sidebar-accent: var(--sidebar-accent);
+	--color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+	--color-sidebar-border: var(--sidebar-border);
+	--color-sidebar-ring: var(--sidebar-ring);
+
+	--color-neutral-5: var(--neutral-5);
+	--color-neutral-10: var(--neutral-10);
+	--color-neutral-20: var(--neutral-20);
+	--color-neutral-40: var(--neutral-40);
+	--color-neutral-60: var(--neutral-60);
+	--color-neutral-80: var(--neutral-80);
+	--color-neutral-100: var(--neutral-100);
+
+	--color-brand-dark: var(--brand-dark);
+	--color-brand-default: var(--brand-default);
+	--color-brand-light: var(--brand-light);
+
+	--color-alert: var(--alert);
+	--shadow-sm: var(--shadow-200);
+	--shadow-md: var(--shadow-300);
+	--shadow-lg: var(--shadow-400);
 
 	--color-sidebar: var(--sidebar);
 	--color-sidebar-foreground: var(--sidebar-foreground);
@@ -221,15 +260,6 @@
 			font-size: 1rem;
 			line-height: 1.5rem;
 		}
-	}
-}
-
-@layer base {
-	* {
-		@apply border-border;
-	}
-	body {
-		@apply bg-background text-foreground;
 	}
 }
 

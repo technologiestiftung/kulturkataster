@@ -84,6 +84,9 @@ export interface LayerService {
 	singleTile?: boolean;
 	infoFormat?: string;
 	vtStyles: VectorTileStyle[];
+	preview?: {
+		src: string;
+	};
 }
 
 export interface VectorTileStyle {
@@ -119,6 +122,10 @@ export interface MapStoreState {
 	map: Map | null;
 	populateMap: (map: Map) => void;
 	removeMap: () => void;
+
+	// LayerTree
+	isLayerTreeOpen: boolean;
+	setIsLayerTreeOpen: (isOpen: boolean) => void;
 
 	// Layers
 	layers: ManagedLayer[];
