@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useVenueStore } from "@/lib/store/venueStore";
 import { getVenuesGeoJSON } from "@/lib/supabase/api";
 import { getCategoryIconComponent } from "@/lib/utils/iconUtils";
+import { normalizeUrl } from "@/lib/utils/sanitizerUtils";
 import { Category, VenueProperties } from "@/types";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -42,9 +43,12 @@ function ContactLink({
 		? { target: "_blank", rel: "noopener noreferrer" }
 		: {};
 
+	// Normalize the URL for external links (websites)
+	const normalizedHref = external ? normalizeUrl(href) : href;
+
 	return (
 		<a
-			href={href}
+			href={normalizedHref}
 			className="body2 text-primary-dark hover:underline break-all"
 			{...props}
 		>
