@@ -33,19 +33,20 @@ import { SearchContent } from "./MenuContent/SearchContent";
 import { VenueDetailContent } from "./MenuContent/VenueDetailContent";
 
 const menuItems = [
-	{ id: "filter", icon: FilterLines, label: "filter" },
+	{ id: "filter", icon: FilterLines, label: "filter.title" },
 	{ id: "search", icon: Search, label: "search.title" },
-	{ id: "add", icon: Edit, label: "add" },
-	{ id: "download", icon: Download, label: "download" },
+	{ id: "add", icon: Edit, label: "add.title" },
+	{ id: "download", icon: Download, label: "download.title" },
 ] as const;
 
 const footerItems = [
-	{ id: "info", icon: InfoCircle, label: "info" },
-	{ id: "accessibility", icon: Accessibility, label: "accessibility" },
+	{ id: "info", icon: InfoCircle, label: "info.title" },
+	{ id: "accessibility", icon: Accessibility, label: "accessibility.title" },
 ] as const;
 
 export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
-	const { toggleSidebar, setOpen, setOpenMobile, isMobile } = useSidebar();
+	const { toggleSidebar, setOpen, setOpenMobile, isMobile, open, openMobile } =
+		useSidebar();
 	const { t } = useTranslation("common");
 	const [activeItem, setActiveItem] = React.useState("filter");
 	const [dialogOpen, setDialogOpen] = React.useState(false);
@@ -71,6 +72,18 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 		}
 	}, [selectedVenueId, isMobile, setOpen, setOpenMobile]);
 
+	React.useEffect(() => {
+		const isSidebarClosed = isMobile ? !openMobile : !open;
+		if (isSidebarClosed) {
+			setActiveItem("");
+		}
+	}, [open, openMobile, isMobile]);
+
+	React.useEffect(() => {
+		setOpen(false);
+		setOpenMobile(false);
+	}, [isMobile]);
+
 	const handleItemClick = (itemName: string) => {
 		if (itemName === "info") {
 			setInfoModalOpen(true);
@@ -87,6 +100,15 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 				}
 				return;
 			}
+		}
+
+		if (itemName === "add") {
+			/** Open external Link */
+			window.open(
+				"https://form.formcentric.com/form/fb8189d9-8887-425d-bdd5-4aec08f7d8d5",
+				"_blank",
+			);
+			return;
 		}
 
 		if (activeItem === itemName) {
@@ -188,7 +210,8 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 								{(() => {
 									if (activeItem === "layertree") return "Fachkarten";
 									if (activeItem === "venue-detail") return t("venue.details");
-									return t(activeItem + ".title") || t(activeItem);
+
+									return t(activeItem + ".title");
 								})()}
 							</span>
 							<button
