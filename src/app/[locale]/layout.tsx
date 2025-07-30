@@ -8,7 +8,6 @@ import { getDirection } from "@/lib/utils";
 import I18NProvider from "@/i18n/i18n-provider";
 import { serverSideTranslation } from "@/i18n";
 import { Barlow } from "next/font/google";
-import { EnvDebug } from "@/components/Debug/EnvDebug";
 
 const barlow = Barlow({
 	preload: true,
@@ -45,7 +44,6 @@ export default async function RootLayout({
 								{children}
 							</div>
 						</SidebarInset>
-						<EnvDebug />
 					</SidebarProvider>
 				</I18NProvider>
 			</body>
