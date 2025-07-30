@@ -41,7 +41,10 @@ export function SearchResults({
 								: `institution-${result.id}`
 						}
 						{...getItemProps(index)}
-						onClick={() => onResultClick(result)}
+						onClick={(e) => {
+							e.stopPropagation();
+							onResultClick(result);
+						}}
 						className={`py-3 px-2 cursor-pointer rounded text-sm border-b
 							${index === activeIndex ? "bg-gray-100" : ""}
 							hover:bg-gray-100
