@@ -42,7 +42,6 @@ const VenueLayer: FC<VenueLayerProps> = ({
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 
-	// Use refs to track the current layer and sources
 	const vectorLayerRef = useRef<VectorLayer<any> | null>(null);
 	const vectorSourceRef = useRef<VectorSource | null>(null);
 	const clusterSourceRef = useRef<Cluster | null>(null);
@@ -124,18 +123,15 @@ const VenueLayer: FC<VenueLayerProps> = ({
 				const featureToCheck = features ? features[0] : feature;
 				const featureId =
 					featureToCheck?.get?.("id") || featureToCheck?.values_?.id;
-				const isSelected = featureId === selectedVenueId;
+
+				const currentSelectedId = useVenueStore.getState().selectedVenueId;
+				const isSelected = featureId === currentSelectedId;
 
 				return createSingleFeatureStyle(categoryKey, isSelected);
 			}
 			return createClusterStyle(size);
 		},
-		[
-			getCategoryKey,
-			createSingleFeatureStyle,
-			createClusterStyle,
-			selectedVenueId,
-		],
+		[getCategoryKey, createSingleFeatureStyle, createClusterStyle],
 	);
 
 	const shouldCluster = useCallback(
@@ -170,7 +166,6 @@ const VenueLayer: FC<VenueLayerProps> = ({
 			const clustering = shouldCluster(zoomLevel);
 
 			if (clustering) {
-				// Use clustering
 				if (!clusterSourceRef.current) {
 					clusterSourceRef.current = new Cluster({
 						distance: getClusterDistance(zoomLevel),
@@ -181,7 +176,6 @@ const VenueLayer: FC<VenueLayerProps> = ({
 				}
 				vectorLayerRef.current.setSource(clusterSourceRef.current);
 			} else {
-				// Use original source without clustering
 				vectorLayerRef.current.setSource(vectorSourceRef.current);
 			}
 		},
@@ -200,9 +194,10 @@ const VenueLayer: FC<VenueLayerProps> = ({
 				const feature = features[0];
 				const clusteredFeatures = feature.get("features");
 
-				// Check if this is a cluster (has multiple features)
 				if (clusteredFeatures && clusteredFeatures.length > 1) {
-					// Get the extent of all features in the cluster
+					event.preventDefault();
+					event.stopPropagation();
+
 					const extent = clusteredFeatures.reduce(
 						(acc: any, clusterFeature: any) => {
 							const geometry = clusterFeature.getGeometry();
@@ -224,7 +219,6 @@ const VenueLayer: FC<VenueLayerProps> = ({
 					);
 
 					if (extent) {
-						// Zoom to fit the cluster features with some padding
 						map.getView().fit(extent, {
 							padding: [50, 50, 50, 50],
 							duration: 500,
@@ -308,7 +302,10 @@ const VenueLayer: FC<VenueLayerProps> = ({
 
 	useEffect(() => {
 		if (vectorLayerRef.current) {
-			vectorLayerRef.current.changed();
+			const source = vectorLayerRef.current.getSource();
+			if (source) {
+				source.changed();
+			}
 		}
 	}, [selectedVenueId]);
 
