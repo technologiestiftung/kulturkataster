@@ -6,6 +6,7 @@ import SimpleLanguage from "@/icons/simple-language.svg";
 import FontSize from "@/icons/font-size.svg";
 import Contrast from "@/icons/contrast.svg";
 import { SubMenuOption } from "../SubMenuOption";
+import { useAppStore } from "@/lib/store/appStore";
 
 interface AccessibilityContentProps {
 	onItemClick: (itemName: string) => void;
@@ -41,16 +42,22 @@ const accessibilityOptions = [
 export function AccessibilityContent({
 	onItemClick,
 }: AccessibilityContentProps) {
-	const [fontSizeEnabled, setFontSizeEnabled] = React.useState(false);
-	const [contrastEnabled, setContrastEnabled] = React.useState(false);
+	const {
+		isContrastMode,
+		setIsContrastMode,
+		setBaseFontSize,
+		isLargeTextMode,
+		setIsLargeTextMode,
+	} = useAppStore();
 
 	const handleSwitchChange = (optionId: string, checked: boolean) => {
 		switch (optionId) {
 			case "fontSize":
-				setFontSizeEnabled(checked);
+				setIsLargeTextMode(checked);
+				setBaseFontSize(checked ? 18 : 16);
 				break;
 			case "contrast":
-				setContrastEnabled(checked);
+				setIsContrastMode(checked);
 				break;
 			default:
 				console.warn(`Unknown option ID: ${optionId}`);
@@ -61,9 +68,9 @@ export function AccessibilityContent({
 	const getSwitchState = (optionId: string) => {
 		switch (optionId) {
 			case "fontSize":
-				return fontSizeEnabled;
+				return isLargeTextMode;
 			case "contrast":
-				return contrastEnabled;
+				return isContrastMode;
 			default:
 				return false;
 		}
