@@ -29,7 +29,7 @@ const Map: FC = () => {
 					<MapNavigationControls />
 					<HoverControl
 						layerId="venues"
-						minZoomForHover={3}
+						minZoomForHover={0}
 						overlayOptions={{
 							offset: [8, 8],
 						}}
