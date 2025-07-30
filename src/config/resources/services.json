@@ -863,5 +863,35 @@
 		"preview": {
 			"src": "/resources/preview-img/preview-img-einwohnerentwicklung.png"
 		}
+	},
+	{
+		"id": "mss_2023:bc_mss2023_i_sdi",
+		"name": "Gesamtindex Soziale Ungleichheit (Status/Dynamik-Index)",
+		"name_lang": "Gesamtindex Soziale Ungleichheit (Status/Dynamik-Index) (Monitoring Soziale Stadtentwicklung (MSS) 2023)",
+		"crs": "EPSG:25833",
+		"url": "https://gdi.berlin.de/services/wms/mss_2023",
+		"typ": "WMS",
+		"gfiAttributes": "showAll",
+		"layers": "bc_mss2023_i_sdi",
+		"legend": "/resources/legends/Legende-Transferbezug.svg",
+		"datasets": [
+			{
+				"md_name": "Monitoring Soziale Stadtentwicklung (MSS) 2023",
+				"md_id": "ba4a911f-b071-4be4-a164-e86fa9bfb6ba",
+				"rs_id": "https://registry.gdi-de.org/id/de.be.csw/605f3ec5-18d0-38f1-9c67-db52b2a358c1",
+				"csw_url": "https://gdi.berlin.de/geonetwork/srv/ger/csw"
+			}
+		],
+		"format": "image/png",
+		"version": "1.3.0",
+		"featureCount": "10",
+		"gfiTheme": "default",
+		"transparent": true,
+		"singleTile": true,
+		"infoFormat": "application/json",
+		"layerAttribution": "Für die Nutzung der Daten ist die Datenlizenz Deutschland - Zero - Version 2.0 anzuwenden. Die Lizenz ist über https://www.govdata.de/dl-de/zero-2-0 abrufbar.",
+		"preview": {
+			"src": "/resources/preview-img/preview-img-einwohnerentwicklung.png"
+		}
 	}
 ]
