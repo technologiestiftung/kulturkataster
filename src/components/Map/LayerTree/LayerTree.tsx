@@ -81,7 +81,6 @@ const LayerThumbnail = memo<{
 					<div className="w-6 h-6 border-2 border-purple-400 rounded opacity-50" />
 				</div>
 			)}
-
 			{showOverlay && layer.visibility && (
 				<div
 					className="absolute inset-0 bg-primary/30 flex items-center justify-center border-2 border-primary rounded"
@@ -113,14 +112,14 @@ const LayerItem = memo<{ layer: ManagedLayer }>(({ layer }) => {
 	const serviceNameLang = layer.config.service.name_lang;
 
 	return (
-		<div
-			className={`bg-white rounded-sm space-y-2 ${layer.visibility ? "shadow-sm" : ""}`}
+		<AccordionItem
+			value={layer.id}
+			className={`border-none bg-white rounded-sm ${layer.visibility ? "shadow-sm" : ""}`}
 			role="listitem"
 		>
 			<div className="flex items-center justify-between p-3 m-0">
 				<div className="flex items-center space-x-3 flex-1">
 					<LayerThumbnail layer={layer} showOverlay />
-
 					<div className="flex flex-col">
 						<Label
 							htmlFor={layer.id}
@@ -139,7 +138,6 @@ const LayerItem = memo<{ layer: ManagedLayer }>(({ layer }) => {
 						)}
 					</div>
 				</div>
-
 				<div className="flex items-center space-x-1">
 					<div className="w-11 h-11 flex items-center justify-center">
 						<Checkbox
@@ -155,31 +153,26 @@ const LayerItem = memo<{ layer: ManagedLayer }>(({ layer }) => {
 			</div>
 
 			{hasLegend && (
-				<Accordion
-					type="single"
-					collapsible
-					className="bg-neutral-20 rounded-b-sm"
-				>
-					<AccordionItem value="legend" className="border-none">
-						<AccordionTrigger
-							className="px-3 py-2 hover:no-underline flex justify-end items-center gap-2 [&>svg]:text-black"
-							aria-label={`Show legend for ${serviceName}`}
-						>
-							Legende ansehen
-						</AccordionTrigger>
-						<AccordionContent className="px-3 pb-3 rounded-b-sm">
-							<Image
-								src={layer.config.service.legend as string}
-								alt={`Legend for ${serviceName}`}
-								width={300}
-								height={200}
-								style={{ width: "auto", height: "auto", maxWidth: "100%" }}
-							/>
-						</AccordionContent>
-					</AccordionItem>
-				</Accordion>
+				<>
+					<AccordionTrigger
+						className="px-3 py-2 rounded-none [&[data-state=closed]]:rounded-b-sm hover:no-underline flex justify-end items-center gap-2 [&>svg]:text-black bg-neutral-10"
+						aria-label={`Show legend for ${serviceName}`}
+					>
+						Legende ansehen
+					</AccordionTrigger>
+					<AccordionContent className="px-3 pb-3 bg-neutral-10 rounded-b-sm">
+						<Image
+							src={layer.config.service.legend as string}
+							alt={`Legend for ${serviceName}`}
+							width={300}
+							height={200}
+							className="h-auto w-full max-w-full rounded"
+							loading="lazy"
+						/>
+					</AccordionContent>
+				</>
 			)}
-		</div>
+		</AccordionItem>
 	);
 });
 
@@ -270,12 +263,10 @@ const LayerTree: FC = () => {
 		}
 	}, [isMobile, isOpen, setIsLayerTreeOpen, setOpenMobile]);
 
-	// Mobile doesn't show the floating button
 	if (!isOpen && isMobile) {
 		return null;
 	}
 
-	// Desktop floating button
 	if (!isOpen) {
 		return (
 			<FloatingLayerButton
@@ -287,7 +278,6 @@ const LayerTree: FC = () => {
 		);
 	}
 
-	// Desktop card view
 	return (
 		<Card
 			className={`flex w-[400px] max-h-[70vh] absolute bottom-4 z-50 flex-col bg-neutral-5 transition-all duration-200 left-4`}
@@ -308,7 +298,6 @@ const LayerTree: FC = () => {
 					</Button>
 				</div>
 			</CardHeader>
-
 			<CardContent className="p-2">
 				<LayerTreeContent layers={subjectLayers} />
 			</CardContent>
@@ -332,7 +321,9 @@ export const LayerTreeContent: FC<{ layers?: ManagedLayer[] }> = ({
 	}
 
 	return (
-		<div
+		<Accordion
+			type="single"
+			collapsible
 			className="flex flex-col gap-2 overflow-y-auto max-h-[60vh]"
 			role="list"
 			aria-label="Available layers"
@@ -340,7 +331,7 @@ export const LayerTreeContent: FC<{ layers?: ManagedLayer[] }> = ({
 			{layersToRender.map((layer) => (
 				<LayerItem key={layer.id} layer={layer} />
 			))}
-		</div>
+		</Accordion>
 	);
 };
 
