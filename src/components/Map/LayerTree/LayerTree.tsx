@@ -165,7 +165,7 @@ const LayerItem = memo<{ layer: ManagedLayer }>(({ layer }) => {
 							src={layer.config.service.legend as string}
 							alt={`Legend for ${serviceName}`}
 							width={300}
-							height={200}
+							height={50}
 							className="h-auto w-full max-w-full rounded"
 							loading="lazy"
 						/>
