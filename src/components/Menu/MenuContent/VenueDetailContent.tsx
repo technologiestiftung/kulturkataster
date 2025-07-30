@@ -236,7 +236,7 @@ function VenueCard({ venueData }: { venueData: VenueProperties }) {
 	const hasExtendedInfo = EXTENDED_INFO_FIELDS.some((field) =>
 		Boolean(venueData[field]),
 	);
-	
+
 	return (
 		<Card className="w-full rounded-lg overflow-hidden border-none">
 			<VenueHeader venueData={venueData} />
