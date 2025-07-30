@@ -334,7 +334,7 @@ export function VenueDetailContent() {
 	}
 
 	return (
-		<main className="p-2">
+		<main className="p-2 h-full">
 			<VenueCard venueData={venueData} />
 		</main>
 	);
