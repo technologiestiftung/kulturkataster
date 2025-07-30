@@ -82,6 +82,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	React.useEffect(() => {
 		setOpen(false);
 		setOpenMobile(false);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isMobile]);
 
 	const handleItemClick = (itemName: string) => {
