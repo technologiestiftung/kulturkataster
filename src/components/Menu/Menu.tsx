@@ -2,6 +2,7 @@
 
 import { InformationModal } from "@/components/Modals/Pages/InformationModal";
 import { WelcomeModal } from "@/components/Modals/Pages/WelcomeModal";
+import { Button } from "@/components/ui/button";
 import {
 	Sidebar,
 	SidebarContent,
@@ -212,16 +213,27 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 						</div>
 					</SidebarHeader>
 					<SidebarContent>
-						<SidebarGroup className="px-0">
-							<SidebarGroupContent>
-								<div className="">
-									{activeItem === "filter" && <FilterContent />}
-									{activeItem === "search" && <SearchContent />}
-									{activeItem === "accessibility" && (
-										<AccessibilityContent onItemClick={handleItemClick} />
+						<SidebarGroup className="px-0 h-full">
+							<SidebarGroupContent className="h-full overflow-auto">
+								<div className="min-h-full flex flex-col">
+									<div className="flex-1">
+										{activeItem === "filter" && <FilterContent />}
+										{activeItem === "search" && <SearchContent />}
+										{activeItem === "accessibility" && (
+											<AccessibilityContent onItemClick={handleItemClick} />
+										)}
+										{activeItem === "layertree" && <LayerTreeContent />}
+										{activeItem === "venue-detail" && <VenueDetailContent />}
+									</div>
+									{(activeItem === "venue-detail" ||
+										activeItem === "filter") && (
+										<div className="sticky bottom-0 flex justify-center p-4">
+											<Button variant={"outline"} className="w-full">
+												<Download size={6} />
+												Daten herunterladen
+											</Button>
+										</div>
 									)}
-									{activeItem === "layertree" && <LayerTreeContent />}
-									{activeItem === "venue-detail" && <VenueDetailContent />}
 								</div>
 							</SidebarGroupContent>
 						</SidebarGroup>
