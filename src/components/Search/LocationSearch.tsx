@@ -145,21 +145,17 @@ export function LocationSearch() {
 	};
 
 	const handleResultClick = (result: SearchResult) => {
+		console.log("handleResultClick triggered with result:", result);
+		
 		if (isGeoFeature(result)) {
 			handleGeoFeatureClick(result);
 		} else {
 			handleInstitutionClick(result);
 		}
-
+		console.log("Selected result:", result);
 		setQuery("");
 		clearResults();
 		resetNavigation();
-	};
-
-	const handleBlur = (e: React.FocusEvent) => {
-		if (!e.currentTarget.contains(e.relatedTarget as Node)) {
-			setTimeout(clearResults, 100);
-		}
 	};
 
 	const formatAddress = (institution: Institution) => {
@@ -189,7 +185,7 @@ export function LocationSearch() {
 
 	return (
 		<div className="h-full flex flex-col overflow-hidden">
-			<div className="flex-shrink-0 mb-8" onBlur={handleBlur}>
+			<div className="flex-shrink-0 mb-8">
 				<div className="relative">
 					<Input
 						ref={inputRef}

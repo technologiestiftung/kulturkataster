@@ -3,6 +3,7 @@
 import { PageModal } from "../PageModal";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
+import Download from "@/icons/download.svg";
 
 interface InformationModalProps {
 	open: boolean;
@@ -43,6 +44,7 @@ export function InformationModal({
 					{t("informationModal.usage_info.description2", { ns: "content" })}
 				</p>
 				<Button variant="outline" className="mt-4">
+					<Download className="mr-2 h-6 w-6" />
 					{t("informationModal.usage_info.downloadPDF", { ns: "content" })}
 				</Button>
 			</div>
