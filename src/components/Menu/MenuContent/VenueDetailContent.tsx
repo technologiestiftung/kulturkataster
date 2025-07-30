@@ -20,8 +20,8 @@ function InfoItem({
 }) {
 	return (
 		<div>
-			<p className="body2 font-bold break-words">{label}:</p>
-			<p className="body2 break-words">{children}</p>
+			<p className="body2 font-bold">{label}:</p>
+			<p className="body2">{children}</p>
 		</div>
 	);
 }
@@ -49,7 +49,7 @@ function ContactLink({
 	return (
 		<a
 			href={normalizedHref}
-			className="body2 text-primary-dark hover:underline break-words"
+			className="body2 text-primary-dark hover:underline break-anywhere"
 			{...props}
 		>
 			{children}
@@ -67,11 +67,11 @@ function VenueHeader({ venueData }: { venueData: VenueProperties }) {
 		<CardHeader
 			className={`relative p-0 ${isInUse ? "bg-brand-default" : "bg-neutral-20"}`}
 		>
-			<p className="body2 p-4 pb-0 break-words">
+			<p className="body2 p-4 pb-0">
 				{venueData.parent_organizations?.[0]?.name || ""}
 			</p>
-			<CardTitle className="px-4">
-				<h1 className="h1 break-words">{venueData.name}</h1>
+			<CardTitle className="px-4 max-w-full overflow-hidden">
+				<h1 className="h1 break-anywhere">{venueData.name}</h1>
 			</CardTitle>
 
 			{venueData.categories?.length > 0 && (
@@ -84,13 +84,11 @@ function VenueHeader({ venueData }: { venueData: VenueProperties }) {
 									<div className="w-6 h-6">
 										<IconComponent />
 									</div>
-									<p className="body2 font-bold break-words">
+									<p className="body2 font-bold">
 										{tEnum(`category.${category.key}`)}
 									</p>
 								</div>
-								<p className="body2 pl-8 break-words">
-									{t("venue.subcategory")}
-								</p>
+								<p className="body2 pl-8">{t("venue.subcategory")}</p>
 							</div>
 						);
 					})}
@@ -120,13 +118,13 @@ function VenueBasicInfo({ venueData }: { venueData: VenueProperties }) {
 	return (
 		<div>
 			<address className="not-italic mb-4">
-				<p className="body1 break-words">{venueData.name}</p>
+				<p className="body1">{venueData.name}</p>
 				{venueData.street && venueData.street_number && venueData.zip_code && (
 					<div className="body1">
-						<p className="break-words">
+						<p>
 							{venueData.street} {venueData.street_number}
 						</p>
-						<p className="break-words">{venueData.zip_code}</p>
+						<p>{venueData.zip_code}</p>
 					</div>
 				)}
 			</address>
