@@ -3,7 +3,7 @@
 		"title": "Kulturorte filtern"
 	},
 	"search": {
-		"title": "Kulturorte suchen",
+		"title": "Suche",
 		"description": "Entdecken Sie Berlins Kulturorte ganz einfach über die Suchfunktion – geben Sie eine Adresse oder einen Ort ein, und die Ergebnisse erscheinen direkt auf der Karte.",
 		"hint": "Adresse oder Kulturort eingeben",
 		"placeholder": "Kulturort, Adresse oder Kategorie",
@@ -14,7 +14,7 @@
 		"suggestions": "Vorschläge für Ihre Suche"
 	},
 	"download": {
-		"title": "Daten herunterladen",
+		"title": "Liste herunterladen",
 		"description": "Laden Sie die Daten der Kulturorte im JSON-Format herunter. Diese Daten können für eigene Anwendungen oder Analysen verwendet werden.",
 		"downloadButton": "Daten herunterladen"
 	},
@@ -38,9 +38,11 @@
 		}
 	},
 	"about": "Über",
-	"info": "Info",
+	"info": {
+		"title": "Info"
+	},
 	"add": {
-		"title": "Kulturort hinzufügen",
+		"title": "Mitwirken",
 		"description": "Fügen Sie einen neuen Kulturort hinzu, indem Sie das Formular ausfüllen. Wir prüfen Ihre Angaben und veröffentlichen den Ort nach Freigabe."
 	},
 	"edit": "Bearbeiten",
