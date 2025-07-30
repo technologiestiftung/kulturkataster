@@ -95,7 +95,7 @@
 	"success": "Erfolg",
 	"footer": {
 		"title": "Kulturkataster Berlin",
-		"open_source_notice": "Das Kulturkataster ist ein Open-Source-Projekt.",
+		"openSource": "Das Kulturkataster ist ein <0>Open-Source-Projekt</0>.",
 		"address": {
 			"suffix": "c/o Kulturraum Berlin gGmbH",
 			"street": "Spandauer Damm 19",
