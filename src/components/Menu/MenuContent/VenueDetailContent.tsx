@@ -67,7 +67,7 @@ function VenueHeader({ venueData }: { venueData: VenueProperties }) {
 		<CardHeader
 			className={`relative p-0 ${isInUse ? "bg-brand-default" : "bg-neutral-20"}`}
 		>
-			<p className="body2 p-4 pb-0">
+			<p className="body2 p-4 pb-0 break-words">
 				{venueData.parent_organizations?.[0]?.name || ""}
 			</p>
 			<CardTitle className="px-4">
