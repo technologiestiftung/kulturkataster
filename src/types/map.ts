@@ -123,6 +123,10 @@ export interface MapStoreState {
 	populateMap: (map: Map) => void;
 	removeMap: () => void;
 
+	// LayerTree
+	isLayerTreeOpen: boolean;
+	setIsLayerTreeOpen: (isOpen: boolean) => void;
+
 	// Layers
 	layers: ManagedLayer[];
 	setLayers: (layers: ManagedLayer[]) => void;

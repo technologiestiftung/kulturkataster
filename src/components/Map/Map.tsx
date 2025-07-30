@@ -21,23 +21,22 @@ const Map: FC = () => {
 
 			<LazyOlMap>
 				<LayerInitializer />
-				{/* venue layer */}
 				<Layers>
 					<VenueLayer />
 				</Layers>
 
 				<MapControls>
 					<MapNavigationControls />
-					{true && (
-						<HoverControl layerId="venues" minZoomForHover={3}>
-							<HoverCard />
-						</HoverControl>
-					)}
-					{false && (
-						<ClickControl layerId="alkis_bezirke:wfs:bezirksgrenzen">
-							<HoverCard />
-						</ClickControl>
-					)}
+					<HoverControl
+						layerId="venues"
+						minZoomForHover={3}
+						overlayOptions={{
+							offset: [8, 8],
+						}}
+					>
+						<HoverCard />
+					</HoverControl>
+					<ClickControl layerId="venues" />
 				</MapControls>
 			</LazyOlMap>
 		</div>

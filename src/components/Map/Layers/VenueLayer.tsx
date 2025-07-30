@@ -1,17 +1,22 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import venues from "@/config/resources/venues.json";
 import { useMapStore } from "@/lib/store/mapStore";
+import { useVenueStore } from "@/lib/store/venueStore";
+import { getVenuesGeoJSON } from "@/lib/supabase/api";
 import { transformGeoJSON } from "@/lib/utils/mapUtils";
 import { MapStoreState } from "@/types/map";
+import type { FeatureCollection, GeoJsonProperties, Geometry } from "geojson";
 import { FeatureLike } from "ol/Feature";
 import GeoJSON from "ol/format/GeoJSON";
 import VectorLayer from "ol/layer/Vector";
 import { Vector as VectorSource } from "ol/source";
 import Cluster from "ol/source/Cluster";
-import { Fill, Icon, Stroke, Style, Text } from "ol/style";
+import { Fill, Icon, Style, Text } from "ol/style";
 import CircleStyle from "ol/style/Circle";
-import { FC, useCallback, useEffect } from "react";
+import { FC, useCallback, useEffect, useRef, useState } from "react";
+import { createPoiSvg } from "../MapStyles/createPoiSvg";
+import { CategoryType } from "@/types";
 
 interface VenueLayerProps {
 	zIndex?: number;
@@ -22,82 +27,129 @@ interface VenueLayerProps {
 
 const VenueLayer: FC<VenueLayerProps> = ({
 	zIndex = 10000,
-	distance = 60,
+	distance = 100,
 	minZoomForClustering = 0,
 	maxZoomForClustering = 4,
 }) => {
 	const map = useMapStore((state: MapStoreState) => state.map);
 	const config = useMapStore((state) => state.config);
+	const selectedVenueId = useVenueStore((state) => state.selectedVenueId);
+	const [venuesData, setVenuesData] = useState<FeatureCollection<
+		Geometry,
+		GeoJsonProperties
+	> | null>(null);
 
-	const styleFunction = function (feature: FeatureLike) {
-		const features = feature.get("features");
-		const size = features ? features.length : 1;
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState<string | null>(null);
 
-		if (size === 1) {
-			const scale = 1.2;
+	// Use refs to track the current layer and sources
+	const vectorLayerRef = useRef<VectorLayer<any> | null>(null);
+	const vectorSourceRef = useRef<VectorSource | null>(null);
+	const clusterSourceRef = useRef<Cluster | null>(null);
 
+	useEffect(() => {
+		const fetchVenues = async () => {
+			try {
+				setLoading(true);
+				setError(null);
+				const data = await getVenuesGeoJSON();
+
+				setVenuesData(data);
+			} catch (err) {
+				console.error("Failed to fetch venues data:", err);
+				setError(
+					err instanceof Error ? err.message : "Failed to fetch venues data",
+				);
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		fetchVenues();
+	}, []);
+
+	const getCategoryKey = useCallback(
+		(feature: FeatureLike, features: any[]) => {
+			if (features && features.length > 0) {
+				return features[0]?.values_?.categories?.[0]?.key;
+			}
+			return feature.get("categories")?.[0]?.key;
+		},
+		[],
+	);
+
+	const createSingleFeatureStyle = useCallback(
+		(categoryKey: CategoryType, isSelected = false) => {
+			const fillColor = isSelected ? "#AAE9C9" : "#D9C1FF";
+			const iconSvg = createPoiSvg(categoryKey, fillColor, "#161616");
 			return new Style({
 				image: new Icon({
 					anchor: [0.5, 1],
-					src: "/icons/test.svg",
+					src: iconSvg,
 					offset: [0, 0],
 					opacity: 1,
-					scale,
+					scale: 1,
 				}),
 			});
-		}
+		},
+		[],
+	);
 
-		let radius = 15;
-		let color = "#6B46C1";
-
-		if (size > 1000) {
-			radius = 30;
-			color = "#553C9A";
-		} else if (size > 500) {
-			radius = 27;
-			color = "#6B46C1";
-		} else if (size > 200) {
-			radius = 25;
-			color = "#7C3AED";
-		} else if (size > 100) {
-			radius = 22;
-			color = "#8B5CF6";
-		} else if (size > 50) {
-			radius = 19;
-			color = "#9F7AEA";
-		} else if (size > 20) {
-			radius = 16;
-			color = "#A78BFA";
-		}
+	const createClusterStyle = useCallback((size: number) => {
+		const radius = 15;
+		const color = "#C288FF";
+		const textColor = "#161616";
 
 		return new Style({
 			image: new CircleStyle({
-				radius: radius,
-				fill: new Fill({
-					color: color,
-				}),
-				stroke: new Stroke({
-					color: "#FFFFFF",
-					width: 2,
-				}),
+				radius,
+				fill: new Fill({ color }),
 			}),
 			text: new Text({
 				text: size.toString(),
-				font: `bold ${Math.min(radius * 0.6, 14)}px sans-serif`,
-				fill: new Fill({
-					color: "#FFFFFF",
-				}),
+				font: `bold ${Math.min(radius * 1, 12)}px sans-serif`,
+				fill: new Fill({ color: textColor }),
 				offsetY: 0,
 			}),
 		});
-	};
+	}, []);
+
+	const styleFunction = useCallback(
+		function (feature: FeatureLike) {
+			const features = feature.get("features");
+			const size = features ? features.length : 1;
+
+			if (size === 1) {
+				const categoryKey = getCategoryKey(feature, features);
+				const featureToCheck = features ? features[0] : feature;
+				const featureId =
+					featureToCheck?.get?.("id") || featureToCheck?.values_?.id;
+				const isSelected = featureId === selectedVenueId;
+
+				return createSingleFeatureStyle(categoryKey, isSelected);
+			}
+			return createClusterStyle(size);
+		},
+		[
+			getCategoryKey,
+			createSingleFeatureStyle,
+			createClusterStyle,
+			selectedVenueId,
+		],
+	);
+
+	const shouldCluster = useCallback(
+		(zoomLevel: number) => {
+			return (
+				zoomLevel >= minZoomForClustering && zoomLevel <= maxZoomForClustering
+			);
+		},
+		[minZoomForClustering, maxZoomForClustering],
+	);
 
 	const getClusterDistance = useCallback(
 		(zoomLevel: number) => {
-			if (
-				zoomLevel < minZoomForClustering ||
-				zoomLevel > maxZoomForClustering
-			) {
+			if (!shouldCluster(zoomLevel)) {
 				return 0;
 			}
 
@@ -108,39 +160,69 @@ const VenueLayer: FC<VenueLayerProps> = ({
 			);
 			return distance * factor;
 		},
-		[distance, minZoomForClustering, maxZoomForClustering],
+		[distance, minZoomForClustering, maxZoomForClustering, shouldCluster],
+	);
+
+	const updateLayerSource = useCallback(
+		(zoomLevel: number) => {
+			if (!map || !vectorSourceRef.current || !vectorLayerRef.current) return;
+
+			const clustering = shouldCluster(zoomLevel);
+
+			if (clustering) {
+				// Use clustering
+				if (!clusterSourceRef.current) {
+					clusterSourceRef.current = new Cluster({
+						distance: getClusterDistance(zoomLevel),
+						source: vectorSourceRef.current,
+					});
+				} else {
+					clusterSourceRef.current.setDistance(getClusterDistance(zoomLevel));
+				}
+				vectorLayerRef.current.setSource(clusterSourceRef.current);
+			} else {
+				// Use original source without clustering
+				vectorLayerRef.current.setSource(vectorSourceRef.current);
+			}
+		},
+		[map, shouldCluster, getClusterDistance],
 	);
 
 	useEffect(() => {
-		if (!map || zIndex === null || !config) return;
+		if (!map || zIndex === null || !config || loading || error || !venuesData)
+			return;
 
 		const epsg = config.portalConfig.map.mapView.epsg;
 		const currentZoom = map.getView().getZoom() || 6;
 
 		const vectorSource = new VectorSource({
-			features: new GeoJSON().readFeatures(transformGeoJSON(venues, epsg)),
+			features: new GeoJSON().readFeatures(transformGeoJSON(venuesData, epsg)),
 		});
+		vectorSourceRef.current = vectorSource;
 
 		const clusterSource = new Cluster({
 			distance: getClusterDistance(currentZoom),
 			source: vectorSource,
 		});
+		clusterSourceRef.current = clusterSource;
 
+		const initialSource = shouldCluster(currentZoom)
+			? clusterSource
+			: vectorSource;
 		const vectorLayer = new VectorLayer({
-			source: clusterSource,
+			source: initialSource,
 			style: styleFunction,
 		});
+		vectorLayerRef.current = vectorLayer;
 
 		const handleZoomChange = () => {
 			let zoomLevel = map.getView().getZoom() ?? 6;
 
-			// Clamp any negative zoom to 0
 			if (zoomLevel < 0) {
 				zoomLevel = 0;
 			}
 
-			const newDistance = getClusterDistance(zoomLevel);
-			clusterSource.setDistance(newDistance);
+			updateLayerSource(zoomLevel);
 		};
 
 		map.getView().on("change:resolution", handleZoomChange);
@@ -151,12 +233,40 @@ const VenueLayer: FC<VenueLayerProps> = ({
 		vectorLayer.set("id", "venues");
 
 		return () => {
-			if (map) {
+			if (map && vectorLayerRef.current) {
 				map.getView().un("change:resolution", handleZoomChange);
-				map.removeLayer(vectorLayer);
+				map.removeLayer(vectorLayerRef.current);
 			}
+			vectorLayerRef.current = null;
+			vectorSourceRef.current = null;
+			clusterSourceRef.current = null;
 		};
-	}, [map, zIndex, config, getClusterDistance]);
+	}, [
+		map,
+		zIndex,
+		config,
+		getClusterDistance,
+		shouldCluster,
+		updateLayerSource,
+		styleFunction,
+		venuesData,
+		loading,
+		error,
+	]);
+
+	useEffect(() => {
+		if (vectorLayerRef.current) {
+			vectorLayerRef.current.changed();
+		}
+	}, [selectedVenueId]);
+
+	if (loading) {
+		console.log("Loading venues data...");
+	}
+
+	if (error) {
+		console.error("Venues layer error:", error);
+	}
 
 	return null;
 };
