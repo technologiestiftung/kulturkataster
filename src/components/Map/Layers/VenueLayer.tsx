@@ -5,6 +5,7 @@ import { useMapStore } from "@/lib/store/mapStore";
 import { useVenueStore } from "@/lib/store/venueStore";
 import { getVenuesGeoJSON } from "@/lib/supabase/api";
 import { transformGeoJSON } from "@/lib/utils/mapUtils";
+import { CategoryType } from "@/types";
 import { MapStoreState } from "@/types/map";
 import type { FeatureCollection, GeoJsonProperties, Geometry } from "geojson";
 import { FeatureLike } from "ol/Feature";
@@ -16,7 +17,6 @@ import { Fill, Icon, Style, Text } from "ol/style";
 import CircleStyle from "ol/style/Circle";
 import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { createPoiSvg } from "../MapStyles/createPoiSvg";
-import { CategoryType } from "@/types";
 
 interface VenueLayerProps {
 	zIndex?: number;
@@ -188,6 +188,55 @@ const VenueLayer: FC<VenueLayerProps> = ({
 		[map, shouldCluster, getClusterDistance],
 	);
 
+	const handleClusterClick = useCallback(
+		(event: any) => {
+			if (!map || !vectorLayerRef.current) return;
+
+			const features = map.getFeaturesAtPixel(event.pixel, {
+				layerFilter: (layer) => layer === vectorLayerRef.current,
+			});
+
+			if (features.length > 0) {
+				const feature = features[0];
+				const clusteredFeatures = feature.get("features");
+
+				// Check if this is a cluster (has multiple features)
+				if (clusteredFeatures && clusteredFeatures.length > 1) {
+					// Get the extent of all features in the cluster
+					const extent = clusteredFeatures.reduce(
+						(acc: any, clusterFeature: any) => {
+							const geometry = clusterFeature.getGeometry();
+							if (geometry) {
+								const featureExtent = geometry.getExtent();
+								if (acc) {
+									return [
+										Math.min(acc[0], featureExtent[0]),
+										Math.min(acc[1], featureExtent[1]),
+										Math.max(acc[2], featureExtent[2]),
+										Math.max(acc[3], featureExtent[3]),
+									];
+								}
+								return featureExtent;
+							}
+							return acc;
+						},
+						null,
+					);
+
+					if (extent) {
+						// Zoom to fit the cluster features with some padding
+						map.getView().fit(extent, {
+							padding: [50, 50, 50, 50],
+							duration: 500,
+							maxZoom: Math.max(maxZoomForClustering + 1, 10),
+						});
+					}
+				}
+			}
+		},
+		[map, maxZoomForClustering],
+	);
+
 	useEffect(() => {
 		if (!map || zIndex === null || !config || loading || error || !venuesData)
 			return;
@@ -226,6 +275,7 @@ const VenueLayer: FC<VenueLayerProps> = ({
 		};
 
 		map.getView().on("change:resolution", handleZoomChange);
+		map.on("click", handleClusterClick);
 
 		map.addLayer(vectorLayer);
 		vectorLayer.setZIndex(zIndex);
@@ -235,6 +285,7 @@ const VenueLayer: FC<VenueLayerProps> = ({
 		return () => {
 			if (map && vectorLayerRef.current) {
 				map.getView().un("change:resolution", handleZoomChange);
+				map.un("click", handleClusterClick);
 				map.removeLayer(vectorLayerRef.current);
 			}
 			vectorLayerRef.current = null;
@@ -252,6 +303,7 @@ const VenueLayer: FC<VenueLayerProps> = ({
 		venuesData,
 		loading,
 		error,
+		handleClusterClick,
 	]);
 
 	useEffect(() => {
