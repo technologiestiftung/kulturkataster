@@ -91,16 +91,18 @@ function VenueHeader({ venueData }: { venueData: VenueProperties }) {
 				</section>
 			)}
 
-			<div
-				className={`${isInUse ? "bg-brand-light" : "bg-alert"} p-4 flex gap-2`}
-			>
-				<span className="body2 font-bold">
-					{t("venue.utilizationStatus")}:{" "}
-				</span>
-				<span className="body2">
-					{tEnum(`utilization_status.${venueData.utilization_status}`)}
-				</span>
-			</div>
+			{venueData.utilization_status && (
+				<div
+					className={`${isInUse ? "bg-brand-light" : "bg-alert"} p-4 flex gap-2`}
+				>
+					<span className="body2 font-bold">
+						{t("venue.utilizationStatus")}:{" "}
+					</span>
+					<span className="body2">
+						{tEnum(`utilization_status.${venueData.utilization_status}`)}
+					</span>
+				</div>
+			)}
 		</CardHeader>
 	);
 }
@@ -113,12 +115,14 @@ function VenueBasicInfo({ venueData }: { venueData: VenueProperties }) {
 		<div>
 			<address className="not-italic mb-4">
 				<p className="body1 break-words">{venueData.name}</p>
-				<div className="body1">
-					<p className="break-words">
-						{venueData.street} {venueData.street_number}
-					</p>
-					<p className="break-words">{venueData.zip_code}</p>
-				</div>
+				{venueData.street && venueData.street_number && venueData.zip_code && (
+					<div className="body1">
+						<p className="break-words">
+							{venueData.street} {venueData.street_number}
+						</p>
+						<p className="break-words">{venueData.zip_code}</p>
+					</div>
+				)}
 			</address>
 
 			<InfoSection>
@@ -215,18 +219,24 @@ function VenueExtendedInfo({ venueData }: { venueData: VenueProperties }) {
 	);
 }
 
+const EXTENDED_INFO_FIELDS = [
+	"funding_type",
+	"support_type",
+	"capacity",
+	"rooms_count",
+	"established_since",
+	"shared_use_allowed",
+	"district_id",
+] as const;
+
 function VenueCard({ venueData }: { venueData: VenueProperties }) {
 	const { t } = useTranslation("common");
 	const [showMore, setShowMore] = useState(false);
 
-	const hasExtendedInfo = !!(
-		venueData.funding_type ||
-		venueData.support_type ||
-		venueData.capacity ||
-		venueData.rooms_count ||
-		venueData.established_since
+	const hasExtendedInfo = EXTENDED_INFO_FIELDS.some((field) =>
+		Boolean(venueData[field]),
 	);
-
+	
 	return (
 		<Card className="w-full rounded-lg overflow-hidden border-none">
 			<VenueHeader venueData={venueData} />
@@ -238,9 +248,10 @@ function VenueCard({ venueData }: { venueData: VenueProperties }) {
 
 				{hasExtendedInfo && (
 					<Button
-						variant="ghost"
+						variant="accordion"
+						size="icon-default"
 						onClick={() => setShowMore(!showMore)}
-						className="w-full gap-2 justify-start text-primary-dark p-0 h-auto"
+						className=""
 					>
 						{showMore ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
 						<span className="body2">

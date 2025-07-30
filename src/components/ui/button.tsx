@@ -20,6 +20,7 @@ const buttonVariants = cva(
 				link: "text-primary underline-offset-4 hover:underline",
 				"map-icon":
 					"rounded-full shadow-md bg-background hover:bg-accent [&_svg]:size-6",
+				accordion: "gap-2 justify-start text-primary-dark px-4",
 			},
 			size: {
 				default: "px-4.5 py-2.5 md:px-7 md:py-4",
@@ -28,6 +29,7 @@ const buttonVariants = cva(
 				md: "",
 				icon: "h-10 w-10",
 				"icon-only": "h-12 w-12",
+				"icon-default": "h-6 w-full",
 			},
 		},
 		defaultVariants: {
