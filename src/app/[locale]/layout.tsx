@@ -1,6 +1,5 @@
 import MapInitializer from "@/components/Map/MapInitializer/MapInitializer";
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { Menu } from "@/components/Menu/Menu";
