@@ -1,4 +1,5 @@
-import { CategoryType, getCategoryIconRawSvg } from "@/lib/utils/iconUtils";
+import { getCategoryIconRawSvg } from "@/lib/utils/iconUtils";
+import { CategoryType } from "@/types";
 
 function extractSvgContent(svgString: string): {
 	inner: string;
