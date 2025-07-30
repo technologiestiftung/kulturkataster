@@ -100,7 +100,12 @@ const HoverControl: FC<HoverControlProps> = ({
 
 			map.forEachFeatureAtPixel(pixel, function (feature, layer) {
 				if (layer && layer.get("id") === layerId) {
-					matchedFeature = feature;
+					const clusteredFeatures = feature.get("features");
+					const isCluster = clusteredFeatures && clusteredFeatures.length > 1;
+
+					if (!isCluster) {
+						matchedFeature = feature;
+					}
 					return true;
 				}
 			});
