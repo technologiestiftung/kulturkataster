@@ -84,7 +84,9 @@ function VenueHeader({ venueData }: { venueData: VenueProperties }) {
 										{tEnum(`category.${category.key}`)}
 									</p>
 								</div>
-								<p className="body2 pl-8 break-words">{t("venue.subtitle")}</p>
+								<p className="body2 pl-8 break-words">
+									{t("venue.subcategory")}
+								</p>
 							</div>
 						);
 					})}
@@ -135,7 +137,7 @@ function VenueBasicInfo({ venueData }: { venueData: VenueProperties }) {
 				{venueData.website && (
 					<InfoItem label={t("venue.website")}>
 						<ContactLink href={venueData.website} external>
-							{venueData.website}
+							Website {venueData.name}
 						</ContactLink>
 					</InfoItem>
 				)}
