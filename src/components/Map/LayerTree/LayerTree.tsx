@@ -41,8 +41,6 @@ const useLayerData = () => {
 		const subjectLayers = layers.filter((l) => l.layerType === "subject");
 		const visibleSubjectLayers = subjectLayers.filter((l) => l.visibility);
 
-		console.log("visibleSubjectLayers", visibleSubjectLayers);
-
 		const topVisibleLayer = visibleSubjectLayers.reduce(
 			(topLayer, currentLayer) => {
 				return !topLayer || currentLayer.zIndex > topLayer.zIndex
