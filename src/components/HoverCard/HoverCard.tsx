@@ -101,7 +101,7 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 							<span className="text-md font-semibold">
 								{t("venue.utilizationStatus")}:
 							</span>
-							<span>Unbekannt</span>
+							<span>{t("unknown")}</span>
 						</div>
 					)}
 				</CardFooter>

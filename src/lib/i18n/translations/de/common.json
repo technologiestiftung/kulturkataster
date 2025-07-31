@@ -93,6 +93,7 @@
 	"loading": "Laden",
 	"error": "Fehler",
 	"success": "Erfolg",
+	"unknown": "Unbekannt",
 	"footer": {
 		"title": "Kulturkataster Berlin",
 		"openSource": "Das Kulturkataster ist ein <0>Open-Source-Projekt</0>.",
