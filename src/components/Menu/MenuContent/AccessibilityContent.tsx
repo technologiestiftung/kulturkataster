@@ -1,8 +1,8 @@
 "use client";
 
 import * as React from "react";
-import SignLanguage from "@/icons/sign-language.svg";
-import SimpleLanguage from "@/icons/simple-language.svg";
+// import SignLanguage from "@/icons/sign-language.svg";
+// import SimpleLanguage from "@/icons/simple-language.svg";
 import FontSize from "@/icons/font-size.svg";
 // import Contrast from "@/icons/contrast.svg";
 import { SubMenuOption } from "../SubMenuOption";
@@ -13,18 +13,18 @@ interface AccessibilityContentProps {
 }
 
 const accessibilityOptions = [
-	{
-		id: "signLanguage",
-		icon: SignLanguage,
-		titleKey: "accessibility.signLanguage.title",
-		hasSwitch: false,
-	},
-	{
-		id: "simpleLanguage",
-		icon: SimpleLanguage,
-		titleKey: "accessibility.simpleLanguage.title",
-		hasSwitch: false,
-	},
+	// {
+	// 	id: "signLanguage",
+	// 	icon: SignLanguage,
+	// 	titleKey: "accessibility.signLanguage.title",
+	// 	hasSwitch: false,
+	// },
+	// {
+	// 	id: "simpleLanguage",
+	// 	icon: SimpleLanguage,
+	// 	titleKey: "accessibility.simpleLanguage.title",
+	// 	hasSwitch: false,
+	// },
 	{
 		id: "fontSize",
 		icon: FontSize,
