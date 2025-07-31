@@ -139,7 +139,10 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
 	return (
 		<>
-			<WelcomeModal open={firstTimeUser} onOpenChange={handleWelcomeModalClose} />
+			<WelcomeModal
+				open={firstTimeUser}
+				onOpenChange={handleWelcomeModalClose}
+			/>
 			<InformationModal open={infoModalOpen} onOpenChange={setInfoModalOpen} />
 			<Sidebar
 				collapsible="icon"
