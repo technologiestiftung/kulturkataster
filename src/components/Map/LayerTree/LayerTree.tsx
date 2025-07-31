@@ -17,7 +17,15 @@ import { useMapStore } from "@/lib/store/mapStore";
 import { ManagedLayer } from "@/types";
 import { X } from "lucide-react";
 import Image from "next/image";
-import { FC, memo, useCallback, useEffect, useMemo, useState } from "react";
+import {
+	FC,
+	memo,
+	useCallback,
+	useEffect,
+	useMemo,
+	useRef,
+	useState,
+} from "react";
 
 // Constants
 const LAYER_THUMBNAIL_SIZE = 80;
@@ -32,6 +40,8 @@ const useLayerData = () => {
 	return useMemo(() => {
 		const subjectLayers = layers.filter((l) => l.layerType === "subject");
 		const visibleSubjectLayers = subjectLayers.filter((l) => l.visibility);
+
+		console.log("visibleSubjectLayers", visibleSubjectLayers);
 
 		const topVisibleLayer = visibleSubjectLayers.reduce(
 			(topLayer, currentLayer) => {
@@ -96,12 +106,30 @@ LayerThumbnail.displayName = "LayerThumbnail";
 // Memoized LayerItem component
 const LayerItem = memo<{ layer: ManagedLayer }>(({ layer }) => {
 	const setLayerVisibility = useMapStore((state) => state.setLayerVisibility);
+	const accordionContentRef = useRef<HTMLDivElement>(null);
 
 	const handleVisibilityChange = useCallback(
 		(checked: boolean) => {
 			setLayerVisibility(layer.id, checked);
 		},
 		[layer.id, setLayerVisibility],
+	);
+
+	const handleAccordionToggle = useCallback(
+		(value: string) => {
+			if (value === layer.id) {
+				setTimeout(() => {
+					if (accordionContentRef.current) {
+						accordionContentRef.current.scrollIntoView({
+							behavior: "smooth",
+							block: "nearest",
+							inline: "start",
+						});
+					}
+				}, 200);
+			}
+		},
+		[layer.id],
 	);
 
 	const hasLegend =
@@ -123,16 +151,18 @@ const LayerItem = memo<{ layer: ManagedLayer }>(({ layer }) => {
 					<div className="flex flex-col">
 						<Label
 							htmlFor={layer.id}
-							className={`text-sm font-medium cursor-pointer flex ${
+							className={`body2 font-bold cursor-pointer flex ${
 								layer.visibility ? "text-primary" : ""
 							}`}
 						>
 							{serviceName}
 						</Label>
 						{serviceNameLang && (
-							<div className="text-xs text-muted-foreground">
+							<div
+								className={`body2 ${layer.status === "error" ? "text-alert" : ""}`}
+							>
 								{layer.status === "error"
-									? "Fachkarte nicht verfügbar. Bitte versuchen Sie es später erneut."
+									? "Fachkarte nicht verfügbar. Bitte versuchen Sie es später erneut."
 									: serviceNameLang}
 							</div>
 						)}
@@ -157,10 +187,14 @@ const LayerItem = memo<{ layer: ManagedLayer }>(({ layer }) => {
 					<AccordionTrigger
 						className="px-3 py-2 rounded-none [&[data-state=closed]]:rounded-b-sm hover:no-underline flex justify-end items-center gap-2 [&>svg]:text-black bg-neutral-10"
 						aria-label={`Show legend for ${serviceName}`}
+						onClick={() => handleAccordionToggle(layer.id)}
 					>
 						Legende ansehen
 					</AccordionTrigger>
-					<AccordionContent className="px-3 pb-3 bg-neutral-10 rounded-b-sm">
+					<AccordionContent
+						ref={accordionContentRef}
+						className="px-3 pb-3 bg-neutral-10 rounded-b-sm"
+					>
 						<Image
 							src={layer.config.service.legend as string}
 							alt={`Legend for ${serviceName}`}
@@ -240,12 +274,13 @@ const FloatingLayerButton = memo<{
 
 FloatingLayerButton.displayName = "FloatingLayerButton";
 
-// Main LayerTree component
+// Main LayerTree component with scroll container support
 const LayerTree: FC = () => {
 	const { subjectLayers, visibleCount, topVisibleLayer } = useLayerData();
 	const setIsLayerTreeOpen = useMapStore((state) => state.setIsLayerTreeOpen);
 	const { state: sidebarState, isMobile, setOpenMobile } = useSidebar();
 	const [isOpen, setIsOpen] = useState(false);
+	const [accordionValue, setAccordionValue] = useState<string>("");
 
 	const handleOpen = useCallback(() => {
 		setIsOpen(true);
@@ -253,6 +288,10 @@ const LayerTree: FC = () => {
 
 	const handleClose = useCallback(() => {
 		setIsOpen(false);
+	}, []);
+
+	const handleAccordionChange = useCallback((value: string) => {
+		setAccordionValue(value);
 	}, []);
 
 	useEffect(() => {
@@ -299,16 +338,22 @@ const LayerTree: FC = () => {
 				</div>
 			</CardHeader>
 			<CardContent className="p-2">
-				<LayerTreeContent layers={subjectLayers} />
+				<LayerTreeContent
+					layers={subjectLayers}
+					accordionValue={accordionValue}
+					onAccordionChange={handleAccordionChange}
+				/>
 			</CardContent>
 		</Card>
 	);
 };
 
-// Reusable LayerTreeContent component
-export const LayerTreeContent: FC<{ layers?: ManagedLayer[] }> = ({
-	layers: providedLayers,
-}) => {
+// Updated LayerTreeContent component with accordion control
+export const LayerTreeContent: FC<{
+	layers?: ManagedLayer[];
+	accordionValue?: string;
+	onAccordionChange?: (value: string) => void;
+}> = ({ layers: providedLayers, accordionValue, onAccordionChange }) => {
 	const { subjectLayers } = useLayerData();
 	const layersToRender = providedLayers || subjectLayers;
 
@@ -324,6 +369,8 @@ export const LayerTreeContent: FC<{ layers?: ManagedLayer[] }> = ({
 		<Accordion
 			type="single"
 			collapsible
+			value={accordionValue}
+			onValueChange={onAccordionChange}
 			className="flex flex-col gap-2 overflow-y-auto max-h-[60vh]"
 			role="list"
 			aria-label="Available layers"
