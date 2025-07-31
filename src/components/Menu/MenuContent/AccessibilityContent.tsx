@@ -4,7 +4,7 @@ import * as React from "react";
 import SignLanguage from "@/icons/sign-language.svg";
 import SimpleLanguage from "@/icons/simple-language.svg";
 import FontSize from "@/icons/font-size.svg";
-import Contrast from "@/icons/contrast.svg";
+// import Contrast from "@/icons/contrast.svg";
 import { SubMenuOption } from "../SubMenuOption";
 import { useAppStore } from "@/lib/store/appStore";
 
