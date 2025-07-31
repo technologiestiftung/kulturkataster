@@ -238,7 +238,7 @@ const FloatingLayerButton = memo<{
 				)}
 
 				<button
-					className={`relative w-16 h-16 p-0 bg-neutral-80 shadow-lg rounded overflow-hidden flex items-center justify-center cursor-pointer transition-colors hover:bg-neutral-70 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${
+					className={`relative w-16 h-16 p-0 bg-neutral-80 shadow-lg rounded overflow-hidden flex items-center justify-center cursor-pointer transition-colors hover:bg-neutral-70 focus:outline-none ${
 						visibleCount > 0 ? "border-2 border-primary" : ""
 					}`}
 					onClick={onClick}
