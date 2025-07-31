@@ -23,21 +23,29 @@ export function SubMenuOption({
 }: SubMenuOptionProps) {
 	const { t } = useTranslation("common");
 
+	const handleClick = () => {
+		if (hasSwitch && onSwitchChange) {
+			onSwitchChange(!switchChecked);
+		} else if (onClick) {
+			onClick();
+		}
+	};
+
 	return (
 		<SidebarMenuItem
-			onClick={hasSwitch ? undefined : onClick}
-			className={`flex items-center justify-between gap-2 bg-background p-2 rounded-md h-20 ${
-				hasSwitch
-					? ""
-					: "hover:bg-accent hover:text-accent-foreground cursor-pointer"
-			}`}
+			onClick={handleClick}
+			className="flex items-center justify-between gap-2 bg-background p-2 rounded-md h-20 hover:bg-accent hover:text-accent-foreground cursor-pointer"
 		>
 			<div className="flex items-center gap-2">
 				<Icon className="size-8" />
 				<span className="body2 font-bold">{t(titleKey)}</span>
 			</div>
 			{hasSwitch && (
-				<Switch checked={switchChecked} onCheckedChange={onSwitchChange} />
+				<Switch
+					checked={switchChecked}
+					onCheckedChange={onSwitchChange}
+					onClick={(e) => e.stopPropagation()}
+				/>
 			)}
 		</SidebarMenuItem>
 	);
