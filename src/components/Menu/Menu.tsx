@@ -23,6 +23,7 @@ import InfoCircle from "@/icons/info-circle.svg";
 import Search from "@/icons/search.svg";
 import { useMapStore } from "@/lib/store/mapStore";
 import { useVenueStore } from "@/lib/store/venueStore";
+import { useAppStore } from "@/lib/store/appStore";
 import KukaMiniLogo from "@/logos/kuka-mini.svg";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
@@ -49,11 +50,11 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 		useSidebar();
 	const { t } = useTranslation("common");
 	const [activeItem, setActiveItem] = React.useState("filter");
-	const [dialogOpen, setDialogOpen] = React.useState(false);
 	const [infoModalOpen, setInfoModalOpen] = React.useState(false);
 	const isLayerTreeOpen = useMapStore((state) => state.isLayerTreeOpen);
 	const setIsLayerTreeOpen = useMapStore((state) => state.setIsLayerTreeOpen);
 	const selectedVenueId = useVenueStore((state) => state.selectedVenueId);
+	const { firstTimeUser, setFirstTimeUser } = useAppStore();
 
 	React.useEffect(() => {
 		if (isLayerTreeOpen) {
@@ -129,12 +130,16 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	};
 
 	const handleLogoClick = () => {
-		setDialogOpen(true);
+		setFirstTimeUser(true);
+	};
+
+	const handleWelcomeModalClose = () => {
+		setFirstTimeUser(false);
 	};
 
 	return (
 		<>
-			<WelcomeModal open={dialogOpen} onOpenChange={setDialogOpen} />
+			<WelcomeModal open={firstTimeUser} onOpenChange={handleWelcomeModalClose} />
 			<InformationModal open={infoModalOpen} onOpenChange={setInfoModalOpen} />
 			<Sidebar
 				collapsible="icon"
