@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useVenueStore } from "@/lib/store/venueStore";
-import { getVenuesGeoJSON } from "@/lib/supabase/api";
+import { getInstitutionsGeoJSON } from "@/lib/supabase/api";
 import { getCategoryIconComponent } from "@/lib/utils/iconUtils";
 import { Category, VenueProperties } from "@/types";
 import { ChevronDown, ChevronUp } from "lucide-react";
@@ -282,7 +282,7 @@ export function VenueDetailContent() {
 		const fetchVenueData = async () => {
 			try {
 				setLoading(true);
-				const geoJsonData = await getVenuesGeoJSON();
+				const geoJsonData = await getInstitutionsGeoJSON();
 				const venue = geoJsonData.features.find(
 					(feature) => feature.properties?.id === selectedVenueId,
 				);
