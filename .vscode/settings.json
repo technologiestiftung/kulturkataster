@@ -12,10 +12,11 @@
 		"titleBar.inactiveForeground": "#e7e7e799"
 	},
 	"peacock.color": "#0f49c3",
+	"i18n-ally.localesPaths": ["src/lib/i18n/translations"],
 	"cSpell.words": ["geolocate", "maplibregl"],
-	"i18n-ally.localesPaths": ["public/locales"],
 	"i18n-ally.keystyle": "nested",
 	"i18n-ally.defaultNamespace": "common",
+	"i18n-ally.namespaceSeparator": ".",
 	"i18n-ally.namespaces": ["common", "content"],
 	"i18n-ally.enabledParsers": ["json"],
 	"i18n-ally.sourceLanguage": "de",
