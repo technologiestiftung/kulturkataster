@@ -25,13 +25,13 @@ import { useMapStore } from "@/lib/store/mapStore";
 import { useVenueStore } from "@/lib/store/venueStore";
 import { useAppStore } from "@/lib/store/appStore";
 import KukaMiniLogo from "@/logos/kuka-mini.svg";
-import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { LayerTreeContent } from "../Map/LayerTree/LayerTree";
 import { AccessibilityContent } from "./MenuContent/AccessibilityContent";
 import { FilterContent } from "./MenuContent/FilterContent";
 import { SearchContent } from "./MenuContent/SearchContent";
 import { VenueDetailContent } from "./MenuContent/VenueDetailContent";
+import { useEffect, useState } from "react";
 
 const menuItems = [
 	{ id: "filter", icon: FilterLines, label: "filter.title" },
@@ -49,20 +49,20 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	const { toggleSidebar, setOpen, setOpenMobile, isMobile, open, openMobile } =
 		useSidebar();
 	const { t } = useTranslation("common");
-	const [activeItem, setActiveItem] = React.useState("filter");
-	const [infoModalOpen, setInfoModalOpen] = React.useState(false);
+	const [activeItem, setActiveItem] = useState("filter");
+	const [infoModalOpen, setInfoModalOpen] = useState(false);
 	const isLayerTreeOpen = useMapStore((state) => state.isLayerTreeOpen);
 	const setIsLayerTreeOpen = useMapStore((state) => state.setIsLayerTreeOpen);
 	const selectedVenueId = useVenueStore((state) => state.selectedVenueId);
 	const { firstTimeUser, setFirstTimeUser } = useAppStore();
 
-	React.useEffect(() => {
+	useEffect(() => {
 		if (isLayerTreeOpen) {
 			setActiveItem("layertree");
 		}
 	}, [isLayerTreeOpen]);
 
-	React.useEffect(() => {
+	useEffect(() => {
 		if (selectedVenueId) {
 			setActiveItem("venue-detail");
 			if (isMobile) {
@@ -73,14 +73,16 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 		}
 	}, [selectedVenueId, isMobile, setOpen, setOpenMobile]);
 
-	React.useEffect(() => {
+	useEffect(() => {
 		const isSidebarClosed = isMobile ? !openMobile : !open;
-		if (isSidebarClosed) {
+		if (isSidebarClosed && !isMobile) {
+			// Only clear activeItem on desktop when sidebar closes
+			// On mobile, we handle this manually in handleItemClick
 			setActiveItem("");
 		}
 	}, [open, openMobile, isMobile]);
 
-	React.useEffect(() => {
+	useEffect(() => {
 		setOpen(false);
 		setOpenMobile(false);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -116,6 +118,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 		if (activeItem === itemName) {
 			if (isMobile) {
 				setOpenMobile(false);
+				setActiveItem("");
 			} else {
 				toggleSidebar();
 			}
@@ -268,7 +271,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 					<KukaMiniLogo className="size-14" />
 				</button>
 			</div>
-			<div className="fixed bottom-0 left-0 right-0 z-[60] bg-sidebar border-t md:hidden h-20">
+			<div className="fixed bottom-0 left-0 right-0 z-[60] bg-sidebar border-t md:hidden h-20 pointer-events-auto">
 				<SidebarMenu className="flex-row justify-around px-2 py-3">
 					{menuItems.map((item) => (
 						<SidebarMenuItem key={item.id} className="flex-shrink-0">
