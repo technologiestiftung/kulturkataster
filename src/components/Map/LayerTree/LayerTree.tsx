@@ -17,7 +17,15 @@ import { useMapStore } from "@/lib/store/mapStore";
 import { ManagedLayer } from "@/types";
 import { X } from "lucide-react";
 import Image from "next/image";
-import { FC, memo, useCallback, useEffect, useMemo, useState } from "react";
+import {
+	FC,
+	memo,
+	useCallback,
+	useEffect,
+	useMemo,
+	useRef,
+	useState,
+} from "react";
 
 // Constants
 const LAYER_THUMBNAIL_SIZE = 80;
@@ -81,7 +89,6 @@ const LayerThumbnail = memo<{
 					<div className="w-6 h-6 border-2 border-purple-400 rounded opacity-50" />
 				</div>
 			)}
-
 			{showOverlay && layer.visibility && (
 				<div
 					className="absolute inset-0 bg-primary/30 flex items-center justify-center border-2 border-primary rounded"
@@ -97,12 +104,30 @@ LayerThumbnail.displayName = "LayerThumbnail";
 // Memoized LayerItem component
 const LayerItem = memo<{ layer: ManagedLayer }>(({ layer }) => {
 	const setLayerVisibility = useMapStore((state) => state.setLayerVisibility);
+	const accordionContentRef = useRef<HTMLDivElement>(null);
 
 	const handleVisibilityChange = useCallback(
 		(checked: boolean) => {
 			setLayerVisibility(layer.id, checked);
 		},
 		[layer.id, setLayerVisibility],
+	);
+
+	const handleAccordionToggle = useCallback(
+		(value: string) => {
+			if (value === layer.id) {
+				setTimeout(() => {
+					if (accordionContentRef.current) {
+						accordionContentRef.current.scrollIntoView({
+							behavior: "smooth",
+							block: "nearest",
+							inline: "start",
+						});
+					}
+				}, 200);
+			}
+		},
+		[layer.id],
 	);
 
 	const hasLegend =
@@ -113,33 +138,34 @@ const LayerItem = memo<{ layer: ManagedLayer }>(({ layer }) => {
 	const serviceNameLang = layer.config.service.name_lang;
 
 	return (
-		<div
-			className={`bg-white rounded-sm space-y-2 ${layer.visibility ? "shadow-sm" : ""}`}
+		<AccordionItem
+			value={layer.id}
+			className={`border-none bg-white rounded-sm ${layer.visibility ? "shadow-sm" : ""}`}
 			role="listitem"
 		>
 			<div className="flex items-center justify-between p-3 m-0">
 				<div className="flex items-center space-x-3 flex-1">
 					<LayerThumbnail layer={layer} showOverlay />
-
 					<div className="flex flex-col">
 						<Label
 							htmlFor={layer.id}
-							className={`text-sm font-medium cursor-pointer flex ${
+							className={`body2 font-bold cursor-pointer flex ${
 								layer.visibility ? "text-primary" : ""
 							}`}
 						>
 							{serviceName}
 						</Label>
 						{serviceNameLang && (
-							<div className="text-xs text-muted-foreground">
+							<div
+								className={`body2 ${layer.status === "error" ? "text-alert" : ""}`}
+							>
 								{layer.status === "error"
-									? "Fachkarte nicht verfügbar. Bitte versuchen Sie es später erneut."
+									? "Fachkarte nicht verfügbar. Bitte versuchen Sie es später erneut."
 									: serviceNameLang}
 							</div>
 						)}
 					</div>
 				</div>
-
 				<div className="flex items-center space-x-1">
 					<div className="w-11 h-11 flex items-center justify-center">
 						<Checkbox
@@ -155,31 +181,30 @@ const LayerItem = memo<{ layer: ManagedLayer }>(({ layer }) => {
 			</div>
 
 			{hasLegend && (
-				<Accordion
-					type="single"
-					collapsible
-					className="bg-neutral-20 rounded-b-sm"
-				>
-					<AccordionItem value="legend" className="border-none">
-						<AccordionTrigger
-							className="px-3 py-2 hover:no-underline flex justify-end items-center gap-2 [&>svg]:text-black"
-							aria-label={`Show legend for ${serviceName}`}
-						>
-							Legende ansehen
-						</AccordionTrigger>
-						<AccordionContent className="px-3 pb-3 rounded-b-sm">
-							<Image
-								src={layer.config.service.legend as string}
-								alt={`Legend for ${serviceName}`}
-								width={300}
-								height={200}
-								style={{ width: "auto", height: "auto", maxWidth: "100%" }}
-							/>
-						</AccordionContent>
-					</AccordionItem>
-				</Accordion>
+				<>
+					<AccordionTrigger
+						className="px-3 py-2 rounded-none [&[data-state=closed]]:rounded-b-sm hover:no-underline flex justify-end items-center gap-2 [&>svg]:text-black bg-neutral-10"
+						aria-label={`Show legend for ${serviceName}`}
+						onClick={() => handleAccordionToggle(layer.id)}
+					>
+						Legende ansehen
+					</AccordionTrigger>
+					<AccordionContent
+						ref={accordionContentRef}
+						className="px-3 pb-3 bg-neutral-10 rounded-b-sm"
+					>
+						<Image
+							src={layer.config.service.legend as string}
+							alt={`Legend for ${serviceName}`}
+							width={300}
+							height={50}
+							className="h-auto w-full max-w-full rounded"
+							loading="lazy"
+						/>
+					</AccordionContent>
+				</>
 			)}
-		</div>
+		</AccordionItem>
 	);
 });
 
@@ -211,7 +236,7 @@ const FloatingLayerButton = memo<{
 				)}
 
 				<button
-					className={`relative w-16 h-16 p-0 bg-neutral-80 shadow-lg rounded overflow-hidden flex items-center justify-center cursor-pointer transition-colors hover:bg-neutral-70 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${
+					className={`relative w-16 h-16 p-0 bg-neutral-80 shadow-lg rounded overflow-hidden flex items-center justify-center cursor-pointer transition-colors hover:bg-neutral-70 focus:outline-none ${
 						visibleCount > 0 ? "border-2 border-primary" : ""
 					}`}
 					onClick={onClick}
@@ -247,12 +272,13 @@ const FloatingLayerButton = memo<{
 
 FloatingLayerButton.displayName = "FloatingLayerButton";
 
-// Main LayerTree component
+// Main LayerTree component with scroll container support
 const LayerTree: FC = () => {
 	const { subjectLayers, visibleCount, topVisibleLayer } = useLayerData();
 	const setIsLayerTreeOpen = useMapStore((state) => state.setIsLayerTreeOpen);
 	const { state: sidebarState, isMobile, setOpenMobile } = useSidebar();
 	const [isOpen, setIsOpen] = useState(false);
+	const [accordionValue, setAccordionValue] = useState<string>("");
 
 	const handleOpen = useCallback(() => {
 		setIsOpen(true);
@@ -260,6 +286,10 @@ const LayerTree: FC = () => {
 
 	const handleClose = useCallback(() => {
 		setIsOpen(false);
+	}, []);
+
+	const handleAccordionChange = useCallback((value: string) => {
+		setAccordionValue(value);
 	}, []);
 
 	useEffect(() => {
@@ -270,12 +300,10 @@ const LayerTree: FC = () => {
 		}
 	}, [isMobile, isOpen, setIsLayerTreeOpen, setOpenMobile]);
 
-	// Mobile doesn't show the floating button
 	if (!isOpen && isMobile) {
 		return null;
 	}
 
-	// Desktop floating button
 	if (!isOpen) {
 		return (
 			<FloatingLayerButton
@@ -287,7 +315,6 @@ const LayerTree: FC = () => {
 		);
 	}
 
-	// Desktop card view
 	return (
 		<Card
 			className={`flex w-[400px] max-h-[70vh] absolute bottom-4 z-50 flex-col bg-neutral-5 transition-all duration-200 left-4`}
@@ -308,18 +335,23 @@ const LayerTree: FC = () => {
 					</Button>
 				</div>
 			</CardHeader>
-
 			<CardContent className="p-2">
-				<LayerTreeContent layers={subjectLayers} />
+				<LayerTreeContent
+					layers={subjectLayers}
+					accordionValue={accordionValue}
+					onAccordionChange={handleAccordionChange}
+				/>
 			</CardContent>
 		</Card>
 	);
 };
 
-// Reusable LayerTreeContent component
-export const LayerTreeContent: FC<{ layers?: ManagedLayer[] }> = ({
-	layers: providedLayers,
-}) => {
+// Updated LayerTreeContent component with accordion control
+export const LayerTreeContent: FC<{
+	layers?: ManagedLayer[];
+	accordionValue?: string;
+	onAccordionChange?: (value: string) => void;
+}> = ({ layers: providedLayers, accordionValue, onAccordionChange }) => {
 	const { subjectLayers } = useLayerData();
 	const layersToRender = providedLayers || subjectLayers;
 
@@ -332,7 +364,11 @@ export const LayerTreeContent: FC<{ layers?: ManagedLayer[] }> = ({
 	}
 
 	return (
-		<div
+		<Accordion
+			type="single"
+			collapsible
+			value={accordionValue}
+			onValueChange={onAccordionChange}
 			className="flex flex-col gap-2 overflow-y-auto max-h-[60vh]"
 			role="list"
 			aria-label="Available layers"
@@ -340,7 +376,7 @@ export const LayerTreeContent: FC<{ layers?: ManagedLayer[] }> = ({
 			{layersToRender.map((layer) => (
 				<LayerItem key={layer.id} layer={layer} />
 			))}
-		</div>
+		</Accordion>
 	);
 };
 
