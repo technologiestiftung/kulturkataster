@@ -95,18 +95,21 @@ function VenueHeader({ venueData }: { venueData: VenueProperties }) {
 				</section>
 			)}
 
-			{venueData.utilization_status && (
-				<div
-					className={`${isInUse ? "bg-brand-light" : "bg-alert"} p-4 flex gap-2`}
-				>
-					<span className="body2 font-bold">
-						{t("venue.utilizationStatus")}:{" "}
-					</span>
+			<div
+				className={`${isInUse ? "bg-brand-light" : "bg-alert"} p-4 flex gap-2`}
+			>
+				<span className="body2 font-bold">
+					{t("venue.utilizationStatus")}:{" "}
+				</span>
+
+				{venueData.utilization_status ? (
 					<span className="body2">
 						{tEnum(`utilization_status.${venueData.utilization_status}`)}
 					</span>
-				</div>
-			)}
+				) : (
+					<span className="body2">{t("unknown")}</span>
+				)}
+			</div>
 		</CardHeader>
 	);
 }
