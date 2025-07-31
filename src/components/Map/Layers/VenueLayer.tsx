@@ -4,7 +4,6 @@
 import { useMapStore } from "@/lib/store/mapStore";
 import { useVenueStore } from "@/lib/store/venueStore";
 import { transformGeoJSON } from "@/lib/utils/mapUtils";
-import { CategoryType } from "@/types";
 import { MapStoreState } from "@/types/map";
 import type { FeatureCollection, GeoJsonProperties, Geometry } from "geojson";
 import { FeatureLike } from "ol/Feature";
