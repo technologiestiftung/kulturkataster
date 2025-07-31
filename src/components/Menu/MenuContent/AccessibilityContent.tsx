@@ -31,12 +31,12 @@ const accessibilityOptions = [
 		titleKey: "accessibility.fontSize.title",
 		hasSwitch: true,
 	},
-	{
-		id: "contrast",
-		icon: Contrast,
-		titleKey: "accessibility.contrast.title",
-		hasSwitch: true,
-	},
+	// {
+	// 	id: "contrast",
+	// 	icon: Contrast,
+	// 	titleKey: "accessibility.contrast.title",
+	// 	hasSwitch: true,
+	// },
 ] as const;
 
 export function AccessibilityContent({
