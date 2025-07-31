@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 /**
  * Props for the useSearch hook.
@@ -33,6 +34,7 @@ export function useSearch<T>({
 	const [debounceTimeout, setDebounceTimeout] = useState<ReturnType<
 		typeof setTimeout
 	> | null>(null);
+	const { t } = useTranslation("common");
 
 	useEffect(() => {
 		return () => {
@@ -98,9 +100,7 @@ export function useSearch<T>({
 	};
 
 	const displayResultError = () => {
-		setResultErrorMessage(
-			"Es konnte keine Ergebnisse unter der Suchangabe gefunden werden.",
-		);
+		setResultErrorMessage(t("search.noResultsFound"));
 	};
 
 	return {

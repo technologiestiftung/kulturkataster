@@ -1,6 +1,6 @@
 "use client";
 
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { ModalFooter } from "./ModalFooter";
 
 interface PageModalProps {
@@ -25,7 +25,7 @@ export function PageModal({
 				className="flex flex-col gap-4 items-start space-y-4"
 			>
 				<div className="flex flex-col space-y-4 mt-8 p-6 md:p-32">
-					<span className="display">{title}</span>
+					<DialogTitle className="display">{title}</DialogTitle>
 					{subtitle && <h2 className="body1">{subtitle}</h2>}
 					<div className="space-y-4 flex-1">
 						<div className="body2">{content}</div>
