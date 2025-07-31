@@ -176,7 +176,7 @@
 	}
 
 	p {
-		@apply wrap-anywhere
+		@apply wrap-anywhere;
 	}
 }
 
