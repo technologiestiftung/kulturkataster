@@ -110,6 +110,7 @@ const VenueLayer: FC<VenueLayerProps> = ({
 				fill: new Fill({ color: textColor }),
 				offsetY: 0,
 			}),
+			zIndex: 10,
 		});
 	}, []);
 
