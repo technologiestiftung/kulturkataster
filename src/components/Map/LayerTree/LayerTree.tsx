@@ -102,15 +102,30 @@ const LayerThumbnail = memo<{
 LayerThumbnail.displayName = "LayerThumbnail";
 
 // Memoized LayerItem component
-const LayerItem = memo<{ layer: ManagedLayer }>(({ layer }) => {
+const LayerItem = memo<{
+	layer: ManagedLayer;
+	onAccordionChange?: (value: string) => void;
+}>(({ layer, onAccordionChange }) => {
 	const setLayerVisibility = useMapStore((state) => state.setLayerVisibility);
 	const accordionContentRef = useRef<HTMLDivElement>(null);
 
 	const handleVisibilityChange = useCallback(
 		(checked: boolean) => {
 			setLayerVisibility(layer.id, checked);
+			if (layer.config.service.legend && onAccordionChange) {
+				if (checked) {
+					onAccordionChange(layer.id);
+				} else {
+					onAccordionChange("");
+				}
+			}
 		},
-		[layer.id, setLayerVisibility],
+		[
+			layer.id,
+			setLayerVisibility,
+			layer.config.service.legend,
+			onAccordionChange,
+		],
 	);
 
 	const handleAccordionToggle = useCallback(
@@ -374,7 +389,11 @@ export const LayerTreeContent: FC<{
 			aria-label="Available layers"
 		>
 			{layersToRender.map((layer) => (
-				<LayerItem key={layer.id} layer={layer} />
+				<LayerItem
+					key={layer.id}
+					layer={layer}
+					onAccordionChange={onAccordionChange}
+				/>
 			))}
 		</Accordion>
 	);
