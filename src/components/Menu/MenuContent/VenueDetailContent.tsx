@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useVenueStore } from "@/lib/store/venueStore";
 import { getInstitutionsGeoJSON } from "@/lib/supabase/api";
 import { getCategoryIconComponent } from "@/lib/utils/iconUtils";
+import { normalizeUrl } from "@/lib/utils/sanitizerUtils";
 import { Category, VenueProperties } from "@/types";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -19,8 +20,8 @@ function InfoItem({
 }) {
 	return (
 		<div>
-			<p className="body2 font-bold break-words">{label}:</p>
-			<p className="body2 break-words">{children}</p>
+			<p className="body2 font-bold">{label}:</p>
+			<p className="body2">{children}</p>
 		</div>
 	);
 }
@@ -42,10 +43,13 @@ function ContactLink({
 		? { target: "_blank", rel: "noopener noreferrer" }
 		: {};
 
+	// Normalize the URL for external links (websites)
+	const normalizedHref = external ? normalizeUrl(href) : href;
+
 	return (
 		<a
-			href={href}
-			className="body2 text-primary-dark hover:underline break-all"
+			href={normalizedHref}
+			className="body2 text-primary-dark hover:underline wrap-anywhere"
 			{...props}
 		>
 			{children}
@@ -66,8 +70,8 @@ function VenueHeader({ venueData }: { venueData: VenueProperties }) {
 			<p className="body2 p-4 pb-0">
 				{venueData.parent_organizations?.[0]?.name || ""}
 			</p>
-			<CardTitle className="px-4">
-				<h1 className="h1 break-words">{venueData.name}</h1>
+			<CardTitle className="px-4 max-w-full overflow-hidden">
+				<h1 className="h1 wrap-anywhere">{venueData.name}</h1>
 			</CardTitle>
 
 			{venueData.categories?.length > 0 && (
@@ -80,13 +84,11 @@ function VenueHeader({ venueData }: { venueData: VenueProperties }) {
 									<div className="w-6 h-6">
 										<IconComponent />
 									</div>
-									<p className="body2 font-bold break-words">
+									<p className="body2 font-bold">
 										{tEnum(`category.${category.key}`)}
 									</p>
 								</div>
-								<p className="body2 pl-8 break-words">
-									{t("venue.subcategory")}
-								</p>
+								<p className="body2 pl-8">{t("venue.subcategory")}</p>
 							</div>
 						);
 					})}
@@ -116,13 +118,13 @@ function VenueBasicInfo({ venueData }: { venueData: VenueProperties }) {
 	return (
 		<div>
 			<address className="not-italic mb-4">
-				<p className="body1 break-words">{venueData.name}</p>
+				<p className="body1">{venueData.name}</p>
 				{venueData.street && venueData.street_number && venueData.zip_code && (
 					<div className="body1">
-						<p className="break-words">
+						<p>
 							{venueData.street} {venueData.street_number}
 						</p>
-						<p className="break-words">{venueData.zip_code}</p>
+						<p>{venueData.zip_code}</p>
 					</div>
 				)}
 			</address>
@@ -330,7 +332,7 @@ export function VenueDetailContent() {
 	}
 
 	return (
-		<main className="p-2">
+		<main className="p-2 h-full">
 			<VenueCard venueData={venueData} />
 		</main>
 	);

@@ -27,7 +27,7 @@ interface VenueLayerProps {
 
 const VenueLayer: FC<VenueLayerProps> = ({
 	zIndex = 10000,
-	distance = 100,
+	distance = 150,
 	minZoomForClustering = 0,
 	maxZoomForClustering = 4,
 }) => {
@@ -42,7 +42,6 @@ const VenueLayer: FC<VenueLayerProps> = ({
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 
-	// Use refs to track the current layer and sources
 	const vectorLayerRef = useRef<VectorLayer<any> | null>(null);
 	const vectorSourceRef = useRef<VectorSource | null>(null);
 	const clusterSourceRef = useRef<Cluster | null>(null);
@@ -111,6 +110,7 @@ const VenueLayer: FC<VenueLayerProps> = ({
 				fill: new Fill({ color: textColor }),
 				offsetY: 0,
 			}),
+			zIndex: 10,
 		});
 	}, []);
 
@@ -124,18 +124,15 @@ const VenueLayer: FC<VenueLayerProps> = ({
 				const featureToCheck = features ? features[0] : feature;
 				const featureId =
 					featureToCheck?.get?.("id") || featureToCheck?.values_?.id;
-				const isSelected = featureId === selectedVenueId;
+
+				const currentSelectedId = useVenueStore.getState().selectedVenueId;
+				const isSelected = featureId === currentSelectedId;
 
 				return createSingleFeatureStyle(categoryKey, isSelected);
 			}
 			return createClusterStyle(size);
 		},
-		[
-			getCategoryKey,
-			createSingleFeatureStyle,
-			createClusterStyle,
-			selectedVenueId,
-		],
+		[getCategoryKey, createSingleFeatureStyle, createClusterStyle],
 	);
 
 	const shouldCluster = useCallback(
@@ -170,7 +167,6 @@ const VenueLayer: FC<VenueLayerProps> = ({
 			const clustering = shouldCluster(zoomLevel);
 
 			if (clustering) {
-				// Use clustering
 				if (!clusterSourceRef.current) {
 					clusterSourceRef.current = new Cluster({
 						distance: getClusterDistance(zoomLevel),
@@ -181,11 +177,59 @@ const VenueLayer: FC<VenueLayerProps> = ({
 				}
 				vectorLayerRef.current.setSource(clusterSourceRef.current);
 			} else {
-				// Use original source without clustering
 				vectorLayerRef.current.setSource(vectorSourceRef.current);
 			}
 		},
 		[map, shouldCluster, getClusterDistance],
+	);
+
+	const handleClusterClick = useCallback(
+		(event: any) => {
+			if (!map || !vectorLayerRef.current) return;
+
+			const features = map.getFeaturesAtPixel(event.pixel, {
+				layerFilter: (layer) => layer === vectorLayerRef.current,
+			});
+
+			if (features.length > 0) {
+				const feature = features[0];
+				const clusteredFeatures = feature.get("features");
+
+				if (clusteredFeatures && clusteredFeatures.length > 1) {
+					event.preventDefault();
+					event.stopPropagation();
+
+					const extent = clusteredFeatures.reduce(
+						(acc: any, clusterFeature: any) => {
+							const geometry = clusterFeature.getGeometry();
+							if (geometry) {
+								const featureExtent = geometry.getExtent();
+								if (acc) {
+									return [
+										Math.min(acc[0], featureExtent[0]),
+										Math.min(acc[1], featureExtent[1]),
+										Math.max(acc[2], featureExtent[2]),
+										Math.max(acc[3], featureExtent[3]),
+									];
+								}
+								return featureExtent;
+							}
+							return acc;
+						},
+						null,
+					);
+
+					if (extent) {
+						map.getView().fit(extent, {
+							padding: [50, 50, 50, 50],
+							duration: 500,
+							maxZoom: Math.max(maxZoomForClustering + 1, 10),
+						});
+					}
+				}
+			}
+		},
+		[map, maxZoomForClustering],
 	);
 
 	useEffect(() => {
@@ -226,6 +270,7 @@ const VenueLayer: FC<VenueLayerProps> = ({
 		};
 
 		map.getView().on("change:resolution", handleZoomChange);
+		map.on("click", handleClusterClick);
 
 		map.addLayer(vectorLayer);
 		vectorLayer.setZIndex(zIndex);
@@ -235,6 +280,7 @@ const VenueLayer: FC<VenueLayerProps> = ({
 		return () => {
 			if (map && vectorLayerRef.current) {
 				map.getView().un("change:resolution", handleZoomChange);
+				map.un("click", handleClusterClick);
 				map.removeLayer(vectorLayerRef.current);
 			}
 			vectorLayerRef.current = null;
@@ -252,11 +298,15 @@ const VenueLayer: FC<VenueLayerProps> = ({
 		venuesData,
 		loading,
 		error,
+		handleClusterClick,
 	]);
 
 	useEffect(() => {
 		if (vectorLayerRef.current) {
-			vectorLayerRef.current.changed();
+			const source = vectorLayerRef.current.getSource();
+			if (source) {
+				source.changed();
+			}
 		}
 	}, [selectedVenueId]);
 

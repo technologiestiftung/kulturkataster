@@ -174,11 +174,18 @@
 		background-color: var(--color-background);
 		color: var(--color-foreground);
 	}
+
+	p {
+		@apply wrap-anywhere;
+	}
 }
 
 @layer utilities {
 	body {
 		font-family: Arial, Helvetica, sans-serif;
+	}
+	.break-anywhere {
+		overflow-wrap: anywhere;
 	}
 }
 
