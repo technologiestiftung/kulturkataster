@@ -176,7 +176,7 @@
 	}
 
 	p {
-		overflow-wrap: anywhere;
+		@apply wrap-anywhere
 	}
 }
 

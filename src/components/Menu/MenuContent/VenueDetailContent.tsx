@@ -49,7 +49,7 @@ function ContactLink({
 	return (
 		<a
 			href={normalizedHref}
-			className="body2 text-primary-dark hover:underline break-anywhere"
+			className="body2 text-primary-dark hover:underline wrap-anywhere"
 			{...props}
 		>
 			{children}
@@ -71,7 +71,7 @@ function VenueHeader({ venueData }: { venueData: VenueProperties }) {
 				{venueData.parent_organizations?.[0]?.name || ""}
 			</p>
 			<CardTitle className="px-4 max-w-full overflow-hidden">
-				<h1 className="h1 break-anywhere">{venueData.name}</h1>
+				<h1 className="h1 wrap-anywhere">{venueData.name}</h1>
 			</CardTitle>
 
 			{venueData.categories?.length > 0 && (
