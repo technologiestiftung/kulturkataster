@@ -60,6 +60,8 @@
 	--sidebar-width: 30rem;
 	--sidebar-width-mobile: 18rem;
 	--sidebar-width-icon: 5rem;
+
+	--footer: #f9f8f5;
 }
 
 :root[data-theme="contrast"] {
@@ -147,6 +149,8 @@
 	--color-brand-light: var(--brand-light);
 
 	--color-alert: var(--alert);
+	--color-footer: var(--footer);
+
 	--shadow-sm: var(--shadow-200);
 	--shadow-md: var(--shadow-300);
 	--shadow-lg: var(--shadow-400);

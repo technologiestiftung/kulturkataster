@@ -1,3 +1,4 @@
+import Footer from "@/components/Footer/Footer";
 import MapInitializer from "@/components/Map/MapInitializer/MapInitializer";
 import { Menu } from "@/components/Menu/Menu";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
@@ -46,6 +47,8 @@ export default async function RootLayout({
 							</div>
 						</SidebarInset>
 					</SidebarProvider>
+
+					<Footer />
 				</I18NProvider>
 
 				<Script id="matomo" strategy="afterInteractive">
