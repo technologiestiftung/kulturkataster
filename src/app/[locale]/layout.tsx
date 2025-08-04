@@ -1,13 +1,14 @@
 import MapInitializer from "@/components/Map/MapInitializer/MapInitializer";
-import type { Metadata } from "next";
-import "./globals.css";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { Menu } from "@/components/Menu/Menu";
-import { Locale } from "@/types";
-import { getDirection } from "@/lib/utils";
-import I18NProvider from "@/i18n/i18n-provider";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { serverSideTranslation } from "@/i18n";
+import I18NProvider from "@/i18n/i18n-provider";
+import { getDirection } from "@/lib/utils";
+import { Locale } from "@/types";
+import type { Metadata } from "next";
 import { Barlow } from "next/font/google";
+import Script from "next/script";
+import "./globals.css";
 
 const barlow = Barlow({
 	preload: true,
@@ -46,6 +47,22 @@ export default async function RootLayout({
 						</SidebarInset>
 					</SidebarProvider>
 				</I18NProvider>
+
+				<Script id="matomo" strategy="afterInteractive">
+					{`
+            var _paq = window._paq = window._paq || [];
+            _paq.push(['disableCookies']);
+            _paq.push(['trackPageView']);
+            _paq.push(['enableLinkTracking']);
+            (function() {
+              var u="//kulturraeume.berlin/matomo/";
+              _paq.push(['setTrackerUrl', u+'matomo.php']);
+              _paq.push(['setSiteId', '3']);
+              var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+              g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+            })();
+          `}
+				</Script>
 			</body>
 		</html>
 	);
