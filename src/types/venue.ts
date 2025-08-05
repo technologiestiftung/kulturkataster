@@ -65,23 +65,22 @@ export interface VenueFeature extends VenueProperties {
 }
 
 export interface FilterState {
-	districts: number[];
+	districts: string[];
 	categories: CategoryType[];
 }
 
 export interface VenueStoreState {
 	venues: FeatureCollection<Geometry, GeoJsonProperties> | null;
-	filteredVenues: FeatureCollection<Geometry, GeoJsonProperties> | null;
 	selectedVenueId: number | string | null;
 	filters: FilterState | null;
 
 	setVenues: (
 		venues: FeatureCollection<Geometry, GeoJsonProperties> | null,
 	) => void;
-	setFilteredVenues: (
-		venues: FeatureCollection<Geometry, GeoJsonProperties> | null,
-	) => void;
 	setSelectedVenueId: (id: string | null) => void;
 
 	setFilters: (filters: FilterState | null) => void;
+
+	initializeVenues: () => Promise<void>;
+	applyFilters: () => Promise<void>;
 }
