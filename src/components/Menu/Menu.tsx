@@ -312,20 +312,6 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 					))}
-					{/* {footerItems.map((item) => (
-						<SidebarMenuItem key={item.id} className="flex-shrink-0">
-							<SidebarMenuButton
-								onClick={() => handleItemClick(item.id)}
-								isActive={activeItem === item.id}
-								className="flex-col gap-1 h-auto py-2 px-2 w-auto"
-							>
-								<item.icon className="size-6" />
-								<span className="text-xs font-medium hidden">
-									{t(item.label)}
-								</span>
-							</SidebarMenuButton>
-						</SidebarMenuItem>
-					))} */}
 				</SidebarMenu>
 			</div>
 		</>
