@@ -28,6 +28,16 @@
 			"downloadPDF": "PDF herunterladen"
 		}
 	},
+	"privacyModal": {
+		"title": "Datenschutz",
+		"subtitle": "Hier kommt der Datenschutztext.",
+		"description": "HLorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus."
+	},
+	"imprintModal": {
+		"title": "Impressum",
+		"subtitle": "Hier kommt der Impressumtext.",
+		"description": "HLorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus."
+	},
 	"accessibilityModal": {
 		"title": "Erklärung zur Barrierefreiheit",
 		"description": "Wir bemühen uns, unseren Webauftritt barrierefrei zu machen. Die Erklärung zur digitalen Barrierefreiheit wird im Gesetz über die barrierefreie Informations- und Kommunikationstechnik Berlin (BIKTG Bln) verlangt. Die technischen Anforderungen zur Barrierefreiheit ergeben sich aus der BITV 2.0. Diese Erklärung zur digitalen Barrierefreiheit gilt für die Website  {{ url }}.",
