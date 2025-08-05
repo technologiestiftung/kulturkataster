@@ -17,7 +17,7 @@ export function AccessibilityModal({
 	const content = (
 		<div className="space-y-8">
 			{/* Main description */}
-			<h1>Datenschutz</h1>
+			<h1>{t("accessibilityModal.title", { ns: "content" })}</h1>
 			<p className="body1">
 				{t("accessibilityModal.description", { ns: "content" })}
 			</p>
