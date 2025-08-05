@@ -39,7 +39,8 @@
 	},
 	"about": "Über",
 	"info": {
-		"title": "Info"
+		"title": "Info",
+		"open": "Infos öffnen"
 	},
 	"add": {
 		"title": "Mitwirken",
@@ -96,6 +97,7 @@
 	"unknown": "Unbekannt",
 	"footer": {
 		"title": "Kulturkataster Berlin",
+		"projectBy": "Ein Projekt der Kulturraum Berlin gGmbH",
 		"openSource": "Das Kulturkataster ist ein <0>Open-Source-Projekt</0>.",
 		"address": {
 			"suffix": "c/o Kulturraum Berlin gGmbH",
