@@ -1,3 +1,5 @@
+import { FeatureCollection, GeoJsonProperties, Geometry } from "geojson";
+
 export enum CategoryType {
 	WORKSHOPS = "workshops",
 	EDUCATION_PLACES = "education_places",
@@ -62,7 +64,24 @@ export interface VenueFeature extends VenueProperties {
 	};
 }
 
+export interface FilterState {
+	districts: number[];
+	categories: CategoryType[];
+}
+
 export interface VenueStoreState {
+	venues: FeatureCollection<Geometry, GeoJsonProperties> | null;
+	filteredVenues: FeatureCollection<Geometry, GeoJsonProperties> | null;
 	selectedVenueId: number | string | null;
+	filters: FilterState | null;
+
+	setVenues: (
+		venues: FeatureCollection<Geometry, GeoJsonProperties> | null,
+	) => void;
+	setFilteredVenues: (
+		venues: FeatureCollection<Geometry, GeoJsonProperties> | null,
+	) => void;
 	setSelectedVenueId: (id: string | null) => void;
+
+	setFilters: (filters: FilterState | null) => void;
 }
