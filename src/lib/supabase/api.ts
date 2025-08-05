@@ -87,8 +87,8 @@ export async function searchInstitutions(query: string) {
 }
 
 export async function filterInstitutions(query: any) {
+	console.log("[api] query::", query);
 
-	console.log('[api] query::', query);
-
-	return localFilteredVenues;
+	// Type cast the imported JSON to proper FeatureCollection type
+	return localFilteredVenues as FeatureCollection;
 }
