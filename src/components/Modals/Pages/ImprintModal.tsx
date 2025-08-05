@@ -14,7 +14,7 @@ export function ImprintModal({ open, onOpenChange }: ImprintModalProps) {
 	const content = (
 		<div className="space-y-8">
 			{/* Main description */}
-			<h1>Datenschutz</h1>
+			<h1>{t("imprintModal.title", { ns: "content" })}</h1>
 			<p className="body1">
 				{t("imprintModal.description", { ns: "content" })}
 			</p>
