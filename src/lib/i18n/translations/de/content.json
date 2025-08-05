@@ -15,7 +15,7 @@
 	"informationModal": {
 		"title": "Informationen zur Kartenanwendung",
 		"subtitle": "Hier können Informationen zum Kulturkataster und zur Funktionsweise stehen.",
-		"description": "HLorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",
+		"description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",
 		"methodology": {
 			"title": "Methodik",
 			"description1": "Räume für Kunst und Kultur sind in Berlin knappe Ressourcen, von denen viele in den letzten Jahrzehnten verloren gegangen und zahlreiche weiterhin an ihrem Standort gefährdet sind. Ein Berliner Kulturkataster soll helfen, diese Räume zu schützen, neue zu erschließen und kulturelle Teilhabe zu stärken. Die Basis bildet eine öffentliche und umfassende Bestandsaufnahme von Kulturräumen und -orten in einer browserbasierten Kartenanwendung, die mit analytisch nutzbaren Kontextdaten zu einem einzigartigen Instrument der kulturellen Stadtentwicklung zusammengeführt wird.",
@@ -31,15 +31,16 @@
 	"privacyModal": {
 		"title": "Datenschutz",
 		"subtitle": "Hier kommt der Datenschutztext.",
-		"description": "HLorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus."
+		"description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus."
 	},
 	"imprintModal": {
 		"title": "Impressum",
 		"subtitle": "Hier kommt der Impressumtext.",
-		"description": "HLorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus."
+		"description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus."
 	},
 	"accessibilityModal": {
 		"title": "Erklärung zur Barrierefreiheit",
+		"subtitle": "Erklärung zur Barrierefreiheit Subtitle",
 		"description": "Wir bemühen uns, unseren Webauftritt barrierefrei zu machen. Die Erklärung zur digitalen Barrierefreiheit wird im Gesetz über die barrierefreie Informations- und Kommunikationstechnik Berlin (BIKTG Bln) verlangt. Die technischen Anforderungen zur Barrierefreiheit ergeben sich aus der BITV 2.0. Diese Erklärung zur digitalen Barrierefreiheit gilt für die Website  {{ url }}.",
 		"when": {
 			"title": "Wann wurde die Erklärung zur Barrierefreiheit erstellt?",
