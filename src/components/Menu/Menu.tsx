@@ -17,22 +17,23 @@ import {
 } from "@/components/ui/sidebar";
 import Accessibility from "@/icons/accessibility.svg";
 import Close from "@/icons/close.svg";
+import DotsVertical from "@/icons/dots-vertical.svg";
 import Download from "@/icons/download.svg";
 import Edit from "@/icons/edit.svg";
 import FilterLines from "@/icons/filter-lines.svg";
 import InfoCircle from "@/icons/info-circle.svg";
 import Search from "@/icons/search.svg";
+import { useAppStore } from "@/lib/store/appStore";
 import { useMapStore } from "@/lib/store/mapStore";
 import { useVenueStore } from "@/lib/store/venueStore";
-import { useAppStore } from "@/lib/store/appStore";
 import KukaMiniLogo from "@/logos/kuka-mini.svg";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { LayerTreeContent } from "../Map/LayerTree/LayerTree";
 import { AccessibilityContent } from "./MenuContent/AccessibilityContent";
 import { FilterContent } from "./MenuContent/FilterContent";
 import { SearchContent } from "./MenuContent/SearchContent";
 import { VenueDetailContent } from "./MenuContent/VenueDetailContent";
-import { useEffect, useState } from "react";
 
 const menuItems = [
 	{ id: "filter", icon: FilterLines, label: "filter.title" },
@@ -283,6 +284,18 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 					<KukaMiniLogo className="size-14" />
 				</button>
 			</div>
+
+			<div className="absolute md:hidden block z-[50] top-0 right-0 p-4 overflow-hidden">
+				<Button
+					variant="map-icon"
+					size="icon-only"
+					title="Infos öffnen"
+					onClick={() => setInfoModalOpen(true)}
+				>
+					<DotsVertical size={14} />
+				</Button>
+			</div>
+
 			<div className="fixed bottom-0 left-0 right-0 z-[60] bg-sidebar border-t md:hidden h-20 pointer-events-auto">
 				<SidebarMenu className="flex-row justify-around px-2 py-3">
 					{menuItems.map((item) => (
@@ -299,20 +312,6 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 					))}
-					{/* {footerItems.map((item) => (
-						<SidebarMenuItem key={item.id} className="flex-shrink-0">
-							<SidebarMenuButton
-								onClick={() => handleItemClick(item.id)}
-								isActive={activeItem === item.id}
-								className="flex-col gap-1 h-auto py-2 px-2 w-auto"
-							>
-								<item.icon className="size-6" />
-								<span className="text-xs font-medium hidden">
-									{t(item.label)}
-								</span>
-							</SidebarMenuButton>
-						</SidebarMenuItem>
-					))} */}
 				</SidebarMenu>
 			</div>
 		</>
