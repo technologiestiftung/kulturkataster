@@ -14,7 +14,7 @@ export function PrivacyModal({ open, onOpenChange }: PrivacyModalProps) {
 	const content = (
 		<div className="space-y-8">
 			{/* Main description */}
-			<h1>Datenschutz</h1>
+			<h1>{t("privacyModal.title", { ns: "content" })}</h1>
 			<p className="body1">
 				{t("privacyModal.description", { ns: "content" })}
 			</p>
