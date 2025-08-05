@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createClient } from "@/lib/supabase/client";
 import type { FeatureCollection } from "geojson";
+import localFilteredVenues from "./../../config/resources/venues.json";
 
 // Error handling
 export class ApiError extends Error {
@@ -83,4 +84,11 @@ export async function searchInstitutions(query: string) {
 
 	// Return the institutions array directly
 	return data || [];
+}
+
+export async function filterInstitutions(query: any) {
+
+	console.log('[api] query::', query);
+
+	return localFilteredVenues;
 }
