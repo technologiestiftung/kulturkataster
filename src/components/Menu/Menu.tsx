@@ -289,7 +289,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 				<Button
 					variant="map-icon"
 					size="icon-only"
-					title="Infos öffnen"
+					title={t("info.open")}
 					onClick={() => setInfoModalOpen(true)}
 				>
 					<DotsVertical size={14} />

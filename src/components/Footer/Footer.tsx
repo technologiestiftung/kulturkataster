@@ -57,7 +57,7 @@ const Footer: FC = () => {
 			/>
 
 			<div className="pr-14 body2">
-				<p>Ein Projekt der Kulturraum Berlin gGmbH</p>
+				<p>{t("footer.projectBy")}</p>
 			</div>
 			<ul className="flex gap-4 body2 font-bold">
 				{footerItems.map((item) => (
