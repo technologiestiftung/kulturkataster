@@ -61,9 +61,13 @@ const Footer: FC = ({}) => {
 			</div>
 			<ul className="flex gap-4 body2 font-bold">
 				{footerItems.map((item) => (
-					<li key={item.id} onClick={() => handleItemClick(item.id)}>
-						<p>{t(`footer.${item.id}`)}</p>
-					</li>
+					<button
+						className="body2 font-bold"
+						key={item.id}
+						onClick={() => handleItemClick(item.id)}
+					>
+						{t(`footer.${item.id}`)}
+					</button>
 				))}
 			</ul>
 		</div>
