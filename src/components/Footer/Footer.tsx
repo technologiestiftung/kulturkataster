@@ -13,7 +13,7 @@ const footerItems = [
 	{ id: "accessibility" },
 ] as const;
 
-const Footer: FC = ({}) => {
+const Footer: FC = () => {
 	const { t } = useTranslation("common");
 
 	const [infoModalOpen, setInfoModalOpen] = useState(false);
