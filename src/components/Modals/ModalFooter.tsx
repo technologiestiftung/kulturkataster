@@ -5,14 +5,66 @@ import KukaLargeLogo from "@/logos/kuka-large.svg";
 import KukaSmallLogo from "@/logos/kuka-small.svg";
 import SenateLogo from "@/logos/senate.svg";
 import TechnologieStiftungLogo from "@/logos/technologiestiftung.svg";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { AccessibilityModal } from "../Modals/Pages/AccessibilityModal";
+import { ImprintModal } from "../Modals/Pages/ImprintModal";
+import { InformationModal } from "../Modals/Pages/InformationModal";
+import { PrivacyModal } from "../Modals/Pages/PrivacyModal";
+
+const footerItems = [
+	{ id: "about" },
+	{ id: "imprint" },
+	{ id: "privacy" },
+	{ id: "accessibility" },
+] as const;
 
 export function ModalFooter() {
 	const { t } = useTranslation("common");
+	const [infoModalOpen, setInfoModalOpen] = useState(false);
+	const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
+	const [imprintModalOpen, setImprintModalOpen] = useState(false);
+	const [accessibilityModalOpen, setAccessibilityModalOpen] = useState(false);
+
+	const handleItemClick = (id: string) => {
+		if (id === "about") {
+			setInfoModalOpen(true);
+			return;
+		}
+		if (id === "imprint") {
+			setImprintModalOpen(true);
+			return;
+		}
+		if (id === "privacy") {
+			setPrivacyModalOpen(true);
+			return;
+		}
+		if (id === "accessibility") {
+			setAccessibilityModalOpen(true);
+			return;
+		}
+	};
 
 	return (
 		<>
 			<div className="ModalFooter-root flex justify-center w-full h-auto bg-secondary px-6 py-12 ">
+				<InformationModal
+					open={infoModalOpen}
+					onOpenChange={setInfoModalOpen}
+				/>
+				<PrivacyModal
+					open={privacyModalOpen}
+					onOpenChange={setPrivacyModalOpen}
+				/>
+				<ImprintModal
+					open={imprintModalOpen}
+					onOpenChange={setImprintModalOpen}
+				/>
+				<AccessibilityModal
+					open={accessibilityModalOpen}
+					onOpenChange={setAccessibilityModalOpen}
+				/>
+
 				<div className="w-full flex flex-col md:flex-row md:items-center md:justify-between">
 					<div className="w-5/11 hidden md:flex items-center justify-center">
 						<KukaLargeLogo className="h-auto w-36" />
@@ -40,11 +92,15 @@ export function ModalFooter() {
 								<span className="underline">{t("footer.email.address")}</span>
 							</div>
 							<div className="flex flex-col md:flex-row gap-2 md:gap-4 mt-16 font-bold">
-								<a className="">{t("footer.about")}</a>
-								<a className="">{t("footer.newsletter")}</a>
-								<a className="">{t("footer.imprint")}</a>
-								<a className="">{t("footer.privacy")}</a>
-								<a className="">{t("footer.accessibility")}</a>
+								{footerItems.map((item) => (
+									<button
+										className="body2 font-bold w-fit"
+										key={item.id}
+										onClick={() => handleItemClick(item.id)}
+									>
+										{t(`footer.${item.id}`)}
+									</button>
+								))}
 							</div>
 						</div>
 					</div>
