@@ -116,8 +116,8 @@ const CATEGORY_GROUPS = [
 const Filter: FC = () => {
 	const setFilters = useVenueStore((state) => state.setFilters);
 	const filters = useVenueStore((state) => state.filters);
-  const applyFilters = useVenueStore((state) => state.applyFilters);
-  const initializeVenues = useVenueStore((state) => state.initializeVenues);
+	const applyFilters = useVenueStore((state) => state.applyFilters);
+	const initializeVenues = useVenueStore((state) => state.initializeVenues);
 
 	const [openSections, setOpenSections] = useState<string[]>([
 		"districts",
