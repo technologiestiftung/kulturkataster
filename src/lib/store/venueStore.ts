@@ -9,12 +9,13 @@ export const useVenueStore = create<VenueStoreState>((set, get) => ({
 	selectedVenueId: null,
 	setSelectedVenueId: (id: string | null) => set({ selectedVenueId: id }),
 
-	filters: { districts: [], categories: [] },
+	filters: { districts: [], categories: [], subcategories: [] },
 	setFilters: (filters) => set({ filters }),
 
 	initializeVenues: async () => {
 		try {
 			const venuesData = await getInstitutionsGeoJSON();
+			console.log("[venueStore] venuesData::", venuesData);
 			set({ venues: venuesData });
 		} catch (error) {
 			console.error("Failed to initialize venues:", error);
@@ -23,6 +24,10 @@ export const useVenueStore = create<VenueStoreState>((set, get) => ({
 
 	applyFilters: async () => {
 		const { filters } = get();
+		if (!filters) {
+			console.warn("No filters available");
+			return;
+		}
 		try {
 			const filteredData = await filterInstitutions(filters);
 			set({ venues: filteredData });
