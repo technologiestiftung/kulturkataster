@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createClient } from "@/lib/supabase/client";
+import type { CategoryWithSubcategories, District, FilterState } from "@/types";
 import type { FeatureCollection } from "geojson";
 import localFilteredVenues from "./../../config/resources/venues.json";
 
@@ -86,9 +87,70 @@ export async function searchInstitutions(query: string) {
 	return data || [];
 }
 
-export async function filterInstitutions(query: any) {
+export async function filterInstitutions(query: FilterState) {
 	console.log("[api] query::", query);
 
 	// Type cast the imported JSON to proper FeatureCollection type
 	return localFilteredVenues as FeatureCollection;
+}
+
+export async function getCategoriesWithSubcategories(): Promise<
+	CategoryWithSubcategories[]
+> {
+	const supabase = createClient();
+
+	const { data: subcategories, error: subcategoryError } = await supabase
+		.from("subcategory")
+		.select("*");
+
+	const { data: categories, error: categoryError } = await supabase
+		.from("category")
+		.select("*");
+
+	console.log(
+		"[api] subcategories::",
+		subcategories,
+		"categories::",
+		categories,
+	);
+
+	if (subcategoryError || categoryError) {
+		handleError(subcategoryError || categoryError, "fetch categories");
+	}
+
+	const categoryMap = new Map<number, CategoryWithSubcategories>();
+	categories?.forEach((category) => {
+		categoryMap.set(category.id, {
+			...category,
+			subcategories: [],
+		});
+	});
+
+	subcategories?.forEach((subcategory) => {
+		if (categoryMap.has(subcategory.category_id)) {
+			categoryMap.get(subcategory.category_id)!.subcategories.push(subcategory);
+		}
+	});
+
+	return Array.from(categoryMap.values()).filter(
+		(category) => category.subcategories.length > 0,
+	);
+}
+
+export async function getDistricts(): Promise<District[]> {
+	const supabase = createClient();
+
+	const { data: districts, error } = await supabase
+		.from("district")
+		.select("*");
+
+	console.log("[api] districts::", districts);
+
+	if (error) {
+		handleError(error, "fetch districts");
+	}
+
+	console.log("[api] districts::", districts);
+
+	return districts || [];
 }

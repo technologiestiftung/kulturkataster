@@ -24,6 +24,40 @@ export interface Category {
 	key: CategoryType;
 }
 
+export interface CategoryWithSubcategories extends Category {
+	subcategories: Subcategory[];
+}
+
+export interface Subcategory {
+	id: number;
+	key: string;
+	category_id: number;
+}
+
+export interface District {
+	city_id: number;
+	created_at: string;
+	id: number;
+	key: string;
+	name: string;
+}
+
+export interface TransformedCategory {
+	categoryKey: string;
+	categoryName: string;
+	subcategories: TransformedSubcategory[];
+}
+
+export interface TransformedSubcategory {
+	key: string;
+	name: string;
+}
+
+export interface TransformedDistrict {
+	key: string;
+	name: string;
+}
+
 export interface ParentOrganization {
 	id: number;
 	name: string;
@@ -43,7 +77,7 @@ export interface VenueProperties {
 	categories: Category[];
 	district_id: number;
 	street_number: string;
-	subcategories: Category[];
+	subcategories: Subcategory[];
 	funding_sources: unknown[];
 	established_since: string;
 	shared_use_allowed: boolean;
@@ -66,7 +100,8 @@ export interface VenueFeature extends VenueProperties {
 
 export interface FilterState {
 	districts: string[];
-	categories: CategoryType[];
+	categories: string[]; // Changed to string to match enumMap keys
+	subcategories: string[];
 }
 
 export interface VenueStoreState {
