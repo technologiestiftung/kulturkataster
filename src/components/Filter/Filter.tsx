@@ -116,7 +116,8 @@ const CATEGORY_GROUPS = [
 const Filter: FC = () => {
 	const setFilters = useVenueStore((state) => state.setFilters);
 	const filters = useVenueStore((state) => state.filters);
-	const applyFilters = useVenueStore((state) => state.applyFilters);
+  const applyFilters = useVenueStore((state) => state.applyFilters);
+  const initializeVenues = useVenueStore((state) => state.initializeVenues);
 
 	const [openSections, setOpenSections] = useState<string[]>([
 		"districts",
@@ -145,26 +146,26 @@ const Filter: FC = () => {
 		applyFilters();
 	};
 
-	const handleCategoryChange = (category: CategoryType, checked: boolean) => {
-		console.log("[Filter] category, checked::", category, checked);
+	// const handleCategoryChange = (category: CategoryType, checked: boolean) => {
+	// 	console.log("[Filter] category, checked::", category, checked);
 
-		if (!filters) return;
+	// 	if (!filters) return;
 
-		const updatedCategories = checked
-			? [...filters.categories, category]
-			: filters.categories.filter((c) => c !== category);
+	// 	const updatedCategories = checked
+	// 		? [...filters.categories, category]
+	// 		: filters.categories.filter((c) => c !== category);
 
-		const newFilters = { ...filters, categories: updatedCategories };
-		setFilters(newFilters);
-		applyFilters();
-	};
+	// 	const newFilters = { ...filters, categories: updatedCategories };
+	// 	setFilters(newFilters);
+	// 	applyFilters();
+	// };
 
 	const resetFilters = () => {
 		setFilters({
 			districts: [],
 			categories: [],
 		});
-		applyFilters();
+		initializeVenues();
 	};
 
 	return (
@@ -239,7 +240,7 @@ const Filter: FC = () => {
 									<span className="text-sm font-medium">{group.name}</span>
 									<span className="text-xs text-gray-500">(164)</span>
 								</div>
-								<Checkbox
+								{/* <Checkbox
 									checked={group.categories.some((cat) =>
 										filters?.categories.includes(cat),
 									)}
@@ -248,7 +249,7 @@ const Filter: FC = () => {
 											handleCategoryChange(cat, Boolean(checked));
 										});
 									}}
-								/>
+								/> */}
 							</CollapsibleTrigger>
 
 							<CollapsibleContent className="pl-6 space-y-1">
