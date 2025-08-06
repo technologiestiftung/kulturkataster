@@ -7,101 +7,20 @@ import {
 	CollapsibleContent,
 	CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import enumMapDE from "@/lib/i18n/translations/de/enumMap.json";
+import Close from "@/icons/close.svg";
+import EyeOff from "@/icons/eye-off.svg";
+import Eye from "@/icons/eye.svg";
 import { useVenueStore } from "@/lib/store/venueStore";
+import { getCategoryIconComponent } from "@/lib/utils/iconUtils";
 import {
-	getCategoriesWithSubcategories,
-	getDistricts,
-} from "@/lib/supabase/api";
-import {
-	CategoryWithSubcategories,
-	District,
+	CategoryType,
 	TransformedCategory,
 	TransformedDistrict,
 } from "@/types";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { FC, useCallback, useEffect, useState } from "react";
+import { FC, useCallback, useState } from "react";
+import { useFilterData } from "./hooks/useFilterData";
 
-// Transform data utilities
-const transformCategories = (
-	data: CategoryWithSubcategories[],
-): TransformedCategory[] =>
-	data.map((category) => ({
-		categoryKey: category.key,
-		categoryName:
-			enumMapDE.category[category.key as keyof typeof enumMapDE.category] ||
-			category.key,
-		subcategories: category.subcategories.map((sub) => ({
-			key: sub.key,
-			name:
-				enumMapDE.subcategory[sub.key as keyof typeof enumMapDE.subcategory] ||
-				sub.key,
-		})),
-	}));
-
-const transformDistricts = (data: District[]): TransformedDistrict[] =>
-	data.map((district) => ({
-		key: district.key,
-		name:
-			enumMapDE.district_id[
-				district.key as keyof typeof enumMapDE.district_id
-			] ||
-			district.name ||
-			district.key,
-	}));
-
-// Simple hook - fetch once and done
-const useFilterData = () => {
-	const [categoryGroups, setCategoryGroups] = useState<TransformedCategory[]>(
-		[],
-	);
-	const [districts, setDistricts] = useState<TransformedDistrict[]>([]);
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState<string | null>(null);
-
-	useEffect(() => {
-		const fetchData = async () => {
-			try {
-				const [categoriesData, districtsData] = await Promise.all([
-					getCategoriesWithSubcategories(),
-					getDistricts(),
-				]);
-
-				setCategoryGroups(transformCategories(categoriesData));
-				setDistricts(transformDistricts(districtsData));
-			} catch (err) {
-				console.error("Error fetching filter data:", err);
-				setError("Failed to load filter data");
-			} finally {
-				setLoading(false);
-			}
-		};
-
-		fetchData();
-	}, []); // Empty dependency array - run once and that's it
-
-	const retry = useCallback(() => {
-		setLoading(true);
-		setError(null);
-		// Re-run the fetch
-		Promise.all([getCategoriesWithSubcategories(), getDistricts()])
-			.then(([categoriesData, districtsData]) => {
-				setCategoryGroups(transformCategories(categoriesData));
-				setDistricts(transformDistricts(districtsData));
-			})
-			.catch((err) => {
-				console.error("Error fetching filter data:", err);
-				setError("Failed to load filter data");
-			})
-			.finally(() => {
-				setLoading(false);
-			});
-	}, []);
-
-	return { categoryGroups, districts, loading, error, retry };
-};
-
-// Sub-components
 const DistrictFilter: FC<{
 	districts: TransformedDistrict[];
 	selectedDistricts: string[];
@@ -113,13 +32,17 @@ const DistrictFilter: FC<{
 			return (
 				<Button
 					key={district.key}
-					variant={isSelected ? "default" : "outline"}
-					size="sm"
-					className={`text-xs ${isSelected ? "bg-gray-600 text-white" : ""}`}
+					variant="tag"
+					size="tag"
+					className={isSelected ? "bg-neutral-80 text-white" : ""}
 					onClick={() => onDistrictChange(district.key, !isSelected)}
 				>
 					{district.name}
-					{isSelected && <span className="ml-1">×</span>}
+					{isSelected && (
+						<span className="ml-0 w-full">
+							<Close size={4} viewBox="0 0 24 24" />
+						</span>
+					)}
 				</Button>
 			);
 		})}
@@ -158,6 +81,16 @@ const CategoryFilter: FC<{
 							) : (
 								<ChevronUp size={16} />
 							)}
+							{(() => {
+								const IconComponent = getCategoryIconComponent(
+									group.categoryKey as CategoryType,
+								);
+								return (
+									<div className="w-6 h-6">
+										<IconComponent />
+									</div>
+								);
+							})()}
 							<span className="text-sm font-medium">{group.categoryName}</span>
 							<span className="text-xs text-gray-500">
 								({group.subcategories.length})
@@ -194,7 +127,6 @@ const CategoryFilter: FC<{
 	</div>
 );
 
-// Main Filter component
 const Filter: FC = () => {
 	const { setFilters, filters, applyFilters, initializeVenues } =
 		useVenueStore();
@@ -204,6 +136,7 @@ const Filter: FC = () => {
 		"districts",
 		"categories",
 	]);
+	const [hideClosedVenues, setHideClosedVenues] = useState<boolean>(true);
 
 	const toggleSection = useCallback((section: string) => {
 		setOpenSections((prev) =>
@@ -255,10 +188,25 @@ const Filter: FC = () => {
 		[filters, updateFilters],
 	);
 
-	const resetFilters = useCallback(() => {
+	const resetDistricts = useCallback(() => {
 		setFilters({ districts: [], categories: [], subcategories: [] });
 		initializeVenues();
 	}, [setFilters, initializeVenues]);
+
+	const resetCategories = useCallback(() => {
+		setFilters({ districts: [], categories: [], subcategories: [] });
+		initializeVenues();
+	}, [setFilters, initializeVenues]);
+
+	const toggleClosedVenues = useCallback(() => {
+		if (hideClosedVenues) {
+			// filter current Data and update filtered Data
+    } else {
+      initializeVenues();
+    }
+    
+		setHideClosedVenues(!hideClosedVenues);
+	}, [initializeVenues, hideClosedVenues]);
 
 	if (loading) {
 		return (
@@ -285,28 +233,32 @@ const Filter: FC = () => {
 	return (
 		<div className="Filter-root p-4 bg-white border-r border-gray-200 h-full overflow-y-auto">
 			<div className="mb-6">
-				<h2 className="text-lg font-semibold mb-2">
+				<h2 className="body2 font-bold mb-2">
 					Angezeigte Kulturorte in Berlin
 				</h2>
 				<div className="space-y-2 text-sm text-purple-600">
-					<div className="flex items-center gap-2">
-						<span>👁</span>
-						<span>Geschlossene Orte ausblenden</span>
-					</div>
-					<div className="flex items-center gap-2">
-						<span>→</span>
-						<span>Alle 23 Orte in einer Liste anzeigen</span>
-					</div>
+					<button
+						className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+						onClick={toggleClosedVenues}
+					>
+						{hideClosedVenues ? <Eye /> : <EyeOff />}
+						<span className="body2 font-bold">
+							Geschlossene Orte ausblenden
+						</span>
+					</button>
 				</div>
 			</div>
 
 			{/* Districts Section */}
 			<div className="mb-6">
 				<div className="flex items-center justify-between mb-4">
-					<h3 className="font-semibold">Bezirke</h3>
-					<Button variant="ghost" size="sm" onClick={resetFilters}>
+					<h3 className="body1 font-bold">Bezirke</h3>
+					<button
+						className="body2 font-light underline"
+						onClick={resetDistricts}
+					>
 						Filter zurücksetzen
-					</Button>
+					</button>
 				</div>
 				<DistrictFilter
 					districts={districts}
@@ -318,10 +270,13 @@ const Filter: FC = () => {
 			{/* Categories Section */}
 			<div>
 				<div className="flex items-center justify-between mb-4">
-					<h3 className="font-semibold">Kulturortkategorien</h3>
-					<Button variant="ghost" size="sm" onClick={resetFilters}>
+					<h3 className="body1 font-bold">Kulturortkategorien</h3>
+					<button
+						className="body2 font-light underline"
+						onClick={resetCategories}
+					>
 						Filter zurücksetzen
-					</Button>
+					</button>
 				</div>
 				<CategoryFilter
 					categoryGroups={categoryGroups}
