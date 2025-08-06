@@ -2,7 +2,6 @@
 import { createClient } from "@/lib/supabase/client";
 import type { CategoryWithSubcategories, District, FilterState } from "@/types";
 import type { FeatureCollection } from "geojson";
-import localFilteredVenues from "./../../config/resources/venues.json";
 
 // Error handling
 export class ApiError extends Error {
@@ -89,9 +88,34 @@ export async function searchInstitutions(query: string) {
 
 export async function filterInstitutions(query: FilterState) {
 	console.log("[api] query::", query);
+	const supabase = createClient();
+
+	const { data, error } = await supabase.rpc(
+		"get_public_institutions_by_districts_geojson",
+		{
+			district_keys: query.districts,
+		},
+	);
+
+	// const { data, error } = await supabase.rpc(
+	// 	"get_public_institutions_by_categories_geojson",
+	// 	{
+	// 		category_keys: ["education_places"],
+	// 		subcategory_keys: [],
+	// 	},
+	// );
+	// if (error) console.error(error);
+	// else console.log(data);
+
+	if (error) {
+		handleError(error, "filter institutions");
+	}
+
+	console.log("[api] filtered data::", data);
 
 	// Type cast the imported JSON to proper FeatureCollection type
-	return localFilteredVenues as FeatureCollection;
+	// return localFilteredVenues as FeatureCollection;
+	return data;
 }
 
 export async function getCategoriesWithSubcategories(): Promise<
