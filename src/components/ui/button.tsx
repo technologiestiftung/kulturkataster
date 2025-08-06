@@ -21,9 +21,11 @@ const buttonVariants = cva(
 				"map-icon":
 					"rounded-full shadow-md bg-background hover:bg-accent [&_svg]:size-6",
 				accordion: "gap-2 justify-start text-primary-dark px-4",
+				tag: "bg-neutral-10 font-light flex items-center justify-center px-4 rounded-full",
 			},
 			size: {
 				default: "px-4.5 py-2.5 md:px-7 md:py-4",
+				tag: "h-6",
 				sm: "h-9 rounded-md px-3",
 				lg: "h-11 rounded-md px-8",
 				md: "",
