@@ -26,7 +26,7 @@ import Search from "@/icons/search.svg";
 import { useAppStore } from "@/lib/store/appStore";
 import { useMapStore } from "@/lib/store/mapStore";
 import { useVenueStore } from "@/lib/store/venueStore";
-import KukaMiniLogo from "@/logos/kuka-mini.svg";
+import KukaSmallLogo from "@/logos/kuka-small.svg";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { LayerTreeContent } from "../Map/LayerTree/LayerTree";
@@ -162,7 +162,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 						<SidebarMenu className="my-2">
 							<SidebarMenuItem>
 								<button onClick={handleLogoClick}>
-									<KukaMiniLogo className="size-14 cursor-pointer hover:opacity-80 transition-opacity" />
+									<KukaSmallLogo className="size-14 cursor-pointer hover:opacity-80 transition-opacity" />
 								</button>
 							</SidebarMenuItem>
 						</SidebarMenu>
@@ -281,7 +281,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 					onClick={handleLogoClick}
 					className="flex flex-col items-center gap-1 p-2"
 				>
-					<KukaMiniLogo className="size-14" />
+					<KukaSmallLogo className="size-14" />
 				</button>
 			</div>
 
