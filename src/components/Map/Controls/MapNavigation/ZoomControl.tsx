@@ -58,6 +58,7 @@ const ZoomControl: FC<ZoomControlProps> = ({
 				size="icon-only"
 				tooltip={t("map.zoomIn")}
 				onClick={handleZoomIn}
+				className="cursor-pointer"
 			>
 				{zoomInIcon}
 			</ButtonWithTooltip>
@@ -66,6 +67,7 @@ const ZoomControl: FC<ZoomControlProps> = ({
 				size="icon-only"
 				tooltip={t("map.zoomOut")}
 				onClick={handleZoomOut}
+				className="cursor-pointer"
 			>
 				{zoomOutIcon}
 			</ButtonWithTooltip>
