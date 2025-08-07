@@ -14,19 +14,105 @@
 		"closeButton": "Schließen"
 	},
 	"informationModal": {
-		"title": "Informationen zur Kartenanwendung",
-		"subtitle": "Hier können Informationen zum Kulturkataster und zur Funktionsweise stehen.",
-		"description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",
-		"methodology": {
-			"title": "Methodik",
-			"description1": "Räume für Kunst und Kultur sind in Berlin knappe Ressourcen, von denen viele in den letzten Jahrzehnten verloren gegangen und zahlreiche weiterhin an ihrem Standort gefährdet sind. Ein Berliner Kulturkataster soll helfen, diese Räume zu schützen, neue zu erschließen und kulturelle Teilhabe zu stärken. Die Basis bildet eine öffentliche und umfassende Bestandsaufnahme von Kulturräumen und -orten in einer browserbasierten Kartenanwendung, die mit analytisch nutzbaren Kontextdaten zu einem einzigartigen Instrument der kulturellen Stadtentwicklung zusammengeführt wird.",
-			"description2": "Für die Erarbeitung des Konzepts setzen wir auf eine enge Zusammenarbeit mit Akteur*innen aus Kunst, Kultur und Kulturpolitik, um ihre Bedarfe an einem Kataster zu formulieren und zu ermitteln, welche bereits existierenden Datenquellen in das Kataster einfließen können. Für die technische Entwicklung des Kulturkatasters hat die Technologiestiftung Berlin den Zuschlag erhalten ist von der KRB mit der Umsetzung beauftragt worden."
+		"title": "Infos & Service",
+		"subtitle": "",
+		"introduction": "Seit September 2025 steht Ihnen mit dem Kulturkataster Berlin die erste Version unseres digitalen Werkzeugs zur Verfügung, dass die Berliner Kulturlandschaft systematisch erfasst.",
+		"growing": "Das Kulturkataster wächst stetig weiter: Bereits für das Frühjahr 2026 ist Version 2 geplant, und zur Jahresmitte 2026 folgt Version 3. Mit jeder neuen Version nehmen wir weitere Kulturorte auf, ergänzen die Informationen und fügen neue Funktionalitäten hinzu.",
+		"currentVersion": "Die aktuelle Version des Kulturkatasters ist die Version 1.",
+		"scope": {
+			"title": "Umfang Version 1",
+			"features": [
+				"XXXX Kulturorte mit den Grundinformationen (Name, vollständige Adresse, allgemeine Kontaktinformationen, Angaben zu Förderung und Finanzierung)",
+				"16 Kategorien und 71 Unterkategorien",
+				"Einbindung von 12 Fachkarten aus dem Geoportal Berlin",
+				"Ein Suchfeld, indem Sie nach Adressen und Namen von Kulturorten suchen können.",
+				"Einen Suchfilter, der es ermöglicht, Orte nach Bezirk sowie Kategorie und Unterkategorie zu filtern. Darüber hinaus ist es möglich, geschlossene Kulturorte einzublenden."
+			],
+			"upcomingEnhancements": {
+				"title": "Folgende Erweiterungen für Version 1 werden bis November 2025 ergänzt",
+				"items": [
+					"Informationen in Deutscher Gebärdensprache",
+					"Informationen in Leichter Sprache"
+				]
+			}
 		},
-		"usage_info": {
-			"title": "Informationen zur Benutzung",
-			"description1": "Räume für Kunst und Kultur sind in Berlin knappe Ressourcen, von denen viele in den letzten Jahrzehnten verloren gegangen und zahlreiche weiterhin an ihrem Standort gefährdet sind. Ein Berliner Kulturkataster soll helfen, diese Räume zu schützen, neue zu erschließen und kulturelle Teilhabe zu stärken. Die Basis bildet eine öffentliche und umfassende Bestandsaufnahme von Kulturräumen und -orten in einer browserbasierten Kartenanwendung, die mit analytisch nutzbaren Kontextdaten zu einem einzigartigen Instrument der kulturellen Stadtentwicklung zusammengeführt wird.",
-			"description2": "Für die Erarbeitung des Konzepts setzen wir auf eine enge Zusammenarbeit mit Akteur*innen aus Kunst, Kultur und Kulturpolitik, um ihre Bedarfe an einem Kataster zu formulieren und zu ermitteln, welche bereits existierenden Datenquellen in das Kataster einfließen können. Für die technische Entwicklung des Kulturkatasters hat die Technologiestiftung Berlin den Zuschlag erhalten ist von der KRB mit der Umsetzung beauftragt worden.",
-			"downloadPDF": "PDF herunterladen"
+		"usage": {
+			"title": "Bedienung",
+			"introduction": "Das Kulturkataster Berlin wurde so konzipiert, dass es möglichst intuitiv bedient werden kann. Funktionalitäten orientieren sich an gängigen Kartenanwendungen. Grundlegende Bedienungshinweise haben wir an dieser Stelle für Sie zusammengefasst.",
+			"moveMap": {
+				"title": "Karte bewegen",
+				"desktop": "Auf dem Computer: Halten Sie die linke Maustaste gedrückt und ziehen die Karte in die gewünschte Richtung.",
+				"mobile": "Auf dem Smartphone/Tablet: Berühren Sie den Bildschirm mit einem Finger und wischen Sie über die Karte."
+			},
+			"zoom": {
+				"title": "Zoomen",
+				"desktop": "Auf dem Computer: Nutzen Sie das Mausrad oder die Plus- und Minus-Zeichen am unteren rechten Bildschirmrand.",
+				"mobile": "Auf dem Smartphone/Tablet: Legen Sie zwei Finger auf den Bildschirm und bewegen Sie diese auseinander, um zu vergrößern. Zum Verkleinern ziehen Sie die Finger wieder zusammen."
+			},
+			"search": {
+				"title": "Einen Ort suchen",
+				"desktop": "Auf dem Computer: Öffnen Sie das Suchfeld, indem Sie auf das Lupensymbol oben links klicken.",
+				"mobile": "Auf dem Smartphone/Tablet: Öffnen Sie das Suchfeld, indem Sie auf das Lupensymbol unten tippen.",
+				"action": "Geben Sie den Namen eines Ortes oder die Adresse ein und bestätigen Sie Ihre Suche."
+			},
+			"filter": {
+				"title": "Filterfunktionen verwenden",
+				"desktop": "Auf dem Computer: Öffnen Sie die Filterfunktion, indem Sie auf das Symbol mit den drei übereinanderliegenden Strichen oben links klicken.",
+				"mobile": "Auf dem Smartphone/Tablet: Öffnen Sie die Filterfunktion, indem Sie auf das Symbol mit den drei übereinanderliegenden Strichen oben links tippen.",
+				"description": "Sie können nun alle Kulturorte nach Bezirken sowie nach den zugeordneten Kategorien und Unterkategorien filtern.",
+				"closedPlaces": "Standardmäßig werden alle geöffneten Kulturorte auf der Karte dargestellt. Durch einen Klick auf das Bedienfeld \"Geschlossene Orte einblenden\" können Sie sich zusätzlich vorübergehend und dauerhaft geschlossene Kulturorte anzeigen lassen."
+			},
+			"download": {
+				"title": "Eine Auswahl herunterladen",
+				"description": "Das Kulturkataster bietet Ihnen die Möglichkeit, Informationen zu einzelnen sowie auch zu allen Kulturorten Ihrer aktuellen Ansicht herunterzuladen.",
+				"desktop": "Auf dem Computer: Klicken Sie auf den nach unten zeigenden Pfeil in der Seitennavigation oben links.",
+				"mobile": "Auf dem Smartphone/Tablet: Tippen Sie auf den nach unten zeigenden Pfeil in der Navigation unten rechts."
+			},
+			"addPlace": {
+				"title": "Einen Ort eintragen",
+				"desktop": "Auf dem Computer: Öffnen Sie das Mitwirken-Formular, indem sie auf das Stift- Symbol oben links klicken.",
+				"mobile": "Auf dem Smartphone/Tablet: Öffnen Sie das Mitwirken-Formular, indem sie auf das Stift-Symbol unten rechts tippen.",
+				"instructions": "Folgen Sie den Hinweisen des Formulars und füllen Sie die Datenfelder gewissenhaft aus. Bitte beachten Sie, dass es sich bei den mit einem *Symbol versehenen Feldern um Pflichtfelder handelt.",
+				"submit": "Bestätigen Sie die Einverständniserklärung und schicken Sie das Formular ab.",
+				"review": "Das Redaktionsteam wird Ihren Eintrag prüfen und sich bei Rückfragen gegebenenfalls per E-Mail bei Ihnen melden. Wir bitten Sie um Verständnis, dass dieser Prozess einige Zeit in Anspruch nehmen kann, da wir gegebenenfalls auch Fachexpert*innen in den Entscheidungsprozess einbeziehen werden."
+			},
+			"fontSize": {
+				"title": "Schriftgröße ändern",
+				"desktop": "Auf dem Computer: Öffnen Sie das Menü für die barrierefreie Bedienung der Website, indem Sie auf das Personensymbol unten links klicken.",
+				"mobile": "Auf dem Smartphone/Tablet: Öffnen Sie das Menü für die barrierefreie Bedienung der Website, indem Sie auf das Menüsymbol oben rechts tippen und anschließend die Schaltfläche mit dem Personensymbol auswählen.",
+				"action": "Wählen Sie die Schaltfläche mit der Bezeichnung \"Schriftgröße ändern\" aus."
+			},
+			"contrast": {
+				"title": "Kontrast anpassen",
+				"desktop": "Auf dem Computer: Öffnen Sie das Menü für die barrierefreie Bedienung der Website, indem Sie auf das Personensymbol unten links klicken.",
+				"mobile": "Auf dem Handy/Tablet: Öffnen Sie das Menü für die barrierefreie Bedienung der Website, indem Sie auf das Menüsymbol oben rechts tippen und anschließend die Schaltfläche mit dem Personensymbol auswählen.",
+				"action": "Wählen Sie die Schaltfläche mit der Bezeichnung \"Kontrast anpassen\" aus."
+			}
+		},
+		"faq": {
+			"title": "Fragen & Antworten",
+			"questions": [
+				{
+					"question": "Warum ist mein Kulturort nicht im Kulturkataster verzeichnet?",
+					"answer": "Die Redaktion ist bemüht, alle Berliner Kulturorte auf der Karte abzubilden. Dies ist ein Prozess, der nie abgeschlossen sein wird. Zahlreiche Kategorien wurden bisher noch nicht erfasst (z. B. Archive, Kunst im öffentlichen Raum, Künstler*innenresidenzen, oder Kulturorganisationen). Gleichzeitig existieren auch innerhalb der Kategorien noch Lücken (z.B. private Galerien, private Kunstschulen), die in Zukunft erschlossen werden sollen. Falls Sie einen Ort vermissen, können Sie diesen über das Formular einreichen. Wählen Sie hierfür das Stift-Symbol in der Seitennavigation links auf der Computer-Version bzw. unten rechts in der Darstellung auf dem Tablet oder Smartphone aus und folgen Sie den Anweisungen."
+				},
+				{
+					"question": "Wie kann ich Informationen zu einem Kulturort ergänzen oder korrigieren?",
+					"answer": "In der Version 1 ist die Mitarbeit an den Inhalten des Kulturkatasters lediglich über ein Formular vorgesehen. Wenn Sie Informationen zu einem Kulturort ergänzen oder korrigieren wollen, können Sie diese über das Formular einreichen. Wählen Sie hierfür das Stift-Symbol in der Seitennavigation links auf der Desktop-Version bzw. unten rechts in der Darstellung auf dem Tablet oder Smartphone aus und folgen Sie den Anweisungen."
+				},
+				{
+					"question": "Ich habe meinen Kulturort beim Kulturkataster eingereicht, doch er erscheint immer noch nicht auf der Karte. Was ist da los?",
+					"answer": "Bitte haben Sie Verständnis dafür, dass Einträge im Kulturkataster nicht automatisch veröffentlicht werden. Das Redaktionsteam prüft jeden Eintrag einzeln. Wir bitten Sie um Verständnis, dass dieser Prozess einige Zeit in Anspruch nehmen kann, da wir gegebenenfalls auch Fachexpert*innen in den Entscheidungsprozess einbeziehen werden. Bei Rückfragen melden wir uns gegebenenfalls per E-Mail bei Ihnen."
+				},
+				{
+					"question": "Warum sind im Kulturkataster nur eine Handvoll an Fachkarten aus dem Geoportal?",
+					"answer": "Mit jeder Version wächst das Kulturkataster. Das Projektteam hat sich entschieden, mit einer kleinen Auswahl an Fachkarten aus dem Geoportal zu starten, um auf Grundlage der Empfehlungen der Nutzer*innen weitere Karten ins Kulturkataster zu integrieren. Gerne können Sie uns Ihre Vorschläge per E-Mail schicken: info@kulturkataster.berlin"
+				},
+				{
+					"question": "Wie kann ich meinen Kulturort aus dem Kulturkataster löschen lassen?",
+					"answer": "In der Version können wir Ihnen leider keine eigenständige Verwaltung Ihrer Daten bieten. Wenn Sie Ihren Ort löschen lassen möchten, bitten wir Sie darum, unsere Redaktion zu kontaktieren und wir werden Ihren Eintrag schnellstmöglich löschen. Bitte schreiben Sie eine E-Mail an: info@kulturkataster.berlin"
+				}
+			]
 		}
 	},
 	"privacyModal": {
