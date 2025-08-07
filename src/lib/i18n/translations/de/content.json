@@ -34,6 +34,116 @@
 		"subtitle": "Hier kommt der Datenschutztext.",
 		"description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus."
 	},
+	"aboutModal": {
+		"title": "Über das Projekt",
+		"subtitle": "",
+		"introduction": "In einer wachsenden Metropole wie Berlin sind Kunst- und Kulturräume knappe Ressourcen. Verdrängung, Raumkonkurrenzen und Standortkonflikte gefährden die Kulturräume Berlins, die für die Stadt eine vielschichtige und entscheidende Rolle spielen. Sie sind Standortfaktor, Tourismusmagnet und Innovationsmotor, dienen der Wissensvermittlung sowie dem Erinnern und fördern den gesellschaftlichen Zusammenhalt, indem sie einen Identitätsrahmen für eine vielfältige und inklusive Stadtgesellschaft bilden. Das Kulturkataster, eine online frei zugängliche Bestandsaufnahme der Berliner Kulturlandschaft auf einer digitalen Karte, ist ein entscheidender Schritt hin zu einer nachhaltigen kulturellen Stadtentwicklung.",
+		"history": "Erstmals findet das Kulturkataster im Berliner Koalitionsvertrag von 2011 Erwähnung und wird seitdem in allen Koalitionsverträgen fortgeschrieben. Ende 2022 wird die Kulturraum Berlin gGmbH von der Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt mit der Konzeption betraut und stellt in zwei Konzeptpapieren (ausgeführt durch das Studio für unendliche Möglichkeiten) die Ausgangssituation und Bedarfe sowie ein Umsetzungskonzept für das Kulturkataster vor. Auch die Umsetzung wird 2024 zur Aufgabe der KRB. Mit der Entwicklung der online-basierten Kartenanwendung beauftragte die KRB die Technologiestiftung Berlin.",
+		"guidelines": {
+			"title": "Kulturpolitische Leitlinien",
+			"description": "Den Rahmen für die Entwicklung des Kulturkatasters bilden vier kulturpolitische Leitlinien, auf die sich die KRB mit der Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt sowie auch mit der Senatsverwaltung für Stadtentwicklung, Bauen und Wohnen verständigt hat:",
+			"items": [
+				"Evidenzbasierte Kulturpolitik und kulturelle Stadtentwicklung: Das Kulturkataster Berlin schafft eine umfassende Datengrundlage über Kulturräume, um eine faktengestützte Kulturpolitik und eine gezielte Stadtentwicklung zu ermöglichen.",
+				"Sicherung sowie Neuerschließung von Räumen für Kultur: Das Kulturkataster dient als Instrument für ein nachhaltiges Monitoring von Kulturflächen, um deren Erhalt zu gewährleisten und neue Räume zu erschließen.",
+				"Gerechte Verteilung von Kulturangeboten im Stadtraum und Chancengerechtigkeit im Hinblick auf Teilhabe: Das Kulturkataster visualisiert Lücken im Kulturangebot und unterstützt die Stadtplanung dabei, ein ausgewogenes und gerechtes Kulturangebot für alle Berliner*innen zu schaffen.",
+				"Verbesserung der Zusammenarbeit zwischen Ressorts, Ebenen und Sektoren: Als flexibles digitales Planungsinstrument stärkt das Kulturkataster die Zusammenarbeit innerhalb der verschiedenen Zuständigkeitsbereiche, Verwaltungsebenen sowie der gesamten Berliner Kulturszene."
+			]
+		},
+		"approach": "Für das Kulturkataster Berlin gilt es, eine Kulturlandschaft zu erfassen, die so vielfältig, dynamisch und interdisziplinär, wie keine andere ist. So sehr sich die Redaktion auch bemühen wird, dieser Prozess wird niemals abgeschlossen sein. Deshalb ist es erklärtes Ziel des Projekts, sich dem Ist-Zustand der Berliner Kulturlandschaft auf der digitalen Karte kontinuierlich anzunähern. Dies gelingt jedoch nur mit denjenigen, für die das Kulturkataster eine wichtige Arbeitshilfe darstellen kann – den Verwaltungen auf Bezirks- und Landesebene, den zahlreichen Interessen- und Spartenverbänden, Wissenschaftler*innen, Expert*innen, Aktivist*innen und natürlich den Kulturorten selbst.",
+		"concept": "Ein weit gefasster Kulturbegriff und ein deskriptives Kulturverständnis bilden die Grundlage des Kulturkatasters. Die Datenbank erfasst eine Vielzahl von Orten. Weitere Kategorien und Kulturorte folgen in den nächsten Versionen. Anstatt kulturelle Ausdrucksformen zu bewerten, werden diese im Kulturkataster anhand zahlreicher Kriterien beschrieben und eingeordnet. Dies würdigt den individuellen Beitrag, den sowohl einzelne Orte als auch ganze Sparten zum kulturellen Gefüge der Stadt beitragen.",
+		"documentation": "Eine ausführliche Dokumentation zur Entwicklung der Datenbank des Kulturkatasters finden Sie hier.",
+		"downloadPDF": "PDF herunterladen",
+		"versions": {
+			"title": "Zukünftige Versionen",
+			"description": "Die Entwicklung Berliner Kulturkatasters erfolgt als lernender Prozess. Das bedeutet, dass in festgelegten zeitlichen Abständen neue Versionen des Kulturkatasters veröffentlicht werden. Zukünftige Versionen sollen neue Funktionalitäten und aktualisierte Informationen zur Verfügung stellen. Dieser Prozess ermöglicht es dem Projektteam, Anmerkungen und Kritik in den fortlaufenden Entwicklungsprozess zu integrieren und lädt die Nutzenden des Kulturkatasters dazu ein, die zukünftige Ausrichtung aktiv mitzugestalten.",
+			"planned": "Folgende Versionen des Kulturkatasters sind geplant:",
+			"items": [
+				"Version 1 – Bestandsaufnahme von Kulturorten mit grundlegenden Standortinformationen in ausgewählten Kulturraumkategorien (Veröffentlichung September 2025)",
+				"Version 2 – Einführung neuer Kulturortkategorien und Aktualisierung der Daten; Einführung eines Log-in-Bereichs; gemeinsame Datenpflege und Zugang für Kulturorte, Verbände und Verwaltung (Veröffentlichung Frühjahr 2026)",
+				"Version 3 – Aktualisierung und Vervollständigung der Daten; Einbindung neuer Fachkarten aus dem Geoportal; Veröffentlichung von bedrohten Kulturorten; Erweiterung des Log-In-Bereichs (Veröffentlichung Mitte 2026)"
+			]
+		},
+		"thanks": "Das Berliner Kulturkataster verdankt seine erfolgreiche Veröffentlichung der Begeisterung, dem Engagement und dem gemeinsamen Wirken aller Personen, für die die Berliner Kulturlandschaft von ebenso großer Bedeutung ist wie für das Projektteam. Diese tiefe Verankerung in der Szene bildet die Grundlage dafür, dass das langfristig ausgerichtete Projekt seine Vision in vollem Umfang entfalten und dynamisch weiterentwickeln kann.",
+		"credits": {
+			"funding": {
+				"title": "Förderung",
+				"organization": "Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt"
+			},
+			"team": {
+				"title": "Projektteam",
+				"members": [
+					"Projektleitung: Daniel Jakobson",
+					"Projektmanagement: Ali Deniz Şensöz",
+					"Datenredaktion: Lina Rippel",
+					"Strategische Projektkoordination: Laura Raber",
+					"Vergabe und Administration: Doris Antonides-Heidelmeyer",
+					"Technische Projektleitung bis 2024: Metini Krivanish"
+				]
+			},
+			"steering": {
+				"title": "Steuerungsgremium",
+				"members": [
+					"Tobias Schmidt-Pathenheimer (Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt)",
+					"Henning Roser (Senatsverwaltung für Stadtentwicklung Bauen und Wohnen)",
+					"Stéphane Bauer (Bezirksamt Friedrichshain-Kreuzberg)",
+					"Daniela Bell (Bezirksamt Lichtenberg)",
+					"Susanne Roggenhofer (Bezirksamt Pankow)",
+					"Sonja Augart (Raumbüro Freie Szene)",
+					"Kai Sachse (Clubcommission)",
+					"Sonja Schaudt (Kulturkonferenz Berlin, Landesmusikrat)",
+					"Julia Brodauf (Atelierbüro im kulturwerk des bbk berlin)",
+					"Daniel Brunet (LAFT)",
+					"Benedikt Stoll (Urbane Praxis e.V.)"
+				]
+			},
+			"partners": {
+				"title": "Partner*innen",
+				"list": [
+					"Berliner Museumsverband e.V.",
+					"Berliner Projektfonds Urbane Praxis",
+					"Berliner Zentrengipfel - Senatsverwaltung für Wirtschaft, Energie und Betriebe",
+					"Börsenverein des Deutschen Buchhandels - Landesverband Berlin-Brandenburg",
+					"Bundesverband Soziokultur e.V.",
+					"Deutscher Bibliotheksverband",
+					"IG Jazz Berlin e.V.",
+					"Internationale Gesellschaft der Bildenden Künste (IGBK)",
+					"IT-Dienstleistungszentrum Berlin (ITDZ)",
+					"Institut für Kulturelle Teilhabeforschung (IKTf)",
+					"Kulturerbenetz Berlin",
+					"Landesverband freie darstellende Künste Berlin e.V. (LAFT Berlin)",
+					"Lettrétage e.V.",
+					"Moabit-Wedding-Kunstfestival - Bezirksamt Mitte",
+					"Musicboard Berlin",
+					"Raumsonde - Kollektiv Spieltrieb",
+					"Schulverzeichnis der Senatsverwaltung für Bildung, Jugend und Familie",
+					"Senatsverwaltung für Stadtentwicklung, Bauen und Wohnen",
+					"servicezentrum musikschulen (szm)"
+				]
+			},
+			"contractors": {
+				"title": "Auftragnehmer*innen",
+				"technical": "Technische Umsetzung: Technologiestiftung Berlin, Projektmanagement Ninett Rosenfeld",
+				"management": "Digitale Projektsteuerung: Carsten Hein",
+				"concept": "Konzept, Beratung und Beteiligungsformate: Studio für unendliche Möglichkeiten",
+				"design": "Design: Common Studio",
+				"editorial": {
+					"title": "Externe Datenredaktion",
+					"items": [
+						"Ateliers: Atelierbüro im kulturwerk des bbk berlin",
+						"Clubs und Musikspielstätten: Clubcommission - Netzwerk der Berliner Clubkultur e.V.",
+						"Potenzialorte und Orte der kulturellen Stadtentwicklung: Urbane Praxis e.V.",
+						"Orte des Berliner Tanzes: Tanzbüro Berlin - Zeitgenössischer Tanz Berlin e.V.",
+						"Projekträume und -initiativen: Netzwerk freier Berliner Projekträume und -initiativen e.V.",
+						"Soziokulturelle Orte und Street-Art-Flächen: Daniel Schneider (Archiv der Jugendkulturen e.V.)"
+					]
+				},
+				"collaboration": "Mitarbeit Online-Redaktion: Lilli Berlin",
+				"accessibility": "Prüfung und Beratung Digitale Barrierefreiheit: adesso SE",
+				"privacy": "Beratung zum Datenschutz: Cortina Consult",
+				"legal": "Rechtliche Beratung: Kanzlei Laaser"
+			}
+		}
+	},
 	"imprintModal": {
 		"title": "Impressum",
 		"subtitle": "Hier kommt der Impressumtext.",
