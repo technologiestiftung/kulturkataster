@@ -123,8 +123,8 @@
 		}
 	},
 	"map": {
-		"zoomIn": "Verkleinern",
-		"zoomOut": "Vergrößern",
+		"zoomIn": "Vergrößern",
+		"zoomOut": "Verkleinern",
 		"geolocate": "Meinen Standort finden",
 		"layerTree": "Fachkarten",
 		"layerTreeTitle": "Fachkarten",
