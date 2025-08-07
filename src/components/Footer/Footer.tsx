@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { AccessibilityModal } from "../Modals/Pages/AccessibilityModal";
 import { ImprintModal } from "../Modals/Pages/ImprintModal";
 import { PrivacyModal } from "../Modals/Pages/PrivacyModal";
-import { AboutModal } from "../Modals/Pages/aboutModal";
+import { AboutModal } from "../Modals/Pages/ProjectAboutModal";
 
 const footerItems = [
 	{ id: "about" },
