@@ -1,14 +1,14 @@
 "use client";
 
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useTranslation } from "react-i18next";
-import KukaLargeLogo from "@/logos/kuka-large.svg";
-import ArrowNarrowRight from "@/icons/arrow-narrow-right.svg";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
-import TechnologieStiftungLogo from "@/logos/technologiestiftung.svg";
-import SenateLogo from "@/logos/senate.svg";
+import ArrowNarrowRight from "@/icons/arrow-narrow-right.svg";
 import KRBLogo from "@/logos/KRB.svg";
+import KukaLargeLogo from "@/logos/kuka-large.svg";
+import SenateLogo from "@/logos/senate.svg";
+import TechnologieStiftungLogo from "@/logos/technologiestiftung.svg";
+import { useTranslation } from "react-i18next";
 
 interface WelcomeModalProps {
 	open: boolean;
@@ -37,9 +37,12 @@ export function WelcomeModal({ open, onOpenChange }: WelcomeModalProps) {
 						</h1>
 					</div>
 					<div className="flex flex-col md:items-start space-y-2">
-						<p className="body1">
-							{t("welcomeModal.description", { ns: "content" })}
-						</p>
+						<p
+							className="body1"
+							dangerouslySetInnerHTML={{
+								__html: t("welcomeModal.description", { ns: "content" }),
+							}}
+						/>
 						<div className="text-primary-dark flex space-x-2 cursor-pointer">
 							<ArrowNarrowRight className="stroke-primary-dark size-6" />
 							<a
