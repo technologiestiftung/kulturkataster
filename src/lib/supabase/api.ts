@@ -90,22 +90,25 @@ export async function filterInstitutions(query: FilterState) {
 	console.log("[api] query::", query);
 	const supabase = createClient();
 
+	// For now, we'll use the district-based filtering and can extend it later
+	// to include category, subcategory, and status filtering when the backend supports it
 	const { data, error } = await supabase.rpc(
 		"get_public_institutions_by_districts_geojson",
 		{
-			district_keys: query.districts,
+			district_keys: query.district_keys,
 		},
 	);
 
+	// TODO: Extend API to support these parameters when backend is ready:
 	// const { data, error } = await supabase.rpc(
-	// 	"get_public_institutions_by_categories_geojson",
+	// 	"get_public_institutions_by_filters_geojson",
 	// 	{
-	// 		category_keys: ["education_places"],
-	// 		subcategory_keys: [],
+	// 		district_keys: query.district_keys,
+	// 		category_keys: query.category_keys,
+	// 		subcategory_keys: query.subcategory_keys,
+	// 		status: query.status,
 	// 	},
 	// );
-	// if (error) console.error(error);
-	// else console.log(data);
 
 	if (error) {
 		handleError(error, "filter institutions");
