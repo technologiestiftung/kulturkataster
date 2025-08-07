@@ -15,9 +15,9 @@ import { useVenueStore } from "@/lib/store/venueStore";
 import { getCategoryIconComponent } from "@/lib/utils/iconUtils";
 import {
 	CategoryType,
+	CategoryWithSubcategories,
+	District,
 	FilterState,
-	TransformedCategory,
-	TransformedDistrict,
 } from "@/types";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { FC, useState } from "react";
@@ -25,7 +25,7 @@ import { useFilterData } from "./hooks/useFilterData";
 
 // Simple district filter component
 const DistrictTags: FC<{
-	districts: TransformedDistrict[];
+	districts: District[];
 	selected: string[];
 	onChange: (key: string) => void;
 }> = ({ districts, selected, onChange }) => (
@@ -54,7 +54,7 @@ const DistrictTags: FC<{
 
 // Category section with collapsible subcategories
 const CategorySection: FC<{
-	group: TransformedCategory;
+	group: CategoryWithSubcategories;
 	selectedCategories: string[];
 	selectedSubcategories: string[];
 	isOpen: boolean;
@@ -70,9 +70,7 @@ const CategorySection: FC<{
 	onCategoryChange,
 	onSubcategoryChange,
 }) => {
-	const IconComponent = getCategoryIconComponent(
-		group.categoryKey as CategoryType,
-	);
+	const IconComponent = getCategoryIconComponent(group.key as CategoryType);
 
 	return (
 		<Collapsible open={isOpen} onOpenChange={onToggle}>
@@ -83,14 +81,14 @@ const CategorySection: FC<{
 						<div className="w-6 h-6">
 							<IconComponent />
 						</div>
-						<span className="body2 font-bold">{group.categoryName}</span>
+						<span className="body2 font-bold">{group.name}</span>
 						<span className="body2">({group.subcategories.length})</span>
 					</button>
 				</CollapsibleTrigger>
 
 				<Checkbox
-					checked={selectedCategories.includes(group.categoryKey)}
-					onCheckedChange={() => onCategoryChange(group.categoryKey)}
+					checked={selectedCategories.includes(group.key)}
+					onCheckedChange={() => onCategoryChange(group.key)}
 				/>
 			</div>
 
@@ -267,12 +265,12 @@ const Filter: FC = () => {
 				<div className="space-y-2">
 					{categoryGroups.map((group) => (
 						<CategorySection
-							key={group.categoryKey}
+							key={group.key}
 							group={group}
 							selectedCategories={filters?.category_keys || []}
 							selectedSubcategories={filters?.subcategory_keys || []}
-							isOpen={openSections.includes(group.categoryKey)}
-							onToggle={() => toggleSection(group.categoryKey)}
+							isOpen={openSections.includes(group.key)}
+							onToggle={() => toggleSection(group.key)}
 							onCategoryChange={toggleCategory}
 							onSubcategoryChange={toggleSubcategory}
 						/>

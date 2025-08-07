@@ -5,16 +5,16 @@ import {
 	getDistricts,
 } from "@/lib/supabase/api";
 import {
-	transformCategories,
-	transformDistricts,
+	addCategoryTranslations,
+	addDistrictTranslations,
 } from "@/lib/utils/filterUtils";
-import { TransformedCategory, TransformedDistrict } from "@/types";
+import { CategoryWithSubcategories, District } from "@/types";
 import { useCallback, useEffect, useState } from "react";
 export const useFilterData = () => {
-	const [categoryGroups, setCategoryGroups] = useState<TransformedCategory[]>(
-		[],
-	);
-	const [districts, setDistricts] = useState<TransformedDistrict[]>([]);
+	const [categoryGroups, setCategoryGroups] = useState<
+		CategoryWithSubcategories[]
+	>([]);
+	const [districts, setDistricts] = useState<District[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 
@@ -26,8 +26,8 @@ export const useFilterData = () => {
 					getDistricts(),
 				]);
 
-				setCategoryGroups(transformCategories(categoriesData));
-				setDistricts(transformDistricts(districtsData));
+				setCategoryGroups(addCategoryTranslations(categoriesData));
+				setDistricts(addDistrictTranslations(districtsData));
 			} catch (err) {
 				console.error("Error fetching filter data:", err);
 				setError("Failed to load filter data");
@@ -44,8 +44,8 @@ export const useFilterData = () => {
 		setError(null);
 		Promise.all([getCategoriesWithSubcategories(), getDistricts()])
 			.then(([categoriesData, districtsData]) => {
-				setCategoryGroups(transformCategories(categoriesData));
-				setDistricts(transformDistricts(districtsData));
+				setCategoryGroups(addCategoryTranslations(categoriesData));
+				setDistricts(addDistrictTranslations(districtsData));
 			})
 			.catch((err) => {
 				console.error("Error fetching filter data:", err);
