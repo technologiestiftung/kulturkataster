@@ -201,10 +201,10 @@ const Filter: FC = () => {
 	const toggleClosedVenues = useCallback(() => {
 		if (hideClosedVenues) {
 			// filter current Data and update filtered Data
-    } else {
-      initializeVenues();
-    }
-    
+		} else {
+			initializeVenues();
+		}
+
 		setHideClosedVenues(!hideClosedVenues);
 	}, [initializeVenues, hideClosedVenues]);
 
