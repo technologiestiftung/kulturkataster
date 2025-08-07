@@ -87,7 +87,6 @@ export async function searchInstitutions(query: string) {
 }
 
 export async function filterInstitutions(query: FilterState) {
-	console.log("[api] query::", query);
 	const supabase = createClient();
 
 	// For now, we'll use the district-based filtering and can extend it later
@@ -113,8 +112,6 @@ export async function filterInstitutions(query: FilterState) {
 	if (error) {
 		handleError(error, "filter institutions");
 	}
-
-	console.log("[api] filtered data::", data);
 
 	// Type cast the imported JSON to proper FeatureCollection type
 	// return localFilteredVenues as FeatureCollection;
