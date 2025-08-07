@@ -27,7 +27,7 @@ export const addDistrictTranslations = (data: District[]): District[] =>
 			district.name ||
 			district.key,
 	}));
-	
+
 export const hasActiveFilters = (filters: FilterState | null): boolean => {
 	if (!filters) return false;
 	return (
