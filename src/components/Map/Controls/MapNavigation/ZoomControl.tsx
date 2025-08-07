@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { useMapStore } from "@/lib/store/mapStore";
 import { FC, ReactNode, useCallback, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import MinusIcon from "../../../../icons/minus.svg";
 import PlusIcon from "../../../../icons/plus.svg";
 
@@ -15,6 +16,7 @@ const ZoomControl: FC<ZoomControlProps> = ({
 	zoomInIcon = <PlusIcon />,
 	zoomOutIcon = <MinusIcon />,
 }) => {
+	const { t } = useTranslation("common");
 	const map = useMapStore((state) => state.map);
 
 	const handleZoomIn = useCallback(() => {
@@ -54,7 +56,7 @@ const ZoomControl: FC<ZoomControlProps> = ({
 			<Button
 				variant="map-icon"
 				size="icon-only"
-				title="Zoom in"
+				title={t("map.zoomIn")}
 				onClick={handleZoomIn}
 			>
 				{zoomInIcon}
@@ -62,7 +64,7 @@ const ZoomControl: FC<ZoomControlProps> = ({
 			<Button
 				variant="map-icon"
 				size="icon-only"
-				title="Zoom out"
+				title={t("map.zoomOut")}
 				onClick={handleZoomOut}
 			>
 				{zoomOutIcon}
