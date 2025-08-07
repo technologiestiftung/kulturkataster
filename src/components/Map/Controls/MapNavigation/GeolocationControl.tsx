@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { ButtonWithTooltip } from "@/components/ui/button";
 import { useMapStore } from "@/lib/store/mapStore";
 import { transform } from "ol/proj";
 import { FC, ReactNode, useCallback } from "react";
@@ -64,14 +64,14 @@ const GeolocationControl: FC<GeolocationControlProps> = ({
 	if (!map) return null;
 
 	return (
-		<Button
+		<ButtonWithTooltip
 			variant="map-icon"
 			size="icon-only"
-			title={t("map.geolocate")}
+			tooltip={t("map.geolocate")}
 			onClick={handleGeolocate}
 		>
 			{geolocateIcon}
-		</Button>
+		</ButtonWithTooltip>
 	);
 };
 
