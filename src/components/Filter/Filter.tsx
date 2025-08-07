@@ -21,6 +21,7 @@ import {
 } from "@/types";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { FC, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useFilterData } from "./hooks/useFilterData";
 
 // Simple district filter component
@@ -115,6 +116,7 @@ const Filter: FC = () => {
 	const { setFilters, filters, applyFilters, initializeVenues } =
 		useVenueStore();
 	const { categoryGroups, districts, loading, error, retry } = useFilterData();
+	const { t } = useTranslation(["content", "common"]);
 
 	const [openSections, setOpenSections] = useState<string[]>([]);
 	const [hideClosedVenues, setHideClosedVenues] = useState(true);
@@ -198,7 +200,7 @@ const Filter: FC = () => {
 				<ContentContainer>
 					<div className="flex items-center gap-2 body2">
 						<div className="animate-spin rounded-full h-4 w-4 border-b-2"></div>
-						Loading filters...
+						{t("filter.loading", { ns: "content" })}
 					</div>
 				</ContentContainer>
 			</div>
@@ -210,9 +212,11 @@ const Filter: FC = () => {
 		return (
 			<div className="Filter-root p-4 h-full">
 				<ContentContainer>
-					<div className="body2 text-alert mb-2">{error}</div>
+					<div className="body2 text-alert mb-2">
+						{t("filter.error", { ns: "content" })}
+					</div>
 					<Button size="sm" onClick={retry}>
-						Retry
+						{t("filter.retry", { ns: "content" })}
 					</Button>
 				</ContentContainer>
 			</div>
@@ -224,7 +228,7 @@ const Filter: FC = () => {
 			{/* Header Section */}
 			<ContentContainer className="p-6">
 				<h2 className="body2 font-bold mb-3 pl-2">
-					Angezeigte Kulturorte in Berlin
+					{t("filter.displayedVenues", { ns: "content" })}
 				</h2>
 				<button
 					className="flex items-center gap-2 transition-opacity body2 text-primary-dark"
@@ -233,8 +237,8 @@ const Filter: FC = () => {
 					{hideClosedVenues ? <Eye /> : <EyeOff />}
 					<span className="body2 font-bold">
 						{hideClosedVenues
-							? "Geschlossene Orte ausblenden"
-							: "Geschlossene Orte einblenden"}
+							? t("filter.hideClosed", { ns: "content" })
+							: t("filter.showClosed", { ns: "content" })}
 					</span>
 				</button>
 			</ContentContainer>
@@ -242,9 +246,11 @@ const Filter: FC = () => {
 			{/* Districts Section */}
 			<ContentContainer className="py-6 px-4">
 				<div className="flex items-center justify-between mb-4">
-					<h3 className="body1 font-bold">Bezirke</h3>
+					<h3 className="body1 font-bold">
+						{t("filter.districts.title", { ns: "content" })}
+					</h3>
 					<button className="body2 font-light underline" onClick={resetFilters}>
-						Filter zurücksetzen
+						{t("filter.districts.resetFilters", { ns: "content" })}
 					</button>
 				</div>
 				<DistrictTags
@@ -257,9 +263,11 @@ const Filter: FC = () => {
 			{/* Categories Section */}
 			<ContentContainer className="py-6 px-4">
 				<div className="flex items-center justify-between mb-4">
-					<h3 className="body1 font-bold">Kulturortkategorien</h3>
+					<h3 className="body1 font-bold">
+						{t("filter.categories.title", { ns: "content" })}
+					</h3>
 					<button className="body2 font-light underline" onClick={resetFilters}>
-						Filter zurücksetzen
+						{t("filter.categories.resetFilters", { ns: "content" })}
 					</button>
 				</div>
 				<div className="space-y-2">
