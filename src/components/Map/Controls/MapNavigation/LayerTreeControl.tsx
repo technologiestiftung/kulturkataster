@@ -8,8 +8,10 @@ import { useMapStore } from "@/lib/store/mapStore";
 import { ManagedLayer } from "@/types";
 import Image from "next/image";
 import { FC, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 
 const LayerTreeControl: FC = () => {
+	const { t } = useTranslation("common");
 	const layers = useMapStore((state) => state.layers);
 	const setIsLayerTreeOpen = useMapStore((state) => state.setIsLayerTreeOpen);
 	const { setOpen, setOpenMobile, isMobile } = useSidebar();
@@ -70,7 +72,7 @@ const LayerTreeControl: FC = () => {
 			<Button
 				variant="map-icon"
 				size="icon-only"
-				title="Fachkarten"
+				title={t("map.layerTree")}
 				onClick={handleLayerTreeOpen}
 				className={`relative w-12 h-12 p-0 bg-neutral-80 overflow-hidden`}
 			>
