@@ -2,6 +2,12 @@ import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
@@ -59,4 +65,44 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 );
 Button.displayName = "Button";
 
-export { Button, buttonVariants };
+export interface ButtonWithTooltipProps extends ButtonProps {
+	tooltip: string | React.ComponentProps<typeof TooltipContent>;
+	tooltipSide?: "top" | "right" | "bottom" | "left";
+	delayDuration?: number;
+}
+
+const ButtonWithTooltip = React.forwardRef<
+	HTMLButtonElement,
+	ButtonWithTooltipProps
+>(
+	(
+		{
+			tooltip,
+			tooltipSide = "left",
+			delayDuration = 0,
+			children,
+			...buttonProps
+		},
+		ref,
+	) => {
+		// Convert string tooltip to object format
+		const tooltipProps =
+			typeof tooltip === "string" ? { children: tooltip } : tooltip;
+
+		return (
+			<TooltipProvider delayDuration={delayDuration}>
+				<Tooltip>
+					<TooltipTrigger asChild>
+						<Button ref={ref} {...buttonProps}>
+							{children}
+						</Button>
+					</TooltipTrigger>
+					<TooltipContent side={tooltipSide} {...tooltipProps} />
+				</Tooltip>
+			</TooltipProvider>
+		);
+	},
+);
+ButtonWithTooltip.displayName = "ButtonWithTooltip";
+
+export { Button, buttonVariants, ButtonWithTooltip };
