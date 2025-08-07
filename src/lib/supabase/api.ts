@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createClient } from "@/lib/supabase/client";
-import type { FilterState } from "@/types";
+import type { CategoryWithSubcategories, District, FilterState } from "@/types";
 import type { FeatureCollection } from "geojson";
-import staticCategoryMap from "./categoryMap.json";
-import staticDistrictMap from "./districtMap.json";
 
 // Error handling
 export class ApiError extends Error {
@@ -123,12 +121,32 @@ export async function filterInstitutions(query: FilterState) {
 	return data;
 }
 
-export async function getCategoriesWithSubcategories() {
-	// get_public_category_map
-	return staticCategoryMap;
+export async function getCategoriesWithSubcategories(): Promise<
+	CategoryWithSubcategories[]
+> {
+	// TODO: Replace with actual backend call when ready
+	// const supabase = createClient();
+	// const { data, error } = await supabase.rpc("get_public_category_map");
+	// if (error) {
+	// 	handleError(error, "fetch categories");
+	// }
+	// return data || []; // Backend will return pre-transformed data
+
+	// For now, return static data directly (same format as backend will provide)
+	const staticCategoryMap = await import("./categoryMap.json");
+	return staticCategoryMap.default as CategoryWithSubcategories[];
 }
 
-export async function getDistricts() {
-	// get_public_district_map
-	return staticDistrictMap;
+export async function getDistricts(): Promise<District[]> {
+	// TODO: Replace with actual backend call when ready
+	// const supabase = createClient();
+	// const { data, error } = await supabase.rpc("get_public_district_map");
+	// if (error) {
+	// 	handleError(error, "fetch districts");
+	// }
+	// return data || []; // Backend will return pre-transformed data
+
+	// For now, return static data directly (same format as backend will provide)
+	const staticDistrictMap = await import("./districtMap.json");
+	return staticDistrictMap.default as District[];
 }

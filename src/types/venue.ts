@@ -22,16 +22,20 @@ export enum CategoryType {
 export interface Category {
 	id: number;
 	key: CategoryType;
+	created_at?: string;
 }
 
 export interface CategoryWithSubcategories extends Category {
 	subcategories: Subcategory[];
+	name?: string; // Translated name
 }
 
 export interface Subcategory {
 	id: number;
 	key: string;
 	category_id: number;
+	created_at?: string;
+	name?: string; // Translated name
 }
 
 export interface District {
@@ -39,23 +43,7 @@ export interface District {
 	created_at: string;
 	id: number;
 	key: string;
-	name: string;
-}
-
-export interface TransformedCategory {
-	categoryKey: string;
-	categoryName: string;
-	subcategories: TransformedSubcategory[];
-}
-
-export interface TransformedSubcategory {
-	key: string;
-	name: string;
-}
-
-export interface TransformedDistrict {
-	key: string;
-	name: string;
+	name: string; // Already has translated name
 }
 
 export interface ParentOrganization {

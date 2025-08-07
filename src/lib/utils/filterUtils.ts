@@ -1,30 +1,25 @@
-import {
-	CategoryWithSubcategories,
-	District,
-	TransformedCategory,
-	TransformedDistrict,
-} from "@/types";
 import enumMapDE from "@/lib/i18n/translations/de/enumMap.json";
+import { CategoryWithSubcategories, District } from "@/types";
 
-export const transformCategories = (
+export const addCategoryTranslations = (
 	data: CategoryWithSubcategories[],
-): TransformedCategory[] =>
+): CategoryWithSubcategories[] =>
 	data.map((category) => ({
-		categoryKey: category.key,
-		categoryName:
+		...category,
+		name:
 			enumMapDE.category[category.key as keyof typeof enumMapDE.category] ||
 			category.key,
 		subcategories: category.subcategories.map((sub) => ({
-			key: sub.key,
+			...sub,
 			name:
 				enumMapDE.subcategory[sub.key as keyof typeof enumMapDE.subcategory] ||
 				sub.key,
 		})),
 	}));
 
-export const transformDistricts = (data: District[]): TransformedDistrict[] =>
+export const addDistrictTranslations = (data: District[]): District[] =>
 	data.map((district) => ({
-		key: district.key,
+		...district,
 		name:
 			enumMapDE.district_id[
 				district.key as keyof typeof enumMapDE.district_id
