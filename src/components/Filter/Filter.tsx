@@ -1,5 +1,6 @@
 "use client";
 
+import ContentContainer from "@/components/Content/ContentContainer";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -75,17 +76,15 @@ const CategorySection: FC<{
 
 	return (
 		<Collapsible open={isOpen} onOpenChange={onToggle}>
-			<div className="flex items-center justify-between w-full p-2 hover:bg-gray-50 rounded">
+			<div className="flex items-center justify-between w-full p-2 rounded">
 				<CollapsibleTrigger asChild>
 					<button className="flex items-center gap-2">
 						{isOpen ? <ChevronDown size={16} /> : <ChevronUp size={16} />}
 						<div className="w-6 h-6">
 							<IconComponent />
 						</div>
-						<span className="text-sm font-medium">{group.categoryName}</span>
-						<span className="text-xs text-gray-500">
-							({group.subcategories.length})
-						</span>
+						<span className="body2 font-bold">{group.categoryName}</span>
+						<span className="body2">({group.subcategories.length})</span>
 					</button>
 				</CollapsibleTrigger>
 
@@ -95,13 +94,13 @@ const CategorySection: FC<{
 				/>
 			</div>
 
-			<CollapsibleContent className="pl-6 space-y-1">
+			<CollapsibleContent className="pl-16 pr-2 space-y-1">
 				{group.subcategories.map((subcategory) => (
 					<div
 						key={subcategory.key}
 						className="flex items-center justify-between py-1"
 					>
-						<span className="text-sm text-gray-600">{subcategory.name}</span>
+						<span className="body2">{subcategory.name}</span>
 						<Checkbox
 							checked={selectedSubcategories.includes(subcategory.key)}
 							onCheckedChange={() => onSubcategoryChange(subcategory.key)}
@@ -198,10 +197,12 @@ const Filter: FC = () => {
 	if (loading) {
 		return (
 			<div className="Filter-root p-4 bg-white border-r border-gray-200 h-full overflow-y-auto">
-				<div className="flex items-center gap-2 text-sm text-gray-500">
-					<div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-500"></div>
-					Loading filters...
-				</div>
+				<ContentContainer>
+					<div className="flex items-center gap-2 body2">
+						<div className="animate-spin rounded-full h-4 w-4 border-b-2"></div>
+						Loading filters...
+					</div>
+				</ContentContainer>
 			</div>
 		);
 	}
@@ -209,24 +210,26 @@ const Filter: FC = () => {
 	// Error state
 	if (error) {
 		return (
-			<div className="Filter-root p-4 bg-white border-r border-gray-200 h-full overflow-y-auto">
-				<div className="text-sm text-red-500 mb-2">{error}</div>
-				<Button size="sm" onClick={retry}>
-					Retry
-				</Button>
+			<div className="Filter-root p-4 h-full">
+				<ContentContainer>
+					<div className="body2 text-alert mb-2">{error}</div>
+					<Button size="sm" onClick={retry}>
+						Retry
+					</Button>
+				</ContentContainer>
 			</div>
 		);
 	}
 
 	return (
-		<div className="Filter-root p-4 bg-white border-r border-gray-200 h-full overflow-y-auto">
-			{/* Header with closed venues toggle */}
-			<div className="mb-6">
-				<h2 className="body2 font-bold mb-2">
+		<div className="Filter-root p-4 h-full flex flex-col gap-2">
+			{/* Header Section */}
+			<ContentContainer className="p-6">
+				<h2 className="body2 font-bold mb-3 pl-2">
 					Angezeigte Kulturorte in Berlin
 				</h2>
 				<button
-					className="flex items-center gap-2 hover:opacity-80 transition-opacity text-sm text-purple-600"
+					className="flex items-center gap-2 transition-opacity body2 text-primary-dark"
 					onClick={toggleClosedVenues}
 				>
 					{hideClosedVenues ? <Eye /> : <EyeOff />}
@@ -236,10 +239,10 @@ const Filter: FC = () => {
 							: "Geschlossene Orte einblenden"}
 					</span>
 				</button>
-			</div>
+			</ContentContainer>
 
 			{/* Districts Section */}
-			<div className="mb-6">
+			<ContentContainer className="py-6 px-4">
 				<div className="flex items-center justify-between mb-4">
 					<h3 className="body1 font-bold">Bezirke</h3>
 					<button className="body2 font-light underline" onClick={resetFilters}>
@@ -251,10 +254,10 @@ const Filter: FC = () => {
 					selected={filters?.district_keys || []}
 					onChange={toggleDistrict}
 				/>
-			</div>
+			</ContentContainer>
 
 			{/* Categories Section */}
-			<div>
+			<ContentContainer className="py-6 px-4">
 				<div className="flex items-center justify-between mb-4">
 					<h3 className="body1 font-bold">Kulturortkategorien</h3>
 					<button className="body2 font-light underline" onClick={resetFilters}>
@@ -275,7 +278,7 @@ const Filter: FC = () => {
 						/>
 					))}
 				</div>
-			</div>
+			</ContentContainer>
 		</div>
 	);
 };
