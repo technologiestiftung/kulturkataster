@@ -37,12 +37,14 @@ export function WelcomeModal({ open, onOpenChange }: WelcomeModalProps) {
 						</h1>
 					</div>
 					<div className="flex flex-col md:items-start space-y-2">
-						<p
-							className="body1"
-							dangerouslySetInnerHTML={{
-								__html: t("welcomeModal.description", { ns: "content" }),
-							}}
-						/>
+						<div className="space-y-4">
+							<p className="body1">
+								{t("welcomeModal.description1", { ns: "content" })}
+							</p>
+							<p className="body1">
+								{t("welcomeModal.description2", { ns: "content" })}
+							</p>
+						</div>
 						<div className="text-primary-dark flex space-x-2 cursor-pointer">
 							<ArrowNarrowRight className="stroke-primary-dark size-6" />
 							<a
