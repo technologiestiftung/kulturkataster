@@ -1,5 +1,5 @@
 import enumMapDE from "@/lib/i18n/translations/de/enumMap.json";
-import { CategoryWithSubcategories, District } from "@/types";
+import { CategoryWithSubcategories, District, FilterState } from "@/types";
 
 export const addCategoryTranslations = (
 	data: CategoryWithSubcategories[],
@@ -27,3 +27,13 @@ export const addDistrictTranslations = (data: District[]): District[] =>
 			district.name ||
 			district.key,
 	}));
+	
+export const hasActiveFilters = (filters: FilterState | null): boolean => {
+	if (!filters) return false;
+	return (
+		filters.district_keys.length > 0 ||
+		filters.category_keys.length > 0 ||
+		filters.subcategory_keys.length > 0 ||
+		filters.status !== undefined
+	);
+};

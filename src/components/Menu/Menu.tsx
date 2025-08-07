@@ -26,6 +26,7 @@ import Search from "@/icons/search.svg";
 import { useAppStore } from "@/lib/store/appStore";
 import { useMapStore } from "@/lib/store/mapStore";
 import { useVenueStore } from "@/lib/store/venueStore";
+import { hasActiveFilters } from "@/lib/utils/filterUtils";
 import KukaSmallLogo from "@/logos/kuka-small.svg";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -56,6 +57,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	const isLayerTreeOpen = useMapStore((state) => state.isLayerTreeOpen);
 	const setIsLayerTreeOpen = useMapStore((state) => state.setIsLayerTreeOpen);
 	const selectedVenueId = useVenueStore((state) => state.selectedVenueId);
+	const filters = useVenueStore((state) => state.filters);
 	const { firstTimeUser, setFirstTimeUser } = useAppStore();
 
 	useEffect(() => {
@@ -262,7 +264,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 										{activeItem === "venue-detail" && <VenueDetailContent />}
 									</div>
 									{(activeItem === "venue-detail" ||
-										activeItem === "filter") && (
+										(activeItem === "filter" && hasActiveFilters(filters))) && (
 										<div className="sticky bottom-0 flex justify-center p-4">
 											<Button variant={"outline"} className="w-full">
 												<Download size={6} viewBox="0 0 24 24" />
