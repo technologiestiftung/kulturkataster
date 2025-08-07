@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { ButtonWithTooltip } from "@/components/ui/button";
 import { useMapStore } from "@/lib/store/mapStore";
 import { FC, ReactNode, useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
@@ -53,22 +53,22 @@ const ZoomControl: FC<ZoomControlProps> = ({
 
 	return (
 		<div className="hidden md:flex flex-col gap-2">
-			<Button
+			<ButtonWithTooltip
 				variant="map-icon"
 				size="icon-only"
-				title={t("map.zoomIn")}
+				tooltip={t("map.zoomIn")}
 				onClick={handleZoomIn}
 			>
 				{zoomInIcon}
-			</Button>
-			<Button
+			</ButtonWithTooltip>
+			<ButtonWithTooltip
 				variant="map-icon"
 				size="icon-only"
-				title={t("map.zoomOut")}
+				tooltip={t("map.zoomOut")}
 				onClick={handleZoomOut}
 			>
 				{zoomOutIcon}
-			</Button>
+			</ButtonWithTooltip>
 		</div>
 	);
 };

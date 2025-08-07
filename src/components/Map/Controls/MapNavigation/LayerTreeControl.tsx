@@ -1,7 +1,7 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { ButtonWithTooltip } from "@/components/ui/button";
 import { useSidebar } from "@/components/ui/sidebar";
 import ContextMapIcon from "@/icons/fachkarten.svg";
 import { useMapStore } from "@/lib/store/mapStore";
@@ -69,10 +69,10 @@ const LayerTreeControl: FC = () => {
 
 	return (
 		<div className="relative">
-			<Button
+			<ButtonWithTooltip
 				variant="map-icon"
 				size="icon-only"
-				title={t("map.layerTree")}
+				tooltip={t("map.layerTree")}
 				onClick={handleLayerTreeOpen}
 				className={`relative w-12 h-12 p-0 bg-neutral-80 overflow-hidden`}
 			>
@@ -88,7 +88,7 @@ const LayerTreeControl: FC = () => {
 						</>
 					)}
 				</div>
-			</Button>
+			</ButtonWithTooltip>
 
 			{visibleCount > 0 && (
 				<Badge
