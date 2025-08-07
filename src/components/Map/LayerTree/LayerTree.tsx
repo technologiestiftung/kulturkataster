@@ -26,6 +26,7 @@ import {
 	useRef,
 	useState,
 } from "react";
+import { useTranslation } from "react-i18next";
 
 // Constants
 const LAYER_THUMBNAIL_SIZE = 80;
@@ -289,6 +290,7 @@ FloatingLayerButton.displayName = "FloatingLayerButton";
 
 // Main LayerTree component with scroll container support
 const LayerTree: FC = () => {
+	const { t } = useTranslation("common");
 	const { subjectLayers, visibleCount, topVisibleLayer } = useLayerData();
 	const setIsLayerTreeOpen = useMapStore((state) => state.setIsLayerTreeOpen);
 	const { state: sidebarState, isMobile, setOpenMobile } = useSidebar();
@@ -334,17 +336,17 @@ const LayerTree: FC = () => {
 		<Card
 			className={`flex w-[400px] max-h-[70vh] absolute bottom-4 z-50 flex-col bg-neutral-5 transition-all duration-200 left-4`}
 			role="dialog"
-			aria-label="Layer tree"
+			aria-label={t("map.layerTreeTitle")}
 		>
 			<CardHeader className="shadow-sm p-1 pl-6">
 				<div className="flex items-center justify-between">
-					<CardTitle className="body1">Fachkarten</CardTitle>
+					<CardTitle className="body1">{t("map.layerTreeTitle")}</CardTitle>
 					<Button
 						variant="ghost"
 						size="sm"
 						className="w-14 h-14 p-0"
 						onClick={handleClose}
-						aria-label="Close layer tree"
+						aria-label={t("map.closeLayerTree")}
 					>
 						<X className="w-4 h-4" />
 					</Button>
@@ -367,13 +369,14 @@ export const LayerTreeContent: FC<{
 	accordionValue?: string;
 	onAccordionChange?: (value: string) => void;
 }> = ({ layers: providedLayers, accordionValue, onAccordionChange }) => {
+	const { t } = useTranslation("common");
 	const { subjectLayers } = useLayerData();
 	const layersToRender = providedLayers || subjectLayers;
 
 	if (layersToRender.length === 0) {
 		return (
 			<div className="flex items-center justify-center py-8 text-muted-foreground">
-				<p>Keine Fachkarten verfügbar</p>
+				<p>{t("map.noLayersAvailable")}</p>
 			</div>
 		);
 	}
@@ -386,7 +389,7 @@ export const LayerTreeContent: FC<{
 			onValueChange={onAccordionChange}
 			className="flex flex-col gap-2 overflow-y-auto max-h-[60vh]"
 			role="list"
-			aria-label="Available layers"
+			aria-label={t("map.availableLayers")}
 		>
 			{layersToRender.map((layer) => (
 				<LayerItem
