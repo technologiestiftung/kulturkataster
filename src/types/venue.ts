@@ -99,9 +99,10 @@ export interface VenueFeature extends VenueProperties {
 }
 
 export interface FilterState {
-	districts: string[];
-	categories: string[]; // Changed to string to match enumMap keys
-	subcategories: string[];
+	district_keys: string[];
+	category_keys: string[];
+	subcategory_keys: string[];
+	status?: "closed" | "open";
 }
 
 export interface VenueStoreState {

@@ -9,7 +9,7 @@ export const useVenueStore = create<VenueStoreState>((set, get) => ({
 	selectedVenueId: null,
 	setSelectedVenueId: (id: string | null) => set({ selectedVenueId: id }),
 
-	filters: { districts: [], categories: [], subcategories: [] },
+	filters: { district_keys: [], category_keys: [], subcategory_keys: [] },
 	setFilters: (filters) => set({ filters }),
 
 	initializeVenues: async () => {
