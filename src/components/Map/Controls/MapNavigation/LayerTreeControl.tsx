@@ -74,7 +74,7 @@ const LayerTreeControl: FC = () => {
 				size="icon-only"
 				tooltip={t("map.layerTree")}
 				onClick={handleLayerTreeOpen}
-				className={`relative w-12 h-12 p-0 bg-neutral-80 overflow-hidden`}
+				className={`relative w-12 h-12 p-0 bg-neutral-80 overflow-hidden cursor-pointer`}
 			>
 				<div className="w-full h-full flex items-center justify-center">
 					{isMobile ? (
