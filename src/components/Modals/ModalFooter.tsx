@@ -9,8 +9,8 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { AccessibilityModal } from "../Modals/Pages/AccessibilityModal";
 import { ImprintModal } from "../Modals/Pages/ImprintModal";
-import { InformationModal } from "../Modals/Pages/InformationModal";
 import { PrivacyModal } from "../Modals/Pages/PrivacyModal";
+import { AboutModal } from "./Pages/AboutModal";
 
 const footerItems = [
 	{ id: "about" },
@@ -21,14 +21,14 @@ const footerItems = [
 
 export function ModalFooter() {
 	const { t } = useTranslation("common");
-	const [infoModalOpen, setInfoModalOpen] = useState(false);
+	const [aboutModalOpen, setAboutModalOpen] = useState(false);
 	const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
 	const [imprintModalOpen, setImprintModalOpen] = useState(false);
 	const [accessibilityModalOpen, setAccessibilityModalOpen] = useState(false);
 
 	const handleItemClick = (id: string) => {
 		if (id === "about") {
-			setInfoModalOpen(true);
+			setAboutModalOpen(true);
 			return;
 		}
 		if (id === "imprint") {
@@ -48,10 +48,7 @@ export function ModalFooter() {
 	return (
 		<>
 			<div className="ModalFooter-root flex justify-center w-full h-auto bg-secondary px-6 py-12 ">
-				<InformationModal
-					open={infoModalOpen}
-					onOpenChange={setInfoModalOpen}
-				/>
+				<AboutModal open={aboutModalOpen} onOpenChange={setAboutModalOpen} />
 				<PrivacyModal
 					open={privacyModalOpen}
 					onOpenChange={setPrivacyModalOpen}
