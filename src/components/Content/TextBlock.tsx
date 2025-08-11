@@ -16,16 +16,67 @@ interface TextBlockProps extends HTMLAttributes<HTMLDivElement> {
 	titleAs?: ElementType;
 	titleClassName?: string;
 	text?: string;
+	textVariant?: "body1" | "body2";
 	link?: LinkProps;
 	subText?: SubTextProps;
 	className?: string;
 }
 
+const Title = ({
+	as: Tag = "h2",
+	className,
+	children,
+}: {
+	as?: ElementType;
+	className?: string;
+	children?: React.ReactNode;
+}) => {
+	if (!children) return null;
+	return <Tag className={className}>{children}</Tag>;
+};
+
+const Text = ({
+	variant = "body2",
+	children,
+}: {
+	variant?: "body1" | "body2";
+	children?: React.ReactNode;
+}) => {
+	if (!children) return null;
+	return <div className={variant}>{children}</div>;
+};
+
+const Link = ({ link }: { link?: LinkProps }) => {
+	if (!link) return null;
+	return (
+		<a
+			href={link.href}
+			target={link.target || "_self"}
+			className="body2 text-primary hover:text-primary-dark underline"
+		>
+			{link.text}
+		</a>
+	);
+};
+
+const SubText = ({ subText }: { subText?: SubTextProps }) => {
+	if (!subText) return null;
+	return (
+		<div className="flex flex-col gap-2 mt-4">
+			{subText.subtitle && (
+				<div className="body2 font-bold">{subText.subtitle}</div>
+			)}
+			<div className="body2">{subText.text}</div>
+		</div>
+	);
+};
+
 const TextBlock: FC<TextBlockProps> = ({
 	title,
-	titleAs: TitleTag = "h2",
-	titleClassName = "",
+	titleAs,
+	titleClassName,
 	text,
+	textVariant,
 	link,
 	subText,
 	className = "",
@@ -34,29 +85,13 @@ const TextBlock: FC<TextBlockProps> = ({
 	return (
 		<div className={`TextBlock-root ${className}`} {...props}>
 			<div className="flex flex-col gap-2">
-				{title && <TitleTag className={titleClassName}>{title}</TitleTag>}
-
-				{text && <div className="body2">{text}</div>}
-
-				{link && (
-					<a
-						href={link.href}
-						target={link.target || "_self"}
-						className="body2 text-primary hover:text-primary-dark underline"
-					>
-						{link.text}
-					</a>
-				)}
+				<Title as={titleAs} className={titleClassName}>
+					{title}
+				</Title>
+				<Text variant={textVariant}>{text}</Text>
+				<Link link={link} />
 			</div>
-
-			{subText && (
-				<div className="flex flex-col gap-2 mt-4">
-					{subText.subtitle && (
-						<div className="body2 font-bold">{subText.subtitle}</div>
-					)}
-					<div className="body2">{subText.text}</div>
-				</div>
-			)}
+			<SubText subText={subText} />
 		</div>
 	);
 };
