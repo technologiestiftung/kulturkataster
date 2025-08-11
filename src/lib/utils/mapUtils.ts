@@ -17,6 +17,10 @@ export function transformGeoJSON(geojson: any, targetProjection = "EPSG:3857") {
 	const transformed = JSON.parse(JSON.stringify(geojson)); // Deep copy
 
 	function transformGeometry(geometry: any) {
+		if (!geometry) {
+			return;
+		}
+
 		if (geometry.type === "Point") {
 			geometry.coordinates = transformCoordinates(
 				geometry.coordinates,

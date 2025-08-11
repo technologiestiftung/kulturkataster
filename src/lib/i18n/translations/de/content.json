@@ -333,5 +333,22 @@
 				"url": "https://www.berlin.de/sen/justiz/aufgaben/barrierefreiheit/kontaktformular/"
 			}
 		}
+	},
+	"filter": {
+		"title": "Filter",
+		"displayedVenues": "Angezeigte Kulturorte in Berlin",
+		"hideClosed": "Geschlossene Orte ausblenden",
+		"showClosed": "Geschlossene Orte einblenden",
+		"districts": {
+			"title": "Bezirke",
+			"resetFilters": "Filter zurücksetzen"
+		},
+		"categories": {
+			"title": "Kulturortkategorien",
+			"resetFilters": "Filter zurücksetzen"
+		},
+		"loading": "Filter werden geladen...",
+		"error": "Fehler beim Laden der Filter",
+		"retry": "Erneut versuchen"
 	}
 }

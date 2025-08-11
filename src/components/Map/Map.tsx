@@ -1,5 +1,6 @@
 "use client";
 
+import { useVenueStore } from "@/lib/store/venueStore";
 import dynamic from "next/dynamic";
 import { FC } from "react";
 import HoverCard from "../HoverCard/HoverCard";
@@ -15,15 +16,15 @@ const LazyOlMap = dynamic(() => import("./OlMap/OlMap"), {
 });
 
 const Map: FC = () => {
+	const venues = useVenueStore((state) => state.venues);
+
 	return (
 		<div className="Map-root w-full h-full">
 			{true && <LayerTree />}
 
 			<LazyOlMap>
 				<LayerInitializer />
-				<Layers>
-					<VenueLayer />
-				</Layers>
+				<Layers>{venues && <VenueLayer venuesData={venues} />}</Layers>
 
 				<MapControls>
 					<MapNavigationControls />
