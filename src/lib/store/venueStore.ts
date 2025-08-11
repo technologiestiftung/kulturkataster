@@ -15,7 +15,6 @@ export const useVenueStore = create<VenueStoreState>((set, get) => ({
 	initializeVenues: async () => {
 		try {
 			const venuesData = await getInstitutionsGeoJSON();
-			console.log("[venueStore] venuesData::", venuesData);
 			set({ venues: venuesData });
 		} catch (error) {
 			console.error("Failed to initialize venues:", error);
