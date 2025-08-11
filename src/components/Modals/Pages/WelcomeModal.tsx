@@ -7,7 +7,6 @@ import ArrowNarrowRight from "@/icons/arrow-narrow-right.svg";
 import KRBLogo from "@/logos/KRB.svg";
 import KukaLargeLogo from "@/logos/kuka-large.svg";
 import SenateLogo from "@/logos/senate.svg";
-import TechnologieStiftungLogo from "@/logos/technologiestiftung.svg";
 import { useTranslation } from "react-i18next";
 
 interface WelcomeModalProps {
@@ -88,9 +87,8 @@ export function WelcomeModal({ open, onOpenChange }: WelcomeModalProps) {
 									{t("footer.credit.text", { ns: "common" })}
 								</p>
 							</div>
-							<div className="flex md:w-1/2 md:justify-end justify-around space-x-4 md:mx-4">
+							<div className="flex md:w-1/2 md:justify-end justify-around gap-2 space-x-4 md:mx-4">
 								<KRBLogo className="w-20 md:w-24 h-auto" />
-								<TechnologieStiftungLogo className="w-36 md:w-48 h-auto" />
 								<SenateLogo className="w-32 md:w-42 h-auto" />
 							</div>
 						</div>
