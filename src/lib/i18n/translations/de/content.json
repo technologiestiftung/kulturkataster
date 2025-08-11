@@ -236,85 +236,89 @@
 		"description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus."
 	},
 	"accessibilityModal": {
-		"title": "Erklärung zur Barrierefreiheit",
-		"subtitle": "Erklärung zur Barrierefreiheit Subtitle",
-		"description": "Wir bemühen uns, unseren Webauftritt barrierefrei zu machen. Die Erklärung zur digitalen Barrierefreiheit wird im Gesetz über die barrierefreie Informations- und Kommunikationstechnik Berlin (BIKTG Bln) verlangt. Die technischen Anforderungen zur Barrierefreiheit ergeben sich aus der BITV 2.0. Diese Erklärung zur digitalen Barrierefreiheit gilt für die Website  {{ url }}.",
+		"title": "Erklärung zur digitalen Barrierefreiheit",
+		"subtitle": "Kulturraum Berlin gGmbH",
+		"description": "Wir bemühen uns, unseren Webauftritt “Kulturkataster Berlin” und dessen mobile Anwendung barrierefrei zu gestalten. Die Erklärung zur digitalen Barrierefreiheit wird im Gesetz über die barrierefreie Informations- und Kommunikationstechnik Berlin (BIKTG Bln) verlangt. Die technischen Anforderungen zur Barrierefreiheit ergeben sich aus der BITV 2.0.",
+		"descriptionLink": "Diese Erklärung zur digitalen Barrierefreiheit gilt für den Webauftritt:",
+		"link": "https://kulturkataster.berlin",
 		"when": {
-			"title": "Wann wurde die Erklärung zur Barrierefreiheit erstellt?",
-			"description": "Diese Erklärung wurde am 30.04.2025 erstellt. Die Erklärung basiert auf einer vorgenommenen Selbstbewertung."
+			"title": "Erstellung dieser Erklärung zur Barrierefreiheit",
+			"description": "Diese Erklärung wurde am 05.08.2025 erstellt. Die Aussagen dieser Erklärung wurden zuletzt am 05.08.2025 überprüft. Die Überprüfung der digitalen Barrierefreiheit wurde in Form einer Selbstbewertung von der Kulturraum Berlin gGmbH durchgeführt."
 		},
 		"how": {
-			"title": "Wie barrierefrei ist das Angebot?",
-			"description": "Diese Website ist nur teilweise barrierefrei. Sie erfüllt die Anforderungen der Barrierefreie-Informationstechnik-Verordnung (BITV 2.0) in Verbindung mit der Norm EN 301 549 bzw. den Web Content Accessibility Guidelines (WCAG) 2.1 Stufe AA nur teilweise."
+			"title": "Wie barrierefrei ist das Kulturkataster Berlin?",
+			"description": "Dieser Webauftritt ist teilweise barrierefrei. Es werden nur teilweise die Anforderungen der BITV 2.0 erfüllt."
 		},
 		"which": {
 			"title": "Welche Bereiche sind nicht barrierefrei?",
-			"description": "Die nachstehend aufgeführten Bereiche sind aufgrund von Unvereinbarkeit mit den Anforderungen der BITV 2.0 / EN 301 549 / WCAG 2.1 AA noch nicht vollständig barrierefrei:",
-			"perceivability": {
-				"title": "Wahrnehmbarkeit",
-				"alternative": {
-					"title": "Alternativtexte",
-					"description": "Für Bilder und Bedienelemente sind aussagekräftige Textalternativen teilweise nicht vorhanden oder nicht ausreichend formuliert."
+			"description": "Die nachstehend aufgeführten Bereiche sind aus folgenden Gründen nicht barrierefrei:",
+			"subheading": "Unvereinbarkeit mit BITV 2.0",
+			"list_intro": "Teilbereiche, die nicht barrierefrei sind:",
+			"barriers": [
+				{
+					"title": "Barriere: Inhalte",
+					"description": "Die Website bietet derzeit (Stand September 2025) keine Inhalte in Leichter Sprache und keine Videos in Deutscher Gebärdensprache (DGS) an.",
+					"measures": "Texte in Leichter Sprache sowie Erklärvideos in Deutscher Gebärdensprache (DGS) sind derzeit in Arbeit. Sie beinhalten grundlegende Informationen zum Kulturkataster und zur Nutzung der Plattform.",
+					"timeline": "Die Veröffentlichung der Inhalte in Leichter Sprache und DGS ist für Oktober 2025 geplant."
 				},
-				"contrast": {
-					"title": "Kontrast",
-					"description": "Die erforderlichen Mindestkontraste für Texte, Bedienelemente und Grafiken sind noch nicht durchgängig erreicht."
+				{
+					"title": "Barriere: Ansicht",
+					"description": "Darstellung der Kulturstandorte im Kulturkataster erfolgt derzeit ausschließlich über eine interaktive Kartenansicht.",
+					"measures": "Es ist geplant, eine ergänzende Listenansicht der Kulturstandorte, die vollständig tastaturbedienbar und screenreaderfreundlich ist, bereitzustellen. Diese Listenansicht soll als alternative Navigationsmöglichkeit zur Karte dienen und so eine barriereärmere Nutzung ermöglichen.",
+					"timeline": "Die Umsetzung der Listenansicht ist bis Dezember 2025 vorgesehen."
 				},
-				"adaptability": {
-					"title": "Anpassungsfähigkeit",
-					"description": "Bei Textvergrößerung oder Nutzung auf schmalen Bildschirmen kann es zu Darstellungsproblemen oder Informationsverlust kommen (Zoom/Reflow). Individuelle Browser-Einstellungen (z.B. eigene Farben, Schriftarten) werden nicht durchgängig übernommen."
+				{
+					"title": "Barriere: Dokumente",
+					"description": "Einige der auf der Website bereitgestellten Dokumente, wie z. B. herunterladbare Excel-Tabellen mit gefilterten Kulturstandorten oder einzelne PDF-Dateien, entsprechen nicht den Anforderungen an barrierefreie Dokumente. Diese Dateien sind teilweise nicht mit Screenreadern lesbar oder nicht für die Tastaturnavigation optimiert.",
+					"measures": "Die Dokumente sollen künftig in barrierefreier Form angeboten werden. Dafür werden barrierearme Dateiformate verwendet und die Inhalte werden entsprechend der Standards für barrierefreie Dokumente überarbeitet.",
+					"timeline": "Die Überarbeitung der bestehenden Dateien ist für 2026 vorgesehen. Neue Dokumente sollen 2026 barrierearm veröffentlicht werden."
 				},
-				"language": {
-					"title": "Leichte Sprache / Deutsche Gebärdensprache",
-					"description": "Die gesetzlich geforderten Informationen in Leichter Sprache und Deutscher Gebärdensprache sind noch nicht vorhanden."
+				{
+					"title": "Barriere: Tastaturbedienbarkeit",
+					"description": "Einige interaktive Elemente der Website – insbesondere Filterfunktionen, Kartenelemente oder Navigationspunkte – sind derzeit nicht per Tastatur bedienbar.",
+					"measures": "Die technische Struktur der Website wird überarbeitet, um eine vollständige Tastatursteuerung aller interaktiven Elemente zu gewährleisten.",
+					"timeline": "Die Umsetzung erfolgt bis Ende 2025."
+				},
+				{
+					"title": "Barriere: Sichtbarer Fokus",
+					"description": "Beim Navigieren mit der Tastatur ist der sichtbare Fokus nicht an allen interaktiven Elementen deutlich erkennbar. Die betrifft die Navigationsschaltflächen „Verkleinern“, „Vergrößern“ und „Meinen Standort finden“.",
+					"measures": "Das visuelle Fokusdesign wird überarbeitet, sodass interaktive Elemente beim Durchlaufen klar hervorgehoben werden.",
+					"timeline": "Die Umsetzung erfolgt bis Ende 2025."
+				},
+				{
+					"title": "Barriere: Alternativtexte für Bilder und Symbole",
+					"description": "Einige Icons oder Buttons auf der Website verfügen nicht über aussagekräftige Alternativtexte.",
+					"measures": "Alle grafischen Elemente werden überprüft und mit korrekten Alternativtexten versehen.",
+					"timeline": "Die Umsetzung erfolgt im Laufe des Jahres 2026."
+				},
+				{
+					"title": "Barriere: Fehlende ARIA-Rollen und Landmarken",
+					"description": "Die semantische Struktur der Website ist nicht vollständig durch ARIA-Rollen und Landmarken definiert. Screenreader können dadurch nicht alle Bereiche der Website korrekt erfassen.",
+					"measures": "Die Seitenstruktur wird um semantische HTML-Elemente und ARIA-Rollen ergänzt, um die Orientierung für assistive Technologien zu verbessern.",
+					"timeline": "Die Umsetzung erfolgt bis Ende 2025."
+				},
+				{
+					"title": "Barriere: Unstrukturierte Überschriften (h1–h6)",
+					"description": "Die hierarchische Struktur der Überschriften ist nicht auf allen Seiten korrekt umgesetzt. Dies kann die Navigation mit Screenreadern erschweren.",
+					"measures": "Die HTML-Struktur wird überarbeitet, um eine konsistente und logische Überschriftenstruktur sicherzustellen.",
+					"timeline": "Die Korrektur erfolgt im Laufe des Jahres 2026."
+				},
+				{
+					"title": "Barriere: Fehlende Rückmeldung bei Interaktionen",
+					"description": "Dynamische Inhalte, wie z. B. die Anwendung von Filtern oder das Anzeigen eines Standorts, werden nicht durch Statusmeldungen oder Hinweise für Screenreader begleitet.",
+					"measures": "Die Interaktionen werden technisch geprüft und so ergänzt, dass sie Screenreadern Rückmeldungen übermitteln.",
+					"timeline": "Die Umsetzung ist für das Jahr 2026 vorgesehen."
 				}
-			},
-			"operability": {
-				"title": "Bedienbarkeit",
-				"keyboard": {
-					"title": "Tastaturbedienung",
-					"description": "Die Navigation und Bedienung der Website ist nicht durchgängig mit der Tastatur möglich. Einige Bedienelemente sind nur mit der Maus erreichbar."
-				},
-				"focus": {
-					"title": "Fokusindikatoren",
-					"description": "Fokusindikatoren für die Tastaturnavigation sind nicht durchgängig vorhanden oder ausreichend sichtbar."
-				},
-				"structure": {
-					"title": "Struktur und Navigation",
-					"description": "Die Struktur der Website ist nicht durchgängig logisch und konsistent. Einige Links und Bedienelemente sind nicht eindeutig beschriftet."
-				},
-				"timed": {
-					"title": "Zeitgesteuerte Inhalte",
-					"description": "Bei zeitgesteuerten Inhalten (z.B. automatische Updates) fehlen Möglichkeiten zur Steuerung oder Anpassung der Zeitlimits."
-				}
-			},
-			"understandability": {
-				"title": "Verständlichkeit",
-				"label": {
-					"title": "Beschriftungen und Anweisungen",
-					"description": "Einige Formularelemente und Bedienelemente sind nicht ausreichend beschriftet oder die Anweisungen sind unklar."
-				}
-			},
-			"robustness": {
-				"title": "Robustheit",
-				"documents": {
-					"title": "Barrierefreie Dokumente",
-					"description": "Die bereitgestellten Dokumente (z.B. PDFs) sind nicht durchgängig barrierefrei. Einige Dokumente enthalten keine oder unzureichende Tags und Strukturinformationen."
-				}
-			},
-			"closing_remarks": {
-				"title": "Schlussbemerkungen",
-				"description": "Wir arbeiten kontinuierlich daran, die Barrierefreiheit unserer Website zu verbessern. Bitte zögern Sie nicht, uns bei Fragen oder Anregungen zur Barrierefreiheit zu kontaktieren."
-			}
+			]
 		},
 		"contact": {
-			"title": "Kontakt zur Barrierefreiheit",
-			"description": "Wenn Sie auf unserer Website auf Barrieren stoßen oder Verbesserungsvorschläge haben, kontaktieren Sie uns bitte unter:",
-			"name": "Kulturraum Berlin gGmbH",
+			"title": "Barrieren melden",
+			"description": "Sie möchten Informationen zur Umsetzung der Barrierefreiheit oder möchten bestehende Barrieren melden? Sie können etwas auf unserer Website nicht ausreichend wahrnehmen, bedienen oder verstehen? Sie benötigen Informationen in einer barrierefreien Form? Dann informieren Sie uns bitte.",
+			"name": "Daniel Jakobson",
 			"company": "Kulturraum Berlin gGmbH",
 			"telephone": {
-				"label": "Telefon",
-				"number": "+49 30 3030 444 60"
+				"label": "T",
+				"number": "+49 (0)30 3030 444 76"
 			},
 			"email": {
 				"label": "E-Mail",
@@ -322,15 +326,16 @@
 			}
 		},
 		"contact_officer": {
-			"title": "Kontakt zur Landesbeauftragten für digitale Barrierefreiheit",
-			"description": "Wir bemühen uns, Ihre Anfragen innerhalb einer angemessenen Frist zu beantworten. Wenn Sie keine Antwort erhalten oder mit der Antwort ganz oder teilweise unzufrieden sind, können Sie sich an die Landesbeauftragte für digitale Barrierefreiheit wenden.",
+			"title": "Kontakt zur Landesbeauftragten für digitale Barrierefreiheit (Durchsetzungsverfahren)",
+			"description": "Wenn Ihre Kontaktaufnahme mit uns nicht erfolgreich war, Sie innerhalb von einem Monat keine Antwort erhalten haben oder die Antwort unzureichend war, können Sie sich an die Landesbeauftragte für digitale Barrierefreiheit wenden und ein Durchsetzungsverfahren anstreben. Bitte kontaktieren Sie immer zuerst uns!",
 			"link1": {
-				"text": "Landesbeauftragte für digitale Barrierefreiheit Berlin",
-				"url": "https://www.berlin.de/sen/justiz/aufgaben/barrierefreiheit/"
+				"text": "Zum Kontaktformular",
+				"url": "https://www.berlin.de/lb/digitale-barrierefreiheit/includes/formular.1326107.php"
 			},
+			"info_text_link2": "Weitere Informationen zum Durchsetzungsverfahren und der Landesbeauftragten für digitale Barrierefreiheit finden sie ",
 			"link2": {
-				"text": "Kontaktformular der Landesbeauftragten für digitale Barrierefreiheit",
-				"url": "https://www.berlin.de/sen/justiz/aufgaben/barrierefreiheit/kontaktformular/"
+				"text": "hier.",
+				"url": "https://www.berlin.de/lb/digitale-barrierefreiheit/aufgaben/durchsetzungsverfahren/durchsetzungsverfahren-1305830.php"
 			}
 		}
 	},
