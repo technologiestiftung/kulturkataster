@@ -152,7 +152,6 @@ export function LocationSearch() {
 	};
 
 	const handleResultClick = (result: SearchResult) => {
-
 		if (isGeoFeature(result)) {
 			handleGeoFeatureClick(result);
 		} else {
