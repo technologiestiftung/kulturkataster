@@ -66,9 +66,9 @@ export function AboutModal({ open, onOpenChange }: AboutModalProps) {
 	const content = t("aboutModal", { returnObjects: true }) as AboutContent;
 
 	const CreditSectionComponent = ({ data }: { data: CreditSection }) => (
-		<div>
+		<div className="mb-8">
 			<p className="body1 font-bold">{data.title}</p>
-			<div className="body2 space-y-1">
+			<div className="body2 space-y-1 mt-4">
 				{data.organization && <p>{data.organization}</p>}
 				{data.members?.map((item, i) => <p key={i}>{item}</p>)}
 				{data.list?.map((item, i) => <p key={i}>{item}</p>)}
@@ -99,7 +99,7 @@ export function AboutModal({ open, onOpenChange }: AboutModalProps) {
 			<div>
 				<TextBlock text={content.documentation.text} />
 				<DownloadPDFButton
-					className="mt-4"
+					className="mt-8"
 					title={content.documentation.downloadPDF}
 				/>
 			</div>
@@ -114,33 +114,33 @@ export function AboutModal({ open, onOpenChange }: AboutModalProps) {
 
 			<TextBlock text={content.thanks} />
 
-			<div className="space-y-6 pt-4">
+			<div className="space-y-6 mt-8">
 				<CreditSectionComponent data={content.credits.funding} />
 				<CreditSectionComponent data={content.credits.team} />
 				<CreditSectionComponent data={content.credits.steering} />
 				<CreditSectionComponent data={content.credits.partners} />
 
 				<div>
-					<p className="body2 font-bold pb-2">
+					<p className="body2 font-bold mt-8 mb-4">
 						{content.credits.contractors.title}
 					</p>
 					<div className="body2 space-y-4">
-						<div className="space-y-1">
+						<div className="space-y-2">
 							{content.credits.contractors.items.map((item, i) => (
 								<p key={i}>{item}</p>
 							))}
 						</div>
 						<div>
-							<p className="font-bold">
+							<p className="font-bold mt-8 mb-4">
 								{content.credits.contractors.editorial.title}
 							</p>
-							<div className="space-y-1">
+							<div className="space-y-2">
 								{content.credits.contractors.editorial.items.map((item, i) => (
 									<p key={i}>{item}</p>
 								))}
 							</div>
 						</div>
-						<div className="space-y-1">
+						<div className="space-y-2">
 							{content.credits.contractors.additional.map((item, i) => (
 								<p key={i}>{item}</p>
 							))}
