@@ -30,7 +30,7 @@ const VenueLayer: FC<VenueLayerProps> = ({
 	zIndex = 10000,
 	distance = 150,
 	minZoomForClustering = 0,
-	maxZoomForClustering = 4,
+	maxZoomForClustering = 5,
 	venuesData,
 }) => {
 	const map = useMapStore((state: MapStoreState) => state.map);

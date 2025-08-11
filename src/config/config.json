@@ -10,54 +10,64 @@
 			"mapView": {
 				"backgroundImage": "",
 				"startCenter": [13.404954, 52.520008],
-				"extent": [1444000, 6860000, 1538000, 6925000],
+				"extent": [1400000, 6840000, 1580000, 6950000],
 				"epsg": "EPSG:3857",
 				"startZoomLevel": 1,
 				"options": [
 					{
+						"resolution": 211.6,
+						"scale": 800000,
+						"zoomLevel": 0
+					},
+					{
+						"resolution": 105.8,
+						"scale": 400000,
+						"zoomLevel": 1
+					},
+					{
 						"resolution": 52.9,
 						"scale": 200000,
-						"zoomLevel": 0
+						"zoomLevel": 2
 					},
 					{
 						"resolution": 28,
 						"scale": 100000,
-						"zoomLevel": 1
+						"zoomLevel": 3
 					},
 					{
 						"resolution": 14,
 						"scale": 50000,
-						"zoomLevel": 2
+						"zoomLevel": 4
 					},
 					{
 						"resolution": 7,
 						"scale": 25000,
-						"zoomLevel": 3
+						"zoomLevel": 5
 					},
 					{
 						"resolution": 2.8,
 						"scale": 10000,
-						"zoomLevel": 4
+						"zoomLevel": 6
 					},
 					{
 						"resolution": 1.4,
 						"scale": 5000,
-						"zoomLevel": 5
+						"zoomLevel": 7
 					},
 					{
 						"resolution": 0.7,
 						"scale": 2500,
-						"zoomLevel": 6
+						"zoomLevel": 8
 					},
 					{
 						"resolution": 0.28,
 						"scale": 1000,
-						"zoomLevel": 7
+						"zoomLevel": 9
 					},
 					{
 						"resolution": 0.14,
 						"scale": 500,
-						"zoomLevel": 8
+						"zoomLevel": 10
 					}
 				]
 			}
