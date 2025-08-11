@@ -152,14 +152,12 @@ export function LocationSearch() {
 	};
 
 	const handleResultClick = (result: SearchResult) => {
-		console.log("handleResultClick triggered with result:", result);
 
 		if (isGeoFeature(result)) {
 			handleGeoFeatureClick(result);
 		} else {
 			handleInstitutionClick(result);
 		}
-		console.log("Selected result:", result);
 		setQuery("");
 		clearResults();
 		resetNavigation();
