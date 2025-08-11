@@ -9,10 +9,16 @@ interface DownloadPDFButtonProps extends React.HTMLAttributes<HTMLDivElement> {
 const DownloadPDFButton: FC<DownloadPDFButtonProps> = ({ title, ...props }) => {
 	return (
 		<div className="DownloadPDFButton-root" {...props}>
-			<Button variant={"outline"}>
-				<Download size={6} viewBox="0 0 24 24" />
-				<span>{title}</span>
-			</Button>
+			<a
+				href="https://kulturraum.berlin/kulturkataster-methodik/"
+				target="_blank"
+				rel="noopener noreferrer"
+			>
+				<Button variant={"outline"}>
+					<Download size={6} viewBox="0 0 24 24" />
+					<span>{title}</span>
+				</Button>
+			</a>
 		</div>
 	);
 };
