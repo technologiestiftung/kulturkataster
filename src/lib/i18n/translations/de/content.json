@@ -127,10 +127,11 @@
 	"aboutModal": {
 		"title": "Über das Projekt",
 		"subtitle": "",
-		"introduction": "In einer wachsenden Metropole wie Berlin sind Kunst- und Kulturräume knappe Ressourcen. Verdrängung, Raumkonkurrenzen und Standortkonflikte gefährden die Kulturräume Berlins, die für die Stadt eine vielschichtige und entscheidende Rolle spielen. Sie sind Standortfaktor, Tourismusmagnet und Innovationsmotor, dienen der Wissensvermittlung sowie dem Erinnern und fördern den gesellschaftlichen Zusammenhalt, indem sie einen Identitätsrahmen für eine vielfältige und inklusive Stadtgesellschaft bilden. Das Kulturkataster, eine online frei zugängliche Bestandsaufnahme der Berliner Kulturlandschaft auf einer digitalen Karte, ist ein entscheidender Schritt hin zu einer nachhaltigen kulturellen Stadtentwicklung.",
-		"history": "Erstmals findet das Kulturkataster im Berliner Koalitionsvertrag von 2011 Erwähnung und wird seitdem in allen Koalitionsverträgen fortgeschrieben. Ende 2022 wird die Kulturraum Berlin gGmbH von der Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt mit der Konzeption betraut und stellt in zwei Konzeptpapieren (ausgeführt durch das Studio für unendliche Möglichkeiten) die Ausgangssituation und Bedarfe sowie ein Umsetzungskonzept für das Kulturkataster vor. Auch die Umsetzung wird 2024 zur Aufgabe der KRB. Mit der Entwicklung der online-basierten Kartenanwendung beauftragte die KRB die Technologiestiftung Berlin.",
+		"introduction": [
+			"In einer wachsenden Metropole wie Berlin sind Kunst- und Kulturräume knappe Ressourcen. Verdrängung, Raumkonkurrenzen und Standortkonflikte gefährden die Kulturräume Berlins, die für die Stadt eine vielschichtige und entscheidende Rolle spielen. Sie sind Standortfaktor, Tourismusmagnet und Innovationsmotor, dienen der Wissensvermittlung sowie dem Erinnern und fördern den gesellschaftlichen Zusammenhalt, indem sie einen Identitätsrahmen für eine vielfältige und inklusive Stadtgesellschaft bilden. Das Kulturkataster, eine online frei zugängliche Bestandsaufnahme der Berliner Kulturlandschaft auf einer digitalen Karte, ist ein entscheidender Schritt hin zu einer nachhaltigen kulturellen Stadtentwicklung.",
+			"Erstmals findet das Kulturkataster im Berliner Koalitionsvertrag von 2011 Erwähnung und wird seitdem in allen Koalitionsverträgen fortgeschrieben. Ende 2022 wird die Kulturraum Berlin gGmbH von der Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt mit der Konzeption betraut und stellt in zwei Konzeptpapieren (ausgeführt durch das Studio für unendliche Möglichkeiten) die Ausgangssituation und Bedarfe sowie ein Umsetzungskonzept für das Kulturkataster vor. Auch die Umsetzung wird 2024 zur Aufgabe der KRB. Mit der Entwicklung der online-basierten Kartenanwendung beauftragte die KRB die Technologiestiftung Berlin."
+		],
 		"guidelines": {
-			"title": "Kulturpolitische Leitlinien",
 			"description": "Den Rahmen für die Entwicklung des Kulturkatasters bilden vier kulturpolitische Leitlinien, auf die sich die KRB mit der Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt sowie auch mit der Senatsverwaltung für Stadtentwicklung, Bauen und Wohnen verständigt hat:",
 			"items": [
 				"Evidenzbasierte Kulturpolitik und kulturelle Stadtentwicklung: Das Kulturkataster Berlin schafft eine umfassende Datengrundlage über Kulturräume, um eine faktengestützte Kulturpolitik und eine gezielte Stadtentwicklung zu ermöglichen.",
@@ -141,10 +142,11 @@
 		},
 		"approach": "Für das Kulturkataster Berlin gilt es, eine Kulturlandschaft zu erfassen, die so vielfältig, dynamisch und interdisziplinär, wie keine andere ist. So sehr sich die Redaktion auch bemühen wird, dieser Prozess wird niemals abgeschlossen sein. Deshalb ist es erklärtes Ziel des Projekts, sich dem Ist-Zustand der Berliner Kulturlandschaft auf der digitalen Karte kontinuierlich anzunähern. Dies gelingt jedoch nur mit denjenigen, für die das Kulturkataster eine wichtige Arbeitshilfe darstellen kann – den Verwaltungen auf Bezirks- und Landesebene, den zahlreichen Interessen- und Spartenverbänden, Wissenschaftler*innen, Expert*innen, Aktivist*innen und natürlich den Kulturorten selbst.",
 		"concept": "Ein weit gefasster Kulturbegriff und ein deskriptives Kulturverständnis bilden die Grundlage des Kulturkatasters. Die Datenbank erfasst eine Vielzahl von Orten. Weitere Kategorien und Kulturorte folgen in den nächsten Versionen. Anstatt kulturelle Ausdrucksformen zu bewerten, werden diese im Kulturkataster anhand zahlreicher Kriterien beschrieben und eingeordnet. Dies würdigt den individuellen Beitrag, den sowohl einzelne Orte als auch ganze Sparten zum kulturellen Gefüge der Stadt beitragen.",
-		"documentation": "Eine ausführliche Dokumentation zur Entwicklung der Datenbank des Kulturkatasters finden Sie hier.",
-		"downloadPDF": "PDF herunterladen",
+		"documentation": {
+			"text": "Eine ausführliche Dokumentation zur Entwicklung der Datenbank des Kulturkatasters finden Sie hier.",
+			"downloadPDF": "PDF herunterladen"
+		},
 		"versions": {
-			"title": "Zukünftige Versionen",
 			"description": "Die Entwicklung Berliner Kulturkatasters erfolgt als lernender Prozess. Das bedeutet, dass in festgelegten zeitlichen Abständen neue Versionen des Kulturkatasters veröffentlicht werden. Zukünftige Versionen sollen neue Funktionalitäten und aktualisierte Informationen zur Verfügung stellen. Dieser Prozess ermöglicht es dem Projektteam, Anmerkungen und Kritik in den fortlaufenden Entwicklungsprozess zu integrieren und lädt die Nutzenden des Kulturkatasters dazu ein, die zukünftige Ausrichtung aktiv mitzugestalten.",
 			"planned": "Folgende Versionen des Kulturkatasters sind geplant:",
 			"items": [
@@ -212,10 +214,12 @@
 			},
 			"contractors": {
 				"title": "Auftragnehmer*innen",
-				"technical": "Technische Umsetzung: Technologiestiftung Berlin, Projektmanagement Ninett Rosenfeld",
-				"management": "Digitale Projektsteuerung: Carsten Hein",
-				"concept": "Konzept, Beratung und Beteiligungsformate: Studio für unendliche Möglichkeiten",
-				"design": "Design: Common Studio",
+				"items": [
+					"Technische Umsetzung: Technologiestiftung Berlin, Projektmanagement Ninett Rosenfeld",
+					"Digitale Projektsteuerung: Carsten Hein",
+					"Konzept, Beratung und Beteiligungsformate: Studio für unendliche Möglichkeiten",
+					"Design: Common Studio"
+				],
 				"editorial": {
 					"title": "Externe Datenredaktion",
 					"items": [
@@ -227,10 +231,14 @@
 						"Soziokulturelle Orte und Street-Art-Flächen: Daniel Schneider (Archiv der Jugendkulturen e.V.)"
 					]
 				},
-				"collaboration": "Mitarbeit Online-Redaktion: Lilli Berlin",
-				"accessibility": "Prüfung und Beratung Digitale Barrierefreiheit: adesso SE",
-				"privacy": "Beratung zum Datenschutz: Cortina Consult",
-				"legal": "Rechtliche Beratung: Kanzlei Laaser"
+				"additional": [
+					"Mitarbeit Online-Redaktion: Lilli Berlin",
+					"Umsetzung Deutsche Gebärdensprache:",
+					"Umsetzung Leichte Sprache:",
+					"Prüfung und Beratung Digitale Barrierefreiheit: adesso SE",
+					"Beratung zum Datenschutz: Cortina Consult",
+					"Rechtliche Beratung: Kanzlei Laaser"
+				]
 			}
 		}
 	},
