@@ -1,25 +1,21 @@
 import { create } from "zustand";
 
 export interface ModalStoreState {
-	// Modal states
 	aboutModalOpen: boolean;
 	privacyModalOpen: boolean;
 	imprintModalOpen: boolean;
 	accessibilityModalOpen: boolean;
 	informationModalOpen: boolean;
 
-	// Modal actions
 	setAboutModalOpen: (open: boolean) => void;
 	setPrivacyModalOpen: (open: boolean) => void;
 	setImprintModalOpen: (open: boolean) => void;
 	setAccessibilityModalOpen: (open: boolean) => void;
 	setInformationModalOpen: (open: boolean) => void;
 
-	// methods to open any modal by name
 	openModal: (modalName: string) => void;
 	closeAllModals: () => void;
 
-	// Helper method for handling footer item clicks
 	handleFooterItemClick: (id: string) => void;
 }
 
@@ -38,10 +34,8 @@ export const useModalStore = create<ModalStoreState>((set) => ({
 	setAccessibilityModalOpen: (open) => set({ accessibilityModalOpen: open }),
 	setInformationModalOpen: (open) => set({ informationModalOpen: open }),
 
-	// Convenience methods
 	openModal: (modalName: string) => {
 		set((state) => {
-			// Close all modals first
 			const newState = {
 				aboutModalOpen: false,
 				privacyModalOpen: false,
@@ -50,7 +44,6 @@ export const useModalStore = create<ModalStoreState>((set) => ({
 				informationModalOpen: false,
 			};
 
-			// Open the requested modal
 			switch (modalName) {
 				case "about":
 					newState.aboutModalOpen = true;
@@ -72,7 +65,6 @@ export const useModalStore = create<ModalStoreState>((set) => ({
 					console.warn(`Unknown modal name: ${modalName}`);
 					return state;
 			}
-
 			return newState;
 		});
 	},
@@ -86,27 +78,8 @@ export const useModalStore = create<ModalStoreState>((set) => ({
 			informationModalOpen: false,
 		}),
 
-	// Helper method for handling footer item clicks (consolidates the logic from Footer and ModalFooter)
 	handleFooterItemClick: (id: string) => {
-		switch (id) {
-			case "about":
-				set({ aboutModalOpen: true });
-				break;
-			case "imprint":
-				set({ imprintModalOpen: true });
-				break;
-			case "privacy":
-				set({ privacyModalOpen: true });
-				break;
-			case "accessibility":
-				set({ accessibilityModalOpen: true });
-				break;
-			case "info":
-			case "information":
-				set({ informationModalOpen: true });
-				break;
-			default:
-				console.warn(`Unknown footer item: ${id}`);
-		}
+		const { openModal } = useModalStore.getState();
+		openModal(id);
 	},
 }));
