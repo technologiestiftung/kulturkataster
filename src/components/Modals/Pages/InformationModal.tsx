@@ -94,7 +94,7 @@ export function InformationModal({
 			</div>
 
 			<div className="space-y-4">
-				<TextBlock titleAs="h1" className="h1" title={scope.title} />
+				<TextBlock titleAs="h1" title={scope.title} />
 				<ul className="list-disc pl-5 body2 space-y-1">
 					{scope.features.map((item, i) => (
 						<li key={i}>{item}</li>
@@ -114,8 +114,8 @@ export function InformationModal({
 
 			<div className="space-y-6">
 				<TextBlock
-					titleAs="h2"
-					className="h2"
+					titleAs="h1"
+					titleClassName="mb-2"
 					title={usage.title}
 					text={usage.introduction}
 				/>
@@ -139,7 +139,7 @@ export function InformationModal({
 			</div>
 
 			<div className="space-y-6">
-				<TextBlock titleAs="h2" className="h2" title={faq.title} />
+				<TextBlock titleAs="h1" title={faq.title} />
 				<div className="space-y-6">
 					{faq.questions.map((item) => (
 						<div key={item.question}>
