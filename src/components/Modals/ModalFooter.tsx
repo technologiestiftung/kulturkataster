@@ -5,7 +5,6 @@ import KRBLogo from "@/logos/KRB.svg";
 import KukaLargeLogo from "@/logos/kuka-large.svg";
 import KukaSmallLogo from "@/logos/kuka-small.svg";
 import SenateLogo from "@/logos/senate.svg";
-import TechnologieStiftungLogo from "@/logos/technologiestiftung.svg";
 import { useTranslation } from "react-i18next";
 
 const footerItems = [
@@ -67,9 +66,8 @@ export function ModalFooter() {
 			</div>
 			<div className="mt-4 mb-10 p-6  md:px-40 flex-col md:flex md:flex-row items-center justify-center gap-4">
 				<span className="text-xs self-center">{t("footer.credit.text")}</span>
-				<div className="flex gap-4 w-full pt-6">
+				<div className="flex gap-4 justify-end w-full pt-6">
 					<KRBLogo className="w-full md:w-22 h-auto" />
-					<TechnologieStiftungLogo className="w-full md:w-48 h-auto" />
 					<SenateLogo className="w-full md:w-36 h-auto" />
 				</div>
 			</div>
