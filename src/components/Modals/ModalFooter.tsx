@@ -1,16 +1,12 @@
 "use client";
 
+import { useModalStore } from "@/lib/store/modalStore";
 import KRBLogo from "@/logos/KRB.svg";
 import KukaLargeLogo from "@/logos/kuka-large.svg";
 import KukaSmallLogo from "@/logos/kuka-small.svg";
 import SenateLogo from "@/logos/senate.svg";
 import TechnologieStiftungLogo from "@/logos/technologiestiftung.svg";
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { AccessibilityModal } from "../Modals/Pages/AccessibilityModal";
-import { ImprintModal } from "../Modals/Pages/ImprintModal";
-import { PrivacyModal } from "../Modals/Pages/PrivacyModal";
-import { AboutModal } from "./Pages/AboutModal";
 
 const footerItems = [
 	{ id: "about" },
@@ -21,46 +17,12 @@ const footerItems = [
 
 export function ModalFooter() {
 	const { t } = useTranslation("common");
-	const [aboutModalOpen, setAboutModalOpen] = useState(false);
-	const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
-	const [imprintModalOpen, setImprintModalOpen] = useState(false);
-	const [accessibilityModalOpen, setAccessibilityModalOpen] = useState(false);
-
-	const handleItemClick = (id: string) => {
-		if (id === "about") {
-			setAboutModalOpen(true);
-			return;
-		}
-		if (id === "imprint") {
-			setImprintModalOpen(true);
-			return;
-		}
-		if (id === "privacy") {
-			setPrivacyModalOpen(true);
-			return;
-		}
-		if (id === "accessibility") {
-			setAccessibilityModalOpen(true);
-			return;
-		}
-	};
+	const { handleFooterItemClick } = useModalStore();
 
 	return (
 		<>
 			<div className="ModalFooter-root flex justify-center w-full h-auto bg-secondary px-6 py-12 ">
-				<AboutModal open={aboutModalOpen} onOpenChange={setAboutModalOpen} />
-				<PrivacyModal
-					open={privacyModalOpen}
-					onOpenChange={setPrivacyModalOpen}
-				/>
-				<ImprintModal
-					open={imprintModalOpen}
-					onOpenChange={setImprintModalOpen}
-				/>
-				<AccessibilityModal
-					open={accessibilityModalOpen}
-					onOpenChange={setAccessibilityModalOpen}
-				/>
+				{/* Removed the modal components to prevent circular rendering */}
 
 				<div className="w-full flex flex-col md:flex-row md:items-center md:justify-between">
 					<div className="w-5/11 hidden md:flex items-center justify-center">
@@ -93,7 +55,7 @@ export function ModalFooter() {
 									<button
 										className="body2 font-bold w-fit"
 										key={item.id}
-										onClick={() => handleItemClick(item.id)}
+										onClick={() => handleFooterItemClick(item.id)}
 									>
 										{t(`footer.${item.id}`)}
 									</button>
