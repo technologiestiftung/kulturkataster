@@ -78,7 +78,7 @@ const CategorySection: FC<{
 			<div className="flex items-center justify-between w-full p-2 rounded">
 				<CollapsibleTrigger asChild>
 					<button className="flex items-center gap-2">
-						{isOpen ? <ChevronDown size={16} /> : <ChevronUp size={16} />}
+						{isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
 						<div className="w-6 h-6">
 							<IconComponent />
 						</div>
