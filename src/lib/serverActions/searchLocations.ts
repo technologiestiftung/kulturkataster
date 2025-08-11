@@ -68,7 +68,6 @@ async function searchAddresses(query: string): Promise<GeoFeature[]> {
 		}
 
 		const data = await response.json();
-		console.log("Address search results:", data);
 		return data.features || [];
 	} catch (error) {
 		console.warn("Address search error:", error);
