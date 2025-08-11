@@ -101,7 +101,9 @@ export function InformationModal({
 					))}
 				</ul>
 				<div className="pt-4">
-					<p className="body1 font-bold">{scope.upcomingEnhancements.title}</p>
+					<p className="body1 font-bold pb-2">
+						{scope.upcomingEnhancements.title}
+					</p>
 					<ul className="list-disc pl-5 body2 space-y-1">
 						{scope.upcomingEnhancements.items.map((item, i) => (
 							<li key={i}>{item}</li>
