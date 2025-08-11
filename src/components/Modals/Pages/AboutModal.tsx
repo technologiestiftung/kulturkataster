@@ -1,5 +1,6 @@
 "use client";
 
+import DownloadPDFButton from "@/components/Content/DownloadPDFButton";
 import TextBlock from "@/components/Content/TextBlock"; // Stelle sicher, dass der Pfad korrekt ist
 import { useTranslation } from "react-i18next";
 import { PageModal } from "../PageModal";
@@ -97,13 +98,10 @@ export function AboutModal({ open, onOpenChange }: AboutModalProps) {
 
 			<div>
 				<TextBlock text={content.documentation.text} />
-				<a
-					href="/pfad/zum/deinem.pdf" // WICHTIG: Ersetze dies mit dem echten Pfad
-					download
-					className="mt-4 inline-block bg-primary text-white body2 font-bold py-2 px-4 rounded hover:bg-primary-dark transition-colors"
-				>
-					{content.documentation.downloadPDF}
-				</a>
+				<DownloadPDFButton
+					className="mt-4"
+					title={content.documentation.downloadPDF}
+				/>
 			</div>
 
 			<TextBlock text={content.versions.description} />
@@ -116,7 +114,7 @@ export function AboutModal({ open, onOpenChange }: AboutModalProps) {
 
 			<TextBlock text={content.thanks} />
 
-			<div className="space-y-6 pt-4 border-t">
+			<div className="space-y-6 pt-4">
 				<CreditSectionComponent data={content.credits.funding} />
 				<CreditSectionComponent data={content.credits.team} />
 				<CreditSectionComponent data={content.credits.steering} />
