@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createClient } from "@/lib/supabase/client";
+import type { CategoryWithSubcategories, District, FilterState } from "@/types";
 import type { FeatureCollection } from "geojson";
 
 // Error handling
@@ -83,4 +84,66 @@ export async function searchInstitutions(query: string) {
 
 	// Return the institutions array directly
 	return data || [];
+}
+
+export async function filterInstitutions(query: FilterState) {
+	const supabase = createClient();
+
+	// For now, we'll use the district-based filtering and can extend it later
+	// to include category, subcategory, and status filtering when the backend supports it
+	const { data, error } = await supabase.rpc(
+		"get_public_institutions_by_districts_geojson",
+		{
+			district_keys: query.district_keys,
+		},
+	);
+
+	// TODO: Extend API to support these parameters when backend is ready:
+	// const { data, error } = await supabase.rpc(
+	// 	"get_public_institutions_by_filters_geojson",
+	// 	{
+	// 		district_keys: query.district_keys,
+	// 		category_keys: query.category_keys,
+	// 		subcategory_keys: query.subcategory_keys,
+	// 		status: query.status,
+	// 	},
+	// );
+
+	if (error) {
+		handleError(error, "filter institutions");
+	}
+
+	// Type cast the imported JSON to proper FeatureCollection type
+	// return localFilteredVenues as FeatureCollection;
+	return data;
+}
+
+export async function getCategoriesWithSubcategories(): Promise<
+	CategoryWithSubcategories[]
+> {
+	// TODO: Replace with actual backend call when ready
+	// const supabase = createClient();
+	// const { data, error } = await supabase.rpc("get_public_category_map");
+	// if (error) {
+	// 	handleError(error, "fetch categories");
+	// }
+	// return data || []; // Backend will return pre-transformed data
+
+	// For now, return static data directly (same format as backend will provide)
+	const staticCategoryMap = await import("./categoryMap.json");
+	return staticCategoryMap.default as CategoryWithSubcategories[];
+}
+
+export async function getDistricts(): Promise<District[]> {
+	// TODO: Replace with actual backend call when ready
+	// const supabase = createClient();
+	// const { data, error } = await supabase.rpc("get_public_district_map");
+	// if (error) {
+	// 	handleError(error, "fetch districts");
+	// }
+	// return data || []; // Backend will return pre-transformed data
+
+	// For now, return static data directly (same format as backend will provide)
+	const staticDistrictMap = await import("./districtMap.json");
+	return staticDistrictMap.default as District[];
 }
