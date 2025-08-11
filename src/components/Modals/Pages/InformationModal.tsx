@@ -1,10 +1,69 @@
 "use client";
 
-import Facebook from "@/icons/facebook.svg";
-import Instagram from "@/icons/instagram.svg";
-import LinkedIn from "@/icons/linkedin.svg";
-import { Trans, useTranslation } from "react-i18next";
+import TextBlock from "@/components/Content/TextBlock";
+import React from "react";
+import { useTranslation } from "react-i18next";
 import { PageModal } from "../PageModal";
+
+interface FaqItem {
+	question: string;
+	answer: string;
+}
+
+interface Faq {
+	title: string;
+	questions: FaqItem[];
+}
+
+interface UsageGuide {
+	title: string;
+	desktop?: string;
+	mobile?: string;
+	description?: string;
+	action?: string;
+	closedPlaces?: string;
+	instructions?: string;
+	submit?: string;
+	review?: string;
+}
+
+interface Usage {
+	title: string;
+	introduction: string;
+	guides: UsageGuide[];
+}
+
+interface Scope {
+	title: string;
+	features: string[];
+	upcomingEnhancements: {
+		title: string;
+		items: string[];
+	};
+}
+
+const TextWithEmailLinks = ({ text }: { text: string }) => {
+	const emailRegex = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi;
+	const parts = text.split(emailRegex);
+
+	return (
+		<p className="body2">
+			{parts.map((part, index) =>
+				emailRegex.test(part) ? (
+					<a
+						key={index}
+						href={`mailto:${part}`}
+						className="text-primary hover:text-primary-dark underline"
+					>
+						{part}
+					</a>
+				) : (
+					<React.Fragment key={index}>{part}</React.Fragment>
+				),
+			)}
+		</p>
+	);
+};
 
 interface InformationModalProps {
 	open: boolean;
@@ -15,242 +74,77 @@ export function InformationModal({
 	open,
 	onOpenChange,
 }: InformationModalProps) {
-	const { t } = useTranslation(["content", "common"]);
+	const { t } = useTranslation("content");
+
+	const introParagraphs = t("informationModal.introduction", {
+		returnObjects: true,
+	}) as string[];
+	const scope = t("informationModal.scope", { returnObjects: true }) as Scope;
+	const usage = t("informationModal.usage", { returnObjects: true }) as Usage;
+	const faq = t("informationModal.faq", { returnObjects: true }) as Faq;
 
 	const content = (
-		<div className="space-y-8">
-			{/* Introduction */}
+		<div className="space-y-10">
 			<div className="space-y-4">
-				<p className="body1">
-					{t("informationModal.introduction", { ns: "content" })}
-				</p>
-				<p className="body1">
-					{t("informationModal.growing", { ns: "content" })}
-				</p>
-				<p className="body1">
-					{t("informationModal.currentVersion", { ns: "content" })}
-				</p>
+				{introParagraphs.map((text, index) => (
+					<p key={index} className="body2">
+						{text}
+					</p>
+				))}
 			</div>
 
-			{/* Scope of Version 1 */}
 			<div className="space-y-4">
-				<h2 className="h2">
-					{t("informationModal.scope.title", { ns: "content" })}
-				</h2>
-				<ul className="list-disc list-inside space-y-2 body1 ml-4">
-					{(
-						t("informationModal.scope.features", {
-							ns: "content",
-							returnObjects: true,
-						}) as string[]
-					).map((feature: string, index: number) => (
-						<li key={index}>{feature}</li>
+				<TextBlock titleAs="h1" className="h1" title={scope.title} />
+				<ul className="list-disc pl-5 body2 space-y-1">
+					{scope.features.map((item, i) => (
+						<li key={i}>{item}</li>
 					))}
 				</ul>
-
-				<div className="mt-6">
-					<h3 className="h3 mb-2">
-						{t("informationModal.scope.upcomingEnhancements.title", {
-							ns: "content",
-						})}
-					</h3>
-					<ul className="list-disc list-inside space-y-1 body1 ml-4">
-						{(
-							t("informationModal.scope.upcomingEnhancements.items", {
-								ns: "content",
-								returnObjects: true,
-							}) as string[]
-						).map((item: string, index: number) => (
-							<li key={index}>{item}</li>
+				<div className="pt-4">
+					<p className="body1 font-bold">{scope.upcomingEnhancements.title}</p>
+					<ul className="list-disc pl-5 body2 space-y-1">
+						{scope.upcomingEnhancements.items.map((item, i) => (
+							<li key={i}>{item}</li>
 						))}
 					</ul>
 				</div>
 			</div>
 
-			{/* Usage Instructions */}
 			<div className="space-y-6">
-				<h2 className="h2">
-					{t("informationModal.usage.title", { ns: "content" })}
-				</h2>
-				<p className="body1">
-					{t("informationModal.usage.introduction", { ns: "content" })}
-				</p>
-
-				{/* Move Map */}
-				<div className="space-y-2">
-					<h3 className="h3">
-						{t("informationModal.usage.moveMap.title", { ns: "content" })}
-					</h3>
-					<p className="body2">
-						{t("informationModal.usage.moveMap.desktop", { ns: "content" })}
-					</p>
-					<p className="body2">
-						{t("informationModal.usage.moveMap.mobile", { ns: "content" })}
-					</p>
-				</div>
-
-				{/* Zoom */}
-				<div className="space-y-2">
-					<h3 className="h3">
-						{t("informationModal.usage.zoom.title", { ns: "content" })}
-					</h3>
-					<p className="body2">
-						{t("informationModal.usage.zoom.desktop", { ns: "content" })}
-					</p>
-					<p className="body2">
-						{t("informationModal.usage.zoom.mobile", { ns: "content" })}
-					</p>
-				</div>
-
-				{/* Search */}
-				<div className="space-y-2">
-					<h3 className="h3">
-						{t("informationModal.usage.search.title", { ns: "content" })}
-					</h3>
-					<p className="body2">
-						{t("informationModal.usage.search.desktop", { ns: "content" })}
-					</p>
-					<p className="body2">
-						{t("informationModal.usage.search.mobile", { ns: "content" })}
-					</p>
-					<p className="body2">
-						{t("informationModal.usage.search.action", { ns: "content" })}
-					</p>
-				</div>
-
-				{/* Filter */}
-				<div className="space-y-2">
-					<h3 className="h3">
-						{t("informationModal.usage.filter.title", { ns: "content" })}
-					</h3>
-					<p className="body2">
-						{t("informationModal.usage.filter.desktop", { ns: "content" })}
-					</p>
-					<p className="body2">
-						{t("informationModal.usage.filter.mobile", { ns: "content" })}
-					</p>
-					<p className="body2">
-						{t("informationModal.usage.filter.description", { ns: "content" })}
-					</p>
-					<p className="body2">
-						{t("informationModal.usage.filter.closedPlaces", { ns: "content" })}
-					</p>
-				</div>
-
-				{/* Download */}
-				<div className="space-y-2">
-					<h3 className="h3">
-						{t("informationModal.usage.download.title", { ns: "content" })}
-					</h3>
-					<p className="body2">
-						{t("informationModal.usage.download.description", {
-							ns: "content",
-						})}
-					</p>
-					<p className="body2">
-						{t("informationModal.usage.download.desktop", { ns: "content" })}
-					</p>
-					<p className="body2">
-						{t("informationModal.usage.download.mobile", { ns: "content" })}
-					</p>
-				</div>
-
-				{/* Add Place */}
-				<div className="space-y-2">
-					<h3 className="h3">
-						{t("informationModal.usage.addPlace.title", { ns: "content" })}
-					</h3>
-					<p className="body2">
-						{t("informationModal.usage.addPlace.desktop", { ns: "content" })}
-					</p>
-					<p className="body2">
-						{t("informationModal.usage.addPlace.mobile", { ns: "content" })}
-					</p>
-					<p className="body2">
-						{t("informationModal.usage.addPlace.instructions", {
-							ns: "content",
-						})}
-					</p>
-					<p className="body2">
-						{t("informationModal.usage.addPlace.submit", { ns: "content" })}
-					</p>
-					<p className="body2">
-						{t("informationModal.usage.addPlace.review", { ns: "content" })}
-					</p>
-				</div>
-
-				{/* Font Size */}
-				<div className="space-y-2">
-					<h3 className="h3">
-						{t("informationModal.usage.fontSize.title", { ns: "content" })}
-					</h3>
-					<p className="body2">
-						{t("informationModal.usage.fontSize.desktop", { ns: "content" })}
-					</p>
-					<p className="body2">
-						{t("informationModal.usage.fontSize.mobile", { ns: "content" })}
-					</p>
-					<p className="body2">
-						{t("informationModal.usage.fontSize.action", { ns: "content" })}
-					</p>
-				</div>
-
-				{/* Contrast */}
-				<div className="space-y-2">
-					<h3 className="h3">
-						{t("informationModal.usage.contrast.title", { ns: "content" })}
-					</h3>
-					<p className="body2">
-						{t("informationModal.usage.contrast.desktop", { ns: "content" })}
-					</p>
-					<p className="body2">
-						{t("informationModal.usage.contrast.mobile", { ns: "content" })}
-					</p>
-					<p className="body2">
-						{t("informationModal.usage.contrast.action", { ns: "content" })}
-					</p>
+				<TextBlock
+					titleAs="h2"
+					className="h2"
+					title={usage.title}
+					text={usage.introduction}
+				/>
+				<div className="space-y-6">
+					{usage.guides.map((guide) => (
+						<div key={guide.title}>
+							<p className="body1 font-bold pb-2">{guide.title}</p>
+							<div className="body2 space-y-2">
+								{guide.description && <p>{guide.description}</p>}
+								{guide.desktop && <p>{guide.desktop}</p>}
+								{guide.mobile && <p>{guide.mobile}</p>}
+								{guide.action && <p>{guide.action}</p>}
+								{guide.closedPlaces && <p>{guide.closedPlaces}</p>}
+								{guide.instructions && <p>{guide.instructions}</p>}
+								{guide.submit && <p>{guide.submit}</p>}
+								{guide.review && <p>{guide.review}</p>}
+							</div>
+						</div>
+					))}
 				</div>
 			</div>
 
-			{/* FAQ */}
 			<div className="space-y-6">
-				<h2 className="h2">
-					{t("informationModal.faq.title", { ns: "content" })}
-				</h2>
-				{(
-					t("informationModal.faq.questions", {
-						ns: "content",
-						returnObjects: true,
-					}) as Array<{ question: string; answer: string }>
-				).map((faq, index: number) => (
-					<div key={index} className="space-y-2">
-						<h3 className="h3">{faq.question}</h3>
-						<p className="body2">{faq.answer}</p>
-					</div>
-				))}
-			</div>
-
-			{/* Footer with social links */}
-			<div className="mt-20 flex justify-between">
-				<div>
-					<Trans
-						i18nKey="footer.openSource"
-						ns="common"
-						components={[
-							<a
-								href="https://github.com/technologiestiftung/kulturkataster-frontend/"
-								target="_blank"
-								key={"sourceLink"}
-								rel="noopener noreferrer"
-								className="underline font-bold text-primary-dark"
-							/>,
-						]}
-					/>
-				</div>
-				<div className="flex space-x-4">
-					<Facebook className="size-6 cursor-pointer" />
-					<Instagram className="size-6 cursor-pointer" />
-					<LinkedIn className="size-6 cursor-pointer" />
+				<TextBlock titleAs="h2" className="h2" title={faq.title} />
+				<div className="space-y-6">
+					{faq.questions.map((item) => (
+						<div key={item.question}>
+							<p className="body1 font-bold">{item.question}</p>
+							<TextWithEmailLinks text={item.answer} />
+						</div>
+					))}
 				</div>
 			</div>
 		</div>
@@ -260,8 +154,8 @@ export function InformationModal({
 		<PageModal
 			open={open}
 			onOpenChange={onOpenChange}
-			title={t("informationModal.title", { ns: "content" })}
-			subtitle={t("informationModal.subtitle", { ns: "content" })}
+			title={t("informationModal.title")}
+			subtitle={t("informationModal.subtitle")}
 			content={content}
 		/>
 	);
