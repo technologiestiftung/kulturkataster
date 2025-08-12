@@ -11,7 +11,7 @@ import {
 import Close from "@/icons/close.svg";
 import EyeOff from "@/icons/eye-off.svg";
 import Eye from "@/icons/eye.svg";
-import { useVenueStore } from "@/lib/store/venueStore";
+import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { getCategoryIconComponent } from "@/lib/utils/iconUtils";
 import {
 	CategoryType,
@@ -113,13 +113,13 @@ const CategorySection: FC<{
 
 // Main Filter Component
 const Filter: FC = () => {
-	const { setFilters, filters, applyFilters, initializeVenues } =
-		useVenueStore();
+	const { setFilters, filters, applyFilters, initializeInstitutions } =
+		useInstitutionStore();
 	const { categoryGroups, districts, loading, error, retry } = useFilterData();
 	const { t } = useTranslation(["content", "common"]);
 
 	const [openSections, setOpenSections] = useState<string[]>([]);
-	const [hideClosedVenues, setHideClosedVenues] = useState(true);
+	const [hideClosedInstitutions, setHideClosedInstitutions] = useState(true);
 
 	// Update filters and apply changes
 	const updateFilters = (newFilters: FilterState) => {
@@ -175,15 +175,15 @@ const Filter: FC = () => {
 	// Reset all filters
 	const resetFilters = () => {
 		setFilters({ district_keys: [], category_keys: [], subcategory_keys: [] });
-		initializeVenues();
+		initializeInstitutions();
 	};
 
-	// Toggle closed venues visibility
-	const toggleClosedVenues = () => {
+	// Toggle closed institutions visibility
+	const toggleClosedInstitutions = () => {
 		if (!filters) return;
 
-		const newHideState = !hideClosedVenues;
-		setHideClosedVenues(newHideState);
+		const newHideState = !hideClosedInstitutions;
+		setHideClosedInstitutions(newHideState);
 
 		if (newHideState) {
 			updateFilters({ ...filters, status: "open" as const });
@@ -232,11 +232,11 @@ const Filter: FC = () => {
 				</h2>
 				<button
 					className="flex items-center gap-2 transition-opacity body2 text-primary-dark"
-					onClick={toggleClosedVenues}
+					onClick={toggleClosedInstitutions}
 				>
-					{hideClosedVenues ? <Eye /> : <EyeOff />}
+					{hideClosedInstitutions ? <Eye /> : <EyeOff />}
 					<span className="body2 font-bold">
-						{hideClosedVenues
+						{hideClosedInstitutions
 							? t("filter.hideClosed", { ns: "content" })
 							: t("filter.showClosed", { ns: "content" })}
 					</span>
