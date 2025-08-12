@@ -56,7 +56,9 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	const { setInformationModalOpen } = useModalStore();
 	const isLayerTreeOpen = useMapStore((state) => state.isLayerTreeOpen);
 	const setIsLayerTreeOpen = useMapStore((state) => state.setIsLayerTreeOpen);
-	const selectedInstitutionId = useInstitutionStore((state) => state.selectedInstitutionId);
+	const selectedInstitutionId = useInstitutionStore(
+		(state) => state.selectedInstitutionId,
+	);
 	const filters = useInstitutionStore((state) => state.filters);
 	const { firstTimeUser, setFirstTimeUser } = useAppStore();
 
@@ -227,7 +229,8 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 							<span className="body1 font-bold">
 								{(() => {
 									if (activeItem === "layertree") return "Fachkarten";
-									if (activeItem === "institution-detail") return t("venue.details");
+									if (activeItem === "institution-detail")
+										return t("venue.details");
 
 									return t(activeItem + ".title");
 								})()}
