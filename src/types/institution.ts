@@ -123,14 +123,14 @@ export interface FilterState {
 export interface InstitutionStoreState {
 	institutions: FeatureCollection<Geometry, GeoJsonProperties> | null;
 	selectedInstitutionId: number | string | null;
-	filters: FilterState | null;
+	filters: FilterState;
 
 	setInstitutions: (
 		institutions: FeatureCollection<Geometry, GeoJsonProperties> | null,
 	) => void;
 	setSelectedInstitutionId: (id: string | null) => void;
 
-	setFilters: (filters: FilterState | null) => void;
+	setFilters: (filters: FilterState) => void;
 
 	initializeInstitutions: () => Promise<void>;
 	applyFilters: () => Promise<void>;
