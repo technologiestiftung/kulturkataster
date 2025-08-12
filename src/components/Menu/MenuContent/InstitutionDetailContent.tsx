@@ -2,11 +2,11 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useVenueStore } from "@/lib/store/venueStore";
+import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { getInstitutionsGeoJSON } from "@/lib/supabase/api";
 import { getCategoryIconComponent } from "@/lib/utils/iconUtils";
 import { normalizeUrl } from "@/lib/utils/sanitizerUtils";
-import { Category, VenueProperties } from "@/types";
+import { Category, InstitutionProperties } from "@/types";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -58,25 +58,29 @@ function ContactLink({
 }
 
 // Header component
-function VenueHeader({ venueData }: { venueData: VenueProperties }) {
+function InstitutionHeader({
+	institutionData,
+}: {
+	institutionData: InstitutionProperties;
+}) {
 	const { t } = useTranslation("common");
 	const { t: tEnum } = useTranslation("enumMap");
-	const isInUse = venueData.utilization_status === "in_use";
+	const isInUse = institutionData.utilization_status === "in_use";
 
 	return (
 		<CardHeader
 			className={`relative p-0 ${isInUse ? "bg-brand-default" : "bg-neutral-20"}`}
 		>
 			<p className="body2 p-4 pb-0">
-				{venueData.parent_organizations?.[0]?.name || ""}
+				{institutionData.parent_organizations?.[0]?.name || ""}
 			</p>
 			<CardTitle className="px-4 max-w-full overflow-hidden">
-				<h1 className="h1 wrap-anywhere">{venueData.name}</h1>
+				<h1 className="h1 wrap-anywhere">{institutionData.name}</h1>
 			</CardTitle>
 
-			{venueData.categories?.length > 0 && (
+			{institutionData.categories?.length > 0 && (
 				<section className="px-4">
-					{venueData.categories.map((category: Category) => {
+					{institutionData.categories.map((category: Category) => {
 						const IconComponent = getCategoryIconComponent(category.key);
 						return (
 							<div key={category.id} className="mb-2">
@@ -102,9 +106,9 @@ function VenueHeader({ venueData }: { venueData: VenueProperties }) {
 					{t("venue.utilizationStatus")}:{" "}
 				</span>
 
-				{venueData.utilization_status ? (
+				{institutionData.utilization_status ? (
 					<span className="body2">
-						{tEnum(`utilization_status.${venueData.utilization_status}`)}
+						{tEnum(`utilization_status.${institutionData.utilization_status}`)}
 					</span>
 				) : (
 					<span className="body2">{t("unknown")}</span>
@@ -115,50 +119,56 @@ function VenueHeader({ venueData }: { venueData: VenueProperties }) {
 }
 
 // Basic info component
-function VenueBasicInfo({ venueData }: { venueData: VenueProperties }) {
+function InstitutionBasicInfo({
+	institutionData,
+}: {
+	institutionData: InstitutionProperties;
+}) {
 	const { t } = useTranslation("common");
 
 	return (
 		<div>
 			<address className="not-italic mb-4">
-				<p className="body1">{venueData.name}</p>
-				{venueData.street && venueData.street_number && venueData.zip_code && (
-					<div className="body1">
-						<p>
-							{venueData.street} {venueData.street_number}
-						</p>
-						<p>{venueData.zip_code}</p>
-					</div>
-				)}
+				<p className="body1">{institutionData.name}</p>
+				{institutionData.street &&
+					institutionData.street_number &&
+					institutionData.zip_code && (
+						<div className="body1">
+							<p>
+								{institutionData.street} {institutionData.street_number}
+							</p>
+							<p>{institutionData.zip_code}</p>
+						</div>
+					)}
 			</address>
 
 			<InfoSection>
-				{venueData.description && (
+				{institutionData.description && (
 					<InfoItem label={t("venue.culturalArea")}>
-						{venueData.description}
+						{institutionData.description}
 					</InfoItem>
 				)}
 
-				{venueData.website && (
+				{institutionData.website && (
 					<InfoItem label={t("venue.website")}>
-						<ContactLink href={venueData.website} external>
-							Website {venueData.name}
+						<ContactLink href={institutionData.website} external>
+							Website {institutionData.name}
 						</ContactLink>
 					</InfoItem>
 				)}
 
-				{venueData.phone && (
+				{institutionData.phone && (
 					<InfoItem label={t("venue.phoneNumber")}>
-						<ContactLink href={`tel:${venueData.phone}`}>
-							{venueData.phone}
+						<ContactLink href={`tel:${institutionData.phone}`}>
+							{institutionData.phone}
 						</ContactLink>
 					</InfoItem>
 				)}
 
-				{venueData.email && (
+				{institutionData.email && (
 					<InfoItem label={t("venue.emailAddress")}>
-						<ContactLink href={`mailto:${venueData.email}`}>
-							{venueData.email}
+						<ContactLink href={`mailto:${institutionData.email}`}>
+							{institutionData.email}
 						</ContactLink>
 					</InfoItem>
 				)}
@@ -168,61 +178,67 @@ function VenueBasicInfo({ venueData }: { venueData: VenueProperties }) {
 }
 
 // Extended info component
-function VenueExtendedInfo({ venueData }: { venueData: VenueProperties }) {
+function InstitutionExtendedInfo({
+	institutionData,
+}: {
+	institutionData: InstitutionProperties;
+}) {
 	const { t } = useTranslation("common");
 	const { t: tEnum } = useTranslation("enumMap");
 
 	return (
 		<div className="space-y-4">
 			<InfoSection>
-				{venueData.funding_type && (
+				{institutionData.funding_type && (
 					<InfoItem label={t("venue.fundingType")}>
-						{tEnum(`funding_type.${venueData.funding_type}`)}
+						{tEnum(`funding_type.${institutionData.funding_type}`)}
 					</InfoItem>
 				)}
-				{venueData.support_type && (
+				{institutionData.support_type && (
 					<InfoItem label={t("venue.supportType")}>
-						{venueData.support_type}
+						{institutionData.support_type}
 					</InfoItem>
 				)}
-				{venueData.district_id && (
+				{institutionData.district_id && (
 					<InfoItem label={t("venue.district")}>
-						{tEnum(`district_id.${venueData.district_id}`)}
+						{tEnum(`district_id.${institutionData.district_id}`)}
 					</InfoItem>
 				)}
 			</InfoSection>
 
 			<InfoSection>
-				{venueData.capacity && (
+				{institutionData.capacity && (
 					<InfoItem label={t("venue.usableAreaSize")}>
-						{venueData.capacity}
+						{institutionData.capacity}
 					</InfoItem>
 				)}
-				{venueData.rooms_count && (
+				{institutionData.rooms_count && (
 					<InfoItem label={t("venue.workspaceCount")}>
-						{venueData.rooms_count}
+						{institutionData.rooms_count}
 					</InfoItem>
 				)}
 				<InfoItem label={t("venue.multipleUse")}>
-					{venueData.shared_use_allowed
+					{institutionData.shared_use_allowed
 						? t("venue.multipleUsePossible")
 						: t("venue.multipleUseNotPossible")}
 				</InfoItem>
-				{venueData.shared_use_allowed && (
+				{institutionData.shared_use_allowed && (
 					<InfoItem label={t("venue.description")}>
 						{t("venue.multipleUseDescription")}
 					</InfoItem>
 				)}
-				{venueData.established_since && (
+				{institutionData.established_since && (
 					<InfoItem label={t("venue.establishedSince")}>
-						{new Date(venueData.established_since).getFullYear()}
+						{new Date(institutionData.established_since).getFullYear()}
 					</InfoItem>
 				)}
 			</InfoSection>
 
-			{venueData.updated_at && (
+			{institutionData.updated_at && (
 				<InfoSection>
-					<InfoItem label={t("venue.status")}>{venueData.updated_at}</InfoItem>
+					<InfoItem label={t("venue.status")}>
+						{institutionData.updated_at}
+					</InfoItem>
 				</InfoSection>
 			)}
 		</div>
@@ -239,22 +255,28 @@ const EXTENDED_INFO_FIELDS = [
 	"district_id",
 ] as const;
 
-function VenueCard({ venueData }: { venueData: VenueProperties }) {
+function InstitutionCard({
+	institutionData,
+}: {
+	institutionData: InstitutionProperties;
+}) {
 	const { t } = useTranslation("common");
 	const [showMore, setShowMore] = useState(false);
 
 	const hasExtendedInfo = EXTENDED_INFO_FIELDS.some((field) =>
-		Boolean(venueData[field]),
+		Boolean(institutionData[field]),
 	);
 
 	return (
 		<Card className="w-full rounded-lg overflow-hidden border-none">
-			<VenueHeader venueData={venueData} />
+			<InstitutionHeader institutionData={institutionData} />
 
 			<CardContent className="p-4 space-y-4">
-				<VenueBasicInfo venueData={venueData} />
+				<InstitutionBasicInfo institutionData={institutionData} />
 
-				{showMore && <VenueExtendedInfo venueData={venueData} />}
+				{showMore && (
+					<InstitutionExtendedInfo institutionData={institutionData} />
+				)}
 
 				{hasExtendedInfo && (
 					<Button
@@ -274,41 +296,48 @@ function VenueCard({ venueData }: { venueData: VenueProperties }) {
 	);
 }
 
-export function VenueDetailContent() {
+export function InstitutionDetailContent() {
 	const { t } = useTranslation("common");
-	const selectedVenueId = useVenueStore((state) => state.selectedVenueId);
-	const setSelectedVenueId = useVenueStore((state) => state.setSelectedVenueId);
-	const [venueData, setVenueData] = useState<VenueProperties | null>(null);
+	const selectedInstitutionId = useInstitutionStore(
+		(state) => state.selectedInstitutionId,
+	);
+	const setSelectedInstitutionId = useInstitutionStore(
+		(state) => state.setSelectedInstitutionId,
+	);
+	const [institutionData, setInstitutionData] =
+		useState<InstitutionProperties | null>(null);
 	const [loading, setLoading] = useState(false);
 
 	useEffect(() => {
-		if (!selectedVenueId) {
-			setVenueData(null);
+		if (!selectedInstitutionId) {
+			setInstitutionData(null);
 			return;
 		}
 
-		const fetchVenueData = async () => {
+		const fetchInstitutionData = async () => {
 			try {
 				setLoading(true);
 				const geoJsonData = await getInstitutionsGeoJSON();
-				const venue = geoJsonData.features.find(
-					(feature) => feature.properties?.id === selectedVenueId,
+				const institution = geoJsonData.features.find(
+					(feature) => feature.properties?.id === selectedInstitutionId,
 				);
-				setVenueData((venue?.properties as VenueProperties) || null);
+				setInstitutionData(
+					(institution?.properties as InstitutionProperties) || null,
+				);
 			} catch (error) {
-				console.error("Failed to fetch venue data:", error);
-				setVenueData(null);
+				console.error("Failed to fetch institution data:", error);
+				setInstitutionData(null);
 			} finally {
 				setLoading(false);
 			}
 		};
 
-		fetchVenueData();
-	}, [selectedVenueId]);
+		fetchInstitutionData();
+	}, [selectedInstitutionId]);
 
-	const handleClose = () => setSelectedVenueId(null);
+	const handleClose = () => setSelectedInstitutionId(null);
 
-	if (!selectedVenueId) return null;
+	if (!selectedInstitutionId) return null;
 
 	if (loading) {
 		return (
@@ -322,7 +351,7 @@ export function VenueDetailContent() {
 		);
 	}
 
-	if (!venueData) {
+	if (!institutionData) {
 		return (
 			<div className="p-6">
 				<p className="text-muted-foreground">{t("venue.notFound")}</p>
@@ -339,7 +368,7 @@ export function VenueDetailContent() {
 
 	return (
 		<main className="p-2 h-full">
-			<VenueCard venueData={venueData} />
+			<InstitutionCard institutionData={institutionData} />
 		</main>
 	);
 }

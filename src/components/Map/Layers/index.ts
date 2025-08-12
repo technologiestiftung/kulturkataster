@@ -1,4 +1,4 @@
+import InstitutionLayer from "./InstitutionLayer";
 import Layers from "./MapLayers";
-import VenueLayer from "./VenueLayer";
 
-export { VenueLayer, Layers };
+export { InstitutionLayer, Layers };
