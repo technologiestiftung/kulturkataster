@@ -230,7 +230,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 								{(() => {
 									if (activeItem === "layertree") return "Fachkarten";
 									if (activeItem === "institution-detail")
-										return t("venue.details");
+										return t("institution.details");
 
 									return t(activeItem + ".title");
 								})()}
