@@ -13,6 +13,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { useSidebar } from "@/components/ui/sidebar";
 import ContextMapIcon from "@/icons/fachkarten.svg";
+import { useAppStore } from "@/lib/store/appStore";
 import { useMapStore } from "@/lib/store/mapStore";
 import { ManagedLayer } from "@/types";
 import { X } from "lucide-react";
@@ -33,6 +34,7 @@ const LAYER_THUMBNAIL_SIZE = 80;
 const FLOATING_BUTTON_SIZE = 64;
 const SIDEBAR_COLLAPSED_OFFSET = "left-24";
 const SIDEBAR_EXPANDED_OFFSET = "left-[494px]";
+const SIDEBAR_EXPANDED_OFFSET_LARGE_TEXT = "left-[554px]";
 
 // Custom hooks
 const useLayerData = () => {
@@ -233,11 +235,17 @@ const FloatingLayerButton = memo<{
 	sidebarState: string;
 	onClick: () => void;
 }>(({ visibleCount, topVisibleLayer, sidebarState, onClick }) => {
+	const { isLargeTextMode } = useAppStore();
+
 	const getLeftPosition = useCallback(() => {
+		const expandedOffset = isLargeTextMode
+			? SIDEBAR_EXPANDED_OFFSET_LARGE_TEXT
+			: SIDEBAR_EXPANDED_OFFSET;
+
 		return sidebarState === "collapsed"
 			? SIDEBAR_COLLAPSED_OFFSET
-			: SIDEBAR_EXPANDED_OFFSET;
-	}, [sidebarState]);
+			: expandedOffset;
+	}, [sidebarState, isLargeTextMode]);
 
 	return (
 		<div
