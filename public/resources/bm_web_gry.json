@@ -18,23 +18,15 @@
 	},
 	"sprite": "https://sgx.geodatenzentrum.de/gdz_basemapde_vektor/sprites/v2/bm_web_gry_sprite",
 	"glyphs": "https://sgx.geodatenzentrum.de/gdz_basemapde_vektor/fonts/v2/{fontstack}/{range}.pbf",
-	"transition": {
-		"duration": 300,
-		"delay": 0
-	},
+	"transition": { "duration": 300, "delay": 0 },
 	"layers": [
 		{
 			"id": "Hintergrund",
 			"type": "fill",
 			"source": "smarttiles_de",
 			"source-layer": "Hintergrund",
-			"layout": {
-				"visibility": "visible"
-			},
-			"paint": {
-				"fill-color": "rgba(248, 246, 242, 1)",
-				"fill-opacity": 1
-			}
+			"layout": { "visibility": "visible" },
+			"paint": { "fill-color": "rgba(248, 246, 242, 1)", "fill-opacity": 1 }
 		},
 		{
 			"id": "SiedlungF_SportFreizeitundErholung",
@@ -77,9 +69,7 @@
 				"Verkehrsübungsplatz, Testgelände, Fahrsicherheit",
 				"Wochenendplatz"
 			],
-			"layout": {
-				"visibility": "visible"
-			},
+			"layout": { "visibility": "visible" },
 			"paint": {
 				"fill-color": "rgba(220, 224, 220, 1)",
 				"fill-opacity": 1,
@@ -94,13 +84,8 @@
 			"minzoom": 11,
 			"maxzoom": 22,
 			"filter": ["in", "klasse", "Friedhof", "Parkfriedhof"],
-			"layout": {
-				"visibility": "visible"
-			},
-			"paint": {
-				"fill-color": "rgba(220, 224, 220, 1)",
-				"fill-opacity": 1
-			}
+			"layout": { "visibility": "visible" },
+			"paint": { "fill-color": "rgba(220, 224, 220, 1)", "fill-opacity": 1 }
 		},
 		{
 			"id": "SiedlungF_Siedlung_Industrie",
@@ -179,9 +164,7 @@
 				"Möbel und sonstige Konsumgüter",
 				"Siedlungsfläche"
 			],
-			"layout": {
-				"visibility": "visible"
-			},
+			"layout": { "visibility": "visible" },
 			"paint": {
 				"fill-color": {
 					"stops": [
@@ -219,9 +202,7 @@
 				"Wohnen",
 				"Wohnen und Betrieb"
 			],
-			"layout": {
-				"visibility": "visible"
-			},
+			"layout": { "visibility": "visible" },
 			"paint": {
 				"fill-color": "rgba(248, 246, 242, 1)",
 				"fill-opacity": 1,
@@ -243,13 +224,8 @@
 				"Streuobst",
 				"Gras"
 			],
-			"layout": {
-				"visibility": "visible"
-			},
-			"paint": {
-				"fill-color": "rgba(230, 233, 229, 1)",
-				"fill-opacity": 0.3
-			}
+			"layout": { "visibility": "visible" },
+			"paint": { "fill-color": "rgba(230, 233, 229, 1)", "fill-opacity": 0.3 }
 		},
 		{
 			"id": "VegetationsF_Gehoelz",
@@ -259,9 +235,7 @@
 			"minzoom": 11,
 			"maxzoom": 24,
 			"filter": ["in", "klasse", "Gehölz", "Bewuchs, Gehölz", "Gebüsch"],
-			"layout": {
-				"visibility": "visible"
-			},
+			"layout": { "visibility": "visible" },
 			"paint": {
 				"fill-color": {
 					"stops": [
@@ -290,9 +264,7 @@
 				"Baumbestand, Laubholz",
 				"Baumbestand, Nadelholz"
 			],
-			"layout": {
-				"visibility": "visible"
-			},
+			"layout": { "visibility": "visible" },
 			"paint": {
 				"fill-color": {
 					"stops": [
@@ -322,9 +294,7 @@
 				["!has", "merkmal"],
 				["!in", "bauwerk", "Durchlass", "Rohrdurchlass", "Düker"]
 			],
-			"layout": {
-				"visibility": "visible"
-			},
+			"layout": { "visibility": "visible" },
 			"paint": {
 				"line-color": "rgba(194, 200, 202, 1)",
 				"line-opacity": 1,
@@ -353,9 +323,7 @@
 				["!has", "merkmal"],
 				["!in", "bauwerk", "Durchlass", "Rohrdurchlass", "Düker"]
 			],
-			"layout": {
-				"visibility": "visible"
-			},
+			"layout": { "visibility": "visible" },
 			"paint": {
 				"line-color": "rgba(194, 200, 202, 1)",
 				"line-opacity": 1,
@@ -382,9 +350,7 @@
 				["!has", "merkmal"],
 				["!in", "bauwerk", "Durchlass", "Rohrdurchlass", "Düker"]
 			],
-			"layout": {
-				"visibility": "visible"
-			},
+			"layout": { "visibility": "visible" },
 			"paint": {
 				"line-color": "rgba(194, 200, 202, 1)",
 				"line-opacity": 1,
@@ -412,13 +378,8 @@
 				"Kanal",
 				"Flussmündungstrichter"
 			],
-			"layout": {
-				"visibility": "visible"
-			},
-			"paint": {
-				"fill-color": "rgba(194, 200, 202, 1)",
-				"fill-opacity": 1
-			}
+			"layout": { "visibility": "visible" },
+			"paint": { "fill-color": "rgba(194, 200, 202, 1)", "fill-opacity": 1 }
 		},
 		{
 			"id": "Gewaesser_F_See_Hafenbecken",
@@ -436,12 +397,33 @@
 				"Stausee",
 				"Speicherbecken"
 			],
+			"layout": { "visibility": "visible" },
+			"paint": { "fill-color": "rgba(194, 200, 202, 1)", "fill-opacity": 1 }
+		},
+		{
+			"id": "Grenzen_Landesgrenze",
+			"type": "line",
+			"source": "smarttiles_de",
+			"source-layer": "Grenze_Linie",
+			"minzoom": 5,
+			"maxzoom": 22,
+			"filter": ["==", "klasse", "Grenze des Bundeslandes"],
 			"layout": {
-				"visibility": "visible"
+				"visibility": "visible",
+				"line-cap": "round",
+				"line-join": "round"
 			},
 			"paint": {
-				"fill-color": "rgba(194, 200, 202, 1)",
-				"fill-opacity": 1
+				"line-color": "rgba(176, 176, 176, 1)",
+				"line-opacity": 1,
+				"line-width": {
+					"stops": [
+						[2, 0.6],
+						[6, 1],
+						[10, 4],
+						[14, 7]
+					]
+				}
 			}
 		},
 		{
@@ -484,13 +466,8 @@
 				"Hallenbad",
 				"Sanatorium"
 			],
-			"layout": {
-				"visibility": "visible"
-			},
-			"paint": {
-				"fill-color": "rgba(226, 223, 219, 1)",
-				"fill-opacity": 1
-			}
+			"layout": { "visibility": "visible" },
+			"paint": { "fill-color": "rgba(226, 223, 219, 1)", "fill-opacity": 1 }
 		},
 		{
 			"id": "Gebaeude2D_oeffentlich",
@@ -532,9 +509,7 @@
 				"Hallenbad",
 				"Sanatorium"
 			],
-			"layout": {
-				"visibility": "visible"
-			},
+			"layout": { "visibility": "visible" },
 			"paint": {
 				"fill-color": "rgba(234, 234, 229, 1)",
 				"fill-opacity": 1,
@@ -562,10 +537,7 @@
 				["==", "funktion", "Fußgängerzone"],
 				["!has", "zustand"]
 			],
-			"layout": {
-				"visibility": "visible",
-				"line-cap": "square"
-			},
+			"layout": { "visibility": "visible", "line-cap": "square" },
 			"paint": {
 				"line-color": "rgb(238,238,238)",
 				"line-opacity": {
@@ -606,10 +578,7 @@
 				["!has", "funktion"],
 				["!has", "zustand"]
 			],
-			"layout": {
-				"visibility": "visible",
-				"line-cap": "round"
-			},
+			"layout": { "visibility": "visible", "line-cap": "round" },
 			"paint": {
 				"line-color": "rgb(255,255,255)",
 				"line-opacity": 1,
@@ -641,10 +610,7 @@
 				["!=", "anzahl", "1"],
 				["!has", "zustand"]
 			],
-			"layout": {
-				"visibility": "visible",
-				"line-cap": "round"
-			},
+			"layout": { "visibility": "visible", "line-cap": "round" },
 			"paint": {
 				"line-color": "rgb(255,255,255)",
 				"line-opacity": 1,
@@ -676,10 +642,7 @@
 				["!=", "anzahl", "1"],
 				["!has", "zustand"]
 			],
-			"layout": {
-				"visibility": "visible",
-				"line-cap": "round"
-			},
+			"layout": { "visibility": "visible", "line-cap": "round" },
 			"paint": {
 				"line-color": "rgb(255,255,255)",
 				"line-opacity": 1,
@@ -710,10 +673,7 @@
 				["!=", "anzahl", "1"],
 				["!has", "zustand"]
 			],
-			"layout": {
-				"visibility": "visible",
-				"line-cap": "round"
-			},
+			"layout": { "visibility": "visible", "line-cap": "round" },
 			"paint": {
 				"line-color": "rgba(255, 255, 255, 1)",
 				"line-opacity": 1,
@@ -743,10 +703,7 @@
 				["!has", "bauwerk"],
 				["!has", "zustand"]
 			],
-			"layout": {
-				"visibility": "visible",
-				"line-cap": "round"
-			},
+			"layout": { "visibility": "visible", "line-cap": "round" },
 			"paint": {
 				"line-color": "rgb(229,229,229)",
 				"line-opacity": 1,
@@ -796,10 +753,7 @@
 				["!has", "funktion"],
 				["!has", "zustand"]
 			],
-			"layout": {
-				"visibility": "visible",
-				"line-cap": "round"
-			},
+			"layout": { "visibility": "visible", "line-cap": "round" },
 			"paint": {
 				"line-color": "rgb(255,255,255)",
 				"line-opacity": 1,
@@ -846,10 +800,7 @@
 				["!=", "anzahl", "1"],
 				["!has", "zustand"]
 			],
-			"layout": {
-				"visibility": "visible",
-				"line-cap": "round"
-			},
+			"layout": { "visibility": "visible", "line-cap": "round" },
 			"paint": {
 				"line-color": "rgb(255,255,255)",
 				"line-opacity": 1,
@@ -896,10 +847,7 @@
 				["!=", "anzahl", "1"],
 				["!has", "zustand"]
 			],
-			"layout": {
-				"visibility": "visible",
-				"line-cap": "round"
-			},
+			"layout": { "visibility": "visible", "line-cap": "round" },
 			"paint": {
 				"line-color": "rgb(255,255,255)",
 				"line-opacity": 1,
@@ -945,10 +893,7 @@
 				],
 				["!=", "anzahl", "1"]
 			],
-			"layout": {
-				"visibility": "visible",
-				"line-cap": "round"
-			},
+			"layout": { "visibility": "visible", "line-cap": "round" },
 			"paint": {
 				"line-color": "rgb(216,216,216)",
 				"line-opacity": 1,
@@ -994,10 +939,7 @@
 				],
 				["!has", "zustand"]
 			],
-			"layout": {
-				"visibility": "visible",
-				"line-cap": "butt"
-			},
+			"layout": { "visibility": "visible", "line-cap": "butt" },
 			"paint": {
 				"line-color": "rgba(255, 255, 255, 1)",
 				"line-opacity": 1,
@@ -1034,10 +976,7 @@
 					"Sonstige öffentliche Straße"
 				]
 			],
-			"layout": {
-				"visibility": "none",
-				"line-cap": "butt"
-			},
+			"layout": { "visibility": "none", "line-cap": "butt" },
 			"paint": {
 				"line-color": "rgb(51,51,51)",
 				"line-dasharray": {
@@ -1287,9 +1226,7 @@
 					]
 				}
 			},
-			"paint": {
-				"text-color": "rgba(85, 91, 84, 1)"
-			}
+			"paint": { "text-color": "rgba(85, 91, 84, 1)" }
 		},
 		{
 			"id": "Nummer_Autobahn",
@@ -1344,10 +1281,7 @@
 					]
 				}
 			},
-			"paint": {
-				"text-color": "rgb(255,255,255)",
-				"text-translate": [0, 0]
-			}
+			"paint": { "text-color": "rgb(255,255,255)", "text-translate": [0, 0] }
 		},
 		{
 			"id": "Hauskoordinate",
@@ -1555,10 +1489,7 @@
 					]
 				}
 			},
-			"paint": {
-				"icon-halo-width": 0,
-				"icon-opacity": 1
-			}
+			"paint": { "icon-halo-width": 0, "icon-opacity": 1 }
 		},
 		{
 			"id": "Symbol_VerkehrP_S_Bahn",
@@ -1584,10 +1515,7 @@
 					]
 				}
 			},
-			"paint": {
-				"icon-halo-width": 0,
-				"icon-opacity": 1
-			}
+			"paint": { "icon-halo-width": 0, "icon-opacity": 1 }
 		},
 		{
 			"id": "Symbol_VerkehrP_Bahnhof",
@@ -1622,9 +1550,7 @@
 					]
 				}
 			},
-			"paint": {
-				"icon-opacity": 1
-			}
+			"paint": { "icon-opacity": 1 }
 		},
 		{
 			"id": "Gebaeudepunkt_Krankenhaus",

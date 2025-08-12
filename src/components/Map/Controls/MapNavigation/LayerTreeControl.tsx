@@ -1,15 +1,17 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { ButtonWithTooltip } from "@/components/ui/button";
 import { useSidebar } from "@/components/ui/sidebar";
 import ContextMapIcon from "@/icons/fachkarten.svg";
 import { useMapStore } from "@/lib/store/mapStore";
 import { ManagedLayer } from "@/types";
 import Image from "next/image";
 import { FC, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 
 const LayerTreeControl: FC = () => {
+	const { t } = useTranslation("common");
 	const layers = useMapStore((state) => state.layers);
 	const setIsLayerTreeOpen = useMapStore((state) => state.setIsLayerTreeOpen);
 	const { setOpen, setOpenMobile, isMobile } = useSidebar();
@@ -67,12 +69,12 @@ const LayerTreeControl: FC = () => {
 
 	return (
 		<div className="relative">
-			<Button
+			<ButtonWithTooltip
 				variant="map-icon"
 				size="icon-only"
-				title="Fachkarten"
+				tooltip={t("map.layerTree")}
 				onClick={handleLayerTreeOpen}
-				className={`relative w-12 h-12 p-0 bg-neutral-80 overflow-hidden`}
+				className={`relative w-12 h-12 p-0 bg-neutral-80 overflow-hidden cursor-pointer`}
 			>
 				<div className="w-full h-full flex items-center justify-center">
 					{isMobile ? (
@@ -86,7 +88,7 @@ const LayerTreeControl: FC = () => {
 						</>
 					)}
 				</div>
-			</Button>
+			</ButtonWithTooltip>
 
 			{visibleCount > 0 && (
 				<Badge
