@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
+import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useMapStore } from "@/lib/store/mapStore";
-import { useVenueStore } from "@/lib/store/venueStore";
 import { transformGeoJSON } from "@/lib/utils/mapUtils";
 import { MapStoreState } from "@/types/map";
 
@@ -21,26 +21,28 @@ import CircleStyle from "ol/style/Circle";
 import { FC, useCallback, useEffect, useRef } from "react";
 import { createPoiSvg } from "../MapStyles/createPoiSvg";
 
-interface VenueLayerProps {
+interface InstitutionLayerProps {
 	zIndex?: number;
 	distance?: number;
 	minZoomForClustering?: number;
 	maxZoomForClustering?: number;
-	venuesData: FeatureCollection<Geometry, GeoJsonProperties> | null;
+	institutionsData: FeatureCollection<Geometry, GeoJsonProperties> | null;
 	proximityThreshold?: number;
 }
 
-const VenueLayer: FC<VenueLayerProps> = ({
+const InstitutionLayer: FC<InstitutionLayerProps> = ({
 	zIndex = 10000,
 	distance = 150,
 	minZoomForClustering = 0,
 	maxZoomForClustering = 5,
-	venuesData,
+	institutionsData,
 	proximityThreshold = 50,
 }) => {
 	const map = useMapStore((state: MapStoreState) => state.map);
 	const config = useMapStore((state) => state.config);
-	const selectedVenueId = useVenueStore((state) => state.selectedVenueId);
+	const selectedInstitutionId = useInstitutionStore(
+		(state) => state.selectedInstitutionId,
+	);
 
 	const vectorLayerRef = useRef<VectorLayer<any> | null>(null);
 	const vectorSourceRef = useRef<VectorSource | null>(null);
@@ -236,7 +238,8 @@ const VenueLayer: FC<VenueLayerProps> = ({
 				const featureId =
 					featureToCheck?.get?.("id") || featureToCheck?.values_?.id;
 
-				const currentSelectedId = useVenueStore.getState().selectedVenueId;
+				const currentSelectedId =
+					useInstitutionStore.getState().selectedInstitutionId;
 				const isSelected = featureId === currentSelectedId;
 
 				const currentZoom = map?.getView().getZoom() || 6;
@@ -363,13 +366,13 @@ const VenueLayer: FC<VenueLayerProps> = ({
 	);
 
 	useEffect(() => {
-		if (!map || zIndex === null || !config || !venuesData) return;
+		if (!map || zIndex === null || !config || !institutionsData) return;
 
 		const epsg = config.portalConfig.map.mapView.epsg;
 		const currentZoom = map.getView().getZoom() || 6;
 
 		const originalFeatures = new GeoJSON().readFeatures(
-			transformGeoJSON(venuesData, epsg),
+			transformGeoJSON(institutionsData, epsg),
 		);
 		originalFeaturesRef.current = originalFeatures;
 
@@ -415,8 +418,8 @@ const VenueLayer: FC<VenueLayerProps> = ({
 
 		map.addLayer(vectorLayer);
 		vectorLayer.setZIndex(zIndex);
-		vectorLayer.set("name", "venues");
-		vectorLayer.set("id", "venues");
+		vectorLayer.set("name", "institutions");
+		vectorLayer.set("id", "institutions");
 
 		return () => {
 			if (map && vectorLayerRef.current) {
@@ -438,7 +441,7 @@ const VenueLayer: FC<VenueLayerProps> = ({
 		shouldCluster,
 		updateLayerSource,
 		styleFunction,
-		venuesData,
+		institutionsData,
 		handleClusterClick,
 		createOffsetFeatures,
 	]);
@@ -450,9 +453,9 @@ const VenueLayer: FC<VenueLayerProps> = ({
 				source.changed();
 			}
 		}
-	}, [selectedVenueId]);
+	}, [selectedInstitutionId]);
 
 	return null;
 };
 
-export default VenueLayer;
+export default InstitutionLayer;

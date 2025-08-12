@@ -1,3 +1,5 @@
+import { FeatureCollection, GeoJsonProperties, Geometry } from "geojson";
+
 export interface Institution {
 	id: number;
 	name: string;
@@ -23,3 +25,113 @@ export interface GeoFeature {
 }
 
 export type SearchResult = Institution | GeoFeature;
+
+export enum CategoryType {
+	WORKSHOPS = "workshops",
+	EDUCATION_PLACES = "education_places",
+	LIBRARIES = "libraries",
+	BOOKSTORES = "bookstores",
+	MUSIC_VENUES = "music_venues",
+	GALLERIES = "galleries",
+	CINEMAS = "cinemas",
+	LITERATURE_PLACES = "literature_places",
+	MUSEUMS = "museums",
+	URBAN_DEVELOPMENT = "urban_development",
+	POTENTIAL_SPACES = "potential_spaces",
+	REHEARSAL_ROOMS = "rehearsal_rooms",
+	PROJECT_SPACES = "project_spaces",
+	SOCIOCULTURAL_CENTERS = "sociocultural_centers",
+	PERFORMING_ARTS = "performing_arts",
+	OTHER = "other",
+	MULTI_CATEGORIES = "multi_categories",
+}
+export interface Category {
+	id: number;
+	key: CategoryType;
+	created_at?: string;
+}
+
+export interface CategoryWithSubcategories extends Category {
+	subcategories: Subcategory[];
+	name?: string; // Translated name
+}
+
+export interface Subcategory {
+	id: number;
+	key: string;
+	category_id: number;
+	created_at?: string;
+	name?: string; // Translated name
+}
+
+export interface District {
+	city_id: number;
+	created_at: string;
+	id: number;
+	key: string;
+	name: string; // Already has translated name
+}
+
+export interface ParentOrganization {
+	id: number;
+	name: string;
+}
+
+export interface InstitutionProperties {
+	id: number;
+	name: string;
+	tags: string[];
+	email: string;
+	phone: string;
+	status: string;
+	street: string;
+	city_id: number;
+	website: string;
+	zip_code: string;
+	categories: Category[];
+	district_id: number;
+	street_number: string;
+	subcategories: Subcategory[];
+	funding_sources: unknown[];
+	established_since: string;
+	shared_use_allowed: boolean;
+	utilization_status: string;
+	parent_organizations: ParentOrganization[];
+	description?: string;
+	funding_type?: string;
+	support_type?: string;
+	capacity?: number;
+	rooms_count?: number;
+	updated_at?: string;
+}
+
+export interface InstitutionFeature extends InstitutionProperties {
+	type: "Feature";
+	geometry: {
+		type: "Point";
+		coordinates: [number, number];
+	};
+}
+
+export interface FilterState {
+	district_keys: string[];
+	category_keys: string[];
+	subcategory_keys: string[];
+	status?: "closed" | "open";
+}
+
+export interface InstitutionStoreState {
+	institutions: FeatureCollection<Geometry, GeoJsonProperties> | null;
+	selectedInstitutionId: number | string | null;
+	filters: FilterState | null;
+
+	setInstitutions: (
+		institutions: FeatureCollection<Geometry, GeoJsonProperties> | null,
+	) => void;
+	setSelectedInstitutionId: (id: string | null) => void;
+
+	setFilters: (filters: FilterState | null) => void;
+
+	initializeInstitutions: () => Promise<void>;
+	applyFilters: () => Promise<void>;
+}
