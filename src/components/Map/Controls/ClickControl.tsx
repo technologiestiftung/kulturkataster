@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useMapStore } from "@/lib/store/mapStore";
-import { useVenueStore } from "@/lib/store/venueStore";
 import { FeatureLike } from "ol/Feature";
 import { FC, useEffect } from "react";
 
@@ -8,23 +8,25 @@ interface ClickControlProps {
 	layerId: string;
 }
 
-function extractVenueId(feature: any): string | null {
+function extractInstitutionId(feature: any): string | null {
 	return feature?.get?.("id") || feature?.values_?.ID || null;
 }
 
-function findClickedVenueId(clickedFeature: FeatureLike): string | null {
+function findClickedInstitutionId(clickedFeature: FeatureLike): string | null {
 	const features = clickedFeature.get("features");
 
 	if (features?.length > 1) return null;
 
 	const targetFeature = features?.[0] || clickedFeature;
 
-	return extractVenueId(targetFeature);
+	return extractInstitutionId(targetFeature);
 }
 
 const ClickControl: FC<ClickControlProps> = ({ layerId }) => {
 	const map = useMapStore((state) => state.map);
-	const setSelectedVenueId = useVenueStore((state) => state.setSelectedVenueId);
+	const setSelectedInstitutionId = useInstitutionStore(
+		(state) => state.setSelectedInstitutionId,
+	);
 
 	useEffect(() => {
 		if (!map) return;
@@ -36,17 +38,18 @@ const ClickControl: FC<ClickControlProps> = ({ layerId }) => {
 				const _layerId = layer.get("id");
 				const _layerName = layer.get("name");
 
-				const isVenuesLayer = _layerId === "venues" || _layerName === "venues";
+				const isInstitutionsLayer =
+					_layerId === "institutions" || _layerName === "institutions";
 
-				if (isVenuesLayer) {
-					const venueId = findClickedVenueId(_feature);
-					setSelectedVenueId(venueId);
+				if (isInstitutionsLayer) {
+					const institutionId = findClickedInstitutionId(_feature);
+					setSelectedInstitutionId(institutionId);
 				}
 
 				return true;
 			});
 		});
-	}, [map, layerId, setSelectedVenueId]);
+	}, [map, layerId, setSelectedInstitutionId]);
 	return null;
 };
 

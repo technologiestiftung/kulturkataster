@@ -75,7 +75,7 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 											{tEnum(`category.${category.key}`)}
 										</span>
 									</div>
-									<span className="pl-8">{t("venue.subcategory")}</span>
+									<span className="pl-8">{t("institution.subcategory")}</span>
 								</div>
 							);
 						})}
@@ -87,7 +87,7 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 				>
 					{featureProperties.utilization_status && (
 						<div className=" flex gap-1 items-center justify-between">
-							<span>{t("venue.utilizationStatus")}:</span>
+							<span>{t("institution.utilizationStatus")}:</span>
 							{/* todo: add status name */}
 							<span>
 								{tEnum(
@@ -99,7 +99,7 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 					{!featureProperties.utilization_status && (
 						<div className=" flex gap-1 items-center justify-between">
 							<span className="text-md font-semibold">
-								{t("venue.utilizationStatus")}:
+								{t("institution.utilizationStatus")}:
 							</span>
 							<span>{t("unknown")}</span>
 						</div>
