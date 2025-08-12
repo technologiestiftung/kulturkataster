@@ -2,8 +2,8 @@
 
 import mapConfig from "@/config/config.json";
 import services from "@/config/resources/services.json";
+import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useMapStore } from "@/lib/store/mapStore";
-import { useVenueStore } from "@/lib/store/venueStore";
 import {
 	LayerElement,
 	LayerElementBase,
@@ -14,7 +14,9 @@ import { FC, useEffect } from "react";
 
 const MapInitializer: FC = ({}) => {
 	const setConfig = useMapStore((state) => state.setConfig);
-	const initializeVenues = useVenueStore((state) => state.initializeVenues);
+	const initializeInstitutions = useInstitutionStore(
+		(state) => state.initializeInstitutions,
+	);
 
 	useEffect(() => {
 		const servicesMap = new Map(
@@ -40,8 +42,8 @@ const MapInitializer: FC = ({}) => {
 
 		setConfig(enrichedConfig as unknown as MapConfig);
 
-		initializeVenues();
-	}, [setConfig, initializeVenues]);
+		initializeInstitutions();
+	}, [setConfig, initializeInstitutions]);
 
 	return null;
 };

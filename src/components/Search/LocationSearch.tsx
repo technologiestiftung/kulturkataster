@@ -1,20 +1,20 @@
 "use client";
 
-import { useTranslation } from "react-i18next";
 import { Input } from "@/components/ui/input";
+import Search from "@/icons/search.svg";
 import { useKeyboardNavigation } from "@/lib/hooks/useKeyboardNavigation";
 import { useSearch } from "@/lib/hooks/useSearch";
 import { searchLocations } from "@/lib/serverActions/searchLocations";
+import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useMapStore } from "@/lib/store/mapStore";
 import { sanitizeAddressInput } from "@/lib/utils/sanitizerUtils";
+import { GeoFeature, Institution, SearchResult } from "@/types/institution";
 import { boundingExtent } from "ol/extent";
 import { fromLonLat } from "ol/proj";
 import { ChangeEvent, useRef } from "react";
-import Search from "@/icons/search.svg";
-import { SearchResults } from "./SearchResults";
+import { useTranslation } from "react-i18next";
 import { SearchMessages } from "./SearchMessages";
-import { GeoFeature, Institution, SearchResult } from "@/types/institution";
-import { useVenueStore } from "@/lib/store/venueStore";
+import { SearchResults } from "./SearchResults";
 
 export const isGeoFeature = (result: SearchResult): result is GeoFeature => {
 	return "place_name" in result && "center" in result;
@@ -27,7 +27,9 @@ export function LocationSearch() {
 	const { t } = useTranslation("common");
 	const inputRef = useRef<HTMLInputElement>(null);
 	const { map } = useMapStore();
-	const setSelectedVenueId = useVenueStore((state) => state.setSelectedVenueId);
+	const setSelectedInstitutionId = useInstitutionStore(
+		(state) => state.setSelectedInstitutionId,
+	);
 
 	const {
 		query,
@@ -144,7 +146,7 @@ export function LocationSearch() {
 			});
 		}
 
-		setSelectedVenueId(result.id as unknown as string);
+		setSelectedInstitutionId(result.id as unknown as string);
 
 		if (statusRef.current) {
 			statusRef.current.textContent = `${result.name} ausgewählt.`;

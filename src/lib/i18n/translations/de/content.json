@@ -353,7 +353,7 @@
 	},
 	"filter": {
 		"title": "Filter",
-		"displayedVenues": "Angezeigte Kulturorte in Berlin",
+		"displayedInstitutions": "Angezeigte Kulturorte in Berlin",
 		"hideClosed": "Geschlossene Orte ausblenden",
 		"showClosed": "Geschlossene Orte einblenden",
 		"districts": {
