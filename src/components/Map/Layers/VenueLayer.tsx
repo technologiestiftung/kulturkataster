@@ -8,11 +8,14 @@ import { MapStoreState } from "@/types/map";
 
 import { CategoryType } from "@/types";
 import { FeatureCollection, GeoJsonProperties, Geometry } from "geojson";
-import { FeatureLike } from "ol/Feature";
+import { Coordinate } from "ol/coordinate";
+import Feature, { FeatureLike } from "ol/Feature";
 import GeoJSON from "ol/format/GeoJSON";
+import { Point } from "ol/geom";
 import VectorLayer from "ol/layer/Vector";
 import { Vector as VectorSource } from "ol/source";
 import Cluster from "ol/source/Cluster";
+import { getDistance } from "ol/sphere";
 import { Fill, Icon, Style, Text } from "ol/style";
 import CircleStyle from "ol/style/Circle";
 import { FC, useCallback, useEffect, useRef } from "react";
@@ -24,6 +27,7 @@ interface VenueLayerProps {
 	minZoomForClustering?: number;
 	maxZoomForClustering?: number;
 	venuesData: FeatureCollection<Geometry, GeoJsonProperties> | null;
+	proximityThreshold?: number;
 }
 
 const VenueLayer: FC<VenueLayerProps> = ({
@@ -32,6 +36,7 @@ const VenueLayer: FC<VenueLayerProps> = ({
 	minZoomForClustering = 0,
 	maxZoomForClustering = 5,
 	venuesData,
+	proximityThreshold = 50,
 }) => {
 	const map = useMapStore((state: MapStoreState) => state.map);
 	const config = useMapStore((state) => state.config);
@@ -39,7 +44,9 @@ const VenueLayer: FC<VenueLayerProps> = ({
 
 	const vectorLayerRef = useRef<VectorLayer<any> | null>(null);
 	const vectorSourceRef = useRef<VectorSource | null>(null);
+	const offsetVectorSourceRef = useRef<VectorSource | null>(null);
 	const clusterSourceRef = useRef<Cluster | null>(null);
+	const originalFeaturesRef = useRef<Feature[] | null>(null);
 
 	const getCategoryKey = useCallback(
 		(feature: FeatureLike, features: any[]) => {
@@ -51,8 +58,128 @@ const VenueLayer: FC<VenueLayerProps> = ({
 		[],
 	);
 
+	const getFeatureCoordinates = useCallback(
+		(feature: Feature): Coordinate | null => {
+			const geometry = feature.getGeometry();
+			if (geometry && geometry.getType() === "Point") {
+				return (geometry as Point).getCoordinates();
+			}
+			return null;
+		},
+		[],
+	);
+
+	const calculateDistance = useCallback(
+		(coord1: Coordinate, coord2: Coordinate): number => {
+			return getDistance(coord1, coord2);
+		},
+		[],
+	);
+
+	const findNearbyFeatures = useCallback(
+		(targetFeature: Feature, allFeatures: Feature[]): Feature[] => {
+			const targetCoords = getFeatureCoordinates(targetFeature);
+			if (!targetCoords) return [targetFeature];
+
+			const nearby: Feature[] = [];
+
+			allFeatures.forEach((feature) => {
+				const coords = getFeatureCoordinates(feature);
+				if (
+					coords &&
+					calculateDistance(targetCoords, coords) <= proximityThreshold
+				) {
+					nearby.push(feature);
+				}
+			});
+			return nearby.length > 0 ? nearby : [targetFeature];
+		},
+		[getFeatureCoordinates, calculateDistance, proximityThreshold],
+	);
+
+	const groupFeaturesByProximity = useCallback(
+		(features: Feature[]): Feature[][] => {
+			const processed = new Set<Feature>();
+			const groups: Feature[][] = [];
+
+			features.forEach((feature) => {
+				if (processed.has(feature)) return;
+
+				const nearbyFeatures = findNearbyFeatures(feature, features);
+				nearbyFeatures.forEach((f) => processed.add(f));
+				groups.push(nearbyFeatures);
+			});
+
+			return groups;
+		},
+		[findNearbyFeatures],
+	);
+
+	const createOffsetFeatures = useCallback(
+		(features: Feature[]): Feature[] => {
+			const proximityGroups = groupFeaturesByProximity(features);
+			const offsetFeatures: Feature[] = [];
+
+			proximityGroups.forEach((group) => {
+				if (group.length === 1) {
+					offsetFeatures.push(group[0].clone());
+				} else {
+					const offsetRadius = Math.max(
+						10,
+						Math.min(50, proximityThreshold * 0.8),
+					);
+					const angleStep = (2 * Math.PI) / group.length;
+
+					group.forEach((feature, index) => {
+						const clonedFeature = feature.clone();
+						const geometry = clonedFeature.getGeometry();
+
+						if (geometry && geometry.getType() === "Point") {
+							const coords = (geometry as Point).getCoordinates() as Coordinate;
+
+							if (index === 0) {
+								offsetFeatures.push(clonedFeature);
+							} else {
+								const angle = angleStep * index;
+								const offsetX = Math.cos(angle) * offsetRadius;
+								const offsetY = Math.sin(angle) * offsetRadius;
+
+								const newCoords: Coordinate = [
+									coords[0] + offsetX,
+									coords[1] + offsetY,
+								];
+								(geometry as Point).setCoordinates(newCoords);
+								offsetFeatures.push(clonedFeature);
+							}
+						}
+					});
+				}
+			});
+
+			return offsetFeatures;
+		},
+		[groupFeaturesByProximity, proximityThreshold],
+	);
+
+	const hasNearbyFeatures = useCallback(
+		(targetFeature: Feature, allFeatures: Feature[]): boolean => {
+			const targetCoords = getFeatureCoordinates(targetFeature);
+			if (!targetCoords) return false;
+
+			return allFeatures.some((feature) => {
+				if (feature === targetFeature) return false;
+				const coords = getFeatureCoordinates(feature);
+				return (
+					coords &&
+					calculateDistance(targetCoords, coords) <= proximityThreshold
+				);
+			});
+		},
+		[getFeatureCoordinates, calculateDistance, proximityThreshold],
+	);
+
 	const createSingleFeatureStyle = useCallback(
-		(categoryKey: CategoryType, isSelected = false) => {
+		(categoryKey: CategoryType, isSelected = false, hasOverlapping = false) => {
 			const fillColor = isSelected ? "#AAE9C9" : "#D9C1FF";
 			const iconSvg = createPoiSvg(categoryKey, fillColor, "#161616");
 			return new Style({
@@ -61,7 +188,7 @@ const VenueLayer: FC<VenueLayerProps> = ({
 					src: iconSvg,
 					offset: [0, 0],
 					opacity: 1,
-					scale: 1,
+					scale: hasOverlapping ? 0.9 : 1,
 				}),
 			});
 		},
@@ -88,7 +215,17 @@ const VenueLayer: FC<VenueLayerProps> = ({
 		});
 	}, []);
 
+	const shouldCluster = useCallback(
+		(zoomLevel: number) => {
+			return (
+				zoomLevel >= minZoomForClustering && zoomLevel <= maxZoomForClustering
+			);
+		},
+		[minZoomForClustering, maxZoomForClustering],
+	);
+
 	const styleFunction = useCallback(
+		// eslint-disable-next-line complexity
 		function (feature: FeatureLike) {
 			const features = feature.get("features");
 			const size = features ? features.length : 1;
@@ -102,20 +239,33 @@ const VenueLayer: FC<VenueLayerProps> = ({
 				const currentSelectedId = useVenueStore.getState().selectedVenueId;
 				const isSelected = featureId === currentSelectedId;
 
-				return createSingleFeatureStyle(categoryKey, isSelected);
+				const currentZoom = map?.getView().getZoom() || 6;
+				const clustering = shouldCluster(currentZoom);
+				let hasOverlapping = false;
+
+				if (!clustering && originalFeaturesRef.current) {
+					hasOverlapping = hasNearbyFeatures(
+						featureToCheck,
+						originalFeaturesRef.current,
+					);
+				}
+
+				return createSingleFeatureStyle(
+					categoryKey,
+					isSelected,
+					hasOverlapping,
+				);
 			}
 			return createClusterStyle(size);
 		},
-		[getCategoryKey, createSingleFeatureStyle, createClusterStyle],
-	);
-
-	const shouldCluster = useCallback(
-		(zoomLevel: number) => {
-			return (
-				zoomLevel >= minZoomForClustering && zoomLevel <= maxZoomForClustering
-			);
-		},
-		[minZoomForClustering, maxZoomForClustering],
+		[
+			createClusterStyle,
+			getCategoryKey,
+			map,
+			shouldCluster,
+			createSingleFeatureStyle,
+			hasNearbyFeatures,
+		],
 	);
 
 	const getClusterDistance = useCallback(
@@ -136,7 +286,13 @@ const VenueLayer: FC<VenueLayerProps> = ({
 
 	const updateLayerSource = useCallback(
 		(zoomLevel: number) => {
-			if (!map || !vectorSourceRef.current || !vectorLayerRef.current) return;
+			if (
+				!map ||
+				!vectorSourceRef.current ||
+				!vectorLayerRef.current ||
+				!offsetVectorSourceRef.current
+			)
+				return;
 
 			const clustering = shouldCluster(zoomLevel);
 
@@ -151,7 +307,7 @@ const VenueLayer: FC<VenueLayerProps> = ({
 				}
 				vectorLayerRef.current.setSource(clusterSourceRef.current);
 			} else {
-				vectorLayerRef.current.setSource(vectorSourceRef.current);
+				vectorLayerRef.current.setSource(offsetVectorSourceRef.current);
 			}
 		},
 		[map, shouldCluster, getClusterDistance],
@@ -212,10 +368,21 @@ const VenueLayer: FC<VenueLayerProps> = ({
 		const epsg = config.portalConfig.map.mapView.epsg;
 		const currentZoom = map.getView().getZoom() || 6;
 
+		const originalFeatures = new GeoJSON().readFeatures(
+			transformGeoJSON(venuesData, epsg),
+		);
+		originalFeaturesRef.current = originalFeatures;
+
 		const vectorSource = new VectorSource({
-			features: new GeoJSON().readFeatures(transformGeoJSON(venuesData, epsg)),
+			features: originalFeatures,
 		});
 		vectorSourceRef.current = vectorSource;
+
+		const offsetFeatures = createOffsetFeatures(originalFeatures);
+		const offsetVectorSource = new VectorSource({
+			features: offsetFeatures,
+		});
+		offsetVectorSourceRef.current = offsetVectorSource;
 
 		const clusterSource = new Cluster({
 			distance: getClusterDistance(currentZoom),
@@ -225,7 +392,8 @@ const VenueLayer: FC<VenueLayerProps> = ({
 
 		const initialSource = shouldCluster(currentZoom)
 			? clusterSource
-			: vectorSource;
+			: offsetVectorSource;
+
 		const vectorLayer = new VectorLayer({
 			source: initialSource,
 			style: styleFunction,
@@ -258,7 +426,9 @@ const VenueLayer: FC<VenueLayerProps> = ({
 			}
 			vectorLayerRef.current = null;
 			vectorSourceRef.current = null;
+			offsetVectorSourceRef.current = null;
 			clusterSourceRef.current = null;
+			originalFeaturesRef.current = null;
 		};
 	}, [
 		map,
@@ -270,6 +440,7 @@ const VenueLayer: FC<VenueLayerProps> = ({
 		styleFunction,
 		venuesData,
 		handleClusterClick,
+		createOffsetFeatures,
 	]);
 
 	useEffect(() => {
