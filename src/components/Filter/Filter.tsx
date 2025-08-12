@@ -228,7 +228,7 @@ const Filter: FC = () => {
 			{/* Header Section */}
 			<ContentContainer className="p-6">
 				<h2 className="body2 font-bold mb-3 pl-2">
-					{t("filter.displayedVenues", { ns: "content" })}
+					{t("filter.displayedInstitutions", { ns: "content" })}
 				</h2>
 				<button
 					className="flex items-center gap-2 transition-opacity body2 text-primary-dark"
