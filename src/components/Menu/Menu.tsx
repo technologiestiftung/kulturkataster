@@ -23,9 +23,9 @@ import FilterLines from "@/icons/filter-lines.svg";
 import InfoCircle from "@/icons/info-circle.svg";
 import Search from "@/icons/search.svg";
 import { useAppStore } from "@/lib/store/appStore";
+import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useMapStore } from "@/lib/store/mapStore";
 import { useModalStore } from "@/lib/store/modalStore";
-import { useVenueStore } from "@/lib/store/venueStore";
 import { hasActiveFilters } from "@/lib/utils/filterUtils";
 import KukaSmallLogo from "@/logos/kuka-small.svg";
 import { useEffect, useState } from "react";
@@ -33,8 +33,8 @@ import { useTranslation } from "react-i18next";
 import { LayerTreeContent } from "../Map/LayerTree/LayerTree";
 import { AccessibilityContent } from "./MenuContent/AccessibilityContent";
 import { FilterContent } from "./MenuContent/FilterContent";
+import { InstitutionDetailContent } from "./MenuContent/InstitutionDetailContent";
 import { SearchContent } from "./MenuContent/SearchContent";
-import { VenueDetailContent } from "./MenuContent/VenueDetailContent";
 
 const menuItems = [
 	{ id: "filter", icon: FilterLines, label: "filter.title" },
@@ -56,8 +56,10 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	const { setInformationModalOpen } = useModalStore();
 	const isLayerTreeOpen = useMapStore((state) => state.isLayerTreeOpen);
 	const setIsLayerTreeOpen = useMapStore((state) => state.setIsLayerTreeOpen);
-	const selectedVenueId = useVenueStore((state) => state.selectedVenueId);
-	const filters = useVenueStore((state) => state.filters);
+	const selectedInstitutionId = useInstitutionStore(
+		(state) => state.selectedInstitutionId,
+	);
+	const filters = useInstitutionStore((state) => state.filters);
 	const { firstTimeUser, setFirstTimeUser } = useAppStore();
 
 	useEffect(() => {
@@ -67,15 +69,15 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	}, [isLayerTreeOpen]);
 
 	useEffect(() => {
-		if (selectedVenueId) {
-			setActiveItem("venue-detail");
+		if (selectedInstitutionId) {
+			setActiveItem("institution-detail");
 			if (isMobile) {
 				setOpenMobile(true);
 			} else {
 				setOpen(true);
 			}
 		}
-	}, [selectedVenueId, isMobile, setOpen, setOpenMobile]);
+	}, [selectedInstitutionId, isMobile, setOpen, setOpenMobile]);
 
 	useEffect(() => {
 		const isSidebarClosed = isMobile ? !openMobile : !open;
@@ -227,7 +229,8 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 							<span className="body1 font-bold">
 								{(() => {
 									if (activeItem === "layertree") return "Fachkarten";
-									if (activeItem === "venue-detail") return t("venue.details");
+									if (activeItem === "institution-detail")
+										return t("institution.details");
 
 									return t(activeItem + ".title");
 								})()}
@@ -239,10 +242,10 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 									if (activeItem === "layertree") {
 										setIsLayerTreeOpen(false);
 										setActiveItem("filter");
-									} else if (activeItem === "venue-detail") {
-										const setSelectedVenueId =
-											useVenueStore.getState().setSelectedVenueId;
-										setSelectedVenueId(null);
+									} else if (activeItem === "institution-detail") {
+										const setSelectedInstitutionId =
+											useInstitutionStore.getState().setSelectedInstitutionId;
+										setSelectedInstitutionId(null);
 										setActiveItem("filter");
 									}
 								}}
@@ -263,9 +266,11 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 											<AccessibilityContent onItemClick={handleItemClick} />
 										)}
 										{activeItem === "layertree" && <LayerTreeContent />}
-										{activeItem === "venue-detail" && <VenueDetailContent />}
+										{activeItem === "institution-detail" && (
+											<InstitutionDetailContent />
+										)}
 									</div>
-									{(activeItem === "venue-detail" ||
+									{(activeItem === "institution-detail" ||
 										(activeItem === "filter" && hasActiveFilters(filters))) && (
 										<div className="sticky bottom-0 flex justify-center p-4">
 											<Button
