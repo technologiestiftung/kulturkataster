@@ -14,5 +14,15 @@
 		"support": "Support Type",
 		"notFound": "Venue not found",
 		"backToMap": "Back to Map"
+	},
+	"map": {
+		"zoomIn": "Zoom In",
+		"zoomOut": "Zoom Out",
+		"geolocate": "Find my location",
+		"layerTree": "Context Maps",
+		"layerTreeTitle": "Context Maps",
+		"closeLayerTree": "Close context maps",
+		"availableLayers": "Available layers",
+		"noLayersAvailable": "No context maps available"
 	}
 }
