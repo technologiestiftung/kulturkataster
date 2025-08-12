@@ -3,7 +3,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
-import { getInstitutionsGeoJSON } from "@/lib/supabase/api";
 import { getCategoryIconComponent } from "@/lib/utils/iconUtils";
 import { normalizeUrl } from "@/lib/utils/sanitizerUtils";
 import { Category, InstitutionProperties } from "@/types";
@@ -43,7 +42,6 @@ function ContactLink({
 		? { target: "_blank", rel: "noopener noreferrer" }
 		: {};
 
-	// Normalize the URL for external links (websites)
 	const normalizedHref = external ? normalizeUrl(href) : href;
 
 	return (
@@ -301,9 +299,11 @@ export function InstitutionDetailContent() {
 	const selectedInstitutionId = useInstitutionStore(
 		(state) => state.selectedInstitutionId,
 	);
+	const institutions = useInstitutionStore((state) => state.institutions);
 	const setSelectedInstitutionId = useInstitutionStore(
 		(state) => state.setSelectedInstitutionId,
 	);
+
 	const [institutionData, setInstitutionData] =
 		useState<InstitutionProperties | null>(null);
 	const [loading, setLoading] = useState(false);
@@ -317,8 +317,8 @@ export function InstitutionDetailContent() {
 		const fetchInstitutionData = async () => {
 			try {
 				setLoading(true);
-				const geoJsonData = await getInstitutionsGeoJSON();
-				const institution = geoJsonData.features.find(
+				// TODO: fix fetch single institution by id -> implement function
+				const institution = institutions?.features.find(
 					(feature) => feature.properties?.id === selectedInstitutionId,
 				);
 				setInstitutionData(
@@ -333,7 +333,7 @@ export function InstitutionDetailContent() {
 		};
 
 		fetchInstitutionData();
-	}, [selectedInstitutionId]);
+	}, [selectedInstitutionId, institutions]);
 
 	const handleClose = () => setSelectedInstitutionId(null);
 
