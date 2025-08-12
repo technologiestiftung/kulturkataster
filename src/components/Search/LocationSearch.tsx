@@ -21,7 +21,7 @@ export const isGeoFeature = (result: SearchResult): result is GeoFeature => {
 };
 
 const ANIMATION_DURATION = 1000;
-const DEFAULT_ZOOM = 5;
+const DEFAULT_ZOOM = 7;
 
 export function LocationSearch() {
 	const { t } = useTranslation("common");
@@ -152,14 +152,11 @@ export function LocationSearch() {
 	};
 
 	const handleResultClick = (result: SearchResult) => {
-		console.log("handleResultClick triggered with result:", result);
-
 		if (isGeoFeature(result)) {
 			handleGeoFeatureClick(result);
 		} else {
 			handleInstitutionClick(result);
 		}
-		console.log("Selected result:", result);
 		setQuery("");
 		clearResults();
 		resetNavigation();

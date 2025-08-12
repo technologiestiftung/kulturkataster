@@ -1,9 +1,10 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { ButtonWithTooltip } from "@/components/ui/button";
 import { useMapStore } from "@/lib/store/mapStore";
 import { transform } from "ol/proj";
 import { FC, ReactNode, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import LocationIcon from "../../../../icons/mark.svg";
 
 interface GeolocationControlProps {
@@ -15,6 +16,7 @@ const GeolocationControl: FC<GeolocationControlProps> = ({
 	geolocateIcon = <LocationIcon />,
 	onGeolocate,
 }) => {
+	const { t } = useTranslation("common");
 	const map = useMapStore((state) => state.map);
 
 	const handleGeolocate = useCallback(() => {
@@ -62,14 +64,15 @@ const GeolocationControl: FC<GeolocationControlProps> = ({
 	if (!map) return null;
 
 	return (
-		<Button
+		<ButtonWithTooltip
 			variant="map-icon"
 			size="icon-only"
-			title="Go to my location"
+			tooltip={t("map.geolocate")}
 			onClick={handleGeolocate}
+			className="cursor-pointer"
 		>
 			{geolocateIcon}
-		</Button>
+		</ButtonWithTooltip>
 	);
 };
 

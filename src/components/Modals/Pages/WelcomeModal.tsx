@@ -1,14 +1,14 @@
 "use client";
 
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useTranslation } from "react-i18next";
-import KukaLargeLogo from "@/logos/kuka-large.svg";
-import ArrowNarrowRight from "@/icons/arrow-narrow-right.svg";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
-import TechnologieStiftungLogo from "@/logos/technologiestiftung.svg";
-import SenateLogo from "@/logos/senate.svg";
+import ArrowNarrowRight from "@/icons/arrow-narrow-right.svg";
+import { useModalStore } from "@/lib/store/modalStore";
 import KRBLogo from "@/logos/KRB.svg";
+import KukaLargeLogo from "@/logos/kuka-large.svg";
+import SenateLogo from "@/logos/senate.svg";
+import { useTranslation } from "react-i18next";
 
 interface WelcomeModalProps {
 	open: boolean;
@@ -17,6 +17,17 @@ interface WelcomeModalProps {
 
 export function WelcomeModal({ open, onOpenChange }: WelcomeModalProps) {
 	const { t } = useTranslation(["content", "common"]);
+	const { openModal } = useModalStore();
+
+	const handleAboutClick = () => {
+		onOpenChange(false);
+		openModal("about");
+	};
+
+	const handleInfoClick = () => {
+		onOpenChange(false);
+		openModal("information");
+	};
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
@@ -37,9 +48,14 @@ export function WelcomeModal({ open, onOpenChange }: WelcomeModalProps) {
 						</h1>
 					</div>
 					<div className="flex flex-col md:items-start space-y-2">
-						<p className="body1">
-							{t("welcomeModal.description", { ns: "content" })}
-						</p>
+						<div className="space-y-4">
+							<p className="body1">
+								{t("welcomeModal.description1", { ns: "content" })}
+							</p>
+							<p className="body1">
+								{t("welcomeModal.description2", { ns: "content" })}
+							</p>
+						</div>
 						<div className="text-primary-dark flex space-x-2 cursor-pointer">
 							<ArrowNarrowRight className="stroke-primary-dark size-6" />
 							<a
@@ -63,14 +79,14 @@ export function WelcomeModal({ open, onOpenChange }: WelcomeModalProps) {
 								<Button
 									variant="outline"
 									className="w-1/2 md:w-auto cursor-pointer"
-									onClick={() => onOpenChange(false)}
+									onClick={handleAboutClick}
 								>
 									{t("welcomeModal.aboutButton", { ns: "content" })}
 								</Button>
 								<Button
 									variant="outline"
 									className="w-1/2 md:w-auto cursor-pointer"
-									onClick={() => onOpenChange(false)}
+									onClick={handleInfoClick}
 								>
 									{t("welcomeModal.infoButton", { ns: "content" })}
 								</Button>
@@ -83,9 +99,8 @@ export function WelcomeModal({ open, onOpenChange }: WelcomeModalProps) {
 									{t("footer.credit.text", { ns: "common" })}
 								</p>
 							</div>
-							<div className="flex md:w-1/2 md:justify-end justify-around space-x-4 md:mx-4">
+							<div className="flex md:w-1/2 md:justify-end justify-around gap-2 space-x-4 md:mx-4">
 								<KRBLogo className="w-20 md:w-24 h-auto" />
-								<TechnologieStiftungLogo className="w-36 md:w-48 h-auto" />
 								<SenateLogo className="w-32 md:w-42 h-auto" />
 							</div>
 						</div>

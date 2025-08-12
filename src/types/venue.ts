@@ -1,3 +1,5 @@
+import { FeatureCollection, GeoJsonProperties, Geometry } from "geojson";
+
 export enum CategoryType {
 	WORKSHOPS = "workshops",
 	EDUCATION_PLACES = "education_places",
@@ -20,6 +22,28 @@ export enum CategoryType {
 export interface Category {
 	id: number;
 	key: CategoryType;
+	created_at?: string;
+}
+
+export interface CategoryWithSubcategories extends Category {
+	subcategories: Subcategory[];
+	name?: string; // Translated name
+}
+
+export interface Subcategory {
+	id: number;
+	key: string;
+	category_id: number;
+	created_at?: string;
+	name?: string; // Translated name
+}
+
+export interface District {
+	city_id: number;
+	created_at: string;
+	id: number;
+	key: string;
+	name: string; // Already has translated name
 }
 
 export interface ParentOrganization {
@@ -41,7 +65,7 @@ export interface VenueProperties {
 	categories: Category[];
 	district_id: number;
 	street_number: string;
-	subcategories: Category[];
+	subcategories: Subcategory[];
 	funding_sources: unknown[];
 	established_since: string;
 	shared_use_allowed: boolean;
@@ -52,6 +76,7 @@ export interface VenueProperties {
 	support_type?: string;
 	capacity?: number;
 	rooms_count?: number;
+	updated_at?: string;
 }
 
 export interface VenueFeature extends VenueProperties {
@@ -62,7 +87,25 @@ export interface VenueFeature extends VenueProperties {
 	};
 }
 
+export interface FilterState {
+	district_keys: string[];
+	category_keys: string[];
+	subcategory_keys: string[];
+	status?: "closed" | "open";
+}
+
 export interface VenueStoreState {
+	venues: FeatureCollection<Geometry, GeoJsonProperties> | null;
 	selectedVenueId: number | string | null;
+	filters: FilterState | null;
+
+	setVenues: (
+		venues: FeatureCollection<Geometry, GeoJsonProperties> | null,
+	) => void;
 	setSelectedVenueId: (id: string | null) => void;
+
+	setFilters: (filters: FilterState | null) => void;
+
+	initializeVenues: () => Promise<void>;
+	applyFilters: () => Promise<void>;
 }

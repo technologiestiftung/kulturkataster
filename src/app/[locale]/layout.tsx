@@ -1,6 +1,7 @@
 import Footer from "@/components/Footer/Footer";
 import MapInitializer from "@/components/Map/MapInitializer/MapInitializer";
 import { Menu } from "@/components/Menu/Menu";
+import { ModalProvider } from "@/components/ModalProvider";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { serverSideTranslation } from "@/i18n";
 import I18NProvider from "@/i18n/i18n-provider";
@@ -49,6 +50,7 @@ export default async function RootLayout({
 					</SidebarProvider>
 
 					<Footer />
+					<ModalProvider />
 				</I18NProvider>
 
 				<Script id="matomo" strategy="afterInteractive">

@@ -1,15 +1,15 @@
 "use client";
 
-import * as React from "react";
 // import SignLanguage from "@/icons/sign-language.svg";
 // import SimpleLanguage from "@/icons/simple-language.svg";
 import FontSize from "@/icons/font-size.svg";
 // import Contrast from "@/icons/contrast.svg";
-import { SubMenuOption } from "../SubMenuOption";
 import { useAppStore } from "@/lib/store/appStore";
+import { useModalStore } from "@/lib/store/modalStore";
+import { SubMenuOption } from "../SubMenuOption";
 
 interface AccessibilityContentProps {
-	onItemClick: (itemName: string) => void;
+	onItemClick?: (itemName: string) => void; // Made optional since we can use the modal store directly
 }
 
 const accessibilityOptions = [
@@ -50,6 +50,8 @@ export function AccessibilityContent({
 		setIsLargeTextMode,
 	} = useAppStore();
 
+	const { setAccessibilityModalOpen } = useModalStore();
+
 	const handleSwitchChange = (optionId: string, checked: boolean) => {
 		switch (optionId) {
 			case "fontSize":
@@ -84,7 +86,15 @@ export function AccessibilityContent({
 					icon={option.icon}
 					titleKey={option.titleKey}
 					onClick={
-						option.hasSwitch ? undefined : () => onItemClick("accessibility")
+						option.hasSwitch
+							? undefined
+							: () => {
+									if (onItemClick) {
+										onItemClick("accessibility");
+									} else {
+										setAccessibilityModalOpen(true);
+									}
+								}
 					}
 					hasSwitch={option.hasSwitch}
 					switchChecked={getSwitchState(option.id)}

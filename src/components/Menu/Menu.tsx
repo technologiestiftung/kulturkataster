@@ -1,6 +1,5 @@
 "use client";
 
-import { InformationModal } from "@/components/Modals/Pages/InformationModal";
 import { WelcomeModal } from "@/components/Modals/Pages/WelcomeModal";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,7 +24,9 @@ import InfoCircle from "@/icons/info-circle.svg";
 import Search from "@/icons/search.svg";
 import { useAppStore } from "@/lib/store/appStore";
 import { useMapStore } from "@/lib/store/mapStore";
+import { useModalStore } from "@/lib/store/modalStore";
 import { useVenueStore } from "@/lib/store/venueStore";
+import { hasActiveFilters } from "@/lib/utils/filterUtils";
 import KukaSmallLogo from "@/logos/kuka-small.svg";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -52,10 +53,11 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 		useSidebar();
 	const { t } = useTranslation("common");
 	const [activeItem, setActiveItem] = useState("filter");
-	const [infoModalOpen, setInfoModalOpen] = useState(false);
+	const { setInformationModalOpen } = useModalStore();
 	const isLayerTreeOpen = useMapStore((state) => state.isLayerTreeOpen);
 	const setIsLayerTreeOpen = useMapStore((state) => state.setIsLayerTreeOpen);
 	const selectedVenueId = useVenueStore((state) => state.selectedVenueId);
+	const filters = useVenueStore((state) => state.filters);
 	const { firstTimeUser, setFirstTimeUser } = useAppStore();
 
 	useEffect(() => {
@@ -92,7 +94,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
 	const handleItemClick = (itemName: string) => {
 		if (itemName === "info") {
-			setInfoModalOpen(true);
+			setInformationModalOpen(true);
 			return;
 		}
 
@@ -148,7 +150,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 				open={firstTimeUser}
 				onOpenChange={handleWelcomeModalClose}
 			/>
-			<InformationModal open={infoModalOpen} onOpenChange={setInfoModalOpen} />
+			{/* InformationModal now handled by ModalProvider */}
 			<Sidebar
 				collapsible="icon"
 				className="overflow-hidden *:data-[sidebar=sidebar]:flex-row [&_*]:!transition-none"
@@ -262,7 +264,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 										{activeItem === "venue-detail" && <VenueDetailContent />}
 									</div>
 									{(activeItem === "venue-detail" ||
-										activeItem === "filter") && (
+										(activeItem === "filter" && hasActiveFilters(filters))) && (
 										<div className="sticky bottom-0 flex justify-center p-4">
 											<Button variant={"outline"} className="w-full">
 												<Download size={6} viewBox="0 0 24 24" />
@@ -290,7 +292,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 					variant="map-icon"
 					size="icon-only"
 					title={t("info.open")}
-					onClick={() => setInfoModalOpen(true)}
+					onClick={() => setInformationModalOpen(true)}
 				>
 					<DotsVertical size={14} />
 				</Button>

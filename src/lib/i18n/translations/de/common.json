@@ -4,7 +4,7 @@
 	},
 	"search": {
 		"title": "Suche",
-		"description": "Entdecken Sie Berlins Kulturorte ganz einfach über die Suchfunktion – geben Sie eine Adresse oder einen Ort ein, und die Ergebnisse erscheinen direkt auf der Karte.",
+		"description": "Ganz einfach die Berliner Kulturlandschaft entdecken: Geben Sie einen Kulturortnamen, eine Adresse, einen Bezirk oder Ortsteil in die Suchfunktion ein und wählen Sie das Ergebnis aus den angezeigten Vorschlägen aus. Ihre Auswahl wird direkt auf der Karte angezeigt.",
 		"hint": "Adresse oder Kulturort eingeben",
 		"placeholder": "Kulturort, Adresse oder Kategorie",
 		"searchButton": "Suchen",
@@ -89,7 +89,8 @@
 		"status": "Stand",
 		"moreInfo": "Mehr Informationen",
 		"lessInfo": "Weniger Informationen",
-		"loading": "Laden..."
+		"loading": "Laden...",
+		"establishedSince": "Am Standort etabliert seit"
 	},
 	"loading": "Laden",
 	"error": "Fehler",
@@ -119,7 +120,17 @@
 		"privacy": "Datenschutz",
 		"accessibility": "Barrierefreiheit",
 		"credit": {
-			"text": "© 2025 - Ein Projekt der Kulturraum Berlin gGmbH, in Zusammenarbeit mit der Technologiestiftung Berlin und gefördert durch den Senat Berlin."
+			"text": "© 2025 - Ein Projekt der Kulturraum Berlin gGmbH, gefördert durch die Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt, mit der technischen Umsetzung durch die Technologiestiftung Berlin."
 		}
+	},
+	"map": {
+		"zoomIn": "Vergrößern",
+		"zoomOut": "Verkleinern",
+		"geolocate": "Meinen Standort finden",
+		"layerTree": "Fachkarten",
+		"layerTreeTitle": "Fachkarten",
+		"closeLayerTree": "Fachkarten schließen",
+		"availableLayers": "Verfügbare Ebenen",
+		"noLayersAvailable": "Keine Fachkarten verfügbar"
 	}
 }
