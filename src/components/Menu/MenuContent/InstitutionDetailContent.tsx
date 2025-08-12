@@ -92,7 +92,7 @@ function InstitutionHeader({
 										{tEnum(`category.${category.key}`)}
 									</p>
 								</div>
-								<p className="body2 pl-8">{t("venue.subcategory")}</p>
+								<p className="body2 pl-8">{t("institution.subcategory")}</p>
 							</div>
 						);
 					})}
@@ -103,7 +103,7 @@ function InstitutionHeader({
 				className={`${isInUse ? "bg-brand-light" : "bg-alert"} p-4 flex gap-2`}
 			>
 				<span className="body2 font-bold">
-					{t("venue.utilizationStatus")}:{" "}
+					{t("institution.utilizationStatus")}:{" "}
 				</span>
 
 				{institutionData.utilization_status ? (
@@ -144,13 +144,13 @@ function InstitutionBasicInfo({
 
 			<InfoSection>
 				{institutionData.description && (
-					<InfoItem label={t("venue.culturalArea")}>
+					<InfoItem label={t("institution.culturalArea")}>
 						{institutionData.description}
 					</InfoItem>
 				)}
 
 				{institutionData.website && (
-					<InfoItem label={t("venue.website")}>
+					<InfoItem label={t("institution.website")}>
 						<ContactLink href={institutionData.website} external>
 							Website {institutionData.name}
 						</ContactLink>
@@ -158,7 +158,7 @@ function InstitutionBasicInfo({
 				)}
 
 				{institutionData.phone && (
-					<InfoItem label={t("venue.phoneNumber")}>
+					<InfoItem label={t("institution.phoneNumber")}>
 						<ContactLink href={`tel:${institutionData.phone}`}>
 							{institutionData.phone}
 						</ContactLink>
@@ -166,7 +166,7 @@ function InstitutionBasicInfo({
 				)}
 
 				{institutionData.email && (
-					<InfoItem label={t("venue.emailAddress")}>
+					<InfoItem label={t("institution.emailAddress")}>
 						<ContactLink href={`mailto:${institutionData.email}`}>
 							{institutionData.email}
 						</ContactLink>
@@ -190,17 +190,17 @@ function InstitutionExtendedInfo({
 		<div className="space-y-4">
 			<InfoSection>
 				{institutionData.funding_type && (
-					<InfoItem label={t("venue.fundingType")}>
+					<InfoItem label={t("institution.fundingType")}>
 						{tEnum(`funding_type.${institutionData.funding_type}`)}
 					</InfoItem>
 				)}
 				{institutionData.support_type && (
-					<InfoItem label={t("venue.supportType")}>
+					<InfoItem label={t("institution.supportType")}>
 						{institutionData.support_type}
 					</InfoItem>
 				)}
 				{institutionData.district_id && (
-					<InfoItem label={t("venue.district")}>
+					<InfoItem label={t("institution.district")}>
 						{tEnum(`district_id.${institutionData.district_id}`)}
 					</InfoItem>
 				)}
@@ -208,27 +208,27 @@ function InstitutionExtendedInfo({
 
 			<InfoSection>
 				{institutionData.capacity && (
-					<InfoItem label={t("venue.usableAreaSize")}>
+					<InfoItem label={t("institution.usableAreaSize")}>
 						{institutionData.capacity}
 					</InfoItem>
 				)}
 				{institutionData.rooms_count && (
-					<InfoItem label={t("venue.workspaceCount")}>
+					<InfoItem label={t("institution.workspaceCount")}>
 						{institutionData.rooms_count}
 					</InfoItem>
 				)}
-				<InfoItem label={t("venue.multipleUse")}>
+				<InfoItem label={t("institution.multipleUse")}>
 					{institutionData.shared_use_allowed
-						? t("venue.multipleUsePossible")
-						: t("venue.multipleUseNotPossible")}
+						? t("institution.multipleUsePossible")
+						: t("institution.multipleUseNotPossible")}
 				</InfoItem>
 				{institutionData.shared_use_allowed && (
-					<InfoItem label={t("venue.description")}>
-						{t("venue.multipleUseDescription")}
+					<InfoItem label={t("institution.description")}>
+						{t("institution.multipleUseDescription")}
 					</InfoItem>
 				)}
 				{institutionData.established_since && (
-					<InfoItem label={t("venue.establishedSince")}>
+					<InfoItem label={t("institution.establishedSince")}>
 						{new Date(institutionData.established_since).getFullYear()}
 					</InfoItem>
 				)}
@@ -236,7 +236,7 @@ function InstitutionExtendedInfo({
 
 			{institutionData.updated_at && (
 				<InfoSection>
-					<InfoItem label={t("venue.status")}>
+					<InfoItem label={t("institution.status")}>
 						{institutionData.updated_at}
 					</InfoItem>
 				</InfoSection>
@@ -287,7 +287,7 @@ function InstitutionCard({
 					>
 						{showMore ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
 						<span className="body2">
-							{showMore ? t("venue.lessInfo") : t("venue.moreInfo")}
+							{showMore ? t("institution.lessInfo") : t("institution.moreInfo")}
 						</span>
 					</Button>
 				)}
@@ -354,13 +354,13 @@ export function InstitutionDetailContent() {
 	if (!institutionData) {
 		return (
 			<div className="p-6">
-				<p className="text-muted-foreground">{t("venue.notFound")}</p>
+				<p className="text-muted-foreground">{t("institution.notFound")}</p>
 				<Button
 					onClick={handleClose}
 					variant="link"
 					className="mt-4 text-primary-dark hover:underline p-0 h-auto"
 				>
-					{t("venue.backToMap")}
+					{t("institution.backToMap")}
 				</Button>
 			</div>
 		);
