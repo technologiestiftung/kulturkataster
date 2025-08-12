@@ -76,6 +76,7 @@ export interface VenueProperties {
 	support_type?: string;
 	capacity?: number;
 	rooms_count?: number;
+	updated_at?: string;
 }
 
 export interface VenueFeature extends VenueProperties {

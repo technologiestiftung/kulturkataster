@@ -213,13 +213,16 @@ function VenueExtendedInfo({ venueData }: { venueData: VenueProperties }) {
 						{t("venue.multipleUseDescription")}
 					</InfoItem>
 				)}
+				{venueData.established_since && (
+					<InfoItem label={t("venue.establishedSince")}>
+						{new Date(venueData.established_since).getFullYear()}
+					</InfoItem>
+				)}
 			</InfoSection>
 
-			{venueData.established_since && (
+			{venueData.updated_at && (
 				<InfoSection>
-					<InfoItem label={t("venue.status")}>
-						{venueData.established_since}
-					</InfoItem>
+					<InfoItem label={t("venue.status")}>{venueData.updated_at}</InfoItem>
 				</InfoSection>
 			)}
 		</div>
