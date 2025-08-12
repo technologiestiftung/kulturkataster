@@ -94,7 +94,7 @@ export async function filterInstitutions(query: FilterState) {
 			district_keys: query.district_keys,
 			category_keys: query.category_keys,
 			subcategory_keys: query.subcategory_keys,
-			"include_closed": true,
+			include_closed: true,
 		},
 	);
 
