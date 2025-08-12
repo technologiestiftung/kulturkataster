@@ -72,7 +72,6 @@ export async function searchInstitutions(query: string) {
 
 	const trimmedQuery = query.trim();
 
-	// Use the backend RPC function for search
 	const { data, error } = await supabase.rpc("get_public_institutions", {
 		search_term: trimmedQuery,
 		limit_count: 50,
@@ -82,39 +81,26 @@ export async function searchInstitutions(query: string) {
 		handleError(error, "search institutions");
 	}
 
-	// Return the institutions array directly
 	return data || [];
 }
 
 export async function filterInstitutions(query: FilterState) {
 	const supabase = createClient();
 
-	// For now, we'll use the district-based filtering and can extend it later
-	// to include category, subcategory, and status filtering when the backend supports it
+	// TODO: Extend API to support these parameters when backend is ready:
 	const { data, error } = await supabase.rpc(
-		"get_public_institutions_by_districts_geojson",
+		"get_public_institutions_with_filters",
 		{
 			district_keys: query.district_keys,
+			category_keys: query.category_keys,
+			subcategory_keys: query.subcategory_keys,
+			"include_closed": true,
 		},
 	);
-
-	// TODO: Extend API to support these parameters when backend is ready:
-	// const { data, error } = await supabase.rpc(
-	// 	"get_public_institutions_by_filters_geojson",
-	// 	{
-	// 		district_keys: query.district_keys,
-	// 		category_keys: query.category_keys,
-	// 		subcategory_keys: query.subcategory_keys,
-	// 		status: query.status,
-	// 	},
-	// );
 
 	if (error) {
 		handleError(error, "filter institutions");
 	}
-
-	// Type cast the imported JSON to proper FeatureCollection type
-	// return localFilteredVenues as FeatureCollection;
 	return data;
 }
 
