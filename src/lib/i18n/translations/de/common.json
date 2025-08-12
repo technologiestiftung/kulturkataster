@@ -89,7 +89,8 @@
 		"status": "Stand",
 		"moreInfo": "Mehr Informationen",
 		"lessInfo": "Weniger Informationen",
-		"loading": "Laden..."
+		"loading": "Laden...",
+		"establishedSince": "Am Standort etabliert seit"
 	},
 	"loading": "Laden",
 	"error": "Fehler",
