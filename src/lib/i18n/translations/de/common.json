@@ -52,6 +52,7 @@
 	"cancel": "Abbrechen",
 	"confirm": "Bestätigen",
 	"close": "Schließen",
+	"closeSidebar": "Seitenleiste schließen",
 	"venue": {
 		"details": "Kulturort Details",
 		"unnamed": "Unbenannter Kulturort",
@@ -132,5 +133,6 @@
 		"closeLayerTree": "Fachkarten schließen",
 		"availableLayers": "Verfügbare Ebenen",
 		"noLayersAvailable": "Keine Fachkarten verfügbar"
-	}
+	},
+	"kukaLogo": "Kulturkataster - Logo"
 }

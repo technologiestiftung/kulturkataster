@@ -163,7 +163,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 					<SidebarHeader>
 						<SidebarMenu className="my-2">
 							<SidebarMenuItem>
-								<button onClick={handleLogoClick}>
+								<button onClick={handleLogoClick} aria-label={t("kukaLogo")}>
 									<KukaSmallLogo className="size-14 cursor-pointer hover:opacity-80 transition-opacity" />
 								</button>
 							</SidebarMenuItem>
@@ -182,6 +182,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 												}}
 												onClick={() => handleItemClick(item.id)}
 												isActive={activeItem === item.id}
+												aria-label={t(item.label)}
 											>
 												<item.icon />
 											</SidebarMenuButton>
@@ -202,6 +203,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 										}}
 										onClick={() => handleItemClick(item.id)}
 										isActive={activeItem === item.id}
+										aria-label={t(item.label)}
 									>
 										<item.icon />
 									</SidebarMenuButton>
@@ -244,7 +246,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 										setActiveItem("filter");
 									}
 								}}
-								className=""
+								aria-label={t("closeSidebar")}
 							>
 								<Close />
 							</button>
@@ -266,7 +268,11 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 									{(activeItem === "venue-detail" ||
 										(activeItem === "filter" && hasActiveFilters(filters))) && (
 										<div className="sticky bottom-0 flex justify-center p-4">
-											<Button variant={"outline"} className="w-full">
+											<Button
+												variant={"outline"}
+												className="w-full"
+												aria-label={t("download.downloadButton")}
+											>
 												<Download size={6} viewBox="0 0 24 24" />
 												Daten herunterladen
 											</Button>
@@ -282,6 +288,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 				<button
 					onClick={handleLogoClick}
 					className="flex flex-col items-center gap-1 p-2"
+					aria-label={t("kukaLogo")}
 				>
 					<KukaSmallLogo className="size-14" />
 				</button>
@@ -293,6 +300,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 					size="icon-only"
 					title={t("info.open")}
 					onClick={() => setInformationModalOpen(true)}
+					aria-label={t("info.open")}
 				>
 					<DotsVertical size={14} />
 				</Button>
@@ -306,6 +314,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 								onClick={() => handleItemClick(item.id)}
 								isActive={activeItem === item.id}
 								className="flex-col gap-1 h-auto py-2 px-2 w-auto size-12"
+								aria-label={t(item.label)}
 							>
 								<item.icon className="size-6" />
 								<span className="text-xs font-medium hidden">
