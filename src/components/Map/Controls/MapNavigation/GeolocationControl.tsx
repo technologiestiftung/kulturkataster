@@ -70,6 +70,7 @@ const GeolocationControl: FC<GeolocationControlProps> = ({
 			tooltip={t("map.geolocate")}
 			onClick={handleGeolocate}
 			className="cursor-pointer"
+			aria-label={t("map.geolocate")}
 		>
 			{geolocateIcon}
 		</ButtonWithTooltip>
