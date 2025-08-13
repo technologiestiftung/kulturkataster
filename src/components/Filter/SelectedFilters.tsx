@@ -25,7 +25,6 @@ export function SelectedFilters({
 	showRemove = false,
 	className = "",
 }: SelectedFiltersProps) {
-
 	const getDistrictName = (key: string) => {
 		const district = districts.find((d) => d.key === key);
 		return district?.name || key;
@@ -46,7 +45,7 @@ export function SelectedFilters({
 		return key;
 	};
 
-	const hasAnyFilters = 
+	const hasAnyFilters =
 		filters.district_keys.length > 0 ||
 		filters.category_keys.length > 0 ||
 		filters.subcategory_keys.length > 0;
@@ -59,9 +58,9 @@ export function SelectedFilters({
 		<div className={`flex flex-wrap gap-2 ${className}`}>
 			{/* District filters */}
 			{filters.district_keys.map((key) => (
-				<Button 
+				<Button
 					key={`district-${key}`}
-					variant="tag" 
+					variant="tag"
 					size="tag"
 					className={showRemove ? "bg-neutral-80 text-white" : ""}
 					onClick={showRemove ? () => onRemoveDistrict?.(key) : undefined}
@@ -77,9 +76,9 @@ export function SelectedFilters({
 
 			{/* Category filters */}
 			{filters.category_keys.map((key) => (
-				<Button 
+				<Button
 					key={`category-${key}`}
-					variant="tag" 
+					variant="tag"
 					size="tag"
 					className={showRemove ? "bg-neutral-80 text-white" : ""}
 					onClick={showRemove ? () => onRemoveCategory?.(key) : undefined}
@@ -95,9 +94,9 @@ export function SelectedFilters({
 
 			{/* Subcategory filters */}
 			{filters.subcategory_keys.map((key) => (
-				<Button 
+				<Button
 					key={`subcategory-${key}`}
-					variant="tag" 
+					variant="tag"
 					size="tag"
 					className={showRemove ? "bg-neutral-80 text-white" : ""}
 					onClick={showRemove ? () => onRemoveSubcategory?.(key) : undefined}
