@@ -93,7 +93,7 @@
 			"elements": [
 				{
 					"id": "alkis_bezirke:bezirksgrenzen",
-					"visibility": false
+					"visibility": true
 				},
 				{
 					"id": "alkis_ortsteile:ortsteile",
