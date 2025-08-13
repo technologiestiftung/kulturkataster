@@ -108,29 +108,11 @@ export async function filterInstitutions(query: FilterState) {
 export async function getCategoriesWithSubcategories(): Promise<
 	CategoryWithSubcategories[]
 > {
-	// TODO: Replace with actual backend call when ready
-	// const supabase = createClient();
-	// const { data, error } = await supabase.rpc("get_public_category_map");
-	// if (error) {
-	// 	handleError(error, "fetch categories");
-	// }
-	// return data || []; // Backend will return pre-transformed data
-
-	// For now, return static data directly (same format as backend will provide)
 	const staticCategoryMap = await import("./categoryMap.json");
 	return staticCategoryMap.default as CategoryWithSubcategories[];
 }
 
 export async function getDistricts(): Promise<District[]> {
-	// TODO: Replace with actual backend call when ready
-	// const supabase = createClient();
-	// const { data, error } = await supabase.rpc("get_public_district_map");
-	// if (error) {
-	// 	handleError(error, "fetch districts");
-	// }
-	// return data || []; // Backend will return pre-transformed data
-
-	// For now, return static data directly (same format as backend will provide)
 	const staticDistrictMap = await import("./districtMap.json");
 	return staticDistrictMap.default as District[];
 }
