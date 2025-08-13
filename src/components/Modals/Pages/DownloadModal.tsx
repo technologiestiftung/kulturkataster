@@ -84,14 +84,15 @@ interface DownloadButtonProps {
 	t: (key: string) => string;
 }
 
-function DownloadButton({ isDownloading, isDisabled, onDownload, t }: DownloadButtonProps) {
+function DownloadButton({
+	isDownloading,
+	isDisabled,
+	onDownload,
+	t,
+}: DownloadButtonProps) {
 	return (
 		<div className="flex flex-col space-y-2">
-			<Button
-				className="w-full"
-				onClick={onDownload}
-				disabled={isDisabled}
-			>
+			<Button className="w-full" onClick={onDownload} disabled={isDisabled}>
 				{isDownloading
 					? t("download.downloading")
 					: t("download.downloadButton")}
@@ -100,7 +101,11 @@ function DownloadButton({ isDownloading, isDisabled, onDownload, t }: DownloadBu
 	);
 }
 
-export function DownloadModal({ open, onOpenChange, mode = "all" }: DownloadModalProps) {
+export function DownloadModal({
+	open,
+	onOpenChange,
+	mode = "all",
+}: DownloadModalProps) {
 	const { t } = useTranslation(["content", "common", "enumMap"]);
 	const { t: tEnum } = useTranslation("enumMap");
 	const { institutions, filters } = useInstitutionStore();
@@ -158,7 +163,7 @@ export function DownloadModal({ open, onOpenChange, mode = "all" }: DownloadModa
 					/>
 				</div>
 			)}
-			
+
 			<FormatSelector
 				selectedFormat={selectedFormat}
 				onFormatChange={setSelectedFormat}
