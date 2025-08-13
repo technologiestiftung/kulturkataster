@@ -10,7 +10,6 @@ interface DownloadData {
 	translateFn?: (key: string, options?: Record<string, unknown>) => string;
 }
 
-// Translation lookup function for enum values
 function translateEnumValue(
 	key: string,
 	value: string | number,
@@ -20,7 +19,6 @@ function translateEnumValue(
 		return value.toString();
 	}
 
-	// Handle special cases for different property types
 	const enumKeyMappings: Record<string, string> = {
 		district_id: "district_id",
 		categories: "category",
@@ -34,28 +32,22 @@ function translateEnumValue(
 	const enumType = enumKeyMappings[key];
 	if (enumType) {
 		try {
-			// Try to translate using i18n key format
 			const translationKey = `${enumType}.${value}`;
 			const translated = translateFn(translationKey);
 
-			// If translation key is returned as-is, it means no translation was found
 			if (translated !== translationKey) {
 				return translated;
 			}
-		} catch {
-			// Fallback to original value if translation fails
-		}
+		} catch {}
 	}
 
 	return value.toString();
 }
 
-// Handle null/undefined values
 function handleNullValue(key: string): Record<string, string> {
 	return { [key]: "" };
 }
 
-// Handle array values for export
 function handleArrayValue(
 	value: unknown[],
 	key: string,
@@ -65,7 +57,6 @@ function handleArrayValue(
 		return { [key]: "" };
 	}
 
-	// Handle primitive arrays (strings, numbers)
 	const firstItem = value[0];
 	if (typeof firstItem === "string" || typeof firstItem === "number") {
 		const translatedValues = value.map((item) =>
@@ -74,14 +65,12 @@ function handleArrayValue(
 		return { [key]: translatedValues.join("; ") };
 	}
 
-	// Handle object arrays - extract meaningful properties
 	if (typeof firstItem === "object" && firstItem !== null) {
 		const names = value.map((item) => {
 			if (item && typeof item === "object") {
 				const obj = item as Record<string, unknown>;
 				const extractedValue = obj.name || obj.key;
 
-				// Try to translate if it's a known enum value
 				if (extractedValue) {
 					return translateEnumValue(key, String(extractedValue), translateFn);
 				}
@@ -134,12 +123,10 @@ function flattenProperty(
 		return handleNullValue(key);
 	}
 
-	// Handle arrays
 	if (Array.isArray(value)) {
 		return handleArrayValue(value, key, translateFn);
 	}
 
-	// Handle objects
 	if (typeof value === "object" && value !== null) {
 		return handleObjectValue(
 			value as Record<string, unknown>,
@@ -148,7 +135,6 @@ function flattenProperty(
 		);
 	}
 
-	// Handle primitives - apply translation for enum values
 	const translatedValue = translateEnumValue(
 		key,
 		value as string | number,
@@ -183,15 +169,14 @@ const COLUMN_ORDER = [
 	"parent_organizations",
 ];
 
-const EXCLUDED_FIELDS = ["id", "updated_at"];
+const EXCLUDED_FIELDS = ["id", "updated_at", "city_id", "created_at"];
 
-// Convert institution data to flat records for export with ordered columns
 export function prepareDataForExport(
 	institutions: InstitutionProperties[],
 	translateFn?: (key: string, options?: Record<string, unknown>) => string,
 ): Record<string, string>[] {
 	return institutions
-		.sort((a, b) => a.id - b.id) // Sort by ID
+		.sort((a, b) => a.id - b.id)
 		.map((institution) => {
 			const flattened: Record<string, string> = {};
 
@@ -221,7 +206,6 @@ export function prepareDataForExport(
 		});
 }
 
-// Generate CSV content
 function generateCSV(data: Record<string, string>[]): string {
 	if (data.length === 0) return "";
 
@@ -232,7 +216,6 @@ function generateCSV(data: Record<string, string>[]): string {
 		headers
 			.map((header) => {
 				const value = row[header];
-				// Escape commas and quotes in CSV
 				if (
 					typeof value === "string" &&
 					(value.includes(",") || value.includes('"'))
@@ -247,31 +230,23 @@ function generateCSV(data: Record<string, string>[]): string {
 	return [csvHeaders, ...csvRows].join("\n");
 }
 
-// Generate proper Excel file using xlsx library
 function generateExcelBuffer(
 	data: Record<string, string>[],
 	format: "xlsx" | "xls",
 ): ArrayBuffer {
 	if (data.length === 0) {
-		// Create empty workbook
 		const wb = XLSX.utils.book_new();
 		const ws = XLSX.utils.json_to_sheet([]);
 		XLSX.utils.book_append_sheet(wb, ws, "Institutions");
 		return XLSX.write(wb, { bookType: format, type: "array" });
 	}
-
-	// Create workbook and worksheet
 	const wb = XLSX.utils.book_new();
 	const ws = XLSX.utils.json_to_sheet(data);
-
-	// Add worksheet to workbook
 	XLSX.utils.book_append_sheet(wb, ws, "Institutions");
 
-	// Generate file
 	return XLSX.write(wb, { bookType: format, type: "array" });
 }
 
-// Trigger file download for text content
 function downloadFile(content: string, filename: string, mimeType: string) {
 	const blob = new Blob([content], { type: mimeType });
 	const url = URL.createObjectURL(blob);
@@ -284,7 +259,6 @@ function downloadFile(content: string, filename: string, mimeType: string) {
 	URL.revokeObjectURL(url);
 }
 
-// Trigger file download for binary content
 function downloadBinaryFile(
 	content: ArrayBuffer,
 	filename: string,
@@ -301,7 +275,6 @@ function downloadBinaryFile(
 	URL.revokeObjectURL(url);
 }
 
-// Main download function
 export async function downloadInstitutions({
 	data,
 	filename,
