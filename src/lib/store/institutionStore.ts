@@ -1,9 +1,10 @@
 import { filterInstitutions, getInstitutionsGeoJSON } from "@/lib/supabase/api";
 import { InstitutionStoreState } from "@/types";
 import { create } from "zustand";
+import { devtools } from "zustand/middleware";
 
-export const useInstitutionStore = create<InstitutionStoreState>(
-	(set, get) => ({
+export const useInstitutionStore = create<InstitutionStoreState>()(
+	devtools((set, get) => ({
 		institutions: null,
 		setInstitutions: (institutions) => set({ institutions }),
 
@@ -44,5 +45,5 @@ export const useInstitutionStore = create<InstitutionStoreState>(
 				console.error("Failed to apply filters:", error);
 			}
 		},
-	}),
+	})),
 );
