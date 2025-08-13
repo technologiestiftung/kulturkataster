@@ -12,6 +12,7 @@ export const useInstitutionStore = create<InstitutionStoreState>(
 			set({ selectedInstitutionId: id }),
 
 		filters: {
+			status: undefined, // e.g., "open", "closed", etc.
 			district_keys: [],
 			category_keys: [],
 			subcategory_keys: [],
