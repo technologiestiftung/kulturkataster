@@ -53,7 +53,11 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 		useSidebar();
 	const { t } = useTranslation("common");
 	const [activeItem, setActiveItem] = useState("filter");
-	const { setInformationModalOpen, setDownloadModalOpen } = useModalStore();
+	const {
+		setInformationModalOpen,
+		setDownloadModalOpen,
+		setDownloadModalMode,
+	} = useModalStore();
 	const isLayerTreeOpen = useMapStore((state) => state.isLayerTreeOpen);
 	const setIsLayerTreeOpen = useMapStore((state) => state.setIsLayerTreeOpen);
 	const selectedInstitutionId = useInstitutionStore(
@@ -124,6 +128,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
 		if (itemName === "download") {
 			setDownloadModalOpen(true);
+			setDownloadModalMode("all");
 			return;
 		}
 
@@ -283,7 +288,10 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 												variant={"outline"}
 												className="w-full"
 												aria-label={t("download.downloadButton")}
-												onClick={() => setDownloadModalOpen(true)}
+												onClick={() => {
+													setDownloadModalOpen(true);
+													setDownloadModalMode("filtered");
+												}}
 											>
 												<Download size={6} viewBox="0 0 24 24" />
 												{t("download.downloadButton")}

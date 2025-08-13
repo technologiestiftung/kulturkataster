@@ -7,6 +7,7 @@ export interface ModalStoreState {
 	accessibilityModalOpen: boolean;
 	informationModalOpen: boolean;
 	downloadModalOpen: boolean;
+	downloadModalMode: "all" | "filtered";
 
 	setAboutModalOpen: (open: boolean) => void;
 	setPrivacyModalOpen: (open: boolean) => void;
@@ -14,6 +15,7 @@ export interface ModalStoreState {
 	setAccessibilityModalOpen: (open: boolean) => void;
 	setInformationModalOpen: (open: boolean) => void;
 	setDownloadModalOpen: (open: boolean) => void;
+	setDownloadModalMode: (mode: "all" | "filtered") => void;
 
 	openModal: (modalName: string) => void;
 	closeAllModals: () => void;
@@ -29,6 +31,7 @@ export const useModalStore = create<ModalStoreState>((set) => ({
 	accessibilityModalOpen: false,
 	informationModalOpen: false,
 	downloadModalOpen: false,
+	downloadModalMode: "all",
 
 	// Setters
 	setAboutModalOpen: (open) => set({ aboutModalOpen: open }),
@@ -37,6 +40,7 @@ export const useModalStore = create<ModalStoreState>((set) => ({
 	setAccessibilityModalOpen: (open) => set({ accessibilityModalOpen: open }),
 	setInformationModalOpen: (open) => set({ informationModalOpen: open }),
 	setDownloadModalOpen: (open) => set({ downloadModalOpen: open }),
+	setDownloadModalMode: (mode) => set({ downloadModalMode: mode }),
 
 	openModal: (modalName: string) => {
 		set((state) => {
