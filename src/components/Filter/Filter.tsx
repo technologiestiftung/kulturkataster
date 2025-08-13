@@ -143,7 +143,7 @@ const CategorySection: FC<{
 
 // Main Filter Component
 const Filter: FC = () => {
-	const { setFilters, filters, applyFilters, institutions } =
+	const { setFilters, filters, filterInstitutionsFrontend, institutions } =
 		useInstitutionStore();
 	const { categoryGroups, districts, loading, error, retry } = useFilterData();
 	const { t } = useTranslation(["content", "common"]);
@@ -172,10 +172,16 @@ const Filter: FC = () => {
 		console.log("[Filter] categoryGroups::", categoryGroups);
 	}, [categoryGroups]);
 
-	const updateFilters = (newFilters: FilterState) => {
+	const updateFilters = async (newFilters: FilterState) => {
 		setFilters(newFilters);
-		applyFilters();
+		await filterInstitutionsFrontend(newFilters);
 	};
+
+	// BE Filter to bring back:
+	// const updateFilters = (newFilters: FilterState) => {
+	// 	setFilters(newFilters);
+	// 	applyFilters();
+	// };
 
 	// Toggle district selection
 	const toggleDistrict = (districtKey: string) => {
