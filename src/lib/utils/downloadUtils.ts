@@ -200,7 +200,7 @@ export function prepareDataForExport(
 				if (EXCLUDED_FIELDS.includes(key)) {
 					return;
 				}
-				
+
 				const flattenedProp = flattenProperty(value, key, translateFn);
 				Object.assign(tempFlattened, flattenedProp);
 			});
