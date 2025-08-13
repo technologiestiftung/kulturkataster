@@ -117,7 +117,7 @@ export interface FilterState {
 	district_keys: string[];
 	category_keys: string[];
 	subcategory_keys: string[];
-	status?: "closed" | "open";
+	include_closed: boolean;
 }
 
 export interface InstitutionStoreState {

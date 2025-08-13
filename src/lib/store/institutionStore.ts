@@ -11,7 +11,12 @@ export const useInstitutionStore = create<InstitutionStoreState>(
 		setSelectedInstitutionId: (id: string | null) =>
 			set({ selectedInstitutionId: id }),
 
-		filters: { district_keys: [], category_keys: [], subcategory_keys: [] },
+		filters: {
+			district_keys: [],
+			category_keys: [],
+			subcategory_keys: [],
+			include_closed: true,
+		},
 		setFilters: (filters) => set({ filters }),
 
 		initializeInstitutions: async () => {

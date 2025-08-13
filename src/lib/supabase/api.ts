@@ -87,20 +87,21 @@ export async function searchInstitutions(query: string) {
 export async function filterInstitutions(query: FilterState) {
 	const supabase = createClient();
 
-	// TODO: Extend API to support these parameters when backend is ready:
 	const { data, error } = await supabase.rpc(
 		"get_public_institutions_with_filters",
 		{
 			district_keys: query.district_keys,
 			category_keys: query.category_keys,
 			subcategory_keys: query.subcategory_keys,
-			include_closed: true,
+			include_closed: query.include_closed,
 		},
 	);
 
 	if (error) {
 		handleError(error, "filter institutions");
 	}
+
+	console.log("[api] data::", data);
 	return data;
 }
 
