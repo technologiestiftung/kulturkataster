@@ -14,6 +14,7 @@ import { useState } from "react";
 interface DownloadModalProps {
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
+	mode?: "all" | "filtered"; // "all" downloads all data, "filtered" shows current filtered data
 }
 
 interface FormatSelectorProps {
@@ -76,13 +77,38 @@ function hasActiveFilters(filters: {
 	);
 }
 
-export function DownloadModal({ open, onOpenChange }: DownloadModalProps) {
+interface DownloadButtonProps {
+	isDownloading: boolean;
+	isDisabled: boolean;
+	onDownload: () => void;
+	t: (key: string) => string;
+}
+
+function DownloadButton({ isDownloading, isDisabled, onDownload, t }: DownloadButtonProps) {
+	return (
+		<div className="flex flex-col space-y-2">
+			<Button
+				className="w-full"
+				onClick={onDownload}
+				disabled={isDisabled}
+			>
+				{isDownloading
+					? t("download.downloading")
+					: t("download.downloadButton")}
+			</Button>
+		</div>
+	);
+}
+
+export function DownloadModal({ open, onOpenChange, mode = "all" }: DownloadModalProps) {
 	const { t } = useTranslation(["content", "common", "enumMap"]);
 	const { t: tEnum } = useTranslation("enumMap");
 	const { institutions, filters } = useInstitutionStore();
 	const { districts, categoryGroups } = useFilterData();
 	const [selectedFormat, setSelectedFormat] = useState<ExportFormat>("xls");
 	const [isDownloading, setIsDownloading] = useState(false);
+
+	const showFilters = mode === "filtered";
 
 	const handleDownload = async () => {
 		if (!institutions?.features || institutions.features.length === 0) {
@@ -118,7 +144,7 @@ export function DownloadModal({ open, onOpenChange }: DownloadModalProps) {
 
 	const content = (
 		<div className="space-y-6">
-			{filtersActive && (
+			{showFilters && filtersActive && (
 				<div>
 					<p className="body2 mb-3">
 						{t("downloadModal.selectedFilters", { ns: "content" })}
@@ -132,23 +158,19 @@ export function DownloadModal({ open, onOpenChange }: DownloadModalProps) {
 					/>
 				</div>
 			)}
+			
 			<FormatSelector
 				selectedFormat={selectedFormat}
 				onFormatChange={setSelectedFormat}
 				t={t}
 			/>
 
-			<div className="flex flex-col space-y-2">
-				<Button
-					className="w-full"
-					onClick={handleDownload}
-					disabled={isDownloading || !institutions?.features?.length}
-				>
-					{isDownloading
-						? t("downloadModal.downloading")
-						: t("downloadModal.downloadButton")}
-				</Button>
-			</div>
+			<DownloadButton
+				isDownloading={isDownloading}
+				isDisabled={isDownloading || !institutions?.features?.length}
+				onDownload={handleDownload}
+				t={t}
+			/>
 		</div>
 	);
 

@@ -46,6 +46,7 @@ export function ModalProvider() {
 			<DownloadModal
 				open={downloadModalOpen}
 				onOpenChange={setDownloadModalOpen}
+				mode="all"
 			/>
 		</>
 	);
