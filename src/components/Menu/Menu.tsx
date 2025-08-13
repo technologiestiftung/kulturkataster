@@ -53,7 +53,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 		useSidebar();
 	const { t } = useTranslation("common");
 	const [activeItem, setActiveItem] = useState("filter");
-	const { setInformationModalOpen } = useModalStore();
+	const { setInformationModalOpen, setDownloadModalOpen } = useModalStore();
 	const isLayerTreeOpen = useMapStore((state) => state.isLayerTreeOpen);
 	const setIsLayerTreeOpen = useMapStore((state) => state.setIsLayerTreeOpen);
 	const selectedInstitutionId = useInstitutionStore(
@@ -119,6 +119,11 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 				"https://form.formcentric.com/form/fb8189d9-8887-425d-bdd5-4aec08f7d8d5",
 				"_blank",
 			);
+			return;
+		}
+
+		if (itemName === "download") {
+			setDownloadModalOpen(true);
 			return;
 		}
 
