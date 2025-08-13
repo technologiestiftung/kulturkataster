@@ -71,6 +71,8 @@ const OlMap: FC<OlMapProps> = ({ children }) => {
 					center: center,
 					zoom: startZoomLevel,
 					projection: projection,
+					smoothResolutionConstraint: false,
+					constrainResolution: true,
 					extent: mapViewConfig.extent,
 					resolutions: resolutions,
 					minZoom: 0,
