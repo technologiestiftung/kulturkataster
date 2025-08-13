@@ -117,10 +117,7 @@ const Filter: FC = () => {
 		useInstitutionStore();
 	const { categoryGroups, districts, loading, error, retry } = useFilterData();
 	const { t } = useTranslation(["content", "common"]);
-
 	const [openSections, setOpenSections] = useState<string[]>([]);
-	const [includeClosedInstitutions, setIncludeClosedInstitutions] =
-		useState(true);
 
 	const updateFilters = (newFilters: FilterState) => {
 		setFilters(newFilters);
@@ -171,8 +168,7 @@ const Filter: FC = () => {
 
 	const toggleClosedInstitutions = () => {
 		if (!filters) return;
-		const newState = !includeClosedInstitutions;
-		setIncludeClosedInstitutions(newState);
+		const newState = !filters.include_closed;
 
 		updateFilters({ ...filters, include_closed: newState });
 	};
@@ -226,9 +222,9 @@ const Filter: FC = () => {
 					className="flex items-center gap-2 transition-opacity body2 text-primary-dark"
 					onClick={toggleClosedInstitutions}
 				>
-					{includeClosedInstitutions ? <Eye /> : <EyeOff />}
+					{filters?.include_closed ? <Eye /> : <EyeOff />}
 					<span className="body2 font-bold">
-						{includeClosedInstitutions
+						{filters?.include_closed
 							? t("filter.hideClosed", { ns: "content" })
 							: t("filter.showClosed", { ns: "content" })}
 					</span>
