@@ -18,9 +18,10 @@ import {
 	CategoryWithSubcategories,
 	District,
 	FilterState,
+	InstitutionProperties,
 } from "@/types";
 import { ChevronDown, ChevronUp, Minus } from "lucide-react";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useFilterData } from "./hooks/useFilterData";
 
@@ -143,29 +144,83 @@ const CategorySection: FC<{
 
 // Main Filter Component
 const Filter: FC = () => {
-	const { setFilters, filters, filterInstitutionsFrontend, institutions } =
-		useInstitutionStore();
+	const {
+		setFilters,
+		filters,
+		filterInstitutionsFrontend,
+		originalInstitutions,
+	} = useInstitutionStore();
 	const { categoryGroups, districts, loading, error, retry } = useFilterData();
 	const { t } = useTranslation(["content", "common"]);
 	const [openSections, setOpenSections] = useState<string[]>([]);
 
-	// Calculate category and subcategory counts from institutions
+	const districtIdToKeyMap = useMemo(() => {
+		const map = new Map<number, string>();
+		districts.forEach((district: District) => {
+			map.set(district.id, district.key);
+		});
+		return map;
+	}, [districts]);
+
+	const matchesDistrictFilter = (
+		properties: InstitutionProperties,
+		districtKeys: string[],
+	): boolean => {
+		if (districtKeys.length === 0) return true;
+		if (!properties.district_id) return false;
+
+		const districtKey = districtIdToKeyMap.get(properties.district_id);
+		if (!districtKey) return false;
+
+		return districtKeys.includes(districtKey);
+	};
+
 	const getCategoryCount = (categoryKey: string): number => {
-		if (!institutions?.features) return 0;
-		return institutions.features.filter((feature) =>
-			feature.properties?.categories?.some(
+		if (!originalInstitutions?.features || !filters) return 0;
+
+		return originalInstitutions.features.filter((feature) => {
+			const properties = feature.properties as InstitutionProperties;
+			if (!properties) return false;
+
+			const matchesCategory = properties.categories?.some(
 				(cat: { key: string }) => cat.key === categoryKey,
-			),
-		).length;
+			);
+			if (!matchesCategory) return false;
+
+			if (!matchesDistrictFilter(properties, filters.district_keys)) {
+				return false;
+			}
+
+			if (!filters.include_closed && properties.status === "closed") {
+				return false;
+			}
+
+			return true;
+		}).length;
 	};
 
 	const getSubcategoryCount = (subcategoryKey: string): number => {
-		if (!institutions?.features) return 0;
-		return institutions.features.filter((feature) =>
-			feature.properties?.subcategories?.some(
+		if (!originalInstitutions?.features || !filters) return 0;
+
+		return originalInstitutions.features.filter((feature) => {
+			const properties = feature.properties as InstitutionProperties;
+			if (!properties) return false;
+
+			const matchesSubcategory = properties.subcategories?.some(
 				(subcat: { key: string }) => subcat.key === subcategoryKey,
-			),
-		).length;
+			);
+			if (!matchesSubcategory) return false;
+
+			if (!matchesDistrictFilter(properties, filters.district_keys)) {
+				return false;
+			}
+
+			if (!filters.include_closed && properties.status === "closed") {
+				return false;
+			}
+
+			return true;
+		}).length;
 	};
 
 	useEffect(() => {
@@ -183,7 +238,6 @@ const Filter: FC = () => {
 	// 	applyFilters();
 	// };
 
-	// Toggle district selection
 	const toggleDistrict = (districtKey: string) => {
 		if (!filters) return;
 
@@ -212,7 +266,6 @@ const Filter: FC = () => {
 			categoryGroup.subcategories.length;
 
 		if (isCategorySelected || allSubcategoriesSelected) {
-			// If category is selected or all subcategories are selected, uncheck everything
 			const newCategories = filters.category_keys.filter(
 				(c) => c !== categoryKey,
 			);
@@ -252,7 +305,6 @@ const Filter: FC = () => {
 			? filters.subcategory_keys.filter((s) => s !== subcategoryKey)
 			: [...filters.subcategory_keys, subcategoryKey];
 
-		// Find the category that contains this subcategory
 		const parentCategory = categoryGroups.find((group) =>
 			group.subcategories.some((sub) => sub.key === subcategoryKey),
 		);
@@ -260,8 +312,6 @@ const Filter: FC = () => {
 		let newCategories = filters.category_keys;
 
 		if (parentCategory) {
-			// If we're deselecting a subcategory and the parent category was selected,
-			// remove the category from the filter (it should only use subcategories now)
 			if (isSelected && filters.category_keys.includes(parentCategory.key)) {
 				newCategories = filters.category_keys.filter(
 					(c) => c !== parentCategory.key,
