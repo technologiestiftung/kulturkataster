@@ -317,7 +317,6 @@ export function InstitutionDetailContent() {
 		const fetchInstitutionData = async () => {
 			try {
 				setLoading(true);
-				// TODO: fix fetch single institution by id -> implement function
 				const institution = institutions?.features.find(
 					(feature) => feature.properties?.id === selectedInstitutionId,
 				);
