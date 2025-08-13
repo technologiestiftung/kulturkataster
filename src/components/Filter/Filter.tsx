@@ -119,9 +119,9 @@ const Filter: FC = () => {
 	const { t } = useTranslation(["content", "common"]);
 
 	const [openSections, setOpenSections] = useState<string[]>([]);
-	const [hideClosedInstitutions, setHideClosedInstitutions] = useState(true);
+	const [includeClosedInstitutions, setIncludeClosedInstitutions] =
+		useState(true);
 
-	// Update filters and apply changes
 	const updateFilters = (newFilters: FilterState) => {
 		setFilters(newFilters);
 		applyFilters();
@@ -139,7 +139,6 @@ const Filter: FC = () => {
 		updateFilters({ ...filters, district_keys: newDistricts });
 	};
 
-	// Toggle category selection
 	const toggleCategory = (categoryKey: string) => {
 		if (!filters) return;
 
@@ -151,7 +150,6 @@ const Filter: FC = () => {
 		updateFilters({ ...filters, category_keys: newCategories });
 	};
 
-	// Toggle subcategory selection
 	const toggleSubcategory = (subcategoryKey: string) => {
 		if (!filters) return;
 
@@ -163,7 +161,6 @@ const Filter: FC = () => {
 		updateFilters({ ...filters, subcategory_keys: newSubcategories });
 	};
 
-	// Toggle category section open/closed
 	const toggleSection = (sectionKey: string) => {
 		setOpenSections((prev) =>
 			prev.includes(sectionKey)
@@ -172,28 +169,24 @@ const Filter: FC = () => {
 		);
 	};
 
-	// Reset all filters
+	const toggleClosedInstitutions = () => {
+		if (!filters) return;
+		const newState = !includeClosedInstitutions;
+		setIncludeClosedInstitutions(newState);
+
+		updateFilters({ ...filters, include_closed: newState });
+	};
+
 	const resetFilters = () => {
-		setFilters({ district_keys: [], category_keys: [], subcategory_keys: [] });
+		setFilters({
+			district_keys: [],
+			category_keys: [],
+			subcategory_keys: [],
+			include_closed: true,
+		});
 		initializeInstitutions();
 	};
 
-	// Toggle closed institutions visibility
-	const toggleClosedInstitutions = () => {
-		if (!filters) return;
-
-		const newHideState = !hideClosedInstitutions;
-		setHideClosedInstitutions(newHideState);
-
-		if (newHideState) {
-			updateFilters({ ...filters, status: "open" as const });
-		} else {
-			const { status: _status, ...filtersWithoutStatus } = filters;
-			updateFilters(filtersWithoutStatus);
-		}
-	};
-
-	// Loading state
 	if (loading) {
 		return (
 			<div className="Filter-root p-4 bg-white border-r border-gray-200 h-full overflow-y-auto">
@@ -207,7 +200,6 @@ const Filter: FC = () => {
 		);
 	}
 
-	// Error state
 	if (error) {
 		return (
 			<div className="Filter-root p-4 h-full">
@@ -234,9 +226,9 @@ const Filter: FC = () => {
 					className="flex items-center gap-2 transition-opacity body2 text-primary-dark"
 					onClick={toggleClosedInstitutions}
 				>
-					{hideClosedInstitutions ? <Eye /> : <EyeOff />}
+					{includeClosedInstitutions ? <Eye /> : <EyeOff />}
 					<span className="body2 font-bold">
-						{hideClosedInstitutions
+						{includeClosedInstitutions
 							? t("filter.hideClosed", { ns: "content" })
 							: t("filter.showClosed", { ns: "content" })}
 					</span>
