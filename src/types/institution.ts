@@ -122,6 +122,7 @@ export interface FilterState {
 
 export interface InstitutionStoreState {
 	institutions: FeatureCollection<Geometry, GeoJsonProperties> | null;
+	originalInstitutions: FeatureCollection<Geometry, GeoJsonProperties> | null;
 	selectedInstitutionId: number | string | null;
 	filters: FilterState;
 
@@ -134,4 +135,5 @@ export interface InstitutionStoreState {
 
 	initializeInstitutions: () => Promise<void>;
 	applyFilters: () => Promise<void>;
+	filterInstitutionsFrontend: (filters: FilterState) => Promise<void>;
 }
