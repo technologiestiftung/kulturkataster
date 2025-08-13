@@ -283,9 +283,10 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 												variant={"outline"}
 												className="w-full"
 												aria-label={t("download.downloadButton")}
+												onClick={() => setDownloadModalOpen(true)}
 											>
 												<Download size={6} viewBox="0 0 24 24" />
-												Daten herunterladen{" "}
+												{t("download.downloadButton")}
 												{institutions && (
 													<span>({institutions.features.length})</span>
 												)}
