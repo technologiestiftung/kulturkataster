@@ -104,14 +104,15 @@ const CategorySection: FC<{
 					</button>
 				</CollapsibleTrigger>
 
-				<div className="relative">
+				<div className="relative w-6 h-6 flex items-center justify-center">
 					<Checkbox
 						checked={isChecked}
 						onCheckedChange={() => onCategoryChange(group.key)}
+						className="w-4 h-4"
 					/>
 					{isIndeterminate && (
 						<div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-							<Minus size={12} className="text-primary" />
+							<Minus size={4} className="text-primary" />
 						</div>
 					)}
 				</div>
@@ -126,10 +127,13 @@ const CategorySection: FC<{
 						<span className="body2">
 							{subcategory.name} ({getSubcategoryCount(subcategory.key)})
 						</span>
-						<Checkbox
-							checked={selectedSubcategories.includes(subcategory.key)}
-							onCheckedChange={() => onSubcategoryChange(subcategory.key)}
-						/>
+
+						<div className="relative w-6 h-6 flex items-center justify-center">
+							<Checkbox
+								checked={selectedSubcategories.includes(subcategory.key)}
+								onCheckedChange={() => onSubcategoryChange(subcategory.key)}
+							/>
+						</div>
 					</div>
 				))}
 			</CollapsibleContent>
@@ -139,13 +143,8 @@ const CategorySection: FC<{
 
 // Main Filter Component
 const Filter: FC = () => {
-	const {
-		setFilters,
-		filters,
-		applyFilters,
-		initializeInstitutions,
-		institutions,
-	} = useInstitutionStore();
+	const { setFilters, filters, applyFilters, institutions } =
+		useInstitutionStore();
 	const { categoryGroups, districts, loading, error, retry } = useFilterData();
 	const { t } = useTranslation(["content", "common"]);
 	const [openSections, setOpenSections] = useState<string[]>([]);
@@ -286,14 +285,21 @@ const Filter: FC = () => {
 		updateFilters({ ...filters, include_closed: newState });
 	};
 
-	const resetFilters = () => {
-		setFilters({
+	const resetDistrictFilters = () => {
+		if (!filters) return;
+		updateFilters({
+			...filters,
 			district_keys: [],
+		});
+	};
+
+	const resetCategoryFilters = () => {
+		if (!filters) return;
+		updateFilters({
+			...filters,
 			category_keys: [],
 			subcategory_keys: [],
-			include_closed: true,
 		});
-		initializeInstitutions();
 	};
 
 	if (loading) {
@@ -350,7 +356,10 @@ const Filter: FC = () => {
 					<h3 className="body1 font-bold">
 						{t("filter.districts.title", { ns: "content" })}
 					</h3>
-					<button className="body2 font-light underline" onClick={resetFilters}>
+					<button
+						className="body2 font-light underline"
+						onClick={resetDistrictFilters}
+					>
 						{t("filter.districts.resetFilters", { ns: "content" })}
 					</button>
 				</div>
@@ -367,7 +376,10 @@ const Filter: FC = () => {
 					<h3 className="body1 font-bold">
 						{t("filter.categories.title", { ns: "content" })}
 					</h3>
-					<button className="body2 font-light underline" onClick={resetFilters}>
+					<button
+						className="body2 font-light underline"
+						onClick={resetCategoryFilters}
+					>
 						{t("filter.categories.resetFilters", { ns: "content" })}
 					</button>
 				</div>
