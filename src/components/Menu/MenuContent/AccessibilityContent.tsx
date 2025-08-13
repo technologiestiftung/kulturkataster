@@ -3,7 +3,7 @@
 // import SignLanguage from "@/icons/sign-language.svg";
 // import SimpleLanguage from "@/icons/simple-language.svg";
 import FontSize from "@/icons/font-size.svg";
-// import Contrast from "@/icons/contrast.svg";
+import Contrast from "@/icons/contrast.svg";
 import { useAppStore } from "@/lib/store/appStore";
 import { useModalStore } from "@/lib/store/modalStore";
 import { SubMenuOption } from "../SubMenuOption";
@@ -31,12 +31,12 @@ const accessibilityOptions = [
 		titleKey: "accessibility.fontSize.title",
 		hasSwitch: true,
 	},
-	// {
-	// 	id: "contrast",
-	// 	icon: Contrast,
-	// 	titleKey: "accessibility.contrast.title",
-	// 	hasSwitch: true,
-	// },
+	{
+		id: "contrast",
+		icon: Contrast,
+		titleKey: "accessibility.contrast.title",
+		hasSwitch: true,
+	},
 ] as const;
 
 export function AccessibilityContent({
