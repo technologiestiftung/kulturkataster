@@ -8,44 +8,18 @@ import { SelectedFilters } from "@/components/Filter/SelectedFilters";
 import { useFilterData } from "@/components/Filter/hooks/useFilterData";
 import { Button } from "@/components/ui/button";
 import { downloadInstitutions, ExportFormat } from "@/lib/utils/downloadUtils";
-import { InstitutionProperties } from "@/types";
+import {
+	InstitutionProperties,
+	FilterState,
+	District,
+	CategoryWithSubcategories,
+} from "@/types";
 import { useState } from "react";
 
 interface DownloadModalProps {
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
 	mode?: "all" | "filtered"; // "all" downloads all data, "filtered" shows current filtered data
-}
-
-interface FormatSelectorProps {
-	selectedFormat: ExportFormat;
-	onFormatChange: (format: ExportFormat) => void;
-	t: (key: string) => string;
-}
-
-function FormatSelector({
-	selectedFormat,
-	onFormatChange,
-	t,
-}: FormatSelectorProps) {
-	const formats: ExportFormat[] = ["xls", "xlsx", "csv"];
-
-	return (
-		<div className="space-y-2">
-			<p className="body2 font-bold">{t("downloadModal.chooseFormat")}</p>
-			<div className="flex gap-2">
-				{formats.map((format) => (
-					<Button
-						key={format}
-						variant={selectedFormat === format ? "default" : "outline"}
-						onClick={() => onFormatChange(format)}
-					>
-						{t(`fileFormat.${format}`)}
-					</Button>
-				))}
-			</div>
-		</div>
-	);
 }
 
 interface DownloadSubtitleProps {
@@ -77,19 +51,46 @@ function hasActiveFilters(filters: {
 	);
 }
 
-interface DownloadButtonProps {
-	isDownloading: boolean;
-	isDisabled: boolean;
-	onDownload: () => void;
+function FormatSelection({
+	selectedFormat,
+	onFormatChange,
+	t,
+}: {
+	selectedFormat: ExportFormat;
+	onFormatChange: (format: ExportFormat) => void;
 	t: (key: string) => string;
+}) {
+	const formats: ExportFormat[] = ["xls", "xlsx", "csv"];
+
+	return (
+		<div className="space-y-2">
+			<p className="body2 font-bold">{t("downloadModal.chooseFormat")}</p>
+			<div className="flex gap-2">
+				{formats.map((format) => (
+					<Button
+						key={format}
+						variant={selectedFormat === format ? "default" : "outline"}
+						onClick={() => onFormatChange(format)}
+					>
+						{t(`fileFormat.${format}`)}
+					</Button>
+				))}
+			</div>
+		</div>
+	);
 }
 
-function DownloadButton({
+function DownloadActionButton({
 	isDownloading,
 	isDisabled,
 	onDownload,
 	t,
-}: DownloadButtonProps) {
+}: {
+	isDownloading: boolean;
+	isDisabled: boolean;
+	onDownload: () => void;
+	t: (key: string) => string;
+}) {
 	return (
 		<div className="flex flex-col space-y-2">
 			<Button className="w-full" onClick={onDownload} disabled={isDisabled}>
@@ -101,6 +102,41 @@ function DownloadButton({
 	);
 }
 
+function FilterSection({
+	showFilters,
+	filtersActive,
+	filters,
+	districts,
+	categoryGroups,
+	t,
+}: {
+	showFilters: boolean;
+	filtersActive: boolean;
+	filters: FilterState;
+	districts: District[];
+	categoryGroups: CategoryWithSubcategories[];
+	t: (key: string, options?: Record<string, unknown>) => string;
+}) {
+	if (!showFilters || !filtersActive) {
+		return null;
+	}
+
+	return (
+		<div>
+			<p className="body2 mb-3">
+				{t("downloadModal.selectedFilters", { ns: "content" })}
+			</p>
+			<SelectedFilters
+				filters={filters}
+				districts={districts}
+				categoryGroups={categoryGroups}
+				showRemove={false}
+				className="gap-2"
+			/>
+		</div>
+	);
+}
+
 export function DownloadModal({
 	open,
 	onOpenChange,
@@ -108,21 +144,23 @@ export function DownloadModal({
 }: DownloadModalProps) {
 	const { t } = useTranslation(["content", "common", "enumMap"]);
 	const { t: tEnum } = useTranslation("enumMap");
-	const { institutions, filters } = useInstitutionStore();
+	const { institutions, originalInstitutions, filters } = useInstitutionStore();
 	const { districts, categoryGroups } = useFilterData();
 	const [selectedFormat, setSelectedFormat] = useState<ExportFormat>("xls");
 	const [isDownloading, setIsDownloading] = useState(false);
 
 	const showFilters = mode === "filtered";
 
+	const dataSource = mode === "all" ? originalInstitutions : institutions;
+
 	const handleDownload = async () => {
-		if (!institutions?.features || institutions.features.length === 0) {
+		if (!dataSource?.features || dataSource.features.length === 0) {
 			return;
 		}
 
 		setIsDownloading(true);
 		try {
-			const institutionData = institutions.features
+			const institutionData = dataSource.features
 				.map((feature) => feature.properties)
 				.filter(
 					(properties): properties is InstitutionProperties =>
@@ -140,39 +178,32 @@ export function DownloadModal({
 			setIsDownloading(false);
 		}
 	};
-
 	const subtitle = (
-		<DownloadSubtitle count={institutions?.features?.length || 0} t={t} />
+		<DownloadSubtitle count={dataSource?.features?.length || 0} t={t} />
 	);
 
 	const filtersActive = hasActiveFilters(filters);
 
 	const content = (
 		<div className="space-y-6">
-			{showFilters && filtersActive && (
-				<div>
-					<p className="body2 mb-3">
-						{t("downloadModal.selectedFilters", { ns: "content" })}
-					</p>
-					<SelectedFilters
-						filters={filters}
-						districts={districts}
-						categoryGroups={categoryGroups}
-						showRemove={false}
-						className="gap-2"
-					/>
-				</div>
-			)}
+			<FilterSection
+				showFilters={showFilters}
+				filtersActive={filtersActive}
+				filters={filters}
+				districts={districts}
+				categoryGroups={categoryGroups}
+				t={t}
+			/>
 
-			<FormatSelector
+			<FormatSelection
 				selectedFormat={selectedFormat}
 				onFormatChange={setSelectedFormat}
 				t={t}
 			/>
 
-			<DownloadButton
+			<DownloadActionButton
 				isDownloading={isDownloading}
-				isDisabled={isDownloading || !institutions?.features?.length}
+				isDisabled={isDownloading || !dataSource?.features?.length}
 				onDownload={handleDownload}
 				t={t}
 			/>
