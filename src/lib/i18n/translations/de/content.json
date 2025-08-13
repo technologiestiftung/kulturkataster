@@ -246,8 +246,7 @@
 		"title": "Download",
 		"subtitle": "{{count}} Orte zum Herunterladen",
 		"selectedFilters": "Die Auswahl setzt sich zusammen aus folgenden Filtern:",
-		"chooseFormat": "Dateiformat wählen",
-		"downloadButton": "Daten herunterladen"
+		"chooseFormat": "Dateiformat wählen"
 	},
 	"imprintModal": {
 		"title": "Impressum",
