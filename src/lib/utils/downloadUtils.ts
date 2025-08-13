@@ -157,50 +157,33 @@ function flattenProperty(
 	return { [key]: translatedValue };
 }
 
-// Define logical column order for export
 const COLUMN_ORDER = [
-	// Basic identification
 	"name",
 	"status",
-
-	// Contact information
 	"email",
 	"phone",
 	"website",
-
-	// Location
 	"street",
 	"street_number",
 	"zip_code",
 	"city_id",
 	"district_id",
-
-	// Categories and classification
 	"categories",
 	"subcategories",
 	"tags",
-
-	// Details
 	"description",
 	"capacity",
 	"rooms_count",
 	"established_since",
-
-	// Status and usage
 	"utilization_status",
 	"shared_use_allowed",
-
-	// Funding
 	"funding_type",
 	"funding_sources",
 	"support_type",
-
-	// Organization
 	"parent_organizations",
-
-	// System
-	"updated_at",
 ];
+
+const EXCLUDED_FIELDS = ["id", "updated_at"];
 
 // Convert institution data to flat records for export with ordered columns
 export function prepareDataForExport(
@@ -212,21 +195,22 @@ export function prepareDataForExport(
 		.map((institution) => {
 			const flattened: Record<string, string> = {};
 
-			// Process each property and flatten it
 			const tempFlattened: Record<string, string> = {};
 			Object.entries(institution).forEach(([key, value]) => {
+				if (EXCLUDED_FIELDS.includes(key)) {
+					return;
+				}
+				
 				const flattenedProp = flattenProperty(value, key, translateFn);
 				Object.assign(tempFlattened, flattenedProp);
 			});
 
-			// Reorder columns according to COLUMN_ORDER
 			COLUMN_ORDER.forEach((columnKey) => {
 				if (tempFlattened.hasOwnProperty(columnKey)) {
 					flattened[columnKey] = tempFlattened[columnKey];
 				}
 			});
 
-			// Add any remaining columns that weren't in the predefined order
 			Object.entries(tempFlattened).forEach(([key, value]) => {
 				if (!flattened.hasOwnProperty(key)) {
 					flattened[key] = value;
