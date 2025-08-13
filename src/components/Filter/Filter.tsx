@@ -178,6 +178,7 @@ const Filter: FC = () => {
 			district_keys: [],
 			category_keys: [],
 			subcategory_keys: [],
+			status: undefined,
 			include_closed: true,
 		});
 		initializeInstitutions();
