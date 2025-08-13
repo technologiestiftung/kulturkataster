@@ -16,6 +16,7 @@ export function ModalProvider() {
 		accessibilityModalOpen,
 		informationModalOpen,
 		downloadModalOpen,
+		downloadModalMode,
 		setAboutModalOpen,
 		setPrivacyModalOpen,
 		setImprintModalOpen,
@@ -46,7 +47,7 @@ export function ModalProvider() {
 			<DownloadModal
 				open={downloadModalOpen}
 				onOpenChange={setDownloadModalOpen}
-				mode="all"
+				mode={downloadModalMode}
 			/>
 		</>
 	);
