@@ -134,5 +134,10 @@
 		"availableLayers": "Verfügbare Ebenen",
 		"noLayersAvailable": "Keine Fachkarten verfügbar"
 	},
-	"kukaLogo": "Kulturkataster - Logo"
+	"kukaLogo": "Kulturkataster - Logo",
+	"fileFormat": {
+		"xls": "XLS",
+		"xlsx": "XLSX",
+		"csv": "CSV"
+	}
 }
