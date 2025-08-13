@@ -60,6 +60,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 		(state) => state.selectedInstitutionId,
 	);
 	const filters = useInstitutionStore((state) => state.filters);
+	const institutions = useInstitutionStore((state) => state.institutions);
 	const { firstTimeUser, setFirstTimeUser } = useAppStore();
 
 	useEffect(() => {
@@ -279,7 +280,10 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 												aria-label={t("download.downloadButton")}
 											>
 												<Download size={6} viewBox="0 0 24 24" />
-												Daten herunterladen
+												Daten herunterladen{" "}
+												{institutions && (
+													<span>({institutions.features.length})</span>
+												)}
 											</Button>
 										</div>
 									)}

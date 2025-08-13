@@ -20,7 +20,7 @@ import {
 	FilterState,
 } from "@/types";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useFilterData } from "./hooks/useFilterData";
 
@@ -62,6 +62,8 @@ const CategorySection: FC<{
 	onToggle: () => void;
 	onCategoryChange: (key: string) => void;
 	onSubcategoryChange: (key: string) => void;
+	getCategoryCount: (key: string) => number;
+	getSubcategoryCount: (key: string) => number;
 }> = ({
 	group,
 	selectedCategories,
@@ -70,6 +72,8 @@ const CategorySection: FC<{
 	onToggle,
 	onCategoryChange,
 	onSubcategoryChange,
+	getCategoryCount,
+	getSubcategoryCount,
 }) => {
 	const IconComponent = getCategoryIconComponent(group.key as CategoryType);
 
@@ -83,7 +87,7 @@ const CategorySection: FC<{
 							<IconComponent />
 						</div>
 						<span className="body2 font-bold">{group.name}</span>
-						<span className="body2">({group.subcategories.length})</span>
+						<span className="body2">({getCategoryCount(group.key)})</span>
 					</button>
 				</CollapsibleTrigger>
 
@@ -99,7 +103,9 @@ const CategorySection: FC<{
 						key={subcategory.key}
 						className="flex items-center justify-between py-1"
 					>
-						<span className="body2">{subcategory.name}</span>
+						<span className="body2">
+							{subcategory.name} ({getSubcategoryCount(subcategory.key)})
+						</span>
 						<Checkbox
 							checked={selectedSubcategories.includes(subcategory.key)}
 							onCheckedChange={() => onSubcategoryChange(subcategory.key)}
@@ -113,11 +119,39 @@ const CategorySection: FC<{
 
 // Main Filter Component
 const Filter: FC = () => {
-	const { setFilters, filters, applyFilters, initializeInstitutions } =
-		useInstitutionStore();
+	const {
+		setFilters,
+		filters,
+		applyFilters,
+		initializeInstitutions,
+		institutions,
+	} = useInstitutionStore();
 	const { categoryGroups, districts, loading, error, retry } = useFilterData();
 	const { t } = useTranslation(["content", "common"]);
 	const [openSections, setOpenSections] = useState<string[]>([]);
+
+	// Calculate category and subcategory counts from institutions
+	const getCategoryCount = (categoryKey: string): number => {
+		if (!institutions?.features) return 0;
+		return institutions.features.filter((feature) =>
+			feature.properties?.categories?.some(
+				(cat: { key: string }) => cat.key === categoryKey,
+			),
+		).length;
+	};
+
+	const getSubcategoryCount = (subcategoryKey: string): number => {
+		if (!institutions?.features) return 0;
+		return institutions.features.filter((feature) =>
+			feature.properties?.subcategories?.some(
+				(subcat: { key: string }) => subcat.key === subcategoryKey,
+			),
+		).length;
+	};
+
+	useEffect(() => {
+		console.log("[Filter] categoryGroups::", categoryGroups);
+	}, [categoryGroups]);
 
 	const updateFilters = (newFilters: FilterState) => {
 		setFilters(newFilters);
@@ -269,6 +303,8 @@ const Filter: FC = () => {
 							onToggle={() => toggleSection(group.key)}
 							onCategoryChange={toggleCategory}
 							onSubcategoryChange={toggleSubcategory}
+							getCategoryCount={getCategoryCount}
+							getSubcategoryCount={getSubcategoryCount}
 						/>
 					))}
 				</div>
