@@ -242,6 +242,13 @@
 			}
 		}
 	},
+	"downloadModal": {
+		"title": "Download",
+		"subtitle": "{{count}} Orte zum Herunterladen",
+		"selectedFilters": "Die Auswahl setzt sich zusammen aus folgenden Filtern:",
+		"chooseFormat": "Dateiformat wählen",
+		"downloadButton": "Daten herunterladen"
+	},
 	"imprintModal": {
 		"title": "Impressum",
 		"subtitle": "Hier kommt der Impressumtext.",
