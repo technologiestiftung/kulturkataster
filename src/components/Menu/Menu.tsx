@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 "use client";
 
 import { WelcomeModal } from "@/components/Modals/Pages/WelcomeModal";
@@ -53,6 +54,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 		useSidebar();
 	const { t } = useTranslation("common");
 	const [activeItem, setActiveItem] = useState<string>("");
+	const [previousActiveItem, setPreviousActiveItem] = useState<string>("");
 	const [userHasClosedSidebar, setUserHasClosedSidebar] = useState(false);
 	const { setInformationModalOpen } = useModalStore();
 	const isLayerTreeOpen = useMapStore((state) => state.isLayerTreeOpen);
@@ -82,6 +84,9 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
 	useEffect(() => {
 		if (selectedInstitutionId) {
+			if (activeItem && activeItem !== "institution-detail") {
+				setPreviousActiveItem(activeItem);
+			}
 			setActiveItem("institution-detail");
 			if (isMobile) {
 				setOpenMobile(true);
@@ -89,9 +94,16 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 				setOpen(true);
 			}
 		} else if (activeItem === "institution-detail") {
-			setActiveItem("");
+			setActiveItem(previousActiveItem);
 		}
-	}, [selectedInstitutionId, isMobile, setOpen, setOpenMobile, activeItem]);
+	}, [
+		selectedInstitutionId,
+		isMobile,
+		setOpen,
+		setOpenMobile,
+		activeItem,
+		previousActiveItem,
+	]);
 
 	useEffect(() => {
 		const isSidebarClosed = isMobile ? !openMobile : !open;
@@ -160,14 +172,20 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
 	const handleSidebarClose = () => {
 		setUserHasClosedSidebar(true);
-		setOpen(false);
-		setOpenMobile(false);
-		if (activeItem === "layertree") {
-			setIsLayerTreeOpen(false);
-		} else if (activeItem === "institution-detail") {
+		if (activeItem === "institution-detail") {
 			setSelectedInstitutionId(null);
 		}
+		if (activeItem === "layertree") {
+			setIsLayerTreeOpen(false);
+		}
 		setActiveItem("");
+		setOpen(false);
+		setOpenMobile(false);
+	};
+
+	const handleBackToFilter = () => {
+		setSelectedInstitutionId(null);
+		setActiveItem(previousActiveItem);
 	};
 
 	return (
@@ -250,15 +268,30 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 							<div className="w-10 h-1 bg-muted-foreground/30 rounded-full"></div>
 						</div>
 						<div className="flex items-center justify-between">
-							<span className="body1 font-bold">
-								{(() => {
-									if (!activeItem) return;
-									if (activeItem === "layertree") return "Fachkarten";
-									if (activeItem === "institution-detail")
-										return t("institution.details");
-									return t(activeItem + ".title");
-								})()}
-							</span>
+							<div className="flex items-center gap-2">
+								{activeItem === "institution-detail" && previousActiveItem && (
+									<button
+										onClick={handleBackToFilter}
+										className="body1 font-bold flex items-center gap-1"
+										aria-label={`Zurück zu ${t(previousActiveItem + ".title")}`}
+									>
+										← Zurück zu {t(previousActiveItem + ".title")}
+									</button>
+								)}
+								{!(
+									activeItem === "institution-detail" && previousActiveItem
+								) && (
+									<span className="body1 font-bold">
+										{(() => {
+											if (!activeItem) return;
+											if (activeItem === "layertree") return "Fachkarten";
+											if (activeItem === "institution-detail")
+												return t("institution.details");
+											return t(activeItem + ".title");
+										})()}
+									</span>
+								)}
+							</div>
 							<button
 								onClick={handleSidebarClose}
 								aria-label={t("closeSidebar")}
