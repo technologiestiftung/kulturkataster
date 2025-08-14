@@ -164,10 +164,18 @@
 	},
 	"protection_status": {
 		"long_term_secured": "Langfristig gesichert",
-		"not_yet_secured": "Noch nicht gesichert"
+		"medium_term_secured": "Mittelfristig gesichert",
+		"not_yet_secured": "Noch nicht gesichert",
+		"not_secured": "Ungesichert",
+		"uncertain": "Ungewiss",
+		"permanently_closed": "Dauerhaft geschlossen",
+		"acutely_threatened": "Akut bedroht",
+		"unknown": "Unbekannt"
 	},
 	"rental_contract_type": {
 		"unlimited_lease": "Unbefristete Miete",
+		"limited_lease": "Befristeter Mietvertrag",
+		"hereditary_building_right": "Erbbaurecht",
 		"organization_ownership": "Eigentum der Organisation"
 	},
 	"user_role": {
