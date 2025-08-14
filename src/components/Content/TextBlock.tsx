@@ -84,7 +84,7 @@ const TextBlock: FC<TextBlockProps> = ({
 }) => {
 	return (
 		<div className={`TextBlock-root ${className}`} {...props}>
-			<div className="flex flex-col gap-2">
+			<div className="flex flex-col wrap-anywhere gap-2">
 				<Title as={titleAs} className={titleClassName}>
 					{title}
 				</Title>
