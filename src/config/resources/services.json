@@ -873,7 +873,7 @@
 		"typ": "WMS",
 		"gfiAttributes": "showAll",
 		"layers": "bc_mss2023_i_sdi",
-		"legend": "/resources/legends/Legende-Transferbezug.svg",
+		"legend": "/resources/legends/Legende-Soziale-Stadtentwicklung.svg",
 		"datasets": [
 			{
 				"md_name": "Monitoring Soziale Stadtentwicklung (MSS) 2023",
@@ -891,7 +891,7 @@
 		"infoFormat": "application/json",
 		"layerAttribution": "Für die Nutzung der Daten ist die Datenlizenz Deutschland - Zero - Version 2.0 anzuwenden. Die Lizenz ist über https://www.govdata.de/dl-de/zero-2-0 abrufbar.",
 		"preview": {
-			"src": "/resources/preview-img/preview-img-einwohnerentwicklung.png"
+			"src": "/resources/preview-img/preview-img-soziale-stadtentwicklung.png"
 		}
 	}
 ]
