@@ -258,37 +258,54 @@
 			"management": "Dirk Förster, Geschäftsführung"
 		},
 		"chairman": {
-			"title": "Vorsitzender des Aufsichtsrats",
+			"title": "Vorsitzende des Aufsichtsrats",
 			"name": "Cerstin Richter-Kotowski, Staatssekretärin der Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt"
 		},
 		"contact": {
 			"title": "Kontakt",
 			"phone": "Telefon: +49 (0)30 30 30 444-60",
-			"fax": "Telefax: +49 (0)30 3030444–59",
 			"email": "E-Mail: kontakt@kulturraum.berlin"
 		},
 		"insurance": {
 			"title": "Angaben zur Berufshaftpflichtversicherung",
-			"company": "Name und Sitz des Versicherers:\nHDI Versicherung AG\nHDI-Platz 1\n30659 Hannover",
-			"scope": "Geltungsraum der Versicherung:\nBerlin"
+			"company": "Name und Sitz des Versicherers",
+			"name": "HDI Versicherung AG",
+			"address": "HDI-Platz 1",
+			"zipCity": "30659 Hannover",
+			"scope": "Geltungsraum der Versicherung",
+			"scopeLocation": "Berlin"
 		},
 		"editor": {
-			"title": "Redaktionell Verantwortliche",
+			"title": "Redaktionell Verantwortlich",
 			"name": "Daniel Jakobson",
 			"role": "Referent für Kommunikation und Beteiligung",
-			"address": "Spandauer Damm 19\n14059 Berlin"
+			"address": "Spandauer Damm 19",
+			"zipCity": "14059 Berlin"
 		},
 		"conception": {
 			"title": "Konzeption",
-			"companies": "Kulturraum Berlin gGmbH\nStudio für unendliche Möglichkeiten"
+			"link1": {
+				"text": "Kulturraum Berlin gGmbH",
+				"href": "https://kulturraum.berlin/"
+			},
+			"link2": {
+				"text": "Studio für unendliche Möglichkeiten",
+				"href": "https://unendlichemoeglichkeiten.de/en"
+			}
 		},
 		"design": {
 			"title": "Gestaltung",
-			"company": "Common Studio"
+			"link": {
+				"text": "Common Studio",
+				"href": "https://www.commonstudio.de/"
+			}
 		},
 		"programming": {
 			"title": "Programmierung",
-			"company": "Technologiestiftung Berlin"
+			"link": {
+				"text": "Technologiestiftung Berlin",
+				"href": "https://www.technologiestiftung-berlin.de/"
+			}
 		},
 		"dispute_resolution": {
 			"title": "Verbraucherstreitbeilegung/Universalschlichtungsstelle",
