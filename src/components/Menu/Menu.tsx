@@ -243,7 +243,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 												<item.icon />
 												{(item.id === "filter" || item.id === "download") &&
 													institutions && (
-														<div className="absolute top-2 -right-2 bg-primary text-primary-foreground body2 font-bold rounded-full min-w-5 h-5 flex items-center justify-center px-1">
+														<div className="absolute top-2 -right-1 bg-primary text-primary-foreground body2 font-bold rounded-full min-w-5 h-5 flex items-center justify-center px-1">
 															{institutions.features.length}
 														</div>
 													)}
@@ -368,6 +368,12 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 								<span className="text-xs font-medium hidden">
 									{t(item.label)}
 								</span>
+								{(item.id === "filter" || item.id === "download") &&
+									institutions && (
+										<div className="absolute -top-1 -right-1 bg-primary text-primary-foreground body2 font-bold rounded-full min-w-5 h-5 flex items-center justify-center px-1">
+											{institutions.features.length}
+										</div>
+									)}
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 					))}
