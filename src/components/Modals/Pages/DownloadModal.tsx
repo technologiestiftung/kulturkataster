@@ -14,12 +14,13 @@ import {
 	District,
 	CategoryWithSubcategories,
 } from "@/types";
+import { FeatureCollection, GeoJsonProperties, Geometry } from "geojson";
 import { useState } from "react";
 
 interface DownloadModalProps {
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
-	mode?: "all" | "filtered"; // "all" downloads all data, "filtered" shows current filtered data
+	mode?: "all" | "filtered" | "selected";
 }
 
 interface DownloadSubtitleProps {
@@ -137,6 +138,32 @@ function FilterSection({
 	);
 }
 
+// eslint-disable-next-line max-params
+function getDataSource(
+	mode: string,
+	institutions: FeatureCollection<Geometry, GeoJsonProperties> | null,
+	originalInstitutions: FeatureCollection<Geometry, GeoJsonProperties> | null,
+	selectedInstitutionId: string | number | null,
+): FeatureCollection<Geometry, GeoJsonProperties> | null {
+	switch (mode) {
+		case "all":
+			return originalInstitutions;
+		case "selected":
+			if (originalInstitutions && selectedInstitutionId) {
+				const selectedFeatures = originalInstitutions.features.filter(
+					(feature) => feature?.properties?.id === selectedInstitutionId,
+				);
+				return {
+					type: "FeatureCollection",
+					features: selectedFeatures,
+				};
+			}
+			return null;
+		default:
+			return institutions;
+	}
+}
+
 export function DownloadModal({
 	open,
 	onOpenChange,
@@ -144,14 +171,19 @@ export function DownloadModal({
 }: DownloadModalProps) {
 	const { t } = useTranslation(["content", "common", "enumMap"]);
 	const { t: tEnum } = useTranslation("enumMap");
-	const { institutions, originalInstitutions, filters } = useInstitutionStore();
+	const { institutions, originalInstitutions, selectedInstitutionId, filters } =
+		useInstitutionStore();
 	const { districts, categoryGroups } = useFilterData();
 	const [selectedFormat, setSelectedFormat] = useState<ExportFormat>("xls");
 	const [isDownloading, setIsDownloading] = useState(false);
 
 	const showFilters = mode === "filtered";
-
-	const dataSource = mode === "all" ? originalInstitutions : institutions;
+	const dataSource = getDataSource(
+		mode,
+		institutions,
+		originalInstitutions,
+		selectedInstitutionId,
+	);
 
 	const handleDownload = async () => {
 		if (!dataSource?.features || dataSource.features.length === 0) {
