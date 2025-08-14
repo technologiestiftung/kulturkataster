@@ -2,7 +2,6 @@
 import { useModalStore } from "@/lib/store/modalStore";
 import { FC } from "react";
 import { useTranslation } from "react-i18next";
-import packageInfo from "../../../package.json";
 
 const footerItems = [
 	{ id: "about" },
