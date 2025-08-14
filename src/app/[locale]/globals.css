@@ -182,6 +182,10 @@
 	p {
 		@apply wrap-anywhere;
 	}
+
+	button {
+		@apply cursor-pointer;
+	}
 }
 
 @layer utilities {
