@@ -7,7 +7,7 @@ export interface ModalStoreState {
 	accessibilityModalOpen: boolean;
 	informationModalOpen: boolean;
 	downloadModalOpen: boolean;
-	downloadModalMode: "all" | "filtered";
+	downloadModalMode: "all" | "filtered" | "selected";
 
 	setAboutModalOpen: (open: boolean) => void;
 	setPrivacyModalOpen: (open: boolean) => void;
@@ -15,7 +15,7 @@ export interface ModalStoreState {
 	setAccessibilityModalOpen: (open: boolean) => void;
 	setInformationModalOpen: (open: boolean) => void;
 	setDownloadModalOpen: (open: boolean) => void;
-	setDownloadModalMode: (mode: "all" | "filtered") => void;
+	setDownloadModalMode: (mode: "all" | "filtered" | "selected") => void;
 
 	openModal: (modalName: string) => void;
 	closeAllModals: () => void;

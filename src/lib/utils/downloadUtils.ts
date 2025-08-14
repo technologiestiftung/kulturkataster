@@ -1,5 +1,5 @@
 import { InstitutionProperties } from "@/types";
-import * as XLSX from "xlsx";
+import * as XLSX from "xlsx-js-style";
 
 export type ExportFormat = "csv" | "xlsx" | "xls";
 
@@ -169,7 +169,13 @@ const COLUMN_ORDER = [
 	"parent_organizations",
 ];
 
-const EXCLUDED_FIELDS = ["id", "updated_at", "city_id", "created_at"];
+const EXCLUDED_FIELDS = [
+	"id",
+	"updated_at",
+	"city_id",
+	"created_at",
+	"cultural_area_id",
+];
 
 export function prepareDataForExport(
 	institutions: InstitutionProperties[],
@@ -192,13 +198,29 @@ export function prepareDataForExport(
 
 			COLUMN_ORDER.forEach((columnKey) => {
 				if (tempFlattened.hasOwnProperty(columnKey)) {
-					flattened[columnKey] = tempFlattened[columnKey];
+					let translatedColumnName = columnKey;
+					if (translateFn) {
+						const translationKey = `field_names.${columnKey}`;
+						const translation = translateFn(translationKey);
+						if (translation !== translationKey) {
+							translatedColumnName = translation;
+						}
+					}
+					flattened[translatedColumnName] = tempFlattened[columnKey];
 				}
 			});
 
 			Object.entries(tempFlattened).forEach(([key, value]) => {
-				if (!flattened.hasOwnProperty(key)) {
-					flattened[key] = value;
+				let translatedColumnName = key;
+				if (translateFn) {
+					const translationKey = `field_names.${key}`;
+					const translation = translateFn(translationKey);
+					if (translation !== translationKey) {
+						translatedColumnName = translation;
+					}
+				}
+				if (!flattened.hasOwnProperty(translatedColumnName)) {
+					flattened[translatedColumnName] = value;
 				}
 			});
 
@@ -210,24 +232,27 @@ function generateCSV(data: Record<string, string>[]): string {
 	if (data.length === 0) return "";
 
 	const headers = Object.keys(data[0]);
-	const csvHeaders = headers.join(",");
 
+	const escapeCSVValue = (value: string | undefined): string => {
+		if (!value) return '""';
+		const stringValue = String(value);
+
+		const cleanValue = stringValue
+			.replace(/"/g, '""')
+			.replace(/\r\n/g, " ")
+			.replace(/\r/g, " ")
+			.replace(/\n/g, " ");
+
+		return `"${cleanValue}"`;
+	};
+
+	const csvHeaders = headers.map(escapeCSVValue).join(",");
 	const csvRows = data.map((row) =>
-		headers
-			.map((header) => {
-				const value = row[header];
-				if (
-					typeof value === "string" &&
-					(value.includes(",") || value.includes('"'))
-				) {
-					return `"${value.replace(/"/g, '""')}"`;
-				}
-				return value;
-			})
-			.join(","),
+		headers.map((header) => escapeCSVValue(row[header])).join(","),
 	);
 
-	return [csvHeaders, ...csvRows].join("\n");
+	const BOM = "\uFEFF";
+	return BOM + [csvHeaders, ...csvRows].join("\r\n");
 }
 
 function generateExcelBuffer(
@@ -237,13 +262,40 @@ function generateExcelBuffer(
 	if (data.length === 0) {
 		const wb = XLSX.utils.book_new();
 		const ws = XLSX.utils.json_to_sheet([]);
-		XLSX.utils.book_append_sheet(wb, ws, "Institutions");
+		XLSX.utils.book_append_sheet(wb, ws, "Kulturorte");
 		return XLSX.write(wb, { bookType: format, type: "array" });
 	}
+
 	const wb = XLSX.utils.book_new();
 	const ws = XLSX.utils.json_to_sheet(data);
-	XLSX.utils.book_append_sheet(wb, ws, "Institutions");
+	if (data.length > 0) {
+		const headers = Object.keys(data[0]);
+		headers.forEach((_, colIndex) => {
+			const cellAddress = XLSX.utils.encode_cell({ r: 0, c: colIndex });
+			if (ws[cellAddress]) {
+				ws[cellAddress].s = {
+					font: {
+						name: "Arial",
+						sz: 11,
+						bold: true,
+					},
+					fill: {
+						patternType: "solid",
+						fgColor: { rgb: "FFFFFF" },
+					},
+					alignment: {
+						horizontal: "center",
+						vertical: "center",
+					},
+					border: {
+						bottom: { style: "thin", color: { rgb: "000000" } },
+					},
+				};
+			}
+		});
+	}
 
+	XLSX.utils.book_append_sheet(wb, ws, "Kulturorte");
 	return XLSX.write(wb, { bookType: format, type: "array" });
 }
 
