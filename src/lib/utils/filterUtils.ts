@@ -34,6 +34,6 @@ export const hasActiveFilters = (filters: FilterState | null): boolean => {
 		filters.district_keys.length > 0 ||
 		filters.category_keys.length > 0 ||
 		filters.subcategory_keys.length > 0 ||
-		filters.status !== undefined
+		filters.include_closed !== undefined
 	);
 };
