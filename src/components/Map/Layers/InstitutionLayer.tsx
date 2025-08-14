@@ -182,7 +182,7 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 
 	const createSingleFeatureStyle = useCallback(
 		(categoryKey: CategoryType, isSelected = false, hasOverlapping = false) => {
-			const fillColor = isSelected ? "#AAE9C9" : "#D9C1FF";
+			const fillColor = isSelected ? "#55D494" : "#C288FF";
 			const iconSvg = createPoiSvg(categoryKey, fillColor, "#161616");
 			return new Style({
 				image: new Icon({
