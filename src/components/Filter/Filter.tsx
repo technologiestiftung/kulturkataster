@@ -21,7 +21,7 @@ import {
 	InstitutionProperties,
 } from "@/types";
 import { ChevronDown, ChevronUp, Minus } from "lucide-react";
-import { FC, useEffect, useMemo, useState } from "react";
+import { FC, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useFilterData } from "./hooks/useFilterData";
 
@@ -224,10 +224,6 @@ const Filter: FC = () => {
 			return true;
 		}).length;
 	};
-
-	useEffect(() => {
-		console.log("[Filter] categoryGroups::", categoryGroups);
-	}, [categoryGroups]);
 
 	const updateFilters = async (newFilters: FilterState) => {
 		setFilters(newFilters);
