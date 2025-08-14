@@ -16,6 +16,7 @@ import {
 	useSidebar,
 } from "@/components/ui/sidebar";
 import Accessibility from "@/icons/accessibility.svg";
+import ArrowLeft from "@/icons/arrow-narrow-left.svg";
 import Close from "@/icons/close.svg";
 import DotsVertical from "@/icons/dots-vertical.svg";
 import Download from "@/icons/download.svg";
@@ -275,7 +276,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 										className="body1 font-bold flex items-center gap-1"
 										aria-label={`Zurück zu ${t(previousActiveItem + ".title")}`}
 									>
-										← Zurück zu {t(previousActiveItem + ".title")}
+										<ArrowLeft /> Zurück zu {t(previousActiveItem + ".title")}
 									</button>
 								)}
 								{!(
