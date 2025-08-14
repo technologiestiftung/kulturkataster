@@ -128,7 +128,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
 		if (itemName === "download") {
 			setDownloadModalOpen(true);
-			setDownloadModalMode("all");
+			setDownloadModalMode("filtered");
 			return;
 		}
 
@@ -157,13 +157,55 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 		setFirstTimeUser(false);
 	};
 
+	const getActiveItemTitle = () => {
+		if (activeItem === "layertree") return "Fachkarten";
+		if (activeItem === "institution-detail") return t("institution.details");
+		return t(activeItem + ".title");
+	};
+
+	const handleCloseButtonClick = () => {
+		setOpen(false);
+		setOpenMobile(false);
+		if (activeItem === "layertree") {
+			setIsLayerTreeOpen(false);
+			setActiveItem("filter");
+		} else if (activeItem === "institution-detail") {
+			const setSelectedInstitutionId =
+				useInstitutionStore.getState().setSelectedInstitutionId;
+			setSelectedInstitutionId(null);
+			setActiveItem("filter");
+		}
+	};
+
+	const shouldShowDownloadButton = () => {
+		return (
+			activeItem === "institution-detail" ||
+			(activeItem === "filter" && hasActiveFilters(filters))
+		);
+	};
+
+	const handleDownloadButtonClick = () => {
+		setDownloadModalOpen(true);
+		const mode = activeItem === "filter" ? "filtered" : "selected";
+		setDownloadModalMode(mode);
+	};
+
+	const getDownloadButtonCount = () => {
+		if (activeItem === "institution-detail") {
+			return 1;
+		}
+		if (activeItem === "filter" && institutions && hasActiveFilters(filters)) {
+			return institutions.features.length;
+		}
+		return null;
+	};
+
 	return (
 		<>
 			<WelcomeModal
 				open={firstTimeUser}
 				onOpenChange={handleWelcomeModalClose}
 			/>
-			{/* InformationModal now handled by ModalProvider */}
 			<Sidebar
 				collapsible="icon"
 				className="overflow-hidden *:data-[sidebar=sidebar]:flex-row [&_*]:!transition-none"
@@ -196,8 +238,15 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 												onClick={() => handleItemClick(item.id)}
 												isActive={activeItem === item.id}
 												aria-label={t(item.label)}
+												className="relative"
 											>
 												<item.icon />
+												{(item.id === "filter" || item.id === "download") &&
+													institutions && (
+														<div className="absolute top-2 -right-2 bg-primary text-primary-foreground body2 font-bold rounded-full min-w-5 h-5 flex items-center justify-center px-1">
+															{institutions.features.length}
+														</div>
+													)}
 											</SidebarMenuButton>
 										</SidebarMenuItem>
 									))}
@@ -237,29 +286,9 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 							<div className="w-10 h-1 bg-muted-foreground/30 rounded-full"></div>
 						</div>
 						<div className="flex items-center justify-between w-full">
-							<span className="body1 font-bold">
-								{(() => {
-									if (activeItem === "layertree") return "Fachkarten";
-									if (activeItem === "institution-detail")
-										return t("institution.details");
-
-									return t(activeItem + ".title");
-								})()}
-							</span>
+							<span className="body1 font-bold">{getActiveItemTitle()}</span>
 							<button
-								onClick={() => {
-									setOpen(false);
-									setOpenMobile(false);
-									if (activeItem === "layertree") {
-										setIsLayerTreeOpen(false);
-										setActiveItem("filter");
-									} else if (activeItem === "institution-detail") {
-										const setSelectedInstitutionId =
-											useInstitutionStore.getState().setSelectedInstitutionId;
-										setSelectedInstitutionId(null);
-										setActiveItem("filter");
-									}
-								}}
+								onClick={handleCloseButtonClick}
 								aria-label={t("closeSidebar")}
 							>
 								<Close />
@@ -281,22 +310,18 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 											<InstitutionDetailContent />
 										)}
 									</div>
-									{(activeItem === "institution-detail" ||
-										(activeItem === "filter" && hasActiveFilters(filters))) && (
+									{shouldShowDownloadButton() && (
 										<div className="sticky bottom-0 flex justify-center p-4">
 											<Button
 												variant={"outline"}
 												className="w-full"
 												aria-label={t("download.downloadButton")}
-												onClick={() => {
-													setDownloadModalOpen(true);
-													setDownloadModalMode("filtered");
-												}}
+												onClick={handleDownloadButtonClick}
 											>
 												<Download size={6} viewBox="0 0 24 24" />
 												{t("download.downloadButton")}
-												{institutions && (
-													<span>({institutions.features.length})</span>
+												{getDownloadButtonCount() && (
+													<span>({getDownloadButtonCount()})</span>
 												)}
 											</Button>
 										</div>

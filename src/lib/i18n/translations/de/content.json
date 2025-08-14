@@ -243,7 +243,7 @@
 		}
 	},
 	"downloadModal": {
-		"title": "Download",
+		"title": "Daten als Liste herunterladen",
 		"subtitle": "{{count}} Orte zum Herunterladen",
 		"selectedFilters": "Die Auswahl setzt sich zusammen aus folgenden Filtern:",
 		"chooseFormat": "Dateiformat wählen"
