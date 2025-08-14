@@ -257,6 +257,8 @@ const Filter: FC = () => {
 		);
 		if (!categoryGroup) return;
 
+		toggleSection(categoryKey);
+
 		const isCategorySelected = filters.category_keys.includes(categoryKey);
 		const selectedSubcategoriesInGroup = categoryGroup.subcategories.filter(
 			(sub) => filters.subcategory_keys.includes(sub.key),
