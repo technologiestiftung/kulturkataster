@@ -100,8 +100,10 @@ const CategorySection: FC<{
 						<div className="w-6 h-6">
 							<IconComponent />
 						</div>
-						<span className="body2 font-bold">{group.name}</span>
-						<span className="body2">({getCategoryCount(group.key)})</span>
+						<div className="body2 text-left">
+							<span className="font-bold">{group.name}</span>
+							<span className="pl-2">({getCategoryCount(group.key)})</span>
+						</div>
 					</button>
 				</CollapsibleTrigger>
 
