@@ -11,6 +11,7 @@ import {
 } from "@/types";
 import { FeatureCollection } from "geojson";
 import { create } from "zustand";
+import { devtools } from "zustand/middleware";
 
 // Helper function to check if institution matches district filter
 const matchesDistrictFilter = (
@@ -65,8 +66,8 @@ const matchesStatusFilter = (
 	return properties.status !== "closed";
 };
 
-export const useInstitutionStore = create<InstitutionStoreState>(
-	(set, get) => ({
+export const useInstitutionStore = create<InstitutionStoreState>()(
+	devtools((set, get) => ({
 		institutions: null,
 		originalInstitutions: null,
 		setInstitutions: (institutions) => set({ institutions }),
@@ -153,5 +154,5 @@ export const useInstitutionStore = create<InstitutionStoreState>(
 				console.error("Failed to apply filters:", error);
 			}
 		},
-	}),
+	})),
 );

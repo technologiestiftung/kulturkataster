@@ -16,7 +16,8 @@
 	"download": {
 		"title": "Liste herunterladen",
 		"description": "Laden Sie die Daten der Kulturorte im JSON-Format herunter. Diese Daten können für eigene Anwendungen oder Analysen verwendet werden.",
-		"downloadButton": "Daten herunterladen"
+		"downloadButton": "Daten herunterladen",
+		"downloading": "Daten werden heruntergeladen..."
 	},
 	"accessibility": {
 		"title": "Barrierefreiheit",
@@ -134,5 +135,10 @@
 		"availableLayers": "Verfügbare Ebenen",
 		"noLayersAvailable": "Keine Fachkarten verfügbar"
 	},
-	"kukaLogo": "Kulturkataster - Logo"
+	"kukaLogo": "Kulturkataster - Logo",
+	"fileFormat": {
+		"xls": "XLS",
+		"xlsx": "XLSX",
+		"csv": "CSV"
+	}
 }
