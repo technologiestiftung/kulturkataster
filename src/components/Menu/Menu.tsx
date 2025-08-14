@@ -53,22 +53,26 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 		useSidebar();
 	const { t } = useTranslation("common");
 	const [activeItem, setActiveItem] = useState<string>("");
+	const [userHasClosedSidebar, setUserHasClosedSidebar] = useState(false);
 	const { setInformationModalOpen } = useModalStore();
 	const isLayerTreeOpen = useMapStore((state) => state.isLayerTreeOpen);
 	const setIsLayerTreeOpen = useMapStore((state) => state.setIsLayerTreeOpen);
 	const selectedInstitutionId = useInstitutionStore(
 		(state) => state.selectedInstitutionId,
 	);
+	const setSelectedInstitutionId = useInstitutionStore(
+		(state) => state.setSelectedInstitutionId,
+	);
 	const filters = useInstitutionStore((state) => state.filters);
 	const institutions = useInstitutionStore((state) => state.institutions);
 	const { firstTimeUser, setFirstTimeUser } = useAppStore();
 
 	useEffect(() => {
-		if (!isMobile && !firstTimeUser) {
+		if (!isMobile && !firstTimeUser && !userHasClosedSidebar) {
 			setActiveItem("filter");
 			setOpen(true);
 		}
-	}, [isMobile, firstTimeUser, setOpen]);
+	}, [isMobile, firstTimeUser, setOpen, userHasClosedSidebar]);
 
 	useEffect(() => {
 		if (isLayerTreeOpen) {
@@ -84,8 +88,10 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			} else {
 				setOpen(true);
 			}
+		} else if (activeItem === "institution-detail") {
+			setActiveItem("");
 		}
-	}, [selectedInstitutionId, isMobile, setOpen, setOpenMobile]);
+	}, [selectedInstitutionId, isMobile, setOpen, setOpenMobile, activeItem]);
 
 	useEffect(() => {
 		const isSidebarClosed = isMobile ? !openMobile : !open;
@@ -150,6 +156,18 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
 	const handleWelcomeModalClose = () => {
 		setFirstTimeUser(false);
+	};
+
+	const handleSidebarClose = () => {
+		setUserHasClosedSidebar(true);
+		setOpen(false);
+		setOpenMobile(false);
+		if (activeItem === "layertree") {
+			setIsLayerTreeOpen(false);
+		} else if (activeItem === "institution-detail") {
+			setSelectedInstitutionId(null);
+		}
+		setActiveItem("");
 	};
 
 	return (
@@ -225,13 +243,13 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 				{/* We disable collapsible and let it fill remaining space */}
 				<Sidebar
 					collapsible="none"
-					className="flex-1 w-full h-full group-data-[collapsible=icon]:hidden"
+					className="flex-1 h-full group-data-[collapsible=icon]:hidden"
 				>
 					<SidebarHeader className="gap-3.5 p-6 shadow-sm md:shadow-none z-10">
 						<div className="md:hidden flex justify-center pb-2">
 							<div className="w-10 h-1 bg-muted-foreground/30 rounded-full"></div>
 						</div>
-						<div className="flex items-center justify-between w-full">
+						<div className="flex items-center justify-between">
 							<span className="body1 font-bold">
 								{(() => {
 									if (!activeItem) return;
@@ -242,19 +260,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 								})()}
 							</span>
 							<button
-								onClick={() => {
-									setOpen(false);
-									setOpenMobile(false);
-									if (activeItem === "layertree") {
-										setIsLayerTreeOpen(false);
-										setActiveItem("filter");
-									} else if (activeItem === "institution-detail") {
-										const setSelectedInstitutionId =
-											useInstitutionStore.getState().setSelectedInstitutionId;
-										setSelectedInstitutionId(null);
-										setActiveItem("filter");
-									}
-								}}
+								onClick={handleSidebarClose}
 								aria-label={t("closeSidebar")}
 							>
 								<Close />
