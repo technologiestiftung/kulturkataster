@@ -93,9 +93,9 @@ const CategorySection: FC<{
 
 	return (
 		<Collapsible open={isOpen} onOpenChange={onToggle}>
-			<div className="flex items-center justify-between w-full p-2 rounded">
+			<div className="flex items-center gap-2 justify-between w-full p-2 rounded">
 				<CollapsibleTrigger asChild>
-					<button className="flex items-center gap-2">
+					<button className="flex items-center gap-2 w-full">
 						{isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
 						<div className="w-6 h-6">
 							<IconComponent />
@@ -109,11 +109,11 @@ const CategorySection: FC<{
 					<Checkbox
 						checked={isChecked}
 						onCheckedChange={() => onCategoryChange(group.key)}
-						className="w-4 h-4"
+						className={`w-4 h-4 ${isIndeterminate ? "border-primary-dark" : ""}`}
 					/>
 					{isIndeterminate && (
 						<div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-							<Minus size={4} className="text-primary" />
+							<Minus size={10} className="text-primary-dark" />
 						</div>
 					)}
 				</div>
@@ -123,9 +123,9 @@ const CategorySection: FC<{
 				{group.subcategories.map((subcategory) => (
 					<div
 						key={subcategory.key}
-						className="flex items-center justify-between py-1"
+						className="flex items-center gap-2 justify-between py-1 w-full"
 					>
-						<span className="body2">
+						<span className="body2 w-full">
 							{subcategory.name} ({getSubcategoryCount(subcategory.key)})
 						</span>
 
@@ -257,8 +257,6 @@ const Filter: FC = () => {
 		);
 		if (!categoryGroup) return;
 
-		toggleSection(categoryKey);
-
 		const isCategorySelected = filters.category_keys.includes(categoryKey);
 		const selectedSubcategoriesInGroup = categoryGroup.subcategories.filter(
 			(sub) => filters.subcategory_keys.includes(sub.key),
@@ -266,6 +264,13 @@ const Filter: FC = () => {
 		const allSubcategoriesSelected =
 			selectedSubcategoriesInGroup.length ===
 			categoryGroup.subcategories.length;
+
+		if (
+			!(isCategorySelected || allSubcategoriesSelected) &&
+			!openSections.includes(categoryKey)
+		) {
+			toggleSection(categoryKey);
+		}
 
 		if (isCategorySelected || allSubcategoriesSelected) {
 			const newCategories = filters.category_keys.filter(
