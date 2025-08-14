@@ -5,7 +5,11 @@
 		"libraries": "Bibliotheken",
 		"bookstores": "Buchhandlungen",
 		"music_venues": "Musikorte",
+		"dance_venues": "Spielorte Tanz",
+		"cultural_urban_development": "Orte der kulturellen Stadtentwicklung",
 		"galleries": "Galerien",
+		"studios": "Ateliers",
+		"clubs_music_venues": "Clubs und Musikspielstätten",
 		"cinemas": "Kinos",
 		"literature_places": "Literaturorte",
 		"museums": "Museen",
@@ -15,6 +19,7 @@
 		"project_spaces": "Projekträume",
 		"sociocultural_centers": "Soziokulturelle Zentren",
 		"performing_arts": "Darstellende Künste",
+		"performing_arts_venues": "Spielstätten Darstellende Künste",
 		"other": "Sonstiges"
 	},
 	"subcategory": {
