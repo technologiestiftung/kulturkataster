@@ -64,6 +64,9 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 		(state) => state.selectedInstitutionId,
 	);
 	const filters = useInstitutionStore((state) => state.filters);
+	const originalInstitutions = useInstitutionStore(
+		(state) => state.originalInstitutions,
+	);
 	const institutions = useInstitutionStore((state) => state.institutions);
 	const { firstTimeUser, setFirstTimeUser } = useAppStore();
 
@@ -242,8 +245,10 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 											>
 												<item.icon />
 												{(item.id === "filter" || item.id === "download") &&
-													institutions && (
-														<div className="absolute top-2 -right-1 bg-primary text-primary-foreground body2 font-bold rounded-full min-w-5 h-5 flex items-center justify-center px-1">
+													institutions &&
+													originalInstitutions?.features.length !==
+														institutions.features.length && (
+														<div className="absolute top-2 -right-1 bg-primary text-primary-foreground body2 rounded-full min-w-5 h-5 flex items-center justify-center px-1">
 															{institutions.features.length}
 														</div>
 													)}
@@ -369,8 +374,10 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 									{t(item.label)}
 								</span>
 								{(item.id === "filter" || item.id === "download") &&
-									institutions && (
-										<div className="absolute -top-1 -right-1 bg-primary text-primary-foreground body2 font-bold rounded-full min-w-5 h-5 flex items-center justify-center px-1">
+									institutions &&
+									originalInstitutions?.features.length !==
+										institutions.features.length && (
+										<div className="absolute -top-1 -right-1 bg-primary text-primary-foreground body2 rounded-full min-w-5 h-5 flex items-center justify-center px-1">
 											{institutions.features.length}
 										</div>
 									)}
