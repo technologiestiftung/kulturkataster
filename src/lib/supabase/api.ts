@@ -100,8 +100,6 @@ export async function filterInstitutions(query: FilterState) {
 	if (error) {
 		handleError(error, "filter institutions");
 	}
-
-	console.log("[api] data::", data);
 	return data;
 }
 
