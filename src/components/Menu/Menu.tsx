@@ -57,7 +57,11 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	const [activeItem, setActiveItem] = useState<string>("");
 	const [previousActiveItem, setPreviousActiveItem] = useState<string>("");
 	const [userHasClosedSidebar, setUserHasClosedSidebar] = useState(false);
-	const { setInformationModalOpen } = useModalStore();
+	const {
+		setInformationModalOpen,
+		setDownloadModalOpen,
+		setDownloadModalMode,
+	} = useModalStore();
 	const isLayerTreeOpen = useMapStore((state) => state.isLayerTreeOpen);
 	const setIsLayerTreeOpen = useMapStore((state) => state.setIsLayerTreeOpen);
 	const selectedInstitutionId = useInstitutionStore(
@@ -67,6 +71,9 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 		(state) => state.setSelectedInstitutionId,
 	);
 	const filters = useInstitutionStore((state) => state.filters);
+	const originalInstitutions = useInstitutionStore(
+		(state) => state.originalInstitutions,
+	);
 	const institutions = useInstitutionStore((state) => state.institutions);
 	const { firstTimeUser, setFirstTimeUser } = useAppStore();
 
@@ -146,6 +153,12 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			return;
 		}
 
+		if (itemName === "download") {
+			setDownloadModalOpen(true);
+			setDownloadModalMode("filtered");
+			return;
+		}
+
 		if (activeItem === itemName) {
 			if (isMobile) {
 				setOpenMobile(false);
@@ -189,13 +202,41 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 		setActiveItem(previousActiveItem);
 	};
 
+	const getActiveItemTitle = () => {
+		if (activeItem === "layertree") return "Fachkarten";
+		if (activeItem === "institution-detail") return t("institution.details");
+		return t(activeItem + ".title");
+	};
+
+	const shouldShowDownloadButton = () => {
+		return (
+			activeItem === "institution-detail" ||
+			(activeItem === "filter" && hasActiveFilters(filters))
+		);
+	};
+
+	const handleDownloadButtonClick = () => {
+		setDownloadModalOpen(true);
+		const mode = activeItem === "filter" ? "filtered" : "selected";
+		setDownloadModalMode(mode);
+	};
+
+	const getDownloadButtonCount = () => {
+		if (activeItem === "institution-detail") {
+			return 1;
+		}
+		if (activeItem === "filter" && institutions && hasActiveFilters(filters)) {
+			return institutions.features.length;
+		}
+		return null;
+	};
+
 	return (
 		<>
 			<WelcomeModal
 				open={firstTimeUser}
 				onOpenChange={handleWelcomeModalClose}
 			/>
-			{/* InformationModal now handled by ModalProvider */}
 			<Sidebar
 				collapsible="icon"
 				className="overflow-hidden *:data-[sidebar=sidebar]:flex-row [&_*]:!transition-none"
@@ -228,8 +269,17 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 												onClick={() => handleItemClick(item.id)}
 												isActive={activeItem === item.id}
 												aria-label={t(item.label)}
+												className="relative"
 											>
 												<item.icon />
+												{(item.id === "filter" || item.id === "download") &&
+													institutions &&
+													originalInstitutions?.features.length !==
+														institutions.features.length && (
+														<div className="absolute top-2 -right-1 bg-primary text-primary-foreground body2 rounded-full min-w-5 h-5 flex items-center justify-center px-1">
+															{institutions.features.length}
+														</div>
+													)}
 											</SidebarMenuButton>
 										</SidebarMenuItem>
 									))}
@@ -268,30 +318,28 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 						<div className="md:hidden flex justify-center pb-2">
 							<div className="w-10 h-1 bg-muted-foreground/30 rounded-full"></div>
 						</div>
-						<div className="flex items-center justify-between">
-							<div className="flex items-center gap-2">
-								{activeItem === "institution-detail" && previousActiveItem && (
-									<button
-										onClick={handleBackToFilter}
-										className="body1 font-bold flex items-center gap-1"
-										aria-label={`Zurück zu ${t(previousActiveItem + ".title")}`}
-									>
-										<ArrowLeft /> Zurück zu {t(previousActiveItem + ".title")}
-									</button>
-								)}
-								{!(
-									activeItem === "institution-detail" && previousActiveItem
-								) && (
-									<span className="body1 font-bold">
-										{(() => {
-											if (!activeItem) return;
-											if (activeItem === "layertree") return "Fachkarten";
-											if (activeItem === "institution-detail")
-												return t("institution.details");
-											return t(activeItem + ".title");
-										})()}
-									</span>
-								)}
+						<div className="flex items-center justify-between w-full">
+							<div className="flex items-center justify-between">
+								<div className="flex items-center gap-2">
+									{activeItem === "institution-detail" &&
+										previousActiveItem && (
+											<button
+												onClick={handleBackToFilter}
+												className="body1 font-bold flex items-center gap-1"
+												aria-label={`Zurück zu ${t(previousActiveItem + ".title")}`}
+											>
+												<ArrowLeft /> Zurück zu{" "}
+												{t(previousActiveItem + ".title")}
+											</button>
+										)}
+									{!(
+										activeItem === "institution-detail" && previousActiveItem
+									) && (
+										<span className="body1 font-bold">
+											{getActiveItemTitle()}
+										</span>
+									)}
+								</div>
 							</div>
 							<button
 								onClick={handleSidebarClose}
@@ -316,18 +364,18 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 											<InstitutionDetailContent />
 										)}
 									</div>
-									{(activeItem === "institution-detail" ||
-										(activeItem === "filter" && hasActiveFilters(filters))) && (
+									{shouldShowDownloadButton() && (
 										<div className="sticky bottom-0 flex justify-center p-4">
 											<Button
 												variant={"outline"}
 												className="w-full"
 												aria-label={t("download.downloadButton")}
+												onClick={handleDownloadButtonClick}
 											>
 												<Download size={6} viewBox="0 0 24 24" />
-												Daten herunterladen{" "}
-												{institutions && (
-													<span>({institutions.features.length})</span>
+												{t("download.downloadButton")}
+												{getDownloadButtonCount() && (
+													<span>({getDownloadButtonCount()})</span>
 												)}
 											</Button>
 										</div>
@@ -374,6 +422,14 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 								<span className="text-xs font-medium hidden">
 									{t(item.label)}
 								</span>
+								{(item.id === "filter" || item.id === "download") &&
+									institutions &&
+									originalInstitutions?.features.length !==
+										institutions.features.length && (
+										<div className="absolute -top-1 -right-1 bg-primary text-primary-foreground body2 rounded-full min-w-5 h-5 flex items-center justify-center px-1">
+											{institutions.features.length}
+										</div>
+									)}
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 					))}
