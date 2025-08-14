@@ -28,19 +28,24 @@ export type SearchResult = Institution | GeoFeature;
 
 export enum CategoryType {
 	STUDIOS = "studios",
-	CLUBS_MUSIC_VENUES = "clubs_music_venues",
-	PERFORMING_ARTS_VENUES = "performing_arts_venues",
 	EDUCATION_PLACES = "education_places",
 	LIBRARIES = "libraries",
+	CLUBS_MUSIC_VENUES = "clubs_music_venues",
 	GALLERIES = "galleries",
 	CINEMAS = "cinemas",
 	LITERATURE_PLACES = "literature_places",
 	MUSEUMS = "museums",
+	CULTURAL_URBAN_DEVELOPMENT = "cultural_urban_development",
 	POTENTIAL_SPACES = "potential_spaces",
 	REHEARSAL_ROOMS = "rehearsal_rooms",
+	PROJECT_SPACES_INITIATIVES = "project_spaces_initiatives",
 	SOCIOCULTURAL_CENTERS = "sociocultural_centers",
+	DANCE_VENUES = "dance_venues",
+	PERFORMING_ARTS_VENUES = "performing_arts_venues",
+	GRAFFITI_AREAS = "graffiti_areas",
 	OTHER = "other",
-	MULTI_CATEGORIES = "multi_categories",
+
+	MULTI_CATEGORIES = "multi_categories", 
 }
 export interface Category {
 	id: number;
@@ -50,7 +55,7 @@ export interface Category {
 
 export interface CategoryWithSubcategories extends Category {
 	subcategories: Subcategory[];
-	name?: string; // Translated name
+	name?: string;
 }
 
 export interface Subcategory {
@@ -58,7 +63,7 @@ export interface Subcategory {
 	key: string;
 	category_id: number;
 	created_at?: string;
-	name?: string; // Translated name
+	name?: string;
 }
 
 export interface District {
@@ -66,7 +71,7 @@ export interface District {
 	created_at: string;
 	id: number;
 	key: string;
-	name: string; // Already has translated name
+	name: string;
 }
 
 export interface ParentOrganization {
