@@ -6,12 +6,16 @@ export interface ModalStoreState {
 	imprintModalOpen: boolean;
 	accessibilityModalOpen: boolean;
 	informationModalOpen: boolean;
+	downloadModalOpen: boolean;
+	downloadModalMode: "all" | "filtered" | "selected";
 
 	setAboutModalOpen: (open: boolean) => void;
 	setPrivacyModalOpen: (open: boolean) => void;
 	setImprintModalOpen: (open: boolean) => void;
 	setAccessibilityModalOpen: (open: boolean) => void;
 	setInformationModalOpen: (open: boolean) => void;
+	setDownloadModalOpen: (open: boolean) => void;
+	setDownloadModalMode: (mode: "all" | "filtered" | "selected") => void;
 
 	openModal: (modalName: string) => void;
 	closeAllModals: () => void;
@@ -26,6 +30,8 @@ export const useModalStore = create<ModalStoreState>((set) => ({
 	imprintModalOpen: false,
 	accessibilityModalOpen: false,
 	informationModalOpen: false,
+	downloadModalOpen: false,
+	downloadModalMode: "all",
 
 	// Setters
 	setAboutModalOpen: (open) => set({ aboutModalOpen: open }),
@@ -33,6 +39,8 @@ export const useModalStore = create<ModalStoreState>((set) => ({
 	setImprintModalOpen: (open) => set({ imprintModalOpen: open }),
 	setAccessibilityModalOpen: (open) => set({ accessibilityModalOpen: open }),
 	setInformationModalOpen: (open) => set({ informationModalOpen: open }),
+	setDownloadModalOpen: (open) => set({ downloadModalOpen: open }),
+	setDownloadModalMode: (mode) => set({ downloadModalMode: mode }),
 
 	openModal: (modalName: string) => {
 		set((state) => {
@@ -42,6 +50,7 @@ export const useModalStore = create<ModalStoreState>((set) => ({
 				imprintModalOpen: false,
 				accessibilityModalOpen: false,
 				informationModalOpen: false,
+				downloadModalOpen: false,
 			};
 
 			switch (modalName) {
@@ -61,6 +70,9 @@ export const useModalStore = create<ModalStoreState>((set) => ({
 				case "info":
 					newState.informationModalOpen = true;
 					break;
+				case "download":
+					newState.downloadModalOpen = true;
+					break;
 				default:
 					console.warn(`Unknown modal name: ${modalName}`);
 					return state;
@@ -76,6 +88,7 @@ export const useModalStore = create<ModalStoreState>((set) => ({
 			imprintModalOpen: false,
 			accessibilityModalOpen: false,
 			informationModalOpen: false,
+			downloadModalOpen: false,
 		}),
 
 	handleFooterItemClick: (id: string) => {
