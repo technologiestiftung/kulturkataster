@@ -52,7 +52,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	const { toggleSidebar, setOpen, setOpenMobile, isMobile, open, openMobile } =
 		useSidebar();
 	const { t } = useTranslation("common");
-	const [activeItem, setActiveItem] = useState("filter");
+	const [activeItem, setActiveItem] = useState<string>("");
 	const { setInformationModalOpen } = useModalStore();
 	const isLayerTreeOpen = useMapStore((state) => state.isLayerTreeOpen);
 	const setIsLayerTreeOpen = useMapStore((state) => state.setIsLayerTreeOpen);
@@ -62,6 +62,13 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	const filters = useInstitutionStore((state) => state.filters);
 	const institutions = useInstitutionStore((state) => state.institutions);
 	const { firstTimeUser, setFirstTimeUser } = useAppStore();
+
+	useEffect(() => {
+		if (!isMobile && !firstTimeUser) {
+			setActiveItem("filter");
+			setOpen(true);
+		}
+	}, [isMobile, firstTimeUser, setOpen]);
 
 	useEffect(() => {
 		if (isLayerTreeOpen) {
@@ -83,8 +90,6 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	useEffect(() => {
 		const isSidebarClosed = isMobile ? !openMobile : !open;
 		if (isSidebarClosed && !isMobile) {
-			// Only clear activeItem on desktop when sidebar closes
-			// On mobile, we handle this manually in handleItemClick
 			setActiveItem("");
 		}
 	}, [open, openMobile, isMobile]);
@@ -229,10 +234,10 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 						<div className="flex items-center justify-between w-full">
 							<span className="body1 font-bold">
 								{(() => {
+									if (!activeItem) return;
 									if (activeItem === "layertree") return "Fachkarten";
 									if (activeItem === "institution-detail")
 										return t("institution.details");
-
 									return t(activeItem + ".title");
 								})()}
 							</span>
