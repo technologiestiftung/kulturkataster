@@ -16,11 +16,11 @@ const Footer: FC = () => {
 	const { handleFooterItemClick } = useModalStore();
 
 	return (
-		<div className="Footer-root hidden min-w-fit h-8 bg-footer absolute right-0 bottom-0 md:flex justify-between px-2 py-1 ml-20">
-			<div className="pr-14 body2 flex items-center gap-1">
+		<div className="Footer-root space-x-6 hidden min-w-fit h-8 bg-footer absolute right-0 bottom-0 md:flex justify-between px-2 py-1 ml-20">
+			<div className="body2 flex items-center gap-1">
 				<p>{t("footer.projectBy")}</p>
-				<span className="body2">(v{packageInfo.version})</span>
 			</div>
+
 			<ul className="flex gap-4 body2 font-bold">
 				{footerItems.map((item) => (
 					<li key={item.id}>
