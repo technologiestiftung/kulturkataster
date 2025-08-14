@@ -45,7 +45,7 @@ export enum CategoryType {
 	GRAFFITI_AREAS = "graffiti_areas",
 	OTHER = "other",
 
-	MULTI_CATEGORIES = "multi_categories", 
+	MULTI_CATEGORIES = "multi_categories",
 }
 export interface Category {
 	id: number;
