@@ -27,21 +27,18 @@ export interface GeoFeature {
 export type SearchResult = Institution | GeoFeature;
 
 export enum CategoryType {
-	WORKSHOPS = "workshops",
+	STUDIOS = "studios",
+	CLUBS_MUSIC_VENUES = "clubs_music_venues",
+	PERFORMING_ARTS_VENUES = "performing_arts_venues",
 	EDUCATION_PLACES = "education_places",
 	LIBRARIES = "libraries",
-	BOOKSTORES = "bookstores",
-	MUSIC_VENUES = "music_venues",
 	GALLERIES = "galleries",
 	CINEMAS = "cinemas",
 	LITERATURE_PLACES = "literature_places",
 	MUSEUMS = "museums",
-	URBAN_DEVELOPMENT = "urban_development",
 	POTENTIAL_SPACES = "potential_spaces",
 	REHEARSAL_ROOMS = "rehearsal_rooms",
-	PROJECT_SPACES = "project_spaces",
 	SOCIOCULTURAL_CENTERS = "sociocultural_centers",
-	PERFORMING_ARTS = "performing_arts",
 	OTHER = "other",
 	MULTI_CATEGORIES = "multi_categories",
 }
