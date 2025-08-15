@@ -69,7 +69,6 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 								category,
 								featureProperties.subcategories || [],
 							);
-							console.log("[HoverCard] category::", category);
 
 							return (
 								<div key={category.id}>
