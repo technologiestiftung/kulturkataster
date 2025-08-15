@@ -232,6 +232,10 @@
 	},
 	"utilization_status": {
 		"in_use": "In Nutzung",
+		"temporarily_closed": "Vorübergehend geschlossen",
+		"permanently_closed": "Dauerhaft geschlossen",
+		"planned_use": "Geplante Nutzung",
+		"unknown": "Unbekannt",
 		"potential_space": "Potenzialfläche"
 	},
 	"field_names": {

@@ -203,6 +203,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	};
 
 	const getActiveItemTitle = () => {
+		if (!activeItem) return "";
 		if (activeItem === "layertree") return "Fachkarten";
 		if (activeItem === "institution-detail") return t("institution.details");
 		return t(activeItem + ".title");
