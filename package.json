@@ -1,6 +1,6 @@
 {
 	"name": "kulturkataster-frontend",
-	"version": "0.1.0",
+	"version": "1.0.0",
 	"private": true,
 	"scripts": {
 		"dev": "next dev",
@@ -42,6 +42,8 @@
 		"react-i18next": "^15.6.1",
 		"tailwind-merge": "^3.0.1",
 		"tailwindcss-animate": "^1.0.7",
+		"xlsx": "^0.18.5",
+		"xlsx-js-style": "^1.2.0",
 		"zustand": "^5.0.3"
 	},
 	"optionalDependencies": {
@@ -58,6 +60,7 @@
 		"@types/proj4": "^2.19.0",
 		"@types/react": "^19",
 		"@types/react-dom": "^19",
+		"@types/xlsx": "^0.0.36",
 		"eslint": "^9",
 		"eslint-config-next": "15.2.2",
 		"husky": "^9.1.7",

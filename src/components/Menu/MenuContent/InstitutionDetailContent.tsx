@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
+import { getMatchingSubcategories } from "@/lib/utils/categoryUtils";
 import { getCategoryIconComponent } from "@/lib/utils/iconUtils";
 import { normalizeUrl } from "@/lib/utils/sanitizerUtils";
 import { Category, InstitutionProperties } from "@/types";
@@ -80,6 +81,11 @@ function InstitutionHeader({
 				<section className="px-4">
 					{institutionData.categories.map((category: Category) => {
 						const IconComponent = getCategoryIconComponent(category.key);
+						const matchingSubcategories = getMatchingSubcategories(
+							category,
+							institutionData.subcategories || [],
+						);
+
 						return (
 							<div key={category.id} className="mb-2">
 								<div className="flex items-center gap-2 h-6">
@@ -90,7 +96,16 @@ function InstitutionHeader({
 										{tEnum(`category.${category.key}`)}
 									</p>
 								</div>
-								<p className="body2 pl-8">{t("institution.subcategory")}</p>
+								{matchingSubcategories.length > 0 && (
+									<div className="body2 pl-8">
+										{matchingSubcategories.map((subcategory, index) => (
+											<span key={subcategory.id}>
+												{index > 0 && ", "}
+												{tEnum(`subcategory.${subcategory.key}`)}
+											</span>
+										))}
+									</div>
+								)}
 							</div>
 						);
 					})}
