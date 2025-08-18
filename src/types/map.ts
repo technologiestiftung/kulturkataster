@@ -146,4 +146,8 @@ export interface MapStoreState {
 	// Feature
 	currentFeature: Feature<Geometry> | null;
 	setCurrentFeature: (feature: Feature) => void;
+
+	// LayerTree
+	openLegendLayerId: string;
+	setOpenLegendLayerId: (layerId: string) => void;
 }
