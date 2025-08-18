@@ -63,4 +63,9 @@ export const useMapStore = create<MapStoreState>((set, get) => ({
 
 	// Features
 	setCurrentFeature: (currentFeature) => set({ currentFeature }),
+
+	// LayerTress
+	openLegendLayerId: "",
+	setOpenLegendLayerId: (layerId: string) =>
+		set({ openLegendLayerId: layerId }),
 }));
