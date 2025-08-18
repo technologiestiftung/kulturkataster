@@ -7,7 +7,6 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import InfoCircleIcon from "@/icons/info-circle-fill.svg";
 import { getMatchingSubcategories } from "@/lib/utils/categoryUtils";
 import { getCategoryIconComponent } from "@/lib/utils/iconUtils"; // Update this import path
 import { Category } from "@/types";
@@ -57,7 +56,6 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 						<CardTitle className="text-lg font-semibold line-clamp-2 w-full">
 							{featureProperties.name}
 						</CardTitle>
-						<InfoCircleIcon />
 					</div>
 				</CardHeader>
 
