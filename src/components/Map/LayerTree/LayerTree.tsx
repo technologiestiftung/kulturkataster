@@ -280,7 +280,7 @@ const FloatingLayerButton = memo<{
 					</div>
 				</button>
 
-				{visibleCount > 1 && (
+				{visibleCount && (
 					<Badge
 						variant="default"
 						className="absolute -top-2 -right-2 w-6 h-6 p-0 rounded-full border-2 border-white text-xs font-bold"
