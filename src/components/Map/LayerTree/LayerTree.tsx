@@ -94,7 +94,7 @@ const LayerThumbnail = memo<{
 			)}
 			{showOverlay && layer.visibility && (
 				<div
-					className="absolute inset-0 bg-primary/30 flex items-center justify-center border-2 border-primary rounded"
+					className="absolute inset-0 bg-interaction-dark/30 flex items-center justify-center border-2 border-interaction-dark rounded"
 					aria-hidden="true"
 				/>
 			)}
@@ -168,7 +168,7 @@ const LayerItem = memo<{
 						<Label
 							htmlFor={layer.id}
 							className={`body2 font-bold cursor-pointer flex ${
-								layer.visibility ? "text-primary" : ""
+								layer.visibility ? "text-interaction-dark" : ""
 							}`}
 						>
 							{serviceName}
@@ -254,14 +254,14 @@ const FloatingLayerButton = memo<{
 			<div className="relative">
 				{visibleCount > 1 && (
 					<div
-						className="absolute -top-1 left-1 w-16 h-16 bg-primary/70 rounded border-primary"
+						className="absolute -top-1 left-1 w-16 h-16 bg-interaction-dark/70 rounded border-interaction-dark"
 						aria-hidden="true"
 					/>
 				)}
 
 				<button
 					className={`relative w-16 h-16 p-0 bg-neutral-80 shadow-lg rounded overflow-hidden flex items-center justify-center cursor-pointer transition-colors hover:bg-neutral-70 focus:outline-none ${
-						visibleCount > 0 ? "border-2 border-primary" : ""
+						visibleCount > 0 ? "border-2 border-interaction-dark" : ""
 					}`}
 					onClick={onClick}
 					aria-label={`Open layer tree (${visibleCount} visible layers)`}
@@ -348,7 +348,9 @@ const LayerTree: FC = () => {
 		>
 			<CardHeader className="shadow-sm p-1 pl-6">
 				<div className="flex items-center justify-between">
-					<CardTitle className="body1">{t("map.layerTreeTitle")}</CardTitle>
+					<CardTitle className="body1 font-bold">
+						{t("map.layerTreeTitle")}
+					</CardTitle>
 					<Button
 						variant="ghost"
 						size="sm"
