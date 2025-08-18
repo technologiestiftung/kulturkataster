@@ -1,7 +1,7 @@
 "use client";
 
 import { ButtonWithTooltip } from "@/components/ui/button";
-import LocationIcon from "@/icons/icons/mark.svg";
+import LocationIcon from "@/icons/mark.svg";
 import locationSvgString from "@/icons/location.svg?raw";
 import { useMapStore } from "@/lib/store/mapStore";
 import Feature from "ol/Feature";
