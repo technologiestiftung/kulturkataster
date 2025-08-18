@@ -199,14 +199,14 @@ export function LocationSearch() {
 						value={query}
 						onChange={handleInputChange}
 						onKeyDown={handleKeyDown}
-						className="w-full bg-white"
+						className="w-full bg-backround"
 						icon={<Search className="w-5 h-5 text-foreground" />}
 						iconPosition="left"
 						aria-invalid={!!resultErrorMessage}
 					/>
 					{isLoading && (
 						<div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-							<div className="w-4 h-4 border-2 border-gray-300 border-t-blue-500 rounded-full animate-spin" />
+							<div className="w-4 h-4 border-2 border-neutral-20 border-t-accent rounded-full animate-spin" />
 						</div>
 					)}
 				</div>
