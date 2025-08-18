@@ -147,6 +147,16 @@ export interface MapStoreState {
 	currentFeature: Feature<Geometry> | null;
 	setCurrentFeature: (feature: Feature) => void;
 
+	// User Location
+	userLocation: {
+		coordinates: [number, number] | null;
+		accuracy?: number;
+	};
+	setUserLocation: (location: {
+		coordinates: [number, number] | null;
+		accuracy?: number;
+	}) => void;
+
 	// LayerTree
 	openLegendLayerId: string;
 	setOpenLegendLayerId: (layerId: string) => void;
