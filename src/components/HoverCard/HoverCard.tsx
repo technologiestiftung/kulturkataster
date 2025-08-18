@@ -8,6 +8,7 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 import InfoCircleIcon from "@/icons/info-circle-fill.svg";
+import { getMatchingSubcategories } from "@/lib/utils/categoryUtils";
 import { getCategoryIconComponent } from "@/lib/utils/iconUtils"; // Update this import path
 import { Category } from "@/types";
 import { FC, useEffect, useState } from "react";
@@ -64,6 +65,10 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 					<div className="flex flex-col gap-2 ">
 						{featureProperties.categories?.map((category: Category) => {
 							const IconComponent = getCategoryIconComponent(category.key);
+							const matchingSubcategories = getMatchingSubcategories(
+								category,
+								featureProperties.subcategories || [],
+							);
 
 							return (
 								<div key={category.id}>
@@ -75,7 +80,16 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 											{tEnum(`category.${category.key}`)}
 										</span>
 									</div>
-									<span className="pl-8">{t("institution.subcategory")}</span>
+									{matchingSubcategories.length > 0 && (
+										<div className="pl-8">
+											{matchingSubcategories.map((subcategory, index) => (
+												<span key={subcategory.id} className="text-sm">
+													{index > 0 && ", "}
+													{tEnum(`subcategory.${subcategory.key}`)}
+												</span>
+											))}
+										</div>
+									)}
 								</div>
 							);
 						})}
