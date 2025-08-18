@@ -103,7 +103,7 @@
 		"projectBy": "Ein Projekt der Kulturraum Berlin gGmbH",
 		"openSource": "Das Kulturkataster ist ein <0>Open-Source-Projekt</0>.",
 		"address": {
-			"suffix": "c/o Kulturraum Berlin gGmbH",
+			"suffix": "Kulturraum Berlin gGmbH",
 			"street": "Spandauer Damm 19",
 			"city": "Berlin",
 			"zip": "14059"
@@ -114,7 +114,7 @@
 		},
 		"email": {
 			"label": "E-Mail",
-			"address": "kontakt@kulturkataster.berlin"
+			"address": "info@kulturkataster.berlin"
 		},
 		"about": "Über das Projekt",
 		"newsletter": "Newsletter",
