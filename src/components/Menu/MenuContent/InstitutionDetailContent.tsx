@@ -28,9 +28,7 @@ function InfoItem({
 
 function InfoSection({ children }: { children: React.ReactNode }) {
 	const validChildren = Children.toArray(children).filter(Boolean);
-
-	console.log("[InstitutionDetailContent] validChildren::", validChildren);
-
+	
 	if (validChildren.length === 0) {
 		return null;
 	}
