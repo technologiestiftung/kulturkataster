@@ -78,11 +78,11 @@ const LayerTreeControl: FC = () => {
 			>
 				<div className="w-full h-full flex items-center justify-center">
 					{isMobile ? (
-						<ContextMapIcon className="[&>path]:fill-white" />
+						<ContextMapIcon className="[&>path]:fill-popover" />
 					) : (
 						<>
 							{visibleCount === 0 && (
-								<ContextMapIcon className="[&>path]:fill-white" />
+								<ContextMapIcon className="[&>path]:fill-popover" />
 							)}
 							{visibleCount >= 1 && renderThumbnail()}
 						</>

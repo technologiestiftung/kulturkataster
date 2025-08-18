@@ -15,9 +15,6 @@
 	--interaction-light: #d9c1ff;
 
 	/* Highlight colors */
-	--highlight-default: #55d494;
-	--highlight-dark: #4ab780;
-	--highlight-light: #aae9c9;
 	--highlight-alert: #ff9aab;
 
 	/* Neutral colors */
@@ -29,11 +26,9 @@
 	--neutral-80: #555b54;
 	--neutral-100: #2b3229;
 
-	--brand-dark: #924dff;
+	--brand-dark: #4ab780;
 	--brand-default: #55d494;
 	--brand-light: #aae9c9;
-
-	--alert: #ff9aab;
 
 	/* Fachfarben */
 	--fachfarben-yellow: #f5df56;
@@ -55,7 +50,7 @@
 	--sidebar-width-mobile: 18rem;
 	--sidebar-width-icon: 5rem;
 
-	--footer: #f9f8f5;
+	--footer: #f9f8f590;
 }
 
 :root[data-theme="contrast"] {
@@ -76,16 +71,13 @@
 	--neutral-5: #2b3229;
 
 	/* Highlight colors */
-	--highlight-default: #aae9c9;
-	--highlight-dark: #249f61;
-	--highlight-light: #096336;
 	--highlight-alert: #e17284;
 
-	--brand-dark: #4ab780;
-	--brand-default: #aae9c9;
-	--brand-light: #ddf6e9;
+	--brand-dark: #aae9c9;
+	--brand-default: #249f61;
+	--brand-light: #096336;
 
-	--alert: #ffd9df;
+	--footer: #2b322990;
 }
 
 @theme {
@@ -146,7 +138,7 @@
 	--color-brand-default: var(--brand-default);
 	--color-brand-light: var(--brand-light);
 
-	--color-alert: var(--alert);
+	--color-alert: var(--highlight-alert);
 	--color-footer: var(--footer);
 
 	--shadow-sm: var(--shadow-200);
