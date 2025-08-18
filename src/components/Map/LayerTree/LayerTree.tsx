@@ -158,7 +158,7 @@ const LayerItem = memo<{
 	return (
 		<AccordionItem
 			value={layer.id}
-			className={`border-none bg-white rounded-sm ${layer.visibility ? "shadow-sm" : ""}`}
+			className={`border-none bg-background rounded-sm ${layer.visibility ? "shadow-sm" : ""}`}
 			role="listitem"
 		>
 			<div className="flex items-center justify-between p-3 m-0">
@@ -201,7 +201,7 @@ const LayerItem = memo<{
 			{hasLegend && (
 				<>
 					<AccordionTrigger
-						className="px-3 py-2 rounded-none [&[data-state=closed]]:rounded-b-sm hover:no-underline flex justify-end items-center gap-2 [&>svg]:text-black bg-neutral-10"
+						className="px-3 py-2 rounded-none [&[data-state=closed]]:rounded-b-sm hover:no-underline flex justify-end items-center gap-2 [&>svg]:text-foreground bg-neutral-10"
 						aria-label={`Show legend for ${serviceName}`}
 						onClick={() => handleAccordionToggle(layer.id)}
 					>
@@ -268,7 +268,7 @@ const FloatingLayerButton = memo<{
 				>
 					<div className="w-full h-full flex items-center justify-center">
 						{visibleCount === 0 ? (
-							<ContextMapIcon className="[&>path]:fill-white" />
+							<ContextMapIcon className="[&>path]:fill-popover" />
 						) : (
 							topVisibleLayer && (
 								<LayerThumbnail
