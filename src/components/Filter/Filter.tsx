@@ -365,7 +365,7 @@ const Filter: FC = () => {
 
 	if (loading) {
 		return (
-			<div className="Filter-root p-4 bg-white border-r border-gray-200 h-full overflow-y-auto">
+			<div className="Filter-root p-4 bg-background border-r border-gray-200 h-full overflow-y-auto">
 				<ContentContainer>
 					<div className="flex items-center gap-2 body2">
 						<div className="animate-spin rounded-full h-4 w-4 border-b-2"></div>
