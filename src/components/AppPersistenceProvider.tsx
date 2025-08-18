@@ -4,7 +4,8 @@ import { useAppStore } from "@/lib/store/appStore";
 import { useEffect, useState } from "react";
 
 export function AppPersistenceProvider() {
-	const { isContrastMode, setIsContrastMode, baseFontSize, setBaseFontSize } = useAppStore();
+	const { isContrastMode, setIsContrastMode, baseFontSize, setBaseFontSize } =
+		useAppStore();
 	const [hasHydrated, setHasHydrated] = useState(false);
 
 	useEffect(() => {
@@ -25,7 +26,13 @@ export function AppPersistenceProvider() {
 			setIsContrastMode(isContrastMode);
 			setBaseFontSize(baseFontSize);
 		}
-	}, [hasHydrated, isContrastMode, setIsContrastMode, baseFontSize, setBaseFontSize]);
+	}, [
+		hasHydrated,
+		isContrastMode,
+		setIsContrastMode,
+		baseFontSize,
+		setBaseFontSize,
+	]);
 
 	return null;
 }
