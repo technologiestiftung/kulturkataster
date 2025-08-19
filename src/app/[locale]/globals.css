@@ -141,6 +141,10 @@
 	--color-alert: var(--highlight-alert);
 	--color-footer: var(--footer);
 
+	--color-interaction-default: var(--interaction-default);
+	--color-interaction-dark: var(--interaction-dark);
+	--color-interaction-light: var(--interaction-light);
+
 	--shadow-sm: var(--shadow-200);
 	--shadow-md: var(--shadow-300);
 	--shadow-lg: var(--shadow-400);
