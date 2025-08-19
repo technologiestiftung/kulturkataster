@@ -381,7 +381,7 @@ export function InstitutionDetailContent() {
 	}
 
 	return (
-		<main className="p-2 h-full">
+		<main className="p-2 h-full w-full">
 			<InstitutionCard institutionData={institutionData} />
 		</main>
 	);

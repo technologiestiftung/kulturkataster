@@ -32,7 +32,7 @@ export function WelcomeModal({ open, onOpenChange }: WelcomeModalProps) {
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
 			<DialogContent variant="medium" className="flex ">
-				<div className="flex flex-col md:flex-row gap-8 pt-12 md:pt-32">
+				<div className="flex flex-col md:flex-row gap-8 py-12 md:pt-32 md:pb-12 px-6">
 					<div className="md:w-1/4 flex justify-center align-start h-full">
 						<KukaLargeLogo className="h-auto w-32 md:w-42" />
 					</div>
