@@ -409,7 +409,7 @@ export const LayerTreeContent: FC<{
 			collapsible
 			value={openLegendLayerId}
 			onValueChange={handleAccordionChange}
-			className="flex flex-col gap-2 overflow-y-auto max-h-[60vh]"
+			className="flex flex-col gap-2 overflow-y-auto"
 			role="list"
 			aria-label={t("map.availableLayers")}
 		>
