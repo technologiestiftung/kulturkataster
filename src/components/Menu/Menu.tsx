@@ -61,6 +61,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 		setInformationModalOpen,
 		setDownloadModalOpen,
 		setDownloadModalMode,
+		setMobileMenuModalOpen,
 	} = useModalStore();
 	const isLayerTreeOpen = useMapStore((state) => state.isLayerTreeOpen);
 	const setIsLayerTreeOpen = useMapStore((state) => state.setIsLayerTreeOpen);
@@ -354,11 +355,13 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 						<SidebarGroup className="px-0 h-full">
 							<SidebarGroupContent className="h-full overflow-auto">
 								<div className="min-h-full flex flex-col">
-									<div className="flex-1">
+									<div className="flex-1 h-full flex">
 										{activeItem === "filter" && <FilterContent />}
 										{activeItem === "search" && <SearchContent />}
 										{activeItem === "accessibility" && (
-											<AccessibilityContent onItemClick={handleItemClick} />
+											<div className="p-2 w-full">
+												<AccessibilityContent onItemClick={handleItemClick} />
+											</div>
 										)}
 										{activeItem === "layertree" && <LayerTreeContent />}
 										{activeItem === "institution-detail" && (
@@ -401,9 +404,9 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 				<Button
 					variant="map-icon"
 					size="icon-only"
-					title={t("info.open")}
-					onClick={() => setInformationModalOpen(true)}
-					aria-label={t("info.open")}
+					title={t("mobileMenu.title")}
+					onClick={() => setMobileMenuModalOpen(true)}
+					aria-label={t("mobileMenu.title")}
 				>
 					<DotsVertical size={14} />
 				</Button>
