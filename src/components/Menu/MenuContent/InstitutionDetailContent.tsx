@@ -8,7 +8,7 @@ import { getCategoryIconComponent } from "@/lib/utils/iconUtils";
 import { normalizeUrl } from "@/lib/utils/sanitizerUtils";
 import { Category, InstitutionProperties } from "@/types";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Children, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 function InfoItem({
@@ -27,7 +27,15 @@ function InfoItem({
 }
 
 function InfoSection({ children }: { children: React.ReactNode }) {
-	return <div className="rounded space-y-4 p-4 bg-neutral-5">{children}</div>;
+	const validChildren = Children.toArray(children).filter(Boolean);
+
+	if (validChildren.length === 0) {
+		return null;
+	}
+
+	return (
+		<div className="rounded space-y-4 p-4 bg-neutral-5">{validChildren}</div>
+	);
 }
 
 function ContactLink({
@@ -247,13 +255,13 @@ function InstitutionExtendedInfo({
 				)}
 			</InfoSection>
 
-			{institutionData.updated_at && (
-				<InfoSection>
+			<InfoSection>
+				{institutionData.updated_at && (
 					<InfoItem label={t("institution.status")}>
 						{institutionData.updated_at}
 					</InfoItem>
-				</InfoSection>
-			)}
+				)}
+			</InfoSection>
 		</div>
 	);
 }

@@ -1,11 +1,17 @@
 "use client";
 
 import { ButtonWithTooltip } from "@/components/ui/button";
+import LocationIcon from "@/icons/mark.svg";
+import locationSvgString from "@/icons/location.svg?raw";
 import { useMapStore } from "@/lib/store/mapStore";
+import Feature from "ol/Feature";
+import { Point } from "ol/geom";
+import VectorLayer from "ol/layer/Vector";
 import { transform } from "ol/proj";
-import { FC, ReactNode, useCallback } from "react";
+import VectorSource from "ol/source/Vector";
+import { Icon, Style } from "ol/style";
+import { FC, ReactNode, useCallback, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import LocationIcon from "../../../../icons/mark.svg";
 
 interface GeolocationControlProps {
 	geolocateIcon?: ReactNode;
@@ -18,6 +24,38 @@ const GeolocationControl: FC<GeolocationControlProps> = ({
 }) => {
 	const { t } = useTranslation("common");
 	const map = useMapStore((state) => state.map);
+	const setUserLocation = useMapStore((state) => state.setUserLocation);
+	const userLocationLayerRef = useRef<VectorLayer<VectorSource> | null>(null);
+
+	useEffect(() => {
+		if (!map) return;
+
+		const vectorSource = new VectorSource();
+		const vectorLayer = new VectorLayer({
+			source: vectorSource,
+			style: new Style({
+				image: new Icon({
+					anchor: [0.5, 1],
+					src:
+						"data:image/svg+xml;charset=utf-8," +
+						encodeURIComponent(locationSvgString),
+					offset: [0, 0],
+					opacity: 1,
+					scale: 0.8,
+				}),
+			}),
+			zIndex: 1000,
+		});
+
+		map.addLayer(vectorLayer);
+		userLocationLayerRef.current = vectorLayer;
+
+		return () => {
+			if (userLocationLayerRef.current) {
+				map.removeLayer(userLocationLayerRef.current);
+			}
+		};
+	}, [map]);
 
 	const handleGeolocate = useCallback(() => {
 		if (onGeolocate) {
@@ -25,11 +63,10 @@ const GeolocationControl: FC<GeolocationControlProps> = ({
 			return;
 		}
 
-		// Default geolocation behavior
 		if (navigator.geolocation) {
 			navigator.geolocation.getCurrentPosition(
 				(position) => {
-					if (!map) return;
+					if (!map || !userLocationLayerRef.current) return;
 
 					const view = map.getView();
 					const projection = view.getProjection();
@@ -41,6 +78,20 @@ const GeolocationControl: FC<GeolocationControlProps> = ({
 						projection,
 					);
 
+					setUserLocation({
+						coordinates: coords as [number, number],
+						accuracy: position.coords.accuracy,
+					});
+
+					const source = userLocationLayerRef.current.getSource();
+					if (source) {
+						source.clear();
+						const feature = new Feature({
+							geometry: new Point(coords),
+						});
+						source.addFeature(feature);
+					}
+
 					view.animate({
 						center: coords,
 						zoom: 16,
@@ -49,6 +100,16 @@ const GeolocationControl: FC<GeolocationControlProps> = ({
 				},
 				(error) => {
 					console.error("Geolocation error:", error);
+					setUserLocation({
+						coordinates: null,
+						accuracy: undefined,
+					});
+					if (userLocationLayerRef.current) {
+						const source = userLocationLayerRef.current.getSource();
+						if (source) {
+							source.clear();
+						}
+					}
 				},
 				{
 					enableHighAccuracy: true,
@@ -59,7 +120,7 @@ const GeolocationControl: FC<GeolocationControlProps> = ({
 		} else {
 			console.error("Geolocation is not supported by this browser.");
 		}
-	}, [map, onGeolocate]);
+	}, [map, onGeolocate, setUserLocation]);
 
 	if (!map) return null;
 
