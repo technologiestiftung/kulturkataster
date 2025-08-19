@@ -24,9 +24,9 @@
 			},
 			{
 				"id": 73,
-				"key": "others",
+				"key": "others_studios",
 				"category_id": 1,
-				"created_at": "2025-08-19T07:27:26.245Z"
+				"created_at": "2025-08-19T12:16:20.758Z"
 			}
 		]
 	},
@@ -97,9 +97,9 @@
 			},
 			{
 				"id": 74,
-				"key": "others",
+				"key": "others_education_places",
 				"category_id": 2,
-				"created_at": "2025-08-19T07:27:26.245Z"
+				"created_at": "2025-08-19T12:16:20.758Z"
 			}
 		]
 	},
@@ -140,9 +140,9 @@
 			},
 			{
 				"id": 75,
-				"key": "others",
+				"key": "others_libraries",
 				"category_id": 3,
-				"created_at": "2025-08-19T07:27:26.245Z"
+				"created_at": "2025-08-19T12:16:20.758Z"
 			}
 		]
 	},
@@ -201,9 +201,9 @@
 			},
 			{
 				"id": 76,
-				"key": "others",
+				"key": "others_clubs_music_venues",
 				"category_id": 4,
-				"created_at": "2025-08-19T07:27:26.245Z"
+				"created_at": "2025-08-19T12:16:20.758Z"
 			}
 		]
 	},
@@ -226,9 +226,9 @@
 			},
 			{
 				"id": 77,
-				"key": "others",
+				"key": "others_galleries",
 				"category_id": 5,
-				"created_at": "2025-08-19T07:27:26.245Z"
+				"created_at": "2025-08-19T12:16:20.758Z"
 			}
 		]
 	},
@@ -257,9 +257,9 @@
 			},
 			{
 				"id": 78,
-				"key": "others",
+				"key": "others_cinemas",
 				"category_id": 6,
-				"created_at": "2025-08-19T07:27:26.245Z"
+				"created_at": "2025-08-19T12:16:20.758Z"
 			}
 		]
 	},
@@ -300,9 +300,9 @@
 			},
 			{
 				"id": 79,
-				"key": "others",
+				"key": "others_literature_places",
 				"category_id": 7,
-				"created_at": "2025-08-19T07:27:26.245Z"
+				"created_at": "2025-08-19T12:16:20.758Z"
 			}
 		]
 	},
@@ -343,9 +343,9 @@
 			},
 			{
 				"id": 80,
-				"key": "others",
+				"key": "others_museums",
 				"category_id": 8,
-				"created_at": "2025-08-19T07:27:26.245Z"
+				"created_at": "2025-08-19T12:16:20.758Z"
 			}
 		]
 	},
@@ -356,9 +356,9 @@
 		"subcategories": [
 			{
 				"id": 81,
-				"key": "others",
+				"key": "others_cultural_urban_development",
 				"category_id": 9,
-				"created_at": "2025-08-19T07:27:26.245Z"
+				"created_at": "2025-08-19T12:16:20.758Z"
 			}
 		]
 	},
@@ -375,9 +375,9 @@
 			},
 			{
 				"id": 82,
-				"key": "others",
+				"key": "others_potential_spaces",
 				"category_id": 10,
-				"created_at": "2025-08-19T07:27:26.245Z"
+				"created_at": "2025-08-19T12:16:20.758Z"
 			}
 		]
 	},
@@ -406,9 +406,9 @@
 			},
 			{
 				"id": 83,
-				"key": "others",
+				"key": "others_rehearsal_rooms",
 				"category_id": 11,
-				"created_at": "2025-08-19T07:27:26.245Z"
+				"created_at": "2025-08-19T12:16:20.758Z"
 			}
 		]
 	},
@@ -431,9 +431,9 @@
 			},
 			{
 				"id": 84,
-				"key": "others",
+				"key": "others_project_spaces_initiatives",
 				"category_id": 12,
-				"created_at": "2025-08-19T07:27:26.245Z"
+				"created_at": "2025-08-19T12:16:20.758Z"
 			}
 		]
 	},
@@ -480,9 +480,9 @@
 			},
 			{
 				"id": 85,
-				"key": "others",
+				"key": "others_sociocultural_centers",
 				"category_id": 13,
-				"created_at": "2025-08-19T07:27:26.245Z"
+				"created_at": "2025-08-19T12:16:20.758Z"
 			}
 		]
 	},
@@ -511,9 +511,9 @@
 			},
 			{
 				"id": 86,
-				"key": "others",
+				"key": "others_dance_venues",
 				"category_id": 14,
-				"created_at": "2025-08-19T07:27:26.245Z"
+				"created_at": "2025-08-19T12:16:20.758Z"
 			}
 		]
 	},
@@ -614,9 +614,9 @@
 			},
 			{
 				"id": 87,
-				"key": "others",
+				"key": "others_performing_arts_venues",
 				"category_id": 15,
-				"created_at": "2025-08-19T07:27:26.245Z"
+				"created_at": "2025-08-19T12:16:20.758Z"
 			}
 		]
 	},
@@ -627,9 +627,9 @@
 		"subcategories": [
 			{
 				"id": 88,
-				"key": "others",
+				"key": "others_graffiti_areas",
 				"category_id": 16,
-				"created_at": "2025-08-19T07:27:26.245Z"
+				"created_at": "2025-08-19T12:16:20.758Z"
 			}
 		]
 	},
@@ -643,6 +643,12 @@
 				"key": "other",
 				"category_id": 17,
 				"created_at": "2025-08-18T14:35:23.882284+00:00"
+			},
+			{
+				"id": 89,
+				"key": "others_other",
+				"category_id": 17,
+				"created_at": "2025-08-19T12:16:20.758Z"
 			}
 		]
 	}

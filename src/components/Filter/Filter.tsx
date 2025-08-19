@@ -21,7 +21,7 @@ import {
 	InstitutionProperties,
 } from "@/types";
 import { ChevronDown, ChevronUp, Minus } from "lucide-react";
-import { FC, useMemo, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useFilterData } from "./hooks/useFilterData";
 
@@ -201,6 +201,31 @@ const Filter: FC = () => {
 		}).length;
 	};
 
+	const institutionMatchesSubcategory = (
+		properties: InstitutionProperties,
+		subcategoryKey: string,
+	): boolean => {
+		const hasExplicitSubcategory = properties.subcategories?.some(
+			(subcat: { key: string }) => subcat.key === subcategoryKey,
+		);
+
+		if (hasExplicitSubcategory) return true;
+
+		if (subcategoryKey.startsWith("others_")) {
+			const categoryKey = subcategoryKey.replace("others_", "");
+			const hasCategories = properties.categories?.length > 0;
+			const hasNoSubcategories =
+				!properties.subcategories || properties.subcategories.length === 0;
+			const hasMatchingCategory = properties.categories?.some(
+				(cat: { key: string }) => cat.key === categoryKey,
+			);
+
+			return hasCategories && hasNoSubcategories && hasMatchingCategory;
+		}
+
+		return false;
+	};
+
 	const getSubcategoryCount = (subcategoryKey: string): number => {
 		if (!originalInstitutions?.features || !filters) return 0;
 
@@ -208,10 +233,9 @@ const Filter: FC = () => {
 			const properties = feature.properties as InstitutionProperties;
 			if (!properties) return false;
 
-			const matchesSubcategory = properties.subcategories?.some(
-				(subcat: { key: string }) => subcat.key === subcategoryKey,
-			);
-			if (!matchesSubcategory) return false;
+			if (!institutionMatchesSubcategory(properties, subcategoryKey)) {
+				return false;
+			}
 
 			if (!matchesDistrictFilter(properties, filters.district_keys)) {
 				return false;
