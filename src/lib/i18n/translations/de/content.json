@@ -1,6 +1,6 @@
 {
 	"welcomeModal": {
-		"title": "Berliner Kulturkataster: Berlins Kultur auf einen Blick.",
+		"title": "Das Berliner Kulturkataster: Die Kultur der Stadt auf einen Blick",
 		"subtitle": "Ein Projekt der Kulturraum Berlin gGmbH",
 		"description1": "Dies ist die erste Version des Berliner Kulturkatasters. Das Kulturkataster ist eine digitale Karte, die die Vielfalt der Kulturlandschaft Berlins abbildet und systematisch Kunst- und Kulturorte erfasst. Es dient als zentrale Grundlage für eine faktenbasierte kulturelle Stadtentwicklung. In den kommenden Monaten werden wir diese Version mit neuen Funktionen und Informationen ausbauen.",
 		"description2": "Stärken Sie mit uns dieses Projekt für die Berliner Kultur! Wir freuen uns auf Ihre Anmerkungen.",
@@ -19,12 +19,13 @@
 		"introduction": [
 			"Seit September 2025 steht Ihnen mit dem Kulturkataster Berlin die erste Version unseres digitalen Werkzeugs zur Verfügung, dass die Berliner Kulturlandschaft systematisch erfasst.",
 			"Das Kulturkataster wächst stetig weiter: Bereits für Anfang 2026 ist Version 2 geplant, und zur Jahresmitte 2026 folgt Version 3. Mit jeder neuen Version nehmen wir weitere Kulturorte auf, ergänzen die Informationen und fügen neue Funktionalitäten hinzu.",
+			"Sie können uns dabei helfen. Unter diesem [Link https://form.formcentric.com/form/fb8189d9-8887-425d-bdd5-4aec08f7d8d5] können Sie fehlende Kulturorte einreichen und Änderungen vorschlagen. Für Anregungen und Kritik erreichen Sie uns unter: info@kulturkataster.berlin",
 			"Die aktuelle Version des Kulturkatasters ist die Version 1."
 		],
 		"scope": {
 			"title": "Umfang Version 1",
 			"features": [
-				"2.425 Kulturorte mit den Grundinformationen (Name, vollständige Adresse, allgemeine Kontaktinformationen, Angaben zu Förderung und Finanzierung)",
+				"2.382 Kulturorte mit den Grundinformationen (Name, vollständige Adresse, allgemeine Kontaktinformationen, Angaben zu Förderung und Finanzierung)",
 				"16 Kategorien und 71 Unterkategorien",
 				"Einbindung von 12 Fachkarten aus dem Geoportal Berlin",
 				"Ein Suchfeld, indem Sie nach Adressen und Namen von Kulturorten suchen können.",
@@ -191,8 +192,10 @@
 			"partners": {
 				"title": "Partner*innen",
 				"list": [
+					"AG Kino – Gilde deutscher Filmkunsttheater e.V.",
 					"Berliner Museumsverband e.V.",
 					"Berliner Projektfonds Urbane Praxis",
+					"Literaturorte: Netzwerk freie Literaturszene Berlin",
 					"Berliner Zentrengipfel - Senatsverwaltung für Wirtschaft, Energie und Betriebe",
 					"Börsenverein des Deutschen Buchhandels - Landesverband Berlin-Brandenburg",
 					"Bundesverband Soziokultur e.V.",
