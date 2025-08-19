@@ -79,7 +79,7 @@ export function AccessibilityContent({
 	};
 
 	return (
-		<div className="space-y-4 flex flex-col p-2">
+		<div className="space-y-4 flex flex-col min-h-full w-full">
 			{accessibilityOptions.map((option) => (
 				<SubMenuOption
 					key={option.id}
