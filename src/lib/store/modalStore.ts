@@ -8,6 +8,7 @@ export interface ModalStoreState {
 	informationModalOpen: boolean;
 	downloadModalOpen: boolean;
 	downloadModalMode: "all" | "filtered" | "selected";
+	mobileMenuModalOpen: boolean;
 
 	setAboutModalOpen: (open: boolean) => void;
 	setPrivacyModalOpen: (open: boolean) => void;
@@ -16,6 +17,7 @@ export interface ModalStoreState {
 	setInformationModalOpen: (open: boolean) => void;
 	setDownloadModalOpen: (open: boolean) => void;
 	setDownloadModalMode: (mode: "all" | "filtered" | "selected") => void;
+	setMobileMenuModalOpen: (open: boolean) => void;
 
 	openModal: (modalName: string) => void;
 	closeAllModals: () => void;
@@ -32,6 +34,7 @@ export const useModalStore = create<ModalStoreState>((set) => ({
 	informationModalOpen: false,
 	downloadModalOpen: false,
 	downloadModalMode: "all",
+	mobileMenuModalOpen: false,
 
 	// Setters
 	setAboutModalOpen: (open) => set({ aboutModalOpen: open }),
@@ -41,6 +44,7 @@ export const useModalStore = create<ModalStoreState>((set) => ({
 	setInformationModalOpen: (open) => set({ informationModalOpen: open }),
 	setDownloadModalOpen: (open) => set({ downloadModalOpen: open }),
 	setDownloadModalMode: (mode) => set({ downloadModalMode: mode }),
+	setMobileMenuModalOpen: (open) => set({ mobileMenuModalOpen: open }),
 
 	openModal: (modalName: string) => {
 		set((state) => {
@@ -89,6 +93,7 @@ export const useModalStore = create<ModalStoreState>((set) => ({
 			accessibilityModalOpen: false,
 			informationModalOpen: false,
 			downloadModalOpen: false,
+			mobileMenuModalOpen: false,
 		}),
 
 	handleFooterItemClick: (id: string) => {
