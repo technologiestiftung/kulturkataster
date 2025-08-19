@@ -1,7 +1,7 @@
 "use client";
 
 import TextBlock from "@/components/Content/TextBlock";
-import React from "react";
+import TextWithLinks from "@/components/Content/TextWithLinks";
 import { useTranslation } from "react-i18next";
 import { PageModal } from "../PageModal";
 
@@ -42,29 +42,6 @@ interface Scope {
 	};
 }
 
-const TextWithEmailLinks = ({ text }: { text: string }) => {
-	const emailRegex = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi;
-	const parts = text.split(emailRegex);
-
-	return (
-		<p className="body2">
-			{parts.map((part, index) =>
-				emailRegex.test(part) ? (
-					<a
-						key={index}
-						href={`mailto:${part}`}
-						className="text-primary hover:text-primary-dark underline"
-					>
-						{part}
-					</a>
-				) : (
-					<React.Fragment key={index}>{part}</React.Fragment>
-				),
-			)}
-		</p>
-	);
-};
-
 interface InformationModalProps {
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
@@ -87,9 +64,7 @@ export function InformationModal({
 		<div className="space-y-10">
 			<div className="space-y-4">
 				{introParagraphs.map((text, index) => (
-					<p key={index} className="body2">
-						{text}
-					</p>
+					<TextWithLinks key={index} text={text} />
 				))}
 			</div>
 
@@ -144,7 +119,7 @@ export function InformationModal({
 					{faq.questions.map((item) => (
 						<div key={item.question}>
 							<p className="body1 font-bold">{item.question}</p>
-							<TextWithEmailLinks text={item.answer} />
+							<TextWithLinks text={item.answer} />
 						</div>
 					))}
 				</div>
