@@ -59,12 +59,13 @@ export function AccessibilityModal({
 					title={t("accessibilityModal.which.title")}
 					text={t("accessibilityModal.which.description")}
 				/>
-				<div className="body2">
-					<span className="font-bold">
-						{t("accessibilityModal.which.subheading")}
-					</span>
-					<p>{t("accessibilityModal.which.list_intro")}</p>
-				</div>
+				
+				<TextBlock
+					titleAs="h2"
+					className="h2"
+					title={t("accessibilityModal.which.subheading")}
+					text={t("accessibilityModal.which.list_intro")}
+				/>
 
 				<div className="space-y-6">
 					{barriers.map((barrier) => (
