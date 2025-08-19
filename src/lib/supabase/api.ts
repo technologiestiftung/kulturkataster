@@ -106,8 +106,74 @@ export async function filterInstitutions(query: FilterState) {
 export async function getCategoriesWithSubcategories(): Promise<
 	CategoryWithSubcategories[]
 > {
+	// await getCategoryMap();
+
+	// // Return the dynamic category map with unique "others" keys
+	// return dynamicCategoryMap;
+
+	// Fallback to static map if needed
 	const staticCategoryMap = await import("./categoryMap.json");
 	return staticCategoryMap.default as CategoryWithSubcategories[];
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+async function getCategoryMap() {
+	// Replace with actual backend call when ready
+	const supabase = createClient();
+
+	const { data: subcategories, error: subcategories_error } = await supabase
+		.from("subcategory")
+		.select("*");
+
+	if (subcategories_error) {
+		handleError(subcategories_error, "fetch categories");
+	}
+
+	const { data: categories, error: categories_error } = await supabase
+		.from("category")
+		.select("*");
+
+	if (categories_error) {
+		handleError(categories_error, "fetch categories");
+	}
+
+	const subcategoriesByCategoryId = await subcategories.reduce(
+		(acc, subcategory) => {
+			const { category_id } = subcategory;
+			if (!acc[category_id]) {
+				acc[category_id] = [];
+			}
+			acc[category_id].push(subcategory);
+			return acc;
+		},
+		{},
+	);
+
+	const maxSubcategoryId = subcategories.reduce(
+		(max, sub) => Math.max(max, sub.id),
+		0,
+	);
+
+	const categoryMap = await categories
+		.map((category) => {
+			const subs = subcategoriesByCategoryId[category.id] || [];
+
+			const othersSubcategory = {
+				id: maxSubcategoryId + category.id,
+				key: `others_${category.key}`, // Make the key unique per category
+				category_id: category.id,
+				created_at: new Date().toISOString(),
+			};
+
+			return {
+				...category,
+				subcategories: [...subs, othersSubcategory],
+			};
+		})
+		.filter((category) => category.subcategories.length > 0);
+
+	console.log("categoryMap", JSON.stringify(categoryMap, null, 2));
+	return categoryMap;
 }
 
 export async function getDistricts(): Promise<District[]> {

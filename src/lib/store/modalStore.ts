@@ -92,7 +92,14 @@ export const useModalStore = create<ModalStoreState>((set) => ({
 		}),
 
 	handleFooterItemClick: (id: string) => {
-		const { openModal } = useModalStore.getState();
-		openModal(id);
+		if (id === "privacy") {
+			window.open(
+				"https://dsgvo-info.cortina-consult.de/kulturkataster/",
+				"_blank",
+			);
+		} else {
+			const { openModal } = useModalStore.getState();
+			openModal(id);
+		}
 	},
 }));

@@ -121,7 +121,7 @@ export function AboutModal({ open, onOpenChange }: AboutModalProps) {
 				<CreditSectionComponent data={content.credits.partners} />
 
 				<div>
-					<p className="body2 font-bold mt-8 mb-4">
+					<p className="body1 font-bold mt-8 mb-4">
 						{content.credits.contractors.title}
 					</p>
 					<div className="body2 space-y-4">
