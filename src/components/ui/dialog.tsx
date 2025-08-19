@@ -4,7 +4,7 @@ import * as React from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { useRouter } from "next/navigation";
 import Close from "@/icons/close.svg";
-
+import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
 
 function Dialog({
@@ -55,19 +55,28 @@ function DialogContent({
 	...props
 }: React.ComponentProps<typeof DialogPrimitive.Content> & {
 	showCloseButton?: boolean;
-	variant?: "default" | "fullScreen" | "fullScreenNoBottom" | "medium";
+	variant?:
+		| "default"
+		| "fullScreen"
+		| "fullScreenNoBottom"
+		| "medium"
+		| "mobileMenu";
 }) {
+	const { t } = useTranslation("common");
+
 	const getVariantStyles = () => {
 		switch (variant) {
 			case "fullScreen":
 				return "fixed z-[70] inset-0 m-[8rem]";
 			case "fullScreenNoBottom":
-				return "fixed z-[70] top-0 md:top-[5rem] left-1/2 w-full max-w-314 h-full md:h-[calc(100%-5rem)] -translate-x-1/2 overflow-auto rounded-t-lg border";
+				return "fixed z-[70] top-0 md:top-[5rem] left-1/2 w-full max-w-314 h-full md:h-[calc(100%-5rem)] -translate-x-1/2 overflow-auto md:rounded-t-lg border";
 			case "medium":
-				return "fixed z-[70] top-1/2 left-1/2 w-full max-w-314 h-full md:h-[calc(100%-5rem)]  -translate-x-1/2 -translate-y-1/2 overflow-auto rounded-lg border p-6";
+				return "fixed z-[70] top-1/2 left-1/2 w-full max-w-314 h-full md:h-auto md:max-h-[calc(100%-5rem)]  -translate-x-1/2 -translate-y-1/2 overflow-auto md:rounded-lg border";
+			case "mobileMenu":
+				return "fixed z-[70] h-full inset-0 w-full border-0 p-0";
 			case "default":
 			default:
-				return "fixed top-[50%] left-[50%] w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] rounded-lg border p-6 sm:max-w-lg";
+				return "fixed top-[50%] left-[50%] w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] md:rounded-lg border p-6 sm:max-w-lg";
 		}
 	};
 
@@ -77,20 +86,24 @@ function DialogContent({
 			<DialogPrimitive.Content
 				data-slot="dialog-content"
 				className={cn(
-					"bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 z-50 grid gap-4 shadow-lg duration-200",
+					"bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 z-50 shadow-lg duration-200 relative",
 					getVariantStyles(),
 					className,
 				)}
 				{...props}
 			>
-				{children}
+				{variant === "mobileMenu" ? (
+					children
+				) : (
+					<div className="overflow-auto h-full w-full">{children}</div>
+				)}
 				{showCloseButton && (
 					<DialogPrimitive.Close
 						data-slot="dialog-close"
-						className="ring-offset-background focus:ring-ring data-[state=open]:bg-accent data-[state=open]:text-muted-foreground absolute top-12 right-12 rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-6"
+						className="ring-offset-background focus:ring-ring data-[state=open]:bg-accent data-[state=open]:text-muted-foreground fixed top-12 right-12 z-[80] rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-6"
 					>
 						<Close className="size-6" />
-						<span className="sr-only">Close</span>
+						<span className="sr-only">{t("close")}</span>
 					</DialogPrimitive.Close>
 				)}
 			</DialogPrimitive.Content>
