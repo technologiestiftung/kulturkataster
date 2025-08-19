@@ -59,7 +59,7 @@ export function AccessibilityModal({
 					title={t("accessibilityModal.which.title")}
 					text={t("accessibilityModal.which.description")}
 				/>
-				
+
 				<TextBlock
 					titleAs="h2"
 					className="h2"
