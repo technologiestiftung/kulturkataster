@@ -55,7 +55,12 @@ function DialogContent({
 	...props
 }: React.ComponentProps<typeof DialogPrimitive.Content> & {
 	showCloseButton?: boolean;
-	variant?: "default" | "fullScreen" | "fullScreenNoBottom" | "medium";
+	variant?:
+		| "default"
+		| "fullScreen"
+		| "fullScreenNoBottom"
+		| "medium"
+		| "mobileMenu";
 }) {
 	const { t } = useTranslation("common");
 
@@ -64,12 +69,14 @@ function DialogContent({
 			case "fullScreen":
 				return "fixed z-[70] inset-0 m-[8rem]";
 			case "fullScreenNoBottom":
-				return "fixed z-[70] top-0 md:top-[5rem] left-1/2 w-full max-w-314 h-full md:h-[calc(100%-5rem)] -translate-x-1/2 overflow-auto rounded-t-lg border";
+				return "fixed z-[70] top-0 md:top-[5rem] left-1/2 w-full max-w-314 h-full md:h-[calc(100%-5rem)] -translate-x-1/2 overflow-auto md:rounded-t-lg border";
 			case "medium":
-				return "fixed z-[70] top-1/2 left-1/2 w-full max-w-314 h-full md:h-[calc(100%-5rem)]  -translate-x-1/2 -translate-y-1/2 overflow-auto rounded-lg border";
+				return "fixed z-[70] top-1/2 left-1/2 w-full max-w-314 h-full md:h-auto md:max-h-[calc(100%-5rem)]  -translate-x-1/2 -translate-y-1/2 overflow-auto md:rounded-lg border";
+			case "mobileMenu":
+				return "fixed z-[70] h-full inset-0 w-full border-0 p-0";
 			case "default":
 			default:
-				return "fixed top-[50%] left-[50%] w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] rounded-lg border p-6 sm:max-w-lg";
+				return "fixed top-[50%] left-[50%] w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] md:rounded-lg border p-6 sm:max-w-lg";
 		}
 	};
 
@@ -85,7 +92,11 @@ function DialogContent({
 				)}
 				{...props}
 			>
-				<div className="overflow-auto h-full">{children}</div>
+				{variant === "mobileMenu" ? (
+					children
+				) : (
+					<div className="overflow-auto h-full w-full">{children}</div>
+				)}
 				{showCloseButton && (
 					<DialogPrimitive.Close
 						data-slot="dialog-close"
