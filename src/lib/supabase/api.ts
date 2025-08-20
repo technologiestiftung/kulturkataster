@@ -149,11 +149,6 @@ async function getCategoryMap() {
 		{},
 	);
 
-	const maxSubcategoryId = subcategories.reduce(
-		(max, sub) => Math.max(max, sub.id),
-		0,
-	);
-
 	const enumMap = await import("../i18n/translations/de/enumMap.json");
 	const categoryTranslations = enumMap.default.category;
 	const subcategoryTranslations = enumMap.default.subcategory;
@@ -162,15 +157,8 @@ async function getCategoryMap() {
 		.map((category) => {
 			const subs = subcategoriesByCategoryId[category.id] || [];
 
-			const othersSubcategory = {
-				id: maxSubcategoryId + category.id,
-				key: `others_${category.key}`, // Make the key unique per category
-				category_id: category.id,
-				created_at: new Date().toISOString(),
-			};
-
 			// Sort subcategories alphabetically by their German translation
-			const sortedSubcategories = [...subs, othersSubcategory].sort((a, b) => {
+			const sortedSubcategories = [...subs].sort((a, b) => {
 				const nameA =
 					subcategoryTranslations[
 						a.key as keyof typeof subcategoryTranslations
