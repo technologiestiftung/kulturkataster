@@ -177,11 +177,18 @@ export function LocationSearch() {
 	const highlightMatch = (text: string, searchQuery: string) => {
 		if (!searchQuery.trim() || !text) return text;
 
-		const escapedQuery = searchQuery.replace(
-			/[.*+?^${}()|[\\]\\\\]/g,
-			"\\\\$&",
+		// Split search query into individual terms
+		const searchTerms = searchQuery.trim().split(/\s+/).filter((term) => term.length > 0);
+		
+		// Escape each term for regex
+		const escapedTerms = searchTerms.map((term) => 
+			term.replace(/[.*+?^${}()|[\\]\\\\]/g, "\\\\$&")
 		);
-		const regex = new RegExp(`(${escapedQuery})`, "gi");
+		
+		// Create regex pattern that matches any of the terms
+		const pattern = escapedTerms.join('|');
+		const regex = new RegExp(`(${pattern})`, "gi");
+		
 		const parts = text.split(regex);
 
 		return parts.map((part, index) =>
