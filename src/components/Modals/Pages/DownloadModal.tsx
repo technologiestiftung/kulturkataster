@@ -3,6 +3,7 @@
 import { useTranslation } from "react-i18next";
 import { PageModal } from "../PageModal";
 import TextWithLinks from "@/components/Content/TextWithLinks";
+import ArrowNarrowRight from "@/icons/arrow-narrow-right.svg";
 
 interface DownloadModalProps {
 	open: boolean;
@@ -17,9 +18,10 @@ export function DownloadModal({ open, onOpenChange }: DownloadModalProps) {
 		<div className="space-y-6 flex flex-col">
 			<span>{t("downloadModal.description1", { ns: "content" })}</span>
 			<span>{t("downloadModal.description2", { ns: "content" })}</span>
-			<span>
+			<div className="flex items-center space-x-2">
+				<ArrowNarrowRight />
 				<TextWithLinks text={t("downloadModal.link", { ns: "content" })} />
-			</span>
+			</div>
 		</div>
 	);
 
