@@ -62,7 +62,7 @@ export function SelectedFilters({
 					key={`district-${key}`}
 					variant="tag"
 					size="tag"
-					className={showRemove ? "bg-neutral-80 text-white" : ""}
+					className={showRemove ? "bg-neutral-80 text-background" : ""}
 					onClick={showRemove ? () => onRemoveDistrict?.(key) : undefined}
 				>
 					{getDistrictName(key)}
@@ -80,7 +80,7 @@ export function SelectedFilters({
 					key={`category-${key}`}
 					variant="tag"
 					size="tag"
-					className={showRemove ? "bg-neutral-80 text-white" : ""}
+					className={showRemove ? "bg-neutral-80 text-foreground" : ""}
 					onClick={showRemove ? () => onRemoveCategory?.(key) : undefined}
 				>
 					{getCategoryName(key)}
@@ -98,7 +98,7 @@ export function SelectedFilters({
 					key={`subcategory-${key}`}
 					variant="tag"
 					size="tag"
-					className={showRemove ? "bg-neutral-80 text-white" : ""}
+					className={showRemove ? "bg-neutral-80 text-foreground" : ""}
 					onClick={showRemove ? () => onRemoveSubcategory?.(key) : undefined}
 				>
 					{getSubcategoryName(key)}
