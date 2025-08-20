@@ -74,10 +74,15 @@ const matchesSubcategoryFilter = (
 // Helper function to check if institution matches status filter
 const matchesStatusFilter = (
 	properties: InstitutionProperties,
-	includeClosed: boolean,
+	includeClosedFilter: boolean,
 ): boolean => {
-	if (includeClosed) return true;
-	return properties.status !== "closed";
+	if (
+		!includeClosedFilter &&
+		properties.utilization_status === "permanently_closed"
+	) {
+		return false;
+	}
+	return true;
 };
 
 export const useInstitutionStore = create<InstitutionStoreState>()(
@@ -118,7 +123,6 @@ export const useInstitutionStore = create<InstitutionStoreState>()(
 				return;
 			}
 
-			// Load districts data to create ID to key mapping
 			const districts = await getDistricts();
 			const districtIdToKeyMap = new Map<number, string>();
 			districts.forEach((district: District) => {
