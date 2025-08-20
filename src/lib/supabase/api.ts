@@ -154,6 +154,10 @@ async function getCategoryMap() {
 		0,
 	);
 
+	const enumMap = await import("../i18n/translations/de/enumMap.json");
+	const categoryTranslations = enumMap.default.category;
+	const subcategoryTranslations = enumMap.default.subcategory;
+
 	const categoryMap = await categories
 		.map((category) => {
 			const subs = subcategoriesByCategoryId[category.id] || [];
@@ -165,12 +169,34 @@ async function getCategoryMap() {
 				created_at: new Date().toISOString(),
 			};
 
+			// Sort subcategories alphabetically by their German translation
+			const sortedSubcategories = [...subs, othersSubcategory].sort((a, b) => {
+				const nameA =
+					subcategoryTranslations[
+						a.key as keyof typeof subcategoryTranslations
+					] || a.key;
+				const nameB =
+					subcategoryTranslations[
+						b.key as keyof typeof subcategoryTranslations
+					] || b.key;
+				return nameA.localeCompare(nameB);
+			});
+
 			return {
 				...category,
-				subcategories: [...subs, othersSubcategory],
+				subcategories: sortedSubcategories,
 			};
 		})
-		.filter((category) => category.subcategories.length > 0);
+		.filter((category) => category.subcategories.length > 0)
+		.sort((a, b) => {
+			const nameA =
+				categoryTranslations[a.key as keyof typeof categoryTranslations] ||
+				a.key;
+			const nameB =
+				categoryTranslations[b.key as keyof typeof categoryTranslations] ||
+				b.key;
+			return nameA.localeCompare(nameB);
+		});
 
 	console.log("categoryMap", JSON.stringify(categoryMap, null, 2));
 	return categoryMap;
