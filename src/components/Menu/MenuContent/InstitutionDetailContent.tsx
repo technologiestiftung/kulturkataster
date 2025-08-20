@@ -146,11 +146,14 @@ function InstitutionBasicInfo({
 	institutionData: InstitutionProperties;
 }) {
 	const { t } = useTranslation("common");
-
+	const { t: tEnum } = useTranslation("enumMap");
 	return (
 		<div>
 			<address className="not-italic mb-4">
 				<p className="body1">{institutionData.name}</p>
+				{institutionData.address_suffix && (
+					<p className="body1">{institutionData.address_suffix}</p>
+				)}
 				{institutionData.street &&
 					institutionData.street_number &&
 					institutionData.zip_code && (
@@ -158,7 +161,12 @@ function InstitutionBasicInfo({
 							<p>
 								{institutionData.street} {institutionData.street_number}
 							</p>
-							<p>{institutionData.zip_code}</p>
+							<div className="flex flex-wrap space-x-2">
+								<p>{institutionData.zip_code}</p>
+								{institutionData.district_id && (
+									<p>{tEnum(`district_id.${institutionData.district_id}`)}</p>
+								)}
+							</div>
 						</div>
 					)}
 			</address>
@@ -220,11 +228,6 @@ function InstitutionExtendedInfo({
 						{institutionData.support_type}
 					</InfoItem>
 				)}
-				{institutionData.district_id && (
-					<InfoItem label={t("institution.district")}>
-						{tEnum(`district_id.${institutionData.district_id}`)}
-					</InfoItem>
-				)}
 			</InfoSection>
 
 			<InfoSection>
@@ -251,6 +254,11 @@ function InstitutionExtendedInfo({
 				{institutionData.established_since && (
 					<InfoItem label={t("institution.establishedSince")}>
 						{new Date(institutionData.established_since).getFullYear()}
+					</InfoItem>
+				)}
+				{institutionData.established_until && (
+					<InfoItem label={t("institution.establishedUntil")}>
+						{new Date(institutionData.established_until).getFullYear()}
 					</InfoItem>
 				)}
 			</InfoSection>
