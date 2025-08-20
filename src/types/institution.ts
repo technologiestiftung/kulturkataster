@@ -92,10 +92,12 @@ export interface InstitutionProperties {
 	zip_code: string;
 	categories: Category[];
 	district_id: number;
+	address_suffix: string;
 	street_number: string;
 	subcategories: Subcategory[];
 	funding_sources: unknown[];
 	established_since: string;
+	established_until: string;
 	shared_use_allowed: boolean;
 	utilization_status: string;
 	parent_organizations: ParentOrganization[];
