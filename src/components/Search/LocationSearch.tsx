@@ -80,32 +80,76 @@ export function LocationSearch() {
 		setSearchResults([]);
 	};
 
+	const parseLatLongCoordinates = (
+		latlong: string,
+	): [number, number] | null => {
+		const match = latlong.match(/\(([^,]+),([^)]+)\)/);
+		if (!match) return null;
+
+		const lat = parseFloat(match[1]);
+		const lng = parseFloat(match[2]);
+		if (isNaN(lat) || isNaN(lng)) return null;
+
+		const coords = fromLonLat([lng, lat]);
+		return coords as [number, number];
+	};
+
+	const parseCaseCoordinates = (caseField: string): [number, number] | null => {
+		const match = caseField.match(/\(([^,]+),([^)]+)\)/);
+		if (!match) return null;
+
+		const lat = parseFloat(match[1]); // latitude first
+		const lng = parseFloat(match[2]); // longitude second
+		if (isNaN(lat) || isNaN(lng)) return null;
+
+		// Transform from WGS84 (lat,lng) to map projection
+		const coords = fromLonLat([lng, lat]);
+		return coords as [number, number];
+	};
+
+	const parseGeoJsonCoordinates = (
+		st_asgeojson: string,
+	): [number, number] | null => {
+		try {
+			const geoJson = JSON.parse(st_asgeojson);
+			if (!geoJson.coordinates || !Array.isArray(geoJson.coordinates))
+				return null;
+
+			const coords = fromLonLat([
+				geoJson.coordinates[0],
+				geoJson.coordinates[1],
+			]);
+			return coords as [number, number];
+		} catch (error) {
+			console.warn("Failed to parse st_asgeojson:", error);
+			return null;
+		}
+	};
+
 	const extractCoordinates = (result: Institution): [number, number] | null => {
+		console.log("Debug - Institution result:", {
+			latlong: result.latlong,
+			case: result.case,
+			st_asgeojson: result.st_asgeojson,
+		});
+
+		if (result.latlong) {
+			const coords = parseLatLongCoordinates(result.latlong);
+			console.log("Debug - latlong coords:", coords);
+			return coords;
+		}
+
 		if (result.case) {
-			const match = result.case.match(/\\(([^,]+),([^)]+)\\)/);
-			if (match) {
-				const x = parseFloat(match[1]);
-				const y = parseFloat(match[2]);
-				if (!isNaN(x) && !isNaN(y)) {
-					return [x, y];
-				}
-			}
+			return parseCaseCoordinates(result.case);
 		}
 
 		if (result.st_asgeojson) {
-			try {
-				const geoJson = JSON.parse(result.st_asgeojson);
-				if (geoJson.coordinates && Array.isArray(geoJson.coordinates)) {
-					return [geoJson.coordinates[0], geoJson.coordinates[1]];
-				}
-			} catch (error) {
-				console.warn("Failed to parse st_asgeojson:", error);
-			}
+			return parseGeoJsonCoordinates(result.st_asgeojson);
 		}
 
+		console.log("No valid coordinates found");
 		return null;
 	};
-
 	const handleGeoFeatureClick = (result: GeoFeature) => {
 		const [lng, lat] = result.center;
 
@@ -177,11 +221,21 @@ export function LocationSearch() {
 	const highlightMatch = (text: string, searchQuery: string) => {
 		if (!searchQuery.trim() || !text) return text;
 
-		const escapedQuery = searchQuery.replace(
-			/[.*+?^${}()|[\\]\\\\]/g,
-			"\\\\$&",
+		// Split search query into individual terms
+		const searchTerms = searchQuery
+			.trim()
+			.split(/\s+/)
+			.filter((term) => term.length > 0);
+
+		// Escape each term for regex
+		const escapedTerms = searchTerms.map((term) =>
+			term.replace(/[.*+?^${}()|[\\]\\\\]/g, "\\\\$&"),
 		);
-		const regex = new RegExp(`(${escapedQuery})`, "gi");
+
+		// Create regex pattern that matches any of the terms
+		const pattern = escapedTerms.join("|");
+		const regex = new RegExp(`(${pattern})`, "gi");
+
 		const parts = text.split(regex);
 
 		return parts.map((part, index) =>
