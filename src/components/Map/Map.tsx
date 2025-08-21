@@ -30,13 +30,7 @@ const Map: FC = () => {
 
 				<MapControls>
 					<MapNavigationControls />
-					<HoverControl
-						layerId="institutions"
-						minZoomForHover={0}
-						overlayOptions={{
-							offset: [8, 8],
-						}}
-					>
+					<HoverControl layerId="institutions" minZoomForHover={0}>
 						<HoverCard />
 					</HoverControl>
 					<ClickControl layerId="institutions" />
