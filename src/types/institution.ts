@@ -80,6 +80,22 @@ export interface ParentOrganization {
 	name: string;
 }
 
+export interface CulturalArea {
+	id: number;
+	name: string;
+}
+
+export interface Owner {
+	id: number;
+	name: string;
+	owner_type: string;
+}
+
+export interface Source {
+	id: number;
+	name: string;
+}
+
 export interface InstitutionProperties {
 	id: number;
 	name: string;
@@ -108,6 +124,10 @@ export interface InstitutionProperties {
 	capacity?: number;
 	rooms_count?: number;
 	updated_at?: string;
+	cultural_area?: CulturalArea;
+	owner?: Owner;
+	source?: Source;
+	closing_reason?: string;
 }
 
 export interface InstitutionFeature extends InstitutionProperties {
