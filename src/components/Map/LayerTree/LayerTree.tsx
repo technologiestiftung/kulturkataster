@@ -96,6 +96,7 @@ const LayerThumbnail = memo<{
 					width={size}
 					height={size}
 					className="w-full h-full object-cover"
+					loading={layer.visibility ? "eager" : "lazy"}
 					onError={() => setImageError(true)}
 				/>
 			) : (

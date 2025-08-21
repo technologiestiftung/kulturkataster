@@ -1,26 +1,37 @@
-/* eslint-disable complexity */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useMapStore } from "@/lib/store/mapStore";
 import { transformGeoJSON } from "@/lib/utils/mapUtils";
-import { MapStoreState } from "@/types/map";
-
 import { CategoryType } from "@/types";
+import { MapStoreState } from "@/types/map";
 import { FeatureCollection, GeoJsonProperties, Geometry } from "geojson";
-import { Coordinate } from "ol/coordinate";
 import Feature, { FeatureLike } from "ol/Feature";
 import GeoJSON from "ol/format/GeoJSON";
 import { Point } from "ol/geom";
 import VectorLayer from "ol/layer/Vector";
 import { Vector as VectorSource } from "ol/source";
 import Cluster from "ol/source/Cluster";
-import { getDistance } from "ol/sphere";
 import { Fill, Icon, Style, Text } from "ol/style";
 import CircleStyle from "ol/style/Circle";
 import { FC, useCallback, useEffect, useRef } from "react";
 import { createPoiSvg } from "../MapStyles/createPoiSvg";
+
+const styleCache: { [key: string]: Style } = {};
+const svgCache: { [key: string]: string } = {};
+
+const createCachedPoiSvg = (
+	categoryKey: CategoryType,
+	fillColor: string,
+	strokeColor: string,
+): string => {
+	const cacheKey = `${categoryKey}_${fillColor}_${strokeColor}`;
+	if (!svgCache[cacheKey]) {
+		svgCache[cacheKey] = createPoiSvg(categoryKey, fillColor, strokeColor);
+	}
+	return svgCache[cacheKey];
+};
 
 interface InstitutionLayerProps {
 	zIndex?: number;
@@ -33,11 +44,11 @@ interface InstitutionLayerProps {
 
 const InstitutionLayer: FC<InstitutionLayerProps> = ({
 	zIndex = 10000,
-	distance = 250,
+	distance = 350,
 	minZoomForClustering = 0,
-	maxZoomForClustering = 6,
+	maxZoomForClustering = 7,
 	institutionsData,
-	proximityThreshold = 50,
+	proximityThreshold = 40,
 }) => {
 	const map = useMapStore((state: MapStoreState) => state.map);
 	const config = useMapStore((state) => state.config);
@@ -49,154 +60,92 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 	const vectorSourceRef = useRef<VectorSource | null>(null);
 	const offsetVectorSourceRef = useRef<VectorSource | null>(null);
 	const clusterSourceRef = useRef<Cluster | null>(null);
-	const originalFeaturesRef = useRef<Feature[] | null>(null);
 
-	const getCategoryKey = useCallback(
-		(feature: FeatureLike, features: any[]) => {
-			if (features && features[0]?.values_?.categories.length > 1) {
-				return "multi_categories";
-			}
-			if (feature && feature.get("categories")?.length > 1) {
-				return "multi_categories";
-			}
-			return (
-				feature.get("categories")?.[0]?.key ||
-				features[0]?.values_?.categories?.[0]?.key
-			);
-		},
-		[],
-	);
-
-	const getFeatureCoordinates = useCallback(
-		(feature: Feature): Coordinate | null => {
-			const geometry = feature.getGeometry();
-			if (geometry && geometry.getType() === "Point") {
-				return (geometry as Point).getCoordinates();
-			}
-			return null;
-		},
-		[],
-	);
-
-	const calculateDistance = useCallback(
-		(coord1: Coordinate, coord2: Coordinate): number => {
-			return getDistance(coord1, coord2);
-		},
-		[],
-	);
-
-	const findNearbyFeatures = useCallback(
-		(targetFeature: Feature, allFeatures: Feature[]): Feature[] => {
-			const targetCoords = getFeatureCoordinates(targetFeature);
-			if (!targetCoords) return [targetFeature];
-
-			const nearby: Feature[] = [];
-
-			allFeatures.forEach((feature) => {
-				const coords = getFeatureCoordinates(feature);
-				if (
-					coords &&
-					calculateDistance(targetCoords, coords) <= proximityThreshold
-				) {
-					nearby.push(feature);
-				}
-			});
-			return nearby.length > 0 ? nearby : [targetFeature];
-		},
-		[getFeatureCoordinates, calculateDistance, proximityThreshold],
-	);
-
-	const groupFeaturesByProximity = useCallback(
-		(features: Feature[]): Feature[][] => {
-			const processed = new Set<Feature>();
-			const groups: Feature[][] = [];
+	const processFeaturesForDecluttering = useCallback(
+		(features: Feature[]): Feature[] => {
+			const tempSource = new VectorSource({ features });
+			const processedFeatureIds = new Set<string | number>();
+			const proximityGroups: Feature[][] = [];
 
 			features.forEach((feature) => {
-				if (processed.has(feature)) return;
+				const featureId = feature.getId();
+				if (!featureId || processedFeatureIds.has(featureId)) return;
+				const geometry = feature.getGeometry() as Point;
+				if (!geometry) return;
 
-				const nearbyFeatures = findNearbyFeatures(feature, features);
-				nearbyFeatures.forEach((f) => processed.add(f));
-				groups.push(nearbyFeatures);
+				const searchExtent = geometry.getExtent();
+				searchExtent[0] -= proximityThreshold;
+				searchExtent[1] -= proximityThreshold;
+				searchExtent[2] += proximityThreshold;
+				searchExtent[3] += proximityThreshold;
+				const nearbyFeatures = tempSource.getFeaturesInExtent(searchExtent);
+
+				proximityGroups.push(nearbyFeatures);
+				nearbyFeatures.forEach((f) => {
+					const id = f.getId();
+					if (id) processedFeatureIds.add(id);
+				});
 			});
 
-			return groups;
-		},
-		[findNearbyFeatures],
-	);
-
-	const createOffsetFeatures = useCallback(
-		(features: Feature[]): Feature[] => {
-			const proximityGroups = groupFeaturesByProximity(features);
 			const offsetFeatures: Feature[] = [];
-
 			proximityGroups.forEach((group) => {
-				if (group.length === 1) {
-					offsetFeatures.push(group[0].clone());
+				const hasOverlapping = group.length > 1;
+				if (!hasOverlapping) {
+					const singleFeature = group[0].clone();
+					singleFeature.set("has_overlapping", false);
+					offsetFeatures.push(singleFeature);
 				} else {
 					const offsetRadius = Math.max(
 						10,
 						Math.min(50, proximityThreshold * 0.8),
 					);
 					const angleStep = (2 * Math.PI) / group.length;
+					const centerCoords = (
+						group[0].getGeometry() as Point
+					).getCoordinates();
 
-					group.forEach((feature, index) => {
-						const clonedFeature = feature.clone();
-						const geometry = clonedFeature.getGeometry();
+					group.forEach((member, index) => {
+						const clonedFeature = member.clone();
+						clonedFeature.set("has_overlapping", true);
+						const geom = clonedFeature.getGeometry() as Point;
 
-						if (geometry && geometry.getType() === "Point") {
-							const coords = (geometry as Point).getCoordinates() as Coordinate;
-
-							if (index === 0) {
-								offsetFeatures.push(clonedFeature);
-							} else {
-								const angle = angleStep * index;
-								const offsetX = Math.cos(angle) * offsetRadius;
-								const offsetY = Math.sin(angle) * offsetRadius;
-
-								const newCoords: Coordinate = [
-									coords[0] + offsetX,
-									coords[1] + offsetY,
-								];
-								(geometry as Point).setCoordinates(newCoords);
-								offsetFeatures.push(clonedFeature);
-							}
+						if (index > 0) {
+							const angle = angleStep * index;
+							const offsetX = Math.cos(angle) * offsetRadius;
+							const offsetY = Math.sin(angle) * offsetRadius;
+							geom.setCoordinates([
+								centerCoords[0] + offsetX,
+								centerCoords[1] + offsetY,
+							]);
+						} else {
+							geom.setCoordinates(centerCoords);
 						}
+						offsetFeatures.push(clonedFeature);
 					});
 				}
 			});
-
 			return offsetFeatures;
 		},
-		[groupFeaturesByProximity, proximityThreshold],
+		[proximityThreshold],
 	);
 
-	const hasNearbyFeatures = useCallback(
-		(targetFeature: Feature, allFeatures: Feature[]): boolean => {
-			const targetCoords = getFeatureCoordinates(targetFeature);
-			if (!targetCoords) return false;
+	const getCategoryKey = useCallback((feature: FeatureLike) => {
+		const categories = feature.get("categories");
 
-			return allFeatures.some((feature) => {
-				if (feature === targetFeature) return false;
-				const coords = getFeatureCoordinates(feature);
-				return (
-					coords &&
-					calculateDistance(targetCoords, coords) <= proximityThreshold
-				);
-			});
-		},
-		[getFeatureCoordinates, calculateDistance, proximityThreshold],
-	);
+		return categories && categories.length > 1
+			? "multi_categories"
+			: categories?.[0]?.key || "default";
+	}, []);
 
 	const createSingleFeatureStyle = useCallback(
 		(categoryKey: CategoryType, isSelected = false, hasOverlapping = false) => {
 			const fillColor = isSelected ? "#55D494" : "#C288FF";
-			const iconSvg = createPoiSvg(categoryKey, fillColor, "#161616");
+			const iconSvg = createCachedPoiSvg(categoryKey, fillColor, "#161616");
+
 			return new Style({
 				image: new Icon({
 					anchor: [0.5, 1],
 					src: iconSvg,
-					offset: [0, 0],
-					opacity: 1,
 					scale: hasOverlapping ? 0.9 : 1,
 				}),
 			});
@@ -205,84 +154,60 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 	);
 
 	const createClusterStyle = useCallback((size: number) => {
-		const radius = 15;
-		const color = "#C288FF";
-		const textColor = "#161616";
-
 		return new Style({
 			image: new CircleStyle({
-				radius,
-				fill: new Fill({ color }),
+				radius: 15,
+				fill: new Fill({ color: "#C288FF" }),
 			}),
 			text: new Text({
 				text: size.toString(),
-				font: `bold ${Math.min(radius * 1, 12)}px sans-serif`,
-				fill: new Fill({ color: textColor }),
-				offsetY: 0,
+				font: `bold 12px sans-serif`,
+				fill: new Fill({ color: "#161616" }),
 			}),
-			zIndex: 10,
 		});
 	}, []);
 
-	const shouldCluster = useCallback(
-		(zoomLevel: number) => {
-			return (
-				zoomLevel >= minZoomForClustering && zoomLevel <= maxZoomForClustering
-			);
-		},
-		[minZoomForClustering, maxZoomForClustering],
-	);
-
 	const styleFunction = useCallback(
-		function (feature: FeatureLike) {
+		(feature: FeatureLike) => {
 			const features = feature.get("features");
 			const size = features ? features.length : 1;
 
-			if (size === 1) {
-				const categoryKey = getCategoryKey(feature, features);
-				const featureToCheck = features ? features[0] : feature;
-				const featureId =
-					featureToCheck?.get?.("id") || featureToCheck?.values_?.id;
+			if (size > 1) {
+				const clusterCacheKey = `cluster_${size}`;
+				if (!styleCache[clusterCacheKey])
+					styleCache[clusterCacheKey] = createClusterStyle(size);
+				return styleCache[clusterCacheKey];
+			}
 
-				const currentSelectedId =
-					useInstitutionStore.getState().selectedInstitutionId;
-				const isSelected = featureId === currentSelectedId;
+			const singleFeature = features ? features[0] : feature;
+			const isSelected =
+				singleFeature.get("id") ===
+				useInstitutionStore.getState().selectedInstitutionId;
+			const hasOverlapping = singleFeature.get("has_overlapping") === true;
+			const categoryKey = getCategoryKey(singleFeature);
+			const styleCacheKey = `${categoryKey}_${isSelected}_${hasOverlapping}`;
 
-				const currentZoom = map?.getView().getZoom() || 6;
-				const clustering = shouldCluster(currentZoom);
-				let hasOverlapping = false;
-
-				if (!clustering && originalFeaturesRef.current) {
-					hasOverlapping = hasNearbyFeatures(
-						featureToCheck,
-						originalFeaturesRef.current,
-					);
-				}
-
-				return createSingleFeatureStyle(
+			if (!styleCache[styleCacheKey])
+				styleCache[styleCacheKey] = createSingleFeatureStyle(
 					categoryKey,
 					isSelected,
 					hasOverlapping,
 				);
-			}
-			return createClusterStyle(size);
+
+			return styleCache[styleCacheKey];
 		},
-		[
-			createClusterStyle,
-			getCategoryKey,
-			map,
-			shouldCluster,
-			createSingleFeatureStyle,
-			hasNearbyFeatures,
-		],
+		[createClusterStyle, getCategoryKey, createSingleFeatureStyle],
+	);
+
+	const shouldCluster = useCallback(
+		(zoomLevel: number) =>
+			zoomLevel >= minZoomForClustering && zoomLevel <= maxZoomForClustering,
+		[minZoomForClustering, maxZoomForClustering],
 	);
 
 	const getClusterDistance = useCallback(
 		(zoomLevel: number) => {
-			if (!shouldCluster(zoomLevel)) {
-				return 0;
-			}
-
+			if (!shouldCluster(zoomLevel)) return 0;
 			const factor = Math.max(
 				0.1,
 				(maxZoomForClustering - zoomLevel) /
@@ -296,30 +221,20 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 	const updateLayerSource = useCallback(
 		(zoomLevel: number) => {
 			if (
-				!map ||
-				!vectorSourceRef.current ||
 				!vectorLayerRef.current ||
+				!clusterSourceRef.current ||
 				!offsetVectorSourceRef.current
 			)
 				return;
-
 			const clustering = shouldCluster(zoomLevel);
-
 			if (clustering) {
-				if (!clusterSourceRef.current) {
-					clusterSourceRef.current = new Cluster({
-						distance: getClusterDistance(zoomLevel),
-						source: vectorSourceRef.current,
-					});
-				} else {
-					clusterSourceRef.current.setDistance(getClusterDistance(zoomLevel));
-				}
+				clusterSourceRef.current.setDistance(getClusterDistance(zoomLevel));
 				vectorLayerRef.current.setSource(clusterSourceRef.current);
 			} else {
 				vectorLayerRef.current.setSource(offsetVectorSourceRef.current);
 			}
 		},
-		[map, shouldCluster, getClusterDistance],
+		[shouldCluster, getClusterDistance],
 	);
 
 	const handleClusterClick = useCallback(
@@ -331,134 +246,119 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 			});
 
 			if (features.length > 0) {
-				const feature = features[0];
-				const clusteredFeatures = feature.get("features");
+				const clusteredFeatures = features[0].get("features");
 
 				if (clusteredFeatures && clusteredFeatures.length > 1) {
 					event.preventDefault();
 					event.stopPropagation();
 
-					const extent = clusteredFeatures.reduce(
-						(acc: any, clusterFeature: any) => {
-							const geometry = clusterFeature.getGeometry();
-							if (geometry) {
-								const featureExtent = geometry.getExtent();
-								if (acc) {
-									return [
-										Math.min(acc[0], featureExtent[0]),
-										Math.min(acc[1], featureExtent[1]),
-										Math.max(acc[2], featureExtent[2]),
-										Math.max(acc[3], featureExtent[3]),
-									];
-								}
-								return featureExtent;
-							}
-							return acc;
-						},
-						null,
-					);
+					const extent = clusteredFeatures[0]
+						.getGeometry()
+						.getExtent()
+						.slice(0);
 
-					if (extent) {
-						map.getView().fit(extent, {
-							padding: [50, 50, 50, 50],
-							duration: 500,
-							maxZoom: Math.max(maxZoomForClustering + 1, 10),
-						});
-					}
+					clusteredFeatures.forEach((feature: Feature) => {
+						const featureExtent = feature.getGeometry()!.getExtent();
+						extent[0] = Math.min(extent[0], featureExtent[0]);
+						extent[1] = Math.min(extent[1], featureExtent[1]);
+						extent[2] = Math.max(extent[2], featureExtent[2]);
+						extent[3] = Math.max(extent[3], featureExtent[3]);
+					});
+
+					map.getView().fit(extent, {
+						padding: [50, 50, 50, 50],
+						duration: 500,
+						maxZoom: map.getView().getMaxZoom() - 2,
+					});
 				}
 			}
 		},
-		[map, maxZoomForClustering],
+		[map],
 	);
 
 	useEffect(() => {
-		if (!map || zIndex === null || !config || !institutionsData) return;
+		if (!map) return;
 
-		const epsg = config.portalConfig.map.mapView.epsg;
-		const currentZoom = map.getView().getZoom() || 6;
-
-		const originalFeatures = new GeoJSON().readFeatures(
-			transformGeoJSON(institutionsData, epsg),
-		);
-		originalFeaturesRef.current = originalFeatures;
-
-		const vectorSource = new VectorSource({
-			features: originalFeatures,
-		});
+		const vectorSource = new VectorSource();
 		vectorSourceRef.current = vectorSource;
-
-		const offsetFeatures = createOffsetFeatures(originalFeatures);
-		const offsetVectorSource = new VectorSource({
-			features: offsetFeatures,
-		});
+		const offsetVectorSource = new VectorSource();
 		offsetVectorSourceRef.current = offsetVectorSource;
-
-		const clusterSource = new Cluster({
-			distance: getClusterDistance(currentZoom),
-			source: vectorSource,
-		});
+		const clusterSource = new Cluster({ source: vectorSource, distance });
 		clusterSourceRef.current = clusterSource;
 
-		const initialSource = shouldCluster(currentZoom)
-			? clusterSource
-			: offsetVectorSource;
-
 		const vectorLayer = new VectorLayer({
-			source: initialSource,
+			source: clusterSource,
 			style: styleFunction,
+			declutter: true,
+			renderBuffer: 200,
 		});
+
 		vectorLayerRef.current = vectorLayer;
 
-		const handleZoomChange = () => {
-			let zoomLevel = map.getView().getZoom() ?? 6;
-
-			if (zoomLevel < 0) {
-				zoomLevel = 0;
-			}
-
-			updateLayerSource(zoomLevel);
-		};
-
-		map.getView().on("change:resolution", handleZoomChange);
-		map.on("click", handleClusterClick);
-
 		map.addLayer(vectorLayer);
+
 		vectorLayer.setZIndex(zIndex);
 		vectorLayer.set("name", "institutions");
 		vectorLayer.set("id", "institutions");
 
+		const handleZoomChange = () =>
+			updateLayerSource(map.getView().getZoom() ?? 6);
+
+		map.getView().on("change:resolution", handleZoomChange);
+
+		map.on("click", handleClusterClick);
+
 		return () => {
-			if (map && vectorLayerRef.current) {
+			if (map && vectorLayer) {
+				map.removeLayer(vectorLayer);
 				map.getView().un("change:resolution", handleZoomChange);
 				map.un("click", handleClusterClick);
-				map.removeLayer(vectorLayerRef.current);
 			}
-			vectorLayerRef.current = null;
-			vectorSourceRef.current = null;
-			offsetVectorSourceRef.current = null;
-			clusterSourceRef.current = null;
-			originalFeaturesRef.current = null;
 		};
 	}, [
 		map,
-		zIndex,
-		config,
-		getClusterDistance,
-		shouldCluster,
-		updateLayerSource,
 		styleFunction,
-		institutionsData,
+		updateLayerSource,
 		handleClusterClick,
-		createOffsetFeatures,
+		zIndex,
+		distance,
 	]);
 
 	useEffect(() => {
-		if (vectorLayerRef.current) {
-			const source = vectorLayerRef.current.getSource();
-			if (source) {
-				source.changed();
-			}
-		}
+		if (
+			!map ||
+			!config ||
+			!institutionsData ||
+			!vectorSourceRef.current ||
+			!offsetVectorSourceRef.current
+		)
+			return;
+		const epsg = config.portalConfig.map.mapView.epsg;
+		const features = new GeoJSON().readFeatures(
+			transformGeoJSON(institutionsData, epsg),
+		);
+
+		features.forEach((f, i) => {
+			if (!f.getId()) f.setId(f.get("id") || `institution-${i}`);
+		});
+
+		const offsetFeatures = processFeaturesForDecluttering(features);
+		vectorSourceRef.current.clear();
+		vectorSourceRef.current.addFeatures(features);
+		offsetVectorSourceRef.current.clear();
+		offsetVectorSourceRef.current.addFeatures(offsetFeatures);
+
+		updateLayerSource(map.getView().getZoom() ?? 6);
+	}, [
+		institutionsData,
+		config,
+		map,
+		updateLayerSource,
+		processFeaturesForDecluttering,
+	]);
+
+	useEffect(() => {
+		vectorLayerRef.current?.getSource()?.changed();
 	}, [selectedInstitutionId]);
 
 	return null;

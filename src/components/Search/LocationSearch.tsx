@@ -21,7 +21,7 @@ export const isGeoFeature = (result: SearchResult): result is GeoFeature => {
 };
 
 const ANIMATION_DURATION = 1000;
-const DEFAULT_ZOOM = 7;
+const DEFAULT_ZOOM = 8;
 
 export function LocationSearch() {
 	const { t } = useTranslation("common");
