@@ -111,6 +111,7 @@ const CategorySection: FC<{
 					<Checkbox
 						checked={isChecked}
 						onCheckedChange={() => onCategoryChange(group.key)}
+						aria-label={`Checkbox ${group.name}`}
 						className={`w-4 h-4 ${isIndeterminate ? "border-primary-dark" : ""}`}
 					/>
 					{isIndeterminate && (
