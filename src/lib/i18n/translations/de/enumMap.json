@@ -155,9 +155,10 @@
 		"other": "Sonstiges"
 	},
 	"funding_type": {
-		"institutional_funding": "Institutionelle Förderung",
-		"temporary_project_funding": "Projektförderung (zeitlich befristet)",
-		"no_funding": "Keine Förderung"
+		"institutional_funding": "Institutionell gefördert",
+		"temporary_project_funding": "Temporäre Projektförderung",
+		"no_funding": "Nicht gefördert",
+		"workspace_program": "Arbeitsraumprogramm"
 	},
 	"institution_action": {
 		"create": "Erstellen",
