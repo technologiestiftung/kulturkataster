@@ -10,6 +10,7 @@ export interface Institution {
 	district?: { name: string };
 	neighbourhood?: { name: string };
 	case?: string;
+	latlong: string;
 	st_asgeojson?: string;
 }
 
