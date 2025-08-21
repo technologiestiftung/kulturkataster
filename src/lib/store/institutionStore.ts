@@ -65,7 +65,6 @@ const matchesSubcategoryFilter = (
 	return false;
 };
 
-// Helper function to check if institution matches status filter
 const matchesStatusFilter = (
 	properties: InstitutionProperties,
 	includeClosedFilter: boolean,
@@ -93,7 +92,7 @@ export const useInstitutionStore = create<InstitutionStoreState>()(
 			district_keys: [],
 			category_keys: [],
 			subcategory_keys: [],
-			include_closed: true,
+			include_closed: false,
 		},
 		setFilters: (filters) => set({ filters }),
 
@@ -104,6 +103,9 @@ export const useInstitutionStore = create<InstitutionStoreState>()(
 					institutions: institutionsData,
 					originalInstitutions: institutionsData,
 				});
+
+				const { filters, filterInstitutionsFrontend } = get();
+				await filterInstitutionsFrontend(filters);
 			} catch (error) {
 				console.error("Failed to initialize institutions:", error);
 			}
@@ -129,9 +131,6 @@ export const useInstitutionStore = create<InstitutionStoreState>()(
 
 					if (!properties) return false;
 
-					// *** KORRIGIERTE FILTER-LOGIK ***
-
-					// Status und Bezirk sind weiterhin harte UND-Bedingungen
 					const statusMatch = matchesStatusFilter(
 						properties,
 						filters.include_closed,
@@ -142,15 +141,13 @@ export const useInstitutionStore = create<InstitutionStoreState>()(
 						districtIdToKeyMap,
 					);
 
-					// Prüfen, ob überhaupt Kategorie-Filter aktiv sind
 					const hasCategoryFilters =
 						filters.category_keys.length > 0 ||
 						filters.subcategory_keys.length > 0;
 
-					let categoryMatch = true; // Standardmäßig true, wenn keine Filter gesetzt sind
+					let categoryMatch = true;
 
 					if (hasCategoryFilters) {
-						// Wenn Filter gesetzt sind, muss die Institution ENTWEDER der Kategorie ODER der Subkategorie entsprechen
 						categoryMatch =
 							matchesCategoryFilter(properties, filters.category_keys) ||
 							matchesSubcategoryFilter(properties, filters.subcategory_keys);
