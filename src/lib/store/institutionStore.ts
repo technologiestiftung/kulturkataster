@@ -29,13 +29,10 @@ const matchesDistrictFilter = (
 	return districtKeys.includes(districtKey);
 };
 
-// Helper function to check if institution matches category filter
 const matchesCategoryFilter = (
 	properties: InstitutionProperties,
 	categoryKeys: string[],
 ): boolean => {
-	if (categoryKeys.length === 0) return true;
-
 	return (
 		properties.categories?.some((category) =>
 			categoryKeys.includes(category.key),
@@ -43,13 +40,10 @@ const matchesCategoryFilter = (
 	);
 };
 
-// Helper function to check if institution matches subcategory filter
 const matchesSubcategoryFilter = (
 	properties: InstitutionProperties,
 	subcategoryKeys: string[],
 ): boolean => {
-	if (subcategoryKeys.length === 0) return true;
-
 	const hasExplicitMatch = properties.subcategories?.some((subcategory) =>
 		subcategoryKeys.includes(subcategory.key),
 	);
@@ -74,10 +68,15 @@ const matchesSubcategoryFilter = (
 // Helper function to check if institution matches status filter
 const matchesStatusFilter = (
 	properties: InstitutionProperties,
-	includeClosed: boolean,
+	includeClosedFilter: boolean,
 ): boolean => {
-	if (includeClosed) return true;
-	return properties.status !== "closed";
+	if (
+		!includeClosedFilter &&
+		properties.utilization_status === "permanently_closed"
+	) {
+		return false;
+	}
+	return true;
 };
 
 export const useInstitutionStore = create<InstitutionStoreState>()(
@@ -118,7 +117,6 @@ export const useInstitutionStore = create<InstitutionStoreState>()(
 				return;
 			}
 
-			// Load districts data to create ID to key mapping
 			const districts = await getDistricts();
 			const districtIdToKeyMap = new Map<number, string>();
 			districts.forEach((district: District) => {
@@ -131,16 +129,34 @@ export const useInstitutionStore = create<InstitutionStoreState>()(
 
 					if (!properties) return false;
 
-					return (
-						matchesStatusFilter(properties, filters.include_closed) &&
-						matchesDistrictFilter(
-							properties,
-							filters.district_keys,
-							districtIdToKeyMap,
-						) &&
-						matchesCategoryFilter(properties, filters.category_keys) &&
-						matchesSubcategoryFilter(properties, filters.subcategory_keys)
+					// *** KORRIGIERTE FILTER-LOGIK ***
+
+					// Status und Bezirk sind weiterhin harte UND-Bedingungen
+					const statusMatch = matchesStatusFilter(
+						properties,
+						filters.include_closed,
 					);
+					const districtMatch = matchesDistrictFilter(
+						properties,
+						filters.district_keys,
+						districtIdToKeyMap,
+					);
+
+					// Prüfen, ob überhaupt Kategorie-Filter aktiv sind
+					const hasCategoryFilters =
+						filters.category_keys.length > 0 ||
+						filters.subcategory_keys.length > 0;
+
+					let categoryMatch = true; // Standardmäßig true, wenn keine Filter gesetzt sind
+
+					if (hasCategoryFilters) {
+						// Wenn Filter gesetzt sind, muss die Institution ENTWEDER der Kategorie ODER der Subkategorie entsprechen
+						categoryMatch =
+							matchesCategoryFilter(properties, filters.category_keys) ||
+							matchesSubcategoryFilter(properties, filters.subcategory_keys);
+					}
+
+					return statusMatch && districtMatch && categoryMatch;
 				},
 			);
 

@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
@@ -52,10 +53,16 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 
 	const getCategoryKey = useCallback(
 		(feature: FeatureLike, features: any[]) => {
-			if (features && features.length > 0) {
-				return features[0]?.values_?.categories?.[0]?.key;
+			if (features && features[0]?.values_?.categories.length > 1) {
+				return "multi_categories";
 			}
-			return feature.get("categories")?.[0]?.key;
+			if (feature && feature.get("categories")?.length > 1) {
+				return "multi_categories";
+			}
+			return (
+				feature.get("categories")?.[0]?.key ||
+				features[0]?.values_?.categories?.[0]?.key
+			);
 		},
 		[],
 	);
@@ -227,7 +234,6 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 	);
 
 	const styleFunction = useCallback(
-		// eslint-disable-next-line complexity
 		function (feature: FeatureLike) {
 			const features = feature.get("features");
 			const size = features ? features.length : 1;

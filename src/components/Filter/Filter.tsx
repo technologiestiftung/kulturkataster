@@ -193,7 +193,10 @@ const Filter: FC = () => {
 				return false;
 			}
 
-			if (!filters.include_closed && properties.status === "closed") {
+			if (
+				!filters.include_closed &&
+				properties.utilization_status === "permanently_closed"
+			) {
 				return false;
 			}
 
@@ -241,7 +244,10 @@ const Filter: FC = () => {
 				return false;
 			}
 
-			if (!filters.include_closed && properties.status === "closed") {
+			if (
+				!filters.include_closed &&
+				properties.utilization_status === "permanently_closed"
+			) {
 				return false;
 			}
 
@@ -365,9 +371,11 @@ const Filter: FC = () => {
 
 	const toggleClosedInstitutions = () => {
 		if (!filters) return;
-		const newState = !filters.include_closed;
 
-		updateFilters({ ...filters, include_closed: newState });
+		updateFilters({
+			...filters,
+			include_closed: !filters.include_closed,
+		});
 	};
 
 	const resetDistrictFilters = () => {
