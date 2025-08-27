@@ -369,7 +369,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 											<InstitutionDetailContent />
 										)}
 									</div>
-									{shouldShowDownloadButton() && (
+									{shouldShowDownloadButton() && false && (
 										<div className="sticky bottom-0 flex justify-center p-4">
 											<Button
 												variant={"outline"}
