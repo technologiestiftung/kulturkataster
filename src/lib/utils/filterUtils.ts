@@ -40,21 +40,7 @@ export const matchesSubcategoryFilter = (
 		subcategoryKeys.includes(subcategory.key),
 	);
 
-	if (hasExplicitMatch) return true;
-
-	if (
-		(!properties.subcategories || properties.subcategories.length === 0) &&
-		properties.categories?.length > 0
-	) {
-		const hasVirtualOthersMatch = properties.categories.some((category) => {
-			const othersKey = `others_${category.key}`;
-			return subcategoryKeys.includes(othersKey);
-		});
-
-		if (hasVirtualOthersMatch) return true;
-	}
-
-	return false;
+	return hasExplicitMatch || false;
 };
 
 export const matchesStatusFilter = (
