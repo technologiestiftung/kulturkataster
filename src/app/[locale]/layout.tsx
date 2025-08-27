@@ -1,3 +1,4 @@
+import { AppPersistenceProvider } from "@/components/AppPersistenceProvider";
 import Footer from "@/components/Footer/Footer";
 import MapInitializer from "@/components/Map/MapInitializer/MapInitializer";
 import { Menu } from "@/components/Menu/Menu";
@@ -39,6 +40,7 @@ export default async function RootLayout({
 		<html lang={locale} dir={getDirection(locale)}>
 			<body className={`${barlow.className} antialiased`}>
 				<I18NProvider locale={locale} namespaces={ns} resources={resources}>
+					<AppPersistenceProvider />
 					<SidebarProvider>
 						<Menu />
 						<SidebarInset className="flex-1 w-0">
