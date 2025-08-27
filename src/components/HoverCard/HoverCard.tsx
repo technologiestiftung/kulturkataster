@@ -28,6 +28,7 @@ const getFeatureData = (feature: any) => {
 };
 
 // TODO: add fonts
+// TODO: add names categories and status
 
 const HoverCard: FC<HoverCardProps> = ({ features }) => {
 	const [featureProperties, setFeatureProperties] = useState<any>(null);
