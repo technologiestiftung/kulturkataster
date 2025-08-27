@@ -448,11 +448,13 @@
 		"showClosed": "Geschlossene Orte einblenden",
 		"districts": {
 			"title": "Bezirke",
-			"resetFilters": "Filter zurücksetzen"
+			"resetFilters": "Filter zurücksetzen",
+			"setAllFilters": "Alle Filter"
 		},
 		"categories": {
 			"title": "Kategorien",
-			"resetFilters": "Filter zurücksetzen"
+			"resetFilters": "Filter zurücksetzen",
+			"setAllFilters": "Alle Filter"
 		},
 		"loading": "Filter werden geladen...",
 		"error": "Fehler beim Laden der Filter",
