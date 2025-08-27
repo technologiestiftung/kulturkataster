@@ -23,6 +23,13 @@ type OverlayPositioning =
 	| "top-left"
 	| "top-right";
 
+const POSITION_OFFSETS: Record<OverlayPositioning, [number, number]> = {
+	"top-left": [5, 15],
+	"top-right": [-5, 15],
+	"bottom-left": [15, -5],
+	"bottom-right": [-15, -5],
+};
+
 const HoverControl: FC<HoverControlProps> = ({
 	layerId,
 	overlayOptions,
@@ -32,6 +39,8 @@ const HoverControl: FC<HoverControlProps> = ({
 	const map = useMapStore((state) => state.map);
 	const overlayRef = useRef<HTMLDivElement>(null);
 	const overlaySizeRef = useRef({ width: 0, height: 0 });
+	const showTimeoutRef = useRef<number | null>(null);
+	const hideTimeoutRef = useRef<number | null>(null);
 
 	const [features, setFeatures] = useState<any>();
 	const [cardPosition, setCardPosition] =
@@ -39,7 +48,52 @@ const HoverControl: FC<HoverControlProps> = ({
 	const [overlayReady, setOverlayReady] = useState(false);
 	const [isVisible, setIsVisible] = useState(false);
 
-	// Memoized function to calculate the best position
+	const clearTimeouts = useCallback(() => {
+		if (showTimeoutRef.current) {
+			clearTimeout(showTimeoutRef.current as number);
+			showTimeoutRef.current = null;
+		}
+		if (hideTimeoutRef.current) {
+			clearTimeout(hideTimeoutRef.current as number);
+			hideTimeoutRef.current = null;
+		}
+	}, []);
+
+	const hideOverlay = useCallback(
+		(overlay: Overlay, immediate = false) => {
+			clearTimeouts();
+
+			if (immediate) {
+				overlay.setPosition(undefined);
+				setFeatures(undefined);
+				setIsVisible(false);
+			} else {
+				setIsVisible(false);
+				hideTimeoutRef.current = setTimeout(() => {
+					overlay.setPosition(undefined);
+					setFeatures(undefined);
+				}, 200) as unknown as number;
+			}
+		},
+		[clearTimeouts],
+	);
+
+	const showOverlay = useCallback(
+		(overlay: Overlay, coordinate: any, feature: any) => {
+			clearTimeouts();
+
+			overlay.setPosition(coordinate);
+			if (features !== feature) {
+				setFeatures(feature);
+			}
+
+			showTimeoutRef.current = setTimeout(() => {
+				setIsVisible(true);
+			}, 50) as unknown as number;
+		},
+		[clearTimeouts, features],
+	);
+
 	const calculatePositioning = useCallback(
 		(pixel: [number, number]): OverlayPositioning => {
 			if (!map) return "top-left";
@@ -49,17 +103,14 @@ const HoverControl: FC<HoverControlProps> = ({
 
 			const { width: overlayWidth, height: overlayHeight } =
 				overlaySizeRef.current;
-
 			if (overlayWidth === 0 || overlayHeight === 0) return cardPosition;
 
 			const [mapWidth, mapHeight] = mapSize;
 			const [pixelX, pixelY] = pixel;
 			const buffer = 10;
 
-			// Only use corner positions - no center options
 			const vertical: "top" | "bottom" =
 				pixelY + overlayHeight + buffer > mapHeight ? "bottom" : "top";
-
 			const horizontal: "left" | "right" =
 				pixelX + overlayWidth + buffer > mapWidth ? "right" : "left";
 
@@ -68,24 +119,36 @@ const HoverControl: FC<HoverControlProps> = ({
 		[map, cardPosition],
 	);
 
+	const updateOverlaySize = useCallback(() => {
+		if (!overlayRef.current) return;
+
+		requestAnimationFrame(() => {
+			const rect = overlayRef.current?.getBoundingClientRect();
+			if (rect) {
+				overlaySizeRef.current = { width: rect.width, height: rect.height };
+				setOverlayReady(true);
+			}
+		});
+	}, []);
+
 	useEffect(() => {
 		if (!map || !overlayRef.current) return;
 
+		const cardOffset = POSITION_OFFSETS[cardPosition];
 		const overlay = new Overlay({
 			element: overlayRef.current,
 			id: "HoverControl-root",
 			positioning: cardPosition,
+			offset: cardOffset,
 			...overlayOptions,
 		});
 
-		map.addOverlay(overlay); // Attach once
+		map.addOverlay(overlay);
 
 		const handlePointerMove = (evt: any) => {
 			const zoom = Math.max(0, map.getView().getZoom() ?? 0);
 			if (zoom < minZoomForHover) {
-				overlay.setPosition(undefined);
-				setFeatures(undefined);
-				setIsVisible(false);
+				hideOverlay(overlay, true);
 				return;
 			}
 
@@ -111,24 +174,16 @@ const HoverControl: FC<HoverControlProps> = ({
 			});
 
 			if (matchedFeature) {
-				overlay.setPosition(coordinate);
-				if (features !== matchedFeature) {
-					setFeatures(matchedFeature);
-				}
-				setIsVisible(true);
+				showOverlay(overlay, coordinate, matchedFeature);
 			} else {
-				overlay.setPosition(undefined);
-				setFeatures(undefined);
-				setIsVisible(false);
+				hideOverlay(overlay);
 			}
 		};
 
 		const handleZoomChange = () => {
 			const zoom = Math.max(0, map.getView().getZoom() ?? 0);
 			if (zoom < minZoomForHover) {
-				overlay.setPosition(undefined);
-				setFeatures(undefined);
-				setIsVisible(false);
+				hideOverlay(overlay, true);
 			}
 		};
 
@@ -136,6 +191,7 @@ const HoverControl: FC<HoverControlProps> = ({
 		map.getView().on("change:resolution", handleZoomChange);
 
 		return () => {
+			clearTimeouts();
 			map.un("pointermove", handlePointerMove);
 			map.getView().un("change:resolution", handleZoomChange);
 			map.removeOverlay(overlay);
@@ -148,22 +204,12 @@ const HoverControl: FC<HoverControlProps> = ({
 		calculatePositioning,
 		features,
 		minZoomForHover,
+		hideOverlay,
+		showOverlay,
+		clearTimeouts,
 	]);
 
-	useEffect(() => {
-		if (!overlayRef.current) return;
-
-		requestAnimationFrame(() => {
-			const rect = overlayRef.current?.getBoundingClientRect();
-			if (rect) {
-				overlaySizeRef.current = {
-					width: rect.width,
-					height: rect.height,
-				};
-				setOverlayReady(true);
-			}
-		});
-	}, [features]);
+	useEffect(updateOverlaySize, [features, updateOverlaySize]);
 
 	useEffect(() => {
 		const observer = new ResizeObserver((entries) => {
@@ -182,7 +228,7 @@ const HoverControl: FC<HoverControlProps> = ({
 
 	return (
 		<div
-			className={`HoverControl-root`}
+			className="HoverControl-root"
 			ref={overlayRef}
 			style={{
 				visibility: overlayReady ? "visible" : "hidden",
