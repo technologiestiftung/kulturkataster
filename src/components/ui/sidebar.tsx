@@ -178,7 +178,7 @@ function Sidebar({
 					data-sidebar="sidebar"
 					data-slot="sidebar"
 					data-mobile="true"
-					className="bg-background text-sidebar-foreground w-full h-[calc(100vh-5rem)] p-0 [&>button]:hidden rounded-t-4 bottom-20"
+					className="bg-background text-sidebar-foreground w-full h-[calc(100dvh-8rem)] p-0 [&>button]:hidden rounded-t-4 bottom-20"
 					side="bottom"
 				>
 					<SheetHeader className="sr-only">
