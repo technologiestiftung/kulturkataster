@@ -31,29 +31,38 @@ const DistrictTags: FC<{
 	districts: District[];
 	selected: string[];
 	onChange: (key: string) => void;
-}> = ({ districts, selected, onChange }) => (
-	<div className="flex flex-wrap gap-2 mb-4">
-		{districts.map((district) => {
-			const isSelected = selected.includes(district.key);
-			return (
-				<Button
-					key={district.key}
-					variant="tag"
-					size="tag"
-					className={isSelected ? "bg-neutral-80 text-white" : ""}
-					onClick={() => onChange(district.key)}
-				>
-					{district.name}
-					{isSelected && (
-						<span className="ml-0 w-full">
-							<Close size={4} viewBox="0 0 24 24" />
-						</span>
-					)}
-				</Button>
-			);
-		})}
-	</div>
-);
+}> = ({ districts, selected, onChange }) => {
+	const { t: tEnum } = useTranslation("enumMap");
+
+	return (
+		<div className="flex flex-wrap gap-2 mb-4">
+			{districts.map((district) => {
+				const isSelected = selected.includes(district.key);
+				const translatedName =
+					tEnum(`berlin_district.${district.key}`) ||
+					district.name ||
+					district.key;
+
+				return (
+					<Button
+						key={district.key}
+						variant="tag"
+						size="tag"
+						className={isSelected ? "bg-neutral-80 text-white" : ""}
+						onClick={() => onChange(district.key)}
+					>
+						{translatedName}
+						{isSelected && (
+							<span className="ml-0 w-full">
+								<Close size={4} viewBox="0 0 24 24" />
+							</span>
+						)}
+					</Button>
+				);
+			})}
+		</div>
+	);
+};
 
 // Category section with collapsible subcategories
 const CategorySection: FC<{
@@ -78,6 +87,7 @@ const CategorySection: FC<{
 	getSubcategoryCount,
 }) => {
 	const IconComponent = getCategoryIconComponent(group.key as CategoryType);
+	const { t: tEnum } = useTranslation("enumMap");
 
 	// Determine checkbox state for category
 	const selectedSubcategoriesInGroup = group.subcategories.filter((sub) =>
@@ -92,6 +102,8 @@ const CategorySection: FC<{
 	const isIndeterminate =
 		!categorySelected && someSubcategoriesSelected && !allSubcategoriesSelected;
 
+	const translatedCategoryName = tEnum(`category.${group.key}`) || group.key;
+
 	return (
 		<Collapsible open={isOpen} onOpenChange={onToggle}>
 			<div className="flex items-center gap-2 justify-between w-full p-2 rounded">
@@ -102,7 +114,7 @@ const CategorySection: FC<{
 							<IconComponent />
 						</div>
 						<div className="body2 text-left">
-							<span className="font-bold">{group.name}</span>
+							<span className="font-bold">{translatedCategoryName}</span>
 							<span className="pl-2">({getCategoryCount(group.key)})</span>
 						</div>
 					</button>
@@ -112,7 +124,7 @@ const CategorySection: FC<{
 					<Checkbox
 						checked={isChecked}
 						onCheckedChange={() => onCategoryChange(group.key)}
-						aria-label={`Checkbox ${group.name}`}
+						aria-label={`Checkbox ${translatedCategoryName}`}
 						className={`w-4 h-4 ${isIndeterminate ? "border-primary-dark" : ""}`}
 					/>
 					{isIndeterminate && (
@@ -124,23 +136,29 @@ const CategorySection: FC<{
 			</div>
 
 			<CollapsibleContent className="pl-16 pr-2 space-y-1">
-				{group.subcategories.map((subcategory) => (
-					<div
-						key={subcategory.key}
-						className="flex items-center gap-2 justify-between py-1 w-full"
-					>
-						<span className="body2 w-full">
-							{subcategory.name} ({getSubcategoryCount(subcategory.key)})
-						</span>
+				{group.subcategories.map((subcategory) => {
+					const translatedSubcategoryName =
+						tEnum(`subcategory.${subcategory.key}`) || subcategory.key;
 
-						<div className="relative w-6 h-6 flex items-center justify-center">
-							<Checkbox
-								checked={selectedSubcategories.includes(subcategory.key)}
-								onCheckedChange={() => onSubcategoryChange(subcategory.key)}
-							/>
+					return (
+						<div
+							key={subcategory.key}
+							className="flex items-center gap-2 justify-between py-1 w-full"
+						>
+							<span className="body2 w-full">
+								{translatedSubcategoryName} (
+								{getSubcategoryCount(subcategory.key)})
+							</span>
+
+							<div className="relative w-6 h-6 flex items-center justify-center">
+								<Checkbox
+									checked={selectedSubcategories.includes(subcategory.key)}
+									onCheckedChange={() => onSubcategoryChange(subcategory.key)}
+								/>
+							</div>
 						</div>
-					</div>
-				))}
+					);
+				})}
 			</CollapsibleContent>
 		</Collapsible>
 	);
