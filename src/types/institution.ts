@@ -10,6 +10,7 @@ export interface Institution {
 	district?: { name: string };
 	neighbourhood?: { name: string };
 	case?: string;
+	latlong: string;
 	st_asgeojson?: string;
 }
 
@@ -85,6 +86,22 @@ export interface ParentOrganization {
 	name: string;
 }
 
+export interface CulturalArea {
+	id: number;
+	name: string;
+}
+
+export interface Owner {
+	id: number;
+	name: string;
+	owner_type: string;
+}
+
+export interface Source {
+	id: number;
+	name: string;
+}
+
 export interface InstitutionProperties {
 	id: number;
 	name: string;
@@ -99,10 +116,12 @@ export interface InstitutionProperties {
 	categories: Category[];
 	district: DistrictProperty;
 	district_id: number;
+	address_suffix: string;
 	street_number: string;
 	subcategories: Subcategory[];
 	funding_sources: unknown[];
 	established_since: string;
+	established_until: string;
 	shared_use_allowed: boolean;
 	utilization_status: string;
 	parent_organizations: ParentOrganization[];
@@ -112,6 +131,10 @@ export interface InstitutionProperties {
 	capacity?: number;
 	rooms_count?: number;
 	updated_at?: string;
+	cultural_area?: CulturalArea;
+	owner?: Owner;
+	source?: Source;
+	closing_reason?: string;
 }
 
 export interface InstitutionFeature extends InstitutionProperties {
