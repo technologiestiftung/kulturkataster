@@ -322,7 +322,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 					collapsible="none"
 					className="flex-1 h-full group-data-[collapsible=icon]:hidden"
 				>
-					<SidebarHeader className="gap-3.5 p-6 shadow-sm md:shadow-none z-10 sticky top-0 bg-sidebar">
+					<SidebarHeader className="gap-3.5 p-6 shadow-sm md:shadow-none z-10">
 						<div className="md:hidden flex justify-center pb-2">
 							<div className="w-10 h-1 bg-muted-foreground/30 rounded-full"></div>
 						</div>
@@ -357,11 +357,11 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 							</button>
 						</div>
 					</SidebarHeader>
-					<SidebarContent className="overflow-hidden">
+					<SidebarContent>
 						<SidebarGroup className="px-0 h-full">
-							<SidebarGroupContent className="h-full">
-								<div className="min-h-full flex flex-col h-full overflow-auto">
-									<div className="flex-1">
+							<SidebarGroupContent className="h-full overflow-auto">
+								<div className="min-h-full flex flex-col">
+									<div className="flex-1 h-full flex">
 										{activeItem === "filter" && <FilterContent />}
 										{activeItem === "search" && <SearchContent />}
 										{activeItem === "accessibility" && (
