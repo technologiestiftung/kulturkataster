@@ -96,6 +96,7 @@ const LayerThumbnail = memo<{
 					width={size}
 					height={size}
 					className="w-full h-full object-cover"
+					loading={layer.visibility ? "eager" : "lazy"}
 					onError={() => setImageError(true)}
 				/>
 			) : (
@@ -348,7 +349,7 @@ const LayerTree: FC = () => {
 
 	return (
 		<Card
-			className={`flex w-full md:w-[400px] max-h-[70vh] absolute bottom-4 z-50 flex-col bg-neutral-5 transition-all duration-200 left-4`}
+			className={`flex w-full md:w-[400px] max-h-[70vh] absolute  bottom-4 z-50 flex-col bg-neutral-5 transition-all duration-200 left-4`}
 			role="dialog"
 			aria-label={t("map.layerTreeTitle")}
 		>
@@ -368,7 +369,7 @@ const LayerTree: FC = () => {
 					</Button>
 				</div>
 			</CardHeader>
-			<CardContent className="p-2">
+			<CardContent className="p-2 overflow-auto">
 				<LayerTreeContent layers={subjectLayers} />
 			</CardContent>
 		</Card>
@@ -409,7 +410,7 @@ export const LayerTreeContent: FC<{
 			collapsible
 			value={openLegendLayerId}
 			onValueChange={handleAccordionChange}
-			className="flex flex-col gap-2 overflow-y-auto max-h-[60vh]"
+			className="flex flex-col gap-2 overflow-y-auto"
 			role="list"
 			aria-label={t("map.availableLayers")}
 		>
