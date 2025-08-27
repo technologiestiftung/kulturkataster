@@ -98,8 +98,8 @@ export function WelcomeModal({ open, onOpenChange }: WelcomeModalProps) {
 									</p>
 								</div>
 								<div className="flex md:w-1/2 md:justify-end justify-around gap-2 space-x-4 md:mx-4">
-									<KRBLogo className="w-20 md:w-24 h-auto" />
-									<SenateLogo className="w-32 md:w-42 h-auto" />
+									<KRBLogo className="w-20 md:w-24 h-auto bg-white" />
+									<SenateLogo className="w-32 md:w-42 h-auto bg-white" />
 								</div>
 							</div>
 						</div>
