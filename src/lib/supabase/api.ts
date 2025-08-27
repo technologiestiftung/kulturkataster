@@ -136,8 +136,6 @@ async function getCategoryMap() {
 		)
 		.order("id");
 
-	console.log("categories", JSON.stringify(categories, null, 2));
-
 	return categories || [];
 }
 
