@@ -40,7 +40,7 @@ export type Category = Database["public"]["Tables"]["category"]["Row"] & {
 
 export type Subcategory = Database["public"]["Tables"]["subcategory"]["Row"];
 
-export type CategoryType = Database["public"]["Enums"]["category_key_enum"];
+export type CategoryType = Database["public"]["Enums"]["category_key_enum"] | "multi_categories";
 
 export const CategoryKeys = {
 	STUDIOS: "studios",
