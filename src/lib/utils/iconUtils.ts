@@ -67,7 +67,7 @@ export const CATEGORY_ICON_COMPONENTS: Partial<
 	[CategoryKeys.PERFORMING_ARTS_VENUES]: PerformingArtsVenuesIcon,
 	[CategoryKeys.GRAFFITI_AREAS]: GraffitiAreasIcon,
 	[CategoryKeys.OTHER]: PlaceholderIcon,
-	// [CategoryKeys.MULTI_CATEGORIES]: MultiCategoriesIcon,
+	[CategoryKeys.MULTI_CATEGORIES]: MultiCategoriesIcon,
 };
 
 const CATEGORY_ICON_RAW_SVG: Partial<Record<CategoryType, string>> = {
@@ -88,7 +88,7 @@ const CATEGORY_ICON_RAW_SVG: Partial<Record<CategoryType, string>> = {
 	[CategoryKeys.PERFORMING_ARTS_VENUES]: performingArtsVenuesRaw,
 	[CategoryKeys.GRAFFITI_AREAS]: graffitiAreasRaw,
 	[CategoryKeys.OTHER]: placeholderRaw,
-	// [CategoryKeys.MULTI_CATEGORIES]: multiCategoriesRaw,
+	[CategoryKeys.MULTI_CATEGORIES]: multiCategoriesRaw,
 };
 
 export function getCategoryIconComponent(

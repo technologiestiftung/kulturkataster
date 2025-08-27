@@ -8,6 +8,10 @@ import EyeOff from "@/icons/eye-off.svg";
 import Eye from "@/icons/eye.svg";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import {
+	getSortedSubcategories,
+	getSortedCategories,
+} from "@/lib/utils/filterUtils";
+import {
 	Category,
 	Subcategory,
 	District,
@@ -60,6 +64,8 @@ const CategorySection: FC<{
 	onSubcategoryChange: (key: string) => void;
 	getCategoryCount: (category: Category) => number;
 	getSubcategoryCount: (subcategory: Subcategory, category: Category) => number;
+	collator: Intl.Collator;
+	tEnum: (key: string) => string;
 }> = ({
 	category,
 	selectedCategories,
@@ -70,12 +76,12 @@ const CategorySection: FC<{
 	onSubcategoryChange,
 	getCategoryCount,
 	getSubcategoryCount,
+	collator,
+	tEnum,
 }) => {
 	const IconComponent = getCategoryIconComponent(category.key as CategoryType);
 	const { t } = useTranslation(["enumMap"]);
 
-	// Determine checkbox state for category
-	console.log("selectedSubcategories", selectedSubcategories, category);
 	const selectedSubcategoriesInGroup = category.subcategory.filter((sub) =>
 		selectedSubcategories.includes(sub.key),
 	);
@@ -88,58 +94,70 @@ const CategorySection: FC<{
 	const isIndeterminate =
 		!categorySelected && someSubcategoriesSelected && !allSubcategoriesSelected;
 
+	const categoryCount = getCategoryCount(category);
+
 	return (
-		<Collapsible open={isOpen} onOpenChange={onToggle}>
-			<div className="flex items-center gap-2 justify-between w-full p-2 rounded">
-				<CollapsibleTrigger asChild>
-					<button className="flex items-center gap-2 w-full">
-						{isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-						<div className="w-6 h-6">
-							<IconComponent />
-						</div>
-						<div className="body2 text-left">
-							<span className="font-bold">{t(`category.${category.key}`)}</span>
-							<span className="pl-2">({getCategoryCount(category)})</span>
-						</div>
-					</button>
-				</CollapsibleTrigger>
-
-				<div className="relative w-6 h-6 flex items-center justify-center">
-					<Checkbox
-						checked={isChecked}
-						onCheckedChange={() => onCategoryChange(category.key)}
-						aria-label={`Checkbox ${category.key}`}
-						className={`w-4 h-4 ${isIndeterminate ? "border-primary-dark" : ""}`}
-					/>
-					{isIndeterminate && (
-						<div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-							<Minus size={10} className="text-primary-dark" />
-						</div>
-					)}
-				</div>
-			</div>
-
-			<CollapsibleContent className="pl-16 pr-2 space-y-1">
-				{category.subcategory.map((subcategory) => (
-					<div
-						key={subcategory.key}
-						className="flex items-center gap-2 justify-between py-1 w-full"
-					>
-						<span className="body2 w-full">
-							{t(`subcategory.${subcategory.key}`)} (
-							{getSubcategoryCount(subcategory, category)})
-						</span>
+		<>
+			{categoryCount > 0 && (
+				<Collapsible open={isOpen} onOpenChange={onToggle}>
+					<div className="flex items-center gap-2 justify-between w-full p-2 rounded">
+						<CollapsibleTrigger asChild>
+							<button className="flex items-center gap-2 w-full">
+								{isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+								<div className="w-6 h-6">
+									<IconComponent />
+								</div>
+								<div className="body2 text-left">
+									<span className="font-bold">
+										{t(`category.${category.key}`)}
+									</span>
+									<span className="pl-2">({categoryCount})</span>
+								</div>
+							</button>
+						</CollapsibleTrigger>
 
 						<div className="relative w-6 h-6 flex items-center justify-center">
 							<Checkbox
-								checked={selectedSubcategories.includes(subcategory.key)}
-								onCheckedChange={() => onSubcategoryChange(subcategory.key)}
+								checked={isChecked}
+								onCheckedChange={() => onCategoryChange(category.key)}
+								aria-label={`Checkbox ${category.key}`}
+								className={`w-4 h-4 ${isIndeterminate ? "border-primary-dark" : ""}`}
 							/>
+							{isIndeterminate && (
+								<div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+									<Minus size={10} className="text-primary-dark" />
+								</div>
+							)}
 						</div>
 					</div>
-				))}
-			</CollapsibleContent>
-		</Collapsible>
+
+					<CollapsibleContent className="pl-16 pr-2 space-y-1">
+						{getSortedSubcategories(
+							category,
+							collator,
+							tEnum,
+							(subcategory) => getSubcategoryCount(subcategory, category) > 0,
+						).map((subcategory) => (
+							<div
+								key={subcategory.key}
+								className="flex items-center gap-2 justify-between py-1 w-full"
+							>
+								<span className="body2 w-full">
+									{t(`subcategory.${subcategory.key}`)} (
+									{getSubcategoryCount(subcategory, category)})
+								</span>
+								<div className="relative w-6 h-6 flex items-center justify-center">
+									<Checkbox
+										checked={selectedSubcategories.includes(subcategory.key)}
+										onCheckedChange={() => onSubcategoryChange(subcategory.key)}
+									/>
+								</div>
+							</div>
+						))}
+					</CollapsibleContent>
+				</Collapsible>
+			)}
+		</>
 	);
 };
 
@@ -152,10 +170,25 @@ const Filter: FC = () => {
 		originalInstitutions,
 	} = useInstitutionStore();
 	const { categoryGroups, districts, loading, error, retry } = useFilterData();
-	const { t } = useTranslation(["content", "common"]);
+	const { t, i18n } = useTranslation(["content", "common"]);
+	const { t: tEnum } = useTranslation(["enumMap"]);
 	const [openSections, setOpenSections] = useState<string[]>([]);
 
-	const isInstitutionFiltered = (
+	const collator = useMemo(
+		() =>
+			new Intl.Collator(i18n.language, { numeric: true, sensitivity: "base" }),
+		[i18n.language],
+	);
+
+	const districtIdToKeyMap = useMemo(() => {
+		const map = new Map<number, string>();
+		districts.forEach((district: District) => {
+			map.set(district.id, district.key);
+		});
+		return map;
+	}, [districts]);
+
+	const matchesDistrictFilter = (
 		properties: InstitutionProperties,
 	): boolean => {
 		if (!filters) return false;
@@ -498,20 +531,24 @@ const Filter: FC = () => {
 					</button>
 				</div>
 				<div className="space-y-2">
-					{categoryGroups.map((category) => (
-						<CategorySection
-							key={category.key}
-							category={category}
-							selectedCategories={filters?.category_keys || []}
-							selectedSubcategories={filters?.subcategory_keys || []}
-							isOpen={openSections.includes(category.key)}
-							onToggle={() => toggleSection(category.key)}
-							onCategoryChange={toggleCategory}
-							onSubcategoryChange={toggleSubcategory}
-							getCategoryCount={getCategoryCount}
-							getSubcategoryCount={getSubcategoryCount}
-						/>
-					))}
+					{getSortedCategories(categoryGroups, collator, tEnum).map(
+						(category) => (
+							<CategorySection
+								key={category.key}
+								category={category}
+								selectedCategories={filters?.category_keys || []}
+								selectedSubcategories={filters?.subcategory_keys || []}
+								isOpen={openSections.includes(category.key)}
+								onToggle={() => toggleSection(category.key)}
+								onCategoryChange={toggleCategory}
+								onSubcategoryChange={toggleSubcategory}
+								getCategoryCount={getCategoryCount}
+								getSubcategoryCount={getSubcategoryCount}
+								collator={collator}
+								tEnum={tEnum}
+							/>
+						),
+					)}
 				</div>
 			</ContentContainer>
 		</div>
