@@ -1,4 +1,4 @@
-import { FilterState, InstitutionProperties } from "@/types";
+import { FilterState } from "@/types";
 
 export const hasActiveFilters = (filters: FilterState | null): boolean => {
 	if (!filters) return false;

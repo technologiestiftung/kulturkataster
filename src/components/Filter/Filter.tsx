@@ -8,15 +8,142 @@ import EyeOff from "@/icons/eye-off.svg";
 import Eye from "@/icons/eye.svg";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import {
-	matchesDistrictFilter,
-	matchesSubcategoryFilter,
-} from "@/lib/utils/filterUtils";
-import { FilterState, InstitutionProperties } from "@/types";
-import { FC, useState } from "react";
+	Category,
+	Subcategory,
+	District,
+	FilterState,
+	InstitutionProperties,
+	CategoryType,
+} from "@/types";
+import { ChevronDown, ChevronUp, Minus } from "lucide-react";
+import { FC, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useFilterData } from "./hooks/useFilterData";
 
-// eslint-disable-next-line complexity
+// Simple district filter component
+const DistrictTags: FC<{
+	districts: District[];
+	selected: string[];
+	onChange: (key: string) => void;
+}> = ({ districts, selected, onChange }) => (
+	<div className="flex flex-wrap gap-2 mb-4">
+		{districts.map((district) => {
+			const isSelected = selected.includes(district.key);
+			return (
+				<Button
+					key={district.key}
+					variant="tag"
+					size="tag"
+					className={isSelected ? "bg-neutral-80 text-white" : ""}
+					onClick={() => onChange(district.key)}
+				>
+					{district.name}
+					{isSelected && (
+						<span className="ml-0 w-full">
+							<Close size={4} viewBox="0 0 24 24" />
+						</span>
+					)}
+				</Button>
+			);
+		})}
+	</div>
+);
+
+// Category section with collapsible subcategories
+const CategorySection: FC<{
+	category: Category;
+	selectedCategories: string[];
+	selectedSubcategories: string[];
+	isOpen: boolean;
+	onToggle: () => void;
+	onCategoryChange: (key: string) => void;
+	onSubcategoryChange: (key: string) => void;
+	getCategoryCount: (category: Category) => number;
+	getSubcategoryCount: (subcategory: Subcategory, category: Category) => number;
+}> = ({
+	category,
+	selectedCategories,
+	selectedSubcategories,
+	isOpen,
+	onToggle,
+	onCategoryChange,
+	onSubcategoryChange,
+	getCategoryCount,
+	getSubcategoryCount,
+}) => {
+	const IconComponent = getCategoryIconComponent(category.key as CategoryType);
+	const { t } = useTranslation(["enumMap"]);
+
+	// Determine checkbox state for category
+	console.log("selectedSubcategories", selectedSubcategories, category);
+	const selectedSubcategoriesInGroup = category.subcategory.filter((sub) =>
+		selectedSubcategories.includes(sub.key),
+	);
+	const allSubcategoriesSelected =
+		selectedSubcategoriesInGroup.length === category.subcategory.length;
+	const someSubcategoriesSelected = selectedSubcategoriesInGroup.length > 0;
+	const categorySelected = selectedCategories.includes(category.key);
+
+	const isChecked = categorySelected || allSubcategoriesSelected;
+	const isIndeterminate =
+		!categorySelected && someSubcategoriesSelected && !allSubcategoriesSelected;
+
+	return (
+		<Collapsible open={isOpen} onOpenChange={onToggle}>
+			<div className="flex items-center gap-2 justify-between w-full p-2 rounded">
+				<CollapsibleTrigger asChild>
+					<button className="flex items-center gap-2 w-full">
+						{isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+						<div className="w-6 h-6">
+							<IconComponent />
+						</div>
+						<div className="body2 text-left">
+							<span className="font-bold">{t(`category.${category.key}`)}</span>
+							<span className="pl-2">({getCategoryCount(category)})</span>
+						</div>
+					</button>
+				</CollapsibleTrigger>
+
+				<div className="relative w-6 h-6 flex items-center justify-center">
+					<Checkbox
+						checked={isChecked}
+						onCheckedChange={() => onCategoryChange(category.key)}
+						aria-label={`Checkbox ${category.key}`}
+						className={`w-4 h-4 ${isIndeterminate ? "border-primary-dark" : ""}`}
+					/>
+					{isIndeterminate && (
+						<div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+							<Minus size={10} className="text-primary-dark" />
+						</div>
+					)}
+				</div>
+			</div>
+
+			<CollapsibleContent className="pl-16 pr-2 space-y-1">
+				{category.subcategory.map((subcategory) => (
+					<div
+						key={subcategory.key}
+						className="flex items-center gap-2 justify-between py-1 w-full"
+					>
+						<span className="body2 w-full">
+							{t(`subcategory.${subcategory.key}`)} (
+							{getSubcategoryCount(subcategory, category)})
+						</span>
+
+						<div className="relative w-6 h-6 flex items-center justify-center">
+							<Checkbox
+								checked={selectedSubcategories.includes(subcategory.key)}
+								onCheckedChange={() => onSubcategoryChange(subcategory.key)}
+							/>
+						</div>
+					</div>
+				))}
+			</CollapsibleContent>
+		</Collapsible>
+	);
+};
+
+// Main Filter Component
 const Filter: FC = () => {
 	const {
 		setFilters,
@@ -47,7 +174,7 @@ const Filter: FC = () => {
 		return true;
 	};
 
-	const getCategoryCount = (categoryKey: string): number => {
+	const getCategoryCount = (category: Category): number => {
 		if (!originalInstitutions?.features || !filters) return 0;
 
 		return originalInstitutions.features.filter((feature) => {
@@ -55,7 +182,7 @@ const Filter: FC = () => {
 			if (!properties) return false;
 
 			const matchesCategory = properties.categories?.some(
-				(cat: { key: string }) => cat.key === categoryKey,
+				(cat: { key: string }) => cat.key === category.key,
 			);
 			if (!matchesCategory) return false;
 
@@ -63,14 +190,36 @@ const Filter: FC = () => {
 		}).length;
 	};
 
-	const getSubcategoryCount = (subcategoryKey: string): number => {
+	const institutionMatchesSubcategory = (
+		properties: InstitutionProperties,
+		subcategory: Subcategory,
+		category: Category,
+		// subcategoryKey: string,
+	): boolean => {
+		const hasExplicitCategory = properties.categories?.some(
+			(_category: Category) => _category.key === category.key,
+		);
+
+		const hasExplicitSubcategory = properties.subcategories?.some(
+			(_subcategory: Subcategory) => _subcategory.key === subcategory.key,
+		);
+
+		if (hasExplicitSubcategory && hasExplicitCategory) return true;
+
+		return false;
+	};
+
+	const getSubcategoryCount = (
+		subcategory: Subcategory,
+		category: Category,
+	): number => {
 		if (!originalInstitutions?.features || !filters) return 0;
 
 		return originalInstitutions.features.filter((feature) => {
 			const properties = feature.properties as InstitutionProperties;
 			if (!properties) return false;
 
-			if (!matchesSubcategoryFilter(properties, [subcategoryKey])) {
+			if (!institutionMatchesSubcategory(properties, subcategory, category)) {
 				return false;
 			}
 
@@ -103,12 +252,12 @@ const Filter: FC = () => {
 		if (!categoryGroup) return;
 
 		const isCategorySelected = filters.category_keys.includes(categoryKey);
-		const selectedSubcategoriesInGroup = categoryGroup.subcategories.filter(
-			(sub) => filters.subcategory_keys.includes(sub.key),
+		const selectedSubcategoriesInGroup = categoryGroup.subcategory.filter(
+			(subcategory: Subcategory) =>
+				filters.subcategory_keys.includes(subcategory.key),
 		);
 		const allSubcategoriesSelected =
-			selectedSubcategoriesInGroup.length ===
-			categoryGroup.subcategories.length;
+			selectedSubcategoriesInGroup.length === categoryGroup.subcategory.length;
 
 		if (
 			!(isCategorySelected || allSubcategoriesSelected) &&
@@ -122,7 +271,10 @@ const Filter: FC = () => {
 				(c) => c !== categoryKey,
 			);
 			const newSubcategories = filters.subcategory_keys.filter(
-				(s) => !categoryGroup.subcategories.some((sub) => sub.key === s),
+				(s) =>
+					!categoryGroup.subcategory.some(
+						(subcategory: Subcategory) => subcategory.key === s,
+					),
 			);
 
 			updateFilters({
@@ -131,12 +283,16 @@ const Filter: FC = () => {
 				subcategory_keys: newSubcategories,
 			});
 		} else {
-			const subcategoryKeysToAdd = categoryGroup.subcategories.map(
-				(sub) => sub.key,
+			// If category is not selected, select all subcategories (but not the category itself)
+			const subcategoryKeysToAdd = categoryGroup.subcategory.map(
+				(subcategory: Subcategory) => subcategory.key,
 			);
 			const newSubcategories = [
 				...filters.subcategory_keys.filter(
-					(s) => !categoryGroup.subcategories.some((sub) => sub.key === s),
+					(s) =>
+						!categoryGroup.subcategory.some(
+							(subcategory: Subcategory) => subcategory.key === s,
+						),
 				),
 				...subcategoryKeysToAdd,
 			];
@@ -157,7 +313,9 @@ const Filter: FC = () => {
 			: [...filters.subcategory_keys, subcategoryKey];
 
 		const parentCategory = categoryGroups.find((group) =>
-			group.subcategories.some((sub) => sub.key === subcategoryKey),
+			group.subcategory.some(
+				(subcategory: Subcategory) => subcategory.key === subcategoryKey,
+			),
 		);
 
 		let newCategories = filters.category_keys;
@@ -340,14 +498,14 @@ const Filter: FC = () => {
 					</button>
 				</div>
 				<div className="space-y-2">
-					{categoryGroups.map((group) => (
+					{categoryGroups.map((category) => (
 						<CategorySection
-							key={group.key}
-							group={group}
+							key={category.key}
+							category={category}
 							selectedCategories={filters?.category_keys || []}
 							selectedSubcategories={filters?.subcategory_keys || []}
-							isOpen={openSections.includes(group.key)}
-							onToggle={() => toggleSection(group.key)}
+							isOpen={openSections.includes(category.key)}
+							onToggle={() => toggleSection(category.key)}
 							onCategoryChange={toggleCategory}
 							onSubcategoryChange={toggleSubcategory}
 							getCategoryCount={getCategoryCount}
