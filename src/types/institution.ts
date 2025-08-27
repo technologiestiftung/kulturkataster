@@ -150,6 +150,7 @@ export interface FilterState {
 	category_keys: string[];
 	subcategory_keys: string[];
 	include_closed: boolean;
+	status: string | undefined; // e.g., "open", "closed", etc.
 }
 
 export interface InstitutionStoreState {
