@@ -161,6 +161,11 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			return;
 		}
 
+		// Clear selected institution when switching to a different menu item
+		if (selectedInstitutionId && itemName !== "institution-detail") {
+			setSelectedInstitutionId(null);
+		}
+
 		if (activeItem === itemName) {
 			if (isMobile) {
 				setOpenMobile(false);
@@ -369,7 +374,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 											<InstitutionDetailContent />
 										)}
 									</div>
-									{shouldShowDownloadButton() && (
+									{shouldShowDownloadButton() && false && (
 										<div className="sticky bottom-0 flex justify-center p-4">
 											<Button
 												variant={"outline"}
