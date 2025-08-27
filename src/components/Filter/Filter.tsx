@@ -7,7 +7,10 @@ import { Button } from "@/components/ui/button";
 import EyeOff from "@/icons/eye-off.svg";
 import Eye from "@/icons/eye.svg";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
-import { matchesDistrictFilter } from "@/lib/utils/filterUtils";
+import {
+	matchesDistrictFilter,
+	matchesSubcategoryFilter,
+} from "@/lib/utils/filterUtils";
 import { FilterState, InstitutionProperties } from "@/types";
 import { FC, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -24,6 +27,25 @@ const Filter: FC = () => {
 	const { t } = useTranslation(["content", "common"]);
 	const [openSections, setOpenSections] = useState<string[]>([]);
 
+	const isInstitutionFiltered = (
+		properties: InstitutionProperties,
+	): boolean => {
+		if (!filters) return false;
+
+		if (!matchesDistrictFilter(properties, filters.district_keys)) {
+			return false;
+		}
+
+		if (
+			!filters.include_closed &&
+			properties.utilization_status === "permanently_closed"
+		) {
+			return false;
+		}
+
+		return true;
+	};
+
 	const getCategoryCount = (categoryKey: string): number => {
 		if (!originalInstitutions?.features || !filters) return 0;
 
@@ -36,30 +58,8 @@ const Filter: FC = () => {
 			);
 			if (!matchesCategory) return false;
 
-			if (!matchesDistrictFilter(properties, filters.district_keys)) {
-				return false;
-			}
-
-			if (
-				!filters.include_closed &&
-				properties.utilization_status === "permanently_closed"
-			) {
-				return false;
-			}
-
-			return true;
+			return isInstitutionFiltered(properties);
 		}).length;
-	};
-
-	const institutionMatchesSubcategory = (
-		properties: InstitutionProperties,
-		subcategoryKey: string,
-	): boolean => {
-		const hasExplicitSubcategory = properties.subcategories?.some(
-			(subcat: { key: string }) => subcat.key === subcategoryKey,
-		);
-
-		return hasExplicitSubcategory || false;
 	};
 
 	const getSubcategoryCount = (subcategoryKey: string): number => {
@@ -69,22 +69,11 @@ const Filter: FC = () => {
 			const properties = feature.properties as InstitutionProperties;
 			if (!properties) return false;
 
-			if (!institutionMatchesSubcategory(properties, subcategoryKey)) {
+			if (!matchesSubcategoryFilter(properties, [subcategoryKey])) {
 				return false;
 			}
 
-			if (!matchesDistrictFilter(properties, filters.district_keys)) {
-				return false;
-			}
-
-			if (
-				!filters.include_closed &&
-				properties.utilization_status === "permanently_closed"
-			) {
-				return false;
-			}
-
-			return true;
+			return isInstitutionFiltered(properties);
 		}).length;
 	};
 
@@ -92,12 +81,6 @@ const Filter: FC = () => {
 		setFilters(newFilters);
 		await filterInstitutionsFrontend(newFilters);
 	};
-
-	// BE Filter to bring back:
-	// const updateFilters = (newFilters: FilterState) => {
-	// 	setFilters(newFilters);
-	// 	applyFilters();
-	// };
 
 	const toggleDistrict = (districtKey: string) => {
 		if (!filters) return;
