@@ -349,7 +349,7 @@ const LayerTree: FC = () => {
 
 	return (
 		<Card
-			className={`flex w-full md:w-[400px] max-h-[70vh] absolute bottom-4 z-50 flex-col bg-neutral-5 transition-all duration-200 left-4`}
+			className={`flex w-full md:w-[400px] max-h-[70vh] absolute  bottom-4 z-50 flex-col bg-neutral-5 transition-all duration-200 left-4`}
 			role="dialog"
 			aria-label={t("map.layerTreeTitle")}
 		>
@@ -369,7 +369,7 @@ const LayerTree: FC = () => {
 					</Button>
 				</div>
 			</CardHeader>
-			<CardContent className="p-2">
+			<CardContent className="p-2 overflow-auto">
 				<LayerTreeContent layers={subjectLayers} />
 			</CardContent>
 		</Card>
