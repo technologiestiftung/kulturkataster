@@ -165,6 +165,7 @@ const CategorySection: FC<{
 };
 
 // Main Filter Component
+// eslint-disable-next-line complexity
 const Filter: FC = () => {
 	const {
 		setFilters,
@@ -385,6 +386,15 @@ const Filter: FC = () => {
 		});
 	};
 
+	const setAllDistrictFilters = () => {
+		if (!filters) return;
+		const allDistrictKeys = districts.map((district) => district.key);
+		updateFilters({
+			...filters,
+			district_keys: allDistrictKeys,
+		});
+	};
+
 	const resetCategoryFilters = () => {
 		if (!filters) return;
 		updateFilters({
@@ -392,6 +402,30 @@ const Filter: FC = () => {
 			category_keys: [],
 			subcategory_keys: [],
 		});
+	};
+
+	const setAllCategoryFilters = () => {
+		if (!filters) return;
+		const allCategoryKeys = categoryGroups.map((group) => group.key);
+		const allSubcategoryKeys = categoryGroups.flatMap((group) =>
+			group.subcategories.map((sub) => sub.key),
+		);
+		updateFilters({
+			...filters,
+			category_keys: allCategoryKeys,
+			subcategory_keys: allSubcategoryKeys,
+		});
+	};
+
+	const hasActiveDistrictFilters = () => {
+		return filters?.district_keys && filters.district_keys.length > 0;
+	};
+
+	const hasActiveCategoryFilters = () => {
+		return (
+			(filters?.category_keys && filters.category_keys.length > 0) ||
+			(filters?.subcategory_keys && filters.subcategory_keys.length > 0)
+		);
 	};
 
 	if (loading) {
@@ -450,9 +484,15 @@ const Filter: FC = () => {
 					</h3>
 					<button
 						className="body2 font-light underline"
-						onClick={resetDistrictFilters}
+						onClick={
+							hasActiveDistrictFilters()
+								? resetDistrictFilters
+								: setAllDistrictFilters
+						}
 					>
-						{t("filter.districts.resetFilters", { ns: "content" })}
+						{hasActiveDistrictFilters()
+							? t("filter.districts.resetFilters", { ns: "content" })
+							: t("filter.districts.setAllFilters", { ns: "content" })}
 					</button>
 				</div>
 				<DistrictTags
@@ -470,9 +510,15 @@ const Filter: FC = () => {
 					</h3>
 					<button
 						className="body2 font-light underline"
-						onClick={resetCategoryFilters}
+						onClick={
+							hasActiveCategoryFilters()
+								? resetCategoryFilters
+								: setAllCategoryFilters
+						}
 					>
-						{t("filter.categories.resetFilters", { ns: "content" })}
+						{hasActiveCategoryFilters()
+							? t("filter.categories.resetFilters", { ns: "content" })
+							: t("filter.categories.setAllFilters", { ns: "content" })}
 					</button>
 				</div>
 				<div className="space-y-2">
