@@ -253,7 +253,7 @@ export function LocationSearch() {
 						value={query}
 						onChange={handleInputChange}
 						onKeyDown={handleKeyDown}
-						className="w-full bg-backround"
+						className="w-full bg-background"
 						icon={<Search className="w-5 h-5 text-foreground" />}
 						iconPosition="left"
 						aria-invalid={!!resultErrorMessage}
