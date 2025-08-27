@@ -4,10 +4,6 @@ import {
 	getCategoriesWithSubcategories,
 	getDistricts,
 } from "@/lib/supabase/api";
-import {
-	addCategoryTranslations,
-	addDistrictTranslations,
-} from "@/lib/utils/filterUtils";
 import { CategoryWithSubcategories, District } from "@/types";
 import { useCallback, useEffect, useState } from "react";
 export const useFilterData = () => {
@@ -26,8 +22,8 @@ export const useFilterData = () => {
 					getDistricts(),
 				]);
 
-				setCategoryGroups(addCategoryTranslations(categoriesData));
-				setDistricts(addDistrictTranslations(districtsData));
+				setCategoryGroups(categoriesData);
+				setDistricts(districtsData);
 			} catch (err) {
 				console.error("Error fetching filter data:", err);
 				setError("Failed to load filter data");
@@ -44,8 +40,8 @@ export const useFilterData = () => {
 		setError(null);
 		Promise.all([getCategoriesWithSubcategories(), getDistricts()])
 			.then(([categoriesData, districtsData]) => {
-				setCategoryGroups(addCategoryTranslations(categoriesData));
-				setDistricts(addDistrictTranslations(districtsData));
+				setCategoryGroups(categoriesData);
+				setDistricts(districtsData);
 			})
 			.catch((err) => {
 				console.error("Error fetching filter data:", err);
