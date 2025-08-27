@@ -59,21 +59,7 @@ const Filter: FC = () => {
 			(subcat: { key: string }) => subcat.key === subcategoryKey,
 		);
 
-		if (hasExplicitSubcategory) return true;
-
-		if (subcategoryKey.startsWith("others_")) {
-			const categoryKey = subcategoryKey.replace("others_", "");
-			const hasCategories = properties.categories?.length > 0;
-			const hasNoSubcategories =
-				!properties.subcategories || properties.subcategories.length === 0;
-			const hasMatchingCategory = properties.categories?.some(
-				(cat: { key: string }) => cat.key === categoryKey,
-			);
-
-			return hasCategories && hasNoSubcategories && hasMatchingCategory;
-		}
-
-		return false;
+		return hasExplicitSubcategory || false;
 	};
 
 	const getSubcategoryCount = (subcategoryKey: string): number => {
