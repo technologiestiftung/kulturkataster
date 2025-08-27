@@ -9,7 +9,8 @@
 		"lint": "next lint",
 		"prepare": "husky",
 		"format": "prettier --check './**/*.{js,jsx,ts,tsx,css,md,json}' --config ./.prettierrc",
-		"format:fix": "prettier --write './**/*.{js,jsx,ts,tsx,css,md,json}' --config ./.prettierrc"
+		"format:fix": "prettier --write './**/*.{js,jsx,ts,tsx,css,md,json}' --config ./.prettierrc",
+		"fetch-types:dev": "mkdir -p src/types && rm -rf temp-backend && git clone --depth 1 --branch dev git@github.com:technologiestiftung/kulturkataster-backend.git temp-backend && cp temp-backend/types/supabase.ts src/types/supabase.ts && rm -rf temp-backend"
 	},
 	"dependencies": {
 		"@radix-ui/react-accordion": "^1.2.11",

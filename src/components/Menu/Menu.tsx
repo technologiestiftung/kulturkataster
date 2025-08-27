@@ -356,7 +356,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 						<SidebarGroup className="px-0 h-full">
 							<SidebarGroupContent className="h-full overflow-auto">
 								<div className="min-h-full flex flex-col">
-									<div className="flex-1 h-full flex">
+									<div className="flex-1 h-full">
 										{activeItem === "filter" && <FilterContent />}
 										{activeItem === "search" && <SearchContent />}
 										{activeItem === "accessibility" && (
