@@ -146,11 +146,14 @@ function InstitutionBasicInfo({
 	institutionData: InstitutionProperties;
 }) {
 	const { t } = useTranslation("common");
-
+	const { t: tEnum } = useTranslation("enumMap");
 	return (
-		<div>
-			<address className="not-italic mb-4">
+		<div className="space-y-4 flex flex-col">
+			<address className="not-italic">
 				<p className="body1">{institutionData.name}</p>
+				{institutionData.address_suffix && (
+					<p className="body1">{institutionData.address_suffix}</p>
+				)}
 				{institutionData.street &&
 					institutionData.street_number &&
 					institutionData.zip_code && (
@@ -158,18 +161,17 @@ function InstitutionBasicInfo({
 							<p>
 								{institutionData.street} {institutionData.street_number}
 							</p>
-							<p>{institutionData.zip_code}</p>
+							<div className="flex flex-wrap space-x-2">
+								<p>{institutionData.zip_code}</p>
+								{institutionData.district_id && (
+									<p>{tEnum(`district_id.${institutionData.district_id}`)}</p>
+								)}
+							</div>
 						</div>
 					)}
 			</address>
 
 			<InfoSection>
-				{institutionData.description && (
-					<InfoItem label={t("institution.culturalArea")}>
-						{institutionData.description}
-					</InfoItem>
-				)}
-
 				{institutionData.website && (
 					<InfoItem label={t("institution.website")}>
 						<ContactLink href={institutionData.website} external>
@@ -198,8 +200,45 @@ function InstitutionBasicInfo({
 	);
 }
 
-// Extended info component
-function InstitutionExtendedInfo({
+// Organization info component
+function OrganizationInfo({
+	institutionData,
+}: {
+	institutionData: InstitutionProperties;
+}) {
+	const { t } = useTranslation("common");
+
+	return (
+		<InfoSection>
+			{institutionData.closing_reason && (
+				<InfoItem label={t("institution.closingReason")}>
+					{institutionData.closing_reason}
+				</InfoItem>
+			)}
+
+			{institutionData.cultural_area && (
+				<InfoItem label={t("institution.culturalArea")}>
+					{institutionData.cultural_area.name}
+				</InfoItem>
+			)}
+
+			{institutionData.owner && (
+				<InfoItem label={t("institution.owner")}>
+					{institutionData.owner.name}
+				</InfoItem>
+			)}
+
+			{institutionData.source && (
+				<InfoItem label={t("institution.source")}>
+					{institutionData.source.name}
+				</InfoItem>
+			)}
+		</InfoSection>
+	);
+}
+
+// Funding info component
+function FundingInfo({
 	institutionData,
 }: {
 	institutionData: InstitutionProperties;
@@ -208,60 +247,96 @@ function InstitutionExtendedInfo({
 	const { t: tEnum } = useTranslation("enumMap");
 
 	return (
-		<div className="space-y-4">
-			<InfoSection>
-				{institutionData.funding_type && (
-					<InfoItem label={t("institution.fundingType")}>
-						{tEnum(`funding_type.${institutionData.funding_type}`)}
-					</InfoItem>
-				)}
-				{institutionData.support_type && (
-					<InfoItem label={t("institution.supportType")}>
-						{institutionData.support_type}
-					</InfoItem>
-				)}
-				{institutionData.district_id && (
-					<InfoItem label={t("institution.district")}>
-						{tEnum(`district_id.${institutionData.district_id}`)}
-					</InfoItem>
-				)}
-			</InfoSection>
-
-			<InfoSection>
-				{institutionData.capacity && (
-					<InfoItem label={t("institution.usableAreaSize")}>
-						{institutionData.capacity}
-					</InfoItem>
-				)}
-				{institutionData.rooms_count && (
-					<InfoItem label={t("institution.workspaceCount")}>
-						{institutionData.rooms_count}
-					</InfoItem>
-				)}
-				<InfoItem label={t("institution.multipleUse")}>
-					{institutionData.shared_use_allowed
-						? t("institution.multipleUsePossible")
-						: t("institution.multipleUseNotPossible")}
+		<InfoSection>
+			{institutionData.funding_type && (
+				<InfoItem label={t("institution.fundingType")}>
+					{tEnum(`funding_type.${institutionData.funding_type}`)}
 				</InfoItem>
-				{institutionData.shared_use_allowed && (
-					<InfoItem label={t("institution.description")}>
-						{t("institution.multipleUseDescription")}
-					</InfoItem>
-				)}
-				{institutionData.established_since && (
-					<InfoItem label={t("institution.establishedSince")}>
-						{new Date(institutionData.established_since).getFullYear()}
-					</InfoItem>
-				)}
-			</InfoSection>
+			)}
+			{institutionData.support_type && (
+				<InfoItem label={t("institution.supportType")}>
+					{institutionData.support_type}
+				</InfoItem>
+			)}
+		</InfoSection>
+	);
+}
 
-			<InfoSection>
-				{institutionData.updated_at && (
-					<InfoItem label={t("institution.status")}>
-						{institutionData.updated_at}
-					</InfoItem>
-				)}
-			</InfoSection>
+// Facility info component
+function FacilityInfo({
+	institutionData,
+}: {
+	institutionData: InstitutionProperties;
+}) {
+	const { t } = useTranslation("common");
+
+	return (
+		<InfoSection>
+			{institutionData.capacity && (
+				<InfoItem label={t("institution.usableAreaSize")}>
+					{institutionData.capacity}
+				</InfoItem>
+			)}
+			{institutionData.rooms_count && (
+				<InfoItem label={t("institution.workspaceCount")}>
+					{institutionData.rooms_count}
+				</InfoItem>
+			)}
+			<InfoItem label={t("institution.multipleUse")}>
+				{institutionData.shared_use_allowed
+					? t("institution.multipleUsePossible")
+					: t("institution.multipleUseNotPossible")}
+			</InfoItem>
+			{institutionData.shared_use_allowed && (
+				<InfoItem label={t("institution.description")}>
+					{t("institution.multipleUseDescription")}
+				</InfoItem>
+			)}
+			{institutionData.established_since && (
+				<InfoItem label={t("institution.establishedSince")}>
+					{new Date(institutionData.established_since).getFullYear()}
+				</InfoItem>
+			)}
+			{institutionData.established_until && (
+				<InfoItem label={t("institution.establishedUntil")}>
+					{new Date(institutionData.established_until).getFullYear()}
+				</InfoItem>
+			)}
+		</InfoSection>
+	);
+}
+
+// Status info component
+function StatusInfo({
+	institutionData,
+}: {
+	institutionData: InstitutionProperties;
+}) {
+	const { t } = useTranslation("common");
+
+	return (
+		<InfoSection>
+			{institutionData.updated_at && (
+				<InfoItem label={t("institution.status")}>
+					{institutionData.updated_at}
+				</InfoItem>
+			)}
+		</InfoSection>
+	);
+}
+
+// Extended info component
+function InstitutionExtendedInfo({
+	institutionData,
+}: {
+	institutionData: InstitutionProperties;
+}) {
+	return (
+		<div className="space-y-4">
+			<OrganizationInfo institutionData={institutionData} />
+			<FundingInfo institutionData={institutionData} />
+			<FacilityInfo institutionData={institutionData} />
+			<StatusInfo institutionData={institutionData} />
 		</div>
 	);
 }
