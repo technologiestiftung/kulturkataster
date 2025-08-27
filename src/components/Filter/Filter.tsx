@@ -12,6 +12,7 @@ import Close from "@/icons/close.svg";
 import EyeOff from "@/icons/eye-off.svg";
 import Eye from "@/icons/eye.svg";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
+import { matchesDistrictFilter } from "@/lib/utils/filterUtils";
 import { getCategoryIconComponent } from "@/lib/utils/iconUtils";
 import {
 	CategoryType,
@@ -21,7 +22,7 @@ import {
 	InstitutionProperties,
 } from "@/types";
 import { ChevronDown, ChevronUp, Minus } from "lucide-react";
-import { FC, useMemo, useState } from "react";
+import { FC, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useFilterData } from "./hooks/useFilterData";
 
@@ -156,27 +157,6 @@ const Filter: FC = () => {
 	const { categoryGroups, districts, loading, error, retry } = useFilterData();
 	const { t } = useTranslation(["content", "common"]);
 	const [openSections, setOpenSections] = useState<string[]>([]);
-
-	const districtIdToKeyMap = useMemo(() => {
-		const map = new Map<number, string>();
-		districts.forEach((district: District) => {
-			map.set(district.id, district.key);
-		});
-		return map;
-	}, [districts]);
-
-	const matchesDistrictFilter = (
-		properties: InstitutionProperties,
-		districtKeys: string[],
-	): boolean => {
-		if (districtKeys.length === 0) return true;
-		if (!properties.district_id) return false;
-
-		const districtKey = districtIdToKeyMap.get(properties.district_id);
-		if (!districtKey) return false;
-
-		return districtKeys.includes(districtKey);
-	};
 
 	const getCategoryCount = (categoryKey: string): number => {
 		if (!originalInstitutions?.features || !filters) return 0;
