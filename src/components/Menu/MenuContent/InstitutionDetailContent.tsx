@@ -238,11 +238,6 @@ function InstitutionExtendedInfo({
 						{institutionData.rooms_count}
 					</InfoItem>
 				)}
-				<InfoItem label={t("institution.multipleUse")}>
-					{institutionData.shared_use_allowed
-						? t("institution.multipleUsePossible")
-						: t("institution.multipleUseNotPossible")}
-				</InfoItem>
 				{institutionData.shared_use_allowed && (
 					<InfoItem label={t("institution.description")}>
 						{t("institution.multipleUseDescription")}
