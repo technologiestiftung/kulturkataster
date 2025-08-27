@@ -161,7 +161,8 @@
 	"funding_type": {
 		"institutional_funding": "Institutionelle Förderung",
 		"temporary_project_funding": "Projektförderung (zeitlich befristet)",
-		"no_funding": "Keine Förderung"
+		"no_funding": "Nicht gefördert",
+		"workspace_program": "Arbeitsraumprogramm"
 	},
 	"institution_action": {
 		"create": "Erstellen",
@@ -180,16 +181,17 @@
 	},
 	"owner_type": {
 		"private": "Privat",
-		"federal_property": "Bundeseigentum",
-		"state_property_silb": "Landeseigentum (SILB)",
-		"state_property_soda": "Landeseigentum (SODA)",
-		"state_property_other": "Landeseigentum (sonstiges)",
+		"federal_property": "Bundesliegenschaft",
+		"state_property_silb": "Landesliegenschaft (SILB)",
+		"state_property_soda": "Landesliegenschaft (SODA)",
+		"state_property_other": "Landesliegenschaft (Sonstige Liegenschaft)",
 		"state_property_specialized": "Spezialimmobilie Land",
-		"state_property_fund": "Liegenschaftsfonds",
-		"district_property": "Bezirksvermögen",
-		"other_public_property": "Sonstiges öffentliches Eigentum",
-		"municipal_housing_company": "Kommunale Wohnungsbaugesellschaft",
-		"other": "Sonstiges"
+		"state_property_fund": "Landesliegenschaft (Liegenschaftsfonds)",
+		"district_property": "Bezirkliche Liegenschaft",
+		"other_public_property": "Sonstige öffentliche Liegenschaft",
+		"municipal_housing_company": "Städtische Wohnungsbaugesellschaft",
+		"state_property": "Landesliegenschaft",
+		"other": "Sonstige"
 	},
 	"protection_status": {
 		"long_term_secured": "Langfristig gesichert",
