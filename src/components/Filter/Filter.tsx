@@ -111,6 +111,7 @@ const CategorySection: FC<{
 					<Checkbox
 						checked={isChecked}
 						onCheckedChange={() => onCategoryChange(group.key)}
+						aria-label={`Checkbox ${group.name}`}
 						className={`w-4 h-4 ${isIndeterminate ? "border-primary-dark" : ""}`}
 					/>
 					{isIndeterminate && (
@@ -193,7 +194,10 @@ const Filter: FC = () => {
 				return false;
 			}
 
-			if (!filters.include_closed && properties.status === "closed") {
+			if (
+				!filters.include_closed &&
+				properties.utilization_status === "permanently_closed"
+			) {
 				return false;
 			}
 
@@ -241,7 +245,10 @@ const Filter: FC = () => {
 				return false;
 			}
 
-			if (!filters.include_closed && properties.status === "closed") {
+			if (
+				!filters.include_closed &&
+				properties.utilization_status === "permanently_closed"
+			) {
 				return false;
 			}
 
@@ -365,9 +372,11 @@ const Filter: FC = () => {
 
 	const toggleClosedInstitutions = () => {
 		if (!filters) return;
-		const newState = !filters.include_closed;
 
-		updateFilters({ ...filters, include_closed: newState });
+		updateFilters({
+			...filters,
+			include_closed: !filters.include_closed,
+		});
 	};
 
 	const resetDistrictFilters = () => {

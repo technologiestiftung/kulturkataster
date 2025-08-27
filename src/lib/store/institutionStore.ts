@@ -29,13 +29,10 @@ const matchesDistrictFilter = (
 	return districtKeys.includes(districtKey);
 };
 
-// Helper function to check if institution matches category filter
 const matchesCategoryFilter = (
 	properties: InstitutionProperties,
 	categoryKeys: string[],
 ): boolean => {
-	if (categoryKeys.length === 0) return true;
-
 	return (
 		properties.categories?.some((category) =>
 			categoryKeys.includes(category.key),
@@ -43,13 +40,10 @@ const matchesCategoryFilter = (
 	);
 };
 
-// Helper function to check if institution matches subcategory filter
 const matchesSubcategoryFilter = (
 	properties: InstitutionProperties,
 	subcategoryKeys: string[],
 ): boolean => {
-	if (subcategoryKeys.length === 0) return true;
-
 	const hasExplicitMatch = properties.subcategories?.some((subcategory) =>
 		subcategoryKeys.includes(subcategory.key),
 	);
@@ -71,13 +65,17 @@ const matchesSubcategoryFilter = (
 	return false;
 };
 
-// Helper function to check if institution matches status filter
 const matchesStatusFilter = (
 	properties: InstitutionProperties,
-	includeClosed: boolean,
+	includeClosedFilter: boolean,
 ): boolean => {
-	if (includeClosed) return true;
-	return properties.status !== "closed";
+	if (
+		!includeClosedFilter &&
+		properties.utilization_status === "permanently_closed"
+	) {
+		return false;
+	}
+	return true;
 };
 
 export const useInstitutionStore = create<InstitutionStoreState>()(
@@ -95,7 +93,7 @@ export const useInstitutionStore = create<InstitutionStoreState>()(
 			district_keys: [],
 			category_keys: [],
 			subcategory_keys: [],
-			include_closed: true,
+			include_closed: false,
 		},
 		setFilters: (filters) => set({ filters }),
 
@@ -106,6 +104,9 @@ export const useInstitutionStore = create<InstitutionStoreState>()(
 					institutions: institutionsData,
 					originalInstitutions: institutionsData,
 				});
+
+				const { filters, filterInstitutionsFrontend } = get();
+				await filterInstitutionsFrontend(filters);
 			} catch (error) {
 				console.error("Failed to initialize institutions:", error);
 			}
@@ -119,7 +120,6 @@ export const useInstitutionStore = create<InstitutionStoreState>()(
 				return;
 			}
 
-			// Load districts data to create ID to key mapping
 			const districts = await getDistricts();
 			const districtIdToKeyMap = new Map<number, string>();
 			districts.forEach((district: District) => {
@@ -132,16 +132,29 @@ export const useInstitutionStore = create<InstitutionStoreState>()(
 
 					if (!properties) return false;
 
-					return (
-						matchesStatusFilter(properties, filters.include_closed) &&
-						matchesDistrictFilter(
-							properties,
-							filters.district_keys,
-							districtIdToKeyMap,
-						) &&
-						matchesCategoryFilter(properties, filters.category_keys) &&
-						matchesSubcategoryFilter(properties, filters.subcategory_keys)
+					const statusMatch = matchesStatusFilter(
+						properties,
+						filters.include_closed,
 					);
+					const districtMatch = matchesDistrictFilter(
+						properties,
+						filters.district_keys,
+						districtIdToKeyMap,
+					);
+
+					const hasCategoryFilters =
+						filters.category_keys.length > 0 ||
+						filters.subcategory_keys.length > 0;
+
+					let categoryMatch = true;
+
+					if (hasCategoryFilters) {
+						categoryMatch =
+							matchesCategoryFilter(properties, filters.category_keys) ||
+							matchesSubcategoryFilter(properties, filters.subcategory_keys);
+					}
+
+					return statusMatch && districtMatch && categoryMatch;
 				},
 			);
 

@@ -124,6 +124,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	useEffect(() => {
 		setOpen(false);
 		setOpenMobile(false);
+		setIsLayerTreeOpen(false);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isMobile]);
 
