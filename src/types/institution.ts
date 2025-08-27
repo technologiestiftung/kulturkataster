@@ -75,6 +75,12 @@ export interface District {
 	name: string;
 }
 
+export interface DistrictProperty {
+	id: number;
+	key: string;
+	name: string;
+}
+
 export interface ParentOrganization {
 	id: number;
 	name: string;
@@ -108,6 +114,7 @@ export interface InstitutionProperties {
 	website: string;
 	zip_code: string;
 	categories: Category[];
+	district: DistrictProperty;
 	district_id: number;
 	address_suffix: string;
 	street_number: string;
