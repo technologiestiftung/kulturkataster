@@ -163,8 +163,10 @@ function InstitutionBasicInfo({
 							</p>
 							<div className="flex flex-wrap space-x-2">
 								<p>{institutionData.zip_code}</p>
-								{institutionData.district_id && (
-									<p>{tEnum(`district_id.${institutionData.district_id}`)}</p>
+								{institutionData.district.key && (
+									<p>
+										{tEnum(`berlin_district.${institutionData.district.key}`)}
+									</p>
 								)}
 							</div>
 						</div>
@@ -282,11 +284,6 @@ function FacilityInfo({
 					{institutionData.rooms_count}
 				</InfoItem>
 			)}
-			<InfoItem label={t("institution.multipleUse")}>
-				{institutionData.shared_use_allowed
-					? t("institution.multipleUsePossible")
-					: t("institution.multipleUseNotPossible")}
-			</InfoItem>
 			{institutionData.shared_use_allowed && (
 				<InfoItem label={t("institution.description")}>
 					{t("institution.multipleUseDescription")}
