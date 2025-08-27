@@ -220,9 +220,9 @@ function InstitutionExtendedInfo({
 						{institutionData.support_type}
 					</InfoItem>
 				)}
-				{institutionData.district_id && (
+				{institutionData.district.key && (
 					<InfoItem label={t("institution.district")}>
-						{tEnum(`district_id.${institutionData.district_id}`)}
+						{tEnum(`berlin_district.${institutionData.district.key}`)}
 					</InfoItem>
 				)}
 			</InfoSection>
