@@ -1,13 +1,13 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { FilterState, CategoryWithSubcategories, District } from "@/types";
+import { FilterState, District, Category } from "@/types";
 import Close from "@/icons/close.svg";
 
 interface SelectedFiltersProps {
 	filters: FilterState;
 	districts: District[];
-	categoryGroups: CategoryWithSubcategories[];
+	categories: Category[];
 	onRemoveDistrict?: (key: string) => void;
 	onRemoveCategory?: (key: string) => void;
 	onRemoveSubcategory?: (key: string) => void;
@@ -18,7 +18,7 @@ interface SelectedFiltersProps {
 export function SelectedFilters({
 	filters,
 	districts,
-	categoryGroups,
+	categories,
 	onRemoveDistrict,
 	onRemoveCategory,
 	onRemoveSubcategory,
@@ -31,15 +31,15 @@ export function SelectedFilters({
 	};
 
 	const getCategoryName = (key: string) => {
-		const category = categoryGroups.find((c) => c.key === key);
-		return category?.name || key;
+		const category = categories.find((c) => c.key === key);
+		return category?.key || key;
 	};
 
 	const getSubcategoryName = (key: string) => {
-		for (const category of categoryGroups) {
-			const subcategory = category.subcategories.find((s) => s.key === key);
+		for (const category of categories) {
+			const subcategory = category.subcategory.find((s) => s.key === key);
 			if (subcategory) {
-				return subcategory.name;
+				return subcategory.key;
 			}
 		}
 		return key;

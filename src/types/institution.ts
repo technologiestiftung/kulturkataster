@@ -1,4 +1,5 @@
 import { FeatureCollection, GeoJsonProperties, Geometry } from "geojson";
+import { Database } from "./supabase";
 
 export interface Institution {
 	id: number;
@@ -27,45 +28,40 @@ export interface GeoFeature {
 
 export type SearchResult = Institution | GeoFeature;
 
-export enum CategoryType {
-	STUDIOS = "studios",
-	EDUCATION_PLACES = "education_places",
-	LIBRARIES = "libraries",
-	CLUBS_MUSIC_VENUES = "clubs_music_venues",
-	GALLERIES = "galleries",
-	CINEMAS = "cinemas",
-	LITERATURE_PLACES = "literature_places",
-	MUSEUMS = "museums",
-	CULTURAL_URBAN_DEVELOPMENT = "cultural_urban_development",
-	POTENTIAL_SPACES = "potential_spaces",
-	REHEARSAL_ROOMS = "rehearsal_rooms",
-	PROJECT_SPACES_INITIATIVES = "project_spaces_initiatives",
-	SOCIOCULTURAL_CENTERS = "sociocultural_centers",
-	DANCE_VENUES = "dance_venues",
-	PERFORMING_ARTS_VENUES = "performing_arts_venues",
-	GRAFFITI_AREAS = "graffiti_areas",
-	OTHER = "other",
+// export interface Category {
+// 	id: number;
+// 	key: CategoryType;
+// 	created_at?: string;
+// }
 
-	MULTI_CATEGORIES = "multi_categories",
-}
-export interface Category {
-	id: number;
-	key: CategoryType;
-	created_at?: string;
-}
+export type Category = Database["public"]["Tables"]["category"]["Row"] & {
+	subcategory: Subcategory[];
+};
 
-export interface CategoryWithSubcategories extends Category {
-	subcategories: Subcategory[];
-	name?: string;
-}
+export type Subcategory = Database["public"]["Tables"]["subcategory"]["Row"];
 
-export interface Subcategory {
-	id: number;
-	key: string;
-	category_id: number;
-	created_at?: string;
-	name?: string;
-}
+export type CategoryType = Database["public"]["Enums"]["category_key_enum"];
+
+export const CategoryKeys = {
+	STUDIOS: "studios",
+	EDUCATION_PLACES: "education_places",
+	LIBRARIES: "libraries",
+	CLUBS_MUSIC_VENUES: "clubs_music_venues",
+	GALLERIES: "galleries",
+	CINEMAS: "cinemas",
+	LITERATURE_PLACES: "literature_places",
+	MUSEUMS: "museums",
+	CULTURAL_URBAN_DEVELOPMENT: "cultural_urban_development",
+	POTENTIAL_SPACES: "potential_spaces",
+	REHEARSAL_ROOMS: "rehearsal_rooms",
+	PROJECT_SPACES_INITIATIVES: "project_spaces_initiatives",
+	SOCIOCULTURAL_CENTERS: "sociocultural_centers",
+	DANCE_VENUES: "dance_venues",
+	PERFORMING_ARTS_VENUES: "performing_arts_venues",
+	GRAFFITI_AREAS: "graffiti_areas",
+	OTHER: "other",
+	MULTI_CATEGORIES: "multi_categories",
+} as const;
 
 export interface District {
 	city_id: number;
