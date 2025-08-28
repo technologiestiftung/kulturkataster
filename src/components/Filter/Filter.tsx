@@ -218,6 +218,8 @@ const Filter: FC = () => {
 			category_keys: [],
 			subcategory_keys: [],
 		});
+		// Collapse all expanded category sections when resetting
+		setOpenSections([]);
 	};
 
 	const setAllCategoryFilters = () => {
