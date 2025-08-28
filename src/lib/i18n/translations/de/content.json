@@ -1,112 +1,426 @@
 {
 	"welcomeModal": {
-		"title": "Das digitale Kataster für kreative Räume in Berlin.",
-		"subtitle": "Ein Projekt vom Kulturraum Berlin",
-		"description": "Über eine interaktive Karte oder über die Listenansicht lassen sich diese Räume gezielt nach Stadtteil, Nutzung oder Raumtyp filtern. So bietet das Kataster nicht nur Kulturschaffenden Orientierung und Unterstützung bei der Vernetzung, sondern schafft auch Transparenz für Verwaltung und Öffentlichkeit – ein wichtiges Instrument zum Erhalt und zur Stärkung kreativer Infrastruktur in Berlin.",
+		"title": "Das Berliner Kulturkataster: Die Kultur der Stadt auf einen Blick",
+		"subtitle": "Ein Projekt der Kulturraum Berlin gGmbH",
+		"description1": "Dies ist die erste Version des Berliner Kulturkatasters. Das Kulturkataster ist eine digitale Karte, die die Vielfalt der Kulturlandschaft Berlins abbildet und systematisch Kunst- und Kulturorte erfasst. Es dient als zentrale Grundlage für eine faktenbasierte kulturelle Stadtentwicklung. In den kommenden Monaten werden wir diese Version mit neuen Funktionen und Informationen ausbauen.",
+		"description2": "Stärken Sie mit uns dieses Projekt für die Berliner Kultur! Wir freuen uns auf Ihre Anmerkungen.",
 		"newsletter": "Zum Newsletter anmelden",
 		"discoverButton": "Entdecken",
 		"aboutButton": "Über das Projekt",
-		"infoButton": "Infos & Hilfe",
+		"infoButton": "Infos & Service",
 		"footer": {
-			"credit": "Ein Projekt der Kulturraum Berlin gGmbH, in Zusammenarbeit mit der Technologiestiftung Berlin und gefördert durch den Senat Berlin."
+			"credit": "Copyright 2025 - Ein Projekt der Kulturraum Berlin gGmbH, gefördert durch die Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt, mit der technischen Umsetzung durch die Technologiestiftung Berlin."
 		},
 		"closeButton": "Schließen"
 	},
 	"informationModal": {
-		"title": "Informationen zur Kartenanwendung",
-		"subtitle": "Hier können Informationen zum Kulturkataster und zur Funktionsweise stehen.",
-		"description": "HLorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",
-		"methodology": {
-			"title": "Methodik",
-			"description1": "Räume für Kunst und Kultur sind in Berlin knappe Ressourcen, von denen viele in den letzten Jahrzehnten verloren gegangen und zahlreiche weiterhin an ihrem Standort gefährdet sind. Ein Berliner Kulturkataster soll helfen, diese Räume zu schützen, neue zu erschließen und kulturelle Teilhabe zu stärken. Die Basis bildet eine öffentliche und umfassende Bestandsaufnahme von Kulturräumen und -orten in einer browserbasierten Kartenanwendung, die mit analytisch nutzbaren Kontextdaten zu einem einzigartigen Instrument der kulturellen Stadtentwicklung zusammengeführt wird.",
-			"description2": "Für die Erarbeitung des Konzepts setzen wir auf eine enge Zusammenarbeit mit Akteur*innen aus Kunst, Kultur und Kulturpolitik, um ihre Bedarfe an einem Kataster zu formulieren und zu ermitteln, welche bereits existierenden Datenquellen in das Kataster einfließen können. Für die technische Entwicklung des Kulturkatasters hat die Technologiestiftung Berlin den Zuschlag erhalten ist von der KRB mit der Umsetzung beauftragt worden."
+		"title": "Infos & Service",
+		"subtitle": "",
+		"introduction": [
+			"Seit September 2025 steht Ihnen mit dem Kulturkataster Berlin die erste Version unseres digitalen Werkzeugs zur Verfügung, dass die Berliner Kulturlandschaft systematisch erfasst.",
+			"Das Kulturkataster wächst stetig weiter: Bereits für Anfang 2026 ist Version 2 geplant, und zur Jahresmitte 2026 folgt Version 3. Mit jeder neuen Version nehmen wir weitere Kulturorte auf, ergänzen die Informationen und fügen neue Funktionalitäten hinzu.",
+			"Sie können uns dabei helfen. Unter diesem [Link https://form.formcentric.com/form/fb8189d9-8887-425d-bdd5-4aec08f7d8d5] können Sie fehlende Kulturorte einreichen und Änderungen vorschlagen. Für Anregungen und Kritik erreichen Sie uns unter: info@kulturkataster.berlin",
+			"Die aktuelle Version des Kulturkatasters ist die Version 1."
+		],
+		"scope": {
+			"title": "Umfang Version 1",
+			"features": [
+				"2.382 Kulturorte mit den Grundinformationen (Name, vollständige Adresse, allgemeine Kontaktinformationen, Angaben zu Förderung und Finanzierung)",
+				"16 Kategorien und 71 Unterkategorien",
+				"Einbindung von 12 Fachkarten aus dem Geoportal Berlin",
+				"Ein Suchfeld, indem Sie nach Adressen und Namen von Kulturorten suchen können.",
+				"Einen Suchfilter, der es ermöglicht, Orte nach Bezirk sowie Kategorie und Unterkategorie zu filtern. Darüber hinaus ist es möglich, geschlossene Kulturorte einzublenden."
+			],
+			"upcomingEnhancements": {
+				"title": "Folgende Erweiterungen für Version 1 werden bis November 2025 ergänzt",
+				"items": [
+					"Informationen in Deutscher Gebärdensprache",
+					"Informationen in Leichter Sprache"
+				]
+			}
 		},
-		"usage_info": {
-			"title": "Informationen zur Benutzung",
-			"description1": "Räume für Kunst und Kultur sind in Berlin knappe Ressourcen, von denen viele in den letzten Jahrzehnten verloren gegangen und zahlreiche weiterhin an ihrem Standort gefährdet sind. Ein Berliner Kulturkataster soll helfen, diese Räume zu schützen, neue zu erschließen und kulturelle Teilhabe zu stärken. Die Basis bildet eine öffentliche und umfassende Bestandsaufnahme von Kulturräumen und -orten in einer browserbasierten Kartenanwendung, die mit analytisch nutzbaren Kontextdaten zu einem einzigartigen Instrument der kulturellen Stadtentwicklung zusammengeführt wird.",
-			"description2": "Für die Erarbeitung des Konzepts setzen wir auf eine enge Zusammenarbeit mit Akteur*innen aus Kunst, Kultur und Kulturpolitik, um ihre Bedarfe an einem Kataster zu formulieren und zu ermitteln, welche bereits existierenden Datenquellen in das Kataster einfließen können. Für die technische Entwicklung des Kulturkatasters hat die Technologiestiftung Berlin den Zuschlag erhalten ist von der KRB mit der Umsetzung beauftragt worden.",
+		"usage": {
+			"title": "Bedienung",
+			"introduction": "Das Kulturkataster Berlin wurde so konzipiert, dass es möglichst intuitiv bedient werden kann. Funktionalitäten orientieren sich an gängigen Kartenanwendungen. Grundlegende Bedienungshinweise haben wir an dieser Stelle für Sie zusammengefasst.",
+			"guides": [
+				{
+					"title": "Karte bewegen",
+					"desktop": "Auf dem Computer: Halten Sie die linke Maustaste gedrückt und ziehen die Karte in die gewünschte Richtung.",
+					"mobile": "Auf dem Smartphone/Tablet: Berühren Sie den Bildschirm mit einem Finger und wischen Sie über die Karte."
+				},
+				{
+					"title": "Zoomen",
+					"desktop": "Auf dem Computer: Nutzen Sie das Mausrad oder die Plus- und Minus-Zeichen am unteren rechten Bildschirmrand.",
+					"mobile": "Auf dem Smartphone/Tablet: Legen Sie zwei Finger auf den Bildschirm und bewegen Sie diese auseinander, um zu vergrößern. Zum Verkleinern ziehen Sie die Finger wieder zusammen."
+				},
+				{
+					"title": "Einen Ort suchen",
+					"desktop": "Auf dem Computer: Öffnen Sie das Suchfeld, indem Sie auf das Lupensymbol oben links klicken.",
+					"mobile": "Auf dem Smartphone/Tablet: Öffnen Sie das Suchfeld, indem Sie auf das Lupensymbol unten tippen.",
+					"action": "Geben Sie den Namen eines Ortes oder die Adresse ein und bestätigen Sie Ihre Suche."
+				},
+				{
+					"title": "Filterfunktionen verwenden",
+					"desktop": "Auf dem Computer: Öffnen Sie die Filterfunktion, indem Sie auf das Symbol mit den drei übereinanderliegenden Strichen oben links klicken.",
+					"mobile": "Auf dem Smartphone/Tablet: Öffnen Sie die Filterfunktion, indem Sie auf das Symbol mit den drei übereinanderliegenden Strichen oben links tippen.",
+					"description": "Sie können nun alle Kulturorte nach Bezirken sowie nach den zugeordneten Kategorien und Unterkategorien filtern.",
+					"closedPlaces": "Standardmäßig werden alle geöffneten Kulturorte auf der Karte dargestellt. Durch einen Klick auf das Bedienfeld “Geschlossene Orte einblenden” können Sie sich zusätzlich vorübergehend und dauerhaft geschlossene Kulturorte anzeigen lassen."
+				},
+				{
+					"title": "Eine Auswahl herunterladen",
+					"description": "Das Kulturkataster bietet Ihnen die Möglichkeit, Informationen zu einzelnen sowie auch zu allen Kulturorten Ihrer aktuellen Ansicht herunterzuladen.",
+					"desktop": "Auf dem Computer: Klicken Sie auf den nach unten zeigenden Pfeil in der Seitennavigation oben links.",
+					"mobile": "Auf dem Smartphone/Tablet: Tippen Sie auf den nach unten zeigenden Pfeil in der Navigation unten rechts."
+				},
+				{
+					"title": "Einen Ort eintragen",
+					"desktop": "Auf dem Computer: Öffnen Sie das Mitwirken-Formular, indem sie auf das Stift- Symbol oben links klicken.",
+					"mobile": "Auf dem Smartphone/Tablet: Öffnen Sie das Mitwirken-Formular, indem sie auf das Stift-Symbol unten rechts tippen.",
+					"instructions": "Folgen Sie den Hinweisen des Formulars und füllen Sie die Datenfelder gewissenhaft aus. Bitte beachten Sie, dass es sich bei den mit einem *Symbol versehenen Feldern um Pflichtfelder handelt.",
+					"submit": "Bestätigen Sie die Einverständniserklärung und schicken Sie das Formular ab.",
+					"review": "Das Redaktionsteam wird Ihren Eintrag prüfen und sich bei Rückfragen gegebenenfalls per E-Mail bei Ihnen melden. Wir bitten Sie um Verständnis, dass dieser Prozess einige Zeit in Anspruch nehmen kann, da wir gegebenenfalls auch Fachexpert*innen in den Entscheidungsprozess einbeziehen werden."
+				},
+				{
+					"title": "Schriftgröße ändern",
+					"desktop": "Auf dem Computer: Öffnen Sie das Menü für die barrierefreie Bedienung der Website, indem Sie auf das Personensymbol unten links klicken.",
+					"mobile": "Auf dem Smartphone/Tablet: Öffnen Sie das Menü für die barrierefreie Bedienung der Website, indem Sie auf das Menüsymbol oben rechts tippen und anschließend die Schaltfläche mit dem Personensymbol auswählen.",
+					"action": "Wählen Sie die Schaltfläche mit der Bezeichnung “Schriftgröße ändern” aus."
+				},
+				{
+					"title": "Kontrast anpassen",
+					"desktop": "Auf dem Computer: Öffnen Sie das Menü für die barrierefreie Bedienung der Website, indem Sie auf das Personensymbol unten links klicken.",
+					"mobile": "Auf dem Handy/Tablet: Öffnen Sie das Menü für die barrierefreie Bedienung der Website, indem Sie auf das Menüsymbol oben rechts tippen und anschließend die Schaltfläche mit dem Personensymbol auswählen.",
+					"action": "Wählen Sie die Schaltfläche mit der Bezeichnung “Kontrast anpassen” aus."
+				}
+			]
+		},
+		"faq": {
+			"title": "Fragen & Antworten",
+			"questions": [
+				{
+					"question": "Warum ist mein Kulturort nicht im Kulturkataster verzeichnet?",
+					"answer": "Die Redaktion ist bemüht, alle Berliner Kulturorte auf der Karte abzubilden. Dies ist ein Prozess, der nie abgeschlossen sein wird. Zahlreiche Kategorien wurden bisher noch nicht erfasst (z. B. Archive, Kunst im öffentlichen Raum, Künstler*innenresidenzen, oder Kulturorganisationen). Gleichzeitig existieren auch innerhalb der Kategorien noch Lücken (z.B. private Galerien, private Kunstschulen), die in Zukunft erschlossen werden sollen. Falls Sie einen Ort vermissen, können Sie diesen über das Formular einreichen. Wählen Sie hierfür das Stift-Symbol in der Seitennavigation links auf der Computer-Version bzw. unten rechts in der Darstellung auf dem Tablet oder Smartphone aus und folgen Sie den Anweisungen."
+				},
+				{
+					"question": "Wie kann ich Informationen zu einem Kulturort ergänzen oder korrigieren?",
+					"answer": "In der Version 1 ist die Mitarbeit an den Inhalten des Kulturkatasters lediglich über ein Formular vorgesehen. Wenn Sie Informationen zu einem Kulturort ergänzen oder korrigieren wollen, können Sie diese über das Formular einreichen. Wählen Sie hierfür das Stift-Symbol in der Seitennavigation links auf der Desktop-Version bzw. unten rechts in der Darstellung auf dem Tablet oder Smartphone aus und folgen Sie den Anweisungen."
+				},
+				{
+					"question": "Ich habe meinen Kulturort beim Kulturkataster eingereicht, doch er erscheint immer noch nicht auf der Karte. Was ist da los?",
+					"answer": "Bitte haben Sie Verständnis dafür, dass Einträge im Kulturkataster nicht automatisch veröffentlicht werden. Das Redaktionsteam prüft jeden Eintrag einzeln. Wir bitten Sie um Verständnis, dass dieser Prozess einige Zeit in Anspruch nehmen kann, da wir gegebenenfalls auch Fachexpert*innen in den Entscheidungsprozess einbeziehen werden. Bei Rückfragen melden wir uns gegebenenfalls per E-Mail bei Ihnen."
+				},
+				{
+					"question": "Warum sind im Kulturkataster nur eine Handvoll an Fachkarten aus dem Geoportal?",
+					"answer": "Mit jeder Version wächst das Kulturkataster. Das Projektteam hat sich entschieden, mit einer kleinen Auswahl an Fachkarten aus dem Geoportal zu starten, um auf Grundlage der Empfehlungen der Nutzer*innen weitere Karten ins Kulturkataster zu integrieren. Gerne können Sie uns Ihre Vorschläge per E-Mail schicken: info@kulturkataster.berlin"
+				},
+				{
+					"question": "Wie kann ich meinen Kulturort aus dem Kulturkataster löschen lassen?",
+					"answer": "In der Version können wir Ihnen leider keine eigenständige Verwaltung Ihrer Daten bieten. Wenn Sie Ihren Ort löschen lassen möchten, bitten wir Sie darum, unsere Redaktion zu kontaktieren und wir werden Ihren Eintrag schnellstmöglich löschen. Bitte schreiben Sie eine E-Mail an: info@kulturkataster.berlin"
+				}
+			]
+		}
+	},
+	"privacyModal": {
+		"title": "Datenschutz",
+		"subtitle": "Hier kommt der Datenschutztext.",
+		"description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus."
+	},
+	"aboutModal": {
+		"title": "Über das Projekt",
+		"subtitle": "",
+		"introduction": [
+			"In einer wachsenden Metropole wie Berlin sind Kunst- und Kulturräume knappe Ressourcen. Verdrängung, Raumkonkurrenzen und Standortkonflikte gefährden die Kulturräume Berlins, die für die Stadt eine vielschichtige und entscheidende Rolle spielen. Sie sind Standortfaktor, Tourismusmagnet und Innovationsmotor, dienen der Wissensvermittlung sowie dem Erinnern und fördern den gesellschaftlichen Zusammenhalt, indem sie einen Identitätsrahmen für eine vielfältige und inklusive Stadtgesellschaft bilden. Das Kulturkataster, eine online frei zugängliche Bestandsaufnahme der Berliner Kulturlandschaft auf einer digitalen Karte, ist ein entscheidender Schritt hin zu einer nachhaltigen kulturellen Stadtentwicklung.",
+			"Das Kulturkataster findet in den Richtlinien der Regierungspolitik dieser Legislaturperiode Erwähnung. Ende 2022 wird die Kulturraum Berlin gGmbH von der Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt mit der Konzeption betraut und stellt in zwei Konzeptpapieren (ausgeführt durch das Studio für unendliche Möglichkeiten) die Ausgangssituation und Bedarfe sowie ein Umsetzungskonzept für das Kulturkataster vor. Auch die Umsetzung wird 2024 zur Aufgabe der KRB. Mit der Entwicklung der online-basierten Kartenanwendung beauftragte die KRB die Technologiestiftung Berlin."
+		],
+		"guidelines": {
+			"description": "Den Rahmen für die Entwicklung des Kulturkatasters bilden vier kulturpolitische Leitlinien, auf die sich die KRB mit der Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt verständigt hat:",
+			"items": [
+				"Evidenzbasierte Kulturpolitik und kulturelle Stadtentwicklung: Das Kulturkataster Berlin schafft eine umfassende Datengrundlage über Kulturräume, um eine faktengestützte Kulturpolitik und eine gezielte Stadtentwicklung zu ermöglichen.",
+				"Sicherung sowie Neuerschließung von Räumen für Kultur: Das Kulturkataster dient als Instrument für ein nachhaltiges Monitoring von Kulturflächen, um deren Erhalt zu unterstützen und neue Räume zu erschließen.",
+				"Gerechte Verteilung von Kulturangeboten im Stadtraum und Chancengerechtigkeit im Hinblick auf Teilhabe: Das Kulturkataster visualisiert Lücken im Kulturangebot und unterstützt die Stadtplanung dabei, ein ausgewogenes und gerechtes Kulturangebot für alle Berliner*innen zu schaffen.",
+				"Verbesserung der Zusammenarbeit zwischen Ressorts, Ebenen und Sektoren: Als flexibles digitales Planungsinstrument stärkt das Kulturkataster die Zusammenarbeit innerhalb der verschiedenen Zuständigkeitsbereiche, Verwaltungsebenen sowie der gesamten Berliner Kulturszene."
+			]
+		},
+		"approach": "Für das Kulturkataster Berlin gilt es, eine Kulturlandschaft zu erfassen, die so vielfältig, dynamisch und interdisziplinär, wie keine andere ist. So sehr sich die Redaktion auch bemühen wird, dieser Prozess wird niemals abgeschlossen sein. Deshalb ist es erklärtes Ziel des Projekts, sich dem Ist-Zustand der Berliner Kulturlandschaft auf der digitalen Karte kontinuierlich anzunähern. Dies gelingt jedoch nur mit denjenigen, für die das Kulturkataster eine wichtige Arbeitshilfe darstellen kann – den Verwaltungen auf Bezirks- und Landesebene, den zahlreichen Interessen- und Spartenverbänden, Wissenschaftler*innen, Expert*innen, Aktivist*innen und natürlich den Kulturorten selbst.",
+		"concept": "Ein weit gefasster Kulturbegriff und ein deskriptives Kulturverständnis bilden die Grundlage des Kulturkatasters. Die Datenbank erfasst eine Vielzahl von Orten. Weitere Kategorien und Kulturorte folgen in den nächsten Versionen. Anstatt kulturelle Ausdrucksformen zu bewerten, werden diese im Kulturkataster anhand zahlreicher Kriterien beschrieben und eingeordnet. Dies würdigt den individuellen Beitrag, den sowohl einzelne Orte als auch ganze Sparten zum kulturellen Gefüge der Stadt beitragen.",
+		"documentation": {
+			"text": "Eine ausführliche Dokumentation zur Entwicklung der Datenbank des Kulturkatasters finden Sie hier.",
 			"downloadPDF": "PDF herunterladen"
+		},
+		"versions": {
+			"description": "Die Entwicklung Berliner Kulturkatasters erfolgt als lernender Prozess. Das bedeutet, dass in festgelegten zeitlichen Abständen neue Versionen des Kulturkatasters veröffentlicht werden. Zukünftige Versionen sollen neue Funktionalitäten und aktualisierte Informationen zur Verfügung stellen. Dieser Prozess ermöglicht es dem Projektteam, Anmerkungen und Kritik in den fortlaufenden Entwicklungsprozess zu integrieren und lädt die Nutzenden des Kulturkatasters dazu ein, die zukünftige Ausrichtung aktiv mitzugestalten.",
+			"planned": "Folgende Versionen des Kulturkatasters sind geplant:",
+			"items": [
+				"Version 1 – Bestandsaufnahme von Kulturorten mit grundlegenden Standortinformationen in ausgewählten Kulturraumkategorien (Veröffentlichung September 2025)",
+				"Version 2 – Einführung neuer Kulturortkategorien und Aktualisierung der Daten; Einführung eines Log-in-Bereichs; gemeinsame Datenpflege und Zugang für Kulturorte, Verbände und Verwaltung (Veröffentlichung Anfang 2026)",
+				"Version 3 – Aktualisierung und Vervollständigung der Daten; Einbindung neuer Fachkarten aus dem Geoportal; Veröffentlichung von bedrohten Kulturorten; Erweiterung des Log-In-Bereichs (Veröffentlichung Mitte 2026)"
+			]
+		},
+		"thanks": "Das Berliner Kulturkataster verdankt seine erfolgreiche Veröffentlichung der Begeisterung, dem Engagement und dem gemeinsamen Wirken aller Personen, für die die Berliner Kulturlandschaft von ebenso großer Bedeutung ist wie für das Projektteam. Diese tiefe Verankerung in der Szene bildet die Grundlage dafür, dass das langfristig ausgerichtete Projekt seine Vision in vollem Umfang entfalten und dynamisch weiterentwickeln kann.",
+		"credits": {
+			"funding": {
+				"title": "Förderung",
+				"organization": "Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt"
+			},
+			"team": {
+				"title": "Projektteam",
+				"members": [
+					"Projektleitung: Daniel Jakobson",
+					"Projektmanagement: Ali Deniz Şensöz",
+					"Datenredaktion: Lina Rippel",
+					"Strategische Projektkoordination: Laura Raber",
+					"Vergabe und Administration: Doris Antonides-Heidelmeyer",
+					"Technische Projektleitung bis 2024: Metini Krivanish"
+				]
+			},
+			"steering": {
+				"title": "Steuerungsgremium",
+				"members": [
+					"Tobias Schmidt-Pathenheimer (Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt)",
+					"Strategische Beratung: Henning Roser (Senatsverwaltung für Stadtentwicklung Bauen und Wohnen)",
+					"Stéphane Bauer (Bezirksamt Friedrichshain-Kreuzberg)",
+					"Daniela Bell (Bezirksamt Lichtenberg)",
+					"Susanne Roggenhofer (Bezirksamt Pankow)",
+					"Sonja Augart (Raumbüro Freie Szene)",
+					"Kai Sachse (Clubcommission)",
+					"Sonja Schaudt (Kulturkonferenz Berlin, Landesmusikrat)",
+					"Julia Brodauf (Atelierbüro im kulturwerk des bbk berlin)",
+					"Daniel Brunet (LAFT)",
+					"Benedikt Stoll (Urbane Praxis e.V.)"
+				]
+			},
+			"partners": {
+				"title": "Partner*innen",
+				"list": [
+					"AG Kino – Gilde deutscher Filmkunsttheater e.V.",
+					"Berliner Museumsverband e.V.",
+					"Berliner Projektfonds Urbane Praxis",
+					"Literaturorte: Netzwerk freie Literaturszene Berlin",
+					"Berliner Zentrengipfel - Senatsverwaltung für Wirtschaft, Energie und Betriebe",
+					"Börsenverein des Deutschen Buchhandels - Landesverband Berlin-Brandenburg",
+					"Bundesverband Soziokultur e.V.",
+					"Deutscher Bibliotheksverband",
+					"IG Jazz Berlin e.V.",
+					"Internationale Gesellschaft der Bildenden Künste (IGBK)",
+					"IT-Dienstleistungszentrum Berlin (ITDZ)",
+					"Institut für Kulturelle Teilhabeforschung (IKTf)",
+					"Kulturerbenetz Berlin",
+					"Landesverband freie darstellende Künste Berlin e.V. (LAFT Berlin)",
+					"Lettrétage e.V.",
+					"Moabit-Wedding-Kunstfestival - Bezirksamt Mitte",
+					"Musicboard Berlin",
+					"Raumsonde - Kollektiv Spieltrieb",
+					"Schulverzeichnis der Senatsverwaltung für Bildung, Jugend und Familie",
+					"Senatsverwaltung für Stadtentwicklung, Bauen und Wohnen",
+					"servicezentrum musikschulen (szm)"
+				]
+			},
+			"contractors": {
+				"title": "Auftragnehmer*innen",
+				"items": [
+					"Technische Umsetzung: Technologiestiftung Berlin, Projektmanagement Ninett Rosenfeld",
+					"Digitale Projektsteuerung: Carsten Hein",
+					"Konzept, Beratung und Beteiligungsformate: Studio für unendliche Möglichkeiten",
+					"Design: Common Studio"
+				],
+				"editorial": {
+					"title": "Externe Datenredaktion",
+					"items": [
+						"Ateliers: Atelierbüro im kulturwerk des bbk berlin",
+						"Clubs und Musikspielstätten: Clubcommission - Netzwerk der Berliner Clubkultur e.V.",
+						"Potenzialorte und Orte der kulturellen Stadtentwicklung: Urbane Praxis e.V.",
+						"Orte des Berliner Tanzes: Tanzbüro Berlin - Zeitgenössischer Tanz Berlin e.V.",
+						"Projekträume und -initiativen: Netzwerk freier Berliner Projekträume und -initiativen e.V.",
+						"Soziokulturelle Orte und Street-Art-Flächen: Daniel Schneider (Archiv der Jugendkulturen e.V.)"
+					]
+				},
+				"additional": [
+					"Mitarbeit Online-Redaktion: Lilli Berlin",
+					"Umsetzung Deutsche Gebärdensprache:",
+					"Umsetzung Leichte Sprache:",
+					"Prüfung und Beratung Digitale Barrierefreiheit: adesso SE",
+					"Beratung zum Datenschutz: Cortina Consult",
+					"Rechtliche Beratung: Kanzlei Laaser"
+				]
+			}
+		}
+	},
+	"downloadModal": {
+		"title": "Daten als Liste herunterladen",
+		"subtitle": "{{count}} Orte zum Herunterladen",
+		"description1": "Das Kulturkataster ist ein Open-Data-Projekt, das die Ziele der Open-Data-Strategie des Landes Berlin unterstützt. Die vollständige Datensammlung sowie ihre individuelle Auswahl werden wir Ihnen in einer späteren Ausbaustufe zum direkten Download zur Verfügung stellen.",
+		"description2": "Falls Sie die Daten bereits jetzt für Forschungszwecke, Ihre Arbeit in der Berliner Verwaltung, Kulturpolitik sowie andere nachvollziehbare Zwecke nutzen möchten, stellen wir Ihnen diese gerne zur Verfügung. Bitte füllen Sie dazu unser kurzes Anfrageformular aus.",
+		"selectedFilters": "Die Auswahl setzt sich zusammen aus folgenden Filtern:",
+		"link": "[Link https://form.formcentric.com/form/7dfaf065-24a1-4431-8905-019e123e5dbe] zum Anfrageformular ",
+		"chooseFormat": "Dateiformat wählen"
+	},
+	"imprintModal": {
+		"title": "Impressum",
+		"subtitle": "",
+		"company": {
+			"title": "Kulturraum Berlin gGmbH",
+			"address": "Spandauer Damm 19",
+			"zip": "14059 Berlin",
+			"registration": "Handelsregister: HRB 217341 B",
+			"court": "Registergericht: Amtsgericht Berlin Charlottenburg",
+			"taxNumber": "USt-IDNr: DE154218985"
+		},
+		"representatives": {
+			"title": "Vertreten durch:",
+			"management": "Dirk Förster, Geschäftsführung"
+		},
+		"chairman": {
+			"title": "Vorsitzende des Aufsichtsrats",
+			"name": "Cerstin Richter-Kotowski, Staatssekretärin der Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt"
+		},
+		"contact": {
+			"title": "Kontakt",
+			"phone": "Telefon: +49 (0)30 30 30 444-60",
+			"email": "E-Mail: kontakt@kulturraum.berlin"
+		},
+		"insurance": {
+			"title": "Angaben zur Berufshaftpflichtversicherung",
+			"company": "Name und Sitz des Versicherers",
+			"name": "HDI Versicherung AG",
+			"address": "HDI-Platz 1",
+			"zipCity": "30659 Hannover",
+			"scope": "Geltungsraum der Versicherung",
+			"scopeLocation": "Berlin"
+		},
+		"editor": {
+			"title": "Redaktionell Verantwortlich",
+			"name": "Daniel Jakobson",
+			"role": "Referent für Kommunikation und Beteiligung",
+			"address": "Spandauer Damm 19",
+			"zipCity": "14059 Berlin"
+		},
+		"conception": {
+			"title": "Konzeption",
+			"link1": {
+				"text": "Kulturraum Berlin gGmbH",
+				"href": "https://kulturraum.berlin/"
+			},
+			"link2": {
+				"text": "Studio für unendliche Möglichkeiten",
+				"href": "https://unendlichemoeglichkeiten.de/en"
+			}
+		},
+		"design": {
+			"title": "Gestaltung",
+			"link": {
+				"text": "Common Studio",
+				"href": "https://www.commonstudio.de/"
+			}
+		},
+		"programming": {
+			"title": "Programmierung",
+			"link": {
+				"text": "Technologiestiftung Berlin",
+				"href": "https://www.technologiestiftung-berlin.de/"
+			}
+		},
+		"dispute_resolution": {
+			"title": "Verbraucherstreitbeilegung/Universalschlichtungsstelle",
+			"description": "Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen. Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit, die Sie hier finden:",
+			"link": "https://ec.europa.eu/consumers/odr/"
+		},
+		"content_liability": {
+			"title": "Haftung für Inhalte",
+			"description": "Als Diensteanbieter sind wir gemäß den geltenden gesetzlichen Bestimmungen für eigene Inhalte auf diesen Seiten verantwortlich. Als Diensteanbieter sind wir jedoch nicht verpflichtet, übermittelte oder gespeicherte fremde Informationen zu überwachen oder nach Umständen zu forschen, die auf eine rechtswidrige Tätigkeit hinweisen. \n\nVerpflichtungen zur Entfernung oder Sperrung der Nutzung von Informationen nach den allgemeinen Gesetzen bleiben hiervon unberührt. Eine diesbezügliche Haftung ist jedoch erst ab dem Zeitpunkt der Kenntnis einer konkreten Rechtsverletzung möglich. Bei Bekanntwerden von entsprechenden Rechtsverletzungen werden wir diese Inhalte umgehend entfernen."
+		},
+		"link_liability": {
+			"title": "Haftung für externe Links",
+			"description": "Unser Angebot enthält Links zu externen Websites Dritter, auf deren Inhalte wir keinen Einfluss haben. Die verlinkten Seiten wurden zum Zeitpunkt der Verlinkung auf mögliche Rechtsverstöße überprüft. Rechtswidrige Inhalte waren zum Zeitpunkt der Verlinkung nicht erkennbar. Eine permanente inhaltliche Kontrolle der verlinkten Seiten ist jedoch ohne konkrete Anhaltspunkte einer Rechtsverletzung nicht zumutbar. Bei Bekanntwerden von Rechtsverletzungen werden wir derartige Links umgehend entfernen."
+		},
+		"copyright": {
+			"title": "Urheberrecht",
+			"description": "Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem deutschen Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung und jede Art der Verwertung außerhalb der Grenzen des Urheberrechtes bedürfen der schriftlichen Zustimmung des jeweiligen Autors bzw. Erstellers. Downloads und Kopien dieser Seite sind nur für den privaten, nicht kommerziellen Gebrauch gestattet.\n\nSoweit die Inhalte auf dieser Seite nicht vom Betreiber erstellt wurden, werden die Urheberrechte Dritter beachtet. Insbesondere werden Inhalte Dritter als solche gekennzeichnet. Sollten Sie trotzdem auf eine Urheberrechtsverletzung aufmerksam werden, bitten wir um einen entsprechenden Hinweis. Bei Bekanntwerden von Rechtsverletzungen werden wir derartige Inhalte umgehend entfernen."
 		}
 	},
 	"accessibilityModal": {
-		"title": "Erklärung zur Barrierefreiheit",
-		"description": "Wir bemühen uns, unseren Webauftritt barrierefrei zu machen. Die Erklärung zur digitalen Barrierefreiheit wird im Gesetz über die barrierefreie Informations- und Kommunikationstechnik Berlin (BIKTG Bln) verlangt. Die technischen Anforderungen zur Barrierefreiheit ergeben sich aus der BITV 2.0. Diese Erklärung zur digitalen Barrierefreiheit gilt für die Website  {{ url }}.",
+		"title": "Erklärung zur digitalen Barrierefreiheit",
+		"subtitle": "Kulturraum Berlin gGmbH",
+		"description": "Wir bemühen uns, unseren Webauftritt “Kulturkataster Berlin” und dessen mobile Anwendung barrierefrei zu gestalten. Die Erklärung zur digitalen Barrierefreiheit wird im Gesetz über die barrierefreie Informations- und Kommunikationstechnik Berlin (BIKTG Bln) verlangt. Die technischen Anforderungen zur Barrierefreiheit ergeben sich aus der BITV 2.0.",
+		"descriptionLink": "Diese Erklärung zur digitalen Barrierefreiheit gilt für den Webauftritt:",
+		"link": "https://kulturkataster.berlin",
 		"when": {
-			"title": "Wann wurde die Erklärung zur Barrierefreiheit erstellt?",
-			"description": "Diese Erklärung wurde am 30.04.2025 erstellt. Die Erklärung basiert auf einer vorgenommenen Selbstbewertung."
+			"title": "Erstellung dieser Erklärung zur Barrierefreiheit",
+			"description": "Diese Erklärung wurde am 05.08.2025 erstellt. Die Aussagen dieser Erklärung wurden zuletzt am 05.08.2025 überprüft. Die Überprüfung der digitalen Barrierefreiheit wurde in Form einer Selbstbewertung von der Kulturraum Berlin gGmbH durchgeführt."
 		},
 		"how": {
-			"title": "Wie barrierefrei ist das Angebot?",
-			"description": "Diese Website ist nur teilweise barrierefrei. Sie erfüllt die Anforderungen der Barrierefreie-Informationstechnik-Verordnung (BITV 2.0) in Verbindung mit der Norm EN 301 549 bzw. den Web Content Accessibility Guidelines (WCAG) 2.1 Stufe AA nur teilweise."
+			"title": "Wie barrierefrei ist das Kulturkataster Berlin?",
+			"description": "Dieser Webauftritt ist teilweise barrierefrei. Es werden nur teilweise die Anforderungen der BITV 2.0 erfüllt."
 		},
 		"which": {
 			"title": "Welche Bereiche sind nicht barrierefrei?",
-			"description": "Die nachstehend aufgeführten Bereiche sind aufgrund von Unvereinbarkeit mit den Anforderungen der BITV 2.0 / EN 301 549 / WCAG 2.1 AA noch nicht vollständig barrierefrei:",
-			"perceivability": {
-				"title": "Wahrnehmbarkeit",
-				"alternative": {
-					"title": "Alternativtexte",
-					"description": "Für Bilder und Bedienelemente sind aussagekräftige Textalternativen teilweise nicht vorhanden oder nicht ausreichend formuliert."
+			"description": "Die nachstehend aufgeführten Bereiche sind aus folgenden Gründen nicht barrierefrei:",
+			"subheading": "Unvereinbarkeit mit BITV 2.0",
+			"list_intro": "Teilbereiche, die nicht barrierefrei sind:",
+			"barriers": [
+				{
+					"title": "Barriere: Inhalte",
+					"description": "Die Website bietet derzeit (Stand September 2025) keine Inhalte in Leichter Sprache und keine Videos in Deutscher Gebärdensprache (DGS) an.",
+					"measures": "Texte in Leichter Sprache sowie Erklärvideos in Deutscher Gebärdensprache (DGS) sind derzeit in Arbeit. Sie beinhalten grundlegende Informationen zum Kulturkataster und zur Nutzung der Plattform.",
+					"timeline": "Die Veröffentlichung der Inhalte in Leichter Sprache und DGS ist für Oktober 2025 geplant."
 				},
-				"contrast": {
-					"title": "Kontrast",
-					"description": "Die erforderlichen Mindestkontraste für Texte, Bedienelemente und Grafiken sind noch nicht durchgängig erreicht."
+				{
+					"title": "Barriere: Ansicht",
+					"description": "Darstellung der Kulturstandorte im Kulturkataster erfolgt derzeit ausschließlich über eine interaktive Kartenansicht.",
+					"measures": "Es ist geplant, eine ergänzende Listenansicht der Kulturstandorte, die vollständig tastaturbedienbar und screenreaderfreundlich ist, bereitzustellen. Diese Listenansicht soll als alternative Navigationsmöglichkeit zur Karte dienen und so eine barriereärmere Nutzung ermöglichen.",
+					"timeline": "Die Umsetzung der Listenansicht ist bis Dezember 2025 vorgesehen."
 				},
-				"adaptability": {
-					"title": "Anpassungsfähigkeit",
-					"description": "Bei Textvergrößerung oder Nutzung auf schmalen Bildschirmen kann es zu Darstellungsproblemen oder Informationsverlust kommen (Zoom/Reflow). Individuelle Browser-Einstellungen (z.B. eigene Farben, Schriftarten) werden nicht durchgängig übernommen."
+				{
+					"title": "Barriere: Dokumente",
+					"description": "Einige der auf der Website bereitgestellten Dokumente, wie z. B. herunterladbare Excel-Tabellen mit gefilterten Kulturstandorten oder einzelne PDF-Dateien, entsprechen nicht den Anforderungen an barrierefreie Dokumente. Diese Dateien sind teilweise nicht mit Screenreadern lesbar oder nicht für die Tastaturnavigation optimiert.",
+					"measures": "Die Dokumente sollen künftig in barrierefreier Form angeboten werden. Dafür werden barrierearme Dateiformate verwendet und die Inhalte werden entsprechend der Standards für barrierefreie Dokumente überarbeitet.",
+					"timeline": "Die Überarbeitung der bestehenden Dateien ist für 2026 vorgesehen. Neue Dokumente sollen 2026 barrierearm veröffentlicht werden."
 				},
-				"language": {
-					"title": "Leichte Sprache / Deutsche Gebärdensprache",
-					"description": "Die gesetzlich geforderten Informationen in Leichter Sprache und Deutscher Gebärdensprache sind noch nicht vorhanden."
+				{
+					"title": "Barriere: Tastaturbedienbarkeit",
+					"description": "Einige interaktive Elemente der Website – insbesondere Filterfunktionen, Kartenelemente oder Navigationspunkte – sind derzeit nicht per Tastatur bedienbar.",
+					"measures": "Die technische Struktur der Website wird überarbeitet, um eine vollständige Tastatursteuerung aller interaktiven Elemente zu gewährleisten.",
+					"timeline": "Die Umsetzung erfolgt bis Ende 2025."
+				},
+				{
+					"title": "Barriere: Sichtbarer Fokus",
+					"description": "Beim Navigieren mit der Tastatur ist der sichtbare Fokus nicht an allen interaktiven Elementen deutlich erkennbar. Die betrifft die Navigationsschaltflächen „Verkleinern“, „Vergrößern“ und „Meinen Standort finden“.",
+					"measures": "Das visuelle Fokusdesign wird überarbeitet, sodass interaktive Elemente beim Durchlaufen klar hervorgehoben werden.",
+					"timeline": "Die Umsetzung erfolgt bis Ende 2025."
+				},
+				{
+					"title": "Barriere: Alternativtexte für Bilder und Symbole",
+					"description": "Einige Icons oder Buttons auf der Website verfügen nicht über aussagekräftige Alternativtexte.",
+					"measures": "Alle grafischen Elemente werden überprüft und mit korrekten Alternativtexten versehen.",
+					"timeline": "Die Umsetzung erfolgt im Laufe des Jahres 2026."
+				},
+				{
+					"title": "Barriere: Fehlende ARIA-Rollen und Landmarken",
+					"description": "Die semantische Struktur der Website ist nicht vollständig durch ARIA-Rollen und Landmarken definiert. Screenreader können dadurch nicht alle Bereiche der Website korrekt erfassen.",
+					"measures": "Die Seitenstruktur wird um semantische HTML-Elemente und ARIA-Rollen ergänzt, um die Orientierung für assistive Technologien zu verbessern.",
+					"timeline": "Die Umsetzung erfolgt bis Ende 2025."
+				},
+				{
+					"title": "Barriere: Unstrukturierte Überschriften (h1–h6)",
+					"description": "Die hierarchische Struktur der Überschriften ist nicht auf allen Seiten korrekt umgesetzt. Dies kann die Navigation mit Screenreadern erschweren.",
+					"measures": "Die HTML-Struktur wird überarbeitet, um eine konsistente und logische Überschriftenstruktur sicherzustellen.",
+					"timeline": "Die Korrektur erfolgt im Laufe des Jahres 2026."
+				},
+				{
+					"title": "Barriere: Fehlende Rückmeldung bei Interaktionen",
+					"description": "Dynamische Inhalte, wie z. B. die Anwendung von Filtern oder das Anzeigen eines Standorts, werden nicht durch Statusmeldungen oder Hinweise für Screenreader begleitet.",
+					"measures": "Die Interaktionen werden technisch geprüft und so ergänzt, dass sie Screenreadern Rückmeldungen übermitteln.",
+					"timeline": "Die Umsetzung ist für das Jahr 2026 vorgesehen."
 				}
-			},
-			"operability": {
-				"title": "Bedienbarkeit",
-				"keyboard": {
-					"title": "Tastaturbedienung",
-					"description": "Die Navigation und Bedienung der Website ist nicht durchgängig mit der Tastatur möglich. Einige Bedienelemente sind nur mit der Maus erreichbar."
-				},
-				"focus": {
-					"title": "Fokusindikatoren",
-					"description": "Fokusindikatoren für die Tastaturnavigation sind nicht durchgängig vorhanden oder ausreichend sichtbar."
-				},
-				"structure": {
-					"title": "Struktur und Navigation",
-					"description": "Die Struktur der Website ist nicht durchgängig logisch und konsistent. Einige Links und Bedienelemente sind nicht eindeutig beschriftet."
-				},
-				"timed": {
-					"title": "Zeitgesteuerte Inhalte",
-					"description": "Bei zeitgesteuerten Inhalten (z.B. automatische Updates) fehlen Möglichkeiten zur Steuerung oder Anpassung der Zeitlimits."
-				}
-			},
-			"understandability": {
-				"title": "Verständlichkeit",
-				"label": {
-					"title": "Beschriftungen und Anweisungen",
-					"description": "Einige Formularelemente und Bedienelemente sind nicht ausreichend beschriftet oder die Anweisungen sind unklar."
-				}
-			},
-			"robustness": {
-				"title": "Robustheit",
-				"documents": {
-					"title": "Barrierefreie Dokumente",
-					"description": "Die bereitgestellten Dokumente (z.B. PDFs) sind nicht durchgängig barrierefrei. Einige Dokumente enthalten keine oder unzureichende Tags und Strukturinformationen."
-				}
-			},
-			"closing_remarks": {
-				"title": "Schlussbemerkungen",
-				"description": "Wir arbeiten kontinuierlich daran, die Barrierefreiheit unserer Website zu verbessern. Bitte zögern Sie nicht, uns bei Fragen oder Anregungen zur Barrierefreiheit zu kontaktieren."
-			}
+			]
 		},
 		"contact": {
-			"title": "Kontakt zur Barrierefreiheit",
-			"description": "Wenn Sie auf unserer Website auf Barrieren stoßen oder Verbesserungsvorschläge haben, kontaktieren Sie uns bitte unter:",
-			"name": "Kulturraum Berlin gGmbH",
+			"title": "Barrieren melden",
+			"description": "Sie möchten Informationen zur Umsetzung der Barrierefreiheit oder möchten bestehende Barrieren melden? Sie können etwas auf unserer Website nicht ausreichend wahrnehmen, bedienen oder verstehen? Sie benötigen Informationen in einer barrierefreien Form? Dann informieren Sie uns bitte.",
+			"name": "Daniel Jakobson",
 			"company": "Kulturraum Berlin gGmbH",
 			"telephone": {
-				"label": "Telefon",
-				"number": "+49 30 3030 444 60"
+				"label": "T",
+				"number": "+49 (0)30 3030 444 76"
 			},
 			"email": {
 				"label": "E-Mail",
@@ -114,16 +428,36 @@
 			}
 		},
 		"contact_officer": {
-			"title": "Kontakt zur Landesbeauftragten für digitale Barrierefreiheit",
-			"description": "Wir bemühen uns, Ihre Anfragen innerhalb einer angemessenen Frist zu beantworten. Wenn Sie keine Antwort erhalten oder mit der Antwort ganz oder teilweise unzufrieden sind, können Sie sich an die Landesbeauftragte für digitale Barrierefreiheit wenden.",
+			"title": "Kontakt zur Landesbeauftragten für digitale Barrierefreiheit (Durchsetzungsverfahren)",
+			"description": "Wenn Ihre Kontaktaufnahme mit uns nicht erfolgreich war, Sie innerhalb von einem Monat keine Antwort erhalten haben oder die Antwort unzureichend war, können Sie sich an die Landesbeauftragte für digitale Barrierefreiheit wenden und ein Durchsetzungsverfahren anstreben. Bitte kontaktieren Sie immer zuerst uns!",
 			"link1": {
-				"text": "Landesbeauftragte für digitale Barrierefreiheit Berlin",
-				"url": "https://www.berlin.de/sen/justiz/aufgaben/barrierefreiheit/"
+				"text": "Zum Kontaktformular",
+				"url": "https://www.berlin.de/lb/digitale-barrierefreiheit/includes/formular.1326107.php"
 			},
+			"info_text_link2": "Weitere Informationen zum Durchsetzungsverfahren und der Landesbeauftragten für digitale Barrierefreiheit finden sie ",
 			"link2": {
-				"text": "Kontaktformular der Landesbeauftragten für digitale Barrierefreiheit",
-				"url": "https://www.berlin.de/sen/justiz/aufgaben/barrierefreiheit/kontaktformular/"
+				"text": "hier.",
+				"url": "https://www.berlin.de/lb/digitale-barrierefreiheit/aufgaben/durchsetzungsverfahren/durchsetzungsverfahren-1305830.php"
 			}
 		}
+	},
+	"filter": {
+		"title": "Filter",
+		"displayedInstitutions": "Angezeigte Kulturorte in Berlin",
+		"hideClosed": "Geschlossene Orte ausblenden",
+		"showClosed": "Geschlossene Orte einblenden",
+		"districts": {
+			"title": "Bezirke",
+			"resetFilters": "Filter zurücksetzen",
+			"setAllFilters": "Alle Filter"
+		},
+		"categories": {
+			"title": "Kategorien",
+			"resetFilters": "Filter zurücksetzen",
+			"setAllFilters": "Alle Filter"
+		},
+		"loading": "Filter werden geladen...",
+		"error": "Fehler beim Laden der Filter",
+		"retry": "Erneut versuchen"
 	}
 }

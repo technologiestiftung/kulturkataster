@@ -1,6 +1,6 @@
+/* eslint-disable complexity */
 "use client";
 
-import { InformationModal } from "@/components/Modals/Pages/InformationModal";
 import { WelcomeModal } from "@/components/Modals/Pages/WelcomeModal";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,23 +16,27 @@ import {
 	useSidebar,
 } from "@/components/ui/sidebar";
 import Accessibility from "@/icons/accessibility.svg";
+import ArrowLeft from "@/icons/arrow-narrow-left.svg";
 import Close from "@/icons/close.svg";
+import DotsVertical from "@/icons/dots-vertical.svg";
 import Download from "@/icons/download.svg";
 import Edit from "@/icons/edit.svg";
 import FilterLines from "@/icons/filter-lines.svg";
 import InfoCircle from "@/icons/info-circle.svg";
 import Search from "@/icons/search.svg";
-import { useMapStore } from "@/lib/store/mapStore";
-import { useVenueStore } from "@/lib/store/venueStore";
 import { useAppStore } from "@/lib/store/appStore";
-import KukaMiniLogo from "@/logos/kuka-mini.svg";
+import { useInstitutionStore } from "@/lib/store/institutionStore";
+import { useMapStore } from "@/lib/store/mapStore";
+import { useModalStore } from "@/lib/store/modalStore";
+import { hasActiveFilters } from "@/lib/utils/filterUtils";
+import KukaSmallLogo from "@/logos/kuka-small.svg";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { LayerTreeContent } from "../Map/LayerTree/LayerTree";
 import { AccessibilityContent } from "./MenuContent/AccessibilityContent";
 import { FilterContent } from "./MenuContent/FilterContent";
+import { InstitutionDetailContent } from "./MenuContent/InstitutionDetailContent";
 import { SearchContent } from "./MenuContent/SearchContent";
-import { VenueDetailContent } from "./MenuContent/VenueDetailContent";
-import { useEffect, useState } from "react";
 
 const menuItems = [
 	{ id: "filter", icon: FilterLines, label: "filter.title" },
@@ -50,12 +54,36 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	const { toggleSidebar, setOpen, setOpenMobile, isMobile, open, openMobile } =
 		useSidebar();
 	const { t } = useTranslation("common");
-	const [activeItem, setActiveItem] = useState("filter");
-	const [infoModalOpen, setInfoModalOpen] = useState(false);
+	const [activeItem, setActiveItem] = useState<string>("");
+	const [previousActiveItem, setPreviousActiveItem] = useState<string>("");
+	const [userHasClosedSidebar, setUserHasClosedSidebar] = useState(false);
+	const {
+		setInformationModalOpen,
+		setDownloadModalOpen,
+		setDownloadModalMode,
+		setMobileMenuModalOpen,
+	} = useModalStore();
 	const isLayerTreeOpen = useMapStore((state) => state.isLayerTreeOpen);
 	const setIsLayerTreeOpen = useMapStore((state) => state.setIsLayerTreeOpen);
-	const selectedVenueId = useVenueStore((state) => state.selectedVenueId);
+	const selectedInstitutionId = useInstitutionStore(
+		(state) => state.selectedInstitutionId,
+	);
+	const setSelectedInstitutionId = useInstitutionStore(
+		(state) => state.setSelectedInstitutionId,
+	);
+	const filters = useInstitutionStore((state) => state.filters);
+	const originalInstitutions = useInstitutionStore(
+		(state) => state.originalInstitutions,
+	);
+	const institutions = useInstitutionStore((state) => state.institutions);
 	const { firstTimeUser, setFirstTimeUser } = useAppStore();
+
+	useEffect(() => {
+		if (!isMobile && !firstTimeUser && !userHasClosedSidebar) {
+			setActiveItem("filter");
+			setOpen(true);
+		}
+	}, [isMobile, firstTimeUser, setOpen, userHasClosedSidebar]);
 
 	useEffect(() => {
 		if (isLayerTreeOpen) {
@@ -64,21 +92,31 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	}, [isLayerTreeOpen]);
 
 	useEffect(() => {
-		if (selectedVenueId) {
-			setActiveItem("venue-detail");
+		if (selectedInstitutionId) {
+			if (activeItem && activeItem !== "institution-detail") {
+				setPreviousActiveItem(activeItem);
+			}
+			setActiveItem("institution-detail");
 			if (isMobile) {
 				setOpenMobile(true);
 			} else {
 				setOpen(true);
 			}
+		} else if (activeItem === "institution-detail") {
+			setActiveItem(previousActiveItem);
 		}
-	}, [selectedVenueId, isMobile, setOpen, setOpenMobile]);
+	}, [
+		selectedInstitutionId,
+		isMobile,
+		setOpen,
+		setOpenMobile,
+		activeItem,
+		previousActiveItem,
+	]);
 
 	useEffect(() => {
 		const isSidebarClosed = isMobile ? !openMobile : !open;
 		if (isSidebarClosed && !isMobile) {
-			// Only clear activeItem on desktop when sidebar closes
-			// On mobile, we handle this manually in handleItemClick
 			setActiveItem("");
 		}
 	}, [open, openMobile, isMobile]);
@@ -86,12 +124,13 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	useEffect(() => {
 		setOpen(false);
 		setOpenMobile(false);
+		setIsLayerTreeOpen(false);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isMobile]);
 
 	const handleItemClick = (itemName: string) => {
 		if (itemName === "info") {
-			setInfoModalOpen(true);
+			setInformationModalOpen(true);
 			return;
 		}
 
@@ -114,6 +153,17 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 				"_blank",
 			);
 			return;
+		}
+
+		if (itemName === "download") {
+			setDownloadModalOpen(true);
+			setDownloadModalMode("filtered");
+			return;
+		}
+
+		// Clear selected institution when switching to a different menu item
+		if (selectedInstitutionId && itemName !== "institution-detail") {
+			setSelectedInstitutionId(null);
 		}
 
 		if (activeItem === itemName) {
@@ -141,13 +191,60 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 		setFirstTimeUser(false);
 	};
 
+	const handleSidebarClose = () => {
+		setUserHasClosedSidebar(true);
+		if (activeItem === "institution-detail") {
+			setSelectedInstitutionId(null);
+		}
+		if (activeItem === "layertree") {
+			setIsLayerTreeOpen(false);
+		}
+		setActiveItem("");
+		setOpen(false);
+		setOpenMobile(false);
+	};
+
+	const handleBackToFilter = () => {
+		setSelectedInstitutionId(null);
+		setActiveItem(previousActiveItem);
+	};
+
+	const getActiveItemTitle = () => {
+		if (!activeItem) return "";
+		if (activeItem === "layertree") return "Fachkarten";
+		if (activeItem === "institution-detail") return t("institution.details");
+		return t(activeItem + ".title");
+	};
+
+	const shouldShowDownloadButton = () => {
+		return (
+			activeItem === "institution-detail" ||
+			(activeItem === "filter" && hasActiveFilters(filters))
+		);
+	};
+
+	const handleDownloadButtonClick = () => {
+		setDownloadModalOpen(true);
+		const mode = activeItem === "filter" ? "filtered" : "selected";
+		setDownloadModalMode(mode);
+	};
+
+	const getDownloadButtonCount = () => {
+		if (activeItem === "institution-detail") {
+			return 1;
+		}
+		if (activeItem === "filter" && institutions && hasActiveFilters(filters)) {
+			return institutions.features.length;
+		}
+		return null;
+	};
+
 	return (
 		<>
 			<WelcomeModal
 				open={firstTimeUser}
 				onOpenChange={handleWelcomeModalClose}
 			/>
-			<InformationModal open={infoModalOpen} onOpenChange={setInfoModalOpen} />
 			<Sidebar
 				collapsible="icon"
 				className="overflow-hidden *:data-[sidebar=sidebar]:flex-row [&_*]:!transition-none"
@@ -160,8 +257,8 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 					<SidebarHeader>
 						<SidebarMenu className="my-2">
 							<SidebarMenuItem>
-								<button onClick={handleLogoClick}>
-									<KukaMiniLogo className="size-14 cursor-pointer hover:opacity-80 transition-opacity" />
+								<button onClick={handleLogoClick} aria-label={t("kukaLogo")}>
+									<KukaSmallLogo className="size-14 cursor-pointer hover:opacity-80 transition-opacity" />
 								</button>
 							</SidebarMenuItem>
 						</SidebarMenu>
@@ -179,8 +276,18 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 												}}
 												onClick={() => handleItemClick(item.id)}
 												isActive={activeItem === item.id}
+												aria-label={t(item.label)}
+												className="relative"
 											>
 												<item.icon />
+												{(item.id === "filter" || item.id === "download") &&
+													institutions &&
+													originalInstitutions?.features.length !==
+														institutions.features.length && (
+														<div className="absolute top-2 -right-1 bg-primary text-primary-foreground body2 rounded-full min-w-5 h-5 flex items-center justify-center px-1">
+															{institutions.features.length}
+														</div>
+													)}
 											</SidebarMenuButton>
 										</SidebarMenuItem>
 									))}
@@ -199,6 +306,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 										}}
 										onClick={() => handleItemClick(item.id)}
 										isActive={activeItem === item.id}
+										aria-label={t(item.label)}
 									>
 										<item.icon />
 									</SidebarMenuButton>
@@ -212,60 +320,73 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 				{/* We disable collapsible and let it fill remaining space */}
 				<Sidebar
 					collapsible="none"
-					className="flex-1 w-full h-full group-data-[collapsible=icon]:hidden"
+					className="flex-1 h-full group-data-[collapsible=icon]:hidden flex flex-col"
 				>
 					<SidebarHeader className="gap-3.5 p-6 shadow-sm md:shadow-none z-10">
 						<div className="md:hidden flex justify-center pb-2">
 							<div className="w-10 h-1 bg-muted-foreground/30 rounded-full"></div>
 						</div>
 						<div className="flex items-center justify-between w-full">
-							<span className="body1 font-bold">
-								{(() => {
-									if (activeItem === "layertree") return "Fachkarten";
-									if (activeItem === "venue-detail") return t("venue.details");
-
-									return t(activeItem + ".title");
-								})()}
-							</span>
+							<div className="flex items-center justify-between">
+								<div className="flex items-center gap-2">
+									{activeItem === "institution-detail" &&
+										previousActiveItem && (
+											<button
+												onClick={handleBackToFilter}
+												className="body1 font-bold flex items-center gap-1"
+												aria-label={`Zurück zu ${t(previousActiveItem + ".title")}`}
+											>
+												<ArrowLeft /> Zurück zu{" "}
+												{t(previousActiveItem + ".title")}
+											</button>
+										)}
+									{!(
+										activeItem === "institution-detail" && previousActiveItem
+									) && (
+										<span className="body1 font-bold">
+											{getActiveItemTitle()}
+										</span>
+									)}
+								</div>
+							</div>
 							<button
-								onClick={() => {
-									setOpen(false);
-									setOpenMobile(false);
-									if (activeItem === "layertree") {
-										setIsLayerTreeOpen(false);
-										setActiveItem("filter");
-									} else if (activeItem === "venue-detail") {
-										const setSelectedVenueId =
-											useVenueStore.getState().setSelectedVenueId;
-										setSelectedVenueId(null);
-										setActiveItem("filter");
-									}
-								}}
-								className=""
+								onClick={handleSidebarClose}
+								aria-label={t("closeSidebar")}
 							>
 								<Close />
 							</button>
 						</div>
 					</SidebarHeader>
-					<SidebarContent>
+					<SidebarContent className="flex-1 overflow-hidden">
 						<SidebarGroup className="px-0 h-full">
 							<SidebarGroupContent className="h-full overflow-auto">
-								<div className="min-h-full flex flex-col">
+								<div className="h-full flex flex-col">
 									<div className="flex-1">
 										{activeItem === "filter" && <FilterContent />}
 										{activeItem === "search" && <SearchContent />}
 										{activeItem === "accessibility" && (
-											<AccessibilityContent onItemClick={handleItemClick} />
+											<div className="p-2 w-full">
+												<AccessibilityContent onItemClick={handleItemClick} />
+											</div>
 										)}
 										{activeItem === "layertree" && <LayerTreeContent />}
-										{activeItem === "venue-detail" && <VenueDetailContent />}
+										{activeItem === "institution-detail" && (
+											<InstitutionDetailContent />
+										)}
 									</div>
-									{(activeItem === "venue-detail" ||
-										activeItem === "filter") && (
+									{shouldShowDownloadButton() && false && (
 										<div className="sticky bottom-0 flex justify-center p-4">
-											<Button variant={"outline"} className="w-full">
+											<Button
+												variant={"outline"}
+												className="w-full"
+												aria-label={t("download.downloadButton")}
+												onClick={handleDownloadButtonClick}
+											>
 												<Download size={6} viewBox="0 0 24 24" />
-												Daten herunterladen
+												{t("download.downloadButton")}
+												{getDownloadButtonCount() && (
+													<span>({getDownloadButtonCount()})</span>
+												)}
 											</Button>
 										</div>
 									)}
@@ -279,10 +400,24 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 				<button
 					onClick={handleLogoClick}
 					className="flex flex-col items-center gap-1 p-2"
+					aria-label={t("kukaLogo")}
 				>
-					<KukaMiniLogo className="size-14" />
+					<KukaSmallLogo className="size-14" />
 				</button>
 			</div>
+
+			<div className="absolute md:hidden block z-[50] top-0 right-0 p-4 overflow-hidden">
+				<Button
+					variant="map-icon"
+					size="icon-only"
+					title={t("mobileMenu.title")}
+					onClick={() => setMobileMenuModalOpen(true)}
+					aria-label={t("mobileMenu.title")}
+				>
+					<DotsVertical size={14} />
+				</Button>
+			</div>
+
 			<div className="fixed bottom-0 left-0 right-0 z-[60] bg-sidebar border-t md:hidden h-20 pointer-events-auto">
 				<SidebarMenu className="flex-row justify-around px-2 py-3">
 					{menuItems.map((item) => (
@@ -291,28 +426,23 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 								onClick={() => handleItemClick(item.id)}
 								isActive={activeItem === item.id}
 								className="flex-col gap-1 h-auto py-2 px-2 w-auto size-12"
+								aria-label={t(item.label)}
 							>
 								<item.icon className="size-6" />
 								<span className="text-xs font-medium hidden">
 									{t(item.label)}
 								</span>
+								{(item.id === "filter" || item.id === "download") &&
+									institutions &&
+									originalInstitutions?.features.length !==
+										institutions.features.length && (
+										<div className="absolute -top-1 -right-1 bg-primary text-primary-foreground body2 rounded-full min-w-5 h-5 flex items-center justify-center px-1">
+											{institutions.features.length}
+										</div>
+									)}
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 					))}
-					{/* {footerItems.map((item) => (
-						<SidebarMenuItem key={item.id} className="flex-shrink-0">
-							<SidebarMenuButton
-								onClick={() => handleItemClick(item.id)}
-								isActive={activeItem === item.id}
-								className="flex-col gap-1 h-auto py-2 px-2 w-auto"
-							>
-								<item.icon className="size-6" />
-								<span className="text-xs font-medium hidden">
-									{t(item.label)}
-								</span>
-							</SidebarMenuButton>
-						</SidebarMenuItem>
-					))} */}
 				</SidebarMenu>
 			</div>
 		</>

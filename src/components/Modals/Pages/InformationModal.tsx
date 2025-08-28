@@ -1,12 +1,46 @@
 "use client";
 
+import TextBlock from "@/components/Content/TextBlock";
+import TextWithLinks from "@/components/Content/TextWithLinks";
+import { useTranslation } from "react-i18next";
 import { PageModal } from "../PageModal";
-import { useTranslation, Trans } from "react-i18next";
-import { Button } from "@/components/ui/button";
-import Download from "@/icons/download.svg";
-import LinkedIn from "@/icons/linkedin.svg";
-import Facebook from "@/icons/facebook.svg";
-import Instagram from "@/icons/instagram.svg";
+
+interface FaqItem {
+	question: string;
+	answer: string;
+}
+
+interface Faq {
+	title: string;
+	questions: FaqItem[];
+}
+
+interface UsageGuide {
+	title: string;
+	desktop?: string;
+	mobile?: string;
+	description?: string;
+	action?: string;
+	closedPlaces?: string;
+	instructions?: string;
+	submit?: string;
+	review?: string;
+}
+
+interface Usage {
+	title: string;
+	introduction: string;
+	guides: UsageGuide[];
+}
+
+interface Scope {
+	title: string;
+	features: string[];
+	upcomingEnhancements: {
+		title: string;
+		items: string[];
+	};
+}
 
 interface InformationModalProps {
 	open: boolean;
@@ -17,60 +51,77 @@ export function InformationModal({
 	open,
 	onOpenChange,
 }: InformationModalProps) {
-	const { t } = useTranslation(["content", "common"]);
+	const { t } = useTranslation("content");
+
+	const introParagraphs = t("informationModal.introduction", {
+		returnObjects: true,
+	}) as string[];
+	const scope = t("informationModal.scope", { returnObjects: true }) as Scope;
+	const usage = t("informationModal.usage", { returnObjects: true }) as Usage;
+	const faq = t("informationModal.faq", { returnObjects: true }) as Faq;
 
 	const content = (
-		<div className="space-y-8">
-			{/* Main description */}
-			<p className="body1">
-				{t("informationModal.description", { ns: "content" })}
-			</p>
-
-			{/* Methodology section */}
+		<div className="space-y-10">
 			<div className="space-y-4">
-				<h2>{t("informationModal.methodology.title", { ns: "content" })}</h2>
-				<p className="body2">
-					{t("informationModal.methodology.description1", { ns: "content" })}
-				</p>
-				<p className="body2">
-					{t("informationModal.methodology.description2", { ns: "content" })}
-				</p>
+				{introParagraphs.map((text, index) => (
+					<TextWithLinks key={index} text={text} />
+				))}
 			</div>
 
-			{/* Usage info section */}
 			<div className="space-y-4">
-				<h2>{t("informationModal.usage_info.title", { ns: "content" })}</h2>
-				<p className="body2">
-					{t("informationModal.usage_info.description1", { ns: "content" })}
-				</p>
-				<p className="body2">
-					{t("informationModal.usage_info.description2", { ns: "content" })}
-				</p>
-				<Button variant="outline" className="mt-4">
-					<Download className="mr-2 h-6 w-6" />
-					{t("informationModal.usage_info.downloadPDF", { ns: "content" })}
-				</Button>
-				<div className="mt-20 flex justify-between">
-					<div>
-						<Trans
-							i18nKey="footer.openSource"
-							ns="common"
-							components={[
-								<a
-									href="https://github.com/technologiestiftung/kulturkataster-frontend/"
-									target="_blank"
-									key={"sourceLink"}
-									rel="noopener noreferrer"
-									className="underline font-bold text-primary-dark"
-								/>,
-							]}
-						/>
-					</div>
-					<div className="flex space-x-4">
-						<Facebook className="size-6 cursor-pointer" />
-						<Instagram className="size-6 cursor-pointer" />
-						<LinkedIn className="size-6 cursor-pointer" />
-					</div>
+				<TextBlock titleAs="h1" title={scope.title} />
+				<ul className="list-disc pl-5 body2 space-y-1">
+					{scope.features.map((item, i) => (
+						<li key={i}>{item}</li>
+					))}
+				</ul>
+				<div className="pt-4">
+					<p className="body1 font-bold pb-2">
+						{scope.upcomingEnhancements.title}
+					</p>
+					<ul className="list-disc pl-5 body2 space-y-1">
+						{scope.upcomingEnhancements.items.map((item, i) => (
+							<li key={i}>{item}</li>
+						))}
+					</ul>
+				</div>
+			</div>
+
+			<div className="space-y-6">
+				<TextBlock
+					titleAs="h1"
+					titleClassName="mb-2"
+					title={usage.title}
+					text={usage.introduction}
+				/>
+				<div className="space-y-6">
+					{usage.guides.map((guide) => (
+						<div key={guide.title}>
+							<p className="body1 font-bold pb-2">{guide.title}</p>
+							<div className="body2 space-y-2">
+								{guide.description && <p>{guide.description}</p>}
+								{guide.desktop && <p>{guide.desktop}</p>}
+								{guide.mobile && <p>{guide.mobile}</p>}
+								{guide.action && <p>{guide.action}</p>}
+								{guide.closedPlaces && <p>{guide.closedPlaces}</p>}
+								{guide.instructions && <p>{guide.instructions}</p>}
+								{guide.submit && <p>{guide.submit}</p>}
+								{guide.review && <p>{guide.review}</p>}
+							</div>
+						</div>
+					))}
+				</div>
+			</div>
+
+			<div className="space-y-6">
+				<TextBlock titleAs="h1" title={faq.title} />
+				<div className="space-y-6">
+					{faq.questions.map((item) => (
+						<div key={item.question}>
+							<p className="body1 font-bold">{item.question}</p>
+							<TextWithLinks text={item.answer} />
+						</div>
+					))}
 				</div>
 			</div>
 		</div>
@@ -80,8 +131,8 @@ export function InformationModal({
 		<PageModal
 			open={open}
 			onOpenChange={onOpenChange}
-			title={t("informationModal.title", { ns: "content" })}
-			subtitle={t("informationModal.subtitle", { ns: "content" })}
+			title={t("informationModal.title")}
+			subtitle={t("informationModal.subtitle")}
 			content={content}
 		/>
 	);
