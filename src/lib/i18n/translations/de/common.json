@@ -1,0 +1,151 @@
+{
+	"information": {
+		"title": "Informationen"
+	},
+	"filter": {
+		"title": "Kulturorte filtern"
+	},
+	"search": {
+		"title": "Suche",
+		"description": "Ganz einfach die Berliner Kulturlandschaft entdecken: Geben Sie einen Kulturortnamen, eine Adresse, einen Bezirk oder Ortsteil in die Suchfunktion ein und wählen Sie das Ergebnis aus den angezeigten Vorschlägen aus. Ihre Auswahl wird direkt auf der Karte angezeigt.",
+		"hint": "Adresse oder Kulturort eingeben",
+		"placeholder": "Kulturort, Adresse oder Kategorie",
+		"searchButton": "Suchen",
+		"noResults": "Keine Kulturorte gefunden.",
+		"error": "Fehler bei der Suche. Bitte versuchen Sie es später erneut.",
+		"noResultsFound": "Zu Ihrer Eingabe konnte kein Kulturort oder Adresse gefunden werden. Bitte überprüfen Sie die Angaben und versuchen Sie es erneut.",
+		"suggestions": "Vorschläge für Ihre Suche"
+	},
+	"download": {
+		"title": "Liste herunterladen",
+		"description": "Laden Sie die Daten der Kulturorte im JSON-Format herunter. Diese Daten können für eigene Anwendungen oder Analysen verwendet werden.",
+		"downloadButton": "Daten herunterladen",
+		"downloading": "Daten werden heruntergeladen..."
+	},
+	"accessibility": {
+		"title": "Barrierefreiheit",
+		"signLanguage": {
+			"title": "Deutsche Gebärdensprache",
+			"description": "Dieses Video erklärt die Barrierefreiheit der Website in Gebärdensprache."
+		},
+		"simpleLanguage": {
+			"title": "Leichte Sprache",
+			"description": "Diese Seite bietet Informationen zur Barrierefreiheit in einfacher Sprache."
+		},
+		"fontSize": {
+			"title": "Schriftgröße ändern",
+			"description": "Sie können die Schriftgröße der Website anpassen, um die Lesbarkeit zu verbessern. Nutzen Sie die Schaltflächen unten, um die Schriftgröße zu vergrößern oder zu verkleinern."
+		},
+		"contrast": {
+			"title": "Kontrast anpassen",
+			"description": "Aktivieren Sie den Kontrastmodus, um die Lesbarkeit zu verbessern. Dieser Modus erhöht den Kontrast zwischen Text und Hintergrund."
+		}
+	},
+	"about": "Über",
+	"info": {
+		"title": "Info",
+		"open": "Infos öffnen"
+	},
+	"add": {
+		"title": "Mitwirken",
+		"description": "Fügen Sie einen neuen Kulturort hinzu, indem Sie das Formular ausfüllen. Wir prüfen Ihre Angaben und veröffentlichen den Ort nach Freigabe."
+	},
+	"edit": "Bearbeiten",
+	"delete": "Löschen",
+	"save": "Speichern",
+	"cancel": "Abbrechen",
+	"confirm": "Bestätigen",
+	"close": "Schließen",
+	"closeSidebar": "Seitenleiste schließen",
+	"institution": {
+		"details": "Kulturort Details",
+		"unnamed": "Unbenannter Kulturort",
+		"contact": "Kontakt",
+		"website": "Website",
+		"phone": "Telefon",
+		"email": "E-Mail",
+		"address": "Adresse",
+		"source": "Datenquelle",
+		"organization": "Organisation",
+		"parent": "Träger",
+		"funding": "Finanzierung",
+		"support": "Förderung",
+		"notFound": "Kulturort nicht gefunden",
+		"backToMap": "Zurück zur Karte",
+		"owner": "Eigentümer",
+		"categories": "Kategorien",
+		"closingReason": "Schließungsgrund",
+		"utilizationStatus": "Nutzungsstatus",
+		"basicInfoHeading": "Grundinformationen",
+		"parentOrganization": "Dachorganisation",
+		"subtitle": "Subtitle",
+		"subcategories": "Unterkategorien",
+		"subcategory": "Unterkategorie",
+		"culturalArea": "Kulturareal",
+		"phoneNumber": "Telefonnummer",
+		"emailAddress": "E-Mail-Adresse",
+		"fundingType": "Art der Finanzierung",
+		"supportType": "Art der Förderung",
+		"district": "Bezirk",
+		"usableAreaSize": "Größe der Nutzflächen (m²)",
+		"workspaceCount": "Anzahl der Arbeitsräume",
+		"multipleUse": "Offen für Raumanfragen?",
+		"multipleUsePossible": "Ja",
+		"multipleUseNotPossible": "Nein",
+		"description": "Beschreibung",
+		"multipleUseDescription": "Beschreibung Räume/Flächen für Mehrfachnutzung",
+		"status": "Stand",
+		"moreInfo": "Mehr Informationen",
+		"lessInfo": "Weniger Informationen",
+		"loading": "Laden...",
+		"establishedSince": "Bestehen am Standort seit",
+		"establishedUntil": "Bestehen am Standort bis"
+	},
+	"loading": "Laden",
+	"error": "Fehler",
+	"success": "Erfolg",
+	"unknown": "Unbekannt",
+	"footer": {
+		"title": "Kulturkataster Berlin",
+		"projectBy": "Ein Projekt der Kulturraum Berlin gGmbH",
+		"openSource": "Das Kulturkataster ist ein <0>Open-Source-Projekt</0>.",
+		"address": {
+			"suffix": "Kulturraum Berlin gGmbH",
+			"street": "Spandauer Damm 19",
+			"city": "Berlin",
+			"zip": "14059"
+		},
+		"telephone": {
+			"label": "Tel.",
+			"number": "+49 30 3030 444 60"
+		},
+		"email": {
+			"label": "E-Mail",
+			"address": "info@kulturkataster.berlin"
+		},
+		"about": "Über das Projekt",
+		"newsletter": "Newsletter",
+		"imprint": "Impressum",
+		"privacy": "Datenschutz",
+		"accessibility": "Barrierefreiheit",
+		"credit": {
+			"text": "© 2025 - Ein Projekt der Kulturraum Berlin gGmbH, gefördert durch die Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt, mit der technischen Umsetzung durch die Technologiestiftung Berlin."
+		}
+	},
+	"map": {
+		"zoomIn": "Vergrößern",
+		"zoomOut": "Verkleinern",
+		"geolocate": "Meinen Standort finden",
+		"layerTree": "Fachkarten",
+		"layerTreeTitle": "Fachkarten",
+		"closeLayerTree": "Fachkarten schließen",
+		"availableLayers": "Verfügbare Ebenen",
+		"noLayersAvailable": "Keine Fachkarten verfügbar"
+	},
+	"kukaLogo": "Kulturkataster - Logo",
+	"fileFormat": {
+		"xls": "XLS",
+		"xlsx": "XLSX",
+		"csv": "CSV"
+	}
+}

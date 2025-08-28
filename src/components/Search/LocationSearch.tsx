@@ -1,0 +1,289 @@
+"use client";
+
+import { Input } from "@/components/ui/input";
+import Search from "@/icons/search.svg";
+import { useKeyboardNavigation } from "@/lib/hooks/useKeyboardNavigation";
+import { useSearch } from "@/lib/hooks/useSearch";
+import { searchLocations } from "@/lib/serverActions/searchLocations";
+import { useInstitutionStore } from "@/lib/store/institutionStore";
+import { useMapStore } from "@/lib/store/mapStore";
+import { sanitizeAddressInput } from "@/lib/utils/sanitizerUtils";
+import { GeoFeature, Institution, SearchResult } from "@/types/institution";
+import { boundingExtent } from "ol/extent";
+import { fromLonLat } from "ol/proj";
+import { ChangeEvent, useRef } from "react";
+import { useTranslation } from "react-i18next";
+import { SearchMessages } from "./SearchMessages";
+import { SearchResults } from "./SearchResults";
+
+export const isGeoFeature = (result: SearchResult): result is GeoFeature => {
+	return "place_name" in result && "center" in result;
+};
+
+const ANIMATION_DURATION = 1000;
+const DEFAULT_ZOOM = 8;
+
+export function LocationSearch() {
+	const { t } = useTranslation("common");
+	const inputRef = useRef<HTMLInputElement>(null);
+	const { map } = useMapStore();
+	const setSelectedInstitutionId = useInstitutionStore(
+		(state) => state.setSelectedInstitutionId,
+	);
+
+	const {
+		query,
+		results: searchResults,
+		isLoading,
+		resultErrorMessage,
+		statusRef,
+		setResults: setSearchResults,
+		setQuery,
+	} = useSearch<SearchResult>({
+		timeoutDuration: 500,
+		searchFunction: async (currQuery: string) => {
+			const result = await searchLocations(currQuery);
+			return result.allResults;
+		},
+	});
+
+	const {
+		activeIndex,
+		handleKeyDown,
+		listRef,
+		getItemProps,
+		reset: resetNavigation,
+	} = useKeyboardNavigation({
+		itemCount: searchResults.length,
+		onEnter: (index) => {
+			handleResultClick(searchResults[index]);
+		},
+		onEscape: () => {
+			clearResults();
+			inputRef.current?.focus();
+		},
+	});
+
+	const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+		const rawValue = e.target.value;
+		const sanitizedValue = sanitizeAddressInput(rawValue, false);
+
+		if (sanitizedValue !== rawValue) {
+			e.target.value = sanitizedValue;
+		}
+
+		setQuery(sanitizedValue);
+		resetNavigation();
+	};
+
+	const clearResults = () => {
+		setSearchResults([]);
+	};
+
+	const parseLatLongCoordinates = (
+		latlong: string,
+	): [number, number] | null => {
+		const match = latlong.match(/\(([^,]+),([^)]+)\)/);
+		if (!match) return null;
+
+		const lat = parseFloat(match[1]);
+		const lng = parseFloat(match[2]);
+		if (isNaN(lat) || isNaN(lng)) return null;
+
+		const coords = fromLonLat([lng, lat]);
+		return coords as [number, number];
+	};
+
+	const parseCaseCoordinates = (caseField: string): [number, number] | null => {
+		const match = caseField.match(/\(([^,]+),([^)]+)\)/);
+		if (!match) return null;
+
+		const lat = parseFloat(match[1]); // latitude first
+		const lng = parseFloat(match[2]); // longitude second
+		if (isNaN(lat) || isNaN(lng)) return null;
+
+		// Transform from WGS84 (lat,lng) to map projection
+		const coords = fromLonLat([lng, lat]);
+		return coords as [number, number];
+	};
+
+	const parseGeoJsonCoordinates = (
+		st_asgeojson: string,
+	): [number, number] | null => {
+		try {
+			const geoJson = JSON.parse(st_asgeojson);
+			if (!geoJson.coordinates || !Array.isArray(geoJson.coordinates))
+				return null;
+
+			const coords = fromLonLat([
+				geoJson.coordinates[0],
+				geoJson.coordinates[1],
+			]);
+			return coords as [number, number];
+		} catch (error) {
+			console.warn("Failed to parse st_asgeojson:", error);
+			return null;
+		}
+	};
+
+	const extractCoordinates = (result: Institution): [number, number] | null => {
+		console.log("Debug - Institution result:", {
+			latlong: result.latlong,
+			case: result.case,
+			st_asgeojson: result.st_asgeojson,
+		});
+
+		if (result.latlong) {
+			const coords = parseLatLongCoordinates(result.latlong);
+			console.log("Debug - latlong coords:", coords);
+			return coords;
+		}
+
+		if (result.case) {
+			return parseCaseCoordinates(result.case);
+		}
+
+		if (result.st_asgeojson) {
+			return parseGeoJsonCoordinates(result.st_asgeojson);
+		}
+
+		console.log("No valid coordinates found");
+		return null;
+	};
+	const handleGeoFeatureClick = (result: GeoFeature) => {
+		const [lng, lat] = result.center;
+
+		if (!map) return;
+
+		if (result.bbox && result.bbox.length === 4) {
+			const [minLng, minLat, maxLng, maxLat] = result.bbox;
+			const bottomLeft = fromLonLat([minLng, minLat]);
+			const topRight = fromLonLat([maxLng, maxLat]);
+			const extent = boundingExtent([bottomLeft, topRight]);
+
+			map.getView().fit(extent, {
+				duration: ANIMATION_DURATION,
+				padding: [50, 50, 50, 50],
+			});
+		} else {
+			const transformedCoords = fromLonLat([lng, lat]);
+			map.getView().animate({
+				center: transformedCoords,
+				duration: ANIMATION_DURATION,
+				zoom: DEFAULT_ZOOM,
+			});
+		}
+
+		if (statusRef.current) {
+			statusRef.current.textContent = `${result.place_name} ausgewählt.`;
+		}
+	};
+
+	const handleInstitutionClick = (result: Institution) => {
+		const coordinates = extractCoordinates(result);
+
+		if (coordinates && map) {
+			map.getView().animate({
+				center: coordinates,
+				duration: ANIMATION_DURATION,
+				zoom: DEFAULT_ZOOM,
+			});
+		}
+
+		setSelectedInstitutionId(result.id as unknown as string);
+
+		if (statusRef.current) {
+			statusRef.current.textContent = `${result.name} ausgewählt.`;
+		}
+	};
+
+	const handleResultClick = (result: SearchResult) => {
+		if (isGeoFeature(result)) {
+			handleGeoFeatureClick(result);
+		} else {
+			handleInstitutionClick(result);
+		}
+		setQuery("");
+		clearResults();
+		resetNavigation();
+	};
+
+	const formatAddress = (institution: Institution) => {
+		const street = [institution.street, institution.street_number]
+			.filter(Boolean)
+			.join(" ");
+		const city = [institution.zip_code, institution.city?.name]
+			.filter(Boolean)
+			.join(" ");
+		return [street, city].filter(Boolean).join(", ");
+	};
+
+	const highlightMatch = (text: string, searchQuery: string) => {
+		if (!searchQuery.trim() || !text) return text;
+
+		// Split search query into individual terms
+		const searchTerms = searchQuery
+			.trim()
+			.split(/\s+/)
+			.filter((term) => term.length > 0);
+
+		// Escape each term for regex
+		const escapedTerms = searchTerms.map((term) =>
+			term.replace(/[.*+?^${}()|[\\]\\\\]/g, "\\\\$&"),
+		);
+
+		// Create regex pattern that matches any of the terms
+		const pattern = escapedTerms.join("|");
+		const regex = new RegExp(`(${pattern})`, "gi");
+
+		const parts = text.split(regex);
+
+		return parts.map((part, index) =>
+			regex.test(part) ? <strong key={index}>{part}</strong> : part,
+		);
+	};
+
+	return (
+		<div className="h-full flex flex-col overflow-hidden">
+			<div className="flex-shrink-0 mb-8">
+				<div className="relative">
+					<Input
+						ref={inputRef}
+						placeholder={t("search.hint")}
+						value={query}
+						onChange={handleInputChange}
+						onKeyDown={handleKeyDown}
+						className="w-full bg-background"
+						icon={<Search className="w-5 h-5 text-foreground" />}
+						iconPosition="left"
+						aria-invalid={!!resultErrorMessage}
+					/>
+					{isLoading && (
+						<div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+							<div className="w-4 h-4 border-2 border-neutral-20 border-t-accent rounded-full animate-spin" />
+						</div>
+					)}
+				</div>
+				<div ref={statusRef} className="sr-only" aria-live="polite"></div>
+			</div>
+
+			<SearchResults
+				results={searchResults}
+				query={query}
+				activeIndex={activeIndex}
+				listRef={listRef}
+				getItemProps={getItemProps}
+				onResultClick={handleResultClick}
+				highlightMatch={highlightMatch}
+				formatAddress={formatAddress}
+			/>
+
+			<SearchMessages
+				hasError={resultErrorMessage}
+				hasResults={searchResults.length > 0}
+				isLoading={isLoading}
+				query={query}
+			/>
+		</div>
+	);
+}
