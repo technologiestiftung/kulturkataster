@@ -19,6 +19,7 @@ Frontend application for the Kulturkataster project - a comprehensive platform f
 The Kulturkataster Frontend is a Next.js application that provides an interactive map interface for exploring Berlin's cultural landscape. Built with modern web technologies, it offers multilingual support, responsive design, and advanced mapping capabilities.
 
 **Key Features:**
+
 - Interactive map with cultural institution visualization
 - Multilingual support (currently only German implemented) with i18next
 - Responsive design optimized for desktop and mobile
@@ -118,6 +119,7 @@ docker run -p 3000:3000 \
 The project uses GitHub Actions for automated building and publishing to GitHub Container Registry (GHCR). The workflow is triggered on pushes to `main`, `dev`, and `release/*` branches.
 
 **Docker Images Available At:**
+
 - `ghcr.io/technologiestiftung/kulturkataster-frontend:latest`
 - `ghcr.io/technologiestiftung/kulturkataster-frontend:main`
 - `ghcr.io/technologiestiftung/kulturkataster-frontend:dev`
@@ -166,11 +168,11 @@ src/lib/i18n/translations/
 2. Use the `useTranslation` hook in components:
 
 ```tsx
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 
 function MyComponent() {
-  const { t } = useTranslation('common');
-  return <h1>{t('welcome')}</h1>;
+	const { t } = useTranslation("common");
+	return <h1>{t("welcome")}</h1>;
 }
 ```
 
@@ -206,6 +208,7 @@ src/
 ### State Management
 
 The application uses Zustand for state management with separate stores for:
+
 - **App State**: General application state and UI preferences
 - **Map State**: Map interactions, layers, and geographic data
 - **Institution State**: Cultural institution data and filtering
@@ -233,12 +236,14 @@ The application uses Zustand for state management with separate stores for:
 The application supports different environment configurations:
 
 **Build-time Variables** (must start with `NEXT_PUBLIC_`):
+
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - `NEXT_PUBLIC_MAPTILER_API_KEY`
 - `NEXT_PUBLIC_MAP_BOUNDING_BOX`
 
 **Runtime Variables** (server-side only):
+
 - `SUPABASE_SERVICE_ROLE_KEY` (if needed for server actions)
 
 ## Contributing
