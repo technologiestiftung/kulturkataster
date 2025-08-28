@@ -15,6 +15,7 @@ env:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: ${{ github.ref == 'refs/heads/main' && 'main' || 'dev' }}
     permissions:
       contents: read
       packages: write
@@ -61,3 +62,16 @@ jobs:
             NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
             NEXT_PUBLIC_MAPTILER_API_KEY=${{ secrets.NEXT_PUBLIC_MAPTILER_API_KEY }}
             NEXT_PUBLIC_MAP_BOUNDING_BOX=${{ vars.NEXT_PUBLIC_MAP_BOUNDING_BOX }}
+
+      - name: Create Release
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ github.run_number }}
+          release_name: Release v${{ github.run_number }}
+          body: |
+            Automated release created from commit ${{ github.sha }}
+          draft: false
+          prerelease: false
