@@ -113,7 +113,7 @@ const GeolocationControl: FC<GeolocationControlProps> = ({
 				},
 				{
 					enableHighAccuracy: true,
-					timeout: 10000,
+					timeout: 15000,
 					maximumAge: 60000,
 				},
 			);
