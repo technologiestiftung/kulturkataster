@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="logos/kuka-large.svg" alt="Kulturkataster Logo" width="200" />
+  <img src="src/logos/kuka-large.svg" alt="Kulturkataster Logo" width="200" />
 </div>
 
 ![](https://img.shields.io/badge/Built%20with%20%E2%9D%A4%EF%B8%8F-at%20Technologiestiftung%20Berlin-blue)
@@ -286,19 +286,19 @@ Texts and content available as [CC BY](https://creativecommons.org/licenses/by/3
     <td align="center">
       <strong>Projekt von</strong><br />
       <a href="https://kulturraum.berlin/">
-        <img width="120" src="logos/KRB.svg" alt="Kulturraum Berlin" />
+        <img width="120" src="src/logos/KRB.svg" alt="Kulturraum Berlin" />
       </a>
     </td>
     <td align="center">
       <strong>Gefördert durch</strong><br />
       <a href="https://www.berlin.de/sen/kultgz/">
-        <img width="120" src="logos/senate.svg" alt="Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt" />
+        <img width="120" src="src/logos/senate.svg" alt="Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt" />
       </a>
     </td>
     <td align="center">
       <strong>Technische Umsetzung</strong><br />
       <a href="https://www.technologiestiftung-berlin.de/">
-        <img width="120" src="logos/technologiestiftung.svg" alt="Technologiestiftung Berlin" />
+        <img width="120" src="src/logos/technologiestiftung.svg" alt="Technologiestiftung Berlin" />
       </a>
     </td>
   </tr>
