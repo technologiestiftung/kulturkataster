@@ -1,4 +1,4 @@
-import { Geometry, Point, LineString, Polygon } from "geojson";
+import { Geometry, LineString, Point, Polygon } from "geojson";
 
 export function isPoint(geometry: Geometry): geometry is Point {
 	return geometry.type === "Point";
