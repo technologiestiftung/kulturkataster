@@ -11,6 +11,10 @@ export const useMapStore = create<MapStoreState>((set, get) => ({
 	layers: [],
 	currentFeature: null,
 	isLayerTreeOpen: false,
+	userLocation: {
+		coordinates: null,
+		accuracy: undefined,
+	},
 
 	// Map
 	setConfig: (config) => set({ config }),
@@ -63,4 +67,12 @@ export const useMapStore = create<MapStoreState>((set, get) => ({
 
 	// Features
 	setCurrentFeature: (currentFeature) => set({ currentFeature }),
+
+	// User Location
+	setUserLocation: (userLocation) => set({ userLocation }),
+
+	// LayerTress
+	openLegendLayerId: "",
+	setOpenLegendLayerId: (layerId: string) =>
+		set({ openLegendLayerId: layerId }),
 }));

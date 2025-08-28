@@ -1,10 +1,13 @@
 {
+	"information": {
+		"title": "Informationen"
+	},
 	"filter": {
 		"title": "Kulturorte filtern"
 	},
 	"search": {
 		"title": "Suche",
-		"description": "Entdecken Sie Berlins Kulturorte ganz einfach über die Suchfunktion – geben Sie eine Adresse oder einen Ort ein, und die Ergebnisse erscheinen direkt auf der Karte.",
+		"description": "Ganz einfach die Berliner Kulturlandschaft entdecken: Geben Sie einen Kulturortnamen, eine Adresse, einen Bezirk oder Ortsteil in die Suchfunktion ein und wählen Sie das Ergebnis aus den angezeigten Vorschlägen aus. Ihre Auswahl wird direkt auf der Karte angezeigt.",
 		"hint": "Adresse oder Kulturort eingeben",
 		"placeholder": "Kulturort, Adresse oder Kategorie",
 		"searchButton": "Suchen",
@@ -16,7 +19,8 @@
 	"download": {
 		"title": "Liste herunterladen",
 		"description": "Laden Sie die Daten der Kulturorte im JSON-Format herunter. Diese Daten können für eigene Anwendungen oder Analysen verwendet werden.",
-		"downloadButton": "Daten herunterladen"
+		"downloadButton": "Daten herunterladen",
+		"downloading": "Daten werden heruntergeladen..."
 	},
 	"accessibility": {
 		"title": "Barrierefreiheit",
@@ -39,7 +43,8 @@
 	},
 	"about": "Über",
 	"info": {
-		"title": "Info"
+		"title": "Info",
+		"open": "Infos öffnen"
 	},
 	"add": {
 		"title": "Mitwirken",
@@ -51,7 +56,8 @@
 	"cancel": "Abbrechen",
 	"confirm": "Bestätigen",
 	"close": "Schließen",
-	"venue": {
+	"closeSidebar": "Seitenleiste schließen",
+	"institution": {
 		"details": "Kulturort Details",
 		"unnamed": "Unbenannter Kulturort",
 		"contact": "Kontakt",
@@ -59,13 +65,16 @@
 		"phone": "Telefon",
 		"email": "E-Mail",
 		"address": "Adresse",
+		"source": "Datenquelle",
 		"organization": "Organisation",
 		"parent": "Träger",
 		"funding": "Finanzierung",
 		"support": "Förderung",
 		"notFound": "Kulturort nicht gefunden",
 		"backToMap": "Zurück zur Karte",
+		"owner": "Eigentümer",
 		"categories": "Kategorien",
+		"closingReason": "Schließungsgrund",
 		"utilizationStatus": "Nutzungsstatus",
 		"basicInfoHeading": "Grundinformationen",
 		"parentOrganization": "Dachorganisation",
@@ -80,15 +89,17 @@
 		"district": "Bezirk",
 		"usableAreaSize": "Größe der Nutzflächen (m²)",
 		"workspaceCount": "Anzahl der Arbeitsräume",
-		"multipleUse": "Mehrfachnutzung",
-		"multipleUsePossible": "möglich",
-		"multipleUseNotPossible": "nicht möglich",
+		"multipleUse": "Offen für Raumanfragen?",
+		"multipleUsePossible": "Ja",
+		"multipleUseNotPossible": "Nein",
 		"description": "Beschreibung",
 		"multipleUseDescription": "Beschreibung Räume/Flächen für Mehrfachnutzung",
 		"status": "Stand",
 		"moreInfo": "Mehr Informationen",
 		"lessInfo": "Weniger Informationen",
-		"loading": "Laden..."
+		"loading": "Laden...",
+		"establishedSince": "Bestehen am Standort seit",
+		"establishedUntil": "Bestehen am Standort bis"
 	},
 	"loading": "Laden",
 	"error": "Fehler",
@@ -96,9 +107,10 @@
 	"unknown": "Unbekannt",
 	"footer": {
 		"title": "Kulturkataster Berlin",
+		"projectBy": "Ein Projekt der Kulturraum Berlin gGmbH",
 		"openSource": "Das Kulturkataster ist ein <0>Open-Source-Projekt</0>.",
 		"address": {
-			"suffix": "c/o Kulturraum Berlin gGmbH",
+			"suffix": "Kulturraum Berlin gGmbH",
 			"street": "Spandauer Damm 19",
 			"city": "Berlin",
 			"zip": "14059"
@@ -109,7 +121,7 @@
 		},
 		"email": {
 			"label": "E-Mail",
-			"address": "kontakt@kulturkataster.berlin"
+			"address": "info@kulturkataster.berlin"
 		},
 		"about": "Über das Projekt",
 		"newsletter": "Newsletter",
@@ -117,7 +129,23 @@
 		"privacy": "Datenschutz",
 		"accessibility": "Barrierefreiheit",
 		"credit": {
-			"text": "© 2025 - Ein Projekt der Kulturraum Berlin gGmbH, in Zusammenarbeit mit der Technologiestiftung Berlin und gefördert durch den Senat Berlin."
+			"text": "© 2025 - Ein Projekt der Kulturraum Berlin gGmbH, gefördert durch die Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt, mit der technischen Umsetzung durch die Technologiestiftung Berlin."
 		}
+	},
+	"map": {
+		"zoomIn": "Vergrößern",
+		"zoomOut": "Verkleinern",
+		"geolocate": "Meinen Standort finden",
+		"layerTree": "Fachkarten",
+		"layerTreeTitle": "Fachkarten",
+		"closeLayerTree": "Fachkarten schließen",
+		"availableLayers": "Verfügbare Ebenen",
+		"noLayersAvailable": "Keine Fachkarten verfügbar"
+	},
+	"kukaLogo": "Kulturkataster - Logo",
+	"fileFormat": {
+		"xls": "XLS",
+		"xlsx": "XLSX",
+		"csv": "CSV"
 	}
 }
