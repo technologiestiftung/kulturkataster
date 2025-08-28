@@ -1,9 +1,5 @@
-"use client";
-
-import { useTranslation } from "react-i18next";
+import Filter from "@/components/Filter/Filter";
 
 export function FilterContent() {
-	const { t } = useTranslation("common");
-
-	return <p>{t("filterDescription")}</p>;
+	return <Filter />;
 }

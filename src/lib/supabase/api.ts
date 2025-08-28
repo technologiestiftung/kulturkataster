@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createClient } from "@/lib/supabase/client";
+import type { CategoryWithSubcategories, District, FilterState } from "@/types";
 import type { FeatureCollection } from "geojson";
 
 // Error handling
@@ -71,7 +72,6 @@ export async function searchInstitutions(query: string) {
 
 	const trimmedQuery = query.trim();
 
-	// Use the backend RPC function for search
 	const { data, error } = await supabase.rpc("get_public_institutions", {
 		search_term: trimmedQuery,
 		limit_count: 50,
@@ -81,6 +81,116 @@ export async function searchInstitutions(query: string) {
 		handleError(error, "search institutions");
 	}
 
-	// Return the institutions array directly
 	return data || [];
+}
+
+export async function filterInstitutions(query: FilterState) {
+	const supabase = createClient();
+
+	const { data, error } = await supabase.rpc(
+		"get_public_institutions_with_filters",
+		{
+			district_keys: query.district_keys,
+			category_keys: query.category_keys,
+			subcategory_keys: query.subcategory_keys,
+			include_closed: query.include_closed,
+		},
+	);
+
+	if (error) {
+		handleError(error, "filter institutions");
+	}
+	return data;
+}
+
+export async function getCategoriesWithSubcategories(): Promise<
+	CategoryWithSubcategories[]
+> {
+	// await getCategoryMap();
+
+	// // Return the dynamic category map with unique "others" keys
+	// return dynamicCategoryMap;
+
+	// Fallback to static map if needed
+	const staticCategoryMap = await import("./categoryMap.json");
+	return staticCategoryMap.default as CategoryWithSubcategories[];
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+async function getCategoryMap() {
+	// Replace with actual backend call when ready
+	const supabase = createClient();
+
+	const { data: subcategories, error: subcategories_error } = await supabase
+		.from("subcategory")
+		.select("*");
+
+	if (subcategories_error) {
+		handleError(subcategories_error, "fetch categories");
+	}
+
+	const { data: categories, error: categories_error } = await supabase
+		.from("category")
+		.select("*");
+
+	if (categories_error) {
+		handleError(categories_error, "fetch categories");
+	}
+
+	const subcategoriesByCategoryId = await subcategories.reduce(
+		(acc, subcategory) => {
+			const { category_id } = subcategory;
+			if (!acc[category_id]) {
+				acc[category_id] = [];
+			}
+			acc[category_id].push(subcategory);
+			return acc;
+		},
+		{},
+	);
+
+	const enumMap = await import("../i18n/translations/de/enumMap.json");
+	const categoryTranslations = enumMap.default.category;
+	const subcategoryTranslations = enumMap.default.subcategory;
+
+	const categoryMap = await categories
+		.map((category) => {
+			const subs = subcategoriesByCategoryId[category.id] || [];
+
+			// Sort subcategories alphabetically by their German translation
+			const sortedSubcategories = [...subs].sort((a, b) => {
+				const nameA =
+					subcategoryTranslations[
+						a.key as keyof typeof subcategoryTranslations
+					] || a.key;
+				const nameB =
+					subcategoryTranslations[
+						b.key as keyof typeof subcategoryTranslations
+					] || b.key;
+				return nameA.localeCompare(nameB);
+			});
+
+			return {
+				...category,
+				subcategories: sortedSubcategories,
+			};
+		})
+		.filter((category) => category.subcategories.length > 0)
+		.sort((a, b) => {
+			const nameA =
+				categoryTranslations[a.key as keyof typeof categoryTranslations] ||
+				a.key;
+			const nameB =
+				categoryTranslations[b.key as keyof typeof categoryTranslations] ||
+				b.key;
+			return nameA.localeCompare(nameB);
+		});
+
+	console.log("categoryMap", JSON.stringify(categoryMap, null, 2));
+	return categoryMap;
+}
+
+export async function getDistricts(): Promise<District[]> {
+	const staticDistrictMap = await import("./districtMap.json");
+	return staticDistrictMap.default as District[];
 }
