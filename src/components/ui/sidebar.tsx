@@ -161,7 +161,7 @@ function Sidebar({
 			<div
 				data-slot="sidebar"
 				className={cn(
-					"bg-background md:bg-sidebar text-sidebar-foreground flex h-full w-(--sidebar-width) flex-col",
+					"bg-background md:bg-sidebar text-sidebar-foreground flex h-full w-full flex-col",
 					className,
 				)}
 				{...props}
@@ -178,7 +178,7 @@ function Sidebar({
 					data-sidebar="sidebar"
 					data-slot="sidebar"
 					data-mobile="true"
-					className="bg-background text-sidebar-foreground w-full h-[calc(80vh-5rem)] p-0 [&>button]:hidden rounded-t-4 bottom-20"
+					className="bg-background text-sidebar-foreground w-full h-[calc(100dvh-8rem)] p-0 [&>button]:hidden rounded-t-4 bottom-20"
 					side="bottom"
 				>
 					<SheetHeader className="sr-only">
