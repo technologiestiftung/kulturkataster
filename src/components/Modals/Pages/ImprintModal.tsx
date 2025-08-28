@@ -59,21 +59,6 @@ export function ImprintModal({ open, onOpenChange }: ImprintModalProps) {
 				</div>
 			</div>
 
-			{/* Insurance Information */}
-			<div className="space-y-6">
-				<TextBlock titleAs="h1" title={t("imprintModal.insurance.title")} />
-
-				<TextBlock titleAs="h2" title={t("imprintModal.insurance.company")} />
-				<div className="body2 space-y-1">
-					<p>{t("imprintModal.insurance.name")}</p>
-					<p>{t("imprintModal.insurance.address")}</p>
-					<p>{t("imprintModal.insurance.zipCity")}</p>
-				</div>
-
-				<TextBlock titleAs="h2" title={t("imprintModal.insurance.scope")} />
-				<TextBlock text={t("imprintModal.insurance.scopeLocation")} />
-			</div>
-
 			{/* Editorial Responsibility */}
 			<div className="space-y-4">
 				<TextBlock titleAs="h1" title={t("imprintModal.editor.title")} />
