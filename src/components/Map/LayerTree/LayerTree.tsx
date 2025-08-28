@@ -1,0 +1,424 @@
+"use client";
+
+import {
+	Accordion,
+	AccordionContent,
+	AccordionItem,
+	AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { useSidebar } from "@/components/ui/sidebar";
+import ContextMapIcon from "@/icons/fachkarten.svg";
+import { useAppStore } from "@/lib/store/appStore";
+import { useMapStore } from "@/lib/store/mapStore";
+import { ManagedLayer } from "@/types";
+import { X } from "lucide-react";
+import Image from "next/image";
+import {
+	FC,
+	memo,
+	useCallback,
+	useEffect,
+	useMemo,
+	useRef,
+	useState,
+} from "react";
+import { useTranslation } from "react-i18next";
+
+// Constants
+const LAYER_THUMBNAIL_SIZE = 80;
+const FLOATING_BUTTON_SIZE = 64;
+const SIDEBAR_COLLAPSED_OFFSET = "left-24";
+const SIDEBAR_EXPANDED_OFFSET = "left-[494px]";
+const SIDEBAR_EXPANDED_OFFSET_LARGE_TEXT = "left-[554px]";
+
+// Custom hooks
+const useLayerData = () => {
+	const layers = useMapStore((state) => state.layers);
+	const setOpenLegendLayerId = useMapStore(
+		(state) => state.setOpenLegendLayerId,
+	);
+
+	const layerData = useMemo(() => {
+		const subjectLayers = layers.filter((l) => l.layerType === "subject");
+		const visibleSubjectLayers = subjectLayers.filter((l) => l.visibility);
+
+		const topVisibleLayer = visibleSubjectLayers.reduce(
+			(topLayer, currentLayer) => {
+				return !topLayer || currentLayer.zIndex > topLayer.zIndex
+					? currentLayer
+					: topLayer;
+			},
+			null as ManagedLayer | null,
+		);
+
+		return {
+			subjectLayers,
+			visibleSubjectLayers,
+			topVisibleLayer,
+			visibleCount: visibleSubjectLayers.length,
+		};
+	}, [layers]);
+
+	useEffect(() => {
+		if (layerData.topVisibleLayer) {
+			setOpenLegendLayerId(layerData.topVisibleLayer.id);
+		}
+	}, [layerData.topVisibleLayer, setOpenLegendLayerId]);
+
+	return layerData;
+};
+
+// Memoized LayerThumbnail component
+const LayerThumbnail = memo<{
+	layer: ManagedLayer;
+	size?: number;
+	showOverlay?: boolean;
+}>(({ layer, size = LAYER_THUMBNAIL_SIZE, showOverlay = false }) => {
+	const [imageError, setImageError] = useState(false);
+
+	const previewSrc = layer.config.service.preview?.src;
+	const hasPreview = previewSrc && !imageError;
+
+	return (
+		<div
+			className="rounded overflow-hidden flex-shrink-0 relative"
+			style={{ width: size, height: size }}
+		>
+			{hasPreview ? (
+				<Image
+					src={previewSrc}
+					alt={layer.config.service.name}
+					width={size}
+					height={size}
+					className="w-full h-full object-cover"
+					loading={layer.visibility ? "eager" : "lazy"}
+					onError={() => setImageError(true)}
+				/>
+			) : (
+				<div className="w-full h-full bg-gradient-to-br from-purple-200 to-purple-300 flex items-center justify-center">
+					<div className="w-6 h-6 border-2 border-purple-400 rounded opacity-50" />
+				</div>
+			)}
+			{showOverlay && layer.visibility && (
+				<div
+					className="absolute inset-0 bg-interaction-dark/30 flex items-center justify-center border-2 border-interaction-dark rounded"
+					aria-hidden="true"
+				/>
+			)}
+		</div>
+	);
+});
+
+LayerThumbnail.displayName = "LayerThumbnail";
+
+// Memoized LayerItem component
+const LayerItem = memo<{
+	layer: ManagedLayer;
+}>(({ layer }) => {
+	const setLayerVisibility = useMapStore((state) => state.setLayerVisibility);
+	const openLegendLayerId = useMapStore((state) => state.openLegendLayerId);
+	const setOpenLegendLayerId = useMapStore(
+		(state) => state.setOpenLegendLayerId,
+	);
+	const accordionContentRef = useRef<HTMLDivElement>(null);
+
+	const handleVisibilityChange = useCallback(
+		(newVisibility: boolean) => {
+			setLayerVisibility(layer.id, newVisibility);
+			if (layer.config.service.legend) {
+				if (newVisibility) {
+					setOpenLegendLayerId(layer.id);
+				}
+				if (!newVisibility && openLegendLayerId === layer.id) {
+					setOpenLegendLayerId("");
+				}
+			}
+		},
+		[
+			layer.id,
+			layer.config.service.legend,
+			openLegendLayerId,
+			setLayerVisibility,
+			setOpenLegendLayerId,
+		],
+	);
+
+	useEffect(() => {
+		if (openLegendLayerId === layer.id) {
+			const timer = setTimeout(() => {
+				accordionContentRef.current?.scrollIntoView({
+					behavior: "smooth",
+					block: "nearest",
+				});
+			}, 150);
+			return () => clearTimeout(timer);
+		}
+	}, [openLegendLayerId, layer.id]);
+
+	const hasLegend =
+		layer.config.service.legend &&
+		typeof layer.config.service.legend === "string";
+
+	const serviceName = layer.config.service.name;
+	const serviceNameLang = layer.config.service.name_lang;
+
+	return (
+		<AccordionItem
+			value={layer.id}
+			className={`border-none bg-background rounded-sm ${layer.visibility ? "shadow-sm" : ""}`}
+			role="listitem"
+		>
+			<div className="flex items-center justify-between p-3 m-0">
+				<Label
+					htmlFor={layer.id}
+					className="flex items-center space-x-3 flex-1 cursor-pointer"
+				>
+					<LayerThumbnail layer={layer} showOverlay />
+					<div className="flex flex-col">
+						<span
+							className={`body2 font-bold flex ${
+								layer.visibility ? "text-interaction-dark" : ""
+							}`}
+						>
+							{serviceName}
+						</span>
+						{serviceNameLang && (
+							<div
+								className={`body2 ${layer.status === "error" ? "text-alert" : ""}`}
+							>
+								{layer.status === "error"
+									? "Fachkarte nicht verfügbar. Bitte versuchen Sie es später erneut."
+									: serviceNameLang}
+							</div>
+						)}
+					</div>
+				</Label>
+				<div className="flex items-center space-x-1">
+					<div className="w-11 h-11 flex items-center justify-center">
+						<Checkbox
+							id={layer.id}
+							checked={layer.visibility}
+							onCheckedChange={handleVisibilityChange}
+							className="w-6 h-6 rounded-full"
+							aria-label={`Toggle visibility for ${serviceName}`}
+							disabled={layer.status === "error"}
+						/>
+					</div>
+				</div>
+			</div>
+
+			{hasLegend && (
+				<>
+					<AccordionTrigger
+						className="px-3 py-2 rounded-none [&[data-state=closed]]:rounded-b-sm hover:no-underline flex justify-end items-center gap-2 [&>svg]:text-foreground bg-neutral-10"
+						aria-label={`Show legend for ${serviceName}`}
+					>
+						Legende ansehen
+					</AccordionTrigger>
+					<AccordionContent
+						ref={accordionContentRef}
+						className="px-3 pb-3 bg-neutral-10 rounded-b-sm"
+					>
+						<Image
+							src={layer.config.service.legend as string}
+							alt={`Legend for ${serviceName}`}
+							width={300}
+							height={50}
+							className="h-auto w-full max-w-full rounded"
+							loading="lazy"
+						/>
+					</AccordionContent>
+				</>
+			)}
+		</AccordionItem>
+	);
+});
+
+LayerItem.displayName = "LayerItem";
+
+const FloatingLayerButton = memo<{
+	visibleCount: number;
+	topVisibleLayer: ManagedLayer | null;
+	sidebarState: string;
+	onClick: () => void;
+}>(({ visibleCount, topVisibleLayer, sidebarState, onClick }) => {
+	const { isLargeTextMode } = useAppStore();
+
+	const getLeftPosition = useCallback(() => {
+		const expandedOffset = isLargeTextMode
+			? SIDEBAR_EXPANDED_OFFSET_LARGE_TEXT
+			: SIDEBAR_EXPANDED_OFFSET;
+
+		return sidebarState === "collapsed"
+			? SIDEBAR_COLLAPSED_OFFSET
+			: expandedOffset;
+	}, [sidebarState, isLargeTextMode]);
+
+	return (
+		<div
+			className={`fixed bottom-4 z-50 transition-all duration-200 ${getLeftPosition()}`}
+		>
+			<div className="relative">
+				{visibleCount > 1 && (
+					<div
+						className="absolute -top-1 left-1 w-16 h-16 bg-interaction-dark/70 rounded border-interaction-dark"
+						aria-hidden="true"
+					/>
+				)}
+
+				<button
+					className={`relative w-16 h-16 p-0 bg-neutral-80 shadow-lg rounded overflow-hidden flex items-center justify-center cursor-pointer transition-colors hover:bg-neutral-70 focus:outline-none ${
+						visibleCount > 0 ? "border-2 border-interaction-dark" : ""
+					}`}
+					onClick={onClick}
+					aria-label={`Open layer tree (${visibleCount} visible layers)`}
+				>
+					<div className="w-full h-full flex items-center justify-center">
+						{visibleCount === 0 ? (
+							<ContextMapIcon className="[&>path]:fill-popover" />
+						) : (
+							topVisibleLayer && (
+								<LayerThumbnail
+									layer={topVisibleLayer}
+									size={FLOATING_BUTTON_SIZE}
+								/>
+							)
+						)}
+					</div>
+				</button>
+
+				{visibleCount > 0 && (
+					<Badge
+						variant="default"
+						className="absolute -top-2 -right-2 w-6 h-6 p-0 rounded-full border-2 border-white text-xs font-bold"
+						aria-label={`${visibleCount} layers visible`}
+					>
+						{visibleCount}
+					</Badge>
+				)}
+			</div>
+		</div>
+	);
+});
+
+FloatingLayerButton.displayName = "FloatingLayerButton";
+
+// Main LayerTree component
+const LayerTree: FC = () => {
+	const { t } = useTranslation("common");
+	const { subjectLayers, visibleCount, topVisibleLayer } = useLayerData();
+	const setIsLayerTreeOpen = useMapStore((state) => state.setIsLayerTreeOpen);
+	const { state: sidebarState, isMobile, setOpenMobile } = useSidebar();
+	const [isOpen, setIsOpen] = useState(false);
+
+	const handleOpen = useCallback(() => {
+		setIsOpen(true);
+	}, []);
+
+	const handleClose = useCallback(() => {
+		setIsOpen(false);
+	}, []);
+
+	useEffect(() => {
+		if (isOpen && isMobile) {
+			setIsOpen(false);
+			setIsLayerTreeOpen(true);
+			setOpenMobile(true);
+		}
+	}, [isMobile, isOpen, setIsLayerTreeOpen, setOpenMobile]);
+
+	if (!isOpen && isMobile) {
+		return null;
+	}
+
+	if (!isOpen) {
+		return (
+			<FloatingLayerButton
+				visibleCount={visibleCount}
+				topVisibleLayer={topVisibleLayer}
+				sidebarState={sidebarState}
+				onClick={handleOpen}
+			/>
+		);
+	}
+
+	return (
+		<Card
+			className={`flex w-full md:w-[400px] max-h-[70vh] absolute  bottom-4 z-50 flex-col bg-neutral-5 transition-all duration-200 left-4`}
+			role="dialog"
+			aria-label={t("map.layerTreeTitle")}
+		>
+			<CardHeader className="shadow-sm p-1 pl-6">
+				<div className="flex items-center justify-between">
+					<CardTitle className="body1 font-bold">
+						{t("map.layerTreeTitle")}
+					</CardTitle>
+					<Button
+						variant="ghost"
+						size="sm"
+						className="w-14 h-14 p-0"
+						onClick={handleClose}
+						aria-label={t("map.closeLayerTree")}
+					>
+						<X className="w-4 h-4" />
+					</Button>
+				</div>
+			</CardHeader>
+			<CardContent className="p-2 overflow-auto">
+				<LayerTreeContent layers={subjectLayers} />
+			</CardContent>
+		</Card>
+	);
+};
+
+// Updated LayerTreeContent component with store-based accordion control
+export const LayerTreeContent: FC<{
+	layers?: ManagedLayer[];
+}> = ({ layers: providedLayers }) => {
+	const { t } = useTranslation("common");
+	const { subjectLayers } = useLayerData();
+	const openLegendLayerId = useMapStore((state) => state.openLegendLayerId);
+	const setOpenLegendLayerId = useMapStore(
+		(state) => state.setOpenLegendLayerId,
+	);
+
+	const layersToRender = providedLayers || subjectLayers;
+
+	const handleAccordionChange = useCallback(
+		(value: string) => {
+			setOpenLegendLayerId(value);
+		},
+		[setOpenLegendLayerId],
+	);
+
+	if (layersToRender.length === 0) {
+		return (
+			<div className="flex items-center justify-center py-8 text-muted-foreground">
+				<p>{t("map.noLayersAvailable")}</p>
+			</div>
+		);
+	}
+
+	return (
+		<Accordion
+			type="single"
+			collapsible
+			value={openLegendLayerId}
+			onValueChange={handleAccordionChange}
+			className="flex flex-col gap-2 overflow-y-auto"
+			role="list"
+			aria-label={t("map.availableLayers")}
+		>
+			{layersToRender.map((layer) => (
+				<LayerItem key={layer.id} layer={layer} />
+			))}
+		</Accordion>
+	);
+};
+
+export default LayerTree;

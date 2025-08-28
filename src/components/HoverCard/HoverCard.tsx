@@ -1,120 +1,121 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+"use client";
 import {
 	Card,
 	CardContent,
-	CardDescription,
 	CardFooter,
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import { HoverCardData } from "@/types";
+import { getMatchingSubcategories } from "@/lib/utils/categoryUtils";
+import { getCategoryIconComponent } from "@/lib/utils/iconUtils"; // Update this import path
+import { Category } from "@/types";
 import { FC, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface HoverCardProps {
-	data: HoverCardData;
+	features?: any;
 }
 
-const HoverCard: FC<HoverCardProps> = ({ data }) => {
-	const [windowSize, setWindowSize] = useState({
-		width: window.innerWidth,
-		height: window.innerHeight,
-	});
-	const [position, setPosition] = useState<{
-		top: number;
-		left: number;
-		transform: string;
-	}>({
-		top: data.y,
-		left: data.x,
-		transform: "translate(-50%, -110%)",
-	});
+const getFeatureData = (feature: any) => {
+	const properties = feature.getProperties();
 
-	const CARD_WIDTH = 320;
-	const CARD_HEIGHT = 240;
-	const BUFFER = 20;
+	if (properties.features && properties.features.length > 0) {
+		return properties.features[0].values_;
+	}
 
-	useEffect(() => {
-		const calculatePosition = () => {
-			const viewportWidth = windowSize.width;
-			const viewportHeight = windowSize.height;
+	return properties;
+};
 
-			const spaceAbove = data.y;
-			const spaceBelow = viewportHeight - data.y;
-			const spaceLeft = data.x;
-			const spaceRight = viewportWidth - data.x;
+// TODO: add fonts
+// TODO: add names categories and status
 
-			let newTop = data.y;
-			let newLeft = data.x;
-			let newTransform = "";
-
-			if (spaceAbove > CARD_HEIGHT + BUFFER) {
-				newTransform += "translateY(-100%)";
-				newTop -= BUFFER;
-			} else if (spaceBelow > CARD_HEIGHT + BUFFER) {
-				newTop += BUFFER;
-			} else {
-				newTop = Math.max(
-					BUFFER,
-					Math.min(
-						viewportHeight - CARD_HEIGHT - BUFFER,
-						data.y - CARD_HEIGHT / 2,
-					),
-				);
-			}
-
-			if (
-				spaceRight > CARD_WIDTH / 2 + BUFFER &&
-				spaceLeft > CARD_WIDTH / 2 + BUFFER
-			) {
-				newTransform += " translateX(-50%)";
-			} else if (spaceRight < CARD_WIDTH + BUFFER) {
-				newLeft = Math.max(BUFFER, viewportWidth - CARD_WIDTH - BUFFER);
-			} else if (spaceLeft < CARD_WIDTH + BUFFER) {
-				newLeft = BUFFER + CARD_WIDTH / 2;
-			}
-
-			return {
-				top: newTop,
-				left: newLeft,
-				transform: newTransform,
-			};
-		};
-
-		setPosition(calculatePosition());
-	}, [windowSize, data]);
+const HoverCard: FC<HoverCardProps> = ({ features }) => {
+	const [featureProperties, setFeatureProperties] = useState<any>(null);
+	const { t: tEnum } = useTranslation("enumMap");
+	const { t } = useTranslation("common");
 
 	useEffect(() => {
-		const handleResize = () => {
-			setWindowSize({
-				width: window.innerWidth,
-				height: window.innerHeight,
-			});
-		};
-		window.addEventListener("resize", handleResize);
+		if (!features) {
+			setFeatureProperties(null);
+			return;
+		}
 
-		return () => {
-			window.removeEventListener("resize", handleResize);
-		};
-	}, []);
+		setFeatureProperties(getFeatureData(features));
+	}, [features]);
+
+	if (!features || !featureProperties) {
+		return null;
+	}
 
 	return (
-		<div
-			className="HoverCard-root absolute z-10 w-64"
-			style={{
-				top: position.top,
-				left: position.left,
-				transform: position.transform,
-			}}
-		>
-			<Card>
-				<CardHeader>
-					<CardTitle>{data.venue_name}</CardTitle>
-					<CardDescription>Card Description</CardDescription>
+		<div className="HoverCard-root">
+			<Card className="w-80 shadow-lg border-none">
+				<CardHeader className="p-2">
+					<div className="flex gap-2 justify-between">
+						<CardTitle className="text-lg font-semibold line-clamp-2 w-full">
+							{featureProperties.name}
+						</CardTitle>
+					</div>
 				</CardHeader>
-				<CardContent>
-					<p>Card Content</p>
+
+				<CardContent className="p-2 pt-0">
+					<div className="flex flex-col gap-2 ">
+						{featureProperties.categories?.map((category: Category) => {
+							const IconComponent = getCategoryIconComponent(category.key);
+							const matchingSubcategories = getMatchingSubcategories(
+								category,
+								featureProperties.subcategories || [],
+							);
+
+							return (
+								<div key={category.id}>
+									<div className="flex items-center gap-2 h-6">
+										<div className="w-6 h-6">
+											<IconComponent />
+										</div>
+										<span className="text-md font-semibold">
+											{tEnum(`category.${category.key}`)}
+										</span>
+									</div>
+									{matchingSubcategories.length > 0 && (
+										<div className="pl-8">
+											{matchingSubcategories.map((subcategory, index) => (
+												<span key={subcategory.id} className="text-sm">
+													{index > 0 && ", "}
+													{tEnum(`subcategory.${subcategory.key}`)}
+												</span>
+											))}
+										</div>
+									)}
+								</div>
+							);
+						})}
+					</div>
 				</CardContent>
-				<CardFooter>
-					<p>Card Footer</p>
+
+				<CardFooter
+					className={`rounded-b-md p-2 ${featureProperties.utilization_status === "in_use" ? "bg-brand-light" : "bg-alert"}`}
+				>
+					{featureProperties.utilization_status && (
+						<div className=" flex gap-1 items-center justify-between">
+							<span>{t("institution.utilizationStatus")}:</span>
+							{/* todo: add status name */}
+							<span>
+								{tEnum(
+									`utilization_status.${featureProperties.utilization_status}`,
+								)}
+							</span>
+						</div>
+					)}
+					{!featureProperties.utilization_status && (
+						<div className=" flex gap-1 items-center justify-between">
+							<span className="text-md font-semibold">
+								{t("institution.utilizationStatus")}:
+							</span>
+							<span>{t("unknown")}</span>
+						</div>
+					)}
 				</CardFooter>
 			</Card>
 		</div>

@@ -1,0 +1,28 @@
+{
+	"hello": "",
+	"venue": {
+		"details": "Venue Details",
+		"unnamed": "Unnamed Venue",
+		"contact": "Contact",
+		"website": "Website",
+		"phone": "Phone",
+		"email": "Email",
+		"address": "Address",
+		"organization": "Organization",
+		"parent": "Parent Organization",
+		"funding": "Funding Type",
+		"support": "Support Type",
+		"notFound": "Venue not found",
+		"backToMap": "Back to Map"
+	},
+	"map": {
+		"zoomIn": "Zoom In",
+		"zoomOut": "Zoom Out",
+		"geolocate": "Find my location",
+		"layerTree": "Context Maps",
+		"layerTreeTitle": "Context Maps",
+		"closeLayerTree": "Close context maps",
+		"availableLayers": "Available layers",
+		"noLayersAvailable": "No context maps available"
+	}
+}
