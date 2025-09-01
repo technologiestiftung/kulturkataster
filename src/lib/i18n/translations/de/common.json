@@ -93,6 +93,8 @@
 		"multipleUsePossible": "Ja",
 		"multipleUseNotPossible": "Nein",
 		"description": "Beschreibung",
+		"sharedUseAudience": "Verfügbar für Zielgruppe/Sparte",
+		"sharedUseContactPerson": "Kontakt für Raumanfragen",
 		"multipleUseDescription": "Beschreibung Räume/Flächen für Mehrfachnutzung",
 		"status": "Stand",
 		"moreInfo": "Mehr Informationen",
