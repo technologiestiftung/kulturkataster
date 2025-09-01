@@ -286,9 +286,19 @@ function FacilityInfo({
 			)}
 			{institutionData.shared_use_allowed && (
 				<InfoItem label={t("institution.description")}>
-					{t("institution.multipleUseDescription")}
+					{institutionData.shared_use_info && institutionData.shared_use_info}
 				</InfoItem>
 			)}
+			{institutionData.shared_use_audience && (
+				<InfoItem label={t("institution.sharedUseAudience")}>
+					{institutionData.shared_use_audience}
+				</InfoItem>
+			)}
+			{/* {institutionData.shared_use_contact_person && (
+				<InfoItem label={t("institution.sharedUseContactPerson")}>
+					{institutionData.shared_use_contact_person}
+				</InfoItem>
+			)} */}
 			{institutionData.established_since && (
 				<InfoItem label={t("institution.establishedSince")}>
 					{new Date(institutionData.established_since).getFullYear()}
