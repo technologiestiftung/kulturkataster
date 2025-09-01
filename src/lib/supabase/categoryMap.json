@@ -2,633 +2,633 @@
 	{
 		"id": 1,
 		"key": "studios",
-		"created_at": "2025-08-21T12:51:01.860368+00:00",
+		"created_at": "2025-08-27T21:32:12.778395+00:00",
 		"subcategories": [
 			{
 				"id": 1,
 				"key": "studio_houses_workspace_program",
 				"category_id": 1,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			},
 			{
 				"id": 2,
 				"key": "studio_houses_free",
 				"category_id": 1,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			},
 			{
 				"id": 3,
 				"key": "studio_apartments",
 				"category_id": 1,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			},
 			{
 				"id": 4,
 				"key": "studios_other",
 				"category_id": 1,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			}
 		]
 	},
 	{
 		"id": 2,
 		"key": "education_places",
-		"created_at": "2025-08-21T12:51:01.860368+00:00",
+		"created_at": "2025-08-27T21:32:12.778395+00:00",
 		"subcategories": [
 			{
 				"id": 11,
 				"key": "professional_dance_training",
 				"category_id": 2,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			},
 			{
 				"id": 10,
 				"key": "performing_arts_education",
 				"category_id": 2,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			},
 			{
 				"id": 12,
 				"key": "intensive_dance_program",
 				"category_id": 2,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			},
 			{
 				"id": 9,
 				"key": "youth_art_schools",
 				"category_id": 2,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			},
 			{
 				"id": 5,
 				"key": "art_universities",
 				"category_id": 2,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			},
 			{
 				"id": 15,
 				"key": "education_places_other",
 				"category_id": 2,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			},
 			{
 				"id": 7,
 				"key": "public_music_schools",
 				"category_id": 2,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			},
 			{
 				"id": 8,
 				"key": "private_music_schools",
 				"category_id": 2,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			},
 			{
 				"id": 13,
 				"key": "professional_dance_coaching",
 				"category_id": 2,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			},
 			{
 				"id": 14,
 				"key": "dance_training",
 				"category_id": 2,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			},
 			{
 				"id": 6,
 				"key": "adult_education_centers",
 				"category_id": 2,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			}
 		]
 	},
 	{
 		"id": 3,
 		"key": "libraries",
-		"created_at": "2025-08-21T12:51:01.860368+00:00",
+		"created_at": "2025-08-27T21:32:12.778395+00:00",
 		"subcategories": [
 			{
 				"id": 17,
 				"key": "district_libraries",
 				"category_id": 3,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			},
 			{
 				"id": 21,
 				"key": "libraries_other",
 				"category_id": 3,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			},
 			{
 				"id": 20,
 				"key": "workplace_patient_prison_libraries",
 				"category_id": 3,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			},
 			{
 				"id": 19,
 				"key": "scientific_specialized_libraries",
 				"category_id": 3,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			},
 			{
 				"id": 18,
 				"key": "scientific_universal_libraries",
 				"category_id": 3,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			},
 			{
 				"id": 16,
 				"key": "central_state_libraries",
 				"category_id": 3,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			}
 		]
 	},
 	{
 		"id": 4,
 		"key": "clubs_music_venues",
-		"created_at": "2025-08-21T12:51:01.860368+00:00",
+		"created_at": "2025-08-27T21:32:12.778395+00:00",
 		"subcategories": [
 			{
 				"id": 22,
 				"key": "clubs",
 				"category_id": 4,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			},
 			{
 				"id": 29,
 				"key": "discotheques",
 				"category_id": 4,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			},
 			{
 				"id": 27,
 				"key": "jazz_venues",
 				"category_id": 4,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			},
 			{
 				"id": 23,
 				"key": "concert_venues",
 				"category_id": 4,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			},
 			{
 				"id": 24,
 				"key": "concert_halls",
 				"category_id": 4,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			},
 			{
 				"id": 28,
 				"key": "music_bars",
 				"category_id": 4,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
-			},
-			{
-				"id": 25,
-				"key": "music_theater",
-				"category_id": 4,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			},
 			{
 				"id": 30,
+				"key": "music_theater_clubs_music_venues",
+				"category_id": 4,
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
+			},
+			{
+				"id": 31,
 				"key": "clubs_music_venues_other",
 				"category_id": 4,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			},
 			{
 				"id": 26,
 				"key": "open_air_venues",
 				"category_id": 4,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			}
 		]
 	},
 	{
 		"id": 5,
 		"key": "galleries",
-		"created_at": "2025-08-21T12:51:01.860368+00:00",
+		"created_at": "2025-08-27T21:32:12.778395+00:00",
 		"subcategories": [
 			{
-				"id": 32,
+				"id": 33,
 				"key": "exhibition_spaces_galleries",
 				"category_id": 5,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			},
 			{
-				"id": 31,
+				"id": 32,
 				"key": "municipal_galleries",
 				"category_id": 5,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			},
 			{
-				"id": 33,
+				"id": 34,
 				"key": "galleries_other",
 				"category_id": 5,
-				"created_at": "2025-08-21T16:31:45.222616+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			}
 		]
 	},
 	{
 		"id": 6,
 		"key": "cinemas",
-		"created_at": "2025-08-21T12:51:01.860368+00:00",
+		"created_at": "2025-08-27T21:32:12.778395+00:00",
 		"subcategories": [
 			{
-				"id": 36,
+				"id": 37,
 				"key": "outdoor_cinemas",
 				"category_id": 6,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
+			},
+			{
+				"id": 36,
+				"key": "curated_cinemas",
+				"category_id": 6,
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
+			},
+			{
+				"id": 38,
+				"key": "cinemas_other",
+				"category_id": 6,
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			},
 			{
 				"id": 35,
-				"key": "curated_cinemas",
-				"category_id": 6,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
-			},
-			{
-				"id": 37,
-				"key": "cinemas_other",
-				"category_id": 6,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
-			},
-			{
-				"id": 34,
 				"key": "art_house_cinemas",
 				"category_id": 6,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			}
 		]
 	},
 	{
 		"id": 7,
 		"key": "literature_places",
-		"created_at": "2025-08-21T12:51:01.860368+00:00",
+		"created_at": "2025-08-27T21:32:12.778395+00:00",
 		"subcategories": [
 			{
-				"id": 41,
+				"id": 42,
 				"key": "bookstores",
 				"category_id": 7,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			},
 			{
-				"id": 40,
+				"id": 41,
 				"key": "literature_houses",
 				"category_id": 7,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
+			},
+			{
+				"id": 44,
+				"key": "literature_places_other",
+				"category_id": 7,
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			},
 			{
 				"id": 43,
-				"key": "literature_places_other",
-				"category_id": 7,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
-			},
-			{
-				"id": 42,
 				"key": "writing_places",
 				"category_id": 7,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
+			},
+			{
+				"id": 40,
+				"key": "literature_organizers",
+				"category_id": 7,
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			},
 			{
 				"id": 39,
-				"key": "literature_organizers",
-				"category_id": 7,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
-			},
-			{
-				"id": 38,
 				"key": "literature_event_venues",
 				"category_id": 7,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			}
 		]
 	},
 	{
 		"id": 8,
 		"key": "museums",
-		"created_at": "2025-08-21T12:51:01.860368+00:00",
+		"created_at": "2025-08-27T21:32:12.778395+00:00",
 		"subcategories": [
 			{
-				"id": 48,
+				"id": 49,
 				"key": "exhibition_spaces_museums",
 				"category_id": 8,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			},
 			{
-				"id": 47,
+				"id": 48,
 				"key": "memorial_sites",
 				"category_id": 8,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			},
 			{
-				"id": 49,
+				"id": 50,
 				"key": "museums_other",
 				"category_id": 8,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
-			},
-			{
-				"id": 44,
-				"key": "public_museums",
-				"category_id": 8,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			},
 			{
 				"id": 45,
-				"key": "private_museums",
+				"key": "public_museums",
 				"category_id": 8,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			},
 			{
 				"id": 46,
+				"key": "private_museums",
+				"category_id": 8,
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
+			},
+			{
+				"id": 47,
 				"key": "private_collections",
 				"category_id": 8,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			}
 		]
 	},
 	{
 		"id": 9,
 		"key": "cultural_urban_development",
-		"created_at": "2025-08-21T12:51:01.860368+00:00",
+		"created_at": "2025-08-27T21:32:12.778395+00:00",
 		"subcategories": [
 			{
-				"id": 50,
+				"id": 51,
 				"key": "cultural_urban_development_other",
 				"category_id": 9,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
+			},
+			{
+				"id": 52,
+				"key": "potential_cultural_development_spaces",
+				"category_id": 9,
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			}
 		]
 	},
 	{
 		"id": 10,
 		"key": "potential_spaces",
-		"created_at": "2025-08-21T12:51:01.860368+00:00",
+		"created_at": "2025-08-27T21:32:12.778395+00:00",
 		"subcategories": [
 			{
-				"id": 52,
+				"id": 53,
 				"key": "potential_spaces_other",
 				"category_id": 10,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
-			},
-			{
-				"id": 51,
-				"key": "potential_cultural_development_spaces",
-				"category_id": 10,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			}
 		]
 	},
 	{
 		"id": 11,
 		"key": "rehearsal_rooms",
-		"created_at": "2025-08-21T12:51:01.860368+00:00",
+		"created_at": "2025-08-27T21:32:12.778395+00:00",
 		"subcategories": [
 			{
-				"id": 55,
+				"id": 56,
 				"key": "performing_arts_rehearsal_rooms",
 				"category_id": 11,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
-			},
-			{
-				"id": 53,
-				"key": "music_rehearsal_rooms",
-				"category_id": 11,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
-			},
-			{
-				"id": 56,
-				"key": "rehearsal_rooms_other",
-				"category_id": 11,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			},
 			{
 				"id": 54,
+				"key": "music_rehearsal_rooms",
+				"category_id": 11,
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
+			},
+			{
+				"id": 57,
+				"key": "rehearsal_rooms_other",
+				"category_id": 11,
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
+			},
+			{
+				"id": 55,
 				"key": "dance_rehearsal_rooms",
 				"category_id": 11,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			}
 		]
 	},
 	{
 		"id": 12,
 		"key": "project_spaces_initiatives",
-		"created_at": "2025-08-21T12:51:01.860368+00:00",
+		"created_at": "2025-08-27T21:32:12.778395+00:00",
 		"subcategories": [
 			{
-				"id": 59,
+				"id": 62,
 				"key": "project_spaces_initiatives_other",
 				"category_id": 12,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			},
 			{
-				"id": 91,
+				"id": 61,
 				"key": "project_initiatives_general",
 				"category_id": 12,
-				"created_at": "2025-08-21T12:51:03.125495+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			},
 			{
-				"id": 90,
+				"id": 60,
 				"key": "project_spaces_general",
 				"category_id": 12,
-				"created_at": "2025-08-21T12:51:03.125495+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
+			},
+			{
+				"id": 59,
+				"key": "project_spaces_workspace_program",
+				"category_id": 12,
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			},
 			{
 				"id": 58,
-				"key": "project_spaces_workspace_program",
-				"category_id": 12,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
-			},
-			{
-				"id": 57,
 				"key": "project_spaces_event_centers",
 				"category_id": 12,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			}
 		]
 	},
 	{
 		"id": 13,
 		"key": "sociocultural_centers",
-		"created_at": "2025-08-21T12:51:01.860368+00:00",
+		"created_at": "2025-08-27T21:32:12.778395+00:00",
 		"subcategories": [
 			{
-				"id": 64,
+				"id": 67,
 				"key": "community_empowerment_centers",
 				"category_id": 13,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
-			},
-			{
-				"id": 63,
-				"key": "family_centers",
-				"category_id": 13,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
-			},
-			{
-				"id": 61,
-				"key": "youth_leisure_facilities",
-				"category_id": 13,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
-			},
-			{
-				"id": 60,
-				"key": "cultural_centers",
-				"category_id": 13,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			},
 			{
 				"id": 66,
+				"key": "family_centers",
+				"category_id": 13,
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
+			},
+			{
+				"id": 64,
+				"key": "youth_leisure_facilities",
+				"category_id": 13,
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
+			},
+			{
+				"id": 63,
+				"key": "cultural_centers",
+				"category_id": 13,
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
+			},
+			{
+				"id": 69,
 				"key": "sociocultural_centers_other",
 				"category_id": 13,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
+			},
+			{
+				"id": 68,
+				"key": "social_participation_centers",
+				"category_id": 13,
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			},
 			{
 				"id": 65,
-				"key": "social_participation_centers",
-				"category_id": 13,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
-			},
-			{
-				"id": 62,
 				"key": "neighborhood_centers",
 				"category_id": 13,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			}
 		]
 	},
 	{
 		"id": 14,
 		"key": "dance_venues",
-		"created_at": "2025-08-21T12:51:01.860368+00:00",
+		"created_at": "2025-08-27T21:32:12.778395+00:00",
 		"subcategories": [
 			{
-				"id": 68,
+				"id": 71,
 				"key": "dance_young_audience",
 				"category_id": 14,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
+			},
+			{
+				"id": 73,
+				"key": "dance_venues_other",
+				"category_id": 14,
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			},
 			{
 				"id": 70,
-				"key": "dance_venues_other",
-				"category_id": 14,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
-			},
-			{
-				"id": 67,
 				"key": "dance_performance",
 				"category_id": 14,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			},
 			{
-				"id": 69,
+				"id": 72,
 				"key": "dance_contemporary_circus",
 				"category_id": 14,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			}
 		]
 	},
 	{
 		"id": 15,
 		"key": "performing_arts_venues",
-		"created_at": "2025-08-21T12:51:01.860368+00:00",
+		"created_at": "2025-08-27T21:32:12.778395+00:00",
 		"subcategories": [
 			{
-				"id": 77,
+				"id": 79,
 				"key": "acrobatics",
 				"category_id": 15,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
-			},
-			{
-				"id": 78,
-				"key": "comedy",
-				"category_id": 15,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
-			},
-			{
-				"id": 84,
-				"key": "improvisation",
-				"category_id": 15,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
-			},
-			{
-				"id": 85,
-				"key": "performing_arts_young_audience",
-				"category_id": 15,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
-			},
-			{
-				"id": 79,
-				"key": "cabaret",
-				"category_id": 15,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
-			},
-			{
-				"id": 76,
-				"key": "children_circus",
-				"category_id": 15,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
-			},
-			{
-				"id": 83,
-				"key": "musical",
-				"category_id": 15,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
-			},
-			{
-				"id": 72,
-				"key": "music_theater_venues",
-				"category_id": 15,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
-			},
-			{
-				"id": 86,
-				"key": "performing_arts_venues_other",
-				"category_id": 15,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
-			},
-			{
-				"id": 82,
-				"key": "opera",
-				"category_id": 15,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
-			},
-			{
-				"id": 74,
-				"key": "performing_arts_performance",
-				"category_id": 15,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
-			},
-			{
-				"id": 81,
-				"key": "poetry_slam",
-				"category_id": 15,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
-			},
-			{
-				"id": 73,
-				"key": "puppet_figure_object_theater",
-				"category_id": 15,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
-			},
-			{
-				"id": 71,
-				"key": "theater",
-				"category_id": 15,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			},
 			{
 				"id": 80,
-				"key": "variety",
+				"key": "comedy",
 				"category_id": 15,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
+			},
+			{
+				"id": 86,
+				"key": "improvisation",
+				"category_id": 15,
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
+			},
+			{
+				"id": 87,
+				"key": "performing_arts_young_audience",
+				"category_id": 15,
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
+			},
+			{
+				"id": 81,
+				"key": "cabaret",
+				"category_id": 15,
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
+			},
+			{
+				"id": 78,
+				"key": "children_circus",
+				"category_id": 15,
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
+			},
+			{
+				"id": 85,
+				"key": "musical",
+				"category_id": 15,
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
+			},
+			{
+				"id": 88,
+				"key": "music_theater_performing_arts_venues",
+				"category_id": 15,
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
+			},
+			{
+				"id": 89,
+				"key": "performing_arts_venues_other",
+				"category_id": 15,
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
+			},
+			{
+				"id": 84,
+				"key": "opera",
+				"category_id": 15,
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
+			},
+			{
+				"id": 76,
+				"key": "performing_arts_performance",
+				"category_id": 15,
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
+			},
+			{
+				"id": 83,
+				"key": "poetry_slam",
+				"category_id": 15,
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			},
 			{
 				"id": 75,
+				"key": "puppet_figure_object_theater",
+				"category_id": 15,
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
+			},
+			{
+				"id": 74,
+				"key": "theater",
+				"category_id": 15,
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
+			},
+			{
+				"id": 82,
+				"key": "variety",
+				"category_id": 15,
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
+			},
+			{
+				"id": 77,
 				"key": "performing_arts_contemporary_circus",
 				"category_id": 15,
-				"created_at": "2025-08-21T12:51:01.860368+00:00"
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			}
 		]
 	}
