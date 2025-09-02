@@ -127,15 +127,8 @@ export function LocationSearch() {
 	};
 
 	const extractCoordinates = (result: Institution): [number, number] | null => {
-		console.log("Debug - Institution result:", {
-			latlong: result.latlong,
-			case: result.case,
-			st_asgeojson: result.st_asgeojson,
-		});
-
 		if (result.latlong) {
 			const coords = parseLatLongCoordinates(result.latlong);
-			console.log("Debug - latlong coords:", coords);
 			return coords;
 		}
 
@@ -146,8 +139,6 @@ export function LocationSearch() {
 		if (result.st_asgeojson) {
 			return parseGeoJsonCoordinates(result.st_asgeojson);
 		}
-
-		console.log("No valid coordinates found");
 		return null;
 	};
 	const handleGeoFeatureClick = (result: GeoFeature) => {
