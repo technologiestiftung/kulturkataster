@@ -47,7 +47,7 @@ export function SearchResults({
 						}}
 						className={`py-3 px-2 cursor-pointer rounded text-sm border-b
 							${index === activeIndex ? "bg-gray-100" : ""}
-							hover:bg-gray-100
+							hover:bg-gray-100 contrast:hover:text-background
 						`}
 					>
 						{isGeoFeature(result) ? (
