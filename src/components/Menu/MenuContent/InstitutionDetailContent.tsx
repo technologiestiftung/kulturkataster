@@ -251,14 +251,14 @@ function FundingInfo({
 
 	return (
 		<InfoSection>
-			{institutionData.funding_type && (
+			{institutionData.support_type && (
 				<InfoItem label={t("institution.fundingType")}>
-					{tEnum(`funding_type.${institutionData.funding_type}`)}
+					{institutionData.support_type}
 				</InfoItem>
 			)}
-			{institutionData.support_type && (
+			{institutionData.funding_type && (
 				<InfoItem label={t("institution.supportType")}>
-					{institutionData.support_type}
+					{tEnum(`funding_type.${institutionData.funding_type}`)}
 				</InfoItem>
 			)}
 		</InfoSection>
