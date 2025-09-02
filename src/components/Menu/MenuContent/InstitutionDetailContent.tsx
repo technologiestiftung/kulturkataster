@@ -209,6 +209,7 @@ function OrganizationInfo({
 	institutionData: InstitutionProperties;
 }) {
 	const { t } = useTranslation("common");
+	const { t: tEnum } = useTranslation("enumMap");
 
 	return (
 		<InfoSection>
@@ -231,7 +232,7 @@ function OrganizationInfo({
 
 			{institutionData.owner && institutionData.owner?.owner_type && (
 				<InfoItem label={t("institution.ownerType")}>
-					{institutionData.owner.owner_type}
+					{tEnum("owner_type." + institutionData.owner.owner_type)}
 				</InfoItem>
 			)}
 
