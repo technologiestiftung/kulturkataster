@@ -224,11 +224,6 @@ function OrganizationInfo({
 					{institutionData.cultural_area.name}
 				</InfoItem>
 			)}
-			{institutionData.owner && institutionData.owner?.name && (
-				<InfoItem label={t("institution.owner")}>
-					{institutionData.owner.name}
-				</InfoItem>
-			)}
 
 			{institutionData.owner && institutionData.owner?.owner_type && (
 				<InfoItem label={t("institution.ownerType")}>
