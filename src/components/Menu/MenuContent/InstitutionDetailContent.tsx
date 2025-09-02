@@ -159,7 +159,7 @@ function InstitutionBasicInfo({
 					institutionData.zip_code && (
 						<div className="body1">
 							<p>
-								{institutionData.street} {institutionData.street_number}
+								{`${institutionData.street.trim()} ${institutionData.street_number.trim()}`}
 							</p>
 							<div className="flex flex-wrap space-x-2">
 								<p>{institutionData.zip_code}</p>
@@ -223,10 +223,15 @@ function OrganizationInfo({
 					{institutionData.cultural_area.name}
 				</InfoItem>
 			)}
-
-			{institutionData.owner && (
+			{institutionData.owner && institutionData.owner?.name && (
 				<InfoItem label={t("institution.owner")}>
 					{institutionData.owner.name}
+				</InfoItem>
+			)}
+
+			{institutionData.owner && institutionData.owner?.owner_type && (
+				<InfoItem label={t("institution.ownerType")}>
+					{institutionData.owner.owner_type}
 				</InfoItem>
 			)}
 
