@@ -57,7 +57,7 @@ export function InformationModal({
 		(state) => state.originalInstitutions,
 	);
 
-	const institutionCount = originalInstitutions?.features?.length ?? 0;
+	const institutionCount = originalInstitutions?.features?.length ?? 2.382;
 
 	const introParagraphs = t("informationModal.introduction", {
 		returnObjects: true,
