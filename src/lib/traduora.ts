@@ -1,4 +1,4 @@
-'use cache'
+"use cache";
 /* eslint-disable complexity */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -11,7 +11,6 @@ const PROJECT_ID = process.env.TRADUORA_PROJECT_ID!;
  * Fetches and caches a Traduora access token using client credentials.
  */
 async function fetchTraduoraToken(): Promise<string | null> {
-
 	const res = await fetch(`${TRADUORA_API_URL}/auth/token`, {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
@@ -39,7 +38,6 @@ async function fetchLabels(
 	projectId: string,
 	token: string,
 ): Promise<Array<{ id: string; value: string }>> {
-
 	const labelsRes = await fetch(
 		`${TRADUORA_API_URL}/projects/${projectId}/labels`,
 		{
@@ -80,7 +78,6 @@ export async function fetchTranslations(
 	locale: string,
 	namespace?: string,
 ): Promise<Record<string, string>> {
-
 	const token = await fetchTraduoraToken();
 	if (!token) {
 		throw new Error("No Traduora token available");
