@@ -4,7 +4,28 @@ import { initReactI18next } from "react-i18next/initReactI18next";
 import resourcesToBackend from "i18next-resources-to-backend";
 import { Locale } from "../types/i18n";
 import { fetchTranslations } from "@/lib/traduora";
-import { merge } from "lodash";
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function deepMerge(target: any, source: any): any {
+	if (!source || typeof source !== "object") return target;
+	if (!target || typeof target !== "object") return source;
+
+	const result = { ...target };
+
+	for (const key in source) {
+		if (
+			source[key] &&
+			typeof source[key] === "object" &&
+			!Array.isArray(source[key])
+		) {
+			result[key] = deepMerge(target[key], source[key]);
+		} else {
+			result[key] = source[key];
+		}
+	}
+
+	return result;
+}
 
 export const defaultLocale = "de";
 
@@ -44,8 +65,7 @@ async function initTranslations(
 						language,
 						namespace,
 					);
-					const merged = merge(
-						{},
+					const merged = deepMerge(
 						localTranslations.default,
 						traduoraTranslations,
 					);
