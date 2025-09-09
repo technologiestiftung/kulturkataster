@@ -1,4 +1,4 @@
-'use cache'
+"use cache";
 
 const TRADUORA_API_URL = process.env.TRADUORA_API_URL!;
 const CLIENT_ID = process.env.TRADUORA_CLIENT_ID!;
@@ -50,6 +50,7 @@ export async function fetchLabels(
 		throw new Error(`Failed to fetch labels: ${labelsRes.status}`);
 	}
 
-	const labels: Array<{ id: string; value: string }> = (await labelsRes.json()).data;
+	const labels: Array<{ id: string; value: string }> = (await labelsRes.json())
+		.data;
 	return labels;
 }
