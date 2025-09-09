@@ -1,7 +1,7 @@
 /* eslint-disable complexity */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { fetchTraduoraToken, fetchLabels } from './cached';
+import { fetchTraduoraToken, fetchLabels } from "./cached";
 
 const TRADUORA_API_URL = process.env.TRADUORA_API_URL!;
 const PROJECT_ID = process.env.TRADUORA_PROJECT_ID!;
