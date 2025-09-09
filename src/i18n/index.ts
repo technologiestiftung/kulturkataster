@@ -3,6 +3,8 @@ import { createInstance, TFunction, i18n, Resource } from "i18next";
 import { initReactI18next } from "react-i18next/initReactI18next";
 import resourcesToBackend from "i18next-resources-to-backend";
 import { Locale } from "../types/i18n";
+import { fetchTranslations } from "@/lib/traduora";
+import { merge } from "lodash";
 
 export const defaultLocale = "de";
 
@@ -29,13 +31,43 @@ async function initTranslations(
 
 	i18nInstance.use(initReactI18next);
 
+	const translationLoader = resourcesToBackend(
+		async (language: string, namespace: string) => {
+			try {
+				// First try to get local translations as fallback
+				const localTranslations = await import(
+					`@/lib/i18n/translations/${language}/${namespace}.json`
+				);
+
+				try {
+					const traduoraTranslations = await fetchTranslations(
+						language,
+						namespace,
+					);
+					const merged = merge(
+						{},
+						localTranslations.default,
+						traduoraTranslations,
+					);
+					return merged;
+				} catch {
+					console.warn(
+						`Traduora failed, using local translations for ${language}/${namespace}`,
+					);
+					return localTranslations.default;
+				}
+			} catch {
+				console.warn(
+					`No local translations found for ${language}/${namespace}, trying Traduora only`,
+				);
+				const translations = await fetchTranslations(language, namespace);
+				return translations;
+			}
+		},
+	);
+
 	if (!options?.resources) {
-		i18nInstance.use(
-			resourcesToBackend(
-				(language: string, namespace: string) =>
-					import(`@/lib/i18n/translations/${language}/${namespace}.json`),
-			),
-		);
+		i18nInstance.use(translationLoader);
 	}
 
 	await i18nInstance.init({
