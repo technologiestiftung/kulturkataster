@@ -2,6 +2,7 @@
 
 import TextBlock from "@/components/Content/TextBlock";
 import TextWithLinks from "@/components/Content/TextWithLinks";
+import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useTranslation } from "react-i18next";
 import { PageModal } from "../PageModal";
 
@@ -52,6 +53,11 @@ export function InformationModal({
 	onOpenChange,
 }: InformationModalProps) {
 	const { t } = useTranslation("content");
+	const originalInstitutions = useInstitutionStore(
+		(state) => state.originalInstitutions,
+	);
+
+	const institutionCount = originalInstitutions?.features?.length ?? 2.382;
 
 	const introParagraphs = t("informationModal.introduction", {
 		returnObjects: true,
@@ -71,9 +77,16 @@ export function InformationModal({
 			<div className="space-y-4">
 				<TextBlock titleAs="h1" title={scope.title} />
 				<ul className="list-disc pl-5 body2 space-y-1">
-					{scope.features.map((item, i) => (
-						<li key={i}>{item}</li>
-					))}
+					{scope.features.map((item, i) => {
+						if (i === 0) {
+							const dynamicText = item.replace(
+								"{{count}}",
+								institutionCount.toLocaleString("de-DE"),
+							);
+							return <li key={i}>{dynamicText}</li>;
+						}
+						return <li key={i}>{item}</li>;
+					})}
 				</ul>
 				<div className="pt-4">
 					<p className="body1 font-bold pb-2">

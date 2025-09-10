@@ -159,7 +159,7 @@ function InstitutionBasicInfo({
 					institutionData.zip_code && (
 						<div className="body1">
 							<p>
-								{institutionData.street} {institutionData.street_number}
+								{`${institutionData.street.trim()} ${institutionData.street_number.trim()}`}
 							</p>
 							<div className="flex flex-wrap space-x-2">
 								<p>{institutionData.zip_code}</p>
@@ -209,6 +209,7 @@ function OrganizationInfo({
 	institutionData: InstitutionProperties;
 }) {
 	const { t } = useTranslation("common");
+	const { t: tEnum } = useTranslation("enumMap");
 
 	return (
 		<InfoSection>
@@ -224,9 +225,9 @@ function OrganizationInfo({
 				</InfoItem>
 			)}
 
-			{institutionData.owner && (
-				<InfoItem label={t("institution.owner")}>
-					{institutionData.owner.name}
+			{institutionData.owner && institutionData.owner?.owner_type && (
+				<InfoItem label={t("institution.ownerType")}>
+					{tEnum("owner_type." + institutionData.owner.owner_type)}
 				</InfoItem>
 			)}
 
@@ -250,14 +251,14 @@ function FundingInfo({
 
 	return (
 		<InfoSection>
-			{institutionData.funding_type && (
+			{institutionData.support_type && (
 				<InfoItem label={t("institution.fundingType")}>
-					{tEnum(`funding_type.${institutionData.funding_type}`)}
+					{institutionData.support_type}
 				</InfoItem>
 			)}
-			{institutionData.support_type && (
+			{institutionData.funding_type && (
 				<InfoItem label={t("institution.supportType")}>
-					{institutionData.support_type}
+					{tEnum(`funding_type.${institutionData.funding_type}`)}
 				</InfoItem>
 			)}
 		</InfoSection>
@@ -286,9 +287,19 @@ function FacilityInfo({
 			)}
 			{institutionData.shared_use_allowed && (
 				<InfoItem label={t("institution.description")}>
-					{t("institution.multipleUseDescription")}
+					{institutionData.shared_use_info && institutionData.shared_use_info}
 				</InfoItem>
 			)}
+			{institutionData.shared_use_audience && (
+				<InfoItem label={t("institution.sharedUseAudience")}>
+					{institutionData.shared_use_audience}
+				</InfoItem>
+			)}
+			{/* {institutionData.shared_use_contact_person && (
+				<InfoItem label={t("institution.sharedUseContactPerson")}>
+					{institutionData.shared_use_contact_person}
+				</InfoItem>
+			)} */}
 			{institutionData.established_since && (
 				<InfoItem label={t("institution.establishedSince")}>
 					{new Date(institutionData.established_since).getFullYear()}

@@ -25,8 +25,8 @@
 		"scope": {
 			"title": "Umfang Version 1",
 			"features": [
-				"2.382 Kulturorte mit den Grundinformationen (Name, vollständige Adresse, allgemeine Kontaktinformationen, Angaben zu Förderung und Finanzierung)",
-				"16 Kategorien und 71 Unterkategorien",
+				"{{count}} Kulturorte mit den Grundinformationen (Name, vollständige Adresse, allgemeine Kontaktinformationen, Angaben zu Förderung und Finanzierung)",
+				"15 Kategorien und 71 Unterkategorien",
 				"Einbindung von 12 Fachkarten aus dem Geoportal Berlin",
 				"Ein Suchfeld, indem Sie nach Adressen und Namen von Kulturorten suchen können.",
 				"Einen Suchfilter, der es ermöglicht, Orte nach Bezirk sowie Kategorie und Unterkategorie zu filtern. Darüber hinaus ist es möglich, geschlossene Kulturorte einzublenden."
@@ -35,7 +35,8 @@
 				"title": "Folgende Erweiterungen für Version 1 werden bis November 2025 ergänzt",
 				"items": [
 					"Informationen in Deutscher Gebärdensprache",
-					"Informationen in Leichter Sprache"
+					"Informationen in Leichter Sprache",
+					"Barrierearme Listenansicht"
 				]
 			}
 		},
@@ -196,7 +197,6 @@
 					"Berliner Museumsverband e.V.",
 					"Berliner Projektfonds Urbane Praxis",
 					"Literaturorte: Netzwerk freie Literaturszene Berlin",
-					"Berliner Zentrengipfel - Senatsverwaltung für Wirtschaft, Energie und Betriebe",
 					"Börsenverein des Deutschen Buchhandels - Landesverband Berlin-Brandenburg",
 					"Bundesverband Soziokultur e.V.",
 					"Deutscher Bibliotheksverband",
@@ -212,6 +212,7 @@
 					"Raumsonde - Kollektiv Spieltrieb",
 					"Schulverzeichnis der Senatsverwaltung für Bildung, Jugend und Familie",
 					"Senatsverwaltung für Stadtentwicklung, Bauen und Wohnen",
+					"Senatsverwaltung für Wirtschaft, Energie und Betriebe",
 					"servicezentrum musikschulen (szm)"
 				]
 			},
