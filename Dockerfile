@@ -54,13 +54,12 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Accept runtime arguments for Traduora
+# Set Traduora environment variables for runtime (using values from builder stage)
 ARG TRADUORA_API_URL
 ARG TRADUORA_CLIENT_ID
 ARG TRADUORA_CLIENT_SECRET
 ARG TRADUORA_PROJECT_ID
 
-# Set Traduora environment variables for runtime
 ENV TRADUORA_API_URL=$TRADUORA_API_URL
 ENV TRADUORA_CLIENT_ID=$TRADUORA_CLIENT_ID
 ENV TRADUORA_CLIENT_SECRET=$TRADUORA_CLIENT_SECRET
