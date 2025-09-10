@@ -3,8 +3,6 @@ name: Deploy to Container Registry
 on:
   push:
     branches: [main, dev, release/*]
-  pull_request:
-    branches: [main]
   release:
     types: [published]
 
@@ -60,7 +58,7 @@ jobs:
           build-args: |
             NEXT_PUBLIC_SUPABASE_URL=${{ vars.NEXT_PUBLIC_SUPABASE_URL }}
             NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
-            NEXT_PUBLIC_MAPTILER_API_KEY=${{ secrets.NEXT_PUBLIC_MAPTILER_API_KEY }}
+            NEXT_PUBLIC_MAPTILER_API_KEY=${{ secrets.MAPTILER_API_KEY }}
             NEXT_PUBLIC_MAP_BOUNDING_BOX=${{ vars.NEXT_PUBLIC_MAP_BOUNDING_BOX }}
             TRADUORA_API_URL=${{ vars.TRADUORA_API_URL }}
             TRADUORA_CLIENT_ID=${{ vars.TRADUORA_CLIENT_ID }}
