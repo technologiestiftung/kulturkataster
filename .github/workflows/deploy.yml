@@ -60,6 +60,7 @@ jobs:
             NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
             NEXT_PUBLIC_MAPTILER_API_KEY=${{ secrets.MAPTILER_API_KEY }}
             NEXT_PUBLIC_MAP_BOUNDING_BOX=${{ vars.NEXT_PUBLIC_MAP_BOUNDING_BOX }}
+            NEXT_PUBLIC_BRANCH=${{ github.ref_name }}
             TRADUORA_API_URL=${{ vars.TRADUORA_API_URL }}
             TRADUORA_CLIENT_ID=${{ vars.TRADUORA_CLIENT_ID }}
             TRADUORA_CLIENT_SECRET=${{ secrets.TRADUORA_CLIENT_SECRET }}

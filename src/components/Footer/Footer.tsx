@@ -11,7 +11,7 @@ const getBranchIndicator = () => {
 		return "-local";
 	}
 
-	const branch = process.env.VERCEL_GIT_COMMIT_REF || "main";
+	const branch = process.env.NEXT_PUBLIC_BRANCH || "main";
 	if (branch === "main") return "";
 	return `-${branch}`;
 };
