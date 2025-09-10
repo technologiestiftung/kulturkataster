@@ -62,6 +62,10 @@ jobs:
             NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
             NEXT_PUBLIC_MAPTILER_API_KEY=${{ secrets.NEXT_PUBLIC_MAPTILER_API_KEY }}
             NEXT_PUBLIC_MAP_BOUNDING_BOX=${{ vars.NEXT_PUBLIC_MAP_BOUNDING_BOX }}
+            TRADUORA_API_URL=${{ vars.TRADUORA_API_URL }}
+            TRADUORA_CLIENT_ID=${{ vars.TRADUORA_CLIENT_ID }}
+            TRADUORA_CLIENT_SECRET=${{ secrets.TRADUORA_CLIENT_SECRET }}
+            TRADUORA_PROJECT_ID=${{ vars.TRADUORA_PROJECT_ID }}
 
       - name: Create Release
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
