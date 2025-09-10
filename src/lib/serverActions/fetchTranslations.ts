@@ -1,7 +1,8 @@
-/* eslint-disable complexity */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable complexity */
+"use server";
 
-import { fetchTraduoraToken, fetchLabels } from "./cached";
+import { fetchTraduoraToken, fetchLabels } from "@/lib/traduora/cached";
 
 const TRADUORA_API_URL = process.env.TRADUORA_API_URL!;
 const PROJECT_ID = process.env.TRADUORA_PROJECT_ID!;
@@ -19,8 +20,8 @@ async function getLabelIdByName(
 }
 
 /**
- * Fetches translations for a given locale from Traduora.
- * Optionally filters by namespace prefix and strips it.
+ * Server action to fetch translations for a given locale from Traduora.
+ * Optionally filters by namespace.
  */
 export async function fetchTranslations(
 	locale: string,
@@ -41,6 +42,7 @@ export async function fetchTranslations(
 			throw new Error(`Label not found for namespace: ${namespace}`);
 		}
 	}
+
 	const termsRes = await fetch(termsUrl, {
 		headers: {
 			Authorization: `Bearer ${token}`,
