@@ -1,59 +1,139 @@
+<div align="center">
+  <img src="src/logos/kuka-large.svg" alt="Kulturkataster Logo" width="200" />
+</div>
+
 ![](https://img.shields.io/badge/Built%20with%20%E2%9D%A4%EF%B8%8F-at%20Technologiestiftung%20Berlin-blue)
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 
-[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
 
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-# Kulturkataster
+# Kulturkataster Frontend
 
-Welcome to the **Kulturkataster** repository! This project is built using Next.js, Supabase and Maplibre. It is designed to visualize and manage cultural data in Berlin.
+Frontend application for the Kulturkataster project - a comprehensive platform for mapping and managing cultural institutions in Berlin.
 
-Below are setup instructions for running the project locally and steps for deploying it to Netlify.
+## Overview
 
----
+The Kulturkataster Frontend is a Next.js application that provides an interactive map interface for exploring Berlin's cultural landscape. Built with modern web technologies, it offers multilingual support, responsive design, and advanced mapping capabilities.
 
-### Prerequisites
+**Key Features:**
 
-Ensure you have the following installed on your machine:
+- Interactive map with cultural institution visualization
+- Multilingual support (currently only German implemented) with i18next
+- Responsive design optimized for desktop and mobile
+- Advanced filtering and search functionality
+- Docker deployment with GitHub Container Registry integration
+- Modern tech stack: Next.js 15, React 19, TypeScript, Tailwind CSS
 
-- **Node.js** (v18 or higher)
-- **npm** (usually included with Node.js)
+## Tech Stack
 
----
+- **Framework**: Next.js 15.2.2 with App Router
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS v4 with custom design system
+- **UI Components**: Radix UI primitives
+- **Mapping**: OpenLayers (ol) with MapTiler integration
+- **State Management**: Zustand
+- **Internationalization**: i18next with next-i18n-router
+- **Database**: Supabase integration
+- **Deployment**: Docker with GitHub Actions
 
-### Installation
+## Prerequisites
+
+- Node.js >= 18
+- npm or similar package manager
+- Docker (for containerized deployment)
+
+## Installation
+
+### Local Development Setup
 
 1. **Clone the Repository**
 
-   `bash git clone <your-repo-url> && cd <your-repo-name> `
+   ```bash
+   git clone https://github.com/technologiestiftung/kulturkataster-frontend
+   cd kulturkataster-frontend
+   ```
 
 2. **Install Dependencies**
 
-   Run the following command to install all necessary packages and add the .env:
-
    ```bash
-   npm npm install
+   npm install
    ```
 
-Then update the content of the env files accordingly
+3. **Environment Configuration**
+
+   Create a `.env.local` file with the required environment variables:
+
+   ```bash
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+   NEXT_PUBLIC_MAPTILER_API_KEY=your_maptiler_api_key
+   NEXT_PUBLIC_MAP_BOUNDING_BOX=13.091992716067702,52.33488609760638,13.742786470433,52.67626223889507
+   ```
 
 ## Running the Project
 
-To start a local development server, use the following command:
+To start a local development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-This will start the development server, usually accessible at `http://localhost:9000` (check the terminal output to confirm).
+The application will be available at `http://localhost:3000`.
+
+### Other Development Commands
+
+```bash
+npm run build        # Build for production
+npm run start        # Start production server
+npm run lint         # Run ESLint
+npm run format       # Format code with Prettier
+npm run format:fix   # Auto-fix formatting issues
+```
+
+## Docker Deployment
+
+### Building the Docker Image
+
+```bash
+docker build -t kulturkataster-frontend .
+```
+
+### Running with Docker
+
+```bash
+docker run -p 3000:3000 \
+  -e NEXT_PUBLIC_SUPABASE_URL=your_supabase_url \
+  -e NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key \
+  -e NEXT_PUBLIC_MAPTILER_API_KEY=your_maptiler_api_key \
+  -e NEXT_PUBLIC_MAP_BOUNDING_BOX=13.091992716067702,52.33488609760638,13.742786470433,52.67626223889507 \
+  kulturkataster-frontend
+```
+
+## CI/CD and Deployment
+
+### GitHub Container Registry
+
+The project uses GitHub Actions for automated building and publishing to GitHub Container Registry (GHCR). The workflow is triggered on pushes to `main`, `dev`, and `release/*` branches.
+
+**Docker Images Available At:**
+
+- `ghcr.io/technologiestiftung/kulturkataster-frontend:latest`
+- `ghcr.io/technologiestiftung/kulturkataster-frontend:main`
+- `ghcr.io/technologiestiftung/kulturkataster-frontend:dev`
+- `ghcr.io/technologiestiftung/kulturkataster-frontend:release-*`
+
+### Deployment Workflow
+
+1. **Code pushed to repository**
+2. **GitHub Actions triggered** based on branch
+3. **Docker image built** with appropriate environment variables
+4. **Image published** to GitHub Container Registry
+5. **Automatic release created** (for main branch pushes)
+
+Environment-specific configurations are managed through GitHub environments (`main` and `dev`) with appropriate secrets and variables.
 
 ## Internationalization (i18n)
 
@@ -61,73 +141,110 @@ This project leverages `i18next` for internationalization and localization suppo
 
 ### Features
 
-- **Language Detection and Switching**: Automatically detects and switches between supported languages.
-- **Modular Translation Files**: Translations are organized into namespaces for better maintainability.
-- **Collaborative Translation Management**: Translations are managed via the i18next web editor at [i18next Web Editor](https://translate.i18next.com/).
-
-### Namespaces
-
-Translations are grouped into namespaces, each representing a specific feature or area of the application. This allows for lazy-loading and better organization.
-
-- `common`: General UI labels (e.g., buttons, messages).
-
-Each namespace corresponds to files like:
-
-```
-/locales/en/common.json
-/locales/de/auth.json
-```
+- **Language Detection and Switching**: Automatically detects and switches between supported languages
+- **Modular Translation Files**: Translations are organized into namespaces for better maintainability
+- **URL-based Routing**: Language-specific routes (e.g., `/en/`, `/de/`)
 
 ### Supported Languages
 
-- **English (en)**
-- **German (de)**
+- **German (de)** - Primary language
+- **English (en)** - Secondary language
 
-Languages can be switched at runtime, and new ones can be added by creating JSON files under `locales/[lang]/[namespace].json`.
+### Translation Structure
+
+```
+src/lib/i18n/translations/
+├── de/
+│   ├── common.json     # General UI labels
+│   ├── content.json    # Content and descriptions
+│   └── enumMap.json    # Category and subcategory mappings
+└── en/
+    └── common.json     # English translations
+```
 
 ### Working with Translations
 
-1. Open the [i18next Web Editor](https://translate.i18next.com/).
-2. Select your project and namespace (e.g., `dashboard`).
-3. Add or edit translations for supported languages.
-4. Download the updated JSON files and place them in `locales/[lang]/[namespace].json`.
+1. Add new translation keys to the appropriate JSON files
+2. Use the `useTranslation` hook in components:
 
-The application will automatically pick up changes on load or via reload.
+```tsx
+import { useTranslation } from "react-i18next";
 
-## Building for Production
-
-To build the project for production, run:
-
-```bash
-npm run build
+function MyComponent() {
+	const { t } = useTranslation("common");
+	return <h1>{t("welcome")}</h1>;
+}
 ```
 
-## Deploying to Netlify
+## Architecture
 
-### Steps to Deploy
+### Project Structure
 
-1. **Login to Netlify**: Go to [Netlify](https://www.netlify.com/) and log in to your account (or create one if you haven’t already).
+```
+src/
+├── app/                    # Next.js App Router
+│   ├── [locale]/          # Internationalized routes
+│   └── api/               # API routes
+├── components/            # React components
+│   ├── ui/                # Reusable UI components
+│   ├── Map/               # Map-related components
+│   ├── Filter/            # Filtering functionality
+│   └── ...
+├── lib/                   # Utility functions and configurations
+│   ├── supabase/          # Database integration
+│   ├── store/             # Zustand state management
+│   └── i18n/              # Internationalization setup
+├── types/                 # TypeScript type definitions
+└── logos/                 # Project logos and assets
+```
 
-2. **Create a New Site**:
+### Key Components
 
-   - Click **"New site from Git"** and connect your GitHub (or other Git provider) account.
-   - Select the repository for **Project Name**.
+- **Map Component**: OpenLayers-based interactive map with custom styling
+- **Filter System**: Advanced filtering with categories, districts, and search
+- **Modal System**: Responsive modals for detailed information display
+- **Navigation**: Multi-level navigation with mobile optimization
 
-3. **Configure Build Settings**:
+### State Management
 
-   - **Build Command**: `npm run build`
-   - **Publish Directory**: ``
+The application uses Zustand for state management with separate stores for:
 
-4. **Deploy**:
-   - Click **"Deploy Site"**. Netlify will automatically build and deploy your project.
+- **App State**: General application state and UI preferences
+- **Map State**: Map interactions, layers, and geographic data
+- **Institution State**: Cultural institution data and filtering
+- **Modal State**: Modal visibility and content management
 
-### Netlify Continuous Deployment
+## Development
 
-After the initial setup, every push to the main branch will automatically trigger a redeployment on Netlify, ensuring your site stays up-to-date.
+### Code Standards
 
-## Tests
+- **TypeScript**: Strict mode enabled with comprehensive type checking
+- **ESLint**: Extended Next.js configuration with custom rules
+- **Prettier**: Consistent code formatting
+- **Husky**: Pre-commit hooks for code quality
 
-tbd...
+### Adding New Features
+
+1. Create feature branch from `dev`
+2. Implement changes with proper TypeScript typing
+3. Add translations for new text content
+4. Test locally and ensure Docker build works
+5. Create pull request to `dev` branch
+
+### Environment Variables
+
+The application supports different environment configurations:
+
+**Build-time Variables** (must start with `NEXT_PUBLIC_`):
+
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `NEXT_PUBLIC_MAPTILER_API_KEY`
+- `NEXT_PUBLIC_MAP_BOUNDING_BOX`
+
+**Runtime Variables** (server-side only):
+
+- `SUPABASE_SERVICE_ROLE_KEY` (if needed for server actions)
 
 ## Contributing
 
@@ -143,7 +260,8 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <table>
   <tbody>
     <tr>
-      <td align="center" valign="top" width="14.28%"><a href="https:/github.com/LuiseBrandenburger"><img src="https://avatars.githubusercontent.com/u/61413319?s=?s=64" width="64px;" alt="Luise Brandenburger"/><br /><sub><b>Luise Brandenburger</b></sub></a><br /><a href="https://github.com/technologiestiftung/kulturkataster/commits?author=LuiseBrandenburger" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/LuiseBrandenburger"><img src="https://avatars.githubusercontent.com/u/61413319?v=4?s=64" width="64px;" alt="Luise Brandenburger"/><br /><sub><b>Luise Brandenburger</b></sub></a><br /><a href="https://github.com/technologiestiftung/kulturkataster-frontend/commits?author=LuiseBrandenburger" title="Code">💻</a> <a href="#design-LuiseBrandenburger" title="Design">🎨</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/JonathanHaudenschild"><img src="https://avatars.githubusercontent.com/u/15103380?v=4?s=64" width="64px;" alt="Jonathan Haudenschild"/><br /><sub><b>Jonathan Haudenschild</b></sub></a><br /><a href="https://github.com/technologiestiftung/kulturkataster-frontend/commits?author=JonathanHaudenschild" title="Code">💻</a> <a href="#infra-JonathanHaudenschild" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="https://github.com/technologiestiftung/kulturkataster-frontend/commits?author=JonathanHaudenschild" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>
@@ -159,25 +277,33 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 
 Texts and content available as [CC BY](https://creativecommons.org/licenses/by/3.0/de/).
 
-Illustrations by {tba}, all rights reserved.
-
 ## Credits
+
+© 2025 - Ein Projekt der Kulturraum Berlin gGmbH, gefördert durch die Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt, mit der technischen Umsetzung durch die Technologiestiftung Berlin.
 
 <table>
   <tr>
-    <td>
-      Made by  <a href="https://www.technologiestiftung-berlin.de/">
-        <br />
-        <br />
-        <img width="150" src="https://logos.citylab-berlin.org/logo-technologiestiftung-berlin-de.svg" />
+    <td align="center">
+      <strong>Projekt von</strong><br />
+      <a href="https://kulturraum.berlin/">
+        <img width="120" src="src/logos/KRB.svg" alt="Kulturraum Berlin" />
       </a>
     </td>
-    <td>
-      Supported by <a href="https://www.berlin.de/">
-        <br />
-        <br />
-        <img width="150" src="https://logos.citylab-berlin.org/logo-berlin.svg" />
+    <td align="center">
+      <strong>Gefördert durch</strong><br />
+      <a href="https://www.berlin.de/sen/kultgz/">
+        <img width="120" src="src/logos/senate.svg" alt="Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt" />
+      </a>
+    </td>
+    <td align="center">
+      <strong>Technische Umsetzung</strong><br />
+      <a href="https://www.technologiestiftung-berlin.de/">
+        <img width="120" src="src/logos/technologiestiftung.svg" alt="Technologiestiftung Berlin" />
       </a>
     </td>
   </tr>
 </table>
+
+## Related Projects
+
+- [Kulturkataster Backend](https://github.com/technologiestiftung/kulturkataster-backend) - Database and API backend
