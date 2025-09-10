@@ -2,6 +2,19 @@
 import { useModalStore } from "@/lib/store/modalStore";
 import { FC } from "react";
 import { useTranslation } from "react-i18next";
+import packageInfo from "../../../package.json";
+
+const getBranchIndicator = () => {
+	if (typeof window === "undefined") return "";
+
+	if (process.env.NODE_ENV === "development") {
+		return "-local";
+	}
+
+	const branch = process.env.VERCEL_GIT_COMMIT_REF || "main";
+	if (branch === "main") return "";
+	return `-${branch}`;
+};
 
 const footerItems = [
 	{ id: "about" },
@@ -31,6 +44,10 @@ const Footer: FC = () => {
 						</button>
 					</li>
 				))}
+				<span className="body2 font-normal">
+					v{packageInfo.version}
+					{getBranchIndicator()}
+				</span>
 			</ul>
 		</div>
 	);
