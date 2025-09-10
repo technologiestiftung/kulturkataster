@@ -123,6 +123,9 @@ export interface InstitutionProperties {
 	established_since: string;
 	established_until: string;
 	shared_use_allowed: boolean;
+	shared_use_info?: string;
+	shared_use_audience?: string;
+	shared_use_contact_person?: string;
 	utilization_status: string;
 	parent_organizations: ParentOrganization[];
 	description?: string;
