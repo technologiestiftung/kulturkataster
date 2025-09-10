@@ -34,7 +34,7 @@ const DistrictTags: FC<DistrictTagsProps> = ({
 						key={district.key}
 						variant="tag"
 						size="tag"
-						className={isSelected ? "bg-neutral-80 text-white" : ""}
+						className={isSelected ? "bg-neutral-80 text-background" : ""}
 						onClick={() => onChange(district.key)}
 					>
 						{translatedName}
