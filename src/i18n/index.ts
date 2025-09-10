@@ -3,7 +3,7 @@ import { createInstance, TFunction, i18n, Resource } from "i18next";
 import { initReactI18next } from "react-i18next/initReactI18next";
 import resourcesToBackend from "i18next-resources-to-backend";
 import { Locale } from "../types/i18n";
-import { fetchTranslations } from "@/lib/traduora/utils";
+import { fetchTranslations } from "@/lib/serverActions/fetchTranslations";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function deepMerge(target: any, source: any): any {
