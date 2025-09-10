@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ github.ref == 'refs/heads/main' && 'main' || 'dev' }}
     permissions:
-      contents: read
+      contents: write
       packages: write
 
     steps:
@@ -67,14 +67,19 @@ jobs:
             TRADUORA_CLIENT_SECRET=${{ secrets.TRADUORA_CLIENT_SECRET }}
             TRADUORA_PROJECT_ID=${{ vars.TRADUORA_PROJECT_ID }}
 
+      - name: Get package version
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        id: package-version
+        run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+
       - name: Create Release
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: v${{ github.run_number }}
-          release_name: Release v${{ github.run_number }}
+          tag_name: v${{ steps.package-version.outputs.version }}
+          release_name: Release v${{ steps.package-version.outputs.version }}
           body: |
             Automated release created from commit ${{ github.sha }}
           draft: false
