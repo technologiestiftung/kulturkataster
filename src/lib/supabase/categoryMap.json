@@ -359,12 +359,6 @@
 				"key": "cultural_urban_development_other",
 				"category_id": 9,
 				"created_at": "2025-08-27T21:32:12.778395+00:00"
-			},
-			{
-				"id": 52,
-				"key": "potential_cultural_development_spaces",
-				"category_id": 9,
-				"created_at": "2025-08-27T21:32:12.778395+00:00"
 			}
 		]
 	},
@@ -373,6 +367,12 @@
 		"key": "potential_spaces",
 		"created_at": "2025-08-27T21:32:12.778395+00:00",
 		"subcategories": [
+			{
+				"id": 52,
+				"key": "potential_cultural_development_spaces",
+				"category_id": 9,
+				"created_at": "2025-08-27T21:32:12.778395+00:00"
+			},
 			{
 				"id": 53,
 				"key": "potential_spaces_other",

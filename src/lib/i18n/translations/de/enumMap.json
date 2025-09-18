@@ -200,6 +200,7 @@
 		"not_yet_secured": "Noch nicht gesichert"
 	},
 	"rental_contract_type": {
+		"limited_lease": "Befristete Miete",
 		"unlimited_lease": "Unbefristete Miete",
 		"organization_ownership": "Eigentum der Organisation"
 	},
@@ -253,6 +254,7 @@
 		"utilization_status": "Nutzungsstatus",
 		"protection_status": "Sicherungsstatus",
 		"protection_status_info": "Sicherungsstatus Detailinfos",
+		"owner": "Eigentümer*in",
 		"owner_name": "Eigentümer*in",
 		"owner_type": "Eigentümer*innenart",
 		"established_since": "Bestehen am Standort seit",
@@ -273,6 +275,7 @@
 		"notes": "Zusätzliche Informationen",
 		"description": "Zusätzliche Informationen",
 		"geom": "Geoposition",
+		"case": "Geoposition",
 		"address": "Geodaten für Kartenanbindung",
 		"result_num": "Geodaten OSM",
 		"osm_id": "Geodaten OSM",
