@@ -102,6 +102,11 @@ export interface Source {
 	name: string;
 }
 
+export interface City {
+	id: number;
+	name: string;
+}
+
 export interface InstitutionProperties {
 	id: number;
 	name: string;
@@ -110,6 +115,7 @@ export interface InstitutionProperties {
 	phone: string;
 	status: string;
 	street: string;
+	city: City;
 	city_id: number;
 	website: string;
 	zip_code: string;
