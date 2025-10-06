@@ -163,11 +163,19 @@ function InstitutionBasicInfo({
 							</p>
 							<div className="flex flex-wrap space-x-2">
 								<p>{institutionData.zip_code}</p>
-								{institutionData.district.key && (
-									<p>
-										{tEnum(`berlin_district.${institutionData.district.key}`)}
-									</p>
-								)}
+								<p>
+									{institutionData.city.name && (
+										<span>
+											{institutionData.city.name}
+											{"-"}
+										</span>
+									)}
+									{institutionData.district.key && (
+										<span>
+											{tEnum(`berlin_district.${institutionData.district.key}`)}
+										</span>
+									)}
+								</p>
 							</div>
 						</div>
 					)}
