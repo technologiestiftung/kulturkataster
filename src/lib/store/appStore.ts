@@ -15,6 +15,8 @@ export const useAppStore = create<AppStoreState>()(
 				set({ isLargeTextMode: isLargeText }),
 			baseFontSize: 16,
 			setBaseFontSize: createSetBaseFontSize(set),
+			viewMode: "map",
+			setViewMode: (mode) => set({ viewMode: mode }),
 		}),
 		{
 			name: "app-storage",
