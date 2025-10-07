@@ -9,53 +9,118 @@ interface FacilityInfoProps {
 	institutionData: InstitutionProperties;
 }
 
+function hasFacilityData(data: InstitutionProperties): boolean {
+	return !!(
+		data.capacity ||
+		data.rooms_count ||
+		data.shared_use_allowed ||
+		data.shared_use_audience ||
+		data.established_since ||
+		data.established_until
+	);
+}
+
+function CapacityInfo({
+	data,
+	t,
+}: {
+	data: InstitutionProperties;
+	t: (key: string) => string;
+}) {
+	if (!data.capacity) return null;
+	return (
+		<InfoItem label={t("institution.usableAreaSize")}>{data.capacity}</InfoItem>
+	);
+}
+
+function RoomsCountInfo({
+	data,
+	t,
+}: {
+	data: InstitutionProperties;
+	t: (key: string) => string;
+}) {
+	if (!data.rooms_count) return null;
+	return (
+		<InfoItem label={t("institution.workspaceCount")}>
+			{data.rooms_count}
+		</InfoItem>
+	);
+}
+
+function SharedUseInfo({
+	data,
+	t,
+}: {
+	data: InstitutionProperties;
+	t: (key: string) => string;
+}) {
+	if (!data.shared_use_allowed || !data.shared_use_info) return null;
+	return (
+		<InfoItem label={t("institution.description")}>
+			{data.shared_use_info}
+		</InfoItem>
+	);
+}
+
+function SharedUseAudienceInfo({
+	data,
+	t,
+}: {
+	data: InstitutionProperties;
+	t: (key: string) => string;
+}) {
+	if (!data.shared_use_audience) return null;
+	return (
+		<InfoItem label={t("institution.sharedUseAudience")}>
+			{data.shared_use_audience}
+		</InfoItem>
+	);
+}
+
+function EstablishedSinceInfo({
+	data,
+	t,
+}: {
+	data: InstitutionProperties;
+	t: (key: string) => string;
+}) {
+	if (!data.established_since) return null;
+	return (
+		<InfoItem label={t("institution.establishedSince")}>
+			{new Date(data.established_since).getFullYear()}
+		</InfoItem>
+	);
+}
+
+function EstablishedUntilInfo({
+	data,
+	t,
+}: {
+	data: InstitutionProperties;
+	t: (key: string) => string;
+}) {
+	if (!data.established_until) return null;
+	return (
+		<InfoItem label={t("institution.establishedUntil")}>
+			{new Date(data.established_until).getFullYear()}
+		</InfoItem>
+	);
+}
+
 export function FacilityInfo({ institutionData }: FacilityInfoProps) {
 	const { t } = useTranslation("common");
 
-	// Check if there's any facility info to display
-	const hasData = !!(
-		institutionData.capacity ||
-		institutionData.rooms_count ||
-		institutionData.shared_use_allowed ||
-		institutionData.shared_use_audience ||
-		institutionData.established_since ||
-		institutionData.established_until
-	);
-
-	if (!hasData) return null;
+	if (!hasFacilityData(institutionData)) return null;
 
 	return (
 		<InfoSection>
-			{institutionData.capacity && (
-				<InfoItem label={t("institution.usableAreaSize")}>
-					{institutionData.capacity}
-				</InfoItem>
-			)}
-			{institutionData.rooms_count && (
-				<InfoItem label={t("institution.workspaceCount")}>
-					{institutionData.rooms_count}
-				</InfoItem>
-			)}
-			{institutionData.shared_use_allowed && (
-				<InfoItem label={t("institution.description")}>
-					{institutionData.shared_use_info && institutionData.shared_use_info}
-				</InfoItem>
-			)}
-			{institutionData.shared_use_audience && (
-				<InfoItem label={t("institution.sharedUseAudience")}>
-					{institutionData.shared_use_audience}
-				</InfoItem>
-			)}
-			{institutionData.established_since && (
-				<InfoItem label={t("institution.establishedSince")}>
-					{new Date(institutionData.established_since).getFullYear()}
-				</InfoItem>
-			)}
-			{institutionData.established_until && (
-				<InfoItem label={t("institution.establishedUntil")}>
-					{new Date(institutionData.established_until).getFullYear()}
-				</InfoItem>
-			)}
+			<CapacityInfo data={institutionData} t={t} />
+			<RoomsCountInfo data={institutionData} t={t} />
+			<SharedUseInfo data={institutionData} t={t} />
+			<SharedUseAudienceInfo data={institutionData} t={t} />
+			<EstablishedSinceInfo data={institutionData} t={t} />
+			<EstablishedUntilInfo data={institutionData} t={t} />
 		</InfoSection>
 	);
 }

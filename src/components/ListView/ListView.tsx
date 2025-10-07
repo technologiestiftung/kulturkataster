@@ -10,7 +10,6 @@ const ITEMS_PER_PAGE = 20;
 
 const ListView: FC = () => {
 	const { t } = useTranslation("common");
-	const { t: tEnum } = useTranslation("enumMap");
 	const { t: tContent } = useTranslation("content");
 	const institutions = useInstitutionStore((state) => state.institutions);
 	const setSelectedInstitutionId = useInstitutionStore(
