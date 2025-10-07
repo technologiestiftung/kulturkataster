@@ -460,5 +460,11 @@
 		"loading": "Filter werden geladen...",
 		"error": "Fehler beim Laden der Filter",
 		"retry": "Erneut versuchen"
+	},
+	"listView": {
+		"title": "Kulturelle Orte erschließen",
+		"subtitle": "Alle Orte in der Übersicht",
+		"description": "Weit hinten, hinter den Wortbergen, fern der Länder Vokalien und Konsonantien leben die Blindtexte. Abgeschieden wohnen sie in Buchstabhausen an der Küste des Semantik, eines großen Sprachozeans.",
+		"timeline": "Die Entwicklung der Listenansicht ist für das Jahr 2026 geplant."
 	}
 }

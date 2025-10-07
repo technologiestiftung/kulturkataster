@@ -1,0 +1,153 @@
+"use client";
+
+import { Card, CardContent } from "@/components/ui/card";
+import {
+	Address,
+	Contact,
+	OrganizationInfo,
+	FundingInfo,
+	FacilityInfo,
+	StatusInfo,
+	ToggleButton,
+} from "@/components/Institution";
+import { getCategoryIconComponent } from "@/lib/utils/iconUtils";
+import { Category, InstitutionProperties } from "@/types";
+import { memo, useState } from "react";
+import { useTranslation } from "react-i18next";
+
+// Parent organization component
+function ParentOrganization({ name }: { name?: string }) {
+	if (!name) return null;
+	return <p className="body2">{name}</p>;
+}
+
+// Categories display component
+function CategoriesDisplay({
+	categories,
+	tEnum,
+}: {
+	categories: Category[];
+	tEnum: (key: string) => string;
+}) {
+	if (!categories?.length) return null;
+
+	return (
+		<div className="flex items-center gap-2">
+			{categories.map((category: Category) => {
+				const IconComponent = getCategoryIconComponent(category.key);
+
+				return (
+					<div key={category.id} className="flex items-center gap-2">
+						<div>
+							<IconComponent />
+						</div>
+						<span className="body2">{tEnum(`category.${category.key}`)}</span>
+						<span className="body2">•</span>
+						{/* <span className="body2">
+							{tEnum(`subcategory.${category.key}`)}
+						</span> */}
+					</div>
+				);
+			})}
+		</div>
+	);
+}
+
+// Status indicator component
+function StatusIndicator({
+	status,
+	tEnum,
+}: {
+	status: string;
+	tEnum: (key: string) => string;
+}) {
+	const isInUse = status === "in_use";
+	return (
+		<div className="flex items-center gap-2 bg-neutral-5 p-2">
+			<div
+				className={`w-4 h-4 rounded-full ${isInUse ? "bg-brand-default" : "bg-neutral-20"}`}
+			/>
+			<span className="body2 font-medium">
+				<span className="font-bold">
+					{tEnum("field_names.utilization_status")}:{" "}
+				</span>
+				{tEnum("utilization_status." + status)}
+			</span>
+		</div>
+	);
+}
+
+// Left column content
+function LeftColumn({
+	data,
+	tEnum,
+}: {
+	data: InstitutionProperties;
+	tEnum: (key: string) => string;
+}) {
+	return (
+		<div className="space-y-3">
+			<ParentOrganization name={data.parent_organizations?.[0]?.name} />
+			<h2 className="h1 font-bold text-gray-900">{data.name}</h2>
+			<CategoriesDisplay categories={data.categories || []} tEnum={tEnum} />
+			{data.utilization_status && (
+				<StatusIndicator status={data.utilization_status} tEnum={tEnum} />
+			)}
+			<Address institutionData={data} />
+		</div>
+	);
+}
+
+interface InstitutionCardProps {
+	institutionData: InstitutionProperties;
+	onClick?: (institution: InstitutionProperties) => void;
+	isCompact?: boolean;
+}
+
+const InstitutionCard = memo(function InstitutionCard({
+	institutionData,
+	onClick,
+	isCompact: _isCompact = false,
+}: InstitutionCardProps) {
+	const { t: tEnum } = useTranslation("enumMap");
+	const [showMore, setShowMore] = useState(false);
+
+	const handleCardClick = () => onClick?.(institutionData);
+	const handleToggleInfo = (e: React.MouseEvent) => {
+		e.stopPropagation();
+		setShowMore(!showMore);
+	};
+
+	const cardClassName = `w-full rounded-lg overflow-hidden border-none ${
+		onClick ? "cursor-pointer hover:shadow-md transition-shadow" : ""
+	}`;
+
+	return (
+		<Card className={cardClassName} onClick={handleCardClick}>
+			<CardContent className="p-4">
+				<div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+					<LeftColumn data={institutionData} tEnum={tEnum} />
+					<Contact institutionData={institutionData} />
+				</div>
+
+				{showMore && (
+					<div className="mt-6 pt-4 border-t space-y-4">
+						<OrganizationInfo institutionData={institutionData} />
+						<FundingInfo institutionData={institutionData} />
+						<FacilityInfo institutionData={institutionData} />
+						<StatusInfo institutionData={institutionData} />
+					</div>
+				)}
+
+				<ToggleButton
+					showMore={showMore}
+					onClick={handleToggleInfo}
+					hasInfo={true}
+				/>
+			</CardContent>
+		</Card>
+	);
+});
+
+export default InstitutionCard;
+export { InstitutionCard };
