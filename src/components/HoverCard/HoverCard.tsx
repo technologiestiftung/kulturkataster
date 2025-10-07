@@ -100,7 +100,6 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 					{featureProperties.utilization_status && (
 						<div className=" flex gap-1 items-center justify-between">
 							<span>{t("institution.utilizationStatus")}:</span>
-							{/* todo: add status name */}
 							<span>
 								{tEnum(
 									`utilization_status.${featureProperties.utilization_status}`,
