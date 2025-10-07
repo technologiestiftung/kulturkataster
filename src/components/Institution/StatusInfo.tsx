@@ -9,25 +9,37 @@ interface StatusInfoProps {
 	institutionData: InstitutionProperties;
 }
 
+function hasStatusData(data: InstitutionProperties): boolean {
+	return !!data.updated_at;
+}
+
+function UpdatedAtInfo({
+	data,
+	t,
+}: {
+	data: InstitutionProperties;
+	t: (key: string) => string;
+}) {
+	if (!data.updated_at) return null;
+	return (
+		<InfoItem label={t("institution.status")}>
+			{new Date(data.updated_at).toLocaleDateString("de-DE", {
+				day: "2-digit",
+				month: "2-digit",
+				year: "numeric",
+			})}
+		</InfoItem>
+	);
+}
+
 export function StatusInfo({ institutionData }: StatusInfoProps) {
 	const { t } = useTranslation("common");
 
-	// Check if there's any status info to display
-	const hasData = !!institutionData.updated_at;
-
-	if (!hasData) return null;
+	if (!hasStatusData(institutionData)) return null;
 
 	return (
 		<InfoSection>
-			{institutionData.updated_at && (
-				<InfoItem label={t("institution.status")}>
-					{new Date(institutionData.updated_at).toLocaleDateString("de-DE", {
-						day: "2-digit",
-						month: "2-digit",
-						year: "numeric",
-					})}
-				</InfoItem>
-			)}
+			<UpdatedAtInfo data={institutionData} t={t} />
 		</InfoSection>
 	);
 }

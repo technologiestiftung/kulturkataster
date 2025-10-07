@@ -9,7 +9,6 @@ interface OrganizationInfoProps {
 	institutionData: InstitutionProperties;
 }
 
-// Helper function to check if organization info exists
 function hasOrganizationData(data: InstitutionProperties): boolean {
 	return !!(
 		data.closing_reason ||
@@ -19,7 +18,6 @@ function hasOrganizationData(data: InstitutionProperties): boolean {
 	);
 }
 
-// Individual info components
 function ClosingReasonInfo({
 	data,
 	t,
