@@ -9,29 +9,52 @@ interface FundingInfoProps {
 	institutionData: InstitutionProperties;
 }
 
+function hasFundingData(data: InstitutionProperties): boolean {
+	return !!(data.support_type || data.funding_type);
+}
+
+function SupportTypeInfo({
+	data,
+	t,
+}: {
+	data: InstitutionProperties;
+	t: (key: string) => string;
+}) {
+	if (!data.support_type) return null;
+	return (
+		<InfoItem label={t("institution.fundingType")}>
+			{data.support_type}
+		</InfoItem>
+	);
+}
+
+function FundingTypeInfo({
+	data,
+	t,
+	tEnum,
+}: {
+	data: InstitutionProperties;
+	t: (key: string) => string;
+	tEnum: (key: string) => string;
+}) {
+	if (!data.funding_type) return null;
+	return (
+		<InfoItem label={t("institution.supportType")}>
+			{tEnum(`funding_type.${data.funding_type}`)}
+		</InfoItem>
+	);
+}
+
 export function FundingInfo({ institutionData }: FundingInfoProps) {
 	const { t } = useTranslation("common");
 	const { t: tEnum } = useTranslation("enumMap");
 
-	// Check if there's any funding info to display
-	const hasData = !!(
-		institutionData.support_type || institutionData.funding_type
-	);
-
-	if (!hasData) return null;
+	if (!hasFundingData(institutionData)) return null;
 
 	return (
 		<InfoSection>
-			{institutionData.support_type && (
-				<InfoItem label={t("institution.fundingType")}>
-					{institutionData.support_type}
-				</InfoItem>
-			)}
-			{institutionData.funding_type && (
-				<InfoItem label={t("institution.supportType")}>
-					{tEnum(`funding_type.${institutionData.funding_type}`)}
-				</InfoItem>
-			)}
+			<SupportTypeInfo data={institutionData} t={t} />
+			<FundingTypeInfo data={institutionData} t={t} tEnum={tEnum} />
 		</InfoSection>
 	);
 }

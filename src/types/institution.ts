@@ -45,7 +45,6 @@ export enum CategoryType {
 	PERFORMING_ARTS_VENUES = "performing_arts_venues",
 	GRAFFITI_AREAS = "graffiti_areas",
 	OTHER = "other",
-
 	MULTI_CATEGORIES = "multi_categories",
 }
 export interface Category {
