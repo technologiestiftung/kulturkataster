@@ -23,6 +23,8 @@ import Download from "@/icons/download.svg";
 import Edit from "@/icons/edit.svg";
 import FilterLines from "@/icons/filter-lines.svg";
 import InfoCircle from "@/icons/info-circle.svg";
+import ListIcon from "@/icons/list.svg";
+import MapIcon from "@/icons/map-02.svg";
 import Search from "@/icons/search.svg";
 import { useAppStore } from "@/lib/store/appStore";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
@@ -76,7 +78,8 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 		(state) => state.originalInstitutions,
 	);
 	const institutions = useInstitutionStore((state) => state.institutions);
-	const { firstTimeUser, setFirstTimeUser } = useAppStore();
+	const { firstTimeUser, setFirstTimeUser, viewMode, setViewMode } =
+		useAppStore();
 
 	useEffect(() => {
 		if (!isMobile && !firstTimeUser && !userHasClosedSidebar) {
@@ -406,16 +409,55 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 				</button>
 			</div>
 
-			<div className="absolute md:hidden block z-[50] top-0 right-0 p-4 overflow-hidden">
-				<Button
-					variant="map-icon"
-					size="icon-only"
-					title={t("mobileMenu.title")}
-					onClick={() => setMobileMenuModalOpen(true)}
-					aria-label={t("mobileMenu.title")}
-				>
-					<DotsVertical size={14} />
-				</Button>
+			<div className="absolute block z-[50] top-0 right-0 p-4 overflow-hidden">
+				<div className="flex gap-2 items-center">
+					<div className="relative">
+						<div className="flex items-center bg-neutral-80 border rounded-full shadow-sm relative overflow-hidden">
+							<div
+								className={`absolute top-0 bottom-0 w-14 h-14 bg-background rounded-full transition-transform duration-300 ease-in-out ${
+									viewMode === "map" ? "translate-x-0" : "translate-x-14"
+								}`}
+							/>
+
+							<button
+								className={`relative z-10 flex items-center justify-center w-14 h-14 rounded-full transition-colors duration-300 cursor-pointer ${
+									viewMode === "map"
+										? "text-foreground"
+										: "text-background hover:text-background/80"
+								}`}
+								onClick={() => setViewMode("map")}
+								title="Karte anzeigen"
+								aria-label="Karte anzeigen"
+							>
+								<MapIcon size={16} />
+							</button>
+
+							<button
+								className={`relative z-10 flex items-center justify-center w-14 h-14 rounded-full transition-colors duration-300 cursor-pointer ${
+									viewMode === "list"
+										? "text-foreground"
+										: "text-white hover:text-white/80"
+								}`}
+								onClick={() => setViewMode("list")}
+								title="Liste anzeigen"
+								aria-label="Liste anzeigen"
+							>
+								<ListIcon size={16} />
+							</button>
+						</div>
+					</div>
+
+					<Button
+						variant="map-icon"
+						size="icon-only"
+						title={t("mobileMenu.title")}
+						onClick={() => setMobileMenuModalOpen(true)}
+						aria-label={t("mobileMenu.title")}
+						className="md:hidden"
+					>
+						<DotsVertical size={14} />
+					</Button>
+				</div>
 			</div>
 
 			<div className="fixed bottom-0 left-0 right-0 z-[60] bg-sidebar border-t md:hidden h-20 pointer-events-auto">
