@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createClient } from "@/lib/supabase/client";
-import type { CategoryWithSubcategories, District, FilterState } from "@/types";
+import type { Category, District } from "@/types";
 import type { FeatureCollection } from "geojson";
 
 // Error handling
@@ -24,13 +24,6 @@ function handleError(error: any, context: string): never {
 		error.details,
 	);
 }
-
-// function validateArrayResponse<T>(data: unknown, context: string): T[] {
-// 	if (!Array.isArray(data)) {
-// 		throw new ApiError(`Invalid data format in ${context}: expected array`);
-// 	}
-// 	return data as T[];
-// }
 
 function validateSingleResponse<T>(data: unknown, context: string): T {
 	if (!data) {
@@ -84,110 +77,26 @@ export async function searchInstitutions(query: string) {
 	return data || [];
 }
 
-export async function filterInstitutions(query: FilterState) {
+export async function getCategoriesWithSubcategories(): Promise<Category[]> {
 	const supabase = createClient();
-
-	const { data, error } = await supabase.rpc(
-		"get_public_institutions_with_filters",
-		{
-			district_keys: query.district_keys,
-			category_keys: query.category_keys,
-			subcategory_keys: query.subcategory_keys,
-			include_closed: query.include_closed,
-		},
-	);
-
-	if (error) {
-		handleError(error, "filter institutions");
-	}
-	return data;
-}
-
-export async function getCategoriesWithSubcategories(): Promise<
-	CategoryWithSubcategories[]
-> {
-	// await getCategoryMap();
-
-	// // Return the dynamic category map with unique "others" keys
-	// return dynamicCategoryMap;
-
-	// Fallback to static map if needed
-	const staticCategoryMap = await import("./categoryMap.json");
-	return staticCategoryMap.default as CategoryWithSubcategories[];
-}
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function getCategoryMap() {
-	// Replace with actual backend call when ready
-	const supabase = createClient();
-
-	const { data: subcategories, error: subcategories_error } = await supabase
-		.from("subcategory")
-		.select("*");
-
-	if (subcategories_error) {
-		handleError(subcategories_error, "fetch categories");
-	}
-
-	const { data: categories, error: categories_error } = await supabase
+	const { data: categories } = await supabase
 		.from("category")
-		.select("*");
+		.select(
+			`
+      id,
+      key,
+      created_at,
+      subcategory (
+        id,
+        key,
+        category_id,
+        created_at
+      )
+    `,
+		)
+		.order("id");
 
-	if (categories_error) {
-		handleError(categories_error, "fetch categories");
-	}
-
-	const subcategoriesByCategoryId = await subcategories.reduce(
-		(acc, subcategory) => {
-			const { category_id } = subcategory;
-			if (!acc[category_id]) {
-				acc[category_id] = [];
-			}
-			acc[category_id].push(subcategory);
-			return acc;
-		},
-		{},
-	);
-
-	const enumMap = await import("../i18n/translations/de/enumMap.json");
-	const categoryTranslations = enumMap.default.category;
-	const subcategoryTranslations = enumMap.default.subcategory;
-
-	const categoryMap = await categories
-		.map((category) => {
-			const subs = subcategoriesByCategoryId[category.id] || [];
-
-			// Sort subcategories alphabetically by their German translation
-			const sortedSubcategories = [...subs].sort((a, b) => {
-				const nameA =
-					subcategoryTranslations[
-						a.key as keyof typeof subcategoryTranslations
-					] || a.key;
-				const nameB =
-					subcategoryTranslations[
-						b.key as keyof typeof subcategoryTranslations
-					] || b.key;
-				return nameA.localeCompare(nameB);
-			});
-
-			return {
-				...category,
-				subcategories: sortedSubcategories,
-			};
-		})
-		.filter((category) => category.subcategories.length > 0)
-		.sort((a, b) => {
-			const nameA =
-				categoryTranslations[a.key as keyof typeof categoryTranslations] ||
-				a.key;
-			const nameB =
-				categoryTranslations[b.key as keyof typeof categoryTranslations] ||
-				b.key;
-			return nameA.localeCompare(nameB);
-		});
-
-	console.log("categoryMap", JSON.stringify(categoryMap, null, 2));
-	return categoryMap;
+	return categories || [];
 }
 
 export async function getDistricts(): Promise<District[]> {
