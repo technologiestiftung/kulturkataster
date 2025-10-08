@@ -1,7 +1,7 @@
 "use client";
 
 // import SignLanguage from "@/icons/sign-language.svg";
-// import SimpleLanguage from "@/icons/simple-language.svg";
+import SimpleLanguage from "@/icons/simple-language.svg";
 import FontSize from "@/icons/font-size.svg";
 import Contrast from "@/icons/contrast.svg";
 import { useAppStore } from "@/lib/store/appStore";
@@ -19,12 +19,12 @@ const accessibilityOptions = [
 	// 	titleKey: "accessibility.signLanguage.title",
 	// 	hasSwitch: false,
 	// },
-	// {
-	// 	id: "simpleLanguage",
-	// 	icon: SimpleLanguage,
-	// 	titleKey: "accessibility.simpleLanguage.title",
-	// 	hasSwitch: false,
-	// },
+	{
+		id: "simpleLanguage",
+		icon: SimpleLanguage,
+		titleKey: "accessibility.simpleLanguage.title",
+		hasSwitch: false,
+	},
 	{
 		id: "fontSize",
 		icon: FontSize,
@@ -50,7 +50,8 @@ export function AccessibilityContent({
 		setIsLargeTextMode,
 	} = useAppStore();
 
-	const { setAccessibilityModalOpen } = useModalStore();
+	const { setAccessibilityModalOpen, setSimpleLanguageInformationModalOpen } =
+		useModalStore();
 
 	const handleSwitchChange = (optionId: string, checked: boolean) => {
 		switch (optionId) {
@@ -89,7 +90,9 @@ export function AccessibilityContent({
 						option.hasSwitch
 							? undefined
 							: () => {
-									if (onItemClick) {
+									if (option.id === "simpleLanguage") {
+										setSimpleLanguageInformationModalOpen(true);
+									} else if (onItemClick) {
 										onItemClick("accessibility");
 									} else {
 										setAccessibilityModalOpen(true);
