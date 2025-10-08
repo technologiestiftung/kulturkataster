@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 "use client";
 
 import ContentContainer from "@/components/Content/ContentContainer";
@@ -7,168 +8,15 @@ import { Button } from "@/components/ui/button";
 import EyeOff from "@/icons/eye-off.svg";
 import Eye from "@/icons/eye.svg";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
-import {
-	getSortedSubcategories,
-	getSortedCategories,
-} from "@/lib/utils/filterUtils";
-import {
-	Category,
-	Subcategory,
-	District,
-	FilterState,
-	InstitutionProperties,
-	CategoryType,
-} from "@/types";
-import { ChevronDown, ChevronUp, Minus } from "lucide-react";
+import { getSortedCategories } from "@/lib/utils/filterUtils";
 import { FC, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useFilterData } from "./hooks/useFilterData";
-
-// Simple district filter component
-const DistrictTags: FC<{
-	districts: District[];
-	selected: string[];
-	onChange: (key: string) => void;
-}> = ({ districts, selected, onChange }) => (
-	<div className="flex flex-wrap gap-2 mb-4">
-		{districts.map((district) => {
-			const isSelected = selected.includes(district.key);
-			return (
-				<Button
-					key={district.key}
-					variant="tag"
-					size="tag"
-					className={isSelected ? "bg-neutral-80 text-white" : ""}
-					onClick={() => onChange(district.key)}
-				>
-					{district.name}
-					{isSelected && (
-						<span className="ml-0 w-full">
-							<Close size={4} viewBox="0 0 24 24" />
-						</span>
-					)}
-				</Button>
-			);
-		})}
-	</div>
-);
-
-// Category section with collapsible subcategories
-const CategorySection: FC<{
-	category: Category;
-	selectedCategories: string[];
-	selectedSubcategories: string[];
-	isOpen: boolean;
-	onToggle: () => void;
-	onCategoryChange: (key: string) => void;
-	onSubcategoryChange: (key: string) => void;
-	getCategoryCount: (category: Category) => number;
-	getSubcategoryCount: (subcategory: Subcategory, category: Category) => number;
-	collator: Intl.Collator;
-	tEnum: (key: string) => string;
-}> = ({
-	category,
-	selectedCategories,
-	selectedSubcategories,
-	isOpen,
-	onToggle,
-	onCategoryChange,
-	onSubcategoryChange,
-	getCategoryCount,
-	getSubcategoryCount,
-	collator,
-	tEnum,
-}) => {
-	const IconComponent = getCategoryIconComponent(category.key as CategoryType);
-	const { t } = useTranslation(["enumMap"]);
-
-	const selectedSubcategoriesInGroup = category.subcategory.filter((sub) =>
-		selectedSubcategories.includes(sub.key),
-	);
-	const allSubcategoriesSelected =
-		selectedSubcategoriesInGroup.length === category.subcategory.length;
-	const someSubcategoriesSelected = selectedSubcategoriesInGroup.length > 0;
-	const categorySelected = selectedCategories.includes(category.key);
-
-	const isChecked = categorySelected || allSubcategoriesSelected;
-	const isIndeterminate =
-		!categorySelected && someSubcategoriesSelected && !allSubcategoriesSelected;
-
-	const categoryCount = getCategoryCount(category);
-
-	return (
-		<>
-			{categoryCount > 0 && (
-				<Collapsible open={isOpen} onOpenChange={onToggle}>
-					<div className="flex items-center gap-2 justify-between w-full p-2 rounded">
-						<CollapsibleTrigger asChild>
-							<button className="flex items-center gap-2 w-full">
-								{isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-								<div className="w-6 h-6">
-									<IconComponent />
-								</div>
-								<div className="body2 text-left">
-									<span className="font-bold">
-										{t(`category.${category.key}`)}
-									</span>
-									<span className="pl-2">({categoryCount})</span>
-								</div>
-							</button>
-						</CollapsibleTrigger>
-
-						<div className="relative w-6 h-6 flex items-center justify-center">
-							<Checkbox
-								checked={isChecked}
-								onCheckedChange={() => onCategoryChange(category.key)}
-								aria-label={`Checkbox ${category.key}`}
-								className={`w-4 h-4 ${isIndeterminate ? "border-primary-dark" : ""}`}
-							/>
-							{isIndeterminate && (
-								<div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-									<Minus size={10} className="text-primary-dark" />
-								</div>
-							)}
-						</div>
-					</div>
-
-					<CollapsibleContent className="pl-16 pr-2 space-y-1">
-						{getSortedSubcategories(
-							category,
-							collator,
-							tEnum,
-							(subcategory) => getSubcategoryCount(subcategory, category) > 0,
-						).map((subcategory) => (
-							<div
-								key={subcategory.key}
-								className="flex items-center gap-2 justify-between py-1 w-full"
-							>
-								<span className="body2 w-full">
-									{t(`subcategory.${subcategory.key}`)} (
-									{getSubcategoryCount(subcategory, category)})
-								</span>
-								<div className="relative w-6 h-6 flex items-center justify-center">
-									<Checkbox
-										checked={selectedSubcategories.includes(subcategory.key)}
-										onCheckedChange={() => onSubcategoryChange(subcategory.key)}
-									/>
-								</div>
-							</div>
-						))}
-					</CollapsibleContent>
-				</Collapsible>
-			)}
-		</>
-	);
-};
+import { Subcategory, FilterState } from "@/types";
 
 // Main Filter Component
 const Filter: FC = () => {
-	const {
-		setFilters,
-		filters,
-		filterInstitutionsFrontend,
-		originalInstitutions,
-	} = useInstitutionStore();
+	const { setFilters, filters } = useInstitutionStore();
 	const { categoryGroups, districts, loading, error, retry } = useFilterData();
 	const { t, i18n } = useTranslation(["content", "common"]);
 	const { t: tEnum } = useTranslation(["enumMap"]);
@@ -180,89 +28,8 @@ const Filter: FC = () => {
 		[i18n.language],
 	);
 
-	const districtIdToKeyMap = useMemo(() => {
-		const map = new Map<number, string>();
-		districts.forEach((district: District) => {
-			map.set(district.id, district.key);
-		});
-		return map;
-	}, [districts]);
-
-	const matchesDistrictFilter = (
-		properties: InstitutionProperties,
-	): boolean => {
-		if (!filters) return false;
-
-		if (!matchesDistrictFilter(properties, filters.district_keys)) {
-			return false;
-		}
-
-		if (
-			!filters.include_closed &&
-			properties.utilization_status === "permanently_closed"
-		) {
-			return false;
-		}
-
-		return true;
-	};
-
-	const getCategoryCount = (category: Category): number => {
-		if (!originalInstitutions?.features || !filters) return 0;
-
-		return originalInstitutions.features.filter((feature) => {
-			const properties = feature.properties as InstitutionProperties;
-			if (!properties) return false;
-
-			const matchesCategory = properties.categories?.some(
-				(cat: { key: string }) => cat.key === category.key,
-			);
-			if (!matchesCategory) return false;
-
-			return isInstitutionFiltered(properties);
-		}).length;
-	};
-
-	const institutionMatchesSubcategory = (
-		properties: InstitutionProperties,
-		subcategory: Subcategory,
-		category: Category,
-		// subcategoryKey: string,
-	): boolean => {
-		const hasExplicitCategory = properties.categories?.some(
-			(_category: Category) => _category.key === category.key,
-		);
-
-		const hasExplicitSubcategory = properties.subcategories?.some(
-			(_subcategory: Subcategory) => _subcategory.key === subcategory.key,
-		);
-
-		if (hasExplicitSubcategory && hasExplicitCategory) return true;
-
-		return false;
-	};
-
-	const getSubcategoryCount = (
-		subcategory: Subcategory,
-		category: Category,
-	): number => {
-		if (!originalInstitutions?.features || !filters) return 0;
-
-		return originalInstitutions.features.filter((feature) => {
-			const properties = feature.properties as InstitutionProperties;
-			if (!properties) return false;
-
-			if (!institutionMatchesSubcategory(properties, subcategory, category)) {
-				return false;
-			}
-
-			return isInstitutionFiltered(properties);
-		}).length;
-	};
-
 	const updateFilters = async (newFilters: FilterState) => {
 		setFilters(newFilters);
-		await filterInstitutionsFrontend(newFilters);
 	};
 
 	const toggleDistrict = (districtKey: string) => {
@@ -316,7 +83,6 @@ const Filter: FC = () => {
 				subcategory_keys: newSubcategories,
 			});
 		} else {
-			// If category is not selected, select all subcategories (but not the category itself)
 			const subcategoryKeysToAdd = categoryGroup.subcategory.map(
 				(subcategory: Subcategory) => subcategory.key,
 			);
@@ -417,7 +183,7 @@ const Filter: FC = () => {
 		if (!filters) return;
 		const allCategoryKeys = categoryGroups.map((group) => group.key);
 		const allSubcategoryKeys = categoryGroups.flatMap((group) =>
-			group.subcategories.map((sub) => sub.key),
+			group.subcategory.map((sub) => sub.key),
 		);
 		updateFilters({
 			...filters,
@@ -439,13 +205,11 @@ const Filter: FC = () => {
 
 	if (loading) {
 		return (
-			<div className="Filter-root p-4 bg-background border-r border-gray-200 h-full overflow-y-auto">
-				<ContentContainer>
-					<div className="flex items-center gap-2 body2">
-						<div className="animate-spin rounded-full h-4 w-4 border-b-2"></div>
-						{t("filter.loading", { ns: "content" })}
-					</div>
-				</ContentContainer>
+			<div className="Filter-root p-4 bg-neutral-5 border-r border-gray-200 h-full overflow-y-auto">
+				<div className="flex items-center gap-2 body2">
+					<div className="animate-spin rounded-full h-4 w-4 border-b-2"></div>
+					{t("filter.loading", { ns: "content" })}
+				</div>
 			</div>
 		);
 	}
@@ -535,17 +299,13 @@ const Filter: FC = () => {
 						(category) => (
 							<CategorySection
 								key={category.key}
-								category={category}
+								group={category}
 								selectedCategories={filters?.category_keys || []}
 								selectedSubcategories={filters?.subcategory_keys || []}
 								isOpen={openSections.includes(category.key)}
 								onToggle={() => toggleSection(category.key)}
 								onCategoryChange={toggleCategory}
 								onSubcategoryChange={toggleSubcategory}
-								getCategoryCount={getCategoryCount}
-								getSubcategoryCount={getSubcategoryCount}
-								collator={collator}
-								tEnum={tEnum}
 							/>
 						),
 					)}
