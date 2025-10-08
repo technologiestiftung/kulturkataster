@@ -1,10 +1,10 @@
 "use client";
 
-import { InstitutionProperties } from "@/types";
+import { Institution } from "@/types";
 import { useTranslation } from "react-i18next";
 
 interface InstitutionAddressProps {
-	institutionData: InstitutionProperties;
+	institutionData: Institution;
 }
 
 export function Address({ institutionData }: InstitutionAddressProps) {
