@@ -1,17 +1,19 @@
 "use client";
 
 import { useInstitutionStore } from "@/lib/store/institutionStore";
-import { InstitutionProperties } from "@/types";
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { InstitutionCard } from "./InstitutionCard";
+import { Institution } from "@/types";
 
 const ITEMS_PER_PAGE = 20;
 
 const ListView: FC = () => {
 	const { t } = useTranslation("common");
 	const { t: tContent } = useTranslation("content");
-	const institutions = useInstitutionStore((state) => state.institutions);
+	const institutions = useInstitutionStore(
+		(state) => state.filteredInstitutions,
+	);
 	const setSelectedInstitutionId = useInstitutionStore(
 		(state) => state.setSelectedInstitutionId,
 	);
@@ -24,7 +26,7 @@ const ListView: FC = () => {
 	const institutionsList = useMemo(() => {
 		if (!institutions?.features) return [];
 		return institutions.features.map(
-			(feature) => feature.properties as InstitutionProperties,
+			(feature) => feature.properties as Institution,
 		);
 	}, [institutions]);
 
@@ -48,7 +50,7 @@ const ListView: FC = () => {
 	}, [isLoading, hasMore, institutionsList.length]);
 
 	const handleInstitutionClick = useCallback(
-		(institution: InstitutionProperties) => {
+		(institution: Institution) => {
 			console.log("Selected Institution ID:", institution.id);
 			setSelectedInstitutionId(institution.id as unknown as string);
 		},
