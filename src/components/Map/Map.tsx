@@ -16,7 +16,9 @@ const LazyOlMap = dynamic(() => import("./OlMap/OlMap"), {
 });
 
 const Map: FC = () => {
-	const institutions = useInstitutionStore((state) => state.institutions);
+	const institutions = useInstitutionStore(
+		(state) => state.filteredInstitutions,
+	);
 
 	return (
 		<div className="Map-root w-full h-full">
