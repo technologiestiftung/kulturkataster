@@ -54,7 +54,7 @@ export function InformationModal({
 }: InformationModalProps) {
 	const { t } = useTranslation("content");
 	const originalInstitutions = useInstitutionStore(
-		(state) => state.originalInstitutions,
+		(state) => state.allInstitutions,
 	);
 
 	const institutionCount = originalInstitutions?.features?.length ?? 2.382;

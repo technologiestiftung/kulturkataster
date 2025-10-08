@@ -1,13 +1,13 @@
 "use client";
 
-import { InstitutionProperties } from "@/types";
+import { Institution } from "@/types";
 import { useTranslation } from "react-i18next";
 import { ContactLink } from "./shared/ContactLink";
 import { InfoItem } from "./shared/InfoItem";
 import { InfoSection } from "./shared/InfoSection";
 
 interface InstitutionContactProps {
-	institutionData: InstitutionProperties;
+	institutionData: Institution;
 }
 
 export function Contact({ institutionData }: InstitutionContactProps) {

@@ -75,9 +75,11 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	);
 	const filters = useInstitutionStore((state) => state.filters);
 	const originalInstitutions = useInstitutionStore(
-		(state) => state.originalInstitutions,
+		(state) => state.allInstitutions,
 	);
-	const institutions = useInstitutionStore((state) => state.institutions);
+	const institutions = useInstitutionStore(
+		(state) => state.filteredInstitutions,
+	);
 	const { firstTimeUser, setFirstTimeUser, viewMode, setViewMode } =
 		useAppStore();
 
@@ -414,13 +416,13 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 					<div className="relative">
 						<div className="flex items-center bg-neutral-80 border rounded-full shadow-sm relative overflow-hidden">
 							<div
-								className={`absolute top-0 bottom-0 w-14 h-14 bg-background rounded-full transition-transform duration-300 ease-in-out ${
-									viewMode === "map" ? "translate-x-0" : "translate-x-14"
+								className={`absolute top-0 bottom-0 w-12 h-12 bg-background rounded-full transition-transform duration-300 ease-in-out ${
+									viewMode === "map" ? "translate-x-0" : "translate-x-12"
 								}`}
 							/>
 
 							<button
-								className={`relative z-10 flex items-center justify-center w-14 h-14 rounded-full transition-colors duration-300 cursor-pointer ${
+								className={`relative z-10 flex items-center justify-center w-12 h-12 rounded-full transition-colors duration-300 cursor-pointer ${
 									viewMode === "map"
 										? "text-foreground"
 										: "text-background hover:text-background/80"
@@ -429,11 +431,11 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 								title="Karte anzeigen"
 								aria-label="Karte anzeigen"
 							>
-								<MapIcon size={16} />
+								<MapIcon size={14} />
 							</button>
 
 							<button
-								className={`relative z-10 flex items-center justify-center w-14 h-14 rounded-full transition-colors duration-300 cursor-pointer ${
+								className={`relative z-10 flex items-center justify-center w-12 h-12 rounded-full transition-colors duration-300 cursor-pointer ${
 									viewMode === "list"
 										? "text-foreground"
 										: "text-white hover:text-white/80"
@@ -442,7 +444,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 								title="Liste anzeigen"
 								aria-label="Liste anzeigen"
 							>
-								<ListIcon size={16} />
+								<ListIcon size={14} />
 							</button>
 						</div>
 					</div>
