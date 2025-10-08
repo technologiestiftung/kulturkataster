@@ -1,20 +1,6 @@
 import { FeatureCollection, GeoJsonProperties, Geometry } from "geojson";
 import { Database } from "./supabase";
 
-export interface Institution {
-	id: number;
-	name: string;
-	street: string;
-	street_number: string;
-	zip_code: string;
-	city?: { name: string };
-	district?: { name: string };
-	neighbourhood?: { name: string };
-	case?: string;
-	latlong: string;
-	st_asgeojson?: string;
-}
-
 export interface GeoFeature {
 	id: string;
 	place_name: string;
@@ -28,11 +14,22 @@ export interface GeoFeature {
 
 export type SearchResult = Institution | GeoFeature;
 
-// export interface Category {
-// 	id: number;
-// 	key: CategoryType;
-// 	created_at?: string;
-// }
+export type Institution = Database["public"]["Tables"]["institution"]["Row"] & {
+	categories: Category[];
+	district: District;
+	parent_organizations: ParentOrganization[]; // Renamed from 'org' to 'parent_organizations'
+	cultural_areas: CulturalArea[];
+	subcategories: Subcategory[];
+	rooms_count: number | null;
+	support_type: string | null;
+	source: Source | null;
+	cultural_area: CulturalArea | null;
+	owner: Owner | null;
+	funding_type: string | null;
+	closing_reason: string | null;
+	created_at: string;
+	updated_at: string;
+};
 
 export type Category = Database["public"]["Tables"]["category"]["Row"] & {
 	subcategory: Subcategory[];
@@ -65,86 +62,18 @@ export const CategoryKeys = {
 	MULTI_CATEGORIES: "multi_categories",
 } as const;
 
-export interface District {
-	city_id: number;
-	created_at: string;
-	id: number;
-	key: string;
-	name: string;
-}
+export type District = Database["public"]["Tables"]["district"]["Row"];
 
-export interface DistrictProperty {
-	id: number;
-	key: string;
-	name: string;
-}
+export type ParentOrganization =
+	Database["public"]["Tables"]["parent_organization"]["Row"];
 
-export interface ParentOrganization {
-	id: number;
-	name: string;
-}
+export type CulturalArea = Database["public"]["Tables"]["cultural_area"]["Row"];
 
-export interface CulturalArea {
-	id: number;
-	name: string;
-}
+export type Owner = Database["public"]["Tables"]["owner"]["Row"];
 
-export interface Owner {
-	id: number;
-	name: string;
-	owner_type: string;
-}
+export type Source = Database["public"]["Tables"]["source"]["Row"];
 
-export interface Source {
-	id: number;
-	name: string;
-}
-
-export interface City {
-	id: number;
-	name: string;
-}
-
-export interface InstitutionProperties {
-	id: number;
-	name: string;
-	tags: string[];
-	email: string;
-	phone: string;
-	status: string;
-	street: string;
-	city: City;
-	city_id: number;
-	website: string;
-	zip_code: string;
-	categories: Category[];
-	district: DistrictProperty;
-	district_id: number;
-	address_suffix: string;
-	street_number: string;
-	subcategories: Subcategory[];
-	funding_sources: unknown[];
-	established_since: string;
-	established_until: string;
-	shared_use_allowed: boolean;
-	shared_use_info?: string;
-	shared_use_audience?: string;
-	shared_use_contact_person?: string;
-	utilization_status: string;
-	parent_organizations: ParentOrganization[];
-	description?: string;
-	funding_type?: string;
-	support_type?: string;
-	capacity?: number;
-	rooms_count?: number;
-	updated_at?: string;
-	cultural_area?: CulturalArea;
-	owner?: Owner;
-	source?: Source;
-	closing_reason?: string;
-}
-
-export interface InstitutionFeature extends InstitutionProperties {
+export interface InstitutionFeature extends Institution {
 	type: "Feature";
 	geometry: {
 		type: "Point";
@@ -161,19 +90,21 @@ export interface FilterState {
 }
 
 export interface InstitutionStoreState {
-	institutions: FeatureCollection<Geometry, GeoJsonProperties> | null;
-	originalInstitutions: FeatureCollection<Geometry, GeoJsonProperties> | null;
+	allInstitutions: FeatureCollection<Geometry, GeoJsonProperties> | null;
+	filteredInstitutions: FeatureCollection<Geometry, GeoJsonProperties> | null;
+	categoryCounts: Record<string, number>;
+	subcategoryCounts: Record<string, number>;
 	selectedInstitutionId: number | string | null;
 	filters: FilterState;
-
+	categories: Category[] | null;
+	setCategories: (categories: Category[] | null) => void;
 	setInstitutions: (
 		institutions: FeatureCollection<Geometry, GeoJsonProperties> | null,
 	) => void;
 	setSelectedInstitutionId: (id: string | null) => void;
 
 	setFilters: (filters: FilterState) => void;
-
+	initializeCategories: () => Promise<void>;
 	initializeInstitutions: () => Promise<void>;
 	applyFilters: () => Promise<void>;
-	filterInstitutionsFrontend: (filters: FilterState) => Promise<void>;
 }
