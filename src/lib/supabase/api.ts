@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createClient } from "@/lib/supabase/client";
-import type { District, FilterState } from "@/types";
+import type { Category, District } from "@/types";
 import type { FeatureCollection } from "geojson";
 import { Database } from "../../types/supabase";
 import { SupabaseClient } from "@supabase/supabase-js";
@@ -26,13 +26,6 @@ function handleError(error: any, context: string): never {
 		error.details,
 	);
 }
-
-// function validateArrayResponse<T>(data: unknown, context: string): T[] {
-// 	if (!Array.isArray(data)) {
-// 		throw new ApiError(`Invalid data format in ${context}: expected array`);
-// 	}
-// 	return data as T[];
-// }
 
 function validateSingleResponse<T>(data: unknown, context: string): T {
 	if (!data) {
@@ -86,38 +79,7 @@ export async function searchInstitutions(query: string) {
 	return data || [];
 }
 
-export async function filterInstitutions(query: FilterState) {
-	const supabase = createClient();
-
-	const { data, error } = await supabase.rpc(
-		"get_public_institutions_with_filters",
-		{
-			district_keys: query.district_keys,
-			category_keys: query.category_keys,
-			subcategory_keys: query.subcategory_keys,
-			include_closed: query.include_closed,
-		},
-	);
-
-	if (error) {
-		handleError(error, "filter institutions");
-	}
-	return data;
-}
-
-export async function getCategoriesWithSubcategories(): Promise<any[]> {
-	const categories = await getCategoryMap();
-	return categories;
-	// // Return the dynamic category map with unique "others" keys
-	// return dynamicCategoryMap;
-
-	// Fallback to static map if needed
-	// const staticCategoryMap = await import("./categoryMap.json");
-	// return staticCategoryMap.default as CategoryWithSubcategories[];
-}
-
-async function getCategoryMap() {
-	// Replace with actual backend call when ready
+export async function getCategoriesWithSubcategories(): Promise<Category[]> {
 	const supabase = createClient();
 	const { data: categories } = await supabase
 		.from("category")
