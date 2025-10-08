@@ -54,6 +54,8 @@ export function SimpleLanguageInformationModal({
 		return <TextWithLinks text={title} textVariant="body1" />;
 	};
 
+	/* Neuer Push */
+
 	const simpleLanguageInformationContent = (
 		<div className="space-y-10">
 			{content.map((contentItem, contentItemIndex) => (
