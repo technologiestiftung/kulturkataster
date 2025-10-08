@@ -11,7 +11,7 @@ import {
 	ToggleButton,
 } from "@/components/Institution";
 import { getCategoryIconComponent } from "@/lib/utils/iconUtils";
-import { Category, InstitutionProperties } from "@/types";
+import { Category, Institution, Subcategory } from "@/types";
 import { memo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -24,9 +24,11 @@ function ParentOrganization({ name }: { name?: string }) {
 // Categories display component
 function CategoriesDisplay({
 	categories,
+	subCategories,
 	tEnum,
 }: {
 	categories: Category[];
+	subCategories: Subcategory[];
 	tEnum: (key: string) => string;
 }) {
 	if (!categories?.length) return null;
@@ -37,15 +39,19 @@ function CategoriesDisplay({
 				const IconComponent = getCategoryIconComponent(category.key);
 
 				return (
-					<div key={category.id} className="flex items-center gap-2">
+					<div key={category.id} className="flex items-center gap-2 flex-wrap">
 						<div>
 							<IconComponent />
 						</div>
 						<span className="body2">{tEnum(`category.${category.key}`)}</span>
 						<span className="body2">•</span>
-						{/* <span className="body2">
-							{tEnum(`subcategory.${category.key}`)}
-						</span> */}
+						{subCategories?.length ? (
+							<span className="body2">
+								{subCategories
+									.map((sub) => tEnum(`subcategory.${sub.key}`))
+									.join(", ")}
+							</span>
+						) : null}
 					</div>
 				);
 			})}
@@ -63,7 +69,7 @@ function StatusIndicator({
 }) {
 	const isInUse = status === "in_use";
 	return (
-		<div className="flex items-center gap-2 bg-neutral-5 p-2">
+		<div className="flex items-center gap-2 bg-neutral-5 p-2 flex-wrap">
 			<div
 				className={`w-4 h-4 rounded-full ${isInUse ? "bg-brand-default" : "bg-neutral-20"}`}
 			/>
@@ -82,14 +88,18 @@ function LeftColumn({
 	data,
 	tEnum,
 }: {
-	data: InstitutionProperties;
+	data: Institution;
 	tEnum: (key: string) => string;
 }) {
 	return (
 		<div className="space-y-3">
 			<ParentOrganization name={data.parent_organizations?.[0]?.name} />
 			<h2 className="h1 font-bold text-gray-900">{data.name}</h2>
-			<CategoriesDisplay categories={data.categories || []} tEnum={tEnum} />
+			<CategoriesDisplay
+				categories={data.categories || []}
+				subCategories={data.subcategories || []}
+				tEnum={tEnum}
+			/>
 			{data.utilization_status && (
 				<StatusIndicator status={data.utilization_status} tEnum={tEnum} />
 			)}
@@ -99,8 +109,8 @@ function LeftColumn({
 }
 
 interface InstitutionCardProps {
-	institutionData: InstitutionProperties;
-	onClick?: (institution: InstitutionProperties) => void;
+	institutionData: Institution;
+	onClick?: (institution: Institution) => void;
 	isCompact?: boolean;
 }
 
@@ -118,20 +128,20 @@ const InstitutionCard = memo(function InstitutionCard({
 		setShowMore(!showMore);
 	};
 
-	const cardClassName = `w-full rounded-lg overflow-hidden border-none ${
+	const cardClassName = `w-full rounded-lg overflow-hidden border-none  shadow-sm ${
 		onClick ? "cursor-pointer hover:shadow-md transition-shadow" : ""
 	}`;
 
 	return (
 		<Card className={cardClassName} onClick={handleCardClick}>
-			<CardContent className="p-4">
-				<div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+			<CardContent className="p-4 space-y-2 md:space-y-4">
+				<div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
 					<LeftColumn data={institutionData} tEnum={tEnum} />
 					<Contact institutionData={institutionData} />
 				</div>
 
 				{showMore && (
-					<div className="mt-6 pt-4 border-t space-y-4">
+					<div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
 						<OrganizationInfo institutionData={institutionData} />
 						<FundingInfo institutionData={institutionData} />
 						<FacilityInfo institutionData={institutionData} />
