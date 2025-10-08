@@ -1,15 +1,15 @@
 "use client";
 
-import { InstitutionProperties } from "@/types";
+import { Institution } from "@/types";
 import { useTranslation } from "react-i18next";
 import { InfoItem } from "./shared/InfoItem";
 import { InfoSection } from "./shared/InfoSection";
 
 interface FacilityInfoProps {
-	institutionData: InstitutionProperties;
+	institutionData: Institution;
 }
 
-function hasFacilityData(data: InstitutionProperties): boolean {
+function hasFacilityData(data: Institution): boolean {
 	return !!(
 		data.capacity ||
 		data.rooms_count ||
@@ -24,7 +24,7 @@ function CapacityInfo({
 	data,
 	t,
 }: {
-	data: InstitutionProperties;
+	data: Institution;
 	t: (key: string) => string;
 }) {
 	if (!data.capacity) return null;
@@ -37,7 +37,7 @@ function RoomsCountInfo({
 	data,
 	t,
 }: {
-	data: InstitutionProperties;
+	data: Institution;
 	t: (key: string) => string;
 }) {
 	if (!data.rooms_count) return null;
@@ -52,7 +52,7 @@ function SharedUseInfo({
 	data,
 	t,
 }: {
-	data: InstitutionProperties;
+	data: Institution;
 	t: (key: string) => string;
 }) {
 	if (!data.shared_use_allowed || !data.shared_use_info) return null;
@@ -67,7 +67,7 @@ function SharedUseAudienceInfo({
 	data,
 	t,
 }: {
-	data: InstitutionProperties;
+	data: Institution;
 	t: (key: string) => string;
 }) {
 	if (!data.shared_use_audience) return null;
@@ -82,7 +82,7 @@ function EstablishedSinceInfo({
 	data,
 	t,
 }: {
-	data: InstitutionProperties;
+	data: Institution;
 	t: (key: string) => string;
 }) {
 	if (!data.established_since) return null;
@@ -97,7 +97,7 @@ function EstablishedUntilInfo({
 	data,
 	t,
 }: {
-	data: InstitutionProperties;
+	data: Institution;
 	t: (key: string) => string;
 }) {
 	if (!data.established_until) return null;
