@@ -1,11 +1,24 @@
 "use client";
 
 import { useInstitutionStore } from "@/lib/store/institutionStore";
+import { useModalStore } from "@/lib/store/modalStore";
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { InstitutionCard } from "./InstitutionCard";
+import InstitutionCardSkeleton from "./InstitutionCardSkeleton";
 import { Institution } from "@/types";
 import { ModalFooter } from "../Modals/ModalFooter";
+import Download from "@/icons/download.svg";
+
+import { Button } from "@/components/ui/button";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Loading } from "@/components/ui/loading";
+import { ArrowUp } from "lucide-react";
+import TextWithLinks from "../Content/TextWithLinks";
 
 const ITEMS_PER_PAGE = 20;
 
@@ -18,9 +31,11 @@ const ListView: FC = () => {
 	const setSelectedInstitutionId = useInstitutionStore(
 		(state) => state.setSelectedInstitutionId,
 	);
+	const { setDownloadModalOpen, setDownloadModalMode } = useModalStore();
 
 	const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
 	const [isLoading, setIsLoading] = useState(false);
+	const [showScrollToTop, setShowScrollToTop] = useState(false);
 	const sentinelRef = useRef<HTMLDivElement>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
 
@@ -84,29 +99,33 @@ const ListView: FC = () => {
 		return () => observer.disconnect();
 	}, [hasMore, isLoading, loadMore]);
 
+	useEffect(() => {
+		const handleScroll = () => {
+			const scrollTop =
+				window.pageYOffset || document.documentElement.scrollTop;
+			setShowScrollToTop(scrollTop > 400);
+		};
+
+		window.addEventListener("scroll", handleScroll);
+		return () => window.removeEventListener("scroll", handleScroll);
+	}, []);
+
+	const scrollToTop = () => {
+		window.scrollTo({
+			top: 0,
+			behavior: "smooth",
+		});
+	};
+
+	const handleDownloadClick = () => {
+		setDownloadModalOpen(true);
+		setDownloadModalMode("filtered");
+	};
+
 	if (!institutions) {
 		return (
 			<div className="ListView-root w-full h-full flex items-center justify-center">
-				<div className="animate-pulse space-y-4 w-full max-w-md">
-					<div className="h-4 bg-gray-200 rounded w-3/4"></div>
-					<div className="h-3 bg-gray-200 rounded w-1/2"></div>
-					<div className="h-3 bg-gray-200 rounded w-2/3"></div>
-				</div>
-			</div>
-		);
-	}
-
-	if (institutionsList.length === 0) {
-		return (
-			<div className="ListView-root w-full h-full flex items-center justify-center bg-neutral-10">
-				<div className="text-center p-8">
-					<p className="text-muted-foreground text-lg">
-						{t("institution.noInstitutionsFound")}
-					</p>
-					<p className="text-muted-foreground text-sm mt-2">
-						{t("institution.tryAdjustingFilters")}
-					</p>
-				</div>
+				<Loading size="lg" />
 			</div>
 		);
 	}
@@ -129,12 +148,36 @@ const ListView: FC = () => {
 						</div>
 
 						<div className="space-y-2">
-							{visibleCount < institutionsList.length && (
-								<p className="body2 font-bold">
-									{tContent("listView.countLabel", {
-										count: institutionsList.length,
-									})}
-								</p>
+							<div className="flex items-center justify-between">
+								{visibleCount < institutionsList.length && (
+									<p className="body2 font-bold">
+										{tContent("listView.countLabel", {
+											count: institutionsList.length,
+										})}
+									</p>
+								)}
+								<button
+									onClick={handleDownloadClick}
+									className="body2 text-primary-dark font-bold flex items-center gap-1 hover:text-primary/80 transition-colors cursor-pointer"
+									aria-label={t("download.title")}
+								>
+									<Download className="h-6 w-6" />
+									{t("download.title")}
+								</button>
+							</div>
+							{institutionsList.length === 0 && (
+								<div className="text-center p-8 my-8 bg-neutral-10 rounded">
+									<p className="body1 font-bold">
+										<TextWithLinks
+											text={t("listView.noResultsFound")}
+										></TextWithLinks>
+									</p>
+									<p className="body2 mt-2">
+										<TextWithLinks
+											text={t("listView.tryAdjustingFilters")}
+										></TextWithLinks>
+									</p>
+								</div>
 							)}
 							{visibleInstitutions.map((institution) => (
 								<InstitutionCard
@@ -147,9 +190,11 @@ const ListView: FC = () => {
 
 							{/* Loading indicator */}
 							{isLoading && (
-								<div className="flex justify-center py-4">
-									<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-								</div>
+								<>
+									{[...Array(3)].map((_, index) => (
+										<InstitutionCardSkeleton key={index} />
+									))}
+								</>
 							)}
 
 							{/* Sentinel for intersection observer */}
@@ -159,7 +204,7 @@ const ListView: FC = () => {
 									className="h-4 flex justify-center items-center"
 								>
 									{!isLoading && (
-										<div className="text-sm text-muted-foreground">
+										<div className="body1 font-bold">
 											{tContent("listView.loadingMore")}
 										</div>
 									)}
@@ -169,7 +214,7 @@ const ListView: FC = () => {
 							{/* End indicator */}
 							{!hasMore && institutionsList.length > ITEMS_PER_PAGE && (
 								<div className="flex justify-center py-4">
-									<div className="text-sm text-muted-foreground">
+									<div className="body1 font-bold">
 										{tContent("listView.allLoaded", {
 											count: institutionsList.length,
 										})}
@@ -181,6 +226,28 @@ const ListView: FC = () => {
 					</div>
 				</div>
 			</div>
+
+			{/* Floating scroll-to-top button */}
+			{showScrollToTop && (
+				<div className="fixed block z-[50] bottom-5 right-0 p-4 overflow-hidden">
+					<Tooltip>
+						<TooltipTrigger asChild>
+							<Button
+								onClick={scrollToTop}
+								variant="map-icon"
+								size="icon-only"
+								className="cursor-pointer"
+								aria-label={t("listView.scrollToTop")}
+							>
+								<ArrowUp size={20} />
+							</Button>
+						</TooltipTrigger>
+						<TooltipContent>
+							<p>{t("listView.scrollToTop")}</p>
+						</TooltipContent>
+					</Tooltip>
+				</div>
+			)}
 		</div>
 	);
 };
