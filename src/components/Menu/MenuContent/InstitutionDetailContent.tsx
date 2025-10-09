@@ -18,8 +18,6 @@ import { getCategoryIconComponent } from "@/lib/utils/iconUtils";
 import {
 	parseLatLongCoordinates,
 	animateMapToCoordinates,
-	ANIMATION_DURATION,
-	DEFAULT_ZOOM,
 } from "@/lib/utils/mapUtils";
 import { fromLonLat } from "ol/proj";
 import { Category, Institution } from "@/types";
