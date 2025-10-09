@@ -9,10 +9,15 @@ import MapNavigationControls from "./Controls/MapNavigation/MapNavigationControl
 import LayerInitializer from "./LayerInitializer/LayerInitializer";
 import { InstitutionLayer, Layers } from "./Layers";
 import LayerTree from "./LayerTree/LayerTree";
+import { Loading } from "../ui/loading";
 
 const LazyOlMap = dynamic(() => import("./OlMap/OlMap"), {
 	ssr: false,
-	loading: () => <div>Loading map container...</div>,
+	loading: () => (
+		<div className="Map-root w-full h-full flex items-center justify-center">
+			<Loading size="lg" />
+		</div>
+	),
 });
 
 const Map: FC = () => {
