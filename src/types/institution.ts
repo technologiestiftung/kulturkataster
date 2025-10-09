@@ -29,7 +29,10 @@ export type Institution = Database["public"]["Tables"]["institution"]["Row"] & {
 	closing_reason: string | null;
 	created_at: string;
 	updated_at: string;
+	city: City | null;
 };
+
+export type City = Database["public"]["Tables"]["city"]["Row"];
 
 export type Category = Database["public"]["Tables"]["category"]["Row"] & {
 	subcategory: Subcategory[];

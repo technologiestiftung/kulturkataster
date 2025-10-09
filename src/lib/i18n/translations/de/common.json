@@ -143,7 +143,11 @@
 		"layerTreeTitle": "Fachkarten",
 		"closeLayerTree": "Fachkarten schließen",
 		"availableLayers": "Verfügbare Ebenen",
-		"noLayersAvailable": "Keine Fachkarten verfügbar"
+		"noLayersAvailable": "Keine Fachkarten verfügbar",
+		"show": "Karte Anzeigen"
+	},
+	"listView": {
+		"show": "Listenansicht anzeigen"
 	},
 	"kukaLogo": "Kulturkataster - Logo",
 	"fileFormat": {

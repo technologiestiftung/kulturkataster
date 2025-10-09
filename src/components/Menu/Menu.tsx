@@ -428,8 +428,8 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 										: "text-background hover:text-background/80"
 								}`}
 								onClick={() => setViewMode("map")}
-								title="Karte anzeigen"
-								aria-label="Karte anzeigen"
+								title={t("map.show")}
+								aria-label={t("map.show")}
 							>
 								<MapIcon size={14} />
 							</button>
@@ -441,8 +441,8 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 										: "text-white hover:text-white/80"
 								}`}
 								onClick={() => setViewMode("list")}
-								title="Liste anzeigen"
-								aria-label="Liste anzeigen"
+								title={t("listView.show")}
+								aria-label={t("listView.show")}
 							>
 								<ListIcon size={14} />
 							</button>
