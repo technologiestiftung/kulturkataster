@@ -68,7 +68,7 @@ export function MobileMenuModal({ open, onOpenChange }: MobileMenuModalProps) {
 					</button>
 				</DialogHeader>
 				<div className="flex flex-col justify-between flex-1">
-					<div className="flex-1 flex flex-col gap-8 p-4 overflow-auto">
+					<div className="flex-1 flex flex-col gap-4 p-4 overflow-auto mb-4">
 						<SubMenuOption
 							key="map"
 							icon={MapIcon}
