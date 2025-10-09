@@ -1049,7 +1049,6 @@ export type Database = {
 				| "dance_contemporary_circus"
 				| "dance_venues_other"
 				| "theater"
-				| "music_theater_venues"
 				| "puppet_figure_object_theater"
 				| "performing_arts_performance"
 				| "performing_arts_contemporary_circus"
@@ -1066,8 +1065,8 @@ export type Database = {
 				| "performing_arts_venues_other"
 				| "graffiti_areas_other"
 				| "other"
-				| "musiktheater_clubs_music_venues"
-				| "musiktheater_performing_arts_venues"
+				| "music_theater_clubs_music_venues"
+				| "music_theater_performing_arts_venues"
 				| "project_spaces_general"
 				| "project_initiatives_general";
 			user_role_enum:
@@ -1386,7 +1385,6 @@ export const Constants = {
 				"dance_contemporary_circus",
 				"dance_venues_other",
 				"theater",
-				"music_theater_venues",
 				"puppet_figure_object_theater",
 				"performing_arts_performance",
 				"performing_arts_contemporary_circus",
@@ -1403,8 +1401,8 @@ export const Constants = {
 				"performing_arts_venues_other",
 				"graffiti_areas_other",
 				"other",
-				"musiktheater_clubs_music_venues",
-				"musiktheater_performing_arts_venues",
+				"music_theater_clubs_music_venues",
+				"music_theater_performing_arts_venues",
 				"project_spaces_general",
 				"project_initiatives_general",
 			],
