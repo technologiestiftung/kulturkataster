@@ -8,6 +8,13 @@ import { searchLocations } from "@/lib/serverActions/searchLocations";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useMapStore } from "@/lib/store/mapStore";
 import { sanitizeAddressInput } from "@/lib/utils/sanitizerUtils";
+import {
+	parseSearchLatLongCoordinates,
+	parseCaseCoordinates,
+	parseGeoJsonCoordinates,
+	animateMapToCoordinates,
+	ANIMATION_DURATION,
+} from "@/lib/utils/mapUtils";
 import { GeoFeature, Institution, SearchResult } from "@/types/institution";
 import { boundingExtent } from "ol/extent";
 import { fromLonLat } from "ol/proj";
@@ -19,9 +26,6 @@ import { SearchResults } from "./SearchResults";
 export const isGeoFeature = (result: SearchResult): result is GeoFeature => {
 	return "place_name" in result && "center" in result;
 };
-
-const ANIMATION_DURATION = 1000;
-const DEFAULT_ZOOM = 8;
 
 export function LocationSearch() {
 	const { t } = useTranslation("common");
@@ -80,55 +84,11 @@ export function LocationSearch() {
 		setSearchResults([]);
 	};
 
-	const parseLatLongCoordinates = (
-		latlong: string,
+	const extractCoordinates = (
+		result: Institution & { case?: string; st_asgeojson?: string },
 	): [number, number] | null => {
-		const match = latlong.match(/\(([^,]+),([^)]+)\)/);
-		if (!match) return null;
-
-		const lat = parseFloat(match[1]);
-		const lng = parseFloat(match[2]);
-		if (isNaN(lat) || isNaN(lng)) return null;
-
-		const coords = fromLonLat([lng, lat]);
-		return coords as [number, number];
-	};
-
-	const parseCaseCoordinates = (caseField: string): [number, number] | null => {
-		const match = caseField.match(/\(([^,]+),([^)]+)\)/);
-		if (!match) return null;
-
-		const lat = parseFloat(match[1]); // latitude first
-		const lng = parseFloat(match[2]); // longitude second
-		if (isNaN(lat) || isNaN(lng)) return null;
-
-		// Transform from WGS84 (lat,lng) to map projection
-		const coords = fromLonLat([lng, lat]);
-		return coords as [number, number];
-	};
-
-	const parseGeoJsonCoordinates = (
-		st_asgeojson: string,
-	): [number, number] | null => {
-		try {
-			const geoJson = JSON.parse(st_asgeojson);
-			if (!geoJson.coordinates || !Array.isArray(geoJson.coordinates))
-				return null;
-
-			const coords = fromLonLat([
-				geoJson.coordinates[0],
-				geoJson.coordinates[1],
-			]);
-			return coords as [number, number];
-		} catch (error) {
-			console.warn("Failed to parse st_asgeojson:", error);
-			return null;
-		}
-	};
-
-	const extractCoordinates = (result: Institution): [number, number] | null => {
 		if (result.latlong) {
-			const coords = parseLatLongCoordinates(result.latlong);
+			const coords = parseSearchLatLongCoordinates(result.latlong as string);
 			return coords;
 		}
 
@@ -158,11 +118,7 @@ export function LocationSearch() {
 			});
 		} else {
 			const transformedCoords = fromLonLat([lng, lat]);
-			map.getView().animate({
-				center: transformedCoords,
-				duration: ANIMATION_DURATION,
-				zoom: DEFAULT_ZOOM,
-			});
+			animateMapToCoordinates(map, transformedCoords);
 		}
 
 		if (statusRef.current) {
@@ -174,11 +130,7 @@ export function LocationSearch() {
 		const coordinates = extractCoordinates(result);
 
 		if (coordinates && map) {
-			map.getView().animate({
-				center: coordinates,
-				duration: ANIMATION_DURATION,
-				zoom: DEFAULT_ZOOM,
-			});
+			animateMapToCoordinates(map, coordinates);
 		}
 
 		setSelectedInstitutionId(result.id as unknown as string);
