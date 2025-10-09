@@ -15,6 +15,11 @@ import {
 	SidebarMenuItem,
 	useSidebar,
 } from "@/components/ui/sidebar";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+} from "@/components/ui/tooltip";
 import Accessibility from "@/icons/accessibility.svg";
 import ArrowLeft from "@/icons/arrow-narrow-left.svg";
 import Close from "@/icons/close.svg";
@@ -31,6 +36,11 @@ import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useMapStore } from "@/lib/store/mapStore";
 import { useModalStore } from "@/lib/store/modalStore";
 import { hasActiveFilters } from "@/lib/utils/filterUtils";
+import {
+	animateMapToCoordinates,
+	parseLatLongCoordinates,
+} from "@/lib/utils/mapUtils";
+import { fromLonLat } from "ol/proj";
 import KukaSmallLogo from "@/logos/kuka-small.svg";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -244,6 +254,49 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 		return null;
 	};
 
+	const zoomToSelectedInstitution = () => {
+		// Get map directly from store to ensure we have the latest instance
+		const currentMap = useMapStore.getState().map;
+
+		if (
+			!selectedInstitutionId ||
+			!currentMap ||
+			!originalInstitutions?.features
+		)
+			return;
+
+		const institution = originalInstitutions.features.find(
+			(feature) => feature.properties?.id === selectedInstitutionId,
+		);
+
+		if (!institution) return;
+
+		let coordinates: [number, number] | null = null;
+
+		if (
+			institution.geometry?.type === "Point" &&
+			institution.geometry.coordinates
+		) {
+			const [lng, lat] = institution.geometry.coordinates;
+			coordinates = [lng, lat];
+		} else if (institution.properties?.latlong) {
+			coordinates = parseLatLongCoordinates(institution.properties.latlong);
+		}
+
+		if (coordinates) {
+			const transformedCoords = fromLonLat(coordinates);
+			animateMapToCoordinates(currentMap, transformedCoords);
+		}
+	};
+
+	const handleViewModeSwitch = (newViewMode: "map" | "list") => {
+		setViewMode(newViewMode);
+
+		if (newViewMode === "map" && selectedInstitutionId) {
+			setTimeout(zoomToSelectedInstitution, 100);
+		}
+	};
+
 	return (
 		<>
 			<WelcomeModal
@@ -341,8 +394,10 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 												className="body1 font-bold flex items-center gap-1"
 												aria-label={`Zurück zu ${t(previousActiveItem + ".title")}`}
 											>
-												<ArrowLeft /> Zurück zu{" "}
-												{t(previousActiveItem + ".title")}
+												<ArrowLeft />{" "}
+												{t("menu.backTo", {
+													page: t(previousActiveItem + ".title"),
+												})}
 											</button>
 										)}
 									{!(
@@ -411,7 +466,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 				</button>
 			</div>
 
-			<div className="absolute block z-[50] top-0 right-0 p-4 overflow-hidden">
+			<div className="fixed block z-[50] top-0 right-0 p-4 overflow-hidden">
 				<div className="flex gap-2 items-center">
 					<div className="relative">
 						<div className="flex items-center bg-neutral-80 border rounded-full shadow-sm relative overflow-hidden">
@@ -421,31 +476,47 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 								}`}
 							/>
 
-							<button
-								className={`relative z-10 flex items-center justify-center w-12 h-12 rounded-full transition-colors duration-300 cursor-pointer ${
-									viewMode === "map"
-										? "text-foreground"
-										: "text-background hover:text-background/80"
-								}`}
-								onClick={() => setViewMode("map")}
-								title={t("map.show")}
-								aria-label={t("map.show")}
-							>
-								<MapIcon size={14} />
-							</button>
+							<Tooltip>
+								<TooltipTrigger asChild>
+									<button
+										className={`relative z-10 flex items-center justify-center w-12 h-12 rounded-full transition-colors duration-300 cursor-pointer ${
+											viewMode === "map"
+												? "text-foreground"
+												: "text-background hover:text-background/80"
+										}`}
+										onClick={() =>
+											handleViewModeSwitch(viewMode === "list" ? "map" : "list")
+										}
+										aria-label={t("map.show")}
+									>
+										<MapIcon className="size-6" />
+									</button>
+								</TooltipTrigger>
+								<TooltipContent>
+									<p>{t("map.show")}</p>
+								</TooltipContent>
+							</Tooltip>
 
-							<button
-								className={`relative z-10 flex items-center justify-center w-12 h-12 rounded-full transition-colors duration-300 cursor-pointer ${
-									viewMode === "list"
-										? "text-foreground"
-										: "text-white hover:text-white/80"
-								}`}
-								onClick={() => setViewMode("list")}
-								title={t("listView.show")}
-								aria-label={t("listView.show")}
-							>
-								<ListIcon size={14} />
-							</button>
+							<Tooltip>
+								<TooltipTrigger asChild>
+									<button
+										className={`relative z-10 flex items-center justify-center w-12 h-12 rounded-full transition-colors duration-300 cursor-pointer ${
+											viewMode === "list"
+												? "text-foreground"
+												: "text-white hover:text-white/80"
+										}`}
+										onClick={() =>
+											handleViewModeSwitch(viewMode === "map" ? "list" : "map")
+										}
+										aria-label={t("listView.show")}
+									>
+										<ListIcon className="size-6" />
+									</button>
+								</TooltipTrigger>
+								<TooltipContent>
+									<p>{t("listView.show")}</p>
+								</TooltipContent>
+							</Tooltip>
 						</div>
 					</div>
 
