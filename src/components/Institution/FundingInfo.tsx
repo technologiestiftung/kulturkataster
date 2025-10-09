@@ -1,15 +1,15 @@
 "use client";
 
-import { InstitutionProperties } from "@/types";
+import { Institution } from "@/types";
 import { useTranslation } from "react-i18next";
 import { InfoItem } from "./shared/InfoItem";
 import { InfoSection } from "./shared/InfoSection";
 
 interface FundingInfoProps {
-	institutionData: InstitutionProperties;
+	institutionData: Institution;
 }
 
-function hasFundingData(data: InstitutionProperties): boolean {
+function hasFundingData(data: Institution): boolean {
 	return !!(data.support_type || data.funding_type);
 }
 
@@ -17,7 +17,7 @@ function SupportTypeInfo({
 	data,
 	t,
 }: {
-	data: InstitutionProperties;
+	data: Institution;
 	t: (key: string) => string;
 }) {
 	if (!data.support_type) return null;
@@ -33,7 +33,7 @@ function FundingTypeInfo({
 	t,
 	tEnum,
 }: {
-	data: InstitutionProperties;
+	data: Institution;
 	t: (key: string) => string;
 	tEnum: (key: string) => string;
 }) {
