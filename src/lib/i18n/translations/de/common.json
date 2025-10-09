@@ -146,6 +146,7 @@
 		}
 	},
 	"map": {
+		"title": "Kartenansicht",
 		"zoomIn": "Vergrößern",
 		"zoomOut": "Verkleinern",
 		"geolocate": "Meinen Standort finden",
@@ -157,6 +158,7 @@
 		"show": "Karte Anzeigen"
 	},
 	"listView": {
+		"title": "Listenansicht",
 		"show": "Listenansicht anzeigen",
 		"noResultsFound": "Keine Kulturorte gefunden :(",
 		"tryAdjustingFilters": "Versuchen Sie, die Filter anzupassen. Wenn Sie sicher sind, dass dieser Ort existiert, können Sie ihn über [dieses Formular https://form.formcentric.com/form/fb8189d9-8887-425d-bdd5-4aec08f7d8d5] einreichen.",
