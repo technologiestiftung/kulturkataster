@@ -1,15 +1,15 @@
 "use client";
 
-import { InstitutionProperties } from "@/types";
+import { Institution } from "@/types";
 import { useTranslation } from "react-i18next";
 import { InfoItem } from "./shared/InfoItem";
 import { InfoSection } from "./shared/InfoSection";
 
 interface StatusInfoProps {
-	institutionData: InstitutionProperties;
+	institutionData: Institution;
 }
 
-function hasStatusData(data: InstitutionProperties): boolean {
+function hasStatusData(data: Institution): boolean {
 	return !!data.updated_at;
 }
 
@@ -17,7 +17,7 @@ function UpdatedAtInfo({
 	data,
 	t,
 }: {
-	data: InstitutionProperties;
+	data: Institution;
 	t: (key: string) => string;
 }) {
 	if (!data.updated_at) return null;

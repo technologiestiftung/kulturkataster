@@ -1,15 +1,15 @@
 "use client";
 
-import { InstitutionProperties } from "@/types";
+import { Institution } from "@/types";
 import { useTranslation } from "react-i18next";
 import { InfoItem } from "./shared/InfoItem";
 import { InfoSection } from "./shared/InfoSection";
 
 interface OrganizationInfoProps {
-	institutionData: InstitutionProperties;
+	institutionData: Institution;
 }
 
-function hasOrganizationData(data: InstitutionProperties): boolean {
+function hasOrganizationData(data: Institution): boolean {
 	return !!(
 		data.closing_reason ||
 		data.cultural_area ||
@@ -22,7 +22,7 @@ function ClosingReasonInfo({
 	data,
 	t,
 }: {
-	data: InstitutionProperties;
+	data: Institution;
 	t: (key: string) => string;
 }) {
 	if (!data.closing_reason) return null;
@@ -37,7 +37,7 @@ function CulturalAreaInfo({
 	data,
 	t,
 }: {
-	data: InstitutionProperties;
+	data: Institution;
 	t: (key: string) => string;
 }) {
 	if (!data.cultural_area) return null;
@@ -53,7 +53,7 @@ function OwnerTypeInfo({
 	t,
 	tEnum,
 }: {
-	data: InstitutionProperties;
+	data: Institution;
 	t: (key: string) => string;
 	tEnum: (key: string) => string;
 }) {
@@ -69,7 +69,7 @@ function SourceInfo({
 	data,
 	t,
 }: {
-	data: InstitutionProperties;
+	data: Institution;
 	t: (key: string) => string;
 }) {
 	if (!data.source) return null;
