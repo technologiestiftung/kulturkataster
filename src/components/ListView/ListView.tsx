@@ -5,6 +5,7 @@ import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { InstitutionCard } from "./InstitutionCard";
 import { Institution } from "@/types";
+import { ModalFooter } from "../Modals/ModalFooter";
 
 const ITEMS_PER_PAGE = 20;
 
@@ -40,7 +41,6 @@ const ListView: FC = () => {
 		if (isLoading || !hasMore) return;
 
 		setIsLoading(true);
-		// Simulate async loading with setTimeout to prevent blocking
 		setTimeout(() => {
 			setVisibleCount((prev) =>
 				Math.min(prev + ITEMS_PER_PAGE, institutionsList.length),
@@ -98,7 +98,7 @@ const ListView: FC = () => {
 
 	if (institutionsList.length === 0) {
 		return (
-			<div className="ListView-root w-full h-full flex items-center justify-center bg-neutral-5">
+			<div className="ListView-root w-full h-full flex items-center justify-center bg-neutral-10">
 				<div className="text-center p-8">
 					<p className="text-muted-foreground text-lg">
 						{t("institution.noInstitutionsFound")}
@@ -115,7 +115,7 @@ const ListView: FC = () => {
 		<div className="ListView-root w-full h-full justify-center flex bg-neutral-5">
 			<div
 				ref={containerRef}
-				className="h-full overflow-aut max-w-5xl
+				className="h-full overflow-auto max-w-5xl
 "
 			>
 				<div className="p-4 mt-20">
@@ -131,7 +131,9 @@ const ListView: FC = () => {
 						<div className="space-y-2">
 							{visibleCount < institutionsList.length && (
 								<p className="body2 font-bold">
-									{institutionsList.length} Kulturorte
+									{tContent("listView.countLabel", {
+										count: institutionsList.length,
+									})}
 								</p>
 							)}
 							{visibleInstitutions.map((institution) => (
@@ -158,7 +160,7 @@ const ListView: FC = () => {
 								>
 									{!isLoading && (
 										<div className="text-sm text-muted-foreground">
-											Lade weitere Einrichtungen...
+											{tContent("listView.loadingMore")}
 										</div>
 									)}
 								</div>
@@ -168,11 +170,14 @@ const ListView: FC = () => {
 							{!hasMore && institutionsList.length > ITEMS_PER_PAGE && (
 								<div className="flex justify-center py-4">
 									<div className="text-sm text-muted-foreground">
-										Alle {institutionsList.length} Einrichtungen geladen
+										{tContent("listView.allLoaded", {
+											count: institutionsList.length,
+										})}
 									</div>
 								</div>
 							)}
 						</div>
+						<ModalFooter />
 					</div>
 				</div>
 			</div>
