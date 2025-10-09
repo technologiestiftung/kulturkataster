@@ -12,17 +12,28 @@ import {
 	ToggleButton,
 } from "@/components/Institution";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
+import { useMapStore } from "@/lib/store/mapStore";
 import { getMatchingSubcategories } from "@/lib/utils/categoryUtils";
 import { getCategoryIconComponent } from "@/lib/utils/iconUtils";
-import { Category, InstitutionProperties } from "@/types";
+import {
+	parseLatLongCoordinates,
+	animateMapToCoordinates,
+	ANIMATION_DURATION,
+	DEFAULT_ZOOM,
+} from "@/lib/utils/mapUtils";
+import { fromLonLat } from "ol/proj";
+import { Category, Institution } from "@/types";
+import { Feature, Geometry, GeoJsonProperties } from "geojson";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 // Header component
 function InstitutionHeader({
 	institutionData,
+	onCenterMap,
 }: {
-	institutionData: InstitutionProperties;
+	institutionData: Institution;
+	onCenterMap?: () => void;
 }) {
 	const { t } = useTranslation("common");
 	const { t: tEnum } = useTranslation("enumMap");
@@ -30,7 +41,10 @@ function InstitutionHeader({
 
 	return (
 		<CardHeader
-			className={`relative p-0 ${isInUse ? "bg-brand-default" : "bg-neutral-20"}`}
+			className={`relative p-0 ${isInUse ? "bg-brand-default" : "bg-neutral-20"} ${
+				onCenterMap ? "cursor-pointer hover:opacity-90 transition-opacity" : ""
+			}`}
+			onClick={onCenterMap}
 		>
 			<p className="body2 p-4 pb-0">
 				{institutionData.parent_organizations?.[0]?.name || ""}
@@ -95,14 +109,19 @@ function InstitutionHeader({
 
 function InstitutionCard({
 	institutionData,
+	onCenterMap,
 }: {
-	institutionData: InstitutionProperties;
+	institutionData: Institution;
+	onCenterMap?: () => void;
 }) {
 	const [showMore, setShowMore] = useState(false);
 
 	return (
 		<Card className="w-full rounded-lg overflow-hidden border-none">
-			<InstitutionHeader institutionData={institutionData} />
+			<InstitutionHeader
+				institutionData={institutionData}
+				onCenterMap={onCenterMap}
+			/>
 
 			<CardContent className="p-4 space-y-4">
 				<div className="space-y-4 flex flex-col">
@@ -134,14 +153,55 @@ export function InstitutionDetailContent() {
 	const selectedInstitutionId = useInstitutionStore(
 		(state) => state.selectedInstitutionId,
 	);
-	const institutions = useInstitutionStore((state) => state.institutions);
+	const institutions = useInstitutionStore((state) => state.allInstitutions);
 	const setSelectedInstitutionId = useInstitutionStore(
 		(state) => state.setSelectedInstitutionId,
 	);
+	const map = useMapStore((state) => state.map);
 
-	const [institutionData, setInstitutionData] =
-		useState<InstitutionProperties | null>(null);
+	const [institutionData, setInstitutionData] = useState<Institution | null>(
+		null,
+	);
 	const [loading, setLoading] = useState(false);
+
+	const findInstitutionFeature = (id: number) => {
+		return institutions?.features.find(
+			(feature) => feature.properties?.id === id,
+		);
+	};
+
+	const extractCoordinatesFromInstitution = (
+		institution: Feature<Geometry, GeoJsonProperties>,
+	): [number, number] | null => {
+		if (
+			institution.geometry?.type === "Point" &&
+			institution.geometry.coordinates
+		) {
+			const [lng, lat] = institution.geometry.coordinates;
+			return [lng, lat];
+		}
+
+		if (institution.properties?.latlong) {
+			return parseLatLongCoordinates(institution.properties.latlong);
+		}
+
+		return null;
+	};
+
+	const centerMapToInstitution = () => {
+		if (!institutionData || !map) {
+			return;
+		}
+
+		const institution = findInstitutionFeature(institutionData.id);
+		if (!institution) return;
+
+		const coordinates = extractCoordinatesFromInstitution(institution);
+		if (coordinates) {
+			const transformedCoords = fromLonLat(coordinates);
+			animateMapToCoordinates(map, transformedCoords);
+		}
+	};
 
 	useEffect(() => {
 		if (!selectedInstitutionId) {
@@ -155,9 +215,7 @@ export function InstitutionDetailContent() {
 				const institution = institutions?.features.find(
 					(feature) => feature.properties?.id === selectedInstitutionId,
 				);
-				setInstitutionData(
-					(institution?.properties as InstitutionProperties) || null,
-				);
+				setInstitutionData((institution?.properties as Institution) || null);
 			} catch (error) {
 				console.error("Failed to fetch institution data:", error);
 				setInstitutionData(null);
@@ -202,7 +260,10 @@ export function InstitutionDetailContent() {
 
 	return (
 		<main className="p-2 h-full w-full">
-			<InstitutionCard institutionData={institutionData} />
+			<InstitutionCard
+				institutionData={institutionData}
+				onCenterMap={centerMapToInstitution}
+			/>
 		</main>
 	);
 }
