@@ -2,7 +2,7 @@ import React, { FC } from "react";
 
 interface TextWithLinkProps {
 	text: string;
-	textVariant?: "body1" | "body2" | "body1 font-bold";
+	textVariant?: string;
 }
 
 const TextWithLinks: FC<TextWithLinkProps> = ({
