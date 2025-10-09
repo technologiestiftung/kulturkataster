@@ -19,7 +19,7 @@ const TextWithLinks: FC<TextWithLinkProps> = ({ text }) => {
 	);
 
 	return (
-		<p className="TextWithLink-root body2">
+		<p className="TextWithLink-root body2 whitespace-pre-line">
 			{parts.map((part, index) => {
 				if (emailRegex.test(part)) {
 					return (

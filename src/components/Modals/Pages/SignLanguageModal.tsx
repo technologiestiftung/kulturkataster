@@ -2,6 +2,18 @@
 
 import { useTranslation } from "react-i18next";
 import { PageModal } from "../PageModal";
+import TextBlock from "@/components/Content/TextBlock";
+import TextWithLinks from "@/components/Content/TextWithLinks";
+
+interface SignLanguageVideoItem {
+	title: string;
+	src: string;
+}
+
+interface SignLanguageInformationItem {
+	title: string;
+	videos: SignLanguageVideoItem[];
+}
 
 interface SignLanguageModalProps {
 	open: boolean;
@@ -14,17 +26,35 @@ export function SignLanguageModal({
 }: SignLanguageModalProps) {
 	const { t } = useTranslation("content");
 
-	const content = (
-		<div className="space-y-10">
-			<div className="space-y-4">
-				<video controls>
-					<source
-						src="https://www.manua.cloud/gobackend/mediaserver?fp=%2FfileOrigs%2Fc6%2FC62lJeh1iXj1zaSSZz_-1759834704_T3R3REv.mp4"
-						type="video/mp4"
-					/>
-				</video>
+	const content = t("signLanguageModal.content", {
+		returnObjects: true,
+	}) as SignLanguageInformationItem[];
+
+	const signLanguageInformationContent = (
+		<>
+			<div className="space-y-10">
+				<p>{t("signLanguageModal.description")}</p>
+				{content.map((contentItem, contentItemIndex) => (
+					<div className="space-y-4" key={contentItemIndex}>
+						<TextBlock
+							titleAs="h2"
+							title={contentItem.title}
+							className="underline"
+						/>
+						{contentItem.videos.map(
+							(contentItemVideo, contentItemVideoIndex) => (
+								<div className="space-y-2" key={contentItemVideoIndex}>
+									<TextWithLinks text={contentItemVideo.title} />
+									<video controls>
+										<source src={contentItemVideo.src} type="video/mp4" />
+									</video>
+								</div>
+							),
+						)}
+					</div>
+				))}
 			</div>
-		</div>
+		</>
 	);
 
 	return (
@@ -33,7 +63,7 @@ export function SignLanguageModal({
 			onOpenChange={onOpenChange}
 			title={t("signLanguageModal.title")}
 			subtitle={t("signLanguageModal.subtitle")}
-			content={content}
+			content={signLanguageInformationContent}
 		/>
 	);
 }
