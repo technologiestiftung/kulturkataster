@@ -25,7 +25,16 @@ export default function Home() {
 
 	return (
 		<div className="items-center flex-1 justify-items-center h-full relative w-full">
-			{viewMode === "map" ? <Map /> : <ListView />}
+			<div
+				className={`h-full w-full ${viewMode === "map" ? "block" : "hidden"}`}
+			>
+				<Map />
+			</div>
+			<div
+				className={`h-full w-full ${viewMode === "list" ? "block" : "hidden"}`}
+			>
+				<ListView />
+			</div>
 		</div>
 	);
 }
