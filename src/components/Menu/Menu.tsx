@@ -18,7 +18,7 @@ import {
 import Accessibility from "@/icons/accessibility.svg";
 import ArrowLeft from "@/icons/arrow-narrow-left.svg";
 import Close from "@/icons/close.svg";
-import DotsVertical from "@/icons/dots-vertical.svg";
+import BurgerMenu from "@/icons/burger-menu-icon.svg";
 import Download from "@/icons/download.svg";
 import Edit from "@/icons/edit.svg";
 import FilterLines from "@/icons/filter-lines.svg";
@@ -414,7 +414,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 					onClick={() => setMobileMenuModalOpen(true)}
 					aria-label={t("mobileMenu.title")}
 				>
-					<DotsVertical size={14} />
+					<BurgerMenu size={14} />
 				</Button>
 			</div>
 
