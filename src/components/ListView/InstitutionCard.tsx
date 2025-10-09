@@ -34,24 +34,27 @@ function CategoriesDisplay({
 	if (!categories?.length) return null;
 
 	return (
-		<div className="flex items-center gap-2">
+		<div className="flex justify-center gap-2 flex-col">
 			{categories.map((category: Category) => {
 				const IconComponent = getCategoryIconComponent(category.key);
 
 				return (
-					<div key={category.id} className="flex items-center gap-2 flex-wrap">
+					<div key={category.id} className="flex items-center gap-1 flex-wrap">
 						<div>
 							<IconComponent />
 						</div>
 						<span className="body2">{tEnum(`category.${category.key}`)}</span>
 						<span className="body2">•</span>
-						{subCategories?.length ? (
-							<span className="body2">
-								{subCategories
-									.map((sub) => tEnum(`subcategory.${sub.key}`))
-									.join(", ")}
-							</span>
-						) : null}
+						{subCategories?.length
+							? subCategories
+									.filter((sub) => sub.category_id === category.id)
+									.map((sub, index) => (
+										<span className="body2" key={sub.id}>
+											{tEnum(`subcategory.${sub.key}`)}
+											{index < subCategories.length - 1 && ", "}
+										</span>
+									))
+							: null}
 					</div>
 				);
 			})}
@@ -142,9 +145,9 @@ const InstitutionCard = memo(function InstitutionCard({
 
 				{showMore && (
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
-						<OrganizationInfo institutionData={institutionData} />
 						<FundingInfo institutionData={institutionData} />
 						<FacilityInfo institutionData={institutionData} />
+						<OrganizationInfo institutionData={institutionData} />
 						<StatusInfo institutionData={institutionData} />
 					</div>
 				)}
