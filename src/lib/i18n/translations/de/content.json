@@ -121,6 +121,11 @@
 			]
 		}
 	},
+	"signLanguageModal": {
+		"title": "Informationen in Deutscher Gebärdensprache",
+		"subtitle": "",
+		"description": "Hier kommt der Text in Deutscher Gebärdensprache."
+	},
 	"privacyModal": {
 		"title": "Datenschutz",
 		"subtitle": "Hier kommt der Datenschutztext.",

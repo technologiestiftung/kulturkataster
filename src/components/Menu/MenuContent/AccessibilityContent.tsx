@@ -1,6 +1,6 @@
 "use client";
 
-// import SignLanguage from "@/icons/sign-language.svg";
+import SignLanguage from "@/icons/sign-language.svg";
 // import SimpleLanguage from "@/icons/simple-language.svg";
 import FontSize from "@/icons/font-size.svg";
 import List from "@/icons/list.svg";
@@ -14,12 +14,12 @@ interface AccessibilityContentProps {
 }
 
 const accessibilityOptions = [
-	// {
-	// 	id: "signLanguage",
-	// 	icon: SignLanguage,
-	// 	titleKey: "accessibility.signLanguage.title",
-	// 	hasSwitch: false,
-	// },
+	{
+		id: "signLanguage",
+		icon: SignLanguage,
+		titleKey: "accessibility.signLanguage.title",
+		hasSwitch: false,
+	},
 	// {
 	// 	id: "simpleLanguage",
 	// 	icon: SimpleLanguage,
@@ -59,7 +59,8 @@ export function AccessibilityContent({
 		setViewMode,
 	} = useAppStore();
 
-	const { setAccessibilityModalOpen } = useModalStore();
+	const { setAccessibilityModalOpen, setSignLanguageModalOpen } =
+		useModalStore();
 
 	const handleSwitchChange = (optionId: string, checked: boolean) => {
 		switch (optionId) {
@@ -103,7 +104,9 @@ export function AccessibilityContent({
 						option.hasSwitch
 							? undefined
 							: () => {
-									if (onItemClick) {
+									if (option.id === "signLanguage") {
+										setSignLanguageModalOpen(true);
+									} else if (onItemClick) {
 										onItemClick("accessibility");
 									} else {
 										setAccessibilityModalOpen(true);
