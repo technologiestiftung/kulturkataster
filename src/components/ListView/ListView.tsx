@@ -149,13 +149,13 @@ const ListView: FC = () => {
 
 						<div className="space-y-2">
 							<div className="flex items-center justify-between">
-								{visibleCount < institutionsList.length && (
+								{
 									<p className="body2 font-bold">
 										{tContent("listView.countLabel", {
 											count: institutionsList.length,
 										})}
 									</p>
-								)}
+								}
 								<button
 									onClick={handleDownloadClick}
 									className="body2 text-primary-dark font-bold flex items-center gap-1 hover:text-primary/80 transition-colors cursor-pointer"
