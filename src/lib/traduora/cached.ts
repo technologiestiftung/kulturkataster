@@ -1,13 +1,13 @@
 "use cache";
 
-const TRADUORA_API_URL = process.env.TRADUORA_API_URL!;
-const CLIENT_ID = process.env.TRADUORA_CLIENT_ID!;
-const CLIENT_SECRET = process.env.TRADUORA_CLIENT_SECRET!;
-
 /**
  * Fetches and caches a Traduora access token using client credentials.
  */
 export async function fetchTraduoraToken(): Promise<string | null> {
+	const TRADUORA_API_URL = process.env.TRADUORA_API_URL!;
+	const CLIENT_ID = process.env.TRADUORA_CLIENT_ID!;
+	const CLIENT_SECRET = process.env.TRADUORA_CLIENT_SECRET!;
+
 	const res = await fetch(`${TRADUORA_API_URL}/auth/token`, {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
@@ -35,6 +35,8 @@ export async function fetchLabels(
 	projectId: string,
 	token: string,
 ): Promise<Array<{ id: string; value: string }>> {
+	const TRADUORA_API_URL = process.env.TRADUORA_API_URL!;
+	
 	const labelsRes = await fetch(
 		`${TRADUORA_API_URL}/projects/${projectId}/labels`,
 		{

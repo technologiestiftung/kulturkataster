@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { createClient } from "@/lib/supabase/client";
-import type { Category, District } from "@/types";
+"use server";
+
+import { createClient } from "@/lib/supabase/server";
+import type { Category, District, FilterState } from "@/types";
 import type { FeatureCollection } from "geojson";
-import { Database } from "../../types/supabase";
-import { SupabaseClient } from "@supabase/supabase-js";
 
 // Error handling
 export class ApiError extends Error {
@@ -35,7 +35,7 @@ function validateSingleResponse<T>(data: unknown, context: string): T {
 }
 
 export async function getInstitutionsGeoJSON() {
-	const supabase: SupabaseClient<Database> = createClient();
+	const supabase = await createClient();
 
 	const { data, error } = await supabase.rpc("get_public_institutions_geojson");
 
@@ -59,7 +59,7 @@ export async function getInstitutionsGeoJSON() {
 }
 
 export async function searchInstitutions(query: string) {
-	const supabase = createClient();
+	const supabase = await createClient();
 
 	if (!query || query.trim().length === 0) {
 		return [];
@@ -79,29 +79,65 @@ export async function searchInstitutions(query: string) {
 	return data || [];
 }
 
+export async function filterInstitutions(query: FilterState) {
+	const supabase = await createClient();
+
+	const { data, error } = await supabase.rpc(
+		"get_public_institutions_with_filters",
+		{
+			district_keys: query.district_keys,
+			category_keys: query.category_keys,
+			subcategory_keys: query.subcategory_keys,
+			include_closed: query.include_closed,
+		},
+	);
+
+	if (error) {
+		handleError(error, "filter institutions");
+	}
+	return data;
+}
+
 export async function getCategoriesWithSubcategories(): Promise<Category[]> {
-	const supabase = createClient();
-	const { data: categories } = await supabase
+	const supabase = await createClient();
+
+	const { data: categories, error } = await supabase
 		.from("category")
 		.select(
 			`
-      id,
-      key,
-      created_at,
-      subcategory (
-        id,
-        key,
-        category_id,
-        created_at
-      )
-    `,
+			id,
+			key,
+			created_at,
+			subcategory (
+				id,
+				key,
+				category_id,
+				created_at
+			)
+		`,
 		)
 		.order("id");
+
+	if (error) {
+		console.error("Error fetching categories:", error);
+		return [];
+	}
 
 	return categories || [];
 }
 
 export async function getDistricts(): Promise<District[]> {
-	const staticDistrictMap = await import("./districtMap.json");
-	return staticDistrictMap.default as District[];
+	const supabase = await createClient();
+
+	const { data: districts, error } = await supabase
+		.from("district")
+		.select("*")
+		.order("id");
+
+	if (error) {
+		console.error("Error fetching districts:", error);
+		return [];
+	}
+
+	return districts || [];
 }
