@@ -4,9 +4,6 @@
 
 import { fetchTraduoraToken, fetchLabels } from "@/lib/traduora/cached";
 
-const TRADUORA_API_URL = process.env.TRADUORA_API_URL!;
-const PROJECT_ID = process.env.TRADUORA_PROJECT_ID!;
-
 async function getLabelIdByName(
 	projectId: string,
 	token: string,
@@ -27,6 +24,9 @@ export async function fetchTranslations(
 	locale: string,
 	namespace?: string,
 ): Promise<Record<string, string>> {
+	const TRADUORA_API_URL = process.env.TRADUORA_API_URL!;
+	const PROJECT_ID = process.env.TRADUORA_PROJECT_ID!;
+	
 	const token = await fetchTraduoraToken();
 	if (!token) {
 		throw new Error("No Traduora token available");

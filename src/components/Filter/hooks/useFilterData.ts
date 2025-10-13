@@ -3,7 +3,7 @@
 import {
 	getCategoriesWithSubcategories,
 	getDistricts,
-} from "@/lib/supabase/api";
+} from "@/lib/serverActions/institutions";
 import { Category, District } from "@/types";
 import { useCallback, useEffect, useState } from "react";
 export const useFilterData = () => {
