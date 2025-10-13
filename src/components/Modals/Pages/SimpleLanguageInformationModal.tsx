@@ -39,13 +39,7 @@ export function SimpleLanguageInformationModal({
 		const isVersionHeading = text.startsWith("##");
 
 		if (isVersionHeading)
-			return (
-				<TextBlock
-					titleAs="h2"
-					title={text.replace("##", "")}
-					className="underline"
-				/>
-			);
+			return <TextBlock titleAs="h2" title={text.replace("##", "")} />;
 
 		if (findFirstListEntry >= 0) {
 			const listHeading = text.slice(0, findFirstListEntry);
