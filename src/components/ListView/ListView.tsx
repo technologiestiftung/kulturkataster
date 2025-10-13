@@ -66,7 +66,6 @@ const ListView: FC = () => {
 
 	const handleInstitutionClick = useCallback(
 		(institution: Institution) => {
-			console.log("Selected Institution ID:", institution.id);
 			setSelectedInstitutionId(institution.id as unknown as string);
 		},
 		[setSelectedInstitutionId],

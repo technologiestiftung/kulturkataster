@@ -48,10 +48,10 @@ function CategoriesDisplay({
 						{subCategories?.length
 							? subCategories
 									.filter((sub) => sub.category_id === category.id)
-									.map((sub, index) => (
+									.map((sub, index, filteredArray) => (
 										<span className="body2" key={sub.id}>
 											{tEnum(`subcategory.${sub.key}`)}
-											{index < subCategories.length - 1 && ", "}
+											{index < filteredArray.length - 1 && ", "}
 										</span>
 									))
 							: null}
