@@ -36,7 +36,7 @@ export async function fetchLabels(
 	token: string,
 ): Promise<Array<{ id: string; value: string }>> {
 	const TRADUORA_API_URL = process.env.TRADUORA_API_URL!;
-	
+
 	const labelsRes = await fetch(
 		`${TRADUORA_API_URL}/projects/${projectId}/labels`,
 		{
