@@ -462,12 +462,12 @@
 		"retry": "Erneut versuchen"
 	},
 	"listView": {
-		"title": "Kulturelle Orte erschließen",
-		"subtitle": "Alle Orte in der Übersicht",
+		"title": "Liste der Kulturorte",
+		"subtitle": "Ihre Ergebnisse auf einen Blick",
 		"countLabel": "{{count}} Kulturorte",
 		"loadMore": "Weitere Kulturorte laden",
 		"allLoaded": "Alle Kulturorte geladen",
-		"description": "Weit hinten, hinter den Wortbergen, fern der Länder Vokalien und Konsonantien leben die Blindtexte. Abgeschieden wohnen sie in Buchstabhausen an der Küste des Semantik, eines großen Sprachozeans.",
+		"description": "Diese Liste zeigt alle Orte, die Sie in den Filtern ausgewählt haben – 1:1 wie auf der Karte. Sie eignet sich besonders für Screenreader.",
 		"timeline": "Die Entwicklung der Listenansicht ist für das Jahr 2026 geplant."
 	}
 }
