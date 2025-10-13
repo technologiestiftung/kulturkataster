@@ -8,6 +8,7 @@ import TextWithLinks from "@/components/Content/TextWithLinks";
 interface SignLanguageVideoItem {
 	title: string;
 	src: string;
+	sub?: string;
 }
 
 interface SignLanguageInformationItem {
@@ -36,18 +37,23 @@ export function SignLanguageModal({
 				<p>{t("signLanguageModal.description")}</p>
 				{content.map((contentItem, contentItemIndex) => (
 					<div className="space-y-4" key={contentItemIndex}>
-						<TextBlock
-							titleAs="h2"
-							title={contentItem.title}
-							className="underline"
-						/>
+						<TextBlock titleAs="h2" title={contentItem.title} />
 						{contentItem.videos.map(
 							(contentItemVideo, contentItemVideoIndex) => (
 								<div className="space-y-2" key={contentItemVideoIndex}>
-									<TextWithLinks text={contentItemVideo.title} />
+									<TextWithLinks
+										text={contentItemVideo.title}
+										textVariant="body1 font-bold"
+									/>
 									<video controls>
 										<source src={contentItemVideo.src} type="video/mp4" />
 									</video>
+									{contentItemVideo.sub && (
+										<TextWithLinks
+											text={contentItemVideo.sub}
+											textVariant="body1"
+										/>
+									)}
 								</div>
 							),
 						)}
