@@ -161,7 +161,7 @@ function InstitutionBasicInfo({
 							<p>
 								{`${institutionData.street.trim()} ${institutionData.street_number.trim()}`}
 							</p>
-							<div className="flex flex-wrap space-x-2">
+							<div className="flex flex-wrap space-x-1">
 								<p>{institutionData.zip_code}</p>
 								<p>
 									{institutionData.city.name && (
