@@ -26,7 +26,7 @@ export async function fetchTranslations(
 ): Promise<Record<string, string>> {
 	const TRADUORA_API_URL = process.env.TRADUORA_API_URL!;
 	const PROJECT_ID = process.env.TRADUORA_PROJECT_ID!;
-	
+
 	const token = await fetchTraduoraToken();
 	if (!token) {
 		throw new Error("No Traduora token available");
