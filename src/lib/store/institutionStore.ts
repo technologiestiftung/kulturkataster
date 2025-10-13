@@ -1,7 +1,7 @@
 import {
-	getCategoriesWithSubcategories,
 	getInstitutionsGeoJSON,
-} from "@/lib/supabase/api";
+	getCategoriesWithSubcategories,
+} from "@/lib/serverActions/institutions";
 import { Institution, InstitutionStoreState } from "@/types";
 import { FeatureCollection } from "geojson";
 import { create } from "zustand";
