@@ -21,8 +21,9 @@ const barlow = Barlow({
 });
 
 export const metadata: Metadata = {
-	title: "Kulturkataster",
-	description: "Kulturkataster",
+	title: "Berliner Kulturkataster – Karte & Daten zu Kulturorten",
+	description:
+		"Die Seite macht Berlins Kulturlandschaft sichtbar: Kulturorte finden, filtern und erkunden – für Planung, Forschung und Öffentlichkeit. Ein Projekt der Kulturraum Berlin gGmbH.",
 };
 
 export default async function RootLayout({
