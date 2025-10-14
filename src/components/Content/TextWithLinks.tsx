@@ -23,7 +23,7 @@ const TextWithLinks: FC<TextWithLinkProps> = ({
 	);
 
 	return (
-		<p className={`TextWithLink-root ${textVariant}`}>
+		<p className={`TextWithLink-root whitespace-pre-line ${textVariant}`}>
 			{parts.map((part, index) => {
 				if (emailRegex.test(part)) {
 					return (

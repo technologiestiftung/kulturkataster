@@ -1,4 +1,4 @@
-import { FilterState, InstitutionProperties } from "@/types";
+import { Category, FilterState, Institution, Subcategory } from "@/types";
 
 export const hasActiveFilters = (filters: FilterState | null): boolean => {
 	if (!filters) return false;
@@ -10,8 +10,41 @@ export const hasActiveFilters = (filters: FilterState | null): boolean => {
 	);
 };
 
+export const getSortedSubcategories = (
+	category: Category,
+	collator: Intl.Collator,
+	translateFn: (key: string) => string,
+	filterFn: (subcategory: Subcategory) => boolean,
+): Subcategory[] => {
+	const filtered = category.subcategory?.filter(filterFn);
+	if (!filtered) return [];
+	return filtered.sort((a, b) => {
+		if (a.key.includes("other") && !b.key.includes("other")) return 1;
+		if (b.key.includes("other") && !a.key.includes("other")) return -1;
+		return collator.compare(
+			translateFn(`subcategory.${a.key}`),
+			translateFn(`subcategory.${b.key}`),
+		);
+	});
+};
+
+export const getSortedCategories = (
+	categories: Category[],
+	collator: Intl.Collator,
+	translateFn: (key: string) => string,
+): Category[] => {
+	return [...categories].sort((a, b) => {
+		if (a.key.includes("other") && !b.key.includes("other")) return 1;
+		if (b.key.includes("other") && !a.key.includes("other")) return -1;
+		return collator.compare(
+			translateFn(`category.${a.key}`),
+			translateFn(`category.${b.key}`),
+		);
+	});
+};
+
 export const matchesDistrictFilter = (
-	properties: InstitutionProperties,
+	properties: Institution,
 	districtKeys: string[],
 ): boolean => {
 	if (districtKeys.length === 0) return true;
@@ -22,7 +55,7 @@ export const matchesDistrictFilter = (
 };
 
 export const matchesCategoryFilter = (
-	properties: InstitutionProperties,
+	properties: Institution,
 	categoryKeys: string[],
 ): boolean => {
 	return (
@@ -33,7 +66,7 @@ export const matchesCategoryFilter = (
 };
 
 export const matchesSubcategoryFilter = (
-	properties: InstitutionProperties,
+	properties: Institution,
 	subcategoryKeys: string[],
 ): boolean => {
 	const hasExplicitMatch = properties.subcategories?.some((subcategory) =>
@@ -44,7 +77,7 @@ export const matchesSubcategoryFilter = (
 };
 
 export const matchesStatusFilter = (
-	properties: InstitutionProperties,
+	properties: Institution,
 	includeClosedFilter: boolean,
 ): boolean => {
 	if (
