@@ -340,7 +340,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 												className="relative"
 											>
 												<item.icon />
-												{(item.id === "filter" || item.id === "download") &&
+												{item.id === "filter" &&
 													institutions &&
 													originalInstitutions?.features.length !==
 														institutions.features.length && (
@@ -549,7 +549,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 								<span className="text-xs font-medium hidden">
 									{t(item.label)}
 								</span>
-								{(item.id === "filter" || item.id === "download") &&
+								{item.id === "filter" &&
 									institutions &&
 									originalInstitutions?.features.length !==
 										institutions.features.length && (
