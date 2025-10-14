@@ -139,8 +139,8 @@ const ListView: FC = () => {
 				<div className="p-4 mt-20">
 					<div className="space-y-6 flex flex-col">
 						<div className="space-y-2">
-							<span className="display">{tContent("listView.title")}</span>
-							<h1 className="font-bold">{tContent("listView.subtitle")}</h1>
+							<h1 className="display">{tContent("listView.title")}</h1>
+							<h2 className="font-bold">{tContent("listView.subtitle")}</h2>
 						</div>
 						<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 							<span className="body1">{tContent("listView.description")}</span>
@@ -178,14 +178,20 @@ const ListView: FC = () => {
 									</p>
 								</div>
 							)}
-							{visibleInstitutions.map((institution) => (
-								<InstitutionCard
-									key={institution.id}
-									institutionData={institution}
-									onClick={handleInstitutionClick}
-									isCompact={true}
-								/>
-							))}
+							<div
+								role="list"
+								className="space-y-2"
+								aria-label={t("listView.institutionsListLabel")}
+							>
+								{visibleInstitutions.map((institution) => (
+									<InstitutionCard
+										key={institution.id}
+										institutionData={institution}
+										onClick={handleInstitutionClick}
+										isCompact={true}
+									/>
+								))}
+							</div>
 
 							{/* Loading indicator */}
 							{isLoading && (
