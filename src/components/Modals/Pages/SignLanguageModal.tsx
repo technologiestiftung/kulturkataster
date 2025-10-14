@@ -1,9 +1,11 @@
 "use client";
 
+import { useRef, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { PageModal } from "../PageModal";
 import TextBlock from "@/components/Content/TextBlock";
 import TextWithLinks from "@/components/Content/TextWithLinks";
+import { Loading } from "@/components/ui/loading";
 
 interface SignLanguageVideoItem {
 	title: string;
@@ -19,6 +21,43 @@ interface SignLanguageInformationItem {
 interface SignLanguageModalProps {
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
+}
+
+export function VideoWithLoader({ src }: { src: string }) {
+	const videoRef = useRef<HTMLVideoElement>(null);
+	const [isLoaded, setIsLoaded] = useState(false);
+
+	useEffect(() => {
+		const video = videoRef.current;
+		if (!video) return;
+
+		const handleLoaded = () => setIsLoaded(true);
+
+		video.addEventListener("loadeddata", handleLoaded);
+
+		return () => {
+			video.removeEventListener("loadeddata", handleLoaded);
+		};
+	}, []);
+
+	return (
+		<div className="relative w-full aspect-video bg-muted">
+			{!isLoaded && (
+				<div className="absolute inset-0 flex items-center justify-center">
+					<Loading />
+				</div>
+			)}
+			<video
+				ref={videoRef}
+				src={src}
+				preload="auto"
+				controls
+				className={`w-full h-full object-cover transition-opacity duration-300 ${
+					isLoaded ? "opacity-100" : "opacity-0"
+				}`}
+			/>
+		</div>
+	);
 }
 
 export function SignLanguageModal({
@@ -45,9 +84,7 @@ export function SignLanguageModal({
 										text={contentItemVideo.title}
 										textVariant="body1 font-bold"
 									/>
-									<video controls>
-										<source src={contentItemVideo.src} type="video/mp4" />
-									</video>
+									<VideoWithLoader src={contentItemVideo.src} />
 									{contentItemVideo.sub && (
 										<TextWithLinks
 											text={contentItemVideo.sub}
