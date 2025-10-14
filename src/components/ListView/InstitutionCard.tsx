@@ -97,7 +97,7 @@ function LeftColumn({
 	return (
 		<div className="space-y-3">
 			<ParentOrganization name={data.parent_organizations?.[0]?.name} />
-			<h2 className="h1 font-bold text-gray-900">{data.name}</h2>
+			<h2 className="h1 font-bold text-foreground">{data.name}</h2>
 			<CategoriesDisplay
 				categories={data.categories || []}
 				subCategories={data.subcategories || []}
