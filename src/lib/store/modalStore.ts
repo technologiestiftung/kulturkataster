@@ -6,6 +6,7 @@ export interface ModalStoreState {
 	imprintModalOpen: boolean;
 	accessibilityModalOpen: boolean;
 	informationModalOpen: boolean;
+	simpleLanguageInformationModalOpen: boolean;
 	downloadModalOpen: boolean;
 	downloadModalMode: "all" | "filtered" | "selected";
 	mobileMenuModalOpen: boolean;
@@ -16,6 +17,7 @@ export interface ModalStoreState {
 	setImprintModalOpen: (open: boolean) => void;
 	setAccessibilityModalOpen: (open: boolean) => void;
 	setInformationModalOpen: (open: boolean) => void;
+	setSimpleLanguageInformationModalOpen: (open: boolean) => void;
 	setDownloadModalOpen: (open: boolean) => void;
 	setDownloadModalMode: (mode: "all" | "filtered" | "selected") => void;
 	setMobileMenuModalOpen: (open: boolean) => void;
@@ -34,6 +36,7 @@ export const useModalStore = create<ModalStoreState>((set) => ({
 	imprintModalOpen: false,
 	accessibilityModalOpen: false,
 	informationModalOpen: false,
+	simpleLanguageInformationModalOpen: false,
 	downloadModalOpen: false,
 	downloadModalMode: "all",
 	mobileMenuModalOpen: false,
@@ -45,6 +48,8 @@ export const useModalStore = create<ModalStoreState>((set) => ({
 	setImprintModalOpen: (open) => set({ imprintModalOpen: open }),
 	setAccessibilityModalOpen: (open) => set({ accessibilityModalOpen: open }),
 	setInformationModalOpen: (open) => set({ informationModalOpen: open }),
+	setSimpleLanguageInformationModalOpen: (open) =>
+		set({ simpleLanguageInformationModalOpen: open }),
 	setDownloadModalOpen: (open) => set({ downloadModalOpen: open }),
 	setDownloadModalMode: (mode) => set({ downloadModalMode: mode }),
 	setMobileMenuModalOpen: (open) => set({ mobileMenuModalOpen: open }),
@@ -75,6 +80,7 @@ export const useModalStore = create<ModalStoreState>((set) => ({
 					newState.accessibilityModalOpen = true;
 					break;
 				case "information":
+				case "simpleLanguageInformation":
 				case "info":
 					newState.informationModalOpen = true;
 					break;
