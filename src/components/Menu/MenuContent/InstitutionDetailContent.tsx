@@ -259,17 +259,18 @@ export function InstitutionDetailContent() {
 	}
 
 	return (
-		<div
+		<section
 			className="p-2 h-full w-full"
-			role="dialog"
+			role="region"
 			aria-labelledby="institution-title"
-			aria-modal="false"
+			aria-live="polite"
 			tabIndex={0}
+			autoFocus
 		>
 			<InstitutionCard
 				institutionData={institutionData}
 				onCenterMap={centerMapToInstitution}
 			/>
-		</div>
+		</section>
 	);
 }

@@ -275,9 +275,7 @@
 			"name": "Cerstin Richter-Kotowski, Staatssekretärin der Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt"
 		},
 		"contact": {
-			"title": "Kontakt",
-			"phone": "Telefon: +49 (0)30 30 30 444-60",
-			"email": "E-Mail: kontakt@kulturraum.berlin"
+			"title": "Kontakt"
 		},
 		"insurance": {
 			"title": "Angaben zur Berufshaftpflichtversicherung",
@@ -421,7 +419,7 @@
 			"company": "Kulturraum Berlin gGmbH",
 			"telephone": {
 				"label": "T",
-				"number": "+49 (0)30 3030 444 76"
+				"number": "+49 (0) 30 3030 444 76"
 			},
 			"email": {
 				"label": "E-Mail",
