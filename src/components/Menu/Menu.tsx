@@ -505,7 +505,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 										className={`relative z-10 flex items-center justify-center w-12 h-12 rounded-full transition-colors duration-300 cursor-pointer ${
 											viewMode === "list"
 												? "text-foreground"
-												: "text-white hover:text-white/80"
+												: "text-background hover:text-background/80"
 										}`}
 										onClick={() =>
 											handleViewModeSwitch(viewMode === "map" ? "list" : "map")
