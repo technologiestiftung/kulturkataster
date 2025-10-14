@@ -7,20 +7,21 @@ import {
 	CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { getCategoryIconComponent } from "@/lib/utils/iconUtils";
-import { CategoryType, CategoryWithSubcategories } from "@/types";
+import { CategoryType, Category } from "@/types";
 import { ChevronDown, ChevronUp, Minus } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useInstitutionStore } from "@/lib/store/institutionStore";
+import { getSortedSubcategories } from "@/lib/utils/filterUtils";
+import { useMemo } from "react";
 
 interface CategorySectionProps {
-	group: CategoryWithSubcategories;
+	group: Category;
 	selectedCategories: string[];
 	selectedSubcategories: string[];
 	isOpen: boolean;
 	onToggle: () => void;
 	onCategoryChange: (key: string) => void;
 	onSubcategoryChange: (key: string) => void;
-	getCategoryCount: (key: string) => number;
-	getSubcategoryCount: (key: string) => number;
 }
 
 export function CategorySection({
@@ -31,18 +32,34 @@ export function CategorySection({
 	onToggle,
 	onCategoryChange,
 	onSubcategoryChange,
-	getCategoryCount,
-	getSubcategoryCount,
 }: CategorySectionProps) {
 	const IconComponent = getCategoryIconComponent(group.key as CategoryType);
-	const { t: tEnum } = useTranslation("enumMap");
+	const { t: tEnum, i18n } = useTranslation("enumMap");
+
+	const collator = useMemo(
+		() =>
+			new Intl.Collator(i18n.language, { numeric: true, sensitivity: "base" }),
+		[i18n.language],
+	);
+
+	const sortedSubcategories = useMemo(
+		() => getSortedSubcategories(group, collator, tEnum, () => true),
+		[group, collator, tEnum],
+	);
+
+	const categoryCount = useInstitutionStore(
+		(state) => state.categoryCounts[group.key] || 0,
+	);
+	const subcategoryCounts = useInstitutionStore(
+		(state) => state.subcategoryCounts,
+	);
 
 	// Determine checkbox state for category
-	const selectedSubcategoriesInGroup = group.subcategories.filter((sub) =>
+	const selectedSubcategoriesInGroup = (group.subcategory || []).filter((sub) =>
 		selectedSubcategories.includes(sub.key),
 	);
 	const allSubcategoriesSelected =
-		selectedSubcategoriesInGroup.length === group.subcategories.length;
+		selectedSubcategoriesInGroup.length === (group.subcategory || []).length;
 	const someSubcategoriesSelected = selectedSubcategoriesInGroup.length > 0;
 	const categorySelected = selectedCategories.includes(group.key);
 
@@ -63,7 +80,7 @@ export function CategorySection({
 						</div>
 						<div className="body2 text-left">
 							<span className="font-bold">{translatedCategoryName}</span>
-							<span className="pl-2">({getCategoryCount(group.key)})</span>
+							<span className="pl-2">({categoryCount})</span>
 						</div>
 					</button>
 				</CollapsibleTrigger>
@@ -84,7 +101,7 @@ export function CategorySection({
 			</div>
 
 			<CollapsibleContent className="pl-16 pr-2 space-y-1">
-				{group.subcategories.map((subcategory) => {
+				{sortedSubcategories.map((subcategory) => {
 					const translatedSubcategoryName =
 						tEnum(`subcategory.${subcategory.key}`) || subcategory.key;
 
@@ -95,7 +112,7 @@ export function CategorySection({
 						>
 							<span className="body2 w-full">
 								{translatedSubcategoryName} (
-								{getSubcategoryCount(subcategory.key)})
+								{subcategoryCounts[subcategory.key] || 0})
 							</span>
 
 							<div className="relative w-6 h-6 flex items-center justify-center">

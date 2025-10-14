@@ -121,6 +121,73 @@
 			]
 		}
 	},
+	"signLanguageModal": {
+		"title": "Gebärdensprache (DGS)",
+		"subtitle": "Barrierefreie Informationen über das Kulturkataster Berlin",
+		"description": "Hier finden Sie alle Informationen zum Kulturkataster Berlin in Deutscher Gebärdensprache (DGS). Die Videos erklären die wichtigsten Inhalte der Website – von „Über das Kulturkataster“ über „Info & Service“ bis hin zu den häufig gestellten Fragen (FAQ). Sie können die einzelnen Videos direkt abspielen.",
+		"content": [
+			{
+				"title": "Über das Projekt",
+				"videos": [
+					{
+						"title": "Was ist das Kulturkataster Berlin?",
+						"src": "https://kulturraeume.berlin/content/uploads/kulturraeume-01awasistkulturkataster.mp4"
+					},
+					{
+						"title": "Auftrag, Beteiligte und Ziele des Kulturkatasters",
+						"src": "https://kulturraeume.berlin/content/uploads/kulturraeume-01bauftragbeteiligte.mp4"
+					},
+					{
+						"title": "Wie das Kulturkataster entsteht und sich verändert",
+						"src": "https://kulturraeume.berlin/content/uploads/kulturraeume-01cwieentstehen.mp4"
+					}
+				]
+			},
+			{
+				"title": "Infos & Service",
+				"videos": [
+					{
+						"title": "Ein vollständiges Kulturkataster - so können Sie es unterstützen",
+						"src": "https://kulturraeume.berlin/content/uploads/kulturraeume-02akulturkatasterwieunterstuezen.mp4",
+						"sub": "[\"Zum Mitwirken-Formular\" https://form.formcentric.com/form/fb8189d9-8887-425d-bdd5-4aec08f7d8d5]"
+					},
+					{
+						"title": "Was enthält die erste Version des Kulturkatasters?",
+						"src": "https://kulturraeume.berlin/content/uploads/kulturraeume-02bwasenthaeltersteversion.mp4"
+					},
+					{
+						"title": "Wie kann ich die Karte benutzen?",
+						"src": "https://kulturraeume.berlin/content/uploads/kulturraeume-02cwiekartenutzen.mp4"
+					}
+				]
+			},
+			{
+				"title": "Fragen & Antworten",
+				"videos": [
+					{
+						"title": "Warum ist mein Kulturort nicht im Kulturkataster verzeichnet?",
+						"src": "https://kulturraeume.berlin/content/uploads/kulturraeume-02d1faqwarumnichtverzeichnen.mp4"
+					},
+					{
+						"title": "Wie kann ich Informationen zu einem Kulturort ergänzen oder korrigieren?",
+						"src": "https://kulturraeume.berlin/content/uploads/kulturraeume-02d2faqwieinformationenergaenzen.mp4"
+					},
+					{
+						"title": "Ich habe meinen Kulturort beim Kulturkataster eingereicht, doch er erscheint immer noch nicht auf der Karte. Was ist da los?",
+						"src": "https://kulturraeume.berlin/content/uploads/kulturraeume-02d3faqkartenichterscheinen.mp4"
+					},
+					{
+						"title": "Warum sind im Kulturkataster nur eine Handvoll an Fachkarten aus dem Geoportal?",
+						"src": "https://kulturraeume.berlin/content/uploads/kulturraeume-02d4faqwenigefachkarten.mp4"
+					},
+					{
+						"title": "Wie kann ich meinen Kulturort aus dem Kulturkataster löschen lassen?",
+						"src": "https://kulturraeume.berlin/content/uploads/kulturraeume-02d5faqwieloeschen.mp4"
+					}
+				]
+			}
+		]
+	},
 	"privacyModal": {
 		"title": "Datenschutz",
 		"subtitle": "Hier kommt der Datenschutztext.",
@@ -812,5 +879,14 @@
 		"loading": "Filter werden geladen...",
 		"error": "Fehler beim Laden der Filter",
 		"retry": "Erneut versuchen"
+	},
+	"listView": {
+		"title": "Liste der Kulturorte",
+		"subtitle": "Ihre Ergebnisse auf einen Blick",
+		"countLabel": "{{count}} Kulturorte",
+		"loadMore": "Weitere Kulturorte laden",
+		"allLoaded": "Alle Kulturorte geladen",
+		"description": "Diese Liste zeigt alle Orte, die Sie in den Filtern ausgewählt haben – 1:1 wie auf der Karte. Sie eignet sich besonders für Screenreader.",
+		"timeline": "Die Entwicklung der Listenansicht ist für das Jahr 2026 geplant."
 	}
 }

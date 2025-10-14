@@ -9,6 +9,7 @@ import { PrivacyModal } from "@/components/Modals/Pages/PrivacyModal";
 import { useModalStore } from "@/lib/store/modalStore";
 import { DownloadModal } from "./Modals/Pages/DownloadModal";
 import { SimpleLanguageInformationModal } from "./Modals/Pages/SimpleLanguageInformationModal";
+import { SignLanguageModal } from "./Modals/Pages/SignLanguageModal";
 
 export function ModalProvider() {
 	const {
@@ -21,6 +22,7 @@ export function ModalProvider() {
 		downloadModalOpen,
 		downloadModalMode,
 		mobileMenuModalOpen,
+		signLanguageModalOpen,
 		setAboutModalOpen,
 		setPrivacyModalOpen,
 		setImprintModalOpen,
@@ -29,6 +31,7 @@ export function ModalProvider() {
 		setSimpleLanguageInformationModalOpen,
 		setDownloadModalOpen,
 		setMobileMenuModalOpen,
+		setSignLanguageModalOpen,
 	} = useModalStore();
 
 	return (
@@ -53,6 +56,9 @@ export function ModalProvider() {
 			<SimpleLanguageInformationModal
 				open={simpleLanguageInformationModalOpen}
 				onOpenChange={setSimpleLanguageInformationModalOpen}
+			<SignLanguageModal
+				open={signLanguageModalOpen}
+				onOpenChange={setSignLanguageModalOpen}
 			/>
 			<DownloadModal
 				open={downloadModalOpen}
