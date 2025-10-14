@@ -15,6 +15,8 @@ import Close from "@/icons/close.svg";
 import KRBLogo from "@/logos/KRB.svg";
 import InfoCircle from "@/icons/info-circle.svg";
 import { SubMenuOption } from "@/components/Menu/SubMenuOption";
+import MapIcon from "@/icons/map-02.svg";
+import ListIcon from "@/icons/list.svg";
 
 interface MobileMenuModalProps {
 	open: boolean;
@@ -31,20 +33,19 @@ const footerItems = [
 export function MobileMenuModal({ open, onOpenChange }: MobileMenuModalProps) {
 	const { t } = useTranslation("common");
 	const { handleFooterItemClick } = useModalStore();
-	const { setFirstTimeUser } = useAppStore();
+	const { setFirstTimeUser, setViewMode } = useAppStore();
 
 	const handleFooterClick = (itemId: string) => {
-		onOpenChange(false); // Close modal first
-		// Use setTimeout to ensure modal closes before opening new one
+		onOpenChange(false);
 		setTimeout(() => {
 			handleFooterItemClick(itemId);
 		}, 100);
 	};
 
 	const handleWelcomeModalOpen = () => {
-		onOpenChange(false); // Close mobile menu first
+		onOpenChange(false);
 		setTimeout(() => {
-			setFirstTimeUser(true); // This opens the welcome modal
+			setFirstTimeUser(true);
 		}, 100);
 	};
 
@@ -56,7 +57,7 @@ export function MobileMenuModal({ open, onOpenChange }: MobileMenuModalProps) {
 				showCloseButton={false}
 			>
 				<DialogHeader className="flex-row items-center justify-between p-4 space-y-0">
-					<DialogTitle className="sr-only">Mobile Menu</DialogTitle>
+					<DialogTitle className="sr-only">{t("mobileMenu.title")}</DialogTitle>
 					<KukaSmallLogo className="size-14 cursor-pointer hover:opacity-80 transition-opacity" />
 					<button
 						onClick={() => onOpenChange(false)}
@@ -67,7 +68,25 @@ export function MobileMenuModal({ open, onOpenChange }: MobileMenuModalProps) {
 					</button>
 				</DialogHeader>
 				<div className="flex flex-col justify-between flex-1">
-					<div className="flex-1 flex flex-col gap-8 p-4 overflow-auto">
+					<div className="flex-1 flex flex-col gap-4 p-4 overflow-auto mb-4">
+						<SubMenuOption
+							key="map"
+							icon={MapIcon}
+							titleKey="map.title"
+							onClick={() => {
+								onOpenChange(false);
+								setViewMode("map");
+							}}
+						/>
+						<SubMenuOption
+							key="listView"
+							icon={ListIcon}
+							titleKey="listView.title"
+							onClick={() => {
+								onOpenChange(false);
+								setViewMode("list");
+							}}
+						/>
 						<SubMenuOption
 							key="information"
 							icon={InfoCircle}
