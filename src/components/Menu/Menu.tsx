@@ -528,7 +528,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 						aria-label={t("mobileMenu.title")}
 						className="md:hidden"
 					>
-						<DotsVertical size={14} />
+						<BurgerMenu size={14} />
 					</Button>
 				</div>
 			</div>
