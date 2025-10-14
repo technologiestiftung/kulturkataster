@@ -48,7 +48,9 @@ function InstitutionHeader({
 				{institutionData.parent_organizations?.[0]?.name || ""}
 			</p>
 			<CardTitle className="px-4 max-w-full overflow-hidden">
-				<h1 className="h1 wrap-anywhere">{institutionData.name}</h1>
+				<h1 id="institution-title" className="h1 wrap-anywhere">
+					{institutionData.name}
+				</h1>
 			</CardTitle>
 
 			{institutionData.categories?.length > 0 && (
@@ -257,11 +259,17 @@ export function InstitutionDetailContent() {
 	}
 
 	return (
-		<main className="p-2 h-full w-full">
+		<div
+			className="p-2 h-full w-full"
+			role="dialog"
+			aria-labelledby="institution-title"
+			aria-modal="false"
+			tabIndex={0}
+		>
 			<InstitutionCard
 				institutionData={institutionData}
 				onCenterMap={centerMapToInstitution}
 			/>
-		</main>
+		</div>
 	);
 }

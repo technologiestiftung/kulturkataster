@@ -306,6 +306,8 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			<Sidebar
 				collapsible="icon"
 				className="overflow-hidden *:data-[sidebar=sidebar]:flex-row [&_*]:!transition-none"
+				role="navigation"
+				aria-label={t("menu.navigation")}
 				{...props}
 			>
 				<Sidebar
