@@ -261,14 +261,14 @@
 	body {
 		@apply bg-background text-foreground;
 	}
-	
+
 	/* Hide Matomo analytics UI from screen readers */
 	iframe[src*="matomo"] {
 		visibility: hidden;
 		position: absolute;
 		left: -9999px;
 	}
-	
+
 	/* Hide elements with invalid ARIA tablist structure */
 	[role="tablist"] button:not([role="tab"]) {
 		display: none;
