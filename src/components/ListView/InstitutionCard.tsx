@@ -123,6 +123,7 @@ const InstitutionCard = memo(function InstitutionCard({
 	isCompact: _isCompact = false,
 }: InstitutionCardProps) {
 	const { t: tEnum } = useTranslation("enumMap");
+	const { t } = useTranslation("common");
 	const [showMore, setShowMore] = useState(false);
 
 	const handleCardClick = () => onClick?.(institutionData);
@@ -136,7 +137,29 @@ const InstitutionCard = memo(function InstitutionCard({
 	}`;
 
 	return (
-		<Card className={cardClassName} onClick={handleCardClick}>
+		<Card 
+			className={cardClassName} 
+			role="listitem"
+			tabIndex={onClick ? 0 : undefined}
+			onClick={onClick ? (e) => {
+				// Only trigger card click if the target is not an interactive element
+				const target = e.target as HTMLElement;
+				if (!target.closest('a, button')) {
+					handleCardClick();
+				}
+			} : undefined}
+			onKeyDown={onClick ? (e) => {
+				if (e.key === 'Enter' || e.key === ' ') {
+					// Only trigger if focus is on the card itself, not on nested elements
+					const target = e.target as HTMLElement;
+					if (target === e.currentTarget) {
+						e.preventDefault();
+						handleCardClick();
+					}
+				}
+			} : undefined}
+			aria-label={onClick ? `${institutionData.name} - ${t("institution.showDetails")}` : undefined}
+		>
 			<CardContent className="p-4 space-y-2 md:space-y-4">
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
 					<LeftColumn data={institutionData} tEnum={tEnum} />

@@ -108,6 +108,7 @@
 		"moreInfo": "Mehr Informationen",
 		"lessInfo": "Weniger Informationen",
 		"loading": "Laden...",
+		"showDetails": "Details anzeigen",
 		"establishedSince": "Bestehen am Standort seit",
 		"establishedUntil": "Bestehen am Standort bis"
 	},
@@ -116,6 +117,7 @@
 	"success": "Erfolg",
 	"unknown": "Unbekannt",
 	"menu": {
+		"navigation": "Hauptmenü",
 		"backTo": "Zurück zu {{page}}"
 	},
 	"footer": {
@@ -159,6 +161,7 @@
 	},
 	"listView": {
 		"title": "Listenansicht",
+		"institutionsListLabel": "Liste der Kulturorte",
 		"show": "Zur Listenansicht",
 		"noResultsFound": "Keine Kulturorte gefunden :(",
 		"tryAdjustingFilters": "Versuchen Sie, die Filter anzupassen. Wenn Sie sicher sind, dass dieser Ort existiert, können Sie ihn über [dieses Formular https://form.formcentric.com/form/fb8189d9-8887-425d-bdd5-4aec08f7d8d5] einreichen.",
