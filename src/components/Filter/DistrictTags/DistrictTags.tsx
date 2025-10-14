@@ -23,6 +23,7 @@ const DistrictTags: FC<DistrictTagsProps> = ({
 	return (
 		<div className="flex flex-wrap gap-2 mb-4">
 			{districts.map((district) => {
+				if (!district.key) return null;
 				const isSelected = selected.includes(district.key);
 				const translatedName =
 					tEnum(`berlin_district.${district.key}`) ||
@@ -35,7 +36,7 @@ const DistrictTags: FC<DistrictTagsProps> = ({
 						variant="tag"
 						size="tag"
 						className={isSelected ? "bg-neutral-80 text-background" : ""}
-						onClick={() => onChange(district.key)}
+						onClick={() => onChange(district.key || "")}
 					>
 						{translatedName}
 						{isSelected && (
