@@ -56,6 +56,7 @@ export function ModalProvider() {
 			<SimpleLanguageInformationModal
 				open={simpleLanguageInformationModalOpen}
 				onOpenChange={setSimpleLanguageInformationModalOpen}
+			/>
 			<SignLanguageModal
 				open={signLanguageModalOpen}
 				onOpenChange={setSignLanguageModalOpen}
