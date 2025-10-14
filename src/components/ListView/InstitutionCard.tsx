@@ -97,7 +97,7 @@ function LeftColumn({
 	return (
 		<div className="space-y-3">
 			<ParentOrganization name={data.parent_organizations?.[0]?.name} />
-			<h2 className="h1 font-bold text-gray-900">{data.name}</h2>
+			<h2 className="h1 font-bold text-foreground">{data.name}</h2>
 			<CategoriesDisplay
 				categories={data.categories || []}
 				subCategories={data.subcategories || []}
@@ -123,6 +123,7 @@ const InstitutionCard = memo(function InstitutionCard({
 	isCompact: _isCompact = false,
 }: InstitutionCardProps) {
 	const { t: tEnum } = useTranslation("enumMap");
+	const { t } = useTranslation("common");
 	const [showMore, setShowMore] = useState(false);
 
 	const handleCardClick = () => onClick?.(institutionData);
@@ -136,7 +137,39 @@ const InstitutionCard = memo(function InstitutionCard({
 	}`;
 
 	return (
-		<Card className={cardClassName} onClick={handleCardClick}>
+		<Card
+			className={cardClassName}
+			role="listitem"
+			tabIndex={onClick ? 0 : undefined}
+			onClick={
+				onClick
+					? (e) => {
+							const target = e.target as HTMLElement;
+							if (!target.closest("a, button")) {
+								handleCardClick();
+							}
+						}
+					: undefined
+			}
+			onKeyDown={
+				onClick
+					? (e) => {
+							if (e.key === "Enter" || e.key === " ") {
+								const target = e.target as HTMLElement;
+								if (target === e.currentTarget) {
+									e.preventDefault();
+									handleCardClick();
+								}
+							}
+						}
+					: undefined
+			}
+			aria-label={
+				onClick
+					? `${institutionData.name} - ${t("institution.showDetails")}`
+					: undefined
+			}
+		>
 			<CardContent className="p-4 space-y-2 md:space-y-4">
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
 					<LeftColumn data={institutionData} tEnum={tEnum} />

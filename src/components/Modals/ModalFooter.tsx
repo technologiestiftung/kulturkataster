@@ -40,14 +40,19 @@ export function ModalFooter() {
 								<span>{t("footer.address.city")}</span>
 							</div>
 							<div className="flex space-x-2">
-								<span>{t("footer.telephone.label")}</span>
-								<span className="underline">
-									{t("footer.telephone.number")}
-								</span>
+								<span>{t("telephone.labelShort")}</span>
+								<a className="underline" href={`tel:${t("telephone.number")}`}>
+									{t("telephone.number")}
+								</a>
 							</div>
 							<div className="flex gap-2">
 								<span>{t("footer.email.label")}</span>
-								<span className="underline">{t("footer.email.address")}</span>
+								<a
+									className="underline"
+									href={`mailto:${t("footer.email.address")}`}
+								>
+									{t("footer.email.address")}
+								</a>
 							</div>
 							<div className="flex flex-col md:flex-row gap-2 md:gap-4 mt-16 font-bold">
 								{footerItems.map((item) => (

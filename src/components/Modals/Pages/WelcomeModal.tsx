@@ -67,12 +67,14 @@ export function WelcomeModal({ open, onOpenChange }: WelcomeModalProps) {
 						</div>
 						<div className="space-y-4 w-full">
 							<div className="flex flex-col md:flex-row md:space-x-2 w-full mb-5 mt-12 md:mb-0">
-								<Button
-									className="w-full md:w-auto mb-2 md:mb-0 cursor-pointer"
-									onClick={() => onOpenChange(false)}
-								>
-									{t("welcomeModal.discoverButton", { ns: "content" })}
-								</Button>
+								<div className="flex-grow md:flex-none">
+									<Button
+										className="w-full md:w-auto mb-2 md:mb-0 cursor-pointer"
+										onClick={() => onOpenChange(false)}
+									>
+										{t("welcomeModal.discoverButton", { ns: "content" })}
+									</Button>
+								</div>
 								<div className="flex w-full md:w-auto space-x-2">
 									<Button
 										variant="outline"
