@@ -120,6 +120,15 @@
 		"navigation": "Hauptmenü",
 		"backTo": "Zurück zu {{page}}"
 	},
+	"telephone": {
+		"label": "Telefon",
+		"labelShort": "Tel.",
+		"number": "+49 (0) 30 3030 444 60"
+	},
+	"email": {
+		"label": "E-Mail",
+		"address": "info@kulturkataster.berlin"
+	},
 	"footer": {
 		"title": "Kulturkataster Berlin",
 		"projectBy": "Ein Projekt der Kulturraum Berlin gGmbH",
@@ -129,14 +138,6 @@
 			"street": "Spandauer Damm 19",
 			"city": "Berlin",
 			"zip": "14059"
-		},
-		"telephone": {
-			"label": "Tel.",
-			"number": "+49 30 3030 444 60"
-		},
-		"email": {
-			"label": "E-Mail",
-			"address": "info@kulturkataster.berlin"
 		},
 		"about": "Über das Projekt",
 		"newsletter": "Newsletter",

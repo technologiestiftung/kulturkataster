@@ -10,139 +10,133 @@ interface ImprintModalProps {
 }
 
 export function ImprintModal({ open, onOpenChange }: ImprintModalProps) {
-	const { t } = useTranslation("content");
+	const { t: tContent } = useTranslation("content");
+	const { t } = useTranslation("common");
 
 	const content = (
 		<div className="space-y-10">
-			{/* Company Information */}
 			<div className="space-y-1">
-				<TextBlock text={t("imprintModal.company.title")} />
-				<TextBlock text={t("imprintModal.company.address")} />
-				<TextBlock text={t("imprintModal.company.zip")} />
+				<TextBlock text={tContent("imprintModal.company.title")} />
+				<TextBlock text={tContent("imprintModal.company.address")} />
+				<TextBlock text={tContent("imprintModal.company.zip")} />
 			</div>
 
 			<div className="space-y-1">
-				<TextBlock text={t("imprintModal.company.registration")} />
-				<TextBlock text={t("imprintModal.company.court")} />
-				<TextBlock text={t("imprintModal.company.taxNumber")} />
+				<TextBlock text={tContent("imprintModal.company.registration")} />
+				<TextBlock text={tContent("imprintModal.company.court")} />
+				<TextBlock text={tContent("imprintModal.company.taxNumber")} />
 			</div>
 
-			{/* Representatives */}
 			<div className="space-y-4">
 				<TextBlock
 					titleAs="h2"
-					title={t("imprintModal.representatives.title")}
-					text={t("imprintModal.representatives.management")}
+					title={tContent("imprintModal.representatives.title")}
+					text={tContent("imprintModal.representatives.management")}
 				/>
 
 				<TextBlock
 					titleAs="h2"
-					title={t("imprintModal.chairman.title")}
-					text={t("imprintModal.chairman.name")}
+					title={tContent("imprintModal.chairman.title")}
+					text={tContent("imprintModal.chairman.name")}
 				/>
 			</div>
 
-			{/* Contact */}
 			<div className="space-y-4">
-				<TextBlock titleAs="h1" title={t("imprintModal.contact.title")} />
+				<TextBlock
+					titleAs="h1"
+					title={tContent("imprintModal.contact.title")}
+				/>
 				<div className="body2 space-y-1">
-					<p>{t("imprintModal.contact.phone")}</p>
+					<p>{t("telephone.label")}</p>
+					<p>{t("telephone.number")}</p>
 					<p>
-						E-Mail:{" "}
+						<p>{t("email.label")}</p>
 						<a
-							href="mailto:kontakt@kulturraum.berlin"
+							href={`mailto:${t("email.address")}`}
 							className="text-primary hover:text-primary-dark underline"
 						>
-							kontakt@kulturraum.berlin
+							{t("email.address")}
 						</a>
 					</p>
 				</div>
 			</div>
 
-			{/* Editorial Responsibility */}
 			<div className="space-y-4">
-				<TextBlock titleAs="h1" title={t("imprintModal.editor.title")} />
+				<TextBlock titleAs="h1" title={tContent("imprintModal.editor.title")} />
 				<div className="body2 space-y-1">
-					<p>{t("imprintModal.editor.name")}</p>
-					<p>{t("imprintModal.editor.role")}</p>
-					<p>{t("imprintModal.editor.address")}</p>
-					<p>{t("imprintModal.editor.zipCity")}</p>
+					<p>{tContent("imprintModal.editor.name")}</p>
+					<p>{tContent("imprintModal.editor.role")}</p>
+					<p>{tContent("imprintModal.editor.address")}</p>
+					<p>{tContent("imprintModal.editor.zipCity")}</p>
 				</div>
 			</div>
 
-			{/* Conception */}
 			<TextBlock
 				className="m-0"
-				title={t("imprintModal.conception.title")}
+				title={tContent("imprintModal.conception.title")}
 				link={{
-					href: t("imprintModal.conception.link1.href"),
-					text: t("imprintModal.conception.link1.text"),
+					href: tContent("imprintModal.conception.link1.href"),
+					text: tContent("imprintModal.conception.link1.text"),
 					target: "_blank",
 				}}
 			/>
 			<TextBlock
 				link={{
-					href: t("imprintModal.conception.link2.href"),
-					text: t("imprintModal.conception.link2.text"),
+					href: tContent("imprintModal.conception.link2.href"),
+					text: tContent("imprintModal.conception.link2.text"),
 					target: "_blank",
 				}}
 			/>
 
-			{/* Design */}
-			<TextBlock
-				titleAs="h1"
-				title={t("imprintModal.design.title")}
-				link={{
-					href: t("imprintModal.design.link.href"),
-					text: t("imprintModal.design.link.text"),
-					target: "_blank",
-				}}
-			/>
-
-			{/* Programming */}
 			<TextBlock
 				titleAs="h1"
-				title={t("imprintModal.programming.title")}
+				title={tContent("imprintModal.design.title")}
 				link={{
-					href: t("imprintModal.programming.link.href"),
-					text: t("imprintModal.programming.link.text"),
+					href: tContent("imprintModal.design.link.href"),
+					text: tContent("imprintModal.design.link.text"),
 					target: "_blank",
 				}}
 			/>
 
-			{/* Dispute Resolution */}
+			<TextBlock
+				titleAs="h1"
+				title={tContent("imprintModal.programming.title")}
+				link={{
+					href: tContent("imprintModal.programming.link.href"),
+					text: tContent("imprintModal.programming.link.text"),
+					target: "_blank",
+				}}
+			/>
+
 			<div className="space-y-4">
 				<TextBlock
 					titleAs="h1"
-					title={t("imprintModal.dispute_resolution.title")}
-					text={t("imprintModal.dispute_resolution.description")}
+					title={tContent("imprintModal.dispute_resolution.title")}
+					text={tContent("imprintModal.dispute_resolution.description")}
 					link={{
-						href: t("imprintModal.dispute_resolution.link"),
-						text: t("imprintModal.dispute_resolution.link"),
+						href: tContent("imprintModal.dispute_resolution.link"),
+						text: tContent("imprintModal.dispute_resolution.link"),
 						target: "_blank",
 					}}
 				/>
 			</div>
 
-			{/* Content Liability */}
 			<TextBlock
 				titleAs="h1"
-				title={t("imprintModal.content_liability.title")}
-				text={t("imprintModal.content_liability.description")}
+				title={tContent("imprintModal.content_liability.title")}
+				text={tContent("imprintModal.content_liability.description")}
 			/>
 
-			{/* Link Liability */}
 			<TextBlock
 				titleAs="h1"
-				title={t("imprintModal.link_liability.title")}
-				text={t("imprintModal.link_liability.description")}
+				title={tContent("imprintModal.link_liability.title")}
+				text={tContent("imprintModal.link_liability.description")}
 			/>
 
-			{/* Copyright */}
 			<TextBlock
 				titleAs="h1"
-				title={t("imprintModal.copyright.title")}
-				text={t("imprintModal.copyright.description")}
+				title={tContent("imprintModal.copyright.title")}
+				text={tContent("imprintModal.copyright.description")}
 			/>
 		</div>
 	);
@@ -151,8 +145,8 @@ export function ImprintModal({ open, onOpenChange }: ImprintModalProps) {
 		<PageModal
 			open={open}
 			onOpenChange={onOpenChange}
-			title={t("imprintModal.title")}
-			subtitle={t("imprintModal.subtitle")}
+			title={tContent("imprintModal.title")}
+			subtitle={tContent("imprintModal.subtitle")}
 			content={content}
 		/>
 	);
