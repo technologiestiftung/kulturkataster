@@ -2,9 +2,13 @@ import React, { FC } from "react";
 
 interface TextWithLinkProps {
 	text: string;
+	textVariant?: string;
 }
 
-const TextWithLinks: FC<TextWithLinkProps> = ({ text }) => {
+const TextWithLinks: FC<TextWithLinkProps> = ({
+	text,
+	textVariant = "body2",
+}) => {
 	const emailRegex = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi;
 	const urlRegex = /\[([^\]]+?)\s+(https:\/\/[^\]]+)\]/gi;
 
@@ -19,7 +23,7 @@ const TextWithLinks: FC<TextWithLinkProps> = ({ text }) => {
 	);
 
 	return (
-		<p className="TextWithLink-root body2">
+		<p className={`TextWithLink-root whitespace-pre-line ${textVariant}`}>
 			{parts.map((part, index) => {
 				if (emailRegex.test(part)) {
 					return (
