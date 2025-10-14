@@ -58,9 +58,12 @@ export function AccessibilityContent({
 		viewMode,
 		setViewMode,
 	} = useAppStore();
-  
-	const { setAccessibilityModalOpen, setSimpleLanguageInformationModalOpen, setSignLanguageModalOpen } =
-		useModalStore();
+
+	const {
+		setAccessibilityModalOpen,
+		setSimpleLanguageInformationModalOpen,
+		setSignLanguageModalOpen,
+	} = useModalStore();
 
 	const handleSwitchChange = (optionId: string, checked: boolean) => {
 		switch (optionId) {
@@ -106,7 +109,7 @@ export function AccessibilityContent({
 							: () => {
 									if (option.id === "simpleLanguage") {
 										setSimpleLanguageInformationModalOpen(true);
-                  } else if (option.id === "signLanguage") {
+									} else if (option.id === "signLanguage") {
 										setSignLanguageModalOpen(true);
 									} else if (onItemClick) {
 										onItemClick("accessibility");
