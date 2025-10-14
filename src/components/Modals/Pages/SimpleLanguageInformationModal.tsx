@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 "use client";
 
 import TextBlock from "@/components/Content/TextBlock";
@@ -12,102 +13,102 @@ interface SimpleLanguageInformationModalProps {
 	onOpenChange: (open: boolean) => void;
 }
 
+interface ListProps {
+	title1?: string;
+	title2?: string;
+	content: string[];
+}
+
+function hasContent(value: unknown): value is { content: string[] } {
+	return (
+		typeof value === "object" &&
+		value !== null &&
+		"content" in value &&
+		Array.isArray((value as { content?: unknown }).content)
+	);
+}
+
+const RenderContent = ({
+	keyValue,
+	value,
+}: {
+	keyValue: string;
+	value: string | ListProps;
+}) => {
+	const originalInstitutions = useInstitutionStore(
+		(state) => state.originalInstitutions,
+	);
+	const institutionCount = originalInstitutions?.features?.length ?? 2.382;
+	return (
+		<div className={!value ? "mb-8" : ""}>
+			{keyValue === "title" && (
+				<DialogTitle className="display text-center md:text-left my-10">
+					{value as string}
+				</DialogTitle>
+			)}
+			{keyValue.startsWith("text") && (
+				<TextWithLinks
+					text={value as string}
+					textVariant={`body1 whitespace-pre-line ${keyValue.includes("Bold") ? "font-bold" : ""}`}
+				/>
+			)}
+			{keyValue.startsWith("subTitle") && (
+				<TextBlock titleAs="h2" title={value as string} className="my-8" />
+			)}
+			{keyValue.startsWith("list") && hasContent(value) && (
+				<>
+					{Object.entries(value).map(([innerKey, innerValue]) => (
+						<div key={innerKey}>
+							{innerKey.startsWith("title") && (
+								<TextWithLinks
+									text={innerValue as string}
+									textVariant={`body1 whitespace-pre-line ${innerKey.includes("Bold") ? "font-bold" : ""}`}
+								/>
+							)}
+						</div>
+					))}
+					<ul className="list-disc pl-5 body1 space-y-1 mt-1 mb-8">
+						{value.content.map((line, i) => (
+							<li key={i}>
+								{line.replace(
+									"{{count}}",
+									institutionCount.toLocaleString("de-DE"),
+								)}
+							</li>
+						))}
+					</ul>
+				</>
+			)}
+		</div>
+	);
+};
+
 export function SimpleLanguageInformationModal({
 	open,
 	onOpenChange,
 }: SimpleLanguageInformationModalProps) {
 	const { t } = useTranslation("content");
 
-	const originalInstitutions = useInstitutionStore(
-		(state) => state.originalInstitutions,
-	);
-
-	const institutionCount = originalInstitutions?.features?.length ?? 2.382;
-
 	const content = {
 		about: t("simpleLanguageInformation.about", {
 			returnObjects: true,
-		}) as string[],
+		}) as { [key: string]: string | ListProps },
 		infosAndServices: t("simpleLanguageInformation.infosAndServices", {
 			returnObjects: true,
-		}) as string[],
+		}) as { [key: string]: string | ListProps },
 	};
 
-	const RenderText = ({ text }: { text: string }) => {
-		const findFirstListEntry = text.indexOf("\n-");
-
-		const isVersionHeading = text.startsWith("##");
-
-		if (isVersionHeading)
-			return <TextBlock titleAs="h2" title={text.replace("##", "")} />;
-
-		if (findFirstListEntry >= 0) {
-			const listHeading = text.slice(0, findFirstListEntry);
-			const list = text.slice(findFirstListEntry, text.length);
-			const lines = list
-				.split("\n")
-				.map((line) => line.trim())
-				.filter((line) => !!line);
-
-			return (
-				<div>
-					<TextWithLinks
-						text={listHeading}
-						textVariant="body1 whitespace-pre-line"
-					/>
-					<ul className="list-disc pl-5 body1 space-y-1">
-						{lines.map((line, i) => (
-							<li key={i}>
-								{line
-									.replace(/^[-–•*]\s?/, "")
-									.replace(
-										"{{count}}",
-										institutionCount.toLocaleString("de-DE"),
-									)}
-							</li>
-						))}
-					</ul>
-				</div>
-			);
-		}
-
-		const isBoldText = text.match(/^#([^#]+)#([\s\S]*)$/);
-		if (!isBoldText)
-			return (
-				<TextWithLinks text={text} textVariant="body1 whitespace-pre-line" />
-			);
-		const [, bold, rest] = isBoldText;
-		return (
-			<div>
-				<TextWithLinks
-					text={bold}
-					textVariant="body1 whitespace-pre-line font-bold"
-				/>
-				<TextWithLinks text={rest} textVariant="body1 whitespace-pre-line" />
-			</div>
-		);
-	};
+	const { about, infosAndServices } = content;
 
 	const simpleLanguageInformationContent = (
-		<div className="space-y-10">
-			{Object.entries(content).map(([_, textArray]) => (
-				<>
-					{textArray.map((text, index) => {
-						if (!index)
-							return (
-								<DialogTitle
-									key={index}
-									className="display text-center md:text-left"
-								>
-									{text}
-								</DialogTitle>
-							);
-
-						return <RenderText key={index} text={text} />;
-					})}
-				</>
+		<>
+			{Object.entries(about).map(([key, value]) => (
+				<RenderContent key={key} keyValue={key} value={value} />
 			))}
-		</div>
+			{Object.entries(infosAndServices).map(([key, value]) => (
+				<RenderContent key={key} keyValue={key} value={value} />
+			))}
+		</>
 	);
 
 	return (
