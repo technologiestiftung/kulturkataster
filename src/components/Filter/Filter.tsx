@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 "use client";
 
 import ContentContainer from "@/components/Content/ContentContainer";
@@ -7,80 +8,29 @@ import { Button } from "@/components/ui/button";
 import EyeOff from "@/icons/eye-off.svg";
 import Eye from "@/icons/eye.svg";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
-import {
-	matchesDistrictFilter,
-	matchesSubcategoryFilter,
-} from "@/lib/utils/filterUtils";
-import { FilterState, InstitutionProperties } from "@/types";
-import { FC, useState } from "react";
+import { getSortedCategories } from "@/lib/utils/filterUtils";
+import { FC, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useFilterData } from "./hooks/useFilterData";
+import { Subcategory, FilterState } from "@/types";
+import { Loading } from "../ui/loading";
 
-// eslint-disable-next-line complexity
+// Main Filter Component
 const Filter: FC = () => {
-	const {
-		setFilters,
-		filters,
-		filterInstitutionsFrontend,
-		originalInstitutions,
-	} = useInstitutionStore();
+	const { setFilters, filters } = useInstitutionStore();
 	const { categoryGroups, districts, loading, error, retry } = useFilterData();
-	const { t } = useTranslation(["content", "common"]);
+	const { t, i18n } = useTranslation(["content", "common"]);
+	const { t: tEnum } = useTranslation(["enumMap"]);
 	const [openSections, setOpenSections] = useState<string[]>([]);
 
-	const isInstitutionFiltered = (
-		properties: InstitutionProperties,
-	): boolean => {
-		if (!filters) return false;
-
-		if (!matchesDistrictFilter(properties, filters.district_keys)) {
-			return false;
-		}
-
-		if (
-			!filters.include_closed &&
-			properties.utilization_status === "permanently_closed"
-		) {
-			return false;
-		}
-
-		return true;
-	};
-
-	const getCategoryCount = (categoryKey: string): number => {
-		if (!originalInstitutions?.features || !filters) return 0;
-
-		return originalInstitutions.features.filter((feature) => {
-			const properties = feature.properties as InstitutionProperties;
-			if (!properties) return false;
-
-			const matchesCategory = properties.categories?.some(
-				(cat: { key: string }) => cat.key === categoryKey,
-			);
-			if (!matchesCategory) return false;
-
-			return isInstitutionFiltered(properties);
-		}).length;
-	};
-
-	const getSubcategoryCount = (subcategoryKey: string): number => {
-		if (!originalInstitutions?.features || !filters) return 0;
-
-		return originalInstitutions.features.filter((feature) => {
-			const properties = feature.properties as InstitutionProperties;
-			if (!properties) return false;
-
-			if (!matchesSubcategoryFilter(properties, [subcategoryKey])) {
-				return false;
-			}
-
-			return isInstitutionFiltered(properties);
-		}).length;
-	};
+	const collator = useMemo(
+		() =>
+			new Intl.Collator(i18n.language, { numeric: true, sensitivity: "base" }),
+		[i18n.language],
+	);
 
 	const updateFilters = async (newFilters: FilterState) => {
 		setFilters(newFilters);
-		await filterInstitutionsFrontend(newFilters);
 	};
 
 	const toggleDistrict = (districtKey: string) => {
@@ -103,12 +53,12 @@ const Filter: FC = () => {
 		if (!categoryGroup) return;
 
 		const isCategorySelected = filters.category_keys.includes(categoryKey);
-		const selectedSubcategoriesInGroup = categoryGroup.subcategories.filter(
-			(sub) => filters.subcategory_keys.includes(sub.key),
+		const selectedSubcategoriesInGroup = categoryGroup.subcategory.filter(
+			(subcategory: Subcategory) =>
+				filters.subcategory_keys.includes(subcategory.key),
 		);
 		const allSubcategoriesSelected =
-			selectedSubcategoriesInGroup.length ===
-			categoryGroup.subcategories.length;
+			selectedSubcategoriesInGroup.length === categoryGroup.subcategory.length;
 
 		if (
 			!(isCategorySelected || allSubcategoriesSelected) &&
@@ -122,7 +72,10 @@ const Filter: FC = () => {
 				(c) => c !== categoryKey,
 			);
 			const newSubcategories = filters.subcategory_keys.filter(
-				(s) => !categoryGroup.subcategories.some((sub) => sub.key === s),
+				(s) =>
+					!categoryGroup.subcategory.some(
+						(subcategory: Subcategory) => subcategory.key === s,
+					),
 			);
 
 			updateFilters({
@@ -131,12 +84,15 @@ const Filter: FC = () => {
 				subcategory_keys: newSubcategories,
 			});
 		} else {
-			const subcategoryKeysToAdd = categoryGroup.subcategories.map(
-				(sub) => sub.key,
+			const subcategoryKeysToAdd = categoryGroup.subcategory.map(
+				(subcategory: Subcategory) => subcategory.key,
 			);
 			const newSubcategories = [
 				...filters.subcategory_keys.filter(
-					(s) => !categoryGroup.subcategories.some((sub) => sub.key === s),
+					(s) =>
+						!categoryGroup.subcategory.some(
+							(subcategory: Subcategory) => subcategory.key === s,
+						),
 				),
 				...subcategoryKeysToAdd,
 			];
@@ -157,7 +113,9 @@ const Filter: FC = () => {
 			: [...filters.subcategory_keys, subcategoryKey];
 
 		const parentCategory = categoryGroups.find((group) =>
-			group.subcategories.some((sub) => sub.key === subcategoryKey),
+			group.subcategory.some(
+				(subcategory: Subcategory) => subcategory.key === subcategoryKey,
+			),
 		);
 
 		let newCategories = filters.category_keys;
@@ -204,7 +162,11 @@ const Filter: FC = () => {
 
 	const setAllDistrictFilters = () => {
 		if (!filters) return;
-		const allDistrictKeys = districts.map((district) => district.key);
+		const allDistrictKeys = districts
+			.map((district) => district.key)
+			.filter((key): key is NonNullable<typeof key> => key !== null);
+		if (allDistrictKeys.length === 0) return;
+
 		updateFilters({
 			...filters,
 			district_keys: allDistrictKeys,
@@ -226,7 +188,7 @@ const Filter: FC = () => {
 		if (!filters) return;
 		const allCategoryKeys = categoryGroups.map((group) => group.key);
 		const allSubcategoryKeys = categoryGroups.flatMap((group) =>
-			group.subcategories.map((sub) => sub.key),
+			group.subcategory.map((sub) => sub.key),
 		);
 		updateFilters({
 			...filters,
@@ -248,13 +210,8 @@ const Filter: FC = () => {
 
 	if (loading) {
 		return (
-			<div className="Filter-root p-4 bg-background border-r border-gray-200 h-full overflow-y-auto">
-				<ContentContainer>
-					<div className="flex items-center gap-2 body2">
-						<div className="animate-spin rounded-full h-4 w-4 border-b-2"></div>
-						{t("filter.loading", { ns: "content" })}
-					</div>
-				</ContentContainer>
+			<div className="Filter-root h-full w-full p-4 flex justify-center items-center">
+				<Loading size="md" />
 			</div>
 		);
 	}
@@ -340,20 +297,20 @@ const Filter: FC = () => {
 					</button>
 				</div>
 				<div className="space-y-2">
-					{categoryGroups.map((group) => (
-						<CategorySection
-							key={group.key}
-							group={group}
-							selectedCategories={filters?.category_keys || []}
-							selectedSubcategories={filters?.subcategory_keys || []}
-							isOpen={openSections.includes(group.key)}
-							onToggle={() => toggleSection(group.key)}
-							onCategoryChange={toggleCategory}
-							onSubcategoryChange={toggleSubcategory}
-							getCategoryCount={getCategoryCount}
-							getSubcategoryCount={getSubcategoryCount}
-						/>
-					))}
+					{getSortedCategories(categoryGroups, collator, tEnum).map(
+						(category) => (
+							<CategorySection
+								key={category.key}
+								group={category}
+								selectedCategories={filters?.category_keys || []}
+								selectedSubcategories={filters?.subcategory_keys || []}
+								isOpen={openSections.includes(category.key)}
+								onToggle={() => toggleSection(category.key)}
+								onCategoryChange={toggleCategory}
+								onSubcategoryChange={toggleSubcategory}
+							/>
+						),
+					)}
 				</div>
 			</ContentContainer>
 		</div>
