@@ -5,8 +5,10 @@ import Map from "@/components/Map/Map";
 import { useAppStore } from "@/lib/store/appStore";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 export default function Home() {
+	const { t } = useTranslation("common");
 	const viewMode = useAppStore((state) => state.viewMode);
 	const initializeInstitutions = useInstitutionStore(
 		(state) => state.initializeInstitutions,
@@ -25,16 +27,18 @@ export default function Home() {
 
 	return (
 		<div className="items-center flex-1 justify-items-center h-full relative w-full">
-			<div
+			<section
 				className={`h-full w-full ${viewMode === "map" ? "block" : "hidden"}`}
+				aria-label={t("map.title")}
 			>
 				<Map />
-			</div>
-			<div
+			</section>
+			<section
 				className={`h-full w-full ${viewMode === "list" ? "block" : "hidden"}`}
+				aria-label={t("listView.title")}
 			>
 				<ListView />
-			</div>
+			</section>
 		</div>
 	);
 }
