@@ -53,7 +53,7 @@ const RenderContent = ({
 	t: (key: string, options?: Record<string, unknown>) => string;
 }) => {
 	const originalInstitutions = useInstitutionStore(
-		(state) => state.originalInstitutions,
+		(state) => state.allInstitutions,
 	);
 	const institutionCount = originalInstitutions?.features?.length ?? 2.382;
 	let lineBreak = false;
