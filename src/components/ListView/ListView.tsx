@@ -130,12 +130,8 @@ const ListView: FC = () => {
 	}
 
 	return (
-		<div className="ListView-root w-full h-full justify-center flex bg-neutral-5">
-			<div
-				ref={containerRef}
-				className="h-full overflow-auto max-w-5xl
-"
-			>
+		<div className="ListView-root w-full h-full flex flex-col items-center bg-neutral-5">
+			<div ref={containerRef} className="h-full overflow-auto max-w-5xl ">
 				<div className="p-4 mt-20">
 					<div className="space-y-6 flex flex-col">
 						<div className="space-y-2">
@@ -227,14 +223,14 @@ const ListView: FC = () => {
 								</div>
 							)}
 						</div>
-						<ModalFooter />
 					</div>
 				</div>
 			</div>
+			<ModalFooter />
 
 			{/* Floating scroll-to-top button */}
 			{showScrollToTop && (
-				<div className="fixed block z-[50] bottom-5 right-0 p-4 overflow-hidden">
+				<div className="fixed block z-[50] bottom-20 right-0 p-4 overflow-hidden">
 					<Tooltip>
 						<TooltipTrigger asChild>
 							<Button
