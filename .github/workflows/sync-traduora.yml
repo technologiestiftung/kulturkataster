@@ -1,0 +1,147 @@
+name: Sync Traduora Translations
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+    paths:
+      - 'src/lib/i18n/translations/**'
+      - 'scripts/sync-traduora.ts'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Run in dry-run mode (no changes will be made)'
+        required: false
+        default: 'false'
+        type: boolean
+      namespace:
+        description: 'Sync only specific namespace (optional)'
+        required: false
+        type: string
+
+jobs:
+  sync-translations:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Traduora sync (dry-run)
+        if: github.event_name == 'push'
+        env:
+          TRADUORA_API_URL: ${{ secrets.TRADUORA_API_URL }}
+          TRADUORA_CLIENT_ID: ${{ secrets.TRADUORA_CLIENT_ID }}
+          TRADUORA_CLIENT_SECRET: ${{ secrets.TRADUORA_CLIENT_SECRET }}
+          TRADUORA_PROJECT_ID: ${{ secrets.TRADUORA_PROJECT_ID }}
+        run: |
+          echo "🔍 Running sync in dry-run mode to check for differences..."
+          if [ -n "${{ github.event.inputs.namespace }}" ]; then
+            npm run sync-traduora:dry -- --namespace=${{ github.event.inputs.namespace }}
+          else
+            npm run sync-traduora:dry
+          fi
+
+      - name: Run Traduora sync (actual)
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          TRADUORA_API_URL: ${{ secrets.TRADUORA_API_URL }}
+          TRADUORA_CLIENT_ID: ${{ secrets.TRADUORA_CLIENT_ID }}
+          TRADUORA_CLIENT_SECRET: ${{ secrets.TRADUORA_CLIENT_SECRET }}
+          TRADUORA_PROJECT_ID: ${{ secrets.TRADUORA_PROJECT_ID }}
+        run: |
+          if [ "${{ github.event.inputs.dry_run }}" == "true" ]; then
+            echo "🔍 Running in dry-run mode..."
+            if [ -n "${{ github.event.inputs.namespace }}" ]; then
+              npm run sync-traduora:dry -- --namespace=${{ github.event.inputs.namespace }}
+            else
+              npm run sync-traduora:dry
+            fi
+          else
+            echo "🚀 Running actual sync..."
+            if [ -n "${{ github.event.inputs.namespace }}" ]; then
+              npm run sync-traduora -- --namespace=${{ github.event.inputs.namespace }}
+            else
+              npm run sync-traduora
+            fi
+          fi
+
+      - name: Check for changes
+        id: check_changes
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.dry_run != 'true'
+        run: |
+          if git diff --quiet; then
+            echo "changes=false" >> $GITHUB_OUTPUT
+            echo "No changes detected"
+          else
+            echo "changes=true" >> $GITHUB_OUTPUT
+            echo "Changes detected"
+            git status
+          fi
+
+      - name: Create Pull Request
+        if: steps.check_changes.outputs.changes == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: |
+            feat: sync translations with Traduora
+            
+            🤖 Generated with [Claude Code](https://claude.ai/code)
+            
+            Co-Authored-By: Claude <noreply@anthropic.com>
+          title: 'feat: sync translations with Traduora'
+          body: |
+            ## Summary
+            - Synced translations between local files and Traduora
+            - Updated translation keys and values to maintain consistency
+            
+            ## Changes
+            This PR contains automatic translation synchronization from Traduora. The changes include:
+            - Added new translation keys from Traduora
+            - Updated existing translations with Traduora values
+            - Resolved conflicts between local and remote translations
+            
+            ## Test plan
+            - [ ] Review translation changes for accuracy
+            - [ ] Test application with updated translations
+            - [ ] Verify all namespaces are properly synced
+            
+            🤖 Generated with [Claude Code](https://claude.ai/code)
+          branch: sync-traduora/automated-${{ github.run_number }}
+          base: ${{ github.ref_name }}
+          draft: false
+
+      - name: Post summary
+        if: always()
+        run: |
+          echo "## Traduora Sync Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Trigger**: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "- **Dry Run**: ${{ github.event.inputs.dry_run }}" >> $GITHUB_STEP_SUMMARY
+            if [ -n "${{ github.event.inputs.namespace }}" ]; then
+              echo "- **Namespace**: ${{ github.event.inputs.namespace }}" >> $GITHUB_STEP_SUMMARY
+            fi
+          fi
+          if [ "${{ steps.check_changes.outputs.changes }}" == "true" ]; then
+            echo "- **Result**: ✅ Changes detected and PR created" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ github.event_name }}" == "workflow_dispatch" ] && [ "${{ github.event.inputs.dry_run }}" != "true" ]; then
+            echo "- **Result**: ℹ️ No changes needed" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- **Result**: 🔍 Dry run completed" >> $GITHUB_STEP_SUMMARY
+          fi
