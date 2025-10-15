@@ -4,18 +4,7 @@
 import { createClient } from "@/lib/supabase/server";
 import type { Category, District, FilterState } from "@/types";
 import type { FeatureCollection } from "geojson";
-
-// Error handling
-export class ApiError extends Error {
-	constructor(
-		message: string,
-		public code?: string,
-		public details?: unknown,
-	) {
-		super(message);
-		this.name = "ApiError";
-	}
-}
+import { ApiError } from "../utils/errorUtils";
 
 // Utility functions
 function handleError(error: any, context: string): never {
