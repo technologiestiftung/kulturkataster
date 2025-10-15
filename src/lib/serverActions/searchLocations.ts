@@ -1,6 +1,6 @@
 "use server";
 
-import { searchInstitutions } from "@/lib/supabase/api";
+import { searchInstitutions } from "@/lib/serverActions/institutions";
 import { Institution, GeoFeature, SearchResult } from "@/types/institution";
 
 interface SearchLocationsResult {
@@ -54,7 +54,7 @@ async function searchAddresses(query: string): Promise<GeoFeature[]> {
 	}
 
 	try {
-		const bbox = process.env.NEXT_PUBLIC_MAP_BOUNDING_BOX;
+		const bbox = process.env.MAP_BOUNDING_BOX;
 		const apiKey = process.env.MAPTILER_API_KEY;
 		const url = `https://api.maptiler.com/geocoding/${encodeURIComponent(
 			query,

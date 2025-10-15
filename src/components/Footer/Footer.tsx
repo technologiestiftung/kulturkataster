@@ -4,18 +4,6 @@ import { FC } from "react";
 import { useTranslation } from "react-i18next";
 import packageInfo from "../../../package.json";
 
-const getBranchIndicator = () => {
-	if (typeof window === "undefined") return "";
-
-	if (process.env.NODE_ENV === "development") {
-		return "-local";
-	}
-
-	const branch = process.env.NEXT_PUBLIC_BRANCH || "main";
-	if (branch === "main") return "";
-	return `-${branch}`;
-};
-
 const footerItems = [
 	{ id: "about" },
 	{ id: "imprint" },
@@ -48,10 +36,7 @@ const Footer: FC = () => {
 							</button>
 						</li>
 					))}
-					<li className="body2 font-normal">
-						v{packageInfo.version}
-						{getBranchIndicator()}
-					</li>
+					<li className="body2 font-normal">v{packageInfo.version}</li>
 				</ul>
 			</nav>
 		</footer>

@@ -13,7 +13,6 @@ import {
 } from "@/components/Institution";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useMapStore } from "@/lib/store/mapStore";
-import { getMatchingSubcategories } from "@/lib/utils/categoryUtils";
 import { getCategoryIconComponent } from "@/lib/utils/iconUtils";
 import {
 	parseLatLongCoordinates,
@@ -57,11 +56,6 @@ function InstitutionHeader({
 				<section className="px-4">
 					{institutionData.categories.map((category: Category) => {
 						const IconComponent = getCategoryIconComponent(category.key);
-						const matchingSubcategories = getMatchingSubcategories(
-							category,
-							institutionData.subcategories || [],
-						);
-
 						return (
 							<div key={category.id} className="mb-2">
 								<div className="flex items-center gap-2 h-6">
@@ -72,14 +66,16 @@ function InstitutionHeader({
 										{tEnum(`category.${category.key}`)}
 									</p>
 								</div>
-								{matchingSubcategories.length > 0 && (
+								{institutionData.subcategories?.length > 0 && (
 									<div className="body2 pl-8">
-										{matchingSubcategories.map((subcategory, index) => (
-											<span key={subcategory.id}>
-												{index > 0 && ", "}
-												{tEnum(`subcategory.${subcategory.key}`)}
-											</span>
-										))}
+										{institutionData.subcategories
+											.filter((sub) => sub.category_id === category.id)
+											.map((subcategory, index) => (
+												<span key={subcategory.id}>
+													{index > 0 && ", "}
+													{tEnum(`subcategory.${subcategory.key}`)}
+												</span>
+											))}
 									</div>
 								)}
 							</div>
