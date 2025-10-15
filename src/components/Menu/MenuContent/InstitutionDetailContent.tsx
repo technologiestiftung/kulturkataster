@@ -261,11 +261,8 @@ export function InstitutionDetailContent() {
 	return (
 		<section
 			className="p-2 h-full w-full"
-			role="region"
 			aria-labelledby="institution-title"
 			aria-live="polite"
-			tabIndex={0}
-			autoFocus
 		>
 			<InstitutionCard
 				institutionData={institutionData}

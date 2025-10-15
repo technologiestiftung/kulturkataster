@@ -55,7 +55,9 @@ export function VideoWithLoader({ src }: { src: string }) {
 				className={`w-full h-full object-cover transition-opacity duration-300 ${
 					isLoaded ? "opacity-100" : "opacity-0"
 				}`}
-			/>
+			>
+				<track kind="captions" label="Sign language video" default />
+			</video>
 		</div>
 	);
 }
