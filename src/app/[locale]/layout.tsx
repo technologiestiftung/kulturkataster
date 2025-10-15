@@ -14,10 +14,10 @@ import Script from "next/script";
 import "./globals.css";
 
 // Initialize axe-core for accessibility testing in development
-if (process.env.NODE_ENV !== 'production') {
-	import('react').then((React) => {
-		import('react-dom').then((ReactDOM) => {
-			import('@axe-core/react').then((axe) => {
+if (process.env.NODE_ENV !== "production") {
+	import("react").then((React) => {
+		import("react-dom").then((ReactDOM) => {
+			import("@axe-core/react").then((axe) => {
 				axe.default(React, ReactDOM, 1000);
 			});
 		});
