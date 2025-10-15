@@ -119,7 +119,8 @@
 					"answer": "In der Version können wir Ihnen leider keine eigenständige Verwaltung Ihrer Daten bieten. Wenn Sie Ihren Ort löschen lassen möchten, bitten wir Sie darum, unsere Redaktion zu kontaktieren und wir werden Ihren Eintrag schnellstmöglich löschen. Bitte schreiben Sie eine E-Mail an: info@kulturkataster.berlin"
 				}
 			]
-		}
+		},
+		"simpleLanguageDirect": "Den Bereich „Infos & Service“ in leichter Sprache finden Sie <link />."
 	},
 	"signLanguageModal": {
 		"title": "Gebärdensprache (DGS)",
@@ -311,7 +312,8 @@
 					"Rechtliche Beratung: Kanzlei Laaser"
 				]
 			}
-		}
+		},
+		"simpleLanguageDirect": "Den Bereich „Über das Projekt“ in leichter Sprache finden Sie <link />."
 	},
 	"simpleLanguageInformation": {
 		"about": {
@@ -857,7 +859,9 @@
 				"text": "hier.",
 				"url": "https://www.berlin.de/lb/digitale-barrierefreiheit/aufgaben/durchsetzungsverfahren/durchsetzungsverfahren-1305830.php"
 			}
-		}
+		},
+		"simpleLanguageDirect": "Erläuterungen in Leichter Sprache finden Sie <link />.",
+		"signLanguageDirect": "Deutscher Gebärdensprache (DGS) finden Sie <link />."
 	},
 	"filter": {
 		"title": "Filter",
