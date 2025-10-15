@@ -67,56 +67,58 @@ export function MobileMenuModal({ open, onOpenChange }: MobileMenuModalProps) {
 						<Close className="w-6 h-6" />
 					</button>
 				</DialogHeader>
-				<div className="flex flex-col justify-between flex-1">
-					<div className="flex-1 flex flex-col gap-4 p-4 overflow-auto mb-4">
-						<SubMenuOption
-							key="map"
-							icon={MapIcon}
-							titleKey="map.title"
-							onClick={() => {
-								onOpenChange(false);
-								setViewMode("map");
-							}}
-						/>
-						<SubMenuOption
-							key="listView"
-							icon={ListIcon}
-							titleKey="listView.title"
-							onClick={() => {
-								onOpenChange(false);
-								setViewMode("list");
-							}}
-						/>
-						<SubMenuOption
-							key="information"
-							icon={InfoCircle}
-							titleKey="information.title"
-							onClick={handleWelcomeModalOpen}
-						/>
-						<div className="space-y-4 flex flex-col">
-							<span className="body2">{t("accessibility.title")}</span>
-							<div className="">
-								<AccessibilityContent />
+				<div className="overflow-scroll">
+					<div className="flex flex-col justify-between flex-1">
+						<div className="flex-1 flex flex-col gap-4 p-4 overflow-auto mb-4">
+							<SubMenuOption
+								key="map"
+								icon={MapIcon}
+								titleKey="map.title"
+								onClick={() => {
+									onOpenChange(false);
+									setViewMode("map");
+								}}
+							/>
+							<SubMenuOption
+								key="listView"
+								icon={ListIcon}
+								titleKey="listView.title"
+								onClick={() => {
+									onOpenChange(false);
+									setViewMode("list");
+								}}
+							/>
+							<SubMenuOption
+								key="information"
+								icon={InfoCircle}
+								titleKey="information.title"
+								onClick={handleWelcomeModalOpen}
+							/>
+							<div className="space-y-4 flex flex-col">
+								<span className="body2">{t("accessibility.title")}</span>
+								<div className="">
+									<AccessibilityContent />
+								</div>
 							</div>
-						</div>
 
-						<div className="space-y-4 mt-auto">
-							<div className="flex flex-col gap-4">
-								{footerItems.map((item) => (
-									<button
-										key={item.id}
-										onClick={() => handleFooterClick(item.id)}
-										className="flex items-center justify-between text-left text-neutral-80"
-									>
-										<span className="body2">{t(`footer.${item.id}`)}</span>
-									</button>
-								))}
+							<div className="space-y-4 mt-auto">
+								<div className="flex flex-col gap-4">
+									{footerItems.map((item) => (
+										<button
+											key={item.id}
+											onClick={() => handleFooterClick(item.id)}
+											className="flex items-center justify-between text-left text-neutral-80"
+										>
+											<span className="body2">{t(`footer.${item.id}`)}</span>
+										</button>
+									))}
+								</div>
 							</div>
 						</div>
-					</div>
-					<div className="flex gap-4 flex-0 bg-neutral-10 p-4 justify-between items-center">
-						<p className="body2">{t("footer.projectBy")}</p>
-						<KRBLogo className="w-12 h-auto" />
+						<div className="flex gap-4 flex-0 bg-neutral-10 p-4 justify-between items-center">
+							<p className="body2">{t("footer.projectBy")}</p>
+							<KRBLogo className="w-12 h-auto" />
+						</div>
 					</div>
 				</div>
 			</DialogContent>
