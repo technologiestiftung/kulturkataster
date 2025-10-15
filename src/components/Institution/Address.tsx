@@ -25,8 +25,9 @@ export function Address({ institutionData }: InstitutionAddressProps) {
 						</p>
 						<div className="flex flex-wrap space-x-1">
 							<p>{institutionData.zip_code}</p>
-							{institutionData.district.key && (
+							{institutionData?.city?.name && institutionData.district.key && (
 								<p>
+									{institutionData.city.name}-
 									{tEnum(`berlin_district.${institutionData.district.key}`)}
 								</p>
 							)}
