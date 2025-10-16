@@ -71,7 +71,7 @@ function DialogContent({
 			case "fullScreenNoBottom":
 				return "fixed z-[70] top-0 md:top-[5rem] left-1/2 w-full max-w-314 h-full md:h-[calc(100%-5rem)] -translate-x-1/2 overflow-auto md:rounded-t-lg border";
 			case "medium":
-				return "fixed z-[70] top-1/2 left-1/2 w-full max-w-314 h-full md:h-auto md:max-h-[calc(100%-5rem)]  -translate-x-1/2 -translate-y-1/2 overflow-auto md:rounded-lg border";
+				return "fixed z-[70] top-0 md:top-1/2 left-1/2 w-full max-w-314 h-full md:max-h-[calc(100%-5rem)] -translate-x-1/2 md:-translate-y-1/2 md:rounded-lg border flex flex-col";
 			case "mobileMenu":
 				return "fixed z-[70] h-full inset-0 w-full border-0 p-0";
 			case "default":
