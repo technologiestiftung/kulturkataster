@@ -64,6 +64,8 @@ export const useModalStore = create<ModalStoreState>((set) => ({
 				accessibilityModalOpen: false,
 				informationModalOpen: false,
 				downloadModalOpen: false,
+				simpleLanguageInformationModalOpen: false,
+				signLanguageModalOpen: false,
 			};
 
 			switch (modalName) {
@@ -79,8 +81,15 @@ export const useModalStore = create<ModalStoreState>((set) => ({
 				case "accessibility":
 					newState.accessibilityModalOpen = true;
 					break;
-				case "information":
+				case "signLanguageInformation":
+				case "signLanguageInformationShort":
+				case "signLanguageInformationLong":
+					newState.signLanguageModalOpen = true;
+					break;
 				case "simpleLanguageInformation":
+					newState.simpleLanguageInformationModalOpen = true;
+					break;
+				case "information":
 				case "info":
 					newState.informationModalOpen = true;
 					break;
@@ -104,6 +113,8 @@ export const useModalStore = create<ModalStoreState>((set) => ({
 			informationModalOpen: false,
 			downloadModalOpen: false,
 			mobileMenuModalOpen: false,
+			simpleLanguageInformationModalOpen: false,
+			signLanguageModalOpen: false,
 		}),
 
 	handleFooterItemClick: (id: string) => {

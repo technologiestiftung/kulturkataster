@@ -144,6 +144,10 @@
 		"imprint": "Impressum",
 		"privacy": "Datenschutz",
 		"accessibility": "Barrierefreiheit",
+		"simpleLanguageInformation": "Leichte Sprache",
+		"signLanguageInformation": "Deutsche Gebärdensprache",
+		"signLanguageInformationShort": "DGS",
+		"signLanguageInformationLong": "Deutsche Gebärdensprache (DGS)",
 		"credit": {
 			"text": "© 2025 - Ein Projekt der Kulturraum Berlin gGmbH, gefördert durch die Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt, mit der technischen Umsetzung durch die Technologiestiftung Berlin."
 		}
