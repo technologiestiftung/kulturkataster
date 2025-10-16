@@ -3,6 +3,7 @@ import { useModalStore } from "@/lib/store/modalStore";
 import { FC } from "react";
 import { useTranslation } from "react-i18next";
 import packageInfo from "../../../package.json";
+import { useAppStore } from "@/lib/store/appStore";
 
 const footerItems = [
 	{ id: "about" },
@@ -16,6 +17,9 @@ const footerItems = [
 const Footer: FC = () => {
 	const { t } = useTranslation("common");
 	const { handleFooterItemClick } = useModalStore();
+	const viewMode = useAppStore((state) => state.viewMode);
+
+	if (viewMode === "list") return <></>;
 
 	return (
 		<footer
