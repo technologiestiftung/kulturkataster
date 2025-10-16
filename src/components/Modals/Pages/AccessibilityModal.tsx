@@ -48,17 +48,15 @@ export function AccessibilityModal({
 						ns="content"
 						components={{
 							link: (
-								<a
-									href="#"
-									rel="noopener noreferrer"
-									className="text-primary hover:text-primary-dark underline"
-									onClick={(e) => {
-										e.preventDefault();
+								<button
+									type="button"
+									className="text-primary hover:text-primary-dark underline bg-transparent border-none p-0 cursor-pointer"
+									onClick={() => {
 										handleFooterItemClick("simpleLanguageInformation");
 									}}
 								>
 									hier
-								</a>
+								</button>
 							),
 						}}
 					/>
@@ -69,17 +67,15 @@ export function AccessibilityModal({
 						ns="content"
 						components={{
 							link: (
-								<a
-									href="#"
-									rel="noopener noreferrer"
-									className="text-primary hover:text-primary-dark underline"
-									onClick={(e) => {
-										e.preventDefault();
+								<button
+									type="button"
+									className="text-primary hover:text-primary-dark underline bg-transparent border-none p-0 cursor-pointer"
+									onClick={() => {
 										handleFooterItemClick("signLanguageInformation");
 									}}
 								>
 									hier
-								</a>
+								</button>
 							),
 						}}
 					/>
