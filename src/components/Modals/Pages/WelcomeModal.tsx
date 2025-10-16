@@ -9,6 +9,7 @@ import KRBLogo from "@/logos/KRB.svg";
 import KukaLargeLogo from "@/logos/kuka-large.svg";
 import SenateLogo from "@/logos/senate.svg";
 import { useTranslation } from "react-i18next";
+import { ModalFooter } from "../ModalFooter";
 
 interface WelcomeModalProps {
 	open: boolean;
@@ -28,6 +29,17 @@ export function WelcomeModal({ open, onOpenChange }: WelcomeModalProps) {
 		onOpenChange(false);
 		openModal("information");
 	};
+
+	const handleFooterItemClickWelcomeModal = (id: string) => {
+		onOpenChange(false);
+		openModal(id);
+	};
+
+	const footerItems = [
+		{ id: "accessibility" },
+		{ id: "simpleLanguageInformation" },
+		{ id: "signLanguageInformationLong" },
+	] as const;
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
@@ -92,10 +104,10 @@ export function WelcomeModal({ open, onOpenChange }: WelcomeModalProps) {
 									</Button>
 								</div>
 							</div>
-							<Separator className="w-full mt-20 mb-6" />
-							<div className="flex space-x-2 md:mb-12 space-y-12 md:space-y-0 flex-col md:flex-row w-full justify-center">
+							<Separator className="w-full mt-20 mb-6 hidden md:block" />
+							<div className="hidden md:flex space-x-2 md:mb-12 space-y-12 md:space-y-0 flex-col md:flex-row w-full justify-center">
 								<div className="w-full md:w-1/2">
-									<p className="body2 ">
+									<p className="body2">
 										{t("footer.credit.text", { ns: "common" })}
 									</p>
 								</div>
@@ -106,6 +118,28 @@ export function WelcomeModal({ open, onOpenChange }: WelcomeModalProps) {
 							</div>
 						</div>
 					</div>
+				</div>
+				<div className="hidden md:block">
+					<nav
+						aria-label={t("footer.navigation")}
+						className="bg-neutral-5 py-2 px-4 w-full"
+					>
+						<ul className="flex gap-4 body2 font-bold justify-end">
+							{footerItems.map((item) => (
+								<li key={item.id}>
+									<button
+										className="body2 font-bold"
+										onClick={() => handleFooterItemClickWelcomeModal(item.id)}
+									>
+										{t(`footer.${item.id}`)}
+									</button>
+								</li>
+							))}
+						</ul>
+					</nav>
+				</div>
+				<div className="md:hidden">
+					<ModalFooter />
 				</div>
 			</DialogContent>
 		</Dialog>

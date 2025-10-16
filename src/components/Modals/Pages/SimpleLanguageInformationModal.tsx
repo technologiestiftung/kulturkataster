@@ -134,6 +134,7 @@ export function SimpleLanguageInformationModal({
 					t={t}
 				/>
 			))}
+			<div id="infosAndServices" />
 			<DialogTitle className="display text-center md:text-left my-10">
 				{infosAndServices.title as string}
 			</DialogTitle>
