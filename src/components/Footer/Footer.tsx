@@ -9,6 +9,8 @@ const footerItems = [
 	{ id: "imprint" },
 	{ id: "privacy" },
 	{ id: "accessibility" },
+	{ id: "simpleLanguageInformation" },
+	{ id: "signLanguageInformationShort" },
 ] as const;
 
 const Footer: FC = () => {
