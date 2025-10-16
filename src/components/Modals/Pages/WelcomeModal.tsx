@@ -46,7 +46,10 @@ export function WelcomeModal({ open, onOpenChange }: WelcomeModalProps) {
 			<DialogContent variant="medium" className="flex ">
 				<div className="flex flex-col md:flex-row gap-8 py-12 md:pt-32 md:pb-12 px-6">
 					<div className="md:w-1/4 flex justify-center align-start h-full">
-						<KukaLargeLogo className="h-auto w-32 md:w-42" />
+						<KukaLargeLogo
+							title="Kulturkataster Berlin, Logo"
+							className="h-auto w-32 md:w-42"
+						/>
 					</div>
 					<div className="md:w-3/4 flex flex-col items-start space-y-4 md:pr-32 ">
 						<div className="flex flex-col space-y-2">
@@ -112,8 +115,14 @@ export function WelcomeModal({ open, onOpenChange }: WelcomeModalProps) {
 									</p>
 								</div>
 								<div className="flex md:w-1/2 md:justify-end justify-around gap-2 space-x-4 md:mx-4">
-									<KRBLogo className="w-20 md:w-24 h-auto bg-white" />
-									<SenateLogo className="w-32 md:w-42 h-auto bg-white" />
+									<KRBLogo
+										title="Kulturraum Berlin gGmbH, Logo"
+										className="w-20 md:w-24 h-auto bg-white"
+									/>
+									<SenateLogo
+										title="Logo der Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt, Logo"
+										className="w-32 md:w-42 h-auto bg-white"
+									/>
 								</div>
 							</div>
 						</div>

@@ -318,7 +318,10 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 						<SidebarMenu className="my-2">
 							<SidebarMenuItem>
 								<button onClick={handleLogoClick} aria-label={t("kukaLogo")}>
-									<KukaSmallLogo className="size-14 cursor-pointer hover:opacity-80 transition-opacity" />
+									<KukaSmallLogo
+										title="Kulturkataster Berlin, Logo"
+										className="size-14 cursor-pointer hover:opacity-80 transition-opacity"
+									/>
 								</button>
 							</SidebarMenuItem>
 						</SidebarMenu>
@@ -464,7 +467,10 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 					className="flex flex-col items-center gap-1 p-2"
 					aria-label={t("kukaLogo")}
 				>
-					<KukaSmallLogo className="size-14" />
+					<KukaSmallLogo
+						title="Kulturkataster Berlin, Logo"
+						className="size-14"
+					/>
 				</button>
 			</div>
 

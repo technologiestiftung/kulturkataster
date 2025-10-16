@@ -29,10 +29,16 @@ export function ModalFooter() {
 
 				<div className="w-full flex flex-col md:flex-row md:items-center md:justify-between">
 					<div className="w-4/11 hidden md:flex items-center justify-center">
-						<KukaLargeLogo className="h-auto w-36" />
+						<KukaLargeLogo
+							title="Kulturkataster Berlin, Logo"
+							className="h-auto w-36"
+						/>
 					</div>
 					<div className="block mb-8 md:hidden">
-						<KukaSmallLogo className="h-auto w-16" />
+						<KukaSmallLogo
+							title="Kulturkataster Berlin, Logo"
+							className="h-auto w-16"
+						/>
 					</div>
 					<div className="w-full md:w-7/11 flex justify-center flex-col text-left">
 						<h2>{t("footer.title")}</h2>
@@ -83,8 +89,14 @@ export function ModalFooter() {
 						</p>
 					</div>
 					<div className="flex md:w-1/2 md:justify-end justify-around gap-2 space-x-4">
-						<KRBLogo className="w-20 md:w-24 h-auto bg-white" />
-						<SenateLogo className="w-32 md:w-42 h-auto bg-white" />
+						<KRBLogo
+							title="Kulturraum Berlin gGmbH, Logo"
+							className="w-20 md:w-24 h-auto bg-white"
+						/>
+						<SenateLogo
+							title="Logo der Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt, Logo"
+							className="w-32 md:w-42 h-auto bg-white"
+						/>
 					</div>
 				</div>
 			</div>

@@ -58,7 +58,10 @@ export function MobileMenuModal({ open, onOpenChange }: MobileMenuModalProps) {
 			>
 				<DialogHeader className="flex-row items-center justify-between p-4 space-y-0">
 					<DialogTitle className="sr-only">{t("mobileMenu.title")}</DialogTitle>
-					<KukaSmallLogo className="size-14 cursor-pointer hover:opacity-80 transition-opacity" />
+					<KukaSmallLogo
+						title="Kulturkataster Berlin, Logo"
+						className="size-14 cursor-pointer hover:opacity-80 transition-opacity"
+					/>
 					<button
 						onClick={() => onOpenChange(false)}
 						className="flex items-center justify-center w-14 h-14 rounded-full bg-muted hover:bg-muted/80 transition-colors"
@@ -117,7 +120,10 @@ export function MobileMenuModal({ open, onOpenChange }: MobileMenuModalProps) {
 						</div>
 						<div className="flex gap-4 flex-0 bg-neutral-10 p-4 justify-between items-center">
 							<p className="body2">{t("footer.projectBy")}</p>
-							<KRBLogo className="w-12 h-auto" />
+							<KRBLogo
+								title="Kulturraum Berlin gGmbH, Logo"
+								className="w-12 h-auto"
+							/>
 						</div>
 					</div>
 				</div>
