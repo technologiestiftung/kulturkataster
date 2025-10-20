@@ -95,7 +95,7 @@ export function AboutModal({ open, onOpenChange }: AboutModalProps) {
 										handleFooterItemClick("simpleLanguageInformation");
 									}}
 								>
-									hier
+									{t("here")}
 								</button>
 							),
 						}}

@@ -23,6 +23,8 @@ const buttonVariants = cva(
 				secondary:
 					"bg-secondary text-secondary-foreground hover:bg-secondary/80",
 				ghost: "hover:bg-accent hover:text-accent-foreground",
+				"menu-icon":
+					" z-10 flex items-center justify-center [&_svg]:size-6 rounded-full transition-colors duration-300 cursor-pointer ",
 				link: "text-primary underline-offset-4 hover:underline",
 				"map-icon":
 					"rounded-full shadow-md bg-background hover:bg-accent [&_svg]:size-6",
