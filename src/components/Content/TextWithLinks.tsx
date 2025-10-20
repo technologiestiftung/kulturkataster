@@ -23,7 +23,7 @@ const TextWithLinks: FC<TextWithLinkProps> = ({
 	);
 
 	return (
-		<p className={`TextWithLink-root whitespace-pre-line ${textVariant}`}>
+		<span className={`TextWithLink-root whitespace-pre-line ${textVariant}`}>
 			{parts.map((part, index) => {
 				if (emailRegex.test(part)) {
 					return (
@@ -44,6 +44,7 @@ const TextWithLinks: FC<TextWithLinkProps> = ({
 							<a
 								key={index}
 								href={url}
+								tabIndex={0}
 								target="_blank"
 								rel="noopener noreferrer"
 								className="text-primary hover:text-primary-dark underline"
@@ -55,7 +56,7 @@ const TextWithLinks: FC<TextWithLinkProps> = ({
 				}
 				return <React.Fragment key={index}>{part}</React.Fragment>;
 			})}
-		</p>
+		</span>
 	);
 };
 
