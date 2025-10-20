@@ -76,28 +76,37 @@ export function SignLanguageModal({
 		<>
 			<div className="space-y-10">
 				<p>{t("signLanguageModal.description")}</p>
-				{content.map((contentItem, contentItemIndex) => (
-					<div className="space-y-4" key={contentItemIndex}>
-						<TextBlock titleAs="h2" title={contentItem.title} />
-						{contentItem.videos.map(
-							(contentItemVideo, contentItemVideoIndex) => (
-								<div className="space-y-2" key={contentItemVideoIndex}>
-									<TextWithLinks
-										text={contentItemVideo.title}
-										textVariant="body1 font-bold"
-									/>
-									<VideoWithLoader src={contentItemVideo.src} />
-									{contentItemVideo.sub && (
+
+				{content.map(
+					(
+						contentItem: SignLanguageInformationItem,
+						contentItemIndex: number,
+					) => (
+						<div className="space-y-4" key={contentItemIndex}>
+							<TextBlock titleAs="h2" title={contentItem.title} />
+							{contentItem.videos.map(
+								(
+									contentItemVideo: SignLanguageVideoItem,
+									contentItemVideoIndex: number,
+								) => (
+									<div className="space-y-2" key={contentItemVideoIndex}>
 										<TextWithLinks
-											text={contentItemVideo.sub}
-											textVariant="body1"
+											text={contentItemVideo.title}
+											textVariant="body1 font-bold"
 										/>
-									)}
-								</div>
-							),
-						)}
-					</div>
-				))}
+										<VideoWithLoader src={contentItemVideo.src} />
+										{contentItemVideo.sub && (
+											<TextWithLinks
+												text={contentItemVideo.sub}
+												textVariant="body1"
+											/>
+										)}
+									</div>
+								),
+							)}
+						</div>
+					),
+				)}
 			</div>
 		</>
 	);
