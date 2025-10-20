@@ -275,6 +275,7 @@ const FloatingLayerButton = memo<{
 					variant="map-icon"
 					size="icon"
 					tooltip={t("map.layerTree")}
+					tooltipSide="right"
 					className={`relative w-16 h-16 p-0 bg-neutral-80 shadow-lg rounded overflow-hidden flex items-center justify-center cursor-pointer transition-colors hover:bg-neutral-70 focus:outline-none ${
 						visibleCount > 0 ? "border-2 border-interaction-dark" : ""
 					}`}
