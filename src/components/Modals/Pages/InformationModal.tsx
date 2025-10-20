@@ -71,7 +71,7 @@ export function InformationModal({
 
 	const content = (
 		<div className="space-y-10">
-			<div className="space-y-4 pt-4">
+			<div className="space-y-4 pt-4 flex flex-col">
 				<p>
 					<Trans
 						i18nKey="informationModal.simpleLanguageDirect"
@@ -86,7 +86,7 @@ export function InformationModal({
 										handleFooterItemClick("simpleLanguageInformation")
 									}
 								>
-									hier
+									{t("here")}
 								</a>
 							),
 						}}
