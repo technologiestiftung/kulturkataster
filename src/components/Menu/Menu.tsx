@@ -15,20 +15,32 @@ import {
 	SidebarMenuItem,
 	useSidebar,
 } from "@/components/ui/sidebar";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+} from "@/components/ui/tooltip";
 import Accessibility from "@/icons/accessibility.svg";
 import ArrowLeft from "@/icons/arrow-narrow-left.svg";
 import Close from "@/icons/close.svg";
-import DotsVertical from "@/icons/dots-vertical.svg";
+import BurgerMenu from "@/icons/burger-menu-icon.svg";
 import Download from "@/icons/download.svg";
 import Edit from "@/icons/edit.svg";
 import FilterLines from "@/icons/filter-lines.svg";
 import InfoCircle from "@/icons/info-circle.svg";
+import ListIcon from "@/icons/list.svg";
+import MapIcon from "@/icons/map-02.svg";
 import Search from "@/icons/search.svg";
 import { useAppStore } from "@/lib/store/appStore";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useMapStore } from "@/lib/store/mapStore";
 import { useModalStore } from "@/lib/store/modalStore";
 import { hasActiveFilters } from "@/lib/utils/filterUtils";
+import {
+	animateMapToCoordinates,
+	parseLatLongCoordinates,
+} from "@/lib/utils/mapUtils";
+import { fromLonLat } from "ol/proj";
 import KukaSmallLogo from "@/logos/kuka-small.svg";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -73,10 +85,13 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	);
 	const filters = useInstitutionStore((state) => state.filters);
 	const originalInstitutions = useInstitutionStore(
-		(state) => state.originalInstitutions,
+		(state) => state.allInstitutions,
 	);
-	const institutions = useInstitutionStore((state) => state.institutions);
-	const { firstTimeUser, setFirstTimeUser } = useAppStore();
+	const institutions = useInstitutionStore(
+		(state) => state.filteredInstitutions,
+	);
+	const { firstTimeUser, setFirstTimeUser, viewMode, setViewMode } =
+		useAppStore();
 
 	useEffect(() => {
 		if (!isMobile && !firstTimeUser && !userHasClosedSidebar) {
@@ -239,6 +254,49 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 		return null;
 	};
 
+	const zoomToSelectedInstitution = () => {
+		// Get map directly from store to ensure we have the latest instance
+		const currentMap = useMapStore.getState().map;
+
+		if (
+			!selectedInstitutionId ||
+			!currentMap ||
+			!originalInstitutions?.features
+		)
+			return;
+
+		const institution = originalInstitutions.features.find(
+			(feature) => feature.properties?.id === selectedInstitutionId,
+		);
+
+		if (!institution) return;
+
+		let coordinates: [number, number] | null = null;
+
+		if (
+			institution.geometry?.type === "Point" &&
+			institution.geometry.coordinates
+		) {
+			const [lng, lat] = institution.geometry.coordinates;
+			coordinates = [lng, lat];
+		} else if (institution.properties?.latlong) {
+			coordinates = parseLatLongCoordinates(institution.properties.latlong);
+		}
+
+		if (coordinates) {
+			const transformedCoords = fromLonLat(coordinates);
+			animateMapToCoordinates(currentMap, transformedCoords);
+		}
+	};
+
+	const handleViewModeSwitch = (newViewMode: "map" | "list") => {
+		setViewMode(newViewMode);
+
+		if (newViewMode === "map" && selectedInstitutionId) {
+			setTimeout(zoomToSelectedInstitution, 100);
+		}
+	};
+
 	return (
 		<>
 			<WelcomeModal
@@ -248,6 +306,8 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			<Sidebar
 				collapsible="icon"
 				className="overflow-hidden *:data-[sidebar=sidebar]:flex-row [&_*]:!transition-none"
+				role="navigation"
+				aria-label={t("menu.navigation")}
 				{...props}
 			>
 				<Sidebar
@@ -258,7 +318,10 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 						<SidebarMenu className="my-2">
 							<SidebarMenuItem>
 								<button onClick={handleLogoClick} aria-label={t("kukaLogo")}>
-									<KukaSmallLogo className="size-14 cursor-pointer hover:opacity-80 transition-opacity" />
+									<KukaSmallLogo
+										title="Kulturkataster Berlin, Logo"
+										className="size-14 cursor-pointer hover:opacity-80 transition-opacity"
+									/>
 								</button>
 							</SidebarMenuItem>
 						</SidebarMenu>
@@ -280,7 +343,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 												className="relative"
 											>
 												<item.icon />
-												{(item.id === "filter" || item.id === "download") &&
+												{item.id === "filter" &&
 													institutions &&
 													originalInstitutions?.features.length !==
 														institutions.features.length && (
@@ -336,8 +399,10 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 												className="body1 font-bold flex items-center gap-1"
 												aria-label={`Zurück zu ${t(previousActiveItem + ".title")}`}
 											>
-												<ArrowLeft /> Zurück zu{" "}
-												{t(previousActiveItem + ".title")}
+												<ArrowLeft />{" "}
+												{t("menu.backTo", {
+													page: t(previousActiveItem + ".title"),
+												})}
 											</button>
 										)}
 									{!(
@@ -360,8 +425,8 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 					<SidebarContent className="flex-1 overflow-hidden">
 						<SidebarGroup className="px-0 h-full">
 							<SidebarGroupContent className="h-full overflow-auto">
-								<div className="h-full flex flex-col">
-									<div className="flex-1">
+								<div className="min-h-full flex flex-col">
+									<div className="flex-1 h-full bg-secondary">
 										{activeItem === "filter" && <FilterContent />}
 										{activeItem === "search" && <SearchContent />}
 										{activeItem === "accessibility" && (
@@ -402,20 +467,78 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 					className="flex flex-col items-center gap-1 p-2"
 					aria-label={t("kukaLogo")}
 				>
-					<KukaSmallLogo className="size-14" />
+					<KukaSmallLogo
+						title="Kulturkataster Berlin, Logo"
+						className="size-14"
+					/>
 				</button>
 			</div>
 
-			<div className="absolute md:hidden block z-[50] top-0 right-0 p-4 overflow-hidden">
-				<Button
-					variant="map-icon"
-					size="icon-only"
-					title={t("mobileMenu.title")}
-					onClick={() => setMobileMenuModalOpen(true)}
-					aria-label={t("mobileMenu.title")}
-				>
-					<DotsVertical size={14} />
-				</Button>
+			<div className="fixed block z-[50] top-0 right-0 p-4 overflow-hidden">
+				<div className="flex gap-2 items-center">
+					<div className="relative">
+						<div className="flex items-center bg-neutral-80 border rounded-full shadow-sm relative overflow-hidden">
+							<div
+								className={`absolute top-0 bottom-0 w-12 h-12 bg-background rounded-full transition-transform duration-300 ease-in-out ${
+									viewMode === "map" ? "translate-x-0" : "translate-x-12"
+								}`}
+							/>
+
+							<Tooltip>
+								<TooltipTrigger asChild>
+									<button
+										className={`relative z-10 flex items-center justify-center w-12 h-12 rounded-full transition-colors duration-300 cursor-pointer ${
+											viewMode === "map"
+												? "text-foreground"
+												: "text-background hover:text-background/80"
+										}`}
+										onClick={() =>
+											handleViewModeSwitch(viewMode === "list" ? "map" : "list")
+										}
+										aria-label={t("map.show")}
+									>
+										<MapIcon className="size-6" />
+									</button>
+								</TooltipTrigger>
+								<TooltipContent>
+									<p>{t("map.show")}</p>
+								</TooltipContent>
+							</Tooltip>
+
+							<Tooltip>
+								<TooltipTrigger asChild>
+									<button
+										className={`relative z-10 flex items-center justify-center w-12 h-12 rounded-full transition-colors duration-300 cursor-pointer ${
+											viewMode === "list"
+												? "text-foreground"
+												: "text-background hover:text-background/80"
+										}`}
+										onClick={() =>
+											handleViewModeSwitch(viewMode === "map" ? "list" : "map")
+										}
+										aria-label={t("listView.show")}
+									>
+										<ListIcon className="size-6" />
+									</button>
+								</TooltipTrigger>
+								<TooltipContent>
+									<p>{t("listView.show")}</p>
+								</TooltipContent>
+							</Tooltip>
+						</div>
+					</div>
+
+					<Button
+						variant="map-icon"
+						size="icon-only"
+						title={t("mobileMenu.title")}
+						onClick={() => setMobileMenuModalOpen(true)}
+						aria-label={t("mobileMenu.title")}
+						className="md:hidden"
+					>
+						<BurgerMenu size={14} />
+					</Button>
+				</div>
 			</div>
 
 			<div className="fixed bottom-0 left-0 right-0 z-[60] bg-sidebar border-t md:hidden h-20 pointer-events-auto">
@@ -432,7 +555,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 								<span className="text-xs font-medium hidden">
 									{t(item.label)}
 								</span>
-								{(item.id === "filter" || item.id === "download") &&
+								{item.id === "filter" &&
 									institutions &&
 									originalInstitutions?.features.length !==
 										institutions.features.length && (

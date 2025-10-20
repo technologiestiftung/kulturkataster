@@ -71,7 +71,7 @@ function DialogContent({
 			case "fullScreenNoBottom":
 				return "fixed z-[70] top-0 md:top-[5rem] left-1/2 w-full max-w-314 h-full md:h-[calc(100%-5rem)] -translate-x-1/2 overflow-auto md:rounded-t-lg border";
 			case "medium":
-				return "fixed z-[70] top-1/2 left-1/2 w-full max-w-314 h-full md:h-auto md:max-h-[calc(100%-5rem)]  -translate-x-1/2 -translate-y-1/2 overflow-auto md:rounded-lg border";
+				return "fixed z-[70] top-0 md:top-1/2 left-1/2 w-full max-w-314 h-full md:h-auto md:max-h-[calc(100%-5rem)] -translate-x-1/2 md:-translate-y-1/2 md:rounded-lg border flex flex-col";
 			case "mobileMenu":
 				return "fixed z-[70] h-full inset-0 w-full border-0 p-0";
 			case "default":
@@ -90,6 +90,7 @@ function DialogContent({
 					getVariantStyles(),
 					className,
 				)}
+				aria-describedby={undefined}
 				{...props}
 			>
 				{variant === "mobileMenu" ? (
@@ -181,6 +182,7 @@ function InterceptedDialogContent({
 					"bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] fixed left-[50%] top-[50%] z-50 grid w-full max-w-6xl translate-x-[-50%] translate-y-[-50%] gap-4 border p-6 shadow-lg duration-200",
 					className,
 				)}
+				aria-describedby={undefined}
 				{...props}
 			>
 				{children}

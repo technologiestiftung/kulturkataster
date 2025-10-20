@@ -34,6 +34,7 @@ export function SearchResults({
 			</span>
 			<ul ref={listRef} className="flex-1 overflow-y-auto space-y-1">
 				{results.map((result, index) => (
+					// eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
 					<li
 						key={
 							isGeoFeature(result)
@@ -45,6 +46,15 @@ export function SearchResults({
 							e.stopPropagation();
 							onResultClick(result);
 						}}
+						onKeyDown={(e) => {
+							if (e.key === "Enter" || e.key === " ") {
+								e.preventDefault();
+								e.stopPropagation();
+								onResultClick(result);
+							}
+						}}
+						// eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+						tabIndex={0}
 						className={`py-3 px-2 cursor-pointer rounded text-sm border-b
 							${index === activeIndex ? "bg-gray-100" : ""}
 							hover:bg-gray-100 contrast:hover:text-background

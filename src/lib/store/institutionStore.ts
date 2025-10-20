@@ -1,12 +1,11 @@
-import { filterInstitutions, getInstitutionsGeoJSON } from "@/lib/supabase/api";
 import {
-	FilterState,
-	InstitutionProperties,
-	InstitutionStoreState,
-} from "@/types";
+	getInstitutionsGeoJSON,
+	getCategoriesWithSubcategories,
+} from "@/lib/serverActions/institutions";
+import { Institution, InstitutionStoreState } from "@/types";
 import { FeatureCollection } from "geojson";
 import { create } from "zustand";
-import { devtools } from "zustand/middleware";
+import { devtools, subscribeWithSelector } from "zustand/middleware";
 import {
 	matchesCategoryFilter,
 	matchesDistrictFilter,
@@ -14,102 +13,169 @@ import {
 	matchesSubcategoryFilter,
 } from "../utils/filterUtils";
 
-export const useInstitutionStore = create<InstitutionStoreState>()(
-	devtools((set, get) => ({
-		institutions: null,
-		originalInstitutions: null,
-		setInstitutions: (institutions) => set({ institutions }),
+const computeCounts = (state: InstitutionStoreState) => {
+	const { allInstitutions, categories, filters } = state;
 
-		selectedInstitutionId: null,
-		setSelectedInstitutionId: (id: string | null) =>
-			set({ selectedInstitutionId: id }),
+	const categoryCounts: Record<string, number> = {};
+	const subcategoryCounts: Record<string, number> = {};
 
-		filters: {
-			status: undefined, // e.g., "open", "closed", etc.
-			district_keys: [],
-			category_keys: [],
-			subcategory_keys: [],
-			include_closed: false,
-		},
-		setFilters: (filters) => set({ filters }),
+	if (!allInstitutions?.features || !categories) {
+		return { categoryCounts, subcategoryCounts };
+	}
 
-		initializeInstitutions: async () => {
-			try {
-				const institutionsData = await getInstitutionsGeoJSON();
-				set({
-					institutions: institutionsData,
-					originalInstitutions: institutionsData,
-				});
+	// Initialize counts
+	categories.forEach((category) => {
+		categoryCounts[category.key] = 0;
+		(category.subcategory || []).forEach((sub) => {
+			subcategoryCounts[sub.key] = 0;
+		});
+	});
 
-				const { filters, filterInstitutionsFrontend } = get();
-				await filterInstitutionsFrontend(filters);
-			} catch (error) {
-				console.error("Failed to initialize institutions:", error);
+	// Count institutions that match non-category filters
+	allInstitutions.features.forEach((feature) => {
+		const properties = feature.properties as Institution;
+		if (!properties) return;
+
+		// Apply non-category filters (district, status, etc.)
+		if (!matchesStatusFilter(properties, filters.include_closed)) return;
+		if (!matchesDistrictFilter(properties, filters.district_keys)) return;
+
+		// Count categories
+		properties.categories?.forEach((cat: { key: string }) => {
+			if (categoryCounts.hasOwnProperty(cat.key)) {
+				categoryCounts[cat.key]++;
 			}
-		},
+		});
 
-		filterInstitutionsFrontend: async (filters: FilterState) => {
-			const { originalInstitutions } = get();
-
-			if (!originalInstitutions?.features) {
-				console.warn("No original institutions data to filter");
-				return;
+		// Count subcategories
+		properties.subcategories?.forEach((sub: { key: string }) => {
+			if (subcategoryCounts.hasOwnProperty(sub.key)) {
+				subcategoryCounts[sub.key]++;
 			}
+		});
+	});
 
-			const filteredFeatures = originalInstitutions.features.filter(
-				(feature) => {
-					const properties = feature.properties as InstitutionProperties;
+	return { categoryCounts, subcategoryCounts };
+};
 
-					if (!properties) return false;
+const computeFilteredInstitutions = (
+	state: InstitutionStoreState,
+): FeatureCollection | null => {
+	const { allInstitutions, filters } = state;
 
-					const statusMatch = matchesStatusFilter(
-						properties,
-						filters.include_closed,
-					);
-					const districtMatch = matchesDistrictFilter(
-						properties,
-						filters.district_keys,
-					);
+	if (!allInstitutions?.features) return null;
 
-					const hasCategoryFilters =
-						filters.category_keys.length > 0 ||
-						filters.subcategory_keys.length > 0;
+	const hasFilters =
+		filters.district_keys.length > 0 ||
+		filters.category_keys.length > 0 ||
+		filters.subcategory_keys.length > 0 ||
+		!filters.include_closed;
 
-					let categoryMatch = true;
+	if (!hasFilters) return allInstitutions;
 
-					if (hasCategoryFilters) {
-						categoryMatch =
-							matchesCategoryFilter(properties, filters.category_keys) ||
-							matchesSubcategoryFilter(properties, filters.subcategory_keys);
-					}
+	const filteredFeatures = allInstitutions.features.filter((feature) => {
+		const properties = feature.properties as Institution;
+		if (!properties) return false;
 
-					return statusMatch && districtMatch && categoryMatch;
-				},
+		if (!matchesStatusFilter(properties, filters.include_closed)) return false;
+		if (!matchesDistrictFilter(properties, filters.district_keys)) return false;
+
+		const hasCategoryFilters =
+			filters.category_keys.length > 0 || filters.subcategory_keys.length > 0;
+
+		if (hasCategoryFilters) {
+			return (
+				matchesCategoryFilter(properties, filters.category_keys) ||
+				matchesSubcategoryFilter(properties, filters.subcategory_keys)
 			);
+		}
 
-			const filteredGeoJSON: FeatureCollection = {
-				type: "FeatureCollection",
-				features: filteredFeatures,
-			};
+		return true;
+	});
 
-			set({ institutions: filteredGeoJSON });
-		},
+	return {
+		type: "FeatureCollection",
+		features: filteredFeatures,
+	} as FeatureCollection;
+};
 
-		applyFilters: async () => {
-			const { filters } = get();
-			try {
-				let filteredData;
-
-				if (filters) {
-					filteredData = await filterInstitutions(filters);
-				} else {
-					filteredData = await getInstitutionsGeoJSON();
+export const useInstitutionStore = create<InstitutionStoreState>()(
+	subscribeWithSelector(
+		devtools((set, get) => ({
+			allInstitutions: null,
+			filteredInstitutions: null,
+			categoryCounts: {},
+			subcategoryCounts: {},
+			selectedInstitutionId: null,
+			setSelectedInstitutionId: (id: string | null) =>
+				set({ selectedInstitutionId: id }),
+			filters: {
+				status: undefined, // e.g., "open", "closed", etc.
+				district_keys: [],
+				category_keys: [],
+				subcategory_keys: [],
+				include_closed: false,
+			},
+			setFilters: (filters) => {
+				const newState = { filters };
+				const currentState = { ...get(), ...newState };
+				const filteredInstitutions = computeFilteredInstitutions(currentState);
+				const { categoryCounts, subcategoryCounts } =
+					computeCounts(currentState);
+				set({
+					...newState,
+					filteredInstitutions,
+					categoryCounts,
+					subcategoryCounts,
+				});
+			},
+			categories: null,
+			setCategories: (categories) => set({ categories }),
+			initializeCategories: async () => {
+				const categories = await getCategoriesWithSubcategories();
+				const currentState = { ...get(), categories };
+				const { categoryCounts, subcategoryCounts } =
+					computeCounts(currentState);
+				set({
+					categories,
+					categoryCounts,
+					subcategoryCounts,
+				});
+			},
+			initializeInstitutions: async () => {
+				try {
+					const institutionsData = await getInstitutionsGeoJSON();
+					const newState = { allInstitutions: institutionsData };
+					const currentState = { ...get(), ...newState };
+					const filteredInstitutions =
+						computeFilteredInstitutions(currentState);
+					const stateWithFiltered = { ...currentState, filteredInstitutions };
+					const { categoryCounts, subcategoryCounts } =
+						computeCounts(stateWithFiltered);
+					set({
+						...newState,
+						filteredInstitutions,
+						categoryCounts,
+						subcategoryCounts,
+					});
+				} catch (error) {
+					console.error("Failed to initialize institutions:", error);
 				}
-
-				set({ institutions: filteredData });
-			} catch (error) {
-				console.error("Failed to apply filters:", error);
-			}
-		},
-	})),
+			},
+			setInstitutions: (institutions) => {
+				const newState = { allInstitutions: institutions };
+				const currentState = { ...get(), ...newState };
+				const filteredInstitutions = computeFilteredInstitutions(currentState);
+				const stateWithFiltered = { ...currentState, filteredInstitutions };
+				const { categoryCounts, subcategoryCounts } =
+					computeCounts(stateWithFiltered);
+				set({
+					...newState,
+					filteredInstitutions,
+					categoryCounts,
+					subcategoryCounts,
+				});
+			},
+		})),
+	),
 );

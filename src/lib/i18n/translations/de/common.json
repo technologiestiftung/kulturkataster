@@ -2,6 +2,9 @@
 	"information": {
 		"title": "Informationen"
 	},
+	"mobileMenu": {
+		"title": "Mobile Menü"
+	},
 	"filter": {
 		"title": "Kulturorte filtern"
 	},
@@ -39,6 +42,10 @@
 		"contrast": {
 			"title": "Kontrast anpassen",
 			"description": "Aktivieren Sie den Kontrastmodus, um die Lesbarkeit zu verbessern. Dieser Modus erhöht den Kontrast zwischen Text und Hintergrund."
+		},
+		"viewMode": {
+			"title": "Listenansicht der Kulturorte",
+			"description": "Wechseln Sie zwischen der Kartenansicht und der Listenansicht, um die Kulturorte auf die für Sie angenehmste Weise zu erkunden."
 		}
 	},
 	"about": "Über",
@@ -101,6 +108,7 @@
 		"moreInfo": "Mehr Informationen",
 		"lessInfo": "Weniger Informationen",
 		"loading": "Laden...",
+		"showDetails": "Details anzeigen",
 		"establishedSince": "Bestehen am Standort seit",
 		"establishedUntil": "Bestehen am Standort bis"
 	},
@@ -108,6 +116,19 @@
 	"error": "Fehler",
 	"success": "Erfolg",
 	"unknown": "Unbekannt",
+	"menu": {
+		"navigation": "Hauptmenü",
+		"backTo": "Zurück zu {{page}}"
+	},
+	"telephone": {
+		"label": "Telefon",
+		"labelShort": "Tel.",
+		"number": "+49 (0) 30 3030 444 60"
+	},
+	"email": {
+		"label": "E-Mail",
+		"address": "info@kulturkataster.berlin"
+	},
 	"footer": {
 		"title": "Kulturkataster Berlin",
 		"projectBy": "Ein Projekt der Kulturraum Berlin gGmbH",
@@ -118,24 +139,21 @@
 			"city": "Berlin",
 			"zip": "14059"
 		},
-		"telephone": {
-			"label": "Tel.",
-			"number": "+49 30 3030 444 60"
-		},
-		"email": {
-			"label": "E-Mail",
-			"address": "info@kulturkataster.berlin"
-		},
 		"about": "Über das Projekt",
 		"newsletter": "Newsletter",
 		"imprint": "Impressum",
 		"privacy": "Datenschutz",
 		"accessibility": "Barrierefreiheit",
+		"simpleLanguageInformation": "Leichte Sprache",
+		"signLanguageInformation": "Deutsche Gebärdensprache",
+		"signLanguageInformationShort": "DGS",
+		"signLanguageInformationLong": "Deutsche Gebärdensprache (DGS)",
 		"credit": {
 			"text": "© 2025 - Ein Projekt der Kulturraum Berlin gGmbH, gefördert durch die Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt, mit der technischen Umsetzung durch die Technologiestiftung Berlin."
 		}
 	},
 	"map": {
+		"title": "Kartenansicht",
 		"zoomIn": "Vergrößern",
 		"zoomOut": "Verkleinern",
 		"geolocate": "Meinen Standort finden",
@@ -143,9 +161,18 @@
 		"layerTreeTitle": "Fachkarten",
 		"closeLayerTree": "Fachkarten schließen",
 		"availableLayers": "Verfügbare Ebenen",
-		"noLayersAvailable": "Keine Fachkarten verfügbar"
+		"noLayersAvailable": "Keine Fachkarten verfügbar",
+		"show": "Zur Kartenansicht"
 	},
-	"kukaLogo": "Kulturkataster - Logo",
+	"listView": {
+		"title": "Listenansicht",
+		"institutionsListLabel": "Liste der Kulturorte",
+		"show": "Zur Listenansicht",
+		"noResultsFound": "Keine Kulturorte gefunden :(",
+		"tryAdjustingFilters": "Versuchen Sie, die Filter anzupassen. Wenn Sie sicher sind, dass dieser Ort existiert, können Sie ihn über [dieses Formular https://form.formcentric.com/form/fb8189d9-8887-425d-bdd5-4aec08f7d8d5] einreichen.",
+		"scrollToTop": "Nach oben scrollen"
+	},
+	"kukaLogo": "Kulturraum Berlin gGmbH, Logo",
 	"fileFormat": {
 		"xls": "XLS",
 		"xlsx": "XLSX",

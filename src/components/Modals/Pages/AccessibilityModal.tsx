@@ -1,8 +1,9 @@
 "use client";
 
 import TextBlock from "@/components/Content/TextBlock";
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { PageModal } from "../PageModal";
+import { useModalStore } from "@/lib/store/modalStore";
 
 interface AccessibilityModalProps {
 	open: boolean;
@@ -22,6 +23,8 @@ export function AccessibilityModal({
 }: AccessibilityModalProps) {
 	const { t } = useTranslation("content");
 
+	const { handleFooterItemClick } = useModalStore();
+
 	const barriers = t("accessibilityModal.which.barriers", {
 		returnObjects: true,
 	}) as Barrier[];
@@ -37,6 +40,47 @@ export function AccessibilityModal({
 					target: "_blank",
 				}}
 			/>
+
+			<div>
+				<p>
+					<Trans
+						i18nKey="accessibilityModal.simpleLanguageDirect"
+						ns="content"
+						components={{
+							link: (
+								<button
+									type="button"
+									className="text-primary hover:text-primary-dark underline bg-transparent border-none p-0 cursor-pointer"
+									onClick={() => {
+										handleFooterItemClick("simpleLanguageInformation");
+									}}
+								>
+									hier
+								</button>
+							),
+						}}
+					/>
+				</p>
+				<p>
+					<Trans
+						i18nKey="accessibilityModal.signLanguageDirect"
+						ns="content"
+						components={{
+							link: (
+								<button
+									type="button"
+									className="text-primary hover:text-primary-dark underline bg-transparent border-none p-0 cursor-pointer"
+									onClick={() => {
+										handleFooterItemClick("signLanguageInformation");
+									}}
+								>
+									hier
+								</button>
+							),
+						}}
+					/>
+				</p>
+			</div>
 
 			<TextBlock
 				titleAs="h1"

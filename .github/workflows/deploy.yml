@@ -60,25 +60,13 @@ jobs:
             NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
             NEXT_PUBLIC_MAPTILER_API_KEY=${{ secrets.MAPTILER_API_KEY }}
             NEXT_PUBLIC_MAP_BOUNDING_BOX=${{ vars.NEXT_PUBLIC_MAP_BOUNDING_BOX }}
+            NEXT_PUBLIC_BRANCH=${{ github.ref_name }}
             TRADUORA_API_URL=${{ vars.TRADUORA_API_URL }}
             TRADUORA_CLIENT_ID=${{ vars.TRADUORA_CLIENT_ID }}
             TRADUORA_CLIENT_SECRET=${{ secrets.TRADUORA_CLIENT_SECRET }}
             TRADUORA_PROJECT_ID=${{ vars.TRADUORA_PROJECT_ID }}
 
       - name: Get package version
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        if: github.event_name == 'release'
         id: package-version
         run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
-
-      - name: Create Release
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: v${{ steps.package-version.outputs.version }}
-          release_name: Release v${{ steps.package-version.outputs.version }}
-          body: |
-            Automated release created from commit ${{ github.sha }}
-          draft: false
-          prerelease: false

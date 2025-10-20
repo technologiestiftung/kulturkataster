@@ -11,7 +11,7 @@
 
 	/* Interaction colors */
 	--interaction-default: #c288ff;
-	--interaction-dark: #924dff;
+	--interaction-dark: #6201e0;
 	--interaction-light: #d9c1ff;
 
 	/* Highlight colors */
@@ -57,7 +57,7 @@
 	--black: #ffffff;
 	--white: #161616;
 
-	--interaction-default: #5617ba;
+	--interaction-default: #8b3dff;
 	--interaction-dark: #c288ff;
 	--interaction-light: #34077b;
 
@@ -260,5 +260,17 @@
 	}
 	body {
 		@apply bg-background text-foreground;
+	}
+
+	/* Hide Matomo analytics UI from screen readers */
+	iframe[src*="matomo"] {
+		visibility: hidden;
+		position: absolute;
+		left: -9999px;
+	}
+
+	/* Hide elements with invalid ARIA tablist structure */
+	[role="tablist"] button:not([role="tab"]) {
+		display: none;
 	}
 }

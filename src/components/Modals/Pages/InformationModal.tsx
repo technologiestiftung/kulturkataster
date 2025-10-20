@@ -3,8 +3,9 @@
 import TextBlock from "@/components/Content/TextBlock";
 import TextWithLinks from "@/components/Content/TextWithLinks";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { PageModal } from "../PageModal";
+import { useModalStore } from "@/lib/store/modalStore";
 
 interface FaqItem {
 	question: string;
@@ -54,10 +55,12 @@ export function InformationModal({
 }: InformationModalProps) {
 	const { t } = useTranslation("content");
 	const originalInstitutions = useInstitutionStore(
-		(state) => state.originalInstitutions,
+		(state) => state.allInstitutions,
 	);
 
 	const institutionCount = originalInstitutions?.features?.length ?? 2.382;
+
+	const { handleFooterItemClick } = useModalStore();
 
 	const introParagraphs = t("informationModal.introduction", {
 		returnObjects: true,
@@ -68,7 +71,27 @@ export function InformationModal({
 
 	const content = (
 		<div className="space-y-10">
-			<div className="space-y-4">
+			<div className="space-y-4 pt-4">
+				<p>
+					<Trans
+						i18nKey="informationModal.simpleLanguageDirect"
+						ns="content"
+						components={{
+							link: (
+								<a
+									href="#infosAndServices"
+									rel="noopener noreferrer"
+									className="text-primary hover:text-primary-dark underline"
+									onClick={() =>
+										handleFooterItemClick("simpleLanguageInformation")
+									}
+								>
+									hier
+								</a>
+							),
+						}}
+					/>
+				</p>
 				{introParagraphs.map((text, index) => (
 					<TextWithLinks key={index} text={text} />
 				))}
