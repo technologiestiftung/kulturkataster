@@ -73,6 +73,7 @@ const LayerTreeControl: FC = () => {
 				variant="map-icon"
 				size="icon-only"
 				tooltip={t("map.layerTree")}
+				tooltipSide="right"
 				onClick={handleLayerTreeOpen}
 				className={`relative w-12 h-12 p-0 bg-neutral-80 overflow-hidden cursor-pointer`}
 			>
