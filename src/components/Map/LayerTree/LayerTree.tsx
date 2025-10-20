@@ -7,7 +7,7 @@ import {
 	AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, ButtonWithTooltip } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -248,7 +248,7 @@ const FloatingLayerButton = memo<{
 	onClick: () => void;
 }>(({ visibleCount, topVisibleLayer, sidebarState, onClick }) => {
 	const { isLargeTextMode } = useAppStore();
-
+	const { t } = useTranslation("common");
 	const getLeftPosition = useCallback(() => {
 		const expandedOffset = isLargeTextMode
 			? SIDEBAR_EXPANDED_OFFSET_LARGE_TEXT
@@ -271,7 +271,11 @@ const FloatingLayerButton = memo<{
 					/>
 				)}
 
-				<button
+				<ButtonWithTooltip
+					variant="map-icon"
+					size="icon"
+					tooltip={t("map.layerTree")}
+					tooltipSide="right"
 					className={`relative w-16 h-16 p-0 bg-neutral-80 shadow-lg rounded overflow-hidden flex items-center justify-center cursor-pointer transition-colors hover:bg-neutral-70 focus:outline-none ${
 						visibleCount > 0 ? "border-2 border-interaction-dark" : ""
 					}`}
@@ -290,7 +294,7 @@ const FloatingLayerButton = memo<{
 							)
 						)}
 					</div>
-				</button>
+				</ButtonWithTooltip>
 
 				{visibleCount > 0 && (
 					<Badge

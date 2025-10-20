@@ -56,12 +56,9 @@ export function ModalFooter() {
 								</a>
 							</div>
 							<div className="flex gap-2">
-								<span>{t("footer.email.label")}</span>
-								<a
-									className="underline"
-									href={`mailto:${t("footer.email.address")}`}
-								>
-									{t("footer.email.address")}
+								<span>{t("email.label")}</span>
+								<a className="underline" href={`mailto:${t("email.address")}`}>
+									{t("email.address")}
 								</a>
 							</div>
 							<div className="flex flex-col md:flex-row gap-2 md:gap-4 mt-16 font-bold flex-wrap">

@@ -42,6 +42,10 @@ export function MobileMenuModal({ open, onOpenChange }: MobileMenuModalProps) {
 		}, 100);
 	};
 
+	const handleLogoClick = () => {
+		setFirstTimeUser(true);
+	};
+
 	const handleWelcomeModalOpen = () => {
 		onOpenChange(false);
 		setTimeout(() => {
@@ -58,10 +62,12 @@ export function MobileMenuModal({ open, onOpenChange }: MobileMenuModalProps) {
 			>
 				<DialogHeader className="flex-row items-center justify-between p-4 space-y-0">
 					<DialogTitle className="sr-only">{t("mobileMenu.title")}</DialogTitle>
-					<KukaSmallLogo
-						title="Kulturkataster Berlin, Logo"
-						className="size-14 cursor-pointer hover:opacity-80 transition-opacity"
-					/>
+					<button onClick={handleLogoClick} aria-label={t("kukaLogo")}>
+						<KukaSmallLogo
+							title="Kulturkataster Berlin, Logo"
+							className="size-14 cursor-pointer hover:opacity-80 transition-opacity"
+						/>
+					</button>
 					<button
 						onClick={() => onOpenChange(false)}
 						className="flex items-center justify-center w-14 h-14 rounded-full bg-muted hover:bg-muted/80 transition-colors"

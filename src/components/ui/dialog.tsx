@@ -93,11 +93,6 @@ function DialogContent({
 				aria-describedby={undefined}
 				{...props}
 			>
-				{variant === "mobileMenu" ? (
-					children
-				) : (
-					<div className="overflow-auto h-full w-full">{children}</div>
-				)}
 				{showCloseButton && (
 					<DialogPrimitive.Close
 						data-slot="dialog-close"
@@ -106,6 +101,11 @@ function DialogContent({
 						<Close className="size-6" />
 						<span className="sr-only">{t("close")}</span>
 					</DialogPrimitive.Close>
+				)}
+				{variant === "mobileMenu" ? (
+					children
+				) : (
+					<div className="overflow-auto h-full w-full">{children}</div>
 				)}
 			</DialogPrimitive.Content>
 		</DialogPortal>
