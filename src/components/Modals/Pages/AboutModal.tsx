@@ -2,8 +2,9 @@
 
 import DownloadPDFButton from "@/components/Content/DownloadPDFButton";
 import TextBlock from "@/components/Content/TextBlock"; // Stelle sicher, dass der Pfad korrekt ist
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { PageModal } from "../PageModal";
+import { useModalStore } from "@/lib/store/modalStore";
 
 interface Guidelines {
 	description: string;
@@ -63,6 +64,8 @@ interface AboutModalProps {
 export function AboutModal({ open, onOpenChange }: AboutModalProps) {
 	const { t } = useTranslation("content");
 
+	const { handleFooterItemClick } = useModalStore();
+
 	const content = t("aboutModal", { returnObjects: true }) as AboutContent;
 
 	const CreditSectionComponent = ({ data }: { data: CreditSection }) => (
@@ -78,7 +81,26 @@ export function AboutModal({ open, onOpenChange }: AboutModalProps) {
 
 	const modalContent = (
 		<div className="space-y-8">
-			<div className="space-y-4">
+			<div className="space-y-4 pt-4">
+				<p>
+					<Trans
+						i18nKey="aboutModal.simpleLanguageDirect"
+						ns="content"
+						components={{
+							link: (
+								<button
+									type="button"
+									className="text-primary hover:text-primary-dark underline bg-transparent border-none p-0 cursor-pointer"
+									onClick={() => {
+										handleFooterItemClick("simpleLanguageInformation");
+									}}
+								>
+									hier
+								</button>
+							),
+						}}
+					/>
+				</p>
 				{content.introduction.map((paragraph, i) => (
 					<p key={i} className="body2">
 						{paragraph}

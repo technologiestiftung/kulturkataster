@@ -1,8 +1,9 @@
 "use client";
 
-// import SignLanguage from "@/icons/sign-language.svg";
-// import SimpleLanguage from "@/icons/simple-language.svg";
+import SimpleLanguage from "@/icons/simple-language.svg";
+import SignLanguage from "@/icons/sign-language.svg";
 import FontSize from "@/icons/font-size.svg";
+import List from "@/icons/list.svg";
 import Contrast from "@/icons/contrast.svg";
 import { useAppStore } from "@/lib/store/appStore";
 import { useModalStore } from "@/lib/store/modalStore";
@@ -13,18 +14,24 @@ interface AccessibilityContentProps {
 }
 
 const accessibilityOptions = [
-	// {
-	// 	id: "signLanguage",
-	// 	icon: SignLanguage,
-	// 	titleKey: "accessibility.signLanguage.title",
-	// 	hasSwitch: false,
-	// },
-	// {
-	// 	id: "simpleLanguage",
-	// 	icon: SimpleLanguage,
-	// 	titleKey: "accessibility.simpleLanguage.title",
-	// 	hasSwitch: false,
-	// },
+	{
+		id: "simpleLanguage",
+		icon: SimpleLanguage,
+		titleKey: "accessibility.simpleLanguage.title",
+		hasSwitch: false,
+	},
+	{
+		id: "signLanguage",
+		icon: SignLanguage,
+		titleKey: "accessibility.signLanguage.title",
+		hasSwitch: false,
+	},
+	{
+		id: "viewMode",
+		icon: List, // Reusing contrast icon for now
+		titleKey: "accessibility.viewMode.title",
+		hasSwitch: true,
+	},
 	{
 		id: "fontSize",
 		icon: FontSize,
@@ -48,12 +55,21 @@ export function AccessibilityContent({
 		setBaseFontSize,
 		isLargeTextMode,
 		setIsLargeTextMode,
+		viewMode,
+		setViewMode,
 	} = useAppStore();
 
-	const { setAccessibilityModalOpen } = useModalStore();
+	const {
+		setAccessibilityModalOpen,
+		setSimpleLanguageInformationModalOpen,
+		setSignLanguageModalOpen,
+	} = useModalStore();
 
 	const handleSwitchChange = (optionId: string, checked: boolean) => {
 		switch (optionId) {
+			case "viewMode":
+				setViewMode(checked ? "list" : "map");
+				break;
 			case "fontSize":
 				setIsLargeTextMode(checked);
 				setBaseFontSize(checked ? 18 : 16);
@@ -73,6 +89,8 @@ export function AccessibilityContent({
 				return isLargeTextMode;
 			case "contrast":
 				return isContrastMode;
+			case "viewMode":
+				return viewMode === "list";
 			default:
 				return false;
 		}
@@ -89,7 +107,11 @@ export function AccessibilityContent({
 						option.hasSwitch
 							? undefined
 							: () => {
-									if (onItemClick) {
+									if (option.id === "simpleLanguage") {
+										setSimpleLanguageInformationModalOpen(true);
+									} else if (option.id === "signLanguage") {
+										setSignLanguageModalOpen(true);
+									} else if (onItemClick) {
 										onItemClick("accessibility");
 									} else {
 										setAccessibilityModalOpen(true);

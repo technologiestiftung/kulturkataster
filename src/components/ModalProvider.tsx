@@ -8,6 +8,8 @@ import { MobileMenuModal } from "@/components/Modals/Pages/MobileMenuModal";
 import { PrivacyModal } from "@/components/Modals/Pages/PrivacyModal";
 import { useModalStore } from "@/lib/store/modalStore";
 import { DownloadModal } from "./Modals/Pages/DownloadModal";
+import { SimpleLanguageInformationModal } from "./Modals/Pages/SimpleLanguageInformationModal";
+import { SignLanguageModal } from "./Modals/Pages/SignLanguageModal";
 
 export function ModalProvider() {
 	const {
@@ -16,16 +18,20 @@ export function ModalProvider() {
 		imprintModalOpen,
 		accessibilityModalOpen,
 		informationModalOpen,
+		simpleLanguageInformationModalOpen,
 		downloadModalOpen,
 		downloadModalMode,
 		mobileMenuModalOpen,
+		signLanguageModalOpen,
 		setAboutModalOpen,
 		setPrivacyModalOpen,
 		setImprintModalOpen,
 		setAccessibilityModalOpen,
 		setInformationModalOpen,
+		setSimpleLanguageInformationModalOpen,
 		setDownloadModalOpen,
 		setMobileMenuModalOpen,
+		setSignLanguageModalOpen,
 	} = useModalStore();
 
 	return (
@@ -46,6 +52,14 @@ export function ModalProvider() {
 			<InformationModal
 				open={informationModalOpen}
 				onOpenChange={setInformationModalOpen}
+			/>
+			<SimpleLanguageInformationModal
+				open={simpleLanguageInformationModalOpen}
+				onOpenChange={setSimpleLanguageInformationModalOpen}
+			/>
+			<SignLanguageModal
+				open={signLanguageModalOpen}
+				onOpenChange={setSignLanguageModalOpen}
 			/>
 			<DownloadModal
 				open={downloadModalOpen}

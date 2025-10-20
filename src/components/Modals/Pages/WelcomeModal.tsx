@@ -9,6 +9,7 @@ import KRBLogo from "@/logos/KRB.svg";
 import KukaLargeLogo from "@/logos/kuka-large.svg";
 import SenateLogo from "@/logos/senate.svg";
 import { useTranslation } from "react-i18next";
+import { ModalFooter } from "../ModalFooter";
 
 interface WelcomeModalProps {
 	open: boolean;
@@ -29,12 +30,26 @@ export function WelcomeModal({ open, onOpenChange }: WelcomeModalProps) {
 		openModal("information");
 	};
 
+	const handleFooterItemClickWelcomeModal = (id: string) => {
+		onOpenChange(false);
+		openModal(id);
+	};
+
+	const footerItems = [
+		{ id: "accessibility" },
+		{ id: "simpleLanguageInformation" },
+		{ id: "signLanguageInformationLong" },
+	] as const;
+
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
 			<DialogContent variant="medium" className="flex ">
 				<div className="flex flex-col md:flex-row gap-8 py-12 md:pt-32 md:pb-12 px-6">
 					<div className="md:w-1/4 flex justify-center align-start h-full">
-						<KukaLargeLogo className="h-auto w-32 md:w-42" />
+						<KukaLargeLogo
+							title="Kulturkataster Berlin, Logo"
+							className="h-auto w-32 md:w-42"
+						/>
 					</div>
 					<div className="md:w-3/4 flex flex-col items-start space-y-4 md:pr-32 ">
 						<div className="flex flex-col space-y-2">
@@ -67,12 +82,14 @@ export function WelcomeModal({ open, onOpenChange }: WelcomeModalProps) {
 						</div>
 						<div className="space-y-4 w-full">
 							<div className="flex flex-col md:flex-row md:space-x-2 w-full mb-5 mt-12 md:mb-0">
-								<Button
-									className="w-full md:w-auto mb-2 md:mb-0 cursor-pointer"
-									onClick={() => onOpenChange(false)}
-								>
-									{t("welcomeModal.discoverButton", { ns: "content" })}
-								</Button>
+								<div className="flex-grow md:flex-none">
+									<Button
+										className="w-full md:w-auto mb-2 md:mb-0 cursor-pointer"
+										onClick={() => onOpenChange(false)}
+									>
+										{t("welcomeModal.discoverButton", { ns: "content" })}
+									</Button>
+								</div>
 								<div className="flex w-full md:w-auto space-x-2">
 									<Button
 										variant="outline"
@@ -90,20 +107,48 @@ export function WelcomeModal({ open, onOpenChange }: WelcomeModalProps) {
 									</Button>
 								</div>
 							</div>
-							<Separator className="w-full mt-20 mb-6" />
-							<div className="flex space-x-2 md:mb-12 space-y-12 md:space-y-0 flex-col md:flex-row w-full justify-center">
+							<Separator className="w-full mt-20 mb-6 hidden md:block" />
+							<div className="hidden md:flex space-x-2 md:mb-12 space-y-12 md:space-y-0 flex-col md:flex-row w-full justify-center">
 								<div className="w-full md:w-1/2">
-									<p className="body2 ">
+									<p className="body2">
 										{t("footer.credit.text", { ns: "common" })}
 									</p>
 								</div>
 								<div className="flex md:w-1/2 md:justify-end justify-around gap-2 space-x-4 md:mx-4">
-									<KRBLogo className="w-20 md:w-24 h-auto bg-white" />
-									<SenateLogo className="w-32 md:w-42 h-auto bg-white" />
+									<KRBLogo
+										title="Kulturraum Berlin gGmbH, Logo"
+										className="w-20 md:w-24 h-auto bg-white"
+									/>
+									<SenateLogo
+										title="Logo der Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt, Logo"
+										className="w-32 md:w-42 h-auto bg-white"
+									/>
 								</div>
 							</div>
 						</div>
 					</div>
+				</div>
+				<div className="hidden md:block">
+					<nav
+						aria-label={t("footer.navigation")}
+						className="bg-neutral-5 py-2 px-4 w-full"
+					>
+						<ul className="flex gap-4 body2 font-bold justify-end">
+							{footerItems.map((item) => (
+								<li key={item.id}>
+									<button
+										className="body2 font-bold"
+										onClick={() => handleFooterItemClickWelcomeModal(item.id)}
+									>
+										{t(`footer.${item.id}`)}
+									</button>
+								</li>
+							))}
+						</ul>
+					</nav>
+				</div>
+				<div className="md:hidden">
+					<ModalFooter />
 				</div>
 			</DialogContent>
 		</Dialog>
