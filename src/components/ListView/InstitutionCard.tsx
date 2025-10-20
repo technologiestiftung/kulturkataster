@@ -74,7 +74,7 @@ function StatusIndicator({
 	return (
 		<div className="flex items-center gap-2 bg-neutral-5 p-2 flex-wrap">
 			<div
-				className={`w-4 h-4 rounded-full ${isInUse ? "bg-brand-default" : "bg-neutral-20"}`}
+				className={`w-4 h-4 rounded-full ${isInUse ? "bg-brand-default" : "bg-alert"}`}
 			/>
 			<span className="body2 font-medium">
 				<span className="font-bold">
