@@ -2,7 +2,7 @@
 "use client";
 
 import { WelcomeModal } from "@/components/Modals/Pages/WelcomeModal";
-import { Button } from "@/components/ui/button";
+import { Button, ButtonWithTooltip } from "@/components/ui/button";
 import {
 	Sidebar,
 	SidebarContent,
@@ -15,11 +15,6 @@ import {
 	SidebarMenuItem,
 	useSidebar,
 } from "@/components/ui/sidebar";
-import {
-	Tooltip,
-	TooltipContent,
-	TooltipTrigger,
-} from "@/components/ui/tooltip";
 import Accessibility from "@/icons/accessibility.svg";
 import ArrowLeft from "@/icons/arrow-narrow-left.svg";
 import Close from "@/icons/close.svg";
@@ -483,48 +478,38 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 									viewMode === "map" ? "translate-x-0" : "translate-x-12"
 								}`}
 							/>
-
-							<Tooltip>
-								<TooltipTrigger asChild>
-									<button
-										className={`relative z-10 flex items-center justify-center w-12 h-12 rounded-full transition-colors duration-300 cursor-pointer ${
-											viewMode === "map"
-												? "text-foreground"
-												: "text-background hover:text-background/80"
-										}`}
-										onClick={() =>
-											handleViewModeSwitch(viewMode === "list" ? "map" : "list")
-										}
-										aria-label={t("map.show")}
-									>
-										<MapIcon className="size-6" />
-									</button>
-								</TooltipTrigger>
-								<TooltipContent>
-									<p>{t("map.show")}</p>
-								</TooltipContent>
-							</Tooltip>
-
-							<Tooltip>
-								<TooltipTrigger asChild>
-									<button
-										className={`relative z-10 flex items-center justify-center w-12 h-12 rounded-full transition-colors duration-300 cursor-pointer ${
-											viewMode === "list"
-												? "text-foreground"
-												: "text-background hover:text-background/80"
-										}`}
-										onClick={() =>
-											handleViewModeSwitch(viewMode === "map" ? "list" : "map")
-										}
-										aria-label={t("listView.show")}
-									>
-										<ListIcon className="size-6" />
-									</button>
-								</TooltipTrigger>
-								<TooltipContent>
-									<p>{t("listView.show")}</p>
-								</TooltipContent>
-							</Tooltip>
+							<ButtonWithTooltip
+								variant="menu-icon"
+								size="icon-only"
+								tooltip={t("map.show")}
+								className={`${
+									viewMode === "map"
+										? "text-foreground"
+										: "text-background hover:text-background/80"
+								}`}
+								onClick={() =>
+									handleViewModeSwitch(viewMode === "list" ? "map" : "list")
+								}
+								aria-label={t("map.show")}
+							>
+								<MapIcon className="size-6" />
+							</ButtonWithTooltip>
+							<ButtonWithTooltip
+								variant="menu-icon"
+								size="icon-only"
+								tooltip={t("listView.show")}
+								className={`${
+									viewMode === "list"
+										? "text-foreground"
+										: "text-background hover:text-background/80"
+								}`}
+								onClick={() =>
+									handleViewModeSwitch(viewMode === "map" ? "list" : "map")
+								}
+								aria-label={t("listView.show")}
+							>
+								<ListIcon className="size-6" />
+							</ButtonWithTooltip>
 						</div>
 					</div>
 
