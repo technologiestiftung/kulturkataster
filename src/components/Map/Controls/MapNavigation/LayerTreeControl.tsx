@@ -93,7 +93,7 @@ const LayerTreeControl: FC = () => {
 			{visibleCount > 0 && (
 				<Badge
 					variant="default"
-					className="absolute -top-2 -right-2 w-6 h-6 p-0 rounded-full text-xs font-bold"
+					className="pointer-events-none absolute -top-2 -right-2 w-6 h-6 p-0 rounded-full text-xs font-bold"
 				>
 					{visibleCount}
 				</Badge>
