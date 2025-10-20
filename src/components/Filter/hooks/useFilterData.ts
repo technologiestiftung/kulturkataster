@@ -3,13 +3,11 @@
 import {
 	getCategoriesWithSubcategories,
 	getDistricts,
-} from "@/lib/supabase/api";
-import { CategoryWithSubcategories, District } from "@/types";
+} from "@/lib/serverActions/institutions";
+import { Category, District } from "@/types";
 import { useCallback, useEffect, useState } from "react";
 export const useFilterData = () => {
-	const [categoryGroups, setCategoryGroups] = useState<
-		CategoryWithSubcategories[]
-	>([]);
+	const [categoryGroups, setCategoryGroups] = useState<Category[]>([]);
 	const [districts, setDistricts] = useState<District[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);

@@ -13,6 +13,17 @@ import { Barlow } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 
+// Initialize axe-core for accessibility testing in development
+if (process.env.NODE_ENV !== "production") {
+	import("react").then((React) => {
+		import("react-dom").then((ReactDOM) => {
+			import("@axe-core/react").then((axe) => {
+				axe.default(React, ReactDOM, 1000);
+			});
+		});
+	});
+}
+
 const barlow = Barlow({
 	preload: true,
 	subsets: ["latin"],
@@ -21,8 +32,9 @@ const barlow = Barlow({
 });
 
 export const metadata: Metadata = {
-	title: "Kulturkataster",
-	description: "Kulturkataster",
+	title: "Berliner Kulturkataster – Karte & Daten zu Kulturorten",
+	description:
+		"Die Seite macht Berlins Kulturlandschaft sichtbar: Kulturorte finden, filtern und erkunden – für Planung, Forschung und Öffentlichkeit. Ein Projekt der Kulturraum Berlin gGmbH.",
 };
 
 export default async function RootLayout({

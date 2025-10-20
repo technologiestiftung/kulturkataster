@@ -1,10 +1,10 @@
-import { InstitutionProperties } from "@/types";
+import { Institution } from "@/types";
 import * as XLSX from "xlsx-js-style";
 
 export type ExportFormat = "csv" | "xlsx" | "xls";
 
 interface DownloadData {
-	data: InstitutionProperties[];
+	data: Institution[];
 	filename: string;
 	format: ExportFormat;
 	translateFn?: (key: string, options?: Record<string, unknown>) => string;
@@ -178,7 +178,7 @@ const EXCLUDED_FIELDS = [
 ];
 
 export function prepareDataForExport(
-	institutions: InstitutionProperties[],
+	institutions: Institution[],
 	translateFn?: (key: string, options?: Record<string, unknown>) => string,
 ): Record<string, string>[] {
 	return institutions

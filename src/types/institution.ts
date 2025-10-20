@@ -1,18 +1,5 @@
 import { FeatureCollection, GeoJsonProperties, Geometry } from "geojson";
-
-export interface Institution {
-	id: number;
-	name: string;
-	street: string;
-	street_number: string;
-	zip_code: string;
-	city?: { name: string };
-	district?: { name: string };
-	neighbourhood?: { name: string };
-	case?: string;
-	latlong: string;
-	st_asgeojson?: string;
-}
+import { Database } from "./supabase";
 
 export interface GeoFeature {
 	id: string;
@@ -27,120 +14,69 @@ export interface GeoFeature {
 
 export type SearchResult = Institution | GeoFeature;
 
-export enum CategoryType {
-	STUDIOS = "studios",
-	EDUCATION_PLACES = "education_places",
-	LIBRARIES = "libraries",
-	CLUBS_MUSIC_VENUES = "clubs_music_venues",
-	GALLERIES = "galleries",
-	CINEMAS = "cinemas",
-	LITERATURE_PLACES = "literature_places",
-	MUSEUMS = "museums",
-	CULTURAL_URBAN_DEVELOPMENT = "cultural_urban_development",
-	POTENTIAL_SPACES = "potential_spaces",
-	REHEARSAL_ROOMS = "rehearsal_rooms",
-	PROJECT_SPACES_INITIATIVES = "project_spaces_initiatives",
-	SOCIOCULTURAL_CENTERS = "sociocultural_centers",
-	DANCE_VENUES = "dance_venues",
-	PERFORMING_ARTS_VENUES = "performing_arts_venues",
-	GRAFFITI_AREAS = "graffiti_areas",
-	OTHER = "other",
-
-	MULTI_CATEGORIES = "multi_categories",
-}
-export interface Category {
-	id: number;
-	key: CategoryType;
-	created_at?: string;
-}
-
-export interface CategoryWithSubcategories extends Category {
-	subcategories: Subcategory[];
-	name?: string;
-}
-
-export interface Subcategory {
-	id: number;
-	key: string;
-	category_id: number;
-	created_at?: string;
-	name?: string;
-}
-
-export interface District {
-	city_id: number;
-	created_at: string;
-	id: number;
-	key: string;
-	name: string;
-}
-
-export interface DistrictProperty {
-	id: number;
-	key: string;
-	name: string;
-}
-
-export interface ParentOrganization {
-	id: number;
-	name: string;
-}
-
-export interface CulturalArea {
-	id: number;
-	name: string;
-}
-
-export interface Owner {
-	id: number;
-	name: string;
-	owner_type: string;
-}
-
-export interface Source {
-	id: number;
-	name: string;
-}
-
-export interface InstitutionProperties {
-	id: number;
-	name: string;
-	tags: string[];
-	email: string;
-	phone: string;
-	status: string;
-	street: string;
-	city_id: number;
-	website: string;
-	zip_code: string;
+export type Institution = Database["public"]["Tables"]["institution"]["Row"] & {
 	categories: Category[];
-	district: DistrictProperty;
-	district_id: number;
-	address_suffix: string;
-	street_number: string;
+	district: District;
+	parent_organizations: ParentOrganization[]; // Renamed from 'org' to 'parent_organizations'
+	cultural_areas: CulturalArea[];
 	subcategories: Subcategory[];
-	funding_sources: unknown[];
-	established_since: string;
-	established_until: string;
-	shared_use_allowed: boolean;
-	shared_use_info?: string;
-	shared_use_audience?: string;
-	shared_use_contact_person?: string;
-	utilization_status: string;
-	parent_organizations: ParentOrganization[];
-	description?: string;
-	funding_type?: string;
-	support_type?: string;
-	capacity?: number;
-	rooms_count?: number;
-	updated_at?: string;
-	cultural_area?: CulturalArea;
-	owner?: Owner;
-	source?: Source;
-	closing_reason?: string;
-}
+	rooms_count: number | null;
+	support_type: string | null;
+	source: Source | null;
+	cultural_area: CulturalArea | null;
+	owner: Owner | null;
+	funding_type: string | null;
+	closing_reason: string | null;
+	created_at: string;
+	updated_at: string;
+	city: City | null;
+};
 
-export interface InstitutionFeature extends InstitutionProperties {
+export type City = Database["public"]["Tables"]["city"]["Row"];
+
+export type Category = Database["public"]["Tables"]["category"]["Row"] & {
+	subcategory: Subcategory[];
+};
+
+export type Subcategory = Database["public"]["Tables"]["subcategory"]["Row"];
+
+export type CategoryType =
+	| Database["public"]["Enums"]["category_key_enum"]
+	| "multi_categories";
+
+export const CategoryKeys = {
+	STUDIOS: "studios",
+	EDUCATION_PLACES: "education_places",
+	LIBRARIES: "libraries",
+	CLUBS_MUSIC_VENUES: "clubs_music_venues",
+	GALLERIES: "galleries",
+	CINEMAS: "cinemas",
+	LITERATURE_PLACES: "literature_places",
+	MUSEUMS: "museums",
+	CULTURAL_URBAN_DEVELOPMENT: "cultural_urban_development",
+	POTENTIAL_SPACES: "potential_spaces",
+	REHEARSAL_ROOMS: "rehearsal_rooms",
+	PROJECT_SPACES_INITIATIVES: "project_spaces_initiatives",
+	SOCIOCULTURAL_CENTERS: "sociocultural_centers",
+	DANCE_VENUES: "dance_venues",
+	PERFORMING_ARTS_VENUES: "performing_arts_venues",
+	GRAFFITI_AREAS: "graffiti_areas",
+	OTHER: "other",
+	MULTI_CATEGORIES: "multi_categories",
+} as const;
+
+export type District = Database["public"]["Tables"]["district"]["Row"];
+
+export type ParentOrganization =
+	Database["public"]["Tables"]["parent_organization"]["Row"];
+
+export type CulturalArea = Database["public"]["Tables"]["cultural_area"]["Row"];
+
+export type Owner = Database["public"]["Tables"]["owner"]["Row"];
+
+export type Source = Database["public"]["Tables"]["source"]["Row"];
+
+export interface InstitutionFeature extends Institution {
 	type: "Feature";
 	geometry: {
 		type: "Point";
@@ -157,19 +93,21 @@ export interface FilterState {
 }
 
 export interface InstitutionStoreState {
-	institutions: FeatureCollection<Geometry, GeoJsonProperties> | null;
-	originalInstitutions: FeatureCollection<Geometry, GeoJsonProperties> | null;
+	allInstitutions: FeatureCollection<Geometry, GeoJsonProperties> | null;
+	filteredInstitutions: FeatureCollection<Geometry, GeoJsonProperties> | null;
+	categoryCounts: Record<string, number>;
+	subcategoryCounts: Record<string, number>;
 	selectedInstitutionId: number | string | null;
 	filters: FilterState;
-
+	categories: Category[] | null;
+	setCategories: (categories: Category[] | null) => void;
 	setInstitutions: (
 		institutions: FeatureCollection<Geometry, GeoJsonProperties> | null,
 	) => void;
 	setSelectedInstitutionId: (id: string | null) => void;
 
 	setFilters: (filters: FilterState) => void;
-
+	initializeCategories: () => Promise<void>;
 	initializeInstitutions: () => Promise<void>;
 	applyFilters: () => Promise<void>;
-	filterInstitutionsFrontend: (filters: FilterState) => Promise<void>;
 }

@@ -6,18 +6,22 @@ export interface ModalStoreState {
 	imprintModalOpen: boolean;
 	accessibilityModalOpen: boolean;
 	informationModalOpen: boolean;
+	simpleLanguageInformationModalOpen: boolean;
 	downloadModalOpen: boolean;
 	downloadModalMode: "all" | "filtered" | "selected";
 	mobileMenuModalOpen: boolean;
+	signLanguageModalOpen: boolean;
 
 	setAboutModalOpen: (open: boolean) => void;
 	setPrivacyModalOpen: (open: boolean) => void;
 	setImprintModalOpen: (open: boolean) => void;
 	setAccessibilityModalOpen: (open: boolean) => void;
 	setInformationModalOpen: (open: boolean) => void;
+	setSimpleLanguageInformationModalOpen: (open: boolean) => void;
 	setDownloadModalOpen: (open: boolean) => void;
 	setDownloadModalMode: (mode: "all" | "filtered" | "selected") => void;
 	setMobileMenuModalOpen: (open: boolean) => void;
+	setSignLanguageModalOpen: (open: boolean) => void;
 
 	openModal: (modalName: string) => void;
 	closeAllModals: () => void;
@@ -32,9 +36,11 @@ export const useModalStore = create<ModalStoreState>((set) => ({
 	imprintModalOpen: false,
 	accessibilityModalOpen: false,
 	informationModalOpen: false,
+	simpleLanguageInformationModalOpen: false,
 	downloadModalOpen: false,
 	downloadModalMode: "all",
 	mobileMenuModalOpen: false,
+	signLanguageModalOpen: false,
 
 	// Setters
 	setAboutModalOpen: (open) => set({ aboutModalOpen: open }),
@@ -42,9 +48,12 @@ export const useModalStore = create<ModalStoreState>((set) => ({
 	setImprintModalOpen: (open) => set({ imprintModalOpen: open }),
 	setAccessibilityModalOpen: (open) => set({ accessibilityModalOpen: open }),
 	setInformationModalOpen: (open) => set({ informationModalOpen: open }),
+	setSimpleLanguageInformationModalOpen: (open) =>
+		set({ simpleLanguageInformationModalOpen: open }),
 	setDownloadModalOpen: (open) => set({ downloadModalOpen: open }),
 	setDownloadModalMode: (mode) => set({ downloadModalMode: mode }),
 	setMobileMenuModalOpen: (open) => set({ mobileMenuModalOpen: open }),
+	setSignLanguageModalOpen: (open) => set({ signLanguageModalOpen: open }),
 
 	openModal: (modalName: string) => {
 		set((state) => {
@@ -55,6 +64,8 @@ export const useModalStore = create<ModalStoreState>((set) => ({
 				accessibilityModalOpen: false,
 				informationModalOpen: false,
 				downloadModalOpen: false,
+				simpleLanguageInformationModalOpen: false,
+				signLanguageModalOpen: false,
 			};
 
 			switch (modalName) {
@@ -69,6 +80,14 @@ export const useModalStore = create<ModalStoreState>((set) => ({
 					break;
 				case "accessibility":
 					newState.accessibilityModalOpen = true;
+					break;
+				case "signLanguageInformation":
+				case "signLanguageInformationShort":
+				case "signLanguageInformationLong":
+					newState.signLanguageModalOpen = true;
+					break;
+				case "simpleLanguageInformation":
+					newState.simpleLanguageInformationModalOpen = true;
 					break;
 				case "information":
 				case "info":
@@ -94,6 +113,8 @@ export const useModalStore = create<ModalStoreState>((set) => ({
 			informationModalOpen: false,
 			downloadModalOpen: false,
 			mobileMenuModalOpen: false,
+			simpleLanguageInformationModalOpen: false,
+			signLanguageModalOpen: false,
 		}),
 
 	handleFooterItemClick: (id: string) => {

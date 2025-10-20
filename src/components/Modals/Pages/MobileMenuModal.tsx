@@ -15,6 +15,8 @@ import Close from "@/icons/close.svg";
 import KRBLogo from "@/logos/KRB.svg";
 import InfoCircle from "@/icons/info-circle.svg";
 import { SubMenuOption } from "@/components/Menu/SubMenuOption";
+import MapIcon from "@/icons/map-02.svg";
+import ListIcon from "@/icons/list.svg";
 
 interface MobileMenuModalProps {
 	open: boolean;
@@ -31,20 +33,19 @@ const footerItems = [
 export function MobileMenuModal({ open, onOpenChange }: MobileMenuModalProps) {
 	const { t } = useTranslation("common");
 	const { handleFooterItemClick } = useModalStore();
-	const { setFirstTimeUser } = useAppStore();
+	const { setFirstTimeUser, setViewMode } = useAppStore();
 
 	const handleFooterClick = (itemId: string) => {
-		onOpenChange(false); // Close modal first
-		// Use setTimeout to ensure modal closes before opening new one
+		onOpenChange(false);
 		setTimeout(() => {
 			handleFooterItemClick(itemId);
 		}, 100);
 	};
 
 	const handleWelcomeModalOpen = () => {
-		onOpenChange(false); // Close mobile menu first
+		onOpenChange(false);
 		setTimeout(() => {
-			setFirstTimeUser(true); // This opens the welcome modal
+			setFirstTimeUser(true);
 		}, 100);
 	};
 
@@ -56,8 +57,11 @@ export function MobileMenuModal({ open, onOpenChange }: MobileMenuModalProps) {
 				showCloseButton={false}
 			>
 				<DialogHeader className="flex-row items-center justify-between p-4 space-y-0">
-					<DialogTitle className="sr-only">Mobile Menu</DialogTitle>
-					<KukaSmallLogo className="size-14 cursor-pointer hover:opacity-80 transition-opacity" />
+					<DialogTitle className="sr-only">{t("mobileMenu.title")}</DialogTitle>
+					<KukaSmallLogo
+						title="Kulturkataster Berlin, Logo"
+						className="size-14 cursor-pointer hover:opacity-80 transition-opacity"
+					/>
 					<button
 						onClick={() => onOpenChange(false)}
 						className="flex items-center justify-center w-14 h-14 rounded-full bg-muted hover:bg-muted/80 transition-colors"
@@ -66,38 +70,61 @@ export function MobileMenuModal({ open, onOpenChange }: MobileMenuModalProps) {
 						<Close className="w-6 h-6" />
 					</button>
 				</DialogHeader>
-				<div className="flex flex-col justify-between flex-1">
-					<div className="flex-1 flex flex-col gap-8 p-4 overflow-auto">
-						<SubMenuOption
-							key="information"
-							icon={InfoCircle}
-							titleKey="information.title"
-							onClick={handleWelcomeModalOpen}
-						/>
-						<div className="space-y-4 flex flex-col">
-							<span className="body2">{t("accessibility.title")}</span>
-							<div className="">
-								<AccessibilityContent />
+				<div className="overflow-scroll">
+					<div className="flex flex-col justify-between flex-1">
+						<div className="flex-1 flex flex-col gap-4 p-4 overflow-auto mb-4">
+							<SubMenuOption
+								key="map"
+								icon={MapIcon}
+								titleKey="map.title"
+								onClick={() => {
+									onOpenChange(false);
+									setViewMode("map");
+								}}
+							/>
+							<SubMenuOption
+								key="listView"
+								icon={ListIcon}
+								titleKey="listView.title"
+								onClick={() => {
+									onOpenChange(false);
+									setViewMode("list");
+								}}
+							/>
+							<SubMenuOption
+								key="information"
+								icon={InfoCircle}
+								titleKey="information.title"
+								onClick={handleWelcomeModalOpen}
+							/>
+							<div className="space-y-4 flex flex-col">
+								<span className="body2">{t("accessibility.title")}</span>
+								<div className="">
+									<AccessibilityContent />
+								</div>
 							</div>
-						</div>
 
-						<div className="space-y-4 mt-auto">
-							<div className="flex flex-col gap-4">
-								{footerItems.map((item) => (
-									<button
-										key={item.id}
-										onClick={() => handleFooterClick(item.id)}
-										className="flex items-center justify-between text-left text-neutral-80"
-									>
-										<span className="body2">{t(`footer.${item.id}`)}</span>
-									</button>
-								))}
+							<div className="space-y-4 mt-auto">
+								<div className="flex flex-col gap-4">
+									{footerItems.map((item) => (
+										<button
+											key={item.id}
+											onClick={() => handleFooterClick(item.id)}
+											className="flex items-center justify-between text-left text-neutral-80"
+										>
+											<span className="body2">{t(`footer.${item.id}`)}</span>
+										</button>
+									))}
+								</div>
 							</div>
 						</div>
-					</div>
-					<div className="flex gap-4 flex-0 bg-neutral-10 p-4 justify-between items-center">
-						<p className="body2">{t("footer.projectBy")}</p>
-						<KRBLogo className="w-12 h-auto" />
+						<div className="flex gap-4 flex-0 bg-neutral-10 p-4 justify-between items-center">
+							<p className="body2">{t("footer.projectBy")}</p>
+							<KRBLogo
+								title="Kulturraum Berlin gGmbH, Logo"
+								className="w-12 h-auto"
+							/>
+						</div>
 					</div>
 				</div>
 			</DialogContent>
