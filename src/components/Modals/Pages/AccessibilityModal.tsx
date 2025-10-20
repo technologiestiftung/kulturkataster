@@ -55,7 +55,7 @@ export function AccessibilityModal({
 										handleFooterItemClick("simpleLanguageInformation");
 									}}
 								>
-									hier
+									{t("here")}
 								</button>
 							),
 						}}
@@ -74,7 +74,7 @@ export function AccessibilityModal({
 										handleFooterItemClick("signLanguageInformation");
 									}}
 								>
-									hier
+									{t("here")}
 								</button>
 							),
 						}}
