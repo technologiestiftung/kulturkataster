@@ -1229,6 +1229,96 @@
 			"paint": { "text-color": "rgba(85, 91, 84, 1)" }
 		},
 		{
+			"id": "Decker_Bundesstr_getrennt_Fahrbahnachse",
+			"type": "line",
+			"source": "smarttiles_de",
+			"source-layer": "Verkehrslinie",
+			"minzoom": 14,
+			"maxzoom": 22,
+			"filter": [
+				"all",
+				["==", "klasse", "Bundesstraße"],
+				["==", "fahrbahnachse", 1],
+				["!has", "bauwerk"],
+				["!has", "zustand"]
+			],
+			"layout": { "visibility": "visible", "line-cap": "round" },
+			"paint": {
+				"line-color": "rgba(255, 255, 255, 1)",
+				"line-opacity": 1,
+				"line-width": {
+					"stops": [
+						[11, 1.2],
+						[12, 1.5],
+						[13, 3],
+						[14, 5],
+						[16, 8],
+						[20, 33]
+					]
+				}
+			}
+		},
+		{
+			"id": "Decker_Gemeindestr_Sonstige_Str_getrennt_Fahrbahnachse",
+			"type": "line",
+			"source": "smarttiles_de",
+			"source-layer": "Verkehrslinie",
+			"minzoom": 14,
+			"maxzoom": 22,
+			"filter": [
+				"all",
+				[
+					"in",
+					"klasse",
+					"Gemeindestraße",
+					"Nicht öffentliche Straße",
+					"Sonstige öffentliche Straße"
+				],
+				["==", "fahrbahnachse", 1],
+				["!has", "bauwerk"],
+				["!has", "zustand"]
+			],
+			"layout": { "visibility": "visible", "line-cap": "butt" },
+			"paint": {
+				"line-color": "rgb(255,255,255)",
+				"line-opacity": 1,
+				"line-width": {
+					"stops": [
+						[14, 5],
+						[16, 8],
+						[20, 20]
+					]
+				}
+			}
+		},
+		{
+			"id": "Decker_Autobahn_getrennt_ohne_Tunnel_Bruecke",
+			"type": "line",
+			"source": "smarttiles_de",
+			"source-layer": "Verkehrslinie",
+			"minzoom": 0,
+			"maxzoom": 11,
+			"filter": [
+				"all",
+				["==", "klasse", "Bundesautobahn"],
+				["==", "fahrbahn", "Getrennt"],
+				["!has", "zustand"]
+			],
+			"layout": { "visibility": "visible", "line-cap": "round" },
+			"paint": {
+				"line-color": "rgb(229,229,229)",
+				"line-opacity": 1,
+				"line-width": {
+					"stops": [
+						[5, 2],
+						[7, 3],
+						[10, 4],
+						[11, 5.5]
+					]
+				}
+			}
+		},
+		{
 			"id": "Nummer_Autobahn",
 			"type": "symbol",
 			"source": "smarttiles_de",
