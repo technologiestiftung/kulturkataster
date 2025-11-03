@@ -10,6 +10,7 @@ import {
 	FacilityInfo,
 	StatusInfo,
 	ToggleButton,
+	AdditionalInfo,
 } from "@/components/Institution";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useMapStore } from "@/lib/store/mapStore";
@@ -131,6 +132,7 @@ function InstitutionCard({
 						<FundingInfo institutionData={institutionData} />
 						<FacilityInfo institutionData={institutionData} />
 						<StatusInfo institutionData={institutionData} />
+						<AdditionalInfo institutionData={institutionData} />
 					</div>
 				)}
 
