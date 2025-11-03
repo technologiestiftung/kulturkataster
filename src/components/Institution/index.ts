@@ -13,3 +13,4 @@ export { OrganizationInfo } from "./OrganizationInfo";
 export { FundingInfo } from "./FundingInfo";
 export { FacilityInfo } from "./FacilityInfo";
 export { StatusInfo } from "./StatusInfo";
+export { AdditionalInfo } from "./AdditionalInfo";

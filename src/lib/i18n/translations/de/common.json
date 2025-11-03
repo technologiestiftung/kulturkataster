@@ -111,7 +111,8 @@
 		"loading": "Laden...",
 		"showDetails": "Details anzeigen",
 		"establishedSince": "Bestehen am Standort seit",
-		"establishedUntil": "Bestehen am Standort bis"
+		"establishedUntil": "Bestehen am Standort bis",
+		"additionalInfo": "Zusätzliche Informationen"
 	},
 	"loading": "Laden",
 	"error": "Fehler",
