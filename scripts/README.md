@@ -34,6 +34,7 @@ npm run traduora:pull
 ## Environment Variables
 
 Required in `.env`:
+
 - `TRADUORA_API_URL`
 - `TRADUORA_CLIENT_ID` (editor permissions required)
 - `TRADUORA_CLIENT_SECRET`
