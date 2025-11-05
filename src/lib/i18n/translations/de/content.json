@@ -481,18 +481,11 @@
 			"list1": {
 				"title1": "Das Kultur·kataster wächst immer weiter.",
 				"title2": "Im Jahr 2026 gibt es 2 neue Versionen:",
-				"content": [
-					"Anfang 2026 Version 2",
-					"Mitte 2026 Version 3"
-				]
+				"content": ["Anfang 2026 Version 2", "Mitte 2026 Version 3"]
 			},
 			"list2": {
 				"title": "Mit jeder Version gibt es:",
-				"content": [
-					"Mehr Kultur·ort",
-					"Mehr Infos",
-					"Mehr Funktionen"
-				]
+				"content": ["Mehr Kultur·ort", "Mehr Infos", "Mehr Funktionen"]
 			},
 			"text5": "Sie können uns helfen.",
 			"text6": "Hier ist der [Link https://form.formcentric.com/form/fb8189d9-8887-425d-bdd5-4aec08f7d8d5].",
@@ -592,10 +585,7 @@
 			"text90": "Felder mit einem Stern sind Pflicht·felder.",
 			"list6": {
 				"title": "Dann müssen Sie:",
-				"content": [
-					"Einverständnis·erklärung ankreuzen",
-					"Formular abschicken"
-				]
+				"content": ["Einverständnis·erklärung ankreuzen", "Formular abschicken"]
 			},
 			"text93": "Wir prüfen Ihren Eintrag.",
 			"text95": "Wenn es Fragen gibt",
@@ -641,10 +631,7 @@
 			"list8": {
 				"title1": "Auch in bestehenden Kategorien fehlen Orte.",
 				"title2": "Zum Beispiel:",
-				"content": [
-					"Private Galerien",
-					"Private Kunst·schulen"
-				]
+				"content": ["Private Galerien", "Private Kunst·schulen"]
 			},
 			"text132": "Wenn Ihr Ort fehlt:",
 			"text133": "Sie können den Ort über ein Formular einreichen.",
