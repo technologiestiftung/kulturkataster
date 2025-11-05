@@ -12,6 +12,7 @@ import LibrariesIcon from "@/icons/libraries.svg";
 import LiteraturePlacesIcon from "@/icons/literature-places.svg";
 import MultiCategoriesIcon from "@/icons/multi-categories.svg";
 import MuseumsIcon from "@/icons/museums.svg";
+import StreetArtIcon from "@/icons/street-art.svg";
 import PerformingArtsVenuesIcon from "@/icons/performing-arts-venues.svg";
 import {
 	default as DefaultIcon,
@@ -34,6 +35,7 @@ import librariesRaw from "@/icons/libraries.svg?raw";
 import literaturePlacesRaw from "@/icons/literature-places.svg?raw";
 import multiCategoriesRaw from "@/icons/multi-categories.svg?raw";
 import museumsRaw from "@/icons/museums.svg?raw";
+import streetArtRaw from "@/icons/street-art.svg?raw";
 import performingArtsVenuesRaw from "@/icons/performing-arts-venues.svg?raw";
 import {
 	default as defaultRaw,
@@ -66,6 +68,7 @@ export const CATEGORY_ICON_COMPONENTS: Partial<
 	[CategoryKeys.DANCE_VENUES]: DanceVenuesIcon,
 	[CategoryKeys.PERFORMING_ARTS_VENUES]: PerformingArtsVenuesIcon,
 	[CategoryKeys.GRAFFITI_AREAS]: GraffitiAreasIcon,
+	[CategoryKeys.URBAN_ART]: StreetArtIcon,
 	[CategoryKeys.OTHER]: PlaceholderIcon,
 	[CategoryKeys.MULTI_CATEGORIES]: MultiCategoriesIcon,
 };
@@ -87,6 +90,7 @@ const CATEGORY_ICON_RAW_SVG: Partial<Record<CategoryType, string>> = {
 	[CategoryKeys.DANCE_VENUES]: danceVenuesRaw,
 	[CategoryKeys.PERFORMING_ARTS_VENUES]: performingArtsVenuesRaw,
 	[CategoryKeys.GRAFFITI_AREAS]: graffitiAreasRaw,
+	[CategoryKeys.URBAN_ART]: streetArtRaw,
 	[CategoryKeys.OTHER]: placeholderRaw,
 	[CategoryKeys.MULTI_CATEGORIES]: multiCategoriesRaw,
 };
