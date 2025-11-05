@@ -176,6 +176,16 @@ function MyComponent() {
 }
 ```
 
+### Traduora Sync
+
+The project includes automated translation synchronization with Traduora. See [`scripts/README.md`](scripts/README.md) for details.
+
+**Quick commands:**
+```bash
+npm run traduora:push  # Upload local translations to Traduora
+npm run traduora:pull  # Download translations from Traduora
+```
+
 ## Architecture
 
 ### Project Structure
