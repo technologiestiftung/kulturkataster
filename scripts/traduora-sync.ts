@@ -1,4 +1,5 @@
 #!/usr/bin/env tsx
+/* eslint-disable complexity */
 /* eslint-disable no-shadow */
 /* eslint-disable max-depth */
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -568,7 +569,7 @@ async function pullFromTraduora(): Promise<void> {
 					// Merge: Traduora translations overwrite local, but preserve local-only keys
 					mergedTranslations = deepMerge(localContent, traduoraTranslations);
 					console.log(`    ℹ Merged with existing local translations`);
-				} catch (error) {
+				} catch {
 					console.warn(`    ⚠ Could not read existing file, will overwrite`);
 				}
 			}
