@@ -5,7 +5,14 @@ const nextConfig: NextConfig = {
 	experimental: {
 		useCache: true,
 	},
-	turbopack: {},
+	turbopack: {
+		rules: {
+			"*.svg": {
+				loaders: ["@svgr/webpack"],
+				as: "*.js",
+			},
+		},
+	},
 	webpack(config) {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const fileLoaderRule = config.module.rules.find((rule: any) =>
