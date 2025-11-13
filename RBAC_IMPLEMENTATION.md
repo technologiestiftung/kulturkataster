@@ -7,14 +7,12 @@ This document outlines the recommended approach for implementing the Role-Based 
 ## Architecture Decision
 
 ### What to Handle with Supabase RLS
-
 - ✅ **Institution Read Access** - Filter which institutions users can view based on group membership
 - ✅ **User Management Read Access** - Control who can see which users
 - ✅ **Group Membership** - Restrict access to groups users belong to
 - ✅ **Basic CRUD Operations** - Standard create, read, update, delete based on role permissions
 
 ### What to Handle with Server Actions
-
 - ✅ **Field-Level Permissions** - Complex permission checks for individual fields (view, requestChange, approveChange)
 - ✅ **Status Change Workflows** - Archive, unarchive, publish, unpublish logic
 - ✅ **Deletion Workflows** - Request deletion, approve deletion (requires workflow state)
@@ -25,14 +23,12 @@ This document outlines the recommended approach for implementing the Role-Based 
 ### Why This Split?
 
 **RLS for Simple Access Control:**
-
 - Native database-level security
 - Fast performance (happens at query time)
 - Automatic enforcement (can't be bypassed)
 - Good for: "Can user X see institution Y?"
 
 **Server Actions for Complex Business Logic:**
-
 - Flexible workflow implementation
 - Easier to maintain and test
 - Better error handling and validation
@@ -118,19 +114,19 @@ CREATE TABLE change_requests (
 
 ```typescript
 interface RolePermissions {
-	fields: {
-		[fieldName: string]: {
-			view: boolean;
-			requestChange: boolean;
-			approveChange: boolean;
-		};
-	};
-	createInstitution: boolean;
-	publishInstitution: boolean;
-	changeStatus: boolean;
-	deleteInstitution: boolean;
-	manageUsers: boolean;
-	manageGroups: boolean;
+  fields: {
+    [fieldName: string]: {
+      view: boolean;
+      requestChange: boolean;
+      approveChange: boolean;
+    }
+  };
+  createInstitution: boolean;
+  publishInstitution: boolean;
+  changeStatus: boolean;
+  deleteInstitution: boolean;
+  manageUsers: boolean;
+  manageGroups: boolean;
 }
 ```
 
@@ -258,91 +254,87 @@ USING (
 
 ```typescript
 // lib/permissions.ts
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from '@/lib/supabase/server';
 
 export async function getCurrentUserPermissions() {
-	const supabase = await createClient();
+  const supabase = await createClient();
 
-	const {
-		data: { user },
-	} = await supabase.auth.getUser();
-	if (!user) throw new Error("Unauthorized");
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Unauthorized');
 
-	const { data: profile } = await supabase
-		.from("user_profiles")
-		.select("*, role:roles(*), groups:user_groups(group:groups(*))")
-		.eq("id", user.id)
-		.single();
+  const { data: profile } = await supabase
+    .from('user_profiles')
+    .select('*, role:roles(*), groups:user_groups(group:groups(*))')
+    .eq('id', user.id)
+    .single();
 
-	if (!profile?.role) throw new Error("User has no role assigned");
+  if (!profile?.role) throw new Error('User has no role assigned');
 
-	return {
-		userId: user.id,
-		role: profile.role,
-		permissions: profile.role.permissions as RolePermissions,
-		scopeRestriction: profile.role.scope_restriction,
-		groups: profile.groups.map((ug) => ug.group),
-	};
+  return {
+    userId: user.id,
+    role: profile.role,
+    permissions: profile.role.permissions as RolePermissions,
+    scopeRestriction: profile.role.scope_restriction,
+    groups: profile.groups.map(ug => ug.group),
+  };
 }
 
 export async function canUserAccessInstitution(
-	institutionId: string,
-	userId: string,
-	groups: any[],
+  institutionId: string,
+  userId: string,
+  groups: any[]
 ): Promise<boolean> {
-	const supabase = await createClient();
+  const supabase = await createClient();
 
-	const { data: institution } = await supabase
-		.from("institutions")
-		.select("*")
-		.eq("id", institutionId)
-		.single();
+  const { data: institution } = await supabase
+    .from('institutions')
+    .select('*')
+    .eq('id', institutionId)
+    .single();
 
-	if (!institution) return false;
+  if (!institution) return false;
 
-	// Check if any of user's groups grant access
-	return groups.some((group) => {
-		const access = group.institution_access;
+  // Check if any of user's groups grant access
+  return groups.some(group => {
+    const access = group.institution_access;
 
-		if (access.type === "all") return true;
+    if (access.type === 'all') return true;
 
-		if (access.type === "district") {
-			return access.districts?.some((d: any) => d.key === institution.district);
-		}
+    if (access.type === 'district') {
+      return access.districts?.some((d: any) => d.key === institution.district);
+    }
 
-		if (access.type === "category") {
-			return access.categories?.some(
-				(c: any) => c.key === institution.category,
-			);
-		}
+    if (access.type === 'category') {
+      return access.categories?.some((c: any) => c.key === institution.category);
+    }
 
-		if (access.type === "custom") {
-			return access.institutions?.some((i: any) => i.id === institutionId);
-		}
+    if (access.type === 'custom') {
+      return access.institutions?.some((i: any) => i.id === institutionId);
+    }
 
-		return false;
-	});
+    return false;
+  });
 }
 
 export async function canUserEditField(
-	fieldName: string,
-	permissions: RolePermissions,
+  fieldName: string,
+  permissions: RolePermissions
 ): Promise<{ canEdit: boolean; needsApproval: boolean }> {
-	const fieldPerms = permissions.fields[fieldName];
+  const fieldPerms = permissions.fields[fieldName];
 
-	if (!fieldPerms) return { canEdit: false, needsApproval: false };
+  if (!fieldPerms) return { canEdit: false, needsApproval: false };
 
-	// Can edit directly if has approveChange permission
-	if (fieldPerms.approveChange) {
-		return { canEdit: true, needsApproval: false };
-	}
+  // Can edit directly if has approveChange permission
+  if (fieldPerms.approveChange) {
+    return { canEdit: true, needsApproval: false };
+  }
 
-	// Can propose change if has requestChange permission
-	if (fieldPerms.requestChange) {
-		return { canEdit: true, needsApproval: true };
-	}
+  // Can propose change if has requestChange permission
+  if (fieldPerms.requestChange) {
+    return { canEdit: true, needsApproval: true };
+  }
 
-	return { canEdit: false, needsApproval: false };
+  return { canEdit: false, needsApproval: false };
 }
 ```
 
@@ -350,79 +342,77 @@ export async function canUserEditField(
 
 ```typescript
 // actions/institutions.ts
-"use server";
+'use server';
 
-import { revalidatePath } from "next/cache";
-import {
-	getCurrentUserPermissions,
-	canUserAccessInstitution,
-	canUserEditField,
-} from "@/lib/permissions";
-import { createClient } from "@/lib/supabase/server";
+import { revalidatePath } from 'next/cache';
+import { getCurrentUserPermissions, canUserAccessInstitution, canUserEditField } from '@/lib/permissions';
+import { createClient } from '@/lib/supabase/server';
 
 export async function updateInstitutionField(
-	institutionId: string,
-	fieldName: string,
-	newValue: any,
+  institutionId: string,
+  fieldName: string,
+  newValue: any
 ) {
-	const supabase = await createClient();
-	const userPerms = await getCurrentUserPermissions();
+  const supabase = await createClient();
+  const userPerms = await getCurrentUserPermissions();
 
-	// Check if user has access to this institution
-	const hasAccess = await canUserAccessInstitution(
-		institutionId,
-		userPerms.userId,
-		userPerms.groups,
-	);
+  // Check if user has access to this institution
+  const hasAccess = await canUserAccessInstitution(
+    institutionId,
+    userPerms.userId,
+    userPerms.groups
+  );
 
-	if (!hasAccess) {
-		return { error: "No access to this institution" };
-	}
+  if (!hasAccess) {
+    return { error: 'No access to this institution' };
+  }
 
-	// Check field-level permissions
-	const { canEdit, needsApproval } = await canUserEditField(
-		fieldName,
-		userPerms.permissions,
-	);
+  // Check field-level permissions
+  const { canEdit, needsApproval } = await canUserEditField(
+    fieldName,
+    userPerms.permissions
+  );
 
-	if (!canEdit) {
-		return { error: `No permission to edit field: ${fieldName}` };
-	}
+  if (!canEdit) {
+    return { error: `No permission to edit field: ${fieldName}` };
+  }
 
-	if (needsApproval) {
-		// Create change request instead of direct update
-		const { data: currentInstitution } = await supabase
-			.from("institutions")
-			.select(fieldName)
-			.eq("id", institutionId)
-			.single();
+  if (needsApproval) {
+    // Create change request instead of direct update
+    const { data: currentInstitution } = await supabase
+      .from('institutions')
+      .select(fieldName)
+      .eq('id', institutionId)
+      .single();
 
-		const { error } = await supabase.from("change_requests").insert({
-			institution_id: institutionId,
-			requested_by: userPerms.userId,
-			change_type: "field_change",
-			field_name: fieldName,
-			current_value: currentInstitution?.[fieldName],
-			proposed_value: newValue,
-			status: "pending",
-		});
+    const { error } = await supabase
+      .from('change_requests')
+      .insert({
+        institution_id: institutionId,
+        requested_by: userPerms.userId,
+        change_type: 'field_change',
+        field_name: fieldName,
+        current_value: currentInstitution?.[fieldName],
+        proposed_value: newValue,
+        status: 'pending',
+      });
 
-		if (error) return { error: error.message };
+    if (error) return { error: error.message };
 
-		revalidatePath(`/institutions/${institutionId}`);
-		return { success: true, needsApproval: true };
-	}
+    revalidatePath(`/institutions/${institutionId}`);
+    return { success: true, needsApproval: true };
+  }
 
-	// Direct update (has approveChange permission)
-	const { error } = await supabase
-		.from("institutions")
-		.update({ [fieldName]: newValue, updated_at: new Date().toISOString() })
-		.eq("id", institutionId);
+  // Direct update (has approveChange permission)
+  const { error } = await supabase
+    .from('institutions')
+    .update({ [fieldName]: newValue, updated_at: new Date().toISOString() })
+    .eq('id', institutionId);
 
-	if (error) return { error: error.message };
+  if (error) return { error: error.message };
 
-	revalidatePath(`/institutions/${institutionId}`);
-	return { success: true, needsApproval: false };
+  revalidatePath(`/institutions/${institutionId}`);
+  return { success: true, needsApproval: false };
 }
 ```
 
@@ -431,44 +421,41 @@ export async function updateInstitutionField(
 ```typescript
 // actions/institutions.ts
 export async function changeInstitutionStatus(
-	institutionId: string,
-	newStatus: "draft" | "published" | "archived",
+  institutionId: string,
+  newStatus: 'draft' | 'published' | 'archived'
 ) {
-	const supabase = await createClient();
-	const userPerms = await getCurrentUserPermissions();
+  const supabase = await createClient();
+  const userPerms = await getCurrentUserPermissions();
 
-	// Check institution access
-	const hasAccess = await canUserAccessInstitution(
-		institutionId,
-		userPerms.userId,
-		userPerms.groups,
-	);
+  // Check institution access
+  const hasAccess = await canUserAccessInstitution(
+    institutionId,
+    userPerms.userId,
+    userPerms.groups
+  );
 
-	if (!hasAccess) {
-		return { error: "No access to this institution" };
-	}
+  if (!hasAccess) {
+    return { error: 'No access to this institution' };
+  }
 
-	// Check permission based on status change type
-	if (newStatus === "published" && !userPerms.permissions.publishInstitution) {
-		return { error: "No permission to publish institutions" };
-	}
+  // Check permission based on status change type
+  if (newStatus === 'published' && !userPerms.permissions.publishInstitution) {
+    return { error: 'No permission to publish institutions' };
+  }
 
-	if (
-		(newStatus === "archived" || newStatus === "draft") &&
-		!userPerms.permissions.changeStatus
-	) {
-		return { error: "No permission to change institution status" };
-	}
+  if ((newStatus === 'archived' || newStatus === 'draft') && !userPerms.permissions.changeStatus) {
+    return { error: 'No permission to change institution status' };
+  }
 
-	const { error } = await supabase
-		.from("institutions")
-		.update({ status: newStatus, updated_at: new Date().toISOString() })
-		.eq("id", institutionId);
+  const { error } = await supabase
+    .from('institutions')
+    .update({ status: newStatus, updated_at: new Date().toISOString() })
+    .eq('id', institutionId);
 
-	if (error) return { error: error.message };
+  if (error) return { error: error.message };
 
-	revalidatePath(`/institutions/${institutionId}`);
-	return { success: true };
+  revalidatePath(`/institutions/${institutionId}`);
+  return { success: true };
 }
 ```
 
@@ -477,103 +464,105 @@ export async function changeInstitutionStatus(
 ```typescript
 // actions/institutions.ts
 export async function requestInstitutionDeletion(institutionId: string) {
-	const supabase = await createClient();
-	const userPerms = await getCurrentUserPermissions();
+  const supabase = await createClient();
+  const userPerms = await getCurrentUserPermissions();
 
-	if (!userPerms.permissions.changeStatus) {
-		return { error: "No permission to request deletion" };
-	}
+  if (!userPerms.permissions.changeStatus) {
+    return { error: 'No permission to request deletion' };
+  }
 
-	const hasAccess = await canUserAccessInstitution(
-		institutionId,
-		userPerms.userId,
-		userPerms.groups,
-	);
+  const hasAccess = await canUserAccessInstitution(
+    institutionId,
+    userPerms.userId,
+    userPerms.groups
+  );
 
-	if (!hasAccess) {
-		return { error: "No access to this institution" };
-	}
+  if (!hasAccess) {
+    return { error: 'No access to this institution' };
+  }
 
-	const { error } = await supabase.from("change_requests").insert({
-		institution_id: institutionId,
-		requested_by: userPerms.userId,
-		change_type: "deletion",
-		status: "pending",
-	});
+  const { error } = await supabase
+    .from('change_requests')
+    .insert({
+      institution_id: institutionId,
+      requested_by: userPerms.userId,
+      change_type: 'deletion',
+      status: 'pending',
+    });
 
-	if (error) return { error: error.message };
+  if (error) return { error: error.message };
 
-	revalidatePath(`/institutions/${institutionId}`);
-	return { success: true };
+  revalidatePath(`/institutions/${institutionId}`);
+  return { success: true };
 }
 
 export async function approveInstitutionDeletion(changeRequestId: string) {
-	const supabase = await createClient();
-	const userPerms = await getCurrentUserPermissions();
+  const supabase = await createClient();
+  const userPerms = await getCurrentUserPermissions();
 
-	if (!userPerms.permissions.deleteInstitution) {
-		return { error: "No permission to approve deletions" };
-	}
+  if (!userPerms.permissions.deleteInstitution) {
+    return { error: 'No permission to approve deletions' };
+  }
 
-	const { data: changeRequest } = await supabase
-		.from("change_requests")
-		.select("*, institution:institutions(*)")
-		.eq("id", changeRequestId)
-		.single();
+  const { data: changeRequest } = await supabase
+    .from('change_requests')
+    .select('*, institution:institutions(*)')
+    .eq('id', changeRequestId)
+    .single();
 
-	if (!changeRequest) {
-		return { error: "Change request not found" };
-	}
+  if (!changeRequest) {
+    return { error: 'Change request not found' };
+  }
 
-	// Delete the institution
-	const { error: deleteError } = await supabase
-		.from("institutions")
-		.delete()
-		.eq("id", changeRequest.institution_id);
+  // Delete the institution
+  const { error: deleteError } = await supabase
+    .from('institutions')
+    .delete()
+    .eq('id', changeRequest.institution_id);
 
-	if (deleteError) return { error: deleteError.message };
+  if (deleteError) return { error: deleteError.message };
 
-	// Mark change request as approved
-	await supabase
-		.from("change_requests")
-		.update({
-			status: "approved",
-			approved_by: userPerms.userId,
-			updated_at: new Date().toISOString(),
-		})
-		.eq("id", changeRequestId);
+  // Mark change request as approved
+  await supabase
+    .from('change_requests')
+    .update({
+      status: 'approved',
+      approved_by: userPerms.userId,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', changeRequestId);
 
-	revalidatePath("/institutions");
-	return { success: true };
+  revalidatePath('/institutions');
+  return { success: true };
 }
 
 export async function deleteInstitutionDirectly(institutionId: string) {
-	const supabase = await createClient();
-	const userPerms = await getCurrentUserPermissions();
+  const supabase = await createClient();
+  const userPerms = await getCurrentUserPermissions();
 
-	if (!userPerms.permissions.deleteInstitution) {
-		return { error: "No permission to delete institutions" };
-	}
+  if (!userPerms.permissions.deleteInstitution) {
+    return { error: 'No permission to delete institutions' };
+  }
 
-	const hasAccess = await canUserAccessInstitution(
-		institutionId,
-		userPerms.userId,
-		userPerms.groups,
-	);
+  const hasAccess = await canUserAccessInstitution(
+    institutionId,
+    userPerms.userId,
+    userPerms.groups
+  );
 
-	if (!hasAccess) {
-		return { error: "No access to this institution" };
-	}
+  if (!hasAccess) {
+    return { error: 'No access to this institution' };
+  }
 
-	const { error } = await supabase
-		.from("institutions")
-		.delete()
-		.eq("id", institutionId);
+  const { error } = await supabase
+    .from('institutions')
+    .delete()
+    .eq('id', institutionId);
 
-	if (error) return { error: error.message };
+  if (error) return { error: error.message };
 
-	revalidatePath("/institutions");
-	return { success: true };
+  revalidatePath('/institutions');
+  return { success: true };
 }
 ```
 
@@ -582,45 +571,37 @@ export async function deleteInstitutionDirectly(institutionId: string) {
 ## Best Practices
 
 ### 1. **Always Validate on Server**
-
 Never trust client-side permission checks. Always re-validate permissions in server actions.
 
 ### 2. **Use RLS as Base Security Layer**
-
 RLS ensures users can't access data they shouldn't, even if server action has bugs.
 
 ### 3. **Cache Permission Checks**
-
 For frequently accessed permissions, consider caching role data in the session.
 
 ### 4. **Audit Logging**
-
 Log all permission-sensitive operations:
 
 ```typescript
-await supabase.from("audit_logs").insert({
-	user_id: userPerms.userId,
-	action: "update_institution",
-	resource_type: "institution",
-	resource_id: institutionId,
-	details: { field: fieldName, old_value, new_value },
+await supabase.from('audit_logs').insert({
+  user_id: userPerms.userId,
+  action: 'update_institution',
+  resource_type: 'institution',
+  resource_id: institutionId,
+  details: { field: fieldName, old_value, new_value },
 });
 ```
 
 ### 5. **Handle Scope Restriction Consistently**
-
 Always apply scope restriction logic in both RLS and server actions.
 
 ### 6. **Test Permission Boundaries**
-
 Write tests for edge cases:
-
 - User with no groups
 - User with multiple groups with conflicting access
 - Scope restriction edge cases
 
 ### 7. **Performance Optimization**
-
 - Index foreign keys (user_id, role_id, group_id)
 - Use JSONB indexes for permission lookups
 - Consider materializing frequently checked permissions
@@ -635,25 +616,21 @@ CREATE INDEX idx_groups_institution_access ON groups USING GIN (institution_acce
 ## Migration Path
 
 ### Phase 1: Setup Database
-
 1. Create tables and RLS policies
 2. Migrate existing roles to new structure
 3. Create initial groups
 
 ### Phase 2: Implement Read Access
-
 1. Apply RLS policies for read operations
 2. Test institution filtering by groups
 3. Test user management access
 
 ### Phase 3: Implement Write Operations
-
 1. Create server actions for field updates
 2. Implement change request workflow
 3. Add status change logic
 
 ### Phase 4: Advanced Features
-
 1. Implement deletion workflows
 2. Add audit logging
 3. Optimize performance
@@ -663,13 +640,11 @@ CREATE INDEX idx_groups_institution_access ON groups USING GIN (institution_acce
 ## Summary
 
 **Use Supabase RLS for:**
-
 - Institution read access (fast, automatic filtering)
 - Basic CRUD authorization checks
 - Group-based access control
 
 **Use Server Actions for:**
-
 - Field-level permission validation
 - Change request workflows
 - Status management
