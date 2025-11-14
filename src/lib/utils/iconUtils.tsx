@@ -1,5 +1,5 @@
 import { CategoryKeys, CategoryType } from "@/types";
-import type { FC, SVGProps } from "react";
+import React, { type FC, type SVGProps } from "react";
 
 import CinemasIcon from "@/icons/cinemas.svg";
 import ClubsMusicVenuesIcon from "@/icons/clubs-music-venues.svg";
@@ -12,6 +12,7 @@ import LibrariesIcon from "@/icons/libraries.svg";
 import LiteraturePlacesIcon from "@/icons/literature-places.svg";
 import MultiCategoriesIcon from "@/icons/multi-categories.svg";
 import MuseumsIcon from "@/icons/museums.svg";
+import StreetArtIcon from "@/icons/street-art.svg";
 import PerformingArtsVenuesIcon from "@/icons/performing-arts-venues.svg";
 import {
 	default as DefaultIcon,
@@ -23,27 +24,7 @@ import RehearsalRoomsIcon from "@/icons/rehearsal-rooms.svg";
 import SocioculturalCentersIcon from "@/icons/sociocultural-centers.svg";
 import StudiosIcon from "@/icons/studios.svg";
 
-import cinemasRaw from "@/icons/cinemas.svg?raw";
-import clubsMusicVenuesRaw from "@/icons/clubs-music-venues.svg?raw";
-import culturalUrbanDevelopmentRaw from "@/icons/cultural-urban-development.svg?raw";
-import danceVenuesRaw from "@/icons/dance-venues.svg?raw";
-import educationPlacesRaw from "@/icons/education-places.svg?raw";
-import galleriesRaw from "@/icons/galleries.svg?raw";
-import graffitiAreasRaw from "@/icons/graffiti-areas.svg?raw";
-import librariesRaw from "@/icons/libraries.svg?raw";
-import literaturePlacesRaw from "@/icons/literature-places.svg?raw";
-import multiCategoriesRaw from "@/icons/multi-categories.svg?raw";
-import museumsRaw from "@/icons/museums.svg?raw";
-import performingArtsVenuesRaw from "@/icons/performing-arts-venues.svg?raw";
-import {
-	default as defaultRaw,
-	default as placeholderRaw,
-} from "@/icons/placeholder.svg?raw";
-import potentialSpacesRaw from "@/icons/potential-spaces.svg?raw";
-import projectSpacesInitiativesRaw from "@/icons/project-spaces-initiatives.svg?raw";
-import rehearsalRoomsRaw from "@/icons/rehearsal-rooms.svg?raw";
-import socioculturalCentersRaw from "@/icons/sociocultural-centers.svg?raw";
-import studiosRaw from "@/icons/studios.svg?raw";
+import { renderToStaticMarkup } from "react-dom/server";
 
 type SvgIconComponent = FC<SVGProps<SVGSVGElement>>;
 
@@ -66,30 +47,16 @@ export const CATEGORY_ICON_COMPONENTS: Partial<
 	[CategoryKeys.DANCE_VENUES]: DanceVenuesIcon,
 	[CategoryKeys.PERFORMING_ARTS_VENUES]: PerformingArtsVenuesIcon,
 	[CategoryKeys.GRAFFITI_AREAS]: GraffitiAreasIcon,
+	[CategoryKeys.URBAN_ART]: StreetArtIcon,
 	[CategoryKeys.OTHER]: PlaceholderIcon,
 	[CategoryKeys.MULTI_CATEGORIES]: MultiCategoriesIcon,
 };
 
-const CATEGORY_ICON_RAW_SVG: Partial<Record<CategoryType, string>> = {
-	[CategoryKeys.STUDIOS]: studiosRaw,
-	[CategoryKeys.EDUCATION_PLACES]: educationPlacesRaw,
-	[CategoryKeys.LIBRARIES]: librariesRaw,
-	[CategoryKeys.CLUBS_MUSIC_VENUES]: clubsMusicVenuesRaw,
-	[CategoryKeys.GALLERIES]: galleriesRaw,
-	[CategoryKeys.CINEMAS]: cinemasRaw,
-	[CategoryKeys.LITERATURE_PLACES]: literaturePlacesRaw,
-	[CategoryKeys.MUSEUMS]: museumsRaw,
-	[CategoryKeys.CULTURAL_URBAN_DEVELOPMENT]: culturalUrbanDevelopmentRaw,
-	[CategoryKeys.POTENTIAL_SPACES]: potentialSpacesRaw,
-	[CategoryKeys.REHEARSAL_ROOMS]: rehearsalRoomsRaw,
-	[CategoryKeys.PROJECT_SPACES_INITIATIVES]: projectSpacesInitiativesRaw,
-	[CategoryKeys.SOCIOCULTURAL_CENTERS]: socioculturalCentersRaw,
-	[CategoryKeys.DANCE_VENUES]: danceVenuesRaw,
-	[CategoryKeys.PERFORMING_ARTS_VENUES]: performingArtsVenuesRaw,
-	[CategoryKeys.GRAFFITI_AREAS]: graffitiAreasRaw,
-	[CategoryKeys.OTHER]: placeholderRaw,
-	[CategoryKeys.MULTI_CATEGORIES]: multiCategoriesRaw,
-};
+function svgToString(SvgComponent: SvgIconComponent): string {
+	return renderToStaticMarkup(<SvgComponent />);
+}
+
+const CATEGORY_ICON_RAW_SVG_CACHE: Partial<Record<CategoryType, string>> = {};
 
 export function getCategoryIconComponent(
 	category: CategoryType,
@@ -98,8 +65,14 @@ export function getCategoryIconComponent(
 }
 
 export function getCategoryIconRawSvg(category: CategoryType): string {
-	if (CATEGORY_ICON_RAW_SVG[category]) {
-		return CATEGORY_ICON_RAW_SVG[category] as string;
+	if (CATEGORY_ICON_RAW_SVG_CACHE[category]) {
+		return CATEGORY_ICON_RAW_SVG_CACHE[category] as string;
 	}
-	return defaultRaw;
+
+	const IconComponent = getCategoryIconComponent(category);
+	const svgString = svgToString(IconComponent);
+
+	CATEGORY_ICON_RAW_SVG_CACHE[category] = svgString;
+
+	return svgString;
 }
