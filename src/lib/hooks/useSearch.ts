@@ -51,7 +51,6 @@ export function useSearch<T>({
 		}, timeoutDuration);
 
 		setDebounceTimeout(timeout);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [query]);
 
 	const search = async () => {

@@ -96,7 +96,6 @@
 		"musiktheater_performing_arts_venues": "Musiktheater",
 		"music_theater_performing_arts_venues": "Musiktheater",
 		"music_theater_clubs_music_venues": "Musiktheater",
-
 		"others": "Nicht zugeordnet",
 		"studios_other": "Nicht zugeordnet",
 		"education_places_other": "Nicht zugeordnet",
@@ -126,20 +125,21 @@
 		"eu": "EU",
 		"other": "Sonstiges"
 	},
-	"district_id": {
-		"10": "Charlottenburg-Wilmersdorf",
-		"4": "Friedrichshain-Kreuzberg",
-		"3": "Lichtenberg",
-		"9": "Marzahn-Hellersdorf",
-		"8": "Mitte",
-		"7": "Neukölln",
-		"2": "Pankow",
-		"5": "Reinickendorf",
-		"12": "Spandau",
-		"11": "Steglitz-Zehlendorf",
-		"6": "Tempelhof-Schöneberg",
-		"1": "Treptow-Köpenick"
-	},
+	"district_id": [
+		null,
+		"Treptow-Köpenick",
+		"Pankow",
+		"Lichtenberg",
+		"Friedrichshain-Kreuzberg",
+		"Reinickendorf",
+		"Tempelhof-Schöneberg",
+		"Neukölln",
+		"Mitte",
+		"Marzahn-Hellersdorf",
+		"Charlottenburg-Wilmersdorf",
+		"Steglitz-Zehlendorf",
+		"Spandau"
+	],
 	"berlin_district": {
 		"charlottenburg_wilmersdorf": "Charlottenburg-Wilmersdorf",
 		"friedrichshain_kreuzberg": "Friedrichshain-Kreuzberg",

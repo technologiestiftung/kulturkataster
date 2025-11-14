@@ -1,4 +1,4 @@
-export type Locale = "de";
+export type Locale = string;
 
 export type AllowedLocales = Locale[];
 

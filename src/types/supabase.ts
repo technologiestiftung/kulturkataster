@@ -181,11 +181,11 @@ export type Database = {
 					established_since: string | null;
 					established_until: string | null;
 					funding_type: Database["public"]["Enums"]["funding_type_enum"] | null;
-					geom: unknown | null;
+					geom: unknown;
 					id: number;
 					import_identifier: string | null;
 					internal_notes: string | null;
-					latlong: unknown | null;
+					latlong: unknown;
 					name: string;
 					neighbourhood_id: number | null;
 					notes: string | null;
@@ -231,11 +231,11 @@ export type Database = {
 					funding_type?:
 						| Database["public"]["Enums"]["funding_type_enum"]
 						| null;
-					geom?: unknown | null;
+					geom?: unknown;
 					id?: number;
 					import_identifier?: string | null;
 					internal_notes?: string | null;
-					latlong?: unknown | null;
+					latlong?: unknown;
 					name: string;
 					neighbourhood_id?: number | null;
 					notes?: string | null;
@@ -283,11 +283,11 @@ export type Database = {
 					funding_type?:
 						| Database["public"]["Enums"]["funding_type_enum"]
 						| null;
-					geom?: unknown | null;
+					geom?: unknown;
 					id?: number;
 					import_identifier?: string | null;
 					internal_notes?: string | null;
-					latlong?: unknown | null;
+					latlong?: unknown;
 					name?: string;
 					neighbourhood_id?: number | null;
 					notes?: string | null;
@@ -853,10 +853,7 @@ export type Database = {
 				Args: { limit_count?: number; search_term?: string };
 				Returns: Json;
 			};
-			get_public_institutions_geojson: {
-				Args: Record<PropertyKey, never>;
-				Returns: Json;
-			};
+			get_public_institutions_geojson: { Args: never; Returns: Json };
 			get_public_institutions_with_filters: {
 				Args: {
 					category_keys?: Database["public"]["Enums"]["category_key_enum"][];
@@ -867,24 +864,18 @@ export type Database = {
 				Returns: Json;
 			};
 			get_user_categories: {
-				Args: Record<PropertyKey, never>;
+				Args: never;
 				Returns: Database["public"]["Enums"]["category_key_enum"][];
 			};
-			get_user_district: {
-				Args: Record<PropertyKey, never>;
-				Returns: string;
-			};
+			get_user_district: { Args: never; Returns: string };
 			get_user_permissions: {
-				Args: Record<PropertyKey, never>;
+				Args: never;
 				Returns: {
 					allowed_fields: string[];
 					user_role: string;
 				}[];
 			};
-			get_user_role: {
-				Args: Record<PropertyKey, never>;
-				Returns: string;
-			};
+			get_user_role: { Args: never; Returns: string };
 			user_has_any_institution_role: {
 				Args: { institution_id_param: number; required_roles: string[] };
 				Returns: boolean;
@@ -921,7 +912,8 @@ export type Database = {
 				| "dance_venues"
 				| "performing_arts_venues"
 				| "graffiti_areas"
-				| "other";
+				| "other"
+				| "urban_art";
 			closing_reason_enum:
 				| "lease_expired"
 				| "funding_discontinued"
@@ -1068,7 +1060,11 @@ export type Database = {
 				| "music_theater_clubs_music_venues"
 				| "music_theater_performing_arts_venues"
 				| "project_spaces_general"
-				| "project_initiatives_general";
+				| "project_initiatives_general"
+				| "legal_graffiti_areas"
+				| "mobile_libraries"
+				| "rehearsal_rooms_program"
+				| "rehearsal_rooms_workspace_program";
 			user_role_enum:
 				| "public"
 				| "institution"
@@ -1249,6 +1245,7 @@ export const Constants = {
 				"performing_arts_venues",
 				"graffiti_areas",
 				"other",
+				"urban_art",
 			],
 			closing_reason_enum: [
 				"lease_expired",
@@ -1405,6 +1402,10 @@ export const Constants = {
 				"music_theater_performing_arts_venues",
 				"project_spaces_general",
 				"project_initiatives_general",
+				"legal_graffiti_areas",
+				"mobile_libraries",
+				"rehearsal_rooms_program",
+				"rehearsal_rooms_workspace_program",
 			],
 			user_role_enum: [
 				"public",

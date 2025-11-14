@@ -2,7 +2,7 @@
 	"welcomeModal": {
 		"title": "Das Berliner Kulturkataster: Die Kultur der Stadt auf einen Blick",
 		"subtitle": "Ein Projekt der Kulturraum Berlin gGmbH",
-		"description1": "Dies ist die erste Version des Berliner Kulturkatasters. Das Kulturkataster ist eine digitale Karte, die die Vielfalt der Kulturlandschaft Berlins abbildet und systematisch Kunst- und Kulturorte erfasst. Es dient als zentrale Grundlage für eine faktenbasierte kulturelle Stadtentwicklung. In den kommenden Monaten werden wir diese Version mit neuen Funktionen und Informationen ausbauen.",
+		"description1": "Das ist die erste Version des Berliner Kulturkatasters. Das Kulturkataster ist eine digitale Karte, die die Vielfalt der Kulturlandschaft Berlins abbildet und systematisch Kunst- und Kulturorte erfasst. Es dient als zentrale Grundlage für eine faktenbasierte kulturelle Stadtentwicklung. In den kommenden Monaten werden wir diese Version mit neuen Funktionen und Informationen ausbauen.",
 		"description2": "Stärken Sie mit uns dieses Projekt für die Berliner Kultur! Wir freuen uns auf Ihre Anmerkungen.",
 		"newsletter": "Zum Newsletter anmelden",
 		"discoverButton": "Entdecken",
@@ -45,53 +45,53 @@
 			"introduction": "Das Kulturkataster Berlin wurde so konzipiert, dass es möglichst intuitiv bedient werden kann. Funktionalitäten orientieren sich an gängigen Kartenanwendungen. Grundlegende Bedienungshinweise haben wir an dieser Stelle für Sie zusammengefasst.",
 			"guides": [
 				{
-					"title": "Karte bewegen",
 					"desktop": "Auf dem Computer: Halten Sie die linke Maustaste gedrückt und ziehen die Karte in die gewünschte Richtung.",
-					"mobile": "Auf dem Smartphone/Tablet: Berühren Sie den Bildschirm mit einem Finger und wischen Sie über die Karte."
+					"mobile": "Auf dem Smartphone/Tablet: Berühren Sie den Bildschirm mit einem Finger und wischen Sie über die Karte.",
+					"title": "Karte bewegen"
 				},
 				{
-					"title": "Zoomen",
 					"desktop": "Auf dem Computer: Nutzen Sie das Mausrad oder die Plus- und Minus-Zeichen am unteren rechten Bildschirmrand.",
-					"mobile": "Auf dem Smartphone/Tablet: Legen Sie zwei Finger auf den Bildschirm und bewegen Sie diese auseinander, um zu vergrößern. Zum Verkleinern ziehen Sie die Finger wieder zusammen."
+					"mobile": "Auf dem Smartphone/Tablet: Legen Sie zwei Finger auf den Bildschirm und bewegen Sie diese auseinander, um zu vergrößern. Zum Verkleinern ziehen Sie die Finger wieder zusammen.",
+					"title": "Zoomen"
 				},
 				{
-					"title": "Einen Ort suchen",
+					"action": "Geben Sie den Namen eines Ortes oder die Adresse ein und bestätigen Sie Ihre Suche.",
 					"desktop": "Auf dem Computer: Öffnen Sie das Suchfeld, indem Sie auf das Lupensymbol oben links klicken.",
 					"mobile": "Auf dem Smartphone/Tablet: Öffnen Sie das Suchfeld, indem Sie auf das Lupensymbol unten tippen.",
-					"action": "Geben Sie den Namen eines Ortes oder die Adresse ein und bestätigen Sie Ihre Suche."
+					"title": "Einen Ort suchen"
 				},
 				{
-					"title": "Filterfunktionen verwenden",
+					"closedPlaces": "Standardmäßig werden alle geöffneten Kulturorte auf der Karte dargestellt. Durch einen Klick auf das Bedienfeld “Geschlossene Orte einblenden” können Sie sich zusätzlich vorübergehend und dauerhaft geschlossene Kulturorte anzeigen lassen.",
+					"description": "Sie können nun alle Kulturorte nach Bezirken sowie nach den zugeordneten Kategorien und Unterkategorien filtern.",
 					"desktop": "Auf dem Computer: Öffnen Sie die Filterfunktion, indem Sie auf das Symbol mit den drei übereinanderliegenden Strichen oben links klicken.",
 					"mobile": "Auf dem Smartphone/Tablet: Öffnen Sie die Filterfunktion, indem Sie auf das Symbol mit den drei übereinanderliegenden Strichen oben links tippen.",
-					"description": "Sie können nun alle Kulturorte nach Bezirken sowie nach den zugeordneten Kategorien und Unterkategorien filtern.",
-					"closedPlaces": "Standardmäßig werden alle geöffneten Kulturorte auf der Karte dargestellt. Durch einen Klick auf das Bedienfeld “Geschlossene Orte einblenden” können Sie sich zusätzlich vorübergehend und dauerhaft geschlossene Kulturorte anzeigen lassen."
+					"title": "Filterfunktionen verwenden"
 				},
 				{
-					"title": "Eine Auswahl herunterladen",
 					"description": "Das Kulturkataster bietet Ihnen die Möglichkeit, Informationen zu einzelnen sowie auch zu allen Kulturorten Ihrer aktuellen Ansicht herunterzuladen.",
 					"desktop": "Auf dem Computer: Klicken Sie auf den nach unten zeigenden Pfeil in der Seitennavigation oben links.",
-					"mobile": "Auf dem Smartphone/Tablet: Tippen Sie auf den nach unten zeigenden Pfeil in der Navigation unten rechts."
+					"mobile": "Auf dem Smartphone/Tablet: Tippen Sie auf den nach unten zeigenden Pfeil in der Navigation unten rechts.",
+					"title": "Eine Auswahl herunterladen"
 				},
 				{
-					"title": "Einen Ort eintragen",
 					"desktop": "Auf dem Computer: Öffnen Sie das Mitwirken-Formular, indem sie auf das Stift- Symbol oben links klicken.",
-					"mobile": "Auf dem Smartphone/Tablet: Öffnen Sie das Mitwirken-Formular, indem sie auf das Stift-Symbol unten rechts tippen.",
 					"instructions": "Folgen Sie den Hinweisen des Formulars und füllen Sie die Datenfelder gewissenhaft aus. Bitte beachten Sie, dass es sich bei den mit einem *Symbol versehenen Feldern um Pflichtfelder handelt.",
+					"mobile": "Auf dem Smartphone/Tablet: Öffnen Sie das Mitwirken-Formular, indem sie auf das Stift-Symbol unten rechts tippen.",
+					"review": "Das Redaktionsteam wird Ihren Eintrag prüfen und sich bei Rückfragen gegebenenfalls per E-Mail bei Ihnen melden. Wir bitten Sie um Verständnis, dass dieser Prozess einige Zeit in Anspruch nehmen kann, da wir gegebenenfalls auch Fachexpert*innen in den Entscheidungsprozess einbeziehen werden.",
 					"submit": "Bestätigen Sie die Einverständniserklärung und schicken Sie das Formular ab.",
-					"review": "Das Redaktionsteam wird Ihren Eintrag prüfen und sich bei Rückfragen gegebenenfalls per E-Mail bei Ihnen melden. Wir bitten Sie um Verständnis, dass dieser Prozess einige Zeit in Anspruch nehmen kann, da wir gegebenenfalls auch Fachexpert*innen in den Entscheidungsprozess einbeziehen werden."
+					"title": "Einen Ort eintragen"
 				},
 				{
-					"title": "Schriftgröße ändern",
+					"action": "Wählen Sie die Schaltfläche mit der Bezeichnung “Schriftgröße ändern” aus.",
 					"desktop": "Auf dem Computer: Öffnen Sie das Menü für die barrierefreie Bedienung der Website, indem Sie auf das Personensymbol unten links klicken.",
 					"mobile": "Auf dem Smartphone/Tablet: Öffnen Sie das Menü für die barrierefreie Bedienung der Website, indem Sie auf das Menüsymbol oben rechts tippen und anschließend die Schaltfläche mit dem Personensymbol auswählen.",
-					"action": "Wählen Sie die Schaltfläche mit der Bezeichnung “Schriftgröße ändern” aus."
+					"title": "Schriftgröße ändern"
 				},
 				{
-					"title": "Kontrast anpassen",
+					"action": "Wählen Sie die Schaltfläche mit der Bezeichnung “Kontrast anpassen” aus.",
 					"desktop": "Auf dem Computer: Öffnen Sie das Menü für die barrierefreie Bedienung der Website, indem Sie auf das Personensymbol unten links klicken.",
 					"mobile": "Auf dem Handy/Tablet: Öffnen Sie das Menü für die barrierefreie Bedienung der Website, indem Sie auf das Menüsymbol oben rechts tippen und anschließend die Schaltfläche mit dem Personensymbol auswählen.",
-					"action": "Wählen Sie die Schaltfläche mit der Bezeichnung “Kontrast anpassen” aus."
+					"title": "Kontrast anpassen"
 				}
 			]
 		},
@@ -99,24 +99,24 @@
 			"title": "Fragen & Antworten",
 			"questions": [
 				{
-					"question": "Warum ist mein Kulturort nicht im Kulturkataster verzeichnet?",
-					"answer": "Die Redaktion ist bemüht, alle Berliner Kulturorte auf der Karte abzubilden. Dies ist ein Prozess, der nie abgeschlossen sein wird. Zahlreiche Kategorien wurden bisher noch nicht erfasst (z. B. Archive, Kunst im öffentlichen Raum, Künstler*innenresidenzen, oder Kulturorganisationen). Gleichzeitig existieren auch innerhalb der Kategorien noch Lücken (z.B. private Galerien, private Kunstschulen), die in Zukunft erschlossen werden sollen. Falls Sie einen Ort vermissen, können Sie diesen über das Formular einreichen. Wählen Sie hierfür das Stift-Symbol in der Seitennavigation links auf der Computer-Version bzw. unten rechts in der Darstellung auf dem Tablet oder Smartphone aus und folgen Sie den Anweisungen."
+					"answer": "Die Redaktion ist bemüht, alle Berliner Kulturorte auf der Karte abzubilden. Dies ist ein Prozess, der nie abgeschlossen sein wird. Zahlreiche Kategorien wurden bisher noch nicht erfasst (z. B. Archive, Kunst im öffentlichen Raum, Künstler*innenresidenzen, oder Kulturorganisationen). Gleichzeitig existieren auch innerhalb der Kategorien noch Lücken (z.B. private Galerien, private Kunstschulen), die in Zukunft erschlossen werden sollen. Falls Sie einen Ort vermissen, können Sie diesen über das Formular einreichen. Wählen Sie hierfür das Stift-Symbol in der Seitennavigation links auf der Computer-Version bzw. unten rechts in der Darstellung auf dem Tablet oder Smartphone aus und folgen Sie den Anweisungen.",
+					"question": "Warum ist mein Kulturort nicht im Kulturkataster verzeichnet?"
 				},
 				{
-					"question": "Wie kann ich Informationen zu einem Kulturort ergänzen oder korrigieren?",
-					"answer": "In der Version 1 ist die Mitarbeit an den Inhalten des Kulturkatasters lediglich über ein Formular vorgesehen. Wenn Sie Informationen zu einem Kulturort ergänzen oder korrigieren wollen, können Sie diese über das Formular einreichen. Wählen Sie hierfür das Stift-Symbol in der Seitennavigation links auf der Desktop-Version bzw. unten rechts in der Darstellung auf dem Tablet oder Smartphone aus und folgen Sie den Anweisungen."
+					"answer": "In der Version 1 ist die Mitarbeit an den Inhalten des Kulturkatasters lediglich über ein Formular vorgesehen. Wenn Sie Informationen zu einem Kulturort ergänzen oder korrigieren wollen, können Sie diese über das Formular einreichen. Wählen Sie hierfür das Stift-Symbol in der Seitennavigation links auf der Desktop-Version bzw. unten rechts in der Darstellung auf dem Tablet oder Smartphone aus und folgen Sie den Anweisungen.",
+					"question": "Wie kann ich Informationen zu einem Kulturort ergänzen oder korrigieren?"
 				},
 				{
-					"question": "Ich habe meinen Kulturort beim Kulturkataster eingereicht, doch er erscheint immer noch nicht auf der Karte. Was ist da los?",
-					"answer": "Bitte haben Sie Verständnis dafür, dass Einträge im Kulturkataster nicht automatisch veröffentlicht werden. Das Redaktionsteam prüft jeden Eintrag einzeln. Wir bitten Sie um Verständnis, dass dieser Prozess einige Zeit in Anspruch nehmen kann, da wir gegebenenfalls auch Fachexpert*innen in den Entscheidungsprozess einbeziehen werden. Bei Rückfragen melden wir uns gegebenenfalls per E-Mail bei Ihnen."
+					"answer": "Bitte haben Sie Verständnis dafür, dass Einträge im Kulturkataster nicht automatisch veröffentlicht werden. Das Redaktionsteam prüft jeden Eintrag einzeln. Wir bitten Sie um Verständnis, dass dieser Prozess einige Zeit in Anspruch nehmen kann, da wir gegebenenfalls auch Fachexpert*innen in den Entscheidungsprozess einbeziehen werden. Bei Rückfragen melden wir uns gegebenenfalls per E-Mail bei Ihnen.",
+					"question": "Ich habe meinen Kulturort beim Kulturkataster eingereicht, doch er erscheint immer noch nicht auf der Karte. Was ist da los?"
 				},
 				{
-					"question": "Warum sind im Kulturkataster nur eine Handvoll an Fachkarten aus dem Geoportal?",
-					"answer": "Mit jeder Version wächst das Kulturkataster. Das Projektteam hat sich entschieden, mit einer kleinen Auswahl an Fachkarten aus dem Geoportal zu starten, um auf Grundlage der Empfehlungen der Nutzer*innen weitere Karten ins Kulturkataster zu integrieren. Gerne können Sie uns Ihre Vorschläge per E-Mail schicken: info@kulturkataster.berlin"
+					"answer": "Mit jeder Version wächst das Kulturkataster. Das Projektteam hat sich entschieden, mit einer kleinen Auswahl an Fachkarten aus dem Geoportal zu starten, um auf Grundlage der Empfehlungen der Nutzer*innen weitere Karten ins Kulturkataster zu integrieren. Gerne können Sie uns Ihre Vorschläge per E-Mail schicken: info@kulturkataster.berlin",
+					"question": "Warum sind im Kulturkataster nur eine Handvoll an Fachkarten aus dem Geoportal?"
 				},
 				{
-					"question": "Wie kann ich meinen Kulturort aus dem Kulturkataster löschen lassen?",
-					"answer": "In der Version können wir Ihnen leider keine eigenständige Verwaltung Ihrer Daten bieten. Wenn Sie Ihren Ort löschen lassen möchten, bitten wir Sie darum, unsere Redaktion zu kontaktieren und wir werden Ihren Eintrag schnellstmöglich löschen. Bitte schreiben Sie eine E-Mail an: info@kulturkataster.berlin"
+					"answer": "In der Version können wir Ihnen leider keine eigenständige Verwaltung Ihrer Daten bieten. Wenn Sie Ihren Ort löschen lassen möchten, bitten wir Sie darum, unsere Redaktion zu kontaktieren und wir werden Ihren Eintrag schnellstmöglich löschen. Bitte schreiben Sie eine E-Mail an: info@kulturkataster.berlin",
+					"question": "Wie kann ich meinen Kulturort aus dem Kulturkataster löschen lassen?"
 				}
 			]
 		},
@@ -696,7 +696,9 @@
 			"name": "Cerstin Richter-Kotowski, Staatssekretärin der Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt"
 		},
 		"contact": {
-			"title": "Kontakt"
+			"title": "Kontakt",
+			"email": "E-Mail: kontakt@kulturraum.berlin",
+			"phone": "Telefon: +49 (0)30 30 30 444-60"
 		},
 		"insurance": {
 			"title": "Angaben zur Berufshaftpflichtversicherung",
@@ -778,58 +780,58 @@
 			"list_intro": "Teilbereiche, die nicht barrierefrei sind:",
 			"barriers": [
 				{
-					"title": "Barriere: Inhalte",
 					"description": "Die Website bietet derzeit (Stand September 2025) keine Inhalte in Leichter Sprache und keine Videos in Deutscher Gebärdensprache (DGS) an.",
 					"measures": "Texte in Leichter Sprache sowie Erklärvideos in Deutscher Gebärdensprache (DGS) sind derzeit in Arbeit. Sie beinhalten grundlegende Informationen zum Kulturkataster und zur Nutzung der Plattform.",
-					"timeline": "Die Veröffentlichung der Inhalte in Leichter Sprache und DGS ist für Oktober 2025 geplant."
+					"timeline": "Die Veröffentlichung der Inhalte in Leichter Sprache und DGS ist für Oktober 2025 geplant.",
+					"title": "Barriere: Inhalte"
 				},
 				{
-					"title": "Barriere: Ansicht",
 					"description": "Darstellung der Kulturstandorte im Kulturkataster erfolgt derzeit ausschließlich über eine interaktive Kartenansicht.",
 					"measures": "Es ist geplant, eine ergänzende Listenansicht der Kulturstandorte, die vollständig tastaturbedienbar und screenreaderfreundlich ist, bereitzustellen. Diese Listenansicht soll als alternative Navigationsmöglichkeit zur Karte dienen und so eine barriereärmere Nutzung ermöglichen.",
-					"timeline": "Die Umsetzung der Listenansicht ist bis Dezember 2025 vorgesehen."
+					"timeline": "Die Umsetzung der Listenansicht ist bis Dezember 2025 vorgesehen.",
+					"title": "Barriere: Ansicht"
 				},
 				{
-					"title": "Barriere: Dokumente",
 					"description": "Einige der auf der Website bereitgestellten Dokumente, wie z. B. herunterladbare Excel-Tabellen mit gefilterten Kulturstandorten oder einzelne PDF-Dateien, entsprechen nicht den Anforderungen an barrierefreie Dokumente. Diese Dateien sind teilweise nicht mit Screenreadern lesbar oder nicht für die Tastaturnavigation optimiert.",
 					"measures": "Die Dokumente sollen künftig in barrierefreier Form angeboten werden. Dafür werden barrierearme Dateiformate verwendet und die Inhalte werden entsprechend der Standards für barrierefreie Dokumente überarbeitet.",
-					"timeline": "Die Überarbeitung der bestehenden Dateien ist für 2026 vorgesehen. Neue Dokumente sollen 2026 barrierearm veröffentlicht werden."
+					"timeline": "Die Überarbeitung der bestehenden Dateien ist für 2026 vorgesehen. Neue Dokumente sollen 2026 barrierearm veröffentlicht werden.",
+					"title": "Barriere: Dokumente"
 				},
 				{
-					"title": "Barriere: Tastaturbedienbarkeit",
 					"description": "Einige interaktive Elemente der Website – insbesondere Filterfunktionen, Kartenelemente oder Navigationspunkte – sind derzeit nicht per Tastatur bedienbar.",
 					"measures": "Die technische Struktur der Website wird überarbeitet, um eine vollständige Tastatursteuerung aller interaktiven Elemente zu gewährleisten.",
-					"timeline": "Die Umsetzung erfolgt bis Ende 2025."
+					"timeline": "Die Umsetzung erfolgt bis Ende 2025.",
+					"title": "Barriere: Tastaturbedienbarkeit"
 				},
 				{
-					"title": "Barriere: Sichtbarer Fokus",
 					"description": "Beim Navigieren mit der Tastatur ist der sichtbare Fokus nicht an allen interaktiven Elementen deutlich erkennbar. Die betrifft die Navigationsschaltflächen „Verkleinern“, „Vergrößern“ und „Meinen Standort finden“.",
 					"measures": "Das visuelle Fokusdesign wird überarbeitet, sodass interaktive Elemente beim Durchlaufen klar hervorgehoben werden.",
-					"timeline": "Die Umsetzung erfolgt bis Ende 2025."
+					"timeline": "Die Umsetzung erfolgt bis Ende 2025.",
+					"title": "Barriere: Sichtbarer Fokus"
 				},
 				{
-					"title": "Barriere: Alternativtexte für Bilder und Symbole",
 					"description": "Einige Icons oder Buttons auf der Website verfügen nicht über aussagekräftige Alternativtexte.",
 					"measures": "Alle grafischen Elemente werden überprüft und mit korrekten Alternativtexten versehen.",
-					"timeline": "Die Umsetzung erfolgt im Laufe des Jahres 2026."
+					"timeline": "Die Umsetzung erfolgt im Laufe des Jahres 2026.",
+					"title": "Barriere: Alternativtexte für Bilder und Symbole"
 				},
 				{
-					"title": "Barriere: Fehlende ARIA-Rollen und Landmarken",
 					"description": "Die semantische Struktur der Website ist nicht vollständig durch ARIA-Rollen und Landmarken definiert. Screenreader können dadurch nicht alle Bereiche der Website korrekt erfassen.",
 					"measures": "Die Seitenstruktur wird um semantische HTML-Elemente und ARIA-Rollen ergänzt, um die Orientierung für assistive Technologien zu verbessern.",
-					"timeline": "Die Umsetzung erfolgt bis Ende 2025."
+					"timeline": "Die Umsetzung erfolgt bis Ende 2025.",
+					"title": "Barriere: Fehlende ARIA-Rollen und Landmarken"
 				},
 				{
-					"title": "Barriere: Unstrukturierte Überschriften (h1–h6)",
 					"description": "Die hierarchische Struktur der Überschriften ist nicht auf allen Seiten korrekt umgesetzt. Dies kann die Navigation mit Screenreadern erschweren.",
 					"measures": "Die HTML-Struktur wird überarbeitet, um eine konsistente und logische Überschriftenstruktur sicherzustellen.",
-					"timeline": "Die Korrektur erfolgt im Laufe des Jahres 2026."
+					"timeline": "Die Korrektur erfolgt im Laufe des Jahres 2026.",
+					"title": "Barriere: Unstrukturierte Überschriften (h1–h6)"
 				},
 				{
-					"title": "Barriere: Fehlende Rückmeldung bei Interaktionen",
 					"description": "Dynamische Inhalte, wie z. B. die Anwendung von Filtern oder das Anzeigen eines Standorts, werden nicht durch Statusmeldungen oder Hinweise für Screenreader begleitet.",
 					"measures": "Die Interaktionen werden technisch geprüft und so ergänzt, dass sie Screenreadern Rückmeldungen übermitteln.",
-					"timeline": "Die Umsetzung ist für das Jahr 2026 vorgesehen."
+					"timeline": "Die Umsetzung ist für das Jahr 2026 vorgesehen.",
+					"title": "Barriere: Fehlende Rückmeldung bei Interaktionen"
 				}
 			]
 		},
@@ -840,7 +842,7 @@
 			"company": "Kulturraum Berlin gGmbH",
 			"telephone": {
 				"label": "T",
-				"number": "+49 (0) 30 3030 444 76"
+				"number": "+49 (0)30 3030 444 76"
 			},
 			"email": {
 				"label": "E-Mail",
@@ -864,7 +866,7 @@
 		"signLanguageDirect": "Deutscher Gebärdensprache (DGS) finden Sie <link />."
 	},
 	"filter": {
-		"title": "Filter",
+		"title": "Kulturorte filtern",
 		"displayedInstitutions": "Angezeigte Kulturorte in Berlin",
 		"hideClosed": "Geschlossene Orte ausblenden",
 		"showClosed": "Geschlossene Orte einblenden",

@@ -61,6 +61,7 @@ export const CategoryKeys = {
 	DANCE_VENUES: "dance_venues",
 	PERFORMING_ARTS_VENUES: "performing_arts_venues",
 	GRAFFITI_AREAS: "graffiti_areas",
+	URBAN_ART: "urban_art",
 	OTHER: "other",
 	MULTI_CATEGORIES: "multi_categories",
 } as const;
