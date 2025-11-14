@@ -80,11 +80,18 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 				searchExtent[3] += proximityThreshold;
 				const nearbyFeatures = tempSource.getFeaturesInExtent(searchExtent);
 
-				proximityGroups.push(nearbyFeatures);
-				nearbyFeatures.forEach((f) => {
+				const unprocessedNearbyFeatures = nearbyFeatures.filter((f) => {
 					const id = f.getId();
-					if (id) processedFeatureIds.add(id);
+					return id && !processedFeatureIds.has(id);
 				});
+
+				if (unprocessedNearbyFeatures.length > 0) {
+					proximityGroups.push(unprocessedNearbyFeatures);
+					unprocessedNearbyFeatures.forEach((f) => {
+						const id = f.getId();
+						if (id) processedFeatureIds.add(id);
+					});
+				}
 			});
 
 			const offsetFeatures: Feature[] = [];
