@@ -16,11 +16,12 @@
 		"dance_venues": "Spielorte Tanz",
 		"performing_arts_venues": "Spielstätten Darstellende Künste",
 		"graffiti_areas": "Graffiti-Flächen",
+		"urban_art": "Urban Art ",
 		"other": "Sonstiges"
 	},
 	"subcategory": {
-		"studio_houses_workspace_program": "Atelierhäuser (Arbeitsraumprogramm)",
-		"studio_houses_free": "Atelierhäuser (frei)",
+		"studio_houses_workspace_program": "Atelierhäuser im Arbeitsraumprogramm",
+		"studio_houses_free": "Freie Atelierhäuser",
 		"studio_apartments": "Atelierwohnungen",
 		"art_universities": "Kunsthochschulen",
 		"adult_education_centers": "Volkshochschulen",
@@ -37,6 +38,7 @@
 		"scientific_specialized_libraries": "Wissenschaftliche Spezialbibliotheken",
 		"workplace_patient_prison_libraries": "Werkbibliotheken, Patientenbibliotheken und Gefangenenbüchereien",
 		"clubs": "Clubs",
+		"workspace_program_rehearsal_rooms": "Proberäume im Arbeitsraumprogramm",
 		"concert_venues": "Konzert-Venues",
 		"concert_halls": "Konzerthäuser",
 		"music_theater": "Musiktheater",
@@ -53,7 +55,7 @@
 		"literature_organizers": "Veranstalter",
 		"literature_houses": "Literaturhäuser",
 		"bookstores": "Buchhandlungen",
-		"writing_places": "Schreibplätze",
+		"writing_places": "Schreibplätze im Arbeitsraumprogramm",
 		"public_museums": "Öffentliche Museen",
 		"private_museums": "Private Museen",
 		"private_collections": "Privatsammlungen",
@@ -75,6 +77,7 @@
 		"dance_young_audience": "Junges Publikum",
 		"dance_contemporary_circus": "Zeitgenössischer Zirkus",
 		"theater": "Theater",
+		"bookmobile_libraries": "Fahrbibliotheken",
 		"music_theater_venues": "Musiktheater",
 		"puppet_figure_object_theater": "Puppen-/Figuren-/Objekttheater",
 		"performing_arts_performance": "Performance",
@@ -113,7 +116,8 @@
 		"dance_venues_other": "Nicht zugeordnet",
 		"performing_arts_venues_other": "Nicht zugeordnet",
 		"graffiti_areas_other": "Nicht zugeordnet",
-		"other": "Nicht zugeordnet"
+		"other": "Nicht zugeordnet",
+		"legal_graffiti_areas": "Legale Graffitiflächen"
 	},
 	"funding_source": {
 		"district": "Bezirk",

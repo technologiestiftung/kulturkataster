@@ -152,6 +152,14 @@
 		"signLanguageInformationLong": "Deutsche Gebärdensprache (DGS)",
 		"credit": {
 			"text": "© 2025 - Ein Projekt der Kulturraum Berlin gGmbH, gefördert durch die Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt, mit der technischen Umsetzung durch die Technologiestiftung Berlin."
+		},
+		"email": {
+			"address": "info@kulturkataster.berlin",
+			"label": "E-Mail"
+		},
+		"telephone": {
+			"label": "Tel.",
+			"number": "+49 30 3030 444 60"
 		}
 	},
 	"map": {
