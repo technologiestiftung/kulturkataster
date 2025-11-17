@@ -405,6 +405,8 @@ function unflattenObject(flat: Record<string, string>): any {
  */
 async function pushToTraduora(): Promise<void> {
 	console.log("🚀 Starting push to Traduora...\n");
+	console.log(`ℹ Using Traduora API URL: ${TRADUORA_API_URL}`);
+	console.log(`ℹ Project ID: ${TRADUORA_PROJECT_ID}\n`);
 
 	const token = await getTraduoraToken();
 	console.log("✓ Authenticated with Traduora\n");
@@ -482,6 +484,8 @@ async function pushToTraduora(): Promise<void> {
  */
 async function pullFromTraduora(): Promise<void> {
 	console.log("🚀 Starting pull from Traduora...\n");
+	console.log(`ℹ Using Traduora API URL: ${TRADUORA_API_URL}`);
+	console.log(`ℹ Project ID: ${TRADUORA_PROJECT_ID}\n`);
 
 	const token = await getTraduoraToken();
 	console.log("✓ Authenticated with Traduora\n");
