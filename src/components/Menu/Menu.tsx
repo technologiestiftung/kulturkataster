@@ -483,7 +483,11 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			<div className="fixed block z-[50] top-0 right-0 p-4 overflow-hidden">
 				<div className="flex gap-2 items-center">
 					<div className="relative">
-						<div className="flex items-center bg-neutral-80 border rounded-full shadow-sm relative overflow-hidden">
+						<div
+							className="flex items-center bg-neutral-80 border rounded-full shadow-sm relative overflow-hidden"
+							role="radiogroup"
+							aria-label={t("map.radioGroupAriaLabel")}
+						>
 							<div
 								className={`absolute top-0 bottom-0 w-12 h-12 bg-background rounded-full transition-transform duration-300 ease-in-out ${
 									viewMode === "map" ? "translate-x-0" : "translate-x-12"
@@ -502,6 +506,9 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 									handleViewModeSwitch(viewMode === "list" ? "map" : "list")
 								}
 								aria-label={t("map.show")}
+								role="radio"
+								aria-checked={viewMode === "map"}
+								tabIndex={viewMode === "map" ? 0 : -1}
 							>
 								<MapIcon className="size-6" />
 							</ButtonWithTooltip>
@@ -518,6 +525,9 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 									handleViewModeSwitch(viewMode === "map" ? "list" : "map")
 								}
 								aria-label={t("listView.show")}
+								role="radio"
+								aria-checked={viewMode === "list"}
+								tabIndex={viewMode === "list" ? 0 : -1}
 							>
 								<ListIcon className="size-6" />
 							</ButtonWithTooltip>
