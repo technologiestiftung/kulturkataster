@@ -60,6 +60,7 @@ export function SubMenuOption({
 					checked={switchChecked}
 					onCheckedChange={onSwitchChange}
 					onClick={(e) => e.stopPropagation()}
+					aria-label={t(titleKey)}
 				/>
 			)}
 		</SidebarMenuItem>
