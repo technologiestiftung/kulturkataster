@@ -120,7 +120,8 @@
 	"unknown": "Unbekannt",
 	"menu": {
 		"navigation": "Hauptmenü",
-		"backTo": "Zurück zu {{page}}"
+		"backTo": "Zurück zu {{page}}",
+		"backToAriaLabel": "Zurück zu {{title}}"
 	},
 	"telephone": {
 		"label": "Telefon",
@@ -169,10 +170,14 @@
 		"geolocate": "Meinen Standort finden",
 		"layerTree": "Fachkarten",
 		"layerTreeTitle": "Fachkarten",
+		"layerTreeAriaLabel": "Fachkarten einblenden ({{visibleCount}} sichtbare Karten)",
+		"layerTreeVisibleCountAriaLabel": "{{visibleCount}} sichtbare Karten",
 		"closeLayerTree": "Fachkarten schließen",
 		"availableLayers": "Verfügbare Ebenen",
 		"noLayersAvailable": "Keine Fachkarten verfügbar",
-		"show": "Zur Kartenansicht"
+		"show": "Zur Kartenansicht",
+		"layerItemAriaLabel": "Sichtbarkeit von der Karte {{serviceName}} umschalten",
+		"layerItemLegendAriaLabel": "Kartenlegende für die Karte {{serviceName}} anzeigen"
 	},
 	"listView": {
 		"title": "Listenansicht",
