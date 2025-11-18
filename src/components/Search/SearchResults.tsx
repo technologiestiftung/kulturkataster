@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { isGeoFeature } from "./LocationSearch";
 import { Institution, SearchResult } from "@/types/institution";
+import { cn } from "@/lib/utils";
 
 interface SearchResultsProps {
 	results: SearchResult[];
@@ -69,11 +70,13 @@ export function SearchResults({
 									onResultClick(result);
 								}
 							}}
+							// eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
 							tabIndex={-1}
-							className={`py-3 px-2 cursor-pointer rounded text-sm border-b
-								${index === activeIndex ? "bg-gray-100" : ""}
-								hover:bg-gray-100 contrast:hover:text-background
-							`}
+							className={cn(
+								"py-3 px-2 cursor-pointer rounded text-sm border-b",
+								index === activeIndex && "bg-gray-100 contrast:bg-neutral-10",
+								"hover:bg-black/10 contrast:hover:bg-neutral-10",
+							)}
 						>
 							{isGeoFeature(result) ? (
 								<div className="font-medium">
