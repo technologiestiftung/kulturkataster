@@ -7,6 +7,7 @@ import { cva, VariantProps } from "class-variance-authority";
 import { PanelLeftIcon } from "lucide-react";
 
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useRestoreFocus } from "@/hooks/use-restore-focus";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -119,6 +120,8 @@ function SidebarProvider({
 		}),
 		[state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar],
 	);
+
+	useRestoreFocus(isMobile ? openMobile : open);
 
 	return (
 		<SidebarContext.Provider value={contextValue}>
