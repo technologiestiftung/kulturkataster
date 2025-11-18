@@ -39,6 +39,7 @@ import { fromLonLat } from "ol/proj";
 import KukaSmallLogo from "@/logos/kuka-small.svg";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { usePathname } from "next/navigation";
 import { LayerTreeContent } from "../Map/LayerTree/LayerTree";
 import { AccessibilityContent } from "./MenuContent/AccessibilityContent";
 import { FilterContent } from "./MenuContent/FilterContent";
@@ -61,6 +62,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	const { toggleSidebar, setOpen, setOpenMobile, isMobile, open, openMobile } =
 		useSidebar();
 	const { t } = useTranslation("common");
+	const pathname = usePathname();
 	const [activeItem, setActiveItem] = useState<string>("");
 	const [previousActiveItem, setPreviousActiveItem] = useState<string>("");
 	const [userHasClosedSidebar, setUserHasClosedSidebar] = useState(false);
@@ -104,6 +106,17 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			setActiveItem("layertree");
 		}
 	}, [isLayerTreeOpen]);
+
+	useEffect(() => {
+		const pathSegments = pathname.split("/").filter(Boolean);
+		const isBaseRoute = pathSegments.length === 1;
+
+		if (isBaseRoute) {
+			setActiveItem("");
+			setOpen(false);
+			setOpenMobile(false);
+		}
+	}, [pathname, setOpen, setOpenMobile]);
 
 	useEffect(() => {
 		if (selectedInstitutionId) {
