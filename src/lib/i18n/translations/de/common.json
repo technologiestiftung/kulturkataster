@@ -17,7 +17,8 @@
 		"noResults": "Keine Kulturorte gefunden.",
 		"error": "Fehler bei der Suche. Bitte versuchen Sie es später erneut.",
 		"noResultsFound": "Zu Ihrer Eingabe konnte kein Kulturort oder Adresse gefunden werden. Bitte überprüfen Sie die Angaben und versuchen Sie es erneut.",
-		"suggestions": "Vorschläge für Ihre Suche"
+		"suggestions": "Vorschläge für Ihre Suche",
+		"searchAriaLabel": "{{count}} Suchergebnisse"
 	},
 	"download": {
 		"title": "Liste herunterladen",
@@ -161,7 +162,9 @@
 		"telephone": {
 			"label": "Tel.",
 			"number": "+49 30 3030 444 60"
-		}
+		},
+		"navigationAriaLabel": "Fußzeilen-Navigation",
+		"welcomeModalLinkListAriaLabel": "Fußzeilen-Navigation der Willkommensansicht"
 	},
 	"map": {
 		"title": "Kartenansicht",
