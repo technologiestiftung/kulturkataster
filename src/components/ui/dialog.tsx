@@ -6,11 +6,14 @@ import { useRouter } from "next/navigation";
 import Close from "@/icons/close.svg";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
+import { useRestoreFocus } from "@/hooks/use-restore-focus";
 
-function Dialog({
-	...props
-}: React.ComponentProps<typeof DialogPrimitive.Root>) {
-	return <DialogPrimitive.Root data-slot="dialog" {...props} />;
+type DialogRootProps = React.ComponentProps<typeof DialogPrimitive.Root>;
+
+function Dialog({ open, ...props }: DialogRootProps) {
+	useRestoreFocus(open);
+
+	return <DialogPrimitive.Root data-slot="dialog" open={open} {...props} />;
 }
 
 function DialogTrigger({
