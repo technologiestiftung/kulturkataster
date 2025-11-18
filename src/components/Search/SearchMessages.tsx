@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
 
 interface SearchMessagesProps {
@@ -5,18 +6,20 @@ interface SearchMessagesProps {
 	hasResults: boolean;
 	isLoading: boolean;
 	query: string;
+	className?: string;
 }
 
 export function SearchMessages({
 	hasError,
 	isLoading,
 	query,
+	className,
 }: SearchMessagesProps) {
 	const { t } = useTranslation("common");
 
 	if (hasError && !isLoading) {
 		return (
-			<div className="flex-1">
+			<div className={cn("flex-1", className)}>
 				<p className="body2">{hasError}</p>
 			</div>
 		);
@@ -24,7 +27,7 @@ export function SearchMessages({
 
 	if (query.trim().length === 0) {
 		return (
-			<div className="flex-1">
+			<div className={cn("flex-1", className)}>
 				<p className="body2">{t("search.description")}</p>
 			</div>
 		);
