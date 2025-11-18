@@ -92,7 +92,8 @@ const LayerThumbnail = memo<{
 			{hasPreview ? (
 				<Image
 					src={previewSrc}
-					alt={layer.config.service.name}
+					// alt={layer.config.service.name}
+					alt=""
 					width={size}
 					height={size}
 					className="w-full h-full object-cover"
@@ -226,7 +227,8 @@ const LayerItem = memo<{
 					>
 						<Image
 							src={layer.config.service.legend as string}
-							alt={`Legend for ${serviceName}`}
+							// alt={`Legend for ${serviceName}`}
+							alt=""
 							width={300}
 							height={50}
 							className="h-auto w-full max-w-full rounded"
@@ -369,7 +371,7 @@ const LayerTree: FC = () => {
 						onClick={handleClose}
 						aria-label={t("map.closeLayerTree")}
 					>
-						<X className="w-4 h-4" />
+						<X className="w-4 h-4" aria-hidden="true" focusable="false" />
 					</Button>
 				</div>
 			</CardHeader>
