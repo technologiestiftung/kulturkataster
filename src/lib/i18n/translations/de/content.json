@@ -875,6 +875,7 @@
 			"resetFilters": "Filter zurücksetzen",
 			"setAllFilters": "Alle Filter"
 		},
+		"districtTagsSwitchAriaLabel": "{{translatedName}} ein- oder ausschalten",
 		"categories": {
 			"title": "Kategorien",
 			"resetFilters": "Filter zurücksetzen",
