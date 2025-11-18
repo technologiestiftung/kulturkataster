@@ -19,6 +19,7 @@ const DistrictTags: FC<DistrictTagsProps> = ({
 	onChange,
 }) => {
 	const { t: tEnum } = useTranslation("enumMap");
+	const { t } = useTranslation("content");
 
 	return (
 		<div className="flex flex-wrap gap-2 mb-4">
@@ -37,8 +38,11 @@ const DistrictTags: FC<DistrictTagsProps> = ({
 						size="tag"
 						className={isSelected ? "bg-neutral-80 text-background" : ""}
 						onClick={() => onChange(district.key || "")}
-						aria-pressed={isSelected}
-						aria-label={translatedName}
+						role="switch"
+						aria-checked={isSelected}
+						aria-label={t("filter.districtTagsSwitchAriaLabel", {
+							translatedName,
+						})}
 					>
 						{translatedName}
 						{isSelected && (
