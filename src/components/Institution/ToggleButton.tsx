@@ -29,7 +29,11 @@ export function ToggleButton({
 				onClick={onClick}
 				className={`text-primary-dark hover:text-primary-dark ${className}`}
 			>
-				{showMore ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+				{showMore ? (
+					<ChevronUp size={16} aria-hidden="true" focusable="false" />
+				) : (
+					<ChevronDown size={16} aria-hidden="true" focusable="false" />
+				)}
 				<span className="body2">
 					{showMore ? t("institution.lessInfo") : t("institution.moreInfo")}
 				</span>

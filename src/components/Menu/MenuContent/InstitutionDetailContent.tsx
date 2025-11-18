@@ -61,7 +61,7 @@ function InstitutionHeader({
 							<div key={category.id} className="mb-2">
 								<div className="flex items-center gap-2 h-6">
 									<div className="w-6 h-6">
-										<IconComponent />
+										<IconComponent aria-hidden="true" focusable="false" />
 									</div>
 									<p className="body2 font-bold">
 										{tEnum(`category.${category.key}`)}
