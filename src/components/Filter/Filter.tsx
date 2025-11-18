@@ -242,7 +242,7 @@ const Filter: FC = () => {
 					className="flex items-center gap-2 transition-opacity body2 text-primary-dark"
 					onClick={toggleClosedInstitutions}
 				>
-					{filters?.include_closed ? <Eye /> : <EyeOff />}
+					{filters?.include_closed ? <EyeOff /> : <Eye />}
 					<strong className="body2 font-bold">
 						{filters?.include_closed
 							? t("filter.hideClosed", { ns: "content" })
