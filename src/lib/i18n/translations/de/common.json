@@ -176,7 +176,7 @@
 		"availableLayers": "Verfügbare Ebenen",
 		"noLayersAvailable": "Keine Fachkarten verfügbar",
 		"show": "Zur Kartenansicht",
-		"radioGroupAriaLabel": "Layout",
+		"radioGroupAriaLabel": "Ansicht",
 		"layerItemAriaLabel": "Sichtbarkeit von der Karte {{serviceName}} umschalten",
 		"layerItemLegendAriaLabel": "Kartenlegende für die Karte {{serviceName}} anzeigen"
 	},
