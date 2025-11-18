@@ -282,7 +282,7 @@ const FloatingLayerButton = memo<{
 						visibleCount > 0 ? "border-2 border-interaction-dark" : ""
 					}`}
 					onClick={onClick}
-					aria-label={`Open layer tree (${visibleCount} visible layers)`}
+					aria-label={`Fachkarten einblenden (${visibleCount} sichtbare Karten)`}
 				>
 					<div className="w-full h-full flex items-center justify-center">
 						{visibleCount === 0 ? (
