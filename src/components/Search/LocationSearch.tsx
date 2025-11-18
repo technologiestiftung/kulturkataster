@@ -188,6 +188,13 @@ export function LocationSearch() {
 
 	return (
 		<div className="h-full flex flex-col overflow-hidden">
+			<SearchMessages
+				hasError={resultErrorMessage}
+				hasResults={searchResults.length > 0}
+				isLoading={isLoading}
+				query={query}
+				className="order-last"
+			/>
 			<div className="flex-shrink-0 mb-8">
 				<div className="relative">
 					<Input
@@ -219,13 +226,6 @@ export function LocationSearch() {
 				onResultClick={handleResultClick}
 				highlightMatch={highlightMatch}
 				formatAddress={formatAddress}
-			/>
-
-			<SearchMessages
-				hasError={resultErrorMessage}
-				hasResults={searchResults.length > 0}
-				isLoading={isLoading}
-				query={query}
 			/>
 		</div>
 	);
