@@ -88,8 +88,10 @@ function InstitutionHeader({
 			<div
 				className={`${isInUse ? "bg-brand-light" : "bg-alert"} p-4 flex gap-2`}
 			>
-				<span className="body2 font-bold">
-					{t("institution.utilizationStatus")}:{" "}
+				<span className="body2">
+					<strong className="font-bold">
+						{t("institution.utilizationStatus")}:
+					</strong>{" "}
 				</span>
 
 				{institutionData.utilization_status ? (
