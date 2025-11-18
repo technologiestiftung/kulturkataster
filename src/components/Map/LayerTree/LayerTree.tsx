@@ -121,6 +121,7 @@ LayerThumbnail.displayName = "LayerThumbnail";
 const LayerItem = memo<{
 	layer: ManagedLayer;
 }>(({ layer }) => {
+	const { t } = useTranslation("common");
 	const setLayerVisibility = useMapStore((state) => state.setLayerVisibility);
 	const openLegendLayerId = useMapStore((state) => state.openLegendLayerId);
 	const setOpenLegendLayerId = useMapStore(
@@ -206,8 +207,7 @@ const LayerItem = memo<{
 							checked={layer.visibility}
 							onCheckedChange={handleVisibilityChange}
 							className="w-6 h-6 rounded-full"
-							// aria-label={`Toggle visibility for ${serviceName}`}
-							aria-label={`Sichtbarkeit von der Karte ${serviceName} umschalten`}
+							aria-label={t("map.layerItemAriaLabel", { serviceName })}
 							disabled={layer.status === "error"}
 						/>
 					</div>
@@ -218,7 +218,7 @@ const LayerItem = memo<{
 				<>
 					<AccordionTrigger
 						className="px-3 py-2 rounded-none [&[data-state=closed]]:rounded-b-sm hover:no-underline flex justify-end items-center gap-2 [&>svg]:text-foreground bg-neutral-10"
-						aria-label={`Kartenlegende für die Karte ${serviceName} anzeigen`}
+						aria-label={t("map.layerItemLegendAriaLabel", { serviceName })}
 					>
 						Legende ansehen
 					</AccordionTrigger>
@@ -283,7 +283,7 @@ const FloatingLayerButton = memo<{
 						visibleCount > 0 ? "border-2 border-interaction-dark" : ""
 					}`}
 					onClick={onClick}
-					aria-label={`Fachkarten einblenden (${visibleCount} sichtbare Karten)`}
+					aria-label={t("map.layerTreeAriaLabel", { visibleCount })}
 				>
 					<div className="w-full h-full flex items-center justify-center">
 						{visibleCount === 0 ? (
@@ -303,7 +303,9 @@ const FloatingLayerButton = memo<{
 					<Badge
 						variant="default"
 						className="absolute -top-2 -right-2 w-6 h-6 p-0 rounded-full border-2 border-white text-xs font-bold"
-						aria-label={`${visibleCount} sichtbare Karten`}
+						aria-label={t("map.layerTreeVisibleCountAriaLabel", {
+							visibleCount,
+						})}
 					>
 						{visibleCount}
 					</Badge>
