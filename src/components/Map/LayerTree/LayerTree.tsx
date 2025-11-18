@@ -217,7 +217,7 @@ const LayerItem = memo<{
 				<>
 					<AccordionTrigger
 						className="px-3 py-2 rounded-none [&[data-state=closed]]:rounded-b-sm hover:no-underline flex justify-end items-center gap-2 [&>svg]:text-foreground bg-neutral-10"
-						aria-label={`Show legend for ${serviceName}`}
+						aria-label={`Kartenlegende für die Karte ${serviceName} anzeigen`}
 					>
 						Legende ansehen
 					</AccordionTrigger>
