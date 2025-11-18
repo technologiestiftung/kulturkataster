@@ -30,7 +30,7 @@ const Footer: FC = () => {
 				<p>{t("footer.projectBy")}</p>
 			</div>
 
-			<nav aria-label={t("footer.navigation")}>
+			<nav aria-label={t("footer.navigationAriaLabel")}>
 				<ul className="flex gap-4 body2 font-bold">
 					{footerItems.map((item) => (
 						<li key={item.id}>
