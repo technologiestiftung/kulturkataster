@@ -309,16 +309,16 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 					className="w-[var(--sidebar-width-icon)] min-w-[var(--sidebar-width-icon)] max-w-[var(--sidebar-width-icon)] flex-shrink-0 border-r justify-center hidden md:flex"
 				>
 					<SidebarHeader>
-						<SidebarMenu className="my-2">
-							<SidebarMenuItem>
+						<div className="my-2">
+							<div className="flex justify-center">
 								<button onClick={handleLogoClick} aria-label={t("kukaLogo")}>
 									<KukaSmallLogo
 										title="Kulturkataster Berlin, Logo"
 										className="size-14 cursor-pointer hover:opacity-80 transition-opacity"
 									/>
 								</button>
-							</SidebarMenuItem>
-						</SidebarMenu>
+							</div>
+						</div>
 					</SidebarHeader>
 					<SidebarContent>
 						<SidebarGroup>
