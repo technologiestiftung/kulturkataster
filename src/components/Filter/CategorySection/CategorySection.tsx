@@ -128,6 +128,7 @@ export function CategorySection({
 								<Checkbox
 									checked={selectedSubcategories.includes(subcategory.key)}
 									onCheckedChange={() => onSubcategoryChange(subcategory.key)}
+									aria-label={`Checkbox ${translatedSubcategoryName}`}
 								/>
 							</div>
 						</div>
