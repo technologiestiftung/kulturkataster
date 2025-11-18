@@ -206,7 +206,8 @@ const LayerItem = memo<{
 							checked={layer.visibility}
 							onCheckedChange={handleVisibilityChange}
 							className="w-6 h-6 rounded-full"
-							aria-label={`Toggle visibility for ${serviceName}`}
+							// aria-label={`Toggle visibility for ${serviceName}`}
+							aria-label={`Sichtbarkeit von der Karte ${serviceName} umschalten`}
 							disabled={layer.status === "error"}
 						/>
 					</div>
@@ -302,7 +303,7 @@ const FloatingLayerButton = memo<{
 					<Badge
 						variant="default"
 						className="absolute -top-2 -right-2 w-6 h-6 p-0 rounded-full border-2 border-white text-xs font-bold"
-						aria-label={`${visibleCount} layers visible`}
+						aria-label={`${visibleCount} sichtbare Karten`}
 					>
 						{visibleCount}
 					</Badge>
