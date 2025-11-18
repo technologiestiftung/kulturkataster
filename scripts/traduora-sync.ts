@@ -1,5 +1,4 @@
 #!/usr/bin/env tsx
-/* eslint-disable no-undef */
 /* eslint-disable complexity */
 /* eslint-disable no-shadow */
 /* eslint-disable max-depth */
