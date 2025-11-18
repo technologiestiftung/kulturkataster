@@ -118,13 +118,13 @@ export function AccessibilityModal({
 							<h2 className="h2 mb-2">{barrier.title}</h2>
 							<div className="body2 space-y-2">
 								<p className="body2">
-									<span>Beschreibung:</span> {barrier.description}
+									<strong>Beschreibung:</strong> {barrier.description}
 								</p>
 								<p>
-									<span>Maßnahmen:</span> {barrier.measures}
+									<strong>Maßnahmen:</strong> {barrier.measures}
 								</p>
 								<p>
-									<span>Zeitplan:</span> {barrier.timeline}
+									<strong>Zeitplan:</strong> {barrier.timeline}
 								</p>
 							</div>
 						</div>
@@ -140,8 +140,10 @@ export function AccessibilityModal({
 					text={t("accessibilityModal.contact.description")}
 				/>
 				<div className="body1 space-y-1">
-					<p className="body2 font-bold">
-						{t("accessibilityModal.contact.name")}
+					<p className="body2">
+						<strong className="font-bold">
+							{t("accessibilityModal.contact.name")}
+						</strong>
 					</p>
 					<p className="body2">{t("accessibilityModal.contact.company")}</p>
 					<p className="body2">
