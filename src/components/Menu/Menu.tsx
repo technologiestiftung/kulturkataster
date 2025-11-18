@@ -324,30 +324,38 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 						<SidebarGroup>
 							<SidebarGroupContent>
 								<SidebarMenu>
-									{menuItems.map((item) => (
-										<SidebarMenuItem key={item.id}>
-											<SidebarMenuButton
-												tooltip={{
-													children: t(item.label),
-													hidden: false,
-												}}
-												onClick={() => handleItemClick(item.id)}
-												isActive={activeItem === item.id}
-												aria-label={t(item.label)}
-												className="relative"
-											>
-												<item.icon />
-												{item.id === "filter" &&
-													institutions &&
-													originalInstitutions?.features.length !==
-														institutions.features.length && (
+									{menuItems.map((item) => {
+										const showBadge =
+											item.id === "filter" &&
+											institutions &&
+											originalInstitutions?.features.length !==
+												institutions.features.length;
+										return (
+											<SidebarMenuItem key={item.id}>
+												<SidebarMenuButton
+													tooltip={{
+														children: t(item.label),
+														hidden: false,
+													}}
+													onClick={() => handleItemClick(item.id)}
+													isActive={activeItem === item.id}
+													aria-label={
+														showBadge
+															? `${t(item.label)} - ${institutions.features.length} Kulturorte aktiv`
+															: t(item.label)
+													}
+													className="relative"
+												>
+													<item.icon />
+													{showBadge && (
 														<div className="absolute top-2 -right-1 bg-primary text-primary-foreground body2 rounded-full min-w-5 h-5 flex items-center justify-center px-1">
 															{institutions.features.length}
 														</div>
 													)}
-											</SidebarMenuButton>
-										</SidebarMenuItem>
-									))}
+												</SidebarMenuButton>
+											</SidebarMenuItem>
+										);
+									})}
 								</SidebarMenu>
 							</SidebarGroupContent>
 						</SidebarGroup>
