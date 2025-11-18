@@ -95,6 +95,7 @@ export function CategorySection({
 						onCheckedChange={() => onCategoryChange(group.key)}
 						aria-label={`Checkbox ${translatedCategoryName}`}
 						className={`w-4 h-4 ${isIndeterminate ? "border-primary-dark" : ""}`}
+						aria-checked={isIndeterminate ? "mixed" : isChecked}
 					/>
 					{isIndeterminate && (
 						<div className="absolute inset-0 flex items-center justify-center pointer-events-none">
