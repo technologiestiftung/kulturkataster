@@ -445,7 +445,15 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 										)}
 										{activeItem === "layertree" && <LayerTreeContent />}
 										{activeItem === "institution-detail" && (
-											<InstitutionDetailContent />
+											<div
+												aria-hidden={viewMode === "list"}
+												tabIndex={viewMode === "list" ? -1 : undefined}
+												className={
+													viewMode === "list" ? "pointer-events-none" : undefined
+												}
+											>
+												<InstitutionDetailContent />
+											</div>
 										)}
 									</div>
 									{shouldShowDownloadButton() && false && (
