@@ -449,7 +449,9 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 												aria-hidden={viewMode === "list"}
 												tabIndex={viewMode === "list" ? -1 : undefined}
 												className={
-													viewMode === "list" ? "pointer-events-none" : undefined
+													viewMode === "list"
+														? "pointer-events-none"
+														: undefined
 												}
 											>
 												<InstitutionDetailContent />
