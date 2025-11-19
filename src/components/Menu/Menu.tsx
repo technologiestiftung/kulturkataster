@@ -44,6 +44,7 @@ import { AccessibilityContent } from "./MenuContent/AccessibilityContent";
 import { FilterContent } from "./MenuContent/FilterContent";
 import { InstitutionDetailContent } from "./MenuContent/InstitutionDetailContent";
 import { SearchContent } from "./MenuContent/SearchContent";
+import { cn } from "@/lib/utils";
 
 const menuItems = [
 	{ id: "filter", icon: FilterLines, label: "filter.title" },
