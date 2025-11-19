@@ -30,7 +30,7 @@ import { useAppStore } from "@/lib/store/appStore";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useMapStore } from "@/lib/store/mapStore";
 import { useModalStore } from "@/lib/store/modalStore";
-import { hasActiveFilters } from "@/lib/utils/filterUtils";
+import { getFilterCount, hasActiveFilters } from "@/lib/utils/filterUtils";
 import {
 	animateMapToCoordinates,
 	parseLatLongCoordinates,
@@ -87,6 +87,8 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	);
 	const { firstTimeUser, setFirstTimeUser, viewMode, setViewMode } =
 		useAppStore();
+
+	const filterCount = getFilterCount(filters);
 
 	useEffect(() => {
 		if (!isMobile && !firstTimeUser && !userHasClosedSidebar) {
