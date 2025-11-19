@@ -13,6 +13,8 @@ import { useTranslation } from "react-i18next";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { getSortedSubcategories } from "@/lib/utils/filterUtils";
 import { useMemo } from "react";
+import { cn } from "@/lib/utils";
+import { useAppStore } from "@/lib/store/appStore";
 
 interface CategorySectionProps {
 	group: Category;
@@ -33,6 +35,7 @@ export function CategorySection({
 	onCategoryChange,
 	onSubcategoryChange,
 }: CategorySectionProps) {
+	const { isContrastMode } = useAppStore();
 	const IconComponent = getCategoryIconComponent(group.key as CategoryType);
 	const { t: tEnum, i18n } = useTranslation("enumMap");
 

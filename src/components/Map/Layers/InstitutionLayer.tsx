@@ -17,6 +17,7 @@ import { Fill, Icon, Style, Text } from "ol/style";
 import CircleStyle from "ol/style/Circle";
 import { FC, useCallback, useEffect, useRef } from "react";
 import { createPoiSvg } from "../MapStyles/createPoiSvg";
+import { useAppStore } from "@/lib/store/appStore";
 
 const styleCache: { [key: string]: Style } = {};
 const svgCache: { [key: string]: string } = {};
@@ -60,6 +61,8 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 	const vectorSourceRef = useRef<VectorSource | null>(null);
 	const offsetVectorSourceRef = useRef<VectorSource | null>(null);
 	const clusterSourceRef = useRef<Cluster | null>(null);
+
+	const { isContrastMode } = useAppStore();
 
 	const processFeaturesForDecluttering = useCallback(
 		(features: Feature[]): Feature[] => {
@@ -145,9 +148,35 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 	}, []);
 
 	const createSingleFeatureStyle = useCallback(
-		(categoryKey: CategoryType, isSelected = false, hasOverlapping = false) => {
-			const fillColor = isSelected ? "#55D494" : "#C288FF";
-			const iconSvg = createCachedPoiSvg(categoryKey, fillColor, "#161616");
+		(
+			categoryKey: CategoryType,
+			isSelected = false,
+			isPermanentlyClosed = false,
+			hasOverlapping = false,
+		) => {
+			let fillColor: string = "#C288FF";
+
+			if (isSelected && isContrastMode) {
+				fillColor = "#249F61";
+			} else if (isSelected && !isContrastMode) {
+				fillColor = "#55D494";
+			} else if (isPermanentlyClosed && isContrastMode) {
+				fillColor = "white";
+			} else if (isPermanentlyClosed && !isContrastMode) {
+				fillColor = "#555b54";
+			} else if (isContrastMode) {
+				fillColor = "#5617BA";
+			}
+
+			let strokeColor: string = "#161616";
+			if (
+				(!isContrastMode && isPermanentlyClosed) ||
+				(isContrastMode && !isPermanentlyClosed)
+			) {
+				strokeColor = "white";
+			}
+
+			const iconSvg = createCachedPoiSvg(categoryKey, fillColor, strokeColor);
 
 			return new Style({
 				image: new Icon({
@@ -164,12 +193,12 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 		return new Style({
 			image: new CircleStyle({
 				radius: 15,
-				fill: new Fill({ color: "#C288FF" }),
+				fill: new Fill({ color: isContrastMode ? "#5617BA" : "#C288FF" }),
 			}),
 			text: new Text({
 				text: size.toString(),
 				font: `bold 12px sans-serif`,
-				fill: new Fill({ color: "#161616" }),
+				fill: new Fill({ color: isContrastMode ? "white" : "#161616" }),
 			}),
 		});
 	}, []);
@@ -191,6 +220,9 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 				singleFeature.get("id") ===
 				useInstitutionStore.getState().selectedInstitutionId;
 			const hasOverlapping = singleFeature.get("has_overlapping") === true;
+			const isPermanentlyClosed =
+				singleFeature.get("utilization_status") === "permanently_closed" ||
+				singleFeature.get("utilization_status") === "temporarily_closed";
 			const categoryKey = getCategoryKey(singleFeature);
 			const styleCacheKey = `${categoryKey}_${isSelected}_${hasOverlapping}`;
 
@@ -198,6 +230,7 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 				styleCache[styleCacheKey] = createSingleFeatureStyle(
 					categoryKey,
 					isSelected,
+					isPermanentlyClosed,
 					hasOverlapping,
 				);
 
@@ -340,6 +373,7 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 			!offsetVectorSourceRef.current
 		)
 			return;
+
 		const epsg = config.portalConfig.map.mapView.epsg;
 		const features = new GeoJSON().readFeatures(
 			transformGeoJSON(institutionsData, epsg),
