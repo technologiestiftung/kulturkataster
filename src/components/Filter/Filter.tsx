@@ -232,7 +232,7 @@ const Filter: FC = () => {
 	}
 
 	return (
-		<div className="Filter-root p-4 h-full flex flex-col gap-2">
+		<div className="Filter-root p-2 md:p-4 h-full flex flex-col gap-2">
 			{/* Header Section */}
 			<ContentContainer className="p-6">
 				<h2 className="body2 font-bold mb-3 pl-2">

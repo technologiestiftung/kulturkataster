@@ -15,6 +15,7 @@ import { getSortedSubcategories } from "@/lib/utils/filterUtils";
 import { useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/lib/store/appStore";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface CategorySectionProps {
 	group: Category;
@@ -36,6 +37,7 @@ export function CategorySection({
 	onSubcategoryChange,
 }: CategorySectionProps) {
 	const { isContrastMode } = useAppStore();
+	const isMobile = useIsMobile();
 	const IconComponent = getCategoryIconComponent(group.key as CategoryType);
 	const { t: tEnum, i18n } = useTranslation("enumMap");
 
@@ -92,7 +94,7 @@ export function CategorySection({
 					</button>
 				</CollapsibleTrigger>
 
-				<div className="relative w-6 h-6 flex items-center justify-center">
+				<div className="relative w-10 h-10 md:w-6 md:h-6 flex items-center justify-center">
 					<Checkbox
 						checked={isChecked}
 						onCheckedChange={() => onCategoryChange(group.key)}
@@ -128,11 +130,12 @@ export function CategorySection({
 								{subcategoryCounts[subcategory.key] || 0})
 							</span>
 
-							<div className="relative w-6 h-6 flex items-center justify-center">
+							<div className="relative w-10 h-10 md:w-6 md:h-6 flex items-center justify-center">
 								<Checkbox
 									checked={selectedSubcategories.includes(subcategory.key)}
 									onCheckedChange={() => onSubcategoryChange(subcategory.key)}
 									aria-label={`${translatedSubcategoryName}`}
+									className="w-[33px] h-[33px] border-radius-[33px] md:w-4 md:h-4 border-neutral-80"
 								/>
 							</div>
 						</div>
