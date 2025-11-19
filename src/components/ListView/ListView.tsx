@@ -185,7 +185,6 @@ const ListView: FC = () => {
 										institutionData={institution}
 										onClick={handleInstitutionClick}
 										isCompact={true}
-										disableKeyboardActivation={true}
 									/>
 								))}
 							</div>

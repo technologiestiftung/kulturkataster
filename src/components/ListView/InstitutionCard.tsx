@@ -115,14 +115,12 @@ interface InstitutionCardProps {
 	institutionData: Institution;
 	onClick?: (institution: Institution) => void;
 	isCompact?: boolean;
-	disableKeyboardActivation?: boolean;
 }
 
 const InstitutionCard = memo(function InstitutionCard({
 	institutionData,
 	onClick,
 	isCompact: _isCompact = false,
-	disableKeyboardActivation = false,
 }: InstitutionCardProps) {
 	const { t: tEnum } = useTranslation("enumMap");
 	const { t } = useTranslation("common");
@@ -138,13 +136,11 @@ const InstitutionCard = memo(function InstitutionCard({
 		onClick ? "cursor-pointer hover:shadow-md transition-shadow" : ""
 	}`;
 
-	const isKeyboardInteractive = Boolean(onClick) && !disableKeyboardActivation;
-
 	return (
 		<Card
 			className={cardClassName}
 			role="listitem"
-			tabIndex={isKeyboardInteractive ? 0 : undefined}
+			tabIndex={onClick ? 0 : undefined}
 			onClick={
 				onClick
 					? (e) => {
@@ -156,7 +152,7 @@ const InstitutionCard = memo(function InstitutionCard({
 					: undefined
 			}
 			onKeyDown={
-				isKeyboardInteractive
+				onClick
 					? (e) => {
 							if (e.key === "Enter" || e.key === " ") {
 								const target = e.target as HTMLElement;
@@ -169,7 +165,7 @@ const InstitutionCard = memo(function InstitutionCard({
 					: undefined
 			}
 			aria-label={
-				isKeyboardInteractive
+				onClick
 					? `${institutionData.name} - ${t("institution.showDetails")}`
 					: undefined
 			}
