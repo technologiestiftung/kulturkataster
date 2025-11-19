@@ -6,8 +6,8 @@ interface SearchResultsProps {
 	results: SearchResult[];
 	query: string;
 	activeIndex: number;
-	listRef: React.RefObject<HTMLUListElement | null>;
-	getItemProps: (index: number) => React.HTMLAttributes<HTMLLIElement>;
+	listRef: React.RefObject<HTMLElement | null>;
+	getItemProps: (index: number) => React.HTMLAttributes<HTMLDivElement>;
 	onResultClick: (result: SearchResult) => void;
 	highlightMatch: (text: string, query: string) => React.ReactNode;
 	formatAddress: (institution: Institution) => string;
@@ -39,8 +39,8 @@ export function SearchResults({
 			>
 				{t("search.suggestions")}
 			</span>
-			<ul
-				ref={listRef}
+			<div
+				ref={listRef as React.RefObject<HTMLDivElement>}
 				id={listId}
 				className="flex-1 overflow-y-auto space-y-1"
 				role="listbox"
@@ -49,14 +49,14 @@ export function SearchResults({
 				{results.map((result, index) => {
 					const itemProps = getItemProps(index);
 					return (
-						// eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
-						<li
+						<div
 							key={
 								isGeoFeature(result)
 									? `address-${result.id}`
 									: `institution-${result.id}`
 							}
 							role="option"
+							aria-selected={index === activeIndex}
 							{...itemProps}
 							onClick={(e) => {
 								e.stopPropagation();
@@ -69,7 +69,6 @@ export function SearchResults({
 									onResultClick(result);
 								}
 							}}
-							// eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
 							tabIndex={-1}
 							className={`py-3 px-2 cursor-pointer rounded text-sm border-b
 								${index === activeIndex ? "bg-gray-100" : ""}
@@ -90,10 +89,10 @@ export function SearchResults({
 									</div>
 								</>
 							)}
-						</li>
+						</div>
 					);
 				})}
-			</ul>
+			</div>
 		</div>
 	);
 }

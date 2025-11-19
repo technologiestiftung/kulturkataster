@@ -297,189 +297,189 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 				open={firstTimeUser}
 				onOpenChange={handleWelcomeModalClose}
 			/>
-			<Sidebar
-				collapsible="icon"
-				className="overflow-hidden *:data-[sidebar=sidebar]:flex-row [&_*]:!transition-none"
-				role="navigation"
-				aria-label={t("menu.navigation")}
-				{...props}
-			>
+			<nav aria-label={t("menu.navigation")}>
 				<Sidebar
-					collapsible="none"
-					className="w-[var(--sidebar-width-icon)] min-w-[var(--sidebar-width-icon)] max-w-[var(--sidebar-width-icon)] flex-shrink-0 border-r justify-center hidden md:flex"
+					collapsible="icon"
+					className="overflow-hidden *:data-[sidebar=sidebar]:flex-row [&_*]:!transition-none"
+					{...props}
 				>
-					<SidebarHeader>
-						<div className="my-2">
-							<div className="flex justify-center">
-								<button onClick={handleLogoClick} aria-label={t("kukaLogo")}>
-									<KukaSmallLogo
-										title="Kulturkataster Berlin, Logo"
-										className="size-14 cursor-pointer hover:opacity-80 transition-opacity"
-									/>
-								</button>
-							</div>
-						</div>
-					</SidebarHeader>
-					<SidebarContent>
-						<SidebarGroup>
-							<SidebarGroupContent>
-								<SidebarMenu>
-									{menuItems.map((item) => {
-										const showBadge =
-											item.id === "filter" &&
-											institutions &&
-											originalInstitutions?.features.length !==
-												institutions.features.length;
-										const active = activeItem === item.id;
-										return (
-											<SidebarMenuItem key={item.id}>
-												<SidebarMenuButton
-													tooltip={{
-														children: t(item.label),
-														hidden: false,
-													}}
-													onClick={() => handleItemClick(item.id)}
-													isActive={active}
-													aria-label={
-														showBadge
-															? t("menu.menuButtonBadge", {
-																	label: t(item.label),
-																	count: institutions.features.length,
-																})
-															: t(item.label)
-													}
-													aria-current={active}
-													className="relative"
-												>
-													<item.icon />
-													{showBadge && (
-														<div className="absolute top-2 -right-1 bg-primary text-primary-foreground body2 rounded-full min-w-5 h-5 flex items-center justify-center px-1">
-															{institutions.features.length}
-														</div>
-													)}
-												</SidebarMenuButton>
-											</SidebarMenuItem>
-										);
-									})}
-								</SidebarMenu>
-							</SidebarGroupContent>
-						</SidebarGroup>
-					</SidebarContent>
-					<SidebarFooter>
-						<SidebarMenu>
-							{footerItems.map((item) => (
-								<SidebarMenuItem key={item.id}>
-									<SidebarMenuButton
-										tooltip={{
-											children: t(item.label),
-											hidden: false,
-										}}
-										onClick={() => handleItemClick(item.id)}
-										isActive={activeItem === item.id}
-										aria-label={t(item.label)}
-									>
-										<item.icon />
-									</SidebarMenuButton>
-								</SidebarMenuItem>
-							))}
-						</SidebarMenu>
-					</SidebarFooter>
-				</Sidebar>
-
-				{/* This is the second sidebar */}
-				{/* We disable collapsible and let it fill remaining space */}
-				<Sidebar
-					collapsible="none"
-					className="flex-1 h-full group-data-[collapsible=icon]:hidden flex flex-col"
-				>
-					<SidebarHeader className="gap-3.5 p-6 shadow-sm md:shadow-none z-10">
-						<div className="md:hidden flex justify-center pb-2">
-							<div className="w-10 h-1 bg-muted-foreground/30 rounded-full"></div>
-						</div>
-						<div className="flex items-center justify-between w-full">
-							<div className="flex items-center justify-between">
-								<div className="flex items-center gap-2">
-									{activeItem === "institution-detail" &&
-										previousActiveItem && (
-											<button
-												onClick={handleBackToFilter}
-												className="body1 font-bold flex items-center gap-1"
-												aria-label={t("menu.backToAriaLabel", {
-													title: t(previousActiveItem + ".title"),
-												})}
-											>
-												<ArrowLeft />{" "}
-												{t("menu.backTo", {
-													page: t(previousActiveItem + ".title"),
-												})}
-											</button>
-										)}
-									{!(
-										activeItem === "institution-detail" && previousActiveItem
-									) && (
-										<span className="body1 font-bold">
-											{getActiveItemTitle()}
-										</span>
-									)}
+					<Sidebar
+						collapsible="none"
+						className="w-[var(--sidebar-width-icon)] min-w-[var(--sidebar-width-icon)] max-w-[var(--sidebar-width-icon)] flex-shrink-0 border-r justify-center hidden md:flex"
+					>
+						<SidebarHeader>
+							<div className="my-2">
+								<div className="flex justify-center">
+									<button onClick={handleLogoClick} aria-label={t("kukaLogo")}>
+										<KukaSmallLogo
+											title="Kulturkataster Berlin, Logo"
+											className="size-14 cursor-pointer hover:opacity-80 transition-opacity"
+										/>
+									</button>
 								</div>
 							</div>
-							<button
-								onClick={handleSidebarClose}
-								aria-label={t("closeSidebar")}
-							>
-								<Close />
-							</button>
-						</div>
-					</SidebarHeader>
-					<SidebarContent className="flex-1 overflow-hidden">
-						<SidebarGroup className="px-0 h-full">
-							<SidebarGroupContent className="h-full overflow-auto">
-								<div className="min-h-full flex flex-col">
-									<div className="flex-1 h-full bg-secondary">
-										{activeItem === "filter" && <FilterContent />}
-										{activeItem === "search" && <SearchContent />}
-										{activeItem === "accessibility" && (
-											<div className="p-2 w-full">
-												<AccessibilityContent onItemClick={handleItemClick} />
-											</div>
+						</SidebarHeader>
+						<SidebarContent>
+							<SidebarGroup>
+								<SidebarGroupContent>
+									<SidebarMenu>
+										{menuItems.map((item) => {
+											const showBadge =
+												item.id === "filter" &&
+												institutions &&
+												originalInstitutions?.features.length !==
+													institutions.features.length;
+											const active = activeItem === item.id;
+											return (
+												<SidebarMenuItem key={item.id}>
+													<SidebarMenuButton
+														tooltip={{
+															children: t(item.label),
+															hidden: false,
+														}}
+														onClick={() => handleItemClick(item.id)}
+														isActive={active}
+														aria-label={
+															showBadge
+																? t("menu.menuButtonBadge", {
+																		label: t(item.label),
+																		count: institutions.features.length,
+																	})
+																: t(item.label)
+														}
+														aria-current={active}
+														className="relative"
+													>
+														<item.icon />
+														{showBadge && (
+															<div className="absolute top-2 -right-1 bg-primary text-primary-foreground body2 rounded-full min-w-5 h-5 flex items-center justify-center px-1">
+																{institutions.features.length}
+															</div>
+														)}
+													</SidebarMenuButton>
+												</SidebarMenuItem>
+											);
+										})}
+									</SidebarMenu>
+								</SidebarGroupContent>
+							</SidebarGroup>
+						</SidebarContent>
+						<SidebarFooter>
+							<SidebarMenu>
+								{footerItems.map((item) => (
+									<SidebarMenuItem key={item.id}>
+										<SidebarMenuButton
+											tooltip={{
+												children: t(item.label),
+												hidden: false,
+											}}
+											onClick={() => handleItemClick(item.id)}
+											isActive={activeItem === item.id}
+											aria-label={t(item.label)}
+										>
+											<item.icon />
+										</SidebarMenuButton>
+									</SidebarMenuItem>
+								))}
+							</SidebarMenu>
+						</SidebarFooter>
+					</Sidebar>
+
+					{/* This is the second sidebar */}
+					{/* We disable collapsible and let it fill remaining space */}
+					<Sidebar
+						collapsible="none"
+						className="flex-1 h-full group-data-[collapsible=icon]:hidden flex flex-col"
+					>
+						<SidebarHeader className="gap-3.5 p-6 shadow-sm md:shadow-none z-10">
+							<div className="md:hidden flex justify-center pb-2">
+								<div className="w-10 h-1 bg-muted-foreground/30 rounded-full"></div>
+							</div>
+							<div className="flex items-center justify-between w-full">
+								<div className="flex items-center justify-between">
+									<div className="flex items-center gap-2">
+										{activeItem === "institution-detail" &&
+											previousActiveItem && (
+												<button
+													onClick={handleBackToFilter}
+													className="body1 font-bold flex items-center gap-1"
+													aria-label={t("menu.backToAriaLabel", {
+														title: t(previousActiveItem + ".title"),
+													})}
+												>
+													<ArrowLeft />{" "}
+													{t("menu.backTo", {
+														page: t(previousActiveItem + ".title"),
+													})}
+												</button>
+											)}
+										{!(
+											activeItem === "institution-detail" && previousActiveItem
+										) && (
+											<span className="body1 font-bold">
+												{getActiveItemTitle()}
+											</span>
 										)}
-										{activeItem === "layertree" && <LayerTreeContent />}
-										{activeItem === "institution-detail" && (
-											<div
-												aria-hidden={viewMode === "list"}
-												tabIndex={viewMode === "list" ? -1 : undefined}
-												className={
-													viewMode === "list"
-														? "pointer-events-none"
-														: undefined
-												}
-											>
-												<InstitutionDetailContent />
+									</div>
+								</div>
+								<button
+									onClick={handleSidebarClose}
+									aria-label={t("closeSidebar")}
+								>
+									<Close />
+								</button>
+							</div>
+						</SidebarHeader>
+						<SidebarContent className="flex-1 overflow-hidden">
+							<SidebarGroup className="px-0 h-full">
+								<SidebarGroupContent className="h-full overflow-auto">
+									<div className="min-h-full flex flex-col">
+										<div className="flex-1 h-full bg-secondary">
+											{activeItem === "filter" && <FilterContent />}
+											{activeItem === "search" && <SearchContent />}
+											{activeItem === "accessibility" && (
+												<div className="p-2 w-full">
+													<AccessibilityContent onItemClick={handleItemClick} />
+												</div>
+											)}
+											{activeItem === "layertree" && <LayerTreeContent />}
+											{activeItem === "institution-detail" && (
+												<div
+													aria-hidden={viewMode === "list"}
+													tabIndex={viewMode === "list" ? -1 : undefined}
+													className={
+														viewMode === "list"
+															? "pointer-events-none"
+															: undefined
+													}
+												>
+													<InstitutionDetailContent />
+												</div>
+											)}
+										</div>
+										{shouldShowDownloadButton() && false && (
+											<div className="sticky bottom-0 flex justify-center p-4">
+												<Button
+													variant={"outline"}
+													className="w-full"
+													aria-label={t("download.downloadButton")}
+													onClick={handleDownloadButtonClick}
+												>
+													<Download size={6} viewBox="0 0 24 24" />
+													{t("download.downloadButton")}
+													{getDownloadButtonCount() && (
+														<span>({getDownloadButtonCount()})</span>
+													)}
+												</Button>
 											</div>
 										)}
 									</div>
-									{shouldShowDownloadButton() && false && (
-										<div className="sticky bottom-0 flex justify-center p-4">
-											<Button
-												variant={"outline"}
-												className="w-full"
-												aria-label={t("download.downloadButton")}
-												onClick={handleDownloadButtonClick}
-											>
-												<Download size={6} viewBox="0 0 24 24" />
-												{t("download.downloadButton")}
-												{getDownloadButtonCount() && (
-													<span>({getDownloadButtonCount()})</span>
-												)}
-											</Button>
-										</div>
-									)}
-								</div>
-							</SidebarGroupContent>
-						</SidebarGroup>
-					</SidebarContent>
+								</SidebarGroupContent>
+							</SidebarGroup>
+						</SidebarContent>
+					</Sidebar>
 				</Sidebar>
-			</Sidebar>
+			</nav>
 			<div className="absolute md:hidden block z-[50] top-0 left-0">
 				<button
 					onClick={handleLogoClick}

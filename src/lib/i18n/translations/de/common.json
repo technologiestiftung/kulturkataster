@@ -1,4 +1,9 @@
 {
+	"skipToContent": "Zum Hauptinhalt springen",
+	"mainContent": "Hauptinhalt",
+	"siteTitle": "Berliner Kulturkataster",
+	"headerLandmark": "Seitennavigation",
+	"footerLandmark": "Fußbereich",
 	"information": {
 		"title": "Informationen"
 	},
@@ -136,6 +141,7 @@
 		"address": "info@kulturkataster.berlin"
 	},
 	"footer": {
+		"navigation": "Footer-Navigation",
 		"title": "Kulturkataster Berlin",
 		"projectBy": "Ein Projekt der Kulturraum Berlin gGmbH",
 		"openSource": "Das Kulturkataster ist ein <0>Open-Source-Projekt</0>.",
