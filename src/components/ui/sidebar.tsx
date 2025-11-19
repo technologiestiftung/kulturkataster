@@ -147,17 +147,20 @@ function Sidebar({
 	collapsible = "offcanvas",
 	className,
 	children,
+	asChild = false,
 	...props
 }: React.ComponentProps<"div"> & {
 	side?: "left" | "right";
 	variant?: "sidebar" | "floating" | "inset";
 	collapsible?: "offcanvas" | "icon" | "none";
+	asChild?: boolean;
 }) {
 	const { isMobile, state, openMobile, setOpenMobile } = useSidebar();
+	const Comp = asChild ? Slot : "div";
 
 	if (collapsible === "none") {
 		return (
-			<div
+			<Comp
 				data-slot="sidebar"
 				className={cn(
 					"bg-background md:bg-sidebar text-sidebar-foreground flex h-full w-full flex-col",
@@ -166,7 +169,7 @@ function Sidebar({
 				{...props}
 			>
 				{children}
-			</div>
+			</Comp>
 		);
 	}
 
@@ -191,7 +194,7 @@ function Sidebar({
 	}
 
 	return (
-		<div
+		<Comp
 			className="group peer text-sidebar-foreground hidden md:block"
 			data-state={state}
 			data-collapsible={state === "collapsed" ? collapsible : ""}
@@ -233,7 +236,7 @@ function Sidebar({
 					{children}
 				</div>
 			</div>
-		</div>
+		</Comp>
 	);
 }
 
@@ -289,9 +292,14 @@ function SidebarRail({ className, ...props }: React.ComponentProps<"button">) {
 	);
 }
 
-function SidebarInset({ className, ...props }: React.ComponentProps<"main">) {
+function SidebarInset({
+	className,
+	asChild = false,
+	...props
+}: React.ComponentProps<"main"> & { asChild?: boolean }) {
+	const Comp = asChild ? Slot : "main";
 	return (
-		<main
+		<Comp
 			data-slot="sidebar-inset"
 			className={cn(
 				"bg-background relative flex flex-col flex-1",
@@ -317,9 +325,14 @@ function SidebarInput({
 	);
 }
 
-function SidebarHeader({ className, ...props }: React.ComponentProps<"div">) {
+function SidebarHeader({
+	className,
+	asChild = false,
+	...props
+}: React.ComponentProps<"div"> & { asChild?: boolean }) {
+	const Comp = asChild ? Slot : "div";
 	return (
-		<div
+		<Comp
 			data-slot="sidebar-header"
 			data-sidebar="header"
 			className={cn("flex flex-col gap-2 p-2", className)}
