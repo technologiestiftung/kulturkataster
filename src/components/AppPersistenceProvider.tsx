@@ -24,7 +24,7 @@ export function AppPersistenceProvider() {
 		if (hasHydrated) {
 			setIsContrastMode(isContrastMode);
 			if (isLargeTextMode) {
-				document.documentElement.style.fontSize = "125%";
+				document.documentElement.style.fontSize = "112.5%";
 			}
 		}
 	}, [hasHydrated, isContrastMode, setIsContrastMode, isLargeTextMode]);
