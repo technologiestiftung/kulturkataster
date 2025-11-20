@@ -106,7 +106,7 @@ const LayerThumbnail = memo<{
 			)}
 			{showOverlay && layer.visibility && (
 				<div
-					className="absolute inset-0 bg-neutral-80/30 contrast:bg-interaction-dark/30 flex items-center justify-center border-2 border-neutral-80 contrast:border-interaction-dark rounded"
+					className="absolute inset-0 bg-interaction-dark/30 flex items-center justify-center border-2 border-interaction-dark rounded"
 					aria-hidden="true"
 				/>
 			)}
@@ -226,7 +226,7 @@ const LayerItem = memo<{
 							id={layer.id}
 							checked={layer.visibility}
 							onCheckedChange={handleVisibilityChange}
-							className="w-6 h-6 rounded-full"
+							className="w-6 h-6 rounded-full border-neutral-80"
 							aria-label={t("map.layerItemAriaLabel", { serviceName })}
 							disabled={layer.status === "error"}
 						/>
