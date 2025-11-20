@@ -4,8 +4,7 @@ import { useAppStore } from "@/lib/store/appStore";
 import { useEffect, useState } from "react";
 
 export function AppPersistenceProvider() {
-	const { isContrastMode, setIsContrastMode, baseFontSize, setBaseFontSize } =
-		useAppStore();
+	const { isContrastMode, setIsContrastMode, isLargeTextMode } = useAppStore();
 	const [hasHydrated, setHasHydrated] = useState(false);
 
 	useEffect(() => {
@@ -24,15 +23,11 @@ export function AppPersistenceProvider() {
 	useEffect(() => {
 		if (hasHydrated) {
 			setIsContrastMode(isContrastMode);
-			setBaseFontSize(baseFontSize);
+			if (isLargeTextMode) {
+				document.documentElement.style.fontSize = "125%";
+			}
 		}
-	}, [
-		hasHydrated,
-		isContrastMode,
-		setIsContrastMode,
-		baseFontSize,
-		setBaseFontSize,
-	]);
+	}, [hasHydrated, isContrastMode, setIsContrastMode, isLargeTextMode]);
 
 	return null;
 }
