@@ -13,7 +13,7 @@ export const useAppStore = create<AppStoreState>()(
 			isLargeTextMode: false,
 			setIsLargeTextMode: (isLargeText) => {
 				if (isLargeText) {
-					document.documentElement.style.fontSize = "125%";
+					document.documentElement.style.fontSize = "112.5%";
 				} else {
 					document.documentElement.style.fontSize = "";
 				}
