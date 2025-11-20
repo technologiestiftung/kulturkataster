@@ -297,6 +297,32 @@ async function updateTranslation(params: {
 }
 
 /**
+ * Recursively sort object keys alphabetically
+ */
+function sortObjectKeys(obj: any): any {
+	if (obj === null || obj === undefined) {
+		return obj;
+	}
+
+	if (Array.isArray(obj)) {
+		return obj.map((item) => sortObjectKeys(item));
+	}
+
+	if (typeof obj !== "object") {
+		return obj;
+	}
+
+	const sorted: Record<string, any> = {};
+	const keys = Object.keys(obj).sort();
+
+	for (const key of keys) {
+		sorted[key] = sortObjectKeys(obj[key]);
+	}
+
+	return sorted;
+}
+
+/**
  * Deep merge two objects, with source overwriting target
  */
 function deepMerge(target: any, source: any): any {
@@ -402,8 +428,9 @@ function unflattenObject(flat: Record<string, string>): any {
 /**
  * Push local translation files to Traduora
  */
-async function pushToTraduora(): Promise<void> {
+async function pushToTraduora(overwriteAll: boolean = false): Promise<void> {
 	console.log("🚀 Starting push to Traduora...\n");
+	console.log(`ℹ Mode: ${overwriteAll ? "Overwrite all" : "New keys only"}`);
 	console.log(`ℹ Using Traduora API URL: ${TRADUORA_API_URL}`);
 	console.log(`ℹ Project ID: ${TRADUORA_PROJECT_ID}\n`);
 
@@ -445,8 +472,24 @@ async function pushToTraduora(): Promise<void> {
 				`    ℹ Found ${Object.keys(flatTranslations).length} translation keys`,
 			);
 
+			// Fetch existing translations for this locale if not overwriting all
+			const existingTranslationsMap = new Map<string, string>();
+			if (!overwriteAll) {
+				const existingTranslations = await fetchTranslations(token, locale);
+				const allTerms = await fetchTerms(token);
+				const termIdToKey = new Map(allTerms.map((t) => [t.id, t.value]));
+
+				for (const trans of existingTranslations) {
+					const termKey = termIdToKey.get(trans.termId);
+					if (termKey && trans.value) {
+						existingTranslationsMap.set(termKey, trans.value);
+					}
+				}
+			}
+
 			// Process each translation
 			let updatedCount = 0;
+			let skippedCount = 0;
 			let errorCount = 0;
 			for (const [termKey, termValue] of Object.entries(flatTranslations)) {
 				try {
@@ -455,6 +498,12 @@ async function pushToTraduora(): Promise<void> {
 
 					// Label the term with the namespace
 					await labelTerm(token, labelId, termId);
+
+					// Skip if translation already exists and we're not overwriting
+					if (!overwriteAll && existingTranslationsMap.has(termKey)) {
+						skippedCount++;
+						continue;
+					}
 
 					// Update translation
 					await updateTranslation({ token, locale, termId, value: termValue });
@@ -471,7 +520,9 @@ async function pushToTraduora(): Promise<void> {
 				}
 			}
 
-			console.log(`    ✓ Updated ${updatedCount} translations\n`);
+			console.log(
+				`    ✓ Updated ${updatedCount} translations${!overwriteAll ? `, skipped ${skippedCount} existing` : ""}\n`,
+			);
 		}
 	}
 
@@ -481,8 +532,9 @@ async function pushToTraduora(): Promise<void> {
 /**
  * Pull translations from Traduora to local files
  */
-async function pullFromTraduora(): Promise<void> {
+async function pullFromTraduora(overwriteAll: boolean = false): Promise<void> {
 	console.log("🚀 Starting pull from Traduora...\n");
+	console.log(`ℹ Mode: ${overwriteAll ? "Overwrite all" : "New keys only"}`);
 	console.log(`ℹ Using Traduora API URL: ${TRADUORA_API_URL}`);
 	console.log(`ℹ Project ID: ${TRADUORA_PROJECT_ID}\n`);
 
@@ -557,31 +609,45 @@ async function pullFromTraduora(): Promise<void> {
 
 			let mergedTranslations = traduoraTranslations;
 			// Check for existing file in multiple case variations
-			const existingFilePath = fs.existsSync(normalizedFilePath)
-				? normalizedFilePath
-				: fs.existsSync(originalFilePath)
-					? originalFilePath
-					: fs.existsSync(allLowerPath)
-						? allLowerPath
-						: null;
+			let existingFilePath: string | null = null;
+			if (fs.existsSync(normalizedFilePath)) {
+				existingFilePath = normalizedFilePath;
+			} else if (fs.existsSync(originalFilePath)) {
+				existingFilePath = originalFilePath;
+			} else if (fs.existsSync(allLowerPath)) {
+				existingFilePath = allLowerPath;
+			}
 
 			if (existingFilePath) {
 				try {
 					const localContent = JSON.parse(
 						fs.readFileSync(existingFilePath, "utf-8"),
 					);
-					// Merge: Traduora translations overwrite local, but preserve local-only keys
-					mergedTranslations = deepMerge(localContent, traduoraTranslations);
-					console.log(`    ℹ Merged with existing local translations`);
+					if (overwriteAll) {
+						// Overwrite all: Traduora values replace local values completely
+						mergedTranslations = deepMerge(localContent, traduoraTranslations);
+						console.log(
+							`    ℹ Merged with existing local translations (Traduora overwriting)`,
+						);
+					} else {
+						// New keys only: Keep existing local values, only add new keys from Traduora
+						mergedTranslations = deepMerge(traduoraTranslations, localContent);
+						console.log(
+							`    ℹ Merged with existing local translations (preserving local values)`,
+						);
+					}
 				} catch {
 					console.warn(`    ⚠ Could not read existing file, will overwrite`);
 				}
 			}
 
-			// Write to file (normalize filename to lowercase)
+			// Sort keys alphabetically for consistent output
+			const sortedTranslations = sortObjectKeys(mergedTranslations);
+
+			// Write to file (normalize filename to lowercase) with trailing newline
 			fs.writeFileSync(
 				normalizedFilePath,
-				JSON.stringify(mergedTranslations, null, "\t"),
+				JSON.stringify(sortedTranslations, null, "\t") + "\n",
 			);
 			console.log(
 				`    ✓ Saved to ${path.relative(process.cwd(), normalizedFilePath)}\n`,
@@ -596,7 +662,9 @@ async function pullFromTraduora(): Promise<void> {
  * Main function
  */
 async function main() {
-	const command = process.argv[2];
+	const args = process.argv.slice(2);
+	const command = args[0];
+	const hasAllFlag = args.includes("--all");
 
 	if (
 		!TRADUORA_API_URL ||
@@ -615,14 +683,24 @@ async function main() {
 
 	try {
 		if (command === "push") {
-			await pushToTraduora();
+			await pushToTraduora(hasAllFlag);
 		} else if (command === "pull") {
-			await pullFromTraduora();
+			await pullFromTraduora(hasAllFlag);
 		} else {
-			console.log("Usage: npm run traduora:sync <push|pull>");
-			console.log("  push - Upload local translation files to Traduora");
+			console.log("Usage: npm run traduora:sync <push|pull> [--all]");
+			console.log("");
+			console.log("Commands:");
 			console.log(
-				"  pull - Download translations from Traduora to local files",
+				"  push       - Upload local translation files to Traduora (default: new keys only)",
+			);
+			console.log(
+				"  push --all - Upload and overwrite all translations in Traduora",
+			);
+			console.log(
+				"  pull       - Download translations from Traduora (default: new keys only)",
+			);
+			console.log(
+				"  pull --all - Download and overwrite all local translations",
 			);
 			process.exit(1);
 		}
