@@ -11,8 +11,14 @@ export const useAppStore = create<AppStoreState>()(
 			isContrastMode: false,
 			setIsContrastMode: createSetContrastMode(set),
 			isLargeTextMode: false,
-			setIsLargeTextMode: (isLargeText) =>
-				set({ isLargeTextMode: isLargeText }),
+			setIsLargeTextMode: (isLargeText) => {
+				if (isLargeText) {
+					document.documentElement.style.fontSize = "125%";
+				} else {
+					document.documentElement.style.fontSize = "";
+				}
+				set({ isLargeTextMode: isLargeText });
+			},
 			baseFontSize: 16,
 			setBaseFontSize: createSetBaseFontSize(set),
 			viewMode: "map",
