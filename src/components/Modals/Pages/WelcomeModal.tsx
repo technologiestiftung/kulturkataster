@@ -133,7 +133,10 @@ export function WelcomeModal({ open, onOpenChange }: WelcomeModalProps) {
 						aria-label={t("footer.navigation")}
 						className="bg-neutral-5 py-2 px-4 w-full"
 					>
-						<ul className="flex gap-4 body2 font-bold justify-end">
+						<ul
+							className="flex gap-4 body2 font-bold justify-end"
+							aria-label={t("footer.welcomeModalLinkListAriaLabel")}
+						>
 							{footerItems.map((item) => (
 								<li key={item.id}>
 									<button

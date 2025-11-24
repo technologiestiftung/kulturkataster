@@ -32,7 +32,11 @@ export function SearchResults({
 			<span className="body1 font-bold text-neutral-60 mb-2 flex-shrink-0">
 				{t("search.suggestions")}
 			</span>
-			<ul ref={listRef} className="flex-1 overflow-y-auto space-y-1">
+			<ul
+				ref={listRef}
+				className="flex-1 overflow-y-auto space-y-1"
+				aria-label={t("search.searchAriaLabel", { count: results.length })}
+			>
 				{results.map((result, index) => (
 					// eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
 					<li

@@ -92,7 +92,7 @@ const LayerThumbnail = memo<{
 			{hasPreview ? (
 				<Image
 					src={previewSrc}
-					alt={layer.config.service.name}
+					alt=""
 					width={size}
 					height={size}
 					className="w-full h-full object-cover"
@@ -120,6 +120,7 @@ LayerThumbnail.displayName = "LayerThumbnail";
 const LayerItem = memo<{
 	layer: ManagedLayer;
 }>(({ layer }) => {
+	const { t } = useTranslation("common");
 	const setLayerVisibility = useMapStore((state) => state.setLayerVisibility);
 	const openLegendLayerId = useMapStore((state) => state.openLegendLayerId);
 	const setOpenLegendLayerId = useMapStore(
@@ -205,7 +206,7 @@ const LayerItem = memo<{
 							checked={layer.visibility}
 							onCheckedChange={handleVisibilityChange}
 							className="w-6 h-6 rounded-full"
-							aria-label={`Toggle visibility for ${serviceName}`}
+							aria-label={t("map.layerItemAriaLabel", { serviceName })}
 							disabled={layer.status === "error"}
 						/>
 					</div>
@@ -216,7 +217,7 @@ const LayerItem = memo<{
 				<>
 					<AccordionTrigger
 						className="px-3 py-2 rounded-none [&[data-state=closed]]:rounded-b-sm hover:no-underline flex justify-end items-center gap-2 [&>svg]:text-foreground bg-neutral-10"
-						aria-label={`Show legend for ${serviceName}`}
+						aria-label={t("map.layerItemLegendAriaLabel", { serviceName })}
 					>
 						Legende ansehen
 					</AccordionTrigger>
@@ -226,7 +227,7 @@ const LayerItem = memo<{
 					>
 						<Image
 							src={layer.config.service.legend as string}
-							alt={`Legend for ${serviceName}`}
+							alt=""
 							width={300}
 							height={50}
 							className="h-auto w-full max-w-full rounded"
@@ -280,7 +281,7 @@ const FloatingLayerButton = memo<{
 						visibleCount > 0 ? "border-2 border-interaction-dark" : ""
 					}`}
 					onClick={onClick}
-					aria-label={`Open layer tree (${visibleCount} visible layers)`}
+					aria-label={t("map.layerTreeAriaLabel", { visibleCount })}
 				>
 					<div className="w-full h-full flex items-center justify-center">
 						{visibleCount === 0 ? (
@@ -300,7 +301,9 @@ const FloatingLayerButton = memo<{
 					<Badge
 						variant="default"
 						className="absolute -top-2 -right-2 w-6 h-6 p-0 rounded-full border-2 border-white text-xs font-bold"
-						aria-label={`${visibleCount} layers visible`}
+						aria-label={t("map.layerTreeVisibleCountAriaLabel", {
+							visibleCount,
+						})}
 					>
 						{visibleCount}
 					</Badge>
@@ -369,7 +372,7 @@ const LayerTree: FC = () => {
 						onClick={handleClose}
 						aria-label={t("map.closeLayerTree")}
 					>
-						<X className="w-4 h-4" />
+						<X className="w-4 h-4" aria-hidden="true" focusable="false" />
 					</Button>
 				</div>
 			</CardHeader>

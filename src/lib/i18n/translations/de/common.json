@@ -17,7 +17,8 @@
 		"noResults": "Keine Kulturorte gefunden.",
 		"error": "Fehler bei der Suche. Bitte versuchen Sie es später erneut.",
 		"noResultsFound": "Zu Ihrer Eingabe konnte kein Kulturort oder Adresse gefunden werden. Bitte überprüfen Sie die Angaben und versuchen Sie es erneut.",
-		"suggestions": "Vorschläge für Ihre Suche"
+		"suggestions": "Vorschläge für Ihre Suche",
+		"searchAriaLabel": "{{count}} Suchergebnisse"
 	},
 	"download": {
 		"title": "Liste herunterladen",
@@ -65,6 +66,7 @@
 	"close": "Schließen",
 	"here": "hier",
 	"closeSidebar": "Seitenleiste schließen",
+	"toggleSidebar": "Seitenleiste umschalten",
 	"institution": {
 		"details": "Kulturort Details",
 		"unnamed": "Unbenannter Kulturort",
@@ -120,7 +122,9 @@
 	"unknown": "Unbekannt",
 	"menu": {
 		"navigation": "Hauptmenü",
-		"backTo": "Zurück zu {{page}}"
+		"backTo": "Zurück zu {{page}}",
+		"backToAriaLabel": "Zurück zu {{title}}",
+		"menuButtonBadge": "{{label}} - {{count}} Kulturorte aktiv"
 	},
 	"telephone": {
 		"label": "Telefon",
@@ -160,7 +164,9 @@
 		"telephone": {
 			"label": "Tel.",
 			"number": "+49 30 3030 444 60"
-		}
+		},
+		"navigationAriaLabel": "Fußzeilen-Navigation",
+		"welcomeModalLinkListAriaLabel": "Fußzeilen-Navigation der Willkommensansicht"
 	},
 	"map": {
 		"title": "Kartenansicht",
@@ -169,10 +175,15 @@
 		"geolocate": "Meinen Standort finden",
 		"layerTree": "Fachkarten",
 		"layerTreeTitle": "Fachkarten",
+		"layerTreeAriaLabel": "Fachkarten einblenden ({{visibleCount}} sichtbare Karten)",
+		"layerTreeVisibleCountAriaLabel": "{{visibleCount}} sichtbare Karten",
 		"closeLayerTree": "Fachkarten schließen",
 		"availableLayers": "Verfügbare Ebenen",
 		"noLayersAvailable": "Keine Fachkarten verfügbar",
-		"show": "Zur Kartenansicht"
+		"show": "Zur Kartenansicht",
+		"radioGroupAriaLabel": "Ansicht",
+		"layerItemAriaLabel": "Sichtbarkeit von der Karte {{serviceName}} umschalten",
+		"layerItemLegendAriaLabel": "Kartenlegende für die Karte {{serviceName}} anzeigen"
 	},
 	"listView": {
 		"title": "Listenansicht",
