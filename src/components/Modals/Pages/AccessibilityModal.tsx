@@ -114,17 +114,21 @@ export function AccessibilityModal({
 				<div className="space-y-6">
 					{barriers.map((barrier) => (
 						<div key={barrier.title}>
-							{/* Hier verwenden wir h2 für die untergeordneten Barrieren-Titel */}
 							<h2 className="h2 mb-2">{barrier.title}</h2>
 							<div className="body2 space-y-2">
 								<p className="body2">
-									<strong>Beschreibung:</strong> {barrier.description}
+									<strong>
+										{t("accessibilityModal.which.descriptionLabel")}
+									</strong>{" "}
+									{barrier.description}
 								</p>
 								<p>
-									<strong>Maßnahmen:</strong> {barrier.measures}
+									<strong>{t("accessibilityModal.which.measuresLabel")}</strong>{" "}
+									{barrier.measures}
 								</p>
 								<p>
-									<strong>Zeitplan:</strong> {barrier.timeline}
+									<strong>{t("accessibilityModal.which.timelineLabel")}</strong>{" "}
+									{barrier.timeline}
 								</p>
 							</div>
 						</div>
