@@ -92,7 +92,6 @@ const LayerThumbnail = memo<{
 			{hasPreview ? (
 				<Image
 					src={previewSrc}
-					// alt={layer.config.service.name}
 					alt=""
 					width={size}
 					height={size}
@@ -228,7 +227,6 @@ const LayerItem = memo<{
 					>
 						<Image
 							src={layer.config.service.legend as string}
-							// alt={`Legend for ${serviceName}`}
 							alt=""
 							width={300}
 							height={50}

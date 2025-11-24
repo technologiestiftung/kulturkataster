@@ -342,7 +342,10 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 													isActive={active}
 													aria-label={
 														showBadge
-															? `${t(item.label)} - ${institutions.features.length} Kulturorte aktiv`
+															? t("menu.menuButtonBadge", {
+																	label: t(item.label),
+																	count: institutions.features.length,
+																})
 															: t(item.label)
 													}
 													aria-current={active}
