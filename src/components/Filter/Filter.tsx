@@ -17,7 +17,7 @@ import { Loading } from "../ui/loading";
 
 // Main Filter Component
 const Filter: FC = () => {
-	const { setFilters, filters } = useInstitutionStore();
+	const { setFilters, filters, filteredInstitutions } = useInstitutionStore();
 	const { categoryGroups, districts, loading, error, retry } = useFilterData();
 	const { t, i18n } = useTranslation(["content", "common"]);
 	const { t: tEnum } = useTranslation(["enumMap"]);
@@ -236,7 +236,10 @@ const Filter: FC = () => {
 			{/* Header Section */}
 			<ContentContainer className="p-6">
 				<h2 className="body2 font-bold mb-3 pl-2">
-					{t("filter.displayedInstitutions", { ns: "content" })}
+					{t("filter.displayedInstitutions", {
+						ns: "content",
+						count: filteredInstitutions?.features.length ?? 0,
+					})}
 				</h2>
 				<button
 					className="flex items-center gap-2 transition-opacity body2 text-primary-dark"
