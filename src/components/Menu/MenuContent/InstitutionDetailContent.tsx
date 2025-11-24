@@ -63,9 +63,9 @@ function InstitutionHeader({
 									<div className="w-6 h-6">
 										<IconComponent aria-hidden="true" focusable="false" />
 									</div>
-									<p className="body2 font-bold">
+									<strong className="body2 font-bold">
 										{tEnum(`category.${category.key}`)}
-									</p>
+									</strong>
 								</div>
 								{institutionData.subcategories?.length > 0 && (
 									<div className="body2 pl-8">

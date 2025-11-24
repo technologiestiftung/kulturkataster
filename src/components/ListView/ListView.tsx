@@ -145,11 +145,11 @@ const ListView: FC = () => {
 						<div className="space-y-2">
 							<div className="flex items-center justify-between">
 								{
-									<p className="body2 font-bold">
+									<strong className="body2 font-bold">
 										{tContent("listView.countLabel", {
 											count: institutionsList.length,
 										})}
-									</p>
+									</strong>
 								}
 								<button
 									onClick={handleDownloadClick}
