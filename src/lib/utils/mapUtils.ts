@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable no-undef */
 import { fromLonLat } from "ol/proj";
 import { Map } from "ol";
 import { Coordinate } from "ol/coordinate";
@@ -155,3 +156,13 @@ export const animateMapToCoordinates = (
 		zoom,
 	});
 };
+
+/**
+ * gets a tailwind defined color from the dom, so it does need to be hard coded
+ * Expects the correct color name
+ */
+export function getTailwindColor(name: string): string {
+	return getComputedStyle(document.documentElement)
+		.getPropertyValue(`--${name}`)
+		.trim();
+}
