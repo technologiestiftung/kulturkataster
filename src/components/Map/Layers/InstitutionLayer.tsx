@@ -26,13 +26,23 @@ const createCachedPoiSvg = (
 	categoryKey: CategoryType,
 	fillColor: string,
 	strokeColor: string,
+	isPermanentlyClosed: boolean,
 ): string => {
-	const cacheKey = `${categoryKey}_${fillColor}_${strokeColor}`;
+	const cacheKey = `${categoryKey}_${fillColor}_${strokeColor}_${isPermanentlyClosed}`;
 	if (!svgCache[cacheKey]) {
 		svgCache[cacheKey] = createPoiSvg(categoryKey, fillColor, strokeColor);
 	}
 	return svgCache[cacheKey];
 };
+
+/* const clearCache = () => {
+	for (const key in svgCache) {
+		delete svgCache[key];
+	}
+	for (const key in styleCache) {
+		delete styleCache[key];
+	}
+}; */
 
 interface InstitutionLayerProps {
 	zIndex?: number;
@@ -176,7 +186,12 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 				strokeColor = "white";
 			}
 
-			const iconSvg = createCachedPoiSvg(categoryKey, fillColor, strokeColor);
+			const iconSvg = createCachedPoiSvg(
+				categoryKey,
+				fillColor,
+				strokeColor,
+				isPermanentlyClosed,
+			);
 
 			return new Style({
 				image: new Icon({
@@ -223,7 +238,7 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 			const isPermanentlyClosed =
 				singleFeature.get("utilization_status") === "permanently_closed";
 			const categoryKey = getCategoryKey(singleFeature);
-			const styleCacheKey = `${categoryKey}_${isSelected}_${hasOverlapping}`;
+			const styleCacheKey = `${categoryKey}_${isSelected}_${hasOverlapping}_${isPermanentlyClosed}`;
 
 			if (!styleCache[styleCacheKey])
 				styleCache[styleCacheKey] = createSingleFeatureStyle(
@@ -400,6 +415,20 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 	useEffect(() => {
 		vectorLayerRef.current?.getSource()?.changed();
 	}, [selectedInstitutionId]);
+
+	/* useEffect(() => {
+		function handleKey(e: KeyboardEvent) {
+			if (e.key.toLowerCase() === "d") {
+				clearCache();
+			} else if (e.key.toLowerCase() === "l") {
+				console.log("svgCache :>> ", svgCache);
+				console.log("styleCache :>> ", styleCache);
+			}
+		}
+
+		window.addEventListener("keydown", handleKey);
+		return () => window.removeEventListener("keydown", handleKey);
+	}, []); */
 
 	return null;
 };
