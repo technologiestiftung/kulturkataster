@@ -221,8 +221,7 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 				useInstitutionStore.getState().selectedInstitutionId;
 			const hasOverlapping = singleFeature.get("has_overlapping") === true;
 			const isPermanentlyClosed =
-				singleFeature.get("utilization_status") === "permanently_closed" ||
-				singleFeature.get("utilization_status") === "temporarily_closed";
+				singleFeature.get("utilization_status") === "permanently_closed";
 			const categoryKey = getCategoryKey(singleFeature);
 			const styleCacheKey = `${categoryKey}_${isSelected}_${hasOverlapping}`;
 
