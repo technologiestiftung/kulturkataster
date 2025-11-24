@@ -93,7 +93,7 @@ export function CategorySection({
 					<Checkbox
 						checked={isChecked}
 						onCheckedChange={() => onCategoryChange(group.key)}
-						aria-label={`Checkbox ${translatedCategoryName}`}
+						aria-label={`${translatedCategoryName}`}
 						className={`w-4 h-4 ${isIndeterminate ? "border-primary-dark" : ""}`}
 						aria-checked={isIndeterminate ? "mixed" : isChecked}
 					/>
@@ -129,7 +129,7 @@ export function CategorySection({
 								<Checkbox
 									checked={selectedSubcategories.includes(subcategory.key)}
 									onCheckedChange={() => onSubcategoryChange(subcategory.key)}
-									aria-label={`Checkbox ${translatedSubcategoryName}`}
+									aria-label={`${translatedSubcategoryName}`}
 								/>
 							</div>
 						</div>
