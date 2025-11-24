@@ -164,27 +164,24 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 			isPermanentlyClosed = false,
 			hasOverlapping = false,
 		) => {
-			let fillColor: string = "#C288FF";
+			const key = `${isSelected}_${isContrastMode}_${isPermanentlyClosed}`;
 
-			if (isSelected && isContrastMode) {
-				fillColor = "#249F61";
-			} else if (isSelected && !isContrastMode) {
-				fillColor = "#55D494";
-			} else if (isPermanentlyClosed && isContrastMode) {
-				fillColor = "white";
-			} else if (isPermanentlyClosed && !isContrastMode) {
-				fillColor = "#555b54";
-			} else if (isContrastMode) {
-				fillColor = "#5617BA";
-			}
+			const fillMap: Record<string, string> = {
+				true_true_false: "#249F61", // selected + contrast
+				true_false_false: "#55D494", // selected + normal
+				false_true_true: "white", // closed + contrast
+				false_false_true: "#555b54", // closed + normal
+				false_true_false: "#5617BA", // contrast mode default
+				false_false_false: "#C288FF", // default
+			};
 
-			let strokeColor: string = "#161616";
-			if (
+			const fillColor = fillMap[key] ?? "#C288FF";
+
+			const strokeColor =
 				(!isContrastMode && isPermanentlyClosed) ||
 				(isContrastMode && !isPermanentlyClosed)
-			) {
-				strokeColor = "white";
-			}
+					? "white"
+					: "#161616";
 
 			const iconSvg = createCachedPoiSvg(
 				categoryKey,
