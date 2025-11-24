@@ -782,6 +782,9 @@
 			"description": "Die nachstehend aufgeführten Bereiche sind aus folgenden Gründen nicht barrierefrei:",
 			"subheading": "Unvereinbarkeit mit BITV 2.0",
 			"list_intro": "Teilbereiche, die nicht barrierefrei sind:",
+			"descriptionLabel": "Beschreibung:",
+			"measuresLabel": "Maßnahmen:",
+			"timelineLabel": "Zeitplan:",
 			"barriers": [
 				{
 					"description": "Die Website bietet derzeit (Stand September 2025) keine Inhalte in Leichter Sprache und keine Videos in Deutscher Gebärdensprache (DGS) an.",
