@@ -44,7 +44,6 @@ import { AccessibilityContent } from "./MenuContent/AccessibilityContent";
 import { FilterContent } from "./MenuContent/FilterContent";
 import { InstitutionDetailContent } from "./MenuContent/InstitutionDetailContent";
 import { SearchContent } from "./MenuContent/SearchContent";
-import { cn } from "@/lib/utils";
 
 const menuItems = [
 	{ id: "filter", icon: FilterLines, label: "filter.title" },
@@ -419,7 +418,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 										{!(
 											activeItem === "institution-detail" && previousActiveItem
 										) && (
-											<span className="body1 font-bold">
+											<span className="font-bold body3">
 												{getActiveItemTitle()}
 											</span>
 										)}
@@ -437,7 +436,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 							<SidebarGroup className="px-0 h-full">
 								<SidebarGroupContent className="h-full overflow-auto">
 									<div className="min-h-full flex flex-col">
-										<div className="flex-1 h-full bg-secondary">
+										<div className="flex-1 h-full bg-neutral-10 md:bg-secondary">
 											{activeItem === "filter" && <FilterContent />}
 											{activeItem === "search" && <SearchContent />}
 											{activeItem === "accessibility" && (
