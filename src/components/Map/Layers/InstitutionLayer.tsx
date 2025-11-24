@@ -3,7 +3,7 @@
 
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useMapStore } from "@/lib/store/mapStore";
-import { transformGeoJSON } from "@/lib/utils/mapUtils";
+import { getTailwindColor, transformGeoJSON } from "@/lib/utils/mapUtils";
 import { CategoryType } from "@/types";
 import { MapStoreState } from "@/types/map";
 import { FeatureCollection, GeoJsonProperties, Geometry } from "geojson";
@@ -35,14 +35,25 @@ const createCachedPoiSvg = (
 	return svgCache[cacheKey];
 };
 
-/* const clearCache = () => {
-	for (const key in svgCache) {
-		delete svgCache[key];
-	}
-	for (const key in styleCache) {
-		delete styleCache[key];
-	}
-}; */
+const fillColors = {
+	selected: {
+		contrast: "brand-default",
+		normal: "brand-default",
+	},
+	closed: {
+		contrast: "black",
+		normal: "neutral-80",
+	},
+	default: {
+		contrast: "cluster-pins",
+		normal: "interaction-default",
+	},
+} as const;
+
+const strokeColors = {
+	closed: "white",
+	default: "black",
+} as const;
 
 interface InstitutionLayerProps {
 	zIndex?: number;
@@ -164,24 +175,18 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 			isPermanentlyClosed = false,
 			hasOverlapping = false,
 		) => {
-			const key = `${isSelected}_${isContrastMode}_${isPermanentlyClosed}`;
+			const state = isSelected
+				? "selected"
+				: isPermanentlyClosed
+					? "closed"
+					: "default";
 
-			const fillMap: Record<string, string> = {
-				true_true_false: "#249F61", // selected + contrast
-				true_false_false: "#55D494", // selected + normal
-				false_true_true: "white", // closed + contrast
-				false_false_true: "#555b54", // closed + normal
-				false_true_false: "#5617BA", // contrast mode default
-				false_false_false: "#C288FF", // default
-			};
+			const mode = isContrastMode ? "contrast" : "normal";
+			const fillColor = getTailwindColor(fillColors[state][mode]);
 
-			const fillColor = fillMap[key] ?? "#C288FF";
-
-			const strokeColor =
-				(!isContrastMode && isPermanentlyClosed) ||
-				(isContrastMode && !isPermanentlyClosed)
-					? "white"
-					: "#161616";
+			const strokeColor = getTailwindColor(
+				strokeColors[isPermanentlyClosed ? "closed" : "default"],
+			);
 
 			const iconSvg = createCachedPoiSvg(
 				categoryKey,
@@ -412,20 +417,6 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 	useEffect(() => {
 		vectorLayerRef.current?.getSource()?.changed();
 	}, [selectedInstitutionId]);
-
-	/* useEffect(() => {
-		function handleKey(e: KeyboardEvent) {
-			if (e.key.toLowerCase() === "d") {
-				clearCache();
-			} else if (e.key.toLowerCase() === "l") {
-				console.log("svgCache :>> ", svgCache);
-				console.log("styleCache :>> ", styleCache);
-			}
-		}
-
-		window.addEventListener("keydown", handleKey);
-		return () => window.removeEventListener("keydown", handleKey);
-	}, []); */
 
 	return null;
 };
