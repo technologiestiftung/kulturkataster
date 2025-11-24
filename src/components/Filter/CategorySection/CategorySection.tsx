@@ -74,9 +74,13 @@ export function CategorySection({
 			<div className="flex items-center gap-2 justify-between w-full p-2 rounded">
 				<CollapsibleTrigger asChild>
 					<button className="flex items-center gap-2 w-full">
-						{isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+						{isOpen ? (
+							<ChevronUp size={16} aria-hidden="true" focusable="false" />
+						) : (
+							<ChevronDown size={16} aria-hidden="true" focusable="false" />
+						)}
 						<div className="w-6 h-6">
-							<IconComponent />
+							<IconComponent aria-hidden="true" focusable="false" />
 						</div>
 						<div className="body2 text-left">
 							<span className="font-bold">{translatedCategoryName}</span>
@@ -89,12 +93,18 @@ export function CategorySection({
 					<Checkbox
 						checked={isChecked}
 						onCheckedChange={() => onCategoryChange(group.key)}
-						aria-label={`Checkbox ${translatedCategoryName}`}
+						aria-label={`${translatedCategoryName}`}
 						className={`w-4 h-4 ${isIndeterminate ? "border-primary-dark" : ""}`}
+						aria-checked={isIndeterminate ? "mixed" : isChecked}
 					/>
 					{isIndeterminate && (
 						<div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-							<Minus size={10} className="text-primary-dark" />
+							<Minus
+								size={10}
+								className="text-primary-dark"
+								aria-hidden="true"
+								focusable="false"
+							/>
 						</div>
 					)}
 				</div>
@@ -119,6 +129,7 @@ export function CategorySection({
 								<Checkbox
 									checked={selectedSubcategories.includes(subcategory.key)}
 									onCheckedChange={() => onSubcategoryChange(subcategory.key)}
+									aria-label={`${translatedSubcategoryName}`}
 								/>
 							</div>
 						</div>

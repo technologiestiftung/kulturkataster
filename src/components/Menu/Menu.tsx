@@ -324,30 +324,43 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 						<SidebarGroup>
 							<SidebarGroupContent>
 								<SidebarMenu>
-									{menuItems.map((item) => (
-										<SidebarMenuItem key={item.id}>
-											<SidebarMenuButton
-												tooltip={{
-													children: t(item.label),
-													hidden: false,
-												}}
-												onClick={() => handleItemClick(item.id)}
-												isActive={activeItem === item.id}
-												aria-label={t(item.label)}
-												className="relative"
-											>
-												<item.icon />
-												{item.id === "filter" &&
-													institutions &&
-													originalInstitutions?.features.length !==
-														institutions.features.length && (
+									{menuItems.map((item) => {
+										const showBadge =
+											item.id === "filter" &&
+											institutions &&
+											originalInstitutions?.features.length !==
+												institutions.features.length;
+										const active = activeItem === item.id;
+										return (
+											<SidebarMenuItem key={item.id}>
+												<SidebarMenuButton
+													tooltip={{
+														children: t(item.label),
+														hidden: false,
+													}}
+													onClick={() => handleItemClick(item.id)}
+													isActive={active}
+													aria-label={
+														showBadge
+															? t("menu.menuButtonBadge", {
+																	label: t(item.label),
+																	count: institutions.features.length,
+																})
+															: t(item.label)
+													}
+													aria-current={active}
+													className="relative"
+												>
+													<item.icon />
+													{showBadge && (
 														<div className="absolute top-2 -right-1 bg-primary text-primary-foreground body2 rounded-full min-w-5 h-5 flex items-center justify-center px-1">
 															{institutions.features.length}
 														</div>
 													)}
-											</SidebarMenuButton>
-										</SidebarMenuItem>
-									))}
+												</SidebarMenuButton>
+											</SidebarMenuItem>
+										);
+									})}
 								</SidebarMenu>
 							</SidebarGroupContent>
 						</SidebarGroup>
@@ -391,7 +404,9 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 											<button
 												onClick={handleBackToFilter}
 												className="body1 font-bold flex items-center gap-1"
-												aria-label={`Zurück zu ${t(previousActiveItem + ".title")}`}
+												aria-label={t("menu.backToAriaLabel", {
+													title: t(previousActiveItem + ".title"),
+												})}
 											>
 												<ArrowLeft />{" "}
 												{t("menu.backTo", {
@@ -471,7 +486,11 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			<div className="fixed block z-[50] top-0 right-0 p-4 overflow-hidden">
 				<div className="flex gap-2 items-center">
 					<div className="relative">
-						<div className="flex items-center bg-neutral-80 border rounded-full shadow-sm relative overflow-hidden">
+						<div
+							className="flex items-center bg-neutral-80 border rounded-full shadow-sm relative overflow-hidden"
+							role="radiogroup"
+							aria-label={t("map.radioGroupAriaLabel")}
+						>
 							<div
 								className={`absolute top-0 bottom-0 w-12 h-12 bg-background rounded-full transition-transform duration-300 ease-in-out ${
 									viewMode === "map" ? "translate-x-0" : "translate-x-12"
@@ -490,6 +509,9 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 									handleViewModeSwitch(viewMode === "list" ? "map" : "list")
 								}
 								aria-label={t("map.show")}
+								role="radio"
+								aria-checked={viewMode === "map"}
+								tabIndex={viewMode === "map" ? 0 : -1}
 							>
 								<MapIcon className="size-6" />
 							</ButtonWithTooltip>
@@ -506,6 +528,9 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 									handleViewModeSwitch(viewMode === "map" ? "list" : "map")
 								}
 								aria-label={t("listView.show")}
+								role="radio"
+								aria-checked={viewMode === "list"}
+								tabIndex={viewMode === "list" ? 0 : -1}
 							>
 								<ListIcon className="size-6" />
 							</ButtonWithTooltip>
@@ -527,29 +552,33 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
 			<div className="fixed bottom-0 left-0 right-0 z-[60] bg-sidebar border-t md:hidden h-20 pointer-events-auto">
 				<SidebarMenu className="flex-row justify-around px-2 py-3">
-					{menuItems.map((item) => (
-						<SidebarMenuItem key={item.id} className="flex-shrink-0">
-							<SidebarMenuButton
-								onClick={() => handleItemClick(item.id)}
-								isActive={activeItem === item.id}
-								className="flex-col gap-1 h-auto py-2 px-2 w-auto size-12"
-								aria-label={t(item.label)}
-							>
-								<item.icon className="size-6" />
-								<span className="text-xs font-medium hidden">
-									{t(item.label)}
-								</span>
-								{item.id === "filter" &&
-									institutions &&
-									originalInstitutions?.features.length !==
-										institutions.features.length && (
+					{menuItems.map((item) => {
+						const showBadge =
+							item.id === "filter" &&
+							institutions &&
+							originalInstitutions?.features.length !==
+								institutions.features.length;
+						return (
+							<SidebarMenuItem key={item.id} className="flex-shrink-0">
+								<SidebarMenuButton
+									onClick={() => handleItemClick(item.id)}
+									isActive={activeItem === item.id}
+									className="flex-col gap-1 h-auto py-2 px-2 w-auto size-12"
+									aria-label={t(item.label)}
+								>
+									<item.icon className="size-6" />
+									<span className="text-xs font-medium hidden">
+										{t(item.label)}
+									</span>
+									{showBadge && (
 										<div className="absolute -top-1 -right-1 bg-primary text-primary-foreground body2 rounded-full min-w-5 h-5 flex items-center justify-center px-1">
 											{institutions.features.length}
 										</div>
 									)}
-							</SidebarMenuButton>
-						</SidebarMenuItem>
-					))}
+								</SidebarMenuButton>
+							</SidebarMenuItem>
+						);
+					})}
 				</SidebarMenu>
 			</div>
 		</>

@@ -32,6 +32,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 							className,
 						)}
 						ref={ref}
+						aria-label={props.placeholder || ""}
 						{...props}
 					/>
 				</div>
@@ -49,6 +50,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 					className,
 				)}
 				ref={ref}
+				aria-label={props.placeholder || ""}
 				{...props}
 			/>
 		);

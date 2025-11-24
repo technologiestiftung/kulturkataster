@@ -41,7 +41,7 @@ function CategoriesDisplay({
 				return (
 					<div key={category.id} className="flex items-center gap-1 flex-wrap">
 						<div>
-							<IconComponent />
+							<IconComponent aria-hidden="true" focusable="false" />
 						</div>
 						<span className="body2">{tEnum(`category.${category.key}`)}</span>
 						<span className="body2">•</span>

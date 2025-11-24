@@ -120,7 +120,9 @@
 				}
 			]
 		},
-		"simpleLanguageDirect": "Den Bereich „Infos & Service“ in leichter Sprache finden Sie <link />."
+		"simpleLanguageDirect": "Den Bereich „Infos & Service“ in leichter Sprache finden Sie <link />.",
+		"featuresListAriaLabel": "Liste der verfügbaren Projektfunktionen",
+		"upcomingEnhancementsListAriaLabel": "Liste der geplanten Weiterungen und Verbesserungen"
 	},
 	"signLanguageModal": {
 		"title": "Gebärdensprache (DGS)",
@@ -313,7 +315,9 @@
 				]
 			}
 		},
-		"simpleLanguageDirect": "Den Bereich „Über das Projekt“ in leichter Sprache finden Sie <link />."
+		"simpleLanguageDirect": "Den Bereich „Über das Projekt“ in leichter Sprache finden Sie <link />.",
+		"guidelinesListAriaLabel": "Liste der Richtlinien",
+		"versionListAriaLabel": "Liste der Versionsänderungen"
 	},
 	"simpleLanguageInformation": {
 		"about": {
@@ -875,6 +879,7 @@
 			"resetFilters": "Filter zurücksetzen",
 			"setAllFilters": "Alle Filter"
 		},
+		"districtTagsSwitchAriaLabel": "{{translatedName}} ein- oder ausschalten",
 		"categories": {
 			"title": "Kategorien",
 			"resetFilters": "Filter zurücksetzen",

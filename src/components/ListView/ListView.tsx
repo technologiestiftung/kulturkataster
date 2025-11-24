@@ -240,7 +240,7 @@ const ListView: FC = () => {
 								className="cursor-pointer"
 								aria-label={t("listView.scrollToTop")}
 							>
-								<ArrowUp size={20} />
+								<ArrowUp size={20} aria-hidden="true" focusable="false" />
 							</Button>
 						</TooltipTrigger>
 						<TooltipContent>
