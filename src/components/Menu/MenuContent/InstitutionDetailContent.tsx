@@ -63,9 +63,9 @@ function InstitutionHeader({
 									<div className="w-6 h-6">
 										<IconComponent aria-hidden="true" focusable="false" />
 									</div>
-									<p className="body2 font-bold">
+									<strong className="body2 font-bold">
 										{tEnum(`category.${category.key}`)}
-									</p>
+									</strong>
 								</div>
 								{institutionData.subcategories?.length > 0 && (
 									<div className="body2 pl-8">
@@ -88,8 +88,10 @@ function InstitutionHeader({
 			<div
 				className={`${isInUse ? "bg-brand-light" : "bg-alert"} p-4 flex gap-2`}
 			>
-				<span className="body2 font-bold">
-					{t("institution.utilizationStatus")}:{" "}
+				<span className="body2">
+					<strong className="font-bold">
+						{t("institution.utilizationStatus")}:
+					</strong>{" "}
 				</span>
 
 				{institutionData.utilization_status ? (

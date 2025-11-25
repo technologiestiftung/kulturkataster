@@ -6,11 +6,12 @@ interface SearchResultsProps {
 	results: SearchResult[];
 	query: string;
 	activeIndex: number;
-	listRef: React.RefObject<HTMLUListElement | null>;
-	getItemProps: (index: number) => React.HTMLAttributes<HTMLLIElement>;
+	listRef: React.RefObject<HTMLElement | null>;
+	getItemProps: (index: number) => React.HTMLAttributes<HTMLDivElement>;
 	onResultClick: (result: SearchResult) => void;
 	highlightMatch: (text: string, query: string) => React.ReactNode;
 	formatAddress: (institution: Institution) => string;
+	listId: string;
 }
 
 export function SearchResults({
@@ -22,65 +23,76 @@ export function SearchResults({
 	onResultClick,
 	highlightMatch,
 	formatAddress,
+	listId,
 }: SearchResultsProps) {
 	const { t } = useTranslation("common");
 
 	if (results.length === 0) return null;
 
+	const headingId = `${listId}-label`;
+
 	return (
 		<div className="flex-1 flex flex-col min-h-0">
-			<span className="body1 font-bold text-neutral-60 mb-2 flex-shrink-0">
+			<span
+				className="body1 font-bold text-neutral-60 mb-2 flex-shrink-0"
+				id={headingId}
+			>
 				{t("search.suggestions")}
 			</span>
-			<ul
-				ref={listRef}
+			<div
+				ref={listRef as React.RefObject<HTMLDivElement>}
+				id={listId}
 				className="flex-1 overflow-y-auto space-y-1"
-				aria-label={t("search.searchAriaLabel", { count: results.length })}
+				role="listbox"
+				aria-labelledby={headingId}
 			>
-				{results.map((result, index) => (
-					// eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
-					<li
-						key={
-							isGeoFeature(result)
-								? `address-${result.id}`
-								: `institution-${result.id}`
-						}
-						{...getItemProps(index)}
-						onClick={(e) => {
-							e.stopPropagation();
-							onResultClick(result);
-						}}
-						onKeyDown={(e) => {
-							if (e.key === "Enter" || e.key === " ") {
-								e.preventDefault();
+				{results.map((result, index) => {
+					const itemProps = getItemProps(index);
+					return (
+						<div
+							key={
+								isGeoFeature(result)
+									? `address-${result.id}`
+									: `institution-${result.id}`
+							}
+							role="option"
+							aria-selected={index === activeIndex}
+							{...itemProps}
+							onClick={(e) => {
 								e.stopPropagation();
 								onResultClick(result);
-							}
-						}}
-						// eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
-						tabIndex={0}
-						className={`py-3 px-2 cursor-pointer rounded text-sm border-b
-							${index === activeIndex ? "bg-gray-100" : ""}
-							hover:bg-gray-100 contrast:hover:text-background
-						`}
-					>
-						{isGeoFeature(result) ? (
-							<div className="font-medium">
-								{highlightMatch(result.place_name, query)}
-							</div>
-						) : (
-							<>
+							}}
+							onKeyDown={(e) => {
+								if (e.key === "Enter" || e.key === " ") {
+									e.preventDefault();
+									e.stopPropagation();
+									onResultClick(result);
+								}
+							}}
+							tabIndex={-1}
+							className={`py-3 px-2 cursor-pointer rounded text-sm border-b
+								${index === activeIndex ? "bg-gray-100" : ""}
+								hover:bg-gray-100 contrast:hover:text-background
+							`}
+						>
+							{isGeoFeature(result) ? (
 								<div className="font-medium">
-									{highlightMatch(result.name, query)}
+									{highlightMatch(result.place_name, query)}
 								</div>
-								<div className="">
-									{highlightMatch(formatAddress(result), query)}
-								</div>
-							</>
-						)}
-					</li>
-				))}
-			</ul>
+							) : (
+								<>
+									<div className="font-medium">
+										{highlightMatch(result.name, query)}
+									</div>
+									<div className="">
+										{highlightMatch(formatAddress(result), query)}
+									</div>
+								</>
+							)}
+						</div>
+					);
+				})}
+			</div>
 		</div>
 	);
 }

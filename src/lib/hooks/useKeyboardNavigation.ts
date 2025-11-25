@@ -4,6 +4,7 @@ import {
 	RefObject,
 	SetStateAction,
 	useEffect,
+	useId,
 	useRef,
 	useState,
 } from "react";
@@ -18,17 +19,18 @@ interface UseKeyboardNavigationOptions {
 
 interface UseKeyboardNavigationReturn {
 	activeIndex: number;
+	activeDescendantId?: string;
 	setActiveIndex: Dispatch<SetStateAction<number>>;
 	isKeyboardNav: boolean;
 	setIsKeyboardNav: Dispatch<SetStateAction<boolean>>;
 	getItemProps: (index: number) => {
 		onMouseEnter: () => void;
-		"aria-selected": boolean;
 		id: string;
 	};
 	handleKeyDown: (e: KeyboardEvent) => void;
 	reset: () => void;
-	listRef: RefObject<HTMLUListElement | null>;
+	listRef: RefObject<HTMLElement | null>;
+	listId: string;
 }
 
 export function useKeyboardNavigation({
@@ -40,7 +42,11 @@ export function useKeyboardNavigation({
 }: UseKeyboardNavigationOptions): UseKeyboardNavigationReturn {
 	const [activeIndex, setActiveIndex] = useState<number>(initialIndex);
 	const [isKeyboardNav, setIsKeyboardNav] = useState<boolean>(false);
-	const listRef = useRef<HTMLUListElement>(null);
+	const listRef = useRef<HTMLElement>(null);
+	const idBase = useId();
+	const listId = `${idBase}-listbox`;
+
+	const getItemId = (index: number) => `${idBase}-item-${index}`;
 
 	useEffect(() => {
 		if (itemCount === 0) {
@@ -108,8 +114,7 @@ export function useKeyboardNavigation({
 			setIsKeyboardNav(false);
 			setActiveIndex(index);
 		},
-		"aria-selected": index === activeIndex,
-		id: `keyboard-nav-item-${index}`,
+		id: getItemId(index),
 	});
 
 	const reset = () => {
@@ -117,8 +122,12 @@ export function useKeyboardNavigation({
 		setIsKeyboardNav(false);
 	};
 
+	const activeDescendantId =
+		activeIndex >= 0 ? getItemId(activeIndex) : undefined;
+
 	return {
 		activeIndex,
+		activeDescendantId,
 		setActiveIndex,
 		isKeyboardNav,
 		setIsKeyboardNav,
@@ -126,5 +135,6 @@ export function useKeyboardNavigation({
 		handleKeyDown,
 		reset,
 		listRef,
+		listId,
 	};
 }

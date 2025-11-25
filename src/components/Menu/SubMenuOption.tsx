@@ -12,6 +12,7 @@ interface SubMenuOptionProps {
 	hasSwitch?: boolean;
 	switchChecked?: boolean;
 	onSwitchChange?: (checked: boolean) => void;
+	switchKey?: string;
 }
 
 export function SubMenuOption({
@@ -21,6 +22,7 @@ export function SubMenuOption({
 	hasSwitch = false,
 	switchChecked = false,
 	onSwitchChange,
+	switchKey,
 }: SubMenuOptionProps) {
 	const { t } = useTranslation("common");
 
@@ -43,6 +45,9 @@ export function SubMenuOption({
 		}
 	};
 
+	const displayLabel =
+		hasSwitch && switchKey && switchChecked ? t(switchKey) : t(titleKey);
+
 	return (
 		<SidebarMenuItem
 			onClick={handleClick}
@@ -53,7 +58,7 @@ export function SubMenuOption({
 		>
 			<div className="flex items-center gap-2">
 				<Icon className="size-8" />
-				<span className="body2 font-bold">{t(titleKey)}</span>
+				<span className="body2 font-bold">{displayLabel}</span>
 			</div>
 			{hasSwitch && (
 				<Switch

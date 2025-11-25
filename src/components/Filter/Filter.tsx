@@ -243,11 +243,11 @@ const Filter: FC = () => {
 					onClick={toggleClosedInstitutions}
 				>
 					{filters?.include_closed ? <Eye /> : <EyeOff />}
-					<span className="body2 font-bold">
+					<strong className="body2 font-bold">
 						{filters?.include_closed
 							? t("filter.hideClosed", { ns: "content" })
 							: t("filter.showClosed", { ns: "content" })}
-					</span>
+					</strong>
 				</button>
 			</ContentContainer>
 
