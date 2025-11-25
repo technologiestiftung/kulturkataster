@@ -42,6 +42,8 @@
 	--fachfarben-green: #55d494;
 	--fachfarben-dark-green: #4ab780;
 
+	--cluster-pins: #5617ba;
+
 	--shadow-200: 0 1px 3px rgba(0, 0, 0, 0.1);
 	--shadow-300: 0 4px 6px rgba(0, 0, 0, 0.1);
 	--shadow-400: 0 10px 20px rgba(0, 0, 0, 0.1);
@@ -76,6 +78,8 @@
 	--brand-dark: #aae9c9;
 	--brand-default: #249f61;
 	--brand-light: #096336;
+
+	--cluster-pins: #5617ba;
 
 	--footer: #2b322990;
 }
@@ -137,6 +141,8 @@
 	--color-brand-dark: var(--brand-dark);
 	--color-brand-default: var(--brand-default);
 	--color-brand-light: var(--brand-light);
+
+	--color-cluster-pins: var(--cluster-pins);
 
 	--color-alert: var(--highlight-alert);
 	--color-footer: var(--footer);
@@ -220,6 +226,11 @@
 		line-height: 1.5rem;
 	}
 
+	.body3 {
+		font-size: 1.25rem;
+		line-height: 1.75rem;
+	}
+
 	.button {
 		@apply font-bold;
 		font-size: 1rem;
@@ -244,6 +255,10 @@
 			line-height: 1.75rem;
 		}
 		.body2 {
+			font-size: 1rem;
+			line-height: 1.5rem;
+		}
+		.body3 {
 			font-size: 1rem;
 			line-height: 1.5rem;
 		}

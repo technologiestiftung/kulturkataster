@@ -13,6 +13,7 @@ import { useTranslation } from "react-i18next";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { getSortedSubcategories } from "@/lib/utils/filterUtils";
 import { useMemo } from "react";
+import { cn } from "@/lib/utils";
 
 interface CategorySectionProps {
 	group: Category;
@@ -89,19 +90,21 @@ export function CategorySection({
 					</button>
 				</CollapsibleTrigger>
 
-				<div className="relative w-6 h-6 flex items-center justify-center">
+				<div className="relative w-10 h-10 md:w-6 md:h-6 flex items-center justify-center">
 					<Checkbox
 						checked={isChecked}
 						onCheckedChange={() => onCategoryChange(group.key)}
 						aria-label={`${translatedCategoryName}`}
-						className={`w-4 h-4 ${isIndeterminate ? "border-primary-dark" : ""}`}
 						aria-checked={isIndeterminate ? "mixed" : isChecked}
+						className={cn(
+							"w-[2.06rem] h-[2.06rem] border-radius-[2.06rem] md:w-4 md:h-4 border-neutral-80",
+							isIndeterminate && "contrast:border-interaction-dark",
+						)}
 					/>
 					{isIndeterminate && (
 						<div className="absolute inset-0 flex items-center justify-center pointer-events-none">
 							<Minus
-								size={10}
-								className="text-primary-dark"
+								className="text-neutral-80 contrast:text-interaction-dark size-[0.9375rem] md:size-[0.625rem]"
 								aria-hidden="true"
 								focusable="false"
 							/>
@@ -125,11 +128,12 @@ export function CategorySection({
 								{subcategoryCounts[subcategory.key] || 0})
 							</span>
 
-							<div className="relative w-6 h-6 flex items-center justify-center">
+							<div className="relative w-10 h-10 md:w-6 md:h-6 flex items-center justify-center">
 								<Checkbox
 									checked={selectedSubcategories.includes(subcategory.key)}
 									onCheckedChange={() => onSubcategoryChange(subcategory.key)}
 									aria-label={`${translatedSubcategoryName}`}
+									className="w-[2.06rem] h-[2.06rem] border-radius-[2.06rem] md:w-4 md:h-4 border-neutral-80"
 								/>
 							</div>
 						</div>

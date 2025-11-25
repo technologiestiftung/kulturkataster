@@ -130,7 +130,7 @@ const ListView: FC = () => {
 	}
 
 	return (
-		<div className="ListView-root w-full h-full flex flex-col items-center bg-neutral-5">
+		<div className="ListView-root w-full h-full flex flex-col items-center bg-neutral-10">
 			<div ref={containerRef} className="h-full overflow-auto max-w-5xl ">
 				<div className="p-4 mt-20">
 					<div className="space-y-6 flex flex-col">
