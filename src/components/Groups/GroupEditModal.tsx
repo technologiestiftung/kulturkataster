@@ -21,6 +21,7 @@ interface GroupEditModalProps {
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
 	onSave: (group: Group) => void;
+	onDelete: (groupId: string) => void;
 }
 
 export function GroupEditModal({
@@ -28,9 +29,11 @@ export function GroupEditModal({
 	open,
 	onOpenChange,
 	onSave,
+	onDelete,
 }: GroupEditModalProps) {
 	const [editedGroup, setEditedGroup] = useState<Group | null>(group);
 	const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
+	const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 	const restorePointerEvents = () => {
 		if (typeof document === "undefined") return;
 		if (document.body.style.pointerEvents === "none") {
@@ -46,6 +49,7 @@ export function GroupEditModal({
 			restorePointerEvents();
 		}
 		setSelectedUserIds([]);
+		setShowDeleteConfirm(false);
 	}, [group, open]);
 
 	React.useEffect(() => {
@@ -57,6 +61,29 @@ export function GroupEditModal({
 	const handleSave = () => {
 		if (!editedGroup) return;
 		onSave(editedGroup);
+		onOpenChange(false);
+	};
+
+	const handleAccessChange = (access: Group["institutionAccess"]) => {
+		setEditedGroup((current) => {
+			if (!current) return current;
+
+			const derivedCount =
+				access.type === "custom" || access.type === "category"
+					? access.institutions?.length || 0
+					: current.institutionCount;
+
+			return {
+				...current,
+				institutionAccess: access,
+				institutionCount: derivedCount,
+			};
+		});
+	};
+
+	const handleDelete = () => {
+		if (!editedGroup) return;
+		onDelete(editedGroup.id);
 		onOpenChange(false);
 	};
 
@@ -118,12 +145,7 @@ export function GroupEditModal({
 						<InstitutionAccessEditor
 							access={editedGroup.institutionAccess}
 							institutionCount={editedGroup.institutionCount}
-							onChange={(institutionAccess) =>
-								setEditedGroup({
-									...editedGroup,
-									institutionAccess,
-								})
-							}
+							onChange={handleAccessChange}
 						/>
 
 						<div className="space-y-2">
@@ -146,13 +168,41 @@ export function GroupEditModal({
 					</div>
 				)}
 
-				<div className="flex justify-end gap-3">
-					<Button variant="outline" onClick={() => onOpenChange(false)}>
-						Cancel
-					</Button>
-					<Button onClick={handleSave} disabled={!editedGroup}>
-						Save Changes
-					</Button>
+				<div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+					{editedGroup ? (
+						<div>
+							{!showDeleteConfirm ? (
+								<Button
+									variant="destructive"
+									onClick={() => setShowDeleteConfirm(true)}
+								>
+									Delete Group
+								</Button>
+							) : (
+								<div className="flex gap-2">
+									<Button variant="destructive" onClick={handleDelete}>
+										Confirm Delete
+									</Button>
+									<Button
+										variant="outline"
+										onClick={() => setShowDeleteConfirm(false)}
+									>
+										Cancel
+									</Button>
+								</div>
+							)}
+						</div>
+					) : (
+						<div />
+					)}
+					<div className="flex gap-2">
+						<Button variant="outline" onClick={() => onOpenChange(false)}>
+							Cancel
+						</Button>
+						<Button onClick={handleSave} disabled={!editedGroup}>
+							Save Changes
+						</Button>
+					</div>
 				</div>
 			</DialogContent>
 		</Dialog>

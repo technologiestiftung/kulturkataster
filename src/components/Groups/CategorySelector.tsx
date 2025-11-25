@@ -1,34 +1,20 @@
 "use client";
 
 import { MultiSelect } from "@/components/shared/MultiSelect";
-import type { MultiSelectOption } from "@/components/shared/MultiSelect";
 import type { CategoryAccess } from "./types";
-
-// Cultural institution categories
-const availableCategories: MultiSelectOption[] = [
-	{ value: "museums", label: "Museums" },
-	{ value: "theaters", label: "Theaters & Performance" },
-	{ value: "libraries", label: "Libraries & Archives" },
-	{ value: "galleries", label: "Art Galleries" },
-	{ value: "music-venues", label: "Music Venues" },
-	{ value: "cinemas", label: "Cinemas" },
-	{ value: "cultural-centers", label: "Cultural Centers" },
-	{ value: "parks", label: "Parks & Gardens" },
-	{ value: "plazas", label: "Public Plazas" },
-	{ value: "historical-sites", label: "Historical Sites" },
-	{ value: "community-centers", label: "Community Centers" },
-	{ value: "educational", label: "Educational Institutions" },
-];
 
 interface CategorySelectorProps {
 	selectedCategories: CategoryAccess[];
 	onChange: (categories: CategoryAccess[]) => void;
+	options?: { value: string; label: string }[];
 }
 
 export function CategorySelector({
 	selectedCategories,
 	onChange,
+	options,
 }: CategorySelectorProps) {
+	const availableCategories = options || [];
 	const selectedKeys = selectedCategories.map((c) => c.key);
 
 	const handleChange = (selected: string[]) => {

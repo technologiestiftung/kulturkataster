@@ -10,6 +10,12 @@ export interface CategoryAccess {
 	name: string;
 }
 
+export interface SubcategoryAccess {
+	key: string;
+	name: string;
+	categoryKey: string;
+}
+
 export interface InstitutionAccess {
 	id: string;
 	name: string;
@@ -19,6 +25,7 @@ export interface GroupInstitutionAccess {
 	type: InstitutionAccessType;
 	districts?: DistrictAccess[];
 	categories?: CategoryAccess[];
+	subcategories?: SubcategoryAccess[];
 	institutions?: InstitutionAccess[];
 }
 

@@ -1,29 +1,15 @@
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import type { Group } from "./types";
-import { ActionMenu } from "@/components/shared";
-import type { ActionMenuItem } from "@/components/shared";
 import { formatDate } from "./utils";
 
 interface GroupRowProps {
 	group: Group;
 	onEdit: (group: Group) => void;
-	onDelete: (groupId: string) => void;
 }
 
-export function GroupRow({ group, onEdit, onDelete }: GroupRowProps) {
-	const actionItems: ActionMenuItem[] = [
-		{
-			label: "Edit Group",
-			onClick: () => onEdit(group),
-		},
-		{
-			label: "Delete Group",
-			onClick: () => onDelete(group.id),
-			variant: "destructive",
-		},
-	];
-
+export function GroupRow({ group, onEdit }: GroupRowProps) {
 	return (
 		<TableRow>
 			<TableCell className="font-medium">{group.name}</TableCell>
@@ -40,7 +26,9 @@ export function GroupRow({ group, onEdit, onDelete }: GroupRowProps) {
 				{formatDate(group.createdAt)}
 			</TableCell>
 			<TableCell>
-				<ActionMenu items={actionItems} />
+				<Button size="sm" variant="secondary" onClick={() => onEdit(group)}>
+					Edit
+				</Button>
 			</TableCell>
 		</TableRow>
 	);

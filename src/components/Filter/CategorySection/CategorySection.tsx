@@ -1,6 +1,6 @@
-/* eslint-disable complexity */
 "use client";
 
+import React, { useMemo } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
 	Collapsible,
@@ -13,8 +13,6 @@ import { ChevronDown, ChevronUp, Minus } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { getSortedSubcategories } from "@/lib/utils/filterUtils";
-import { useMemo } from "react";
-import { cn } from "@/lib/utils";
 
 interface CategorySectionProps {
 	group: Category;
@@ -35,7 +33,6 @@ export function CategorySection({
 	onCategoryChange,
 	onSubcategoryChange,
 }: CategorySectionProps) {
-	const IconComponent = getCategoryIconComponent(group.key as CategoryType);
 	const { t: tEnum, i18n } = useTranslation("enumMap");
 
 	const collator = useMemo(
@@ -76,13 +73,11 @@ export function CategorySection({
 			<div className="flex items-center gap-2 justify-between w-full p-2 rounded">
 				<CollapsibleTrigger asChild>
 					<button className="flex items-center gap-2 w-full">
-						{isOpen ? (
-							<ChevronUp size={16} aria-hidden="true" focusable="false" />
-						) : (
-							<ChevronDown size={16} aria-hidden="true" focusable="false" />
-						)}
+						{isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
 						<div className="w-6 h-6">
-							<IconComponent aria-hidden="true" focusable="false" />
+							{React.createElement(
+								getCategoryIconComponent(group.key as CategoryType),
+							)}
 						</div>
 						<div className="body2 text-left">
 							<span className="font-bold">{translatedCategoryName}</span>
@@ -91,24 +86,16 @@ export function CategorySection({
 					</button>
 				</CollapsibleTrigger>
 
-				<div className="relative w-10 h-10 md:w-6 md:h-6 flex items-center justify-center">
+				<div className="relative w-6 h-6 flex items-center justify-center">
 					<Checkbox
 						checked={isChecked}
 						onCheckedChange={() => onCategoryChange(group.key)}
-						aria-label={`${translatedCategoryName}`}
-						aria-checked={isIndeterminate ? "mixed" : isChecked}
-						className={cn(
-							"w-[2.06rem] h-[2.06rem] border-radius-[2.06rem] md:w-4 md:h-4 border-neutral-80",
-							isIndeterminate && "contrast:border-interaction-dark",
-						)}
+						aria-label={`Checkbox ${translatedCategoryName}`}
+						className={`w-4 h-4 ${isIndeterminate ? "border-primary-dark" : ""}`}
 					/>
 					{isIndeterminate && (
 						<div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-							<Minus
-								className="text-neutral-80 contrast:text-interaction-dark size-[0.9375rem] md:size-[0.625rem]"
-								aria-hidden="true"
-								focusable="false"
-							/>
+							<Minus size={10} className="text-primary-dark" />
 						</div>
 					)}
 				</div>
@@ -129,12 +116,10 @@ export function CategorySection({
 								{subcategoryCounts[subcategory.key] || 0})
 							</span>
 
-							<div className="relative w-10 h-10 md:w-6 md:h-6 flex items-center justify-center">
+							<div className="relative w-6 h-6 flex items-center justify-center">
 								<Checkbox
 									checked={selectedSubcategories.includes(subcategory.key)}
 									onCheckedChange={() => onSubcategoryChange(subcategory.key)}
-									aria-label={`${translatedSubcategoryName}`}
-									className="w-[2.06rem] h-[2.06rem] border-radius-[2.06rem] md:w-4 md:h-4 border-neutral-80"
 								/>
 							</div>
 						</div>

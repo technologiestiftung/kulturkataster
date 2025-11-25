@@ -1,11 +1,11 @@
 "use client";
 
-import { MultiSelect } from "@/components/shared/MultiSelect";
-import type { MultiSelectOption } from "@/components/shared/MultiSelect";
+import { SearchableSelect } from "@/components/shared/SearchableSelect";
+import type { SearchableSelectOption } from "@/components/shared/SearchableSelect";
 import type { Group } from "./types";
 
 // Sample groups data (in real app, this would come from API/props)
-const availableGroups: MultiSelectOption[] = [
+const availableGroups: SearchableSelectOption[] = [
 	{ value: "g1", label: "Admin" },
 	{ value: "g2", label: "Open Spaces" },
 	{ value: "g3", label: "Custom District" },
@@ -41,13 +41,15 @@ export function GroupSelector({
 	};
 
 	return (
-		<MultiSelect
+		<SearchableSelect
 			options={availableGroups}
 			selected={selectedIds}
 			onChange={handleChange}
-			placeholder="Select groups..."
-			searchPlaceholder="Search groups..."
+			placeholder="Search groups..."
+			searchPlaceholder="Type group name..."
 			emptyText="No groups found"
+			allowMultiple
+			previewCount={3}
 		/>
 	);
 }

@@ -254,13 +254,16 @@ export function RoleEditModal({
 								/>
 								<label htmlFor="scopeRestriction" className="text-sm">
 									<strong>Nur eigene Gruppe</strong> - Beschränkt alle
-									Berechtigungen auf die eigene(n) Gruppe(n)
+									Berechtigungen auf die eigene(n) Gruppe(n) bzw. eigene
+									Institutionen. Ohne Gruppenzugehörigkeit gelten eigene
+									Institutionen als verwaltbar.
 								</label>
 							</div>
 							<p className="text-xs text-muted-foreground ml-6">
 								Wenn aktiviert, können Benutzer mit dieser Rolle nur Benutzer,
 								Gruppen und Institutionen innerhalb ihrer zugewiesenen Gruppe(n)
-								verwalten.
+								bzw. ihrer eigenen Institutionen verwalten. Ohne Gruppe gelten
+								nur die eigenen Institutionen.
 							</p>
 						</div>
 					)}

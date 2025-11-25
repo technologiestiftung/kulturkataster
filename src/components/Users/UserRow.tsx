@@ -3,10 +3,9 @@
 import { useState } from "react";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import type { User } from "./types";
-import { ActionMenu } from "@/components/shared";
-import type { ActionMenuItem } from "@/components/shared";
 import {
 	getRoleBadgeVariant,
 	getStatusBadgeVariant,
@@ -19,22 +18,10 @@ import { UserAccessDetails } from "./UserAccessDetails";
 interface UserRowProps {
 	user: User;
 	onEdit: (user: User) => void;
-	onResendEmail: (userId: string) => void;
 }
 
-export function UserRow({ user, onEdit, onResendEmail }: UserRowProps) {
+export function UserRow({ user, onEdit }: UserRowProps) {
 	const [isExpanded, setIsExpanded] = useState(false);
-
-	const actionItems: ActionMenuItem[] = [
-		{
-			label: "Edit User",
-			onClick: () => onEdit(user),
-		},
-		{
-			label: "Resend Email",
-			onClick: () => onResendEmail(user.id),
-		},
-	];
 
 	return (
 		<>
@@ -89,7 +76,19 @@ export function UserRow({ user, onEdit, onResendEmail }: UserRowProps) {
 					{formatLastActivity(user.lastActivity)}
 				</TableCell>
 				<TableCell>
-					<ActionMenu items={actionItems} />
+					<Badge
+						variant={user.complianceAccepted ? "default" : "secondary"}
+						className="text-xs"
+					>
+						{user.complianceAccepted ? "Accepted" : "Pending"}
+					</Badge>
+				</TableCell>
+				<TableCell>
+					<div className="flex flex-wrap gap-2">
+						<Button size="sm" variant="secondary" onClick={() => onEdit(user)}>
+							Edit
+						</Button>
+					</div>
 				</TableCell>
 			</TableRow>
 			{isExpanded && (

@@ -1,13 +1,19 @@
-import globals from "globals";
-
 export const technologiestiftungRules = {
 	files: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
 	languageOptions: {
+		parserOptions: {
+			ecmaFeatures: {
+				jsx: true,
+			},
+		},
 		globals: {
-			...globals.browser,
-			...globals.node,
-			...globals.es2021,
 			React: "readonly",
+			JSX: "readonly",
+		},
+	},
+	settings: {
+		react: {
+			version: "detect",
 		},
 	},
 	rules: {
@@ -52,5 +58,8 @@ export const technologiestiftungRules = {
 			},
 		],
 		"react-hooks/exhaustive-deps": "off",
+		"react-hooks/set-state-in-effect": "warn", // React 19 rule - set to warn for now
+		"react-hooks/static-components": "warn", // React 19 rule - set to warn for now
+		"react-hooks/purity": "warn", // React 19 rule - set to warn for now
 	},
 };

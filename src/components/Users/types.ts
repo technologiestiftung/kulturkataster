@@ -31,6 +31,7 @@ export interface User {
 	status: "active" | "inactive" | "pending";
 	lastActivity: Date;
 	access: UserAccessDetails;
+	complianceAccepted?: boolean;
 	groups: Group[];
 }
 
@@ -41,4 +42,5 @@ export type SortColumn =
 	| "groups"
 	| "status"
 	| "lastActivity"
-	| "access";
+	| "access"
+	| "compliance";
