@@ -43,7 +43,7 @@ export function SearchResults({
 			<div
 				ref={listRef as React.RefObject<HTMLDivElement>}
 				id={listId}
-				className="flex-1 overflow-y-auto space-y-1"
+				className="flex-1 overflow-visible space-y-1"
 				role="listbox"
 				aria-labelledby={headingId}
 			>
@@ -74,8 +74,9 @@ export function SearchResults({
 							tabIndex={-1}
 							className={cn(
 								"py-3 px-2 cursor-pointer rounded text-sm border-b",
-								index === activeIndex && "bg-gray-100 contrast:bg-neutral-10",
+								index === activeIndex && "bg-black/10 contrast:bg-neutral-10",
 								"hover:bg-black/10 contrast:hover:bg-neutral-10",
+								"outline-interaction-dark",
 							)}
 						>
 							{isGeoFeature(result) ? (
