@@ -30,7 +30,7 @@ import { useAppStore } from "@/lib/store/appStore";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useMapStore } from "@/lib/store/mapStore";
 import { useModalStore } from "@/lib/store/modalStore";
-import { hasActiveFilters } from "@/lib/utils/filterUtils";
+import { getFilterCount, hasActiveFilters } from "@/lib/utils/filterUtils";
 import {
 	animateMapToCoordinates,
 	parseLatLongCoordinates,
@@ -87,6 +87,8 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	);
 	const { firstTimeUser, setFirstTimeUser, viewMode, setViewMode } =
 		useAppStore();
+
+	const filterCount = getFilterCount(filters);
 
 	useEffect(() => {
 		if (!isMobile && !firstTimeUser && !userHasClosedSidebar) {
@@ -416,7 +418,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 										{!(
 											activeItem === "institution-detail" && previousActiveItem
 										) && (
-											<span className="body1 font-bold">
+											<span className="font-bold body3">
 												{getActiveItemTitle()}
 											</span>
 										)}
@@ -434,7 +436,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 							<SidebarGroup className="px-0 h-full">
 								<SidebarGroupContent className="h-full overflow-auto">
 									<div className="min-h-full flex flex-col">
-										<div className="flex-1 h-full bg-secondary">
+										<div className="flex-1 h-full bg-neutral-10 md:bg-secondary">
 											{activeItem === "filter" && <FilterContent />}
 											{activeItem === "search" && <SearchContent />}
 											{activeItem === "accessibility" && (

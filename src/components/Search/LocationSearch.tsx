@@ -189,7 +189,7 @@ export function LocationSearch() {
 	};
 
 	return (
-		<div className="h-full flex flex-col overflow-hidden">
+		<div className="h-full flex flex-col overflow-visible">
 			<SearchMessages
 				hasError={resultErrorMessage}
 				hasResults={searchResults.length > 0}

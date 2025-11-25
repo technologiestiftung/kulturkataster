@@ -121,6 +121,7 @@ const LayerItem = memo<{
 	layer: ManagedLayer;
 }>(({ layer }) => {
 	const { t } = useTranslation("common");
+	const { isContrastMode } = useAppStore();
 	const setLayerVisibility = useMapStore((state) => state.setLayerVisibility);
 	const openLegendLayerId = useMapStore((state) => state.openLegendLayerId);
 	const setOpenLegendLayerId = useMapStore(
@@ -165,8 +166,19 @@ const LayerItem = memo<{
 		layer.config.service.legend &&
 		typeof layer.config.service.legend === "string";
 
+	let setLegend = "";
+
+	if (hasLegend) {
+		const legend = layer.config.service.legend?.toString() ?? "";
+
+		setLegend = isContrastMode
+			? legend.replace("/legends/", "/legends-contrast/")
+			: legend;
+	}
+
 	const serviceName = layer.config.service.name;
 	const serviceNameLang = layer.config.service.name_lang;
+	const serviceNameMid = layer.config.service.name_mid;
 
 	return (
 		<AccordionItem
@@ -177,7 +189,7 @@ const LayerItem = memo<{
 			<div className="flex items-center justify-between p-3 m-0">
 				<Label
 					htmlFor={layer.id}
-					className="flex items-center space-x-3 flex-1 cursor-pointer"
+					className="flex items-start space-x-3 flex-1 cursor-pointer"
 				>
 					<LayerThumbnail layer={layer} showOverlay />
 					<div className="flex flex-col">
@@ -197,6 +209,15 @@ const LayerItem = memo<{
 									: serviceNameLang}
 							</div>
 						)}
+						{serviceNameMid && (
+							<div
+								className={`body2 ${layer.status === "error" ? "text-alert" : ""}`}
+							>
+								{layer.status === "error"
+									? "Fachkarte nicht verfügbar. Bitte versuchen Sie es später erneut."
+									: serviceNameMid}
+							</div>
+						)}
 					</div>
 				</Label>
 				<div className="flex items-center space-x-1">
@@ -205,7 +226,7 @@ const LayerItem = memo<{
 							id={layer.id}
 							checked={layer.visibility}
 							onCheckedChange={handleVisibilityChange}
-							className="w-6 h-6 rounded-full"
+							className="w-6 h-6 rounded-full border-neutral-80"
 							aria-label={t("map.layerItemAriaLabel", { serviceName })}
 							disabled={layer.status === "error"}
 						/>
@@ -226,7 +247,7 @@ const LayerItem = memo<{
 						className="px-3 pb-3 bg-neutral-10 rounded-b-sm"
 					>
 						<Image
-							src={layer.config.service.legend as string}
+							src={setLegend}
 							alt=""
 							width={300}
 							height={50}
@@ -256,70 +277,70 @@ const FloatingLayerButton = memo(
 		onClick: () => void;
 		forwardedRef?: React.RefObject<HTMLButtonElement | null>;
 	}) => {
-	const { isLargeTextMode } = useAppStore();
-	const { t } = useTranslation("common");
-	const getLeftPosition = useCallback(() => {
-		const expandedOffset = isLargeTextMode
-			? SIDEBAR_EXPANDED_OFFSET_LARGE_TEXT
-			: SIDEBAR_EXPANDED_OFFSET;
+		const { isLargeTextMode } = useAppStore();
+		const { t } = useTranslation("common");
+		const getLeftPosition = useCallback(() => {
+			const expandedOffset = isLargeTextMode
+				? SIDEBAR_EXPANDED_OFFSET_LARGE_TEXT
+				: SIDEBAR_EXPANDED_OFFSET;
 
-		return sidebarState === "collapsed"
-			? SIDEBAR_COLLAPSED_OFFSET
-			: expandedOffset;
-	}, [sidebarState, isLargeTextMode]);
+			return sidebarState === "collapsed"
+				? SIDEBAR_COLLAPSED_OFFSET
+				: expandedOffset;
+		}, [sidebarState, isLargeTextMode]);
 
-	return (
-		<div
-			className={`fixed bottom-4 z-50 transition-all duration-200 ${getLeftPosition()}`}
-		>
-			<div className="relative">
-				{visibleCount > 1 && (
-					<div
-						className="absolute -top-1 left-1 w-16 h-16 bg-interaction-dark/70 rounded border-interaction-dark"
-						aria-hidden="true"
-					/>
-				)}
+		return (
+			<div
+				className={`fixed bottom-4 z-50 transition-all duration-200 ${getLeftPosition()}`}
+			>
+				<div className="relative">
+					{visibleCount > 1 && (
+						<div
+							className="absolute -top-1 left-1 w-16 h-16 bg-interaction-dark/70 rounded border-interaction-dark"
+							aria-hidden="true"
+						/>
+					)}
 
-				<ButtonWithTooltip
-					ref={forwardedRef}
-					variant="map-icon"
-					size="icon"
-					tooltip={t("map.layerTree")}
-					tooltipSide="right"
-					className={`relative w-16 h-16 p-0 bg-neutral-80 shadow-lg rounded overflow-hidden flex items-center justify-center cursor-pointer transition-colors hover:bg-neutral-70 focus:outline-none ${
-						visibleCount > 0 ? "border-2 border-interaction-dark" : ""
-					}`}
-					onClick={onClick}
-					aria-label={t("map.layerTreeAriaLabel", { visibleCount })}
-				>
-					<div className="w-full h-full flex items-center justify-center">
-						{visibleCount === 0 ? (
-							<ContextMapIcon className="[&>path]:fill-popover" />
-						) : (
-							topVisibleLayer && (
-								<LayerThumbnail
-									layer={topVisibleLayer}
-									size={FLOATING_BUTTON_SIZE}
-								/>
-							)
-						)}
-					</div>
-				</ButtonWithTooltip>
-
-				{visibleCount > 0 && (
-					<Badge
-						variant="default"
-						className="absolute -top-2 -right-2 w-6 h-6 p-0 rounded-full border-2 border-white text-xs font-bold"
-						aria-label={t("map.layerTreeVisibleCountAriaLabel", {
-							visibleCount,
-						})}
+					<ButtonWithTooltip
+						ref={forwardedRef}
+						variant="map-icon"
+						size="icon"
+						tooltip={t("map.layerTree")}
+						tooltipSide="right"
+						className={`relative w-16 h-16 p-0 bg-neutral-80 shadow-lg rounded overflow-hidden flex items-center justify-center cursor-pointer transition-colors hover:bg-neutral-70 focus:outline-none ${
+							visibleCount > 0 ? "border-2 border-interaction-dark" : ""
+						}`}
+						onClick={onClick}
+						aria-label={t("map.layerTreeAriaLabel", { visibleCount })}
 					>
-						{visibleCount}
-					</Badge>
-				)}
+						<div className="w-full h-full flex items-center justify-center">
+							{visibleCount === 0 ? (
+								<ContextMapIcon className="[&>path]:fill-popover" />
+							) : (
+								topVisibleLayer && (
+									<LayerThumbnail
+										layer={topVisibleLayer}
+										size={FLOATING_BUTTON_SIZE}
+									/>
+								)
+							)}
+						</div>
+					</ButtonWithTooltip>
+
+					{visibleCount > 0 && (
+						<Badge
+							variant="default"
+							className="absolute -top-2 -right-2 w-6 h-6 p-0 rounded-full border-2 border-white text-xs font-bold"
+							aria-label={t("map.layerTreeVisibleCountAriaLabel", {
+								visibleCount,
+							})}
+						>
+							{visibleCount}
+						</Badge>
+					)}
+				</div>
 			</div>
-		</div>
-	);
+		);
 	},
 );
 

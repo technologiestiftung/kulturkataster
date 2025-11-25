@@ -17,7 +17,7 @@ import { Loading } from "../ui/loading";
 
 // Main Filter Component
 const Filter: FC = () => {
-	const { setFilters, filters } = useInstitutionStore();
+	const { setFilters, filters, filteredInstitutions } = useInstitutionStore();
 	const { categoryGroups, districts, loading, error, retry } = useFilterData();
 	const { t, i18n } = useTranslation(["content", "common"]);
 	const { t: tEnum } = useTranslation(["enumMap"]);
@@ -232,17 +232,20 @@ const Filter: FC = () => {
 	}
 
 	return (
-		<div className="Filter-root p-4 h-full flex flex-col gap-2">
+		<div className="Filter-root p-2 md:p-4 h-full flex flex-col gap-2">
 			{/* Header Section */}
 			<ContentContainer className="p-6">
 				<h2 className="body2 font-bold mb-3 pl-2">
-					{t("filter.displayedInstitutions", { ns: "content" })}
+					{t("filter.displayedInstitutions", {
+						ns: "content",
+						count: filteredInstitutions?.features.length ?? 0,
+					})}
 				</h2>
 				<button
 					className="flex items-center gap-2 transition-opacity body2 text-primary-dark"
 					onClick={toggleClosedInstitutions}
 				>
-					{filters?.include_closed ? <Eye /> : <EyeOff />}
+					{filters?.include_closed ? <EyeOff /> : <Eye />}
 					<strong className="body2 font-bold">
 						{filters?.include_closed
 							? t("filter.hideClosed", { ns: "content" })

@@ -66,6 +66,7 @@ export interface LayerService {
 	id: string;
 	name: string;
 	name_lang?: string;
+	name_mid?: string;
 	capabilitiesUrl?: string;
 	url: string;
 	typ: LayerType;
