@@ -46,6 +46,16 @@ interface InstitutionProperties {
 	subcategory?: { key: string };
 }
 
+interface InstitutionSearchResult {
+	id?: string | number;
+	institution_id?: string | number;
+	slug?: string;
+	name?: string;
+	title?: string;
+	address?: string;
+	city?: string;
+}
+
 type InstitutionFeature = Feature<Geometry | null, InstitutionProperties>;
 
 export function InstitutionAccessEditor({
@@ -323,11 +333,13 @@ export function InstitutionAccessEditor({
 		}
 		try {
 			const results = await searchInstitutions(term);
-			const options: SearchableSelectOption[] = (results || []).map((inst) => ({
-				value: String(inst.id ?? inst.institution_id ?? inst.slug ?? ""),
-				label: inst.name || inst.title || "Institution",
-				description: inst.address || inst.city || "",
-			}));
+			const options: SearchableSelectOption[] = (results || []).map(
+				(inst: InstitutionSearchResult) => ({
+					value: String(inst.id ?? inst.institution_id ?? inst.slug ?? ""),
+					label: inst.name || inst.title || "Institution",
+					description: inst.address || inst.city || "",
+				}),
+			);
 			setSearchInstitutionOptions(options);
 		} catch (error) {
 			console.error(

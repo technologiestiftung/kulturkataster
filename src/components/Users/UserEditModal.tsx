@@ -22,7 +22,7 @@ import { GroupSelector } from "./GroupSelector";
 import { InstitutionSelector } from "./InstitutionSelector";
 import { searchInstitutions } from "@/lib/serverActions/institutions";
 import { getInstitutionsGeoJSON } from "@/lib/serverActions/institutions";
-import type { Feature } from "geojson";
+import type { Feature, Geometry } from "geojson";
 
 interface InstitutionProperties {
 	id?: string | number;
@@ -35,7 +35,17 @@ interface InstitutionProperties {
 	district?: string;
 }
 
-type InstitutionFeature = Feature<unknown, InstitutionProperties>;
+interface InstitutionSearchResult {
+	id?: string | number;
+	institution_id?: string | number;
+	slug?: string;
+	name?: string;
+	title?: string;
+	address?: string;
+	city?: string;
+}
+
+type InstitutionFeature = Feature<Geometry | null, InstitutionProperties>;
 
 interface UserEditModalProps {
 	user: User | null;
@@ -165,11 +175,13 @@ export function UserEditModal({
 		}
 		try {
 			const results = await searchInstitutions(term);
-			const options: SearchableSelectOption[] = (results || []).map((inst) => ({
-				value: String(inst.id ?? inst.institution_id ?? inst.slug ?? ""),
-				label: inst.name || inst.title || "Institution",
-				description: inst.address || inst.city || "",
-			}));
+			const options: SearchableSelectOption[] = (results || []).map(
+				(inst: InstitutionSearchResult) => ({
+					value: String(inst.id ?? inst.institution_id ?? inst.slug ?? ""),
+					label: inst.name || inst.title || "Institution",
+					description: inst.address || inst.city || "",
+				}),
+			);
 			setInstitutionOptions(options);
 		} catch (error) {
 			console.error("Institution search failed", error);
