@@ -41,7 +41,8 @@ const accessibilityOptions = [
 	{
 		id: "contrast",
 		icon: Contrast,
-		titleKey: "accessibility.contrast.title",
+		titleKey: "accessibility.contrast.darkMode",
+		switchKey: "accessibility.contrast.lightMode",
 		hasSwitch: true,
 	},
 ] as const;
@@ -103,6 +104,7 @@ export function AccessibilityContent({
 					key={option.id}
 					icon={option.icon}
 					titleKey={option.titleKey}
+					switchKey={"switchKey" in option ? option.switchKey : undefined}
 					onClick={
 						option.hasSwitch
 							? undefined

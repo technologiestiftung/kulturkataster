@@ -182,7 +182,7 @@ const LayerItem = memo<{
 					<LayerThumbnail layer={layer} showOverlay />
 					<div className="flex flex-col">
 						<span
-							className={`body2 font-bold flex ${
+							className={`body2 md:break-words break-all font-bold flex ${
 								layer.visibility ? "text-interaction-dark" : ""
 							}`}
 						>
@@ -190,7 +190,7 @@ const LayerItem = memo<{
 						</span>
 						{serviceNameLang && (
 							<div
-								className={`body2 ${layer.status === "error" ? "text-alert" : ""}`}
+								className={`body2 md:break-words break-all ${layer.status === "error" ? "text-alert" : ""}`}
 							>
 								{layer.status === "error"
 									? "Fachkarte nicht verfügbar. Bitte versuchen Sie es später erneut."
@@ -242,12 +242,20 @@ const LayerItem = memo<{
 
 LayerItem.displayName = "LayerItem";
 
-const FloatingLayerButton = memo<{
-	visibleCount: number;
-	topVisibleLayer: ManagedLayer | null;
-	sidebarState: string;
-	onClick: () => void;
-}>(({ visibleCount, topVisibleLayer, sidebarState, onClick }) => {
+const FloatingLayerButton = memo(
+	({
+		visibleCount,
+		topVisibleLayer,
+		sidebarState,
+		onClick,
+		forwardedRef,
+	}: {
+		visibleCount: number;
+		topVisibleLayer: ManagedLayer | null;
+		sidebarState: string;
+		onClick: () => void;
+		forwardedRef?: React.RefObject<HTMLButtonElement | null>;
+	}) => {
 	const { isLargeTextMode } = useAppStore();
 	const { t } = useTranslation("common");
 	const getLeftPosition = useCallback(() => {
@@ -273,6 +281,7 @@ const FloatingLayerButton = memo<{
 				)}
 
 				<ButtonWithTooltip
+					ref={forwardedRef}
 					variant="map-icon"
 					size="icon"
 					tooltip={t("map.layerTree")}
@@ -311,7 +320,8 @@ const FloatingLayerButton = memo<{
 			</div>
 		</div>
 	);
-});
+	},
+);
 
 FloatingLayerButton.displayName = "FloatingLayerButton";
 
@@ -322,6 +332,7 @@ const LayerTree: FC = () => {
 	const setIsLayerTreeOpen = useMapStore((state) => state.setIsLayerTreeOpen);
 	const { state: sidebarState, isMobile, setOpenMobile } = useSidebar();
 	const [isOpen, setIsOpen] = useState(false);
+	const floatingButtonRef = useRef<HTMLButtonElement>(null);
 
 	const handleOpen = useCallback(() => {
 		setIsOpen(true);
@@ -329,6 +340,9 @@ const LayerTree: FC = () => {
 
 	const handleClose = useCallback(() => {
 		setIsOpen(false);
+		setTimeout(() => {
+			floatingButtonRef.current?.focus();
+		}, 0);
 	}, []);
 
 	useEffect(() => {
@@ -338,6 +352,20 @@ const LayerTree: FC = () => {
 			setOpenMobile(true);
 		}
 	}, [isMobile, isOpen, setIsLayerTreeOpen, setOpenMobile]);
+
+	// Handle Escape key to close the dialog
+	useEffect(() => {
+		if (!isOpen) return;
+
+		const handleKeyDown = (event: KeyboardEvent) => {
+			if (event.key === "Escape") {
+				handleClose();
+			}
+		};
+
+		document.addEventListener("keydown", handleKeyDown);
+		return () => document.removeEventListener("keydown", handleKeyDown);
+	}, [isOpen, handleClose]);
 
 	if (!isOpen && isMobile) {
 		return null;
@@ -350,6 +378,7 @@ const LayerTree: FC = () => {
 				topVisibleLayer={topVisibleLayer}
 				sidebarState={sidebarState}
 				onClick={handleOpen}
+				forwardedRef={floatingButtonRef}
 			/>
 		);
 	}
