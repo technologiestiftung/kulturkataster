@@ -166,3 +166,10 @@ export function getTailwindColor(name: string): string {
 		.getPropertyValue(`--${name}`)
 		.trim();
 }
+
+/**
+ * gets a pixel value based on the root size for map elements styling and sizing
+ * Expects a number of rem
+ */
+export const remToPx = (rem: number) =>
+	rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
