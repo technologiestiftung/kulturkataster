@@ -65,6 +65,7 @@ export function UserSelector({ selectedUserIds, onChange }: UserSelectorProps) {
 			searchPlaceholder="Type user name or email..."
 			emptyText="No users found"
 			allowMultiple={true}
+			previewCount={3}
 		/>
 	);
 }

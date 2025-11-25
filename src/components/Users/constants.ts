@@ -8,6 +8,7 @@ export const sampleUsers: User[] = [
 		role: "admin",
 		status: "active",
 		lastActivity: new Date("2025-11-10T09:30:00"),
+		complianceAccepted: true,
 		access: {
 			type: "inherit",
 			source: "group-inherited",
@@ -25,6 +26,7 @@ export const sampleUsers: User[] = [
 		role: "editor",
 		status: "active",
 		lastActivity: new Date("2025-11-09T14:22:00"),
+		complianceAccepted: true,
 		access: {
 			type: "custom",
 			source: "mixed",
@@ -43,6 +45,7 @@ export const sampleUsers: User[] = [
 		role: "viewer",
 		status: "inactive",
 		lastActivity: new Date("2025-10-15T11:05:00"),
+		complianceAccepted: false,
 		access: {
 			type: "custom",
 			source: "individual-override",
@@ -61,6 +64,7 @@ export const sampleUsers: User[] = [
 		role: "editor",
 		status: "pending",
 		lastActivity: new Date("2025-11-08T16:45:00"),
+		complianceAccepted: false,
 		access: {
 			type: "custom",
 			source: "individual-override",
@@ -80,6 +84,7 @@ export const sampleUsers: User[] = [
 		role: "viewer",
 		status: "active",
 		lastActivity: new Date("2025-11-10T08:12:00"),
+		complianceAccepted: true,
 		access: {
 			type: "custom",
 			source: "individual-override",
@@ -95,6 +100,7 @@ export const sampleUsers: User[] = [
 		role: "publisher",
 		status: "active",
 		lastActivity: new Date("2025-11-10T10:15:00"),
+		complianceAccepted: true,
 		access: {
 			type: "custom",
 			source: "individual-override",
@@ -113,6 +119,7 @@ export const sampleUsers: User[] = [
 		role: "redaktion",
 		status: "active",
 		lastActivity: new Date("2025-11-09T16:30:00"),
+		complianceAccepted: true,
 		access: {
 			type: "custom",
 			source: "individual-override",
@@ -131,6 +138,7 @@ export const sampleUsers: User[] = [
 		role: "contributor",
 		status: "pending",
 		lastActivity: new Date("2025-11-07T13:20:00"),
+		complianceAccepted: false,
 		access: {
 			type: "custom",
 			source: "individual-override",
@@ -149,6 +157,7 @@ export const sampleUsers: User[] = [
 		role: "publisher",
 		status: "active",
 		lastActivity: new Date("2025-11-10T07:45:00"),
+		complianceAccepted: true,
 		access: {
 			type: "custom",
 			source: "individual-override",
@@ -167,6 +176,7 @@ export const sampleUsers: User[] = [
 		role: "redaktion",
 		status: "active",
 		lastActivity: new Date("2025-11-09T11:00:00"),
+		complianceAccepted: true,
 		access: {
 			type: "custom",
 			source: "individual-override",
@@ -182,6 +192,7 @@ export const sampleUsers: User[] = [
 		role: "contributor",
 		status: "active",
 		lastActivity: new Date("2025-11-08T09:30:00"),
+		complianceAccepted: false,
 		access: {
 			type: "custom",
 			source: "individual-override",

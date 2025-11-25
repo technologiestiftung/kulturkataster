@@ -87,7 +87,7 @@ function DialogContent({
 				return "fixed z-[70] h-full inset-0 w-full border-0 p-0";
 			case "default":
 			default:
-				return "fixed top-[50%] left-[50%] w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] md:rounded-lg border p-6 sm:max-w-lg";
+				return "fixed top-[50%] left-[50%] w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] md:rounded-lg border p-6 sm:max-w-3xl";
 		}
 	};
 

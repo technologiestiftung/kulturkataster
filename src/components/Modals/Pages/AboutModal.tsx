@@ -61,23 +61,23 @@ interface AboutModalProps {
 	onOpenChange: (open: boolean) => void;
 }
 
+const CreditSectionComponent = ({ data }: { data: CreditSection }) => (
+	<div className="mb-8">
+		<p className="body1 font-bold">{data.title}</p>
+		<div className="body2 space-y-1 mt-4">
+			{data.organization && <p>{data.organization}</p>}
+			{data.members?.map((item, i) => <p key={i}>{item}</p>)}
+			{data.list?.map((item, i) => <p key={i}>{item}</p>)}
+		</div>
+	</div>
+);
+
 export function AboutModal({ open, onOpenChange }: AboutModalProps) {
 	const { t } = useTranslation("content");
 
 	const { handleFooterItemClick } = useModalStore();
 
 	const content = t("aboutModal", { returnObjects: true }) as AboutContent;
-
-	const CreditSectionComponent = ({ data }: { data: CreditSection }) => (
-		<div className="mb-8">
-			<p className="body1 font-bold">{data.title}</p>
-			<div className="body2 space-y-1 mt-4">
-				{data.organization && <p>{data.organization}</p>}
-				{data.members?.map((item, i) => <p key={i}>{item}</p>)}
-				{data.list?.map((item, i) => <p key={i}>{item}</p>)}
-			</div>
-		</div>
-	);
 
 	const modalContent = (
 		<div className="space-y-8">

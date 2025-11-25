@@ -5,7 +5,7 @@ import type { SearchableSelectOption } from "@/components/shared/SearchableSelec
 import type { InstitutionAccess } from "./types";
 
 // Sample institutions data (in real app, this would come from API/props)
-const availableInstitutions: SearchableSelectOption[] = [
+export const defaultInstitutionOptions: SearchableSelectOption[] = [
 	{
 		value: "1",
 		label: "Berlinische Galerie",
@@ -57,20 +57,25 @@ const availableInstitutions: SearchableSelectOption[] = [
 interface InstitutionSelectorProps {
 	selectedInstitutions: InstitutionAccess[];
 	onChange: (institutions: InstitutionAccess[]) => void;
+	options?: SearchableSelectOption[];
+	onSearch?: (term: string) => void;
 }
 
 export function InstitutionSelector({
 	selectedInstitutions,
 	onChange,
+	options,
+	onSearch,
 }: InstitutionSelectorProps) {
 	const selectedIds = selectedInstitutions.map((i) => i.id);
+	const institutionOptions = options || defaultInstitutionOptions;
 
 	const handleChange = (selected: string[]) => {
 		const institutions: InstitutionAccess[] = selected.map((id) => {
 			const existing = selectedInstitutions.find((i) => i.id === id);
 			if (existing) return existing;
 
-			const option = availableInstitutions.find((i) => i.value === id);
+			const option = institutionOptions.find((i) => i.value === id);
 			return {
 				id,
 				name: option?.label || id,
@@ -81,13 +86,15 @@ export function InstitutionSelector({
 
 	return (
 		<SearchableSelect
-			options={availableInstitutions}
+			options={institutionOptions}
 			selected={selectedIds}
 			onChange={handleChange}
 			placeholder="Search institutions..."
 			searchPlaceholder="Type institution name..."
 			emptyText="No institutions found"
 			allowMultiple={true}
+			previewCount={3}
+			onSearch={onSearch}
 		/>
 	);
 }

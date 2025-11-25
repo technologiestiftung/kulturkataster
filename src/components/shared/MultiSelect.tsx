@@ -32,6 +32,7 @@ interface MultiSelectProps {
 	placeholder?: string;
 	searchPlaceholder?: string;
 	emptyText?: string;
+	previewCount?: number;
 }
 
 export function MultiSelect({
@@ -41,6 +42,7 @@ export function MultiSelect({
 	placeholder = "Select items...",
 	searchPlaceholder = "Search...",
 	emptyText = "No items found",
+	previewCount = 3,
 }: MultiSelectProps) {
 	const [open, setOpen] = useState(false);
 
@@ -57,12 +59,17 @@ export function MultiSelect({
 	};
 
 	const selectedOptions = options.filter((opt) => selected.includes(opt.value));
+	const previewSelections = selectedOptions.slice(0, previewCount);
+	const overflowCount =
+		selectedOptions.length > previewCount
+			? selectedOptions.length - previewCount
+			: 0;
 
 	return (
 		<div className="flex flex-col gap-2">
 			{selectedOptions.length > 0 && (
 				<div className="flex flex-wrap gap-2">
-					{selectedOptions.map((option) => (
+					{previewSelections.map((option) => (
 						<Badge key={option.value} variant="secondary" className="gap-1">
 							{option.label}
 							<button
@@ -74,6 +81,9 @@ export function MultiSelect({
 							</button>
 						</Badge>
 					))}
+					{overflowCount > 0 && (
+						<Badge variant="secondary">{`+${overflowCount} more`}</Badge>
+					)}
 				</div>
 			)}
 

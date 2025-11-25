@@ -1,6 +1,6 @@
-import jsxA11y from "eslint-plugin-jsx-a11y";
 import tseslint from "typescript-eslint";
 import { technologiestiftungRules } from "./eslintRules.mjs";
+import nextVitals from "eslint-config-next/core-web-vitals";
 
 const eslintConfig = [
 	{
@@ -15,10 +15,9 @@ const eslintConfig = [
 	},
 	...tseslint.configs.recommended,
 	{
-		plugins: {
-			"jsx-a11y": jsxA11y,
-		},
+		files: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
 		rules: {
+
 			// jsx-a11y recommended rules
 			"jsx-a11y/alt-text": "warn",
 			"jsx-a11y/anchor-has-content": "warn",
@@ -53,6 +52,7 @@ const eslintConfig = [
 		},
 	},
 	technologiestiftungRules,
+	...nextVitals,
 ];
 
 export default eslintConfig;

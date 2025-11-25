@@ -22,6 +22,14 @@ export const sampleGroups: Group[] = [
 				{ key: "parks", name: "Parks & Gardens" },
 				{ key: "plazas", name: "Public Plazas" },
 			],
+			subcategories: [
+				{ key: "urban-parks", name: "Urban Parks", categoryKey: "parks" },
+				{
+					key: "central-squares",
+					name: "Central Squares",
+					categoryKey: "plazas",
+				},
+			],
 		},
 		userCount: 1,
 		institutionCount: 67,

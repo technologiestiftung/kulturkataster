@@ -34,6 +34,8 @@ interface SearchableSelectProps {
 	searchPlaceholder?: string;
 	emptyText?: string;
 	allowMultiple?: boolean;
+	previewCount?: number;
+	onSearch?: (value: string) => void;
 }
 
 export function SearchableSelect({
@@ -44,8 +46,12 @@ export function SearchableSelect({
 	searchPlaceholder = "Type to search...",
 	emptyText = "No results found",
 	allowMultiple = true,
+	previewCount = 3,
+	onSearch,
 }: SearchableSelectProps) {
 	const [open, setOpen] = useState(false);
+	const [showSelectedOnly, setShowSelectedOnly] = useState(false);
+	const [query, setQuery] = useState("");
 
 	const selectOption = (value: string) => {
 		if (allowMultiple) {
@@ -65,12 +71,23 @@ export function SearchableSelect({
 	};
 
 	const selectedOptions = options.filter((opt) => selected.includes(opt.value));
+	const previewSelections = allowMultiple
+		? selectedOptions.slice(0, previewCount)
+		: [];
+	const overflowCount =
+		allowMultiple && selectedOptions.length > previewCount
+			? selectedOptions.length - previewCount
+			: 0;
+
+	const filteredOptions = showSelectedOnly
+		? options.filter((opt) => selected.includes(opt.value))
+		: options;
 
 	return (
 		<div className="flex flex-col gap-2">
-			{selectedOptions.length > 0 && (
+			{allowMultiple && selectedOptions.length > 0 && (
 				<div className="flex flex-wrap gap-2">
-					{selectedOptions.map((option) => (
+					{previewSelections.map((option) => (
 						<Badge key={option.value} variant="secondary" className="gap-1">
 							{option.label}
 							<button
@@ -82,6 +99,9 @@ export function SearchableSelect({
 							</button>
 						</Badge>
 					))}
+					{overflowCount > 0 && (
+						<Badge variant="secondary">{`+${overflowCount} more`}</Badge>
+					)}
 				</div>
 			)}
 
@@ -104,11 +124,34 @@ export function SearchableSelect({
 				</PopoverTrigger>
 				<PopoverContent className="w-full p-0" align="start">
 					<Command>
-						<CommandInput placeholder={searchPlaceholder} />
+						<div className="flex items-center justify-between px-3 pt-3 pb-1 gap-2">
+							<CommandInput
+								placeholder={searchPlaceholder}
+								className="flex-1"
+								value={query}
+								onValueChange={(value) => {
+									setQuery(value);
+									onSearch?.(value);
+								}}
+							/>
+							{allowMultiple && (
+								<Button
+									type="button"
+									variant="ghost"
+									size="sm"
+									className="shrink-0"
+									onClick={() => setShowSelectedOnly(!showSelectedOnly)}
+								>
+									{showSelectedOnly
+										? "Show all"
+										: `Selected (${selected.length})`}
+								</Button>
+							)}
+						</div>
 						<CommandList>
 							<CommandEmpty>{emptyText}</CommandEmpty>
 							<CommandGroup>
-								{options.map((option) => (
+								{filteredOptions.map((option) => (
 									<CommandItem
 										key={option.value}
 										value={option.value}

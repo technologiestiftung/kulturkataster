@@ -1,7 +1,7 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
-import * as React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
 	Dialog,
 	DialogContent,
@@ -13,11 +13,29 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import type { SearchableSelectOption } from "@/components/shared/SearchableSelect";
+import { Switch } from "@/components/ui/switch";
 import type { User, AccessType } from "./types";
 import { UserAccessDetails } from "./UserAccessDetails";
 import { formatLastActivity } from "./utils";
 import { GroupSelector } from "./GroupSelector";
 import { InstitutionSelector } from "./InstitutionSelector";
+import { searchInstitutions } from "@/lib/serverActions/institutions";
+import { getInstitutionsGeoJSON } from "@/lib/serverActions/institutions";
+import type { Feature } from "geojson";
+
+interface InstitutionProperties {
+	id?: string | number;
+	slug?: string;
+	institution_id?: string | number;
+	name?: string;
+	title?: string;
+	address?: string;
+	city?: string;
+	district?: string;
+}
+
+type InstitutionFeature = Feature<unknown, InstitutionProperties>;
 
 interface UserEditModalProps {
 	user: User | null;
@@ -25,6 +43,9 @@ interface UserEditModalProps {
 	onOpenChange: (open: boolean) => void;
 	onSave: (user: User) => void;
 	onDelete: (userId: string) => void;
+	onResendEmail: (userId: string) => void;
+	onResetPassword: (userId: string) => void;
+	onResendCompliance: (userId: string) => void;
 }
 
 export function UserEditModal({
@@ -33,9 +54,15 @@ export function UserEditModal({
 	onOpenChange,
 	onSave,
 	onDelete,
+	onResendEmail,
+	onResetPassword,
+	onResendCompliance,
 }: UserEditModalProps) {
 	const [editedUser, setEditedUser] = useState<User | null>(user);
 	const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+	const [institutionOptions, setInstitutionOptions] = useState<
+		SearchableSelectOption[]
+	>([]);
 	const restorePointerEvents = () => {
 		if (typeof document === "undefined") return;
 		if (document.body.style.pointerEvents === "none") {
@@ -43,17 +70,59 @@ export function UserEditModal({
 		}
 	};
 
-	React.useEffect(() => {
+	useEffect(() => {
 		if (open) {
 			setEditedUser(user);
+			if (user?.access.customInstitutions?.length) {
+				setInstitutionOptions(
+					user.access.customInstitutions.map((inst) => ({
+						value: inst.id,
+						label: inst.name,
+					})),
+				);
+			}
 		} else {
 			setEditedUser(null);
 			restorePointerEvents();
+			setInstitutionOptions([]);
 		}
 		setShowDeleteConfirm(false);
 	}, [user, open]);
 
-	React.useEffect(() => {
+	useEffect(() => {
+		if (!open) return;
+		const loadFallbackInstitutions = async () => {
+			const geojson = await getInstitutionsGeoJSON().catch(() => null);
+			if (geojson && "features" in geojson && Array.isArray(geojson.features)) {
+				const options: SearchableSelectOption[] = (
+					geojson.features as InstitutionFeature[]
+				).map((feature) => ({
+					value: String(
+						feature.id ||
+							feature.properties?.id ||
+							feature.properties?.slug ||
+							feature.properties?.institution_id ||
+							"",
+					),
+					label:
+						feature.properties?.name ||
+						feature.properties?.title ||
+						"Institution",
+					description:
+						feature.properties?.address ||
+						feature.properties?.city ||
+						feature.properties?.district ||
+						"",
+				}));
+				setInstitutionOptions((prev) =>
+					prev.length > 0 ? prev : options.slice(0, 100),
+				);
+			}
+		};
+		loadFallbackInstitutions();
+	}, [open]);
+
+	useEffect(() => {
 		return () => {
 			restorePointerEvents();
 		};
@@ -69,6 +138,43 @@ export function UserEditModal({
 		if (!editedUser) return;
 		onDelete(editedUser.id);
 		onOpenChange(false);
+	};
+
+	const handleResend = () => {
+		if (!editedUser) return;
+		onResendEmail(editedUser.id);
+	};
+
+	const handleResetPassword = () => {
+		if (!editedUser) return;
+		onResetPassword(editedUser.id);
+	};
+
+	const toggleCompliance = () => {
+		if (!editedUser) return;
+		setEditedUser({
+			...editedUser,
+			complianceAccepted: !editedUser.complianceAccepted,
+		});
+	};
+
+	const handleInstitutionSearch = async (term: string) => {
+		if (!term.trim()) {
+			setInstitutionOptions([]);
+			return;
+		}
+		try {
+			const results = await searchInstitutions(term);
+			const options: SearchableSelectOption[] = (results || []).map((inst) => ({
+				value: String(inst.id ?? inst.institution_id ?? inst.slug ?? ""),
+				label: inst.name || inst.title || "Institution",
+				description: inst.address || inst.city || "",
+			}));
+			setInstitutionOptions(options);
+		} catch (error) {
+			console.error("Institution search failed", error);
+			setInstitutionOptions([]);
+		}
 	};
 
 	return (
@@ -149,6 +255,19 @@ export function UserEditModal({
 							</div>
 						</div>
 
+						<div className="flex items-center justify-between rounded-md border p-3">
+							<div className="space-y-1">
+								<Label>Compliance accepted</Label>
+								<p className="text-xs text-muted-foreground">
+									Track whether the user acknowledged the compliance policy.
+								</p>
+							</div>
+							<Switch
+								checked={!!editedUser.complianceAccepted}
+								onCheckedChange={toggleCompliance}
+							/>
+						</div>
+
 						<div className="space-y-2">
 							<Label>Gruppen (Groups)</Label>
 							<GroupSelector
@@ -220,6 +339,8 @@ export function UserEditModal({
 												},
 											})
 										}
+										options={institutionOptions}
+										onSearch={handleInstitutionSearch}
 									/>
 									<p className="text-xs text-muted-foreground mt-2">
 										Custom institutions can be added on top of group access
@@ -263,36 +384,66 @@ export function UserEditModal({
 					</div>
 				)}
 
-				<DialogFooter className="flex justify-between sm:justify-between">
+				<DialogFooter className="flex flex-wrap gap-2">
 					{editedUser ? (
-						<div>
-							{!showDeleteConfirm ? (
+						<>
+							<div className="flex  gap-2">
 								<Button
 									type="button"
-									variant="destructive"
-									onClick={() => setShowDeleteConfirm(true)}
+									variant="secondary"
+									onClick={handleResend}
+									disabled={!editedUser}
 								>
-									Delete User
+									Resend Invitation
 								</Button>
-							) : (
-								<div className="flex gap-2">
+								<Button
+									type="button"
+									variant="secondary"
+									onClick={handleResetPassword}
+									disabled={!editedUser}
+								>
+									Reset Password
+								</Button>
+								<Button
+									type="button"
+									variant="secondary"
+									onClick={() =>
+										editedUser && onResendCompliance(editedUser.id)
+									}
+									disabled={!editedUser}
+								>
+									Resend Compliance
+								</Button>
+							</div>
+							<div className="flex gap-2">
+								{!showDeleteConfirm ? (
 									<Button
 										type="button"
 										variant="destructive"
-										onClick={handleDelete}
+										onClick={() => setShowDeleteConfirm(true)}
 									>
-										Confirm Delete
+										Delete User
 									</Button>
-									<Button
-										type="button"
-										variant="outline"
-										onClick={() => setShowDeleteConfirm(false)}
-									>
-										Cancel
-									</Button>
-								</div>
-							)}
-						</div>
+								) : (
+									<div className="flex gap-2">
+										<Button
+											type="button"
+											variant="destructive"
+											onClick={handleDelete}
+										>
+											Confirm Delete
+										</Button>
+										<Button
+											type="button"
+											variant="outline"
+											onClick={() => setShowDeleteConfirm(false)}
+										>
+											Cancel
+										</Button>
+									</div>
+								)}
+							</div>
+						</>
 					) : (
 						<div />
 					)}
