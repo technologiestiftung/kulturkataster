@@ -27,8 +27,9 @@ const createCachedPoiSvg = (
 	fillColor: string,
 	strokeColor: string,
 	isPermanentlyClosed: boolean,
+	isContrastMode: boolean,
 ): string => {
-	const cacheKey = `${categoryKey}_${fillColor}_${strokeColor}_${isPermanentlyClosed}`;
+	const cacheKey = `${categoryKey}_${fillColor}_${strokeColor}_${isPermanentlyClosed}_${isContrastMode}`;
 	if (!svgCache[cacheKey]) {
 		svgCache[cacheKey] = createPoiSvg(categoryKey, fillColor, strokeColor);
 	}
@@ -174,6 +175,7 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 			isSelected = false,
 			isPermanentlyClosed = false,
 			hasOverlapping = false,
+			downIsContrastMode = false,
 		) => {
 			const state = isSelected
 				? "selected"
@@ -181,7 +183,7 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 					? "closed"
 					: "default";
 
-			const mode = isContrastMode ? "contrast" : "normal";
+			const mode = downIsContrastMode ? "contrast" : "normal";
 			const fillColor = getTailwindColor(fillColors[state][mode]);
 
 			const strokeColor = getTailwindColor(
@@ -193,6 +195,7 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 				fillColor,
 				strokeColor,
 				isPermanentlyClosed,
+				downIsContrastMode,
 			);
 
 			return new Style({
@@ -206,19 +209,22 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 		[],
 	);
 
-	const createClusterStyle = useCallback((size: number) => {
-		return new Style({
-			image: new CircleStyle({
-				radius: 15,
-				fill: new Fill({ color: isContrastMode ? "#5617BA" : "#C288FF" }),
-			}),
-			text: new Text({
-				text: size.toString(),
-				font: `bold 12px sans-serif`,
-				fill: new Fill({ color: isContrastMode ? "white" : "#161616" }),
-			}),
-		});
-	}, []);
+	const createClusterStyle = useCallback(
+		(size: number, downIsContrastMode: boolean) => {
+			return new Style({
+				image: new CircleStyle({
+					radius: 15,
+					fill: new Fill({ color: downIsContrastMode ? "#5617BA" : "#C288FF" }),
+				}),
+				text: new Text({
+					text: size.toString(),
+					font: `bold 12px sans-serif`,
+					fill: new Fill({ color: downIsContrastMode ? "white" : "#161616" }),
+				}),
+			});
+		},
+		[],
+	);
 
 	const styleFunction = useCallback(
 		(feature: FeatureLike) => {
@@ -226,9 +232,12 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 			const size = features ? features.length : 1;
 
 			if (size > 1) {
-				const clusterCacheKey = `cluster_${size}`;
+				const clusterCacheKey = `cluster_${size}_${isContrastMode}`;
 				if (!styleCache[clusterCacheKey])
-					styleCache[clusterCacheKey] = createClusterStyle(size);
+					styleCache[clusterCacheKey] = createClusterStyle(
+						size,
+						isContrastMode,
+					);
 				return styleCache[clusterCacheKey];
 			}
 
@@ -240,7 +249,7 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 			const isPermanentlyClosed =
 				singleFeature.get("utilization_status") === "permanently_closed";
 			const categoryKey = getCategoryKey(singleFeature);
-			const styleCacheKey = `${categoryKey}_${isSelected}_${hasOverlapping}_${isPermanentlyClosed}`;
+			const styleCacheKey = `${categoryKey}_${isSelected}_${hasOverlapping}_${isPermanentlyClosed}_${isContrastMode}`;
 
 			if (!styleCache[styleCacheKey])
 				styleCache[styleCacheKey] = createSingleFeatureStyle(
@@ -248,11 +257,17 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 					isSelected,
 					isPermanentlyClosed,
 					hasOverlapping,
+					isContrastMode,
 				);
 
 			return styleCache[styleCacheKey];
 		},
-		[createClusterStyle, getCategoryKey, createSingleFeatureStyle],
+		[
+			createClusterStyle,
+			getCategoryKey,
+			createSingleFeatureStyle,
+			isContrastMode,
+		],
 	);
 
 	const shouldCluster = useCallback(
@@ -371,14 +386,7 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 				map.un("click", handleClusterClick);
 			}
 		};
-	}, [
-		map,
-		styleFunction,
-		updateLayerSource,
-		handleClusterClick,
-		zIndex,
-		distance,
-	]);
+	}, [map, updateLayerSource, handleClusterClick, zIndex, distance]);
 
 	useEffect(() => {
 		if (
@@ -417,6 +425,16 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 	useEffect(() => {
 		vectorLayerRef.current?.getSource()?.changed();
 	}, [selectedInstitutionId]);
+
+	useEffect(() => {
+		if (!vectorLayerRef.current) return;
+		vectorLayerRef.current.setStyle(styleFunction);
+		vectorLayerRef.current.changed();
+	}, [styleFunction]);
+
+	useEffect(() => {
+		Object.keys(styleCache).forEach((k) => delete styleCache[k]);
+	}, [isContrastMode]);
 
 	return null;
 };
