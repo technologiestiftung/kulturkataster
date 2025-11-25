@@ -3,7 +3,11 @@
 
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useMapStore } from "@/lib/store/mapStore";
-import { getTailwindColor, transformGeoJSON } from "@/lib/utils/mapUtils";
+import {
+	getTailwindColor,
+	remToPx,
+	transformGeoJSON,
+} from "@/lib/utils/mapUtils";
 import { CategoryType } from "@/types";
 import { MapStoreState } from "@/types/map";
 import { FeatureCollection, GeoJsonProperties, Geometry } from "geojson";
@@ -28,8 +32,9 @@ const createCachedPoiSvg = (
 	strokeColor: string,
 	isPermanentlyClosed: boolean,
 	isContrastMode: boolean,
+	isLargeTextMode: boolean,
 ): string => {
-	const cacheKey = `${categoryKey}_${fillColor}_${strokeColor}_${isPermanentlyClosed}_${isContrastMode}`;
+	const cacheKey = `${categoryKey}_${fillColor}_${strokeColor}_${isPermanentlyClosed}_${isContrastMode}_${isLargeTextMode}`;
 	if (!svgCache[cacheKey]) {
 		svgCache[cacheKey] = createPoiSvg(categoryKey, fillColor, strokeColor);
 	}
@@ -84,7 +89,7 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 	const offsetVectorSourceRef = useRef<VectorSource | null>(null);
 	const clusterSourceRef = useRef<Cluster | null>(null);
 
-	const { isContrastMode } = useAppStore();
+	const { isContrastMode, isLargeTextMode } = useAppStore();
 
 	const processFeaturesForDecluttering = useCallback(
 		(features: Feature[]): Feature[] => {
@@ -196,6 +201,7 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 				strokeColor,
 				isPermanentlyClosed,
 				downIsContrastMode,
+				isLargeTextMode,
 			);
 
 			return new Style({
@@ -213,12 +219,12 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 		(size: number, downIsContrastMode: boolean) => {
 			return new Style({
 				image: new CircleStyle({
-					radius: 15,
+					radius: remToPx(0.9375),
 					fill: new Fill({ color: downIsContrastMode ? "#5617BA" : "#C288FF" }),
 				}),
 				text: new Text({
 					text: size.toString(),
-					font: `bold 12px sans-serif`,
+					font: `bold 0.75rem sans-serif`,
 					fill: new Fill({ color: downIsContrastMode ? "white" : "#161616" }),
 				}),
 			});
@@ -232,7 +238,7 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 			const size = features ? features.length : 1;
 
 			if (size > 1) {
-				const clusterCacheKey = `cluster_${size}_${isContrastMode}`;
+				const clusterCacheKey = `cluster_${size}_${isContrastMode}_${isLargeTextMode}`;
 				if (!styleCache[clusterCacheKey])
 					styleCache[clusterCacheKey] = createClusterStyle(
 						size,
@@ -249,7 +255,7 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 			const isPermanentlyClosed =
 				singleFeature.get("utilization_status") === "permanently_closed";
 			const categoryKey = getCategoryKey(singleFeature);
-			const styleCacheKey = `${categoryKey}_${isSelected}_${hasOverlapping}_${isPermanentlyClosed}_${isContrastMode}`;
+			const styleCacheKey = `${categoryKey}_${isSelected}_${hasOverlapping}_${isPermanentlyClosed}_${isContrastMode}_${isLargeTextMode}`;
 
 			if (!styleCache[styleCacheKey])
 				styleCache[styleCacheKey] = createSingleFeatureStyle(
@@ -267,6 +273,7 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 			getCategoryKey,
 			createSingleFeatureStyle,
 			isContrastMode,
+			isLargeTextMode,
 		],
 	);
 
@@ -434,7 +441,8 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 
 	useEffect(() => {
 		Object.keys(styleCache).forEach((k) => delete styleCache[k]);
-	}, [isContrastMode]);
+		Object.keys(svgCache).forEach((k) => delete svgCache[k]);
+	}, [isContrastMode, isLargeTextMode]);
 
 	return null;
 };
