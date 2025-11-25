@@ -53,10 +53,12 @@ export function LocationSearch() {
 
 	const {
 		activeIndex,
+		activeDescendantId,
 		handleKeyDown,
 		listRef,
 		getItemProps,
 		reset: resetNavigation,
+		listId,
 	} = useKeyboardNavigation({
 		itemCount: searchResults.length,
 		onEnter: (index) => {
@@ -188,6 +190,13 @@ export function LocationSearch() {
 
 	return (
 		<div className="h-full flex flex-col overflow-hidden">
+			<SearchMessages
+				hasError={resultErrorMessage}
+				hasResults={searchResults.length > 0}
+				isLoading={isLoading}
+				query={query}
+				className="order-last"
+			/>
 			<div className="flex-shrink-0 mb-8">
 				<div className="relative">
 					<Input
@@ -200,6 +209,13 @@ export function LocationSearch() {
 						icon={<Search className="w-5 h-5 text-foreground" />}
 						iconPosition="left"
 						aria-invalid={!!resultErrorMessage}
+						role="combobox"
+						aria-autocomplete="list"
+						aria-expanded={searchResults.length > 0}
+						aria-controls={searchResults.length > 0 ? listId : undefined}
+						aria-activedescendant={
+							searchResults.length > 0 ? activeDescendantId : undefined
+						}
 					/>
 					{isLoading && (
 						<div className="absolute right-3 top-1/2 transform -translate-y-1/2">
@@ -219,13 +235,7 @@ export function LocationSearch() {
 				onResultClick={handleResultClick}
 				highlightMatch={highlightMatch}
 				formatAddress={formatAddress}
-			/>
-
-			<SearchMessages
-				hasError={resultErrorMessage}
-				hasResults={searchResults.length > 0}
-				isLoading={isLoading}
-				query={query}
+				listId={listId}
 			/>
 		</div>
 	);
