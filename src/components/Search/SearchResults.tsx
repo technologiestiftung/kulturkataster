@@ -35,7 +35,7 @@ export function SearchResults({
 	return (
 		<div className="flex-1 flex flex-col min-h-0">
 			<span
-				className="body1 font-bold text-neutral-60 mb-2 flex-shrink-0"
+				className="body1 font-bold text-neutral-80 mb-2 flex-shrink-0"
 				id={headingId}
 			>
 				{t("search.suggestions")}
