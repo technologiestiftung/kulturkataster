@@ -33,10 +33,16 @@ const createCachedPoiSvg = (
 	isPermanentlyClosed: boolean,
 	isContrastMode: boolean,
 	isLargeTextMode: boolean,
+	state: string,
 ): string => {
-	const cacheKey = `${categoryKey}_${fillColor}_${strokeColor}_${isPermanentlyClosed}_${isContrastMode}_${isLargeTextMode}`;
+	const cacheKey = `${categoryKey}_${fillColor}_${strokeColor}_${isPermanentlyClosed}_${isContrastMode}_${isLargeTextMode}_${state}`;
 	if (!svgCache[cacheKey]) {
-		svgCache[cacheKey] = createPoiSvg(categoryKey, fillColor, strokeColor);
+		svgCache[cacheKey] = createPoiSvg(
+			categoryKey,
+			fillColor,
+			strokeColor,
+			state,
+		);
 	}
 	return svgCache[cacheKey];
 };
@@ -132,8 +138,9 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 					singleFeature.set("has_overlapping", false);
 					offsetFeatures.push(singleFeature);
 				} else {
+					const maxPinPixelSize = remToPx(3.5);
 					const offsetRadius = Math.max(
-						10,
+						maxPinPixelSize,
 						Math.min(50, proximityThreshold * 0.8),
 					);
 					const angleStep = (2 * Math.PI) / group.length;
@@ -202,6 +209,7 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 				isPermanentlyClosed,
 				downIsContrastMode,
 				isLargeTextMode,
+				state,
 			);
 
 			return new Style({

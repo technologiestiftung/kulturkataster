@@ -17,10 +17,11 @@ export function createPoiSvg(
 	categoryKey: CategoryType,
 	fillColor = "#C288FF",
 	iconColor = "#FFFFFF", // Changed default to white for better contrast
+	state: string = "default",
 ): string {
 	const iconSvgString = getCategoryIconRawSvg(categoryKey);
 	const { inner, viewBox } = extractSvgContent(iconSvgString);
-	const size = 2.5;
+	const size = state === "selected" ? 3.5 : 2.5;
 
 	const svg = `
 		<svg width="${remToPx(size)}px" height="${remToPx(size)}px" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
