@@ -312,7 +312,10 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 						<SidebarHeader>
 							<div className="my-2">
 								<div className="flex justify-center">
-									<button onClick={handleLogoClick} aria-label={t("kukaLogo")}>
+									<button
+										onClick={handleLogoClick}
+										aria-label={t("kukaLogoButton")}
+									>
 										<KukaSmallLogo
 											title="Kulturkataster Berlin, Logo"
 											className="size-14 cursor-pointer hover:opacity-80 transition-opacity"
