@@ -23,7 +23,9 @@
 		"viewMode": {
 			"description": "Wechseln Sie zwischen der Kartenansicht und der Listenansicht, um die Kulturorte auf die für Sie angenehmste Weise zu erkunden.",
 			"title": "Listenansicht der Kulturorte"
-		}
+		},
+		"switchOn": "An",
+		"switchOff": "Aus"
 	},
 	"add": {
 		"description": "Fügen Sie einen neuen Kulturort hinzu, indem Sie das Formular ausfüllen. Wir prüfen Ihre Angaben und veröffentlichen den Ort nach Freigabe.",
@@ -148,6 +150,7 @@
 		"workspaceCount": "Anzahl der Arbeitsräume"
 	},
 	"kukaLogo": "Kulturkataster - Logo",
+	"kukaLogoButton": "Kulturkataster: Zur Einführung",
 	"listView": {
 		"institutionsListLabel": "Liste der Kulturorte",
 		"noResultsFound": "Keine Kulturorte gefunden :(",
