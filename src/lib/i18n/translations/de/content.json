@@ -107,6 +107,8 @@
 			"Das Kulturkataster findet in den Richtlinien der Regierungspolitik dieser Legislaturperiode Erwähnung. Ende 2022 wird die Kulturraum Berlin gGmbH von der Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt mit der Konzeption betraut und stellt in zwei Konzeptpapieren (ausgeführt durch das Studio für unendliche Möglichkeiten) die Ausgangssituation und Bedarfe sowie ein Umsetzungskonzept für das Kulturkataster vor. Auch die Umsetzung wird 2024 zur Aufgabe der KRB. Mit der Entwicklung der online-basierten Kartenanwendung beauftragte die KRB die Technologiestiftung Berlin."
 		],
 		"simpleLanguageDirect": "Den Bereich „Über das Projekt“ in leichter Sprache finden Sie <link />.",
+		"guidelinesListAriaLabel": "Liste der Richtlinien",
+		"versionListAriaLabel": "Liste der Versionsänderungen",
 		"subtitle": "",
 		"thanks": "Das Berliner Kulturkataster verdankt seine erfolgreiche Veröffentlichung der Begeisterung, dem Engagement und dem gemeinsamen Wirken aller Personen, für die die Berliner Kulturlandschaft von ebenso großer Bedeutung ist wie für das Projektteam. Diese tiefe Verankerung in der Szene bildet die Grundlage dafür, dass das langfristig ausgerichtete Projekt seine Vision in vollem Umfang entfalten und dynamisch weiterentwickeln kann.",
 		"title": "Über das Projekt",
@@ -236,6 +238,7 @@
 		"title": "Daten als Liste herunterladen"
 	},
 	"filter": {
+		"districtTagsSwitchAriaLabel": "{{translatedName}} ein- oder ausschalten",
 		"categories": {
 			"resetFilters": "Filter zurücksetzen",
 			"setAllFilters": "Alle Filter",
@@ -444,7 +447,9 @@
 			],
 			"introduction": "Das Kulturkataster Berlin wurde so konzipiert, dass es möglichst intuitiv bedient werden kann. Funktionalitäten orientieren sich an gängigen Kartenanwendungen. Grundlegende Bedienungshinweise haben wir an dieser Stelle für Sie zusammengefasst.",
 			"title": "Bedienung"
-		}
+		},
+		"featuresListAriaLabel": "Liste der verfügbaren Projektfunktionen",
+		"upcomingEnhancementsListAriaLabel": "Liste der geplanten Weiterungen und Verbesserungen"
 	},
 	"listView": {
 		"allLoaded": "Alle Kulturorte geladen",

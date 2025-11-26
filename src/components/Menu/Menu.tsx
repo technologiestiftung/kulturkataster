@@ -326,11 +326,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 								<SidebarGroupContent>
 									<SidebarMenu>
 										{menuItems.map((item) => {
-											const showBadge =
-												item.id === "filter" &&
-												institutions &&
-												originalInstitutions?.features.length !==
-													institutions.features.length;
+											const showBadge = filterCount > 0 && item.id === "filter";
 											const active = activeItem === item.id;
 											return (
 												<SidebarMenuItem key={item.id}>
@@ -345,7 +341,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 															showBadge
 																? t("menu.menuButtonBadge", {
 																		label: t(item.label),
-																		count: institutions.features.length,
+																		count: filterCount,
 																	})
 																: t(item.label)
 														}
@@ -355,7 +351,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 														<item.icon />
 														{showBadge && (
 															<div className="absolute top-2 -right-1 bg-primary text-primary-foreground body2 rounded-full min-w-5 h-5 flex items-center justify-center px-1">
-																{institutions.features.length}
+																{filterCount}
 															</div>
 														)}
 													</SidebarMenuButton>
@@ -565,11 +561,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			<div className="fixed bottom-0 left-0 right-0 z-[60] bg-sidebar border-t md:hidden h-20 pointer-events-auto">
 				<SidebarMenu className="flex-row justify-around px-2 py-3">
 					{menuItems.map((item) => {
-						const showBadge =
-							item.id === "filter" &&
-							institutions &&
-							originalInstitutions?.features.length !==
-								institutions.features.length;
+						const showBadge = filterCount > 0 && item.id === "filter";
 						return (
 							<SidebarMenuItem key={item.id} className="flex-shrink-0">
 								<SidebarMenuButton
@@ -584,7 +576,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 									</span>
 									{showBadge && (
 										<div className="absolute -top-1 -right-1 bg-primary text-primary-foreground body2 rounded-full min-w-5 h-5 flex items-center justify-center px-1">
-											{institutions.features.length}
+											{filterCount}
 										</div>
 									)}
 								</SidebarMenuButton>

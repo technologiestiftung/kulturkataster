@@ -202,7 +202,7 @@ const LayerItem = memo<{
 						</span>
 						{serviceNameLang && (
 							<div
-								className={`body2 md:break-words break-all ${layer.status === "error" ? "text-alert" : ""}`}
+								className={`body2 md:break-words hidden break-all ${layer.status === "error" ? "text-alert" : ""}`}
 							>
 								{layer.status === "error"
 									? "Fachkarte nicht verfügbar. Bitte versuchen Sie es später erneut."
@@ -233,14 +233,13 @@ const LayerItem = memo<{
 					</div>
 				</div>
 			</div>
-
 			{hasLegend && (
 				<>
 					<AccordionTrigger
 						className="px-3 py-2 rounded-none [&[data-state=closed]]:rounded-b-sm hover:no-underline flex justify-end items-center gap-2 [&>svg]:text-foreground bg-neutral-10"
 						aria-label={t("map.layerItemLegendAriaLabel", { serviceName })}
 					>
-						Legende ansehen
+						{t("map.lookAtLegend")}
 					</AccordionTrigger>
 					<AccordionContent
 						ref={accordionContentRef}
