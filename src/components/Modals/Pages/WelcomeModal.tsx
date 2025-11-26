@@ -72,7 +72,7 @@ export function WelcomeModal({ open, onOpenChange }: WelcomeModalProps) {
 							<div className="text-primary-dark flex space-x-2 cursor-pointer">
 								<ArrowNarrowRight className="stroke-primary-dark size-6" />
 								<a
-									className="underline body2"
+									className="underline body2 text-primary-dark font-semibold"
 									target="_blank"
 									href="https://flow.cleverreach.com/fl/21a1a529-f085-4bd1-8e53-d657c3ccc1de/"
 								>
