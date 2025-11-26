@@ -113,7 +113,7 @@
 
 	--color-border: var(--neutral-20);
 	--color-input: var(--neutral-20);
-	--color-ring: var(--interaction-default);
+	--color-ring: var(--interaction-dark);
 
 	--color-chart-1: var(--fachfarben-yellow);
 	--color-chart-2: var(--fachfarben-orange);
@@ -128,7 +128,7 @@
 	--color-sidebar-accent: var(--white);
 	--color-sidebar-accent-foreground: var(--interaction-default);
 	--color-sidebar-border: var(--black);
-	--color-sidebar-ring: var(----interaction-default);
+	--color-sidebar-ring: var(--interaction-dark);
 
 	--color-neutral-5: var(--neutral-5);
 	--color-neutral-10: var(--neutral-10);
@@ -271,7 +271,7 @@
 
 @layer base {
 	* {
-		@apply border-border outline-ring/50;
+		@apply border-border outline-ring/100;
 	}
 	body {
 		@apply bg-background text-foreground;
