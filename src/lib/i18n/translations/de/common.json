@@ -84,7 +84,9 @@
 			"label": "Tel.",
 			"number": "+49 30 3030 444 60"
 		},
-		"title": "Kulturkataster Berlin"
+		"title": "Kulturkataster Berlin",
+		"navigationAriaLabel": "Fußzeilen-Navigation",
+		"welcomeModalLinkListAriaLabel": "Fußzeilen-Navigation der Willkommensansicht"
 	},
 	"footerLandmark": "Fußbereich",
 	"headerLandmark": "Seitennavigation",
@@ -166,11 +168,19 @@
 		"show": "Zur Kartenansicht",
 		"title": "Kartenansicht",
 		"zoomIn": "Vergrößern",
-		"zoomOut": "Verkleinern"
+		"zoomOut": "Verkleinern",
+		"layerTreeAriaLabel": "Fachkarten einblenden ({{visibleCount}} sichtbare Karten)",
+		"layerTreeVisibleCountAriaLabel": "{{visibleCount}} sichtbare Karten",
+		"radioGroupAriaLabel": "Ansicht",
+		"layerItemAriaLabel": "Sichtbarkeit von der Karte {{serviceName}} umschalten",
+		"layerItemLegendAriaLabel": "Kartenlegende für die Karte {{serviceName}} anzeigen",
+		"lookAtLegend": "Legende ansehen"
 	},
 	"menu": {
+		"navigation": "Hauptmenü",
 		"backTo": "Zurück zu {{page}}",
-		"navigation": "Hauptmenü"
+		"backToAriaLabel": "Zurück zu {{title}}",
+		"menuButtonBadge": "{{label}} - {{count}} Filter aktiv"
 	},
 	"mobileMenu": {
 		"title": "Mobile Menü"
