@@ -61,12 +61,19 @@ export function SubMenuOption({
 				<span className="body2 font-bold">{displayLabel}</span>
 			</div>
 			{hasSwitch && (
-				<Switch
-					checked={switchChecked}
-					onCheckedChange={onSwitchChange}
-					onClick={(e) => e.stopPropagation()}
-					aria-label={t(titleKey)}
-				/>
+				<div className="flex items-center gap-1">
+					<Switch
+						checked={switchChecked}
+						onCheckedChange={onSwitchChange}
+						onClick={(e) => e.stopPropagation()}
+						aria-label={t(titleKey)}
+					/>
+					<p className="body2 font-bold min-w-[2rem]">
+						{switchChecked
+							? t("accessibility.switchOn")
+							: t("accessibility.switchOff")}
+					</p>
+				</div>
 			)}
 		</SidebarMenuItem>
 	);
