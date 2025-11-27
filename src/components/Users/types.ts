@@ -17,6 +17,8 @@ export interface Group {
 	name: string;
 }
 
+export interface OwnershipClaim extends InstitutionAccess {}
+
 export interface User {
 	id: string;
 	name: string;
@@ -33,6 +35,7 @@ export interface User {
 	access: UserAccessDetails;
 	complianceAccepted?: boolean;
 	groups: Group[];
+	ownershipClaims?: OwnershipClaim[];
 }
 
 export type SortColumn =

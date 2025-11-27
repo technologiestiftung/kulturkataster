@@ -18,6 +18,10 @@ export const sampleUsers: User[] = [
 			{ id: "g1", name: "Admin" },
 			{ id: "g2", name: "Open Spaces" },
 		],
+		ownershipClaims: [
+			{ id: "80", name: "Haus der Kulturen der Welt" },
+			{ id: "81", name: "Kunsthaus Tacheles" },
+		],
 	},
 	{
 		id: "2",
@@ -37,6 +41,10 @@ export const sampleUsers: User[] = [
 			institutionCount: 89,
 		},
 		groups: [{ id: "g3", name: "Custom District" }],
+		ownershipClaims: [
+			{ id: "2", name: "Hamburger Bahnhof" },
+			{ id: "3", name: "KW Institute for Contemporary Art" },
+		],
 	},
 	{
 		id: "3",
@@ -56,6 +64,7 @@ export const sampleUsers: User[] = [
 			institutionCount: 52,
 		},
 		groups: [],
+		ownershipClaims: [{ id: "70", name: "Tempodrom" }],
 	},
 	{
 		id: "4",
@@ -76,6 +85,10 @@ export const sampleUsers: User[] = [
 			institutionCount: 3,
 		},
 		groups: [],
+		ownershipClaims: [
+			{ id: "10", name: "Kulturbrauerei" },
+			{ id: "41", name: "Gretchen" },
+		],
 	},
 	{
 		id: "5",
@@ -92,6 +105,7 @@ export const sampleUsers: User[] = [
 			institutionCount: 31,
 		},
 		groups: [],
+		ownershipClaims: [{ id: "82", name: "SO36" }],
 	},
 	{
 		id: "6",
@@ -111,6 +125,7 @@ export const sampleUsers: User[] = [
 			institutionCount: 67,
 		},
 		groups: [],
+		ownershipClaims: [{ id: "12", name: "Alte Nationalgalerie" }],
 	},
 	{
 		id: "7",
@@ -130,6 +145,7 @@ export const sampleUsers: User[] = [
 			institutionCount: 102,
 		},
 		groups: [],
+		ownershipClaims: [{ id: "50", name: "Deutsche Oper" }],
 	},
 	{
 		id: "8",
@@ -149,6 +165,7 @@ export const sampleUsers: User[] = [
 			institutionCount: 2,
 		},
 		groups: [],
+		ownershipClaims: [{ id: "1", name: "Berlinische Galerie" }],
 	},
 	{
 		id: "9",
@@ -168,6 +185,10 @@ export const sampleUsers: User[] = [
 			institutionCount: 234,
 		},
 		groups: [],
+		ownershipClaims: [
+			{ id: "23", name: "C/O Berlin" },
+			{ id: "30", name: "Schaubühne" },
+		],
 	},
 	{
 		id: "10",
@@ -184,6 +205,10 @@ export const sampleUsers: User[] = [
 			institutionCount: 48,
 		},
 		groups: [],
+		ownershipClaims: [
+			{ id: "83", name: "Volksbühne" },
+			{ id: "84", name: "Maxim Gorki Theater" },
+		],
 	},
 	{
 		id: "11",
@@ -200,5 +225,6 @@ export const sampleUsers: User[] = [
 			institutionCount: 41,
 		},
 		groups: [],
+		ownershipClaims: [{ id: "31", name: "Radialsystem" }],
 	},
 ];

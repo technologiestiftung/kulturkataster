@@ -13,6 +13,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import type { SearchableSelectOption } from "@/components/shared/SearchableSelect";
 import { Switch } from "@/components/ui/switch";
 import type { User, AccessType } from "./types";
@@ -73,6 +75,8 @@ export function UserEditModal({
 	const [institutionOptions, setInstitutionOptions] = useState<
 		SearchableSelectOption[]
 	>([]);
+	const [selectedClaims, setSelectedClaims] = useState<string[]>([]);
+	const claimedInstitutions = editedUser?.ownershipClaims || [];
 	const restorePointerEvents = () => {
 		if (typeof document === "undefined") return;
 		if (document.body.style.pointerEvents === "none") {
@@ -83,6 +87,9 @@ export function UserEditModal({
 	useEffect(() => {
 		if (open) {
 			setEditedUser(user);
+			setSelectedClaims(
+				(user?.ownershipClaims || []).map((claim) => String(claim.id)),
+			);
 			if (user?.access.customInstitutions?.length) {
 				setInstitutionOptions(
 					user.access.customInstitutions.map((inst) => ({
@@ -189,6 +196,58 @@ export function UserEditModal({
 		}
 	};
 
+	const addSelectedClaimsToCustomAccess = () => {
+		if (!selectedClaims.length || !claimedInstitutions.length) return;
+		const selectedClaimRecords = claimedInstitutions.filter((claim) =>
+			selectedClaims.includes(String(claim.id)),
+		);
+		if (!selectedClaimRecords.length) return;
+
+		setEditedUser((currentUser) => {
+			if (!currentUser) return currentUser;
+			const existing = currentUser.access.customInstitutions || [];
+			const mergedInstitutions = [...existing];
+
+			selectedClaimRecords.forEach((claim) => {
+				if (!mergedInstitutions.some((inst) => inst.id === claim.id)) {
+					mergedInstitutions.push({ id: claim.id, name: claim.name });
+				}
+			});
+
+			return {
+				...currentUser,
+				access: {
+					...currentUser.access,
+					type: "custom",
+					source:
+						currentUser.access.type === "inherit"
+							? "individual-override"
+							: currentUser.access.source,
+					customInstitutions: mergedInstitutions,
+					institutionCount: mergedInstitutions.length,
+				},
+			};
+		});
+
+		setInstitutionOptions((prev) => {
+			const optionMap = new Map(prev.map((option) => [option.value, option]));
+			selectedClaimRecords.forEach((claim) => {
+				if (!optionMap.has(claim.id)) {
+					optionMap.set(claim.id, { value: claim.id, label: claim.name });
+				}
+			});
+			return Array.from(optionMap.values());
+		});
+	};
+
+	const toggleClaimSelection = (claimId: string) => {
+		setSelectedClaims((prev) =>
+			prev.includes(claimId)
+				? prev.filter((id) => id !== claimId)
+				: [...prev, claimId],
+		);
+	};
+
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
 			<DialogContent className="max-w-2xl">
@@ -286,6 +345,57 @@ export function UserEditModal({
 								selectedGroups={editedUser.groups}
 								onChange={(groups) => setEditedUser({ ...editedUser, groups })}
 							/>
+						</div>
+
+						<div className="space-y-2">
+							<Label>Ownership Claims</Label>
+							<div className="space-y-3">
+								{claimedInstitutions.length > 0 ? (
+									<>
+										<p className="text-xs text-muted-foreground">
+											User requested ownership for these institutions.
+										</p>
+										<div className="space-y-1">
+											{claimedInstitutions.map((institution) => {
+												const id = String(institution.id);
+												const checked = selectedClaims.includes(id);
+												return (
+													<label
+														key={id}
+														className="flex items-center gap-2 border-b py-2 last:border-b-0"
+													>
+														<Checkbox
+															checked={checked}
+															onCheckedChange={() => toggleClaimSelection(id)}
+														/>
+														<div className="flex items-center gap-2">
+															<Badge variant="outline">
+																{institution.name}
+															</Badge>
+															<span className="text-xs text-muted-foreground">
+																Claim request
+															</span>
+														</div>
+													</label>
+												);
+											})}
+										</div>
+										<Button
+											type="button"
+											variant="secondary"
+											size="sm"
+											onClick={addSelectedClaimsToCustomAccess}
+											disabled={!selectedClaims.length}
+										>
+											Add selected to custom access
+										</Button>
+									</>
+								) : (
+									<p className="text-xs text-muted-foreground">
+										No ownership claims submitted.
+									</p>
+								)}
+							</div>
 						</div>
 
 						<div className="space-y-2">
