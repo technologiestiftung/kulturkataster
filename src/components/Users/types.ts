@@ -17,7 +17,7 @@ export interface Group {
 	name: string;
 }
 
-export interface OwnershipClaim extends InstitutionAccess {}
+export type OwnershipClaim = InstitutionAccess;
 
 export interface User {
 	id: string;
