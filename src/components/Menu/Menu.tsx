@@ -498,7 +498,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 				<div className="flex gap-2 items-center">
 					<div className="relative">
 						<div
-							className="flex items-center bg-neutral-80 border rounded-full shadow-sm relative overflow-hidden"
+							className="flex items-center bg-neutral-80 border rounded-full shadow-sm relative"
 							role="radiogroup"
 							aria-label={t("map.radioGroupAriaLabel")}
 						>
