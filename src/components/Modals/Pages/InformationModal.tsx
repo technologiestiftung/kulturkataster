@@ -81,7 +81,7 @@ export function InformationModal({
 								<a
 									href="#infosAndServices"
 									rel="noopener noreferrer"
-									className="text-primary hover:text-primary-dark underline"
+									className="text-primary-dark hover:text-primary underline"
 									onClick={() =>
 										handleFooterItemClick("simpleLanguageInformation")
 									}

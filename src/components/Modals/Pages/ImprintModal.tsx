@@ -53,7 +53,7 @@ export function ImprintModal({ open, onOpenChange }: ImprintModalProps) {
 						<p>{t("email.label")}</p>
 						<a
 							href={`mailto:${t("email.address")}`}
-							className="text-primary hover:text-primary-dark underline"
+							className="text-primary-dark hover:text-primary underline"
 						>
 							{t("email.address")}
 						</a>

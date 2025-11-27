@@ -50,7 +50,7 @@ export function AccessibilityModal({
 							link: (
 								<button
 									type="button"
-									className="text-primary hover:text-primary-dark underline bg-transparent border-none p-0 cursor-pointer"
+									className="text-primary-dark hover:text-primary underline bg-transparent border-none p-0 cursor-pointer"
 									onClick={() => {
 										handleFooterItemClick("simpleLanguageInformation");
 									}}
@@ -69,7 +69,7 @@ export function AccessibilityModal({
 							link: (
 								<button
 									type="button"
-									className="text-primary hover:text-primary-dark underline bg-transparent border-none p-0 cursor-pointer"
+									className="text-primary-dark hover:text-primary underline bg-transparent border-none p-0 cursor-pointer"
 									onClick={() => {
 										handleFooterItemClick("signLanguageInformation");
 									}}
@@ -157,7 +157,7 @@ export function AccessibilityModal({
 					<p>
 						<a
 							href={`mailto:${t("accessibilityModal.contact.email.address")}`}
-							className="body2 text-primary hover:text-primary-dark underline"
+							className="body2 text-primary-dark hover:text-primary underline"
 						>
 							{t("accessibilityModal.contact.email.address")}
 						</a>
@@ -176,7 +176,7 @@ export function AccessibilityModal({
 					<p className="body2">
 						<a
 							href={t("accessibilityModal.contact_officer.link1.url")}
-							className="text-primary hover:text-primary-dark underline"
+							className="text-primary-dark hover:text-primary underline"
 							target="_blank"
 							rel="noopener noreferrer"
 						>
@@ -187,7 +187,7 @@ export function AccessibilityModal({
 						{t("accessibilityModal.contact_officer.info_text_link2")}{" "}
 						<a
 							href={t("accessibilityModal.contact_officer.link2.url")}
-							className="text-primary hover:text-primary-dark underline"
+							className="text-primary-dark hover:text-primary underline"
 							target="_blank"
 							rel="noopener noreferrer"
 						>
