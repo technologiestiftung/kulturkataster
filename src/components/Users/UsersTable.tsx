@@ -133,6 +133,7 @@ export function UsersTable() {
 				institutionCount: 0,
 			},
 			groups: [],
+			ownershipClaims: [],
 		};
 		setSelectedUser(newUser);
 		setIsEditModalOpen(true);

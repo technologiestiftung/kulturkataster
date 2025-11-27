@@ -67,17 +67,37 @@ export function InstitutionSelector({
 	options,
 	onSearch,
 }: InstitutionSelectorProps) {
-	const selectedIds = selectedInstitutions.map((i) => i.id);
-	const institutionOptions = options || defaultInstitutionOptions;
+	const selectedIds = selectedInstitutions.map((i) => String(i.id));
+	const institutionOptions = (options || defaultInstitutionOptions).map(
+		(option) => ({
+			value:
+				typeof option.value === "string"
+					? option.value
+					: String((option as { value: unknown }).value ?? ""),
+			label:
+				typeof option.label === "string"
+					? option.label
+					: String(
+							(option as { label?: unknown }).label ??
+								(option as { name?: unknown }).name ??
+								(option as { value?: unknown }).value ??
+								"Institution",
+						),
+			description:
+				typeof option.description === "string" ? option.description : undefined,
+		}),
+	);
 
 	const handleChange = (selected: string[]) => {
 		const institutions: InstitutionAccess[] = selected.map((id) => {
-			const existing = selectedInstitutions.find((i) => i.id === id);
+			const existing = selectedInstitutions.find(
+				(i) => String(i.id) === String(id),
+			);
 			if (existing) return existing;
 
 			const option = institutionOptions.find((i) => i.value === id);
 			return {
-				id,
+				id: String(id),
 				name: option?.label || id,
 			};
 		});
