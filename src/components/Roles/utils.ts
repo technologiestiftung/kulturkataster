@@ -13,9 +13,7 @@ export const createFieldPermissions = (
 	}, {} as FieldPermissionsMap);
 };
 
-export function getPermissionSummary(
-	permissions: RolePermissions,
-): string {
+export function getPermissionSummary(permissions: RolePermissions): string {
 	const parts: string[] = [];
 
 	const fieldValues = Object.values(permissions.fields);

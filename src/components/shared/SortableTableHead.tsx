@@ -12,9 +12,7 @@ interface SortableTableHeadProps {
 	onSort: (column: string) => void;
 	children: React.ReactNode;
 	className?: string;
-	HeadComponent?: ComponentType<
-		React.ComponentProps<typeof TableHead>
-	>;
+	HeadComponent?: ComponentType<React.ComponentProps<typeof TableHead>>;
 }
 
 export function SortableTableHead({
