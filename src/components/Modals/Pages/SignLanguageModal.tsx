@@ -118,6 +118,11 @@ export function SignLanguageModal({
 			title={t("signLanguageModal.title")}
 			subtitle={t("signLanguageModal.subtitle")}
 			content={signLanguageInformationContent}
+			hideLinksInModalFooter={[
+				"signLanguageInformation",
+				"signLanguageInformationLong",
+				"signLanguageInformationShort",
+			]}
 		/>
 	);
 }

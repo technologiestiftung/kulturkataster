@@ -186,6 +186,7 @@ export function AboutModal({ open, onOpenChange }: AboutModalProps) {
 			title={t("aboutModal.title")}
 			subtitle={t("aboutModal.subtitle")}
 			content={modalContent}
+			hideLinksInModalFooter={["about"]}
 		/>
 	);
 }

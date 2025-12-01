@@ -148,6 +148,7 @@ export function ImprintModal({ open, onOpenChange }: ImprintModalProps) {
 			title={tContent("imprintModal.title")}
 			subtitle={tContent("imprintModal.subtitle")}
 			content={content}
+			hideLinksInModalFooter={["imprint"]}
 		/>
 	);
 }

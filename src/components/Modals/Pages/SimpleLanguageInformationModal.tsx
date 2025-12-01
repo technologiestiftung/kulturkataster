@@ -168,6 +168,7 @@ export function SimpleLanguageInformationModal({
 			title={""}
 			subtitle={""}
 			content={simpleLanguageInformationContent}
+			hideLinksInModalFooter={["simpleLanguageInformation"]}
 		/>
 	);
 }
