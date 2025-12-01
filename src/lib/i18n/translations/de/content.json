@@ -231,6 +231,10 @@
 			"timelineLabel": "Zeitraum"
 		}
 	},
+	"accessibilitySettingsModal": {
+		"title": "Einstellungen zur Barrierefreiheit",
+		"subtitle": "Hier finden Sie alle Einstellungen rund um die Barrierefreiheit auf der Seite."
+	},
 	"downloadModal": {
 		"chooseFormat": "Dateiformat wählen",
 		"description1": "Das Kulturkataster ist ein Open-Data-Projekt, das die Ziele der Open-Data-Strategie des Landes Berlin unterstützt. Die vollständige Datensammlung sowie ihre individuelle Auswahl werden wir Ihnen in einer späteren Ausbaustufe zum direkten Download zur Verfügung stellen.",
@@ -902,6 +906,7 @@
 		"infoButton": "Infos & Service",
 		"newsletter": "Zum Newsletter anmelden",
 		"subtitle": "Ein Projekt der Kulturraum Berlin gGmbH",
-		"title": "Das Berliner Kulturkataster: Die Kultur der Stadt auf einen Blick"
+		"title": "Das Berliner Kulturkataster: Die Kultur der Stadt auf einen Blick",
+		"accessibilitySettings": "Einstellungen zur Barrierefreiheit"
 	}
 }

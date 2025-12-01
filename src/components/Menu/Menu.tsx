@@ -65,6 +65,8 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	const [previousActiveItem, setPreviousActiveItem] = useState<string>("");
 	const [userHasClosedSidebar, setUserHasClosedSidebar] = useState(false);
 	const {
+		welcomeModalOpen,
+		closeAllModals,
 		setInformationModalOpen,
 		setDownloadModalOpen,
 		setDownloadModalMode,
@@ -200,6 +202,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
 	const handleWelcomeModalClose = () => {
 		setFirstTimeUser(false);
+		closeAllModals();
 	};
 
 	const handleSidebarClose = () => {
@@ -296,7 +299,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	return (
 		<>
 			<WelcomeModal
-				open={firstTimeUser}
+				open={firstTimeUser || welcomeModalOpen}
 				onOpenChange={handleWelcomeModalClose}
 			/>
 			<nav aria-label={t("menu.navigation")}>

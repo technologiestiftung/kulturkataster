@@ -11,6 +11,7 @@ import { SubMenuOption } from "../SubMenuOption";
 
 interface AccessibilityContentProps {
 	onItemClick?: (itemName: string) => void; // Made optional since we can use the modal store directly
+	openLinksInModal?: boolean;
 }
 
 const accessibilityOptions = [
@@ -49,6 +50,7 @@ const accessibilityOptions = [
 
 export function AccessibilityContent({
 	onItemClick,
+	openLinksInModal,
 }: AccessibilityContentProps) {
 	const {
 		isContrastMode,
@@ -61,6 +63,7 @@ export function AccessibilityContent({
 	} = useAppStore();
 
 	const {
+		openModal,
 		setAccessibilityModalOpen,
 		setSimpleLanguageInformationModalOpen,
 		setSignLanguageModalOpen,
@@ -110,9 +113,17 @@ export function AccessibilityContent({
 							? undefined
 							: () => {
 									if (option.id === "simpleLanguage") {
-										setSimpleLanguageInformationModalOpen(true);
+										if (openLinksInModal) {
+											openModal("simpleLanguageInformation");
+										} else {
+											setSimpleLanguageInformationModalOpen(true);
+										}
 									} else if (option.id === "signLanguage") {
-										setSignLanguageModalOpen(true);
+										if (openLinksInModal) {
+											openModal("signLanguageInformation");
+										} else {
+											setSignLanguageModalOpen(true);
+										}
 									} else if (onItemClick) {
 										onItemClick("accessibility");
 									} else {
