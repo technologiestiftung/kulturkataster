@@ -21,12 +21,14 @@ interface FieldPermissionsTableProps {
 		type: "view" | "requestChange" | "approveChange",
 		value: boolean,
 	) => void;
+	readOnly?: boolean;
 }
 
 export function FieldPermissionsTable({
 	permissions,
 	onToggleField,
 	onSetAllFields,
+	readOnly = false,
 }: FieldPermissionsTableProps) {
 	const allView = Object.values(permissions).every((f) => f.view);
 	const allRequestChange = Object.values(permissions).every(
@@ -44,20 +46,22 @@ export function FieldPermissionsTable({
 					<Checkbox
 						id="selectAllView"
 						checked={allView}
+						disabled={readOnly}
 						onCheckedChange={(checked) =>
-							onSetAllFields("view", checked === true)
+							!readOnly && onSetAllFields("view", checked === true)
 						}
 					/>
 					<label htmlFor="selectAllView" className="text-sm font-medium">
-						Alle ansehen
+						Alle ansehen & exportieren
 					</label>
 				</div>
 				<div className="flex items-center space-x-2">
 					<Checkbox
 						id="selectAllRequestChange"
 						checked={allRequestChange}
+						disabled={readOnly}
 						onCheckedChange={(checked) =>
-							onSetAllFields("requestChange", checked === true)
+							!readOnly && onSetAllFields("requestChange", checked === true)
 						}
 					/>
 					<label
@@ -71,8 +75,9 @@ export function FieldPermissionsTable({
 					<Checkbox
 						id="selectAllApproveChange"
 						checked={allApproveChange}
+						disabled={readOnly}
 						onCheckedChange={(checked) =>
-							onSetAllFields("approveChange", checked === true)
+							!readOnly && onSetAllFields("approveChange", checked === true)
 						}
 					/>
 					<label
@@ -88,7 +93,9 @@ export function FieldPermissionsTable({
 					<TableHeader className="sticky top-0 bg-background">
 						<TableRow>
 							<TableHead className="w-[180px]">Feld</TableHead>
-							<TableHead className="w-[100px] text-center">Ansehen</TableHead>
+							<TableHead className="w-[100px] text-center">
+								Ansehen & Exportieren
+							</TableHead>
 							<TableHead className="w-[150px] text-center">
 								Änderung vorschlagen
 							</TableHead>
@@ -104,13 +111,18 @@ export function FieldPermissionsTable({
 								<TableCell className="text-center">
 									<Checkbox
 										checked={permissions[field].view}
-										onCheckedChange={() => onToggleField(field, "view")}
+										disabled={readOnly}
+										onCheckedChange={() =>
+											!readOnly && onToggleField(field, "view")
+										}
 									/>
 								</TableCell>
 								<TableCell className="text-center">
 									<Checkbox
 										checked={permissions[field].requestChange}
+										disabled={readOnly}
 										onCheckedChange={() =>
+											!readOnly &&
 											onToggleField(field, "requestChange")
 										}
 									/>
@@ -118,7 +130,9 @@ export function FieldPermissionsTable({
 								<TableCell className="text-center">
 									<Checkbox
 										checked={permissions[field].approveChange}
+										disabled={readOnly}
 										onCheckedChange={() =>
+											!readOnly &&
 											onToggleField(field, "approveChange")
 										}
 									/>

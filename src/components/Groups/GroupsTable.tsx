@@ -1,16 +1,17 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import {
-	Table,
-	TableBody,
-	TableHead,
-	TableHeader,
-	TableRow,
-} from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus } from "lucide-react";
+import {
+	StickyActionsHead,
+	StickyTable,
+	StickyTableBody,
+	StickyTableHead,
+	StickyTableHeader,
+	StickyTableRow,
+} from "@/components/ui/sticky-table";
 import type { Group } from "./types";
 import { sampleGroups } from "./constants";
 import { GroupRow } from "./GroupRow";
@@ -109,23 +110,23 @@ export function GroupsTable() {
 			</div>
 
 			<div className="rounded-md border">
-				<Table>
-					<TableHeader>
-						<TableRow>
-							<TableHead>Name</TableHead>
-							<TableHead>Description</TableHead>
-							<TableHead>Users</TableHead>
-							<TableHead>Institutions</TableHead>
-							<TableHead>Created</TableHead>
-							<TableHead className="w-[110px]">Actions</TableHead>
-						</TableRow>
-					</TableHeader>
-					<TableBody>
+				<StickyTable>
+					<StickyTableHeader>
+						<StickyTableRow>
+							<StickyTableHead>Name</StickyTableHead>
+							<StickyTableHead>Description</StickyTableHead>
+							<StickyTableHead>Users</StickyTableHead>
+							<StickyTableHead>Institutions</StickyTableHead>
+							<StickyTableHead>Created</StickyTableHead>
+							<StickyActionsHead className="w-[120px]">Actions</StickyActionsHead>
+						</StickyTableRow>
+					</StickyTableHeader>
+					<StickyTableBody>
 						{filteredGroups.map((group) => (
 							<GroupRow key={group.id} group={group} onEdit={handleEditGroup} />
 						))}
-					</TableBody>
-				</Table>
+					</StickyTableBody>
+				</StickyTable>
 			</div>
 
 			<GroupEditModal

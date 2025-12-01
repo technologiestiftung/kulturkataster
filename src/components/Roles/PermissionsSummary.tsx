@@ -3,16 +3,8 @@ import { getPermissionSummary } from "./utils";
 
 interface PermissionsSummaryProps {
 	permissions: RolePermissions;
-	scopeRestriction: boolean;
 }
 
-export function PermissionsSummary({
-	permissions,
-	scopeRestriction,
-}: PermissionsSummaryProps) {
-	return (
-		<span className="text-sm">
-			{getPermissionSummary(permissions, scopeRestriction)}
-		</span>
-	);
+export function PermissionsSummary({ permissions }: PermissionsSummaryProps) {
+	return <span className="text-sm">{getPermissionSummary(permissions)}</span>;
 }

@@ -15,7 +15,6 @@ export const createFieldPermissions = (
 
 export function getPermissionSummary(
 	permissions: RolePermissions,
-	scopeRestriction: boolean,
 ): string {
 	const parts: string[] = [];
 
@@ -44,18 +43,6 @@ export function getPermissionSummary(
 
 	if (entityPerms.length > 0) {
 		parts.push(entityPerms.join(", "));
-	}
-
-	const mgmtPerms: string[] = [];
-	if (permissions.manageUsers) mgmtPerms.push("Benutzer");
-	if (permissions.manageGroups) mgmtPerms.push("Gruppen");
-
-	if (mgmtPerms.length > 0) {
-		parts.push(`Verwalten: ${mgmtPerms.join(" & ")}`);
-	}
-
-	if (scopeRestriction) {
-		parts.push("Nur eigene Gruppe");
 	}
 
 	return parts.join(" | ");

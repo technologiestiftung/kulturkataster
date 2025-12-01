@@ -1,4 +1,5 @@
 import * as React from "react";
+import type { ComponentType } from "react";
 import { TableHead } from "@/components/ui/table";
 import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 
@@ -11,6 +12,9 @@ interface SortableTableHeadProps {
 	onSort: (column: string) => void;
 	children: React.ReactNode;
 	className?: string;
+	HeadComponent?: ComponentType<
+		React.ComponentProps<typeof TableHead>
+	>;
 }
 
 export function SortableTableHead({
@@ -20,8 +24,10 @@ export function SortableTableHead({
 	onSort,
 	children,
 	className,
+	HeadComponent,
 }: SortableTableHeadProps) {
 	const isSorted = currentSortColumn === column;
+	const Head = HeadComponent ?? TableHead;
 
 	const getSortIcon = () => {
 		if (!isSorted) {
@@ -34,7 +40,7 @@ export function SortableTableHead({
 	};
 
 	return (
-		<TableHead className={className}>
+		<Head className={className}>
 			<button
 				className="flex items-center gap-2 hover:text-foreground transition-colors"
 				onClick={() => onSort(column)}
@@ -42,6 +48,6 @@ export function SortableTableHead({
 				{children}
 				{getSortIcon()}
 			</button>
-		</TableHead>
+		</Head>
 	);
 }
