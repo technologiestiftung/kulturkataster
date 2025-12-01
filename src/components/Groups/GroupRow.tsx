@@ -1,6 +1,10 @@
-import { TableCell, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+	StickyActionsCell,
+	StickyTableCell,
+	StickyTableRow,
+} from "@/components/ui/sticky-table";
 import type { Group } from "./types";
 import { formatDate } from "./utils";
 
@@ -11,25 +15,25 @@ interface GroupRowProps {
 
 export function GroupRow({ group, onEdit }: GroupRowProps) {
 	return (
-		<TableRow>
-			<TableCell className="font-medium">{group.name}</TableCell>
-			<TableCell className="text-sm text-muted-foreground">
+		<StickyTableRow>
+			<StickyTableCell className="font-medium">{group.name}</StickyTableCell>
+			<StickyTableCell className="text-sm text-muted-foreground">
 				{group.description}
-			</TableCell>
-			<TableCell>
+			</StickyTableCell>
+			<StickyTableCell>
 				<Badge variant="secondary">{group.userCount}</Badge>
-			</TableCell>
-			<TableCell>
+			</StickyTableCell>
+			<StickyTableCell>
 				<Badge variant="outline">{group.institutionCount}</Badge>
-			</TableCell>
-			<TableCell className="text-sm text-muted-foreground">
+			</StickyTableCell>
+			<StickyTableCell className="text-sm text-muted-foreground">
 				{formatDate(group.createdAt)}
-			</TableCell>
-			<TableCell>
+			</StickyTableCell>
+			<StickyActionsCell>
 				<Button size="sm" variant="secondary" onClick={() => onEdit(group)}>
 					Edit
 				</Button>
-			</TableCell>
-		</TableRow>
+			</StickyActionsCell>
+		</StickyTableRow>
 	);
 }

@@ -1,6 +1,10 @@
-import { TableCell, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+	StickyActionsCell,
+	StickyTableCell,
+	StickyTableRow,
+} from "@/components/ui/sticky-table";
 import type { Role } from "./types";
 import { PermissionsSummary } from "./PermissionsSummary";
 
@@ -11,32 +15,29 @@ interface RoleRowProps {
 
 export function RoleRow({ role, onEdit }: RoleRowProps) {
 	return (
-		<TableRow>
-			<TableCell className="font-medium">
+		<StickyTableRow>
+			<StickyTableCell className="font-medium">
 				{role.name}
 				{role.isSystemRole && (
 					<Badge variant="outline" className="ml-2 text-xs">
 						System
 					</Badge>
 				)}
-			</TableCell>
-			<TableCell className="text-sm text-muted-foreground">
+			</StickyTableCell>
+			<StickyTableCell className="text-sm text-muted-foreground">
 				{role.description}
-			</TableCell>
-			<TableCell className="text-sm">
-				<PermissionsSummary
-					permissions={role.permissions}
-					scopeRestriction={role.scopeRestriction}
-				/>
-			</TableCell>
-			<TableCell>
+			</StickyTableCell>
+			<StickyTableCell className="text-sm">
+				<PermissionsSummary permissions={role.permissions} />
+			</StickyTableCell>
+			<StickyTableCell>
 				<Badge variant="secondary">{role.userCount}</Badge>
-			</TableCell>
-			<TableCell>
+			</StickyTableCell>
+			<StickyActionsCell>
 				<Button size="sm" variant="secondary" onClick={() => onEdit(role)}>
 					Edit
 				</Button>
-			</TableCell>
-		</TableRow>
+			</StickyActionsCell>
+		</StickyTableRow>
 	);
 }

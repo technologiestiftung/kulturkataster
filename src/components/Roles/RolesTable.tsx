@@ -1,16 +1,17 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import {
-	Table,
-	TableBody,
-	TableHead,
-	TableHeader,
-	TableRow,
-} from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus } from "lucide-react";
+import {
+	StickyActionsHead,
+	StickyTable,
+	StickyTableBody,
+	StickyTableHead,
+	StickyTableHeader,
+	StickyTableRow,
+} from "@/components/ui/sticky-table";
 import type { Role } from "./types";
 import { sampleRoles } from "./constants";
 import { createFieldPermissions, getPermissionSummary } from "./utils";
@@ -53,7 +54,7 @@ export function RolesTable() {
 				manageUsers: false,
 				manageGroups: false,
 			},
-			scopeRestriction: false,
+			scopeRestriction: true,
 			userCount: 0,
 			createdAt: new Date(),
 		};
@@ -69,7 +70,7 @@ export function RolesTable() {
 			const values: string[] = [
 				role.name,
 				role.description,
-				getPermissionSummary(role.permissions, role.scopeRestriction),
+				getPermissionSummary(role.permissions),
 				String(role.userCount),
 			];
 
@@ -105,22 +106,24 @@ export function RolesTable() {
 			</div>
 
 			<div className="rounded-md border">
-				<Table>
-					<TableHeader>
-						<TableRow>
-							<TableHead>Name</TableHead>
-							<TableHead>Description</TableHead>
-							<TableHead>Permissions</TableHead>
-							<TableHead>Users</TableHead>
-							<TableHead className="w-[120px]">Actions</TableHead>
-						</TableRow>
-					</TableHeader>
-					<TableBody>
+				<StickyTable>
+					<StickyTableHeader>
+						<StickyTableRow>
+							<StickyTableHead>Name</StickyTableHead>
+							<StickyTableHead>Description</StickyTableHead>
+							<StickyTableHead>Permissions</StickyTableHead>
+							<StickyTableHead>Users</StickyTableHead>
+							<StickyActionsHead className="w-[120px]">
+								Actions
+							</StickyActionsHead>
+						</StickyTableRow>
+					</StickyTableHeader>
+					<StickyTableBody>
 						{filteredRoles.map((role) => (
 							<RoleRow key={role.id} role={role} onEdit={handleEditRole} />
 						))}
-					</TableBody>
-				</Table>
+					</StickyTableBody>
+				</StickyTable>
 			</div>
 
 			<RoleEditModal

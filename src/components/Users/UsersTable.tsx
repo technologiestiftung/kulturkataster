@@ -3,12 +3,13 @@
 
 import { useState, useMemo } from "react";
 import {
-	Table,
-	TableBody,
-	TableHead,
-	TableHeader,
-	TableRow,
-} from "@/components/ui/table";
+	StickyTable,
+	StickyTableBody,
+	StickyTableHead,
+	StickyTableHeader,
+	StickyTableRow,
+	StickyActionsHead,
+} from "@/components/ui/sticky-table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus } from "lucide-react";
@@ -189,15 +190,15 @@ export function UsersTable() {
 					Add User
 				</Button>
 			</div>
-			<Table>
-				<TableHeader>
-					<TableRow>
-						<TableHead className="w-[50px]"></TableHead>
+			<StickyTable>
+				<StickyTableHeader>
+					<StickyTableRow>
 						<SortableTableHead
 							column="name"
 							currentSortColumn={sortColumn}
 							currentSortDirection={sortDirection}
 							onSort={handleSort}
+							HeadComponent={StickyTableHead}
 						>
 							Name
 						</SortableTableHead>
@@ -206,6 +207,7 @@ export function UsersTable() {
 							currentSortColumn={sortColumn}
 							currentSortDirection={sortDirection}
 							onSort={handleSort}
+							HeadComponent={StickyTableHead}
 						>
 							Email
 						</SortableTableHead>
@@ -214,6 +216,7 @@ export function UsersTable() {
 							currentSortColumn={sortColumn}
 							currentSortDirection={sortDirection}
 							onSort={handleSort}
+							HeadComponent={StickyTableHead}
 						>
 							Role
 						</SortableTableHead>
@@ -222,6 +225,7 @@ export function UsersTable() {
 							currentSortColumn={sortColumn}
 							currentSortDirection={sortDirection}
 							onSort={handleSort}
+							HeadComponent={StickyTableHead}
 						>
 							Gruppen
 						</SortableTableHead>
@@ -230,6 +234,7 @@ export function UsersTable() {
 							currentSortColumn={sortColumn}
 							currentSortDirection={sortDirection}
 							onSort={handleSort}
+							HeadComponent={StickyTableHead}
 						>
 							Status
 						</SortableTableHead>
@@ -238,6 +243,7 @@ export function UsersTable() {
 							currentSortColumn={sortColumn}
 							currentSortDirection={sortDirection}
 							onSort={handleSort}
+							HeadComponent={StickyTableHead}
 						>
 							Institution Access
 						</SortableTableHead>
@@ -246,6 +252,7 @@ export function UsersTable() {
 							currentSortColumn={sortColumn}
 							currentSortDirection={sortDirection}
 							onSort={handleSort}
+							HeadComponent={StickyTableHead}
 						>
 							Last Activity
 						</SortableTableHead>
@@ -254,18 +261,19 @@ export function UsersTable() {
 							currentSortColumn={sortColumn}
 							currentSortDirection={sortDirection}
 							onSort={handleSort}
+							HeadComponent={StickyTableHead}
 						>
 							Compliance
 						</SortableTableHead>
-						<TableHead className="w-[120px]">Actions</TableHead>
-					</TableRow>
-				</TableHeader>
-				<TableBody>
+						<StickyActionsHead />
+					</StickyTableRow>
+				</StickyTableHeader>
+				<StickyTableBody>
 					{sortedUsers.map((user) => (
 						<UserRow key={user.id} user={user} onEdit={handleEditUser} />
 					))}
-				</TableBody>
-			</Table>
+				</StickyTableBody>
+			</StickyTable>
 
 			<UserEditModal
 				user={selectedUser}

@@ -38,42 +38,36 @@ export function RoleEditModal({
 
 	if (!editedRole) return null;
 
+	const isSystemAdmin =
+		editedRole.isSystemRole &&
+		editedRole.name.trim().toLowerCase() === "admin";
+
 	const handleSave = () => {
-		onSave(editedRole);
+		const sanitizedRole = {
+			...editedRole,
+			permissions: {
+				...editedRole.permissions,
+				manageUsers: isSystemAdmin,
+				manageGroups: isSystemAdmin,
+			},
+			scopeRestriction: true,
+		};
+
+		onSave(sanitizedRole);
 		onOpenChange(false);
 	};
 
 	const togglePermission = (
 		permission: keyof Omit<RolePermissions, "fields">,
 	) => {
-		const newValue = !editedRole.permissions[permission];
-		const scopeRelevantPermissions = [
-			"manageUsers",
-			"manageGroups",
-			"createInstitution",
-			"changeStatus",
-			"deleteInstitution",
-			"publishInstitution",
-		];
-
-		const isFirstScopePermission =
-			scopeRelevantPermissions.includes(permission) &&
-			newValue &&
-			!scopeRelevantPermissions.some(
-				(p) =>
-					p !== permission &&
-					editedRole.permissions[p as keyof Omit<RolePermissions, "fields">],
-			);
+		if (isSystemAdmin) return;
 
 		setEditedRole({
 			...editedRole,
 			permissions: {
 				...editedRole.permissions,
-				[permission]: newValue,
+				[permission]: !editedRole.permissions[permission],
 			},
-			scopeRestriction: isFirstScopePermission
-				? true
-				: editedRole.scopeRestriction,
 		});
 	};
 
@@ -115,14 +109,6 @@ export function RoleEditModal({
 			},
 		});
 	};
-
-	const showScopeRestriction =
-		editedRole.permissions.manageUsers ||
-		editedRole.permissions.manageGroups ||
-		editedRole.permissions.createInstitution ||
-		editedRole.permissions.changeStatus ||
-		editedRole.permissions.deleteInstitution ||
-		editedRole.permissions.publishInstitution;
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
@@ -170,6 +156,7 @@ export function RoleEditModal({
 								<Checkbox
 									id="createInstitution"
 									checked={editedRole.permissions.createInstitution}
+									disabled={isSystemAdmin}
 									onCheckedChange={() => togglePermission("createInstitution")}
 								/>
 								<label htmlFor="createInstitution" className="text-sm">
@@ -180,6 +167,7 @@ export function RoleEditModal({
 								<Checkbox
 									id="publishInstitution"
 									checked={editedRole.permissions.publishInstitution}
+									disabled={isSystemAdmin}
 									onCheckedChange={() => togglePermission("publishInstitution")}
 								/>
 								<label htmlFor="publishInstitution" className="text-sm">
@@ -190,6 +178,7 @@ export function RoleEditModal({
 								<Checkbox
 									id="changeStatus"
 									checked={editedRole.permissions.changeStatus}
+									disabled={isSystemAdmin}
 									onCheckedChange={() => togglePermission("changeStatus")}
 								/>
 								<label htmlFor="changeStatus" className="text-sm">
@@ -200,6 +189,7 @@ export function RoleEditModal({
 								<Checkbox
 									id="deleteInstitution"
 									checked={editedRole.permissions.deleteInstitution}
+									disabled={isSystemAdmin}
 									onCheckedChange={() => togglePermission("deleteInstitution")}
 								/>
 								<label htmlFor="deleteInstitution" className="text-sm">
@@ -209,70 +199,12 @@ export function RoleEditModal({
 						</div>
 					</div>
 
-					{/* Management Permissions */}
-					<div className="space-y-3 rounded-xs p-4 bg-muted/50">
-						<Label className="text-base font-semibold">
-							Verwaltungsberechtigungen
-						</Label>
-						<div className="grid grid-cols-2 gap-3">
-							<div className="flex items-center space-x-2">
-								<Checkbox
-									id="manageUsers"
-									checked={editedRole.permissions.manageUsers}
-									onCheckedChange={() => togglePermission("manageUsers")}
-								/>
-								<label htmlFor="manageUsers" className="text-sm">
-									Benutzer verwalten
-								</label>
-							</div>
-							<div className="flex items-center space-x-2">
-								<Checkbox
-									id="manageGroups"
-									checked={editedRole.permissions.manageGroups}
-									onCheckedChange={() => togglePermission("manageGroups")}
-								/>
-								<label htmlFor="manageGroups" className="text-sm">
-									Gruppen verwalten
-								</label>
-							</div>
-						</div>
-					</div>
-
-					{/* Scope Restriction */}
-					{showScopeRestriction && (
-						<div className="space-y-3 rounded-xs p-4 bg-muted/50">
-							<div className="flex items-center space-x-2">
-								<Checkbox
-									id="scopeRestriction"
-									checked={editedRole.scopeRestriction}
-									onCheckedChange={() =>
-										setEditedRole({
-											...editedRole,
-											scopeRestriction: !editedRole.scopeRestriction,
-										})
-									}
-								/>
-								<label htmlFor="scopeRestriction" className="text-sm">
-									<strong>Nur eigene Gruppe</strong> - Beschränkt alle
-									Berechtigungen auf die eigene(n) Gruppe(n) bzw. eigene
-									Institutionen. Ohne Gruppenzugehörigkeit gelten eigene
-									Institutionen als verwaltbar.
-								</label>
-							</div>
-							<p className="text-xs text-muted-foreground ml-6">
-								Wenn aktiviert, können Benutzer mit dieser Rolle nur Benutzer,
-								Gruppen und Institutionen innerhalb ihrer zugewiesenen Gruppe(n)
-								bzw. ihrer eigenen Institutionen verwalten. Ohne Gruppe gelten
-								nur die eigenen Institutionen.
-							</p>
-						</div>
-					)}
-
 					{/* Field Permissions */}
 					<FieldPermissionsTable
 						permissions={editedRole.permissions.fields}
 						onToggleField={toggleFieldPermission}
 						onSetAllFields={setAllFieldsPermission}
+						readOnly={isSystemAdmin}
 					/>
 				</div>
 
