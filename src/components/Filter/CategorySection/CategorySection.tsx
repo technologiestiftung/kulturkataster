@@ -74,7 +74,7 @@ export function CategorySection({
 		<Collapsible open={isOpen} onOpenChange={onToggle}>
 			<div className="flex items-center gap-2 justify-between w-full p-2 rounded">
 				<CollapsibleTrigger asChild>
-					<button className="flex items-center gap-2 w-full focus-visible:outline-interaction-dark focus:outline-interaction-dark">
+					<button className="flex items-center gap-2 w-full ">
 						{isOpen ? (
 							<ChevronUp size={16} aria-hidden="true" focusable="false" />
 						) : (

@@ -313,7 +313,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 							<div className="my-2">
 								<div className="flex justify-center">
 									<button
-										className="focus-visible:outline-interaction-dark focus:outline-interaction-dark"
+										className=""
 										onClick={handleLogoClick}
 										aria-label={t("kukaLogoButton")}
 									>
@@ -404,7 +404,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 											previousActiveItem && (
 												<button
 													onClick={handleBackToFilter}
-													className="body1 font-bold flex items-center gap-1 focus-visible:outline-interaction-dark focus:outline-interaction-dark"
+													className="body1 font-bold flex items-center gap-1 "
 													aria-label={t("menu.backToAriaLabel", {
 														title: t(previousActiveItem + ".title"),
 													})}
@@ -425,7 +425,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 									</div>
 								</div>
 								<button
-									className="focus-visible:outline-interaction-dark focus:outline-interaction-dark"
+									className=""
 									onClick={handleSidebarClose}
 									aria-label={t("closeSidebar")}
 								>
@@ -435,7 +435,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 						</SidebarHeader>
 						<SidebarContent className="flex-1 overflow-hidden">
 							<SidebarGroup className="px-0 h-full">
-								<SidebarGroupContent className="h-full overflow-auto">
+								<SidebarGroupContent className="h-full overflow-auto focus-visible:outline focus-visible:outline-2 focus-visible:outline-interaction-dark focus-visible:outline-offset-[-2px]">
 									<div className="min-h-full flex flex-col">
 										<div className="flex-1 h-full bg-neutral-10 md:bg-secondary">
 											{activeItem === "filter" && <FilterContent />}
@@ -486,7 +486,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			<div className="absolute md:hidden block z-[50] top-0 left-0">
 				<button
 					onClick={handleLogoClick}
-					className="flex flex-col items-center gap-1 p-2 focus-visible:outline-interaction-dark focus:outline-interaction-dark"
+					className="flex flex-col items-center gap-1 p-2 "
 					aria-label={t("kukaLogo")}
 				>
 					<KukaSmallLogo
