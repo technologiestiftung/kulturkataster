@@ -313,6 +313,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 							<div className="my-2">
 								<div className="flex justify-center">
 									<button
+										className="focus-visible:outline-interaction-dark focus:outline-interaction-dark"
 										onClick={handleLogoClick}
 										aria-label={t("kukaLogoButton")}
 									>
@@ -403,7 +404,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 											previousActiveItem && (
 												<button
 													onClick={handleBackToFilter}
-													className="body1 font-bold flex items-center gap-1"
+													className="body1 font-bold flex items-center gap-1 focus-visible:outline-interaction-dark focus:outline-interaction-dark"
 													aria-label={t("menu.backToAriaLabel", {
 														title: t(previousActiveItem + ".title"),
 													})}
@@ -424,6 +425,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 									</div>
 								</div>
 								<button
+									className="focus-visible:outline-interaction-dark focus:outline-interaction-dark"
 									onClick={handleSidebarClose}
 									aria-label={t("closeSidebar")}
 								>
@@ -484,7 +486,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			<div className="absolute md:hidden block z-[50] top-0 left-0">
 				<button
 					onClick={handleLogoClick}
-					className="flex flex-col items-center gap-1 p-2"
+					className="flex flex-col items-center gap-1 p-2 focus-visible:outline-interaction-dark focus:outline-interaction-dark"
 					aria-label={t("kukaLogo")}
 				>
 					<KukaSmallLogo
