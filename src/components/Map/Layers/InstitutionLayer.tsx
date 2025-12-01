@@ -73,21 +73,23 @@ interface InstitutionLayerProps {
 	minZoomForClustering?: number;
 	maxZoomForClustering?: number;
 	institutionsData: FeatureCollection<Geometry, GeoJsonProperties> | null;
-	proximityThreshold?: number;
 }
 
 const InstitutionLayer: FC<InstitutionLayerProps> = ({
 	zIndex = 10000,
-	distance = 350,
+	distance = 500,
 	minZoomForClustering = 0,
-	maxZoomForClustering = 7,
+	maxZoomForClustering = 8,
 	institutionsData,
-	proximityThreshold = 40,
 }) => {
+	const proximityThreshold = remToPx(4);
 	const map = useMapStore((state: MapStoreState) => state.map);
 	const config = useMapStore((state) => state.config);
 	const selectedInstitutionId = useInstitutionStore(
 		(state) => state.selectedInstitutionId,
+	);
+	const setSelectedInstitutionId = useInstitutionStore(
+		(state) => state.setSelectedInstitutionId,
 	);
 
 	const vectorLayerRef = useRef<VectorLayer<any> | null>(null);
@@ -138,11 +140,7 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 					singleFeature.set("has_overlapping", false);
 					offsetFeatures.push(singleFeature);
 				} else {
-					/* const offsetRadius = Math.max(
-						10,
-						Math.min(50, proximityThreshold * 0.8),
-					); */
-					const offsetRadius = remToPx(5);
+					const offsetRadius = proximityThreshold;
 					const angleStep = (2 * Math.PI) / group.length;
 					const centerCoords = (
 						group[0].getGeometry() as Point
@@ -295,7 +293,7 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 		(zoomLevel: number) => {
 			if (!shouldCluster(zoomLevel)) return 0;
 			const factor = Math.max(
-				0.3,
+				0.1,
 				(maxZoomForClustering - zoomLevel) /
 					(maxZoomForClustering - minZoomForClustering),
 			);
@@ -387,8 +385,10 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 		vectorLayer.set("name", "institutions");
 		vectorLayer.set("id", "institutions");
 
-		const handleZoomChange = () =>
+		const handleZoomChange = () => {
+			setSelectedInstitutionId(null);
 			updateLayerSource(map.getView().getZoom() ?? 6);
+		};
 
 		map.getView().on("change:resolution", handleZoomChange);
 
