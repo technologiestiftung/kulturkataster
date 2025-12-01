@@ -52,7 +52,7 @@ const Link = ({ link }: { link?: LinkProps }) => {
 		<a
 			href={link.href}
 			target={link.target || "_self"}
-			className="body2 text-primary-dark hover:text-primary underline" // replace: text-primary hover:text-primary-dark
+			className="body2 text-primary-dark hover:text-primary underline"
 		>
 			{link.text}
 		</a>
