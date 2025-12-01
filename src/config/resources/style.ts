@@ -5,10 +5,10 @@ const styleList = [
 			{
 				style: {
 					polygonStrokeWidth: 2,
-					polygonStrokeColor: [185, 38, 222, 1],
+					polygonStrokeColor: [98, 1, 224, 1],
 					labelField: "namgem",
 					labelFont: "bold 14px Arial",
-					labelFillColor: "#B926DE",
+					labelFillColor: "#555B54",
 					labelStrokeColor: "#fff",
 					labelStrokeWidth: 2,
 				},
@@ -21,10 +21,10 @@ const styleList = [
 			{
 				style: {
 					polygonStrokeWidth: 2,
-					polygonStrokeColor: [185, 38, 222, 1],
+					polygonStrokeColor: [98, 1, 224, 1],
 					labelField: "nam",
 					labelFont: "bold 12px Arial",
-					labelFillColor: "#B926DE",
+					labelFillColor: "#555B54",
 					labelStrokeColor: "#fff",
 					labelStrokeWidth: 2,
 				},
