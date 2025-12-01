@@ -90,7 +90,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	const { firstTimeUser, setFirstTimeUser, viewMode, setViewMode } =
 		useAppStore();
 
-	const filterCount = getFilterCount(filters);
+	const _filterCount = getFilterCount(filters);
 
 	useEffect(() => {
 		if (!isMobile && !firstTimeUser && !userHasClosedSidebar) {
