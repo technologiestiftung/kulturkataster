@@ -122,8 +122,7 @@ export function FieldPermissionsTable({
 										checked={permissions[field].requestChange}
 										disabled={readOnly}
 										onCheckedChange={() =>
-											!readOnly &&
-											onToggleField(field, "requestChange")
+											!readOnly && onToggleField(field, "requestChange")
 										}
 									/>
 								</TableCell>
@@ -132,8 +131,7 @@ export function FieldPermissionsTable({
 										checked={permissions[field].approveChange}
 										disabled={readOnly}
 										onCheckedChange={() =>
-											!readOnly &&
-											onToggleField(field, "approveChange")
+											!readOnly && onToggleField(field, "approveChange")
 										}
 									/>
 								</TableCell>

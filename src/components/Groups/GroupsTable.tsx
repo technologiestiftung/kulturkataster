@@ -118,7 +118,9 @@ export function GroupsTable() {
 							<StickyTableHead>Users</StickyTableHead>
 							<StickyTableHead>Institutions</StickyTableHead>
 							<StickyTableHead>Created</StickyTableHead>
-							<StickyActionsHead className="w-[120px]">Actions</StickyActionsHead>
+							<StickyActionsHead className="w-[120px]">
+								Actions
+							</StickyActionsHead>
 						</StickyTableRow>
 					</StickyTableHeader>
 					<StickyTableBody>
