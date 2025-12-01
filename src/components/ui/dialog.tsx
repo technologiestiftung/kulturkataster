@@ -4,9 +4,11 @@ import * as React from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { useRouter } from "next/navigation";
 import Close from "@/icons/close.svg";
+import BackIcon from "@/icons/chevron-left.svg";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
 import { useRestoreFocus } from "@/hooks/use-restore-focus";
+import { useModalStore } from "@/lib/store/modalStore";
 
 type DialogRootProps = React.ComponentProps<typeof DialogPrimitive.Root>;
 
@@ -55,17 +57,22 @@ function DialogContent({
 	children,
 	showCloseButton = true,
 	variant = "default",
+	hideBackIcon = false,
 	...props
 }: React.ComponentProps<typeof DialogPrimitive.Content> & {
 	showCloseButton?: boolean;
+	hideBackIcon?: boolean;
 	variant?:
 		| "default"
 		| "fullScreen"
 		| "fullScreenNoBottom"
+		| "fullScreenNoBottomDarkerBackground"
 		| "medium"
 		| "mobileMenu";
 }) {
 	const { t } = useTranslation("common");
+
+	const { modalHistory, backOnModal } = useModalStore();
 
 	const getVariantStyles = () => {
 		switch (variant) {
@@ -73,6 +80,8 @@ function DialogContent({
 				return "fixed z-[70] inset-0 m-[8rem]";
 			case "fullScreenNoBottom":
 				return "fixed z-[70] top-0 md:top-[5rem] left-1/2 w-full max-w-314 h-full md:h-[calc(100%-5rem)] -translate-x-1/2 overflow-auto md:rounded-t-lg border";
+			case "fullScreenNoBottomDarkerBackground":
+				return "fixed z-[70] top-0 md:top-[5rem] left-1/2 w-full max-w-314 h-full md:h-[calc(100%-5rem)] -translate-x-1/2 overflow-auto md:rounded-t-lg border bg-neutral-10";
 			case "medium":
 				return "fixed z-[70] top-0 md:top-1/2 left-1/2 w-full max-w-314 h-full md:h-auto md:max-h-[calc(100%-5rem)] -translate-x-1/2 md:-translate-y-1/2 md:rounded-lg border flex flex-col";
 			case "mobileMenu":
@@ -96,6 +105,16 @@ function DialogContent({
 				aria-describedby={undefined}
 				{...props}
 			>
+				{!hideBackIcon && modalHistory.length > 1 && (
+					<div
+						onClick={backOnModal}
+						data-slot="dialog-back"
+						className="ring-offset-background focus:ring-ring data-[state=open]:bg-accent data-[state=open]:text-muted-foreground fixed top-12 left-12 z-[80] rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-6 cursor-pointer"
+					>
+						<BackIcon className="size-6" />
+						<span className="sr-only">{t("back")}</span>
+					</div>
+				)}
 				{showCloseButton && (
 					<DialogPrimitive.Close
 						data-slot="dialog-close"

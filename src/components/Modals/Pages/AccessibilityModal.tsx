@@ -210,6 +210,7 @@ export function AccessibilityModal({
 			title={t("accessibilityModal.title")}
 			subtitle={t("accessibilityModal.subtitle")}
 			content={content}
+			hideLinksInModalFooter={["accessibility"]}
 		/>
 	);
 }

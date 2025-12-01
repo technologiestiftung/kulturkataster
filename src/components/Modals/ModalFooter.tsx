@@ -8,6 +8,10 @@ import KukaSmallLogo from "@/logos/kuka-small.svg";
 import SenateLogo from "@/logos/senate.svg";
 import { useTranslation } from "react-i18next";
 
+interface ModalFooterProps {
+	hideLinks?: string[];
+}
+
 const footerItems = [
 	{ id: "about" },
 	{ id: "imprint" },
@@ -17,7 +21,7 @@ const footerItems = [
 	{ id: "signLanguageInformationShort" },
 ] as const;
 
-export function ModalFooter() {
+export function ModalFooter({ hideLinks }: ModalFooterProps) {
 	const { t } = useTranslation("common");
 	const { handleFooterItemClick } = useModalStore();
 	const isMobile = useIsMobile();
@@ -62,17 +66,19 @@ export function ModalFooter() {
 								</a>
 							</div>
 							<div className="flex flex-col md:flex-row gap-2 md:gap-4 mt-16 font-bold flex-wrap">
-								{footerItems.map((item) => (
-									<button
-										className="body2 font-bold w-fit "
-										key={item.id}
-										onClick={() => handleFooterItemClick(item.id)}
-									>
-										{item.id === "signLanguageInformationShort" && isMobile
-											? t(`footer.signLanguageInformation`)
-											: t(`footer.${item.id}`)}
-									</button>
-								))}
+								{footerItems
+									.filter((footerItem) => !hideLinks?.includes(footerItem.id))
+									.map((item) => (
+										<button
+											className="body2 font-bold w-fit "
+											key={item.id}
+											onClick={() => handleFooterItemClick(item.id)}
+										>
+											{item.id === "signLanguageInformationShort" && isMobile
+												? t(`footer.signLanguageInformation`)
+												: t(`footer.${item.id}`)}
+										</button>
+									))}
 							</div>
 						</div>
 					</div>
