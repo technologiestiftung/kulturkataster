@@ -140,7 +140,7 @@ export function WelcomeModal({ open, onOpenChange }: WelcomeModalProps) {
 							{footerItems.map((item) => (
 								<li key={item.id}>
 									<button
-										className="body2 font-bold"
+										className="body2 font-bold focus-visible:outline-interaction-dark focus:outline-interaction-dark"
 										onClick={() => handleFooterItemClickWelcomeModal(item.id)}
 									>
 										{t(`footer.${item.id}`)}

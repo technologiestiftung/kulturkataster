@@ -64,7 +64,7 @@ export function ModalFooter() {
 							<div className="flex flex-col md:flex-row gap-2 md:gap-4 mt-16 font-bold flex-wrap">
 								{footerItems.map((item) => (
 									<button
-										className="body2 font-bold w-fit"
+										className="body2 font-bold w-fit focus-visible:outline-interaction-dark focus:outline-interaction-dark"
 										key={item.id}
 										onClick={() => handleFooterItemClick(item.id)}
 									>

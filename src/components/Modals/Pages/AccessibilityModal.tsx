@@ -50,7 +50,7 @@ export function AccessibilityModal({
 							link: (
 								<button
 									type="button"
-									className="text-primary-dark hover:text-primary underline bg-transparent border-none p-0 cursor-pointer"
+									className="text-primary-dark hover:text-primary underline bg-transparent border-none p-0 cursor-pointer focus-visible:outline-interaction-dark focus:outline-interaction-dark"
 									onClick={() => {
 										handleFooterItemClick("simpleLanguageInformation");
 									}}
@@ -69,7 +69,7 @@ export function AccessibilityModal({
 							link: (
 								<button
 									type="button"
-									className="text-primary-dark hover:text-primary underline bg-transparent border-none p-0 cursor-pointer"
+									className="text-primary-dark hover:text-primary underline bg-transparent border-none p-0 cursor-pointer focus-visible:outline-interaction-dark focus:outline-interaction-dark"
 									onClick={() => {
 										handleFooterItemClick("signLanguageInformation");
 									}}
