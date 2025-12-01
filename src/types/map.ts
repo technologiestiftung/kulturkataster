@@ -88,6 +88,7 @@ export interface LayerService {
 	preview?: {
 		src: string;
 	};
+	styleId?: string;
 }
 
 export interface VectorTileStyle {

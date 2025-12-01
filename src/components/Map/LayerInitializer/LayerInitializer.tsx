@@ -2,6 +2,7 @@
 "use client";
 
 import { useMapStore } from "@/lib/store/mapStore";
+import { applyStyleToLayer } from "@/lib/utils/mapStyleUtils";
 import { getEpsgFromCrs } from "@/lib/utils/mapUtils";
 import { LayerElement, LayerService, ManagedLayer } from "@/types";
 import { applyStyle } from "ol-mapbox-style";
@@ -214,8 +215,22 @@ const LayerInitializer: FC = () => {
 					strategy: bboxStrategy,
 				});
 
+				const vectorLayer = new VectorLayer({ source: vectorSource });
+
+				if (serviceConfig.styleId) {
+					const styleApplied = applyStyleToLayer(
+						vectorLayer,
+						serviceConfig.styleId,
+					);
+					if (!styleApplied) {
+						console.warn(
+							`Failed to apply style "${serviceConfig.styleId}" to layer`,
+						);
+					}
+				}
+
 				return {
-					layer: new VectorLayer({ source: vectorSource }),
+					layer: vectorLayer,
 					status: "loaded",
 				};
 			} catch (error) {
