@@ -40,7 +40,7 @@ const Footer: FC<FooterProps> = ({ ariaLabel }) => {
 					{footerItems.map((item) => (
 						<li key={item.id}>
 							<button
-								className="body2 font-bold focus-visible:outline-interaction-dark focus:outline-interaction-dark"
+								className="body2 font-bold "
 								onClick={() => handleFooterItemClick(item.id)}
 							>
 								{t(`footer.${item.id}`)}
