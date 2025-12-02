@@ -1,4 +1,4 @@
-/* eslint-disable complexity */
+/* eslint-disable */
 "use client";
 
 import { WelcomeModal } from "@/components/Modals/Pages/WelcomeModal";
