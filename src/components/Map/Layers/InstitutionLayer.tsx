@@ -73,6 +73,7 @@ interface InstitutionLayerProps {
 	minZoomForClustering?: number;
 	maxZoomForClustering?: number;
 	institutionsData: FeatureCollection<Geometry, GeoJsonProperties> | null;
+	proximityThreshold?: number;
 }
 
 const InstitutionLayer: FC<InstitutionLayerProps> = ({
@@ -81,15 +82,13 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 	minZoomForClustering = 0,
 	maxZoomForClustering = 8,
 	institutionsData,
+	proximityThreshold = 40,
 }) => {
-	const proximityThreshold = remToPx(4);
+	const fixedProximityThreshold = remToPx(3.5);
 	const map = useMapStore((state: MapStoreState) => state.map);
 	const config = useMapStore((state) => state.config);
 	const selectedInstitutionId = useInstitutionStore(
 		(state) => state.selectedInstitutionId,
-	);
-	const setSelectedInstitutionId = useInstitutionStore(
-		(state) => state.setSelectedInstitutionId,
 	);
 
 	const vectorLayerRef = useRef<VectorLayer<any> | null>(null);
@@ -140,7 +139,10 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 					singleFeature.set("has_overlapping", false);
 					offsetFeatures.push(singleFeature);
 				} else {
-					const offsetRadius = proximityThreshold;
+					const usedFixed = false;
+					const offsetRadius = usedFixed
+						? fixedProximityThreshold
+						: Math.max(10, Math.min(50, proximityThreshold * 0.8));
 					const angleStep = (2 * Math.PI) / group.length;
 					const centerCoords = (
 						group[0].getGeometry() as Point
@@ -385,10 +387,8 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 		vectorLayer.set("name", "institutions");
 		vectorLayer.set("id", "institutions");
 
-		const handleZoomChange = () => {
-			setSelectedInstitutionId(null);
+		const handleZoomChange = () =>
 			updateLayerSource(map.getView().getZoom() ?? 6);
-		};
 
 		map.getView().on("change:resolution", handleZoomChange);
 
