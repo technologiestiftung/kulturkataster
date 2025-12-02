@@ -186,9 +186,6 @@
 	button {
 		@apply cursor-pointer;
 	}
-	button:not([role="checkbox"]) {
-		@apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-interaction-dark focus-visible:ring-offset-2 focus-visible:ring-offset-white rounded;
-	}
 }
 
 @layer utilities {
@@ -198,7 +195,8 @@
 	.break-anywhere {
 		overflow-wrap: anywhere;
 	}
-	.tab-ring:not([role="checkbox"]) {
+	button:not([role="checkbox"]):not([role="switch"]),
+	.tab-ring:not([role="checkbox"]):not([role="switch"]) {
 		@apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-interaction-dark focus-visible:ring-offset-2 focus-visible:ring-offset-white rounded;
 	}
 }

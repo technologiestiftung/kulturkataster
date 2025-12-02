@@ -92,6 +92,15 @@ function DialogContent({
 		}
 	};
 
+	const backAndCloseClassNames = (type: "back" | "close") => {
+		return cn(
+			// "data-[state=open]:bg-accent data-[state=open]:text-muted-foreground"
+			"ring-offset-background focus:ring-ring fixed top-12 z-[80] rounded-xs transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-6",
+			type === "back" ? "left-6 md:left-12" : "right-6 md:right-12",
+			"opacity-100 md:opacity-70 bg-white contrast:bg-background md:bg-transparent",
+		);
+	};
+
 	return (
 		<DialogPortal data-slot="dialog-portal">
 			<DialogOverlay />
@@ -103,22 +112,24 @@ function DialogContent({
 					className,
 				)}
 				aria-describedby={undefined}
+				onOpenAutoFocus={(event) => {
+					event.preventDefault();
+				}}
 				{...props}
 			>
 				{!hideBackIcon && modalHistory.length > 1 && (
-					<div
+					<button
 						onClick={backOnModal}
-						data-slot="dialog-back"
-						className="ring-offset-background focus:ring-ring data-[state=open]:bg-accent data-[state=open]:text-muted-foreground fixed top-12 left-12 z-[80] rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-6 cursor-pointer"
+						className={backAndCloseClassNames("back")}
 					>
 						<BackIcon className="size-6" />
 						<span className="sr-only">{t("back")}</span>
-					</div>
+					</button>
 				)}
 				{showCloseButton && (
 					<DialogPrimitive.Close
 						data-slot="dialog-close"
-						className="ring-offset-background focus:ring-ring data-[state=open]:bg-accent data-[state=open]:text-muted-foreground fixed top-12 right-12 z-[80] rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-6"
+						className={backAndCloseClassNames("close")}
 					>
 						<Close className="size-6" />
 						<span className="sr-only">{t("close")}</span>
