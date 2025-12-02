@@ -36,7 +36,7 @@ export function PageModal({
 				className="flex flex-col gap-4 items-start space-y-4"
 				hideBackIcon={hideBackIcon}
 			>
-				<div className="flex flex-col w-full space-y-4 mt-8 p-6 md:p-32">
+				<div className="flex flex-col w-full space-y-4 mt-16 md:mt-8 p-6 md:p-32">
 					<DialogTitle className="display">{title}</DialogTitle>
 					{subtitle && <h2 className="body1">{subtitle}</h2>}
 					<div className="space-y-4 flex-1">
