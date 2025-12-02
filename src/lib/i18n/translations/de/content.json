@@ -233,7 +233,7 @@
 	},
 	"accessibilitySettingsModal": {
 		"title": "Einstellungen zur Barrierefreiheit",
-		"subtitle": "Hier finden Sie alle Einstellungen rund um die Barrierefreiheit auf der Seite."
+		"subtitle": "Hier finden Sie alle Einstellungen rund um die Barrierefreiheit auf der Webseite."
 	},
 	"downloadModal": {
 		"chooseFormat": "Dateiformat wählen",
