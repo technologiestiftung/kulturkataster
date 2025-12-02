@@ -1,4 +1,3 @@
-/* eslint-disable complexity */
 "use client";
 
 import TextBlock from "@/components/Content/TextBlock";
@@ -7,18 +6,9 @@ import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useTranslation } from "react-i18next";
 import { PageModal } from "../PageModal";
 import { DialogTitle } from "@/components/ui/dialog";
-
-const lineBreaks = {
-	about: [
-		2, 5, 9, 13, 16, 19, 23, 26, 32, 35, 39, 42, 45, 48, 53, 57, 60, 63, 69, 77,
-		84, 86, 89, 92,
-	],
-	infosAndServices: [
-		3, 8, 12, 17, 18, 22, 26, 27, 31, 36, 37, 41, 45, 49, 51, 54, 57, 60, 64,
-		66, 70, 74, 75, 80, 85, 88, 90, 91, 93, 96, 100, 103, 107, 111, 113, 116,
-		120, 124, 126, 130, 133, 137, 139, 140, 144, 146, 149, 153, 154, 159, 160,
-	],
-};
+import keyOrder from "@/lib/utils/keyOrderSimpleLanguage.json";
+import React from "react";
+import { cn } from "@/lib/utils";
 
 interface SimpleLanguageInformationModalProps {
 	open: boolean;
@@ -43,12 +33,10 @@ function hasContent(value: unknown): value is { content: string[] } {
 
 const RenderContent = ({
 	keyValue,
-	lineBreakAfterTextKeys,
 	type,
 	t,
 }: {
 	keyValue: string;
-	lineBreakAfterTextKeys: number[];
 	type: "about" | "infosAndServices";
 	t: (key: string, options?: Record<string, unknown>) => string;
 }) => {
@@ -56,16 +44,27 @@ const RenderContent = ({
 		(state) => state.allInstitutions,
 	);
 	const institutionCount = originalInstitutions?.features?.length ?? 2.382;
-	let lineBreak = false;
-	if (keyValue.includes("text") && !keyValue.includes("Bold")) {
-		const keyIndex = +keyValue.replace("text", "");
-		lineBreak = lineBreakAfterTextKeys.includes(keyIndex);
-	}
 	const translation = t(`simpleLanguageInformation.${type}.${keyValue}`, {
 		returnObjects: true,
 	});
+	const sortByTitleKeys = (
+		[aKey]: [string, unknown],
+		[bKey]: [string, unknown],
+	) => {
+		const order: Record<string, number> = {
+			titleBold: 0,
+			title1: 1,
+			title2: 2,
+			title: 3,
+		};
+
+		const aOrder = order[aKey] ?? 999;
+		const bOrder = order[bKey] ?? 999;
+
+		return aOrder - bOrder;
+	};
 	return (
-		<div className={lineBreak ? "mb-8" : ""}>
+		<div>
 			{keyValue.startsWith("text") && (
 				<TextWithLinks
 					text={translation}
@@ -77,16 +76,18 @@ const RenderContent = ({
 			)}
 			{keyValue.startsWith("list") && hasContent(translation) && (
 				<div className="mt-8">
-					{Object.entries(translation).map(([innerKey, innerValue]) => (
-						<div key={innerKey}>
-							{innerKey.startsWith("title") && (
-								<TextWithLinks
-									text={innerValue as string}
-									textVariant={`body1 whitespace-pre-line ${innerKey.includes("Bold") ? "font-bold" : ""}`}
-								/>
-							)}
-						</div>
-					))}
+					{Object.entries(translation)
+						.sort(sortByTitleKeys)
+						.map(([innerKey, innerValue]) => (
+							<div key={innerKey}>
+								{innerKey.startsWith("title") && (
+									<TextWithLinks
+										text={innerValue as string}
+										textVariant={`body1 whitespace-pre-line ${innerKey.includes("Bold") ? "font-bold" : ""}`}
+									/>
+								)}
+							</div>
+						))}
 					<ul className="list-disc pl-5 body1 space-y-1 mt-1 mb-8">
 						{translation.content.map((line, i) => (
 							<li key={i}>
@@ -122,31 +123,41 @@ export function SimpleLanguageInformationModal({
 
 	const simpleLanguageInformationContent = (
 		<>
-			<DialogTitle className="display text-center md:text-left mb-10">
-				{about.title as string}
-			</DialogTitle>
-			{Object.entries(about).map(([key, _]) => (
-				<RenderContent
-					key={key}
-					keyValue={key}
-					lineBreakAfterTextKeys={lineBreaks.about}
-					type="about"
-					t={t}
-				/>
-			))}
-			<div id="infosAndServices" />
-			<DialogTitle className="display text-center md:text-left my-10">
-				{infosAndServices.title as string}
-			</DialogTitle>
-			{Object.entries(infosAndServices).map(([key, _]) => (
-				<RenderContent
-					key={key}
-					keyValue={key}
-					lineBreakAfterTextKeys={lineBreaks.infosAndServices}
-					type="infosAndServices"
-					t={t}
-				/>
-			))}
+			{["about", "infosAndServices"].map((currentKey, index) => {
+				const current = currentKey === "about" ? about : infosAndServices;
+				const currentKeyOrder =
+					currentKey === "about" ? keyOrder.about : keyOrder.infosAndServices;
+				return (
+					<React.Fragment key={index}>
+						{currentKey === "infosAndServices" && <div id="infosAndServices" />}
+						<DialogTitle
+							className={cn(
+								"display text-center md:text-left",
+								currentKey === "about" ? "mb-10" : "my-10",
+							)}
+						>
+							{current.title as string}
+						</DialogTitle>
+						{currentKeyOrder.map((orderKey, currentKeyOrderIndex) => {
+							if (orderKey === "break") {
+								return (
+									<React.Fragment key={`${currentKey}_${currentKeyOrderIndex}`}>
+										<div className="h-8" />
+									</React.Fragment>
+								);
+							}
+							return (
+								<RenderContent
+									key={orderKey}
+									keyValue={orderKey}
+									type={currentKey as "about" | "infosAndServices"}
+									t={t}
+								/>
+							);
+						})}
+					</React.Fragment>
+				);
+			})}
 		</>
 	);
 
