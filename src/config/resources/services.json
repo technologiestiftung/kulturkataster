@@ -130,7 +130,7 @@
 		"typ": "WMS",
 		"gfiAttributes": "showAll",
 		"layers": "a_bp_iv",
-		"legend": "/resources/legends/Legende-Bebauung-Verfahren.svg",
+		"legend": true,
 		"datasets": [
 			{
 				"md_name": "Bebauungsplanverfahren in Berlin",
@@ -161,7 +161,7 @@
 		"typ": "WMS",
 		"gfiAttributes": "showAll",
 		"layers": "b_bp_fs",
-		"legend": "/resources/legends/Legende-Bebauung-festgesetzt.svg",
+		"legend": true,
 		"datasets": [
 			{
 				"md_name": "Bebauungsplanverfahren in Berlin",
@@ -192,7 +192,7 @@
 		"typ": "WMS",
 		"gfiAttributes": "showAll",
 		"layers": "c_bp_ak",
-		"legend": "/resources/legends/Legende-Bebauung-ausser-Kraft.svg",
+		"legend": true,
 		"datasets": [
 			{
 				"md_name": "Bebauungsplanverfahren in Berlin",
@@ -307,7 +307,7 @@
 		"typ": "WMS",
 		"gfiAttributes": "showAll",
 		"layers": "bezirksgrenzen",
-		"legend": "/resources/legends/Legende-Bezirksgrenze.svg",
+		"legend": true,
 		"datasets": [
 			{
 				"md_name": "ALKIS Berlin Bezirke",
@@ -338,7 +338,7 @@
 		"typ": "WMS",
 		"gfiAttributes": "showAll",
 		"layers": "ortsteile",
-		"legend": "/resources/legends/Legende-Ortsteile.svg",
+		"legend": true,
 		"datasets": [
 			{
 				"md_name": "ALKIS Berlin Ortsteile",
@@ -453,7 +453,7 @@
 		"typ": "WMS",
 		"gfiAttributes": "showAll",
 		"layers": "a_lor_plr_2021",
-		"legend": "/resources/legends/Legende-Planungsraum.svg",
+		"legend": true,
 		"datasets": [
 			{
 				"md_name": "Lebensweltlich orientierte Räume (LOR) (01.01.2021)",
@@ -484,7 +484,7 @@
 		"typ": "WMS",
 		"gfiAttributes": "showAll",
 		"layers": "b_lor_bzr_2021",
-		"legend": "/resources/legends/Legende-Bezirksregion.svg",
+		"legend": true,
 		"datasets": [
 			{
 				"md_name": "Lebensweltlich orientierte Räume (LOR) (01.01.2021)",
@@ -515,7 +515,7 @@
 		"typ": "WMS",
 		"gfiAttributes": "showAll",
 		"layers": "c_lor_pgr_2021",
-		"legend": "/resources/legends/Legende-Prognoseraum.svg",
+		"legend": true,
 		"datasets": [
 			{
 				"md_name": "Lebensweltlich orientierte Räume (LOR) (01.01.2021)",
@@ -546,7 +546,7 @@
 		"typ": "WMS",
 		"gfiAttributes": "showAll",
 		"layers": "gemeinschaftsinitiative",
-		"legend": "/resources/legends/Legende-Quartiere.svg",
+		"legend": true,
 		"datasets": [
 			{
 				"md_name": "Ressortübergreifende Gemeinschaftsinitiative zur Stärkung sozial benachteiligter Quartiere",
@@ -703,7 +703,7 @@
 		"typ": "WMS",
 		"gfiAttributes": "showAll",
 		"layers": "einwohnerdichte2022",
-		"legend": "/resources/legends/Legende-Einwohnerdichte.svg",
+		"legend": true,
 		"datasets": [
 			{
 				"md_name": "Einwohnerdichte 2022 (Umweltatlas)",
@@ -734,7 +734,7 @@
 		"typ": "WMS",
 		"gfiAttributes": "showAll",
 		"layers": "einwohnerdichte2022_entw",
-		"legend": "/resources/legends/Legende-Einwohnerentwicklung.svg",
+		"legend": true,
 		"datasets": [
 			{
 				"md_name": "Einwohnerdichte 2022 (Umweltatlas)",
@@ -765,7 +765,7 @@
 		"typ": "WMS",
 		"gfiAttributes": "showAll",
 		"layers": "einwohnerdichte2023",
-		"legend": "/resources/legends/Legende-Einwohnerdichte.svg",
+		"legend": true,
 		"datasets": [
 			{
 				"md_name": "Einwohnerdichte 2023 (Umweltatlas)",
@@ -796,7 +796,7 @@
 		"typ": "WMS",
 		"gfiAttributes": "showAll",
 		"layers": "einwohnerdichte2023_entw",
-		"legend": "/resources/legends/Legende-Einwohnerentwicklung.svg",
+		"legend": true,
 		"datasets": [
 			{
 				"md_name": "Einwohnerdichte 2023 (Umweltatlas)",
@@ -827,7 +827,7 @@
 		"typ": "WMS",
 		"gfiAttributes": "showAll",
 		"layers": "ua_einwohnerdichte_2024",
-		"legend": "/resources/legends/Legende-Einwohnerdichte.svg",
+		"legend": true,
 		"datasets": [
 			{
 				"md_name": "Einwohnerdichte 2024 (Umweltatlas)",
@@ -858,7 +858,7 @@
 		"typ": "WMS",
 		"gfiAttributes": "showAll",
 		"layers": "ua_einwohnerdichte_2024_entw",
-		"legend": "/resources/legends/Legende-Einwohnerentwicklung.svg",
+		"legend": true,
 		"datasets": [
 			{
 				"md_name": "Einwohnerdichte 2024 (Umweltatlas)",
@@ -889,7 +889,7 @@
 		"typ": "WMS",
 		"gfiAttributes": "showAll",
 		"layers": "bc_mss2023_i_sdi",
-		"legend": "/resources/legends/Legende-Soziale-Stadtentwicklung.svg",
+		"legend": true,
 		"datasets": [
 			{
 				"md_name": "Monitoring Soziale Stadtentwicklung (MSS) 2023",
