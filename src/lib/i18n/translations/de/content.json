@@ -225,7 +225,10 @@
 			"description": "Die nachstehend aufgeführten Bereiche sind aus folgenden Gründen nicht barrierefrei:",
 			"list_intro": "Teilbereiche, die nicht barrierefrei sind:",
 			"subheading": "Unvereinbarkeit mit BITV 2.0",
-			"title": "Welche Bereiche sind nicht barrierefrei?"
+			"title": "Welche Bereiche sind nicht barrierefrei?",
+			"descriptionLabel": "Beschreibung",
+			"measuresLabel": "Maßnahmen",
+			"timelineLabel": "Zeitraum"
 		}
 	},
 	"downloadModal": {

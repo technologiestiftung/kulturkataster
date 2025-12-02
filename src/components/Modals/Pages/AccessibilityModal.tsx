@@ -118,16 +118,20 @@ export function AccessibilityModal({
 							<div className="body2 space-y-2">
 								<p className="body2">
 									<strong>
-										{t("accessibilityModal.which.descriptionLabel")}
+										{t("accessibilityModal.which.descriptionLabel")}:
 									</strong>{" "}
 									{barrier.description}
 								</p>
 								<p>
-									<strong>{t("accessibilityModal.which.measuresLabel")}</strong>{" "}
+									<strong>
+										{t("accessibilityModal.which.measuresLabel")}:
+									</strong>{" "}
 									{barrier.measures}
 								</p>
 								<p>
-									<strong>{t("accessibilityModal.which.timelineLabel")}</strong>{" "}
+									<strong>
+										{t("accessibilityModal.which.timelineLabel")}:
+									</strong>{" "}
 									{barrier.timeline}
 								</p>
 							</div>
