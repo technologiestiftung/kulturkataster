@@ -26,7 +26,6 @@ export function ModalProvider() {
 		downloadModalMode,
 		mobileMenuModalOpen,
 		signLanguageModalOpen,
-		modalHistory,
 		clearModalHistory,
 		setAboutModalOpen,
 		setPrivacyModalOpen,
@@ -41,10 +40,6 @@ export function ModalProvider() {
 	} = useModalStore();
 
 	useEffect(() => {
-		console.log("modal open changed:", modalHistory);
-	}, [modalHistory]);
-
-	useEffect(() => {
 		if (
 			!aboutModalOpen &&
 			!privacyModalOpen &&
@@ -56,7 +51,6 @@ export function ModalProvider() {
 			!mobileMenuModalOpen &&
 			!signLanguageModalOpen
 		) {
-			console.log("clearModalHistory");
 			clearModalHistory();
 		}
 	}, [
