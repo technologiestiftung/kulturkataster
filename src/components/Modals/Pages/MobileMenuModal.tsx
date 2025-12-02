@@ -32,7 +32,7 @@ const footerItems = [
 
 export function MobileMenuModal({ open, onOpenChange }: MobileMenuModalProps) {
 	const { t } = useTranslation("common");
-	const { handleFooterItemClick } = useModalStore();
+	const { handleFooterItemClick, openModal } = useModalStore();
 	const { setFirstTimeUser, setViewMode } = useAppStore();
 
 	const handleFooterClick = (itemId: string) => {
@@ -44,13 +44,6 @@ export function MobileMenuModal({ open, onOpenChange }: MobileMenuModalProps) {
 
 	const handleLogoClick = () => {
 		setFirstTimeUser(true);
-	};
-
-	const handleWelcomeModalOpen = () => {
-		onOpenChange(false);
-		setTimeout(() => {
-			setFirstTimeUser(true);
-		}, 100);
 	};
 
 	return (
@@ -101,7 +94,10 @@ export function MobileMenuModal({ open, onOpenChange }: MobileMenuModalProps) {
 								key="information"
 								icon={InfoCircle}
 								titleKey="information.title"
-								onClick={handleWelcomeModalOpen}
+								onClick={() => {
+									onOpenChange(false);
+									openModal("information");
+								}}
 							/>
 							<div className="space-y-4 flex flex-col">
 								<span className="body2">{t("accessibility.title")}</span>
