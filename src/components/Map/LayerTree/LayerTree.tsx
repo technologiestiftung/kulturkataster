@@ -228,8 +228,14 @@ const LayerItem = memo<{
 			<AccordionContent
 				ref={accordionContentRef}
 				className="px-3 pb-3 bg-neutral-10 rounded-b-sm"
+				role="group"
+				aria-label={t("map.legend.legendAriaLabels", {
+					serviceName,
+				})}
+				aria-labelledby={undefined}
+				aria-describedby={undefined}
 			>
-				<Legende id={layer.id} />
+				<Legende id={layer.id} serviceName={serviceName} />
 			</AccordionContent>
 		</AccordionItem>
 	);
