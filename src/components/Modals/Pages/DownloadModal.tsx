@@ -33,6 +33,7 @@ export function DownloadModal({ open, onOpenChange }: DownloadModalProps) {
 			content={content}
 			variant="medium"
 			hasFooter={false}
+			hideBackIcon
 		/>
 	);
 }

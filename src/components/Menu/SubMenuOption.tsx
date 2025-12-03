@@ -54,19 +54,26 @@ export function SubMenuOption({
 			onKeyDown={handleKeyDown}
 			tabIndex={hasSwitch ? undefined : 0}
 			role={hasSwitch ? undefined : "button"}
-			className="flex items-center justify-between gap-2 bg-background p-2 rounded-md h-20 hover:bg-background hover:shadow hover:text-accent-foreground cursor-pointer"
+			className="flex items-center justify-between gap-2 bg-background p-2 rounded-md h-20 hover:bg-background hover:shadow hover:text-accent-foreground cursor-pointer tab-ring"
 		>
 			<div className="flex items-center gap-2">
 				<Icon className="size-8" />
 				<span className="body2 font-bold">{displayLabel}</span>
 			</div>
 			{hasSwitch && (
-				<Switch
-					checked={switchChecked}
-					onCheckedChange={onSwitchChange}
-					onClick={(e) => e.stopPropagation()}
-					aria-label={t(titleKey)}
-				/>
+				<div className="flex items-center gap-1">
+					<Switch
+						checked={switchChecked}
+						onCheckedChange={onSwitchChange}
+						onClick={(e) => e.stopPropagation()}
+						aria-label={t(titleKey)}
+					/>
+					<p className="body2 font-bold min-w-[2rem]">
+						{switchChecked
+							? t("accessibility.switchOn")
+							: t("accessibility.switchOff")}
+					</p>
+				</div>
 			)}
 		</SidebarMenuItem>
 	);
