@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 const titles = {
 	yAxisLabel: "Status",
@@ -67,10 +68,12 @@ const ColumnHeader = () => {
 					!!columHead.index && "py-1 text-center",
 				);
 				if (!columHead.index) {
-					return <th key={columHead.key} className={columHeadClasses} />;
+					return (
+						<th key={columHead.key} className={columHeadClasses} scope="col" />
+					);
 				}
 				return (
-					<th key={columHead.key} className={columHeadClasses}>
+					<th key={columHead.key} className={columHeadClasses} scope="col">
 						<span className="font-normal text-[#000000]">
 							{columHead.label}
 							<br />
@@ -92,7 +95,7 @@ const TableRows = ({ index }: { index: number }) => {
 	}
 	return (
 		<tr>
-			<td className="py-3 text-right align-middle">
+			<td className="py-3 text-right align-middle" scope="row">
 				<div className="flex flex-col items-center leading-tight">
 					<span className="text-[#000000]">{findRow.label}</span>
 					<span className="font-bold text-[#000000]">{findRow.subLabel}</span>
@@ -120,6 +123,8 @@ const TableRows = ({ index }: { index: number }) => {
 };
 
 export default function GesamtIndexTabelle() {
+	const { t } = useTranslation("common");
+	const descriptionId = "gesamtindex-beschreibung";
 	return (
 		<div className="relative">
 			<div className="absolute transform rotate-[-90deg] -translate-x-[1rem] left-0 top-1/2 -translate-y-1/2">
@@ -128,8 +133,18 @@ export default function GesamtIndexTabelle() {
 			<div className="ml-[1.5rem] w-full text-center mb-1.5">
 				<span className="font-bold">{titles.yAxisLabel}</span>
 			</div>
+			<p id={descriptionId} className="sr-only">
+				{t("map.legend.legendGesamtIndexDecriptionSR", {
+					yAxisLabel: titles.yAxisLabel,
+					xAxisLabel: titles.xAxisLabel,
+				})}
+			</p>
 			<div className="inline-block rounded border border-[#E2DFDB] bg-white text-sm w-[calc(100%-1.5rem)] ml-[1.5rem]">
-				<table className="border-collapse table-fixed w-full">
+				<table
+					className="border-collapse table-fixed w-full"
+					aria-label={t("map.legend.legendGesamtIndexAriaLabel")}
+					aria-describedby={descriptionId}
+				>
 					<thead>
 						<ColumnHeader />
 					</thead>
