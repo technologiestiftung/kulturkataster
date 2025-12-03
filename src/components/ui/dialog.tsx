@@ -79,9 +79,8 @@ function DialogContent({
 			case "fullScreen":
 				return "fixed z-[70] inset-0 m-[8rem]";
 			case "fullScreenNoBottom":
-				return "fixed z-[70] top-0 md:top-[5rem] left-1/2 w-full max-w-314 h-full md:h-[calc(100%-5rem)] -translate-x-1/2 md:rounded-t-lg border";
 			case "fullScreenNoBottomDarkerBackground":
-				return "fixed z-[70] top-0 md:top-[5rem] left-1/2 w-full max-w-314 h-full md:h-[calc(100%-5rem)] -translate-x-1/2 md:rounded-t-lg border bg-neutral-10";
+				return "fixed z-[70] top-0 md:top-[5rem] left-1/2 w-full max-w-314 h-full md:h-[calc(100%-5rem)] -translate-x-1/2 md:rounded-t-lg border";
 			case "medium":
 				return "fixed z-[70] top-0 md:top-1/2 left-1/2 w-full max-w-314 h-full md:h-auto md:max-h-[calc(100%-5rem)] -translate-x-1/2 md:-translate-y-1/2 md:rounded-lg border flex flex-col";
 			case "mobileMenu":
@@ -108,6 +107,7 @@ function DialogContent({
 				className={cn(
 					"bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 z-50 shadow-lg duration-200 relative",
 					getVariantStyles(),
+					variant === "fullScreenNoBottomDarkerBackground" && "bg-neutral-10",
 					className,
 				)}
 				aria-describedby={undefined}
