@@ -54,7 +54,7 @@ export function SubMenuOption({
 			onKeyDown={handleKeyDown}
 			tabIndex={hasSwitch ? undefined : 0}
 			role={hasSwitch ? undefined : "button"}
-			className="flex items-center justify-between gap-2 bg-background p-2 rounded-md h-20 hover:bg-background hover:shadow hover:text-accent-foreground cursor-pointer"
+			className="flex items-center justify-between gap-2 bg-background p-2 rounded-md h-20 hover:bg-background hover:shadow hover:text-accent-foreground cursor-pointer tab-ring"
 		>
 			<div className="flex items-center gap-2">
 				<Icon className="size-8" />
