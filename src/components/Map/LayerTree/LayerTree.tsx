@@ -28,6 +28,7 @@ import {
 	useState,
 } from "react";
 import { useTranslation } from "react-i18next";
+import Legende from "./Legende";
 
 // Constants
 const LAYER_THUMBNAIL_SIZE = 80;
@@ -121,7 +122,6 @@ const LayerItem = memo<{
 	layer: ManagedLayer;
 }>(({ layer }) => {
 	const { t } = useTranslation("common");
-	const { isContrastMode } = useAppStore();
 	const setLayerVisibility = useMapStore((state) => state.setLayerVisibility);
 	const openLegendLayerId = useMapStore((state) => state.openLegendLayerId);
 	const setOpenLegendLayerId = useMapStore(
@@ -162,20 +162,6 @@ const LayerItem = memo<{
 		}
 	}, [openLegendLayerId, layer.id]);
 
-	const hasLegend =
-		layer.config.service.legend &&
-		typeof layer.config.service.legend === "string";
-
-	let setLegend = "";
-
-	if (hasLegend) {
-		const legend = layer.config.service.legend?.toString() ?? "";
-
-		setLegend = isContrastMode
-			? legend.replace("/legends/", "/legends-contrast/")
-			: legend;
-	}
-
 	const serviceName = layer.config.service.name;
 	const serviceNameLang = layer.config.service.name_lang;
 	const serviceNameMid = layer.config.service.name_mid;
@@ -194,7 +180,7 @@ const LayerItem = memo<{
 					<LayerThumbnail layer={layer} showOverlay />
 					<div className="flex flex-col">
 						<span
-							className={`body2 md:break-words break-all font-bold flex ${
+							className={`body2 font-bold flex ${
 								layer.visibility ? "text-interaction-dark" : ""
 							}`}
 						>
@@ -202,7 +188,7 @@ const LayerItem = memo<{
 						</span>
 						{serviceNameLang && (
 							<div
-								className={`body2 md:break-words hidden break-all ${layer.status === "error" ? "text-alert" : ""}`}
+								className={`body2 hidden ${layer.status === "error" ? "text-alert" : ""}`}
 							>
 								{layer.status === "error"
 									? "Fachkarte nicht verfügbar. Bitte versuchen Sie es später erneut."
@@ -233,29 +219,24 @@ const LayerItem = memo<{
 					</div>
 				</div>
 			</div>
-			{hasLegend && (
-				<>
-					<AccordionTrigger
-						className="px-3 py-2 rounded-none [&[data-state=closed]]:rounded-b-sm hover:no-underline flex justify-end items-center gap-2 [&>svg]:text-foreground bg-neutral-10"
-						aria-label={t("map.layerItemLegendAriaLabel", { serviceName })}
-					>
-						{t("map.lookAtLegend")}
-					</AccordionTrigger>
-					<AccordionContent
-						ref={accordionContentRef}
-						className="px-3 pb-3 bg-neutral-10 rounded-b-sm"
-					>
-						<Image
-							src={setLegend}
-							alt=""
-							width={300}
-							height={50}
-							className="h-auto w-full max-w-full rounded"
-							loading="lazy"
-						/>
-					</AccordionContent>
-				</>
-			)}
+			<AccordionTrigger
+				className="px-3 py-2 rounded-none [&[data-state=closed]]:rounded-b-sm hover:no-underline flex justify-end items-center gap-2 [&>svg]:text-foreground bg-neutral-10"
+				aria-label={t("map.layerItemLegendAriaLabel", { serviceName })}
+			>
+				{t("map.lookAtLegend")}
+			</AccordionTrigger>
+			<AccordionContent
+				ref={accordionContentRef}
+				className="px-3 pb-3 bg-neutral-10 rounded-b-sm"
+				role="group"
+				aria-label={t("map.legend.legendAriaLabels", {
+					serviceName,
+				})}
+				aria-labelledby={undefined}
+				aria-describedby={undefined}
+			>
+				<Legende id={layer.id} serviceName={serviceName} />
+			</AccordionContent>
 		</AccordionItem>
 	);
 });
