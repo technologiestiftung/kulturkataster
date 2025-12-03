@@ -69,7 +69,7 @@ export function MobileMenuModal({ open, onOpenChange }: MobileMenuModalProps) {
 						<Close className="w-6 h-6" />
 					</button>
 				</DialogHeader>
-				<div className="overflow-scroll">
+				<div className="overflow-scroll tab-ring">
 					<div className="flex flex-col justify-between flex-1">
 						<div className="flex-1 flex flex-col gap-4 p-4 overflow-auto mb-4">
 							<SubMenuOption
