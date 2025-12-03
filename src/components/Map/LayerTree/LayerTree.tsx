@@ -180,7 +180,7 @@ const LayerItem = memo<{
 					<LayerThumbnail layer={layer} showOverlay />
 					<div className="flex flex-col">
 						<span
-							className={`body2 md:break-words break-all font-bold flex ${
+							className={`body2 font-bold flex ${
 								layer.visibility ? "text-interaction-dark" : ""
 							}`}
 						>
@@ -188,7 +188,7 @@ const LayerItem = memo<{
 						</span>
 						{serviceNameLang && (
 							<div
-								className={`body2 md:break-words hidden break-all ${layer.status === "error" ? "text-alert" : ""}`}
+								className={`body2 hidden ${layer.status === "error" ? "text-alert" : ""}`}
 							>
 								{layer.status === "error"
 									? "Fachkarte nicht verfügbar. Bitte versuchen Sie es später erneut."
