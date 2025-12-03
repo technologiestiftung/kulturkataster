@@ -163,6 +163,13 @@
 	"loading": "Laden",
 	"mainContent": "Hauptinhalt",
 	"map": {
+		"legend": {
+			"legendAriaLabels": "Legende für die Fachkarte {{serviceName}}",
+			"legendValueAriaLabel": "Fachkarte {{serviceName}}, Legenden Eintrag {{label}}",
+			"legendValueWordingAriaLabel": "Fachkarte {{serviceName}}, Wert {{value}}, Legenden Eintrag {{label}}",
+			"legendGesamtIndexAriaLabel": "Tabelle in der Legende des Gesamtindex",
+			"legendGesamtIndexDecriptionSR": "Legende des Gesamtindex. Die Zeilen zeigen {{yAxisLabel}}, die Spalten {{xAxisLabel}}. Die farbigen Kreise enthalten die Indexwerte und die daneben stehenden Angaben die Spannweite."
+		},
 		"availableLayers": "Verfügbare Ebenen",
 		"closeLayerTree": "Fachkarten schließen",
 		"geolocate": "Meinen Standort finden",
