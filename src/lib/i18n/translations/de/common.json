@@ -23,7 +23,9 @@
 		"viewMode": {
 			"description": "Wechseln Sie zwischen der Kartenansicht und der Listenansicht, um die Kulturorte auf die für Sie angenehmste Weise zu erkunden.",
 			"title": "Listenansicht der Kulturorte"
-		}
+		},
+		"switchOn": "An",
+		"switchOff": "Aus"
 	},
 	"add": {
 		"description": "Fügen Sie einen neuen Kulturort hinzu, indem Sie das Formular ausfüllen. Wir prüfen Ihre Angaben und veröffentlichen den Ort nach Freigabe.",
@@ -31,6 +33,7 @@
 	},
 	"cancel": "Abbrechen",
 	"close": "Schließen",
+	"back": "Zurück",
 	"closeSidebar": "Seitenleiste schließen",
 	"confirm": "Bestätigen",
 	"delete": "Löschen",
@@ -84,7 +87,9 @@
 			"label": "Tel.",
 			"number": "+49 30 3030 444 60"
 		},
-		"title": "Kulturkataster Berlin"
+		"title": "Kulturkataster Berlin",
+		"navigationAriaLabel": "Fußzeilen-Navigation",
+		"welcomeModalLinkListAriaLabel": "Fußzeilen-Navigation der Willkommensansicht"
 	},
 	"footerLandmark": "Fußbereich",
 	"headerLandmark": "Seitennavigation",
@@ -146,6 +151,7 @@
 		"workspaceCount": "Anzahl der Arbeitsräume"
 	},
 	"kukaLogo": "Kulturkataster - Logo",
+	"kukaLogoButton": "Kulturkataster: Zur Einführung",
 	"listView": {
 		"institutionsListLabel": "Liste der Kulturorte",
 		"noResultsFound": "Keine Kulturorte gefunden :(",
@@ -166,11 +172,19 @@
 		"show": "Zur Kartenansicht",
 		"title": "Kartenansicht",
 		"zoomIn": "Vergrößern",
-		"zoomOut": "Verkleinern"
+		"zoomOut": "Verkleinern",
+		"layerTreeAriaLabel": "Fachkarten einblenden ({{visibleCount}} sichtbare Karten)",
+		"layerTreeVisibleCountAriaLabel": "{{visibleCount}} sichtbare Karten",
+		"radioGroupAriaLabel": "Ansicht",
+		"layerItemAriaLabel": "Sichtbarkeit von der Karte {{serviceName}} umschalten",
+		"layerItemLegendAriaLabel": "Kartenlegende für die Karte {{serviceName}} anzeigen",
+		"lookAtLegend": "Legende ansehen"
 	},
 	"menu": {
+		"navigation": "Hauptmenü",
 		"backTo": "Zurück zu {{page}}",
-		"navigation": "Hauptmenü"
+		"backToAriaLabel": "Zurück zu {{title}}",
+		"menuButtonBadge": "{{label}} - {{count}} Filter aktiv"
 	},
 	"mobileMenu": {
 		"title": "Mobile Menü"

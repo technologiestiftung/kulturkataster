@@ -65,6 +65,8 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	const [previousActiveItem, setPreviousActiveItem] = useState<string>("");
 	const [userHasClosedSidebar, setUserHasClosedSidebar] = useState(false);
 	const {
+		welcomeModalOpen,
+		closeAllModals,
 		setInformationModalOpen,
 		setDownloadModalOpen,
 		setDownloadModalMode,
@@ -200,6 +202,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
 	const handleWelcomeModalClose = () => {
 		setFirstTimeUser(false);
+		closeAllModals();
 	};
 
 	const handleSidebarClose = () => {
@@ -296,7 +299,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	return (
 		<>
 			<WelcomeModal
-				open={firstTimeUser}
+				open={firstTimeUser || welcomeModalOpen}
 				onOpenChange={handleWelcomeModalClose}
 			/>
 			<nav aria-label={t("menu.navigation")}>
@@ -312,7 +315,11 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 						<SidebarHeader>
 							<div className="my-2">
 								<div className="flex justify-center">
-									<button onClick={handleLogoClick} aria-label={t("kukaLogo")}>
+									<button
+										className=""
+										onClick={handleLogoClick}
+										aria-label={t("kukaLogoButton")}
+									>
 										<KukaSmallLogo
 											title="Kulturkataster Berlin, Logo"
 											className="size-14 cursor-pointer hover:opacity-80 transition-opacity"
@@ -326,11 +333,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 								<SidebarGroupContent>
 									<SidebarMenu>
 										{menuItems.map((item) => {
-											const showBadge =
-												item.id === "filter" &&
-												institutions &&
-												originalInstitutions?.features.length !==
-													institutions.features.length;
+											const showBadge = filterCount > 0 && item.id === "filter";
 											const active = activeItem === item.id;
 											return (
 												<SidebarMenuItem key={item.id}>
@@ -345,7 +348,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 															showBadge
 																? t("menu.menuButtonBadge", {
 																		label: t(item.label),
-																		count: institutions.features.length,
+																		count: filterCount,
 																	})
 																: t(item.label)
 														}
@@ -355,7 +358,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 														<item.icon />
 														{showBadge && (
 															<div className="absolute top-2 -right-1 bg-primary text-primary-foreground body2 rounded-full min-w-5 h-5 flex items-center justify-center px-1">
-																{institutions.features.length}
+																{filterCount}
 															</div>
 														)}
 													</SidebarMenuButton>
@@ -404,7 +407,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 											previousActiveItem && (
 												<button
 													onClick={handleBackToFilter}
-													className="body1 font-bold flex items-center gap-1"
+													className="body1 font-bold flex items-center gap-1 "
 													aria-label={t("menu.backToAriaLabel", {
 														title: t(previousActiveItem + ".title"),
 													})}
@@ -425,6 +428,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 									</div>
 								</div>
 								<button
+									className=""
 									onClick={handleSidebarClose}
 									aria-label={t("closeSidebar")}
 								>
@@ -434,7 +438,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 						</SidebarHeader>
 						<SidebarContent className="flex-1 overflow-hidden">
 							<SidebarGroup className="px-0 h-full">
-								<SidebarGroupContent className="h-full overflow-auto">
+								<SidebarGroupContent className="h-full overflow-auto focus-visible:outline focus-visible:outline-2 focus-visible:outline-interaction-dark focus-visible:outline-offset-[-2px]">
 									<div className="min-h-full flex flex-col">
 										<div className="flex-1 h-full bg-neutral-10 md:bg-secondary">
 											{activeItem === "filter" && <FilterContent />}
@@ -485,7 +489,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			<div className="absolute md:hidden block z-[50] top-0 left-0">
 				<button
 					onClick={handleLogoClick}
-					className="flex flex-col items-center gap-1 p-2"
+					className="flex flex-col items-center gap-1 p-2 "
 					aria-label={t("kukaLogo")}
 				>
 					<KukaSmallLogo
@@ -499,7 +503,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 				<div className="flex gap-2 items-center">
 					<div className="relative">
 						<div
-							className="flex items-center bg-neutral-80 border rounded-full shadow-sm relative overflow-hidden"
+							className="flex items-center bg-neutral-80 border rounded-full shadow-sm relative"
 							role="radiogroup"
 							aria-label={t("map.radioGroupAriaLabel")}
 						>
@@ -565,11 +569,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			<div className="fixed bottom-0 left-0 right-0 z-[60] bg-sidebar border-t md:hidden h-20 pointer-events-auto">
 				<SidebarMenu className="flex-row justify-around px-2 py-3">
 					{menuItems.map((item) => {
-						const showBadge =
-							item.id === "filter" &&
-							institutions &&
-							originalInstitutions?.features.length !==
-								institutions.features.length;
+						const showBadge = filterCount > 0 && item.id === "filter";
 						return (
 							<SidebarMenuItem key={item.id} className="flex-shrink-0">
 								<SidebarMenuButton
@@ -584,7 +584,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 									</span>
 									{showBadge && (
 										<div className="absolute -top-1 -right-1 bg-primary text-primary-foreground body2 rounded-full min-w-5 h-5 flex items-center justify-center px-1">
-											{institutions.features.length}
+											{filterCount}
 										</div>
 									)}
 								</SidebarMenuButton>

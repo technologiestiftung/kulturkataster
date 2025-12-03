@@ -33,10 +33,16 @@ const createCachedPoiSvg = (
 	isPermanentlyClosed: boolean,
 	isContrastMode: boolean,
 	isLargeTextMode: boolean,
+	state: string,
 ): string => {
-	const cacheKey = `${categoryKey}_${fillColor}_${strokeColor}_${isPermanentlyClosed}_${isContrastMode}_${isLargeTextMode}`;
+	const cacheKey = `${categoryKey}_${fillColor}_${strokeColor}_${isPermanentlyClosed}_${isContrastMode}_${isLargeTextMode}_${state}`;
 	if (!svgCache[cacheKey]) {
-		svgCache[cacheKey] = createPoiSvg(categoryKey, fillColor, strokeColor);
+		svgCache[cacheKey] = createPoiSvg(
+			categoryKey,
+			fillColor,
+			strokeColor,
+			state,
+		);
 	}
 	return svgCache[cacheKey];
 };
@@ -72,12 +78,13 @@ interface InstitutionLayerProps {
 
 const InstitutionLayer: FC<InstitutionLayerProps> = ({
 	zIndex = 10000,
-	distance = 350,
+	distance = 500,
 	minZoomForClustering = 0,
-	maxZoomForClustering = 7,
+	maxZoomForClustering = 8,
 	institutionsData,
 	proximityThreshold = 40,
 }) => {
+	const fixedProximityThreshold = remToPx(3.5);
 	const map = useMapStore((state: MapStoreState) => state.map);
 	const config = useMapStore((state) => state.config);
 	const selectedInstitutionId = useInstitutionStore(
@@ -132,10 +139,10 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 					singleFeature.set("has_overlapping", false);
 					offsetFeatures.push(singleFeature);
 				} else {
-					const offsetRadius = Math.max(
-						10,
-						Math.min(50, proximityThreshold * 0.8),
-					);
+					const usedFixed = false;
+					const offsetRadius = usedFixed
+						? fixedProximityThreshold
+						: Math.max(10, Math.min(50, proximityThreshold * 0.8));
 					const angleStep = (2 * Math.PI) / group.length;
 					const centerCoords = (
 						group[0].getGeometry() as Point
@@ -202,6 +209,7 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 				isPermanentlyClosed,
 				downIsContrastMode,
 				isLargeTextMode,
+				state,
 			);
 
 			return new Style({
@@ -346,7 +354,7 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 					map.getView().fit(extent, {
 						padding: [50, 50, 50, 50],
 						duration: 500,
-						maxZoom: map.getView().getMaxZoom() - 2,
+						maxZoom: map.getView().getMaxZoom() - 1,
 					});
 				}
 			}
