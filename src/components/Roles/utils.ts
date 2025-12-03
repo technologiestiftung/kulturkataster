@@ -1,16 +1,19 @@
 /* eslint-disable complexity */
 import type { RolePermissions, FieldPermissionsMap } from "./types";
-import { INSTITUTION_FIELDS } from "./types";
+import { FIELD_CLUSTERS } from "./types";
 
 export const createFieldPermissions = (
 	view: boolean,
 	requestChange: boolean,
 	approveChange: boolean,
 ): FieldPermissionsMap => {
-	return INSTITUTION_FIELDS.reduce((acc, field) => {
-		acc[field] = { view, requestChange, approveChange };
-		return acc;
-	}, {} as FieldPermissionsMap);
+	return FIELD_CLUSTERS.reduce(
+		(acc, field) => {
+			acc[field] = { view, requestChange, approveChange };
+			return acc;
+		},
+		{} as FieldPermissionsMap,
+	);
 };
 
 export function getPermissionSummary(permissions: RolePermissions): string {
@@ -20,18 +23,20 @@ export function getPermissionSummary(permissions: RolePermissions): string {
 	const viewableFields = fieldValues.filter((f) => f.view).length;
 	const requestChangeFields = fieldValues.filter((f) => f.requestChange).length;
 	const approveChangeFields = fieldValues.filter((f) => f.approveChange).length;
-	const totalFields = INSTITUTION_FIELDS.length;
+	const totalFields = FIELD_CLUSTERS.length;
 
 	if (approveChangeFields === totalFields) {
-		parts.push("Alle Felder ändern & freigeben");
+		parts.push("Alle Feld-Cluster ändern & freigeben");
 	} else if (approveChangeFields > 0) {
 		parts.push(
-			`${approveChangeFields}/${totalFields} Felder ändern & freigeben`,
+			`${approveChangeFields}/${totalFields} Feld-Cluster ändern & freigeben`,
 		);
 	} else if (requestChangeFields > 0) {
-		parts.push(`${requestChangeFields}/${totalFields} Felder vorschlagen`);
+		parts.push(
+			`${requestChangeFields}/${totalFields} Feld-Cluster vorschlagen`,
+		);
 	} else if (viewableFields > 0) {
-		parts.push(`${viewableFields}/${totalFields} Felder ansehen`);
+		parts.push(`${viewableFields}/${totalFields} Feld-Cluster ansehen`);
 	}
 	const entityPerms: string[] = [];
 	if (permissions.createInstitution) entityPerms.push("Erstellen");

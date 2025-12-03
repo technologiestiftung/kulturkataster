@@ -1,33 +1,15 @@
-// Institution field names
-export const INSTITUTION_FIELDS = [
-	"name",
-	"categories",
-	"district",
-	"parent_organizations",
-	"cultural_areas",
-	"subcategories",
-	"rooms_count",
-	"support_type",
-	"source",
-	"cultural_area",
-	"owner",
-	"funding_type",
-	"closing_reason",
-	"created_at",
-	"updated_at",
-	"city",
-	"address",
-	"postal_code",
-	"email",
-	"phone",
-	"website",
-	"description",
-	"opening_hours",
-	"accessibility",
-	"notes",
+// Institution field clusters (mirrors Supabase grouping)
+export const FIELD_CLUSTERS = [
+	"General Information",
+	"Address",
+	"Contact Information",
+	"Basic Information",
+	"Detailed Information",
+	"Shared Use",
+	"Funding",
 ] as const;
 
-export type InstitutionField = (typeof INSTITUTION_FIELDS)[number];
+export type FieldCluster = (typeof FIELD_CLUSTERS)[number];
 
 // Per-field permissions
 export interface FieldPermissions {
@@ -38,7 +20,7 @@ export interface FieldPermissions {
 
 // Field permissions map
 export type FieldPermissionsMap = {
-	[K in InstitutionField]: FieldPermissions;
+	[K in FieldCluster]: FieldPermissions;
 };
 
 export interface RolePermissions {
