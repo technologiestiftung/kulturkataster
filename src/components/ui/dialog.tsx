@@ -70,6 +70,7 @@ function DialogContent({
 		| "mobileMenu";
 }) {
 	const { t } = useTranslation("common");
+	const focusRef = React.useRef<HTMLDivElement | null>(null);
 
 	const { modalHistory, backOnModal } = useModalStore();
 
@@ -110,8 +111,11 @@ function DialogContent({
 					className,
 				)}
 				aria-describedby={undefined}
+				ref={focusRef}
 				onOpenAutoFocus={(event) => {
 					event.preventDefault();
+					focusRef.current?.focus();
+					setTimeout(() => focusRef.current?.blur(), 100);
 				}}
 				{...props}
 			>
