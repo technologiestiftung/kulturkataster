@@ -195,9 +195,13 @@
 	.break-anywhere {
 		overflow-wrap: anywhere;
 	}
+	a,
 	button:not([role="checkbox"]):not([role="switch"]),
 	.tab-ring:not([role="checkbox"]):not([role="switch"]) {
-		@apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-interaction-dark focus-visible:ring-offset-2 focus-visible:ring-offset-white rounded;
+		@apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-interaction-dark rounded;
+	}
+	a {
+		@apply w-fit;
 	}
 }
 

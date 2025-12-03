@@ -52,7 +52,7 @@ export function VideoWithLoader({ src }: { src: string }) {
 				src={src}
 				preload="auto"
 				controls
-				className={`w-full h-full object-cover transition-opacity duration-300 ${
+				className={`w-full h-full object-cover transition-opacity duration-300 tab-ring ${
 					isLoaded ? "opacity-100" : "opacity-0"
 				}`}
 			>
