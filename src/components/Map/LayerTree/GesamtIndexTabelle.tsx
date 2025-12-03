@@ -119,7 +119,7 @@ const TableRows = ({ index }: { index: number }) => {
 	);
 };
 
-export default function GesamtIndexLegende() {
+export default function GesamtIndexTabelle() {
 	return (
 		<div className="relative">
 			<div className="absolute transform rotate-[-90deg] -translate-x-[1rem] left-0 top-1/2 -translate-y-1/2">

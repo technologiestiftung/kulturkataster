@@ -3,7 +3,7 @@
 import { FC } from "react";
 import rawLegenden from "@/config/resources/legenden.json";
 import { cn } from "@/lib/utils";
-import GesamtIndexLegende from "./GesamtIndexLegende";
+import GesamtIndexTabelle from "./GesamtIndexTabelle";
 
 interface LegendeProps {
 	id: string;
@@ -45,7 +45,9 @@ const Legende: FC<LegendeProps> = ({ id }) => {
 							"py-2.5",
 					)}
 				>
+					{/* Legend Symbol */}
 					<div
+						aria-hidden="true"
 						className={cn(
 							"flex justify-center text-center",
 							item.wider || "min-w-[3.125rem]",
@@ -91,6 +93,7 @@ const Legende: FC<LegendeProps> = ({ id }) => {
 							</span>
 						)}
 					</div>
+					{/* Legend Labels */}
 					{legendItem.label && (
 						<span
 							className={cn(
@@ -101,7 +104,7 @@ const Legende: FC<LegendeProps> = ({ id }) => {
 							{legendItem.label}
 						</span>
 					)}
-					{legendItem.type === "table" && <GesamtIndexLegende />}
+					{legendItem.type === "table" && <GesamtIndexTabelle />}
 					{legendItem.type === "spacer" && (
 						<div className="bg-neutral-20 contrast:bg-neutral-80 w-full h-[1px]" />
 					)}
