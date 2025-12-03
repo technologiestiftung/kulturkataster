@@ -18,7 +18,7 @@ const columns = [
 type Cell = {
 	value: number | string;
 	suffix: string;
-	color: string; // Tailwind bg class
+	color: string;
 };
 
 const rows: {
