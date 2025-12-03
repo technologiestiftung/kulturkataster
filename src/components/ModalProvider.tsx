@@ -10,6 +10,8 @@ import { useModalStore } from "@/lib/store/modalStore";
 import { DownloadModal } from "./Modals/Pages/DownloadModal";
 import { SimpleLanguageInformationModal } from "./Modals/Pages/SimpleLanguageInformationModal";
 import { SignLanguageModal } from "./Modals/Pages/SignLanguageModal";
+import { useEffect } from "react";
+import { AccessibilitySettingsModal } from "./Modals/Pages/AccessibilitySettingsModal";
 
 export function ModalProvider() {
 	const {
@@ -17,22 +19,51 @@ export function ModalProvider() {
 		privacyModalOpen,
 		imprintModalOpen,
 		accessibilityModalOpen,
+		accessibilitySettingsModalOpen,
 		informationModalOpen,
 		simpleLanguageInformationModalOpen,
 		downloadModalOpen,
 		downloadModalMode,
 		mobileMenuModalOpen,
 		signLanguageModalOpen,
+		clearModalHistory,
 		setAboutModalOpen,
 		setPrivacyModalOpen,
 		setImprintModalOpen,
 		setAccessibilityModalOpen,
+		setAccessibilitySettingsModalOpen,
 		setInformationModalOpen,
 		setSimpleLanguageInformationModalOpen,
 		setDownloadModalOpen,
 		setMobileMenuModalOpen,
 		setSignLanguageModalOpen,
 	} = useModalStore();
+
+	useEffect(() => {
+		if (
+			!aboutModalOpen &&
+			!privacyModalOpen &&
+			!imprintModalOpen &&
+			!accessibilityModalOpen &&
+			!accessibilitySettingsModalOpen &&
+			!informationModalOpen &&
+			!simpleLanguageInformationModalOpen &&
+			!mobileMenuModalOpen &&
+			!signLanguageModalOpen
+		) {
+			clearModalHistory();
+		}
+	}, [
+		aboutModalOpen,
+		privacyModalOpen,
+		imprintModalOpen,
+		accessibilityModalOpen,
+		accessibilitySettingsModalOpen,
+		informationModalOpen,
+		simpleLanguageInformationModalOpen,
+		mobileMenuModalOpen,
+		signLanguageModalOpen,
+	]);
 
 	return (
 		<>
@@ -48,6 +79,10 @@ export function ModalProvider() {
 			<AccessibilityModal
 				open={accessibilityModalOpen}
 				onOpenChange={setAccessibilityModalOpen}
+			/>
+			<AccessibilitySettingsModal
+				open={accessibilitySettingsModalOpen}
+				onOpenChange={setAccessibilitySettingsModalOpen}
 			/>
 			<InformationModal
 				open={informationModalOpen}

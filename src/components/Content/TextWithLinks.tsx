@@ -30,7 +30,7 @@ const TextWithLinks: FC<TextWithLinkProps> = ({
 						<a
 							key={index}
 							href={`mailto:${part}`}
-							className="text-primary hover:text-primary-dark underline"
+							className="text-primary-dark hover:text-primary underline"
 						>
 							{part}
 						</a>
@@ -47,7 +47,7 @@ const TextWithLinks: FC<TextWithLinkProps> = ({
 								tabIndex={0}
 								target="_blank"
 								rel="noopener noreferrer"
-								className="text-primary hover:text-primary-dark underline"
+								className="text-primary-dark hover:text-primary underline"
 							>
 								{linkText}
 							</a>

@@ -22,17 +22,22 @@ export function WelcomeModal({ open, onOpenChange }: WelcomeModalProps) {
 
 	const handleAboutClick = () => {
 		onOpenChange(false);
-		openModal("about");
+		openModal("about", true);
 	};
 
 	const handleInfoClick = () => {
 		onOpenChange(false);
-		openModal("information");
+		openModal("information", true);
+	};
+
+	const handleAccessibilitySettingsClick = () => {
+		onOpenChange(false);
+		openModal("accessibilitySettings", true);
 	};
 
 	const handleFooterItemClickWelcomeModal = (id: string) => {
 		onOpenChange(false);
-		openModal(id);
+		openModal(id, true);
 	};
 
 	const footerItems = [
@@ -72,7 +77,7 @@ export function WelcomeModal({ open, onOpenChange }: WelcomeModalProps) {
 							<div className="text-primary-dark flex space-x-2 cursor-pointer">
 								<ArrowNarrowRight className="stroke-primary-dark size-6" />
 								<a
-									className="underline body2"
+									className="underline body2 text-primary-dark font-semibold"
 									target="_blank"
 									href="https://flow.cleverreach.com/fl/21a1a529-f085-4bd1-8e53-d657c3ccc1de/"
 								>
@@ -106,6 +111,20 @@ export function WelcomeModal({ open, onOpenChange }: WelcomeModalProps) {
 										{t("welcomeModal.infoButton", { ns: "content" })}
 									</Button>
 								</div>
+							</div>
+							<div className="mt-4">
+								<a
+									className="underline body2 text-primary-dark font-semibold"
+									href="#"
+									rel="noopener noreferrer"
+									onClick={(e) => {
+										e.preventDefault();
+										e.stopPropagation();
+										handleAccessibilitySettingsClick();
+									}}
+								>
+									{t("welcomeModal.accessibilitySettings", { ns: "content" })}
+								</a>
 							</div>
 							<Separator className="w-full mt-20 mb-6 hidden md:block" />
 							<div className="hidden md:flex space-x-2 md:mb-12 space-y-12 md:space-y-0 flex-col md:flex-row w-full justify-center">

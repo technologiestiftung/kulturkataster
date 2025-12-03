@@ -153,7 +153,7 @@ const ListView: FC = () => {
 								}
 								<button
 									onClick={handleDownloadClick}
-									className="body2 text-primary-dark font-bold flex items-center gap-1 hover:text-primary/80 transition-colors cursor-pointer"
+									className="body2 text-primary-dark font-bold flex items-center gap-1 hover:text-primary/80 transition-colors cursor-pointer focus-visible:outline-interaction-dark"
 									aria-label={t("download.title")}
 								>
 									<Download className="h-6 w-6" />

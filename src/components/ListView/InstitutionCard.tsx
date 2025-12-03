@@ -132,7 +132,7 @@ const InstitutionCard = memo(function InstitutionCard({
 		setShowMore(!showMore);
 	};
 
-	const cardClassName = `w-full rounded-lg overflow-hidden border-none  shadow-sm ${
+	const cardClassName = `tab-ring w-full rounded-lg overflow-hidden shadow-sm ${
 		onClick ? "cursor-pointer hover:shadow-md transition-shadow" : ""
 	}`;
 
