@@ -39,8 +39,7 @@ export function RoleEditModal({
 	if (!editedRole) return null;
 
 	const isSystemAdmin = Boolean(
-		editedRole.isSystemRole &&
-			editedRole.name.trim().toLowerCase() === "admin",
+		editedRole.isSystemRole && editedRole.name.trim().toLowerCase() === "admin",
 	);
 
 	const handleSave = () => {
