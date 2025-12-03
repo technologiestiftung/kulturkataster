@@ -198,7 +198,7 @@
 	a,
 	button:not([role="checkbox"]):not([role="switch"]),
 	.tab-ring:not([role="checkbox"]):not([role="switch"]) {
-		@apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-interaction-dark rounded;
+		@apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-interaction-dark;
 	}
 	a {
 		@apply w-fit;
