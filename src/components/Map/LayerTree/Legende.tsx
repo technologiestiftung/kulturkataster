@@ -4,9 +4,11 @@ import { FC } from "react";
 import rawLegenden from "@/config/resources/legenden.json";
 import { cn } from "@/lib/utils";
 import GesamtIndexTabelle from "./GesamtIndexTabelle";
+import { useTranslation } from "react-i18next";
 
 interface LegendeProps {
 	id: string;
+	serviceName: string;
 }
 
 type SingleLegendItem = {
@@ -25,7 +27,8 @@ type LegendItem = {
 	items: SingleLegendItem[];
 };
 
-const Legende: FC<LegendeProps> = ({ id }) => {
+const Legende: FC<LegendeProps> = ({ id, serviceName }) => {
+	const { t } = useTranslation("common");
 	const legenden = rawLegenden as LegendItem[];
 	const item: LegendItem | undefined = legenden.find(
 		(legend) => legend.id === id,
@@ -47,7 +50,7 @@ const Legende: FC<LegendeProps> = ({ id }) => {
 				>
 					{/* Legend Symbol */}
 					<div
-						aria-hidden="true"
+						aria-hidden={legendItem.type !== "wording" ? "true" : "false"}
 						className={cn(
 							"flex justify-center text-center",
 							item.wider || "min-w-[3.125rem]",
@@ -84,6 +87,11 @@ const Legende: FC<LegendeProps> = ({ id }) => {
 						)}
 						{legendItem.type === "wording" && (
 							<span
+								aria-label={t("map.legend.legendValueWordingAriaLabel", {
+									serviceName,
+									value: legendItem.text,
+									label: legendItem.label,
+								})}
 								className={cn(
 									"font-bold text-sm tracking-wide",
 									legendItem.color,
@@ -96,6 +104,10 @@ const Legende: FC<LegendeProps> = ({ id }) => {
 					{/* Legend Labels */}
 					{legendItem.label && (
 						<span
+							aria-label={t("map.legend.legendValueAriaLabel", {
+								serviceName,
+								label: legendItem.label,
+							})}
 							className={cn(
 								legendItem.type === "title" &&
 									"font-bold text-base tracking-wide",
