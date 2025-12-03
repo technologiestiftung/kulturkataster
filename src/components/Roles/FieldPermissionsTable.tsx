@@ -8,13 +8,13 @@ import {
 } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import type { FieldPermissionsMap, InstitutionField } from "./types";
-import { INSTITUTION_FIELDS } from "./types";
+import type { FieldPermissionsMap, FieldCluster } from "./types";
+import { FIELD_CLUSTERS } from "./types";
 
 interface FieldPermissionsTableProps {
 	permissions: FieldPermissionsMap;
 	onToggleField: (
-		field: InstitutionField,
+		field: FieldCluster,
 		type: "view" | "requestChange" | "approveChange",
 	) => void;
 	onSetAllFields: (
@@ -40,7 +40,9 @@ export function FieldPermissionsTable({
 
 	return (
 		<div className="space-y-3 rounded-xs p-4 bg-muted/50">
-			<Label className="text-base font-semibold">Feldberechtigungen</Label>
+			<Label className="text-base font-semibold">
+				Feldcluster-Berechtigungen
+			</Label>
 			<div className="flex gap-4 mb-3">
 				<div className="flex items-center space-x-2">
 					<Checkbox
@@ -92,7 +94,7 @@ export function FieldPermissionsTable({
 				<Table>
 					<TableHeader className="sticky top-0 bg-background">
 						<TableRow>
-							<TableHead className="w-[180px]">Feld</TableHead>
+							<TableHead className="w-[180px]">Feld-Cluster</TableHead>
 							<TableHead className="w-[100px] text-center">
 								Ansehen & Exportieren
 							</TableHead>
@@ -105,7 +107,7 @@ export function FieldPermissionsTable({
 						</TableRow>
 					</TableHeader>
 					<TableBody>
-						{INSTITUTION_FIELDS.map((field) => (
+						{FIELD_CLUSTERS.map((field) => (
 							<TableRow key={field}>
 								<TableCell className="font-mono text-xs">{field}</TableCell>
 								<TableCell className="text-center">

@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import type { Role, RolePermissions, InstitutionField } from "./types";
+import type { Role, RolePermissions, FieldCluster } from "./types";
 import { FieldPermissionsTable } from "./FieldPermissionsTable";
 
 interface RoleEditModalProps {
@@ -71,7 +71,7 @@ export function RoleEditModal({
 	};
 
 	const toggleFieldPermission = (
-		field: InstitutionField,
+		field: FieldCluster,
 		type: "view" | "requestChange" | "approveChange",
 	) => {
 		setEditedRole({
@@ -95,8 +95,8 @@ export function RoleEditModal({
 	) => {
 		const newFields = { ...editedRole.permissions.fields };
 		Object.keys(newFields).forEach((field) => {
-			newFields[field as InstitutionField] = {
-				...newFields[field as InstitutionField],
+			newFields[field as FieldCluster] = {
+				...newFields[field as FieldCluster],
 				[type]: value,
 			};
 		});
