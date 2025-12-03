@@ -42,7 +42,7 @@ const Legende: FC<LegendeProps> = ({ id }) => {
 						"flex items-center gap-3",
 						legendItem.type !== "table" &&
 							legendItem.type !== "spacer" &&
-							"py-2.5", // px-4
+							"py-2.5",
 					)}
 				>
 					<div
