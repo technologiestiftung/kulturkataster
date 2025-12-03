@@ -58,7 +58,7 @@ const rows: {
 	},
 ];
 
-const ColumHeader = () => {
+const ColumnHeader = () => {
 	return (
 		<tr className="align-center">
 			{columns.map((columHead) => {
@@ -67,7 +67,7 @@ const ColumHeader = () => {
 					!!columHead.index && "py-1 text-center",
 				);
 				if (!columHead.index) {
-					return <th className={columHeadClasses} />;
+					return <th key={columHead.key} className={columHeadClasses} />;
 				}
 				return (
 					<th key={columHead.key} className={columHeadClasses}>
@@ -130,7 +130,9 @@ export default function GesamtIndexLegende() {
 			</div>
 			<div className="inline-block rounded border border-[#E2DFDB] bg-white text-sm w-[calc(100%-1.5rem)] ml-[1.5rem]">
 				<table className="border-collapse table-fixed w-full">
-					<ColumHeader />
+					<thead>
+						<ColumnHeader />
+					</thead>
 					<tbody>
 						{rows.map((_, rowIndex) => (
 							<TableRows key={rowIndex} index={rowIndex} />

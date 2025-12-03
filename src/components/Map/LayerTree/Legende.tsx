@@ -74,7 +74,9 @@ const Legende: FC<LegendeProps> = ({ id }) => {
 								)}
 							>
 								{legendItem.textInCircle && (
-									<span className="text-sm">{legendItem.textInCircle}</span>
+									<span className="text-sm text-[#000000]">
+										{legendItem.textInCircle}
+									</span>
 								)}
 							</div>
 						)}
