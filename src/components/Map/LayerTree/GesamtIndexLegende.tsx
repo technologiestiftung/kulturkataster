@@ -86,7 +86,7 @@ const ColumnHeader = () => {
 };
 
 const TableRows = ({ index }: { index: number }) => {
-	const findRow = rows.find((row, rowIndex) => rowIndex === index);
+	const findRow = rows.find((_, rowIndex) => rowIndex === index);
 	if (!findRow) {
 		return null;
 	}
