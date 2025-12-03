@@ -242,7 +242,7 @@ const Filter: FC = () => {
 					})}
 				</h2>
 				<button
-					className="flex items-center gap-2 transition-opacity body2 text-primary-dark "
+					className="flex items-center gap-2 transition-opacity body2 text-primary-dark"
 					onClick={toggleClosedInstitutions}
 				>
 					{filters?.include_closed ? <EyeOff /> : <Eye />}
@@ -261,7 +261,7 @@ const Filter: FC = () => {
 						{t("filter.districts.title", { ns: "content" })}
 					</h3>
 					<button
-						className="body2 font-light underline "
+						className="body2 font-light underline"
 						onClick={
 							hasActiveDistrictFilters()
 								? resetDistrictFilters
@@ -287,7 +287,7 @@ const Filter: FC = () => {
 						{t("filter.categories.title", { ns: "content" })}
 					</h3>
 					<button
-						className="body2 font-light underline "
+						className="body2 font-light underline"
 						onClick={
 							hasActiveCategoryFilters()
 								? resetCategoryFilters
