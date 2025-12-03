@@ -7,13 +7,10 @@ export const createFieldPermissions = (
 	requestChange: boolean,
 	approveChange: boolean,
 ): FieldPermissionsMap => {
-	return FIELD_CLUSTERS.reduce(
-		(acc, field) => {
-			acc[field] = { view, requestChange, approveChange };
-			return acc;
-		},
-		{} as FieldPermissionsMap,
-	);
+	return FIELD_CLUSTERS.reduce((acc, field) => {
+		acc[field] = { view, requestChange, approveChange };
+		return acc;
+	}, {} as FieldPermissionsMap);
 };
 
 export function getPermissionSummary(permissions: RolePermissions): string {
