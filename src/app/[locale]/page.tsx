@@ -1,7 +1,6 @@
 "use client";
 
 import ListView from "@/components/ListView/ListView";
-import Map from "@/components/Map/Map";
 import { useAppStore } from "@/lib/store/appStore";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { usePathname, useRouter } from "next/navigation";
@@ -39,19 +38,14 @@ export default function Home() {
 	}, []);
 
 	return (
-		<div className="items-center flex-1 justify-items-center h-full relative w-full">
-			<section
-				className={`h-full w-full ${viewMode === "map" ? "block" : "hidden"}`}
-				aria-label={t("map.title")}
-			>
-				<Map />
-			</section>
-			<section
-				className={`h-full w-full ${viewMode === "list" ? "block" : "hidden"}`}
-				aria-label={t("listView.title")}
-			>
-				<ListView />
-			</section>
-		</div>
+		<>
+			{viewMode === "list" && (
+				<div className="items-center flex-1 justify-items-center h-full relative w-full">
+					<section className="h-full w-full" aria-label={t("listView.title")}>
+						<ListView />
+					</section>
+				</div>
+			)}
+		</>
 	);
 }

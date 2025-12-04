@@ -10,9 +10,14 @@ import {
 	MapConfig,
 } from "@/types";
 import { FC, useEffect } from "react";
+import MapComp from "../Map";
+import { useAppStore } from "@/lib/store/appStore";
+import { useTranslation } from "react-i18next";
 
 const MapInitializer: FC = ({}) => {
 	const setConfig = useMapStore((state) => state.setConfig);
+	const { viewMode } = useAppStore();
+	const { t } = useTranslation("common");
 
 	useEffect(() => {
 		const servicesMap = new Map(
@@ -39,7 +44,17 @@ const MapInitializer: FC = ({}) => {
 		setConfig(enrichedConfig as unknown as MapConfig);
 	}, [setConfig]);
 
-	return null;
+	return (
+		<>
+			{viewMode === "map" && (
+				<div className="items-center flex-1 justify-items-center h-full relative w-full">
+					<section className="h-full w-full" aria-label={t("map.title")}>
+						<MapComp />
+					</section>
+				</div>
+			)}
+		</>
+	);
 };
 
 export default MapInitializer;
