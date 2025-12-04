@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 "use client";
 
 import { FC } from "react";
@@ -19,6 +20,7 @@ type SingleLegendItem = {
 	color?: string;
 	borderColor?: string;
 	textInCircle?: string;
+	unit?: string;
 };
 
 type LegendItem = {
@@ -107,6 +109,7 @@ const Legende: FC<LegendeProps> = ({ id, serviceName }) => {
 							aria-label={t("map.legend.legendValueAriaLabel", {
 								serviceName,
 								label: legendItem.label,
+								unit: legendItem.unit ?? "",
 							})}
 							className={cn(
 								legendItem.type === "title" &&
