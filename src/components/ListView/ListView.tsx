@@ -130,7 +130,7 @@ const ListView: FC = () => {
 	}
 
 	return (
-		<div className="ListView-root w-full h-full flex flex-col items-center bg-neutral-5">
+		<div className="ListView-root w-full h-full flex flex-col items-center bg-neutral-10">
 			<div ref={containerRef} className="h-full overflow-auto max-w-5xl ">
 				<div className="p-4 mt-20">
 					<div className="space-y-6 flex flex-col">
@@ -145,15 +145,15 @@ const ListView: FC = () => {
 						<div className="space-y-2">
 							<div className="flex items-center justify-between">
 								{
-									<p className="body2 font-bold">
+									<strong className="body2 font-bold">
 										{tContent("listView.countLabel", {
 											count: institutionsList.length,
 										})}
-									</p>
+									</strong>
 								}
 								<button
 									onClick={handleDownloadClick}
-									className="body2 text-primary-dark font-bold flex items-center gap-1 hover:text-primary/80 transition-colors cursor-pointer"
+									className="body2 text-primary-dark font-bold flex items-center gap-1 hover:text-primary/80 transition-colors cursor-pointer focus-visible:outline-interaction-dark"
 									aria-label={t("download.title")}
 								>
 									<Download className="h-6 w-6" />
@@ -240,7 +240,7 @@ const ListView: FC = () => {
 								className="cursor-pointer"
 								aria-label={t("listView.scrollToTop")}
 							>
-								<ArrowUp size={20} />
+								<ArrowUp size={20} aria-hidden="true" focusable="false" />
 							</Button>
 						</TooltipTrigger>
 						<TooltipContent>

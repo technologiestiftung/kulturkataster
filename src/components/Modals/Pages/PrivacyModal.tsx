@@ -28,6 +28,7 @@ export function PrivacyModal({ open, onOpenChange }: PrivacyModalProps) {
 			title={t("privacyModal.title", { ns: "content" })}
 			subtitle={t("privacyModal.subtitle", { ns: "content" })}
 			content={content}
+			hideLinksInModalFooter={["privacy"]}
 		/>
 	);
 }

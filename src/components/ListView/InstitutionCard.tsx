@@ -41,7 +41,7 @@ function CategoriesDisplay({
 				return (
 					<div key={category.id} className="flex items-center gap-1 flex-wrap">
 						<div>
-							<IconComponent />
+							<IconComponent aria-hidden="true" focusable="false" />
 						</div>
 						<span className="body2">{tEnum(`category.${category.key}`)}</span>
 						<span className="body2">•</span>
@@ -132,7 +132,7 @@ const InstitutionCard = memo(function InstitutionCard({
 		setShowMore(!showMore);
 	};
 
-	const cardClassName = `w-full rounded-lg overflow-hidden border-none  shadow-sm ${
+	const cardClassName = `tab-ring w-full rounded-lg overflow-hidden shadow-sm ${
 		onClick ? "cursor-pointer hover:shadow-md transition-shadow" : ""
 	}`;
 

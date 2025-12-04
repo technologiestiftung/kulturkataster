@@ -1,3 +1,4 @@
+/* eslint-disable max-params */
 import { Category, FilterState, Institution, Subcategory } from "@/types";
 
 export const hasActiveFilters = (filters: FilterState | null): boolean => {
@@ -8,6 +9,18 @@ export const hasActiveFilters = (filters: FilterState | null): boolean => {
 		filters.subcategory_keys.length > 0 ||
 		filters.include_closed !== undefined
 	);
+};
+
+export const getFilterCount = (filters: FilterState | null): number => {
+	if (!filters) return 0;
+	let filterCount: number = 0;
+	filterCount += filters.district_keys.length;
+	filterCount += filters.category_keys.length;
+	filterCount += filters.subcategory_keys.length;
+	if (!!filters.include_closed) {
+		filterCount += 1;
+	}
+	return filterCount;
 };
 
 export const getSortedSubcategories = (

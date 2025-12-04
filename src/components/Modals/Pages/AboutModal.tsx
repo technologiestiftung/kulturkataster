@@ -90,7 +90,7 @@ export function AboutModal({ open, onOpenChange }: AboutModalProps) {
 							link: (
 								<button
 									type="button"
-									className="text-primary hover:text-primary-dark underline bg-transparent border-none p-0 cursor-pointer"
+									className="text-primary-dark hover:text-primary underline bg-transparent border-none p-0 cursor-pointer "
 									onClick={() => {
 										handleFooterItemClick("simpleLanguageInformation");
 									}}
@@ -109,7 +109,10 @@ export function AboutModal({ open, onOpenChange }: AboutModalProps) {
 			</div>
 
 			<TextBlock text={content.guidelines.description} />
-			<ul className="list-disc pl-5 space-y-2 body2">
+			<ul
+				className="list-disc pl-5 space-y-2 body2"
+				aria-label={t("aboutModal.guidelinesListAriaLabel")}
+			>
 				{content.guidelines.items.map((item, i) => (
 					<li key={i}>{item}</li>
 				))}
@@ -128,7 +131,10 @@ export function AboutModal({ open, onOpenChange }: AboutModalProps) {
 
 			<TextBlock text={content.versions.description} />
 			<TextBlock text={content.versions.planned} />
-			<ul className="list-disc pl-5 space-y-2 body2">
+			<ul
+				className="list-disc pl-5 space-y-2 body2"
+				aria-label={t("aboutModal.versionListAriaLabel")}
+			>
 				{content.versions.items.map((item, i) => (
 					<li key={i}>{item}</li>
 				))}
@@ -180,6 +186,7 @@ export function AboutModal({ open, onOpenChange }: AboutModalProps) {
 			title={t("aboutModal.title")}
 			subtitle={t("aboutModal.subtitle")}
 			content={modalContent}
+			hideLinksInModalFooter={["about"]}
 		/>
 	);
 }

@@ -28,6 +28,7 @@ import {
 	useState,
 } from "react";
 import { useTranslation } from "react-i18next";
+import Legende from "./Legende";
 
 // Constants
 const LAYER_THUMBNAIL_SIZE = 80;
@@ -92,7 +93,7 @@ const LayerThumbnail = memo<{
 			{hasPreview ? (
 				<Image
 					src={previewSrc}
-					alt={layer.config.service.name}
+					alt=""
 					width={size}
 					height={size}
 					className="w-full h-full object-cover"
@@ -120,6 +121,7 @@ LayerThumbnail.displayName = "LayerThumbnail";
 const LayerItem = memo<{
 	layer: ManagedLayer;
 }>(({ layer }) => {
+	const { t } = useTranslation("common");
 	const setLayerVisibility = useMapStore((state) => state.setLayerVisibility);
 	const openLegendLayerId = useMapStore((state) => state.openLegendLayerId);
 	const setOpenLegendLayerId = useMapStore(
@@ -160,12 +162,9 @@ const LayerItem = memo<{
 		}
 	}, [openLegendLayerId, layer.id]);
 
-	const hasLegend =
-		layer.config.service.legend &&
-		typeof layer.config.service.legend === "string";
-
 	const serviceName = layer.config.service.name;
 	const serviceNameLang = layer.config.service.name_lang;
+	const serviceNameMid = layer.config.service.name_mid;
 
 	return (
 		<AccordionItem
@@ -176,7 +175,7 @@ const LayerItem = memo<{
 			<div className="flex items-center justify-between p-3 m-0">
 				<Label
 					htmlFor={layer.id}
-					className="flex items-center space-x-3 flex-1 cursor-pointer"
+					className="flex items-start space-x-3 flex-1 cursor-pointer"
 				>
 					<LayerThumbnail layer={layer} showOverlay />
 					<div className="flex flex-col">
@@ -189,11 +188,20 @@ const LayerItem = memo<{
 						</span>
 						{serviceNameLang && (
 							<div
-								className={`body2 ${layer.status === "error" ? "text-alert" : ""}`}
+								className={`body2 hidden ${layer.status === "error" ? "text-alert" : ""}`}
 							>
 								{layer.status === "error"
 									? "Fachkarte nicht verfügbar. Bitte versuchen Sie es später erneut."
 									: serviceNameLang}
+							</div>
+						)}
+						{serviceNameMid && (
+							<div
+								className={`body2 ${layer.status === "error" ? "text-alert" : ""}`}
+							>
+								{layer.status === "error"
+									? "Fachkarte nicht verfügbar. Bitte versuchen Sie es später erneut."
+									: serviceNameMid}
 							</div>
 						)}
 					</div>
@@ -204,111 +212,117 @@ const LayerItem = memo<{
 							id={layer.id}
 							checked={layer.visibility}
 							onCheckedChange={handleVisibilityChange}
-							className="w-6 h-6 rounded-full"
-							aria-label={`Toggle visibility for ${serviceName}`}
+							className="w-6 h-6 rounded-full border-neutral-80"
+							aria-label={t("map.layerItemAriaLabel", { serviceName })}
 							disabled={layer.status === "error"}
 						/>
 					</div>
 				</div>
 			</div>
-
-			{hasLegend && (
-				<>
-					<AccordionTrigger
-						className="px-3 py-2 rounded-none [&[data-state=closed]]:rounded-b-sm hover:no-underline flex justify-end items-center gap-2 [&>svg]:text-foreground bg-neutral-10"
-						aria-label={`Show legend for ${serviceName}`}
-					>
-						Legende ansehen
-					</AccordionTrigger>
-					<AccordionContent
-						ref={accordionContentRef}
-						className="px-3 pb-3 bg-neutral-10 rounded-b-sm"
-					>
-						<Image
-							src={layer.config.service.legend as string}
-							alt={`Legend for ${serviceName}`}
-							width={300}
-							height={50}
-							className="h-auto w-full max-w-full rounded"
-							loading="lazy"
-						/>
-					</AccordionContent>
-				</>
-			)}
+			<AccordionTrigger
+				className="px-3 py-2 rounded-none [&[data-state=closed]]:rounded-b-sm hover:no-underline flex justify-end items-center gap-2 [&>svg]:text-foreground bg-neutral-10"
+				aria-label={t("map.layerItemLegendAriaLabel", { serviceName })}
+			>
+				{t("map.lookAtLegend")}
+			</AccordionTrigger>
+			<AccordionContent
+				ref={accordionContentRef}
+				className="px-3 pb-3 bg-neutral-10 rounded-b-sm"
+				role="group"
+				aria-label={t("map.legend.legendAriaLabels", {
+					serviceName,
+				})}
+				aria-labelledby={undefined}
+				aria-describedby={undefined}
+			>
+				<Legende id={layer.id} serviceName={serviceName} />
+			</AccordionContent>
 		</AccordionItem>
 	);
 });
 
 LayerItem.displayName = "LayerItem";
 
-const FloatingLayerButton = memo<{
-	visibleCount: number;
-	topVisibleLayer: ManagedLayer | null;
-	sidebarState: string;
-	onClick: () => void;
-}>(({ visibleCount, topVisibleLayer, sidebarState, onClick }) => {
-	const { isLargeTextMode } = useAppStore();
-	const { t } = useTranslation("common");
-	const getLeftPosition = useCallback(() => {
-		const expandedOffset = isLargeTextMode
-			? SIDEBAR_EXPANDED_OFFSET_LARGE_TEXT
-			: SIDEBAR_EXPANDED_OFFSET;
+const FloatingLayerButton = memo(
+	({
+		visibleCount,
+		topVisibleLayer,
+		sidebarState,
+		onClick,
+		forwardedRef,
+	}: {
+		visibleCount: number;
+		topVisibleLayer: ManagedLayer | null;
+		sidebarState: string;
+		onClick: () => void;
+		forwardedRef?: React.RefObject<HTMLButtonElement | null>;
+	}) => {
+		const { isLargeTextMode } = useAppStore();
+		const { t } = useTranslation("common");
+		const getLeftPosition = useCallback(() => {
+			const expandedOffset = isLargeTextMode
+				? SIDEBAR_EXPANDED_OFFSET_LARGE_TEXT
+				: SIDEBAR_EXPANDED_OFFSET;
 
-		return sidebarState === "collapsed"
-			? SIDEBAR_COLLAPSED_OFFSET
-			: expandedOffset;
-	}, [sidebarState, isLargeTextMode]);
+			return sidebarState === "collapsed"
+				? SIDEBAR_COLLAPSED_OFFSET
+				: expandedOffset;
+		}, [sidebarState, isLargeTextMode]);
 
-	return (
-		<div
-			className={`fixed bottom-4 z-50 transition-all duration-200 ${getLeftPosition()}`}
-		>
-			<div className="relative">
-				{visibleCount > 1 && (
-					<div
-						className="absolute -top-1 left-1 w-16 h-16 bg-interaction-dark/70 rounded border-interaction-dark"
-						aria-hidden="true"
-					/>
-				)}
+		return (
+			<div
+				className={`fixed bottom-4 z-50 transition-all duration-200 ${getLeftPosition()}`}
+			>
+				<div className="relative">
+					{visibleCount > 1 && (
+						<div
+							className="absolute -top-1 left-1 w-16 h-16 bg-interaction-dark/70 rounded border-interaction-dark"
+							aria-hidden="true"
+						/>
+					)}
 
-				<ButtonWithTooltip
-					variant="map-icon"
-					size="icon"
-					tooltip={t("map.layerTree")}
-					tooltipSide="right"
-					className={`relative w-16 h-16 p-0 bg-neutral-80 shadow-lg rounded overflow-hidden flex items-center justify-center cursor-pointer transition-colors hover:bg-neutral-70 focus:outline-none ${
-						visibleCount > 0 ? "border-2 border-interaction-dark" : ""
-					}`}
-					onClick={onClick}
-					aria-label={`Open layer tree (${visibleCount} visible layers)`}
-				>
-					<div className="w-full h-full flex items-center justify-center">
-						{visibleCount === 0 ? (
-							<ContextMapIcon className="[&>path]:fill-popover" />
-						) : (
-							topVisibleLayer && (
-								<LayerThumbnail
-									layer={topVisibleLayer}
-									size={FLOATING_BUTTON_SIZE}
-								/>
-							)
-						)}
-					</div>
-				</ButtonWithTooltip>
-
-				{visibleCount > 0 && (
-					<Badge
-						variant="default"
-						className="absolute -top-2 -right-2 w-6 h-6 p-0 rounded-full border-2 border-white text-xs font-bold"
-						aria-label={`${visibleCount} layers visible`}
+					<ButtonWithTooltip
+						ref={forwardedRef}
+						variant="map-icon"
+						size="icon"
+						tooltip={t("map.layerTree")}
+						tooltipSide="right"
+						className={`relative w-16 h-16 p-0 bg-neutral-80 shadow-lg rounded overflow-hidden flex items-center justify-center cursor-pointer transition-colors hover:bg-neutral-70 focus:outline-none ${
+							visibleCount > 0 ? "border-2 border-interaction-dark" : ""
+						}`}
+						onClick={onClick}
+						aria-label={t("map.layerTreeAriaLabel", { visibleCount })}
 					>
-						{visibleCount}
-					</Badge>
-				)}
+						<div className="w-full h-full flex items-center justify-center">
+							{visibleCount === 0 ? (
+								<ContextMapIcon className="[&>path]:fill-popover" />
+							) : (
+								topVisibleLayer && (
+									<LayerThumbnail
+										layer={topVisibleLayer}
+										size={FLOATING_BUTTON_SIZE}
+									/>
+								)
+							)}
+						</div>
+					</ButtonWithTooltip>
+
+					{visibleCount > 0 && (
+						<Badge
+							variant="default"
+							className="absolute -top-2 -right-2 w-6 h-6 p-0 rounded-full border-2 border-white text-xs font-bold"
+							aria-label={t("map.layerTreeVisibleCountAriaLabel", {
+								visibleCount,
+							})}
+						>
+							{visibleCount}
+						</Badge>
+					)}
+				</div>
 			</div>
-		</div>
-	);
-});
+		);
+	},
+);
 
 FloatingLayerButton.displayName = "FloatingLayerButton";
 
@@ -319,6 +333,7 @@ const LayerTree: FC = () => {
 	const setIsLayerTreeOpen = useMapStore((state) => state.setIsLayerTreeOpen);
 	const { state: sidebarState, isMobile, setOpenMobile } = useSidebar();
 	const [isOpen, setIsOpen] = useState(false);
+	const floatingButtonRef = useRef<HTMLButtonElement>(null);
 
 	const handleOpen = useCallback(() => {
 		setIsOpen(true);
@@ -326,6 +341,9 @@ const LayerTree: FC = () => {
 
 	const handleClose = useCallback(() => {
 		setIsOpen(false);
+		setTimeout(() => {
+			floatingButtonRef.current?.focus();
+		}, 0);
 	}, []);
 
 	useEffect(() => {
@@ -335,6 +353,20 @@ const LayerTree: FC = () => {
 			setOpenMobile(true);
 		}
 	}, [isMobile, isOpen, setIsLayerTreeOpen, setOpenMobile]);
+
+	// Handle Escape key to close the dialog
+	useEffect(() => {
+		if (!isOpen) return;
+
+		const handleKeyDown = (event: KeyboardEvent) => {
+			if (event.key === "Escape") {
+				handleClose();
+			}
+		};
+
+		document.addEventListener("keydown", handleKeyDown);
+		return () => document.removeEventListener("keydown", handleKeyDown);
+	}, [isOpen, handleClose]);
 
 	if (!isOpen && isMobile) {
 		return null;
@@ -347,13 +379,14 @@ const LayerTree: FC = () => {
 				topVisibleLayer={topVisibleLayer}
 				sidebarState={sidebarState}
 				onClick={handleOpen}
+				forwardedRef={floatingButtonRef}
 			/>
 		);
 	}
 
 	return (
 		<Card
-			className={`flex w-full md:w-[400px] max-h-[70vh] absolute  bottom-4 z-50 flex-col bg-neutral-5 transition-all duration-200 left-4`}
+			className={`flex w-full md:w-[400px] max-h-[70vh] absolute bottom-4 z-50 flex-col bg-neutral-5 transition-all duration-200 left-4`}
 			role="dialog"
 			aria-label={t("map.layerTreeTitle")}
 		>
@@ -369,11 +402,11 @@ const LayerTree: FC = () => {
 						onClick={handleClose}
 						aria-label={t("map.closeLayerTree")}
 					>
-						<X className="w-4 h-4" />
+						<X className="w-4 h-4" aria-hidden="true" focusable="false" />
 					</Button>
 				</div>
 			</CardHeader>
-			<CardContent className="p-2 overflow-auto">
+			<CardContent className="p-2 overflow-auto tab-ring">
 				<LayerTreeContent layers={subjectLayers} />
 			</CardContent>
 		</Card>

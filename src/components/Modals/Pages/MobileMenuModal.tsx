@@ -32,7 +32,7 @@ const footerItems = [
 
 export function MobileMenuModal({ open, onOpenChange }: MobileMenuModalProps) {
 	const { t } = useTranslation("common");
-	const { handleFooterItemClick } = useModalStore();
+	const { handleFooterItemClick, openModal } = useModalStore();
 	const { setFirstTimeUser, setViewMode } = useAppStore();
 
 	const handleFooterClick = (itemId: string) => {
@@ -44,13 +44,6 @@ export function MobileMenuModal({ open, onOpenChange }: MobileMenuModalProps) {
 
 	const handleLogoClick = () => {
 		setFirstTimeUser(true);
-	};
-
-	const handleWelcomeModalOpen = () => {
-		onOpenChange(false);
-		setTimeout(() => {
-			setFirstTimeUser(true);
-		}, 100);
 	};
 
 	return (
@@ -76,7 +69,7 @@ export function MobileMenuModal({ open, onOpenChange }: MobileMenuModalProps) {
 						<Close className="w-6 h-6" />
 					</button>
 				</DialogHeader>
-				<div className="overflow-scroll">
+				<div className="overflow-scroll tab-ring">
 					<div className="flex flex-col justify-between flex-1">
 						<div className="flex-1 flex flex-col gap-4 p-4 overflow-auto mb-4">
 							<SubMenuOption
@@ -101,7 +94,10 @@ export function MobileMenuModal({ open, onOpenChange }: MobileMenuModalProps) {
 								key="information"
 								icon={InfoCircle}
 								titleKey="information.title"
-								onClick={handleWelcomeModalOpen}
+								onClick={() => {
+									onOpenChange(false);
+									openModal("information");
+								}}
 							/>
 							<div className="space-y-4 flex flex-col">
 								<span className="body2">{t("accessibility.title")}</span>

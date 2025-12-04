@@ -3,7 +3,8 @@ import { AppStoreState } from "@/types/app";
 export const createSetBaseFontSize =
 	(set: (fn: (state: AppStoreState) => Partial<AppStoreState>) => void) =>
 	(size: number) => {
-		document.documentElement.style.fontSize = `${size}px`;
+		const percentage = (size / 16) * 100;
+		document.documentElement.style.fontSize = `${percentage}%`;
 		set(() => ({ baseFontSize: size }));
 	};
 
