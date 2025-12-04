@@ -2,7 +2,6 @@
 /* eslint-disable complexity */
 "use client";
 
-import { WelcomeModal } from "@/components/Modals/Pages/WelcomeModal";
 import { Button, ButtonWithTooltip } from "@/components/ui/button";
 import {
 	Sidebar,
@@ -32,12 +31,12 @@ import { useAppStore } from "@/lib/store/appStore";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useMapStore } from "@/lib/store/mapStore";
 import { useModalStore } from "@/lib/store/modalStore";
-import { hasActiveFilters } from "@/lib/utils/filterUtils";
+import { getFilterCount, hasActiveFilters } from "@/lib/utils/filterUtils";
 import { animateMapToCoordinates } from "@/lib/utils/mapUtils";
 import { getCoordinatesFromAddress } from "@/lib/utils/institutionUtils";
 import { fromLonLat } from "ol/proj";
 import KukaSmallLogo from "@/logos/kuka-small.svg";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { usePathname } from "next/navigation";
 import { LayerTreeContent } from "../Map/LayerTree/LayerTree";
@@ -45,6 +44,7 @@ import { AccessibilityContent } from "./MenuContent/AccessibilityContent";
 import { FilterContent } from "./MenuContent/FilterContent";
 import { InstitutionDetailContent } from "./MenuContent/InstitutionDetailContent";
 import { SearchContent } from "./MenuContent/SearchContent";
+import { useRouter } from "next/navigation";
 
 const menuItems = [
 	{ id: "filter", icon: FilterLines, label: "filter.title" },
@@ -68,12 +68,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	const [activeItem, setActiveItem] = useState<string>("");
 	const [previousActiveItem, setPreviousActiveItem] = useState<string>("");
 	const [userHasClosedSidebar, setUserHasClosedSidebar] = useState(false);
-	const {
-		setInformationModalOpen,
-		setDownloadModalOpen,
-		setDownloadModalMode,
-		setMobileMenuModalOpen,
-	} = useModalStore();
+	const { setDownloadModalMode } = useModalStore();
 	const isLayerTreeOpen = useMapStore((state) => state.isLayerTreeOpen);
 	const setIsLayerTreeOpen = useMapStore((state) => state.setIsLayerTreeOpen);
 	const selectedInstitutionId = useInstitutionStore(
@@ -87,8 +82,11 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	const filteredInstitutions = useInstitutionStore(
 		(state) => state.filteredInstitutions,
 	);
-	const { firstTimeUser, setFirstTimeUser, viewMode, setViewMode } =
-		useAppStore();
+	const { firstTimeUser, viewMode, setViewMode } = useAppStore();
+
+	const filterCount = getFilterCount(filters);
+
+	const router = useRouter();
 
 	useEffect(() => {
 		if (!isMobile && !firstTimeUser && !userHasClosedSidebar) {
@@ -152,8 +150,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
 	const handleItemClick = (itemName: string) => {
 		if (itemName === "info") {
-			setInformationModalOpen(true);
-			return;
+			return router.push("/info");
 		}
 
 		if (itemName === "layertree") {
@@ -178,7 +175,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 		}
 
 		if (itemName === "download") {
-			setDownloadModalOpen(true);
+			router.push("/downloadModal");
 			setDownloadModalMode("filtered");
 			return;
 		}
@@ -205,13 +202,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 		}
 	};
 
-	const handleLogoClick = () => {
-		setFirstTimeUser(true);
-	};
-
-	const handleWelcomeModalClose = () => {
-		setFirstTimeUser(false);
-	};
+	const handleLogoClick = () => router.push("/welcome");
 
 	const handleSidebarClose = () => {
 		setUserHasClosedSidebar(true);
@@ -246,7 +237,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	};
 
 	const handleDownloadButtonClick = () => {
-		setDownloadModalOpen(true);
+		router.push("/downloadModal");
 		const mode = activeItem === "filter" ? "filtered" : "selected";
 		setDownloadModalMode(mode);
 	};
@@ -297,168 +288,192 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
 	return (
 		<>
-			<WelcomeModal
-				open={firstTimeUser}
-				onOpenChange={handleWelcomeModalClose}
-			/>
-			<Sidebar
-				collapsible="icon"
-				className="overflow-hidden *:data-[sidebar=sidebar]:flex-row [&_*]:!transition-none"
-				role="navigation"
-				aria-label={t("menu.navigation")}
-				{...props}
-			>
+			<nav aria-label={t("menu.navigation")}>
 				<Sidebar
-					collapsible="none"
-					className="w-[var(--sidebar-width-icon)] min-w-[var(--sidebar-width-icon)] max-w-[var(--sidebar-width-icon)] flex-shrink-0 border-r justify-center hidden md:flex"
+					collapsible="icon"
+					className="overflow-hidden *:data-[sidebar=sidebar]:flex-row [&_*]:!transition-none"
+					{...props}
 				>
-					<SidebarHeader>
-						<SidebarMenu className="my-2">
-							<SidebarMenuItem>
-								<button onClick={handleLogoClick} aria-label={t("kukaLogo")}>
-									<KukaSmallLogo
-										title="Kulturkataster Berlin, Logo"
-										className="size-14 cursor-pointer hover:opacity-80 transition-opacity"
-									/>
-								</button>
-							</SidebarMenuItem>
-						</SidebarMenu>
-					</SidebarHeader>
-					<SidebarContent>
-						<SidebarGroup>
-							<SidebarGroupContent>
-								<SidebarMenu>
-									{menuItems.map((item) => (
-										<SidebarMenuItem key={item.id}>
-											<SidebarMenuButton
-												tooltip={{
-													children: t(item.label),
-													hidden: false,
-												}}
-												onClick={() => handleItemClick(item.id)}
-												isActive={activeItem === item.id}
-												aria-label={t(item.label)}
-												className="relative"
-											>
-												<item.icon />
-												{item.id === "filter" &&
-													institutions &&
-													originalInstitutions?.features.length !==
-														institutions.features.length && (
-														<div className="absolute top-2 -right-1 bg-primary text-primary-foreground body2 rounded-full min-w-5 h-5 flex items-center justify-center px-1">
-															{institutions.features.length}
-														</div>
-													)}
-											</SidebarMenuButton>
-										</SidebarMenuItem>
-									))}
-								</SidebarMenu>
-							</SidebarGroupContent>
-						</SidebarGroup>
-					</SidebarContent>
-					<SidebarFooter>
-						<SidebarMenu>
-							{footerItems.map((item) => (
-								<SidebarMenuItem key={item.id}>
-									<SidebarMenuButton
-										tooltip={{
-											children: t(item.label),
-											hidden: false,
-										}}
-										onClick={() => handleItemClick(item.id)}
-										isActive={activeItem === item.id}
-										aria-label={t(item.label)}
+					<Sidebar
+						collapsible="none"
+						className="w-[var(--sidebar-width-icon)] min-w-[var(--sidebar-width-icon)] max-w-[var(--sidebar-width-icon)] flex-shrink-0 border-r justify-center hidden md:flex"
+					>
+						<SidebarHeader>
+							<div className="my-2">
+								<div className="flex justify-center">
+									<button
+										className=""
+										onClick={handleLogoClick}
+										aria-label={t("kukaLogoButton")}
 									>
-										<item.icon />
-									</SidebarMenuButton>
-								</SidebarMenuItem>
-							))}
-						</SidebarMenu>
-					</SidebarFooter>
-				</Sidebar>
-
-				{/* This is the second sidebar */}
-				{/* We disable collapsible and let it fill remaining space */}
-				<Sidebar
-					collapsible="none"
-					className="flex-1 h-full group-data-[collapsible=icon]:hidden flex flex-col"
-				>
-					<SidebarHeader className="gap-3.5 p-6 shadow-sm md:shadow-none z-10">
-						<div className="md:hidden flex justify-center pb-2">
-							<div className="w-10 h-1 bg-muted-foreground/30 rounded-full"></div>
-						</div>
-						<div className="flex items-center justify-between w-full">
-							<div className="flex items-center justify-between">
-								<div className="flex items-center gap-2">
-									{activeItem === "institution-detail" &&
-										previousActiveItem && (
-											<button
-												onClick={handleBackToFilter}
-												className="body1 font-bold flex items-center gap-1"
-												aria-label={`Zurück zu ${t(previousActiveItem + ".title")}`}
-											>
-												<ArrowLeft />{" "}
-												{t("menu.backTo", {
-													page: t(previousActiveItem + ".title"),
-												})}
-											</button>
-										)}
-									{!(
-										activeItem === "institution-detail" && previousActiveItem
-									) && (
-										<span className="body1 font-bold">
-											{getActiveItemTitle()}
-										</span>
-									)}
+										<KukaSmallLogo
+											title="Kulturkataster Berlin, Logo"
+											className="size-14 cursor-pointer hover:opacity-80 transition-opacity"
+										/>
+									</button>
 								</div>
 							</div>
-							<button
-								onClick={handleSidebarClose}
-								aria-label={t("closeSidebar")}
-							>
-								<Close />
-							</button>
-						</div>
-					</SidebarHeader>
-					<SidebarContent className="flex-1 overflow-hidden">
-						<SidebarGroup className="px-0 h-full">
-							<SidebarGroupContent className="h-full overflow-auto">
-								<div className="min-h-full flex flex-col">
-									<div className="flex-1 h-full bg-secondary">
-										{activeItem === "filter" && <FilterContent />}
-										{activeItem === "search" && <SearchContent />}
-										{activeItem === "accessibility" && (
-											<div className="p-2 w-full">
-												<AccessibilityContent onItemClick={handleItemClick} />
-											</div>
-										)}
-										{activeItem === "layertree" && <LayerTreeContent />}
-										{activeItem === "institution-detail" && (
-											<InstitutionDetailContent />
+						</SidebarHeader>
+						<SidebarContent>
+							<SidebarGroup>
+								<SidebarGroupContent>
+									<SidebarMenu>
+										{menuItems.map((item) => {
+											const showBadge =
+												filterCount > 0 && item.id === "filter";
+											const active = activeItem === item.id;
+											return (
+												<SidebarMenuItem key={item.id}>
+													<SidebarMenuButton
+														tooltip={{
+															children: t(item.label),
+															hidden: false,
+														}}
+														onClick={() => handleItemClick(item.id)}
+														isActive={active}
+														aria-label={
+															showBadge
+																? t("menu.menuButtonBadge", {
+																		label: t(item.label),
+																		count: filterCount,
+																	})
+																: t(item.label)
+														}
+														aria-current={active}
+														className="relative"
+													>
+														<item.icon />
+														{showBadge && (
+															<div className="absolute top-2 -right-1 bg-primary text-primary-foreground body2 rounded-full min-w-5 h-5 flex items-center justify-center px-1">
+																{filterCount}
+															</div>
+														)}
+													</SidebarMenuButton>
+												</SidebarMenuItem>
+											);
+										})}
+									</SidebarMenu>
+								</SidebarGroupContent>
+							</SidebarGroup>
+						</SidebarContent>
+						<SidebarFooter>
+							<SidebarMenu>
+								{footerItems.map((item) => (
+									<SidebarMenuItem key={item.id}>
+										<SidebarMenuButton
+											tooltip={{
+												children: t(item.label),
+												hidden: false,
+											}}
+											onClick={() => handleItemClick(item.id)}
+											isActive={activeItem === item.id}
+											aria-label={t(item.label)}
+										>
+											<item.icon />
+										</SidebarMenuButton>
+									</SidebarMenuItem>
+								))}
+							</SidebarMenu>
+						</SidebarFooter>
+					</Sidebar>
+
+					{/* This is the second sidebar */}
+					{/* We disable collapsible and let it fill remaining space */}
+					<Sidebar
+						collapsible="none"
+						className="flex-1 h-full group-data-[collapsible=icon]:hidden flex flex-col"
+					>
+						<SidebarHeader className="gap-3.5 p-6 shadow-sm md:shadow-none z-10">
+							<div className="md:hidden flex justify-center pb-2">
+								<div className="w-10 h-1 bg-muted-foreground/30 rounded-full"></div>
+							</div>
+							<div className="flex items-center justify-between w-full">
+								<div className="flex items-center justify-between">
+									<div className="flex items-center gap-2">
+										{activeItem === "institution-detail" &&
+											previousActiveItem && (
+												<button
+													onClick={handleBackToFilter}
+													className="body1 font-bold flex items-center gap-1 "
+													aria-label={t("menu.backToAriaLabel", {
+														title: t(previousActiveItem + ".title"),
+													})}
+												>
+													<ArrowLeft />{" "}
+													{t("menu.backTo", {
+														page: t(previousActiveItem + ".title"),
+													})}
+												</button>
+											)}
+										{!(
+											activeItem === "institution-detail" &&
+											previousActiveItem
+										) && (
+											<span className="font-bold body3">
+												{getActiveItemTitle()}
+											</span>
 										)}
 									</div>
-									{shouldShowDownloadButton() && false && (
-										<div className="sticky bottom-0 flex justify-center p-4">
-											<Button
-												variant={"outline"}
-												className="w-full"
-												aria-label={t("download.downloadButton")}
-												onClick={handleDownloadButtonClick}
-											>
-												<Download size={6} viewBox="0 0 24 24" />
-												{t("download.downloadButton")}
-												{getDownloadButtonCount() && (
-													<span>({getDownloadButtonCount()})</span>
-												)}
-											</Button>
-										</div>
-									)}
 								</div>
-							</SidebarGroupContent>
-						</SidebarGroup>
-					</SidebarContent>
+								<button
+									className=""
+									onClick={handleSidebarClose}
+									aria-label={t("closeSidebar")}
+								>
+									<Close />
+								</button>
+							</div>
+						</SidebarHeader>
+						<SidebarContent className="flex-1 overflow-hidden">
+							<SidebarGroup className="px-0 h-full">
+								<SidebarGroupContent className="h-full overflow-auto focus-visible:outline focus-visible:outline-2 focus-visible:outline-interaction-dark focus-visible:outline-offset-[-2px]">
+									<div className="min-h-full flex flex-col">
+										<div className="flex-1 h-full bg-neutral-10 md:bg-secondary">
+											{activeItem === "filter" && <FilterContent />}
+											{activeItem === "search" && <SearchContent />}
+											{activeItem === "accessibility" && (
+												<div className="p-2 w-full">
+													<AccessibilityContent />
+												</div>
+											)}
+											{activeItem === "layertree" && <LayerTreeContent />}
+											{activeItem === "institution-detail" && (
+												<div
+													aria-hidden={viewMode === "list"}
+													tabIndex={viewMode === "list" ? -1 : undefined}
+													className={
+														viewMode === "list"
+															? "pointer-events-none"
+															: undefined
+													}
+												>
+													<InstitutionDetailContent />
+												</div>
+											)}
+										</div>
+										{shouldShowDownloadButton() && false && (
+											<div className="sticky bottom-0 flex justify-center p-4">
+												<Button
+													variant={"outline"}
+													className="w-full"
+													aria-label={t("download.downloadButton")}
+													onClick={handleDownloadButtonClick}
+												>
+													<Download size={6} viewBox="0 0 24 24" />
+													{t("download.downloadButton")}
+													{getDownloadButtonCount() && (
+														<span>({getDownloadButtonCount()})</span>
+													)}
+												</Button>
+											</div>
+										)}
+									</div>
+								</SidebarGroupContent>
+							</SidebarGroup>
+						</SidebarContent>
+					</Sidebar>
 				</Sidebar>
-			</Sidebar>
+			</nav>
 			<div className="absolute md:hidden block z-[50] top-0 left-0">
 				<button
 					onClick={handleLogoClick}
@@ -475,7 +490,11 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			<div className="fixed block z-[50] top-0 right-0 p-4 overflow-hidden">
 				<div className="flex gap-2 items-center">
 					<div className="relative">
-						<div className="flex items-center bg-neutral-80 border rounded-full shadow-sm relative overflow-hidden">
+						<div
+							className="flex items-center bg-neutral-80 border rounded-full shadow-sm relative"
+							role="radiogroup"
+							aria-label={t("map.radioGroupAriaLabel")}
+						>
 							<div
 								className={`absolute top-0 bottom-0 w-12 h-12 bg-background rounded-full transition-transform duration-300 ease-in-out ${
 									viewMode === "map" ? "translate-x-0" : "translate-x-12"
@@ -494,6 +513,9 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 									handleViewModeSwitch(viewMode === "list" ? "map" : "list")
 								}
 								aria-label={t("map.show")}
+								role="radio"
+								aria-checked={viewMode === "map"}
+								tabIndex={viewMode === "map" ? 0 : -1}
 							>
 								<MapIcon className="size-6" />
 							</ButtonWithTooltip>
@@ -510,6 +532,9 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 									handleViewModeSwitch(viewMode === "map" ? "list" : "map")
 								}
 								aria-label={t("listView.show")}
+								role="radio"
+								aria-checked={viewMode === "list"}
+								tabIndex={viewMode === "list" ? 0 : -1}
 							>
 								<ListIcon className="size-6" />
 							</ButtonWithTooltip>
@@ -520,7 +545,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 						variant="map-icon"
 						size="icon-only"
 						title={t("mobileMenu.title")}
-						onClick={() => setMobileMenuModalOpen(true)}
+						onClick={() => router.push("/mobileMenu")}
 						aria-label={t("mobileMenu.title")}
 						className="md:hidden"
 					>
@@ -531,29 +556,29 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
 			<div className="fixed bottom-0 left-0 right-0 z-[60] bg-sidebar border-t md:hidden h-20 pointer-events-auto">
 				<SidebarMenu className="flex-row justify-around px-2 py-3">
-					{menuItems.map((item) => (
-						<SidebarMenuItem key={item.id} className="flex-shrink-0">
-							<SidebarMenuButton
-								onClick={() => handleItemClick(item.id)}
-								isActive={activeItem === item.id}
-								className="flex-col gap-1 h-auto py-2 px-2 w-auto size-12"
-								aria-label={t(item.label)}
-							>
-								<item.icon className="size-6" />
-								<span className="text-xs font-medium hidden">
-									{t(item.label)}
-								</span>
-								{item.id === "filter" &&
-									institutions &&
-									originalInstitutions?.features.length !==
-										institutions.features.length && (
+					{menuItems.map((item) => {
+						const showBadge = filterCount > 0 && item.id === "filter";
+						return (
+							<SidebarMenuItem key={item.id} className="flex-shrink-0">
+								<SidebarMenuButton
+									onClick={() => handleItemClick(item.id)}
+									isActive={activeItem === item.id}
+									className="flex-col gap-1 h-auto py-2 px-2 w-auto size-12"
+									aria-label={t(item.label)}
+								>
+									<item.icon className="size-6" />
+									<span className="text-xs font-medium hidden">
+										{t(item.label)}
+									</span>
+									{showBadge && (
 										<div className="absolute -top-1 -right-1 bg-primary text-primary-foreground body2 rounded-full min-w-5 h-5 flex items-center justify-center px-1">
-											{institutions.features.length}
+											{filterCount}
 										</div>
 									)}
-							</SidebarMenuButton>
-						</SidebarMenuItem>
-					))}
+								</SidebarMenuButton>
+							</SidebarMenuItem>
+						);
+					})}
 				</SidebarMenu>
 			</div>
 		</>

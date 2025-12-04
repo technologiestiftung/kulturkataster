@@ -18,11 +18,6 @@ interface SignLanguageInformationItem {
 	videos: SignLanguageVideoItem[];
 }
 
-interface SignLanguageModalProps {
-	open: boolean;
-	onOpenChange: (open: boolean) => void;
-}
-
 export function VideoWithLoader({ src }: { src: string }) {
 	const videoRef = useRef<HTMLVideoElement>(null);
 	const [isLoaded, setIsLoaded] = useState(false);
@@ -62,10 +57,7 @@ export function VideoWithLoader({ src }: { src: string }) {
 	);
 }
 
-export function SignLanguageModal({
-	open,
-	onOpenChange,
-}: SignLanguageModalProps) {
+export function SignLanguageModal() {
 	const { t } = useTranslation("content");
 
 	const content = t("signLanguageModal.content", {
@@ -113,8 +105,6 @@ export function SignLanguageModal({
 
 	return (
 		<PageModal
-			open={open}
-			onOpenChange={onOpenChange}
 			title={t("signLanguageModal.title")}
 			subtitle={t("signLanguageModal.subtitle")}
 			content={signLanguageInformationContent}

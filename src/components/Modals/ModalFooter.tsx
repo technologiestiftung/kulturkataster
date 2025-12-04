@@ -1,11 +1,12 @@
 "use client";
 
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useModalStore } from "@/lib/store/modalStore";
+import { normalizeModalRoutingUrl } from "@/lib/utils/sanitizerUtils";
 import KRBLogo from "@/logos/KRB.svg";
 import KukaLargeLogo from "@/logos/kuka-large.svg";
 import KukaSmallLogo from "@/logos/kuka-small.svg";
 import SenateLogo from "@/logos/senate.svg";
+import Link from "next/link";
 import { useTranslation } from "react-i18next";
 
 interface ModalFooterProps {
@@ -23,14 +24,11 @@ const footerItems = [
 
 export function ModalFooter({ hideLinks }: ModalFooterProps) {
 	const { t } = useTranslation("common");
-	const { handleFooterItemClick } = useModalStore();
 	const isMobile = useIsMobile();
 
 	return (
 		<>
 			<div className="ModalFooter-root flex justify-center w-full h-auto bg-secondary px-6 py-12 ">
-				{/* Removed the modal components to prevent circular rendering */}
-
 				<div className="w-full flex flex-col md:flex-row md:items-center md:justify-between">
 					<div className="w-4/11 hidden md:flex items-center justify-center">
 						<KukaLargeLogo
@@ -69,15 +67,17 @@ export function ModalFooter({ hideLinks }: ModalFooterProps) {
 								{footerItems
 									.filter((footerItem) => !hideLinks?.includes(footerItem.id))
 									.map((item) => (
-										<button
-											className="body2 font-bold w-fit "
+										<Link
 											key={item.id}
-											onClick={() => handleFooterItemClick(item.id)}
+											className="body2 font-bold select-none"
+											href={normalizeModalRoutingUrl(item.id).url}
+											target={normalizeModalRoutingUrl(item.id).target}
+											rel="noopener noreferrer"
 										>
 											{item.id === "signLanguageInformationShort" && isMobile
 												? t(`footer.signLanguageInformation`)
 												: t(`footer.${item.id}`)}
-										</button>
+										</Link>
 									))}
 							</div>
 						</div>

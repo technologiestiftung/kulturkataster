@@ -20,19 +20,21 @@ import {
 import { Loading } from "@/components/ui/loading";
 import { ArrowUp } from "lucide-react";
 import TextWithLinks from "../Content/TextWithLinks";
+import { useRouter } from "next/navigation";
 
 const ITEMS_PER_PAGE = 20;
 
 const ListView: FC = () => {
 	const { t } = useTranslation("common");
 	const { t: tContent } = useTranslation("content");
+	const router = useRouter();
 	const institutions = useInstitutionStore(
 		(state) => state.filteredInstitutions,
 	);
 	const setSelectedInstitutionId = useInstitutionStore(
 		(state) => state.setSelectedInstitutionId,
 	);
-	const { setDownloadModalOpen, setDownloadModalMode } = useModalStore();
+	const { setDownloadModalMode } = useModalStore();
 
 	const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
 	const [isLoading, setIsLoading] = useState(false);
@@ -116,8 +118,8 @@ const ListView: FC = () => {
 	};
 
 	const handleDownloadClick = () => {
-		setDownloadModalOpen(true);
 		setDownloadModalMode("filtered");
+		router.push("/downloadModal");
 	};
 
 	if (!institutions) {

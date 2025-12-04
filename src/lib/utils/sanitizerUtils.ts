@@ -44,3 +44,50 @@ export const normalizeUrl = (url: string): string => {
 	// For any other case, assume it needs https://
 	return `https://${trimmedUrl}`;
 };
+
+/**
+ * Normalizes a URL to ensure correct routing for modals
+ * @param url The raw URL string from backend or user input
+ * @returns Normalized URL
+ */
+export const normalizeModalRoutingUrl = (
+	url: string,
+): {
+	url: string;
+	target: "_blank" | "_self";
+} => {
+	if (!url)
+		return {
+			url: "/",
+			target: "_self",
+		};
+	if (url.includes("simpleLanguage"))
+		return {
+			url: "/simpleLanguage",
+			target: "_self",
+		};
+	if (url.includes("signLanguage"))
+		return {
+			url: "/signLanguage",
+			target: "_self",
+		};
+	if (url.includes("information"))
+		return {
+			url: "/info",
+			target: "_self",
+		};
+	if (url.includes("download"))
+		return {
+			url: "/downloadModal",
+			target: "_self",
+		};
+	if (url.includes("privacy"))
+		return {
+			url: "https://dsgvo-info.cortina-consult.de/kulturkataster/",
+			target: "_blank",
+		};
+	return {
+		url: `/${url}`,
+		target: "_self",
+	};
+};

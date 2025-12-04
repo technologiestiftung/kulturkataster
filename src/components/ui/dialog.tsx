@@ -7,14 +7,32 @@ import BackIcon from "@/icons/chevron-left.svg";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
 import { useRestoreFocus } from "@/hooks/use-restore-focus";
-import { useModalStore } from "@/lib/store/modalStore";
+import { useRouter } from "next/navigation";
+import { useAppStore } from "@/lib/store/appStore";
 
 type DialogRootProps = React.ComponentProps<typeof DialogPrimitive.Root>;
 
 function Dialog({ open, ...props }: DialogRootProps) {
 	useRestoreFocus(open);
+	const router = useRouter();
+	const { firstTimeUser, setFirstTimeUser } = useAppStore();
 
-	return <DialogPrimitive.Root data-slot="dialog" open={open} {...props} />;
+	return (
+		<DialogPrimitive.Root
+			data-slot="dialog"
+			open={open}
+			onOpenChange={(newOpen) => {
+				if (!newOpen) {
+					if (firstTimeUser) {
+						setFirstTimeUser(false);
+					}
+					return router.push("/");
+				}
+				router.back();
+			}}
+			{...props}
+		/>
+	);
 }
 
 function DialogTrigger({
@@ -72,7 +90,7 @@ function DialogContent({
 	const { t } = useTranslation("common");
 	const focusRef = React.useRef<HTMLDivElement | null>(null);
 
-	const { modalHistory, backOnModal } = useModalStore();
+	const router = useRouter();
 
 	const getVariantStyles = () => {
 		switch (variant) {
@@ -119,9 +137,9 @@ function DialogContent({
 				}}
 				{...props}
 			>
-				{!hideBackIcon && modalHistory.length > 1 && (
+				{!hideBackIcon && (
 					<button
-						onClick={backOnModal}
+						onClick={() => router.back()}
 						className={backAndCloseClassNames("back")}
 					>
 						<BackIcon className="size-6" />

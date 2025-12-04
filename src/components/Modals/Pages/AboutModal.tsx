@@ -1,10 +1,9 @@
 "use client";
 
 import DownloadPDFButton from "@/components/Content/DownloadPDFButton";
-import TextBlock from "@/components/Content/TextBlock"; // Stelle sicher, dass der Pfad korrekt ist
+import TextBlock from "@/components/Content/TextBlock";
 import { Trans, useTranslation } from "react-i18next";
 import { PageModal } from "../PageModal";
-import { useModalStore } from "@/lib/store/modalStore";
 
 interface Guidelines {
 	description: string;
@@ -56,28 +55,21 @@ interface AboutContent {
 	credits: Credits;
 }
 
-interface AboutModalProps {
-	open: boolean;
-	onOpenChange: (open: boolean) => void;
-}
-
-const CreditSectionComponent = ({ data }: { data: CreditSection }) => (
-	<div className="mb-8">
-		<p className="body1 font-bold">{data.title}</p>
-		<div className="body2 space-y-1 mt-4">
-			{data.organization && <p>{data.organization}</p>}
-			{data.members?.map((item, i) => <p key={i}>{item}</p>)}
-			{data.list?.map((item, i) => <p key={i}>{item}</p>)}
-		</div>
-	</div>
-);
-
-export function AboutModal({ open, onOpenChange }: AboutModalProps) {
+export function AboutModal() {
 	const { t } = useTranslation("content");
 
-	const { handleFooterItemClick } = useModalStore();
-
 	const content = t("aboutModal", { returnObjects: true }) as AboutContent;
+
+	const CreditSectionComponent = ({ data }: { data: CreditSection }) => (
+		<div className="mb-8">
+			<p className="body1 font-bold">{data.title}</p>
+			<div className="body2 space-y-1 mt-4">
+				{data.organization && <p>{data.organization}</p>}
+				{data.members?.map((item, i) => <p key={i}>{item}</p>)}
+				{data.list?.map((item, i) => <p key={i}>{item}</p>)}
+			</div>
+		</div>
+	);
 
 	const modalContent = (
 		<div className="space-y-8">
@@ -88,15 +80,14 @@ export function AboutModal({ open, onOpenChange }: AboutModalProps) {
 						ns="content"
 						components={{
 							link: (
-								<button
+								<a
+									href="/simpleLanguage"
+									rel="noopener noreferrer"
 									type="button"
 									className="text-primary-dark hover:text-primary underline bg-transparent border-none p-0 cursor-pointer "
-									onClick={() => {
-										handleFooterItemClick("simpleLanguageInformation");
-									}}
 								>
 									{t("here")}
-								</button>
+								</a>
 							),
 						}}
 					/>
@@ -181,8 +172,6 @@ export function AboutModal({ open, onOpenChange }: AboutModalProps) {
 
 	return (
 		<PageModal
-			open={open}
-			onOpenChange={onOpenChange}
 			title={t("aboutModal.title")}
 			subtitle={t("aboutModal.subtitle")}
 			content={modalContent}

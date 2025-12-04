@@ -6,13 +6,8 @@ import FontSize from "@/icons/font-size.svg";
 import List from "@/icons/list.svg";
 import Contrast from "@/icons/contrast.svg";
 import { useAppStore } from "@/lib/store/appStore";
-import { useModalStore } from "@/lib/store/modalStore";
 import { SubMenuOption } from "../SubMenuOption";
-
-interface AccessibilityContentProps {
-	onItemClick?: (itemName: string) => void; // Made optional since we can use the modal store directly
-	openLinksInModal?: boolean;
-}
+import { useRouter } from "next/navigation";
 
 const accessibilityOptions = [
 	{
@@ -29,7 +24,7 @@ const accessibilityOptions = [
 	},
 	{
 		id: "viewMode",
-		icon: List, // Reusing contrast icon for now
+		icon: List,
 		titleKey: "accessibility.viewMode.title",
 		hasSwitch: true,
 	},
@@ -48,10 +43,7 @@ const accessibilityOptions = [
 	},
 ] as const;
 
-export function AccessibilityContent({
-	onItemClick,
-	openLinksInModal,
-}: AccessibilityContentProps) {
+export function AccessibilityContent() {
 	const {
 		isContrastMode,
 		setIsContrastMode,
@@ -62,12 +54,7 @@ export function AccessibilityContent({
 		setViewMode,
 	} = useAppStore();
 
-	const {
-		openModal,
-		setAccessibilityModalOpen,
-		setSimpleLanguageInformationModalOpen,
-		setSignLanguageModalOpen,
-	} = useModalStore();
+	const router = useRouter();
 
 	const handleSwitchChange = (optionId: string, checked: boolean) => {
 		switch (optionId) {
@@ -113,21 +100,13 @@ export function AccessibilityContent({
 							? undefined
 							: () => {
 									if (option.id === "simpleLanguage") {
-										if (openLinksInModal) {
-											openModal("simpleLanguageInformation");
-										} else {
-											setSimpleLanguageInformationModalOpen(true);
-										}
+										router.push("/simpleLanguage");
 									} else if (option.id === "signLanguage") {
-										if (openLinksInModal) {
-											openModal("signLanguageInformation");
-										} else {
-											setSignLanguageModalOpen(true);
-										}
-									} else if (onItemClick) {
-										onItemClick("accessibility");
+										router.push("/signLanguage");
 									} else {
-										setAccessibilityModalOpen(true);
+										console.warn(
+											`Unknown Link in AccessibilityContent: ${JSON.stringify(option)}`,
+										);
 									}
 								}
 					}

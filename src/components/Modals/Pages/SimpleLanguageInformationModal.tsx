@@ -10,11 +10,6 @@ import keyOrder from "@/lib/utils/keyOrderSimpleLanguage.json";
 import React from "react";
 import { cn } from "@/lib/utils";
 
-interface SimpleLanguageInformationModalProps {
-	open: boolean;
-	onOpenChange: (open: boolean) => void;
-}
-
 interface ListProps {
 	title?: string;
 	title1?: string;
@@ -102,10 +97,7 @@ const RenderContent = ({
 	);
 };
 
-export function SimpleLanguageInformationModal({
-	open,
-	onOpenChange,
-}: SimpleLanguageInformationModalProps) {
+export function SimpleLanguageInformationModal() {
 	const { t } = useTranslation("content");
 
 	const content = {
@@ -161,8 +153,6 @@ export function SimpleLanguageInformationModal({
 
 	return (
 		<PageModal
-			open={open}
-			onOpenChange={onOpenChange}
 			title={""}
 			subtitle={""}
 			content={simpleLanguageInformationContent}
