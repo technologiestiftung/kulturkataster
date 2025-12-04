@@ -1,7 +1,6 @@
 /* eslint-disable */
 "use client";
 
-import { WelcomeModal } from "@/components/Modals/Pages/WelcomeModal";
 import { Button, ButtonWithTooltip } from "@/components/ui/button";
 import {
 	Sidebar,
@@ -44,6 +43,7 @@ import { AccessibilityContent } from "./MenuContent/AccessibilityContent";
 import { FilterContent } from "./MenuContent/FilterContent";
 import { InstitutionDetailContent } from "./MenuContent/InstitutionDetailContent";
 import { SearchContent } from "./MenuContent/SearchContent";
+import { useRouter } from "next/navigation";
 
 const menuItems = [
 	{ id: "filter", icon: FilterLines, label: "filter.title" },
@@ -64,14 +64,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	const [activeItem, setActiveItem] = useState<string>("");
 	const [previousActiveItem, setPreviousActiveItem] = useState<string>("");
 	const [userHasClosedSidebar, setUserHasClosedSidebar] = useState(false);
-	const {
-		welcomeModalOpen,
-		closeAllModals,
-		setInformationModalOpen,
-		setDownloadModalOpen,
-		setDownloadModalMode,
-		setMobileMenuModalOpen,
-	} = useModalStore();
+	const { setDownloadModalMode } = useModalStore();
 	const isLayerTreeOpen = useMapStore((state) => state.isLayerTreeOpen);
 	const setIsLayerTreeOpen = useMapStore((state) => state.setIsLayerTreeOpen);
 	const selectedInstitutionId = useInstitutionStore(
@@ -87,10 +80,11 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	const institutions = useInstitutionStore(
 		(state) => state.filteredInstitutions,
 	);
-	const { firstTimeUser, setFirstTimeUser, viewMode, setViewMode } =
-		useAppStore();
+	const { firstTimeUser, viewMode, setViewMode } = useAppStore();
 
 	const filterCount = getFilterCount(filters);
+
+	const router = useRouter();
 
 	useEffect(() => {
 		if (!isMobile && !firstTimeUser && !userHasClosedSidebar) {
@@ -143,8 +137,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
 	const handleItemClick = (itemName: string) => {
 		if (itemName === "info") {
-			setInformationModalOpen(true);
-			return;
+			return router.push("/info");
 		}
 
 		if (itemName === "layertree") {
@@ -169,7 +162,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 		}
 
 		if (itemName === "download") {
-			setDownloadModalOpen(true);
+			router.push("/downloadModal");
 			setDownloadModalMode("filtered");
 			return;
 		}
@@ -196,14 +189,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 		}
 	};
 
-	const handleLogoClick = () => {
-		setFirstTimeUser(true);
-	};
-
-	const handleWelcomeModalClose = () => {
-		setFirstTimeUser(false);
-		closeAllModals();
-	};
+	const handleLogoClick = () => router.push("/welcome");
 
 	const handleSidebarClose = () => {
 		setUserHasClosedSidebar(true);
@@ -238,7 +224,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	};
 
 	const handleDownloadButtonClick = () => {
-		setDownloadModalOpen(true);
+		router.push("/downloadModal");
 		const mode = activeItem === "filter" ? "filtered" : "selected";
 		setDownloadModalMode(mode);
 	};
@@ -298,10 +284,6 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
 	return (
 		<>
-			<WelcomeModal
-				open={firstTimeUser || welcomeModalOpen}
-				onOpenChange={handleWelcomeModalClose}
-			/>
 			<nav aria-label={t("menu.navigation")}>
 				<Sidebar
 					collapsible="icon"
@@ -445,7 +427,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 											{activeItem === "search" && <SearchContent />}
 											{activeItem === "accessibility" && (
 												<div className="p-2 w-full">
-													<AccessibilityContent onItemClick={handleItemClick} />
+													<AccessibilityContent />
 												</div>
 											)}
 											{activeItem === "layertree" && <LayerTreeContent />}
@@ -489,7 +471,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			<div className="absolute md:hidden block z-[50] top-0 left-0">
 				<button
 					onClick={handleLogoClick}
-					className="flex flex-col items-center gap-1 p-2 "
+					className="flex flex-col items-center gap-1 p-4"
 					aria-label={t("kukaLogo")}
 				>
 					<KukaSmallLogo
@@ -557,7 +539,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 						variant="map-icon"
 						size="icon-only"
 						title={t("mobileMenu.title")}
-						onClick={() => setMobileMenuModalOpen(true)}
+						onClick={() => router.push("/mobileMenu")}
 						aria-label={t("mobileMenu.title")}
 						className="md:hidden"
 					>

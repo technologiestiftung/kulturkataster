@@ -1,9 +1,10 @@
 "use client";
-import { useModalStore } from "@/lib/store/modalStore";
 import { FC } from "react";
 import { useTranslation } from "react-i18next";
 import packageInfo from "../../../package.json";
 import { useAppStore } from "@/lib/store/appStore";
+import Link from "next/link";
+import { normalizeModalRoutingUrl } from "@/lib/utils/sanitizerUtils";
 
 const footerItems = [
 	{ id: "about" },
@@ -20,7 +21,6 @@ interface FooterProps {
 
 const Footer: FC<FooterProps> = ({ ariaLabel }) => {
 	const { t } = useTranslation("common");
-	const { handleFooterItemClick } = useModalStore();
 	const viewMode = useAppStore((state) => state.viewMode);
 
 	if (viewMode === "list") return <></>;
@@ -39,12 +39,14 @@ const Footer: FC<FooterProps> = ({ ariaLabel }) => {
 				<ul className="flex gap-4 body2 font-bold">
 					{footerItems.map((item) => (
 						<li key={item.id}>
-							<button
-								className="body2 font-bold"
-								onClick={() => handleFooterItemClick(item.id)}
+							<Link
+								className="body2 font-bold select-none"
+								href={normalizeModalRoutingUrl(item.id).url}
+								target={normalizeModalRoutingUrl(item.id).target}
+								rel="noopener noreferrer"
 							>
 								{t(`footer.${item.id}`)}
-							</button>
+							</Link>
 						</li>
 					))}
 					<li className="body2 font-normal">v{packageInfo.version}</li>
