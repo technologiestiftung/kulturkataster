@@ -174,55 +174,64 @@
 				"type": "circle",
 				"background": "bg-[#D8FE7E]",
 				"borderColor": "border-neutral-80",
-				"label": "1 - 4"
+				"label": "1 - 4",
+				"unit": "Einwohner pro Hektar"
 			},
 			{
 				"type": "circle",
 				"background": "bg-[#FDFE54]",
 				"borderColor": "border-neutral-80",
-				"label": "5 - 30"
+				"label": "5 - 30",
+				"unit": "Einwohner pro Hektar"
 			},
 			{
 				"type": "circle",
 				"background": "bg-[#F7CC76]",
 				"borderColor": "border-neutral-80",
-				"label": "31 - 70"
+				"label": "31 - 70",
+				"unit": "Einwohner pro Hektar"
 			},
 			{
 				"type": "circle",
 				"background": "bg-[#F19E39]",
 				"borderColor": "border-neutral-80",
-				"label": "71 - 150"
+				"label": "71 - 150",
+				"unit": "Einwohner pro Hektar"
 			},
 			{
 				"type": "circle",
 				"background": "bg-[#ED712E]",
 				"borderColor": "border-neutral-80",
-				"label": "151 - 250"
+				"label": "151 - 250",
+				"unit": "Einwohner pro Hektar"
 			},
 			{
 				"type": "circle",
 				"background": "bg-[#EA3323]",
 				"borderColor": "border-neutral-80",
-				"label": "251 - 350"
+				"label": "251 - 350",
+				"unit": "Einwohner pro Hektar"
 			},
 			{
 				"type": "circle",
 				"background": "bg-[#BB27C4]",
 				"borderColor": "border-neutral-80",
-				"label": "351 - 450"
+				"label": "351 - 450",
+				"unit": "Einwohner pro Hektar"
 			},
 			{
 				"type": "circle",
 				"background": "bg-[#8B1A95]",
 				"borderColor": "border-neutral-80",
-				"label": "451 - 550"
+				"label": "451 - 550",
+				"unit": "Einwohner pro Hektar"
 			},
 			{
 				"type": "circle",
 				"background": "bg-[#000194]",
 				"borderColor": "border-neutral-80",
-				"label": "> 500"
+				"label": "> 500",
+				"unit": "Einwohner pro Hektar"
 			}
 		]
 	},
