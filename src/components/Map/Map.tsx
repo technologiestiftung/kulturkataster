@@ -20,7 +20,7 @@ const LazyOlMap = dynamic(() => import("./OlMap/OlMap"), {
 	),
 });
 
-const Map: FC = () => {
+const MapComp: FC = () => {
 	const institutions = useInstitutionStore(
 		(state) => state.filteredInstitutions,
 	);
@@ -47,4 +47,4 @@ const Map: FC = () => {
 	);
 };
 
-export default Map;
+export default MapComp;
