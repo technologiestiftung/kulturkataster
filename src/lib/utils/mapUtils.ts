@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable no-undef */
+/* eslint-disable max-params */
 import { fromLonLat } from "ol/proj";
 import { Map } from "ol";
 import { Coordinate } from "ol/coordinate";

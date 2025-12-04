@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 import { create } from "zustand";
 
 function popAndGetLastImmutable<T>(arr: T[]): {

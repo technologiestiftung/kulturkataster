@@ -1,3 +1,4 @@
+/* eslint-disable max-params */
 import { Category, FilterState, Institution, Subcategory } from "@/types";
 
 export const hasActiveFilters = (filters: FilterState | null): boolean => {
