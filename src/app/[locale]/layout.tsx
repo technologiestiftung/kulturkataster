@@ -61,22 +61,76 @@ export default async function RootLayout({
 	const ns: string[] = ["common", "content", "enumMap"]; // namespace used for this page
 	const { resources } = await serverSideTranslation(locale, ns);
 
+	const localizedResources = resources as Record<
+		string,
+		Record<string, Record<string, unknown>>
+	>;
+	const localeResources = localizedResources?.[locale] ?? {};
+	const commonResources = (localeResources.common ?? {}) as Record<
+		string,
+		unknown
+	>;
+
+	const skipToContentLabel =
+		typeof commonResources.skipToContent === "string"
+			? (commonResources.skipToContent as string)
+			: "Skip to main content";
+	const mainContentLabel =
+		typeof commonResources.mainContent === "string"
+			? (commonResources.mainContent as string)
+			: "Main content";
+	const siteHeading =
+		typeof commonResources.siteTitle === "string"
+			? (commonResources.siteTitle as string)
+			: "Berliner Kulturkataster";
+	const headerLabel =
+		typeof commonResources.headerLandmark === "string"
+			? (commonResources.headerLandmark as string)
+			: "Site header";
+	const footerLabel =
+		typeof commonResources.footerLandmark === "string"
+			? (commonResources.footerLandmark as string)
+			: "Footer";
+
 	return (
 		<html lang={locale} dir={getDirection(locale)}>
 			<body className={`${barlow.className} antialiased`}>
 				<I18NProvider locale={locale} namespaces={ns} resources={resources}>
 					<AppPersistenceProvider />
-					<SidebarProvider>
-						<Menu />
-						<SidebarInset className="flex-1 w-0">
-							<div className="flex flex-1 flex-col gap-4 h-full w-full pb-20 md:pb-0">
-								<MapInitializer />
-								{children}
+					<a
+						href="#main-content"
+						className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-4 focus:left-4 focus:bg-background focus:text-foreground focus:px-4 focus:py-2 focus:rounded-md focus:shadow-lg tab-ring"
+					>
+						{skipToContentLabel}
+					</a>
+					<div className="flex min-h-screen flex-col">
+						<SidebarProvider>
+							<div className="flex flex-1 w-full">
+								<header
+									aria-label={headerLabel}
+									className="flex-shrink-0 w-auto"
+								>
+									<Menu />
+								</header>
+								<SidebarInset asChild className="flex-1 w-0">
+									<main
+										id="main-content"
+										className="focus:outline-none"
+										tabIndex={-1}
+										aria-label={mainContentLabel}
+									>
+										<h1 className="sr-only">{siteHeading}</h1>
+										<div className="flex flex-1 flex-col gap-4 h-full w-full pb-20 md:pb-0">
+											<MapInitializer />
+											{children}
+										</div>
+									</main>
+								</SidebarInset>
 							</div>
-						</SidebarInset>
-					</SidebarProvider>
+						</SidebarProvider>
 
-					<Footer />
+						<Footer ariaLabel={footerLabel} />
+					</div>
 					<ModalProvider />
 				</I18NProvider>
 

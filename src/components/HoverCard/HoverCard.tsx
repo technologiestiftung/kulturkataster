@@ -52,7 +52,7 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 			<Card className="w-80 shadow-lg border-none">
 				<CardHeader className="p-2">
 					<div className="flex gap-2 justify-between">
-						<CardTitle className="text-lg font-semibold line-clamp-2 w-full">
+						<CardTitle className="text-xl font-bold line-clamp-2 w-full">
 							{featureProperties.name}
 						</CardTitle>
 					</div>
@@ -67,9 +67,9 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 								<div key={category.id}>
 									<div className="flex items-center gap-2 h-6">
 										<div className="w-6 h-6">
-											<IconComponent />
+											<IconComponent aria-hidden="true" focusable="false" />
 										</div>
-										<span className="text-md font-semibold">
+										<span className="text-base font-bold">
 											{tEnum(`category.${category.key}`)}
 										</span>
 									</div>
@@ -80,7 +80,7 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 													(sub: Subcategory) => sub.category_id === category.id,
 												)
 												.map((subcategory: Subcategory, index: number) => (
-													<span key={subcategory.id} className="text-sm">
+													<span key={subcategory.id} className="text-base">
 														{index > 0 && ", "}
 														{tEnum(`subcategory.${subcategory.key}`)}
 													</span>
@@ -98,8 +98,10 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 				>
 					{featureProperties.utilization_status && (
 						<div className=" flex gap-1 items-center justify-between">
-							<span>{t("institution.utilizationStatus")}:</span>
-							<span>
+							<span className="text-base font-bold">
+								{t("institution.utilizationStatus")}:
+							</span>
+							<span className="text-base">
 								{tEnum(
 									`utilization_status.${featureProperties.utilization_status}`,
 								)}
@@ -108,10 +110,10 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 					)}
 					{!featureProperties.utilization_status && (
 						<div className=" flex gap-1 items-center justify-between">
-							<span className="text-md font-semibold">
+							<span className="text-base font-bold">
 								{t("institution.utilizationStatus")}:
 							</span>
-							<span>{t("unknown")}</span>
+							<span className="text-base">{t("unknown")}</span>
 						</div>
 					)}
 				</CardFooter>

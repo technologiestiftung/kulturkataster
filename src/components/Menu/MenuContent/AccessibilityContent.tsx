@@ -11,6 +11,7 @@ import { SubMenuOption } from "../SubMenuOption";
 
 interface AccessibilityContentProps {
 	onItemClick?: (itemName: string) => void; // Made optional since we can use the modal store directly
+	openLinksInModal?: boolean;
 }
 
 const accessibilityOptions = [
@@ -41,13 +42,15 @@ const accessibilityOptions = [
 	{
 		id: "contrast",
 		icon: Contrast,
-		titleKey: "accessibility.contrast.title",
+		titleKey: "accessibility.contrast.darkMode",
+		switchKey: "accessibility.contrast.lightMode",
 		hasSwitch: true,
 	},
 ] as const;
 
 export function AccessibilityContent({
 	onItemClick,
+	openLinksInModal,
 }: AccessibilityContentProps) {
 	const {
 		isContrastMode,
@@ -60,6 +63,7 @@ export function AccessibilityContent({
 	} = useAppStore();
 
 	const {
+		openModal,
 		setAccessibilityModalOpen,
 		setSimpleLanguageInformationModalOpen,
 		setSignLanguageModalOpen,
@@ -103,14 +107,23 @@ export function AccessibilityContent({
 					key={option.id}
 					icon={option.icon}
 					titleKey={option.titleKey}
+					switchKey={"switchKey" in option ? option.switchKey : undefined}
 					onClick={
 						option.hasSwitch
 							? undefined
 							: () => {
 									if (option.id === "simpleLanguage") {
-										setSimpleLanguageInformationModalOpen(true);
+										if (openLinksInModal) {
+											openModal("simpleLanguageInformation");
+										} else {
+											setSimpleLanguageInformationModalOpen(true);
+										}
 									} else if (option.id === "signLanguage") {
-										setSignLanguageModalOpen(true);
+										if (openLinksInModal) {
+											openModal("signLanguageInformation");
+										} else {
+											setSignLanguageModalOpen(true);
+										}
 									} else if (onItemClick) {
 										onItemClick("accessibility");
 									} else {

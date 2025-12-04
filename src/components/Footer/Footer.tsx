@@ -14,7 +14,11 @@ const footerItems = [
 	{ id: "signLanguageInformationShort" },
 ] as const;
 
-const Footer: FC = () => {
+interface FooterProps {
+	ariaLabel?: string;
+}
+
+const Footer: FC<FooterProps> = ({ ariaLabel }) => {
 	const { t } = useTranslation("common");
 	const { handleFooterItemClick } = useModalStore();
 	const viewMode = useAppStore((state) => state.viewMode);
@@ -25,12 +29,13 @@ const Footer: FC = () => {
 		<footer
 			className="Footer-root space-x-14 hidden min-w-fit h-8 bg-footer fixed right-0 bottom-0 md:flex justify-between px-2 py-1 ml-20"
 			role="contentinfo"
+			aria-label={ariaLabel ?? t("footerLandmark")}
 		>
 			<div className="body2 flex items-center gap-1">
 				<p>{t("footer.projectBy")}</p>
 			</div>
 
-			<nav aria-label={t("footer.navigation")}>
+			<nav aria-label={t("footer.navigationAriaLabel")}>
 				<ul className="flex gap-4 body2 font-bold">
 					{footerItems.map((item) => (
 						<li key={item.id}>

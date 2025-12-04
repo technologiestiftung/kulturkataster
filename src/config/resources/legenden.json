@@ -1,0 +1,349 @@
+[
+	{
+		"id": "alkis_bezirke:bezirksgrenzen",
+		"items": [
+			{
+				"type": "line",
+				"background": "bg-[#6201e0]",
+				"label": "Bezirksgrenze"
+			},
+			{
+				"type": "wording",
+				"color": "text-neutral-80",
+				"label": "Bezirksname",
+				"text": "Mitte"
+			}
+		]
+	},
+	{
+		"id": "alkis_ortsteile:ortsteile",
+		"items": [
+			{
+				"type": "line",
+				"background": "bg-[#6201e0]",
+				"label": "Ortsteilgrenze"
+			},
+			{
+				"type": "wording",
+				"color": "text-neutral-80",
+				"label": "Ortsteilname",
+				"text": "Mitte"
+			}
+		]
+	},
+	{
+		"id": "bplan:a_bp_iv",
+		"items": [
+			{
+				"type": "circle",
+				"background": "bg-[#BBC2DB]",
+				"borderColor": "border-[#343591]",
+				"label": "Bebauungsplan, im Verfahren"
+			}
+		]
+	},
+	{
+		"id": "bplan:b_bp_fs",
+		"items": [
+			{
+				"type": "circle",
+				"background": "bg-[#E9BEBA]",
+				"borderColor": "border-[#B02D23]",
+				"label": "Bebauungsplan, festgesetzt"
+			}
+		]
+	},
+	{
+		"id": "bplan:c_bp_ak",
+		"items": [
+			{
+				"type": "circle",
+				"background": "bg-[#CBCBCB]",
+				"borderColor": "border-[#6A6A6A]",
+				"label": "Bebauungsplan, festgesetzt"
+			}
+		]
+	},
+	{
+		"id": "lor_2021:a_lor_plr_2021",
+		"wider": "min-w-[5.1rem]",
+		"items": [
+			{
+				"type": "line",
+				"background": "bg-[#3C89CB]",
+				"label": "Grenze Planungsraum (PLR)"
+			},
+			{
+				"type": "wording",
+				"color": "text-[#3C89CB]",
+				"label": "Nummer",
+				"text": "01200624"
+			},
+			{
+				"type": "wording",
+				"color": "text-[#3C89CB]",
+				"label": "Name",
+				"text": "Heidestraße"
+			}
+		]
+	},
+	{
+		"id": "lor_2021:b_lor_bzr_2021",
+		"wider": "min-w-[4.375rem]",
+		"items": [
+			{
+				"type": "line",
+				"background": "bg-[#DC6128]",
+				"label": "Grenze Bezirksregion (BZR)"
+			},
+			{
+				"type": "wording",
+				"color": "text-[#DC6128]",
+				"label": "Nummer",
+				"text": "012006"
+			},
+			{
+				"type": "wording",
+				"color": "text-[#DC6128]",
+				"label": "Name",
+				"text": "Moabit Ost"
+			}
+		]
+	},
+	{
+		"id": "lor_2021:c_lor_pgr_2021",
+		"items": [
+			{
+				"type": "line",
+				"background": "bg-[#8BB38F]",
+				"label": "Grenze Prognoseraum (PGR)"
+			},
+			{
+				"type": "wording",
+				"color": "text-[#8BB38F]",
+				"label": "Nummer",
+				"text": "0120"
+			},
+			{
+				"type": "wording",
+				"color": "text-[#8BB38F]",
+				"label": "Name",
+				"text": "Moabit"
+			}
+		]
+	},
+	{
+		"id": "gemeinschaftsinitiative:gemeinschaftsinitiative",
+		"items": [
+			{
+				"type": "line",
+				"background": "bg-[#D72E74]",
+				"label": "Handlungsräume der Gemeinschaftsinitiative"
+			}
+		]
+	},
+	{
+		"id": "ua_einwohnerdichte_2024:ua_einwohnerdichte_2024_entw",
+		"items": [
+			{
+				"type": "title",
+				"label": "Einwohnerentwicklung im Vergleich zum Vorjahr"
+			},
+			{
+				"type": "circle",
+				"background": "bg-[#D6FE7D]",
+				"borderColor": "border-neutral-80",
+				"label": "Abnahme von > 10"
+			},
+			{
+				"type": "circle",
+				"background": "bg-[#BB27C5]",
+				"borderColor": "border-neutral-80",
+				"label": "Zunahme von > 20"
+			}
+		]
+	},
+	{
+		"id": "ua_einwohnerdichte_2024:ua_einwohnerdichte_2024",
+		"items": [
+			{
+				"type": "title",
+				"label": "Einwohnerdichte (Einwohner/ha)"
+			},
+			{
+				"type": "circle",
+				"background": "bg-[#D8FE7E]",
+				"borderColor": "border-neutral-80",
+				"label": "1 - 4",
+				"unit": "Einwohner pro Hektar"
+			},
+			{
+				"type": "circle",
+				"background": "bg-[#FDFE54]",
+				"borderColor": "border-neutral-80",
+				"label": "5 - 30",
+				"unit": "Einwohner pro Hektar"
+			},
+			{
+				"type": "circle",
+				"background": "bg-[#F7CC76]",
+				"borderColor": "border-neutral-80",
+				"label": "31 - 70",
+				"unit": "Einwohner pro Hektar"
+			},
+			{
+				"type": "circle",
+				"background": "bg-[#F19E39]",
+				"borderColor": "border-neutral-80",
+				"label": "71 - 150",
+				"unit": "Einwohner pro Hektar"
+			},
+			{
+				"type": "circle",
+				"background": "bg-[#ED712E]",
+				"borderColor": "border-neutral-80",
+				"label": "151 - 250",
+				"unit": "Einwohner pro Hektar"
+			},
+			{
+				"type": "circle",
+				"background": "bg-[#EA3323]",
+				"borderColor": "border-neutral-80",
+				"label": "251 - 350",
+				"unit": "Einwohner pro Hektar"
+			},
+			{
+				"type": "circle",
+				"background": "bg-[#BB27C4]",
+				"borderColor": "border-neutral-80",
+				"label": "351 - 450",
+				"unit": "Einwohner pro Hektar"
+			},
+			{
+				"type": "circle",
+				"background": "bg-[#8B1A95]",
+				"borderColor": "border-neutral-80",
+				"label": "451 - 550",
+				"unit": "Einwohner pro Hektar"
+			},
+			{
+				"type": "circle",
+				"background": "bg-[#000194]",
+				"borderColor": "border-neutral-80",
+				"label": "> 500",
+				"unit": "Einwohner pro Hektar"
+			}
+		]
+	},
+	{
+		"id": "mss_2023:bc_mss2023_i_sdi",
+		"wider": "min-w-[2rem]",
+		"items": [
+			{
+				"type": "intro",
+				"label": "Gebietsbezogene Überlagerung des Status-Index (4 Klassen) mit dem Dynamik-Index (3 Klassen) auf Ebene der Planungsräume (542 PLR) zum Gesamtindex Soziale Ungleichheit (Status/Dynamik-Index) in 12 Gruppen"
+			},
+			{
+				"type": "table"
+			},
+			{
+				"type": "intro",
+				"label": "(Index: 1. Stelle Status, 2. Stelle Dynamik; Wert in Kästchen: Anzahl der PLR)"
+			},
+			{
+				"type": "spacer"
+			},
+			{
+				"type": "wording",
+				"color": "text-black contrast:text-white",
+				"label": "hohem Status und positiver Dynamik",
+				"text": "1+"
+			},
+			{
+				"type": "wording",
+				"color": "text-black contrast:text-white",
+				"label": "hohem Status und stabiler Dynamik",
+				"text": "1+/-"
+			},
+			{
+				"type": "wording",
+				"color": "text-black contrast:text-white",
+				"label": "hohem Status und negativer Dynamik",
+				"text": "1-"
+			},
+			{
+				"type": "spacer"
+			},
+			{
+				"type": "wording",
+				"color": "text-black contrast:text-white",
+				"label": "mittlerem Status und positiver Dynamik",
+				"text": "2+"
+			},
+			{
+				"type": "wording",
+				"color": "text-black contrast:text-white",
+				"label": "mittlerem Status und stabiler Dynamik",
+				"text": "2+/-"
+			},
+			{
+				"type": "wording",
+				"color": "text-black contrast:text-white",
+				"label": "mittlerem Status und negativer Dynamik",
+				"text": "2-"
+			},
+			{
+				"type": "spacer"
+			},
+			{
+				"type": "wording",
+				"color": "text-black contrast:text-white",
+				"label": "niedrigem Status und positiver Dynamik",
+				"text": "3+"
+			},
+			{
+				"type": "wording",
+				"color": "text-black contrast:text-white",
+				"label": "niedrigem Status und stabiler Dynamik",
+				"text": "3+/-"
+			},
+			{
+				"type": "wording",
+				"color": "text-black contrast:text-white",
+				"label": "niedrigem Status und negativer Dynamik",
+				"text": "3-"
+			},
+			{
+				"type": "spacer"
+			},
+			{
+				"type": "wording",
+				"color": "text-black contrast:text-white",
+				"label": "sehr niedrigem Status und positiver Dynamik",
+				"text": "4+"
+			},
+			{
+				"type": "wording",
+				"color": "text-black contrast:text-white",
+				"label": "sehr niedrigem Status und stabiler Dynamik",
+				"text": "4+/-"
+			},
+			{
+				"type": "wording",
+				"color": "text-black contrast:text-white",
+				"label": "sehr niedrigem Status und negativer Dynamik",
+				"text": "4-"
+			},
+			{
+				"type": "spacer"
+			},
+			{
+				"type": "circle",
+				"background": "bg-[#C0C0C0]",
+				"borderColor": "border-[#555B54]",
+				"label": "Planungsraum ohne Zuordnung",
+				"textInCircle": "6"
+			}
+		]
+	}
+]
