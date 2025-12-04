@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable max-params */
+/* eslint-disable no-nested-ternary */
 "use client";
 
 import { useInstitutionStore } from "@/lib/store/institutionStore";

@@ -70,7 +70,6 @@ export function SearchResults({
 									onResultClick(result);
 								}
 							}}
-							// eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
 							tabIndex={-1}
 							className={cn(
 								"py-3 px-2 cursor-pointer rounded text-sm border-b",
