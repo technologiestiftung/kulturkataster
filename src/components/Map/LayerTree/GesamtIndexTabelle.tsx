@@ -69,7 +69,9 @@ const ColumnHeader = () => {
 				);
 				if (!columHead.index) {
 					return (
-						<th key={columHead.key} className={columHeadClasses} scope="col" />
+						<th key={columHead.key} className={columHeadClasses} scope="col">
+							<span className="sr-only">Column</span>
+						</th>
 					);
 				}
 				return (
@@ -95,12 +97,12 @@ const TableRows = ({ index }: { index: number }) => {
 	}
 	return (
 		<tr>
-			<td className="py-3 text-right align-middle" scope="row">
+			<th className="py-3 text-right align-middle" scope="row">
 				<div className="flex flex-col items-center leading-tight">
 					<span className="text-[#000000]">{findRow.label}</span>
 					<span className="font-bold text-[#000000]">{findRow.subLabel}</span>
 				</div>
-			</td>
+			</th>
 			{findRow.cells.map((cell, cellIndex) => (
 				<td key={cellIndex} className="py-3 text-center align-middle">
 					<div className="flex items-center justify-center gap-1">

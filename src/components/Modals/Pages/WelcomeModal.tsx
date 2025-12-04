@@ -113,18 +113,13 @@ export function WelcomeModal({ open, onOpenChange }: WelcomeModalProps) {
 								</div>
 							</div>
 							<div className="mt-4">
-								<a
-									className="underline body2 text-primary-dark font-semibold"
-									href="#"
-									rel="noopener noreferrer"
-									onClick={(e) => {
-										e.preventDefault();
-										e.stopPropagation();
-										handleAccessibilitySettingsClick();
-									}}
+								<Button
+									variant="link"
+									onClick={handleAccessibilitySettingsClick}
+									className="underline body2 text-primary-dark font-semibold p-0 md:p-0 underline-offset-1 rounded-none focus-visible:ring-offset-0"
 								>
 									{t("welcomeModal.accessibilitySettings", { ns: "content" })}
-								</a>
+								</Button>
 							</div>
 							<Separator className="w-full mt-20 mb-6 hidden md:block" />
 							<div className="hidden md:flex space-x-2 md:mb-12 space-y-12 md:space-y-0 flex-col md:flex-row w-full justify-center">

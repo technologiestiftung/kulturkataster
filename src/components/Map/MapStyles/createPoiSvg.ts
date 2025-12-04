@@ -1,3 +1,5 @@
+/* eslint-disable max-params */
+
 import { getCategoryIconRawSvg } from "@/lib/utils/iconUtils";
 import { remToPx } from "@/lib/utils/mapUtils";
 import { CategoryType } from "@/types";
