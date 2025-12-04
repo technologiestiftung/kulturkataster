@@ -278,7 +278,9 @@
 	},
 	{
 		"id": "alkis_bezirke:wfs:bezirksgrenzen",
-		"name": "Bezirksgrenzen - WFS",
+		"name": "Bezirksgrenzen",
+		"styleId": "bezirksgrenzen",
+		"name_lang": "Bezirksgrenzen (ALKIS Berlin Bezirke)",
 		"crs": "urn:ogc:def:crs:EPSG::25833",
 		"url": "https://gdi.berlin.de/services/wfs/alkis_bezirke",
 		"typ": "WFS",
@@ -294,7 +296,7 @@
 		],
 		"gfiAttributes": "showAll",
 		"preview": {
-			"src": "/resources/preview-img/default.png"
+			"src": "/resources/preview-img/preview-img-bezirksgrenzen.png"
 		}
 	},
 	{
@@ -361,7 +363,9 @@
 	},
 	{
 		"id": "alkis_ortsteile:wfs:ortsteile",
-		"name": "Ortsteile - WFS",
+		"styleId": "ortsteile",
+		"name": "Ortsteile",
+		"name_lang": "Ortsteile (ALKIS Berlin Ortsteile)",
 		"crs": "urn:ogc:def:crs:EPSG::25833",
 		"url": "https://gdi.berlin.de/services/wfs/alkis_ortsteile",
 		"typ": "WFS",
@@ -377,7 +381,7 @@
 		],
 		"gfiAttributes": "showAll",
 		"preview": {
-			"src": "/resources/preview-img/default.png"
+			"src": "/resources/preview-img/preview-img-ortsteile.png"
 		}
 	},
 	{
