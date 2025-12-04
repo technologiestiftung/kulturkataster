@@ -81,7 +81,7 @@ export function InformationModal({
 								<a
 									href="#infosAndServices"
 									rel="noopener noreferrer"
-									className="text-primary hover:text-primary-dark underline"
+									className="text-primary-dark hover:text-primary underline"
 									onClick={() =>
 										handleFooterItemClick("simpleLanguageInformation")
 									}
@@ -99,7 +99,10 @@ export function InformationModal({
 
 			<div className="space-y-4">
 				<TextBlock titleAs="h1" title={scope.title} />
-				<ul className="list-disc pl-5 body2 space-y-1">
+				<ul
+					className="list-disc pl-5 body2 space-y-1"
+					aria-label={t("informationModal.featuresListAriaLabel")}
+				>
 					{scope.features.map((item, i) => {
 						if (i === 0) {
 							const dynamicText = item.replace(
@@ -115,7 +118,10 @@ export function InformationModal({
 					<p className="body1 font-bold pb-2">
 						{scope.upcomingEnhancements.title}
 					</p>
-					<ul className="list-disc pl-5 body2 space-y-1">
+					<ul
+						className="list-disc pl-5 body2 space-y-1"
+						aria-label={t("informationModal.upcomingEnhancementsListAriaLabel")}
+					>
 						{scope.upcomingEnhancements.items.map((item, i) => (
 							<li key={i}>{item}</li>
 						))}

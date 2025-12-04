@@ -50,7 +50,7 @@ export function AccessibilityModal({
 							link: (
 								<button
 									type="button"
-									className="text-primary hover:text-primary-dark underline bg-transparent border-none p-0 cursor-pointer"
+									className="text-primary-dark hover:text-primary underline bg-transparent border-none p-0 cursor-pointer "
 									onClick={() => {
 										handleFooterItemClick("simpleLanguageInformation");
 									}}
@@ -69,7 +69,7 @@ export function AccessibilityModal({
 							link: (
 								<button
 									type="button"
-									className="text-primary hover:text-primary-dark underline bg-transparent border-none p-0 cursor-pointer"
+									className="text-primary-dark hover:text-primary underline bg-transparent border-none p-0 cursor-pointer "
 									onClick={() => {
 										handleFooterItemClick("signLanguageInformation");
 									}}
@@ -114,17 +114,25 @@ export function AccessibilityModal({
 				<div className="space-y-6">
 					{barriers.map((barrier) => (
 						<div key={barrier.title}>
-							{/* Hier verwenden wir h2 für die untergeordneten Barrieren-Titel */}
 							<h2 className="h2 mb-2">{barrier.title}</h2>
 							<div className="body2 space-y-2">
 								<p className="body2">
-									<span>Beschreibung:</span> {barrier.description}
+									<strong>
+										{t("accessibilityModal.which.descriptionLabel")}:
+									</strong>{" "}
+									{barrier.description}
 								</p>
 								<p>
-									<span>Maßnahmen:</span> {barrier.measures}
+									<strong>
+										{t("accessibilityModal.which.measuresLabel")}:
+									</strong>{" "}
+									{barrier.measures}
 								</p>
 								<p>
-									<span>Zeitplan:</span> {barrier.timeline}
+									<strong>
+										{t("accessibilityModal.which.timelineLabel")}:
+									</strong>{" "}
+									{barrier.timeline}
 								</p>
 							</div>
 						</div>
@@ -140,8 +148,10 @@ export function AccessibilityModal({
 					text={t("accessibilityModal.contact.description")}
 				/>
 				<div className="body1 space-y-1">
-					<p className="body2 font-bold">
-						{t("accessibilityModal.contact.name")}
+					<p className="body2">
+						<strong className="font-bold">
+							{t("accessibilityModal.contact.name")}
+						</strong>
 					</p>
 					<p className="body2">{t("accessibilityModal.contact.company")}</p>
 					<p className="body2">
@@ -151,7 +161,7 @@ export function AccessibilityModal({
 					<p>
 						<a
 							href={`mailto:${t("accessibilityModal.contact.email.address")}`}
-							className="body2 text-primary hover:text-primary-dark underline"
+							className="body2 text-primary-dark hover:text-primary underline"
 						>
 							{t("accessibilityModal.contact.email.address")}
 						</a>
@@ -170,7 +180,7 @@ export function AccessibilityModal({
 					<p className="body2">
 						<a
 							href={t("accessibilityModal.contact_officer.link1.url")}
-							className="text-primary hover:text-primary-dark underline"
+							className="text-primary-dark hover:text-primary underline"
 							target="_blank"
 							rel="noopener noreferrer"
 						>
@@ -181,7 +191,7 @@ export function AccessibilityModal({
 						{t("accessibilityModal.contact_officer.info_text_link2")}{" "}
 						<a
 							href={t("accessibilityModal.contact_officer.link2.url")}
-							className="text-primary hover:text-primary-dark underline"
+							className="text-primary-dark hover:text-primary underline"
 							target="_blank"
 							rel="noopener noreferrer"
 						>
@@ -200,6 +210,7 @@ export function AccessibilityModal({
 			title={t("accessibilityModal.title")}
 			subtitle={t("accessibilityModal.subtitle")}
 			content={content}
+			hideLinksInModalFooter={["accessibility"]}
 		/>
 	);
 }

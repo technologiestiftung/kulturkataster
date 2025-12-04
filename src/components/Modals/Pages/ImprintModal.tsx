@@ -47,27 +47,27 @@ export function ImprintModal({ open, onOpenChange }: ImprintModalProps) {
 					title={tContent("imprintModal.contact.title")}
 				/>
 				<div className="body2 space-y-1">
-					<p>{t("telephone.label")}</p>
-					<p>{t("telephone.number")}</p>
-					<p>
-						<p>{t("email.label")}</p>
+					<div>{t("telephone.label")}</div>
+					<div>{t("telephone.number")}</div>
+					<div>
+						<div>{t("email.label")}</div>
 						<a
 							href={`mailto:${t("email.address")}`}
-							className="text-primary hover:text-primary-dark underline"
+							className="text-primary-dark hover:text-primary underline"
 						>
 							{t("email.address")}
 						</a>
-					</p>
+					</div>
 				</div>
 			</div>
 
 			<div className="space-y-4">
 				<TextBlock titleAs="h1" title={tContent("imprintModal.editor.title")} />
 				<div className="body2 space-y-1">
-					<p>{tContent("imprintModal.editor.name")}</p>
-					<p>{tContent("imprintModal.editor.role")}</p>
-					<p>{tContent("imprintModal.editor.address")}</p>
-					<p>{tContent("imprintModal.editor.zipCity")}</p>
+					<div>{tContent("imprintModal.editor.name")}</div>
+					<div>{tContent("imprintModal.editor.role")}</div>
+					<div>{tContent("imprintModal.editor.address")}</div>
+					<div>{tContent("imprintModal.editor.zipCity")}</div>
 				</div>
 			</div>
 
@@ -148,6 +148,7 @@ export function ImprintModal({ open, onOpenChange }: ImprintModalProps) {
 			title={tContent("imprintModal.title")}
 			subtitle={tContent("imprintModal.subtitle")}
 			content={content}
+			hideLinksInModalFooter={["imprint"]}
 		/>
 	);
 }

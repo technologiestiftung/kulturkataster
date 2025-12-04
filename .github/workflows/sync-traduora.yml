@@ -10,7 +10,9 @@ on:
         type: choice
         options:
           - pull
+          - pull --all
           - push
+          - push --all
         default: 'pull'
 
   schedule:
@@ -40,15 +42,15 @@ jobs:
         id: action
         run: |
           if [ "${{ github.event_name }}" == "schedule" ]; then
-            echo "action=pull" >> $GITHUB_OUTPUT
-            echo "Running scheduled pull to sync translator updates"
+            echo "action=pull --all" >> $GITHUB_OUTPUT
+            echo "Running scheduled pull --all to sync all translator updates"
           else
             echo "action=${{ github.event.inputs.action }}" >> $GITHUB_OUTPUT
             echo "Running manual ${{ github.event.inputs.action }}"
           fi
 
       - name: Pull translations from Traduora
-        if: steps.action.outputs.action == 'pull'
+        if: startsWith(steps.action.outputs.action, 'pull')
         env:
           TRADUORA_API_URL: ${{ secrets.TRADUORA_API_URL }}
           TRADUORA_CLIENT_ID: ${{ secrets.TRADUORA_CLIENT_ID }}
@@ -56,10 +58,10 @@ jobs:
           TRADUORA_PROJECT_ID: ${{ secrets.TRADUORA_PROJECT_ID }}
         run: |
           echo "📥 Pulling translations from Traduora..."
-          npm run traduora:pull
+          npm run traduora:sync ${{ steps.action.outputs.action }}
 
       - name: Push translations to Traduora
-        if: steps.action.outputs.action == 'push'
+        if: startsWith(steps.action.outputs.action, 'push')
         env:
           TRADUORA_API_URL: ${{ secrets.TRADUORA_API_URL }}
           TRADUORA_CLIENT_ID: ${{ secrets.TRADUORA_CLIENT_ID }}
@@ -67,7 +69,7 @@ jobs:
           TRADUORA_PROJECT_ID: ${{ secrets.TRADUORA_PROJECT_ID }}
         run: |
           echo "📤 Pushing translations to Traduora..."
-          npm run traduora:push
+          npm run traduora:sync ${{ steps.action.outputs.action }}
 
       - name: Check for changes
         id: check_changes
@@ -82,7 +84,7 @@ jobs:
             git diff --stat
 
       - name: Create Pull Request
-        if: steps.check_changes.outputs.changes == 'true' && steps.action.outputs.action == 'pull'
+        if: steps.check_changes.outputs.changes == 'true' && startsWith(steps.action.outputs.action, 'pull')
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -97,12 +99,13 @@ jobs:
             ## Summary
             - Pulled latest translations from Traduora
             - Updated local translation files with translator updates
+            - Mode: ${{ steps.action.outputs.action }}
 
             ## Changes
             This PR contains automatic translation synchronization from Traduora:
-            - ✓ Merged Traduora translations with local files
+            - ✓ Updated translations with latest Traduora values
             - ✓ Preserved local-only translation keys
-            - ✓ Updated existing translations with Traduora values
+            - ✓ Synced all locales
 
             ## Test plan
             - [ ] Review translation changes for accuracy
@@ -116,7 +119,7 @@ jobs:
           labels: translations,automated
 
       - name: Commit changes (push action)
-        if: steps.check_changes.outputs.changes == 'true' && steps.action.outputs.action == 'push'
+        if: steps.check_changes.outputs.changes == 'true' && startsWith(steps.action.outputs.action, 'push')
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"

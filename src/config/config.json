@@ -92,11 +92,11 @@
 		"subjectlayer": {
 			"elements": [
 				{
-					"id": "alkis_bezirke:bezirksgrenzen",
+					"id": "alkis_bezirke:wfs:bezirksgrenzen",
 					"visibility": true
 				},
 				{
-					"id": "alkis_ortsteile:ortsteile",
+					"id": "alkis_ortsteile:wfs:ortsteile",
 					"visibility": false
 				},
 				{

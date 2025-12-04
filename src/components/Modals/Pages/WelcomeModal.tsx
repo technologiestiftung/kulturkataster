@@ -22,17 +22,22 @@ export function WelcomeModal({ open, onOpenChange }: WelcomeModalProps) {
 
 	const handleAboutClick = () => {
 		onOpenChange(false);
-		openModal("about");
+		openModal("about", true);
 	};
 
 	const handleInfoClick = () => {
 		onOpenChange(false);
-		openModal("information");
+		openModal("information", true);
+	};
+
+	const handleAccessibilitySettingsClick = () => {
+		onOpenChange(false);
+		openModal("accessibilitySettings", true);
 	};
 
 	const handleFooterItemClickWelcomeModal = (id: string) => {
 		onOpenChange(false);
-		openModal(id);
+		openModal(id, true);
 	};
 
 	const footerItems = [
@@ -72,7 +77,7 @@ export function WelcomeModal({ open, onOpenChange }: WelcomeModalProps) {
 							<div className="text-primary-dark flex space-x-2 cursor-pointer">
 								<ArrowNarrowRight className="stroke-primary-dark size-6" />
 								<a
-									className="underline body2"
+									className="underline body2 text-primary-dark font-semibold"
 									target="_blank"
 									href="https://flow.cleverreach.com/fl/21a1a529-f085-4bd1-8e53-d657c3ccc1de/"
 								>
@@ -107,6 +112,15 @@ export function WelcomeModal({ open, onOpenChange }: WelcomeModalProps) {
 									</Button>
 								</div>
 							</div>
+							<div className="mt-4">
+								<Button
+									variant="link"
+									onClick={handleAccessibilitySettingsClick}
+									className="underline body2 text-primary-dark font-semibold p-0 md:p-0 underline-offset-1 rounded-none focus-visible:ring-offset-0"
+								>
+									{t("welcomeModal.accessibilitySettings", { ns: "content" })}
+								</Button>
+							</div>
 							<Separator className="w-full mt-20 mb-6 hidden md:block" />
 							<div className="hidden md:flex space-x-2 md:mb-12 space-y-12 md:space-y-0 flex-col md:flex-row w-full justify-center">
 								<div className="w-full md:w-1/2">
@@ -133,7 +147,10 @@ export function WelcomeModal({ open, onOpenChange }: WelcomeModalProps) {
 						aria-label={t("footer.navigation")}
 						className="bg-neutral-5 py-2 px-4 w-full"
 					>
-						<ul className="flex gap-4 body2 font-bold justify-end">
+						<ul
+							className="flex gap-4 body2 font-bold justify-end"
+							aria-label={t("footer.welcomeModalLinkListAriaLabel")}
+						>
 							{footerItems.map((item) => (
 								<li key={item.id}>
 									<button

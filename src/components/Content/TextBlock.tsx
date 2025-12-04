@@ -52,7 +52,7 @@ const Link = ({ link }: { link?: LinkProps }) => {
 		<a
 			href={link.href}
 			target={link.target || "_self"}
-			className="body2 text-primary hover:text-primary-dark underline"
+			className="body2 text-primary-dark hover:text-primary underline"
 		>
 			{link.text}
 		</a>
@@ -64,7 +64,7 @@ const SubText = ({ subText }: { subText?: SubTextProps }) => {
 	return (
 		<div className="flex flex-col gap-2 mt-4">
 			{subText.subtitle && (
-				<div className="body2 font-bold">{subText.subtitle}</div>
+				<strong className="body2 font-bold">{subText.subtitle}</strong>
 			)}
 			<div className="body2">{subText.text}</div>
 		</div>
