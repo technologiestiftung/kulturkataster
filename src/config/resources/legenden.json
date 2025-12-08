@@ -1,6 +1,6 @@
 [
 	{
-		"id": "alkis_bezirke:bezirksgrenzen",
+		"id": "alkis_bezirke:wfs:bezirksgrenzen",
 		"items": [
 			{
 				"type": "line",
@@ -16,7 +16,7 @@
 		]
 	},
 	{
-		"id": "alkis_ortsteile:ortsteile",
+		"id": "alkis_ortsteile:wfs:ortsteile",
 		"items": [
 			{
 				"type": "line",
