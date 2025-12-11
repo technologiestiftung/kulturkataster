@@ -9,6 +9,7 @@ import {
 	FacilityInfo,
 	StatusInfo,
 	ToggleButton,
+	AdditionalInfo,
 } from "@/components/Institution";
 import { getCategoryIconComponent } from "@/lib/utils/iconUtils";
 import { Category, Institution, Subcategory } from "@/types";
@@ -182,6 +183,7 @@ const InstitutionCard = memo(function InstitutionCard({
 						<FacilityInfo institutionData={institutionData} />
 						<OrganizationInfo institutionData={institutionData} />
 						<StatusInfo institutionData={institutionData} />
+						<AdditionalInfo institutionData={institutionData} />
 					</div>
 				)}
 
