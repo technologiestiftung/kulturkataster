@@ -1,6 +1,6 @@
 import { UsersTable } from "@/components/Users";
 
-export default function DemoPage() {
+export default function UsersPage() {
 	return (
 		<div className="container mx-auto py-10">
 			<div className="space-y-6">
