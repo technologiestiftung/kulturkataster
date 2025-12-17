@@ -1,6 +1,7 @@
 "use client";
 import * as React from "react";
 import { Button } from "./button";
+import Edit from "@/icons/edit.svg";
 
 import { cn } from "@/lib/utils";
 import { ArrowLeft, ArrowRight } from "lucide-react";
@@ -82,7 +83,6 @@ const StickyTable = React.forwardRef<HTMLTableElement, StickyTableProps>(
 						)}
 						{...props}
 					/>
-					{hasOverflow ? <StickyTableScrollControls /> : null}
 				</div>
 			</StickyTableContext.Provider>
 		);
@@ -202,31 +202,6 @@ const StickyTableCaption = React.forwardRef<
 ));
 StickyTableCaption.displayName = "StickyTableCaption";
 
-const StickyTableScrollControls = () => {
-	const { scrollByColumns } = useStickyTable();
-
-	return (
-		<div className="pointer-events-none absolute bottom-2 right-2 flex gap-2">
-			<button
-				type="button"
-				className="pointer-events-auto rounded-full bg-neutral-20 px-3 py-1 text-xs font-medium text-foreground shadow-300"
-				onClick={() => scrollByColumns("left")}
-				aria-label="Scroll left"
-			>
-				←
-			</button>
-			<button
-				type="button"
-				className="pointer-events-auto rounded-full bg-neutral-20 px-3 py-1 text-xs font-medium text-foreground shadow-300"
-				onClick={() => scrollByColumns("right")}
-				aria-label="Scroll right"
-			>
-				→
-			</button>
-		</div>
-	);
-};
-
 interface StickyActionsHeadProps
 	extends React.ThHTMLAttributes<HTMLTableCellElement> {
 	showArrows?: boolean;
@@ -240,14 +215,11 @@ const StickyActionsHead = React.forwardRef<
 	return (
 		<StickyTableHead
 			ref={ref}
-			className={cn(
-				"w-[140px] text-right border border-neutral-20 last:border-r-0",
-				className,
-			)}
+			className={cn("text-right border last:border-r-0", className)}
 			{...props}
 		>
 			{showArrows && hasOverflow ? (
-				<div className="flex items-center gap-2">
+				<div className="flex items-center justify-center gap-2">
 					<button
 						type="button"
 						onClick={(event) => {
@@ -290,18 +262,20 @@ const StickyActionsCell = React.forwardRef<
 		className={cn("border border-neutral-20 last:border-r-0", className)}
 		{...props}
 	>
-		<div className="flex flex-wrap gap-2">
+		<div className="flex flex-wrap justify-center gap-2">
 			{children}
 			{onEdit ? (
 				<Button
-					size="sm"
-					variant="secondary"
+					size="icon"
+					variant="ghost"
 					onClick={(event) => {
 						event.stopPropagation();
 						onEdit();
 					}}
+					className="h-8 w-8 rounded-full border bg-background border-neutral-20 hover:bg-neutral-5"
+					aria-label={editLabel}
 				>
-					{editLabel}
+					<Edit className="h-4 w-4 text-neutral-80" />
 				</Button>
 			) : null}
 		</div>
