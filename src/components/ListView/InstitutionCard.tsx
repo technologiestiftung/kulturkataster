@@ -133,6 +133,35 @@ const InstitutionCard = memo(function InstitutionCard({
 		setShowMore(!showMore);
 	};
 
+	const hasExtendedInfo = () => {
+		const data = institutionData;
+		const hasFundingData = !!(data.support_type || data.funding_type);
+		const hasFacilityData = !!(
+			data.capacity ||
+			data.rooms_count ||
+			data.shared_use_allowed ||
+			data.shared_use_audience ||
+			data.established_since ||
+			data.established_until
+		);
+		const hasOrganizationData = !!(
+			data.closing_reason ||
+			data.cultural_area ||
+			data.owner?.owner_type ||
+			data.source
+		);
+		const hasStatusData = !!data.updated_at;
+		const hasAdditionalData = !!data.notes;
+
+		return (
+			hasFundingData ||
+			hasFacilityData ||
+			hasOrganizationData ||
+			hasStatusData ||
+			hasAdditionalData
+		);
+	};
+
 	const cardClassName = `tab-ring w-full rounded-lg overflow-hidden shadow-sm ${
 		onClick ? "cursor-pointer hover:shadow-md transition-shadow" : ""
 	}`;
@@ -190,7 +219,7 @@ const InstitutionCard = memo(function InstitutionCard({
 				<ToggleButton
 					showMore={showMore}
 					onClick={handleToggleInfo}
-					hasInfo={true}
+					hasInfo={hasExtendedInfo()}
 				/>
 			</CardContent>
 		</Card>
