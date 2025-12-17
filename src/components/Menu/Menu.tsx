@@ -152,6 +152,9 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 		if (itemName === "info") {
 			return router.push("/info");
 		}
+		if (itemName === "user") {
+			return router.push("/account");
+		}
 
 		if (itemName === "layertree") {
 			if (isLayerTreeOpen) {
@@ -542,7 +545,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 					</div>
 
 					<Button
-						variant="map-icon"
+						variant="rounded"
 						size="icon-only"
 						title={t("mobileMenu.title")}
 						onClick={() => router.push("/mobileMenu")}

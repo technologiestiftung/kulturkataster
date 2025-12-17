@@ -236,7 +236,7 @@ const ListView: FC = () => {
 						<TooltipTrigger asChild>
 							<Button
 								onClick={scrollToTop}
-								variant="map-icon"
+								variant="rounded"
 								size="icon-only"
 								className="cursor-pointer"
 								aria-label={t("listView.scrollToTop")}
