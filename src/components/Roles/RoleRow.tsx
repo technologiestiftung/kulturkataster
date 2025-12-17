@@ -1,5 +1,4 @@
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
 	StickyActionsCell,
 	StickyTableCell,
@@ -33,11 +32,7 @@ export function RoleRow({ role, onEdit }: RoleRowProps) {
 			<StickyTableCell>
 				<Badge variant="secondary">{role.userCount}</Badge>
 			</StickyTableCell>
-			<StickyActionsCell>
-				<Button size="sm" variant="secondary" onClick={() => onEdit(role)}>
-					Edit
-				</Button>
-			</StickyActionsCell>
+			<StickyActionsCell onEdit={() => onEdit(role)} />
 		</StickyTableRow>
 	);
 }

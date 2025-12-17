@@ -1,5 +1,4 @@
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
 	StickyActionsCell,
 	StickyTableCell,
@@ -29,11 +28,7 @@ export function GroupRow({ group, onEdit }: GroupRowProps) {
 			<StickyTableCell className="text-sm text-muted-foreground">
 				{formatDate(group.createdAt)}
 			</StickyTableCell>
-			<StickyActionsCell>
-				<Button size="sm" variant="secondary" onClick={() => onEdit(group)}>
-					Edit
-				</Button>
-			</StickyActionsCell>
+			<StickyActionsCell onEdit={() => onEdit(group)} />
 		</StickyTableRow>
 	);
 }
