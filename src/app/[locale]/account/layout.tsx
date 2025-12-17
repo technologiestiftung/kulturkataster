@@ -68,11 +68,11 @@ export default function AccountLayout({
 			<div className="Account-section py-10">
 				<Tabs value={getCurrentTab()} onValueChange={handleTabChange}>
 					<TabsList className="px-10">
-						<TabsTrigger value="profile">
-							{t("account.profile", { defaultValue: "Profile" })}
+						<TabsTrigger value="activity">
+							{t("account.activity", { defaultValue: "Activity" })}
 						</TabsTrigger>
-						<TabsTrigger value="settings">
-							{t("account.settings", { defaultValue: "Settings" })}
+						<TabsTrigger value="institutions">
+							{t("account.institutions", { defaultValue: "Institutions" })}
 						</TabsTrigger>
 						<TabsTrigger value="preferences">
 							{t("account.preferences", { defaultValue: "Preferences" })}
