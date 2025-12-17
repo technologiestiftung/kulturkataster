@@ -27,6 +27,7 @@ import InfoCircle from "@/icons/info-circle.svg";
 import ListIcon from "@/icons/list.svg";
 import MapIcon from "@/icons/map-02.svg";
 import Search from "@/icons/search.svg";
+import UserIcon from "@/icons/user.svg";
 import { useAppStore } from "@/lib/store/appStore";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useMapStore } from "@/lib/store/mapStore";
@@ -55,6 +56,8 @@ const menuItems = [
 const footerItems = [
 	{ id: "info", icon: InfoCircle, label: "info.title" },
 	{ id: "accessibility", icon: Accessibility, label: "accessibility.title" },
+	{ id: "language", icon: MapIcon, label: "language.title" },
+	{ id: "user", icon: UserIcon, label: "user.title" },
 ] as const;
 
 export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
