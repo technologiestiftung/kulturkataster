@@ -178,7 +178,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 		}
 
 		if (itemName === "download") {
-			router.push("/downloadModal");
+			router.push("/download");
 			setDownloadModalMode("filtered");
 			return;
 		}
@@ -240,7 +240,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	};
 
 	const handleDownloadButtonClick = () => {
-		router.push("/downloadModal");
+		router.push("/download");
 		const mode = activeItem === "filter" ? "filtered" : "selected";
 		setDownloadModalMode(mode);
 	};

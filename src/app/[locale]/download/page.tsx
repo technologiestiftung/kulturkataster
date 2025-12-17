@@ -5,6 +5,6 @@ export const metadata: Metadata = {
 	title: "Download – Kulturkataster",
 };
 
-export default function DownloadModalPage() {
+export default function DownloadPage() {
 	return <DownloadModal />;
 }

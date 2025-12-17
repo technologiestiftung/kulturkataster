@@ -43,7 +43,8 @@ export default function AccountLayout({
 						variant="rounded"
 						size="icon-only"
 						className="h-14 w-14"
-						aria-label="Settings"
+						aria-label="Edit Profile"
+						onClick={() => router.push("/account/editProfile")}
 					>
 						<Setting className="" />
 					</Button>

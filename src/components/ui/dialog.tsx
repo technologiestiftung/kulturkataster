@@ -26,9 +26,8 @@ function Dialog({ open, ...props }: DialogRootProps) {
 					if (firstTimeUser) {
 						setFirstTimeUser(false);
 					}
-					return router.push("/");
+					router.back();
 				}
-				router.back();
 			}}
 			{...props}
 		/>
