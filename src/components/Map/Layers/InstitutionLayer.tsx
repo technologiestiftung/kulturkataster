@@ -222,7 +222,7 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 				}),
 			});
 		},
-		[],
+		[isLargeTextMode],
 	);
 
 	const createClusterStyle = useCallback(
