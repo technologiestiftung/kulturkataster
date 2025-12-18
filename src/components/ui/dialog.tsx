@@ -104,7 +104,7 @@ function DialogContent({
 			case "mobileMenu":
 				return "fixed z-[70] h-full inset-0 w-full border-0 p-0";
 			case "entityEdit":
-				return "fixed z-[70] top-0 md:top-1/2 left-1/2 w-full max-w-[calc(100%-2rem)] h-full md:h-auto md:max-h-[calc(100%-5rem)] -translate-x-1/2 md:-translate-y-1/2 md:rounded-lg border md:max-w-2xl flex flex-col overflow-hidden";
+				return "bg-neutral-5 fixed z-[70] top-0 md:top-1/2 left-1/2 w-full max-w-[calc(100%-2rem)] h-full md:h-auto md:max-h-[calc(100%-5rem)] -translate-x-1/2 md:-translate-y-1/2 md:rounded-lg border md:max-w-2xl flex flex-col overflow-hidden p-12";
 			case "default":
 			default:
 				return "fixed top-[50%] left-[50%] w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] md:rounded-lg border p-6 sm:max-w-3xl max-h-full overflow-auto";
@@ -160,7 +160,9 @@ function DialogContent({
 				{variant === "mobileMenu" ? (
 					children
 				) : variant === "entityEdit" ? (
-					<div className="flex flex-col h-full w-full">{children}</div>
+					<div className="flex flex-col h-full w-full overflow-auto">
+						{children}
+					</div>
 				) : (
 					<div className="overflow-auto h-full w-full tab-ring">{children}</div>
 				)}

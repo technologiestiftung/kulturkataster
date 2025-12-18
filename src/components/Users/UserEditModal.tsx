@@ -15,6 +15,13 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
 import type { SearchableSelectOption } from "@/components/shared/SearchableSelect";
 import { Switch } from "@/components/ui/switch";
 import type { User, AccessType } from "./types";
@@ -260,71 +267,70 @@ export function UserEditModal({
 
 				{editedUser ? (
 					<div className="space-y-4 py-4">
-						<div className="grid grid-cols-2 gap-4">
-							<div className="space-y-2">
-								<Label htmlFor="name">Name</Label>
-								<Input
-									id="name"
-									value={editedUser.name}
-									onChange={(e) =>
-										setEditedUser({ ...editedUser, name: e.target.value })
-									}
-								/>
-							</div>
-							<div className="space-y-2">
-								<Label htmlFor="email">Email</Label>
-								<Input
-									id="email"
-									type="email"
-									value={editedUser.email}
-									onChange={(e) =>
-										setEditedUser({ ...editedUser, email: e.target.value })
-									}
-								/>
-							</div>
+						<div className="space-y-2">
+							<Label htmlFor="name">Name</Label>
+							<Input
+								id="name"
+								value={editedUser.name}
+								mode="non-edit"
+								onChange={(e) =>
+									setEditedUser({ ...editedUser, name: e.target.value })
+								}
+							/>
+						</div>
+						<div className="space-y-2">
+							<Label htmlFor="email">Email</Label>
+							<Input
+								id="email"
+								type="email"
+								value={editedUser.email}
+								onChange={(e) =>
+									setEditedUser({ ...editedUser, email: e.target.value })
+								}
+							/>
 						</div>
 
-						<div className="grid grid-cols-2 gap-4">
-							<div className="space-y-2">
-								<Label htmlFor="role">Role</Label>
-								<select
-									id="role"
-									className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-									value={editedUser.role}
-									onChange={(e) =>
-										setEditedUser({
-											...editedUser,
-											role: e.target.value as User["role"],
-										})
-									}
-								>
-									<option value="admin">Administrator</option>
-									<option value="publisher">Herausgeber</option>
-									<option value="redaktion">Redaktion</option>
-									<option value="editor">Bearbeiter</option>
-									<option value="contributor">Mitwirkender</option>
-									<option value="viewer">Betrachter</option>
-								</select>
-							</div>
-							<div className="space-y-2">
-								<Label htmlFor="status">Status</Label>
-								<select
-									id="status"
-									className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-									value={editedUser.status}
-									onChange={(e) =>
-										setEditedUser({
-											...editedUser,
-											status: e.target.value as User["status"],
-										})
-									}
-								>
-									<option value="active">Active</option>
-									<option value="inactive">Inactive</option>
-									<option value="pending">Pending</option>
-								</select>
-							</div>
-						</div>
+						<Label htmlFor="role">Role</Label>
+						<Select
+							value={editedUser.role}
+							onValueChange={(value) =>
+								setEditedUser({
+									...editedUser,
+									role: value as User["role"],
+								})
+							}
+						>
+							<SelectTrigger id="role">
+								<SelectValue placeholder="Select role" />
+							</SelectTrigger>
+							<SelectContent>
+								<SelectItem value="admin">Administrator</SelectItem>
+								<SelectItem value="publisher">Herausgeber</SelectItem>
+								<SelectItem value="redaktion">Redaktion</SelectItem>
+								<SelectItem value="editor">Bearbeiter</SelectItem>
+								<SelectItem value="contributor">Mitwirkender</SelectItem>
+								<SelectItem value="viewer">Betrachter</SelectItem>
+							</SelectContent>
+						</Select>
+						<Label htmlFor="status">Status</Label>
+						<Select
+							value={editedUser.status}
+							onValueChange={(value) =>
+								setEditedUser({
+									...editedUser,
+									status: value as User["status"],
+								})
+							}
+						>
+							<SelectTrigger id="status">
+								<SelectValue placeholder="Select status" />
+							</SelectTrigger>
+							<SelectContent>
+								<SelectItem value="active">Active</SelectItem>
+								<SelectItem value="inactive">Inactive</SelectItem>
+								<SelectItem value="pending">Pending</SelectItem>
+							</SelectContent>
+						</Select>
 
 						<div className="flex items-center justify-between rounded-md border p-3">
 							<div className="space-y-1">
@@ -400,12 +406,10 @@ export function UserEditModal({
 
 						<div className="space-y-2">
 							<Label htmlFor="accessType">Institution Access</Label>
-							<select
-								id="accessType"
-								className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+							<Select
 								value={editedUser.access.type}
-								onChange={(e) => {
-									const newType = e.target.value as AccessType;
+								onValueChange={(value) => {
+									const newType = value as AccessType;
 									setEditedUser({
 										...editedUser,
 										access:
@@ -425,11 +429,18 @@ export function UserEditModal({
 									});
 								}}
 							>
-								<option value="inherit">
-									Von Gruppe erben (Inherit from Groups)
-								</option>
-								<option value="custom">Benutzerdefiniert (Custom)</option>
-							</select>
+								<SelectTrigger id="accessType">
+									<SelectValue placeholder="Select access type" />
+								</SelectTrigger>
+								<SelectContent>
+									<SelectItem value="inherit">
+										Von Gruppe erben (Inherit from Groups)
+									</SelectItem>
+									<SelectItem value="custom">
+										Benutzerdefiniert (Custom)
+									</SelectItem>
+								</SelectContent>
+							</Select>
 
 							{editedUser.access.type === "inherit" && (
 								<div className="p-3 bg-muted/50 rounded-md text-sm">
