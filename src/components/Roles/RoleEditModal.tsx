@@ -112,7 +112,7 @@ export function RoleEditModal({
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
-			<DialogContent className="!max-w-4xl max-h-[90vh]  overflow-y-auto">
+			<DialogContent variant="entityEdit" className="max-w-4xl">
 				<DialogHeader>
 					<DialogTitle className="text-2xl font-bold">Edit Role</DialogTitle>
 					<DialogDescription>

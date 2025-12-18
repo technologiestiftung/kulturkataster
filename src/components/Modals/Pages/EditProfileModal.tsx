@@ -5,7 +5,18 @@ import { PageModal } from "../PageModal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+// Dummy function to simulate fetching user data; replace with real API or context
+async function fetchUserProfile() {
+	// Example: Replace with actual fetch or context logic
+	return {
+		name: "John Doe",
+		email: "john@example.com",
+		organization: "Example Org",
+		phone: "+1234567890",
+	};
+}
 
 export function EditProfileModal() {
 	const { t } = useTranslation("common");
@@ -16,9 +27,15 @@ export function EditProfileModal() {
 		phone: "",
 	});
 
+	useEffect(() => {
+		// Fetch and populate user profile data on mount
+		fetchUserProfile().then((profile) => {
+			setFormData(profile);
+		});
+	}, []);
+
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
-		// Handle form submission
 		console.log("Form submitted:", formData);
 	};
 

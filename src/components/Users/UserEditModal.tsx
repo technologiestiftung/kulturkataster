@@ -250,7 +250,7 @@ export function UserEditModal({
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
-			<DialogContent className="max-w-2xl">
+			<DialogContent variant="entityEdit" className="max-w-4xl">
 				<DialogHeader>
 					<DialogTitle className="text-2xl font-bold">Edit User</DialogTitle>
 					<DialogDescription>
