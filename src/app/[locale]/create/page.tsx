@@ -18,7 +18,6 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { ChevronLeft, ChevronRight, Check } from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
@@ -105,7 +104,6 @@ function CreateInstitutionContent() {
 		contactPhone: "",
 	});
 
-	const progress = ((currentStepIndex + 1) / totalSteps) * 100;
 	const currentStep = steps[currentStepIndex];
 
 	const updateFormData = (field: keyof InstitutionFormData, value: string) => {
