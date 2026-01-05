@@ -40,7 +40,7 @@ export function SortableTableHead({
 	return (
 		<Head className={className}>
 			<button
-				className="flex items-center gap-2 hover:text-foreground transition-colors"
+				className="flex items-center gap-2 hover:text-foreground font-bold transition-colors"
 				onClick={() => onSort(column)}
 			>
 				{children}

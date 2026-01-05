@@ -2,7 +2,7 @@ import { UsersTable } from "@/components/Users";
 
 export default function UsersPage() {
 	return (
-		<div className="container mx-auto py-10">
+		<div className="container mx-auto p-10">
 			<div className="space-y-6">
 				<div>
 					<h1 className="text-3xl font-bold">User Management</h1>
