@@ -3,14 +3,15 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-	Address,
-	Contact,
-	OrganizationInfo,
-	FundingInfo,
-	FacilityInfo,
-	StatusInfo,
 	ToggleButton,
-	AdditionalInfo,
+	DynamicInfoBlock,
+	organizationInfoConfig,
+	fundingInfoConfig,
+	facilityInfoConfig,
+	statusInfoConfig,
+	additionalInfoConfig,
+	contactInfoConfig,
+	InfoFieldConfig,
 } from "@/components/Institution";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useMapStore } from "@/lib/store/mapStore";
@@ -25,6 +26,27 @@ import { fromLonLat } from "ol/proj";
 import { Category, Institution } from "@/types";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Address } from "@/components/Institution/Address";
+import { InstitutionDetailSkeleton } from "./InstitutionDetailSkeleton";
+
+const getNestedValue = (
+	obj: Record<string, unknown>,
+	path: string,
+): unknown => {
+	return path.split(".").reduce((current, key) => {
+		if (current && typeof current === "object") {
+			return (current as Record<string, unknown>)[key];
+		}
+		return undefined;
+	}, obj as unknown);
+};
+
+const hasValue = (value: unknown): boolean => {
+	if (value === null || value === undefined || value === "") return false;
+	if (typeof value === "object" && Object.keys(value).length === 0)
+		return false;
+	return true;
+};
 
 // Header component
 function InstitutionHeader({
@@ -117,6 +139,31 @@ function InstitutionCard({
 	onCenterMap?: () => void;
 }) {
 	const [showMore, setShowMore] = useState(false);
+	const hasFieldValue = (field: InfoFieldConfig) => {
+		if (field.condition && !field.condition(institutionData)) {
+			return false;
+		}
+
+		const value = getNestedValue(
+			institutionData as unknown as Record<string, unknown>,
+			field.dataPath,
+		);
+		return hasValue(value);
+	};
+
+	const hasExtendedInfo = () => {
+		const configs = [
+			organizationInfoConfig,
+			fundingInfoConfig,
+			facilityInfoConfig,
+			statusInfoConfig,
+			additionalInfoConfig,
+		];
+
+		return configs.some((config) =>
+			config.fields.some((field) => hasFieldValue(field)),
+		);
+	};
 
 	return (
 		<Card className="w-full rounded-lg overflow-hidden border-none">
@@ -128,23 +175,40 @@ function InstitutionCard({
 			<CardContent className="p-4 space-y-4">
 				<div className="space-y-4 flex flex-col">
 					<Address institution={institutionData} />
-					<Contact institutionData={institutionData} />
+					<DynamicInfoBlock
+						institutionData={institutionData}
+						config={contactInfoConfig}
+					/>
 				</div>
 
 				{showMore && (
 					<div className="space-y-4">
-						<OrganizationInfo institutionData={institutionData} />
-						<FundingInfo institutionData={institutionData} />
-						<FacilityInfo institutionData={institutionData} />
-						<StatusInfo institutionData={institutionData} />
-						<AdditionalInfo institutionData={institutionData} />
+						<DynamicInfoBlock
+							institutionData={institutionData}
+							config={organizationInfoConfig}
+						/>
+						<DynamicInfoBlock
+							institutionData={institutionData}
+							config={fundingInfoConfig}
+						/>
+						<DynamicInfoBlock
+							institutionData={institutionData}
+							config={facilityInfoConfig}
+						/>
+						<DynamicInfoBlock
+							institutionData={institutionData}
+							config={statusInfoConfig}
+						/>
+						<DynamicInfoBlock
+							institutionData={institutionData}
+							config={additionalInfoConfig}
+						/>
 					</div>
 				)}
-
 				<ToggleButton
 					showMore={showMore}
 					onClick={() => setShowMore(!showMore)}
-					hasInfo={true}
+					hasInfo={hasExtendedInfo()}
 				/>
 			</CardContent>
 		</Card>
@@ -221,15 +285,7 @@ export function InstitutionDetailContent() {
 	if (!selectedInstitutionId) return null;
 
 	if (loading) {
-		return (
-			<div className="p-6">
-				<div className="animate-pulse space-y-4">
-					<div className="h-4 bg-gray-200 rounded w-3/4"></div>
-					<div className="h-3 bg-gray-200 rounded w-1/2"></div>
-					<div className="h-3 bg-gray-200 rounded w-2/3"></div>
-				</div>
-			</div>
-		);
+		return <InstitutionDetailSkeleton />;
 	}
 
 	if (!institutionData) {

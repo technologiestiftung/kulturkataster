@@ -20,6 +20,9 @@ import {
 } from "@/components/HorizontalStepper";
 import { ChevronRight, Check } from "lucide-react";
 import { ModalFooter } from "@/components/Modals/ModalFooter";
+import { DynamicInfoBlock, contactInfoConfig } from "@/components/Institution";
+import type { Institution } from "@/types";
+import { Address } from "@/components/Institution/Address";
 
 const stepConfigs: StepConfig[] = [
 	{
@@ -328,104 +331,19 @@ function CreateInstitutionContent() {
 				<CardContent variant="secondary">
 					{currentStepId === "review" ? (
 						/* Review Step */
-						<div className="space-y-6">
-							<div>
-								<h3 className="text-lg font-semibold mb-4">
-									Basic Information
-								</h3>
-								<dl className="grid grid-cols-2 gap-4">
-									<div>
-										<dt className="text-sm font-medium text-muted-foreground">
-											Name
-										</dt>
-										<dd className="text-sm">{formData.name || "—"}</dd>
-									</div>
-									<div>
-										<dt className="text-sm font-medium text-muted-foreground">
-											Slug
-										</dt>
-										<dd className="text-sm">{formData.slug || "—"}</dd>
-									</div>
-									<div>
-										<dt className="text-sm font-medium text-muted-foreground">
-											Type
-										</dt>
-										<dd className="text-sm">{formData.type || "—"}</dd>
-									</div>
-									<div>
-										<dt className="text-sm font-medium text-muted-foreground">
-											Website
-										</dt>
-										<dd className="text-sm">{formData.website || "—"}</dd>
-									</div>
-									<div className="col-span-2">
-										<dt className="text-sm font-medium text-muted-foreground">
-											Description
-										</dt>
-										<dd className="text-sm">{formData.description || "—"}</dd>
-									</div>
-								</dl>
-							</div>
-
-							<div>
-								<h3 className="text-lg font-semibold mb-4">Address</h3>
-								<dl className="grid grid-cols-2 gap-4">
-									<div className="col-span-2">
-										<dt className="text-sm font-medium text-muted-foreground">
-											Street
-										</dt>
-										<dd className="text-sm">{formData.street || "—"}</dd>
-									</div>
-									<div>
-										<dt className="text-sm font-medium text-muted-foreground">
-											City
-										</dt>
-										<dd className="text-sm">{formData.city || "—"}</dd>
-									</div>
-									<div>
-										<dt className="text-sm font-medium text-muted-foreground">
-											Postal Code
-										</dt>
-										<dd className="text-sm">{formData.postalCode || "—"}</dd>
-									</div>
-									<div>
-										<dt className="text-sm font-medium text-muted-foreground">
-											District
-										</dt>
-										<dd className="text-sm">{formData.district || "—"}</dd>
-									</div>
-									<div>
-										<dt className="text-sm font-medium text-muted-foreground">
-											Country
-										</dt>
-										<dd className="text-sm">{formData.country || "—"}</dd>
-									</div>
-								</dl>
-							</div>
-
-							<div>
-								<h3 className="text-lg font-semibold mb-4">Contact</h3>
-								<dl className="grid grid-cols-2 gap-4">
-									<div>
-										<dt className="text-sm font-medium text-muted-foreground">
-											Name
-										</dt>
-										<dd className="text-sm">{formData.contactName || "—"}</dd>
-									</div>
-									<div>
-										<dt className="text-sm font-medium text-muted-foreground">
-											Email
-										</dt>
-										<dd className="text-sm">{formData.contactEmail || "—"}</dd>
-									</div>
-									<div>
-										<dt className="text-sm font-medium text-muted-foreground">
-											Phone
-										</dt>
-										<dd className="text-sm">{formData.contactPhone || "—"}</dd>
-									</div>
-								</dl>
-							</div>
+						<div className="space-y-4">
+							<Address institutionData={formData as unknown as Institution} />
+							<DynamicInfoBlock
+								institutionData={
+									{
+										name: formData.contactName,
+										email: formData.contactEmail,
+										phone: formData.contactPhone,
+										website: formData.website,
+									} as unknown as Institution
+								}
+								config={{ ...contactInfoConfig, alwaysShow: true }}
+							/>
 						</div>
 					) : (
 						/* Form Steps */
