@@ -71,7 +71,7 @@ All many-to-many relationships use Prisma's implicit syntax (no manual join tabl
 
 The following enums are defined:
 
-- `OwnerType` - private, federal_property, state_property_\*, district_property, etc.
+- `OwnerType` - private, federal*property, state_property*\*, district_property, etc.
 - `RentalContractType` - unlimited_lease, limited_lease, hereditary_building_right, organization_ownership
 - `FundingType` - workspace_program, institutional_funding, temporary_project_funding, no_funding
 - `UtilizationStatus` - in_use, temporarily_closed, permanently_closed, planned_use, unknown, potential_space
@@ -89,23 +89,27 @@ This project uses **Supabase for authentication** and **Prisma for database oper
 ### How it works:
 
 1. **Authentication Flow**:
+
    - User signs up/logs in via Supabase Auth
    - Supabase creates a record in `auth.users` with a UUID
    - Your app creates a matching record in `public.users` (Prisma) with the same UUID
 
 2. **User Management**:
+
    ```typescript
    // After Supabase sign up
-   const { data: { user } } = await supabase.auth.signUp({ email, password })
+   const {
+   	data: { user },
+   } = await supabase.auth.signUp({ email, password });
 
    // Create matching Prisma user record
    await prisma.user.create({
-     data: {
-       id: user.id, // Same UUID from Supabase
-       email: user.email,
-       status: 'pending'
-     }
-   })
+   	data: {
+   		id: user.id, // Same UUID from Supabase
+   		email: user.email,
+   		status: "pending",
+   	},
+   });
    ```
 
 3. **Querying Data**:
