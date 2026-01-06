@@ -19,6 +19,7 @@ import {
 	type StepConfig,
 } from "@/components/HorizontalStepper";
 import { ChevronRight, Check } from "lucide-react";
+import { ModalFooter } from "@/components/Modals/ModalFooter";
 
 const stepConfigs: StepConfig[] = [
 	{
@@ -471,8 +472,11 @@ function CreateInstitutionContent() {
 
 export default function CreateInstitutionPage() {
 	return (
-		<HorizontalStepper steps={stepConfigs}>
-			<CreateInstitutionContent />
-		</HorizontalStepper>
+		<div className="min-h-screen bg-background py-10 space-y-10">
+			<HorizontalStepper steps={stepConfigs}>
+				<CreateInstitutionContent />
+			</HorizontalStepper>
+			<ModalFooter />
+		</div>
 	);
 }

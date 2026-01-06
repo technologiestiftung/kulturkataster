@@ -40,7 +40,7 @@ export function StepIndicator({ className }: StepIndicatorProps) {
 							<div
 								className={cn(
 									"h-0.5 flex-1 transition-colors",
-									isPast || isActive ? "bg-primary" : "bg-neutral-20",
+									isPast ? "bg-primary" : "bg-neutral-20",
 								)}
 							/>
 						)}
