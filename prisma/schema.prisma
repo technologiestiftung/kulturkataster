@@ -151,6 +151,7 @@ model Institution {
   area                    Float?
   number_of_rooms         Int?
   parent_organization     String?
+  legal_form              String?
   capacity                Int?
   owner_name              String?
   owner_type              OwnerType?
@@ -158,7 +159,9 @@ model Institution {
   rental_contract_end     DateTime?
   funding_type            FundingType?
   utilization_status      UtilizationStatus?
+  utilizationstatus_info  String?
   protection_status       ProtectionStatus?
+  protectionstatus_info   String?
   shared_use_allowed      Boolean             @default(false)
   shared_use_info         String?
   shared_use_equipment    String?
