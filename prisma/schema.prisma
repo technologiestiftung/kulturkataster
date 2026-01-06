@@ -1,0 +1,322 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================
+// ENUMS
+// ============================================
+
+enum OwnerType {
+  private
+  federal_property
+  state_property
+  state_property_silb
+  state_property_soda
+  state_property_other
+  state_property_specialized
+  state_property_fund
+  district_property
+  other_public_property
+  municipal_housing_company
+  other
+}
+
+enum RentalContractType {
+  unlimited_lease
+  limited_lease
+  hereditary_building_right
+  organization_ownership
+}
+
+enum FundingType {
+  workspace_program
+  institutional_funding
+  temporary_project_funding
+  no_funding
+}
+
+enum UtilizationStatus {
+  in_use
+  temporarily_closed
+  permanently_closed
+  planned_use
+  unknown
+  potential_space
+}
+
+enum ProtectionStatus {
+  long_term_secured
+  medium_term_secured
+  uncertain
+  acutely_threatened
+  permanently_closed
+  not_yet_secured
+}
+
+enum InstitutionStatus {
+  public
+  private
+  archived
+  draft
+  removal_pending
+}
+
+enum UserStatus {
+  active
+  inactive
+  pending
+}
+
+enum CategoryStatus {
+  active
+  pending
+  inactive
+}
+
+enum FieldAction {
+  read
+  write
+  edit
+  delete
+}
+
+enum HistoryAction {
+  create
+  update
+  delete
+}
+
+// ============================================
+// CORE MODELS
+// ============================================
+
+model Address {
+  id             Int      @id @default(autoincrement())
+  street         String
+  street_number  String?
+  address_suffix String?
+  zipcode        String?
+  city           String?
+  district       String?
+  neighbourhood  String?
+  cultural_area  String?
+  lat            Decimal  @db.Decimal(9, 6)
+  lng            Decimal  @db.Decimal(9, 6)
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  institutions Institution[]
+
+  @@index([lat])
+  @@index([lng])
+  @@index([lat, lng])
+  @@index([city])
+  @@index([district])
+  @@index([neighbourhood])
+  @@index([cultural_area])
+  @@index([zipcode])
+  @@map("addresses")
+}
+
+model ContactPerson {
+  id         Int      @id @default(autoincrement())
+  firstname  String?
+  surname    String?
+  email      String?
+  phone      String?
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  institutions_as_contact        Institution[] @relation("InstitutionContact")
+  institutions_as_shared_contact Institution[] @relation("SharedUseContact")
+
+  @@index([email])
+  @@map("contact_persons")
+}
+
+model Institution {
+  id                      Int                 @id @default(autoincrement())
+  name                    String
+  website                 String?
+  phone                   String?
+  email                   String?
+  area                    Float?
+  number_of_rooms         Int?
+  parent_organization     String?
+  capacity                Int?
+  owner_name              String?
+  owner_type              OwnerType?
+  rental_contract_type    RentalContractType?
+  rental_contract_end     DateTime?
+  funding_type            FundingType?
+  utilization_status      UtilizationStatus?
+  protection_status       ProtectionStatus?
+  shared_use_allowed      Boolean             @default(false)
+  shared_use_info         String?
+  shared_use_equipment    String?
+  shared_use_audience     String?
+  shared_use_availability String?
+  accessibility           String?
+  cost                    String?
+  established_since       DateTime?
+  established_until       DateTime?
+  closing_reason          String?
+  notes                   String?
+  internal_notes          String?
+  status                  InstitutionStatus   @default(public)
+  import_identifier       String?
+  source                  String?
+  created_by              String?             @db.Uuid
+  updated_by              String?             @db.Uuid
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+
+  address_id                   Int?
+  contact_person_id            Int?
+  shared_use_contact_person_id Int?
+
+  address                   Address?       @relation(fields: [address_id], references: [id])
+  contact_person            ContactPerson? @relation("InstitutionContact", fields: [contact_person_id], references: [id])
+  shared_use_contact_person ContactPerson? @relation("SharedUseContact", fields: [shared_use_contact_person_id], references: [id])
+
+  funding_sources FundingSource[]
+  categories      Category[]
+  tags            Tag[]
+  groups          Group[]
+  users           User[]
+  creator         User?           @relation("InstitutionCreator", fields: [created_by], references: [id])
+  updater         User?           @relation("InstitutionUpdater", fields: [updated_by], references: [id])
+
+  @@index([status])
+  @@index([address_id])
+  @@index([contact_person_id])
+  @@index([name])
+  @@index([created_by])
+  @@index([updated_by])
+  @@map("institutions")
+}
+
+model FundingSource {
+  id             Int      @id @default(autoincrement())
+  institution_id Int
+  source_name    String
+  description    String?
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  institution Institution @relation(fields: [institution_id], references: [id], onDelete: Cascade)
+
+  @@index([institution_id])
+  @@map("funding_sources")
+}
+
+// ============================================
+// CATEGORY & TAG SYSTEM
+// ============================================
+
+model Category {
+  id                 Int            @id @default(autoincrement())
+  key                String         @unique
+  description        String?
+  icon               String? // SVG format
+  status             CategoryStatus @default(active)
+  parent_category_id Int?
+  created_at         DateTime       @default(now())
+  updated_at         DateTime       @updatedAt
+
+  parent_category  Category?     @relation("CategoryHierarchy", fields: [parent_category_id], references: [id])
+  child_categories Category[]    @relation("CategoryHierarchy")
+  institutions     Institution[]
+
+  @@index([status])
+  @@index([parent_category_id])
+  @@map("categories")
+}
+
+model Tag {
+  id         Int      @id @default(autoincrement())
+  name       String   @unique
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  institutions Institution[]
+
+  @@map("tags")
+}
+
+// ============================================
+// USER & PERMISSION SYSTEM
+// ============================================
+
+model User {
+  id                 String     @id @db.Uuid
+  email              String     @unique
+  role_id            Int?
+  status             UserStatus @default(pending)
+  compliance         Boolean    @default(false)
+  institution_claims String?
+  created_at         DateTime   @default(now())
+  updated_at         DateTime   @updatedAt
+
+  role                 Role?         @relation(fields: [role_id], references: [id])
+  groups               Group[]
+  institutions         Institution[]
+  created_institutions Institution[] @relation("InstitutionCreator")
+  updated_institutions Institution[] @relation("InstitutionUpdater")
+
+  @@index([email])
+  @@index([role_id])
+  @@index([status])
+  @@map("users")
+}
+
+model Role {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  description String?
+  permissions String?
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  users             User[]
+  field_permissions FieldPermission[]
+
+  @@map("roles")
+}
+
+model FieldPermission {
+  id         Int         @id @default(autoincrement())
+  role_id    Int
+  field_name String
+  action     FieldAction
+  created_at DateTime    @default(now())
+  updated_at DateTime    @updatedAt
+
+  role Role @relation(fields: [role_id], references: [id], onDelete: Cascade)
+
+  @@unique([role_id, field_name, action])
+  @@index([role_id])
+  @@index([field_name])
+  @@map("field_permissions")
+}
+
+model Group {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  description String?
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  users        User[]
+  institutions Institution[]
+
+  @@map("groups")
+}
