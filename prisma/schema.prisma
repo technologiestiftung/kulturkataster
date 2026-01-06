@@ -136,7 +136,6 @@ model ContactPerson {
   updated_at DateTime @updatedAt
 
   institutions_as_contact        Institution[] @relation("InstitutionContact")
-  institutions_as_shared_contact Institution[] @relation("SharedUseContact")
 
   @@index([email])
   @@map("contact_persons")
@@ -184,11 +183,10 @@ model Institution {
 
   address_id                   Int?
   contact_person_id            Int?
-  shared_use_contact_person_id Int?
+  shared_use_contact_person_id String?
 
   address                   Address?       @relation(fields: [address_id], references: [id])
   contact_person            ContactPerson? @relation("InstitutionContact", fields: [contact_person_id], references: [id])
-  shared_use_contact_person ContactPerson? @relation("SharedUseContact", fields: [shared_use_contact_person_id], references: [id])
 
   funding_sources FundingSource[]
   categories      Category[]
