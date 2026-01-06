@@ -1,123 +1,24 @@
-/* eslint-disable complexity */
 "use client";
 
-import { useState, useMemo } from "react";
-import {
-	StickyTable,
-	StickyTableBody,
-	StickyTableHead,
-	StickyTableHeader,
-	StickyTableRow,
-	StickyActionsHead,
-} from "@/components/ui/sticky-table";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Plus } from "lucide-react";
-import { SortableTableHead } from "@/components/shared";
-import type { SortDirection } from "@/components/shared";
-import type { User, SortColumn } from "./types";
+import { useState } from "react";
+import { DataTable } from "@/components/shared/DataTable";
+import type { DataTableConfig } from "@/components/shared/DataTable";
+import type { User } from "./types";
 import { sampleUsers } from "./constants";
-import { UserRow } from "./UserRow";
 import { UserEditModal } from "./UserEditModal";
+import { Badge } from "@/components/ui/badge";
 
 export function UsersTable() {
 	const [users, setUsers] = useState<User[]>(sampleUsers);
-	const [sortColumn, setSortColumn] = useState<SortColumn | null>(null);
-	const [sortDirection, setSortDirection] = useState<SortDirection>(null);
 	const [selectedUser, setSelectedUser] = useState<User | null>(null);
 	const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-	const [searchTerm, setSearchTerm] = useState("");
+
 	const handleEditModalOpenChange = (nextOpen: boolean) => {
 		setIsEditModalOpen(nextOpen);
 		if (!nextOpen) {
 			setSelectedUser(null);
 		}
 	};
-
-	const handleSort = (column: string) => {
-		const typedColumn = column as SortColumn;
-		if (sortColumn === typedColumn) {
-			if (sortDirection === "asc") {
-				setSortDirection("desc");
-			} else if (sortDirection === "desc") {
-				setSortDirection(null);
-				setSortColumn(null);
-			}
-		} else {
-			setSortColumn(typedColumn);
-			setSortDirection("asc");
-		}
-	};
-
-	const filteredUsers = useMemo(() => {
-		const term = searchTerm.trim().toLowerCase();
-		if (!term) return users;
-
-		return users.filter((user) => {
-			const values: string[] = [
-				user.name,
-				user.email,
-				user.role,
-				user.status,
-				user.access.type,
-				user.access.source,
-				String(user.access.institutionCount),
-				user.complianceAccepted ? "compliance-accepted" : "compliance-pending",
-				...user.groups.map((group) => group.name),
-			];
-
-			return values.some((value) => value.toLowerCase().includes(term));
-		});
-	}, [users, searchTerm]);
-
-	const sortedUsers = useMemo(() => {
-		if (!sortColumn || !sortDirection) {
-			return filteredUsers;
-		}
-
-		return [...filteredUsers].sort((a, b) => {
-			let comparison = 0;
-
-			switch (sortColumn) {
-				case "name":
-					comparison = a.name.localeCompare(b.name);
-					break;
-				case "email":
-					comparison = a.email.localeCompare(b.email);
-					break;
-				case "role":
-					comparison = a.role.localeCompare(b.role);
-					break;
-				case "groups":
-					if (a.groups.length !== b.groups.length) {
-						comparison = a.groups.length - b.groups.length;
-					} else if (a.groups.length > 0 && b.groups.length > 0) {
-						comparison = a.groups[0].name.localeCompare(b.groups[0].name);
-					} else {
-						comparison = 0;
-					}
-					break;
-				case "status":
-					comparison = a.status.localeCompare(b.status);
-					break;
-				case "lastActivity":
-					comparison = a.lastActivity.getTime() - b.lastActivity.getTime();
-					break;
-				case "access":
-					comparison = a.access.institutionCount - b.access.institutionCount;
-					break;
-				case "compliance":
-					comparison =
-						Number(a.complianceAccepted) - Number(b.complianceAccepted);
-					break;
-				default:
-					comparison = 0;
-					break;
-			}
-
-			return sortDirection === "asc" ? comparison : -comparison;
-		});
-	}, [filteredUsers, sortColumn, sortDirection]);
 
 	const handleAddUser = () => {
 		const newUser: User = {
@@ -154,10 +55,8 @@ export function UsersTable() {
 	const handleSaveUser = (updatedUser: User) => {
 		const exists = users.some((u) => u.id === updatedUser.id);
 		if (exists) {
-			// Update existing user
 			setUsers(users.map((u) => (u.id === updatedUser.id ? updatedUser : u)));
 		} else {
-			// Add new user
 			setUsers([...users, updatedUser]);
 		}
 		setIsEditModalOpen(false);
@@ -176,104 +75,128 @@ export function UsersTable() {
 		console.log("Resend compliance request to user:", userId);
 	};
 
+	const tableConfig: DataTableConfig<User> = {
+		columns: [
+			{
+				key: "name",
+				label: "Name",
+				sortable: true,
+				getValue: (row) => row.name,
+			},
+			{
+				key: "email",
+				label: "Email",
+				sortable: true,
+				getValue: (row) => row.email,
+			},
+			{
+				key: "role",
+				label: "Role",
+				sortable: true,
+				getValue: (row) => row.role,
+				render: (row) => <span className="capitalize">{row.role}</span>,
+			},
+			{
+				key: "groups",
+				label: "Gruppen",
+				sortable: true,
+				compare: (a, b) => {
+					if (a.groups.length !== b.groups.length) {
+						return a.groups.length - b.groups.length;
+					}
+					if (a.groups.length > 0 && b.groups.length > 0) {
+						return a.groups[0].name.localeCompare(b.groups[0].name);
+					}
+					return 0;
+				},
+				render: (row) => (
+					<div className="flex flex-wrap gap-1">
+						{row.groups.length > 0 ? (
+							row.groups.map((group) => (
+								<Badge key={group.id} variant="secondary" className="text-xs">
+									{group.name}
+								</Badge>
+							))
+						) : (
+							<span className="text-muted-foreground">—</span>
+						)}
+					</div>
+				),
+			},
+			{
+				key: "status",
+				label: "Status",
+				sortable: true,
+				getValue: (row) => row.status,
+				render: (row) => {
+					let variant: "default" | "secondary" | "outline" = "outline";
+					if (row.status === "active") variant = "default";
+					if (row.status === "inactive") variant = "secondary";
+					return <Badge variant={variant}>{row.status}</Badge>;
+				},
+			},
+			{
+				key: "access",
+				label: "Institution Access",
+				sortable: true,
+				compare: (a, b) =>
+					a.access.institutionCount - b.access.institutionCount,
+				render: (row) => (
+					<div className="flex flex-col gap-1">
+						<span className="text-sm">
+							{row.access.institutionCount} institutions
+						</span>
+						<span className="text-xs text-muted-foreground capitalize">
+							{row.access.type} ({row.access.source.replace(/-/g, " ")})
+						</span>
+					</div>
+				),
+			},
+			{
+				key: "lastActivity",
+				label: "Last Activity",
+				sortable: true,
+				getValue: (row) => row.lastActivity,
+			},
+			{
+				key: "compliance",
+				label: "Compliance",
+				sortable: true,
+				compare: (a, b) =>
+					Number(a.complianceAccepted) - Number(b.complianceAccepted),
+				render: (row) => (
+					<Badge variant={row.complianceAccepted ? "default" : "destructive"}>
+						{row.complianceAccepted ? "Accepted" : "Pending"}
+					</Badge>
+				),
+			},
+		],
+		data: users,
+		getRowKey: (row) => row.id,
+		searchable: true,
+		searchPlaceholder: "Search users...",
+		getSearchableValues: (row) => [
+			row.name,
+			row.email,
+			row.role,
+			row.status,
+			row.access.type,
+			row.access.source,
+			String(row.access.institutionCount),
+			row.complianceAccepted ? "compliance-accepted" : "compliance-pending",
+			...row.groups.map((group) => group.name),
+		],
+		addButton: {
+			label: "Add User",
+			onClick: handleAddUser,
+		},
+		onEdit: handleEditUser,
+		emptyMessage: "No users found.",
+	};
+
 	return (
-		<div className="w-full space-y-4">
-			<div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-				<Input
-					placeholder="Search users..."
-					value={searchTerm}
-					onChange={(event) => setSearchTerm(event.target.value)}
-					className="w-full sm:max-w-sm"
-				/>
-				<Button onClick={handleAddUser} className="w-full sm:w-auto">
-					<Plus className="mr-2 h-4 w-4" />
-					Add User
-				</Button>
-			</div>
-			<StickyTable>
-				<StickyTableHeader>
-					<StickyTableRow>
-						<SortableTableHead
-							column="name"
-							currentSortColumn={sortColumn}
-							currentSortDirection={sortDirection}
-							onSort={handleSort}
-							HeadComponent={StickyTableHead}
-						>
-							Name
-						</SortableTableHead>
-						<SortableTableHead
-							column="email"
-							currentSortColumn={sortColumn}
-							currentSortDirection={sortDirection}
-							onSort={handleSort}
-							HeadComponent={StickyTableHead}
-						>
-							Email
-						</SortableTableHead>
-						<SortableTableHead
-							column="role"
-							currentSortColumn={sortColumn}
-							currentSortDirection={sortDirection}
-							onSort={handleSort}
-							HeadComponent={StickyTableHead}
-						>
-							Role
-						</SortableTableHead>
-						<SortableTableHead
-							column="groups"
-							currentSortColumn={sortColumn}
-							currentSortDirection={sortDirection}
-							onSort={handleSort}
-							HeadComponent={StickyTableHead}
-						>
-							Gruppen
-						</SortableTableHead>
-						<SortableTableHead
-							column="status"
-							currentSortColumn={sortColumn}
-							currentSortDirection={sortDirection}
-							onSort={handleSort}
-							HeadComponent={StickyTableHead}
-						>
-							Status
-						</SortableTableHead>
-						<SortableTableHead
-							column="access"
-							currentSortColumn={sortColumn}
-							currentSortDirection={sortDirection}
-							onSort={handleSort}
-							HeadComponent={StickyTableHead}
-						>
-							Institution Access
-						</SortableTableHead>
-						<SortableTableHead
-							column="lastActivity"
-							currentSortColumn={sortColumn}
-							currentSortDirection={sortDirection}
-							onSort={handleSort}
-							HeadComponent={StickyTableHead}
-						>
-							Last Activity
-						</SortableTableHead>
-						<SortableTableHead
-							column="compliance"
-							currentSortColumn={sortColumn}
-							currentSortDirection={sortDirection}
-							onSort={handleSort}
-							HeadComponent={StickyTableHead}
-						>
-							Compliance
-						</SortableTableHead>
-						<StickyActionsHead />
-					</StickyTableRow>
-				</StickyTableHeader>
-				<StickyTableBody>
-					{sortedUsers.map((user) => (
-						<UserRow key={user.id} user={user} onEdit={handleEditUser} />
-					))}
-				</StickyTableBody>
-			</StickyTable>
+		<>
+			<DataTable config={tableConfig} />
 
 			<UserEditModal
 				user={selectedUser}
@@ -285,6 +208,6 @@ export function UsersTable() {
 				onResetPassword={handleResetPassword}
 				onResendCompliance={handleResendCompliance}
 			/>
-		</div>
+		</>
 	);
 }
