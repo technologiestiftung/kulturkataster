@@ -2,14 +2,14 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import {
-	Address,
-	Contact,
-	OrganizationInfo,
-	FundingInfo,
-	FacilityInfo,
-	StatusInfo,
 	ToggleButton,
-	AdditionalInfo,
+	DynamicInfoBlock,
+	organizationInfoConfig,
+	fundingInfoConfig,
+	facilityInfoConfig,
+	statusInfoConfig,
+	additionalInfoConfig,
+	contactInfoConfig,
 } from "@/components/Institution";
 import { getCategoryIconComponent } from "@/lib/utils/iconUtils";
 import { Category, Institution } from "@/types";
@@ -19,6 +19,7 @@ import {
 	getParentCategories,
 	getSubcategoriesForCategory,
 } from "@/lib/utils/institutionUtils";
+import { Address } from "../Institution/Address";
 
 // Parent organization component
 function ParentOrganization({ name }: { name?: string }) {
@@ -175,16 +176,34 @@ const InstitutionCard = memo(function InstitutionCard({
 			<CardContent className="p-4 space-y-2 md:space-y-4">
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
 					<LeftColumn data={institutionData} tEnum={tEnum} />
-					<Contact institutionData={institutionData} />
+					<DynamicInfoBlock
+						institutionData={institutionData}
+						config={contactInfoConfig}
+					/>
 				</div>
 
 				{showMore && (
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
-						<FundingInfo institutionData={institutionData} />
-						<FacilityInfo institutionData={institutionData} />
-						<OrganizationInfo institutionData={institutionData} />
-						<StatusInfo institutionData={institutionData} />
-						<AdditionalInfo institutionData={institutionData} />
+						<DynamicInfoBlock
+							institutionData={institutionData}
+							config={fundingInfoConfig}
+						/>
+						<DynamicInfoBlock
+							institutionData={institutionData}
+							config={facilityInfoConfig}
+						/>
+						<DynamicInfoBlock
+							institutionData={institutionData}
+							config={organizationInfoConfig}
+						/>
+						<DynamicInfoBlock
+							institutionData={institutionData}
+							config={statusInfoConfig}
+						/>
+						<DynamicInfoBlock
+							institutionData={institutionData}
+							config={additionalInfoConfig}
+						/>
 					</div>
 				)}
 
