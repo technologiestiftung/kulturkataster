@@ -1,48 +1,24 @@
+import { Prisma } from "@/generated/prisma";
 import { FeatureCollection, GeoJsonProperties, Geometry } from "geojson";
-import { Database } from "./supabase";
 
-export interface GeoFeature {
-	id: string;
-	place_name: string;
-	center: [number, number];
-	geometry: {
-		coordinates: [number, number];
+export type PrismaInstitutionWithRelations = Prisma.InstitutionGetPayload<{
+	include: {
+		address: true;
+		categories: true;
+		tags: true;
+		users: true;
 	};
-	text?: string;
-	bbox?: [number, number, number, number];
-}
+}>;
 
-export type SearchResult = Institution | GeoFeature;
+export type Subcategory = Prisma.CategoryGetPayload<Prisma.CategoryDefaultArgs>;
 
-export type Institution = Database["public"]["Tables"]["institution"]["Row"] & {
-	categories: Category[];
-	district: District;
-	parent_organizations: ParentOrganization[]; // Renamed from 'org' to 'parent_organizations'
-	cultural_areas: CulturalArea[];
-	subcategories: Subcategory[];
-	rooms_count: number | null;
-	support_type: string | null;
-	source: Source | null;
-	cultural_area: CulturalArea | null;
-	owner: Owner | null;
-	funding_type: string | null;
-	closing_reason: string | null;
-	created_at: string;
-	updated_at: string;
-	city: City | null;
+export type Category = Partial<
+	Prisma.CategoryGetPayload<Prisma.CategoryDefaultArgs>
+> & {
+	id: number;
+	key: string;
+	subcategory?: Subcategory[];
 };
-
-export type City = Database["public"]["Tables"]["city"]["Row"];
-
-export type Category = Database["public"]["Tables"]["category"]["Row"] & {
-	subcategory: Subcategory[];
-};
-
-export type Subcategory = Database["public"]["Tables"]["subcategory"]["Row"];
-
-export type CategoryType =
-	| Database["public"]["Enums"]["category_key_enum"]
-	| "multi_categories";
 
 export const CategoryKeys = {
 	STUDIOS: "studios",
@@ -66,24 +42,35 @@ export const CategoryKeys = {
 	MULTI_CATEGORIES: "multi_categories",
 } as const;
 
-export type District = Database["public"]["Tables"]["district"]["Row"];
+export type CategoryType = string;
 
-export type ParentOrganization =
-	Database["public"]["Tables"]["parent_organization"]["Row"];
+export interface District {
+	key: string | null;
+	name: string | null;
+}
 
-export type CulturalArea = Database["public"]["Tables"]["cultural_area"]["Row"];
+export interface City {
+	name?: string | null;
+}
 
-export type Owner = Database["public"]["Tables"]["owner"]["Row"];
+export interface ParentOrganization {
+	name?: string | null;
+}
 
-export type Source = Database["public"]["Tables"]["source"]["Row"];
+export type Institution = PrismaInstitutionWithRelations;
 
-export interface InstitutionFeature extends Institution {
-	type: "Feature";
+export interface GeoFeature {
+	id: string;
+	place_name: string;
+	center: [number, number];
 	geometry: {
-		type: "Point";
 		coordinates: [number, number];
 	};
+	text?: string;
+	bbox?: [number, number, number, number];
 }
+
+export type SearchResult = Institution | GeoFeature;
 
 export interface FilterState {
 	district_keys: string[];
@@ -94,21 +81,22 @@ export interface FilterState {
 }
 
 export interface InstitutionStoreState {
-	allInstitutions: FeatureCollection<Geometry, GeoJsonProperties> | null;
-	filteredInstitutions: FeatureCollection<Geometry, GeoJsonProperties> | null;
+	allInstitutions: Institution[] | null;
+	filteredInstitutions: Institution[] | null;
+	allInstitutionsGeoJSON: FeatureCollection<Geometry, GeoJsonProperties> | null;
+	filteredInstitutionsGeoJSON: FeatureCollection<
+		Geometry,
+		GeoJsonProperties
+	> | null;
 	categoryCounts: Record<string, number>;
 	subcategoryCounts: Record<string, number>;
 	selectedInstitutionId: number | string | null;
 	filters: FilterState;
 	categories: Category[] | null;
 	setCategories: (categories: Category[] | null) => void;
-	setInstitutions: (
-		institutions: FeatureCollection<Geometry, GeoJsonProperties> | null,
-	) => void;
-	setSelectedInstitutionId: (id: string | null) => void;
-
+	setInstitutions: (institutions: Institution[] | null) => void;
+	setSelectedInstitutionId: (id: string | number | null) => void;
 	setFilters: (filters: FilterState) => void;
 	initializeCategories: () => Promise<void>;
 	initializeInstitutions: () => Promise<void>;
-	applyFilters: () => Promise<void>;
 }
