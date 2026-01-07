@@ -1,132 +1,204 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 
-import { createClient } from "@/lib/supabase/server";
 import type { Category, District, FilterState } from "@/types";
-import type { FeatureCollection } from "geojson";
-import { ApiError } from "../utils/errorUtils";
+import { prisma } from "@/lib/prisma";
+import { Prisma } from "@/generated/prisma";
 
-// Utility functions
-function handleError(error: any, context: string): never {
-	console.error(`Error in ${context}:`, error);
-	throw new ApiError(
-		`Failed to ${context}: ${error.message}`,
-		error.code,
-		error.details,
-	);
-}
+export async function getInstitutions() {
+	const institutions = await prisma.institution.findMany({
+		include: {
+			address: true,
+			categories: true,
+			tags: true,
+			users: true,
+		},
+	});
 
-function validateSingleResponse<T>(data: unknown, context: string): T {
-	if (!data) {
-		throw new ApiError(`No data returned from ${context}`);
-	}
-	return data as T;
-}
-
-export async function getInstitutionsGeoJSON() {
-	const supabase = await createClient();
-
-	const { data, error } = await supabase.rpc("get_public_institutions_geojson");
-
-	if (error) {
-		handleError(error, "fetch institutions GeoJSON");
-	}
-
-	const validated = validateSingleResponse<FeatureCollection>(
-		data,
-		"getInstitutionsGeoJSON",
-	);
-
-	if (
-		validated.type !== "FeatureCollection" ||
-		!Array.isArray(validated.features)
-	) {
-		throw new Error("Invalid or missing GeoJSON structure in response");
-	}
-
-	return validated;
+	return institutions;
 }
 
 export async function searchInstitutions(query: string) {
-	const supabase = await createClient();
-
 	if (!query || query.trim().length === 0) {
 		return [];
 	}
 
-	const trimmedQuery = query.trim();
+	const terms = query
+		.split(" ")
+		.map((term) => term.trim())
+		.filter((term) => term.length > 0);
 
-	const { data, error } = await supabase.rpc("get_public_institutions", {
-		search_term: trimmedQuery,
-		limit_count: 50,
+	const whereConditions: Prisma.InstitutionWhereInput | undefined =
+		terms.length > 0
+			? {
+					AND: terms.map((term) => ({
+						OR: [
+							{
+								name: {
+									contains: term,
+									mode: Prisma.QueryMode.insensitive,
+								},
+							},
+							{
+								website: {
+									contains: term,
+									mode: Prisma.QueryMode.insensitive,
+								},
+							},
+							{
+								email: {
+									contains: term,
+									mode: Prisma.QueryMode.insensitive,
+								},
+							},
+							{
+								notes: {
+									contains: term,
+									mode: Prisma.QueryMode.insensitive,
+								},
+							},
+							{
+								address: {
+									street: {
+										contains: term,
+										mode: Prisma.QueryMode.insensitive,
+									},
+								},
+							},
+							{
+								address: {
+									street_number: {
+										contains: term,
+										mode: Prisma.QueryMode.insensitive,
+									},
+								},
+							},
+							{
+								address: {
+									address_suffix: {
+										contains: term,
+										mode: Prisma.QueryMode.insensitive,
+									},
+								},
+							},
+							{
+								address: {
+									zipcode: {
+										contains: term,
+										mode: Prisma.QueryMode.insensitive,
+									},
+								},
+							},
+						],
+					})),
+				}
+			: undefined;
+
+	const institutions = await prisma.institution.findMany({
+		where: whereConditions,
+		include: {
+			address: true,
+			categories: true,
+			tags: true,
+			users: true,
+		},
+		take: 50,
+		orderBy: {
+			id: "asc",
+		},
 	});
 
-	if (error) {
-		handleError(error, "search institutions");
-	}
-
-	return data || [];
+	return institutions;
 }
 
 export async function filterInstitutions(query: FilterState) {
-	const supabase = await createClient();
+	const filters: Prisma.InstitutionWhereInput[] = [];
 
-	const { data, error } = await supabase.rpc(
-		"get_public_institutions_with_filters",
-		{
-			district_keys: query.district_keys,
-			category_keys: query.category_keys,
-			subcategory_keys: query.subcategory_keys,
-			include_closed: query.include_closed,
-		},
-	);
-
-	if (error) {
-		handleError(error, "filter institutions");
+	if (!query.include_closed) {
+		filters.push({
+			utilization_status: { not: "permanently_closed" },
+		});
 	}
-	return data;
+
+	if (query.district_keys.length > 0) {
+		filters.push({
+			address: {
+				district: { in: query.district_keys },
+			},
+		});
+	}
+
+	const categoryConditions: Prisma.InstitutionWhereInput[] = [];
+	if (query.category_keys.length > 0) {
+		categoryConditions.push({
+			categories: {
+				some: {
+					key: { in: query.category_keys },
+					parent_category_id: null,
+				},
+			},
+		});
+	}
+
+	if (query.subcategory_keys.length > 0) {
+		categoryConditions.push({
+			categories: {
+				some: {
+					key: { in: query.subcategory_keys },
+					parent_category_id: { not: null },
+				},
+			},
+		});
+	}
+
+	if (categoryConditions.length > 0) {
+		filters.push({ OR: categoryConditions });
+	}
+
+	const where: Prisma.InstitutionWhereInput =
+		filters.length > 0 ? { AND: filters } : {};
+
+	const institutions = await prisma.institution.findMany({
+		where,
+		include: {
+			address: true,
+			categories: true,
+			tags: true,
+			users: true,
+		},
+	});
+
+	return institutions;
 }
 
 export async function getCategoriesWithSubcategories(): Promise<Category[]> {
-	const supabase = await createClient();
+	const categories = await prisma.category.findMany({
+		include: {
+			child_categories: true,
+		},
+		orderBy: { id: "asc" },
+	});
 
-	const { data: categories, error } = await supabase
-		.from("category")
-		.select(
-			`
-			id,
-			key,
-			created_at,
-			subcategory (
-				id,
-				key,
-				category_id,
-				created_at
-			)
-		`,
-		)
-		.order("id");
-
-	if (error) {
-		console.error("Error fetching categories:", error);
-		return [];
-	}
-
-	return categories || [];
+	return categories
+		.filter((category) => !category.parent_category_id)
+		.map((category) => ({
+			...category,
+			subcategory: category.child_categories,
+		})) as Category[];
 }
 
 export async function getDistricts(): Promise<District[]> {
-	const supabase = await createClient();
+	const districts = await prisma.address.findMany({
+		select: { district: true },
+		where: { district: { not: null } },
+		distinct: ["district"],
+		orderBy: { district: "asc" },
+	});
 
-	const { data: districts, error } = await supabase
-		.from("district")
-		.select("*")
-		.order("id");
-
-	if (error) {
-		console.error("Error fetching districts:", error);
-		return [];
-	}
-
-	return districts || [];
+	return districts
+		.filter((d): d is { district: string } => !!d.district)
+		.map((d) => ({
+			key: d.district,
+			name: d.district,
+		})) as District[];
 }
