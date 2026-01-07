@@ -74,7 +74,7 @@ interface InstitutionLayerProps {
 	distance?: number;
 	minZoomForClustering?: number;
 	maxZoomForClustering?: number;
-	institutionsData: FeatureCollection<Geometry, GeoJsonProperties> | null;
+	institutions: FeatureCollection<Geometry, GeoJsonProperties> | null;
 	proximityThreshold?: number;
 }
 
@@ -83,7 +83,7 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 	distance = 500,
 	minZoomForClustering = 0,
 	maxZoomForClustering = 8,
-	institutionsData,
+	institutions,
 	proximityThreshold = 40,
 }) => {
 	const fixedProximityThreshold = remToPx(3.5);
@@ -408,16 +408,17 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 	useEffect(() => {
 		if (
 			!map ||
-			!config ||
-			!institutionsData ||
 			!vectorSourceRef.current ||
-			!offsetVectorSourceRef.current
+			!offsetVectorSourceRef.current ||
+			!institutions ||
+			!config
 		)
 			return;
 
 		const epsg = config.portalConfig.map.mapView.epsg;
+
 		const features = new GeoJSON().readFeatures(
-			transformGeoJSON(institutionsData, epsg),
+			transformGeoJSON(institutions, epsg),
 		);
 
 		features.forEach((f, i) => {
@@ -432,7 +433,7 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 
 		updateLayerSource(map.getView().getZoom() ?? 6);
 	}, [
-		institutionsData,
+		institutions,
 		config,
 		map,
 		updateLayerSource,
