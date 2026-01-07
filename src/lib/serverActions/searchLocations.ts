@@ -27,11 +27,16 @@ export async function searchLocations(
 		]);
 
 		const institutions =
-			institutionResults.status === "fulfilled" ? institutionResults.value : [];
+			institutionResults.status === "fulfilled"
+				? (institutionResults.value as Institution[])
+				: [];
 		const addresses =
 			addressResults.status === "fulfilled" ? addressResults.value : [];
 
-		const allResults: SearchResult[] = [...institutions, ...addresses];
+		const allResults: SearchResult[] = [
+			...(institutions as Institution[]),
+			...(addresses as GeoFeature[]),
+		];
 
 		return {
 			institutions,
