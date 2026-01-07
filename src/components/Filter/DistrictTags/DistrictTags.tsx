@@ -27,9 +27,7 @@ const DistrictTags: FC<DistrictTagsProps> = ({
 				if (!district.key) return null;
 				const isSelected = selected.includes(district.key);
 				const translatedName =
-					tEnum(`berlin_district.${district.key}`) ||
-					district.name ||
-					district.key;
+					tEnum(`${district.key}`) || district.name || district.key;
 
 				return (
 					<Button

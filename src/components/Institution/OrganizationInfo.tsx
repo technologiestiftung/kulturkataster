@@ -12,8 +12,8 @@ interface OrganizationInfoProps {
 function hasOrganizationData(data: Institution): boolean {
 	return !!(
 		data.closing_reason ||
-		data.cultural_area ||
-		data.owner?.owner_type ||
+		data.address?.cultural_area ||
+		data.owner_type ||
 		data.source
 	);
 }
@@ -40,10 +40,10 @@ function CulturalAreaInfo({
 	data: Institution;
 	t: (key: string) => string;
 }) {
-	if (!data.cultural_area) return null;
+	if (!data.address?.cultural_area) return null;
 	return (
 		<InfoItem label={t("institution.culturalArea")}>
-			{data.cultural_area.name}
+			{data.address.cultural_area}
 		</InfoItem>
 	);
 }
@@ -57,10 +57,10 @@ function OwnerTypeInfo({
 	t: (key: string) => string;
 	tEnum: (key: string) => string;
 }) {
-	if (!data.owner?.owner_type) return null;
+	if (!data.owner_type) return null;
 	return (
 		<InfoItem label={t("institution.ownerType")}>
-			{tEnum("owner_type." + data.owner.owner_type)}
+			{tEnum("owner_type." + data.owner_type)}
 		</InfoItem>
 	);
 }
@@ -73,9 +73,7 @@ function SourceInfo({
 	t: (key: string) => string;
 }) {
 	if (!data.source) return null;
-	return (
-		<InfoItem label={t("institution.source")}>{data.source.name}</InfoItem>
-	);
+	return <InfoItem label={t("institution.source")}>{data.source}</InfoItem>;
 }
 
 export function OrganizationInfo({ institutionData }: OrganizationInfoProps) {
