@@ -15,13 +15,14 @@ import {
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useMapStore } from "@/lib/store/mapStore";
 import { getCategoryIconComponent } from "@/lib/utils/iconUtils";
+import { animateMapToCoordinates } from "@/lib/utils/mapUtils";
 import {
-	parseLatLongCoordinates,
-	animateMapToCoordinates,
-} from "@/lib/utils/mapUtils";
+	getParentCategories,
+	getSubcategoriesForCategory,
+	getCoordinatesFromAddress,
+} from "@/lib/utils/institutionUtils";
 import { fromLonLat } from "ol/proj";
 import { Category, Institution } from "@/types";
-import { Feature, Geometry, GeoJsonProperties } from "geojson";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -45,7 +46,7 @@ function InstitutionHeader({
 			onClick={onCenterMap}
 		>
 			<p className="body2 p-4 pb-0">
-				{institutionData.parent_organizations?.[0]?.name || ""}
+				{institutionData.parent_organization || ""}
 			</p>
 			<CardTitle className="px-4 max-w-full overflow-hidden">
 				<h1 id="institution-title" className="h1 wrap-anywhere">
@@ -53,10 +54,14 @@ function InstitutionHeader({
 				</h1>
 			</CardTitle>
 
-			{institutionData.categories?.length > 0 && (
+			{getParentCategories(institutionData).length > 0 && (
 				<section className="px-4">
-					{institutionData.categories.map((category: Category) => {
+					{getParentCategories(institutionData).map((category: Category) => {
 						const IconComponent = getCategoryIconComponent(category.key);
+						const subcategories = getSubcategoriesForCategory(
+							institutionData,
+							category.id,
+						);
 						return (
 							<div key={category.id} className="mb-2">
 								<div className="flex items-center gap-2 h-6">
@@ -67,16 +72,14 @@ function InstitutionHeader({
 										{tEnum(`category.${category.key}`)}
 									</strong>
 								</div>
-								{institutionData.subcategories?.length > 0 && (
+								{subcategories.length > 0 && (
 									<div className="body2 pl-8">
-										{institutionData.subcategories
-											.filter((sub) => sub.category_id === category.id)
-											.map((subcategory, index) => (
-												<span key={subcategory.id}>
-													{index > 0 && ", "}
-													{tEnum(`subcategory.${subcategory.key}`)}
-												</span>
-											))}
+										{subcategories.map((subcategory, index) => (
+											<span key={subcategory.id}>
+												{index > 0 && ", "}
+												{tEnum(`subcategory.${subcategory.key}`)}
+											</span>
+										))}
 									</div>
 								)}
 							</div>
@@ -124,7 +127,7 @@ function InstitutionCard({
 
 			<CardContent className="p-4 space-y-4">
 				<div className="space-y-4 flex flex-col">
-					<Address institutionData={institutionData} />
+					<Address institution={institutionData} />
 					<Contact institutionData={institutionData} />
 				</div>
 
@@ -164,41 +167,22 @@ export function InstitutionDetailContent() {
 	);
 	const [loading, setLoading] = useState(false);
 
-	const findInstitutionFeature = (id: number) => {
-		return institutions?.features.find(
-			(feature) => feature.properties?.id === id,
-		);
-	};
-
-	const extractCoordinatesFromInstitution = (
-		institution: Feature<Geometry, GeoJsonProperties>,
-	): [number, number] | null => {
-		if (
-			institution.geometry?.type === "Point" &&
-			institution.geometry.coordinates
-		) {
-			const [lng, lat] = institution.geometry.coordinates;
-			return [lng, lat];
-		}
-
-		if (institution.properties?.latlong) {
-			return parseLatLongCoordinates(institution.properties.latlong);
-		}
-
-		return null;
+	const findInstitution = (id: number | string) => {
+		const numericId = typeof id === "string" ? Number(id) : id;
+		return institutions?.find((institution) => institution.id === numericId);
 	};
 
 	const centerMapToInstitution = () => {
 		if (!institutionData || !map) {
 			return;
 		}
-
-		const institution = findInstitutionFeature(institutionData.id);
-		if (!institution) return;
-
-		const coordinates = extractCoordinatesFromInstitution(institution);
-		if (coordinates) {
-			const transformedCoords = fromLonLat(coordinates);
+		const institution = findInstitution(institutionData.id);
+		if (!institution || !institution.address) {
+			return;
+		}
+		const address = getCoordinatesFromAddress(institution.address);
+		if (address) {
+			const transformedCoords = fromLonLat(address);
 			animateMapToCoordinates(map, transformedCoords);
 		}
 	};
@@ -212,10 +196,15 @@ export function InstitutionDetailContent() {
 		const fetchInstitutionData = async () => {
 			try {
 				setLoading(true);
-				const institution = institutions?.features.find(
-					(feature) => feature.properties?.id === selectedInstitutionId,
+				const normalizedId =
+					typeof selectedInstitutionId === "string"
+						? Number(selectedInstitutionId)
+						: selectedInstitutionId;
+				setInstitutionData(
+					(institutions?.find(
+						(institution) => institution.id === normalizedId,
+					) as Institution) || null,
 				);
-				setInstitutionData((institution?.properties as Institution) || null);
 			} catch (error) {
 				console.error("Failed to fetch institution data:", error);
 				setInstitutionData(null);
