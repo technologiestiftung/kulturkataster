@@ -54,11 +54,8 @@ export function InformationModal({
 	onOpenChange,
 }: InformationModalProps) {
 	const { t } = useTranslation("content");
-	const originalInstitutions = useInstitutionStore(
-		(state) => state.allInstitutions,
-	);
-
-	const institutionCount = originalInstitutions?.features?.length ?? 2.382;
+	const institutions = useInstitutionStore((state) => state.allInstitutions);
+	const institutionCount = institutions?.length;
 
 	const { handleFooterItemClick } = useModalStore();
 
@@ -107,7 +104,7 @@ export function InformationModal({
 						if (i === 0) {
 							const dynamicText = item.replace(
 								"{{count}}",
-								institutionCount.toLocaleString("de-DE"),
+								institutionCount?.toLocaleString("de-DE") ?? "0",
 							);
 							return <li key={i}>{dynamicText}</li>;
 						}
