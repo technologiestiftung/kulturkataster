@@ -76,9 +76,12 @@ Example path: `category-icons/<uuid>.svg`
 ```ts
 import { FILE_STORAGE_BUCKET } from "@/lib/supabase/storage";
 
-const { data } = supabase.storage.from(FILE_STORAGE_BUCKET).getPublicUrl(iconPath);
+const { data } = supabase.storage
+	.from(FILE_STORAGE_BUCKET)
+	.getPublicUrl(iconPath);
 const publicUrl = data.publicUrl;
 ```
+
 Use `FILE_STORAGE_BUCKET` to configure the bucket name at runtime (defaults to `icons`).
 Expose it to clients via a server action if needed.
 
