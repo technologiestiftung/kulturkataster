@@ -67,6 +67,21 @@ All many-to-many relationships use Prisma's implicit syntax (no manual join tabl
 - User ↔ Group
 - Institution ↔ Group
 
+## Icons via Supabase Storage
+
+Admin-uploaded icons (SVG) should live in Supabase Storage. Store the storage path in the database (e.g. `icon` or `icon_path`), and generate the public URL at read time.
+
+Example path: `category-icons/<uuid>.svg`
+
+```ts
+import { FILE_STORAGE_BUCKET } from "@/lib/supabase/storage";
+
+const { data } = supabase.storage.from(FILE_STORAGE_BUCKET).getPublicUrl(iconPath);
+const publicUrl = data.publicUrl;
+```
+Use `FILE_STORAGE_BUCKET` to configure the bucket name at runtime (defaults to `icons`).
+Expose it to clients via a server action if needed.
+
 ## Enums
 
 The following enums are defined:
