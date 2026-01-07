@@ -12,7 +12,7 @@ interface FacilityInfoProps {
 function hasFacilityData(data: Institution): boolean {
 	return !!(
 		data.capacity ||
-		data.rooms_count ||
+		data.number_of_rooms ||
 		data.shared_use_allowed ||
 		data.shared_use_audience ||
 		data.established_since ||
@@ -40,10 +40,10 @@ function RoomsCountInfo({
 	data: Institution;
 	t: (key: string) => string;
 }) {
-	if (!data.rooms_count) return null;
+	if (!data.number_of_rooms) return null;
 	return (
 		<InfoItem label={t("institution.workspaceCount")}>
-			{data.rooms_count}
+			{data.number_of_rooms}
 		</InfoItem>
 	);
 }
