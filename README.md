@@ -64,13 +64,22 @@ The Kulturkataster Frontend is a Next.js application that provides an interactiv
 
 3. **Environment Configuration**
 
-   Create a `.env.local` file with the required environment variables:
+   Create a `.env` file with the required environment variables:
 
    ```bash
-   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-   NEXT_PUBLIC_MAPTILER_API_KEY=your_maptiler_api_key
-   NEXT_PUBLIC_MAP_BOUNDING_BOX=13.091992716067702,52.33488609760638,13.742786470433,52.67626223889507
+   MAP_BOUNDING_BOX=13.091992716067702,52.33488609760638,13.742786470433,52.67626223889507
+   MAPTILER_API_KEY=your_maptiler_api_key
+
+   SUPABASE_URL=your_supabase_url
+   SUPABASE_ANON_KEY=your_supabase_anon_key
+   DATABASE_URL=postgresql://prisma:your_password@127.0.0.1:54522/postgres
+
+   FILE_STORAGE_BUCKET=icons
+
+   TRADUORA_API_URL=your_traduora_api_url
+   TRADUORA_CLIENT_ID=your_traduora_client_id
+   TRADUORA_CLIENT_SECRET=your_traduora_client_secret
+   TRADUORA_PROJECT_ID=your_traduora_project_id
    ```
 
 ## Running the Project
@@ -246,15 +255,18 @@ The application uses Zustand for state management with separate stores for:
 
 The application supports different environment configurations:
 
-**Build-time Variables** (must start with `NEXT_PUBLIC_`):
-
-- `NEXT_PUBLIC_SUPABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-- `NEXT_PUBLIC_MAPTILER_API_KEY`
-- `NEXT_PUBLIC_MAP_BOUNDING_BOX`
-
 **Runtime Variables** (server-side only):
 
+- `MAP_BOUNDING_BOX`
+- `MAPTILER_API_KEY`
+- `SUPABASE_URL`
+- `SUPABASE_ANON_KEY`
+- `DATABASE_URL`
+- `FILE_STORAGE_BUCKET`
+- `TRADUORA_API_URL`
+- `TRADUORA_CLIENT_ID`
+- `TRADUORA_CLIENT_SECRET`
+- `TRADUORA_PROJECT_ID`
 - `SUPABASE_SERVICE_ROLE_KEY` (if needed for server actions)
 
 ## Contributing
