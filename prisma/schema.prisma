@@ -108,8 +108,8 @@ model Address {
   district       String?
   neighbourhood  String?
   cultural_area  String?
-  lat            Decimal  @db.Decimal(9, 6)
-  lng            Decimal  @db.Decimal(9, 6)
+  lat            Float?    @db.DoublePrecision
+  lng            Float?    @db.DoublePrecision
   created_at     DateTime @default(now())
   updated_at     DateTime @updatedAt
 
