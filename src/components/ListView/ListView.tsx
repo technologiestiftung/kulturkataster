@@ -40,10 +40,8 @@ const ListView: FC = () => {
 	const containerRef = useRef<HTMLDivElement>(null);
 
 	const institutionsList = useMemo(() => {
-		if (!institutions?.features) return [];
-		return institutions.features.map(
-			(feature) => feature.properties as Institution,
-		);
+		if (!institutions) return [];
+		return institutions;
 	}, [institutions]);
 
 	const visibleInstitutions = useMemo(() => {
@@ -66,7 +64,7 @@ const ListView: FC = () => {
 
 	const handleInstitutionClick = useCallback(
 		(institution: Institution) => {
-			setSelectedInstitutionId(institution.id as unknown as string);
+			setSelectedInstitutionId(institution.id);
 		},
 		[setSelectedInstitutionId],
 	);
