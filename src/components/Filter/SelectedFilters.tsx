@@ -37,7 +37,9 @@ export function SelectedFilters({
 
 	const getSubcategoryName = (key: string) => {
 		for (const category of categories) {
-			const subcategory = category.subcategory.find((s) => s.key === key);
+			const subcategory = (category.subcategory ?? []).find(
+				(s) => s.key === key,
+			);
 			if (subcategory) {
 				return subcategory.key;
 			}
