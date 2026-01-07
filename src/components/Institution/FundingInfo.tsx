@@ -10,22 +10,7 @@ interface FundingInfoProps {
 }
 
 function hasFundingData(data: Institution): boolean {
-	return !!(data.support_type || data.funding_type);
-}
-
-function SupportTypeInfo({
-	data,
-	t,
-}: {
-	data: Institution;
-	t: (key: string) => string;
-}) {
-	if (!data.support_type) return null;
-	return (
-		<InfoItem label={t("institution.fundingType")}>
-			{data.support_type}
-		</InfoItem>
-	);
+	return !!data.funding_type;
 }
 
 function FundingTypeInfo({
@@ -53,7 +38,6 @@ export function FundingInfo({ institutionData }: FundingInfoProps) {
 
 	return (
 		<InfoSection>
-			<SupportTypeInfo data={institutionData} t={t} />
 			<FundingTypeInfo data={institutionData} t={t} tEnum={tEnum} />
 		</InfoSection>
 	);
