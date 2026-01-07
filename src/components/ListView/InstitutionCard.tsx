@@ -12,9 +12,13 @@ import {
 	AdditionalInfo,
 } from "@/components/Institution";
 import { getCategoryIconComponent } from "@/lib/utils/iconUtils";
-import { Category, Institution, Subcategory } from "@/types";
+import { Category, Institution } from "@/types";
 import { memo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import {
+	getParentCategories,
+	getSubcategoriesForCategory,
+} from "@/lib/utils/institutionUtils";
 
 // Parent organization component
 function ParentOrganization({ name }: { name?: string }) {
@@ -22,22 +26,25 @@ function ParentOrganization({ name }: { name?: string }) {
 	return <p className="body2">{name}</p>;
 }
 
-// Categories display component
 function CategoriesDisplay({
-	categories,
-	subCategories,
+	institution,
 	tEnum,
 }: {
-	categories: Category[];
-	subCategories: Subcategory[];
+	institution: Institution;
 	tEnum: (key: string) => string;
 }) {
+	const categories = getParentCategories(institution);
+
 	if (!categories?.length) return null;
 
 	return (
 		<div className="flex justify-center gap-2 flex-col">
 			{categories.map((category: Category) => {
 				const IconComponent = getCategoryIconComponent(category.key);
+				const subCategories = getSubcategoriesForCategory(
+					institution,
+					category.id,
+				);
 
 				return (
 					<div key={category.id} className="flex items-center gap-1 flex-wrap">
@@ -47,14 +54,12 @@ function CategoriesDisplay({
 						<span className="body2">{tEnum(`category.${category.key}`)}</span>
 						<span className="body2">•</span>
 						{subCategories?.length
-							? subCategories
-									.filter((sub) => sub.category_id === category.id)
-									.map((sub, index, filteredArray) => (
-										<span className="body2" key={sub.id}>
-											{tEnum(`subcategory.${sub.key}`)}
-											{index < filteredArray.length - 1 && ", "}
-										</span>
-									))
+							? subCategories.map((sub, index, filteredArray) => (
+									<span className="body2" key={sub.id}>
+										{tEnum(`subcategory.${sub.key}`)}
+										{index < filteredArray.length - 1 && ", "}
+									</span>
+								))
 							: null}
 					</div>
 				);
@@ -97,17 +102,13 @@ function LeftColumn({
 }) {
 	return (
 		<div className="space-y-3">
-			<ParentOrganization name={data.parent_organizations?.[0]?.name} />
+			<ParentOrganization name={data.parent_organization || undefined} />
 			<h2 className="h1 font-bold text-foreground">{data.name}</h2>
-			<CategoriesDisplay
-				categories={data.categories || []}
-				subCategories={data.subcategories || []}
-				tEnum={tEnum}
-			/>
+			<CategoriesDisplay institution={data} tEnum={tEnum} />
 			{data.utilization_status && (
 				<StatusIndicator status={data.utilization_status} tEnum={tEnum} />
 			)}
-			<Address institutionData={data} />
+			<Address institution={data} />
 		</div>
 	);
 }
@@ -131,35 +132,6 @@ const InstitutionCard = memo(function InstitutionCard({
 	const handleToggleInfo = (e: React.MouseEvent) => {
 		e.stopPropagation();
 		setShowMore(!showMore);
-	};
-
-	const hasExtendedInfo = () => {
-		const data = institutionData;
-		const hasFundingData = !!(data.support_type || data.funding_type);
-		const hasFacilityData = !!(
-			data.capacity ||
-			data.rooms_count ||
-			data.shared_use_allowed ||
-			data.shared_use_audience ||
-			data.established_since ||
-			data.established_until
-		);
-		const hasOrganizationData = !!(
-			data.closing_reason ||
-			data.cultural_area ||
-			data.owner?.owner_type ||
-			data.source
-		);
-		const hasStatusData = !!data.updated_at;
-		const hasAdditionalData = !!data.notes;
-
-		return (
-			hasFundingData ||
-			hasFacilityData ||
-			hasOrganizationData ||
-			hasStatusData ||
-			hasAdditionalData
-		);
 	};
 
 	const cardClassName = `tab-ring w-full rounded-lg overflow-hidden shadow-sm ${
@@ -219,7 +191,7 @@ const InstitutionCard = memo(function InstitutionCard({
 				<ToggleButton
 					showMore={showMore}
 					onClick={handleToggleInfo}
-					hasInfo={hasExtendedInfo()}
+					hasInfo={true}
 				/>
 			</CardContent>
 		</Card>
