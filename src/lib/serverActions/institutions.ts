@@ -1,11 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 
-import type { Category, District, FilterState } from "@/types";
+import type { Category, District } from "@/types";
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@/generated/prisma";
+import { getAccessContextForUser, throwIfUnauthorized } from "@/lib/utils/rbac";
+import { getCurrentUserId } from "../auth/getCurrentUser";
 
 export async function getInstitutions() {
+	const currentUserId = await getCurrentUserId();
+	const ctx = await getAccessContextForUser(currentUserId);
+	throwIfUnauthorized({
+		context: ctx,
+		resource: "institutions",
+		action: "read",
+	});
+
 	const institutions = await prisma.institution.findMany({
 		include: {
 			address: true,
@@ -19,6 +29,14 @@ export async function getInstitutions() {
 }
 
 export async function searchInstitutions(query: string) {
+	const currentUserId = await getCurrentUserId();
+	const ctx = await getAccessContextForUser(currentUserId);
+	throwIfUnauthorized({
+		context: ctx,
+		resource: "institutions",
+		action: "read",
+	});
+
 	if (!query || query.trim().length === 0) {
 		return [];
 	}
@@ -111,67 +129,15 @@ export async function searchInstitutions(query: string) {
 	return institutions;
 }
 
-export async function filterInstitutions(query: FilterState) {
-	const filters: Prisma.InstitutionWhereInput[] = [];
-
-	if (!query.include_closed) {
-		filters.push({
-			utilization_status: { not: "permanently_closed" },
-		});
-	}
-
-	if (query.district_keys.length > 0) {
-		filters.push({
-			address: {
-				district: { in: query.district_keys },
-			},
-		});
-	}
-
-	const categoryConditions: Prisma.InstitutionWhereInput[] = [];
-	if (query.category_keys.length > 0) {
-		categoryConditions.push({
-			categories: {
-				some: {
-					key: { in: query.category_keys },
-					parent_category_id: null,
-				},
-			},
-		});
-	}
-
-	if (query.subcategory_keys.length > 0) {
-		categoryConditions.push({
-			categories: {
-				some: {
-					key: { in: query.subcategory_keys },
-					parent_category_id: { not: null },
-				},
-			},
-		});
-	}
-
-	if (categoryConditions.length > 0) {
-		filters.push({ OR: categoryConditions });
-	}
-
-	const where: Prisma.InstitutionWhereInput =
-		filters.length > 0 ? { AND: filters } : {};
-
-	const institutions = await prisma.institution.findMany({
-		where,
-		include: {
-			address: true,
-			categories: true,
-			tags: true,
-			users: true,
-		},
+export async function getCategoriesWithSubcategories(): Promise<Category[]> {
+	const currentUserId = await getCurrentUserId();
+	const ctx = await getAccessContextForUser(currentUserId);
+	throwIfUnauthorized({
+		context: ctx,
+		resource: "categories",
+		action: "read",
 	});
 
-	return institutions;
-}
-
-export async function getCategoriesWithSubcategories(): Promise<Category[]> {
 	const categories = await prisma.category.findMany({
 		include: {
 			child_categories: true,
