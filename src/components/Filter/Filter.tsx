@@ -53,12 +53,14 @@ const Filter: FC = () => {
 		if (!categoryGroup) return;
 
 		const isCategorySelected = filters.category_keys.includes(categoryKey);
-		const selectedSubcategoriesInGroup = categoryGroup.subcategory.filter(
-			(subcategory: Subcategory) =>
-				filters.subcategory_keys.includes(subcategory.key),
+		const selectedSubcategoriesInGroup = (
+			categoryGroup.subcategory ?? []
+		).filter((subcategory: Subcategory) =>
+			filters.subcategory_keys.includes(subcategory.key),
 		);
 		const allSubcategoriesSelected =
-			selectedSubcategoriesInGroup.length === categoryGroup.subcategory.length;
+			selectedSubcategoriesInGroup.length ===
+			(categoryGroup.subcategory ?? []).length;
 
 		if (
 			!(isCategorySelected || allSubcategoriesSelected) &&
@@ -73,7 +75,7 @@ const Filter: FC = () => {
 			);
 			const newSubcategories = filters.subcategory_keys.filter(
 				(s) =>
-					!categoryGroup.subcategory.some(
+					!(categoryGroup.subcategory ?? []).some(
 						(subcategory: Subcategory) => subcategory.key === s,
 					),
 			);
@@ -84,13 +86,13 @@ const Filter: FC = () => {
 				subcategory_keys: newSubcategories,
 			});
 		} else {
-			const subcategoryKeysToAdd = categoryGroup.subcategory.map(
+			const subcategoryKeysToAdd = (categoryGroup.subcategory ?? []).map(
 				(subcategory: Subcategory) => subcategory.key,
 			);
 			const newSubcategories = [
 				...filters.subcategory_keys.filter(
 					(s) =>
-						!categoryGroup.subcategory.some(
+						!(categoryGroup.subcategory ?? []).some(
 							(subcategory: Subcategory) => subcategory.key === s,
 						),
 				),
@@ -113,7 +115,7 @@ const Filter: FC = () => {
 			: [...filters.subcategory_keys, subcategoryKey];
 
 		const parentCategory = categoryGroups.find((group) =>
-			group.subcategory.some(
+			(group.subcategory ?? []).some(
 				(subcategory: Subcategory) => subcategory.key === subcategoryKey,
 			),
 		);
@@ -188,7 +190,7 @@ const Filter: FC = () => {
 		if (!filters) return;
 		const allCategoryKeys = categoryGroups.map((group) => group.key);
 		const allSubcategoryKeys = categoryGroups.flatMap((group) =>
-			group.subcategory.map((sub) => sub.key),
+			(group.subcategory ?? []).map((sub) => sub.key),
 		);
 		updateFilters({
 			...filters,
@@ -233,12 +235,11 @@ const Filter: FC = () => {
 
 	return (
 		<div className="Filter-root p-2 md:p-4 h-full flex flex-col gap-2">
-			{/* Header Section */}
 			<ContentContainer className="p-6">
 				<h2 className="body2 font-bold mb-3 pl-2">
 					{t("filter.displayedInstitutions", {
 						ns: "content",
-						count: filteredInstitutions?.features.length ?? 0,
+						count: filteredInstitutions?.length ?? 0,
 					})}
 				</h2>
 				<button
