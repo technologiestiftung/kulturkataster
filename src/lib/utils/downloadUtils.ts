@@ -165,8 +165,7 @@ const COLUMN_ORDER = [
 	"shared_use_allowed",
 	"funding_type",
 	"funding_sources",
-	"support_type",
-	"parent_organizations",
+	"parent_organization",
 ];
 
 const EXCLUDED_FIELDS = [
