@@ -1,20 +1,33 @@
 import * as React from "react";
+import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
 
-const Card = React.forwardRef<
-	HTMLDivElement,
-	React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-	<div
-		ref={ref}
-		className={cn(
-			"rounded-lg border bg-card text-card-foreground shadow-xs",
-			className,
-		)}
-		{...props}
-	/>
-));
+const cardVariants = cva("text-card-foreground", {
+	variants: {
+		variant: {
+			default: "rounded-lg border bg-card shadow-xs",
+			secondary: "rounded-sm bg-secondary border-0 p-6",
+		},
+	},
+	defaultVariants: {
+		variant: "default",
+	},
+});
+
+export interface CardProps
+	extends React.HTMLAttributes<HTMLDivElement>,
+		VariantProps<typeof cardVariants> {}
+
+const Card = React.forwardRef<HTMLDivElement, CardProps>(
+	({ className, variant, ...props }, ref) => (
+		<div
+			ref={ref}
+			className={cn(cardVariants({ variant }), className)}
+			{...props}
+		/>
+	),
+);
 Card.displayName = "Card";
 
 const CardHeader = React.forwardRef<
@@ -56,12 +69,31 @@ const CardDescription = React.forwardRef<
 ));
 CardDescription.displayName = "CardDescription";
 
-const CardContent = React.forwardRef<
-	HTMLDivElement,
-	React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-	<div ref={ref} className={cn("p-6 pt-0", className)} {...props} />
-));
+const cardContentVariants = cva("", {
+	variants: {
+		variant: {
+			default: "p-6 pt-0",
+			secondary: "p-6 pt-0",
+		},
+	},
+	defaultVariants: {
+		variant: "default",
+	},
+});
+
+export interface CardContentProps
+	extends React.HTMLAttributes<HTMLDivElement>,
+		VariantProps<typeof cardContentVariants> {}
+
+const CardContent = React.forwardRef<HTMLDivElement, CardContentProps>(
+	({ className, variant, ...props }, ref) => (
+		<div
+			ref={ref}
+			className={cn(cardContentVariants({ variant }), className)}
+			{...props}
+		/>
+	),
+);
 CardContent.displayName = "CardContent";
 
 const CardFooter = React.forwardRef<
