@@ -1,7 +1,7 @@
 "use server";
 
 import type { Category } from "@/types";
-import { getAccessContextForUser, throwIfUnauthorized } from "@/lib/utils/rbac";
+import { getAccessContextForUser, throwIfUnauthorized } from "@/server/utils/rbac";
 import { getCurrentUserId } from "@/server/auth/getCurrentUser";
 import { institutionRepo } from "@/server/data/institutionRepo";
 import { categoryRepo } from "@/server/data/categoryRepo";
