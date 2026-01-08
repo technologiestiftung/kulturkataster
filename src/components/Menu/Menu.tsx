@@ -137,6 +137,10 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			router.push("/info");
 			return;
 		}
+		if (itemName === "user") {
+			router.push("/account");
+			return;
+		}
 
 		if (itemName === "layertree") {
 			if (isLayerTreeOpen) {
