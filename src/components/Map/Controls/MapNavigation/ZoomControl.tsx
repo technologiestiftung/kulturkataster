@@ -54,7 +54,7 @@ const ZoomControl: FC<ZoomControlProps> = ({
 	return (
 		<div className="hidden md:flex flex-col gap-2">
 			<ButtonWithTooltip
-				variant="map-icon"
+				variant="rounded"
 				size="icon-only"
 				tooltip={t("map.zoomIn")}
 				onClick={handleZoomIn}
@@ -64,7 +64,7 @@ const ZoomControl: FC<ZoomControlProps> = ({
 				{zoomInIcon}
 			</ButtonWithTooltip>
 			<ButtonWithTooltip
-				variant="map-icon"
+				variant="rounded"
 				size="icon-only"
 				tooltip={t("map.zoomOut")}
 				onClick={handleZoomOut}
