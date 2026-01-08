@@ -123,13 +123,13 @@ model Address {
   @@index([neighbourhood])
   @@index([cultural_area])
   @@index([zipcode])
-  @@map("addresses")
+  @@map("address")
 }
 
 model ContactPerson {
   id         Int      @id @default(autoincrement())
-  firstname  String?
-  surname    String?
+  first_name String?
+  last_name  String?
   email      String?
   phone      String?
   created_at DateTime @default(now())
@@ -138,7 +138,7 @@ model ContactPerson {
   institutions_as_contact        Institution[] @relation("InstitutionContact")
 
   @@index([email])
-  @@map("contact_persons")
+  @@map("contact_person")
 }
 
 model Institution {
@@ -158,9 +158,9 @@ model Institution {
   rental_contract_end     DateTime?
   funding_type            FundingType?
   utilization_status      UtilizationStatus?
-  utilizationstatus_info  String?
+  utilization_status_info  String?
   protection_status       ProtectionStatus?
-  protectionstatus_info   String?
+  protection_status_info   String?
   shared_use_allowed      Boolean             @default(false)
   shared_use_info         String?
   shared_use_equipment    String?
@@ -202,7 +202,7 @@ model Institution {
   @@index([name])
   @@index([created_by])
   @@index([updated_by])
-  @@map("institutions")
+  @@map("institution")
 }
 
 model FundingSource {
@@ -216,7 +216,7 @@ model FundingSource {
   institution Institution @relation(fields: [institution_id], references: [id], onDelete: Cascade)
 
   @@index([institution_id])
-  @@map("funding_sources")
+  @@map("funding_source")
 }
 
 // ============================================
@@ -239,7 +239,7 @@ model Category {
 
   @@index([status])
   @@index([parent_category_id])
-  @@map("categories")
+  @@map("category")
 }
 
 model Tag {
@@ -250,7 +250,7 @@ model Tag {
 
   institutions Institution[]
 
-  @@map("tags")
+  @@map("tag")
 }
 
 // ============================================
@@ -276,7 +276,7 @@ model User {
   @@index([email])
   @@index([role_id])
   @@index([status])
-  @@map("users")
+  @@map("user")
 }
 
 model Role {
@@ -290,7 +290,7 @@ model Role {
   users             User[]
   field_permissions FieldPermission[]
 
-  @@map("roles")
+  @@map("role")
 }
 
 model FieldPermission {
@@ -306,7 +306,7 @@ model FieldPermission {
   @@unique([role_id, field_name, action])
   @@index([role_id])
   @@index([field_name])
-  @@map("field_permissions")
+  @@map("field_permission")
 }
 
 model Group {
@@ -319,5 +319,5 @@ model Group {
   users        User[]
   institutions Institution[]
 
-  @@map("groups")
+  @@map("group")
 }
