@@ -760,6 +760,66 @@
 			}
 		},
 		{
+			"id": "Decker_Autobahn_getrennt_ohne_Tunnel_Bruecke",
+			"type": "line",
+			"source": "smarttiles_de",
+			"source-layer": "Verkehrslinie",
+			"minzoom": 0,
+			"maxzoom": 11,
+			"filter": [
+				"all",
+				["==", "klasse", "Bundesautobahn"],
+				["==", "fahrbahn", "Getrennt"],
+				["!has", "zustand"]
+			],
+			"layout": { "visibility": "visible", "line-cap": "round" },
+			"paint": {
+				"line-color": "rgb(229,229,229)",
+				"line-opacity": 1,
+				"line-width": {
+					"stops": [
+						[5, 2],
+						[7, 3],
+						[10, 4],
+						[11, 5.5]
+					]
+				}
+			}
+		},
+		{
+			"id": "Decker_Gemeindestr_Sonstige_Str_getrennt_Fahrbahnachse",
+			"type": "line",
+			"source": "smarttiles_de",
+			"source-layer": "Verkehrslinie",
+			"minzoom": 14,
+			"maxzoom": 22,
+			"filter": [
+				"all",
+				[
+					"in",
+					"klasse",
+					"Gemeindestraße",
+					"Nicht öffentliche Straße",
+					"Sonstige öffentliche Straße"
+				],
+				["==", "fahrbahnachse", 1],
+				["!has", "bauwerk"],
+				["!has", "zustand"]
+			],
+			"layout": { "visibility": "visible", "line-cap": "butt" },
+			"paint": {
+				"line-color": "rgb(255,255,255)",
+				"line-opacity": 1,
+				"line-width": {
+					"stops": [
+						[14, 5],
+						[16, 8],
+						[20, 20]
+					]
+				}
+			}
+		},
+		{
 			"id": "Bruecke_Gemeindestr_Sonstige_Str_Decker",
 			"type": "line",
 			"source": "smarttiles_de",
