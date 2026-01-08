@@ -13,6 +13,9 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { registerWithEmailPassword } from "@/server/actions/auth";
+import { useTranslation } from "react-i18next";
 
 export function RegisterForm() {
 	const [formData, setFormData] = useState({
@@ -23,39 +26,44 @@ export function RegisterForm() {
 		password: "",
 		confirmPassword: "",
 		acceptTerms: false,
+		subscribeNewsletter: false,
 	});
 	const [isLoading, setIsLoading] = useState(false);
 	const [errors, setErrors] = useState<Record<string, string>>({});
+	const [errorMessage, setErrorMessage] = useState<string | null>(null);
+	const [successMessage, setSuccessMessage] = useState<string | null>(null);
+	const router = useRouter();
+	const { t } = useTranslation("common");
 
 	const validateForm = () => {
 		const newErrors: Record<string, string> = {};
 
 		if (!formData.name.trim()) {
-			newErrors.name = "Name is required";
+			newErrors.name = t("auth.validation.firstNameRequired");
 		}
 
 		if (!formData.accountType) {
-			newErrors.accountType = "Account type is required";
+			newErrors.accountType = t("auth.validation.accountTypeRequired");
 		}
 
 		if (!formData.email.trim()) {
-			newErrors.email = "Email is required";
+			newErrors.email = t("auth.validation.emailRequired");
 		} else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-			newErrors.email = "Invalid email address";
+			newErrors.email = t("auth.validation.emailInvalid");
 		}
 
 		if (!formData.password) {
-			newErrors.password = "Password is required";
+			newErrors.password = t("auth.validation.passwordRequired");
 		} else if (formData.password.length < 8) {
-			newErrors.password = "Password must be at least 8 characters";
+			newErrors.password = t("auth.validation.passwordMin");
 		}
 
 		if (formData.password !== formData.confirmPassword) {
-			newErrors.confirmPassword = "Passwords do not match";
+			newErrors.confirmPassword = t("auth.validation.passwordMismatch");
 		}
 
 		if (!formData.acceptTerms) {
-			newErrors.acceptTerms = "You must accept the terms and conditions";
+			newErrors.acceptTerms = t("auth.validation.acceptTermsRequired");
 		}
 
 		setErrors(newErrors);
@@ -70,14 +78,31 @@ export function RegisterForm() {
 		}
 
 		setIsLoading(true);
+		setErrorMessage(null);
+		setSuccessMessage(null);
 
-		// TODO: Implement actual registration logic
-		console.log("Registration attempt:", formData);
-
-		// Simulate API call
-		setTimeout(() => {
+		try {
+			const result = await registerWithEmailPassword({
+				email: formData.email,
+				password: formData.password,
+				firstName: formData.name,
+				lastName: formData.lastName,
+				accountType: formData.accountType,
+			});
+			if (!result.ok) {
+				setErrorMessage(result.error ?? t("auth.register.errorFallback"));
+				return;
+			}
+			if (result.needsConfirmation) {
+				setSuccessMessage(t("auth.register.confirmEmail"));
+				return;
+			}
+			router.push("/account");
+		} catch {
+			setErrorMessage(t("auth.register.errorFallback"));
+		} finally {
 			setIsLoading(false);
-		}, 1000);
+		}
 	};
 
 	const handleInputChange = (field: string, value: string | boolean) => {
@@ -93,17 +118,21 @@ export function RegisterForm() {
 	};
 
 	return (
-		<div className="w-full max-w-md mx-auto space-y-6">
+		<div className="w-full max-w-2xl mx-auto space-y-6">
 			<div className="space-y-2 text-start">
-				<h1 className="text-3xl font-bold">Create an account</h1>
-				<p className="text-muted-foreground">
-					Enter your information to get started
-				</p>
+				<h1 className="text-3xl font-bold">{t("auth.register.title")}</h1>
+				<p className="text-muted-foreground">{t("auth.register.subtitle")}</p>
 			</div>
 
 			<form onSubmit={handleSubmit} className="space-y-4">
+				{errorMessage && (
+					<p className="text-sm text-destructive">{errorMessage}</p>
+				)}
+				{successMessage && (
+					<p className="text-sm text-green-700">{successMessage}</p>
+				)}
 				<div className="space-y-2">
-					<Label htmlFor="accountType">Account Type</Label>
+					<Label htmlFor="accountType">{t("auth.register.accountType")}</Label>
 					<Select
 						value={formData.accountType}
 						onValueChange={(value) => handleInputChange("accountType", value)}
@@ -114,11 +143,20 @@ export function RegisterForm() {
 							className="w-full"
 							aria-invalid={!!errors.accountType}
 						>
-							<SelectValue placeholder="Select account type" />
+							<SelectValue
+								placeholder={t("auth.register.accountTypePlaceholder")}
+							/>
 						</SelectTrigger>
 						<SelectContent>
-							<SelectItem value="individual">Individual</SelectItem>
-							<SelectItem value="organization">Organization</SelectItem>
+							<SelectItem value="organization">
+								{t("auth.register.accountTypeOrganization")}
+							</SelectItem>
+							<SelectItem value="district">
+								{t("auth.register.accountTypeDistrict")}
+							</SelectItem>
+							<SelectItem value="administration">
+								{t("auth.register.accountTypeAdministration")}
+							</SelectItem>
 						</SelectContent>
 					</Select>
 					{errors.accountType && (
@@ -127,11 +165,13 @@ export function RegisterForm() {
 				</div>
 				<div className="space-y-2 grid grid-cols-2 gap-4">
 					<div className="space-y-2 ">
-						<Label htmlFor="name">First Name</Label>
+						<Label htmlFor="name" required>
+							{t("auth.register.firstName")}
+						</Label>
 						<Input
 							id="name"
 							type="text"
-							placeholder="John Doe"
+							placeholder={t("auth.register.firstNamePlaceholder")}
 							value={formData.name}
 							onChange={(e) => handleInputChange("name", e.target.value)}
 							required
@@ -143,11 +183,13 @@ export function RegisterForm() {
 						)}
 					</div>
 					<div className="space-y-2">
-						<Label htmlFor="lastName">Last Name</Label>
+						<Label htmlFor="lastName" required>
+							{t("auth.register.lastName")}
+						</Label>
 						<Input
 							id="lastName"
 							type="text"
-							placeholder="Doe"
+							placeholder={t("auth.register.lastNamePlaceholder")}
 							value={formData.lastName}
 							onChange={(e) => handleInputChange("lastName", e.target.value)}
 							required
@@ -161,11 +203,13 @@ export function RegisterForm() {
 				</div>
 
 				<div className="space-y-2">
-					<Label htmlFor="email">Email</Label>
+					<Label htmlFor="email" required>
+						{t("auth.register.emailLabel")}
+					</Label>
 					<Input
 						id="email"
 						type="email"
-						placeholder="name@example.com"
+						placeholder={t("auth.register.emailPlaceholder")}
 						value={formData.email}
 						onChange={(e) => handleInputChange("email", e.target.value)}
 						required
@@ -178,11 +222,13 @@ export function RegisterForm() {
 				</div>
 
 				<div className="space-y-2">
-					<Label htmlFor="password">Password</Label>
+					<Label htmlFor="password" required>
+						{t("auth.register.passwordLabel")}
+					</Label>
 					<Input
 						id="password"
 						type="password"
-						placeholder="Create a password"
+						placeholder={t("auth.register.passwordPlaceholder")}
 						value={formData.password}
 						onChange={(e) => handleInputChange("password", e.target.value)}
 						required
@@ -192,17 +238,16 @@ export function RegisterForm() {
 					{errors.password && (
 						<p className="text-sm text-destructive">{errors.password}</p>
 					)}
-					<p className="text-xs text-muted-foreground">
-						Must be at least 8 characters
-					</p>
 				</div>
 
 				<div className="space-y-2">
-					<Label htmlFor="confirmPassword">Confirm Password</Label>
+					<Label htmlFor="confirmPassword" required>
+						{t("auth.register.confirmPassword")}
+					</Label>
 					<Input
 						id="confirmPassword"
 						type="password"
-						placeholder="Confirm your password"
+						placeholder={t("auth.register.confirmPasswordPlaceholder")}
 						value={formData.confirmPassword}
 						onChange={(e) =>
 							handleInputChange("confirmPassword", e.target.value)
@@ -217,12 +262,15 @@ export function RegisterForm() {
 				</div>
 
 				<Button type="submit" className="w-full" disabled={isLoading}>
-					{isLoading ? "Creating account..." : "Create account"}
+					{isLoading
+						? t("auth.register.submitting")
+						: t("auth.register.submit")}
 				</Button>
-				<div className="flex items-start space-x-2">
+				<div className="flex items-center space-x-2">
 					<Checkbox
 						id="terms"
 						checked={formData.acceptTerms}
+						className="border-neutral-80"
 						onCheckedChange={(checked) =>
 							handleInputChange("acceptTerms", checked as boolean)
 						}
@@ -232,76 +280,61 @@ export function RegisterForm() {
 					<div className="space-y-1">
 						<Label
 							htmlFor="terms"
-							className="text-sm font-normal leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+							className="body2 font-normal flex-wrap"
+							required
 						>
-							I agree to the{" "}
+							{t("auth.register.termsIntro")}{" "}
 							<Link
 								href="/terms"
-								className="text-primary hover:underline"
+								className="text-primary-dark underline"
 								target="_blank"
 							>
-								Terms of Service
+								{t("auth.register.termsLink")}
 							</Link>{" "}
-							and{" "}
+							{t("auth.register.termsSeparator")}{" "}
 							<Link
 								href="/privacy"
-								className="text-primary hover:underline"
+								className="text-primary-dark underline"
 								target="_blank"
 							>
-								Privacy Policy
+								{t("auth.register.privacyLink")}
 							</Link>
+							{t("auth.register.privacySuffix")}
 						</Label>
 						{errors.acceptTerms && (
 							<p className="text-sm text-destructive">{errors.acceptTerms}</p>
 						)}
 					</div>
 				</div>
-				<div className="flex items-start space-x-2">
+				<div className="flex items-center space-x-2">
 					<Checkbox
-						id="terms"
-						checked={formData.acceptTerms}
+						id="newsletter"
+						checked={formData.subscribeNewsletter}
+						className="border-neutral-80"
 						onCheckedChange={(checked) =>
-							handleInputChange("acceptTerms", checked as boolean)
+							handleInputChange("subscribeNewsletter", checked as boolean)
 						}
 						disabled={isLoading}
-						aria-invalid={!!errors.acceptTerms}
 					/>
 					<div className="space-y-1">
-						<Label
-							htmlFor="terms"
-							className="text-sm font-normal leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-						>
-							I agree to the{" "}
+						<Label htmlFor="newsletter" className="body2 font-normal ">
+							{t("auth.register.newsletterOptInPrefix")}{" "}
 							<Link
-								href="/terms"
-								className="text-primary hover:underline"
+								href="/newsletter"
+								className="text-primary-dark underline"
 								target="_blank"
 							>
-								Terms of Service
-							</Link>{" "}
-							and{" "}
-							<Link
-								href="/privacy"
-								className="text-primary hover:underline"
-								target="_blank"
-							>
-								Privacy Policy
+								{t("auth.register.newsletterLink")}
 							</Link>
 						</Label>
-						{errors.acceptTerms && (
-							<p className="text-sm text-destructive">{errors.acceptTerms}</p>
-						)}
 					</div>
 				</div>
 			</form>
 
 			<div className="text-center text-sm">
-				<span className="text-muted-foreground">Already have an account? </span>
-				<Link
-					href="/account/login"
-					className="text-primary hover:underline font-medium"
-				>
-					Sign in
+				<span className="">{t("auth.register.alreadyAccount")} </span>
+				<Link href="/login" className="text-primary-dark underline">
+					{t("auth.register.signIn")}
 				</Link>
 			</div>
 		</div>
