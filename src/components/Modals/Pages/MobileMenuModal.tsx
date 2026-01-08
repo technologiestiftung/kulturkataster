@@ -18,7 +18,7 @@ import MapIcon from "@/icons/map-02.svg";
 import ListIcon from "@/icons/list.svg";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { normalizeModalRoutingUrl } from "@/lib/utils/sanitizerUtils";
+import { getModalLink } from "@/lib/utils/modalRouting";
 
 const footerItems = [
 	{ id: "about" },
@@ -100,8 +100,8 @@ export function MobileMenuModal() {
 										<Link
 											key={item.id}
 											className="flex items-center justify-between text-left text-neutral-80"
-											href={normalizeModalRoutingUrl(item.id).url}
-											target={normalizeModalRoutingUrl(item.id).target}
+											href={getModalLink(item.id).url}
+											target={getModalLink(item.id).target}
 											rel="noopener noreferrer"
 										>
 											<span className="body2">{t(`footer.${item.id}`)}</span>
