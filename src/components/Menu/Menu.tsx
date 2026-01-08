@@ -1,7 +1,6 @@
 /* eslint-disable */
 "use client";
 
-import { WelcomeModal } from "@/components/Modals/Pages/WelcomeModal";
 import { Button, ButtonWithTooltip } from "@/components/ui/button";
 import {
 	Sidebar,
@@ -37,6 +36,7 @@ import { fromLonLat } from "ol/proj";
 import KukaSmallLogo from "@/logos/kuka-small.svg";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useRouter } from "next/navigation";
 import { LayerTreeContent } from "../Map/LayerTree/LayerTree";
 import { AccessibilityContent } from "./MenuContent/AccessibilityContent";
 import { FilterContent } from "./MenuContent/FilterContent";
@@ -59,17 +59,11 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	const { toggleSidebar, setOpen, setOpenMobile, isMobile, open, openMobile } =
 		useSidebar();
 	const { t } = useTranslation("common");
+	const router = useRouter();
 	const [activeItem, setActiveItem] = useState<string>("");
 	const [previousActiveItem, setPreviousActiveItem] = useState<string>("");
 	const [userHasClosedSidebar, setUserHasClosedSidebar] = useState(false);
-	const {
-		welcomeModalOpen,
-		closeAllModals,
-		setInformationModalOpen,
-		setDownloadModalOpen,
-		setDownloadModalMode,
-		setMobileMenuModalOpen,
-	} = useModalStore();
+	const { setDownloadModalMode } = useModalStore();
 	const isLayerTreeOpen = useMapStore((state) => state.isLayerTreeOpen);
 	const setIsLayerTreeOpen = useMapStore((state) => state.setIsLayerTreeOpen);
 	const selectedInstitutionId = useInstitutionStore(
@@ -139,7 +133,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
 	const handleItemClick = (itemName: string) => {
 		if (itemName === "info") {
-			setInformationModalOpen(true);
+			router.push("/info");
 			return;
 		}
 
@@ -165,8 +159,8 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 		}
 
 		if (itemName === "download") {
-			setDownloadModalOpen(true);
 			setDownloadModalMode("filtered");
+			router.push("/download");
 			return;
 		}
 
@@ -194,11 +188,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
 	const handleLogoClick = () => {
 		setFirstTimeUser(true);
-	};
-
-	const handleWelcomeModalClose = () => {
-		setFirstTimeUser(false);
-		closeAllModals();
+		router.push("/welcome");
 	};
 
 	const handleSidebarClose = () => {
@@ -234,9 +224,9 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	};
 
 	const handleDownloadButtonClick = () => {
-		setDownloadModalOpen(true);
 		const mode = activeItem === "filter" ? "filtered" : "selected";
 		setDownloadModalMode(mode);
+		router.push("/download");
 	};
 
 	const getDownloadButtonCount = () => {
@@ -285,10 +275,6 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
 	return (
 		<>
-			<WelcomeModal
-				open={firstTimeUser || welcomeModalOpen}
-				onOpenChange={handleWelcomeModalClose}
-			/>
 			<nav aria-label={t("menu.navigation")}>
 				<Sidebar
 					collapsible="icon"
@@ -539,7 +525,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 						variant="rounded"
 						size="icon-only"
 						title={t("mobileMenu.title")}
-						onClick={() => setMobileMenuModalOpen(true)}
+						onClick={() => router.push("/mobileMenu")}
 						aria-label={t("mobileMenu.title")}
 						className="md:hidden"
 					>

@@ -26,7 +26,19 @@ export function WelcomeModal() {
 	] as const;
 
 	return (
-		<Dialog open>
+		<Dialog
+			open
+			onOpenChange={(open) => {
+				if (!open) {
+					setFirstTimeUser(false);
+					if (typeof window !== "undefined" && window.history.length > 1) {
+						router.back();
+					} else {
+						router.push("/");
+					}
+				}
+			}}
+		>
 			<DialogContent variant="medium" className="flex" hideBackIcon>
 				<div className="flex flex-col md:flex-row gap-8 py-12 md:pt-32 md:pb-12 px-6">
 					<div className="md:w-1/4 flex justify-center align-start h-full">
