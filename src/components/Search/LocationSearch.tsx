@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import Search from "@/icons/search.svg";
 import { useKeyboardNavigation } from "@/lib/hooks/useKeyboardNavigation";
 import { useSearch } from "@/lib/hooks/useSearch";
-import { searchLocations } from "@/lib/serverActions/searchLocations";
+import { searchLocations } from "@/server/actions/searchLocations";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useMapStore } from "@/lib/store/mapStore";
 import { sanitizeAddressInput } from "@/lib/utils/sanitizerUtils";
