@@ -17,7 +17,7 @@ export default async function AccountPage({ params }: PageProps) {
 	}
 
 	return (
-		<div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4">
+		<div className="h-full w-full items-center justify-center px-4">
 			<div className="w-full max-w-md space-y-4 text-center">
 				<h1 className="text-2xl font-bold">{t("auth.account.title")}</h1>
 				<p className="text-muted-foreground">{t("auth.account.comingSoon")}</p>
