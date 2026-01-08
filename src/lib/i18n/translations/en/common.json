@@ -1,17 +1,299 @@
 {
+	"about": "",
+	"accessibility": {
+		"contrast": {
+			"darkMode": "",
+			"description": "",
+			"lightMode": "",
+			"title": ""
+		},
+		"fontSize": {
+			"description": "",
+			"title": ""
+		},
+		"signLanguage": {
+			"description": "",
+			"title": ""
+		},
+		"simpleLanguage": {
+			"description": "",
+			"title": ""
+		},
+		"switchOff": "",
+		"switchOn": "",
+		"title": "",
+		"viewMode": {
+			"description": "",
+			"title": ""
+		}
+	},
+	"add": {
+		"description": "",
+		"title": ""
+	},
+	"auth": {
+		"account": {
+			"alreadyAccount": "Already have an account?",
+			"backToMap": "Back to map",
+			"comingSoon": "Your account area is coming soon.",
+			"continueGuest": "Continue as guest",
+			"intro": "Create an account to access personalized features, or continue as a guest.",
+			"signIn": "Sign in",
+			"signUp": "Sign up",
+			"title": "Account"
+		},
+		"forgot": {
+			"backToSignIn": "Back to sign in",
+			"description": "Password recovery is coming soon. Please contact the team or sign in again if you already have access.",
+			"metaTitle": "Forgot password – Kulturkataster",
+			"title": "Forgot password"
+		},
+		"login": {
+			"emailLabel": "Email",
+			"emailPlaceholder": "name@example.com",
+			"errorFallback": "Login failed.",
+			"forgotPassword": "Forgot password?",
+			"metaTitle": "Login – Kulturkataster",
+			"noAccount": "Don't have an account?",
+			"passwordLabel": "Password",
+			"passwordPlaceholder": "Enter your password",
+			"signUp": "Sign up",
+			"submit": "Sign in",
+			"submitting": "Signing in...",
+			"subtitle": "Enter your credentials to access your account",
+			"title": "Welcome back"
+		},
+		"register": {
+			"accountType": "Account Type",
+			"accountTypeIndividual": "Individual",
+			"accountTypeOrganization": "Organization",
+			"accountTypePlaceholder": "Select account type",
+			"alreadyAccount": "Already have an account?",
+			"confirmEmail": "Check your email to confirm your account.",
+			"confirmPassword": "Confirm Password",
+			"confirmPasswordPlaceholder": "Confirm your password",
+			"emailLabel": "Email",
+			"emailPlaceholder": "name@example.com",
+			"errorFallback": "Registration failed.",
+			"firstName": "First Name",
+			"firstNamePlaceholder": "First name",
+			"lastName": "Last Name",
+			"lastNamePlaceholder": "Last name",
+			"metaTitle": "Register – Kulturkataster",
+			"newsletterLink": "newsletter.",
+			"newsletterOptInPrefix": "To stay up to date, I would also like to subscribe to the",
+			"passwordLabel": "Password",
+			"passwordPlaceholder": "Create a password",
+			"privacyLink": "Privacy Policy",
+			"signIn": "Sign in",
+			"submit": "Create account",
+			"submitting": "Creating account...",
+			"subtitle": "Enter your information to get started",
+			"termsIntro": "I agree to the",
+			"termsLink": "Terms of Service",
+			"termsSeparator": "and",
+			"title": "Create an account"
+		},
+		"validation": {
+			"acceptTermsRequired": "You must accept the terms and conditions",
+			"accountTypeRequired": "Account type is required",
+			"emailInvalid": "Invalid email address",
+			"emailRequired": "Email is required",
+			"firstNameRequired": "First name is required",
+			"passwordMin": "Password must be at least 8 characters",
+			"passwordMismatch": "Passwords do not match",
+			"passwordRequired": "Password is required"
+		}
+	},
+	"back": "",
+	"cancel": "",
+	"close": "",
+	"closeSidebar": "",
+	"confirm": "",
+	"delete": "",
+	"download": {
+		"description": "",
+		"downloadButton": "",
+		"downloading": "",
+		"title": ""
+	},
+	"edit": "",
+	"email": {
+		"address": "",
+		"label": ""
+	},
+	"error": "",
+	"fileFormat": {
+		"csv": "",
+		"xls": "",
+		"xlsx": ""
+	},
+	"filter": {
+		"title": ""
+	},
+	"footer": {
+		"about": "",
+		"accessibility": "",
+		"address": {
+			"city": "",
+			"street": "",
+			"suffix": "",
+			"zip": ""
+		},
+		"credit": {
+			"text": ""
+		},
+		"email": {
+			"address": "",
+			"label": ""
+		},
+		"imprint": "",
+		"navigation": "",
+		"navigationAriaLabel": "",
+		"newsletter": "",
+		"openSource": "",
+		"privacy": "",
+		"projectBy": "",
+		"signLanguageInformation": "",
+		"signLanguageInformationLong": "",
+		"signLanguageInformationShort": "",
+		"simpleLanguageInformation": "",
+		"telephone": {
+			"label": "",
+			"number": ""
+		},
+		"title": "",
+		"welcomeModalLinkListAriaLabel": ""
+	},
+	"footerLandmark": "",
+	"headerLandmark": "",
 	"hello": "",
-	"yes": "Yes",
-	"no": "No",
+	"here": "",
+	"info": {
+		"open": "",
+		"title": ""
+	},
+	"information": {
+		"title": ""
+	},
+	"institution": {
+		"additionalInfo": "",
+		"address": "",
+		"backToMap": "",
+		"basicInfoHeading": "",
+		"categories": "",
+		"closingReason": "",
+		"contact": "",
+		"createdAt": "",
+		"culturalArea": "",
+		"description": "",
+		"details": "",
+		"district": "",
+		"email": "",
+		"emailAddress": "",
+		"establishedSince": "",
+		"establishedUntil": "",
+		"funding": "",
+		"fundingType": "",
+		"lessInfo": "",
+		"loading": "",
+		"moreInfo": "",
+		"notFound": "",
+		"notes": "",
+		"organization": "",
+		"owner": "",
+		"ownerType": "",
+		"parent": "",
+		"parentOrganization": "",
+		"phone": "",
+		"phoneNumber": "",
+		"sharedUseAllowed": "",
+		"sharedUseAudience": "",
+		"sharedUseContactPerson": "",
+		"sharedUseInfo": "",
+		"showDetails": "",
+		"source": "",
+		"status": "",
+		"subcategories": "",
+		"subcategory": "",
+		"subtitle": "",
+		"support": "",
+		"supportType": "",
+		"unnamed": "",
+		"updatedAt": "",
+		"usableAreaSize": "",
+		"utilizationStatus": "",
+		"website": "",
+		"workspaceCount": ""
+	},
+	"kukaLogo": "",
+	"kukaLogoButton": "",
+	"listView": {
+		"institutionsListLabel": "",
+		"noResultsFound": "",
+		"scrollToTop": "",
+		"show": "",
+		"title": "",
+		"tryAdjustingFilters": ""
+	},
+	"loading": "",
+	"mainContent": "",
 	"map": {
 		"availableLayers": "Available layers",
 		"closeLayerTree": "Close context maps",
 		"geolocate": "Find my location",
+		"layerItemAriaLabel": "",
+		"layerItemLegendAriaLabel": "",
 		"layerTree": "Context Maps",
+		"layerTreeAriaLabel": "",
 		"layerTreeTitle": "Context Maps",
+		"layerTreeVisibleCountAriaLabel": "",
+		"legend": {
+			"legendAriaLabels": "",
+			"legendGesamtIndexAriaLabel": "",
+			"legendGesamtIndexDecriptionSR": "",
+			"legendValueAriaLabel": "",
+			"legendValueWordingAriaLabel": ""
+		},
+		"lookAtLegend": "",
 		"noLayersAvailable": "No context maps available",
+		"radioGroupAriaLabel": "",
+		"show": "",
+		"title": "",
 		"zoomIn": "Zoom In",
 		"zoomOut": "Zoom Out"
 	},
+	"menu": {
+		"backTo": "",
+		"backToAriaLabel": "",
+		"menuButtonBadge": "",
+		"navigation": ""
+	},
+	"mobileMenu": {
+		"title": ""
+	},
+	"no": "No",
+	"save": "",
+	"search": {
+		"description": "",
+		"error": "",
+		"hint": "",
+		"noResults": "",
+		"noResultsFound": "",
+		"placeholder": "",
+		"searchButton": "",
+		"suggestions": "",
+		"title": ""
+	},
+	"siteTitle": "",
+	"skipToContent": "",
+	"success": "",
+	"telephone": {
+		"label": "",
+		"labelShort": "",
+		"number": ""
+	},
+	"unknown": "",
 	"venue": {
 		"address": "Address",
 		"backToMap": "Back to Map",
@@ -26,5 +308,6 @@
 		"support": "Support Type",
 		"unnamed": "Unnamed Venue",
 		"website": "Website"
-	}
+	},
+	"yes": "Yes"
 }
