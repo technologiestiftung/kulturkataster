@@ -262,6 +262,7 @@ model User {
   institution_claims String?
   created_at         DateTime   @default(now())
   updated_at         DateTime   @updatedAt
+  account_type       String?
 
   role                 Role?         @relation(fields: [role_id], references: [id])
   groups               Group[]
