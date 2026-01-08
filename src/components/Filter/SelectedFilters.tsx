@@ -1,12 +1,12 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { FilterState, District, Category } from "@/types";
+import { FilterState, Category } from "@/types";
 import Close from "@/icons/close.svg";
 
 interface SelectedFiltersProps {
 	filters: FilterState;
-	districts: District[];
+	districts: string[];
 	categories: Category[];
 	onRemoveDistrict?: (key: string) => void;
 	onRemoveCategory?: (key: string) => void;
@@ -26,8 +26,7 @@ export function SelectedFilters({
 	className = "",
 }: SelectedFiltersProps) {
 	const getDistrictName = (key: string) => {
-		const district = districts.find((d) => d.key === key);
-		return district?.name || key;
+		return key;
 	};
 
 	const getCategoryName = (key: string) => {
