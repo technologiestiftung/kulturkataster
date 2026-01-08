@@ -283,7 +283,7 @@ const FloatingLayerButton = memo(
 
 					<ButtonWithTooltip
 						ref={forwardedRef}
-						variant="map-icon"
+						variant="rounded"
 						size="icon"
 						tooltip={t("map.layerTree")}
 						tooltipSide="right"
