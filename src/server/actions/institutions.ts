@@ -1,14 +1,13 @@
 "use server";
 
-import type { Category, District } from "@/types";
+import type { Category } from "@/types";
 import { getAccessContextForUser, throwIfUnauthorized } from "@/lib/utils/rbac";
-import { getCurrentUserId } from "@/lib/auth/getCurrentUser";
+import { getCurrentUserId } from "@/server/auth/getCurrentUser";
 import { institutionRepo } from "@/server/data/institutionRepo";
 import { categoryRepo } from "@/server/data/categoryRepo";
 import { districtRepo } from "@/server/data/districtRepo";
 import { buildInstitutionSearchWhere } from "@/server/logic/institutionSearch";
 import { mapCategoriesWithSubcategories } from "@/server/logic/categoryMapping";
-import { mapDistrictRows } from "@/server/logic/districtMapping";
 
 export async function getInstitutions() {
 	const currentUserId = await getCurrentUserId();
@@ -54,7 +53,7 @@ export async function getCategoriesWithSubcategories(): Promise<Category[]> {
 	return mapCategoriesWithSubcategories(categories);
 }
 
-export async function getDistricts(): Promise<District[]> {
+export async function getDistricts(): Promise<string[]> {
 	const currentUserId = await getCurrentUserId();
 	const ctx = await getAccessContextForUser(currentUserId);
 	throwIfUnauthorized({
@@ -64,5 +63,7 @@ export async function getDistricts(): Promise<District[]> {
 	});
 
 	const districts = await districtRepo.listDistinct();
-	return mapDistrictRows(districts);
+	return districts
+		.map((row) => row.district)
+		.filter((district): district is string => !!district);
 }
