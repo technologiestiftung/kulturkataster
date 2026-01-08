@@ -125,12 +125,8 @@ export function RegisterForm() {
 			</div>
 
 			<form onSubmit={handleSubmit} className="space-y-4">
-				{errorMessage && (
-					<p className="text-sm text-destructive">{errorMessage}</p>
-				)}
-				{successMessage && (
-					<p className="text-sm text-green-700">{successMessage}</p>
-				)}
+				{errorMessage && <p className="text-destructive">{errorMessage}</p>}
+				{successMessage && <p className="text-green-700">{successMessage}</p>}
 				<div className="space-y-2">
 					<Label htmlFor="accountType">{t("auth.register.accountType")}</Label>
 					<Select
@@ -160,7 +156,7 @@ export function RegisterForm() {
 						</SelectContent>
 					</Select>
 					{errors.accountType && (
-						<p className="text-sm text-destructive">{errors.accountType}</p>
+						<p className="text-destructive">{errors.accountType}</p>
 					)}
 				</div>
 				<div className="space-y-2 grid grid-cols-2 gap-4">
@@ -178,9 +174,7 @@ export function RegisterForm() {
 							disabled={isLoading}
 							aria-invalid={!!errors.name}
 						/>
-						{errors.name && (
-							<p className="text-sm text-destructive">{errors.name}</p>
-						)}
+						{errors.name && <p className="text-destructive">{errors.name}</p>}
 					</div>
 					<div className="space-y-2">
 						<Label htmlFor="lastName" required>
@@ -197,7 +191,7 @@ export function RegisterForm() {
 							aria-invalid={!!errors.lastName}
 						/>
 						{errors.lastName && (
-							<p className="text-sm text-destructive">{errors.lastName}</p>
+							<p className="text-destructive">{errors.lastName}</p>
 						)}
 					</div>
 				</div>
@@ -216,9 +210,7 @@ export function RegisterForm() {
 						disabled={isLoading}
 						aria-invalid={!!errors.email}
 					/>
-					{errors.email && (
-						<p className="text-sm text-destructive">{errors.email}</p>
-					)}
+					{errors.email && <p className="text-destructive">{errors.email}</p>}
 				</div>
 
 				<div className="space-y-2">
@@ -236,7 +228,7 @@ export function RegisterForm() {
 						aria-invalid={!!errors.password}
 					/>
 					{errors.password && (
-						<p className="text-sm text-destructive">{errors.password}</p>
+						<p className="text-destructive">{errors.password}</p>
 					)}
 				</div>
 
@@ -257,7 +249,7 @@ export function RegisterForm() {
 						aria-invalid={!!errors.confirmPassword}
 					/>
 					{errors.confirmPassword && (
-						<p className="text-sm text-destructive">{errors.confirmPassword}</p>
+						<p className="text-destructive">{errors.confirmPassword}</p>
 					)}
 				</div>
 
@@ -302,7 +294,7 @@ export function RegisterForm() {
 							{t("auth.register.privacySuffix")}
 						</Label>
 						{errors.acceptTerms && (
-							<p className="text-sm text-destructive">{errors.acceptTerms}</p>
+							<p className="text-destructive">{errors.acceptTerms}</p>
 						)}
 					</div>
 				</div>
@@ -331,9 +323,9 @@ export function RegisterForm() {
 				</div>
 			</form>
 
-			<div className="text-center text-sm">
+			<div className="flex flex-col items-center text-center">
 				<span className="">{t("auth.register.alreadyAccount")} </span>
-				<Link href="/login" className="text-primary-dark underline">
+				<Link href="/user/login" className="text-primary-dark underline">
 					{t("auth.register.signIn")}
 				</Link>
 			</div>

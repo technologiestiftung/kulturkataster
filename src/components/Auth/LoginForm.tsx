@@ -78,7 +78,7 @@ export function LoginForm() {
 						disabled={isLoading}
 					/>
 					<Link
-						href="/forgot-password"
+						href="/user/forgot-password"
 						className="self-end text-primary-dark body2 underline"
 					>
 						{t("auth.login.forgotPassword")}
@@ -90,9 +90,9 @@ export function LoginForm() {
 				</Button>
 			</form>
 
-			<div className="text-center text-sm">
+			<div className="flex flex-col items-center text-center">
 				<span className="">{t("auth.login.noAccount")} </span>
-				<Link href="/register" className="text-primary hover:underline ">
+				<Link href="/user/register" className="text-primary-dark underline ">
 					{t("auth.login.signUp")}
 				</Link>
 			</div>
