@@ -1,0 +1,78 @@
+import { describe, expect, it, vi, beforeEach } from "vitest";
+import type { Prisma } from "@/generated/prisma";
+
+vi.mock("@/server/auth/getCurrentUser", () => ({
+	getCurrentUserId: vi.fn().mockResolvedValue("user-1"),
+}));
+
+vi.mock("@/lib/utils/rbac", () => ({
+	getAccessContextForUser: vi.fn().mockResolvedValue({}),
+	throwIfUnauthorized: vi.fn(),
+}));
+
+const listMock = vi.fn().mockResolvedValue([]);
+const searchMock = vi.fn().mockResolvedValue([]);
+vi.mock("@/server/data/institutionRepo", () => ({
+	institutionRepo: {
+		list: () => listMock(),
+		search: (where: Prisma.InstitutionWhereInput) => searchMock(where),
+	},
+}));
+
+const listWithChildrenMock = vi.fn().mockResolvedValue([]);
+vi.mock("@/server/data/categoryRepo", () => ({
+	categoryRepo: {
+		listWithChildren: () => listWithChildrenMock(),
+	},
+}));
+
+const listDistinctMock = vi
+	.fn()
+	.mockResolvedValue([{ district: "mitte" }, { district: null }]);
+vi.mock("@/server/data/districtRepo", () => ({
+	districtRepo: {
+		listDistinct: () => listDistinctMock(),
+	},
+}));
+
+import {
+	getInstitutions,
+	getCategoriesWithSubcategories,
+	getDistricts,
+	searchInstitutions,
+} from "@/server/actions/institutions";
+
+describe("server actions: institutions", () => {
+	beforeEach(() => {
+		listMock.mockClear();
+		searchMock.mockClear();
+		listWithChildrenMock.mockClear();
+		listDistinctMock.mockClear();
+	});
+
+	it("getInstitutions returns repo list", async () => {
+		await getInstitutions();
+		expect(listMock).toHaveBeenCalledTimes(1);
+	});
+
+	it("searchInstitutions returns [] for empty query", async () => {
+		const result = await searchInstitutions("   ");
+		expect(result).toEqual([]);
+		expect(searchMock).not.toHaveBeenCalled();
+	});
+
+	it("searchInstitutions uses repo search for valid query", async () => {
+		await searchInstitutions("museum");
+		expect(searchMock).toHaveBeenCalledTimes(1);
+	});
+
+	it("getCategoriesWithSubcategories calls repo", async () => {
+		await getCategoriesWithSubcategories();
+		expect(listWithChildrenMock).toHaveBeenCalledTimes(1);
+	});
+
+	it("getDistricts filters null districts", async () => {
+		const districts = await getDistricts();
+		expect(districts).toEqual(["mitte"]);
+	});
+});
