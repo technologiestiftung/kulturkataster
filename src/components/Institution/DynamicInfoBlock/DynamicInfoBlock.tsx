@@ -26,6 +26,9 @@ function hasValue(value: unknown): boolean {
 	if (value === null || value === undefined || value === "") {
 		return false;
 	}
+	if (value instanceof Date) {
+		return !Number.isNaN(value.getTime());
+	}
 	if (typeof value === "object" && Object.keys(value).length === 0) {
 		return false;
 	}
@@ -84,13 +87,23 @@ export function DynamicInfoBlock({
 					}
 					break;
 				case "year":
-					if (typeof value === "string" || value instanceof Date) {
-						displayValue = new Date(value).getFullYear();
+					if (typeof value === "number") {
+						displayValue = value;
+					} else if (typeof value === "string" || value instanceof Date) {
+						const parsed = new Date(value);
+						if (!Number.isNaN(parsed.getTime())) {
+							displayValue = parsed.getFullYear();
+						}
 					}
 					break;
 				case "date":
 					if (typeof value === "string" || value instanceof Date) {
 						displayValue = new Date(value).toLocaleDateString();
+					}
+					break;
+				case "boolean":
+					if (typeof value === "boolean") {
+						displayValue = value ? t("yes") : t("no");
 					}
 					break;
 				case "text":

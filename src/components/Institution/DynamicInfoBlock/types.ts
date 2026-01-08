@@ -1,6 +1,12 @@
 import type { Institution } from "@/types";
 
-export type FieldValueType = "text" | "enum" | "nested" | "date" | "year";
+export type FieldValueType =
+	| "text"
+	| "enum"
+	| "nested"
+	| "date"
+	| "year"
+	| "boolean";
 
 export interface InfoFieldConfig {
 	// The key to access the value from the institution data (e.g., "closing_reason", "owner.owner_type")

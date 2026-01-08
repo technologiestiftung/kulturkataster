@@ -1,5 +1,7 @@
 {
 	"about": "Über",
+	"yes": "Ja",
+	"no": "Nein",
 	"accessibility": {
 		"contrast": {
 			"darkMode": "Dunkler Modus",
@@ -122,12 +124,13 @@
 		"lessInfo": "Weniger Informationen",
 		"loading": "Laden...",
 		"moreInfo": "Mehr Informationen",
-		"multipleUse": "Offen für Raumanfragen?",
-		"multipleUseDescription": "Beschreibung Räume/Flächen für Mehrfachnutzung",
-		"multipleUseNotPossible": "Nein",
-		"multipleUsePossible": "Ja",
+		"sharedUseAllowed": "Offen für Raumanfragen?",
+		"sharedUseInfo": "Beschreibung Räume/Flächen für Mehrfachnutzung",
 		"notFound": "Kulturort nicht gefunden",
 		"organization": "Organisation",
+		"notes": "Zusätzliche Informationen",
+		"createdAt": "Erstellt am",
+		"updatedAt": "Stand",
 		"owner": "Eigentümer*in",
 		"ownerType": "Eigentümer*innenart",
 		"parent": "Träger",
