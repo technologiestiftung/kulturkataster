@@ -44,15 +44,6 @@ export const CategoryKeys = {
 
 export type CategoryType = string;
 
-export interface District {
-	key: string | null;
-	name: string | null;
-}
-
-export interface City {
-	name?: string | null;
-}
-
 export interface ParentOrganization {
 	name?: string | null;
 }

@@ -2,13 +2,12 @@
 
 import { Button } from "@/components/ui/button";
 import Close from "@/icons/close.svg";
-import { District } from "@/types";
 import { FC } from "react";
 import { useTranslation } from "react-i18next";
 
 // Simple district filter component
 interface DistrictTagsProps {
-	districts: District[];
+	districts: string[];
 	selected: string[];
 	onChange: (key: string) => void;
 }
@@ -24,18 +23,17 @@ const DistrictTags: FC<DistrictTagsProps> = ({
 	return (
 		<div className="flex flex-wrap gap-2 mb-4">
 			{districts.map((district) => {
-				if (!district.key) return null;
-				const isSelected = selected.includes(district.key);
-				const translatedName =
-					tEnum(`${district.key}`) || district.name || district.key;
+				if (!district) return null;
+				const isSelected = selected.includes(district);
+				const translatedName = tEnum(`${district}`) || district;
 
 				return (
 					<Button
-						key={district.key}
+						key={district}
 						variant="tag"
 						size="tag"
 						className={isSelected ? "bg-neutral-80 text-background" : ""}
-						onClick={() => onChange(district.key || "")}
+						onClick={() => onChange(district)}
 						role="switch"
 						aria-checked={isSelected}
 						aria-label={t("filter.districtTagsSwitchAriaLabel", {
