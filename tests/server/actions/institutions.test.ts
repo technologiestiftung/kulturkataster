@@ -5,7 +5,7 @@ vi.mock("@/server/auth/getCurrentUser", () => ({
 	getCurrentUserId: vi.fn().mockResolvedValue("user-1"),
 }));
 
-vi.mock("@/lib/utils/rbac", () => ({
+vi.mock("@/server/utils/rbac", () => ({
 	getAccessContextForUser: vi.fn().mockResolvedValue({}),
 	throwIfUnauthorized: vi.fn(),
 }));
