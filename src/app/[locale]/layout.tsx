@@ -2,7 +2,6 @@ import { AppPersistenceProvider } from "@/components/AppPersistenceProvider";
 import Footer from "@/components/Footer/Footer";
 import MapInitializer from "@/components/Map/MapInitializer/MapInitializer";
 import { Menu } from "@/components/Menu/Menu";
-import { ModalProvider } from "@/components/ModalProvider";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { serverSideTranslation } from "@/i18n";
 import I18NProvider from "@/i18n/i18n-provider";
@@ -52,9 +51,11 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({
 	children,
+	modal,
 	params,
 }: Readonly<{
 	children: React.ReactNode;
+	modal: React.ReactNode;
 	params: Promise<{ locale: Locale }>;
 }>) {
 	const { locale } = await params;
@@ -131,7 +132,7 @@ export default async function RootLayout({
 
 						<Footer ariaLabel={footerLabel} />
 					</div>
-					<ModalProvider />
+					{modal}
 				</I18NProvider>
 
 				<Script id="matomo" strategy="afterInteractive">
