@@ -164,14 +164,11 @@ const Filter: FC = () => {
 
 	const setAllDistrictFilters = () => {
 		if (!filters) return;
-		const allDistrictKeys = districts
-			.map((district) => district.key)
-			.filter((key): key is NonNullable<typeof key> => key !== null);
-		if (allDistrictKeys.length === 0) return;
+		if (districts.length === 0) return;
 
 		updateFilters({
 			...filters,
-			district_keys: allDistrictKeys,
+			district_keys: districts,
 		});
 	};
 
