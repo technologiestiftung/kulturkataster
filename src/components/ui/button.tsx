@@ -26,7 +26,7 @@ const buttonVariants = cva(
 				"menu-icon":
 					" z-10 flex items-center justify-center [&_svg]:size-6 rounded-full transition-colors duration-300 cursor-pointer ",
 				link: "text-primary underline-offset-4 hover:underline",
-				"map-icon":
+				rounded:
 					"rounded-full shadow-md bg-background hover:bg-accent [&_svg]:size-6",
 				accordion: "gap-2 justify-start text-primary-dark px-4",
 				tag: "bg-neutral-10 font-light flex items-center justify-center px-4 rounded-full",

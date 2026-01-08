@@ -70,7 +70,7 @@ const LayerTreeControl: FC = () => {
 	return (
 		<div className="relative">
 			<ButtonWithTooltip
-				variant="map-icon"
+				variant="rounded"
 				size="icon-only"
 				tooltip={t("map.layerTree")}
 				tooltipSide="right"

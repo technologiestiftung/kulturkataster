@@ -536,7 +536,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 					</div>
 
 					<Button
-						variant="map-icon"
+						variant="rounded"
 						size="icon-only"
 						title={t("mobileMenu.title")}
 						onClick={() => setMobileMenuModalOpen(true)}
