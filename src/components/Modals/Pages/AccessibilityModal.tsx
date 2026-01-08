@@ -3,12 +3,7 @@
 import TextBlock from "@/components/Content/TextBlock";
 import { Trans, useTranslation } from "react-i18next";
 import { PageModal } from "../PageModal";
-import { useModalStore } from "@/lib/store/modalStore";
-
-interface AccessibilityModalProps {
-	open: boolean;
-	onOpenChange: (open: boolean) => void;
-}
+import Link from "next/link";
 
 interface Barrier {
 	title: string;
@@ -17,13 +12,8 @@ interface Barrier {
 	timeline: string;
 }
 
-export function AccessibilityModal({
-	open,
-	onOpenChange,
-}: AccessibilityModalProps) {
+export function AccessibilityModal() {
 	const { t } = useTranslation("content");
-
-	const { handleFooterItemClick } = useModalStore();
 
 	const barriers = t("accessibilityModal.which.barriers", {
 		returnObjects: true,
@@ -48,15 +38,13 @@ export function AccessibilityModal({
 						ns="content"
 						components={{
 							link: (
-								<button
-									type="button"
-									className="text-primary-dark hover:text-primary underline bg-transparent border-none p-0 cursor-pointer "
-									onClick={() => {
-										handleFooterItemClick("simpleLanguageInformation");
-									}}
+								<Link
+									href="/simpleLanguage"
+									rel="noopener noreferrer"
+									className="text-primary-dark hover:text-primary underline bg-transparent border-none p-0 "
 								>
 									{t("here")}
-								</button>
+								</Link>
 							),
 						}}
 					/>
@@ -67,15 +55,13 @@ export function AccessibilityModal({
 						ns="content"
 						components={{
 							link: (
-								<button
-									type="button"
-									className="text-primary-dark hover:text-primary underline bg-transparent border-none p-0 cursor-pointer "
-									onClick={() => {
-										handleFooterItemClick("signLanguageInformation");
-									}}
+								<Link
+									href="/signLanguage"
+									rel="noopener noreferrer"
+									className="text-primary-dark hover:text-primary underline bg-transparent border-none p-0 "
 								>
 									{t("here")}
-								</button>
+								</Link>
 							),
 						}}
 					/>
@@ -205,8 +191,6 @@ export function AccessibilityModal({
 
 	return (
 		<PageModal
-			open={open}
-			onOpenChange={onOpenChange}
 			title={t("accessibilityModal.title")}
 			subtitle={t("accessibilityModal.subtitle")}
 			content={content}
