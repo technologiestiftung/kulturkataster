@@ -1,7 +1,6 @@
 "use client";
 
 import { useInstitutionStore } from "@/lib/store/institutionStore";
-import { useModalStore } from "@/lib/store/modalStore";
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { InstitutionCard } from "./InstitutionCard";
@@ -31,7 +30,6 @@ const ListView: FC = () => {
 	const setSelectedInstitutionId = useInstitutionStore(
 		(state) => state.setSelectedInstitutionId,
 	);
-	const { setDownloadModalOpen, setDownloadModalMode } = useModalStore();
 
 	const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
 	const [isLoading, setIsLoading] = useState(false);
@@ -124,11 +122,6 @@ const ListView: FC = () => {
 		});
 	};
 
-	const handleDownloadClick = () => {
-		setDownloadModalOpen(true);
-		setDownloadModalMode("filtered");
-	};
-
 	if (!institutions) {
 		return (
 			<div className="ListView-root w-full h-full flex items-center justify-center">
@@ -160,7 +153,6 @@ const ListView: FC = () => {
 									</strong>
 								}
 								<button
-									onClick={handleDownloadClick}
 									className="body2 text-primary-dark font-bold flex items-center gap-1 hover:text-primary/80 transition-colors cursor-pointer focus-visible:outline-interaction-dark"
 									aria-label={t("download.title")}
 								>
