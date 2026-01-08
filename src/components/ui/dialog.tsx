@@ -7,13 +7,31 @@ import BackIcon from "@/icons/chevron-left.svg";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
 import { useRestoreFocus } from "@/hooks/use-restore-focus";
+import { useRouter } from "next/navigation";
+import { useAppStore } from "@/lib/store/appStore";
 
 type DialogRootProps = React.ComponentProps<typeof DialogPrimitive.Root>;
 
 function Dialog({ open, ...props }: DialogRootProps) {
 	useRestoreFocus(open);
+	const router = useRouter();
+	const { firstTimeUser, setFirstTimeUser } = useAppStore();
 
-	return <DialogPrimitive.Root data-slot="dialog" open={open} {...props} />;
+	return (
+		<DialogPrimitive.Root
+			data-slot="dialog"
+			open={open}
+			onOpenChange={(newOpen) => {
+				if (!newOpen) {
+					if (firstTimeUser) {
+						setFirstTimeUser(false);
+					}
+					router.back();
+				}
+			}}
+			{...props}
+		/>
+	);
 }
 
 function DialogTrigger({
@@ -66,23 +84,14 @@ function DialogContent({
 		| "fullScreenNoBottom"
 		| "fullScreenNoBottomDarkerBackground"
 		| "medium"
-		| "mobileMenu";
+		| "mobileMenu"
+		| "entityEdit";
 }) {
 	const { t } = useTranslation("common");
 	const focusRef = React.useRef<HTMLDivElement | null>(null);
 	const [canGoBack, setCanGoBack] = React.useState(false);
 
-	React.useEffect(() => {
-		if (typeof window !== "undefined") {
-			setCanGoBack(window.history.length > 1);
-		}
-	}, []);
-
-	const backOnModal = () => {
-		if (typeof window !== "undefined") {
-			window.history.back();
-		}
-	};
+	const router = useRouter();
 
 	const getVariantStyles = () => {
 		switch (variant) {
@@ -95,9 +104,11 @@ function DialogContent({
 				return "fixed z-[70] top-0 md:top-1/2 left-1/2 w-full max-w-314 h-full md:h-auto md:max-h-[calc(100%-5rem)] -translate-x-1/2 md:-translate-y-1/2 md:rounded-lg border flex flex-col";
 			case "mobileMenu":
 				return "fixed z-[70] h-full inset-0 w-full border-0 p-0";
+			case "entityEdit":
+				return "bg-neutral-5 fixed z-[70] top-0 md:top-1/2 left-1/2 w-full max-w-[calc(100%-2rem)] h-full md:h-auto md:max-h-[calc(100%-5rem)] -translate-x-1/2 md:-translate-y-1/2 md:rounded-lg border md:max-w-2xl flex flex-col overflow-hidden p-12";
 			case "default":
 			default:
-				return "fixed top-[50%] left-[50%] w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] md:rounded-lg border p-6 sm:max-w-lg";
+				return "fixed top-[50%] left-[50%] w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] md:rounded-lg border p-6 sm:max-w-3xl max-h-full overflow-auto";
 		}
 	};
 
@@ -129,9 +140,9 @@ function DialogContent({
 				}}
 				{...props}
 			>
-				{!hideBackIcon && canGoBack && (
+				{!hideBackIcon && (
 					<button
-						onClick={backOnModal}
+						onClick={() => router.back()}
 						className={backAndCloseClassNames("back")}
 					>
 						<BackIcon className="size-6" />
@@ -149,6 +160,10 @@ function DialogContent({
 				)}
 				{variant === "mobileMenu" ? (
 					children
+				) : variant === "entityEdit" ? (
+					<div className="flex flex-col h-full w-full overflow-auto">
+						{children}
+					</div>
 				) : (
 					<div className="overflow-auto h-full w-full tab-ring">{children}</div>
 				)}
