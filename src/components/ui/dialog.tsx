@@ -7,7 +7,6 @@ import BackIcon from "@/icons/chevron-left.svg";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
 import { useRestoreFocus } from "@/hooks/use-restore-focus";
-import { useModalStore } from "@/lib/store/modalStore";
 
 type DialogRootProps = React.ComponentProps<typeof DialogPrimitive.Root>;
 
@@ -71,8 +70,19 @@ function DialogContent({
 }) {
 	const { t } = useTranslation("common");
 	const focusRef = React.useRef<HTMLDivElement | null>(null);
+	const [canGoBack, setCanGoBack] = React.useState(false);
 
-	const { modalHistory, backOnModal } = useModalStore();
+	React.useEffect(() => {
+		if (typeof window !== "undefined") {
+			setCanGoBack(window.history.length > 1);
+		}
+	}, []);
+
+	const backOnModal = () => {
+		if (typeof window !== "undefined") {
+			window.history.back();
+		}
+	};
 
 	const getVariantStyles = () => {
 		switch (variant) {
@@ -119,7 +129,7 @@ function DialogContent({
 				}}
 				{...props}
 			>
-				{!hideBackIcon && modalHistory.length > 1 && (
+				{!hideBackIcon && canGoBack && (
 					<button
 						onClick={backOnModal}
 						className={backAndCloseClassNames("back")}

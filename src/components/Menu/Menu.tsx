@@ -28,7 +28,6 @@ import Search from "@/icons/search.svg";
 import { useAppStore } from "@/lib/store/appStore";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useMapStore } from "@/lib/store/mapStore";
-import { useModalStore } from "@/lib/store/modalStore";
 import { getFilterCount, hasActiveFilters } from "@/lib/utils/filterUtils";
 import { animateMapToCoordinates } from "@/lib/utils/mapUtils";
 import { getCoordinatesFromAddress } from "@/lib/utils/institutionUtils";
@@ -63,7 +62,6 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	const [activeItem, setActiveItem] = useState<string>("");
 	const [previousActiveItem, setPreviousActiveItem] = useState<string>("");
 	const [userHasClosedSidebar, setUserHasClosedSidebar] = useState(false);
-	const { setDownloadModalMode } = useModalStore();
 	const isLayerTreeOpen = useMapStore((state) => state.isLayerTreeOpen);
 	const setIsLayerTreeOpen = useMapStore((state) => state.setIsLayerTreeOpen);
 	const selectedInstitutionId = useInstitutionStore(
@@ -159,7 +157,6 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 		}
 
 		if (itemName === "download") {
-			setDownloadModalMode("filtered");
 			router.push("/download");
 			return;
 		}
@@ -224,8 +221,6 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	};
 
 	const handleDownloadButtonClick = () => {
-		const mode = activeItem === "filter" ? "filtered" : "selected";
-		setDownloadModalMode(mode);
 		router.push("/download");
 	};
 
@@ -418,7 +413,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 											{activeItem === "search" && <SearchContent />}
 											{activeItem === "accessibility" && (
 												<div className="p-2 w-full">
-													<AccessibilityContent onItemClick={handleItemClick} />
+													<AccessibilityContent />
 												</div>
 											)}
 											{activeItem === "layertree" && <LayerTreeContent />}
