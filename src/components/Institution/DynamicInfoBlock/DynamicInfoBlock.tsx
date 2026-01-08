@@ -5,13 +5,13 @@ import { useTranslation } from "react-i18next";
 import { InfoItem } from "../shared/InfoItem";
 import { InfoSection } from "../shared/InfoSection";
 import type { DynamicInfoBlockConfig, InfoFieldConfig } from "./types";
+import { formatFieldValue, hasDisplayValue } from "./valueFormatters";
 
 interface DynamicInfoBlockProps {
 	institutionData: Institution;
 	config: DynamicInfoBlockConfig;
 }
 
-// Helper function to get nested value from object using dot notation
 function getNestedValue(obj: Record<string, unknown>, path: string): unknown {
 	return path.split(".").reduce((current, key) => {
 		if (current && typeof current === "object") {
@@ -19,20 +19,6 @@ function getNestedValue(obj: Record<string, unknown>, path: string): unknown {
 		}
 		return undefined;
 	}, obj as unknown);
-}
-
-// Check if field has a value
-function hasValue(value: unknown): boolean {
-	if (value === null || value === undefined || value === "") {
-		return false;
-	}
-	if (value instanceof Date) {
-		return !Number.isNaN(value.getTime());
-	}
-	if (typeof value === "object" && Object.keys(value).length === 0) {
-		return false;
-	}
-	return true;
 }
 
 export function DynamicInfoBlock({
@@ -47,18 +33,15 @@ export function DynamicInfoBlock({
 			return null;
 		}
 
-		// Get the value
 		const value = getNestedValue(
 			institutionData as unknown as Record<string, unknown>,
 			fieldConfig.dataPath,
 		);
 
-		// Skip if no value and not in alwaysShow mode
-		if (!config.alwaysShow && !hasValue(value)) {
+		if (!config.alwaysShow && !hasDisplayValue(value)) {
 			return null;
 		}
 
-		// Custom render function
 		if (fieldConfig.render) {
 			return (
 				<InfoItem
@@ -71,46 +54,15 @@ export function DynamicInfoBlock({
 			);
 		}
 
-		// Determine how to display the value
 		let displayValue: React.ReactNode = "—";
 
-		if (hasValue(value)) {
-			switch (fieldConfig.valueType) {
-				case "enum":
-					if (fieldConfig.enumKey && typeof value === "string") {
-						displayValue = tEnum(`${fieldConfig.enumKey}.${value}`);
-					}
-					break;
-				case "nested":
-					if (value && typeof value === "object" && "name" in value) {
-						displayValue = (value as { name: string }).name;
-					}
-					break;
-				case "year":
-					if (typeof value === "number") {
-						displayValue = value;
-					} else if (typeof value === "string" || value instanceof Date) {
-						const parsed = new Date(value);
-						if (!Number.isNaN(parsed.getTime())) {
-							displayValue = parsed.getFullYear();
-						}
-					}
-					break;
-				case "date":
-					if (typeof value === "string" || value instanceof Date) {
-						displayValue = new Date(value).toLocaleDateString();
-					}
-					break;
-				case "boolean":
-					if (typeof value === "boolean") {
-						displayValue = value ? t("yes") : t("no");
-					}
-					break;
-				case "text":
-				default:
-					displayValue = String(value);
-					break;
-			}
+		if (hasDisplayValue(value)) {
+			displayValue = formatFieldValue(value, {
+				valueType: fieldConfig.valueType,
+				enumKey: fieldConfig.enumKey,
+				tEnum,
+				tCommon: t,
+			});
 		}
 
 		return (
