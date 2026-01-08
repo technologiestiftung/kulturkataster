@@ -16,7 +16,7 @@ import InfoCircle from "@/icons/info-circle.svg";
 import { SubMenuOption } from "@/components/Menu/SubMenuOption";
 import MapIcon from "@/icons/map-02.svg";
 import ListIcon from "@/icons/list.svg";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { getModalLink } from "@/lib/utils/modalRouting";
 
@@ -32,17 +32,23 @@ export function MobileMenuModal() {
 	const { setViewMode } = useAppStore();
 
 	const router = useRouter();
+	const pathname = usePathname();
+	const isOpen = pathname?.includes("/mobileMenu");
+
+	const closeModal = () => {
+		if (typeof window !== "undefined" && window.history.length > 1) {
+			router.back();
+		} else {
+			router.push("/");
+		}
+	};
 
 	return (
 		<Dialog
-			open
+			open={!!isOpen}
 			onOpenChange={(open) => {
 				if (!open) {
-					if (typeof window !== "undefined" && window.history.length > 1) {
-						router.back();
-					} else {
-						router.push("/");
-					}
+					closeModal();
 				}
 			}}
 		>
@@ -64,7 +70,7 @@ export function MobileMenuModal() {
 						/>
 					</button>
 					<button
-						onClick={() => router.back()}
+						onClick={closeModal}
 						className="flex items-center justify-center w-14 h-14 rounded-full bg-muted hover:bg-muted/80 transition-colors"
 						aria-label={t("close")}
 					>
