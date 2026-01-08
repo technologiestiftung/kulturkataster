@@ -1485,6 +1485,62 @@
 			}
 		},
 		{
+			"id": "Bruecke_Fussgaengerzone_Gemeindestr_Sonstige_Str_Decker",
+			"type": "line",
+			"source": "smarttiles_de",
+			"source-layer": "Verkehrslinie",
+			"minzoom": 12,
+			"maxzoom": 22,
+			"filter": [
+				"all",
+				[
+					"in",
+					"klasse",
+					"Gemeindestraße",
+					"Nicht öffentliche Straße",
+					"Sonstige öffentliche Straße"
+				],
+				["!has", "fahrbahn"],
+				[
+					"in",
+					"bauwerk",
+					"Brücke",
+					"Drehbrücke",
+					"Hebebrücke",
+					"Bogenbrücke",
+					"Fachwerkbrücke",
+					"Hochbahn, Hochstraße",
+					"Hängebrücke",
+					"Mehrstöckige Brücke",
+					"Pontonbrücke",
+					"Zugbrücke",
+					"Staudamm",
+					"Staumauer",
+					"Sperrwerk"
+				],
+				["==", "funktion", "Fußgängerzone"]
+			],
+			"layout": { "visibility": "visible", "line-cap": "round" },
+			"paint": {
+				"line-color": "rgb(238,238,238)",
+				"line-opacity": {
+					"stops": [
+						[12, 0.5],
+						[13, 1]
+					]
+				},
+				"line-width": {
+					"stops": [
+						[12, 0.8],
+						[13, 2],
+						[14, 3],
+						[16, 6],
+						[20, 18]
+					]
+				}
+			}
+		},
+		{
 			"id": "Tunnel_Strasse",
 			"type": "line",
 			"source": "smarttiles_de",
