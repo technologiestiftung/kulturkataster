@@ -3,6 +3,7 @@
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { ModalFooter } from "./ModalFooter";
 import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 interface PageModalProps {
 	title: string;
@@ -26,6 +27,7 @@ export function PageModal({
 	hideBackIcon,
 	hideLinksInModalFooter,
 }: PageModalProps) {
+	const router = useRouter();
 	useEffect(() => {
 		const checkForHashAndScroll = () => {
 			const hash = window.location.hash;
@@ -40,8 +42,17 @@ export function PageModal({
 			checkForHashAndScroll();
 		}, 500);
 	}, []);
+
+	const handleClose = () => {
+		if (typeof window !== "undefined" && window.history.length > 1) {
+			router.back();
+			return;
+		}
+		router.push("/");
+	};
+
 	return (
-		<Dialog open>
+		<Dialog open onOpenChange={(open) => (!open ? handleClose() : undefined)}>
 			<DialogContent
 				variant={variant}
 				className="flex flex-col gap-4 items-start space-y-4"
