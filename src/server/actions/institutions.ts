@@ -58,7 +58,7 @@ export async function getDistricts(): Promise<string[]> {
 	const ctx = await getAccessContextForUser(currentUserId);
 	throwIfUnauthorized({
 		context: ctx,
-		resource: "districts",
+		resource: "addresses",
 		action: "read",
 	});
 
