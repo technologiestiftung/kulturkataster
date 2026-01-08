@@ -41,7 +41,17 @@ const ListView: FC = () => {
 
 	const institutionsList = useMemo(() => {
 		if (!institutions) return [];
-		return institutions;
+		return [...institutions].sort((a, b) => {
+			const nameA = a?.name ?? "";
+			const nameB = b?.name ?? "";
+			const byName = nameA.localeCompare(nameB, "de", {
+				sensitivity: "base",
+			});
+			if (byName !== 0) return byName;
+			return String(a?.id ?? "").localeCompare(String(b?.id ?? ""), "de", {
+				numeric: true,
+			});
+		});
 	}, [institutions]);
 
 	const visibleInstitutions = useMemo(() => {
