@@ -3,7 +3,7 @@
 import {
 	getCategoriesWithSubcategories,
 	getDistricts,
-} from "@/lib/serverActions/institutions";
+} from "@/server/actions/institutions";
 import { Category, District } from "@/types";
 import { useCallback, useEffect, useState } from "react";
 export const useFilterData = () => {
