@@ -73,6 +73,7 @@ export function MobileMenuModal() {
 						onClick={closeModal}
 						className="flex items-center justify-center w-14 h-14 rounded-full bg-muted hover:bg-muted/80 transition-colors"
 						aria-label={t("close")}
+						data-testid="mobile-menu-close"
 					>
 						<Close className="w-6 h-6" />
 					</button>
