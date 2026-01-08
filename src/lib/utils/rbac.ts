@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/server/prisma";
 import { FieldAction, FieldPermission, Role } from "@/generated/prisma";
 
 type RoleWithPermissions = Role & { field_permissions: FieldPermission[] };
