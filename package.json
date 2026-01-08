@@ -7,6 +7,8 @@
 		"build": "prisma generate && next build",
 		"start": "next start",
 		"test:e2e": "playwright test",
+		"test:unit": "vitest run",
+		"test:unit:watch": "vitest",
 		"lint": "eslint .",
 		"prepare": "husky",
 		"format": "prettier --check './**/*.{js,jsx,ts,tsx,css,md,json}' --config ./.prettierrc",
@@ -74,6 +76,7 @@
 		"@types/proj4": "^2.19.0",
 		"@types/react": "^19",
 		"@types/react-dom": "^19",
+		"@vitest/coverage-v8": "^4.0.16",
 		"dotenv": "^17.2.3",
 		"eslint": "^9",
 		"eslint-config-next": "16.0.2",
@@ -84,6 +87,7 @@
 		"tailwindcss": "^4.0.14",
 		"ts-node": "^10.9.2",
 		"tsx": "^4.20.6",
-		"typescript": "^5.9.3"
+		"typescript": "^5.9.3",
+		"vitest": "^4.0.16"
 	}
 }
