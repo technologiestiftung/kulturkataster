@@ -44,10 +44,6 @@ export const CategoryKeys = {
 
 export type CategoryType = string;
 
-export interface ParentOrganization {
-	name?: string | null;
-}
-
 export type Institution = PrismaInstitutionWithRelations;
 
 export interface GeoFeature {
