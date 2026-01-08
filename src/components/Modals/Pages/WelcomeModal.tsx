@@ -11,7 +11,7 @@ import { useTranslation } from "react-i18next";
 import { ModalFooter } from "../ModalFooter";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { normalizeModalRoutingUrl } from "@/lib/utils/sanitizerUtils";
+import { getModalLink } from "@/lib/utils/modalRouting";
 import { useAppStore } from "@/lib/store/appStore";
 
 export function WelcomeModal() {
@@ -137,8 +137,8 @@ export function WelcomeModal() {
 								<li key={item.id}>
 									<Link
 										className="body2 font-bold select-none"
-										href={normalizeModalRoutingUrl(item.id).url}
-										target={normalizeModalRoutingUrl(item.id).target}
+										href={getModalLink(item.id).url}
+										target={getModalLink(item.id).target}
 										rel="noopener noreferrer"
 									>
 										{t(`footer.${item.id}`)}

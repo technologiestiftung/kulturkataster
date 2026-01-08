@@ -1,7 +1,7 @@
 "use client";
 
 import { useIsMobile } from "@/hooks/use-mobile";
-import { normalizeModalRoutingUrl } from "@/lib/utils/sanitizerUtils";
+import { getModalLink } from "@/lib/utils/modalRouting";
 import KRBLogo from "@/logos/KRB.svg";
 import KukaLargeLogo from "@/logos/kuka-large.svg";
 import KukaSmallLogo from "@/logos/kuka-small.svg";
@@ -70,8 +70,8 @@ export function ModalFooter({ hideLinks }: ModalFooterProps) {
 										<Link
 											key={item.id}
 											className="body2 font-bold select-none"
-											href={normalizeModalRoutingUrl(item.id).url}
-											target={normalizeModalRoutingUrl(item.id).target}
+											href={getModalLink(item.id).url}
+											target={getModalLink(item.id).target}
 											rel="noopener noreferrer"
 										>
 											{item.id === "signLanguageInformationShort" && isMobile
