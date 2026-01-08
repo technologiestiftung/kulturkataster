@@ -34,7 +34,18 @@ export function MobileMenuModal() {
 	const router = useRouter();
 
 	return (
-		<Dialog open>
+		<Dialog
+			open
+			onOpenChange={(open) => {
+				if (!open) {
+					if (typeof window !== "undefined" && window.history.length > 1) {
+						router.back();
+					} else {
+						router.push("/");
+					}
+				}
+			}}
+		>
 			<DialogContent
 				variant="mobileMenu"
 				className="flex flex-col flex-1 bg-sidebar justify-between"
@@ -53,7 +64,7 @@ export function MobileMenuModal() {
 						/>
 					</button>
 					<button
-						onClick={() => router.push("/")}
+						onClick={() => router.back()}
 						className="flex items-center justify-center w-14 h-14 rounded-full bg-muted hover:bg-muted/80 transition-colors"
 						aria-label={t("close")}
 					>
