@@ -1,6 +1,6 @@
 "use server";
 
-import { searchInstitutions } from "@/lib/serverActions/institutions";
+import { searchInstitutions } from "@/server/actions/institutions";
 import { Institution, GeoFeature, SearchResult } from "@/types/institution";
 
 interface SearchLocationsResult {

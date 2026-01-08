@@ -1,7 +1,7 @@
 import {
 	getCategoriesWithSubcategories,
 	getInstitutions,
-} from "@/lib/serverActions/institutions";
+} from "@/server/actions/institutions";
 import { Institution, InstitutionStoreState } from "@/types";
 import { create } from "zustand";
 import { devtools, subscribeWithSelector } from "zustand/middleware";
