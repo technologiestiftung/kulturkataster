@@ -112,7 +112,7 @@
 	--color-destructive-foreground: var(--white);
 
 	--color-border: var(--neutral-20);
-	--color-input: var(--neutral-20);
+	--color-input: var(--neutral-40);
 	--color-ring: var(--interaction-dark);
 
 	--color-chart-1: var(--fachfarben-yellow);
