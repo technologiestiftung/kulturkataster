@@ -88,7 +88,7 @@ export const organizationInfoConfig: DynamicInfoBlockConfig = {
 		{
 			dataPath: "source",
 			labelKey: "institution.source",
-			valueType: "nested",
+			valueType: "text",
 		},
 	],
 };
@@ -117,7 +117,7 @@ export const facilityInfoConfig: DynamicInfoBlockConfig = {
 			valueType: "text",
 		},
 		{
-			dataPath: "rooms_count",
+			dataPath: "number_of_rooms",
 			labelKey: "institution.workspaceCount",
 			valueType: "text",
 		},
@@ -126,6 +126,11 @@ export const facilityInfoConfig: DynamicInfoBlockConfig = {
 			labelKey: "institution.description",
 			valueType: "text",
 			condition: (data) => !!(data.shared_use_allowed && data.shared_use_info),
+		},
+		{
+			dataPath: "shared_use_allowed",
+			labelKey: "institution.sharedUseAllowed",
+			valueType: "boolean",
 		},
 		{
 			dataPath: "shared_use_audience",
@@ -168,6 +173,11 @@ export const additionalInfoConfig: DynamicInfoBlockConfig = {
 			dataPath: "notes",
 			labelKey: "institution.notes",
 			valueType: "text",
+		},
+		{
+			dataPath: "updated_at",
+			labelKey: "institution.updatedAt",
+			valueType: "date",
 		},
 		{
 			dataPath: "external_id",
