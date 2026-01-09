@@ -20,3 +20,5 @@ export {
 	statusInfoConfig,
 	additionalInfoConfig,
 } from "./DynamicInfoBlock";
+
+export { InstitutionsTable } from "./InstitutionsTable";
