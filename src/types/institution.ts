@@ -5,6 +5,7 @@ export type PrismaInstitutionWithRelations = Prisma.InstitutionGetPayload<{
 	include: {
 		address: true;
 		categories: true;
+		contact_person: true;
 		tags: true;
 		users: true;
 	};

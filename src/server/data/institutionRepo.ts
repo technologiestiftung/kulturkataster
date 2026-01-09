@@ -4,6 +4,7 @@ import { Prisma } from "@/generated/prisma";
 const institutionInclude = {
 	address: true,
 	categories: true,
+	contact_person: true,
 	tags: true,
 	users: true,
 } as const;
