@@ -16,7 +16,7 @@ import ContextMapIcon from "@/icons/fachkarten.svg";
 import { useAppStore } from "@/lib/store/appStore";
 import { useMapStore } from "@/lib/store/mapStore";
 import { ManagedLayer } from "@/types";
-import { X } from "lucide-react";
+import X from "@/icons/x.svg";
 import Image from "next/image";
 import {
 	FC,
@@ -402,7 +402,7 @@ const LayerTree: FC = () => {
 						onClick={handleClose}
 						aria-label={t("map.closeLayerTree")}
 					>
-						<X className="w-4 h-4" aria-hidden="true" focusable="false" />
+						<X className="size-4" aria-hidden="true" focusable="false" />
 					</Button>
 				</div>
 			</CardHeader>
