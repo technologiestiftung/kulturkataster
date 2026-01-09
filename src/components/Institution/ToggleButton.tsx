@@ -1,7 +1,8 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import ChevronDown from "@/icons/chevron-down.svg";
+import ChevronUp from "@/icons/chevron-up.svg";
 import { useTranslation } from "react-i18next";
 
 interface ToggleButtonProps {
@@ -30,9 +31,13 @@ export function ToggleButton({
 				className={`text-primary-dark hover:text-primary-dark ${className}`}
 			>
 				{showMore ? (
-					<ChevronUp size={16} aria-hidden="true" focusable="false" />
+					<ChevronUp className="size-4" aria-hidden="true" focusable="false" />
 				) : (
-					<ChevronDown size={16} aria-hidden="true" focusable="false" />
+					<ChevronDown
+						className="size-4"
+						aria-hidden="true"
+						focusable="false"
+					/>
 				)}
 				<span className="body2">
 					{showMore ? t("institution.lessInfo") : t("institution.moreInfo")}

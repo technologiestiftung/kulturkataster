@@ -16,7 +16,7 @@ import {
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Loading } from "@/components/ui/loading";
-import { ArrowUp } from "lucide-react";
+import ArrowNarrowUp from "@/icons/arrow-narrow-up.svg";
 import TextWithLinks from "../Content/TextWithLinks";
 
 const ITEMS_PER_PAGE = 20;
@@ -240,7 +240,11 @@ const ListView: FC = () => {
 								className="cursor-pointer"
 								aria-label={t("listView.scrollToTop")}
 							>
-								<ArrowUp size={20} aria-hidden="true" focusable="false" />
+								<ArrowNarrowUp
+									className="size-6"
+									aria-hidden="true"
+									focusable="false"
+								/>
 							</Button>
 						</TooltipTrigger>
 						<TooltipContent>

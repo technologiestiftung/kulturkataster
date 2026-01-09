@@ -3,8 +3,7 @@
 import * as React from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { cva, type VariantProps } from "class-variance-authority";
-import { X } from "lucide-react";
-
+import X from "@/icons/x.svg";
 import { cn } from "@/lib/utils";
 
 const ResponsiveModal = DialogPrimitive.Root;
