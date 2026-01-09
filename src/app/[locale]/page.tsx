@@ -2,30 +2,16 @@
 
 import ListView from "@/components/ListView/ListView";
 import { useAppStore } from "@/lib/store/appStore";
-import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
 export default function Home() {
 	const { t } = useTranslation("common");
-	const { viewMode } = useAppStore();
+	const viewMode = useAppStore((state) => state.viewMode);
+
 	const router = useRouter();
 	const pathname = usePathname();
-	const initializeInstitutions = useInstitutionStore(
-		(state) => state.initializeInstitutions,
-	);
-	const initializeCategories = useInstitutionStore(
-		(state) => state.initializeCategories,
-	);
-
-	useEffect(() => {
-		initializeCategories();
-	}, [initializeCategories]);
-
-	useEffect(() => {
-		initializeInstitutions();
-	}, [initializeInstitutions]);
 
 	useEffect(() => {
 		const firstTimeUser = useAppStore.getState().firstTimeUser;
