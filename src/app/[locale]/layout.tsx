@@ -11,6 +11,7 @@ import type { Metadata } from "next";
 import { Barlow } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
+import { StoreInitializer } from "@/components/StoreInitializer";
 
 // Initialize axe-core for accessibility testing in development
 // Commented out until @axe-core/react is installed
@@ -98,6 +99,7 @@ export default async function RootLayout({
 			<body className={`${barlow.className} antialiased`}>
 				<I18NProvider locale={locale} namespaces={ns} resources={resources}>
 					<AppPersistenceProvider />
+					<StoreInitializer />
 					<a
 						href="#main-content"
 						className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-4 focus:left-4 focus:bg-background focus:text-foreground focus:px-4 focus:py-2 focus:rounded-md focus:shadow-lg tab-ring"
