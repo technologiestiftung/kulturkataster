@@ -4,8 +4,8 @@ import { Button } from "./button";
 import Edit from "@/icons/edit.svg";
 
 import { cn } from "@/lib/utils";
-import { ArrowLeft, ArrowRight } from "lucide-react";
-
+import ArrowNarrowLeft from "@/icons/arrow-narrow-left.svg";
+import ArrowNarrowRight from "@/icons/arrow-narrow-right.svg";
 type StickyScrollDirection = "left" | "right";
 
 interface StickyTableContextValue {
@@ -228,7 +228,7 @@ const StickyActionsHead = React.forwardRef<
 						}}
 						aria-label="Scroll left"
 					>
-						<ArrowLeft className="text-primary-dark" />
+						<ArrowNarrowLeft className="text-primary-dark size-4" />
 					</button>
 					<button
 						type="button"
@@ -238,7 +238,7 @@ const StickyActionsHead = React.forwardRef<
 						}}
 						aria-label="Scroll right"
 					>
-						<ArrowRight className="text-primary-dark" />
+						<ArrowNarrowRight className="text-primary-dark size-4" />
 					</button>
 				</div>
 			) : null}

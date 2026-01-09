@@ -4,8 +4,8 @@ import { ButtonWithTooltip } from "@/components/ui/button";
 import { useMapStore } from "@/lib/store/mapStore";
 import { FC, ReactNode, useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import MinusIcon from "../../../../icons/minus.svg";
-import PlusIcon from "../../../../icons/plus.svg";
+import MinusIcon from "@/icons/minus.svg";
+import PlusIcon from "@/icons/plus.svg";
 
 interface ZoomControlProps {
 	zoomInIcon?: ReactNode;
@@ -13,8 +13,8 @@ interface ZoomControlProps {
 }
 
 const ZoomControl: FC<ZoomControlProps> = ({
-	zoomInIcon = <PlusIcon />,
-	zoomOutIcon = <MinusIcon />,
+	zoomInIcon = <PlusIcon className="size-4" />,
+	zoomOutIcon = <MinusIcon className="size-4" />,
 }) => {
 	const { t } = useTranslation("common");
 	const map = useMapStore((state) => state.map);
