@@ -9,7 +9,10 @@ import {
 } from "@/components/ui/collapsible";
 import { getCategoryIconComponent } from "@/lib/utils/iconUtils";
 import { CategoryType, Category } from "@/types";
-import { ChevronDown, ChevronUp, Minus } from "lucide-react";
+import Minus from "@/icons/minus.svg";
+import ChevronDown from "@/icons/chevron-down.svg";
+import ChevronUp from "@/icons/chevron-down.svg";
+
 import { useTranslation } from "react-i18next";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { getSortedSubcategories } from "@/lib/utils/filterUtils";
@@ -77,9 +80,17 @@ export function CategorySection({
 				<CollapsibleTrigger asChild>
 					<button className="flex items-center gap-2 w-full">
 						{isOpen ? (
-							<ChevronUp size={16} aria-hidden="true" focusable="false" />
+							<ChevronUp
+								className="size-4"
+								aria-hidden="true"
+								focusable="false"
+							/>
 						) : (
-							<ChevronDown size={16} aria-hidden="true" focusable="false" />
+							<ChevronDown
+								className="size-4"
+								aria-hidden="true"
+								focusable="false"
+							/>
 						)}
 						<div className="w-6 h-6">
 							<IconComponent aria-hidden="true" focusable="false" />
