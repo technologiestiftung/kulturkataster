@@ -10,10 +10,22 @@ const institutionInclude = {
 
 export const institutionRepo = {
 	list: () => prisma.institution.findMany({ include: institutionInclude }),
+	listWithSelect: (select: Prisma.InstitutionSelect) =>
+		prisma.institution.findMany({ select }),
 	search: (where: Prisma.InstitutionWhereInput, take = 50) =>
 		prisma.institution.findMany({
 			where,
-			include: institutionInclude,
+			take,
+			orderBy: { id: "asc" },
+		}),
+	searchWithSelect: (
+		where: Prisma.InstitutionWhereInput,
+		select: Prisma.InstitutionSelect,
+		take = 50,
+	) =>
+		prisma.institution.findMany({
+			where,
+			select,
 			take,
 			orderBy: { id: "asc" },
 		}),
