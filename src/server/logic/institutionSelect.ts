@@ -49,8 +49,10 @@ export const buildInstitutionSelect = (
 		return null;
 	}
 	const select = { id: true } as Prisma.InstitutionSelect;
-	const mutableSelect: Record<string, unknown> =
-		select as Record<string, unknown>;
+	const mutableSelect: Record<string, unknown> = select as Record<
+		string,
+		unknown
+	>;
 
 	for (const field of allowedFields) {
 		const [maybeRelation, ...rest] = field.split(".");
