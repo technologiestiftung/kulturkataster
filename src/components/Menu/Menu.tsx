@@ -31,10 +31,8 @@ import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useMapStore } from "@/lib/store/mapStore";
 import { useModalStore } from "@/lib/store/modalStore";
 import { getFilterCount, hasActiveFilters } from "@/lib/utils/filterUtils";
-import {
-	animateMapToCoordinates,
-	parseLatLongCoordinates,
-} from "@/lib/utils/mapUtils";
+import { animateMapToCoordinates } from "@/lib/utils/mapUtils";
+import { getCoordinatesFromAddress } from "@/lib/utils/institutionUtils";
 import { fromLonLat } from "ol/proj";
 import KukaSmallLogo from "@/logos/kuka-small.svg";
 import { useEffect, useState } from "react";
@@ -81,10 +79,8 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 		(state) => state.setSelectedInstitutionId,
 	);
 	const filters = useInstitutionStore((state) => state.filters);
-	const originalInstitutions = useInstitutionStore(
-		(state) => state.allInstitutions,
-	);
-	const institutions = useInstitutionStore(
+	const institutions = useInstitutionStore((state) => state.allInstitutions);
+	const filteredInstitutions = useInstitutionStore(
 		(state) => state.filteredInstitutions,
 	);
 	const { firstTimeUser, setFirstTimeUser, viewMode, setViewMode } =
@@ -247,8 +243,12 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 		if (activeItem === "institution-detail") {
 			return 1;
 		}
-		if (activeItem === "filter" && institutions && hasActiveFilters(filters)) {
-			return institutions.features.length;
+		if (
+			activeItem === "filter" &&
+			filteredInstitutions &&
+			hasActiveFilters(filters)
+		) {
+			return filteredInstitutions.length;
 		}
 		return null;
 	};
@@ -257,30 +257,17 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 		// Get map directly from store to ensure we have the latest instance
 		const currentMap = useMapStore.getState().map;
 
-		if (
-			!selectedInstitutionId ||
-			!currentMap ||
-			!originalInstitutions?.features
-		)
-			return;
+		if (!selectedInstitutionId || !currentMap || !institutions) return;
 
-		const institution = originalInstitutions.features.find(
-			(feature) => feature.properties?.id === selectedInstitutionId,
+		const institution = institutions.find(
+			(institution) => institution?.id === selectedInstitutionId,
 		);
 
-		if (!institution) return;
+		if (!institution || !institution.address) return;
 
-		let coordinates: [number, number] | null = null;
-
-		if (
-			institution.geometry?.type === "Point" &&
-			institution.geometry.coordinates
-		) {
-			const [lng, lat] = institution.geometry.coordinates;
-			coordinates = [lng, lat];
-		} else if (institution.properties?.latlong) {
-			coordinates = parseLatLongCoordinates(institution.properties.latlong);
-		}
+		let coordinates: [number, number] | null = getCoordinatesFromAddress(
+			institution.address,
+		);
 
 		if (coordinates) {
 			const transformedCoords = fromLonLat(coordinates);
@@ -453,11 +440,6 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 												<div
 													aria-hidden={viewMode === "list"}
 													tabIndex={viewMode === "list" ? -1 : undefined}
-													className={
-														viewMode === "list"
-															? "pointer-events-none"
-															: undefined
-													}
 												>
 													<InstitutionDetailContent />
 												</div>
@@ -554,7 +536,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 					</div>
 
 					<Button
-						variant="map-icon"
+						variant="rounded"
 						size="icon-only"
 						title={t("mobileMenu.title")}
 						onClick={() => setMobileMenuModalOpen(true)}

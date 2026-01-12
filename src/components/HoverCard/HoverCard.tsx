@@ -77,7 +77,8 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 										<div className="pl-8">
 											{featureProperties.subcategories
 												.filter(
-													(sub: Subcategory) => sub.category_id === category.id,
+													(subcategory: Subcategory) =>
+														subcategory.parent_category_id === category.id,
 												)
 												.map((subcategory: Subcategory, index: number) => (
 													<span key={subcategory.id} className="text-base">

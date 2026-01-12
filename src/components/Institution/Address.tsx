@@ -4,31 +4,32 @@ import { Institution } from "@/types";
 import { useTranslation } from "react-i18next";
 
 interface InstitutionAddressProps {
-	institutionData: Institution;
+	institution: Institution;
 }
 
-export function Address({ institutionData }: InstitutionAddressProps) {
+export function Address({ institution }: InstitutionAddressProps) {
 	const { t: tEnum } = useTranslation("enumMap");
+	const cityName = institution.address?.city;
+	const districtKey = institution.address?.district;
 
 	return (
 		<address className="not-italic">
-			<p className="body1">{institutionData.name}</p>
-			{institutionData.address_suffix && (
-				<p className="body1">{institutionData.address_suffix}</p>
+			<p className="body1">{institution.name}</p>
+			{institution.address?.address_suffix && (
+				<p className="body1">{institution.address.address_suffix}</p>
 			)}
-			{institutionData.street &&
-				institutionData.street_number &&
-				institutionData.zip_code && (
+			{institution.address?.street &&
+				institution.address.street_number &&
+				institution.address.zipcode && (
 					<div className="body1">
 						<p>
-							{`${institutionData.street.trim()} ${institutionData.street_number.trim()}`}
+							{`${institution.address.street.trim()} ${institution.address.street_number.trim()}`}
 						</p>
 						<div className="flex flex-wrap space-x-1">
-							<p>{institutionData.zip_code}</p>
-							{institutionData?.city?.name && institutionData.district.key && (
+							<p>{institution.address.zipcode}</p>
+							{cityName && districtKey && (
 								<p>
-									{institutionData.city.name}-
-									{tEnum(`berlin_district.${institutionData.district.key}`)}
+									{cityName}-{tEnum(`${districtKey}`)}
 								</p>
 							)}
 						</div>

@@ -3,27 +3,50 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-	Address,
-	Contact,
-	OrganizationInfo,
-	FundingInfo,
-	FacilityInfo,
-	StatusInfo,
 	ToggleButton,
-	AdditionalInfo,
+	DynamicInfoBlock,
+	organizationInfoConfig,
+	fundingInfoConfig,
+	facilityInfoConfig,
+	statusInfoConfig,
+	additionalInfoConfig,
+	contactInfoConfig,
+	InfoFieldConfig,
 } from "@/components/Institution";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useMapStore } from "@/lib/store/mapStore";
 import { getCategoryIconComponent } from "@/lib/utils/iconUtils";
+import { animateMapToCoordinates } from "@/lib/utils/mapUtils";
 import {
-	parseLatLongCoordinates,
-	animateMapToCoordinates,
-} from "@/lib/utils/mapUtils";
+	getParentCategories,
+	getSubcategoriesForCategory,
+	getCoordinatesFromAddress,
+} from "@/lib/utils/institutionUtils";
 import { fromLonLat } from "ol/proj";
 import { Category, Institution } from "@/types";
-import { Feature, Geometry, GeoJsonProperties } from "geojson";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Address } from "@/components/Institution/Address";
+import { InstitutionDetailSkeleton } from "./InstitutionDetailSkeleton";
+
+const getNestedValue = (
+	obj: Record<string, unknown>,
+	path: string,
+): unknown => {
+	return path.split(".").reduce((current, key) => {
+		if (current && typeof current === "object") {
+			return (current as Record<string, unknown>)[key];
+		}
+		return undefined;
+	}, obj as unknown);
+};
+
+const hasValue = (value: unknown): boolean => {
+	if (value === null || value === undefined || value === "") return false;
+	if (typeof value === "object" && Object.keys(value).length === 0)
+		return false;
+	return true;
+};
 
 // Header component
 function InstitutionHeader({
@@ -45,7 +68,7 @@ function InstitutionHeader({
 			onClick={onCenterMap}
 		>
 			<p className="body2 p-4 pb-0">
-				{institutionData.parent_organizations?.[0]?.name || ""}
+				{institutionData.parent_organization || ""}
 			</p>
 			<CardTitle className="px-4 max-w-full overflow-hidden">
 				<h1 id="institution-title" className="h1 wrap-anywhere">
@@ -53,10 +76,14 @@ function InstitutionHeader({
 				</h1>
 			</CardTitle>
 
-			{institutionData.categories?.length > 0 && (
+			{getParentCategories(institutionData).length > 0 && (
 				<section className="px-4">
-					{institutionData.categories.map((category: Category) => {
+					{getParentCategories(institutionData).map((category: Category) => {
 						const IconComponent = getCategoryIconComponent(category.key);
+						const subcategories = getSubcategoriesForCategory(
+							institutionData,
+							category.id,
+						);
 						return (
 							<div key={category.id} className="mb-2">
 								<div className="flex items-center gap-2 h-6">
@@ -67,16 +94,14 @@ function InstitutionHeader({
 										{tEnum(`category.${category.key}`)}
 									</strong>
 								</div>
-								{institutionData.subcategories?.length > 0 && (
+								{subcategories.length > 0 && (
 									<div className="body2 pl-8">
-										{institutionData.subcategories
-											.filter((sub) => sub.category_id === category.id)
-											.map((subcategory, index) => (
-												<span key={subcategory.id}>
-													{index > 0 && ", "}
-													{tEnum(`subcategory.${subcategory.key}`)}
-												</span>
-											))}
+										{subcategories.map((subcategory, index) => (
+											<span key={subcategory.id}>
+												{index > 0 && ", "}
+												{tEnum(`subcategory.${subcategory.key}`)}
+											</span>
+										))}
 									</div>
 								)}
 							</div>
@@ -114,6 +139,31 @@ function InstitutionCard({
 	onCenterMap?: () => void;
 }) {
 	const [showMore, setShowMore] = useState(false);
+	const hasFieldValue = (field: InfoFieldConfig) => {
+		if (field.condition && !field.condition(institutionData)) {
+			return false;
+		}
+
+		const value = getNestedValue(
+			institutionData as unknown as Record<string, unknown>,
+			field.dataPath,
+		);
+		return hasValue(value);
+	};
+
+	const hasExtendedInfo = () => {
+		const configs = [
+			organizationInfoConfig,
+			fundingInfoConfig,
+			facilityInfoConfig,
+			statusInfoConfig,
+			additionalInfoConfig,
+		];
+
+		return configs.some((config) =>
+			config.fields.some((field) => hasFieldValue(field)),
+		);
+	};
 
 	return (
 		<Card className="w-full rounded-lg overflow-hidden border-none">
@@ -124,24 +174,41 @@ function InstitutionCard({
 
 			<CardContent className="p-4 space-y-4">
 				<div className="space-y-4 flex flex-col">
-					<Address institutionData={institutionData} />
-					<Contact institutionData={institutionData} />
+					<Address institution={institutionData} />
+					<DynamicInfoBlock
+						institutionData={institutionData}
+						config={contactInfoConfig}
+					/>
 				</div>
 
 				{showMore && (
 					<div className="space-y-4">
-						<OrganizationInfo institutionData={institutionData} />
-						<FundingInfo institutionData={institutionData} />
-						<FacilityInfo institutionData={institutionData} />
-						<StatusInfo institutionData={institutionData} />
-						<AdditionalInfo institutionData={institutionData} />
+						<DynamicInfoBlock
+							institutionData={institutionData}
+							config={organizationInfoConfig}
+						/>
+						<DynamicInfoBlock
+							institutionData={institutionData}
+							config={fundingInfoConfig}
+						/>
+						<DynamicInfoBlock
+							institutionData={institutionData}
+							config={facilityInfoConfig}
+						/>
+						<DynamicInfoBlock
+							institutionData={institutionData}
+							config={statusInfoConfig}
+						/>
+						<DynamicInfoBlock
+							institutionData={institutionData}
+							config={additionalInfoConfig}
+						/>
 					</div>
 				)}
-
 				<ToggleButton
 					showMore={showMore}
 					onClick={() => setShowMore(!showMore)}
-					hasInfo={true}
+					hasInfo={hasExtendedInfo()}
 				/>
 			</CardContent>
 		</Card>
@@ -164,41 +231,22 @@ export function InstitutionDetailContent() {
 	);
 	const [loading, setLoading] = useState(false);
 
-	const findInstitutionFeature = (id: number) => {
-		return institutions?.features.find(
-			(feature) => feature.properties?.id === id,
-		);
-	};
-
-	const extractCoordinatesFromInstitution = (
-		institution: Feature<Geometry, GeoJsonProperties>,
-	): [number, number] | null => {
-		if (
-			institution.geometry?.type === "Point" &&
-			institution.geometry.coordinates
-		) {
-			const [lng, lat] = institution.geometry.coordinates;
-			return [lng, lat];
-		}
-
-		if (institution.properties?.latlong) {
-			return parseLatLongCoordinates(institution.properties.latlong);
-		}
-
-		return null;
+	const findInstitution = (id: number | string) => {
+		const numericId = typeof id === "string" ? Number(id) : id;
+		return institutions?.find((institution) => institution.id === numericId);
 	};
 
 	const centerMapToInstitution = () => {
 		if (!institutionData || !map) {
 			return;
 		}
-
-		const institution = findInstitutionFeature(institutionData.id);
-		if (!institution) return;
-
-		const coordinates = extractCoordinatesFromInstitution(institution);
-		if (coordinates) {
-			const transformedCoords = fromLonLat(coordinates);
+		const institution = findInstitution(institutionData.id);
+		if (!institution || !institution.address) {
+			return;
+		}
+		const address = getCoordinatesFromAddress(institution.address);
+		if (address) {
+			const transformedCoords = fromLonLat(address);
 			animateMapToCoordinates(map, transformedCoords);
 		}
 	};
@@ -212,10 +260,15 @@ export function InstitutionDetailContent() {
 		const fetchInstitutionData = async () => {
 			try {
 				setLoading(true);
-				const institution = institutions?.features.find(
-					(feature) => feature.properties?.id === selectedInstitutionId,
+				const normalizedId =
+					typeof selectedInstitutionId === "string"
+						? Number(selectedInstitutionId)
+						: selectedInstitutionId;
+				setInstitutionData(
+					(institutions?.find(
+						(institution) => institution.id === normalizedId,
+					) as Institution) || null,
 				);
-				setInstitutionData((institution?.properties as Institution) || null);
 			} catch (error) {
 				console.error("Failed to fetch institution data:", error);
 				setInstitutionData(null);
@@ -232,15 +285,7 @@ export function InstitutionDetailContent() {
 	if (!selectedInstitutionId) return null;
 
 	if (loading) {
-		return (
-			<div className="p-6">
-				<div className="animate-pulse space-y-4">
-					<div className="h-4 bg-gray-200 rounded w-3/4"></div>
-					<div className="h-3 bg-gray-200 rounded w-1/2"></div>
-					<div className="h-3 bg-gray-200 rounded w-2/3"></div>
-				</div>
-			</div>
-		);
+		return <InstitutionDetailSkeleton />;
 	}
 
 	if (!institutionData) {

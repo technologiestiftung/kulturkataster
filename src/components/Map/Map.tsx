@@ -21,8 +21,8 @@ const LazyOlMap = dynamic(() => import("./OlMap/OlMap"), {
 });
 
 const Map: FC = () => {
-	const institutions = useInstitutionStore(
-		(state) => state.filteredInstitutions,
+	const filteredInstitutionsGeoJSON = useInstitutionStore(
+		(state) => state.filteredInstitutionsGeoJSON,
 	);
 
 	return (
@@ -32,7 +32,9 @@ const Map: FC = () => {
 			<LazyOlMap>
 				<LayerInitializer />
 				<Layers>
-					{institutions && <InstitutionLayer institutionsData={institutions} />}
+					{filteredInstitutionsGeoJSON && (
+						<InstitutionLayer institutions={filteredInstitutionsGeoJSON} />
+					)}
 				</Layers>
 
 				<MapControls>
