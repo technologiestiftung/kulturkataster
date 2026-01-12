@@ -5,13 +5,7 @@ import { PageModal } from "../PageModal";
 import TextWithLinks from "@/components/Content/TextWithLinks";
 import ArrowNarrowRight from "@/icons/arrow-narrow-right.svg";
 
-interface DownloadModalProps {
-	open: boolean;
-	onOpenChange: (open: boolean) => void;
-	mode?: "all" | "filtered" | "selected";
-}
-
-export function DownloadModal({ open, onOpenChange }: DownloadModalProps) {
+export function DownloadModal() {
 	const { t } = useTranslation(["content", "common", "enumMap"]);
 
 	const content = (
@@ -27,8 +21,6 @@ export function DownloadModal({ open, onOpenChange }: DownloadModalProps) {
 
 	return (
 		<PageModal
-			open={open}
-			onOpenChange={onOpenChange}
 			title={t("downloadModal.title", { ns: "content" })}
 			content={content}
 			variant="medium"

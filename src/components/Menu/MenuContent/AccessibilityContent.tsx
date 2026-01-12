@@ -6,13 +6,9 @@ import FontSize from "@/icons/font-size.svg";
 import List from "@/icons/list.svg";
 import Contrast from "@/icons/contrast.svg";
 import { useAppStore } from "@/lib/store/appStore";
-import { useModalStore } from "@/lib/store/modalStore";
+import { getModalLink } from "@/lib/utils/modalRouting";
+import { useRouter } from "next/navigation";
 import { SubMenuOption } from "../SubMenuOption";
-
-interface AccessibilityContentProps {
-	onItemClick?: (itemName: string) => void; // Made optional since we can use the modal store directly
-	openLinksInModal?: boolean;
-}
 
 const accessibilityOptions = [
 	{
@@ -48,10 +44,7 @@ const accessibilityOptions = [
 	},
 ] as const;
 
-export function AccessibilityContent({
-	onItemClick,
-	openLinksInModal,
-}: AccessibilityContentProps) {
+export function AccessibilityContent() {
 	const {
 		isContrastMode,
 		setIsContrastMode,
@@ -61,13 +54,18 @@ export function AccessibilityContent({
 		viewMode,
 		setViewMode,
 	} = useAppStore();
+	const router = useRouter();
 
-	const {
-		openModal,
-		setAccessibilityModalOpen,
-		setSimpleLanguageInformationModalOpen,
-		setSignLanguageModalOpen,
-	} = useModalStore();
+	const openModalRoute = (id: string) => {
+		const { url, target } = getModalLink(id);
+		if (target === "_blank") {
+			if (typeof window !== "undefined") {
+				window.open(url, "_blank", "noopener,noreferrer");
+			}
+			return;
+		}
+		router.push(url);
+	};
 
 	const handleSwitchChange = (optionId: string, checked: boolean) => {
 		switch (optionId) {
@@ -113,21 +111,9 @@ export function AccessibilityContent({
 							? undefined
 							: () => {
 									if (option.id === "simpleLanguage") {
-										if (openLinksInModal) {
-											openModal("simpleLanguageInformation");
-										} else {
-											setSimpleLanguageInformationModalOpen(true);
-										}
+										openModalRoute("simpleLanguage");
 									} else if (option.id === "signLanguage") {
-										if (openLinksInModal) {
-											openModal("signLanguageInformation");
-										} else {
-											setSignLanguageModalOpen(true);
-										}
-									} else if (onItemClick) {
-										onItemClick("accessibility");
-									} else {
-										setAccessibilityModalOpen(true);
+										openModalRoute("signLanguage");
 									}
 								}
 					}

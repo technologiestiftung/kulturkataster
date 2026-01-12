@@ -4,12 +4,7 @@ import TextBlock from "@/components/Content/TextBlock";
 import { useTranslation } from "react-i18next";
 import { PageModal } from "../PageModal";
 
-interface ImprintModalProps {
-	open: boolean;
-	onOpenChange: (open: boolean) => void;
-}
-
-export function ImprintModal({ open, onOpenChange }: ImprintModalProps) {
+export function ImprintModal() {
 	const { t: tContent } = useTranslation("content");
 	const { t } = useTranslation("common");
 
@@ -143,8 +138,6 @@ export function ImprintModal({ open, onOpenChange }: ImprintModalProps) {
 
 	return (
 		<PageModal
-			open={open}
-			onOpenChange={onOpenChange}
 			title={tContent("imprintModal.title")}
 			subtitle={tContent("imprintModal.subtitle")}
 			content={content}
