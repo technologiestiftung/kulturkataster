@@ -281,6 +281,7 @@ model Role {
   description String?
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
+  is_system  Boolean  @default(false)
 
   users                  User[]
   table_permissions      RoleTablePermission[]

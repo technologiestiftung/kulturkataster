@@ -164,6 +164,7 @@ CREATE TABLE "role" (
     "description" TEXT,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
+    "is_system" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "role_pkey" PRIMARY KEY ("id")
 );
