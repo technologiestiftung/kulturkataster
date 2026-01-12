@@ -1,5 +1,11 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import type { Prisma } from "@/generated/prisma";
+import { getCategoriesWithSubcategories } from "@/server/actions/categories";
+import { getDistricts } from "@/server/actions/addresses";
+import {
+	getInstitutions,
+	searchInstitutions,
+} from "@/server/actions/institutions";
 
 vi.mock("@/server/auth/getCurrentUser", () => ({
 	getCurrentUserId: vi.fn().mockResolvedValue("user-1"),
@@ -34,13 +40,6 @@ vi.mock("@/server/data/districtRepo", () => ({
 		listDistinct: () => listDistinctMock(),
 	},
 }));
-
-import {
-	getInstitutions,
-	getCategoriesWithSubcategories,
-	getDistricts,
-	searchInstitutions,
-} from "@/server/actions/institutions";
 
 describe("server actions: institutions", () => {
 	beforeEach(() => {
