@@ -1,7 +1,4 @@
-import {
-	getCategoriesWithSubcategories,
-	getInstitutions,
-} from "@/server/actions/institutions";
+import { getCategoriesWithSubcategories } from "@/server/actions/categories";
 import { Institution, InstitutionStoreState } from "@/types";
 import { create } from "zustand";
 import { devtools, subscribeWithSelector } from "zustand/middleware";
@@ -16,6 +13,7 @@ import {
 	getSubcategories,
 	toFeatureCollection,
 } from "../utils/institutionUtils";
+import { getInstitutions } from "@/server/actions/institutions";
 
 const matchesBaseFilters = (
 	institution: Institution,
