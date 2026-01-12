@@ -4,14 +4,11 @@ import { Input } from "@/components/ui/input";
 import Search from "@/icons/search.svg";
 import { useKeyboardNavigation } from "@/lib/hooks/useKeyboardNavigation";
 import { useSearch } from "@/lib/hooks/useSearch";
-import { searchLocations } from "@/lib/serverActions/searchLocations";
+import { searchLocations } from "@/server/actions/searchLocations";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useMapStore } from "@/lib/store/mapStore";
 import { sanitizeAddressInput } from "@/lib/utils/sanitizerUtils";
 import {
-	parseSearchLatLongCoordinates,
-	parseCaseCoordinates,
-	parseGeoJsonCoordinates,
 	animateMapToCoordinates,
 	ANIMATION_DURATION,
 } from "@/lib/utils/mapUtils";
@@ -22,6 +19,7 @@ import { ChangeEvent, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { SearchMessages } from "./SearchMessages";
 import { SearchResults } from "./SearchResults";
+import { getCoordinatesFromAddress } from "@/lib/utils/institutionUtils";
 
 export const isGeoFeature = (result: SearchResult): result is GeoFeature => {
 	return "place_name" in result && "center" in result;
@@ -86,21 +84,9 @@ export function LocationSearch() {
 		setSearchResults([]);
 	};
 
-	const extractCoordinates = (
-		result: Institution & { case?: string; st_asgeojson?: string },
-	): [number, number] | null => {
-		if (result.latlong) {
-			const coords = parseSearchLatLongCoordinates(result.latlong as string);
-			return coords;
-		}
-
-		if (result.case) {
-			return parseCaseCoordinates(result.case);
-		}
-
-		if (result.st_asgeojson) {
-			return parseGeoJsonCoordinates(result.st_asgeojson);
-		}
+	const extractCoordinates = (result: Institution): [number, number] | null => {
+		const addressCoordinates = getCoordinatesFromAddress(result.address);
+		if (addressCoordinates) return addressCoordinates;
 		return null;
 	};
 	const handleGeoFeatureClick = (result: GeoFeature) => {
@@ -132,10 +118,11 @@ export function LocationSearch() {
 		const coordinates = extractCoordinates(result);
 
 		if (coordinates && map) {
-			animateMapToCoordinates(map, coordinates);
+			const transformedCoords = fromLonLat(coordinates);
+			animateMapToCoordinates(map, transformedCoords);
 		}
 
-		setSelectedInstitutionId(result.id as unknown as string);
+		setSelectedInstitutionId(result.id);
 
 		if (statusRef.current) {
 			statusRef.current.textContent = `${result.name} ausgewählt.`;
@@ -154,10 +141,13 @@ export function LocationSearch() {
 	};
 
 	const formatAddress = (institution: Institution) => {
-		const street = [institution.street, institution.street_number]
+		const street = [
+			institution.address?.street,
+			institution.address?.street_number,
+		]
 			.filter(Boolean)
 			.join(" ");
-		const city = [institution.zip_code, institution.city?.name]
+		const city = [institution.address?.zipcode, institution.address?.city]
 			.filter(Boolean)
 			.join(" ");
 		return [street, city].filter(Boolean).join(", ");

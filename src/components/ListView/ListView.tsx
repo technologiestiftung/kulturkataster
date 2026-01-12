@@ -40,10 +40,18 @@ const ListView: FC = () => {
 	const containerRef = useRef<HTMLDivElement>(null);
 
 	const institutionsList = useMemo(() => {
-		if (!institutions?.features) return [];
-		return institutions.features.map(
-			(feature) => feature.properties as Institution,
-		);
+		if (!institutions) return [];
+		return [...institutions].sort((a, b) => {
+			const nameA = a?.name ?? "";
+			const nameB = b?.name ?? "";
+			const byName = nameA.localeCompare(nameB, "de", {
+				sensitivity: "base",
+			});
+			if (byName !== 0) return byName;
+			return String(a?.id ?? "").localeCompare(String(b?.id ?? ""), "de", {
+				numeric: true,
+			});
+		});
 	}, [institutions]);
 
 	const visibleInstitutions = useMemo(() => {
@@ -66,7 +74,7 @@ const ListView: FC = () => {
 
 	const handleInstitutionClick = useCallback(
 		(institution: Institution) => {
-			setSelectedInstitutionId(institution.id as unknown as string);
+			setSelectedInstitutionId(institution.id);
 		},
 		[setSelectedInstitutionId],
 	);
@@ -235,7 +243,7 @@ const ListView: FC = () => {
 						<TooltipTrigger asChild>
 							<Button
 								onClick={scrollToTop}
-								variant="map-icon"
+								variant="rounded"
 								size="icon-only"
 								className="cursor-pointer"
 								aria-label={t("listView.scrollToTop")}

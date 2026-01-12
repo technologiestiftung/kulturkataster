@@ -4,12 +4,16 @@ import { Children } from "react";
 
 interface InfoSectionProps {
 	children: React.ReactNode;
+	alwaysShow?: boolean;
 }
 
-export function InfoSection({ children }: InfoSectionProps) {
+export function InfoSection({
+	children,
+	alwaysShow = false,
+}: InfoSectionProps) {
 	const validChildren = Children.toArray(children).filter(Boolean);
 
-	if (validChildren.length === 0) {
+	if (!alwaysShow && validChildren.length === 0) {
 		return null;
 	}
 

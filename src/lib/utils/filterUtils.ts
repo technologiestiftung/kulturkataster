@@ -1,5 +1,6 @@
 /* eslint-disable max-params */
 import { Category, FilterState, Institution, Subcategory } from "@/types";
+import { getParentCategories, getSubcategories } from "./institutionUtils";
 
 export const hasActiveFilters = (filters: FilterState | null): boolean => {
 	if (!filters) return false;
@@ -17,7 +18,7 @@ export const getFilterCount = (filters: FilterState | null): number => {
 	filterCount += filters.district_keys.length;
 	filterCount += filters.category_keys.length;
 	filterCount += filters.subcategory_keys.length;
-	if (!!filters.include_closed) {
+	if (!filters.include_closed) {
 		filterCount += 1;
 	}
 	return filterCount;
@@ -62,9 +63,9 @@ export const matchesDistrictFilter = (
 ): boolean => {
 	if (districtKeys.length === 0) return true;
 
-	if (!properties.district?.key) return false;
+	if (!properties.address?.district) return false;
 
-	return districtKeys.includes(properties.district.key);
+	return districtKeys.includes(properties.address.district);
 };
 
 export const matchesCategoryFilter = (
@@ -72,7 +73,7 @@ export const matchesCategoryFilter = (
 	categoryKeys: string[],
 ): boolean => {
 	return (
-		properties.categories?.some((category) =>
+		getParentCategories(properties).some((category) =>
 			categoryKeys.includes(category.key),
 		) || false
 	);
@@ -82,7 +83,7 @@ export const matchesSubcategoryFilter = (
 	properties: Institution,
 	subcategoryKeys: string[],
 ): boolean => {
-	const hasExplicitMatch = properties.subcategories?.some((subcategory) =>
+	const hasExplicitMatch = getSubcategories(properties).some((subcategory) =>
 		subcategoryKeys.includes(subcategory.key),
 	);
 
@@ -90,12 +91,12 @@ export const matchesSubcategoryFilter = (
 };
 
 export const matchesStatusFilter = (
-	properties: Institution,
+	institution: Institution,
 	includeClosedFilter: boolean,
 ): boolean => {
 	if (
 		!includeClosedFilter &&
-		properties.utilization_status === "permanently_closed"
+		institution.utilization_status === "permanently_closed"
 	) {
 		return false;
 	}

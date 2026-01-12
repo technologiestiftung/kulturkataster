@@ -29,6 +29,11 @@ export async function createClient() {
 						// user sessions.
 					}
 				},
+				removeAll() {
+					cookieStore.getAll().forEach((cookie) => {
+						cookieStore.set(cookie.name, "", { maxAge: 0 });
+					});
+				},
 			},
 		},
 	);
