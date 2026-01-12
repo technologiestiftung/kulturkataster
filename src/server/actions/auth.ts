@@ -64,7 +64,7 @@ export async function registerWithEmailPassword(params: {
 					id: data.user.id,
 					email: data.user.email ?? params.email,
 					account_type: params.accountType ?? null,
-					status: "pending",
+					status: "approval_pending",
 				},
 			});
 		} catch (prismaError) {

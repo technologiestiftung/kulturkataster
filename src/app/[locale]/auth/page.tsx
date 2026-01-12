@@ -26,7 +26,7 @@ export default async function UserLandingPage({ params }: PageProps) {
 				</div>
 				<div className="space-y-3">
 					<Button asChild className="w-full">
-						<Link href="/user/register">{t("auth.account.signUp")}</Link>
+						<Link href="/auth/register">{t("auth.account.signUp")}</Link>
 					</Button>
 					<Button asChild variant="outline" className="w-full">
 						<Link href="/">{t("auth.account.continueGuest")}</Link>
@@ -34,7 +34,7 @@ export default async function UserLandingPage({ params }: PageProps) {
 				</div>
 				<p className="text-sm text-muted-foreground">
 					{t("auth.account.alreadyAccount")}{" "}
-					<Link href="/user/login" className="text-primary hover:underline">
+					<Link href="/auth/login" className="text-primary hover:underline">
 						{t("auth.account.signIn")}
 					</Link>
 				</p>

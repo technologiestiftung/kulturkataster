@@ -325,7 +325,7 @@ export function RegisterForm() {
 
 			<div className="flex flex-col items-center text-center">
 				<span className="">{t("auth.register.alreadyAccount")} </span>
-				<Link href="/user/login" className="text-primary-dark underline">
+				<Link href="/auth/login" className="text-primary-dark underline">
 					{t("auth.register.signIn")}
 				</Link>
 			</div>
