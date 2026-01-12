@@ -1,5 +1,13 @@
-import { Prisma } from "@/generated/prisma";
+import type {
+	FundingType,
+	InstitutionStatus,
+	Prisma,
+	ProtectionStatus,
+	UtilizationStatus,
+} from "@/generated/prisma";
+import type { Category } from "@/types/category";
 import { FeatureCollection, GeoJsonProperties, Geometry } from "geojson";
+import { OwnerType, RentalContractType } from "@/generated/prisma";
 
 export type PrismaInstitutionWithRelations = Prisma.InstitutionGetPayload<{
 	include: {
@@ -8,44 +16,68 @@ export type PrismaInstitutionWithRelations = Prisma.InstitutionGetPayload<{
 		contact_person: true;
 		tags: true;
 		users: true;
+		groups: true;
 	};
 }>;
 
-export type Subcategory = Prisma.CategoryGetPayload<Prisma.CategoryDefaultArgs>;
+export type Institution = PrismaInstitutionWithRelations;
 
-export type Category = Partial<
-	Prisma.CategoryGetPayload<Prisma.CategoryDefaultArgs>
-> & {
-	id: number;
-	key: string;
-	subcategory?: Subcategory[];
+export type InstitutionCreateInput = Prisma.InstitutionCreateInput;
+
+export type InstitutionUpdateInput = Prisma.InstitutionUpdateInput;
+
+export type InstitutionWhereInput = Prisma.InstitutionWhereInput;
+
+export type AddressInput = Prisma.AddressCreateInput & {
+	id?: number;
 };
 
-export const CategoryKeys = {
-	STUDIOS: "studios",
-	EDUCATION_PLACES: "education_places",
-	LIBRARIES: "libraries",
-	CLUBS_MUSIC_VENUES: "clubs_music_venues",
-	GALLERIES: "galleries",
-	CINEMAS: "cinemas",
-	LITERATURE_PLACES: "literature_places",
-	MUSEUMS: "museums",
-	CULTURAL_URBAN_DEVELOPMENT: "cultural_urban_development",
-	POTENTIAL_SPACES: "potential_spaces",
-	REHEARSAL_ROOMS: "rehearsal_rooms",
-	PROJECT_SPACES_INITIATIVES: "project_spaces_initiatives",
-	SOCIOCULTURAL_CENTERS: "sociocultural_centers",
-	DANCE_VENUES: "dance_venues",
-	PERFORMING_ARTS_VENUES: "performing_arts_venues",
-	GRAFFITI_AREAS: "graffiti_areas",
-	URBAN_ART: "urban_art",
-	OTHER: "other",
-	MULTI_CATEGORIES: "multi_categories",
-} as const;
+export type InstitutionForm = {
+	name: string;
+	website?: string | null;
+	phone?: string | null;
+	email?: string | null;
+	area?: number | null;
+	number_of_rooms?: number | null;
+	parent_organization?: string | null;
+	legal_form?: string | null;
+	capacity?: number | null;
+	owner_name?: string | null;
+	owner_type?: OwnerType | null;
+	rental_contract_type?: RentalContractType | null;
+	rental_contract_end?: Date | string | null;
+	funding_type?: FundingType | null;
+	utilization_status?: UtilizationStatus | null;
+	utilization_status_info?: string | null;
+	protection_status?: ProtectionStatus | null;
+	protection_status_info?: string | null;
+	shared_use_allowed?: boolean | null;
+	shared_use_info?: string | null;
+	shared_use_equipment?: string | null;
+	shared_use_audience?: string | null;
+	shared_use_availability?: string | null;
+	accessibility?: string | null;
+	cost?: string | null;
+	established_since?: Date | string | null;
+	established_until?: Date | string | null;
+	closing_reason?: string | null;
+	notes?: string | null;
+	internal_notes?: string | null;
+	status?: InstitutionStatus | null;
+	import_identifier?: string | null;
+	source?: string | null;
+	shared_use_contact_person_id?: string | null;
+	contact_person_id?: number | null;
+	address?: AddressInput | null;
+	categoryIds?: number[];
+	tagIds?: number[];
+	userIds?: string[];
+	groupIds?: number[];
+};
 
-export type CategoryType = string;
-
-export type Institution = PrismaInstitutionWithRelations;
+export type InstitutionUpdateForm = InstitutionForm & {
+	id: number;
+};
 
 export interface GeoFeature {
 	id: string;
