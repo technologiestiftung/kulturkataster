@@ -7,7 +7,7 @@ type UserLayoutProps = {
 
 export default function UserLayout({ children }: UserLayoutProps) {
 	return (
-		<section className="min-h-[calc(100vh-4rem)] flex flex-1 flex-col items-center justify-center px-4">
+		<section className="min-h-[calc(100vh-4rem)] flex flex-1 flex-col items-center justify-center">
 			{children}
 			<ModalFooter />
 		</section>
