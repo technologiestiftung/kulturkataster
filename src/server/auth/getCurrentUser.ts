@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/server/supabase/server";
+import { redirect } from "next/navigation";
 
 export async function getCurrentUser() {
 	const supabase = await createClient();
@@ -16,4 +17,12 @@ export async function getCurrentUser() {
 export async function getCurrentUserId() {
 	const user = await getCurrentUser();
 	return user?.id ?? null;
+}
+
+export async function requireAuth() {
+	const user = await getCurrentUser();
+	if (!user) {
+		redirect("/auth/login");
+	}
+	return user;
 }

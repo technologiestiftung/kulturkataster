@@ -9,6 +9,54 @@ const include = {
 
 export const userRepo = {
 	list: () => prisma.user.findMany({ include }),
+	findById: (id: string) =>
+		prisma.user.findUnique({
+			where: { id },
+			include,
+		}),
+	ensureUser: async ({ id, email }: { id: string; email: string }) => {
+		const existing = await prisma.user.findUnique({
+			where: { id },
+			include,
+		});
+		if (existing) {
+			if (email && existing.email !== email) {
+				return prisma.user.update({
+					where: { id },
+					data: { email },
+					include,
+				});
+			}
+			if (!existing.role_id) {
+				const guestRole = await prisma.role.findUnique({
+					where: { name: "guest" },
+					select: { id: true },
+				});
+				if (guestRole) {
+					return prisma.user.update({
+						where: { id },
+						data: { role: { connect: { id: guestRole.id } } },
+						include,
+					});
+				}
+			}
+			return existing;
+		}
+
+		const guestRole = await prisma.role.findUnique({
+			where: { name: "guest" },
+			select: { id: true },
+		});
+
+		return prisma.user.create({
+			data: {
+				id,
+				email,
+				role: guestRole ? { connect: { id: guestRole.id } } : undefined,
+			},
+			include,
+		});
+	},
 	create: (data: UserCreateInput) =>
 		prisma.user.create({
 			data,

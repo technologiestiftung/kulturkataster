@@ -23,6 +23,8 @@ export const institutionRepo = {
 				categories: { where: { status: "active" } },
 			},
 		}),
+	listWithSelect: (select: Prisma.InstitutionSelect) =>
+		prisma.institution.findMany({ select }),
 	listForUser: (userId: string) =>
 		prisma.institution.findMany({
 			where: {
