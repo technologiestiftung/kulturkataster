@@ -5,11 +5,11 @@ import { DataTable } from "@/components/DataTable";
 import type { DataTableConfig } from "@/components/DataTable";
 import { Badge } from "@/components/ui/badge";
 import { Institution } from "@/types";
-import { useInstitutionStore } from "@/lib/store/institutionStore";
+import { useAccountStore } from "@/lib/store/accountStore";
 
 export function InstitutionsTable() {
 	const router = useRouter();
-	const institutions = useInstitutionStore((state) => state.allInstitutions);
+	const institutions = useAccountStore((state) => state.institutions);
 
 	const tableConfig: DataTableConfig<Institution> = {
 		columns: [
