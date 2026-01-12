@@ -17,6 +17,17 @@ export async function loginWithEmailPassword(email: string, password: string) {
 	return { ok: true };
 }
 
+export async function logout() {
+	const supabase = await createClient();
+	const { error } = await supabase.auth.signOut();
+
+	if (error) {
+		return { ok: false, error: error.message };
+	}
+
+	return { ok: true };
+}
+
 export async function registerWithEmailPassword(params: {
 	email: string;
 	password: string;
