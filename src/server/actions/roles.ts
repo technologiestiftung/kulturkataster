@@ -12,14 +12,6 @@ export async function getRoles() {
 	return roleRepo.list();
 }
 
-const getRoleFieldList = (input: RoleInput | RoleUpdateInput) => {
-	const fields: string[] = ["name"];
-	if (typeof input.description !== "undefined") fields.push("description");
-	if (typeof input.permissions !== "undefined") fields.push("permissions");
-	if (input.fieldPermissions) fields.push("field_permissions");
-	return fields;
-};
-
 export async function createRole(input: RoleInput) {
 	const currentUserId = await getCurrentUserId();
 	const ctx = await getAccessContextForUser(currentUserId);
