@@ -1,11 +1,7 @@
 "use server";
 
 import { categoryRepo } from "@/server/data/categoryRepo";
-import {
-	authorizeFields,
-	authorizeTable,
-	getAccessContextForUser,
-} from "@/server/utils/rbac";
+import { authorizeTable, getAccessContextForUser } from "@/server/utils/rbac";
 import { getCurrentUserId } from "@/server/auth/getCurrentUser";
 import { CategoryStatus } from "@/generated/prisma";
 import type { Category } from "@/types";
@@ -31,7 +27,7 @@ type CategoryUpdateInput = {
 export async function getCategories() {
 	const currentUserId = await getCurrentUserId();
 	const ctx = await getAccessContextForUser(currentUserId);
-	authorizeTable(ctx, "categories", "read");
+	authorizeTable(ctx, "category", "update");
 
 	return categoryRepo.listAll();
 }
@@ -39,16 +35,16 @@ export async function getCategories() {
 export async function getCategoriesWithSubcategories(): Promise<Category[]> {
 	const currentUserId = await getCurrentUserId();
 	const ctx = await getAccessContextForUser(currentUserId);
-	authorizeTable(ctx, "categories", "read");
+	authorizeTable(ctx, "category", "read");
 
-	const categories = await categoryRepo.listWithChildren();
-	return mapCategoriesWithSubcategories(categories);
+	const category = await categoryRepo.listWithChildren();
+	return mapCategoriesWithSubcategories(category);
 }
 
 export async function createCategory(input: CategoryInput) {
 	const currentUserId = await getCurrentUserId();
 	const ctx = await getAccessContextForUser(currentUserId);
-	authorizeTable(ctx, "categories", "create");
+	authorizeTable(ctx, "category", "create");
 
 	return categoryRepo.create({
 		key: input.key,
@@ -66,7 +62,7 @@ export async function createCategory(input: CategoryInput) {
 export async function updateCategory(input: CategoryUpdateInput) {
 	const currentUserId = await getCurrentUserId();
 	const ctx = await getAccessContextForUser(currentUserId);
-	authorizeTable(ctx, "categories", "update");
+	authorizeTable(ctx, "category", "update");
 
 	if (input.parentCategoryId && input.parentCategoryId === input.id) {
 		throw new Error("Category cannot be its own parent.");
@@ -88,7 +84,7 @@ export async function updateCategory(input: CategoryUpdateInput) {
 export async function deleteCategory(id: number) {
 	const currentUserId = await getCurrentUserId();
 	const ctx = await getAccessContextForUser(currentUserId);
-	authorizeTable(ctx, "categories", "delete");
+	authorizeTable(ctx, "category", "delete");
 
 	return categoryRepo.remove(id);
 }

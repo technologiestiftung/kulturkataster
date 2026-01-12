@@ -86,6 +86,9 @@ export async function createInstitution(input: InstitutionForm) {
 	const ctx = await getAccessContextForUser(currentUserId);
 	const { fields, addressFields } = buildInstitutionFieldList(input);
 	authorizeTable(ctx, "institution", "update");
+	if (fields.length > 0) {
+		authorizeFields(ctx, "institution", fields, "update");
+	}
 	if (addressFields.length > 0) {
 		authorizeFields(ctx, "institution", addressFields, "update");
 	}
@@ -152,6 +155,9 @@ export async function updateInstitution(input: InstitutionUpdateForm) {
 	const ctx = await getAccessContextForUser(currentUserId);
 	const { fields, addressFields } = buildInstitutionFieldList(input);
 	authorizeTable(ctx, "institution", "update");
+	if (fields.length > 0) {
+		authorizeFields(ctx, "institution", fields, "update");
+	}
 	if (addressFields.length > 0) {
 		authorizeFields(ctx, "institution", addressFields, "update");
 	}
