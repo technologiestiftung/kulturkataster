@@ -89,8 +89,6 @@ function DialogContent({
 }) {
 	const { t } = useTranslation("common");
 	const focusRef = React.useRef<HTMLDivElement | null>(null);
-	const [canGoBack, setCanGoBack] = React.useState(false);
-
 	const router = useRouter();
 
 	const getVariantStyles = () => {
