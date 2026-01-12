@@ -1,5 +1,7 @@
 {
 	"hello": "",
+	"yes": "Yes",
+	"no": "No",
 	"map": {
 		"availableLayers": "Available layers",
 		"closeLayerTree": "Close context maps",

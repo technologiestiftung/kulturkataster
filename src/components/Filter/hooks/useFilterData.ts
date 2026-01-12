@@ -3,12 +3,12 @@
 import {
 	getCategoriesWithSubcategories,
 	getDistricts,
-} from "@/lib/serverActions/institutions";
-import { Category, District } from "@/types";
+} from "@/server/actions/institutions";
+import { Category } from "@/types";
 import { useCallback, useEffect, useState } from "react";
 export const useFilterData = () => {
 	const [categoryGroups, setCategoryGroups] = useState<Category[]>([]);
-	const [districts, setDistricts] = useState<District[]>([]);
+	const [districts, setDistricts] = useState<string[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 

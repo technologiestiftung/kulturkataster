@@ -40,10 +40,8 @@ const RenderContent = ({
 	type: "about" | "infosAndServices";
 	t: (key: string, options?: Record<string, unknown>) => string;
 }) => {
-	const originalInstitutions = useInstitutionStore(
-		(state) => state.allInstitutions,
-	);
-	const institutionCount = originalInstitutions?.features?.length ?? 2.382;
+	const institutions = useInstitutionStore((state) => state.allInstitutions);
+	const institutionCount = institutions?.length ?? 0;
 	const translation = t(`simpleLanguageInformation.${type}.${keyValue}`, {
 		returnObjects: true,
 	});

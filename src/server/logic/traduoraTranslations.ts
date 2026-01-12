@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable complexity */
-"use server";
 
-import { fetchTraduoraToken, fetchLabels } from "@/lib/traduora/cached";
+import { fetchLabels, fetchTraduoraToken } from "@/server/traduora/cached";
 
 async function getLabelIdByName(
 	projectId: string,
@@ -16,11 +15,31 @@ async function getLabelIdByName(
 	return label?.id || null;
 }
 
-/**
- * Server action to fetch translations for a given locale from Traduora.
- * Optionally filters by namespace.
- */
-export async function fetchTranslations(
+const convertToArrays = (obj: any): any => {
+	if (typeof obj !== "object" || obj === null) {
+		return obj;
+	}
+
+	const keys = Object.keys(obj);
+	const isArrayLike = keys.every((key: string) => /^\d+$/.test(key));
+
+	if (isArrayLike && keys.length > 0) {
+		const maxIndex = Math.max(...keys.map(Number));
+		const arr = new Array(maxIndex + 1);
+		for (const [key, val] of Object.entries(obj)) {
+			arr[parseInt(key)] = convertToArrays(val);
+		}
+		return arr;
+	}
+
+	const result: Record<string, any> = {};
+	for (const [key, val] of Object.entries(obj)) {
+		result[key] = convertToArrays(val);
+	}
+	return result;
+};
+
+export async function fetchTraduoraTranslations(
 	locale: string,
 	namespace?: string,
 ): Promise<Record<string, string>> {
@@ -118,31 +137,5 @@ export async function fetchTranslations(
 		current[keys[keys.length - 1]] = value;
 	}
 
-	// Convert objects with numeric keys to arrays
-	function convertToArrays(obj: any): any {
-		if (typeof obj !== "object" || obj === null) {
-			return obj;
-		}
-
-		const keys = Object.keys(obj);
-		const isArrayLike = keys.every((key: string) => /^\d+$/.test(key));
-
-		if (isArrayLike && keys.length > 0) {
-			const maxIndex = Math.max(...keys.map(Number));
-			const arr = new Array(maxIndex + 1);
-			for (const [key, val] of Object.entries(obj)) {
-				arr[parseInt(key)] = convertToArrays(val);
-			}
-			return arr;
-		}
-
-		const result: Record<string, any> = {};
-		for (const [key, val] of Object.entries(obj)) {
-			result[key] = convertToArrays(val);
-		}
-		return result;
-	}
-
-	const result = convertToArrays(nested);
-	return result;
+	return convertToArrays(nested);
 }
