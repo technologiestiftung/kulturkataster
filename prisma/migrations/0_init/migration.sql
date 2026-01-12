@@ -17,19 +17,16 @@ CREATE TYPE "UtilizationStatus" AS ENUM ('in_use', 'temporarily_closed', 'perman
 CREATE TYPE "ProtectionStatus" AS ENUM ('long_term_secured', 'medium_term_secured', 'uncertain', 'acutely_threatened', 'permanently_closed', 'not_yet_secured');
 
 -- CreateEnum
-CREATE TYPE "InstitutionStatus" AS ENUM ('public', 'private', 'archived', 'draft', 'removal_pending');
+CREATE TYPE "InstitutionStatus" AS ENUM ('public', 'private', 'archived', 'draft', 'approval_pending', 'removal_pending');
 
 -- CreateEnum
-CREATE TYPE "UserStatus" AS ENUM ('active', 'inactive', 'pending');
+CREATE TYPE "UserStatus" AS ENUM ('active', 'inactive', 'approval_pending');
 
 -- CreateEnum
 CREATE TYPE "CategoryStatus" AS ENUM ('active', 'pending', 'inactive');
 
 -- CreateEnum
-CREATE TYPE "FieldAction" AS ENUM ('read', 'write', 'edit', 'delete');
-
--- CreateEnum
-CREATE TYPE "HistoryAction" AS ENUM ('create', 'update', 'delete');
+CREATE TYPE "Action" AS ENUM ('read', 'create', 'update', 'delete');
 
 -- CreateTable
 CREATE TABLE "address" (
@@ -151,7 +148,7 @@ CREATE TABLE "user" (
     "id" UUID NOT NULL,
     "email" TEXT NOT NULL,
     "role_id" INTEGER,
-    "status" "UserStatus" NOT NULL DEFAULT 'pending',
+    "status" "UserStatus" NOT NULL DEFAULT 'approval_pending',
     "compliance" BOOLEAN NOT NULL DEFAULT false,
     "institution_claims" TEXT,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -165,7 +162,6 @@ CREATE TABLE "role" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
     "description" TEXT,
-    "permissions" TEXT,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
@@ -173,15 +169,24 @@ CREATE TABLE "role" (
 );
 
 -- CreateTable
-CREATE TABLE "field_permission" (
+CREATE TABLE "role_table_permission" (
     "id" SERIAL NOT NULL,
     "role_id" INTEGER NOT NULL,
-    "field_name" TEXT NOT NULL,
-    "action" "FieldAction" NOT NULL,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL,
+    "table" TEXT NOT NULL,
+    "action" "Action" NOT NULL,
 
-    CONSTRAINT "field_permission_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "role_table_permission_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "role_field_permission" (
+    "id" SERIAL NOT NULL,
+    "role_id" INTEGER NOT NULL,
+    "table" TEXT NOT NULL,
+    "field" TEXT NOT NULL,
+    "action" "Action" NOT NULL,
+
+    CONSTRAINT "role_field_permission_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -311,13 +316,25 @@ CREATE INDEX "user_status_idx" ON "user"("status");
 CREATE UNIQUE INDEX "role_name_key" ON "role"("name");
 
 -- CreateIndex
-CREATE INDEX "field_permission_role_id_idx" ON "field_permission"("role_id");
+CREATE INDEX "role_table_permission_role_id_idx" ON "role_table_permission"("role_id");
 
 -- CreateIndex
-CREATE INDEX "field_permission_field_name_idx" ON "field_permission"("field_name");
+CREATE INDEX "role_table_permission_table_idx" ON "role_table_permission"("table");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "field_permission_role_id_field_name_action_key" ON "field_permission"("role_id", "field_name", "action");
+CREATE UNIQUE INDEX "role_table_permission_role_id_table_action_key" ON "role_table_permission"("role_id", "table", "action");
+
+-- CreateIndex
+CREATE INDEX "role_field_permission_role_id_idx" ON "role_field_permission"("role_id");
+
+-- CreateIndex
+CREATE INDEX "role_field_permission_table_idx" ON "role_field_permission"("table");
+
+-- CreateIndex
+CREATE INDEX "role_field_permission_field_idx" ON "role_field_permission"("field");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "role_field_permission_role_id_table_field_action_key" ON "role_field_permission"("role_id", "table", "field", "action");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "group_name_key" ON "group"("name");
@@ -359,7 +376,10 @@ ALTER TABLE "category" ADD CONSTRAINT "category_parent_category_id_fkey" FOREIGN
 ALTER TABLE "user" ADD CONSTRAINT "user_role_id_fkey" FOREIGN KEY ("role_id") REFERENCES "role"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "field_permission" ADD CONSTRAINT "field_permission_role_id_fkey" FOREIGN KEY ("role_id") REFERENCES "role"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "role_table_permission" ADD CONSTRAINT "role_table_permission_role_id_fkey" FOREIGN KEY ("role_id") REFERENCES "role"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "role_field_permission" ADD CONSTRAINT "role_field_permission_role_id_fkey" FOREIGN KEY ("role_id") REFERENCES "role"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_InstitutionToTag" ADD CONSTRAINT "_InstitutionToTag_A_fkey" FOREIGN KEY ("A") REFERENCES "institution"("id") ON DELETE CASCADE ON UPDATE CASCADE;
