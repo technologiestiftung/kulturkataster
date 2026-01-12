@@ -1,57 +1,46 @@
 import { prisma } from "@/server/prisma";
-import { FieldAction, FieldPermission, Role } from "@/generated/prisma";
+import {
+	Action as PrismaAction,
+	Role,
+	RoleFieldPermission,
+	RoleTablePermission,
+} from "@/generated/prisma";
 
-type RoleWithPermissions = Role & { field_permissions: FieldPermission[] };
+export type Action = PrismaAction;
 
-type TablePermissionMap = Record<string, Set<FieldAction>>;
-type FieldPermissionMap = Record<string, Record<string, Set<FieldAction>>>;
+type TablePermissionMap = Record<string, Set<Action>>;
+type FieldPermissionMap = Record<string, Record<string, Set<Action>>>;
 
 export interface AccessContext {
 	role: string | null;
-	tables: TablePermissionMap;
-	fields: FieldPermissionMap;
+	table: TablePermissionMap;
+	field: FieldPermissionMap;
 }
 
-interface AuthorizeParams {
-	context: AccessContext;
-	resource: string;
-	action: FieldAction;
-	fields?: string[];
-}
-
-const parseTablePermissions = (
-	permissions?: string | null,
-): TablePermissionMap => {
-	if (!permissions) return {};
-
-	try {
-		const parsed = JSON.parse(permissions) as Record<string, FieldAction[]>;
-		return Object.entries(parsed).reduce<TablePermissionMap>(
-			(acc, [table, actions]) => {
-				if (Array.isArray(actions)) {
-					acc[table] = new Set(actions);
-				}
-				return acc;
-			},
-			{},
-		);
-	} catch (error) {
-		console.warn("[RBAC] Failed to parse role.permissions JSON:", error);
-		return {};
-	}
+type RoleWithPermissions = Role & {
+	table_permissions: RoleTablePermission[];
+	field_permissions: RoleFieldPermission[];
 };
 
-const parseFieldPermissions = (
-	fieldPermissions: FieldPermission[],
-): FieldPermissionMap => {
-	return fieldPermissions.reduce<FieldPermissionMap>((acc, permission) => {
-		const [maybeTable, ...rest] = permission.field_name.split(".");
-		const table = rest.length ? maybeTable : "institution";
-		const fieldName = rest.length ? rest.join(".") : maybeTable;
+const buildTablePerms = (
+	permissions: RoleTablePermission[] = [],
+): TablePermissionMap => {
+	return permissions.reduce<TablePermissionMap>((acc, permission) => {
+		if (!acc[permission.table]) acc[permission.table] = new Set();
+		acc[permission.table].add(permission.action);
+		return acc;
+	}, {});
+};
 
-		if (!acc[table]) acc[table] = {};
-		if (!acc[table][fieldName]) acc[table][fieldName] = new Set();
-		acc[table][fieldName].add(permission.action);
+const buildFieldPerms = (
+	permissions: RoleFieldPermission[] = [],
+): FieldPermissionMap => {
+	return permissions.reduce<FieldPermissionMap>((acc, permission) => {
+		if (!acc[permission.table]) acc[permission.table] = {};
+		if (!acc[permission.table][permission.field]) {
+			acc[permission.table][permission.field] = new Set();
+		}
+		acc[permission.table][permission.field].add(permission.action);
 		return acc;
 	}, {});
 };
@@ -60,64 +49,62 @@ export const buildAccessContext = (
 	role: RoleWithPermissions | null,
 ): AccessContext => {
 	if (!role) {
-		return { role: null, tables: {}, fields: {} };
+		return { role: null, table: {}, field: {} };
 	}
 
 	return {
 		role: role.name,
-		tables: parseTablePermissions(role.permissions),
-		fields: parseFieldPermissions(role.field_permissions ?? []),
+		table: buildTablePerms(role.table_permissions ?? []),
+		field: buildFieldPerms(role.field_permissions ?? []),
 	};
 };
 
-export const hasTableAccess = (
+export const canTable = (
 	context: AccessContext,
-	resource: string,
-	action: FieldAction,
+	table: string,
+	action: Action,
 ): boolean => {
-	const tablePerms = context.tables[resource];
+	const tablePerms = context.table[table];
 	if (!tablePerms) return false;
 	return tablePerms.has(action);
 };
 
-export const hasFieldAccess = (
+export const canFields = (
 	context: AccessContext,
-	resource: string,
+	table: string,
 	fields: string[],
-	action: FieldAction,
+	action: Action,
 ): boolean => {
 	if (fields.length === 0) return true;
-	const resourceFields = context.fields[resource] ?? {};
-	return fields.every((field) => resourceFields[field]?.has(action));
+	const tableFields = context.field[table] ?? {};
+	return fields.every((field) => tableFields[field]?.has(action));
 };
 
-export const authorize = ({
-	context,
-	resource,
-	action,
-	fields = [],
-}: AuthorizeParams): { allowed: boolean; reason?: string } => {
-	if (!hasTableAccess(context, resource, action)) {
-		return {
-			allowed: false,
-			reason: `Role "${context.role ?? "anonymous"}" lacks ${action} on ${resource}`,
-		};
+export const authorizeTable = (
+	context: AccessContext,
+	table: string,
+	action: Action,
+): void => {
+	if (!canTable(context, table, action)) {
+		const error = new Error(
+			`Role "${context.role ?? "guest"}" lacks ${action} on ${table}`,
+		);
+		error.name = "RBACError";
+		throw error;
 	}
-
-	if (fields.length > 0 && !hasFieldAccess(context, resource, fields, action)) {
-		return {
-			allowed: false,
-			reason: `Role "${context.role ?? "anonymous"}" lacks ${action} on some fields of ${resource}`,
-		};
-	}
-
-	return { allowed: true };
 };
 
-export const throwIfUnauthorized = (params: AuthorizeParams) => {
-	const result = authorize(params);
-	if (!result.allowed) {
-		const error = new Error(result.reason ?? "Unauthorized");
+export const authorizeFields = (
+	context: AccessContext,
+	table: string,
+	fields: string[],
+	action: Action,
+): void => {
+	if (fields.length === 0) return;
+	if (!canFields(context, table, fields, action)) {
+		const error = new Error(
+			`Role "${context.role ?? "guest"}" lacks ${action} on some fields of ${table}`,
+		);
 		error.name = "RBACError";
 		throw error;
 	}
@@ -129,7 +116,10 @@ export const getAccessContextForUser = async (
 	if (!userId) {
 		const guestRole = await prisma.role.findUnique({
 			where: { name: "guest" },
-			include: { field_permissions: true },
+			include: {
+				table_permissions: true,
+				field_permissions: true,
+			},
 		});
 		return buildAccessContext(guestRole ?? null);
 	}
@@ -139,6 +129,7 @@ export const getAccessContextForUser = async (
 		include: {
 			role: {
 				include: {
+					table_permissions: true,
 					field_permissions: true,
 				},
 			},
