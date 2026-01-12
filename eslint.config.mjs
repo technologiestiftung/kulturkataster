@@ -10,6 +10,7 @@ const eslintConfig = [
 			"out/**",
 			"build/**",
 			"dist/**",
+			"src/generated/**",
 		],
 	},
 	...tseslint.configs.recommended,
