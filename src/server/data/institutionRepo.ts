@@ -1,5 +1,10 @@
-import { prisma } from "@/server/prisma";
 import { Prisma } from "@/generated/prisma";
+import { prisma } from "@/server/prisma";
+import {
+	InstitutionCreateInput,
+	InstitutionUpdateInput,
+	InstitutionWhereInput,
+} from "@/types";
 
 const institutionInclude = {
 	address: true,
@@ -7,13 +12,38 @@ const institutionInclude = {
 	contact_person: true,
 	tags: true,
 	users: true,
+	groups: true,
 } as const;
 
 export const institutionRepo = {
-	list: () => prisma.institution.findMany({ include: institutionInclude }),
-	listWithSelect: (select: Prisma.InstitutionSelect) =>
-		prisma.institution.findMany({ select }),
-	search: (where: Prisma.InstitutionWhereInput, take = 50) =>
+	list: () =>
+		prisma.institution.findMany({
+			include: {
+				...institutionInclude,
+				categories: { where: { status: "active" } },
+			},
+		}),
+	listForUser: (userId: string) =>
+		prisma.institution.findMany({
+			where: {
+				OR: [
+					{ users: { some: { id: userId } } },
+					{ groups: { some: { users: { some: { id: userId } } } } },
+				],
+			},
+			distinct: ["id"],
+			include: institutionInclude,
+		}),
+	create: (data: InstitutionCreateInput) =>
+		prisma.institution.create({ data, include: institutionInclude }),
+	update: (id: number, data: InstitutionUpdateInput) =>
+		prisma.institution.update({
+			where: { id },
+			data,
+			include: institutionInclude,
+		}),
+	remove: (id: number) => prisma.institution.delete({ where: { id } }),
+	search: (where: InstitutionWhereInput, take = 50) =>
 		prisma.institution.findMany({
 			where,
 			take,
