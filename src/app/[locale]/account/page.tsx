@@ -1,7 +1,5 @@
-import { getCurrentUser } from "@/server/auth/getCurrentUser";
 import { Button } from "@/components/ui/button";
 import { serverSideTranslation } from "@/i18n";
-import { redirect } from "next/navigation";
 import Link from "next/link";
 
 type PageProps = {
