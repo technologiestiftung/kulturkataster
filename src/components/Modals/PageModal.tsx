@@ -2,10 +2,10 @@
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { ModalFooter } from "./ModalFooter";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 interface PageModalProps {
-	open: boolean;
-	onOpenChange: (open: boolean) => void;
 	title: string;
 	subtitle?: React.ReactNode;
 	variant?:
@@ -19,8 +19,6 @@ interface PageModalProps {
 }
 
 export function PageModal({
-	open,
-	onOpenChange,
 	title,
 	subtitle,
 	variant = "fullScreenNoBottom",
@@ -29,8 +27,32 @@ export function PageModal({
 	hideBackIcon,
 	hideLinksInModalFooter,
 }: PageModalProps) {
+	const router = useRouter();
+	useEffect(() => {
+		const checkForHashAndScroll = () => {
+			const hash = window.location.hash;
+			if (hash === "#infosAndServices") {
+				const element = document.getElementById("infosAndServices");
+				if (element) {
+					element.scrollIntoView({ behavior: "instant" });
+				}
+			}
+		};
+		setTimeout(() => {
+			checkForHashAndScroll();
+		}, 500);
+	}, []);
+
+	const handleClose = () => {
+		if (typeof window !== "undefined" && window.history.length > 1) {
+			router.back();
+			return;
+		}
+		router.push("/");
+	};
+
 	return (
-		<Dialog open={open} onOpenChange={onOpenChange}>
+		<Dialog open onOpenChange={(open) => (!open ? handleClose() : undefined)}>
 			<DialogContent
 				variant={variant}
 				className="flex flex-col gap-4 items-start space-y-4"
