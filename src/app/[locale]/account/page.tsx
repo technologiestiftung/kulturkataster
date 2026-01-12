@@ -11,10 +11,6 @@ type PageProps = {
 export default async function AccountPage({ params }: PageProps) {
 	const { locale } = await params;
 	const { t } = await serverSideTranslation(locale, ["common"]);
-	const user = await getCurrentUser();
-	if (!user) {
-		redirect("/user");
-	}
 
 	return (
 		<div className="h-full w-full items-center justify-center px-4">

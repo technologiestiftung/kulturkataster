@@ -191,6 +191,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	};
 
 	const handleLogoClick = () => {
+		router.push("/");
 		setFirstTimeUser(true);
 		router.push("/welcome");
 	};
