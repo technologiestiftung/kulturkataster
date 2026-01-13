@@ -163,7 +163,7 @@ const StickyTableHead = React.forwardRef<
 	<th
 		ref={ref}
 		className={cn(
-			"h-12 px-4 text-left align-middle text-foreground [&:has([role=checkbox])]:pr-0",
+			"h-12 px-4 text-left align-middle +text-foreground [&:has([role=checkbox])]:pr-0",
 			"first:sticky first:left-0 first:z-40 last:sticky last:right-0 last:z-40",
 			"border border-neutral-20 first:border-l-0 last:border-r-0",
 			className,
@@ -251,36 +251,45 @@ interface StickyActionsCellProps
 	extends React.TdHTMLAttributes<HTMLTableCellElement> {
 	onEdit?: () => void;
 	editLabel?: string;
+	editDisabled?: boolean;
 }
 
 const StickyActionsCell = React.forwardRef<
 	HTMLTableCellElement,
 	StickyActionsCellProps
->(({ className, children, onEdit, editLabel = "Edit", ...props }, ref) => (
-	<StickyTableCell
-		ref={ref}
-		className={cn("border border-neutral-20 last:border-r-0", className)}
-		{...props}
-	>
-		<div className="flex flex-wrap justify-center gap-2">
-			{children}
-			{onEdit ? (
-				<Button
-					size="icon"
-					variant="ghost"
-					onClick={(event) => {
-						event.stopPropagation();
-						onEdit();
-					}}
-					className="h-8 w-8 rounded-full border bg-background border-neutral-20 hover:bg-neutral-5"
-					aria-label={editLabel}
-				>
-					<Edit className="h-4 w-4 text-neutral-80" />
-				</Button>
-			) : null}
-		</div>
-	</StickyTableCell>
-));
+>(
+	(
+		{ className, children, onEdit, editLabel = "Edit", editDisabled, ...props },
+		ref,
+	) => (
+		<StickyTableCell
+			ref={ref}
+			className={cn("border border-neutral-20 last:border-r-0", className)}
+			{...props}
+		>
+			<div className="flex flex-wrap justify-center gap-2">
+				{children}
+				{onEdit ? (
+					<Button
+						size="icon"
+						variant="ghost"
+						disabled={editDisabled}
+						onClick={(event) => {
+							event.stopPropagation();
+							if (!editDisabled) {
+								onEdit();
+							}
+						}}
+						className="h-8 w-8 rounded-full border bg-background border-neutral-20 hover:bg-neutral-5"
+						aria-label={editLabel}
+					>
+						<Edit className="h-5 w-5 text-neutral-80" />
+					</Button>
+				) : null}
+			</div>
+		</StickyTableCell>
+	),
+);
 StickyActionsCell.displayName = "StickyActionsCell";
 
 export {

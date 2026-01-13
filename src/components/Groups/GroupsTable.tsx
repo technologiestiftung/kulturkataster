@@ -52,7 +52,7 @@ export function GroupsTable() {
 			String(row.institutions?.length ?? 0),
 			row.created_at.toLocaleDateString(),
 		],
-		addButton: {
+		primaryButton: {
 			label: "Create Group",
 			onClick: () => {},
 		},

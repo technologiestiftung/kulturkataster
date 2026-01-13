@@ -21,7 +21,12 @@ export interface DataTableConfig<T> {
 	searchPlaceholder?: string;
 	getSearchableValues?: (row: T) => string[];
 
-	addButton?: {
+	primaryButton?: {
+		label: string;
+		onClick: () => void;
+	};
+
+	secondaryButton?: {
 		label: string;
 		onClick: () => void;
 	};
