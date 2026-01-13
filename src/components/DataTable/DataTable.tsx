@@ -14,12 +14,15 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Plus from "@/icons/plus.svg";
+import Search from "@/icons/search.svg";
 import type { DataTableConfig, SortState } from "./types";
 import { extractValue, formatDisplayValue, compareValues } from "./utils";
 import { SortableTableHead } from "./SortableTableHead";
+import { Label } from "@radix-ui/react-label";
 
 export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 	const [searchTerm, setSearchTerm] = useState("");
+	const [isSearchOpen, setIsSearchOpen] = useState(false);
 	const [sortState, setSortState] = useState<SortState>({
 		column: null,
 		direction: null,
@@ -82,10 +85,16 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 		return formatDisplayValue(value);
 	};
 
+	const searchPlaceholder = config.searchPlaceholder || "Search...";
+	const searchLabel = searchPlaceholder.replace(/\.\.\.$/, "");
+
 	return (
 		<div className="w-full space-y-4">
-			{(config.title || config.searchable || config.addButton) && (
-				<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+			{(config.title ||
+				config.searchable ||
+				config.primaryButton ||
+				config.secondaryButton) && (
+				<div className="flex flex-col gap-4 w-full">
 					{config.title && (
 						<div>
 							<h2 className="text-2xl font-bold">{config.title}</h2>
@@ -95,23 +104,70 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 						</div>
 					)}
 
-					<div className="flex w-full flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
-						{config.searchable && (
-							<Input
-								placeholder={config.searchPlaceholder || "Search..."}
-								value={searchTerm}
-								onChange={(e) => setSearchTerm(e.target.value)}
-								className="w-full sm:max-w-sm"
-							/>
-						)}
-						{config.addButton && (
+					<div className="flex w-full relative flex-col md:flex-row gap-2">
+						{!isSearchOpen && config.primaryButton && (
 							<Button
-								onClick={config.addButton.onClick}
-								className="w-full sm:w-auto"
+								onClick={config.primaryButton.onClick}
+								variant="rounded"
+								className="bg-primary"
+								size="icon"
+								aria-label={config.primaryButton.label}
 							>
-								<Plus className="size-4 mr-2" />
-								{config.addButton.label}
+								<Plus className="size-6" />
 							</Button>
+						)}
+						{!isSearchOpen && config.secondaryButton && (
+							<Button
+								onClick={config.secondaryButton.onClick}
+								variant="outline"
+								size="md"
+								className="bg-primary-light text-foreground border-primary rounded-full"
+								aria-label={config.secondaryButton.label}
+							>
+								{config.secondaryButton.label}
+							</Button>
+						)}
+						{config.searchable && (
+							<div className="relative flex flex-1 items-center gap-2">
+								<div
+									className={[
+										"relative flex-1 transition-all duration-200 ease-out",
+										isSearchOpen
+											? "w-full max-w-full opacity-100"
+											: "max-w-0 opacity-0 pointer-events-none",
+									]
+										.filter(Boolean)
+										.join(" ")}
+								>
+									<span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+										<Search className="size-4" />
+									</span>
+									<Input
+										placeholder={searchPlaceholder}
+										value={searchTerm}
+										onChange={(e) => setSearchTerm(e.target.value)}
+										onClick={() => {
+											setSearchTerm("");
+											setIsSearchOpen(false);
+										}}
+										className="h-10 w-full rounded-full pl-9"
+									/>
+								</div>
+								{isSearchOpen ? null : (
+									<div className="gap-2 flex items-center">
+										<Button
+											type="button"
+											variant="icon"
+											size="icon"
+											className="bg-secondary border-border"
+											onClick={() => setIsSearchOpen(true)}
+										>
+											<Search className="size-4" />
+										</Button>
+										<Label>{searchLabel}</Label>
+									</div>
+								)}
+							</div>
 						)}
 					</div>
 				</div>

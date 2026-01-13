@@ -42,7 +42,7 @@ export function RolesTable() {
 
 			return values;
 		},
-		addButton: {
+		primaryButton: {
 			label: "Create Role",
 			onClick: () => {},
 		},

@@ -78,7 +78,7 @@ export function CategoriesTable() {
 				"",
 			...(row.subcategory ?? []).map((child) => child.key),
 		],
-		addButton: undefined,
+		primaryButton: undefined,
 		onEdit: undefined,
 		emptyMessage: "No categories found.",
 		title: "Categories",

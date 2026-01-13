@@ -81,7 +81,7 @@ export function InstitutionsTable() {
 			row.contact_person?.email || "",
 			row.owner_name || "",
 		],
-		addButton: {
+		primaryButton: {
 			label: "Add Institution",
 			onClick: () => router.push("/create"),
 		},
