@@ -396,11 +396,18 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 			{!config.hideActions && (
 				<div className="flex items-center justify-end gap-4">
 					{config.showCancel && (
-						<Button type="button" variant="ghost" onClick={config.onCancel}>
+						<Button
+							type="button"
+							variant="outline"
+							className="flex-1"
+							onClick={config.onCancel}
+						>
 							{config.cancelLabel || "Cancel"}
 						</Button>
 					)}
-					<Button type="submit">{config.submitLabel || "Submit"}</Button>
+					<Button type="submit" className="flex-1">
+						{config.submitLabel || "Submit"}
+					</Button>
 				</div>
 			)}
 		</form>
