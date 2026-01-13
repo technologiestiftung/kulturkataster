@@ -63,6 +63,21 @@
 			"subtitle": "Enter your credentials to access your account",
 			"title": "Welcome back"
 		},
+		"reset": {
+			"backToLogin": "Back to login",
+			"confirmPasswordLabel": "Confirm password",
+			"confirmPasswordPlaceholder": "Confirm your password",
+			"errorFallback": "Password update failed.",
+			"loading": "Preparing your password reset…",
+			"metaTitle": "Reset password – Kulturkataster",
+			"missingToken": "This link looks invalid or expired. Please request a new invite.",
+			"newPasswordLabel": "New password",
+			"newPasswordPlaceholder": "Create a password",
+			"submit": "Set password",
+			"submitting": "Setting password...",
+			"subtitle": "Create a password to access your account",
+			"title": "Set your password"
+		},
 		"register": {
 			"accountType": "Account Type",
 			"accountTypeIndividual": "Individual",
