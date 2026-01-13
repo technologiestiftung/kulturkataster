@@ -63,6 +63,21 @@
 			"subtitle": "Wirken Sie mit, Berlins Kulturlandschaft zu gestalten.",
 			"title": "Schön, dass Sie da sind."
 		},
+		"reset": {
+			"backToLogin": "Zurück zur Anmeldung",
+			"confirmPasswordLabel": "Passwort bestätigen",
+			"confirmPasswordPlaceholder": "Passwort bestätigen",
+			"errorFallback": "Passwort konnte nicht aktualisiert werden.",
+			"loading": "Passwort wird vorbereitet…",
+			"metaTitle": "Passwort zurücksetzen – Kulturkataster",
+			"missingToken": "Dieser Link ist ungültig oder abgelaufen. Bitte fordern Sie eine neue Einladung an.",
+			"newPasswordLabel": "Neues Passwort",
+			"newPasswordPlaceholder": "Passwort erstellen",
+			"submit": "Passwort festlegen",
+			"submitting": "Passwort wird festgelegt...",
+			"subtitle": "Erstellen Sie ein Passwort, um Ihr Konto zu nutzen.",
+			"title": "Passwort festlegen"
+		},
 		"register": {
 			"accountType": "Arbeiten Sie für eine Organisation oder in der Verwaltung?",
 			"accountTypeAdministration": "Mitarbeiter*in der Landes Berlin",
