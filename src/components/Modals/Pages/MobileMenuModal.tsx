@@ -7,14 +7,13 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";
-import { useAppStore } from "@/lib/store/appStore";
 import { useTranslation } from "react-i18next";
 import KukaSmallLogo from "@/logos/kuka-small.svg";
 import Close from "@/icons/close.svg";
 import KRBLogo from "@/logos/KRB.svg";
 import InfoCircle from "@/icons/info-circle.svg";
 import { SubMenuOption } from "@/components/Menu/SubMenuOption";
-import MapIcon from "@/icons/map-02.svg";
+import MapIcon from "@/icons/map.svg";
 import ListIcon from "@/icons/list.svg";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
@@ -29,7 +28,6 @@ const footerItems = [
 
 export function MobileMenuModal() {
 	const { t } = useTranslation("common");
-	const { setViewMode } = useAppStore();
 
 	const router = useRouter();
 	const pathname = usePathname();
@@ -39,7 +37,7 @@ export function MobileMenuModal() {
 		if (typeof window !== "undefined" && window.history.length > 1) {
 			router.back();
 		} else {
-			router.push("/");
+			router.push("/map");
 		}
 	};
 
@@ -86,8 +84,7 @@ export function MobileMenuModal() {
 								icon={MapIcon}
 								titleKey="map.title"
 								onClick={() => {
-									setViewMode("map");
-									router.push("/");
+									router.push("/map");
 								}}
 							/>
 							<SubMenuOption
@@ -95,8 +92,7 @@ export function MobileMenuModal() {
 								icon={ListIcon}
 								titleKey="listView.title"
 								onClick={() => {
-									setViewMode("list");
-									router.push("/");
+									router.push("/list");
 								}}
 							/>
 							<SubMenuOption
