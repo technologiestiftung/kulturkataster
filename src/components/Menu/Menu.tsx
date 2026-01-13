@@ -36,7 +36,7 @@ import { fromLonLat } from "ol/proj";
 import KukaSmallLogo from "@/logos/kuka-small.svg";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { LayerTreeContent } from "../Map/LayerTree/LayerTree";
 import { AccessibilityContent } from "./MenuContent/AccessibilityContent";
 import { FilterContent } from "./MenuContent/FilterContent";
@@ -62,6 +62,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 		useSidebar();
 	const { t } = useTranslation("common");
 	const router = useRouter();
+	const pathname = usePathname();
 	const [activeItem, setActiveItem] = useState<string>("");
 	const [previousActiveItem, setPreviousActiveItem] = useState<string>("");
 	const [userHasClosedSidebar, setUserHasClosedSidebar] = useState(false);
@@ -165,6 +166,11 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
 		if (itemName === "download") {
 			router.push("/download");
+			return;
+		}
+
+		if (pathname?.startsWith("/account")) {
+			router.push("/");
 			return;
 		}
 

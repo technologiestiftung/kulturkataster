@@ -222,7 +222,7 @@ const Filter: FC = () => {
 					<div className="body2 text-alert mb-2">
 						{t("filter.error", { ns: "content" })}
 					</div>
-					<Button size="sm" onClick={retry}>
+					<Button size="sm" variant="rounded-md" onClick={retry}>
 						{t("filter.retry", { ns: "content" })}
 					</Button>
 				</ContentContainer>

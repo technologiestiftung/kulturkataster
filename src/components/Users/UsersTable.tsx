@@ -141,9 +141,13 @@ export function UsersTable() {
 			row.status,
 			...row.groups.map((group) => group.name),
 		],
-		addButton: {
+		primaryButton: {
 			label: t("userTable.actions.add"),
 			onClick: () => router.push("/account/users/new"),
+		},
+		secondaryButton: {
+			label: t("userTable.actions.cancel"),
+			onClick: () => router.push("/account/users"),
 		},
 		onEdit: (row) => router.push(`/account/users/${row.id}/edit`),
 		emptyMessage: t("userTable.emptyMessage"),
