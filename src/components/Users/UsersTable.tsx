@@ -5,9 +5,11 @@ import type { DataTableConfig } from "@/components/DataTable";
 import { Badge } from "@/components/ui/badge";
 import { useAccountStore } from "@/lib/store/accountStore";
 import type { User } from "@/types/user";
+import { useRouter } from "next/navigation";
 
 export function UsersTable() {
 	const users = useAccountStore((state) => state.users);
+	const router = useRouter();
 
 	const tableConfig: DataTableConfig<User> = {
 		columns: [
@@ -16,6 +18,18 @@ export function UsersTable() {
 				label: "Email",
 				sortable: true,
 				getValue: (row) => row.email,
+			},
+			{
+				key: "first_name",
+				label: "First Name",
+				sortable: true,
+				getValue: (row) => row.first_name,
+			},
+			{
+				key: "last_name",
+				label: "Last Name",
+				sortable: true,
+				getValue: (row) => row.last_name,
 			},
 			{
 				key: "role",
@@ -92,9 +106,9 @@ export function UsersTable() {
 		],
 		addButton: {
 			label: "Add User",
-			onClick: () => {},
+			onClick: () => router.push("/account/users/new"),
 		},
-		onEdit: () => {},
+		onEdit: (row) => router.push(`/account/users/${row.id}/edit`),
 		emptyMessage: "No users found.",
 	};
 
