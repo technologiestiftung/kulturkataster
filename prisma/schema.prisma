@@ -74,6 +74,7 @@ enum UserStatus {
   active
   inactive
   approval_pending
+  banned
 }
 
 enum CategoryStatus {
@@ -256,13 +257,18 @@ model Tag {
 model User {
   id                 String     @id @db.Uuid
   email              String     @unique
+  first_name         String?
+  last_name          String?
+  phone              String?
+  avatar_url         String?
+  notes              String?
+  account_type       String?
   role_id            Int?
   status             UserStatus @default(approval_pending)
   compliance         Boolean    @default(false)
-  institution_claims String?
+  institution_claims String[]
   created_at         DateTime   @default(now())
   updated_at         DateTime   @updatedAt
-  account_type       String?
 
   role                 Role?         @relation(fields: [role_id], references: [id])
   groups               Group[]
