@@ -2,12 +2,12 @@
 
 import SimpleLanguage from "@/icons/simple-language.svg";
 import SignLanguage from "@/icons/sign-language.svg";
-import FontSize from "@/icons/font-size.svg";
 import List from "@/icons/list.svg";
+import FontSize from "@/icons/font-size.svg";
 import Contrast from "@/icons/contrast.svg";
 import { useAppStore } from "@/lib/store/appStore";
 import { getModalLink } from "@/lib/utils/modalRouting";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { SubMenuOption } from "../SubMenuOption";
 
 const accessibilityOptions = [
@@ -25,7 +25,7 @@ const accessibilityOptions = [
 	},
 	{
 		id: "viewMode",
-		icon: List, // Reusing contrast icon for now
+		icon: List,
 		titleKey: "accessibility.viewMode.title",
 		hasSwitch: true,
 	},
@@ -51,9 +51,9 @@ export function AccessibilityContent() {
 		setBaseFontSize,
 		isLargeTextMode,
 		setIsLargeTextMode,
-		viewMode,
-		setViewMode,
 	} = useAppStore();
+	const pathname = usePathname();
+	const isListRoute = pathname?.replace(/\/$/, "").endsWith("/list");
 	const router = useRouter();
 
 	const openModalRoute = (id: string) => {
@@ -70,7 +70,7 @@ export function AccessibilityContent() {
 	const handleSwitchChange = (optionId: string, checked: boolean) => {
 		switch (optionId) {
 			case "viewMode":
-				setViewMode(checked ? "list" : "map");
+				router.push(checked ? "/list" : "/map");
 				break;
 			case "fontSize":
 				setIsLargeTextMode(checked);
@@ -87,12 +87,12 @@ export function AccessibilityContent() {
 
 	const getSwitchState = (optionId: string) => {
 		switch (optionId) {
+			case "viewMode":
+				return Boolean(isListRoute);
 			case "fontSize":
 				return isLargeTextMode;
 			case "contrast":
 				return isContrastMode;
-			case "viewMode":
-				return viewMode === "list";
 			default:
 				return false;
 		}

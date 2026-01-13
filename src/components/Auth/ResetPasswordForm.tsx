@@ -143,7 +143,7 @@ export function ResetPasswordForm() {
 			</form>
 
 			<div className="flex flex-col items-center text-center">
-				<Link href="/auth/login" className="text-primary-dark underline ">
+				<Link href="/account/login" className="text-primary-dark underline ">
 					{t("auth.reset.backToLogin")}
 				</Link>
 			</div>

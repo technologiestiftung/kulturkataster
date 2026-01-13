@@ -1,5 +1,3 @@
-export type ViewMode = "map" | "list";
-
 export interface AppStoreState {
 	firstTimeUser: boolean;
 	setFirstTimeUser: (firstTime: boolean) => void;
@@ -9,6 +7,4 @@ export interface AppStoreState {
 	setIsLargeTextMode: (isLargeText: boolean) => void;
 	baseFontSize: number;
 	setBaseFontSize: (size: number) => void;
-	viewMode: ViewMode;
-	setViewMode: (mode: ViewMode) => void;
 }

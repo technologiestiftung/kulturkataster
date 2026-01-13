@@ -1,6 +1,6 @@
 import { AppPersistenceProvider } from "@/components/AppPersistenceProvider";
 import Footer from "@/components/Footer/Footer";
-import MapInitializer from "@/components/Map/MapInitializer/MapInitializer";
+import { MapListShell } from "@/components/Map/MapListShell";
 import { Menu } from "@/components/Menu/Menu";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { serverSideTranslation } from "@/i18n";
@@ -124,7 +124,7 @@ export default async function RootLayout({
 									>
 										<h1 className="sr-only">{siteHeading}</h1>
 										<div className="flex flex-1 flex-col gap-4 h-full w-full pb-20 md:pb-0">
-											<MapInitializer />
+											<MapListShell />
 											{children}
 										</div>
 									</main>
