@@ -48,7 +48,7 @@ export async function createUser(input: UserFormInput) {
 	const { data, error } = await supabase.auth.admin.inviteUserByEmail(
 		input.email,
 		{
-			redirectTo: `${siteUrl}/auth/reset-password`,
+			redirectTo: `${siteUrl}/account/reset-password`,
 		},
 	);
 
@@ -152,7 +152,7 @@ export async function sendPasswordReset(email: string) {
 		type: "recovery",
 		email,
 		options: {
-			redirectTo: `${siteUrl}/auth/reset-password`,
+			redirectTo: `${siteUrl}/account/reset-password`,
 		},
 	});
 

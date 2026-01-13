@@ -1,7 +1,7 @@
 /* eslint-disable */
 "use client";
 
-import { Button, ButtonWithTooltip } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import {
 	Sidebar,
 	SidebarContent,
@@ -17,15 +17,14 @@ import {
 import Accessibility from "@/icons/accessibility.svg";
 import ArrowLeft from "@/icons/arrow-narrow-left.svg";
 import Close from "@/icons/close.svg";
-import BurgerMenu from "@/icons/burger-menu-icon.svg";
 import Download from "@/icons/download.svg";
 import Edit from "@/icons/edit.svg";
 import FilterLines from "@/icons/filter-lines.svg";
 import InfoCircle from "@/icons/info-circle.svg";
 import ListIcon from "@/icons/list.svg";
-import MapIcon from "@/icons/map-02.svg";
 import Search from "@/icons/search.svg";
 import UserIcon from "@/icons/user.svg";
+import MapIcon from "@/icons/map.svg";
 import { useAppStore } from "@/lib/store/appStore";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useMapStore } from "@/lib/store/mapStore";
@@ -34,7 +33,7 @@ import { animateMapToCoordinates } from "@/lib/utils/mapUtils";
 import { getCoordinatesFromAddress } from "@/lib/utils/institutionUtils";
 import { fromLonLat } from "ol/proj";
 import KukaSmallLogo from "@/logos/kuka-small.svg";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { usePathname, useRouter } from "next/navigation";
 import { LayerTreeContent } from "../Map/LayerTree/LayerTree";
@@ -42,6 +41,7 @@ import { AccessibilityContent } from "./MenuContent/AccessibilityContent";
 import { FilterContent } from "./MenuContent/FilterContent";
 import { InstitutionDetailContent } from "./MenuContent/InstitutionDetailContent";
 import { SearchContent } from "./MenuContent/SearchContent";
+import { ViewModeToggle } from "@/components/Menu/ViewModeToggle";
 
 const menuItems = [
 	{ id: "filter", icon: FilterLines, label: "filter.title" },
@@ -57,12 +57,16 @@ const footerItems = [
 	{ id: "user", icon: UserIcon, label: "user.title" },
 ] as const;
 
+const mapMenuItemIds = new Set(menuItems.map((item) => item.id));
+
 export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	const { toggleSidebar, setOpen, setOpenMobile, isMobile, open, openMobile } =
 		useSidebar();
 	const { t } = useTranslation("common");
 	const router = useRouter();
 	const pathname = usePathname();
+	const lastMapRouteRef = useRef("/map");
+	const isAccountRoute = pathname?.includes("/account") ?? false;
 	const [activeItem, setActiveItem] = useState<string>("");
 	const [previousActiveItem, setPreviousActiveItem] = useState<string>("");
 	const [userHasClosedSidebar, setUserHasClosedSidebar] = useState(false);
@@ -79,17 +83,39 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	const filteredInstitutions = useInstitutionStore(
 		(state) => state.filteredInstitutions,
 	);
-	const { firstTimeUser, setFirstTimeUser, viewMode, setViewMode } =
-		useAppStore();
+	const { firstTimeUser, setFirstTimeUser } = useAppStore();
 
 	const filterCount = getFilterCount(filters);
+	const mapLabel = t("map.title");
+	const listLabel = t("listView.title");
 
 	useEffect(() => {
-		if (!isMobile && !firstTimeUser && !userHasClosedSidebar) {
+		if (pathname?.endsWith("/map")) {
+			lastMapRouteRef.current = "/map";
+		} else if (pathname?.endsWith("/list")) {
+			lastMapRouteRef.current = "/list";
+		}
+	}, [pathname]);
+
+	useEffect(() => {
+		if (
+			!isMobile &&
+			!firstTimeUser &&
+			!userHasClosedSidebar &&
+			!isAccountRoute
+		) {
 			setActiveItem("filter");
 			setOpen(true);
 		}
-	}, [isMobile, firstTimeUser, setOpen, userHasClosedSidebar]);
+	}, [isMobile, firstTimeUser, setOpen, userHasClosedSidebar, isAccountRoute]);
+
+	useEffect(() => {
+		if (isAccountRoute) {
+			setActiveItem("");
+			setOpen(false);
+			setOpenMobile(false);
+		}
+	}, [isAccountRoute, setOpen, setOpenMobile]);
 
 	useEffect(() => {
 		if (isLayerTreeOpen) {
@@ -133,73 +159,35 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 		setIsLayerTreeOpen(false);
 	}, [isMobile]);
 
-	const handleItemClick = (itemName: string) => {
-		if (itemName === "info") {
-			router.push("/info");
-			return;
-		}
-		if (itemName === "user") {
-			router.push("/account");
-			return;
-		}
+	const closeSidebar = () => {
+		setActiveItem("");
+		setOpen(false);
+		setOpenMobile(false);
+	};
 
-		if (itemName === "layertree") {
-			if (isLayerTreeOpen) {
-				setIsLayerTreeOpen(false);
-				if (isMobile) {
-					setOpenMobile(false);
-				} else {
-					setOpen(false);
-				}
-				return;
-			}
-		}
-
-		if (itemName === "add") {
-			/** Open external Link */
-			window.open(
-				"https://form.formcentric.com/form/fb8189d9-8887-425d-bdd5-4aec08f7d8d5",
-				"_blank",
-			);
-			return;
-		}
-
-		if (itemName === "download") {
-			router.push("/download");
-			return;
-		}
-
-		if (pathname?.startsWith("/account")) {
-			router.push("/");
-			return;
-		}
-
-		// Clear selected institution when switching to a different menu item
-		if (selectedInstitutionId && itemName !== "institution-detail") {
-			setSelectedInstitutionId(null);
-		}
-
-		if (activeItem === itemName) {
-			if (isMobile) {
-				setOpenMobile(false);
-				setActiveItem("");
-			} else {
-				toggleSidebar();
-			}
+	const openSidebarForItem = (itemName: string) => {
+		setActiveItem(itemName);
+		if (isMobile) {
+			setOpenMobile(true);
 		} else {
-			setActiveItem(itemName);
-			if (isMobile) {
-				setOpenMobile(true);
-			} else {
-				setOpen(true);
-			}
+			setOpen(true);
 		}
 	};
 
 	const handleLogoClick = () => {
-		router.push("/");
+		router.push("/map");
 		setFirstTimeUser(true);
 		router.push("/welcome");
+	};
+
+	const handleBackToMapRoute = () => {
+		closeSidebar();
+		router.push(lastMapRouteRef.current);
+	};
+
+	const handleAccountRouteSwitch = (target: "map" | "list") => {
+		closeSidebar();
+		router.push(target === "map" ? "/map" : "/list");
 	};
 
 	const handleSidebarClose = () => {
@@ -210,14 +198,64 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 		if (activeItem === "layertree") {
 			setIsLayerTreeOpen(false);
 		}
-		setActiveItem("");
-		setOpen(false);
-		setOpenMobile(false);
+		closeSidebar();
 	};
 
 	const handleBackToFilter = () => {
 		setSelectedInstitutionId(null);
 		setActiveItem(previousActiveItem);
+	};
+
+	const handleItemClick = (itemName: string) => {
+		if (isAccountRoute && mapMenuItemIds.has(itemName)) {
+			handleBackToMapRoute();
+			return;
+		}
+
+		switch (itemName) {
+			case "info":
+				if (isAccountRoute) {
+					closeSidebar();
+				}
+				router.push("/info");
+				return;
+			case "user":
+				router.push("/account");
+				return;
+			case "add":
+				window.open(
+					"https://form.formcentric.com/form/fb8189d9-8887-425d-bdd5-4aec08f7d8d5",
+					"_blank",
+				);
+				return;
+			case "download":
+				router.push("/download");
+				return;
+			case "layertree":
+				if (isLayerTreeOpen) {
+					setIsLayerTreeOpen(false);
+					closeSidebar();
+				}
+				return;
+			default:
+				break;
+		}
+
+		// Clear selected institution when switching to a different menu item
+		if (selectedInstitutionId && itemName !== "institution-detail") {
+			setSelectedInstitutionId(null);
+		}
+
+		if (activeItem === itemName) {
+			if (isMobile) {
+				closeSidebar();
+			} else {
+				toggleSidebar();
+			}
+			return;
+		}
+
+		openSidebarForItem(itemName);
 	};
 
 	const getActiveItemTitle = () => {
@@ -274,13 +312,14 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 		}
 	};
 
-	const handleViewModeSwitch = (newViewMode: "map" | "list") => {
-		setViewMode(newViewMode);
-
-		if (newViewMode === "map" && selectedInstitutionId) {
-			setTimeout(zoomToSelectedInstitution, 100);
-		}
-	};
+	const normalizedPath = useMemo(
+		() => pathname?.replace(/\/$/, "") ?? "",
+		[pathname],
+	);
+	const isListRoute = useMemo(
+		() => normalizedPath.endsWith("/list"),
+		[normalizedPath],
+	);
 
 	return (
 		<>
@@ -314,39 +353,69 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 							<SidebarGroup>
 								<SidebarGroupContent>
 									<SidebarMenu>
-										{menuItems.map((item) => {
-											const showBadge = filterCount > 0 && item.id === "filter";
-											const active = activeItem === item.id;
-											return (
-												<SidebarMenuItem key={item.id}>
+										{isAccountRoute ? (
+											<>
+												<SidebarMenuItem>
 													<SidebarMenuButton
 														tooltip={{
-															children: t(item.label),
+															children: mapLabel,
 															hidden: false,
 														}}
-														onClick={() => handleItemClick(item.id)}
-														isActive={active}
-														aria-label={
-															showBadge
-																? t("menu.menuButtonBadge", {
-																		label: t(item.label),
-																		count: filterCount,
-																	})
-																: t(item.label)
-														}
-														aria-current={active}
-														className="relative"
+														onClick={() => handleAccountRouteSwitch("map")}
+														aria-label={mapLabel}
 													>
-														<item.icon />
-														{showBadge && (
-															<div className="absolute top-2 -right-1 bg-primary text-primary-foreground body2 rounded-full min-w-5 h-5 flex items-center justify-center px-1">
-																{filterCount}
-															</div>
-														)}
+														<MapIcon />
 													</SidebarMenuButton>
 												</SidebarMenuItem>
-											);
-										})}
+												<SidebarMenuItem>
+													<SidebarMenuButton
+														tooltip={{
+															children: listLabel,
+															hidden: false,
+														}}
+														onClick={() => handleAccountRouteSwitch("list")}
+														aria-label={listLabel}
+													>
+														<ListIcon />
+													</SidebarMenuButton>
+												</SidebarMenuItem>
+											</>
+										) : (
+											menuItems.map((item) => {
+												const showBadge =
+													filterCount > 0 && item.id === "filter";
+												const active = activeItem === item.id;
+												return (
+													<SidebarMenuItem key={item.id}>
+														<SidebarMenuButton
+															tooltip={{
+																children: t(item.label),
+																hidden: false,
+															}}
+															onClick={() => handleItemClick(item.id)}
+															isActive={active}
+															aria-label={
+																showBadge
+																	? t("menu.menuButtonBadge", {
+																			label: t(item.label),
+																			count: filterCount,
+																		})
+																	: t(item.label)
+															}
+															aria-current={active}
+															className="relative"
+														>
+															<item.icon />
+															{showBadge && (
+																<div className="absolute top-2 -right-1 bg-primary text-primary-foreground body2 rounded-full min-w-5 h-5 flex items-center justify-center px-1">
+																	{filterCount}
+																</div>
+															)}
+														</SidebarMenuButton>
+													</SidebarMenuItem>
+												);
+											})
+										)}
 									</SidebarMenu>
 								</SidebarGroupContent>
 							</SidebarGroup>
@@ -394,7 +463,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 														title: t(previousActiveItem + ".title"),
 													})}
 												>
-													<ArrowLeft />{" "}
+													<ArrowLeft className="size-6" />{" "}
 													{t("menu.backTo", {
 														page: t(previousActiveItem + ".title"),
 													})}
@@ -433,8 +502,8 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 											{activeItem === "layertree" && <LayerTreeContent />}
 											{activeItem === "institution-detail" && (
 												<div
-													aria-hidden={viewMode === "list"}
-													tabIndex={viewMode === "list" ? -1 : undefined}
+													aria-hidden={isListRoute}
+													tabIndex={isListRoute ? -1 : undefined}
 												>
 													<InstitutionDetailContent />
 												</div>
@@ -476,72 +545,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 				</button>
 			</div>
 
-			<div className="fixed block z-[50] top-0 right-0 p-4 overflow-hidden">
-				<div className="flex gap-2 items-center">
-					<div className="relative">
-						<div
-							className="flex items-center bg-neutral-80 border rounded-full shadow-sm relative"
-							role="radiogroup"
-							aria-label={t("map.radioGroupAriaLabel")}
-						>
-							<div
-								className={`absolute top-0 bottom-0 w-12 h-12 bg-background rounded-full transition-transform duration-300 ease-in-out ${
-									viewMode === "map" ? "translate-x-0" : "translate-x-12"
-								}`}
-							/>
-							<ButtonWithTooltip
-								variant="menu-icon"
-								size="icon-only"
-								tooltip={t("map.show")}
-								className={`${
-									viewMode === "map"
-										? "text-foreground"
-										: "text-background hover:text-background/80"
-								}`}
-								onClick={() =>
-									handleViewModeSwitch(viewMode === "list" ? "map" : "list")
-								}
-								aria-label={t("map.show")}
-								role="radio"
-								aria-checked={viewMode === "map"}
-								tabIndex={viewMode === "map" ? 0 : -1}
-							>
-								<MapIcon className="size-6" />
-							</ButtonWithTooltip>
-							<ButtonWithTooltip
-								variant="menu-icon"
-								size="icon-only"
-								tooltip={t("listView.show")}
-								className={`${
-									viewMode === "list"
-										? "text-foreground"
-										: "text-background hover:text-background/80"
-								}`}
-								onClick={() =>
-									handleViewModeSwitch(viewMode === "map" ? "list" : "map")
-								}
-								aria-label={t("listView.show")}
-								role="radio"
-								aria-checked={viewMode === "list"}
-								tabIndex={viewMode === "list" ? 0 : -1}
-							>
-								<ListIcon className="size-6" />
-							</ButtonWithTooltip>
-						</div>
-					</div>
-
-					<Button
-						variant="rounded"
-						size="icon-only"
-						title={t("mobileMenu.title")}
-						onClick={() => router.push("/mobileMenu")}
-						aria-label={t("mobileMenu.title")}
-						className="md:hidden"
-					>
-						<BurgerMenu size={14} />
-					</Button>
-				</div>
-			</div>
+			<ViewModeToggle />
 
 			<div className="fixed bottom-0 left-0 right-0 z-[60] bg-sidebar border-t md:hidden h-20 pointer-events-auto">
 				<SidebarMenu className="flex-row justify-around px-2 py-3">
