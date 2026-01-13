@@ -1,6 +1,6 @@
 "use server";
 
-import { createClient } from "@/server/supabase/server";
+import { createAnonClient, createClient } from "@/server/supabase/server";
 import { prisma } from "@/server/prisma";
 
 export async function loginWithEmailPassword(email: string, password: string) {
@@ -39,13 +39,6 @@ export async function registerWithEmailPassword(params: {
 	const { data, error } = await supabase.auth.signUp({
 		email: params.email,
 		password: params.password,
-		options: {
-			data: {
-				first_name: params.firstName,
-				last_name: params.lastName,
-				account_type: params.accountType,
-			},
-		},
 	});
 
 	if (error) {
@@ -58,11 +51,15 @@ export async function registerWithEmailPassword(params: {
 				where: { id: data.user.id },
 				update: {
 					email: data.user.email ?? params.email,
+					first_name: params.firstName ?? null,
+					last_name: params.lastName ?? null,
 					account_type: params.accountType ?? null,
 				},
 				create: {
 					id: data.user.id,
 					email: data.user.email ?? params.email,
+					first_name: params.firstName ?? null,
+					last_name: params.lastName ?? null,
 					account_type: params.accountType ?? null,
 					status: "approval_pending",
 				},
@@ -79,4 +76,34 @@ export async function registerWithEmailPassword(params: {
 	}
 
 	return { ok: true, needsConfirmation: !data.session };
+}
+
+export async function setPasswordWithTokens(params: {
+	accessToken: string;
+	refreshToken: string;
+	password: string;
+}) {
+	if (!params.accessToken || !params.refreshToken) {
+		return { ok: false, error: "Missing session tokens." };
+	}
+
+	const supabase = createAnonClient();
+	const { error: sessionError } = await supabase.auth.setSession({
+		access_token: params.accessToken,
+		refresh_token: params.refreshToken,
+	});
+
+	if (sessionError) {
+		return { ok: false, error: sessionError.message };
+	}
+
+	const { error } = await supabase.auth.updateUser({
+		password: params.password,
+	});
+
+	if (error) {
+		return { ok: false, error: error.message };
+	}
+
+	return { ok: true };
 }
