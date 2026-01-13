@@ -244,6 +244,111 @@
 		"subtitle": "{{count}} Orte zum Herunterladen",
 		"title": "Daten als Liste herunterladen"
 	},
+	"userFormModal": {
+		"status": {
+			"approvalPending": "Freigabe ausstehend",
+			"active": "Aktiv",
+			"inactive": "Inaktiv",
+			"banned": "Gesperrt"
+		},
+		"form": {
+			"identity": {
+				"title": "Benutzerdetails",
+				"description": {
+					"create": "Laden Sie eine neue Nutzerin oder einen neuen Nutzer ein und legen Sie die Zugriffsrechte fest.",
+					"edit": "Profilangaben und Zugriffsrechte aktualisieren."
+				},
+				"fields": {
+					"email": {
+						"label": "E-Mail",
+						"placeholder": "name@beispiel.de"
+					},
+					"firstName": {
+						"label": "Vorname",
+						"placeholder": "Max"
+					},
+					"lastName": {
+						"label": "Nachname",
+						"placeholder": "Mustermann"
+					},
+					"status": {
+						"label": "Status"
+					},
+					"accountType": {
+						"label": "Kontotyp",
+						"placeholder": "Organisation, Bezirk, ..."
+					},
+					"compliance": {
+						"label": "Compliance freigegeben"
+					}
+				}
+			},
+			"access": {
+				"title": "Zugriff & Mitgliedschaften",
+				"fields": {
+					"role": {
+						"label": "Rolle"
+					},
+					"groups": {
+						"label": "Gruppen"
+					},
+					"institutions": {
+						"label": "Institutionen"
+					}
+				}
+			}
+		},
+		"actions": {
+			"cancel": "Abbrechen",
+			"create": "Nutzer*in anlegen",
+			"save": "Änderungen speichern",
+			"creating": "Wird angelegt...",
+			"saving": "Wird gespeichert..."
+		},
+		"dialog": {
+			"title": {
+				"create": "Nutzer*in hinzufügen",
+				"edit": "Nutzer*in bearbeiten"
+			},
+			"loading": "Nutzer*in wird geladen…",
+			"notFound": {
+				"title": "Nutzer*in nicht gefunden",
+				"description": "Der Datensatz ist derzeit nicht verfügbar. Bitte versuchen Sie es erneut."
+			}
+		},
+		"passwordReset": {
+			"title": "Passwort zurücksetzen",
+			"description": "Senden Sie eine Reset-E-Mail an die Nutzerin oder den Nutzer.",
+			"sending": "Wird gesendet…",
+			"send": "Reset-E-Mail senden",
+			"success": "E-Mail zum Zurücksetzen des Passworts gesendet.",
+			"error": "Reset-E-Mail konnte nicht gesendet werden."
+		}
+	},
+	"userTable": {
+		"columns": {
+			"email": "E-Mail",
+			"firstName": "Vorname",
+			"lastName": "Nachname",
+			"role": "Rolle",
+			"groups": "Gruppen",
+			"status": "Status",
+			"access": "Zugriff auf Institutionen",
+			"compliance": "Compliance"
+		},
+		"searchPlaceholder": "Nutzer*innen suchen...",
+		"actions": {
+			"add": "Nutzer*in hinzufügen"
+		},
+		"emptyMessage": "Keine Nutzer*innen gefunden.",
+		"emptyValue": "—",
+		"institutionsCount_one": "{{count}} Institution",
+		"institutionsCount_other": "{{count}} Institutionen",
+		"compliance": {
+			"accepted": "DSGVO akzeptiert",
+			"rejected": "DSGVO nicht akzeptiert"
+		}
+	},
 	"filter": {
 		"districtTagsSwitchAriaLabel": "{{translatedName}} ein- oder ausschalten",
 		"categories": {

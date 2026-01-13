@@ -163,7 +163,7 @@ const StickyTableHead = React.forwardRef<
 	<th
 		ref={ref}
 		className={cn(
-			"h-12 px-4 text-left align-middle font-medium text-foreground [&:has([role=checkbox])]:pr-0",
+			"h-12 px-4 text-left align-middle text-foreground [&:has([role=checkbox])]:pr-0",
 			"first:sticky first:left-0 first:z-40 last:sticky last:right-0 last:z-40",
 			"border border-neutral-20 first:border-l-0 last:border-r-0",
 			className,
