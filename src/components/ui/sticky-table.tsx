@@ -228,7 +228,7 @@ const StickyActionsHead = React.forwardRef<
 						}}
 						aria-label="Scroll left"
 					>
-						<ArrowNarrowLeft className="text-primary-dark size-4" />
+						<ArrowNarrowLeft className="text-primary-dark size-6" />
 					</button>
 					<button
 						type="button"
@@ -238,7 +238,7 @@ const StickyActionsHead = React.forwardRef<
 						}}
 						aria-label="Scroll right"
 					>
-						<ArrowNarrowRight className="text-primary-dark size-4" />
+						<ArrowNarrowRight className="text-primary-dark size-6" />
 					</button>
 				</div>
 			) : null}
