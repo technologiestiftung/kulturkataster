@@ -2,22 +2,37 @@ import { prisma } from "@/server/prisma";
 import { RoleUpdateInput, RoleCreateInput } from "@/types/role";
 
 const include = {
+	table_permissions: true,
 	field_permissions: true,
 	users: true,
 } as const;
 
 export const roleRepo = {
 	list: () => prisma.role.findMany({ include }),
+	findById: (id: number) =>
+		prisma.role.findUnique({
+			where: { id },
+			include,
+		}),
 	create: (data: RoleCreateInput) =>
 		prisma.role.create({
 			data: {
 				name: data.name,
 				description: data.description ?? null,
 				permissions: data.permissions ?? null,
-				fieldPermissions: data.fieldPermissions
+				table_permissions: data.tablePermissions
+					? {
+							create: data.tablePermissions.map((permission) => ({
+								table: permission.table,
+								action: permission.action,
+							})),
+						}
+					: undefined,
+				field_permissions: data.fieldPermissions
 					? {
 							create: data.fieldPermissions.map((permission) => ({
-								field_name: permission.field_name,
+								table: permission.table,
+								field: permission.field,
 								action: permission.action,
 							})),
 						}
@@ -32,11 +47,21 @@ export const roleRepo = {
 				name: data.name,
 				description: data.description ?? undefined,
 				permissions: data.permissions ?? undefined,
-				fieldPermissions: data.fieldPermissions
+				table_permissions: data.tablePermissions
+					? {
+							deleteMany: {},
+							create: data.tablePermissions.map((permission) => ({
+								table: permission.table,
+								action: permission.action,
+							})),
+						}
+					: undefined,
+				field_permissions: data.fieldPermissions
 					? {
 							deleteMany: {},
 							create: data.fieldPermissions.map((permission) => ({
-								field_name: permission.field_name,
+								table: permission.table,
+								field: permission.field,
 								action: permission.action,
 							})),
 						}

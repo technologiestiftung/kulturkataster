@@ -1,27 +1,11 @@
 "use server";
 
-import {
-	authorizeFields,
-	authorizeTable,
-	getAccessContextForUser,
-} from "@/server/utils/rbac";
+import { authorizeTable, getAccessContextForUser } from "@/server/utils/rbac";
 import { getCurrentUserId } from "@/server/auth/getCurrentUser";
 import { userRepo } from "@/server/data/userRepo";
 import { createAdminClient } from "@/server/supabase/server";
 import type { UserFormInput } from "@/types/user";
-
-const getUserFields = (input: UserFormInput) => {
-	const fields: string[] = ["email"];
-	if (typeof input.status !== "undefined") fields.push("status");
-	if (typeof input.compliance !== "undefined") fields.push("compliance");
-	if (typeof input.institution_claims !== "undefined")
-		fields.push("institution_claims");
-	if (typeof input.account_type !== "undefined") fields.push("account_type");
-	if (typeof input.roleId !== "undefined") fields.push("role");
-	if (input.groupIds) fields.push("groups");
-	if (input.institutionIds) fields.push("institutions");
-	return fields;
-};
+import { revalidateAccount } from "../utils/actionsUtils";
 
 export async function getUsers() {
 	const currentUserId = await getCurrentUserId();
@@ -56,7 +40,7 @@ export async function createUser(input: UserFormInput) {
 		throw new Error(error?.message || "Failed to create auth user.");
 	}
 
-	return userRepo.create({
+	const user = await userRepo.create({
 		id: data.user.id,
 		email: input.email,
 		first_name: input.first_name ?? undefined,
@@ -73,14 +57,14 @@ export async function createUser(input: UserFormInput) {
 			? { connect: input.institutionIds.map((id) => ({ id })) }
 			: undefined,
 	});
+	revalidateAccount();
+	return user;
 }
 
 export async function updateUser(input: UserFormInput) {
 	const currentUserId = await getCurrentUserId();
 	const ctx = await getAccessContextForUser(currentUserId);
-	const fields = getUserFields(input);
 	authorizeTable(ctx, "user", "update");
-	authorizeFields(ctx, "user", fields, "update");
 
 	if (!input.id) {
 		throw new Error("User id is required for update.");
@@ -109,7 +93,7 @@ export async function updateUser(input: UserFormInput) {
 		throw new Error(authUpdateError.message);
 	}
 
-	return userRepo.update(input.id, {
+	const user = await userRepo.update(input.id, {
 		email: input.email,
 		first_name: input.first_name ?? undefined,
 		last_name: input.last_name ?? undefined,
@@ -125,6 +109,8 @@ export async function updateUser(input: UserFormInput) {
 			? { set: input.institutionIds.map((id) => ({ id })) }
 			: undefined,
 	});
+	revalidateAccount();
+	return user;
 }
 
 export async function removeUser(id: string) {
@@ -138,7 +124,9 @@ export async function removeUser(id: string) {
 		throw new Error(error.message);
 	}
 
-	return userRepo.remove(id);
+	const user = await userRepo.remove(id);
+	revalidateAccount();
+	return user;
 }
 
 export async function sendPasswordReset(email: string) {
@@ -161,4 +149,10 @@ export async function sendPasswordReset(email: string) {
 	}
 
 	return { ok: true };
+}
+
+export async function sendComplianceResend(email: string): Promise<void> {
+	// To be implemented
+	console.log(`Resend compliance email to ${email} - Not yet implemented.`);
+	return;
 }
