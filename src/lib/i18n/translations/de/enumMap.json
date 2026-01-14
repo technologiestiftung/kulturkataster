@@ -41,7 +41,7 @@
 		"Spandau"
 	],
 	"field_names": {
-		"address": "Geodaten für Kartenanbindung",
+		"address": "Adresse",
 		"address_suffix": "Adresszusatz",
 		"area": "Größe der Nutzflächen (m²)",
 		"capacity": "Kapazität",
@@ -51,7 +51,7 @@
 		"city": "Ort",
 		"closing_reason": "Schließungsgründe",
 		"contact_person_email": "Ansprechperson E-Mail Adresse",
-		"contact_person_name": "Ansprechperson Vorname",
+		"contact_person_": "Ansprechperson Vorname",
 		"contact_person_phone": "Ansprechperson Telefonnummer",
 		"contact_person_surname": "Ansprechperson Nachname",
 		"cultural_area": "Kulturareal",
@@ -104,7 +104,7 @@
 		"updated_at": "Stand",
 		"utilization_status": "Nutzungsstatus",
 		"website": "Website",
-		"zip_code": "PLZ"
+		"zipcode": "PLZ"
 	},
 	"funding_source": {
 		"church": "Kirche",
