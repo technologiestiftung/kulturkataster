@@ -74,6 +74,7 @@ enum UserStatus {
   active
   inactive
   approval_pending
+  invited
   banned
 }
 
@@ -163,6 +164,7 @@ model Institution {
   shared_use_equipment    String?
   shared_use_audience     String?
   shared_use_availability String?
+  shared_use_contact_person String?
   accessibility           String?
   cost                    String?
   established_since       DateTime?
@@ -180,7 +182,6 @@ model Institution {
 
   address_id                   Int?
   contact_person_id            Int?
-  shared_use_contact_person_id String?
 
   address                   Address?       @relation(fields: [address_id], references: [id])
   contact_person            ContactPerson? @relation("InstitutionContact", fields: [contact_person_id], references: [id])
