@@ -73,11 +73,11 @@ function DialogContent({
 	children,
 	showCloseButton = true,
 	variant = "default",
-	hideBackIcon = false,
+	showBackButton = false,
 	...props
 }: React.ComponentProps<typeof DialogPrimitive.Content> & {
 	showCloseButton?: boolean;
-	hideBackIcon?: boolean;
+	showBackButton?: boolean;
 	variant?:
 		| "default"
 		| "fullScreen"
@@ -85,6 +85,7 @@ function DialogContent({
 		| "fullScreenNoBottomDarkerBackground"
 		| "medium"
 		| "mobileMenu"
+		| "multiSelect"
 		| "entityEdit";
 }) {
 	const { t } = useTranslation("common");
@@ -104,6 +105,8 @@ function DialogContent({
 				return "fixed z-[70] h-full inset-0 w-full border-0 p-0";
 			case "entityEdit":
 				return "bg-neutral-5 fixed z-[70] top-0 md:top-1/2 left-1/2 w-full max-w-[calc(100%-2rem)] h-full md:h-auto md:max-h-[calc(100%-5rem)] -translate-x-1/2 md:-translate-y-1/2 md:rounded-lg border md:max-w-5xl flex flex-col overflow-hidden p-12";
+			case "multiSelect":
+				return "bg-neutral-5 fixed z-[75] top-0 md:top-1/2 left-1/2 w-full max-w-[calc(100%-2rem)] h-full md:h-auto md:max-h-[calc(100%-5rem)] -translate-x-1/2 md:-translate-y-1/2 md:rounded-lg border md:max-w-5xl flex flex-col overflow-hidden";
 			case "default":
 			default:
 				return "fixed top-[50%] left-[50%] w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] md:rounded-lg border p-6 sm:max-w-3xl max-h-full overflow-auto";
@@ -114,17 +117,17 @@ function DialogContent({
 		return cn(
 			"ring-offset-background focus:ring-ring fixed top-12 z-[80] rounded-xs transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-6",
 			type === "back" ? "left-6 md:left-12" : "right-6 md:right-12",
-			"opacity-100 md:opacity-70 bg-white contrast:bg-background md:bg-transparent",
+			"",
 		);
 	};
 
 	return (
 		<DialogPortal data-slot="dialog-portal">
-			<DialogOverlay />
+			<DialogOverlay className={variant === "multiSelect" ? "z-[71]" : ""} />
 			<DialogPrimitive.Content
 				data-slot="dialog-content"
 				className={cn(
-					"bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 z-50 shadow-lg duration-200 relative",
+					"bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 z-[61] shadow-lg duration-200 relative",
 					getVariantStyles(),
 					variant === "fullScreenNoBottomDarkerBackground" && "bg-neutral-10",
 					className,
@@ -138,7 +141,7 @@ function DialogContent({
 				}}
 				{...props}
 			>
-				{!hideBackIcon && (
+				{showBackButton && (
 					<button
 						onClick={() => router.back()}
 						className={backAndCloseClassNames("back")}
@@ -213,7 +216,7 @@ function DialogDescription({
 	return (
 		<DialogPrimitive.Description
 			data-slot="dialog-description"
-			className={cn("text-muted-foreground text-sm", className)}
+			className={cn("text-foreground body3", className)}
 			{...props}
 		/>
 	);
