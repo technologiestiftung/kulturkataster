@@ -7,6 +7,11 @@ const include = {
 
 export const groupRepo = {
 	list: () => prisma.group.findMany({ include }),
+	findById: (id: number) =>
+		prisma.group.findUnique({
+			where: { id },
+			include,
+		}),
 	create: (data: {
 		name: string;
 		description?: string | null;
