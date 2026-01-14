@@ -78,7 +78,7 @@ const StickyTable = React.forwardRef<HTMLTableElement, StickyTableProps>(
 					<table
 						ref={setRefs}
 						className={cn(
-							"w-full min-w-[960px] caption-bottom text-sm border-collapse",
+							"w-full min-w-[960px] caption-bottom body3 border-collapse",
 							className,
 						)}
 						{...props}
@@ -196,7 +196,7 @@ const StickyTableCaption = React.forwardRef<
 >(({ className, ...props }, ref) => (
 	<caption
 		ref={ref}
-		className={cn("mt-4 text-sm text-foreground", className)}
+		className={cn("mt-4 body3 text-foreground", className)}
 		{...props}
 	/>
 ));
