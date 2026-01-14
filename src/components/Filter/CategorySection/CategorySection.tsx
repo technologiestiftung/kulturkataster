@@ -27,6 +27,8 @@ interface CategorySectionProps {
 	onToggle: () => void;
 	onCategoryChange: (key: string) => void;
 	onSubcategoryChange: (key: string) => void;
+	categoryCount?: number;
+	subcategoryCounts?: Record<string, number>;
 }
 
 export function CategorySection({
@@ -37,6 +39,8 @@ export function CategorySection({
 	onToggle,
 	onCategoryChange,
 	onSubcategoryChange,
+	categoryCount,
+	subcategoryCounts: subcategoryCountsOverride,
 }: CategorySectionProps) {
 	const IconComponent = getCategoryIconComponent(group.key as CategoryType);
 	const { t: tEnum, i18n } = useTranslation("enumMap");
@@ -52,12 +56,15 @@ export function CategorySection({
 		[group, collator, tEnum],
 	);
 
-	const categoryCount = useInstitutionStore(
+	const storeCategoryCount = useInstitutionStore(
 		(state) => state.categoryCounts[group.key] || 0,
 	);
-	const subcategoryCounts = useInstitutionStore(
+	const storeSubcategoryCounts = useInstitutionStore(
 		(state) => state.subcategoryCounts,
 	);
+	const resolvedCategoryCount = categoryCount ?? storeCategoryCount;
+	const resolvedSubcategoryCounts =
+		subcategoryCountsOverride ?? storeSubcategoryCounts;
 
 	// Determine checkbox state for category
 	const selectedSubcategoriesInGroup = (group.subcategory || []).filter((sub) =>
@@ -97,7 +104,7 @@ export function CategorySection({
 						</div>
 						<div className="body2 text-left">
 							<span className="font-bold">{translatedCategoryName}</span>
-							<span className="pl-2">({categoryCount})</span>
+							<span className="pl-2">({resolvedCategoryCount})</span>
 						</div>
 					</button>
 				</CollapsibleTrigger>
@@ -109,14 +116,14 @@ export function CategorySection({
 						aria-label={`${translatedCategoryName}`}
 						aria-checked={isIndeterminate ? "mixed" : isChecked}
 						className={cn(
-							"w-[2.06rem] h-[2.06rem] border-radius-[2.06rem] md:w-4 md:h-4 border-neutral-80",
+							"w-8 h-8 rounded-full md:w-4 md:h-4 border-neutral-80",
 							isIndeterminate && "contrast:border-interaction-dark",
 						)}
 					/>
 					{isIndeterminate && (
-						<div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+						<div className="absolute flex items-center justify-center pointer-events-none">
 							<Minus
-								className="text-neutral-80 contrast:text-interaction-dark size-[0.9375rem] md:size-[0.625rem]"
+								className="text-neutral-80 contrast:text-interaction-dark size-4 md:size-2.5"
 								aria-hidden="true"
 								focusable="false"
 							/>
@@ -137,7 +144,7 @@ export function CategorySection({
 						>
 							<span className="body2 w-full">
 								{translatedSubcategoryName} (
-								{subcategoryCounts[subcategory.key] || 0})
+								{resolvedSubcategoryCounts[subcategory.key] || 0})
 							</span>
 
 							<div className="relative w-10 h-10 md:w-6 md:h-6 flex items-center justify-center">
@@ -145,7 +152,7 @@ export function CategorySection({
 									checked={selectedSubcategories.includes(subcategory.key)}
 									onCheckedChange={() => onSubcategoryChange(subcategory.key)}
 									aria-label={`${translatedSubcategoryName}`}
-									className="w-[2.06rem] h-[2.06rem] border-radius-[2.06rem] md:w-4 md:h-4 border-neutral-80"
+									className="w-8 h-8 rounded-full md:w-4 md:h-4 border-neutral-80"
 								/>
 							</div>
 						</div>
