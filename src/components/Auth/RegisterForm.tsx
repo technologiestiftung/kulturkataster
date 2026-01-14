@@ -121,7 +121,7 @@ export function RegisterForm() {
 		<div className="w-full max-w-2xl mx-auto space-y-6">
 			<div className="space-y-2 text-start">
 				<h1 className="text-3xl font-bold">{t("auth.register.title")}</h1>
-				<p className="text-muted-foreground">{t("auth.register.subtitle")}</p>
+				<p className="text-foreground">{t("auth.register.subtitle")}</p>
 			</div>
 
 			<form onSubmit={handleSubmit} className="space-y-4">

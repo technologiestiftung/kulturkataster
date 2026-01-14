@@ -31,9 +31,7 @@ export function StepIndicator({ className }: StepIndicatorProps) {
 								isPast &&
 									!isActive &&
 									"bg-primary border-primary text-primary-foreground",
-								!isActive &&
-									!isPast &&
-									"border-neutral-20 text-muted-foreground",
+								!isActive && !isPast && "border-neutral-20 text-foreground",
 							)}
 						></button>
 						{!isLast && (

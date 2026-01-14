@@ -115,8 +115,9 @@ export function CategorySection({
 						onCheckedChange={() => onCategoryChange(group.key)}
 						aria-label={`${translatedCategoryName}`}
 						aria-checked={isIndeterminate ? "mixed" : isChecked}
+						variant="filter"
+						size="filter"
 						className={cn(
-							"w-8 h-8 rounded-full md:w-4 md:h-4 border-neutral-80",
 							isIndeterminate && "contrast:border-interaction-dark",
 						)}
 					/>
@@ -152,7 +153,8 @@ export function CategorySection({
 									checked={selectedSubcategories.includes(subcategory.key)}
 									onCheckedChange={() => onSubcategoryChange(subcategory.key)}
 									aria-label={`${translatedSubcategoryName}`}
-									className="w-8 h-8 rounded-full md:w-4 md:h-4 border-neutral-80"
+									variant="filter"
+									size="filter"
 								/>
 							</div>
 						</div>

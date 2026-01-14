@@ -25,7 +25,7 @@ export function DownloadModal() {
 			content={content}
 			variant="medium"
 			hasFooter={false}
-			hideBackIcon
+			showBackButton={false}
 		/>
 	);
 }

@@ -188,7 +188,7 @@ const LayerItem = memo<{
 						</span>
 						{serviceNameLang && (
 							<div
-								className={`body2 hidden ${layer.status === "error" ? "text-alert" : ""}`}
+								className={`body2 font-semibold hidden ${layer.status === "error" ? "text-alert" : ""}`}
 							>
 								{layer.status === "error"
 									? "Fachkarte nicht verfügbar. Bitte versuchen Sie es später erneut."
@@ -197,7 +197,7 @@ const LayerItem = memo<{
 						)}
 						{serviceNameMid && (
 							<div
-								className={`body2 ${layer.status === "error" ? "text-alert" : ""}`}
+								className={`body2 font-semibold ${layer.status === "error" ? "text-alert" : ""}`}
 							>
 								{layer.status === "error"
 									? "Fachkarte nicht verfügbar. Bitte versuchen Sie es später erneut."
@@ -435,7 +435,7 @@ export const LayerTreeContent: FC<{
 
 	if (layersToRender.length === 0) {
 		return (
-			<div className="flex items-center justify-center py-8 text-muted-foreground">
+			<div className="flex items-center justify-center py-8 text-foreground">
 				<p>{t("map.noLayersAvailable")}</p>
 			</div>
 		);

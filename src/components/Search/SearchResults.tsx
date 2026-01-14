@@ -72,7 +72,7 @@ export function SearchResults({
 							}}
 							tabIndex={-1}
 							className={cn(
-								"py-3 px-2 cursor-pointer rounded text-sm border-b",
+								"py-3 px-2 cursor-pointer rounded body3 border-b",
 								index === activeIndex && "bg-black/10 contrast:bg-neutral-10",
 								"hover:bg-black/10 contrast:hover:bg-neutral-10",
 								"outline-interaction-dark",
