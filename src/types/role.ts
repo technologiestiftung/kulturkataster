@@ -1,7 +1,8 @@
-import type { Prisma } from "@/generated/prisma";
+import type { Action, Prisma } from "@/generated/prisma";
 
 export type PrismaRoleWithRelations = Prisma.RoleGetPayload<{
 	include: {
+		table_permissions: true;
 		field_permissions: true;
 		users: true;
 	};
@@ -9,23 +10,31 @@ export type PrismaRoleWithRelations = Prisma.RoleGetPayload<{
 
 export type Role = PrismaRoleWithRelations;
 
-export type RolePermissionInput = {
-	field_name: string;
-	action: "read" | "create" | "update" | "delete";
+export type RoleTablePermissionInput = {
+	table: string;
+	action: Action;
+};
+
+export type RoleFieldPermissionInput = {
+	table: string;
+	field: string;
+	action: Action;
 };
 
 export type RoleCreatePayload = {
 	name: string;
 	description?: string | null;
 	permissions?: string | null;
-	fieldPermissions?: RolePermissionInput[];
+	tablePermissions?: RoleTablePermissionInput[];
+	fieldPermissions?: RoleFieldPermissionInput[];
 };
 
 export type RoleUpdatePayload = {
 	name?: string;
 	description?: string | null;
 	permissions?: string | null;
-	fieldPermissions?: RolePermissionInput[];
+	tablePermissions?: RoleTablePermissionInput[];
+	fieldPermissions?: RoleFieldPermissionInput[];
 };
 
 export type RoleInput = RoleCreatePayload;
