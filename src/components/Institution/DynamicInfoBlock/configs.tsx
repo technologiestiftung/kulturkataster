@@ -14,7 +14,7 @@ export const addressInfoConfig: DynamicInfoBlockConfig = {
 			valueType: "text",
 		},
 		{
-			dataPath: "zip_code",
+			dataPath: "zipcode",
 			labelKey: "institution.postalCode",
 			valueType: "text",
 		},

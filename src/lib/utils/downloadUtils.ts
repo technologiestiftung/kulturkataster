@@ -151,7 +151,7 @@ const COLUMN_ORDER = [
 	"website",
 	"street",
 	"street_number",
-	"zip_code",
+	"zipcode",
 	"city_id",
 	"district_id",
 	"categories",

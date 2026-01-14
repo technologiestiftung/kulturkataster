@@ -66,7 +66,7 @@ export type InstitutionForm = {
 	status?: InstitutionStatus | null;
 	import_identifier?: string | null;
 	source?: string | null;
-	shared_use_contact_person_id?: string | null;
+	shared_use_contact_person?: string | null;
 	contact_person_id?: number | null;
 	address?: AddressInput | null;
 	categoryIds?: number[];
@@ -78,6 +78,49 @@ export type InstitutionForm = {
 export type InstitutionUpdateForm = InstitutionForm & {
 	id: number;
 };
+
+export const INSTITUTION_PERMISSION_FIELDS = [
+	"address",
+	"categories",
+	"contact_person",
+	"groups",
+	"tags",
+	"users",
+	"name",
+	"website",
+	"phone",
+	"email",
+	"area",
+	"number_of_rooms",
+	"parent_organization",
+	"legal_form",
+	"capacity",
+	"owner_name",
+	"owner_type",
+	"rental_contract_type",
+	"rental_contract_end",
+	"funding_type",
+	"utilization_status",
+	"utilization_status_info",
+	"protection_status",
+	"protection_status_info",
+	"shared_use_allowed",
+	"shared_use_info",
+	"shared_use_equipment",
+	"shared_use_audience",
+	"shared_use_availability",
+	"shared_use_contact_person",
+	"accessibility",
+	"cost",
+	"established_since",
+	"established_until",
+	"closing_reason",
+	"notes",
+	"internal_notes",
+	"status",
+	"import_identifier",
+	"source",
+] as const satisfies readonly (keyof Institution)[];
 
 export interface GeoFeature {
 	id: string;
