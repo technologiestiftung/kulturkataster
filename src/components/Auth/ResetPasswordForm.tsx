@@ -90,17 +90,15 @@ export function ResetPasswordForm() {
 
 			<form onSubmit={handleSubmit} className="space-y-4">
 				{errorMessage && (
-					<p className="text-sm text-destructive">{errorMessage}</p>
+					<p className="body3 text-destructive">{errorMessage}</p>
 				)}
 
 				{!isReady ? (
-					<p className="text-sm text-muted-foreground">
-						{t("auth.reset.loading")}
-					</p>
+					<p className="body3 text-foreground">{t("auth.reset.loading")}</p>
 				) : (
 					<>
 						{!hasToken && (
-							<p className="text-sm text-muted-foreground">
+							<p className="body3 text-foreground">
 								{t("auth.reset.missingToken")}
 							</p>
 						)}

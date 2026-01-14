@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Plus from "@/icons/plus.svg";
 import Search from "@/icons/search.svg";
+import Close from "@/icons/close.svg";
 import type { DataTableConfig, SortState } from "./types";
 import { extractValue, formatDisplayValue, compareValues } from "./utils";
 import { SortableTableHead } from "./SortableTableHead";
@@ -97,9 +98,9 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 				<div className="flex flex-col gap-4 w-full">
 					{config.title && (
 						<div>
-							<h2 className="text-2xl font-bold">{config.title}</h2>
+							<h2>{config.title}</h2>
 							{config.subtitle && (
-								<p className="text-muted-foreground">{config.subtitle}</p>
+								<p className="text-foreground">{config.subtitle}</p>
 							)}
 						</div>
 					)}
@@ -121,7 +122,7 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 								onClick={config.secondaryButton.onClick}
 								variant="outline"
 								size="md"
-								className="bg-primary-light text-foreground border-primary rounded-full"
+								className="bg-primary-light flex-0 text-foreground border-primary rounded-full"
 								aria-label={config.secondaryButton.label}
 							>
 								{config.secondaryButton.label}
@@ -139,19 +140,26 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 										.filter(Boolean)
 										.join(" ")}
 								>
-									<span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+									<span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-foreground">
 										<Search className="size-4" />
 									</span>
 									<Input
 										placeholder={searchPlaceholder}
 										value={searchTerm}
 										onChange={(e) => setSearchTerm(e.target.value)}
+										className="h-10 w-full rounded-full pl-9 pr-10"
+									/>
+									<button
+										type="button"
 										onClick={() => {
 											setSearchTerm("");
 											setIsSearchOpen(false);
 										}}
-										className="h-10 w-full rounded-full pl-9"
-									/>
+										className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground hover:text-foreground transition-colors"
+										aria-label="Close search"
+									>
+										<Close className="size-4" />
+									</button>
 								</div>
 								{isSearchOpen ? null : (
 									<div className="gap-2 flex items-center">

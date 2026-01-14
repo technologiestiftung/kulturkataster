@@ -52,7 +52,7 @@ export function InstitutionsTable() {
 				sortable: true,
 				getValue: (row) => row.owner_name || "",
 				render: (row) =>
-					row.owner_name || <span className="text-muted-foreground">—</span>,
+					row.owner_name || <span className="text-foreground">—</span>,
 			},
 			{
 				key: "createdAt",

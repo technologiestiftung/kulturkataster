@@ -39,7 +39,7 @@ export function WelcomeModal() {
 				}
 			}}
 		>
-			<DialogContent variant="medium" className="flex" hideBackIcon>
+			<DialogContent variant="medium" className="flex" showBackButton={false}>
 				<div className="flex flex-col md:flex-row gap-8 py-12 md:pt-32 md:pb-12 px-6">
 					<div className="md:w-1/4 flex justify-center align-start h-full">
 						<KukaLargeLogo

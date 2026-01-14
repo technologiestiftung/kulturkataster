@@ -76,7 +76,7 @@ export function UsersTable() {
 								</Badge>
 							))
 						) : (
-							<span className="text-muted-foreground">
+							<span className="text-foreground">
 								{t("userTable.emptyValue")}
 							</span>
 						)}
@@ -103,7 +103,7 @@ export function UsersTable() {
 					(a.institutions?.length ?? 0) - (b.institutions?.length ?? 0),
 				render: (row) => (
 					<div className="flex flex-col gap-1">
-						<span className="text-sm">
+						<span className="body3">
 							{t("userTable.institutionsCount", {
 								count: row.institutions?.length ?? 0,
 							})}

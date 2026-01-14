@@ -108,7 +108,7 @@ const TableRows = ({ index }: { index: number }) => {
 					<div className="flex items-center justify-center gap-1">
 						<div
 							className={cn(
-								"flex h-8.5 w-8.5 items-center justify-center rounded-full border border-[#555B54] text-sm text-[#000000]",
+								"flex h-8.5 w-8.5 items-center justify-center rounded-full border border-[#555B54] body3 text-[#000000]",
 								cell.color,
 							)}
 						>
@@ -141,7 +141,7 @@ export default function GesamtIndexTabelle() {
 					xAxisLabel: titles.xAxisLabel,
 				})}
 			</p>
-			<div className="inline-block rounded border border-[#E2DFDB] bg-white text-sm w-[calc(100%-1.5rem)] ml-[1.5rem]">
+			<div className="inline-block rounded border border-[#E2DFDB] bg-white body3 w-[calc(100%-1.5rem)] ml-[1.5rem]">
 				<table
 					className="border-collapse table-fixed w-full"
 					aria-label={t("map.legend.legendGesamtIndexAriaLabel")}

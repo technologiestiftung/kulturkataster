@@ -291,7 +291,7 @@ export function InstitutionDetailContent() {
 	if (!institutionData) {
 		return (
 			<div className="p-6">
-				<p className="text-muted-foreground">{t("institution.notFound")}</p>
+				<p className="text-foreground">{t("institution.notFound")}</p>
 				<Button
 					onClick={handleClose}
 					variant="link"
