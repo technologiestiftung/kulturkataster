@@ -14,7 +14,7 @@ interface PageModalProps {
 		| "medium";
 	hasFooter?: boolean;
 	content: React.ReactNode;
-	hideBackIcon?: boolean;
+	showBackButton?: boolean;
 	hideLinksInModalFooter?: string[];
 }
 
@@ -24,7 +24,7 @@ export function PageModal({
 	variant = "fullScreenNoBottom",
 	hasFooter = true,
 	content,
-	hideBackIcon,
+	showBackButton,
 	hideLinksInModalFooter,
 }: PageModalProps) {
 	const router = useRouter();
@@ -56,7 +56,7 @@ export function PageModal({
 			<DialogContent
 				variant={variant}
 				className="flex flex-col gap-4 items-start space-y-4"
-				hideBackIcon={hideBackIcon}
+				showBackButton={showBackButton}
 			>
 				<div className="flex flex-col w-full space-y-4 mt-16 md:mt-8 p-6 md:p-32">
 					<DialogTitle className="display">{title}</DialogTitle>

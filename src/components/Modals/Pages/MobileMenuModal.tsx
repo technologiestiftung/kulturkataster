@@ -54,7 +54,7 @@ export function MobileMenuModal() {
 				variant="mobileMenu"
 				className="flex flex-col flex-1 bg-sidebar justify-between"
 				showCloseButton={false}
-				hideBackIcon
+				showBackButton={false}
 			>
 				<DialogHeader className="flex-row items-center justify-between p-4 space-y-0">
 					<DialogTitle className="sr-only">{t("mobileMenu.title")}</DialogTitle>

@@ -52,7 +52,7 @@ export function AccountLayoutClient({
 			<div className="space-y-6 p-10">
 				<div className="mt-16">
 					<h1 className="text-3xl font-bold"></h1>
-					<p className="text-muted-foreground mt-2"></p>
+					<p className="text-foreground mt-2"></p>
 				</div>
 				<div className="Buttons flex flex-wrap space-x-3">
 					<Button

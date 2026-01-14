@@ -45,7 +45,7 @@ export function LoginForm() {
 
 			<form onSubmit={handleSubmit} className="space-y-4">
 				{errorMessage && (
-					<p className="text-sm text-destructive">{errorMessage}</p>
+					<p className="body3 text-destructive">{errorMessage}</p>
 				)}
 				<div className="space-y-2">
 					<Label htmlFor="email" required>

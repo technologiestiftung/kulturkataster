@@ -49,7 +49,7 @@ export function CategoriesTable() {
 				sortable: true,
 				getValue: (row) => row.subcategory?.length ?? 0,
 				render: (row) => (
-					<span className="text-sm">{row.subcategory?.length ?? 0}</span>
+					<span className="body3">{row.subcategory?.length ?? 0}</span>
 				),
 			},
 			{

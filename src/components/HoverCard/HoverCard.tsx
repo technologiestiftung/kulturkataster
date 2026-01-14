@@ -52,9 +52,7 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 			<Card className="w-80 shadow-lg border-none">
 				<CardHeader className="p-2">
 					<div className="flex gap-2 justify-between">
-						<CardTitle className="text-xl font-bold line-clamp-2 w-full">
-							{featureProperties.name}
-						</CardTitle>
+						<CardTitle className="body1">{featureProperties.name}</CardTitle>
 					</div>
 				</CardHeader>
 
