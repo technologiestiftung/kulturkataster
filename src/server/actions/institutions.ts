@@ -10,6 +10,8 @@ import { getCurrentUserId } from "@/server/auth/getCurrentUser";
 import { institutionRepo } from "@/server/data/institutionRepo";
 import { buildInstitutionSearchWhere } from "@/server/logic/institutionSearch";
 import { buildInstitutionSelect } from "@/server/logic/institutionSelect";
+import { buildInstitutionPermissionFields } from "@/lib/utils/institutionPermissionUtils";
+import { revalidateAccount } from "../utils/actionsUtils";
 
 export async function getInstitutions() {
 	const currentUserId = await getCurrentUserId();
@@ -36,23 +38,7 @@ export async function getMyInstitutions() {
 const buildInstitutionFieldList = (
 	input: InstitutionForm | InstitutionUpdateForm,
 ) => {
-	const fields = Object.keys(input).filter(
-		(key) =>
-			![
-				"id",
-				"categoryIds",
-				"tagIds",
-				"userIds",
-				"groupIds",
-				"address",
-			].includes(key),
-	);
-	const addressFields = input.address
-		? Object.keys(input.address)
-				.filter((field) => field !== "id")
-				.map((field) => `address.${field}`)
-		: [];
-	return { fields, addressFields };
+	return { fields: buildInstitutionPermissionFields(input) };
 };
 
 const buildAddressCreate = (address?: InstitutionForm["address"] | null) => {
@@ -84,19 +70,16 @@ const buildContactPersonConnect = (contactPersonId?: number | null) => {
 export async function createInstitution(input: InstitutionForm) {
 	const currentUserId = await getCurrentUserId();
 	const ctx = await getAccessContextForUser(currentUserId);
-	const { fields, addressFields } = buildInstitutionFieldList(input);
-	authorizeTable(ctx, "institution", "update");
+	const { fields } = buildInstitutionFieldList(input);
+	authorizeTable(ctx, "institution", "create");
 	if (fields.length > 0) {
-		authorizeFields(ctx, "institution", fields, "update");
-	}
-	if (addressFields.length > 0) {
-		authorizeFields(ctx, "institution", addressFields, "update");
+		authorizeFields(ctx, "institution", fields, "create");
 	}
 	if (input.address && !input.address.id && !input.address.street) {
 		throw new Error("Address street is required when creating a new address.");
 	}
 
-	return institutionRepo.create({
+	const institution = await institutionRepo.create({
 		name: input.name,
 		website: input.website ?? null,
 		phone: input.phone ?? null,
@@ -130,7 +113,7 @@ export async function createInstitution(input: InstitutionForm) {
 		status: input.status ?? "public",
 		import_identifier: input.import_identifier ?? null,
 		source: input.source ?? null,
-		shared_use_contact_person_id: input.shared_use_contact_person_id ?? null,
+		shared_use_contact_person: input.shared_use_contact_person ?? null,
 		creator: { connect: { id: currentUserId! } },
 		updater: currentUserId ? { connect: { id: currentUserId } } : undefined,
 		address: buildAddressCreate(input.address),
@@ -148,21 +131,20 @@ export async function createInstitution(input: InstitutionForm) {
 			? { connect: input.groupIds.map((id) => ({ id })) }
 			: undefined,
 	});
+	revalidateAccount();
+	return institution;
 }
 
 export async function updateInstitution(input: InstitutionUpdateForm) {
 	const currentUserId = await getCurrentUserId();
 	const ctx = await getAccessContextForUser(currentUserId);
-	const { fields, addressFields } = buildInstitutionFieldList(input);
+	const { fields } = buildInstitutionFieldList(input);
 	authorizeTable(ctx, "institution", "update");
 	if (fields.length > 0) {
 		authorizeFields(ctx, "institution", fields, "update");
 	}
-	if (addressFields.length > 0) {
-		authorizeFields(ctx, "institution", addressFields, "update");
-	}
 
-	return institutionRepo.update(input.id, {
+	const institution = await institutionRepo.update(input.id, {
 		name: input.name,
 		website: input.website ?? undefined,
 		phone: input.phone ?? undefined,
@@ -196,8 +178,7 @@ export async function updateInstitution(input: InstitutionUpdateForm) {
 		status: input.status ?? undefined,
 		import_identifier: input.import_identifier ?? undefined,
 		source: input.source ?? undefined,
-		shared_use_contact_person_id:
-			input.shared_use_contact_person_id ?? undefined,
+		shared_use_contact_person: input.shared_use_contact_person ?? undefined,
 		updater: currentUserId ? { connect: { id: currentUserId } } : undefined,
 		address: buildAddressUpsert(input.address),
 		contact_person: buildContactPersonConnect(input.contact_person_id),
@@ -214,13 +195,17 @@ export async function updateInstitution(input: InstitutionUpdateForm) {
 			? { set: input.groupIds.map((id) => ({ id })) }
 			: undefined,
 	});
+	revalidateAccount();
+	return institution;
 }
 
 export async function deleteInstitution(id: number) {
 	const currentUserId = await getCurrentUserId();
 	const ctx = await getAccessContextForUser(currentUserId);
 	authorizeTable(ctx, "institution", "delete");
-	return institutionRepo.remove(id);
+	const institution = await institutionRepo.remove(id);
+	revalidateAccount();
+	return institution;
 }
 
 export async function searchInstitutions(query: string) {
