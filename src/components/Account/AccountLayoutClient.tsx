@@ -7,6 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import Setting from "@/icons/user.svg";
 import { logout } from "@/server/actions/auth";
+import { AccountAlertDialog } from "@/components/Account/AccountAlertDialog";
 
 type AccountLayoutClientProps = {
 	children: ReactNode;
@@ -49,6 +50,7 @@ export function AccountLayoutClient({
 	};
 	return (
 		<div>
+			<AccountAlertDialog />
 			<div className="space-y-6 p-10">
 				<div className="mt-16">
 					<h1 className="text-3xl font-bold"></h1>
