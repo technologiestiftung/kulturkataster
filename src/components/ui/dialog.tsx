@@ -11,8 +11,11 @@ import { useRouter } from "next/navigation";
 import { useAppStore } from "@/lib/store/appStore";
 
 type DialogRootProps = React.ComponentProps<typeof DialogPrimitive.Root>;
+type DialogProps = DialogRootProps & {
+	disableRouteSync?: boolean;
+};
 
-function Dialog({ open, ...props }: DialogRootProps) {
+function Dialog({ open, disableRouteSync, onOpenChange, ...props }: DialogProps) {
 	useRestoreFocus(open);
 	const router = useRouter();
 	const { firstTimeUser, setFirstTimeUser } = useAppStore();
@@ -22,6 +25,8 @@ function Dialog({ open, ...props }: DialogRootProps) {
 			data-slot="dialog"
 			open={open}
 			onOpenChange={(newOpen) => {
+				onOpenChange?.(newOpen);
+				if (disableRouteSync) return;
 				if (!newOpen) {
 					if (firstTimeUser) {
 						setFirstTimeUser(false);
@@ -86,6 +91,7 @@ function DialogContent({
 		| "medium"
 		| "mobileMenu"
 		| "multiSelect"
+		| "alert"
 		| "entityEdit";
 }) {
 	const { t } = useTranslation("common");
@@ -107,6 +113,8 @@ function DialogContent({
 				return "bg-neutral-5 fixed z-[70] top-0 md:top-1/2 left-1/2 w-full max-w-[calc(100%-2rem)] h-full md:h-auto md:max-h-[calc(100%-5rem)] -translate-x-1/2 md:-translate-y-1/2 md:rounded-lg border md:max-w-5xl flex flex-col overflow-hidden p-12";
 			case "multiSelect":
 				return "bg-neutral-5 fixed z-[75] top-0 md:top-1/2 left-1/2 w-full max-w-[calc(100%-2rem)] h-full md:h-auto md:max-h-[calc(100%-5rem)] -translate-x-1/2 md:-translate-y-1/2 md:rounded-lg border md:max-w-5xl flex flex-col overflow-hidden";
+			case "alert":
+				return "fixed z-[70] top-1/2 left-1/2 w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 md:max-w-lg md:rounded-lg border p-6";
 			case "default":
 			default:
 				return "fixed top-[50%] left-[50%] w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] md:rounded-lg border p-6 sm:max-w-3xl max-h-full overflow-auto";
@@ -123,7 +131,15 @@ function DialogContent({
 
 	return (
 		<DialogPortal data-slot="dialog-portal">
-			<DialogOverlay className={variant === "multiSelect" ? "z-[71]" : ""} />
+			<DialogOverlay
+				className={
+					variant === "multiSelect"
+						? "z-[71]"
+						: variant === "alert"
+							? "bg-black/40"
+							: ""
+				}
+			/>
 			<DialogPrimitive.Content
 				data-slot="dialog-content"
 				className={cn(

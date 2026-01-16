@@ -12,6 +12,7 @@ export const useAccountStore = create<AccountStoreState>()(
 		selectedUserId: null,
 		selectedGroupId: null,
 		selectedRoleId: null,
+		alertDialog: null,
 		setUsers: (users) => set({ users }),
 		setGroups: (groups) => set({ groups }),
 		setRoles: (roles) => set({ roles }),
@@ -20,5 +21,6 @@ export const useAccountStore = create<AccountStoreState>()(
 		setSelectedUserId: (id) => set({ selectedUserId: id }),
 		setSelectedGroupId: (id) => set({ selectedGroupId: id }),
 		setSelectedRoleId: (id) => set({ selectedRoleId: id }),
+		setAlertDialog: (alert) => set({ alertDialog: alert }),
 	})),
 );

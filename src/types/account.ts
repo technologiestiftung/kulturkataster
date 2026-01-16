@@ -13,6 +13,7 @@ export type AccountStoreState = {
 	selectedUserId: string | null;
 	selectedGroupId: string | null;
 	selectedRoleId: string | null;
+	alertDialog: { title: string; description: string } | null;
 	setUsers: (users: User[]) => void;
 	setGroups: (groups: Group[]) => void;
 	setRoles: (roles: Role[]) => void;
@@ -21,4 +22,5 @@ export type AccountStoreState = {
 	setSelectedUserId: (id: string | null) => void;
 	setSelectedGroupId: (id: string | null) => void;
 	setSelectedRoleId: (id: string | null) => void;
+	setAlertDialog: (alert: { title: string; description: string } | null) => void;
 };
