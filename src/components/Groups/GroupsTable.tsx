@@ -4,47 +4,63 @@ import { DataTable } from "@/components/DataTable";
 import type { DataTableConfig } from "@/components/DataTable";
 import { useAccountStore } from "@/lib/store/accountStore";
 import type { Group } from "@/types/group";
+import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 
 export function GroupsTable() {
 	const groups = useAccountStore((state) => state.groups);
+	const router = useRouter();
+	const { t } = useTranslation("content");
 
 	const tableConfig: DataTableConfig<Group> = {
 		columns: [
 			{
-				key: "name",
-				label: "Name",
-				sortable: true,
-				getValue: (row) => row.name,
+				accessorKey: "name",
+				header: t("groupTable.columns.name"),
+				enableSorting: true,
+				meta: { pin: "left", truncate: true },
 			},
 			{
-				key: "description",
-				label: "Description",
-				sortable: true,
-				getValue: (row) => row.description,
+				accessorKey: "description",
+				header: t("groupTable.columns.description"),
+				enableSorting: true,
+				meta: { truncate: true },
 			},
 			{
-				key: "userCount",
-				label: "Users",
-				sortable: true,
-				getValue: (row) => row.users?.length,
+				id: "userCount",
+				header: t("groupTable.columns.users"),
+				accessorFn: (row) => row.users?.length ?? 0,
+				enableSorting: true,
 			},
 			{
-				key: "institutionCount",
-				label: "Institutions",
-				sortable: true,
-				getValue: (row) => row.institutions?.length,
+				id: "institutionCount",
+				header: t("groupTable.columns.institutions"),
+				accessorFn: (row) => row.institutions?.length ?? 0,
+				enableSorting: true,
 			},
 			{
-				key: "createdAt",
-				label: "Created",
-				sortable: true,
-				getValue: (row) => row.created_at,
+				accessorKey: "updated_at",
+				header: t("groupTable.columns.updated"),
+				enableSorting: true,
+				cell: ({ row }) => {
+					const group = row.original;
+					return group.updated_at.toLocaleDateString();
+				},
+			},
+			{
+				accessorKey: "created_at",
+				header: t("groupTable.columns.created"),
+				enableSorting: true,
+				cell: ({ row }) => {
+					const group = row.original;
+					return group.created_at.toLocaleDateString();
+				},
 			},
 		],
 		data: groups,
 		getRowKey: (row) => row.id,
 		searchable: true,
-		searchPlaceholder: "Search groups...",
+		searchPlaceholder: t("groupTable.searchPlaceholder"),
 		getSearchableValues: (row) => [
 			row.name,
 			row.description ?? "",
@@ -53,13 +69,16 @@ export function GroupsTable() {
 			row.created_at.toLocaleDateString(),
 		],
 		primaryButton: {
-			label: "Create Group",
-			onClick: () => {},
+			label: t("groupTable.actions.add"),
+			onClick: () => router.push("/account/groups/new"),
 		},
-		onEdit: () => {},
-		emptyMessage: "No groups found.",
-		title: "Groups",
-		subtitle: `${groups.length} ${groups.length === 1 ? "group" : "groups"} total`,
+		onEdit: (row) => router.push(`/account/groups/${row.id}/edit`),
+		emptyMessage: t("groupTable.emptyMessage"),
+		title: t("groupTable.title"),
+		subtitle:
+			groups.length === 1
+				? t("groupTable.subtitle.singular")
+				: t("groupTable.subtitle.plural", { count: groups.length }),
 	};
 
 	return (

@@ -290,10 +290,22 @@
 						"label": "Rolle"
 					},
 					"groups": {
-						"label": "Gruppen"
+						"label": "Gruppen",
+						"placeholder": "Gruppen auswählen",
+						"searchPlaceholder": "Gruppen suchen...",
+						"emptyText": "Keine Gruppen gefunden"
 					},
 					"institutions": {
-						"label": "Institutionen"
+						"label": "Institutionen",
+						"placeholder": "Institutionen auswählen",
+						"searchPlaceholder": "Institution suchen...",
+						"emptyText": "Keine Institutionen gefunden",
+						"filters": {
+							"categories": "Kategorien",
+							"subcategories": "Unterkategorien",
+							"tags": "Tags",
+							"districts": "Bezirke"
+						}
 					}
 				}
 			}
@@ -323,6 +335,24 @@
 			"send": "Reset-E-Mail senden",
 			"success": "E-Mail zum Zurücksetzen des Passworts gesendet.",
 			"error": "Reset-E-Mail konnte nicht gesendet werden."
+		},
+		"complianceResend": {
+			"title": "DSGVO-Compliance erneut senden",
+			"description": "Senden Sie die DSGVO-Compliance-E-Mail erneut an die Nutzerin oder den Nutzer.",
+			"sending": "Wird gesendet…",
+			"send": "DSGVO-Compliance-E-Mail senden",
+			"success": "DSGVO-Compliance-E-Mail erfolgreich gesendet.",
+			"error": "DSGVO-Compliance-E-Mail konnte nicht gesendet werden."
+		},
+		"feedback": {
+			"create": {
+				"title": "Nutzer*in erstellt",
+				"description": "Die Nutzer*in wurde erfolgreich erstellt."
+			},
+			"update": {
+				"title": "Nutzer*in aktualisiert",
+				"description": "Die Änderungen wurden erfolgreich gespeichert."
+			}
 		}
 	},
 	"userTable": {
@@ -334,7 +364,9 @@
 			"groups": "Gruppen",
 			"status": "Status",
 			"access": "Zugriff auf Institutionen",
-			"compliance": "Compliance"
+			"compliance": "Compliance",
+			"createdAt": "Erstellt am",
+			"updatedAt": "Aktualisiert am"
 		},
 		"searchPlaceholder": "Nutzer*innen suchen...",
 		"actions": {
@@ -1013,5 +1045,194 @@
 		"subtitle": "Ein Projekt der Kulturraum Berlin gGmbH",
 		"title": "Das Berliner Kulturkataster: Die Kultur der Stadt auf einen Blick",
 		"accessibilitySettings": "Einstellungen zur Barrierefreiheit"
+	},
+	"groupFormModal": {
+		"dialog": {
+			"title": {
+				"create": "Gruppe erstellen",
+				"edit": "Gruppe bearbeiten"
+			},
+			"loading": "Gruppe wird geladen...",
+			"notFound": {
+				"title": "Gruppe nicht gefunden",
+				"description": "Die ausgewählte Gruppe konnte nicht geladen werden."
+			}
+		},
+		"form": {
+			"details": {
+				"title": "Gruppendetails",
+				"description": {
+					"create": "Legen Sie eine neue Gruppe an.",
+					"edit": "Aktualisieren Sie den Gruppennamen und die Beschreibung."
+				},
+				"fields": {
+					"name": {
+						"label": "Name",
+						"placeholder": "Gruppenname"
+					},
+					"description": {
+						"label": "Beschreibung",
+						"placeholder": "Optionale Beschreibung"
+					}
+				}
+			},
+			"members": {
+				"title": "Mitglieder",
+				"fields": {
+					"users": {
+						"label": "Benutzer*innen",
+						"placeholder": "Benutzer*innen auswählen",
+						"searchPlaceholder": "Benutzer*innen suchen...",
+						"emptyText": "Keine Benutzer*innen gefunden",
+						"filters": {
+							"role": "Rolle"
+						}
+					},
+					"institutions": {
+						"label": "Institutionen",
+						"placeholder": "Institutionen auswählen",
+						"searchPlaceholder": "Institutionen suchen...",
+						"emptyText": "Keine Institutionen gefunden",
+						"filters": {
+							"categories": "Kategorien",
+							"subcategories": "Unterkategorien",
+							"tags": "Tags",
+							"districts": "Bezirke"
+						}
+					}
+				}
+			}
+		},
+		"actions": {
+			"create": "Gruppe erstellen",
+			"creating": "Gruppe wird erstellt...",
+			"save": "Änderungen speichern",
+			"saving": "Änderungen werden gespeichert...",
+			"cancel": "Abbrechen"
+		},
+		"feedback": {
+			"create": {
+				"title": "Gruppe erstellt",
+				"description": "Die Gruppe wurde erfolgreich erstellt."
+			},
+			"update": {
+				"title": "Gruppe aktualisiert",
+				"description": "Die Änderungen wurden erfolgreich gespeichert."
+			}
+		}
+	},
+	"roleFormModal": {
+		"dialog": {
+			"title": {
+				"create": "Rolle erstellen",
+				"edit": "Rolle bearbeiten"
+			},
+			"loading": "Rolle wird geladen...",
+			"notFound": {
+				"title": "Rolle nicht gefunden",
+				"description": "Die ausgewählte Rolle konnte nicht geladen werden."
+			}
+		},
+		"form": {
+			"details": {
+				"title": "Rollen-Details",
+				"description": {
+					"create": "Legen Sie eine neue Rolle an.",
+					"edit": "Aktualisieren Sie den Rollennamen und die Beschreibung."
+				},
+				"fields": {
+					"name": {
+						"label": "Name",
+						"placeholder": "Rollenname"
+					},
+					"description": {
+						"label": "Beschreibung",
+						"placeholder": "Optionale Beschreibung"
+					}
+				}
+			}
+		},
+		"permissions": {
+			"title": "Berechtigungen",
+			"table": {
+				"title": "Tabellenberechtigungen",
+				"description": "Legen Sie fest, welche Aktionen diese Rolle pro Tabelle ausführen darf."
+			},
+			"tables": {
+				"institution": "Institutionen",
+				"user": "Benutzer*innen",
+				"group": "Gruppen",
+				"role": "Rollen",
+				"category": "Kategorien",
+				"address": "Adressen"
+			},
+			"fields": {
+				"title": "Feldberechtigungen",
+				"description": "Begrenzen Sie Aktualisierungen auf bestimmte Kulturort-Felder.",
+				"columnLabel": "Feld",
+				"sections": {
+					"relations": "Beziehungen",
+					"institution": "Kulturort-Felder",
+					"address": "Adressfelder"
+				}
+			}
+		},
+		"actions": {
+			"create": "Rolle erstellen",
+			"creating": "Rolle wird erstellt...",
+			"save": "Änderungen speichern",
+			"saving": "Änderungen werden gespeichert...",
+			"cancel": "Abbrechen"
+		},
+		"feedback": {
+			"create": {
+				"title": "Rolle erstellt",
+				"description": "Die Rolle wurde erfolgreich erstellt."
+			},
+			"update": {
+				"title": "Rolle aktualisiert",
+				"description": "Die Änderungen wurden erfolgreich gespeichert."
+			}
+		}
+	},
+	"groupTable": {
+		"title": "Gruppen",
+		"subtitle": {
+			"singular": "1 Gruppe insgesamt",
+			"plural": "{{count}} Gruppen insgesamt"
+		},
+		"columns": {
+			"name": "Name",
+			"description": "Beschreibung",
+			"users": "Benutzer*innen",
+			"institutions": "Institutionen",
+			"created": "Erstellt",
+			"createdAt": "Erstellt am",
+			"updatedAt": "Aktualisiert am"
+		},
+		"searchPlaceholder": "Gruppen durchsuchen...",
+		"emptyMessage": "Keine Gruppen gefunden.",
+		"actions": {
+			"add": "Gruppe erstellen"
+		}
+	},
+	"roleTable": {
+		"title": "Rollen",
+		"subtitle": {
+			"singular": "1 Rolle insgesamt",
+			"plural": "{{count}} Rollen insgesamt"
+		},
+		"columns": {
+			"name": "Name",
+			"description": "Beschreibung",
+			"users": "Benutzer*innen",
+			"createdAt": "Erstellt am",
+			"updatedAt": "Aktualisiert am"
+		},
+		"searchPlaceholder": "Rollen durchsuchen...",
+		"emptyMessage": "Keine Rollen gefunden.",
+		"actions": {
+			"add": "Rolle erstellen"
+		}
 	}
 }

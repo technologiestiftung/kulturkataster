@@ -56,3 +56,30 @@ export const getCoordinatesFromAddress = (
 	}
 	return [Number(lng), Number(lat)];
 };
+
+export const formatInstitutionDate = (value?: Date | string | null) => {
+	if (!value) return "—";
+	const date = new Date(value);
+	if (Number.isNaN(date.getTime())) return "—";
+	return date.toLocaleDateString();
+};
+
+export const formatInstitutionBoolean = (value?: boolean | null) => {
+	if (value === true) return "Yes";
+	if (value === false) return "No";
+	return "—";
+};
+
+export const formatInstitutionAddress = (institution: Institution) => {
+	const address = institution.address;
+	if (!address) return "—";
+	const street = [address.street, address.street_number]
+		.filter(Boolean)
+		.join(" ");
+	const city = [address.zipcode, address.city].filter(Boolean).join(" ");
+	const district = address.district ?? "";
+	return [street, city, district].filter(Boolean).join(", ") || "—";
+};
+
+export const joinInstitutionIds = (values?: Array<number | string> | null) =>
+	values && values.length > 0 ? values.join(", ") : "—";

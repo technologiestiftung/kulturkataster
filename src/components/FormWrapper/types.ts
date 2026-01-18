@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+
 export type FieldType =
 	| "text"
 	| "email"
@@ -11,11 +13,19 @@ export type FieldType =
 	| "radio"
 	| "checkbox"
 	| "switch"
-	| "multiselect";
+	| "multiselect"
+	| "actionPanel"
+	| "tablePermissions"
+	| "fieldPermissions";
+
+export type PermissionAction = "read" | "create" | "update" | "delete";
 
 export interface SelectOption {
 	label: string;
 	value: string;
+	searchText?: string;
+	filterValues?: Record<string, string[]>;
+	parentValue?: string;
 }
 
 export interface FieldConfig {
@@ -27,6 +37,48 @@ export interface FieldConfig {
 	disabled?: boolean;
 	description?: string;
 	defaultValue?: unknown;
+	multiselectVariant?: "list" | "modal";
+	searchPlaceholder?: string;
+	emptyText?: string;
+	previewCount?: number;
+	multiselectFilterPanel?: ReactNode;
+	multiselectFilteredOptions?: SelectOption[];
+	multiselectFilters?: {
+		id: string;
+		label: string;
+		dependsOn?: string;
+		options: SelectOption[];
+	}[];
+	multiselectSortOptions?: {
+		id: string;
+		label: string;
+		compare?: (a: SelectOption, b: SelectOption) => number;
+	}[];
+	tablePermissions?: {
+		tables: { key: string; label: string }[];
+		actions?: PermissionAction[];
+		actionLabels?: Partial<Record<PermissionAction, string>>;
+	};
+	fieldPermissions?: {
+		sections: {
+			id: string;
+			title: string;
+			fields: { key: string; label: string }[];
+		}[];
+		actions?: PermissionAction[];
+		actionLabels?: Partial<Record<PermissionAction, string>>;
+		fieldLabel?: string;
+	};
+	actionPanel?: {
+		title: string;
+		description: string;
+		actionLabel: string;
+		actionLabelLoading: string;
+		onAction: () => Promise<string | null | undefined>;
+		errorFallback: string;
+		className?: string;
+		icon?: ReactNode;
+	};
 
 	// For select, radio, checkbox, multiselect
 	options?: SelectOption[];

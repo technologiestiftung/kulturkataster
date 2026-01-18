@@ -1,17 +1,7 @@
-export type SortDirection = "asc" | "desc" | null;
-
-export interface ColumnConfig<T> {
-	key: string;
-	label: string;
-	sortable?: boolean;
-	getValue?: (row: T) => string | number | boolean | Date | null;
-	render?: (row: T) => React.ReactNode;
-	accessor?: string;
-	compare?: (a: T, b: T) => number;
-}
+import { type ColumnDef } from "@tanstack/react-table";
 
 export interface DataTableConfig<T> {
-	columns: ColumnConfig<T>[];
+	columns: ColumnDef<T, unknown>[];
 
 	data: T[];
 
@@ -20,6 +10,15 @@ export interface DataTableConfig<T> {
 	searchable?: boolean;
 	searchPlaceholder?: string;
 	getSearchableValues?: (row: T) => string[];
+
+	virtualization?: {
+		enabled?: boolean;
+		rowHeight?: number;
+		overscan?: number;
+	};
+
+	renderExpandedRow?: (row: T) => React.ReactNode;
+	getRowCanExpand?: (row: T) => boolean;
 
 	primaryButton?: {
 		label: string;
@@ -34,13 +33,10 @@ export interface DataTableConfig<T> {
 	onEdit?: (row: T) => void;
 	rowActions?: (row: T) => React.ReactNode;
 
+	enableColumnResizing?: boolean;
+
 	emptyMessage?: string;
 
 	title?: string;
 	subtitle?: string;
-}
-
-export interface SortState {
-	column: string | null;
-	direction: SortDirection;
 }

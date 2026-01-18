@@ -49,9 +49,9 @@ export function AccountLayoutClient({
 		}
 	};
 	return (
-		<div>
+		<div className="flex min-h-0 h-full flex-col">
 			<AccountAlertDialog />
-			<div className="space-y-6 p-10">
+			<div className="space-y-6 p-10 shrink-0">
 				<div className="mt-16">
 					<h1 className="text-3xl font-bold"></h1>
 					<p className="text-foreground mt-2"></p>
@@ -93,7 +93,7 @@ export function AccountLayoutClient({
 					</Button>
 				</div>
 			</div>
-			<div className="Account-section py-10">
+			<div className="Account-section py-10 flex flex-col min-h-0 flex-1">
 				<Tabs value={getCurrentTab()} onValueChange={handleTabChange}>
 					<TabsList className="px-10">
 						{allowedTabs.includes("activity") && (
@@ -129,7 +129,7 @@ export function AccountLayoutClient({
 					</TabsList>
 				</Tabs>
 
-				<div className="mt-6">{children}</div>
+				<div className="mt-6 flex-1 min-h-0">{children}</div>
 			</div>
 		</div>
 	);

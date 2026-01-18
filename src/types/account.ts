@@ -22,5 +22,7 @@ export type AccountStoreState = {
 	setSelectedUserId: (id: string | null) => void;
 	setSelectedGroupId: (id: string | null) => void;
 	setSelectedRoleId: (id: string | null) => void;
-	setAlertDialog: (alert: { title: string; description: string } | null) => void;
+	setAlertDialog: (
+		alert: { title: string; description: string } | null,
+	) => void;
 };

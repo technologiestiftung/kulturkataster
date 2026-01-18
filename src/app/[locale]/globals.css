@@ -203,6 +203,13 @@
 	a {
 		@apply w-fit;
 	}
+	.no-scrollbar {
+		-ms-overflow-style: none;
+		scrollbar-width: none;
+	}
+	.no-scrollbar::-webkit-scrollbar {
+		display: none;
+	}
 }
 
 @layer components {
