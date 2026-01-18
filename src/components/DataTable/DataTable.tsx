@@ -50,6 +50,7 @@ declare module "@tanstack/react-table" {
 		itemRank?: RankingInfo;
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	interface ColumnMeta<TData, TValue> {
 		pin?: "left" | "right";
 		truncate?: boolean;
