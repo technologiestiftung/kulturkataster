@@ -1,5 +1,8 @@
+import type { ReactNode } from "react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Label } from "../ui/label";
+import { cn } from "@/lib/utils";
 
 type ActionPanelProps = {
 	title: string;
@@ -9,6 +12,7 @@ type ActionPanelProps = {
 	onAction: () => Promise<string | null | undefined>;
 	errorFallback: string;
 	className?: string;
+	icon?: ReactNode;
 };
 
 export function ActionPanel({
@@ -19,6 +23,7 @@ export function ActionPanel({
 	onAction,
 	errorFallback,
 	className,
+	icon,
 }: ActionPanelProps) {
 	const [message, setMessage] = useState<string | null>(null);
 	const [isLoading, setIsLoading] = useState(false);
@@ -38,25 +43,29 @@ export function ActionPanel({
 
 	return (
 		<div
-			className={`rounded-sm border border-input bg-background p-4 ${className}`}
+			className={cn(
+				"rounded-sm border border-input bg-background p-4",
+				className,
+			)}
 		>
-			<div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-				<div>
-					<p className="text-sm font-semibold">{title}</p>
-					<p className="text-xs text-muted-foreground">{description}</p>
+			<div className="flex flex-col gap-2">
+				<div className="flex flex-col gap-2">
+					<div className="flex items-center gap-2">
+						{icon && <span className="text-muted-foreground">{icon}</span>}
+						<Label className="font-bold">{title}</Label>
+					</div>
+					<p className="body2">{description}</p>
 				</div>
 				<Button
 					type="button"
-					variant="outline"
+					variant="ghost"
 					disabled={isLoading}
 					onClick={handleAction}
 				>
 					{isLoading ? actionLabelLoading : actionLabel}
 				</Button>
 			</div>
-			{message && (
-				<p className="mt-2 text-xs text-muted-foreground">{message}</p>
-			)}
+			{message && <p className="mt-2 text-xs text-foreground">{message}</p>}
 		</div>
 	);
 }

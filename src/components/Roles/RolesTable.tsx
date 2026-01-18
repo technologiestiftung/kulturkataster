@@ -4,35 +4,51 @@ import { DataTable } from "@/components/DataTable";
 import type { DataTableConfig } from "@/components/DataTable";
 import { useAccountStore } from "@/lib/store/accountStore";
 import type { Role } from "@/types/role";
+import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 
 export function RolesTable() {
 	const roles = useAccountStore((state) => state.roles);
+	const router = useRouter();
+	const { t } = useTranslation(["content", "enumMap"]);
 
 	const tableConfig: DataTableConfig<Role> = {
 		columns: [
 			{
-				key: "name",
-				label: "Name",
-				sortable: true,
-				getValue: (row) => row.name,
+				accessorKey: "name",
+				header: t("roleTable.columns.name"),
+				enableSorting: true,
+				meta: { pin: "left", truncate: true },
 			},
 			{
-				key: "description",
-				label: "Description",
-				sortable: true,
-				getValue: (row) => row.description,
+				accessorKey: "description",
+				header: t("roleTable.columns.description"),
+				enableSorting: true,
+				meta: { truncate: true },
 			},
 			{
-				key: "userCount",
-				label: "Users",
-				sortable: true,
-				getValue: (row) => row.users.length,
+				id: "created_at",
+				header: t("roleTable.columns.createdAt"),
+				accessorFn: (row) => row.created_at.toLocaleDateString(),
+				enableSorting: true,
+			},
+			{
+				id: "updated_at",
+				header: t("roleTable.columns.updatedAt"),
+				accessorFn: (row) => row.updated_at.toLocaleDateString(),
+				enableSorting: true,
+			},
+			{
+				id: "userCount",
+				header: t("roleTable.columns.users"),
+				accessorFn: (row) => row.users.length,
+				enableSorting: true,
 			},
 		],
 		data: roles,
 		getRowKey: (row) => row.id,
 		searchable: true,
-		searchPlaceholder: "Search roles...",
+		searchPlaceholder: t("roleTable.searchPlaceholder"),
 		getSearchableValues: (row) => {
 			const values: string[] = [
 				row.name,
@@ -43,13 +59,16 @@ export function RolesTable() {
 			return values;
 		},
 		primaryButton: {
-			label: "Create Role",
-			onClick: () => {},
+			label: t("roleTable.actions.add"),
+			onClick: () => router.push("/account/roles/new"),
 		},
-		onEdit: () => {},
-		emptyMessage: "No roles found.",
-		title: "Roles",
-		subtitle: `${roles.length} ${roles.length === 1 ? "role" : "roles"} total`,
+		onEdit: (row) => router.push(`/account/roles/${row.id}/edit`),
+		emptyMessage: t("roleTable.emptyMessage"),
+		title: t("roleTable.title"),
+		subtitle:
+			roles.length === 1
+				? t("roleTable.subtitle.singular")
+				: t("roleTable.subtitle.plural", { count: roles.length }),
 	};
 
 	return (

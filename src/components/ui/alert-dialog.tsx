@@ -45,11 +45,7 @@ function AlertDialog({
 					{hasActions && (
 						<div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
 							{showCancel && (
-								<Button
-									type="button"
-									variant="outline"
-									onClick={onCancel}
-								>
+								<Button type="button" variant="outline" onClick={onCancel}>
 									{cancelLabel}
 								</Button>
 							)}

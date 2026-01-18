@@ -2,18 +2,21 @@
 
 import { DataTable } from "@/components/DataTable";
 import type { DataTableConfig } from "@/components/DataTable";
-import { Badge } from "@/components/ui/badge";
+import { BadgeOverflowList } from "@/components/Badges/Badges";
+import { StatusDot } from "@/components/ui/status-dot";
 import { useAccountStore } from "@/lib/store/accountStore";
 import type { User } from "@/types/user";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
+import { Badge } from "../ui/badge";
+import { UserStatus } from "@/generated/prisma";
 
 export function UsersTable() {
 	const users = useAccountStore((state) => state.users);
 	const router = useRouter();
 	const { t } = useTranslation("content");
 
-	const getStatusLabel = (status: User["status"]) => {
+	const getStatusLabel = (status: UserStatus) => {
 		if (status === "approval_pending") {
 			return t("userFormModal.status.approvalPending");
 		}
@@ -26,39 +29,66 @@ export function UsersTable() {
 	const tableConfig: DataTableConfig<User> = {
 		columns: [
 			{
-				key: "email",
-				label: t("userTable.columns.email"),
-				sortable: true,
-				getValue: (row) => row.email,
+				id: "status",
+				header: "",
+				accessorKey: "status",
+				enableSorting: true,
+				meta: { pin: "left" },
+				size: 50,
+				cell: ({ row }) => {
+					const user = row.original;
+					let tone: "success" | "neutral" | "info" | "error" = "neutral";
+					if (user.status === "active") tone = "success";
+					else if (user.status === "approval_pending") tone = "info";
+					else if (user.status === "inactive") tone = "error";
+					else if (user.status === "banned") tone = "neutral";
+					return (
+						<StatusDot
+							tone={tone}
+							label={getStatusLabel(user.status)}
+							showLabel="hover"
+						/>
+					);
+				},
 			},
 			{
-				key: "first_name",
-				label: t("userTable.columns.firstName"),
-				sortable: true,
-				getValue: (row) => row.first_name,
+				accessorKey: "email",
+				header: t("userTable.columns.email"),
+				enableSorting: true,
+				size: 250,
+				meta: { pin: "left", truncate: true },
 			},
 			{
-				key: "last_name",
-				label: t("userTable.columns.lastName"),
-				sortable: true,
-				getValue: (row) => row.last_name,
+				accessorKey: "first_name",
+				header: t("userTable.columns.firstName"),
+				enableSorting: true,
+				meta: { truncate: true },
 			},
 			{
-				key: "role",
-				label: t("userTable.columns.role"),
-				sortable: true,
-				getValue: (row) => row.role?.name ?? "",
-				render: (row) => (
+				accessorKey: "last_name",
+				header: t("userTable.columns.lastName"),
+				enableSorting: true,
+				meta: { truncate: true },
+			},
+			{
+				id: "role",
+				header: t("userTable.columns.role"),
+				accessorFn: (row) => row.role?.name ?? "",
+				enableSorting: true,
+				meta: { truncate: true },
+				cell: ({ row }) => (
 					<span className="capitalize">
-						{row.role?.name ?? t("userTable.emptyValue")}
+						{row.original.role?.name ?? t("userTable.emptyValue")}
 					</span>
 				),
 			},
 			{
-				key: "groups",
-				label: t("userTable.columns.groups"),
-				sortable: true,
-				compare: (a, b) => {
+				id: "groups",
+				header: t("userTable.columns.groups"),
+				enableSorting: true,
+				sortingFn: (rowA, rowB) => {
+					const a = rowA.original;
+					const b = rowB.original;
 					if (a.groups.length !== b.groups.length) {
 						return a.groups.length - b.groups.length;
 					}
@@ -67,58 +97,44 @@ export function UsersTable() {
 					}
 					return 0;
 				},
-				render: (row) => (
-					<div className="flex flex-wrap gap-1">
-						{row.groups.length > 0 ? (
-							row.groups.map((group) => (
-								<Badge key={group.id} variant="secondary" className="text-xs">
-									{group.name}
-								</Badge>
-							))
-						) : (
-							<span className="text-foreground">
-								{t("userTable.emptyValue")}
-							</span>
-						)}
-					</div>
+				cell: ({ row }) => (
+					<BadgeOverflowList
+						items={row.original.groups.map((group) => ({
+							id: group.id,
+							label: group.name,
+						}))}
+						emptyLabel={t("userTable.emptyValue")}
+					/>
 				),
 			},
 			{
-				key: "status",
-				label: t("userTable.columns.status"),
-				sortable: true,
-				getValue: (row) => row.status,
-				render: (row) => {
-					let variant: "default" | "secondary" | "outline" = "outline";
-					if (row.status === "active") variant = "default";
-					if (row.status === "inactive") variant = "secondary";
-					return <Badge variant={variant}>{getStatusLabel(row.status)}</Badge>;
-				},
-			},
-			{
-				key: "access",
-				label: t("userTable.columns.access"),
-				sortable: true,
-				compare: (a, b) =>
-					(a.institutions?.length ?? 0) - (b.institutions?.length ?? 0),
-				render: (row) => (
+				id: "access",
+				header: t("userTable.columns.access"),
+				accessorFn: (row) => row.institutions?.length ?? 0,
+				enableSorting: true,
+				sortingFn: (rowA, rowB) =>
+					(rowA.original.institutions?.length ?? 0) -
+					(rowB.original.institutions?.length ?? 0),
+				cell: ({ row }) => (
 					<div className="flex flex-col gap-1">
 						<span className="body3">
 							{t("userTable.institutionsCount", {
-								count: row.institutions?.length ?? 0,
+								count: row.original.institutions?.length ?? 0,
 							})}
 						</span>
 					</div>
 				),
 			},
 			{
-				key: "compliance",
-				label: t("userTable.columns.compliance"),
-				sortable: true,
-				compare: (a, b) => Number(b.compliance) - Number(a.compliance),
-				render: (row) => (
+				id: "compliance",
+				header: t("userTable.columns.compliance"),
+				accessorFn: (row) => Number(row.compliance ?? false),
+				enableSorting: true,
+				sortingFn: (rowA, rowB) =>
+					Number(rowB.original.compliance) - Number(rowA.original.compliance),
+				cell: ({ row }) => (
 					<div className="flex flex-col gap-1">
-						{row.compliance ? (
+						{row.original.compliance ? (
 							<Badge variant="default" className="text-xs">
 								{t("userTable.compliance.accepted")}
 							</Badge>
