@@ -1,49 +1,82 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
+import { useRouter } from "next/navigation";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { AlertDialog } from "@/components/ui/alert-dialog";
 import { FormWrapper } from "@/components/FormWrapper";
 import type { FormWrapperConfig } from "@/components/FormWrapper";
 import { Card, CardContent } from "@/components/ui/card";
 import { useAccountStore } from "@/lib/store/accountStore";
+import { useInstitutionMultiSelect } from "@/lib/hooks/useInstitutionMultiSelect";
+import {
+	getSubmitLabel,
+	toNumberArray,
+	toOptionalNumber,
+} from "@/lib/utils/formUtils";
 import {
 	createUser,
 	getUserById,
+	sendComplianceResend,
 	sendPasswordReset,
 	updateUser,
 } from "@/server/actions/users";
 import type { UserStatus } from "@/generated/prisma";
 import type { User } from "@/types/user";
-import { ActionPanel } from "@/components/ActionPanel";
+import { useInstitutionStore } from "@/lib/store/institutionStore";
+import Mail from "@/icons/mail.svg";
 
 type UserFormModalProps = {
 	mode: "create" | "edit";
 	userId?: string;
 };
 
-const toNumberArray = (value: unknown): number[] => {
-	if (!Array.isArray(value)) return [];
-	return value
-		.map((item) => Number(item))
-		.filter((item) => Number.isFinite(item));
+const getInitialValues = (resolvedUser?: User) => ({
+	email: resolvedUser?.email ?? "",
+	first_name: resolvedUser?.first_name ?? "",
+	last_name: resolvedUser?.last_name ?? "",
+	status: resolvedUser?.status ?? "approval_pending",
+	account_type: resolvedUser?.account_type ?? "",
+	compliance: resolvedUser?.compliance ?? false,
+	roleId: resolvedUser?.role?.id ? String(resolvedUser.role.id) : "",
+	groupIds: resolvedUser?.groups?.map((group) => String(group.id)) ?? [],
+	institutionIds:
+		resolvedUser?.institutions?.map((institution) => String(institution.id)) ??
+		[],
+});
+
+type UserFormConfigArgs = {
+	mode: UserFormModalProps["mode"];
+	t: (key: string) => string;
+	statusOptions: { value: string; label: string }[];
+	roles: { id: number; name: string }[];
+	groups: { id: number; name: string }[];
+	institutionOptions: { value: string; label: string; searchText?: string }[];
+	filteredInstitutionOptions: {
+		value: string;
+		label: string;
+		searchText?: string;
+	}[];
+	institutionFilterPanel: ReactNode;
+	resolvedUser?: User;
+	submitting: boolean;
+	onSubmit: (data: Record<string, unknown>) => void | Promise<void>;
+	onCancel: () => void;
 };
 
-const toOptionalNumber = (value: unknown): number | undefined => {
-	if (typeof value !== "string") return undefined;
-	const parsed = Number(value);
-	return Number.isFinite(parsed) ? parsed : undefined;
+type UseResolvedUserResult = {
+	resolvedUser?: User;
+	isWaitingForUser: boolean;
+	showNotFound: boolean;
 };
 
-export function UserFormModal({ mode, userId }: UserFormModalProps) {
-	const router = useRouter();
-	const { t } = useTranslation("content");
-	const users = useAccountStore((state) => state.users);
-	const roles = useAccountStore((state) => state.roles);
-	const groups = useAccountStore((state) => state.groups);
-	const institutions = useAccountStore((state) => state.institutions);
-	const [submitting, setSubmitting] = useState(false);
+const useResolvedUser = (
+	mode: UserFormModalProps["mode"],
+	userId: string | undefined,
+	users: User[],
+): UseResolvedUserResult => {
 	const [fetchedUser, setFetchedUser] = useState<User | null>(null);
 	const [isFetchingUser, setIsFetchingUser] = useState(false);
 	const [hasFetchedUser, setHasFetchedUser] = useState(false);
@@ -52,28 +85,6 @@ export function UserFormModal({ mode, userId }: UserFormModalProps) {
 		if (mode !== "edit" || !userId) return undefined;
 		return users.find((item) => item.id === userId);
 	}, [mode, userId, users]);
-
-	const resolvedUser = user ?? fetchedUser ?? undefined;
-	const isWaitingForUser =
-		mode === "edit" && !resolvedUser && (isFetchingUser || !hasFetchedUser);
-	const showNotFound = mode === "edit" && !isWaitingForUser && !resolvedUser;
-
-	const statusOptions = useMemo(
-		() => [
-			{
-				value: "approval_pending",
-				label: t("userFormModal.status.approvalPending"),
-			},
-			{ value: "active", label: t("userFormModal.status.active") },
-			{ value: "inactive", label: t("userFormModal.status.inactive") },
-			{ value: "banned", label: t("userFormModal.status.banned") },
-		],
-		[t],
-	);
-
-	const handleClose = () => {
-		router.back();
-	};
 
 	useEffect(() => {
 		if (mode !== "edit" || !userId || user || hasFetchedUser) return;
@@ -99,6 +110,23 @@ export function UserFormModal({ mode, userId }: UserFormModalProps) {
 			isMounted = false;
 		};
 	}, [mode, userId, user, hasFetchedUser]);
+
+	const resolvedUser = user ?? fetchedUser ?? undefined;
+	const isWaitingForUser =
+		mode === "edit" && !resolvedUser && (isFetchingUser || !hasFetchedUser);
+	const showNotFound = mode === "edit" && !isWaitingForUser && !resolvedUser;
+
+	return { resolvedUser, isWaitingForUser, showNotFound };
+};
+
+const useUserSubmit = (
+	mode: UserFormModalProps["mode"],
+	userId: string | undefined,
+	onClose: () => void,
+	onSuccess: (mode: UserFormModalProps["mode"]) => void,
+) => {
+	const router = useRouter();
+	const [submitting, setSubmitting] = useState(false);
 
 	const handleSubmit = async (data: Record<string, unknown>) => {
 		if (submitting) return;
@@ -144,22 +172,43 @@ export function UserFormModal({ mode, userId }: UserFormModalProps) {
 				});
 			}
 
+			onSuccess(mode);
 			router.refresh();
-			handleClose();
+			onClose();
 		} finally {
 			setSubmitting(false);
 		}
 	};
 
-	const formConfig: FormWrapperConfig = {
+	return { handleSubmit, submitting };
+};
+
+const buildUserFormConfig = ({
+	mode,
+	t,
+	statusOptions,
+	roles,
+	groups,
+	institutionOptions,
+	filteredInstitutionOptions,
+	institutionFilterPanel,
+	resolvedUser,
+	submitting,
+	onSubmit,
+	onCancel,
+}: UserFormConfigArgs): FormWrapperConfig => {
+	const identityDescription =
+		mode === "create"
+			? t("userFormModal.form.identity.description.create")
+			: t("userFormModal.form.identity.description.edit");
+	const accessCondition = () => mode === "edit" && Boolean(resolvedUser);
+
+	return {
 		sections: [
 			{
 				id: "identity",
 				title: t("userFormModal.form.identity.title"),
-				description:
-					mode === "create"
-						? t("userFormModal.form.identity.description.create")
-						: t("userFormModal.form.identity.description.edit"),
+				description: identityDescription,
 				fields: [
 					{
 						name: "email",
@@ -178,7 +227,7 @@ export function UserFormModal({ mode, userId }: UserFormModalProps) {
 						placeholder: t(
 							"userFormModal.form.identity.fields.firstName.placeholder",
 						),
-						gridColumn: "full",
+						gridColumn: "half",
 					},
 					{
 						name: "last_name",
@@ -187,18 +236,20 @@ export function UserFormModal({ mode, userId }: UserFormModalProps) {
 						placeholder: t(
 							"userFormModal.form.identity.fields.lastName.placeholder",
 						),
-						gridColumn: "full",
+						gridColumn: "half",
 					},
 					{
 						name: "status",
 						label: t("userFormModal.form.identity.fields.status.label"),
 						type: "select",
+						gridColumn: "half",
 						options: statusOptions,
 					},
 					{
 						name: "account_type",
 						label: t("userFormModal.form.identity.fields.accountType.label"),
 						type: "text",
+						gridColumn: "half",
 						placeholder: t(
 							"userFormModal.form.identity.fields.accountType.placeholder",
 						),
@@ -228,6 +279,14 @@ export function UserFormModal({ mode, userId }: UserFormModalProps) {
 						name: "groupIds",
 						label: t("userFormModal.form.access.fields.groups.label"),
 						type: "multiselect",
+						multiselectVariant: "modal",
+						placeholder: t(
+							"userFormModal.form.access.fields.groups.placeholder",
+						),
+						searchPlaceholder: t(
+							"userFormModal.form.access.fields.groups.searchPlaceholder",
+						),
+						emptyText: t("userFormModal.form.access.fields.groups.emptyText"),
 						options: groups.map((group) => ({
 							value: String(group.id),
 							label: group.name,
@@ -238,108 +297,235 @@ export function UserFormModal({ mode, userId }: UserFormModalProps) {
 						name: "institutionIds",
 						label: t("userFormModal.form.access.fields.institutions.label"),
 						type: "multiselect",
-						options: institutions.map((institution) => ({
-							value: String(institution.id),
-							label: institution.name,
-						})),
+						multiselectVariant: "modal",
+						placeholder: t(
+							"userFormModal.form.access.fields.institutions.placeholder",
+						),
+						searchPlaceholder: t(
+							"userFormModal.form.access.fields.institutions.searchPlaceholder",
+						),
+						emptyText: t(
+							"userFormModal.form.access.fields.institutions.emptyText",
+						),
+						previewCount: 3,
+						options: institutionOptions,
+						multiselectFilteredOptions: filteredInstitutionOptions,
+						multiselectFilterPanel: institutionFilterPanel,
 						gridColumn: "full",
+					},
+					{
+						name: "passwordReset",
+						label: "",
+						type: "actionPanel",
+						gridColumn: "full",
+						condition: accessCondition,
+						actionPanel: {
+							title: t("userFormModal.passwordReset.title"),
+							description: t("userFormModal.passwordReset.description"),
+							actionLabel: t("userFormModal.passwordReset.send"),
+							actionLabelLoading: t("userFormModal.passwordReset.sending"),
+							errorFallback: t("userFormModal.passwordReset.error"),
+							icon: <Mail className="h-5 w-5 text-primary-dark" />,
+							onAction: async () => {
+								if (!resolvedUser) return null;
+								await sendPasswordReset(resolvedUser.email);
+								return t("userFormModal.passwordReset.success");
+							},
+						},
+					},
+					{
+						name: "complianceResend",
+						label: "",
+						type: "actionPanel",
+						gridColumn: "full",
+						condition: accessCondition,
+						actionPanel: {
+							title: t("userFormModal.complianceResend.title"),
+							description: t("userFormModal.complianceResend.description"),
+							actionLabel: t("userFormModal.complianceResend.send"),
+							actionLabelLoading: t("userFormModal.complianceResend.sending"),
+							errorFallback: t("userFormModal.complianceResend.error"),
+							icon: <Mail className="h-5 w-5 text-primary-dark" />,
+							onAction: async () => {
+								if (!resolvedUser) return null;
+								await sendComplianceResend(resolvedUser.email);
+								return t("userFormModal.complianceResend.success");
+							},
+						},
 					},
 				],
 			},
 		],
 		gridColumns: 2,
-		onSubmit: handleSubmit,
+		onSubmit,
 		showCancel: true,
 		cancelLabel: t("userFormModal.actions.cancel"),
-		onCancel: handleClose,
-		submitLabel: (() => {
-			if (submitting) {
-				return mode === "create"
-					? t("userFormModal.actions.creating")
-					: t("userFormModal.actions.saving");
-			}
-			return mode === "create"
-				? t("userFormModal.actions.create")
-				: t("userFormModal.actions.save");
-		})(),
-		initialValues: {
-			email: resolvedUser?.email ?? "",
-			first_name: resolvedUser?.first_name ?? "",
-			last_name: resolvedUser?.last_name ?? "",
-			status: resolvedUser?.status ?? "approval_pending",
-			account_type: resolvedUser?.account_type ?? "",
-			compliance: resolvedUser?.compliance ?? false,
-			roleId: resolvedUser?.role?.id ? String(resolvedUser.role.id) : "",
-			groupIds: resolvedUser?.groups?.map((group) => String(group.id)) ?? [],
-			institutionIds:
-				resolvedUser?.institutions?.map((institution) =>
-					String(institution.id),
-				) ?? [],
-		},
+		onCancel,
+		submitLabel: getSubmitLabel(mode, submitting, {
+			create: {
+				default: t("userFormModal.actions.create"),
+				loading: t("userFormModal.actions.creating"),
+			},
+			edit: {
+				default: t("userFormModal.actions.save"),
+				loading: t("userFormModal.actions.saving"),
+			},
+		}),
+		initialValues: getInitialValues(resolvedUser),
 	};
+};
 
-	if (showNotFound) {
+const getDialogTitle = (
+	mode: UserFormModalProps["mode"],
+	t: (key: string) => string,
+) =>
+	mode === "create"
+		? t("userFormModal.dialog.title.create")
+		: t("userFormModal.dialog.title.edit");
+
+const renderNotFoundDialog = (t: (key: string) => string) => (
+	<AlertDialog
+		title={t("userFormModal.dialog.notFound.title")}
+		description={t("userFormModal.dialog.notFound.description")}
+	/>
+);
+
+const renderDialogBody = (
+	isWaitingForUser: boolean,
+	t: (key: string) => string,
+	formConfig: FormWrapperConfig,
+	resolvedUser: User | undefined,
+	mode: UserFormModalProps["mode"],
+) => {
+	if (isWaitingForUser) {
 		return (
-			<Dialog open>
-				<DialogContent variant="fullScreenNoBottom" className="p-0">
-					<div className="flex h-full flex-col">
-						<div className="border-b px-6 py-5 md:px-10">
-							<DialogTitle className="text-2xl font-semibold">
-								{t("userFormModal.dialog.notFound.title")}
-							</DialogTitle>
-						</div>
-						<div className="flex-1 overflow-auto px-6 py-6 md:px-10">
-							<p className="text-muted-foreground">
-								{t("userFormModal.dialog.notFound.description")}
-							</p>
-						</div>
-					</div>
-				</DialogContent>
-			</Dialog>
+			<p className="text-foreground">{t("userFormModal.dialog.loading")}</p>
 		);
 	}
 
 	return (
+		<Card variant="secondary">
+			<CardContent>
+				<FormWrapper key={resolvedUser?.id ?? mode} config={formConfig} />
+			</CardContent>
+		</Card>
+	);
+};
+
+export function UserFormModal({ mode, userId }: UserFormModalProps) {
+	const router = useRouter();
+	const { t } = useTranslation("content");
+	const { t: tEnum, i18n } = useTranslation("enumMap");
+	const users = useAccountStore((state) => state.users);
+	const roles = useAccountStore((state) => state.roles);
+	const groups = useAccountStore((state) => state.groups);
+	const setAlertDialog = useAccountStore((state) => state.setAlertDialog);
+	const institutions =
+		useInstitutionStore((state) => state.allInstitutions) ?? [];
+	const categories = useInstitutionStore((state) => state.categories) ?? [];
+	const handleClose = () => {
+		router.back();
+	};
+
+	const { resolvedUser, isWaitingForUser, showNotFound } = useResolvedUser(
+		mode,
+		userId,
+		users,
+	);
+	const handleSuccess = (nextMode: UserFormModalProps["mode"]) => {
+		const keyPrefix =
+			nextMode === "create"
+				? "userFormModal.feedback.create"
+				: "userFormModal.feedback.update";
+		setAlertDialog({
+			title: t(`${keyPrefix}.title`),
+			description: t(`${keyPrefix}.description`),
+		});
+	};
+	const { handleSubmit, submitting } = useUserSubmit(
+		mode,
+		userId,
+		handleClose,
+		handleSuccess,
+	);
+
+	const statusOptions = useMemo(
+		() => [
+			{
+				value: "approval_pending",
+				label: t("userFormModal.status.approvalPending"),
+			},
+			{ value: "active", label: t("userFormModal.status.active") },
+			{ value: "inactive", label: t("userFormModal.status.inactive") },
+			{ value: "banned", label: t("userFormModal.status.banned") },
+		],
+		[t],
+	);
+	const { institutionOptions, filteredInstitutionOptions, filterPanel } =
+		useInstitutionMultiSelect({
+			institutions,
+			categories,
+			locale: i18n.language,
+			tEnum,
+		});
+
+	const formConfig = useMemo(
+		() =>
+			buildUserFormConfig({
+				mode,
+				t,
+				statusOptions,
+				roles,
+				groups,
+				institutionOptions,
+				filteredInstitutionOptions,
+				institutionFilterPanel: filterPanel,
+				resolvedUser,
+				submitting,
+				onSubmit: handleSubmit,
+				onCancel: handleClose,
+			}),
+		[
+			mode,
+			t,
+			statusOptions,
+			roles,
+			groups,
+			institutionOptions,
+			filteredInstitutionOptions,
+			filterPanel,
+			resolvedUser,
+			submitting,
+			handleSubmit,
+			handleClose,
+			handleSuccess,
+		],
+	);
+
+	if (showNotFound) {
+		return renderNotFoundDialog(t);
+	}
+
+	return (
 		<Dialog open>
-			<DialogContent variant="entityEdit" hideBackIcon={true} className="p-0">
+			<DialogContent
+				variant="entityEdit"
+				showBackButton={false}
+				className="p-0"
+			>
 				<div className="flex h-full flex-col">
 					<div className="px-6 py-8 md:px-10">
-						<DialogTitle className="text-2xl font-semibold">
-							{mode === "create"
-								? t("userFormModal.dialog.title.create")
-								: t("userFormModal.dialog.title.edit")}
+						<DialogTitle className="title">
+							{getDialogTitle(mode, t)}
 						</DialogTitle>
 					</div>
 					<div className="flex-1 overflow-auto px-6 py-6 md:px-10">
-						{isWaitingForUser ? (
-							<p className="text-muted-foreground">
-								{t("userFormModal.dialog.loading")}
-							</p>
-						) : (
-							<Card variant="secondary">
-								<CardContent>
-									<FormWrapper
-										key={resolvedUser?.id ?? mode}
-										config={formConfig}
-									/>
-									{mode === "edit" && resolvedUser && (
-										<ActionPanel
-											title={t("userFormModal.passwordReset.title")}
-											description={t("userFormModal.passwordReset.description")}
-											actionLabel={t("userFormModal.passwordReset.send")}
-											actionLabelLoading={t(
-												"userFormModal.passwordReset.sending",
-											)}
-											errorFallback={t("userFormModal.passwordReset.error")}
-											onAction={async () => {
-												await sendPasswordReset(resolvedUser.email);
-												return t("userFormModal.passwordReset.success");
-											}}
-											className="mt-6"
-										/>
-									)}
-								</CardContent>
-							</Card>
+						{renderDialogBody(
+							isWaitingForUser,
+							t,
+							formConfig,
+							resolvedUser,
+							mode,
 						)}
 					</div>
 				</div>

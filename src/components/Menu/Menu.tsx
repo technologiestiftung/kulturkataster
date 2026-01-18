@@ -44,10 +44,54 @@ import { SearchContent } from "./MenuContent/SearchContent";
 import { ViewModeToggle } from "@/components/Menu/ViewModeToggle";
 
 const menuItems = [
-	{ id: "filter", icon: FilterLines, label: "filter.title" },
-	{ id: "search", icon: Search, label: "search.title" },
-	{ id: "add", icon: Edit, label: "add.title" },
-	{ id: "download", icon: Download, label: "download.title" },
+	{
+		id: "map",
+		icon: MapIcon,
+		label: "map.title",
+		showInMobile: false,
+		showInAccount: true,
+		showInMap: false,
+	},
+	{
+		id: "list",
+		icon: ListIcon,
+		label: "listView.title",
+		showInMobile: false,
+		showInAccount: true,
+		showInMap: false,
+	},
+	{
+		id: "filter",
+		icon: FilterLines,
+		label: "filter.title",
+		showInMobile: true,
+		showInAccount: false,
+		showInMap: true,
+	},
+	{
+		id: "search",
+		icon: Search,
+		label: "search.title",
+		showInMobile: true,
+		showInAccount: false,
+		showInMap: true,
+	},
+	{
+		id: "add",
+		icon: Edit,
+		label: "add.title",
+		showInMobile: true,
+		showInAccount: true,
+		showInMap: true,
+	},
+	{
+		id: "download",
+		icon: Download,
+		label: "download.title",
+		showInMobile: true,
+		showInAccount: false,
+		showInMap: true,
+	},
 ] as const;
 
 const footerItems = [
@@ -57,7 +101,9 @@ const footerItems = [
 	{ id: "user", icon: UserIcon, label: "user.title" },
 ] as const;
 
-const mapMenuItemIds = new Set(menuItems.map((item) => item.id));
+const mapMenuItemIds: Set<string> = new Set(
+	menuItems.filter((item) => item.showInMap).map((item) => item.id),
+);
 
 export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	const { toggleSidebar, setOpen, setOpenMobile, isMobile, open, openMobile } =
@@ -213,6 +259,12 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 		}
 
 		switch (itemName) {
+			case "map":
+				handleAccountRouteSwitch("map");
+				return;
+			case "list":
+				handleAccountRouteSwitch("list");
+				return;
 			case "info":
 				if (isAccountRoute) {
 					closeSidebar();
@@ -353,35 +405,11 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 							<SidebarGroup>
 								<SidebarGroupContent>
 									<SidebarMenu>
-										{isAccountRoute ? (
-											<>
-												<SidebarMenuItem>
-													<SidebarMenuButton
-														tooltip={{
-															children: mapLabel,
-															hidden: false,
-														}}
-														onClick={() => handleAccountRouteSwitch("map")}
-														aria-label={mapLabel}
-													>
-														<MapIcon />
-													</SidebarMenuButton>
-												</SidebarMenuItem>
-												<SidebarMenuItem>
-													<SidebarMenuButton
-														tooltip={{
-															children: listLabel,
-															hidden: false,
-														}}
-														onClick={() => handleAccountRouteSwitch("list")}
-														aria-label={listLabel}
-													>
-														<ListIcon />
-													</SidebarMenuButton>
-												</SidebarMenuItem>
-											</>
-										) : (
-											menuItems.map((item) => {
+										{menuItems
+											.filter((item) =>
+												isAccountRoute ? item.showInAccount : item.showInMap,
+											)
+											.map((item) => {
 												const showBadge =
 													filterCount > 0 && item.id === "filter";
 												const active = activeItem === item.id;
@@ -414,8 +442,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 														</SidebarMenuButton>
 													</SidebarMenuItem>
 												);
-											})
-										)}
+											})}
 									</SidebarMenu>
 								</SidebarGroupContent>
 							</SidebarGroup>
@@ -472,7 +499,7 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 										{!(
 											activeItem === "institution-detail" && previousActiveItem
 										) && (
-											<span className="font-bold body3">
+											<span className="font-bold body2">
 												{getActiveItemTitle()}
 											</span>
 										)}
@@ -549,29 +576,31 @@ export function Menu({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
 			<div className="fixed bottom-0 left-0 right-0 z-[60] bg-sidebar border-t md:hidden h-20 pointer-events-auto">
 				<SidebarMenu className="flex-row justify-around px-2 py-3">
-					{menuItems.map((item) => {
-						const showBadge = filterCount > 0 && item.id === "filter";
-						return (
-							<SidebarMenuItem key={item.id} className="flex-shrink-0">
-								<SidebarMenuButton
-									onClick={() => handleItemClick(item.id)}
-									isActive={activeItem === item.id}
-									className="flex-col gap-1 h-auto py-2 px-2 w-auto size-12"
-									aria-label={t(item.label)}
-								>
-									<item.icon className="size-6" />
-									<span className="text-xs font-medium hidden">
-										{t(item.label)}
-									</span>
-									{showBadge && (
-										<div className="absolute -top-1 -right-1 bg-primary text-primary-foreground body2 rounded-full min-w-5 h-5 flex items-center justify-center px-1">
-											{filterCount}
-										</div>
-									)}
-								</SidebarMenuButton>
-							</SidebarMenuItem>
-						);
-					})}
+					{menuItems
+						.filter((item) => item.showInMobile)
+						.map((item) => {
+							const showBadge = filterCount > 0 && item.id === "filter";
+							return (
+								<SidebarMenuItem key={item.id} className="flex-shrink-0">
+									<SidebarMenuButton
+										onClick={() => handleItemClick(item.id)}
+										isActive={activeItem === item.id}
+										className="flex-col gap-1 h-auto py-2 px-2 w-auto size-12"
+										aria-label={t(item.label)}
+									>
+										<item.icon className="size-6" />
+										<span className="text-xs font-medium hidden">
+											{t(item.label)}
+										</span>
+										{showBadge && (
+											<div className="absolute -top-1 -right-1 bg-primary text-primary-foreground body2 rounded-full min-w-5 h-5 flex items-center justify-center px-1">
+												{filterCount}
+											</div>
+										)}
+									</SidebarMenuButton>
+								</SidebarMenuItem>
+							);
+						})}
 				</SidebarMenu>
 			</div>
 		</>

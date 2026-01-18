@@ -15,7 +15,12 @@ type DialogProps = DialogRootProps & {
 	disableRouteSync?: boolean;
 };
 
-function Dialog({ open, disableRouteSync, onOpenChange, ...props }: DialogProps) {
+function Dialog({
+	open,
+	disableRouteSync,
+	onOpenChange,
+	...props
+}: DialogProps) {
 	useRestoreFocus(open);
 	const router = useRouter();
 	const { firstTimeUser, setFirstTimeUser } = useAppStore();

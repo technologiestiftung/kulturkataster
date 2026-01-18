@@ -311,6 +311,29 @@
 		"labelShort": "Tel.",
 		"number": "+49 (0) 30 3030 444 60"
 	},
+	"multiSelectModal": {
+		"selectedCount": "{{count}} ausgewählt",
+		"selectedMore": "+{{count}} weitere",
+		"resultsCount": "{{count}} Ergebnisse",
+		"filtersTitle": "Filter",
+		"sortBy": "Sortieren nach",
+		"subcategoryHint": "Wählen Sie zuerst eine Kategorie aus.",
+		"actions": {
+			"selectFiltered": "Alles auswählen",
+			"clearFiltered": "Alles entfernen",
+			"clearAll": "Alle entfernen",
+			"showSelected": "Ausgewählte anzeigen",
+			"showAll": "Alle anzeigen",
+			"cancel": "Abbrechen",
+			"apply": "Akzeptieren"
+		},
+		"sort": {
+			"az": "A-Z"
+		}
+	},
+	"badges": {
+		"more": "+{{count}} weitere"
+	},
 	"unknown": "Unbekannt",
 	"venue": {
 		"address": "",
