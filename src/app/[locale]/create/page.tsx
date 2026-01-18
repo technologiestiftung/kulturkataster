@@ -309,7 +309,7 @@ function CreateInstitutionContent() {
 			{/* Header */}
 			<div className="mb-8">
 				<h1 className="text-3xl font-bold">Add New Institution</h1>
-				<p className="text-muted-foreground mt-2">
+				<p className="text-foreground mt-2">
 					Complete the following steps to add a new cultural institution
 				</p>
 			</div>
@@ -353,15 +353,12 @@ function CreateInstitutionContent() {
 
 			<div className="flex items-center justify-between mt-8">
 				<div className="flex items-center gap-4 w-full">
-					<Button variant="outline" onClick={handleCancel} className="flex-1">
+					<Button variant="outline" onClick={handleCancel}>
 						Cancel
 					</Button>
 
 					{currentStepId === "review" ? (
-						<Button
-							onClick={() => handleFinalSubmit(formData)}
-							className="flex-1"
-						>
+						<Button onClick={() => handleFinalSubmit(formData)}>
 							<Check className="h-4 w-4 mr-2" />
 							Previous
 						</Button>
@@ -369,7 +366,6 @@ function CreateInstitutionContent() {
 						<Button
 							type="submit"
 							form="institution-form"
-							className="flex-1"
 							onClick={() => {
 								// Trigger form submit
 								const form = document.querySelector("form") as HTMLFormElement;
