@@ -535,7 +535,7 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 											? (event) => {
 													if (event.key === "Enter" || event.key === " ") {
 														event.preventDefault();
-														toggleSorting(event);
+														toggleSorting?.(event);
 													}
 												}
 											: undefined

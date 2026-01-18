@@ -80,7 +80,7 @@
 		"@svgr/webpack": "^8.1.0",
 		"@tailwindcss/postcss": "^4.0.14",
 		"@types/geojson": "^7946.0.16",
-		"@types/node": "^24.10.4",
+		"@types/node": "^24.10.9",
 		"@types/proj4": "^2.19.0",
 		"@types/react": "^19",
 		"@types/react-dom": "^19",
