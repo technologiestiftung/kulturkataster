@@ -3,7 +3,7 @@ import { UserCreateInput, UserUpdateInput, UserWhereInput } from "@/types/user";
 
 const include = {
 	role: true,
-	institutions: true,
+	institutions: { select: { id: true } },
 	groups: true,
 } as const;
 

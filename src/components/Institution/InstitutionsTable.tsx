@@ -16,6 +16,7 @@ import {
 	joinInstitutionIds,
 } from "@/lib/utils/institutionUtils";
 import { Badge } from "../ui/badge";
+import { useSearch } from "../../lib/hooks/useSearch";
 
 export function InstitutionsTable() {
 	const router = useRouter();
@@ -112,7 +113,7 @@ export function InstitutionsTable() {
 			},
 			{
 				accessorKey: "address.street",
-				header: `${headerLabel("street", "Street")} ${headerLabel("street_number", "Number")}`,
+				header: `${headerLabel("street", "Street")} & ${headerLabel("street_number", "Number")}`,
 				enableSorting: true,
 				size: 150,
 				enableResizing: true,
@@ -202,7 +203,7 @@ export function InstitutionsTable() {
 				size: 250,
 				cell: ({ row }) => {
 					return (
-						<div className="gap-1 flex flex-wrap">
+						<div className="gap-1 flex-wrap flex">
 							{getParentCategories(row.original).map((cat) => (
 								<Badge
 									variant="outline"
@@ -494,20 +495,28 @@ export function InstitutionsTable() {
 			row.address?.city || "",
 			row.address?.district || "",
 			row.address?.street || "",
+			row.address?.zipcode || "",
+			row.address?.neighbourhood || "",
+			row.contact_person?.last_name || "",
+			row.contact_person?.phone || "",
+			row.website || "",
+			row.email || "",
+			row.contact_person?.first_name || "",
+			row.parent_organization || "",
 			row.contact_person?.first_name || "",
 			row.contact_person?.email || "",
 			row.owner_name || "",
 		],
 		virtualization: {
 			enabled: true,
-			rowHeight: 30,
+			rowHeight: 65,
 			overscan: 8,
 		},
 		primaryButton: {
 			label: "Add Institution",
-			onClick: () => router.push("/create"),
+			onClick: () => router.push("/account/institutions/new"),
 		},
-		onEdit: () => {},
+		onEdit: (row) => router.push(`/account/institutions/${row.id}/edit`),
 		emptyMessage: "No institutions found.",
 	};
 

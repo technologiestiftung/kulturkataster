@@ -54,7 +54,7 @@ export default async function AccountLayout({ children }: AccountLayoutProps) {
 				categories={categories}
 				institutions={institutions}
 			/>
-			<AccountLayoutClient allowedTabs={allowedTabs}>
+			<AccountLayoutClient allowedTabs={allowedTabs} user={currentUser}>
 				{children}
 			</AccountLayoutClient>
 		</>

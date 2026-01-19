@@ -399,6 +399,8 @@
 		"loading": "Filter werden geladen...",
 		"retry": "Erneut versuchen",
 		"showClosed": "Geschlossene Orte einblenden",
+		"showMoreCategories": "Mehr Kategorien anzeigen",
+		"showSelectedCategories": "Ausgewählte Kategorien anzeigen",
 		"title": "Kulturorte filtern"
 	},
 	"imprintModal": {
@@ -1233,6 +1235,74 @@
 		"emptyMessage": "Keine Rollen gefunden.",
 		"actions": {
 			"add": "Rolle erstellen"
+		}
+	},
+	"institutionFormModal": {
+		"dialog": {
+			"title": {
+				"create": "Institution erstellen",
+				"edit": "Institution bearbeiten"
+			},
+			"notFound": {
+				"title": "Institution nicht gefunden",
+				"description": "Die ausgewählte Institution konnte nicht geladen werden."
+			}
+		},
+		"form": {
+			"details": {
+				"title": "Details",
+				"description": {
+					"create": "Legen Sie eine neue Institution an.",
+					"edit": "Aktualisieren Sie die Institutionsdaten."
+				},
+				"fields": {
+					"name": {
+						"placeholder": "Institutionsname"
+					},
+					"description": {
+						"placeholder": "Optionale Beschreibung"
+					},
+					"address": {
+						"placeholder": "Straße, Hausnummer, PLZ, Ort"
+					},
+					"categories": {
+						"placeholder": "Kategorien auswählen",
+						"searchPlaceholder": "Kategorien durchsuchen...",
+						"emptyText": "Keine Kategorien gefunden."
+					}
+				}
+			},
+			"contact": {
+				"title": "Kontakt",
+				"fields": {
+					"website": {
+						"placeholder": "https://..."
+					},
+					"email": {
+						"placeholder": "kontakt@..."
+					},
+					"phone": {
+						"placeholder": "+49 ..."
+					}
+				}
+			}
+		},
+		"actions": {
+			"cancel": "Abbrechen",
+			"create": "Erstellen",
+			"creating": "Wird erstellt...",
+			"save": "Speichern",
+			"saving": "Wird gespeichert..."
+		},
+		"feedback": {
+			"create": {
+				"title": "Institution erstellt",
+				"description": "Die Institution wurde erfolgreich erstellt."
+			},
+			"update": {
+				"title": "Institution aktualisiert",
+				"description": "Die Änderungen wurden erfolgreich gespeichert."
+			}
 		}
 	}
 }

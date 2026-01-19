@@ -40,10 +40,38 @@ const toStringArray = (value: unknown): string[] => {
 		.filter((item) => item.length > 0);
 };
 
+const splitStreetLine = (value: string) => {
+	const trimmed = value.trim();
+	if (!trimmed) {
+		return { street: "", streetNumber: "" };
+	}
+
+	const parts = trimmed.split(/\s+/);
+	const lastPart = parts[parts.length - 1];
+	if (parts.length > 1 && /\d/.test(lastPart)) {
+		return {
+			street: parts.slice(0, -1).join(" "),
+			streetNumber: lastPart,
+		};
+	}
+
+	return { street: trimmed, streetNumber: "" };
+};
+
+const buildStreetLine = (
+	street?: string | null,
+	streetNumber?: string | null,
+) => {
+	const parts = [street?.trim(), streetNumber?.trim()].filter(Boolean);
+	return parts.join(" ");
+};
+
 export {
 	getSubmitLabel,
 	toNumberArray,
 	toOptionalNumber,
 	toOptionalText,
 	toStringArray,
+	splitStreetLine,
+	buildStreetLine,
 };
