@@ -25,6 +25,7 @@ import ListIcon from "@/icons/list.svg";
 import Search from "@/icons/search.svg";
 import UserIcon from "@/icons/user.svg";
 import MapIcon from "@/icons/map.svg";
+import ENIcon from "@/icons/lang/en.svg";
 import { useAppStore } from "@/lib/store/appStore";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useMapStore } from "@/lib/store/mapStore";
@@ -97,7 +98,7 @@ const menuItems = [
 const footerItems = [
 	{ id: "info", icon: InfoCircle, label: "info.title" },
 	{ id: "accessibility", icon: Accessibility, label: "accessibility.title" },
-	{ id: "language", icon: MapIcon, label: "language.title" },
+	{ id: "language", icon: ENIcon, label: "language.title" },
 	{ id: "user", icon: UserIcon, label: "user.title" },
 ] as const;
 
