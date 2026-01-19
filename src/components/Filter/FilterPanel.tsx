@@ -130,7 +130,6 @@ export const FilterPanel: FC<FilterPanelProps> = ({
 
 	return (
 		<div className={rootClassName}>
-
 			{showSummary && (
 				<ContentContainer className="p-6">
 					<h2 className="body2 font-bold mb-3 pl-2">

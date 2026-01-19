@@ -16,7 +16,6 @@ import {
 	joinInstitutionIds,
 } from "@/lib/utils/institutionUtils";
 import { Badge } from "../ui/badge";
-import { useSearch } from "../../lib/hooks/useSearch";
 
 export function InstitutionsTable() {
 	const router = useRouter();
