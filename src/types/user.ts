@@ -4,7 +4,7 @@ export type PrismaUserWithRelations = Prisma.UserGetPayload<{
 	include: {
 		role: true;
 		groups: true;
-		institutions: true;
+		institutions: { select: { id: true } };
 	};
 }>;
 

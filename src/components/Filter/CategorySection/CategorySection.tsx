@@ -29,6 +29,7 @@ interface CategorySectionProps {
 	onSubcategoryChange: (key: string) => void;
 	categoryCount?: number;
 	subcategoryCounts?: Record<string, number>;
+	mode?: "filter" | "selection";
 }
 
 export function CategorySection({
@@ -41,6 +42,7 @@ export function CategorySection({
 	onSubcategoryChange,
 	categoryCount,
 	subcategoryCounts: subcategoryCountsOverride,
+	mode = "filter",
 }: CategorySectionProps) {
 	const IconComponent = getCategoryIconComponent(group.key as CategoryType);
 	const { t: tEnum, i18n } = useTranslation("enumMap");
@@ -80,6 +82,7 @@ export function CategorySection({
 		!categorySelected && someSubcategoriesSelected && !allSubcategoriesSelected;
 
 	const translatedCategoryName = tEnum(`category.${group.key}`) || group.key;
+	const showCounts = mode !== "selection";
 
 	return (
 		<Collapsible open={isOpen} onOpenChange={onToggle}>
@@ -104,7 +107,9 @@ export function CategorySection({
 						</div>
 						<div className="body2 text-left">
 							<span className="font-bold">{translatedCategoryName}</span>
-							<span className="pl-2">({resolvedCategoryCount})</span>
+							{showCounts && (
+								<span className="pl-2">({resolvedCategoryCount})</span>
+							)}
 						</div>
 					</button>
 				</CollapsibleTrigger>
@@ -144,8 +149,12 @@ export function CategorySection({
 							className="flex items-center gap-2 justify-between py-1 w-full"
 						>
 							<span className="body2 w-full">
-								{translatedSubcategoryName} (
-								{resolvedSubcategoryCounts[subcategory.key] || 0})
+								{translatedSubcategoryName}
+								{showCounts && (
+									<span className="pl-2">
+										({resolvedSubcategoryCounts[subcategory.key] || 0})
+									</span>
+								)}
 							</span>
 
 							<div className="relative w-10 h-10 md:w-6 md:h-6 flex items-center justify-center">

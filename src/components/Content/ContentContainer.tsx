@@ -13,7 +13,7 @@ const ContentContainer: FC<ContentContainerProps> = ({
 	return (
 		<div
 			className={cn(
-				"ContentContainer-root w-full h-full bg-background p-2 rounded",
+				"ContentContainer-root w-full h-auto bg-background p-2 rounded",
 				className,
 			)}
 			{...props}

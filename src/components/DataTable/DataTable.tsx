@@ -39,23 +39,7 @@ import Edit from "@/icons/edit.svg";
 import ArrowNarrowLeft from "@/icons/arrow-narrow-left.svg";
 import ArrowNarrowRight from "@/icons/arrow-narrow-right.svg";
 import { useWindowVirtualizer } from "@tanstack/react-virtual";
-import {
-	compareItems,
-	rankItem,
-	type RankingInfo,
-} from "@tanstack/match-sorter-utils";
-
-declare module "@tanstack/react-table" {
-	interface FilterMeta {
-		itemRank?: RankingInfo;
-	}
-
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	interface ColumnMeta<TData, TValue> {
-		pin?: "left" | "right";
-		truncate?: boolean;
-	}
-}
+import { compareItems, rankItem } from "@tanstack/match-sorter-utils";
 
 const getNestedValue = (obj: Record<string, unknown>, path: string): unknown =>
 	path
@@ -76,6 +60,7 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 	const [scrollbarWidth, setScrollbarWidth] = useState(0);
 	const [scrollMargin, setScrollMargin] = useState(0);
 	const tableId = useId();
+	const searchInputRef = useRef<HTMLInputElement | null>(null);
 	const containerRef = useRef<HTMLDivElement | null>(null);
 	const tableRef = useRef<HTMLTableElement | null>(null);
 	const headerTableRef = useRef<HTMLTableElement | null>(null);
@@ -602,6 +587,14 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 	const searchPlaceholder = config.searchPlaceholder || "Search...";
 	const searchLabel = searchPlaceholder.replace(/\.\.\.$/, "");
 
+	useEffect(() => {
+		if (!isSearchOpen) return;
+		const handle = requestAnimationFrame(() => {
+			searchInputRef.current?.focus();
+		});
+		return () => cancelAnimationFrame(handle);
+	}, [isSearchOpen]);
+
 	return (
 		<div className="w-full space-y-4">
 			{(config.title ||
@@ -657,6 +650,7 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 										<Search className="size-4" />
 									</span>
 									<Input
+										ref={searchInputRef}
 										placeholder={searchPlaceholder}
 										value={globalFilter}
 										onChange={(e) => setGlobalFilter(e.target.value)}
@@ -804,6 +798,12 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 												return (
 													<Fragment key={row.id}>
 														<tr
+															data-index={virtualRow.index}
+															ref={
+																shouldVirtualize
+																	? rowVirtualizer.measureElement
+																	: undefined
+															}
 															className={cn(
 																"transition-colors hover:bg-neutral-5/80",
 																rowIndex % 2 === 0
@@ -812,8 +812,8 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 															)}
 															style={
 																shouldVirtualize
-																	? { height: virtualRow.size }
-																	: undefined
+																	? undefined
+																	: { height: rowHeight }
 															}
 														>
 															{row.getVisibleCells().map((cell) => {

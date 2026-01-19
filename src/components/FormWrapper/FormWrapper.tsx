@@ -21,10 +21,20 @@ import {
 	AccordionItem,
 	AccordionTrigger,
 } from "@/components/ui/accordion";
+import { CategorySectionList } from "@/components/Filter/CategorySection/CategorySectionList";
 import { MultiSelectModal } from "@/components/MultiSelect/MultiSelectModal";
 import { ActionPanel } from "@/components/ActionPanel";
 import { cn } from "@/lib/utils";
+import type { FilterState } from "@/types";
 import type { FieldConfig, FormWrapperConfig, PermissionAction } from "./types";
+
+const defaultFilterState: FilterState = {
+	district_keys: [],
+	category_keys: [],
+	subcategory_keys: [],
+	include_closed: false,
+	status: undefined,
+};
 
 export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 	const [formData, setFormData] = useState<Record<string, unknown>>(() => {
@@ -44,6 +54,8 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 				initialData[field.name] = false;
 			} else if (field.type === "multiselect") {
 				initialData[field.name] = [];
+			} else if (field.type === "filterPanel") {
+				initialData[field.name] = { ...defaultFilterState };
 			} else if (
 				field.type === "tablePermissions" ||
 				field.type === "fieldPermissions"
@@ -174,7 +186,7 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 		};
 
 		return (
-			<div key={field.name} className={cn("space-y-2", gridClass)}>
+			<div key={field.name} className={cn("space-y-1", gridClass)}>
 				{field.type !== "checkbox" &&
 					field.type !== "switch" &&
 					field.type !== "tablePermissions" &&
@@ -185,6 +197,12 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 								<span className="text-destructive ml-1">*</span>
 							)}
 						</Label>
+					)}
+
+				{field.description &&
+					field.type !== "tablePermissions" &&
+					field.type !== "fieldPermissions" && (
+						<p className="body2 text-neutral-80 mb-2">{field.description}</p>
 					)}
 
 				{(field.type === "text" ||
@@ -346,6 +364,22 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 							))
 						)}
 					</div>
+				)}
+
+				{field.type === "filterPanel" && field.filterPanel && (
+					<CategorySectionList
+						filters={(value as FilterState) ?? defaultFilterState}
+						categoryGroups={field.filterPanel.categoryGroups}
+						categoryCounts={field.filterPanel.categoryCounts}
+						subcategoryCounts={field.filterPanel.subcategoryCounts}
+						onFiltersChange={(nextFilters) =>
+							updateField(field.name, nextFilters)
+						}
+						collapsible={field.filterPanel.collapsible}
+						defaultCollapsed={field.filterPanel.defaultCollapsed}
+						categorySectionMode={field.filterPanel.categorySectionMode}
+						selectionEmptyLabel={field.filterPanel.selectionEmptyLabel}
+					/>
 				)}
 
 				{field.type === "actionPanel" && field.actionPanel && (
@@ -516,12 +550,6 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 						</div>
 					</div>
 				)}
-
-				{field.description &&
-					field.type !== "tablePermissions" &&
-					field.type !== "fieldPermissions" && (
-						<p className="text-xs text-foreground">{field.description}</p>
-					)}
 
 				{error && <p className="text-xs text-destructive">{error}</p>}
 			</div>
