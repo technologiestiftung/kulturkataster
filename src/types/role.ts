@@ -24,7 +24,6 @@ export type RoleFieldPermissionInput = {
 export type RoleCreatePayload = {
 	name: string;
 	description?: string | null;
-	permissions?: string | null;
 	tablePermissions?: RoleTablePermissionInput[];
 	fieldPermissions?: RoleFieldPermissionInput[];
 };
@@ -32,7 +31,6 @@ export type RoleCreatePayload = {
 export type RoleUpdatePayload = {
 	name?: string;
 	description?: string | null;
-	permissions?: string | null;
 	tablePermissions?: RoleTablePermissionInput[];
 	fieldPermissions?: RoleFieldPermissionInput[];
 };

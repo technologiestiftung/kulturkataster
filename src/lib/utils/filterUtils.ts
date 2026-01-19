@@ -102,3 +102,25 @@ export const matchesStatusFilter = (
 	}
 	return true;
 };
+
+export const resolveCategoryIdsFromFilters = (
+	filters: FilterState,
+	categoryGroups: Category[],
+): number[] => {
+	const selectedIds = new Set<number>();
+	const selectedCategoryKeys = new Set(filters.category_keys);
+	const selectedSubcategoryKeys = new Set(filters.subcategory_keys);
+
+	categoryGroups.forEach((category) => {
+		if (selectedCategoryKeys.has(category.key)) {
+			selectedIds.add(category.id);
+		}
+		(category.subcategory ?? []).forEach((subcategory) => {
+			if (selectedSubcategoryKeys.has(subcategory.key)) {
+				selectedIds.add(subcategory.id);
+			}
+		});
+	});
+
+	return Array.from(selectedIds);
+};

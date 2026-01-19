@@ -5,17 +5,23 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
-import Setting from "@/icons/user.svg";
+import Setting from "@/icons/settings.svg";
+import Edit from "@/icons/edit.svg";
 import { logout } from "@/server/actions/auth";
 import { AccountAlertDialog } from "@/components/Account/AccountAlertDialog";
+import Image from "next/image";
+import { LogOut } from "lucide-react";
+import { User } from "@supabase/supabase-js";
 
 type AccountLayoutClientProps = {
 	children: ReactNode;
+	user: User | null;
 	allowedTabs: string[];
 };
 
 export function AccountLayoutClient({
 	children,
+	user,
 	allowedTabs,
 }: AccountLayoutClientProps) {
 	const { t } = useTranslation("common");
@@ -49,87 +55,102 @@ export function AccountLayoutClient({
 		}
 	};
 	return (
-		<div className="flex min-h-0 h-full flex-col">
-			<AccountAlertDialog />
-			<div className="space-y-6 p-10 shrink-0">
-				<div className="mt-16">
-					<h1 className="text-3xl font-bold"></h1>
-					<p className="text-foreground mt-2"></p>
-				</div>
-				<div className="Buttons flex flex-wrap space-x-3">
-					<Button
-						variant="rounded"
-						size="icon-only"
-						className="h-14 w-14"
-						aria-label="Edit Profile"
-						onClick={() => router.push("/account/editProfile")}
-					>
-						<Setting />
-					</Button>
-					<Button
-						variant="rounded"
-						size="icon-only"
-						className="h-14 w-14"
-						aria-label="Settings"
-					>
-						<Setting />
-					</Button>
-					<Button
-						variant="rounded"
-						size="icon-only"
-						className="h-14 w-14"
-						aria-label="Settings"
-					>
-						<Setting />
-					</Button>
-					<Button
-						variant="rounded"
-						size="icon-only"
-						className="h-14 w-14"
-						aria-label="Logout"
-						onClick={handleLogout}
-					>
-						<Setting />
-					</Button>
-				</div>
+		<div className="AccountLayoutClient relative min-h-0 h-full">
+			<div className="absolute h-full w-full">
+				<Image
+					src="/resources/map.png"
+					alt="Map background"
+					fill
+					className="object-cover"
+					priority
+				/>
 			</div>
-			<div className="Account-section py-10 flex flex-col min-h-0 flex-1">
-				<Tabs value={getCurrentTab()} onValueChange={handleTabChange}>
-					<TabsList className="px-10">
-						{allowedTabs.includes("activity") && (
-							<TabsTrigger value="activity">
-								{t("account.activity", { defaultValue: "Activity" })}
-							</TabsTrigger>
-						)}
-						{allowedTabs.includes("institutions") && (
-							<TabsTrigger value="institutions">
-								{t("account.institutions", { defaultValue: "Institutions" })}
-							</TabsTrigger>
-						)}
-						{allowedTabs.includes("users") && (
-							<TabsTrigger value="users">
-								{t("account.users", { defaultValue: "Users" })}
-							</TabsTrigger>
-						)}
-						{allowedTabs.includes("groups") && (
-							<TabsTrigger value="groups">
-								{t("account.groups", { defaultValue: "Groups" })}
-							</TabsTrigger>
-						)}
-						{allowedTabs.includes("roles") && (
-							<TabsTrigger value="roles">
-								{t("account.roles", { defaultValue: "Roles" })}
-							</TabsTrigger>
-						)}
-						{allowedTabs.includes("categories") && (
-							<TabsTrigger value="categories">
-								{t("account.categories", { defaultValue: "Categories" })}
-							</TabsTrigger>
-						)}
-					</TabsList>
-				</Tabs>
+			<div className="absolute flex h-full w-full flex-col">
+				<AccountAlertDialog />
+				<div className="space-y-6 p-10 shrink-0">
+					<div className="mt-16">
+						<h1 className="text-3xl font-bold">
+							{t("auth.account.welcome", { name: `${user?.email || ""}` })}
+						</h1>
+						<p className="text-foreground mt-2"></p>
+					</div>
+					<div className="Buttons flex flex-wrap space-x-3">
+						<Button
+							variant="rounded"
+							size="icon-only"
+							className="h-14 w-14"
+							aria-label="Edit Profile"
+							onClick={() => router.push("/account/editProfile")}
+						>
+							<Edit />
+						</Button>
+						<Button
+							variant="rounded"
+							size="icon-only"
+							className="h-14 w-14"
+							aria-label="Settings"
+						>
+							<Setting />
+						</Button>
+						<Button
+							variant="rounded"
+							size="icon-only"
+							className="h-14 w-14"
+							aria-label="Settings"
+						>
+							<Setting />
+						</Button>
+						<Button
+							variant="rounded"
+							size="icon-only"
+							className="h-14 w-14"
+							aria-label="Logout"
+							onClick={handleLogout}
+						>
+							<LogOut />
+						</Button>
+					</div>
+				</div>
+				<div className="Account-section flex flex-col min-h-0 flex-1">
+					<Tabs value={getCurrentTab()} onValueChange={handleTabChange}>
+						<TabsList className="px-10">
+							{allowedTabs.includes("activity") && (
+								<TabsTrigger value="activity">
+									{t("account.activity", { defaultValue: "Activity" })}
+								</TabsTrigger>
+							)}
+							{allowedTabs.includes("institutions") && (
+								<TabsTrigger value="institutions">
+									{t("account.institutions", { defaultValue: "Institutions" })}
+								</TabsTrigger>
+							)}
+							{allowedTabs.includes("users") && (
+								<TabsTrigger value="users">
+									{t("account.users", { defaultValue: "Users" })}
+								</TabsTrigger>
+							)}
+							{allowedTabs.includes("groups") && (
+								<TabsTrigger value="groups">
+									{t("account.groups", { defaultValue: "Groups" })}
+								</TabsTrigger>
+							)}
+							{allowedTabs.includes("roles") && (
+								<TabsTrigger value="roles">
+									{t("account.roles", { defaultValue: "Roles" })}
+								</TabsTrigger>
+							)}
+							{allowedTabs.includes("categories") && (
+								<TabsTrigger value="categories">
+									{t("account.categories", { defaultValue: "Categories" })}
+								</TabsTrigger>
+							)}
+						</TabsList>
+					</Tabs>
 
-				<div className="mt-6 flex-1 min-h-0">{children}</div>
+					<div className="pt-6 flex-1 min-h-0 w-full bg-background ">
+						{children}
+					</div>
+				</div>
 			</div>
 		</div>
 	);

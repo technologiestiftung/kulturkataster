@@ -19,7 +19,7 @@ interface GeolocationControlProps {
 }
 
 const GeolocationControl: FC<GeolocationControlProps> = ({
-	geolocateIcon = <LocationIcon />,
+	geolocateIcon = <LocationIcon className="h-6 w-6" />,
 	onGeolocate,
 }) => {
 	const { t } = useTranslation("common");

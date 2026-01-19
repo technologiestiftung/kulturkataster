@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import type { Category } from "@/types";
 
 export type FieldType =
 	| "text"
@@ -14,6 +15,7 @@ export type FieldType =
 	| "checkbox"
 	| "switch"
 	| "multiselect"
+	| "filterPanel"
 	| "actionPanel"
 	| "tablePermissions"
 	| "fieldPermissions";
@@ -78,6 +80,23 @@ export interface FieldConfig {
 		errorFallback: string;
 		className?: string;
 		icon?: ReactNode;
+	};
+	filterPanel?: {
+		categoryGroups: Category[];
+		districts: string[];
+		filteredCount?: number;
+		categoryCounts?: Record<string, number>;
+		subcategoryCounts?: Record<string, number>;
+		loading?: boolean;
+		error?: string | null;
+		onRetry?: () => void;
+		showSummary?: boolean;
+		showDistricts?: boolean;
+		showClosedToggle?: boolean;
+		collapsible?: boolean;
+		defaultCollapsed?: boolean;
+		categorySectionMode?: "filter" | "selection";
+		selectionEmptyLabel?: string;
 	};
 
 	// For select, radio, checkbox, multiselect

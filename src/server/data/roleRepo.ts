@@ -19,7 +19,6 @@ export const roleRepo = {
 			data: {
 				name: data.name,
 				description: data.description ?? null,
-				permissions: data.permissions ?? null,
 				table_permissions: data.tablePermissions
 					? {
 							create: data.tablePermissions.map((permission) => ({
@@ -46,7 +45,6 @@ export const roleRepo = {
 			data: {
 				name: data.name,
 				description: data.description ?? undefined,
-				permissions: data.permissions ?? undefined,
 				table_permissions: data.tablePermissions
 					? {
 							deleteMany: {},

@@ -1,18 +1,17 @@
 "use client";
 
-import { FC, useMemo, useState } from "react";
+import { FC } from "react";
 import { useTranslation } from "react-i18next";
 import ContentContainer from "@/components/Content/ContentContainer";
-import { CategorySection } from "@/components/Filter/CategorySection/CategorySection";
+import { CategorySectionList } from "@/components/Filter/CategorySection/CategorySectionList";
 import DistrictTags from "@/components/Filter/DistrictTags/DistrictTags";
 import { Button } from "@/components/ui/button";
 import { Loading } from "@/components/ui/loading";
 import EyeOff from "@/icons/eye-off.svg";
 import Eye from "@/icons/eye.svg";
-import { getSortedCategories } from "@/lib/utils/filterUtils";
-import type { Category, FilterState, Subcategory } from "@/types";
+import type { Category, FilterState } from "@/types";
 
-type FilterPanelProps = {
+export type FilterPanelProps = {
 	filters: FilterState | null;
 	categoryGroups: Category[];
 	districts: string[];
@@ -23,6 +22,13 @@ type FilterPanelProps = {
 	error?: string | null;
 	onRetry?: () => void;
 	onFiltersChange: (nextFilters: FilterState) => void;
+	showSummary?: boolean;
+	showDistricts?: boolean;
+	showClosedToggle?: boolean;
+	collapsible?: boolean;
+	defaultCollapsed?: boolean;
+	categorySectionMode?: "filter" | "selection";
+	selectionEmptyLabel?: string;
 };
 
 export const FilterPanel: FC<FilterPanelProps> = ({
@@ -36,16 +42,16 @@ export const FilterPanel: FC<FilterPanelProps> = ({
 	error,
 	onRetry,
 	onFiltersChange,
+	showSummary = true,
+	showDistricts = true,
+	showClosedToggle = true,
+	collapsible = false,
+	defaultCollapsed = false,
+	categorySectionMode = "filter",
+	selectionEmptyLabel,
 }) => {
-	const { t, i18n } = useTranslation(["content", "common"]);
-	const { t: tEnum } = useTranslation(["enumMap"]);
-	const [openSections, setOpenSections] = useState<string[]>([]);
-
-	const collator = useMemo(
-		() =>
-			new Intl.Collator(i18n.language, { numeric: true, sensitivity: "base" }),
-		[i18n.language],
-	);
+	const { t } = useTranslation(["content", "common"]);
+	const showCategoryHeader = categorySectionMode !== "selection";
 
 	const updateFilters = (nextFilters: FilterState) => {
 		onFiltersChange(nextFilters);
@@ -60,107 +66,6 @@ export const FilterPanel: FC<FilterPanelProps> = ({
 			: [...filters.district_keys, districtKey];
 
 		updateFilters({ ...filters, district_keys: newDistricts });
-	};
-
-	const toggleCategory = (categoryKey: string) => {
-		if (!filters) return;
-
-		const categoryGroup = categoryGroups.find(
-			(group) => group.key === categoryKey,
-		);
-		if (!categoryGroup) return;
-
-		const isCategorySelected = filters.category_keys.includes(categoryKey);
-		const selectedSubcategoriesInGroup = (
-			categoryGroup.subcategory ?? []
-		).filter((subcategory: Subcategory) =>
-			filters.subcategory_keys.includes(subcategory.key),
-		);
-		const allSubcategoriesSelected =
-			selectedSubcategoriesInGroup.length ===
-			(categoryGroup.subcategory ?? []).length;
-
-		if (
-			!(isCategorySelected || allSubcategoriesSelected) &&
-			!openSections.includes(categoryKey)
-		) {
-			toggleSection(categoryKey);
-		}
-
-		if (isCategorySelected || allSubcategoriesSelected) {
-			const newCategories = filters.category_keys.filter(
-				(c) => c !== categoryKey,
-			);
-			const newSubcategories = filters.subcategory_keys.filter(
-				(s) =>
-					!(categoryGroup.subcategory ?? []).some(
-						(subcategory: Subcategory) => subcategory.key === s,
-					),
-			);
-
-			updateFilters({
-				...filters,
-				category_keys: newCategories,
-				subcategory_keys: newSubcategories,
-			});
-		} else {
-			const subcategoryKeysToAdd = (categoryGroup.subcategory ?? []).map(
-				(subcategory: Subcategory) => subcategory.key,
-			);
-			const newSubcategories = [
-				...filters.subcategory_keys.filter(
-					(s) =>
-						!(categoryGroup.subcategory ?? []).some(
-							(subcategory: Subcategory) => subcategory.key === s,
-						),
-				),
-				...subcategoryKeysToAdd,
-			];
-
-			updateFilters({
-				...filters,
-				subcategory_keys: newSubcategories,
-			});
-		}
-	};
-
-	const toggleSubcategory = (subcategoryKey: string) => {
-		if (!filters) return;
-
-		const isSelected = filters.subcategory_keys.includes(subcategoryKey);
-		const newSubcategories = isSelected
-			? filters.subcategory_keys.filter((s) => s !== subcategoryKey)
-			: [...filters.subcategory_keys, subcategoryKey];
-
-		const parentCategory = categoryGroups.find((group) =>
-			(group.subcategory ?? []).some(
-				(subcategory: Subcategory) => subcategory.key === subcategoryKey,
-			),
-		);
-
-		let newCategories = filters.category_keys;
-
-		if (parentCategory) {
-			if (isSelected && filters.category_keys.includes(parentCategory.key)) {
-				newCategories = filters.category_keys.filter(
-					(c) => c !== parentCategory.key,
-				);
-			}
-		}
-
-		updateFilters({
-			...filters,
-			category_keys: newCategories,
-			subcategory_keys: newSubcategories,
-		});
-	};
-
-	const toggleSection = (sectionKey: string) => {
-		setOpenSections((prev) =>
-			prev.includes(sectionKey)
-				? prev.filter((s) => s !== sectionKey)
-				: [...prev, sectionKey],
-		);
 	};
 
 	const toggleClosedInstitutions = () => {
@@ -190,38 +95,8 @@ export const FilterPanel: FC<FilterPanelProps> = ({
 		});
 	};
 
-	const resetCategoryFilters = () => {
-		if (!filters) return;
-		updateFilters({
-			...filters,
-			category_keys: [],
-			subcategory_keys: [],
-		});
-		setOpenSections([]);
-	};
-
-	const setAllCategoryFilters = () => {
-		if (!filters) return;
-		const allCategoryKeys = categoryGroups.map((group) => group.key);
-		const allSubcategoryKeys = categoryGroups.flatMap((group) =>
-			(group.subcategory ?? []).map((sub) => sub.key),
-		);
-		updateFilters({
-			...filters,
-			category_keys: allCategoryKeys,
-			subcategory_keys: allSubcategoryKeys,
-		});
-	};
-
 	const hasActiveDistrictFilters = () => {
 		return filters?.district_keys && filters.district_keys.length > 0;
-	};
-
-	const hasActiveCategoryFilters = () => {
-		return (
-			(filters?.category_keys && filters.category_keys.length > 0) ||
-			(filters?.subcategory_keys && filters.subcategory_keys.length > 0)
-		);
 	};
 
 	if (loading) {
@@ -249,90 +124,76 @@ export const FilterPanel: FC<FilterPanelProps> = ({
 		);
 	}
 
+	const rootClassName = collapsible
+		? "Filter-root p-2 md:p-4 flex flex-col gap-2"
+		: "Filter-root p-2 md:p-4 h-full flex flex-col gap-2";
+
 	return (
-		<div className="Filter-root p-2 md:p-4 h-full flex flex-col gap-2">
-			<ContentContainer className="p-6">
-				<h2 className="body2 font-bold mb-3 pl-2">
-					{t("filter.displayedInstitutions", {
-						ns: "content",
-						count: filteredCount,
-					})}
-				</h2>
-				<button
-					className="flex items-center gap-2 transition-opacity body2 text-primary-dark"
-					onClick={toggleClosedInstitutions}
-				>
-					{filters?.include_closed ? <EyeOff /> : <Eye />}
-					<strong className="body2 font-bold">
-						{filters?.include_closed
-							? t("filter.hideClosed", { ns: "content" })
-							: t("filter.showClosed", { ns: "content" })}
-					</strong>
-				</button>
-			</ContentContainer>
+		<div className={rootClassName}>
 
-			<ContentContainer className="py-6 px-4">
-				<div className="flex items-center justify-between mb-4">
-					<h3 className="body1 font-bold">
-						{t("filter.districts.title", { ns: "content" })}
-					</h3>
-					<button
-						className="body2 font-light underline"
-						onClick={
-							hasActiveDistrictFilters()
-								? resetDistrictFilters
-								: setAllDistrictFilters
-						}
-					>
-						{hasActiveDistrictFilters()
-							? t("filter.districts.resetFilters", { ns: "content" })
-							: t("filter.districts.setAllFilters", { ns: "content" })}
-					</button>
-				</div>
-				<DistrictTags
-					districts={districts}
-					selected={filters?.district_keys || []}
-					onChange={toggleDistrict}
-				/>
-			</ContentContainer>
-
-			<ContentContainer className="py-6 px-4">
-				<div className="flex items-center justify-between mb-4">
-					<h3 className="body1 font-bold">
-						{t("filter.categories.title", { ns: "content" })}
-					</h3>
-					<button
-						className="body2 font-light underline"
-						onClick={
-							hasActiveCategoryFilters()
-								? resetCategoryFilters
-								: setAllCategoryFilters
-						}
-					>
-						{hasActiveCategoryFilters()
-							? t("filter.categories.resetFilters", { ns: "content" })
-							: t("filter.categories.setAllFilters", { ns: "content" })}
-					</button>
-				</div>
-				<div className="space-y-2">
-					{getSortedCategories(categoryGroups, collator, tEnum).map(
-						(category) => (
-							<CategorySection
-								key={category.key}
-								group={category}
-								selectedCategories={filters?.category_keys || []}
-								selectedSubcategories={filters?.subcategory_keys || []}
-								isOpen={openSections.includes(category.key)}
-								onToggle={() => toggleSection(category.key)}
-								onCategoryChange={toggleCategory}
-								onSubcategoryChange={toggleSubcategory}
-								categoryCount={categoryCounts?.[category.key]}
-								subcategoryCounts={subcategoryCounts}
-							/>
-						),
+			{showSummary && (
+				<ContentContainer className="p-6">
+					<h2 className="body2 font-bold mb-3 pl-2">
+						{t("filter.displayedInstitutions", {
+							ns: "content",
+							count: filteredCount,
+						})}
+					</h2>
+					{showClosedToggle && (
+						<button
+							className="flex items-center gap-2 transition-opacity body2 text-primary-dark"
+							onClick={toggleClosedInstitutions}
+						>
+							{filters?.include_closed ? <EyeOff /> : <Eye />}
+							<strong className="body2 font-bold">
+								{filters?.include_closed
+									? t("filter.hideClosed", { ns: "content" })
+									: t("filter.showClosed", { ns: "content" })}
+							</strong>
+						</button>
 					)}
-				</div>
-			</ContentContainer>
+				</ContentContainer>
+			)}
+
+			{showDistricts && (
+				<ContentContainer className="py-6 px-4">
+					<div className="flex items-center justify-between mb-4">
+						<h3 className="body1 font-bold">
+							{t("filter.districts.title", { ns: "content" })}
+						</h3>
+						<button
+							className="body2 font-light underline"
+							onClick={
+								hasActiveDistrictFilters()
+									? resetDistrictFilters
+									: setAllDistrictFilters
+							}
+						>
+							{hasActiveDistrictFilters()
+								? t("filter.districts.resetFilters", { ns: "content" })
+								: t("filter.districts.setAllFilters", { ns: "content" })}
+						</button>
+					</div>
+					<DistrictTags
+						districts={districts}
+						selected={filters?.district_keys || []}
+						onChange={toggleDistrict}
+					/>
+				</ContentContainer>
+			)}
+
+			<CategorySectionList
+				filters={filters}
+				categoryGroups={categoryGroups}
+				categoryCounts={categoryCounts}
+				subcategoryCounts={subcategoryCounts}
+				onFiltersChange={onFiltersChange}
+				collapsible={collapsible}
+				defaultCollapsed={defaultCollapsed}
+				categorySectionMode={categorySectionMode}
+				selectionEmptyLabel={selectionEmptyLabel}
+				showHeader={showCategoryHeader}
+			/>
 		</div>
 	);
 };
