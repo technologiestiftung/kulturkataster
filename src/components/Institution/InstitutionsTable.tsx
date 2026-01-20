@@ -9,13 +9,14 @@ import { StatusDot } from "../ui/status-dot";
 import { InstitutionStatus } from "@/generated/prisma";
 import { useTranslation } from "react-i18next";
 import {
-	formatInstitutionAddress,
 	formatInstitutionBoolean,
 	formatInstitutionDate,
 	getParentCategories,
+	getSubcategories,
 	joinInstitutionIds,
 } from "@/lib/utils/institutionUtils";
 import { Badge } from "../ui/badge";
+import Link from "next/link";
 
 export function InstitutionsTable() {
 	const router = useRouter();
@@ -83,43 +84,74 @@ export function InstitutionsTable() {
 				header: headerLabel("name", "Name"),
 				enableSorting: true,
 				size: 350,
-				enableResizing: false,
 				meta: { pin: "left", truncate: true },
-			},
-			{
-				accessorKey: "website",
-				header: headerLabel("website", "Website"),
-				enableSorting: true,
-				size: 350,
-				enableResizing: true,
-				meta: { truncate: true },
-			},
-			{
-				accessorKey: "phone",
-				header: headerLabel("phone", "Phone"),
-				enableSorting: true,
-				size: 150,
-				enableResizing: true,
-				meta: { truncate: true },
 			},
 			{
 				accessorKey: "email",
 				header: headerLabel("email", "Email"),
 				enableSorting: true,
 				size: 150,
-				enableResizing: true,
 				meta: { truncate: true },
+				cell: ({ row }) => {
+					const email = row.original.email;
+					if (!email) return "—";
+					return (
+						<Link
+							className="text-primary-dark underline"
+							href={`mailto:${email}`}
+						>
+							{email}
+						</Link>
+					);
+				},
+			},
+			{
+				accessorKey: "phone",
+				header: headerLabel("phone", "Phone"),
+				enableSorting: true,
+				size: 150,
+				meta: { truncate: true },
+				cell: ({ row }) => {
+					const phone = row.original.phone;
+					if (!phone) return "—";
+					return (
+						<Link className="text-primary-dark underline" href={`tel:${phone}`}>
+							{phone}
+						</Link>
+					);
+				},
+			},
+			{
+				accessorKey: "website",
+				header: headerLabel("website", "Website"),
+				enableSorting: true,
+				size: 350,
+				meta: { truncate: true },
+				cell: ({ row }) => {
+					const url = row.original.website;
+					if (!url) return "—";
+					return (
+						<Link
+							href={url}
+							target="_blank"
+							rel="noreferrer"
+							className="underline text-primary-dark hover:text-primary/80"
+						>
+							{url}
+						</Link>
+					);
+				},
 			},
 			{
 				accessorKey: "address.street",
 				header: `${headerLabel("street", "Street")} & ${headerLabel("street_number", "Number")}`,
 				enableSorting: true,
 				size: 150,
-				enableResizing: true,
 				meta: { truncate: true },
 				cell: ({ row }) => {
 					const address = row.original.address;
-					if (!address) return <span className="text-foreground">—</span>;
+					if (!address || !address.street || !address.street_number)
+						return <span className="text-foreground">—</span>;
 					return `${address.street} ${address.street_number}`;
 				},
 			},
@@ -128,78 +160,125 @@ export function InstitutionsTable() {
 				header: headerLabel("city", "City"),
 				enableSorting: true,
 				size: 100,
-				enableResizing: true,
 				meta: { truncate: true },
+				cell: ({ row }) => {
+					const city = row.original.address?.city;
+					if (!city) return <span className="text-foreground">—</span>;
+					return city;
+				},
 			},
 			{
 				accessorKey: "address.zipcode",
 				header: headerLabel("zipcode", "Postal Code"),
 				enableSorting: true,
 				size: 100,
-				enableResizing: true,
 				meta: { truncate: true },
+				cell: ({ row }) => {
+					const zipcode = row.original.address?.zipcode;
+					if (!zipcode) return <span className="text-foreground">—</span>;
+					return zipcode;
+				},
+			},
+			{
+				accessorKey: "address.neighbourhood",
+				header: headerLabel("neighbourhood", "Neighbourhood"),
+				enableSorting: true,
+				size: 150,
+				meta: { truncate: true },
+				cell: ({ row }) => {
+					const neighbourhood = row.original.address?.neighbourhood;
+					if (!neighbourhood) return <span className="text-foreground">—</span>;
+					return neighbourhood;
+				},
 			},
 			{
 				accessorKey: "address.district",
 				header: headerLabel("district", "District"),
 				enableSorting: true,
 				size: 150,
-				enableResizing: true,
 				meta: { truncate: true },
+				cell: ({ row }) => {
+					const district = row.original.address?.district;
+					if (!district) return <span className="text-foreground">—</span>;
+					return district;
+				},
 			},
 			{
-				id: "address",
-				header: headerLabel("address", "Address"),
-				accessorFn: (row) => formatInstitutionAddress(row),
+				accessorKey: "address.cultural_area",
+				header: headerLabel("cultural_area", "Cultural Area"),
 				enableSorting: true,
-				size: 240,
+				size: 150,
 				meta: { truncate: true },
-				cell: ({ row }) => formatInstitutionAddress(row.original),
+				cell: ({ row }) => {
+					const culturalArea = row.original.address?.cultural_area;
+
+					if (!culturalArea) return <span className="text-foreground">—</span>;
+					return culturalArea;
+				},
 			},
 			{
 				accessorKey: "parent_organization",
 				header: headerLabel("parent_organization", "Parent Organization"),
 				enableSorting: true,
 				size: 250,
-				enableResizing: true,
 				meta: { truncate: true },
+				cell: ({ row }) =>
+					row.original.parent_organization || (
+						<span className="text-foreground">—</span>
+					),
 			},
 			{
 				accessorKey: "area",
 				header: headerLabel("area", "Area (m2)"),
 				enableSorting: true,
 				size: 90,
-				enableResizing: true,
 				meta: { truncate: true },
+				cell: ({ row }) =>
+					row.original.area ? (
+						row.original.area.toString()
+					) : (
+						<span className="text-foreground">—</span>
+					),
 			},
 			{
 				accessorKey: "number_of_rooms",
 				header: headerLabel("number_of_rooms", "Rooms"),
 				enableSorting: true,
 				size: 80,
-				enableResizing: true,
+				cell: ({ row }) =>
+					row.original.number_of_rooms ? (
+						row.original.number_of_rooms.toString()
+					) : (
+						<span className="text-foreground">—</span>
+					),
 			},
 			{
 				accessorKey: "legal_form",
 				header: headerLabel("legal_form", "Legal Form"),
 				enableSorting: true,
 				size: 150,
-				enableResizing: true,
 				meta: { truncate: true },
+				cell: ({ row }) =>
+					row.original.legal_form || <span className="text-foreground">—</span>,
 			},
 			{
 				accessorKey: "capacity",
 				header: headerLabel("capacity", "Capacity"),
 				enableSorting: true,
 				size: 90,
-				enableResizing: true,
+				cell: ({ row }) =>
+					row.original.capacity ? (
+						row.original.capacity.toString()
+					) : (
+						<span className="text-foreground">—</span>
+					),
 			},
 			{
 				id: "category",
 				header: headerLabel("category", "Category"),
-				accessorFn: (row) => row.categories[0]?.key || "",
+				accessorFn: (row) => getParentCategories(row),
 				enableSorting: true,
-				size: 250,
+				size: 333,
 				cell: ({ row }) => {
 					return (
 						<div className="gap-1 flex-wrap flex">
@@ -210,6 +289,28 @@ export function InstitutionsTable() {
 									className="capitalize truncate"
 								>
 									{`${tEnum("category." + cat.key)}`}
+								</Badge>
+							))}
+						</div>
+					);
+				},
+			},
+			{
+				id: "subcategory",
+				header: headerLabel("subcategory", "Subcategory"),
+				accessorFn: (row) => getSubcategories(row),
+				enableSorting: true,
+				size: 333,
+				cell: ({ row }) => {
+					return (
+						<div className="gap-1 flex-wrap flex">
+							{getSubcategories(row.original).map((cat) => (
+								<Badge
+									variant="outline"
+									key={cat.id}
+									className="capitalize truncate"
+								>
+									{`${tEnum("subcategory." + cat.key)}`}
 								</Badge>
 							))}
 						</div>

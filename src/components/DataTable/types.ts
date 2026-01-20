@@ -32,6 +32,7 @@ export interface DataTableConfig<T> {
 
 	onEdit?: (row: T) => void;
 	rowActions?: (row: T) => React.ReactNode;
+	actionsColumnSize?: number;
 
 	enableColumnResizing?: boolean;
 

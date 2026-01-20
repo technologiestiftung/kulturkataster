@@ -197,6 +197,7 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 				id: actionsColumnId,
 				header: "",
 				enableSorting: false,
+				size: 100,
 				cell: ({ row }) =>
 					config.rowActions ? config.rowActions(row.original) : null,
 			},

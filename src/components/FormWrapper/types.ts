@@ -15,6 +15,7 @@ export type FieldType =
 	| "checkbox"
 	| "switch"
 	| "multiselect"
+	| "addressMap"
 	| "filterPanel"
 	| "actionPanel"
 	| "tablePermissions"
@@ -98,6 +99,15 @@ export interface FieldConfig {
 		categorySectionMode?: "filter" | "selection";
 		selectionEmptyLabel?: string;
 	};
+	addressMap?: {
+		latField: string;
+		lngField: string;
+		streetField?: string;
+		streetNumberField?: string;
+		cityField?: string;
+		zipField?: string;
+		initialZoom?: number;
+	};
 
 	// For select, radio, checkbox, multiselect
 	options?: SelectOption[];
@@ -112,6 +122,11 @@ export interface FieldConfig {
 
 	// Custom validation
 	validate?: (value: unknown) => string | undefined;
+	onBlur?: (
+		value: unknown,
+		formData: Record<string, unknown>,
+		updateField: (name: string, value: unknown) => void,
+	) => void | Promise<void>;
 
 	// Conditional rendering
 	condition?: (formData: Record<string, unknown>) => boolean;

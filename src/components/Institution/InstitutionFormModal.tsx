@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog } from "@/components/ui/alert-dialog";
@@ -14,12 +14,14 @@ import {
 	getSubmitLabel,
 	splitStreetLine,
 	toOptionalText,
+	toOptionalNumber,
 	toNumberArray,
 } from "@/lib/utils/formUtils";
 import {
 	createInstitution,
 	updateInstitution,
 } from "@/server/actions/institutions";
+import { geocodeAddress } from "@/server/actions/maptiler";
 import type { Category, FilterState } from "@/types";
 import type { Institution } from "@/types/institution";
 import { useRouter } from "next/navigation";
@@ -31,7 +33,7 @@ type InstitutionFormModalProps = {
 };
 
 const buildCategoryFilterState = (
-	categories: Institution["categories"] | undefined,
+	categories: Category[] | undefined,
 ): FilterState => {
 	const category_keys: string[] = [];
 	const subcategory_keys: string[] = [];
@@ -55,7 +57,6 @@ const buildCategoryFilterState = (
 
 const getInitialValues = (resolvedInstitution?: Institution) => {
 	const address = resolvedInstitution?.address;
-
 	return {
 		name: resolvedInstitution?.name ?? "",
 		internal_notes: resolvedInstitution?.internal_notes ?? "",
@@ -65,6 +66,11 @@ const getInitialValues = (resolvedInstitution?: Institution) => {
 		),
 		"address.city": address?.city ?? "",
 		"address.zip": address?.zipcode ?? "",
+		"address.address_suffix": address?.address_suffix ?? "",
+		"address.neighbourhood": address?.neighbourhood ?? "",
+		"address.cultural_area": address?.cultural_area ?? "",
+		"address.lat": address?.lat ?? null,
+		"address.lng": address?.lng ?? null,
 		categoryIds:
 			resolvedInstitution?.categories?.map((category) => String(category.id)) ??
 			[],
@@ -156,6 +162,12 @@ const useInstitutionSubmit = (
 		const streetLine = toOptionalText(data["address.streetLine"]);
 		const city = toOptionalText(data["address.city"]);
 		const zipcode = toOptionalText(data["address.zip"]);
+		const lat = toOptionalNumber(data["address.lat"]);
+		const lng = toOptionalNumber(data["address.lng"]);
+		const address_suffix = toOptionalText(data["address.address_suffix"]);
+		const neighbourhood = toOptionalText(data["address.neighbourhood"]);
+		const cultural_area = toOptionalText(data["address.cultural_area"]);
+
 		const address = streetLine
 			? (() => {
 					const { street, streetNumber } = splitStreetLine(streetLine);
@@ -164,6 +176,11 @@ const useInstitutionSubmit = (
 						street_number: streetNumber ? streetNumber : null,
 						city,
 						zipcode,
+						lat,
+						lng,
+						address_suffix,
+						neighbourhood,
+						cultural_area,
 					};
 					if (addressId) {
 						return { ...nextAddress, id: addressId };
@@ -217,6 +234,11 @@ type InstitutionFormConfigArgs = {
 	submitting: boolean;
 	onSubmit: (data: Record<string, unknown>) => void | Promise<void>;
 	onCancel: () => void;
+	onAddressBlur?: (
+		value: unknown,
+		formData: Record<string, unknown>,
+		updateField: (name: string, value: unknown) => void,
+	) => void | Promise<void>;
 };
 
 const buildInstitutionFormConfig = ({
@@ -228,6 +250,7 @@ const buildInstitutionFormConfig = ({
 	submitting,
 	onSubmit,
 	onCancel,
+	onAddressBlur,
 }: InstitutionFormConfigArgs): FormWrapperConfig => {
 	const fieldLabel = (key: string, fallback: string) => {
 		const translated = tEnum(`field_names.${key}`);
@@ -251,7 +274,6 @@ const buildInstitutionFormConfig = ({
 						description: t(
 							"institutionFormModal.form.details.fields.parentOrganization.description",
 						),
-						required: true,
 						placeholder: t(
 							"institutionFormModal.form.details.fields.parentOrganization.placeholder",
 						),
@@ -290,11 +312,23 @@ const buildInstitutionFormConfig = ({
 						name: "utilization_status",
 						label: fieldLabel("utilization_status", "Utilization Status"),
 						type: "text",
-						required: true,
 						placeholder: t(
 							"institutionFormModal.form.details.fields.utilization_status.placeholder",
 						),
 						gridColumn: "full",
+					},
+					{
+						name: "address.map",
+						label: `${fieldLabel("address", "Address")} Map`,
+						type: "addressMap",
+						gridColumn: "full",
+						addressMap: {
+							latField: "address.lat",
+							lngField: "address.lng",
+							streetField: "address.streetLine",
+							cityField: "address.city",
+							zipField: "address.zip",
+						},
 					},
 					{
 						name: "address.streetLine",
@@ -303,9 +337,21 @@ const buildInstitutionFormConfig = ({
 							"Number",
 						)}`,
 						type: "text",
+						gridColumn: "half",
 						placeholder: t(
 							"institutionFormModal.form.details.fields.address.streetLine.placeholder",
 						),
+						onBlur: onAddressBlur,
+					},
+					{
+						name: "address.zip",
+						label: fieldLabel("address.zip", "ZIP Code"),
+						type: "text",
+						gridColumn: "half",
+						placeholder: t(
+							"institutionFormModal.form.details.fields.address.zip.placeholder",
+						),
+						onBlur: onAddressBlur,
 					},
 					{
 						name: "address.address_suffix",
@@ -316,12 +362,12 @@ const buildInstitutionFormConfig = ({
 						),
 					},
 					{
-						name: "address.zip",
-						label: fieldLabel("address.zip", "ZIP Code"),
+						name: "address.neighbourhood",
+						label: fieldLabel("address.neighbourhood", "Neighbourhood"),
 						type: "text",
 						gridColumn: "half",
 						placeholder: t(
-							"institutionFormModal.form.details.fields.address.zip.placeholder",
+							"institutionFormModal.form.details.fields.address.neighbourhood.placeholder",
 						),
 					},
 					{
@@ -332,10 +378,11 @@ const buildInstitutionFormConfig = ({
 						placeholder: t(
 							"institutionFormModal.form.details.fields.address.city.placeholder",
 						),
+						onBlur: onAddressBlur,
 					},
 					{
-						name: "address.cultural_areal",
-						label: fieldLabel("address.cultural_areal", "Cultural Areal"),
+						name: "address.cultural_area",
+						label: fieldLabel("address.cultural_area", "Cultural Area"),
 						type: "text",
 						placeholder: t(
 							"institutionFormModal.form.details.fields.address.cultural_areal.placeholder",
@@ -406,6 +453,10 @@ export function InstitutionFormModal({
 	const institutions = useAccountStore((state) => state.institutions);
 	const setAlertDialog = useAccountStore((state) => state.setAlertDialog);
 	const categories = useInstitutionStore((state) => state.categories) ?? [];
+	const addressGeocodeState = useRef({
+		lastQuery: "",
+		inflight: false,
+	});
 
 	const categoryOptions = useMemo(
 		() =>
@@ -443,6 +494,39 @@ export function InstitutionFormModal({
 		handleSuccess,
 	);
 
+	const handleAddressBlur = useCallback(
+		async (
+			_value: unknown,
+			formData: Record<string, unknown>,
+			updateField: (name: string, value: unknown) => void,
+		) => {
+			const streetLine = toOptionalText(formData["address.streetLine"]);
+			const zip = toOptionalText(formData["address.zip"]);
+			const city = toOptionalText(formData["address.city"]);
+			const addressSuffix = toOptionalText(formData["address.address_suffix"]);
+			const queryParts = [streetLine, addressSuffix, zip, city].filter(
+				(item): item is string => Boolean(item),
+			);
+			if (queryParts.length === 0) return;
+			const query = queryParts.join(", ");
+			if (addressGeocodeState.current.inflight) return;
+			if (addressGeocodeState.current.lastQuery === query) return;
+
+			addressGeocodeState.current.inflight = true;
+			try {
+				const result = await geocodeAddress(query);
+				if (result) {
+					updateField("address.lat", result.lat);
+					updateField("address.lng", result.lng);
+					addressGeocodeState.current.lastQuery = query;
+				}
+			} finally {
+				addressGeocodeState.current.inflight = false;
+			}
+		},
+		[],
+	);
+
 	const formConfig = useMemo(
 		() =>
 			buildInstitutionFormConfig({
@@ -454,6 +538,7 @@ export function InstitutionFormModal({
 				submitting,
 				onSubmit: handleSubmit,
 				onCancel: handleClose,
+				onAddressBlur: handleAddressBlur,
 			}),
 		[
 			mode,
@@ -465,6 +550,7 @@ export function InstitutionFormModal({
 			submitting,
 			handleSubmit,
 			handleClose,
+			handleAddressBlur,
 		],
 	);
 
