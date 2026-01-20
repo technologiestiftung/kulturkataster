@@ -143,7 +143,11 @@ export const FilterPanel: FC<FilterPanelProps> = ({
 							className="flex items-center gap-2 transition-opacity body2 text-primary-dark"
 							onClick={toggleClosedInstitutions}
 						>
-							{filters?.include_closed ? <EyeOff /> : <Eye />}
+							{filters?.include_closed ? (
+								<EyeOff className="size-6" />
+							) : (
+								<Eye className="size-6" />
+							)}
 							<strong className="body2 font-bold">
 								{filters?.include_closed
 									? t("filter.hideClosed", { ns: "content" })
