@@ -259,6 +259,7 @@
 	"mainContent": "Hauptinhalt",
 	"map": {
 		"availableLayers": "Verfügbare Ebenen",
+		"addressPickerHint": "Bewegen Sie die Karte, um den Pin zu positionieren und die Adresse automatisch auszufüllen.",
 		"closeLayerTree": "Fachkarten schließen",
 		"geolocate": "Meinen Standort finden",
 		"layerItemAriaLabel": "Sichtbarkeit von der Karte {{serviceName}} umschalten",

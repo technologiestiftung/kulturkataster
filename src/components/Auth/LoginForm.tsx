@@ -44,9 +44,6 @@ export function LoginForm() {
 			</div>
 
 			<form onSubmit={handleSubmit} className="space-y-4">
-				{errorMessage && (
-					<p className="body3 text-destructive">{errorMessage}</p>
-				)}
 				<div className="space-y-2">
 					<Label htmlFor="email" required>
 						{t("auth.login.emailLabel")}
@@ -84,7 +81,9 @@ export function LoginForm() {
 						{t("auth.login.forgotPassword")}
 					</Link>
 				</div>
-
+				{errorMessage && (
+					<p className="body3 text-destructive">{errorMessage}</p>
+				)}
 				<Button type="submit" className="w-full" disabled={isLoading}>
 					{isLoading ? t("auth.login.submitting") : t("auth.login.submit")}
 				</Button>
