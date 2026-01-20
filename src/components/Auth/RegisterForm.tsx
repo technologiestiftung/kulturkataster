@@ -125,8 +125,6 @@ export function RegisterForm() {
 			</div>
 
 			<form onSubmit={handleSubmit} className="space-y-4">
-				{errorMessage && <p className="text-destructive">{errorMessage}</p>}
-				{successMessage && <p className="text-green-700">{successMessage}</p>}
 				<div className="space-y-2">
 					<Label htmlFor="accountType">{t("auth.register.accountType")}</Label>
 					<Select
@@ -253,6 +251,8 @@ export function RegisterForm() {
 					)}
 				</div>
 
+				{errorMessage && <p className="text-destructive">{errorMessage}</p>}
+				{successMessage && <p className="text-green-700">{successMessage}</p>}
 				<Button type="submit" className="w-full" disabled={isLoading}>
 					{isLoading
 						? t("auth.register.submitting")

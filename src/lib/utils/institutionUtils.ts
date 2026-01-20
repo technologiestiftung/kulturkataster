@@ -70,16 +70,5 @@ export const formatInstitutionBoolean = (value?: boolean | null) => {
 	return "—";
 };
 
-export const formatInstitutionAddress = (institution: Institution) => {
-	const address = institution.address;
-	if (!address) return "—";
-	const street = [address.street, address.street_number]
-		.filter(Boolean)
-		.join(" ");
-	const city = [address.zipcode, address.city].filter(Boolean).join(" ");
-	const district = address.district ?? "";
-	return [street, city, district].filter(Boolean).join(", ") || "—";
-};
-
 export const joinInstitutionIds = (values?: Array<number | string> | null) =>
 	values && values.length > 0 ? values.join(", ") : "—";

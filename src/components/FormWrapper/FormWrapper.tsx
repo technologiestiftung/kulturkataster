@@ -26,7 +26,9 @@ import { MultiSelectModal } from "@/components/MultiSelect/MultiSelectModal";
 import { ActionPanel } from "@/components/ActionPanel";
 import { cn } from "@/lib/utils";
 import type { FilterState } from "@/types";
+import { buildStreetLine, toOptionalNumber } from "@/lib/utils/formUtils";
 import type { FieldConfig, FormWrapperConfig, PermissionAction } from "./types";
+import { AddressMapField } from "./AddressMapField";
 
 const defaultFilterState: FilterState = {
 	district_keys: [],
@@ -61,6 +63,19 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 				field.type === "fieldPermissions"
 			) {
 				initialData[field.name] = {};
+			} else if (field.type === "addressMap" && field.addressMap) {
+				const latKey = field.addressMap.latField;
+				const lngKey = field.addressMap.lngField;
+				if (config.initialValues?.[latKey] !== undefined) {
+					initialData[latKey] = config.initialValues[latKey];
+				} else {
+					initialData[latKey] = null;
+				}
+				if (config.initialValues?.[lngKey] !== undefined) {
+					initialData[lngKey] = config.initialValues[lngKey];
+				} else {
+					initialData[lngKey] = null;
+				}
 			} else {
 				initialData[field.name] = "";
 			}
@@ -71,6 +86,7 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 
 	const [errors, setErrors] = useState<Record<string, string>>({});
 	const [touched, setTouched] = useState<Record<string, boolean>>({});
+	const [formError, setFormError] = useState<string | null>(null);
 
 	const updateField = (name: string, value: unknown) => {
 		setFormData((prev) => ({ ...prev, [name]: value }));
@@ -80,8 +96,21 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 			setErrors((prev) => {
 				const newErrors = { ...prev };
 				delete newErrors[name];
+				if (Object.keys(newErrors).length === 0) {
+					setFormError(null);
+				}
 				return newErrors;
 			});
+		}
+	};
+
+	const handleFieldBlur = async (field: FieldConfig, nextValue: unknown) => {
+		if (!field.onBlur) return;
+		const nextFormData = { ...formData, [field.name]: nextValue };
+		try {
+			await field.onBlur(nextValue, nextFormData, updateField);
+		} catch (error) {
+			console.warn(`Field onBlur failed for ${field.name}`, error);
 		}
 	};
 
@@ -146,7 +175,10 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 		setTouched(allTouched);
 
 		if (validateForm()) {
+			setFormError(null);
 			await config.onSubmit(formData);
+		} else {
+			setFormError("Please fix the highlighted fields.");
 		}
 	};
 
@@ -217,6 +249,9 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 						type={field.type}
 						value={value as string}
 						onChange={(e) => updateField(field.name, e.target.value)}
+						onBlur={(e) => {
+							void handleFieldBlur(field, e.target.value);
+						}}
 						placeholder={field.placeholder}
 						disabled={field.disabled}
 						min={field.min}
@@ -230,6 +265,9 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 						id={field.name}
 						value={value as string}
 						onChange={(e) => updateField(field.name, e.target.value)}
+						onBlur={(e) => {
+							void handleFieldBlur(field, e.target.value);
+						}}
 						placeholder={field.placeholder}
 						disabled={field.disabled}
 						rows={4}
@@ -379,6 +417,54 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 						defaultCollapsed={field.filterPanel.defaultCollapsed}
 						categorySectionMode={field.filterPanel.categorySectionMode}
 						selectionEmptyLabel={field.filterPanel.selectionEmptyLabel}
+					/>
+				)}
+
+				{field.type === "addressMap" && field.addressMap && (
+					<AddressMapField
+						initialZoom={field.addressMap.initialZoom}
+						disabled={field.disabled}
+						value={{
+							lat:
+								toOptionalNumber(formData[field.addressMap.latField]) ?? null,
+							lng:
+								toOptionalNumber(formData[field.addressMap.lngField]) ?? null,
+						}}
+						onChange={({ lat, lng, address }) => {
+							if (!field.addressMap) return;
+							updateField(field.addressMap.latField, lat);
+							updateField(field.addressMap.lngField, lng);
+
+							if (address) {
+								if (field.addressMap.streetField) {
+									if (field.addressMap.streetNumberField) {
+										if (address.street !== undefined) {
+											updateField(field.addressMap.streetField, address.street);
+										}
+										if (address.streetNumber !== undefined) {
+											updateField(
+												field.addressMap.streetNumberField,
+												address.streetNumber,
+											);
+										}
+									} else {
+										updateField(
+											field.addressMap.streetField,
+											buildStreetLine(address.street, address.streetNumber),
+										);
+									}
+								}
+								if (field.addressMap.cityField && address.city !== undefined) {
+									updateField(field.addressMap.cityField, address.city);
+								}
+								if (
+									field.addressMap.zipField &&
+									address.zipcode !== undefined
+								) {
+									updateField(field.addressMap.zipField, address.zipcode);
+								}
+							}
+						}}
 					/>
 				)}
 
@@ -551,7 +637,7 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 					</div>
 				)}
 
-				{error && <p className="text-xs text-destructive">{error}</p>}
+				{error && <p className="body3 text-destructive">{error}</p>}
 			</div>
 		);
 	};
@@ -661,13 +747,16 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 			)}
 
 			{!config.hideActions && (
-				<div className="flex items-center justify-end gap-4">
-					{config.showCancel && (
-						<Button type="button" variant="outline" onClick={config.onCancel}>
-							{config.cancelLabel || "Cancel"}
-						</Button>
-					)}
-					<Button type="submit">{config.submitLabel || "Submit"}</Button>
+				<div className="flex flex-col gap-3">
+					{formError && <p className="body3 text-destructive">{formError}</p>}
+					<div className="flex items-center justify-end gap-4">
+						{config.showCancel && (
+							<Button type="button" variant="outline" onClick={config.onCancel}>
+								{config.cancelLabel || "Cancel"}
+							</Button>
+						)}
+						<Button type="submit">{config.submitLabel || "Submit"}</Button>
+					</div>
 				</div>
 			)}
 		</form>

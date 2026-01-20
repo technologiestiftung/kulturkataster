@@ -21,6 +21,9 @@ const toNumberArray = (value: unknown): number[] => {
 };
 
 const toOptionalNumber = (value: unknown): number | undefined => {
+	if (typeof value === "number") {
+		return Number.isFinite(value) ? value : undefined;
+	}
 	if (typeof value !== "string") return undefined;
 	const parsed = Number(value);
 	return Number.isFinite(parsed) ? parsed : undefined;
