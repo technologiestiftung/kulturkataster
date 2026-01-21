@@ -10,6 +10,10 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
 
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -70,3 +74,157 @@ jobs:
         if: github.event_name == 'release'
         id: package-version
         run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+      
+      - name: Test SSH connection
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATEKEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 ${{ vars.SERVER_USER }}@${{ vars.SERVER_HOST }} -p ${{ vars.SERVER_PORT }} "echo 'SSH connection successful'"
+
+      - name: Create database backup
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ vars.SERVER_HOST }}
+          port: ${{ vars.SERVER_PORT }}
+          username: ${{ vars.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATEKEY }}
+          script: |
+            set -e
+            # Find database container
+            echo "Available containers:"
+            docker ps --format "{{.Names}}"
+            DB_CONTAINER=$(docker ps --format "{{.Names}}" | grep -E "(supabase.*db|.*db.*supabase)" | head -1)
+            if [ -z "$DB_CONTAINER" ]; then
+              echo "No database container found"
+              exit 1
+            fi
+            echo "Using database container: $DB_CONTAINER"
+            
+            PROJECT_NAME=$(echo "$DB_CONTAINER" | cut -d'-' -f1)
+            mkdir -p /volumes/${PROJECT_NAME}/backup
+
+            TIMESTAMP=$(date +%F_%H%M%S)
+            BACKUP_DIR="/volumes/${PROJECT_NAME}/backup"
+            FULL_BACKUP="${BACKUP_DIR}/full_backup_${TIMESTAMP}.sql"
+            DATA_BACKUP="${BACKUP_DIR}/data_only_${TIMESTAMP}.sql"
+
+            echo "Create full backup"
+            
+            # Try different auth methods for backup
+            if docker exec -i ${DB_CONTAINER} pg_dump -U postgres -d postgres > "${FULL_BACKUP}" 2>/dev/null; then
+              echo "Full backup created with postgres user"
+            elif docker exec -i -e PGPASSWORD='${{ secrets.DB_PASSWORD }}' ${DB_CONTAINER} pg_dump -h localhost -p 5432 -U postgres -d postgres > "${FULL_BACKUP}" 2>/dev/null; then
+              echo "Full backup created with password auth"
+            else
+              echo "Backup failed"
+              exit 1
+            fi
+
+            # Create data-only backup
+            if docker exec -i ${DB_CONTAINER} pg_dump -U postgres -d postgres --data-only > "${DATA_BACKUP}" 2>/dev/null; then
+              echo "Data-only backup created"
+            else
+              echo "Data-only backup failed, continuing with full backup only"
+            fi
+
+            # Verify backup files
+            if [ ! -s "${FULL_BACKUP}" ]; then
+              echo "Full backup file is empty or missing"
+              exit 1
+            fi
+            if [ ! -s "${DATA_BACKUP}" ]; then
+              echo "Data-only backup file is empty or missing"
+              exit 1
+            fi
+
+            echo "Both backups created and verified successfully"
+            echo "Full backup: $(ls -lh ${FULL_BACKUP})"
+            echo "Data-only backup: $(ls -lh ${DATA_BACKUP})"
+
+      - name: Download backup artifacts
+        run: |
+          mkdir -p ./backups
+          # Download both full backup and data-only backup files
+          scp -o StrictHostKeyChecking=no -P ${{ vars.SERVER_PORT }} ${{ vars.SERVER_USER }}@${{ vars.SERVER_HOST }}:/volumes/*/backup/full_backup_*.sql ./backups/ || echo "Failed to download full backup"
+          scp -o StrictHostKeyChecking=no -P ${{ vars.SERVER_PORT }} ${{ vars.SERVER_USER }}@${{ vars.SERVER_HOST }}:/volumes/*/backup/data_only_*.sql ./backups/ || echo "Failed to download data backup"
+          
+          # List downloaded files
+          echo "Downloaded backup files:"
+          ls -lah ./backups/
+
+      - name: Upload backup artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: database-backups-${{ github.ref_name }}-${{ github.run_number }}
+          path: ./backups/
+          retention-days: 30
+          compression-level: 9
+
+      - name: Setup Node.js and install dependencies
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Prisma migrations
+        run: |
+          # Build database URL for Supavisor transaction pooler
+          SUPAVISOR_URL="postgresql://postgres.${{ vars.SUPABASE_TENANT_ID }}:${{ secrets.SUPABASE_DB_PASSWORD }}@supavisor-pooler.kuka-api.ionos-dev.ds-apps.tsb-berlin.de:443/postgres?sslmode=require"
+          echo "Running Prisma migrations via Supavisor transaction pooler..."
+
+          # Test database connection
+          export DATABASE_URL="${SUPAVISOR_URL}"
+          
+          # Generate Prisma client
+          npx prisma generate
+
+          # Push schema changes (equivalent to migrations)
+          npx prisma db push --accept-data-loss
+
+          echo "Prisma migrations completed successfully via Supavisor"
+
+      - name: Restart application containers
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ vars.SERVER_HOST }}
+          port: ${{ vars.SERVER_PORT }}
+          username: ${{ vars.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATEKEY }}
+          script: |
+            # Find and restart the frontend container
+            FRONTEND_CONTAINER=$(docker ps --format "{{.Names}}" | grep -E "(kuka.*frontend|kulturkataster.*frontend)" | head -1)
+            if [ -n "$FRONTEND_CONTAINER" ]; then
+              echo "Restarting frontend container: $FRONTEND_CONTAINER"
+              docker restart $FRONTEND_CONTAINER
+              echo "Frontend container restarted"
+            else
+              echo "No frontend container found to restart"
+            fi
+
+      - name: Create deployment tag
+        run: |
+          TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+          ENVIRONMENT="${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}"
+          TAG_NAME="deploy-${ENVIRONMENT}-${TIMESTAMP}"
+
+          echo "Creating deployment tag: ${TAG_NAME}"
+          git tag -a "${TAG_NAME}" -m "Frontend deployment to ${ENVIRONMENT} at $(date)"
+
+          if ! git push origin "${TAG_NAME}"; then
+            echo "Failed to push deployment tag"
+            exit 1
+          fi
+
+          echo "Deployment tag created: ${TAG_NAME}"
+          echo "View at: https://github.com/${{ github.repository }}/releases/tag/${TAG_NAME}"
+
+      - name: Cleanup SSH keys
+        if: always()
+        run: |
+          # Remove SSH private key securely
+          shred -vfz -n 3 ~/.ssh/id_rsa 2>/dev/null || rm -f ~/.ssh/id_rsa || true
