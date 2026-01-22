@@ -74,83 +74,51 @@ jobs:
         if: github.event_name == 'release'
         id: package-version
         run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
-      
-      - name: Test SSH connection
+
+      - name: Create database backup via Supavisor
         run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATEKEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 ${{ vars.SERVER_USER }}@${{ vars.SERVER_HOST }} -p ${{ vars.SERVER_PORT }} "echo 'SSH connection successful'"
-
-      - name: Create database backup
-        uses: appleboy/ssh-action@v1.2.2
-        with:
-          host: ${{ vars.SERVER_HOST }}
-          port: ${{ vars.SERVER_PORT }}
-          username: ${{ vars.SERVER_USER }}
-          key: ${{ secrets.SSH_PRIVATEKEY }}
-          script: |
-            set -e
-            # Find database container
-            echo "Available containers:"
-            docker ps --format "{{.Names}}"
-            DB_CONTAINER=$(docker ps --format "{{.Names}}" | grep -E "(supabase.*db|.*db.*supabase)" | head -1)
-            if [ -z "$DB_CONTAINER" ]; then
-              echo "No database container found"
-              exit 1
-            fi
-            echo "Using database container: $DB_CONTAINER"
-            
-            PROJECT_NAME=$(echo "$DB_CONTAINER" | cut -d'-' -f1)
-            mkdir -p /volumes/${PROJECT_NAME}/backup
-
-            TIMESTAMP=$(date +%F_%H%M%S)
-            BACKUP_DIR="/volumes/${PROJECT_NAME}/backup"
-            FULL_BACKUP="${BACKUP_DIR}/full_backup_${TIMESTAMP}.sql"
-            DATA_BACKUP="${BACKUP_DIR}/data_only_${TIMESTAMP}.sql"
-
-            echo "Create full backup"
-            
-            # Try different auth methods for backup
-            if docker exec -i ${DB_CONTAINER} pg_dump -U postgres -d postgres > "${FULL_BACKUP}" 2>/dev/null; then
-              echo "Full backup created with postgres user"
-            elif docker exec -i -e PGPASSWORD='${{ secrets.DB_PASSWORD }}' ${DB_CONTAINER} pg_dump -h localhost -p 5432 -U postgres -d postgres > "${FULL_BACKUP}" 2>/dev/null; then
-              echo "Full backup created with password auth"
-            else
-              echo "Backup failed"
-              exit 1
-            fi
-
-            # Create data-only backup
-            if docker exec -i ${DB_CONTAINER} pg_dump -U postgres -d postgres --data-only > "${DATA_BACKUP}" 2>/dev/null; then
-              echo "Data-only backup created"
-            else
-              echo "Data-only backup failed, continuing with full backup only"
-            fi
-
-            # Verify backup files
-            if [ ! -s "${FULL_BACKUP}" ]; then
-              echo "Full backup file is empty or missing"
-              exit 1
-            fi
-            if [ ! -s "${DATA_BACKUP}" ]; then
-              echo "Data-only backup file is empty or missing"
-              exit 1
-            fi
-
-            echo "Both backups created and verified successfully"
-            echo "Full backup: $(ls -lh ${FULL_BACKUP})"
-            echo "Data-only backup: $(ls -lh ${DATA_BACKUP})"
-
-      - name: Download backup artifacts
-        run: |
-          mkdir -p ./backups
-          # Download both full backup and data-only backup files
-          scp -o StrictHostKeyChecking=no -P ${{ vars.SERVER_PORT }} ${{ vars.SERVER_USER }}@${{ vars.SERVER_HOST }}:/volumes/*/backup/full_backup_*.sql ./backups/ || echo "Failed to download full backup"
-          scp -o StrictHostKeyChecking=no -P ${{ vars.SERVER_PORT }} ${{ vars.SERVER_USER }}@${{ vars.SERVER_HOST }}:/volumes/*/backup/data_only_*.sql ./backups/ || echo "Failed to download data backup"
+          # Use the same Supavisor connection as migrations
+          SUPAVISOR_URL="postgresql://postgres.${{ vars.SUPABASE_TENANT_ID }}:${{ secrets.SUPABASE_DB_PASSWORD }}@supavisor-pooler.kuka-api.ionos-dev.ds-apps.tsb-berlin.de:443/postgres?sslmode=require"
           
-          # List downloaded files
-          echo "Downloaded backup files:"
+          # Create local backup directory
+          mkdir -p ./backups
+          
+          TIMESTAMP=$(date +%F_%H%M%S)
+          ENVIRONMENT="${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}"
+          FULL_BACKUP="./backups/full_backup_${ENVIRONMENT}_${TIMESTAMP}.sql"
+          DATA_BACKUP="./backups/data_only_${ENVIRONMENT}_${TIMESTAMP}.sql"
+          
+          echo "Creating database backup via Supavisor pooler..."
+          
+          # Install PostgreSQL client for pg_dump
+          sudo apt-get update && sudo apt-get install -y postgresql-client
+          
+          # Create full backup (schema + data)
+          echo "Creating full backup..."
+          if pg_dump "$SUPAVISOR_URL" > "$FULL_BACKUP"; then
+            echo "Full backup created: $(ls -lh $FULL_BACKUP)"
+          else
+            echo "Full backup failed"
+            exit 1
+          fi
+          
+          # Create data-only backup
+          echo "Creating data-only backup..."
+          if pg_dump "$SUPAVISOR_URL" --data-only > "$DATA_BACKUP"; then
+            echo "Data-only backup created: $(ls -lh $DATA_BACKUP)"
+          else
+            echo "Data-only backup failed, continuing with full backup only"
+            rm -f "$DATA_BACKUP"
+          fi
+          
+          # Verify backups
+          if [ ! -s "$FULL_BACKUP" ]; then
+            echo "Full backup is empty"
+            exit 1
+          fi
+          
+          echo "Backup(s) completed successfully"
+          echo "Files created:"
           ls -lah ./backups/
 
       - name: Upload backup artifacts
@@ -183,28 +151,10 @@ jobs:
           # Generate Prisma client
           npx prisma generate
 
-          # Push schema changes (equivalent to migrations)
-          npx prisma db push --accept-data-loss
+          # Apply existing migrations
+          npx prisma migrate deploy
 
-          echo "Prisma migrations completed successfully via Supavisor"
-
-      - name: Restart application containers
-        uses: appleboy/ssh-action@v1.2.2
-        with:
-          host: ${{ vars.SERVER_HOST }}
-          port: ${{ vars.SERVER_PORT }}
-          username: ${{ vars.SERVER_USER }}
-          key: ${{ secrets.SSH_PRIVATEKEY }}
-          script: |
-            # Find and restart the frontend container
-            FRONTEND_CONTAINER=$(docker ps --format "{{.Names}}" | grep -E "(kuka.*frontend|kulturkataster.*frontend)" | head -1)
-            if [ -n "$FRONTEND_CONTAINER" ]; then
-              echo "Restarting frontend container: $FRONTEND_CONTAINER"
-              docker restart $FRONTEND_CONTAINER
-              echo "Frontend container restarted"
-            else
-              echo "No frontend container found to restart"
-            fi
+          echo "Prisma migrations completed successfully"
 
       - name: Create deployment tag
         run: |
@@ -222,9 +172,3 @@ jobs:
 
           echo "Deployment tag created: ${TAG_NAME}"
           echo "View at: https://github.com/${{ github.repository }}/releases/tag/${TAG_NAME}"
-
-      - name: Cleanup SSH keys
-        if: always()
-        run: |
-          # Remove SSH private key securely
-          shred -vfz -n 3 ~/.ssh/id_rsa 2>/dev/null || rm -f ~/.ssh/id_rsa || true
