@@ -21,9 +21,19 @@ export const useAppStore = create<AppStoreState>()(
 			},
 			baseFontSize: 16,
 			setBaseFontSize: createSetBaseFontSize(set),
+			activePanel: null,
+			setActivePanel: (panel) => set({ activePanel: panel }),
+			isLayerTreeOpen: false,
+			setIsLayerTreeOpen: (isOpen) => set({ isLayerTreeOpen: isOpen }),
 		}),
 		{
 			name: "app-storage",
+			partialize: (state) => ({
+				firstTimeUser: state.firstTimeUser,
+				isContrastMode: state.isContrastMode,
+				isLargeTextMode: state.isLargeTextMode,
+				baseFontSize: state.baseFontSize,
+			}),
 		},
 	),
 );

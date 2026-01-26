@@ -10,7 +10,6 @@ export const useMapStore = create<MapStoreState>((set, get) => ({
 	config: null,
 	layers: [],
 	currentFeature: null,
-	isLayerTreeOpen: false,
 	userLocation: {
 		coordinates: null,
 		accuracy: undefined,
@@ -20,9 +19,6 @@ export const useMapStore = create<MapStoreState>((set, get) => ({
 	setConfig: (config) => set({ config }),
 	populateMap: (map) => set({ map }),
 	removeMap: () => set({ map: null }),
-
-	// LayerTree
-	setIsLayerTreeOpen: (isOpen) => set({ isLayerTreeOpen: isOpen }),
 
 	// Layers    layers: [],
 	setLayers: (layers) => set({ layers }),
