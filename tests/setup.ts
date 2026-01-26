@@ -14,7 +14,6 @@ if (!("ResizeObserver" in globalThis)) {
 		disconnect() {}
 	}
 
-	// @ts-expect-error - test environment polyfill
 	globalThis.ResizeObserver = ResizeObserver;
 }
 
