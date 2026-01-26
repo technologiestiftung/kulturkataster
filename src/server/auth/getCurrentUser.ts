@@ -19,10 +19,10 @@ export async function getCurrentUserId() {
 	return user?.id ?? null;
 }
 
-export async function requireAuth() {
+export async function requireAuth(options?: { redirectTo?: string }) {
 	const user = await getCurrentUser();
 	if (!user) {
-		redirect("/account/login");
+		redirect(options?.redirectTo ?? "/login");
 	}
 	return user;
 }

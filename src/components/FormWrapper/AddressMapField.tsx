@@ -11,6 +11,7 @@ import VectorSource from "ol/source/Vector";
 import XYZ from "ol/source/XYZ";
 import { Circle as CircleStyle, Fill, Style } from "ol/style";
 import { fromLonLat, toLonLat } from "ol/proj";
+// @ts-expect-error: missing types
 import "ol/ol.css";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";

@@ -1,6 +1,12 @@
 import type { ReactNode } from "react";
 import type { Category } from "@/types";
 
+export interface Layout {
+	columns?: 1 | 2;
+	span?: "full" | "half";
+	spanClass?: string;
+}
+
 export type FieldType =
 	| "text"
 	| "email"
@@ -19,7 +25,8 @@ export type FieldType =
 	| "filterPanel"
 	| "actionPanel"
 	| "tablePermissions"
-	| "fieldPermissions";
+	| "fieldPermissions"
+	| "section";
 
 export type PermissionAction = "read" | "create" | "update" | "delete";
 
@@ -31,15 +38,75 @@ export interface SelectOption {
 	parentValue?: string;
 }
 
-export interface FieldConfig {
+type FormWrapperSectionConfig = {
+	title?: string;
+	description?: string;
+	fields: FormWrapperFieldConfig[];
+	cardVariant?: "default" | "secondary" | "tertiary" | "none";
+	collapsible?: boolean;
+	defaultOpen?: boolean;
+	accordionVariant?: "default" | "secondary";
+	accordionTitle?: ReactNode;
+	accordionDescription?: string;
+	className?: string;
+	layout?: Layout;
+	fieldGap?: "gap-0" | "gap-2" | "gap-4" | "gap-6";
+};
+
+type FormWrapperSectionFieldConfig = {
 	name: string;
-	label: string;
-	type: FieldType;
+	type: "section";
+	label?: string;
+	labelNode?: ReactNode;
+	required?: boolean;
+	requiredMessage?: string;
+	disabled?: boolean;
+	afterField?: ReactNode;
+	defaultValue?: unknown;
+	validate?: (value: unknown) => string | undefined;
+	validateWithForm?: (
+		value: unknown,
+		formData: Record<string, unknown>,
+	) => string | undefined;
+	onBlur?: (
+		value: unknown,
+		formData: Record<string, unknown>,
+		updateField: (name: string, value: unknown) => void,
+	) => void | Promise<void>;
+	section?: FormWrapperSectionConfig;
+	fields?: FormWrapperFieldConfig[];
+	title?: string;
+	description?: string;
+	cardVariant?: "default" | "secondary" | "tertiary" | "none";
+	collapsible?: boolean;
+	defaultOpen?: boolean;
+	accordionVariant?: "default" | "secondary";
+	accordionTitle?: ReactNode;
+	accordionDescription?: string;
+	className?: string;
+	layout?: Layout;
+	fieldGap?: "gap-0" | "gap-2" | "gap-4" | "gap-6";
+	condition?: (formData: Record<string, unknown>) => boolean;
+};
+
+type FormWrapperNonSectionFieldConfig = {
+	name: string;
+	label?: string;
+	labelNode?: ReactNode;
+	type: Exclude<FieldType, "section">;
+	fields?: never;
+	collapsible?: boolean;
+	defaultOpen?: boolean;
+	accordionVariant?: "default" | "secondary";
+	accordionTitle?: ReactNode;
+	accordionDescription?: string;
 	placeholder?: string;
 	required?: boolean;
+	requiredMessage?: string;
 	disabled?: boolean;
 	description?: string;
 	defaultValue?: unknown;
+	radioVariant?: "default" | "button";
 	multiselectVariant?: "list" | "modal";
 	searchPlaceholder?: string;
 	emptyText?: string;
@@ -118,37 +185,40 @@ export interface FieldConfig {
 	step?: number;
 
 	// Grid layout
-	gridColumn?: "full" | "half"; // full width or half width in grid
+	layout?: Layout;
+	className?: string;
 
 	// Custom validation
 	validate?: (value: unknown) => string | undefined;
+	validateWithForm?: (
+		value: unknown,
+		formData: Record<string, unknown>,
+	) => string | undefined;
 	onBlur?: (
 		value: unknown,
 		formData: Record<string, unknown>,
 		updateField: (name: string, value: unknown) => void,
 	) => void | Promise<void>;
+	afterField?: ReactNode;
 
 	// Conditional rendering
 	condition?: (formData: Record<string, unknown>) => boolean;
-}
+};
 
-export interface AccordionSection {
-	id: string;
-	title: string;
-	description?: string;
-	defaultOpen?: boolean;
-	useAccordion?: boolean; // Whether this section should be rendered as accordion
-	fields: FieldConfig[];
-}
+export type FormWrapperFieldConfig =
+	| FormWrapperSectionFieldConfig
+	| FormWrapperNonSectionFieldConfig;
 
 export interface FormWrapperConfig {
-	// Either flat fields or accordion sections
-	fields?: FieldConfig[];
-	sections?: AccordionSection[];
+	// Fields can be regular fields or section fields with nested fields
+	fields: FormWrapperFieldConfig[];
+	formId?: string;
+	className?: string;
 
 	// Form-level settings
 	onSubmit: (data: Record<string, unknown>) => void | Promise<void>;
 	submitLabel?: string;
+	submitDisabled?: boolean;
 	showCancel?: boolean;
 	cancelLabel?: string;
 	onCancel?: () => void;
@@ -157,7 +227,8 @@ export interface FormWrapperConfig {
 	initialValues?: Record<string, unknown>;
 
 	// Layout
-	gridColumns?: 1 | 2; // Number of columns for field layout
+	layout?: Layout;
+	cardVariant?: "default" | "secondary" | "none";
 
 	// Hide built-in form actions (useful when used inside Dialog or with custom actions)
 	hideActions?: boolean;
