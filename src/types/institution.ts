@@ -156,10 +156,12 @@ export interface InstitutionStoreState {
 	selectedInstitutionId: number | string | null;
 	filters: FilterState;
 	categories: Category[] | null;
+	districts: string[];
 	setCategories: (categories: Category[] | null) => void;
 	setInstitutions: (institutions: Institution[] | null) => void;
 	setSelectedInstitutionId: (id: string | number | null) => void;
 	setFilters: (filters: FilterState) => void;
 	initializeCategories: () => Promise<void>;
+	initializeDistricts: () => Promise<void>;
 	initializeInstitutions: () => Promise<void>;
 }
