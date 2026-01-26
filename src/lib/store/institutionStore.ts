@@ -1,4 +1,5 @@
 import { getCategoriesWithSubcategories } from "@/server/actions/categories";
+import { getDistricts } from "@/server/actions/addresses";
 import { Institution, InstitutionStoreState } from "@/types";
 import { create } from "zustand";
 import { devtools, subscribeWithSelector } from "zustand/middleware";
@@ -109,6 +110,7 @@ export const useInstitutionStore = create<InstitutionStoreState>()(
 				subcategory_keys: [],
 				include_closed: false,
 			},
+			districts: [],
 			setFilters: (filters) => {
 				const newState = { filters };
 				const currentState = { ...get(), ...newState };
@@ -129,15 +131,27 @@ export const useInstitutionStore = create<InstitutionStoreState>()(
 			categories: null,
 			setCategories: (categories) => set({ categories }),
 			initializeCategories: async () => {
-				const categories = await getCategoriesWithSubcategories();
-				const currentState = { ...get(), categories };
-				const { categoryCounts, subcategoryCounts } =
-					computeCounts(currentState);
-				set({
-					categories,
-					categoryCounts,
-					subcategoryCounts,
-				});
+				try {
+					const categories = await getCategoriesWithSubcategories();
+					const currentState = { ...get(), categories };
+					const { categoryCounts, subcategoryCounts } =
+						computeCounts(currentState);
+					set({
+						categories,
+						categoryCounts,
+						subcategoryCounts,
+					});
+				} catch (error) {
+					console.error("Failed to initialize categories:", error);
+				}
+			},
+			initializeDistricts: async () => {
+				try {
+					const districts = await getDistricts();
+					set({ districts });
+				} catch (error) {
+					console.error("Failed to initialize districts:", error);
+				}
 			},
 			initializeInstitutions: async () => {
 				try {
