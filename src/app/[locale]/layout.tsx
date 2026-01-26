@@ -10,6 +10,7 @@ import { Locale } from "@/types";
 import type { Metadata } from "next";
 import { Barlow } from "next/font/google";
 import Script from "next/script";
+// @ts-expect-error: missing types
 import "./globals.css";
 import { StoreInitializer } from "@/components/StoreInitializer";
 
@@ -53,16 +54,17 @@ export const metadata: Metadata = {
 export default async function RootLayout({
 	children,
 	modal,
+	sidebar,
 	params,
 }: Readonly<{
 	children: React.ReactNode;
 	modal: React.ReactNode;
+	sidebar: React.ReactNode;
 	params: Promise<{ locale: Locale }>;
 }>) {
 	const { locale } = await params;
 	const ns: string[] = ["common", "content", "enumMap"]; // namespace used for this page
 	const { resources } = await serverSideTranslation(locale, ns);
-
 	const localizedResources = resources as Record<
 		string,
 		Record<string, Record<string, unknown>>
@@ -113,7 +115,7 @@ export default async function RootLayout({
 									aria-label={headerLabel}
 									className="flex-shrink-0 w-auto"
 								>
-									<Menu />
+									<Menu sidebar={sidebar} />
 								</header>
 								<SidebarInset asChild className="flex-1 w-0">
 									<main
@@ -123,7 +125,7 @@ export default async function RootLayout({
 										aria-label={mainContentLabel}
 									>
 										<h1 className="sr-only">{siteHeading}</h1>
-										<div className="flex flex-1 flex-col gap-4 h-full w-full pb-20 md:pb-0">
+										<div className="flex flex-1 flex-col pb-20 md:pb-0">
 											<MapListShell />
 											{children}
 										</div>
