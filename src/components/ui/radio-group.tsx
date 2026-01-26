@@ -2,16 +2,30 @@
 
 import * as React from "react";
 import * as RadioGroupPrimitive from "@radix-ui/react-radio-group";
+import { cva, type VariantProps } from "class-variance-authority";
 import Circle from "@/icons/circle.svg";
 import { cn } from "@/lib/utils";
 
+const radioGroupVariants = cva("gap-2", {
+	variants: {
+		variant: {
+			default: "grid",
+			button: "grid grid-cols-3 gap-2",
+		},
+	},
+	defaultVariants: {
+		variant: "default",
+	},
+});
+
 const RadioGroup = React.forwardRef<
 	React.ElementRef<typeof RadioGroupPrimitive.Root>,
-	React.ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Root>
->(({ className, ...props }, ref) => {
+	React.ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Root> &
+		VariantProps<typeof radioGroupVariants>
+>(({ className, variant, ...props }, ref) => {
 	return (
 		<RadioGroupPrimitive.Root
-			className={cn("grid gap-2", className)}
+			className={cn(radioGroupVariants({ variant }), className)}
 			{...props}
 			ref={ref}
 		/>
