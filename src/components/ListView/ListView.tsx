@@ -2,6 +2,7 @@
 
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { InstitutionCard } from "./InstitutionCard";
 import InstitutionCardSkeleton from "./InstitutionCardSkeleton";
@@ -27,9 +28,7 @@ const ListView: FC = () => {
 	const institutions = useInstitutionStore(
 		(state) => state.filteredInstitutions,
 	);
-	const setSelectedInstitutionId = useInstitutionStore(
-		(state) => state.setSelectedInstitutionId,
-	);
+	const router = useRouter();
 
 	const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
 	const [isLoading, setIsLoading] = useState(false);
@@ -72,9 +71,9 @@ const ListView: FC = () => {
 
 	const handleInstitutionClick = useCallback(
 		(institution: Institution) => {
-			setSelectedInstitutionId(institution.id);
+			router.push(`/institution/${institution.id}`);
 		},
-		[setSelectedInstitutionId],
+		[router],
 	);
 
 	// Reset visible count when institutions change (e.g., filters applied)
@@ -146,7 +145,7 @@ const ListView: FC = () => {
 						<div className="space-y-2">
 							<div className="flex items-center justify-between">
 								{
-									<strong className="body2 font-bold">
+									<strong className="body2 ">
 										{tContent("listView.countLabel", {
 											count: institutionsList.length,
 										})}

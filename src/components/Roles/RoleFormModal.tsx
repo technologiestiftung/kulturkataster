@@ -7,7 +7,6 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog } from "@/components/ui/alert-dialog";
 import { FormWrapper } from "@/components/FormWrapper";
 import type { FormWrapperConfig } from "@/components/FormWrapper";
-import { Card, CardContent } from "@/components/ui/card";
 import { useAccountStore } from "@/lib/store/accountStore";
 import { createRole, getRoleById, updateRole } from "@/server/actions/roles";
 import type { Role } from "@/types/role";
@@ -75,6 +74,10 @@ const getTableTargets = (t: (key: string) => string) => [
 	{
 		key: "institution",
 		label: t("roleFormModal.permissions.tables.institution"),
+	},
+	{
+		key: "submission",
+		label: t("roleFormModal.permissions.tables.submission"),
 	},
 	{ key: "user", label: t("roleFormModal.permissions.tables.user") },
 	{ key: "group", label: t("roleFormModal.permissions.tables.group") },
@@ -257,9 +260,10 @@ const buildRoleFormConfig = ({
 	onSubmit: (data: Record<string, unknown>) => void | Promise<void>;
 	onCancel: () => void;
 }): FormWrapperConfig => ({
-	sections: [
+	fields: [
 		{
-			id: "details",
+			name: "detailsSection",
+			type: "section",
 			title: t("roleFormModal.form.details.title"),
 			description:
 				mode === "create"
@@ -272,7 +276,7 @@ const buildRoleFormConfig = ({
 					type: "text",
 					required: true,
 					placeholder: t("roleFormModal.form.details.fields.name.placeholder"),
-					gridColumn: "full",
+					layout: { span: "full" },
 				},
 				{
 					name: "description",
@@ -281,12 +285,11 @@ const buildRoleFormConfig = ({
 					placeholder: t(
 						"roleFormModal.form.details.fields.description.placeholder",
 					),
-					gridColumn: "full",
+					layout: { span: "full" },
 				},
 			],
 		},
 	],
-	gridColumns: 2,
 	onSubmit,
 	showCancel: true,
 	cancelLabel: t("roleFormModal.actions.cancel"),
@@ -331,55 +334,46 @@ const renderDialogBody = (
 	}
 
 	return (
-		<Card variant="secondary">
-			<CardContent>
-				<FormWrapper
-					key={resolvedRole?.id ?? mode}
-					config={{
-						...formConfig,
-						sections: [
-							...formConfig.sections!,
+		<FormWrapper
+			key={resolvedRole?.id ?? mode}
+			config={{
+				...formConfig,
+				fields: [
+					...formConfig.fields,
+					{
+						name: "permissionsSection",
+						type: "section",
+						title: t("roleFormModal.permissions.title"),
+						fields: [
 							{
-								id: "permissions",
-								title: t("roleFormModal.permissions.title"),
-								fields: [
-									{
-										name: "tablePermissions",
-										label: t("roleFormModal.permissions.table.title"),
-										description: t(
-											"roleFormModal.permissions.table.description",
-										),
-										type: "tablePermissions",
-										disabled: isSystemRole,
-										tablePermissions: {
-											tables: tableTargets,
-											actionLabels,
-										},
-										gridColumn: "full",
-									},
-									{
-										name: "fieldPermissions",
-										label: t("roleFormModal.permissions.fields.title"),
-										description: t(
-											"roleFormModal.permissions.fields.description",
-										),
-										type: "fieldPermissions",
-										fieldPermissions: {
-											sections: fieldSections,
-											actionLabels,
-											fieldLabel: t(
-												"roleFormModal.permissions.fields.columnLabel",
-											),
-										},
-										gridColumn: "full",
-									},
-								],
+								name: "tablePermissions",
+								label: t("roleFormModal.permissions.table.title"),
+								description: t("roleFormModal.permissions.table.description"),
+								type: "tablePermissions",
+								disabled: isSystemRole,
+								tablePermissions: {
+									tables: tableTargets,
+									actionLabels,
+								},
+								layout: { span: "full" },
+							},
+							{
+								name: "fieldPermissions",
+								label: t("roleFormModal.permissions.fields.title"),
+								description: t("roleFormModal.permissions.fields.description"),
+								type: "fieldPermissions",
+								fieldPermissions: {
+									sections: fieldSections,
+									actionLabels,
+									fieldLabel: t("roleFormModal.permissions.fields.columnLabel"),
+								},
+								layout: { span: "full" },
 							},
 						],
-					}}
-				/>
-			</CardContent>
-		</Card>
+					},
+				],
+			}}
+		/>
 	);
 };
 
@@ -450,11 +444,7 @@ export function RoleFormModal({ mode, roleId }: RoleFormModalProps) {
 
 	return (
 		<Dialog open>
-			<DialogContent
-				variant="entityEdit"
-				showBackButton={false}
-				className="p-0"
-			>
+			<DialogContent variant="editor" showBackButton={false} className="p-0">
 				<div className="flex h-full flex-col">
 					<div className="px-6 py-8 md:px-10">
 						<DialogTitle className="title">

@@ -242,6 +242,7 @@
 		"updatedAt": "Stand",
 		"usableAreaSize": "Größe der Nutzflächen (m²)",
 		"utilizationStatus": "Nutzungsstatus",
+		"protectionStatus": "Sicherungsstatus",
 		"website": "Website",
 		"workspaceCount": "Anzahl der Arbeitsräume"
 	},

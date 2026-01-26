@@ -8,7 +8,6 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog } from "@/components/ui/alert-dialog";
 import { FormWrapper } from "@/components/FormWrapper";
 import type { FormWrapperConfig } from "@/components/FormWrapper";
-import { Card, CardContent } from "@/components/ui/card";
 import { useAccountStore } from "@/lib/store/accountStore";
 import { useInstitutionMultiSelect } from "@/lib/hooks/useInstitutionMultiSelect";
 import {
@@ -204,9 +203,10 @@ const buildUserFormConfig = ({
 	const accessCondition = () => mode === "edit" && Boolean(resolvedUser);
 
 	return {
-		sections: [
+		fields: [
 			{
-				id: "identity",
+				name: "identitySection",
+				type: "section",
 				title: t("userFormModal.form.identity.title"),
 				description: identityDescription,
 				fields: [
@@ -218,7 +218,7 @@ const buildUserFormConfig = ({
 						placeholder: t(
 							"userFormModal.form.identity.fields.email.placeholder",
 						),
-						gridColumn: "full",
+						layout: { span: "full" },
 					},
 					{
 						name: "first_name",
@@ -227,7 +227,7 @@ const buildUserFormConfig = ({
 						placeholder: t(
 							"userFormModal.form.identity.fields.firstName.placeholder",
 						),
-						gridColumn: "half",
+						layout: { span: "half" },
 					},
 					{
 						name: "last_name",
@@ -236,20 +236,20 @@ const buildUserFormConfig = ({
 						placeholder: t(
 							"userFormModal.form.identity.fields.lastName.placeholder",
 						),
-						gridColumn: "half",
+						layout: { span: "half" },
 					},
 					{
 						name: "status",
 						label: t("userFormModal.form.identity.fields.status.label"),
 						type: "select",
-						gridColumn: "half",
+						layout: { span: "half" },
 						options: statusOptions,
 					},
 					{
 						name: "account_type",
 						label: t("userFormModal.form.identity.fields.accountType.label"),
 						type: "text",
-						gridColumn: "half",
+						layout: { span: "half" },
 						placeholder: t(
 							"userFormModal.form.identity.fields.accountType.placeholder",
 						),
@@ -258,12 +258,13 @@ const buildUserFormConfig = ({
 						name: "compliance",
 						label: t("userFormModal.form.identity.fields.compliance.label"),
 						type: "switch",
-						gridColumn: "full",
+						layout: { span: "full" },
 					},
 				],
 			},
 			{
-				id: "access",
+				name: "accessSection",
+				type: "section",
 				title: t("userFormModal.form.access.title"),
 				fields: [
 					{
@@ -291,7 +292,7 @@ const buildUserFormConfig = ({
 							value: String(group.id),
 							label: group.name,
 						})),
-						gridColumn: "full",
+						layout: { span: "full" },
 					},
 					{
 						name: "institutionIds",
@@ -311,13 +312,13 @@ const buildUserFormConfig = ({
 						options: institutionOptions,
 						multiselectFilteredOptions: filteredInstitutionOptions,
 						multiselectFilterPanel: institutionFilterPanel,
-						gridColumn: "full",
+						layout: { span: "full" },
 					},
 					{
 						name: "passwordReset",
 						label: "",
 						type: "actionPanel",
-						gridColumn: "full",
+						layout: { span: "full" },
 						condition: accessCondition,
 						actionPanel: {
 							title: t("userFormModal.passwordReset.title"),
@@ -337,7 +338,7 @@ const buildUserFormConfig = ({
 						name: "complianceResend",
 						label: "",
 						type: "actionPanel",
-						gridColumn: "full",
+						layout: { span: "full" },
 						condition: accessCondition,
 						actionPanel: {
 							title: t("userFormModal.complianceResend.title"),
@@ -356,7 +357,6 @@ const buildUserFormConfig = ({
 				],
 			},
 		],
-		gridColumns: 2,
 		onSubmit,
 		showCancel: true,
 		cancelLabel: t("userFormModal.actions.cancel"),
@@ -403,13 +403,7 @@ const renderDialogBody = (
 		);
 	}
 
-	return (
-		<Card variant="secondary">
-			<CardContent>
-				<FormWrapper key={resolvedUser?.id ?? mode} config={formConfig} />
-			</CardContent>
-		</Card>
-	);
+	return <FormWrapper key={resolvedUser?.id ?? mode} config={formConfig} />;
 };
 
 export function UserFormModal({ mode, userId }: UserFormModalProps) {
@@ -508,11 +502,7 @@ export function UserFormModal({ mode, userId }: UserFormModalProps) {
 
 	return (
 		<Dialog open>
-			<DialogContent
-				variant="entityEdit"
-				showBackButton={false}
-				className="p-0"
-			>
+			<DialogContent variant="editor" showBackButton={false} className="p-0">
 				<div className="flex h-full flex-col">
 					<div className="px-6 py-8 md:px-10">
 						<DialogTitle className="title">

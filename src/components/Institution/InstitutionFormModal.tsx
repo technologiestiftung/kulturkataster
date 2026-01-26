@@ -1,17 +1,17 @@
 "use client";
 
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog } from "@/components/ui/alert-dialog";
 import { FormWrapper } from "@/components/FormWrapper";
 import type { FormWrapperConfig } from "@/components/FormWrapper";
-import { Card, CardContent } from "@/components/ui/card";
 import { useAccountStore } from "@/lib/store/accountStore";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import {
 	buildStreetLine,
 	getSubmitLabel,
+	handleAddressBlur,
 	splitStreetLine,
 	toOptionalText,
 	toOptionalNumber,
@@ -103,14 +103,7 @@ const renderDialogBody = (
 	mode: InstitutionFormModalProps["mode"],
 ) => {
 	return (
-		<Card variant="secondary">
-			<CardContent>
-				<FormWrapper
-					key={resolvedInstitution?.id ?? mode}
-					config={formConfig}
-				/>
-			</CardContent>
-		</Card>
+		<FormWrapper key={resolvedInstitution?.id ?? mode} config={formConfig} />
 	);
 };
 
@@ -258,9 +251,10 @@ const buildInstitutionFormConfig = ({
 	};
 
 	return {
-		sections: [
+		fields: [
 			{
-				id: "details",
+				name: "details",
+				type: "section",
 				title: t("institutionFormModal.form.details.title"),
 				description:
 					mode === "create"
@@ -277,7 +271,7 @@ const buildInstitutionFormConfig = ({
 						placeholder: t(
 							"institutionFormModal.form.details.fields.parentOrganization.placeholder",
 						),
-						gridColumn: "full",
+						layout: { span: "full" },
 					},
 					{
 						name: "name",
@@ -287,13 +281,13 @@ const buildInstitutionFormConfig = ({
 						placeholder: t(
 							"institutionFormModal.form.details.fields.name.placeholder",
 						),
-						gridColumn: "full",
+						layout: { span: "full" },
 					},
 					{
 						name: "categoryFilters",
 						label: "Categories",
 						type: "filterPanel",
-						gridColumn: "full",
+						layout: { span: "full" },
 						filterPanel: {
 							categoryGroups,
 							districts: [],
@@ -315,13 +309,13 @@ const buildInstitutionFormConfig = ({
 						placeholder: t(
 							"institutionFormModal.form.details.fields.utilization_status.placeholder",
 						),
-						gridColumn: "full",
+						layout: { span: "full" },
 					},
 					{
 						name: "address.map",
 						label: `${fieldLabel("address", "Address")} Map`,
 						type: "addressMap",
-						gridColumn: "full",
+						layout: { span: "full" },
 						addressMap: {
 							latField: "address.lat",
 							lngField: "address.lng",
@@ -337,7 +331,7 @@ const buildInstitutionFormConfig = ({
 							"Number",
 						)}`,
 						type: "text",
-						gridColumn: "half",
+						layout: { span: "half" },
 						placeholder: t(
 							"institutionFormModal.form.details.fields.address.streetLine.placeholder",
 						),
@@ -347,7 +341,7 @@ const buildInstitutionFormConfig = ({
 						name: "address.zip",
 						label: fieldLabel("address.zip", "ZIP Code"),
 						type: "text",
-						gridColumn: "half",
+						layout: { span: "half" },
 						placeholder: t(
 							"institutionFormModal.form.details.fields.address.zip.placeholder",
 						),
@@ -365,7 +359,7 @@ const buildInstitutionFormConfig = ({
 						name: "address.neighbourhood",
 						label: fieldLabel("address.neighbourhood", "Neighbourhood"),
 						type: "text",
-						gridColumn: "half",
+						layout: { span: "half" },
 						placeholder: t(
 							"institutionFormModal.form.details.fields.address.neighbourhood.placeholder",
 						),
@@ -374,7 +368,7 @@ const buildInstitutionFormConfig = ({
 						name: "address.city",
 						label: fieldLabel("address.city", "City"),
 						type: "text",
-						gridColumn: "half",
+						layout: { span: "half" },
 						placeholder: t(
 							"institutionFormModal.form.details.fields.address.city.placeholder",
 						),
@@ -391,7 +385,8 @@ const buildInstitutionFormConfig = ({
 				],
 			},
 			{
-				id: "contact",
+				name: "contact",
+				type: "section",
 				title: t("institutionFormModal.form.contact.title"),
 				fields: [
 					{
@@ -401,7 +396,7 @@ const buildInstitutionFormConfig = ({
 						placeholder: t(
 							"institutionFormModal.form.contact.fields.website.placeholder",
 						),
-						gridColumn: "full",
+						layout: { span: "full" },
 					},
 					{
 						name: "email",
@@ -410,7 +405,7 @@ const buildInstitutionFormConfig = ({
 						placeholder: t(
 							"institutionFormModal.form.contact.fields.email.placeholder",
 						),
-						gridColumn: "full",
+						layout: { span: "full" },
 					},
 					{
 						name: "phone",
@@ -419,12 +414,11 @@ const buildInstitutionFormConfig = ({
 						placeholder: t(
 							"institutionFormModal.form.contact.fields.phone.placeholder",
 						),
-						gridColumn: "full",
+						layout: { span: "full" },
 					},
 				],
 			},
 		],
-		gridColumns: 2,
 		onSubmit,
 		showCancel: true,
 		cancelLabel: t("institutionFormModal.actions.cancel"),
@@ -467,6 +461,18 @@ export function InstitutionFormModal({
 		[categories, tEnum],
 	);
 
+	useEffect(() => {
+		const hash = window.location.hash.slice(1); // Remove the '#'
+		if (hash) {
+			setTimeout(() => {
+				const element = document.getElementById(hash);
+				if (element) {
+					element.scrollIntoView({ behavior: "smooth", block: "start" });
+				}
+			}, 100);
+		}
+	}, []);
+
 	const handleClose = () => {
 		router.back();
 	};
@@ -494,38 +500,7 @@ export function InstitutionFormModal({
 		handleSuccess,
 	);
 
-	const handleAddressBlur = useCallback(
-		async (
-			_value: unknown,
-			formData: Record<string, unknown>,
-			updateField: (name: string, value: unknown) => void,
-		) => {
-			const streetLine = toOptionalText(formData["address.streetLine"]);
-			const zip = toOptionalText(formData["address.zip"]);
-			const city = toOptionalText(formData["address.city"]);
-			const addressSuffix = toOptionalText(formData["address.address_suffix"]);
-			const queryParts = [streetLine, addressSuffix, zip, city].filter(
-				(item): item is string => Boolean(item),
-			);
-			if (queryParts.length === 0) return;
-			const query = queryParts.join(", ");
-			if (addressGeocodeState.current.inflight) return;
-			if (addressGeocodeState.current.lastQuery === query) return;
-
-			addressGeocodeState.current.inflight = true;
-			try {
-				const result = await geocodeAddress(query);
-				if (result) {
-					updateField("address.lat", result.lat);
-					updateField("address.lng", result.lng);
-					addressGeocodeState.current.lastQuery = query;
-				}
-			} finally {
-				addressGeocodeState.current.inflight = false;
-			}
-		},
-		[],
-	);
+	const onAddressBlur = handleAddressBlur(addressGeocodeState, geocodeAddress);
 
 	const formConfig = useMemo(
 		() =>
@@ -538,7 +513,7 @@ export function InstitutionFormModal({
 				submitting,
 				onSubmit: handleSubmit,
 				onCancel: handleClose,
-				onAddressBlur: handleAddressBlur,
+				onAddressBlur,
 			}),
 		[
 			mode,
@@ -550,7 +525,7 @@ export function InstitutionFormModal({
 			submitting,
 			handleSubmit,
 			handleClose,
-			handleAddressBlur,
+			onAddressBlur,
 		],
 	);
 
@@ -560,12 +535,8 @@ export function InstitutionFormModal({
 
 	return (
 		<Dialog open>
-			<DialogContent
-				variant="entityEdit"
-				showBackButton={false}
-				className="p-0"
-			>
-				<div className="flex h-full flex-col bg-background">
+			<DialogContent variant="editor" showBackButton={false} className="p-0">
+				<div className="flex h-full flex-col">
 					<div className="px-6 py-8 md:px-10">
 						<DialogTitle className="title">
 							{getDialogTitle(mode, t)}

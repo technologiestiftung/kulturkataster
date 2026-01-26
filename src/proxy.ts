@@ -8,30 +8,39 @@ import { i18nConfig } from "@/i18n";
 
 export default async function proxy(req: NextRequest) {
 	const { pathname } = req.nextUrl;
+	const cleanedPathname = pathname.replace(/\/\(\.\)([^/]+)/g, "/$1");
 	if (
-		pathname.startsWith("/_next") ||
-		pathname.startsWith("/resources") ||
-		pathname === "/favicon.ico" ||
-		pathname === "/robots.txt" ||
-		pathname === "/sitemap.xml"
+		cleanedPathname.startsWith("/_next") ||
+		cleanedPathname.startsWith("/resources") ||
+		cleanedPathname === "/favicon.ico" ||
+		cleanedPathname === "/robots.txt" ||
+		cleanedPathname === "/sitemap.xml"
 	) {
 		return NextResponse.next();
 	}
 
 	const localePattern = new RegExp(`^/(${i18nConfig.locales.join("|")})(/|$)`);
-	const needsLocaleRewrite = !localePattern.test(pathname);
+	const needsLocaleRewrite = !localePattern.test(cleanedPathname);
 
 	const rewriteUrl = needsLocaleRewrite
 		? (() => {
 				const url = req.nextUrl.clone();
-				url.pathname = `/${i18nConfig.defaultLocale}${pathname}`;
+				url.pathname = `/${i18nConfig.defaultLocale}${cleanedPathname}`;
 				return url;
 			})()
 		: null;
 
-	const res = needsLocaleRewrite
-		? NextResponse.rewrite(rewriteUrl!)
-		: NextResponse.next();
+	const cookiesToSet: {
+		name: string;
+		value: string;
+		options: CookieOptions;
+	}[] = [];
+
+	const applyCookies = (response: NextResponse) => {
+		cookiesToSet.forEach(({ name, value, options }) => {
+			response.cookies.set(name, value, options);
+		});
+	};
 
 	const cookieMethods = {
 		getAll() {
@@ -41,19 +50,23 @@ export default async function proxy(req: NextRequest) {
 			}));
 		},
 		setAll(
-			cookiesToSet: {
+			nextCookies: {
 				name: string;
 				value: string;
 				options: CookieOptions;
 			}[],
 		) {
-			cookiesToSet.forEach(({ name, value, options }) => {
-				res.cookies.set(name, value, options);
+			nextCookies.forEach(({ name, value, options }) => {
+				cookiesToSet.push({ name, value, options });
 			});
 		},
 		removeAll() {
 			req.cookies.getAll().forEach((cookie) => {
-				res.cookies.set(cookie.name, "", { maxAge: 0 });
+				cookiesToSet.push({
+					name: cookie.name,
+					value: "",
+					options: { maxAge: 0 },
+				});
 			});
 		},
 	} satisfies CookieMethodsServer & {
@@ -70,6 +83,10 @@ export default async function proxy(req: NextRequest) {
 
 	await supabase.auth.getSession();
 
+	const res = needsLocaleRewrite
+		? NextResponse.rewrite(rewriteUrl!)
+		: NextResponse.next();
+	applyCookies(res);
 	return res;
 }
 
