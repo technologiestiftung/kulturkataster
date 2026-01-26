@@ -10,7 +10,6 @@ import { Locale } from "@/types";
 import type { Metadata } from "next";
 import { Barlow } from "next/font/google";
 import Script from "next/script";
-// @ts-expect-error: missing types
 import "./globals.css";
 import { StoreInitializer } from "@/components/StoreInitializer";
 
