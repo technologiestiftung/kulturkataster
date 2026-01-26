@@ -1,3 +1,5 @@
+import { useCallback } from "react";
+
 type SubmitLabelText = {
 	default: string;
 	loading: string;
@@ -61,6 +63,73 @@ const splitStreetLine = (value: string) => {
 	return { street: trimmed, streetNumber: "" };
 };
 
+type AddressBlurOptions = {
+	streetLineKey?: string;
+	zipKey?: string;
+	cityKey?: string;
+	addressSuffixKey?: string;
+	latKey?: string;
+	lngKey?: string;
+};
+
+const handleAddressBlur = (
+	addressGeocodeState: React.MutableRefObject<{
+		lastQuery: string;
+		inflight: boolean;
+	}>,
+	geocodeAddress: (
+		query: string,
+	) => Promise<{ lat: number; lng: number } | null>,
+	options: AddressBlurOptions = {},
+) =>
+	useCallback(
+		async (
+			_value: unknown,
+			formData: Record<string, unknown>,
+			updateField: (name: string, value: unknown) => void,
+		) => {
+			const streetLine = toOptionalText(
+				formData[options.streetLineKey ?? "address.streetLine"],
+			);
+			const zip = toOptionalText(formData[options.zipKey ?? "address.zip"]);
+			const city = toOptionalText(formData[options.cityKey ?? "address.city"]);
+			const addressSuffix = toOptionalText(
+				formData[options.addressSuffixKey ?? "address.address_suffix"],
+			);
+			const queryParts = [streetLine, addressSuffix, zip, city].filter(
+				(item): item is string => Boolean(item),
+			);
+			if (queryParts.length === 0) return;
+			const query = queryParts.join(", ");
+			if (addressGeocodeState.current.inflight) return;
+			if (addressGeocodeState.current.lastQuery === query) return;
+
+			addressGeocodeState.current.inflight = true;
+			try {
+				const result = await geocodeAddress(query);
+				if (result) {
+					const latKey = options.latKey ?? "address.lat";
+					const lngKey = options.lngKey ?? "address.lng";
+					updateField(latKey, result.lat);
+					updateField(lngKey, result.lng);
+					addressGeocodeState.current.lastQuery = query;
+				}
+			} finally {
+				addressGeocodeState.current.inflight = false;
+			}
+		},
+		[
+			addressGeocodeState,
+			geocodeAddress,
+			options.addressSuffixKey,
+			options.cityKey,
+			options.latKey,
+			options.lngKey,
+			options.streetLineKey,
+			options.zipKey,
+		],
+	);
+
 const buildStreetLine = (
 	street?: string | null,
 	streetNumber?: string | null,
@@ -69,12 +138,81 @@ const buildStreetLine = (
 	return parts.join(" ");
 };
 
+type AddressFormKeys = {
+	streetLineKey?: string;
+	zipKey?: string;
+	cityKey?: string;
+	districtKey?: string;
+	addressSuffixKey?: string;
+	neighbourhoodKey?: string;
+	culturalAreaKey?: string;
+	latKey?: string;
+	lngKey?: string;
+};
+
+const buildAddressFromFormData = (
+	formData: Record<string, unknown>,
+	keys: AddressFormKeys = {},
+) => {
+	const streetLine = toOptionalText(
+		formData[keys.streetLineKey ?? "address.streetLine"],
+	);
+	const zip = toOptionalText(formData[keys.zipKey ?? "address.zip"]);
+	const city = toOptionalText(formData[keys.cityKey ?? "address.city"]);
+	const district = toOptionalText(
+		formData[keys.districtKey ?? "address.district"],
+	);
+	const addressSuffix = toOptionalText(
+		formData[keys.addressSuffixKey ?? "address.address_suffix"],
+	);
+	const neighbourhood = toOptionalText(
+		formData[keys.neighbourhoodKey ?? "address.neighbourhood"],
+	);
+	const culturalArea = toOptionalText(
+		formData[keys.culturalAreaKey ?? "address.cultural_area"],
+	);
+	const lat = toOptionalNumber(formData[keys.latKey ?? "address.lat"]);
+	const lng = toOptionalNumber(formData[keys.lngKey ?? "address.lng"]);
+
+	const hasAnyValue =
+		streetLine ||
+		zip ||
+		city ||
+		district ||
+		addressSuffix ||
+		neighbourhood ||
+		culturalArea ||
+		lat !== undefined ||
+		lng !== undefined;
+
+	if (!hasAnyValue) return null;
+
+	const { street, streetNumber } = streetLine
+		? splitStreetLine(streetLine)
+		: { street: "", streetNumber: "" };
+
+	return {
+		street: street || null,
+		street_number: streetNumber || null,
+		zipcode: zip,
+		city,
+		district,
+		address_suffix: addressSuffix,
+		neighbourhood,
+		cultural_area: culturalArea,
+		lat: lat ?? null,
+		lng: lng ?? null,
+	};
+};
+
 export {
 	getSubmitLabel,
+	handleAddressBlur,
 	toNumberArray,
 	toOptionalNumber,
 	toOptionalText,
 	toStringArray,
 	splitStreetLine,
 	buildStreetLine,
+	buildAddressFromFormData,
 };

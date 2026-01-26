@@ -1,135 +1,25 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-	ToggleButton,
-	DynamicInfoBlock,
 	organizationInfoConfig,
 	fundingInfoConfig,
 	facilityInfoConfig,
 	statusInfoConfig,
 	additionalInfoConfig,
 	contactInfoConfig,
-	InfoFieldConfig,
 } from "@/components/Institution";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useMapStore } from "@/lib/store/mapStore";
-import { getCategoryIconComponent } from "@/lib/utils/iconUtils";
 import { animateMapToCoordinates } from "@/lib/utils/mapUtils";
-import {
-	getParentCategories,
-	getSubcategoriesForCategory,
-	getCoordinatesFromAddress,
-} from "@/lib/utils/institutionUtils";
+import { getCoordinatesFromAddress } from "@/lib/utils/institutionUtils";
 import { fromLonLat } from "ol/proj";
-import { Category, Institution } from "@/types";
+import { Institution } from "@/types";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
-import { Address } from "@/components/Institution/Address";
 import { InstitutionDetailSkeleton } from "./InstitutionDetailSkeleton";
-
-const getNestedValue = (
-	obj: Record<string, unknown>,
-	path: string,
-): unknown => {
-	return path.split(".").reduce((current, key) => {
-		if (current && typeof current === "object") {
-			return (current as Record<string, unknown>)[key];
-		}
-		return undefined;
-	}, obj as unknown);
-};
-
-const hasValue = (value: unknown): boolean => {
-	if (value === null || value === undefined || value === "") return false;
-	if (typeof value === "object" && Object.keys(value).length === 0)
-		return false;
-	return true;
-};
-
-// Header component
-function InstitutionHeader({
-	institutionData,
-	onCenterMap,
-}: {
-	institutionData: Institution;
-	onCenterMap?: () => void;
-}) {
-	const { t } = useTranslation("common");
-	const { t: tEnum } = useTranslation("enumMap");
-	const isInUse = institutionData.utilization_status === "in_use";
-
-	return (
-		<CardHeader
-			className={`relative p-0 ${isInUse ? "bg-brand-default" : "bg-neutral-20"} ${
-				onCenterMap ? "cursor-pointer hover:opacity-90 transition-opacity" : ""
-			}`}
-			onClick={onCenterMap}
-		>
-			<p className="body2 p-4 pb-0">
-				{institutionData.parent_organization || ""}
-			</p>
-			<CardTitle className="px-4 max-w-full overflow-hidden">
-				<h1 id="institution-title" className="h1 wrap-anywhere">
-					{institutionData.name}
-				</h1>
-			</CardTitle>
-
-			{getParentCategories(institutionData).length > 0 && (
-				<section className="px-4">
-					{getParentCategories(institutionData).map((category: Category) => {
-						const IconComponent = getCategoryIconComponent(category.key);
-						const subcategories = getSubcategoriesForCategory(
-							institutionData,
-							category.id,
-						);
-						return (
-							<div key={category.id} className="mb-2">
-								<div className="flex items-center gap-2 h-6">
-									<div className="w-6 h-6">
-										<IconComponent aria-hidden="true" focusable="false" />
-									</div>
-									<strong className="body2 font-bold">
-										{tEnum(`category.${category.key}`)}
-									</strong>
-								</div>
-								{subcategories.length > 0 && (
-									<div className="body2 pl-8">
-										{subcategories.map((subcategory, index) => (
-											<span key={subcategory.id}>
-												{index > 0 && ", "}
-												{tEnum(`subcategory.${subcategory.key}`)}
-											</span>
-										))}
-									</div>
-								)}
-							</div>
-						);
-					})}
-				</section>
-			)}
-
-			<div
-				className={`${isInUse ? "bg-brand-light" : "bg-alert"} p-4 flex gap-2`}
-			>
-				<span className="body2">
-					<strong className="font-bold">
-						{t("institution.utilizationStatus")}:
-					</strong>{" "}
-				</span>
-
-				{institutionData.utilization_status ? (
-					<span className="body2">
-						{tEnum(`utilization_status.${institutionData.utilization_status}`)}
-					</span>
-				) : (
-					<span className="body2">{t("unknown")}</span>
-				)}
-			</div>
-		</CardHeader>
-	);
-}
+import { InfoWrapper } from "@/components/InfoWrapper";
 
 function InstitutionCard({
 	institutionData,
@@ -138,80 +28,159 @@ function InstitutionCard({
 	institutionData: Institution;
 	onCenterMap?: () => void;
 }) {
-	const [showMore, setShowMore] = useState(false);
-	const hasFieldValue = (field: InfoFieldConfig) => {
-		if (field.condition && !field.condition(institutionData)) {
-			return false;
+	const { t } = useTranslation("common");
+
+	const getHeroStatus = () => {
+		if (institutionData.utilization_status === "in_use") {
+			return "in_use";
 		}
-
-		const value = getNestedValue(
-			institutionData as unknown as Record<string, unknown>,
-			field.dataPath,
-		);
-		return hasValue(value);
-	};
-
-	const hasExtendedInfo = () => {
-		const configs = [
-			organizationInfoConfig,
-			fundingInfoConfig,
-			facilityInfoConfig,
-			statusInfoConfig,
-			additionalInfoConfig,
-		];
-
-		return configs.some((config) =>
-			config.fields.some((field) => hasFieldValue(field)),
-		);
+		if (institutionData.utilization_status) {
+			return "not_in_use";
+		}
+		return "unknown";
 	};
 
 	return (
-		<Card className="w-full rounded-lg overflow-hidden border-none">
-			<InstitutionHeader
-				institutionData={institutionData}
-				onCenterMap={onCenterMap}
+		<section className="w-full rounded-lg overflow-hidden">
+			<InfoWrapper
+				data={institutionData}
+				config={{
+					className: "mb-0 gap-0 bg-background",
+					fields: [
+						{
+							type: "section",
+							id: "header",
+							cardVariant: "none",
+							className: "mb-0",
+							fields: [
+								{
+									type: "section",
+									id: "header",
+									cardVariant: "hero",
+									className: "mb-0",
+									heroStatus: getHeroStatus(),
+									onClick: onCenterMap,
+									fields: [
+										{
+											id: "parent_organization",
+											type: "text",
+											value: "parent_organization",
+										},
+										{
+											id: "name",
+											alwaysShow: true,
+											value: "name",
+											type: "title",
+										},
+										{
+											id: "categories",
+											alwaysShow: true,
+											categoryVariant: "default",
+											type: "category",
+										},
+									],
+								},
+								{
+									id: "utilization_status",
+									alwaysShow: true,
+									label: t("institution.utilizationStatus"),
+									className: "mb-0",
+									type: "status",
+									value: "utilization_status",
+									enumKey: "utilization_status",
+								},
+								{
+									id: "protection_status",
+									alwaysShow: false,
+									label: t("institution.protectionStatus"),
+									type: "status",
+									value: "protection_status",
+									enumKey: "protection_status",
+								},
+							],
+						},
+						{
+							type: "section",
+							id: "details",
+							layout: {
+								columns: 1,
+							},
+							className: "p-4 bg-background space-y-4",
+							cardVariant: "none",
+							fields: [
+								{
+									id: "address",
+									alwaysShow: true,
+									type: "address",
+									addressOptions: {
+										showMapLink: false,
+										showCopy: false,
+									},
+								},
+								{
+									type: "section",
+									id: "contact",
+									cardVariant: "tertiary",
+									fields: contactInfoConfig,
+								},
+								{
+									type: "section",
+									id: "collapsible-details",
+									cardVariant: "none",
+									collapsible: true,
+									accordionVariant: "secondary",
+									title: (
+										<>
+											<span className="group-data-[state=open]:hidden">
+												{t("institution.moreInfo")}
+											</span>
+											<span className="group-data-[state=closed]:hidden">
+												{t("institution.lessInfo")}
+											</span>
+										</>
+									),
+									className: "space-y-4",
+									fields: [
+										{
+											type: "section",
+											id: "organization",
+											alwaysShow: false,
+											cardVariant: "tertiary",
+											fields: organizationInfoConfig,
+										},
+										{
+											type: "section",
+											id: "funding",
+											alwaysShow: false,
+											cardVariant: "tertiary",
+											fields: fundingInfoConfig,
+										},
+										{
+											type: "section",
+											id: "facility",
+											cardVariant: "tertiary",
+											fields: facilityInfoConfig,
+										},
+										{
+											type: "section",
+											id: "status",
+											cardVariant: "tertiary",
+											fields: statusInfoConfig,
+										},
+										{
+											type: "section",
+											id: "additional",
+											cardVariant: "tertiary",
+											fields: additionalInfoConfig,
+										},
+									],
+								},
+							],
+						},
+					],
+				}}
 			/>
-
-			<CardContent className="p-4 space-y-4">
-				<div className="space-y-4 flex flex-col">
-					<Address institution={institutionData} />
-					<DynamicInfoBlock
-						institutionData={institutionData}
-						config={contactInfoConfig}
-					/>
-				</div>
-
-				{showMore && (
-					<div className="space-y-4">
-						<DynamicInfoBlock
-							institutionData={institutionData}
-							config={organizationInfoConfig}
-						/>
-						<DynamicInfoBlock
-							institutionData={institutionData}
-							config={fundingInfoConfig}
-						/>
-						<DynamicInfoBlock
-							institutionData={institutionData}
-							config={facilityInfoConfig}
-						/>
-						<DynamicInfoBlock
-							institutionData={institutionData}
-							config={statusInfoConfig}
-						/>
-						<DynamicInfoBlock
-							institutionData={institutionData}
-							config={additionalInfoConfig}
-						/>
-					</div>
-				)}
-				<ToggleButton
-					showMore={showMore}
-					onClick={() => setShowMore(!showMore)}
-					hasInfo={hasExtendedInfo()}
-				/>
-			</CardContent>
-		</Card>
+		</section>
 	);
 }
 
@@ -221,10 +190,8 @@ export function InstitutionDetailContent() {
 		(state) => state.selectedInstitutionId,
 	);
 	const institutions = useInstitutionStore((state) => state.allInstitutions);
-	const setSelectedInstitutionId = useInstitutionStore(
-		(state) => state.setSelectedInstitutionId,
-	);
 	const map = useMapStore((state) => state.map);
+	const router = useRouter();
 
 	const [institutionData, setInstitutionData] = useState<Institution | null>(
 		null,
@@ -250,6 +217,11 @@ export function InstitutionDetailContent() {
 			animateMapToCoordinates(map, transformedCoords);
 		}
 	};
+
+	useEffect(() => {
+		if (!institutionData || !map) return;
+		centerMapToInstitution();
+	}, [institutionData, map]);
 
 	useEffect(() => {
 		if (!selectedInstitutionId) {
@@ -280,7 +252,19 @@ export function InstitutionDetailContent() {
 		fetchInstitutionData();
 	}, [selectedInstitutionId, institutions]);
 
-	const handleClose = () => setSelectedInstitutionId(null);
+	const handleClose = () => {
+		const canGoBack =
+			typeof window !== "undefined" &&
+			window.history.state?.idx !== undefined &&
+			window.history.state.idx > 0;
+
+		if (canGoBack) {
+			router.back();
+			return;
+		}
+
+		router.push("/map");
+	};
 
 	if (!selectedInstitutionId) return null;
 

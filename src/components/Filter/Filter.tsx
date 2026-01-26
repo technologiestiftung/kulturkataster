@@ -1,8 +1,7 @@
 "use client";
 
 import { useInstitutionStore } from "@/lib/store/institutionStore";
-import { FC } from "react";
-import { useFilterData } from "./hooks/useFilterData";
+import { FC, useCallback } from "react";
 import { FilterState } from "@/types";
 import { FilterPanel } from "./FilterPanel";
 
@@ -14,8 +13,19 @@ const Filter: FC = () => {
 		filteredInstitutions,
 		categoryCounts,
 		subcategoryCounts,
+		categories,
+		districts,
+		initializeCategories,
+		initializeDistricts,
 	} = useInstitutionStore();
-	const { categoryGroups, districts, loading, error, retry } = useFilterData();
+
+	const loading = categories === null || districts.length === 0;
+
+	const retry = useCallback(() => {
+		initializeCategories();
+		initializeDistricts();
+	}, [initializeCategories, initializeDistricts]);
+
 	const updateFilters = (newFilters: FilterState) => {
 		setFilters(newFilters);
 	};
@@ -23,13 +33,13 @@ const Filter: FC = () => {
 	return (
 		<FilterPanel
 			filters={filters}
-			categoryGroups={categoryGroups}
+			categoryGroups={categories ?? []}
 			districts={districts}
 			filteredCount={filteredInstitutions?.length ?? 0}
 			categoryCounts={categoryCounts}
 			subcategoryCounts={subcategoryCounts}
 			loading={loading}
-			error={error}
+			error={null}
 			onRetry={retry}
 			onFiltersChange={updateFilters}
 		/>

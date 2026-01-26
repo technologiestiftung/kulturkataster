@@ -26,7 +26,7 @@ import {
 	sortingFns,
 	type SortingState,
 } from "@tanstack/react-table";
-import { Input } from "@/components/ui/input";
+import { SearchInput } from "@/components/ui/search-input";
 import Plus from "@/icons/plus.svg";
 import Search from "@/icons/search.svg";
 import Close from "@/icons/close.svg";
@@ -612,7 +612,7 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 						</div>
 					)}
 
-					<div className="flex w-full relative flex-col md:flex-row gap-2">
+					<div className="flex w-full relative flex-col justify-center items-center md:flex-row gap-2">
 						{!isSearchOpen && config.primaryButton && (
 							<Button
 								onClick={config.primaryButton.onClick}
@@ -647,27 +647,26 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 										.filter(Boolean)
 										.join(" ")}
 								>
-									<span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-foreground">
-										<Search className="size-4" />
-									</span>
-									<Input
+									<SearchInput
 										ref={searchInputRef}
 										placeholder={searchPlaceholder}
 										value={globalFilter}
 										onChange={(e) => setGlobalFilter(e.target.value)}
-										className="h-10 w-full rounded-full pl-9 pr-10"
+										icon={<Search className="size-4 text-foreground" />}
+										rightSlot={
+											<button
+												type="button"
+												onClick={() => {
+													setGlobalFilter("");
+													setIsSearchOpen(false);
+												}}
+												className="absolute right-6 top-1/2 -translate-y-1/2 text-foreground hover:text-foreground transition-colors"
+												aria-label="Close search"
+											>
+												<Close className="size-4" />
+											</button>
+										}
 									/>
-									<button
-										type="button"
-										onClick={() => {
-											setGlobalFilter("");
-											setIsSearchOpen(false);
-										}}
-										className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground hover:text-foreground transition-colors"
-										aria-label="Close search"
-									>
-										<Close className="size-4" />
-									</button>
 								</div>
 								{isSearchOpen ? null : (
 									<div className="gap-2 flex items-center">
@@ -808,7 +807,7 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 															className={cn(
 																"transition-colors hover:bg-neutral-5/80",
 																rowIndex % 2 === 0
-																	? "bg-white"
+																	? "bg-background"
 																	: "bg-neutral-5",
 															)}
 															style={
@@ -858,7 +857,7 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 																			: "bg-neutral-10"),
 																	isPinnedRight &&
 																		(rowIndex % 2 === 0
-																			? "bg-white"
+																			? "bg-background"
 																			: "bg-neutral-5"),
 																	isPinnedRight &&
 																		(isFirstRightColumn ? "border-l" : null),

@@ -1,8 +1,8 @@
 export { FormWrapper } from "./FormWrapper";
 export type {
 	FormWrapperConfig,
-	FieldConfig,
-	AccordionSection,
+	FormWrapperFieldConfig as FieldConfig,
 	FieldType,
 	SelectOption,
+	Layout,
 } from "./types";
