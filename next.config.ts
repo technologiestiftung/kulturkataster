@@ -2,19 +2,6 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
 	output: "standalone",
-	async rewrites() {
-		return [
-			{
-				source: "/",
-				destination: "/de",
-			},
-			{
-				source:
-					"/:path((?!de(?:/|$))(?!api|_next|favicon\\.ico|robots\\.txt|sitemap\\.xml|resources).*)",
-				destination: "/de/:path",
-			},
-		];
-	},
 	experimental: {
 		useCache: true,
 	},
