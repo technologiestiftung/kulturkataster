@@ -24,7 +24,7 @@ export default async function ForgotPasswordPage({ params }: PageProps) {
 			<div className="w-full max-w-md space-y-4 text-center">
 				<h1>{t("auth.forgot.title")}</h1>
 				<p className="text-foreground">{t("auth.forgot.description")}</p>
-				<Link href="/account/login" className="text-primary hover:underline">
+				<Link href="/login" className="text-primary hover:underline">
 					{t("auth.forgot.backToSignIn")}
 				</Link>
 			</div>

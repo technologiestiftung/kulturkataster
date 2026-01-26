@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
-import { LoginForm } from "@/components/Auth/LoginForm";
-import { redirect } from "next/navigation";
-import { getCurrentUser } from "@/server/auth/getCurrentUser";
 import { serverSideTranslation } from "@/i18n";
+import { LoginModal } from "@/components/Modals/Pages/LoginModal";
 
 type PageProps = {
 	params: Promise<{ locale: string }>;
@@ -19,14 +17,5 @@ export async function generateMetadata({
 }
 
 export default async function LoginPage() {
-	const user = await getCurrentUser();
-	if (user) {
-		redirect("/account");
-	}
-
-	return (
-		<div className="flex flex-1 items-center justify-center py-12 px-4 w-full">
-			<LoginForm />
-		</div>
-	);
+	return <LoginModal />;
 }
