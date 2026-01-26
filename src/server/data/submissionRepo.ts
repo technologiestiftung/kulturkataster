@@ -8,8 +8,7 @@ export const submissionRepo = {
 			take,
 			orderBy: { created_at: "desc" },
 		}),
-	findById: (id: number) =>
-		prisma.submission.findUnique({ where: { id } }),
+	findById: (id: number) => prisma.submission.findUnique({ where: { id } }),
 	create: (data: Prisma.SubmissionCreateInput) =>
 		prisma.submission.create({ data }),
 	update: (id: number, data: Prisma.SubmissionUpdateInput) =>
