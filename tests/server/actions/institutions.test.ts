@@ -12,8 +12,16 @@ vi.mock("@/server/auth/getCurrentUser", () => ({
 }));
 
 vi.mock("@/server/utils/rbac", () => ({
-	getAccessContextForUser: vi.fn().mockResolvedValue({}),
+	getAccessContextForUser: vi.fn().mockResolvedValue({
+		field: {
+			institution: {
+				name: new Set(["read"]),
+			},
+		},
+	}),
 	throwIfUnauthorized: vi.fn(),
+	authorizeTable: vi.fn(),
+	authorizeFields: vi.fn(),
 }));
 
 const listMock = vi.fn().mockResolvedValue([]);
@@ -21,7 +29,10 @@ const searchMock = vi.fn().mockResolvedValue([]);
 vi.mock("@/server/data/institutionRepo", () => ({
 	institutionRepo: {
 		list: () => listMock(),
+		listWithSelect: () => listMock(),
 		search: (where: Prisma.InstitutionWhereInput) => searchMock(where),
+		searchWithSelect: (where: Prisma.InstitutionWhereInput) =>
+			searchMock(where),
 	},
 }));
 
@@ -35,8 +46,8 @@ vi.mock("@/server/data/categoryRepo", () => ({
 const listDistinctMock = vi
 	.fn()
 	.mockResolvedValue([{ district: "mitte" }, { district: null }]);
-vi.mock("@/server/data/districtRepo", () => ({
-	districtRepo: {
+vi.mock("@/server/data/addressRepo", () => ({
+	addressRepo: {
 		listDistinct: () => listDistinctMock(),
 	},
 }));
