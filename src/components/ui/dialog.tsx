@@ -82,54 +82,54 @@ function DialogContent({
 	className,
 	children,
 	showCloseButton = true,
-	variant = "default",
+	variant = "standard",
 	showBackButton = false,
 	...props
 }: React.ComponentProps<typeof DialogPrimitive.Content> & {
 	showCloseButton?: boolean;
 	showBackButton?: boolean;
 	variant?:
-		| "default"
-		| "fullScreen"
-		| "fullScreenNoBottom"
-		| "fullScreenNoBottomDarkerBackground"
-		| "medium"
-		| "mobileMenu"
-		| "multiSelect"
+		| "standard"
+		| "fullscreen-inset"
+		| "fullscreen"
+		| "fullscreen-muted"
+		| "centered"
+		| "mobile-menu"
+		| "multi-select"
 		| "alert"
-		| "entityEdit";
+		| "editor";
 }) {
 	const { t } = useTranslation("common");
 	const focusRef = React.useRef<HTMLDivElement | null>(null);
 	const router = useRouter();
 
 	const getVariantStyles = () => {
-		switch (variant) {
-			case "fullScreen":
-				return "fixed z-[70] inset-0 m-[8rem]";
-			case "fullScreenNoBottom":
-			case "fullScreenNoBottomDarkerBackground":
-				return "fixed z-[70] top-0 md:top-[5rem] left-1/2 w-full max-w-314 h-full md:h-[calc(100%-5rem)] -translate-x-1/2 md:rounded-t-lg border";
-			case "medium":
-				return "fixed z-[70] top-0 md:top-1/2 left-1/2 w-full max-w-314 h-full md:h-auto md:max-h-[calc(100%-5rem)] -translate-x-1/2 md:-translate-y-1/2 md:rounded-lg border flex flex-col";
-			case "mobileMenu":
-				return "fixed z-[70] h-full inset-0 w-full border-0 p-0";
-			case "entityEdit":
-				return "bg-neutral-5 fixed z-[70] top-0 md:top-1/2 left-1/2 w-full max-w-[calc(100%-2rem)] h-full md:h-auto md:max-h-[calc(100%-5rem)] -translate-x-1/2 md:-translate-y-1/2 md:rounded-lg border md:max-w-5xl flex flex-col overflow-hidden p-12";
-			case "multiSelect":
-				return "bg-neutral-5 fixed z-[75] top-0 md:top-1/2 left-1/2 w-full max-w-[calc(100%-2rem)] h-full md:h-auto md:max-h-[calc(100%-5rem)] -translate-x-1/2 md:-translate-y-1/2 md:rounded-lg border md:max-w-5xl flex flex-col overflow-hidden";
-			case "alert":
-				return "fixed z-[70] top-1/2 left-1/2 w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 md:max-w-lg md:rounded-lg border p-6";
-			case "default":
-			default:
-				return "fixed top-[50%] left-[50%] w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] md:rounded-lg border p-6 sm:max-w-3xl max-h-full overflow-auto";
-		}
+		const variants = {
+			standard:
+				"fixed top-[50%] left-[50%] w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] md:rounded-lg border p-6 sm:max-w-3xl max-h-full overflow-auto",
+			"fullscreen-inset": "fixed z-[70] inset-0 m-[8rem]",
+			fullscreen:
+				"fixed z-[70] top-0 md:top-[5rem] left-1/2 w-full max-w-314 h-full md:h-[calc(100%-5rem)] -translate-x-1/2 md:rounded-t-lg border",
+			"fullscreen-muted":
+				"fixed z-[70] top-0 md:top-[5rem] left-1/2 w-full max-w-314 h-full md:h-[calc(100%-5rem)] -translate-x-1/2 md:rounded-t-lg border",
+			centered:
+				"fixed z-[70] top-0 md:top-1/2 left-1/2 w-full max-w-314 h-full md:h-auto md:max-h-[calc(100%-5rem)] -translate-x-1/2 md:-translate-y-1/2 md:rounded-lg border flex flex-col",
+			"mobile-menu": "fixed z-[70] h-full inset-0 w-full border-0 p-0",
+			editor:
+				"bg-neutral-5 fixed z-[70] top-0 md:top-1/2 left-1/2 w-full max-w-[calc(100%-2rem)] h-full md:h-auto md:max-h-[calc(100%-5rem)] -translate-x-1/2 md:-translate-y-1/2 md:rounded-lg border md:max-w-5xl flex flex-col overflow-hidden p-12",
+			"multi-select":
+				"bg-neutral-5 fixed z-[75] top-0 md:top-1/2 left-1/2 w-full max-w-[calc(100%-2rem)] h-full md:h-auto md:max-h-[calc(100%-5rem)] -translate-x-1/2 md:-translate-y-1/2 md:rounded-lg border md:max-w-5xl flex flex-col overflow-hidden",
+			alert:
+				"fixed z-[70] top-1/2 left-1/2 w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 md:max-w-lg md:rounded-lg border p-6",
+		} as const;
+
+		return variants[variant];
 	};
 
 	const backAndCloseClassNames = (type: "back" | "close") => {
 		return cn(
-			"ring-offset-background focus:ring-ring fixed top-12 z-[80] rounded-xs transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-6",
-			type === "back" ? "left-6 md:left-12" : "right-6 md:right-12",
+			"ring-offset-background focus:ring-ring fixed top-6 z-[80] rounded-full bg-background p-3 shadow-sm transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-6",
+			type === "back" ? "left-6 md:left-6" : "right-6 md:right-6",
 			"",
 		);
 	};
@@ -138,7 +138,7 @@ function DialogContent({
 		<DialogPortal data-slot="dialog-portal">
 			<DialogOverlay
 				className={
-					variant === "multiSelect"
+					variant === "multi-select"
 						? "z-[71]"
 						: variant === "alert"
 							? "bg-black/40"
@@ -150,7 +150,7 @@ function DialogContent({
 				className={cn(
 					"bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 z-[61] shadow-lg duration-200 relative",
 					getVariantStyles(),
-					variant === "fullScreenNoBottomDarkerBackground" && "bg-neutral-10",
+					variant === "fullscreen-muted" && "bg-neutral-10",
 					className,
 				)}
 				aria-describedby={undefined}
@@ -180,9 +180,9 @@ function DialogContent({
 						<span className="sr-only">{t("close")}</span>
 					</DialogPrimitive.Close>
 				)}
-				{variant === "mobileMenu" ? (
+				{variant === "mobile-menu" ? (
 					children
-				) : variant === "entityEdit" ? (
+				) : variant === "editor" ? (
 					<div className="flex flex-col h-full w-full overflow-auto">
 						{children}
 					</div>
