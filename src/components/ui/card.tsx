@@ -8,7 +8,7 @@ const cardVariants = cva("text-card-foreground", {
 		variant: {
 			default: "rounded-lg border bg-card shadow-xs",
 			secondary: "rounded-sm bg-secondary border-0 p-6",
-			tertiary: "rounded-sm bg-secondary border-0 p-4",
+			tertiary: "rounded-sm bg-secondary border-0 p-4 h-full",
 			none: "",
 			hero: "rounded-t-lg overflow-hidden border-0 p-4",
 		},
