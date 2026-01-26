@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useMapStore } from "@/lib/store/mapStore";
 import { FeatureLike } from "ol/Feature";
 import { FC, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 interface ClickControlProps {
 	layerId: string;
@@ -24,9 +24,7 @@ function findClickedInstitutionId(clickedFeature: FeatureLike): string | null {
 
 const ClickControl: FC<ClickControlProps> = ({ layerId }) => {
 	const map = useMapStore((state) => state.map);
-	const setSelectedInstitutionId = useInstitutionStore(
-		(state) => state.setSelectedInstitutionId,
-	);
+	const router = useRouter();
 
 	useEffect(() => {
 		if (!map) return;
@@ -43,13 +41,15 @@ const ClickControl: FC<ClickControlProps> = ({ layerId }) => {
 
 				if (isInstitutionsLayer) {
 					const institutionId = findClickedInstitutionId(_feature);
-					setSelectedInstitutionId(institutionId);
+					if (institutionId) {
+						router.push(`/institution/${institutionId}`);
+					}
 				}
 
 				return true;
 			});
 		});
-	}, [map, layerId, setSelectedInstitutionId]);
+	}, [map, layerId, router]);
 	return null;
 };
 

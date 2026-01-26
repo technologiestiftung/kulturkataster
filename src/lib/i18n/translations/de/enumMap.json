@@ -151,10 +151,6 @@
 		"state_property_soda": "Landesliegenschaft (SODA)",
 		"state_property_specialized": "Spezialimmobilie Land"
 	},
-	"protection_status": {
-		"long_term_secured": "Langfristig gesichert",
-		"not_yet_secured": "Noch nicht gesichert"
-	},
 	"rental_contract_type": {
 		"limited_lease": "Befristete Miete",
 		"organization_ownership": "Eigentum der Organisation",
@@ -270,11 +266,19 @@
 		"super_administrator": "Super-Administrator"
 	},
 	"utilization_status": {
-		"in_use": "In Nutzung",
-		"permanently_closed": "Dauerhaft geschlossen",
-		"planned_use": "Geplante Nutzung",
-		"potential_space": "Potenzialort",
-		"temporarily_closed": "Vorübergehend geschlossen",
-		"unknown": "Unbekannt"
+		"L0": "In Nutzung",
+		"L1": "Potenzialort",
+		"L2": "Vorübergehend geschlossen",
+		"L3": "Geplante Nutzung",
+		"L5": "Dauerhaft geschlossen",
+		"L6": "Unbekannt"
+	},
+	"protection_status": {
+		"L0": "Langfristig gesichert",
+		"L1": "Mittelfristig gesichert",
+		"L2": "Kurzfristig gesichert",
+		"L3": "Akut gefährdet",
+		"L4": "Unsicher",
+		"L5": "Noch nicht gesichert"
 	}
 }

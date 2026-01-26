@@ -330,29 +330,26 @@ FloatingLayerButton.displayName = "FloatingLayerButton";
 const LayerTree: FC = () => {
 	const { t } = useTranslation("common");
 	const { subjectLayers, visibleCount, topVisibleLayer } = useLayerData();
-	const setIsLayerTreeOpen = useMapStore((state) => state.setIsLayerTreeOpen);
-	const { state: sidebarState, isMobile, setOpenMobile } = useSidebar();
+	const { state: sidebarState } = useSidebar();
+	const isLayerTreeOpen = useAppStore((state) => state.isLayerTreeOpen);
+	const setIsLayerTreeOpen = useAppStore((state) => state.setIsLayerTreeOpen);
 	const [isOpen, setIsOpen] = useState(false);
 	const floatingButtonRef = useRef<HTMLButtonElement>(null);
 
 	const handleOpen = useCallback(() => {
-		setIsOpen(true);
-	}, []);
+		setIsLayerTreeOpen(true);
+	}, [setIsLayerTreeOpen]);
 
 	const handleClose = useCallback(() => {
-		setIsOpen(false);
+		setIsLayerTreeOpen(false);
 		setTimeout(() => {
 			floatingButtonRef.current?.focus();
 		}, 0);
-	}, []);
+	}, [setIsLayerTreeOpen]);
 
 	useEffect(() => {
-		if (isOpen && isMobile) {
-			setIsOpen(false);
-			setIsLayerTreeOpen(true);
-			setOpenMobile(true);
-		}
-	}, [isMobile, isOpen, setIsLayerTreeOpen, setOpenMobile]);
+		setIsOpen(isLayerTreeOpen);
+	}, [isLayerTreeOpen]);
 
 	// Handle Escape key to close the dialog
 	useEffect(() => {
@@ -367,10 +364,6 @@ const LayerTree: FC = () => {
 		document.addEventListener("keydown", handleKeyDown);
 		return () => document.removeEventListener("keydown", handleKeyDown);
 	}, [isOpen, handleClose]);
-
-	if (!isOpen && isMobile) {
-		return null;
-	}
 
 	if (!isOpen) {
 		return (

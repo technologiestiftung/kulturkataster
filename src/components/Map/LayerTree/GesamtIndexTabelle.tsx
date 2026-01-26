@@ -141,7 +141,7 @@ export default function GesamtIndexTabelle() {
 					xAxisLabel: titles.xAxisLabel,
 				})}
 			</p>
-			<div className="inline-block rounded border border-[#E2DFDB] bg-white body3 w-[calc(100%-1.5rem)] ml-[1.5rem]">
+			<div className="inline-block rounded border border-[#E2DFDB] bg-background body3 w-[calc(100%-1.5rem)] ml-[1.5rem]">
 				<table
 					className="border-collapse table-fixed w-full"
 					aria-label={t("map.legend.legendGesamtIndexAriaLabel")}

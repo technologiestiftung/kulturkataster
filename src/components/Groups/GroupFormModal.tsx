@@ -6,7 +6,6 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog } from "@/components/ui/alert-dialog";
 import { FormWrapper } from "@/components/FormWrapper";
 import type { FormWrapperConfig } from "@/components/FormWrapper";
-import { Card, CardContent } from "@/components/ui/card";
 import { useAccountStore } from "@/lib/store/accountStore";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useInstitutionMultiSelect } from "@/lib/hooks/useInstitutionMultiSelect";
@@ -66,13 +65,7 @@ const renderDialogBody = (
 		);
 	}
 
-	return (
-		<Card variant="secondary">
-			<CardContent>
-				<FormWrapper key={resolvedGroup?.id ?? mode} config={formConfig} />
-			</CardContent>
-		</Card>
-	);
+	return <FormWrapper key={resolvedGroup?.id ?? mode} config={formConfig} />;
 };
 
 type UseResolvedGroupResult = {
@@ -217,9 +210,10 @@ const buildGroupFormConfig = ({
 	onCancel,
 }: GroupFormConfigArgs): FormWrapperConfig => {
 	return {
-		sections: [
+		fields: [
 			{
-				id: "details",
+				name: "detailsSection",
+				type: "section",
 				title: t("groupFormModal.form.details.title"),
 				description:
 					mode === "create"
@@ -234,7 +228,7 @@ const buildGroupFormConfig = ({
 						placeholder: t(
 							"groupFormModal.form.details.fields.name.placeholder",
 						),
-						gridColumn: "full",
+						layout: { span: "full" },
 					},
 					{
 						name: "description",
@@ -243,12 +237,13 @@ const buildGroupFormConfig = ({
 						placeholder: t(
 							"groupFormModal.form.details.fields.description.placeholder",
 						),
-						gridColumn: "full",
+						layout: { span: "full" },
 					},
 				],
 			},
 			{
-				id: "members",
+				name: "membersSection",
+				type: "section",
 				title: t("groupFormModal.form.members.title"),
 				fields: [
 					{
@@ -265,7 +260,7 @@ const buildGroupFormConfig = ({
 						emptyText: t("groupFormModal.form.members.fields.users.emptyText"),
 						previewCount: 3,
 						options: userOptions,
-						gridColumn: "full",
+						layout: { span: "full" },
 					},
 					{
 						name: "institutionIds",
@@ -285,12 +280,11 @@ const buildGroupFormConfig = ({
 						options: institutionOptions,
 						multiselectFilteredOptions: filteredInstitutionOptions,
 						multiselectFilterPanel: filterPanel,
-						gridColumn: "full",
+						layout: { span: "full" },
 					},
 				],
 			},
 		],
-		gridColumns: 2,
 		onSubmit,
 		showCancel: true,
 		cancelLabel: t("groupFormModal.actions.cancel"),
@@ -411,11 +405,7 @@ export function GroupFormModal({ mode, groupId }: GroupFormModalProps) {
 
 	return (
 		<Dialog open>
-			<DialogContent
-				variant="entityEdit"
-				showBackButton={false}
-				className="p-0"
-			>
+			<DialogContent variant="editor" showBackButton={false} className="p-0">
 				<div className="flex h-full flex-col">
 					<div className="px-6 py-8 md:px-10">
 						<DialogTitle className="title">

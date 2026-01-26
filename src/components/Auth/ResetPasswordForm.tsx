@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { setPasswordWithTokens } from "@/server/actions/auth";
 
@@ -19,6 +19,7 @@ export function ResetPasswordForm() {
 	const [accessToken, setAccessToken] = useState<string | null>(null);
 	const [refreshToken, setRefreshToken] = useState<string | null>(null);
 	const router = useRouter();
+	const params = useParams<{ locale: string }>();
 	const { t } = useTranslation("common");
 
 	useEffect(() => {
@@ -73,7 +74,9 @@ export function ResetPasswordForm() {
 				return;
 			}
 
-			router.push("/account");
+			const locale = params?.locale;
+			const accountPath = locale ? `/${locale}/account` : "/account";
+			router.replace(accountPath);
 		} catch {
 			setErrorMessage(t("auth.reset.errorFallback"));
 		} finally {
@@ -141,7 +144,7 @@ export function ResetPasswordForm() {
 			</form>
 
 			<div className="flex flex-col items-center text-center">
-				<Link href="/account/login" className="text-primary-dark underline ">
+				<Link href="/login" className="text-primary-dark underline ">
 					{t("auth.reset.backToLogin")}
 				</Link>
 			</div>
