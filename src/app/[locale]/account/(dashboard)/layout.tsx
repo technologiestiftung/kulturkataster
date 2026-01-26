@@ -16,7 +16,7 @@ type AccountLayoutProps = {
 };
 
 export default async function AccountLayout({ children }: AccountLayoutProps) {
-	const currentUser = await requireAuth();
+	const currentUser = await requireAuth({ redirectTo: `/login` });
 	if (!currentUser.email) {
 		throw new Error("Authenticated user is missing an email.");
 	}
