@@ -1,34 +1,39 @@
 "use client";
 
 import { useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { loginWithEmailPassword } from "@/server/actions/auth";
+import { FormWrapper } from "@/components/FormWrapper";
+import type { FormWrapperConfig } from "@/components/FormWrapper";
 
 export function LoginForm() {
-	const [email, setEmail] = useState("");
-	const [password, setPassword] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 	const router = useRouter();
 	const { t } = useTranslation("common");
 
-	const handleSubmit = async (e: React.FormEvent) => {
-		e.preventDefault();
+	const navigateToAccount = () => {
+		const accountPath = `/account`;
+		router.replace(accountPath);
+	};
+
+	const handleSubmit = async (data: Record<string, unknown>) => {
+		const email = String(data.email ?? "");
+		const password = String(data.password ?? "");
 		setIsLoading(true);
 		setErrorMessage(null);
 
 		try {
 			const result = await loginWithEmailPassword(email, password);
+
 			if (!result.ok) {
 				setErrorMessage(result.error ?? t("auth.login.errorFallback"));
 				return;
 			}
-			router.push("/account");
+
+			navigateToAccount();
 		} catch {
 			setErrorMessage(t("auth.login.errorFallback"));
 		} finally {
@@ -36,62 +41,64 @@ export function LoginForm() {
 		}
 	};
 
+	const formConfig: FormWrapperConfig = {
+		onSubmit: handleSubmit,
+		submitLabel: isLoading
+			? t("auth.login.submitting")
+			: t("auth.login.submit"),
+		submitDisabled: isLoading,
+		layout: { columns: 1 },
+		fields: [
+			{
+				name: "section",
+				type: "section",
+				cardVariant: "secondary",
+				fields: [
+					{
+						name: "email",
+						label: t("auth.login.emailLabel"),
+						type: "email",
+						placeholder: t("auth.login.emailPlaceholder"),
+						required: true,
+						disabled: isLoading,
+					},
+					{
+						name: "password",
+						label: t("auth.login.passwordLabel"),
+						type: "password",
+						placeholder: t("auth.login.passwordPlaceholder"),
+						required: true,
+						disabled: isLoading,
+						afterField: (
+							<div className="flex justify-end">
+								<Link
+									href="/forgot-password"
+									className="text-primary-dark body2 underline"
+								>
+									{t("auth.login.forgotPassword")}
+								</Link>
+							</div>
+						),
+					},
+				],
+			},
+		],
+	};
+
 	return (
-		<div className="w-full max-w-2xl mx-auto space-y-6">
-			<div className="text-start font-bold">
+		<div className="w-full max-w-3xl mx-auto">
+			<div className="text-start font-bold mb-10">
 				<h1 className="">{t("auth.login.title")}</h1>
 				<p className="">{t("auth.login.subtitle")}</p>
 			</div>
 
-			<form onSubmit={handleSubmit} className="space-y-4">
-				<div className="space-y-2">
-					<Label htmlFor="email" required>
-						{t("auth.login.emailLabel")}
-					</Label>
-					<Input
-						id="email"
-						type="email"
-						placeholder={t("auth.login.emailPlaceholder")}
-						value={email}
-						onChange={(e) => setEmail(e.target.value)}
-						required
-						disabled={isLoading}
-					/>
-				</div>
+			{errorMessage && <p className="body3 text-destructive">{errorMessage}</p>}
 
-				<div className="flex flex-col">
-					<div className="">
-						<Label htmlFor="password" required>
-							{t("auth.login.passwordLabel")}
-						</Label>
-					</div>
-					<Input
-						id="password"
-						type="password"
-						placeholder={t("auth.login.passwordPlaceholder")}
-						value={password}
-						onChange={(e) => setPassword(e.target.value)}
-						required
-						disabled={isLoading}
-					/>
-					<Link
-						href="/account/forgot-password"
-						className="self-end text-primary-dark body2 underline"
-					>
-						{t("auth.login.forgotPassword")}
-					</Link>
-				</div>
-				{errorMessage && (
-					<p className="body3 text-destructive">{errorMessage}</p>
-				)}
-				<Button type="submit" className="w-full" disabled={isLoading}>
-					{isLoading ? t("auth.login.submitting") : t("auth.login.submit")}
-				</Button>
-			</form>
+			<FormWrapper config={formConfig} />
 
-			<div className="flex flex-col items-center text-center">
+			<div className="flex flex-col items-center text-center mt-2">
 				<span className="">{t("auth.login.noAccount")} </span>
-				<Link href="/account/register" className="text-primary-dark underline ">
+				<Link href="/register" className="text-primary-dark underline ">
 					{t("auth.login.signUp")}
 				</Link>
 			</div>
