@@ -10,6 +10,9 @@ export function StoreInitializer() {
 	const initializeCategories = useInstitutionStore(
 		(state) => state.initializeCategories,
 	);
+	const initializeDistricts = useInstitutionStore(
+		(state) => state.initializeDistricts,
+	);
 
 	useEffect(() => {
 		initializeInstitutions();
@@ -18,6 +21,10 @@ export function StoreInitializer() {
 	useEffect(() => {
 		initializeCategories();
 	}, [initializeCategories]);
+
+	useEffect(() => {
+		initializeDistricts();
+	}, [initializeDistricts]);
 
 	return null;
 }

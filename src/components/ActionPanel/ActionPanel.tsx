@@ -52,7 +52,9 @@ export function ActionPanel({
 				<div className="flex flex-col gap-2">
 					<div className="flex items-center gap-2">
 						{icon && <span className="text-muted-foreground">{icon}</span>}
-						<Label className="font-bold">{title}</Label>
+						<Label className="font-bold">
+							<strong>{title}</strong>
+						</Label>
 					</div>
 					<p className="body2">{description}</p>
 				</div>

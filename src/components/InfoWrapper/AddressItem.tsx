@@ -7,7 +7,7 @@ interface InstitutionAddressProps {
 	institution: Institution;
 }
 
-export function Address({ institution }: InstitutionAddressProps) {
+export function AddressItem({ institution }: InstitutionAddressProps) {
 	const { t: tEnum } = useTranslation("enumMap");
 	const cityName = institution.address?.city;
 	const districtKey = institution.address?.district;
