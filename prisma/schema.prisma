@@ -84,6 +84,24 @@ enum CategoryStatus {
   inactive
 }
 
+enum SubmissionEntityType {
+  institution
+  category
+}
+
+enum SubmissionStatus {
+  draft
+  approval_pending
+  approved
+  rejected
+  needs_changes
+}
+
+enum SubmissionType {
+  create
+  update
+}
+
 enum Action {
   read
   create
@@ -276,6 +294,8 @@ model User {
   institutions         Institution[]
   created_institutions Institution[] @relation("InstitutionCreator")
   updated_institutions Institution[] @relation("InstitutionUpdater")
+  submissions         Submission[] @relation("SubmissionCreator")
+  reviewed_submissions Submission[] @relation("SubmissionReviewer")
 
   @@index([email])
   @@index([role_id])
@@ -339,4 +359,32 @@ model Group {
   institutions Institution[]
 
   @@map("group")
+}
+
+model Submission {
+  id           Int                  @id @default(autoincrement())
+  entity_type  SubmissionEntityType
+  entity_id    Int?
+  status       SubmissionStatus     @default(draft)
+  type         SubmissionType
+  data         Json
+  diff         Json?
+  meta         Json?
+  review_notes String?
+  created_by   String?              @db.Uuid
+  reviewed_by  String?              @db.Uuid
+  created_at   DateTime             @default(now())
+  updated_at   DateTime             @updatedAt
+  reviewed_at  DateTime?
+
+  creator  User? @relation("SubmissionCreator", fields: [created_by], references: [id])
+  reviewer User? @relation("SubmissionReviewer", fields: [reviewed_by], references: [id])
+
+  @@index([entity_type])
+  @@index([entity_id])
+  @@index([status])
+  @@index([type])
+  @@index([created_by])
+  @@index([reviewed_by])
+  @@map("submission")
 }
