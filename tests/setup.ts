@@ -1,0 +1,26 @@
+import "@testing-library/jest-dom/vitest";
+import { afterEach } from "vitest";
+import { cleanup } from "@testing-library/react";
+import { vi } from "vitest";
+
+afterEach(() => {
+	cleanup();
+});
+
+if (!("ResizeObserver" in globalThis)) {
+	class ResizeObserver {
+		observe() {}
+		unobserve() {}
+		disconnect() {}
+	}
+
+	// @ts-expect-error - test environment polyfill
+	globalThis.ResizeObserver = ResizeObserver;
+}
+
+const SvgMock = () => null;
+
+vi.mock("@/icons/chevron-down.svg", () => ({ default: SvgMock }));
+vi.mock("@/icons/chevron-up.svg", () => ({ default: SvgMock }));
+vi.mock("@/icons/check.svg", () => ({ default: SvgMock }));
+vi.mock("@/icons/circle.svg", () => ({ default: SvgMock }));
