@@ -3,7 +3,7 @@
 import DownloadPDFButton from "@/components/Content/DownloadPDFButton";
 import TextBlock from "@/components/Content/TextBlock";
 import { Trans, useTranslation } from "react-i18next";
-import { PageModal } from "../PageModal";
+import { Modal } from "../Modal";
 
 interface Guidelines {
 	description: string;
@@ -171,7 +171,7 @@ export function AboutModal() {
 	);
 
 	return (
-		<PageModal
+		<Modal
 			title={t("aboutModal.title")}
 			subtitle={t("aboutModal.subtitle")}
 			content={modalContent}

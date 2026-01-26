@@ -2,7 +2,7 @@
 
 import TextBlock from "@/components/Content/TextBlock";
 import { useTranslation } from "react-i18next";
-import { PageModal } from "../PageModal";
+import { Modal } from "../Modal";
 
 export function ImprintModal() {
 	const { t: tContent } = useTranslation("content");
@@ -137,7 +137,7 @@ export function ImprintModal() {
 	);
 
 	return (
-		<PageModal
+		<Modal
 			title={tContent("imprintModal.title")}
 			subtitle={tContent("imprintModal.subtitle")}
 			content={content}

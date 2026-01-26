@@ -2,7 +2,7 @@
 
 import TextBlock from "@/components/Content/TextBlock";
 import { Trans, useTranslation } from "react-i18next";
-import { PageModal } from "../PageModal";
+import { Modal } from "../Modal";
 import Link from "next/link";
 
 interface Barrier {
@@ -135,9 +135,7 @@ export function AccessibilityModal() {
 				/>
 				<div className="body1 space-y-1">
 					<p className="body2">
-						<strong className="font-bold">
-							{t("accessibilityModal.contact.name")}
-						</strong>
+						<strong>{t("accessibilityModal.contact.name")}</strong>
 					</p>
 					<p className="body2">{t("accessibilityModal.contact.company")}</p>
 					<p className="body2">
@@ -190,7 +188,7 @@ export function AccessibilityModal() {
 	);
 
 	return (
-		<PageModal
+		<Modal
 			title={t("accessibilityModal.title")}
 			subtitle={t("accessibilityModal.subtitle")}
 			content={content}

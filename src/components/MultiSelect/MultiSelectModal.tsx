@@ -302,7 +302,7 @@ export function MultiSelectModal({
 			</Button>
 
 			<DialogPrimitive.Root open={open} onOpenChange={handleOpenChange}>
-				<DialogContent variant="multiSelect" showBackButton={false}>
+				<DialogContent variant="multi-select" showBackButton={false}>
 					<div className="flex items-center justify-between bg-neutral-5 px-6 py-5">
 						<DialogTitle className="text-lg font-semibold">{title}</DialogTitle>
 						<div className="body3 text-neutral-60">
@@ -445,7 +445,7 @@ export function MultiSelectModal({
 									</SelectContent>
 								</Select>
 							</div>
-							<div className="flex rounded-sm border border-input bg-white">
+							<div className="flex rounded-sm border border-input bg-background">
 								<div className="max-h-[60vh] w-full overflow-auto">
 									{visibleOptions.length === 0 ? (
 										<p className="px-4 py-6 body3 text-foreground">
