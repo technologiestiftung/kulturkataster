@@ -51,7 +51,7 @@ export function MobileMenuModal() {
 			}}
 		>
 			<DialogContent
-				variant="mobileMenu"
+				variant="mobile-menu"
 				className="flex flex-col flex-1 bg-sidebar justify-between"
 				showCloseButton={false}
 				showBackButton={false}

@@ -1,6 +1,6 @@
 "use client";
 import { useTranslation } from "react-i18next";
-import { PageModal } from "../PageModal";
+import { Modal } from "../Modal";
 import { AccessibilityContent } from "@/components/Menu/MenuContent/AccessibilityContent";
 
 export function AccessibilitySettingsModal() {
@@ -13,11 +13,11 @@ export function AccessibilitySettingsModal() {
 	);
 
 	return (
-		<PageModal
+		<Modal
 			title={t("accessibilitySettingsModal.title")}
 			subtitle={t("accessibilitySettingsModal.subtitle")}
 			content={content}
-			variant="fullScreenNoBottomDarkerBackground"
+			variant="fullscreen-muted"
 		/>
 	);
 }
