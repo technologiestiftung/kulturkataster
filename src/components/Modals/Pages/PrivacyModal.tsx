@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslation } from "react-i18next";
-import { PageModal } from "../PageModal";
+import { Modal } from "../Modal";
 
 export function PrivacyModal() {
 	const { t } = useTranslation(["content", "common"]);
@@ -16,7 +16,7 @@ export function PrivacyModal() {
 	);
 
 	return (
-		<PageModal
+		<Modal
 			title={t("privacyModal.title", { ns: "content" })}
 			subtitle={t("privacyModal.subtitle", { ns: "content" })}
 			content={content}

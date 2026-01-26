@@ -39,7 +39,7 @@ export function WelcomeModal() {
 				}
 			}}
 		>
-			<DialogContent variant="medium" className="flex" showBackButton={false}>
+			<DialogContent variant="centered" className="flex" showBackButton={false}>
 				<div className="flex flex-col md:flex-row gap-8 py-12 md:pt-32 md:pb-12 px-6">
 					<div className="md:w-1/4 flex justify-center align-start h-full">
 						<KukaLargeLogo
@@ -125,11 +125,11 @@ export function WelcomeModal() {
 								<div className="flex md:w-1/2 md:justify-end justify-around gap-2 space-x-4 md:mx-4">
 									<KRBLogo
 										title="Kulturraum Berlin gGmbH, Logo"
-										className="w-20 md:w-24 h-auto bg-white"
+										className="w-20 md:w-24 h-auto bg-background"
 									/>
 									<SenateLogo
 										title="Logo der Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt, Logo"
-										className="w-32 md:w-42 h-auto bg-white"
+										className="w-32 md:w-42 h-auto bg-background"
 									/>
 								</div>
 							</div>

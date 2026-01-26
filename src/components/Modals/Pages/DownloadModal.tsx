@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslation } from "react-i18next";
-import { PageModal } from "../PageModal";
+import { Modal } from "../Modal";
 import TextWithLinks from "@/components/Content/TextWithLinks";
 import ArrowNarrowRight from "@/icons/arrow-narrow-right.svg";
 
@@ -20,10 +20,10 @@ export function DownloadModal() {
 	);
 
 	return (
-		<PageModal
+		<Modal
 			title={t("downloadModal.title", { ns: "content" })}
 			content={content}
-			variant="medium"
+			variant="centered"
 			hasFooter={false}
 			showBackButton={false}
 		/>

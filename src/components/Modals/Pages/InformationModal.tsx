@@ -4,7 +4,7 @@ import TextBlock from "@/components/Content/TextBlock";
 import TextWithLinks from "@/components/Content/TextWithLinks";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { Trans, useTranslation } from "react-i18next";
-import { PageModal } from "../PageModal";
+import { Modal } from "../Modal";
 
 interface FaqItem {
 	question: string;
@@ -153,7 +153,7 @@ export function InformationModal() {
 	);
 
 	return (
-		<PageModal
+		<Modal
 			title={t("informationModal.title")}
 			subtitle={t("informationModal.subtitle")}
 			content={content}
