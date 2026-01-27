@@ -12,6 +12,7 @@ import { createRole, getRoleById, updateRole } from "@/server/actions/roles";
 import type { Role } from "@/types/role";
 import { INSTITUTION_PERMISSION_FIELDS } from "@/types/institution";
 import type { Action } from "@/generated/prisma";
+import type { TablePermissionValue } from "@/components/FormWrapper/types";
 import { getSubmitLabel, toOptionalText } from "@/lib/utils/formUtils";
 
 type RoleFormModalProps = {
@@ -47,17 +48,36 @@ const buildPermissionSnapshot = (
 	const fieldPermissions = resolvedRole?.field_permissions ?? [];
 	const allowedTables = new Set(tableTargets.map((table) => table.key));
 
-	const tableValue: Record<string, Action[]> = {};
+	const tableValue: Record<string, TablePermissionValue> = {};
+	const tableMeta: Record<
+		string,
+		{ actions: Set<Action>; hasAll: boolean; hasOwn: boolean }
+	> = {};
 	const fieldValue: Record<string, Action[]> = {};
 	for (const permission of tablePermissions) {
 		if (!allowedTables.has(permission.table)) continue;
-		if (!tableValue[permission.table]) {
-			tableValue[permission.table] = [];
+		if (!tableMeta[permission.table]) {
+			tableMeta[permission.table] = {
+				actions: new Set(),
+				hasAll: false,
+				hasOwn: false,
+			};
 		}
-		if (!tableValue[permission.table].includes(permission.action)) {
-			tableValue[permission.table].push(permission.action);
+		const meta = tableMeta[permission.table];
+		meta.actions.add(permission.action);
+		if ((permission.scope ?? "own") === "all") {
+			meta.hasAll = true;
+		} else {
+			meta.hasOwn = true;
 		}
 	}
+
+	Object.entries(tableMeta).forEach(([table, meta]) => {
+		tableValue[table] = {
+			actions: Array.from(meta.actions),
+			scope: meta.hasAll && !meta.hasOwn ? "all" : "own",
+		};
+	});
 
 	for (const permission of fieldPermissions) {
 		if (!fieldValue[permission.field]) {
@@ -176,11 +196,23 @@ const useResolvedRole = (
 
 const buildPermissionInputs = (data: Record<string, unknown>) => {
 	const tablePermissionsValue =
-		(data.tablePermissions as Record<string, Action[]>) ?? {};
+		(data.tablePermissions as Record<
+			string,
+			TablePermissionValue | Action[]
+		>) ?? {};
 	const fieldPermissionsValue =
 		(data.fieldPermissions as Record<string, Action[]>) ?? {};
 	const tablePermissionsInput = Object.entries(tablePermissionsValue).flatMap(
-		([table, actions]) => actions.map((action) => ({ table, action })),
+		([table, entry]) => {
+			if (Array.isArray(entry)) {
+				return entry.map((action) => ({ table, action, scope: "own" }));
+			}
+			return entry.actions.map((action) => ({
+				table,
+				action,
+				scope: entry.scope ?? "own",
+			}));
+		},
 	);
 	const fieldPermissionsInput = [
 		...Object.entries(fieldPermissionsValue).flatMap(([field, actions]) =>
@@ -254,7 +286,7 @@ const buildRoleFormConfig = ({
 	resolvedRole?: Role;
 	submitting: boolean;
 	permissionSnapshot: {
-		tableValue: Record<string, Action[]>;
+		tableValue: Record<string, TablePermissionValue>;
 		fieldValue: Record<string, Action[]>;
 	};
 	onSubmit: (data: Record<string, unknown>) => void | Promise<void>;
@@ -354,6 +386,20 @@ const renderDialogBody = (
 								tablePermissions: {
 									tables: tableTargets,
 									actionLabels,
+									scopeLabel: t("roleFormModal.permissions.scope.label"),
+									scopeDescription: t(
+										"roleFormModal.permissions.scope.description",
+									),
+									scopeOptions: [
+										{
+											value: "own",
+											label: t("roleFormModal.permissions.scope.own"),
+										},
+										{
+											value: "all",
+											label: t("roleFormModal.permissions.scope.all"),
+										},
+									],
 								},
 								layout: { span: "full" },
 							},

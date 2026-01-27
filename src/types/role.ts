@@ -1,4 +1,4 @@
-import type { Action, Prisma } from "@/generated/prisma";
+import type { Action, PermissionScope, Prisma } from "@/generated/prisma";
 
 export type PrismaRoleWithRelations = Prisma.RoleGetPayload<{
 	include: {
@@ -13,6 +13,7 @@ export type Role = PrismaRoleWithRelations;
 export type RoleTablePermissionInput = {
 	table: string;
 	action: Action;
+	scope?: PermissionScope;
 };
 
 export type RoleFieldPermissionInput = {
