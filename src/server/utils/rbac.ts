@@ -9,11 +9,13 @@ import {
 export type Action = PrismaAction;
 
 type TablePermissionMap = Record<string, Set<Action>>;
+type TableScopeMap = Record<string, Partial<Record<Action, "own" | "all">>>;
 type FieldPermissionMap = Record<string, Record<string, Set<Action>>>;
 
 export interface AccessContext {
 	role: string | null;
 	table: TablePermissionMap;
+	tableScope: TableScopeMap;
 	field: FieldPermissionMap;
 }
 
@@ -28,6 +30,16 @@ const buildTablePerms = (
 	return permissions.reduce<TablePermissionMap>((acc, permission) => {
 		if (!acc[permission.table]) acc[permission.table] = new Set();
 		acc[permission.table].add(permission.action);
+		return acc;
+	}, {});
+};
+
+const buildTableScopes = (
+	permissions: RoleTablePermission[] = [],
+): TableScopeMap => {
+	return permissions.reduce<TableScopeMap>((acc, permission) => {
+		if (!acc[permission.table]) acc[permission.table] = {};
+		acc[permission.table][permission.action] = permission.scope ?? "own";
 		return acc;
 	}, {});
 };
@@ -49,12 +61,13 @@ export const buildAccessContext = (
 	role: RoleWithPermissions | null,
 ): AccessContext => {
 	if (!role) {
-		return { role: null, table: {}, field: {} };
+		return { role: null, table: {}, tableScope: {}, field: {} };
 	}
 
 	return {
 		role: role.name,
 		table: buildTablePerms(role.table_permissions ?? []),
+		tableScope: buildTableScopes(role.table_permissions ?? []),
 		field: buildFieldPerms(role.field_permissions ?? []),
 	};
 };
@@ -67,6 +80,55 @@ export const canTable = (
 	const tablePerms = context.table[table];
 	if (!tablePerms) return false;
 	return tablePerms.has(action);
+};
+
+export const getTableScope = (
+	context: AccessContext,
+	table: string,
+	action: Action,
+): "own" | "all" => {
+	return context.tableScope[table]?.[action] ?? "own";
+};
+
+export const requireAllScope = (
+	context: AccessContext,
+	table: string,
+	action: Action,
+	message?: string,
+): void => {
+	if (getTableScope(context, table, action) !== "all") {
+		throw new Error(
+			message ?? `Global ${action} access required for ${table}.`,
+		);
+	}
+};
+
+export const requireScopeOrUser = (
+	scope: "own" | "all",
+	userId: string | null,
+	message = "User must be authenticated to access this resource.",
+): string | null => {
+	if (scope === "all") return null;
+	if (!userId) {
+		throw new Error(message);
+	}
+	return userId;
+};
+
+export const getScopeUserId = (
+	scope: "own" | "all",
+	userId: string | null,
+): string | null => {
+	if (scope === "all") return null;
+	return userId;
+};
+
+export const createNoAccessWhere = <T extends Record<string, unknown>>(
+	baseWhere?: T,
+): T => {
+	const noAccessWhere = { id: { equals: -1 } } as unknown as T;
+	if (!baseWhere) return noAccessWhere;
+	return { AND: [baseWhere, noAccessWhere] } as unknown as T;
 };
 
 export const canFields = (
