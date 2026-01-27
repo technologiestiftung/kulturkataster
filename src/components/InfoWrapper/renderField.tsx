@@ -35,7 +35,7 @@ const getNestedValue = (
 
 const resolveFieldValue = (
 	field: InfoWrapperFieldConfig,
-	data: Institution,
+	data: Partial<Institution>,
 ) => {
 	if (typeof field.value === "function") {
 		return field.value(data);
@@ -60,7 +60,7 @@ const resolveFieldValue = (
 
 const resolveNewFieldValue = (
 	field: InfoWrapperFieldConfig,
-	data: Institution,
+	data: Partial<Institution>,
 ) => {
 	if (typeof field.newValue === "function") {
 		return field.newValue(data);
@@ -86,7 +86,7 @@ const resolveNewFieldValue = (
 const resolveHref = (
 	fieldConfig: InfoWrapperFieldConfig,
 	value: unknown,
-	data: Institution,
+	data: Partial<Institution>,
 ) => {
 	if (typeof fieldConfig.href === "function") {
 		return fieldConfig.href(data);
@@ -106,13 +106,13 @@ const hasDisplayValue = (value: unknown) => {
 	return true;
 };
 
-const formatAddressValue = (data: Institution) => {
+const formatAddressValue = (data: Partial<Institution>) => {
 	const lines = buildAddressLines(data);
 	return lines.length ? lines.join(", ") : "";
 };
 
 const formatCategoryValue = (
-	data: Institution,
+	data: Partial<Institution>,
 	tEnum: (key: string) => string,
 ) => {
 	const categories = getParentCategories(data);
@@ -147,7 +147,7 @@ const renderLink = (
 	);
 };
 
-const buildAddressLines = (data: Institution) => {
+const buildAddressLines = (data: Partial<Institution>) => {
 	const address = data.address;
 	if (!address) return [];
 	const lines: string[] = [];
@@ -170,7 +170,7 @@ const buildAddressLines = (data: Institution) => {
 	return lines;
 };
 
-const buildMapHref = (data: Institution) => {
+const buildMapHref = (data: Partial<Institution>) => {
 	const coords = getCoordinatesFromAddress(data.address);
 	if (coords) {
 		return `https://www.google.com/maps/search/?api=1&query=${coords[1]},${coords[0]}`;
@@ -185,7 +185,7 @@ function AddressField({
 	data,
 	options,
 }: {
-	data: Institution;
+	data: Partial<Institution>;
 	options?: InfoWrapperFieldConfig["addressOptions"];
 }) {
 	const [copied, setCopied] = useState(false);
@@ -246,7 +246,7 @@ function AddressField({
 
 type RenderFieldContentArgs = {
 	field: InfoWrapperFieldConfig;
-	data: Institution;
+	data: Partial<Institution>;
 	alwaysShow?: boolean;
 	layoutColumns?: 1 | 2;
 };
@@ -257,7 +257,7 @@ const getContent = (
 	value: unknown,
 	resolvedHref: string | undefined,
 	tEnum: (key: string) => string,
-	data: Institution,
+	data: Partial<Institution>,
 ) => {
 	switch (field.type) {
 		case "address":
@@ -517,7 +517,7 @@ const renderFieldContent = (
 	);
 };
 type BuildRenderFieldArgs = {
-	data: Institution;
+	data: Partial<Institution>;
 	config: InfoWrapperConfig;
 };
 

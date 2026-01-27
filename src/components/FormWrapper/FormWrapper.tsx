@@ -136,7 +136,11 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 	const [formError, setFormError] = useState<string | null>(null);
 
 	const updateField = (name: string, value: unknown) => {
-		setFormData((prev) => ({ ...prev, [name]: value }));
+		setFormData((prev) => {
+			const next = { ...prev, [name]: value };
+			config.onChange?.(next);
+			return next;
+		});
 		setTouched((prev) => ({ ...prev, [name]: true }));
 
 		if (errors[name]) {

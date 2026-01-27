@@ -4,7 +4,7 @@ import { Institution } from "@/types";
 import { useTranslation } from "react-i18next";
 
 interface InstitutionAddressProps {
-	institution: Institution;
+	institution: Partial<Institution>;
 }
 
 export function AddressItem({ institution }: InstitutionAddressProps) {

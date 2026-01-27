@@ -21,6 +21,15 @@ import {
 	handleLatLngBlur,
 } from "@/lib/utils/formUtils";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
+import {
+	additionalInfoConfig,
+	contactInfoConfig,
+	facilityInfoConfig,
+	fundingInfoConfig,
+	organizationInfoConfig,
+	statusInfoConfig,
+} from "@/components/Institution";
+import { InfoWrapper } from "@/components/InfoWrapper";
 
 const stepConfigs: StepConfig[] = [
 	{
@@ -118,6 +127,8 @@ function InstitutionModalContent({
 		type: "",
 		description: "",
 		website: "",
+		"address.lat": 52.52,
+		"address.lng": 13.405,
 		street: "",
 		city: "",
 		district: "",
@@ -149,6 +160,9 @@ function InstitutionModalContent({
 			handleFinalSubmit({ ...nextData, address } as InstitutionFormData);
 		}
 	};
+	const handleStepChange = (data: Record<string, unknown>) => {
+		setFormData((prev) => ({ ...prev, ...data }));
+	};
 
 	const handleFinalSubmit = (data: InstitutionFormData) => {
 		console.log("Submitting institution:", data);
@@ -178,6 +192,7 @@ function InstitutionModalContent({
 						name: "name",
 						label: "Institution Name",
 						type: "text",
+						layout: { span: "full" },
 						placeholder: "e.g., Staatliche Kunsthalle",
 						required: true,
 					},
@@ -185,6 +200,7 @@ function InstitutionModalContent({
 						name: "address.map",
 						label: `${fieldLabel("address", "Address")} Map`,
 						type: "addressMap",
+						layout: { span: "full" },
 						addressMap: {
 							latField: "address.lat",
 							lngField: "address.lng",
@@ -192,6 +208,13 @@ function InstitutionModalContent({
 							cityField: "address.city",
 							zipField: "address.zip",
 						},
+					},
+					{
+						name: "address.lng",
+						label: fieldLabel("lng", "Längengrad"),
+						type: "number",
+						layout: { span: "half" },
+						onBlur: onLatLngBlur,
 					},
 					{
 						name: "address.lat",
@@ -224,16 +247,10 @@ function InstitutionModalContent({
 						onBlur: onAddressBlur,
 					},
 					{
-						name: "address.lng",
-						label: fieldLabel("lng", "Längengrad"),
-						type: "number",
-						layout: { span: "half" },
-						onBlur: onLatLngBlur,
-					},
-					{
 						name: "address.address_suffix",
 						label: fieldLabel("address.address_suffix", "Address Suffix"),
 						type: "text",
+						layout: { span: "half" },
 						placeholder: t(
 							"institutionFormModal.form.details.fields.address.address_suffix.placeholder",
 						),
@@ -340,6 +357,7 @@ function InstitutionModalContent({
 			},
 		],
 		initialValues: formData,
+		onChange: handleStepChange,
 		onSubmit: handleStepSubmit,
 		onCancel: handleCancel,
 		submitLabel: "Next",
@@ -390,6 +408,7 @@ function InstitutionModalContent({
 			},
 		],
 		initialValues: formData,
+		onChange: handleStepChange,
 		onSubmit: handleStepSubmit,
 		onCancel: handleCancel,
 		cancelLabel: "Back",
@@ -546,6 +565,7 @@ function InstitutionModalContent({
 			},
 		],
 		initialValues: formData,
+		onChange: handleStepChange,
 		onSubmit: handleStepSubmit,
 		onCancel: handleCancel,
 		cancelLabel: "Back",
@@ -582,26 +602,129 @@ function InstitutionModalContent({
 
 			{currentStepId === "review" ? (
 				<div className="space-y-4">
-					{JSON.stringify(formData)}
-					<AddressItem
-						institution={
-							{
-								...(formData as unknown as Institution),
-								address: formData.address ?? undefined,
-							} as Institution
-						}
-					/>
-					{/* <DynamicInfoBlock
-						institutionData={
-							{
-								name: formData.contactName,
-								email: formData.contactEmail,
-								phone: formData.contactPhone,
-								website: formData.website,
-							} as unknown as Institution
-						}
-						config={{ ...contactInfoConfig, alwaysShow: true }}
-					/> */}
+					<section className="w-full rounded-lg overflow-hidden">
+						<InfoWrapper
+							data={formData}
+							config={{
+								fields: [
+									{
+										type: "section",
+										id: "header",
+										cardVariant: "none",
+										className: "mb-0",
+										edit: {
+											ariaLabel: "Edit",
+											onClick: () => {
+												router.push("/account/institutions");
+											},
+											enabled: true,
+										},
+										fields: [
+											{
+												id: "parent_organization",
+												type: "text",
+												value: "parent_organization",
+											},
+											{
+												id: "name",
+												alwaysShow: true,
+												value: "name",
+												type: "title",
+											},
+											{
+												id: "categories",
+												alwaysShow: true,
+												categoryVariant: "default",
+												type: "category",
+											},
+										],
+									},
+									{
+										id: "utilization_status",
+										alwaysShow: true,
+										label: t("institution.utilizationStatus"),
+										className: "mb-0",
+										type: "status",
+										value: "utilization_status",
+										enumKey: "utilization_status",
+									},
+									{
+										id: "protection_status",
+										alwaysShow: false,
+										label: t("institution.protectionStatus"),
+										type: "status",
+										value: "protection_status",
+										enumKey: "protection_status",
+									},
+									{
+										type: "section",
+										id: "details",
+										layout: {
+											columns: 1,
+										},
+										cardVariant: "none",
+										fields: [
+											{
+												id: "address",
+												alwaysShow: true,
+												type: "address",
+												addressOptions: {
+													showMapLink: false,
+													showCopy: false,
+												},
+											},
+											{
+												type: "section",
+												id: "contact",
+												edit: {
+													ariaLabel: "Edit",
+													onClick: () => {
+														router.push("/account/institutions");
+													},
+													enabled: true,
+												},
+												cardVariant: "tertiary",
+												fields: contactInfoConfig,
+											},
+
+											{
+												type: "section",
+												id: "organization",
+												alwaysShow: false,
+												cardVariant: "tertiary",
+												fields: organizationInfoConfig,
+											},
+											{
+												type: "section",
+												id: "funding",
+												alwaysShow: false,
+												cardVariant: "tertiary",
+												fields: fundingInfoConfig,
+											},
+											{
+												type: "section",
+												id: "facility",
+												cardVariant: "tertiary",
+												fields: facilityInfoConfig,
+											},
+											{
+												type: "section",
+												id: "status",
+												cardVariant: "tertiary",
+												fields: statusInfoConfig,
+											},
+											{
+												type: "section",
+												id: "additional",
+												cardVariant: "tertiary",
+												fields: additionalInfoConfig,
+											},
+										],
+									},
+								],
+							}}
+						/>
+					</section>
 				</div>
 			) : (
 				<FormWrapper config={getCurrentFormConfig()} />

@@ -17,7 +17,7 @@ export function InfoWrapper({
 	data,
 	config,
 }: {
-	data: Institution;
+	data: Partial<Institution>;
 	config: InfoWrapperConfig;
 }) {
 	const renderField = buildRenderField({ data, config });
@@ -71,6 +71,7 @@ export function InfoWrapper({
 						type="button"
 						variant="icon"
 						size="icon"
+						className="bg-background absolute top-2 right-2"
 						onClick={() => field.edit?.onClick?.(data)}
 						aria-label={field.edit?.ariaLabel ?? "Edit section"}
 					>
@@ -112,7 +113,7 @@ export function InfoWrapper({
 				const showEditButtonInBody = showEditButton && !useAccordion;
 				const sectionHeader =
 					showTitleInBody || showDescriptionInBody || showEditButtonInBody ? (
-						<div className="flex items-start justify-between gap-4">
+						<div className="flex items-start relative justify-between gap-4">
 							<div>
 								{showTitleInBody && (
 									<h3 className="text-lg font-semibold">{field.title}</h3>

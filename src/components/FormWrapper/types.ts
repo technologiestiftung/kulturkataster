@@ -226,6 +226,7 @@ export interface FormWrapperConfig {
 
 	// Form-level settings
 	onSubmit: (data: Record<string, unknown>) => void | Promise<void>;
+	onChange?: (data: Record<string, unknown>) => void;
 	submitLabel?: string;
 	submitDisabled?: boolean;
 	showCancel?: boolean;
