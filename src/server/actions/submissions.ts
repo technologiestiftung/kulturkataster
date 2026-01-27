@@ -60,8 +60,7 @@ export async function getSubmissions(filter: SubmissionFilter = {}) {
 		entity_id: filter.entityId ?? undefined,
 		status: filter.status,
 		type: filter.type,
-		created_by:
-			ownerId ? ownerId : (filter.createdBy ?? undefined),
+		created_by: ownerId ? ownerId : (filter.createdBy ?? undefined),
 		reviewed_by: filter.reviewedBy ?? undefined,
 	};
 
