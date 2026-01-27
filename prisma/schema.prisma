@@ -74,6 +74,8 @@ enum UserStatus {
   active
   inactive
   approval_pending
+  invited
+  banned
 }
 
 enum CategoryStatus {
@@ -82,11 +84,34 @@ enum CategoryStatus {
   inactive
 }
 
+enum SubmissionEntityType {
+  institution
+  category
+}
+
+enum SubmissionStatus {
+  draft
+  approval_pending
+  approved
+  rejected
+  needs_changes
+}
+
+enum SubmissionType {
+  create
+  update
+}
+
 enum Action {
   read
   create
   update
   delete
+}
+
+enum PermissionScope {
+  own
+  all
 }
 
 
@@ -162,6 +187,7 @@ model Institution {
   shared_use_equipment    String?
   shared_use_audience     String?
   shared_use_availability String?
+  shared_use_contact_person String?
   accessibility           String?
   cost                    String?
   established_since       DateTime?
@@ -179,7 +205,6 @@ model Institution {
 
   address_id                   Int?
   contact_person_id            Int?
-  shared_use_contact_person_id String?
 
   address                   Address?       @relation(fields: [address_id], references: [id])
   contact_person            ContactPerson? @relation("InstitutionContact", fields: [contact_person_id], references: [id])
@@ -256,10 +281,16 @@ model Tag {
 model User {
   id                 String     @id @db.Uuid
   email              String     @unique
+  first_name         String?
+  last_name          String?
+  phone              String?
+  avatar_url         String?
+  notes              String?
+  account_type       String?
   role_id            Int?
   status             UserStatus @default(approval_pending)
   compliance         Boolean    @default(false)
-  institution_claims String?
+  institution_claims String[]
   created_at         DateTime   @default(now())
   updated_at         DateTime   @updatedAt
 
@@ -268,6 +299,8 @@ model User {
   institutions         Institution[]
   created_institutions Institution[] @relation("InstitutionCreator")
   updated_institutions Institution[] @relation("InstitutionUpdater")
+  submissions         Submission[] @relation("SubmissionCreator")
+  reviewed_submissions Submission[] @relation("SubmissionReviewer")
 
   @@index([email])
   @@index([role_id])
@@ -295,6 +328,7 @@ model RoleTablePermission {
   role_id Int
   table   String
   action  Action
+  scope   PermissionScope @default(own)
 
   role Role @relation(fields: [role_id], references: [id], onDelete: Cascade)
 
@@ -331,4 +365,32 @@ model Group {
   institutions Institution[]
 
   @@map("group")
+}
+
+model Submission {
+  id           Int                  @id @default(autoincrement())
+  entity_type  SubmissionEntityType
+  entity_id    Int?
+  status       SubmissionStatus     @default(draft)
+  type         SubmissionType
+  data         Json
+  diff         Json?
+  meta         Json?
+  review_notes String?
+  created_by   String?              @db.Uuid
+  reviewed_by  String?              @db.Uuid
+  created_at   DateTime             @default(now())
+  updated_at   DateTime             @updatedAt
+  reviewed_at  DateTime?
+
+  creator  User? @relation("SubmissionCreator", fields: [created_by], references: [id])
+  reviewer User? @relation("SubmissionReviewer", fields: [reviewed_by], references: [id])
+
+  @@index([entity_type])
+  @@index([entity_id])
+  @@index([status])
+  @@index([type])
+  @@index([created_by])
+  @@index([reviewed_by])
+  @@map("submission")
 }
