@@ -24,6 +24,7 @@ export const roleRepo = {
 							create: data.tablePermissions.map((permission) => ({
 								table: permission.table,
 								action: permission.action,
+								scope: permission.scope ?? "own",
 							})),
 						}
 					: undefined,
@@ -51,6 +52,7 @@ export const roleRepo = {
 							create: data.tablePermissions.map((permission) => ({
 								table: permission.table,
 								action: permission.action,
+								scope: permission.scope ?? "own",
 							})),
 						}
 					: undefined,

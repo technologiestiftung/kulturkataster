@@ -72,6 +72,15 @@ type AddressBlurOptions = {
 	lngKey?: string;
 };
 
+type LatLngBlurOptions = {
+	latKey?: string;
+	lngKey?: string;
+	streetLineKey?: string;
+	zipKey?: string;
+	cityKey?: string;
+	neighbourhoodKey?: string;
+};
+
 const handleAddressBlur = (
 	addressGeocodeState: React.MutableRefObject<{
 		lastQuery: string;
@@ -125,6 +134,79 @@ const handleAddressBlur = (
 			options.cityKey,
 			options.latKey,
 			options.lngKey,
+			options.streetLineKey,
+			options.zipKey,
+		],
+	);
+
+const handleLatLngBlur = (
+	latLngGeocodeState: React.MutableRefObject<{
+		lastQuery: string;
+		inflight: boolean;
+	}>,
+	reverseGeocode: (
+		lat: number,
+		lng: number,
+	) => Promise<{
+		street?: string | null;
+		streetNumber?: string | null;
+		city?: string | null;
+		zipcode?: string | null;
+		neighbourhood?: string | null;
+	} | null>,
+	options: LatLngBlurOptions = {},
+) =>
+	useCallback(
+		async (
+			_value: unknown,
+			formData: Record<string, unknown>,
+			updateField: (name: string, value: unknown) => void,
+		) => {
+			const lat = toOptionalNumber(formData[options.latKey ?? "address.lat"]);
+			const lng = toOptionalNumber(formData[options.lngKey ?? "address.lng"]);
+			if (lat === null || lng === null) return;
+			const query = `${lat},${lng}`;
+			if (latLngGeocodeState.current.inflight) return;
+			if (latLngGeocodeState.current.lastQuery === query) return;
+
+			latLngGeocodeState.current.inflight = true;
+			try {
+				const result = await reverseGeocode(lat, lng);
+				if (result) {
+					const streetLineKey = options.streetLineKey ?? "address.streetLine";
+					const cityKey = options.cityKey ?? "address.city";
+					const zipKey = options.zipKey ?? "address.zip";
+					const neighbourhoodKey =
+						options.neighbourhoodKey ?? "address.neighbourhood";
+					const streetLine = buildStreetLine(
+						result.street ?? undefined,
+						result.streetNumber ?? undefined,
+					);
+					if (streetLine) {
+						updateField(streetLineKey, streetLine);
+					}
+					if (result.city !== null) {
+						updateField(cityKey, result.city);
+					}
+					if (result.zipcode !== null) {
+						updateField(zipKey, result.zipcode);
+					}
+					if (result.neighbourhood !== null) {
+						updateField(neighbourhoodKey, result.neighbourhood);
+					}
+				}
+				latLngGeocodeState.current.lastQuery = query;
+			} finally {
+				latLngGeocodeState.current.inflight = false;
+			}
+		},
+		[
+			latLngGeocodeState,
+			reverseGeocode,
+			options.cityKey,
+			options.latKey,
+			options.lngKey,
+			options.neighbourhoodKey,
 			options.streetLineKey,
 			options.zipKey,
 		],
@@ -208,6 +290,7 @@ const buildAddressFromFormData = (
 export {
 	getSubmitLabel,
 	handleAddressBlur,
+	handleLatLngBlur,
 	toNumberArray,
 	toOptionalNumber,
 	toOptionalText,

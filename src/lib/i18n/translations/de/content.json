@@ -1160,6 +1160,12 @@
 				"title": "Tabellenberechtigungen",
 				"description": "Legen Sie fest, welche Aktionen diese Rolle pro Tabelle ausführen darf."
 			},
+			"scope": {
+				"label": "Bandbreite",
+				"description": "Eigene: nur eigene Datensätze. Alle: alle Datensätze.",
+				"own": "Eigene",
+				"all": "Alle"
+			},
 			"tables": {
 				"institution": "Institutionen",
 				"user": "Benutzer*innen",

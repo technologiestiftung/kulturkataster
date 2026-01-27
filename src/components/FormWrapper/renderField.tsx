@@ -10,6 +10,7 @@ import {
 	Select,
 	SelectContent,
 	SelectItem,
+	SelectSeparator,
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
@@ -21,6 +22,7 @@ import {
 } from "@/components/ui/accordion";
 import { SectionWrapper } from "@/components/shared/SectionWrapper";
 import {
+	getGridClass,
 	getResponsiveGridClass,
 	getSpanClass,
 } from "@/components/shared/sectionLayout";
@@ -34,16 +36,50 @@ import type {
 	FormWrapperFieldConfig,
 	FormWrapperConfig,
 	PermissionAction,
+	PermissionScope,
+	TablePermissionValue,
 } from "./types";
 import { AddressMapField } from "./AddressMapField";
 import { defaultFilterState } from "./constants";
 
-const getGridClass = (field: FormWrapperFieldConfig, gridColumns?: 1 | 2) =>
-	field.layout?.span === "half" && gridColumns === 2
-		? "col-span-1"
-		: "col-span-2";
+const normalizeTablePermissionValue = (
+	currentValue: Record<string, TablePermissionValue | PermissionAction[]>,
+): Record<string, TablePermissionValue> => {
+	const nextValue: Record<string, TablePermissionValue> = {};
+	Object.entries(currentValue).forEach(([key, value]) => {
+		if (Array.isArray(value)) {
+			nextValue[key] = { actions: value, scope: "own" };
+			return;
+		}
+		nextValue[key] = { actions: [...value.actions], scope: value.scope };
+	});
+	return nextValue;
+};
 
-const togglePermissionValue = (
+const toggleTablePermissionValue = (
+	currentValue: Record<string, TablePermissionValue | PermissionAction[]>,
+	key: string,
+	action: PermissionAction,
+	defaultScope: PermissionScope = "own",
+) => {
+	const nextValue = normalizeTablePermissionValue(currentValue);
+	const current = nextValue[key] ?? { actions: [], scope: defaultScope };
+	const actions = new Set(current.actions);
+	if (actions.has(action)) {
+		actions.delete(action);
+	} else {
+		actions.add(action);
+	}
+	const nextActions = Array.from(actions);
+	if (nextActions.length === 0) {
+		delete nextValue[key];
+	} else {
+		nextValue[key] = { actions: nextActions, scope: current.scope };
+	}
+	return nextValue;
+};
+
+const toggleFieldPermissionValue = (
 	currentValue: Record<string, PermissionAction[]>,
 	key: string,
 	action: PermissionAction,
@@ -62,6 +98,17 @@ const togglePermissionValue = (
 		nextValue[key] = Array.from(currentActions);
 	}
 
+	return nextValue;
+};
+
+const setTablePermissionScope = (
+	currentValue: Record<string, TablePermissionValue | PermissionAction[]>,
+	key: string,
+	scope: PermissionScope,
+) => {
+	const nextValue = normalizeTablePermissionValue(currentValue);
+	const current = nextValue[key] ?? { actions: [], scope };
+	nextValue[key] = { actions: [...current.actions], scope };
 	return nextValue;
 };
 
@@ -111,7 +158,6 @@ const renderFieldContent = (
 		formData,
 		errors,
 		touched,
-		config,
 		updateField,
 		handleFieldBlur,
 	}: RenderFieldContentArgs,
@@ -120,7 +166,7 @@ const renderFieldContent = (
 	const value = formData[field.name];
 	const error = touched[field.name] ? errors[field.name] : undefined;
 
-	const gridClass = getGridClass(field, config.layout?.columns);
+	const gridClass = getGridClass(field);
 
 	return (
 		<div
@@ -193,11 +239,14 @@ const renderFieldContent = (
 					<SelectTrigger id={field.name}>
 						<SelectValue placeholder={field.placeholder || "Select..."} />
 					</SelectTrigger>
-					<SelectContent>
-						{field.options?.map((option) => (
-							<SelectItem key={option.value} value={option.value}>
-								{option.label}
-							</SelectItem>
+					<SelectContent className="px-3">
+						{field.options?.map((option, index) => (
+							<>
+								<SelectItem value={option.value}>{option.label}</SelectItem>
+								{index < (field.options?.length || 0) - 1 && (
+									<SelectSeparator />
+								)}
+							</>
 						))}
 					</SelectContent>
 				</Select>
@@ -391,45 +440,124 @@ const renderFieldContent = (
 								key={table.key}
 								className="rounded-sm border border-input bg-background p-4"
 							>
-								<p className="body3 ">{table.label}</p>
-								<div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
-									{(
-										field.tablePermissions?.actions ?? [
-											"read",
-											"create",
-											"update",
-											"delete",
-										]
-									).map((action) => {
-										const checkboxId = `${field.name}-${table.key}-${action}`;
-										const permissionValue =
-											(value as Record<string, PermissionAction[]>) ?? {};
-										const isChecked =
-											permissionValue[table.key]?.includes(action);
-										return (
-											<div key={action} className="flex items-center gap-2">
-												<Checkbox
-													id={checkboxId}
-													checked={isChecked}
-													onCheckedChange={() =>
-														updateField(
-															field.name,
-															togglePermissionValue(
-																permissionValue,
-																table.key,
-																action,
-															),
-														)
-													}
-													disabled={field.disabled}
-												/>
-												<Label htmlFor={checkboxId} className="capitalize">
-													{field.tablePermissions?.actionLabels?.[action]}
-												</Label>
+								{(() => {
+									const permissionValue =
+										(value as Record<
+											string,
+											TablePermissionValue | PermissionAction[]
+										>) ?? {};
+									const normalizedValue =
+										normalizeTablePermissionValue(permissionValue);
+									const currentTable = normalizedValue[table.key];
+									const actions = field.tablePermissions?.actions ?? [
+										"read",
+										"create",
+										"update",
+										"delete",
+									];
+									return (
+										<>
+											<p className="body3 ">{table.label}</p>
+											<div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
+												{actions.map((action) => {
+													const checkboxId = `${field.name}-${table.key}-${action}`;
+													const isChecked = Boolean(
+														currentTable?.actions?.includes(action),
+													);
+													return (
+														<div
+															key={action}
+															className="flex items-center gap-2"
+														>
+															<Checkbox
+																id={checkboxId}
+																checked={isChecked}
+																onCheckedChange={() =>
+																	updateField(
+																		field.name,
+																		toggleTablePermissionValue(
+																			permissionValue,
+																			table.key,
+																			action,
+																		),
+																	)
+																}
+																disabled={field.disabled}
+															/>
+															<Label
+																htmlFor={checkboxId}
+																className="capitalize"
+															>
+																{field.tablePermissions?.actionLabels?.[action]}
+															</Label>
+														</div>
+													);
+												})}
 											</div>
-										);
-									})}
-								</div>
+											{field.tablePermissions?.scopeOptions && (
+												<div className="mt-4 flex flex-wrap items-center gap-2 justify-end">
+													<Label
+														htmlFor={`${field.name}-${table.key}-scope`}
+														className="body3 text-neutral-80"
+													>
+														{field.tablePermissions.scopeLabel}
+													</Label>
+													{field.tablePermissions.scopeDescription && (
+														<span
+															id={`${field.name}-${table.key}-scope-description`}
+															className="body3 text-neutral-60"
+														>
+															{field.tablePermissions.scopeDescription}
+														</span>
+													)}
+													<Select
+														value={currentTable?.scope ?? "own"}
+														onValueChange={(nextScope) =>
+															updateField(
+																field.name,
+																setTablePermissionScope(
+																	permissionValue,
+																	table.key,
+																	nextScope as PermissionScope,
+																),
+															)
+														}
+														disabled={
+															field.disabled ||
+															!(currentTable?.actions?.length ?? 0)
+														}
+													>
+														<SelectTrigger
+															id={`${field.name}-${table.key}-scope`}
+															aria-describedby={
+																field.tablePermissions.scopeDescription
+																	? `${field.name}-${table.key}-scope-description`
+																	: undefined
+															}
+															className="h-8 w-[140px]"
+														>
+															<SelectValue
+																placeholder={field.tablePermissions?.scopeLabel}
+															/>
+														</SelectTrigger>
+														<SelectContent>
+															{field.tablePermissions.scopeOptions.map(
+																(option) => (
+																	<SelectItem
+																		key={option.value}
+																		value={option.value}
+																	>
+																		{option.label}
+																	</SelectItem>
+																),
+															)}
+														</SelectContent>
+													</Select>
+												</div>
+											)}
+										</>
+									);
+								})()}
 							</div>
 						))}
 					</div>
@@ -508,7 +636,7 @@ const renderFieldContent = (
 																				onCheckedChange={() =>
 																					updateField(
 																						field.name,
-																						togglePermissionValue(
+																						toggleFieldPermissionValue(
 																							permissionValue,
 																							fieldItem.key,
 																							action,
@@ -622,7 +750,7 @@ export const buildRenderField = ({
 
 		if (!field.collapsible) {
 			return (
-				<div key={field.name} className="contents">
+				<>
 					{renderFieldContent({
 						field,
 						formData,
@@ -632,7 +760,7 @@ export const buildRenderField = ({
 						updateField,
 						handleFieldBlur,
 					})}
-				</div>
+				</>
 			);
 		}
 
@@ -642,7 +770,7 @@ export const buildRenderField = ({
 		const accordionDescription = field.accordionDescription;
 		const accordionVariant = field.accordionVariant ?? "default";
 
-		const gridClass = getGridClass(field, config.layout?.columns);
+		const gridClass = getGridClass(field);
 
 		return (
 			<div key={field.name} className={cn(gridClass, field.className)}>

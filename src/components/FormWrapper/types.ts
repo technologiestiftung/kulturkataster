@@ -29,6 +29,12 @@ export type FieldType =
 	| "section";
 
 export type PermissionAction = "read" | "create" | "update" | "delete";
+export type PermissionScope = "own" | "all";
+
+export type TablePermissionValue = {
+	actions: PermissionAction[];
+	scope: PermissionScope;
+};
 
 export interface SelectOption {
 	label: string;
@@ -128,6 +134,9 @@ type FormWrapperNonSectionFieldConfig = {
 		tables: { key: string; label: string }[];
 		actions?: PermissionAction[];
 		actionLabels?: Partial<Record<PermissionAction, string>>;
+		scopeOptions?: { value: PermissionScope; label: string }[];
+		scopeLabel?: string;
+		scopeDescription?: string;
 	};
 	fieldPermissions?: {
 		sections: {

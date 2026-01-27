@@ -14,10 +14,11 @@ import type { Institution } from "@/types";
 import { AddressItem } from "@/components/InfoWrapper/AddressItem";
 import { Modal } from "@/components/Modals/Modal";
 import { useTranslation } from "react-i18next";
-import { geocodeAddress } from "@/server/actions/maptiler";
+import { geocodeAddress, reverseGeocode } from "@/server/actions/maptiler";
 import {
 	buildAddressFromFormData,
 	handleAddressBlur,
+	handleLatLngBlur,
 } from "@/lib/utils/formUtils";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 
@@ -130,7 +131,12 @@ function InstitutionModalContent({
 		lastQuery: "",
 		inflight: false,
 	});
+	const latLngGeocodeState = useRef({
+		lastQuery: "",
+		inflight: false,
+	});
 	const onAddressBlur = handleAddressBlur(addressGeocodeState, geocodeAddress);
+	const onLatLngBlur = handleLatLngBlur(latLngGeocodeState, reverseGeocode);
 
 	const handleStepSubmit = (data: Record<string, unknown>) => {
 		const nextData = { ...formData, ...data };
@@ -166,7 +172,7 @@ function InstitutionModalContent({
 				name: "basicSection",
 				type: "section",
 				title: "Basic Information",
-				layout: { span: "full" },
+				layout: { columns: 2 },
 				fields: [
 					{
 						name: "name",
@@ -186,6 +192,13 @@ function InstitutionModalContent({
 							cityField: "address.city",
 							zipField: "address.zip",
 						},
+					},
+					{
+						name: "address.lat",
+						label: fieldLabel("lat", "Breitengrad"),
+						type: "number",
+						layout: { span: "half" },
+						onBlur: onLatLngBlur,
 					},
 					{
 						name: "address.streetLine",
@@ -209,6 +222,13 @@ function InstitutionModalContent({
 							"institutionFormModal.form.details.fields.address.zip.placeholder",
 						),
 						onBlur: onAddressBlur,
+					},
+					{
+						name: "address.lng",
+						label: fieldLabel("lng", "Längengrad"),
+						type: "number",
+						layout: { span: "half" },
+						onBlur: onLatLngBlur,
 					},
 					{
 						name: "address.address_suffix",

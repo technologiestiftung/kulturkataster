@@ -12,6 +12,7 @@ import {
 	buildStreetLine,
 	getSubmitLabel,
 	handleAddressBlur,
+	handleLatLngBlur,
 	splitStreetLine,
 	toOptionalText,
 	toOptionalNumber,
@@ -21,7 +22,7 @@ import {
 	createInstitution,
 	updateInstitution,
 } from "@/server/actions/institutions";
-import { geocodeAddress } from "@/server/actions/maptiler";
+import { geocodeAddress, reverseGeocode } from "@/server/actions/maptiler";
 import type { Category, FilterState } from "@/types";
 import type { Institution } from "@/types/institution";
 import { useRouter } from "next/navigation";
@@ -232,6 +233,11 @@ type InstitutionFormConfigArgs = {
 		formData: Record<string, unknown>,
 		updateField: (name: string, value: unknown) => void,
 	) => void | Promise<void>;
+	onLatLngBlur?: (
+		value: unknown,
+		formData: Record<string, unknown>,
+		updateField: (name: string, value: unknown) => void,
+	) => void | Promise<void>;
 };
 
 const buildInstitutionFormConfig = ({
@@ -244,6 +250,7 @@ const buildInstitutionFormConfig = ({
 	onSubmit,
 	onCancel,
 	onAddressBlur,
+	onLatLngBlur,
 }: InstitutionFormConfigArgs): FormWrapperConfig => {
 	const fieldLabel = (key: string, fallback: string) => {
 		const translated = tEnum(`field_names.${key}`);
@@ -336,6 +343,20 @@ const buildInstitutionFormConfig = ({
 							"institutionFormModal.form.details.fields.address.streetLine.placeholder",
 						),
 						onBlur: onAddressBlur,
+					},
+					{
+						name: "address.lat",
+						label: fieldLabel("lat", "Breitengrad"),
+						type: "number",
+						layout: { span: "half" },
+						onBlur: onLatLngBlur,
+					},
+					{
+						name: "address.lng",
+						label: fieldLabel("lng", "Längengrad"),
+						type: "number",
+						layout: { span: "half" },
+						onBlur: onLatLngBlur,
 					},
 					{
 						name: "address.zip",
@@ -451,6 +472,10 @@ export function InstitutionFormModal({
 		lastQuery: "",
 		inflight: false,
 	});
+	const latLngGeocodeState = useRef({
+		lastQuery: "",
+		inflight: false,
+	});
 
 	const categoryOptions = useMemo(
 		() =>
@@ -501,6 +526,7 @@ export function InstitutionFormModal({
 	);
 
 	const onAddressBlur = handleAddressBlur(addressGeocodeState, geocodeAddress);
+	const onLatLngBlur = handleLatLngBlur(latLngGeocodeState, reverseGeocode);
 
 	const formConfig = useMemo(
 		() =>
@@ -514,6 +540,7 @@ export function InstitutionFormModal({
 				onSubmit: handleSubmit,
 				onCancel: handleClose,
 				onAddressBlur,
+				onLatLngBlur,
 			}),
 		[
 			mode,
@@ -526,6 +553,7 @@ export function InstitutionFormModal({
 			handleSubmit,
 			handleClose,
 			onAddressBlur,
+			onLatLngBlur,
 		],
 	);
 
