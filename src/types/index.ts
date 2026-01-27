@@ -2,3 +2,8 @@ export * from "./i18n";
 export * from "./institution";
 export * from "./map";
 export * from "./typeGuards";
+export * from "./category";
+export * from "./user";
+export * from "./role";
+export * from "./group";
+export * from "./submission";
