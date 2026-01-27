@@ -48,8 +48,10 @@ export const institutionRepo = {
 			data,
 			include: institutionInclude,
 		}),
-	updateWhere: (where: Prisma.InstitutionWhereInput, data: InstitutionUpdateInput) =>
-		prisma.institution.updateMany({ where, data }),
+	updateWhere: (
+		where: Prisma.InstitutionWhereInput,
+		data: InstitutionUpdateInput,
+	) => prisma.institution.updateMany({ where, data }),
 	remove: (id: number) => prisma.institution.delete({ where: { id } }),
 	removeWhere: (where: Prisma.InstitutionWhereInput) =>
 		prisma.institution.deleteMany({ where }),

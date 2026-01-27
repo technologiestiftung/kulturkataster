@@ -15,8 +15,10 @@ export const submissionRepo = {
 		prisma.submission.create({ data }),
 	update: (id: number, data: Prisma.SubmissionUpdateInput) =>
 		prisma.submission.update({ where: { id }, data }),
-	updateWhere: (where: Prisma.SubmissionWhereInput, data: Prisma.SubmissionUpdateInput) =>
-		prisma.submission.updateMany({ where, data }),
+	updateWhere: (
+		where: Prisma.SubmissionWhereInput,
+		data: Prisma.SubmissionUpdateInput,
+	) => prisma.submission.updateMany({ where, data }),
 	remove: (id: number) => prisma.submission.delete({ where: { id } }),
 	removeWhere: (where: Prisma.SubmissionWhereInput) =>
 		prisma.submission.deleteMany({ where }),
