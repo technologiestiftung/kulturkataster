@@ -109,6 +109,11 @@ enum Action {
   delete
 }
 
+enum PermissionScope {
+  own
+  all
+}
+
 
 // ============================================
 // CORE MODELS
@@ -323,6 +328,7 @@ model RoleTablePermission {
   role_id Int
   table   String
   action  Action
+  scope   PermissionScope @default(own)
 
   role Role @relation(fields: [role_id], references: [id], onDelete: Cascade)
 
