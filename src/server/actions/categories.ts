@@ -1,7 +1,11 @@
 "use server";
 
 import { categoryRepo } from "@/server/data/categoryRepo";
-import { authorizeTable, getAccessContextForUser } from "@/server/utils/rbac";
+import {
+	authorizeTable,
+	getAccessContextForUser,
+	requireAllScope,
+} from "@/server/utils/rbac";
 import { getCurrentUserId } from "@/server/auth/getCurrentUser";
 import { CategoryStatus } from "@/generated/prisma";
 import type { Category } from "@/types";
@@ -27,7 +31,7 @@ type CategoryUpdateInput = {
 export async function getCategories() {
 	const currentUserId = await getCurrentUserId();
 	const ctx = await getAccessContextForUser(currentUserId);
-	authorizeTable(ctx, "category", "update");
+	authorizeTable(ctx, "category", "read");
 
 	return categoryRepo.listAll();
 }
@@ -45,6 +49,7 @@ export async function createCategory(input: CategoryInput) {
 	const currentUserId = await getCurrentUserId();
 	const ctx = await getAccessContextForUser(currentUserId);
 	authorizeTable(ctx, "category", "create");
+	requireAllScope(ctx, "category", "create");
 
 	return categoryRepo.create({
 		key: input.key,
@@ -63,6 +68,7 @@ export async function updateCategory(input: CategoryUpdateInput) {
 	const currentUserId = await getCurrentUserId();
 	const ctx = await getAccessContextForUser(currentUserId);
 	authorizeTable(ctx, "category", "update");
+	requireAllScope(ctx, "category", "update");
 
 	if (input.parentCategoryId && input.parentCategoryId === input.id) {
 		throw new Error("Category cannot be its own parent.");
@@ -85,6 +91,8 @@ export async function deleteCategory(id: number) {
 	const currentUserId = await getCurrentUserId();
 	const ctx = await getAccessContextForUser(currentUserId);
 	authorizeTable(ctx, "category", "delete");
+	requireAllScope(ctx, "category", "delete");
 
-	return categoryRepo.remove(id);
+	await categoryRepo.remove(id);
+	return { id };
 }

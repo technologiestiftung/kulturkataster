@@ -25,6 +25,10 @@ export const institutionRepo = {
 		}),
 	listWithSelect: (select: Prisma.InstitutionSelect) =>
 		prisma.institution.findMany({ select }),
+	listWithSelectWhere: (
+		where: Prisma.InstitutionWhereInput,
+		select: Prisma.InstitutionSelect,
+	) => prisma.institution.findMany({ where, select }),
 	listForUser: (userId: string) =>
 		prisma.institution.findMany({
 			where: {
@@ -44,7 +48,13 @@ export const institutionRepo = {
 			data,
 			include: institutionInclude,
 		}),
+	updateWhere: (where: Prisma.InstitutionWhereInput, data: InstitutionUpdateInput) =>
+		prisma.institution.updateMany({ where, data }),
 	remove: (id: number) => prisma.institution.delete({ where: { id } }),
+	removeWhere: (where: Prisma.InstitutionWhereInput) =>
+		prisma.institution.deleteMany({ where }),
+	findFirstWithInclude: (where: Prisma.InstitutionWhereInput) =>
+		prisma.institution.findFirst({ where, include: institutionInclude }),
 	search: (where: InstitutionWhereInput, take = 50) =>
 		prisma.institution.findMany({
 			where,
