@@ -26,6 +26,17 @@ export function RegisterForm() {
 		const lastName = String(data.lastName ?? "");
 		const accountType = String(data.accountType ?? "");
 
+		const organizationName = String(data.organizationName ?? "");
+		const organizationPosition = String(data.organizationPosition ?? "");
+		const organizationPhone = String(data.organizationPhone ?? "");
+		const districtName = String(data.districtName ?? "");
+		const districtOffice = String(data.districtOffice ?? "");
+		const districtPosition = String(data.districtPosition ?? "");
+		const districtPhone = String(data.districtPhone ?? "");
+		const administrationName = String(data.administrationName ?? "");
+		const administrationPosition = String(data.administrationPosition ?? "");
+		const administrationPhone = String(data.administrationPhone ?? "");
+
 		setIsLoading(true);
 		setErrorMessage(null);
 		setSuccessMessage(null);
@@ -37,6 +48,17 @@ export function RegisterForm() {
 				firstName: name,
 				lastName,
 				accountType,
+				// Pass account-type-specific fields
+				organizationName,
+				organizationPosition,
+				organizationPhone,
+				districtName,
+				districtOffice,
+				districtPosition,
+				districtPhone,
+				administrationName,
+				administrationPosition,
+				administrationPhone,
 			});
 			if (!result.ok) {
 				setErrorMessage(result.error ?? t("auth.register.errorFallback"));
