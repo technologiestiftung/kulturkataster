@@ -9,10 +9,13 @@ import { FormWrapper } from "@/components/FormWrapper";
 import type { FormWrapperConfig } from "@/components/FormWrapper";
 import { useAccountStore } from "@/lib/store/accountStore";
 import { createRole, getRoleById, updateRole } from "@/server/actions/roles";
-import type { Role } from "@/types/role";
+import type { Role, RoleTablePermissionInput } from "@/types/role";
 import { INSTITUTION_PERMISSION_FIELDS } from "@/types/institution";
 import type { Action } from "@/generated/prisma";
-import type { TablePermissionValue } from "@/components/FormWrapper/types";
+import type {
+	PermissionScope,
+	TablePermissionValue,
+} from "@/components/FormWrapper/types";
 import { getSubmitLabel, toOptionalText } from "@/lib/utils/formUtils";
 
 type RoleFormModalProps = {
@@ -202,18 +205,29 @@ const buildPermissionInputs = (data: Record<string, unknown>) => {
 		>) ?? {};
 	const fieldPermissionsValue =
 		(data.fieldPermissions as Record<string, Action[]>) ?? {};
-	const tablePermissionsInput = Object.entries(tablePermissionsValue).flatMap(
-		([table, entry]) => {
-			if (Array.isArray(entry)) {
-				return entry.map((action) => ({ table, action, scope: "own" }));
-			}
-			return entry.actions.map((action) => ({
+	const normalizeScope = (value: unknown): PermissionScope =>
+		value === "all" ? "all" : "own";
+	const tablePermissionsInput: RoleTablePermissionInput[] = [];
+	const defaultScope: PermissionScope = "own";
+	Object.entries(tablePermissionsValue).forEach(([table, entry]) => {
+		if (Array.isArray(entry)) {
+			entry.forEach((action) => {
+				tablePermissionsInput.push({
+					table,
+					action,
+					scope: defaultScope,
+				});
+			});
+			return;
+		}
+		entry.actions.forEach((action) => {
+			tablePermissionsInput.push({
 				table,
 				action,
-				scope: entry.scope ?? "own",
-			}));
-		},
-	);
+				scope: normalizeScope(entry.scope),
+			});
+		});
+	});
 	const fieldPermissionsInput = [
 		...Object.entries(fieldPermissionsValue).flatMap(([field, actions]) =>
 			actions.map((action) => ({
