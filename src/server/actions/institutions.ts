@@ -5,11 +5,13 @@ import {
 	authorizeFields,
 	authorizeTable,
 	getAccessContextForUser,
+	getTableScope,
 } from "@/server/utils/rbac";
 import { getCurrentUserId } from "@/server/auth/getCurrentUser";
 import { institutionRepo } from "@/server/data/institutionRepo";
 import { buildInstitutionSearchWhere } from "@/server/logic/institutionSearch";
 import { buildInstitutionSelect } from "@/server/logic/institutionSelect";
+import { buildInstitutionScopedWhere } from "@/server/logic/institutionAccess";
 import { buildInstitutionPermissionFields } from "@/lib/utils/institutionPermissionUtils";
 import { revalidateAccount } from "../utils/actionsUtils";
 
@@ -17,10 +19,15 @@ export async function getInstitutions() {
 	const currentUserId = await getCurrentUserId();
 	const ctx = await getAccessContextForUser(currentUserId);
 	authorizeTable(ctx, "institution", "read");
+	const scope = getTableScope(ctx, "institution", "read");
 
 	const select = buildInstitutionSelect(ctx);
 	if (!select) return [];
-	return institutionRepo.listWithSelect(select);
+	const where = buildInstitutionScopedWhere(scope, currentUserId);
+	if (!where && scope !== "all") return [];
+	return where
+		? institutionRepo.listWithSelectWhere(where, select)
+		: institutionRepo.listWithSelect(select);
 }
 
 export async function getMyInstitutions() {
@@ -140,11 +147,12 @@ export async function updateInstitution(input: InstitutionUpdateForm) {
 	const ctx = await getAccessContextForUser(currentUserId);
 	const { fields } = buildInstitutionFieldList(input);
 	authorizeTable(ctx, "institution", "update");
+	const scope = getTableScope(ctx, "institution", "update");
 	if (fields.length > 0) {
 		authorizeFields(ctx, "institution", fields, "update");
 	}
 
-	const institution = await institutionRepo.update(input.id, {
+	const data = {
 		name: input.name,
 		website: input.website ?? undefined,
 		phone: input.phone ?? undefined,
@@ -194,7 +202,25 @@ export async function updateInstitution(input: InstitutionUpdateForm) {
 		groups: input.groupIds
 			? { set: input.groupIds.map((id) => ({ id })) }
 			: undefined,
+	};
+
+	if (scope === "all") {
+		const institution = await institutionRepo.update(input.id, data);
+		revalidateAccount();
+		return institution;
+	}
+
+	const accessWhere = buildInstitutionScopedWhere(scope, currentUserId, {
+		id: input.id,
 	});
+	if (!accessWhere) {
+		throw new Error("User must be authenticated to update institutions.");
+	}
+	const result = await institutionRepo.updateWhere(accessWhere, data);
+	if (result.count === 0) {
+		throw new Error("Not authorized to update this institution.");
+	}
+	const institution = await institutionRepo.findFirstWithInclude(accessWhere);
 	revalidateAccount();
 	return institution;
 }
@@ -203,15 +229,31 @@ export async function deleteInstitution(id: number) {
 	const currentUserId = await getCurrentUserId();
 	const ctx = await getAccessContextForUser(currentUserId);
 	authorizeTable(ctx, "institution", "delete");
-	const institution = await institutionRepo.remove(id);
+	const scope = getTableScope(ctx, "institution", "delete");
+	if (scope === "all") {
+		await institutionRepo.remove(id);
+		revalidateAccount();
+		return { id };
+	}
+	const accessWhere = buildInstitutionScopedWhere(scope, currentUserId, {
+		id,
+	});
+	if (!accessWhere) {
+		throw new Error("User must be authenticated to delete institutions.");
+	}
+	const result = await institutionRepo.removeWhere(accessWhere);
+	if (result.count === 0) {
+		throw new Error("Not authorized to delete this institution.");
+	}
 	revalidateAccount();
-	return institution;
+	return { id };
 }
 
 export async function searchInstitutions(query: string) {
 	const currentUserId = await getCurrentUserId();
 	const ctx = await getAccessContextForUser(currentUserId);
 	authorizeTable(ctx, "institution", "read");
+	const scope = getTableScope(ctx, "institution", "read");
 
 	if (!query || query.trim().length === 0) {
 		return [];
@@ -222,5 +264,9 @@ export async function searchInstitutions(query: string) {
 
 	const select = buildInstitutionSelect(ctx);
 	if (!select) return [];
-	return institutionRepo.searchWithSelect(where, select);
+	const scopedWhere = buildInstitutionScopedWhere(scope, currentUserId, where);
+	if (!scopedWhere && scope !== "all") return [];
+	return scopedWhere
+		? institutionRepo.searchWithSelect(scopedWhere, select)
+		: institutionRepo.searchWithSelect(where, select);
 }
