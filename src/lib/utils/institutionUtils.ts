@@ -27,16 +27,16 @@ export const toFeatureCollection = (
 		})),
 });
 
-export const getParentCategories = (institution: Institution) =>
+export const getParentCategories = (institution: Partial<Institution>) =>
 	institution.categories?.filter((category) => !category.parent_category_id) ||
 	[];
 
-export const getSubcategories = (institution: Institution) =>
+export const getSubcategories = (institution: Partial<Institution>) =>
 	institution.categories?.filter((category) => !!category.parent_category_id) ||
 	[];
 
 export const getSubcategoriesForCategory = (
-	institution: Institution,
+	institution: Partial<Institution>,
 	categoryId: number,
 ) =>
 	getSubcategories(institution).filter(
