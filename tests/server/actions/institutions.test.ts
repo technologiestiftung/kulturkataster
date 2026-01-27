@@ -1,13 +1,30 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import type { Prisma } from "@/generated/prisma";
+import { getCategoriesWithSubcategories } from "@/server/actions/categories";
+import { getDistricts } from "@/server/actions/addresses";
+import {
+	getInstitutions,
+	searchInstitutions,
+} from "@/server/actions/institutions";
 
 vi.mock("@/server/auth/getCurrentUser", () => ({
 	getCurrentUserId: vi.fn().mockResolvedValue("user-1"),
 }));
 
 vi.mock("@/server/utils/rbac", () => ({
-	getAccessContextForUser: vi.fn().mockResolvedValue({}),
+	getAccessContextForUser: vi.fn().mockResolvedValue({
+		field: {
+			institution: {
+				name: new Set(["read"]),
+			},
+		},
+	}),
 	throwIfUnauthorized: vi.fn(),
+	authorizeTable: vi.fn(),
+	authorizeFields: vi.fn(),
+	getTableScope: vi.fn().mockReturnValue("all"),
+	requireAllScope: vi.fn(),
+	getScopeUserId: vi.fn().mockReturnValue(null),
 }));
 
 const listMock = vi.fn().mockResolvedValue([]);
@@ -15,7 +32,10 @@ const searchMock = vi.fn().mockResolvedValue([]);
 vi.mock("@/server/data/institutionRepo", () => ({
 	institutionRepo: {
 		list: () => listMock(),
+		listWithSelect: () => listMock(),
 		search: (where: Prisma.InstitutionWhereInput) => searchMock(where),
+		searchWithSelect: (where: Prisma.InstitutionWhereInput) =>
+			searchMock(where),
 	},
 }));
 
@@ -29,18 +49,11 @@ vi.mock("@/server/data/categoryRepo", () => ({
 const listDistinctMock = vi
 	.fn()
 	.mockResolvedValue([{ district: "mitte" }, { district: null }]);
-vi.mock("@/server/data/districtRepo", () => ({
-	districtRepo: {
+vi.mock("@/server/data/addressRepo", () => ({
+	addressRepo: {
 		listDistinct: () => listDistinctMock(),
 	},
 }));
-
-import {
-	getInstitutions,
-	getCategoriesWithSubcategories,
-	getDistricts,
-	searchInstitutions,
-} from "@/server/actions/institutions";
 
 describe("server actions: institutions", () => {
 	beforeEach(() => {

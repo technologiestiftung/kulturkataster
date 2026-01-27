@@ -17,3 +17,13 @@ export async function getCurrentUserId() {
 	const user = await getCurrentUser();
 	return user?.id ?? null;
 }
+
+export async function requireAuth() {
+	const user = await getCurrentUser();
+	if (!user) {
+		throw new Error(
+			"Unauthenticated access to protected route - proxy should have redirected",
+		);
+	}
+	return user;
+}
