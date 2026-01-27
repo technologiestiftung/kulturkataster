@@ -10,7 +10,7 @@ export function CategoryItem({
 	data,
 	variant = "compact",
 }: {
-	data: Institution;
+	data: Partial<Institution>;
 	variant?: "default" | "plain" | "compact";
 }) {
 	const categories = getParentCategories(data);
