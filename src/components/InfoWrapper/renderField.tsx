@@ -18,6 +18,7 @@ import {
 import { StatusItem } from "./StatusItem";
 import { CategoryItem } from "./CategoryItem";
 import { useTranslation } from "react-i18next";
+import { getGridClass } from "../shared/sectionLayout";
 
 const getNestedValue = (
 	obj: Record<string, unknown>,
@@ -250,11 +251,6 @@ type RenderFieldContentArgs = {
 	layoutColumns?: 1 | 2;
 };
 
-const getGridClass = (field: InfoWrapperFieldConfig, gridColumns?: 1 | 2) =>
-	field.layout?.span === "half" && gridColumns === 2
-		? "col-span-1"
-		: "col-span-2";
-
 const getContent = (
 	field: InfoWrapperFieldConfig,
 	label: string | undefined,
@@ -312,7 +308,7 @@ const getContent = (
 };
 
 const renderFieldContent = (
-	{ field, data, alwaysShow, layoutColumns }: RenderFieldContentArgs,
+	{ field, data, alwaysShow }: RenderFieldContentArgs,
 	includeLayout = true,
 ) => {
 	const { t: tEnum } = useTranslation("enumMap");
@@ -322,7 +318,7 @@ const renderFieldContent = (
 	const newValue = resolveNewFieldValue(field, data);
 	const resolvedNewHref = resolveHref(field, newValue, data);
 
-	const gridClass = getGridClass(field, layoutColumns);
+	const gridClass = getGridClass(field);
 	const translateLabel = (labelKey?: string) => {
 		if (!labelKey) return undefined;
 		const fromEnum = tEnum(labelKey);
