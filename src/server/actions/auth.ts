@@ -34,6 +34,16 @@ export async function registerWithEmailPassword(params: {
 	firstName?: string;
 	lastName?: string;
 	accountType?: string;
+	organizationName?: string;
+	organizationPosition?: string;
+	organizationPhone?: string;
+	districtName?: string;
+	districtOffice?: string;
+	districtPosition?: string;
+	districtPhone?: string;
+	administrationName?: string;
+	administrationPosition?: string;
+	administrationPhone?: string;
 }) {
 	const supabase = await createClient();
 	const { data, error } = await supabase.auth.signUp({
@@ -47,6 +57,29 @@ export async function registerWithEmailPassword(params: {
 
 	if (data.user) {
 		try {
+			let metaInfo: Record<string, string> = {};
+
+			if (params.accountType === "organization") {
+				metaInfo = {
+					organizationName: params.organizationName ?? "",
+					organizationPosition: params.organizationPosition ?? "",
+					organizationPhone: params.organizationPhone ?? "",
+				};
+			} else if (params.accountType === "district") {
+				metaInfo = {
+					districtName: params.districtName ?? "",
+					districtOffice: params.districtOffice ?? "",
+					districtPosition: params.districtPosition ?? "",
+					districtPhone: params.districtPhone ?? "",
+				};
+			} else if (params.accountType === "administration") {
+				metaInfo = {
+					administrationName: params.administrationName ?? "",
+					administrationPosition: params.administrationPosition ?? "",
+					administrationPhone: params.administrationPhone ?? "",
+				};
+			}
+
 			await prisma.user.upsert({
 				where: { id: data.user.id },
 				update: {
@@ -54,6 +87,10 @@ export async function registerWithEmailPassword(params: {
 					first_name: params.firstName ?? null,
 					last_name: params.lastName ?? null,
 					account_type: params.accountType ?? null,
+					meta_info:
+						Object.keys(metaInfo).length > 0
+							? (metaInfo as Record<string, string>)
+							: undefined,
 				},
 				create: {
 					id: data.user.id,
@@ -61,6 +98,10 @@ export async function registerWithEmailPassword(params: {
 					first_name: params.firstName ?? null,
 					last_name: params.lastName ?? null,
 					account_type: params.accountType ?? null,
+					meta_info:
+						Object.keys(metaInfo).length > 0
+							? (metaInfo as Record<string, string>)
+							: undefined,
 					status: "approval_pending",
 				},
 			});
