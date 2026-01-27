@@ -1,7 +1,6 @@
-import {
-	getCategoriesWithSubcategories,
-	getInstitutions,
-} from "@/server/actions/institutions";
+import { getDistricts } from "@/server/actions/addresses";
+import { getCategoriesWithSubcategories } from "@/server/actions/categories";
+import { getInstitutions } from "@/server/actions/institutions";
 import { Institution, InstitutionStoreState } from "@/types";
 import { create } from "zustand";
 import { devtools, subscribeWithSelector } from "zustand/middleware";
@@ -101,6 +100,7 @@ export const useInstitutionStore = create<InstitutionStoreState>()(
 			filteredInstitutionsGeoJSON: null,
 			categoryCounts: {},
 			subcategoryCounts: {},
+			districts: [],
 			selectedInstitutionId: null,
 			setSelectedInstitutionId: (id: string | number | null) =>
 				set({ selectedInstitutionId: id }),
@@ -130,6 +130,10 @@ export const useInstitutionStore = create<InstitutionStoreState>()(
 			},
 			categories: null,
 			setCategories: (categories) => set({ categories }),
+			initializeDistricts: async () => {
+				const districts = await getDistricts();
+				set({ districts });
+			},
 			initializeCategories: async () => {
 				const categories = await getCategoriesWithSubcategories();
 				const currentState = { ...get(), categories };
