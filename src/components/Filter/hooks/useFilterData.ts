@@ -1,9 +1,7 @@
 "use client";
 
-import {
-	getCategoriesWithSubcategories,
-	getDistricts,
-} from "@/server/actions/institutions";
+import { getDistricts } from "@/server/actions/addresses";
+import { getCategoriesWithSubcategories } from "@/server/actions/categories";
 import { Category } from "@/types";
 import { useCallback, useEffect, useState } from "react";
 export const useFilterData = () => {
