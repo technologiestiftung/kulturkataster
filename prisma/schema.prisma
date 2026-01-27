@@ -105,6 +105,7 @@ enum SubmissionType {
 enum Action {
   read
   create
+  review
   update
   delete
 }
@@ -287,6 +288,7 @@ model User {
   avatar_url         String?
   notes              String?
   account_type       String?
+  meta_info         Json?
   role_id            Int?
   status             UserStatus @default(approval_pending)
   compliance         Boolean    @default(false)
