@@ -81,7 +81,28 @@ export default async function proxy(req: NextRequest) {
 		},
 	);
 
-	await supabase.auth.getSession();
+	const {
+		data: { user },
+	} = await supabase.auth.getUser();
+
+	const isAccountRoute =
+		cleanedPathname.startsWith("/account") ||
+		cleanedPathname.match(/^\/[a-z]{2}\/account/);
+	const isLoginRoute =
+		cleanedPathname.endsWith("/login") ||
+		cleanedPathname.match(/^\/[a-z]{2}\/login$/);
+
+	if (isAccountRoute && !user) {
+		const url = req.nextUrl.clone();
+		url.pathname = "/login";
+		return NextResponse.redirect(url);
+	}
+
+	if (isLoginRoute && user) {
+		const url = req.nextUrl.clone();
+		url.pathname = "/account/activity";
+		return NextResponse.redirect(url);
+	}
 
 	const res = needsLocaleRewrite
 		? NextResponse.rewrite(rewriteUrl!)

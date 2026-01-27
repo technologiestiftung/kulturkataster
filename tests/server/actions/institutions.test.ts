@@ -22,6 +22,9 @@ vi.mock("@/server/utils/rbac", () => ({
 	throwIfUnauthorized: vi.fn(),
 	authorizeTable: vi.fn(),
 	authorizeFields: vi.fn(),
+	getTableScope: vi.fn().mockReturnValue("all"),
+	requireAllScope: vi.fn(),
+	getScopeUserId: vi.fn().mockReturnValue(null),
 }));
 
 const listMock = vi.fn().mockResolvedValue([]);

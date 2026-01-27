@@ -9,6 +9,8 @@ interface InputProps extends React.ComponentProps<"input"> {
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
 	({ className, type, icon, iconPosition = "left", ...props }, ref) => {
+		const ariaLabel =
+			props["aria-label"] ?? (props.id ? undefined : props.placeholder);
 		if (icon) {
 			return (
 				<div className="relative">
@@ -32,7 +34,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 							className,
 						)}
 						ref={ref}
-						aria-label={props.placeholder || ""}
+						aria-label={ariaLabel}
 						{...props}
 					/>
 				</div>
@@ -50,7 +52,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 					className,
 				)}
 				ref={ref}
-				aria-label={props.placeholder || ""}
+				aria-label={ariaLabel}
 				{...props}
 			/>
 		);
