@@ -164,7 +164,7 @@ const handleLatLngBlur = (
 		) => {
 			const lat = toOptionalNumber(formData[options.latKey ?? "address.lat"]);
 			const lng = toOptionalNumber(formData[options.lngKey ?? "address.lng"]);
-			if (lat === null || lng === null) return;
+			if (!lat || !lng) return;
 			const query = `${lat},${lng}`;
 			if (latLngGeocodeState.current.inflight) return;
 			if (latLngGeocodeState.current.lastQuery === query) return;
@@ -274,7 +274,7 @@ const buildAddressFromFormData = (
 		: { street: "", streetNumber: "" };
 
 	return {
-		street: street || null,
+		street: street,
 		street_number: streetNumber || null,
 		zipcode: zip,
 		city,
