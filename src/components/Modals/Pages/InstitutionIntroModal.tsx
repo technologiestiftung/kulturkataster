@@ -16,7 +16,7 @@ export function InstitutionIntroModal() {
 			router.push("/institution/edit");
 			return;
 		}
-		router.push("/institution/new");
+		router.push("/institution/submission");
 	};
 
 	return (

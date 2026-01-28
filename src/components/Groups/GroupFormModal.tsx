@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 import { FormWrapper } from "@/components/FormWrapper";
 import type { FormWrapperConfig } from "@/components/FormWrapper";
 import { useAccountStore } from "@/lib/store/accountStore";
@@ -17,6 +18,7 @@ import {
 } from "@/lib/utils/formUtils";
 import {
 	createGroup,
+	deleteGroup,
 	getGroupById,
 	updateGroup,
 } from "@/server/actions/groups";
@@ -26,6 +28,7 @@ import { useRouter } from "next/navigation";
 type GroupFormModalProps = {
 	mode: "create" | "edit";
 	groupId?: string;
+	shouldRefresh?: boolean;
 };
 
 const getInitialValues = (resolvedGroup?: Group) => ({
@@ -133,9 +136,12 @@ const useGroupSubmit = (
 	numericGroupId: number | undefined,
 	onClose: () => void,
 	onSuccess: (mode: GroupFormModalProps["mode"]) => void,
+	shouldRefresh: boolean,
 ) => {
 	const router = useRouter();
 	const [submitting, setSubmitting] = useState(false);
+	const addGroup = useAccountStore((state) => state.addGroup);
+	const upsertGroup = useAccountStore((state) => state.upsertGroup);
 
 	const handleSubmit = async (data: Record<string, unknown>) => {
 		if (submitting) return;
@@ -147,25 +153,31 @@ const useGroupSubmit = (
 
 		try {
 			if (mode === "create") {
-				await createGroup({
+				const created = await createGroup({
 					name: String(data.name ?? ""),
 					description,
 					userIds: userIds.length > 0 ? userIds : undefined,
 					institutionIds:
 						institutionIds.length > 0 ? institutionIds : undefined,
 				});
+				addGroup(created);
 			} else if (numericGroupId) {
-				await updateGroup({
+				const updated = await updateGroup({
 					id: numericGroupId,
 					name: String(data.name ?? ""),
 					description,
 					userIds,
 					institutionIds,
 				});
+				if (updated) {
+					upsertGroup(updated);
+				}
 			}
 
 			onSuccess(mode);
-			router.refresh();
+			if (shouldRefresh) {
+				router.refresh();
+			}
 			onClose();
 		} finally {
 			setSubmitting(false);
@@ -303,16 +315,23 @@ const buildGroupFormConfig = ({
 	};
 };
 
-export function GroupFormModal({ mode, groupId }: GroupFormModalProps) {
+export function GroupFormModal({
+	mode,
+	groupId,
+	shouldRefresh = true,
+}: GroupFormModalProps) {
 	const router = useRouter();
 	const { t } = useTranslation("content");
 	const { t: tEnum, i18n } = useTranslation("enumMap");
 	const groups = useAccountStore((state) => state.groups);
 	const users = useAccountStore((state) => state.users);
 	const setAlertDialog = useAccountStore((state) => state.setAlertDialog);
+	const removeGroup = useAccountStore((state) => state.removeGroup);
 	const institutions =
 		useInstitutionStore((state) => state.allInstitutions) ?? [];
 	const categories = useInstitutionStore((state) => state.categories) ?? [];
+	const [isDeleting, setIsDeleting] = useState(false);
+	const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 	const userOptions = useMemo(
 		() =>
 			users.map((userItem) => {
@@ -361,6 +380,7 @@ export function GroupFormModal({ mode, groupId }: GroupFormModalProps) {
 		numericGroupId,
 		handleClose,
 		handleSuccess,
+		shouldRefresh,
 	);
 	const { institutionOptions, filteredInstitutionOptions, filterPanel } =
 		useInstitutionMultiSelect({
@@ -421,8 +441,82 @@ export function GroupFormModal({ mode, groupId }: GroupFormModalProps) {
 							mode,
 						)}
 					</div>
+					{mode === "edit" && resolvedGroup && (
+						<div className="border-t border-neutral-20 px-6 py-4 md:px-10">
+							<div className="flex flex-wrap items-center justify-between gap-3">
+								<div>
+									<p className="body2 font-bold">
+										{t("groupFormModal.delete.title", {
+											defaultValue: "Delete group",
+										})}
+									</p>
+									<p className="body3 text-neutral-80">
+										{t("groupFormModal.delete.description", {
+											defaultValue:
+												"This action permanently removes the group.",
+										})}
+									</p>
+								</div>
+								<Button
+									variant="destructive"
+									onClick={() => setShowDeleteDialog(true)}
+									disabled={isDeleting || submitting}
+								>
+									{t("groupFormModal.delete.button", {
+										defaultValue: "Delete",
+									})}
+								</Button>
+							</div>
+						</div>
+					)}
 				</div>
 			</DialogContent>
+			{showDeleteDialog && resolvedGroup && (
+				<AlertDialog
+					open
+					disableRouteSync
+					title={t("groupFormModal.delete.confirmTitle", {
+						defaultValue: "Delete group?",
+					})}
+					description={t("groupFormModal.delete.confirmDescription", {
+						defaultValue:
+							"This will permanently remove the group. This action cannot be undone.",
+					})}
+					confirmLabel={t("groupFormModal.delete.confirm", {
+						defaultValue: "Delete",
+					})}
+					cancelLabel={t("groupFormModal.delete.cancel", {
+						defaultValue: "Cancel",
+					})}
+					onCancel={() => setShowDeleteDialog(false)}
+					onConfirm={async () => {
+						if (isDeleting) return;
+						setIsDeleting(true);
+						try {
+							await deleteGroup(resolvedGroup.id);
+							removeGroup(resolvedGroup.id);
+							setShowDeleteDialog(false);
+							handleClose();
+						} catch {
+							setAlertDialog({
+								title: t("groupFormModal.delete.errorTitle", {
+									defaultValue: "Delete failed",
+								}),
+								description: t("groupFormModal.delete.errorDescription", {
+									defaultValue:
+										"Please try again or contact support if the issue persists.",
+								}),
+							});
+							setShowDeleteDialog(false);
+						} finally {
+							setIsDeleting(false);
+						}
+					}}
+					onOpenChange={(open) => {
+						if (!open) setShowDeleteDialog(false);
+					}}
+				/>
+			)}
 		</Dialog>
 	);
 }

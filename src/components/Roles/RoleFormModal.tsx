@@ -5,14 +5,21 @@ import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 import { FormWrapper } from "@/components/FormWrapper";
 import type { FormWrapperConfig } from "@/components/FormWrapper";
 import { useAccountStore } from "@/lib/store/accountStore";
-import { createRole, getRoleById, updateRole } from "@/server/actions/roles";
+import {
+	createRole,
+	deleteRole,
+	getRoleById,
+	updateRole,
+} from "@/server/actions/roles";
 import type { Role, RoleTablePermissionInput } from "@/types/role";
 import { INSTITUTION_PERMISSION_FIELDS } from "@/types/institution";
 import type { Action } from "@/generated/prisma";
 import type {
+	PermissionAction,
 	PermissionScope,
 	TablePermissionValue,
 } from "@/components/FormWrapper/types";
@@ -21,6 +28,7 @@ import { getSubmitLabel, toOptionalText } from "@/lib/utils/formUtils";
 type RoleFormModalProps = {
 	mode: "create" | "edit";
 	roleId?: string;
+	shouldRefresh?: boolean;
 };
 
 const INSTITUTION_FIELDS = INSTITUTION_PERMISSION_FIELDS;
@@ -77,7 +85,7 @@ const buildPermissionSnapshot = (
 
 	Object.entries(tableMeta).forEach(([table, meta]) => {
 		tableValue[table] = {
-			actions: Array.from(meta.actions),
+			actions: Array.from(meta.actions) as PermissionAction[],
 			scope: meta.hasAll && !meta.hasOwn ? "all" : "own",
 		};
 	});
@@ -245,9 +253,12 @@ const useRoleSubmit = (
 	numericRoleId: number | undefined,
 	onClose: () => void,
 	onSuccess: (mode: RoleFormModalProps["mode"]) => void,
+	shouldRefresh: boolean,
 ) => {
 	const router = useRouter();
 	const [submitting, setSubmitting] = useState(false);
+	const addRole = useAccountStore((state) => state.addRole);
+	const upsertRole = useAccountStore((state) => state.upsertRole);
 
 	const handleSubmit = async (data: Record<string, unknown>) => {
 		if (submitting) return;
@@ -259,24 +270,30 @@ const useRoleSubmit = (
 
 		try {
 			if (mode === "create") {
-				await createRole({
+				const created = await createRole({
 					name: String(data.name ?? ""),
 					description,
 					tablePermissions: tablePermissionsInput,
 					fieldPermissions: fieldPermissionsInput,
 				});
+				addRole(created);
 			} else if (numericRoleId) {
-				await updateRole({
+				const updated = await updateRole({
 					id: numericRoleId,
 					name: String(data.name ?? ""),
 					description,
 					tablePermissions: tablePermissionsInput,
 					fieldPermissions: fieldPermissionsInput,
 				});
+				if (updated) {
+					upsertRole(updated);
+				}
 			}
 
 			onSuccess(mode);
-			router.refresh();
+			if (shouldRefresh) {
+				router.refresh();
+			}
 			onClose();
 		} finally {
 			setSubmitting(false);
@@ -437,11 +454,18 @@ const renderDialogBody = (
 	);
 };
 
-export function RoleFormModal({ mode, roleId }: RoleFormModalProps) {
+export function RoleFormModal({
+	mode,
+	roleId,
+	shouldRefresh = true,
+}: RoleFormModalProps) {
 	const router = useRouter();
 	const { t } = useTranslation(["content", "enumMap"]);
 	const roles = useAccountStore((state) => state.roles);
 	const setAlertDialog = useAccountStore((state) => state.setAlertDialog);
+	const removeRoleFromStore = useAccountStore((state) => state.removeRole);
+	const [isDeleting, setIsDeleting] = useState(false);
+	const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
 	const handleClose = () => {
 		router.back();
@@ -464,6 +488,7 @@ export function RoleFormModal({ mode, roleId }: RoleFormModalProps) {
 		numericRoleId,
 		handleClose,
 		handleSuccess,
+		shouldRefresh,
 	);
 
 	const tableTargets = useMemo(() => getTableTargets(t), [t]);
@@ -524,8 +549,81 @@ export function RoleFormModal({ mode, roleId }: RoleFormModalProps) {
 							isSystemRole,
 						)}
 					</div>
+					{mode === "edit" && resolvedRole && (
+						<div className="border-t border-neutral-20 px-6 py-4 md:px-10">
+							<div className="flex flex-wrap items-center justify-between gap-3">
+								<div>
+									<p className="body2 font-bold">
+										{t("roleFormModal.delete.title", {
+											defaultValue: "Delete role",
+										})}
+									</p>
+									<p className="body3 text-neutral-80">
+										{t("roleFormModal.delete.description", {
+											defaultValue: "This action permanently removes the role.",
+										})}
+									</p>
+								</div>
+								<Button
+									variant="destructive"
+									onClick={() => setShowDeleteDialog(true)}
+									disabled={isDeleting || submitting || isSystemRole}
+								>
+									{t("roleFormModal.delete.button", {
+										defaultValue: "Delete",
+									})}
+								</Button>
+							</div>
+						</div>
+					)}
 				</div>
 			</DialogContent>
+			{showDeleteDialog && resolvedRole && (
+				<AlertDialog
+					open
+					disableRouteSync
+					title={t("roleFormModal.delete.confirmTitle", {
+						defaultValue: "Delete role?",
+					})}
+					description={t("roleFormModal.delete.confirmDescription", {
+						defaultValue:
+							"This will permanently remove the role. This action cannot be undone.",
+					})}
+					confirmLabel={t("roleFormModal.delete.confirm", {
+						defaultValue: "Delete",
+					})}
+					cancelLabel={t("roleFormModal.delete.cancel", {
+						defaultValue: "Cancel",
+					})}
+					onCancel={() => setShowDeleteDialog(false)}
+					onConfirm={async () => {
+						if (isDeleting || isSystemRole) return;
+						setIsDeleting(true);
+						try {
+							await deleteRole(resolvedRole.id);
+							removeRoleFromStore(resolvedRole.id);
+							setShowDeleteDialog(false);
+							handleClose();
+						} catch {
+							setAlertDialog({
+								title: t("roleFormModal.delete.errorTitle", {
+									defaultValue: "Delete failed",
+								}),
+								description: t("roleFormModal.delete.errorDescription", {
+									defaultValue:
+										"Please try again or contact support if the issue persists.",
+								}),
+							});
+							setShowDeleteDialog(false);
+						} finally {
+							setIsDeleting(false);
+						}
+					}}
+					onOpenChange={(open) => {
+						if (!open) setShowDeleteDialog(false);
+					}}
+				/>
+			)}
 		</Dialog>
 	);
 }

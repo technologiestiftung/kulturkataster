@@ -1,5 +1,6 @@
 "use client";
 
+import { Fragment } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -241,12 +242,12 @@ const renderFieldContent = (
 					</SelectTrigger>
 					<SelectContent className="px-3">
 						{field.options?.map((option, index) => (
-							<>
+							<Fragment key={option.value}>
 								<SelectItem value={option.value}>{option.label}</SelectItem>
 								{index < (field.options?.length || 0) - 1 && (
 									<SelectSeparator />
 								)}
-							</>
+							</Fragment>
 						))}
 					</SelectContent>
 				</Select>
@@ -750,7 +751,7 @@ export const buildRenderField = ({
 
 		if (!field.collapsible) {
 			return (
-				<>
+				<div key={field.name} className="contents">
 					{renderFieldContent({
 						field,
 						formData,
@@ -760,7 +761,7 @@ export const buildRenderField = ({
 						updateField,
 						handleFieldBlur,
 					})}
-				</>
+				</div>
 			);
 		}
 

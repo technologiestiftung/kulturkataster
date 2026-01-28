@@ -9,7 +9,7 @@ export interface DataTableConfig<T> {
 
 	searchable?: boolean;
 	searchPlaceholder?: string;
-	getSearchableValues?: (row: T) => string[];
+	getSearchableValues: (row: T) => string[];
 
 	virtualization?: {
 		enabled?: boolean;

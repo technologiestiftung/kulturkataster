@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { useRouter } from "next/navigation";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 import { FormWrapper } from "@/components/FormWrapper";
 import type { FormWrapperConfig } from "@/components/FormWrapper";
 import { useAccountStore } from "@/lib/store/accountStore";
@@ -18,6 +19,7 @@ import {
 import {
 	createUser,
 	getUserById,
+	removeUser,
 	sendComplianceResend,
 	sendPasswordReset,
 	updateUser,
@@ -30,6 +32,7 @@ import Mail from "@/icons/mail.svg";
 type UserFormModalProps = {
 	mode: "create" | "edit";
 	userId?: string;
+	shouldRefresh?: boolean;
 };
 
 const getInitialValues = (resolvedUser?: User) => ({
@@ -123,9 +126,12 @@ const useUserSubmit = (
 	userId: string | undefined,
 	onClose: () => void,
 	onSuccess: (mode: UserFormModalProps["mode"]) => void,
+	shouldRefresh: boolean,
 ) => {
 	const router = useRouter();
 	const [submitting, setSubmitting] = useState(false);
+	const addUser = useAccountStore((state) => state.addUser);
+	const upsertUser = useAccountStore((state) => state.upsertUser);
 
 	const handleSubmit = async (data: Record<string, unknown>) => {
 		if (submitting) return;
@@ -138,7 +144,7 @@ const useUserSubmit = (
 
 		try {
 			if (mode === "create") {
-				await createUser({
+				const created = await createUser({
 					email: String(data.email ?? ""),
 					first_name: String(data.first_name ?? ""),
 					last_name: String(data.last_name ?? ""),
@@ -153,8 +159,9 @@ const useUserSubmit = (
 					institutionIds:
 						institutionIds.length > 0 ? institutionIds : undefined,
 				});
+				addUser(created);
 			} else if (userId) {
-				await updateUser({
+				const updated = await updateUser({
 					id: userId,
 					email: String(data.email ?? ""),
 					first_name: String(data.first_name ?? ""),
@@ -169,10 +176,15 @@ const useUserSubmit = (
 					groupIds,
 					institutionIds,
 				});
+				if (updated) {
+					upsertUser(updated);
+				}
 			}
 
 			onSuccess(mode);
-			router.refresh();
+			if (shouldRefresh) {
+				router.refresh();
+			}
 			onClose();
 		} finally {
 			setSubmitting(false);
@@ -209,6 +221,7 @@ const buildUserFormConfig = ({
 				type: "section",
 				title: t("userFormModal.form.identity.title"),
 				description: identityDescription,
+				layout: { columns: 2 },
 				fields: [
 					{
 						name: "email",
@@ -406,7 +419,11 @@ const renderDialogBody = (
 	return <FormWrapper key={resolvedUser?.id ?? mode} config={formConfig} />;
 };
 
-export function UserFormModal({ mode, userId }: UserFormModalProps) {
+export function UserFormModal({
+	mode,
+	userId,
+	shouldRefresh = true,
+}: UserFormModalProps) {
 	const router = useRouter();
 	const { t } = useTranslation("content");
 	const { t: tEnum, i18n } = useTranslation("enumMap");
@@ -414,9 +431,12 @@ export function UserFormModal({ mode, userId }: UserFormModalProps) {
 	const roles = useAccountStore((state) => state.roles);
 	const groups = useAccountStore((state) => state.groups);
 	const setAlertDialog = useAccountStore((state) => state.setAlertDialog);
+	const removeUserFromStore = useAccountStore((state) => state.removeUser);
 	const institutions =
 		useInstitutionStore((state) => state.allInstitutions) ?? [];
 	const categories = useInstitutionStore((state) => state.categories) ?? [];
+	const [isDeleting, setIsDeleting] = useState(false);
+	const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 	const handleClose = () => {
 		router.back();
 	};
@@ -441,6 +461,7 @@ export function UserFormModal({ mode, userId }: UserFormModalProps) {
 		userId,
 		handleClose,
 		handleSuccess,
+		shouldRefresh,
 	);
 
 	const statusOptions = useMemo(
@@ -518,8 +539,81 @@ export function UserFormModal({ mode, userId }: UserFormModalProps) {
 							mode,
 						)}
 					</div>
+					{mode === "edit" && resolvedUser && (
+						<div className="border-t border-neutral-20 px-6 py-4 md:px-10">
+							<div className="flex flex-wrap items-center justify-between gap-3">
+								<div>
+									<p className="body2 font-bold">
+										{t("userFormModal.delete.title", {
+											defaultValue: "Delete user",
+										})}
+									</p>
+									<p className="body3 text-neutral-80">
+										{t("userFormModal.delete.description", {
+											defaultValue: "This action permanently removes the user.",
+										})}
+									</p>
+								</div>
+								<Button
+									variant="destructive"
+									onClick={() => setShowDeleteDialog(true)}
+									disabled={isDeleting || submitting}
+								>
+									{t("userFormModal.delete.button", {
+										defaultValue: "Delete",
+									})}
+								</Button>
+							</div>
+						</div>
+					)}
 				</div>
 			</DialogContent>
+			{showDeleteDialog && resolvedUser && (
+				<AlertDialog
+					open
+					disableRouteSync
+					title={t("userFormModal.delete.confirmTitle", {
+						defaultValue: "Delete user?",
+					})}
+					description={t("userFormModal.delete.confirmDescription", {
+						defaultValue:
+							"This will permanently remove the user. This action cannot be undone.",
+					})}
+					confirmLabel={t("userFormModal.delete.confirm", {
+						defaultValue: "Delete",
+					})}
+					cancelLabel={t("userFormModal.delete.cancel", {
+						defaultValue: "Cancel",
+					})}
+					onCancel={() => setShowDeleteDialog(false)}
+					onConfirm={async () => {
+						if (isDeleting) return;
+						setIsDeleting(true);
+						try {
+							await removeUser(resolvedUser.id);
+							removeUserFromStore(resolvedUser.id);
+							setShowDeleteDialog(false);
+							handleClose();
+						} catch {
+							setAlertDialog({
+								title: t("userFormModal.delete.errorTitle", {
+									defaultValue: "Delete failed",
+								}),
+								description: t("userFormModal.delete.errorDescription", {
+									defaultValue:
+										"Please try again or contact support if the issue persists.",
+								}),
+							});
+							setShowDeleteDialog(false);
+						} finally {
+							setIsDeleting(false);
+						}
+					}}
+					onOpenChange={(open) => {
+						if (!open) setShowDeleteDialog(false);
+					}}
+				/>
+			)}
 		</Dialog>
 	);
 }

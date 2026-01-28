@@ -1,9 +1,10 @@
 "use client";
 
+import { useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { DataTable } from "@/components/DataTable";
 import type { DataTableConfig } from "@/components/DataTable";
-import { Institution } from "@/types";
+import type { InstitutionTableRow } from "@/types/institution";
 import { useAccountStore } from "@/lib/store/accountStore";
 import { StatusDot } from "../ui/status-dot";
 import { InstitutionStatus } from "@/generated/prisma";
@@ -17,12 +18,18 @@ import {
 } from "@/lib/utils/institutionUtils";
 import { Badge } from "../ui/badge";
 import Link from "next/link";
+import {
+	buildSubmissionRow,
+	isSubmissionRow,
+} from "@/lib/utils/institutionTableUtils";
 
 export function InstitutionsTable() {
 	const router = useRouter();
 	const institutions = useAccountStore((state) => state.institutions);
+	const submissions = useAccountStore((state) => state.submissions);
 	const { t } = useTranslation("content");
 	const { t: tEnum } = useTranslation("enumMap");
+	const categories = useAccountStore((state) => state.categories);
 	const translateEnum = (prefix: string, value?: string | null) => {
 		if (!value) return "—";
 		const translated = tEnum(`${prefix}.${value}`);
@@ -44,7 +51,19 @@ export function InstitutionsTable() {
 		return status;
 	};
 
-	const tableConfig: DataTableConfig<Institution> = {
+	const tableRows = useMemo<InstitutionTableRow[]>(() => {
+		const submissionRows = submissions.map((submission) =>
+			buildSubmissionRow(submission, categories),
+		);
+		const institutionRows = institutions.map((institution) => ({
+			...institution,
+			rowKind: "institution" as const,
+			rowKey: `institution-${institution.id}`,
+		}));
+		return [...submissionRows, ...institutionRows];
+	}, [categories, institutions, submissions]);
+
+	const tableConfig: DataTableConfig<InstitutionTableRow> = {
 		columns: [
 			{
 				accessorKey: "status",
@@ -63,10 +82,11 @@ export function InstitutionsTable() {
 					if (institution.status === "removal_pending") variant = "warning";
 					if (institution.status === "draft") variant = "neutral";
 					if (institution.status === "archived") variant = "error";
+					if (institution.rowKind === "submission") variant = "warning";
 					return (
 						<StatusDot
 							tone={variant}
-							label={getStatusLabel(institution.status)}
+							label={getStatusLabel(institution?.status || "draft")}
 							showLabel="hover"
 						/>
 					);
@@ -85,6 +105,18 @@ export function InstitutionsTable() {
 				enableSorting: true,
 				size: 350,
 				meta: { pin: "left", truncate: true },
+				cell: ({ row }) => {
+					const name = row.original.name || "—";
+					if (isSubmissionRow(row.original)) {
+						return (
+							<div className="flex items-center gap-2">
+								<span>{name}</span>
+								<Badge variant="default">In Prüfung</Badge>
+							</div>
+						);
+					}
+					return name;
+				},
 			},
 			{
 				accessorKey: "email",
@@ -585,13 +617,13 @@ export function InstitutionsTable() {
 				accessorFn: (row) => row.updated_at,
 			},
 		],
-		data: institutions || [],
-		getRowKey: (row) => row.id,
+		data: tableRows,
+		getRowKey: (row) => row.rowKey ?? row.id,
 		searchable: true,
 		searchPlaceholder: "Search institutions...",
 		getSearchableValues: (row) => [
 			row.name,
-			row.status,
+			row.status || "",
 			row.address?.city || "",
 			row.address?.district || "",
 			row.address?.street || "",
@@ -616,7 +648,13 @@ export function InstitutionsTable() {
 			label: "Add Institution",
 			onClick: () => router.push("/account/institutions/new"),
 		},
-		onEdit: (row) => router.push(`/account/institutions/${row.id}/edit`),
+		onEdit: (row) => {
+			if (isSubmissionRow(row)) {
+				router.push(`/institution/submission/${row.submissionId}/edit`);
+				return;
+			}
+			router.push(`/account/institutions/${row.id}/edit`);
+		},
 		emptyMessage: "No institutions found.",
 	};
 
