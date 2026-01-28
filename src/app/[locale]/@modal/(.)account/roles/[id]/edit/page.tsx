@@ -8,5 +8,5 @@ type PageProps = {
 
 export default async function EditRoleModal({ params }: PageProps) {
 	const { id } = await params;
-	return <RoleFormModal mode="edit" roleId={id} />;
+	return <RoleFormModal mode="edit" roleId={id} shouldRefresh={false} />;
 }
