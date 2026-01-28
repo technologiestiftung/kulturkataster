@@ -42,7 +42,7 @@ const ClickControl: FC<ClickControlProps> = ({ layerId }) => {
 				if (isInstitutionsLayer) {
 					const institutionId = findClickedInstitutionId(_feature);
 					if (institutionId) {
-						router.push(`/institution/${institutionId}`);
+						router.push(`/map/institution/${institutionId}`);
 					}
 				}
 
