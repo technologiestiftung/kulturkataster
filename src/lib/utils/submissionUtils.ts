@@ -73,7 +73,7 @@ export const submissionToInstitutionDraft = (
 		shared_use_contact_person: toString(data.shared_use_contact_person),
 		contact_person_id: toNumber(data.contact_person_id),
 		address: address ?? null,
-		categoryIds: toNumberArray(data.categoryIds) || [],
+		categoryIds: toNumberArray(data.categoryIds),
 		tagIds: toNumberArray(data.tagIds),
 		userIds: toStringArray(data.userIds),
 		groupIds: toNumberArray(data.groupIds),
