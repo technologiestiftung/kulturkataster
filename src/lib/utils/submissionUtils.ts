@@ -1,5 +1,6 @@
 import type { Submission } from "@/types/submission";
 import type { InstitutionForm } from "@/types/institution";
+import { buildAddressFromFormData } from "@/lib/utils/formUtils";
 import {
 	FundingType,
 	InstitutionStatus,
@@ -18,7 +19,7 @@ export const submissionToInstitutionDraft = (
 	const address =
 		typeof data.address === "object" && data.address
 			? (data.address as InstitutionForm["address"])
-			: undefined;
+			: buildAddressFromFormData(data);
 
 	const toString = (value: unknown): string | null =>
 		typeof value === "string" ? value : null;

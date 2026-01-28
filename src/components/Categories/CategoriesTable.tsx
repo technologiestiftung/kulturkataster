@@ -6,10 +6,14 @@ import { Badge } from "@/components/ui/badge";
 import { useAccountStore } from "@/lib/store/accountStore";
 import { StatusDot } from "@/components/ui/status-dot";
 import type { Category } from "@/types";
+import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
+import { useMemo } from "react";
 
 export function CategoriesTable() {
 	const { t: tEnum } = useTranslation("enumMap");
+	const { t } = useTranslation(["content", "common"]);
+	const router = useRouter();
 	const categories = useAccountStore((state) => state.categories);
 	const parentCategories = categories
 		.filter((category) => !category.parent_category_id)
@@ -21,6 +25,10 @@ export function CategoriesTable() {
 		});
 	const getChildCategories = (parentId: number) =>
 		categories.filter((category) => category.parent_category_id === parentId);
+
+	const parentCategoriesById = useMemo(() => {
+		return new Map(categories.map((category) => [category.id, category.key]));
+	}, [categories]);
 
 	const tableConfig: DataTableConfig<Category> = {
 		columns: [
@@ -57,27 +65,25 @@ export function CategoriesTable() {
 			},
 			{
 				id: "parent",
-				header: "Parent",
+				header: t("categoryTable.columns.parent", { defaultValue: "Parent" }),
 				accessorFn: (row) => {
 					if (!row.parent_category_id) return "";
-					return (
-						categories.find((cat) => cat.id === row.parent_category_id)?.key ??
-						""
-					);
+					return parentCategoriesById.get(row.parent_category_id) ?? "";
 				},
 				enableSorting: true,
 				meta: { truncate: true },
 				cell: ({ row }) => {
 					if (!row.original.parent_category_id) return "—";
 					return (
-						categories.find((cat) => cat.id === row.original.parent_category_id)
-							?.key ?? "—"
+						parentCategoriesById.get(row.original.parent_category_id) ?? "—"
 					);
 				},
 			},
 			{
 				id: "children",
-				header: "Subcategories",
+				header: t("categoryTable.columns.subcategories", {
+					defaultValue: "Subcategories",
+				}),
 				accessorFn: (row) => getChildCategories(row.id).length,
 				enableSorting: true,
 				cell: ({ row }) => (
@@ -110,13 +116,21 @@ export function CategoriesTable() {
 				))}
 			</div>
 		),
-		primaryButton: undefined,
-		onEdit: undefined,
-		emptyMessage: "No categories found.",
-		title: "Categories",
-		subtitle: `${categories.length} ${
-			categories.length === 1 ? "category" : "categories"
-		} total`,
+		primaryButton: {
+			label: t("categoryTable.actions.add", { defaultValue: "Add category" }),
+			onClick: () => router.push("/account/categories/new"),
+		},
+		onEdit: (row) => router.push(`/account/categories/${row.id}/edit`),
+		emptyMessage: t("categoryTable.emptyMessage", {
+			defaultValue: "No categories found.",
+		}),
+		title: t("categoryTable.title", { defaultValue: "Categories" }),
+		subtitle: t("categoryTable.subtitle", {
+			defaultValue: `${categories.length} ${
+				categories.length === 1 ? "category" : "categories"
+			} total`,
+			count: categories.length,
+		}),
 	};
 
 	return (
