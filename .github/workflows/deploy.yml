@@ -10,14 +10,18 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
 
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     environment: ${{ github.ref == 'refs/heads/main' && 'main' || 'dev' }}
     permissions:
-      contents: write
+      contents: read
       packages: write
-
+    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -70,3 +74,129 @@ jobs:
         if: github.event_name == 'release'
         id: package-version
         run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+
+  backup:
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref == 'refs/heads/main' && 'main' || 'dev' }}
+    permissions:
+      contents: read
+    
+    steps:
+      - name: Create database backup via Supavisor
+        run: |
+          SUPAVISOR_URL="postgresql://postgres.${{ vars.SUPABASE_TENANT_ID }}:${{ secrets.SUPABASE_DB_PASSWORD }}@supavisor-pooler.kuka-api.ionos-${{ github.ref_name }}.ds-apps.tsb-berlin.de:443/postgres?sslmode=require"
+          
+          # Create local backup directory
+          mkdir -p ./backups
+          
+          TIMESTAMP=$(date +%F_%H%M%S)
+          ENVIRONMENT="${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}"
+          FULL_BACKUP="./backups/full_backup_${ENVIRONMENT}_${TIMESTAMP}.sql"
+          DATA_BACKUP="./backups/data_only_${ENVIRONMENT}_${TIMESTAMP}.sql"
+          
+          echo "Creating database backup via Supavisor pooler..."
+          
+          # Install PostgreSQL client for pg_dump
+          sudo apt-get update && sudo apt-get install -y postgresql-client
+          
+          # Create full backup (schema + data)
+          echo "Creating full backup..."
+          if pg_dump "$SUPAVISOR_URL" > "$FULL_BACKUP"; then
+            echo "Full backup created: $(ls -lh $FULL_BACKUP)"
+          else
+            echo "Full backup failed"
+            exit 1
+          fi
+          
+          # Create data-only backup
+          echo "Creating data-only backup..."
+          if pg_dump "$SUPAVISOR_URL" --data-only > "$DATA_BACKUP"; then
+            echo "Data-only backup created: $(ls -lh $DATA_BACKUP)"
+          else
+            echo "Data-only backup failed, continuing with full backup only"
+            rm -f "$DATA_BACKUP"
+          fi
+          
+          # Verify backups
+          if [ ! -s "$FULL_BACKUP" ]; then
+            echo "Full backup is empty"
+            exit 1
+          fi
+          
+          echo "Backup(s) completed successfully"
+          echo "Files created:"
+          ls -lah ./backups/
+
+      - name: Upload backup artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: database-backups-${{ github.ref_name }}-${{ github.run_number }}
+          path: ./backups/
+          retention-days: 30
+          compression-level: 9
+
+  migrations:
+    runs-on: ubuntu-latest
+    needs: [backup]
+    environment: ${{ github.ref == 'refs/heads/main' && 'main' || 'dev' }}
+    permissions:
+      contents: read
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js and install dependencies
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Prisma migrations
+        run: |
+          # Build database URL for Supavisor transaction pooler
+          SUPAVISOR_URL="postgresql://postgres.${{ vars.SUPABASE_TENANT_ID }}:${{ secrets.SUPABASE_DB_PASSWORD }}@supavisor-pooler.kuka-api.ionos-${{ github.ref_name }}.ds-apps.tsb-berlin.de:443/postgres?sslmode=require"
+          echo "Running Prisma migrations via Supavisor transaction pooler..."
+
+          # Test database connection
+          export DATABASE_URL="${SUPAVISOR_URL}"
+          
+          # Generate Prisma client
+          npx prisma generate
+
+          # Apply existing migrations
+          npx prisma migrate deploy
+
+          echo "Prisma migrations completed successfully"
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [build, migrations]
+    environment: ${{ github.ref == 'refs/heads/main' && 'main' || 'dev' }}
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create deployment tag
+        run: |
+          TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+          ENVIRONMENT="${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}"
+          TAG_NAME="deploy-${ENVIRONMENT}-${TIMESTAMP}"
+
+          echo "Creating deployment tag: ${TAG_NAME}"
+          git tag -a "${TAG_NAME}" -m "Frontend deployment to ${ENVIRONMENT} at $(date)"
+
+          if ! git push origin "${TAG_NAME}"; then
+            echo "Failed to push deployment tag"
+            exit 1
+          fi
+
+          echo "Deployment tag created: ${TAG_NAME}"
+          echo "View at: https://github.com/${{ github.repository }}/releases/tag/${TAG_NAME}"
