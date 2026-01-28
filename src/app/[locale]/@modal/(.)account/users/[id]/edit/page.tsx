@@ -8,5 +8,5 @@ type PageProps = {
 
 export default async function EditUserModal({ params }: PageProps) {
 	const { id } = await params;
-	return <UserFormModal mode="edit" userId={id} />;
+	return <UserFormModal mode="edit" userId={id} shouldRefresh={false} />;
 }

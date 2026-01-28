@@ -8,5 +8,5 @@ type PageProps = {
 
 export default async function EditGroupModal({ params }: PageProps) {
 	const { id } = await params;
-	return <GroupFormModal mode="edit" groupId={id} />;
+	return <GroupFormModal mode="edit" groupId={id} shouldRefresh={false} />;
 }

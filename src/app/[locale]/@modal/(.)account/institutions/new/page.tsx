@@ -1,5 +1,5 @@
 import { InstitutionFormModal } from "@/components/Institution/InstitutionFormModal";
 
 export default function NewInstitutionModal() {
-	return <InstitutionFormModal mode="create" />;
+	return <InstitutionFormModal mode="create" shouldRefresh={false} />;
 }

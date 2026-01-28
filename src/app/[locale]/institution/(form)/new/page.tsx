@@ -1,5 +1,5 @@
-import { InstitutionNewModal } from "@/components/Modals/Pages/InstitutionNewModal";
+import { SubmissionFormModal } from "@/components/Modals/Pages/SubmissionFormModal";
 
 export default function CreateInstitutionPage() {
-	return <InstitutionNewModal />;
+	return <SubmissionFormModal />;
 }
