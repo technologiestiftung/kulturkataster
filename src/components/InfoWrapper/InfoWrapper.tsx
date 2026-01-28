@@ -72,7 +72,7 @@ export function InfoWrapper({
 						variant="icon"
 						size="icon"
 						className="bg-background absolute top-2 right-2"
-						onClick={() => field.edit?.onClick?.(data)}
+						onClick={() => field.edit?.onClick?.(data as Institution)}
 						aria-label={field.edit?.ariaLabel ?? "Edit section"}
 					>
 						<EditIcon className="size-4" />
@@ -153,7 +153,11 @@ export function InfoWrapper({
 						cardVariant={sectionCardVariant}
 						cardClassName={heroToneClassName}
 						bodyContent={bodyContent}
-						onClick={field.onClick ? () => field.onClick?.(data) : undefined}
+						onClick={
+							field.onClick
+								? () => field.onClick?.(data as Institution)
+								: undefined
+						}
 						onClickAriaLabel={field.onClickAriaLabel}
 						onClickAsButton={!showEditButtonInBody}
 					/>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState, useEffect } from "react";
+import { useCallback, useMemo, useRef, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog } from "@/components/ui/alert-dialog";
@@ -22,15 +22,23 @@ import {
 	createInstitution,
 	updateInstitution,
 } from "@/server/actions/institutions";
+import { getInstitutionById } from "@/server/actions/institutions";
 import { geocodeAddress, reverseGeocode } from "@/server/actions/maptiler";
 import type { Category, FilterState } from "@/types";
 import type { Institution } from "@/types/institution";
 import { useRouter } from "next/navigation";
 import { resolveCategoryIdsFromFilters } from "@/lib/utils/filterUtils";
-
 type InstitutionFormModalProps = {
 	mode: "create" | "edit";
 	institutionId?: string;
+	returnTo?: string;
+	onSubmitOverride?: (data: Record<string, unknown>) => void | Promise<void>;
+	initialValues?: Record<string, unknown>;
+	formKeyOverride?: string;
+	submitLabelOverride?: string;
+	submittingOverride?: boolean;
+	closeOnSubmitOverride?: boolean;
+	shouldRefresh?: boolean;
 };
 
 const buildCategoryFilterState = (
@@ -58,6 +66,7 @@ const buildCategoryFilterState = (
 
 const getInitialValues = (resolvedInstitution?: Institution) => {
 	const address = resolvedInstitution?.address;
+	console.log(resolvedInstitution);
 	return {
 		name: resolvedInstitution?.name ?? "",
 		internal_notes: resolvedInstitution?.internal_notes ?? "",
@@ -98,15 +107,9 @@ const renderNotFoundDialog = (t: (key: string) => string) => (
 );
 
 const renderDialogBody = (
-	t: (key: string) => string,
 	formConfig: FormWrapperConfig,
-	resolvedInstitution: Institution | undefined,
-	mode: InstitutionFormModalProps["mode"],
-) => {
-	return (
-		<FormWrapper key={resolvedInstitution?.id ?? mode} config={formConfig} />
-	);
-};
+	formKey: string | number,
+) => <FormWrapper key={formKey} config={formConfig} />;
 
 const useResolvedInstitution = (
 	mode: InstitutionFormModalProps["mode"],
@@ -140,9 +143,12 @@ const useInstitutionSubmit = (
 	categoryGroups: Category[],
 	onClose: () => void,
 	onSuccess: (mode: InstitutionFormModalProps["mode"]) => void,
+	shouldRefresh: boolean,
 ) => {
-	const router = useRouter();
 	const [submitting, setSubmitting] = useState(false);
+	const addInstitution = useAccountStore((state) => state.addInstitution);
+	const upsertInstitution = useAccountStore((state) => state.upsertInstitution);
+	const router = useRouter();
 
 	const handleSubmit = async (data: Record<string, unknown>) => {
 		if (submitting) return;
@@ -153,7 +159,7 @@ const useInstitutionSubmit = (
 			categoryFilters !== undefined
 				? resolveCategoryIdsFromFilters(categoryFilters, categoryGroups)
 				: toNumberArray(data.categoryIds);
-		const streetLine = toOptionalText(data["address.streetLine"]);
+		const streetLine = toOptionalText(data["address.streetLine"]) ?? "";
 		const city = toOptionalText(data["address.city"]);
 		const zipcode = toOptionalText(data["address.zip"]);
 		const lat = toOptionalNumber(data["address.lat"]);
@@ -162,42 +168,41 @@ const useInstitutionSubmit = (
 		const neighbourhood = toOptionalText(data["address.neighbourhood"]);
 		const cultural_area = toOptionalText(data["address.cultural_area"]);
 
-		const address = streetLine
-			? (() => {
-					const { street, streetNumber } = splitStreetLine(streetLine);
-					const nextAddress = {
-						street,
-						street_number: streetNumber ? streetNumber : null,
-						city,
-						zipcode,
-						lat,
-						lng,
-						address_suffix,
-						neighbourhood,
-						cultural_area,
-					};
-					if (addressId) {
-						return { ...nextAddress, id: addressId };
-					}
-					return nextAddress;
-				})()
-			: undefined;
+		const address = (() => {
+			const { street, streetNumber } = splitStreetLine(streetLine);
+			const nextAddress = {
+				street,
+				street_number: streetNumber,
+				city,
+				zipcode,
+				lat,
+				lng,
+				address_suffix,
+				neighbourhood,
+				cultural_area,
+			};
+			if (addressId) {
+				return { ...nextAddress, id: addressId };
+			}
+			return nextAddress;
+		})();
 		const website = toOptionalText(data.website);
 		const email = toOptionalText(data.email);
 		const phone = toOptionalText(data.phone);
 
 		try {
 			if (mode === "create") {
-				await createInstitution({
+				const created = await createInstitution({
 					name: String(data.name ?? ""),
 					address,
-					categoryIds: categoryIds.length > 0 ? categoryIds : undefined,
+					categoryIds: categoryIds.length > 0 ? categoryIds : [],
 					website,
 					email,
 					phone,
 				});
+				addInstitution(created);
 			} else if (numericInstitutionId) {
-				await updateInstitution({
+				const updated = await updateInstitution({
 					id: numericInstitutionId,
 					name: String(data.name ?? ""),
 					address,
@@ -206,10 +211,15 @@ const useInstitutionSubmit = (
 					email,
 					phone,
 				});
+				if (updated) {
+					upsertInstitution(updated);
+				}
 			}
 
 			onSuccess(mode);
-			router.refresh();
+			if (shouldRefresh) {
+				router.refresh();
+			}
 			onClose();
 		} finally {
 			setSubmitting(false);
@@ -225,7 +235,9 @@ type InstitutionFormConfigArgs = {
 	tEnum: (key: string) => string;
 	categoryGroups: Category[];
 	resolvedInstitution?: Institution;
+	initialValues?: Record<string, unknown>;
 	submitting: boolean;
+	submitLabelOverride?: string;
 	onSubmit: (data: Record<string, unknown>) => void | Promise<void>;
 	onCancel: () => void;
 	onAddressBlur?: (
@@ -246,7 +258,9 @@ const buildInstitutionFormConfig = ({
 	tEnum,
 	categoryGroups,
 	resolvedInstitution,
+	initialValues,
 	submitting,
+	submitLabelOverride,
 	onSubmit,
 	onCancel,
 	onAddressBlur,
@@ -267,9 +281,10 @@ const buildInstitutionFormConfig = ({
 					mode === "create"
 						? t("institutionFormModal.form.details.description.create")
 						: t("institutionFormModal.form.details.description.edit"),
+				layout: { columns: 2 },
 				fields: [
 					{
-						name: "parentOrganization",
+						name: "parent_organization",
 						label: fieldLabel("parent_organization", "Parent Organization"),
 						type: "text",
 						description: t(
@@ -312,11 +327,35 @@ const buildInstitutionFormConfig = ({
 					{
 						name: "utilization_status",
 						label: fieldLabel("utilization_status", "Utilization Status"),
-						type: "text",
-						placeholder: t(
-							"institutionFormModal.form.details.fields.utilization_status.placeholder",
-						),
+						type: "select",
+						placeholder: tEnum("utilization_status.placeholder"),
 						layout: { span: "full" },
+						options: [
+							{
+								value: "in_use",
+								label: tEnum("utilization_status.in_use"),
+							},
+							{
+								value: "permanently_closed",
+								label: tEnum("utilization_status.permanently_closed"),
+							},
+							{
+								value: "planned_use",
+								label: tEnum("utilization_status.planned_use"),
+							},
+							{
+								value: "potential_space",
+								label: tEnum("utilization_status.potential_space"),
+							},
+							{
+								value: "temporarily_closed",
+								label: tEnum("utilization_status.temporarily_closed"),
+							},
+							{
+								value: "unknown",
+								label: tEnum("utilization_status.unknown"),
+							},
+						],
 					},
 					{
 						name: "address.map",
@@ -331,19 +370,7 @@ const buildInstitutionFormConfig = ({
 							zipField: "address.zip",
 						},
 					},
-					{
-						name: "address.streetLine",
-						label: `${fieldLabel("street", "Street")} & ${fieldLabel(
-							"street_number",
-							"Number",
-						)}`,
-						type: "text",
-						layout: { span: "half" },
-						placeholder: t(
-							"institutionFormModal.form.details.fields.address.streetLine.placeholder",
-						),
-						onBlur: onAddressBlur,
-					},
+
 					{
 						name: "address.lat",
 						label: fieldLabel("lat", "Breitengrad"),
@@ -357,6 +384,19 @@ const buildInstitutionFormConfig = ({
 						type: "number",
 						layout: { span: "half" },
 						onBlur: onLatLngBlur,
+					},
+					{
+						name: "address.streetLine",
+						label: `${fieldLabel("street", "Street")} & ${fieldLabel(
+							"street_number",
+							"Number",
+						)}`,
+						type: "text",
+						layout: { span: "half" },
+						placeholder: t(
+							"institutionFormModal.form.details.fields.address.streetLine.placeholder",
+						),
+						onBlur: onAddressBlur,
 					},
 					{
 						name: "address.zip",
@@ -444,23 +484,33 @@ const buildInstitutionFormConfig = ({
 		showCancel: true,
 		cancelLabel: t("institutionFormModal.actions.cancel"),
 		onCancel,
-		submitLabel: getSubmitLabel(mode, submitting, {
-			create: {
-				default: t("institutionFormModal.actions.create"),
-				loading: t("institutionFormModal.actions.creating"),
-			},
-			edit: {
-				default: t("institutionFormModal.actions.save"),
-				loading: t("institutionFormModal.actions.saving"),
-			},
-		}),
-		initialValues: getInitialValues(resolvedInstitution),
+		submitLabel:
+			submitLabelOverride ??
+			getSubmitLabel(mode, submitting, {
+				create: {
+					default: t("institutionFormModal.actions.create"),
+					loading: t("institutionFormModal.actions.creating"),
+				},
+				edit: {
+					default: t("institutionFormModal.actions.save"),
+					loading: t("institutionFormModal.actions.saving"),
+				},
+			}),
+		initialValues: initialValues ?? getInitialValues(resolvedInstitution),
 	};
 };
 
 export function InstitutionFormModal({
 	mode,
 	institutionId,
+	returnTo,
+	onSubmitOverride,
+	initialValues,
+	formKeyOverride,
+	submitLabelOverride,
+	submittingOverride,
+	closeOnSubmitOverride,
+	shouldRefresh = true,
 }: InstitutionFormModalProps) {
 	const router = useRouter();
 	const { t } = useTranslation("content");
@@ -477,15 +527,6 @@ export function InstitutionFormModal({
 		inflight: false,
 	});
 
-	const categoryOptions = useMemo(
-		() =>
-			categories.map((category) => ({
-				value: String(category.id),
-				label: tEnum(`category.${category.key}`),
-			})),
-		[categories, tEnum],
-	);
-
 	useEffect(() => {
 		const hash = window.location.hash.slice(1); // Remove the '#'
 		if (hash) {
@@ -499,11 +540,51 @@ export function InstitutionFormModal({
 	}, []);
 
 	const handleClose = () => {
+		if (returnTo) {
+			router.replace(returnTo);
+			return;
+		}
 		router.back();
 	};
 
-	const { numericInstitutionId, resolvedInstitution, showNotFound } =
-		useResolvedInstitution(mode, institutionId, institutions);
+	const { numericInstitutionId, resolvedInstitution } = useResolvedInstitution(
+		mode,
+		institutionId,
+		institutions,
+	);
+	const [fetchedInstitution, setFetchedInstitution] =
+		useState<Institution | null>(null);
+	const [didFetchInstitution, setDidFetchInstitution] = useState(false);
+
+	useEffect(() => {
+		if (mode !== "edit" || !numericInstitutionId) return;
+		if (resolvedInstitution || didFetchInstitution) return;
+		let active = true;
+		const fetchInstitution = async () => {
+			try {
+				const result = await getInstitutionById(numericInstitutionId);
+				if (!active) return;
+				setFetchedInstitution(result ?? null);
+			} catch {
+				if (active) {
+					setFetchedInstitution(null);
+				}
+			} finally {
+				if (active) {
+					setDidFetchInstitution(true);
+				}
+			}
+		};
+		fetchInstitution();
+		return () => {
+			active = false;
+		};
+	}, [didFetchInstitution, mode, numericInstitutionId, resolvedInstitution]);
+
+	const resolvedInstitutionWithFallback =
+		resolvedInstitution ?? fetchedInstitution ?? undefined;
+	const showNotFoundWithFallback =
+		mode === "edit" && didFetchInstitution && !resolvedInstitutionWithFallback;
 
 	const handleSuccess = (nextMode: InstitutionFormModalProps["mode"]) => {
 		const keyPrefix =
@@ -516,17 +597,35 @@ export function InstitutionFormModal({
 		});
 	};
 
-	const { handleSubmit, submitting } = useInstitutionSubmit(
-		mode,
-		numericInstitutionId,
-		resolvedInstitution?.address?.id,
-		categories,
-		handleClose,
-		handleSuccess,
+	const { handleSubmit: handleInstitutionSubmit, submitting } =
+		useInstitutionSubmit(
+			mode,
+			numericInstitutionId,
+			resolvedInstitutionWithFallback?.address?.id,
+			categories,
+			handleClose,
+			handleSuccess,
+			shouldRefresh,
+		);
+
+	const handleOverrideSubmit = useCallback(
+		(data: Record<string, unknown>) => {
+			const maybePromise = onSubmitOverride?.(data);
+			if (closeOnSubmitOverride) {
+				Promise.resolve(maybePromise).then(() => handleClose());
+			}
+		},
+		[closeOnSubmitOverride, handleClose, onSubmitOverride],
 	);
 
 	const onAddressBlur = handleAddressBlur(addressGeocodeState, geocodeAddress);
 	const onLatLngBlur = handleLatLngBlur(latLngGeocodeState, reverseGeocode);
+	const resolvedSubmitting =
+		onSubmitOverride !== undefined ? (submittingOverride ?? false) : submitting;
+	const resolvedSubmitHandler =
+		onSubmitOverride !== undefined
+			? handleOverrideSubmit
+			: handleInstitutionSubmit;
 
 	const formConfig = useMemo(
 		() =>
@@ -535,9 +634,11 @@ export function InstitutionFormModal({
 				t,
 				tEnum,
 				categoryGroups: categories,
-				resolvedInstitution,
-				submitting,
-				onSubmit: handleSubmit,
+				resolvedInstitution: resolvedInstitutionWithFallback,
+				initialValues,
+				submitting: resolvedSubmitting,
+				submitLabelOverride,
+				onSubmit: resolvedSubmitHandler,
 				onCancel: handleClose,
 				onAddressBlur,
 				onLatLngBlur,
@@ -546,20 +647,23 @@ export function InstitutionFormModal({
 			mode,
 			t,
 			tEnum,
-			categoryOptions,
 			categories,
-			resolvedInstitution,
-			submitting,
-			handleSubmit,
+			resolvedInstitutionWithFallback,
+			initialValues,
+			resolvedSubmitting,
+			submitLabelOverride,
+			resolvedSubmitHandler,
 			handleClose,
 			onAddressBlur,
 			onLatLngBlur,
 		],
 	);
 
-	if (showNotFound) {
+	if (showNotFoundWithFallback) {
 		return renderNotFoundDialog(t);
 	}
+
+	const formKey = formKeyOverride ?? resolvedInstitution?.id ?? mode;
 
 	return (
 		<Dialog open>
@@ -571,7 +675,7 @@ export function InstitutionFormModal({
 						</DialogTitle>
 					</div>
 					<div className="flex-1 overflow-auto px-6 py-6 md:px-10">
-						{renderDialogBody(t, formConfig, resolvedInstitution, mode)}
+						{renderDialogBody(formConfig, formKey)}
 					</div>
 				</div>
 			</DialogContent>

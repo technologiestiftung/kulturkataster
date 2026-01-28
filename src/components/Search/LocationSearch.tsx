@@ -18,7 +18,7 @@ import { useTranslation } from "react-i18next";
 import { SearchMessages } from "./SearchMessages";
 import { SearchResults } from "./SearchResults";
 import { getCoordinatesFromAddress } from "@/lib/utils/institutionUtils";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 export const isGeoFeature = (result: SearchResult): result is GeoFeature => {
 	return "place_name" in result && "center" in result;
@@ -29,6 +29,7 @@ export function LocationSearch() {
 	const inputRef = useRef<HTMLInputElement>(null);
 	const { map } = useMapStore();
 	const router = useRouter();
+	const pathname = usePathname();
 
 	const {
 		query,
@@ -119,7 +120,9 @@ export function LocationSearch() {
 			animateMapToCoordinates(map, transformedCoords);
 		}
 
-		router.push(`/institution/${result.id}`);
+		const isListRoute = /\/list(\/|$)/.test(pathname ?? "");
+		const baseRoute = isListRoute ? "/list" : "/map";
+		router.push(`${baseRoute}/institution/${result.id}`);
 
 		if (statusRef.current) {
 			statusRef.current.textContent = `${result.name} ausgewählt.`;
