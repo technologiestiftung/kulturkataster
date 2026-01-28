@@ -110,6 +110,16 @@ export async function updateSubmission(input: SubmissionUpdatePayload) {
 			status: input.status ?? undefined,
 		});
 	}
+	const existing = await submissionRepo.findFirst({
+		id: input.id,
+		created_by: ownerId,
+	});
+	if (!existing) {
+		throw new Error("Not authorized to update this submission.");
+	}
+	if (existing.status && existing.status !== "draft") {
+		throw new Error("Only draft submissions can be edited.");
+	}
 	const result = await submissionRepo.updateWhere(
 		{ id: input.id, created_by: ownerId },
 		{

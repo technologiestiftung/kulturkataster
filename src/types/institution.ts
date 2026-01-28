@@ -22,6 +22,65 @@ export type PrismaInstitutionWithRelations = Prisma.InstitutionGetPayload<{
 
 export type Institution = PrismaInstitutionWithRelations;
 
+export type InstitutionTableBase = {
+	id: Institution["id"];
+	name: Institution["name"];
+	status: Institution["status"];
+	email: Institution["email"];
+	phone: Institution["phone"];
+	website: Institution["website"];
+	parent_organization: Institution["parent_organization"];
+	address: AddressInput | Institution["address"] | null;
+	categories: Category[] | Institution["categories"];
+	tags: Institution["tags"];
+	users: Institution["users"];
+	groups: Institution["groups"];
+	owner_name?: Institution["owner_name"];
+	owner_type?: Institution["owner_type"];
+	rental_contract_type?: Institution["rental_contract_type"];
+	rental_contract_end?: Institution["rental_contract_end"];
+	funding_type?: Institution["funding_type"];
+	utilization_status?: Institution["utilization_status"];
+	utilization_status_info?: Institution["utilization_status_info"];
+	protection_status?: Institution["protection_status"];
+	protection_status_info?: Institution["protection_status_info"];
+	shared_use_allowed?: Institution["shared_use_allowed"];
+	shared_use_info?: Institution["shared_use_info"];
+	shared_use_equipment?: Institution["shared_use_equipment"];
+	shared_use_audience?: Institution["shared_use_audience"];
+	shared_use_availability?: Institution["shared_use_availability"];
+	accessibility?: Institution["accessibility"];
+	cost?: Institution["cost"];
+	established_since?: Institution["established_since"];
+	established_until?: Institution["established_until"];
+	closing_reason?: Institution["closing_reason"];
+	notes?: Institution["notes"];
+	internal_notes?: Institution["internal_notes"];
+	source?: Institution["source"];
+	shared_use_contact_person?: Institution["shared_use_contact_person"];
+	contact_person?: Institution["contact_person"];
+	contact_person_id?: Institution["contact_person_id"];
+	area?: Institution["area"];
+	number_of_rooms?: Institution["number_of_rooms"];
+	legal_form?: Institution["legal_form"];
+	capacity?: Institution["capacity"];
+	created_at: Institution["created_at"];
+	updated_at: Institution["updated_at"];
+};
+
+export type InstitutionRow = InstitutionTableBase & {
+	rowKind: "institution";
+	rowKey: string;
+};
+
+export type SubmissionRow = InstitutionTableBase & {
+	rowKind: "submission";
+	rowKey: string;
+	submissionId: number;
+};
+
+export type InstitutionTableRow = InstitutionRow | SubmissionRow;
+
 export type InstitutionCreateInput = Prisma.InstitutionCreateInput;
 
 export type InstitutionUpdateInput = Prisma.InstitutionUpdateInput;
@@ -68,8 +127,8 @@ export type InstitutionForm = {
 	source?: string | null;
 	shared_use_contact_person?: string | null;
 	contact_person_id?: number | null;
-	address?: AddressInput | null;
-	categoryIds?: number[];
+	address: AddressInput | null;
+	categoryIds: number[];
 	tagIds?: number[];
 	userIds?: string[];
 	groupIds?: number[];
