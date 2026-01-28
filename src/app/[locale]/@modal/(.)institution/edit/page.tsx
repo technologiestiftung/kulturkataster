@@ -1,5 +1,5 @@
-import { InstitutionEditModal } from "@/components/Modals/Pages/InstitutionNewModal";
+import { SubmissionEditModal } from "@/components/Modals/Pages/SubmissionFormModal";
 
 export default function InstitutionEditModalIntercepted() {
-	return <InstitutionEditModal />;
+	return <SubmissionEditModal />;
 }

@@ -8,5 +8,11 @@ export default async function EditInstitutionPage({
 	params,
 }: EditInstitutionPageProps) {
 	const { id } = await params;
-	return <InstitutionFormModal mode="edit" institutionId={id} />;
+	return (
+		<InstitutionFormModal
+			mode="edit"
+			institutionId={id}
+			shouldRefresh={false}
+		/>
+	);
 }
