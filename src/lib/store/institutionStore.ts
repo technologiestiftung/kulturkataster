@@ -100,6 +100,7 @@ export const useInstitutionStore = create<InstitutionStoreState>()(
 			filteredInstitutionsGeoJSON: null,
 			categoryCounts: {},
 			subcategoryCounts: {},
+			districts: [],
 			selectedInstitutionId: null,
 			setSelectedInstitutionId: (id: string | number | null) =>
 				set({ selectedInstitutionId: id }),
@@ -130,6 +131,10 @@ export const useInstitutionStore = create<InstitutionStoreState>()(
 			},
 			categories: null,
 			setCategories: (categories) => set({ categories }),
+			initializeDistricts: async () => {
+				const districts = await getDistricts();
+				set({ districts });
+			},
 			initializeCategories: async () => {
 				try {
 					const categories = await getCategoriesWithSubcategories();
