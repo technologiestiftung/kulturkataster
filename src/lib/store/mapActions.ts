@@ -4,6 +4,7 @@ import {
 	MapConfig,
 	MapStoreState,
 } from "@/types/map";
+import type { Draft } from "immer";
 
 function findAndUpdateLayerById(
 	config: MapConfig,
@@ -31,7 +32,7 @@ function findAndUpdateLayerById(
 
 export const createSetLayerStatus =
 	(
-		set: (fn: (state: MapStoreState) => Partial<MapStoreState>) => void,
+		set: (fn: (state: Draft<MapStoreState>) => void) => void,
 		get: () => MapStoreState,
 	) =>
 	(id: string, status: LayerStatus) => {
@@ -43,7 +44,9 @@ export const createSetLayerStatus =
 			status,
 		}));
 
-		set(() => ({ config: updatedConfig }));
+		set((state) => {
+			state.config = updatedConfig;
+		});
 	};
 
 export const createGetLayerStatus =
