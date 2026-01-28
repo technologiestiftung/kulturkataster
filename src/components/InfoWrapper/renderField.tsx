@@ -38,7 +38,7 @@ const resolveFieldValue = (
 	data: Partial<Institution>,
 ) => {
 	if (typeof field.value === "function") {
-		return field.value(data);
+		return field.value(data as Institution);
 	}
 
 	if (typeof field.value === "string") {
@@ -63,7 +63,7 @@ const resolveNewFieldValue = (
 	data: Partial<Institution>,
 ) => {
 	if (typeof field.newValue === "function") {
-		return field.newValue(data);
+		return field.newValue(data as Institution);
 	}
 
 	if (typeof field.newValue === "string") {
@@ -89,7 +89,7 @@ const resolveHref = (
 	data: Partial<Institution>,
 ) => {
 	if (typeof fieldConfig.href === "function") {
-		return fieldConfig.href(data);
+		return fieldConfig.href(data as Institution);
 	}
 
 	if (typeof fieldConfig.href === "string") {
@@ -197,7 +197,7 @@ function AddressField({
 	const copiedLabel = options?.copiedLabel ?? "Copied";
 	const mapHref =
 		typeof options?.mapHref === "function"
-			? options.mapHref(data)
+			? options.mapHref(data as Institution)
 			: (options?.mapHref ?? buildMapHref(data));
 
 	if (!address) return null;
@@ -527,7 +527,7 @@ export const buildRenderField = ({ data, config }: BuildRenderFieldArgs) => {
 		fieldIndex: number,
 		layoutColumns?: 1 | 2,
 	) => {
-		if (field.condition && !field.condition(data)) {
+		if (field.condition && !field.condition(data as Institution)) {
 			return null;
 		}
 		const fieldKey =

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { getResponsiveGridClass } from "@/components/shared/sectionLayout";
@@ -127,6 +127,7 @@ const buildTouchedMap = (fields: FormWrapperFieldConfig[]) => {
 };
 
 export function FormWrapper({ config }: { config: FormWrapperConfig }) {
+	const onChangeRef = useRef<FormWrapperConfig["onChange"]>(config.onChange);
 	const [formData, setFormData] = useState<Record<string, unknown>>(() =>
 		buildInitialFormData(config),
 	);
@@ -136,11 +137,7 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 	const [formError, setFormError] = useState<string | null>(null);
 
 	const updateField = (name: string, value: unknown) => {
-		setFormData((prev) => {
-			const next = { ...prev, [name]: value };
-			config.onChange?.(next);
-			return next;
-		});
+		setFormData((prev) => ({ ...prev, [name]: value }));
 		setTouched((prev) => ({ ...prev, [name]: true }));
 
 		if (errors[name]) {
@@ -197,6 +194,14 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 		updateField,
 		handleFieldBlur,
 	});
+
+	useEffect(() => {
+		onChangeRef.current = config.onChange;
+	}, [config.onChange]);
+
+	useEffect(() => {
+		onChangeRef.current?.(formData);
+	}, [formData]);
 
 	return (
 		<form id={config.formId} onSubmit={handleSubmit}>

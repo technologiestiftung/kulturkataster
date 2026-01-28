@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
@@ -36,7 +36,7 @@ const getInitialValues = (resolvedCategory?: Category) => ({
 	status: resolvedCategory?.status ?? "active",
 	parentCategoryId: resolvedCategory?.parent_category_id
 		? String(resolvedCategory.parent_category_id)
-		: "",
+		: "none",
 });
 
 const getDialogTitle = (
@@ -112,7 +112,12 @@ const useResolvedCategory = (
 	}, [mode, numericCategoryId, categories]);
 
 	useEffect(() => {
-		if (mode !== "edit" || !numericCategoryId || resolvedCategory || hasFetchedCategory) {
+		if (
+			mode !== "edit" ||
+			!numericCategoryId ||
+			resolvedCategory ||
+			hasFetchedCategory
+		) {
 			return;
 		}
 		let active = true;
@@ -163,8 +168,8 @@ const useCategorySubmit = (
 ) => {
 	const router = useRouter();
 	const [submitting, setSubmitting] = useState(false);
-	const categories = useAccountStore((state) => state.categories);
-	const setCategories = useAccountStore((state) => state.setCategories);
+	const addCategory = useAccountStore((state) => state.addCategory);
+	const upsertCategory = useAccountStore((state) => state.upsertCategory);
 
 	const handleSubmit = async (data: Record<string, unknown>) => {
 		if (submitting) return;
@@ -174,7 +179,7 @@ const useCategorySubmit = (
 		const icon = toOptionalText(data.icon);
 		const parentCategoryRaw = data.parentCategoryId;
 		const parentCategoryId =
-			parentCategoryRaw === "" ? null : toOptionalNumber(parentCategoryRaw);
+			parentCategoryRaw === "none" ? null : toOptionalNumber(parentCategoryRaw);
 		const status = (data.status as CategoryStatus | undefined) ?? "active";
 
 		try {
@@ -186,7 +191,7 @@ const useCategorySubmit = (
 					status,
 					parentCategoryId: parentCategoryId ?? null,
 				});
-				setCategories([created, ...categories]);
+				addCategory(created);
 			} else if (numericCategoryId) {
 				const updated = await updateCategory({
 					id: numericCategoryId,
@@ -197,9 +202,7 @@ const useCategorySubmit = (
 					parentCategoryId: parentCategoryId ?? null,
 				});
 				if (updated) {
-					setCategories(
-						categories.map((item) => (item.id === updated.id ? updated : item)),
-					);
+					upsertCategory(updated);
 				}
 			}
 
@@ -354,7 +357,7 @@ export function CategoryFormModal({
 	const router = useRouter();
 	const setAlertDialog = useAccountStore((state) => state.setAlertDialog);
 	const categories = useAccountStore((state) => state.categories);
-	const setCategories = useAccountStore((state) => state.setCategories);
+	const removeCategory = useAccountStore((state) => state.removeCategory);
 	const [isDeleting, setIsDeleting] = useState(false);
 	const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
@@ -393,7 +396,7 @@ export function CategoryFormModal({
 		);
 		return [
 			{
-				value: "",
+				value: "none",
 				label: t("categoryFormModal.form.details.fields.parent.none", {
 					defaultValue: "No parent",
 				}),
@@ -531,9 +534,7 @@ export function CategoryFormModal({
 						setIsDeleting(true);
 						try {
 							await deleteCategory(resolvedCategory.id);
-							setCategories(
-								categories.filter((item) => item.id !== resolvedCategory.id),
-							);
+							removeCategory(resolvedCategory.id);
 							setShowDeleteDialog(false);
 							handleClose();
 						} catch {
