@@ -128,7 +128,7 @@ export type InstitutionForm = {
 	shared_use_contact_person?: string | null;
 	contact_person_id?: number | null;
 	address: AddressInput | null;
-	categoryIds: number[];
+	categoryIds?: number[];
 	tagIds?: number[];
 	userIds?: string[];
 	groupIds?: number[];
