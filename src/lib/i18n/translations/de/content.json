@@ -1311,5 +1311,92 @@
 				"description": "Die Änderungen wurden erfolgreich gespeichert."
 			}
 		}
+	},
+	"categoryFormModal": {
+		"dialog": {
+			"title": {
+				"create": "Kategorie erstellen",
+				"edit": "Kategorie bearbeiten"
+			},
+			"notFound": {
+				"title": "Kategorie nicht gefunden",
+				"description": "Diese Kategorie konnte nicht gefunden werden."
+			},
+			"loading": "Kategorie wird geladen..."
+		},
+		"form": {
+			"details": {
+				"title": "Kategoriedetails",
+				"description": "Lege fest, wie diese Kategorie angezeigt wird.",
+				"fields": {
+					"key": {
+						"label": "Schlüssel",
+						"placeholder": "z. B. museen"
+					},
+					"status": {
+						"label": "Status"
+					},
+					"description": {
+						"label": "Beschreibung",
+						"placeholder": "Optionale Beschreibung"
+					},
+					"icon": {
+						"label": "Icon",
+						"placeholder": "Optionaler Icon-Name"
+					},
+					"parent": {
+						"label": "Übergeordnete Kategorie",
+						"placeholder": "Übergeordnete Kategorie auswählen (optional)",
+						"none": "Keine übergeordnete Kategorie"
+					}
+				}
+			}
+		},
+		"actions": {
+			"cancel": "Abbrechen",
+			"create": "Kategorie erstellen",
+			"createLoading": "Wird erstellt...",
+			"update": "Speichern",
+			"updateLoading": "Wird gespeichert...",
+			"save": "Speichern",
+			"saveLoading": "Wird gespeichert..."
+		},
+		"status": {
+			"active": "Aktiv",
+			"inactive": "Inaktiv"
+		},
+		"feedback": {
+			"create": {
+				"title": "Kategorie erstellt",
+				"description": "Die Kategorie ist jetzt verfügbar."
+			},
+			"update": {
+				"title": "Kategorie aktualisiert",
+				"description": "Die Änderungen wurden gespeichert."
+			}
+		},
+		"delete": {
+			"title": "Kategorie löschen",
+			"description": "Die Kategorie wird dauerhaft entfernt.",
+			"button": "Löschen",
+			"confirmTitle": "Kategorie löschen?",
+			"confirmDescription": "Die Kategorie wird dauerhaft entfernt. Diese Aktion kann nicht rückgängig gemacht werden.",
+			"confirm": "Löschen",
+			"cancel": "Abbrechen",
+			"errorTitle": "Löschen fehlgeschlagen",
+			"errorDescription": "Bitte zuerst alle Unterkategorien entfernen und erneut versuchen."
+		}
+	},
+	"categoryTable": {
+		"title": "Kategorien",
+		"subtitle": "{{count}} gesamt",
+		"emptyMessage": "Keine Kategorien gefunden.",
+		"columns": {
+			"parent": "Übergeordnet",
+			"subcategories": "Unterkategorien"
+		},
+		"actions": {
+			"add": "Kategorie hinzufügen"
+		}
 	}
 }
