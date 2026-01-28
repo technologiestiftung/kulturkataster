@@ -5,7 +5,6 @@ import { cookies } from "next/headers";
 export async function createClient() {
 	const cookieStore = await cookies();
 
-	// @ts-expect-error - Supabase SSR cookie methods type mismatch
 	return createServerClient(
 		process.env.SUPABASE_URL!,
 		process.env.SUPABASE_ANON_KEY!,
