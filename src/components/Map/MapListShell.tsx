@@ -15,7 +15,7 @@ export function MapListShell() {
 	const pathname = usePathname();
 	const normalizedPath = pathname?.replace(/\/$/, "");
 	const [lastRouteMode, setLastRouteMode] = useState<"map" | "list">(() =>
-		normalizedPath?.endsWith("/list") ? "list" : "map",
+		/\/list(\/|$)/.test(normalizedPath ?? "") ? "list" : "map",
 	);
 	const selectedInstitutionId = useInstitutionStore(
 		(state) => state.selectedInstitutionId,
@@ -25,24 +25,24 @@ export function MapListShell() {
 	);
 
 	const routeMode = useMemo(() => {
-		if (normalizedPath?.endsWith("/list")) return "list";
-		if (normalizedPath?.endsWith("/map")) return "map";
+		if (/\/list(\/|$)/.test(normalizedPath ?? "")) return "list";
+		if (/\/map(\/|$)/.test(normalizedPath ?? "")) return "map";
 		return lastRouteMode;
 	}, [lastRouteMode, normalizedPath]);
 	const activePanel = useAppStore((state) => state.activePanel);
 	const setActivePanel = useAppStore((state) => state.setActivePanel);
 
 	useEffect(() => {
-		if (normalizedPath?.endsWith("/list")) {
+		if (/\/list(\/|$)/.test(normalizedPath ?? "")) {
 			setLastRouteMode("list");
-		} else if (normalizedPath?.endsWith("/map")) {
+		} else if (/\/map(\/|$)/.test(normalizedPath ?? "")) {
 			setLastRouteMode("map");
 		}
 	}, [normalizedPath]);
 
 	useEffect(() => {
-		const isMapRoute = normalizedPath?.endsWith("/map");
-		const isInstitutionRoute = normalizedPath?.includes("/institution/");
+		const isMapRoute = /\/map(\/|$)/.test(normalizedPath ?? "");
+		const isInstitutionRoute = /\/institution\/\d+$/.test(normalizedPath ?? "");
 		if (!isMapRoute || isInstitutionRoute) {
 			if (activePanel) {
 				setActivePanel(null);

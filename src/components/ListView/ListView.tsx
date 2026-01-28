@@ -71,7 +71,7 @@ const ListView: FC = () => {
 
 	const handleInstitutionClick = useCallback(
 		(institution: Institution) => {
-			router.push(`/institution/${institution.id}`);
+			router.push(`/list/institution/${institution.id}`);
 		},
 		[router],
 	);
