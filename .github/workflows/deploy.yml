@@ -84,7 +84,7 @@ jobs:
     steps:
       - name: Create database backup via Supavisor
         run: |
-          SUPAVISOR_URL="postgresql://postgres.${{ vars.SUPABASE_TENANT_ID }}:${{ secrets.SUPABASE_DB_PASSWORD }}@supavisor-pooler.kuka-api.ionos-${{ github.ref_name }}.ds-apps.tsb-berlin.de:443/postgres?sslmode=require"
+          SUPAVISOR_URL="postgresql://postgres.${{ vars.SUPABASE_TENANT_ID }}:${{ secrets.SUPABASE_DB_PASSWORD }}@supavisor-transaction.kuka-api.ionos-${{ github.ref_name }}.ds-apps.tsb-berlin.de:443/postgres?sslmode=require"
           
           # Create local backup directory
           mkdir -p ./backups
@@ -159,7 +159,7 @@ jobs:
       - name: Run Prisma migrations
         run: |
           # Build database URL for Supavisor transaction pooler
-          SUPAVISOR_URL="postgresql://postgres.${{ vars.SUPABASE_TENANT_ID }}:${{ secrets.SUPABASE_DB_PASSWORD }}@supavisor-pooler.kuka-api.ionos-${{ github.ref_name }}.ds-apps.tsb-berlin.de:443/postgres?sslmode=require"
+          SUPAVISOR_URL="postgresql://postgres.${{ vars.SUPABASE_TENANT_ID }}:${{ secrets.SUPABASE_DB_PASSWORD }}@supavisor-session.kuka-api.ionos-${{ github.ref_name }}.ds-apps.tsb-berlin.de:443/postgres?sslmode=require"
           echo "Running Prisma migrations via Supavisor transaction pooler..."
 
           # Test database connection
