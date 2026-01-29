@@ -84,8 +84,7 @@ export function InstitutionEditModal({
 
 	const resolvedInstitutionWithFallback =
 		resolvedInstitution ?? fetchedInstitution ?? undefined;
-	const showNotFound =
-		didFetchInstitution && !resolvedInstitutionWithFallback;
+	const showNotFound = didFetchInstitution && !resolvedInstitutionWithFallback;
 
 	if (!resolvedInstitutionWithFallback && !didFetchInstitution) {
 		return null;
