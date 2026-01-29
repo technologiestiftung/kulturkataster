@@ -3,12 +3,11 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { InstitutionFormModal } from "@/components/Institution/InstitutionFormModal";
-import { useSubmissionStore } from "@/lib/store/submissionStore";
 import {
 	buildAddressFromFormData,
 	buildStreetLine,
 } from "@/lib/utils/formUtils";
-import { submissionToInstitutionDraft } from "@/lib/utils/submissionUtils";
+import { institutionSubmissionToDraft } from "@/lib/utils/institutionSubmissionUtils";
 import {
 	getSubmissionById,
 	updateSubmission,
@@ -17,41 +16,41 @@ import { useAccountStore } from "@/lib/store/accountStore";
 import type { Category, FilterState } from "@/types";
 import type { Submission } from "@/types/submission";
 import { useRouter } from "next/navigation";
+import { AlertDialog } from "../ui/alert-dialog";
 
-type SubmissionInstitutionFormModalProps = {
+type InstitutionDraftEditModalProps = {
 	returnTo?: string;
 	submissionId?: number;
 	shouldRefresh?: boolean;
 };
 
-export function SubmissionInstitutionFormModal({
+export function InstitutionDraftEditModal({
 	returnTo,
 	submissionId,
 	shouldRefresh = true,
-}: SubmissionInstitutionFormModalProps) {
+}: InstitutionDraftEditModalProps) {
 	const { t } = useTranslation("content");
-	const submissionDraft = useSubmissionStore((state) => state.draft);
-	const setSubmissionDraft = useSubmissionStore((state) => state.setDraft);
 	const submissions = useAccountStore((state) => state.submissions);
 	const upsertSubmission = useAccountStore((state) => state.upsertSubmission);
 	const categories = useAccountStore((state) => state.categories);
 	const router = useRouter();
 
+	const hasSubmissionId = typeof submissionId === "number";
 	const [fetchedSubmission, setFetchedSubmission] = useState<Submission | null>(
 		null,
 	);
 	const [didFetchSubmission, setDidFetchSubmission] = useState(false);
 
 	const resolvedSubmission = useMemo(() => {
-		if (typeof submissionId !== "number") return undefined;
+		if (!hasSubmissionId) return undefined;
 		return submissions.find((item) => item.id === submissionId) ?? undefined;
-	}, [submissions, submissionId]);
+	}, [hasSubmissionId, submissions, submissionId]);
 
 	const resolvedSubmissionWithFallback =
 		resolvedSubmission ?? fetchedSubmission ?? undefined;
 
 	useEffect(() => {
-		if (!submissionId || resolvedSubmission || didFetchSubmission) return;
+		if (!hasSubmissionId || resolvedSubmission || didFetchSubmission) return;
 		let active = true;
 		const fetchSubmission = async () => {
 			try {
@@ -72,7 +71,7 @@ export function SubmissionInstitutionFormModal({
 		return () => {
 			active = false;
 		};
-	}, [didFetchSubmission, resolvedSubmission, submissionId]);
+	}, [didFetchSubmission, hasSubmissionId, resolvedSubmission, submissionId]);
 
 	const handleSubmit = useCallback(
 		async (data: Record<string, unknown>) => {
@@ -80,28 +79,25 @@ export function SubmissionInstitutionFormModal({
 				...data,
 				address: buildAddressFromFormData(data),
 			};
-			if (resolvedSubmissionWithFallback && submissionId) {
-				const updated = await updateSubmission({
-					id: submissionId,
-					data: payload,
-				});
-				if (updated) {
-					upsertSubmission(updated);
-				}
-				if (shouldRefresh) {
-					router.refresh();
-				}
-				return;
+			if (!resolvedSubmissionWithFallback || !hasSubmissionId) return;
+			const updated = await updateSubmission({
+				id: submissionId,
+				data: payload,
+			});
+			if (updated) {
+				upsertSubmission(updated);
 			}
-			setSubmissionDraft(payload);
+			if (shouldRefresh) {
+				router.refresh();
+			}
 		},
 		[
-			resolvedSubmissionWithFallback,
 			router,
-			setSubmissionDraft,
 			upsertSubmission,
 			submissionId,
 			shouldRefresh,
+			hasSubmissionId,
+			resolvedSubmissionWithFallback,
 		],
 	);
 
@@ -136,8 +132,8 @@ export function SubmissionInstitutionFormModal({
 	);
 
 	const initialValues = useMemo(() => {
-		const draft = submissionToInstitutionDraft({
-			data: (resolvedSubmissionWithFallback?.data ?? submissionDraft) as Record<
+		const draft = institutionSubmissionToDraft({
+			data: (resolvedSubmissionWithFallback?.data ?? {}) as Record<
 				string,
 				unknown
 			>,
@@ -164,22 +160,38 @@ export function SubmissionInstitutionFormModal({
 		};
 	}, [
 		resolvedSubmissionWithFallback,
-		submissionDraft,
 		categories,
 		buildCategoryFilterStateFromIds,
 	]);
+
+	const isLoading =
+		hasSubmissionId && !resolvedSubmissionWithFallback && !didFetchSubmission;
+	const isNotFound = !hasSubmissionId || (!isLoading && !resolvedSubmissionWithFallback);
+
+	if (isLoading) {
+		return null;
+	}
+
+	if (isNotFound) {
+		return (
+			<AlertDialog
+				title={t("institutionFormModal.dialog.notFound.title")}
+				description={t("institutionFormModal.dialog.notFound.description")}
+			/>
+		);
+	}
 
 	return (
 		<InstitutionFormModal
 			mode="create"
 			returnTo={returnTo}
-			formKeyOverride={`submission-${submissionId ?? "new"}-${
+			formKey={`draft-${submissionId ?? "new"}-${
 				resolvedSubmissionWithFallback ? "loaded" : "loading"
 			}`}
 			initialValues={initialValues}
-			onSubmitOverride={handleSubmit}
-			closeOnSubmitOverride
-			submitLabelOverride={t("institutionFormModal.actions.save")}
+			onSubmit={({ data }) => handleSubmit(data)}
+			closeOnSubmit
+			submitLabel={t("institutionFormModal.actions.save")}
 			shouldRefresh={shouldRefresh}
 		/>
 	);

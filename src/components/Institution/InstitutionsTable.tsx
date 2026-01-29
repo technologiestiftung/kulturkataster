@@ -22,6 +22,8 @@ import {
 	buildSubmissionRow,
 	isSubmissionRow,
 } from "@/lib/utils/institutionTableUtils";
+import { Button } from "@/components/ui/button";
+import { Eye } from "lucide-react";
 
 export function InstitutionsTable() {
 	const router = useRouter();
@@ -650,10 +652,27 @@ export function InstitutionsTable() {
 		},
 		onEdit: (row) => {
 			if (isSubmissionRow(row)) {
-				router.push(`/institution/submission/${row.submissionId}/edit`);
+				router.push(`/account/submissions/${row.submissionId}/edit`);
 				return;
 			}
 			router.push(`/account/institutions/${row.id}/edit`);
+		},
+		rowActions: (row) => {
+			if (!isSubmissionRow(row)) return null;
+			return (
+				<Button
+					size="icon"
+					variant="ghost"
+					onClick={(event) => {
+						event.stopPropagation();
+						router.push(`/account/submissions/${row.submissionId}`);
+					}}
+					className="h-8 w-8 rounded-full border bg-background border-neutral-20 hover:bg-neutral-5"
+					aria-label="Review"
+				>
+					<Eye className="h-5 w-5 text-neutral-80" />
+				</Button>
+			);
 		},
 		emptyMessage: "No institutions found.",
 	};

@@ -6,12 +6,12 @@ export type SubmissionCreateInput = Prisma.SubmissionCreateInput;
 export type SubmissionUpdateInput = Prisma.SubmissionUpdateInput;
 export type SubmissionWhereInput = Prisma.SubmissionWhereInput;
 
-export type SubmissionDraft = Record<string, unknown>;
+export type InstitutionDraftData = Record<string, unknown>;
 
-export type SubmissionStoreState = {
-	draft: SubmissionDraft;
+export type InstitutionDraftStoreState = {
+	draft: InstitutionDraftData;
 	stepId: string;
-	setDraft: (partial: SubmissionDraft) => void;
+	setDraft: (partial: InstitutionDraftData) => void;
 	setStepId: (stepId: string) => void;
 	resetDraft: () => void;
 };

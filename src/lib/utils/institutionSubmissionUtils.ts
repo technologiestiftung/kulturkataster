@@ -12,7 +12,7 @@ import {
 
 type SubmissionLike = Submission | { data?: Record<string, unknown> | null };
 
-export const submissionToInstitutionDraft = (
+export const institutionSubmissionToDraft = (
 	submission: SubmissionLike,
 ): InstitutionForm => {
 	const data = (submission.data ?? {}) as Record<string, unknown>;
