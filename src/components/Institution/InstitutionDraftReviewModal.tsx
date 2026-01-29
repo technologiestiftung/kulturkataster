@@ -7,7 +7,10 @@ import { Modal } from "@/components/Modals/Modal";
 import { InstitutionReview } from "@/components/Institution/InstitutionReview";
 import { institutionSubmissionToDraft } from "@/lib/utils/institutionSubmissionUtils";
 import { useAccountStore } from "@/lib/store/accountStore";
-import { getSubmissionById, reviewSubmission } from "@/server/actions/submissions";
+import {
+	getSubmissionById,
+	reviewSubmission,
+} from "@/server/actions/submissions";
 import type { Submission } from "@/types/submission";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -106,7 +109,11 @@ export function InstitutionDraftReviewModal({
 		if (err instanceof Error && err.message) return err.message;
 		if (typeof err === "string") return err;
 		if (err && typeof err === "object") {
-			const withMessage = err as { message?: unknown; error?: unknown; code?: unknown };
+			const withMessage = err as {
+				message?: unknown;
+				error?: unknown;
+				code?: unknown;
+			};
 			if (typeof withMessage.message === "string" && withMessage.message) {
 				return withMessage.message;
 			}
@@ -197,9 +204,7 @@ export function InstitutionDraftReviewModal({
 						<Textarea
 							value={reviewNotes}
 							onChange={(event) => setReviewNotes(event.target.value)}
-							placeholder={t(
-								"institutionFormModal.review.notesPlaceholder",
-							)}
+							placeholder={t("institutionFormModal.review.notesPlaceholder")}
 							rows={4}
 						/>
 						{error && <p className="body2 text-destructive">{error}</p>}

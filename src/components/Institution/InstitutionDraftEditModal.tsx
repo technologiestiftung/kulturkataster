@@ -166,7 +166,8 @@ export function InstitutionDraftEditModal({
 
 	const isLoading =
 		hasSubmissionId && !resolvedSubmissionWithFallback && !didFetchSubmission;
-	const isNotFound = !hasSubmissionId || (!isLoading && !resolvedSubmissionWithFallback);
+	const isNotFound =
+		!hasSubmissionId || (!isLoading && !resolvedSubmissionWithFallback);
 
 	if (isLoading) {
 		return null;

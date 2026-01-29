@@ -539,16 +539,18 @@ export function InstitutionFormModal({
 		});
 	};
 
-	const { handleSubmit: handleInstitutionSubmit, submitting: defaultSubmitting } =
-		useInstitutionSubmit(
-			mode,
-			resolvedInstitutionWithFallback?.id,
-			resolvedInstitutionWithFallback?.address?.id,
-			categories,
-			handleClose,
-			handleSuccess,
-			shouldRefresh,
-		);
+	const {
+		handleSubmit: handleInstitutionSubmit,
+		submitting: defaultSubmitting,
+	} = useInstitutionSubmit(
+		mode,
+		resolvedInstitutionWithFallback?.id,
+		resolvedInstitutionWithFallback?.address?.id,
+		categories,
+		handleClose,
+		handleSuccess,
+		shouldRefresh,
+	);
 
 	const handleCustomSubmit = useCallback(
 		(data: Record<string, unknown>) => {
