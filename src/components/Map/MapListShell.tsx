@@ -8,7 +8,6 @@ import MapInitializer from "@/components/Map/MapInitializer/MapInitializer";
 import Filter from "@/components/Filter/Filter";
 import { SearchContent } from "@/components/Menu/MenuContent/SearchContent";
 import { useAppStore } from "@/lib/store/appStore";
-import { useInstitutionStore } from "@/lib/store/institutionStore";
 
 export function MapListShell() {
 	const { t } = useTranslation("common");
@@ -17,13 +16,6 @@ export function MapListShell() {
 	const [lastRouteMode, setLastRouteMode] = useState<"map" | "list">(() =>
 		/\/list(\/|$)/.test(normalizedPath ?? "") ? "list" : "map",
 	);
-	const selectedInstitutionId = useInstitutionStore(
-		(state) => state.selectedInstitutionId,
-	);
-	const setSelectedInstitutionId = useInstitutionStore(
-		(state) => state.setSelectedInstitutionId,
-	);
-
 	const routeMode = useMemo(() => {
 		if (/\/list(\/|$)/.test(normalizedPath ?? "")) return "list";
 		if (/\/map(\/|$)/.test(normalizedPath ?? "")) return "map";
@@ -49,27 +41,6 @@ export function MapListShell() {
 			}
 		}
 	}, [activePanel, normalizedPath, setActivePanel]);
-
-	const institutionIdFromPath = useMemo(() => {
-		if (!normalizedPath) return null;
-		const match = normalizedPath.match(/\/institution\/(\d+)$/);
-		if (!match) return null;
-		const parsedId = Number(match[1]);
-		return Number.isNaN(parsedId) ? null : parsedId;
-	}, [normalizedPath]);
-
-	useEffect(() => {
-		if (institutionIdFromPath) {
-			if (selectedInstitutionId !== institutionIdFromPath) {
-				setSelectedInstitutionId(institutionIdFromPath);
-			}
-			return;
-		}
-
-		if (selectedInstitutionId) {
-			setSelectedInstitutionId(null);
-		}
-	}, [institutionIdFromPath, selectedInstitutionId, setSelectedInstitutionId]);
 
 	if (normalizedPath?.includes("/account")) {
 		return null;

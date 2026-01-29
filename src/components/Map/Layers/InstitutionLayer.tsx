@@ -3,7 +3,6 @@
 /* eslint-disable no-nested-ternary */
 "use client";
 
-import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useMapStore } from "@/lib/store/mapStore";
 import {
 	getTailwindColor,
@@ -21,9 +20,10 @@ import { Vector as VectorSource } from "ol/source";
 import Cluster from "ol/source/Cluster";
 import { Fill, Icon, Style, Text } from "ol/style";
 import CircleStyle from "ol/style/Circle";
-import { FC, useCallback, useEffect, useRef } from "react";
+import { FC, useCallback, useEffect, useMemo, useRef } from "react";
 import { createPoiSvg } from "../MapStyles/createPoiSvg";
 import { useAppStore } from "@/lib/store/appStore";
+import { usePathname } from "next/navigation";
 
 const styleCache: { [key: string]: Style } = {};
 const svgCache: { [key: string]: string } = {};
@@ -89,9 +89,15 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 	const fixedProximityThreshold = remToPx(3.5);
 	const map = useMapStore((state: MapStoreState) => state.map);
 	const config = useMapStore((state) => state.config);
-	const selectedInstitutionId = useInstitutionStore(
-		(state) => state.selectedInstitutionId,
-	);
+	const pathname = usePathname();
+	const selectedInstitutionId = useMemo(() => {
+		const normalizedPath = pathname?.replace(/\/$/, "");
+		if (!normalizedPath) return null;
+		const match = normalizedPath.match(/\/institution\/(\d+)$/);
+		if (!match) return null;
+		const parsedId = Number(match[1]);
+		return Number.isNaN(parsedId) ? null : parsedId;
+	}, [pathname]);
 
 	const vectorLayerRef = useRef<VectorLayer<any> | null>(null);
 	const vectorSourceRef = useRef<VectorSource | null>(null);
@@ -259,8 +265,8 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 
 			const singleFeature = features ? features[0] : feature;
 			const isSelected =
-				singleFeature.get("id") ===
-				useInstitutionStore.getState().selectedInstitutionId;
+				selectedInstitutionId !== null &&
+				singleFeature.get("id") === selectedInstitutionId;
 			const hasOverlapping = singleFeature.get("has_overlapping") === true;
 			const isPermanentlyClosed =
 				singleFeature.get("utilization_status") === "permanently_closed";
@@ -284,6 +290,7 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 			createSingleFeatureStyle,
 			isContrastMode,
 			isLargeTextMode,
+			selectedInstitutionId,
 		],
 	);
 
