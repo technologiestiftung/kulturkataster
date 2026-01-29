@@ -101,9 +101,8 @@ export const useInstitutionStore = create<InstitutionStoreState>()(
 			categoryCounts: {},
 			subcategoryCounts: {},
 			districts: [],
-			selectedInstitutionId: null,
-			setSelectedInstitutionId: (id: string | number | null) =>
-				set({ selectedInstitutionId: id }),
+			isLoading: false,
+			error: null,
 			filters: {
 				status: undefined,
 				district_keys: [],
@@ -111,7 +110,6 @@ export const useInstitutionStore = create<InstitutionStoreState>()(
 				subcategory_keys: [],
 				include_closed: false,
 			},
-			districts: [],
 			setFilters: (filters) => {
 				const newState = { filters };
 				const currentState = { ...get(), ...newState };
@@ -131,11 +129,9 @@ export const useInstitutionStore = create<InstitutionStoreState>()(
 			},
 			categories: null,
 			setCategories: (categories) => set({ categories }),
-			initializeDistricts: async () => {
-				const districts = await getDistricts();
-				set({ districts });
-			},
+			clearError: () => set({ error: null }),
 			initializeCategories: async () => {
+				set({ isLoading: true, error: null });
 				try {
 					const categories = await getCategoriesWithSubcategories();
 					const currentState = { ...get(), categories };
@@ -145,20 +141,37 @@ export const useInstitutionStore = create<InstitutionStoreState>()(
 						categories,
 						categoryCounts,
 						subcategoryCounts,
+						isLoading: false,
 					});
 				} catch (error) {
 					console.error("Failed to initialize categories:", error);
+					set({
+						isLoading: false,
+						error:
+							error instanceof Error
+								? error.message
+								: "Failed to initialize categories.",
+					});
 				}
 			},
 			initializeDistricts: async () => {
+				set({ isLoading: true, error: null });
 				try {
 					const districts = await getDistricts();
-					set({ districts });
+					set({ districts, isLoading: false });
 				} catch (error) {
 					console.error("Failed to initialize districts:", error);
+					set({
+						isLoading: false,
+						error:
+							error instanceof Error
+								? error.message
+								: "Failed to initialize districts.",
+					});
 				}
 			},
 			initializeInstitutions: async () => {
+				set({ isLoading: true, error: null });
 				try {
 					const institutionsData = await getInstitutions();
 					const newState = { allInstitutions: institutionsData };
@@ -188,9 +201,17 @@ export const useInstitutionStore = create<InstitutionStoreState>()(
 						filteredInstitutionsGeoJSON,
 						categoryCounts,
 						subcategoryCounts,
+						isLoading: false,
 					});
 				} catch (error) {
 					console.error("Failed to initialize institutions:", error);
+					set({
+						isLoading: false,
+						error:
+							error instanceof Error
+								? error.message
+								: "Failed to initialize institutions.",
+					});
 				}
 			},
 			setInstitutions: (institutions) => {

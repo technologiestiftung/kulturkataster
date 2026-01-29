@@ -15,8 +15,8 @@ import { animateMapToCoordinates } from "@/lib/utils/mapUtils";
 import { getCoordinatesFromAddress } from "@/lib/utils/institutionUtils";
 import { fromLonLat } from "ol/proj";
 import { Institution } from "@/types";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useMemo } from "react";
+import { useParams, useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { InstitutionDetailSkeleton } from "./InstitutionDetailSkeleton";
 import { InfoWrapper } from "@/components/InfoWrapper";
@@ -186,32 +186,36 @@ function InstitutionCard({
 
 export function InstitutionDetailContent() {
 	const { t } = useTranslation("common");
-	const selectedInstitutionId = useInstitutionStore(
-		(state) => state.selectedInstitutionId,
-	);
 	const institutions = useInstitutionStore((state) => state.allInstitutions);
+	const isLoading = useInstitutionStore((state) => state.isLoading);
+	const error = useInstitutionStore((state) => state.error);
 	const map = useMapStore((state) => state.map);
 	const router = useRouter();
+	const params = useParams();
 
-	const [institutionData, setInstitutionData] = useState<Institution | null>(
-		null,
-	);
-	const [loading, setLoading] = useState(false);
+	const resolvedInstitutionId = useMemo(() => {
+		const rawId = Array.isArray(params?.id) ? params?.id[0] : params?.id;
+		if (!rawId) return null;
+		const numericId = Number(rawId);
+		return Number.isFinite(numericId) ? numericId : null;
+	}, [params]);
 
-	const findInstitution = (id: number | string) => {
-		const numericId = typeof id === "string" ? Number(id) : id;
-		return institutions?.find((institution) => institution.id === numericId);
-	};
+	const institutionData = useMemo(() => {
+		if (!resolvedInstitutionId || !institutions) return null;
+		return (
+			institutions.find((institution) => institution.id === resolvedInstitutionId) ??
+			null
+		);
+	}, [institutions, resolvedInstitutionId]);
 
 	const centerMapToInstitution = () => {
 		if (!institutionData || !map) {
 			return;
 		}
-		const institution = findInstitution(institutionData.id);
-		if (!institution || !institution.address) {
+		if (!institutionData.address) {
 			return;
 		}
-		const address = getCoordinatesFromAddress(institution.address);
+		const address = getCoordinatesFromAddress(institutionData.address);
 		if (address) {
 			const transformedCoords = fromLonLat(address);
 			animateMapToCoordinates(map, transformedCoords);
@@ -222,35 +226,6 @@ export function InstitutionDetailContent() {
 		if (!institutionData || !map) return;
 		centerMapToInstitution();
 	}, [institutionData, map]);
-
-	useEffect(() => {
-		if (!selectedInstitutionId) {
-			setInstitutionData(null);
-			return;
-		}
-
-		const fetchInstitutionData = async () => {
-			try {
-				setLoading(true);
-				const normalizedId =
-					typeof selectedInstitutionId === "string"
-						? Number(selectedInstitutionId)
-						: selectedInstitutionId;
-				setInstitutionData(
-					(institutions?.find(
-						(institution) => institution.id === normalizedId,
-					) as Institution) || null,
-				);
-			} catch (error) {
-				console.error("Failed to fetch institution data:", error);
-				setInstitutionData(null);
-			} finally {
-				setLoading(false);
-			}
-		};
-
-		fetchInstitutionData();
-	}, [selectedInstitutionId, institutions]);
 
 	const handleClose = () => {
 		const canGoBack =
@@ -266,16 +241,18 @@ export function InstitutionDetailContent() {
 		router.push("/map");
 	};
 
-	if (!selectedInstitutionId) return null;
+	if (!resolvedInstitutionId) return null;
 
-	if (loading) {
+	if (isLoading && !institutionData) {
 		return <InstitutionDetailSkeleton />;
 	}
 
 	if (!institutionData) {
 		return (
 			<div className="p-6">
-				<p className="text-foreground">{t("institution.notFound")}</p>
+				<p className="text-foreground">
+					{error ?? t("institution.notFound")}
+				</p>
 				<Button
 					onClick={handleClose}
 					variant="link"
