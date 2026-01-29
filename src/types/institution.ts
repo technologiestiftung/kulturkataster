@@ -212,14 +212,15 @@ export interface InstitutionStoreState {
 	> | null;
 	categoryCounts: Record<string, number>;
 	subcategoryCounts: Record<string, number>;
-	selectedInstitutionId: number | string | null;
 	filters: FilterState;
 	categories: Category[] | null;
 	districts: string[];
+	isLoading: boolean;
+	error: string | null;
 	setCategories: (categories: Category[] | null) => void;
 	setInstitutions: (institutions: Institution[] | null) => void;
-	setSelectedInstitutionId: (id: string | number | null) => void;
 	setFilters: (filters: FilterState) => void;
+	clearError: () => void;
 	initializeCategories: () => Promise<void>;
 	initializeDistricts: () => Promise<void>;
 	initializeInstitutions: () => Promise<void>;
