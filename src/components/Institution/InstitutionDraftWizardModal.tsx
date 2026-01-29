@@ -19,16 +19,8 @@ import {
 	handleLatLngBlur,
 } from "@/lib/utils/formUtils";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
-import { useSubmissionStore } from "@/lib/store/submissionStore";
-import {
-	additionalInfoConfig,
-	contactInfoConfig,
-	facilityInfoConfig,
-	fundingInfoConfig,
-	organizationInfoConfig,
-	statusInfoConfig,
-} from "@/components/Institution";
-import { InfoWrapper } from "@/components/InfoWrapper";
+import { useInstitutionDraftStore } from "@/lib/store/institutionDraftStore";
+import { InstitutionReview } from "@/components/Institution/InstitutionReview";
 import { createSubmission } from "@/server/actions/submissions";
 import { SubmissionEntityType, SubmissionType } from "@/generated/prisma";
 import type { FilterState } from "@/types";
@@ -62,15 +54,15 @@ const stepConfigs: StepConfig[] = [
 	},
 ];
 
-type SubmissionModalContentProps = {
+type InstitutionDraftWizardContentProps = {
 	title: string;
 	subtitle: string;
 };
 
-function SubmissionModalContent({
+function InstitutionDraftWizardContent({
 	title,
 	subtitle,
-}: SubmissionModalContentProps) {
+}: InstitutionDraftWizardContentProps) {
 	const { t } = useTranslation("content");
 	const { t: tEnum } = useTranslation("enumMap");
 
@@ -83,10 +75,10 @@ function SubmissionModalContent({
 	);
 
 	const categories = useInstitutionStore((state) => state.categories) ?? [];
-	const draft = useSubmissionStore((state) => state.draft);
-	const setDraft = useSubmissionStore((state) => state.setDraft);
-	const setStepId = useSubmissionStore((state) => state.setStepId);
-	const resetDraft = useSubmissionStore((state) => state.resetDraft);
+	const draft = useInstitutionDraftStore((state) => state.draft);
+	const setDraft = useInstitutionDraftStore((state) => state.setDraft);
+	const setStepId = useInstitutionDraftStore((state) => state.setStepId);
+	const resetDraft = useInstitutionDraftStore((state) => state.resetDraft);
 
 	const router = useRouter();
 	const {
@@ -99,7 +91,7 @@ function SubmissionModalContent({
 		canGoNext,
 		canGoPrevious,
 	} = useHorizontalStepper();
-	const stepId = useSubmissionStore((state) => state.stepId);
+	const stepId = useInstitutionDraftStore((state) => state.stepId);
 	const stepSyncSource = useRef<"stepper" | "external" | null>(null);
 
 	const addressGeocodeState = useRef({
@@ -628,124 +620,16 @@ function SubmissionModalContent({
 			{currentStepId === "review" ? (
 				<div className="space-y-4">
 					<section className="w-full rounded-lg overflow-hidden">
-						<InfoWrapper
+						<InstitutionReview
 							data={draft}
-							config={{
-								fields: [
-									{
-										type: "section",
-										id: "header",
-										cardVariant: "none",
-										className: "mb-0",
-										edit: {
-											ariaLabel: "Edit",
-											onClick: () => {
-												router.push("/institution/submission/edit#details");
-											},
-											enabled: true,
-										},
-										fields: [
-											{
-												id: "parent_organization",
-												type: "text",
-												value: "parent_organization",
-											},
-											{
-												id: "name",
-												alwaysShow: true,
-												value: "name",
-												type: "title",
-											},
-											{
-												id: "categories",
-												alwaysShow: true,
-												categoryVariant: "default",
-												type: "category",
-											},
-										],
-									},
-									{
-										id: "utilization_status",
-										alwaysShow: true,
-										label: t("institution.utilizationStatus"),
-										className: "mb-0",
-										type: "status",
-										value: "utilization_status",
-										enumKey: "utilization_status",
-									},
-									{
-										id: "protection_status",
-										alwaysShow: false,
-										label: t("institution.protectionStatus"),
-										type: "status",
-										value: "protection_status",
-										enumKey: "protection_status",
-									},
-									{
-										type: "section",
-										id: "details",
-										layout: {
-											columns: 1,
-										},
-										cardVariant: "none",
-										fields: [
-											{
-												id: "address",
-												alwaysShow: true,
-												type: "address",
-												addressOptions: {
-													showMapLink: false,
-													showCopy: false,
-												},
-											},
-											{
-												type: "section",
-												id: "contact",
-												edit: {
-													ariaLabel: "Edit",
-													onClick: () => {
-														router.push("/institution/submission/edit#contact");
-													},
-													enabled: true,
-												},
-												cardVariant: "tertiary",
-												fields: contactInfoConfig,
-											},
-											{
-												type: "section",
-												id: "organization",
-												alwaysShow: false,
-												cardVariant: "tertiary",
-												fields: organizationInfoConfig,
-											},
-											{
-												type: "section",
-												id: "funding",
-												alwaysShow: false,
-												cardVariant: "tertiary",
-												fields: fundingInfoConfig,
-											},
-											{
-												type: "section",
-												id: "facility",
-												cardVariant: "tertiary",
-												fields: facilityInfoConfig,
-											},
-											{
-												type: "section",
-												id: "status",
-												cardVariant: "tertiary",
-												fields: statusInfoConfig,
-											},
-											{
-												type: "section",
-												id: "additional",
-												cardVariant: "tertiary",
-												fields: additionalInfoConfig,
-											},
-										],
-									},
-								],
+							onEditSection={(sectionId) => {
+								if (sectionId === "details") {
+									router.push("/institution/submission/edit#details");
+									return;
+								}
+								if (sectionId === "contact") {
+									router.push("/institution/submission/edit#contact");
+								}
 							}}
 						/>
 					</section>
@@ -762,13 +646,13 @@ function SubmissionModalContent({
 	);
 }
 
-export function SubmissionFormModal({
+export function InstitutionDraftWizardModal({
 	initialStepId,
 }: {
 	initialStepId?: string;
 }) {
-	const storedStepId = useSubmissionStore((state) => state.stepId);
-	const setStepId = useSubmissionStore((state) => state.setStepId);
+	const storedStepId = useInstitutionDraftStore((state) => state.stepId);
+	const setStepId = useInstitutionDraftStore((state) => state.setStepId);
 	const isValidStep = stepConfigs.some((step) => step.id === initialStepId);
 	const resolvedStepId = isValidStep ? initialStepId : storedStepId;
 
@@ -789,7 +673,7 @@ export function SubmissionFormModal({
 			content={
 				<div className="flex min-h-full flex-col bg-background py-10 space-y-10">
 					<HorizontalStepper steps={stepConfigs} initialStepId={resolvedStepId}>
-						<SubmissionModalContent
+						<InstitutionDraftWizardContent
 							title="Add New Institution"
 							subtitle="Complete the following steps to add a new cultural institution"
 						/>
@@ -800,7 +684,7 @@ export function SubmissionFormModal({
 	);
 }
 
-export function SubmissionEditModal() {
+export function InstitutionDraftWizardEditModal() {
 	return (
 		<Modal
 			title="Edit Institution"
@@ -812,7 +696,7 @@ export function SubmissionEditModal() {
 			content={
 				<div className="flex min-h-full flex-col bg-background py-10 space-y-10">
 					<HorizontalStepper steps={stepConfigs}>
-						<SubmissionModalContent
+						<InstitutionDraftWizardContent
 							title="Edit Institution"
 							subtitle="Review and update the institution details"
 						/>

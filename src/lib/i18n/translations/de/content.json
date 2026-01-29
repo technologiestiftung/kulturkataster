@@ -1310,6 +1310,18 @@
 				"title": "Institution aktualisiert",
 				"description": "Die Änderungen wurden erfolgreich gespeichert."
 			}
+		},
+		"review": {
+			"title": "Einreichung prüfen",
+			"notesLabel": "Prüfnotizen",
+			"notesPlaceholder": "Optionale Notizen für die Einreichung",
+			"statusLabel": "Status: {{status}}",
+			"actions": {
+				"reject": "Ablehnen",
+				"approve": "Genehmigen"
+			},
+			"error": "Überprüfung fehlgeschlagen. {{error}}",
+			"errorUnknown": "Unbekannter Fehler."
 		}
 	},
 	"categoryFormModal": {

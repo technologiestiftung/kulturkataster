@@ -1,4 +1,4 @@
-import { InstitutionFormModal } from "@/components/Institution/InstitutionFormModal";
+import { InstitutionEditModal } from "@/components/Institution/InstitutionEditModal";
 
 type EditInstitutionModalProps = {
 	params: Promise<{ id: string }>;
@@ -9,10 +9,6 @@ export default async function EditInstitutionModal({
 }: EditInstitutionModalProps) {
 	const { id } = await params;
 	return (
-		<InstitutionFormModal
-			mode="edit"
-			institutionId={id}
-			shouldRefresh={false}
-		/>
+		<InstitutionEditModal institutionId={id} shouldRefresh={false} />
 	);
 }

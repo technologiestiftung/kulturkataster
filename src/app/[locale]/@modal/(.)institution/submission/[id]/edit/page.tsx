@@ -1,16 +1,16 @@
-import { SubmissionInstitutionFormModal } from "@/components/Institution/SubmissionInstitutionFormModal";
+import { InstitutionDraftEditModal } from "@/components/Institution/InstitutionDraftEditModal";
 
-type SubmissionEditPageProps = {
+type InstitutionDraftEditPageProps = {
 	params: Promise<{ id: string }>;
 };
 
-export default async function SubmissionEditModal({
+export default async function InstitutionDraftEditModalPage({
 	params,
-}: SubmissionEditPageProps) {
+}: InstitutionDraftEditPageProps) {
 	const { id } = await params;
 	const parsedId = Number(id);
 	return (
-		<SubmissionInstitutionFormModal
+		<InstitutionDraftEditModal
 			submissionId={Number.isFinite(parsedId) ? parsedId : undefined}
 			returnTo="/institution/submission"
 		/>

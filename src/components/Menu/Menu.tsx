@@ -59,7 +59,7 @@ const menuItems: MenuItem[] = [
 		id: "add",
 		icon: Edit,
 		label: "add.title",
-		route: "/institution/submission",
+		route: "/institution",
 		showInMobile: true,
 		showInAccount: true,
 		showInMap: true,

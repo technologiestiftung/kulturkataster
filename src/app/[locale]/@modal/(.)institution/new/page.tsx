@@ -1,5 +1,5 @@
-import { SubmissionFormModal } from "@/components/Modals/Pages/SubmissionFormModal";
+import { InstitutionDraftWizardModal } from "@/components/Institution/InstitutionDraftWizardModal";
 
 export default function InstitutionNewModalIntercepted() {
-	return <SubmissionFormModal />;
+	return <InstitutionDraftWizardModal />;
 }
