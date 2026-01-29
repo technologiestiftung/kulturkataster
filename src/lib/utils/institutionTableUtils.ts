@@ -2,7 +2,7 @@ import type { Category } from "@/types/category";
 import type { Submission } from "@/types/submission";
 import type { Institution, InstitutionTableRow, SubmissionRow } from "@/types";
 import { buildAddressFromFormData } from "@/lib/utils/formUtils";
-import { submissionToInstitutionDraft } from "@/lib/utils/submissionUtils";
+import { institutionSubmissionToDraft } from "@/lib/utils/institutionSubmissionUtils";
 
 const toNumberArray = (value: unknown): number[] => {
 	if (!Array.isArray(value)) return [];
@@ -37,7 +37,7 @@ export const buildSubmissionRow = (
 	categories: Category[],
 ): SubmissionRow => {
 	const data = (submission.data ?? {}) as Record<string, unknown>;
-	const draft = submissionToInstitutionDraft(submission);
+	const draft = institutionSubmissionToDraft(submission);
 	const addressFromData =
 		draft.address ??
 		(typeof data.address === "object" && data.address

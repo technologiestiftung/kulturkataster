@@ -1,14 +1,17 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
-import type { SubmissionDraft, SubmissionStoreState } from "@/types/submission";
+import type {
+	InstitutionDraftData,
+	InstitutionDraftStoreState,
+} from "@/types/submission";
 
-const defaultDraft: SubmissionDraft = {
+const defaultDraft: InstitutionDraftData = {
 	"address.lat": 52.52,
 	"address.lng": 13.405,
 };
 
-export const useSubmissionStore = create<SubmissionStoreState>()(
+export const useInstitutionDraftStore = create<InstitutionDraftStoreState>()(
 	persist(
 		immer((set) => ({
 			draft: defaultDraft,
@@ -27,6 +30,6 @@ export const useSubmissionStore = create<SubmissionStoreState>()(
 					state.stepId = "basic";
 				}),
 		})),
-		{ name: "submission-draft" },
+		{ name: "institution-draft" },
 	),
 );

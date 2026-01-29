@@ -98,14 +98,16 @@ enum SubmissionStatus {
 }
 
 enum SubmissionType {
+  read
   create
+  claim
   update
+  delete
 }
 
 enum Action {
   read
   create
-  review
   update
   delete
 }
@@ -292,7 +294,6 @@ model User {
   role_id            Int?
   status             UserStatus @default(approval_pending)
   compliance         Boolean    @default(false)
-  institution_claims String[]
   created_at         DateTime   @default(now())
   updated_at         DateTime   @updatedAt
 
