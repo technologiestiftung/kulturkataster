@@ -186,6 +186,9 @@ jobs:
 
       - name: Create deployment tag
         run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          
           TIMESTAMP=$(date +%Y%m%d-%H%M%S)
           ENVIRONMENT="${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}"
           TAG_NAME="deploy-${ENVIRONMENT}-${TIMESTAMP}"
