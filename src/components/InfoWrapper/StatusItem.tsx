@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { Status, getStatusLevel } from "./types";
+import { getStatusLevel } from "./types";
 
 export function StatusItem({
 	value,
@@ -7,7 +7,7 @@ export function StatusItem({
 	enumKey,
 	variant = "default",
 }: {
-	value: Status | undefined;
+	value: string;
 	label: string | undefined;
 	enumKey: string | undefined;
 	variant?: "default" | "plain";
