@@ -27,6 +27,7 @@ import type { Category, FilterState } from "@/types";
 import type { Institution } from "@/types/institution";
 import { useRouter } from "next/navigation";
 import { resolveCategoryIdsFromDraft } from "@/lib/utils/institutionCategoryUtils";
+import { TFunction } from "i18next";
 type InstitutionFormModalProps = {
 	mode: "create" | "edit";
 	institution?: Institution | null;
@@ -246,8 +247,8 @@ const useInstitutionSubmit = (
 
 type InstitutionFormConfigArgs = {
 	mode: InstitutionFormModalProps["mode"];
-	t: (key: string) => string;
-	tEnum: (key: string) => string;
+	t: TFunction;
+	tEnum: TFunction;
 	categoryGroups: Category[];
 	resolvedInstitution?: Institution;
 	initialValues?: Record<string, unknown>;

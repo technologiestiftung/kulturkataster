@@ -110,11 +110,6 @@ const ListView: FC = () => {
 		[router],
 	);
 
-	// Reset visible count when institutions change (e.g., filters applied)
-	useEffect(() => {
-		setVisibleCount(ITEMS_PER_PAGE);
-	}, [institutions]);
-
 	useEffect(() => {
 		setVisibleCount(ITEMS_PER_PAGE);
 	}, [searchQuery, institutions]);

@@ -119,6 +119,20 @@ export async function registerWithEmailPassword(params: {
 	return { ok: true, needsConfirmation: !data.session };
 }
 
+export async function requestPasswordReset(email: string) {
+	const supabase = createAnonClient();
+	const siteUrl = process.env.SITE_URL ?? "http://127.0.0.1:3000";
+	const { error } = await supabase.auth.resetPasswordForEmail(email, {
+		redirectTo: `${siteUrl}/reset-password`,
+	});
+
+	if (error) {
+		return { ok: false, error: error.message };
+	}
+
+	return { ok: true };
+}
+
 export async function setPasswordWithTokens(params: {
 	accessToken: string;
 	refreshToken: string;
