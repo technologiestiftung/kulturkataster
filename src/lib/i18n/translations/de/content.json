@@ -1263,6 +1263,10 @@
 					"edit": "Aktualisieren Sie die Institutionsdaten."
 				},
 				"fields": {
+					"parentOrganization": {
+						"description": "Name der übergeordneten Organisation",
+						"placeholder": "z. B. Kulturverein Berlin e.V."
+					},
 					"name": {
 						"placeholder": "Institutionsname"
 					},
@@ -1270,7 +1274,25 @@
 						"placeholder": "Optionale Beschreibung"
 					},
 					"address": {
-						"placeholder": "Straße, Hausnummer, PLZ, Ort"
+						"placeholder": "Straße, Hausnummer, PLZ, Ort",
+						"streetLine": {
+							"placeholder": "z. B. Musterstraße 1"
+						},
+						"zip": {
+							"placeholder": "z. B. 10115"
+						},
+						"address_suffix": {
+							"placeholder": "z. B. 2. OG"
+						},
+						"neighbourhood": {
+							"placeholder": "z. B. Mitte"
+						},
+						"city": {
+							"placeholder": "z. B. Berlin"
+						},
+						"cultural_areal": {
+							"placeholder": "z. B. Kulturforum"
+						}
 					},
 					"categories": {
 						"placeholder": "Kategorien auswählen",
@@ -1292,6 +1314,21 @@
 						"placeholder": "+49 ..."
 					}
 				}
+			},
+			"organization": {
+				"title": "Organisation"
+			},
+			"funding": {
+				"title": "Finanzierung"
+			},
+			"facility": {
+				"title": "Einrichtung"
+			},
+			"status": {
+				"title": "Status"
+			},
+			"additional": {
+				"title": "Zusätzliche Informationen"
 			}
 		},
 		"actions": {

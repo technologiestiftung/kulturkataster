@@ -58,7 +58,7 @@ export function SidePanel({
 						/>
 					</div>
 					<div
-						className={`absolute inset-0 transition-all duration-200 ${
+						className={`absolute inset-0  transition-all duration-200 ${
 							sidePanel === "filter"
 								? "opacity-100 translate-x-0"
 								: "opacity-0 -translate-x-3 pointer-events-none"

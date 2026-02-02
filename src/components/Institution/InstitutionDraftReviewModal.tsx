@@ -56,7 +56,11 @@ export function InstitutionDraftReviewModal({
 
 	const resolvedSubmission = useMemo(() => {
 		if (!hasSubmissionId) return undefined;
-		return submissions.find((item) => item.id === submissionId) ?? undefined;
+		return (
+			submissions.find(
+				(item: Submission): item is Submission => item.id === submissionId,
+			) ?? undefined
+		);
 	}, [hasSubmissionId, submissions, submissionId]);
 
 	useEffect(() => {

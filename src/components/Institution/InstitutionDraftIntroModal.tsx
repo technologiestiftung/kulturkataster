@@ -18,7 +18,7 @@ export function InstitutionDraftIntroModal() {
 		resetDraft();
 		if (mode === "edit") {
 			setModeInStore("update");
-			router.push("/institution/edit/select");
+			router.push("/institution/submission/select");
 			return;
 		}
 		setModeInStore("create");

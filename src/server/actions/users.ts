@@ -69,7 +69,7 @@ export async function createUser(input: UserFormInput) {
 		last_name: input.last_name ?? undefined,
 		status: input.status ?? undefined,
 		compliance: input.compliance ?? undefined,
-		institution_claims: input.institution_claims ?? undefined,
+		meta_info: input.meta_info ?? undefined,
 		account_type: input.account_type ?? undefined,
 		role: input.roleId ? { connect: { id: input.roleId } } : undefined,
 		groups: input.groupIds
@@ -123,7 +123,7 @@ export async function updateUser(input: UserFormInput) {
 			first_name: input.first_name ?? undefined,
 			last_name: input.last_name ?? undefined,
 			account_type: input.account_type ?? undefined,
-			institution_claims: input.institution_claims ?? undefined,
+			meta_info: input.meta_info ?? undefined,
 		});
 		revalidateAccount();
 		return user;
@@ -158,7 +158,7 @@ export async function updateUser(input: UserFormInput) {
 		last_name: input.last_name ?? undefined,
 		status: input.status ?? undefined,
 		compliance: input.compliance ?? undefined,
-		institution_claims: input.institution_claims ?? undefined,
+		meta_info: input.meta_info ?? undefined,
 		account_type: input.account_type ?? undefined,
 		role: input.roleId ? { connect: { id: input.roleId } } : undefined,
 		groups: input.groupIds

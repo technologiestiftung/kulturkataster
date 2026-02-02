@@ -80,6 +80,7 @@ const getInitialValues = (resolvedInstitution?: Institution) => {
 	const address = resolvedInstitution?.address;
 	return {
 		name: resolvedInstitution?.name ?? "",
+		parent_organization: resolvedInstitution?.parent_organization ?? "",
 		internal_notes: resolvedInstitution?.internal_notes ?? "",
 		"address.streetLine": buildStreetLine(
 			address?.street,
@@ -96,9 +97,37 @@ const getInitialValues = (resolvedInstitution?: Institution) => {
 			resolvedInstitution?.categories?.map((category) => String(category.id)) ??
 			[],
 		categoryFilters: buildCategoryFilterState(resolvedInstitution?.categories),
+		utilization_status: resolvedInstitution?.utilization_status ?? "",
+		utilization_status_info: resolvedInstitution?.utilization_status_info ?? "",
+		protection_status: resolvedInstitution?.protection_status ?? "",
+		protection_status_info: resolvedInstitution?.protection_status_info ?? "",
 		website: resolvedInstitution?.website ?? "",
 		email: resolvedInstitution?.email ?? "",
 		phone: resolvedInstitution?.phone ?? "",
+		contact_person_name:
+			resolvedInstitution?.contact_person?.first_name &&
+			resolvedInstitution?.contact_person?.last_name
+				? `${resolvedInstitution.contact_person.first_name} ${resolvedInstitution.contact_person.last_name}`
+				: "",
+		contact_person_email: resolvedInstitution?.contact_person?.email ?? "",
+		contact_person_phone: resolvedInstitution?.contact_person?.phone ?? "",
+		legal_form: resolvedInstitution?.legal_form ?? "",
+		funding_type: resolvedInstitution?.funding_type ?? "",
+		funding_source_name: "",
+		funding_source_description: "",
+		owner_type: resolvedInstitution?.owner_type ?? "",
+		owner_name: resolvedInstitution?.owner_name ?? "",
+		rental_contract_type: resolvedInstitution?.rental_contract_type ?? "",
+		rental_contract_end: resolvedInstitution?.rental_contract_end ?? null,
+		established_since: resolvedInstitution?.established_since ?? null,
+		established_until: resolvedInstitution?.established_until ?? null,
+		closing_reason: resolvedInstitution?.closing_reason ?? "",
+		area: resolvedInstitution?.area ?? null,
+		capacity: resolvedInstitution?.capacity ?? null,
+		number_of_rooms: resolvedInstitution?.number_of_rooms ?? null,
+		accessibility: resolvedInstitution?.accessibility ?? "",
+		cost: resolvedInstitution?.cost ?? "",
+		notes: resolvedInstitution?.notes ?? "",
 	};
 };
 
@@ -433,6 +462,7 @@ const buildInstitutionFormConfig = ({
 			{
 				name: "contact",
 				type: "section",
+				layout: { columns: 2 },
 				title: t("institutionFormModal.form.contact.title"),
 				fields: [
 					{
@@ -460,6 +490,324 @@ const buildInstitutionFormConfig = ({
 						placeholder: t(
 							"institutionFormModal.form.contact.fields.phone.placeholder",
 						),
+						layout: { span: "full" },
+					},
+					{
+						name: "contact_person_name",
+						label: fieldLabel("contact_person_name", "Contact Person Name"),
+						type: "text",
+						placeholder: "e.g. Max Mustermann",
+						layout: { span: "full" },
+					},
+					{
+						name: "contact_person_email",
+						label: fieldLabel("contact_person_email", "Contact Person Email"),
+						type: "email",
+						placeholder: "e.g. max.mustermann@example.com",
+						layout: { span: "half" },
+					},
+					{
+						name: "contact_person_phone",
+						label: fieldLabel("contact_person_phone", "Contact Person Phone"),
+						type: "tel",
+						placeholder: "e.g. +49 30 1234567",
+						layout: { span: "half" },
+					},
+				],
+			},
+			{
+				name: "organization",
+				layout: { columns: 2 },
+				type: "section",
+				title: t("institutionFormModal.form.organization.title"),
+				fields: [
+					{
+						name: "legal_form",
+						label: fieldLabel("legal_form", "Legal Form"),
+						type: "text",
+						placeholder: "e.g. e.V., gGmbH, GbR",
+						layout: { span: "full" },
+					},
+					{
+						name: "owner_type",
+						label: fieldLabel("owner_type", "Owner Type"),
+						type: "select",
+						placeholder: tEnum("owner_type.placeholder"),
+						layout: { span: "half" },
+						options: [
+							{
+								value: "private",
+								label: tEnum("owner_type.private"),
+							},
+							{
+								value: "federal_property",
+								label: tEnum("owner_type.federal_property"),
+							},
+							{
+								value: "state_property",
+								label: tEnum("owner_type.state_property"),
+							},
+							{
+								value: "state_property_silb",
+								label: tEnum("owner_type.state_property_silb"),
+							},
+							{
+								value: "state_property_soda",
+								label: tEnum("owner_type.state_property_soda"),
+							},
+							{
+								value: "state_property_other",
+								label: tEnum("owner_type.state_property_other"),
+							},
+							{
+								value: "state_property_specialized",
+								label: tEnum("owner_type.state_property_specialized"),
+							},
+							{
+								value: "state_property_fund",
+								label: tEnum("owner_type.state_property_fund"),
+							},
+							{
+								value: "district_property",
+								label: tEnum("owner_type.district_property"),
+							},
+							{
+								value: "other_public_property",
+								label: tEnum("owner_type.other_public_property"),
+							},
+							{
+								value: "municipal_housing_company",
+								label: tEnum("owner_type.municipal_housing_company"),
+							},
+							{
+								value: "other",
+								label: tEnum("owner_type.other"),
+							},
+						],
+					},
+					{
+						name: "owner_name",
+						label: fieldLabel("owner_name", "Owner Name"),
+						type: "text",
+						placeholder: "e.g. Organization name",
+						layout: { span: "half" },
+					},
+					{
+						name: "rental_contract_type",
+						label: fieldLabel("rental_contract_type", "Rental Contract Type"),
+						type: "select",
+						placeholder: tEnum("rental_contract_type.placeholder"),
+						layout: { span: "half" },
+						options: [
+							{
+								value: "unlimited_lease",
+								label: tEnum("rental_contract_type.unlimited_lease"),
+							},
+							{
+								value: "limited_lease",
+								label: tEnum("rental_contract_type.limited_lease"),
+							},
+							{
+								value: "organization_ownership",
+								label: tEnum("rental_contract_type.organization_ownership"),
+							},
+						],
+					},
+					{
+						name: "rental_contract_end",
+						label: fieldLabel("rental_contract_end", "Rental Contract End"),
+						type: "date",
+						layout: { span: "half" },
+					},
+					{
+						name: "established_since",
+						label: fieldLabel("established_since", "Established Since"),
+						type: "date",
+						layout: { span: "half" },
+					},
+					{
+						name: "established_until",
+						label: fieldLabel("established_until", "Established Until"),
+						type: "date",
+						layout: { span: "half" },
+					},
+					{
+						name: "closing_reason",
+						label: fieldLabel("closing_reason", "Closing Reason"),
+						type: "textarea",
+						placeholder: "Reason for closure",
+						layout: { span: "full" },
+					},
+				],
+			},
+			{
+				name: "funding",
+				type: "section",
+				title: t("institutionFormModal.form.funding.title"),
+				fields: [
+					{
+						name: "funding_type",
+						label: fieldLabel("funding_type", "Funding Type"),
+						type: "select",
+						placeholder: tEnum("funding_type.placeholder"),
+						layout: { span: "full" },
+						options: [
+							{
+								value: "workspace_program",
+								label: tEnum("funding_type.workspace_program"),
+							},
+							{
+								value: "institutional_funding",
+								label: tEnum("funding_type.institutional_funding"),
+							},
+							{
+								value: "temporary_project_funding",
+								label: tEnum("funding_type.temporary_project_funding"),
+							},
+							{
+								value: "no_funding",
+								label: tEnum("funding_type.no_funding"),
+							},
+						],
+					},
+					{
+						name: "funding_source_name",
+						label: fieldLabel("funding_source_name", "Funding Source Name"),
+						type: "text",
+						placeholder: "e.g. Land Berlin, Bezirk Mitte",
+						description:
+							"e.g. Bezirk, Land Berlin, EU, Bund, Stiftung, Kirche, Privat",
+						layout: { span: "full" },
+					},
+					{
+						name: "funding_source_description",
+						label: fieldLabel(
+							"funding_source_description",
+							"Funding Source Description",
+						),
+						type: "textarea",
+						placeholder:
+							"e.g. Funding through the Berlin workspace program since 2020, 50,000€ annually",
+						description:
+							"Optional: Provide additional details (e.g. funding programs, amounts, time periods)",
+						layout: { span: "full" },
+					},
+				],
+			},
+			{
+				name: "facility",
+				type: "section",
+				layout: { columns: 2 },
+				title: t("institutionFormModal.form.facility.title"),
+				fields: [
+					{
+						name: "area",
+						label: fieldLabel("area", "Area (m²)"),
+						type: "number",
+						placeholder: "e.g. 150",
+						layout: { span: "half" },
+					},
+					{
+						name: "capacity",
+						label: fieldLabel("capacity", "Capacity"),
+						type: "number",
+						placeholder: "e.g. 100",
+						layout: { span: "half" },
+					},
+					{
+						name: "number_of_rooms",
+						label: fieldLabel("number_of_rooms", "Number of Rooms"),
+						type: "number",
+						placeholder: "e.g. 5",
+						layout: { span: "half" },
+					},
+					{
+						name: "accessibility",
+						label: fieldLabel("accessibility", "Accessibility"),
+						type: "textarea",
+						placeholder: "Accessibility information",
+						layout: { span: "full" },
+					},
+					{
+						name: "cost",
+						label: fieldLabel("cost", "Cost"),
+						type: "textarea",
+						placeholder: "Cost information",
+						layout: { span: "full" },
+					},
+				],
+			},
+			{
+				name: "status",
+				type: "section",
+				title: t("institutionFormModal.form.status.title"),
+				fields: [
+					{
+						name: "utilization_status_info",
+						label: fieldLabel(
+							"utilization_status_info",
+							"Utilization Status Info",
+						),
+						type: "textarea",
+						placeholder: "Additional details about utilization status",
+						layout: { span: "full" },
+					},
+					{
+						name: "protection_status",
+						label: fieldLabel("protection_status", "Protection Status"),
+						type: "select",
+						placeholder: tEnum("protection_status.placeholder"),
+						layout: { span: "full" },
+						options: [
+							{
+								value: "long_term_secured",
+								label: tEnum("protection_status.long_term_secured"),
+							},
+							{
+								value: "medium_term_secured",
+								label: tEnum("protection_status.medium_term_secured"),
+							},
+							{
+								value: "uncertain",
+								label: tEnum("protection_status.uncertain"),
+							},
+							{
+								value: "acutely_threatened",
+								label: tEnum("protection_status.acutely_threatened"),
+							},
+							{
+								value: "permanently_closed",
+								label: tEnum("protection_status.permanently_closed"),
+							},
+							{
+								value: "not_yet_secured",
+								label: tEnum("protection_status.not_yet_secured"),
+							},
+						],
+					},
+					{
+						name: "protection_status_info",
+						label: fieldLabel(
+							"protection_status_info",
+							"Protection Status Info",
+						),
+						type: "textarea",
+						placeholder: "Additional details about protection status",
+						layout: { span: "full" },
+					},
+				],
+			},
+			{
+				name: "additional",
+				type: "section",
+				title: t("institutionFormModal.form.additional.title"),
+				fields: [
+					{
+						name: "notes",
+						label: fieldLabel("notes", "Notes"),
+						type: "textarea",
+						placeholder:
+							"Additional information relevant to the cultural cadastre",
 						layout: { span: "full" },
 					},
 				],

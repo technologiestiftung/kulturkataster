@@ -1,6 +1,8 @@
 export interface AppStoreState {
 	firstTimeUser: boolean;
 	setFirstTimeUser: (firstTime: boolean) => void;
+	viewMode: "map" | "list";
+	setViewMode: (mode: "map" | "list") => void;
 	isContrastMode: boolean;
 	setIsContrastMode: (isContrast: boolean) => void;
 	isLargeTextMode: boolean;
