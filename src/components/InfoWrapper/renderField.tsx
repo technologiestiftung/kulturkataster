@@ -58,31 +58,6 @@ const resolveFieldValue = (
 	return undefined;
 };
 
-const resolveNewFieldValue = (
-	field: InfoWrapperFieldConfig,
-	data: Partial<Institution>,
-) => {
-	if (typeof field.newValue === "function") {
-		return field.newValue(data as Institution);
-	}
-
-	if (typeof field.newValue === "string") {
-		return getNestedValue(
-			data as unknown as Record<string, unknown>,
-			field.newValue,
-		);
-	}
-
-	if (field.newValue) {
-		return getNestedValue(
-			data as unknown as Record<string, unknown>,
-			field.newValue,
-		);
-	}
-
-	return undefined;
-};
-
 const resolveHref = (
 	fieldConfig: InfoWrapperFieldConfig,
 	value: unknown,
@@ -247,6 +222,7 @@ function AddressField({
 type RenderFieldContentArgs = {
 	field: InfoWrapperFieldConfig;
 	data: Partial<Institution>;
+	newData?: Partial<Institution>;
 	alwaysShow?: boolean;
 	layoutColumns?: 1 | 2;
 };
@@ -308,15 +284,17 @@ const getContent = (
 };
 
 const renderFieldContent = (
-	{ field, data, alwaysShow }: RenderFieldContentArgs,
+	{ field, data, newData, alwaysShow }: RenderFieldContentArgs,
 	includeLayout = true,
 ) => {
 	const { t: tEnum } = useTranslation("enumMap");
 	const { t: tCommon } = useTranslation("common");
 	const value = resolveFieldValue(field, data);
 	const resolvedHref = resolveHref(field, value, data);
-	const newValue = resolveNewFieldValue(field, data);
-	const resolvedNewHref = resolveHref(field, newValue, data);
+	const newValue = newData ? resolveFieldValue(field, newData) : undefined;
+	const resolvedNewHref = newData
+		? resolveHref(field, newValue, newData)
+		: undefined;
 
 	const gridClass = getGridClass(field);
 	const translateLabel = (labelKey?: string) => {
@@ -409,11 +387,18 @@ const renderFieldContent = (
 		}
 	})();
 
-	const hasNew = hasDisplayValue(newValue) || hasDisplayValue(resolvedNewHref);
+	const hasNew =
+		newData !== undefined &&
+		(hasDisplayValue(newValue) || hasDisplayValue(resolvedNewHref));
 
-	const renderValueDisplay = (displayValue: unknown, displayHref?: string) => {
-		if (field.type === "address") return formatAddressValue(data);
-		if (field.type === "category") return formatCategoryValue(data, tEnum);
+	const renderValueDisplay = (
+		displayValue: unknown,
+		displayHref: string | undefined,
+		sourceData: Partial<Institution>,
+	) => {
+		if (field.type === "address") return formatAddressValue(sourceData);
+		if (field.type === "category")
+			return formatCategoryValue(sourceData, tEnum);
 		if (field.type === "status") {
 			const labelKey = `${field.enumKey ?? "utilization_status"}.${String(
 				displayValue,
@@ -433,11 +418,76 @@ const renderFieldContent = (
 		return String(displayValue);
 	};
 
+	const normalizedValue = (valueToNormalize: unknown) => {
+		if (typeof valueToNormalize === "string") return valueToNormalize.trim();
+		if (typeof valueToNormalize === "number") return valueToNormalize;
+		if (typeof valueToNormalize === "boolean") return valueToNormalize;
+		return valueToNormalize ?? null;
+	};
+
+	const originalDisplay = renderValueDisplay(value, resolvedHref, data);
+	const newDisplay = newData
+		? renderValueDisplay(newValue, resolvedNewHref, newData)
+		: null;
+	const hasDiff =
+		newData !== undefined &&
+		(() => {
+			if (field.type === "address" || field.type === "category") {
+				return String(originalDisplay) !== String(newDisplay ?? "");
+			}
+			if (
+				field.type === "link" ||
+				field.type === "email" ||
+				field.type === "phone"
+			) {
+				const oldLink = normalizedValue(resolvedHref ?? value);
+				const newLink = normalizedValue(resolvedNewHref ?? newValue);
+				return oldLink !== newLink;
+			}
+			return (
+				normalizedValue(value) !== normalizedValue(newValue) ||
+				String(originalDisplay) !== String(newDisplay ?? "")
+			);
+		})();
+
 	if (hasNew) {
-		const newDisplay = renderValueDisplay(newValue, resolvedNewHref);
-		const oldDisplay = hasOriginal
-			? renderValueDisplay(value, resolvedHref)
-			: null;
+		if (!hasDiff) {
+			const content = getContent(
+				field,
+				label,
+				value,
+				resolvedHref,
+				tEnum,
+				data,
+			);
+			if (!content) {
+				if (!alwaysShow) return null;
+				return (
+					<div
+						className={cn(
+							includeLayout && gridClass,
+							includeLayout && field.className,
+						)}
+					>
+						<InfoItem label={label} description={field.description}>
+							—
+						</InfoItem>
+					</div>
+				);
+			}
+			return (
+				<div
+					className={cn(
+						includeLayout && gridClass,
+						includeLayout && field.className,
+					)}
+				>
+					{content}
+				</div>
+			);
+		}
+
+		const oldDisplay = hasOriginal ? originalDisplay : null;
 
 		if (field.type === "title") {
 			return (
@@ -488,7 +538,6 @@ const renderFieldContent = (
 	}
 
 	const content = getContent(field, label, value, resolvedHref, tEnum, data);
-
 	if (!content) {
 		if (!alwaysShow) return null;
 		return (
@@ -518,10 +567,15 @@ const renderFieldContent = (
 };
 type BuildRenderFieldArgs = {
 	data: Partial<Institution>;
+	newData?: Partial<Institution>;
 	config: InfoWrapperConfig;
 };
 
-export const buildRenderField = ({ data, config }: BuildRenderFieldArgs) => {
+export const buildRenderField = ({
+	data,
+	newData,
+	config,
+}: BuildRenderFieldArgs) => {
 	return (
 		field: InfoWrapperFieldConfig,
 		fieldIndex: number,
@@ -539,6 +593,7 @@ export const buildRenderField = ({ data, config }: BuildRenderFieldArgs) => {
 		const content = renderFieldContent({
 			field,
 			data,
+			newData,
 			alwaysShow: field.alwaysShow ?? config.alwaysShow,
 			layoutColumns,
 		});

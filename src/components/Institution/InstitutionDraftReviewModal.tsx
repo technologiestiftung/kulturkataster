@@ -11,7 +11,9 @@ import {
 	getSubmissionById,
 	reviewSubmission,
 } from "@/server/actions/submissions";
+import { getInstitutionById } from "@/server/actions/institutions";
 import type { Submission } from "@/types/submission";
+import type { Institution } from "@/types/institution";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "next/navigation";
@@ -34,11 +36,23 @@ export function InstitutionDraftReviewModal({
 	const [error, setError] = useState<string | null>(null);
 
 	const hasSubmissionId = typeof submissionId === "number";
-	const submissions = useAccountStore((state) => state.submissions);
+	const allSubmissions = useAccountStore((state) => state.submissions);
+	const submissions = useMemo(
+		() =>
+			allSubmissions.filter(
+				(s) =>
+					s.entity_type === "institution" &&
+					(s.type === "create" || s.type === "update"),
+			),
+		[allSubmissions],
+	);
 	const [fetchedSubmission, setFetchedSubmission] = useState<Submission | null>(
 		null,
 	);
 	const [didFetchSubmission, setDidFetchSubmission] = useState(false);
+	const [originalInstitution, setOriginalInstitution] =
+		useState<Institution | null>(null);
+	const [didFetchInstitution, setDidFetchInstitution] = useState(false);
 
 	const resolvedSubmission = useMemo(() => {
 		if (!hasSubmissionId) return undefined;
@@ -71,6 +85,42 @@ export function InstitutionDraftReviewModal({
 
 	const resolvedSubmissionWithFallback =
 		resolvedSubmission ?? fetchedSubmission ?? undefined;
+
+	useEffect(() => {
+		const entityId = resolvedSubmissionWithFallback?.entity_id;
+		if (
+			typeof entityId !== "number" ||
+			Number.isNaN(entityId) ||
+			originalInstitution ||
+			didFetchInstitution
+		) {
+			return;
+		}
+		let active = true;
+		const fetchInstitution = async () => {
+			try {
+				const result = await getInstitutionById(entityId);
+				if (!active) return;
+				setOriginalInstitution(result ?? null);
+			} catch {
+				if (active) {
+					setOriginalInstitution(null);
+				}
+			} finally {
+				if (active) {
+					setDidFetchInstitution(true);
+				}
+			}
+		};
+		fetchInstitution();
+		return () => {
+			active = false;
+		};
+	}, [
+		didFetchInstitution,
+		originalInstitution,
+		resolvedSubmissionWithFallback?.entity_id,
+	]);
 
 	useEffect(() => {
 		if (!resolvedSubmissionWithFallback || reviewNotes) return;
@@ -177,15 +227,10 @@ export function InstitutionDraftReviewModal({
 			content={
 				<div className="space-y-6">
 					<InstitutionReview
-						data={draft}
+						data={originalInstitution ?? draft}
+						newData={originalInstitution ? draft : undefined}
 						onEditSection={(sectionId) => {
-							if (sectionId === "details") {
-								router.push(`${editBasePath}/${submissionId}/edit#details`);
-								return;
-							}
-							if (sectionId === "contact") {
-								router.push(`${editBasePath}/${submissionId}/edit#contact`);
-							}
+							router.push(`${editBasePath}/${submissionId}/edit#${sectionId}`);
 						}}
 					/>
 					<div className="space-y-3">

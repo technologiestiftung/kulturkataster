@@ -30,7 +30,16 @@ export function InstitutionDraftEditModal({
 	shouldRefresh = true,
 }: InstitutionDraftEditModalProps) {
 	const { t } = useTranslation("content");
-	const submissions = useAccountStore((state) => state.submissions);
+	const allSubmissions = useAccountStore((state) => state.submissions);
+	const submissions = useMemo(
+		() =>
+			allSubmissions.filter(
+				(s) =>
+					s.entity_type === "institution" &&
+					(s.type === "create" || s.type === "update"),
+			),
+		[allSubmissions],
+	);
 	const upsertSubmission = useAccountStore((state) => state.upsertSubmission);
 	const categories = useAccountStore((state) => state.categories);
 	const router = useRouter();
@@ -106,24 +115,37 @@ export function InstitutionDraftEditModal({
 			categoryIds: number[] | undefined,
 			categoryGroups: Category[],
 		): FilterState => {
-			const category_keys: string[] = [];
-			const subcategory_keys: string[] = [];
-			const categoryMap = new Map(
-				categoryGroups.map((category) => [category.id, category]),
-			);
+			const category_keys = new Set<string>();
+			const child_category_keys = new Set<string>();
+			const categoryMap = new Map<number, Category>();
+			const parentKeyById = new Map<number, string>();
+			categoryGroups.forEach((category) => {
+				categoryMap.set(category.id, category);
+				parentKeyById.set(category.id, category.key);
+				(category.child_categories ?? []).forEach((child) => {
+					categoryMap.set(child.id, child);
+					parentKeyById.set(child.id, category.key);
+				});
+			});
 			(categoryIds ?? []).forEach((id) => {
 				const category = categoryMap.get(id);
 				if (!category) return;
 				if (category.parent_category_id) {
-					subcategory_keys.push(category.key);
+					child_category_keys.add(category.key);
+					const parentKey =
+						parentKeyById.get(id) ??
+						parentKeyById.get(category.parent_category_id);
+					if (parentKey) {
+						category_keys.add(parentKey);
+					}
 				} else {
-					category_keys.push(category.key);
+					category_keys.add(category.key);
 				}
 			});
 			return {
 				district_keys: [],
-				category_keys,
-				subcategory_keys,
+				category_keys: Array.from(category_keys),
+				child_category_keys: Array.from(child_category_keys),
 				include_closed: false,
 				status: undefined,
 			};

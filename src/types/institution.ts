@@ -220,6 +220,7 @@ export interface InstitutionStoreState {
 	setCategories: (categories: Category[] | null) => void;
 	setInstitutions: (institutions: Institution[] | null) => void;
 	setFilters: (filters: FilterState) => void;
+	resetFilters: () => void;
 	clearError: () => void;
 	initializeCategories: () => Promise<void>;
 	initializeDistricts: () => Promise<void>;

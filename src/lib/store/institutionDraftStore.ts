@@ -16,6 +16,7 @@ export const useInstitutionDraftStore = create<InstitutionDraftStoreState>()(
 		immer((set) => ({
 			draft: defaultDraft,
 			stepId: "basic",
+			mode: "create",
 			setDraft: (partial) =>
 				set((state) => {
 					Object.assign(state.draft, partial);
@@ -24,10 +25,15 @@ export const useInstitutionDraftStore = create<InstitutionDraftStoreState>()(
 				set((state) => {
 					state.stepId = stepId;
 				}),
+			setMode: (mode) =>
+				set((state) => {
+					state.mode = mode;
+				}),
 			resetDraft: () =>
 				set((state) => {
 					state.draft = defaultDraft;
 					state.stepId = "basic";
+					state.mode = "create";
 				}),
 		})),
 		{ name: "institution-draft" },

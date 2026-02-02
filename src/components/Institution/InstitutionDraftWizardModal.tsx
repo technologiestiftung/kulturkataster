@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { FormWrapper } from "@/components/FormWrapper";
 import type { FormWrapperConfig } from "@/components/FormWrapper";
@@ -12,6 +12,7 @@ import {
 } from "@/components/HorizontalStepper";
 import { Modal } from "@/components/Modals/Modal";
 import { useTranslation } from "react-i18next";
+import { InstitutionFormModal } from "@/components/Institution/InstitutionFormModal";
 import { geocodeAddress, reverseGeocode } from "@/server/actions/maptiler";
 import {
 	buildAddressFromFormData,
@@ -23,8 +24,7 @@ import { useInstitutionDraftStore } from "@/lib/store/institutionDraftStore";
 import { InstitutionReview } from "@/components/Institution/InstitutionReview";
 import { createSubmission } from "@/server/actions/submissions";
 import { SubmissionEntityType, SubmissionType } from "@/generated/prisma";
-import type { FilterState } from "@/types";
-import { resolveCategoryIdsFromFilters } from "@/lib/utils/filterUtils";
+import { resolveCategoryIdsFromDraft } from "@/lib/utils/institutionCategoryUtils";
 import { Button } from "@/components/ui/button";
 
 const stepConfigs: StepConfig[] = [
@@ -79,6 +79,10 @@ function InstitutionDraftWizardContent({
 	const setDraft = useInstitutionDraftStore((state) => state.setDraft);
 	const setStepId = useInstitutionDraftStore((state) => state.setStepId);
 	const resetDraft = useInstitutionDraftStore((state) => state.resetDraft);
+	const draftMode = useInstitutionDraftStore((state) => state.mode);
+	const [editSectionId, setEditSectionId] = useState<string | null>(null);
+	const [editModalOpen, setEditModalOpen] = useState(false);
+	const hasOpenedFromHash = useRef(false);
 
 	const router = useRouter();
 	const {
@@ -114,26 +118,41 @@ function InstitutionDraftWizardContent({
 
 	const handleFinalSubmit = useCallback(
 		async (data: Record<string, unknown>) => {
-			const categoryFilters = data.categoryFilters as FilterState | undefined;
-			const categoryIds =
-				categoryFilters !== undefined
-					? resolveCategoryIdsFromFilters(categoryFilters, categories)
-					: [];
+			const categoryIds = resolveCategoryIdsFromDraft(
+				data as Record<string, unknown>,
+				categories,
+			);
+			const { entityId, ...rest } = data as {
+				entityId?: unknown;
+			};
+			const resolvedEntityId =
+				typeof entityId === "number" && Number.isFinite(entityId)
+					? entityId
+					: null;
+			if (draftMode === "update" && !resolvedEntityId) {
+				throw new Error("Missing institution for update submission.");
+			}
 			const payload = {
-				...data,
+				...rest,
 				address: buildAddressFromFormData(data),
 				categoryIds,
 			};
 			await createSubmission({
 				entityType: SubmissionEntityType.institution,
-				type: SubmissionType.create,
+				entityId: draftMode === "update" ? resolvedEntityId : null,
+				type:
+					draftMode === "update"
+						? SubmissionType.update
+						: SubmissionType.create,
 				status: "approval_pending",
 				data: payload,
 			});
 			resetDraft();
-			router.push("/account/institutions");
+			router.push(
+				draftMode === "update" ? "/institution" : "/account/institutions",
+			);
 		},
-		[categories, resetDraft, router],
+		[categories, draftMode, resetDraft, router],
 	);
 
 	const handleStepSubmit = useCallback(
@@ -163,6 +182,17 @@ function InstitutionDraftWizardContent({
 		stepSyncSource.current = "stepper";
 		setStepId(currentStepId);
 	}, [currentStepId, setStepId]);
+
+	useEffect(() => {
+		if (currentStepId !== "review" || hasOpenedFromHash.current) return;
+		if (typeof window === "undefined") return;
+		const hash = window.location.hash.replace("#", "").trim();
+		if (hash) {
+			hasOpenedFromHash.current = true;
+			setEditSectionId(hash);
+			setEditModalOpen(true);
+		}
+	}, [currentStepId]);
 
 	useEffect(() => {
 		if (!stepId || stepId === currentStepId) {
@@ -590,6 +620,13 @@ function InstitutionDraftWizardContent({
 		[draft, handleCancel, handleStepChange, handleStepSubmit],
 	);
 
+	const originalInstitution = useMemo(() => {
+		const original = draft.originalInstitution as
+			| Record<string, unknown>
+			| undefined;
+		return original && typeof original === "object" ? original : undefined;
+	}, [draft]);
+
 	const currentFormConfig = useMemo(() => {
 		switch (currentStepId) {
 			case "basic":
@@ -621,15 +658,14 @@ function InstitutionDraftWizardContent({
 				<div className="space-y-4">
 					<section className="w-full rounded-lg overflow-hidden">
 						<InstitutionReview
-							data={draft}
+							data={originalInstitution ?? draft}
+							newData={originalInstitution ? draft : undefined}
 							onEditSection={(sectionId) => {
-								if (sectionId === "details") {
-									router.push("/institution/submission/edit#details");
-									return;
+								if (typeof window !== "undefined") {
+									window.location.hash = sectionId;
 								}
-								if (sectionId === "contact") {
-									router.push("/institution/submission/edit#contact");
-								}
+								setEditSectionId(sectionId);
+								setEditModalOpen(true);
 							}}
 						/>
 					</section>
@@ -642,6 +678,31 @@ function InstitutionDraftWizardContent({
 			) : (
 				<FormWrapper key={currentStepId} config={currentFormConfig} />
 			)}
+			{editModalOpen ? (
+				<InstitutionFormModal
+					mode={draftMode === "update" ? "edit" : "create"}
+					initialValues={draft}
+					onClose={() => {
+						if (typeof window !== "undefined") {
+							const { pathname, search } = window.location;
+							window.history.replaceState(null, "", `${pathname}${search}`);
+						}
+						setEditModalOpen(false);
+					}}
+					onSubmit={({ data }) => {
+						const address = buildAddressFromFormData(data);
+						setDraft({ ...data, address });
+						if (typeof window !== "undefined") {
+							const { pathname, search } = window.location;
+							window.history.replaceState(null, "", `${pathname}${search}`);
+						}
+						setEditModalOpen(false);
+					}}
+					formKey={`draft-edit-${editSectionId ?? "default"}`}
+					closeOnSubmit
+					submitLabel={t("institutionFormModal.actions.save")}
+				/>
+			) : null}
 		</div>
 	);
 }

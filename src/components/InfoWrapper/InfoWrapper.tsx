@@ -15,12 +15,14 @@ import {
 
 export function InfoWrapper({
 	data,
+	newData,
 	config,
 }: {
 	data: Partial<Institution>;
+	newData?: Partial<Institution>;
 	config: InfoWrapperConfig;
 }) {
-	const renderField = buildRenderField({ data, config });
+	const renderField = buildRenderField({ data, newData, config });
 	const isCardField = (field: InfoWrapperFieldConfig) =>
 		field.type === "section";
 

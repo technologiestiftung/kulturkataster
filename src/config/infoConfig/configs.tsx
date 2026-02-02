@@ -122,12 +122,6 @@ export const facilityInfoConfig: InfoWrapperFieldConfig[] = [
 
 export const statusInfoConfig: InfoWrapperFieldConfig[] = [
 	{
-		value: "utilization_status",
-		labelKey: "institution.utilizationStatus",
-		type: "enum",
-		enumKey: "utilization_status",
-	},
-	{
 		value: "monument_status",
 		labelKey: "institution.monumentStatus",
 		type: "enum",

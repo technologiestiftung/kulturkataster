@@ -6,16 +6,22 @@ import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Modal } from "@/components/Modals/Modal";
+import { useInstitutionDraftStore } from "@/lib/store/institutionDraftStore";
 
-export function InstitutionIntroModal() {
+export function InstitutionDraftIntroModal() {
 	const router = useRouter();
 	const [mode, setMode] = useState<"new" | "edit">("new");
+	const resetDraft = useInstitutionDraftStore((state) => state.resetDraft);
+	const setModeInStore = useInstitutionDraftStore((state) => state.setMode);
 
 	const handleContinue = () => {
+		resetDraft();
 		if (mode === "edit") {
-			router.push("/institution/edit");
+			setModeInStore("update");
+			router.push("/institution/edit/select");
 			return;
 		}
+		setModeInStore("create");
 		router.push("/institution/submission");
 	};
 
