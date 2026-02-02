@@ -316,4 +316,8 @@
 	[role="tablist"] button:not([role="tab"]) {
 		display: none;
 	}
+
+	input[type="search"]::-webkit-search-cancel-button {
+		@apply hidden;
+	}
 }

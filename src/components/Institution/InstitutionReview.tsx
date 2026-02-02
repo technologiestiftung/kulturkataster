@@ -10,18 +10,29 @@ import {
 	fundingInfoConfig,
 	organizationInfoConfig,
 	statusInfoConfig,
-} from "@/components/Institution/configs";
-
+} from "@/config/infoConfig/configs";
+import { useInstitutionStore } from "@/lib/store/institutionStore";
+import { useAccountStore } from "@/lib/store/accountStore";
+import { resolveCategoriesFromDraft } from "@/lib/utils/institutionCategoryUtils";
 type InstitutionReviewProps = {
 	data: Record<string, unknown>;
-	onEditSection?: (sectionId: "details" | "contact") => void;
+	newData?: Record<string, unknown>;
+	onEditSection?: (sectionId: string) => void;
 };
 
 export function InstitutionReview({
 	data,
+	newData,
 	onEditSection,
 }: InstitutionReviewProps) {
 	const { t } = useTranslation("content");
+	const institutionCategories =
+		useInstitutionStore((state) => state.categories) ?? [];
+	const accountCategories = useAccountStore((state) => state.categories) ?? [];
+	const categories =
+		institutionCategories.length > 0
+			? institutionCategories
+			: accountCategories;
 
 	const editConfig = useMemo(
 		() => ({
@@ -43,9 +54,31 @@ export function InstitutionReview({
 		[onEditSection],
 	);
 
+	const resolveCategoriesForData = useMemo(
+		() => (input: Record<string, unknown>) =>
+			resolveCategoriesFromDraft(input, categories),
+		[categories],
+	);
+
+	const resolvedData = useMemo(() => {
+		const categoriesForData = resolveCategoriesForData(data);
+		return categoriesForData
+			? { ...data, categories: categoriesForData }
+			: data;
+	}, [data, resolveCategoriesForData]);
+
+	const resolvedNewData = useMemo(() => {
+		if (!newData) return undefined;
+		const categoriesForNewData = resolveCategoriesForData(newData);
+		return categoriesForNewData
+			? { ...newData, categories: categoriesForNewData }
+			: newData;
+	}, [newData, resolveCategoriesForData]);
+
 	return (
 		<InfoWrapper
-			data={data}
+			data={resolvedData}
+			newData={resolvedNewData}
 			config={{
 				fields: [
 					{
@@ -68,7 +101,6 @@ export function InstitutionReview({
 							},
 							{
 								id: "categories",
-								alwaysShow: true,
 								categoryVariant: "default",
 								type: "category",
 							},

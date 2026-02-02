@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { DataTable } from "@/components/DataTable";
 import type { DataTableConfig } from "@/components/DataTable";
-import type { InstitutionTableRow } from "@/types/institution";
+import type { Institution, InstitutionTableRow } from "@/types/institution";
 import { useAccountStore } from "@/lib/store/accountStore";
 import { StatusDot } from "../ui/status-dot";
 import { InstitutionStatus } from "@/generated/prisma";
@@ -28,7 +28,16 @@ import { Eye } from "lucide-react";
 export function InstitutionsTable() {
 	const router = useRouter();
 	const institutions = useAccountStore((state) => state.institutions);
-	const submissions = useAccountStore((state) => state.submissions);
+	const allSubmissions = useAccountStore((state) => state.submissions);
+	const submissions = useMemo(
+		() =>
+			allSubmissions.filter(
+				(s) =>
+					s.entity_type === "institution" &&
+					(s.type === "create" || s.type === "update"),
+			),
+		[allSubmissions],
+	);
 	const { t } = useTranslation("content");
 	const { t: tEnum } = useTranslation("enumMap");
 	const categories = useAccountStore((state) => state.categories);
@@ -310,21 +319,23 @@ export function InstitutionsTable() {
 			{
 				id: "category",
 				header: headerLabel("category", "Category"),
-				accessorFn: (row) => getParentCategories(row),
+				accessorFn: (row) => getParentCategories(row as Partial<Institution>),
 				enableSorting: true,
 				size: 333,
 				cell: ({ row }) => {
 					return (
 						<div className="gap-1 flex-wrap flex">
-							{getParentCategories(row.original).map((cat) => (
-								<Badge
-									variant="outline"
-									key={cat.id}
-									className="capitalize truncate"
-								>
-									{`${tEnum("category." + cat.key)}`}
-								</Badge>
-							))}
+							{getParentCategories(row.original as Partial<Institution>).map(
+								(cat) => (
+									<Badge
+										variant="outline"
+										key={cat.id}
+										className="capitalize truncate"
+									>
+										{`${tEnum("category." + cat.key)}`}
+									</Badge>
+								),
+							)}
 						</div>
 					);
 				},
@@ -332,21 +343,23 @@ export function InstitutionsTable() {
 			{
 				id: "subcategory",
 				header: headerLabel("subcategory", "Subcategory"),
-				accessorFn: (row) => getSubcategories(row),
+				accessorFn: (row) => getSubcategories(row as Partial<Institution>),
 				enableSorting: true,
 				size: 333,
 				cell: ({ row }) => {
 					return (
 						<div className="gap-1 flex-wrap flex">
-							{getSubcategories(row.original).map((cat) => (
-								<Badge
-									variant="outline"
-									key={cat.id}
-									className="capitalize truncate"
-								>
-									{`${tEnum("subcategory." + cat.key)}`}
-								</Badge>
-							))}
+							{getSubcategories(row.original as Partial<Institution>).map(
+								(cat) => (
+									<Badge
+										variant="outline"
+										key={cat.id}
+										className="capitalize truncate"
+									>
+										{`${tEnum("subcategory." + cat.key)}`}
+									</Badge>
+								),
+							)}
 						</div>
 					);
 				},

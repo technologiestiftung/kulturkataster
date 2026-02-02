@@ -36,7 +36,6 @@ interface InfoWrapperBaseFieldConfig {
 	className?: string;
 	alwaysShow?: boolean;
 	href?: string | ((data: Institution) => string);
-	newValue?: string | ((data: Institution) => unknown);
 	layout?: Layout;
 	addressOptions?: {
 		showMapLink?: boolean;

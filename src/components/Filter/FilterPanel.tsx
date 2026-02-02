@@ -125,8 +125,8 @@ export const FilterPanel: FC<FilterPanelProps> = ({
 	}
 
 	const rootClassName = collapsible
-		? "Filter-root p-2 md:p-4 flex flex-col gap-2"
-		: "Filter-root p-2 md:p-4 h-full flex flex-col gap-2";
+		? "Filter-root flex flex-col gap-2"
+		: "Filter-root h-full flex flex-col gap-2";
 
 	return (
 		<div className={rootClassName}>

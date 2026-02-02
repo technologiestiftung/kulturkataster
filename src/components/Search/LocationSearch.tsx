@@ -13,18 +13,26 @@ import {
 import { GeoFeature, Institution, SearchResult } from "@/types/institution";
 import { boundingExtent } from "ol/extent";
 import { fromLonLat } from "ol/proj";
-import { ChangeEvent, useRef } from "react";
+import { ChangeEvent, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { SearchMessages } from "./SearchMessages";
 import { SearchResults } from "./SearchResults";
 import { getCoordinatesFromAddress } from "@/lib/utils/institutionUtils";
 import { usePathname, useRouter } from "next/navigation";
+import Close from "@/icons/close.svg";
+import FilterIcon from "@/icons/filter.svg";
+import { ButtonWithTooltip } from "../ui/button";
 
 export const isGeoFeature = (result: SearchResult): result is GeoFeature => {
 	return "place_name" in result && "center" in result;
 };
 
-export function LocationSearch() {
+export function LocationSearch({
+	onResultsChange,
+	onFilterClick,
+}: {
+	onResultsChange?: (results: SearchResult[]) => void;
+	onFilterClick?: () => void;
+}) {
 	const { t } = useTranslation("common");
 	const inputRef = useRef<HTMLInputElement>(null);
 	const { map } = useMapStore();
@@ -46,6 +54,10 @@ export function LocationSearch() {
 			return result.allResults;
 		},
 	});
+
+	useEffect(() => {
+		onResultsChange?.(searchResults);
+	}, [searchResults, onResultsChange]);
 
 	const {
 		activeIndex,
@@ -179,15 +191,15 @@ export function LocationSearch() {
 	};
 
 	return (
-		<div className="h-full flex flex-col overflow-visible">
-			<SearchMessages
+		<div className="h-full w-full flex flex-col overflow-visible">
+			{/* <SearchMessages
 				hasError={resultErrorMessage}
 				hasResults={searchResults.length > 0}
 				isLoading={isLoading}
 				query={query}
 				className="order-last"
-			/>
-			<div className="flex-shrink-0 mb-8">
+			/> */}
+			<div className="mb-8 flex w-full items-center gap-2  flex-row">
 				<SearchInput
 					ref={inputRef}
 					placeholder={t("search.hint")}
@@ -196,6 +208,8 @@ export function LocationSearch() {
 					onKeyDown={handleKeyDown}
 					aria-invalid={!!resultErrorMessage}
 					role="combobox"
+					containerClassName="flex-1"
+					type="search"
 					aria-autocomplete="list"
 					aria-expanded={searchResults.length > 0}
 					aria-controls={searchResults.length > 0 ? listId : undefined}
@@ -203,13 +217,34 @@ export function LocationSearch() {
 						searchResults.length > 0 ? activeDescendantId : undefined
 					}
 					rightSlot={
-						isLoading ? (
-							<div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-								<div className="w-4 h-4 border-2 border-neutral-20 border-t-accent rounded-full animate-spin" />
-							</div>
-						) : null
+						<div className="absolute right-5 top-1/2 transform -translate-y-1/2">
+							{isLoading ? (
+								<div className="w-5 h-5 border-2 border-neutral-20 border-t-accent rounded-full animate-spin" />
+							) : (
+								<Close
+									onClick={() => {
+										setQuery("");
+										clearResults();
+										inputRef.current?.focus();
+									}}
+									className="w-5 h-5"
+								/>
+							)}
+						</div>
 					}
 				/>
+				{onFilterClick && (
+					<ButtonWithTooltip
+						variant="rounded"
+						size="icon-only"
+						tooltip="Filter"
+						className="cursor-pointer"
+						onClick={onFilterClick}
+					>
+						<FilterIcon className="size-5! stroke-foreground" />
+					</ButtonWithTooltip>
+				)}
+
 				<div ref={statusRef} className="sr-only" aria-live="polite"></div>
 			</div>
 

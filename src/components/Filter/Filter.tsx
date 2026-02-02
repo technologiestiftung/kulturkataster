@@ -4,9 +4,18 @@ import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { FC, useCallback } from "react";
 import { FilterState } from "@/types";
 import { FilterPanel } from "./FilterPanel";
+import { ButtonWithTooltip } from "../ui/button";
+import FilterIcon from "@/icons/filter.svg";
+import Search from "@/icons/search.svg";
+import Close from "@/icons/close.svg";
+import { useTranslation } from "react-i18next";
 
-// Main Filter Component
-const Filter: FC = () => {
+type FilterProps = {
+	onSearchClick?: () => void;
+	onShowFilter?: () => void;
+};
+
+const Filter: FC<FilterProps> = ({ onSearchClick, onShowFilter }) => {
 	const {
 		setFilters,
 		filters,
@@ -30,19 +39,51 @@ const Filter: FC = () => {
 		setFilters(newFilters);
 	};
 
+	const { t } = useTranslation("content");
+
 	return (
-		<FilterPanel
-			filters={filters}
-			categoryGroups={categories ?? []}
-			districts={districts}
-			filteredCount={filteredInstitutions?.length ?? 0}
-			categoryCounts={categoryCounts}
-			subcategoryCounts={subcategoryCounts}
-			loading={loading}
-			error={null}
-			onRetry={retry}
-			onFiltersChange={updateFilters}
-		/>
+		<>
+			<div className="mb-8 flex w-full items-center gap-2  flex-row">
+				{onSearchClick && (
+					<ButtonWithTooltip
+						variant="rounded"
+						size="icon-only"
+						tooltip="Search"
+						className="cursor-pointer"
+						onClick={onSearchClick}
+					>
+						<Search className="size-5! stroke-foreground" />
+					</ButtonWithTooltip>
+				)}
+				<ButtonWithTooltip
+					variant="rounded"
+					tooltip="Filter"
+					className="cursor-pointer h-12 flex-1 justify-between"
+					onClick={onShowFilter}
+				>
+					<div className="flex items-center gap-2">
+						<FilterIcon className="size-5! stroke-foreground" />
+						<span className="body2 font-bold">
+							{t("filter.title", { ns: "content" })}
+						</span>
+					</div>
+					<Close />
+				</ButtonWithTooltip>
+			</div>
+
+			<FilterPanel
+				filters={filters}
+				categoryGroups={categories ?? []}
+				districts={districts}
+				filteredCount={filteredInstitutions?.length ?? 0}
+				categoryCounts={categoryCounts}
+				subcategoryCounts={subcategoryCounts}
+				loading={loading}
+				error={null}
+				onRetry={retry}
+				onFiltersChange={updateFilters}
+			/>
+		</>
 	);
 };
 

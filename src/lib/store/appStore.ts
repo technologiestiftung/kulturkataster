@@ -21,8 +21,6 @@ export const useAppStore = create<AppStoreState>()(
 			},
 			baseFontSize: 16,
 			setBaseFontSize: createSetBaseFontSize(set),
-			activePanel: null,
-			setActivePanel: (panel) => set({ activePanel: panel }),
 			isLayerTreeOpen: false,
 			setIsLayerTreeOpen: (isOpen) => set({ isLayerTreeOpen: isOpen }),
 		}),

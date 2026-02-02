@@ -11,7 +11,9 @@ export type InstitutionDraftData = Record<string, unknown>;
 export type InstitutionDraftStoreState = {
 	draft: InstitutionDraftData;
 	stepId: string;
+	mode: "create" | "update";
 	setDraft: (partial: InstitutionDraftData) => void;
 	setStepId: (stepId: string) => void;
+	setMode: (mode: "create" | "update") => void;
 	resetDraft: () => void;
 };

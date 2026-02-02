@@ -16,6 +16,35 @@ import {
 } from "../utils/institutionUtils";
 import { getInstitutions } from "@/server/actions/institutions";
 
+const defaultFilters: InstitutionStoreState["filters"] = {
+	status: undefined,
+	district_keys: [],
+	category_keys: [],
+	child_category_keys: [],
+	include_closed: false,
+};
+
+const applyFilters = (
+	filters: InstitutionStoreState["filters"],
+	set: (partial: Partial<InstitutionStoreState>) => void,
+	get: () => InstitutionStoreState,
+) => {
+	const newState = { filters };
+	const currentState = { ...get(), ...newState };
+	const filteredInstitutions = computeFilteredInstitutions(currentState);
+	const { categoryCounts, subcategoryCounts } = computeCounts(currentState);
+	const filteredInstitutionsGeoJSON = filteredInstitutions
+		? toFeatureCollection(filteredInstitutions)
+		: null;
+	set({
+		...newState,
+		filteredInstitutions,
+		filteredInstitutionsGeoJSON,
+		categoryCounts,
+		subcategoryCounts,
+	});
+};
+
 const matchesBaseFilters = (
 	institution: Institution,
 	filters: InstitutionStoreState["filters"],
@@ -103,30 +132,9 @@ export const useInstitutionStore = create<InstitutionStoreState>()(
 			districts: [],
 			isLoading: false,
 			error: null,
-			filters: {
-				status: undefined,
-				district_keys: [],
-				category_keys: [],
-				child_category_keys: [],
-				include_closed: false,
-			},
-			setFilters: (filters) => {
-				const newState = { filters };
-				const currentState = { ...get(), ...newState };
-				const filteredInstitutions = computeFilteredInstitutions(currentState);
-				const { categoryCounts, subcategoryCounts } =
-					computeCounts(currentState);
-				const filteredInstitutionsGeoJSON = filteredInstitutions
-					? toFeatureCollection(filteredInstitutions)
-					: null;
-				set({
-					...newState,
-					filteredInstitutions,
-					filteredInstitutionsGeoJSON,
-					categoryCounts,
-					subcategoryCounts,
-				});
-			},
+			filters: defaultFilters,
+			setFilters: (filters) => applyFilters(filters, set, get),
+			resetFilters: () => applyFilters(defaultFilters, set, get),
 			categories: null,
 			setCategories: (categories) => set({ categories }),
 			clearError: () => set({ error: null }),
