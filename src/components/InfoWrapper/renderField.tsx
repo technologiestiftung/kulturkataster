@@ -10,10 +10,7 @@ import {
 	getCoordinatesFromAddress,
 	getParentCategories,
 } from "@/lib/utils/institutionUtils";
-import {
-	type InfoWrapperConfig,
-	type InfoWrapperFieldConfig,
-} from "./types";
+import { type InfoWrapperConfig, type InfoWrapperFieldConfig } from "./types";
 import { StatusItem } from "./StatusItem";
 import { CategoryItem } from "./CategoryItem";
 import { useTranslation } from "react-i18next";
