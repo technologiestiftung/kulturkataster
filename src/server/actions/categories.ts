@@ -9,7 +9,6 @@ import {
 import { getCurrentUserId } from "@/server/auth/getCurrentUser";
 import { CategoryStatus } from "@/generated/prisma";
 import type { Category } from "@/types";
-import { mapCategoriesWithSubcategories } from "@/server/logic/categoryMapping";
 
 type CategoryInput = {
 	key: string;
@@ -41,8 +40,8 @@ export async function getCategoriesWithSubcategories(): Promise<Category[]> {
 	const ctx = await getAccessContextForUser(currentUserId);
 	authorizeTable(ctx, "category", "read");
 
-	const category = await categoryRepo.listWithChildren();
-	return mapCategoriesWithSubcategories(category);
+	const categories = await categoryRepo.listWithChildren();
+	return categories.filter((category) => !category.parent_category_id);
 }
 
 export async function getCategoryById(id: number) {
