@@ -10,12 +10,10 @@ import {
 	MapConfig,
 } from "@/types";
 import { FC, useEffect } from "react";
-import MapComp from "../Map";
-import { useTranslation } from "react-i18next";
+import MapView from "../Map";
 
 const MapInitializer: FC = ({}) => {
 	const setConfig = useMapStore((state) => state.setConfig);
-	const { t } = useTranslation("common");
 
 	useEffect(() => {
 		const servicesMap = new Map(
@@ -44,9 +42,7 @@ const MapInitializer: FC = ({}) => {
 
 	return (
 		<div className="items-center h-full flex-1 justify-items-center h-full relative w-full">
-			<section className="h-full w-full" aria-label={t("map.title")}>
-				<MapComp />
-			</section>
+			<MapView />
 		</div>
 	);
 };

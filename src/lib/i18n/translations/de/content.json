@@ -962,7 +962,12 @@
 		"allLoaded": "Alle Kulturorte geladen",
 		"countLabel": "{{count}} Kulturorte",
 		"description": "Diese Liste zeigt alle Orte, die Sie in den Filtern ausgewählt haben – 1:1 wie auf der Karte. Sie eignet sich besonders für Screenreader.",
+		"filterButton": "Filter",
 		"loadMore": "Weitere Kulturorte laden",
+		"searchButton": "Suchen",
+		"searchClose": "Suche schließen",
+		"searchLabel": "Liste durchsuchen",
+		"searchPlaceholder": "Kulturort, Adresse oder Bezirk",
 		"subtitle": "Ihre Ergebnisse auf einen Blick",
 		"timeline": "Die Entwicklung der Listenansicht ist für das Jahr 2026 geplant.",
 		"title": "Listenansicht"
