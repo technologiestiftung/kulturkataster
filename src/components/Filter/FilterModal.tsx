@@ -2,7 +2,7 @@
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { FilterPanel } from "./FilterPanel";
-import type { Category, District, FilterState } from "@/types";
+import type { Category, FilterState } from "@/types";
 
 type FilterModalProps = {
 	open: boolean;
@@ -10,7 +10,7 @@ type FilterModalProps = {
 	title: string;
 	filters: FilterState | null;
 	categoryGroups: Category[];
-	districts: District[];
+	districts: string[];
 	filteredCount: number;
 	categoryCounts: Record<string, number>;
 	subcategoryCounts: Record<string, number>;
