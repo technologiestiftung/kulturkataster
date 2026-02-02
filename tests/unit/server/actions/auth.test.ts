@@ -25,12 +25,10 @@ describe("registerWithEmailPassword", () => {
 	});
 
 	it("returns a standardized error when Supabase signUp fails", async () => {
-		const signUp = vi
-			.fn()
-			.mockResolvedValue({
-				data: { user: null, session: null },
-				error: { message: "Duplicate email" },
-			});
+		const signUp = vi.fn().mockResolvedValue({
+			data: { user: null, session: null },
+			error: { message: "Duplicate email" },
+		});
 		mockedCreateClient.mockResolvedValue({ auth: { signUp } } as never);
 
 		const result = await registerWithEmailPassword({
