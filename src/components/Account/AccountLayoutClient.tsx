@@ -75,28 +75,15 @@ export function AccountLayoutClient({
 						<p className="text-foreground mt-2"></p>
 					</div>
 					<div className="Buttons flex flex-wrap space-x-3">
-						<Button
-							variant="rounded"
-							size="icon-only"
-							className="h-14 w-14"
-							aria-label="Edit Profile"
-							onClick={() => router.push("/account/editProfile")}
-						>
+						<Button variant="rounded" size="icon-only" className="h-14 w-14">
 							<Edit />
 						</Button>
 						<Button
 							variant="rounded"
 							size="icon-only"
 							className="h-14 w-14"
-							aria-label="Settings"
-						>
-							<Setting />
-						</Button>
-						<Button
-							variant="rounded"
-							size="icon-only"
-							className="h-14 w-14"
-							aria-label="Settings"
+							aria-label="Edit Profile"
+							onClick={() => router.push("/account/edit")}
 						>
 							<Setting />
 						</Button>

@@ -133,6 +133,17 @@ export async function requestPasswordReset(email: string) {
 	return { ok: true };
 }
 
+export async function updateMyPassword(password: string) {
+	const supabase = await createClient();
+	const { error } = await supabase.auth.updateUser({ password });
+
+	if (error) {
+		return { ok: false, error: error.message };
+	}
+
+	return { ok: true };
+}
+
 export async function setPasswordWithTokens(params: {
 	accessToken: string;
 	refreshToken: string;
