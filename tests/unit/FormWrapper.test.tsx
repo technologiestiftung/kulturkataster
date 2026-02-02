@@ -153,10 +153,13 @@ describe("FormWrapper", () => {
 			};
 
 			render(<FormWrapper config={config} />);
-			expect(screen.getByLabelText("Password")).toHaveAttribute(
-				"type",
-				"password",
-			);
+			const passwordInput = screen.getByLabelText("Password");
+			expect(passwordInput).toHaveAttribute("type", "password");
+			const toggleButton = screen.getByRole("button", {
+				name: "auth.password.show",
+			});
+			fireEvent.click(toggleButton);
+			expect(passwordInput).toHaveAttribute("type", "text");
 		});
 
 		it("renders number input field", () => {
@@ -566,7 +569,7 @@ describe("FormWrapper", () => {
 	});
 
 	describe("Field Descriptions and Placeholders", () => {
-		it("renders field description", () => {
+		it("renders field description", async () => {
 			const config: FormWrapperConfig = {
 				fields: toFields([
 					{
@@ -587,7 +590,7 @@ describe("FormWrapper", () => {
 			render(<FormWrapper config={config} />);
 
 			expect(
-				screen.getByText("Must be at least 8 characters"),
+				await screen.findByText("Must be at least 8 characters"),
 			).toBeInTheDocument();
 		});
 
