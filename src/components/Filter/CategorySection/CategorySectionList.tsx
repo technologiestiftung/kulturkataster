@@ -7,7 +7,7 @@ import { CategorySection } from "@/components/Filter/CategorySection/CategorySec
 import ChevronDown from "@/icons/chevron-down.svg";
 import ChevronUp from "@/icons/chevron-up.svg";
 import { getSortedCategories } from "@/lib/utils/filterUtils";
-import type { Category, FilterState, Subcategory } from "@/types";
+import type { Category, ChildCategory, FilterState } from "@/types";
 
 export type CategorySectionListProps = {
 	filters: FilterState | null;
@@ -41,6 +41,17 @@ export const CategorySectionList: FC<CategorySectionListProps> = ({
 		collapsible ? defaultCollapsed : false,
 	);
 
+	const normalizeFilters = (input: FilterState): FilterState => ({
+		...input,
+		district_keys: input.district_keys ?? [],
+		category_keys: input.category_keys ?? [],
+		child_category_keys: input.child_category_keys ?? [],
+		include_closed: input.include_closed ?? false,
+		status: input.status ?? undefined,
+	});
+
+	const safeFilters = filters ? normalizeFilters(filters) : null;
+
 	const collator = useMemo(
 		() =>
 			new Intl.Collator(i18n.language, { numeric: true, sensitivity: "base" }),
@@ -48,26 +59,45 @@ export const CategorySectionList: FC<CategorySectionListProps> = ({
 	);
 
 	const updateFilters = (nextFilters: FilterState) => {
-		onFiltersChange(nextFilters);
+		const normalizedFilters = normalizeFilters(nextFilters);
+		if (categorySectionMode === "selection") {
+			const categoryKeys = new Set(normalizedFilters.category_keys);
+			const subcategoryToParent = new Map<string, string>();
+			categoryGroups.forEach((group) => {
+				(group.child_categories ?? []).forEach((sub) => {
+					subcategoryToParent.set(sub.key, group.key);
+				});
+			});
+			normalizedFilters.child_category_keys.forEach((key) => {
+				const parentKey = subcategoryToParent.get(key);
+				if (parentKey) categoryKeys.add(parentKey);
+			});
+			onFiltersChange({
+				...normalizedFilters,
+				category_keys: Array.from(categoryKeys),
+			});
+			return;
+		}
+		onFiltersChange(normalizedFilters);
 	};
 
 	const toggleCategory = (categoryKey: string) => {
-		if (!filters) return;
+		if (!safeFilters) return;
 
 		const categoryGroup = categoryGroups.find(
 			(group) => group.key === categoryKey,
 		);
 		if (!categoryGroup) return;
 
-		const isCategorySelected = filters.category_keys.includes(categoryKey);
+		const isCategorySelected = safeFilters.category_keys.includes(categoryKey);
 		const selectedSubcategoriesInGroup = (
-			categoryGroup.subcategory ?? []
-		).filter((subcategory: Subcategory) =>
-			filters.subcategory_keys.includes(subcategory.key),
+			categoryGroup.child_categories ?? []
+		).filter((subcategory: ChildCategory) =>
+			safeFilters.child_category_keys.includes(subcategory.key),
 		);
 		const allSubcategoriesSelected =
 			selectedSubcategoriesInGroup.length ===
-			(categoryGroup.subcategory ?? []).length;
+			(categoryGroup.child_categories ?? []).length;
 
 		if (
 			!(isCategorySelected || allSubcategoriesSelected) &&
@@ -76,71 +106,115 @@ export const CategorySectionList: FC<CategorySectionListProps> = ({
 			toggleSection(categoryKey);
 		}
 
+		const groupSubcategoryKeys = (categoryGroup.child_categories ?? []).map(
+			(subcategory: ChildCategory) => subcategory.key,
+		);
+
+		if (categorySectionMode === "selection") {
+			if (isCategorySelected || allSubcategoriesSelected) {
+				const newCategories = safeFilters.category_keys.filter(
+					(c) => c !== categoryKey,
+				);
+				const newSubcategories = safeFilters.child_category_keys.filter(
+					(s) => !groupSubcategoryKeys.includes(s),
+				);
+				updateFilters({
+					...safeFilters,
+					category_keys: newCategories,
+					child_category_keys: newSubcategories,
+				});
+				return;
+			}
+
+			const newCategories = safeFilters.category_keys.includes(categoryKey)
+				? safeFilters.category_keys
+				: [...safeFilters.category_keys, categoryKey];
+			const newSubcategories = [
+				...safeFilters.child_category_keys.filter(
+					(s) => !groupSubcategoryKeys.includes(s),
+				),
+				...groupSubcategoryKeys,
+			];
+			updateFilters({
+				...safeFilters,
+				category_keys: newCategories,
+				child_category_keys: newSubcategories,
+			});
+			return;
+		}
+
 		if (isCategorySelected || allSubcategoriesSelected) {
-			const newCategories = filters.category_keys.filter(
+			const newCategories = safeFilters.category_keys.filter(
 				(c) => c !== categoryKey,
 			);
-			const newSubcategories = filters.subcategory_keys.filter(
-				(s) =>
-					!(categoryGroup.subcategory ?? []).some(
-						(subcategory: Subcategory) => subcategory.key === s,
-					),
+			const newSubcategories = safeFilters.child_category_keys.filter(
+				(s) => !groupSubcategoryKeys.includes(s),
 			);
 
 			updateFilters({
-				...filters,
+				...safeFilters,
 				category_keys: newCategories,
-				subcategory_keys: newSubcategories,
+				child_category_keys: newSubcategories,
 			});
 		} else {
-			const subcategoryKeysToAdd = (categoryGroup.subcategory ?? []).map(
-				(subcategory: Subcategory) => subcategory.key,
-			);
 			const newSubcategories = [
-				...filters.subcategory_keys.filter(
-					(s) =>
-						!(categoryGroup.subcategory ?? []).some(
-							(subcategory: Subcategory) => subcategory.key === s,
-						),
+				...safeFilters.child_category_keys.filter(
+					(s) => !groupSubcategoryKeys.includes(s),
 				),
-				...subcategoryKeysToAdd,
+				...groupSubcategoryKeys,
 			];
 
 			updateFilters({
-				...filters,
-				subcategory_keys: newSubcategories,
+				...safeFilters,
+				child_category_keys: newSubcategories,
 			});
 		}
 	};
 
 	const toggleSubcategory = (subcategoryKey: string) => {
-		if (!filters) return;
+		if (!safeFilters) return;
 
-		const isSelected = filters.subcategory_keys.includes(subcategoryKey);
+		const isSelected = safeFilters.child_category_keys.includes(subcategoryKey);
 		const newSubcategories = isSelected
-			? filters.subcategory_keys.filter((s) => s !== subcategoryKey)
-			: [...filters.subcategory_keys, subcategoryKey];
+			? safeFilters.child_category_keys.filter((s) => s !== subcategoryKey)
+			: [...safeFilters.child_category_keys, subcategoryKey];
 
 		const parentCategory = categoryGroups.find((group) =>
-			(group.subcategory ?? []).some(
-				(subcategory: Subcategory) => subcategory.key === subcategoryKey,
+			(group.child_categories ?? []).some(
+				(subcategory: ChildCategory) => subcategory.key === subcategoryKey,
 			),
 		);
 
-		let newCategories = filters.category_keys;
+		let newCategories = safeFilters.category_keys;
 
 		if (parentCategory) {
-			if (isSelected && filters.category_keys.includes(parentCategory.key)) {
-				newCategories = filters.category_keys.filter(
+			if (categorySectionMode === "selection") {
+				const hasRemainingInGroup = (parentCategory.child_categories ?? []).some(
+					(sub) => newSubcategories.includes(sub.key),
+				);
+				if (hasRemainingInGroup) {
+					if (!safeFilters.category_keys.includes(parentCategory.key)) {
+						newCategories = [...safeFilters.category_keys, parentCategory.key];
+					}
+				} else {
+					newCategories = safeFilters.category_keys.filter(
+						(c) => c !== parentCategory.key,
+					);
+				}
+			} else if (
+				isSelected &&
+				safeFilters.category_keys.includes(parentCategory.key)
+			) {
+				newCategories = safeFilters.category_keys.filter(
 					(c) => c !== parentCategory.key,
 				);
 			}
 		}
 
 		updateFilters({
-			...filters,
+			...safeFilters,
 			category_keys: newCategories,
-			subcategory_keys: newSubcategories,
+			child_category_keys: newSubcategories,
 		});
 	};
 
@@ -153,45 +227,46 @@ export const CategorySectionList: FC<CategorySectionListProps> = ({
 	};
 
 	const selectedCategoryGroups = useMemo(() => {
-		if (!filters) return [];
-		const selectedCategoryKeys = new Set(filters.category_keys);
-		const selectedSubcategoryKeys = new Set(filters.subcategory_keys);
+		if (!safeFilters) return [];
+		const selectedCategoryKeys = new Set(safeFilters.category_keys);
+		const selectedSubcategoryKeys = new Set(safeFilters.child_category_keys);
 		const filteredCategories = categoryGroups.filter((category) => {
 			if (selectedCategoryKeys.has(category.key)) return true;
-			return (category.subcategory ?? []).some((subcategory) =>
+			return (category.child_categories ?? []).some((subcategory) =>
 				selectedSubcategoryKeys.has(subcategory.key),
 			);
 		});
 		return getSortedCategories(filteredCategories, collator, tEnum);
-	}, [filters, categoryGroups, collator, tEnum]);
+	}, [safeFilters, categoryGroups, collator, tEnum]);
 
 	const hasActiveCategoryFilters = () => {
 		return (
-			(filters?.category_keys && filters.category_keys.length > 0) ||
-			(filters?.subcategory_keys && filters.subcategory_keys.length > 0)
+			(safeFilters?.category_keys && safeFilters.category_keys.length > 0) ||
+			(safeFilters?.child_category_keys &&
+				safeFilters.child_category_keys.length > 0)
 		);
 	};
 
 	const resetCategoryFilters = () => {
-		if (!filters) return;
+		if (!safeFilters) return;
 		updateFilters({
-			...filters,
+			...safeFilters,
 			category_keys: [],
-			subcategory_keys: [],
+			child_category_keys: [],
 		});
 		setOpenSections([]);
 	};
 
 	const setAllCategoryFilters = () => {
-		if (!filters) return;
+		if (!safeFilters) return;
 		const allCategoryKeys = categoryGroups.map((group) => group.key);
 		const allSubcategoryKeys = categoryGroups.flatMap((group) =>
-			(group.subcategory ?? []).map((sub) => sub.key),
+			(group.child_categories ?? []).map((sub) => sub.key),
 		);
 		updateFilters({
-			...filters,
+			...safeFilters,
 			category_keys: allCategoryKeys,
-			subcategory_keys: allSubcategoryKeys,
+			child_category_keys: allSubcategoryKeys,
 		});
 	};
 
@@ -208,8 +283,8 @@ export const CategorySectionList: FC<CategorySectionListProps> = ({
 								<CategorySection
 									key={category.key}
 									group={category}
-									selectedCategories={filters?.category_keys || []}
-									selectedSubcategories={filters?.subcategory_keys || []}
+									selectedCategories={safeFilters?.category_keys || []}
+									selectedSubcategories={safeFilters?.child_category_keys || []}
 									isOpen
 									onToggle={() => toggleSection(category.key)}
 									onCategoryChange={toggleCategory}
@@ -262,8 +337,8 @@ export const CategorySectionList: FC<CategorySectionListProps> = ({
 								<CategorySection
 									key={category.key}
 									group={category}
-									selectedCategories={filters?.category_keys || []}
-									selectedSubcategories={filters?.subcategory_keys || []}
+									selectedCategories={safeFilters?.category_keys || []}
+									selectedSubcategories={safeFilters?.child_category_keys || []}
 									isOpen={openSections.includes(category.key)}
 									onToggle={() => toggleSection(category.key)}
 									onCategoryChange={toggleCategory}

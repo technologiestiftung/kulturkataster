@@ -19,7 +19,7 @@ const DEFAULT_INSTITUTION_FILTERS: FilterState = {
 	status: undefined,
 	district_keys: [],
 	category_keys: [],
-	subcategory_keys: [],
+	child_category_keys: [],
 	include_closed: false,
 };
 
@@ -33,11 +33,12 @@ const filterInstitutions = (
 
 	const matchesCategoryFilters = (institution: Institution) => {
 		const hasCategoryFilters =
-			filters.category_keys.length > 0 || filters.subcategory_keys.length > 0;
+			filters.category_keys.length > 0 ||
+			filters.child_category_keys.length > 0;
 		if (!hasCategoryFilters) return true;
 		return (
 			matchesCategoryFilter(institution, filters.category_keys) ||
-			matchesSubcategoryFilter(institution, filters.subcategory_keys)
+			matchesSubcategoryFilter(institution, filters.child_category_keys)
 		);
 	};
 
@@ -63,7 +64,7 @@ const getCategoryCounts = (
 
 	categories.forEach((category) => {
 		counts.categoryCounts[category.key] = 0;
-		(category.subcategory || []).forEach((sub) => {
+		(category.child_categories || []).forEach((sub) => {
 			counts.subcategoryCounts[sub.key] = 0;
 		});
 	});

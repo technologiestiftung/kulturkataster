@@ -197,7 +197,7 @@ export type SearchResult = Institution | GeoFeature;
 export interface FilterState {
 	district_keys: string[];
 	category_keys: string[];
-	subcategory_keys: string[];
+	child_category_keys: string[];
 	include_closed: boolean;
 	status: string | undefined; // e.g., "open", "closed", etc.
 }

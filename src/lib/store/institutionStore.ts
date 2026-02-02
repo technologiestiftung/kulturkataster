@@ -31,13 +31,13 @@ const matchesCategoryFilters = (
 	filters: InstitutionStoreState["filters"],
 ): boolean => {
 	const hasCategoryFilters =
-		filters.category_keys.length > 0 || filters.subcategory_keys.length > 0;
+		filters.category_keys.length > 0 || filters.child_category_keys.length > 0;
 
 	if (!hasCategoryFilters) return true;
 
 	return (
 		matchesCategoryFilter(institution, filters.category_keys) ||
-		matchesSubcategoryFilter(institution, filters.subcategory_keys)
+		matchesSubcategoryFilter(institution, filters.child_category_keys)
 	);
 };
 
@@ -53,7 +53,7 @@ const computeCounts = (state: InstitutionStoreState) => {
 
 	categories.forEach((category) => {
 		categoryCounts[category.key] = 0;
-		(category.subcategory || []).forEach((sub) => {
+		(category.child_categories || []).forEach((sub) => {
 			subcategoryCounts[sub.key] = 0;
 		});
 	});
@@ -107,7 +107,7 @@ export const useInstitutionStore = create<InstitutionStoreState>()(
 				status: undefined,
 				district_keys: [],
 				category_keys: [],
-				subcategory_keys: [],
+				child_category_keys: [],
 				include_closed: false,
 			},
 			setFilters: (filters) => {
