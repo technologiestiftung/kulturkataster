@@ -734,7 +734,12 @@
 		"allLoaded": "",
 		"countLabel": "",
 		"description": "",
+		"filterButton": "",
 		"loadMore": "",
+		"searchButton": "",
+		"searchClose": "",
+		"searchLabel": "",
+		"searchPlaceholder": "",
 		"subtitle": "",
 		"timeline": "",
 		"title": ""
