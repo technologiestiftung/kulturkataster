@@ -37,7 +37,9 @@ export function MapListShell() {
 				className={routeMode === "map" ? "h-full w-full relative" : "hidden"}
 				aria-hidden={routeMode !== "map"}
 			>
-				<MapInitializer />
+				<section className="h-full w-full" aria-label={t("map.title")}>
+					<MapInitializer />
+				</section>
 			</div>
 			<div
 				className={
