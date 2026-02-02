@@ -17,7 +17,6 @@ export function InfoItem({
 	action,
 	className,
 }: InfoItemProps) {
-	// Hide if no content and alwaysShow is false
 	if (!alwaysShow && (!children || children === "")) {
 		return null;
 	}

@@ -93,12 +93,12 @@ export function Modal({
 			open={isRouteMatch}
 			onOpenChange={(openState) => (!openState ? handleClose() : undefined)}
 		>
-		<DialogContent
-			variant={variant}
-			className="flex flex-col gap-4 items-start space-y-4"
-			showBackButton={showBackButton}
-			onBack={handleClose}
-		>
+			<DialogContent
+				variant={variant}
+				className="flex flex-col gap-4 items-start space-y-4"
+				showBackButton={showBackButton}
+				onBack={handleClose}
+			>
 				<div
 					className={cn(
 						"flex flex-col w-full flex-1 space-y-4 mt-16 md:mt-8 p-6 md:p-24",

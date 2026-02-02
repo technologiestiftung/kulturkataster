@@ -11,6 +11,7 @@ import { getCategoryIconComponent } from "@/lib/utils/iconUtils"; // Update this
 import { Category, ChildCategory } from "@/types";
 import { FC, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useFieldLabel } from "@/lib/hooks/useFieldLabel";
 
 interface HoverCardProps {
 	features?: any;
@@ -33,6 +34,7 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 	const [featureProperties, setFeatureProperties] = useState<any>(null);
 	const { t: tEnum } = useTranslation("enumMap");
 	const { t } = useTranslation("common");
+	const fieldLabel = useFieldLabel();
 
 	useEffect(() => {
 		if (!features) {
@@ -98,7 +100,11 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 					{featureProperties.utilization_status && (
 						<div className=" flex gap-1 items-center justify-between">
 							<span className="text-base font-bold">
-								{t("institution.utilizationStatus")}:
+								{fieldLabel(
+									"utilization_status",
+									t("institution.utilizationStatus"),
+								)}
+								:
 							</span>
 							<span className="text-base">
 								{tEnum(
@@ -110,7 +116,11 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 					{!featureProperties.utilization_status && (
 						<div className=" flex gap-1 items-center justify-between">
 							<span className="text-base font-bold">
-								{t("institution.utilizationStatus")}:
+								{fieldLabel(
+									"utilization_status",
+									t("institution.utilizationStatus"),
+								)}
+								:
 							</span>
 							<span className="text-base">{t("unknown")}</span>
 						</div>

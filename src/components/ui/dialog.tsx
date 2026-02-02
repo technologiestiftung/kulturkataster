@@ -145,11 +145,8 @@ function DialogContent({
 				}}
 				{...props}
 			>
-					{showBackButton && (
-						<button
-							onClick={onBack}
-							className={backAndCloseClassNames("back")}
-						>
+				{showBackButton && (
+					<button onClick={onBack} className={backAndCloseClassNames("back")}>
 						<BackIcon className="size-6" />
 						<span className="sr-only">{t("back")}</span>
 					</button>
