@@ -101,8 +101,17 @@ export interface InfoWrapperConfig {
 }
 
 export type Status =
-	| "in_use" | "temporarily_closed" | "planned_use" | "permanently_closed" | "unknown" | "potential_space"
-	| "long_term_secured" | "medium_term_secured" | "uncertain" | "acutely_threatened" | "not_yet_secured";
+	| "in_use"
+	| "temporarily_closed"
+	| "planned_use"
+	| "permanently_closed"
+	| "unknown"
+	| "potential_space"
+	| "long_term_secured"
+	| "medium_term_secured"
+	| "uncertain"
+	| "acutely_threatened"
+	| "not_yet_secured";
 
 // Maps status values to their level (0 = best/safest, higher = worse)
 export const StatusLevelMap: Record<string, number> = {
