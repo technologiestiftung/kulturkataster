@@ -6,5 +6,5 @@ export const metadata: Metadata = {
 };
 
 export default function AboutPage() {
-	return <AboutModal />;
+	return <AboutModal routePath="/about" />;
 }

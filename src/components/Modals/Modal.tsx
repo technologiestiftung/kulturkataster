@@ -3,7 +3,7 @@
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { ModalFooter } from "./ModalFooter";
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 interface PageModalProps {
@@ -12,6 +12,7 @@ interface PageModalProps {
 	variant?: "fullscreen" | "fullscreen-muted" | "centered";
 	hasFooter?: boolean;
 	open?: boolean;
+	routePath?: string;
 	closeTo?: string;
 	content: React.ReactNode;
 	showBackButton?: boolean;
@@ -29,6 +30,7 @@ export function Modal({
 	variant = "fullscreen",
 	hasFooter = true,
 	open = true,
+	routePath,
 	closeTo,
 	content,
 	showBackButton,
@@ -40,6 +42,7 @@ export function Modal({
 	subtitleClassName,
 }: PageModalProps) {
 	const router = useRouter();
+	const pathname = usePathname();
 	useEffect(() => {
 		const checkForHashAndScroll = () => {
 			const hash = window.location.hash;
@@ -78,10 +81,16 @@ export function Modal({
 	};
 
 	const resolvedContentClassName = contentClassName ?? "body2";
+	const isRouteMatch = routePath
+		? Boolean(pathname && pathname.endsWith(routePath))
+		: Boolean(open);
+	if (!isRouteMatch) {
+		return null;
+	}
 
 	return (
 		<Dialog
-			open={open}
+			open={isRouteMatch}
 			onOpenChange={(openState) => (!openState ? handleClose() : undefined)}
 		>
 			<DialogContent

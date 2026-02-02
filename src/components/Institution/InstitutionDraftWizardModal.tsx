@@ -1201,8 +1201,10 @@ function InstitutionDraftWizardContent({
 
 export function InstitutionDraftWizardModal({
 	initialStepId,
+	routePath,
 }: {
 	initialStepId?: string;
+	routePath?: string;
 }) {
 	const storedStepId = useInstitutionDraftStore((state) => state.stepId);
 	const setStepId = useInstitutionDraftStore((state) => state.setStepId);
@@ -1231,6 +1233,7 @@ export function InstitutionDraftWizardModal({
 			title="Add New Institution"
 			titleClassName="sr-only"
 			variant="fullscreen"
+			routePath={routePath}
 			containerClassName="p-0 md:p-0 mt-0 md:mt-0"
 			contentWrapperClassName="flex-1"
 			contentClassName=""

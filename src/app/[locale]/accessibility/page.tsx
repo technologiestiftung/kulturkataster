@@ -6,5 +6,5 @@ export const metadata: Metadata = {
 };
 
 export default function AccessibilityModalPage() {
-	return <AccessibilityModal />;
+	return <AccessibilityModal routePath="/accessibility" />;
 }

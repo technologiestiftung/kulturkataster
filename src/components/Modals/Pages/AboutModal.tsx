@@ -55,7 +55,7 @@ interface AboutContent {
 	credits: Credits;
 }
 
-export function AboutModal() {
+export function AboutModal({ routePath }: { routePath?: string }) {
 	const { t } = useTranslation("content");
 
 	const content = t("aboutModal", { returnObjects: true }) as AboutContent;
@@ -174,6 +174,7 @@ export function AboutModal() {
 		<Modal
 			title={t("aboutModal.title")}
 			subtitle={t("aboutModal.subtitle")}
+			routePath={routePath}
 			content={modalContent}
 			hideLinksInModalFooter={["about"]}
 		/>

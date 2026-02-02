@@ -8,7 +8,6 @@ type AlertDialogProps = {
 	description: string;
 	open?: boolean;
 	onOpenChange?: (open: boolean) => void;
-	disableRouteSync?: boolean;
 	confirmLabel?: string;
 	cancelLabel?: string;
 	onConfirm?: () => void;
@@ -22,7 +21,6 @@ function AlertDialog({
 	description,
 	open = true,
 	onOpenChange,
-	disableRouteSync = false,
 	confirmLabel,
 	cancelLabel,
 	onConfirm,
@@ -33,11 +31,7 @@ function AlertDialog({
 	const hasActions = showConfirm || showCancel;
 
 	return (
-		<Dialog
-			open={open}
-			onOpenChange={onOpenChange}
-			disableRouteSync={disableRouteSync}
-		>
+		<Dialog open={open} onOpenChange={onOpenChange}>
 			<DialogContent variant="alert" className="p-0">
 				<div className="flex flex-col gap-4 p-6">
 					<DialogTitle className="title">{title}</DialogTitle>

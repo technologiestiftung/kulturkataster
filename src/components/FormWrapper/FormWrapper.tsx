@@ -7,6 +7,8 @@ import { getResponsiveGridClass } from "@/components/shared/sectionLayout";
 import type { FormWrapperFieldConfig, FormWrapperConfig } from "./types";
 import { defaultFilterState } from "./constants";
 import { buildRenderField } from "./renderField";
+import { AlertDialog } from "@/components/ui/alert-dialog";
+import { useTranslation } from "react-i18next";
 
 const getAllFields = (
 	fields: FormWrapperFieldConfig[],
@@ -130,6 +132,7 @@ const buildTouchedMap = (fields: FormWrapperFieldConfig[]) => {
 };
 
 export function FormWrapper({ config }: { config: FormWrapperConfig }) {
+	const { t } = useTranslation("common");
 	const onChangeRef = useRef<FormWrapperConfig["onChange"]>(config.onChange);
 	const [formData, setFormData] = useState<Record<string, unknown>>(() =>
 		buildInitialFormData(config),
@@ -183,7 +186,7 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 			setFormError(null);
 			await config.onSubmit(formData);
 		} else {
-			setFormError("Please fix the highlighted fields.");
+			setFormError(t("errorFixFields"));
 		}
 	};
 
@@ -205,7 +208,7 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 	}, [formData]);
 
 	return (
-		<form id={config.formId} onSubmit={handleSubmit}>
+		<form id={config.formId} onSubmit={handleSubmit} noValidate>
 			<div className="flex flex-col gap-6 max-w-3xl mx-auto">
 				<div
 					className={cn(
@@ -217,8 +220,19 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 					{config.fields?.map((field) => renderField(field))}
 				</div>
 				{!config.hideActions && (
-					<div className="flex flex-col gap-3">
-						{formError && <p className="body3 text-destructive">{formError}</p>}
+					<div className="flex flex-col">
+						<AlertDialog
+							title={t("error")}
+							description={formError ?? ""}
+							open={Boolean(formError)}
+							onOpenChange={(open) => {
+								if (!open) {
+									setFormError(null);
+								}
+							}}
+							confirmLabel={t("close")}
+							onConfirm={() => setFormError(null)}
+						/>
 						<div className="flex items-center justify-end gap-4 mt-4">
 							{config.showCancel && (
 								<Button

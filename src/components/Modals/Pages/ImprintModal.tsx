@@ -4,7 +4,7 @@ import TextBlock from "@/components/Content/TextBlock";
 import { useTranslation } from "react-i18next";
 import { Modal } from "../Modal";
 
-export function ImprintModal() {
+export function ImprintModal({ routePath }: { routePath?: string }) {
 	const { t: tContent } = useTranslation("content");
 	const { t } = useTranslation("common");
 
@@ -140,6 +140,7 @@ export function ImprintModal() {
 		<Modal
 			title={tContent("imprintModal.title")}
 			subtitle={tContent("imprintModal.subtitle")}
+			routePath={routePath}
 			content={content}
 			hideLinksInModalFooter={["imprint"]}
 		/>

@@ -97,7 +97,11 @@ const RenderContent = ({
 	);
 };
 
-export function SimpleLanguageInformationModal() {
+export function SimpleLanguageInformationModal({
+	routePath,
+}: {
+	routePath?: string;
+}) {
 	const { t } = useTranslation("content");
 
 	const content = {
@@ -155,6 +159,7 @@ export function SimpleLanguageInformationModal() {
 		<Modal
 			title={""}
 			subtitle={""}
+			routePath={routePath}
 			content={simpleLanguageInformationContent}
 			hideLinksInModalFooter={["simpleLanguageInformation"]}
 		/>

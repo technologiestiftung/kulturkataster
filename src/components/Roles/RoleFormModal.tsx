@@ -581,7 +581,6 @@ export function RoleFormModal({
 			{showDeleteDialog && resolvedRole && (
 				<AlertDialog
 					open
-					disableRouteSync
 					title={t("roleFormModal.delete.confirmTitle", {
 						defaultValue: "Delete role?",
 					})}

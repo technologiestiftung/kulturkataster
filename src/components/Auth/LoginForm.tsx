@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { loginWithEmailPassword } from "@/server/actions/auth";
 import { FormWrapper } from "@/components/FormWrapper";
+import { AlertDialog } from "@/components/ui/alert-dialog";
 import type { FormWrapperConfig } from "@/components/FormWrapper";
 
 export function LoginForm() {
@@ -92,7 +93,18 @@ export function LoginForm() {
 				<p className="">{t("auth.login.subtitle")}</p>
 			</div>
 
-			{errorMessage && <p className="body3 text-destructive">{errorMessage}</p>}
+			<AlertDialog
+				title={t("error")}
+				description={errorMessage ?? ""}
+				open={Boolean(errorMessage)}
+				onOpenChange={(open) => {
+					if (!open) {
+						setErrorMessage(null);
+					}
+				}}
+				confirmLabel={t("close")}
+				onConfirm={() => setErrorMessage(null)}
+			/>
 
 			<FormWrapper config={formConfig} />
 
