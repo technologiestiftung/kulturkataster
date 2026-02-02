@@ -38,13 +38,13 @@ export function SidePanel({
 	};
 
 	return (
-		<div className="absolute inset-0 h-full md:inset-y-0 md:left-0 md:w-[var(--sidebar-width)] z-10">
+		<div className="absolute inset-0 h-full pointer-events-none md:inset-y-0 md:left-0 md:w-[var(--sidebar-width)] z-10">
 			<div
-				className={`h-full w-full overflow-hidden p-5 transition-colors duration-200 ${hasResults || sidePanel === "filter" ? "md:bg-secondary shadow-lg" : ""}`}
+				className={`h-full w-full overflow-hidden p-5 transition-colors duration-200 ${hasResults || sidePanel === "filter" ? "md:bg-secondary shadow-lg" : "pointer-events-none"}`}
 			>
 				<div className="relative h-full">
 					<div
-						className={`absolute inset-0 transition-all duration-200 ${
+						className={`absolute  pointer-events-auto inset-0 transition-all duration-200 ${
 							sidePanel === "search"
 								? "opacity-100 translate-x-0"
 								: "opacity-0 translate-x-3 pointer-events-none"
@@ -58,7 +58,7 @@ export function SidePanel({
 						/>
 					</div>
 					<div
-						className={`absolute inset-0  transition-all duration-200 ${
+						className={`absolute inset-0  pointer-events-auto transition-all duration-200 ${
 							sidePanel === "filter"
 								? "opacity-100 translate-x-0"
 								: "opacity-0 -translate-x-3 pointer-events-none"

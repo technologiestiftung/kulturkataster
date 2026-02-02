@@ -43,6 +43,26 @@
 			"title": "Konto",
 			"welcome": "Willkommen, {{name}}!"
 		},
+		"accountEdit": {
+			"confirmPasswordLabel": "Passwort bestätigen",
+			"confirmPasswordPlaceholder": "Passwort bestätigen",
+			"deleteAction": "Profil löschen",
+			"deleteConfirm": "Profil löschen",
+			"deleteDescription": "Möchten Sie Ihr Profil wirklich löschen? Dieser Vorgang kann nicht rückgängig gemacht werden.",
+			"deleteError": "Profil konnte nicht gelöscht werden.",
+			"deleteTitle": "Profil löschen",
+			"emailLabel": "E-Mail-Adresse",
+			"emailPlaceholder": "name@beispiel.de",
+			"errorFallback": "Änderungen konnten nicht gespeichert werden.",
+			"metaTitle": "Persönliche Angaben ändern – Kulturkataster",
+			"nameLabel": "Ihr Name",
+			"namePlaceholder": "Vor- und Nachname",
+			"passwordLabel": "Passwort",
+			"passwordPlaceholder": "Neues Passwort",
+			"submit": "Speichern",
+			"submitting": "Wird gespeichert...",
+			"title": "Persönliche Angaben ändern"
+		},
 		"forgot": {
 			"backToSignIn": "Zurück zum Login",
 			"description": "Geben Sie Ihre E-Mail-Adresse ein. Wir senden Ihnen einen Link zum Zurücksetzen Ihres Passworts.",
