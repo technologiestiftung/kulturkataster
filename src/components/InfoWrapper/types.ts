@@ -100,20 +100,6 @@ export interface InfoWrapperConfig {
 	layout?: Layout;
 }
 
-export type Status =
-	| "in_use"
-	| "temporarily_closed"
-	| "planned_use"
-	| "permanently_closed"
-	| "unknown"
-	| "potential_space"
-	| "long_term_secured"
-	| "medium_term_secured"
-	| "uncertain"
-	| "acutely_threatened"
-	| "not_yet_secured";
-
-// Maps status values to their level (0 = best/safest, higher = worse)
 export const StatusLevelMap: Record<string, number> = {
 	in_use: 0,
 	potential_space: 1,
@@ -128,7 +114,6 @@ export const StatusLevelMap: Record<string, number> = {
 	long_term_secured: 0,
 };
 
-// Determine if a status is positive (level 0 = good) or negative (level 1+ = warning/bad)
 export function getStatusLevel(value: string): "positive" | "negative" {
 	const level = StatusLevelMap[value];
 	return level === 0 ? "positive" : "negative";
