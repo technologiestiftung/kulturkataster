@@ -23,7 +23,7 @@ export type UserFormInput = {
 	last_name?: string | null;
 	status?: UserStatus;
 	compliance?: boolean;
-	institution_claims?: string[];
+	meta_info?: string | null;
 	account_type?: string | null;
 	roleId?: number | null;
 	groupIds?: number[];

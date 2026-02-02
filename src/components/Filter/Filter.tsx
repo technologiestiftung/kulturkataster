@@ -43,7 +43,7 @@ const Filter: FC<FilterProps> = ({ onSearchClick, onShowFilter }) => {
 
 	return (
 		<>
-			<div className="mb-8 flex w-full items-center gap-2  flex-row">
+			<div className="mb-8 flex w-full items-center gap-2 flex-row">
 				{onSearchClick && (
 					<ButtonWithTooltip
 						variant="rounded"

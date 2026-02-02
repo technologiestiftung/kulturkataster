@@ -10,6 +10,7 @@ import { Loading } from "@/components/ui/loading";
 import EyeOff from "@/icons/eye-off.svg";
 import Eye from "@/icons/eye.svg";
 import type { Category, FilterState } from "@/types";
+import { cn } from "@/lib/utils";
 
 export type FilterPanelProps = {
 	filters: FilterState | null;
@@ -129,7 +130,7 @@ export const FilterPanel: FC<FilterPanelProps> = ({
 		: "Filter-root h-full flex flex-col gap-2";
 
 	return (
-		<div className={rootClassName}>
+		<div className={cn(rootClassName, "overflow-auto")}>
 			{showSummary && (
 				<ContentContainer className="p-6">
 					<h2 className="body2 font-bold mb-3 pl-2">

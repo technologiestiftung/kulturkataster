@@ -41,6 +41,7 @@
 		"Spandau"
 	],
 	"field_names": {
+		"accessibility": "Barrierefreiheit",
 		"address": "Adresse",
 		"address_suffix": "Adresszusatz",
 		"area": "Größe der Nutzflächen (m²)",
@@ -52,8 +53,10 @@
 		"closing_reason": "Schließungsgründe",
 		"contact_person_email": "Ansprechperson E-Mail Adresse",
 		"contact_person_": "Ansprechperson Vorname",
+		"contact_person_name": "Ansprechperson Name",
 		"contact_person_phone": "Ansprechperson Telefonnummer",
 		"contact_person_surname": "Ansprechperson Nachname",
+		"cost": "Kosten",
 		"cultural_area": "Kulturareal",
 		"description": "Zusätzliche Informationen",
 		"display_na": "Geodaten OSM",
@@ -62,17 +65,22 @@
 		"established_since": "Bestehen am Standort seit",
 		"established_until": "Bestehen am Standort bis",
 		"funding_source": "Art der Finanzierung",
+		"funding_source_description": "Beschreibung der Finanzierungsquelle",
+		"funding_source_name": "Name der Finanzierungsquelle",
 		"funding_sources": "Art der Finanzierung",
 		"funding_type": "Art der Förderung",
 		"geo_category": "Geodaten OSM",
 		"geo_type": "Geodaten OSM",
 		"geom": "Geoposition",
 		"id": "ID",
-		"institution_email": "E-Mail-Adresse",
+		"institution_email": "E-Mail-Adresse der Kultureinrichtung",
 		"institution_name": "Kultureinrichtung",
-		"institution_phone": "Telefonnummer",
-		"institution_website": "Website",
+		"institution_phone": "Telefonnummer der Kultureinrichtung",
+		"institution_website": "Website der Kultureinrichtung",
+		"lat": "Breitengrad",
 		"latlong": "Geodaten OSM",
+		"legal_form": "Rechtsform",
+		"lng": "Längengrad",
 		"name": "Kultureinrichtung",
 		"neighbourhood": "Stadtteil",
 		"notes": "Zusätzliche Informationen",
@@ -103,8 +111,9 @@
 		"tags": "Tags",
 		"updated_at": "Stand",
 		"utilization_status": "Nutzungsstatus",
+		"utilization_status_info": "Nutzungsstatus Detailinfos",
 		"website": "Website",
-		"zipcode": "PLZ"
+		"zip": "Postleitzahl"
 	},
 	"funding_source": {
 		"church": "Kirche",
@@ -117,6 +126,7 @@
 		"state_berlin": "Land Berlin"
 	},
 	"funding_type": {
+		"placeholder": "Art der Förderung auswählen",
 		"institutional_funding": "Institutionell gefördert",
 		"no_funding": "Nicht gefördert",
 		"temporary_project_funding": "Temporäre Projektförderung",
@@ -138,6 +148,7 @@
 		"removal_pending": "Löschung beantragt"
 	},
 	"owner_type": {
+		"placeholder": "Eigentümer*innenart auswählen",
 		"district_property": "Bezirkliche Liegenschaft",
 		"federal_property": "Bundesliegenschaft",
 		"municipal_housing_company": "Städtische Wohnungsbaugesellschaft",
@@ -152,6 +163,7 @@
 		"state_property_specialized": "Spezialimmobilie Land"
 	},
 	"rental_contract_type": {
+		"placeholder": "Vertragsform auswählen",
 		"limited_lease": "Befristete Miete",
 		"organization_ownership": "Eigentum der Organisation",
 		"unlimited_lease": "Unbefristete Miete"
@@ -266,19 +278,21 @@
 		"super_administrator": "Super-Administrator"
 	},
 	"utilization_status": {
-		"L0": "In Nutzung",
-		"L1": "Potenzialort",
-		"L2": "Vorübergehend geschlossen",
-		"L3": "Geplante Nutzung",
-		"L5": "Dauerhaft geschlossen",
-		"L6": "Unbekannt"
+		"placeholder": "Nutzungsstatus auswählen",
+		"in_use": "In Nutzung",
+		"potential_space": "Potenzialort",
+		"temporarily_closed": "Vorübergehend geschlossen",
+		"planned_use": "Geplante Nutzung",
+		"permanently_closed": "Dauerhaft geschlossen",
+		"unknown": "Unbekannt"
 	},
 	"protection_status": {
-		"L0": "Langfristig gesichert",
-		"L1": "Mittelfristig gesichert",
-		"L2": "Kurzfristig gesichert",
-		"L3": "Akut gefährdet",
-		"L4": "Unsicher",
-		"L5": "Noch nicht gesichert"
+		"placeholder": "Sicherungsstatus auswählen",
+		"long_term_secured": "Langfristig gesichert",
+		"medium_term_secured": "Mittelfristig gesichert",
+		"uncertain": "Unsicher",
+		"acutely_threatened": "Akut gefährdet",
+		"permanently_closed": "Dauerhaft geschlossen",
+		"not_yet_secured": "Noch nicht gesichert"
 	}
 }

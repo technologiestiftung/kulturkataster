@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { Status } from "./types";
+import { Status, getStatusLevel } from "./types";
 
 export function StatusItem({
 	value,
@@ -17,11 +17,13 @@ export function StatusItem({
 	if (!value || typeof value !== "string") return null;
 	const labelKey = `${enumKey}.${value}`;
 	const showCircle = variant === "plain" || !label;
+	const isPositive = getStatusLevel(value) === "positive";
+
 	const wrapperClassName =
 		variant === "plain"
 			? "flex items-center w-full gap-2 p-4 flex-wrap bg-secondary"
 			: `flex items-center w-full gap-2 p-4 flex-wrap ${
-					label && value === "L0" ? "bg-brand-light" : "bg-alert"
+					label && isPositive ? "bg-brand-light" : "bg-alert"
 				}`;
 
 	return (
@@ -29,7 +31,7 @@ export function StatusItem({
 			{showCircle && (
 				<div
 					className={`w-4 h-4 rounded-full ${
-						value === "L0" ? "bg-brand-default" : "bg-alert"
+						isPositive ? "bg-brand-default" : "bg-alert"
 					}`}
 				/>
 			)}

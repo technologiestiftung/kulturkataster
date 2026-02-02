@@ -11,7 +11,6 @@ import {
 	getParentCategories,
 } from "@/lib/utils/institutionUtils";
 import {
-	StatusMap,
 	type InfoWrapperConfig,
 	type InfoWrapperFieldConfig,
 } from "./types";
@@ -241,7 +240,7 @@ const getContent = (
 		case "status": {
 			return (
 				<StatusItem
-					value={StatusMap[String(value)]}
+					value={String(value)}
 					label={label}
 					enumKey={field.enumKey}
 					variant={field.statusVariant}

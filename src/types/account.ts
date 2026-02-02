@@ -13,8 +13,8 @@ export type AccountStoreState = {
 	institutions: Institution[];
 	submissions: Submission[];
 	selectedUserId: string | null;
-	selectedGroupId: string | null;
-	selectedRoleId: string | null;
+	selectedGroupId: number | null;
+	selectedRoleId: number | null;
 	alertDialog: { title: string; description: string } | null;
 	setUsers: (users: User[]) => void;
 	setGroups: (groups: Group[]) => void;
@@ -23,7 +23,7 @@ export type AccountStoreState = {
 	setInstitutions: (institutions: Institution[]) => void;
 	addUser: (user: User) => void;
 	upsertUser: (user: User) => void;
-	removeUser: (id: number) => void;
+	removeUser: (id: string) => void;
 	addGroup: (group: Group) => void;
 	upsertGroup: (group: Group) => void;
 	removeGroup: (id: number) => void;
@@ -40,7 +40,7 @@ export type AccountStoreState = {
 	addSubmission: (submission: Submission) => void;
 	upsertSubmission: (submission: Submission) => void;
 	removeSubmission: (id: number) => void;
-	setSelectedUserId: (id: number | null) => void;
+	setSelectedUserId: (id: string | null) => void;
 	setSelectedGroupId: (id: number | null) => void;
 	setSelectedRoleId: (id: number | null) => void;
 	setAlertDialog: (

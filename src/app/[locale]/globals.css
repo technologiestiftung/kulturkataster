@@ -320,4 +320,8 @@
 	input[type="search"]::-webkit-search-cancel-button {
 		@apply hidden;
 	}
+	input[type="search"]::-webkit-search-decoration {
+		-webkit-appearance: none;
+		appearance: none;
+	}
 }
