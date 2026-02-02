@@ -5,9 +5,6 @@ import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import ListView from "@/components/ListView/ListView";
 import MapInitializer from "@/components/Map/MapInitializer/MapInitializer";
-import Filter from "@/components/Filter/Filter";
-import { SearchContent } from "@/components/Menu/MenuContent/SearchContent";
-import { useAppStore } from "@/lib/store/appStore";
 
 export function MapListShell() {
 	const { t } = useTranslation("common");
@@ -21,8 +18,6 @@ export function MapListShell() {
 		if (/\/map(\/|$)/.test(normalizedPath ?? "")) return "map";
 		return lastRouteMode;
 	}, [lastRouteMode, normalizedPath]);
-	const activePanel = useAppStore((state) => state.activePanel);
-	const setActivePanel = useAppStore((state) => state.setActivePanel);
 
 	useEffect(() => {
 		if (/\/list(\/|$)/.test(normalizedPath ?? "")) {
@@ -32,16 +27,6 @@ export function MapListShell() {
 		}
 	}, [normalizedPath]);
 
-	useEffect(() => {
-		const isMapRoute = /\/map(\/|$)/.test(normalizedPath ?? "");
-		const isInstitutionRoute = /\/institution\/\d+$/.test(normalizedPath ?? "");
-		if (!isMapRoute || isInstitutionRoute) {
-			if (activePanel) {
-				setActivePanel(null);
-			}
-		}
-	}, [activePanel, normalizedPath, setActivePanel]);
-
 	if (normalizedPath?.includes("/account")) {
 		return null;
 	}
@@ -49,7 +34,7 @@ export function MapListShell() {
 	return (
 		<div className="flex flex-1 h-full w-full relative	">
 			<div
-				className={routeMode === "map" ? "h-full w-full" : "hidden"}
+				className={routeMode === "map" ? "h-full w-full relative" : "hidden"}
 				aria-hidden={routeMode !== "map"}
 			>
 				<MapInitializer />
@@ -66,14 +51,6 @@ export function MapListShell() {
 					<ListView />
 				</section>
 			</div>
-			{routeMode === "map" && activePanel && (
-				<div className="absolute inset-0 md:inset-y-0 md:left-0 md:w-[var(--sidebar-width)] z-40">
-					<div className="h-full w-full bg-neutral-10 md:bg-secondary shadow-lg overflow-auto">
-						{activePanel === "filter" && <Filter />}
-						{activePanel === "search" && <SearchContent />}
-					</div>
-				</div>
-			)}
 		</div>
 	);
 }

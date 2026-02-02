@@ -1,5 +1,5 @@
-import { InstitutionIntroModal } from "@/components/Modals/Pages/InstitutionIntroModal";
+import { InstitutionDraftIntroModal } from "@/components/Institution/InstitutionDraftIntroModal";
 
 export default function InstitutionPage() {
-	return <InstitutionIntroModal />;
+	return <InstitutionDraftIntroModal />;
 }

@@ -189,9 +189,9 @@ export const CategorySectionList: FC<CategorySectionListProps> = ({
 
 		if (parentCategory) {
 			if (categorySectionMode === "selection") {
-				const hasRemainingInGroup = (parentCategory.child_categories ?? []).some(
-					(sub) => newSubcategories.includes(sub.key),
-				);
+				const hasRemainingInGroup = (
+					parentCategory.child_categories ?? []
+				).some((sub) => newSubcategories.includes(sub.key));
 				if (hasRemainingInGroup) {
 					if (!safeFilters.category_keys.includes(parentCategory.key)) {
 						newCategories = [...safeFilters.category_keys, parentCategory.key];

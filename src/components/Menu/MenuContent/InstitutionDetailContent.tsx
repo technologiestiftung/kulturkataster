@@ -203,8 +203,9 @@ export function InstitutionDetailContent() {
 	const institutionData = useMemo(() => {
 		if (!resolvedInstitutionId || !institutions) return null;
 		return (
-			institutions.find((institution) => institution.id === resolvedInstitutionId) ??
-			null
+			institutions.find(
+				(institution) => institution.id === resolvedInstitutionId,
+			) ?? null
 		);
 	}, [institutions, resolvedInstitutionId]);
 
@@ -250,9 +251,7 @@ export function InstitutionDetailContent() {
 	if (!institutionData) {
 		return (
 			<div className="p-6">
-				<p className="text-foreground">
-					{error ?? t("institution.notFound")}
-				</p>
+				<p className="text-foreground">{error ?? t("institution.notFound")}</p>
 				<Button
 					onClick={handleClose}
 					variant="link"

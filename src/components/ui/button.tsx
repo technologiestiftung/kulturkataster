@@ -28,7 +28,7 @@ const buttonVariants = cva(
 					" z-10 flex items-center justify-center [&_svg]:size-6 rounded-full transition-colors duration-300 cursor-pointer ",
 				link: "text-primary underline-offset-4 hover:underline",
 				rounded:
-					"rounded-full shadow-md bg-background hover:bg-accent [&_svg]:size-6",
+					"rounded-full shadow-sm bg-background hover:bg-accent [&_svg]:size-6 border-border border",
 				icon: "bg-secondary border-border rounded-full border [&_svg]:size-5",
 				"rounded-md": "rounded-md",
 				accordion: "gap-2 justify-start text-primary-dark px-4",

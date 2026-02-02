@@ -18,4 +18,4 @@ export {
 	facilityInfoConfig,
 	statusInfoConfig,
 	additionalInfoConfig,
-} from "../Institution/configs";
+} from "../../config/infoConfig/configs";
