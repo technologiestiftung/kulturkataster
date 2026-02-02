@@ -2,27 +2,20 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { registerWithEmailPassword } from "@/server/actions/auth";
 import { useTranslation } from "react-i18next";
 import { FormWrapper } from "@/components/FormWrapper";
 import type { FormWrapperConfig } from "@/components/FormWrapper";
 
-export function RegisterForm() {
+export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
 	const [isLoading, setIsLoading] = useState(false);
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
-	const [successMessage, setSuccessMessage] = useState<string | null>(null);
-	const router = useRouter();
 	const { t } = useTranslation("common");
-
-	const navigateToAccount = () => {
-		router.replace("/account");
-	};
 
 	const handleSubmit = async (data: Record<string, unknown>) => {
 		const email = String(data.email ?? "");
 		const password = String(data.password ?? "");
-		const name = String(data.name ?? "");
+		const firstName = String(data.firstName ?? "");
 		const lastName = String(data.lastName ?? "");
 		const accountType = String(data.accountType ?? "");
 
@@ -39,16 +32,14 @@ export function RegisterForm() {
 
 		setIsLoading(true);
 		setErrorMessage(null);
-		setSuccessMessage(null);
 
 		try {
 			const result = await registerWithEmailPassword({
 				email,
 				password,
-				firstName: name,
+				firstName,
 				lastName,
 				accountType,
-				// Pass account-type-specific fields
 				organizationName,
 				organizationPosition,
 				organizationPhone,
@@ -64,12 +55,7 @@ export function RegisterForm() {
 				setErrorMessage(result.error ?? t("auth.register.errorFallback"));
 				return;
 			}
-			if (result.needsConfirmation) {
-				setSuccessMessage(t("auth.register.confirmEmail"));
-				return;
-			}
-
-			navigateToAccount();
+			onSuccess?.();
 		} catch {
 			setErrorMessage(t("auth.register.errorFallback"));
 		} finally {
@@ -81,14 +67,16 @@ export function RegisterForm() {
 		fields: [
 			{
 				name: "registerSection",
+				layout: { columns: 2 },
+				fieldGap: "gap-6",
 				type: "section",
-				className: "mt-4",
+				className: "mt-8",
 				fields: [
 					{
 						name: "accountType",
 						label: t("auth.register.accountType"),
 						type: "select",
-						required: true,
+						layout: { span: "full" },
 						requiredMessage: t("auth.validation.accountTypeRequired"),
 						disabled: isLoading,
 						placeholder: t("auth.register.accountTypePlaceholder"),
@@ -112,6 +100,7 @@ export function RegisterForm() {
 						type: "section",
 						condition: (formData) => formData.accountType === "organization",
 						cardVariant: "none",
+						layout: { span: "full", columns: 1 },
 						className: "bg-neutral-10 p-5 w-full",
 						fields: [
 							{
@@ -147,6 +136,7 @@ export function RegisterForm() {
 						type: "section",
 						condition: (formData) => formData.accountType === "district",
 						cardVariant: "none",
+						layout: { span: "full", columns: 1 },
 						className: "bg-neutral-10 p-5 w-full",
 						fields: [
 							{
@@ -188,6 +178,7 @@ export function RegisterForm() {
 						type: "section",
 						condition: (formData) => formData.accountType === "administration",
 						cardVariant: "none",
+						layout: { span: "full", columns: 1 },
 						className: "bg-neutral-10 p-5 w-full",
 						fields: [
 							{
@@ -225,13 +216,14 @@ export function RegisterForm() {
 						],
 					},
 					{
-						name: "name",
+						name: "firstName",
 						label: t("auth.register.firstName"),
 						type: "text",
 						required: true,
 						requiredMessage: t("auth.validation.firstNameRequired"),
 						disabled: isLoading,
 						placeholder: t("auth.register.firstNamePlaceholder"),
+						layout: { span: "half" },
 					},
 					{
 						name: "lastName",
@@ -240,6 +232,7 @@ export function RegisterForm() {
 						required: true,
 						disabled: isLoading,
 						placeholder: t("auth.register.lastNamePlaceholder"),
+						layout: { span: "half" },
 					},
 					{
 						name: "email",
@@ -248,6 +241,7 @@ export function RegisterForm() {
 						required: true,
 						requiredMessage: t("auth.validation.emailRequired"),
 						disabled: isLoading,
+						layout: { span: "full" },
 						placeholder: t("auth.register.emailPlaceholder"),
 						validate: (value) => {
 							if (typeof value !== "string" || value.trim().length === 0) {
@@ -265,6 +259,7 @@ export function RegisterForm() {
 						required: true,
 						requiredMessage: t("auth.validation.passwordRequired"),
 						disabled: isLoading,
+						layout: { span: "full" },
 						placeholder: t("auth.register.passwordPlaceholder"),
 						validate: (value) => {
 							if (typeof value !== "string" || value.length === 0) {
@@ -280,6 +275,7 @@ export function RegisterForm() {
 						label: t("auth.register.confirmPassword"),
 						type: "password",
 						required: true,
+						layout: { span: "full" },
 						requiredMessage: t("auth.validation.passwordRequired"),
 						disabled: isLoading,
 						placeholder: t("auth.register.confirmPasswordPlaceholder"),
@@ -290,11 +286,12 @@ export function RegisterForm() {
 					},
 				],
 			},
+		],
+		footerFields: [
 			{
 				name: "privacySection",
 				type: "section",
 				cardVariant: "none",
-				className: "order-last",
 				fields: [
 					{
 						name: "acceptTerms",
@@ -355,20 +352,17 @@ export function RegisterForm() {
 	};
 
 	return (
-		<div className="w-full max-w-3xl mx-auto space-y-10">
-			<div className="space-y-2 text-start  font-bold">
+		<div className="w-full max-w-3xl mx-auto ">
+			<div className="space-y-2 text-start font-bold">
 				<h1 className="text-3xl">{t("auth.register.title")}</h1>
 				<p className="text-foreground">{t("auth.register.subtitle")}</p>
 			</div>
 
 			{errorMessage && <p className="body3 text-destructive">{errorMessage}</p>}
-			{successMessage && (
-				<p className="body3 text-foreground">{successMessage}</p>
-			)}
 
 			<FormWrapper config={formConfig} />
 
-			<div className="flex flex-col items-center text-center border-t pt-4 mt-4">
+			<div className="flex flex-col items-center text-center border-t-2 pt-10 mt-6">
 				<span className="">{t("auth.register.alreadyAccount")} </span>
 				<Link href="/login" className="text-primary-dark underline">
 					{t("auth.register.signIn")}

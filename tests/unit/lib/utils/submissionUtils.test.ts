@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { submissionToInstitutionDraft } from "@/lib/utils/submissionUtils";
+import { institutionSubmissionToDraft } from "@/lib/utils/institutionSubmissionUtils";
 
 const baseAddress = {
 	street: "Main",
@@ -14,9 +14,9 @@ const baseAddress = {
 	lng: 13.4,
 };
 
-describe("submissionToInstitutionDraft", () => {
+describe("institutionSubmissionToDraft", () => {
 	it("maps fields from submission data", () => {
-		const result = submissionToInstitutionDraft({
+		const result = institutionSubmissionToDraft({
 			data: {
 				name: "Test Institution",
 				website: "https://example.com",
@@ -44,7 +44,7 @@ describe("submissionToInstitutionDraft", () => {
 	});
 
 	it("fills defaults for missing data", () => {
-		const result = submissionToInstitutionDraft({ data: {} });
+		const result = institutionSubmissionToDraft({ data: {} });
 		expect(result.name).toBe("");
 		expect(result.website).toBeNull();
 		expect(result.phone).toBeNull();
@@ -55,7 +55,7 @@ describe("submissionToInstitutionDraft", () => {
 	});
 
 	it("maps optional numeric and boolean fields", () => {
-		const result = submissionToInstitutionDraft({
+		const result = institutionSubmissionToDraft({
 			data: {
 				area: 42,
 				capacity: 120,

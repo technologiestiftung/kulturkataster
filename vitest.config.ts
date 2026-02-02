@@ -7,14 +7,14 @@ export default defineConfig({
 			{ find: "@", replacement: path.resolve(__dirname, "src") },
 			{
 				find: /^.+\\.svg$/,
-				replacement: path.resolve(__dirname, "tests/mocks/svgMock.tsx"),
+				replacement: path.resolve(__dirname, "tests/helpers/svgMock.tsx"),
 			},
 		],
 	},
 	test: {
 		environment: "jsdom",
-		include: ["tests/**/*.test.ts", "tests/**/*.test.tsx"],
-		setupFiles: ["./tests/setup.ts"],
+		include: ["tests/unit/**/*.test.ts", "tests/unit/**/*.test.tsx"],
+		setupFiles: ["./tests/helpers/setup.ts"],
 		coverage: {
 			provider: "v8",
 			reporter: ["text", "html"],

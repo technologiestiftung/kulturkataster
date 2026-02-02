@@ -27,7 +27,10 @@ const getAllFields = (
 
 const buildInitialFormData = (config: FormWrapperConfig) => {
 	const initialData: Record<string, unknown> = {};
-	const allFields = getAllFields(config.fields);
+	const allFields = [
+		...getAllFields(config.fields),
+		...getAllFields(config.footerFields ?? []),
+	];
 
 	allFields.forEach((field) => {
 		if (field.type === "actionPanel") return;
@@ -230,6 +233,16 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 								{config.submitLabel || "Submit"}
 							</Button>
 						</div>
+					</div>
+				)}
+				{config.footerFields && config.footerFields.length > 0 && (
+					<div
+						className={cn(
+							"grid gap-4",
+							getResponsiveGridClass(config.layout?.columns),
+						)}
+					>
+						{config.footerFields.map((field) => renderField(field))}
 					</div>
 				)}
 			</div>

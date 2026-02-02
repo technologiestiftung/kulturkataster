@@ -23,3 +23,5 @@ vi.mock("@/icons/chevron-down.svg", () => ({ default: SvgMock }));
 vi.mock("@/icons/chevron-up.svg", () => ({ default: SvgMock }));
 vi.mock("@/icons/check.svg", () => ({ default: SvgMock }));
 vi.mock("@/icons/circle.svg", () => ({ default: SvgMock }));
+vi.mock("@/icons/eye.svg", () => ({ default: SvgMock }));
+vi.mock("@/icons/eye-off.svg", () => ({ default: SvgMock }));
