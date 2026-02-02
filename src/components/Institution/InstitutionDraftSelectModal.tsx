@@ -150,7 +150,9 @@ export function InstitutionDraftSelectModal({
 
 	return (
 		<Modal
-			title="Kulturort auswählen"
+			title={t("institution.editSelectTitle", {
+				defaultValue: "Bestehenden Kulturort auswählen",
+			})}
 			titleClassName="sr-only"
 			variant="fullscreen"
 			routePath={routePath}
