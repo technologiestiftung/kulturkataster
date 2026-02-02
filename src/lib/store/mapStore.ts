@@ -18,18 +18,9 @@ export const useMapStore = create<MapStoreState>()(
 		},
 
 		// Map
-		setConfig: (config) =>
-			set((state) => {
-				state.config = config;
-			}),
-		populateMap: (map) =>
-			set((state) => {
-				state.map = map;
-			}),
-		removeMap: () =>
-			set((state) => {
-				state.map = null;
-			}),
+		setConfig: (config) => set({ config }),
+		populateMap: (map) => set({ map }),
+		removeMap: () => set({ map: null }),
 
 		// Layers
 		setLayers: (layers) =>
