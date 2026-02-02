@@ -7,7 +7,6 @@ import BackIcon from "@/icons/chevron-left.svg";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
 import { useRestoreFocus } from "@/hooks/use-restore-focus";
-import { useRouter } from "next/navigation";
 
 type DialogRootProps = React.ComponentProps<typeof DialogPrimitive.Root>;
 type DialogProps = DialogRootProps;
@@ -67,10 +66,12 @@ function DialogContent({
 	showCloseButton = true,
 	variant = "standard",
 	showBackButton = false,
+	onBack,
 	...props
 }: React.ComponentProps<typeof DialogPrimitive.Content> & {
 	showCloseButton?: boolean;
 	showBackButton?: boolean;
+	onBack?: () => void;
 	variant?:
 		| "standard"
 		| "fullscreen-inset"
@@ -84,11 +85,6 @@ function DialogContent({
 }) {
 	const { t } = useTranslation("common");
 	const focusRef = React.useRef<HTMLDivElement | null>(null);
-	const router = useRouter();
-
-	const handleBack = () => {
-		router.back();
-	};
 
 	const getVariantStyles = () => {
 		const variants = {
@@ -149,11 +145,11 @@ function DialogContent({
 				}}
 				{...props}
 			>
-				{showBackButton && (
-					<button
-						onClick={handleBack}
-						className={backAndCloseClassNames("back")}
-					>
+					{showBackButton && (
+						<button
+							onClick={onBack}
+							className={backAndCloseClassNames("back")}
+						>
 						<BackIcon className="size-6" />
 						<span className="sr-only">{t("back")}</span>
 					</button>
