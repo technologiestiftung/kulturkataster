@@ -6,5 +6,5 @@ export const metadata: Metadata = {
 };
 
 export default function SignLanguageModalPage() {
-	return <SignLanguageModal />;
+	return <SignLanguageModal routePath="/signLanguage" />;
 }

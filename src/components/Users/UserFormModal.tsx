@@ -571,7 +571,6 @@ export function UserFormModal({
 			{showDeleteDialog && resolvedUser && (
 				<AlertDialog
 					open
-					disableRouteSync
 					title={t("userFormModal.delete.confirmTitle", {
 						defaultValue: "Delete user?",
 					})}

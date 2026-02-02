@@ -6,5 +6,5 @@ export const metadata: Metadata = {
 };
 
 export default function SimpleLanguageModalPage() {
-	return <SimpleLanguageInformationModal />;
+	return <SimpleLanguageInformationModal routePath="/simpleLanguage" />;
 }

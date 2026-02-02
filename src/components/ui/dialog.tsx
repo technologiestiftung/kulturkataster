@@ -8,22 +8,12 @@ import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
 import { useRestoreFocus } from "@/hooks/use-restore-focus";
 import { useRouter } from "next/navigation";
-import { useAppStore } from "@/lib/store/appStore";
 
 type DialogRootProps = React.ComponentProps<typeof DialogPrimitive.Root>;
-type DialogProps = DialogRootProps & {
-	disableRouteSync?: boolean;
-};
+type DialogProps = DialogRootProps;
 
-function Dialog({
-	open,
-	disableRouteSync,
-	onOpenChange,
-	...props
-}: DialogProps) {
+function Dialog({ open, onOpenChange, ...props }: DialogProps) {
 	useRestoreFocus(open);
-	const router = useRouter();
-	const { firstTimeUser, setFirstTimeUser } = useAppStore();
 
 	return (
 		<DialogPrimitive.Root
@@ -31,13 +21,6 @@ function Dialog({
 			open={open}
 			onOpenChange={(newOpen) => {
 				onOpenChange?.(newOpen);
-				if (disableRouteSync) return;
-				if (!newOpen) {
-					if (firstTimeUser) {
-						setFirstTimeUser(false);
-					}
-					router.back();
-				}
 			}}
 			{...props}
 		/>
@@ -103,6 +86,10 @@ function DialogContent({
 	const focusRef = React.useRef<HTMLDivElement | null>(null);
 	const router = useRouter();
 
+	const handleBack = () => {
+		router.back();
+	};
+
 	const getVariantStyles = () => {
 		const variants = {
 			standard:
@@ -164,7 +151,7 @@ function DialogContent({
 			>
 				{showBackButton && (
 					<button
-						onClick={() => router.back()}
+						onClick={handleBack}
 						className={backAndCloseClassNames("back")}
 					>
 						<BackIcon className="size-6" />

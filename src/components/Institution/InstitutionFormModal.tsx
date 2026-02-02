@@ -980,7 +980,6 @@ export function InstitutionFormModal({
 	return (
 		<Dialog
 			open
-			disableRouteSync={Boolean(onClose)}
 			onOpenChange={(nextOpen) => {
 				if (!nextOpen) {
 					handleClose();

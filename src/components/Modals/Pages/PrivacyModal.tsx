@@ -3,7 +3,7 @@
 import { useTranslation } from "react-i18next";
 import { Modal } from "../Modal";
 
-export function PrivacyModal() {
+export function PrivacyModal({ routePath }: { routePath?: string }) {
 	const { t } = useTranslation(["content", "common"]);
 
 	const content = (
@@ -19,6 +19,7 @@ export function PrivacyModal() {
 		<Modal
 			title={t("privacyModal.title", { ns: "content" })}
 			subtitle={t("privacyModal.subtitle", { ns: "content" })}
+			routePath={routePath}
 			content={content}
 			hideLinksInModalFooter={["privacy"]}
 		/>
