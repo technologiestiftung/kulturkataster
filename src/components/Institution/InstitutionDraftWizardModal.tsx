@@ -12,6 +12,7 @@ import {
 } from "@/components/HorizontalStepper";
 import { Modal } from "@/components/Modals/Modal";
 import { useTranslation } from "react-i18next";
+import { getFieldLabel } from "@/lib/i18n/fieldLabels";
 import { InstitutionFormModal } from "@/components/Institution/InstitutionFormModal";
 import { geocodeAddress, reverseGeocode } from "@/server/actions/maptiler";
 import {
@@ -72,10 +73,7 @@ function InstitutionDraftWizardContent({
 	const { t: tEnum } = useTranslation("enumMap");
 
 	const fieldLabel = useCallback(
-		(key: string, fallback: string) => {
-			const translated = tEnum(`field_names.${key}`);
-			return translated === `field_names.${key}` ? fallback : translated;
-		},
+		(key: string, fallback: string) => getFieldLabel(tEnum, key, fallback),
 		[tEnum],
 	);
 

@@ -18,6 +18,7 @@ import { Institution } from "@/types";
 import { useEffect, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
+import { useFieldLabel } from "@/lib/hooks/useFieldLabel";
 import { InstitutionDetailSkeleton } from "./InstitutionDetailSkeleton";
 import { InfoWrapper } from "@/components/InfoWrapper";
 
@@ -29,6 +30,7 @@ function InstitutionCard({
 	onCenterMap?: () => void;
 }) {
 	const { t } = useTranslation("common");
+	const fieldLabel = useFieldLabel();
 
 	const getHeroStatus = () => {
 		if (institutionData.utilization_status === "in_use") {
@@ -83,7 +85,10 @@ function InstitutionCard({
 								{
 									id: "utilization_status",
 									alwaysShow: true,
-									label: t("institution.utilizationStatus"),
+									label: fieldLabel(
+										"utilization_status",
+										t("institution.utilizationStatus"),
+									),
 									className: "mb-0",
 									type: "status",
 									value: "utilization_status",
@@ -92,7 +97,10 @@ function InstitutionCard({
 								{
 									id: "protection_status",
 									alwaysShow: false,
-									label: t("institution.protectionStatus"),
+									label: fieldLabel(
+										"protection_status",
+										t("institution.protectionStatus"),
+									),
 									type: "status",
 									value: "protection_status",
 									enumKey: "protection_status",

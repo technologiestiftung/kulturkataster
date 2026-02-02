@@ -290,7 +290,7 @@
 		"usableAreaSize": "Größe der Nutzflächen (m²)",
 		"utilizationStatus": "Nutzungsstatus",
 		"website": "Website",
-		"workspaceCount": "Anzahl der Arbeitsräume"
+		"number_of_rooms": "Anzahl der Arbeitsräume"
 	},
 	"kukaLogo": "Kulturkataster - Logo",
 	"kukaLogoButton": "Kulturkataster: Zur Einführung",

@@ -10,6 +10,7 @@ import {
 import { Institution } from "@/types";
 import { memo } from "react";
 import { useTranslation } from "react-i18next";
+import { useFieldLabel } from "@/lib/hooks/useFieldLabel";
 import { InfoWrapper } from "../InfoWrapper";
 
 interface InstitutionCardProps {
@@ -24,6 +25,7 @@ const InstitutionCard = memo(function InstitutionCard({
 	isCompact: _isCompact = false,
 }: InstitutionCardProps) {
 	const { t } = useTranslation("common");
+	const fieldLabel = useFieldLabel();
 
 	const handleCardClick = (e: React.MouseEvent | React.KeyboardEvent) => {
 		// Don't trigger card click if clicking on interactive elements inside
@@ -95,13 +97,16 @@ const InstitutionCard = memo(function InstitutionCard({
 											},
 											{
 												id: "categories",
-												label: t("institution.categories"),
+												label: fieldLabel("categories", t("institution.categories")),
 												type: "category",
 											},
 											{
 												id: "status",
 												type: "status",
-												label: t("institution.utilizationStatus"),
+												label: fieldLabel(
+													"utilization_status",
+													t("institution.utilizationStatus"),
+												),
 												statusVariant: "plain",
 												value: "utilization_status",
 												enumKey: "utilization_status",

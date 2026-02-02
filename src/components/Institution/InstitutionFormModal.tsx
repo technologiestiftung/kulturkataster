@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { getFieldLabel } from "@/lib/i18n/fieldLabels";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog } from "@/components/ui/alert-dialog";
 import { FormWrapper } from "@/components/FormWrapper";
@@ -280,10 +281,8 @@ const buildInstitutionFormConfig = ({
 	onAddressBlur,
 	onLatLngBlur,
 }: InstitutionFormConfigArgs): FormWrapperConfig => {
-	const fieldLabel = (key: string, fallback: string) => {
-		const translated = tEnum(`field_names.${key}`);
-		return translated === `field_names.${key}` ? fallback : translated;
-	};
+	const fieldLabel = (key: string, fallback: string) =>
+		getFieldLabel(tEnum, key, fallback);
 
 	return {
 		fields: [
