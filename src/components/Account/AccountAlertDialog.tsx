@@ -14,7 +14,6 @@ function AccountAlertDialog() {
 	return (
 		<AlertDialog
 			open
-			disableRouteSync
 			title={alertDialog.title}
 			description={alertDialog.description}
 			confirmLabel={t("confirm")}

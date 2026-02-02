@@ -57,7 +57,7 @@ export function VideoWithLoader({ src }: { src: string }) {
 	);
 }
 
-export function SignLanguageModal() {
+export function SignLanguageModal({ routePath }: { routePath?: string }) {
 	const { t } = useTranslation("content");
 
 	const content = t("signLanguageModal.content", {
@@ -107,6 +107,7 @@ export function SignLanguageModal() {
 		<Modal
 			title={t("signLanguageModal.title")}
 			subtitle={t("signLanguageModal.subtitle")}
+			routePath={routePath}
 			content={signLanguageInformationContent}
 			hideLinksInModalFooter={[
 				"signLanguageInformation",

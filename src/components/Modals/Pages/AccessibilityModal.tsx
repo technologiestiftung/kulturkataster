@@ -12,7 +12,7 @@ interface Barrier {
 	timeline: string;
 }
 
-export function AccessibilityModal() {
+export function AccessibilityModal({ routePath }: { routePath?: string }) {
 	const { t } = useTranslation("content");
 
 	const barriers = t("accessibilityModal.which.barriers", {
@@ -191,6 +191,7 @@ export function AccessibilityModal() {
 		<Modal
 			title={t("accessibilityModal.title")}
 			subtitle={t("accessibilityModal.subtitle")}
+			routePath={routePath}
 			content={content}
 			hideLinksInModalFooter={["accessibility"]}
 		/>

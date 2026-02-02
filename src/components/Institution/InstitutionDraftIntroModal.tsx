@@ -8,7 +8,11 @@ import { Label } from "@/components/ui/label";
 import { Modal } from "@/components/Modals/Modal";
 import { useInstitutionDraftStore } from "@/lib/store/institutionDraftStore";
 
-export function InstitutionDraftIntroModal() {
+export function InstitutionDraftIntroModal({
+	routePath,
+}: {
+	routePath?: string;
+}) {
 	const router = useRouter();
 	const [mode, setMode] = useState<"new" | "edit">("new");
 	const resetDraft = useInstitutionDraftStore((state) => state.resetDraft);
@@ -30,6 +34,7 @@ export function InstitutionDraftIntroModal() {
 			title="Mitwirken beim Kulturkataster Berlin"
 			titleClassName="sr-only"
 			variant="fullscreen"
+			routePath={routePath}
 			containerClassName="p-0 md:p-0 mt-0 md:mt-0"
 			contentWrapperClassName="flex-1"
 			contentClassName=""

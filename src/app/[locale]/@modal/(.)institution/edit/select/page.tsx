@@ -1,5 +1,5 @@
 import { InstitutionDraftSelectModal } from "@/components/Institution/InstitutionDraftSelectModal";
 
 export default function InstitutionEditSelectModalIntercepted() {
-	return <InstitutionDraftSelectModal />;
+	return <InstitutionDraftSelectModal routePath="/institution/edit/select" />;
 }

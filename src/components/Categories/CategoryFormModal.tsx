@@ -514,7 +514,6 @@ export function CategoryFormModal({
 			{showDeleteDialog && resolvedCategory && (
 				<AlertDialog
 					open
-					disableRouteSync
 					title={t("categoryFormModal.delete.confirmTitle", {
 						defaultValue: "Delete category?",
 					})}

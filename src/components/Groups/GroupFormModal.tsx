@@ -474,7 +474,6 @@ export function GroupFormModal({
 			{showDeleteDialog && resolvedGroup && (
 				<AlertDialog
 					open
-					disableRouteSync
 					title={t("groupFormModal.delete.confirmTitle", {
 						defaultValue: "Delete group?",
 					})}

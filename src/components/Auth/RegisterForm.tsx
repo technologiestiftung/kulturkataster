@@ -6,6 +6,7 @@ import { registerWithEmailPassword } from "@/server/actions/auth";
 import { useTranslation } from "react-i18next";
 import { FormWrapper } from "@/components/FormWrapper";
 import type { FormWrapperConfig } from "@/components/FormWrapper";
+import { AlertDialog } from "@/components/ui/alert-dialog";
 
 export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
 	const [isLoading, setIsLoading] = useState(false);
@@ -77,6 +78,7 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
 						label: t("auth.register.accountType"),
 						type: "select",
 						layout: { span: "full" },
+						className: "mt-8",
 						requiredMessage: t("auth.validation.accountTypeRequired"),
 						disabled: isLoading,
 						placeholder: t("auth.register.accountTypePlaceholder"),
@@ -353,16 +355,27 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
 
 	return (
 		<div className="w-full max-w-3xl mx-auto ">
-			<div className="space-y-2 text-start font-bold">
-				<h1 className="text-3xl">{t("auth.register.title")}</h1>
-				<p className="text-foreground">{t("auth.register.subtitle")}</p>
+			<div className="text-start font-bold">
+				<h1 className="">{t("auth.register.title")}</h1>
+				<p className="body1">{t("auth.register.subtitle")}</p>
 			</div>
 
-			{errorMessage && <p className="body3 text-destructive">{errorMessage}</p>}
+			<AlertDialog
+				title={t("error")}
+				description={errorMessage ?? ""}
+				open={Boolean(errorMessage)}
+				onOpenChange={(open) => {
+					if (!open) {
+						setErrorMessage(null);
+					}
+				}}
+				confirmLabel={t("close")}
+				onConfirm={() => setErrorMessage(null)}
+			/>
 
 			<FormWrapper config={formConfig} />
 
-			<div className="flex flex-col items-center text-center border-t-2 pt-10 mt-6">
+			<div className="flex flex-col items-center text-center border-t-2 pt-6 mt-6">
 				<span className="">{t("auth.register.alreadyAccount")} </span>
 				<Link href="/login" className="text-primary-dark underline">
 					{t("auth.register.signIn")}

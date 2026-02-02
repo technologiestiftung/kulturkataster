@@ -5,7 +5,7 @@ import { Modal } from "../Modal";
 import TextWithLinks from "@/components/Content/TextWithLinks";
 import ArrowNarrowRight from "@/icons/arrow-narrow-right.svg";
 
-export function DownloadModal() {
+export function DownloadModal({ routePath }: { routePath?: string }) {
 	const { t } = useTranslation(["content", "common", "enumMap"]);
 
 	const content = (
@@ -22,6 +22,7 @@ export function DownloadModal() {
 	return (
 		<Modal
 			title={t("downloadModal.title", { ns: "content" })}
+			routePath={routePath}
 			content={content}
 			variant="centered"
 			hasFooter={false}

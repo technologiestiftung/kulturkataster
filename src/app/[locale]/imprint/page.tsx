@@ -6,5 +6,5 @@ export const metadata: Metadata = {
 };
 
 export default function ImprintModalPage() {
-	return <ImprintModal />;
+	return <ImprintModal routePath="/imprint" />;
 }

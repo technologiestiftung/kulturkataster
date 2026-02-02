@@ -43,7 +43,7 @@ interface Scope {
 	};
 }
 
-export function InformationModal() {
+export function InformationModal({ routePath }: { routePath?: string }) {
 	const { t } = useTranslation("content");
 	const institutions = useInstitutionStore((state) => state.allInstitutions);
 	const institutionCount = institutions?.length;
@@ -156,6 +156,7 @@ export function InformationModal() {
 		<Modal
 			title={t("informationModal.title")}
 			subtitle={t("informationModal.subtitle")}
+			routePath={routePath}
 			content={content}
 		/>
 	);

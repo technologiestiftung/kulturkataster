@@ -52,7 +52,11 @@ const buildCategoryFilterStateFromIds = (
 	};
 };
 
-export function InstitutionDraftSelectModal() {
+export function InstitutionDraftSelectModal({
+	routePath,
+}: {
+	routePath?: string;
+}) {
 	const { t } = useTranslation("common");
 	const router = useRouter();
 	const institutions = useInstitutionStore((state) => state.allInstitutions);
@@ -149,6 +153,7 @@ export function InstitutionDraftSelectModal() {
 			title="Kulturort auswählen"
 			titleClassName="sr-only"
 			variant="fullscreen"
+			routePath={routePath}
 			containerClassName="p-0 md:p-0 mt-0 md:mt-0"
 			contentWrapperClassName="flex-1"
 			contentClassName=""
