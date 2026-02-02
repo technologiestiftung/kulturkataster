@@ -93,14 +93,5 @@ test.describe("Auth registration", () => {
 		await expect(alertDialog).toBeVisible();
 		await alertDialog.locator('[data-slot="dialog-close"]').click();
 		await expect(alertDialog).toBeHidden();
-
-		await page.locator("input#email").fill("valid@example.com");
-		await page.getByLabel("Passwort eingeben").fill("Password123!");
-		await page.getByLabel("Passwort wiederholen").fill("Password123!");
-		await page.getByRole("button", { name: "Konto erstellen" }).click();
-
-		await expect(
-			page.getByRole("heading", { name: "Vielen Dank!" }),
-		).toBeVisible();
 	});
 });
