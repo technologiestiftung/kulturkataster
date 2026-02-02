@@ -34,15 +34,11 @@ export async function getMyInstitutions() {
 	const currentUserId = await getCurrentUserId();
 	const ctx = await getAccessContextForUser(currentUserId);
 	authorizeTable(ctx, "institution", "read");
-	const scope = getTableScope(ctx, "institution", "read");
 
 	if (!currentUserId) {
 		return [];
 	}
 
-	if (scope === "all") {
-		return institutionRepo.list();
-	}
 	return institutionRepo.listForUser(currentUserId);
 }
 
@@ -50,11 +46,8 @@ export async function getInstitutionById(id: number) {
 	const currentUserId = await getCurrentUserId();
 	const ctx = await getAccessContextForUser(currentUserId);
 	authorizeTable(ctx, "institution", "read");
-	const scope = getTableScope(ctx, "institution", "read");
 	const baseWhere = { id };
-	const where = buildInstitutionScopedWhere(scope, currentUserId, baseWhere);
-	if (!where && scope !== "all") return null;
-	return institutionRepo.findFirstWithInclude(where ?? baseWhere);
+	return institutionRepo.findFirstWithInclude(baseWhere);
 }
 
 const buildInstitutionFieldList = (

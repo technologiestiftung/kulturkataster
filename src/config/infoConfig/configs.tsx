@@ -41,9 +41,34 @@ export const contactInfoConfig: InfoWrapperFieldConfig[] = [
 		labelKey: "institution.emailAddress",
 		type: "email",
 	},
+	{
+		value: "contact_person_name",
+		labelKey: "institution.contactPersonName",
+		type: "text",
+	},
+	{
+		value: "contact_person_email",
+		labelKey: "institution.contactPersonEmail",
+		type: "email",
+	},
+	{
+		value: "contact_person_phone",
+		labelKey: "institution.contactPersonPhone",
+		type: "phone",
+	},
 ];
 
 export const organizationInfoConfig: InfoWrapperFieldConfig[] = [
+	{
+		value: "parent_organization",
+		labelKey: "institution.parentOrganization",
+		type: "text",
+	},
+	{
+		value: "legal_form",
+		labelKey: "institution.legalForm",
+		type: "text",
+	},
 	{
 		value: "closing_reason",
 		labelKey: "institution.closingReason",
@@ -55,10 +80,26 @@ export const organizationInfoConfig: InfoWrapperFieldConfig[] = [
 		type: "nested",
 	},
 	{
-		value: "owner.owner_type",
+		value: "owner_type",
 		labelKey: "institution.ownerType",
 		type: "enum",
 		enumKey: "owner_type",
+	},
+	{
+		value: "owner_name",
+		labelKey: "institution.ownerName",
+		type: "text",
+	},
+	{
+		value: "rental_contract_type",
+		labelKey: "institution.rentalContractType",
+		type: "enum",
+		enumKey: "rental_contract_type",
+	},
+	{
+		value: "rental_contract_end",
+		labelKey: "institution.rentalContractEnd",
+		type: "date",
 	},
 	{
 		value: "source",
@@ -69,27 +110,47 @@ export const organizationInfoConfig: InfoWrapperFieldConfig[] = [
 
 export const fundingInfoConfig: InfoWrapperFieldConfig[] = [
 	{
-		value: "support_type",
+		value: "funding_type",
 		labelKey: "institution.fundingType",
+		type: "enum",
+		enumKey: "funding_type",
+	},
+	{
+		value: "funding_source_name",
+		labelKey: "institution.fundingSourceName",
 		type: "text",
 	},
 	{
-		value: "funding_type",
-		labelKey: "institution.supportType",
-		type: "enum",
-		enumKey: "funding_type",
+		value: "funding_source_description",
+		labelKey: "institution.fundingSourceDescription",
+		type: "text",
 	},
 ];
 
 export const facilityInfoConfig: InfoWrapperFieldConfig[] = [
 	{
+		value: "area",
+		labelKey: "institution.area",
+		type: "text",
+	},
+	{
 		value: "capacity",
-		labelKey: "institution.usableAreaSize",
+		labelKey: "institution.capacity",
 		type: "text",
 	},
 	{
 		value: "number_of_rooms",
 		labelKey: "institution.workspaceCount",
+		type: "text",
+	},
+	{
+		value: "accessibility",
+		labelKey: "institution.accessibility",
+		type: "text",
+	},
+	{
+		value: "cost",
+		labelKey: "institution.cost",
 		type: "text",
 	},
 	{
@@ -122,10 +183,20 @@ export const facilityInfoConfig: InfoWrapperFieldConfig[] = [
 
 export const statusInfoConfig: InfoWrapperFieldConfig[] = [
 	{
-		value: "monument_status",
-		labelKey: "institution.monumentStatus",
+		value: "utilization_status_info",
+		labelKey: "institution.utilizationStatusInfo",
+		type: "text",
+	},
+	{
+		value: "protection_status",
+		labelKey: "institution.protectionStatus",
 		type: "enum",
-		enumKey: "monument_status",
+		enumKey: "protection_status",
+	},
+	{
+		value: "protection_status_info",
+		labelKey: "institution.protectionStatusInfo",
+		type: "text",
 	},
 ];
 
