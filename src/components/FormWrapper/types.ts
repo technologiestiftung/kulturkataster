@@ -221,6 +221,8 @@ export type FormWrapperFieldConfig =
 export interface FormWrapperConfig {
 	// Fields can be regular fields or section fields with nested fields
 	fields: FormWrapperFieldConfig[];
+	// Optional fields rendered after the action buttons
+	footerFields?: FormWrapperFieldConfig[];
 	formId?: string;
 	className?: string;
 

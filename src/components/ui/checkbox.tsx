@@ -12,11 +12,11 @@ const checkboxVariants = cva(
 	{
 		variants: {
 			variant: {
-				default: "rounded-2xl",
+				default: "rounded-2xl border-foreground",
 				filter: "rounded-full border-neutral-80",
 			},
 			size: {
-				default: "size-4",
+				default: "size-5.5",
 				filter: "h-8 w-8 md:h-4 md:w-4",
 			},
 		},

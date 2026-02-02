@@ -1,6 +1,7 @@
 "use client";
 
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -42,6 +43,57 @@ import type {
 } from "./types";
 import { AddressMapField } from "./AddressMapField";
 import { defaultFilterState } from "./constants";
+import Eye from "@/icons/eye.svg";
+import EyeOff from "@/icons/eye-off.svg";
+
+function PasswordField({
+	id,
+	value,
+	onChange,
+	onBlur,
+	placeholder,
+	disabled,
+}: {
+	id: string;
+	value: string;
+	onChange: (value: string) => void;
+	onBlur: (value: string) => void;
+	placeholder?: string;
+	disabled?: boolean;
+}) {
+	const [showPassword, setShowPassword] = useState(false);
+	const { t } = useTranslation("common");
+
+	return (
+		<div className="relative">
+			<Input
+				id={id}
+				type={showPassword ? "text" : "password"}
+				value={value}
+				onChange={(e) => onChange(e.target.value)}
+				onBlur={(e) => onBlur(e.target.value)}
+				placeholder={placeholder}
+				disabled={disabled}
+				className="pr-12"
+			/>
+			<button
+				type="button"
+				className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-80 hover:text-neutral-100"
+				aria-label={
+					showPassword ? t("auth.password.hide") : t("auth.password.show")
+				}
+				onClick={() => setShowPassword((prev) => !prev)}
+				disabled={disabled}
+			>
+				{showPassword ? (
+					<EyeOff className="h-5 w-5" />
+				) : (
+					<Eye className="h-5 w-5" />
+				)}
+			</button>
+		</div>
+	);
+}
 
 const normalizeTablePermissionValue = (
 	currentValue: Record<string, TablePermissionValue | PermissionAction[]>,
@@ -182,7 +234,7 @@ const renderFieldContent = (
 				field.type !== "switch" &&
 				field.type !== "tablePermissions" &&
 				field.type !== "fieldPermissions" && (
-					<Label htmlFor={field.name}>
+					<Label htmlFor={field.name} className="text-neutral-80">
 						{field.labelNode ?? field.label}
 						{field.required && <span className="ml-1">*</span>}
 					</Label>
@@ -196,7 +248,6 @@ const renderFieldContent = (
 
 			{(field.type === "text" ||
 				field.type === "email" ||
-				field.type === "password" ||
 				field.type === "number" ||
 				field.type === "tel" ||
 				field.type === "url" ||
@@ -214,6 +265,19 @@ const renderFieldContent = (
 					min={field.min}
 					max={field.max}
 					step={field.step}
+				/>
+			)}
+
+			{field.type === "password" && (
+				<PasswordField
+					id={field.name}
+					value={(value as string) ?? ""}
+					onChange={(val) => updateField(field.name, val)}
+					onBlur={(val) => {
+						void handleFieldBlur(field, val);
+					}}
+					placeholder={field.placeholder}
+					disabled={field.disabled}
 				/>
 			)}
 
@@ -689,7 +753,10 @@ export const buildRenderField = ({
 	updateField,
 	handleFieldBlur,
 }: BuildRenderFieldArgs) => {
-	const renderField = (field: FormWrapperFieldConfig): React.ReactNode => {
+	const renderField = (
+		field: FormWrapperFieldConfig,
+		parentLayoutColumns = config.layout?.columns,
+	): React.ReactNode => {
 		if (field.condition && !field.condition(formData)) {
 			return null;
 		}
@@ -698,9 +765,9 @@ export const buildRenderField = ({
 			const useAccordion = field.collapsible;
 			const cardVariant =
 				field.cardVariant ?? config.cardVariant ?? "secondary";
-			const layoutColumns = field.layout?.columns ?? config.layout?.columns;
+			const layoutColumns = field.layout?.columns ?? parentLayoutColumns;
 			const gridClass = getResponsiveGridClass(layoutColumns);
-			const spanClass = getSpanClass(field.layout, layoutColumns);
+			const spanClass = getSpanClass(field.layout, parentLayoutColumns);
 			const accordionVariant = field.accordionVariant ?? "default";
 			const accordionTitle =
 				field.accordionTitle ?? field.title ?? field.description;
@@ -724,7 +791,9 @@ export const buildRenderField = ({
 				<div className="space-y-4">
 					{sectionHeader}
 					<div className={cn("grid", field.fieldGap ?? "gap-4", gridClass)}>
-						{field?.fields?.map((nestedField) => renderField(nestedField))}
+						{field?.fields?.map((nestedField) =>
+							renderField(nestedField, layoutColumns),
+						)}
 					</div>
 				</div>
 			);
@@ -751,7 +820,7 @@ export const buildRenderField = ({
 
 		if (!field.collapsible) {
 			return (
-				<div key={field.name} className="contents">
+				<Fragment key={field.name}>
 					{renderFieldContent({
 						field,
 						formData,
@@ -761,7 +830,7 @@ export const buildRenderField = ({
 						updateField,
 						handleFieldBlur,
 					})}
-				</div>
+				</Fragment>
 			);
 		}
 
