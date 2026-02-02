@@ -1,13 +1,14 @@
 import type { Prisma } from "@/generated/prisma";
 
-export type Subcategory = Prisma.CategoryGetPayload<Prisma.CategoryDefaultArgs>;
+export type ChildCategory =
+	Prisma.CategoryGetPayload<Prisma.CategoryDefaultArgs>;
 
 export type Category = Partial<
 	Prisma.CategoryGetPayload<Prisma.CategoryDefaultArgs>
 > & {
 	id: number;
 	key: string;
-	subcategory?: Subcategory[];
+	child_categories?: ChildCategory[];
 };
 
 export type CategoryCreateInput = Prisma.CategoryCreateInput;

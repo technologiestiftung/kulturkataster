@@ -69,11 +69,12 @@ export function CategorySection({
 		subcategoryCountsOverride ?? storeSubcategoryCounts;
 
 	// Determine checkbox state for category
-	const selectedSubcategoriesInGroup = (group.subcategory || []).filter((sub) =>
-		selectedSubcategories.includes(sub.key),
+	const selectedSubcategoriesInGroup = (group.child_categories || []).filter(
+		(sub) => selectedSubcategories.includes(sub.key),
 	);
 	const allSubcategoriesSelected =
-		selectedSubcategoriesInGroup.length === (group.subcategory || []).length;
+		selectedSubcategoriesInGroup.length ===
+		(group.child_categories || []).length;
 	const someSubcategoriesSelected = selectedSubcategoriesInGroup.length > 0;
 	const categorySelected = selectedCategories.includes(group.key);
 

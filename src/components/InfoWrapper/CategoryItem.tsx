@@ -16,7 +16,6 @@ export function CategoryItem({
 	const categories = getParentCategories(data);
 	const { t: tEnum } = useTranslation("enumMap");
 	if (!categories?.length) return null;
-
 	return (
 		<div className="flex justify-center gap-2 flex-col">
 			{categories.map((category) => {
@@ -31,8 +30,8 @@ export function CategoryItem({
 							className="mr-1 h-6 w-6"
 						/>
 						<div
-							className={`flex items-start flex-1 gap-1
-                            ${variant === "compact" ? "flex-row" : "flex-col"}
+							className={`flex items-start flex-1 gap-1 flex-wrap
+                            ${variant === "compact" ? "flex-row " : "flex-col"}
                             `}
 						>
 							<strong className="body2">

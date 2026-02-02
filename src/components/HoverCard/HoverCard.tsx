@@ -8,7 +8,7 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 import { getCategoryIconComponent } from "@/lib/utils/iconUtils"; // Update this import path
-import { Category, Subcategory } from "@/types";
+import { Category, ChildCategory } from "@/types";
 import { FC, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -75,10 +75,10 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 										<div className="pl-8">
 											{featureProperties.subcategories
 												.filter(
-													(subcategory: Subcategory) =>
+													(subcategory: ChildCategory) =>
 														subcategory.parent_category_id === category.id,
 												)
-												.map((subcategory: Subcategory, index: number) => (
+												.map((subcategory: ChildCategory, index: number) => (
 													<span key={subcategory.id} className="text-base">
 														{index > 0 && ", "}
 														{tEnum(`subcategory.${subcategory.key}`)}

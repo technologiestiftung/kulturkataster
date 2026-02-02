@@ -139,7 +139,6 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 	const updateField = (name: string, value: unknown) => {
 		setFormData((prev) => ({ ...prev, [name]: value }));
 		setTouched((prev) => ({ ...prev, [name]: true }));
-
 		if (errors[name]) {
 			setErrors((prev) => {
 				const newErrors = { ...prev };
@@ -177,7 +176,6 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 
 		const allFields = getAllFields(config.fields);
 		setTouched(buildTouchedMap(allFields));
-
 		if (validateForm()) {
 			setFormError(null);
 			await config.onSubmit(formData);
