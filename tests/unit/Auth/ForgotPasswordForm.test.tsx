@@ -44,9 +44,7 @@ describe("ForgotPasswordForm", () => {
 			},
 		);
 
-		fireEvent.click(
-			screen.getByRole("button", { name: "auth.forgot.submit" }),
-		);
+		fireEvent.click(screen.getByRole("button", { name: "auth.forgot.submit" }));
 
 		await waitFor(() => {
 			expect(mockedRequest).toHaveBeenCalledWith("jane@example.com");
@@ -65,9 +63,7 @@ describe("ForgotPasswordForm", () => {
 			},
 		);
 
-		fireEvent.click(
-			screen.getByRole("button", { name: "auth.forgot.submit" }),
-		);
+		fireEvent.click(screen.getByRole("button", { name: "auth.forgot.submit" }));
 
 		await waitFor(() => {
 			expect(mockedRequest).toHaveBeenCalled();

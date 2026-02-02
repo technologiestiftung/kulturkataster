@@ -9,7 +9,7 @@ const hasResetEmail =
 test.describe("auth forgot password", () => {
 	test("invalid submit shows validation dialog", async ({ page }) => {
 		await page.goto("/forgot-password", { waitUntil: "domcontentloaded" });
-		await page.locator("form button[type=\"submit\"]").click();
+		await page.locator('form button[type="submit"]').click();
 
 		const alertDialog = page.getByRole("dialog", { name: /Fehler|Error/i });
 		await expect(alertDialog).toBeVisible();
@@ -21,9 +21,7 @@ test.describe("auth forgot password", () => {
 		test.skip(!hasResetEmail, "E2E_RESET_EMAIL not set");
 
 		await page.goto("/forgot-password", { waitUntil: "domcontentloaded" });
-		await page
-			.getByLabel(/E-Mail-Adresse|Email address/i)
-			.fill(resetEmail!);
+		await page.getByLabel(/E-Mail-Adresse|Email address/i).fill(resetEmail!);
 		await page
 			.getByRole("button", { name: /Link senden|Send reset link/i })
 			.click();
