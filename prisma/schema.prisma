@@ -98,8 +98,11 @@ enum SubmissionStatus {
 }
 
 enum SubmissionType {
+  read
   create
+  claim
   update
+  delete
 }
 
 enum Action {
@@ -287,10 +290,10 @@ model User {
   avatar_url         String?
   notes              String?
   account_type       String?
+  meta_info         Json?
   role_id            Int?
   status             UserStatus @default(approval_pending)
   compliance         Boolean    @default(false)
-  institution_claims String[]
   created_at         DateTime   @default(now())
   updated_at         DateTime   @updatedAt
 
