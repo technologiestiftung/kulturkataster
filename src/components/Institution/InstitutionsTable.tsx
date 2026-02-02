@@ -9,6 +9,7 @@ import { useAccountStore } from "@/lib/store/accountStore";
 import { StatusDot } from "../ui/status-dot";
 import { InstitutionStatus } from "@/generated/prisma";
 import { useTranslation } from "react-i18next";
+import { getFieldLabel } from "@/lib/i18n/fieldLabels";
 import {
 	formatInstitutionBoolean,
 	formatInstitutionDate,
@@ -46,10 +47,8 @@ export function InstitutionsTable() {
 		const translated = tEnum(`${prefix}.${value}`);
 		return translated === `${prefix}.${value}` ? value : translated;
 	};
-	const headerLabel = (key: string, fallback: string) => {
-		const translated = tEnum(`field_names.${key}`);
-		return translated === `field_names.${key}` ? fallback : translated;
-	};
+	const headerLabel = (key: string, fallback: string) =>
+		getFieldLabel(tEnum, key, fallback);
 	const getStatusLabel = (status: InstitutionStatus) => {
 		if (status === "approval_pending")
 			return t("institutionFormModal.status.approvalPending");

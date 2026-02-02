@@ -299,7 +299,7 @@ const renderFieldContent = (
 		if (fromEnum && fromEnum !== labelKey) return fromEnum;
 		const fromCommon = tCommon(labelKey);
 		if (fromCommon && fromCommon !== labelKey) return fromCommon;
-		return undefined;
+		return labelKey;
 	};
 	const label = translateLabel(field.labelKey) ?? field.label;
 

@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { useFieldLabel } from "@/lib/hooks/useFieldLabel";
 import { InfoWrapper } from "@/components/InfoWrapper";
 import {
 	additionalInfoConfig,
@@ -25,7 +26,8 @@ export function InstitutionReview({
 	newData,
 	onEditSection,
 }: InstitutionReviewProps) {
-	const { t } = useTranslation("content");
+	const { t } = useTranslation("common");
+	const fieldLabel = useFieldLabel();
 	const institutionCategories =
 		useInstitutionStore((state) => state.categories) ?? [];
 	const accountCategories = useAccountStore((state) => state.categories) ?? [];
@@ -109,7 +111,10 @@ export function InstitutionReview({
 					{
 						id: "utilization_status",
 						alwaysShow: true,
-						label: t("institution.utilizationStatus"),
+						label: fieldLabel(
+							"utilization_status",
+							t("institution.utilizationStatus"),
+						),
 						className: "mb-0",
 						type: "status",
 						value: "utilization_status",
@@ -118,7 +123,10 @@ export function InstitutionReview({
 					{
 						id: "protection_status",
 						alwaysShow: false,
-						label: t("institution.protectionStatus"),
+						label: fieldLabel(
+							"protection_status",
+							t("institution.protectionStatus"),
+						),
 						type: "status",
 						value: "protection_status",
 						enumKey: "protection_status",
