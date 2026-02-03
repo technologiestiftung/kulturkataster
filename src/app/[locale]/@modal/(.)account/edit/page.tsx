@@ -4,6 +4,9 @@ import { AccountEditModal } from "@/components/Modals/Pages/AccountEditModal";
 
 export default async function AccountEditModalPage() {
 	const currentUser = await requireAuth();
+	if (!currentUser) {
+		throw new Error("Unauthenticated access to protected route.");
+	}
 	const user = await userRepo.findById(currentUser.id);
 
 	if (!currentUser.email || !user) {

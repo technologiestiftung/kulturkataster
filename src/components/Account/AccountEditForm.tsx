@@ -181,6 +181,7 @@ export function AccountEditForm({
 
 			<AlertDialog
 				title={t("error")}
+				status="error"
 				description={errorMessage ?? ""}
 				open={Boolean(errorMessage)}
 				onOpenChange={(open) => {
@@ -193,6 +194,7 @@ export function AccountEditForm({
 			/>
 
 			<AlertDialog
+				status="warning"
 				title={t("auth.accountEdit.deleteTitle")}
 				description={t("auth.accountEdit.deleteDescription")}
 				open={showDeleteConfirm}
