@@ -1,5 +1,6 @@
 "use server";
 
+import { redirect } from "next/navigation";
 import { createClient } from "@/server/supabase/server";
 
 export async function getCurrentUser() {
@@ -21,9 +22,7 @@ export async function getCurrentUserId() {
 export async function requireAuth() {
 	const user = await getCurrentUser();
 	if (!user) {
-		throw new Error(
-			"Unauthenticated access to protected route - proxy should have redirected",
-		);
+		redirect("/login");
 	}
 	return user;
 }
