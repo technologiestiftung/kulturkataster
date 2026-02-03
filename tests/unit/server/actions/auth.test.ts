@@ -1,5 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { loginWithEmailPassword, registerWithEmailPassword } from "@/server/actions/auth";
+import {
+	loginWithEmailPassword,
+	registerWithEmailPassword,
+} from "@/server/actions/auth";
 import { createClient } from "@/server/supabase/server";
 import { prisma } from "@/server/prisma";
 
