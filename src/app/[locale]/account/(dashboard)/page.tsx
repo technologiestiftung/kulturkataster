@@ -1,5 +1,1 @@
-import { redirect } from "next/navigation";
-
-export default async function AccountPage() {
-	redirect(`/account/activity`);
-}
+export default async function AccountPage() {}

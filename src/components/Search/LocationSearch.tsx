@@ -241,7 +241,7 @@ export function LocationSearch({
 						className="cursor-pointer"
 						onClick={onFilterClick}
 					>
-						<FilterIcon className="size-5! stroke-foreground" />
+						<FilterIcon className="size-6! stroke-foreground" />
 					</ButtonWithTooltip>
 				)}
 
