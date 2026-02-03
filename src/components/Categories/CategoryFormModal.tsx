@@ -61,6 +61,7 @@ const renderNotFoundDialog = (
 	t: (key: string, options?: { defaultValue?: string }) => string,
 ) => (
 	<AlertDialog
+		status="warning"
 		title={t("categoryFormModal.dialog.notFound.title", {
 			defaultValue: "Category not found",
 		})}
@@ -515,6 +516,7 @@ export function CategoryFormModal({
 			{showDeleteDialog && resolvedCategory && (
 				<AlertDialog
 					open
+					status="warning"
 					title={t("categoryFormModal.delete.confirmTitle", {
 						defaultValue: "Delete category?",
 					})}

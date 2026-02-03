@@ -583,6 +583,7 @@ export function RoleFormModal({
 			{showDeleteDialog && resolvedRole && (
 				<AlertDialog
 					open
+					status="warning"
 					title={t("roleFormModal.delete.confirmTitle", {
 						defaultValue: "Delete role?",
 					})}
