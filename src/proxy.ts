@@ -82,15 +82,19 @@ export default async function proxy(req: NextRequest) {
 	);
 
 	let user: { id: string } | null = null;
-
-	try {
-		const {
-			data: { user: fetchedUser },
-		} = await supabase.auth.getUser();
-		user = fetchedUser ?? null;
-	} catch (error) {
-		if (process.env.NODE_ENV !== "production") {
-			console.warn("Supabase auth refresh failed in middleware:", error);
+	const hasSupabaseCookie = req.cookies
+		.getAll()
+		.some((cookie) => cookie.name.startsWith("sb-"));
+	if (hasSupabaseCookie) {
+		try {
+			const {
+				data: { user: fetchedUser },
+			} = await supabase.auth.getUser();
+			user = fetchedUser ?? null;
+		} catch (error) {
+			if (process.env.NODE_ENV !== "production") {
+				console.warn("Supabase auth refresh failed in middleware:", error);
+			}
 		}
 	}
 

@@ -5,13 +5,29 @@ import { prisma } from "@/server/prisma";
 
 export async function loginWithEmailPassword(email: string, password: string) {
 	const supabase = await createClient();
-	const { error } = await supabase.auth.signInWithPassword({
+	const { data, error } = await supabase.auth.signInWithPassword({
 		email,
 		password,
 	});
 
 	if (error) {
 		return { ok: false, error: error.message };
+	}
+
+	const userId = data.user?.id ?? null;
+	if (!userId) {
+		await supabase.auth.signOut();
+		return { ok: false, error: "missing_user" };
+	}
+
+	const dbUser = await prisma.user.findUnique({
+		where: { id: userId },
+		select: { status: true },
+	});
+
+	if (!dbUser || dbUser.status !== "active") {
+		await supabase.auth.signOut();
+		return { ok: false, error: "inactive" };
 	}
 
 	return { ok: true };

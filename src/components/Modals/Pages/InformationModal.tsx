@@ -43,7 +43,13 @@ interface Scope {
 	};
 }
 
-export function InformationModal({ routePath }: { routePath?: string }) {
+export function InformationModal({
+	routePath,
+	closeTo,
+}: {
+	routePath?: string;
+	closeTo?: string;
+}) {
 	const { t } = useTranslation("content");
 	const institutions = useInstitutionStore((state) => state.allInstitutions);
 	const institutionCount = institutions?.length;
@@ -157,6 +163,7 @@ export function InformationModal({ routePath }: { routePath?: string }) {
 			title={t("informationModal.title")}
 			subtitle={t("informationModal.subtitle")}
 			routePath={routePath}
+			closeTo={closeTo}
 			content={content}
 		/>
 	);

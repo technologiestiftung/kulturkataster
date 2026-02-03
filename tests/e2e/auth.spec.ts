@@ -23,11 +23,16 @@ test.describe("auth", () => {
 	});
 
 	test("can switch between login and register", async ({ page }) => {
+		await page.context().clearCookies();
 		await page.goto("/login", { waitUntil: "domcontentloaded" });
-		await page.locator('a[href="/register"]').click();
-		await expect(page).toHaveURL(/\/register\/?$/);
-		await page.locator('a[href="/login"]').click();
-		await expect(page).toHaveURL(/\/login\/?$/);
+		await Promise.all([
+			page.waitForURL(/\/register\/?$/, { waitUntil: "domcontentloaded" }),
+			page.locator('a[href="/register"]').click(),
+		]);
+		await Promise.all([
+			page.waitForURL(/\/login\/?$/, { waitUntil: "domcontentloaded" }),
+			page.locator('a[href="/login"]').click(),
+		]);
 	});
 
 	test("login redirects to account", async ({ page }) => {
