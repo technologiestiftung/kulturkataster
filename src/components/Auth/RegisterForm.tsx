@@ -362,6 +362,7 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
 
 			<AlertDialog
 				title={t("error")}
+				status="error"
 				description={errorMessage ?? ""}
 				open={Boolean(errorMessage)}
 				onOpenChange={(open) => {
