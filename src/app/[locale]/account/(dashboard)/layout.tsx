@@ -22,7 +22,10 @@ type AccountLayoutProps = {
 
 export default async function AccountLayout({ children }: AccountLayoutProps) {
 	const currentUser = await requireAuth();
-	if (!currentUser || !currentUser.email) {
+	if (!currentUser) {
+		throw new Error("Unauthenticated access to protected route.");
+	}
+	if (!currentUser.email) {
 		throw new Error("Authenticated user is missing an email.");
 	}
 

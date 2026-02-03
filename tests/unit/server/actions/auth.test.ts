@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { registerWithEmailPassword } from "@/server/actions/auth";
+import { loginWithEmailPassword, registerWithEmailPassword } from "@/server/actions/auth";
 import { createClient } from "@/server/supabase/server";
 import { prisma } from "@/server/prisma";
 
@@ -11,17 +11,20 @@ vi.mock("@/server/prisma", () => ({
 	prisma: {
 		user: {
 			upsert: vi.fn(),
+			findUnique: vi.fn(),
 		},
 	},
 }));
 
 const mockedCreateClient = vi.mocked(createClient);
 const mockedUpsert = vi.mocked(prisma.user.upsert);
+const mockedFindUnique = vi.mocked(prisma.user.findUnique);
 
 describe("registerWithEmailPassword", () => {
 	beforeEach(() => {
 		mockedCreateClient.mockReset();
 		mockedUpsert.mockReset();
+		mockedFindUnique.mockReset();
 	});
 
 	it("returns a standardized error when Supabase signUp fails", async () => {
@@ -80,5 +83,61 @@ describe("registerWithEmailPassword", () => {
 		});
 
 		expect(result).toEqual({ ok: false, error: "User creation failed." });
+	});
+});
+
+describe("loginWithEmailPassword", () => {
+	beforeEach(() => {
+		mockedCreateClient.mockReset();
+		mockedUpsert.mockReset();
+		mockedFindUnique.mockReset();
+	});
+
+	it("returns error when Supabase signIn fails", async () => {
+		const signInWithPassword = vi.fn().mockResolvedValue({
+			data: { user: null },
+			error: { message: "Invalid credentials" },
+		});
+		mockedCreateClient.mockResolvedValue({
+			auth: { signInWithPassword },
+		} as never);
+
+		const result = await loginWithEmailPassword("test@example.com", "bad");
+
+		expect(result).toEqual({ ok: false, error: "Invalid credentials" });
+	});
+
+	it("returns inactive when user is not active and signs out", async () => {
+		const signInWithPassword = vi.fn().mockResolvedValue({
+			data: { user: { id: "user-1" } },
+			error: null,
+		});
+		const signOut = vi.fn().mockResolvedValue({ error: null });
+		mockedCreateClient.mockResolvedValue({
+			auth: { signInWithPassword, signOut },
+		} as never);
+		mockedFindUnique.mockResolvedValue({ status: "inactive" } as never);
+
+		const result = await loginWithEmailPassword("test@example.com", "ok");
+
+		expect(result).toEqual({ ok: false, error: "inactive" });
+		expect(signOut).toHaveBeenCalled();
+	});
+
+	it("returns ok when user is active", async () => {
+		const signInWithPassword = vi.fn().mockResolvedValue({
+			data: { user: { id: "user-1" } },
+			error: null,
+		});
+		const signOut = vi.fn().mockResolvedValue({ error: null });
+		mockedCreateClient.mockResolvedValue({
+			auth: { signInWithPassword, signOut },
+		} as never);
+		mockedFindUnique.mockResolvedValue({ status: "active" } as never);
+
+		const result = await loginWithEmailPassword("test@example.com", "ok");
+
+		expect(result).toEqual({ ok: true });
+		expect(signOut).not.toHaveBeenCalled();
 	});
 });

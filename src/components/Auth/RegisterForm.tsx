@@ -320,6 +320,7 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
 							</span>
 						),
 						type: "checkbox",
+						required: true,
 						disabled: isLoading,
 						validate: (value) =>
 							value ? undefined : t("auth.validation.acceptTermsRequired"),

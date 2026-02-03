@@ -28,12 +28,18 @@ export function LoginForm() {
 
 		try {
 			const result = await loginWithEmailPassword(email, password);
-
 			if (!result.ok) {
-				setErrorMessage(result.error ?? t("auth.login.errorFallback"));
+				let fallback: string;
+				if (result.error === "inactive") {
+					fallback = t("auth.login.inactive");
+				} else if (result.error === "missing_user") {
+					fallback = t("auth.login.errorFallback");
+				} else {
+					fallback = result.error ?? t("auth.login.errorFallback");
+				}
+				setErrorMessage(fallback);
 				return;
 			}
-
 			navigateToAccount();
 		} catch {
 			setErrorMessage(t("auth.login.errorFallback"));
