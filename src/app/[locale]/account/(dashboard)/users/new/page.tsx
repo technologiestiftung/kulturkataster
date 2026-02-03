@@ -1,5 +1,12 @@
 import { UserFormModal } from "@/components/Users/UserFormModal";
 
 export default function NewUserPage() {
-	return <UserFormModal mode="create" shouldRefresh={false} />;
+	return (
+		<UserFormModal
+			mode="create"
+			shouldRefresh={false}
+			routePath="/account/users/new"
+			closeTo="/account/users"
+		/>
+	);
 }

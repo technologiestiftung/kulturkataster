@@ -11,6 +11,8 @@ import type { Institution } from "@/types/institution";
 type InstitutionEditModalProps = {
 	institutionId: string;
 	returnTo?: string;
+	routePath?: string;
+	closeTo?: string;
 	onSubmit?: Parameters<typeof InstitutionFormModal>[0]["onSubmit"];
 	initialValues?: Record<string, unknown>;
 	formKey?: string;
@@ -23,6 +25,8 @@ type InstitutionEditModalProps = {
 export function InstitutionEditModal({
 	institutionId,
 	returnTo,
+	routePath,
+	closeTo,
 	onSubmit,
 	initialValues,
 	formKey,
@@ -50,6 +54,7 @@ export function InstitutionEditModal({
 	if (!numericInstitutionId) {
 		return (
 			<AlertDialog
+				status="error"
 				title={t("institutionFormModal.dialog.notFound.title")}
 				description={t("institutionFormModal.dialog.notFound.description")}
 			/>
@@ -104,6 +109,8 @@ export function InstitutionEditModal({
 			mode="edit"
 			institution={resolvedInstitutionWithFallback}
 			returnTo={returnTo}
+			routePath={routePath}
+			closeTo={closeTo}
 			onSubmit={onSubmit}
 			initialValues={initialValues}
 			formKey={formKey}

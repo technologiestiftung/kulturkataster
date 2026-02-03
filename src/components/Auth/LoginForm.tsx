@@ -94,7 +94,8 @@ export function LoginForm() {
 			</div>
 
 			<AlertDialog
-				title={t("error")}
+				title={t("alert.errorInput")}
+				status="error"
 				description={errorMessage ?? ""}
 				open={Boolean(errorMessage)}
 				onOpenChange={(open) => {

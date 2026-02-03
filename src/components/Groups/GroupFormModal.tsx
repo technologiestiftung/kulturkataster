@@ -2,7 +2,11 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { DialogTitle } from "@/components/ui/dialog";
+import {
+	RoutedEditorModal,
+	useRoutedModalClose,
+} from "@/components/Modals/RoutedEditorModal";
 import { AlertDialog } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { FormWrapper } from "@/components/FormWrapper";
@@ -29,6 +33,8 @@ type GroupFormModalProps = {
 	mode: "create" | "edit";
 	groupId?: string;
 	shouldRefresh?: boolean;
+	routePath?: string;
+	closeTo?: string;
 };
 
 const getInitialValues = (resolvedGroup?: Group) => ({
@@ -50,6 +56,7 @@ const getDialogTitle = (
 
 const renderNotFoundDialog = (t: (key: string) => string) => (
 	<AlertDialog
+		status="error"
 		title={t("groupFormModal.dialog.notFound.title")}
 		description={t("groupFormModal.dialog.notFound.description")}
 	/>
@@ -319,8 +326,9 @@ export function GroupFormModal({
 	mode,
 	groupId,
 	shouldRefresh = true,
+	routePath,
+	closeTo,
 }: GroupFormModalProps) {
-	const router = useRouter();
 	const { t } = useTranslation("content");
 	const { t: tEnum, i18n } = useTranslation("enumMap");
 	const groups = useAccountStore((state) => state.groups);
@@ -359,9 +367,7 @@ export function GroupFormModal({
 		[users],
 	);
 
-	const handleClose = () => {
-		router.back();
-	};
+	const handleClose = useRoutedModalClose({ closeTo });
 
 	const { numericGroupId, resolvedGroup, isWaitingForGroup, showNotFound } =
 		useResolvedGroup(mode, groupId, groups);
@@ -424,53 +430,48 @@ export function GroupFormModal({
 	}
 
 	return (
-		<Dialog open>
-			<DialogContent variant="editor" showBackButton={false} className="p-0">
-				<div className="flex h-full flex-col">
-					<div className="px-6 py-8 md:px-10">
-						<DialogTitle className="title">
-							{getDialogTitle(mode, t)}
-						</DialogTitle>
-					</div>
-					<div className="flex-1 overflow-auto px-6 py-6 md:px-10">
-						{renderDialogBody(
-							isWaitingForGroup,
-							t,
-							formConfig,
-							resolvedGroup,
-							mode,
-						)}
-					</div>
-					{mode === "edit" && resolvedGroup && (
-						<div className="border-t border-neutral-20 px-6 py-4 md:px-10">
-							<div className="flex flex-wrap items-center justify-between gap-3">
-								<div>
-									<p className="body2 font-bold">
-										{t("groupFormModal.delete.title", {
-											defaultValue: "Delete group",
-										})}
-									</p>
-									<p className="body3 text-neutral-80">
-										{t("groupFormModal.delete.description", {
-											defaultValue:
-												"This action permanently removes the group.",
-										})}
-									</p>
-								</div>
-								<Button
-									variant="destructive"
-									onClick={() => setShowDeleteDialog(true)}
-									disabled={isDeleting || submitting}
-								>
-									{t("groupFormModal.delete.button", {
-										defaultValue: "Delete",
-									})}
-								</Button>
-							</div>
-						</div>
+		<RoutedEditorModal routePath={routePath} onClose={handleClose}>
+			<div className="flex h-full flex-col">
+				<div className="px-6 py-8 md:px-10">
+					<DialogTitle className="title">{getDialogTitle(mode, t)}</DialogTitle>
+				</div>
+				<div className="flex-1 overflow-auto px-6 py-6 md:px-10">
+					{renderDialogBody(
+						isWaitingForGroup,
+						t,
+						formConfig,
+						resolvedGroup,
+						mode,
 					)}
 				</div>
-			</DialogContent>
+				{mode === "edit" && resolvedGroup && (
+					<div className="border-t border-neutral-20 px-6 py-4 md:px-10">
+						<div className="flex flex-wrap items-center justify-between gap-3">
+							<div>
+								<p className="body2 font-bold">
+									{t("groupFormModal.delete.title", {
+										defaultValue: "Delete group",
+									})}
+								</p>
+								<p className="body3 text-neutral-80">
+									{t("groupFormModal.delete.description", {
+										defaultValue: "This action permanently removes the group.",
+									})}
+								</p>
+							</div>
+							<Button
+								variant="destructive"
+								onClick={() => setShowDeleteDialog(true)}
+								disabled={isDeleting || submitting}
+							>
+								{t("groupFormModal.delete.button", {
+									defaultValue: "Delete",
+								})}
+							</Button>
+						</div>
+					</div>
+				)}
+			</div>
 			{showDeleteDialog && resolvedGroup && (
 				<AlertDialog
 					open
@@ -516,6 +517,6 @@ export function GroupFormModal({
 					}}
 				/>
 			)}
-		</Dialog>
+		</RoutedEditorModal>
 	);
 }

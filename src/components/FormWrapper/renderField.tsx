@@ -486,14 +486,15 @@ const renderFieldContent = (
 			{field.type === "actionPanel" && field.actionPanel && (
 				<ActionPanel
 					title={field.actionPanel.title}
-					description={field.actionPanel.description}
 					actionLabel={field.actionPanel.actionLabel}
 					actionLabelLoading={field.actionPanel.actionLabelLoading}
 					onAction={field.actionPanel.onAction}
 					errorFallback={field.actionPanel.errorFallback}
 					icon={field.actionPanel.icon}
 					className={field.actionPanel.className}
-				/>
+				>
+					{field.actionPanel.description}
+				</ActionPanel>
 			)}
 
 			{field.type === "tablePermissions" && field.tablePermissions && (

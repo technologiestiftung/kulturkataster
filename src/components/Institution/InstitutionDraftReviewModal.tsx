@@ -140,6 +140,7 @@ export function InstitutionDraftReviewModal({
 	if (!hasSubmissionId) {
 		return (
 			<AlertDialog
+				status="error"
 				title={t("institutionFormModal.dialog.notFound.title")}
 				description={t("institutionFormModal.dialog.notFound.description")}
 			/>
@@ -150,6 +151,7 @@ export function InstitutionDraftReviewModal({
 		if (!didFetchSubmission) return null;
 		return (
 			<AlertDialog
+				status="error"
 				title={t("institutionFormModal.dialog.notFound.title")}
 				description={t("institutionFormModal.dialog.notFound.description")}
 			/>

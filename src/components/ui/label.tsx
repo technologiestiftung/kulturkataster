@@ -17,12 +17,12 @@ function Label({
 		<LabelPrimitive.Root
 			data-slot="label"
 			className={cn(
-				"flex items-center gap-1 font-bold body2 text-foreground select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50",
+				"flex items-center gap-1 body2 text-foreground select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50",
 				className,
 			)}
 			{...props}
 		>
-			{children}
+			<strong>{children}</strong>
 			{required && (
 				<span className="" aria-hidden="true">
 					*
