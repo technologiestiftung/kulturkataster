@@ -46,9 +46,14 @@ export async function registerWithEmailPassword(params: {
 	administrationPhone?: string;
 }) {
 	const supabase = await createClient();
+
+	const siteUrl = process.env.SITE_URL ?? "http://127.0.0.1:3000";
 	const { data, error } = await supabase.auth.signUp({
 		email: params.email,
 		password: params.password,
+		options: {
+			emailRedirectTo: `${siteUrl}/reset-password`,
+		},
 	});
 
 	if (error) {
@@ -122,6 +127,7 @@ export async function registerWithEmailPassword(params: {
 export async function requestPasswordReset(email: string) {
 	const supabase = createAnonClient();
 	const siteUrl = process.env.SITE_URL ?? "http://127.0.0.1:3000";
+	console.log("siteUrl", siteUrl);
 	const { error } = await supabase.auth.resetPasswordForEmail(email, {
 		redirectTo: `${siteUrl}/reset-password`,
 	});
