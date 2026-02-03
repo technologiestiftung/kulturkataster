@@ -2,9 +2,13 @@
 
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { ActionPanel } from "../ActionPanel";
+import InfoCircle from "@/icons/info-circle.svg";
+import { useTranslation } from "react-i18next";
 
 type AlertDialogProps = {
 	title: string;
+	status: "info" | "warning" | "error" | "success";
 	description: string;
 	open?: boolean;
 	onOpenChange?: (open: boolean) => void;
@@ -18,6 +22,7 @@ type AlertDialogProps = {
 
 function AlertDialog({
 	title,
+	status,
 	description,
 	open = true,
 	onOpenChange,
@@ -29,13 +34,23 @@ function AlertDialog({
 	showCancel = Boolean(cancelLabel && onCancel),
 }: AlertDialogProps) {
 	const hasActions = showConfirm || showCancel;
+	const { t } = useTranslation("common");
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
 			<DialogContent variant="alert" className="p-0">
-				<div className="flex flex-col gap-4 p-6">
-					<DialogTitle className="title">{title}</DialogTitle>
-					<p className="text-foreground">{description}</p>
+				<div className="flex flex-col gap-4 p-10">
+					<DialogTitle className="body1 font-bold">
+						{t(`alert.${status}`)}
+					</DialogTitle>
+					<ActionPanel
+						title={title}
+						icon={<InfoCircle className="size-5" />}
+						actionLabel={confirmLabel || ""}
+						actionLabelLoading={confirmLabel || ""}
+					>
+						<p className="text-foreground">{description}</p>
+					</ActionPanel>
 					{hasActions && (
 						<div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
 							{showCancel && (

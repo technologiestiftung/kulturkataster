@@ -14,6 +14,7 @@ function AccountAlertDialog() {
 	return (
 		<AlertDialog
 			open
+			status="info"
 			title={alertDialog.title}
 			description={alertDialog.description}
 			confirmLabel={t("confirm")}

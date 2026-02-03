@@ -5,19 +5,19 @@ import { Label } from "../ui/label";
 import { cn } from "@/lib/utils";
 
 type ActionPanelProps = {
+	children: ReactNode;
 	title: string;
-	description: string;
 	actionLabel: string;
 	actionLabelLoading: string;
-	onAction: () => Promise<string | null | undefined>;
-	errorFallback: string;
+	onAction?: () => Promise<string | null | undefined>;
+	errorFallback?: string;
 	className?: string;
 	icon?: ReactNode;
 };
 
 export function ActionPanel({
+	children,
 	title,
-	description,
 	actionLabel,
 	actionLabelLoading,
 	onAction,
@@ -29,12 +29,15 @@ export function ActionPanel({
 	const [isLoading, setIsLoading] = useState(false);
 
 	const handleAction = async () => {
+		if (!onAction) return;
+
 		setIsLoading(true);
 		setMessage(null);
 		try {
 			const resultMessage = await onAction();
 			setMessage(resultMessage ?? null);
 		} catch (error) {
+			if (!errorFallback) throw error;
 			setMessage(error instanceof Error ? error.message : errorFallback);
 		} finally {
 			setIsLoading(false);
@@ -44,30 +47,30 @@ export function ActionPanel({
 	return (
 		<div
 			className={cn(
-				"rounded-sm border border-input bg-background p-4",
+				"rounded-sm border border-border bg-background p-4",
 				className,
 			)}
 		>
 			<div className="flex flex-col gap-2">
 				<div className="flex flex-col gap-2">
 					<div className="flex items-center gap-2">
-						{icon && <span className="text-muted-foreground">{icon}</span>}
-						<Label className="font-bold">
-							<strong>{title}</strong>
-						</Label>
+						{icon && <span className="text-primary-dark">{icon}</span>}
+						{title && <Label className="body2">{title}</Label>}
 					</div>
-					<p className="body2">{description}</p>
+					<p className="body2">{children}</p>
 				</div>
-				<Button
-					type="button"
-					variant="ghost"
-					disabled={isLoading}
-					onClick={handleAction}
-				>
-					{isLoading ? actionLabelLoading : actionLabel}
-				</Button>
+				{onAction && (
+					<Button
+						type="button"
+						variant="ghost"
+						disabled={isLoading}
+						onClick={handleAction}
+					>
+						{isLoading ? actionLabelLoading : actionLabel}
+					</Button>
+				)}
 			</div>
-			{message && <p className="mt-2 text-xs text-foreground">{message}</p>}
+			{message && <p className="mt-2  text-foreground">{message}</p>}
 		</div>
 	);
 }

@@ -198,6 +198,7 @@ export function InstitutionDraftEditModal({
 	if (isNotFound) {
 		return (
 			<AlertDialog
+				status="error"
 				title={t("institutionFormModal.dialog.notFound.title")}
 				description={t("institutionFormModal.dialog.notFound.description")}
 			/>

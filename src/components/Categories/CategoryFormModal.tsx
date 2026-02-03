@@ -1,9 +1,13 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { useRouter } from "next/navigation";
+import { DialogTitle } from "@/components/ui/dialog";
+import {
+	RoutedEditorModal,
+	useRoutedModalClose,
+} from "@/components/Modals/RoutedEditorModal";
 import { Button } from "@/components/ui/button";
 import { AlertDialog } from "@/components/ui/alert-dialog";
 import { FormWrapper } from "@/components/FormWrapper";
@@ -27,6 +31,8 @@ type CategoryFormModalProps = {
 	mode: "create" | "edit";
 	categoryId?: string;
 	shouldRefresh?: boolean;
+	routePath?: string;
+	closeTo?: string;
 };
 
 const getInitialValues = (resolvedCategory?: Category) => ({
@@ -351,19 +357,18 @@ export function CategoryFormModal({
 	mode,
 	categoryId,
 	shouldRefresh = true,
+	routePath,
+	closeTo,
 }: CategoryFormModalProps) {
 	const { t: tEnum } = useTranslation("enumMap");
 	const { t } = useTranslation();
-	const router = useRouter();
 	const setAlertDialog = useAccountStore((state) => state.setAlertDialog);
 	const categories = useAccountStore((state) => state.categories);
 	const removeCategory = useAccountStore((state) => state.removeCategory);
 	const [isDeleting, setIsDeleting] = useState(false);
 	const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
-	const handleClose = () => {
-		router.back();
-	};
+	const handleClose = useRoutedModalClose({ closeTo });
 
 	const {
 		numericCategoryId,
@@ -464,53 +469,51 @@ export function CategoryFormModal({
 	}
 
 	return (
-		<Dialog open>
-			<DialogContent variant="editor" showBackButton={false} className="p-0">
-				<div className="flex h-full flex-col">
-					<div className="px-6 py-8 md:px-10">
-						<DialogTitle className="title">
-							{getDialogTitle(mode, t)}
-						</DialogTitle>
-					</div>
-					<div className="flex-1 overflow-auto px-6 py-6 md:px-10">
-						{renderDialogBody(
-							isWaitingForCategory,
-							t,
-							formConfig,
-							resolvedCategory,
-							mode,
-						)}
-					</div>
-					{mode === "edit" && resolvedCategory && (
-						<div className="border-t border-neutral-20 px-6 py-4 md:px-10">
-							<div className="flex flex-wrap items-center justify-between gap-3">
-								<div>
-									<p className="body2 font-bold">
-										{t("categoryFormModal.delete.title", {
-											defaultValue: "Delete category",
-										})}
-									</p>
-									<p className="body3 text-neutral-80">
-										{t("categoryFormModal.delete.description", {
-											defaultValue:
-												"This action permanently removes the category.",
-										})}
-									</p>
-								</div>
-								<Button
-									variant="destructive"
-									onClick={() => setShowDeleteDialog(true)}
-									disabled={isDeleting || submitting}
-								>
-									{t("categoryFormModal.delete.button", {
-										defaultValue: "Delete",
-									})}
-								</Button>
-							</div>
-						</div>
+		<RoutedEditorModal routePath={routePath} onClose={handleClose}>
+			<div className="flex h-full flex-col">
+				<div className="px-6 py-8 md:px-10">
+					<DialogTitle className="title">
+						{getDialogTitle(mode, t)}
+					</DialogTitle>
+				</div>
+				<div className="flex-1 overflow-auto px-6 py-6 md:px-10">
+					{renderDialogBody(
+						isWaitingForCategory,
+						t,
+						formConfig,
+						resolvedCategory,
+						mode,
 					)}
 				</div>
-			</DialogContent>
+				{mode === "edit" && resolvedCategory && (
+					<div className="border-t border-neutral-20 px-6 py-4 md:px-10">
+						<div className="flex flex-wrap items-center justify-between gap-3">
+							<div>
+								<p className="body2 font-bold">
+									{t("categoryFormModal.delete.title", {
+										defaultValue: "Delete category",
+									})}
+								</p>
+								<p className="body3 text-neutral-80">
+									{t("categoryFormModal.delete.description", {
+										defaultValue:
+											"This action permanently removes the category.",
+									})}
+								</p>
+							</div>
+							<Button
+								variant="destructive"
+								onClick={() => setShowDeleteDialog(true)}
+								disabled={isDeleting || submitting}
+							>
+								{t("categoryFormModal.delete.button", {
+									defaultValue: "Delete",
+								})}
+							</Button>
+						</div>
+					</div>
+				)}
+			</div>
 			{showDeleteDialog && resolvedCategory && (
 				<AlertDialog
 					open
@@ -556,6 +559,6 @@ export function CategoryFormModal({
 					}}
 				/>
 			)}
-		</Dialog>
+		</RoutedEditorModal>
 	);
 }

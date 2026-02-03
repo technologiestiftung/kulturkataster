@@ -8,5 +8,13 @@ type PageProps = {
 
 export default async function EditUserPage({ params }: PageProps) {
 	const { id } = await params;
-	return <UserFormModal mode="edit" userId={id} shouldRefresh={false} />;
+	return (
+		<UserFormModal
+			mode="edit"
+			userId={id}
+			shouldRefresh={false}
+			routePath={`/account/users/${id}/edit`}
+			closeTo="/account/users"
+		/>
+	);
 }

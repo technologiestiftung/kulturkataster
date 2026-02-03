@@ -1,5 +1,14 @@
 {
 	"about": "Über",
+	"alert": {
+		"close": "Alarm schließen",
+		"info": "Info! Info! Info!",
+		"warning": "Warnung - Jetzt aufpassen!",
+		"error": "Oh nein! Es gab ein Fehler!",
+		"success": "Ein großer Erfolg!",
+		"errorInput": "Eingabefehler",
+		"errorFixFields": "Bitte beheben Sie die hervorgehobenen Fehler."
+	},
 	"accessibility": {
 		"contrast": {
 			"darkMode": "Dunkler Modus",
@@ -210,8 +219,6 @@
 		"address": "info@kulturkataster.berlin",
 		"label": "E-Mail"
 	},
-	"error": "Eingabe Fehler",
-	"errorFixFields": "Bitte beheben Sie die hervorgehobenen Fehler.",
 	"fileFormat": {
 		"csv": "CSV",
 		"xls": "XLS",

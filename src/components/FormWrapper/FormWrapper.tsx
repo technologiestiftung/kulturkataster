@@ -186,7 +186,7 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 			setFormError(null);
 			await config.onSubmit(formData);
 		} else {
-			setFormError(t("errorFixFields"));
+			setFormError(t("alert.errorFixFields"));
 		}
 	};
 
@@ -223,6 +223,7 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 					<div className="flex flex-col">
 						<AlertDialog
 							title={t("error")}
+							status="error"
 							description={formError ?? ""}
 							open={Boolean(formError)}
 							onOpenChange={(open) => {

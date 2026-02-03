@@ -103,7 +103,7 @@ function DialogContent({
 			"multi-select":
 				"bg-neutral-5 fixed z-[75] top-0 md:top-1/2 left-1/2 w-full max-w-[calc(100%-2rem)] h-full md:h-auto md:max-h-[calc(100%-5rem)] -translate-x-1/2 md:-translate-y-1/2 md:rounded-lg border md:max-w-5xl flex flex-col overflow-hidden",
 			alert:
-				"fixed z-[70] top-1/2 left-1/2 w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 md:max-w-lg md:rounded-lg border p-6",
+				"fixed z-[70] top-1/2 left-1/2 w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 md:max-w-lg md:rounded-lg border bg-secondary",
 		} as const;
 
 		return variants[variant];
