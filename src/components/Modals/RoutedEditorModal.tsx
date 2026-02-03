@@ -20,7 +20,10 @@ type UseRoutedModalCloseArgs = {
 	onClose?: () => void;
 };
 
-export function useRoutedModalClose({ closeTo, onClose }: UseRoutedModalCloseArgs) {
+export function useRoutedModalClose({
+	closeTo,
+	onClose,
+}: UseRoutedModalCloseArgs) {
 	const router = useRouter();
 
 	return useCallback(() => {
