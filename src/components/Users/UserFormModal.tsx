@@ -573,6 +573,7 @@ export function UserFormModal({
 			{showDeleteDialog && resolvedUser && (
 				<AlertDialog
 					open
+					status="warning"
 					title={t("userFormModal.delete.confirmTitle", {
 						defaultValue: "Delete user?",
 					})}

@@ -474,6 +474,7 @@ export function GroupFormModal({
 			</div>
 			{showDeleteDialog && resolvedGroup && (
 				<AlertDialog
+					status="warning"
 					open
 					title={t("groupFormModal.delete.confirmTitle", {
 						defaultValue: "Delete group?",

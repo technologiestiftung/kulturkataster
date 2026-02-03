@@ -49,7 +49,7 @@ function AlertDialog({
 						actionLabel={confirmLabel || ""}
 						actionLabelLoading={confirmLabel || ""}
 					>
-						<p className="text-foreground">{description}</p>
+						{description}
 					</ActionPanel>
 					{hasActions && (
 						<div className="flex flex-col gap-3 sm:flex-row sm:justify-end">

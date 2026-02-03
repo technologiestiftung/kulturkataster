@@ -15,6 +15,7 @@ import {
 } from "@/server/utils/rbac";
 import { fetchIfAllowed } from "@/server/utils/rbacHelpers";
 import { userRepo } from "@/server/data/userRepo";
+import { redirect } from "next/navigation";
 
 type AccountLayoutProps = {
 	children: ReactNode;
@@ -22,6 +23,9 @@ type AccountLayoutProps = {
 
 export default async function AccountLayout({ children }: AccountLayoutProps) {
 	const currentUser = await requireAuth();
+	if (!currentUser) {
+		redirect("/login");
+	}
 	if (!currentUser.email) {
 		throw new Error("Authenticated user is missing an email.");
 	}

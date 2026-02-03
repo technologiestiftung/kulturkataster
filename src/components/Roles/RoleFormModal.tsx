@@ -52,6 +52,7 @@ const getDialogTitle = (
 
 const renderNotFoundDialog = (t: (key: string) => string) => (
 	<AlertDialog
+		status="error"
 		title={t("roleFormModal.dialog.notFound.title")}
 		description={t("roleFormModal.dialog.notFound.description")}
 	/>
