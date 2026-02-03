@@ -91,6 +91,7 @@
 			"emailLabel": "E-Mail",
 			"emailPlaceholder": "name@beispiel.de",
 			"errorFallback": "Anmeldung fehlgeschlagen.",
+			"inactive": "Ihr Konto ist noch nicht freigeschaltet. Bitte wenden Sie sich an den Support.",
 			"forgotPassword": "Passwort vergessen?",
 			"metaTitle": "Anmelden – Kulturkataster",
 			"noAccount": "Sie haben noch keinen Account beim Kulturkataster? ",

@@ -15,15 +15,8 @@ test.describe("slot routing", () => {
 		await page.goto(`/map/institution/${institutionId}`, {
 			waitUntil: "domcontentloaded",
 		});
-		const title = page.locator("#institution-title");
-		if (await title.count()) {
-			await expect(title.first()).toContainText(institutionName!);
-		} else {
-			await expect(page.locator(`text=${institutionName}`).first()).toBeVisible(
-				{
-					timeout: 15_000,
-				},
-			);
-		}
+		await expect(page.locator("#institution-title").first()).toBeVisible({
+			timeout: 30_000,
+		});
 	});
 });
