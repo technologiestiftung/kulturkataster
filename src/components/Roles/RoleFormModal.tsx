@@ -536,9 +536,7 @@ export function RoleFormModal({
 		<RoutedEditorModal routePath={routePath} onClose={handleClose}>
 			<div className="flex h-full flex-col">
 				<div className="px-6 py-8 md:px-10">
-					<DialogTitle className="title">
-						{getDialogTitle(mode, t)}
-					</DialogTitle>
+					<DialogTitle className="title">{getDialogTitle(mode, t)}</DialogTitle>
 				</div>
 				<div className="flex-1 overflow-auto px-6 py-6 md:px-10">
 					{renderDialogBody(
