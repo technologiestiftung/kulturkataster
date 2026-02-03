@@ -72,6 +72,7 @@ export function ForgotPasswordForm() {
 
 			<AlertDialog
 				title={t("error")}
+				status="error"
 				description={errorMessage ?? ""}
 				open={Boolean(errorMessage)}
 				onOpenChange={(open) => {
@@ -85,6 +86,7 @@ export function ForgotPasswordForm() {
 
 			<AlertDialog
 				title={t("auth.forgot.successTitle")}
+				status="success"
 				description={t("auth.forgot.successMessage")}
 				open={showSuccess}
 				onOpenChange={(open) => {

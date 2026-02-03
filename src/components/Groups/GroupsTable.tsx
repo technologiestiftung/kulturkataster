@@ -44,7 +44,7 @@ export function GroupsTable() {
 				enableSorting: true,
 				cell: ({ row }) => {
 					const group = row.original;
-					return group.updated_at.toLocaleDateString();
+					return new Date(group.updated_at)?.toLocaleDateString();
 				},
 			},
 			{
@@ -53,7 +53,7 @@ export function GroupsTable() {
 				enableSorting: true,
 				cell: ({ row }) => {
 					const group = row.original;
-					return group.created_at.toLocaleDateString();
+					return new Date(group.created_at)?.toLocaleDateString();
 				},
 			},
 		],

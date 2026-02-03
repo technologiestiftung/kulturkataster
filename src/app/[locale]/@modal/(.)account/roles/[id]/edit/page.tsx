@@ -8,5 +8,13 @@ type PageProps = {
 
 export default async function EditRoleModal({ params }: PageProps) {
 	const { id } = await params;
-	return <RoleFormModal mode="edit" roleId={id} shouldRefresh={false} />;
+	return (
+		<RoleFormModal
+			mode="edit"
+			roleId={id}
+			shouldRefresh={false}
+			routePath={`/account/roles/${id}/edit`}
+			closeTo="/account/roles"
+		/>
+	);
 }

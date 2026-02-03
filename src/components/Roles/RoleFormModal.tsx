@@ -3,7 +3,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { DialogTitle } from "@/components/ui/dialog";
+import {
+	RoutedEditorModal,
+	useRoutedModalClose,
+} from "@/components/Modals/RoutedEditorModal";
 import { AlertDialog } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { FormWrapper } from "@/components/FormWrapper";
@@ -29,6 +33,8 @@ type RoleFormModalProps = {
 	mode: "create" | "edit";
 	roleId?: string;
 	shouldRefresh?: boolean;
+	routePath?: string;
+	closeTo?: string;
 };
 
 const INSTITUTION_FIELDS = INSTITUTION_PERMISSION_FIELDS;
@@ -458,8 +464,9 @@ export function RoleFormModal({
 	mode,
 	roleId,
 	shouldRefresh = true,
+	routePath,
+	closeTo,
 }: RoleFormModalProps) {
-	const router = useRouter();
 	const { t } = useTranslation(["content", "enumMap"]);
 	const roles = useAccountStore((state) => state.roles);
 	const setAlertDialog = useAccountStore((state) => state.setAlertDialog);
@@ -467,9 +474,7 @@ export function RoleFormModal({
 	const [isDeleting, setIsDeleting] = useState(false);
 	const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
-	const handleClose = () => {
-		router.back();
-	};
+	const handleClose = useRoutedModalClose({ closeTo });
 
 	const { numericRoleId, resolvedRole, isWaitingForRole, showNotFound } =
 		useResolvedRole(mode, roleId, roles);
@@ -528,56 +533,54 @@ export function RoleFormModal({
 	}
 
 	return (
-		<Dialog open>
-			<DialogContent variant="editor" showBackButton={false} className="p-0">
-				<div className="flex h-full flex-col">
-					<div className="px-6 py-8 md:px-10">
-						<DialogTitle className="title">
-							{getDialogTitle(mode, t)}
-						</DialogTitle>
-					</div>
-					<div className="flex-1 overflow-auto px-6 py-6 md:px-10">
-						{renderDialogBody(
-							isWaitingForRole,
-							t,
-							formConfig,
-							resolvedRole,
-							mode,
-							tableTargets,
-							actionLabels,
-							fieldSections,
-							isSystemRole,
-						)}
-					</div>
-					{mode === "edit" && resolvedRole && (
-						<div className="border-t border-neutral-20 px-6 py-4 md:px-10">
-							<div className="flex flex-wrap items-center justify-between gap-3">
-								<div>
-									<p className="body2 font-bold">
-										{t("roleFormModal.delete.title", {
-											defaultValue: "Delete role",
-										})}
-									</p>
-									<p className="body3 text-neutral-80">
-										{t("roleFormModal.delete.description", {
-											defaultValue: "This action permanently removes the role.",
-										})}
-									</p>
-								</div>
-								<Button
-									variant="destructive"
-									onClick={() => setShowDeleteDialog(true)}
-									disabled={isDeleting || submitting || isSystemRole}
-								>
-									{t("roleFormModal.delete.button", {
-										defaultValue: "Delete",
-									})}
-								</Button>
-							</div>
-						</div>
+		<RoutedEditorModal routePath={routePath} onClose={handleClose}>
+			<div className="flex h-full flex-col">
+				<div className="px-6 py-8 md:px-10">
+					<DialogTitle className="title">
+						{getDialogTitle(mode, t)}
+					</DialogTitle>
+				</div>
+				<div className="flex-1 overflow-auto px-6 py-6 md:px-10">
+					{renderDialogBody(
+						isWaitingForRole,
+						t,
+						formConfig,
+						resolvedRole,
+						mode,
+						tableTargets,
+						actionLabels,
+						fieldSections,
+						isSystemRole,
 					)}
 				</div>
-			</DialogContent>
+				{mode === "edit" && resolvedRole && (
+					<div className="border-t border-neutral-20 px-6 py-4 md:px-10">
+						<div className="flex flex-wrap items-center justify-between gap-3">
+							<div>
+								<p className="body2 font-bold">
+									{t("roleFormModal.delete.title", {
+										defaultValue: "Delete role",
+									})}
+								</p>
+								<p className="body3 text-neutral-80">
+									{t("roleFormModal.delete.description", {
+										defaultValue: "This action permanently removes the role.",
+									})}
+								</p>
+							</div>
+							<Button
+								variant="destructive"
+								onClick={() => setShowDeleteDialog(true)}
+								disabled={isDeleting || submitting || isSystemRole}
+							>
+								{t("roleFormModal.delete.button", {
+									defaultValue: "Delete",
+								})}
+							</Button>
+						</div>
+					</div>
+				)}
+			</div>
 			{showDeleteDialog && resolvedRole && (
 				<AlertDialog
 					open
@@ -623,6 +626,6 @@ export function RoleFormModal({
 					}}
 				/>
 			)}
-		</Dialog>
+		</RoutedEditorModal>
 	);
 }

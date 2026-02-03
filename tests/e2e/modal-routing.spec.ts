@@ -1,7 +1,8 @@
 import { test, expect } from "@playwright/test";
 
 const closeDialog = async (page: import("@playwright/test").Page) => {
-	await page.locator('[data-slot="dialog-close"]').first().click();
+	const dialog = page.locator('[data-slot="dialog-content"]:visible').first();
+	await dialog.locator('[data-slot="dialog-close"]').click();
 };
 
 test.describe("modal routing", () => {
