@@ -95,7 +95,9 @@ describe("AccountEditForm", () => {
 			{ target: { value: "Password123!" } },
 		);
 		fireEvent.change(
-			screen.getByPlaceholderText("auth.accountEdit.confirmPasswordPlaceholder"),
+			screen.getByPlaceholderText(
+				"auth.accountEdit.confirmPasswordPlaceholder",
+			),
 			{ target: { value: "Password123!" } },
 		);
 
@@ -123,7 +125,9 @@ describe("AccountEditForm", () => {
 			{ target: { value: "Password123!" } },
 		);
 		fireEvent.change(
-			screen.getByPlaceholderText("auth.accountEdit.confirmPasswordPlaceholder"),
+			screen.getByPlaceholderText(
+				"auth.accountEdit.confirmPasswordPlaceholder",
+			),
 			{ target: { value: "Password123" } },
 		);
 
@@ -132,7 +136,9 @@ describe("AccountEditForm", () => {
 		);
 
 		await waitFor(() => {
-			expect(screen.getByText("auth.validation.passwordMismatch")).toBeDefined();
+			expect(
+				screen.getByText("auth.validation.passwordMismatch"),
+			).toBeDefined();
 		});
 	});
 
