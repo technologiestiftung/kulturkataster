@@ -36,9 +36,9 @@ export function ListTopbar({
 			<div className="relative flex flex-1 justify-end">
 				<div
 					className={[
-						"relative flex-1 w-auto transition-all duration-200 ease-out origin-right",
+						"relative flex-1 w-full transition-all duration-200 ease-out origin-left",
 						isSearchOpen
-							? "w-full max-w-full opacity-100 scale-x-100"
+							? "max-w-full opacity-100 scale-x-100"
 							: "max-w-0 opacity-0 scale-x-0 pointer-events-none",
 					]
 						.filter(Boolean)
@@ -85,20 +85,22 @@ export function ListTopbar({
 					</div>
 				)}
 			</div>
-			<div className="flex items-center gap-2">
-				<ButtonWithTooltip
-					type="button"
-					variant="rounded"
-					size="icon-only"
-					tooltip={t("listView.filterButton")}
-					onClick={onOpenFilter}
-				>
-					<div className="flex items-center gap-2">
-						<FilterIcon className="size-4! stroke-foreground" />
-					</div>
-				</ButtonWithTooltip>
-				<Label className="font-normal">{t("listView.filterButton")}</Label>
-			</div>
+			{isSearchOpen ? null : (
+				<div className="flex items-center gap-2">
+					<ButtonWithTooltip
+						type="button"
+						variant="rounded"
+						size="icon-only"
+						tooltip={t("listView.filterButton")}
+						onClick={onOpenFilter}
+					>
+						<div className="flex items-center gap-2">
+							<FilterIcon className="size-4! stroke-foreground" />
+						</div>
+					</ButtonWithTooltip>
+					<Label className="font-normal">{t("listView.filterButton")}</Label>
+				</div>
+			)}
 		</div>
 	);
 }
