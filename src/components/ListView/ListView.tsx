@@ -32,6 +32,7 @@ const ListView: FC = () => {
 	);
 	const {
 		setFilters,
+		resetFilters,
 		filters,
 		categoryCounts,
 		subcategoryCounts,
@@ -191,7 +192,13 @@ const ListView: FC = () => {
 						</div>
 						<ListTopbar
 							query={searchQuery}
-							onQueryChange={setSearchQuery}
+							onQueryChange={(value) => {
+								const nextQuery = value ?? "";
+								if (nextQuery.trim()) {
+									resetFilters();
+								}
+								setSearchQuery(nextQuery);
+							}}
 							onOpenFilter={() => setIsFilterOpen(true)}
 						/>
 
