@@ -21,6 +21,9 @@ export async function generateMetadata({
 export default async function AccountEditPage({ params }: PageProps) {
 	await params;
 	const currentUser = await requireAuth();
+	if (!currentUser) {
+		throw new Error("Unauthenticated access to protected route.");
+	}
 	const user = await userRepo.findById(currentUser.id);
 
 	if (!currentUser.email || !user) {
