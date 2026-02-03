@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ResetPasswordForm } from "@/components/Auth/ResetPasswordForm";
+import { ResetPasswordModal } from "@/components/Modals/Pages/ResetPasswordModal";
 import { serverSideTranslation } from "@/i18n";
 
 type PageProps = {
@@ -17,9 +17,5 @@ export async function generateMetadata({
 }
 
 export default async function ResetPasswordPage() {
-	return (
-		<div className="flex flex-1 items-center justify-center py-12 px-4 w-full">
-			<ResetPasswordForm />
-		</div>
-	);
+	return <ResetPasswordModal routePath="/reset-password" closeTo="/" />;
 }

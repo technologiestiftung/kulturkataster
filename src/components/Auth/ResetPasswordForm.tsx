@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { setPasswordWithTokens } from "@/server/actions/auth";
 
@@ -32,7 +32,8 @@ export function ResetPasswordForm() {
 		if (!access || !refresh) {
 			setHasToken(false);
 			setIsReady(true);
-			return;
+
+			redirect("/");
 		}
 
 		setHasToken(true);

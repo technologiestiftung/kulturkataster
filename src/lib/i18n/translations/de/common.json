@@ -83,7 +83,7 @@
 			"submitting": "Wird gesendet...",
 			"subtitle": "Wir senden Ihnen einen Link zum Zurücksetzen Ihres Passworts.",
 			"successCta": "Zur Anmeldung",
-			"successMessage": "Bitte prüfen Sie Ihr E-Mail-Postfach. Wir haben Ihnen einen Link zum Zurücksetzen des Passworts gesendet.",
+			"successMessage": "Bitte prüfen Sie Ihr E-Mail-Postfach. Falls ein Account existiert, haben wir Ihnen einen Link zum Zurücksetzen des Passworts gesendet.",
 			"successTitle": "E-Mail gesendet",
 			"title": "Passwort vergessen"
 		},
