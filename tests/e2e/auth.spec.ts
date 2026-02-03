@@ -15,6 +15,21 @@ test.describe("auth", () => {
 		await expect(page).toHaveURL(/\/login\/?$/);
 	});
 
+	test("account subroutes redirect to login when logged out", async ({
+		page,
+	}) => {
+		await page.goto("/account/roles", { waitUntil: "domcontentloaded" });
+		await expect(page).toHaveURL(/\/login\/?$/);
+	});
+
+	test("can switch between login and register", async ({ page }) => {
+		await page.goto("/login", { waitUntil: "domcontentloaded" });
+		await page.locator('a[href="/register"]').click();
+		await expect(page).toHaveURL(/\/register\/?$/);
+		await page.locator('a[href="/login"]').click();
+		await expect(page).toHaveURL(/\/login\/?$/);
+	});
+
 	test("login redirects to account", async ({ page }) => {
 		test.skip(!hasRealUserCredentials, "E2E user credentials not set");
 		await page.goto("/login", { waitUntil: "domcontentloaded" });
