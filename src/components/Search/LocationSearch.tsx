@@ -199,7 +199,7 @@ export function LocationSearch({
 				query={query}
 				className="order-last"
 			/> */}
-			<div className="mb-8 flex w-full items-center gap-2  flex-row">
+			<div className="mb-8 flex w-full items-center gap-2  flex-row pointer-events-auto">
 				<SearchInput
 					ref={inputRef}
 					placeholder={t("search.hint")}

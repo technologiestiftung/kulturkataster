@@ -12,6 +12,7 @@ import { Barlow } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { StoreInitializer } from "@/components/StoreInitializer";
+import { ViewModeToggle } from "@/components/Menu/ViewModeToggle";
 
 // Initialize axe-core for accessibility testing in development
 // Commented out until @axe-core/react is installed
@@ -132,7 +133,7 @@ export default async function RootLayout({
 								</SidebarInset>
 							</div>
 						</SidebarProvider>
-
+						<ViewModeToggle />
 						<Footer ariaLabel={footerLabel} />
 					</div>
 					{modal}

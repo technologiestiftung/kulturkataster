@@ -42,7 +42,7 @@ const menuItems: MenuItem[] = [
 		icon: MapIcon,
 		label: "map.title",
 		route: "/map",
-		showInMobile: false,
+		showInMobile: true,
 		showInAccount: true,
 		showInMap: true,
 	},
@@ -51,7 +51,7 @@ const menuItems: MenuItem[] = [
 		icon: ListIcon,
 		label: "listView.title",
 		route: "/list",
-		showInMobile: false,
+		showInMobile: true,
 		showInAccount: true,
 		showInMap: true,
 	},
@@ -282,18 +282,6 @@ export function Menu({
 					)}
 				</Sidebar>
 			</nav>
-			<div className="absolute md:hidden block z-[50] top-0 left-0">
-				<button
-					onClick={handleLogoClick}
-					className="flex flex-col items-center gap-1 p-2 "
-					aria-label={t("kukaLogo")}
-				>
-					<KukaSmallLogo
-						title="Kulturkataster Berlin, Logo"
-						className="size-14"
-					/>
-				</button>
-			</div>
 
 			<div className="fixed bottom-0 left-0 right-0 z-[60] bg-sidebar border-t md:hidden h-20 pointer-events-auto">
 				<SidebarMenu className="flex-row justify-around px-2 py-3">
