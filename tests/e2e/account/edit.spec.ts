@@ -13,7 +13,9 @@ const login = async (page: import("@playwright/test").Page) => {
 	test.skip(!hasRealUserCredentials, "E2E credentials not set");
 	await page.goto("/login", { waitUntil: "domcontentloaded" });
 	await page.getByLabel("E-Mail").fill(email as string);
-	await page.getByRole("textbox", { name: /^Passwort/ }).fill(password as string);
+	await page
+		.getByRole("textbox", { name: /^Passwort/ })
+		.fill(password as string);
 	await page.getByRole("button", { name: "Anmelden" }).click();
 	await expect(page).toHaveURL(/\/account(\/.*)?$/);
 };
