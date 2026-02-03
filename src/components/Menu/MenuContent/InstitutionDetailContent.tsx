@@ -237,16 +237,6 @@ export function InstitutionDetailContent() {
 	}, [institutionData, map]);
 
 	const handleClose = () => {
-		const canGoBack =
-			typeof window !== "undefined" &&
-			window.history.state?.idx !== undefined &&
-			window.history.state.idx > 0;
-
-		if (canGoBack) {
-			router.back();
-			return;
-		}
-
 		router.push("/map");
 	};
 
