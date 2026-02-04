@@ -1,9 +1,4 @@
 import { NextResponse, type NextRequest } from "next/server";
-import {
-	createServerClient,
-	type CookieMethodsServer,
-	type CookieOptions,
-} from "@supabase/ssr";
 import { i18nConfig } from "@/i18n";
 
 export default async function proxy(req: NextRequest) {
@@ -30,85 +25,13 @@ export default async function proxy(req: NextRequest) {
 			})()
 		: null;
 
-	const cookiesToSet: {
-		name: string;
-		value: string;
-		options: CookieOptions;
-	}[] = [];
-
-	const applyCookies = (response: NextResponse) => {
-		cookiesToSet.forEach(({ name, value, options }) => {
-			response.cookies.set(name, value, options);
-		});
-	};
-
-	const cookieMethods = {
-		getAll() {
-			return req.cookies.getAll().map((cookie) => ({
-				name: cookie.name,
-				value: cookie.value,
-			}));
-		},
-		setAll(
-			nextCookies: {
-				name: string;
-				value: string;
-				options: CookieOptions;
-			}[],
-		) {
-			nextCookies.forEach(({ name, value, options }) => {
-				cookiesToSet.push({ name, value, options });
-			});
-		},
-		removeAll() {
-			req.cookies.getAll().forEach((cookie) => {
-				cookiesToSet.push({
-					name: cookie.name,
-					value: "",
-					options: { maxAge: 0 },
-				});
-			});
-		},
-	} satisfies CookieMethodsServer & {
-		removeAll: () => void;
-	};
-
-	const supabase = createServerClient(
-		process.env.SUPABASE_URL ?? "",
-		process.env.SUPABASE_ANON_KEY ?? "",
-		{
-			cookies: cookieMethods,
-		},
-	);
-
-	let user: { id: string } | null = null;
-	const hasSupabaseCookie = req.cookies
+	const hasSession = req.cookies
 		.getAll()
-		.some((cookie) => cookie.name.startsWith("sb-"));
-	const hasSupabaseEnv =
-		Boolean(process.env.SUPABASE_URL) && Boolean(process.env.SUPABASE_ANON_KEY);
-	if (hasSupabaseCookie) {
-		try {
-			if (!hasSupabaseEnv) {
-				throw new Error("Missing SUPABASE_URL or SUPABASE_ANON_KEY.");
-			}
-
-			const getUserPromise = supabase.auth.getUser();
-			const timeoutPromise = new Promise<never>((_, reject) => {
-				setTimeout(() => {
-					reject(new Error("Supabase auth getUser timeout"));
-				}, 1200);
-			});
-			const {
-				data: { user: fetchedUser },
-			} = await Promise.race([getUserPromise, timeoutPromise]);
-			user = fetchedUser ?? null;
-		} catch (error) {
-			if (process.env.NODE_ENV !== "production") {
-				console.warn("Supabase auth refresh failed in middleware:", error);
-			}
-		}
-	}
+		.some((cookie) => cookie.name.includes("sb-") && cookie.value.length > 0);
+	const accessToken = getAccessTokenFromCookies(req.cookies.getAll());
+	const isSessionValid = accessToken
+		? isJwtNotExpired(accessToken)
+		: hasSession;
 
 	const isAccountBasePath =
 		cleanedPathname === "/account" ||
@@ -126,24 +49,61 @@ export default async function proxy(req: NextRequest) {
 		cleanedPathname.endsWith("/login") ||
 		cleanedPathname.match(/^\/[a-z]{2}\/login$/);
 
-	if (isAccountRoute && !user) {
+	if (isAccountRoute && !isSessionValid) {
 		const url = req.nextUrl.clone();
 		url.pathname = "/login";
 		return NextResponse.redirect(url);
 	}
 
-	if (isLoginRoute && user) {
+	if (isLoginRoute && isSessionValid) {
 		const url = req.nextUrl.clone();
 		url.pathname = "/account/activity";
 		return NextResponse.redirect(url);
 	}
 
-	const res = needsLocaleRewrite
-		? NextResponse.rewrite(rewriteUrl!)
-		: NextResponse.next();
-	applyCookies(res);
-	return res;
+	return needsLocaleRewrite ? NextResponse.rewrite(rewriteUrl!) : NextResponse.next();
 }
+
+const getAccessTokenFromCookies = (
+	cookies: { name: string; value: string }[],
+) => {
+	const accessTokenCookie = cookies.find((cookie) =>
+		cookie.name.includes("access-token"),
+	);
+	if (accessTokenCookie?.value) return accessTokenCookie.value;
+
+	const authTokenCookie = cookies.find((cookie) =>
+		cookie.name.includes("auth-token"),
+	);
+	if (authTokenCookie?.value) {
+		const maybeJson = authTokenCookie.value;
+		try {
+			const parsed = JSON.parse(maybeJson);
+			if (parsed?.access_token) return String(parsed.access_token);
+		} catch {
+			if (isJwtLike(maybeJson)) return maybeJson;
+		}
+	}
+
+	const fallbackJwt = cookies.find(
+		(cookie) => cookie.name.includes("sb-") && isJwtLike(cookie.value),
+	);
+	return fallbackJwt?.value ?? null;
+};
+
+const isJwtLike = (value: string) => value.split(".").length === 3;
+
+const isJwtNotExpired = (token: string) => {
+	try {
+		const payload = token.split(".")[1];
+		const normalized = payload.replace(/-/g, "+").replace(/_/g, "/");
+		const decoded = JSON.parse(atob(normalized));
+		if (typeof decoded?.exp !== "number") return true;
+		return decoded.exp * 1000 > Date.now();
+	} catch {
+		return true;
+	}
+};
 
 export const config = {
 	matcher: [
