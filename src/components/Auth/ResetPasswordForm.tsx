@@ -1,17 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { setPasswordWithTokens } from "@/server/actions/auth";
+import { FormWrapper } from "@/components/FormWrapper";
+import type { FormWrapperConfig } from "@/components/FormWrapper";
+import { AlertDialog } from "@/components/ui/alert-dialog";
 
 export function ResetPasswordForm() {
-	const [password, setPassword] = useState("");
-	const [confirmPassword, setConfirmPassword] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 	const [isReady, setIsReady] = useState(false);
@@ -32,24 +30,17 @@ export function ResetPasswordForm() {
 		if (!access || !refresh) {
 			setHasToken(false);
 			setIsReady(true);
-
-			redirect("/");
 		}
 
 		setHasToken(true);
 		setAccessToken(access);
 		setRefreshToken(refresh);
 
-		window.history.replaceState(
-			{},
-			document.title,
-			window.location.pathname + window.location.search,
-		);
 		setIsReady(true);
 	}, []);
 
-	const handleSubmit = async (e: React.FormEvent) => {
-		e.preventDefault();
+	const handleSubmit = async (data: Record<string, unknown>) => {
+		if (isLoading) return;
 		setIsLoading(true);
 		setErrorMessage(null);
 
@@ -59,6 +50,8 @@ export function ResetPasswordForm() {
 				return;
 			}
 
+			const password = String(data.password ?? "");
+			const confirmPassword = String(data.confirmPassword ?? "");
 			if (password !== confirmPassword) {
 				setErrorMessage(t("auth.validation.passwordMismatch"));
 				return;
@@ -74,7 +67,7 @@ export function ResetPasswordForm() {
 				return;
 			}
 
-			const accountPath = "/account";
+			const accountPath = "/login";
 			router.replace(accountPath);
 		} catch {
 			setErrorMessage(t("auth.reset.errorFallback"));
@@ -83,6 +76,43 @@ export function ResetPasswordForm() {
 		}
 	};
 
+	const formConfig: FormWrapperConfig = useMemo(
+		() => ({
+			onSubmit: handleSubmit,
+			submitLabel: isLoading
+				? t("auth.reset.submitting")
+				: t("auth.reset.submit"),
+			submitDisabled: isLoading || !isReady || !hasToken,
+			layout: { columns: 1 },
+			fields: [
+				{
+					name: "section",
+					type: "section",
+					cardVariant: "secondary",
+					fields: [
+						{
+							name: "password",
+							label: t("auth.reset.newPasswordLabel"),
+							type: "password",
+							placeholder: t("auth.reset.newPasswordPlaceholder"),
+							required: true,
+							disabled: isLoading || !isReady || !hasToken,
+						},
+						{
+							name: "confirmPassword",
+							label: t("auth.reset.confirmPasswordLabel"),
+							type: "password",
+							placeholder: t("auth.reset.confirmPasswordPlaceholder"),
+							required: true,
+							disabled: isLoading || !isReady || !hasToken,
+						},
+					],
+				},
+			],
+		}),
+		[handleSubmit, hasToken, isLoading, isReady, t],
+	);
+
 	return (
 		<div className="w-full max-w-2xl mx-auto space-y-6">
 			<div className="text-start font-bold">
@@ -90,57 +120,19 @@ export function ResetPasswordForm() {
 				<p className="">{t("auth.reset.subtitle")}</p>
 			</div>
 
-			<form onSubmit={handleSubmit} className="space-y-4">
-				{errorMessage && (
-					<p className="body3 text-destructive">{errorMessage}</p>
-				)}
+			<AlertDialog
+				title={t("alert.errorInput")}
+				status="error"
+				description={errorMessage ?? ""}
+				open={Boolean(errorMessage)}
+				onOpenChange={(open) => {
+					if (!open) setErrorMessage(null);
+				}}
+				confirmLabel={t("close")}
+				onConfirm={() => setErrorMessage(null)}
+			/>
 
-				{!isReady ? (
-					<p className="body3 text-foreground">{t("auth.reset.loading")}</p>
-				) : (
-					<>
-						{!hasToken && (
-							<p className="body3 text-foreground">
-								{t("auth.reset.missingToken")}
-							</p>
-						)}
-
-						<div className="space-y-2">
-							<Label htmlFor="password" required>
-								{t("auth.reset.newPasswordLabel")}
-							</Label>
-							<Input
-								id="password"
-								type="password"
-								placeholder={t("auth.reset.newPasswordPlaceholder")}
-								value={password}
-								onChange={(e) => setPassword(e.target.value)}
-								required
-								disabled={isLoading}
-							/>
-						</div>
-
-						<div className="space-y-2">
-							<Label htmlFor="confirmPassword" required>
-								{t("auth.reset.confirmPasswordLabel")}
-							</Label>
-							<Input
-								id="confirmPassword"
-								type="password"
-								placeholder={t("auth.reset.confirmPasswordPlaceholder")}
-								value={confirmPassword}
-								onChange={(e) => setConfirmPassword(e.target.value)}
-								required
-								disabled={isLoading}
-							/>
-						</div>
-					</>
-				)}
-
-				<Button type="submit" className="w-full" disabled={isLoading}>
-					{isLoading ? t("auth.reset.submitting") : t("auth.reset.submit")}
-				</Button>
-			</form>
+			<FormWrapper config={formConfig} />
 
 			<div className="flex flex-col items-center text-center">
 				<Link href="/login" className="text-primary-dark underline ">
