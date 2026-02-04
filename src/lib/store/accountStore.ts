@@ -9,6 +9,7 @@ export const useAccountStore = create<AccountStoreState>()(
 	persist(
 		devtools(
 			immer((set) => ({
+				currentProfile: null,
 				users: [],
 				groups: [],
 				roles: [],
@@ -19,6 +20,10 @@ export const useAccountStore = create<AccountStoreState>()(
 				selectedGroupId: null,
 				selectedRoleId: null,
 				alertDialog: null,
+				setCurrentProfile: (profile) =>
+					set((state) => {
+						state.currentProfile = profile;
+					}),
 				setUsers: (users) =>
 					set((state) => {
 						state.users = users;

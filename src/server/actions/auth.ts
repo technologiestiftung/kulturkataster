@@ -3,6 +3,52 @@
 import { createAnonClient, createClient } from "@/server/supabase/server";
 import { prisma } from "@/server/prisma";
 
+export async function getCurrentUser() {
+	const supabase = await createClient();
+	const {
+		data: { user },
+		error,
+	} = await supabase.auth.getUser();
+
+	if (error || !user) return null;
+	return user;
+}
+
+export async function getAuthUserWithDbUser() {
+	const supabase = await createClient();
+	const {
+		data: { user },
+		error,
+	} = await supabase.auth.getUser();
+
+	if (error || !user) {
+		return { supabase, user: null, profile: null };
+	}
+
+	const profile = await prisma.user.findUnique({
+		where: { id: user.id },
+	});
+
+	return { supabase, user, profile };
+}
+
+export async function getCurrentUserId() {
+	const user = await getCurrentUser();
+	return user?.id ?? null;
+}
+
+export async function requireAuth() {
+	const { supabase, user, profile } = await getAuthUserWithDbUser();
+	if (!user) return null;
+
+	if (!profile || profile.status !== "active") {
+		await supabase.auth.signOut();
+		return null;
+	}
+
+	return user;
+}
+
 export async function loginWithEmailPassword(email: string, password: string) {
 	const supabase = await createClient();
 	const { data, error } = await supabase.auth.signInWithPassword({
@@ -20,12 +66,8 @@ export async function loginWithEmailPassword(email: string, password: string) {
 		return { ok: false, error: "missing_user" };
 	}
 
-	const dbUser = await prisma.user.findUnique({
-		where: { id: userId },
-		select: { status: true },
-	});
-
-	if (!dbUser || dbUser.status !== "active") {
+	const { profile } = await getAuthUserWithDbUser();
+	if (!profile || profile.id !== userId || profile.status !== "active") {
 		await supabase.auth.signOut();
 		return { ok: false, error: "inactive" };
 	}

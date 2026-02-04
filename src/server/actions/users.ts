@@ -6,7 +6,7 @@ import {
 	getTableScope,
 	requireAllScope,
 } from "@/server/utils/rbac";
-import { getCurrentUserId } from "@/server/auth/getCurrentUser";
+import { getCurrentUserId } from "@/server/actions/auth";
 import { userRepo } from "@/server/data/userRepo";
 import { createAdminClient, createClient } from "@/server/supabase/server";
 import type { UserFormInput } from "@/types/user";

@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { updateInstitution } from "@/server/actions/institutions";
 
-vi.mock("@/server/auth/getCurrentUser", () => ({
+vi.mock("@/server/actions/auth", () => ({
 	getCurrentUserId: vi.fn().mockResolvedValue("user-1"),
 }));
 

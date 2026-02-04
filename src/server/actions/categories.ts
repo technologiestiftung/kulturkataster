@@ -6,7 +6,7 @@ import {
 	getAccessContextForUser,
 	requireAllScope,
 } from "@/server/utils/rbac";
-import { getCurrentUserId } from "@/server/auth/getCurrentUser";
+import { getCurrentUserId } from "@/server/actions/auth";
 import { CategoryStatus } from "@/generated/prisma";
 import type { Category } from "@/types";
 
