@@ -16,7 +16,11 @@ export function LoginForm() {
 	const { t } = useTranslation("common");
 
 	const navigateToAccount = () => {
-		const accountPath = `/account`;
+		const accountPath = "/account";
+		if (typeof window !== "undefined") {
+			window.location.assign(accountPath);
+			return;
+		}
 		router.replace(accountPath);
 	};
 

@@ -1,9 +1,9 @@
-import { requireAuth } from "@/server/actions/auth";
+import { getCurrentUser } from "@/server/actions/auth";
 import { userRepo } from "@/server/data/userRepo";
 import { AccountEditModal } from "@/components/Modals/Pages/AccountEditModal";
 
 export default async function AccountEditModalPage() {
-	const currentUser = await requireAuth();
+	const currentUser = await getCurrentUser();
 	if (!currentUser) {
 		throw new Error("Unauthenticated access to protected route.");
 	}
