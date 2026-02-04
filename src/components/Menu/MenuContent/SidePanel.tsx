@@ -70,7 +70,6 @@ export function SidePanel({
 						></Filter>
 					</div>
 				</div>
-				<div className="relative block size-14 md:invisible"></div>
 			</div>
 		</div>
 	);

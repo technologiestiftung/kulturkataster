@@ -22,12 +22,14 @@ type InstitutionDraftEditModalProps = {
 	returnTo?: string;
 	submissionId?: number;
 	shouldRefresh?: boolean;
+	routePath?: string;
 };
 
 export function InstitutionDraftEditModal({
 	returnTo,
 	submissionId,
 	shouldRefresh = true,
+	routePath,
 }: InstitutionDraftEditModalProps) {
 	const { t } = useTranslation("content");
 	const allSubmissions = useAccountStore((state) => state.submissions);
@@ -209,6 +211,7 @@ export function InstitutionDraftEditModal({
 		<InstitutionFormModal
 			mode="create"
 			returnTo={returnTo}
+			routePath={routePath}
 			formKey={`draft-${submissionId ?? "new"}-${
 				resolvedSubmissionWithFallback ? "loaded" : "loading"
 			}`}

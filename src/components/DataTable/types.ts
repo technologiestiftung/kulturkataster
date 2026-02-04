@@ -31,6 +31,9 @@ export interface DataTableConfig<T> {
 	};
 
 	onEdit?: (row: T) => void;
+	onReview?: (row: T) => void;
+	getCanReview?: (row: T) => boolean;
+	reviewAriaLabel?: string;
 	rowActions?: (row: T) => React.ReactNode;
 	actionsColumnSize?: number;
 

@@ -22,12 +22,14 @@ type InstitutionDraftReviewModalProps = {
 	submissionId?: number;
 	returnTo?: string;
 	editBasePath?: string;
+	routePath?: string;
 };
 
 export function InstitutionDraftReviewModal({
 	submissionId,
 	returnTo,
 	editBasePath = "/account/submissions",
+	routePath,
 }: InstitutionDraftReviewModalProps) {
 	const { t } = useTranslation("content");
 	const router = useRouter();
@@ -230,6 +232,7 @@ export function InstitutionDraftReviewModal({
 			title={t("institutionFormModal.review.title")}
 			variant="fullscreen"
 			closeTo={returnTo}
+			routePath={routePath}
 			content={
 				<div className="space-y-6">
 					<InstitutionReview

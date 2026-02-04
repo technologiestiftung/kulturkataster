@@ -36,6 +36,7 @@ import { cn } from "@/lib/utils";
 import ChevronUp from "@/icons/chevron-up.svg";
 import ChevronDown from "@/icons/chevron-down.svg";
 import Edit from "@/icons/edit.svg";
+import Eye from "@/icons/eye.svg";
 import ArrowNarrowLeft from "@/icons/arrow-narrow-left.svg";
 import ArrowNarrowRight from "@/icons/arrow-narrow-right.svg";
 import { useWindowVirtualizer } from "@tanstack/react-virtual";
@@ -69,7 +70,9 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 	const headerCellRefs = useRef<Record<string, HTMLTableCellElement | null>>(
 		{},
 	);
-	const hasActions = Boolean(config.onEdit || config.rowActions);
+	const hasActions = Boolean(
+		config.onEdit || config.onReview || config.rowActions,
+	);
 	const hasExpandedRow = Boolean(config.renderExpandedRow);
 
 	const actionsColumnId = "__actions__";
@@ -875,6 +878,26 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 																		>
 																			<div className="flex flex-wrap justify-center gap-2">
 																				{content}
+																				{config.onReview &&
+																				(config.getCanReview?.(row.original) ?? true) ? (
+																					<Button
+																						size="icon"
+																						variant="ghost"
+																						onClick={(event) => {
+																							event.stopPropagation();
+																							config.onReview?.(
+																								row.original,
+																							);
+																						}}
+																						className="h-8 w-8 rounded-full border bg-background border-neutral-20 hover:bg-neutral-5"
+																						aria-label={
+																							config.reviewAriaLabel ??
+																							"Review"
+																						}
+																					>
+																						<Eye className="h-5 w-5 text-neutral-80" />
+																					</Button>
+																				) : null}
 																				{config.onEdit ? (
 																					<Button
 																						size="icon"
