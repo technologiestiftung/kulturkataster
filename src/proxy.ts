@@ -61,7 +61,9 @@ export default async function proxy(req: NextRequest) {
 		return NextResponse.redirect(url);
 	}
 
-	return needsLocaleRewrite ? NextResponse.rewrite(rewriteUrl!) : NextResponse.next();
+	return needsLocaleRewrite
+		? NextResponse.rewrite(rewriteUrl!)
+		: NextResponse.next();
 }
 
 const getAccessTokenFromCookies = (
