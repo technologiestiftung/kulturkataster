@@ -5,7 +5,7 @@ import { getCategories } from "@/server/actions/categories";
 import { getUsers } from "@/server/actions/users";
 import { getGroups } from "@/server/actions/groups";
 import { getRoles } from "@/server/actions/roles";
-import { requireAuth } from "@/server/auth/getCurrentUser";
+import { getAuthUserWithDbUser } from "@/server/actions/auth";
 import { getMyInstitutions } from "@/server/actions/institutions";
 import { getSubmissions } from "@/server/actions/submissions";
 import {
@@ -21,20 +21,20 @@ type AccountLayoutProps = {
 };
 
 export default async function AccountLayout({ children }: AccountLayoutProps) {
-	const currentUser = await requireAuth();
+	const currentUser = await getAuthUserWithDbUser();
 	if (!currentUser) {
 		throw new Error("Unauthenticated access to protected route.");
 	}
-	if (!currentUser.email) {
+	if (!currentUser.user?.email) {
 		throw new Error("Authenticated user is missing an email.");
 	}
 
 	await userRepo.ensureUser({
-		id: currentUser.id,
-		email: currentUser.email,
+		id: currentUser.user.id,
+		email: currentUser.user.email,
 	});
 
-	const ctx = await getAccessContextForUser(currentUser.id);
+	const ctx = await getAccessContextForUser(currentUser.user.id);
 
 	const [users, groups, roles, categories, institutions, submissions] =
 		await Promise.all([
@@ -72,6 +72,7 @@ export default async function AccountLayout({ children }: AccountLayoutProps) {
 	return (
 		<>
 			<AccountStoreInitializer
+				currentProfile={currentUser.profile}
 				users={users}
 				groups={groups}
 				roles={roles}
@@ -79,7 +80,10 @@ export default async function AccountLayout({ children }: AccountLayoutProps) {
 				institutions={institutions}
 				submissions={submissions}
 			/>
-			<AccountLayoutClient allowedTabs={allowedTabs} user={currentUser}>
+			<AccountLayoutClient
+				allowedTabs={allowedTabs}
+				currentProfile={currentUser.profile}
+			>
 				{children}
 			</AccountLayoutClient>
 		</>

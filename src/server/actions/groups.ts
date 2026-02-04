@@ -5,7 +5,7 @@ import {
 	getAccessContextForUser,
 	requireAllScope,
 } from "@/server/utils/rbac";
-import { getCurrentUserId } from "@/server/auth/getCurrentUser";
+import { getCurrentUserId } from "@/server/actions/auth";
 import { groupRepo } from "@/server/data/groupRepo";
 import { revalidateAccount } from "../utils/actionsUtils";
 

@@ -6,7 +6,7 @@ import {
 	SubmissionStatus,
 	SubmissionType,
 } from "@/generated/prisma";
-import { getCurrentUserId } from "@/server/auth/getCurrentUser";
+import { getCurrentUserId } from "@/server/actions/auth";
 import { submissionRepo } from "@/server/data/submissionRepo";
 import {
 	authorizeTable,

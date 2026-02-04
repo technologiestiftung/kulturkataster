@@ -1,4 +1,4 @@
-import { requireAuth } from "@/server/auth/getCurrentUser";
+import { requireAuth } from "@/server/actions/auth";
 import { userRepo } from "@/server/data/userRepo";
 import { AccountEditModal } from "@/components/Modals/Pages/AccountEditModal";
 

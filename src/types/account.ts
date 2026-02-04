@@ -1,4 +1,4 @@
-import type { User } from "@/types/user";
+import type { Profile, User } from "@/types/user";
 import type { Group } from "@/types/group";
 import type { Role } from "@/types/role";
 import type { Institution } from "@/types/institution";
@@ -6,6 +6,7 @@ import type { Category } from "@/types/category";
 import type { Submission } from "@/types/submission";
 
 export type AccountStoreState = {
+	currentProfile: Profile | null;
 	users: User[];
 	groups: Group[];
 	roles: Role[];
@@ -16,6 +17,7 @@ export type AccountStoreState = {
 	selectedGroupId: number | null;
 	selectedRoleId: number | null;
 	alertDialog: { title: string; description: string } | null;
+	setCurrentProfile: (profile: Profile | null) => void;
 	setUsers: (users: User[]) => void;
 	setGroups: (groups: Group[]) => void;
 	setRoles: (roles: Role[]) => void;

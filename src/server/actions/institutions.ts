@@ -7,7 +7,7 @@ import {
 	getAccessContextForUser,
 	getTableScope,
 } from "@/server/utils/rbac";
-import { getCurrentUserId } from "@/server/auth/getCurrentUser";
+import { getCurrentUserId } from "@/server/actions/auth";
 import { institutionRepo } from "@/server/data/institutionRepo";
 import { buildInstitutionSearchWhere } from "@/server/logic/institutionSearch";
 import { buildInstitutionSelect } from "@/server/logic/institutionSelect";

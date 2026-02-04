@@ -85,11 +85,23 @@ export default async function proxy(req: NextRequest) {
 	const hasSupabaseCookie = req.cookies
 		.getAll()
 		.some((cookie) => cookie.name.startsWith("sb-"));
+	const hasSupabaseEnv =
+		Boolean(process.env.SUPABASE_URL) && Boolean(process.env.SUPABASE_ANON_KEY);
 	if (hasSupabaseCookie) {
 		try {
+			if (!hasSupabaseEnv) {
+				throw new Error("Missing SUPABASE_URL or SUPABASE_ANON_KEY.");
+			}
+
+			const getUserPromise = supabase.auth.getUser();
+			const timeoutPromise = new Promise<never>((_, reject) => {
+				setTimeout(() => {
+					reject(new Error("Supabase auth getUser timeout"));
+				}, 1200);
+			});
 			const {
 				data: { user: fetchedUser },
-			} = await supabase.auth.getUser();
+			} = await Promise.race([getUserPromise, timeoutPromise]);
 			user = fetchedUser ?? null;
 		} catch (error) {
 			if (process.env.NODE_ENV !== "production") {
