@@ -84,7 +84,10 @@ describe("requireAuth", () => {
 		mockedCreateClient.mockResolvedValue({
 			auth: { getUser, signOut },
 		} as never);
-		mockedFindUnique.mockResolvedValue({ id: "user-1", status: "inactive" } as never);
+		mockedFindUnique.mockResolvedValue({
+			id: "user-1",
+			status: "inactive",
+		} as never);
 
 		const result = await requireAuth();
 
@@ -100,7 +103,10 @@ describe("requireAuth", () => {
 		mockedCreateClient.mockResolvedValue({
 			auth: { getUser },
 		} as never);
-		mockedFindUnique.mockResolvedValue({ id: "user-1", status: "active" } as never);
+		mockedFindUnique.mockResolvedValue({
+			id: "user-1",
+			status: "active",
+		} as never);
 
 		const result = await requireAuth();
 
@@ -133,7 +139,10 @@ describe("getAuthUserWithDbUser", () => {
 			error: null,
 		});
 		mockedCreateClient.mockResolvedValue({ auth: { getUser } } as never);
-		mockedFindUnique.mockResolvedValue({ id: "user-1", status: "active" } as never);
+		mockedFindUnique.mockResolvedValue({
+			id: "user-1",
+			status: "active",
+		} as never);
 
 		const result = await getAuthUserWithDbUser();
 

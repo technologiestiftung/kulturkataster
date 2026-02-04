@@ -122,12 +122,15 @@ describe("loginWithEmailPassword", () => {
 		});
 		mockedCreateClient
 			.mockResolvedValueOnce({
-			auth: { signInWithPassword, signOut },
-		} as never)
+				auth: { signInWithPassword, signOut },
+			} as never)
 			.mockResolvedValueOnce({
 				auth: { getUser },
 			} as never);
-		mockedFindUnique.mockResolvedValue({ id: "user-1", status: "inactive" } as never);
+		mockedFindUnique.mockResolvedValue({
+			id: "user-1",
+			status: "inactive",
+		} as never);
 
 		const result = await loginWithEmailPassword("test@example.com", "ok");
 
@@ -147,12 +150,15 @@ describe("loginWithEmailPassword", () => {
 		});
 		mockedCreateClient
 			.mockResolvedValueOnce({
-			auth: { signInWithPassword, signOut },
-		} as never)
+				auth: { signInWithPassword, signOut },
+			} as never)
 			.mockResolvedValueOnce({
 				auth: { getUser },
 			} as never);
-		mockedFindUnique.mockResolvedValue({ id: "user-1", status: "active" } as never);
+		mockedFindUnique.mockResolvedValue({
+			id: "user-1",
+			status: "active",
+		} as never);
 
 		const result = await loginWithEmailPassword("test@example.com", "ok");
 
