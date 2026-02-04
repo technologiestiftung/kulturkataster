@@ -13,7 +13,7 @@ export function DownloadModal({ routePath }: { routePath?: string }) {
 			<span>{t("downloadModal.description1", { ns: "content" })}</span>
 			<span>{t("downloadModal.description2", { ns: "content" })}</span>
 			<div className="flex items-center space-x-2">
-				<ArrowNarrowRight />
+				<ArrowNarrowRight className="h-4 w-4 text-gray-500" />
 				<TextWithLinks text={t("downloadModal.link", { ns: "content" })} />
 			</div>
 		</div>
