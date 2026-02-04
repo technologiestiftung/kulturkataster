@@ -89,7 +89,6 @@ export function AccountLayoutClient({
 							size="icon-only"
 							className="h-14 w-14"
 							aria-label="Edit Profile"
-							c
 							onClick={() => router.push("/account/edit")}
 						>
 							<Setting />

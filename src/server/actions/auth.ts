@@ -14,7 +14,7 @@ export async function getCurrentUser() {
 	return user;
 }
 
-export async function getAuthUserWithDbUser() {
+export async function getAuthUserWithProfile() {
 	const supabase = await createClient();
 	const {
 		data: { user },
@@ -38,7 +38,7 @@ export async function getCurrentUserId() {
 }
 
 export async function requireAuth() {
-	const { supabase, user, profile } = await getAuthUserWithDbUser();
+	const { supabase, user, profile } = await getAuthUserWithProfile();
 	if (!user) return null;
 
 	if (!profile || profile.status !== "active") {
@@ -66,7 +66,7 @@ export async function loginWithEmailPassword(email: string, password: string) {
 		return { ok: false, error: "missing_user" };
 	}
 
-	const { profile } = await getAuthUserWithDbUser();
+	const { profile } = await getAuthUserWithProfile();
 	if (!profile || profile.id !== userId || profile.status !== "active") {
 		await supabase.auth.signOut();
 		return { ok: false, error: "inactive" };
