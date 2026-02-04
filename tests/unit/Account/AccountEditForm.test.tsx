@@ -21,6 +21,12 @@ vi.mock("next/navigation", () => ({
 	}),
 }));
 
+vi.mock("idb-keyval", () => ({
+	get: vi.fn(),
+	set: vi.fn(),
+	del: vi.fn(),
+}));
+
 vi.mock("@/server/actions/users", () => ({
 	updateUser: vi.fn(),
 	removeUser: vi.fn(),
