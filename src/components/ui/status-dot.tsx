@@ -14,7 +14,7 @@ const statusDotVariants = cva("rounded-full", {
 		tone: {
 			success: "bg-brand-default",
 			info: "bg-input",
-			warning: "bg-alert",
+			warning: "bg-input",
 			error: "bg-alert",
 			neutral: "bg-black",
 		},

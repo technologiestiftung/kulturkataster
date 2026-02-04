@@ -14,6 +14,7 @@ export default async function InstitutionDraftEditModalPage({
 			submissionId={Number.isFinite(parsedId) ? parsedId : undefined}
 			returnTo="/account/institutions"
 			shouldRefresh={false}
+			routePath={`/account/submissions/${id}/edit`}
 		/>
 	);
 }

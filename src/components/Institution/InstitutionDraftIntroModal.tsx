@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
 import { Modal } from "@/components/Modals/Modal";
 import { useInstitutionDraftStore } from "@/lib/store/institutionDraftStore";
 
@@ -90,12 +89,9 @@ export function InstitutionDraftIntroModal({
 										className="bg-background border-none"
 										id="new"
 									/>
-									<Label
-										htmlFor="new"
-										className="flex font-normal items-center gap-2 cursor-pointer"
-									>
+									<span className="flex items-center gap-2 cursor-pointer">
 										Neue/n Kulturort/e eintragen
-									</Label>
+									</span>
 								</div>
 								<div key="edit" className="flex items-center space-x-2">
 									<RadioGroupItem
@@ -103,13 +99,10 @@ export function InstitutionDraftIntroModal({
 										className="bg-background border-none"
 										id="edit"
 									/>
-									<Label
-										htmlFor="edit"
-										className="flex font-normal items-center gap-2 cursor-pointer"
-									>
+									<span className="flex items-center gap-2 cursor-pointer">
 										Ergänzung oder Änderung eines oder mehrere bestehender
 										Kulturorte
-									</Label>
+									</span>
 								</div>
 							</RadioGroup>
 						</div>

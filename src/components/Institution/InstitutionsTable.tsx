@@ -23,8 +23,6 @@ import {
 	buildSubmissionRow,
 	isSubmissionRow,
 } from "@/lib/utils/institutionTableUtils";
-import { Button } from "@/components/ui/button";
-import { Eye } from "lucide-react";
 
 export function InstitutionsTable() {
 	const router = useRouter();
@@ -117,14 +115,14 @@ export function InstitutionsTable() {
 				meta: { pin: "left", truncate: true },
 				cell: ({ row }) => {
 					const name = row.original.name || "—";
-					if (isSubmissionRow(row.original)) {
-						return (
-							<div className="flex items-center gap-2">
-								<span>{name}</span>
-								<Badge variant="default">In Prüfung</Badge>
-							</div>
-						);
-					}
+					// if (isSubmissionRow(row.original)) {
+					// 	return (
+					// 		<div className="flex items-center gap-2">
+					// 			<span>{name}</span>
+					// 			<Badge variant="default">In Prüfung</Badge>
+					// 		</div>
+					// 	);
+					// }
 					return name;
 				},
 			},
@@ -669,23 +667,12 @@ export function InstitutionsTable() {
 			}
 			router.push(`/account/institutions/${row.id}/edit`);
 		},
-		rowActions: (row) => {
-			if (!isSubmissionRow(row)) return null;
-			return (
-				<Button
-					size="icon"
-					variant="ghost"
-					onClick={(event) => {
-						event.stopPropagation();
-						router.push(`/account/submissions/${row.submissionId}`);
-					}}
-					className="h-8 w-8 rounded-full border bg-background border-neutral-20 hover:bg-neutral-5"
-					aria-label="Review"
-				>
-					<Eye className="h-5 w-5 text-neutral-80" />
-				</Button>
-			);
+		onReview: (row) => {
+			if (!isSubmissionRow(row)) return;
+			router.push(`/account/submissions/${row.submissionId}`);
 		},
+		getCanReview: (row) => isSubmissionRow(row),
+		reviewAriaLabel: "Review",
 		emptyMessage: "No institutions found.",
 	};
 
