@@ -879,20 +879,18 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 																			<div className="flex flex-wrap justify-center gap-2">
 																				{content}
 																				{config.onReview &&
-																				(config.getCanReview?.(row.original) ?? true) ? (
+																				(config.getCanReview?.(row.original) ??
+																					true) ? (
 																					<Button
 																						size="icon"
 																						variant="ghost"
 																						onClick={(event) => {
 																							event.stopPropagation();
-																							config.onReview?.(
-																								row.original,
-																							);
+																							config.onReview?.(row.original);
 																						}}
 																						className="h-8 w-8 rounded-full border bg-background border-neutral-20 hover:bg-neutral-5"
 																						aria-label={
-																							config.reviewAriaLabel ??
-																							"Review"
+																							config.reviewAriaLabel ?? "Review"
 																						}
 																					>
 																						<Eye className="h-5 w-5 text-neutral-80" />
