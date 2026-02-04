@@ -21,6 +21,9 @@ export async function generateMetadata({
 export default async function AccountEditPage({ params }: PageProps) {
 	await params;
 	const user = await getCurrentUser();
+	if (!user) {
+		return null;
+	}
 	const userProfile = await userRepo.findById(user.id);
 
 	return (
