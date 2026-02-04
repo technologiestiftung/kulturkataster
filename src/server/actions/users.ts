@@ -203,19 +203,20 @@ export async function sendPasswordReset(email: string) {
 
 	const siteUrl = process.env.SITE_URL ?? "http://127.0.0.1:3000";
 	const supabase = createAdminClient();
-	const { error } = await supabase.auth.admin.generateLink({
+	const { error, data } = await supabase.auth.admin.generateLink({
 		type: "recovery",
 		email,
 		options: {
 			redirectTo: `${siteUrl}/reset-password`,
 		},
 	});
+	console.log("sendPasswordReset data:", data);
 
 	if (error) {
 		throw new Error(error.message);
 	}
 
-	return { ok: true };
+	return { data };
 }
 
 export async function sendComplianceResend(email: string): Promise<void> {

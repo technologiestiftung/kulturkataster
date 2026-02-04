@@ -9,6 +9,7 @@ import { AlertDialog } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { updateUser, removeUser } from "@/server/actions/users";
 import { updateMyPassword, logout } from "@/server/actions/auth";
+import { useAccountStore } from "@/lib/store/accountStore";
 
 type AccountEditFormProps = {
 	userId: string;
@@ -37,6 +38,7 @@ export function AccountEditForm({
 	const [isLoading, setIsLoading] = useState(false);
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 	const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+	const setAlertDialog = useAccountStore((state) => state.setAlertDialog);
 
 	const initialName = useMemo(() => {
 		const parts = [firstName, lastName].filter(Boolean);
@@ -74,6 +76,11 @@ export function AccountEditForm({
 					return;
 				}
 			}
+
+			setAlertDialog({
+				title: t("auth.accountEdit.successTitle"),
+				description: t("auth.accountEdit.successDescription"),
+			});
 
 			router.replace("/account");
 		} catch (error) {

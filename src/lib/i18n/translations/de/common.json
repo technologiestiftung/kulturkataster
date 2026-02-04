@@ -70,7 +70,9 @@
 			"passwordPlaceholder": "Neues Passwort",
 			"submit": "Speichern",
 			"submitting": "Wird gespeichert...",
-			"title": "Persönliche Angaben ändern"
+			"title": "Persönliche Angaben ändern",
+			"successTitle": "Änderungen gespeichert",
+			"successDescription": "Ihre persönlichen Angaben wurden erfolgreich aktualisiert."
 		},
 		"forgot": {
 			"backToSignIn": "Zurück zum Login",

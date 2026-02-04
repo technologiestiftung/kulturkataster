@@ -29,13 +29,13 @@ export function RolesTable() {
 			{
 				id: "created_at",
 				header: t("roleTable.columns.createdAt"),
-				accessorFn: (row) => row.created_at.toLocaleDateString(),
+				accessorFn: (row) => new Date(row.created_at).toLocaleDateString(),
 				enableSorting: true,
 			},
 			{
 				id: "updated_at",
 				header: t("roleTable.columns.updatedAt"),
-				accessorFn: (row) => row.updated_at.toLocaleDateString(),
+				accessorFn: (row) => new Date(row.updated_at).toLocaleDateString(),
 				enableSorting: true,
 			},
 			{

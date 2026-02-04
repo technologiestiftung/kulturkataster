@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "../ui/label";
 import { cn } from "@/lib/utils";
+import { AlertDialog } from "../ui/alert-dialog";
 
 type ActionPanelProps = {
 	children: ReactNode;
@@ -70,7 +71,17 @@ export function ActionPanel({
 					</Button>
 				)}
 			</div>
-			{message && <p className="mt-2  text-foreground">{message}</p>}
+			<AlertDialog
+				open={!!message}
+				onOpenChange={(open) => {
+					if (!open) setMessage(null);
+				}}
+				title={"Passwort zurückgesetzt"}
+				description={message ?? ""}
+				status="success"
+				confirmLabel="OK"
+				onConfirm={() => setMessage(null)}
+			/>
 		</div>
 	);
 }
