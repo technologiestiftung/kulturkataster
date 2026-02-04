@@ -5,7 +5,7 @@ import { getCategories } from "@/server/actions/categories";
 import { getUsers } from "@/server/actions/users";
 import { getGroups } from "@/server/actions/groups";
 import { getRoles } from "@/server/actions/roles";
-import { getAuthUserWithDbUser } from "@/server/actions/auth";
+import { getAuthUserWithProfile } from "@/server/actions/auth";
 import { getMyInstitutions } from "@/server/actions/institutions";
 import { getSubmissions } from "@/server/actions/submissions";
 import {
@@ -21,7 +21,7 @@ type AccountLayoutProps = {
 };
 
 export default async function AccountLayout({ children }: AccountLayoutProps) {
-	const currentUser = await getAuthUserWithDbUser();
+	const currentUser = await getAuthUserWithProfile();
 	if (!currentUser) {
 		throw new Error("Unauthenticated access to protected route.");
 	}

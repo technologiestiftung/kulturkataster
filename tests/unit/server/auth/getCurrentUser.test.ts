@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
-	getAuthUserWithDbUser,
+	getAuthUserWithProfile,
 	getCurrentUser,
 	requireAuth,
 } from "@/server/actions/auth";
@@ -114,7 +114,7 @@ describe("requireAuth", () => {
 	});
 });
 
-describe("getAuthUserWithDbUser", () => {
+describe("getAuthUserWithProfile", () => {
 	beforeEach(() => {
 		mockedCreateClient.mockReset();
 		mockedFindUnique.mockReset();
@@ -127,13 +127,13 @@ describe("getAuthUserWithDbUser", () => {
 		});
 		mockedCreateClient.mockResolvedValue({ auth: { getUser } } as never);
 
-		const result = await getAuthUserWithDbUser();
+		const result = await getAuthUserWithProfile();
 
 		expect(result.user).toBeNull();
-		expect(result.dbUser).toBeNull();
+		expect(result.profile).toBeNull();
 	});
 
-	it("returns user and dbUser when present", async () => {
+	it("returns user and profile when present", async () => {
 		const getUser = vi.fn().mockResolvedValue({
 			data: { user: { id: "user-1" } },
 			error: null,
@@ -144,9 +144,9 @@ describe("getAuthUserWithDbUser", () => {
 			status: "active",
 		} as never);
 
-		const result = await getAuthUserWithDbUser();
+		const result = await getAuthUserWithProfile();
 
 		expect(result.user).toEqual({ id: "user-1" });
-		expect(result.dbUser).toEqual({ id: "user-1", status: "active" });
+		expect(result.profile).toEqual({ id: "user-1", status: "active" });
 	});
 });
