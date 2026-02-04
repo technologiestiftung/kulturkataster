@@ -5,7 +5,7 @@ import { getCategories } from "@/server/actions/categories";
 import { getUsers } from "@/server/actions/users";
 import { getGroups } from "@/server/actions/groups";
 import { getRoles } from "@/server/actions/roles";
-import { getAuthUserWithProfile } from "@/server/actions/auth";
+import { getCurrentProfile, getCurrentUser } from "@/server/actions/auth";
 import { getMyInstitutions } from "@/server/actions/institutions";
 import { getSubmissions } from "@/server/actions/submissions";
 import {
@@ -14,30 +14,22 @@ import {
 	getTableScope,
 } from "@/server/utils/rbac";
 import { fetchIfAllowed } from "@/server/utils/rbacHelpers";
-import { userRepo } from "@/server/data/userRepo";
 
 type AccountLayoutProps = {
 	children: ReactNode;
 };
 
 export default async function AccountLayout({ children }: AccountLayoutProps) {
-	const currentUser = await getAuthUserWithProfile();
-	if (!currentUser) {
-		throw new Error("Unauthenticated access to protected route.");
+	const user = await getCurrentUser();
+
+	if (!user) {
+		return null;
 	}
-	if (!currentUser.user?.email) {
-		throw new Error("Authenticated user is missing an email.");
-	}
+	const ctx = await getAccessContextForUser(user?.id);
 
-	await userRepo.ensureUser({
-		id: currentUser.user.id,
-		email: currentUser.user.email,
-	});
-
-	const ctx = await getAccessContextForUser(currentUser.user.id);
-
-	const [users, groups, roles, categories, institutions, submissions] =
+	const [profile, users, groups, roles, categories, institutions, submissions] =
 		await Promise.all([
+			getCurrentProfile(),
 			fetchIfAllowed(ctx, "user", "read", getUsers, []),
 			fetchIfAllowed(ctx, "group", "read", getGroups, []),
 			fetchIfAllowed(ctx, "role", "read", getRoles, []),
@@ -46,7 +38,6 @@ export default async function AccountLayout({ children }: AccountLayoutProps) {
 			fetchIfAllowed(ctx, "submission", "read", getSubmissions, []),
 		]);
 
-	// Check scopes for tabs - most admin tabs should only show with "all" scope
 	const hasUserAllScope =
 		canTable(ctx, "user", "read") &&
 		getTableScope(ctx, "user", "read") === "all";
@@ -72,7 +63,7 @@ export default async function AccountLayout({ children }: AccountLayoutProps) {
 	return (
 		<>
 			<AccountStoreInitializer
-				currentProfile={currentUser.profile}
+				currentProfile={profile}
 				users={users}
 				groups={groups}
 				roles={roles}
@@ -80,10 +71,7 @@ export default async function AccountLayout({ children }: AccountLayoutProps) {
 				institutions={institutions}
 				submissions={submissions}
 			/>
-			<AccountLayoutClient
-				allowedTabs={allowedTabs}
-				currentProfile={currentUser.profile}
-			>
+			<AccountLayoutClient allowedTabs={allowedTabs} currentProfile={profile}>
 				{children}
 			</AccountLayoutClient>
 		</>

@@ -29,7 +29,9 @@ export function ResetPasswordForm() {
 
 		if (!access || !refresh) {
 			setHasToken(false);
+			setErrorMessage(t("auth.reset.missingToken"));
 			setIsReady(true);
+			return;
 		}
 
 		setHasToken(true);
@@ -37,7 +39,7 @@ export function ResetPasswordForm() {
 		setRefreshToken(refresh);
 
 		setIsReady(true);
-	}, []);
+	}, [t]);
 
 	const handleSubmit = async (data: Record<string, unknown>) => {
 		if (isLoading) return;

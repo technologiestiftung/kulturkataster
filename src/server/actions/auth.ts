@@ -14,39 +14,20 @@ export async function getCurrentUser() {
 	return user;
 }
 
-export async function getAuthUserWithProfile() {
-	const supabase = await createClient();
-	const {
-		data: { user },
-		error,
-	} = await supabase.auth.getUser();
-
-	if (error || !user) {
-		return { supabase, user: null, profile: null };
-	}
+export async function getCurrentProfile() {
+	const user = await getCurrentUser();
+	if (!user) return null;
 
 	const profile = await prisma.user.findUnique({
 		where: { id: user.id },
 	});
 
-	return { supabase, user, profile };
+	return profile;
 }
 
 export async function getCurrentUserId() {
 	const user = await getCurrentUser();
 	return user?.id ?? null;
-}
-
-export async function requireAuth() {
-	const { supabase, user, profile } = await getAuthUserWithProfile();
-	if (!user) return null;
-
-	if (!profile || profile.status !== "active") {
-		await supabase.auth.signOut();
-		return null;
-	}
-
-	return user;
 }
 
 export async function loginWithEmailPassword(email: string, password: string) {
@@ -66,8 +47,10 @@ export async function loginWithEmailPassword(email: string, password: string) {
 		return { ok: false, error: "missing_user" };
 	}
 
-	const { profile } = await getAuthUserWithProfile();
-	if (!profile || profile.id !== userId || profile.status !== "active") {
+	const profile = await prisma.user.findUnique({
+		where: { id: userId },
+	});
+	if (!profile || profile.status !== "active") {
 		await supabase.auth.signOut();
 		return { ok: false, error: "inactive" };
 	}

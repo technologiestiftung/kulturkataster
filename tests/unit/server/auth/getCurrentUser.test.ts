@@ -1,9 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import {
-	getAuthUserWithProfile,
-	getCurrentUser,
-	requireAuth,
-} from "@/server/actions/auth";
+import { getCurrentUser, getCurrentProfile } from "@/server/actions/auth";
 import { createClient } from "@/server/supabase/server";
 import { prisma } from "@/server/prisma";
 
@@ -53,11 +49,10 @@ describe("getCurrentUser", () => {
 	});
 });
 
-describe("requireAuth", () => {
+describe("getCurrentProfile", () => {
 	beforeEach(() => {
 		mockedCreateClient.mockReset();
 		mockedFindUnique.mockReset();
-		vi.resetModules();
 	});
 
 	it("returns null when no Supabase user", async () => {
@@ -65,75 +60,14 @@ describe("requireAuth", () => {
 			data: { user: null },
 			error: null,
 		});
-		mockedCreateClient.mockResolvedValue({
-			auth: { getUser },
-		} as never);
-
-		const result = await requireAuth();
-
-		expect(result).toBeNull();
-	});
-
-	it("returns null and signs out when user is not active", async () => {
-		const getUser = vi.fn().mockResolvedValue({
-			data: { user: { id: "user-1" } },
-			error: null,
-		});
-		const signOut = vi.fn().mockResolvedValue({ error: null });
-
-		mockedCreateClient.mockResolvedValue({
-			auth: { getUser, signOut },
-		} as never);
-		mockedFindUnique.mockResolvedValue({
-			id: "user-1",
-			status: "inactive",
-		} as never);
-
-		const result = await requireAuth();
-
-		expect(result).toBeNull();
-		expect(signOut).toHaveBeenCalled();
-	});
-
-	it("returns user when status is active", async () => {
-		const getUser = vi.fn().mockResolvedValue({
-			data: { user: { id: "user-1" } },
-			error: null,
-		});
-		mockedCreateClient.mockResolvedValue({
-			auth: { getUser },
-		} as never);
-		mockedFindUnique.mockResolvedValue({
-			id: "user-1",
-			status: "active",
-		} as never);
-
-		const result = await requireAuth();
-
-		expect(result).toEqual({ id: "user-1" });
-	});
-});
-
-describe("getAuthUserWithProfile", () => {
-	beforeEach(() => {
-		mockedCreateClient.mockReset();
-		mockedFindUnique.mockReset();
-	});
-
-	it("returns nulls when no Supabase user", async () => {
-		const getUser = vi.fn().mockResolvedValue({
-			data: { user: null },
-			error: null,
-		});
 		mockedCreateClient.mockResolvedValue({ auth: { getUser } } as never);
 
-		const result = await getAuthUserWithProfile();
+		const result = await getCurrentProfile();
 
-		expect(result.user).toBeNull();
-		expect(result.profile).toBeNull();
+		expect(result).toBeNull();
 	});
 
-	it("returns user and profile when present", async () => {
+	it("returns profile when present", async () => {
 		const getUser = vi.fn().mockResolvedValue({
 			data: { user: { id: "user-1" } },
 			error: null,
@@ -144,9 +78,8 @@ describe("getAuthUserWithProfile", () => {
 			status: "active",
 		} as never);
 
-		const result = await getAuthUserWithProfile();
+		const result = await getCurrentProfile();
 
-		expect(result.user).toEqual({ id: "user-1" });
-		expect(result.profile).toEqual({ id: "user-1", status: "active" });
+		expect(result).toEqual({ id: "user-1", status: "active" });
 	});
 });

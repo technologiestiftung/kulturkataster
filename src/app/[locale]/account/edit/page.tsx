@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { serverSideTranslation } from "@/i18n";
-import { requireAuth } from "@/server/actions/auth";
 import { userRepo } from "@/server/data/userRepo";
 import { AccountEditModal } from "@/components/Modals/Pages/AccountEditModal";
+import { getCurrentUser } from "@/server/actions/auth";
 
 type PageProps = {
 	params: Promise<{ locale: string }>;
@@ -20,24 +20,17 @@ export async function generateMetadata({
 
 export default async function AccountEditPage({ params }: PageProps) {
 	await params;
-	const currentUser = await requireAuth();
-	if (!currentUser) {
-		throw new Error("Unauthenticated access to protected route.");
-	}
-	const user = await userRepo.findById(currentUser.id);
-
-	if (!currentUser.email || !user) {
-		throw new Error("Authenticated user is missing.");
-	}
+	const user = await getCurrentUser();
+	const userProfile = await userRepo.findById(user.id);
 
 	return (
 		<AccountEditModal
 			routePath="/account/edit"
 			closeTo="/account"
-			userId={user.id}
-			email={currentUser.email}
-			firstName={user.first_name}
-			lastName={user.last_name}
+			userId={user?.id || ""}
+			email={user?.email || ""}
+			firstName={userProfile?.first_name}
+			lastName={userProfile?.last_name}
 		/>
 	);
 }
