@@ -59,7 +59,7 @@ function AlertDialog({
 								</Button>
 							)}
 							{showConfirm && (
-								<Button type="button" onClick={onConfirm}>
+								<Button type="button" onClick={onConfirm} autoFocus>
 									{confirmLabel}
 								</Button>
 							)}
