@@ -19,6 +19,7 @@ import ListIcon from "@/icons/list.svg";
 import UserIcon from "@/icons/user.svg";
 import MapIcon from "@/icons/map.svg";
 import ENIcon from "@/icons/lang/en.svg";
+import Download from "@/icons/download.svg";
 import { useAppStore } from "@/lib/store/appStore";
 import KukaSmallLogo from "@/logos/kuka-small.svg";
 import { useEffect, useMemo } from "react";
@@ -83,6 +84,16 @@ const footerItems: MenuItem[] = [
 		label: "info.title",
 		route: "/info",
 		matchPattern: /^\/[^/]+\/info/,
+		showInMobile: false,
+		showInAccount: false,
+		showInMap: false,
+	},
+	{
+		id: "download",
+		icon: Download,
+		label: "download.title",
+		route: "/download",
+		matchPattern: /^\/[^/]+\/download/,
 		showInMobile: false,
 		showInAccount: false,
 		showInMap: false,

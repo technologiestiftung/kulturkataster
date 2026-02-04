@@ -5,7 +5,7 @@ import {
 	getAccessContextForUser,
 	getTableScope,
 } from "@/server/utils/rbac";
-import { getCurrentUserId } from "@/server/auth/getCurrentUser";
+import { getCurrentUserId } from "@/server/actions/auth";
 import { addressRepo } from "@/server/data/addressRepo";
 import { buildInstitutionScopedWhere } from "@/server/logic/institutionAccess";
 

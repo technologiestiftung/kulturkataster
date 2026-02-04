@@ -116,10 +116,18 @@ describe("loginWithEmailPassword", () => {
 			error: null,
 		});
 		const signOut = vi.fn().mockResolvedValue({ error: null });
-		mockedCreateClient.mockResolvedValue({
+		const getUser = vi.fn().mockResolvedValue({
+			data: { user: { id: "user-1" } },
+			error: null,
+		});
+		mockedCreateClient
+			.mockResolvedValueOnce({
 			auth: { signInWithPassword, signOut },
-		} as never);
-		mockedFindUnique.mockResolvedValue({ status: "inactive" } as never);
+		} as never)
+			.mockResolvedValueOnce({
+				auth: { getUser },
+			} as never);
+		mockedFindUnique.mockResolvedValue({ id: "user-1", status: "inactive" } as never);
 
 		const result = await loginWithEmailPassword("test@example.com", "ok");
 
@@ -133,10 +141,18 @@ describe("loginWithEmailPassword", () => {
 			error: null,
 		});
 		const signOut = vi.fn().mockResolvedValue({ error: null });
-		mockedCreateClient.mockResolvedValue({
+		const getUser = vi.fn().mockResolvedValue({
+			data: { user: { id: "user-1" } },
+			error: null,
+		});
+		mockedCreateClient
+			.mockResolvedValueOnce({
 			auth: { signInWithPassword, signOut },
-		} as never);
-		mockedFindUnique.mockResolvedValue({ status: "active" } as never);
+		} as never)
+			.mockResolvedValueOnce({
+				auth: { getUser },
+			} as never);
+		mockedFindUnique.mockResolvedValue({ id: "user-1", status: "active" } as never);
 
 		const result = await loginWithEmailPassword("test@example.com", "ok");
 

@@ -7,7 +7,7 @@ import {
 	searchInstitutions,
 } from "@/server/actions/institutions";
 
-vi.mock("@/server/auth/getCurrentUser", () => ({
+vi.mock("@/server/actions/auth", () => ({
 	getCurrentUserId: vi.fn().mockResolvedValue("user-1"),
 }));
 

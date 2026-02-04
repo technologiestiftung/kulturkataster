@@ -17,6 +17,16 @@ if (!("ResizeObserver" in globalThis)) {
 	globalThis.ResizeObserver = ResizeObserver;
 }
 
+if (!("indexedDB" in globalThis)) {
+	const mockIDB = {
+		open: vi.fn(),
+		deleteDatabase: vi.fn(),
+		cmp: vi.fn(),
+	};
+	// @ts-expect-error - Mocking IndexedDB for test environment
+	globalThis.indexedDB = mockIDB;
+}
+
 const SvgMock = () => null;
 
 vi.mock("@/icons/chevron-down.svg", () => ({ default: SvgMock }));

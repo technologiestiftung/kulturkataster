@@ -10,6 +10,8 @@ export type PrismaUserWithRelations = Prisma.UserGetPayload<{
 
 export type User = PrismaUserWithRelations;
 
+export type Profile = Prisma.UserGetPayload<Record<string, never>>;
+
 export type UserCreateInput = Prisma.UserCreateInput;
 
 export type UserUpdateInput = Prisma.UserUpdateInput;

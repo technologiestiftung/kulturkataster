@@ -7,7 +7,7 @@ import {
 } from "@/server/utils/rbac";
 import { roleRepo } from "@/server/data/roleRepo";
 import { RoleInput, RoleUpdateInput } from "@/types";
-import { getCurrentUserId } from "../auth/getCurrentUser";
+import { getCurrentUserId } from "@/server/actions/auth";
 import { revalidateAccount } from "../utils/actionsUtils";
 
 export async function getRoles() {
