@@ -6,7 +6,7 @@ export default function NewRoleModal() {
 			mode="create"
 			shouldRefresh={false}
 			routePath="/account/roles/new"
-			closeTo="/account/roles"
+			returnTo="/account/roles"
 		/>
 	);
 }

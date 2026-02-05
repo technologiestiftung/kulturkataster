@@ -10,9 +10,8 @@ import type { Institution } from "@/types/institution";
 
 type InstitutionEditModalProps = {
 	institutionId: string;
-	returnTo?: string;
 	routePath?: string;
-	closeTo?: string;
+	returnTo?: string;
 	onSubmit?: Parameters<typeof InstitutionFormModal>[0]["onSubmit"];
 	initialValues?: Record<string, unknown>;
 	formKey?: string;
@@ -24,9 +23,8 @@ type InstitutionEditModalProps = {
 
 export function InstitutionEditModal({
 	institutionId,
-	returnTo,
 	routePath,
-	closeTo,
+	returnTo,
 	onSubmit,
 	initialValues,
 	formKey,
@@ -111,7 +109,6 @@ export function InstitutionEditModal({
 			institution={resolvedInstitutionWithFallback}
 			returnTo={returnTo}
 			routePath={routePath}
-			closeTo={closeTo}
 			onSubmit={onSubmit}
 			initialValues={initialValues}
 			formKey={formKey}

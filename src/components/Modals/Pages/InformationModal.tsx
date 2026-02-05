@@ -45,10 +45,10 @@ interface Scope {
 
 export function InformationModal({
 	routePath,
-	closeTo,
+	returnTo,
 }: {
 	routePath?: string;
-	closeTo?: string;
+	returnTo?: string;
 }) {
 	const { t } = useTranslation("content");
 	const institutions = useInstitutionStore((state) => state.allInstitutions);
@@ -163,7 +163,7 @@ export function InformationModal({
 			title={t("informationModal.title")}
 			subtitle={t("informationModal.subtitle")}
 			routePath={routePath}
-			closeTo={closeTo}
+			returnTo={returnTo}
 			content={content}
 		/>
 	);

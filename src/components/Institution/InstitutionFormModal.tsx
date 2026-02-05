@@ -35,10 +35,9 @@ import { TFunction } from "i18next";
 type InstitutionFormModalProps = {
 	mode: "create" | "edit";
 	institution?: Institution | null;
-	returnTo?: string;
 	onClose?: () => void;
 	routePath?: string;
-	closeTo?: string;
+	returnTo?: string;
 	onSubmit?: (args: {
 		data: Record<string, unknown>;
 		institution?: Institution;
@@ -846,7 +845,6 @@ export function InstitutionFormModal({
 	returnTo,
 	onClose,
 	routePath,
-	closeTo,
 	onSubmit,
 	initialValues,
 	formKey,
@@ -881,7 +879,7 @@ export function InstitutionFormModal({
 	}, []);
 
 	const handleClose = useRoutedModalClose({
-		closeTo: closeTo ?? returnTo,
+		returnTo: returnTo ?? returnTo,
 		onClose,
 	});
 

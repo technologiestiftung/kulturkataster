@@ -17,5 +17,5 @@ export async function generateMetadata({
 }
 
 export default async function RegisterPage() {
-	return <RegisterModal routePath="/register" closeTo="/" />;
+	return <RegisterModal routePath="/register" returnTo="/" />;
 }

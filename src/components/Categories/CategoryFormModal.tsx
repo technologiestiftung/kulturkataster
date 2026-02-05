@@ -32,7 +32,7 @@ type CategoryFormModalProps = {
 	categoryId?: string;
 	shouldRefresh?: boolean;
 	routePath?: string;
-	closeTo?: string;
+	returnTo?: string;
 };
 
 const getInitialValues = (resolvedCategory?: Category) => ({
@@ -359,7 +359,7 @@ export function CategoryFormModal({
 	categoryId,
 	shouldRefresh = true,
 	routePath,
-	closeTo,
+	returnTo,
 }: CategoryFormModalProps) {
 	const { t: tEnum } = useTranslation("enumMap");
 	const { t } = useTranslation();
@@ -369,7 +369,7 @@ export function CategoryFormModal({
 	const [isDeleting, setIsDeleting] = useState(false);
 	const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
-	const handleClose = useRoutedModalClose({ closeTo });
+	const handleClose = useRoutedModalClose({ returnTo });
 
 	const {
 		numericCategoryId,

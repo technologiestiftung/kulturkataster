@@ -34,7 +34,7 @@ type GroupFormModalProps = {
 	groupId?: string;
 	shouldRefresh?: boolean;
 	routePath?: string;
-	closeTo?: string;
+	returnTo?: string;
 };
 
 const getInitialValues = (resolvedGroup?: Group) => ({
@@ -327,7 +327,7 @@ export function GroupFormModal({
 	groupId,
 	shouldRefresh = true,
 	routePath,
-	closeTo,
+	returnTo,
 }: GroupFormModalProps) {
 	const { t } = useTranslation("content");
 	const { t: tEnum, i18n } = useTranslation("enumMap");
@@ -367,7 +367,7 @@ export function GroupFormModal({
 		[users],
 	);
 
-	const handleClose = useRoutedModalClose({ closeTo });
+	const handleClose = useRoutedModalClose({ returnTo });
 
 	const { numericGroupId, resolvedGroup, isWaitingForGroup, showNotFound } =
 		useResolvedGroup(mode, groupId, groups);

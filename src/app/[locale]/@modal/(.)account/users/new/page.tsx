@@ -6,7 +6,7 @@ export default function NewUserModal() {
 			mode="create"
 			shouldRefresh={false}
 			routePath="/account/users/new"
-			closeTo="/account/users"
+			returnTo="/account/users"
 		/>
 	);
 }

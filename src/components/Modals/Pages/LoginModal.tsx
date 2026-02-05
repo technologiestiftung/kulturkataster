@@ -5,10 +5,10 @@ import { useTranslation } from "react-i18next";
 import { Modal } from "@/components/Modals/Modal";
 export function LoginModal({
 	routePath,
-	closeTo,
+	returnTo,
 }: {
 	routePath?: string;
-	closeTo?: string;
+	returnTo?: string;
 }) {
 	const { t } = useTranslation("common");
 
@@ -18,7 +18,7 @@ export function LoginModal({
 			titleClassName="sr-only"
 			variant="fullscreen"
 			routePath={routePath}
-			closeTo={closeTo}
+			returnTo={returnTo}
 			content={
 				<div className="flex flex-1 items-center justify-center py-12 px-4 w-full">
 					<LoginForm />

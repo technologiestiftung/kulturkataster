@@ -6,7 +6,7 @@ export default function NewCategoryModal() {
 			mode="create"
 			shouldRefresh={false}
 			routePath="/account/categories/new"
-			closeTo="/account/categories"
+			returnTo="/account/categories"
 		/>
 	);
 }

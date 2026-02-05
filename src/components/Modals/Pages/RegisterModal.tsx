@@ -10,10 +10,10 @@ import Image from "next/image";
 
 export function RegisterModal({
 	routePath,
-	closeTo,
+	returnTo,
 }: {
 	routePath?: string;
-	closeTo?: string;
+	returnTo?: string;
 }) {
 	const { t } = useTranslation("common");
 	const router = useRouter();
@@ -28,7 +28,7 @@ export function RegisterModal({
 			containerClassName="p-0 md:p-0 mt-0 md:mt-0"
 			contentWrapperClassName="flex-1"
 			contentClassName=""
-			closeTo={didRegister ? "/login" : closeTo}
+			returnTo={didRegister ? "/login" : returnTo}
 			content={
 				<>
 					{didRegister ? (

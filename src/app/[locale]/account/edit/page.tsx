@@ -29,7 +29,7 @@ export default async function AccountEditPage({ params }: PageProps) {
 	return (
 		<AccountEditModal
 			routePath="/account/edit"
-			closeTo="/account"
+			returnTo="/account"
 			userId={user?.id || ""}
 			email={user?.email || ""}
 			firstName={userProfile?.first_name}

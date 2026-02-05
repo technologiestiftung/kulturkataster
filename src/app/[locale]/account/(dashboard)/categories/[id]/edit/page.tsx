@@ -14,7 +14,7 @@ export default async function EditCategoryPage({
 			categoryId={id}
 			shouldRefresh={false}
 			routePath={`/account/categories/${id}/edit`}
-			closeTo="/account/categories"
+			returnTo="/account/categories"
 		/>
 	);
 }
