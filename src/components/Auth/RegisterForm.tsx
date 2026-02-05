@@ -381,7 +381,10 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
 
 			<div className="flex flex-col items-center text-center border-t-2 pt-6 mt-6">
 				<span className="">{t("auth.register.alreadyAccount")} </span>
-				<Link href={toLocalePath("/login")} className="text-primary-dark underline">
+				<Link
+					href={toLocalePath("/login")}
+					className="text-primary-dark underline"
+				>
 					{t("auth.register.signIn")}
 				</Link>
 			</div>

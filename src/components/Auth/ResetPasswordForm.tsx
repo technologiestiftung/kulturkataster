@@ -139,7 +139,10 @@ export function ResetPasswordForm() {
 			<FormWrapper config={formConfig} />
 
 			<div className="flex flex-col items-center text-center">
-				<Link href={toLocalePath("/login")} className="text-primary-dark underline ">
+				<Link
+					href={toLocalePath("/login")}
+					className="text-primary-dark underline "
+				>
 					{t("auth.reset.backToLogin")}
 				</Link>
 			</div>
