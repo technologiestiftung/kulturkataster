@@ -6,7 +6,7 @@ export default function NewInstitutionPage() {
 			mode="create"
 			shouldRefresh={false}
 			routePath="/account/institutions/new"
-			closeTo="/account/institutions"
+			returnTo="/account/institutions"
 		/>
 	);
 }

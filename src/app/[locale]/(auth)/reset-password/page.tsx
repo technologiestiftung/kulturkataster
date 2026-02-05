@@ -17,5 +17,5 @@ export async function generateMetadata({
 }
 
 export default async function ResetPasswordPage() {
-	return <ResetPasswordModal routePath="/reset-password" closeTo="/" />;
+	return <ResetPasswordModal routePath="/reset-password" returnTo="/" />;
 }

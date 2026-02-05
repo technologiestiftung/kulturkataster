@@ -34,7 +34,7 @@ type RoleFormModalProps = {
 	roleId?: string;
 	shouldRefresh?: boolean;
 	routePath?: string;
-	closeTo?: string;
+	returnTo?: string;
 };
 
 const INSTITUTION_FIELDS = INSTITUTION_PERMISSION_FIELDS;
@@ -466,7 +466,7 @@ export function RoleFormModal({
 	roleId,
 	shouldRefresh = true,
 	routePath,
-	closeTo,
+	returnTo,
 }: RoleFormModalProps) {
 	const { t } = useTranslation(["content", "enumMap"]);
 	const roles = useAccountStore((state) => state.roles);
@@ -475,7 +475,7 @@ export function RoleFormModal({
 	const [isDeleting, setIsDeleting] = useState(false);
 	const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
-	const handleClose = useRoutedModalClose({ closeTo });
+	const handleClose = useRoutedModalClose({ returnTo });
 
 	const { numericRoleId, resolvedRole, isWaitingForRole, showNotFound } =
 		useResolvedRole(mode, roleId, roles);

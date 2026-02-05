@@ -14,7 +14,7 @@ export default async function EditUserModal({ params }: PageProps) {
 			userId={id}
 			shouldRefresh={false}
 			routePath={`/account/users/${id}/edit`}
-			closeTo="/account/users"
+			returnTo="/account/users"
 		/>
 	);
 }

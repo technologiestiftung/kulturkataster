@@ -6,7 +6,7 @@ export default function NewUserPage() {
 			mode="create"
 			shouldRefresh={false}
 			routePath="/account/users/new"
-			closeTo="/account/users"
+			returnTo="/account/users"
 		/>
 	);
 }
