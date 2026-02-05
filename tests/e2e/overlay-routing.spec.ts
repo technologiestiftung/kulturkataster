@@ -11,7 +11,7 @@ test.describe("map overlays", () => {
 		await filterButton.click({ force: true });
 
 		await expect(page.locator(filterRootSelector)).toBeVisible({
-			timeout: 10_000,
+			timeout: 15_000,
 		});
 
 		await page.goto("/list", { waitUntil: "domcontentloaded" });

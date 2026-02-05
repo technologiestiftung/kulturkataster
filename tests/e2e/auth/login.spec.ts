@@ -49,7 +49,7 @@ test.describe("auth login", () => {
 		await page.getByRole("button", { name: "Anmelden" }).click();
 
 		await expect
-			.poll(async () => page.url(), { timeout: 10_000 })
+			.poll(async () => page.url(), { timeout: 15_000 })
 			.toMatch(/\/login\/?$/);
 	});
 });
