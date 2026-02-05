@@ -1,6 +1,7 @@
 "use client";
 
 import { useInstitutionStore } from "@/lib/store/institutionStore";
+import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
@@ -42,6 +43,7 @@ const ListView: FC = () => {
 		initializeDistricts,
 	} = useInstitutionStore();
 	const router = useRouter();
+	const toLocalePath = useLocalePath();
 
 	const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
 	const [isLoading, setIsLoading] = useState(false);
@@ -106,9 +108,9 @@ const ListView: FC = () => {
 
 	const handleInstitutionClick = useCallback(
 		(institution: Institution) => {
-			router.push(`/list/institution/${institution.id}`);
+			router.push(toLocalePath(`/list/institution/${institution.id}`));
 		},
-		[router],
+		[router, toLocalePath],
 	);
 
 	useEffect(() => {

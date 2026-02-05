@@ -7,10 +7,12 @@ import { useTranslation } from "react-i18next";
 import { FormWrapper } from "@/components/FormWrapper";
 import type { FormWrapperConfig } from "@/components/FormWrapper";
 import { AlertDialog } from "@/components/ui/alert-dialog";
+import { useLocalePath } from "@/lib/hooks/useLocalePath";
 
 export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
 	const [isLoading, setIsLoading] = useState(false);
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
+	const toLocalePath = useLocalePath();
 	const { t } = useTranslation("common");
 
 	const handleSubmit = async (data: Record<string, unknown>) => {
@@ -302,7 +304,7 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
 							<span className="body2 font-normal flex-wrap">
 								{t("auth.register.termsIntro")}{" "}
 								<Link
-									href="/terms"
+									href={toLocalePath("/terms")}
 									className="text-primary-dark underline"
 									target="_blank"
 								>
@@ -310,7 +312,7 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
 								</Link>{" "}
 								{t("auth.register.termsSeparator")}{" "}
 								<Link
-									href="/privacy"
+									href={toLocalePath("/privacy")}
 									className="text-primary-dark underline"
 									target="_blank"
 								>
@@ -332,7 +334,7 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
 							<span className="body2 font-normal">
 								{t("auth.register.newsletterOptInPrefix")}{" "}
 								<Link
-									href="/newsletter"
+									href={toLocalePath("/newsletter")}
 									className="text-primary-dark underline"
 									target="_blank"
 								>
@@ -379,7 +381,7 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
 
 			<div className="flex flex-col items-center text-center border-t-2 pt-6 mt-6">
 				<span className="">{t("auth.register.alreadyAccount")} </span>
-				<Link href="/login" className="text-primary-dark underline">
+				<Link href={toLocalePath("/login")} className="text-primary-dark underline">
 					{t("auth.register.signIn")}
 				</Link>
 			</div>

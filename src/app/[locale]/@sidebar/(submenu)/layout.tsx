@@ -4,6 +4,7 @@ import ArrowLeft from "@/icons/arrow-narrow-left.svg";
 import Close from "@/icons/close.svg";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
+import { useLocalePath } from "@/lib/hooks/useLocalePath";
 
 export default function SubmenuLayout({
 	children,
@@ -12,6 +13,7 @@ export default function SubmenuLayout({
 }) {
 	const { t } = useTranslation("common");
 	const router = useRouter();
+	const toLocalePath = useLocalePath();
 
 	const handleBack = () => {
 		const canGoBack =
@@ -24,7 +26,7 @@ export default function SubmenuLayout({
 			return;
 		}
 
-		router.push("/map");
+		router.push(toLocalePath("/map"));
 	};
 
 	const handleClose = () => {

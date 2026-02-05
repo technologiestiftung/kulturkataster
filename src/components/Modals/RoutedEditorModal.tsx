@@ -3,6 +3,7 @@
 import { useCallback } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { cn } from "@/lib/utils";
 
 type RoutedEditorModalProps = {
@@ -25,6 +26,7 @@ export function useRoutedModalClose({
 	onClose,
 }: UseRoutedModalCloseArgs) {
 	const router = useRouter();
+	const toLocalePath = useLocalePath();
 
 	return useCallback(() => {
 		if (onClose) {
@@ -33,7 +35,7 @@ export function useRoutedModalClose({
 		}
 
 		if (returnTo) {
-			router.replace(returnTo);
+			router.replace(toLocalePath(returnTo));
 			return;
 		}
 
@@ -45,9 +47,9 @@ export function useRoutedModalClose({
 		if (canGoBack) {
 			router.back();
 		} else {
-			router.push("/");
+			router.push(toLocalePath("/"));
 		}
-	}, [returnTo, onClose, router]);
+	}, [returnTo, onClose, router, toLocalePath]);
 }
 
 export function RoutedEditorModal({

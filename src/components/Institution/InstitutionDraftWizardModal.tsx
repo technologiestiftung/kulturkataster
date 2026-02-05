@@ -27,6 +27,7 @@ import { createSubmission } from "@/server/actions/submissions";
 import { SubmissionEntityType, SubmissionType } from "@/generated/prisma";
 import { resolveCategoryIdsFromDraft } from "@/lib/utils/institutionCategoryUtils";
 import { Button } from "@/components/ui/button";
+import { useLocalePath } from "@/lib/hooks/useLocalePath";
 const stepConfigs: StepConfig[] = [
 	{
 		id: "basic",
@@ -89,6 +90,7 @@ function InstitutionDraftWizardContent({
 	const hasOpenedFromHash = useRef(false);
 
 	const router = useRouter();
+	const toLocalePath = useLocalePath();
 	const {
 		currentStepId,
 		currentStepIndex,
@@ -153,10 +155,12 @@ function InstitutionDraftWizardContent({
 			});
 			resetDraft();
 			router.push(
-				draftMode === "update" ? "/institution" : "/account/institutions",
+				toLocalePath(
+					draftMode === "update" ? "/institution" : "/account/institutions",
+				),
 			);
 		},
-		[categories, draftMode, resetDraft, router],
+		[categories, draftMode, resetDraft, router, toLocalePath],
 	);
 
 	const handleStepSubmit = useCallback(
@@ -179,8 +183,8 @@ function InstitutionDraftWizardContent({
 			previousStep();
 			return;
 		}
-		router.push("/account/institutions");
-	}, [canGoPrevious, previousStep, router]);
+		router.push(toLocalePath("/account/institutions"));
+	}, [canGoPrevious, previousStep, router, toLocalePath]);
 
 	useEffect(() => {
 		stepSyncSource.current = "stepper";

@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { ModalFooter } from "./ModalFooter";
 import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { cn } from "@/lib/utils";
 
 interface PageModalProps {
@@ -42,6 +43,7 @@ export function Modal({
 	subtitleClassName,
 }: PageModalProps) {
 	const router = useRouter();
+	const toLocalePath = useLocalePath();
 	const pathname = usePathname();
 	useEffect(() => {
 		const checkForHashAndScroll = () => {
@@ -60,7 +62,7 @@ export function Modal({
 
 	const handleClose = () => {
 		if (returnTo) {
-			router.replace(returnTo);
+			router.replace(toLocalePath(returnTo));
 			return;
 		}
 
@@ -76,7 +78,7 @@ export function Modal({
 			router.back();
 		} else {
 			// No history (direct visit to modal URL), navigate to home
-			router.push("/");
+			router.push(toLocalePath("/"));
 		}
 	};
 

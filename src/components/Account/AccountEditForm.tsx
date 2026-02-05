@@ -7,6 +7,7 @@ import { FormWrapper } from "@/components/FormWrapper";
 import type { FormWrapperConfig } from "@/components/FormWrapper";
 import { AlertDialog } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { updateUser, removeUser } from "@/server/actions/users";
 import { updateMyPassword, logout } from "@/server/actions/auth";
 import { useAccountStore } from "@/lib/store/accountStore";
@@ -34,6 +35,7 @@ export function AccountEditForm({
 	lastName,
 }: AccountEditFormProps) {
 	const router = useRouter();
+	const toLocalePath = useLocalePath();
 	const { t } = useTranslation("common");
 	const [isLoading, setIsLoading] = useState(false);
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -82,7 +84,7 @@ export function AccountEditForm({
 				description: t("auth.accountEdit.successDescription"),
 			});
 
-			router.replace("/account");
+			router.replace(toLocalePath("/account"));
 		} catch (error) {
 			setErrorMessage(
 				error instanceof Error
@@ -167,7 +169,7 @@ export function AccountEditForm({
 		try {
 			await removeUser(userId);
 			await logout();
-			router.replace("/");
+			router.replace(toLocalePath("/"));
 		} catch (error) {
 			setErrorMessage(
 				error instanceof Error
@@ -217,7 +219,7 @@ export function AccountEditForm({
 					<Button
 						type="button"
 						variant="outline"
-						onClick={() => router.replace("/account")}
+						onClick={() => router.replace(toLocalePath("/account"))}
 						disabled={isLoading}
 					>
 						{t("cancel")}

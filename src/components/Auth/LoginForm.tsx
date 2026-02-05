@@ -8,15 +8,17 @@ import { loginWithEmailPassword } from "@/server/actions/auth";
 import { FormWrapper } from "@/components/FormWrapper";
 import { AlertDialog } from "@/components/ui/alert-dialog";
 import type { FormWrapperConfig } from "@/components/FormWrapper";
+import { useLocalePath } from "@/lib/hooks/useLocalePath";
 
 export function LoginForm() {
 	const [isLoading, setIsLoading] = useState(false);
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 	const router = useRouter();
+	const toLocalePath = useLocalePath();
 	const { t } = useTranslation("common");
 
 	const navigateToAccount = () => {
-		const accountPath = "/account";
+		const accountPath = toLocalePath("/account");
 		if (typeof window !== "undefined") {
 			window.location.assign(accountPath);
 			return;
@@ -83,7 +85,7 @@ export function LoginForm() {
 						afterField: (
 							<div className="flex justify-end">
 								<Link
-									href="/forgot-password"
+									href={toLocalePath("/forgot-password")}
 									className="text-primary-dark body2 underline"
 								>
 									{t("auth.login.forgotPassword")}
@@ -121,7 +123,7 @@ export function LoginForm() {
 
 			<div className="flex flex-col items-center text-center mt-2">
 				<span className="">{t("auth.login.noAccount")} </span>
-				<Link href="/register" className="text-primary-dark underline ">
+				<Link href={toLocalePath("/register")} className="text-primary-dark underline ">
 					{t("auth.login.signUp")}
 				</Link>
 			</div>

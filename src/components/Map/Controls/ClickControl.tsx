@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { useMapStore } from "@/lib/store/mapStore";
 import { FeatureLike } from "ol/Feature";
 import { FC, useEffect } from "react";
@@ -25,6 +26,7 @@ function findClickedInstitutionId(clickedFeature: FeatureLike): string | null {
 const ClickControl: FC<ClickControlProps> = ({ layerId }) => {
 	const map = useMapStore((state) => state.map);
 	const router = useRouter();
+	const toLocalePath = useLocalePath();
 
 	useEffect(() => {
 		if (!map) return;
@@ -42,14 +44,14 @@ const ClickControl: FC<ClickControlProps> = ({ layerId }) => {
 				if (isInstitutionsLayer) {
 					const institutionId = findClickedInstitutionId(_feature);
 					if (institutionId) {
-						router.push(`/map/institution/${institutionId}`);
+						router.push(toLocalePath(`/map/institution/${institutionId}`));
 					}
 				}
 
 				return true;
 			});
 		});
-	}, [map, layerId, router]);
+	}, [map, layerId, router, toLocalePath]);
 	return null;
 };
 

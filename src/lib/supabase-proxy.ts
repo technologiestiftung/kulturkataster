@@ -49,32 +49,24 @@ export async function updateSession(request: NextRequest) {
 	// with the Supabase client, your users may be randomly logged out.
 	const { data } = await supabase.auth.getClaims();
 
-	const user = data?.claims;
-	console.log(
-		"[updateSession] path",
-		request.nextUrl.pathname,
-		"hasUser",
-		!!user,
-	);
+	const pathname = request.nextUrl.pathname;
+	const localeMatch = pathname.match(/^\/([a-zA-Z-]{2,5})(?=\/)/);
+	const localePrefix = localeMatch ? `/${localeMatch[1]}` : "";
+	const appPath = localePrefix ? pathname.replace(localePrefix, "") : pathname;
+	const isLoginPath = appPath === "/login";
+	const isResetPasswordPath = appPath.startsWith("/reset-password");
+	const isAccountPath = appPath.startsWith("/account");
 
-	if (
-		!user &&
-		!request.nextUrl.pathname.startsWith("/login") &&
-		!request.nextUrl.pathname.startsWith("/reset-password") &&
-		request.nextUrl.pathname.startsWith("/account")
-	) {
+	const user = data?.claims;
+	if (!user && !isLoginPath && !isResetPasswordPath && isAccountPath) {
 		const url = request.nextUrl.clone();
-		url.pathname = "/login";
+		url.pathname = `${localePrefix}/login`;
 		return NextResponse.redirect(url);
 	}
 
-	if (
-		user &&
-		(request.nextUrl.pathname === "/login" ||
-			request.nextUrl.pathname.startsWith("/reset-password"))
-	) {
+	if (user && (isLoginPath || isResetPasswordPath)) {
 		const url = request.nextUrl.clone();
-		url.pathname = "/account";
+		url.pathname = `${localePrefix}/account`;
 		return NextResponse.redirect(url);
 	}
 
