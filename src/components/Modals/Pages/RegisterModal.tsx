@@ -30,7 +30,8 @@ export function RegisterModal({
 			containerClassName="p-0 md:p-0 mt-0 md:mt-0"
 			contentWrapperClassName="flex-1"
 			contentClassName=""
-			returnTo={didRegister ? toLocalePath("/login") : returnTo}
+			showBackButton={!didRegister}
+			returnTo={toLocalePath("/login") || returnTo}
 			content={
 				<>
 					{didRegister ? (
