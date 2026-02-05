@@ -10,6 +10,7 @@ import {
 	contactInfoConfig,
 } from "@/components/Institution";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
+import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { useMapStore } from "@/lib/store/mapStore";
 import { animateMapToCoordinates } from "@/lib/utils/mapUtils";
 import { getCoordinatesFromAddress } from "@/lib/utils/institutionUtils";
@@ -199,6 +200,7 @@ export function InstitutionDetailContent() {
 	const error = useInstitutionStore((state) => state.error);
 	const map = useMapStore((state) => state.map);
 	const router = useRouter();
+	const toLocalePath = useLocalePath();
 	const params = useParams();
 
 	const resolvedInstitutionId = useMemo(() => {
@@ -237,7 +239,7 @@ export function InstitutionDetailContent() {
 	}, [institutionData, map]);
 
 	const handleClose = () => {
-		router.push("/map");
+		router.push(toLocalePath("/map"));
 	};
 
 	if (!resolvedInstitutionId) return null;

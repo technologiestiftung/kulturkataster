@@ -8,6 +8,7 @@ import { setPasswordWithTokens } from "@/server/actions/auth";
 import { FormWrapper } from "@/components/FormWrapper";
 import type { FormWrapperConfig } from "@/components/FormWrapper";
 import { AlertDialog } from "@/components/ui/alert-dialog";
+import { useLocalePath } from "@/lib/hooks/useLocalePath";
 
 export function ResetPasswordForm() {
 	const [isLoading, setIsLoading] = useState(false);
@@ -17,6 +18,7 @@ export function ResetPasswordForm() {
 	const [accessToken, setAccessToken] = useState<string | null>(null);
 	const [refreshToken, setRefreshToken] = useState<string | null>(null);
 	const router = useRouter();
+	const toLocalePath = useLocalePath();
 	const { t } = useTranslation("common");
 
 	useEffect(() => {
@@ -69,7 +71,7 @@ export function ResetPasswordForm() {
 				return;
 			}
 
-			const accountPath = "/login";
+			const accountPath = toLocalePath("/login");
 			router.replace(accountPath);
 		} catch {
 			setErrorMessage(t("auth.reset.errorFallback"));
@@ -137,7 +139,7 @@ export function ResetPasswordForm() {
 			<FormWrapper config={formConfig} />
 
 			<div className="flex flex-col items-center text-center">
-				<Link href="/login" className="text-primary-dark underline ">
+				<Link href={toLocalePath("/login")} className="text-primary-dark underline ">
 					{t("auth.reset.backToLogin")}
 				</Link>
 			</div>

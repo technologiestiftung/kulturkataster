@@ -4,11 +4,13 @@ import { useMemo } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
+import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import BurgerMenu from "@/icons/burger-menu-icon.svg";
 
 export function ViewModeToggle() {
 	const { t } = useTranslation("common");
 	const router = useRouter();
+	const toLocalePath = useLocalePath();
 	const pathname = usePathname();
 
 	const normalizedPath = useMemo(
@@ -27,7 +29,7 @@ export function ViewModeToggle() {
 					variant="rounded"
 					size="icon-only"
 					title={t("mobileMenu.title")}
-					onClick={() => router.push("/mobileMenu")}
+					onClick={() => router.push(toLocalePath("/mobileMenu"))}
 					aria-label={t("mobileMenu.title")}
 					className="md:hidden"
 				>

@@ -17,6 +17,7 @@ import MapIcon from "@/icons/map.svg";
 import ListIcon from "@/icons/list.svg";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
+import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { getModalLink } from "@/lib/utils/modalRouting";
 
 const footerItems = [
@@ -30,6 +31,7 @@ export function MobileMenuModal() {
 	const { t } = useTranslation("common");
 
 	const router = useRouter();
+	const toLocalePath = useLocalePath();
 	const pathname = usePathname();
 	const isOpen = pathname?.includes("/mobileMenu");
 
@@ -37,7 +39,7 @@ export function MobileMenuModal() {
 		if (typeof window !== "undefined" && window.history.length > 1) {
 			router.back();
 		} else {
-			router.push("/map");
+			router.push(toLocalePath("/map"));
 		}
 	};
 
@@ -59,7 +61,7 @@ export function MobileMenuModal() {
 				<DialogHeader className="flex-row items-center justify-between p-4 space-y-0">
 					<DialogTitle className="sr-only">{t("mobileMenu.title")}</DialogTitle>
 					<button
-						onClick={() => router.push("/welcome")}
+						onClick={() => router.push(toLocalePath("/welcome"))}
 						aria-label={t("kukaLogo")}
 					>
 						<KukaSmallLogo
@@ -84,7 +86,7 @@ export function MobileMenuModal() {
 								icon={MapIcon}
 								titleKey="map.title"
 								onClick={() => {
-									router.push("/map");
+									router.push(toLocalePath("/map"));
 								}}
 							/>
 							<SubMenuOption
@@ -92,14 +94,14 @@ export function MobileMenuModal() {
 								icon={ListIcon}
 								titleKey="listView.title"
 								onClick={() => {
-									router.push("/list");
+									router.push(toLocalePath("/list"));
 								}}
 							/>
 							<SubMenuOption
 								key="information"
 								icon={InfoCircle}
 								titleKey="information.title"
-								onClick={() => router.push("/info")}
+								onClick={() => router.push(toLocalePath("/info"))}
 							/>
 							<div className="space-y-4 flex flex-col">
 								<span className="body2">{t("accessibility.title")}</span>

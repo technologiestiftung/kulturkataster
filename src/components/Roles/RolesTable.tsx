@@ -2,6 +2,7 @@
 
 import { DataTable } from "@/components/DataTable";
 import type { DataTableConfig } from "@/components/DataTable";
+import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { useAccountStore } from "@/lib/store/accountStore";
 import type { Role } from "@/types/role";
 import { useRouter } from "next/navigation";
@@ -10,6 +11,7 @@ import { useTranslation } from "react-i18next";
 export function RolesTable() {
 	const roles = useAccountStore((state) => state.roles);
 	const router = useRouter();
+	const toLocalePath = useLocalePath();
 	const { t } = useTranslation(["content", "enumMap"]);
 
 	const tableConfig: DataTableConfig<Role> = {
@@ -60,9 +62,9 @@ export function RolesTable() {
 		},
 		primaryButton: {
 			label: t("roleTable.actions.add"),
-			onClick: () => router.push("/account/roles/new"),
+			onClick: () => router.push(toLocalePath("/account/roles/new")),
 		},
-		onEdit: (row) => router.push(`/account/roles/${row.id}/edit`),
+		onEdit: (row) => router.push(toLocalePath(`/account/roles/${row.id}/edit`)),
 		emptyMessage: t("roleTable.emptyMessage"),
 		title: t("roleTable.title"),
 		subtitle:

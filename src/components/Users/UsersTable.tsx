@@ -5,6 +5,7 @@ import type { DataTableConfig } from "@/components/DataTable";
 import { BadgeOverflowList } from "@/components/Badges/Badges";
 import { StatusDot } from "@/components/ui/status-dot";
 import { useAccountStore } from "@/lib/store/accountStore";
+import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import type { User } from "@/types/user";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
@@ -14,6 +15,7 @@ import { UserStatus } from "@/generated/prisma";
 export function UsersTable() {
 	const users = useAccountStore((state) => state.users);
 	const router = useRouter();
+	const toLocalePath = useLocalePath();
 	const { t } = useTranslation("content");
 
 	const getStatusLabel = (status: UserStatus) => {
@@ -159,13 +161,13 @@ export function UsersTable() {
 		],
 		primaryButton: {
 			label: t("userTable.actions.add"),
-			onClick: () => router.push("/account/users/new"),
+			onClick: () => router.push(toLocalePath("/account/users/new")),
 		},
 		secondaryButton: {
 			label: t("userTable.actions.cancel"),
-			onClick: () => router.push("/account/users"),
+			onClick: () => router.push(toLocalePath("/account/users")),
 		},
-		onEdit: (row) => router.push(`/account/users/${row.id}/edit`),
+		onEdit: (row) => router.push(toLocalePath(`/account/users/${row.id}/edit`)),
 		emptyMessage: t("userTable.emptyMessage"),
 	};
 

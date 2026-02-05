@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { DataTable } from "@/components/DataTable";
 import type { DataTableConfig } from "@/components/DataTable";
+import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import type { Institution, InstitutionTableRow } from "@/types/institution";
 import { useAccountStore } from "@/lib/store/accountStore";
 import { StatusDot } from "../ui/status-dot";
@@ -26,6 +27,7 @@ import {
 
 export function InstitutionsTable() {
 	const router = useRouter();
+	const toLocalePath = useLocalePath();
 	const institutions = useAccountStore((state) => state.institutions);
 	const allSubmissions = useAccountStore((state) => state.submissions);
 	const submissions = useMemo(
@@ -658,18 +660,20 @@ export function InstitutionsTable() {
 		},
 		primaryButton: {
 			label: "Add Institution",
-			onClick: () => router.push("/account/institutions/new"),
+			onClick: () => router.push(toLocalePath("/account/institutions/new")),
 		},
 		onEdit: (row) => {
 			if (isSubmissionRow(row)) {
-				router.push(`/account/submissions/${row.submissionId}/edit`);
+				router.push(
+					toLocalePath(`/account/submissions/${row.submissionId}/edit`),
+				);
 				return;
 			}
-			router.push(`/account/institutions/${row.id}/edit`);
+			router.push(toLocalePath(`/account/institutions/${row.id}/edit`));
 		},
 		onReview: (row) => {
 			if (!isSubmissionRow(row)) return;
-			router.push(`/account/submissions/${row.submissionId}`);
+			router.push(toLocalePath(`/account/submissions/${row.submissionId}`));
 		},
 		getCanReview: (row) => isSubmissionRow(row),
 		reviewAriaLabel: "Review",

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { Modal } from "@/components/Modals/Modal";
 import { Input } from "@/components/ui/input";
+import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useInstitutionDraftStore } from "@/lib/store/institutionDraftStore";
 import { searchInstitutions } from "@/server/actions/institutions";
@@ -59,6 +60,7 @@ export function InstitutionDraftSelectModal({
 }) {
 	const { t } = useTranslation("common");
 	const router = useRouter();
+	const toLocalePath = useLocalePath();
 	const institutions = useInstitutionStore((state) => state.allInstitutions);
 	const categories = useInstitutionStore((state) => state.categories) ?? [];
 	const isLoading = useInstitutionStore((state) => state.isLoading);
@@ -143,7 +145,7 @@ export function InstitutionDraftSelectModal({
 				"address.lat": address?.lat ?? null,
 				"address.lng": address?.lng ?? null,
 			});
-			router.push("/institution/submission");
+			router.push(toLocalePath("/institution/submission"));
 		},
 		[categories, setDraft, setMode, setStepId, router],
 	);

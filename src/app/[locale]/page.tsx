@@ -1,5 +1,11 @@
 import { redirect } from "next/navigation";
+import { localePath } from "@/lib/utils/localePath";
 
-export default function Home() {
-	redirect("/map");
+export default async function Home({
+	params,
+}: {
+	params: Promise<{ locale: string }>;
+}) {
+	const { locale } = await params;
+	redirect(localePath(locale, "/map"));
 }

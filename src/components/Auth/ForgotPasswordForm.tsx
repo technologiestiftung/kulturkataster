@@ -7,12 +7,14 @@ import { requestPasswordReset } from "@/server/actions/auth";
 import { FormWrapper } from "@/components/FormWrapper";
 import type { FormWrapperConfig } from "@/components/FormWrapper";
 import { AlertDialog } from "@/components/ui/alert-dialog";
+import { useLocalePath } from "@/lib/hooks/useLocalePath";
 
 export function ForgotPasswordForm() {
 	const [isLoading, setIsLoading] = useState(false);
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 	const [showSuccess, setShowSuccess] = useState(false);
 	const router = useRouter();
+	const toLocalePath = useLocalePath();
 	const { t } = useTranslation("common");
 
 	const handleSubmit = async (data: Record<string, unknown>) => {
@@ -38,7 +40,7 @@ export function ForgotPasswordForm() {
 		onSubmit: handleSubmit,
 		showCancel: true,
 		cancelLabel: t("auth.forgot.backToSignIn"),
-		onCancel: () => router.replace("/login"),
+		onCancel: () => router.replace(toLocalePath("/login")),
 		submitLabel: isLoading
 			? t("auth.forgot.submitting")
 			: t("auth.forgot.submit"),
@@ -97,7 +99,7 @@ export function ForgotPasswordForm() {
 				confirmLabel={t("auth.forgot.successCta")}
 				onConfirm={() => {
 					setShowSuccess(false);
-					router.replace("/login");
+					router.replace(toLocalePath("/login"));
 				}}
 			/>
 

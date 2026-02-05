@@ -3,6 +3,7 @@
 import { DataTable } from "@/components/DataTable";
 import type { DataTableConfig } from "@/components/DataTable";
 import { Badge } from "@/components/ui/badge";
+import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { useAccountStore } from "@/lib/store/accountStore";
 import { StatusDot } from "@/components/ui/status-dot";
 import type { Category } from "@/types";
@@ -14,6 +15,7 @@ export function CategoriesTable() {
 	const { t: tEnum } = useTranslation("enumMap");
 	const { t } = useTranslation(["content", "common"]);
 	const router = useRouter();
+	const toLocalePath = useLocalePath();
 	const categories = useAccountStore((state) => state.categories);
 	const parentCategories = categories
 		.filter((category) => !category.parent_category_id)
@@ -118,9 +120,10 @@ export function CategoriesTable() {
 		),
 		primaryButton: {
 			label: t("categoryTable.actions.add", { defaultValue: "Add category" }),
-			onClick: () => router.push("/account/categories/new"),
+			onClick: () => router.push(toLocalePath("/account/categories/new")),
 		},
-		onEdit: (row) => router.push(`/account/categories/${row.id}/edit`),
+		onEdit: (row) =>
+			router.push(toLocalePath(`/account/categories/${row.id}/edit`)),
 		emptyMessage: t("categoryTable.emptyMessage", {
 			defaultValue: "No categories found.",
 		}),
