@@ -74,7 +74,8 @@ export function GroupsTable() {
 			label: t("groupTable.actions.add"),
 			onClick: () => router.push(toLocalePath("/account/groups/new")),
 		},
-		onEdit: (row) => router.push(toLocalePath(`/account/groups/${row.id}/edit`)),
+		onEdit: (row) =>
+			router.push(toLocalePath(`/account/groups/${row.id}/edit`)),
 		emptyMessage: t("groupTable.emptyMessage"),
 		title: t("groupTable.title"),
 		subtitle:

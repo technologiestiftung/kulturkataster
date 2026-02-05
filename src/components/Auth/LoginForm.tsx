@@ -123,7 +123,10 @@ export function LoginForm() {
 
 			<div className="flex flex-col items-center text-center mt-2">
 				<span className="">{t("auth.login.noAccount")} </span>
-				<Link href={toLocalePath("/register")} className="text-primary-dark underline ">
+				<Link
+					href={toLocalePath("/register")}
+					className="text-primary-dark underline "
+				>
 					{t("auth.login.signUp")}
 				</Link>
 			</div>
