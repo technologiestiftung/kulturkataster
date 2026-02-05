@@ -2,6 +2,7 @@
 
 import { DataTable } from "@/components/DataTable";
 import type { DataTableConfig } from "@/components/DataTable";
+import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { useAccountStore } from "@/lib/store/accountStore";
 import type { Group } from "@/types/group";
 import { useRouter } from "next/navigation";
@@ -10,6 +11,7 @@ import { useTranslation } from "react-i18next";
 export function GroupsTable() {
 	const groups = useAccountStore((state) => state.groups);
 	const router = useRouter();
+	const toLocalePath = useLocalePath();
 	const { t } = useTranslation("content");
 
 	const tableConfig: DataTableConfig<Group> = {
@@ -70,9 +72,9 @@ export function GroupsTable() {
 		],
 		primaryButton: {
 			label: t("groupTable.actions.add"),
-			onClick: () => router.push("/account/groups/new"),
+			onClick: () => router.push(toLocalePath("/account/groups/new")),
 		},
-		onEdit: (row) => router.push(`/account/groups/${row.id}/edit`),
+		onEdit: (row) => router.push(toLocalePath(`/account/groups/${row.id}/edit`)),
 		emptyMessage: t("groupTable.emptyMessage"),
 		title: t("groupTable.title"),
 		subtitle:

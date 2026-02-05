@@ -20,6 +20,7 @@ import UserIcon from "@/icons/user.svg";
 import MapIcon from "@/icons/map.svg";
 import ENIcon from "@/icons/lang/en.svg";
 import Download from "@/icons/download.svg";
+import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { useAppStore } from "@/lib/store/appStore";
 import KukaSmallLogo from "@/logos/kuka-small.svg";
 import { useEffect, useMemo } from "react";
@@ -119,7 +120,11 @@ const footerItems: MenuItem[] = [
 	},
 ];
 
-const isMenuItemActive = (item: MenuItem, pathname: string): boolean => {
+const isMenuItemActive = (
+	item: MenuItem,
+	pathname: string,
+	toLocalePath: (path: string) => string,
+): boolean => {
 	const normalizedPath = pathname.replace(/\/$/, "");
 
 	// Use matchPattern if provided for more flexible matching
@@ -127,7 +132,11 @@ const isMenuItemActive = (item: MenuItem, pathname: string): boolean => {
 		return item.matchPattern.test(normalizedPath);
 	}
 
-	return normalizedPath === item.route || normalizedPath.startsWith(item.route);
+	const localizedRoute = toLocalePath(item.route).replace(/\/$/, "");
+	return (
+		normalizedPath === localizedRoute ||
+		normalizedPath.startsWith(`${localizedRoute}/`)
+	);
 };
 
 export function Menu({
@@ -137,6 +146,7 @@ export function Menu({
 	const { setOpen, setOpenMobile } = useSidebar();
 	const { t } = useTranslation("common");
 	const router = useRouter();
+	const toLocalePath = useLocalePath();
 	const pathname = usePathname();
 	const { setFirstTimeUser } = useAppStore();
 
@@ -176,12 +186,12 @@ export function Menu({
 
 	const handleLogoClick = () => {
 		setFirstTimeUser(true);
-		router.push("/welcome");
+		router.push(toLocalePath("/welcome"));
 	};
 
 	const handleItemClick = (item: MenuItem) => {
 		if (item.route && item.route !== "#") {
-			router.push(item.route);
+			router.push(toLocalePath(item.route));
 		}
 		setOpen(false);
 		setOpenMobile(false);
@@ -224,7 +234,11 @@ export function Menu({
 												isAccountRoute ? item.showInAccount : item.showInMap,
 											)
 											.map((item) => {
-												const isActive = isMenuItemActive(item, normalizedPath);
+												const isActive = isMenuItemActive(
+													item,
+													normalizedPath,
+													toLocalePath,
+												);
 
 												return (
 													<SidebarMenuItem key={item.id}>
@@ -251,7 +265,11 @@ export function Menu({
 						<SidebarFooter>
 							<SidebarMenu>
 								{footerItems.map((item) => {
-									const isActive = isMenuItemActive(item, normalizedPath);
+									const isActive = isMenuItemActive(
+										item,
+										normalizedPath,
+										toLocalePath,
+									);
 									return (
 										<SidebarMenuItem key={item.id}>
 											<SidebarMenuButton
@@ -299,7 +317,11 @@ export function Menu({
 					{menuItems
 						.filter((item) => item.showInMobile)
 						.map((item) => {
-							const isActive = isMenuItemActive(item, normalizedPath);
+							const isActive = isMenuItemActive(
+								item,
+								normalizedPath,
+								toLocalePath,
+							);
 							return (
 								<SidebarMenuItem key={item.id} className="flex-shrink-0">
 									<SidebarMenuButton

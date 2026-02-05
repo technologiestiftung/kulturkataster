@@ -1,54 +1,53 @@
-import { NextResponse, type NextRequest } from "next/server";
-import { i18nConfig } from "@/i18n";
+import { type NextRequest } from "next/server";
+import { NextResponse } from "next/server";
+import { match } from "@formatjs/intl-localematcher";
+import Negotiator from "negotiator";
+import { allowedLocales, defaultLocale } from "@/i18n";
 import { updateSession } from "./lib/supabase-proxy";
+
+function getPreferredLocale(request: NextRequest): string {
+	const headers: Record<string, string> = {
+		"accept-language": request.headers.get("accept-language") ?? "",
+	};
+	const languages = new Negotiator({ headers }).languages();
+	const locales = Array.from(new Set(allowedLocales));
+	return match(languages, locales, defaultLocale);
+}
+
+function pathnameHasLocale(pathname: string): boolean {
+	return allowedLocales.some(
+		(locale) => pathname === `/${locale}` || pathname.startsWith(`/${locale}/`),
+	);
+}
 
 export async function proxy(request: NextRequest) {
 	const { pathname } = request.nextUrl;
-	const cleanedPathname = pathname.replace(/\/\(\.\)([^/]+)/g, "/$1");
 
-	const localePattern = new RegExp(`^/(${i18nConfig.locales.join("|")})(/|$)`);
-	const needsLocaleRewrite = !localePattern.test(cleanedPathname);
-	const rewriteUrl = needsLocaleRewrite
-		? (() => {
-				const url = request.nextUrl.clone();
-				url.pathname = `/${i18nConfig.defaultLocale}${cleanedPathname}`;
-				return url;
-			})()
-		: null;
-
-	const isAuthRoute =
-		cleanedPathname.match(
-			/^\/(account|login|register|forgot-password|reset-password)(\/|$)/,
-		) ||
-		cleanedPathname.match(
-			/^\/[a-z]{2}\/(account|login|register|forgot-password|reset-password)(\/|$)/,
-		);
-
-	if (isAuthRoute) {
-		const supabaseResponse = await updateSession(request);
-		const location = supabaseResponse.headers.get("location");
-		if (location) {
-			return supabaseResponse;
-		}
-		if (needsLocaleRewrite) {
-			const rewritten = NextResponse.rewrite(rewriteUrl!, { request });
-			supabaseResponse.cookies.getAll().forEach((cookie) => {
-				rewritten.cookies.set(cookie.name, cookie.value, cookie);
-			});
-			return rewritten;
-		}
-		return supabaseResponse;
+	// Keep API routes and public static resources untouched.
+	if (
+		!pathname.startsWith("/api") &&
+		!pathname.startsWith("/resources") &&
+		!pathnameHasLocale(pathname)
+	) {
+		const locale = getPreferredLocale(request);
+		const url = request.nextUrl.clone();
+		url.pathname = pathname === "/" ? `/${locale}` : `/${locale}${pathname}`;
+		return NextResponse.redirect(url);
 	}
 
-	if (needsLocaleRewrite) {
-		return NextResponse.rewrite(rewriteUrl!);
-	}
-
-	return NextResponse.next();
+	// update user's auth session
+	return await updateSession(request);
 }
 
 export const config = {
 	matcher: [
-		"/((?!api|_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|resources/).*)",
+		/*
+		 * Match all request paths except for the ones starting with:
+		 * - _next/static (static files)
+		 * - _next/image (image optimization files)
+		 * - favicon.ico (favicon file)
+		 * Feel free to modify this pattern to include more paths.
+		 */
+		"/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
 	],
 };

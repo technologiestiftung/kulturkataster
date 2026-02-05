@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import { useLocalePath } from "@/lib/hooks/useLocalePath";
 
 export function RegisterModal({
 	routePath,
@@ -17,6 +18,7 @@ export function RegisterModal({
 }) {
 	const { t } = useTranslation("common");
 	const router = useRouter();
+	const toLocalePath = useLocalePath();
 	const [didRegister, setDidRegister] = useState(false);
 
 	return (
@@ -28,7 +30,7 @@ export function RegisterModal({
 			containerClassName="p-0 md:p-0 mt-0 md:mt-0"
 			contentWrapperClassName="flex-1"
 			contentClassName=""
-			returnTo={didRegister ? "/login" : returnTo}
+			returnTo={didRegister ? toLocalePath("/login") : returnTo}
 			content={
 				<>
 					{didRegister ? (
@@ -60,7 +62,7 @@ export function RegisterModal({
 									<Button
 										variant="default"
 										className="w-full"
-										onClick={() => router.replace("/login")}
+										onClick={() => router.replace(toLocalePath("/login"))}
 									>
 										{t("auth.register.successCta", {
 											defaultValue: "Fertig",

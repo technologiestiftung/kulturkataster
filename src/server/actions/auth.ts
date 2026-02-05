@@ -93,7 +93,7 @@ export async function registerWithEmailPassword(params: {
 		email: params.email,
 		password: params.password,
 		options: {
-			emailRedirectTo: `${siteUrl}/reset-password`,
+			emailRedirectTo: `${siteUrl}/login`,
 		},
 	});
 

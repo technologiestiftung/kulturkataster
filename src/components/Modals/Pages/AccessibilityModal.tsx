@@ -1,6 +1,7 @@
 "use client";
 
 import TextBlock from "@/components/Content/TextBlock";
+import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { Trans, useTranslation } from "react-i18next";
 import { Modal } from "../Modal";
 import Link from "next/link";
@@ -14,6 +15,7 @@ interface Barrier {
 
 export function AccessibilityModal({ routePath }: { routePath?: string }) {
 	const { t } = useTranslation("content");
+	const toLocalePath = useLocalePath();
 
 	const barriers = t("accessibilityModal.which.barriers", {
 		returnObjects: true,
@@ -39,7 +41,7 @@ export function AccessibilityModal({ routePath }: { routePath?: string }) {
 						components={{
 							link: (
 								<Link
-									href="/simpleLanguage"
+									href={toLocalePath("/simpleLanguage")}
 									rel="noopener noreferrer"
 									className="text-primary-dark hover:text-primary underline bg-transparent border-none p-0 "
 								>
@@ -56,7 +58,7 @@ export function AccessibilityModal({ routePath }: { routePath?: string }) {
 						components={{
 							link: (
 								<Link
-									href="/signLanguage"
+									href={toLocalePath("/signLanguage")}
 									rel="noopener noreferrer"
 									className="text-primary-dark hover:text-primary underline bg-transparent border-none p-0 "
 								>

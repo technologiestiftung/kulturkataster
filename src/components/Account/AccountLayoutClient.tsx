@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import Setting from "@/icons/settings.svg";
@@ -26,6 +27,7 @@ export function AccountLayoutClient({
 }: AccountLayoutClientProps) {
 	const { t } = useTranslation("common");
 	const router = useRouter();
+	const toLocalePath = useLocalePath();
 	const pathname = usePathname();
 
 	const getCurrentTab = () => {
@@ -43,13 +45,13 @@ export function AccountLayoutClient({
 
 	const handleTabChange = (value: string) => {
 		if (!allowedTabs.includes(value)) return;
-		router.push(`/account/${value}`);
+		router.push(toLocalePath(`/account/${value}`));
 	};
 
 	const handleLogout = async () => {
 		const result = await logout();
 		if (result.ok) {
-			router.push("/");
+			router.push(toLocalePath("/"));
 		} else {
 			console.error("Logout failed:", result.error);
 		}
@@ -89,7 +91,7 @@ export function AccountLayoutClient({
 							size="icon-only"
 							className="h-14 w-14"
 							aria-label="Edit Profile"
-							onClick={() => router.push("/account/edit")}
+							onClick={() => router.push(toLocalePath("/account/edit"))}
 						>
 							<Setting />
 						</Button>

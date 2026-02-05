@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Modal } from "@/components/Modals/Modal";
+import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { useInstitutionDraftStore } from "@/lib/store/institutionDraftStore";
 
 export function InstitutionDraftIntroModal({
@@ -13,6 +14,7 @@ export function InstitutionDraftIntroModal({
 	routePath?: string;
 }) {
 	const router = useRouter();
+	const toLocalePath = useLocalePath();
 	const [mode, setMode] = useState<"new" | "edit">("new");
 	const resetDraft = useInstitutionDraftStore((state) => state.resetDraft);
 	const setModeInStore = useInstitutionDraftStore((state) => state.setMode);
@@ -21,11 +23,11 @@ export function InstitutionDraftIntroModal({
 		resetDraft();
 		if (mode === "edit") {
 			setModeInStore("update");
-			router.push("/institution/submission/select");
+			router.push(toLocalePath("/institution/submission/select"));
 			return;
 		}
 		setModeInStore("create");
-		router.push("/institution/submission");
+		router.push(toLocalePath("/institution/submission"));
 	};
 
 	return (
