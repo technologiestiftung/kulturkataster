@@ -20,6 +20,7 @@ export function ForgotPasswordModal({
 			variant="fullscreen"
 			routePath={routePath}
 			returnTo={returnTo}
+			showBackButton={true}
 			content={
 				<div className="flex flex-1 items-center justify-center py-12 px-4 w-full">
 					<ForgotPasswordForm />
