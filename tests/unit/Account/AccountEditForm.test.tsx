@@ -19,6 +19,8 @@ vi.mock("next/navigation", () => ({
 	useRouter: () => ({
 		replace: replaceMock,
 	}),
+	usePathname: () => "/de/account/edit",
+	useParams: () => ({ locale: "de" }),
 }));
 
 vi.mock("idb-keyval", () => ({
@@ -171,7 +173,7 @@ describe("AccountEditForm", () => {
 		await waitFor(() => {
 			expect(mockedRemoveUser).toHaveBeenCalledWith("user-1");
 			expect(mockedLogout).toHaveBeenCalled();
-			expect(replaceMock).toHaveBeenCalledWith("/");
+			expect(replaceMock).toHaveBeenCalledWith("/de/");
 		});
 	});
 });

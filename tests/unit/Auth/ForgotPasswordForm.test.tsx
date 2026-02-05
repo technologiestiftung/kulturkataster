@@ -18,6 +18,8 @@ vi.mock("next/navigation", () => ({
 	useRouter: () => ({
 		replace: replaceMock,
 	}),
+	usePathname: () => "/de/forgot-password",
+	useParams: () => ({ locale: "de" }),
 }));
 
 vi.mock("@/server/actions/auth", () => ({
