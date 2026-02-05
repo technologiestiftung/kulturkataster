@@ -1,13 +1,18 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useMemo } from "react";
 import { localePath } from "@/lib/utils/localePath";
+import { allowedLocales } from "@/i18n";
 
 export function useLocalePath() {
-	const params = useParams<{ locale?: string | string[] }>();
-	const localeParam = params?.locale;
-	const locale = Array.isArray(localeParam) ? localeParam[0] : localeParam;
+	const pathname = usePathname();
+	const locale = useMemo(() => {
+		if (!pathname) return undefined;
+		const firstSegment = pathname.split("/").filter(Boolean)[0];
+		if (!firstSegment) return undefined;
+		return allowedLocales.includes(firstSegment) ? firstSegment : undefined;
+	}, [pathname]);
 
 	return useMemo(() => {
 		return (path: string) => localePath(locale, path);
