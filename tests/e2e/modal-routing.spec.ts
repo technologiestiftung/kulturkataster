@@ -5,7 +5,11 @@ const closeDialog = async (page: import("@playwright/test").Page) => {
 	// Ensure app close handlers that rely on Next history idx choose router.back().
 	await page.evaluate(() => {
 		const current = (window.history.state ?? {}) as Record<string, unknown>;
-		window.history.replaceState({ ...current, idx: 1 }, "", window.location.href);
+		window.history.replaceState(
+			{ ...current, idx: 1 },
+			"",
+			window.location.href,
+		);
 	});
 	const dialog = page.locator('[data-slot="dialog-content"]:visible').first();
 	await dialog.locator('[data-slot="dialog-close"]').click({ force: true });
