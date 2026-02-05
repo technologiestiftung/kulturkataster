@@ -2,7 +2,7 @@ import { type NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { match } from "@formatjs/intl-localematcher";
 import Negotiator from "negotiator";
-import { allowedLocales, defaultLocale } from "@/i18n";
+import { allowedLocales, defaultLocale } from "@/i18n/config";
 import { updateSession } from "./lib/supabase-proxy";
 
 function getPreferredLocale(request: NextRequest): string {
