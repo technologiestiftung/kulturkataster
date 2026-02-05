@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 type RoutedEditorModalProps = {
 	children: React.ReactNode;
 	routePath?: string;
-	closeTo?: string;
+	returnTo?: string;
 	onClose?: () => void;
 	open?: boolean;
 	showBackButton?: boolean;
@@ -16,12 +16,12 @@ type RoutedEditorModalProps = {
 };
 
 type UseRoutedModalCloseArgs = {
-	closeTo?: string;
+	returnTo?: string;
 	onClose?: () => void;
 };
 
 export function useRoutedModalClose({
-	closeTo,
+	returnTo,
 	onClose,
 }: UseRoutedModalCloseArgs) {
 	const router = useRouter();
@@ -32,8 +32,8 @@ export function useRoutedModalClose({
 			return;
 		}
 
-		if (closeTo) {
-			router.replace(closeTo);
+		if (returnTo) {
+			router.replace(returnTo);
 			return;
 		}
 
@@ -47,20 +47,20 @@ export function useRoutedModalClose({
 		} else {
 			router.push("/");
 		}
-	}, [closeTo, onClose, router]);
+	}, [returnTo, onClose, router]);
 }
 
 export function RoutedEditorModal({
 	children,
 	routePath,
-	closeTo,
+	returnTo,
 	onClose,
 	open = true,
 	showBackButton = false,
 	contentClassName,
 }: RoutedEditorModalProps) {
 	const pathname = usePathname();
-	const handleClose = useRoutedModalClose({ closeTo, onClose });
+	const handleClose = useRoutedModalClose({ returnTo, onClose });
 
 	const isRouteMatch = routePath
 		? Boolean(pathname && pathname.endsWith(routePath))

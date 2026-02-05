@@ -16,7 +16,7 @@ export default async function AccountEditModalPage() {
 	return (
 		<AccountEditModal
 			routePath="/account/edit"
-			closeTo="/account"
+			returnTo="/account"
 			userId={user.id}
 			email={currentUser.email}
 			firstName={user.first_name}

@@ -6,7 +6,7 @@ import { AccountEditForm } from "@/components/Account/AccountEditForm";
 
 type AccountEditModalProps = {
 	routePath?: string;
-	closeTo?: string;
+	returnTo?: string;
 	userId: string;
 	email: string;
 	firstName?: string | null;
@@ -15,7 +15,7 @@ type AccountEditModalProps = {
 
 export function AccountEditModal({
 	routePath,
-	closeTo,
+	returnTo,
 	userId,
 	email,
 	firstName,
@@ -29,7 +29,7 @@ export function AccountEditModal({
 			titleClassName="sr-only"
 			variant="fullscreen"
 			routePath={routePath}
-			closeTo={closeTo}
+			returnTo={returnTo}
 			content={
 				<div className="flex flex-1 items-center justify-center py-12 px-4 w-full">
 					<AccountEditForm

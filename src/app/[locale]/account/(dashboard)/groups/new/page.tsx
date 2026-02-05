@@ -6,7 +6,7 @@ export default function NewGroupPage() {
 			mode="create"
 			shouldRefresh={false}
 			routePath="/account/groups/new"
-			closeTo="/account/groups"
+			returnTo="/account/groups"
 		/>
 	);
 }

@@ -231,7 +231,7 @@ export function InstitutionDraftReviewModal({
 		<Modal
 			title={t("institutionFormModal.review.title")}
 			variant="fullscreen"
-			closeTo={returnTo}
+			returnTo={returnTo}
 			routePath={routePath}
 			content={
 				<div className="space-y-6">

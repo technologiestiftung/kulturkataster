@@ -17,5 +17,5 @@ export async function generateMetadata({
 }
 
 export default async function LoginPage() {
-	return <LoginModal routePath="/login" closeTo="/" />;
+	return <LoginModal routePath="/login" returnTo="/" />;
 }

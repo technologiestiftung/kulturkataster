@@ -13,7 +13,7 @@ interface PageModalProps {
 	hasFooter?: boolean;
 	open?: boolean;
 	routePath?: string;
-	closeTo?: string;
+	returnTo?: string;
 	content: React.ReactNode;
 	showBackButton?: boolean;
 	hideLinksInModalFooter?: string[];
@@ -31,7 +31,7 @@ export function Modal({
 	hasFooter = true,
 	open = true,
 	routePath,
-	closeTo,
+	returnTo,
 	content,
 	showBackButton,
 	hideLinksInModalFooter,
@@ -59,8 +59,8 @@ export function Modal({
 	}, []);
 
 	const handleClose = () => {
-		if (closeTo) {
-			router.replace(closeTo);
+		if (returnTo) {
+			router.replace(returnTo);
 			return;
 		}
 

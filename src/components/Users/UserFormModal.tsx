@@ -38,7 +38,7 @@ type UserFormModalProps = {
 	userId?: string;
 	shouldRefresh?: boolean;
 	routePath?: string;
-	closeTo?: string;
+	returnTo?: string;
 };
 
 const getInitialValues = (resolvedUser?: User) => ({
@@ -432,7 +432,7 @@ export function UserFormModal({
 	userId,
 	shouldRefresh = true,
 	routePath,
-	closeTo,
+	returnTo,
 }: UserFormModalProps) {
 	const { t } = useTranslation("content");
 	const { t: tEnum, i18n } = useTranslation("enumMap");
@@ -446,7 +446,7 @@ export function UserFormModal({
 	const categories = useInstitutionStore((state) => state.categories) ?? [];
 	const [isDeleting, setIsDeleting] = useState(false);
 	const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-	const handleClose = useRoutedModalClose({ closeTo });
+	const handleClose = useRoutedModalClose({ returnTo });
 
 	const { resolvedUser, isWaitingForUser, showNotFound } = useResolvedUser(
 		mode,

@@ -14,7 +14,7 @@ export default async function EditGroupPage({ params }: PageProps) {
 			groupId={id}
 			shouldRefresh={false}
 			routePath={`/account/groups/${id}/edit`}
-			closeTo="/account/groups"
+			returnTo="/account/groups"
 		/>
 	);
 }
