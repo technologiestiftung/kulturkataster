@@ -290,8 +290,6 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
 					},
 				],
 			},
-		],
-		footerFields: [
 			{
 				name: "privacySection",
 				type: "section",
@@ -299,7 +297,7 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
 				fields: [
 					{
 						name: "acceptTerms",
-						label: t("auth.register.termsIntro"),
+						label: t("auth.register.privacyLink"),
 						labelNode: (
 							<span className="body2 font-normal flex-wrap">
 								{t("auth.register.termsIntro")}{" "}
@@ -334,7 +332,9 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
 							<span className="body2 font-normal">
 								{t("auth.register.newsletterOptInPrefix")}{" "}
 								<Link
-									href={toLocalePath("/newsletter")}
+									href={
+										"https://flow.cleverreach.com/fl/21a1a529-f085-4bd1-8e53-d657c3ccc1de/"
+									}
 									className="text-primary-dark underline"
 									target="_blank"
 								>
@@ -379,7 +379,7 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
 
 			<FormWrapper config={formConfig} />
 
-			<div className="flex flex-col items-center text-center border-t-2 pt-6 mt-6">
+			<div className="flex flex-col items-center text-center pt-2 mt-6">
 				<span className="">{t("auth.register.alreadyAccount")} </span>
 				<Link
 					href={toLocalePath("/login")}

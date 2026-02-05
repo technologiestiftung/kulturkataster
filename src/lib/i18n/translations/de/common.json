@@ -232,6 +232,11 @@
 	"filter": {
 		"title": "Kulturorte filtern"
 	},
+	"form": {
+		"validation": {
+			"required": "{{field}} ist erforderlich"
+		}
+	},
 	"footer": {
 		"about": "Über das Projekt",
 		"accessibility": "Barrierefreiheit",
