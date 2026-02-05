@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 import { useMemo } from "react";
 import { localePath } from "@/lib/utils/localePath";
-import { allowedLocales } from "@/i18n";
+import { allowedLocales } from "@/i18n/config";
 
 export function useLocalePath() {
 	const pathname = usePathname();
