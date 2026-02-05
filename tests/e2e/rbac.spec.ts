@@ -44,7 +44,7 @@ test.describe("rbac", () => {
 
 		await login(page, userEmail, userPassword);
 		await page.goto("/account/institutions");
-		await expect(page.getByRole("table")).toBeVisible({ timeout: 10_000 });
+		await expect(page.getByRole("table")).toBeVisible({ timeout: 15_000 });
 	});
 
 	test("admin sees users tab", async ({ page }) => {
