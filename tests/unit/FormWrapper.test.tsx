@@ -36,7 +36,12 @@ const toFields = (
 // Mock i18next
 vi.mock("react-i18next", () => ({
 	useTranslation: () => ({
-		t: (key: string) => key,
+		t: (key: string, options?: Record<string, unknown>) => {
+			if (key === "form.validation.required") {
+				return `${String(options?.field ?? "")} is required`;
+			}
+			return key;
+		},
 		i18n: {
 			changeLanguage: () => new Promise(() => {}),
 		},
@@ -350,6 +355,37 @@ describe("FormWrapper", () => {
 				expect(screen.getByText(/Name is required/i)).toBeInTheDocument();
 			});
 
+			expect(onSubmit).not.toHaveBeenCalled();
+		});
+
+		it("prevents submit when required checkbox is unchecked", async () => {
+			const onSubmit = vi.fn();
+			const config: FormWrapperConfig = {
+				fields: toFields([
+					{
+						id: "main",
+						fields: [
+							{
+								name: "agree",
+								label: "I agree to terms",
+								type: "checkbox",
+								required: true,
+							},
+						],
+					},
+				]),
+				onSubmit,
+			};
+
+			render(<FormWrapper config={config} />);
+
+			fireEvent.click(screen.getByRole("button", { name: /Submit/i }));
+
+			await waitFor(() => {
+				expect(
+					screen.getByText(/I agree to terms is required/i),
+				).toBeInTheDocument();
+			});
 			expect(onSubmit).not.toHaveBeenCalled();
 		});
 

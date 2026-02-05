@@ -76,13 +76,23 @@ const validateFieldValue = (
 	field: FormWrapperFieldConfig,
 	value: unknown,
 	nextFormData: Record<string, unknown>,
+	t: (key: string, options?: Record<string, unknown>) => string,
 ): string | undefined => {
+	const requiredMessage =
+		field.requiredMessage ??
+		t("form.validation.required", {
+			field: field.label ?? field.name,
+		});
+
 	if (field.required) {
+		if (field.type === "checkbox" && value !== true) {
+			return requiredMessage;
+		}
 		if (value === undefined || value === null || value === "") {
-			return field.requiredMessage ?? `${field.label} is required`;
+			return requiredMessage;
 		}
 		if (Array.isArray(value) && value.length === 0) {
-			return field.requiredMessage ?? `${field.label} is required`;
+			return requiredMessage;
 		}
 	}
 
@@ -100,6 +110,7 @@ const validateFieldValue = (
 const collectValidationErrors = (
 	fields: FormWrapperFieldConfig[],
 	formData: Record<string, unknown>,
+	t: (key: string, options?: Record<string, unknown>) => string,
 ) => {
 	const newErrors: Record<string, string> = {};
 
@@ -111,7 +122,7 @@ const collectValidationErrors = (
 			return;
 		}
 
-		const error = validateFieldValue(field, formData[field.name], formData);
+		const error = validateFieldValue(field, formData[field.name], formData, t);
 		if (error) {
 			newErrors[field.name] = error;
 		}
@@ -172,7 +183,7 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 
 	const validateForm = (): boolean => {
 		const allFields = getAllFields(config.fields);
-		const newErrors = collectValidationErrors(allFields, formData);
+		const newErrors = collectValidationErrors(allFields, formData, t);
 		setErrors(newErrors);
 		return Object.keys(newErrors).length === 0;
 	};
