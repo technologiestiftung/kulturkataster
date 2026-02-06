@@ -124,7 +124,7 @@ function AccordionContent({
 	return (
 		<AccordionPrimitive.Content
 			data-slot="accordion-content"
-			className="data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down overflow-hidden body3"
+			className="data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down overflow-visible body3"
 			{...props}
 		>
 			<div className={cn(accordionContentVariants({ variant }), className)}>

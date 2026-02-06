@@ -20,7 +20,8 @@ export async function getUsers() {
 
 	const scope = getTableScope(ctx, "user", "read");
 	if (scope === "all") {
-		return userRepo.list();
+		const list = await userRepo.list();
+		return list;
 	}
 	const ownerId = requireScopeOrUser(scope, currentUserId);
 	if (!ownerId) return [];
@@ -210,7 +211,6 @@ export async function sendPasswordReset(email: string) {
 			redirectTo: `${siteUrl}/reset-password`,
 		},
 	});
-	console.log("sendPasswordReset data:", data);
 
 	if (error) {
 		throw new Error(error.message);

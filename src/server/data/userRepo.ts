@@ -4,7 +4,7 @@ import { UserCreateInput, UserUpdateInput, UserWhereInput } from "@/types/user";
 const include = {
 	role: true,
 	institutions: { select: { id: true } },
-	submissions: { select: { id: true } },
+	submissions: { where: { type: "claim" } },
 	groups: true,
 } as const;
 

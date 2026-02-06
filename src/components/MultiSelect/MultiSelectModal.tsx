@@ -6,7 +6,6 @@ import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { useTranslation } from "react-i18next";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { DialogContent, DialogTitle } from "@/components/ui/dialog";
 import {
@@ -17,7 +16,9 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import ChevronDown from "@/icons/chevron-down.svg";
+import { SelectableOptionsList } from "@/components/MultiSelect/SelectableOptionsList";
 import { cn } from "@/lib/utils";
+import { Checkbox } from "../ui/checkbox";
 export type MultiSelectOption = {
 	value: string;
 	label: string;
@@ -445,47 +446,14 @@ export function MultiSelectModal({
 									</SelectContent>
 								</Select>
 							</div>
-							<div className="flex rounded-sm border border-input bg-background">
-								<div className="max-h-[60vh] w-full overflow-auto">
-									{visibleOptions.length === 0 ? (
-										<p className="px-4 py-6 body3 text-foreground">
-											{emptyText}
-										</p>
-									) : (
-										visibleOptions.map((option) => {
-											const isChecked = draftSelected.includes(option.value);
-											return (
-												<div
-													key={option.value}
-													onClick={() => handleToggleOption(option.value)}
-													className={cn(
-														"flex min-w-0 items-center gap-3 border-b border-input px-4 py-3 text-left body3 last:border-b-0",
-														isChecked && "bg-neutral-5",
-													)}
-													role="button"
-													tabIndex={0}
-													onKeyDown={(event) => {
-														if (event.key === "Enter" || event.key === " ") {
-															event.preventDefault();
-															handleToggleOption(option.value);
-														}
-													}}
-												>
-													<Checkbox
-														checked={isChecked}
-														variant="filter"
-														size="filter"
-														onCheckedChange={() =>
-															handleToggleOption(option.value)
-														}
-													/>
-													<span className="">{`${option.label}`}</span>
-												</div>
-											);
-										})
-									)}
-								</div>
-							</div>
+							<SelectableOptionsList
+								options={visibleOptions}
+								selectedValues={draftSelected}
+								containerClassName="max-h-60 md:max-h-180"
+								onToggle={handleToggleOption}
+								emptyText={emptyText}
+								variant="panel"
+							/>
 							<div className="flex flex-col gap-3 py-4 flex-wrap md:flex-row">
 								<Button type="button" variant="outline" onClick={handleCancel}>
 									{t("multiSelectModal.actions.cancel")}

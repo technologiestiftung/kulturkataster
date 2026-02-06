@@ -2,20 +2,166 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Modal } from "@/components/Modals/Modal";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { useInstitutionDraftStore } from "@/lib/store/institutionDraftStore";
+import { Label } from "../ui/label";
+
+type DraftMode = "new" | "edit";
+
+type AuthChoiceContentProps = {
+	t: (key: string) => string;
+	onLogin: () => void;
+	onGuestContinue: () => void;
+};
+
+function AuthChoiceContent({
+	t,
+	onLogin,
+	onGuestContinue,
+}: AuthChoiceContentProps) {
+	return (
+		<div className="my-18 space-y-10">
+			<div>
+				<h1 className="font-bold">{t("institutionDraftIntroModal.title")}</h1>
+				<h2 className="font-bold">
+					{t("institutionDraftIntroModal.choice.title")}
+				</h2>
+			</div>
+			<div className="space-y-2">
+				<div>
+					<h3 className="font-bold">
+						{t("institutionDraftIntroModal.choice.login.title")}
+					</h3>
+					<p className="body2">
+						{t("institutionDraftIntroModal.choice.login.description")}
+					</p>
+				</div>
+				<div className="flex ">
+					<Button variant="default" onClick={onLogin}>
+						{t("institutionDraftIntroModal.choice.login.cta")}
+					</Button>
+				</div>
+			</div>
+			<div className="space-y-2">
+				<div>
+					<h3 className="font-bold">
+						{t("institutionDraftIntroModal.choice.guest.title")}
+					</h3>
+					<p className="body2">
+						{t("institutionDraftIntroModal.choice.guest.description")}
+					</p>
+				</div>
+				<div className="flex">
+					<Button variant="default" onClick={onGuestContinue}>
+						{t("institutionDraftIntroModal.choice.guest.cta")}
+					</Button>
+				</div>
+			</div>
+		</div>
+	);
+}
+
+type ContributionSetupContentProps = {
+	t: (key: string) => string;
+	mode: DraftMode;
+	setMode: (mode: DraftMode) => void;
+	onContinue: () => void;
+};
+
+function ContributionSetupContent({
+	t,
+	mode,
+	setMode,
+	onContinue,
+}: ContributionSetupContentProps) {
+	return (
+		<>
+			<div className="mt-18">
+				<h1 className="font-bold">{t("institutionDraftIntroModal.title")}</h1>
+				<p className="font-bold">
+					{t("institutionDraftIntroModal.intro.thankYou")}
+				</p>
+			</div>
+			<p>{t("institutionDraftIntroModal.intro.description")}</p>
+			<div className="space-y-2">
+				<h2 className="font-bold">
+					{t("institutionDraftIntroModal.intro.sectionTitle")}
+				</h2>
+				<span className="body2">
+					{t("institutionDraftIntroModal.intro.sectionNote")}
+				</span>
+			</div>
+			<div className="space-y-2 my-12 rounded-md bg-primary-light/50 p-12">
+				<p className="font-bold">
+					{t("institutionDraftIntroModal.intro.mode.title")}
+				</p>
+				<span className="body2">
+					{t("institutionDraftIntroModal.intro.mode.description")}
+				</span>
+				<div className="pt-4">
+					<RadioGroup
+						value={mode}
+						onValueChange={(value) =>
+							setMode(value === "edit" ? "edit" : "new")
+						}
+						className="flex flex-col gap-4"
+					>
+						<div key="new" className="flex items-center space-x-2">
+							<RadioGroupItem
+								value="new"
+								className="bg-background border-none"
+								id="new"
+							/>
+							<Label
+								htmlFor="new"
+								emphasize={false}
+								className="flex items-center gap-2 cursor-pointer"
+							>
+								{t("institutionDraftIntroModal.intro.mode.new")}
+							</Label>
+						</div>
+						<div key="edit" className="flex items-center space-x-2">
+							<RadioGroupItem
+								value="edit"
+								className="bg-background border-none"
+								id="edit"
+							/>
+							<Label
+								htmlFor="edit"
+								emphasize={false}
+								className="flex items-center gap-2 cursor-pointer"
+							>
+								{t("institutionDraftIntroModal.intro.mode.edit")}
+							</Label>
+						</div>
+					</RadioGroup>
+				</div>
+			</div>
+			<div className="flex">
+				<Button variant="default" onClick={onContinue}>
+					{t("institutionDraftIntroModal.intro.cta")}
+				</Button>
+			</div>
+		</>
+	);
+}
 
 export function InstitutionDraftIntroModal({
 	routePath,
+	isAuthenticated,
 }: {
 	routePath?: string;
+	isAuthenticated: boolean;
 }) {
 	const router = useRouter();
 	const toLocalePath = useLocalePath();
-	const [mode, setMode] = useState<"new" | "edit">("new");
+	const { t } = useTranslation("content");
+	const [mode, setMode] = useState<DraftMode>("new");
+	const [isGuestSetupVisible, setIsGuestSetupVisible] = useState(false);
 	const resetDraft = useInstitutionDraftStore((state) => state.resetDraft);
 	const setModeInStore = useInstitutionDraftStore((state) => state.setMode);
 
@@ -30,6 +176,12 @@ export function InstitutionDraftIntroModal({
 		router.push(toLocalePath("/institution/submission"));
 	};
 
+	const handleGuestContinue = () => {
+		setIsGuestSetupVisible(true);
+	};
+
+	const showContributionSetup = isAuthenticated || isGuestSetupVisible;
+
 	return (
 		<Modal
 			title="Mitwirken beim Kulturkataster Berlin"
@@ -41,79 +193,20 @@ export function InstitutionDraftIntroModal({
 			contentClassName=""
 			content={
 				<div className="p-4 space-y-4 flex-1 flex-col max-w-5xl mx-auto w-full">
-					<div className="mt-18">
-						<h1 className="font-bold">Mitwirken beim Kulturkataster Berlin</h1>
-						<p className="font-bold">
-							Vielen Dank, dass Sie das Kulturkataster Berlin mit Ihrem Beitrag
-							unterstützen!
-						</p>
-					</div>
-					<p>
-						Zum Mitwirken tragen Sie bitte die benötigten Angaben in die
-						jeweiligen Felder ein und klicken Sie am Ende des Formulars auf
-						„Daten übermitteln“. Unser Redaktionsteam prüft jede Einsendung vor
-						der Veröffentlichung und meldet sich ggfs. bei Rückfragen.
-					</p>
-					<div className="space-y-2">
-						<h2 className="font-bold">
-							Basisinformation der Kultureinrichtung
-						</h2>
-						<span className="body2">
-							Bitte beachten Sie, dass Sie Angaben nur dann machen sollten, wenn
-							Sie sich der Richtigkeit sicher sind und einer Einwilligung zur
-							Veröffentlichung im Kulturkataster zustimmen. Sollten
-							Informationen nur für befugte Nutzer*innen im geschützten Bereich
-							des Kulturkatasters zugänglich und nicht öffentlich einsehbar
-							sein, haben wir dies am jeweiligen Datenfeld gekennzeichnet.
-						</span>
-					</div>
-					<div className="space-y-2 my-12 rounded-md bg-primary-light/50 p-12">
-						<p className="font-bold">
-							Möchten Sie eine neue Kultureinrichtung eintragen oder einen
-							bestehenden Datensatz ergänzen bzw. korrigieren? *
-						</p>
-						<span className="body2">
-							Wählen Sie die passende Kategorie für die Kultureinrichtung aus.
-							Falls mehrere Kategorien zutreffen, wählen Sie die primäre
-							Kategorie aus.
-						</span>
-						<div className="pt-4">
-							<RadioGroup
-								value={mode}
-								onValueChange={(value) =>
-									setMode(value === "edit" ? "edit" : "new")
-								}
-								className="flex flex-col gap-4"
-							>
-								<div key="new" className="flex items-center space-x-2">
-									<RadioGroupItem
-										value="new"
-										className="bg-background border-none"
-										id="new"
-									/>
-									<span className="flex items-center gap-2 cursor-pointer">
-										Neue/n Kulturort/e eintragen
-									</span>
-								</div>
-								<div key="edit" className="flex items-center space-x-2">
-									<RadioGroupItem
-										value="edit"
-										className="bg-background border-none"
-										id="edit"
-									/>
-									<span className="flex items-center gap-2 cursor-pointer">
-										Ergänzung oder Änderung eines oder mehrere bestehender
-										Kulturorte
-									</span>
-								</div>
-							</RadioGroup>
-						</div>
-					</div>
-					<div className="flex">
-						<Button variant="default" onClick={handleContinue}>
-							Weiter
-						</Button>
-					</div>
+					{showContributionSetup ? (
+						<ContributionSetupContent
+							t={t}
+							mode={mode}
+							setMode={setMode}
+							onContinue={handleContinue}
+						/>
+					) : (
+						<AuthChoiceContent
+							t={t}
+							onLogin={() => router.push(toLocalePath("/login"))}
+							onGuestContinue={handleGuestContinue}
+						/>
+					)}
 				</div>
 			}
 		/>
