@@ -13,14 +13,14 @@ import {
 import { GeoFeature, Institution, SearchResult } from "@/types/institution";
 import { boundingExtent } from "ol/extent";
 import { fromLonLat } from "ol/proj";
-import { ChangeEvent, useEffect, useRef } from "react";
+import { ChangeEvent, useEffect, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { SearchResults } from "./SearchResults";
 import { getCoordinatesFromAddress } from "@/lib/utils/institutionUtils";
 import { usePathname, useRouter } from "next/navigation";
 import Close from "@/icons/close.svg";
 import FilterIcon from "@/icons/filter.svg";
 import { ButtonWithTooltip } from "../ui/button";
+import { SelectableOptionsList } from "@/components/MultiSelect/SelectableOptionsList";
 
 export const isGeoFeature = (result: SearchResult): result is GeoFeature => {
 	return "place_name" in result && "center" in result;
@@ -29,9 +29,19 @@ export const isGeoFeature = (result: SearchResult): result is GeoFeature => {
 export function LocationSearch({
 	onResultsChange,
 	onFilterClick,
+	onQueryChange,
+	onLoadingChange,
+	showResults = true,
+	placeholder,
+	searchFunction,
 }: {
 	onResultsChange?: (results: SearchResult[]) => void;
 	onFilterClick?: () => void;
+	onQueryChange?: (query: string) => void;
+	onLoadingChange?: (isLoading: boolean) => void;
+	showResults?: boolean;
+	placeholder?: string;
+	searchFunction?: (query: string) => Promise<SearchResult[]>;
 }) {
 	const { t } = useTranslation("common");
 	const inputRef = useRef<HTMLInputElement>(null);
@@ -50,6 +60,9 @@ export function LocationSearch({
 	} = useSearch<SearchResult>({
 		timeoutDuration: 500,
 		searchFunction: async (currQuery: string) => {
+			if (searchFunction) {
+				return searchFunction(currQuery);
+			}
 			const result = await searchLocations(currQuery);
 			return result.allResults;
 		},
@@ -58,6 +71,15 @@ export function LocationSearch({
 	useEffect(() => {
 		onResultsChange?.(searchResults);
 	}, [searchResults, onResultsChange]);
+
+	useEffect(() => {
+		onLoadingChange?.(isLoading);
+	}, [isLoading, onLoadingChange]);
+
+	const updateQuery = (nextQuery: string) => {
+		setQuery(nextQuery);
+		onQueryChange?.(nextQuery);
+	};
 
 	const {
 		activeIndex,
@@ -86,7 +108,7 @@ export function LocationSearch({
 			e.target.value = sanitizedValue;
 		}
 
-		setQuery(sanitizedValue);
+		updateQuery(sanitizedValue);
 		resetNavigation();
 	};
 
@@ -147,7 +169,7 @@ export function LocationSearch({
 		} else {
 			handleInstitutionClick(result);
 		}
-		setQuery("");
+		updateQuery("");
 		clearResults();
 		resetNavigation();
 	};
@@ -190,6 +212,40 @@ export function LocationSearch({
 		);
 	};
 
+	const resultOptions = useMemo(
+		() =>
+			searchResults.map((result) => {
+				const value = isGeoFeature(result)
+					? `address-${result.id}`
+					: `institution-${result.id}`;
+				if (isGeoFeature(result)) {
+					return {
+						value,
+						label: highlightMatch(result.place_name, query),
+					};
+				}
+				return {
+					value,
+					label: highlightMatch(result.name, query),
+					description: highlightMatch(formatAddress(result), query),
+				};
+			}),
+		[searchResults, query],
+	);
+
+	const resultByValue = useMemo(
+		() =>
+			new Map(
+				searchResults.map((result) => {
+					const value = isGeoFeature(result)
+						? `address-${result.id}`
+						: `institution-${result.id}`;
+					return [value, result];
+				}),
+			),
+		[searchResults],
+	);
+
 	return (
 		<div className="h-full w-full flex flex-col overflow-visible">
 			{/* <SearchMessages
@@ -202,7 +258,7 @@ export function LocationSearch({
 			<div className="mb-8 flex w-full items-center gap-2  flex-row pointer-events-auto">
 				<SearchInput
 					ref={inputRef}
-					placeholder={t("search.hint")}
+					placeholder={placeholder ?? t("search.hint")}
 					value={query}
 					onChange={handleInputChange}
 					onKeyDown={handleKeyDown}
@@ -223,7 +279,7 @@ export function LocationSearch({
 							) : (
 								<Close
 									onClick={() => {
-										setQuery("");
+										updateQuery("");
 										clearResults();
 										inputRef.current?.focus();
 									}}
@@ -248,17 +304,25 @@ export function LocationSearch({
 				<div ref={statusRef} className="sr-only" aria-live="polite"></div>
 			</div>
 
-			<SearchResults
-				results={searchResults}
-				query={query}
-				activeIndex={activeIndex}
-				listRef={listRef}
-				getItemProps={getItemProps}
-				onResultClick={handleResultClick}
-				highlightMatch={highlightMatch}
-				formatAddress={formatAddress}
-				listId={listId}
-			/>
+			{showResults && searchResults.length > 0 ? (
+				<SelectableOptionsList
+					options={resultOptions}
+					selectedValues={[]}
+					showCheckbox={false}
+					variant="search"
+					headingLabel={t("search.suggestions")}
+					listId={listId}
+					listRef={listRef as React.RefObject<HTMLDivElement | null>}
+					activeIndex={activeIndex}
+					getItemProps={getItemProps}
+					onToggle={(value) => {
+						const result = resultByValue.get(value);
+						if (result) {
+							handleResultClick(result);
+						}
+					}}
+				/>
+			) : null}
 		</div>
 	);
 }

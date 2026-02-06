@@ -73,6 +73,25 @@ export function UsersTable() {
 				meta: { truncate: true },
 			},
 			{
+				accessorKey: "submissions",
+				header: t("userTable.columns.claims"),
+				enableSorting: true,
+				meta: { truncate: true },
+				cell: ({ row }) => {
+					const claims =
+						row.original.submissions?.filter(
+							(submission) => submission.type === "claim",
+						).length ?? 0;
+					return (
+						<span>
+							{claims > 0
+								? row.original.submissions?.length
+								: t("userTable.emptyValue")}
+						</span>
+					);
+				},
+			},
+			{
 				id: "role",
 				header: t("userTable.columns.role"),
 				accessorFn: (row) => row.role?.name ?? "",
@@ -163,10 +182,12 @@ export function UsersTable() {
 			label: t("userTable.actions.add"),
 			onClick: () => router.push(toLocalePath("/account/users/new")),
 		},
-		secondaryButton: {
-			label: t("userTable.actions.cancel"),
-			onClick: () => router.push(toLocalePath("/account/users")),
-		},
+		onReview: (row) =>
+			router.push(toLocalePath(`/account/users/${row.id}/review`)),
+		getCanReview: (row) => (row.submissions?.length ?? 0) > 0,
+		reviewAriaLabel: t("userTable.actions.reviewClaims", {
+			defaultValue: "Claims prüfen",
+		}),
 		onEdit: (row) => router.push(toLocalePath(`/account/users/${row.id}/edit`)),
 		emptyMessage: t("userTable.emptyMessage"),
 	};

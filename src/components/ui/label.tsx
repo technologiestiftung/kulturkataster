@@ -8,10 +8,12 @@ import { cn } from "@/lib/utils";
 function Label({
 	className,
 	required,
+	emphasize = true,
 	children,
 	...props
 }: React.ComponentProps<typeof LabelPrimitive.Root> & {
 	required?: boolean;
+	emphasize?: boolean;
 }) {
 	return (
 		<LabelPrimitive.Root
@@ -22,7 +24,7 @@ function Label({
 			)}
 			{...props}
 		>
-			<strong>{children}</strong>
+			{emphasize ? <strong>{children}</strong> : children}
 			{required && (
 				<span className="" aria-hidden="true">
 					*

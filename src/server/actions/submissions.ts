@@ -8,18 +8,21 @@ import {
 } from "@/generated/prisma";
 import { getCurrentUserId } from "@/server/actions/auth";
 import { submissionRepo } from "@/server/data/submissionRepo";
+import { prisma } from "@/server/prisma";
 import {
 	authorizeTable,
 	getAccessContextForUser,
 	getTableScope,
+	requireAllScope,
 	requireScopeOrUser,
 } from "@/server/utils/rbac";
+import { revalidateAccount } from "@/server/utils/actionsUtils";
 
 type SubmissionFilter = {
 	entityType?: SubmissionEntityType;
 	entityId?: number | null;
 	status?: SubmissionStatus;
-	type?: SubmissionType;
+	type?: SubmissionType | Prisma.EnumSubmissionTypeFilter<"Submission">;
 	createdBy?: string | null;
 	reviewedBy?: string | null;
 };
@@ -48,6 +51,12 @@ type SubmissionReviewPayload = {
 	reviewNotes?: string | null;
 };
 
+type ClaimReviewPayload = {
+	id: number;
+	decision: "approved" | "rejected";
+	reviewNotes?: string | null;
+};
+
 export async function getSubmissions(filter: SubmissionFilter = {}) {
 	const currentUserId = await getCurrentUserId();
 	const ctx = await getAccessContextForUser(currentUserId);
@@ -65,6 +74,43 @@ export async function getSubmissions(filter: SubmissionFilter = {}) {
 	};
 
 	return submissionRepo.list(where);
+}
+
+export async function getClaimSubmissionsDetailed(userId?: string) {
+	const currentUserId = await getCurrentUserId();
+	const ctx = await getAccessContextForUser(currentUserId);
+	authorizeTable(ctx, "submission", "read");
+	requireAllScope(ctx, "submission", "read");
+
+	const submissions = await prisma.submission.findMany({
+		where: { type: "claim", created_by: userId ?? undefined },
+		orderBy: { created_at: "desc" },
+		include: { creator: true },
+	});
+
+	const institutionIds = submissions
+		.map((submission) => submission.entity_id)
+		.filter((id): id is number => typeof id === "number");
+
+	const institutions = institutionIds.length
+		? await prisma.institution.findMany({
+				where: { id: { in: institutionIds } },
+				include: { address: true, users: true },
+			})
+		: [];
+
+	const institutionById = new Map(
+		institutions.map((institution) => [institution.id, institution]),
+	);
+
+	return submissions.map((submission) => ({
+		submission,
+		institution:
+			typeof submission.entity_id === "number"
+				? (institutionById.get(submission.entity_id) ?? null)
+				: null,
+		claimant: submission.creator ?? null,
+	}));
 }
 
 export async function getSubmissionById(id: number) {
@@ -169,6 +215,52 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 		reviewer: currentUserId ? { connect: { id: currentUserId } } : undefined,
 		reviewed_at: new Date(),
 	});
+}
+
+export async function reviewClaimSubmission(input: ClaimReviewPayload) {
+	const currentUserId = await getCurrentUserId();
+	const ctx = await getAccessContextForUser(currentUserId);
+	authorizeTable(ctx, "submission", "update");
+	requireAllScope(ctx, "submission", "update");
+
+	const submission = await submissionRepo.findById(input.id);
+	if (!submission) {
+		throw new Error("Claim submission not found.");
+	}
+	if (submission.type !== "claim") {
+		throw new Error("Submission is not a claim.");
+	}
+	if (input.decision === "rejected") {
+		await submissionRepo.remove(input.id);
+		revalidateAccount();
+		return { id: input.id, status: "rejected" as const };
+	}
+
+	const entityId = submission.entity_id;
+	const claimantId = submission.created_by;
+	if (!entityId || !claimantId) {
+		throw new Error("Claim submission missing entity or user.");
+	}
+
+	await prisma.institution.update({
+		where: { id: entityId },
+		data: { users: { connect: { id: claimantId } } },
+	});
+
+	await prisma.user.update({
+		where: { id: claimantId },
+		data: { institutions: { connect: { id: entityId } } },
+	});
+
+	const updated = await submissionRepo.update(input.id, {
+		status: "approved",
+		review_notes: input.reviewNotes ?? undefined,
+		reviewer: currentUserId ? { connect: { id: currentUserId } } : undefined,
+		reviewed_at: new Date(),
+	});
+
+	revalidateAccount();
+	return updated;
 }
 
 export async function deleteSubmission(id: number) {

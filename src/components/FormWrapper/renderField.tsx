@@ -333,7 +333,7 @@ const renderFieldContent = (
 							/>
 							<Label
 								htmlFor={`${field.name}-${option.value}`}
-								className="font-normal"
+								emphasize={false}
 							>
 								{option.label}
 							</Label>
@@ -350,7 +350,7 @@ const renderFieldContent = (
 						onCheckedChange={(checked) => updateField(field.name, checked)}
 						disabled={field.disabled}
 					/>
-					<Label htmlFor={field.name} className="font-normal">
+					<Label htmlFor={field.name} emphasize={false}>
 						{field.labelNode ?? field.label}
 						{field.required && <span className=" ml-1">*</span>}
 					</Label>
@@ -445,8 +445,8 @@ const renderFieldContent = (
 					initialZoom={field.addressMap.initialZoom}
 					disabled={field.disabled}
 					value={{
-						lat: toOptionalNumber(formData[field.addressMap.latField]) ?? null,
-						lng: toOptionalNumber(formData[field.addressMap.lngField]) ?? null,
+						lat: toOptionalNumber(formData[field.addressMap.latField]) ?? 0,
+						lng: toOptionalNumber(formData[field.addressMap.lngField]) ?? 0,
 					}}
 					onChange={({ lat, lng, address }) => {
 						if (!field.addressMap) return;
