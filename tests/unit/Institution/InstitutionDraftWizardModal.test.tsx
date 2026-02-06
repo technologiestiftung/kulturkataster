@@ -86,7 +86,9 @@ vi.mock("@/lib/utils/institutionCategoryUtils", () => ({
 
 const mockedCreateSubmission = vi.mocked(createSubmission);
 const mockedBuildAddressFromFormData = vi.mocked(buildAddressFromFormData);
-const mockedResolveCategoryIdsFromDraft = vi.mocked(resolveCategoryIdsFromDraft);
+const mockedResolveCategoryIdsFromDraft = vi.mocked(
+	resolveCategoryIdsFromDraft,
+);
 
 describe("InstitutionDraftWizardModal submission workflow", () => {
 	beforeEach(() => {

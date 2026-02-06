@@ -84,14 +84,12 @@ describe("InstitutionClaimSelectModal", () => {
 	});
 
 	it("creates claim submissions for selected institutions and redirects", async () => {
-		render(<InstitutionClaimSelectModal routePath="/account/submissions/claim" />);
+		render(
+			<InstitutionClaimSelectModal routePath="/account/submissions/claim" />,
+		);
 
-		fireEvent.click(
-			screen.getByRole("button", { name: /institution alpha/i }),
-		);
-		fireEvent.click(
-			screen.getByRole("button", { name: /anfrage senden/i }),
-		);
+		fireEvent.click(screen.getByRole("button", { name: /institution alpha/i }));
+		fireEvent.click(screen.getByRole("button", { name: /anfrage senden/i }));
 
 		await waitFor(() => {
 			expect(mockedCreateSubmission).toHaveBeenCalledTimes(1);
@@ -130,7 +128,9 @@ describe("InstitutionClaimSelectModal", () => {
 			},
 		] as never);
 
-		render(<InstitutionClaimSelectModal routePath="/account/submissions/claim" />);
+		render(
+			<InstitutionClaimSelectModal routePath="/account/submissions/claim" />,
+		);
 
 		fireEvent.click(screen.getByRole("button", { name: /mock-search/i }));
 

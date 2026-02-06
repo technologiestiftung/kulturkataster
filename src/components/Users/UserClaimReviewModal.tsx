@@ -29,12 +29,14 @@ export function UserClaimReviewModal({
 	const isBusy = useCallback((id: number) => busyIds.includes(id), [busyIds]);
 
 	const formatAddress = useCallback(
-		(address?: {
-			street?: string | null;
-			street_number?: string | null;
-			zipcode?: string | null;
-			city?: string | null;
-		} | null) => {
+		(
+			address?: {
+				street?: string | null;
+				street_number?: string | null;
+				zipcode?: string | null;
+				city?: string | null;
+			} | null,
+		) => {
 			if (!address) return "—";
 			const street = [address.street, address.street_number]
 				.filter(Boolean)
