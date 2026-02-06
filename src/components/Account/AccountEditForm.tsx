@@ -67,8 +67,8 @@ export function AccountEditForm({
 			await updateUser({
 				id: userId,
 				email: nextEmail,
-				first_name: nextFirst ?? null,
-				last_name: nextLast ?? null,
+				first_name: nextFirst ?? "",
+				last_name: nextLast ?? "",
 			});
 
 			if (password) {

@@ -1,5 +1,12 @@
 import { InstitutionDraftIntroModal } from "@/components/Institution/InstitutionDraftIntroModal";
+import { getCurrentUser } from "@/server/actions/auth";
 
-export default function InstitutionPage() {
-	return <InstitutionDraftIntroModal routePath="/institution" />;
+export default async function InstitutionPage() {
+	const user = await getCurrentUser();
+	return (
+		<InstitutionDraftIntroModal
+			routePath="/institution"
+			isAuthenticated={Boolean(user)}
+		/>
+	);
 }

@@ -958,6 +958,35 @@
 			"title": "Einreichung prüfen"
 		}
 	},
+	"institutionDraftIntroModal": {
+		"title": "Mitwirken beim Kulturkataster Berlin",
+		"choice": {
+			"title": "Wie möchten Sie fortfahren?",
+			"login": {
+				"title": "Melden Sie sich an oder registrieren Sie sich, um fortzufahren.",
+				"description": "Für die schnellere Bearbeitung Ihrer Einträge und die Übersicht empfehlen wir Ihnen, sich im Kulturkatasterportal anzumelden oder zu registrieren.",
+				"cta": "Zur Anmeldung"
+			},
+			"guest": {
+				"title": "Fortfahren ohne Anmeldung",
+				"description": "Sie können natürlich auch gern mitwirken, ohne sich bei uns anzumelden.",
+				"cta": "Weiter als Gast"
+			}
+		},
+		"intro": {
+			"thankYou": "Vielen Dank, dass Sie das Kulturkataster Berlin mit Ihrem Beitrag unterstützen!",
+			"description": "Zum Mitwirken tragen Sie bitte die benötigten Angaben in die jeweiligen Felder ein und klicken Sie am Ende des Formulars auf „Daten übermitteln“. Unser Redaktionsteam prüft jede Einsendung vor der Veröffentlichung und meldet sich ggfs. bei Rückfragen.",
+			"sectionTitle": "Basisinformation der Kultureinrichtung",
+			"sectionNote": "Bitte beachten Sie, dass Sie Angaben nur dann machen sollten, wenn Sie sich der Richtigkeit sicher sind und einer Einwilligung zur Veröffentlichung im Kulturkataster zustimmen. Sollten Informationen nur für befugte Nutzer*innen im geschützten Bereich des Kulturkatasters zugänglich und nicht öffentlich einsehbar sein, haben wir dies am jeweiligen Datenfeld gekennzeichnet.",
+			"mode": {
+				"title": "Möchten Sie eine neue Kultureinrichtung eintragen oder einen bestehenden Datensatz ergänzen bzw. korrigieren? *",
+				"description": "Wählen Sie die passende Kategorie für die Kultureinrichtung aus. Falls mehrere Kategorien zutreffen, wählen Sie die primäre Kategorie aus.",
+				"new": "Neue/n Kulturort/e eintragen",
+				"edit": "Ergänzung oder Änderung eines oder mehrere bestehender Kulturorte"
+			},
+			"cta": "Weiter"
+		}
+	},
 	"listView": {
 		"allLoaded": "Alle Kulturorte geladen",
 		"countLabel": "{{count}} Kulturorte",

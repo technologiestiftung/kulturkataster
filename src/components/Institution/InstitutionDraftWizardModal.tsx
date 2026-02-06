@@ -1027,13 +1027,20 @@ function InstitutionDraftWizardContent({
 				{
 					name: "contactSection",
 					type: "section",
-					layout: { span: "full" },
+					layout: { span: "full", columns: 2 },
 					fields: [
 						{
-							name: "contact_person_name",
-							label: "Kontaktperson Name",
+							name: "contact_person_first_name",
+							label: "Kontaktperson Vorname",
 							type: "text",
-							placeholder: "z. B. Max Mustermann",
+							placeholder: "z. B. Max",
+							layout: { span: "half" },
+						},
+						{
+							name: "contact_person_last_name",
+							label: "Kontaktperson Nachname",
+							type: "text",
+							placeholder: "z. B. Mustermann",
 							layout: { span: "half" },
 						},
 						{
@@ -1041,14 +1048,14 @@ function InstitutionDraftWizardContent({
 							label: "Kontaktperson E-Mail",
 							type: "email",
 							placeholder: "z. B. max.mustermann@example.com",
-							layout: { span: "half" },
+							layout: { span: "full" },
 						},
 						{
 							name: "contact_person_phone",
 							label: "Kontaktperson Telefon",
 							type: "text",
 							placeholder: "z. B. +49 30 1234567",
-							layout: { span: "half" },
+							layout: { span: "full" },
 						},
 					],
 				},
@@ -1061,34 +1068,19 @@ function InstitutionDraftWizardContent({
 						{
 							name: "works_for_organization",
 							label: "Ich arbeite für diese Kulturorganisation.",
-							type: "radio",
-							radioVariant: "button",
-							options: [
-								{ value: "yes", label: "Ja" },
-								{ value: "no", label: "Nein" },
-							],
+							type: "checkbox",
 						},
 						{
 							name: "consent_contact_listing",
 							label:
 								"Ich bin damit einverstanden, mit meinen Kontaktdaten als Ansprechperson im passwortgeschützten Bereich des Kulturkatasters genannt zu werden.",
-							type: "radio",
-							radioVariant: "button",
-							options: [
-								{ value: "yes", label: "Ja" },
-								{ value: "no", label: "Nein" },
-							],
+							type: "checkbox",
 						},
 						{
 							name: "request_admin_rights",
 							label:
 								"Ich bin verantwortlich für diesen Kulturort und möchte ihn der Liste in meinem Profil hinzufügen und die Administrationsrechte dafür erhalten.",
-							type: "radio",
-							radioVariant: "button",
-							options: [
-								{ value: "yes", label: "Ja" },
-								{ value: "no", label: "Nein" },
-							],
+							type: "checkbox",
 						},
 					],
 				},

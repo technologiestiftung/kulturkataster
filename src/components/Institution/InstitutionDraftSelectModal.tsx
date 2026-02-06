@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { Modal } from "@/components/Modals/Modal";
-import { Input } from "@/components/ui/input";
+import { InstitutionDraftSelectSearch } from "@/components/Institution/InstitutionDraftSelectSearch";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useInstitutionDraftStore } from "@/lib/store/institutionDraftStore";
@@ -13,6 +13,8 @@ import type { Institution } from "@/types/institution";
 import type { Category, FilterState } from "@/types";
 import { buildStreetLine } from "@/lib/utils/formUtils";
 import { institutionSubmissionToDraft } from "@/lib/utils/institutionSubmissionUtils";
+import { SelectableOptionsList } from "@/components/MultiSelect/SelectableOptionsList";
+import { Card } from "../ui/card";
 
 const buildCategoryFilterStateFromIds = (
 	categoryIds: number[] | undefined,
@@ -80,6 +82,31 @@ export function InstitutionDraftSelectModal({
 		return searchResults;
 	}, [institutions, query, searchResults]);
 
+	const selectableOptions = useMemo(
+		() =>
+			selectableInstitutions.map((institution) => ({
+				value: String(institution.id),
+				label: institution.name,
+				description: institution.address?.street
+					? `${institution.address.street} ${institution.address.street_number ?? ""}`.trim()
+					: t("institution.editSelectNoAddress", {
+							defaultValue: "Keine Adresse hinterlegt",
+						}),
+			})),
+		[selectableInstitutions, t],
+	);
+
+	const institutionById = useMemo(
+		() =>
+			new Map(
+				selectableInstitutions.map((institution) => [
+					String(institution.id),
+					institution,
+				]),
+			),
+		[selectableInstitutions],
+	);
+
 	useEffect(() => {
 		if (!query.trim()) {
 			setSearchResults([]);
@@ -142,8 +169,8 @@ export function InstitutionDraftSelectModal({
 				"address.address_suffix": address?.address_suffix ?? "",
 				"address.neighbourhood": address?.neighbourhood ?? "",
 				"address.cultural_area": address?.cultural_area ?? "",
-				"address.lat": address?.lat ?? null,
-				"address.lng": address?.lng ?? null,
+				"address.lat": address?.lat ?? "",
+				"address.lng": address?.lng ?? "",
 			});
 			router.push(toLocalePath("/institution/submission"));
 		},
@@ -177,14 +204,8 @@ export function InstitutionDraftSelectModal({
 						</p>
 					</div>
 
-					<div className="space-y-4">
-						<Input
-							value={query}
-							onChange={(event) => setQuery(event.target.value)}
-							placeholder={t("institution.editSelectSearchPlaceholder", {
-								defaultValue: "Kulturort suchen...",
-							})}
-						/>
+					<Card className="space-y-4 mb-10 p-10 h-full" variant="tertiary">
+						<InstitutionDraftSelectSearch onQueryChange={setQuery} />
 						{isLoading || searchLoading ? (
 							<p className="body2">
 								{t("institution.loading", {
@@ -194,35 +215,24 @@ export function InstitutionDraftSelectModal({
 						) : null}
 						{error && !isLoading ? (
 							<p className="body2 text-destructive">{error}</p>
-						) : null}
-						{selectableInstitutions.length === 0 && !searchLoading ? (
-							<p className="body2">
-								{t("institution.editSelectEmpty", {
+						) : (
+							<SelectableOptionsList
+								options={selectableOptions}
+								selectedValues={[]}
+								containerClassName="max-h-52 md:max-h-69 overflow-auto"
+								emptyText={t("institution.editSelectEmpty", {
 									defaultValue: "Keine Kulturorte gefunden.",
 								})}
-							</p>
-						) : (
-							<div className="divide-y rounded-md border border-neutral-20">
-								{selectableInstitutions.map((institution) => (
-									<button
-										key={institution.id}
-										type="button"
-										onClick={() => handleSelectInstitution(institution)}
-										className="w-full px-4 py-3 text-left hover:bg-neutral-10"
-									>
-										<p className="body2 font-bold">{institution.name}</p>
-										<p className="body3 text-neutral-80">
-											{institution.address?.street
-												? `${institution.address.street} ${institution.address.street_number ?? ""}`.trim()
-												: t("institution.editSelectNoAddress", {
-														defaultValue: "Keine Adresse hinterlegt",
-													})}
-										</p>
-									</button>
-								))}
-							</div>
+								showCheckbox={false}
+								onToggle={(value) => {
+									const institution = institutionById.get(value);
+									if (institution) {
+										handleSelectInstitution(institution);
+									}
+								}}
+							/>
 						)}
-					</div>
+					</Card>
 				</div>
 			}
 		/>

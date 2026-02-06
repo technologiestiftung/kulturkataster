@@ -35,7 +35,7 @@ export function InstitutionsTable() {
 			allSubmissions.filter(
 				(s) =>
 					s.entity_type === "institution" &&
-					(s.type === "create" || s.type === "update"),
+					(s.type === "create" || s.type === "update" || s.type === "claim"),
 			),
 		[allSubmissions],
 	);
@@ -661,6 +661,10 @@ export function InstitutionsTable() {
 		primaryButton: {
 			label: "Add Institution",
 			onClick: () => router.push(toLocalePath("/account/institutions/new")),
+		},
+		secondaryButton: {
+			label: "Claim Institution",
+			onClick: () => router.push(toLocalePath("/account/submissions/claim")),
 		},
 		onEdit: (row) => {
 			if (isSubmissionRow(row)) {

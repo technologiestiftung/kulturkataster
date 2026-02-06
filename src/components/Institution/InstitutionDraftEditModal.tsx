@@ -179,8 +179,8 @@ export function InstitutionDraftEditModal({
 			"address.address_suffix": address?.address_suffix ?? "",
 			"address.neighbourhood": address?.neighbourhood ?? "",
 			"address.cultural_area": address?.cultural_area ?? "",
-			"address.lat": address?.lat ?? null,
-			"address.lng": address?.lng ?? null,
+			"address.lat": address?.lat ?? "",
+			"address.lng": address?.lng ?? "",
 		};
 	}, [
 		resolvedSubmissionWithFallback,

@@ -8,15 +8,15 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const checkboxVariants = cva(
-	"peer contrast:border-white border-input dark:bg-input/30 data-[state=checked]:contrast:border-interaction-default data-[state=checked]:contrast:bg-interaction-default data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground dark:data-[state=checked]:bg-primary data-[state=checked]:border-primary focus-visible:border-ring focus-visible:ring-ring/100 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive shrink-0 border shadow-xs transition-shadow outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50",
+	"peer contrast:border-white dark:bg-input/30 data-[state=checked]:contrast:border-interaction-default data-[state=checked]:contrast:bg-interaction-default data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground dark:data-[state=checked]:bg-primary data-[state=checked]:border-primary focus-visible:border-ring focus-visible:ring-ring/100 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive shrink-0 border shadow-xs transition-shadow outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50",
 	{
 		variants: {
 			variant: {
-				default: "rounded-2xl border-foreground",
+				default: "rounded-2xl border-neutral-60",
 				filter: "rounded-full border-neutral-80",
 			},
 			size: {
-				default: "size-5.5",
+				default: "size-6",
 				filter: "h-8 w-8 md:h-4 md:w-4",
 			},
 		},
@@ -41,11 +41,7 @@ function Checkbox({ className, variant, size, ...props }: CheckboxProps) {
 				data-slot="checkbox-indicator"
 				className="flex items-center justify-center text-current transition-none"
 			>
-				<Check
-					className="size-5.5 md:size-3.5"
-					aria-hidden="true"
-					focusable="false"
-				/>
+				<Check className="size-3.5" aria-hidden="true" focusable="false" />
 			</CheckboxPrimitive.Indicator>
 		</CheckboxPrimitive.Root>
 	);
