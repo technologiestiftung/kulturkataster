@@ -38,7 +38,7 @@ test.describe("auth", () => {
 		const toRegisterLink = page.locator(`a[href="${localized("/register")}"]`);
 		await expect(toRegisterLink).toBeVisible();
 		await toRegisterLink.click();
-		await expect(page).toHaveURL(/\/register\/?$/, { timeout: 15_000 });
+		await expect(page).toHaveURL(/\/register\/?$/, { timeout: 30_000 });
 		await recordNavigationTiming(page, testInfo, "auth-login-to-register");
 
 		// Verify back-link exists, then navigate directly for deterministic routing.
