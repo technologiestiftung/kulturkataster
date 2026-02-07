@@ -119,11 +119,13 @@ export function SelectableOptionsList({
 							>
 								{showCheckbox ? (
 									<Checkbox
+										asChild
 										checked={isChecked}
 										variant="filter"
 										size="filter"
-										onCheckedChange={() => onToggle(option.value)}
-									/>
+									>
+										<span aria-hidden="true" className="pointer-events-none" />
+									</Checkbox>
 								) : null}
 								<span className="flex min-w-0 flex-1 flex-col gap-1">
 									<span className={!isPanel ? "font-medium" : undefined}>
