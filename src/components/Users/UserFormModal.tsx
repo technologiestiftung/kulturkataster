@@ -430,7 +430,7 @@ const renderDialogBody = (
 export function UserFormModal({
 	mode,
 	userId,
-	shouldRefresh = true,
+	shouldRefresh = false,
 	routePath,
 	returnTo,
 }: UserFormModalProps) {

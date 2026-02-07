@@ -120,9 +120,7 @@ export function InstitutionClaimSelectModal({
 						type: SubmissionType.claim,
 						status: "approval_pending",
 						data: {
-							id: institution.id,
-							name: institution.name,
-							address: institution.address ?? null,
+							...institution,
 						},
 					}),
 				),

@@ -31,7 +31,7 @@ export function InstitutionEditModal({
 	submitLabel,
 	submitting,
 	closeOnSubmit,
-	shouldRefresh,
+	shouldRefresh = false,
 }: InstitutionEditModalProps) {
 	const { t } = useTranslation("content");
 	const institutions = useAccountStore((state) => state.institutions);

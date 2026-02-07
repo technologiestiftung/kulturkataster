@@ -8,7 +8,7 @@ type AccountEditModalProps = {
 	routePath?: string;
 	returnTo?: string;
 	userId: string;
-	email: string;
+	email: string | null;
 	firstName?: string | null;
 	lastName?: string | null;
 };
