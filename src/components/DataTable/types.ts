@@ -1,4 +1,5 @@
 import { type ColumnDef } from "@tanstack/react-table";
+import type { ReactNode } from "react";
 
 export interface DataTableConfig<T> {
 	columns: ColumnDef<T, unknown>[];
@@ -21,12 +22,12 @@ export interface DataTableConfig<T> {
 	getRowCanExpand?: (row: T) => boolean;
 
 	primaryButton?: {
-		label: string;
+		label: ReactNode;
 		onClick: () => void;
 	};
 
 	secondaryButton?: {
-		label: string;
+		label: ReactNode;
 		onClick: () => void;
 	};
 

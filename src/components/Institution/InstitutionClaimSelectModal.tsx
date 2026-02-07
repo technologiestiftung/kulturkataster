@@ -9,17 +9,25 @@ import { InstitutionDraftSelectSearch } from "@/components/Institution/Instituti
 import { SelectableOptionsList } from "@/components/MultiSelect/SelectableOptionsList";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
+import { useAccountStore } from "@/lib/store/accountStore";
 import { searchInstitutions } from "@/server/actions/institutions";
 import { createSubmission } from "@/server/actions/submissions";
-import { SubmissionEntityType, SubmissionType } from "@/generated/prisma";
+import {
+	$Enums,
+	SubmissionEntityType,
+	SubmissionType,
+} from "@/generated/prisma";
 import type { Institution } from "@/types/institution";
 import { Card } from "../ui/card";
 import { AlertDialog } from "../ui/alert-dialog";
+import { JsonValue } from "@/generated/prisma/runtime/client";
 
 export function InstitutionClaimSelectModal({
 	routePath,
+	returnTo = "/account/institutions",
 }: {
 	routePath?: string;
+	returnTo?: string;
 }) {
 	const { t } = useTranslation("content");
 	const router = useRouter();
@@ -27,6 +35,12 @@ export function InstitutionClaimSelectModal({
 	const institutions = useInstitutionStore((state) => state.allInstitutions);
 	const isLoading = useInstitutionStore((state) => state.isLoading);
 	const error = useInstitutionStore((state) => state.error);
+	const ownedInstitutions = useAccountStore((state) => state.institutions);
+	const upsertSubmission = useAccountStore((state) => state.upsertSubmission);
+	const ownedInstitutionIds = useMemo(
+		() => new Set(ownedInstitutions.map((institution) => institution.id)),
+		[ownedInstitutions],
+	);
 
 	const [query, setQuery] = useState("");
 	const [searchResults, setSearchResults] = useState<Institution[]>([]);
@@ -35,11 +49,12 @@ export function InstitutionClaimSelectModal({
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const selectableInstitutions = useMemo(() => {
-		if (query.trim().length === 0) {
-			return institutions ?? [];
-		}
-		return searchResults;
-	}, [institutions, query, searchResults]);
+		const sourceInstitutions =
+			query.trim().length === 0 ? (institutions ?? []) : searchResults;
+		return sourceInstitutions.filter(
+			(institution) => !ownedInstitutionIds.has(institution.id),
+		);
+	}, [institutions, ownedInstitutionIds, query, searchResults]);
 
 	const selectableOptions = useMemo(
 		() =>
@@ -112,7 +127,7 @@ export function InstitutionClaimSelectModal({
 				.map((id) => institutionById.get(id))
 				.filter(Boolean) as Institution[];
 
-			await Promise.all(
+			const createdSubmissions = await Promise.all(
 				institutionsToClaim.map((institution) =>
 					createSubmission({
 						entityType: SubmissionEntityType.institution,
@@ -125,13 +140,35 @@ export function InstitutionClaimSelectModal({
 					}),
 				),
 			);
+			createdSubmissions.forEach(
+				(submission: {
+					data: JsonValue;
+					id: number;
+					entity_type: $Enums.SubmissionEntityType;
+					entity_id: number | null;
+					status: $Enums.SubmissionStatus;
+					type: $Enums.SubmissionType;
+					diff: JsonValue | null;
+					meta: JsonValue | null;
+					review_notes: string | null;
+					created_by: string | null;
+					reviewed_by: string | null;
+					created_at: Date;
+					updated_at: Date;
+					reviewed_at: Date | null;
+				}) => {
+					if (submission) {
+						upsertSubmission(submission);
+					}
+				},
+			);
 
 			setSelectedIds([]);
 			router.push(toLocalePath("/account/institutions"));
 		} finally {
 			setIsSubmitting(false);
 		}
-	}, [institutionById, router, selectedIds, toLocalePath]);
+	}, [institutionById, router, selectedIds, toLocalePath, upsertSubmission]);
 
 	return (
 		<Modal
@@ -141,6 +178,7 @@ export function InstitutionClaimSelectModal({
 			titleClassName="sr-only"
 			variant="fullscreen"
 			routePath={routePath}
+			returnTo={returnTo}
 			containerClassName="p-0 md:p-0 mt-0 md:mt-0"
 			contentWrapperClassName="flex-1"
 			contentClassName=""

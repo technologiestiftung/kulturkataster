@@ -20,6 +20,7 @@ const submission = {
 		email: "submit@example.com",
 		categoryIds: ["2", 1],
 	},
+	type: "create",
 } as Submission;
 
 describe("institutionTableUtils", () => {
@@ -33,6 +34,7 @@ describe("institutionTableUtils", () => {
 		expect(row.categories.map((cat) => cat.id)).toEqual([2, 1]);
 		expect(row.created_at).toEqual(submission.created_at);
 		expect(row.updated_at).toEqual(submission.updated_at);
+		expect(row.submissionType).toEqual(submission.type);
 		expect(isSubmissionRow(row)).toBe(true);
 	});
 
