@@ -625,24 +625,24 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 
 					<div className="flex w-full relative flex-col justify-center items-center md:flex-row gap-2">
 						{!isSearchOpen && config.primaryButton && (
-								<Button
-									onClick={config.primaryButton.onClick}
-									variant="rounded"
-									className="bg-primary"
-									size="icon"
-									aria-label={primaryButtonAriaLabel}
-								>
+							<Button
+								onClick={config.primaryButton.onClick}
+								variant="rounded"
+								className="bg-primary"
+								size="icon"
+								aria-label={primaryButtonAriaLabel}
+							>
 								<Plus className="size-6" />
 							</Button>
 						)}
 						{!isSearchOpen && config.secondaryButton && (
-								<Button
-									onClick={config.secondaryButton.onClick}
-									variant="outline"
-									size="md"
-									className="bg-primary-light flex-0 text-foreground border-primary rounded-full"
-									aria-label={secondaryButtonAriaLabel}
-								>
+							<Button
+								onClick={config.secondaryButton.onClick}
+								variant="outline"
+								size="md"
+								className="bg-primary-light flex-0 text-foreground border-primary rounded-full"
+								aria-label={secondaryButtonAriaLabel}
+							>
 								{config.secondaryButton.label}
 							</Button>
 						)}
