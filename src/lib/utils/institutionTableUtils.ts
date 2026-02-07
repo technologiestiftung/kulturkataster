@@ -66,5 +66,6 @@ export const buildSubmissionRow = (
 		groups: [],
 		created_at: submission.created_at,
 		updated_at: submission.updated_at,
+		submissionType: submission.type,
 	};
 };

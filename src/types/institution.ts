@@ -3,6 +3,7 @@ import type {
 	InstitutionStatus,
 	Prisma,
 	ProtectionStatus,
+	SubmissionType,
 	UtilizationStatus,
 } from "@/generated/prisma";
 import type { Category } from "@/types/category";
@@ -77,6 +78,7 @@ export type SubmissionRow = InstitutionTableBase & {
 	rowKind: "submission";
 	rowKey: string;
 	submissionId: number;
+	submissionType: SubmissionType;
 };
 
 export type InstitutionTableRow = InstitutionRow | SubmissionRow;
