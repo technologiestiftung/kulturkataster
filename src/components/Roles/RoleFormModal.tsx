@@ -464,7 +464,7 @@ const renderDialogBody = (
 export function RoleFormModal({
 	mode,
 	roleId,
-	shouldRefresh = true,
+	shouldRefresh = false,
 	routePath,
 	returnTo,
 }: RoleFormModalProps) {

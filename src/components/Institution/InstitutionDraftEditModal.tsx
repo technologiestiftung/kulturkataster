@@ -28,7 +28,7 @@ type InstitutionDraftEditModalProps = {
 export function InstitutionDraftEditModal({
 	returnTo,
 	submissionId,
-	shouldRefresh = true,
+	shouldRefresh = false,
 	routePath,
 }: InstitutionDraftEditModalProps) {
 	const { t } = useTranslation("content");

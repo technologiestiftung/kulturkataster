@@ -325,7 +325,7 @@ const buildGroupFormConfig = ({
 export function GroupFormModal({
 	mode,
 	groupId,
-	shouldRefresh = true,
+	shouldRefresh = false,
 	routePath,
 	returnTo,
 }: GroupFormModalProps) {
