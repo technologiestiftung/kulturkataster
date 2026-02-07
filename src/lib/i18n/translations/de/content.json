@@ -520,16 +520,16 @@
 			"members": {
 				"fields": {
 					"institutions": {
-						"emptyText": "Keine Institutionen gefunden",
+						"emptyText": "Keine Kulturorte gefunden",
 						"filters": {
 							"categories": "Kategorien",
 							"districts": "Bezirke",
 							"subcategories": "Unterkategorien",
 							"tags": "Tags"
 						},
-						"label": "Institutionen",
-						"placeholder": "Institutionen auswählen",
-						"searchPlaceholder": "Institutionen suchen..."
+						"label": "Kulturorte",
+						"placeholder": "Kulturorte auswählen",
+						"searchPlaceholder": "Kulturorte suchen..."
 					},
 					"users": {
 						"emptyText": "Keine Benutzer*innen gefunden",
@@ -553,7 +553,7 @@
 			"created": "Erstellt",
 			"createdAt": "Erstellt am",
 			"description": "Beschreibung",
-			"institutions": "Institutionen",
+			"kulturorte": "Kulturorte",
 			"name": "Name",
 			"updatedAt": "Aktualisiert am",
 			"users": "Benutzer*innen"
@@ -851,22 +851,22 @@
 		},
 		"dialog": {
 			"notFound": {
-				"description": "Die ausgewählte Institution konnte nicht geladen werden.",
-				"title": "Institution nicht gefunden"
+				"description": "Der ausgewählter Kulturort konnte nicht geladen werden.",
+				"title": "Kulturort nicht gefunden"
 			},
 			"title": {
-				"create": "Institution erstellen",
-				"edit": "Institution bearbeiten"
+				"create": "Kulturort erstellen",
+				"edit": "Kulturort bearbeiten"
 			}
 		},
 		"feedback": {
 			"create": {
-				"description": "Die Institution wurde erfolgreich erstellt.",
-				"title": "Institution erstellt"
+				"description": "Der Kulturort wurde erfolgreich erstellt.",
+				"title": "Kulturort erstellt"
 			},
 			"update": {
 				"description": "Die Änderungen wurden erfolgreich gespeichert.",
-				"title": "Institution aktualisiert"
+				"title": "Kulturort aktualisiert"
 			}
 		},
 		"form": {
@@ -889,8 +889,8 @@
 			},
 			"details": {
 				"description": {
-					"create": "Legen Sie eine neue Institution an.",
-					"edit": "Aktualisieren Sie die Institutionsdaten."
+					"create": "Legen Sie einen neuen Kulturort an.",
+					"edit": "Aktualisieren Sie die Kulturorte."
 				},
 				"fields": {
 					"address": {
@@ -1079,9 +1079,9 @@
 				"address": "Adressen",
 				"category": "Kategorien",
 				"group": "Gruppen",
-				"institution": "Institutionen",
+				"institution": "Kulturorte",
 				"role": "Rollen",
-				"submission": "Institutionseinreichungen",
+				"submission": "Kulturort-Anfragen",
 				"user": "Benutzer*innen"
 			},
 			"title": "Berechtigungen"
@@ -1642,6 +1642,20 @@
 			"title": "Infos & Services"
 		}
 	},
+	"institutionsTable": {
+		"actions": {
+			"addInstitution": "Kulturort hinzufügen",
+			"claimInstitution": "Meine Kulturorte anfragen"
+		},
+		"type": {
+			"manage": "Verwalten",
+			"submission": {
+				"claim": "Angefragt",
+				"create": "Erstellt",
+				"update": "Änderung angefragt"
+			}
+		}
+	},
 	"userFormModal": {
 		"actions": {
 			"cancel": "Abbrechen",
@@ -1689,16 +1703,16 @@
 						"searchPlaceholder": "Gruppen suchen..."
 					},
 					"institutions": {
-						"emptyText": "Keine Institutionen gefunden",
+						"emptyText": "Keine Kulturorte gefunden",
 						"filters": {
 							"categories": "Kategorien",
 							"districts": "Bezirke",
 							"subcategories": "Unterkategorien",
 							"tags": "Tags"
 						},
-						"label": "Institutionen",
-						"placeholder": "Institutionen auswählen",
-						"searchPlaceholder": "Institution suchen..."
+						"label": "Kulturorte",
+						"placeholder": "Kulturorte auswählen",
+						"searchPlaceholder": "Kulturort suchen..."
 					},
 					"role": {
 						"label": "Rolle"
@@ -1758,7 +1772,7 @@
 			"add": "Nutzer*in hinzufügen"
 		},
 		"columns": {
-			"access": "Zugriff auf Institutionen",
+			"access": "Zugriff auf Kulturorte",
 			"compliance": "Compliance",
 			"createdAt": "Erstellt am",
 			"email": "E-Mail",
@@ -1767,6 +1781,7 @@
 			"lastName": "Nachname",
 			"role": "Rolle",
 			"status": "Status",
+			"claims": "Kulturort Anfragen",
 			"updatedAt": "Aktualisiert am"
 		},
 		"compliance": {
@@ -1775,8 +1790,8 @@
 		},
 		"emptyMessage": "Keine Nutzer*innen gefunden.",
 		"emptyValue": "—",
-		"institutionsCount_one": "{{count}} Institution",
-		"institutionsCount_other": "{{count}} Institutionen",
+		"institutionsCount_one": "{{count}} Kulturort",
+		"institutionsCount_other": "{{count}} Kulturorte",
 		"searchPlaceholder": "Nutzer*innen suchen..."
 	},
 	"welcomeModal": {

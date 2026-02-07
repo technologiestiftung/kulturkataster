@@ -1,5 +1,10 @@
 import { InstitutionClaimSelectModal } from "@/components/Institution/InstitutionClaimSelectModal";
 
 export default function InstitutionClaimModalPage() {
-	return <InstitutionClaimSelectModal routePath="/account/submissions/claim" />;
+	return (
+		<InstitutionClaimSelectModal
+			routePath="/account/submissions/claim"
+			returnTo="/account/institutions"
+		/>
+	);
 }

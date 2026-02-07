@@ -24,6 +24,7 @@ import {
 	buildSubmissionRow,
 	isSubmissionRow,
 } from "@/lib/utils/institutionTableUtils";
+import Send from "@/icons/send.svg";
 
 export function InstitutionsTable() {
 	const router = useRouter();
@@ -99,6 +100,30 @@ export function InstitutionsTable() {
 							label={getStatusLabel(institution?.status || "draft")}
 							showLabel="hover"
 						/>
+					);
+				},
+			},
+			{
+				accessorKey: "type",
+				header: headerLabel("type", "Type"),
+				enableSorting: true,
+				meta: { pin: "left" },
+				size: 110,
+				cell: ({ row }) => {
+					if (row.original.rowKind === "submission") {
+						return (
+							<Badge variant="outline" className="capitalize">
+								{t(
+									`institutionsTable.type.submission.${row.original.submissionType}`,
+									{ defaultValue: row.original.submissionType },
+								)}
+							</Badge>
+						);
+					}
+					return (
+						<Badge variant="default" className="capitalize">
+							{t("institutionsTable.type.manage")}
+						</Badge>
 					);
 				},
 			},
@@ -653,19 +678,24 @@ export function InstitutionsTable() {
 			row.contact_person?.email || "",
 			row.owner_name || "",
 		],
-		virtualization: {
-			enabled: true,
-			rowHeight: 65,
-			overscan: 8,
-		},
-		primaryButton: {
-			label: "Add Institution",
-			onClick: () => router.push(toLocalePath("/account/institutions/new")),
-		},
-		secondaryButton: {
-			label: "Claim Institution",
-			onClick: () => router.push(toLocalePath("/account/submissions/claim")),
-		},
+			virtualization: {
+				enabled: true,
+				rowHeight: 65,
+				overscan: 8,
+			},
+			primaryButton: {
+				label: t("institutionsTable.actions.addInstitution"),
+				onClick: () => router.push(toLocalePath("/account/institutions/new")),
+			},
+			secondaryButton: {
+				label: (
+					<span className="inline-flex items-center gap-2">
+						<Send className="size-4" />
+						<span>{t("institutionsTable.actions.claimInstitution")}</span>
+					</span>
+				),
+				onClick: () => router.push(toLocalePath("/account/submissions/claim")),
+			},
 		onEdit: (row) => {
 			if (isSubmissionRow(row)) {
 				router.push(
