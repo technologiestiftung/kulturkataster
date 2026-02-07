@@ -30,8 +30,8 @@ export default async function AccountEditPage({ params }: PageProps) {
 		<AccountEditModal
 			routePath="/account/edit"
 			returnTo="/account"
-			userId={user?.id || ""}
-			email={user?.email || ""}
+			userId={user?.id}
+			email={user?.email ?? null}
 			firstName={userProfile?.first_name}
 			lastName={userProfile?.last_name}
 		/>

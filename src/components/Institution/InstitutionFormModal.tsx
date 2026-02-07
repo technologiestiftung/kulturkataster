@@ -851,7 +851,7 @@ export function InstitutionFormModal({
 	submitLabel,
 	submitting: submittingProp,
 	closeOnSubmit,
-	shouldRefresh = true,
+	shouldRefresh = false,
 }: InstitutionFormModalProps) {
 	const { t } = useTranslation("content");
 	const { t: tEnum } = useTranslation("enumMap");

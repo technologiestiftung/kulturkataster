@@ -14,7 +14,7 @@ import { useAccountStore } from "@/lib/store/accountStore";
 
 type AccountEditFormProps = {
 	userId: string;
-	email: string;
+	email: string | null;
 	firstName?: string | null;
 	lastName?: string | null;
 };

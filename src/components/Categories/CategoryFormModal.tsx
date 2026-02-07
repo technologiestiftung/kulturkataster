@@ -357,7 +357,7 @@ const buildCategoryFormConfig = ({
 export function CategoryFormModal({
 	mode,
 	categoryId,
-	shouldRefresh = true,
+	shouldRefresh = false,
 	routePath,
 	returnTo,
 }: CategoryFormModalProps) {
