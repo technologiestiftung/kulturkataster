@@ -17,6 +17,7 @@ import {
 	requireScopeOrUser,
 } from "@/server/utils/rbac";
 import { revalidateAccount } from "@/server/utils/actionsUtils";
+import { ClaimSubmissionDetail } from "@/types";
 
 type SubmissionFilter = {
 	entityType?: SubmissionEntityType;
@@ -76,7 +77,9 @@ export async function getSubmissions(filter: SubmissionFilter = {}) {
 	return submissionRepo.list(where);
 }
 
-export async function getClaimSubmissionsDetailed(userId?: string) {
+export async function getClaimSubmissionsDetailed(
+	userId?: string,
+): Promise<ClaimSubmissionDetail[]> {
 	const currentUserId = await getCurrentUserId();
 	const ctx = await getAccessContextForUser(currentUserId);
 	authorizeTable(ctx, "submission", "read");
@@ -85,7 +88,16 @@ export async function getClaimSubmissionsDetailed(userId?: string) {
 	const submissions = await prisma.submission.findMany({
 		where: { type: "claim", created_by: userId ?? undefined },
 		orderBy: { created_at: "desc" },
-		include: { creator: true },
+		include: {
+			creator: {
+				include: {
+					role: true,
+					groups: true,
+					institutions: true,
+					submissions: true,
+				},
+			},
+		},
 	});
 
 	const institutionIds = submissions
@@ -95,7 +107,14 @@ export async function getClaimSubmissionsDetailed(userId?: string) {
 	const institutions = institutionIds.length
 		? await prisma.institution.findMany({
 				where: { id: { in: institutionIds } },
-				include: { address: true, users: true },
+				include: {
+					address: true,
+					users: true,
+					groups: true,
+					contact_person: true,
+					categories: true,
+					tags: true,
+				},
 			})
 		: [];
 
