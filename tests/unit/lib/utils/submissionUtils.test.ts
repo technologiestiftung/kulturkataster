@@ -46,10 +46,10 @@ describe("institutionSubmissionToDraft", () => {
 	it("fills defaults for missing data", () => {
 		const result = institutionSubmissionToDraft({ data: {} });
 		expect(result.name).toBe("");
-		expect(result.website).toBeNull();
-		expect(result.phone).toBeNull();
-		expect(result.email).toBeNull();
-		expect(result.parent_organization).toBeNull();
+		expect(result.website).toBeUndefined();
+		expect(result.phone).toBeUndefined();
+		expect(result.email).toBeUndefined();
+		expect(result.parent_organization).toBeUndefined();
 		expect(result.categoryIds).toBeUndefined();
 		expect(result.address).toBeNull();
 	});
