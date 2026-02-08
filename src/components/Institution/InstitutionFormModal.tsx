@@ -973,7 +973,8 @@ export function InstitutionFormModal({
 		onSubmit !== undefined ? handleCustomSubmit : handleInstitutionSubmit;
 	const isPrivateFormField = useCallback(
 		(field: FieldConfig) => {
-			if (field.type === "section" || field.type === "actionPanel") return false;
+			if (field.type === "section" || field.type === "actionPanel")
+				return false;
 			return isPrivateField(field);
 		},
 		[isPrivateField],

@@ -45,7 +45,7 @@ import { AddressMapField } from "./AddressMapField";
 import { defaultFilterState } from "./constants";
 import Eye from "@/icons/eye.svg";
 import EyeOff from "@/icons/eye-off.svg";
-import { PrivateBadge } from "@/components/InfoWrapper/PrivateBadge";
+import { PrivateBadge } from "@/components/shared/PrivateBadge";
 
 function PasswordField({
 	id,

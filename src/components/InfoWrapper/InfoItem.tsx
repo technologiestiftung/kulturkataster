@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { PrivateBadge } from "./PrivateBadge";
+import { PrivateBadge } from "../shared/PrivateBadge";
 
 interface InfoItemProps {
 	label?: string;

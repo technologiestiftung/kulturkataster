@@ -5,7 +5,7 @@ import {
 } from "@/lib/utils/institutionUtils";
 import { Institution } from "@/types";
 import { useTranslation } from "react-i18next";
-import { PrivateBadge } from "./PrivateBadge";
+import { PrivateBadge } from "../shared/PrivateBadge";
 
 export function CategoryItem({
 	data,

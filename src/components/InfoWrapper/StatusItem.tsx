@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { getStatusLevel } from "./types";
-import { PrivateBadge } from "./PrivateBadge";
+import { PrivateBadge } from "../shared/PrivateBadge";
 
 export function StatusItem({
 	value,
