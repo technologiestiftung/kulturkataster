@@ -238,17 +238,17 @@ export function InstitutionDraftReviewModal({
 			routePath={routePath}
 			content={
 				<div className="space-y-6">
-						<InstitutionReview
-							data={originalInstitution ?? draft}
-							newData={originalInstitution ? draft : undefined}
-							onEditSection={(sectionId) => {
-								router.push(
-									toLocalePath(
-										`${editBasePath}/${submissionId}/edit#${sectionId}`,
-									),
-								);
-							}}
-						/>
+					<InstitutionReview
+						data={originalInstitution ?? draft}
+						newData={originalInstitution ? draft : undefined}
+						onEditSection={(sectionId) => {
+							router.push(
+								toLocalePath(
+									`${editBasePath}/${submissionId}/edit#${sectionId}`,
+								),
+							);
+						}}
+					/>
 					<div className="space-y-3">
 						<div className="flex items-center justify-between">
 							<span className="body2">
