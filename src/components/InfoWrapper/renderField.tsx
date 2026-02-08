@@ -15,6 +15,7 @@ import { StatusItem } from "./StatusItem";
 import { CategoryItem } from "./CategoryItem";
 import { useTranslation } from "react-i18next";
 import { getGridClass } from "../shared/sectionLayout";
+import { getEditAction } from "./getEditAction";
 
 const getNestedValue = (
 	obj: Record<string, unknown>,
@@ -75,6 +76,40 @@ const hasDisplayValue = (value: unknown) => {
 	if (typeof value === "string") return value.trim().length > 0;
 	if (Array.isArray(value)) return value.length > 0;
 	return true;
+};
+
+const toDate = (value: unknown): Date | null => {
+	if (value instanceof Date) {
+		return Number.isNaN(value.getTime()) ? null : value;
+	}
+	if (typeof value === "string" || typeof value === "number") {
+		const parsed = new Date(value);
+		return Number.isNaN(parsed.getTime()) ? null : parsed;
+	}
+	return null;
+};
+
+const formatDateByType = (value: unknown, type: "date" | "year"): string => {
+	const date = toDate(value);
+	if (!date) return String(value ?? "");
+	if (type === "year") return String(date.getFullYear());
+	return date.toLocaleDateString();
+};
+
+const normalizeDateByType = (
+	value: unknown,
+	type: "date" | "year",
+): string | null => {
+	const date = toDate(value);
+	if (!date) {
+		if (value === null || value === undefined) return null;
+		if (typeof value === "string") return value.trim();
+		return String(value);
+	}
+	if (type === "year") {
+		return String(date.getFullYear());
+	}
+	return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
 };
 
 const formatAddressValue = (data: Partial<Institution>) => {
@@ -155,9 +190,17 @@ const buildMapHref = (data: Partial<Institution>) => {
 function AddressField({
 	data,
 	options,
+	label,
+	description,
+	isPrivate,
+	action,
 }: {
 	data: Partial<Institution>;
 	options?: InfoWrapperFieldConfig["addressOptions"];
+	label?: string;
+	description?: string;
+	isPrivate?: boolean;
+	action?: React.ReactNode;
 }) {
 	const [copied, setCopied] = useState(false);
 	const address = data.address;
@@ -187,7 +230,13 @@ function AddressField({
 
 	return (
 		<div className="space-y-2">
-			<AddressItem institution={data} />
+			<AddressItem
+				institution={data}
+				label={label}
+				description={description}
+				isPrivate={isPrivate}
+				action={action}
+			/>
 			{(showMapLink || showCopy) && (
 				<div className="flex flex-wrap gap-3">
 					{showMapLink && mapHref && (
@@ -221,6 +270,7 @@ type RenderFieldContentArgs = {
 	newData?: Partial<Institution>;
 	alwaysShow?: boolean;
 	layoutColumns?: 1 | 2;
+	isPrivate: boolean;
 };
 
 const getContent = (
@@ -230,10 +280,21 @@ const getContent = (
 	resolvedHref: string | undefined,
 	tEnum: (key: string) => string,
 	data: Partial<Institution>,
+	isPrivate: boolean,
+	action: React.ReactNode,
 ) => {
 	switch (field.type) {
 		case "address":
-			return <AddressField data={data} options={field.addressOptions} />;
+			return (
+				<AddressField
+					data={data}
+					options={field.addressOptions}
+					label={label}
+					description={field.description}
+					isPrivate={isPrivate}
+					action={action}
+				/>
+			);
 		case "status": {
 			return (
 				<StatusItem
@@ -241,6 +302,8 @@ const getContent = (
 					label={label}
 					enumKey={field.enumKey}
 					variant={field.statusVariant}
+					isPrivate={isPrivate}
+					action={action}
 				/>
 			);
 		}
@@ -248,12 +311,26 @@ const getContent = (
 		case "email":
 		case "phone":
 			return (
-				<InfoItem label={label} description={field.description}>
+				<InfoItem
+					label={label}
+					description={field.description}
+					isPrivate={isPrivate}
+					action={action}
+				>
 					{renderLink(value, resolvedHref, field.type)}
 				</InfoItem>
 			);
 		case "category":
-			return <CategoryItem data={data} variant={field.categoryVariant} />;
+			return (
+				<CategoryItem
+					data={data}
+					variant={field.categoryVariant}
+					label={label}
+					description={field.description}
+					isPrivate={isPrivate}
+					action={action}
+				/>
+			);
 		case "title":
 			return (
 				<div className="overflow-hidden">
@@ -264,14 +341,36 @@ const getContent = (
 			);
 		case "text":
 			return (
-				<InfoItem label={label} description={field.description}>
+				<InfoItem
+					label={label}
+					description={field.description}
+					isPrivate={isPrivate}
+					action={action}
+				>
 					{String(value)}
 				</InfoItem>
 			);
 		case "enum":
 			return (
-				<InfoItem label={label} description={field.description}>
+				<InfoItem
+					label={label}
+					description={field.description}
+					isPrivate={isPrivate}
+					action={action}
+				>
 					{tEnum(`${field.enumKey}.${String(value)}`)}
+				</InfoItem>
+			);
+		case "date":
+		case "year":
+			return (
+				<InfoItem
+					label={label}
+					description={field.description}
+					isPrivate={isPrivate}
+					action={action}
+				>
+					{formatDateByType(value, field.type)}
 				</InfoItem>
 			);
 		default:
@@ -280,13 +379,18 @@ const getContent = (
 };
 
 const renderFieldContent = (
-	{ field, data, newData, alwaysShow }: RenderFieldContentArgs,
+	{ field, data, newData, alwaysShow, isPrivate }: RenderFieldContentArgs,
 	includeLayout = true,
 ) => {
 	const { t: tEnum } = useTranslation("enumMap");
 	const { t: tCommon } = useTranslation("common");
 	const value = resolveFieldValue(field, data);
 	const resolvedHref = resolveHref(field, value, data);
+	const action = getEditAction({
+		edit: field.edit,
+		data,
+		defaultAriaLabel: `Edit ${field.id ?? "field"}`,
+	});
 	const newValue = newData ? resolveFieldValue(field, newData) : undefined;
 	const resolvedNewHref = newData
 		? resolveHref(field, newValue, newData)
@@ -324,6 +428,8 @@ const renderFieldContent = (
 			case "status":
 			case "text":
 			case "enum":
+			case "date":
+			case "year":
 			case "title":
 				return hasDisplayValue(value) || hasDisplayValue(newValue);
 			default:
@@ -356,7 +462,12 @@ const renderFieldContent = (
 					includeLayout && field.className,
 				)}
 			>
-				<InfoItem label={label} description={field.description}>
+				<InfoItem
+					label={label}
+					description={field.description}
+					isPrivate={isPrivate}
+					action={action}
+				>
 					—
 				</InfoItem>
 			</div>
@@ -376,6 +487,8 @@ const renderFieldContent = (
 			case "status":
 			case "text":
 			case "enum":
+			case "date":
+			case "year":
 			case "title":
 				return hasDisplayValue(value);
 			default:
@@ -404,6 +517,9 @@ const renderFieldContent = (
 		if (field.type === "enum") {
 			return tEnum(`${field.enumKey}.${String(displayValue)}`);
 		}
+		if (field.type === "date" || field.type === "year") {
+			return formatDateByType(displayValue, field.type);
+		}
 		if (
 			field.type === "link" ||
 			field.type === "email" ||
@@ -431,6 +547,12 @@ const renderFieldContent = (
 			if (field.type === "address" || field.type === "category") {
 				return String(originalDisplay) !== String(newDisplay ?? "");
 			}
+			if (field.type === "date" || field.type === "year") {
+				return (
+					normalizeDateByType(value, field.type) !==
+					normalizeDateByType(newValue, field.type)
+				);
+			}
 			if (
 				field.type === "link" ||
 				field.type === "email" ||
@@ -455,6 +577,8 @@ const renderFieldContent = (
 				resolvedHref,
 				tEnum,
 				data,
+				isPrivate,
+				action,
 			);
 			if (!content) {
 				if (!alwaysShow) return null;
@@ -465,7 +589,12 @@ const renderFieldContent = (
 							includeLayout && field.className,
 						)}
 					>
-						<InfoItem label={label} description={field.description}>
+						<InfoItem
+							label={label}
+							description={field.description}
+							isPrivate={isPrivate}
+							action={action}
+						>
 							—
 						</InfoItem>
 					</div>
@@ -518,7 +647,12 @@ const renderFieldContent = (
 					includeLayout && field.className,
 				)}
 			>
-				<InfoItem label={label} description={field.description}>
+				<InfoItem
+					label={label}
+					description={field.description}
+					isPrivate={isPrivate}
+					action={action}
+				>
 					{hasOriginal ? (
 						<span className="line-through">{oldDisplay}</span>
 					) : null}
@@ -533,7 +667,16 @@ const renderFieldContent = (
 		);
 	}
 
-	const content = getContent(field, label, value, resolvedHref, tEnum, data);
+	const content = getContent(
+		field,
+		label,
+		value,
+		resolvedHref,
+		tEnum,
+		data,
+		isPrivate,
+		action,
+	);
 	if (!content) {
 		if (!alwaysShow) return null;
 		return (
@@ -543,7 +686,12 @@ const renderFieldContent = (
 					includeLayout && field.className,
 				)}
 			>
-				<InfoItem label={label} description={field.description}>
+				<InfoItem
+					label={label}
+					description={field.description}
+					isPrivate={isPrivate}
+					action={action}
+				>
 					—
 				</InfoItem>
 			</div>
@@ -561,16 +709,21 @@ const renderFieldContent = (
 		</div>
 	);
 };
+
 type BuildRenderFieldArgs = {
 	data: Partial<Institution>;
 	newData?: Partial<Institution>;
 	config: InfoWrapperConfig;
+	showPrivateBadge: boolean;
+	isPrivateField?: (field: InfoWrapperFieldConfig) => boolean;
 };
 
 export const buildRenderField = ({
 	data,
 	newData,
 	config,
+	showPrivateBadge,
+	isPrivateField,
 }: BuildRenderFieldArgs) => {
 	return (
 		field: InfoWrapperFieldConfig,
@@ -586,12 +739,15 @@ export const buildRenderField = ({
 			field.label ??
 			(typeof field.value === "string" ? field.value : undefined) ??
 			`${config.infoId ?? "info"}-field-${fieldIndex}`;
+		const isPrivate =
+			showPrivateBadge && (field.isPrivate ?? isPrivateField?.(field) ?? false);
 		const content = renderFieldContent({
 			field,
 			data,
 			newData,
 			alwaysShow: field.alwaysShow ?? config.alwaysShow,
 			layoutColumns,
+			isPrivate,
 		});
 		if (!content) return null;
 		return (

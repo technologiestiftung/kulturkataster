@@ -867,12 +867,41 @@ export function InstitutionFormModal({
 	});
 
 	useEffect(() => {
-		const hash = window.location.hash.slice(1); // Remove the '#'
+		const hash = window.location.hash.slice(1);
 		if (hash) {
 			setTimeout(() => {
 				const element = document.getElementById(hash);
 				if (element) {
-					element.scrollIntoView({ behavior: "smooth", block: "start" });
+					element.scrollIntoView({ behavior: "smooth", block: "center" });
+					if (typeof element.animate === "function") {
+						element.animate(
+							[
+								{
+									backgroundColor:
+										"color-mix(in srgb, var(--color-primary-dark) 0%, transparent)",
+									boxShadow:
+										"0 0 0 0 color-mix(in srgb, var(--color-primary-dark) 0%, transparent)",
+								},
+								{
+									backgroundColor:
+										"color-mix(in srgb, var(--color-primary-dark) 100%, transparent)",
+									boxShadow:
+										"0 0 0 6px color-mix(in srgb, var(--color-primary-dark) 95%, transparent)",
+								},
+								{
+									backgroundColor:
+										"color-mix(in srgb, var(--color-primary-dark) 0%, transparent)",
+									boxShadow:
+										"0 0 0 0 color-mix(in srgb, var(--color-primary-dark) 0%, transparent)",
+								},
+							],
+							{
+								duration: 1000,
+								iterations: 5,
+								easing: "ease-in-out",
+							},
+						);
+					}
 				}
 			}, 100);
 		}

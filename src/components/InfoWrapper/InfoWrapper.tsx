@@ -6,12 +6,11 @@ import { Fragment, type ReactNode } from "react";
 import type { InfoWrapperConfig, InfoWrapperFieldConfig } from "./types";
 import { buildRenderField } from "./renderField";
 import { SectionWrapper } from "@/components/shared/SectionWrapper";
-import { Button } from "@/components/ui/button";
-import EditIcon from "@/icons/edit.svg";
 import {
 	getResponsiveGridClass,
 	getSpanClass,
 } from "@/components/shared/sectionLayout";
+import { getEditAction } from "./getEditAction";
 
 export function InfoWrapper({
 	data,
@@ -22,7 +21,13 @@ export function InfoWrapper({
 	newData?: Partial<Institution>;
 	config: InfoWrapperConfig;
 }) {
-	const renderField = buildRenderField({ data, newData, config });
+	const renderField = buildRenderField({
+		data,
+		newData,
+		config,
+		showPrivateBadge: config.showPrivateBadge ?? true,
+		isPrivateField: config.isPrivateField,
+	});
 	const isCardField = (field: InfoWrapperFieldConfig) =>
 		field.type === "section";
 
@@ -66,20 +71,13 @@ export function InfoWrapper({
 					field.cardVariant ?? config.cardVariant ?? "default";
 				const accordionVariant =
 					field.accordionVariant ?? config.accordionVariant ?? "default";
-				const showEditButton =
-					field.edit?.enabled && typeof field.edit.onClick === "function";
-				const editButton = showEditButton ? (
-					<Button
-						type="button"
-						variant="icon"
-						size="icon"
-						className="bg-background absolute top-2 right-2"
-						onClick={() => field.edit?.onClick?.(data as Institution)}
-						aria-label={field.edit?.ariaLabel ?? "Edit section"}
-					>
-						<EditIcon className="size-4" />
-					</Button>
-				) : null;
+				const editButton = getEditAction({
+					edit: field.edit,
+					data,
+					defaultAriaLabel: "Edit section",
+					className: "absolute top-2 right-2",
+				});
+				const showEditButton = Boolean(editButton);
 				const sectionContent = renderFieldGroup(
 					field.fields ?? [],
 					field.layout,

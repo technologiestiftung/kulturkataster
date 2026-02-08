@@ -1,16 +1,21 @@
 import { useTranslation } from "react-i18next";
 import { getStatusLevel } from "./types";
+import { PrivateBadge } from "./PrivateBadge";
 
 export function StatusItem({
 	value,
 	label,
 	enumKey,
 	variant = "default",
+	isPrivate = false,
+	action,
 }: {
 	value: string;
 	label: string | undefined;
 	enumKey: string | undefined;
 	variant?: "default" | "plain";
+	isPrivate?: boolean;
+	action?: React.ReactNode;
 }) {
 	const { t: tEnum } = useTranslation("enumMap");
 
@@ -37,6 +42,8 @@ export function StatusItem({
 			)}
 			{label && <strong className="body2">{label}:</strong>}
 			<span className="body2 font-medium">{tEnum(labelKey)}</span>
+			{isPrivate ? <PrivateBadge /> : null}
+			<div className="ml-auto flex items-center gap-2">{action}</div>
 		</div>
 	);
 }

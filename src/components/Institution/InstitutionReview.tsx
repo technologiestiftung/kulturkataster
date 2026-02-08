@@ -15,6 +15,7 @@ import {
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useAccountStore } from "@/lib/store/accountStore";
 import { resolveCategoriesFromDraft } from "@/lib/utils/institutionCategoryUtils";
+import { useInstitutionPrivateFieldResolver } from "@/lib/hooks/useInstitutionPrivateFieldResolver";
 type InstitutionReviewProps = {
 	data: Record<string, unknown>;
 	newData?: Record<string, unknown>;
@@ -28,6 +29,7 @@ export function InstitutionReview({
 }: InstitutionReviewProps) {
 	const { t } = useTranslation("common");
 	const fieldLabel = useFieldLabel();
+	const { isPrivateField } = useInstitutionPrivateFieldResolver();
 	const institutionCategories =
 		useInstitutionStore((state) => state.categories) ?? [];
 	const accountCategories = useAccountStore((state) => state.categories) ?? [];
@@ -45,10 +47,66 @@ export function InstitutionReview({
 						enabled: true,
 					}
 				: undefined,
+			utilization_status: onEditSection
+				? {
+						ariaLabel: "Edit",
+						onClick: () => onEditSection("utilization_status"),
+						enabled: true,
+					}
+				: undefined,
+			protection_status: onEditSection
+				? {
+						ariaLabel: "Edit",
+						onClick: () => onEditSection("protection_status"),
+						enabled: true,
+					}
+				: undefined,
+			address: onEditSection
+				? {
+						ariaLabel: "Edit",
+						onClick: () => onEditSection("address"),
+						enabled: true,
+					}
+				: undefined,
 			contact: onEditSection
 				? {
 						ariaLabel: "Edit",
 						onClick: () => onEditSection("contact"),
+						enabled: true,
+					}
+				: undefined,
+			organization: onEditSection
+				? {
+						ariaLabel: "Edit",
+						onClick: () => onEditSection("organization"),
+						enabled: true,
+					}
+				: undefined,
+			funding: onEditSection
+				? {
+						ariaLabel: "Edit",
+						onClick: () => onEditSection("funding"),
+						enabled: true,
+					}
+				: undefined,
+			facility: onEditSection
+				? {
+						ariaLabel: "Edit",
+						onClick: () => onEditSection("facility"),
+						enabled: true,
+					}
+				: undefined,
+			status: onEditSection
+				? {
+						ariaLabel: "Edit",
+						onClick: () => onEditSection("status"),
+						enabled: true,
+					}
+				: undefined,
+			additional: onEditSection
+				? {
+						ariaLabel: "Edit",
+						onClick: () => onEditSection("additional"),
 						enabled: true,
 					}
 				: undefined,
@@ -82,12 +140,14 @@ export function InstitutionReview({
 			data={resolvedData}
 			newData={resolvedNewData}
 			config={{
+				isPrivateField,
+				showPrivateBadge: true,
 				fields: [
 					{
 						type: "section",
 						id: "header",
 						cardVariant: "none",
-						className: "mb-0",
+						className: "mb-2",
 						edit: editConfig.details,
 						fields: [
 							{
@@ -115,7 +175,8 @@ export function InstitutionReview({
 							"utilization_status",
 							t("institution.utilizationStatus"),
 						),
-						className: "mb-0",
+						edit: editConfig.utilization_status,
+						className: "mb-2",
 						type: "status",
 						value: "utilization_status",
 						enumKey: "utilization_status",
@@ -127,6 +188,7 @@ export function InstitutionReview({
 							"protection_status",
 							t("institution.protectionStatus"),
 						),
+						edit: editConfig.protection_status,
 						type: "status",
 						value: "protection_status",
 						enumKey: "protection_status",
@@ -143,6 +205,7 @@ export function InstitutionReview({
 								id: "address",
 								alwaysShow: true,
 								type: "address",
+								edit: editConfig.address,
 								addressOptions: {
 									showMapLink: false,
 									showCopy: false,
@@ -159,6 +222,7 @@ export function InstitutionReview({
 								type: "section",
 								id: "organization",
 								alwaysShow: false,
+								edit: editConfig.organization,
 								cardVariant: "tertiary",
 								fields: organizationInfoConfig,
 							},
@@ -166,12 +230,14 @@ export function InstitutionReview({
 								type: "section",
 								id: "funding",
 								alwaysShow: false,
+								edit: editConfig.funding,
 								cardVariant: "tertiary",
 								fields: fundingInfoConfig,
 							},
 							{
 								type: "section",
 								id: "facility",
+								edit: editConfig.facility,
 								cardVariant: "tertiary",
 								fields: facilityInfoConfig,
 							},
