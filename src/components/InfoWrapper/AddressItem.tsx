@@ -2,7 +2,7 @@
 
 import { Institution } from "@/types";
 import { useTranslation } from "react-i18next";
-import { PrivateBadge } from "./PrivateBadge";
+import { PrivateBadge } from "../shared/PrivateBadge";
 
 interface InstitutionAddressProps {
 	institution: Partial<Institution>;
