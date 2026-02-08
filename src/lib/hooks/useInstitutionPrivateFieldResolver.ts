@@ -41,7 +41,8 @@ const normalizePermissionField = (field: string | undefined): string | null => {
 const resolvePermissionField = (
 	field: InfoWrapperFieldConfig,
 ): string | null => {
-	if (field.permissionField) return normalizePermissionField(field.permissionField);
+	if (field.permissionField)
+		return normalizePermissionField(field.permissionField);
 
 	if (field.labelKey?.startsWith("field_names.")) {
 		const key = field.labelKey.replace("field_names.", "");
@@ -85,4 +86,3 @@ export const useInstitutionPrivateFieldResolver = () => {
 		[isPrivateField, isLoading],
 	);
 };
-

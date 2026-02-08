@@ -5,7 +5,10 @@ import { getMyInstitutions } from "@/server/actions/institutions";
 import { getRoles } from "@/server/actions/roles";
 import { getSubmissions } from "@/server/actions/submissions";
 import { getUsers } from "@/server/actions/users";
-import { getAccessContextForUser, type AccessContext } from "@/server/utils/rbac";
+import {
+	getAccessContextForUser,
+	type AccessContext,
+} from "@/server/utils/rbac";
 import { fetchIfAllowed } from "@/server/utils/rbacHelpers";
 
 export type AccountBootstrapData = {
@@ -24,16 +27,23 @@ export async function getAccountBootstrapData(): Promise<AccountBootstrapData | 
 	if (!user) return null;
 
 	const ctx = await getAccessContextForUser(user.id);
-	const [currentProfile, users, groups, roles, categories, institutions, submissions] =
-		await Promise.all([
-			getCurrentProfile(),
-			fetchIfAllowed(ctx, "user", "read", getUsers, []),
-			fetchIfAllowed(ctx, "group", "read", getGroups, []),
-			fetchIfAllowed(ctx, "role", "read", getRoles, []),
-			fetchIfAllowed(ctx, "category", "update", getCategories, []),
-			fetchIfAllowed(ctx, "institution", "read", getMyInstitutions, []),
-			fetchIfAllowed(ctx, "submission", "read", getSubmissions, []),
-		]);
+	const [
+		currentProfile,
+		users,
+		groups,
+		roles,
+		categories,
+		institutions,
+		submissions,
+	] = await Promise.all([
+		getCurrentProfile(),
+		fetchIfAllowed(ctx, "user", "read", getUsers, []),
+		fetchIfAllowed(ctx, "group", "read", getGroups, []),
+		fetchIfAllowed(ctx, "role", "read", getRoles, []),
+		fetchIfAllowed(ctx, "category", "update", getCategories, []),
+		fetchIfAllowed(ctx, "institution", "read", getMyInstitutions, []),
+		fetchIfAllowed(ctx, "submission", "read", getSubmissions, []),
+	]);
 
 	return {
 		ctx,
@@ -46,4 +56,3 @@ export async function getAccountBootstrapData(): Promise<AccountBootstrapData | 
 		submissions,
 	};
 }
-
