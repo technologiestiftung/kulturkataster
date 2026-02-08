@@ -207,6 +207,7 @@
 	"badges": {
 		"more": "+{{count}} weitere"
 	},
+	"sensitiveInformation": "Sensitive Informationen",
 	"cancel": "Abbrechen",
 	"close": "Schließen",
 	"closeSidebar": "Seitenleiste schließen",

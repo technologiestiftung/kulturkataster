@@ -1,42 +1,29 @@
 import type { ReactNode } from "react";
 import { AccountLayoutClient } from "@/components/Account/AccountLayoutClient";
 import { AccountStoreInitializer } from "@/components/Account/AccountStoreInitializer";
-import { getCategories } from "@/server/actions/categories";
-import { getUsers } from "@/server/actions/users";
-import { getGroups } from "@/server/actions/groups";
-import { getRoles } from "@/server/actions/roles";
-import { getCurrentProfile, getCurrentUser } from "@/server/actions/auth";
-import { getMyInstitutions } from "@/server/actions/institutions";
-import { getSubmissions } from "@/server/actions/submissions";
 import {
 	canTable,
-	getAccessContextForUser,
 	getTableScope,
 } from "@/server/utils/rbac";
-import { fetchIfAllowed } from "@/server/utils/rbacHelpers";
+import { getAccountBootstrapData } from "@/server/utils/accountBootstrap";
 
 type AccountLayoutProps = {
 	children: ReactNode;
 };
 
 export default async function AccountLayout({ children }: AccountLayoutProps) {
-	const user = await getCurrentUser();
-
-	if (!user) {
-		return null;
-	}
-	const ctx = await getAccessContextForUser(user?.id);
-
-	const [profile, users, groups, roles, categories, institutions, submissions] =
-		await Promise.all([
-			getCurrentProfile(),
-			fetchIfAllowed(ctx, "user", "read", getUsers, []),
-			fetchIfAllowed(ctx, "group", "read", getGroups, []),
-			fetchIfAllowed(ctx, "role", "read", getRoles, []),
-			fetchIfAllowed(ctx, "category", "update", getCategories, []),
-			fetchIfAllowed(ctx, "institution", "read", getMyInstitutions, []),
-			fetchIfAllowed(ctx, "submission", "read", getSubmissions, []),
-		]);
+	const accountData = await getAccountBootstrapData();
+	if (!accountData) return null;
+	const {
+		ctx,
+		currentProfile,
+		users,
+		groups,
+		roles,
+		categories,
+		institutions,
+		submissions,
+	} = accountData;
 
 	const hasUserAllScope =
 		canTable(ctx, "user", "read") &&
@@ -63,7 +50,7 @@ export default async function AccountLayout({ children }: AccountLayoutProps) {
 	return (
 		<>
 			<AccountStoreInitializer
-				currentProfile={profile}
+				currentProfile={currentProfile}
 				users={users}
 				groups={groups}
 				roles={roles}
@@ -71,7 +58,10 @@ export default async function AccountLayout({ children }: AccountLayoutProps) {
 				institutions={institutions}
 				submissions={submissions}
 			/>
-			<AccountLayoutClient allowedTabs={allowedTabs} currentProfile={profile}>
+			<AccountLayoutClient
+				allowedTabs={allowedTabs}
+				currentProfile={currentProfile}
+			>
 				{children}
 			</AccountLayoutClient>
 		</>

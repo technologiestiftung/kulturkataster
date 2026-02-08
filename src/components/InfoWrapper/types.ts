@@ -23,10 +23,20 @@ export type InfoWrapperFieldType =
 	| "link"
 	| "section";
 
+export interface InfoWrapperEditConfig {
+	enabled?: boolean;
+	label?: string;
+	ariaLabel?: string;
+	href?: string;
+	onClick?: (data: Institution) => void;
+}
+
 interface InfoWrapperBaseFieldConfig {
 	id?: string;
 	infoId?: string;
 	value?: string | ((data: Institution) => unknown);
+	permissionField?: string;
+	isPrivate?: boolean;
 	label?: string;
 	labelKey?: string;
 	enumKey?: string;
@@ -49,12 +59,7 @@ interface InfoWrapperBaseFieldConfig {
 	statusVariant?: "default" | "plain";
 	onClick?: (data: Institution) => void;
 	onClickAriaLabel?: string;
-	edit?: {
-		enabled?: boolean;
-		label?: string;
-		href?: string;
-		onClick?: (data: Institution) => void;
-	};
+	edit?: InfoWrapperEditConfig;
 }
 
 type InfoWrapperSectionFieldConfig = InfoWrapperBaseFieldConfig & {
@@ -67,11 +72,7 @@ type InfoWrapperSectionFieldConfig = InfoWrapperBaseFieldConfig & {
 	heroStatus?: "in_use" | "not_in_use" | "unknown";
 	onClick?: (data: Institution) => void;
 	onClickAriaLabel?: string;
-	edit?: {
-		enabled?: boolean;
-		onClick?: (data: Institution) => void;
-		ariaLabel?: string;
-	};
+	edit?: InfoWrapperEditConfig;
 	collapsible?: boolean;
 	defaultOpen?: boolean;
 	layout?: Layout;
@@ -98,6 +99,8 @@ export interface InfoWrapperConfig {
 	useAccordion?: boolean;
 	defaultOpen?: boolean;
 	layout?: Layout;
+	showPrivateBadge?: boolean;
+	isPrivateField?: (field: InfoWrapperFieldConfig) => boolean;
 }
 
 export const StatusLevelMap: Record<string, number> = {

@@ -17,6 +17,7 @@ import type { Institution } from "@/types/institution";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "next/navigation";
+import { useLocalePath } from "@/lib/hooks/useLocalePath";
 
 type InstitutionDraftReviewModalProps = {
 	submissionId?: number;
@@ -33,6 +34,7 @@ export function InstitutionDraftReviewModal({
 }: InstitutionDraftReviewModalProps) {
 	const { t } = useTranslation("content");
 	const router = useRouter();
+	const toLocalePath = useLocalePath();
 	const [reviewNotes, setReviewNotes] = useState("");
 	const [submitting, setSubmitting] = useState(false);
 	const [error, setError] = useState<string | null>(null);
@@ -139,30 +141,6 @@ export function InstitutionDraftReviewModal({
 		}
 	}, [resolvedSubmissionWithFallback, reviewNotes]);
 
-	if (!hasSubmissionId) {
-		return (
-			<AlertDialog
-				status="error"
-				title={t("institutionFormModal.dialog.notFound.title")}
-				description={t("institutionFormModal.dialog.notFound.description")}
-			/>
-		);
-	}
-
-	if (!resolvedSubmissionWithFallback) {
-		if (!didFetchSubmission) return null;
-		return (
-			<AlertDialog
-				status="error"
-				title={t("institutionFormModal.dialog.notFound.title")}
-				description={t("institutionFormModal.dialog.notFound.description")}
-			/>
-		);
-	}
-
-	const draft = institutionSubmissionToDraft(resolvedSubmissionWithFallback);
-	const submissionStatus = resolvedSubmissionWithFallback.status;
-
 	const formatReviewError = (err: unknown) => {
 		if (err instanceof Error && err.message) return err.message;
 		if (typeof err === "string") return err;
@@ -187,6 +165,7 @@ export function InstitutionDraftReviewModal({
 
 	const handleReview = useCallback(
 		async (status: "approved" | "rejected") => {
+			if (!resolvedSubmissionWithFallback) return;
 			if (submitting) return;
 			setSubmitting(true);
 			setError(null);
@@ -219,13 +198,37 @@ export function InstitutionDraftReviewModal({
 		[
 			formatReviewError,
 			submitting,
-			resolvedSubmissionWithFallback.id,
+			resolvedSubmissionWithFallback?.id,
 			reviewNotes,
 			router,
 			returnTo,
 			t,
 		],
 	);
+
+	if (!hasSubmissionId) {
+		return (
+			<AlertDialog
+				status="error"
+				title={t("institutionFormModal.dialog.notFound.title")}
+				description={t("institutionFormModal.dialog.notFound.description")}
+			/>
+		);
+	}
+
+	if (!resolvedSubmissionWithFallback) {
+		if (!didFetchSubmission) return null;
+		return (
+			<AlertDialog
+				status="error"
+				title={t("institutionFormModal.dialog.notFound.title")}
+				description={t("institutionFormModal.dialog.notFound.description")}
+			/>
+		);
+	}
+
+	const draft = institutionSubmissionToDraft(resolvedSubmissionWithFallback);
+	const submissionStatus = resolvedSubmissionWithFallback.status;
 
 	return (
 		<Modal
@@ -235,13 +238,17 @@ export function InstitutionDraftReviewModal({
 			routePath={routePath}
 			content={
 				<div className="space-y-6">
-					<InstitutionReview
-						data={originalInstitution ?? draft}
-						newData={originalInstitution ? draft : undefined}
-						onEditSection={(sectionId) => {
-							router.push(`${editBasePath}/${submissionId}/edit#${sectionId}`);
-						}}
-					/>
+						<InstitutionReview
+							data={originalInstitution ?? draft}
+							newData={originalInstitution ? draft : undefined}
+							onEditSection={(sectionId) => {
+								router.push(
+									toLocalePath(
+										`${editBasePath}/${submissionId}/edit#${sectionId}`,
+									),
+								);
+							}}
+						/>
 					<div className="space-y-3">
 						<div className="flex items-center justify-between">
 							<span className="body2">
