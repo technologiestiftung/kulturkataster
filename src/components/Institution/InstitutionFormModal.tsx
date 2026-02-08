@@ -10,7 +10,7 @@ import {
 } from "@/components/Modals/RoutedEditorModal";
 import { AlertDialog } from "@/components/ui/alert-dialog";
 import { FormWrapper } from "@/components/FormWrapper";
-import type { FormWrapperConfig } from "@/components/FormWrapper";
+import type { FormWrapperConfig, FieldConfig } from "@/components/FormWrapper";
 import { useAccountStore } from "@/lib/store/accountStore";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import {
@@ -32,6 +32,7 @@ import type { Institution } from "@/types/institution";
 import { useRouter } from "next/navigation";
 import { resolveCategoryIdsFromDraft } from "@/lib/utils/institutionCategoryUtils";
 import { TFunction } from "i18next";
+import { useInstitutionPrivateFieldResolver } from "@/lib/hooks/useInstitutionPrivateFieldResolver";
 type InstitutionFormModalProps = {
 	mode: "create" | "edit";
 	institution?: Institution | null;
@@ -272,6 +273,7 @@ type InstitutionFormConfigArgs = {
 		formData: Record<string, unknown>,
 		updateField: (name: string, value: unknown) => void,
 	) => void | Promise<void>;
+	isPrivateField?: (field: FieldConfig) => boolean;
 };
 
 const buildInstitutionFormConfig = ({
@@ -287,6 +289,7 @@ const buildInstitutionFormConfig = ({
 	onCancel,
 	onAddressBlur,
 	onLatLngBlur,
+	isPrivateField,
 }: InstitutionFormConfigArgs): FormWrapperConfig => {
 	const fieldLabel = (key: string, fallback: string) =>
 		getFieldLabel(tEnum, key, fallback);
@@ -820,6 +823,7 @@ const buildInstitutionFormConfig = ({
 			},
 		],
 		onSubmit,
+		isPrivateField,
 		showCancel: true,
 		cancelLabel: t("institutionFormModal.actions.cancel"),
 		onCancel,
@@ -855,6 +859,7 @@ export function InstitutionFormModal({
 }: InstitutionFormModalProps) {
 	const { t } = useTranslation("content");
 	const { t: tEnum } = useTranslation("enumMap");
+	const { isPrivateField } = useInstitutionPrivateFieldResolver();
 	const setAlertDialog = useAccountStore((state) => state.setAlertDialog);
 	const categories = useInstitutionStore((state) => state.categories) ?? [];
 	const addressGeocodeState = useRef({
@@ -966,6 +971,13 @@ export function InstitutionFormModal({
 		onSubmit !== undefined ? (submittingProp ?? false) : defaultSubmitting;
 	const resolvedSubmitHandler =
 		onSubmit !== undefined ? handleCustomSubmit : handleInstitutionSubmit;
+	const isPrivateFormField = useCallback(
+		(field: FieldConfig) => {
+			if (field.type === "section" || field.type === "actionPanel") return false;
+			return isPrivateField(field);
+		},
+		[isPrivateField],
+	);
 
 	const formConfig = useMemo(
 		() =>
@@ -982,6 +994,7 @@ export function InstitutionFormModal({
 				onCancel: handleClose,
 				onAddressBlur,
 				onLatLngBlur,
+				isPrivateField: isPrivateFormField,
 			}),
 		[
 			mode,
@@ -996,6 +1009,7 @@ export function InstitutionFormModal({
 			handleClose,
 			onAddressBlur,
 			onLatLngBlur,
+			isPrivateFormField,
 		],
 	);
 
