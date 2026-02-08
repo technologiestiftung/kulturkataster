@@ -176,8 +176,8 @@ export const getAccessContextForUser = async (
 	userId: string | null,
 ): Promise<AccessContext> => {
 	if (!userId) {
-		const guestRole = await prisma.role.findUnique({
-			where: { name: "guest" },
+		const guestRole = await prisma.role.findFirst({
+			where: { name: "guest", is_system: true },
 			include: {
 				table_permissions: true,
 				field_permissions: true,
@@ -199,4 +199,32 @@ export const getAccessContextForUser = async (
 	});
 
 	return buildAccessContext(user?.role ?? null);
+};
+
+export const getSystemRoleReadableFieldsForTable = async (
+	roleName: string,
+	table: string,
+): Promise<string[]> => {
+	const role = await prisma.role.findFirst({
+		where: {
+			name: roleName,
+			is_system: true,
+		},
+		include: {
+			field_permissions: true,
+		},
+	});
+	if (!role) return [];
+	const readableFields = role.field_permissions
+		.filter(
+			(permission) => permission.table === table && permission.action === "read",
+		)
+		.map((permission) => permission.field);
+	return Array.from(new Set(readableFields));
+};
+
+export const getGuestReadableFieldsForTable = async (
+	table: string,
+): Promise<string[]> => {
+	return getSystemRoleReadableFieldsForTable("guest", table);
 };

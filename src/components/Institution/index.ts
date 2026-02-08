@@ -1,5 +1,4 @@
 export { InfoItem } from "../InfoWrapper/InfoItem";
-export { ContactLink } from "./shared/ContactLink";
 
 export { ToggleButton } from "./ToggleButton";
 

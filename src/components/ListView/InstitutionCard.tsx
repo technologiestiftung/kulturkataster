@@ -12,6 +12,7 @@ import { memo } from "react";
 import { useTranslation } from "react-i18next";
 import { useFieldLabel } from "@/lib/hooks/useFieldLabel";
 import { InfoWrapper } from "../InfoWrapper";
+import { useInstitutionPrivateFieldResolver } from "@/lib/hooks/useInstitutionPrivateFieldResolver";
 
 interface InstitutionCardProps {
 	institutionData: Institution;
@@ -26,6 +27,7 @@ const InstitutionCard = memo(function InstitutionCard({
 }: InstitutionCardProps) {
 	const { t } = useTranslation("common");
 	const fieldLabel = useFieldLabel();
+	const { isPrivateField } = useInstitutionPrivateFieldResolver();
 
 	const handleCardClick = (e: React.MouseEvent | React.KeyboardEvent) => {
 		// Don't trigger card click if clicking on interactive elements inside
@@ -69,6 +71,8 @@ const InstitutionCard = memo(function InstitutionCard({
 					data={institutionData}
 					config={{
 						className: "bg-background p-4",
+						isPrivateField,
+						showPrivateBadge: true,
 						fields: [
 							{
 								type: "section",
