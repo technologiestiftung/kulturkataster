@@ -57,4 +57,3 @@ export const useGuestReadableFields = (table: string) => {
 	const fieldSet = useMemo(() => new Set(fields), [fields]);
 	return { fields, fieldSet, isLoading };
 };
-

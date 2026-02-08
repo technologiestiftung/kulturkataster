@@ -1,10 +1,7 @@
 import type { ReactNode } from "react";
 import { AccountLayoutClient } from "@/components/Account/AccountLayoutClient";
 import { AccountStoreInitializer } from "@/components/Account/AccountStoreInitializer";
-import {
-	canTable,
-	getTableScope,
-} from "@/server/utils/rbac";
+import { canTable, getTableScope } from "@/server/utils/rbac";
 import { getAccountBootstrapData } from "@/server/utils/accountBootstrap";
 
 type AccountLayoutProps = {

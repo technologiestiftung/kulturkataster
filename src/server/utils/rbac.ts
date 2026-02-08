@@ -217,7 +217,8 @@ export const getSystemRoleReadableFieldsForTable = async (
 	if (!role) return [];
 	const readableFields = role.field_permissions
 		.filter(
-			(permission) => permission.table === table && permission.action === "read",
+			(permission) =>
+				permission.table === table && permission.action === "read",
 		)
 		.map((permission) => permission.field);
 	return Array.from(new Set(readableFields));
