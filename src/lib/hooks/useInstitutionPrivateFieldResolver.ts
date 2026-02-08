@@ -2,7 +2,6 @@
 
 import { useCallback, useMemo } from "react";
 import { INSTITUTION_PERMISSION_FIELDS } from "@/types/institution";
-import type { InfoWrapperFieldConfig } from "@/components/InfoWrapper/types";
 import { useGuestReadableFields } from "@/lib/hooks/useGuestReadableFields";
 
 const permissionFields = new Set<string>(
@@ -38,8 +37,16 @@ const normalizePermissionField = (field: string | undefined): string | null => {
 	return permissionFields.has(alias) ? alias : null;
 };
 
+type PrivateFieldCandidate = {
+	permissionField?: string;
+	labelKey?: string;
+	value?: unknown;
+	id?: string;
+	name?: string;
+};
+
 const resolvePermissionField = (
-	field: InfoWrapperFieldConfig,
+	field: PrivateFieldCandidate,
 ): string | null => {
 	if (field.permissionField)
 		return normalizePermissionField(field.permissionField);
@@ -61,6 +68,12 @@ const resolvePermissionField = (
 		if (normalized) return normalized;
 	}
 
+	if (field.name) {
+		const topLevelField = field.name.split(".")[0];
+		const normalized = normalizePermissionField(topLevelField);
+		if (normalized) return normalized;
+	}
+
 	return null;
 };
 
@@ -69,7 +82,7 @@ export const useInstitutionPrivateFieldResolver = () => {
 		useGuestReadableFields("institution");
 
 	const isPrivateField = useCallback(
-		(field: InfoWrapperFieldConfig) => {
+		(field: PrivateFieldCandidate) => {
 			if (isLoading) return false;
 			const permissionField = resolvePermissionField(field);
 			if (!permissionField) return false;

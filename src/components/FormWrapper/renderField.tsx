@@ -45,6 +45,7 @@ import { AddressMapField } from "./AddressMapField";
 import { defaultFilterState } from "./constants";
 import Eye from "@/icons/eye.svg";
 import EyeOff from "@/icons/eye-off.svg";
+import { PrivateBadge } from "@/components/InfoWrapper/PrivateBadge";
 
 function PasswordField({
 	id,
@@ -203,6 +204,7 @@ type RenderFieldContentArgs = {
 		field: FormWrapperFieldConfig,
 		nextValue: unknown,
 	) => void | Promise<void>;
+	isPrivate: boolean;
 };
 
 const renderFieldContent = (
@@ -213,6 +215,7 @@ const renderFieldContent = (
 		touched,
 		updateField,
 		handleFieldBlur,
+		isPrivate,
 	}: RenderFieldContentArgs,
 	includeLayout = true,
 ) => {
@@ -234,10 +237,13 @@ const renderFieldContent = (
 				field.type !== "switch" &&
 				field.type !== "tablePermissions" &&
 				field.type !== "fieldPermissions" && (
-					<Label htmlFor={field.name} className="text-neutral-80">
-						{field.labelNode ?? field.label}
-						{field.required && <span className="ml-1">*</span>}
-					</Label>
+					<div className="flex items-center justify-between gap-2">
+						<Label htmlFor={field.name} className="text-neutral-80">
+							{field.labelNode ?? field.label}
+							{field.required && <span className="ml-1">*</span>}
+						</Label>
+						{isPrivate ? <PrivateBadge /> : null}
+					</div>
 				)}
 
 			{field.description &&
@@ -354,6 +360,7 @@ const renderFieldContent = (
 						{field.labelNode ?? field.label}
 						{field.required && <span className=" ml-1">*</span>}
 					</Label>
+					{isPrivate ? <PrivateBadge /> : null}
 				</div>
 			)}
 
@@ -363,6 +370,7 @@ const renderFieldContent = (
 						{field.labelNode ?? field.label}
 						{field.required && <span className=" ml-1">*</span>}
 					</Label>
+					{isPrivate ? <PrivateBadge /> : null}
 					<Switch
 						id={field.name}
 						checked={value as boolean}
@@ -499,7 +507,10 @@ const renderFieldContent = (
 
 			{field.type === "tablePermissions" && field.tablePermissions && (
 				<div className="flex flex-col gap-1">
-					<Label className="">{field.label}</Label>
+					<div className="flex items-center justify-between gap-2">
+						<Label className="">{field.label}</Label>
+						{isPrivate ? <PrivateBadge /> : null}
+					</div>
 					<div className="mt-4 grid gap-4">
 						{field.tablePermissions.tables.map((table) => (
 							<div
@@ -632,7 +643,10 @@ const renderFieldContent = (
 
 			{field.type === "fieldPermissions" && field.fieldPermissions && (
 				<div className="flex flex-col gap-1">
-					<Label className="">{field.label}</Label>
+					<div className="flex items-center justify-between gap-2">
+						<Label className="">{field.label}</Label>
+						{isPrivate ? <PrivateBadge /> : null}
+					</div>
 					<div className="mt-4 grid gap-4">
 						{field.fieldPermissions.sections.map((section) => {
 							const permissionValue =
@@ -744,6 +758,7 @@ type BuildRenderFieldArgs = {
 		field: FormWrapperFieldConfig,
 		nextValue: unknown,
 	) => void | Promise<void>;
+	isPrivateField?: (field: FormWrapperFieldConfig) => boolean;
 };
 
 export const buildRenderField = ({
@@ -753,6 +768,7 @@ export const buildRenderField = ({
 	config,
 	updateField,
 	handleFieldBlur,
+	isPrivateField,
 }: BuildRenderFieldArgs) => {
 	const renderField = (
 		field: FormWrapperFieldConfig,
@@ -761,6 +777,8 @@ export const buildRenderField = ({
 		if (field.condition && !field.condition(formData)) {
 			return null;
 		}
+
+		const isPrivate = isPrivateField?.(field) ?? false;
 
 		if (field.type === "section") {
 			const useAccordion = field.collapsible;
@@ -830,6 +848,7 @@ export const buildRenderField = ({
 						config,
 						updateField,
 						handleFieldBlur,
+						isPrivate,
 					})}
 				</Fragment>
 			);
@@ -870,6 +889,7 @@ export const buildRenderField = ({
 									config,
 									updateField,
 									handleFieldBlur,
+									isPrivate,
 								},
 								false,
 							)}

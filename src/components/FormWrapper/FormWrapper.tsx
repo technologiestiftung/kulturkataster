@@ -208,6 +208,7 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 		config,
 		updateField,
 		handleFieldBlur,
+		isPrivateField: config.isPrivateField,
 	});
 
 	useEffect(() => {

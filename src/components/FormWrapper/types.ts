@@ -241,6 +241,7 @@ export interface FormWrapperConfig {
 	// Layout
 	layout?: Layout;
 	cardVariant?: "default" | "secondary" | "none";
+	isPrivateField?: (field: FormWrapperFieldConfig) => boolean;
 
 	// Hide built-in form actions (useful when used inside Dialog or with custom actions)
 	hideActions?: boolean;
