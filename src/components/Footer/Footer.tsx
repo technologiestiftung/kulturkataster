@@ -2,7 +2,7 @@
 import { FC } from "react";
 import { useTranslation } from "react-i18next";
 import packageInfo from "../../../package.json";
-import { useAppStore } from "@/lib/store/appStore";
+import { usePathname } from "next/navigation";
 import { getModalLink } from "@/lib/utils/modalRouting";
 import Link from "next/link";
 
@@ -21,9 +21,10 @@ interface FooterProps {
 
 const Footer: FC<FooterProps> = ({ ariaLabel }) => {
 	const { t } = useTranslation("common");
-	const viewMode = useAppStore((state) => state.viewMode);
+	const pathname = usePathname();
+	const isListRoute = pathname?.replace(/\/$/, "").endsWith("/list");
 
-	if (viewMode === "list") return <></>;
+	if (isListRoute) return <></>;
 
 	return (
 		<footer

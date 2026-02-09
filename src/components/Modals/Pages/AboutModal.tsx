@@ -2,8 +2,9 @@
 
 import DownloadPDFButton from "@/components/Content/DownloadPDFButton";
 import TextBlock from "@/components/Content/TextBlock";
+import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { Trans, useTranslation } from "react-i18next";
-import { PageModal } from "../PageModal";
+import { Modal } from "../Modal";
 
 interface Guidelines {
 	description: string;
@@ -55,8 +56,9 @@ interface AboutContent {
 	credits: Credits;
 }
 
-export function AboutModal() {
+export function AboutModal({ routePath }: { routePath?: string }) {
 	const { t } = useTranslation("content");
+	const toLocalePath = useLocalePath();
 
 	const content = t("aboutModal", { returnObjects: true }) as AboutContent;
 
@@ -81,7 +83,7 @@ export function AboutModal() {
 						components={{
 							link: (
 								<a
-									href="/simpleLanguage"
+									href={toLocalePath("/simpleLanguage")}
 									rel="noopener noreferrer"
 									type="button"
 									className="text-primary-dark hover:text-primary underline bg-transparent border-none p-0 cursor-pointer "
@@ -171,9 +173,10 @@ export function AboutModal() {
 	);
 
 	return (
-		<PageModal
+		<Modal
 			title={t("aboutModal.title")}
 			subtitle={t("aboutModal.subtitle")}
+			routePath={routePath}
 			content={modalContent}
 			hideLinksInModalFooter={["about"]}
 		/>

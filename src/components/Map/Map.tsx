@@ -10,6 +10,7 @@ import LayerInitializer from "./LayerInitializer/LayerInitializer";
 import { InstitutionLayer, Layers } from "./Layers";
 import LayerTree from "./LayerTree/LayerTree";
 import { Loading } from "../ui/loading";
+import { SidePanel } from "../Menu/MenuContent/SidePanel";
 
 const LazyOlMap = dynamic(() => import("./OlMap/OlMap"), {
 	ssr: false,
@@ -27,6 +28,7 @@ const Map: FC = () => {
 
 	return (
 		<div className="Map-root w-full h-full">
+			<SidePanel />
 			{true && <LayerTree />}
 
 			<LazyOlMap>

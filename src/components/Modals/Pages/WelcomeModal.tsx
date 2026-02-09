@@ -13,11 +13,13 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { getModalLink } from "@/lib/utils/modalRouting";
 import { useAppStore } from "@/lib/store/appStore";
+import { useLocalePath } from "@/lib/hooks/useLocalePath";
 
 export function WelcomeModal() {
 	const { t } = useTranslation(["content", "common"]);
 	const { setFirstTimeUser } = useAppStore();
 	const router = useRouter();
+	const toLocalePath = useLocalePath();
 
 	const footerItems = [
 		{ id: "accessibility" },
@@ -34,12 +36,12 @@ export function WelcomeModal() {
 					if (typeof window !== "undefined" && window.history.length > 1) {
 						router.back();
 					} else {
-						router.push("/");
+						router.push(toLocalePath("/"));
 					}
 				}
 			}}
 		>
-			<DialogContent variant="medium" className="flex" hideBackIcon>
+			<DialogContent variant="centered" className="flex" showBackButton={false}>
 				<div className="flex flex-col md:flex-row gap-8 py-12 md:pt-32 md:pb-12 px-6">
 					<div className="md:w-1/4 flex justify-center align-start h-full">
 						<KukaLargeLogo
@@ -83,7 +85,7 @@ export function WelcomeModal() {
 										className="w-full md:w-auto mb-2 md:mb-0 cursor-pointer"
 										onClick={() => {
 											setFirstTimeUser(false);
-											router.push("/");
+											router.push(toLocalePath("/"));
 										}}
 									>
 										{t("welcomeModal.discoverButton", { ns: "content" })}
@@ -93,14 +95,14 @@ export function WelcomeModal() {
 									<Button
 										variant="outline"
 										className="w-1/2 md:w-auto cursor-pointer"
-										onClick={() => router.push("/about")}
+										onClick={() => router.push(toLocalePath("/about"))}
 									>
 										{t("welcomeModal.aboutButton", { ns: "content" })}
 									</Button>
 									<Button
 										variant="outline"
 										className="w-1/2 md:w-auto cursor-pointer"
-										onClick={() => router.push("/info")}
+										onClick={() => router.push(toLocalePath("/info"))}
 									>
 										{t("welcomeModal.infoButton", { ns: "content" })}
 									</Button>
@@ -109,7 +111,9 @@ export function WelcomeModal() {
 							<div className="mt-4">
 								<Button
 									variant="link"
-									onClick={() => router.push("/accessibilitySettings")}
+									onClick={() =>
+										router.push(toLocalePath("/accessibilitySettings"))
+									}
 									className="underline body2 text-primary-dark font-semibold p-0 md:p-0 underline-offset-1 rounded-none focus-visible:ring-offset-0"
 								>
 									{t("welcomeModal.accessibilitySettings", { ns: "content" })}
@@ -125,11 +129,11 @@ export function WelcomeModal() {
 								<div className="flex md:w-1/2 md:justify-end justify-around gap-2 space-x-4 md:mx-4">
 									<KRBLogo
 										title="Kulturraum Berlin gGmbH, Logo"
-										className="w-20 md:w-24 h-auto bg-white"
+										className="w-20 md:w-24 h-auto bg-background"
 									/>
 									<SenateLogo
 										title="Logo der Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt, Logo"
-										className="w-32 md:w-42 h-auto bg-white"
+										className="w-32 md:w-42 h-auto bg-background"
 									/>
 								</div>
 							</div>

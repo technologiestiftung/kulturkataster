@@ -6,5 +6,5 @@ export const metadata: Metadata = {
 };
 
 export default function DownloadPage() {
-	return <DownloadModal />;
+	return <DownloadModal routePath="/download" />;
 }

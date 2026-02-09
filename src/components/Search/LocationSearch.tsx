@@ -1,11 +1,9 @@
 "use client";
 
-import { Input } from "@/components/ui/input";
-import Search from "@/icons/search.svg";
+import { SearchInput } from "@/components/ui/search-input";
 import { useKeyboardNavigation } from "@/lib/hooks/useKeyboardNavigation";
 import { useSearch } from "@/lib/hooks/useSearch";
 import { searchLocations } from "@/server/actions/searchLocations";
-import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useMapStore } from "@/lib/store/mapStore";
 import { sanitizeAddressInput } from "@/lib/utils/sanitizerUtils";
 import {
@@ -15,23 +13,41 @@ import {
 import { GeoFeature, Institution, SearchResult } from "@/types/institution";
 import { boundingExtent } from "ol/extent";
 import { fromLonLat } from "ol/proj";
-import { ChangeEvent, useRef } from "react";
+import { ChangeEvent, useEffect, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { SearchMessages } from "./SearchMessages";
-import { SearchResults } from "./SearchResults";
 import { getCoordinatesFromAddress } from "@/lib/utils/institutionUtils";
+import { usePathname, useRouter } from "next/navigation";
+import Close from "@/icons/close.svg";
+import FilterIcon from "@/icons/filter.svg";
+import { ButtonWithTooltip } from "../ui/button";
+import { SelectableOptionsList } from "@/components/MultiSelect/SelectableOptionsList";
 
 export const isGeoFeature = (result: SearchResult): result is GeoFeature => {
 	return "place_name" in result && "center" in result;
 };
 
-export function LocationSearch() {
+export function LocationSearch({
+	onResultsChange,
+	onFilterClick,
+	onQueryChange,
+	onLoadingChange,
+	showResults = true,
+	placeholder,
+	searchFunction,
+}: {
+	onResultsChange?: (results: SearchResult[]) => void;
+	onFilterClick?: () => void;
+	onQueryChange?: (query: string) => void;
+	onLoadingChange?: (isLoading: boolean) => void;
+	showResults?: boolean;
+	placeholder?: string;
+	searchFunction?: (query: string) => Promise<SearchResult[]>;
+}) {
 	const { t } = useTranslation("common");
 	const inputRef = useRef<HTMLInputElement>(null);
 	const { map } = useMapStore();
-	const setSelectedInstitutionId = useInstitutionStore(
-		(state) => state.setSelectedInstitutionId,
-	);
+	const router = useRouter();
+	const pathname = usePathname();
 
 	const {
 		query,
@@ -44,10 +60,26 @@ export function LocationSearch() {
 	} = useSearch<SearchResult>({
 		timeoutDuration: 500,
 		searchFunction: async (currQuery: string) => {
+			if (searchFunction) {
+				return searchFunction(currQuery);
+			}
 			const result = await searchLocations(currQuery);
 			return result.allResults;
 		},
 	});
+
+	useEffect(() => {
+		onResultsChange?.(searchResults);
+	}, [searchResults, onResultsChange]);
+
+	useEffect(() => {
+		onLoadingChange?.(isLoading);
+	}, [isLoading, onLoadingChange]);
+
+	const updateQuery = (nextQuery: string) => {
+		setQuery(nextQuery);
+		onQueryChange?.(nextQuery);
+	};
 
 	const {
 		activeIndex,
@@ -76,7 +108,7 @@ export function LocationSearch() {
 			e.target.value = sanitizedValue;
 		}
 
-		setQuery(sanitizedValue);
+		updateQuery(sanitizedValue);
 		resetNavigation();
 	};
 
@@ -122,7 +154,9 @@ export function LocationSearch() {
 			animateMapToCoordinates(map, transformedCoords);
 		}
 
-		setSelectedInstitutionId(result.id);
+		const isListRoute = /\/list(\/|$)/.test(pathname ?? "");
+		const baseRoute = isListRoute ? "/list" : "/map";
+		router.push(`${baseRoute}/institution/${result.id}`);
 
 		if (statusRef.current) {
 			statusRef.current.textContent = `${result.name} ausgewählt.`;
@@ -135,7 +169,7 @@ export function LocationSearch() {
 		} else {
 			handleInstitutionClick(result);
 		}
-		setQuery("");
+		updateQuery("");
 		clearResults();
 		resetNavigation();
 	};
@@ -178,55 +212,117 @@ export function LocationSearch() {
 		);
 	};
 
+	const resultOptions = useMemo(
+		() =>
+			searchResults.map((result) => {
+				const value = isGeoFeature(result)
+					? `address-${result.id}`
+					: `institution-${result.id}`;
+				if (isGeoFeature(result)) {
+					return {
+						value,
+						label: highlightMatch(result.place_name, query),
+					};
+				}
+				return {
+					value,
+					label: highlightMatch(result.name, query),
+					description: highlightMatch(formatAddress(result), query),
+				};
+			}),
+		[searchResults, query],
+	);
+
+	const resultByValue = useMemo(
+		() =>
+			new Map(
+				searchResults.map((result) => {
+					const value = isGeoFeature(result)
+						? `address-${result.id}`
+						: `institution-${result.id}`;
+					return [value, result];
+				}),
+			),
+		[searchResults],
+	);
+
 	return (
-		<div className="h-full flex flex-col overflow-visible">
-			<SearchMessages
+		<div className="h-full w-full flex flex-col overflow-visible">
+			{/* <SearchMessages
 				hasError={resultErrorMessage}
 				hasResults={searchResults.length > 0}
 				isLoading={isLoading}
 				query={query}
 				className="order-last"
-			/>
-			<div className="flex-shrink-0 mb-8">
-				<div className="relative">
-					<Input
-						ref={inputRef}
-						placeholder={t("search.hint")}
-						value={query}
-						onChange={handleInputChange}
-						onKeyDown={handleKeyDown}
-						className="w-full bg-background"
-						icon={<Search className="w-5 h-5 text-foreground" />}
-						iconPosition="left"
-						aria-invalid={!!resultErrorMessage}
-						role="combobox"
-						aria-autocomplete="list"
-						aria-expanded={searchResults.length > 0}
-						aria-controls={searchResults.length > 0 ? listId : undefined}
-						aria-activedescendant={
-							searchResults.length > 0 ? activeDescendantId : undefined
-						}
-					/>
-					{isLoading && (
-						<div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-							<div className="w-4 h-4 border-2 border-neutral-20 border-t-accent rounded-full animate-spin" />
+			/> */}
+			<div className="mb-8 flex w-full items-center gap-2  flex-row pointer-events-auto">
+				<SearchInput
+					ref={inputRef}
+					placeholder={placeholder ?? t("search.hint")}
+					value={query}
+					onChange={handleInputChange}
+					onKeyDown={handleKeyDown}
+					aria-invalid={!!resultErrorMessage}
+					role="combobox"
+					containerClassName="flex-1"
+					type="search"
+					aria-autocomplete="list"
+					aria-expanded={searchResults.length > 0}
+					aria-controls={searchResults.length > 0 ? listId : undefined}
+					aria-activedescendant={
+						searchResults.length > 0 ? activeDescendantId : undefined
+					}
+					rightSlot={
+						<div className="absolute right-5 top-1/2 transform -translate-y-1/2">
+							{isLoading ? (
+								<div className="w-5 h-5 border-2 border-neutral-20 border-t-accent rounded-full animate-spin" />
+							) : (
+								<Close
+									onClick={() => {
+										updateQuery("");
+										clearResults();
+										inputRef.current?.focus();
+									}}
+									className="w-5 h-5"
+								/>
+							)}
 						</div>
-					)}
-				</div>
+					}
+				/>
+				{onFilterClick && (
+					<ButtonWithTooltip
+						variant="rounded"
+						size="icon-only"
+						tooltip="Filter"
+						className="cursor-pointer"
+						onClick={onFilterClick}
+					>
+						<FilterIcon className="size-6! stroke-foreground" />
+					</ButtonWithTooltip>
+				)}
+
 				<div ref={statusRef} className="sr-only" aria-live="polite"></div>
 			</div>
 
-			<SearchResults
-				results={searchResults}
-				query={query}
-				activeIndex={activeIndex}
-				listRef={listRef}
-				getItemProps={getItemProps}
-				onResultClick={handleResultClick}
-				highlightMatch={highlightMatch}
-				formatAddress={formatAddress}
-				listId={listId}
-			/>
+			{showResults && searchResults.length > 0 ? (
+				<SelectableOptionsList
+					options={resultOptions}
+					selectedValues={[]}
+					showCheckbox={false}
+					variant="search"
+					headingLabel={t("search.suggestions")}
+					listId={listId}
+					listRef={listRef as React.RefObject<HTMLDivElement | null>}
+					activeIndex={activeIndex}
+					getItemProps={getItemProps}
+					onToggle={(value) => {
+						const result = resultByValue.get(value);
+						if (result) {
+							handleResultClick(result);
+						}
+					}}
+				/>
+			) : null}
 		</div>
 	);
 }

@@ -6,5 +6,5 @@ export const metadata: Metadata = {
 };
 
 export default function PrivacyModalPage() {
-	return <PrivacyModal />;
+	return <PrivacyModal routePath="/privacy" />;
 }
