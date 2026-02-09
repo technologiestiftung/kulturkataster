@@ -30,7 +30,16 @@ export function createAuditMiddleware(client: PrismaClient) {
 
 	// Fetch current state before update/delete
 	const fetchCurrent = async (model: AuditedModel, id: string | number) => {
-		const modelClient = (client as unknown as Record<string, { findUnique: (args: { where: { id: string | number } }) => Promise<unknown> }>)[model.toLowerCase()];
+		const modelClient = (
+			client as unknown as Record<
+				string,
+				{
+					findUnique: (args: {
+						where: { id: string | number };
+					}) => Promise<unknown>;
+				}
+			>
+		)[model.toLowerCase()];
 		return modelClient.findUnique({ where: { id } });
 	};
 
@@ -44,7 +53,22 @@ export function createAuditMiddleware(client: PrismaClient) {
 	) => {
 		const userId = ContextManager.getUserId();
 
-		await (client as unknown as { entityAudit: { create: (args: { data: { action: string; entity_type: string; entity_id: string; old_data: unknown; new_data: unknown; changed_by: string | null } }) => Promise<unknown> } }).entityAudit.create({
+		await (
+			client as unknown as {
+				entityAudit: {
+					create: (args: {
+						data: {
+							action: string;
+							entity_type: string;
+							entity_id: string;
+							old_data: unknown;
+							new_data: unknown;
+							changed_by: string | null;
+						};
+					}) => Promise<unknown>;
+				};
+			}
+		).entityAudit.create({
 			data: {
 				action,
 				entity_type: MODEL_TO_ENTITY_TYPE[model],
