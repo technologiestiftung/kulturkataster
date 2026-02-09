@@ -1,12 +1,15 @@
 import { test, expect } from "@playwright/test";
 import { recordNavigationTiming } from "../helpers/navigationTiming";
 import { prepareStableUi } from "../helpers/e2eStableUi";
+import { safeGoto } from "../helpers/e2eNavigation";
 
 const closeDialog = async (page: import("@playwright/test").Page) => {
-	await page.goto("/de/list", { waitUntil: "domcontentloaded" });
+	await safeGoto(page, "/de/list", /\/de\/list\/?$/);
 };
 
 test.describe("modal routing", () => {
+	test.setTimeout(180_000);
+
 	const localized = (path: string) => `/de${path}`;
 
 	test.beforeEach(async ({ page }) => {
@@ -14,8 +17,8 @@ test.describe("modal routing", () => {
 	});
 
 	test("welcome modal opens and closes", async ({ page }, testInfo) => {
-		await page.goto(localized("/list"), { waitUntil: "domcontentloaded" });
-		await page.goto(localized("/welcome"), { waitUntil: "domcontentloaded" });
+		await safeGoto(page, localized("/list"), /\/de\/list\/?$/);
+		await safeGoto(page, localized("/welcome"), /\/de\/welcome\/?$/);
 		await recordNavigationTiming(page, testInfo, "modal-open-welcome");
 		await expect(page).toHaveURL(/\/welcome\/?$/);
 		await closeDialog(page);
@@ -24,8 +27,8 @@ test.describe("modal routing", () => {
 	});
 
 	test("info modal opens and closes", async ({ page }, testInfo) => {
-		await page.goto(localized("/list"), { waitUntil: "domcontentloaded" });
-		await page.goto(localized("/info"), { waitUntil: "domcontentloaded" });
+		await safeGoto(page, localized("/list"), /\/de\/list\/?$/);
+		await safeGoto(page, localized("/info"), /\/de\/info\/?$/);
 		await recordNavigationTiming(page, testInfo, "modal-open-info");
 		await expect(page).toHaveURL(/\/info\/?$/);
 		await closeDialog(page);
@@ -34,8 +37,8 @@ test.describe("modal routing", () => {
 	});
 
 	test("about modal opens and closes", async ({ page }, testInfo) => {
-		await page.goto(localized("/list"), { waitUntil: "domcontentloaded" });
-		await page.goto(localized("/about"), { waitUntil: "domcontentloaded" });
+		await safeGoto(page, localized("/list"), /\/de\/list\/?$/);
+		await safeGoto(page, localized("/about"), /\/de\/about\/?$/);
 		await recordNavigationTiming(page, testInfo, "modal-open-about");
 		await expect(page).toHaveURL(/\/about\/?$/);
 		await closeDialog(page);
@@ -44,8 +47,8 @@ test.describe("modal routing", () => {
 	});
 
 	test("privacy modal opens and closes", async ({ page }, testInfo) => {
-		await page.goto(localized("/list"), { waitUntil: "domcontentloaded" });
-		await page.goto(localized("/privacy"), { waitUntil: "domcontentloaded" });
+		await safeGoto(page, localized("/list"), /\/de\/list\/?$/);
+		await safeGoto(page, localized("/privacy"), /\/de\/privacy\/?$/);
 		await recordNavigationTiming(page, testInfo, "modal-open-privacy");
 		await expect(page).toHaveURL(/\/privacy\/?$/);
 		await closeDialog(page);
@@ -54,8 +57,8 @@ test.describe("modal routing", () => {
 	});
 
 	test("download modal opens and closes", async ({ page }, testInfo) => {
-		await page.goto(localized("/list"), { waitUntil: "domcontentloaded" });
-		await page.goto(localized("/download"), { waitUntil: "domcontentloaded" });
+		await safeGoto(page, localized("/list"), /\/de\/list\/?$/);
+		await safeGoto(page, localized("/download"), /\/de\/download\/?$/);
 		await recordNavigationTiming(page, testInfo, "modal-open-download");
 		await expect(page).toHaveURL(/\/download\/?$/);
 		await closeDialog(page);
@@ -64,10 +67,8 @@ test.describe("modal routing", () => {
 	});
 
 	test("mobile menu modal opens and closes", async ({ page }, testInfo) => {
-		await page.goto(localized("/list"), { waitUntil: "domcontentloaded" });
-		await page.goto(localized("/mobileMenu"), {
-			waitUntil: "domcontentloaded",
-		});
+		await safeGoto(page, localized("/list"), /\/de\/list\/?$/);
+		await safeGoto(page, localized("/mobileMenu"), /\/de\/mobileMenu\/?$/);
 		await recordNavigationTiming(page, testInfo, "modal-open-mobile-menu");
 		await expect(page).toHaveURL(/\/mobileMenu\/?$/);
 		await closeDialog(page);

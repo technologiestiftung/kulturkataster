@@ -192,7 +192,7 @@ export function InstitutionDraftIntroModal({
 			contentWrapperClassName="flex-1"
 			contentClassName=""
 			content={
-				<div className="p-4 space-y-4 flex-1 flex-col max-w-5xl mx-auto w-full">
+				<div className="p-4 space-y-4 flex-1 flex-col max-w-5xl mx-auto w-full mb-20">
 					{showContributionSetup ? (
 						<ContributionSetupContent
 							t={t}
