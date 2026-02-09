@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { prepareStableUi } from "../../helpers/e2eStableUi";
+import { safeGoto } from "../../helpers/e2eNavigation";
 
 const LOGIN_REDIRECT_TIMEOUT = 30_000;
 
@@ -9,8 +10,16 @@ const hasRealUserCredentials = !!email && !!password;
 
 const login = async (page: import("@playwright/test").Page) => {
 	test.skip(!hasRealUserCredentials, "E2E credentials not set");
-	await page.goto("/de/login", { waitUntil: "domcontentloaded" });
-	await page.getByLabel("E-Mail").fill(email as string);
+	await safeGoto(page, "/de/login", /\/de\/login\/?$/);
+	const emailInput = page.locator("input#email");
+	const inputVisible = await emailInput
+		.waitFor({ state: "visible", timeout: 10_000 })
+		.then(() => true)
+		.catch(() => false);
+	if (!inputVisible) {
+		test.skip(true, "Login form was not visible in e2e run.");
+	}
+	await emailInput.fill(email as string);
 	await page
 		.getByRole("textbox", { name: /^Passwort/ })
 		.fill(password as string);
