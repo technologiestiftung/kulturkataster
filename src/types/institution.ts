@@ -45,7 +45,6 @@ export type InstitutionTableBase = {
 	rental_contract_type?: Institution["rental_contract_type"];
 	rental_contract_end?: Institution["rental_contract_end"];
 	funding_type?: Institution["funding_type"];
-	funding_source?: FundingSourceInput | FundingSource | null;
 	funding_sources?: FundingSourceInput[] | FundingSource[] | null;
 	utilization_status?: Institution["utilization_status"];
 	utilization_status_info?: Institution["utilization_status_info"];

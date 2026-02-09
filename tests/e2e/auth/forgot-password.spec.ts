@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { prepareStableUi } from "../../helpers/e2eStableUi";
 
 const resetEmail = process.env.E2E_RESET_EMAIL;
 const hasResetEmail =
@@ -7,11 +8,21 @@ const hasResetEmail =
 	!resetEmail.includes("example.");
 
 test.describe("auth forgot password", () => {
+	test.beforeEach(async ({ page }) => {
+		await prepareStableUi(page);
+	});
+
 	test("invalid submit shows validation dialog", async ({ page }) => {
 		await page.goto("/forgot-password", { waitUntil: "domcontentloaded" });
+		await page
+			.getByLabel(/E-Mail-Adresse|Email address/i)
+			.fill("invalid-email");
 		await page.locator('form button[type="submit"]').click();
 
-		const alertDialog = page.getByRole("dialog", { name: /Fehler|Error/i });
+		const alertDialog = page
+			.locator('[data-slot="dialog-content"]')
+			.filter({ hasText: /Eingabefehler|Fehler|Error/i })
+			.first();
 		await expect(alertDialog).toBeVisible();
 		await alertDialog.locator('[data-slot="dialog-close"]').click();
 		await expect(alertDialog).toBeHidden();

@@ -23,6 +23,7 @@ interface PageModalProps {
 	contentClassName?: string;
 	titleClassName?: string;
 	subtitleClassName?: string;
+	closeOnOutsideInteract?: boolean;
 }
 
 export function Modal({
@@ -41,6 +42,7 @@ export function Modal({
 	contentClassName,
 	titleClassName,
 	subtitleClassName,
+	closeOnOutsideInteract = false,
 }: PageModalProps) {
 	const router = useRouter();
 	const toLocalePath = useLocalePath();
@@ -100,6 +102,21 @@ export function Modal({
 				className="flex flex-col gap-4 items-start space-y-4"
 				showBackButton={showBackButton}
 				onBack={handleClose}
+				onInteractOutside={(event) => {
+					if (!closeOnOutsideInteract) {
+						event.preventDefault();
+					}
+				}}
+				onPointerDownOutside={(event) => {
+					if (!closeOnOutsideInteract) {
+						event.preventDefault();
+					}
+				}}
+				onFocusOutside={(event) => {
+					if (!closeOnOutsideInteract) {
+						event.preventDefault();
+					}
+				}}
 			>
 				<div
 					className={cn(
