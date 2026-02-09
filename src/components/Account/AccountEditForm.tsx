@@ -232,8 +232,8 @@ export function AccountEditForm({
 				</div>
 				<Button
 					type="button"
-					variant="ghost"
-					className="self-start text-destructive"
+					variant="tertiary"
+					className="self-center underline"
 					onClick={() => setShowDeleteConfirm(true)}
 					disabled={isLoading}
 				>
