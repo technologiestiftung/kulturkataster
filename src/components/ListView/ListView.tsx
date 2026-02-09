@@ -1,13 +1,16 @@
 "use client";
 
 import { useInstitutionStore } from "@/lib/store/institutionStore";
+import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { InstitutionCard } from "./InstitutionCard";
 import InstitutionCardSkeleton from "./InstitutionCardSkeleton";
 import { Institution } from "@/types";
 import { ModalFooter } from "../Modals/ModalFooter";
 import Download from "@/icons/download.svg";
+import { ListTopbar } from "./ListTopbar";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -16,8 +19,9 @@ import {
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Loading } from "@/components/ui/loading";
-import { ArrowUp } from "lucide-react";
+import ArrowNarrowUp from "@/icons/arrow-narrow-up.svg";
 import TextWithLinks from "../Content/TextWithLinks";
+import { FilterModal } from "@/components/Filter/FilterModal";
 
 const ITEMS_PER_PAGE = 20;
 
@@ -27,19 +31,51 @@ const ListView: FC = () => {
 	const institutions = useInstitutionStore(
 		(state) => state.filteredInstitutions,
 	);
-	const setSelectedInstitutionId = useInstitutionStore(
-		(state) => state.setSelectedInstitutionId,
-	);
+	const {
+		setFilters,
+		resetFilters,
+		filters,
+		categoryCounts,
+		subcategoryCounts,
+		categories,
+		districts,
+		initializeCategories,
+		initializeDistricts,
+	} = useInstitutionStore();
+	const router = useRouter();
+	const toLocalePath = useLocalePath();
 
 	const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
 	const [isLoading, setIsLoading] = useState(false);
 	const [showScrollToTop, setShowScrollToTop] = useState(false);
+	const [searchQuery, setSearchQuery] = useState("");
+	const [isFilterOpen, setIsFilterOpen] = useState(false);
 	const sentinelRef = useRef<HTMLDivElement>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
 
 	const institutionsList = useMemo(() => {
 		if (!institutions) return [];
-		return [...institutions].sort((a, b) => {
+		const normalizedQuery = searchQuery.trim().toLowerCase();
+		const filtered = normalizedQuery
+			? institutions.filter((institution) => {
+					const address = institution.address;
+					const haystack = [
+						institution.name,
+						address?.street,
+						address?.street_number,
+						address?.zipcode,
+						address?.city,
+						address?.district,
+						address?.neighbourhood,
+					]
+						.filter(Boolean)
+						.join(" ")
+						.toLowerCase();
+					return haystack.includes(normalizedQuery);
+				})
+			: institutions;
+
+		return [...filtered].sort((a, b) => {
 			const nameA = a?.name ?? "";
 			const nameB = b?.name ?? "";
 			const byName = nameA.localeCompare(nameB, "de", {
@@ -50,7 +86,7 @@ const ListView: FC = () => {
 				numeric: true,
 			});
 		});
-	}, [institutions]);
+	}, [institutions, searchQuery]);
 
 	const visibleInstitutions = useMemo(() => {
 		return institutionsList.slice(0, visibleCount);
@@ -72,15 +108,23 @@ const ListView: FC = () => {
 
 	const handleInstitutionClick = useCallback(
 		(institution: Institution) => {
-			setSelectedInstitutionId(institution.id);
+			router.push(toLocalePath(`/list/institution/${institution.id}`));
 		},
-		[setSelectedInstitutionId],
+		[router, toLocalePath],
 	);
 
-	// Reset visible count when institutions change (e.g., filters applied)
 	useEffect(() => {
 		setVisibleCount(ITEMS_PER_PAGE);
-	}, [institutions]);
+	}, [searchQuery, institutions]);
+
+	useEffect(() => {
+		if (categories === null) {
+			initializeCategories();
+		}
+		if (districts.length === 0) {
+			initializeDistricts();
+		}
+	}, [categories, districts.length, initializeCategories, initializeDistricts]);
 
 	// Intersection Observer for infinite scroll
 	useEffect(() => {
@@ -130,6 +174,12 @@ const ListView: FC = () => {
 		);
 	}
 
+	const loadingFilters = categories === null || districts.length === 0;
+	const handleFilterRetry = () => {
+		initializeCategories();
+		initializeDistricts();
+	};
+
 	return (
 		<div className="ListView-root w-full h-full flex flex-col items-center bg-neutral-10">
 			<div ref={containerRef} className="h-full overflow-auto max-w-5xl ">
@@ -142,11 +192,22 @@ const ListView: FC = () => {
 						<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 							<span className="body1">{tContent("listView.description")}</span>
 						</div>
+						<ListTopbar
+							query={searchQuery}
+							onQueryChange={(value) => {
+								const nextQuery = value ?? "";
+								if (nextQuery.trim()) {
+									resetFilters();
+								}
+								setSearchQuery(nextQuery);
+							}}
+							onOpenFilter={() => setIsFilterOpen(true)}
+						/>
 
 						<div className="space-y-2">
 							<div className="flex items-center justify-between">
 								{
-									<strong className="body2 font-bold">
+									<strong className="body2 ">
 										{tContent("listView.countLabel", {
 											count: institutionsList.length,
 										})}
@@ -227,6 +288,21 @@ const ListView: FC = () => {
 				</div>
 			</div>
 			<ModalFooter />
+			<FilterModal
+				open={isFilterOpen}
+				onOpenChange={setIsFilterOpen}
+				title={tContent("filter.title")}
+				filters={filters}
+				categoryGroups={categories ?? []}
+				districts={districts}
+				filteredCount={institutions?.length ?? 0}
+				categoryCounts={categoryCounts}
+				subcategoryCounts={subcategoryCounts}
+				loading={loadingFilters}
+				error={null}
+				onRetry={handleFilterRetry}
+				onFiltersChange={setFilters}
+			/>
 
 			{/* Floating scroll-to-top button */}
 			{showScrollToTop && (
@@ -240,7 +316,11 @@ const ListView: FC = () => {
 								className="cursor-pointer"
 								aria-label={t("listView.scrollToTop")}
 							>
-								<ArrowUp size={20} aria-hidden="true" focusable="false" />
+								<ArrowNarrowUp
+									className="size-6"
+									aria-hidden="true"
+									focusable="false"
+								/>
 							</Button>
 						</TooltipTrigger>
 						<TooltipContent>

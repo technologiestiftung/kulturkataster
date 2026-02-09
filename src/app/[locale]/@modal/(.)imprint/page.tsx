@@ -1,5 +1,5 @@
 import { ImprintModal } from "@/components/Modals/Pages/ImprintModal";
 
 export default function ImprintModalIntercepted() {
-	return <ImprintModal />;
+	return <ImprintModal routePath="/imprint" />;
 }

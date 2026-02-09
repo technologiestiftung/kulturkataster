@@ -1,6 +1,7 @@
 import {
 	Dispatch,
 	KeyboardEvent,
+	HTMLAttributes,
 	RefObject,
 	SetStateAction,
 	useEffect,
@@ -23,10 +24,7 @@ interface UseKeyboardNavigationReturn {
 	setActiveIndex: Dispatch<SetStateAction<number>>;
 	isKeyboardNav: boolean;
 	setIsKeyboardNav: Dispatch<SetStateAction<boolean>>;
-	getItemProps: (index: number) => {
-		onMouseEnter: () => void;
-		id: string;
-	};
+	getItemProps: (index: number) => HTMLAttributes<HTMLElement>;
 	handleKeyDown: (e: KeyboardEvent) => void;
 	reset: () => void;
 	listRef: RefObject<HTMLElement | null>;

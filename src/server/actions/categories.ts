@@ -6,10 +6,9 @@ import {
 	getAccessContextForUser,
 	requireAllScope,
 } from "@/server/utils/rbac";
-import { getCurrentUserId } from "@/server/auth/getCurrentUser";
+import { getCurrentUserId } from "@/server/actions/auth";
 import { CategoryStatus } from "@/generated/prisma";
 import type { Category } from "@/types";
-import { mapCategoriesWithSubcategories } from "@/server/logic/categoryMapping";
 
 type CategoryInput = {
 	key: string;
@@ -41,8 +40,16 @@ export async function getCategoriesWithSubcategories(): Promise<Category[]> {
 	const ctx = await getAccessContextForUser(currentUserId);
 	authorizeTable(ctx, "category", "read");
 
-	const category = await categoryRepo.listWithChildren();
-	return mapCategoriesWithSubcategories(category);
+	const categories = await categoryRepo.listWithChildren();
+	return categories.filter((category) => !category.parent_category_id);
+}
+
+export async function getCategoryById(id: number) {
+	const currentUserId = await getCurrentUserId();
+	const ctx = await getAccessContextForUser(currentUserId);
+	authorizeTable(ctx, "category", "read");
+
+	return categoryRepo.findById(id);
 }
 
 export async function createCategory(input: CategoryInput) {
@@ -74,16 +81,21 @@ export async function updateCategory(input: CategoryUpdateInput) {
 		throw new Error("Category cannot be its own parent.");
 	}
 
+	let parentCategoryUpdate;
+	if (input.parentCategoryId === null) {
+		parentCategoryUpdate = { disconnect: true };
+	} else if (input.parentCategoryId) {
+		parentCategoryUpdate = { connect: { id: input.parentCategoryId } };
+	} else {
+		parentCategoryUpdate = undefined;
+	}
+
 	return categoryRepo.update(input.id, {
 		key: input.key,
 		description: input.description ?? null,
 		icon: input.icon ?? null,
 		status: input.status,
-		parent_category: {
-			connect: input.parentCategoryId
-				? { id: input.parentCategoryId }
-				: undefined,
-		},
+		parent_category: parentCategoryUpdate,
 	});
 }
 
@@ -92,6 +104,11 @@ export async function deleteCategory(id: number) {
 	const ctx = await getAccessContextForUser(currentUserId);
 	authorizeTable(ctx, "category", "delete");
 	requireAllScope(ctx, "category", "delete");
+
+	const category = await categoryRepo.findById(id);
+	if (category?.child_categories?.length) {
+		throw new Error("Category has subcategories and cannot be deleted.");
+	}
 
 	await categoryRepo.remove(id);
 	return { id };

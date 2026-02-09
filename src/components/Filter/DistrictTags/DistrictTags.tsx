@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import Close from "@/icons/close.svg";
 import { FC } from "react";
 import { useTranslation } from "react-i18next";
@@ -28,11 +28,10 @@ const DistrictTags: FC<DistrictTagsProps> = ({
 				const translatedName = tEnum(`${district}`) || district;
 
 				return (
-					<Button
+					<Badge
 						key={district}
 						variant="tag"
-						size="tag"
-						className={isSelected ? "bg-neutral-80 text-background" : ""}
+						data-selected={isSelected}
 						onClick={() => onChange(district)}
 						role="switch"
 						aria-checked={isSelected}
@@ -41,12 +40,8 @@ const DistrictTags: FC<DistrictTagsProps> = ({
 						})}
 					>
 						{translatedName}
-						{isSelected && (
-							<span className="ml-0 w-full">
-								<Close size={4} viewBox="0 0 24 24" />
-							</span>
-						)}
-					</Button>
+						{isSelected && <Close className="ml-2 h-3 w-3" />}
+					</Badge>
 				);
 			})}
 		</div>

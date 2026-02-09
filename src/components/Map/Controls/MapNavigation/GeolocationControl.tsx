@@ -2,7 +2,7 @@
 
 import { ButtonWithTooltip } from "@/components/ui/button";
 import LocationIcon from "@/icons/mark.svg";
-import locationSvgString from "@/icons/location.svg?raw";
+import locationSvgString from "@/icons/location.svg";
 import { useMapStore } from "@/lib/store/mapStore";
 import Feature from "ol/Feature";
 import { Point } from "ol/geom";
@@ -19,7 +19,7 @@ interface GeolocationControlProps {
 }
 
 const GeolocationControl: FC<GeolocationControlProps> = ({
-	geolocateIcon = <LocationIcon />,
+	geolocateIcon = <LocationIcon className="h-6 w-6" />,
 	onGeolocate,
 }) => {
 	const { t } = useTranslation("common");

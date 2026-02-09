@@ -7,17 +7,17 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";
-import { useAppStore } from "@/lib/store/appStore";
 import { useTranslation } from "react-i18next";
 import KukaSmallLogo from "@/logos/kuka-small.svg";
 import Close from "@/icons/close.svg";
 import KRBLogo from "@/logos/KRB.svg";
 import InfoCircle from "@/icons/info-circle.svg";
 import { SubMenuOption } from "@/components/Menu/SubMenuOption";
-import MapIcon from "@/icons/map-02.svg";
+import MapIcon from "@/icons/map.svg";
 import ListIcon from "@/icons/list.svg";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
+import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { getModalLink } from "@/lib/utils/modalRouting";
 
 const footerItems = [
@@ -29,9 +29,9 @@ const footerItems = [
 
 export function MobileMenuModal() {
 	const { t } = useTranslation("common");
-	const { setViewMode } = useAppStore();
 
 	const router = useRouter();
+	const toLocalePath = useLocalePath();
 	const pathname = usePathname();
 	const isOpen = pathname?.includes("/mobileMenu");
 
@@ -39,7 +39,7 @@ export function MobileMenuModal() {
 		if (typeof window !== "undefined" && window.history.length > 1) {
 			router.back();
 		} else {
-			router.push("/");
+			router.push(toLocalePath("/map"));
 		}
 	};
 
@@ -53,15 +53,15 @@ export function MobileMenuModal() {
 			}}
 		>
 			<DialogContent
-				variant="mobileMenu"
+				variant="mobile-menu"
 				className="flex flex-col flex-1 bg-sidebar justify-between"
 				showCloseButton={false}
-				hideBackIcon
+				showBackButton={false}
 			>
 				<DialogHeader className="flex-row items-center justify-between p-4 space-y-0">
 					<DialogTitle className="sr-only">{t("mobileMenu.title")}</DialogTitle>
 					<button
-						onClick={() => router.push("/welcome")}
+						onClick={() => router.push(toLocalePath("/welcome"))}
 						aria-label={t("kukaLogo")}
 					>
 						<KukaSmallLogo
@@ -86,8 +86,7 @@ export function MobileMenuModal() {
 								icon={MapIcon}
 								titleKey="map.title"
 								onClick={() => {
-									setViewMode("map");
-									router.push("/");
+									router.push(toLocalePath("/map"));
 								}}
 							/>
 							<SubMenuOption
@@ -95,15 +94,14 @@ export function MobileMenuModal() {
 								icon={ListIcon}
 								titleKey="listView.title"
 								onClick={() => {
-									setViewMode("list");
-									router.push("/");
+									router.push(toLocalePath("/list"));
 								}}
 							/>
 							<SubMenuOption
 								key="information"
 								icon={InfoCircle}
 								titleKey="information.title"
-								onClick={() => router.push("/info")}
+								onClick={() => router.push(toLocalePath("/info"))}
 							/>
 							<div className="space-y-4 flex flex-col">
 								<span className="body2">{t("accessibility.title")}</span>

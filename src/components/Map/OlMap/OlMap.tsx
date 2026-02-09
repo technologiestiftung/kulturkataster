@@ -45,7 +45,7 @@ const OlMap: FC<OlMapProps> = ({ children }) => {
 		} else if (projection !== "EPSG:25833") {
 		}
 
-		const resolutions = mapViewConfig.options
+		const resolutions = [...mapViewConfig.options]
 			.sort((a, b) => a.zoomLevel - b.zoomLevel)
 			.map((option) => option.resolution);
 

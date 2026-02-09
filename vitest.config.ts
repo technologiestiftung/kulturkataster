@@ -3,13 +3,18 @@ import path from "node:path";
 
 export default defineConfig({
 	resolve: {
-		alias: {
-			"@": path.resolve(__dirname, "src"),
-		},
+		alias: [
+			{ find: "@", replacement: path.resolve(__dirname, "src") },
+			{
+				find: /^.+\\.svg$/,
+				replacement: path.resolve(__dirname, "tests/helpers/svgMock.tsx"),
+			},
+		],
 	},
 	test: {
-		environment: "node",
-		include: ["tests/**/*.test.ts"],
+		environment: "jsdom",
+		include: ["tests/unit/**/*.test.ts", "tests/unit/**/*.test.tsx"],
+		setupFiles: ["./tests/helpers/setup.ts"],
 		coverage: {
 			provider: "v8",
 			reporter: ["text", "html"],

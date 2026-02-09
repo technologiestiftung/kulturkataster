@@ -2,8 +2,9 @@
 
 import { Badge } from "@/components/ui/badge";
 import { ButtonWithTooltip } from "@/components/ui/button";
-import { useSidebar } from "@/components/ui/sidebar";
+import { useIsMobile } from "@/hooks/use-mobile";
 import ContextMapIcon from "@/icons/fachkarten.svg";
+import { useAppStore } from "@/lib/store/appStore";
 import { useMapStore } from "@/lib/store/mapStore";
 import { ManagedLayer } from "@/types";
 import Image from "next/image";
@@ -13,8 +14,8 @@ import { useTranslation } from "react-i18next";
 const LayerTreeControl: FC = () => {
 	const { t } = useTranslation("common");
 	const layers = useMapStore((state) => state.layers);
-	const setIsLayerTreeOpen = useMapStore((state) => state.setIsLayerTreeOpen);
-	const { setOpen, setOpenMobile, isMobile } = useSidebar();
+	const isLayerTreeOpen = useAppStore((state) => state.isLayerTreeOpen);
+	const setIsLayerTreeOpen = useAppStore((state) => state.setIsLayerTreeOpen);
 
 	const subjectLayers = useMemo(
 		() => layers.filter((l) => l.layerType === "subject"),
@@ -40,12 +41,7 @@ const LayerTreeControl: FC = () => {
 	const visibleCount = visibleSubjectLayers.length;
 
 	const handleLayerTreeOpen = () => {
-		setIsLayerTreeOpen(true);
-		if (isMobile) {
-			setOpenMobile(true);
-		} else {
-			setOpen(true);
-		}
+		setIsLayerTreeOpen(!isLayerTreeOpen);
 	};
 
 	const renderThumbnail = () => {
@@ -78,7 +74,7 @@ const LayerTreeControl: FC = () => {
 				className={`relative w-12 h-12 p-0 bg-neutral-80 overflow-hidden cursor-pointer`}
 			>
 				<div className="w-full h-full flex items-center justify-center">
-					{isMobile ? (
+					{useIsMobile() ? (
 						<ContextMapIcon className="[&>path]:fill-popover" />
 					) : (
 						<>

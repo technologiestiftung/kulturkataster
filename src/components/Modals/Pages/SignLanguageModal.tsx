@@ -2,7 +2,7 @@
 
 import { useRef, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { PageModal } from "../PageModal";
+import { Modal } from "../Modal";
 import TextBlock from "@/components/Content/TextBlock";
 import TextWithLinks from "@/components/Content/TextWithLinks";
 import { Loading } from "@/components/ui/loading";
@@ -57,7 +57,7 @@ export function VideoWithLoader({ src }: { src: string }) {
 	);
 }
 
-export function SignLanguageModal() {
+export function SignLanguageModal({ routePath }: { routePath?: string }) {
 	const { t } = useTranslation("content");
 
 	const content = t("signLanguageModal.content", {
@@ -104,9 +104,10 @@ export function SignLanguageModal() {
 	);
 
 	return (
-		<PageModal
+		<Modal
 			title={t("signLanguageModal.title")}
 			subtitle={t("signLanguageModal.subtitle")}
+			routePath={routePath}
 			content={signLanguageInformationContent}
 			hideLinksInModalFooter={[
 				"signLanguageInformation",

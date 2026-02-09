@@ -1,80 +1,53 @@
-import { NextResponse, type NextRequest } from "next/server";
-import {
-	createServerClient,
-	type CookieMethodsServer,
-	type CookieOptions,
-} from "@supabase/ssr";
-import { i18nConfig } from "@/i18n";
+import { type NextRequest } from "next/server";
+import { NextResponse } from "next/server";
+import { match } from "@formatjs/intl-localematcher";
+import Negotiator from "negotiator";
+import { allowedLocales, defaultLocale } from "@/i18n/config";
+import { updateSession } from "./lib/supabase-proxy";
 
-export default async function proxy(req: NextRequest) {
-	const { pathname } = req.nextUrl;
+function getPreferredLocale(request: NextRequest): string {
+	const headers: Record<string, string> = {
+		"accept-language": request.headers.get("accept-language") ?? "",
+	};
+	const languages = new Negotiator({ headers }).languages();
+	const locales = Array.from(new Set(allowedLocales));
+	return match(languages, locales, defaultLocale);
+}
+
+function pathnameHasLocale(pathname: string): boolean {
+	return allowedLocales.some(
+		(locale) => pathname === `/${locale}` || pathname.startsWith(`/${locale}/`),
+	);
+}
+
+export async function proxy(request: NextRequest) {
+	const { pathname } = request.nextUrl;
+
+	// Keep API routes and public static resources untouched.
 	if (
-		pathname.startsWith("/_next") ||
-		pathname.startsWith("/resources") ||
-		pathname === "/favicon.ico" ||
-		pathname === "/robots.txt" ||
-		pathname === "/sitemap.xml"
+		!pathname.startsWith("/api") &&
+		!pathname.startsWith("/resources") &&
+		!pathnameHasLocale(pathname)
 	) {
-		return NextResponse.next();
+		const locale = getPreferredLocale(request);
+		const url = request.nextUrl.clone();
+		url.pathname = pathname === "/" ? `/${locale}` : `/${locale}${pathname}`;
+		return NextResponse.redirect(url);
 	}
 
-	const localePattern = new RegExp(`^/(${i18nConfig.locales.join("|")})(/|$)`);
-	const needsLocaleRewrite = !localePattern.test(pathname);
-
-	const rewriteUrl = needsLocaleRewrite
-		? (() => {
-				const url = req.nextUrl.clone();
-				url.pathname = `/${i18nConfig.defaultLocale}${pathname}`;
-				return url;
-			})()
-		: null;
-
-	const res = needsLocaleRewrite
-		? NextResponse.rewrite(rewriteUrl!)
-		: NextResponse.next();
-
-	const cookieMethods = {
-		getAll() {
-			return req.cookies.getAll().map((cookie) => ({
-				name: cookie.name,
-				value: cookie.value,
-			}));
-		},
-		setAll(
-			cookiesToSet: {
-				name: string;
-				value: string;
-				options: CookieOptions;
-			}[],
-		) {
-			cookiesToSet.forEach(({ name, value, options }) => {
-				res.cookies.set(name, value, options);
-			});
-		},
-		removeAll() {
-			req.cookies.getAll().forEach((cookie) => {
-				res.cookies.set(cookie.name, "", { maxAge: 0 });
-			});
-		},
-	} satisfies CookieMethodsServer & {
-		removeAll: () => void;
-	};
-
-	const supabase = createServerClient(
-		process.env.SUPABASE_URL ?? "",
-		process.env.SUPABASE_ANON_KEY ?? "",
-		{
-			cookies: cookieMethods,
-		},
-	);
-
-	await supabase.auth.getSession();
-
-	return res;
+	// update user's auth session
+	return await updateSession(request);
 }
 
 export const config = {
 	matcher: [
-		"/((?!api|_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|resources/).*)",
+		/*
+		 * Match all request paths except for the ones starting with:
+		 * - _next/static (static files)
+		 * - _next/image (image optimization files)
+		 * - favicon.ico (favicon file)
+		 * Feel free to modify this pattern to include more paths.
+		 */
+		"/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
 	],
 };

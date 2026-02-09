@@ -1,8 +1,9 @@
 "use client";
 
 import TextBlock from "@/components/Content/TextBlock";
+import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { Trans, useTranslation } from "react-i18next";
-import { PageModal } from "../PageModal";
+import { Modal } from "../Modal";
 import Link from "next/link";
 
 interface Barrier {
@@ -12,8 +13,9 @@ interface Barrier {
 	timeline: string;
 }
 
-export function AccessibilityModal() {
+export function AccessibilityModal({ routePath }: { routePath?: string }) {
 	const { t } = useTranslation("content");
+	const toLocalePath = useLocalePath();
 
 	const barriers = t("accessibilityModal.which.barriers", {
 		returnObjects: true,
@@ -39,7 +41,7 @@ export function AccessibilityModal() {
 						components={{
 							link: (
 								<Link
-									href="/simpleLanguage"
+									href={toLocalePath("/simpleLanguage")}
 									rel="noopener noreferrer"
 									className="text-primary-dark hover:text-primary underline bg-transparent border-none p-0 "
 								>
@@ -56,7 +58,7 @@ export function AccessibilityModal() {
 						components={{
 							link: (
 								<Link
-									href="/signLanguage"
+									href={toLocalePath("/signLanguage")}
 									rel="noopener noreferrer"
 									className="text-primary-dark hover:text-primary underline bg-transparent border-none p-0 "
 								>
@@ -135,9 +137,7 @@ export function AccessibilityModal() {
 				/>
 				<div className="body1 space-y-1">
 					<p className="body2">
-						<strong className="font-bold">
-							{t("accessibilityModal.contact.name")}
-						</strong>
+						<strong>{t("accessibilityModal.contact.name")}</strong>
 					</p>
 					<p className="body2">{t("accessibilityModal.contact.company")}</p>
 					<p className="body2">
@@ -190,9 +190,10 @@ export function AccessibilityModal() {
 	);
 
 	return (
-		<PageModal
+		<Modal
 			title={t("accessibilityModal.title")}
 			subtitle={t("accessibilityModal.subtitle")}
+			routePath={routePath}
 			content={content}
 			hideLinksInModalFooter={["accessibility"]}
 		/>

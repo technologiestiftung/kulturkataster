@@ -64,7 +64,7 @@ const SubText = ({ subText }: { subText?: SubTextProps }) => {
 	return (
 		<div className="flex flex-col gap-2 mt-4">
 			{subText.subtitle && (
-				<strong className="body2 font-bold">{subText.subtitle}</strong>
+				<strong className="body2">{subText.subtitle}</strong>
 			)}
 			<div className="body2">{subText.text}</div>
 		</div>

@@ -1,5 +1,5 @@
 /* eslint-disable max-params */
-import { Category, FilterState, Institution, Subcategory } from "@/types";
+import { Category, ChildCategory, FilterState, Institution } from "@/types";
 import { getParentCategories, getSubcategories } from "./institutionUtils";
 
 export const hasActiveFilters = (filters: FilterState | null): boolean => {
@@ -7,7 +7,7 @@ export const hasActiveFilters = (filters: FilterState | null): boolean => {
 	return (
 		filters.district_keys.length > 0 ||
 		filters.category_keys.length > 0 ||
-		filters.subcategory_keys.length > 0 ||
+		filters.child_category_keys.length > 0 ||
 		filters.include_closed !== undefined
 	);
 };
@@ -17,7 +17,7 @@ export const getFilterCount = (filters: FilterState | null): number => {
 	let filterCount: number = 0;
 	filterCount += filters.district_keys.length;
 	filterCount += filters.category_keys.length;
-	filterCount += filters.subcategory_keys.length;
+	filterCount += filters.child_category_keys.length;
 	if (!filters.include_closed) {
 		filterCount += 1;
 	}
@@ -28,9 +28,9 @@ export const getSortedSubcategories = (
 	category: Category,
 	collator: Intl.Collator,
 	translateFn: (key: string) => string,
-	filterFn: (subcategory: Subcategory) => boolean,
-): Subcategory[] => {
-	const filtered = category.subcategory?.filter(filterFn);
+	filterFn: (subcategory: ChildCategory) => boolean,
+): ChildCategory[] => {
+	const filtered = category.child_categories?.filter(filterFn);
 	if (!filtered) return [];
 	return filtered.sort((a, b) => {
 		if (a.key.includes("other") && !b.key.includes("other")) return 1;
@@ -101,4 +101,26 @@ export const matchesStatusFilter = (
 		return false;
 	}
 	return true;
+};
+
+export const resolveCategoryIdsFromFilters = (
+	filters: FilterState,
+	categoryGroups: Category[],
+): number[] => {
+	const selectedIds = new Set<number>();
+	const selectedCategoryKeys = new Set(filters.category_keys);
+	const selectedSubcategoryKeys = new Set(filters.child_category_keys);
+
+	categoryGroups.forEach((category) => {
+		if (selectedCategoryKeys.has(category.key)) {
+			selectedIds.add(category.id);
+		}
+		(category.child_categories ?? []).forEach((subcategory) => {
+			if (selectedSubcategoryKeys.has(subcategory.key)) {
+				selectedIds.add(subcategory.id);
+			}
+		});
+	});
+
+	return Array.from(selectedIds);
 };
