@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { test, expect } from "@playwright/test";
+import { prepareStableUi } from "../../helpers/e2eStableUi";
 
 const registerEmail = process.env.E2E_REGISTER_EMAIL;
 const existingEmail = process.env.E2E_USER_EMAIL;
@@ -28,6 +29,10 @@ const hasRealExistingEmail =
 	!existingEmail.includes("example.");
 
 test.describe("Auth registration", () => {
+	test.beforeEach(async ({ page }) => {
+		await prepareStableUi(page);
+	});
+
 	test("valid registration shows verify-email success and navigates to login", async ({
 		page,
 	}) => {
@@ -89,7 +94,10 @@ test.describe("Auth registration", () => {
 		await page.getByRole("checkbox", { name: /Ich akzeptiere/ }).click();
 		await page.getByRole("button", { name: "Konto erstellen" }).click();
 
-		const alertDialog = page.getByRole("dialog", { name: "Fehler" });
+		const alertDialog = page
+			.locator('[data-slot="dialog-content"]')
+			.filter({ hasText: /Eingabefehler|Fehler/i })
+			.first();
 		await expect(alertDialog).toBeVisible();
 		await alertDialog.locator('[data-slot="dialog-close"]').click();
 		await expect(alertDialog).toBeHidden();

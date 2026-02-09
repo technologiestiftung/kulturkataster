@@ -36,7 +36,7 @@ export function LoginForm() {
 			const result = await loginWithEmailPassword(email, password);
 			if (!result.ok) {
 				let fallback: string;
-				if (result.error === "inactive") {
+				if (result.error === "banned") {
 					fallback = t("auth.login.inactive");
 				} else if (result.error === "missing_user") {
 					fallback = t("auth.login.errorFallback");
