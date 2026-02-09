@@ -42,6 +42,11 @@
 	},
 	"auth": {
 		"account": {
+			"actions": {
+				"faq": "FAQ",
+				"logout": "Abmelden",
+				"profileSettings": "Profileinstellungen"
+			},
 			"alreadyAccount": "Haben Sie bereits ein Konto beim Kulturkataster?",
 			"backToMap": "Zur Karte",
 			"comingSoon": "Ihr Kontobereich ist bald verfügbar.",
