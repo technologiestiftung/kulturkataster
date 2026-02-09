@@ -13,7 +13,10 @@ export async function prepareStableUi(page: Page) {
 				},
 				version: 0,
 			};
-			window.localStorage.setItem("app-storage", JSON.stringify(persistedState));
+			window.localStorage.setItem(
+				"app-storage",
+				JSON.stringify(persistedState),
+			);
 		} catch {
 			// Ignore storage errors in restricted contexts.
 		}
