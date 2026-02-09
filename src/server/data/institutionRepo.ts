@@ -10,6 +10,7 @@ const institutionInclude = {
 	address: true,
 	categories: true,
 	contact_person: true,
+	funding_sources: true,
 	tags: true,
 	users: true,
 	groups: true,

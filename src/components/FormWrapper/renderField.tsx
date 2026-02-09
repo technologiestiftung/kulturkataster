@@ -42,6 +42,7 @@ import type {
 	TablePermissionValue,
 } from "./types";
 import { AddressMapField } from "./AddressMapField";
+import { FundingSourceField } from "./FundingSourceField";
 import { defaultFilterState } from "./constants";
 import Eye from "@/icons/eye.svg";
 import EyeOff from "@/icons/eye-off.svg";
@@ -488,6 +489,14 @@ const renderFieldContent = (
 							}
 						}
 					}}
+				/>
+			)}
+
+			{field.type === "fundingSources" && (
+				<FundingSourceField
+					field={field}
+					value={value}
+					updateField={updateField}
 				/>
 			)}
 

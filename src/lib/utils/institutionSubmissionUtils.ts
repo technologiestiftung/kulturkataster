@@ -37,6 +37,45 @@ export const institutionSubmissionToDraft = (
 			: undefined;
 	const toStringArray = (value: unknown): string[] | undefined =>
 		Array.isArray(value) ? value.map((item) => String(item)) : undefined;
+	const toFundingSources = (
+		value: unknown,
+	): InstitutionForm["funding_sources"] | undefined => {
+		if (!Array.isArray(value)) return undefined;
+		const items = value
+			.map((item) => {
+				if (!item || typeof item !== "object") return null;
+				const source = item as Record<string, unknown>;
+				const source_name = toString(source.source_name)?.trim();
+				const description = toString(source.description)?.trim();
+				if (!source_name) return null;
+				return {
+					source_name,
+					description: description || null,
+				};
+			})
+			.filter(
+				(
+					item,
+				): item is { source_name: string; description: string | null } =>
+					item !== null,
+			);
+		return items;
+	};
+
+	const fallbackFundingSourceName = toString(data.funding_source_name)?.trim();
+	const fallbackFundingSourceDescription = toString(
+		data.funding_source_description,
+	)?.trim();
+	const funding_sources =
+		toFundingSources(data.funding_sources) ??
+		(fallbackFundingSourceName
+			? [
+					{
+						source_name: fallbackFundingSourceName,
+						description: fallbackFundingSourceDescription || null,
+					},
+				]
+			: undefined);
 
 	return {
 		name: toString(data.name) ?? "",
@@ -53,6 +92,7 @@ export const institutionSubmissionToDraft = (
 		rental_contract_type: data.rental_contract_type as RentalContractType,
 		rental_contract_end: toString(data.rental_contract_end),
 		funding_type: data.funding_type as FundingType | undefined,
+		funding_sources,
 		utilization_status: data.utilization_status as
 			| UtilizationStatus
 			| undefined,

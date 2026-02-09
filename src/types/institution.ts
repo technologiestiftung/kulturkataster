@@ -1,4 +1,6 @@
 import type {
+	Address,
+	FundingSource,
 	FundingType,
 	InstitutionStatus,
 	Prisma,
@@ -21,7 +23,9 @@ export type PrismaInstitutionWithRelations = Prisma.InstitutionGetPayload<{
 	};
 }>;
 
-export type Institution = PrismaInstitutionWithRelations;
+export type Institution = PrismaInstitutionWithRelations & {
+	funding_sources?: FundingSource[];
+};
 
 export type InstitutionTableBase = {
 	id: Institution["id"];
@@ -31,8 +35,8 @@ export type InstitutionTableBase = {
 	phone: Institution["phone"];
 	website: Institution["website"];
 	parent_organization: Institution["parent_organization"];
-	address: AddressInput | Institution["address"] | null;
-	categories: Category[] | Institution["categories"];
+	address: AddressInput | Address | null;
+	categories: Category[] | Category;
 	tags: Institution["tags"];
 	users: Institution["users"];
 	groups: Institution["groups"];
@@ -41,7 +45,9 @@ export type InstitutionTableBase = {
 	rental_contract_type?: Institution["rental_contract_type"];
 	rental_contract_end?: Institution["rental_contract_end"];
 	funding_type?: Institution["funding_type"];
-	utilization_status?: Institution["utilization_status"];
+	funding_source?: FundingSourceInput | FundingSource | null;
+	funding_sources?: FundingSourceInput[] | FundingSource[] | null;
+	utilization_status?: UtilizationStatus;
 	utilization_status_info?: Institution["utilization_status_info"];
 	protection_status?: Institution["protection_status"];
 	protection_status_info?: Institution["protection_status_info"];
@@ -93,6 +99,12 @@ export type AddressInput = Prisma.AddressCreateInput & {
 	id?: number;
 };
 
+export type FundingSourceInput = {
+	id?: number;
+	source_name: string;
+	description?: string | null;
+};
+
 export type InstitutionForm = {
 	name: string;
 	website?: string | null;
@@ -108,6 +120,8 @@ export type InstitutionForm = {
 	rental_contract_type?: RentalContractType | null;
 	rental_contract_end?: Date | string | null;
 	funding_type?: FundingType | null;
+	funding_source?: FundingSourceInput | null;
+	funding_sources?: FundingSourceInput[] | null;
 	utilization_status?: UtilizationStatus | null;
 	utilization_status_info?: string | null;
 	protection_status?: ProtectionStatus | null;
@@ -161,6 +175,7 @@ export const INSTITUTION_PERMISSION_FIELDS = [
 	"rental_contract_type",
 	"rental_contract_end",
 	"funding_type",
+	"funding_sources",
 	"utilization_status",
 	"utilization_status_info",
 	"protection_status",
