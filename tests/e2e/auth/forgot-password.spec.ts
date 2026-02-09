@@ -11,9 +11,7 @@ test.describe("auth forgot password", () => {
 
 	test("invalid submit shows validation dialog", async ({ page }) => {
 		await page.goto("/de/forgot-password", { waitUntil: "domcontentloaded" });
-		await page
-			.locator("input#email")
-			.fill("invalid-email");
+		await page.locator("input#email").fill("invalid-email");
 		await page.locator('form button[type="submit"]').click();
 
 		await expect(page).toHaveURL(/\/de\/forgot-password\/?$/);
