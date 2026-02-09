@@ -20,7 +20,9 @@ test.describe("slot routing", () => {
 		await page.goto(`/de/map/institution/${institutionId}`, {
 			waitUntil: "domcontentloaded",
 		});
-		await expect(page).toHaveURL(new RegExp(`/de/map/institution/${institutionId}/?$`));
+		await expect(page).toHaveURL(
+			new RegExp(`/de/map/institution/${institutionId}/?$`),
+		);
 		const title = page.locator("#institution-title").first();
 		const notFound = page.getByText(/Kulturort nicht gefunden/i).first();
 		await expect(title.or(notFound)).toBeVisible({ timeout: 30_000 });
