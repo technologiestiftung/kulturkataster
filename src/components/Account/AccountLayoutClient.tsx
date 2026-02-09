@@ -65,6 +65,24 @@ export function AccountLayoutClient({
 	const logoutLabel = t("auth.account.actions.logout", {
 		defaultValue: "Logout",
 	});
+	const activityTabLabel = t("auth.account.tabs.activity", {
+		defaultValue: "Activity",
+	});
+	const institutionsTabLabel = t("auth.account.tabs.institutions", {
+		defaultValue: "Institutions",
+	});
+	const usersTabLabel = t("auth.account.tabs.users", {
+		defaultValue: "Users",
+	});
+	const groupsTabLabel = t("auth.account.tabs.groups", {
+		defaultValue: "Groups",
+	});
+	const rolesTabLabel = t("auth.account.tabs.roles", {
+		defaultValue: "Roles",
+	});
+	const categoriesTabLabel = t("auth.account.tabs.categories", {
+		defaultValue: "Categories",
+	});
 	return (
 		<div className="AccountLayoutClient relative min-h-0 h-full">
 			<div className="absolute h-full w-full">
@@ -128,33 +146,25 @@ export function AccountLayoutClient({
 					<Tabs value={getCurrentTab()} onValueChange={handleTabChange}>
 						<TabsList className="px-10">
 							{allowedTabs.includes("activity") && (
-								<TabsTrigger value="activity">
-									{t("account.activity", { defaultValue: "Activity" })}
-								</TabsTrigger>
+								<TabsTrigger value="activity">{activityTabLabel}</TabsTrigger>
 							)}
 							{allowedTabs.includes("institutions") && (
 								<TabsTrigger value="institutions">
-									{t("account.institutions", { defaultValue: "Institutions" })}
+									{institutionsTabLabel}
 								</TabsTrigger>
 							)}
 							{allowedTabs.includes("users") && (
-								<TabsTrigger value="users">
-									{t("account.users", { defaultValue: "Users" })}
-								</TabsTrigger>
+								<TabsTrigger value="users">{usersTabLabel}</TabsTrigger>
 							)}
 							{allowedTabs.includes("groups") && (
-								<TabsTrigger value="groups">
-									{t("account.groups", { defaultValue: "Groups" })}
-								</TabsTrigger>
+								<TabsTrigger value="groups">{groupsTabLabel}</TabsTrigger>
 							)}
 							{allowedTabs.includes("roles") && (
-								<TabsTrigger value="roles">
-									{t("account.roles", { defaultValue: "Roles" })}
-								</TabsTrigger>
+								<TabsTrigger value="roles">{rolesTabLabel}</TabsTrigger>
 							)}
 							{allowedTabs.includes("categories") && (
 								<TabsTrigger value="categories">
-									{t("account.categories", { defaultValue: "Categories" })}
+									{categoriesTabLabel}
 								</TabsTrigger>
 							)}
 						</TabsList>

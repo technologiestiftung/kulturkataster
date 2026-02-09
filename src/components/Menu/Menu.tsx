@@ -155,9 +155,14 @@ export function Menu({
 		[pathname],
 	);
 
+	const currentSidebarInstitutionId = useMemo(() => {
+		const match = normalizedPath.match(/\/(?:map|list)\/institution\/(\d+)$/);
+		return match?.[1] ?? null;
+	}, [normalizedPath]);
+
 	const hasSidebarRoute = useMemo(
-		() => /\/(?:map|list)\/institution\/\d+$/.test(normalizedPath),
-		[normalizedPath],
+		() => Boolean(currentSidebarInstitutionId),
+		[currentSidebarInstitutionId],
 	);
 	const hasSidebarContent = hasSidebarRoute && Boolean(sidebar);
 
@@ -191,7 +196,18 @@ export function Menu({
 
 	const handleItemClick = (item: MenuItem) => {
 		if (item.route && item.route !== "#") {
-			router.push(toLocalePath(item.route));
+			if (
+				(item.id === "map" || item.id === "list") &&
+				currentSidebarInstitutionId
+			) {
+				router.push(
+					toLocalePath(
+						`/${item.id}/institution/${currentSidebarInstitutionId}`,
+					),
+				);
+			} else {
+				router.push(toLocalePath(item.route));
+			}
 		}
 		setOpen(false);
 		setOpenMobile(false);
