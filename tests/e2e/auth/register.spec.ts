@@ -23,10 +23,7 @@ const fillOrganizationFields = async (page: any) => {
 	await page.getByLabel("Telefonnumer für Rückfragen").fill("123456");
 };
 
-const hasRealExistingEmail =
-	!!existingEmail &&
-	!existingEmail.includes("example@") &&
-	!existingEmail.includes("example.");
+const hasRealExistingEmail = !!existingEmail;
 
 test.describe("Auth registration", () => {
 	test.beforeEach(async ({ page }) => {
@@ -38,7 +35,7 @@ test.describe("Auth registration", () => {
 	}) => {
 		test.skip(!registerEmail, "E2E_REGISTER_EMAIL not set");
 
-		await page.goto("/register", { waitUntil: "domcontentloaded" });
+		await page.goto("/de/register", { waitUntil: "domcontentloaded" });
 		await selectAccountType(page, "Mitarbeiter*in einer Organisation");
 		await fillOrganizationFields(page);
 		await page.getByLabel("Vorname").fill("Jane");
@@ -59,13 +56,13 @@ test.describe("Auth registration", () => {
 		).toBeVisible();
 
 		await page.getByRole("button", { name: "Fertig" }).click();
-		await expect(page).toHaveURL(/\/login\/?$/);
+		await expect(page).toHaveURL(/\/de\/login\/?$/);
 	});
 
 	test("existing email shows error UI", async ({ page }) => {
 		test.skip(!hasRealExistingEmail, "E2E_USER_EMAIL not set");
 
-		await page.goto("/register", { waitUntil: "domcontentloaded" });
+		await page.goto("/de/register", { waitUntil: "domcontentloaded" });
 		await selectAccountType(page, "Mitarbeiter*in einer Organisation");
 		await fillOrganizationFields(page);
 		await page.getByLabel("Vorname").fill("Jane");
@@ -83,7 +80,7 @@ test.describe("Auth registration", () => {
 	test("invalid fields block submit; fixing enables submit", async ({
 		page,
 	}) => {
-		await page.goto("/register", { waitUntil: "domcontentloaded" });
+		await page.goto("/de/register", { waitUntil: "domcontentloaded" });
 		await selectAccountType(page, "Mitarbeiter*in einer Organisation");
 		await fillOrganizationFields(page);
 		await page.getByLabel("Vorname").fill("Jane");
