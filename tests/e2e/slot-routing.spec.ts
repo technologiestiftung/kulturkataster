@@ -54,7 +54,9 @@ test.describe("slot routing", () => {
 			new RegExp(`/de/map/institution/${institutionId}/?$`),
 		);
 
-		const listButton = page.locator('button[aria-label="Listenansicht"]:visible').first();
+		const listButton = page
+			.locator('button[aria-label="Listenansicht"]:visible')
+			.first();
 		const listButtonVisible = await listButton
 			.waitFor({ state: "visible", timeout: 10_000 })
 			.then(() => true)
@@ -68,7 +70,9 @@ test.describe("slot routing", () => {
 			{ timeout: 15_000 },
 		);
 
-		const mapButton = page.locator('button[aria-label="Kartenansicht"]:visible').first();
+		const mapButton = page
+			.locator('button[aria-label="Kartenansicht"]:visible')
+			.first();
 		const mapButtonVisible = await mapButton
 			.waitFor({ state: "visible", timeout: 10_000 })
 			.then(() => true)
