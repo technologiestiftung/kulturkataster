@@ -3,7 +3,7 @@ import { recordNavigationTiming } from "../helpers/navigationTiming";
 import { prepareStableUi } from "../helpers/e2eStableUi";
 
 const closeDialog = async (page: import("@playwright/test").Page) => {
-	await page.goBack({ waitUntil: "domcontentloaded" });
+	await page.goto("/de/list", { waitUntil: "domcontentloaded" });
 };
 
 test.describe("modal routing", () => {

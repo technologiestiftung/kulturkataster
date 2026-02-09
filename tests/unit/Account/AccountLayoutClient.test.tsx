@@ -43,12 +43,12 @@ vi.mock("react-i18next", () => ({
 				"auth.account.actions.profileSettings": "Profile settings",
 				"auth.account.actions.faq": "FAQ",
 				"auth.account.actions.logout": "Logout",
-				"account.activity": "Activity",
-				"account.institutions": "Institutions",
-				"account.users": "Users",
-				"account.groups": "Groups",
-				"account.roles": "Roles",
-				"account.categories": "Categories",
+				"auth.account.tabs.activity": "Activity",
+				"auth.account.tabs.institutions": "Institutions",
+				"auth.account.tabs.users": "Users",
+				"auth.account.tabs.groups": "Groups",
+				"auth.account.tabs.roles": "Roles",
+				"auth.account.tabs.categories": "Categories",
 			};
 			return dictionary[key] ?? options?.defaultValue ?? key;
 		},

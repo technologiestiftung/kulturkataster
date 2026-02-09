@@ -53,6 +53,24 @@ describe("AccountEditForm", () => {
 		replaceMock.mockReset();
 	});
 
+	it("renders prefilled personal information fields", () => {
+		render(
+			<AccountEditForm
+				userId="user-1"
+				email="user@example.com"
+				firstName="Jane"
+				lastName="Doe"
+			/>,
+		);
+
+		expect(
+			screen.getByPlaceholderText("auth.accountEdit.namePlaceholder"),
+		).toHaveValue("Jane Doe");
+		expect(
+			screen.getByPlaceholderText("auth.accountEdit.emailPlaceholder"),
+		).toHaveValue("user@example.com");
+	});
+
 	it("submits updated profile data", async () => {
 		mockedUpdateUser.mockResolvedValue({} as any);
 		mockedUpdatePassword.mockResolvedValue({ ok: true });

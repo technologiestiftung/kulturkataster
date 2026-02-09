@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { setPasswordWithTokens } from "@/server/actions/auth";
@@ -9,6 +8,7 @@ import { FormWrapper } from "@/components/FormWrapper";
 import type { FormWrapperConfig } from "@/components/FormWrapper";
 import { AlertDialog } from "@/components/ui/alert-dialog";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
+import { Button } from "../ui/button";
 
 export function ResetPasswordForm() {
 	const [isLoading, setIsLoading] = useState(false);
@@ -139,12 +139,16 @@ export function ResetPasswordForm() {
 			<FormWrapper config={formConfig} />
 
 			<div className="flex flex-col items-center text-center">
-				<Link
-					href={toLocalePath("/login")}
-					className="text-primary-dark underline "
+				<Button
+					type="button"
+					variant="tertiary"
+					size="tag"
+					className="self-center underline body2"
+					onClick={() => router.push(toLocalePath("/login"))}
+					disabled={isLoading}
 				>
 					{t("auth.reset.backToLogin")}
-				</Link>
+				</Button>
 			</div>
 		</div>
 	);

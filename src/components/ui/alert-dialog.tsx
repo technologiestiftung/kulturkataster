@@ -59,7 +59,16 @@ function AlertDialog({
 								</Button>
 							)}
 							{showConfirm && (
-								<Button type="button" onClick={onConfirm} autoFocus>
+								<Button
+									type="button"
+									onClick={onConfirm}
+									autoFocus
+									className={
+										status === "warning"
+											? "bg-destructive hover:bg-destructive/90"
+											: ""
+									}
+								>
 									{confirmLabel}
 								</Button>
 							)}
