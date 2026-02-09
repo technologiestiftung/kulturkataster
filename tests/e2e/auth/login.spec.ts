@@ -22,7 +22,7 @@ test.describe("auth login", () => {
 		await prepareStableUi(page);
 	});
 
-const assertRejectedLogin = async (
+	const assertRejectedLogin = async (
 		page: import("@playwright/test").Page,
 		email: string,
 		password: string,
@@ -53,7 +53,9 @@ const assertRejectedLogin = async (
 	test("invalid submit shows validation dialog", async ({ page }) => {
 		await page.goto("/de/login", { waitUntil: "domcontentloaded" });
 		await page.locator("input#email").fill(`invalid-${Date.now()}@example.de`);
-		await page.getByRole("textbox", { name: /^Passwort/ }).fill("WrongPassword1!");
+		await page
+			.getByRole("textbox", { name: /^Passwort/ })
+			.fill("WrongPassword1!");
 		await page.getByRole("button", { name: "Anmelden" }).click();
 		await expect(page).toHaveURL(/\/login\/?$/, { timeout: 15_000 });
 		await expect(page).not.toHaveURL(/\/account(\/.*)?$/, { timeout: 15_000 });
