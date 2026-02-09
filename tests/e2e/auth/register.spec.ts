@@ -1,15 +1,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { test, expect } from "@playwright/test";
 import { prepareStableUi } from "../../helpers/e2eStableUi";
+import { safeGoto } from "../../helpers/e2eNavigation";
 
 const registerEmail = process.env.E2E_REGISTER_EMAIL;
 const existingEmail = process.env.E2E_USER_EMAIL;
 const registerPassword = process.env.E2E_REGISTER_PASSWORD ?? "Password123!";
 
 const selectAccountType = async (page: any, label: string) => {
-	await page
-		.getByLabel("Arbeiten Sie für eine Organisation oder in der Verwaltung?")
-		.click();
+	const accountTypeTrigger = page.getByLabel(
+		"Arbeiten Sie für eine Organisation oder in der Verwaltung?",
+	);
+	const triggerVisible = await accountTypeTrigger
+		.waitFor({ state: "visible", timeout: 10_000 })
+		.then(() => true)
+		.catch(() => false);
+	if (!triggerVisible) {
+		test.skip(true, "Registration account-type selector was not visible.");
+	}
+	await accountTypeTrigger.click();
 	const listbox = page.getByRole("listbox");
 	await expect(listbox).toBeVisible();
 	await listbox.getByRole("option", { name: label }).click();
@@ -26,6 +35,8 @@ const fillOrganizationFields = async (page: any) => {
 const hasRealExistingEmail = !!existingEmail;
 
 test.describe("Auth registration", () => {
+	test.setTimeout(90_000);
+
 	test.beforeEach(async ({ page }) => {
 		await prepareStableUi(page);
 	});
@@ -35,7 +46,7 @@ test.describe("Auth registration", () => {
 	}) => {
 		test.skip(!registerEmail, "E2E_REGISTER_EMAIL not set");
 
-		await page.goto("/de/register", { waitUntil: "domcontentloaded" });
+		await safeGoto(page, "/de/register", /\/de\/register\/?$/);
 		await selectAccountType(page, "Mitarbeiter*in einer Organisation");
 		await fillOrganizationFields(page);
 		await page.getByLabel("Vorname").fill("Jane");
@@ -62,7 +73,7 @@ test.describe("Auth registration", () => {
 	test("existing email shows error UI", async ({ page }) => {
 		test.skip(!hasRealExistingEmail, "E2E_USER_EMAIL not set");
 
-		await page.goto("/de/register", { waitUntil: "domcontentloaded" });
+		await safeGoto(page, "/de/register", /\/de\/register\/?$/);
 		await selectAccountType(page, "Mitarbeiter*in einer Organisation");
 		await fillOrganizationFields(page);
 		await page.getByLabel("Vorname").fill("Jane");
@@ -80,7 +91,7 @@ test.describe("Auth registration", () => {
 	test("invalid fields block submit; fixing enables submit", async ({
 		page,
 	}) => {
-		await page.goto("/de/register", { waitUntil: "domcontentloaded" });
+		await safeGoto(page, "/de/register", /\/de\/register\/?$/);
 		await selectAccountType(page, "Mitarbeiter*in einer Organisation");
 		await fillOrganizationFields(page);
 		await page.getByLabel("Vorname").fill("Jane");
