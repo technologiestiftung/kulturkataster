@@ -49,16 +49,19 @@ jobs:
           git push origin "v$NEW_VERSION"
 
       - name: Create Release
-        uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: v${{ steps.version.outputs.version }}
-          release_name: Release v${{ steps.version.outputs.version }}
-          body: |
-            Release v${{ steps.version.outputs.version }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ "${{ github.ref_name }}" != "main" ]; then
+            PRERELEASE_FLAG="--prerelease"
+          else
+            PRERELEASE_FLAG=""
+          fi
 
-            **Branch:** ${{ github.ref_name }}
-            **Commit:** ${{ github.sha }}
-          draft: false
-          prerelease: ${{ github.ref_name != 'main' }}
+          gh release create "v${{ steps.version.outputs.version }}" \
+            --title "Release v${{ steps.version.outputs.version }}" \
+            --notes "Release v${{ steps.version.outputs.version }}
+
+          **Branch:** ${{ github.ref_name }}
+          **Commit:** ${{ github.sha }}" \
+            $PRERELEASE_FLAG
