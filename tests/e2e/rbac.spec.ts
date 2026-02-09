@@ -15,8 +15,7 @@ if (!adminEmail || !adminPassword || !adminEmail.includes("@")) {
 	console.warn("E2E admin credentials are not set or invalid");
 }
 
-const hasRealUserCredentials =
-	!!userEmail && !!userPassword;
+const hasRealUserCredentials = !!userEmail && !!userPassword;
 const hasRealAdminCredentials = !!adminEmail && !!adminPassword;
 
 const login = async (
@@ -35,7 +34,10 @@ const login = async (
 		.then(() => true)
 		.catch(() => false);
 	if (!loginSucceeded) {
-		test.skip(true, `Credentials for ${email} did not authenticate in e2e run.`);
+		test.skip(
+			true,
+			`Credentials for ${email} did not authenticate in e2e run.`,
+		);
 	}
 };
 
