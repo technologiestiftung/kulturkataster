@@ -32,6 +32,51 @@ export const isSubmissionRow = (
 	row: InstitutionTableRow,
 ): row is SubmissionRow => row.rowKind === "submission";
 
+export const formatFundingSources = (
+	row: InstitutionTableRow,
+	options?: {
+		translateFundingSource?: (value: string) => string;
+	},
+) => {
+	const sources = row.funding_sources;
+	if (Array.isArray(sources) && sources.length > 0) {
+		const values = sources
+			.map((source) => {
+				const rawName =
+					typeof source.source_name === "string"
+						? source.source_name.trim()
+						: "";
+				const name = rawName
+					? (options?.translateFundingSource?.(rawName) ?? rawName)
+					: "";
+				const description =
+					typeof source.description === "string"
+						? source.description.trim()
+						: "";
+				if (!name && !description) return null;
+				if (!description) return name;
+				if (!name) return description;
+				return `${name}: ${description}`;
+			})
+			.filter((value): value is string => Boolean(value));
+		if (values.length > 0) return values.join(" | ");
+	}
+
+	const legacyName = (row as Record<string, unknown>).funding_source_name;
+	const legacyDescription = (row as Record<string, unknown>)
+		.funding_source_description;
+
+	if (
+		typeof legacyName === "string" &&
+		typeof legacyDescription === "string"
+	) {
+		return `${legacyName}: ${legacyDescription}`;
+	}
+	if (typeof legacyName === "string") return legacyName;
+	if (typeof legacyDescription === "string") return legacyDescription;
+	return "—";
+};
+
 export const buildSubmissionRow = (
 	submission: Submission,
 	categories: Category[],

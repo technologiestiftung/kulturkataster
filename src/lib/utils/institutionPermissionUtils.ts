@@ -6,6 +6,7 @@ const RELATION_FIELD_ALIASES: Record<string, string> = {
 	userIds: "users",
 	groupIds: "groups",
 	contact_person_id: "contact_person",
+	funding_source: "funding_sources",
 };
 
 const buildIgnoreFields = () => {

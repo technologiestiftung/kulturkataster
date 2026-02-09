@@ -1,0 +1,152 @@
+"use client";
+
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { useTranslation } from "react-i18next";
+import type { FormWrapperFieldConfig } from "./types";
+
+type FundingSourceFormValue = {
+	source_name: string;
+	description: string;
+};
+
+type FundingSourceFieldProps = {
+	field: FormWrapperFieldConfig;
+	value: unknown;
+	updateField: (name: string, value: unknown) => void;
+};
+
+export function FundingSourceField({
+	field,
+	value,
+	updateField,
+}: FundingSourceFieldProps) {
+	const { t: tEnum } = useTranslation("enumMap");
+
+	if (field.type !== "fundingSources") {
+		return null;
+	}
+
+	const items = Array.isArray(value) ? (value as FundingSourceFormValue[]) : [];
+	const maxItems = field.fundingSources?.maxItems;
+	const canAdd = typeof maxItems === "number" ? items.length < maxItems : true;
+	const sourceLabel = field.fundingSources?.sourceLabel ?? "Funding Source Name";
+	const descriptionLabel =
+		field.fundingSources?.descriptionLabel ?? "Funding Source Description";
+	const sourcePlaceholder = field.fundingSources?.sourcePlaceholder ?? "";
+	const descriptionPlaceholder =
+		field.fundingSources?.descriptionPlaceholder ?? "";
+	const addButtonLabel =
+		field.fundingSources?.addButtonLabel ?? "Add funding source";
+	const removeButtonLabel = field.fundingSources?.removeButtonLabel ?? "Remove";
+	const fundingSourceOptions = [
+		"church",
+		"district",
+		"eu",
+		"federal",
+		"foundation",
+		"other",
+		"private",
+		"state_berlin",
+	] as const;
+
+	const updateItem = (
+		index: number,
+		key: keyof FundingSourceFormValue,
+		nextValue: string,
+	) => {
+		const nextItems = [...items];
+		const current = nextItems[index] ?? { source_name: "", description: "" };
+		nextItems[index] = { ...current, [key]: nextValue };
+		updateField(field.name, nextItems);
+	};
+
+	const addItem = () => {
+		updateField(field.name, [...items, { source_name: "", description: "" }]);
+	};
+
+	const removeItem = (index: number) => {
+		updateField(
+			field.name,
+			items.filter((_, itemIndex) => itemIndex !== index),
+		);
+	};
+
+	return (
+		<div className="space-y-3">
+			{items.map((item, index) => (
+				<div
+					key={`${field.name}-${index}`}
+					className="rounded-md border border-input p-3 space-y-2"
+				>
+					<div className="flex items-center justify-between gap-2">
+						<p className="body3 text-neutral-80">{`${sourceLabel} ${index + 1}`}</p>
+						<Button
+							type="button"
+							variant="outline"
+							size="sm"
+							onClick={() => removeItem(index)}
+							disabled={field.disabled}
+						>
+							{removeButtonLabel}
+						</Button>
+					</div>
+					<div className="space-y-1">
+						<Label htmlFor={`${field.name}-${index}-source`}>{sourceLabel}</Label>
+						<Select
+							value={item.source_name ?? ""}
+							onValueChange={(nextValue) =>
+								updateItem(index, "source_name", nextValue)
+							}
+							disabled={field.disabled}
+						>
+							<SelectTrigger id={`${field.name}-${index}-source`}>
+								<SelectValue placeholder={sourcePlaceholder || sourceLabel} />
+							</SelectTrigger>
+							<SelectContent>
+								{fundingSourceOptions.map((option) => (
+									<SelectItem key={option} value={option}>
+										{tEnum(`funding_source.${option}`)}
+									</SelectItem>
+								))}
+							</SelectContent>
+						</Select>
+					</div>
+					<div className="space-y-1">
+						<Label htmlFor={`${field.name}-${index}-description`}>
+							{descriptionLabel}
+						</Label>
+						<Textarea
+							id={`${field.name}-${index}-description`}
+							value={item.description ?? ""}
+							onChange={(event) =>
+								updateItem(index, "description", event.target.value)
+							}
+							placeholder={descriptionPlaceholder}
+							disabled={field.disabled}
+							rows={3}
+						/>
+					</div>
+				</div>
+			))}
+			{canAdd && (
+				<Button
+					type="button"
+					variant="outline"
+					onClick={addItem}
+					disabled={field.disabled}
+				>
+					{addButtonLabel}
+				</Button>
+			)}
+		</div>
+	);
+}

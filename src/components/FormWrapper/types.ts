@@ -26,6 +26,7 @@ export type FieldType =
 	| "actionPanel"
 	| "tablePermissions"
 	| "fieldPermissions"
+	| "fundingSources"
 	| "section";
 
 export type PermissionAction = "read" | "create" | "update" | "delete";
@@ -183,6 +184,15 @@ type FormWrapperNonSectionFieldConfig = {
 		cityField?: string;
 		zipField?: string;
 		initialZoom?: number;
+	};
+	fundingSources?: {
+		sourceLabel?: string;
+		descriptionLabel?: string;
+		sourcePlaceholder?: string;
+		descriptionPlaceholder?: string;
+		addButtonLabel?: string;
+		removeButtonLabel?: string;
+		maxItems?: number;
 	};
 
 	// For select, radio, checkbox, multiselect
