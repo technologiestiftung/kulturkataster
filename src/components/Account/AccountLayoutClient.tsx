@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { Button } from "@/components/ui/button";
+import { ButtonWithTooltip } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { usePathname, useRouter } from "next/navigation";
@@ -56,6 +56,15 @@ export function AccountLayoutClient({
 			console.error("Logout failed:", result.error);
 		}
 	};
+	const profileSettingsLabel = t("auth.account.actions.profileSettings", {
+		defaultValue: "Profile settings",
+	});
+	const faqLabel = t("auth.account.actions.faq", {
+		defaultValue: "FAQ",
+	});
+	const logoutLabel = t("auth.account.actions.logout", {
+		defaultValue: "Logout",
+	});
 	return (
 		<div className="AccountLayoutClient relative min-h-0 h-full">
 			<div className="absolute h-full w-full">
@@ -83,33 +92,36 @@ export function AccountLayoutClient({
 						</p>
 					</div>
 					<div className="Buttons flex flex-wrap space-x-3">
-						<Button
+						<ButtonWithTooltip
 							variant="rounded"
 							size="icon-only"
+							tooltip={profileSettingsLabel}
 							className="h-14 w-14"
-							aria-label="Edit Profile"
+							aria-label={profileSettingsLabel}
 							onClick={() => router.push(toLocalePath("/account/edit"))}
 						>
 							<Setting />
-						</Button>
-						<Button
+						</ButtonWithTooltip>
+						<ButtonWithTooltip
 							variant="rounded"
 							size="icon-only"
+							tooltip={faqLabel}
 							className="h-14 w-14"
-							aria-label="Frequently Asked Questions"
+							aria-label={faqLabel}
 							onClick={() => router.push(toLocalePath("/account/faq"))}
 						>
 							<Edit />
-						</Button>
-						<Button
+						</ButtonWithTooltip>
+						<ButtonWithTooltip
 							variant="rounded"
 							size="icon-only"
+							tooltip={logoutLabel}
 							className="h-14 w-14"
-							aria-label="Logout"
+							aria-label={logoutLabel}
 							onClick={handleLogout}
 						>
 							<LogOut />
-						</Button>
+						</ButtonWithTooltip>
 					</div>
 				</div>
 				<div className="Account-section flex flex-col min-h-0 flex-1">
