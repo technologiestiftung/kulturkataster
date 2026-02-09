@@ -47,6 +47,14 @@
 				"logout": "Abmelden",
 				"profileSettings": "Profileinstellungen"
 			},
+			"tabs": {
+				"activity": "Aktivität",
+				"categories": "Kategorien",
+				"groups": "Gruppen",
+				"institutions": "Kulturorte",
+				"roles": "Rollen",
+				"users": "Nutzer*innen"
+			},
 			"alreadyAccount": "Haben Sie bereits ein Konto beim Kulturkataster?",
 			"backToMap": "Zur Karte",
 			"comingSoon": "Ihr Kontobereich ist bald verfügbar.",
