@@ -26,6 +26,7 @@ const permissionFieldAliasMap: Record<string, string> = {
 	contact_person_surname: "contact_person",
 	funding_source_name: "funding_sources",
 	funding_source_description: "funding_sources",
+	funding_source: "funding_sources",
 	category: "categories",
 	subcategory: "categories",
 	subcategories: "categories",

@@ -44,6 +44,8 @@ const buildInitialFormData = (config: FormWrapperConfig) => {
 			initialData[field.name] = false;
 		} else if (field.type === "multiselect") {
 			initialData[field.name] = [];
+		} else if (field.type === "fundingSources") {
+			initialData[field.name] = [];
 		} else if (field.type === "filterPanel") {
 			initialData[field.name] = { ...defaultFilterState };
 		} else if (

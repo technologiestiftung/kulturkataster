@@ -667,19 +667,20 @@ function InstitutionDraftWizardContent({
 							cardVariant: "none",
 							fields: [
 								{
-									name: "funding_source_name",
+									name: "funding_sources",
+									label: "Finanzierungsquellen",
+									type: "fundingSources",
 									description:
 										"z. B. Bezirk, Land Berlin, EU, Bund, Stiftung, Kirche, Privat",
-									type: "text",
-									placeholder: "z. B. Land Berlin, Bezirk Mitte",
-								},
-								{
-									name: "funding_source_description",
-									description:
-										"Optional: Geben Sie weitere Details an (z. B. Förderprogramme, Beträge, Zeiträume).",
-									type: "textarea",
-									placeholder:
-										"z. B. Förderung durch das Berliner Arbeitsraumprogramm seit 2020, jährlich 50.000€",
+									fundingSources: {
+										sourceLabel: "Art der Finanzierung",
+										descriptionLabel: "Details",
+										sourcePlaceholder: "z. B. Land Berlin, Bezirk Mitte",
+										descriptionPlaceholder:
+											"z. B. Förderung durch das Berliner Arbeitsraumprogramm seit 2020, jährlich 50.000€",
+										addButtonLabel: "Finanzierungsquelle hinzufügen",
+										removeButtonLabel: "Entfernen",
+									},
 								},
 							],
 						},

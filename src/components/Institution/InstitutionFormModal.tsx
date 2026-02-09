@@ -121,8 +121,11 @@ const getInitialValues = (resolvedInstitution?: Institution) => {
 		contact_person_phone: resolvedInstitution?.contact_person?.phone ?? "",
 		legal_form: resolvedInstitution?.legal_form ?? "",
 		funding_type: resolvedInstitution?.funding_type ?? "",
-		funding_source_name: "",
-		funding_source_description: "",
+		funding_sources:
+			resolvedInstitution?.funding_sources?.map((source) => ({
+				source_name: source.source_name ?? "",
+				description: source.description ?? "",
+			})) ?? [],
 		owner_type: resolvedInstitution?.owner_type ?? "",
 		owner_name: resolvedInstitution?.owner_name ?? "",
 		rental_contract_type: resolvedInstitution?.rental_contract_type ?? "",
@@ -212,6 +215,28 @@ const useInstitutionSubmit = (
 		const website = toOptionalText(data.website);
 		const email = toOptionalText(data.email);
 		const phone = toOptionalText(data.phone);
+		const funding_type = toOptionalText(data.funding_type) as
+			| Institution["funding_type"]
+			| undefined;
+		const funding_sources = Array.isArray(data.funding_sources)
+			? data.funding_sources
+					.map((item) => {
+						const source = item as {
+							source_name?: unknown;
+							description?: unknown;
+						};
+						const source_name = toOptionalText(source.source_name);
+						const description = toOptionalText(source.description);
+						if (!source_name) return null;
+						return { source_name, description: description ?? null };
+					})
+					.filter(
+						(
+							item,
+						): item is { source_name: string; description: string | null } =>
+							item !== null,
+					)
+			: [];
 
 		try {
 			if (mode === "create") {
@@ -222,6 +247,8 @@ const useInstitutionSubmit = (
 					website,
 					email,
 					phone,
+					funding_type: funding_type ?? null,
+					funding_sources,
 				});
 				addInstitution(created);
 			} else if (institutionId) {
@@ -233,6 +260,8 @@ const useInstitutionSubmit = (
 					website,
 					email,
 					phone,
+					funding_type: funding_type ?? null,
+					funding_sources,
 				});
 				if (updated) {
 					upsertInstitution(updated);
@@ -680,26 +709,25 @@ const buildInstitutionFormConfig = ({
 						],
 					},
 					{
-						name: "funding_source_name",
-						label: fieldLabel("funding_source_name", "Funding Source Name"),
-						type: "text",
-						placeholder: "e.g. Land Berlin, Bezirk Mitte",
-						description:
-							"e.g. Bezirk, Land Berlin, EU, Bund, Stiftung, Kirche, Privat",
+						name: "funding_sources",
+						label: fieldLabel("funding_source_name", "Funding Sources"),
+						type: "fundingSources",
 						layout: { span: "full" },
-					},
-					{
-						name: "funding_source_description",
-						label: fieldLabel(
-							"funding_source_description",
-							"Funding Source Description",
-						),
-						type: "textarea",
-						placeholder:
-							"e.g. Funding through the Berlin workspace program since 2020, 50,000€ annually",
-						description:
-							"Optional: Provide additional details (e.g. funding programs, amounts, time periods)",
-						layout: { span: "full" },
+						fundingSources: {
+							sourceLabel: fieldLabel(
+								"funding_source_name",
+								"Funding Source Name",
+							),
+							descriptionLabel: fieldLabel(
+								"funding_source_description",
+								"Funding Source Description",
+							),
+							sourcePlaceholder: "e.g. Land, Bezirk",
+							descriptionPlaceholder:
+								"e.g. Funding through the Berlin workspace program since 2020, 50,000€ annually",
+							addButtonLabel: "Add funding source",
+							removeButtonLabel: "Remove funding source",
+						},
 					},
 				],
 			},

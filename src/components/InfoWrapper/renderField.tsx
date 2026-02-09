@@ -7,6 +7,10 @@ import type { Institution } from "@/types";
 import { AddressItem } from "@/components/InfoWrapper/AddressItem";
 import { InfoItem } from "@/components/InfoWrapper/InfoItem";
 import {
+	FundingSourceItem,
+	formatFundingSourcesValue,
+} from "@/components/InfoWrapper/FundingSourceItem";
+import {
 	getCoordinatesFromAddress,
 	getParentCategories,
 } from "@/lib/utils/institutionUtils";
@@ -331,6 +335,16 @@ const getContent = (
 					action={action}
 				/>
 			);
+		case "fundingSources":
+			return (
+				<FundingSourceItem
+					data={data}
+					label={label}
+					description={field.description}
+					isPrivate={isPrivate}
+					action={action}
+				/>
+			);
 		case "title":
 			return (
 				<div className="overflow-hidden">
@@ -428,6 +442,7 @@ const renderFieldContent = (
 			case "status":
 			case "text":
 			case "enum":
+			case "fundingSources":
 			case "date":
 			case "year":
 			case "title":
@@ -487,6 +502,7 @@ const renderFieldContent = (
 			case "status":
 			case "text":
 			case "enum":
+			case "fundingSources":
 			case "date":
 			case "year":
 			case "title":
@@ -508,6 +524,8 @@ const renderFieldContent = (
 		if (field.type === "address") return formatAddressValue(sourceData);
 		if (field.type === "category")
 			return formatCategoryValue(sourceData, tEnum);
+		if (field.type === "fundingSources")
+			return formatFundingSourcesValue(sourceData, tEnum);
 		if (field.type === "status") {
 			const labelKey = `${field.enumKey ?? "utilization_status"}.${String(
 				displayValue,
@@ -545,6 +563,9 @@ const renderFieldContent = (
 		newData !== undefined &&
 		(() => {
 			if (field.type === "address" || field.type === "category") {
+				return String(originalDisplay) !== String(newDisplay ?? "");
+			}
+			if (field.type === "fundingSources") {
 				return String(originalDisplay) !== String(newDisplay ?? "");
 			}
 			if (field.type === "date" || field.type === "year") {

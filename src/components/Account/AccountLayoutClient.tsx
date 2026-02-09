@@ -83,9 +83,6 @@ export function AccountLayoutClient({
 						</p>
 					</div>
 					<div className="Buttons flex flex-wrap space-x-3">
-						<Button variant="rounded" size="icon-only" className="h-14 w-14">
-							<Edit />
-						</Button>
 						<Button
 							variant="rounded"
 							size="icon-only"
@@ -94,6 +91,15 @@ export function AccountLayoutClient({
 							onClick={() => router.push(toLocalePath("/account/edit"))}
 						>
 							<Setting />
+						</Button>
+						<Button
+							variant="rounded"
+							size="icon-only"
+							className="h-14 w-14"
+							aria-label="Frequently Asked Questions"
+							onClick={() => router.push(toLocalePath("/account/faq"))}
+						>
+							<Edit />
 						</Button>
 						<Button
 							variant="rounded"

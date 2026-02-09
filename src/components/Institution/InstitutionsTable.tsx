@@ -22,6 +22,7 @@ import { Badge } from "../ui/badge";
 import Link from "next/link";
 import {
 	buildSubmissionRow,
+	formatFundingSources,
 	isSubmissionRow,
 } from "@/lib/utils/institutionTableUtils";
 import Send from "@/icons/send.svg";
@@ -50,6 +51,10 @@ export function InstitutionsTable() {
 	};
 	const headerLabel = (key: string, fallback: string) =>
 		getFieldLabel(tEnum, key, fallback);
+	const translateFundingSource = (value: string) => {
+		const translated = tEnum(`funding_source.${value}`);
+		return translated === `funding_source.${value}` ? value : translated;
+	};
 	const getStatusLabel = (status: InstitutionStatus) => {
 		if (status === "approval_pending")
 			return t("institutionFormModal.status.approvalPending");
@@ -434,6 +439,18 @@ export function InstitutionsTable() {
 				meta: { truncate: true },
 				cell: ({ row }) =>
 					translateEnum("funding_type", row.original.funding_type),
+			},
+
+			{
+				id: "funding_sources",
+				accessorFn: (row) =>
+					formatFundingSources(row, { translateFundingSource }),
+				header: headerLabel("funding_sources", "Funding Sources"),
+				enableSorting: true,
+				size: 140,
+				meta: { truncate: true },
+				cell: ({ row }) =>
+					formatFundingSources(row.original, { translateFundingSource }),
 			},
 			{
 				accessorKey: "utilization_status",

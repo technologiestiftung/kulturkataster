@@ -19,6 +19,7 @@ export type InfoWrapperFieldType =
 	| "boolean"
 	| "status"
 	| "category"
+	| "fundingSources"
 	| "address"
 	| "link"
 	| "section";

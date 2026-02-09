@@ -35,6 +35,11 @@ const relationDefaults = {
 		email: true,
 		phone: true,
 	} satisfies Prisma.ContactPersonSelect,
+	funding_sources: {
+		id: true,
+		source_name: true,
+		description: true,
+	} satisfies Prisma.FundingSourceSelect,
 } as const;
 
 export const buildInstitutionSelect = (

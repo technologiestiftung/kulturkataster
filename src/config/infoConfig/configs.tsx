@@ -116,14 +116,9 @@ export const fundingInfoConfig: InfoWrapperFieldConfig[] = [
 		enumKey: "funding_type",
 	},
 	{
-		value: "funding_source_name",
+		value: "funding_sources",
 		labelKey: "field_names.funding_source_name",
-		type: "text",
-	},
-	{
-		value: "funding_source_description",
-		labelKey: "field_names.funding_source_description",
-		type: "text",
+		type: "fundingSources",
 	},
 ];
 
