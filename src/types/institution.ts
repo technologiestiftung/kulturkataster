@@ -36,7 +36,7 @@ export type InstitutionTableBase = {
 	website: Institution["website"];
 	parent_organization: Institution["parent_organization"];
 	address: AddressInput | Address | null;
-	categories: Category[] | Category;
+	categories: Category[];
 	tags: Institution["tags"];
 	users: Institution["users"];
 	groups: Institution["groups"];
@@ -47,7 +47,7 @@ export type InstitutionTableBase = {
 	funding_type?: Institution["funding_type"];
 	funding_source?: FundingSourceInput | FundingSource | null;
 	funding_sources?: FundingSourceInput[] | FundingSource[] | null;
-	utilization_status?: UtilizationStatus;
+	utilization_status?: Institution["utilization_status"];
 	utilization_status_info?: Institution["utilization_status_info"];
 	protection_status?: Institution["protection_status"];
 	protection_status_info?: Institution["protection_status_info"];

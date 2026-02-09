@@ -54,9 +54,7 @@ export const institutionSubmissionToDraft = (
 				};
 			})
 			.filter(
-				(
-					item,
-				): item is { source_name: string; description: string | null } =>
+				(item): item is { source_name: string; description: string | null } =>
 					item !== null,
 			);
 		return items;

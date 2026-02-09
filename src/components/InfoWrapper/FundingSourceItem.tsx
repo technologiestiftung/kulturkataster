@@ -42,10 +42,7 @@ export const formatFundingSourcesValue = (
 	const legacyDescription = (data as Record<string, unknown>)
 		.funding_source_description;
 
-	if (
-		typeof legacyName === "string" &&
-		typeof legacyDescription === "string"
-	) {
+	if (typeof legacyName === "string" && typeof legacyDescription === "string") {
 		return `${legacyName}: ${legacyDescription}`;
 	}
 	if (typeof legacyName === "string") return legacyName;

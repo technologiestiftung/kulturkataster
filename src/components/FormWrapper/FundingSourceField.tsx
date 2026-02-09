@@ -38,7 +38,8 @@ export function FundingSourceField({
 	const items = Array.isArray(value) ? (value as FundingSourceFormValue[]) : [];
 	const maxItems = field.fundingSources?.maxItems;
 	const canAdd = typeof maxItems === "number" ? items.length < maxItems : true;
-	const sourceLabel = field.fundingSources?.sourceLabel ?? "Funding Source Name";
+	const sourceLabel =
+		field.fundingSources?.sourceLabel ?? "Funding Source Name";
 	const descriptionLabel =
 		field.fundingSources?.descriptionLabel ?? "Funding Source Description";
 	const sourcePlaceholder = field.fundingSources?.sourcePlaceholder ?? "";
@@ -100,7 +101,9 @@ export function FundingSourceField({
 						</Button>
 					</div>
 					<div className="space-y-1">
-						<Label htmlFor={`${field.name}-${index}-source`}>{sourceLabel}</Label>
+						<Label htmlFor={`${field.name}-${index}-source`}>
+							{sourceLabel}
+						</Label>
 						<Select
 							value={item.source_name ?? ""}
 							onValueChange={(nextValue) =>
