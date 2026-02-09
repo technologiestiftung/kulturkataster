@@ -74,10 +74,7 @@ test.describe("auth login", () => {
 	});
 
 	test("banned user cannot login", async ({ page }) => {
-		test.skip(
-			!hasBannedUserCredentials,
-			"E2E banned user credentials not set",
-		);
+		test.skip(!hasBannedUserCredentials, "E2E banned user credentials not set");
 
 		await assertRejectedLogin(
 			page,
