@@ -1,5 +1,6 @@
 import { prisma } from "@/server/prisma";
 import { CategoryCreateInput, CategoryUpdateInput } from "@/types";
+import { withAuditContext } from "@/lib/middleware/contextMiddleware";
 
 const include = {
 	parent_category: true,
@@ -19,15 +20,20 @@ export const categoryRepo = {
 			orderBy: { key: "asc" },
 		}),
 	create: (data: CategoryCreateInput) =>
-		prisma.category.create({
-			data,
-			include,
-		}),
+		withAuditContext(() =>
+			prisma.category.create({
+				data,
+				include,
+			}),
+		),
 	update: (id: number, data: CategoryUpdateInput) =>
-		prisma.category.update({
-			where: { id },
-			data,
-			include,
-		}),
-	remove: (id: number) => prisma.category.delete({ where: { id } }),
+		withAuditContext(() =>
+			prisma.category.update({
+				where: { id },
+				data,
+				include,
+			}),
+		),
+	remove: (id: number) =>
+		withAuditContext(() => prisma.category.delete({ where: { id } })),
 };

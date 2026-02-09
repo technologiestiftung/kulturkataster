@@ -5,6 +5,7 @@ import {
 	InstitutionUpdateInput,
 	InstitutionWhereInput,
 } from "@/types";
+import { withAuditContext } from "@/lib/middleware/contextMiddleware";
 
 const institutionInclude = {
 	address: true,
@@ -41,20 +42,25 @@ export const institutionRepo = {
 			include: institutionInclude,
 		}),
 	create: (data: InstitutionCreateInput) =>
-		prisma.institution.create({ data, include: institutionInclude }),
+		withAuditContext(() =>
+			prisma.institution.create({ data, include: institutionInclude }),
+		),
 	update: (id: number, data: InstitutionUpdateInput) =>
-		prisma.institution.update({
-			where: { id },
-			data,
-			include: institutionInclude,
-		}),
+		withAuditContext(() =>
+			prisma.institution.update({
+				where: { id },
+				data,
+				include: institutionInclude,
+			}),
+		),
 	updateWhere: (
 		where: Prisma.InstitutionWhereInput,
 		data: InstitutionUpdateInput,
-	) => prisma.institution.updateMany({ where, data }),
-	remove: (id: number) => prisma.institution.delete({ where: { id } }),
+	) => withAuditContext(() => prisma.institution.updateMany({ where, data })),
+	remove: (id: number) =>
+		withAuditContext(() => prisma.institution.delete({ where: { id } })),
 	removeWhere: (where: Prisma.InstitutionWhereInput) =>
-		prisma.institution.deleteMany({ where }),
+		withAuditContext(() => prisma.institution.deleteMany({ where })),
 	findFirstWithInclude: (where: Prisma.InstitutionWhereInput) =>
 		prisma.institution.findFirst({ where, include: institutionInclude }),
 	search: (where: InstitutionWhereInput, take = 50) =>

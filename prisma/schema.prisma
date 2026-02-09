@@ -290,7 +290,7 @@ model User {
   avatar_url         String?
   notes              String?
   account_type       String?
-  meta_info         Json?
+  meta_info          Json?
   role_id            Int?
   status             UserStatus @default(approval_pending)
   compliance         Boolean    @default(false)
@@ -302,8 +302,9 @@ model User {
   institutions         Institution[]
   created_institutions Institution[] @relation("InstitutionCreator")
   updated_institutions Institution[] @relation("InstitutionUpdater")
-  submissions         Submission[] @relation("SubmissionCreator")
+  submissions          Submission[] @relation("SubmissionCreator")
   reviewed_submissions Submission[] @relation("SubmissionReviewer")
+  entity_audits        EntityAudit[] @relation("EntityAuditUser")
 
   @@index([email])
   @@index([role_id])
@@ -396,4 +397,42 @@ model Submission {
   @@index([created_by])
   @@index([reviewed_by])
   @@map("submission")
+}
+
+// ============================================
+// AUDIT SYSTEM
+// ============================================
+
+enum AuditAction {
+  create
+  update
+  delete
+}
+
+enum AuditEntityType {
+  institution
+  address
+  contact_person
+  category
+  tag
+}
+
+model EntityAudit {
+  id          Int               @id @default(autoincrement())
+  entity_id   String
+  entity_type AuditEntityType
+  action      AuditAction
+  old_data    Json?
+  new_data    Json?
+  changed_by  String?           @db.Uuid
+  changed_at  DateTime          @default(now())
+
+  user User? @relation("EntityAuditUser", fields: [changed_by], references: [id])
+
+  @@index([entity_id])
+  @@index([entity_type])
+  @@index([action])
+  @@index([changed_by])
+  @@index([changed_at])
+  @@map("entity_audit")
 }
