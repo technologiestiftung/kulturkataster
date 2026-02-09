@@ -6,7 +6,7 @@ import {
 	getTableScope,
 	requireAllScope,
 } from "@/server/utils/rbac";
-import { getCurrentUserId } from "@/server/auth/getCurrentUser";
+import { getCurrentUserId } from "@/server/actions/auth";
 import { userRepo } from "@/server/data/userRepo";
 import { createAdminClient, createClient } from "@/server/supabase/server";
 import type { UserFormInput } from "@/types/user";
@@ -20,7 +20,8 @@ export async function getUsers() {
 
 	const scope = getTableScope(ctx, "user", "read");
 	if (scope === "all") {
-		return userRepo.list();
+		const list = await userRepo.list();
+		return list;
 	}
 	const ownerId = requireScopeOrUser(scope, currentUserId);
 	if (!ownerId) return [];
@@ -69,7 +70,7 @@ export async function createUser(input: UserFormInput) {
 		last_name: input.last_name ?? undefined,
 		status: input.status ?? undefined,
 		compliance: input.compliance ?? undefined,
-		institution_claims: input.institution_claims ?? undefined,
+		meta_info: input.meta_info ?? undefined,
 		account_type: input.account_type ?? undefined,
 		role: input.roleId ? { connect: { id: input.roleId } } : undefined,
 		groups: input.groupIds
@@ -123,7 +124,7 @@ export async function updateUser(input: UserFormInput) {
 			first_name: input.first_name ?? undefined,
 			last_name: input.last_name ?? undefined,
 			account_type: input.account_type ?? undefined,
-			institution_claims: input.institution_claims ?? undefined,
+			meta_info: input.meta_info ?? undefined,
 		});
 		revalidateAccount();
 		return user;
@@ -158,7 +159,7 @@ export async function updateUser(input: UserFormInput) {
 		last_name: input.last_name ?? undefined,
 		status: input.status ?? undefined,
 		compliance: input.compliance ?? undefined,
-		institution_claims: input.institution_claims ?? undefined,
+		meta_info: input.meta_info ?? undefined,
 		account_type: input.account_type ?? undefined,
 		role: input.roleId ? { connect: { id: input.roleId } } : undefined,
 		groups: input.groupIds
@@ -203,7 +204,7 @@ export async function sendPasswordReset(email: string) {
 
 	const siteUrl = process.env.SITE_URL ?? "http://127.0.0.1:3000";
 	const supabase = createAdminClient();
-	const { error } = await supabase.auth.admin.generateLink({
+	const { error, data } = await supabase.auth.admin.generateLink({
 		type: "recovery",
 		email,
 		options: {
@@ -215,7 +216,7 @@ export async function sendPasswordReset(email: string) {
 		throw new Error(error.message);
 	}
 
-	return { ok: true };
+	return { data };
 }
 
 export async function sendComplianceResend(email: string): Promise<void> {

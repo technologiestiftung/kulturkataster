@@ -1,9 +1,9 @@
-import { AllowedLocales, I18NConfig } from "@/types";
 import { createInstance, TFunction, i18n, Resource } from "i18next";
 import { initReactI18next } from "react-i18next/initReactI18next";
 import resourcesToBackend from "i18next-resources-to-backend";
 import { Locale } from "../types/i18n";
 import { fetchTranslations } from "@/server/actions/fetchTranslations";
+import { allowedLocales, defaultLocale, i18nConfig } from "./config";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function deepMerge(target: any, source: any): any {
@@ -27,17 +27,8 @@ function deepMerge(target: any, source: any): any {
 	return result;
 }
 
-export const defaultLocale = "de";
-
-export const allowedLocales: AllowedLocales = [defaultLocale, "de"];
-
-const i18nConfig: I18NConfig = {
-	locales: allowedLocales,
-	defaultLocale,
-	prefixDefault: false, // avoids prefixing the default locale in URLs
-};
-
 export { i18nConfig };
+export { allowedLocales, defaultLocale };
 
 async function initTranslations(
 	locale: string,

@@ -4,7 +4,7 @@ import TextBlock from "@/components/Content/TextBlock";
 import TextWithLinks from "@/components/Content/TextWithLinks";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useTranslation } from "react-i18next";
-import { PageModal } from "../PageModal";
+import { Modal } from "../Modal";
 import { DialogTitle } from "@/components/ui/dialog";
 import keyOrder from "@/lib/utils/keyOrderSimpleLanguage.json";
 import React from "react";
@@ -97,7 +97,11 @@ const RenderContent = ({
 	);
 };
 
-export function SimpleLanguageInformationModal() {
+export function SimpleLanguageInformationModal({
+	routePath,
+}: {
+	routePath?: string;
+}) {
 	const { t } = useTranslation("content");
 
 	const content = {
@@ -152,9 +156,10 @@ export function SimpleLanguageInformationModal() {
 	);
 
 	return (
-		<PageModal
+		<Modal
 			title={""}
 			subtitle={""}
+			routePath={routePath}
 			content={simpleLanguageInformationContent}
 			hideLinksInModalFooter={["simpleLanguageInformation"]}
 		/>

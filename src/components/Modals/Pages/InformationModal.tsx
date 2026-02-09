@@ -2,9 +2,10 @@
 
 import TextBlock from "@/components/Content/TextBlock";
 import TextWithLinks from "@/components/Content/TextWithLinks";
+import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { Trans, useTranslation } from "react-i18next";
-import { PageModal } from "../PageModal";
+import { Modal } from "../Modal";
 
 interface FaqItem {
 	question: string;
@@ -43,8 +44,15 @@ interface Scope {
 	};
 }
 
-export function InformationModal() {
+export function InformationModal({
+	routePath,
+	returnTo,
+}: {
+	routePath?: string;
+	returnTo?: string;
+}) {
 	const { t } = useTranslation("content");
+	const toLocalePath = useLocalePath();
 	const institutions = useInstitutionStore((state) => state.allInstitutions);
 	const institutionCount = institutions?.length;
 
@@ -65,7 +73,7 @@ export function InformationModal() {
 						components={{
 							link: (
 								<a
-									href="/simpleLanguage#infosAndServices"
+									href={toLocalePath("/simpleLanguage#infosAndServices")}
 									rel="noopener noreferrer"
 									className="text-primary-dark hover:text-primary underline"
 								>
@@ -153,9 +161,11 @@ export function InformationModal() {
 	);
 
 	return (
-		<PageModal
+		<Modal
 			title={t("informationModal.title")}
 			subtitle={t("informationModal.subtitle")}
+			routePath={routePath}
+			returnTo={returnTo}
 			content={content}
 		/>
 	);

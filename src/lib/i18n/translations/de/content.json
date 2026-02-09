@@ -12,6 +12,12 @@
 					"Beratung zum Datenschutz: Cortina Consult",
 					"Rechtliche Beratung: Kanzlei Laaser"
 				],
+				"additional[0]": "",
+				"additional[1]": "",
+				"additional[2]": "",
+				"additional[3]": "",
+				"additional[4]": "",
+				"additional[5]": "",
 				"editorial": {
 					"items": [
 						"Ateliers: Atelierbüro im kulturwerk des bbk berlin",
@@ -21,6 +27,12 @@
 						"Projekträume und -initiativen: Netzwerk freier Berliner Projekträume und -initiativen e.V.",
 						"Soziokulturelle Orte und Street-Art-Flächen: Daniel Schneider (Archiv der Jugendkulturen e.V.)"
 					],
+					"items[0]": "",
+					"items[1]": "",
+					"items[2]": "",
+					"items[3]": "",
+					"items[4]": "",
+					"items[5]": "",
 					"title": "Externe Datenredaktion"
 				},
 				"items": [
@@ -29,6 +41,10 @@
 					"Konzept, Beratung und Beteiligungsformate: Studio für unendliche Möglichkeiten",
 					"Design: Common Studio"
 				],
+				"items[0]": "",
+				"items[1]": "",
+				"items[2]": "",
+				"items[3]": "",
 				"title": "Auftragnehmer*innen"
 			},
 			"funding": {
@@ -59,6 +75,27 @@
 					"Senatsverwaltung für Wirtschaft, Energie und Betriebe",
 					"servicezentrum musikschulen (szm)"
 				],
+				"list[0]": "",
+				"list[10]": "",
+				"list[11]": "",
+				"list[12]": "",
+				"list[13]": "",
+				"list[14]": "",
+				"list[15]": "",
+				"list[16]": "",
+				"list[17]": "",
+				"list[18]": "",
+				"list[19]": "",
+				"list[1]": "",
+				"list[20]": "",
+				"list[2]": "",
+				"list[3]": "",
+				"list[4]": "",
+				"list[5]": "",
+				"list[6]": "",
+				"list[7]": "",
+				"list[8]": "",
+				"list[9]": "",
 				"title": "Partner*innen"
 			},
 			"steering": {
@@ -75,6 +112,17 @@
 					"Daniel Brunet (LAFT)",
 					"Benedikt Stoll (Urbane Praxis e.V.)"
 				],
+				"members[0]": "",
+				"members[10]": "",
+				"members[1]": "",
+				"members[2]": "",
+				"members[3]": "",
+				"members[4]": "",
+				"members[5]": "",
+				"members[6]": "",
+				"members[7]": "",
+				"members[8]": "",
+				"members[9]": "",
 				"title": "Steuerungsgremium"
 			},
 			"team": {
@@ -86,6 +134,12 @@
 					"Vergabe und Administration: Doris Antonides-Heidelmeyer",
 					"Technische Projektleitung bis 2024: Metini Krivanish"
 				],
+				"members[0]": "",
+				"members[1]": "",
+				"members[2]": "",
+				"members[3]": "",
+				"members[4]": "",
+				"members[5]": "",
 				"title": "Projektteam"
 			}
 		},
@@ -100,18 +154,24 @@
 				"Sicherung sowie Neuerschließung von Räumen für Kultur: Das Kulturkataster dient als Instrument für ein nachhaltiges Monitoring von Kulturflächen, um deren Erhalt zu unterstützen und neue Räume zu erschließen.",
 				"Gerechte Verteilung von Kulturangeboten im Stadtraum und Chancengerechtigkeit im Hinblick auf Teilhabe: Das Kulturkataster visualisiert Lücken im Kulturangebot und unterstützt die Stadtplanung dabei, ein ausgewogenes und gerechtes Kulturangebot für alle Berliner*innen zu schaffen.",
 				"Verbesserung der Zusammenarbeit zwischen Ressorts, Ebenen und Sektoren: Als flexibles digitales Planungsinstrument stärkt das Kulturkataster die Zusammenarbeit innerhalb der verschiedenen Zuständigkeitsbereiche, Verwaltungsebenen sowie der gesamten Berliner Kulturszene."
-			]
+			],
+			"items[0]": "",
+			"items[1]": "",
+			"items[2]": "",
+			"items[3]": ""
 		},
+		"guidelinesListAriaLabel": "Liste der Richtlinien",
 		"introduction": [
 			"In einer wachsenden Metropole wie Berlin sind Kunst- und Kulturräume knappe Ressourcen. Verdrängung, Raumkonkurrenzen und Standortkonflikte gefährden die Kulturräume Berlins, die für die Stadt eine vielschichtige und entscheidende Rolle spielen. Sie sind Standortfaktor, Tourismusmagnet und Innovationsmotor, dienen der Wissensvermittlung sowie dem Erinnern und fördern den gesellschaftlichen Zusammenhalt, indem sie einen Identitätsrahmen für eine vielfältige und inklusive Stadtgesellschaft bilden. Das Kulturkataster, eine online frei zugängliche Bestandsaufnahme der Berliner Kulturlandschaft auf einer digitalen Karte, ist ein entscheidender Schritt hin zu einer nachhaltigen kulturellen Stadtentwicklung.",
 			"Das Kulturkataster findet in den Richtlinien der Regierungspolitik dieser Legislaturperiode Erwähnung. Ende 2022 wird die Kulturraum Berlin gGmbH von der Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt mit der Konzeption betraut und stellt in zwei Konzeptpapieren (ausgeführt durch das Studio für unendliche Möglichkeiten) die Ausgangssituation und Bedarfe sowie ein Umsetzungskonzept für das Kulturkataster vor. Auch die Umsetzung wird 2024 zur Aufgabe der KRB. Mit der Entwicklung der online-basierten Kartenanwendung beauftragte die KRB die Technologiestiftung Berlin."
 		],
+		"introduction[0]": "",
+		"introduction[1]": "",
 		"simpleLanguageDirect": "Den Bereich „Über das Projekt“ in leichter Sprache finden Sie <link />.",
-		"guidelinesListAriaLabel": "Liste der Richtlinien",
-		"versionListAriaLabel": "Liste der Versionsänderungen",
 		"subtitle": "",
 		"thanks": "Das Berliner Kulturkataster verdankt seine erfolgreiche Veröffentlichung der Begeisterung, dem Engagement und dem gemeinsamen Wirken aller Personen, für die die Berliner Kulturlandschaft von ebenso großer Bedeutung ist wie für das Projektteam. Diese tiefe Verankerung in der Szene bildet die Grundlage dafür, dass das langfristig ausgerichtete Projekt seine Vision in vollem Umfang entfalten und dynamisch weiterentwickeln kann.",
 		"title": "Über das Projekt",
+		"versionListAriaLabel": "Liste der Versionsänderungen",
 		"versions": {
 			"description": "Die Entwicklung Berliner Kulturkatasters erfolgt als lernender Prozess. Das bedeutet, dass in festgelegten zeitlichen Abständen neue Versionen des Kulturkatasters veröffentlicht werden. Zukünftige Versionen sollen neue Funktionalitäten und aktualisierte Informationen zur Verfügung stellen. Dieser Prozess ermöglicht es dem Projektteam, Anmerkungen und Kritik in den fortlaufenden Entwicklungsprozess zu integrieren und lädt die Nutzenden des Kulturkatasters dazu ein, die zukünftige Ausrichtung aktiv mitzugestalten.",
 			"items": [
@@ -119,6 +179,9 @@
 				"Version 2 – Einführung neuer Kulturortkategorien und Aktualisierung der Daten; Einführung eines Log-in-Bereichs; gemeinsame Datenpflege und Zugang für Kulturorte, Verbände und Verwaltung (Veröffentlichung Anfang 2026)",
 				"Version 3 – Aktualisierung und Vervollständigung der Daten; Einbindung neuer Fachkarten aus dem Geoportal; Veröffentlichung von bedrohten Kulturorten; Erweiterung des Log-In-Bereichs (Veröffentlichung Mitte 2026)"
 			],
+			"items[0]": "",
+			"items[1]": "",
+			"items[2]": "",
 			"planned": "Folgende Versionen des Kulturkatasters sind geplant:"
 		}
 	},
@@ -222,18 +285,159 @@
 					"title": "Barriere: Fehlende Rückmeldung bei Interaktionen"
 				}
 			],
+			"barriers[0]": {
+				"description": "",
+				"measures": "",
+				"timeline": "",
+				"title": ""
+			},
+			"barriers[1]": {
+				"description": "",
+				"measures": "",
+				"timeline": "",
+				"title": ""
+			},
+			"barriers[2]": {
+				"description": "",
+				"measures": "",
+				"timeline": "",
+				"title": ""
+			},
+			"barriers[3]": {
+				"description": "",
+				"measures": "",
+				"timeline": "",
+				"title": ""
+			},
+			"barriers[4]": {
+				"description": "",
+				"measures": "",
+				"timeline": "",
+				"title": ""
+			},
+			"barriers[5]": {
+				"description": "",
+				"measures": "",
+				"timeline": "",
+				"title": ""
+			},
+			"barriers[6]": {
+				"description": "",
+				"measures": "",
+				"timeline": "",
+				"title": ""
+			},
+			"barriers[7]": {
+				"description": "",
+				"measures": "",
+				"timeline": "",
+				"title": ""
+			},
+			"barriers[8]": {
+				"description": "",
+				"measures": "",
+				"timeline": "",
+				"title": ""
+			},
 			"description": "Die nachstehend aufgeführten Bereiche sind aus folgenden Gründen nicht barrierefrei:",
-			"list_intro": "Teilbereiche, die nicht barrierefrei sind:",
-			"subheading": "Unvereinbarkeit mit BITV 2.0",
-			"title": "Welche Bereiche sind nicht barrierefrei?",
 			"descriptionLabel": "Beschreibung",
+			"list_intro": "Teilbereiche, die nicht barrierefrei sind:",
 			"measuresLabel": "Maßnahmen",
-			"timelineLabel": "Zeitraum"
+			"subheading": "Unvereinbarkeit mit BITV 2.0",
+			"timelineLabel": "Zeitraum",
+			"title": "Welche Bereiche sind nicht barrierefrei?"
 		}
 	},
 	"accessibilitySettingsModal": {
-		"title": "Einstellungen zur Barrierefreiheit",
-		"subtitle": "Hier finden Sie alle Einstellungen rund um die Barrierefreiheit auf der Webseite."
+		"subtitle": "Hier finden Sie alle Einstellungen rund um die Barrierefreiheit auf der Webseite.",
+		"title": "Einstellungen zur Barrierefreiheit"
+	},
+	"categoryFormModal": {
+		"actions": {
+			"cancel": "Abbrechen",
+			"create": "Kategorie erstellen",
+			"createLoading": "Wird erstellt...",
+			"save": "Speichern",
+			"saveLoading": "Wird gespeichert...",
+			"update": "Speichern",
+			"updateLoading": "Wird gespeichert..."
+		},
+		"delete": {
+			"button": "Löschen",
+			"cancel": "Abbrechen",
+			"confirm": "Löschen",
+			"confirmDescription": "Die Kategorie wird dauerhaft entfernt. Diese Aktion kann nicht rückgängig gemacht werden.",
+			"confirmTitle": "Kategorie löschen?",
+			"description": "Die Kategorie wird dauerhaft entfernt.",
+			"errorDescription": "Bitte zuerst alle Unterkategorien entfernen und erneut versuchen.",
+			"errorTitle": "Löschen fehlgeschlagen",
+			"title": "Kategorie löschen"
+		},
+		"dialog": {
+			"loading": "Kategorie wird geladen...",
+			"notFound": {
+				"description": "Diese Kategorie konnte nicht gefunden werden.",
+				"title": "Kategorie nicht gefunden"
+			},
+			"title": {
+				"create": "Kategorie erstellen",
+				"edit": "Kategorie bearbeiten"
+			}
+		},
+		"feedback": {
+			"create": {
+				"description": "Die Kategorie ist jetzt verfügbar.",
+				"title": "Kategorie erstellt"
+			},
+			"update": {
+				"description": "Die Änderungen wurden gespeichert.",
+				"title": "Kategorie aktualisiert"
+			}
+		},
+		"form": {
+			"details": {
+				"description": "Lege fest, wie diese Kategorie angezeigt wird.",
+				"fields": {
+					"description": {
+						"label": "Beschreibung",
+						"placeholder": "Optionale Beschreibung"
+					},
+					"icon": {
+						"label": "Icon",
+						"placeholder": "Optionaler Icon-Name"
+					},
+					"key": {
+						"label": "Schlüssel",
+						"placeholder": "z. B. museen"
+					},
+					"parent": {
+						"label": "Übergeordnete Kategorie",
+						"none": "Keine übergeordnete Kategorie",
+						"placeholder": "Übergeordnete Kategorie auswählen (optional)"
+					},
+					"status": {
+						"label": "Status"
+					}
+				},
+				"title": "Kategoriedetails"
+			}
+		},
+		"status": {
+			"active": "Aktiv",
+			"inactive": "Inaktiv"
+		}
+	},
+	"categoryTable": {
+		"actions": {
+			"add": "Kategorie hinzufügen"
+		},
+		"columns": {
+			"parent": "Übergeordnet",
+			"subcategories": "Unterkategorien"
+		},
+		"emptyMessage": "Keine Kategorien gefunden.",
+		"subtitle": "{{count}} gesamt",
+		"title": "Kategorien"
 	},
 	"downloadModal": {
 		"chooseFormat": "Dateiformat wählen",
@@ -245,13 +449,13 @@
 		"title": "Daten als Liste herunterladen"
 	},
 	"filter": {
-		"districtTagsSwitchAriaLabel": "{{translatedName}} ein- oder ausschalten",
 		"categories": {
 			"resetFilters": "Filter zurücksetzen",
 			"setAllFilters": "Alle Filter",
 			"title": "Kategorien"
 		},
 		"displayedInstitutions": "Angezeigte Kulturorte in Berlin",
+		"districtTagsSwitchAriaLabel": "{{translatedName}} ein- oder ausschalten",
 		"districts": {
 			"resetFilters": "Filter zurücksetzen",
 			"setAllFilters": "Alle Filter",
@@ -262,7 +466,105 @@
 		"loading": "Filter werden geladen...",
 		"retry": "Erneut versuchen",
 		"showClosed": "Geschlossene Orte einblenden",
+		"showMoreCategories": "Mehr Kategorien anzeigen",
+		"showSelectedCategories": "Ausgewählte Kategorien anzeigen",
 		"title": "Kulturorte filtern"
+	},
+	"groupFormModal": {
+		"actions": {
+			"cancel": "Abbrechen",
+			"create": "Gruppe erstellen",
+			"creating": "Gruppe wird erstellt...",
+			"save": "Änderungen speichern",
+			"saving": "Änderungen werden gespeichert..."
+		},
+		"dialog": {
+			"loading": "Gruppe wird geladen...",
+			"notFound": {
+				"description": "Die ausgewählte Gruppe konnte nicht geladen werden.",
+				"title": "Gruppe nicht gefunden"
+			},
+			"title": {
+				"create": "Gruppe erstellen",
+				"edit": "Gruppe bearbeiten"
+			}
+		},
+		"feedback": {
+			"create": {
+				"description": "Die Gruppe wurde erfolgreich erstellt.",
+				"title": "Gruppe erstellt"
+			},
+			"update": {
+				"description": "Die Änderungen wurden erfolgreich gespeichert.",
+				"title": "Gruppe aktualisiert"
+			}
+		},
+		"form": {
+			"details": {
+				"description": {
+					"create": "Legen Sie eine neue Gruppe an.",
+					"edit": "Aktualisieren Sie den Gruppennamen und die Beschreibung."
+				},
+				"fields": {
+					"description": {
+						"label": "Beschreibung",
+						"placeholder": "Optionale Beschreibung"
+					},
+					"name": {
+						"label": "Name",
+						"placeholder": "Gruppenname"
+					}
+				},
+				"title": "Gruppendetails"
+			},
+			"members": {
+				"fields": {
+					"institutions": {
+						"emptyText": "Keine Kulturorte gefunden",
+						"filters": {
+							"categories": "Kategorien",
+							"districts": "Bezirke",
+							"subcategories": "Unterkategorien",
+							"tags": "Tags"
+						},
+						"label": "Kulturorte",
+						"placeholder": "Kulturorte auswählen",
+						"searchPlaceholder": "Kulturorte suchen..."
+					},
+					"users": {
+						"emptyText": "Keine Benutzer*innen gefunden",
+						"filters": {
+							"role": "Rolle"
+						},
+						"label": "Benutzer*innen",
+						"placeholder": "Benutzer*innen auswählen",
+						"searchPlaceholder": "Benutzer*innen suchen..."
+					}
+				},
+				"title": "Mitglieder"
+			}
+		}
+	},
+	"groupTable": {
+		"actions": {
+			"add": "Gruppe erstellen"
+		},
+		"columns": {
+			"created": "Erstellt",
+			"createdAt": "Erstellt am",
+			"description": "Beschreibung",
+			"kulturorte": "Kulturorte",
+			"name": "Name",
+			"updatedAt": "Aktualisiert am",
+			"users": "Benutzer*innen"
+		},
+		"emptyMessage": "Keine Gruppen gefunden.",
+		"searchPlaceholder": "Gruppen durchsuchen...",
+		"subtitle": {
+			"plural": "{{count}} Gruppen insgesamt",
+			"singular": "1 Gruppe insgesamt"
+		},
+		"title": "Gruppen"
 	},
 	"imprintModal": {
 		"chairman": {
@@ -371,14 +673,39 @@
 					"question": "Wie kann ich meinen Kulturort aus dem Kulturkataster löschen lassen?"
 				}
 			],
+			"questions[0]": {
+				"answer": "",
+				"question": ""
+			},
+			"questions[1]": {
+				"answer": "",
+				"question": ""
+			},
+			"questions[2]": {
+				"answer": "",
+				"question": ""
+			},
+			"questions[3]": {
+				"answer": "",
+				"question": ""
+			},
+			"questions[4]": {
+				"answer": "",
+				"question": ""
+			},
 			"title": "Fragen & Antworten"
 		},
+		"featuresListAriaLabel": "Liste der verfügbaren Projektfunktionen",
 		"introduction": [
 			"Seit September 2025 steht Ihnen mit dem Kulturkataster Berlin die erste Version unseres digitalen Werkzeugs zur Verfügung, dass die Berliner Kulturlandschaft systematisch erfasst.",
 			"Das Kulturkataster wächst stetig weiter: Bereits für Anfang 2026 ist Version 2 geplant, und zur Jahresmitte 2026 folgt Version 3. Mit jeder neuen Version nehmen wir weitere Kulturorte auf, ergänzen die Informationen und fügen neue Funktionalitäten hinzu.",
 			"Sie können uns dabei helfen. Unter diesem [Link https://form.formcentric.com/form/fb8189d9-8887-425d-bdd5-4aec08f7d8d5] können Sie fehlende Kulturorte einreichen und Änderungen vorschlagen. Für Anregungen und Kritik erreichen Sie uns unter: info@kulturkataster.berlin",
 			"Die aktuelle Version des Kulturkatasters ist die Version 1."
 		],
+		"introduction[0]": "",
+		"introduction[1]": "",
+		"introduction[2]": "",
+		"introduction[3]": "",
 		"scope": {
 			"features": [
 				"{{count}} Kulturorte mit den Grundinformationen (Name, vollständige Adresse, allgemeine Kontaktinformationen, Angaben zu Förderung und Finanzierung)",
@@ -387,6 +714,11 @@
 				"Ein Suchfeld, indem Sie nach Adressen und Namen von Kulturorten suchen können.",
 				"Einen Suchfilter, der es ermöglicht, Orte nach Bezirk sowie Kategorie und Unterkategorie zu filtern. Darüber hinaus ist es möglich, geschlossene Kulturorte einzublenden."
 			],
+			"features[0]": "",
+			"features[1]": "",
+			"features[2]": "",
+			"features[3]": "",
+			"features[4]": "",
 			"title": "Umfang Version 1",
 			"upcomingEnhancements": {
 				"items": [
@@ -394,12 +726,16 @@
 					"Informationen in Leichter Sprache",
 					"Barrierearme Listenansicht"
 				],
+				"items[0]": "",
+				"items[1]": "",
+				"items[2]": "",
 				"title": "Folgende Erweiterungen für Version 1 werden bis November 2025 ergänzt"
 			}
 		},
 		"simpleLanguageDirect": "Den Bereich „Infos & Service“ in leichter Sprache finden Sie <link />.",
 		"subtitle": "",
 		"title": "Infos & Service",
+		"upcomingEnhancementsListAriaLabel": "Liste der geplanten Weiterungen und Verbesserungen",
 		"usage": {
 			"guides": [
 				{
@@ -452,17 +788,215 @@
 					"title": "Kontrast anpassen"
 				}
 			],
+			"guides[0]": {
+				"desktop": "",
+				"mobile": "",
+				"title": ""
+			},
+			"guides[1]": {
+				"desktop": "",
+				"mobile": "",
+				"title": ""
+			},
+			"guides[2]": {
+				"action": "",
+				"desktop": "",
+				"mobile": "",
+				"title": ""
+			},
+			"guides[3]": {
+				"closedPlaces": "",
+				"description": "",
+				"desktop": "",
+				"mobile": "",
+				"title": ""
+			},
+			"guides[4]": {
+				"description": "",
+				"desktop": "",
+				"mobile": "",
+				"title": ""
+			},
+			"guides[5]": {
+				"desktop": "",
+				"instructions": "",
+				"mobile": "",
+				"review": "",
+				"submit": "",
+				"title": ""
+			},
+			"guides[6]": {
+				"action": "",
+				"desktop": "",
+				"mobile": "",
+				"title": ""
+			},
+			"guides[7]": {
+				"action": "",
+				"desktop": "",
+				"mobile": "",
+				"title": ""
+			},
 			"introduction": "Das Kulturkataster Berlin wurde so konzipiert, dass es möglichst intuitiv bedient werden kann. Funktionalitäten orientieren sich an gängigen Kartenanwendungen. Grundlegende Bedienungshinweise haben wir an dieser Stelle für Sie zusammengefasst.",
 			"title": "Bedienung"
+		}
+	},
+	"institutionFormModal": {
+		"actions": {
+			"cancel": "Abbrechen",
+			"create": "Erstellen",
+			"creating": "Wird erstellt...",
+			"save": "Speichern",
+			"saving": "Wird gespeichert..."
 		},
-		"featuresListAriaLabel": "Liste der verfügbaren Projektfunktionen",
-		"upcomingEnhancementsListAriaLabel": "Liste der geplanten Weiterungen und Verbesserungen"
+		"dialog": {
+			"notFound": {
+				"description": "Der ausgewählter Kulturort konnte nicht geladen werden.",
+				"title": "Kulturort nicht gefunden"
+			},
+			"title": {
+				"create": "Kulturort erstellen",
+				"edit": "Kulturort bearbeiten"
+			}
+		},
+		"feedback": {
+			"create": {
+				"description": "Der Kulturort wurde erfolgreich erstellt.",
+				"title": "Kulturort erstellt"
+			},
+			"update": {
+				"description": "Die Änderungen wurden erfolgreich gespeichert.",
+				"title": "Kulturort aktualisiert"
+			}
+		},
+		"form": {
+			"additional": {
+				"title": "Zusätzliche Informationen"
+			},
+			"contact": {
+				"fields": {
+					"email": {
+						"placeholder": "kontakt@..."
+					},
+					"phone": {
+						"placeholder": "+49 ..."
+					},
+					"website": {
+						"placeholder": "https://..."
+					}
+				},
+				"title": "Kontakt"
+			},
+			"details": {
+				"description": {
+					"create": "Legen Sie einen neuen Kulturort an.",
+					"edit": "Aktualisieren Sie die Kulturorte."
+				},
+				"fields": {
+					"address": {
+						"address_suffix": {
+							"placeholder": "z. B. 2. OG"
+						},
+						"city": {
+							"placeholder": "z. B. Berlin"
+						},
+						"cultural_areal": {
+							"placeholder": "z. B. Kulturforum"
+						},
+						"neighbourhood": {
+							"placeholder": "z. B. Mitte"
+						},
+						"placeholder": "Straße, Hausnummer, PLZ, Ort",
+						"streetLine": {
+							"placeholder": "z. B. Musterstraße 1"
+						},
+						"zip": {
+							"placeholder": "z. B. 10115"
+						}
+					},
+					"categories": {
+						"emptyText": "Keine Kategorien gefunden.",
+						"placeholder": "Kategorien auswählen",
+						"searchPlaceholder": "Kategorien durchsuchen..."
+					},
+					"description": {
+						"placeholder": "Optionale Beschreibung"
+					},
+					"name": {
+						"placeholder": "Institutionsname"
+					},
+					"parentOrganization": {
+						"description": "Name der übergeordneten Organisation",
+						"placeholder": "z. B. Kulturverein Berlin e.V."
+					}
+				},
+				"title": "Details"
+			},
+			"facility": {
+				"title": "Einrichtung"
+			},
+			"funding": {
+				"title": "Finanzierung"
+			},
+			"organization": {
+				"title": "Organisation"
+			},
+			"status": {
+				"title": "Status"
+			}
+		},
+		"review": {
+			"actions": {
+				"approve": "Genehmigen",
+				"reject": "Ablehnen"
+			},
+			"error": "Überprüfung fehlgeschlagen. {{error}}",
+			"errorUnknown": "Unbekannter Fehler.",
+			"notesLabel": "Prüfnotizen",
+			"notesPlaceholder": "Optionale Notizen für die Einreichung",
+			"statusLabel": "Status: {{status}}",
+			"title": "Einreichung prüfen"
+		}
+	},
+	"institutionDraftIntroModal": {
+		"title": "Mitwirken beim Kulturkataster Berlin",
+		"choice": {
+			"title": "Wie möchten Sie fortfahren?",
+			"login": {
+				"title": "Melden Sie sich an oder registrieren Sie sich, um fortzufahren.",
+				"description": "Für die schnellere Bearbeitung Ihrer Einträge und die Übersicht empfehlen wir Ihnen, sich im Kulturkatasterportal anzumelden oder zu registrieren.",
+				"cta": "Zur Anmeldung"
+			},
+			"guest": {
+				"title": "Fortfahren ohne Anmeldung",
+				"description": "Sie können natürlich auch gern mitwirken, ohne sich bei uns anzumelden.",
+				"cta": "Weiter als Gast"
+			}
+		},
+		"intro": {
+			"thankYou": "Vielen Dank, dass Sie das Kulturkataster Berlin mit Ihrem Beitrag unterstützen!",
+			"description": "Zum Mitwirken tragen Sie bitte die benötigten Angaben in die jeweiligen Felder ein und klicken Sie am Ende des Formulars auf „Daten übermitteln“. Unser Redaktionsteam prüft jede Einsendung vor der Veröffentlichung und meldet sich ggfs. bei Rückfragen.",
+			"sectionTitle": "Basisinformation der Kultureinrichtung",
+			"sectionNote": "Bitte beachten Sie, dass Sie Angaben nur dann machen sollten, wenn Sie sich der Richtigkeit sicher sind und einer Einwilligung zur Veröffentlichung im Kulturkataster zustimmen. Sollten Informationen nur für befugte Nutzer*innen im geschützten Bereich des Kulturkatasters zugänglich und nicht öffentlich einsehbar sein, haben wir dies am jeweiligen Datenfeld gekennzeichnet.",
+			"mode": {
+				"title": "Möchten Sie eine neue Kultureinrichtung eintragen oder einen bestehenden Datensatz ergänzen bzw. korrigieren? *",
+				"description": "Wählen Sie die passende Kategorie für die Kultureinrichtung aus. Falls mehrere Kategorien zutreffen, wählen Sie die primäre Kategorie aus.",
+				"new": "Neue/n Kulturort/e eintragen",
+				"edit": "Ergänzung oder Änderung eines oder mehrere bestehender Kulturorte"
+			},
+			"cta": "Weiter"
+		}
 	},
 	"listView": {
 		"allLoaded": "Alle Kulturorte geladen",
 		"countLabel": "{{count}} Kulturorte",
 		"description": "Diese Liste zeigt alle Orte, die Sie in den Filtern ausgewählt haben – 1:1 wie auf der Karte. Sie eignet sich besonders für Screenreader.",
+		"filterButton": "Filter",
 		"loadMore": "Weitere Kulturorte laden",
+		"searchButton": "Suchen",
+		"searchClose": "Suche schließen",
+		"searchLabel": "Liste durchsuchen",
+		"searchPlaceholder": "Kulturort, Adresse oder Bezirk",
 		"subtitle": "Ihre Ergebnisse auf einen Blick",
 		"timeline": "Die Entwicklung der Listenansicht ist für das Jahr 2026 geplant.",
 		"title": "Listenansicht"
@@ -471,6 +1005,106 @@
 		"description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",
 		"subtitle": "Hier kommt der Datenschutztext.",
 		"title": "Datenschutz"
+	},
+	"roleFormModal": {
+		"actions": {
+			"cancel": "Abbrechen",
+			"create": "Rolle erstellen",
+			"creating": "Rolle wird erstellt...",
+			"save": "Änderungen speichern",
+			"saving": "Änderungen werden gespeichert..."
+		},
+		"dialog": {
+			"loading": "Rolle wird geladen...",
+			"notFound": {
+				"description": "Die ausgewählte Rolle konnte nicht geladen werden.",
+				"title": "Rolle nicht gefunden"
+			},
+			"title": {
+				"create": "Rolle erstellen",
+				"edit": "Rolle bearbeiten"
+			}
+		},
+		"feedback": {
+			"create": {
+				"description": "Die Rolle wurde erfolgreich erstellt.",
+				"title": "Rolle erstellt"
+			},
+			"update": {
+				"description": "Die Änderungen wurden erfolgreich gespeichert.",
+				"title": "Rolle aktualisiert"
+			}
+		},
+		"form": {
+			"details": {
+				"description": {
+					"create": "Legen Sie eine neue Rolle an.",
+					"edit": "Aktualisieren Sie den Rollennamen und die Beschreibung."
+				},
+				"fields": {
+					"description": {
+						"label": "Beschreibung",
+						"placeholder": "Optionale Beschreibung"
+					},
+					"name": {
+						"label": "Name",
+						"placeholder": "Rollenname"
+					}
+				},
+				"title": "Rollen-Details"
+			}
+		},
+		"permissions": {
+			"fields": {
+				"columnLabel": "Feld",
+				"description": "Begrenzen Sie Aktualisierungen auf bestimmte Kulturort-Felder.",
+				"sections": {
+					"address": "Adressfelder",
+					"institution": "Kulturort-Felder",
+					"relations": "Beziehungen"
+				},
+				"title": "Feldberechtigungen"
+			},
+			"scope": {
+				"all": "Alle",
+				"description": "Eigene: nur eigene Datensätze. Alle: alle Datensätze.",
+				"label": "Bandbreite",
+				"own": "Eigene"
+			},
+			"table": {
+				"description": "Legen Sie fest, welche Aktionen diese Rolle pro Tabelle ausführen darf.",
+				"title": "Tabellenberechtigungen"
+			},
+			"tables": {
+				"address": "Adressen",
+				"category": "Kategorien",
+				"group": "Gruppen",
+				"institution": "Kulturorte",
+				"role": "Rollen",
+				"submission": "Kulturort-Anfragen",
+				"user": "Benutzer*innen"
+			},
+			"title": "Berechtigungen"
+		}
+	},
+	"roleTable": {
+		"actions": {
+			"add": "Rolle erstellen"
+		},
+		"columns": {
+			"createdAt": "Erstellt am",
+			"description": "Beschreibung",
+			"name": "Name",
+			"updatedAt": "Aktualisiert am",
+			"users": "Benutzer*innen"
+		},
+		"emptyMessage": "Keine Rollen gefunden.",
+		"searchPlaceholder": "Rollen durchsuchen...",
+		"subtitle": {
+			"plural": "{{count}} Rollen insgesamt",
+			"singular": "1 Rolle insgesamt"
+		},
+		"title": "Rollen"
 	},
 	"signLanguageModal": {
 		"content": [
@@ -535,6 +1169,60 @@
 				]
 			}
 		],
+		"content[0]": {
+			"title": "",
+			"videos[0]": {
+				"src": "",
+				"title": ""
+			},
+			"videos[1]": {
+				"src": "",
+				"title": ""
+			},
+			"videos[2]": {
+				"src": "",
+				"title": ""
+			}
+		},
+		"content[1]": {
+			"title": "",
+			"videos[0]": {
+				"src": "",
+				"sub": "",
+				"title": ""
+			},
+			"videos[1]": {
+				"src": "",
+				"title": ""
+			},
+			"videos[2]": {
+				"src": "",
+				"title": ""
+			}
+		},
+		"content[2]": {
+			"title": "",
+			"videos[0]": {
+				"src": "",
+				"title": ""
+			},
+			"videos[1]": {
+				"src": "",
+				"title": ""
+			},
+			"videos[2]": {
+				"src": "",
+				"title": ""
+			},
+			"videos[3]": {
+				"src": "",
+				"title": ""
+			},
+			"videos[4]": {
+				"src": "",
+				"title": ""
+			}
+		},
 		"description": "Hier finden Sie alle Informationen zum Kulturkataster Berlin in Deutscher Gebärdensprache (DGS). Die Videos erklären die wichtigsten Inhalte der Website – von „Über das Kulturkataster“ über „Info & Service“ bis hin zu den häufig gestellten Fragen (FAQ). Sie können die einzelnen Videos direkt abspielen.",
 		"subtitle": "Barrierefreie Informationen über das Kulturkataster Berlin",
 		"title": "Gebärdensprache (DGS)"
@@ -549,6 +1237,11 @@
 					"Ein Ort zum Lernen und Erinnern",
 					"Ein Ort für Zusammen·halt in der Gesellschaft"
 				],
+				"content[0]": "",
+				"content[1]": "",
+				"content[2]": "",
+				"content[3]": "",
+				"content[4]": "",
 				"title": "Sie sind:"
 			},
 			"list2": {
@@ -557,6 +1250,9 @@
 					"Was braucht Berlin?",
 					"Wie kann man das Kultur·kataster machen?"
 				],
+				"content[0]": "",
+				"content[1]": "",
+				"content[2]": "",
 				"title1": "Ende 2022 bekam die Kultur·raum Berlin gGmbH den Auftrag.",
 				"title2": "Sie sollte überlegen:"
 			},
@@ -566,6 +1262,9 @@
 					"Damit kann man bessere Politik machen.",
 					"Damit kann man die Stadt gezielt entwickeln."
 				],
+				"content[0]": "",
+				"content[1]": "",
+				"content[2]": "",
 				"title": "1. Kultur·politik mit Fakten machen"
 			},
 			"list4": {
@@ -574,6 +1273,9 @@
 					"Es hilft beim Schutz von Kultur·orten.",
 					"Es hilft neue Orte zu finden."
 				],
+				"content[0]": "",
+				"content[1]": "",
+				"content[2]": "",
 				"title": "2. Räume für Kultur sichern und neu finden"
 			},
 			"list5": {
@@ -582,6 +1284,9 @@
 					"So kann man Kultur·orte besser planen.",
 					"Ziel ist: Alle Menschen in Berlin sollen Kultur erleben."
 				],
+				"content[0]": "",
+				"content[1]": "",
+				"content[2]": "",
 				"title": "3. Gerechte Verteilung von Kultur"
 			},
 			"list6": {
@@ -590,6 +1295,9 @@
 					"Es hilft Behörden und Politik zusammen zu arbeiten.",
 					"Es hilft auch der ganzen Berliner Kultur·szene."
 				],
+				"content[0]": "",
+				"content[1]": "",
+				"content[2]": "",
 				"title": "4. Zusammen·arbeit verbessern"
 			},
 			"list7": {
@@ -597,6 +1305,8 @@
 					"Immer näher an den echten Zustand kommen.",
 					"Die Kultur von Berlin gut zeigen."
 				],
+				"content[0]": "",
+				"content[1]": "",
 				"title": "Darum ist das Ziel:"
 			},
 			"list8": {
@@ -608,6 +1318,12 @@
 					"Aktivistinnen und Aktivisten",
 					"Den Kultur·orten selbst"
 				],
+				"content[0]": "",
+				"content[1]": "",
+				"content[2]": "",
+				"content[3]": "",
+				"content[4]": "",
+				"content[5]": "",
 				"title": "Das geht nur zusammen mit:"
 			},
 			"list9": {
@@ -616,6 +1332,9 @@
 					"Jede Version hat neue Funktionen.",
 					"Jede Version hat aktuelle Infos."
 				],
+				"content[0]": "",
+				"content[1]": "",
+				"content[2]": "",
 				"title1": "Das Kultur·kataster ist ein Lern·prozess.",
 				"title2": "Das heißt:"
 			},
@@ -700,11 +1419,16 @@
 		"infosAndServices": {
 			"list1": {
 				"content": ["Anfang 2026 Version 2", "Mitte 2026 Version 3"],
+				"content[0]": "",
+				"content[1]": "",
 				"title1": "Das Kultur·kataster wächst immer weiter.",
 				"title2": "Im Jahr 2026 gibt es 2 neue Versionen:"
 			},
 			"list2": {
 				"content": ["Mehr Kultur·ort", "Mehr Infos", "Mehr Funktionen"],
+				"content[0]": "",
+				"content[1]": "",
+				"content[2]": "",
 				"title": "Mit jeder Version gibt es:"
 			},
 			"list3": {
@@ -717,7 +1441,15 @@
 					"Infos in Deutscher Gebärden·sprache",
 					"Infos in Leichter Sprache",
 					"Barriere·arme Listen·ansicht"
-				]
+				],
+				"content[0]": "",
+				"content[1]": "",
+				"content[2]": "",
+				"content[3]": "",
+				"content[4]": "",
+				"content[5]": "",
+				"content[6]": "",
+				"content[7]": ""
 			},
 			"list4": {
 				"content": [
@@ -725,6 +1457,9 @@
 					"Nach Kategorien.",
 					"Nach Unter·kategorien."
 				],
+				"content[0]": "",
+				"content[1]": "",
+				"content[2]": "",
 				"title": "Sie können Kultur·orte filtern:",
 				"titleBold": "Filtern"
 			},
@@ -733,6 +1468,8 @@
 					"Nur kurz geschlossene Kultur·orte",
 					"Für immer geschlossene Kultur·orte"
 				],
+				"content[0]": "",
+				"content[1]": "",
 				"title": "Dann sehen Sie auch:"
 			},
 			"list6": {
@@ -740,6 +1477,8 @@
 					"Einverständnis·erklärung ankreuzen",
 					"Formular abschicken"
 				],
+				"content[0]": "",
+				"content[1]": "",
 				"title": "Dann müssen Sie:"
 			},
 			"list7": {
@@ -749,11 +1488,17 @@
 					"Künstler·residenzen",
 					"Kultur·organisationen"
 				],
+				"content[0]": "",
+				"content[1]": "",
+				"content[2]": "",
+				"content[3]": "",
 				"title1": "Noch fehlen viele Kategorien.",
 				"title2": "Zum Beispiel:"
 			},
 			"list8": {
 				"content": ["Private Galerien", "Private Kunst·schulen"],
+				"content[0]": "",
+				"content[1]": "",
 				"title1": "Auch in bestehenden Kategorien fehlen Orte.",
 				"title2": "Zum Beispiel:"
 			},
@@ -763,6 +1508,9 @@
 					"Am Handy oder Tablet: Stift·symbol unten rechts antippen",
 					"Dann den Anweisungen folgen"
 				],
+				"content[0]": "",
+				"content[1]": "",
+				"content[2]": "",
 				"title": "So geht es:"
 			},
 			"subTitle1": "Was ist dabei in Version 1",
@@ -894,8 +1642,161 @@
 			"title": "Infos & Services"
 		}
 	},
+	"institutionsTable": {
+		"actions": {
+			"addInstitution": "Kulturort hinzufügen",
+			"claimInstitution": "Meine Kulturorte anfragen"
+		},
+		"type": {
+			"manage": "Verwalten",
+			"submission": {
+				"claim": "Angefragt",
+				"create": "Erstellt",
+				"update": "Änderung angefragt"
+			}
+		}
+	},
+	"userFormModal": {
+		"actions": {
+			"cancel": "Abbrechen",
+			"create": "Nutzer*in anlegen",
+			"creating": "Wird angelegt...",
+			"save": "Änderungen speichern",
+			"saving": "Wird gespeichert..."
+		},
+		"complianceResend": {
+			"description": "Senden Sie die DSGVO-Compliance-E-Mail erneut an die Nutzerin oder den Nutzer.",
+			"error": "DSGVO-Compliance-E-Mail konnte nicht gesendet werden.",
+			"send": "DSGVO-Compliance-E-Mail senden",
+			"sending": "Wird gesendet…",
+			"success": "DSGVO-Compliance-E-Mail erfolgreich gesendet.",
+			"title": "DSGVO-Compliance erneut senden"
+		},
+		"dialog": {
+			"loading": "Nutzer*in wird geladen…",
+			"notFound": {
+				"description": "Der Datensatz ist derzeit nicht verfügbar. Bitte versuchen Sie es erneut.",
+				"title": "Nutzer*in nicht gefunden"
+			},
+			"title": {
+				"create": "Nutzer*in hinzufügen",
+				"edit": "Nutzer*in bearbeiten"
+			}
+		},
+		"feedback": {
+			"create": {
+				"description": "Die Nutzer*in wurde erfolgreich erstellt.",
+				"title": "Nutzer*in erstellt"
+			},
+			"update": {
+				"description": "Die Änderungen wurden erfolgreich gespeichert.",
+				"title": "Nutzer*in aktualisiert"
+			}
+		},
+		"form": {
+			"access": {
+				"fields": {
+					"groups": {
+						"emptyText": "Keine Gruppen gefunden",
+						"label": "Gruppen",
+						"placeholder": "Gruppen auswählen",
+						"searchPlaceholder": "Gruppen suchen..."
+					},
+					"institutions": {
+						"emptyText": "Keine Kulturorte gefunden",
+						"filters": {
+							"categories": "Kategorien",
+							"districts": "Bezirke",
+							"subcategories": "Unterkategorien",
+							"tags": "Tags"
+						},
+						"label": "Kulturorte",
+						"placeholder": "Kulturorte auswählen",
+						"searchPlaceholder": "Kulturort suchen..."
+					},
+					"role": {
+						"label": "Rolle"
+					}
+				},
+				"title": "Zugriff & Mitgliedschaften"
+			},
+			"identity": {
+				"description": {
+					"create": "Laden Sie eine neue Nutzerin oder einen neuen Nutzer ein und legen Sie die Zugriffsrechte fest.",
+					"edit": "Profilangaben und Zugriffsrechte aktualisieren."
+				},
+				"fields": {
+					"accountType": {
+						"label": "Kontotyp",
+						"placeholder": "Organisation, Bezirk, ..."
+					},
+					"compliance": {
+						"label": "Compliance freigegeben"
+					},
+					"email": {
+						"label": "E-Mail",
+						"placeholder": "name@beispiel.de"
+					},
+					"firstName": {
+						"label": "Vorname",
+						"placeholder": "Max"
+					},
+					"lastName": {
+						"label": "Nachname",
+						"placeholder": "Mustermann"
+					},
+					"status": {
+						"label": "Status"
+					}
+				},
+				"title": "Benutzerdetails"
+			}
+		},
+		"passwordReset": {
+			"description": "Senden Sie eine Reset-E-Mail an die Nutzerin oder den Nutzer.",
+			"error": "Reset-E-Mail konnte nicht gesendet werden.",
+			"send": "Reset-E-Mail senden",
+			"sending": "Wird gesendet…",
+			"success": "E-Mail zum Zurücksetzen des Passworts gesendet.",
+			"title": "Passwort zurücksetzen"
+		},
+		"status": {
+			"active": "Aktiv",
+			"approvalPending": "Freigabe ausstehend",
+			"banned": "Gesperrt",
+			"inactive": "Inaktiv"
+		}
+	},
+	"userTable": {
+		"actions": {
+			"add": "Nutzer*in hinzufügen"
+		},
+		"columns": {
+			"access": "Zugriff auf Kulturorte",
+			"compliance": "Compliance",
+			"createdAt": "Erstellt am",
+			"email": "E-Mail",
+			"firstName": "Vorname",
+			"groups": "Gruppen",
+			"lastName": "Nachname",
+			"role": "Rolle",
+			"status": "Status",
+			"claims": "Kulturort Anfragen",
+			"updatedAt": "Aktualisiert am"
+		},
+		"compliance": {
+			"accepted": "DSGVO akzeptiert",
+			"rejected": "DSGVO nicht akzeptiert"
+		},
+		"emptyMessage": "Keine Nutzer*innen gefunden.",
+		"emptyValue": "—",
+		"institutionsCount_one": "{{count}} Kulturort",
+		"institutionsCount_other": "{{count}} Kulturorte",
+		"searchPlaceholder": "Nutzer*innen suchen..."
+	},
 	"welcomeModal": {
 		"aboutButton": "Über das Projekt",
+		"accessibilitySettings": "Einstellungen zur Barrierefreiheit",
 		"closeButton": "Schließen",
 		"description1": "Das ist die erste Version des Berliner Kulturkatasters. Das Kulturkataster ist eine digitale Karte, die die Vielfalt der Kulturlandschaft Berlins abbildet und systematisch Kunst- und Kulturorte erfasst. Es dient als zentrale Grundlage für eine faktenbasierte kulturelle Stadtentwicklung. In den kommenden Monaten werden wir diese Version mit neuen Funktionen und Informationen ausbauen.",
 		"description2": "Stärken Sie mit uns dieses Projekt für die Berliner Kultur! Wir freuen uns auf Ihre Anmerkungen.",
@@ -906,7 +1807,6 @@
 		"infoButton": "Infos & Service",
 		"newsletter": "Zum Newsletter anmelden",
 		"subtitle": "Ein Projekt der Kulturraum Berlin gGmbH",
-		"title": "Das Berliner Kulturkataster: Die Kultur der Stadt auf einen Blick",
-		"accessibilitySettings": "Einstellungen zur Barrierefreiheit"
+		"title": "Das Berliner Kulturkataster: Die Kultur der Stadt auf einen Blick"
 	}
 }

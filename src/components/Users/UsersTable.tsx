@@ -1,0 +1,200 @@
+"use client";
+
+import { DataTable } from "@/components/DataTable";
+import type { DataTableConfig } from "@/components/DataTable";
+import { BadgeOverflowList } from "@/components/Badges/Badges";
+import { StatusDot } from "@/components/ui/status-dot";
+import { useAccountStore } from "@/lib/store/accountStore";
+import { useLocalePath } from "@/lib/hooks/useLocalePath";
+import type { User } from "@/types/user";
+import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
+import { Badge } from "../ui/badge";
+import { UserStatus } from "@/generated/prisma";
+
+export function UsersTable() {
+	const users = useAccountStore((state) => state.users);
+	const router = useRouter();
+	const toLocalePath = useLocalePath();
+	const { t } = useTranslation("content");
+
+	const getStatusLabel = (status: UserStatus) => {
+		if (status === "approval_pending") {
+			return t("userFormModal.status.approvalPending");
+		}
+		if (status === "active") return t("userFormModal.status.active");
+		if (status === "inactive") return t("userFormModal.status.inactive");
+		if (status === "banned") return t("userFormModal.status.banned");
+		return status;
+	};
+
+	const tableConfig: DataTableConfig<User> = {
+		columns: [
+			{
+				id: "status",
+				header: "",
+				accessorKey: "status",
+				enableSorting: true,
+				meta: { pin: "left" },
+				size: 50,
+				cell: ({ row }) => {
+					const user = row.original;
+					let tone: "success" | "neutral" | "info" | "error" = "neutral";
+					if (user.status === "active") tone = "success";
+					else if (user.status === "approval_pending") tone = "info";
+					else if (user.status === "inactive") tone = "error";
+					else if (user.status === "banned") tone = "neutral";
+					return (
+						<StatusDot
+							tone={tone}
+							label={getStatusLabel(user.status)}
+							showLabel="hover"
+						/>
+					);
+				},
+			},
+			{
+				accessorKey: "email",
+				header: t("userTable.columns.email"),
+				enableSorting: true,
+				size: 250,
+				meta: { pin: "left", truncate: true },
+			},
+			{
+				accessorKey: "first_name",
+				header: t("userTable.columns.firstName"),
+				enableSorting: true,
+				meta: { truncate: true },
+			},
+			{
+				accessorKey: "last_name",
+				header: t("userTable.columns.lastName"),
+				enableSorting: true,
+				meta: { truncate: true },
+			},
+			{
+				accessorKey: "submissions",
+				header: t("userTable.columns.claims"),
+				enableSorting: true,
+				meta: { truncate: true },
+				cell: ({ row }) => {
+					const claims =
+						row.original.submissions?.filter(
+							(submission) => submission.type === "claim",
+						).length ?? 0;
+					return (
+						<span>
+							{claims > 0
+								? row.original.submissions?.length
+								: t("userTable.emptyValue")}
+						</span>
+					);
+				},
+			},
+			{
+				id: "role",
+				header: t("userTable.columns.role"),
+				accessorFn: (row) => row.role?.name ?? "",
+				enableSorting: true,
+				meta: { truncate: true },
+				cell: ({ row }) => (
+					<span className="capitalize">
+						{row.original.role?.name ?? t("userTable.emptyValue")}
+					</span>
+				),
+			},
+			{
+				id: "groups",
+				header: t("userTable.columns.groups"),
+				enableSorting: true,
+				sortingFn: (rowA, rowB) => {
+					const a = rowA.original;
+					const b = rowB.original;
+					if (a.groups.length !== b.groups.length) {
+						return a.groups.length - b.groups.length;
+					}
+					if (a.groups.length > 0 && b.groups.length > 0) {
+						return a.groups[0].name.localeCompare(b.groups[0].name);
+					}
+					return 0;
+				},
+				cell: ({ row }) => (
+					<BadgeOverflowList
+						items={row.original.groups.map((group) => ({
+							id: group.id,
+							label: group.name,
+						}))}
+						emptyLabel={t("userTable.emptyValue")}
+					/>
+				),
+			},
+			{
+				id: "access",
+				header: t("userTable.columns.access"),
+				accessorFn: (row) => row.institutions?.length ?? 0,
+				enableSorting: true,
+				sortingFn: (rowA, rowB) =>
+					(rowA.original.institutions?.length ?? 0) -
+					(rowB.original.institutions?.length ?? 0),
+				cell: ({ row }) => (
+					<div className="flex flex-col gap-1">
+						<span className="body3">
+							{t("userTable.institutionsCount", {
+								count: row.original.institutions?.length ?? 0,
+							})}
+						</span>
+					</div>
+				),
+			},
+			{
+				id: "compliance",
+				header: t("userTable.columns.compliance"),
+				accessorFn: (row) => Number(row.compliance ?? false),
+				enableSorting: true,
+				sortingFn: (rowA, rowB) =>
+					Number(rowB.original.compliance) - Number(rowA.original.compliance),
+				cell: ({ row }) => (
+					<div className="flex flex-col gap-1">
+						{row.original.compliance ? (
+							<Badge variant="default" className="text-xs">
+								{t("userTable.compliance.accepted")}
+							</Badge>
+						) : (
+							<Badge variant="outline" className="text-xs">
+								{t("userTable.compliance.rejected")}
+							</Badge>
+						)}
+					</div>
+				),
+			},
+		],
+		data: users,
+		getRowKey: (row) => row.id,
+		searchable: true,
+		searchPlaceholder: t("userTable.searchPlaceholder"),
+		getSearchableValues: (row) => [
+			row.email,
+			row.role?.name ?? "",
+			row.status,
+			...row.groups.map((group) => group.name),
+		],
+		primaryButton: {
+			label: t("userTable.actions.add"),
+			onClick: () => router.push(toLocalePath("/account/users/new")),
+		},
+		onReview: (row) =>
+			router.push(toLocalePath(`/account/users/${row.id}/review`)),
+		getCanReview: (row) => (row.submissions?.length ?? 0) > 0,
+		reviewAriaLabel: t("userTable.actions.reviewClaims", {
+			defaultValue: "Claims prüfen",
+		}),
+		onEdit: (row) => router.push(toLocalePath(`/account/users/${row.id}/edit`)),
+		emptyMessage: t("userTable.emptyMessage"),
+	};
+
+	return (
+		<>
+			<DataTable config={tableConfig} />
+		</>
+	);
+}

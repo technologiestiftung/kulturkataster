@@ -1,0 +1,81 @@
+"use client";
+
+import { DataTable } from "@/components/DataTable";
+import type { DataTableConfig } from "@/components/DataTable";
+import { useLocalePath } from "@/lib/hooks/useLocalePath";
+import { useAccountStore } from "@/lib/store/accountStore";
+import type { Role } from "@/types/role";
+import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
+
+export function RolesTable() {
+	const roles = useAccountStore((state) => state.roles);
+	const router = useRouter();
+	const toLocalePath = useLocalePath();
+	const { t } = useTranslation(["content", "enumMap"]);
+
+	const tableConfig: DataTableConfig<Role> = {
+		columns: [
+			{
+				accessorKey: "name",
+				header: t("roleTable.columns.name"),
+				enableSorting: true,
+				meta: { pin: "left", truncate: true },
+			},
+			{
+				accessorKey: "description",
+				header: t("roleTable.columns.description"),
+				enableSorting: true,
+				meta: { truncate: true },
+			},
+			{
+				id: "created_at",
+				header: t("roleTable.columns.createdAt"),
+				accessorFn: (row) => new Date(row.created_at).toLocaleDateString(),
+				enableSorting: true,
+			},
+			{
+				id: "updated_at",
+				header: t("roleTable.columns.updatedAt"),
+				accessorFn: (row) => new Date(row.updated_at).toLocaleDateString(),
+				enableSorting: true,
+			},
+			{
+				id: "userCount",
+				header: t("roleTable.columns.users"),
+				accessorFn: (row) => row.users.length,
+				enableSorting: true,
+			},
+		],
+		data: roles,
+		getRowKey: (row) => row.id,
+		searchable: true,
+		searchPlaceholder: t("roleTable.searchPlaceholder"),
+		getSearchableValues: (row) => {
+			const values: string[] = [
+				row.name,
+				row.description ?? "",
+				String(row.users.length),
+			];
+
+			return values;
+		},
+		primaryButton: {
+			label: t("roleTable.actions.add"),
+			onClick: () => router.push(toLocalePath("/account/roles/new")),
+		},
+		onEdit: (row) => router.push(toLocalePath(`/account/roles/${row.id}/edit`)),
+		emptyMessage: t("roleTable.emptyMessage"),
+		title: t("roleTable.title"),
+		subtitle:
+			roles.length === 1
+				? t("roleTable.subtitle.singular")
+				: t("roleTable.subtitle.plural", { count: roles.length }),
+	};
+
+	return (
+		<>
+			<DataTable config={tableConfig} />
+		</>
+	);
+}

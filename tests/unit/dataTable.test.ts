@@ -1,0 +1,78 @@
+import React from "react";
+import { describe, expect, it, vi } from "vitest";
+import { renderToStaticMarkup } from "react-dom/server";
+import { DataTable } from "@/components/DataTable/DataTable";
+import type { DataTableConfig } from "@/components/DataTable";
+
+vi.mock("@tanstack/react-virtual", () => ({
+	useWindowVirtualizer: () => ({
+		getVirtualItems: () => [],
+		getTotalSize: () => 0,
+	}),
+}));
+
+vi.mock("@/icons/chevron-up.svg", () => ({ default: () => null }));
+vi.mock("@/icons/chevron-down.svg", () => ({ default: () => null }));
+vi.mock("@/icons/edit.svg", () => ({ default: () => null }));
+vi.mock("@/icons/arrow-narrow-left.svg", () => ({ default: () => null }));
+vi.mock("@/icons/arrow-narrow-right.svg", () => ({ default: () => null }));
+vi.mock("@/icons/plus.svg", () => ({ default: () => null }));
+vi.mock("@/icons/search.svg", () => ({ default: () => null }));
+vi.mock("@/icons/close.svg", () => ({ default: () => null }));
+
+type Row = {
+	id: number;
+	name: string;
+	status: string;
+};
+
+const buildMarkup = () => {
+	const config: DataTableConfig<Row> = {
+		columns: [
+			{
+				accessorKey: "name",
+				header: "Name",
+				enableSorting: true,
+				meta: { truncate: true },
+			},
+			{
+				accessorKey: "status",
+				header: "Status",
+				enableSorting: false,
+			},
+		],
+		data: [{ id: 1, name: "Alpha", status: "Active" }],
+		getRowKey: (row) => row.id,
+	};
+
+	return renderToStaticMarkup(React.createElement(DataTable<Row>, { config }));
+};
+
+describe("DataTable", () => {
+	it("wires header ids to data cells for accessibility", () => {
+		const markup = buildMarkup();
+		const nameHeaderMatch = markup.match(/id="([^"]+-header-name)"/);
+		const statusHeaderMatch = markup.match(/id="([^"]+-header-status)"/);
+
+		expect(nameHeaderMatch).not.toBeNull();
+		expect(statusHeaderMatch).not.toBeNull();
+
+		const nameHeaderId = nameHeaderMatch?.[1] ?? "";
+		const statusHeaderId = statusHeaderMatch?.[1] ?? "";
+
+		expect(markup).toContain(`headers="${nameHeaderId}"`);
+		expect(markup).toContain(`headers="${statusHeaderId}"`);
+	});
+
+	it("applies truncate only to columns that opt in", () => {
+		const markup = buildMarkup();
+		const truncateMatches = markup.match(/\btruncate\b/g) ?? [];
+		expect(truncateMatches.length).toBe(1);
+	});
+
+	it("only makes sortable headers keyboard focusable", () => {
+		const markup = buildMarkup();
+		const tabIndexMatches = markup.match(/tabindex="0"/g) ?? [];
+		expect(tabIndexMatches.length).toBe(1);
+	});
+});

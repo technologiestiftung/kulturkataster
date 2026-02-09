@@ -8,6 +8,8 @@ export const useAppStore = create<AppStoreState>()(
 		(set) => ({
 			firstTimeUser: true,
 			setFirstTimeUser: (firstTime) => set({ firstTimeUser: firstTime }),
+			viewMode: "map",
+			setViewMode: (mode) => set({ viewMode: mode }),
 			isContrastMode: false,
 			setIsContrastMode: createSetContrastMode(set),
 			isLargeTextMode: false,
@@ -21,11 +23,18 @@ export const useAppStore = create<AppStoreState>()(
 			},
 			baseFontSize: 16,
 			setBaseFontSize: createSetBaseFontSize(set),
-			viewMode: "map",
-			setViewMode: (mode) => set({ viewMode: mode }),
+			isLayerTreeOpen: false,
+			setIsLayerTreeOpen: (isOpen) => set({ isLayerTreeOpen: isOpen }),
 		}),
 		{
 			name: "app-storage",
+			partialize: (state) => ({
+				firstTimeUser: state.firstTimeUser,
+				viewMode: state.viewMode,
+				isContrastMode: state.isContrastMode,
+				isLargeTextMode: state.isLargeTextMode,
+				baseFontSize: state.baseFontSize,
+			}),
 		},
 	),
 );

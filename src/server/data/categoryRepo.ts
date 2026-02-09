@@ -18,6 +18,11 @@ export const categoryRepo = {
 			include,
 			orderBy: { key: "asc" },
 		}),
+	findById: (id: number) =>
+		prisma.category.findUnique({
+			where: { id },
+			include,
+		}),
 	create: (data: CategoryCreateInput) =>
 		prisma.category.create({
 			data,

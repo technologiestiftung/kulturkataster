@@ -41,7 +41,8 @@
 		"Spandau"
 	],
 	"field_names": {
-		"address": "Geodaten für Kartenanbindung",
+		"accessibility": "Barrierefreiheit",
+		"address": "Adresse",
 		"address_suffix": "Adresszusatz",
 		"area": "Größe der Nutzflächen (m²)",
 		"capacity": "Kapazität",
@@ -51,9 +52,11 @@
 		"city": "Ort",
 		"closing_reason": "Schließungsgründe",
 		"contact_person_email": "Ansprechperson E-Mail Adresse",
-		"contact_person_name": "Ansprechperson Vorname",
+		"contact_person_": "Ansprechperson Vorname",
+		"contact_person_name": "Ansprechperson Name",
 		"contact_person_phone": "Ansprechperson Telefonnummer",
 		"contact_person_surname": "Ansprechperson Nachname",
+		"cost": "Kosten",
 		"cultural_area": "Kulturareal",
 		"description": "Zusätzliche Informationen",
 		"display_na": "Geodaten OSM",
@@ -61,18 +64,24 @@
 		"email": "E-Mail-Adresse",
 		"established_since": "Bestehen am Standort seit",
 		"established_until": "Bestehen am Standort bis",
+		"external_id": "Externe ID",
 		"funding_source": "Art der Finanzierung",
+		"funding_source_description": "Beschreibung der Finanzierungsquelle",
+		"funding_source_name": "Name der Finanzierungsquelle",
 		"funding_sources": "Art der Finanzierung",
 		"funding_type": "Art der Förderung",
 		"geo_category": "Geodaten OSM",
 		"geo_type": "Geodaten OSM",
 		"geom": "Geoposition",
 		"id": "ID",
-		"institution_email": "E-Mail-Adresse",
+		"institution_email": "E-Mail-Adresse der Kultureinrichtung",
 		"institution_name": "Kultureinrichtung",
-		"institution_phone": "Telefonnummer",
-		"institution_website": "Website",
+		"institution_phone": "Telefonnummer der Kultureinrichtung",
+		"institution_website": "Website der Kultureinrichtung",
+		"lat": "Breitengrad",
 		"latlong": "Geodaten OSM",
+		"legal_form": "Rechtsform",
+		"lng": "Längengrad",
 		"name": "Kultureinrichtung",
 		"neighbourhood": "Stadtteil",
 		"notes": "Zusätzliche Informationen",
@@ -94,6 +103,7 @@
 		"shared_use_audience": "Verfügbar für Zielgruppe/Sparte",
 		"shared_use_contact_person": "Kontakt für Raumanfragen",
 		"shared_use_info": "Beschreibung der Räume/Flächen",
+		"support_type": "Art der Finanzierung",
 		"source": "Datenquelle",
 		"street": "Straße",
 		"street_number": "Hausnummer",
@@ -103,8 +113,9 @@
 		"tags": "Tags",
 		"updated_at": "Stand",
 		"utilization_status": "Nutzungsstatus",
+		"utilization_status_info": "Nutzungsstatus Detailinfos",
 		"website": "Website",
-		"zip_code": "PLZ"
+		"zip": "Postleitzahl"
 	},
 	"funding_source": {
 		"church": "Kirche",
@@ -117,6 +128,7 @@
 		"state_berlin": "Land Berlin"
 	},
 	"funding_type": {
+		"placeholder": "Art der Förderung auswählen",
 		"institutional_funding": "Institutionell gefördert",
 		"no_funding": "Nicht gefördert",
 		"temporary_project_funding": "Temporäre Projektförderung",
@@ -138,6 +150,7 @@
 		"removal_pending": "Löschung beantragt"
 	},
 	"owner_type": {
+		"placeholder": "Eigentümer*innenart auswählen",
 		"district_property": "Bezirkliche Liegenschaft",
 		"federal_property": "Bundesliegenschaft",
 		"municipal_housing_company": "Städtische Wohnungsbaugesellschaft",
@@ -151,11 +164,8 @@
 		"state_property_soda": "Landesliegenschaft (SODA)",
 		"state_property_specialized": "Spezialimmobilie Land"
 	},
-	"protection_status": {
-		"long_term_secured": "Langfristig gesichert",
-		"not_yet_secured": "Noch nicht gesichert"
-	},
 	"rental_contract_type": {
+		"placeholder": "Vertragsform auswählen",
 		"limited_lease": "Befristete Miete",
 		"organization_ownership": "Eigentum der Organisation",
 		"unlimited_lease": "Unbefristete Miete"
@@ -270,11 +280,21 @@
 		"super_administrator": "Super-Administrator"
 	},
 	"utilization_status": {
+		"placeholder": "Nutzungsstatus auswählen",
 		"in_use": "In Nutzung",
-		"permanently_closed": "Dauerhaft geschlossen",
-		"planned_use": "Geplante Nutzung",
 		"potential_space": "Potenzialort",
 		"temporarily_closed": "Vorübergehend geschlossen",
+		"planned_use": "Geplante Nutzung",
+		"permanently_closed": "Dauerhaft geschlossen",
 		"unknown": "Unbekannt"
+	},
+	"protection_status": {
+		"placeholder": "Sicherungsstatus auswählen",
+		"long_term_secured": "Langfristig gesichert",
+		"medium_term_secured": "Mittelfristig gesichert",
+		"uncertain": "Unsicher",
+		"acutely_threatened": "Akut gefährdet",
+		"permanently_closed": "Dauerhaft geschlossen",
+		"not_yet_secured": "Noch nicht gesichert"
 	}
 }

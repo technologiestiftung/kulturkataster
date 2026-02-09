@@ -1,15 +1,13 @@
-export { InfoItem } from "./shared/InfoItem";
-export { InfoSection } from "./shared/InfoSection";
-export { ContactLink } from "./shared/ContactLink";
+export { InfoItem } from "../InfoWrapper/InfoItem";
 
 export { ToggleButton } from "./ToggleButton";
 
-export { DynamicInfoBlock } from "./DynamicInfoBlock";
 export type {
-	DynamicInfoBlockConfig,
-	InfoFieldConfig,
-	FieldValueType,
-} from "./DynamicInfoBlock";
+	InfoWrapperConfig,
+	InfoWrapperFieldConfig,
+} from "../InfoWrapper/types";
+
+export { InstitutionsTable } from "./InstitutionsTable";
 
 export {
 	addressInfoConfig,
@@ -19,4 +17,4 @@ export {
 	facilityInfoConfig,
 	statusInfoConfig,
 	additionalInfoConfig,
-} from "./DynamicInfoBlock";
+} from "../../config/infoConfig/configs";

@@ -1,8 +1,11 @@
 import type {
+	Address,
+	FundingSource,
 	FundingType,
 	InstitutionStatus,
 	Prisma,
 	ProtectionStatus,
+	SubmissionType,
 	UtilizationStatus,
 } from "@/generated/prisma";
 import type { Category } from "@/types/category";
@@ -20,7 +23,71 @@ export type PrismaInstitutionWithRelations = Prisma.InstitutionGetPayload<{
 	};
 }>;
 
-export type Institution = PrismaInstitutionWithRelations;
+export type Institution = PrismaInstitutionWithRelations & {
+	funding_sources?: FundingSource[];
+};
+
+export type InstitutionTableBase = {
+	id: Institution["id"];
+	name: Institution["name"];
+	status: Institution["status"];
+	email: Institution["email"];
+	phone: Institution["phone"];
+	website: Institution["website"];
+	parent_organization: Institution["parent_organization"];
+	address: AddressInput | Address | null;
+	categories: Category[];
+	tags: Institution["tags"];
+	users: Institution["users"];
+	groups: Institution["groups"];
+	owner_name?: Institution["owner_name"];
+	owner_type?: Institution["owner_type"];
+	rental_contract_type?: Institution["rental_contract_type"];
+	rental_contract_end?: Institution["rental_contract_end"];
+	funding_type?: Institution["funding_type"];
+	funding_source?: FundingSourceInput | FundingSource | null;
+	funding_sources?: FundingSourceInput[] | FundingSource[] | null;
+	utilization_status?: Institution["utilization_status"];
+	utilization_status_info?: Institution["utilization_status_info"];
+	protection_status?: Institution["protection_status"];
+	protection_status_info?: Institution["protection_status_info"];
+	shared_use_allowed?: Institution["shared_use_allowed"];
+	shared_use_info?: Institution["shared_use_info"];
+	shared_use_equipment?: Institution["shared_use_equipment"];
+	shared_use_audience?: Institution["shared_use_audience"];
+	shared_use_availability?: Institution["shared_use_availability"];
+	accessibility?: Institution["accessibility"];
+	cost?: Institution["cost"];
+	established_since?: Institution["established_since"];
+	established_until?: Institution["established_until"];
+	closing_reason?: Institution["closing_reason"];
+	notes?: Institution["notes"];
+	internal_notes?: Institution["internal_notes"];
+	source?: Institution["source"];
+	shared_use_contact_person?: Institution["shared_use_contact_person"];
+	contact_person?: Institution["contact_person"];
+	contact_person_id?: Institution["contact_person_id"];
+	area?: Institution["area"];
+	number_of_rooms?: Institution["number_of_rooms"];
+	legal_form?: Institution["legal_form"];
+	capacity?: Institution["capacity"];
+	created_at: Institution["created_at"];
+	updated_at: Institution["updated_at"];
+};
+
+export type InstitutionRow = InstitutionTableBase & {
+	rowKind: "institution";
+	rowKey: string;
+};
+
+export type SubmissionRow = InstitutionTableBase & {
+	rowKind: "submission";
+	rowKey: string;
+	submissionId: number;
+	submissionType: SubmissionType;
+};
+
+export type InstitutionTableRow = InstitutionRow | SubmissionRow;
 
 export type InstitutionCreateInput = Prisma.InstitutionCreateInput;
 
@@ -30,6 +97,12 @@ export type InstitutionWhereInput = Prisma.InstitutionWhereInput;
 
 export type AddressInput = Prisma.AddressCreateInput & {
 	id?: number;
+};
+
+export type FundingSourceInput = {
+	id?: number;
+	source_name: string;
+	description?: string | null;
 };
 
 export type InstitutionForm = {
@@ -47,6 +120,8 @@ export type InstitutionForm = {
 	rental_contract_type?: RentalContractType | null;
 	rental_contract_end?: Date | string | null;
 	funding_type?: FundingType | null;
+	funding_source?: FundingSourceInput | null;
+	funding_sources?: FundingSourceInput[] | null;
 	utilization_status?: UtilizationStatus | null;
 	utilization_status_info?: string | null;
 	protection_status?: ProtectionStatus | null;
@@ -68,7 +143,7 @@ export type InstitutionForm = {
 	source?: string | null;
 	shared_use_contact_person?: string | null;
 	contact_person_id?: number | null;
-	address?: AddressInput | null;
+	address: AddressInput | null;
 	categoryIds?: number[];
 	tagIds?: number[];
 	userIds?: string[];
@@ -100,6 +175,7 @@ export const INSTITUTION_PERMISSION_FIELDS = [
 	"rental_contract_type",
 	"rental_contract_end",
 	"funding_type",
+	"funding_sources",
 	"utilization_status",
 	"utilization_status_info",
 	"protection_status",
@@ -138,7 +214,7 @@ export type SearchResult = Institution | GeoFeature;
 export interface FilterState {
 	district_keys: string[];
 	category_keys: string[];
-	subcategory_keys: string[];
+	child_category_keys: string[];
 	include_closed: boolean;
 	status: string | undefined; // e.g., "open", "closed", etc.
 }
@@ -153,14 +229,16 @@ export interface InstitutionStoreState {
 	> | null;
 	categoryCounts: Record<string, number>;
 	subcategoryCounts: Record<string, number>;
-	selectedInstitutionId: number | string | null;
 	filters: FilterState;
 	categories: Category[] | null;
 	districts: string[];
+	isLoading: boolean;
+	error: string | null;
 	setCategories: (categories: Category[] | null) => void;
 	setInstitutions: (institutions: Institution[] | null) => void;
-	setSelectedInstitutionId: (id: string | number | null) => void;
 	setFilters: (filters: FilterState) => void;
+	resetFilters: () => void;
+	clearError: () => void;
 	initializeCategories: () => Promise<void>;
 	initializeDistricts: () => Promise<void>;
 	initializeInstitutions: () => Promise<void>;
