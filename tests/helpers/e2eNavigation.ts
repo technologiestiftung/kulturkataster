@@ -22,4 +22,3 @@ export async function safeGoto(
 	if (await attempt()) return;
 	test.skip(true, `Navigation to ${path} was unstable in this e2e run.`);
 }
-
