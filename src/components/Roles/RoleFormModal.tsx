@@ -539,7 +539,7 @@ export function RoleFormModal({
 				<div className="px-6 py-8 md:px-10">
 					<DialogTitle className="title">{getDialogTitle(mode, t)}</DialogTitle>
 				</div>
-				<div className="flex-1 overflow-auto px-6 py-6 md:px-10">
+				<div className="flex-1 overflow-auto px-6 py-6 md:px-10 flex flex-col">
 					{renderDialogBody(
 						isWaitingForRole,
 						t,
@@ -551,34 +551,20 @@ export function RoleFormModal({
 						fieldSections,
 						isSystemRole,
 					)}
+					{mode === "edit" && resolvedRole && (
+						<Button
+							type="button"
+							variant="tertiary"
+							className="self-center underline"
+							onClick={() => setShowDeleteDialog(true)}
+							disabled={isDeleting || submitting || isSystemRole}
+						>
+							{t("roleFormModal.delete.button", {
+								defaultValue: "Delete",
+							})}
+						</Button>
+					)}
 				</div>
-				{mode === "edit" && resolvedRole && (
-					<div className="border-t border-neutral-20 px-6 py-4 md:px-10">
-						<div className="flex flex-wrap items-center justify-between gap-3">
-							<div>
-								<p className="body2 font-bold">
-									{t("roleFormModal.delete.title", {
-										defaultValue: "Delete role",
-									})}
-								</p>
-								<p className="body3 text-neutral-80">
-									{t("roleFormModal.delete.description", {
-										defaultValue: "This action permanently removes the role.",
-									})}
-								</p>
-							</div>
-							<Button
-								variant="destructive"
-								onClick={() => setShowDeleteDialog(true)}
-								disabled={isDeleting || submitting || isSystemRole}
-							>
-								{t("roleFormModal.delete.button", {
-									defaultValue: "Delete",
-								})}
-							</Button>
-						</div>
-					</div>
-				)}
 			</div>
 			{showDeleteDialog && resolvedRole && (
 				<AlertDialog

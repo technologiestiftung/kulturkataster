@@ -19,6 +19,12 @@ export interface AccessContext {
 	field: FieldPermissionMap;
 }
 
+type RBACErrorMeta = {
+	table?: string;
+	action?: Action;
+	requiredScope?: "own" | "all";
+};
+
 type RoleWithPermissions = Role & {
 	table_permissions: RoleTablePermission[];
 	field_permissions: RoleFieldPermission[];
@@ -97,9 +103,14 @@ export const requireAllScope = (
 	message?: string,
 ): void => {
 	if (getTableScope(context, table, action) !== "all") {
-		throw new Error(
+		const error = new Error(
 			message ?? `Global ${action} access required for ${table}.`,
-		);
+		) as Error & RBACErrorMeta;
+		error.name = "RBACError";
+		error.table = table;
+		error.action = action;
+		error.requiredScope = "all";
+		throw error;
 	}
 };
 
@@ -150,8 +161,10 @@ export const authorizeTable = (
 	if (!canTable(context, table, action)) {
 		const error = new Error(
 			`Role "${context.role ?? "guest"}" lacks ${action} on ${table}`,
-		);
+		) as Error & RBACErrorMeta;
 		error.name = "RBACError";
+		error.table = table;
+		error.action = action;
 		throw error;
 	}
 };
@@ -166,8 +179,10 @@ export const authorizeFields = (
 	if (!canFields(context, table, fields, action)) {
 		const error = new Error(
 			`Role "${context.role ?? "guest"}" lacks ${action} on some fields of ${table}`,
-		);
+		) as Error & RBACErrorMeta;
 		error.name = "RBACError";
+		error.table = table;
+		error.action = action;
 		throw error;
 	}
 };

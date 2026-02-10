@@ -475,7 +475,7 @@ export function CategoryFormModal({
 				<div className="px-6 py-8 md:px-10">
 					<DialogTitle className="title">{getDialogTitle(mode, t)}</DialogTitle>
 				</div>
-				<div className="flex-1 overflow-auto px-6 py-6 md:px-10">
+				<div className="flex-1 overflow-auto px-6 py-6 md:px-10 flex flex-col">
 					{renderDialogBody(
 						isWaitingForCategory,
 						t,
@@ -483,35 +483,20 @@ export function CategoryFormModal({
 						resolvedCategory,
 						mode,
 					)}
+					{mode === "edit" && resolvedCategory && (
+						<Button
+							type="button"
+							variant="tertiary"
+							className="self-center underline"
+							onClick={() => setShowDeleteDialog(true)}
+							disabled={isDeleting || submitting}
+						>
+							{t("categoryFormModal.delete.button", {
+								defaultValue: "Delete",
+							})}
+						</Button>
+					)}
 				</div>
-				{mode === "edit" && resolvedCategory && (
-					<div className="border-t border-neutral-20 px-6 py-4 md:px-10">
-						<div className="flex flex-wrap items-center justify-between gap-3">
-							<div>
-								<p className="body2 font-bold">
-									{t("categoryFormModal.delete.title", {
-										defaultValue: "Delete category",
-									})}
-								</p>
-								<p className="body3 text-neutral-80">
-									{t("categoryFormModal.delete.description", {
-										defaultValue:
-											"This action permanently removes the category.",
-									})}
-								</p>
-							</div>
-							<Button
-								variant="destructive"
-								onClick={() => setShowDeleteDialog(true)}
-								disabled={isDeleting || submitting}
-							>
-								{t("categoryFormModal.delete.button", {
-									defaultValue: "Delete",
-								})}
-							</Button>
-						</div>
-					</div>
-				)}
 			</div>
 			{showDeleteDialog && resolvedCategory && (
 				<AlertDialog
