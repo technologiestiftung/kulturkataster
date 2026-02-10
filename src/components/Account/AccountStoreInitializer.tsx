@@ -7,6 +7,7 @@ import type { Role } from "@/types/role";
 import type { Profile, User } from "@/types/user";
 import type { Institution, Category } from "@/types";
 import type { Submission } from "@/types/submission";
+import type { InstitutionActionPermissions } from "@/types/account";
 
 type AccountStoreInitializerProps = {
 	currentProfile: Profile | null;
@@ -16,6 +17,7 @@ type AccountStoreInitializerProps = {
 	categories: Category[];
 	institutions: Institution[];
 	submissions: Submission[];
+	institutionPermissions: InstitutionActionPermissions;
 };
 
 export function AccountStoreInitializer({
@@ -26,6 +28,7 @@ export function AccountStoreInitializer({
 	categories,
 	institutions,
 	submissions,
+	institutionPermissions,
 }: AccountStoreInitializerProps) {
 	const setCurrentProfile = useAccountStore((state) => state.setCurrentProfile);
 	const setUsers = useAccountStore((state) => state.setUsers);
@@ -34,6 +37,9 @@ export function AccountStoreInitializer({
 	const setCategories = useAccountStore((state) => state.setCategories);
 	const setInstitutions = useAccountStore((state) => state.setInstitutions);
 	const setSubmissions = useAccountStore((state) => state.setSubmissions);
+	const setInstitutionPermissions = useAccountStore(
+		(state) => state.setInstitutionPermissions,
+	);
 
 	useEffect(() => {
 		setCurrentProfile(currentProfile);
@@ -62,6 +68,10 @@ export function AccountStoreInitializer({
 	useEffect(() => {
 		setSubmissions(submissions);
 	}, [setSubmissions, submissions]);
+
+	useEffect(() => {
+		setInstitutionPermissions(institutionPermissions);
+	}, [setInstitutionPermissions, institutionPermissions]);
 
 	return null;
 }

@@ -32,12 +32,22 @@ export function InstitutionsTable() {
 	const toLocalePath = useLocalePath();
 	const institutions = useAccountStore((state) => state.institutions);
 	const allSubmissions = useAccountStore((state) => state.submissions);
+	const institutionPermissions = useAccountStore(
+		(state) => state.institutionPermissions,
+	);
+	const canReviewSubmissionType = (
+		type: "create" | "update" | "claim" | "delete",
+	) => {
+		if (type === "create") return institutionPermissions.create;
+		if (type === "update" || type === "claim") return institutionPermissions.update;
+		return institutionPermissions.delete;
+	};
 	const submissions = useMemo(
 		() =>
 			allSubmissions.filter(
 				(s) =>
 					s.entity_type === "institution" &&
-					(s.type === "create" ||
+				(s.type === "create" ||
 						s.type === "update" ||
 						s.type === "claim" ||
 						s.type === "delete"),
@@ -727,9 +737,11 @@ export function InstitutionsTable() {
 		},
 		onReview: (row) => {
 			if (!isSubmissionRow(row)) return;
+			if (!canReviewSubmissionType(row.submissionType)) return;
 			router.push(toLocalePath(`/account/submissions/${row.submissionId}`));
 		},
-		getCanReview: (row) => isSubmissionRow(row),
+		getCanReview: (row) =>
+			isSubmissionRow(row) && canReviewSubmissionType(row.submissionType),
 		reviewAriaLabel: "Review",
 		emptyMessage: "No institutions found.",
 	};

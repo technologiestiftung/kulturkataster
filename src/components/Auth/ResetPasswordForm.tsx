@@ -143,7 +143,7 @@ export function ResetPasswordForm() {
 					type="button"
 					variant="tertiary"
 					size="tag"
-					className="self-center underline body2"
+					className=" underline body2"
 					onClick={() => router.push(toLocalePath("/login"))}
 					disabled={isLoading}
 				>

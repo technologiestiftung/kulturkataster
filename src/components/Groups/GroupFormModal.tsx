@@ -8,7 +8,6 @@ import {
 	useRoutedModalClose,
 } from "@/components/Modals/RoutedEditorModal";
 import { AlertDialog } from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
 import { FormWrapper } from "@/components/FormWrapper";
 import type { FormWrapperConfig } from "@/components/FormWrapper";
 import { useAccountStore } from "@/lib/store/accountStore";
@@ -396,21 +395,8 @@ export function GroupFormModal({
 			tEnum,
 		});
 
-	const formConfig = useMemo(
-		() =>
-			buildGroupFormConfig({
-				mode,
-				t,
-				userOptions,
-				institutionOptions,
-				filteredInstitutionOptions,
-				filterPanel,
-				resolvedGroup,
-				submitting,
-				onSubmit: handleSubmit,
-				onCancel: handleClose,
-			}),
-		[
+	const formConfig = useMemo(() => {
+		const baseConfig = buildGroupFormConfig({
 			mode,
 			t,
 			userOptions,
@@ -419,11 +405,33 @@ export function GroupFormModal({
 			filterPanel,
 			resolvedGroup,
 			submitting,
-			handleSubmit,
-			handleClose,
-			handleSuccess,
-		],
-	);
+			onSubmit: handleSubmit,
+			onCancel: handleClose,
+		});
+		if (mode !== "edit" || !resolvedGroup) return baseConfig;
+		return {
+			...baseConfig,
+			deleteAction: {
+				label: t("groupFormModal.delete.button"),
+				onClick: () => setShowDeleteDialog(true),
+				disabled: isDeleting || submitting,
+				className: "p-0!",
+			},
+		};
+	}, [
+		mode,
+		t,
+		userOptions,
+		institutionOptions,
+		filteredInstitutionOptions,
+		filterPanel,
+		resolvedGroup,
+		submitting,
+		isDeleting,
+		handleSubmit,
+		handleClose,
+		handleSuccess,
+	]);
 
 	if (showNotFound) {
 		return renderNotFoundDialog(t);
@@ -431,7 +439,7 @@ export function GroupFormModal({
 
 	return (
 		<RoutedEditorModal routePath={routePath} onClose={handleClose}>
-			<div className="flex h-full flex-col">
+			<div className="w-full  max-w-3xl mx-auto">
 				<div className="px-6 py-8 md:px-10">
 					<DialogTitle className="title">{getDialogTitle(mode, t)}</DialogTitle>
 				</div>
@@ -442,19 +450,6 @@ export function GroupFormModal({
 						formConfig,
 						resolvedGroup,
 						mode,
-					)}
-					{mode === "edit" && resolvedGroup && (
-						<Button
-							type="button"
-							variant="tertiary"
-							className="self-center underline"
-							onClick={() => setShowDeleteDialog(true)}
-							disabled={isDeleting || submitting}
-						>
-							{t("groupFormModal.delete.button", {
-								defaultValue: "Delete",
-							})}
-						</Button>
 					)}
 				</div>
 			</div>
@@ -469,9 +464,7 @@ export function GroupFormModal({
 						defaultValue:
 							"This will permanently remove the group. This action cannot be undone.",
 					})}
-					confirmLabel={t("groupFormModal.delete.confirm", {
-						defaultValue: "Delete",
-					})}
+					confirmLabel={t("groupFormModal.delete.confirm")}
 					cancelLabel={t("groupFormModal.delete.cancel", {
 						defaultValue: "Cancel",
 					})}

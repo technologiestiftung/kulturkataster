@@ -5,6 +5,12 @@ import type { Institution } from "@/types/institution";
 import type { Category } from "@/types/category";
 import type { Submission } from "@/types/submission";
 
+export type InstitutionActionPermissions = {
+	create: boolean;
+	update: boolean;
+	delete: boolean;
+};
+
 export type AccountStoreState = {
 	currentProfile: Profile | null;
 	users: User[];
@@ -13,6 +19,7 @@ export type AccountStoreState = {
 	categories: Category[];
 	institutions: Institution[];
 	submissions: Submission[];
+	institutionPermissions: InstitutionActionPermissions;
 	selectedUserId: string | null;
 	selectedGroupId: number | null;
 	selectedRoleId: number | null;
@@ -23,6 +30,9 @@ export type AccountStoreState = {
 	setRoles: (roles: Role[]) => void;
 	setCategories: (categories: Category[]) => void;
 	setInstitutions: (institutions: Institution[]) => void;
+	setInstitutionPermissions: (
+		permissions: InstitutionActionPermissions,
+	) => void;
 	addUser: (user: User) => void;
 	upsertUser: (user: User) => void;
 	removeUser: (id: string) => void;
