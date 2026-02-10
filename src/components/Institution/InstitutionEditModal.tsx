@@ -1,11 +1,16 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { AlertDialog } from "@/components/ui/alert-dialog";
 import { InstitutionFormModal } from "@/components/Institution/InstitutionFormModal";
 import { useAccountStore } from "@/lib/store/accountStore";
-import { getInstitutionById } from "@/server/actions/institutions";
+import {
+	deleteInstitution,
+	getInstitutionById,
+} from "@/server/actions/institutions";
+import { createSubmission } from "@/server/actions/submissions";
+import { SubmissionEntityType, SubmissionType } from "@/generated/prisma";
 import type { Institution } from "@/types/institution";
 
 type InstitutionEditModalProps = {
@@ -35,6 +40,9 @@ export function InstitutionEditModal({
 }: InstitutionEditModalProps) {
 	const { t } = useTranslation("content");
 	const institutions = useAccountStore((state) => state.institutions);
+	const setAlertDialog = useAccountStore((state) => state.setAlertDialog);
+	const removeInstitution = useAccountStore((state) => state.removeInstitution);
+	const upsertSubmission = useAccountStore((state) => state.upsertSubmission);
 	const [fetchedInstitution, setFetchedInstitution] =
 		useState<Institution | null>(null);
 	const [didFetchInstitution, setDidFetchInstitution] = useState(false);
@@ -89,6 +97,83 @@ export function InstitutionEditModal({
 		resolvedInstitution ?? fetchedInstitution ?? undefined;
 	const showNotFound = didFetchInstitution && !resolvedInstitutionWithFallback;
 
+	const isDeleteDeniedError = useCallback((error: unknown) => {
+		if (!(error instanceof Error)) return false;
+		if (error.name === "RBACError") return true;
+		const message = error.message.toLowerCase();
+		return (
+			message.includes("not authorized") ||
+			message.includes("lacks delete") ||
+			message.includes("global delete access required")
+		);
+	}, []);
+
+	const handleDelete = useCallback(async () => {
+		if (!resolvedInstitutionWithFallback) return;
+
+		try {
+			await deleteInstitution(resolvedInstitutionWithFallback.id);
+			removeInstitution(resolvedInstitutionWithFallback.id);
+			setAlertDialog({
+				title: t("institutionFormModal.feedback.delete.title"),
+				description: t("institutionFormModal.feedback.delete.description"),
+			});
+			return;
+		} catch (error) {
+			if (!isDeleteDeniedError(error)) {
+				setAlertDialog({
+					title: t("institutionFormModal.delete.errorTitle", {
+						defaultValue: "Delete failed",
+					}),
+					description: t("institutionFormModal.delete.errorDescription", {
+						defaultValue:
+							"Please try again or contact support if the issue persists.",
+					}),
+				});
+				throw error;
+			}
+		}
+
+		try {
+			const deleteSubmission = await createSubmission({
+				entityType: SubmissionEntityType.institution,
+				entityId: resolvedInstitutionWithFallback.id,
+				type: SubmissionType.delete,
+				status: "approval_pending",
+				data: {
+					...resolvedInstitutionWithFallback,
+				},
+				meta: {
+					institution_id: resolvedInstitutionWithFallback.id,
+					institution_name: resolvedInstitutionWithFallback.name,
+				},
+			});
+			upsertSubmission(deleteSubmission);
+			setAlertDialog({
+				title: t("institutionFormModal.feedback.deleteRequest.title"),
+				description: t("institutionFormModal.feedback.deleteRequest.description"),
+			});
+		} catch {
+			setAlertDialog({
+				title: t("institutionFormModal.delete.errorTitle", {
+					defaultValue: "Delete failed",
+				}),
+				description: t("institutionFormModal.delete.errorDescription", {
+					defaultValue:
+						"Please try again or contact support if the issue persists.",
+				}),
+			});
+			throw new Error("delete-failed");
+		}
+	}, [
+		isDeleteDeniedError,
+		removeInstitution,
+		resolvedInstitutionWithFallback,
+		setAlertDialog,
+		t,
+		upsertSubmission,
+	]);
+
 	if (!resolvedInstitutionWithFallback && !didFetchInstitution) {
 		return null;
 	}
@@ -116,6 +201,13 @@ export function InstitutionEditModal({
 			submitting={submitting}
 			closeOnSubmit={closeOnSubmit}
 			shouldRefresh={shouldRefresh}
+			onDelete={handleDelete}
+			deleteConfig={{
+				confirmDescription: t("institutionFormModal.delete.confirmDescription", {
+					defaultValue:
+						"If you can delete this institution directly, it will be removed immediately. Otherwise, a delete request will be submitted for review.",
+				}),
+			}}
 		/>
 	);
 }

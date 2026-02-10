@@ -37,7 +37,10 @@ export function InstitutionsTable() {
 			allSubmissions.filter(
 				(s) =>
 					s.entity_type === "institution" &&
-					(s.type === "create" || s.type === "update" || s.type === "claim"),
+					(s.type === "create" ||
+						s.type === "update" ||
+						s.type === "claim" ||
+						s.type === "delete"),
 			),
 		[allSubmissions],
 	);
