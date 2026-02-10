@@ -3,6 +3,7 @@ import type {
 	FundingSource,
 	FundingType,
 	InstitutionStatus,
+	SubmissionStatus,
 	Prisma,
 	ProtectionStatus,
 	SubmissionType,
@@ -30,7 +31,7 @@ export type Institution = PrismaInstitutionWithRelations & {
 export type InstitutionTableBase = {
 	id: Institution["id"];
 	name: Institution["name"];
-	status: Institution["status"];
+	status: Institution["status"] | SubmissionStatus;
 	email: Institution["email"];
 	phone: Institution["phone"];
 	website: Institution["website"];

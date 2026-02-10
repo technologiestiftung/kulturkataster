@@ -9,6 +9,7 @@ import type { Institution, InstitutionTableRow } from "@/types/institution";
 import { useAccountStore } from "@/lib/store/accountStore";
 import { StatusDot } from "../ui/status-dot";
 import { InstitutionStatus } from "@/generated/prisma";
+import type { SubmissionType } from "@/generated/prisma";
 import { useTranslation } from "react-i18next";
 import { getFieldLabel } from "@/lib/i18n/fieldLabels";
 import {
@@ -35,13 +36,12 @@ export function InstitutionsTable() {
 	const institutionPermissions = useAccountStore(
 		(state) => state.institutionPermissions,
 	);
-	const canReviewSubmissionType = (
-		type: "create" | "update" | "claim" | "delete",
-	) => {
+	const canReviewSubmissionType = (type: SubmissionType) => {
 		if (type === "create") return institutionPermissions.create;
 		if (type === "update" || type === "claim")
 			return institutionPermissions.update;
-		return institutionPermissions.delete;
+		if (type === "delete") return institutionPermissions.delete;
+		return false;
 	};
 	const submissions = useMemo(
 		() =>
@@ -69,7 +69,7 @@ export function InstitutionsTable() {
 		const translated = tEnum(`funding_source.${value}`);
 		return translated === `funding_source.${value}` ? value : translated;
 	};
-	const getStatusLabel = (status: InstitutionStatus) => {
+	const getStatusLabel = (status: InstitutionStatus | string) => {
 		if (status === "approval_pending")
 			return t("institutionFormModal.status.approvalPending");
 		if (status === "public") return t("institutionFormModal.status.public");
@@ -112,7 +112,14 @@ export function InstitutionsTable() {
 					if (institution.status === "removal_pending") variant = "warning";
 					if (institution.status === "draft") variant = "neutral";
 					if (institution.status === "archived") variant = "error";
-					if (institution.rowKind === "submission") variant = "warning";
+					if (institution.rowKind === "submission") {
+						if (institution.status === "approved") variant = "success";
+						else if (institution.status === "approval_pending")
+							variant = "info";
+						else if (institution.status === "rejected") variant = "error";
+						else if (institution.status === "needs_changes")
+							variant = "warning";
+					}
 					return (
 						<StatusDot
 							tone={variant}
