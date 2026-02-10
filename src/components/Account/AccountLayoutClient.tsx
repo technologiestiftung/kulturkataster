@@ -7,12 +7,13 @@ import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import Setting from "@/icons/settings.svg";
-import Edit from "@/icons/edit.svg";
+import Info from "@/icons/info-circle.svg";
 import { logout } from "@/server/actions/auth";
 import { AccountAlertDialog } from "@/components/Account/AccountAlertDialog";
 import Image from "next/image";
 import { LogOut } from "lucide-react";
 import { Profile } from "@/types";
+import { clearAccountStore } from "@/lib/store/accountStore";
 
 type AccountLayoutClientProps = {
 	children: ReactNode;
@@ -51,6 +52,7 @@ export function AccountLayoutClient({
 	const handleLogout = async () => {
 		const result = await logout();
 		if (result.ok) {
+			await clearAccountStore();
 			router.push(toLocalePath("/"));
 		} else {
 			console.error("Logout failed:", result.error);
@@ -128,7 +130,7 @@ export function AccountLayoutClient({
 							aria-label={faqLabel}
 							onClick={() => router.push(toLocalePath("/account/faq"))}
 						>
-							<Edit />
+							<Info />
 						</ButtonWithTooltip>
 						<ButtonWithTooltip
 							variant="rounded"

@@ -5,21 +5,30 @@ import { create } from "zustand";
 import { createJSONStorage, devtools, persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 
+const accountStoreInitialState = {
+	currentProfile: null,
+	users: [],
+	groups: [],
+	roles: [],
+	categories: [],
+	institutions: [],
+	submissions: [],
+	institutionPermissions: {
+		create: false,
+		update: false,
+		delete: false,
+	},
+	selectedUserId: null,
+	selectedGroupId: null,
+	selectedRoleId: null,
+	alertDialog: null,
+};
+
 export const useAccountStore = create<AccountStoreState>()(
 	persist(
 		devtools(
 			immer((set) => ({
-				currentProfile: null,
-				users: [],
-				groups: [],
-				roles: [],
-				categories: [],
-				institutions: [],
-				submissions: [],
-				selectedUserId: null,
-				selectedGroupId: null,
-				selectedRoleId: null,
-				alertDialog: null,
+				...accountStoreInitialState,
 				setCurrentProfile: (profile) =>
 					set((state) => {
 						state.currentProfile = profile;
@@ -118,6 +127,10 @@ export const useAccountStore = create<AccountStoreState>()(
 					set((state) => {
 						state.institutions = institutions;
 					}),
+				setInstitutionPermissions: (permissions) =>
+					set((state) => {
+						state.institutionPermissions = permissions;
+					}),
 				addInstitution: (institution: Institution) =>
 					set((state) => {
 						state.institutions.unshift(institution);
@@ -185,3 +198,8 @@ export const useAccountStore = create<AccountStoreState>()(
 		{ name: "account-storage", storage: createJSONStorage(() => idbStorage) },
 	),
 );
+
+export async function clearAccountStore() {
+	useAccountStore.setState(accountStoreInitialState);
+	await useAccountStore.persist.clearStorage();
+}

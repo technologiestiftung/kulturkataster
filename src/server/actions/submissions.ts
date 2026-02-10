@@ -64,7 +64,6 @@ export async function getSubmissions(filter: SubmissionFilter = {}) {
 	authorizeTable(ctx, "submission", "read");
 	const scope = getTableScope(ctx, "submission", "read");
 	const ownerId = requireScopeOrUser(scope, currentUserId);
-
 	const where: Prisma.SubmissionWhereInput = {
 		entity_type: filter.entityType,
 		entity_id: filter.entityId ?? undefined,
@@ -84,7 +83,7 @@ export async function getClaimSubmissionsDetailed(
 	const ctx = await getAccessContextForUser(currentUserId);
 	authorizeTable(ctx, "submission", "read");
 	requireAllScope(ctx, "submission", "read");
-
+	console.log("Getting claim submissions for userId:", userId);
 	const submissions = await prisma.submission.findMany({
 		where: { type: "claim", created_by: userId ?? undefined },
 		orderBy: { created_at: "desc" },

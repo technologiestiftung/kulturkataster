@@ -9,7 +9,6 @@ import {
 	useRoutedModalClose,
 } from "@/components/Modals/RoutedEditorModal";
 import { AlertDialog } from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
 import { FormWrapper } from "@/components/FormWrapper";
 import type { FormWrapperConfig } from "@/components/FormWrapper";
 import { useAccountStore } from "@/lib/store/accountStore";
@@ -506,28 +505,37 @@ export function RoleFormModal({
 		[resolvedRole, tableTargets],
 	);
 
-	const formConfig = useMemo(
-		() =>
-			buildRoleFormConfig({
-				mode,
-				t,
-				resolvedRole,
-				submitting,
-				permissionSnapshot,
-				onSubmit: handleSubmit,
-				onCancel: handleClose,
-			}),
-		[
+	const formConfig = useMemo(() => {
+		const baseConfig = buildRoleFormConfig({
 			mode,
 			t,
 			resolvedRole,
 			submitting,
 			permissionSnapshot,
-			handleSubmit,
-			handleClose,
-			handleSuccess,
-		],
-	);
+			onSubmit: handleSubmit,
+			onCancel: handleClose,
+		});
+		if (mode !== "edit" || !resolvedRole) return baseConfig;
+		return {
+			...baseConfig,
+			deleteAction: {
+				label: t("roleFormModal.delete.button"),
+				onClick: () => setShowDeleteDialog(true),
+				disabled: isDeleting || submitting || isSystemRole,
+				className: "p-0!",
+			},
+		};
+	}, [
+		mode,
+		t,
+		resolvedRole,
+		submitting,
+		isDeleting,
+		permissionSnapshot,
+		handleSubmit,
+		handleClose,
+		handleSuccess,
+	]);
 
 	if (showNotFound) {
 		return renderNotFoundDialog(t);
@@ -551,19 +559,6 @@ export function RoleFormModal({
 						fieldSections,
 						isSystemRole,
 					)}
-					{mode === "edit" && resolvedRole && (
-						<Button
-							type="button"
-							variant="tertiary"
-							className="self-center underline"
-							onClick={() => setShowDeleteDialog(true)}
-							disabled={isDeleting || submitting || isSystemRole}
-						>
-							{t("roleFormModal.delete.button", {
-								defaultValue: "Delete",
-							})}
-						</Button>
-					)}
 				</div>
 			</div>
 			{showDeleteDialog && resolvedRole && (
@@ -577,9 +572,7 @@ export function RoleFormModal({
 						defaultValue:
 							"This will permanently remove the role. This action cannot be undone.",
 					})}
-					confirmLabel={t("roleFormModal.delete.confirm", {
-						defaultValue: "Delete",
-					})}
+					confirmLabel={t("roleFormModal.delete.confirm")}
 					cancelLabel={t("roleFormModal.delete.cancel", {
 						defaultValue: "Cancel",
 					})}

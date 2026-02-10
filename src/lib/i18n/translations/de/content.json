@@ -478,6 +478,15 @@
 			"save": "Änderungen speichern",
 			"saving": "Änderungen werden gespeichert..."
 		},
+		"delete": {
+			"button": "Löschen",
+			"cancel": "Abbrechen",
+			"confirm": "Löschen",
+			"confirmDescription": "Die Gruppe wird dauerhaft entfernt. Diese Aktion kann nicht rückgängig gemacht werden.",
+			"confirmTitle": "Gruppe löschen?",
+			"errorDescription": "Bitte versuchen Sie es erneut oder kontaktieren Sie den Support, falls das Problem weiterhin besteht.",
+			"errorTitle": "Löschen fehlgeschlagen"
+		},
 		"dialog": {
 			"loading": "Gruppe wird geladen...",
 			"notFound": {
@@ -1030,6 +1039,15 @@
 			"creating": "Rolle wird erstellt...",
 			"save": "Änderungen speichern",
 			"saving": "Änderungen werden gespeichert..."
+		},
+		"delete": {
+			"button": "Löschen",
+			"cancel": "Abbrechen",
+			"confirm": "Löschen",
+			"confirmDescription": "Die Rolle wird dauerhaft entfernt. Diese Aktion kann nicht rückgängig gemacht werden.",
+			"confirmTitle": "Rolle löschen?",
+			"errorDescription": "Bitte versuchen Sie es erneut oder kontaktieren Sie den Support, falls das Problem weiterhin besteht.",
+			"errorTitle": "Löschen fehlgeschlagen"
 		},
 		"dialog": {
 			"loading": "Rolle wird geladen...",
@@ -1681,6 +1699,15 @@
 			"creating": "Wird angelegt...",
 			"save": "Änderungen speichern",
 			"saving": "Wird gespeichert..."
+		},
+		"delete": {
+			"button": "Löschen",
+			"cancel": "Abbrechen",
+			"confirm": "Löschen",
+			"confirmDescription": "Die Nutzer*in wird dauerhaft entfernt. Diese Aktion kann nicht rückgängig gemacht werden.",
+			"confirmTitle": "Nutzer*in löschen?",
+			"errorDescription": "Bitte versuchen Sie es erneut oder kontaktieren Sie den Support, falls das Problem weiterhin besteht.",
+			"errorTitle": "Löschen fehlgeschlagen"
 		},
 		"complianceResend": {
 			"description": "Senden Sie die DSGVO-Compliance-E-Mail erneut an die Nutzerin oder den Nutzer.",

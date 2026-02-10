@@ -10,7 +10,6 @@ import {
 	useRoutedModalClose,
 } from "@/components/Modals/RoutedEditorModal";
 import { AlertDialog } from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
 import { FormWrapper } from "@/components/FormWrapper";
 import type { FormWrapperConfig } from "@/components/FormWrapper";
 import { useAccountStore } from "@/lib/store/accountStore";
@@ -491,23 +490,8 @@ export function UserFormModal({
 			tEnum,
 		});
 
-	const formConfig = useMemo(
-		() =>
-			buildUserFormConfig({
-				mode,
-				t,
-				statusOptions,
-				roles,
-				groups,
-				institutionOptions,
-				filteredInstitutionOptions,
-				institutionFilterPanel: filterPanel,
-				resolvedUser,
-				submitting,
-				onSubmit: handleSubmit,
-				onCancel: handleClose,
-			}),
-		[
+	const formConfig = useMemo(() => {
+		const baseConfig = buildUserFormConfig({
 			mode,
 			t,
 			statusOptions,
@@ -515,14 +499,38 @@ export function UserFormModal({
 			groups,
 			institutionOptions,
 			filteredInstitutionOptions,
-			filterPanel,
+			institutionFilterPanel: filterPanel,
 			resolvedUser,
 			submitting,
-			handleSubmit,
-			handleClose,
-			handleSuccess,
-		],
-	);
+			onSubmit: handleSubmit,
+			onCancel: handleClose,
+		});
+		if (mode !== "edit" || !resolvedUser) return baseConfig;
+		return {
+			...baseConfig,
+			deleteAction: {
+				label: t("userFormModal.delete.button"),
+				onClick: () => setShowDeleteDialog(true),
+				disabled: isDeleting || submitting,
+				className: "p-0!",
+			},
+		};
+	}, [
+		mode,
+		t,
+		statusOptions,
+		roles,
+		groups,
+		institutionOptions,
+		filteredInstitutionOptions,
+		filterPanel,
+		resolvedUser,
+		submitting,
+		isDeleting,
+		handleSubmit,
+		handleClose,
+		handleSuccess,
+	]);
 
 	if (showNotFound) {
 		return renderNotFoundDialog(t);
@@ -542,17 +550,6 @@ export function UserFormModal({
 						resolvedUser,
 						mode,
 					)}
-					<Button
-						type="button"
-						variant="tertiary"
-						className="self-center underline"
-						onClick={() => setShowDeleteDialog(true)}
-						disabled={isDeleting || submitting}
-					>
-						{t("userFormModal.delete.button", {
-							defaultValue: "Delete",
-						})}
-					</Button>
 				</div>
 			</div>
 			{showDeleteDialog && resolvedUser && (
@@ -566,9 +563,7 @@ export function UserFormModal({
 						defaultValue:
 							"This will permanently remove the user. This action cannot be undone.",
 					})}
-					confirmLabel={t("userFormModal.delete.confirm", {
-						defaultValue: "Delete",
-					})}
+					confirmLabel={t("userFormModal.delete.confirm")}
 					cancelLabel={t("userFormModal.delete.cancel", {
 						defaultValue: "Cancel",
 					})}

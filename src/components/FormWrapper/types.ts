@@ -244,6 +244,12 @@ export interface FormWrapperConfig {
 	showCancel?: boolean;
 	cancelLabel?: string;
 	onCancel?: () => void;
+	deleteAction?: {
+		label: string;
+		onClick: () => void;
+		disabled?: boolean;
+		className?: string;
+	};
 
 	// Initial values
 	initialValues?: Record<string, unknown>;
