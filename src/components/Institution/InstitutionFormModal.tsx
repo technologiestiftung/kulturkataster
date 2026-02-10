@@ -11,7 +11,6 @@ import {
 import { AlertDialog } from "@/components/ui/alert-dialog";
 import { FormWrapper } from "@/components/FormWrapper";
 import type { FormWrapperConfig, FieldConfig } from "@/components/FormWrapper";
-import { Button } from "@/components/ui/button";
 import { useAccountStore } from "@/lib/store/accountStore";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import {
@@ -1021,6 +1020,8 @@ export function InstitutionFormModal({
 		[isPrivateField],
 	);
 
+	const canShowDeleteAction = Boolean(onDelete);
+
 	const formConfig = useMemo(
 		() =>
 			buildInstitutionFormConfig({
@@ -1060,7 +1061,6 @@ export function InstitutionFormModal({
 	}
 
 	const formKeyValue = formKey ?? resolvedInstitutionWithFallback?.id ?? mode;
-	const canShowDeleteAction = Boolean(onDelete);
 
 	const handleDelete = useCallback(async () => {
 		if (!onDelete || isDeleting || resolvedSubmitting) return;
@@ -1076,6 +1076,27 @@ export function InstitutionFormModal({
 		}
 	}, [onDelete, isDeleting, resolvedSubmitting, handleClose]);
 
+	const formConfigWithDelete = useMemo(() => {
+		if (!canShowDeleteAction) return formConfig;
+		return {
+			...formConfig,
+			deleteAction: {
+				label:
+					deleteConfig?.buttonLabel ?? t("institutionFormModal.delete.button"),
+				onClick: () => setShowDeleteDialog(true),
+				disabled: isDeleting || resolvedSubmitting,
+				className: "p-0!",
+			},
+		};
+	}, [
+		canShowDeleteAction,
+		formConfig,
+		deleteConfig?.buttonLabel,
+		t,
+		isDeleting,
+		resolvedSubmitting,
+	]);
+
 	return (
 		<RoutedEditorModal routePath={routePath} onClose={handleClose}>
 			<div className="flex h-full flex-col">
@@ -1083,21 +1104,7 @@ export function InstitutionFormModal({
 					<DialogTitle className="title">{getDialogTitle(mode, t)}</DialogTitle>
 				</div>
 				<div className="flex-1 overflow-auto px-6 py-6 md:px-10 flex flex-col">
-					{renderDialogBody(formConfig, formKeyValue)}
-					{canShowDeleteAction && (
-						<Button
-							type="button"
-							variant="tertiary"
-							className="self-center underline"
-							onClick={() => setShowDeleteDialog(true)}
-							disabled={isDeleting || resolvedSubmitting}
-						>
-							{deleteConfig?.buttonLabel ??
-								t("institutionFormModal.delete.button", {
-									defaultValue: "Delete",
-								})}
-						</Button>
-					)}
+					{renderDialogBody(formConfigWithDelete, formKeyValue)}
 				</div>
 			</div>
 			{showDeleteDialog && onDelete && (
@@ -1118,9 +1125,7 @@ export function InstitutionFormModal({
 					}
 					confirmLabel={
 						deleteConfig?.confirmLabel ??
-						t("institutionFormModal.delete.confirm", {
-							defaultValue: "Delete",
-						})
+						t("institutionFormModal.delete.confirm")
 					}
 					cancelLabel={
 						deleteConfig?.cancelLabel ??

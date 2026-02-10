@@ -6,11 +6,10 @@ import { useTranslation } from "react-i18next";
 import { FormWrapper } from "@/components/FormWrapper";
 import type { FormWrapperConfig } from "@/components/FormWrapper";
 import { AlertDialog } from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { updateUser, removeUser } from "@/server/actions/users";
 import { updateMyPassword, logout } from "@/server/actions/auth";
-import { useAccountStore } from "@/lib/store/accountStore";
+import { clearAccountStore, useAccountStore } from "@/lib/store/accountStore";
 
 type AccountEditFormProps = {
 	userId: string;
@@ -99,7 +98,19 @@ export function AccountEditForm({
 	const formConfig: FormWrapperConfig = {
 		formId: "account-edit-form",
 		onSubmit: handleSubmit,
-		hideActions: true,
+		submitLabel: isLoading
+			? t("auth.accountEdit.submitting")
+			: t("auth.accountEdit.submit"),
+		submitDisabled: isLoading,
+		showCancel: true,
+		cancelLabel: t("cancel"),
+		onCancel: () => router.replace(toLocalePath("/account")),
+		deleteAction: {
+			label: t("auth.accountEdit.deleteAction"),
+			onClick: () => setShowDeleteConfirm(true),
+			disabled: isLoading,
+			className: "p-0!",
+		},
 		initialValues: {
 			name: initialName,
 			email,
@@ -168,7 +179,10 @@ export function AccountEditForm({
 		setErrorMessage(null);
 		try {
 			await removeUser(userId);
-			await logout();
+			const result = await logout();
+			if (result.ok) {
+				await clearAccountStore();
+			}
 			router.replace(toLocalePath("/"));
 		} catch (error) {
 			setErrorMessage(
@@ -211,34 +225,8 @@ export function AccountEditForm({
 				confirmLabel={t("auth.accountEdit.deleteConfirm")}
 				onConfirm={handleDelete}
 			/>
-
-			<FormWrapper config={formConfig} />
-
-			<div className="flex flex-col gap-3 mt-6">
-				<div className="flex items-center justify-end gap-4">
-					<Button
-						type="button"
-						variant="outline"
-						onClick={() => router.replace(toLocalePath("/account"))}
-						disabled={isLoading}
-					>
-						{t("cancel")}
-					</Button>
-					<Button type="submit" form="account-edit-form" disabled={isLoading}>
-						{isLoading
-							? t("auth.accountEdit.submitting")
-							: t("auth.accountEdit.submit")}
-					</Button>
-				</div>
-				<Button
-					type="button"
-					variant="tertiary"
-					className="self-center underline"
-					onClick={() => setShowDeleteConfirm(true)}
-					disabled={isLoading}
-				>
-					{t("auth.accountEdit.deleteAction")}
-				</Button>
+			<div className="flex-1 overflow-auto flex flex-col">
+				<FormWrapper config={formConfig} />
 			</div>
 		</div>
 	);
