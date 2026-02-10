@@ -39,7 +39,8 @@ export function InstitutionsTable() {
 		type: "create" | "update" | "claim" | "delete",
 	) => {
 		if (type === "create") return institutionPermissions.create;
-		if (type === "update" || type === "claim") return institutionPermissions.update;
+		if (type === "update" || type === "claim")
+			return institutionPermissions.update;
 		return institutionPermissions.delete;
 	};
 	const submissions = useMemo(
@@ -47,7 +48,7 @@ export function InstitutionsTable() {
 			allSubmissions.filter(
 				(s) =>
 					s.entity_type === "institution" &&
-				(s.type === "create" ||
+					(s.type === "create" ||
 						s.type === "update" ||
 						s.type === "claim" ||
 						s.type === "delete"),

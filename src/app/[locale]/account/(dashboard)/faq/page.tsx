@@ -6,5 +6,7 @@ export const metadata: Metadata = {
 };
 
 export default function AccountFaqPage() {
-	return <AccountFaqModal routePath="/account/faq" returnTo="/account/activity" />;
+	return (
+		<AccountFaqModal routePath="/account/faq" returnTo="/account/activity" />
+	);
 }
