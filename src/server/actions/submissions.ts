@@ -223,16 +223,30 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 	const ctx = await getAccessContextForUser(currentUserId);
 	authorizeTable(ctx, "submission", "update");
 	const scope = getTableScope(ctx, "submission", "update");
-	if (scope !== "all") {
-		throw new Error("Only admins can review submissions.");
+	const ownerId = requireScopeOrUser(scope, currentUserId);
+
+	if (!ownerId) {
+		return submissionRepo.update(input.id, {
+			status: input.status,
+			review_notes: input.reviewNotes ?? undefined,
+			reviewer: currentUserId ? { connect: { id: currentUserId } } : undefined,
+			reviewed_at: new Date(),
+		});
 	}
 
-	return submissionRepo.update(input.id, {
-		status: input.status,
-		review_notes: input.reviewNotes ?? undefined,
-		reviewer: currentUserId ? { connect: { id: currentUserId } } : undefined,
-		reviewed_at: new Date(),
-	});
+	const result = await submissionRepo.updateWhere(
+		{ id: input.id, created_by: ownerId },
+		{
+			status: input.status,
+			review_notes: input.reviewNotes ?? undefined,
+			reviewer: currentUserId ? { connect: { id: currentUserId } } : undefined,
+			reviewed_at: new Date(),
+		},
+	);
+	if (result.count === 0) {
+		throw new Error("Not authorized to review this submission.");
+	}
+	return submissionRepo.findFirst({ id: input.id, created_by: ownerId });
 }
 
 export async function reviewClaimSubmission(input: ClaimReviewPayload) {
