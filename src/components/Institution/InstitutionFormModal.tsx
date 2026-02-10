@@ -11,6 +11,7 @@ import {
 import { AlertDialog } from "@/components/ui/alert-dialog";
 import { FormWrapper } from "@/components/FormWrapper";
 import type { FormWrapperConfig, FieldConfig } from "@/components/FormWrapper";
+import { Button } from "@/components/ui/button";
 import { useAccountStore } from "@/lib/store/accountStore";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import {
@@ -50,6 +51,14 @@ type InstitutionFormModalProps = {
 	submitting?: boolean;
 	closeOnSubmit?: boolean;
 	shouldRefresh?: boolean;
+	onDelete?: () => void | Promise<void>;
+	deleteConfig?: {
+		buttonLabel?: string;
+		confirmTitle?: string;
+		confirmDescription?: string;
+		confirmLabel?: string;
+		cancelLabel?: string;
+	};
 };
 
 const buildCategoryFilterState = (
@@ -884,12 +893,16 @@ export function InstitutionFormModal({
 	submitting: submittingProp,
 	closeOnSubmit,
 	shouldRefresh = false,
+	onDelete,
+	deleteConfig,
 }: InstitutionFormModalProps) {
 	const { t } = useTranslation("content");
 	const { t: tEnum } = useTranslation("enumMap");
 	const { isPrivateField } = useInstitutionPrivateFieldResolver();
 	const setAlertDialog = useAccountStore((state) => state.setAlertDialog);
 	const categories = useInstitutionStore((state) => state.categories) ?? [];
+	const [isDeleting, setIsDeleting] = useState(false);
+	const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 	const addressGeocodeState = useRef({
 		lastQuery: "",
 		inflight: false,
@@ -1047,6 +1060,26 @@ export function InstitutionFormModal({
 	}
 
 	const formKeyValue = formKey ?? resolvedInstitutionWithFallback?.id ?? mode;
+	const canShowDeleteAction = Boolean(onDelete);
+
+	const handleDelete = useCallback(async () => {
+		if (!onDelete || isDeleting || resolvedSubmitting) return;
+		setIsDeleting(true);
+		try {
+			await onDelete();
+			setShowDeleteDialog(false);
+			handleClose();
+		} catch {
+			// Keep dialog open so the caller can surface and recover from errors.
+		} finally {
+			setIsDeleting(false);
+		}
+	}, [
+		onDelete,
+		isDeleting,
+		resolvedSubmitting,
+		handleClose,
+	]);
 
 	return (
 		<RoutedEditorModal routePath={routePath} onClose={handleClose}>
@@ -1054,10 +1087,60 @@ export function InstitutionFormModal({
 				<div className="px-6 py-8 md:px-10">
 					<DialogTitle className="title">{getDialogTitle(mode, t)}</DialogTitle>
 				</div>
-				<div className="flex-1 overflow-auto px-6 py-6 md:px-10">
+				<div className="flex-1 overflow-auto px-6 py-6 md:px-10 flex flex-col">
 					{renderDialogBody(formConfig, formKeyValue)}
+					{canShowDeleteAction && (
+						<Button
+							type="button"
+							variant="tertiary"
+							className="self-center underline"
+							onClick={() => setShowDeleteDialog(true)}
+							disabled={isDeleting || resolvedSubmitting}
+						>
+							{deleteConfig?.buttonLabel ??
+								t("institutionFormModal.delete.button", {
+									defaultValue: "Delete",
+								})}
+						</Button>
+					)}
 				</div>
 			</div>
+			{showDeleteDialog && onDelete && (
+				<AlertDialog
+					open
+					status="warning"
+					title={
+						deleteConfig?.confirmTitle ??
+						t("institutionFormModal.delete.confirmTitle", {
+							defaultValue: "Delete institution?",
+						})
+					}
+					description={
+						deleteConfig?.confirmDescription ??
+						t("institutionFormModal.delete.confirmDescription", {
+							defaultValue:
+								"This action cannot be undone.",
+						})
+					}
+					confirmLabel={
+						deleteConfig?.confirmLabel ??
+						t("institutionFormModal.delete.confirm", {
+							defaultValue: "Delete",
+						})
+					}
+					cancelLabel={
+						deleteConfig?.cancelLabel ??
+						t("institutionFormModal.delete.cancel", {
+							defaultValue: "Cancel",
+						})
+					}
+					onCancel={() => setShowDeleteDialog(false)}
+					onConfirm={handleDelete}
+					onOpenChange={(open) => {
+						if (!open) setShowDeleteDialog(false);
+					}}
+				/>
+			)}
 		</RoutedEditorModal>
 	);
 }

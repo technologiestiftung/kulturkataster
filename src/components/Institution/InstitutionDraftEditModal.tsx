@@ -9,6 +9,7 @@ import {
 } from "@/lib/utils/formUtils";
 import { institutionSubmissionToDraft } from "@/lib/utils/institutionSubmissionUtils";
 import {
+	deleteSubmission,
 	getSubmissionById,
 	updateSubmission,
 } from "@/server/actions/submissions";
@@ -43,6 +44,8 @@ export function InstitutionDraftEditModal({
 		[allSubmissions],
 	);
 	const upsertSubmission = useAccountStore((state) => state.upsertSubmission);
+	const removeSubmission = useAccountStore((state) => state.removeSubmission);
+	const setAlertDialog = useAccountStore((state) => state.setAlertDialog);
 	const categories = useAccountStore((state) => state.categories);
 	const router = useRouter();
 
@@ -111,6 +114,31 @@ export function InstitutionDraftEditModal({
 			resolvedSubmissionWithFallback,
 		],
 	);
+
+	const handleDeleteDraft = useCallback(async () => {
+		if (!hasSubmissionId || typeof submissionId !== "number") return;
+		await deleteSubmission(submissionId);
+		removeSubmission(submissionId);
+		setAlertDialog({
+			title: t("institutionDraftEditModal.delete.successTitle", {
+				defaultValue: "Entwurf gelöscht",
+			}),
+			description: t("institutionDraftEditModal.delete.successDescription", {
+				defaultValue: "Die Einreichung wurde gelöscht.",
+			}),
+		});
+		if (shouldRefresh) {
+			router.refresh();
+		}
+	}, [
+		hasSubmissionId,
+		removeSubmission,
+		router,
+		setAlertDialog,
+		shouldRefresh,
+		submissionId,
+		t,
+	]);
 
 	const buildCategoryFilterStateFromIds = useCallback(
 		(
@@ -217,6 +245,28 @@ export function InstitutionDraftEditModal({
 			}`}
 			initialValues={initialValues}
 			onSubmit={({ data }) => handleSubmit(data)}
+			onDelete={handleDeleteDraft}
+			deleteConfig={{
+				buttonLabel: t("institutionDraftEditModal.delete.button", {
+					defaultValue: "Entwurf löschen",
+				}),
+				confirmTitle: t("institutionDraftEditModal.delete.confirmTitle", {
+					defaultValue: "Entwurf löschen?",
+				}),
+				confirmDescription: t(
+					"institutionDraftEditModal.delete.confirmDescription",
+					{
+						defaultValue:
+							"Die Einreichung wird dauerhaft entfernt. Diese Aktion kann nicht rückgängig gemacht werden.",
+					},
+				),
+				confirmLabel: t("institutionDraftEditModal.delete.confirm", {
+					defaultValue: "Löschen",
+				}),
+				cancelLabel: t("institutionDraftEditModal.delete.cancel", {
+					defaultValue: "Abbrechen",
+				}),
+			}}
 			closeOnSubmit
 			submitLabel={t("institutionFormModal.actions.save")}
 			shouldRefresh={shouldRefresh}

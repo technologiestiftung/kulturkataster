@@ -435,7 +435,7 @@ export function GroupFormModal({
 				<div className="px-6 py-8 md:px-10">
 					<DialogTitle className="title">{getDialogTitle(mode, t)}</DialogTitle>
 				</div>
-				<div className="flex-1 overflow-auto px-6 py-6 md:px-10">
+				<div className="flex-1 overflow-auto px-6 py-6 md:px-10 flex flex-col">
 					{renderDialogBody(
 						isWaitingForGroup,
 						t,
@@ -443,34 +443,20 @@ export function GroupFormModal({
 						resolvedGroup,
 						mode,
 					)}
+					{mode === "edit" && resolvedGroup && (
+						<Button
+							type="button"
+							variant="tertiary"
+							className="self-center underline"
+							onClick={() => setShowDeleteDialog(true)}
+							disabled={isDeleting || submitting}
+						>
+							{t("groupFormModal.delete.button", {
+								defaultValue: "Delete",
+							})}
+						</Button>
+					)}
 				</div>
-				{mode === "edit" && resolvedGroup && (
-					<div className="border-t border-neutral-20 px-6 py-4 md:px-10">
-						<div className="flex flex-wrap items-center justify-between gap-3">
-							<div>
-								<p className="body2 font-bold">
-									{t("groupFormModal.delete.title", {
-										defaultValue: "Delete group",
-									})}
-								</p>
-								<p className="body3 text-neutral-80">
-									{t("groupFormModal.delete.description", {
-										defaultValue: "This action permanently removes the group.",
-									})}
-								</p>
-							</div>
-							<Button
-								variant="destructive"
-								onClick={() => setShowDeleteDialog(true)}
-								disabled={isDeleting || submitting}
-							>
-								{t("groupFormModal.delete.button", {
-									defaultValue: "Delete",
-								})}
-							</Button>
-						</div>
-					</div>
-				)}
 			</div>
 			{showDeleteDialog && resolvedGroup && (
 				<AlertDialog
