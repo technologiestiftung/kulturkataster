@@ -96,7 +96,7 @@ export const buildSubmissionRow = (
 		submissionId: submission.id,
 		id: submission.id,
 		name: draft.name || "-",
-		status: "approval_pending",
+		status: submission.status,
 		email: draft.email ?? null,
 		phone: draft.phone ?? null,
 		website: draft.website ?? null,
