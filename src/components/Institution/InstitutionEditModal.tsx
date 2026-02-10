@@ -151,7 +151,9 @@ export function InstitutionEditModal({
 			upsertSubmission(deleteSubmission);
 			setAlertDialog({
 				title: t("institutionFormModal.feedback.deleteRequest.title"),
-				description: t("institutionFormModal.feedback.deleteRequest.description"),
+				description: t(
+					"institutionFormModal.feedback.deleteRequest.description",
+				),
 			});
 		} catch {
 			setAlertDialog({
@@ -203,10 +205,13 @@ export function InstitutionEditModal({
 			shouldRefresh={shouldRefresh}
 			onDelete={handleDelete}
 			deleteConfig={{
-				confirmDescription: t("institutionFormModal.delete.confirmDescription", {
-					defaultValue:
-						"If you can delete this institution directly, it will be removed immediately. Otherwise, a delete request will be submitted for review.",
-				}),
+				confirmDescription: t(
+					"institutionFormModal.delete.confirmDescription",
+					{
+						defaultValue:
+							"If you can delete this institution directly, it will be removed immediately. Otherwise, a delete request will be submitted for review.",
+					},
+				),
 			}}
 		/>
 	);
