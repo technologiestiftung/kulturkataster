@@ -1074,12 +1074,7 @@ export function InstitutionFormModal({
 		} finally {
 			setIsDeleting(false);
 		}
-	}, [
-		onDelete,
-		isDeleting,
-		resolvedSubmitting,
-		handleClose,
-	]);
+	}, [onDelete, isDeleting, resolvedSubmitting, handleClose]);
 
 	return (
 		<RoutedEditorModal routePath={routePath} onClose={handleClose}>
@@ -1118,8 +1113,7 @@ export function InstitutionFormModal({
 					description={
 						deleteConfig?.confirmDescription ??
 						t("institutionFormModal.delete.confirmDescription", {
-							defaultValue:
-								"This action cannot be undone.",
+							defaultValue: "This action cannot be undone.",
 						})
 					}
 					confirmLabel={
