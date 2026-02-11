@@ -14,7 +14,9 @@ test.describe("dashboard routing, tabs, greeting, and menu actions", () => {
 		test.skip(!hasRealAdminCredentials, "E2E admin credentials not set");
 		await prepareStableUi(page);
 		await safeGoto(page, "/de/account/activity", /\/de\/account\/activity\/?$/);
-		await expect(page.getByRole("tab").first()).toBeVisible({ timeout: 15_000 });
+		await expect(page.getByRole("tab").first()).toBeVisible({
+			timeout: 15_000,
+		});
 	});
 
 	test("redirects /account to /account/activity and greets current user", async ({
