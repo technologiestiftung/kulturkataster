@@ -8,14 +8,17 @@ export async function safeGoto(
 ) {
 	const attempt = async () => {
 		try {
-			await page.goto(path, { waitUntil: "commit" });
+			await page.goto(path, { waitUntil: "domcontentloaded" });
 		} catch {
 			// Ignore transient navigation aborts (route interception/frame detach).
 		}
-		return page
+		const arrived = await page
 			.waitForURL(urlPattern, { timeout: timeoutMs })
 			.then(() => true)
 			.catch(() => false);
+		if (!arrived) return false;
+		await page.waitForLoadState("domcontentloaded").catch(() => undefined);
+		return true;
 	};
 
 	if (await attempt()) return;
