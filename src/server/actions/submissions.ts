@@ -7,17 +7,27 @@ import {
 	SubmissionType,
 } from "@/generated/prisma";
 import { getCurrentUserId } from "@/server/actions/auth";
+import {
+	createInstitution,
+	deleteInstitution,
+	updateInstitution,
+} from "@/server/actions/institutions";
 import { submissionRepo } from "@/server/data/submissionRepo";
 import { prisma } from "@/server/prisma";
+import { institutionSubmissionToDraft } from "@/lib/utils/institutionSubmissionUtils";
 import {
 	authorizeTable,
 	getAccessContextForUser,
 	getTableScope,
+	getScopeUserId,
+	authorizeFields,
 	requireAllScope,
 	requireScopeOrUser,
 } from "@/server/utils/rbac";
 import { revalidateAccount } from "@/server/utils/actionsUtils";
 import { ClaimSubmissionDetail } from "@/types";
+import { buildInstitutionPermissionFields } from "@/lib/utils/institutionPermissionUtils";
+import { buildInstitutionScopedWhere } from "@/server/logic/institutionAccess";
 
 type SubmissionFilter = {
 	entityType?: SubmissionEntityType;
@@ -224,29 +234,95 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 	authorizeTable(ctx, "submission", "update");
 	const scope = getTableScope(ctx, "submission", "update");
 	const ownerId = requireScopeOrUser(scope, currentUserId);
-
-	if (!ownerId) {
-		return submissionRepo.update(input.id, {
-			status: input.status,
-			review_notes: input.reviewNotes ?? undefined,
-			reviewer: currentUserId ? { connect: { id: currentUserId } } : undefined,
-			reviewed_at: new Date(),
-		});
-	}
-
-	const result = await submissionRepo.updateWhere(
-		{ id: input.id, created_by: ownerId },
-		{
-			status: input.status,
-			review_notes: input.reviewNotes ?? undefined,
-			reviewer: currentUserId ? { connect: { id: currentUserId } } : undefined,
-			reviewed_at: new Date(),
-		},
-	);
-	if (result.count === 0) {
+	const submission = ownerId
+		? await submissionRepo.findFirst({ id: input.id, created_by: ownerId })
+		: await submissionRepo.findById(input.id);
+	if (!submission) {
 		throw new Error("Not authorized to review this submission.");
 	}
-	return submissionRepo.findFirst({ id: input.id, created_by: ownerId });
+
+	if (input.status === "approved") {
+		if (submission.entity_type !== "institution") {
+			throw new Error("Only institution submissions can be reviewed.");
+		}
+
+		const draft = institutionSubmissionToDraft(submission);
+		const fields = buildInstitutionPermissionFields(draft);
+		const institutionScope = getTableScope(ctx, "institution", "update");
+
+		if (submission.type === "create") {
+			authorizeTable(ctx, "institution", "create");
+			if (fields.length > 0) {
+				authorizeFields(ctx, "institution", fields, "create");
+			}
+			await createInstitution(draft);
+		}
+
+		if (submission.type === "update") {
+			authorizeTable(ctx, "institution", "update");
+			if (fields.length > 0) {
+				authorizeFields(ctx, "institution", fields, "update");
+			}
+			if (!submission.entity_id) {
+				throw new Error("Update submission is missing institution id.");
+			}
+			await updateInstitution({
+				...draft,
+				id: submission.entity_id,
+			});
+		}
+
+		if (submission.type === "claim") {
+			authorizeTable(ctx, "institution", "update");
+			if (!submission.entity_id) {
+				throw new Error("Claim submission is missing institution id.");
+			}
+			if (!submission.created_by) {
+				throw new Error("Claim submission is missing claimant id.");
+			}
+			const institutionOwnerId = getScopeUserId(
+				institutionScope,
+				currentUserId,
+			);
+			const institutionWhere = buildInstitutionScopedWhere(
+				institutionScope,
+				institutionOwnerId,
+				{ id: submission.entity_id },
+			);
+			const targetInstitution = institutionWhere
+				? await prisma.institution.findFirst({ where: institutionWhere })
+				: null;
+			if (!targetInstitution) {
+				throw new Error("Not authorized to claim this institution.");
+			}
+			await prisma.institution.update({
+				where: { id: submission.entity_id },
+				data: { users: { connect: { id: submission.created_by } } },
+			});
+		}
+
+		if (submission.type === "delete") {
+			authorizeTable(ctx, "institution", "delete");
+			if (!submission.entity_id) {
+				throw new Error("Delete submission is missing institution id.");
+			}
+			await deleteInstitution(submission.entity_id);
+		}
+
+		// Delete the submission only after the institution mutation succeeded.
+		await submissionRepo.remove(input.id);
+		revalidateAccount();
+		return { id: input.id, status: "approved" as const };
+	}
+
+	const updated = await submissionRepo.update(input.id, {
+		status: input.status,
+		review_notes: input.reviewNotes ?? undefined,
+		reviewer: currentUserId ? { connect: { id: currentUserId } } : undefined,
+		reviewed_at: new Date(),
+	});
+	revalidateAccount();
+	return updated;
 }
 
 export async function reviewClaimSubmission(input: ClaimReviewPayload) {
