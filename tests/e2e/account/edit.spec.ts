@@ -1,52 +1,25 @@
 import { test, expect } from "@playwright/test";
 import { prepareStableUi } from "../../helpers/e2eStableUi";
 import { safeGoto } from "../../helpers/e2eNavigation";
-
-const LOGIN_REDIRECT_TIMEOUT = 30_000;
+import { USER_STORAGE_STATE } from "../../helpers/e2eAuthState";
 
 const email = process.env.E2E_USER_EMAIL;
-const password = process.env.E2E_USER_PASSWORD;
-const hasRealUserCredentials = !!email && !!password;
-
-const login = async (page: import("@playwright/test").Page) => {
-	test.skip(!hasRealUserCredentials, "E2E credentials not set");
-	await safeGoto(page, "/de/login", /\/de\/login\/?$/);
-	const emailInput = page.locator("input#email");
-	const inputVisible = await emailInput
-		.waitFor({ state: "visible", timeout: 10_000 })
-		.then(() => true)
-		.catch(() => false);
-	if (!inputVisible) {
-		test.skip(true, "Login form was not visible in e2e run.");
-	}
-	await emailInput.fill(email as string);
-	await page
-		.getByRole("textbox", { name: /^Passwort/ })
-		.fill(password as string);
-	await page.getByRole("button", { name: "Anmelden" }).click();
-	const loginSucceeded = await page
-		.waitForURL(/\/de\/account(\/.*)?$/, {
-			timeout: LOGIN_REDIRECT_TIMEOUT,
-		})
-		.then(() => true)
-		.catch(() => false);
-	if (!loginSucceeded) {
-		test.skip(true, "User credentials did not authenticate in e2e run.");
-	}
-};
+const hasRealUserCredentials = !!email && !!process.env.E2E_USER_PASSWORD;
 
 test.describe("account edit", () => {
 	test.setTimeout(90_000);
+	test.use({ storageState: USER_STORAGE_STATE });
 
 	test.beforeEach(async ({ page }) => {
+		test.skip(!hasRealUserCredentials, "E2E credentials not set");
 		await prepareStableUi(page);
+		await safeGoto(page, "/de/account/activity", /\/de\/account\/activity\/?$/);
 	});
 
 	test("direct /de/account/edit shows personal data fields and secure password controls", async ({
 		page,
 	}) => {
-		await login(page);
-		await page.goto("/de/account/edit", { waitUntil: "domcontentloaded" });
+		await safeGoto(page, "/de/account/edit", /\/de\/account\/edit\/?$/);
 
 		await expect(
 			page.getByRole("heading", {
@@ -66,12 +39,18 @@ test.describe("account edit", () => {
 	});
 
 	test("account route allows reaching edit workflow", async ({ page }) => {
-		await login(page);
-		await page.goto("/de/account", { waitUntil: "domcontentloaded" });
+		await safeGoto(page, "/de/account", /\/de\/account\/activity\/?$/);
 		await expect(page).toHaveURL(/\/de\/account\/activity\/?$/);
-
-		await page.getByRole("button", { name: "Profileinstellungen" }).click();
-		await expect(page).toHaveURL(/\/de\/account\/edit\/?$/);
+		await expect(
+			page.getByRole("button", { name: "Profileinstellungen" }),
+		).toBeVisible();
+		await Promise.all([
+			page.waitForURL(/\/de\/account\/edit\/?$/, { timeout: 15_000 }),
+			page
+				.getByRole("button", { name: "Profileinstellungen" })
+				.first()
+				.click({ delay: 100 }),
+		]);
 		await expect(
 			page.getByRole("heading", {
 				name: "Persönliche Angaben ändern",
@@ -83,8 +62,7 @@ test.describe("account edit", () => {
 	test("delete account opens confirmation dialog with confirm action", async ({
 		page,
 	}) => {
-		await login(page);
-		await page.goto("/de/account/edit", { waitUntil: "domcontentloaded" });
+		await safeGoto(page, "/de/account/edit", /\/de\/account\/edit\/?$/);
 
 		await expect(
 			page.getByRole("button", { name: "Profil löschen" }),

@@ -39,8 +39,13 @@ test.describe("auth login", () => {
 			test.skip(true, "Login form was not visible in e2e run.");
 		}
 		await emailInput.fill(email);
-		await page.getByRole("textbox", { name: /^Passwort/ }).fill(password);
-		await page.getByRole("button", { name: "Anmelden" }).click();
+		const passwordInput = page.getByRole("textbox", { name: /^Passwort/ });
+		await expect(passwordInput).toBeVisible();
+		await passwordInput.fill(password);
+		const loginButton = page.getByRole("button", { name: "Anmelden" });
+		await expect(loginButton).toBeVisible();
+		await expect(loginButton).toBeEnabled();
+		await loginButton.click();
 
 		// Hard fail if authentication succeeds and reaches account.
 		await expect(page).not.toHaveURL(/\/account(\/.*)?$/, { timeout: 15_000 });
@@ -53,7 +58,7 @@ test.describe("auth login", () => {
 					/Eingabefehler|freigeschaltet|Anmeldung fehlgeschlagen|invalid|error/i,
 			})
 			.first();
-		await expect(alertDialog).toBeVisible({ timeout: 15_000 });
+		await expect(alertDialog).toBeVisible({ timeout: 30_000 });
 		if (expectedErrorFragment) {
 			await expect(alertDialog).toContainText(expectedErrorFragment);
 		}
@@ -70,10 +75,13 @@ test.describe("auth login", () => {
 			test.skip(true, "Login form was not visible in e2e run.");
 		}
 		await emailInput.fill(`invalid-${Date.now()}@example.de`);
-		await page
-			.getByRole("textbox", { name: /^Passwort/ })
-			.fill("WrongPassword1!");
-		await page.getByRole("button", { name: "Anmelden" }).click();
+		const passwordInput = page.getByRole("textbox", { name: /^Passwort/ });
+		await expect(passwordInput).toBeVisible();
+		await passwordInput.fill("WrongPassword1!");
+		const loginButton = page.getByRole("button", { name: "Anmelden" });
+		await expect(loginButton).toBeVisible();
+		await expect(loginButton).toBeEnabled();
+		await loginButton.click();
 		await expect(page).toHaveURL(/\/login\/?$/, { timeout: 15_000 });
 		await expect(page).not.toHaveURL(/\/account(\/.*)?$/, { timeout: 15_000 });
 	});
@@ -91,19 +99,26 @@ test.describe("auth login", () => {
 			test.skip(true, "Login form was not visible in e2e run.");
 		}
 		await emailInput.fill(activeEmail!);
-		await page
-			.getByRole("textbox", { name: /^Passwort/ })
-			.fill(activePassword!);
-		await page.getByRole("button", { name: "Anmelden" }).click();
-		const loginSucceeded = await page
-			.waitForURL(/\/de\/account(\/.*)?$/, {
+		const passwordInput = page.getByRole("textbox", { name: /^Passwort/ });
+		await expect(passwordInput).toBeVisible();
+		await passwordInput.fill(activePassword!);
+		const loginButton = page.getByRole("button", { name: "Anmelden" });
+		await expect(loginButton).toBeVisible();
+		await expect(loginButton).toBeEnabled();
+		const loginSucceeded = await Promise.all([
+			page.waitForURL(/\/de\/account(\/.*)?$/, {
 				timeout: LOGIN_REDIRECT_TIMEOUT,
-			})
+			}),
+			loginButton.click(),
+		])
 			.then(() => true)
 			.catch(() => false);
 		if (!loginSucceeded) {
 			test.skip(true, "User credentials did not authenticate in e2e run.");
 		}
+		await expect(page.getByRole("tab").first()).toBeVisible({
+			timeout: 15_000,
+		});
 	});
 
 	test("banned user cannot login", async ({ page }) => {

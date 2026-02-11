@@ -18,10 +18,13 @@ const selectAccountType = async (page: any, label: string) => {
 	if (!triggerVisible) {
 		test.skip(true, "Registration account-type selector was not visible.");
 	}
+	await expect(accountTypeTrigger).toBeEnabled();
 	await accountTypeTrigger.click();
 	const listbox = page.getByRole("listbox");
 	await expect(listbox).toBeVisible();
-	await listbox.getByRole("option", { name: label }).click();
+	const option = listbox.getByRole("option", { name: label });
+	await expect(option).toBeVisible();
+	await option.click();
 };
 
 const fillOrganizationFields = async (page: any) => {
@@ -54,8 +57,16 @@ test.describe("Auth registration", () => {
 		await page.getByLabel("Ihre E-Mail Adresse").fill(registerEmail!);
 		await page.getByLabel("Passwort eingeben").fill(registerPassword);
 		await page.getByLabel("Passwort wiederholen").fill(registerPassword);
-		await page.getByRole("checkbox", { name: /Ich akzeptiere/ }).click();
-		await page.getByRole("button", { name: "Konto erstellen" }).click();
+		const termsCheckbox = page.getByRole("checkbox", { name: /Ich akzeptiere/ });
+		await expect(termsCheckbox).toBeVisible();
+		await expect(termsCheckbox).toBeEnabled();
+		await termsCheckbox.click();
+		const createAccountButton = page.getByRole("button", {
+			name: "Konto erstellen",
+		});
+		await expect(createAccountButton).toBeVisible();
+		await expect(createAccountButton).toBeEnabled();
+		await createAccountButton.click();
 
 		await expect(
 			page.getByRole("heading", { name: "Vielen Dank!" }),
@@ -66,8 +77,13 @@ test.describe("Auth registration", () => {
 			),
 		).toBeVisible();
 
-		await page.getByRole("button", { name: "Fertig" }).click();
-		await expect(page).toHaveURL(/\/de\/login\/?$/);
+		const doneButton = page.getByRole("button", { name: "Fertig" });
+		await expect(doneButton).toBeVisible();
+		await expect(doneButton).toBeEnabled();
+		await Promise.all([
+			page.waitForURL(/\/de\/login\/?$/, { timeout: 15_000 }),
+			doneButton.click(),
+		]);
 	});
 
 	test("existing email shows error UI", async ({ page }) => {
@@ -81,11 +97,22 @@ test.describe("Auth registration", () => {
 		await page.getByLabel("Ihre E-Mail Adresse").fill(existingEmail!);
 		await page.getByLabel("Passwort eingeben").fill("Password123!");
 		await page.getByLabel("Passwort wiederholen").fill("Password123!");
-		await page.getByRole("checkbox", { name: /Ich akzeptiere/ }).click();
-		await page.getByRole("button", { name: "Konto erstellen" }).click();
+		const termsCheckbox = page.getByRole("checkbox", { name: /Ich akzeptiere/ });
+		await expect(termsCheckbox).toBeVisible();
+		await expect(termsCheckbox).toBeEnabled();
+		await termsCheckbox.click();
+		const createAccountButton = page.getByRole("button", {
+			name: "Konto erstellen",
+		});
+		await expect(createAccountButton).toBeVisible();
+		await expect(createAccountButton).toBeEnabled();
+		await createAccountButton.click();
 
 		await expect(page.getByRole("dialog")).toBeVisible();
-		await page.getByRole("button", { name: "Schließen" }).click();
+		const closeButton = page.getByRole("button", { name: "Schließen" });
+		await expect(closeButton).toBeVisible();
+		await expect(closeButton).toBeEnabled();
+		await closeButton.click();
 	});
 
 	test("invalid fields block submit; fixing enables submit", async ({
@@ -99,8 +126,16 @@ test.describe("Auth registration", () => {
 		await page.getByLabel("Ihre E-Mail Adresse").fill("invalid-email");
 		await page.getByLabel("Passwort eingeben").fill("short");
 		await page.getByLabel("Passwort wiederholen").fill("different");
-		await page.getByRole("checkbox", { name: /Ich akzeptiere/ }).click();
-		await page.getByRole("button", { name: "Konto erstellen" }).click();
+		const termsCheckbox = page.getByRole("checkbox", { name: /Ich akzeptiere/ });
+		await expect(termsCheckbox).toBeVisible();
+		await expect(termsCheckbox).toBeEnabled();
+		await termsCheckbox.click();
+		const createAccountButton = page.getByRole("button", {
+			name: "Konto erstellen",
+		});
+		await expect(createAccountButton).toBeVisible();
+		await expect(createAccountButton).toBeEnabled();
+		await createAccountButton.click();
 
 		const alertDialog = page
 			.locator('[data-slot="dialog-content"]')

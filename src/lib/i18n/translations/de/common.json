@@ -132,7 +132,6 @@
 			"accountType": "Arbeiten Sie für eine Organisation oder in der Verwaltung?",
 			"accountTypeAdministration": "Mitarbeiter*in des Landes Berlin",
 			"accountTypeDistrict": "Mitarbeiter*in eines Bezirks",
-			"accountTypeIndividual": "",
 			"accountTypeOrganization": "Mitarbeiter*in einer Organisation",
 			"accountTypePlaceholder": "Optionen auswählen",
 			"administrationName": "Für welche Landesbehörde arbeiten Sie?",
@@ -241,7 +240,6 @@
 		"address": "info@kulturkataster.berlin",
 		"label": "E-Mail"
 	},
-	"error": "",
 	"fileFormat": {
 		"csv": "CSV",
 		"xls": "XLS",
@@ -291,7 +289,6 @@
 		}
 	},
 	"headerLandmark": "Seitennavigation",
-	"hello": "",
 	"here": "hier",
 	"info": {
 		"open": "Infos öffnen",
@@ -446,20 +443,5 @@
 		"number": "+49 (0) 30 3030 444 60"
 	},
 	"unknown": "Unbekannt",
-	"venue": {
-		"address": "",
-		"backToMap": "",
-		"contact": "",
-		"details": "",
-		"email": "",
-		"funding": "",
-		"notFound": "",
-		"organization": "",
-		"parent": "",
-		"phone": "",
-		"support": "",
-		"unnamed": "",
-		"website": ""
-	},
 	"yes": "Ja"
 }

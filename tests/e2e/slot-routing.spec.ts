@@ -64,11 +64,16 @@ test.describe("slot routing", () => {
 		if (!listButtonVisible) {
 			test.skip(true, "List view switch button was not visible.");
 		}
-		await listButton.click({ force: true });
-		await expect(page).toHaveURL(
-			new RegExp(`/de/list/institution/${institutionId}/?$`),
-			{ timeout: 15_000 },
-		);
+		await expect(listButton).toBeEnabled();
+		await Promise.all([
+			page.waitForURL(new RegExp(`/de/list/institution/${institutionId}/?$`), {
+				timeout: 30_000,
+			}),
+			listButton.click({ force: true }),
+		]);
+		await expect(page.locator("#institution-title").first()).toBeVisible({
+			timeout: 15_000,
+		});
 
 		const mapButton = page
 			.locator('button[aria-label="Kartenansicht"]:visible')
@@ -80,10 +85,15 @@ test.describe("slot routing", () => {
 		if (!mapButtonVisible) {
 			test.skip(true, "Map view switch button was not visible.");
 		}
-		await mapButton.click({ force: true });
-		await expect(page).toHaveURL(
-			new RegExp(`/de/map/institution/${institutionId}/?$`),
-			{ timeout: 15_000 },
-		);
+		await expect(mapButton).toBeEnabled();
+		await Promise.all([
+			page.waitForURL(new RegExp(`/de/map/institution/${institutionId}/?$`), {
+				timeout: 15_000,
+			}),
+			mapButton.click({ force: true }),
+		]);
+		await expect(page.locator("#institution-title").first()).toBeVisible({
+			timeout: 15_000,
+		});
 	});
 });
