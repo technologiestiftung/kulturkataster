@@ -1,44 +1,20 @@
 import { test, expect } from "@playwright/test";
 import { safeGoto } from "../../helpers/e2eNavigation";
+import { prepareStableUi } from "../../helpers/e2eStableUi";
+import { ADMIN_STORAGE_STATE } from "../../helpers/e2eAuthState";
 
-const LOGIN_REDIRECT_TIMEOUT = 30_000;
-
-const adminEmail = process.env.E2E_ADMIN_EMAIL || "";
-const adminPassword = process.env.E2E_ADMIN_PASSWORD;
-const hasRealAdminCredentials = !!adminEmail && !!adminPassword;
-
-const loginAsAdmin = async (page: import("@playwright/test").Page) => {
-	await safeGoto(page, "/de/login", /\/de\/login\/?$/);
-	const emailInput = page.locator("input#email");
-	const inputVisible = await emailInput
-		.waitFor({ state: "visible", timeout: 10_000 })
-		.then(() => true)
-		.catch(() => false);
-	if (!inputVisible) {
-		test.skip(true, "Login form was not visible in e2e run.");
-	}
-	await emailInput.fill(adminEmail);
-	await page
-		.getByRole("textbox", { name: /^Passwort/ })
-		.fill(adminPassword ?? "");
-	await page.getByRole("button", { name: "Anmelden" }).click();
-	const loginSucceeded = await page
-		.waitForURL(/\/de\/account(\/.*)?$/, {
-			timeout: LOGIN_REDIRECT_TIMEOUT,
-		})
-		.then(() => true)
-		.catch(() => false);
-	if (!loginSucceeded) {
-		test.skip(true, "Admin credentials did not authenticate in e2e run.");
-	}
-};
+const hasRealAdminCredentials =
+	!!process.env.E2E_ADMIN_EMAIL && !!process.env.E2E_ADMIN_PASSWORD;
 
 test.describe("dashboard routing, tabs, greeting, and menu actions", () => {
 	test.setTimeout(90_000);
+	test.use({ storageState: ADMIN_STORAGE_STATE });
 
 	test.beforeEach(async ({ page }) => {
 		test.skip(!hasRealAdminCredentials, "E2E admin credentials not set");
-		await loginAsAdmin(page);
+		await prepareStableUi(page);
+		await safeGoto(page, "/de/account/activity", /\/de\/account\/activity\/?$/);
+		await expect(page.getByRole("tab").first()).toBeVisible({ timeout: 15_000 });
 	});
 
 	test("redirects /account to /account/activity and greets current user", async ({
@@ -67,10 +43,12 @@ test.describe("dashboard routing, tabs, greeting, and menu actions", () => {
 		for (const tab of tabRoutes) {
 			const tabButton = page.getByRole("tab", { name: tab.label });
 			if ((await tabButton.count()) === 0) continue;
-			await tabButton.click();
-			await expect(page).toHaveURL(new RegExp(`${tab.route}/?$`), {
-				timeout: 15_000,
-			});
+			await expect(tabButton).toBeVisible();
+			await expect(tabButton).toBeEnabled();
+			await Promise.all([
+				page.waitForURL(new RegExp(`${tab.route}/?$`), { timeout: 15_000 }),
+				tabButton.click(),
+			]);
 			await expect(tabButton).toHaveAttribute("data-state", "active");
 			lastVisitedRoute = tab.route;
 		}
@@ -84,25 +62,39 @@ test.describe("dashboard routing, tabs, greeting, and menu actions", () => {
 	test("shows dashboard menu actions and executes their routing", async ({
 		page,
 	}) => {
-		await page.goto("/de/account/activity", { waitUntil: "domcontentloaded" });
+		const navigateViaMenuAction = async (
+			buttonName: string,
+			targetUrl: RegExp,
+			timeout = 15_000,
+		) => {
+			await page.goto("/de/account/activity", {
+				waitUntil: "domcontentloaded",
+			});
+			const button = page.getByRole("button", { name: buttonName });
+			await expect(button).toBeVisible();
+			await Promise.all([
+				page.waitForURL(targetUrl, { timeout }),
+				button.click(),
+			]);
+		};
 
-		await page.goto("/de/account/activity", { waitUntil: "domcontentloaded" });
-		await page.getByRole("button", { name: "Profileinstellungen" }).click();
-		await expect(page).toHaveURL(/\/de\/account\/edit\/?$/);
+		await navigateViaMenuAction(
+			"Profileinstellungen",
+			/\/de\/account\/edit\/?$/,
+		);
+		await expect(
+			page.getByRole("heading", {
+				name: "Persönliche Angaben ändern",
+				level: 1,
+			}),
+		).toBeVisible();
 
-		await page.goto("/de/account/activity", { waitUntil: "domcontentloaded" });
-		const faqButton = page.getByRole("button", { name: "FAQ" });
-		await expect(faqButton).toBeVisible();
-		await faqButton.click();
-		await expect(page).toHaveURL(/\/de\/account\/faq\/?$/, {
-			timeout: 15_000,
-		});
+		await navigateViaMenuAction("FAQ", /\/de\/account\/faq\/?$/, 30_000);
+		await expect(
+			page.getByRole("heading", { name: "Kontakt zum Support" }),
+		).toBeVisible({ timeout: 15_000 });
 
-		await page.goto("/de/account/activity", { waitUntil: "domcontentloaded" });
-		await page.getByRole("button", { name: "Abmelden" }).click();
-		await expect(page).toHaveURL(/\/de(?:\/|\/welcome\/?)?$/, {
-			timeout: 15_000,
-		});
+		await navigateViaMenuAction("Abmelden", /\/de(?:\/|\/welcome\/?)?$/);
 
 		await page.goto("/de/account/activity", { waitUntil: "domcontentloaded" });
 		await expect(page).toHaveURL(/\/de\/login\/?$/);
