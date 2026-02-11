@@ -57,7 +57,9 @@ test.describe("Auth registration", () => {
 		await page.getByLabel("Ihre E-Mail Adresse").fill(registerEmail!);
 		await page.getByLabel("Passwort eingeben").fill(registerPassword);
 		await page.getByLabel("Passwort wiederholen").fill(registerPassword);
-		const termsCheckbox = page.getByRole("checkbox", { name: /Ich akzeptiere/ });
+		const termsCheckbox = page.getByRole("checkbox", {
+			name: /Ich akzeptiere/,
+		});
 		await expect(termsCheckbox).toBeVisible();
 		await expect(termsCheckbox).toBeEnabled();
 		await termsCheckbox.click();
@@ -97,7 +99,9 @@ test.describe("Auth registration", () => {
 		await page.getByLabel("Ihre E-Mail Adresse").fill(existingEmail!);
 		await page.getByLabel("Passwort eingeben").fill("Password123!");
 		await page.getByLabel("Passwort wiederholen").fill("Password123!");
-		const termsCheckbox = page.getByRole("checkbox", { name: /Ich akzeptiere/ });
+		const termsCheckbox = page.getByRole("checkbox", {
+			name: /Ich akzeptiere/,
+		});
 		await expect(termsCheckbox).toBeVisible();
 		await expect(termsCheckbox).toBeEnabled();
 		await termsCheckbox.click();
@@ -126,7 +130,9 @@ test.describe("Auth registration", () => {
 		await page.getByLabel("Ihre E-Mail Adresse").fill("invalid-email");
 		await page.getByLabel("Passwort eingeben").fill("short");
 		await page.getByLabel("Passwort wiederholen").fill("different");
-		const termsCheckbox = page.getByRole("checkbox", { name: /Ich akzeptiere/ });
+		const termsCheckbox = page.getByRole("checkbox", {
+			name: /Ich akzeptiere/,
+		});
 		await expect(termsCheckbox).toBeVisible();
 		await expect(termsCheckbox).toBeEnabled();
 		await termsCheckbox.click();

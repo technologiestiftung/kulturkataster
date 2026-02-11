@@ -9,11 +9,11 @@ import {
 const LOGIN_TIMEOUT = 30_000;
 
 type SaveStorageOptions = {
-	baseURL: string,
-	statePath: string,
-	label: string,
-	email?: string,
-	password?: string,
+	baseURL: string;
+	statePath: string;
+	label: string;
+	email?: string;
+	password?: string;
 };
 
 const saveStorageState = async ({

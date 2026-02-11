@@ -29,10 +29,7 @@
 	"i18n-ally.indent": 2,
 	"i18n-ally.usage.scanningIgnore": ["node_modules/**", "dist/**", ".next/**"],
 	"i18n-ally.extract.keygenStyle": "nested",
-	"i18n-ally.refactor.templates": [
-		"{key}",
-		"{namespace}.{key}"
-	],
+	"i18n-ally.refactor.templates": ["{key}", "{namespace}.{key}"],
 	"WillLuke.nextjs.addTypesOnSave": true,
 	"WillLuke.nextjs.hasPrompted": true
 }
