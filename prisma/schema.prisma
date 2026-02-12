@@ -124,7 +124,7 @@ enum PermissionScope {
 
 model Address {
   id             Int      @id @default(autoincrement())
-  street         String
+  street         String?
   street_number  String?
   address_suffix String?
   zipcode        String?

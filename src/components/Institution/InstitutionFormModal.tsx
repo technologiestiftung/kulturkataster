@@ -462,7 +462,6 @@ const buildInstitutionFormConfig = ({
 						)}`,
 						type: "text",
 						layout: { span: "half" },
-						required: true,
 						placeholder: t(
 							"institutionFormModal.form.details.fields.address.streetLine.placeholder",
 						),
