@@ -366,7 +366,9 @@
 	"loading": "Laden",
 	"mainContent": "Hauptinhalt",
 	"map": {
-		"addressPickerHint": "Bewegen Sie die Karte, um den Pin zu positionieren und die Adresse automatisch auszufüllen.",
+		"addressPickerHint": "Bewegen Sie die Karte, um den Pin zu positionieren. Übernehmen Sie die Position anschließend in das Formular.",
+		"addressPickerApply": "Position übernehmen",
+		"addressPickerApplyLoading": "Position wird übernommen...",
 		"availableLayers": "Verfügbare Ebenen",
 		"closeLayerTree": "Fachkarten schließen",
 		"geolocate": "Meinen Standort finden",
