@@ -30,9 +30,7 @@ const copyField = (field: FieldConfig): FieldConfig => {
 const toFieldSet = (values: string[] | undefined): Set<string> =>
 	new Set((values ?? []).filter(Boolean));
 
-const resolveTopLevelField = (
-	field: FieldConfig,
-): string | null => {
+const resolveTopLevelField = (field: FieldConfig): string | null => {
 	if (field.type === "section" || field.type === "actionPanel") return null;
 	return resolveInstitutionPermissionField(field);
 };
@@ -78,9 +76,7 @@ const shapeField = (
 ): FieldConfig | null => {
 	if (field.type === "section") {
 		const nested = (field.fields ?? [])
-			.map((nestedField) =>
-				shapeField(nestedField, mode, permissions),
-			)
+			.map((nestedField) => shapeField(nestedField, mode, permissions))
 			.filter((item): item is FieldConfig => item !== null);
 		if (nested.length === 0) return null;
 		return {

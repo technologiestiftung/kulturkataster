@@ -747,7 +747,8 @@ export function InstitutionsTable() {
 							<span>{t("institutionsTable.actions.claimInstitution")}</span>
 						</span>
 					),
-					onClick: () => router.push(toLocalePath("/account/submissions/claim")),
+					onClick: () =>
+						router.push(toLocalePath("/account/submissions/claim")),
 				}
 			: undefined,
 		onEdit: (row) => {
