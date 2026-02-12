@@ -17,6 +17,13 @@ const accountStoreInitialState = {
 		create: false,
 		update: false,
 		delete: false,
+		createSubmission: false,
+	},
+	institutionFieldPermissions: {
+		read: [],
+		create: [],
+		update: [],
+		delete: [],
 	},
 	selectedUserId: null,
 	selectedGroupId: null,
@@ -130,6 +137,10 @@ export const useAccountStore = create<AccountStoreState>()(
 				setInstitutionPermissions: (permissions) =>
 					set((state) => {
 						state.institutionPermissions = permissions;
+					}),
+				setInstitutionFieldPermissions: (permissions) =>
+					set((state) => {
+						state.institutionFieldPermissions = permissions;
 					}),
 				addInstitution: (institution: Institution) =>
 					set((state) => {

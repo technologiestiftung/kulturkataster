@@ -24,6 +24,7 @@ type InstitutionDraftReviewModalProps = {
 	returnTo?: string;
 	editBasePath?: string;
 	routePath?: string;
+	shouldRefresh?: boolean;
 };
 
 export function InstitutionDraftReviewModal({
@@ -31,6 +32,7 @@ export function InstitutionDraftReviewModal({
 	returnTo,
 	editBasePath = "/account/submissions",
 	routePath,
+	shouldRefresh = false,
 }: InstitutionDraftReviewModalProps) {
 	const { t } = useTranslation("content");
 	const router = useRouter();
@@ -41,6 +43,8 @@ export function InstitutionDraftReviewModal({
 
 	const hasSubmissionId = typeof submissionId === "number";
 	const allSubmissions = useAccountStore((state) => state.submissions);
+	const upsertSubmission = useAccountStore((state) => state.upsertSubmission);
+	const removeSubmission = useAccountStore((state) => state.removeSubmission);
 	const submissions = useMemo(
 		() =>
 			allSubmissions.filter(
@@ -170,14 +174,21 @@ export function InstitutionDraftReviewModal({
 			setSubmitting(true);
 			setError(null);
 			try {
-				await reviewSubmission({
+				const reviewed = await reviewSubmission({
 					id: resolvedSubmissionWithFallback.id,
 					status,
 					reviewNotes: reviewNotes.trim() ? reviewNotes.trim() : undefined,
 				});
-				router.refresh();
+				if (status === "approved") {
+					removeSubmission(resolvedSubmissionWithFallback.id);
+				} else if (reviewed && typeof reviewed === "object") {
+					upsertSubmission(reviewed as Submission);
+				}
+				if (shouldRefresh) {
+					router.refresh();
+				}
 				if (returnTo) {
-					router.replace(returnTo);
+					router.replace(toLocalePath(returnTo));
 				}
 			} catch (err) {
 				console.error(
@@ -202,7 +213,11 @@ export function InstitutionDraftReviewModal({
 			reviewNotes,
 			router,
 			returnTo,
+			shouldRefresh,
 			t,
+			removeSubmission,
+			toLocalePath,
+			upsertSubmission,
 		],
 	);
 

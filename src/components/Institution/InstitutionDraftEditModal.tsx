@@ -238,6 +238,7 @@ export function InstitutionDraftEditModal({
 	return (
 		<InstitutionFormModal
 			mode="create"
+			permissionContext="submission"
 			returnTo={returnTo}
 			routePath={routePath}
 			formKey={`draft-${submissionId ?? "new"}-${

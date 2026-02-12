@@ -1168,6 +1168,7 @@ function InstitutionDraftWizardContent({
 			{editModalOpen ? (
 				<InstitutionFormModal
 					mode={draftMode === "update" ? "edit" : "create"}
+					permissionContext="submission"
 					initialValues={draft}
 					onClose={() => {
 						if (typeof window !== "undefined") {

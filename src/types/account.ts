@@ -9,6 +9,14 @@ export type InstitutionActionPermissions = {
 	create: boolean;
 	update: boolean;
 	delete: boolean;
+	createSubmission: boolean;
+};
+
+export type InstitutionFieldPermissions = {
+	read: string[];
+	create: string[];
+	update: string[];
+	delete: string[];
 };
 
 export type AccountStoreState = {
@@ -20,6 +28,7 @@ export type AccountStoreState = {
 	institutions: Institution[];
 	submissions: Submission[];
 	institutionPermissions: InstitutionActionPermissions;
+	institutionFieldPermissions: InstitutionFieldPermissions;
 	selectedUserId: string | null;
 	selectedGroupId: number | null;
 	selectedRoleId: number | null;
@@ -32,6 +41,9 @@ export type AccountStoreState = {
 	setInstitutions: (institutions: Institution[]) => void;
 	setInstitutionPermissions: (
 		permissions: InstitutionActionPermissions,
+	) => void;
+	setInstitutionFieldPermissions: (
+		permissions: InstitutionFieldPermissions,
 	) => void;
 	addUser: (user: User) => void;
 	upsertUser: (user: User) => void;
