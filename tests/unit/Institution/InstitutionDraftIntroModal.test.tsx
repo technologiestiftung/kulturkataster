@@ -29,7 +29,9 @@ describe("InstitutionDraftIntroModal", () => {
 	});
 
 	it("authenticated user can continue with new location flow", () => {
-		render(<InstitutionDraftIntroModal routePath="/institution" isAuthenticated />);
+		render(
+			<InstitutionDraftIntroModal routePath="/institution" isAuthenticated />,
+		);
 
 		fireEvent.click(
 			screen.getByRole("button", {
@@ -42,7 +44,9 @@ describe("InstitutionDraftIntroModal", () => {
 	});
 
 	it("authenticated user can select existing location flow", () => {
-		render(<InstitutionDraftIntroModal routePath="/institution" isAuthenticated />);
+		render(
+			<InstitutionDraftIntroModal routePath="/institution" isAuthenticated />,
+		);
 
 		fireEvent.click(
 			screen.getByLabelText("institutionDraftIntroModal.intro.mode.edit"),
@@ -59,7 +63,10 @@ describe("InstitutionDraftIntroModal", () => {
 
 	it("guest user can choose guest path and then select contribution mode", () => {
 		render(
-			<InstitutionDraftIntroModal routePath="/institution" isAuthenticated={false} />,
+			<InstitutionDraftIntroModal
+				routePath="/institution"
+				isAuthenticated={false}
+			/>,
 		);
 
 		expect(
