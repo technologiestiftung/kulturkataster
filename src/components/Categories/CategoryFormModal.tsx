@@ -473,7 +473,7 @@ export function CategoryFormModal({
 		handleClose,
 	]);
 
-	if (showNotFound) {
+	if (showNotFound && !isDeleting) {
 		return renderNotFoundDialog(t);
 	}
 
@@ -512,9 +512,11 @@ export function CategoryFormModal({
 					onConfirm={async () => {
 						if (isDeleting) return;
 						setIsDeleting(true);
+						let deleteSucceeded = false;
 						try {
 							await deleteCategory(resolvedCategory.id);
 							removeCategory(resolvedCategory.id);
+							deleteSucceeded = true;
 							setShowDeleteDialog(false);
 							handleClose();
 						} catch {
@@ -529,7 +531,9 @@ export function CategoryFormModal({
 							});
 							setShowDeleteDialog(false);
 						} finally {
-							setIsDeleting(false);
+							if (!deleteSucceeded) {
+								setIsDeleting(false);
+							}
 						}
 					}}
 					onOpenChange={(open) => {
