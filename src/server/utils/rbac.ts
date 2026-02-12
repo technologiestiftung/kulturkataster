@@ -19,6 +19,13 @@ export interface AccessContext {
 	field: FieldPermissionMap;
 }
 
+export type FieldPermissionLists = {
+	read: string[];
+	create: string[];
+	update: string[];
+	delete: string[];
+};
+
 type RBACErrorMeta = {
 	table?: string;
 	action?: Action;
@@ -243,4 +250,29 @@ export const getGuestReadableFieldsForTable = async (
 	table: string,
 ): Promise<string[]> => {
 	return getSystemRoleReadableFieldsForTable("guest", table);
+};
+
+export const getFieldPermissionListsForTable = (
+	context: AccessContext,
+	table: string,
+): FieldPermissionLists => {
+	const tableFields = context.field[table] ?? {};
+	const read = new Set<string>();
+	const create = new Set<string>();
+	const update = new Set<string>();
+	const del = new Set<string>();
+
+	for (const [field, actions] of Object.entries(tableFields)) {
+		if (actions.has("read")) read.add(field);
+		if (actions.has("create")) create.add(field);
+		if (actions.has("update")) update.add(field);
+		if (actions.has("delete")) del.add(field);
+	}
+
+	return {
+		read: Array.from(read),
+		create: Array.from(create),
+		update: Array.from(update),
+		delete: Array.from(del),
+	};
 };

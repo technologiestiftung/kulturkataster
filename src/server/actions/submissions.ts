@@ -17,16 +17,19 @@ import { prisma } from "@/server/prisma";
 import { institutionSubmissionToDraft } from "@/lib/utils/institutionSubmissionUtils";
 import {
 	authorizeTable,
+	canFields,
 	getAccessContextForUser,
 	getTableScope,
 	getScopeUserId,
-	authorizeFields,
 	requireAllScope,
 	requireScopeOrUser,
 } from "@/server/utils/rbac";
 import { revalidateAccount } from "@/server/utils/actionsUtils";
 import { ClaimSubmissionDetail } from "@/types";
-import { buildInstitutionPermissionFields } from "@/lib/utils/institutionPermissionUtils";
+import {
+	buildInstitutionPermissionFields,
+	filterInstitutionInputByPermissionFields,
+} from "@/lib/utils/institutionPermissionUtils";
 import { buildInstitutionScopedWhere } from "@/server/logic/institutionAccess";
 
 type SubmissionFilter = {
@@ -247,28 +250,65 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 		}
 
 		const draft = institutionSubmissionToDraft(submission);
-		const fields = buildInstitutionPermissionFields(draft);
 		const institutionScope = getTableScope(ctx, "institution", "update");
 
 		if (submission.type === "create") {
 			authorizeTable(ctx, "institution", "create");
-			if (fields.length > 0) {
-				authorizeFields(ctx, "institution", fields, "create");
+			const fields = buildInstitutionPermissionFields(draft);
+			const allowedFields = new Set(
+				fields.filter((field) =>
+					canFields(ctx, "institution", [field], "create"),
+				),
+			);
+			const sanitizedDraft = filterInstitutionInputByPermissionFields(
+				draft,
+				allowedFields,
+			);
+			const name = sanitizedDraft.name;
+			if (!name || typeof name !== "string" || name.trim().length === 0) {
+				throw new Error(
+					"Create submission does not include permitted required fields.",
+				);
 			}
-			await createInstitution(draft);
+			await createInstitution({
+				...draft,
+				...sanitizedDraft,
+				name,
+			});
 		}
 
 		if (submission.type === "update") {
 			authorizeTable(ctx, "institution", "update");
-			if (fields.length > 0) {
-				authorizeFields(ctx, "institution", fields, "update");
-			}
 			if (!submission.entity_id) {
 				throw new Error("Update submission is missing institution id.");
 			}
+			const fields = buildInstitutionPermissionFields(draft);
+			const allowedFields = new Set(
+				fields.filter((field) =>
+					canFields(ctx, "institution", [field], "update"),
+				),
+			);
+			const sanitizedDraft = filterInstitutionInputByPermissionFields(
+				draft,
+				allowedFields,
+			);
+			const currentInstitution = await prisma.institution.findUnique({
+				where: { id: submission.entity_id },
+				select: { name: true },
+			});
+			if (!currentInstitution) {
+				throw new Error("Target institution not found.");
+			}
+			const resolvedName =
+				typeof sanitizedDraft.name === "string" &&
+				sanitizedDraft.name.trim().length > 0
+					? sanitizedDraft.name
+					: currentInstitution.name;
 			await updateInstitution({
 				...draft,
+				...sanitizedDraft,
 				id: submission.entity_id,
+				name: resolvedName,
 			});
 		}
 
