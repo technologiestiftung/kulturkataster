@@ -59,6 +59,13 @@ type InstitutionFormModalProps = {
 		confirmLabel?: string;
 		cancelLabel?: string;
 	};
+	closeConfirmation?: {
+		title: string;
+		description: string;
+		status?: "info" | "warning" | "error" | "success";
+		confirmLabel?: string;
+		cancelLabel?: string;
+	};
 	permissionContext?: "institution" | "submission";
 };
 
@@ -897,6 +904,7 @@ export function InstitutionFormModal({
 	shouldRefresh = false,
 	onDelete,
 	deleteConfig,
+	closeConfirmation,
 	permissionContext = "institution",
 }: InstitutionFormModalProps) {
 	const { t } = useTranslation("content");
@@ -1118,7 +1126,11 @@ export function InstitutionFormModal({
 	]);
 
 	return (
-		<RoutedEditorModal routePath={routePath} onClose={handleClose}>
+		<RoutedEditorModal
+			routePath={routePath}
+			onClose={handleClose}
+			closeConfirmation={closeConfirmation}
+		>
 			<div className="flex h-full flex-col">
 				<div className="px-6 py-8 md:px-10">
 					<DialogTitle className="title">{getDialogTitle(mode, t)}</DialogTitle>

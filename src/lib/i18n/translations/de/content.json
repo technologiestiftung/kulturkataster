@@ -783,6 +783,12 @@
 			"title": "Einreichung prüfen"
 		}
 	},
+	"institutionModalCloseConfirmation": {
+		"title": "Vorgang verlassen?",
+		"description": "Nicht gespeicherte Eingaben gehen verloren.",
+		"confirm": "Verlassen",
+		"cancel": "Abbrechen"
+	},
 	"institutionDraftIntroModal": {
 		"title": "Mitwirken beim Kulturkataster Berlin",
 		"choice": {
@@ -809,7 +815,8 @@
 				"new": "Neue/n Kulturort/e eintragen",
 				"edit": "Ergänzung oder Änderung eines oder mehrere bestehender Kulturorte"
 			},
-			"cta": "Weiter"
+			"cta": "Weiter",
+			"back": "Zurück"
 		}
 	},
 	"listView": {

@@ -1202,6 +1202,7 @@ export function InstitutionDraftWizardModal({
 	initialStepId?: string;
 	routePath?: string;
 }) {
+	const { t } = useTranslation("content");
 	const storedStepId = useInstitutionDraftStore((state) => state.stepId);
 	const setStepId = useInstitutionDraftStore((state) => state.setStepId);
 	const draftMode = useInstitutionDraftStore((state) => state.mode);
@@ -1230,6 +1231,12 @@ export function InstitutionDraftWizardModal({
 			titleClassName="sr-only"
 			variant="fullscreen"
 			routePath={routePath}
+			closeConfirmation={{
+				title: t("institutionModalCloseConfirmation.title"),
+				description: t("institutionModalCloseConfirmation.description"),
+				confirmLabel: t("institutionModalCloseConfirmation.confirm"),
+				cancelLabel: t("institutionModalCloseConfirmation.cancel"),
+			}}
 			containerClassName="p-0 md:p-0 mt-0 md:mt-0"
 			contentWrapperClassName="flex-1"
 			contentClassName=""
@@ -1251,6 +1258,7 @@ export function InstitutionDraftWizardModal({
 }
 
 export function InstitutionDraftWizardEditModal() {
+	const { t } = useTranslation("content");
 	const reviewOnlySteps = useMemo(
 		() => stepConfigs.filter((step) => step.id === "review"),
 		[],
@@ -1260,6 +1268,12 @@ export function InstitutionDraftWizardEditModal() {
 			title="Edit Institution"
 			titleClassName="sr-only"
 			variant="fullscreen"
+			closeConfirmation={{
+				title: t("institutionModalCloseConfirmation.title"),
+				description: t("institutionModalCloseConfirmation.description"),
+				confirmLabel: t("institutionModalCloseConfirmation.confirm"),
+				cancelLabel: t("institutionModalCloseConfirmation.cancel"),
+			}}
 			containerClassName="p-0 md:p-0 mt-0 md:mt-0"
 			contentWrapperClassName="flex-1"
 			contentClassName=""

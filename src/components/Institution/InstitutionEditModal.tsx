@@ -196,6 +196,12 @@ export function InstitutionEditModal({
 			institution={resolvedInstitutionWithFallback}
 			returnTo={returnTo}
 			routePath={routePath}
+			closeConfirmation={{
+				title: t("institutionModalCloseConfirmation.title"),
+				description: t("institutionModalCloseConfirmation.description"),
+				confirmLabel: t("institutionModalCloseConfirmation.confirm"),
+				cancelLabel: t("institutionModalCloseConfirmation.cancel"),
+			}}
 			onSubmit={onSubmit}
 			initialValues={initialValues}
 			formKey={formKey}
