@@ -18,7 +18,13 @@ describe("institutionPermissionUtils", () => {
 		const fields = buildInstitutionPermissionFields(input);
 
 		expect(fields).toEqual(
-			expect.arrayContaining(["name", "address", "categories", "groups", "notes"]),
+			expect.arrayContaining([
+				"name",
+				"address",
+				"categories",
+				"groups",
+				"notes",
+			]),
 		);
 		expect(fields).not.toContain("categoryIds");
 		expect(fields).not.toContain("groupIds");

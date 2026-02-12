@@ -21,7 +21,9 @@ export type AccountBootstrapData = {
 	categories: Awaited<ReturnType<typeof getCategories>>;
 	institutions: Awaited<ReturnType<typeof getMyInstitutions>>;
 	submissions: Awaited<ReturnType<typeof getSubmissions>>;
-	institutionFieldPermissions: ReturnType<typeof getFieldPermissionListsForTable>;
+	institutionFieldPermissions: ReturnType<
+		typeof getFieldPermissionListsForTable
+	>;
 };
 
 export async function getAccountBootstrapData(): Promise<AccountBootstrapData | null> {
