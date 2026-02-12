@@ -1,5 +1,11 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
-import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+	act,
+	fireEvent,
+	render,
+	screen,
+	waitFor,
+} from "@testing-library/react";
 import { AddressMapField } from "@/components/FormWrapper/AddressMapField";
 
 // Mock i18next
@@ -183,9 +189,7 @@ describe("AddressMapField", () => {
 
 			await waitFor(() => {
 				expect(
-					screen.getByText(
-						/Move the map pin and then apply the position./i,
-					),
+					screen.getByText(/Move the map pin and then apply the position./i),
 				).toBeInTheDocument();
 			});
 		});
@@ -378,7 +382,10 @@ describe("AddressMapField", () => {
 		it("does not update fields automatically on map move", async () => {
 			const onChange = vi.fn();
 			render(
-				<AddressMapField value={{ lat: 52.52, lng: 13.405 }} onChange={onChange} />,
+				<AddressMapField
+					value={{ lat: 52.52, lng: 13.405 }}
+					onChange={onChange}
+				/>,
 			);
 
 			await waitFor(() => {
@@ -401,7 +408,10 @@ describe("AddressMapField", () => {
 		it("applies selected map position only after CTA click", async () => {
 			const onChange = vi.fn();
 			render(
-				<AddressMapField value={{ lat: 52.52, lng: 13.405 }} onChange={onChange} />,
+				<AddressMapField
+					value={{ lat: 52.52, lng: 13.405 }}
+					onChange={onChange}
+				/>,
 			);
 
 			await waitFor(() => {
@@ -440,7 +450,10 @@ describe("AddressMapField", () => {
 			mockReverseGeocode.mockRejectedValueOnce(new Error("reverse failed"));
 			const onChange = vi.fn();
 			render(
-				<AddressMapField value={{ lat: 52.52, lng: 13.405 }} onChange={onChange} />,
+				<AddressMapField
+					value={{ lat: 52.52, lng: 13.405 }}
+					onChange={onChange}
+				/>,
 			);
 
 			await waitFor(() => {
