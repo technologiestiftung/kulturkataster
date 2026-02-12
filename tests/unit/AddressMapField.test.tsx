@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { AddressMapField } from "@/components/FormWrapper/AddressMapField";
 
 // Mock i18next
@@ -8,7 +8,9 @@ vi.mock("react-i18next", () => ({
 		t: (key: string) => {
 			const translations: Record<string, string> = {
 				"map.addressPickerHint":
-					"Drag the map to select a location. The address will be filled automatically.",
+					"Move the map pin and then apply the position.",
+				"map.addressPickerApply": "Apply map position",
+				"map.addressPickerApplyLoading": "Applying position...",
 			};
 			return translations[key] || key;
 		},
@@ -37,6 +39,7 @@ const mockMap = {
 	un: vi.fn(),
 	updateSize: vi.fn(),
 };
+let mapEventHandlers: Record<string, (() => void) | undefined> = {};
 
 const mockVectorSource = {
 	addFeature: vi.fn(),
@@ -138,10 +141,18 @@ describe("AddressMapField", () => {
 			zipcode: "10115",
 		});
 		mockView.getCenter.mockReturnValue([13.405, 52.52]);
+		mapEventHandlers = {};
+		mockMap.on.mockImplementation((event: string, handler: () => void) => {
+			mapEventHandlers[event] = handler;
+		});
+		mockMap.un.mockImplementation((event: string) => {
+			delete mapEventHandlers[event];
+		});
 	});
 
 	afterEach(() => {
 		vi.clearAllTimers();
+		vi.useRealTimers();
 	});
 
 	describe("Rendering", () => {
@@ -155,7 +166,9 @@ describe("AddressMapField", () => {
 			);
 
 			await waitFor(() => {
-				expect(screen.getByText(/Drag the map/i)).toBeInTheDocument();
+				expect(
+					screen.getByText(/Move the map pin and then apply the position./i),
+				).toBeInTheDocument();
 			});
 		});
 
@@ -171,7 +184,7 @@ describe("AddressMapField", () => {
 			await waitFor(() => {
 				expect(
 					screen.getByText(
-						/Drag the map to select a location. The address will be filled automatically./i,
+						/Move the map pin and then apply the position./i,
 					),
 				).toBeInTheDocument();
 			});
@@ -362,6 +375,100 @@ describe("AddressMapField", () => {
 	});
 
 	describe("Coordinate Updates", () => {
+		it("does not update fields automatically on map move", async () => {
+			const onChange = vi.fn();
+			render(
+				<AddressMapField value={{ lat: 52.52, lng: 13.405 }} onChange={onChange} />,
+			);
+
+			await waitFor(() => {
+				expect(mockMap.on).toHaveBeenCalled();
+			});
+			vi.useFakeTimers();
+
+			act(() => {
+				mapEventHandlers.pointerdrag?.();
+				mapEventHandlers.moveend?.();
+				vi.advanceTimersByTime(350);
+			});
+
+			expect(onChange).not.toHaveBeenCalled();
+			expect(
+				screen.getByRole("button", { name: /Apply map position/i }),
+			).toBeEnabled();
+		});
+
+		it("applies selected map position only after CTA click", async () => {
+			const onChange = vi.fn();
+			render(
+				<AddressMapField value={{ lat: 52.52, lng: 13.405 }} onChange={onChange} />,
+			);
+
+			await waitFor(() => {
+				expect(mockMap.on).toHaveBeenCalled();
+			});
+			vi.useFakeTimers();
+
+			act(() => {
+				mapEventHandlers.pointerdrag?.();
+				mapEventHandlers.moveend?.();
+				vi.advanceTimersByTime(350);
+			});
+
+			const applyButton = screen.getByRole("button", {
+				name: /Apply map position/i,
+			});
+			expect(applyButton).toBeEnabled();
+
+			await act(async () => {
+				fireEvent.click(applyButton);
+			});
+
+			expect(onChange).toHaveBeenCalledWith({
+				lat: 52.52,
+				lng: 13.405,
+				address: {
+					street: "Hauptstraße",
+					streetNumber: "123",
+					city: "Berlin",
+					zipcode: "10115",
+				},
+			});
+		});
+
+		it("applies lat/lng without address when reverse geocode fails", async () => {
+			mockReverseGeocode.mockRejectedValueOnce(new Error("reverse failed"));
+			const onChange = vi.fn();
+			render(
+				<AddressMapField value={{ lat: 52.52, lng: 13.405 }} onChange={onChange} />,
+			);
+
+			await waitFor(() => {
+				expect(mockMap.on).toHaveBeenCalled();
+			});
+			vi.useFakeTimers();
+
+			act(() => {
+				mapEventHandlers.pointerdrag?.();
+				mapEventHandlers.moveend?.();
+				vi.advanceTimersByTime(350);
+			});
+
+			const applyButton = screen.getByRole("button", {
+				name: /Apply map position/i,
+			});
+			expect(applyButton).toBeEnabled();
+
+			await act(async () => {
+				fireEvent.click(applyButton);
+			});
+
+			expect(onChange).toHaveBeenCalledWith({
+				lat: 52.52,
+				lng: 13.405,
+			});
+		});
+
 		it.skip("updates marker when coordinates change externally", async () => {
 			const onChange = vi.fn();
 			const { rerender } = render(
