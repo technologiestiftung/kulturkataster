@@ -1,6 +1,6 @@
 import type { InstitutionForm, InstitutionUpdateForm } from "@/types";
 
-const RELATION_FIELD_ALIASES: Record<string, string> = {
+export const RELATION_FIELD_ALIASES: Record<string, string> = {
 	categoryIds: "categories",
 	tagIds: "tags",
 	userIds: "users",
@@ -39,4 +39,32 @@ export const buildInstitutionPermissionFields = (
 	if (input.address) fields.add("address");
 
 	return Array.from(fields);
+};
+
+const getPermissionFieldForInputKey = (key: string): string | null => {
+	if (key === "id") return null;
+	if (key === "address") return "address";
+	if (key in RELATION_FIELD_ALIASES) {
+		return RELATION_FIELD_ALIASES[key] ?? null;
+	}
+	return key;
+};
+
+export const filterInstitutionInputByPermissionFields = <
+	T extends InstitutionForm | InstitutionUpdateForm,
+>(
+	input: T,
+	allowedFields: Set<string>,
+): Partial<T> => {
+	const filtered = {} as Partial<T>;
+
+	for (const [key, value] of Object.entries(input)) {
+		if (typeof value === "undefined") continue;
+		const permissionField = getPermissionFieldForInputKey(key);
+		if (!permissionField) continue;
+		if (!allowedFields.has(permissionField)) continue;
+		(filtered as Record<string, unknown>)[key] = value;
+	}
+
+	return filtered;
 };

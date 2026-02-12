@@ -36,6 +36,10 @@ export function InstitutionsTable() {
 	const institutionPermissions = useAccountStore(
 		(state) => state.institutionPermissions,
 	);
+	const canCreateInstitutionDirect = institutionPermissions.create;
+	const canCreateInstitutionViaSubmission =
+		!canCreateInstitutionDirect && institutionPermissions.createSubmission;
+	const canClaimInstitution = institutionPermissions.createSubmission;
 	const canReviewSubmissionType = (type: SubmissionType) => {
 		if (type === "create") return institutionPermissions.create;
 		if (type === "update" || type === "claim")
@@ -721,19 +725,31 @@ export function InstitutionsTable() {
 			rowHeight: 65,
 			overscan: 8,
 		},
-		primaryButton: {
-			label: t("institutionsTable.actions.addInstitution"),
-			onClick: () => router.push(toLocalePath("/account/institutions/new")),
-		},
-		secondaryButton: {
-			label: (
-				<span className="inline-flex items-center gap-2">
-					<Send className="size-4" />
-					<span>{t("institutionsTable.actions.claimInstitution")}</span>
-				</span>
-			),
-			onClick: () => router.push(toLocalePath("/account/submissions/claim")),
-		},
+		primaryButton:
+			canCreateInstitutionDirect || canCreateInstitutionViaSubmission
+				? {
+						label: t("institutionsTable.actions.addInstitution"),
+						onClick: () =>
+							router.push(
+								toLocalePath(
+									canCreateInstitutionDirect
+										? "/account/institutions/new"
+										: "/institution/submission",
+								),
+							),
+					}
+				: undefined,
+		secondaryButton: canClaimInstitution
+			? {
+					label: (
+						<span className="inline-flex items-center gap-2">
+							<Send className="size-4" />
+							<span>{t("institutionsTable.actions.claimInstitution")}</span>
+						</span>
+					),
+					onClick: () => router.push(toLocalePath("/account/submissions/claim")),
+				}
+			: undefined,
 		onEdit: (row) => {
 			if (isSubmissionRow(row)) {
 				router.push(

@@ -33,6 +33,7 @@ import { useRouter } from "next/navigation";
 import { resolveCategoryIdsFromDraft } from "@/lib/utils/institutionCategoryUtils";
 import { TFunction } from "i18next";
 import { useInstitutionPrivateFieldResolver } from "@/lib/hooks/useInstitutionPrivateFieldResolver";
+import { applyInstitutionFieldAccess } from "@/lib/utils/institutionFieldAccess";
 type InstitutionFormModalProps = {
 	mode: "create" | "edit";
 	institution?: Institution | null;
@@ -58,6 +59,7 @@ type InstitutionFormModalProps = {
 		confirmLabel?: string;
 		cancelLabel?: string;
 	};
+	permissionContext?: "institution" | "submission";
 };
 
 const buildCategoryFilterState = (
@@ -453,6 +455,7 @@ const buildInstitutionFormConfig = ({
 						)}`,
 						type: "text",
 						layout: { span: "half" },
+						required: true,
 						placeholder: t(
 							"institutionFormModal.form.details.fields.address.streetLine.placeholder",
 						),
@@ -894,11 +897,15 @@ export function InstitutionFormModal({
 	shouldRefresh = false,
 	onDelete,
 	deleteConfig,
+	permissionContext = "institution",
 }: InstitutionFormModalProps) {
 	const { t } = useTranslation("content");
 	const { t: tEnum } = useTranslation("enumMap");
 	const { isPrivateField } = useInstitutionPrivateFieldResolver();
 	const setAlertDialog = useAccountStore((state) => state.setAlertDialog);
+	const institutionFieldPermissions = useAccountStore(
+		(state) => state.institutionFieldPermissions,
+	);
 	const categories = useInstitutionStore((state) => state.categories) ?? [];
 	const [isDeleting, setIsDeleting] = useState(false);
 	const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -1056,6 +1063,19 @@ export function InstitutionFormModal({
 		],
 	);
 
+	const formConfigWithFieldAccess = useMemo(() => {
+		const filteredFields = applyInstitutionFieldAccess({
+			fields: formConfig.fields,
+			mode,
+			permissions:
+				permissionContext === "submission" ? null : institutionFieldPermissions,
+		});
+		return {
+			...formConfig,
+			fields: filteredFields,
+		};
+	}, [formConfig, institutionFieldPermissions, mode, permissionContext]);
+
 	if (showNotFoundWithFallback) {
 		return renderNotFoundDialog(t);
 	}
@@ -1077,9 +1097,9 @@ export function InstitutionFormModal({
 	}, [onDelete, isDeleting, resolvedSubmitting, handleClose]);
 
 	const formConfigWithDelete = useMemo(() => {
-		if (!canShowDeleteAction) return formConfig;
+		if (!canShowDeleteAction) return formConfigWithFieldAccess;
 		return {
-			...formConfig,
+			...formConfigWithFieldAccess,
 			deleteAction: {
 				label:
 					deleteConfig?.buttonLabel ?? t("institutionFormModal.delete.button"),
@@ -1090,7 +1110,7 @@ export function InstitutionFormModal({
 		};
 	}, [
 		canShowDeleteAction,
-		formConfig,
+		formConfigWithFieldAccess,
 		deleteConfig?.buttonLabel,
 		t,
 		isDeleting,

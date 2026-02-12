@@ -20,6 +20,7 @@ export default async function AccountLayout({ children }: AccountLayoutProps) {
 		categories,
 		institutions,
 		submissions,
+		institutionFieldPermissions,
 	} = accountData;
 
 	const hasUserAllScope =
@@ -35,15 +36,14 @@ export default async function AccountLayout({ children }: AccountLayoutProps) {
 		canTable(ctx, "category", "update") &&
 		getTableScope(ctx, "category", "update") === "all";
 	const institutionPermissions = {
-		create:
-			canTable(ctx, "institution", "create") &&
-			getTableScope(ctx, "institution", "create") === "all",
+		create: canTable(ctx, "institution", "create"),
 		update:
 			canTable(ctx, "institution", "update") &&
 			getTableScope(ctx, "institution", "update") === "all",
 		delete:
 			canTable(ctx, "institution", "delete") &&
 			getTableScope(ctx, "institution", "delete") === "all",
+		createSubmission: canTable(ctx, "submission", "create"),
 	};
 
 	const allowedTabs = [
@@ -66,6 +66,7 @@ export default async function AccountLayout({ children }: AccountLayoutProps) {
 				institutions={institutions}
 				submissions={submissions}
 				institutionPermissions={institutionPermissions}
+				institutionFieldPermissions={institutionFieldPermissions}
 			/>
 			<AccountLayoutClient
 				allowedTabs={allowedTabs}

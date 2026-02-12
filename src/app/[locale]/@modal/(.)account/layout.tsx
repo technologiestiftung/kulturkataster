@@ -22,17 +22,17 @@ export default async function AccountModalLayout({
 		categories,
 		institutions,
 		submissions,
+		institutionFieldPermissions,
 	} = accountData;
 	const institutionPermissions = {
-		create:
-			canTable(ctx, "institution", "create") &&
-			getTableScope(ctx, "institution", "create") === "all",
+		create: canTable(ctx, "institution", "create"),
 		update:
 			canTable(ctx, "institution", "update") &&
 			getTableScope(ctx, "institution", "update") === "all",
 		delete:
 			canTable(ctx, "institution", "delete") &&
 			getTableScope(ctx, "institution", "delete") === "all",
+		createSubmission: canTable(ctx, "submission", "create"),
 	};
 
 	return (
@@ -46,6 +46,7 @@ export default async function AccountModalLayout({
 				institutions={institutions}
 				submissions={submissions}
 				institutionPermissions={institutionPermissions}
+				institutionFieldPermissions={institutionFieldPermissions}
 			/>
 			{children}
 		</>
