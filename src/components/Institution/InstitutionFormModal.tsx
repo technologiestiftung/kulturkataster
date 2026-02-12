@@ -974,7 +974,10 @@ export function InstitutionFormModal({
 
 	const resolvedInstitutionWithFallback = institution ?? undefined;
 	const showNotFoundWithFallback =
-		mode === "edit" && !resolvedInstitutionWithFallback && !initialValues;
+		mode === "edit" &&
+		!resolvedInstitutionWithFallback &&
+		!initialValues &&
+		!isDeleting;
 
 	const handleSuccess = (nextMode: InstitutionFormModalProps["mode"]) => {
 		const keyPrefix =
@@ -1093,14 +1096,18 @@ export function InstitutionFormModal({
 	const handleDelete = useCallback(async () => {
 		if (!onDelete || isDeleting || resolvedSubmitting) return;
 		setIsDeleting(true);
+		let deleteSucceeded = false;
 		try {
 			await onDelete();
+			deleteSucceeded = true;
 			setShowDeleteDialog(false);
 			handleClose();
 		} catch {
 			// Keep dialog open so the caller can surface and recover from errors.
 		} finally {
-			setIsDeleting(false);
+			if (!deleteSucceeded) {
+				setIsDeleting(false);
+			}
 		}
 	}, [onDelete, isDeleting, resolvedSubmitting, handleClose]);
 

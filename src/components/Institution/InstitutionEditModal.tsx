@@ -43,6 +43,7 @@ export function InstitutionEditModal({
 	const setAlertDialog = useAccountStore((state) => state.setAlertDialog);
 	const removeInstitution = useAccountStore((state) => state.removeInstitution);
 	const upsertSubmission = useAccountStore((state) => state.upsertSubmission);
+	const [isDeleting, setIsDeleting] = useState(false);
 	const [fetchedInstitution, setFetchedInstitution] =
 		useState<Institution | null>(null);
 	const [didFetchInstitution, setDidFetchInstitution] = useState(false);
@@ -95,7 +96,8 @@ export function InstitutionEditModal({
 
 	const resolvedInstitutionWithFallback =
 		resolvedInstitution ?? fetchedInstitution ?? undefined;
-	const showNotFound = didFetchInstitution && !resolvedInstitutionWithFallback;
+	const showNotFound =
+		didFetchInstitution && !resolvedInstitutionWithFallback && !isDeleting;
 
 	const isDeleteDeniedError = useCallback((error: unknown) => {
 		if (!(error instanceof Error)) return false;
@@ -109,7 +111,8 @@ export function InstitutionEditModal({
 	}, []);
 
 	const handleDelete = useCallback(async () => {
-		if (!resolvedInstitutionWithFallback) return;
+		if (!resolvedInstitutionWithFallback || isDeleting) return;
+		setIsDeleting(true);
 
 		try {
 			await deleteInstitution(resolvedInstitutionWithFallback.id);
@@ -121,6 +124,7 @@ export function InstitutionEditModal({
 			return;
 		} catch (error) {
 			if (!isDeleteDeniedError(error)) {
+				setIsDeleting(false);
 				setAlertDialog({
 					title: t("institutionFormModal.delete.errorTitle", {
 						defaultValue: "Delete failed",
@@ -156,6 +160,7 @@ export function InstitutionEditModal({
 				),
 			});
 		} catch {
+			setIsDeleting(false);
 			setAlertDialog({
 				title: t("institutionFormModal.delete.errorTitle", {
 					defaultValue: "Delete failed",
@@ -168,6 +173,7 @@ export function InstitutionEditModal({
 			throw new Error("delete-failed");
 		}
 	}, [
+		isDeleting,
 		isDeleteDeniedError,
 		removeInstitution,
 		resolvedInstitutionWithFallback,
