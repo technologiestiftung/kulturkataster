@@ -251,6 +251,12 @@ export function InstitutionDraftReviewModal({
 			variant="fullscreen"
 			returnTo={returnTo}
 			routePath={routePath}
+			closeConfirmation={{
+				title: t("institutionModalCloseConfirmation.title"),
+				description: t("institutionModalCloseConfirmation.description"),
+				confirmLabel: t("institutionModalCloseConfirmation.confirm"),
+				cancelLabel: t("institutionModalCloseConfirmation.cancel"),
+			}}
 			content={
 				<div className="space-y-6">
 					<InstitutionReview
