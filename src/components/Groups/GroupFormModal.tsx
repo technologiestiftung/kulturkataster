@@ -433,7 +433,7 @@ export function GroupFormModal({
 		handleSuccess,
 	]);
 
-	if (showNotFound) {
+	if (showNotFound && !isDeleting) {
 		return renderNotFoundDialog(t);
 	}
 
@@ -472,9 +472,11 @@ export function GroupFormModal({
 					onConfirm={async () => {
 						if (isDeleting) return;
 						setIsDeleting(true);
+						let deleteSucceeded = false;
 						try {
 							await deleteGroup(resolvedGroup.id);
 							removeGroup(resolvedGroup.id);
+							deleteSucceeded = true;
 							setShowDeleteDialog(false);
 							handleClose();
 						} catch {
@@ -489,7 +491,9 @@ export function GroupFormModal({
 							});
 							setShowDeleteDialog(false);
 						} finally {
-							setIsDeleting(false);
+							if (!deleteSucceeded) {
+								setIsDeleting(false);
+							}
 						}
 					}}
 					onOpenChange={(open) => {

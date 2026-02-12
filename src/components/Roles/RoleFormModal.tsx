@@ -537,7 +537,7 @@ export function RoleFormModal({
 		handleSuccess,
 	]);
 
-	if (showNotFound) {
+	if (showNotFound && !isDeleting) {
 		return renderNotFoundDialog(t);
 	}
 
@@ -580,9 +580,11 @@ export function RoleFormModal({
 					onConfirm={async () => {
 						if (isDeleting || isSystemRole) return;
 						setIsDeleting(true);
+						let deleteSucceeded = false;
 						try {
 							await deleteRole(resolvedRole.id);
 							removeRoleFromStore(resolvedRole.id);
+							deleteSucceeded = true;
 							setShowDeleteDialog(false);
 							handleClose();
 						} catch {
@@ -597,7 +599,9 @@ export function RoleFormModal({
 							});
 							setShowDeleteDialog(false);
 						} finally {
-							setIsDeleting(false);
+							if (!deleteSucceeded) {
+								setIsDeleting(false);
+							}
 						}
 					}}
 					onOpenChange={(open) => {

@@ -54,6 +54,7 @@ export function InstitutionDraftEditModal({
 		null,
 	);
 	const [didFetchSubmission, setDidFetchSubmission] = useState(false);
+	const [isDeleting, setIsDeleting] = useState(false);
 
 	const resolvedSubmission = useMemo(() => {
 		if (!hasSubmissionId) return undefined;
@@ -117,21 +118,29 @@ export function InstitutionDraftEditModal({
 
 	const handleDeleteDraft = useCallback(async () => {
 		if (!hasSubmissionId || typeof submissionId !== "number") return;
-		await deleteSubmission(submissionId);
-		removeSubmission(submissionId);
-		setAlertDialog({
-			title: t("institutionDraftEditModal.delete.successTitle", {
-				defaultValue: "Entwurf gelöscht",
-			}),
-			description: t("institutionDraftEditModal.delete.successDescription", {
-				defaultValue: "Die Einreichung wurde gelöscht.",
-			}),
-		});
-		if (shouldRefresh) {
-			router.refresh();
+		if (isDeleting) return;
+		setIsDeleting(true);
+		try {
+			await deleteSubmission(submissionId);
+			removeSubmission(submissionId);
+			setAlertDialog({
+				title: t("institutionDraftEditModal.delete.successTitle", {
+					defaultValue: "Entwurf gelöscht",
+				}),
+				description: t("institutionDraftEditModal.delete.successDescription", {
+					defaultValue: "Die Einreichung wurde gelöscht.",
+				}),
+			});
+			if (shouldRefresh) {
+				router.refresh();
+			}
+		} catch (error) {
+			setIsDeleting(false);
+			throw error;
 		}
 	}, [
 		hasSubmissionId,
+		isDeleting,
 		removeSubmission,
 		router,
 		setAlertDialog,
@@ -219,7 +228,8 @@ export function InstitutionDraftEditModal({
 	const isLoading =
 		hasSubmissionId && !resolvedSubmissionWithFallback && !didFetchSubmission;
 	const isNotFound =
-		!hasSubmissionId || (!isLoading && !resolvedSubmissionWithFallback);
+		!hasSubmissionId ||
+		(!isLoading && !resolvedSubmissionWithFallback && !isDeleting);
 
 	if (isLoading) {
 		return null;

@@ -267,6 +267,7 @@ function InstitutionDraftWizardContent({
 								"Number",
 							)}`,
 							type: "text",
+							required: true,
 							layout: { span: "full" },
 							placeholder: t(
 								"institutionFormModal.form.details.fields.address.streetLine.placeholder",

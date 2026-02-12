@@ -532,7 +532,7 @@ export function UserFormModal({
 		handleSuccess,
 	]);
 
-	if (showNotFound) {
+	if (showNotFound && !isDeleting) {
 		return renderNotFoundDialog(t);
 	}
 
@@ -571,9 +571,11 @@ export function UserFormModal({
 					onConfirm={async () => {
 						if (isDeleting) return;
 						setIsDeleting(true);
+						let deleteSucceeded = false;
 						try {
 							await removeUser(resolvedUser.id);
 							removeUserFromStore(resolvedUser.id);
+							deleteSucceeded = true;
 							setShowDeleteDialog(false);
 							handleClose();
 						} catch {
@@ -588,7 +590,9 @@ export function UserFormModal({
 							});
 							setShowDeleteDialog(false);
 						} finally {
-							setIsDeleting(false);
+							if (!deleteSucceeded) {
+								setIsDeleting(false);
+							}
 						}
 					}}
 					onOpenChange={(open) => {
