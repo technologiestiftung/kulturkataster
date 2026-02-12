@@ -1,10 +1,19 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { cn } from "@/lib/utils";
+import { AlertDialog } from "@/components/ui/alert-dialog";
+
+type ModalCloseConfirmation = {
+	title: string;
+	description: string;
+	status?: "info" | "warning" | "error" | "success";
+	confirmLabel?: string;
+	cancelLabel?: string;
+};
 
 type RoutedEditorModalProps = {
 	children: React.ReactNode;
@@ -14,6 +23,7 @@ type RoutedEditorModalProps = {
 	open?: boolean;
 	showBackButton?: boolean;
 	contentClassName?: string;
+	closeConfirmation?: ModalCloseConfirmation | false;
 };
 
 type UseRoutedModalCloseArgs = {
@@ -60,9 +70,20 @@ export function RoutedEditorModal({
 	open = true,
 	showBackButton = false,
 	contentClassName,
+	closeConfirmation,
 }: RoutedEditorModalProps) {
 	const pathname = usePathname();
 	const handleClose = useRoutedModalClose({ returnTo, onClose });
+	const [showCloseConfirmation, setShowCloseConfirmation] = useState(false);
+	const resolvedCloseConfirmation =
+		closeConfirmation === false ? undefined : closeConfirmation;
+	const handleCloseRequest = useCallback(() => {
+		if (resolvedCloseConfirmation) {
+			setShowCloseConfirmation(true);
+			return;
+		}
+		handleClose();
+	}, [resolvedCloseConfirmation, handleClose]);
 
 	const isRouteMatch = routePath
 		? Boolean(pathname && pathname.endsWith(routePath))
@@ -75,16 +96,36 @@ export function RoutedEditorModal({
 	return (
 		<Dialog
 			open={isRouteMatch}
-			onOpenChange={(openState) => (!openState ? handleClose() : undefined)}
+			onOpenChange={(openState) =>
+				!openState ? handleCloseRequest() : undefined
+			}
 		>
 			<DialogContent
 				variant="editor"
 				showBackButton={showBackButton}
-				onBack={handleClose}
+				onBack={handleCloseRequest}
 				className={cn("p-0", contentClassName)}
 			>
 				{children}
 			</DialogContent>
+			{showCloseConfirmation && resolvedCloseConfirmation ? (
+				<AlertDialog
+					open
+					status={resolvedCloseConfirmation.status ?? "warning"}
+					title={resolvedCloseConfirmation.title}
+					description={resolvedCloseConfirmation.description}
+					confirmLabel={resolvedCloseConfirmation.confirmLabel ?? "Schließen"}
+					cancelLabel={resolvedCloseConfirmation.cancelLabel ?? "Abbrechen"}
+					onCancel={() => setShowCloseConfirmation(false)}
+					onConfirm={() => {
+						setShowCloseConfirmation(false);
+						handleClose();
+					}}
+					onOpenChange={(openState) => {
+						if (!openState) setShowCloseConfirmation(false);
+					}}
+				/>
+			) : null}
 		</Dialog>
 	);
 }

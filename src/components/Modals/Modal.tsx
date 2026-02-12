@@ -2,10 +2,19 @@
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { ModalFooter } from "./ModalFooter";
-import { useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { cn } from "@/lib/utils";
+import { AlertDialog } from "@/components/ui/alert-dialog";
+
+type ModalCloseConfirmation = {
+	title: string;
+	description: string;
+	status?: "info" | "warning" | "error" | "success";
+	confirmLabel?: string;
+	cancelLabel?: string;
+};
 
 interface PageModalProps {
 	title: string;
@@ -24,6 +33,7 @@ interface PageModalProps {
 	titleClassName?: string;
 	subtitleClassName?: string;
 	closeOnOutsideInteract?: boolean;
+	closeConfirmation?: ModalCloseConfirmation | false;
 }
 
 export function Modal({
@@ -43,10 +53,14 @@ export function Modal({
 	titleClassName,
 	subtitleClassName,
 	closeOnOutsideInteract = false,
+	closeConfirmation,
 }: PageModalProps) {
 	const router = useRouter();
 	const toLocalePath = useLocalePath();
 	const pathname = usePathname();
+	const [showCloseConfirmation, setShowCloseConfirmation] = useState(false);
+	const resolvedCloseConfirmation =
+		closeConfirmation === false ? undefined : closeConfirmation;
 	useEffect(() => {
 		const checkForHashAndScroll = () => {
 			const hash = window.location.hash;
@@ -62,7 +76,7 @@ export function Modal({
 		}, 500);
 	}, []);
 
-	const handleClose = () => {
+	const performClose = useCallback(() => {
 		if (returnTo) {
 			router.replace(toLocalePath(returnTo));
 			return;
@@ -82,7 +96,15 @@ export function Modal({
 			// No history (direct visit to modal URL), navigate to home
 			router.push(toLocalePath("/"));
 		}
-	};
+	}, [returnTo, router, toLocalePath]);
+
+	const handleCloseRequest = useCallback(() => {
+		if (resolvedCloseConfirmation) {
+			setShowCloseConfirmation(true);
+			return;
+		}
+		performClose();
+	}, [resolvedCloseConfirmation, performClose]);
 
 	const resolvedContentClassName = contentClassName ?? "body2";
 	const isRouteMatch = routePath
@@ -95,13 +117,15 @@ export function Modal({
 	return (
 		<Dialog
 			open={isRouteMatch}
-			onOpenChange={(openState) => (!openState ? handleClose() : undefined)}
+			onOpenChange={(openState) =>
+				!openState ? handleCloseRequest() : undefined
+			}
 		>
 			<DialogContent
 				variant={variant}
 				className="flex flex-col gap-4 items-start space-y-4"
 				showBackButton={showBackButton}
-				onBack={handleClose}
+				onBack={handleCloseRequest}
 				onInteractOutside={(event) => {
 					if (!closeOnOutsideInteract) {
 						event.preventDefault();
@@ -138,6 +162,24 @@ export function Modal({
 				</div>
 				{hasFooter && <ModalFooter hideLinks={hideLinksInModalFooter} />}
 			</DialogContent>
+			{showCloseConfirmation && resolvedCloseConfirmation ? (
+				<AlertDialog
+					open
+					status={resolvedCloseConfirmation.status ?? "warning"}
+					title={resolvedCloseConfirmation.title}
+					description={resolvedCloseConfirmation.description}
+					confirmLabel={resolvedCloseConfirmation.confirmLabel ?? "Schließen"}
+					cancelLabel={resolvedCloseConfirmation.cancelLabel ?? "Abbrechen"}
+					onCancel={() => setShowCloseConfirmation(false)}
+					onConfirm={() => {
+						setShowCloseConfirmation(false);
+						performClose();
+					}}
+					onOpenChange={(openState) => {
+						if (!openState) setShowCloseConfirmation(false);
+					}}
+				/>
+			) : null}
 		</Dialog>
 	);
 }

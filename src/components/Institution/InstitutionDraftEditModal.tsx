@@ -241,6 +241,12 @@ export function InstitutionDraftEditModal({
 			permissionContext="submission"
 			returnTo={returnTo}
 			routePath={routePath}
+			closeConfirmation={{
+				title: t("institutionModalCloseConfirmation.title"),
+				description: t("institutionModalCloseConfirmation.description"),
+				confirmLabel: t("institutionModalCloseConfirmation.confirm"),
+				cancelLabel: t("institutionModalCloseConfirmation.cancel"),
+			}}
 			formKey={`draft-${submissionId ?? "new"}-${
 				resolvedSubmissionWithFallback ? "loaded" : "loading"
 			}`}
