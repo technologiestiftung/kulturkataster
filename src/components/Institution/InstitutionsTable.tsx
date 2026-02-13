@@ -9,6 +9,7 @@ import type { Institution, InstitutionTableRow } from "@/types/institution";
 import { useAccountStore } from "@/lib/store/accountStore";
 import { StatusDot } from "../ui/status-dot";
 import { InstitutionStatus } from "@/generated/prisma";
+import type { SubmissionType } from "@/generated/prisma";
 import { useTranslation } from "react-i18next";
 import { getFieldLabel } from "@/lib/i18n/fieldLabels";
 import {
@@ -32,12 +33,29 @@ export function InstitutionsTable() {
 	const toLocalePath = useLocalePath();
 	const institutions = useAccountStore((state) => state.institutions);
 	const allSubmissions = useAccountStore((state) => state.submissions);
+	const institutionPermissions = useAccountStore(
+		(state) => state.institutionPermissions,
+	);
+	const canCreateInstitutionDirect = institutionPermissions.create;
+	const canCreateInstitutionViaSubmission =
+		!canCreateInstitutionDirect && institutionPermissions.createSubmission;
+	const canClaimInstitution = institutionPermissions.createSubmission;
+	const canReviewSubmissionType = (type: SubmissionType) => {
+		if (type === "create") return institutionPermissions.create;
+		if (type === "update" || type === "claim")
+			return institutionPermissions.update;
+		if (type === "delete") return institutionPermissions.delete;
+		return false;
+	};
 	const submissions = useMemo(
 		() =>
 			allSubmissions.filter(
 				(s) =>
 					s.entity_type === "institution" &&
-					(s.type === "create" || s.type === "update" || s.type === "claim"),
+					(s.type === "create" ||
+						s.type === "update" ||
+						s.type === "claim" ||
+						s.type === "delete"),
 			),
 		[allSubmissions],
 	);
@@ -55,7 +73,7 @@ export function InstitutionsTable() {
 		const translated = tEnum(`funding_source.${value}`);
 		return translated === `funding_source.${value}` ? value : translated;
 	};
-	const getStatusLabel = (status: InstitutionStatus) => {
+	const getStatusLabel = (status: InstitutionStatus | string) => {
 		if (status === "approval_pending")
 			return t("institutionFormModal.status.approvalPending");
 		if (status === "public") return t("institutionFormModal.status.public");
@@ -98,7 +116,14 @@ export function InstitutionsTable() {
 					if (institution.status === "removal_pending") variant = "warning";
 					if (institution.status === "draft") variant = "neutral";
 					if (institution.status === "archived") variant = "error";
-					if (institution.rowKind === "submission") variant = "warning";
+					if (institution.rowKind === "submission") {
+						if (institution.status === "approved") variant = "success";
+						else if (institution.status === "approval_pending")
+							variant = "info";
+						else if (institution.status === "rejected") variant = "error";
+						else if (institution.status === "needs_changes")
+							variant = "warning";
+					}
 					return (
 						<StatusDot
 							tone={variant}
@@ -700,19 +725,32 @@ export function InstitutionsTable() {
 			rowHeight: 65,
 			overscan: 8,
 		},
-		primaryButton: {
-			label: t("institutionsTable.actions.addInstitution"),
-			onClick: () => router.push(toLocalePath("/account/institutions/new")),
-		},
-		secondaryButton: {
-			label: (
-				<span className="inline-flex items-center gap-2">
-					<Send className="size-4" />
-					<span>{t("institutionsTable.actions.claimInstitution")}</span>
-				</span>
-			),
-			onClick: () => router.push(toLocalePath("/account/submissions/claim")),
-		},
+		primaryButton:
+			canCreateInstitutionDirect || canCreateInstitutionViaSubmission
+				? {
+						label: t("institutionsTable.actions.addInstitution"),
+						onClick: () =>
+							router.push(
+								toLocalePath(
+									canCreateInstitutionDirect
+										? "/account/institutions/new"
+										: "/institution/submission",
+								),
+							),
+					}
+				: undefined,
+		secondaryButton: canClaimInstitution
+			? {
+					label: (
+						<span className="inline-flex items-center gap-2">
+							<Send className="size-4" />
+							<span>{t("institutionsTable.actions.claimInstitution")}</span>
+						</span>
+					),
+					onClick: () =>
+						router.push(toLocalePath("/account/submissions/claim")),
+				}
+			: undefined,
 		onEdit: (row) => {
 			if (isSubmissionRow(row)) {
 				router.push(
@@ -724,9 +762,11 @@ export function InstitutionsTable() {
 		},
 		onReview: (row) => {
 			if (!isSubmissionRow(row)) return;
+			if (!canReviewSubmissionType(row.submissionType)) return;
 			router.push(toLocalePath(`/account/submissions/${row.submissionId}`));
 		},
-		getCanReview: (row) => isSubmissionRow(row),
+		getCanReview: (row) =>
+			isSubmissionRow(row) && canReviewSubmissionType(row.submissionType),
 		reviewAriaLabel: "Review",
 		emptyMessage: "No institutions found.",
 	};

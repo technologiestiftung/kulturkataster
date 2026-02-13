@@ -15,10 +15,16 @@ import "ol/ol.css";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
 import { getMaptilerKey, reverseGeocode } from "@/server/actions/maptiler";
+import { Button } from "@/components/ui/button";
 
 type AddressMapValue = {
 	lat: number | null;
 	lng: number | null;
+};
+
+type AddressMapSelection = {
+	lat: number;
+	lng: number;
 };
 
 type AddressMapAddress = {
@@ -54,9 +60,11 @@ export function AddressMapField({
 	const markerFeature = useRef<Feature<Point> | null>(null);
 	const [mapError, setMapError] = useState<string | null>(null);
 	const [maptilerKey, setMaptilerKey] = useState<string | null>(null);
+	const [pendingSelection, setPendingSelection] =
+		useState<AddressMapSelection | null>(null);
+	const [isApplyingSelection, setIsApplyingSelection] = useState(false);
 	const isUserMove = useRef(false);
 	const moveEndTimeout = useRef<number | null>(null);
-	const lastUpdateSource = useRef<"map" | "external" | null>(null);
 	const onChangeRef = useRef(onChange);
 	const disabledRef = useRef(disabled);
 
@@ -192,19 +200,7 @@ export function AddressMapField({
 				if (!center) return;
 				const [lng, lat] = toLonLat(center);
 				setMarker(lng, lat);
-				try {
-					const address = await reverseGeocode(lat, lng);
-					lastUpdateSource.current = "map";
-					onChangeRef.current({
-						lat,
-						lng,
-						address: address ?? undefined,
-					});
-				} catch (error) {
-					console.warn("Reverse geocode failed", error);
-					lastUpdateSource.current = "map";
-					onChangeRef.current({ lat, lng });
-				}
+				setPendingSelection({ lat, lng });
 			}, 300);
 		};
 
@@ -231,11 +227,6 @@ export function AddressMapField({
 	useEffect(() => {
 		if (!mapInstance.current) return;
 		if (value.lat === null || value.lng === null) return;
-		if (lastUpdateSource.current === "map") {
-			lastUpdateSource.current = null;
-			return;
-		}
-		lastUpdateSource.current = "external";
 		setMarker(value.lng, value.lat);
 		const view = mapInstance.current.getView();
 		const nextCenter = fromLonLat([value.lng, value.lat]);
@@ -249,6 +240,31 @@ export function AddressMapField({
 		}
 		view.setCenter(nextCenter);
 	}, [setMarker, value.lat, value.lng]);
+
+	const handleApplySelection = useCallback(async () => {
+		if (disabled || !pendingSelection || isApplyingSelection) return;
+		setIsApplyingSelection(true);
+		try {
+			const address = await reverseGeocode(
+				pendingSelection.lat,
+				pendingSelection.lng,
+			);
+			onChangeRef.current({
+				lat: pendingSelection.lat,
+				lng: pendingSelection.lng,
+				address: address ?? undefined,
+			});
+		} catch (error) {
+			console.warn("Reverse geocode failed", error);
+			onChangeRef.current({
+				lat: pendingSelection.lat,
+				lng: pendingSelection.lng,
+			});
+		} finally {
+			setPendingSelection(null);
+			setIsApplyingSelection(false);
+		}
+	}, [disabled, isApplyingSelection, pendingSelection]);
 
 	if (mapError) {
 		return (
@@ -273,6 +289,19 @@ export function AddressMapField({
 				<div className="pointer-events-none absolute inset-0 flex items-center justify-center">
 					<div className="h-2 w-2 rounded-full bg-primary-dark" />
 				</div>
+			</div>
+			<div className="flex justify-end">
+				<Button
+					type="button"
+					variant="outline"
+					size="sm"
+					onClick={() => void handleApplySelection()}
+					disabled={disabled || !pendingSelection || isApplyingSelection}
+				>
+					{isApplyingSelection
+						? t("map.addressPickerApplyLoading")
+						: t("map.addressPickerApply")}
+				</Button>
 			</div>
 		</div>
 	);

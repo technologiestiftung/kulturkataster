@@ -102,9 +102,6 @@ export async function createInstitution(input: InstitutionForm) {
 	if (fields.length > 0) {
 		authorizeFields(ctx, "institution", fields, "create");
 	}
-	if (input.address && !input.address.id && !input.address.street) {
-		throw new Error("Address street is required when creating a new address.");
-	}
 
 	const institution = await institutionRepo.create({
 		name: input.name,

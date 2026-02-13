@@ -42,14 +42,32 @@
 	},
 	"auth": {
 		"account": {
+			"actions": {
+				"faq": "FAQ",
+				"logout": "Abmelden",
+				"profileSettings": "Profileinstellungen"
+			},
 			"alreadyAccount": "Haben Sie bereits ein Konto beim Kulturkataster?",
 			"backToMap": "Zur Karte",
 			"comingSoon": "Ihr Kontobereich ist bald verfügbar.",
 			"continueGuest": "Als Gast fortfahren",
+			"faqModal": {
+				"placeholder": "Inhalt folgt in einem nächsten Schritt.",
+				"subtitle": "Häufig gestellte Fragen zum Konto-Bereich.",
+				"title": "Fragen & Antworten"
+			},
 			"intro": "Erstellen Sie ein Konto für personalisierte Funktionen oder fahren Sie als Gast fort.",
 			"signIn": "Melden Sie sich hier an.",
 			"signUp": "Registrieren",
 			"subtitle": "Meine Profilübersicht",
+			"tabs": {
+				"activity": "Aktivität",
+				"categories": "Kategorien",
+				"groups": "Gruppen",
+				"institutions": "Kulturorte",
+				"roles": "Rollen",
+				"users": "Nutzer*innen"
+			},
 			"title": "Konto",
 			"welcome": "Willkommen, {{name}}!"
 		},
@@ -114,7 +132,6 @@
 			"accountType": "Arbeiten Sie für eine Organisation oder in der Verwaltung?",
 			"accountTypeAdministration": "Mitarbeiter*in des Landes Berlin",
 			"accountTypeDistrict": "Mitarbeiter*in eines Bezirks",
-			"accountTypeIndividual": "",
 			"accountTypeOrganization": "Mitarbeiter*in einer Organisation",
 			"accountTypePlaceholder": "Optionen auswählen",
 			"administrationName": "Für welche Landesbehörde arbeiten Sie?",
@@ -207,7 +224,6 @@
 	"badges": {
 		"more": "+{{count}} weitere"
 	},
-	"sensitiveInformation": "Sensitive Informationen",
 	"cancel": "Abbrechen",
 	"close": "Schließen",
 	"closeSidebar": "Seitenleiste schließen",
@@ -224,7 +240,6 @@
 		"address": "info@kulturkataster.berlin",
 		"label": "E-Mail"
 	},
-	"error": "",
 	"fileFormat": {
 		"csv": "CSV",
 		"xls": "XLS",
@@ -232,11 +247,6 @@
 	},
 	"filter": {
 		"title": "Kulturorte filtern"
-	},
-	"form": {
-		"validation": {
-			"required": "{{field}} ist erforderlich"
-		}
 	},
 	"footer": {
 		"about": "Über das Projekt",
@@ -273,8 +283,12 @@
 		"welcomeModalLinkListAriaLabel": "Fußzeilen-Navigation der Willkommensansicht"
 	},
 	"footerLandmark": "Fußbereich",
+	"form": {
+		"validation": {
+			"required": "{{field}} ist erforderlich"
+		}
+	},
 	"headerLandmark": "Seitennavigation",
-	"hello": "",
 	"here": "hier",
 	"info": {
 		"open": "Infos öffnen",
@@ -352,7 +366,9 @@
 	"loading": "Laden",
 	"mainContent": "Hauptinhalt",
 	"map": {
-		"addressPickerHint": "Bewegen Sie die Karte, um den Pin zu positionieren und die Adresse automatisch auszufüllen.",
+		"addressPickerHint": "Bewegen Sie die Karte, um den Pin zu positionieren. Übernehmen Sie die Position anschließend in das Formular.",
+		"addressPickerApply": "Position übernehmen",
+		"addressPickerApplyLoading": "Position wird übernommen...",
 		"availableLayers": "Verfügbare Ebenen",
 		"closeLayerTree": "Fachkarten schließen",
 		"geolocate": "Meinen Standort finden",
@@ -419,6 +435,7 @@
 		"suggestions": "Vorschläge für Ihre Suche",
 		"title": "Suche"
 	},
+	"sensitiveInformation": "Sensitive Informationen",
 	"siteTitle": "Berliner Kulturkataster",
 	"skipToContent": "Zum Hauptinhalt springen",
 	"success": "Erfolg",
@@ -428,20 +445,5 @@
 		"number": "+49 (0) 30 3030 444 60"
 	},
 	"unknown": "Unbekannt",
-	"venue": {
-		"address": "",
-		"backToMap": "",
-		"contact": "",
-		"details": "",
-		"email": "",
-		"funding": "",
-		"notFound": "",
-		"organization": "",
-		"parent": "",
-		"phone": "",
-		"support": "",
-		"unnamed": "",
-		"website": ""
-	},
 	"yes": "Ja"
 }

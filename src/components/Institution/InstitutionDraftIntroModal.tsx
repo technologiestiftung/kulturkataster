@@ -70,6 +70,8 @@ type ContributionSetupContentProps = {
 	mode: DraftMode;
 	setMode: (mode: DraftMode) => void;
 	onContinue: () => void;
+	onBack?: () => void;
+	showBackButton?: boolean;
 };
 
 function ContributionSetupContent({
@@ -77,6 +79,8 @@ function ContributionSetupContent({
 	mode,
 	setMode,
 	onContinue,
+	onBack,
+	showBackButton = false,
 }: ContributionSetupContentProps) {
 	return (
 		<>
@@ -141,7 +145,12 @@ function ContributionSetupContent({
 					</RadioGroup>
 				</div>
 			</div>
-			<div className="flex">
+			<div className="flex items-center gap-3">
+				{showBackButton && onBack ? (
+					<Button variant="outline" onClick={onBack}>
+						{t("institutionDraftIntroModal.intro.back")}
+					</Button>
+				) : null}
 				<Button variant="default" onClick={onContinue}>
 					{t("institutionDraftIntroModal.intro.cta")}
 				</Button>
@@ -188,17 +197,25 @@ export function InstitutionDraftIntroModal({
 			titleClassName="sr-only"
 			variant="fullscreen"
 			routePath={routePath}
+			closeConfirmation={{
+				title: t("institutionModalCloseConfirmation.title"),
+				description: t("institutionModalCloseConfirmation.description"),
+				confirmLabel: t("institutionModalCloseConfirmation.confirm"),
+				cancelLabel: t("institutionModalCloseConfirmation.cancel"),
+			}}
 			containerClassName="p-0 md:p-0 mt-0 md:mt-0"
 			contentWrapperClassName="flex-1"
 			contentClassName=""
 			content={
-				<div className="p-4 space-y-4 flex-1 flex-col max-w-5xl mx-auto w-full">
+				<div className="p-4 space-y-4 flex-1 flex-col max-w-5xl mx-auto w-full mb-20">
 					{showContributionSetup ? (
 						<ContributionSetupContent
 							t={t}
 							mode={mode}
 							setMode={setMode}
 							onContinue={handleContinue}
+							showBackButton={!isAuthenticated}
+							onBack={() => setIsGuestSetupVisible(false)}
 						/>
 					) : (
 						<AuthChoiceContent

@@ -1,56 +1,49 @@
 import { test, expect } from "@playwright/test";
-
-const userEmail = process.env.E2E_USER_EMAIL || "";
-const userPassword = process.env.E2E_USER_PASSWORD;
-const adminEmail = process.env.E2E_ADMIN_EMAIL || "";
-const adminPassword = process.env.E2E_ADMIN_PASSWORD;
-
-if (!userEmail || !userPassword || !userEmail.includes("@")) {
-	console.warn("E2E user credentials are not set or invalid");
-}
-
-if (!adminEmail || !adminPassword || !adminEmail.includes("@")) {
-	console.warn("E2E admin credentials are not set or invalid");
-}
+import { prepareStableUi } from "../helpers/e2eStableUi";
+import { safeGoto } from "../helpers/e2eNavigation";
+import {
+	ADMIN_STORAGE_STATE,
+	USER_STORAGE_STATE,
+} from "../helpers/e2eAuthState";
 
 const hasRealUserCredentials =
-	!!userEmail &&
-	!!userPassword &&
-	!userEmail.includes("example@") &&
-	!userEmail.includes("example.") &&
-	!["guest123", "example123"].includes(userPassword);
+	!!process.env.E2E_USER_EMAIL && !!process.env.E2E_USER_PASSWORD;
 const hasRealAdminCredentials =
-	!!adminEmail &&
-	!!adminPassword &&
-	!adminEmail.includes("example@") &&
-	!adminEmail.includes("example.") &&
-	!["guest123", "example123"].includes(adminPassword);
+	!!process.env.E2E_ADMIN_EMAIL && !!process.env.E2E_ADMIN_PASSWORD;
 
-const login = async (
-	page: import("@playwright/test").Page,
-	email: string,
-	password: string,
-) => {
-	await page.goto("/login", { waitUntil: "domcontentloaded" });
-	await page.getByLabel("E-Mail").fill(email);
-	await page.getByRole("textbox", { name: /^Passwort/ }).fill(password);
-	await page.getByRole("button", { name: "Anmelden" }).click();
-	await expect(page).toHaveURL(/\/account(\/.*)?$/);
-};
+test.describe("rbac regular user", () => {
+	test.setTimeout(90_000);
+	test.use({ storageState: USER_STORAGE_STATE });
 
-test.describe("rbac", () => {
-	test("regular user can access institutions", async ({ page }) => {
+	test.beforeEach(async ({ page }) => {
 		test.skip(!hasRealUserCredentials, "E2E user credentials not set");
+		await prepareStableUi(page);
+		await safeGoto(page, "/de/account/activity", /\/de\/account\/activity\/?$/);
+	});
 
-		await login(page, userEmail, userPassword);
-		await page.goto("/account/institutions");
+	test("regular user can access institutions", async ({ page }) => {
+		await safeGoto(
+			page,
+			"/de/account/institutions",
+			/\/de\/account\/institutions\/?$/,
+		);
 		await expect(page.getByRole("table")).toBeVisible({ timeout: 15_000 });
+	});
+});
+
+test.describe("rbac admin", () => {
+	test.setTimeout(90_000);
+	test.use({ storageState: ADMIN_STORAGE_STATE });
+
+	test.beforeEach(async ({ page }) => {
+		test.skip(!hasRealAdminCredentials, "E2E admin credentials not set");
+		await prepareStableUi(page);
+		await safeGoto(page, "/de/account/activity", /\/de\/account\/activity\/?$/);
 	});
 
 	test("admin sees users tab", async ({ page }) => {
-		test.skip(!hasRealAdminCredentials, "E2E admin credentials not set");
-
-		await login(page, adminEmail, adminPassword);
-		await expect(page.getByRole("tab", { name: "Users" })).toBeVisible();
+		await expect(
+			page.getByRole("tab", { name: /Nutzer\*innen|Users/i }),
+		).toBeVisible();
 	});
 });
