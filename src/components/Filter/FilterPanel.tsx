@@ -2,7 +2,7 @@
 
 import { FC } from "react";
 import { useTranslation } from "react-i18next";
-import ContentContainer from "@/components/Content/ContentContainer";
+import { Card } from "@/components/ui/card";
 import { CategorySectionList } from "@/components/Filter/CategorySection/CategorySectionList";
 import DistrictTags from "@/components/Filter/DistrictTags/DistrictTags";
 import { Button } from "@/components/ui/button";
@@ -111,7 +111,7 @@ export const FilterPanel: FC<FilterPanelProps> = ({
 	if (error) {
 		return (
 			<div className="Filter-root p-4 h-full">
-				<ContentContainer>
+				<Card variant="filter">
 					<div className="body2 text-alert mb-2">
 						{t("filter.error", { ns: "content" })}
 					</div>
@@ -120,7 +120,7 @@ export const FilterPanel: FC<FilterPanelProps> = ({
 							{t("filter.retry", { ns: "content" })}
 						</Button>
 					)}
-				</ContentContainer>
+				</Card>
 			</div>
 		);
 	}
@@ -132,7 +132,7 @@ export const FilterPanel: FC<FilterPanelProps> = ({
 	return (
 		<div className={cn(rootClassName, "overflow-auto")}>
 			{showSummary && (
-				<ContentContainer className="p-6">
+				<Card variant="filter">
 					<h2 className="body2 font-bold mb-3 pl-2">
 						{t("filter.displayedInstitutions", {
 							ns: "content",
@@ -156,11 +156,11 @@ export const FilterPanel: FC<FilterPanelProps> = ({
 							</strong>
 						</button>
 					)}
-				</ContentContainer>
+				</Card>
 			)}
 
 			{showDistricts && (
-				<ContentContainer className="py-6 px-4">
+				<Card variant="filter">
 					<div className="flex items-center justify-between mb-4">
 						<h3 className="body1 font-bold">
 							{t("filter.districts.title", { ns: "content" })}
@@ -183,7 +183,7 @@ export const FilterPanel: FC<FilterPanelProps> = ({
 						selected={filters?.district_keys || []}
 						onChange={toggleDistrict}
 					/>
-				</ContentContainer>
+				</Card>
 			)}
 
 			<CategorySectionList

@@ -424,6 +424,7 @@ const renderFieldContent = (
 								<Label
 									htmlFor={`${field.name}-${option.value}`}
 									className="font-normal"
+									emphasize={false}
 								>
 									{option.label}
 								</Label>

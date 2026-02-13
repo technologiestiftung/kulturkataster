@@ -21,7 +21,8 @@ import {
 import { Loading } from "@/components/ui/loading";
 import ArrowNarrowUp from "@/icons/arrow-narrow-up.svg";
 import TextWithLinks from "../Content/TextWithLinks";
-import { FilterModal } from "@/components/Filter/FilterModal";
+import { FilterModalWrapper } from "@/components/Filter/FilterModalWrapper";
+import { FilterPanel } from "@/components/Filter/FilterPanel";
 
 const ITEMS_PER_PAGE = 20;
 
@@ -288,21 +289,24 @@ const ListView: FC = () => {
 				</div>
 			</div>
 			<ModalFooter />
-			<FilterModal
+			<FilterModalWrapper
 				open={isFilterOpen}
 				onOpenChange={setIsFilterOpen}
 				title={tContent("filter.title")}
-				filters={filters}
-				categoryGroups={categories ?? []}
-				districts={districts}
-				filteredCount={institutions?.length ?? 0}
-				categoryCounts={categoryCounts}
-				subcategoryCounts={subcategoryCounts}
-				loading={loadingFilters}
-				error={null}
-				onRetry={handleFilterRetry}
-				onFiltersChange={setFilters}
-			/>
+			>
+				<FilterPanel
+					filters={filters}
+					categoryGroups={categories ?? []}
+					districts={districts}
+					filteredCount={institutions?.length ?? 0}
+					categoryCounts={categoryCounts}
+					subcategoryCounts={subcategoryCounts}
+					loading={loadingFilters}
+					error={null}
+					onRetry={handleFilterRetry}
+					onFiltersChange={setFilters}
+				/>
+			</FilterModalWrapper>
 
 			{/* Floating scroll-to-top button */}
 			{showScrollToTop && (
