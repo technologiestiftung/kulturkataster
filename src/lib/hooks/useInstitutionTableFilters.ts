@@ -58,13 +58,15 @@ export function useInstitutionTableFilters(
 
 			if (!hasCategoryFilters) return true;
 
-			const parentMatches = getParentCategories(row as Partial<Institution>).some(
-				(category) => filters.category_keys.includes(category.key),
-			);
+			const parentMatches = getParentCategories(
+				row as Partial<Institution>,
+			).some((category) => filters.category_keys.includes(category.key));
 
 			const subcategoryMatches = getSubcategories(
 				row as Partial<Institution>,
-			).some((subcategory) => filters.child_category_keys.includes(subcategory.key));
+			).some((subcategory) =>
+				filters.child_category_keys.includes(subcategory.key),
+			);
 
 			return parentMatches || subcategoryMatches;
 		});
@@ -127,7 +129,12 @@ export function useInstitutionTableFilters(
 		});
 
 		return counts;
-	}, [filterCategoryGroups, filters.district_keys, filters.include_closed, tableRows]);
+	}, [
+		filterCategoryGroups,
+		filters.district_keys,
+		filters.include_closed,
+		tableRows,
+	]);
 
 	return {
 		filters,

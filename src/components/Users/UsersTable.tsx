@@ -11,10 +11,7 @@ import { StatusDot } from "@/components/ui/status-dot";
 import { useAccountStore } from "@/lib/store/accountStore";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import type { User } from "@/types/user";
-import {
-	UserFilterPanel,
-	type UserFilters,
-} from "./UserFilterPanel";
+import { UserFilterPanel, type UserFilters } from "./UserFilterPanel";
 import { Badge } from "../ui/badge";
 
 const defaultFilters: UserFilters = {

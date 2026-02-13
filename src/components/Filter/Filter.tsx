@@ -52,7 +52,7 @@ const Filter: FC<FilterProps> = ({ onSearchClick, onShowFilter }) => {
 						className="cursor-pointer"
 						onClick={onSearchClick}
 					>
-						<Search className="size-5! stroke-foreground" />
+						<Search className="size-5!" />
 					</ButtonWithTooltip>
 				)}
 				<ButtonWithTooltip
@@ -62,7 +62,7 @@ const Filter: FC<FilterProps> = ({ onSearchClick, onShowFilter }) => {
 					onClick={onShowFilter}
 				>
 					<div className="flex items-center gap-2">
-						<FilterIcon className="size-5! stroke-foreground" />
+						<FilterIcon className="size-5!" />
 						<span className="body2 font-bold">
 							{t("filter.title", { ns: "content" })}
 						</span>
