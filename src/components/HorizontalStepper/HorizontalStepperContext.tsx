@@ -42,6 +42,12 @@ export function HorizontalStepperProvider({
 	const [currentStepId, setCurrentStepId] = useState(
 		initialStepId || steps[0]?.id,
 	);
+	const initialIndex = Math.max(
+		0,
+		steps.findIndex((step) => step.id === (initialStepId || steps[0]?.id)),
+	);
+	const [furthestReachedStepIndex, setFurthestReachedStepIndex] =
+		useState(initialIndex);
 	const [stepValidations, setStepValidations] = useState<
 		Map<string, () => boolean>
 	>(new Map());
@@ -73,18 +79,37 @@ export function HorizontalStepperProvider({
 
 	const goToStep = useCallback(
 		(stepId: string) => {
-			if (stepId !== currentStepId && !canCurrentStepProceed()) {
+			const targetIndex = steps.findIndex((step) => step.id === stepId);
+			const currentIndex = steps.findIndex((step) => step.id === currentStepId);
+			if (targetIndex === -1) return;
+			const isBackwardNavigation = targetIndex < currentIndex;
+			const isAllowedForwardJump = targetIndex <= furthestReachedStepIndex + 1;
+			if (
+				stepId !== currentStepId &&
+				((!isBackwardNavigation && !isAllowedForwardJump) ||
+					(!isBackwardNavigation && !canCurrentStepProceed()))
+			) {
 				return;
 			}
 			setCurrentStepId(stepId);
+			if (!isBackwardNavigation) {
+				setFurthestReachedStepIndex((prev) => Math.max(prev, targetIndex));
+			}
 		},
-		[currentStepId, canCurrentStepProceed],
+		[
+			currentStepId,
+			canCurrentStepProceed,
+			steps,
+			furthestReachedStepIndex,
+		],
 	);
 
 	const nextStep = useCallback(() => {
 		const currentIndex = steps.findIndex((step) => step.id === currentStepId);
 		if (currentIndex < steps.length - 1 && canCurrentStepProceed()) {
-			setCurrentStepId(steps[currentIndex + 1].id);
+			const nextIndex = currentIndex + 1;
+			setCurrentStepId(steps[nextIndex].id);
+			setFurthestReachedStepIndex((prev) => Math.max(prev, nextIndex));
 		}
 	}, [steps, currentStepId, canCurrentStepProceed]);
 

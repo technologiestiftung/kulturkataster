@@ -24,7 +24,9 @@ export function StepIndicator({ className }: StepIndicatorProps) {
 						className={cn("flex items-center", !isLast && "flex-1")}
 					>
 						<button
+							type="button"
 							onClick={() => goToStep(step.id)}
+							aria-label={`Go to step ${index + 1}`}
 							className={cn(
 								"flex h-4 w-4 items-center justify-center rounded-full bg-neutral-20 border-2 transition-colors",
 								isActive && "bg-primary border-primary text-primary-foreground",
