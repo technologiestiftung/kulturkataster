@@ -27,8 +27,10 @@ import {
 	type SortingState,
 } from "@tanstack/react-table";
 import { SearchInput } from "@/components/ui/search-input";
+import { FilterModalWrapper } from "@/components/Filter/FilterModalWrapper";
 import Plus from "@/icons/plus.svg";
 import Search from "@/icons/search.svg";
+import Filter from "@/icons/filter.svg";
 import Close from "@/icons/close.svg";
 import type { DataTableConfig } from "./types";
 import { Label } from "@radix-ui/react-label";
@@ -53,6 +55,7 @@ const getNestedValue = (obj: Record<string, unknown>, path: string): unknown =>
 
 export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 	const [isSearchOpen, setIsSearchOpen] = useState(false);
+	const [isFilterOpen, setIsFilterOpen] = useState(false);
 	const [sorting, setSorting] = useState<SortingState>([]);
 	const [globalFilter, setGlobalFilter] = useState("");
 	const [expanded, setExpanded] = useState<ExpandedState>({});
@@ -598,6 +601,15 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 		typeof config.secondaryButton?.label === "string"
 			? config.secondaryButton.label
 			: undefined;
+	const filterButtonAriaLabel = (() => {
+		if (typeof config.filterModal?.triggerAriaLabel === "string") {
+			return config.filterModal.triggerAriaLabel;
+		}
+		if (typeof config.filterModal?.triggerLabel === "string") {
+			return config.filterModal.triggerLabel;
+		}
+		return "Open filters";
+	})();
 
 	useEffect(() => {
 		if (!isSearchOpen) return;
@@ -612,7 +624,8 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 			{(config.title ||
 				config.searchable ||
 				config.primaryButton ||
-				config.secondaryButton) && (
+				config.secondaryButton ||
+				config.filterModal) && (
 				<div className="flex flex-col gap-4 w-full">
 					{config.title && (
 						<div>
@@ -679,18 +692,31 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 										}
 									/>
 								</div>
-								{isSearchOpen ? null : (
+								{!isSearchOpen && (
 									<div className="gap-2 flex items-center">
 										<Button
 											type="button"
-											variant="icon"
+											variant="rounded"
 											size="icon"
-											className="bg-secondary border-border"
 											onClick={() => setIsSearchOpen(true)}
 										>
-											<Search className="size-4" />
+											<Search className="size-5!" />
 										</Button>
 										<Label>{searchLabel}</Label>
+									</div>
+								)}
+								{!isSearchOpen && config.filterModal && (
+									<div className="gap-2 flex items-center">
+										<Button
+											type="button"
+											onClick={() => setIsFilterOpen(true)}
+											variant="rounded"
+											size="icon"
+											aria-label={filterButtonAriaLabel}
+										>
+											<Filter className="size-5!" />
+										</Button>
+										<Label>{config.filterModal.triggerLabel ?? "Filter"}</Label>
 									</div>
 								)}
 							</div>
@@ -973,6 +999,24 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 					</table>
 				</div>
 			</div>
+			{config.filterModal ? (
+				<FilterModalWrapper
+					open={isFilterOpen}
+					onOpenChange={setIsFilterOpen}
+					title={
+						config.filterModal.title ??
+						config.filterModal.triggerLabel ??
+						"Filter"
+					}
+					description={config.filterModal.description}
+				>
+					{typeof config.filterModal.content === "function"
+						? config.filterModal.content({
+								close: () => setIsFilterOpen(false),
+							})
+						: config.filterModal.content}
+				</FilterModalWrapper>
+			) : null}
 		</div>
 	);
 }
