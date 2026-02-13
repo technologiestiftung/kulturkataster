@@ -1777,5 +1777,17 @@
 		"newsletter": "Zum Newsletter anmelden",
 		"subtitle": "Ein Projekt der Kulturraum Berlin gGmbH",
 		"title": "Das Berliner Kulturkataster: Die Kultur der Stadt auf einen Blick"
+	},
+	"userClaims": {
+		"approve": "Annehmen",
+		"claimDate": "Datum der Anfrage",
+		"currentUsers": "Aktuelle Nutzer",
+		"empty": "Keine offenen Anfragen vorhanden.",
+		"institutionAddress": "Adresse",
+		"reject": "Ablehnen",
+		"subtitle": "Überprüfen Sie die Anfragen zur Institutionen-Zugehörigkeit.",
+		"title": "Institutionen-Anfragen prüfen",
+		"unknownInstitution": "Unbekannte Institution",
+		"userGroup": "Benutzergruppe"
 	}
 }

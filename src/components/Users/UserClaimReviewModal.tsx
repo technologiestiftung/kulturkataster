@@ -9,6 +9,7 @@ import { InfoWrapper } from "@/components/InfoWrapper/InfoWrapper";
 import type { InfoWrapperConfig } from "@/components/InfoWrapper/types";
 import { reviewClaimSubmission } from "@/server/actions/submissions";
 import type { ClaimSubmissionDetail } from "@/types/submission";
+import { Card } from "../ui/card";
 
 type UserClaimReviewModalProps = {
 	claims: ClaimSubmissionDetail[];
@@ -47,6 +48,23 @@ export function UserClaimReviewModal({
 		[],
 	);
 
+	const formatDate = useCallback((date: Date | string) => {
+		const dateObj = typeof date === "string" ? new Date(date) : date;
+		return dateObj.toLocaleDateString("de-DE", {
+			year: "numeric",
+			month: "2-digit",
+			day: "2-digit",
+		});
+	}, []);
+
+	const formatGroups = useCallback(
+		(groups?: Array<{ name: string }> | null) => {
+			if (!groups || groups.length === 0) return "—";
+			return groups.map((group) => group.name).join(", ");
+		},
+		[],
+	);
+
 	const handleDecision = useCallback(
 		async (id: number, decision: "approved" | "rejected") => {
 			if (isBusy(id)) return;
@@ -67,39 +85,30 @@ export function UserClaimReviewModal({
 	return (
 		<Modal
 			title={t("userClaims.title", {
-				defaultValue: "Institutionen-Claims prüfen",
+				defaultValue: "Institutionen-Anfragen prüfen",
+			})}
+			subtitle={t("userClaims.subtitle", {
+				defaultValue:
+					"Hier kannst du die Anfragen von Institutionen überprüfen und entscheiden, ob sie akzeptiert oder abgelehnt werden.",
 			})}
 			variant="fullscreen"
 			routePath={routePath}
 			returnTo={returnTo}
 			content={
-				<div className="p-4 space-y-6 max-w-5xl mx-auto w-full">
-					<div className="mt-10 space-y-2">
-						<h1 className="font-bold">
-							{t("userClaims.title", {
-								defaultValue: "Institutionen-Claims prüfen",
-							})}
-						</h1>
-						<p className="body2">
-							{t("userClaims.subtitle", {
-								defaultValue:
-									"Überprüfen Sie die Anfragen zur Institutionen-Zuordnung.",
-							})}
-						</p>
-					</div>
-
+				<div className="space-y-6 w-full">
 					{emptyState ? (
 						<p className="body2">
 							{t("userClaims.empty", {
-								defaultValue: "Keine offenen Claims vorhanden.",
+								defaultValue: "Keine offenen Anfragen vorhanden.",
 							})}
 						</p>
 					) : (
 						<div className="space-y-4">
-							{items.map(({ submission, institution }) => (
-								<div
+							{items.map(({ submission, institution, claimant }) => (
+								<Card
 									key={submission.id}
-									className="rounded-md border border-input p-4 space-y-3"
+									variant={"tertiary"}
+									className="space-y-4"
 								>
 									{(() => {
 										const infoConfig: InfoWrapperConfig = {
@@ -107,15 +116,18 @@ export function UserClaimReviewModal({
 											alwaysShow: true,
 											fields: [
 												{
-													type: "text",
+													type: "title",
 													label: t("userClaims.institutionName", {
 														defaultValue: "Institution",
 													}),
-													value: () =>
-														institution?.name ??
-														t("userClaims.unknownInstitution", {
-															defaultValue: "Unbekannte Institution",
-														}),
+													value: () => {
+														return (
+															(institution?.name ??
+																t("userClaims.unknownInstitution", {
+																	defaultValue: "Unbekannte Institution",
+																})) + ` (${institution?.id ?? "—"})`
+														);
+													},
 													alwaysShow: true,
 												},
 												{
@@ -137,6 +149,22 @@ export function UserClaimReviewModal({
 																	.map((user) => user.email ?? user.id)
 																	.join(", ")
 															: "—",
+													alwaysShow: true,
+												},
+												{
+													type: "text",
+													label: t("userClaims.userGroup", {
+														defaultValue: "Benutzergruppe",
+													}),
+													value: () => formatGroups(claimant?.groups),
+													alwaysShow: true,
+												},
+												{
+													type: "text",
+													label: t("userClaims.claimDate", {
+														defaultValue: "Datum der Anfrage",
+													}),
+													value: () => formatDate(submission.created_at),
 													alwaysShow: true,
 												},
 											],
@@ -167,7 +195,7 @@ export function UserClaimReviewModal({
 											})}
 										</Button>
 									</div>
-								</div>
+								</Card>
 							))}
 						</div>
 					)}
