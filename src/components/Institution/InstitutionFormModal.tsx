@@ -648,6 +648,18 @@ const buildInstitutionFormConfig = ({
 						layout: { span: "half" },
 					},
 					{
+						name: "established_since",
+						label: fieldLabel("established_since", "Established Since"),
+						type: "date",
+						layout: { span: "half" },
+					},
+					{
+						name: "established_until",
+						label: fieldLabel("established_until", "Established Until"),
+						type: "date",
+						layout: { span: "half" },
+					},
+					{
 						name: "rental_contract_type",
 						label: fieldLabel("rental_contract_type", "Rental Contract Type"),
 						type: "select",
@@ -672,18 +684,8 @@ const buildInstitutionFormConfig = ({
 						name: "rental_contract_end",
 						label: fieldLabel("rental_contract_end", "Rental Contract End"),
 						type: "date",
-						layout: { span: "half" },
-					},
-					{
-						name: "established_since",
-						label: fieldLabel("established_since", "Established Since"),
-						type: "date",
-						layout: { span: "half" },
-					},
-					{
-						name: "established_until",
-						label: fieldLabel("established_until", "Established Until"),
-						type: "date",
+						condition: (formData) =>
+							formData.rental_contract_type === "limited_lease",
 						layout: { span: "half" },
 					},
 					{
@@ -846,7 +848,9 @@ const buildInstitutionFormConfig = ({
 							"Protection Status Info",
 						),
 						type: "textarea",
-						placeholder: "Additional details about protection status",
+						placeholder: t(
+							"institutionFormModal.form.details.fields.protection_status_info.placeholder",
+						),
 						layout: { span: "full" },
 					},
 				],
@@ -860,8 +864,9 @@ const buildInstitutionFormConfig = ({
 						name: "notes",
 						label: fieldLabel("notes", "Notes"),
 						type: "textarea",
-						placeholder:
-							"Additional information relevant to the cultural cadastre",
+						placeholder: t(
+							"institutionFormModal.form.additional.fields.notes.placeholder",
+						),
 						layout: { span: "full" },
 					},
 				],

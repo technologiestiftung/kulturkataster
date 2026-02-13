@@ -61,6 +61,8 @@ export function Modal({
 	const [showCloseConfirmation, setShowCloseConfirmation] = useState(false);
 	const resolvedCloseConfirmation =
 		closeConfirmation === false ? undefined : closeConfirmation;
+	const normalizePath = (value: string) =>
+		value.length > 1 && value.endsWith("/") ? value.slice(0, -1) : value;
 	useEffect(() => {
 		const checkForHashAndScroll = () => {
 			const hash = window.location.hash;
@@ -108,7 +110,10 @@ export function Modal({
 
 	const resolvedContentClassName = contentClassName ?? "body2";
 	const isRouteMatch = routePath
-		? Boolean(pathname && pathname.endsWith(routePath))
+		? Boolean(
+				pathname &&
+					normalizePath(pathname).endsWith(normalizePath(routePath)),
+			)
 		: Boolean(open);
 	if (!isRouteMatch) {
 		return null;
