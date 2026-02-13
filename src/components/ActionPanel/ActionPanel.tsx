@@ -63,7 +63,8 @@ export function ActionPanel({
 				{onAction && (
 					<Button
 						type="button"
-						variant="ghost"
+						variant="outline"
+						size="md"
 						disabled={isLoading}
 						onClick={handleAction}
 					>
@@ -76,7 +77,7 @@ export function ActionPanel({
 				onOpenChange={(open) => {
 					if (!open) setMessage(null);
 				}}
-				title={"Passwort zurückgesetzt"}
+				title={title}
 				description={message ?? ""}
 				status="success"
 				confirmLabel="OK"
