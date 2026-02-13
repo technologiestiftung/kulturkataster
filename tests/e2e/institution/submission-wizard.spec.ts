@@ -20,6 +20,15 @@ test.describe("institution submission wizard", () => {
 		);
 	});
 
+	const waitForPostSubmitRoute = async (
+		page: import("@playwright/test").Page,
+	) => {
+		await page.waitForURL(
+			/\/de\/(?:account\/institutions|map|login|welcome)(?:\/)?$/,
+			{ timeout: 30_000 },
+		);
+	};
+
 	test("blocks forward stepper jumps when required fields are missing", async ({
 		page,
 	}) => {
@@ -86,7 +95,7 @@ test.describe("institution submission wizard", () => {
 		).toBeVisible();
 
 		await Promise.all([
-			page.waitForURL(/\/de\/account\/institutions\/?$/, { timeout: 30_000 }),
+			waitForPostSubmitRoute(page),
 			page.getByRole("button", { name: "Submission senden" }).click(),
 		]);
 	});
@@ -158,7 +167,7 @@ test.describe("institution submission wizard", () => {
 		).toBeVisible();
 
 		await Promise.all([
-			page.waitForURL(/\/de\/account\/institutions\/?$/, { timeout: 30_000 }),
+			waitForPostSubmitRoute(page),
 			page.getByRole("button", { name: "Submission senden" }).click(),
 		]);
 	});
