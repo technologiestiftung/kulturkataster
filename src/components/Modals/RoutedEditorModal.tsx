@@ -89,8 +89,7 @@ export function RoutedEditorModal({
 
 	const isRouteMatch = routePath
 		? Boolean(
-				pathname &&
-					normalizePath(pathname).endsWith(normalizePath(routePath)),
+				pathname && normalizePath(pathname).endsWith(normalizePath(routePath)),
 			)
 		: Boolean(open);
 

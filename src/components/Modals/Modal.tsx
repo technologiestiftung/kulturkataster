@@ -111,8 +111,7 @@ export function Modal({
 	const resolvedContentClassName = contentClassName ?? "body2";
 	const isRouteMatch = routePath
 		? Boolean(
-				pathname &&
-					normalizePath(pathname).endsWith(normalizePath(routePath)),
+				pathname && normalizePath(pathname).endsWith(normalizePath(routePath)),
 			)
 		: Boolean(open);
 	if (!isRouteMatch) {
