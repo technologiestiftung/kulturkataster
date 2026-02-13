@@ -854,10 +854,9 @@ function InstitutionDraftWizardContent({
 										sourcePlaceholder: t(
 											"institutionDraftWizardModal.form.information.fundingSources.sourcePlaceholder",
 										),
-										descriptionPlaceholder:
-											t(
-												"institutionDraftWizardModal.form.information.fundingSources.descriptionPlaceholder",
-											),
+										descriptionPlaceholder: t(
+											"institutionDraftWizardModal.form.information.fundingSources.descriptionPlaceholder",
+										),
 										addButtonLabel: t(
 											"institutionDraftWizardModal.form.information.fundingSources.addButtonLabel",
 										),
@@ -1207,10 +1206,9 @@ function InstitutionDraftWizardContent({
 										"institutionDraftWizardModal.form.information.accessibility.label",
 									),
 									type: "textarea",
-									placeholder:
-										t(
-											"institutionDraftWizardModal.form.information.accessibility.placeholder",
-										),
+									placeholder: t(
+										"institutionDraftWizardModal.form.information.accessibility.placeholder",
+									),
 								},
 							],
 						},
@@ -1230,12 +1228,13 @@ function InstitutionDraftWizardContent({
 							fields: [
 								{
 									name: "cost",
-									label: t("institutionDraftWizardModal.form.information.cost.label"),
+									label: t(
+										"institutionDraftWizardModal.form.information.cost.label",
+									),
 									type: "textarea",
-									placeholder:
-										t(
-											"institutionDraftWizardModal.form.information.cost.placeholder",
-										),
+									placeholder: t(
+										"institutionDraftWizardModal.form.information.cost.placeholder",
+									),
 								},
 							],
 						},
@@ -1249,8 +1248,9 @@ function InstitutionDraftWizardContent({
 							name: "notes",
 							label: fieldLabel("notes", "Notizen"),
 							type: "textarea",
-							placeholder:
-								t("institutionDraftWizardModal.form.information.notes.placeholder"),
+							placeholder: t(
+								"institutionDraftWizardModal.form.information.notes.placeholder",
+							),
 						},
 					],
 				},
@@ -1307,9 +1307,7 @@ function InstitutionDraftWizardContent({
 						},
 						{
 							name: "contact_person_email",
-							label: t(
-								"institutionDraftWizardModal.form.contact.email.label",
-							),
+							label: t("institutionDraftWizardModal.form.contact.email.label"),
 							type: "email",
 							placeholder: t(
 								"institutionDraftWizardModal.form.contact.email.placeholder",
@@ -1318,9 +1316,7 @@ function InstitutionDraftWizardContent({
 						},
 						{
 							name: "contact_person_phone",
-							label: t(
-								"institutionDraftWizardModal.form.contact.phone.label",
-							),
+							label: t("institutionDraftWizardModal.form.contact.phone.label"),
 							type: "text",
 							placeholder: t(
 								"institutionDraftWizardModal.form.contact.phone.placeholder",
@@ -1344,18 +1340,16 @@ function InstitutionDraftWizardContent({
 						},
 						{
 							name: "consent_contact_listing",
-							label:
-								t(
-									"institutionDraftWizardModal.form.contact.consent.contactListing",
-								),
+							label: t(
+								"institutionDraftWizardModal.form.contact.consent.contactListing",
+							),
 							type: "checkbox",
 						},
 						{
 							name: "request_admin_rights",
-							label:
-								t(
-									"institutionDraftWizardModal.form.contact.consent.requestAdminRights",
-								),
+							label: t(
+								"institutionDraftWizardModal.form.contact.consent.requestAdminRights",
+							),
 							type: "checkbox",
 						},
 					],
@@ -1412,9 +1406,7 @@ function InstitutionDraftWizardContent({
 				: "basic";
 		return {
 			title:
-				t(`institutionDraftWizardModal.steps.${stepKey}.title`) ||
-				title ||
-				"",
+				t(`institutionDraftWizardModal.steps.${stepKey}.title`) || title || "",
 			subtitle:
 				t(`institutionDraftWizardModal.steps.${stepKey}.subtitle`) ||
 				subtitle ||
