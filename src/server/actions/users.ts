@@ -204,6 +204,9 @@ export async function sendPasswordReset(email: string) {
 
 	const siteUrl = process.env.SITE_URL ?? "http://127.0.0.1:3000";
 	const supabase = createAdminClient();
+	console.log(
+		`Generating password reset link for ${email} with redirect to ${siteUrl}/reset-password`,
+	);
 	const { error, data } = await supabase.auth.admin.generateLink({
 		type: "recovery",
 		email,

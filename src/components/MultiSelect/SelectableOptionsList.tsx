@@ -92,7 +92,6 @@ export function SelectableOptionsList({
 								onClick={() => onToggle(option.value)}
 								className={cn(
 									baseItemClassName,
-									isChecked && "bg-neutral-5",
 									!isPanel && isActive && "bg-black/10 contrast:bg-neutral-10",
 									!isPanel &&
 										"hover:bg-black/10 contrast:hover:bg-neutral-10 outline-interaction-dark",
