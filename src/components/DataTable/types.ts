@@ -31,6 +31,14 @@ export interface DataTableConfig<T> {
 		onClick: () => void;
 	};
 
+	filterModal?: {
+		triggerLabel?: ReactNode;
+		triggerAriaLabel?: string;
+		title?: ReactNode;
+		description?: ReactNode;
+		content: ReactNode | ((api: { close: () => void }) => ReactNode);
+	};
+
 	onEdit?: (row: T) => void;
 	onReview?: (row: T) => void;
 	getCanReview?: (row: T) => boolean;

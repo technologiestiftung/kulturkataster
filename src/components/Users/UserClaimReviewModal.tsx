@@ -91,7 +91,7 @@ export function UserClaimReviewModal({
 				defaultValue:
 					"Hier kannst du die Anfragen von Institutionen überprüfen und entscheiden, ob sie akzeptiert oder abgelehnt werden.",
 			})}
-			variant="fullscreen"
+			variant="fullscreen-muted"
 			routePath={routePath}
 			returnTo={returnTo}
 			content={
@@ -107,7 +107,7 @@ export function UserClaimReviewModal({
 							{items.map(({ submission, institution, claimant }) => (
 								<Card
 									key={submission.id}
-									variant={"tertiary"}
+									variant={"filter"}
 									className="space-y-4"
 								>
 									{(() => {

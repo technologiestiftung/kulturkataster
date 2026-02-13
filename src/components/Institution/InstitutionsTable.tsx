@@ -27,6 +27,9 @@ import {
 	isSubmissionRow,
 } from "@/lib/utils/institutionTableUtils";
 import Send from "@/icons/send.svg";
+import { FilterPanel } from "@/components/Filter/FilterPanel";
+import { useInstitutionFilterCategories } from "@/lib/hooks/useInstitutionFilterCategories";
+import { useInstitutionTableFilters } from "@/lib/hooks/useInstitutionTableFilters";
 
 export function InstitutionsTable() {
 	const router = useRouter();
@@ -61,7 +64,12 @@ export function InstitutionsTable() {
 	);
 	const { t } = useTranslation("content");
 	const { t: tEnum } = useTranslation("enumMap");
-	const categories = useAccountStore((state) => state.categories);
+	const {
+		filterCategoryGroups,
+		flattenedCategories,
+		isFilterCategoriesLoading,
+		retryInitializeFilterCategories,
+	} = useInstitutionFilterCategories();
 	const translateEnum = (prefix: string, value?: string | null) => {
 		if (!value) return "—";
 		const translated = tEnum(`${prefix}.${value}`);
@@ -87,7 +95,7 @@ export function InstitutionsTable() {
 
 	const tableRows = useMemo<InstitutionTableRow[]>(() => {
 		const submissionRows = submissions.map((submission) =>
-			buildSubmissionRow(submission, categories),
+			buildSubmissionRow(submission, flattenedCategories),
 		);
 		const institutionRows = institutions.map((institution) => ({
 			...institution,
@@ -95,7 +103,16 @@ export function InstitutionsTable() {
 			rowKey: `institution-${institution.id}`,
 		}));
 		return [...submissionRows, ...institutionRows];
-	}, [categories, institutions, submissions]);
+	}, [flattenedCategories, institutions, submissions]);
+
+	const {
+		filters,
+		setFilters,
+		districts,
+		filteredTableRows,
+		categoryCounts,
+		subcategoryCounts,
+	} = useInstitutionTableFilters(tableRows, filterCategoryGroups);
 
 	const tableConfig: DataTableConfig<InstitutionTableRow> = {
 		columns: [
@@ -698,7 +715,7 @@ export function InstitutionsTable() {
 				accessorFn: (row) => row.updated_at,
 			},
 		],
-		data: tableRows,
+		data: filteredTableRows,
 		getRowKey: (row) => row.rowKey ?? row.id,
 		searchable: true,
 		searchPlaceholder: "Search institutions...",
@@ -724,6 +741,25 @@ export function InstitutionsTable() {
 			enabled: true,
 			rowHeight: 65,
 			overscan: 8,
+		},
+		filterModal: {
+			triggerLabel: t("filter.title"),
+			triggerAriaLabel: t("filter.title"),
+			title: t("filter.title"),
+			content: () => (
+				<FilterPanel
+					filters={filters}
+					categoryGroups={filterCategoryGroups}
+					districts={districts}
+					filteredCount={filteredTableRows.length}
+					categoryCounts={categoryCounts}
+					subcategoryCounts={subcategoryCounts}
+					loading={isFilterCategoriesLoading}
+					error={null}
+					onRetry={retryInitializeFilterCategories}
+					onFiltersChange={setFilters}
+				/>
+			),
 		},
 		primaryButton:
 			canCreateInstitutionDirect || canCreateInstitutionViaSubmission
