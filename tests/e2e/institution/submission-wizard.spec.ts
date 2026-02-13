@@ -29,7 +29,9 @@ test.describe("institution submission wizard", () => {
 		await expect(page.getByText(/Schritt 1 \/ 5/)).toBeVisible();
 
 		// Even with valid current step, jumping multiple steps ahead is blocked.
-		await page.getByLabel("Name des Kulturortes").fill("E2E Validation Institution");
+		await page
+			.getByLabel("Name des Kulturortes")
+			.fill("E2E Validation Institution");
 		await page.getByRole("button", { name: "Go to step 5" }).click();
 		await expect(page.getByText(/Schritt 1 \/ 5/)).toBeVisible();
 
@@ -60,7 +62,9 @@ test.describe("institution submission wizard", () => {
 		await expect(page.getByText(/Schritt 3 \/ 5/)).toBeVisible({
 			timeout: 15_000,
 		});
-		await expect(page.locator("form#institution-shared-use-form")).toBeVisible();
+		await expect(
+			page.locator("form#institution-shared-use-form"),
+		).toBeVisible();
 		await page
 			.locator('form#institution-shared-use-form button[type="submit"]')
 			.click();
@@ -75,7 +79,10 @@ test.describe("institution submission wizard", () => {
 			page.getByRole("button", { name: "Submission senden" }),
 		).toBeVisible({ timeout: 15_000 });
 		await expect(
-			page.locator("#institution-title").filter({ hasText: uniqueName }).first(),
+			page
+				.locator("#institution-title")
+				.filter({ hasText: uniqueName })
+				.first(),
 		).toBeVisible();
 
 		await Promise.all([
@@ -112,7 +119,9 @@ test.describe("institution submission wizard", () => {
 		await expect(page.getByText(/Schritt 3 \/ 5/)).toBeVisible({
 			timeout: 15_000,
 		});
-		await expect(page.locator("form#institution-shared-use-form")).toBeVisible();
+		await expect(
+			page.locator("form#institution-shared-use-form"),
+		).toBeVisible();
 		const yesOption = page.getByRole("radio", { name: "Ja" });
 		if (await yesOption.isVisible().catch(() => false)) {
 			await yesOption.click();
@@ -142,7 +151,10 @@ test.describe("institution submission wizard", () => {
 			page.getByRole("button", { name: "Submission senden" }),
 		).toBeVisible({ timeout: 15_000 });
 		await expect(
-			page.locator("#institution-title").filter({ hasText: uniqueName }).first(),
+			page
+				.locator("#institution-title")
+				.filter({ hasText: uniqueName })
+				.first(),
 		).toBeVisible();
 
 		await Promise.all([

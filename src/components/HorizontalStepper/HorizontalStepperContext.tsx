@@ -96,12 +96,7 @@ export function HorizontalStepperProvider({
 				setFurthestReachedStepIndex((prev) => Math.max(prev, targetIndex));
 			}
 		},
-		[
-			currentStepId,
-			canCurrentStepProceed,
-			steps,
-			furthestReachedStepIndex,
-		],
+		[currentStepId, canCurrentStepProceed, steps, furthestReachedStepIndex],
 	);
 
 	const nextStep = useCallback(() => {
