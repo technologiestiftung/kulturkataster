@@ -10,29 +10,39 @@ export function MapListShell() {
 	const { t } = useTranslation("common");
 	const pathname = usePathname();
 	const normalizedPath = pathname?.replace(/\/$/, "");
+	const isListRoute = /\/list(\/|$)/.test(normalizedPath ?? "");
+	const isMapRoute = /\/map(\/|$)/.test(normalizedPath ?? "");
+	const showMapListShell = isListRoute || isMapRoute;
+
 	const [lastRouteMode, setLastRouteMode] = useState<"map" | "list">(() =>
-		/\/list(\/|$)/.test(normalizedPath ?? "") ? "list" : "map",
+		isListRoute ? "list" : "map",
 	);
+
 	const routeMode = useMemo(() => {
-		if (/\/list(\/|$)/.test(normalizedPath ?? "")) return "list";
-		if (/\/map(\/|$)/.test(normalizedPath ?? "")) return "map";
+		if (isListRoute) return "list";
+		if (isMapRoute) return "map";
 		return lastRouteMode;
-	}, [lastRouteMode, normalizedPath]);
+	}, [isListRoute, isMapRoute, lastRouteMode]);
 
 	useEffect(() => {
-		if (/\/list(\/|$)/.test(normalizedPath ?? "")) {
+		if (isListRoute) {
 			setLastRouteMode("list");
-		} else if (/\/map(\/|$)/.test(normalizedPath ?? "")) {
+		} else if (isMapRoute) {
 			setLastRouteMode("map");
 		}
-	}, [normalizedPath]);
+	}, [isListRoute, isMapRoute]);
 
 	if (normalizedPath?.includes("/account")) {
 		return null;
 	}
 
 	return (
-		<div className="flex flex-1 h-full w-full relative	">
+		<div
+			className={
+				showMapListShell ? "flex flex-1 h-full w-full relative" : "hidden"
+			}
+			aria-hidden={!showMapListShell}
+		>
 			<div
 				className={routeMode === "map" ? "h-full w-full relative" : "hidden"}
 				aria-hidden={routeMode !== "map"}
