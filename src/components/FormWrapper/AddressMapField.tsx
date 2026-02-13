@@ -22,6 +22,11 @@ type AddressMapValue = {
 	lng: number | null;
 };
 
+type AddressMapSelection = {
+	lat: number;
+	lng: number;
+};
+
 type AddressMapAddress = {
 	street?: string | null;
 	streetNumber?: string | null;
@@ -56,7 +61,7 @@ export function AddressMapField({
 	const [mapError, setMapError] = useState<string | null>(null);
 	const [maptilerKey, setMaptilerKey] = useState<string | null>(null);
 	const [pendingSelection, setPendingSelection] =
-		useState<AddressMapValue | null>(null);
+		useState<AddressMapSelection | null>(null);
 	const [isApplyingSelection, setIsApplyingSelection] = useState(false);
 	const isUserMove = useRef(false);
 	const moveEndTimeout = useRef<number | null>(null);
