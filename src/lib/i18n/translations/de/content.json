@@ -696,6 +696,11 @@
 		},
 		"form": {
 			"additional": {
+				"fields": {
+					"notes": {
+						"placeholder": "Weitere Informationen, die für das Kulturkataster relevant sein könnten"
+					}
+				},
 				"title": "Zusätzliche Informationen"
 			},
 			"contact": {
@@ -705,6 +710,9 @@
 					},
 					"phone": {
 						"placeholder": "+49 ..."
+					},
+					"protection_status_info": {
+						"placeholder": "Zusätzliche Details zum Sicherungsstatus"
 					},
 					"website": {
 						"placeholder": "https://..."
@@ -750,9 +758,21 @@
 					"name": {
 						"placeholder": "Institutionsname"
 					},
+					"parent_organization": {
+						"placeholder": "z. B. Kulturverein Berlin e.V."
+					},
 					"parentOrganization": {
 						"description": "Name der übergeordneten Organisation",
 						"placeholder": "z. B. Kulturverein Berlin e.V."
+					},
+					"email": {
+						"placeholder": "kontakt@..."
+					},
+					"phone": {
+						"placeholder": "+49 ..."
+					},
+					"website": {
+						"placeholder": "https://..."
 					}
 				},
 				"title": "Details"
@@ -818,6 +838,218 @@
 			"cta": "Weiter",
 			"back": "Zurück"
 		}
+	},
+	"institutionDraftWizardModal": {
+		"actions": {
+			"back": "Zurück",
+			"next": "Weiter",
+			"review": "Prüfen",
+			"submit": "Submission senden"
+		},
+		"dialog": {
+			"create": {
+				"title": "Neuen Kulturort eintragen",
+				"subtitle": "Vervollständigen Sie die folgenden Schritte, um einen neuen Kulturort einzutragen."
+			},
+			"edit": {
+				"title": "Kulturort bearbeiten",
+				"subtitle": "Prüfen und aktualisieren Sie die Angaben zum Kulturort."
+			}
+		},
+		"steps": {
+			"basic": {
+				"title": "Neuen Kulturort eintragen",
+				"subtitle": "Jedes Feld, das Sie im Formular ausfüllen, hilft uns, diesen Ort im Kulturkataster zu ergänzen. Bei einem Großteil der Felder handelt es sich um freiwillige Angaben."
+			},
+			"category": {
+				"title": "Kategorie zuordnen",
+				"subtitle": "Wählen Sie die passenden Kategorien für den Kulturort aus. Falls etwas fehlt, können Sie neue Kategorien vorschlagen."
+			},
+			"information": {
+				"title": "Raumanfragen und weitere Angaben",
+				"subtitle": "Das Kulturkataster fördert eine solidarische, resiliente Kulturlandschaft, indem es Orte mit freien Kapazitäten mit Organisationen verbindet, die Räume suchen. So werden Leerstände verringert und Ressourcen optimal genutzt. Alle Angaben sind freiwillig."
+			},
+			"contact": {
+				"title": "Ansprechperson für Rückfragen",
+				"subtitle": "Hinterlegen Sie eine Ansprechperson, damit unser Redaktionsteam Sie bei Rückfragen kontaktieren kann."
+			},
+			"review": {
+				"title": "Prüfung Ihrer Angaben",
+				"subtitle": "Sie können hier alle Angaben noch einmal einsehen und falls nötig korrigieren."
+			}
+		},
+		"form": {
+			"basic": {
+				"sectionTitle": "Grundinformationen",
+				"name": {
+					"label": "Name des Kulturortes",
+					"placeholder": "z. B. Staatliche Kunsthalle"
+				},
+				"utilizationStatusInfo": {
+					"label": "Weitere Informationen zum Nutzungsstatus",
+					"placeholder": "Zusätzliche Details zum Nutzungsstatus"
+				}
+			},
+			"category": {
+				"newCategory": {
+					"label": "Neue Kategorie(n) vorschlagen",
+					"description": "Mehrere Kategorien bitte durch Komma trennen.",
+					"placeholder": "z. B. Neue Kategorie"
+				}
+			},
+			"information": {
+				"selectPlaceholder": "Bitte auswählen",
+				"datePlaceholder": "DD.MM.YYYY",
+				"sharedUse": {
+					"label": "Offen für Raumanfragen",
+					"detailsLabel": "Details",
+					"options": {
+						"yes": "Ja",
+						"no": "Nein"
+					},
+					"infoPlaceholder": "Beschreibung der Räume/Flächen",
+					"equipmentPlaceholder": "Ausstattung beschreiben",
+					"audiencePlaceholder": "Geeignete Zielgruppe/Sparte beschreiben",
+					"availabilityPlaceholder": "Zeitliche Verfügbarkeiten beschreiben",
+					"accessibilityPlaceholder": "Barrierefreiheit beschreiben",
+					"costPlaceholder": "Kosten für die Nutzung beschreiben",
+					"contactPersonPlaceholder": "Kontakt für Raumanfragen angeben"
+				},
+				"accordions": {
+					"sharedUseInfo": {
+						"title": "Beschreibung der Räume/Flächen"
+					},
+					"sharedUseEquipment": {
+						"title": "Ausstattung"
+					},
+					"sharedUseAudience": {
+						"title": "Zielgruppe/Sparte"
+					},
+					"sharedUseAvailability": {
+						"title": "Zeitliche Verfügbarkeiten"
+					},
+					"sharedUseAccessibility": {
+						"title": "Barrierefreiheit"
+					},
+					"sharedUseCost": {
+						"title": "Kosten"
+					},
+					"sharedUseContactPerson": {
+						"title": "Kontakt für Raumanfragen"
+					},
+					"organization": {
+						"title": "Organisationsform",
+						"description": "Rechtsform der Kultureinrichtung."
+					},
+					"funding": {
+						"title": "Art der Förderung",
+						"description": "Informationen zur Förderung."
+					},
+					"fundingSources": {
+						"title": "Art der Finanzierung"
+					},
+					"establishment": {
+						"title": "Zeitraum am Standort"
+					},
+					"closing": {
+						"title": "Schließungsgründe"
+					},
+					"ownership": {
+						"title": "Eigentumsverhältnisse"
+					},
+					"rental": {
+						"title": "Miet- und Nutzungsverhältnisse"
+					},
+					"protection": {
+						"title": "Sicherungsstatus",
+						"description": "Angaben zum Schutz und zur Sicherung des Standorts."
+					},
+					"space": {
+						"title": "Räumlichkeiten",
+						"description": "Angaben zu Fläche, Räumen und Kapazität."
+					},
+					"accessibility": {
+						"title": "Barrierefreiheit"
+					},
+					"cost": {
+						"title": "Kosten"
+					}
+				},
+				"organization": {
+					"legalFormPlaceholder": "z. B. e.V., gGmbH, GbR"
+				},
+				"fundingSources": {
+					"label": "Finanzierungsquellen",
+					"sourceLabel": "Art der Finanzierung",
+					"descriptionLabel": "Details",
+					"sourcePlaceholder": "z. B. Land Berlin, Bezirk Mitte",
+					"descriptionPlaceholder": "z. B. Förderung seit 2020, jährlich 50.000€",
+					"addButtonLabel": "Finanzierungsquelle hinzufügen",
+					"removeButtonLabel": "Entfernen"
+				},
+				"closingReason": {
+					"placeholder": "Gründe für die Schließung angeben"
+				},
+				"ownerName": {
+					"placeholder": "Name der/des Eigentümer*in"
+				},
+				"rentalContract": {
+					"hereditaryBuildingRight": "Erbbaurecht"
+				},
+				"protectionStatus": {
+					"longTermSecured": "Langfristig gesichert",
+					"mediumTermSecured": "Mittelfristig gesichert",
+					"uncertain": "Unsicher",
+					"acutelyThreatened": "Akut bedroht",
+					"permanentlyClosed": "Dauerhaft geschlossen",
+					"notYetSecured": "Noch nicht gesichert"
+				},
+				"protectionStatusInfo": {
+					"placeholder": "Weitere Informationen zum Sicherungsstatus"
+				},
+				"space": {
+					"areaPlaceholder": "z. B. 150",
+					"roomsPlaceholder": "z. B. 5",
+					"capacityPlaceholder": "z. B. 100 Personen"
+				},
+				"accessibility": {
+					"label": "Barrierefreiheit",
+					"placeholder": "z. B. Rollstuhlgerecht, Aufzug vorhanden, barrierefreie Toiletten"
+				},
+				"cost": {
+					"label": "Kosten",
+					"placeholder": "z. B. Eintritt frei, 5-10 Euro, ermäßigt 3 Euro"
+				},
+				"notes": {
+					"placeholder": "Weitere Informationen, die für das Kulturkataster relevant sein könnten"
+				}
+			},
+			"contact": {
+				"firstName": {
+					"label": "Kontaktperson Vorname",
+					"placeholder": "z. B. Max"
+				},
+				"lastName": {
+					"label": "Kontaktperson Nachname",
+					"placeholder": "z. B. Mustermann"
+				},
+				"email": {
+					"label": "Kontaktperson E-Mail",
+					"placeholder": "z. B. max.mustermann@example.com"
+				},
+				"phone": {
+					"label": "Kontaktperson Telefon",
+					"placeholder": "z. B. +49 30 1234567"
+				},
+				"consent": {
+					"title": "Abschließende Angaben",
+					"worksForOrganization": "Ich arbeite für diese Kulturorganisation.",
+					"contactListing": "Ich bin damit einverstanden, mit meinen Kontaktdaten als Ansprechperson im passwortgeschützten Bereich des Kulturkatasters genannt zu werden.",
+					"requestAdminRights": "Ich bin verantwortlich für diesen Kulturort und möchte ihn der Liste in meinem Profil hinzufügen und die Administrationsrechte dafür erhalten."
+				}
+			}
+		},
+		"stepLabel": "Schritt {{current}} / {{total}}"
 	},
 	"listView": {
 		"allLoaded": "Alle Kulturorte geladen",

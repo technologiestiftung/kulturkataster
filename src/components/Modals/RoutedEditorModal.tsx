@@ -77,6 +77,8 @@ export function RoutedEditorModal({
 	const [showCloseConfirmation, setShowCloseConfirmation] = useState(false);
 	const resolvedCloseConfirmation =
 		closeConfirmation === false ? undefined : closeConfirmation;
+	const normalizePath = (value: string) =>
+		value.length > 1 && value.endsWith("/") ? value.slice(0, -1) : value;
 	const handleCloseRequest = useCallback(() => {
 		if (resolvedCloseConfirmation) {
 			setShowCloseConfirmation(true);
@@ -86,7 +88,10 @@ export function RoutedEditorModal({
 	}, [resolvedCloseConfirmation, handleClose]);
 
 	const isRouteMatch = routePath
-		? Boolean(pathname && pathname.endsWith(routePath))
+		? Boolean(
+				pathname &&
+					normalizePath(pathname).endsWith(normalizePath(routePath)),
+			)
 		: Boolean(open);
 
 	if (!isRouteMatch) {
