@@ -23,6 +23,8 @@ const buttonVariants = cva(
 					"border flex-1 border-input text-primary-dark bg-background hover:bg-accent hover:text-accent-foreground",
 				secondary:
 					"bg-secondary text-secondary-foreground hover:bg-secondary/80",
+				tertiary:
+					"text-primary-dark underline-offset-4 hover:underline p-0 m-0 font-normal",
 				ghost: "hover:bg-accent hover:text-accent-foreground",
 				"menu-icon":
 					" z-10 flex items-center justify-center [&_svg]:size-6 rounded-full transition-colors duration-300 cursor-pointer ",

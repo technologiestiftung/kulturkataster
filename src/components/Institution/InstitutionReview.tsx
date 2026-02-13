@@ -38,6 +38,8 @@ export function InstitutionReview({
 			? institutionCategories
 			: accountCategories;
 
+	console.log("data in review", data);
+
 	const editConfig = useMemo(
 		() => ({
 			details: onEditSection

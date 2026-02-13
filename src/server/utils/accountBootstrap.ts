@@ -7,6 +7,7 @@ import { getSubmissions } from "@/server/actions/submissions";
 import { getUsers } from "@/server/actions/users";
 import {
 	getAccessContextForUser,
+	getFieldPermissionListsForTable,
 	type AccessContext,
 } from "@/server/utils/rbac";
 import { fetchIfAllowed } from "@/server/utils/rbacHelpers";
@@ -20,6 +21,9 @@ export type AccountBootstrapData = {
 	categories: Awaited<ReturnType<typeof getCategories>>;
 	institutions: Awaited<ReturnType<typeof getMyInstitutions>>;
 	submissions: Awaited<ReturnType<typeof getSubmissions>>;
+	institutionFieldPermissions: ReturnType<
+		typeof getFieldPermissionListsForTable
+	>;
 };
 
 export async function getAccountBootstrapData(): Promise<AccountBootstrapData | null> {
@@ -54,5 +58,9 @@ export async function getAccountBootstrapData(): Promise<AccountBootstrapData | 
 		categories,
 		institutions,
 		submissions,
+		institutionFieldPermissions: getFieldPermissionListsForTable(
+			ctx,
+			"institution",
+		),
 	};
 }

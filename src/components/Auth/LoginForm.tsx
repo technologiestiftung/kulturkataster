@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { loginWithEmailPassword } from "@/server/actions/auth";
@@ -9,6 +8,7 @@ import { FormWrapper } from "@/components/FormWrapper";
 import { AlertDialog } from "@/components/ui/alert-dialog";
 import type { FormWrapperConfig } from "@/components/FormWrapper";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
+import { Button } from "../ui/button";
 
 export function LoginForm() {
 	const [isLoading, setIsLoading] = useState(false);
@@ -36,7 +36,7 @@ export function LoginForm() {
 			const result = await loginWithEmailPassword(email, password);
 			if (!result.ok) {
 				let fallback: string;
-				if (result.error === "inactive") {
+				if (result.error === "banned") {
 					fallback = t("auth.login.inactive");
 				} else if (result.error === "missing_user") {
 					fallback = t("auth.login.errorFallback");
@@ -84,12 +84,16 @@ export function LoginForm() {
 						disabled: isLoading,
 						afterField: (
 							<div className="flex justify-end">
-								<Link
-									href={toLocalePath("/forgot-password")}
-									className="text-primary-dark body2 underline"
+								<Button
+									type="button"
+									variant="tertiary"
+									size="tag"
+									className=" underline body2"
+									onClick={() => router.push(toLocalePath("/forgot-password"))}
+									disabled={isLoading}
 								>
 									{t("auth.login.forgotPassword")}
-								</Link>
+								</Button>
 							</div>
 						),
 					},
@@ -123,12 +127,16 @@ export function LoginForm() {
 
 			<div className="flex flex-col items-center text-center mt-2">
 				<span className="">{t("auth.login.noAccount")} </span>
-				<Link
-					href={toLocalePath("/register")}
-					className="text-primary-dark underline "
+				<Button
+					type="button"
+					variant="tertiary"
+					size="tag"
+					className=" underline"
+					onClick={() => router.push(toLocalePath("/register"))}
+					disabled={isLoading}
 				>
 					{t("auth.login.signUp")}
-				</Link>
+				</Button>
 			</div>
 		</div>
 	);

@@ -7,17 +7,30 @@ import {
 	SubmissionType,
 } from "@/generated/prisma";
 import { getCurrentUserId } from "@/server/actions/auth";
+import {
+	createInstitution,
+	deleteInstitution,
+	updateInstitution,
+} from "@/server/actions/institutions";
 import { submissionRepo } from "@/server/data/submissionRepo";
 import { prisma } from "@/server/prisma";
+import { institutionSubmissionToDraft } from "@/lib/utils/institutionSubmissionUtils";
 import {
 	authorizeTable,
+	canFields,
 	getAccessContextForUser,
 	getTableScope,
+	getScopeUserId,
 	requireAllScope,
 	requireScopeOrUser,
 } from "@/server/utils/rbac";
 import { revalidateAccount } from "@/server/utils/actionsUtils";
 import { ClaimSubmissionDetail } from "@/types";
+import {
+	buildInstitutionPermissionFields,
+	filterInstitutionInputByPermissionFields,
+} from "@/lib/utils/institutionPermissionUtils";
+import { buildInstitutionScopedWhere } from "@/server/logic/institutionAccess";
 
 type SubmissionFilter = {
 	entityType?: SubmissionEntityType;
@@ -64,7 +77,6 @@ export async function getSubmissions(filter: SubmissionFilter = {}) {
 	authorizeTable(ctx, "submission", "read");
 	const scope = getTableScope(ctx, "submission", "read");
 	const ownerId = requireScopeOrUser(scope, currentUserId);
-
 	const where: Prisma.SubmissionWhereInput = {
 		entity_type: filter.entityType,
 		entity_id: filter.entityId ?? undefined,
@@ -84,7 +96,7 @@ export async function getClaimSubmissionsDetailed(
 	const ctx = await getAccessContextForUser(currentUserId);
 	authorizeTable(ctx, "submission", "read");
 	requireAllScope(ctx, "submission", "read");
-
+	console.log("Getting claim submissions for userId:", userId);
 	const submissions = await prisma.submission.findMany({
 		where: { type: "claim", created_by: userId ?? undefined },
 		orderBy: { created_at: "desc" },
@@ -224,16 +236,133 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 	const ctx = await getAccessContextForUser(currentUserId);
 	authorizeTable(ctx, "submission", "update");
 	const scope = getTableScope(ctx, "submission", "update");
-	if (scope !== "all") {
-		throw new Error("Only admins can review submissions.");
+	const ownerId = requireScopeOrUser(scope, currentUserId);
+	const submission = ownerId
+		? await submissionRepo.findFirst({ id: input.id, created_by: ownerId })
+		: await submissionRepo.findById(input.id);
+	if (!submission) {
+		throw new Error("Not authorized to review this submission.");
 	}
 
-	return submissionRepo.update(input.id, {
+	if (input.status === "approved") {
+		if (submission.entity_type !== "institution") {
+			throw new Error("Only institution submissions can be reviewed.");
+		}
+
+		const draft = institutionSubmissionToDraft(submission);
+		const institutionScope = getTableScope(ctx, "institution", "update");
+
+		if (submission.type === "create") {
+			authorizeTable(ctx, "institution", "create");
+			const fields = buildInstitutionPermissionFields(draft);
+			const allowedFields = new Set(
+				fields.filter((field) =>
+					canFields(ctx, "institution", [field], "create"),
+				),
+			);
+			const sanitizedDraft = filterInstitutionInputByPermissionFields(
+				draft,
+				allowedFields,
+			);
+			const name = sanitizedDraft.name;
+			if (!name || typeof name !== "string" || name.trim().length === 0) {
+				throw new Error(
+					"Create submission does not include permitted required fields.",
+				);
+			}
+			await createInstitution({
+				...draft,
+				...sanitizedDraft,
+				name,
+			});
+		}
+
+		if (submission.type === "update") {
+			authorizeTable(ctx, "institution", "update");
+			if (!submission.entity_id) {
+				throw new Error("Update submission is missing institution id.");
+			}
+			const fields = buildInstitutionPermissionFields(draft);
+			const allowedFields = new Set(
+				fields.filter((field) =>
+					canFields(ctx, "institution", [field], "update"),
+				),
+			);
+			const sanitizedDraft = filterInstitutionInputByPermissionFields(
+				draft,
+				allowedFields,
+			);
+			const currentInstitution = await prisma.institution.findUnique({
+				where: { id: submission.entity_id },
+				select: { name: true },
+			});
+			if (!currentInstitution) {
+				throw new Error("Target institution not found.");
+			}
+			const resolvedName =
+				typeof sanitizedDraft.name === "string" &&
+				sanitizedDraft.name.trim().length > 0
+					? sanitizedDraft.name
+					: currentInstitution.name;
+			await updateInstitution({
+				...draft,
+				...sanitizedDraft,
+				id: submission.entity_id,
+				name: resolvedName,
+			});
+		}
+
+		if (submission.type === "claim") {
+			authorizeTable(ctx, "institution", "update");
+			if (!submission.entity_id) {
+				throw new Error("Claim submission is missing institution id.");
+			}
+			if (!submission.created_by) {
+				throw new Error("Claim submission is missing claimant id.");
+			}
+			const institutionOwnerId = getScopeUserId(
+				institutionScope,
+				currentUserId,
+			);
+			const institutionWhere = buildInstitutionScopedWhere(
+				institutionScope,
+				institutionOwnerId,
+				{ id: submission.entity_id },
+			);
+			const targetInstitution = institutionWhere
+				? await prisma.institution.findFirst({ where: institutionWhere })
+				: null;
+			if (!targetInstitution) {
+				throw new Error("Not authorized to claim this institution.");
+			}
+			await prisma.institution.update({
+				where: { id: submission.entity_id },
+				data: { users: { connect: { id: submission.created_by } } },
+			});
+		}
+
+		if (submission.type === "delete") {
+			authorizeTable(ctx, "institution", "delete");
+			if (!submission.entity_id) {
+				throw new Error("Delete submission is missing institution id.");
+			}
+			await deleteInstitution(submission.entity_id);
+		}
+
+		// Delete the submission only after the institution mutation succeeded.
+		await submissionRepo.remove(input.id);
+		revalidateAccount();
+		return { id: input.id, status: "approved" as const };
+	}
+
+	const updated = await submissionRepo.update(input.id, {
 		status: input.status,
 		review_notes: input.reviewNotes ?? undefined,
 		reviewer: currentUserId ? { connect: { id: currentUserId } } : undefined,
 		reviewed_at: new Date(),
 	});
+	revalidateAccount();
+	return updated;
 }
 
 export async function reviewClaimSubmission(input: ClaimReviewPayload) {

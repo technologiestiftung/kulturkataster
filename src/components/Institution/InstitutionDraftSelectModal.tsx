@@ -223,6 +223,7 @@ export function InstitutionDraftSelectModal({
 								emptyText={t("institution.editSelectEmpty", {
 									defaultValue: "Keine Kulturorte gefunden.",
 								})}
+								variant="panel"
 								showCheckbox={false}
 								onToggle={(value) => {
 									const institution = institutionById.get(value);

@@ -8,7 +8,6 @@ import {
 	useRoutedModalClose,
 } from "@/components/Modals/RoutedEditorModal";
 import { AlertDialog } from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
 import { FormWrapper } from "@/components/FormWrapper";
 import type { FormWrapperConfig } from "@/components/FormWrapper";
 import { useAccountStore } from "@/lib/store/accountStore";
@@ -396,21 +395,8 @@ export function GroupFormModal({
 			tEnum,
 		});
 
-	const formConfig = useMemo(
-		() =>
-			buildGroupFormConfig({
-				mode,
-				t,
-				userOptions,
-				institutionOptions,
-				filteredInstitutionOptions,
-				filterPanel,
-				resolvedGroup,
-				submitting,
-				onSubmit: handleSubmit,
-				onCancel: handleClose,
-			}),
-		[
+	const formConfig = useMemo(() => {
+		const baseConfig = buildGroupFormConfig({
 			mode,
 			t,
 			userOptions,
@@ -419,23 +405,45 @@ export function GroupFormModal({
 			filterPanel,
 			resolvedGroup,
 			submitting,
-			handleSubmit,
-			handleClose,
-			handleSuccess,
-		],
-	);
+			onSubmit: handleSubmit,
+			onCancel: handleClose,
+		});
+		if (mode !== "edit" || !resolvedGroup) return baseConfig;
+		return {
+			...baseConfig,
+			deleteAction: {
+				label: t("groupFormModal.delete.button"),
+				onClick: () => setShowDeleteDialog(true),
+				disabled: isDeleting || submitting,
+				className: "p-0!",
+			},
+		};
+	}, [
+		mode,
+		t,
+		userOptions,
+		institutionOptions,
+		filteredInstitutionOptions,
+		filterPanel,
+		resolvedGroup,
+		submitting,
+		isDeleting,
+		handleSubmit,
+		handleClose,
+		handleSuccess,
+	]);
 
-	if (showNotFound) {
+	if (showNotFound && !isDeleting) {
 		return renderNotFoundDialog(t);
 	}
 
 	return (
 		<RoutedEditorModal routePath={routePath} onClose={handleClose}>
-			<div className="flex h-full flex-col">
+			<div className="w-full  max-w-3xl mx-auto">
 				<div className="px-6 py-8 md:px-10">
 					<DialogTitle className="title">{getDialogTitle(mode, t)}</DialogTitle>
 				</div>
-				<div className="flex-1 overflow-auto px-6 py-6 md:px-10">
+				<div className="flex-1 overflow-auto px-6 py-6 md:px-10 flex flex-col">
 					{renderDialogBody(
 						isWaitingForGroup,
 						t,
@@ -444,33 +452,6 @@ export function GroupFormModal({
 						mode,
 					)}
 				</div>
-				{mode === "edit" && resolvedGroup && (
-					<div className="border-t border-neutral-20 px-6 py-4 md:px-10">
-						<div className="flex flex-wrap items-center justify-between gap-3">
-							<div>
-								<p className="body2 font-bold">
-									{t("groupFormModal.delete.title", {
-										defaultValue: "Delete group",
-									})}
-								</p>
-								<p className="body3 text-neutral-80">
-									{t("groupFormModal.delete.description", {
-										defaultValue: "This action permanently removes the group.",
-									})}
-								</p>
-							</div>
-							<Button
-								variant="destructive"
-								onClick={() => setShowDeleteDialog(true)}
-								disabled={isDeleting || submitting}
-							>
-								{t("groupFormModal.delete.button", {
-									defaultValue: "Delete",
-								})}
-							</Button>
-						</div>
-					</div>
-				)}
 			</div>
 			{showDeleteDialog && resolvedGroup && (
 				<AlertDialog
@@ -483,9 +464,7 @@ export function GroupFormModal({
 						defaultValue:
 							"This will permanently remove the group. This action cannot be undone.",
 					})}
-					confirmLabel={t("groupFormModal.delete.confirm", {
-						defaultValue: "Delete",
-					})}
+					confirmLabel={t("groupFormModal.delete.confirm")}
 					cancelLabel={t("groupFormModal.delete.cancel", {
 						defaultValue: "Cancel",
 					})}
@@ -493,9 +472,11 @@ export function GroupFormModal({
 					onConfirm={async () => {
 						if (isDeleting) return;
 						setIsDeleting(true);
+						let deleteSucceeded = false;
 						try {
 							await deleteGroup(resolvedGroup.id);
 							removeGroup(resolvedGroup.id);
+							deleteSucceeded = true;
 							setShowDeleteDialog(false);
 							handleClose();
 						} catch {
@@ -510,7 +491,9 @@ export function GroupFormModal({
 							});
 							setShowDeleteDialog(false);
 						} finally {
-							setIsDeleting(false);
+							if (!deleteSucceeded) {
+								setIsDeleting(false);
+							}
 						}
 					}}
 					onOpenChange={(open) => {

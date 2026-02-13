@@ -50,9 +50,14 @@ export async function loginWithEmailPassword(email: string, password: string) {
 	const profile = await prisma.user.findUnique({
 		where: { id: userId },
 	});
-	if (!profile || profile.status !== "active") {
+	if (!profile) {
 		await supabase.auth.signOut();
-		return { ok: false, error: "inactive" };
+		return { ok: false, error: "missing_user" };
+	}
+
+	if (profile.status === "banned") {
+		await supabase.auth.signOut();
+		return { ok: false, error: "banned" };
 	}
 
 	return { ok: true };
@@ -103,6 +108,18 @@ export async function registerWithEmailPassword(params: {
 
 	if (data.user) {
 		try {
+			const existingUser = await prisma.user.findUnique({
+				where: { id: data.user.id },
+				select: { role_id: true },
+			});
+			const guestRole = await prisma.role.findUnique({
+				where: { name: "guest" },
+				select: { id: true },
+			});
+			const shouldAssignGuestRole =
+				Boolean(guestRole?.id) &&
+				(!existingUser || existingUser.role_id === null);
+
 			let metaInfo: Record<string, string> = {};
 
 			if (params.accountType === "organization") {
@@ -133,6 +150,10 @@ export async function registerWithEmailPassword(params: {
 					first_name: params.firstName ?? null,
 					last_name: params.lastName ?? null,
 					account_type: params.accountType ?? null,
+					role:
+						shouldAssignGuestRole && guestRole
+							? { connect: { id: guestRole.id } }
+							: undefined,
 					meta_info:
 						Object.keys(metaInfo).length > 0
 							? (metaInfo as Record<string, string>)
@@ -144,6 +165,7 @@ export async function registerWithEmailPassword(params: {
 					first_name: params.firstName ?? null,
 					last_name: params.lastName ?? null,
 					account_type: params.accountType ?? null,
+					role: guestRole ? { connect: { id: guestRole.id } } : undefined,
 					meta_info:
 						Object.keys(metaInfo).length > 0
 							? (metaInfo as Record<string, string>)

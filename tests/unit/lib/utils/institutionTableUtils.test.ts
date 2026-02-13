@@ -13,6 +13,7 @@ const categories: Category[] = [
 
 const submission = {
 	id: 10,
+	status: "approval_pending",
 	created_at: new Date("2024-01-01T10:00:00Z"),
 	updated_at: new Date("2024-02-01T10:00:00Z"),
 	data: {

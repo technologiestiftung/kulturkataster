@@ -262,6 +262,20 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 								{config.submitLabel || "Submit"}
 							</Button>
 						</div>
+						{config.deleteAction && (
+							<Button
+								type="button"
+								variant="tertiary"
+								className={cn(
+									"self-start mt-3 underline",
+									config.deleteAction.className,
+								)}
+								onClick={config.deleteAction.onClick}
+								disabled={config.deleteAction.disabled}
+							>
+								{config.deleteAction.label}
+							</Button>
+						)}
 					</div>
 				)}
 				{config.footerFields && config.footerFields.length > 0 && (
