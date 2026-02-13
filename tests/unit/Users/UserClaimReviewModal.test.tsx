@@ -70,6 +70,7 @@ describe("UserClaimReviewModal", () => {
 							id: 12,
 							entity_id: 99,
 							type: "claim",
+							created_at: "2024-01-01T12:00:00Z",
 						} as never,
 						institution: {
 							name: "Institution Alpha",
@@ -118,6 +119,7 @@ describe("UserClaimReviewModal", () => {
 							id: 33,
 							entity_id: 100,
 							type: "claim",
+							created_at: "2024-01-02T12:00:00Z",
 						} as never,
 						institution: {
 							name: "Institution Beta",
