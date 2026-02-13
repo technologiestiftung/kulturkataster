@@ -84,21 +84,27 @@ export function Modal({
 			return;
 		}
 
-		// Check if we can go back in Next.js navigation history
-		// Next.js tracks navigation state in window.history.state.idx
-		const canGoBack =
-			typeof window !== "undefined" &&
-			window.history.state?.idx !== undefined &&
-			window.history.state.idx > 0;
-
-		if (canGoBack) {
-			// We have navigation history within the app, go back
-			router.back();
-		} else {
-			// No history (direct visit to modal URL), navigate to home
-			router.push(toLocalePath("/"));
+		if (typeof window === "undefined") {
+			router.replace(toLocalePath("/"));
+			return;
 		}
-	}, [returnTo, router, toLocalePath]);
+
+		const currentPath = normalizePath(pathname ?? window.location.pathname);
+		const hasHistory = window.history.length > 1;
+
+		if (hasHistory) {
+			router.back();
+			window.setTimeout(() => {
+				const nextPath = normalizePath(window.location.pathname);
+				if (nextPath === currentPath) {
+					router.replace(toLocalePath("/"));
+				}
+			}, 150);
+			return;
+		}
+
+		router.replace(toLocalePath("/"));
+	}, [normalizePath, pathname, returnTo, router, toLocalePath]);
 
 	const handleCloseRequest = useCallback(() => {
 		if (resolvedCloseConfirmation) {
