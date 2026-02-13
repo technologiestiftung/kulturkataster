@@ -46,6 +46,7 @@ type MockStepperState = {
 	previousStep: ReturnType<typeof vi.fn>;
 	canGoNext: boolean;
 	canGoPrevious: boolean;
+	setStepValidation: ReturnType<typeof vi.fn>;
 };
 
 let mockStepperState: MockStepperState;
@@ -108,6 +109,7 @@ describe("InstitutionDraftWizardModal submission workflow", () => {
 			previousStep: vi.fn(),
 			canGoNext: false,
 			canGoPrevious: false,
+			setStepValidation: vi.fn(),
 		};
 
 		const draftState = useInstitutionDraftStore.getState();
@@ -135,7 +137,11 @@ describe("InstitutionDraftWizardModal submission workflow", () => {
 	it("submits create payload from review step and navigates to account institutions", async () => {
 		render(<InstitutionDraftWizardModal routePath="/institution/submission" />);
 
-		fireEvent.click(screen.getByRole("button", { name: "Submission senden" }));
+		fireEvent.click(
+			screen.getByRole("button", {
+				name: "institutionDraftWizardModal.actions.submit",
+			}),
+		);
 
 		await waitFor(() => {
 			expect(mockedCreateSubmission).toHaveBeenCalledTimes(1);
@@ -156,7 +162,62 @@ describe("InstitutionDraftWizardModal submission workflow", () => {
 				}),
 			}),
 		);
+		expect(mockedCreateSubmission.mock.calls[0]?.[0]).not.toEqual(
+			expect.objectContaining({
+				data: expect.objectContaining({ newCategory: expect.anything() }),
+			}),
+		);
 		expect(pushMock).toHaveBeenCalledWith("/de/account/institutions");
+	});
+
+	it("creates separate category submissions for proposed new categories", async () => {
+		const draftState = useInstitutionDraftStore.getState();
+		draftState.setDraft({
+			name: "Draft With New Category",
+			newCategory: "Atelier,  Probe , Atelier,",
+		});
+
+		mockedCreateSubmission
+			.mockResolvedValueOnce({ id: 321 } as any)
+			.mockResolvedValue({} as any);
+
+		render(<InstitutionDraftWizardModal routePath="/institution/submission" />);
+
+		fireEvent.click(
+			screen.getByRole("button", {
+				name: "institutionDraftWizardModal.actions.submit",
+			}),
+		);
+
+		await waitFor(() => {
+			expect(mockedCreateSubmission).toHaveBeenCalledTimes(3);
+		});
+
+		expect(mockedCreateSubmission.mock.calls[0]?.[0]).toEqual(
+			expect.objectContaining({
+				entityType: "institution",
+				type: "create",
+				status: "approval_pending",
+			}),
+		);
+		expect(mockedCreateSubmission.mock.calls[1]?.[0]).toEqual(
+			expect.objectContaining({
+				entityType: "category",
+				entityId: null,
+				type: "create",
+				status: "approval_pending",
+				data: { key: "Atelier" },
+			}),
+		);
+		expect(mockedCreateSubmission.mock.calls[2]?.[0]).toEqual(
+			expect.objectContaining({
+				entityType: "category",
+				entityId: null,
+				type: "create",
+				status: "approval_pending",
+				data: { key: "Probe" },
+			}),
+		);
 	});
 
 	it("submits update payload with entityId and navigates back to institution page", async () => {
@@ -169,7 +230,11 @@ describe("InstitutionDraftWizardModal submission workflow", () => {
 
 		render(<InstitutionDraftWizardModal routePath="/institution/submission" />);
 
-		fireEvent.click(screen.getByRole("button", { name: "Submission senden" }));
+		fireEvent.click(
+			screen.getByRole("button", {
+				name: "institutionDraftWizardModal.actions.submit",
+			}),
+		);
 
 		await waitFor(() => {
 			expect(mockedCreateSubmission).toHaveBeenCalledTimes(1);
@@ -202,7 +267,7 @@ describe("InstitutionDraftWizardModal submission workflow", () => {
 		expect(mockedCreateSubmission).not.toHaveBeenCalled();
 	});
 
-	it("submits merged draft + step data when finalizing from a non-review step", async () => {
+	it("moves to next step from non-review submit without creating submission", async () => {
 		mockStepperState.currentStepId = "contact";
 		mockStepperState.currentStepIndex = 3;
 		mockStepperState.canGoNext = false;
@@ -221,20 +286,65 @@ describe("InstitutionDraftWizardModal submission workflow", () => {
 		fireEvent.click(screen.getByRole("button", { name: "mock-form-submit" }));
 
 		await waitFor(() => {
-			expect(mockedCreateSubmission).toHaveBeenCalledTimes(1);
+			expect(mockStepperState.nextStep).toHaveBeenCalledTimes(1);
 		});
 
-		expect(mockedCreateSubmission).toHaveBeenCalledWith(
-			expect.objectContaining({
-				type: "create",
-				data: expect.objectContaining({
-					name: "Draft Name",
-					website: "https://draft.example",
-					contact_person_email: "contact@example.com",
-					address: { street: "Mock Street" },
-					categoryIds: [101, 202],
-				}),
-			}),
-		);
+		expect(mockedCreateSubmission).not.toHaveBeenCalled();
+	});
+
+	it("registers step validation and blocks progression for missing required name", async () => {
+		mockStepperState.currentStepId = "basic";
+		mockStepperState.currentStepIndex = 0;
+		mockStepperState.canGoNext = true;
+
+		const draftState = useInstitutionDraftStore.getState();
+		draftState.setDraft({
+			name: "",
+			"address.city": "Berlin",
+		});
+
+		render(<InstitutionDraftWizardModal routePath="/institution/submission" />);
+
+		await waitFor(() => {
+			expect(mockStepperState.setStepValidation).toHaveBeenCalledWith(
+				"basic",
+				expect.any(Function),
+			);
+		});
+
+		const validationFn = mockStepperState.setStepValidation.mock.calls.find(
+			([stepId]) => stepId === "basic",
+		)?.[1] as (() => boolean) | undefined;
+
+		expect(validationFn).toBeDefined();
+		expect(validationFn?.()).toBe(false);
+	});
+
+	it("allows progression when required basic fields are present", async () => {
+		mockStepperState.currentStepId = "basic";
+		mockStepperState.currentStepIndex = 0;
+		mockStepperState.canGoNext = true;
+
+		const draftState = useInstitutionDraftStore.getState();
+		draftState.setDraft({
+			name: "Valid Name",
+			"address.city": "Berlin",
+		});
+
+		render(<InstitutionDraftWizardModal routePath="/institution/submission" />);
+
+		await waitFor(() => {
+			expect(mockStepperState.setStepValidation).toHaveBeenCalledWith(
+				"basic",
+				expect.any(Function),
+			);
+		});
+
+		const validationFn = mockStepperState.setStepValidation.mock.calls.find(
+			([stepId]) => stepId === "basic",
+		)?.[1] as (() => boolean) | undefined;
+
+		expect(validationFn).toBeDefined();
+		expect(validationFn?.()).toBe(true);
 	});
 });

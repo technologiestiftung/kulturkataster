@@ -33,6 +33,7 @@ import { useRouter } from "next/navigation";
 import { resolveCategoryIdsFromDraft } from "@/lib/utils/institutionCategoryUtils";
 import { TFunction } from "i18next";
 import { useInstitutionPrivateFieldResolver } from "@/lib/hooks/useInstitutionPrivateFieldResolver";
+import { applyInstitutionFieldAccess } from "@/lib/utils/institutionFieldAccess";
 type InstitutionFormModalProps = {
 	mode: "create" | "edit";
 	institution?: Institution | null;
@@ -50,6 +51,22 @@ type InstitutionFormModalProps = {
 	submitting?: boolean;
 	closeOnSubmit?: boolean;
 	shouldRefresh?: boolean;
+	onDelete?: () => void | Promise<void>;
+	deleteConfig?: {
+		buttonLabel?: string;
+		confirmTitle?: string;
+		confirmDescription?: string;
+		confirmLabel?: string;
+		cancelLabel?: string;
+	};
+	closeConfirmation?: {
+		title: string;
+		description: string;
+		status?: "info" | "warning" | "error" | "success";
+		confirmLabel?: string;
+		cancelLabel?: string;
+	};
+	permissionContext?: "institution" | "submission";
 };
 
 const buildCategoryFilterState = (
@@ -631,6 +648,18 @@ const buildInstitutionFormConfig = ({
 						layout: { span: "half" },
 					},
 					{
+						name: "established_since",
+						label: fieldLabel("established_since", "Established Since"),
+						type: "date",
+						layout: { span: "half" },
+					},
+					{
+						name: "established_until",
+						label: fieldLabel("established_until", "Established Until"),
+						type: "date",
+						layout: { span: "half" },
+					},
+					{
 						name: "rental_contract_type",
 						label: fieldLabel("rental_contract_type", "Rental Contract Type"),
 						type: "select",
@@ -655,18 +684,8 @@ const buildInstitutionFormConfig = ({
 						name: "rental_contract_end",
 						label: fieldLabel("rental_contract_end", "Rental Contract End"),
 						type: "date",
-						layout: { span: "half" },
-					},
-					{
-						name: "established_since",
-						label: fieldLabel("established_since", "Established Since"),
-						type: "date",
-						layout: { span: "half" },
-					},
-					{
-						name: "established_until",
-						label: fieldLabel("established_until", "Established Until"),
-						type: "date",
+						condition: (formData) =>
+							formData.rental_contract_type === "limited_lease",
 						layout: { span: "half" },
 					},
 					{
@@ -829,7 +848,9 @@ const buildInstitutionFormConfig = ({
 							"Protection Status Info",
 						),
 						type: "textarea",
-						placeholder: "Additional details about protection status",
+						placeholder: t(
+							"institutionFormModal.form.details.fields.protection_status_info.placeholder",
+						),
 						layout: { span: "full" },
 					},
 				],
@@ -843,8 +864,9 @@ const buildInstitutionFormConfig = ({
 						name: "notes",
 						label: fieldLabel("notes", "Notes"),
 						type: "textarea",
-						placeholder:
-							"Additional information relevant to the cultural cadastre",
+						placeholder: t(
+							"institutionFormModal.form.additional.fields.notes.placeholder",
+						),
 						layout: { span: "full" },
 					},
 				],
@@ -884,12 +906,21 @@ export function InstitutionFormModal({
 	submitting: submittingProp,
 	closeOnSubmit,
 	shouldRefresh = false,
+	onDelete,
+	deleteConfig,
+	closeConfirmation,
+	permissionContext = "institution",
 }: InstitutionFormModalProps) {
 	const { t } = useTranslation("content");
 	const { t: tEnum } = useTranslation("enumMap");
 	const { isPrivateField } = useInstitutionPrivateFieldResolver();
 	const setAlertDialog = useAccountStore((state) => state.setAlertDialog);
+	const institutionFieldPermissions = useAccountStore(
+		(state) => state.institutionFieldPermissions,
+	);
 	const categories = useInstitutionStore((state) => state.categories) ?? [];
+	const [isDeleting, setIsDeleting] = useState(false);
+	const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 	const addressGeocodeState = useRef({
 		lastQuery: "",
 		inflight: false,
@@ -947,7 +978,10 @@ export function InstitutionFormModal({
 
 	const resolvedInstitutionWithFallback = institution ?? undefined;
 	const showNotFoundWithFallback =
-		mode === "edit" && !resolvedInstitutionWithFallback && !initialValues;
+		mode === "edit" &&
+		!resolvedInstitutionWithFallback &&
+		!initialValues &&
+		!isDeleting;
 
 	const handleSuccess = (nextMode: InstitutionFormModalProps["mode"]) => {
 		const keyPrefix =
@@ -1008,6 +1042,8 @@ export function InstitutionFormModal({
 		[isPrivateField],
 	);
 
+	const canShowDeleteAction = Boolean(onDelete);
+
 	const formConfig = useMemo(
 		() =>
 			buildInstitutionFormConfig({
@@ -1042,22 +1078,111 @@ export function InstitutionFormModal({
 		],
 	);
 
+	const formConfigWithFieldAccess = useMemo(() => {
+		const filteredFields = applyInstitutionFieldAccess({
+			fields: formConfig.fields,
+			mode,
+			permissions:
+				permissionContext === "submission" ? null : institutionFieldPermissions,
+		});
+		return {
+			...formConfig,
+			fields: filteredFields,
+		};
+	}, [formConfig, institutionFieldPermissions, mode, permissionContext]);
+
 	if (showNotFoundWithFallback) {
 		return renderNotFoundDialog(t);
 	}
 
 	const formKeyValue = formKey ?? resolvedInstitutionWithFallback?.id ?? mode;
 
+	const handleDelete = useCallback(async () => {
+		if (!onDelete || isDeleting || resolvedSubmitting) return;
+		setIsDeleting(true);
+		let deleteSucceeded = false;
+		try {
+			await onDelete();
+			deleteSucceeded = true;
+			setShowDeleteDialog(false);
+			handleClose();
+		} catch {
+			// Keep dialog open so the caller can surface and recover from errors.
+		} finally {
+			if (!deleteSucceeded) {
+				setIsDeleting(false);
+			}
+		}
+	}, [onDelete, isDeleting, resolvedSubmitting, handleClose]);
+
+	const formConfigWithDelete = useMemo(() => {
+		if (!canShowDeleteAction) return formConfigWithFieldAccess;
+		return {
+			...formConfigWithFieldAccess,
+			deleteAction: {
+				label:
+					deleteConfig?.buttonLabel ?? t("institutionFormModal.delete.button"),
+				onClick: () => setShowDeleteDialog(true),
+				disabled: isDeleting || resolvedSubmitting,
+				className: "p-0!",
+			},
+		};
+	}, [
+		canShowDeleteAction,
+		formConfigWithFieldAccess,
+		deleteConfig?.buttonLabel,
+		t,
+		isDeleting,
+		resolvedSubmitting,
+	]);
+
 	return (
-		<RoutedEditorModal routePath={routePath} onClose={handleClose}>
+		<RoutedEditorModal
+			routePath={routePath}
+			onClose={handleClose}
+			closeConfirmation={closeConfirmation}
+		>
 			<div className="flex h-full flex-col">
 				<div className="px-6 py-8 md:px-10">
 					<DialogTitle className="title">{getDialogTitle(mode, t)}</DialogTitle>
 				</div>
-				<div className="flex-1 overflow-auto px-6 py-6 md:px-10">
-					{renderDialogBody(formConfig, formKeyValue)}
+				<div className="flex-1 overflow-auto px-6 py-6 md:px-10 flex flex-col">
+					{renderDialogBody(formConfigWithDelete, formKeyValue)}
 				</div>
 			</div>
+			{showDeleteDialog && onDelete && (
+				<AlertDialog
+					open
+					status="warning"
+					title={
+						deleteConfig?.confirmTitle ??
+						t("institutionFormModal.delete.confirmTitle", {
+							defaultValue: "Delete institution?",
+						})
+					}
+					description={
+						deleteConfig?.confirmDescription ??
+						t("institutionFormModal.delete.confirmDescription", {
+							defaultValue: "This action cannot be undone.",
+						})
+					}
+					confirmLabel={
+						deleteConfig?.confirmLabel ??
+						t("institutionFormModal.delete.confirm")
+					}
+					cancelLabel={
+						deleteConfig?.cancelLabel ??
+						t("institutionFormModal.delete.cancel", {
+							defaultValue: "Cancel",
+						})
+					}
+					onCancel={() => setShowDeleteDialog(false)}
+					onConfirm={handleDelete}
+					onOpenChange={(open) => {
+						if (!open) setShowDeleteDialog(false);
+					}}
+				/>
+			)}
 		</RoutedEditorModal>
 	);
 }

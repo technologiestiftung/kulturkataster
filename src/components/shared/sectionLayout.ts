@@ -10,12 +10,14 @@ export const getSpanClass = (
 ) => {
 	if (columns !== 2) return "grid-cols-1 col-span-1";
 	if (layout?.span === "half") return "col-span-1";
-	if (layout?.span === "full") return "col-span-2";
+	if (layout?.span === "full") return "md:col-span-2 col-span-1";
 	return undefined;
 };
 
 export const getGridClass = (
 	field: FormWrapperFieldConfig | InfoWrapperFieldConfig,
 ) => {
-	return field.layout?.span === "full" ? "col-span-2" : "col-span-1";
+	return field.layout?.span === "full"
+		? "col-span-1 md:col-span-2"
+		: "col-span-1";
 };

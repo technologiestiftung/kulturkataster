@@ -454,8 +454,8 @@ const renderFieldContent = (
 					initialZoom={field.addressMap.initialZoom}
 					disabled={field.disabled}
 					value={{
-						lat: toOptionalNumber(formData[field.addressMap.latField]) ?? 0,
-						lng: toOptionalNumber(formData[field.addressMap.lngField]) ?? 0,
+						lat: toOptionalNumber(formData[field.addressMap.latField]) ?? null,
+						lng: toOptionalNumber(formData[field.addressMap.lngField]) ?? null,
 					}}
 					onChange={({ lat, lng, address }) => {
 						if (!field.addressMap) return;

@@ -19,6 +19,19 @@ export interface AccessContext {
 	field: FieldPermissionMap;
 }
 
+export type FieldPermissionLists = {
+	read: string[];
+	create: string[];
+	update: string[];
+	delete: string[];
+};
+
+type RBACErrorMeta = {
+	table?: string;
+	action?: Action;
+	requiredScope?: "own" | "all";
+};
+
 type RoleWithPermissions = Role & {
 	table_permissions: RoleTablePermission[];
 	field_permissions: RoleFieldPermission[];
@@ -97,9 +110,14 @@ export const requireAllScope = (
 	message?: string,
 ): void => {
 	if (getTableScope(context, table, action) !== "all") {
-		throw new Error(
+		const error = new Error(
 			message ?? `Global ${action} access required for ${table}.`,
-		);
+		) as Error & RBACErrorMeta;
+		error.name = "RBACError";
+		error.table = table;
+		error.action = action;
+		error.requiredScope = "all";
+		throw error;
 	}
 };
 
@@ -150,8 +168,10 @@ export const authorizeTable = (
 	if (!canTable(context, table, action)) {
 		const error = new Error(
 			`Role "${context.role ?? "guest"}" lacks ${action} on ${table}`,
-		);
+		) as Error & RBACErrorMeta;
 		error.name = "RBACError";
+		error.table = table;
+		error.action = action;
 		throw error;
 	}
 };
@@ -166,8 +186,10 @@ export const authorizeFields = (
 	if (!canFields(context, table, fields, action)) {
 		const error = new Error(
 			`Role "${context.role ?? "guest"}" lacks ${action} on some fields of ${table}`,
-		);
+		) as Error & RBACErrorMeta;
 		error.name = "RBACError";
+		error.table = table;
+		error.action = action;
 		throw error;
 	}
 };
@@ -228,4 +250,29 @@ export const getGuestReadableFieldsForTable = async (
 	table: string,
 ): Promise<string[]> => {
 	return getSystemRoleReadableFieldsForTable("guest", table);
+};
+
+export const getFieldPermissionListsForTable = (
+	context: AccessContext,
+	table: string,
+): FieldPermissionLists => {
+	const tableFields = context.field[table] ?? {};
+	const read = new Set<string>();
+	const create = new Set<string>();
+	const update = new Set<string>();
+	const del = new Set<string>();
+
+	for (const [field, actions] of Object.entries(tableFields)) {
+		if (actions.has("read")) read.add(field);
+		if (actions.has("create")) create.add(field);
+		if (actions.has("update")) update.add(field);
+		if (actions.has("delete")) del.add(field);
+	}
+
+	return {
+		read: Array.from(read),
+		create: Array.from(create),
+		update: Array.from(update),
+		delete: Array.from(del),
+	};
 };

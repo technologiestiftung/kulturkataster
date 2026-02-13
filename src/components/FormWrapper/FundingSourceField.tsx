@@ -82,24 +82,12 @@ export function FundingSourceField({
 	};
 
 	return (
-		<div className="space-y-3">
+		<div className="space-y-3 flex flex-col">
 			{items.map((item, index) => (
 				<div
 					key={`${field.name}-${index}`}
 					className="rounded-md border border-input p-3 space-y-2"
 				>
-					<div className="flex items-center justify-between gap-2">
-						<p className="body3 text-neutral-80">{`${sourceLabel} ${index + 1}`}</p>
-						<Button
-							type="button"
-							variant="outline"
-							size="sm"
-							onClick={() => removeItem(index)}
-							disabled={field.disabled}
-						>
-							{removeButtonLabel}
-						</Button>
-					</div>
 					<div className="space-y-1">
 						<Label htmlFor={`${field.name}-${index}-source`}>
 							{sourceLabel}
@@ -137,6 +125,17 @@ export function FundingSourceField({
 							disabled={field.disabled}
 							rows={3}
 						/>
+					</div>
+					<div className="flex items-center justify-start">
+						<Button
+							type="button"
+							variant="outline"
+							size="sm"
+							onClick={() => removeItem(index)}
+							disabled={field.disabled}
+						>
+							{removeButtonLabel}
+						</Button>
 					</div>
 				</div>
 			))}

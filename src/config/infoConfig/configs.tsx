@@ -42,8 +42,13 @@ export const contactInfoConfig: InfoWrapperFieldConfig[] = [
 		type: "email",
 	},
 	{
-		value: "contact_person_name",
-		labelKey: "field_names.contact_person_name",
+		value: "contact_person_first_name",
+		labelKey: "field_names.contact_person_first_name",
+		type: "text",
+	},
+	{
+		value: "contact_person_last_name",
+		labelKey: "field_names.contact_person_last_name",
 		type: "text",
 	},
 	{

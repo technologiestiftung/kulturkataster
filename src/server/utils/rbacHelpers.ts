@@ -8,7 +8,14 @@ export const fetchIfAllowed = <T>(
 	fetcher: () => Promise<T>,
 	fallback: T,
 ): Promise<T> => {
-	return canTable(context, table, action)
-		? fetcher()
-		: Promise.resolve(fallback);
+	if (!canTable(context, table, action)) {
+		return Promise.resolve(fallback);
+	}
+
+	return fetcher().catch((error: unknown) => {
+		if (error instanceof Error && error.name === "RBACError") {
+			return fallback;
+		}
+		throw error;
+	});
 };

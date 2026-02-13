@@ -8,7 +8,6 @@ import {
 	RoutedEditorModal,
 	useRoutedModalClose,
 } from "@/components/Modals/RoutedEditorModal";
-import { Button } from "@/components/ui/button";
 import { AlertDialog } from "@/components/ui/alert-dialog";
 import { FormWrapper } from "@/components/FormWrapper";
 import type { FormWrapperConfig } from "@/components/FormWrapper";
@@ -441,31 +440,40 @@ export function CategoryFormModal({
 		shouldRefresh,
 	);
 
-	const formConfig = useMemo(
-		() =>
-			buildCategoryFormConfig({
-				mode,
-				t,
-				statusOptions,
-				parentOptions,
-				resolvedCategory,
-				submitting,
-				onSubmit: handleSubmit,
-				onCancel: handleClose,
-			}),
-		[
+	const formConfig = useMemo(() => {
+		const baseConfig = buildCategoryFormConfig({
 			mode,
 			t,
 			statusOptions,
 			parentOptions,
 			resolvedCategory,
 			submitting,
-			handleSubmit,
-			handleClose,
-		],
-	);
+			onSubmit: handleSubmit,
+			onCancel: handleClose,
+		});
+		if (mode !== "edit" || !resolvedCategory) return baseConfig;
+		return {
+			...baseConfig,
+			deleteAction: {
+				label: t("categoryFormModal.delete.button"),
+				onClick: () => setShowDeleteDialog(true),
+				disabled: isDeleting || submitting,
+				className: "p-0!",
+			},
+		};
+	}, [
+		mode,
+		t,
+		statusOptions,
+		parentOptions,
+		resolvedCategory,
+		submitting,
+		isDeleting,
+		handleSubmit,
+		handleClose,
+	]);
 
-	if (showNotFound) {
+	if (showNotFound && !isDeleting) {
 		return renderNotFoundDialog(t);
 	}
 
@@ -475,7 +483,7 @@ export function CategoryFormModal({
 				<div className="px-6 py-8 md:px-10">
 					<DialogTitle className="title">{getDialogTitle(mode, t)}</DialogTitle>
 				</div>
-				<div className="flex-1 overflow-auto px-6 py-6 md:px-10">
+				<div className="flex-1 overflow-auto flex flex-col">
 					{renderDialogBody(
 						isWaitingForCategory,
 						t,
@@ -484,34 +492,6 @@ export function CategoryFormModal({
 						mode,
 					)}
 				</div>
-				{mode === "edit" && resolvedCategory && (
-					<div className="border-t border-neutral-20 px-6 py-4 md:px-10">
-						<div className="flex flex-wrap items-center justify-between gap-3">
-							<div>
-								<p className="body2 font-bold">
-									{t("categoryFormModal.delete.title", {
-										defaultValue: "Delete category",
-									})}
-								</p>
-								<p className="body3 text-neutral-80">
-									{t("categoryFormModal.delete.description", {
-										defaultValue:
-											"This action permanently removes the category.",
-									})}
-								</p>
-							</div>
-							<Button
-								variant="destructive"
-								onClick={() => setShowDeleteDialog(true)}
-								disabled={isDeleting || submitting}
-							>
-								{t("categoryFormModal.delete.button", {
-									defaultValue: "Delete",
-								})}
-							</Button>
-						</div>
-					</div>
-				)}
 			</div>
 			{showDeleteDialog && resolvedCategory && (
 				<AlertDialog
@@ -524,9 +504,7 @@ export function CategoryFormModal({
 						defaultValue:
 							"This will permanently remove the category. This action cannot be undone.",
 					})}
-					confirmLabel={t("categoryFormModal.delete.confirm", {
-						defaultValue: "Delete",
-					})}
+					confirmLabel={t("categoryFormModal.delete.confirm")}
 					cancelLabel={t("categoryFormModal.delete.cancel", {
 						defaultValue: "Cancel",
 					})}
@@ -534,9 +512,11 @@ export function CategoryFormModal({
 					onConfirm={async () => {
 						if (isDeleting) return;
 						setIsDeleting(true);
+						let deleteSucceeded = false;
 						try {
 							await deleteCategory(resolvedCategory.id);
 							removeCategory(resolvedCategory.id);
+							deleteSucceeded = true;
 							setShowDeleteDialog(false);
 							handleClose();
 						} catch {
@@ -551,7 +531,9 @@ export function CategoryFormModal({
 							});
 							setShowDeleteDialog(false);
 						} finally {
-							setIsDeleting(false);
+							if (!deleteSucceeded) {
+								setIsDeleting(false);
+							}
 						}
 					}}
 					onOpenChange={(open) => {
