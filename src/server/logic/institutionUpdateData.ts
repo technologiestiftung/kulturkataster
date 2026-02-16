@@ -117,9 +117,7 @@ export const buildInstitutionUpdateData = (
 	categories: input.categoryIds
 		? { set: input.categoryIds.map((id) => ({ id })) }
 		: undefined,
-	tags: input.tagIds
-		? { set: input.tagIds.map((id) => ({ id })) }
-		: undefined,
+	tags: input.tagIds ? { set: input.tagIds.map((id) => ({ id })) } : undefined,
 	users: input.userIds
 		? { set: input.userIds.map((id) => ({ id })) }
 		: undefined,
@@ -127,4 +125,3 @@ export const buildInstitutionUpdateData = (
 		? { set: input.groupIds.map((id) => ({ id })) }
 		: undefined,
 });
-
