@@ -18,6 +18,7 @@ const accountStoreInitialState = {
 		update: false,
 		delete: false,
 		createSubmission: false,
+		reviewSubmission: false,
 	},
 	institutionFieldPermissions: {
 		read: [],

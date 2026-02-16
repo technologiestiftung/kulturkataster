@@ -12,7 +12,6 @@ export default async function InstitutionDraftReviewModalPage({
 	return (
 		<InstitutionDraftReviewModal
 			submissionId={Number.isFinite(parsedId) ? parsedId : undefined}
-			returnTo="/account/institutions"
 			routePath={`/account/submissions/${id}`}
 		/>
 	);

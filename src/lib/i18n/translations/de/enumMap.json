@@ -143,10 +143,18 @@
 	},
 	"institution_status": {
 		"archived": "Archiviert",
+		"approval_pending": "Freigabe ausstehend",
 		"draft": "Entwurf",
 		"private": "Privat",
 		"public": "Öffentlich",
 		"removal_pending": "Löschung beantragt"
+	},
+	"submission_status": {
+		"draft": "Entwurf",
+		"approval_pending": "Freigabe ausstehend",
+		"approved": "Genehmigt",
+		"rejected": "Abgelehnt",
+		"needs_changes": "Änderungen erforderlich"
 	},
 	"owner_type": {
 		"placeholder": "Eigentümer*innenart auswählen",

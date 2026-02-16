@@ -29,7 +29,7 @@ type InstitutionEditModalProps = {
 export function InstitutionEditModal({
 	institutionId,
 	routePath,
-	returnTo,
+	returnTo = "/account/institutions",
 	onSubmit,
 	initialValues,
 	formKey,

@@ -16,6 +16,7 @@ import type { Submission } from "@/types/submission";
 import type { Institution } from "@/types/institution";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useRouter } from "next/navigation";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
 
@@ -35,10 +36,13 @@ export function InstitutionDraftReviewModal({
 	shouldRefresh = false,
 }: InstitutionDraftReviewModalProps) {
 	const { t } = useTranslation("content");
+	const { t: tEnum } = useTranslation("enumMap");
 	const router = useRouter();
 	const toLocalePath = useLocalePath();
-	const [reviewNotes, setReviewNotes] = useState("");
+	const [internalNotes, setInternalNotes] = useState("");
+	const [grantSubmitterAccess, setGrantSubmitterAccess] = useState(false);
 	const [submitting, setSubmitting] = useState(false);
+	const [isClosing, setIsClosing] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
 	const hasSubmissionId = typeof submissionId === "number";
@@ -97,6 +101,13 @@ export function InstitutionDraftReviewModal({
 
 	const resolvedSubmissionWithFallback =
 		resolvedSubmission ?? fetchedSubmission ?? undefined;
+	const shouldShowGrantSubmitterAccessToggle = useMemo(() => {
+		if (!resolvedSubmissionWithFallback) return false;
+		if (resolvedSubmissionWithFallback.type !== "create") return false;
+		const meta = resolvedSubmissionWithFallback.meta;
+		if (!meta || typeof meta !== "object" || Array.isArray(meta)) return false;
+		return (meta as Record<string, unknown>).request_claim_on_approval === true;
+	}, [resolvedSubmissionWithFallback]);
 
 	useEffect(() => {
 		const entityId = resolvedSubmissionWithFallback?.entity_id;
@@ -135,15 +146,19 @@ export function InstitutionDraftReviewModal({
 	]);
 
 	useEffect(() => {
-		if (!resolvedSubmissionWithFallback || reviewNotes) return;
+		if (!resolvedSubmissionWithFallback || internalNotes) return;
 		const existingNotes =
 			typeof resolvedSubmissionWithFallback.review_notes === "string"
 				? resolvedSubmissionWithFallback.review_notes
 				: "";
 		if (existingNotes) {
-			setReviewNotes(existingNotes);
+			setInternalNotes(existingNotes);
 		}
-	}, [resolvedSubmissionWithFallback, reviewNotes]);
+	}, [resolvedSubmissionWithFallback, internalNotes]);
+
+	useEffect(() => {
+		setGrantSubmitterAccess(false);
+	}, [resolvedSubmissionWithFallback?.id]);
 
 	const formatReviewError = (err: unknown) => {
 		if (err instanceof Error && err.message) return err.message;
@@ -171,14 +186,31 @@ export function InstitutionDraftReviewModal({
 		async (status: "approved" | "rejected") => {
 			if (!resolvedSubmissionWithFallback) return;
 			if (submitting) return;
+			if (
+				resolvedSubmissionWithFallback.type === "update" &&
+				typeof resolvedSubmissionWithFallback.entity_id !== "number"
+			) {
+				setError(
+					t("institutionFormModal.review.error", {
+						error: "Update submission is missing institution id.",
+					}),
+				);
+				return;
+			}
 			setSubmitting(true);
 			setError(null);
 			try {
 				const reviewed = await reviewSubmission({
 					id: resolvedSubmissionWithFallback.id,
 					status,
-					reviewNotes: reviewNotes.trim() ? reviewNotes.trim() : undefined,
+					internalNotes: internalNotes.trim()
+						? internalNotes.trim()
+						: undefined,
+					grantSubmitterAccess: shouldShowGrantSubmitterAccessToggle
+						? grantSubmitterAccess
+						: undefined,
 				});
+				setIsClosing(true);
 				if (status === "approved") {
 					removeSubmission(resolvedSubmissionWithFallback.id);
 				} else if (reviewed && typeof reviewed === "object") {
@@ -187,10 +219,9 @@ export function InstitutionDraftReviewModal({
 				if (shouldRefresh) {
 					router.refresh();
 				}
-				if (returnTo) {
-					router.replace(toLocalePath(returnTo));
-				}
+				router.replace(toLocalePath(returnTo ?? "/account/institutions"));
 			} catch (err) {
+				setIsClosing(false);
 				console.error(
 					"Failed to review submission:",
 					resolvedSubmissionWithFallback.id,
@@ -210,7 +241,11 @@ export function InstitutionDraftReviewModal({
 			formatReviewError,
 			submitting,
 			resolvedSubmissionWithFallback?.id,
-			reviewNotes,
+			resolvedSubmissionWithFallback?.entity_id,
+			resolvedSubmissionWithFallback?.type,
+			internalNotes,
+			grantSubmitterAccess,
+			shouldShowGrantSubmitterAccessToggle,
 			router,
 			returnTo,
 			shouldRefresh,
@@ -231,6 +266,10 @@ export function InstitutionDraftReviewModal({
 		);
 	}
 
+	if (isClosing) {
+		return null;
+	}
+
 	if (!resolvedSubmissionWithFallback) {
 		if (!didFetchSubmission) return null;
 		return (
@@ -244,6 +283,12 @@ export function InstitutionDraftReviewModal({
 
 	const draft = institutionSubmissionToDraft(resolvedSubmissionWithFallback);
 	const submissionStatus = resolvedSubmissionWithFallback.status;
+	const submissionStatusLabel = useMemo(() => {
+		if (!submissionStatus) return "";
+		const key = `submission_status.${submissionStatus}`;
+		const translated = tEnum(key);
+		return translated === key ? submissionStatus : translated;
+	}, [submissionStatus, tEnum]);
 
 	return (
 		<Modal
@@ -278,17 +323,34 @@ export function InstitutionDraftReviewModal({
 							{submissionStatus && (
 								<span className="body2 text-muted-foreground">
 									{t("institutionFormModal.review.statusLabel", {
-										status: submissionStatus,
+										status: submissionStatusLabel,
 									})}
 								</span>
 							)}
 						</div>
 						<Textarea
-							value={reviewNotes}
-							onChange={(event) => setReviewNotes(event.target.value)}
+							value={internalNotes}
+							onChange={(event) => setInternalNotes(event.target.value)}
 							placeholder={t("institutionFormModal.review.notesPlaceholder")}
 							rows={4}
 						/>
+						{shouldShowGrantSubmitterAccessToggle ? (
+							<label className="flex items-start gap-3">
+								<Checkbox
+									checked={grantSubmitterAccess}
+									onCheckedChange={(checked) =>
+										setGrantSubmitterAccess(checked === true)
+									}
+									disabled={submitting}
+								/>
+								<span className="body2">
+									{t("institutionFormModal.review.grantSubmitterAccess", {
+										defaultValue:
+											"Grant the submitter access to this institution after approval.",
+									})}
+								</span>
+							</label>
+						) : null}
 						{error && <p className="body2 text-destructive">{error}</p>}
 						<div className="flex items-center justify-end gap-3">
 							<Button

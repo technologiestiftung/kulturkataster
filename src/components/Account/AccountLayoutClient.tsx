@@ -116,6 +116,7 @@ export function AccountLayoutClient({
 							variant="rounded"
 							size="icon-only"
 							tooltip={profileSettingsLabel}
+							tooltipSide="bottom"
 							className="h-14 w-14"
 							aria-label={profileSettingsLabel}
 							onClick={() => router.push(toLocalePath("/account/edit"))}
@@ -125,6 +126,7 @@ export function AccountLayoutClient({
 						<ButtonWithTooltip
 							variant="rounded"
 							size="icon-only"
+							tooltipSide="bottom"
 							tooltip={faqLabel}
 							className="h-14 w-14"
 							aria-label={faqLabel}
@@ -135,6 +137,7 @@ export function AccountLayoutClient({
 						<ButtonWithTooltip
 							variant="rounded"
 							size="icon-only"
+							tooltipSide="bottom"
 							tooltip={logoutLabel}
 							className="h-14 w-14"
 							aria-label={logoutLabel}

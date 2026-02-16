@@ -7,6 +7,7 @@ import { FormWrapper } from "@/components/FormWrapper";
 import type { FormWrapperConfig } from "@/components/FormWrapper";
 import { AlertDialog } from "@/components/ui/alert-dialog";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
+import { useRoutedModalClose } from "@/components/Modals/RoutedEditorModal";
 import { updateUser, removeUser } from "@/server/actions/users";
 import { updateMyPassword, logout } from "@/server/actions/auth";
 import { clearAccountStore, useAccountStore } from "@/lib/store/accountStore";
@@ -35,6 +36,7 @@ export function AccountEditForm({
 }: AccountEditFormProps) {
 	const router = useRouter();
 	const toLocalePath = useLocalePath();
+	const closeForm = useRoutedModalClose({ returnTo: "/account" });
 	const { t } = useTranslation("common");
 	const [isLoading, setIsLoading] = useState(false);
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -82,8 +84,7 @@ export function AccountEditForm({
 				title: t("auth.accountEdit.successTitle"),
 				description: t("auth.accountEdit.successDescription"),
 			});
-
-			router.replace(toLocalePath("/account"));
+			closeForm();
 		} catch (error) {
 			setErrorMessage(
 				error instanceof Error
@@ -104,7 +105,7 @@ export function AccountEditForm({
 		submitDisabled: isLoading,
 		showCancel: true,
 		cancelLabel: t("cancel"),
-		onCancel: () => router.replace(toLocalePath("/account")),
+		onCancel: closeForm,
 		deleteAction: {
 			label: t("auth.accountEdit.deleteAction"),
 			onClick: () => setShowDeleteConfirm(true),
@@ -223,6 +224,8 @@ export function AccountEditForm({
 				open={showDeleteConfirm}
 				onOpenChange={(open) => setShowDeleteConfirm(open)}
 				confirmLabel={t("auth.accountEdit.deleteConfirm")}
+				cancelLabel={t("cancel")}
+				onCancel={() => setShowDeleteConfirm(false)}
 				onConfirm={handleDelete}
 			/>
 			<div className="flex-1 overflow-auto flex flex-col">

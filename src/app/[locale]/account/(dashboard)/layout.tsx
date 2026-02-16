@@ -37,13 +37,10 @@ export default async function AccountLayout({ children }: AccountLayoutProps) {
 		getTableScope(ctx, "category", "update") === "all";
 	const institutionPermissions = {
 		create: canTable(ctx, "institution", "create"),
-		update:
-			canTable(ctx, "institution", "update") &&
-			getTableScope(ctx, "institution", "update") === "all",
-		delete:
-			canTable(ctx, "institution", "delete") &&
-			getTableScope(ctx, "institution", "delete") === "all",
+		update: canTable(ctx, "institution", "update"),
+		delete: canTable(ctx, "institution", "delete"),
 		createSubmission: canTable(ctx, "submission", "create"),
+		reviewSubmission: canTable(ctx, "submission", "update"),
 	};
 
 	const allowedTabs = [
