@@ -147,7 +147,9 @@ test.describe("Auth registration", () => {
 		await expect(
 			page.getByText("Passwort muss mindestens 8 Zeichen haben"),
 		).toBeVisible();
-		await expect(page.getByText("Passwörter stimmen nicht überein")).toBeVisible();
+		await expect(
+			page.getByText("Passwörter stimmen nicht überein"),
+		).toBeVisible();
 		await expect(page).toHaveURL(/\/de\/register\/?$/);
 	});
 });
