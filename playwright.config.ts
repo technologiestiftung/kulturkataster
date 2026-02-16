@@ -19,9 +19,15 @@ export default defineConfig({
 		trace: "on-first-retry",
 	},
 	webServer: {
-		command: `npm run build && PORT=${port} node .next/standalone/server.js`,
-		url: `${baseURL}/de/login`,
-		reuseExistingServer: !process.env.CI,
+		command: `
+    npm run build &&
+    rm -rf .next/standalone/.next/static &&
+    rm -rf .next/standalone/public &&
+    mkdir -p .next/standalone/.next &&
+    cp -R .next/static .next/standalone/.next/static &&
+    cp -R public .next/standalone/public &&
+    PORT=${port} node .next/standalone/server.js
+  `,
 		timeout: 180_000,
 	},
 	reporter: [["list"], ["html", { open: "never" }]],
