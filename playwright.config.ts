@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 
 dotenv.config({ path: process.env.DOTENV_CONFIG_PATH ?? ".env.test" });
 
-const port = Number(process.env.PORT ?? 3000);
+const port = Number(process.env.PORT ?? 3010);
 const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? `http://localhost:${port}`;
 
 export default defineConfig({
