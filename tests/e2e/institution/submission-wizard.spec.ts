@@ -144,6 +144,16 @@ test.describe("institution submission wizard", () => {
 			timeout: 15_000,
 		});
 		await expect(page.locator("form#institution-contact-form")).toBeVisible();
+		await page
+			.getByRole("checkbox", {
+				name: "Ich arbeite für diese Kulturorganisation.",
+			})
+			.click();
+		await page
+			.getByRole("checkbox", {
+				name: /Ich bin damit einverstanden/i,
+			})
+			.click();
 		await page.getByLabel("Kontaktperson Vorname").fill("Max");
 		await page.getByLabel("Kontaktperson Nachname").fill("Mustermann");
 		await page
