@@ -94,7 +94,6 @@ const normalizeFundingSources = (
 		.filter((source) => source.source_name.length > 0);
 };
 
-
 export async function createInstitution(input: InstitutionForm) {
 	const currentUserId = await getCurrentUserId();
 	const ctx = await getAccessContextForUser(currentUserId);

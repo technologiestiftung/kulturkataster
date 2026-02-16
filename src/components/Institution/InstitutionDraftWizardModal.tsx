@@ -270,15 +270,8 @@ function InstitutionDraftWizardContent({
 				),
 			);
 		},
-			[
-				categories,
-				draftMode,
-				resetDraft,
-				router,
-				toLocalePath,
-				upsertSubmission,
-			],
-		);
+		[categories, draftMode, resetDraft, router, toLocalePath, upsertSubmission],
+	);
 
 	const handleStepSubmit = useCallback(
 		(data: Record<string, unknown>) => {
