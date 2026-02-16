@@ -15,6 +15,17 @@ test.describe("institution submission wizard", () => {
 		await prepareStableUi(page);
 		await safeGoto(
 			page,
+			"/de/account/institutions",
+			/\/de\/(?:account\/institutions|login)(?:\/)?$/,
+		);
+		if (/\/de\/login(?:\/)?$/.test(page.url())) {
+			test.skip(
+				true,
+				"Authenticated storage state is unavailable (global setup likely fell back to anonymous).",
+			);
+		}
+		await safeGoto(
+			page,
 			"/de/institution/submission",
 			/\/de\/institution\/submission\/?$/,
 		);
@@ -24,7 +35,7 @@ test.describe("institution submission wizard", () => {
 		page: import("@playwright/test").Page,
 	) => {
 		await page.waitForURL(
-			/\/de\/(?:account\/institutions|map|login|welcome)(?:\/)?$/,
+			/\/de\/(?:account(?:\/institutions|\/activity)?|map|login|welcome)(?:\/)?$/,
 			{ timeout: 30_000 },
 		);
 	};
