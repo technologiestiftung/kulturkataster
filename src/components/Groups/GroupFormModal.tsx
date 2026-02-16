@@ -326,7 +326,7 @@ export function GroupFormModal({
 	groupId,
 	shouldRefresh = false,
 	routePath,
-	returnTo,
+	returnTo = "/account/groups",
 }: GroupFormModalProps) {
 	const { t } = useTranslation("content");
 	const { t: tEnum, i18n } = useTranslation("enumMap");

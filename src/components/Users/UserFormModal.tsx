@@ -431,7 +431,7 @@ export function UserFormModal({
 	userId,
 	shouldRefresh = false,
 	routePath,
-	returnTo,
+	returnTo = "/account/users",
 }: UserFormModalProps) {
 	const { t } = useTranslation("content");
 	const { t: tEnum, i18n } = useTranslation("enumMap");

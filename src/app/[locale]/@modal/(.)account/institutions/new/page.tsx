@@ -6,7 +6,6 @@ export default function NewInstitutionModal() {
 			mode="create"
 			shouldRefresh={false}
 			routePath="/account/institutions/new"
-			returnTo="/account/institutions"
 		/>
 	);
 }

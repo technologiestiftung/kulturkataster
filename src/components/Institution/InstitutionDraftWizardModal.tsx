@@ -23,10 +23,13 @@ import {
 } from "@/lib/utils/formUtils";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useInstitutionDraftStore } from "@/lib/store/institutionDraftStore";
+import { useAccountStore } from "@/lib/store/accountStore";
 import { InstitutionReview } from "@/components/Institution/InstitutionReview";
 import { createSubmission } from "@/server/actions/submissions";
+import type { Prisma } from "@/generated/prisma";
 import { SubmissionEntityType, SubmissionType } from "@/generated/prisma";
 import { resolveCategoryIdsFromDraft } from "@/lib/utils/institutionCategoryUtils";
+import { buildSubmissionDiff } from "@/lib/utils/submissionDiff";
 import { Button } from "@/components/ui/button";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
 const stepConfigs: StepConfig[] = [
@@ -130,6 +133,7 @@ function InstitutionDraftWizardContent({
 	const setDraft = useInstitutionDraftStore((state) => state.setDraft);
 	const setStepId = useInstitutionDraftStore((state) => state.setStepId);
 	const resetDraft = useInstitutionDraftStore((state) => state.resetDraft);
+	const upsertSubmission = useAccountStore((state) => state.upsertSubmission);
 	const draftMode = useInstitutionDraftStore((state) => state.mode);
 	const isUpdateReviewOnly = draftMode === "update";
 	const [editSectionId, setEditSectionId] = useState<string | null>(null);
@@ -186,14 +190,34 @@ function InstitutionDraftWizardContent({
 				typeof entityId === "number" && Number.isFinite(entityId)
 					? entityId
 					: null;
+			const canShareContactPerson = data.consent_contact_listing === true;
 			if (draftMode === "update" && !resolvedEntityId) {
 				throw new Error("Missing institution for update submission.");
 			}
-			const payload = {
-				...rest,
+			const sanitizedRest = { ...rest } as Record<string, unknown>;
+			if (!canShareContactPerson) {
+				delete sanitizedRest.contact_person_first_name;
+				delete sanitizedRest.contact_person_last_name;
+				delete sanitizedRest.contact_person_email;
+				delete sanitizedRest.contact_person_phone;
+			}
+			const payload: Record<string, unknown> = {
+				...sanitizedRest,
 				address: buildAddressFromFormData(data),
 				categoryIds,
 			};
+			const sourceInstitution =
+				draftMode === "update" && data.originalInstitution
+					? (data.originalInstitution as Record<string, unknown>)
+					: undefined;
+			const submissionDiff =
+				draftMode === "update"
+					? buildSubmissionDiff(payload, sourceInstitution)
+					: undefined;
+			const submissionMeta =
+				draftMode === "create" && data.works_for_organization === true
+					? { request_claim_on_approval: true }
+					: undefined;
 			const institutionSubmission = await createSubmission({
 				entityType: SubmissionEntityType.institution,
 				entityId: draftMode === "update" ? resolvedEntityId : null,
@@ -202,8 +226,11 @@ function InstitutionDraftWizardContent({
 						? SubmissionType.update
 						: SubmissionType.create,
 				status: "approval_pending",
-				data: payload,
+				data: payload as Prisma.InputJsonValue,
+				diff: submissionDiff as Prisma.InputJsonValue | undefined,
+				meta: submissionMeta,
 			});
+			upsertSubmission(institutionSubmission);
 			const proposedCategories =
 				typeof newCategory === "string"
 					? Array.from(
@@ -243,8 +270,15 @@ function InstitutionDraftWizardContent({
 				),
 			);
 		},
-		[categories, draftMode, resetDraft, router, toLocalePath],
-	);
+			[
+				categories,
+				draftMode,
+				resetDraft,
+				router,
+				toLocalePath,
+				upsertSubmission,
+			],
+		);
 
 	const handleStepSubmit = useCallback(
 		(data: Record<string, unknown>) => {
@@ -1279,9 +1313,35 @@ function InstitutionDraftWizardContent({
 			formId: "institution-contact-form",
 			fields: [
 				{
+					name: "consentSection",
+					type: "section",
+					title: t("institutionDraftWizardModal.form.contact.consent.title"),
+					layout: { span: "full" },
+					fields: [
+						{
+							name: "works_for_organization",
+							label: t(
+								"institutionDraftWizardModal.form.contact.consent.worksForOrganization",
+							),
+							type: "checkbox",
+						},
+						{
+							name: "consent_contact_listing",
+							label: t(
+								"institutionDraftWizardModal.form.contact.consent.contactListing",
+							),
+							condition: (formData) => formData.works_for_organization === true,
+							type: "checkbox",
+						},
+					],
+				},
+				{
 					name: "contactSection",
 					type: "section",
 					layout: { span: "full", columns: 2 },
+					condition: (formData) =>
+						formData.works_for_organization === true &&
+						formData.consent_contact_listing === true,
 					fields: [
 						{
 							name: "contact_person_first_name",
@@ -1322,35 +1382,6 @@ function InstitutionDraftWizardContent({
 								"institutionDraftWizardModal.form.contact.phone.placeholder",
 							),
 							layout: { span: "full" },
-						},
-					],
-				},
-				{
-					name: "consentSection",
-					type: "section",
-					title: t("institutionDraftWizardModal.form.contact.consent.title"),
-					layout: { span: "full" },
-					fields: [
-						{
-							name: "works_for_organization",
-							label: t(
-								"institutionDraftWizardModal.form.contact.consent.worksForOrganization",
-							),
-							type: "checkbox",
-						},
-						{
-							name: "consent_contact_listing",
-							label: t(
-								"institutionDraftWizardModal.form.contact.consent.contactListing",
-							),
-							type: "checkbox",
-						},
-						{
-							name: "request_admin_rights",
-							label: t(
-								"institutionDraftWizardModal.form.contact.consent.requestAdminRights",
-							),
-							type: "checkbox",
 						},
 					],
 				},

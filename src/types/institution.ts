@@ -142,6 +142,10 @@ export type InstitutionForm = {
 	import_identifier?: string | null;
 	source?: string | null;
 	shared_use_contact_person?: string | null;
+	contact_person_first_name?: string | null;
+	contact_person_last_name?: string | null;
+	contact_person_email?: string | null;
+	contact_person_phone?: string | null;
 	contact_person_id?: number | null;
 	address: AddressInput | null;
 	categoryIds?: number[];

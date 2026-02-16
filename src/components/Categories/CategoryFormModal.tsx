@@ -358,7 +358,7 @@ export function CategoryFormModal({
 	categoryId,
 	shouldRefresh = false,
 	routePath,
-	returnTo,
+	returnTo = "/account/categories",
 }: CategoryFormModalProps) {
 	const { t: tEnum } = useTranslation("enumMap");
 	const { t } = useTranslation();

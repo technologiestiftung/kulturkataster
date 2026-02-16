@@ -8,6 +8,8 @@ import {
 	buildStreetLine,
 } from "@/lib/utils/formUtils";
 import { institutionSubmissionToDraft } from "@/lib/utils/institutionSubmissionUtils";
+import { buildSubmissionDiff } from "@/lib/utils/submissionDiff";
+import type { Prisma } from "@/generated/prisma";
 import {
 	deleteSubmission,
 	getSubmissionById,
@@ -27,7 +29,7 @@ type InstitutionDraftEditModalProps = {
 };
 
 export function InstitutionDraftEditModal({
-	returnTo,
+	returnTo = "/account/institutions",
 	submissionId,
 	shouldRefresh = false,
 	routePath,
@@ -90,14 +92,25 @@ export function InstitutionDraftEditModal({
 
 	const handleSubmit = useCallback(
 		async (data: Record<string, unknown>) => {
-			const payload = {
+			const payload: Record<string, unknown> = {
 				...data,
 				address: buildAddressFromFormData(data),
 			};
 			if (!resolvedSubmissionWithFallback || !hasSubmissionId) return;
+			const sourceInstitution =
+				resolvedSubmissionWithFallback.type === "update" &&
+				typeof payload.originalInstitution === "object" &&
+				payload.originalInstitution !== null
+					? (payload.originalInstitution as Record<string, unknown>)
+					: undefined;
+			const submissionDiff =
+				resolvedSubmissionWithFallback.type === "update"
+					? buildSubmissionDiff(payload, sourceInstitution)
+					: undefined;
 			const updated = await updateSubmission({
 				id: submissionId,
-				data: payload,
+				data: payload as Prisma.InputJsonValue,
+				diff: submissionDiff as Prisma.InputJsonValue | undefined,
 			});
 			if (updated) {
 				upsertSubmission(updated);

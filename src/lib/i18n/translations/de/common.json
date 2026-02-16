@@ -227,7 +227,7 @@
 	"cancel": "Abbrechen",
 	"close": "Schließen",
 	"closeSidebar": "Seitenleiste schließen",
-	"confirm": "Bestätigen",
+	"confirm": "Schließen",
 	"delete": "Löschen",
 	"download": {
 		"description": "Laden Sie die Daten der Kulturorte im JSON-Format herunter. Diese Daten können für eigene Anwendungen oder Analysen verwendet werden.",

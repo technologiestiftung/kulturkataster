@@ -797,6 +797,7 @@
 			},
 			"error": "Überprüfung fehlgeschlagen. {{error}}",
 			"errorUnknown": "Unbekannter Fehler.",
+			"grantSubmitterAccess": "Der einreichenden Person nach Genehmigung Zugriff auf diesen Kulturort geben.",
 			"notesLabel": "Prüfnotizen",
 			"notesPlaceholder": "Optionale Notizen für die Einreichung",
 			"statusLabel": "Status: {{status}}",
