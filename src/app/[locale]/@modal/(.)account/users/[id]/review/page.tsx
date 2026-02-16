@@ -12,7 +12,6 @@ export default async function UserClaimsReviewModalPage({
 		<UserClaimReviewModal
 			claims={claims}
 			routePath={`/account/users/${id}/review`}
-			returnTo="/account/users"
 		/>
 	);
 }

@@ -14,7 +14,6 @@ export default async function EditRoleModal({ params }: PageProps) {
 			roleId={id}
 			shouldRefresh={false}
 			routePath={`/account/roles/${id}/edit`}
-			returnTo="/account/roles"
 		/>
 	);
 }

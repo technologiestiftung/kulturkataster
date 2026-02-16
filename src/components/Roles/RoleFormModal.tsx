@@ -465,7 +465,7 @@ export function RoleFormModal({
 	roleId,
 	shouldRefresh = false,
 	routePath,
-	returnTo,
+	returnTo = "/account/roles",
 }: RoleFormModalProps) {
 	const { t } = useTranslation(["content", "enumMap"]);
 	const roles = useAccountStore((state) => state.roles);

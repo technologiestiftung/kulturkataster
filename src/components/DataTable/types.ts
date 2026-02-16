@@ -40,6 +40,7 @@ export interface DataTableConfig<T> {
 	};
 
 	onEdit?: (row: T) => void;
+	getCanEdit?: (row: T) => boolean;
 	onReview?: (row: T) => void;
 	getCanReview?: (row: T) => boolean;
 	reviewAriaLabel?: string;

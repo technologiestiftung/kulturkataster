@@ -86,16 +86,19 @@ export const institutionSubmissionToDraft = (
 		legal_form: toString(data.legal_form),
 		capacity: toNumber(data.capacity),
 		owner_name: toString(data.owner_name),
-		owner_type: data.owner_type as OwnerType | undefined,
-		rental_contract_type: data.rental_contract_type as RentalContractType,
-		rental_contract_end: toString(data.rental_contract_end),
-		funding_type: data.funding_type as FundingType | undefined,
+		owner_type: (data.owner_type as OwnerType | undefined) || undefined,
+		rental_contract_type:
+			(data.rental_contract_type as RentalContractType | undefined) ||
+			undefined,
+		rental_contract_end:
+			(data.rental_contract_end as Date | undefined) || undefined,
+		funding_type: (data.funding_type as FundingType | undefined) || undefined,
 		funding_sources,
-		utilization_status: data.utilization_status as
-			| UtilizationStatus
-			| undefined,
+		utilization_status:
+			(data.utilization_status as UtilizationStatus | undefined) || undefined,
 		utilization_status_info: toString(data.utilization_status_info),
-		protection_status: data.protection_status as ProtectionStatus | undefined,
+		protection_status:
+			(data.protection_status as ProtectionStatus | undefined) || undefined,
 		protection_status_info: toString(data.protection_status_info),
 		shared_use_allowed: toBool(data.shared_use_allowed),
 		shared_use_info: toString(data.shared_use_info),
@@ -104,15 +107,21 @@ export const institutionSubmissionToDraft = (
 		shared_use_availability: toString(data.shared_use_availability),
 		accessibility: toString(data.accessibility),
 		cost: toString(data.cost),
-		established_since: toString(data.established_since),
-		established_until: toString(data.established_until),
+		established_since:
+			(data.established_since as Date | undefined) || undefined,
+		established_until:
+			(data.established_until as Date | undefined) || undefined,
 		closing_reason: toString(data.closing_reason),
 		notes: toString(data.notes),
 		internal_notes: toString(data.internal_notes),
-		status: data.status as InstitutionStatus | undefined,
+		status: (data.status as InstitutionStatus | undefined) || undefined,
 		import_identifier: toString(data.import_identifier),
 		source: toString(data.source),
 		shared_use_contact_person: toString(data.shared_use_contact_person),
+		contact_person_first_name: toString(data.contact_person_first_name),
+		contact_person_last_name: toString(data.contact_person_last_name),
+		contact_person_email: toString(data.contact_person_email),
+		contact_person_phone: toString(data.contact_person_phone),
 		contact_person_id: toNumber(data.contact_person_id),
 		address: address ?? null,
 		categoryIds: toNumberArray(data.categoryIds),

@@ -10,6 +10,7 @@ export type InstitutionActionPermissions = {
 	update: boolean;
 	delete: boolean;
 	createSubmission: boolean;
+	reviewSubmission: boolean;
 };
 
 export type InstitutionFieldPermissions = {

@@ -10,9 +10,10 @@ import { getCurrentUserId } from "@/server/actions/auth";
 import {
 	createInstitution,
 	deleteInstitution,
-	updateInstitution,
 } from "@/server/actions/institutions";
+import { institutionRepo } from "@/server/data/institutionRepo";
 import { submissionRepo } from "@/server/data/submissionRepo";
+import { buildInstitutionUpdateData } from "@/server/logic/institutionUpdateData";
 import { prisma } from "@/server/prisma";
 import { institutionSubmissionToDraft } from "@/lib/utils/institutionSubmissionUtils";
 import {
@@ -62,7 +63,8 @@ type SubmissionUpdatePayload = {
 type SubmissionReviewPayload = {
 	id: number;
 	status: Exclude<SubmissionStatus, "draft">;
-	reviewNotes?: string | null;
+	internalNotes?: string | null;
+	grantSubmitterAccess?: boolean;
 };
 
 type ClaimReviewPayload = {
@@ -250,18 +252,25 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 		}
 
 		const draft = institutionSubmissionToDraft(submission);
+		const draftWithInternalNotes = {
+			...draft,
+			internal_notes:
+				typeof input.internalNotes === "string"
+					? input.internalNotes
+					: draft.internal_notes,
+		};
 		const institutionScope = getTableScope(ctx, "institution", "update");
 
 		if (submission.type === "create") {
 			authorizeTable(ctx, "institution", "create");
-			const fields = buildInstitutionPermissionFields(draft);
+			const fields = buildInstitutionPermissionFields(draftWithInternalNotes);
 			const allowedFields = new Set(
 				fields.filter((field) =>
 					canFields(ctx, "institution", [field], "create"),
 				),
 			);
 			const sanitizedDraft = filterInstitutionInputByPermissionFields(
-				draft,
+				draftWithInternalNotes,
 				allowedFields,
 			);
 			const name = sanitizedDraft.name;
@@ -270,11 +279,36 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 					"Create submission does not include permitted required fields.",
 				);
 			}
-			await createInstitution({
-				...draft,
+			const createdInstitution = await createInstitution({
+				...draftWithInternalNotes,
 				...sanitizedDraft,
 				name,
 			});
+			const submissionMeta =
+				submission.meta &&
+				typeof submission.meta === "object" &&
+				!Array.isArray(submission.meta)
+					? (submission.meta as Record<string, unknown>)
+					: null;
+			const requestClaimOnApproval =
+				submissionMeta?.request_claim_on_approval === true;
+			const shouldGrantSubmitterAccess =
+				requestClaimOnApproval && input.grantSubmitterAccess === true;
+
+			if (shouldGrantSubmitterAccess) {
+				if (!submission.created_by) {
+					throw new Error("Create submission is missing submitter id.");
+				}
+				if (!canFields(ctx, "institution", ["users"], "create")) {
+					throw new Error(
+						"Not authorized to grant submitter access on institution creation.",
+					);
+				}
+				await prisma.institution.update({
+					where: { id: createdInstitution.id },
+					data: { users: { connect: { id: submission.created_by } } },
+				});
+			}
 		}
 
 		if (submission.type === "update") {
@@ -282,14 +316,14 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 			if (!submission.entity_id) {
 				throw new Error("Update submission is missing institution id.");
 			}
-			const fields = buildInstitutionPermissionFields(draft);
+			const fields = buildInstitutionPermissionFields(draftWithInternalNotes);
 			const allowedFields = new Set(
 				fields.filter((field) =>
 					canFields(ctx, "institution", [field], "update"),
 				),
 			);
 			const sanitizedDraft = filterInstitutionInputByPermissionFields(
-				draft,
+				draftWithInternalNotes,
 				allowedFields,
 			);
 			const currentInstitution = await prisma.institution.findUnique({
@@ -304,12 +338,16 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 				sanitizedDraft.name.trim().length > 0
 					? sanitizedDraft.name
 					: currentInstitution.name;
-			await updateInstitution({
-				...draft,
+			const updateInput = {
+				...draftWithInternalNotes,
 				...sanitizedDraft,
 				id: submission.entity_id,
 				name: resolvedName,
-			});
+			};
+			await institutionRepo.update(
+				submission.entity_id,
+				buildInstitutionUpdateData(updateInput, currentUserId),
+			);
 		}
 
 		if (submission.type === "claim") {
@@ -357,7 +395,7 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 
 	const updated = await submissionRepo.update(input.id, {
 		status: input.status,
-		review_notes: input.reviewNotes ?? undefined,
+		review_notes: input.internalNotes ?? undefined,
 		reviewer: currentUserId ? { connect: { id: currentUserId } } : undefined,
 		reviewed_at: new Date(),
 	});

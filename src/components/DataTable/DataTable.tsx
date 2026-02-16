@@ -930,7 +930,9 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 																						<Eye className="h-5 w-5 text-neutral-80" />
 																					</Button>
 																				) : null}
-																				{config.onEdit ? (
+																				{config.onEdit &&
+																				(config.getCanEdit?.(row.original) ??
+																					true) ? (
 																					<Button
 																						size="icon"
 																						variant="ghost"

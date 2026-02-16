@@ -122,30 +122,30 @@ const getInitialValues = (resolvedInstitution?: Institution) => {
 			resolvedInstitution?.categories?.map((category) => String(category.id)) ??
 			[],
 		categoryFilters: buildCategoryFilterState(resolvedInstitution?.categories),
-		utilization_status: resolvedInstitution?.utilization_status ?? "",
+		utilization_status: resolvedInstitution?.utilization_status ?? undefined,
 		utilization_status_info: resolvedInstitution?.utilization_status_info ?? "",
-		protection_status: resolvedInstitution?.protection_status ?? "",
+		protection_status: resolvedInstitution?.protection_status ?? undefined,
 		protection_status_info: resolvedInstitution?.protection_status_info ?? "",
 		website: resolvedInstitution?.website ?? "",
 		email: resolvedInstitution?.email ?? "",
 		phone: resolvedInstitution?.phone ?? "",
-		contact_person_name:
-			resolvedInstitution?.contact_person?.first_name &&
-			resolvedInstitution?.contact_person?.last_name
-				? `${resolvedInstitution.contact_person.first_name} ${resolvedInstitution.contact_person.last_name}`
-				: "",
+		contact_person_first_name:
+			resolvedInstitution?.contact_person?.first_name ?? "",
+		contact_person_last_name:
+			resolvedInstitution?.contact_person?.last_name ?? "",
 		contact_person_email: resolvedInstitution?.contact_person?.email ?? "",
 		contact_person_phone: resolvedInstitution?.contact_person?.phone ?? "",
 		legal_form: resolvedInstitution?.legal_form ?? "",
-		funding_type: resolvedInstitution?.funding_type ?? "",
+		funding_type: resolvedInstitution?.funding_type ?? undefined,
 		funding_sources:
 			resolvedInstitution?.funding_sources?.map((source) => ({
 				source_name: source.source_name ?? "",
 				description: source.description ?? "",
 			})) ?? [],
-		owner_type: resolvedInstitution?.owner_type ?? "",
+		owner_type: resolvedInstitution?.owner_type ?? undefined,
 		owner_name: resolvedInstitution?.owner_name ?? "",
-		rental_contract_type: resolvedInstitution?.rental_contract_type ?? "",
+		rental_contract_type:
+			resolvedInstitution?.rental_contract_type ?? undefined,
 		rental_contract_end: resolvedInstitution?.rental_contract_end ?? "",
 		established_since: resolvedInstitution?.established_since ?? "",
 		established_until: resolvedInstitution?.established_until ?? "",
@@ -548,11 +548,24 @@ const buildInstitutionFormConfig = ({
 						layout: { span: "full" },
 					},
 					{
-						name: "contact_person_name",
-						label: fieldLabel("contact_person_name", "Contact Person Name"),
+						name: "contact_person_first_name",
+						label: fieldLabel(
+							"contact_person_first_name",
+							"Contact Person First Name",
+						),
 						type: "text",
-						placeholder: "e.g. Max Mustermann",
-						layout: { span: "full" },
+						placeholder: "e.g. Max",
+						layout: { span: "half" },
+					},
+					{
+						name: "contact_person_last_name",
+						label: fieldLabel(
+							"contact_person_last_name",
+							"Contact Person Last Name",
+						),
+						type: "text",
+						placeholder: "e.g. Mustermann",
+						layout: { span: "half" },
 					},
 					{
 						name: "contact_person_email",
