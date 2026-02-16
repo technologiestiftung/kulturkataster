@@ -7,6 +7,7 @@ import {
 } from "../helpers/e2eAuthState";
 
 const LOGIN_TIMEOUT = 30_000;
+const FIELD_TIMEOUT = 30_000;
 
 type SaveStorageOptions = {
 	baseURL: string;
@@ -38,16 +39,23 @@ const saveStorageState = async ({
 				waitUntil: "domcontentloaded",
 				timeout: LOGIN_TIMEOUT,
 			});
+			await page.waitForLoadState("networkidle", { timeout: LOGIN_TIMEOUT });
 
-			const emailInput = page.locator("input#email");
-			await emailInput.waitFor({ state: "visible", timeout: 15_000 });
+			const emailInput = page
+				.getByLabel(/E-?Mail/i)
+				.or(page.locator('input[type="email"]').first());
+			await emailInput.waitFor({ state: "visible", timeout: FIELD_TIMEOUT });
 			await emailInput.fill(email);
 
-			const passwordInput = page.getByRole("textbox", { name: /^Passwort/ });
-			await passwordInput.waitFor({ state: "visible", timeout: 15_000 });
+			const passwordInput = page
+				.getByLabel(/Passwort/i)
+				.or(page.locator('input[type="password"]').first());
+			await passwordInput.waitFor({ state: "visible", timeout: FIELD_TIMEOUT });
 			await passwordInput.fill(password);
 
-			const loginButton = page.getByRole("button", { name: "Anmelden" });
+			const loginButton = page
+				.getByRole("button", { name: /Anmelden/i })
+				.or(page.locator('button[type="submit"]').first());
 			await Promise.all([
 				page.waitForURL(/\/de\/account(\/.*)?$/, { timeout: LOGIN_TIMEOUT }),
 				loginButton.click(),
