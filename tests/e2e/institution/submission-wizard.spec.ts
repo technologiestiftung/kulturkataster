@@ -31,13 +31,21 @@ test.describe("institution submission wizard", () => {
 		);
 	});
 
-	const waitForPostSubmitRoute = async (
+	const waitForPostSubmitOutcome = async (
 		page: import("@playwright/test").Page,
 	) => {
-		await page.waitForURL(
-			/\/de\/(?:account(?:\/institutions|\/activity)?|map|login|welcome)(?:\/)?$/,
-			{ timeout: 30_000 },
-		);
+		const postSubmitRoutePattern =
+			/\/de\/(?:account(?:\/institutions|\/activity)?|map|login|welcome)(?:\/)?$/;
+		const submitButton = page.getByRole("button", { name: "Submission senden" });
+		const stepOneIndicator = page.getByText(/Schritt 1 \/ 5/);
+
+		await Promise.race([
+			expect(page).toHaveURL(postSubmitRoutePattern, { timeout: 45_000 }),
+			(async () => {
+				await expect(submitButton).toBeHidden({ timeout: 45_000 });
+				await expect(stepOneIndicator).toBeVisible({ timeout: 45_000 });
+			})(),
+		]);
 	};
 
 	test("blocks forward stepper jumps when required fields are missing", async ({
@@ -105,10 +113,8 @@ test.describe("institution submission wizard", () => {
 				.first(),
 		).toBeVisible();
 
-		await Promise.all([
-			waitForPostSubmitRoute(page),
-			page.getByRole("button", { name: "Submission senden" }).click(),
-		]);
+		await page.getByRole("button", { name: "Submission senden" }).click();
+		await waitForPostSubmitOutcome(page);
 	});
 
 	test("fills a detailed multi-step draft and submits it for review", async ({
@@ -187,9 +193,7 @@ test.describe("institution submission wizard", () => {
 				.first(),
 		).toBeVisible();
 
-		await Promise.all([
-			waitForPostSubmitRoute(page),
-			page.getByRole("button", { name: "Submission senden" }).click(),
-		]);
+		await page.getByRole("button", { name: "Submission senden" }).click();
+		await waitForPostSubmitOutcome(page);
 	});
 });
