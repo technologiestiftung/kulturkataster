@@ -19,7 +19,7 @@ export default defineConfig({
 		trace: "on-first-retry",
 	},
 	webServer: {
-		command: `npm run build && npm run start -- -p ${port}`,
+		command: `npm run build && PORT=${port} node .next/standalone/server.js`,
 		url: `${baseURL}/de/login`,
 		reuseExistingServer: !process.env.CI,
 		timeout: 180_000,
