@@ -1,4 +1,10 @@
-import type { Prisma } from "@/generated/prisma";
+import type {
+	ActivityStatus,
+	Prisma,
+	SubmissionEntityType,
+	SubmissionStatus,
+	SubmissionType,
+} from "@/generated/prisma";
 import type { Institution } from "@/types/institution";
 import type { User } from "@/types/user";
 
@@ -24,4 +30,51 @@ export type InstitutionDraftStoreState = {
 	setStepId: (stepId: string) => void;
 	setMode: (mode: "create" | "update") => void;
 	resetDraft: () => void;
+};
+
+export type SubmissionFilter = {
+	entityType?: SubmissionEntityType;
+	entityId?: number | null;
+	status?: SubmissionStatus;
+	type?: SubmissionType | Prisma.EnumSubmissionTypeFilter<"Submission">;
+	createdBy?: string | null;
+	reviewedBy?: string | null;
+};
+
+export type SubmissionCreatePayload = {
+	entityType: SubmissionEntityType;
+	entityId?: number | null;
+	type: SubmissionType;
+	data: Prisma.InputJsonValue;
+	diff?: Prisma.InputJsonValue | null;
+	meta?: Prisma.InputJsonValue | null;
+	status?: SubmissionStatus;
+};
+
+export type SubmissionUpdatePayload = {
+	id: number;
+	data?: Prisma.InputJsonValue;
+	diff?: Prisma.InputJsonValue | null;
+	meta?: Prisma.InputJsonValue | null;
+	status?: SubmissionStatus;
+};
+
+export type SubmissionReviewPayload = {
+	id: number;
+	status: Exclude<SubmissionStatus, "draft">;
+	internalNotes?: string | null;
+	grantSubmitterAccess?: boolean;
+};
+
+export type ClaimReviewPayload = {
+	id: number;
+	decision: "approved" | "rejected";
+	reviewNotes?: string | null;
+};
+
+export type SubmissionAuditStatusUpdateInput = {
+	submissionId: number;
+	status: ActivityStatus;
+	reviewerId: string | null;
+	reviewNotes?: string | null;
 };

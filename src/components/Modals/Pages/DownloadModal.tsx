@@ -23,10 +23,11 @@ export function DownloadModal({ routePath }: { routePath?: string }) {
 		<Modal
 			title={t("downloadModal.title", { ns: "content" })}
 			routePath={routePath}
-			content={content}
 			variant="centered"
 			hasFooter={false}
 			showBackButton={false}
-		/>
+		>
+			{content}
+		</Modal>
 	);
 }

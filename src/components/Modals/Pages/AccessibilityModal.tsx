@@ -194,8 +194,9 @@ export function AccessibilityModal({ routePath }: { routePath?: string }) {
 			title={t("accessibilityModal.title")}
 			subtitle={t("accessibilityModal.subtitle")}
 			routePath={routePath}
-			content={content}
 			hideLinksInModalFooter={["accessibility"]}
-		/>
+		>
+			{content}
+		</Modal>
 	);
 }

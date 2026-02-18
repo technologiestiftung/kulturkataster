@@ -1,5 +1,9 @@
 "use client";
 
+import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
+import { UserStatus } from "@/generated/prisma";
 import { DataTable } from "@/components/DataTable";
 import type { DataTableConfig } from "@/components/DataTable";
 import { BadgeOverflowList } from "@/components/Badges/Badges";
@@ -7,16 +11,50 @@ import { StatusDot } from "@/components/ui/status-dot";
 import { useAccountStore } from "@/lib/store/accountStore";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import type { User } from "@/types/user";
-import { useRouter } from "next/navigation";
-import { useTranslation } from "react-i18next";
+import { UserFilterPanel, type UserFilters } from "./UserFilterPanel";
 import { Badge } from "../ui/badge";
-import { UserStatus } from "@/generated/prisma";
+import { EmptyActionState } from "@/components/EmptyActionState";
+import Plus from "@/icons/plus.svg";
+
+const defaultFilters: UserFilters = {
+	status: "all",
+	role: "all",
+	groups: [],
+	compliance: "all",
+};
 
 export function UsersTable() {
 	const users = useAccountStore((state) => state.users);
 	const router = useRouter();
 	const toLocalePath = useLocalePath();
 	const { t } = useTranslation("content");
+
+	const [filters, setFilters] = useState<UserFilters>(defaultFilters);
+	const [draftFilters, setDraftFilters] = useState<UserFilters>(defaultFilters);
+
+	const roleOptions = useMemo(() => {
+		const roles = Array.from(
+			new Set(users.map((user) => user.role?.name).filter(Boolean) as string[]),
+		).sort((a, b) => a.localeCompare(b));
+		return [
+			{
+				label: t("userTable.filter.allRoles", { defaultValue: "All roles" }),
+				value: "all",
+			},
+			...roles.map((role) => ({ label: role, value: role })),
+		];
+	}, [t, users]);
+
+	const groupOptions = useMemo(() => {
+		const groups = Array.from(
+			new Set(
+				users
+					.flatMap((user) => user.groups.map((group) => group.name))
+					.filter(Boolean),
+			),
+		).sort((a, b) => a.localeCompare(b));
+		return groups.map((group) => ({ label: group, value: group }));
+	}, [users]);
 
 	const getStatusLabel = (status: UserStatus) => {
 		if (status === "approval_pending") {
@@ -27,6 +65,34 @@ export function UsersTable() {
 		if (status === "banned") return t("userFormModal.status.banned");
 		return status;
 	};
+
+	const filteredUsers = useMemo(() => {
+		return users.filter((user) => {
+			const matchesStatus =
+				filters.status === "all" ? true : user.status === filters.status;
+
+			const matchesRole =
+				filters.role === "all"
+					? true
+					: (user.role?.name ?? "") === filters.role;
+
+			const matchesGroups =
+				filters.groups.length === 0
+					? true
+					: filters.groups.some((groupName) =>
+							user.groups.some((group) => group.name === groupName),
+						);
+
+			let matchesCompliance = true;
+			if (filters.compliance === "accepted") {
+				matchesCompliance = Boolean(user.compliance);
+			} else if (filters.compliance === "rejected") {
+				matchesCompliance = !Boolean(user.compliance);
+			}
+
+			return matchesStatus && matchesRole && matchesGroups && matchesCompliance;
+		});
+	}, [filters, users]);
 
 	const tableConfig: DataTableConfig<User> = {
 		columns: [
@@ -168,7 +234,7 @@ export function UsersTable() {
 				),
 			},
 		],
-		data: users,
+		data: filteredUsers,
 		getRowKey: (row) => row.id,
 		searchable: true,
 		searchPlaceholder: t("userTable.searchPlaceholder"),
@@ -178,10 +244,55 @@ export function UsersTable() {
 			row.status,
 			...row.groups.map((group) => group.name),
 		],
+		filterModal: {
+			triggerLabel: t("userTable.filter.button", { defaultValue: "Filter" }),
+			triggerAriaLabel: t("userTable.filter.button", {
+				defaultValue: "Filter",
+			}),
+			title: t("userTable.filter.title", { defaultValue: "Filter users" }),
+			description: t("userTable.filter.description", {
+				defaultValue: "Narrow users by status, role, groups, and compliance.",
+			}),
+			content: ({ close }) => (
+				<UserFilterPanel
+					value={draftFilters}
+					roleOptions={roleOptions}
+					groupOptions={groupOptions}
+					getStatusLabel={getStatusLabel}
+					onChange={setDraftFilters}
+					onApply={() => {
+						setFilters(draftFilters);
+						close();
+					}}
+					onReset={() => {
+						setDraftFilters(defaultFilters);
+						setFilters(defaultFilters);
+					}}
+					onCancel={close}
+				/>
+			),
+		},
 		primaryButton: {
 			label: t("userTable.actions.add"),
 			onClick: () => router.push(toLocalePath("/account/users/new")),
 		},
+		emptyState: (
+			<EmptyActionState
+				title={t("userTable.empty.title", {
+					defaultValue: "Keine Nutzer*innen gefunden.",
+				})}
+				description={t("userTable.empty.description", {
+					defaultValue: "Legen Sie eine neue Nutzer*in an, um zu starten.",
+				})}
+				actions={[
+					{
+						icon: <Plus className="size-5" />,
+						label: t("userTable.actions.add"),
+						href: toLocalePath("/account/users/new"),
+					},
+				]}
+			/>
+		),
 		onReview: (row) =>
 			router.push(toLocalePath(`/account/users/${row.id}/review`)),
 		getCanReview: (row) => (row.submissions?.length ?? 0) > 0,

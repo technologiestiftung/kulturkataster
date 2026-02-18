@@ -11,6 +11,7 @@ const cardVariants = cva("text-card-foreground", {
 			tertiary: "rounded-sm bg-secondary border-0 p-4 h-full",
 			none: "",
 			hero: "rounded-t-lg overflow-hidden border-0 p-4",
+			filter: "rounded bg-background border-0 p-6",
 		},
 	},
 	defaultVariants: {

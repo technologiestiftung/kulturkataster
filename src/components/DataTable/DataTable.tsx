@@ -27,8 +27,10 @@ import {
 	type SortingState,
 } from "@tanstack/react-table";
 import { SearchInput } from "@/components/ui/search-input";
+import { FilterModalWrapper } from "@/components/Filter/FilterModalWrapper";
 import Plus from "@/icons/plus.svg";
 import Search from "@/icons/search.svg";
+import Filter from "@/icons/filter.svg";
 import Close from "@/icons/close.svg";
 import type { DataTableConfig } from "./types";
 import { Label } from "@radix-ui/react-label";
@@ -53,6 +55,7 @@ const getNestedValue = (obj: Record<string, unknown>, path: string): unknown =>
 
 export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 	const [isSearchOpen, setIsSearchOpen] = useState(false);
+	const [isFilterOpen, setIsFilterOpen] = useState(false);
 	const [sorting, setSorting] = useState<SortingState>([]);
 	const [globalFilter, setGlobalFilter] = useState("");
 	const [expanded, setExpanded] = useState<ExpandedState>({});
@@ -598,6 +601,17 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 		typeof config.secondaryButton?.label === "string"
 			? config.secondaryButton.label
 			: undefined;
+	const filterButtonAriaLabel = (() => {
+		if (typeof config.filterModal?.triggerAriaLabel === "string") {
+			return config.filterModal.triggerAriaLabel;
+		}
+		if (typeof config.filterModal?.triggerLabel === "string") {
+			return config.filterModal.triggerLabel;
+		}
+		return "Open filters";
+	})();
+	const hasRows = table.getRowModel().rows.length > 0;
+	const showStandaloneEmptyState = !hasRows && Boolean(config.emptyState);
 
 	useEffect(() => {
 		if (!isSearchOpen) return;
@@ -612,7 +626,8 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 			{(config.title ||
 				config.searchable ||
 				config.primaryButton ||
-				config.secondaryButton) && (
+				config.secondaryButton ||
+				config.filterModal) && (
 				<div className="flex flex-col gap-4 w-full">
 					{config.title && (
 						<div>
@@ -679,18 +694,31 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 										}
 									/>
 								</div>
-								{isSearchOpen ? null : (
+								{!isSearchOpen && (
 									<div className="gap-2 flex items-center">
 										<Button
 											type="button"
-											variant="icon"
+											variant="rounded"
 											size="icon"
-											className="bg-secondary border-border"
 											onClick={() => setIsSearchOpen(true)}
 										>
-											<Search className="size-4" />
+											<Search className="size-5!" />
 										</Button>
 										<Label>{searchLabel}</Label>
+									</div>
+								)}
+								{!isSearchOpen && config.filterModal && (
+									<div className="gap-2 flex items-center">
+										<Button
+											type="button"
+											onClick={() => setIsFilterOpen(true)}
+											variant="rounded"
+											size="icon"
+											aria-label={filterButtonAriaLabel}
+										>
+											<Filter className="size-5!" />
+										</Button>
+										<Label>{config.filterModal.triggerLabel ?? "Filter"}</Label>
 									</div>
 								)}
 							</div>
@@ -699,280 +727,311 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 				</div>
 			)}
 
-			<div className="relative w-full border border-neutral-20 rounded-md">
-				<div
-					ref={headerScrollRef}
-					onScroll={handleHeaderScroll}
-					className="sticky top-0 z-40 overflow-x-auto bg-neutral-5 no-scrollbar"
-					style={{ paddingRight: scrollbarWidth }}
-					aria-hidden="true"
-				>
-					<table
-						ref={headerTableRef}
-						className="w-full table-fixed caption-bottom body3 border-separate border-spacing-0"
-						role="presentation"
+			{showStandaloneEmptyState ? (
+				<div className="w-full h-full">{config.emptyState}</div>
+			) : (
+				<div className="relative w-full border border-neutral-20 rounded-md">
+					<div
+						ref={headerScrollRef}
+						onScroll={handleHeaderScroll}
+						className="sticky top-0 z-40 overflow-x-auto bg-neutral-5 no-scrollbar"
+						style={{ paddingRight: scrollbarWidth }}
+						aria-hidden="true"
 					>
-						<colgroup>
-							{table.getVisibleLeafColumns().map((column) => {
-								const width = headerWidths[column.id] ?? column.columnDef.size;
-								return (
-									<col
-										key={column.id}
-										style={
-											typeof width === "number"
-												? { width: `${width}px` }
-												: undefined
-										}
-									/>
-								);
-							})}
-						</colgroup>
-						{renderHeaderRows({
-							withRefs: true,
-							withHeaderIds: false,
-							interactive: true,
-						})}
-					</table>
-				</div>
-
-				<div
-					ref={containerRef}
-					onScroll={handleBodyScroll}
-					className="overflow-x-auto"
-				>
-					<table
-						ref={tableRef}
-						className="w-full table-fixed caption-bottom body3 border-separate border-spacing-0"
-					>
-						<colgroup>
-							{table.getVisibleLeafColumns().map((column) => {
-								const width = headerWidths[column.id] ?? column.columnDef.size;
-								return (
-									<col
-										key={column.id}
-										style={
-											typeof width === "number"
-												? { width: `${width}px` }
-												: undefined
-										}
-									/>
-								);
-							})}
-						</colgroup>
-						{renderHeaderRows({
-							withRefs: false,
-							withHeaderIds: true,
-							interactive: false,
-							className: "sr-only",
-						})}
-						<tbody>
-							{table.getRowModel().rows.length > 0 ? (
-								(() => {
-									const rows = table.getRowModel().rows;
-									const virtualRows = shouldVirtualize
-										? rowVirtualizer.getVirtualItems()
-										: rows.map((_, index) => ({
-												index,
-												start: 0,
-												size: rowHeight,
-											}));
-									const totalSize = shouldVirtualize
-										? rowVirtualizer.getTotalSize()
-										: rows.length * rowHeight;
-									const paddingTop = shouldVirtualize
-										? Math.max(0, (virtualRows[0]?.start ?? 0) - scrollMargin)
-										: 0;
-									const lastVirtualRow = virtualRows[virtualRows.length - 1];
-									const paddingBottom = shouldVirtualize
-										? totalSize -
-											((lastVirtualRow?.start ?? 0) +
-												(lastVirtualRow?.size ?? 0) -
-												scrollMargin)
-										: 0;
-									const colSpan = table.getVisibleLeafColumns().length;
-
+						<table
+							ref={headerTableRef}
+							className="w-full table-fixed caption-bottom body3 border-separate border-spacing-0"
+							role="presentation"
+						>
+							<colgroup>
+								{table.getVisibleLeafColumns().map((column) => {
+									const width =
+										headerWidths[column.id] ?? column.columnDef.size;
 									return (
-										<Fragment key={colSpan}>
-											{paddingTop > 0 ? (
-												<tr aria-hidden="true">
-													<td
-														style={{ height: paddingTop }}
-														colSpan={colSpan}
-														className="p-0 border-0"
-													/>
-												</tr>
-											) : null}
-											{virtualRows.map((virtualRow) => {
-												const row = rows[virtualRow.index];
-												if (!row) return null;
-												const rowIndex = virtualRow.index;
-												return (
-													<Fragment key={row.id}>
-														<tr
-															data-index={virtualRow.index}
-															ref={
-																shouldVirtualize
-																	? rowVirtualizer.measureElement
-																	: undefined
-															}
-															className={cn(
-																"transition-colors hover:bg-neutral-5/80",
-																rowIndex % 2 === 0
-																	? "bg-background"
-																	: "bg-neutral-5",
-															)}
-															style={
-																shouldVirtualize
-																	? undefined
-																	: { height: rowHeight }
-															}
-														>
-															{row.getVisibleCells().map((cell) => {
-																const isActions =
-																	cell.column.id === actionsColumnId;
-																const pinning = getPinningStyles(
-																	cell.column,
-																	false,
-																);
-																const isPinnedLeft =
-																	cell.column.getIsPinned() === "left";
-																const isPinnedRight =
-																	cell.column.getIsPinned() === "right";
-																const isLastCenterColumn =
-																	cell.column.getIsLastColumn("center");
-																const isFirstRightColumn =
-																	cell.column.getIsFirstColumn("right");
-																const isFirstCenterColumn =
-																	cell.column.getIsFirstColumn("center");
-																const content = flexRender(
-																	cell.column.columnDef.cell,
-																	cell.getContext(),
-																);
-																const shouldTruncate = Boolean(
-																	cell.column.columnDef.meta?.truncate,
-																);
-																const cellClassName = cn(
-																	"p-4 align-middle",
-																	"border-b border-r border-neutral-20 first:border-l",
-																	shouldTruncate && "truncate",
-																	isLastCenterColumn &&
-																		hasPinnedRight &&
-																		"border-r-0",
-																	isFirstCenterColumn &&
-																		hasPinnedLeft &&
-																		"border-l-0",
-																	pinning.className,
-																	isPinnedLeft &&
-																		(rowIndex % 2 === 0
-																			? "bg-neutral-5"
-																			: "bg-neutral-10"),
-																	isPinnedRight &&
-																		(rowIndex % 2 === 0
-																			? "bg-background"
-																			: "bg-neutral-5"),
-																	isPinnedRight &&
-																		(isFirstRightColumn ? "border-l" : null),
-																);
-																if (isActions) {
+										<col
+											key={column.id}
+											style={
+												typeof width === "number"
+													? { width: `${width}px` }
+													: undefined
+											}
+										/>
+									);
+								})}
+							</colgroup>
+							{renderHeaderRows({
+								withRefs: true,
+								withHeaderIds: false,
+								interactive: true,
+							})}
+						</table>
+					</div>
+
+					<div
+						ref={containerRef}
+						onScroll={handleBodyScroll}
+						className="overflow-x-auto"
+					>
+						<table
+							ref={tableRef}
+							className="w-full table-fixed caption-bottom body3 border-separate border-spacing-0"
+						>
+							<colgroup>
+								{table.getVisibleLeafColumns().map((column) => {
+									const width =
+										headerWidths[column.id] ?? column.columnDef.size;
+									return (
+										<col
+											key={column.id}
+											style={
+												typeof width === "number"
+													? { width: `${width}px` }
+													: undefined
+											}
+										/>
+									);
+								})}
+							</colgroup>
+							{renderHeaderRows({
+								withRefs: false,
+								withHeaderIds: true,
+								interactive: false,
+								className: "sr-only",
+							})}
+							<tbody>
+								{hasRows ? (
+									(() => {
+										const rows = table.getRowModel().rows;
+										const virtualRows = shouldVirtualize
+											? rowVirtualizer.getVirtualItems()
+											: rows.map((_, index) => ({
+													index,
+													start: 0,
+													size: rowHeight,
+												}));
+										const totalSize = shouldVirtualize
+											? rowVirtualizer.getTotalSize()
+											: rows.length * rowHeight;
+										const paddingTop = shouldVirtualize
+											? Math.max(0, (virtualRows[0]?.start ?? 0) - scrollMargin)
+											: 0;
+										const lastVirtualRow = virtualRows[virtualRows.length - 1];
+										const paddingBottom = shouldVirtualize
+											? totalSize -
+												((lastVirtualRow?.start ?? 0) +
+													(lastVirtualRow?.size ?? 0) -
+													scrollMargin)
+											: 0;
+										const colSpan = table.getVisibleLeafColumns().length;
+
+										return (
+											<Fragment key={colSpan}>
+												{paddingTop > 0 ? (
+													<tr aria-hidden="true">
+														<td
+															style={{ height: paddingTop }}
+															colSpan={colSpan}
+															className="p-0 border-0"
+														/>
+													</tr>
+												) : null}
+												{virtualRows.map((virtualRow) => {
+													const row = rows[virtualRow.index];
+													if (!row) return null;
+													const rowIndex = virtualRow.index;
+													return (
+														<Fragment key={row.id}>
+															<tr
+																data-index={virtualRow.index}
+																ref={
+																	shouldVirtualize
+																		? rowVirtualizer.measureElement
+																		: undefined
+																}
+																className={cn(
+																	"transition-colors hover:bg-neutral-5/80",
+																	rowIndex % 2 === 0
+																		? "bg-background"
+																		: "bg-neutral-5",
+																)}
+																style={
+																	shouldVirtualize
+																		? undefined
+																		: { height: rowHeight }
+																}
+															>
+																{row.getVisibleCells().map((cell) => {
+																	const isActions =
+																		cell.column.id === actionsColumnId;
+																	const pinning = getPinningStyles(
+																		cell.column,
+																		false,
+																	);
+																	const isPinnedLeft =
+																		cell.column.getIsPinned() === "left";
+																	const isPinnedRight =
+																		cell.column.getIsPinned() === "right";
+																	const isLastCenterColumn =
+																		cell.column.getIsLastColumn("center");
+																	const isFirstRightColumn =
+																		cell.column.getIsFirstColumn("right");
+																	const isFirstCenterColumn =
+																		cell.column.getIsFirstColumn("center");
+																	const content = flexRender(
+																		cell.column.columnDef.cell,
+																		cell.getContext(),
+																	);
+																	const shouldTruncate = Boolean(
+																		cell.column.columnDef.meta?.truncate,
+																	);
+																	const cellClassName = cn(
+																		"p-4 align-middle",
+																		"border-b border-r border-neutral-20 first:border-l",
+																		shouldTruncate && "truncate",
+																		isLastCenterColumn &&
+																			hasPinnedRight &&
+																			"border-r-0",
+																		isFirstCenterColumn &&
+																			hasPinnedLeft &&
+																			"border-l-0",
+																		pinning.className,
+																		isPinnedLeft &&
+																			(rowIndex % 2 === 0
+																				? "bg-neutral-5"
+																				: "bg-neutral-10"),
+																		isPinnedRight &&
+																			(rowIndex % 2 === 0
+																				? "bg-background"
+																				: "bg-neutral-5"),
+																		isPinnedRight &&
+																			(isFirstRightColumn ? "border-l" : null),
+																	);
+																	if (isActions) {
+																		return (
+																			<td
+																				key={cell.id}
+																				className={cn(
+																					cellClassName,
+																					"text-right",
+																				)}
+																				style={pinning.style}
+																				headers={getHeaderId(cell.column.id)}
+																			>
+																				<div className="flex flex-wrap justify-center gap-2">
+																					{content}
+																					{config.onReview &&
+																					(config.getCanReview?.(
+																						row.original,
+																					) ??
+																						true) ? (
+																						<Button
+																							size="icon"
+																							variant="ghost"
+																							onClick={(event) => {
+																								event.stopPropagation();
+																								config.onReview?.(row.original);
+																							}}
+																							className="h-8 w-8 rounded-full border bg-background border-neutral-20 hover:bg-neutral-5"
+																							aria-label={
+																								config.reviewAriaLabel ??
+																								"Review"
+																							}
+																						>
+																							<Eye className="h-5 w-5 text-neutral-80" />
+																						</Button>
+																					) : null}
+																					{config.onEdit &&
+																					(config.getCanEdit?.(row.original) ??
+																						true) ? (
+																						<Button
+																							size="icon"
+																							variant="ghost"
+																							onClick={(event) => {
+																								event.stopPropagation();
+																								config.onEdit?.(row.original);
+																							}}
+																							className="h-8 w-8 rounded-full border bg-background border-neutral-20 hover:bg-neutral-5"
+																							aria-label="Edit"
+																						>
+																							<Edit className="h-5 w-5 text-neutral-80" />
+																						</Button>
+																					) : null}
+																				</div>
+																			</td>
+																		);
+																	}
 																	return (
 																		<td
 																			key={cell.id}
-																			className={cn(
-																				cellClassName,
-																				"text-right",
-																			)}
+																			className={cellClassName}
 																			style={pinning.style}
 																			headers={getHeaderId(cell.column.id)}
 																		>
-																			<div className="flex flex-wrap justify-center gap-2">
-																				{content}
-																				{config.onReview &&
-																				(config.getCanReview?.(row.original) ??
-																					true) ? (
-																					<Button
-																						size="icon"
-																						variant="ghost"
-																						onClick={(event) => {
-																							event.stopPropagation();
-																							config.onReview?.(row.original);
-																						}}
-																						className="h-8 w-8 rounded-full border bg-background border-neutral-20 hover:bg-neutral-5"
-																						aria-label={
-																							config.reviewAriaLabel ?? "Review"
-																						}
-																					>
-																						<Eye className="h-5 w-5 text-neutral-80" />
-																					</Button>
-																				) : null}
-																				{config.onEdit ? (
-																					<Button
-																						size="icon"
-																						variant="ghost"
-																						onClick={(event) => {
-																							event.stopPropagation();
-																							config.onEdit?.(row.original);
-																						}}
-																						className="h-8 w-8 rounded-full border bg-background border-neutral-20 hover:bg-neutral-5"
-																						aria-label="Edit"
-																					>
-																						<Edit className="h-5 w-5 text-neutral-80" />
-																					</Button>
-																				) : null}
-																			</div>
+																			{content}
 																		</td>
 																	);
-																}
-																return (
-																	<td
-																		key={cell.id}
-																		className={cellClassName}
-																		style={pinning.style}
-																		headers={getHeaderId(cell.column.id)}
-																	>
-																		{content}
-																	</td>
-																);
-															})}
-														</tr>
-														{hasExpandedRow && row.getIsExpanded() ? (
-															<tr>
-																<td
-																	colSpan={table.getVisibleLeafColumns().length}
-																	className="border-b border-r border-neutral-20 first:border-l bg-background"
-																>
-																	{config.renderExpandedRow?.(row.original)}
-																</td>
+																})}
 															</tr>
-														) : null}
-													</Fragment>
-												);
-											})}
-											{paddingBottom > 0 ? (
-												<tr aria-hidden="true">
-													<td
-														style={{ height: paddingBottom }}
-														colSpan={colSpan}
-														className="p-0 border-0"
-													/>
-												</tr>
-											) : null}
-										</Fragment>
-									);
-								})()
-							) : (
-								<tr>
-									<td
-										colSpan={table.getVisibleLeafColumns().length}
-										className="h-24 text-center border-b border-r border-neutral-20 first:border-l"
-									>
-										{config.emptyMessage || "No data found."}
-									</td>
-								</tr>
-							)}
-						</tbody>
-					</table>
+															{hasExpandedRow && row.getIsExpanded() ? (
+																<tr>
+																	<td
+																		colSpan={
+																			table.getVisibleLeafColumns().length
+																		}
+																		className="border-b border-r border-neutral-20 first:border-l bg-background"
+																	>
+																		{config.renderExpandedRow?.(row.original)}
+																	</td>
+																</tr>
+															) : null}
+														</Fragment>
+													);
+												})}
+												{paddingBottom > 0 ? (
+													<tr aria-hidden="true">
+														<td
+															style={{ height: paddingBottom }}
+															colSpan={colSpan}
+															className="p-0 border-0"
+														/>
+													</tr>
+												) : null}
+											</Fragment>
+										);
+									})()
+								) : (
+									<tr>
+										<td
+											colSpan={table.getVisibleLeafColumns().length}
+											className="h-24 text-center border-b border-r border-neutral-20 first:border-l"
+										>
+											{config.emptyMessage ?? "No data found."}
+										</td>
+									</tr>
+								)}
+							</tbody>
+						</table>
+					</div>
 				</div>
-			</div>
+			)}
+			{config.filterModal ? (
+				<FilterModalWrapper
+					open={isFilterOpen}
+					onOpenChange={setIsFilterOpen}
+					title={
+						config.filterModal.title ??
+						config.filterModal.triggerLabel ??
+						"Filter"
+					}
+					description={config.filterModal.description}
+				>
+					{typeof config.filterModal.content === "function"
+						? config.filterModal.content({
+								close: () => setIsFilterOpen(false),
+							})
+						: config.filterModal.content}
+				</FilterModalWrapper>
+			) : null}
 		</div>
 	);
 }

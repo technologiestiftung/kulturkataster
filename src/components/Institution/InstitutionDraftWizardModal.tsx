@@ -12,6 +12,7 @@ import {
 	type StepConfig,
 } from "@/components/HorizontalStepper";
 import { Modal } from "@/components/Modals/Modal";
+import { useRoutedModalClose } from "@/components/Modals/useRoutedModalClose";
 import { useTranslation } from "react-i18next";
 import { getFieldLabel } from "@/lib/i18n/fieldLabels";
 import { InstitutionFormModal } from "@/components/Institution/InstitutionFormModal";
@@ -23,12 +24,16 @@ import {
 } from "@/lib/utils/formUtils";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useInstitutionDraftStore } from "@/lib/store/institutionDraftStore";
+import { useAccountStore } from "@/lib/store/accountStore";
 import { InstitutionReview } from "@/components/Institution/InstitutionReview";
 import { createSubmission } from "@/server/actions/submissions";
+import type { Prisma } from "@/generated/prisma";
 import { SubmissionEntityType, SubmissionType } from "@/generated/prisma";
 import { resolveCategoryIdsFromDraft } from "@/lib/utils/institutionCategoryUtils";
+import { buildSubmissionDiff } from "@/lib/utils/submissionDiff";
 import { Button } from "@/components/ui/button";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
+import { showSuccessToast } from "@/lib/utils/feedbackToast";
 const stepConfigs: StepConfig[] = [
 	{
 		id: "basic",
@@ -111,11 +116,13 @@ const validateStepFieldValue = (
 type InstitutionDraftWizardContentProps = {
 	title?: string;
 	subtitle?: string;
+	onSubmitted?: () => void;
 };
 
 function InstitutionDraftWizardContent({
 	title,
 	subtitle,
+	onSubmitted,
 }: InstitutionDraftWizardContentProps) {
 	const { t } = useTranslation("content");
 	const { t: tEnum } = useTranslation("enumMap");
@@ -130,6 +137,7 @@ function InstitutionDraftWizardContent({
 	const setDraft = useInstitutionDraftStore((state) => state.setDraft);
 	const setStepId = useInstitutionDraftStore((state) => state.setStepId);
 	const resetDraft = useInstitutionDraftStore((state) => state.resetDraft);
+	const upsertSubmission = useAccountStore((state) => state.upsertSubmission);
 	const draftMode = useInstitutionDraftStore((state) => state.mode);
 	const isUpdateReviewOnly = draftMode === "update";
 	const [editSectionId, setEditSectionId] = useState<string | null>(null);
@@ -162,6 +170,17 @@ function InstitutionDraftWizardContent({
 	});
 	const onAddressBlur = handleAddressBlur(addressGeocodeState, geocodeAddress);
 	const onLatLngBlur = handleLatLngBlur(latLngGeocodeState, reverseGeocode);
+	const scrollStepContainerToTop = useCallback(() => {
+		if (typeof window === "undefined") return;
+		const modalContent = document.querySelector(
+			'[data-slot="dialog-content"]',
+		) as HTMLElement | null;
+		if (modalContent) {
+			modalContent.scrollTo({ top: 0, behavior: "auto" });
+			return;
+		}
+		window.scrollTo({ top: 0, behavior: "auto" });
+	}, []);
 
 	const handleStepChange = useCallback(
 		(data: Record<string, unknown>) => {
@@ -186,14 +205,34 @@ function InstitutionDraftWizardContent({
 				typeof entityId === "number" && Number.isFinite(entityId)
 					? entityId
 					: null;
+			const canShareContactPerson = data.consent_contact_listing === true;
 			if (draftMode === "update" && !resolvedEntityId) {
 				throw new Error("Missing institution for update submission.");
 			}
-			const payload = {
-				...rest,
+			const sanitizedRest = { ...rest } as Record<string, unknown>;
+			if (!canShareContactPerson) {
+				delete sanitizedRest.contact_person_first_name;
+				delete sanitizedRest.contact_person_last_name;
+				delete sanitizedRest.contact_person_email;
+				delete sanitizedRest.contact_person_phone;
+			}
+			const payload: Record<string, unknown> = {
+				...sanitizedRest,
 				address: buildAddressFromFormData(data),
 				categoryIds,
 			};
+			const sourceInstitution =
+				draftMode === "update" && data.originalInstitution
+					? (data.originalInstitution as Record<string, unknown>)
+					: undefined;
+			const submissionDiff =
+				draftMode === "update"
+					? buildSubmissionDiff(payload, sourceInstitution)
+					: undefined;
+			const submissionMeta =
+				draftMode === "create" && data.works_for_organization === true
+					? { request_claim_on_approval: true }
+					: undefined;
 			const institutionSubmission = await createSubmission({
 				entityType: SubmissionEntityType.institution,
 				entityId: draftMode === "update" ? resolvedEntityId : null,
@@ -202,8 +241,11 @@ function InstitutionDraftWizardContent({
 						? SubmissionType.update
 						: SubmissionType.create,
 				status: "approval_pending",
-				data: payload,
+				data: payload as Prisma.InputJsonValue,
+				diff: submissionDiff as Prisma.InputJsonValue | undefined,
+				meta: submissionMeta,
 			});
+			upsertSubmission(institutionSubmission);
 			const proposedCategories =
 				typeof newCategory === "string"
 					? Array.from(
@@ -217,7 +259,7 @@ function InstitutionDraftWizardContent({
 					: [];
 
 			if (proposedCategories.length > 0) {
-				await Promise.all(
+				await Promise.allSettled(
 					proposedCategories.map((key) =>
 						createSubmission({
 							entityType: SubmissionEntityType.category,
@@ -237,13 +279,9 @@ function InstitutionDraftWizardContent({
 				);
 			}
 			resetDraft();
-			router.push(
-				toLocalePath(
-					draftMode === "update" ? "/institution" : "/account/institutions",
-				),
-			);
+			onSubmitted?.();
 		},
-		[categories, draftMode, resetDraft, router, toLocalePath],
+		[categories, draftMode, onSubmitted, resetDraft, upsertSubmission],
 	);
 
 	const handleStepSubmit = useCallback(
@@ -1159,7 +1197,7 @@ function InstitutionDraftWizardContent({
 							fields: [
 								{
 									name: "area",
-									label: fieldLabel("area", "Größe der Nutzflächen (m²)"),
+									label: fieldLabel("usableAreaSize", "Nutzfläche in m²"),
 									type: "number",
 									placeholder: t(
 										"institutionDraftWizardModal.form.information.space.areaPlaceholder",
@@ -1279,9 +1317,35 @@ function InstitutionDraftWizardContent({
 			formId: "institution-contact-form",
 			fields: [
 				{
+					name: "consentSection",
+					type: "section",
+					title: t("institutionDraftWizardModal.form.contact.consent.title"),
+					layout: { span: "full" },
+					fields: [
+						{
+							name: "works_for_organization",
+							label: t(
+								"institutionDraftWizardModal.form.contact.consent.worksForOrganization",
+							),
+							type: "checkbox",
+						},
+						{
+							name: "consent_contact_listing",
+							label: t(
+								"institutionDraftWizardModal.form.contact.consent.contactListing",
+							),
+							condition: (formData) => formData.works_for_organization === true,
+							type: "checkbox",
+						},
+					],
+				},
+				{
 					name: "contactSection",
 					type: "section",
 					layout: { span: "full", columns: 2 },
+					condition: (formData) =>
+						formData.works_for_organization === true &&
+						formData.consent_contact_listing === true,
 					fields: [
 						{
 							name: "contact_person_first_name",
@@ -1322,35 +1386,6 @@ function InstitutionDraftWizardContent({
 								"institutionDraftWizardModal.form.contact.phone.placeholder",
 							),
 							layout: { span: "full" },
-						},
-					],
-				},
-				{
-					name: "consentSection",
-					type: "section",
-					title: t("institutionDraftWizardModal.form.contact.consent.title"),
-					layout: { span: "full" },
-					fields: [
-						{
-							name: "works_for_organization",
-							label: t(
-								"institutionDraftWizardModal.form.contact.consent.worksForOrganization",
-							),
-							type: "checkbox",
-						},
-						{
-							name: "consent_contact_listing",
-							label: t(
-								"institutionDraftWizardModal.form.contact.consent.contactListing",
-							),
-							type: "checkbox",
-						},
-						{
-							name: "request_admin_rights",
-							label: t(
-								"institutionDraftWizardModal.form.contact.consent.requestAdminRights",
-							),
-							type: "checkbox",
 						},
 					],
 				},
@@ -1436,6 +1471,10 @@ function InstitutionDraftWizardContent({
 		});
 	}, [currentStepId, isUpdateReviewOnly, setStepValidation]);
 
+	useEffect(() => {
+		scrollStepContainerToTop();
+	}, [currentStepId, scrollStepContainerToTop]);
+
 	return (
 		<div className="container mx-auto max-w-4xl py-10">
 			<div className="mb-8">
@@ -1517,10 +1556,17 @@ export function InstitutionDraftWizardModal({
 	routePath?: string;
 }) {
 	const { t } = useTranslation("content");
+	const closeModal = useRoutedModalClose({
+		returnTo: useInstitutionDraftStore((state) =>
+			state.mode === "update" ? "/institution" : "/account/institutions",
+		),
+	});
 	const storedStepId = useInstitutionDraftStore((state) => state.stepId);
 	const setStepId = useInstitutionDraftStore((state) => state.setStepId);
 	const draftMode = useInstitutionDraftStore((state) => state.mode);
 	const isUpdateReviewOnly = draftMode === "update";
+	const submitReturnTo =
+		draftMode === "update" ? "/institution" : "/account/institutions";
 	const reviewOnlySteps = useMemo(
 		() => stepConfigs.filter((step) => step.id === "review"),
 		[],
@@ -1528,6 +1574,17 @@ export function InstitutionDraftWizardModal({
 	const resolvedSteps = isUpdateReviewOnly ? reviewOnlySteps : stepConfigs;
 	const isValidStep = stepConfigs.some((step) => step.id === initialStepId);
 	const resolvedStepId = isValidStep ? initialStepId : storedStepId;
+	const handleSubmitted = useCallback(() => {
+		closeModal();
+		showSuccessToast(
+			t("institutionDraftWizardModal.feedback.submit.title", {
+				defaultValue: "Submission sent",
+			}),
+			t("institutionDraftWizardModal.feedback.submit.description", {
+				defaultValue: "Your submission has been sent for review.",
+			}),
+		);
+	}, [closeModal, t]);
 
 	useEffect(() => {
 		if (isUpdateReviewOnly) {
@@ -1547,6 +1604,7 @@ export function InstitutionDraftWizardModal({
 			titleClassName="sr-only"
 			variant="fullscreen"
 			routePath={routePath}
+			returnTo={submitReturnTo}
 			closeConfirmation={{
 				title: t("institutionModalCloseConfirmation.title"),
 				description: t("institutionModalCloseConfirmation.description"),
@@ -1556,25 +1614,37 @@ export function InstitutionDraftWizardModal({
 			containerClassName="p-0 md:p-0 mt-0 md:mt-0"
 			contentWrapperClassName="flex-1"
 			contentClassName=""
-			content={
-				<div className="flex min-h-full flex-col bg-background py-10 space-y-10">
-					<HorizontalStepper
-						steps={resolvedSteps}
-						initialStepId={isUpdateReviewOnly ? "review" : resolvedStepId}
-					>
-						<InstitutionDraftWizardContent
-							title={t("institutionDraftWizardModal.dialog.create.title")}
-							subtitle={t("institutionDraftWizardModal.dialog.create.subtitle")}
-						/>
-					</HorizontalStepper>
-				</div>
-			}
-		/>
+		>
+			<div className="flex min-h-full flex-col bg-background py-10 space-y-10">
+				<HorizontalStepper
+					steps={resolvedSteps}
+					initialStepId={isUpdateReviewOnly ? "review" : resolvedStepId}
+				>
+					<InstitutionDraftWizardContent
+						title={t("institutionDraftWizardModal.dialog.create.title")}
+						subtitle={t("institutionDraftWizardModal.dialog.create.subtitle")}
+						onSubmitted={handleSubmitted}
+					/>
+				</HorizontalStepper>
+			</div>
+		</Modal>
 	);
 }
 
 export function InstitutionDraftWizardEditModal() {
 	const { t } = useTranslation("content");
+	const closeModal = useRoutedModalClose({ returnTo: "/institution" });
+	const handleSubmitted = useCallback(() => {
+		closeModal();
+		showSuccessToast(
+			t("institutionDraftWizardModal.feedback.submit.title", {
+				defaultValue: "Submission sent",
+			}),
+			t("institutionDraftWizardModal.feedback.submit.description", {
+				defaultValue: "Your submission has been sent for review.",
+			}),
+		);
+	}, [closeModal, t]);
 	const reviewOnlySteps = useMemo(
 		() => stepConfigs.filter((step) => step.id === "review"),
 		[],
@@ -1584,6 +1654,7 @@ export function InstitutionDraftWizardEditModal() {
 			title={t("institutionDraftWizardModal.dialog.edit.title")}
 			titleClassName="sr-only"
 			variant="fullscreen"
+			returnTo="/institution"
 			closeConfirmation={{
 				title: t("institutionModalCloseConfirmation.title"),
 				description: t("institutionModalCloseConfirmation.description"),
@@ -1593,16 +1664,16 @@ export function InstitutionDraftWizardEditModal() {
 			containerClassName="p-0 md:p-0 mt-0 md:mt-0"
 			contentWrapperClassName="flex-1"
 			contentClassName=""
-			content={
-				<div className="flex min-h-full flex-col bg-background py-10 space-y-10">
-					<HorizontalStepper steps={reviewOnlySteps} initialStepId="review">
-						<InstitutionDraftWizardContent
-							title={t("institutionDraftWizardModal.dialog.edit.title")}
-							subtitle={t("institutionDraftWizardModal.dialog.edit.subtitle")}
-						/>
-					</HorizontalStepper>
-				</div>
-			}
-		/>
+		>
+			<div className="flex min-h-full flex-col bg-background py-10 space-y-10">
+				<HorizontalStepper steps={reviewOnlySteps} initialStepId="review">
+					<InstitutionDraftWizardContent
+						title={t("institutionDraftWizardModal.dialog.edit.title")}
+						subtitle={t("institutionDraftWizardModal.dialog.edit.subtitle")}
+						onSubmitted={handleSubmitted}
+					/>
+				</HorizontalStepper>
+			</div>
+		</Modal>
 	);
 }

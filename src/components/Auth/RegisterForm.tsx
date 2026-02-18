@@ -264,6 +264,7 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
 						requiredMessage: t("auth.validation.passwordRequired"),
 						disabled: isLoading,
 						layout: { span: "full" },
+						afterField: t("auth.accountEdit.passwordRequirements"),
 						placeholder: t("auth.register.passwordPlaceholder"),
 						validate: (value) => {
 							if (typeof value !== "string" || value.length === 0) {

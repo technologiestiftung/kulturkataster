@@ -6,6 +6,11 @@ export const RELATION_FIELD_ALIASES: Record<string, string> = {
 	userIds: "users",
 	groupIds: "groups",
 	contact_person_id: "contact_person",
+	contact_person_name: "contact_person",
+	contact_person_first_name: "contact_person",
+	contact_person_last_name: "contact_person",
+	contact_person_email: "contact_person",
+	contact_person_phone: "contact_person",
 	funding_source: "funding_sources",
 };
 

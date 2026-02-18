@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { UserClaimReviewModal } from "@/components/Users/UserClaimReviewModal";
 import { reviewClaimSubmission } from "@/server/actions/submissions";
+import { showSuccessToast } from "@/lib/utils/feedbackToast";
 
 vi.mock("react-i18next", () => ({
 	useTranslation: () => ({
@@ -16,7 +17,18 @@ vi.mock("next/navigation", () => ({
 }));
 
 vi.mock("@/components/Modals/Modal", () => ({
-	Modal: ({ content }: { content: React.ReactNode }) => <div>{content}</div>,
+	Modal: ({
+		children,
+		errorDialog,
+	}: {
+		children: React.ReactNode;
+		errorDialog?: { open?: boolean; description?: string };
+	}) => (
+		<div>
+			{children}
+			{errorDialog?.open ? <div>{errorDialog.description}</div> : null}
+		</div>
+	),
 }));
 
 vi.mock("@/components/InfoWrapper/InfoWrapper", () => ({
@@ -51,13 +63,19 @@ vi.mock("@/server/actions/submissions", () => ({
 	reviewClaimSubmission: vi.fn(),
 }));
 
+vi.mock("@/lib/utils/feedbackToast", () => ({
+	showSuccessToast: vi.fn(),
+}));
+
 const mockedReviewClaimSubmission = vi.mocked(reviewClaimSubmission);
+const mockedShowSuccessToast = vi.mocked(showSuccessToast);
 
 describe("UserClaimReviewModal", () => {
 	beforeEach(() => {
 		refreshMock.mockReset();
 		mockedReviewClaimSubmission.mockReset();
 		mockedReviewClaimSubmission.mockResolvedValue({} as never);
+		mockedShowSuccessToast.mockReset();
 	});
 
 	it("renders claim details and approves a claim", async () => {
@@ -70,6 +88,7 @@ describe("UserClaimReviewModal", () => {
 							id: 12,
 							entity_id: 99,
 							type: "claim",
+							created_at: "2024-01-01T12:00:00Z",
 						} as never,
 						institution: {
 							name: "Institution Alpha",
@@ -106,6 +125,7 @@ describe("UserClaimReviewModal", () => {
 			});
 		});
 		expect(refreshMock).toHaveBeenCalled();
+		expect(mockedShowSuccessToast).toHaveBeenCalledTimes(1);
 	});
 
 	it("rejects a claim and removes it from the list", async () => {
@@ -118,6 +138,7 @@ describe("UserClaimReviewModal", () => {
 							id: 33,
 							entity_id: 100,
 							type: "claim",
+							created_at: "2024-01-02T12:00:00Z",
 						} as never,
 						institution: {
 							name: "Institution Beta",
@@ -153,5 +174,44 @@ describe("UserClaimReviewModal", () => {
 				screen.queryByText("Institution Beta", { exact: false }),
 			).toBeNull();
 		});
+		expect(mockedShowSuccessToast).toHaveBeenCalledTimes(1);
+	});
+
+	it("shows an error dialog when claim review fails", async () => {
+		mockedReviewClaimSubmission.mockRejectedValueOnce(new Error("boom"));
+
+		render(
+			<UserClaimReviewModal
+				routePath="/account/users/1/review"
+				claims={[
+					{
+						submission: {
+							id: 44,
+							entity_id: 101,
+							type: "claim",
+							created_at: "2024-01-03T12:00:00Z",
+						} as never,
+						institution: {
+							name: "Institution Gamma",
+							address: null,
+							users: [],
+						} as never,
+						claimant: null,
+					},
+				]}
+			/>,
+		);
+
+		fireEvent.click(screen.getByRole("button", { name: /annehmen/i }));
+
+		await waitFor(() => {
+			expect(
+				screen.getByText(
+					"Please try again or contact support if the issue persists.",
+				),
+			).toBeInTheDocument();
+		});
+		expect(mockedShowSuccessToast).not.toHaveBeenCalled();
+		expect(refreshMock).not.toHaveBeenCalled();
 	});
 });

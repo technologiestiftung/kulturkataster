@@ -297,7 +297,7 @@ export function LocationSearch({
 						className="cursor-pointer"
 						onClick={onFilterClick}
 					>
-						<FilterIcon className="size-6! stroke-foreground" />
+						<FilterIcon className="size-5! " />
 					</ButtonWithTooltip>
 				)}
 
@@ -308,7 +308,7 @@ export function LocationSearch({
 				<SelectableOptionsList
 					options={resultOptions}
 					selectedValues={[]}
-					showCheckbox={false}
+					showCheckbox={true}
 					variant="search"
 					headingLabel={t("search.suggestions")}
 					listId={listId}

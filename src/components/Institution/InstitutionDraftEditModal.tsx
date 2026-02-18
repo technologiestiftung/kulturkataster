@@ -8,6 +8,8 @@ import {
 	buildStreetLine,
 } from "@/lib/utils/formUtils";
 import { institutionSubmissionToDraft } from "@/lib/utils/institutionSubmissionUtils";
+import { buildSubmissionDiff } from "@/lib/utils/submissionDiff";
+import type { Prisma } from "@/generated/prisma";
 import {
 	deleteSubmission,
 	getSubmissionById,
@@ -18,6 +20,7 @@ import type { Category, FilterState } from "@/types";
 import type { Submission } from "@/types/submission";
 import { useRouter } from "next/navigation";
 import { AlertDialog } from "../ui/alert-dialog";
+import { showSuccessToast } from "@/lib/utils/feedbackToast";
 
 type InstitutionDraftEditModalProps = {
 	returnTo?: string;
@@ -45,7 +48,6 @@ export function InstitutionDraftEditModal({
 	);
 	const upsertSubmission = useAccountStore((state) => state.upsertSubmission);
 	const removeSubmission = useAccountStore((state) => state.removeSubmission);
-	const setAlertDialog = useAccountStore((state) => state.setAlertDialog);
 	const categories = useAccountStore((state) => state.categories);
 	const router = useRouter();
 
@@ -90,14 +92,25 @@ export function InstitutionDraftEditModal({
 
 	const handleSubmit = useCallback(
 		async (data: Record<string, unknown>) => {
-			const payload = {
+			const payload: Record<string, unknown> = {
 				...data,
 				address: buildAddressFromFormData(data),
 			};
 			if (!resolvedSubmissionWithFallback || !hasSubmissionId) return;
+			const sourceInstitution =
+				resolvedSubmissionWithFallback.type === "update" &&
+				typeof payload.originalInstitution === "object" &&
+				payload.originalInstitution !== null
+					? (payload.originalInstitution as Record<string, unknown>)
+					: undefined;
+			const submissionDiff =
+				resolvedSubmissionWithFallback.type === "update"
+					? buildSubmissionDiff(payload, sourceInstitution)
+					: undefined;
 			const updated = await updateSubmission({
 				id: submissionId,
-				data: payload,
+				data: payload as Prisma.InputJsonValue,
+				diff: submissionDiff as Prisma.InputJsonValue | undefined,
 			});
 			if (updated) {
 				upsertSubmission(updated);
@@ -123,14 +136,14 @@ export function InstitutionDraftEditModal({
 		try {
 			await deleteSubmission(submissionId);
 			removeSubmission(submissionId);
-			setAlertDialog({
-				title: t("institutionDraftEditModal.delete.successTitle", {
+			showSuccessToast(
+				t("institutionDraftEditModal.delete.successTitle", {
 					defaultValue: "Entwurf gelöscht",
 				}),
-				description: t("institutionDraftEditModal.delete.successDescription", {
+				t("institutionDraftEditModal.delete.successDescription", {
 					defaultValue: "Die Einreichung wurde gelöscht.",
 				}),
-			});
+			);
 			if (shouldRefresh) {
 				router.refresh();
 			}
@@ -143,7 +156,6 @@ export function InstitutionDraftEditModal({
 		isDeleting,
 		removeSubmission,
 		router,
-		setAlertDialog,
 		shouldRefresh,
 		submissionId,
 		t,

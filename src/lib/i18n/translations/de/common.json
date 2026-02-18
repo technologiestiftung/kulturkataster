@@ -47,6 +47,56 @@
 				"logout": "Abmelden",
 				"profileSettings": "Profileinstellungen"
 			},
+			"activity": {
+				"actions": {
+					"create": "erstellt",
+					"delete": "gelöscht",
+					"submission_review_approved": "freigegeben",
+					"submission_review_completed": "abgeschlossen",
+					"submission_review_rejected": "abgelehnt",
+					"update": "aktualisiert"
+				},
+				"empty": "Sie haben noch keine Aktivitäten.",
+				"emptyHint": "Folgende Aktionen können Sie hier durchführen.",
+				"emptyActions": {
+					"claimLocations": "Meine Orte anfragen",
+					"contribute": "Mitwirken"
+				},
+				"entities": {
+					"address": "Adresse #{{id}}",
+					"category": "Kategorie #{{id}}",
+					"contact_person": "Ansprechperson #{{id}}",
+					"funding_source": "Finanzierungsquelle #{{id}}",
+					"group": "Gruppe #{{id}}",
+					"institution": "Kulturort #{{id}}",
+					"role": "Rolle #{{id}}",
+					"role_field_permission": "Feldberechtigung #{{id}}",
+					"role_table_permission": "Tabellenberechtigung #{{id}}",
+					"submission": "Einreichung #{{id}}",
+					"tag": "Tag #{{id}}",
+					"user": "Nutzer*in ({{email}})"
+				},
+				"itemWithName": "{{item}}: {{name}}",
+				"relationPreposition": "zu",
+				"templates": {
+					"assign": "<actor>{{actor}}</actor> hat <secondary>{{secondaryEntity}}</secondary> <primary>{{primaryEntity}}</primary> {{action}}",
+					"create": "<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> {{action}}",
+					"statusChange": "<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> {{action}} <from>{{from}}</from> -> <to>{{to}}</to>",
+					"statusChangeNoDiff": "<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> {{action}}",
+					"statusChangeWithSecondary": "<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> für <secondary>{{secondaryEntity}}</secondary> {{action}}  <from>{{from}}</from> -> <to>{{to}}</to>",
+					"statusChangeWithSecondaryNoDiff": "<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> für <secondary>{{secondaryEntity}}</secondary> {{action}}"
+				},
+				"unknown": "Unbekannt",
+				"status": {
+					"approved": "Genehmigt",
+					"completed": "Abgeschlossen",
+					"pending": "Ausstehend",
+					"rejected": "Abgelehnt"
+				},
+				"statusAria": "Status: {{status}}",
+				"hiddenActor": "Redaktion",
+				"system": "System"
+			},
 			"alreadyAccount": "Haben Sie bereits ein Konto beim Kulturkataster?",
 			"backToMap": "Zur Karte",
 			"comingSoon": "Ihr Kontobereich ist bald verfügbar.",
@@ -87,6 +137,7 @@
 			"namePlaceholder": "Vor- und Nachname",
 			"passwordLabel": "Passwort",
 			"passwordPlaceholder": "Neues Passwort",
+			"passwordRequirements": "Passwort muss mindestens 8 Zeichen lang sein.",
 			"submit": "Speichern",
 			"submitting": "Wird gespeichert...",
 			"successDescription": "Ihre persönlichen Angaben wurden erfolgreich aktualisiert.",
@@ -111,6 +162,7 @@
 		"login": {
 			"emailLabel": "E-Mail",
 			"emailPlaceholder": "name@beispiel.de",
+			"invalidCredentials": "Ungültige Anmeldedaten. Bitte überprüfen Sie Ihre E-Mail-Adresse und Ihr Passwort.",
 			"errorFallback": "Anmeldung fehlgeschlagen.",
 			"forgotPassword": "Passwort vergessen?",
 			"inactive": "Ihr Konto ist noch nicht freigeschaltet. Bitte wenden Sie sich an den Support.",
@@ -194,6 +246,7 @@
 			"missingToken": "Dieser Link ist ungültig oder abgelaufen. Bitte fordern Sie eine neue Einladung an.",
 			"newPasswordLabel": "Neues Passwort",
 			"newPasswordPlaceholder": "Passwort erstellen",
+			"passwordRequirements": "Passwort muss mindestens 8 Zeichen lang sein.",
 			"submit": "Passwort festlegen",
 			"submitting": "Passwort wird festgelegt...",
 			"subtitle": "Erstellen Sie ein Passwort, um Ihr Konto zu nutzen.",
@@ -227,7 +280,7 @@
 	"cancel": "Abbrechen",
 	"close": "Schließen",
 	"closeSidebar": "Seitenleiste schließen",
-	"confirm": "Bestätigen",
+	"confirm": "Schließen",
 	"delete": "Löschen",
 	"download": {
 		"description": "Laden Sie die Daten der Kulturorte im JSON-Format herunter. Diese Daten können für eigene Anwendungen oder Analysen verwendet werden.",
@@ -289,6 +342,7 @@
 		}
 	},
 	"headerLandmark": "Seitennavigation",
+	"hello": "",
 	"here": "hier",
 	"info": {
 		"open": "Infos öffnen",
@@ -337,18 +391,18 @@
 		"protectionStatus": "Sicherungsstatus",
 		"sharedUseAllowed": "Offen für Raumanfragen?",
 		"sharedUseAudience": "Verfügbar für Zielgruppe/Sparte",
-		"sharedUseContactPerson": "Kontakt für Raumanfragen",
+		"sharedUseContactPerson": "Kontakt xxfür Raumanfragen",
 		"sharedUseInfo": "Beschreibung Räume/Flächen für Mehrfachnutzung",
 		"showDetails": "Details anzeigen",
 		"source": "Datenquelle",
-		"status": "Stand",
+		"status": "Status",
 		"subcategories": "Unterkategorien",
 		"subcategory": "Unterkategorie",
 		"subtitle": "Subtitle",
 		"support": "Förderung",
 		"supportType": "Art der Förderung",
 		"unnamed": "Unbenannter Kulturort",
-		"updatedAt": "Stand",
+		"updatedAt": "Aktualisiert am",
 		"usableAreaSize": "Größe der Nutzflächen (m²)",
 		"utilizationStatus": "Nutzungsstatus",
 		"website": "Website"
@@ -366,9 +420,9 @@
 	"loading": "Laden",
 	"mainContent": "Hauptinhalt",
 	"map": {
-		"addressPickerHint": "Bewegen Sie die Karte, um den Pin zu positionieren. Übernehmen Sie die Position anschließend in das Formular.",
 		"addressPickerApply": "Position übernehmen",
 		"addressPickerApplyLoading": "Position wird übernommen...",
+		"addressPickerHint": "Bewegen Sie die Karte, um den Pin zu positionieren. Übernehmen Sie die Position anschließend in das Formular.",
 		"availableLayers": "Verfügbare Ebenen",
 		"closeLayerTree": "Fachkarten schließen",
 		"geolocate": "Meinen Standort finden",
@@ -414,6 +468,7 @@
 		},
 		"filtersTitle": "Filter",
 		"resultsCount": "{{count}} Ergebnisse",
+		"resultsCountNumber": "{{number}} Ergebnisse",
 		"selectedCount": "{{count}} ausgewählt",
 		"selectedMore": "+{{count}} weitere",
 		"sort": {
@@ -445,5 +500,20 @@
 		"number": "+49 (0) 30 3030 444 60"
 	},
 	"unknown": "Unbekannt",
+	"venue": {
+		"address": "",
+		"backToMap": "",
+		"contact": "",
+		"details": "",
+		"email": "",
+		"funding": "",
+		"notFound": "",
+		"organization": "",
+		"parent": "",
+		"phone": "",
+		"support": "",
+		"unnamed": "",
+		"website": ""
+	},
 	"yes": "Ja"
 }

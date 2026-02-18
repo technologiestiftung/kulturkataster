@@ -2,7 +2,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { AccountEditForm } from "@/components/Account/AccountEditForm";
-import { updateUser, removeUser } from "@/server/actions/users";
+import { updateUser, deleteUser } from "@/server/actions/users";
 import { updateMyPassword, logout } from "@/server/actions/auth";
 
 vi.mock("react-i18next", () => ({
@@ -31,7 +31,7 @@ vi.mock("idb-keyval", () => ({
 
 vi.mock("@/server/actions/users", () => ({
 	updateUser: vi.fn(),
-	removeUser: vi.fn(),
+	deleteUser: vi.fn(),
 }));
 
 vi.mock("@/server/actions/auth", () => ({
@@ -40,14 +40,14 @@ vi.mock("@/server/actions/auth", () => ({
 }));
 
 const mockedUpdateUser = vi.mocked(updateUser);
-const mockedRemoveUser = vi.mocked(removeUser);
+const mockedDeleteUser = vi.mocked(deleteUser);
 const mockedUpdatePassword = vi.mocked(updateMyPassword);
 const mockedLogout = vi.mocked(logout);
 
 describe("AccountEditForm", () => {
 	beforeEach(() => {
 		mockedUpdateUser.mockReset();
-		mockedRemoveUser.mockReset();
+		mockedDeleteUser.mockReset();
 		mockedUpdatePassword.mockReset();
 		mockedLogout.mockReset();
 		replaceMock.mockReset();
@@ -169,7 +169,7 @@ describe("AccountEditForm", () => {
 	});
 
 	it("deletes profile after confirmation", async () => {
-		mockedRemoveUser.mockResolvedValue({ id: "user-1" } as any);
+		mockedDeleteUser.mockResolvedValue({ id: "user-1" } as any);
 		mockedLogout.mockResolvedValue({ ok: true });
 
 		render(
@@ -189,7 +189,7 @@ describe("AccountEditForm", () => {
 		);
 
 		await waitFor(() => {
-			expect(mockedRemoveUser).toHaveBeenCalledWith("user-1");
+			expect(mockedDeleteUser).toHaveBeenCalledWith("user-1");
 			expect(mockedLogout).toHaveBeenCalled();
 			expect(replaceMock).toHaveBeenCalledWith("/de/");
 		});

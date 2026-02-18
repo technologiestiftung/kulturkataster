@@ -20,6 +20,7 @@ export default async function AccountLayout({ children }: AccountLayoutProps) {
 		categories,
 		institutions,
 		submissions,
+		entityAudits,
 		institutionFieldPermissions,
 	} = accountData;
 
@@ -37,17 +38,15 @@ export default async function AccountLayout({ children }: AccountLayoutProps) {
 		getTableScope(ctx, "category", "update") === "all";
 	const institutionPermissions = {
 		create: canTable(ctx, "institution", "create"),
-		update:
-			canTable(ctx, "institution", "update") &&
-			getTableScope(ctx, "institution", "update") === "all",
-		delete:
-			canTable(ctx, "institution", "delete") &&
-			getTableScope(ctx, "institution", "delete") === "all",
+		update: canTable(ctx, "institution", "update"),
+		delete: canTable(ctx, "institution", "delete"),
 		createSubmission: canTable(ctx, "submission", "create"),
+		reviewSubmission: canTable(ctx, "submission", "update"),
 	};
+	const canReadActivity = canTable(ctx, "entity_audit", "read");
 
 	const allowedTabs = [
-		"activity",
+		canReadActivity ? "activity" : null,
 		canTable(ctx, "institution", "read") ? "institutions" : null,
 		hasUserAllScope ? "users" : null,
 		hasGroupAllScope ? "groups" : null,
@@ -65,6 +64,7 @@ export default async function AccountLayout({ children }: AccountLayoutProps) {
 				categories={categories}
 				institutions={institutions}
 				submissions={submissions}
+				entityAudits={entityAudits}
 				institutionPermissions={institutionPermissions}
 				institutionFieldPermissions={institutionFieldPermissions}
 			/>

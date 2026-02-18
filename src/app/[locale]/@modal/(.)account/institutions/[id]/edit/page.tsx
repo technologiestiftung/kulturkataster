@@ -13,7 +13,6 @@ export default async function EditInstitutionModal({
 			institutionId={id}
 			shouldRefresh={false}
 			routePath={`/account/institutions/${id}/edit`}
-			returnTo="/account/institutions"
 		/>
 	);
 }

@@ -28,11 +28,14 @@ vi.mock("@/server/utils/rbac", () => ({
 }));
 
 const listMock = vi.fn().mockResolvedValue([]);
+const listWithSelectWhereMock = vi.fn().mockResolvedValue([]);
 const searchMock = vi.fn().mockResolvedValue([]);
 vi.mock("@/server/data/institutionRepo", () => ({
 	institutionRepo: {
 		list: () => listMock(),
 		listWithSelect: () => listMock(),
+		listWithSelectWhere: (where: Prisma.InstitutionWhereInput) =>
+			listWithSelectWhereMock(where),
 		search: (where: Prisma.InstitutionWhereInput) => searchMock(where),
 		searchWithSelect: (where: Prisma.InstitutionWhereInput) =>
 			searchMock(where),
@@ -58,6 +61,7 @@ vi.mock("@/server/data/addressRepo", () => ({
 describe("server actions: institutions", () => {
 	beforeEach(() => {
 		listMock.mockClear();
+		listWithSelectWhereMock.mockClear();
 		searchMock.mockClear();
 		listWithChildrenMock.mockClear();
 		listDistinctMock.mockClear();
@@ -65,7 +69,12 @@ describe("server actions: institutions", () => {
 
 	it("getInstitutions returns repo list", async () => {
 		await getInstitutions();
-		expect(listMock).toHaveBeenCalledTimes(1);
+		expect(listWithSelectWhereMock).toHaveBeenCalledTimes(1);
+		expect(listWithSelectWhereMock).toHaveBeenCalledWith(
+			expect.objectContaining({
+				status: { in: ["public", "private", "archived"] },
+			}),
+		);
 	});
 
 	it("searchInstitutions returns [] for empty query", async () => {

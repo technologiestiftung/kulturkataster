@@ -31,7 +31,16 @@ export interface DataTableConfig<T> {
 		onClick: () => void;
 	};
 
+	filterModal?: {
+		triggerLabel?: ReactNode;
+		triggerAriaLabel?: string;
+		title?: ReactNode;
+		description?: ReactNode;
+		content: ReactNode | ((api: { close: () => void }) => ReactNode);
+	};
+
 	onEdit?: (row: T) => void;
+	getCanEdit?: (row: T) => boolean;
 	onReview?: (row: T) => void;
 	getCanReview?: (row: T) => boolean;
 	reviewAriaLabel?: string;
@@ -41,6 +50,7 @@ export interface DataTableConfig<T> {
 	enableColumnResizing?: boolean;
 
 	emptyMessage?: string;
+	emptyState?: ReactNode;
 
 	title?: string;
 	subtitle?: string;

@@ -4,11 +4,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getFieldLabel } from "@/lib/i18n/fieldLabels";
 import { DialogTitle } from "@/components/ui/dialog";
-import {
-	RoutedEditorModal,
-	useRoutedModalClose,
-} from "@/components/Modals/RoutedEditorModal";
-import { AlertDialog } from "@/components/ui/alert-dialog";
+import { Modal } from "@/components/Modals/Modal";
+import { useRoutedModalClose } from "@/components/Modals/useRoutedModalClose";
 import { FormWrapper } from "@/components/FormWrapper";
 import type { FormWrapperConfig, FieldConfig } from "@/components/FormWrapper";
 import { useAccountStore } from "@/lib/store/accountStore";
@@ -34,6 +31,7 @@ import { resolveCategoryIdsFromDraft } from "@/lib/utils/institutionCategoryUtil
 import { TFunction } from "i18next";
 import { useInstitutionPrivateFieldResolver } from "@/lib/hooks/useInstitutionPrivateFieldResolver";
 import { applyInstitutionFieldAccess } from "@/lib/utils/institutionFieldAccess";
+import { showSuccessToast } from "@/lib/utils/feedbackToast";
 type InstitutionFormModalProps = {
 	mode: "create" | "edit";
 	institution?: Institution | null;
@@ -122,30 +120,30 @@ const getInitialValues = (resolvedInstitution?: Institution) => {
 			resolvedInstitution?.categories?.map((category) => String(category.id)) ??
 			[],
 		categoryFilters: buildCategoryFilterState(resolvedInstitution?.categories),
-		utilization_status: resolvedInstitution?.utilization_status ?? "",
+		utilization_status: resolvedInstitution?.utilization_status ?? undefined,
 		utilization_status_info: resolvedInstitution?.utilization_status_info ?? "",
-		protection_status: resolvedInstitution?.protection_status ?? "",
+		protection_status: resolvedInstitution?.protection_status ?? undefined,
 		protection_status_info: resolvedInstitution?.protection_status_info ?? "",
 		website: resolvedInstitution?.website ?? "",
 		email: resolvedInstitution?.email ?? "",
 		phone: resolvedInstitution?.phone ?? "",
-		contact_person_name:
-			resolvedInstitution?.contact_person?.first_name &&
-			resolvedInstitution?.contact_person?.last_name
-				? `${resolvedInstitution.contact_person.first_name} ${resolvedInstitution.contact_person.last_name}`
-				: "",
+		contact_person_first_name:
+			resolvedInstitution?.contact_person?.first_name ?? "",
+		contact_person_last_name:
+			resolvedInstitution?.contact_person?.last_name ?? "",
 		contact_person_email: resolvedInstitution?.contact_person?.email ?? "",
 		contact_person_phone: resolvedInstitution?.contact_person?.phone ?? "",
 		legal_form: resolvedInstitution?.legal_form ?? "",
-		funding_type: resolvedInstitution?.funding_type ?? "",
+		funding_type: resolvedInstitution?.funding_type ?? undefined,
 		funding_sources:
 			resolvedInstitution?.funding_sources?.map((source) => ({
 				source_name: source.source_name ?? "",
 				description: source.description ?? "",
 			})) ?? [],
-		owner_type: resolvedInstitution?.owner_type ?? "",
+		owner_type: resolvedInstitution?.owner_type ?? undefined,
 		owner_name: resolvedInstitution?.owner_name ?? "",
-		rental_contract_type: resolvedInstitution?.rental_contract_type ?? "",
+		rental_contract_type:
+			resolvedInstitution?.rental_contract_type ?? undefined,
 		rental_contract_end: resolvedInstitution?.rental_contract_end ?? "",
 		established_since: resolvedInstitution?.established_since ?? "",
 		established_until: resolvedInstitution?.established_until ?? "",
@@ -166,14 +164,6 @@ const getDialogTitle = (
 	mode === "create"
 		? t("institutionFormModal.dialog.title.create")
 		: t("institutionFormModal.dialog.title.edit");
-
-const renderNotFoundDialog = (t: (key: string) => string) => (
-	<AlertDialog
-		status="error"
-		title={t("institutionFormModal.dialog.notFound.title")}
-		description={t("institutionFormModal.dialog.notFound.description")}
-	/>
-);
 
 const renderDialogBody = (
 	formConfig: FormWrapperConfig,
@@ -548,11 +538,24 @@ const buildInstitutionFormConfig = ({
 						layout: { span: "full" },
 					},
 					{
-						name: "contact_person_name",
-						label: fieldLabel("contact_person_name", "Contact Person Name"),
+						name: "contact_person_first_name",
+						label: fieldLabel(
+							"contact_person_first_name",
+							"Contact Person First Name",
+						),
 						type: "text",
-						placeholder: "e.g. Max Mustermann",
-						layout: { span: "full" },
+						placeholder: "e.g. Max",
+						layout: { span: "half" },
+					},
+					{
+						name: "contact_person_last_name",
+						label: fieldLabel(
+							"contact_person_last_name",
+							"Contact Person Last Name",
+						),
+						type: "text",
+						placeholder: "e.g. Mustermann",
+						layout: { span: "half" },
 					},
 					{
 						name: "contact_person_email",
@@ -897,7 +900,7 @@ export function InstitutionFormModal({
 	mode,
 	institution,
 	returnTo,
-	onClose,
+	onClose: _onClose,
 	routePath,
 	onSubmit,
 	initialValues,
@@ -914,7 +917,6 @@ export function InstitutionFormModal({
 	const { t } = useTranslation("content");
 	const { t: tEnum } = useTranslation("enumMap");
 	const { isPrivateField } = useInstitutionPrivateFieldResolver();
-	const setAlertDialog = useAccountStore((state) => state.setAlertDialog);
 	const institutionFieldPermissions = useAccountStore(
 		(state) => state.institutionFieldPermissions,
 	);
@@ -971,10 +973,7 @@ export function InstitutionFormModal({
 		}
 	}, []);
 
-	const handleClose = useRoutedModalClose({
-		returnTo: returnTo ?? returnTo,
-		onClose,
-	});
+	const handleClose = useRoutedModalClose({ returnTo });
 
 	const resolvedInstitutionWithFallback = institution ?? undefined;
 	const showNotFoundWithFallback =
@@ -988,10 +987,7 @@ export function InstitutionFormModal({
 			nextMode === "create"
 				? "institutionFormModal.feedback.create"
 				: "institutionFormModal.feedback.update";
-		setAlertDialog({
-			title: t(`${keyPrefix}.title`),
-			description: t(`${keyPrefix}.description`),
-		});
+		showSuccessToast(t(`${keyPrefix}.title`), t(`${keyPrefix}.description`));
 	};
 
 	const {
@@ -1091,27 +1087,27 @@ export function InstitutionFormModal({
 		};
 	}, [formConfig, institutionFieldPermissions, mode, permissionContext]);
 
-	if (showNotFoundWithFallback) {
-		return renderNotFoundDialog(t);
-	}
+	const autoCloseError = showNotFoundWithFallback
+		? {
+				active: true,
+				title: t("institutionFormModal.dialog.notFound.title"),
+				description: t("institutionFormModal.dialog.notFound.description"),
+			}
+		: undefined;
 
 	const formKeyValue = formKey ?? resolvedInstitutionWithFallback?.id ?? mode;
 
 	const handleDelete = useCallback(async () => {
 		if (!onDelete || isDeleting || resolvedSubmitting) return;
 		setIsDeleting(true);
-		let deleteSucceeded = false;
 		try {
-			await onDelete();
-			deleteSucceeded = true;
-			setShowDeleteDialog(false);
 			handleClose();
+			await onDelete();
+			setShowDeleteDialog(false);
 		} catch {
 			// Keep dialog open so the caller can surface and recover from errors.
 		} finally {
-			if (!deleteSucceeded) {
-				setIsDeleting(false);
-			}
+			setIsDeleting(false);
 		}
 	}, [onDelete, isDeleting, resolvedSubmitting, handleClose]);
 
@@ -1137,10 +1133,45 @@ export function InstitutionFormModal({
 	]);
 
 	return (
-		<RoutedEditorModal
+		<Modal
+			title={getDialogTitle(mode, t)}
+			variant="editor"
+			hasFooter={false}
 			routePath={routePath}
-			onClose={handleClose}
+			returnTo={returnTo}
 			closeConfirmation={closeConfirmation}
+			autoCloseError={autoCloseError}
+			confirmDialog={
+				showDeleteDialog && onDelete
+					? {
+							open: true,
+							status: "warning",
+							title:
+								deleteConfig?.confirmTitle ??
+								t("institutionFormModal.delete.confirmTitle", {
+									defaultValue: "Delete institution?",
+								}),
+							description:
+								deleteConfig?.confirmDescription ??
+								t("institutionFormModal.delete.confirmDescription", {
+									defaultValue: "This action cannot be undone.",
+								}),
+							confirmLabel:
+								deleteConfig?.confirmLabel ??
+								t("institutionFormModal.delete.confirm"),
+							cancelLabel:
+								deleteConfig?.cancelLabel ??
+								t("institutionFormModal.delete.cancel", {
+									defaultValue: "Cancel",
+								}),
+							onCancel: () => setShowDeleteDialog(false),
+							onConfirm: handleDelete,
+							onOpenChange: (open) => {
+								if (!open) setShowDeleteDialog(false);
+							},
+						}
+					: undefined
+			}
 		>
 			<div className="flex h-full flex-col">
 				<div className="px-6 py-8 md:px-10">
@@ -1150,39 +1181,6 @@ export function InstitutionFormModal({
 					{renderDialogBody(formConfigWithDelete, formKeyValue)}
 				</div>
 			</div>
-			{showDeleteDialog && onDelete && (
-				<AlertDialog
-					open
-					status="warning"
-					title={
-						deleteConfig?.confirmTitle ??
-						t("institutionFormModal.delete.confirmTitle", {
-							defaultValue: "Delete institution?",
-						})
-					}
-					description={
-						deleteConfig?.confirmDescription ??
-						t("institutionFormModal.delete.confirmDescription", {
-							defaultValue: "This action cannot be undone.",
-						})
-					}
-					confirmLabel={
-						deleteConfig?.confirmLabel ??
-						t("institutionFormModal.delete.confirm")
-					}
-					cancelLabel={
-						deleteConfig?.cancelLabel ??
-						t("institutionFormModal.delete.cancel", {
-							defaultValue: "Cancel",
-						})
-					}
-					onCancel={() => setShowDeleteDialog(false)}
-					onConfirm={handleDelete}
-					onOpenChange={(open) => {
-						if (!open) setShowDeleteDialog(false);
-					}}
-				/>
-			)}
-		</RoutedEditorModal>
+		</Modal>
 	);
 }

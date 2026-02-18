@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { AccountStoreInitializer } from "@/components/Account/AccountStoreInitializer";
 import { getAccountBootstrapData } from "@/server/utils/accountBootstrap";
-import { canTable, getTableScope } from "@/server/utils/rbac";
+import { canTable } from "@/server/utils/rbac";
 
 type AccountModalLayoutProps = {
 	children: ReactNode;
@@ -22,17 +22,15 @@ export default async function AccountModalLayout({
 		categories,
 		institutions,
 		submissions,
+		entityAudits,
 		institutionFieldPermissions,
 	} = accountData;
 	const institutionPermissions = {
 		create: canTable(ctx, "institution", "create"),
-		update:
-			canTable(ctx, "institution", "update") &&
-			getTableScope(ctx, "institution", "update") === "all",
-		delete:
-			canTable(ctx, "institution", "delete") &&
-			getTableScope(ctx, "institution", "delete") === "all",
+		update: canTable(ctx, "institution", "update"),
+		delete: canTable(ctx, "institution", "delete"),
 		createSubmission: canTable(ctx, "submission", "create"),
+		reviewSubmission: canTable(ctx, "submission", "update"),
 	};
 
 	return (
@@ -45,6 +43,7 @@ export default async function AccountModalLayout({
 				categories={categories}
 				institutions={institutions}
 				submissions={submissions}
+				entityAudits={entityAudits}
 				institutionPermissions={institutionPermissions}
 				institutionFieldPermissions={institutionFieldPermissions}
 			/>

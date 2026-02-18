@@ -13,11 +13,13 @@ const accountStoreInitialState = {
 	categories: [],
 	institutions: [],
 	submissions: [],
+	entityAudits: [],
 	institutionPermissions: {
 		create: false,
 		update: false,
 		delete: false,
 		createSubmission: false,
+		reviewSubmission: false,
 	},
 	institutionFieldPermissions: {
 		read: [],
@@ -28,7 +30,6 @@ const accountStoreInitialState = {
 	selectedUserId: null,
 	selectedGroupId: null,
 	selectedRoleId: null,
-	alertDialog: null,
 };
 
 export const useAccountStore = create<AccountStoreState>()(
@@ -167,6 +168,10 @@ export const useAccountStore = create<AccountStoreState>()(
 					set((state) => {
 						state.submissions = submissions;
 					}),
+				setEntityAudits: (entityAudits) =>
+					set((state) => {
+						state.entityAudits = entityAudits;
+					}),
 				addSubmission: (submission: Submission) =>
 					set((state) => {
 						state.submissions.unshift(submission);
@@ -188,6 +193,27 @@ export const useAccountStore = create<AccountStoreState>()(
 							(item) => item.id !== id,
 						);
 					}),
+				addEntityAudit: (entityAudit) =>
+					set((state) => {
+						state.entityAudits.unshift(entityAudit);
+					}),
+				upsertEntityAudit: (entityAudit) =>
+					set((state) => {
+						const index = state.entityAudits.findIndex(
+							(item) => item.id === entityAudit.id,
+						);
+						if (index >= 0) {
+							state.entityAudits[index] = entityAudit;
+						} else {
+							state.entityAudits.unshift(entityAudit);
+						}
+					}),
+				removeEntityAudit: (id: number) =>
+					set((state) => {
+						state.entityAudits = state.entityAudits.filter(
+							(item) => item.id !== id,
+						);
+					}),
 				setSelectedUserId: (id: string | null) =>
 					set((state) => {
 						state.selectedUserId = id;
@@ -199,10 +225,6 @@ export const useAccountStore = create<AccountStoreState>()(
 				setSelectedRoleId: (id: number | null) =>
 					set((state) => {
 						state.selectedRoleId = id;
-					}),
-				setAlertDialog: (alert) =>
-					set((state) => {
-						state.alertDialog = alert;
 					}),
 			})),
 		),

@@ -17,6 +17,8 @@ const permissionFieldAliasMap: Record<string, string> = {
 	lat: "address",
 	lng: "address",
 	contact_person_name: "contact_person",
+	contact_person_first_name: "contact_person",
+	contact_person_last_name: "contact_person",
 	contact_person_email: "contact_person",
 	contact_person_phone: "contact_person",
 	contact_person_surname: "contact_person",
