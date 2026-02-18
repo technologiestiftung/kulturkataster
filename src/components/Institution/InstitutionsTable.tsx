@@ -88,14 +88,14 @@ export function InstitutionsTable() {
 		return translated === `funding_source.${value}` ? value : translated;
 	};
 	const getStatusLabel = (status: InstitutionStatus | string) => {
-		if (status === "approval_pending")
-			return t("institutionFormModal.status.approvalPending");
-		if (status === "public") return t("institutionFormModal.status.public");
-		if (status === "private") return t("institutionFormModal.status.private");
-		if (status === "removal_pending")
-			return t("institutionFormModal.status.removalPending");
-		if (status === "draft") return t("institutionFormModal.status.draft");
-		if (status === "archived") return t("institutionFormModal.status.archived");
+		const institutionStatus = tEnum(`institution_status.${status}`);
+		if (institutionStatus !== `institution_status.${status}`) {
+			return institutionStatus;
+		}
+		const submissionStatus = tEnum(`submission_status.${status}`);
+		if (submissionStatus !== `submission_status.${status}`) {
+			return submissionStatus;
+		}
 		return status;
 	};
 
@@ -168,18 +168,18 @@ export function InstitutionsTable() {
 				cell: ({ row }) => {
 					if (row.original.rowKind === "submission") {
 						return (
-							<Badge variant="outline" className="capitalize">
+							<p className="capitalize text-wrap self-center text-center  flex-wrap ">
 								{t(
 									`institutionsTable.type.submission.${row.original.submissionType}`,
 									{ defaultValue: row.original.submissionType },
 								)}
-							</Badge>
+							</p>
 						);
 					}
 					return (
-						<Badge variant="default" className="capitalize">
+						<p className="capitalize text-wrap self-center text-center flex-wrap ">
 							{t("institutionsTable.type.manage")}
-						</Badge>
+						</p>
 					);
 				},
 			},
@@ -774,14 +774,14 @@ export function InstitutionsTable() {
 			canCreateInstitutionDirect || canCreateInstitutionViaSubmission
 				? {
 						label: t("institutionsTable.actions.addInstitution"),
-						onClick: () =>
-							router.push(
-								toLocalePath(
-									canCreateInstitutionDirect
-										? "/account/institutions/new"
-										: "/institution/submission",
-								),
-							),
+						onClick: () => {
+							if (!canCreateInstitutionDirect) {
+								resetDraft();
+								router.push(toLocalePath("/institution/submission"));
+								return;
+							}
+							router.push(toLocalePath("/account/institutions/new"));
+						},
 					}
 				: undefined,
 		secondaryButton: canClaimInstitution

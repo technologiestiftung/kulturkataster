@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
 import { FormWrapper } from "@/components/FormWrapper";
 import type { FormWrapperConfig } from "@/components/FormWrapper";
 import type { FormWrapperFieldConfig } from "@/components/FormWrapper/types";
@@ -32,7 +31,6 @@ import { SubmissionEntityType, SubmissionType } from "@/generated/prisma";
 import { resolveCategoryIdsFromDraft } from "@/lib/utils/institutionCategoryUtils";
 import { buildSubmissionDiff } from "@/lib/utils/submissionDiff";
 import { Button } from "@/components/ui/button";
-import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { showSuccessToast } from "@/lib/utils/feedbackToast";
 const stepConfigs: StepConfig[] = [
 	{
@@ -117,12 +115,14 @@ type InstitutionDraftWizardContentProps = {
 	title?: string;
 	subtitle?: string;
 	onSubmitted?: () => void;
+	onCloseRequest?: () => void;
 };
 
 function InstitutionDraftWizardContent({
 	title,
 	subtitle,
 	onSubmitted,
+	onCloseRequest,
 }: InstitutionDraftWizardContentProps) {
 	const { t } = useTranslation("content");
 	const { t: tEnum } = useTranslation("enumMap");
@@ -136,7 +136,6 @@ function InstitutionDraftWizardContent({
 	const draft = useInstitutionDraftStore((state) => state.draft);
 	const setDraft = useInstitutionDraftStore((state) => state.setDraft);
 	const setStepId = useInstitutionDraftStore((state) => state.setStepId);
-	const resetDraft = useInstitutionDraftStore((state) => state.resetDraft);
 	const upsertSubmission = useAccountStore((state) => state.upsertSubmission);
 	const draftMode = useInstitutionDraftStore((state) => state.mode);
 	const isUpdateReviewOnly = draftMode === "update";
@@ -144,9 +143,8 @@ function InstitutionDraftWizardContent({
 	const [editModalOpen, setEditModalOpen] = useState(false);
 	const hasOpenedFromHash = useRef(false);
 	const draftRef = useRef(draft);
+	const wizardRootRef = useRef<HTMLDivElement | null>(null);
 
-	const router = useRouter();
-	const toLocalePath = useLocalePath();
 	const {
 		currentStepId,
 		currentStepIndex,
@@ -172,12 +170,13 @@ function InstitutionDraftWizardContent({
 	const onLatLngBlur = handleLatLngBlur(latLngGeocodeState, reverseGeocode);
 	const scrollStepContainerToTop = useCallback(() => {
 		if (typeof window === "undefined") return;
-		const modalContent = document.querySelector(
-			'[data-slot="dialog-content"]',
-		) as HTMLElement | null;
-		if (modalContent) {
-			modalContent.scrollTo({ top: 0, behavior: "auto" });
-			return;
+		const root = wizardRootRef.current;
+		if (root) {
+			const modalRoot = root.closest(".Modal-Root") as HTMLElement | null;
+			if (modalRoot) {
+				modalRoot.scrollTo({ top: 0, behavior: "auto" });
+				return;
+			}
 		}
 		window.scrollTo({ top: 0, behavior: "auto" });
 	}, []);
@@ -278,10 +277,9 @@ function InstitutionDraftWizardContent({
 					),
 				);
 			}
-			resetDraft();
 			onSubmitted?.();
 		},
-		[categories, draftMode, onSubmitted, resetDraft, upsertSubmission],
+		[categories, draftMode, onSubmitted, upsertSubmission],
 	);
 
 	const handleStepSubmit = useCallback(
@@ -300,8 +298,8 @@ function InstitutionDraftWizardContent({
 			previousStep();
 			return;
 		}
-		router.push(toLocalePath("/account/institutions"));
-	}, [canGoPrevious, previousStep, router, toLocalePath]);
+		onCloseRequest?.();
+	}, [canGoPrevious, onCloseRequest, previousStep]);
 
 	useEffect(() => {
 		stepSyncSource.current = "stepper";
@@ -1476,7 +1474,10 @@ function InstitutionDraftWizardContent({
 	}, [currentStepId, scrollStepContainerToTop]);
 
 	return (
-		<div className="container mx-auto max-w-4xl py-10">
+		<div
+			ref={wizardRootRef}
+			className="Wizard-Root container mx-auto max-w-4xl py-10"
+		>
 			<div className="mb-8">
 				<h1 className="text-3xl font-bold">{resolvedStepHeader.title}</h1>
 				<p className="text-foreground mt-2">{resolvedStepHeader.subtitle}</p>
@@ -1556,17 +1557,15 @@ export function InstitutionDraftWizardModal({
 	routePath?: string;
 }) {
 	const { t } = useTranslation("content");
-	const closeModal = useRoutedModalClose({
-		returnTo: useInstitutionDraftStore((state) =>
-			state.mode === "update" ? "/institution" : "/account/institutions",
-		),
+	const closeModal = useRoutedModalClose({});
+	const closeToThankYou = useRoutedModalClose({
+		returnTo: "/institution?thankyou=1",
 	});
+	const resetDraft = useInstitutionDraftStore((state) => state.resetDraft);
 	const storedStepId = useInstitutionDraftStore((state) => state.stepId);
 	const setStepId = useInstitutionDraftStore((state) => state.setStepId);
 	const draftMode = useInstitutionDraftStore((state) => state.mode);
 	const isUpdateReviewOnly = draftMode === "update";
-	const submitReturnTo =
-		draftMode === "update" ? "/institution" : "/account/institutions";
 	const reviewOnlySteps = useMemo(
 		() => stepConfigs.filter((step) => step.id === "review"),
 		[],
@@ -1575,7 +1574,7 @@ export function InstitutionDraftWizardModal({
 	const isValidStep = stepConfigs.some((step) => step.id === initialStepId);
 	const resolvedStepId = isValidStep ? initialStepId : storedStepId;
 	const handleSubmitted = useCallback(() => {
-		closeModal();
+		closeToThankYou();
 		showSuccessToast(
 			t("institutionDraftWizardModal.feedback.submit.title", {
 				defaultValue: "Submission sent",
@@ -1584,7 +1583,10 @@ export function InstitutionDraftWizardModal({
 				defaultValue: "Your submission has been sent for review.",
 			}),
 		);
-	}, [closeModal, t]);
+		queueMicrotask(() => {
+			resetDraft();
+		});
+	}, [closeToThankYou, resetDraft, t]);
 
 	useEffect(() => {
 		if (isUpdateReviewOnly) {
@@ -1604,7 +1606,6 @@ export function InstitutionDraftWizardModal({
 			titleClassName="sr-only"
 			variant="fullscreen"
 			routePath={routePath}
-			returnTo={submitReturnTo}
 			closeConfirmation={{
 				title: t("institutionModalCloseConfirmation.title"),
 				description: t("institutionModalCloseConfirmation.description"),
@@ -1624,53 +1625,7 @@ export function InstitutionDraftWizardModal({
 						title={t("institutionDraftWizardModal.dialog.create.title")}
 						subtitle={t("institutionDraftWizardModal.dialog.create.subtitle")}
 						onSubmitted={handleSubmitted}
-					/>
-				</HorizontalStepper>
-			</div>
-		</Modal>
-	);
-}
-
-export function InstitutionDraftWizardEditModal() {
-	const { t } = useTranslation("content");
-	const closeModal = useRoutedModalClose({ returnTo: "/institution" });
-	const handleSubmitted = useCallback(() => {
-		closeModal();
-		showSuccessToast(
-			t("institutionDraftWizardModal.feedback.submit.title", {
-				defaultValue: "Submission sent",
-			}),
-			t("institutionDraftWizardModal.feedback.submit.description", {
-				defaultValue: "Your submission has been sent for review.",
-			}),
-		);
-	}, [closeModal, t]);
-	const reviewOnlySteps = useMemo(
-		() => stepConfigs.filter((step) => step.id === "review"),
-		[],
-	);
-	return (
-		<Modal
-			title={t("institutionDraftWizardModal.dialog.edit.title")}
-			titleClassName="sr-only"
-			variant="fullscreen"
-			returnTo="/institution"
-			closeConfirmation={{
-				title: t("institutionModalCloseConfirmation.title"),
-				description: t("institutionModalCloseConfirmation.description"),
-				confirmLabel: t("institutionModalCloseConfirmation.confirm"),
-				cancelLabel: t("institutionModalCloseConfirmation.cancel"),
-			}}
-			containerClassName="p-0 md:p-0 mt-0 md:mt-0"
-			contentWrapperClassName="flex-1"
-			contentClassName=""
-		>
-			<div className="flex min-h-full flex-col bg-background py-10 space-y-10">
-				<HorizontalStepper steps={reviewOnlySteps} initialStepId="review">
-					<InstitutionDraftWizardContent
-						title={t("institutionDraftWizardModal.dialog.edit.title")}
-						subtitle={t("institutionDraftWizardModal.dialog.edit.subtitle")}
-						onSubmitted={handleSubmitted}
+						onCloseRequest={closeModal}
 					/>
 				</HorizontalStepper>
 			</div>

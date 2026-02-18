@@ -167,7 +167,9 @@ function DialogContent({
 						{children}
 					</div>
 				) : (
-					<div className="overflow-auto h-full w-full tab-ring">{children}</div>
+					<div className="Modal-Root overflow-auto h-full w-full tab-ring">
+						{children}
+					</div>
 				)}
 			</DialogPrimitive.Content>
 		</DialogPortal>

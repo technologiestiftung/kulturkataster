@@ -176,6 +176,7 @@ export function AccountEditForm({
 				await clearAccountStore();
 			}
 			router.replace(toLocalePath("/"));
+			onSuccess?.();
 		} catch (error) {
 			setErrorMessage(
 				error instanceof Error
