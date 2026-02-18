@@ -269,14 +269,14 @@ export function ActivityItem({ activity, index }: ActivityItemProps) {
 					<Trans
 						i18nKey="auth.account.activity.templates.statusChangeWithSecondary"
 						defaults="<actor>{{actor}}</actor> changed <primary>{{primaryEntity}}</primary> status from <from>{{from}}</from> to <to>{{to}}</to> for <secondary>{{secondaryEntity}}</secondary>"
-							values={{
-								actor,
-								action,
-								primaryEntity,
-								secondaryEntity,
-								from: fromLabel,
-								to: toLabel,
-							}}
+						values={{
+							actor,
+							action,
+							primaryEntity,
+							secondaryEntity,
+							from: fromLabel,
+							to: toLabel,
+						}}
 						components={{
 							actor: <span className="body3" />,
 							primary: primaryNode,
@@ -308,13 +308,13 @@ export function ActivityItem({ activity, index }: ActivityItemProps) {
 				<Trans
 					i18nKey="auth.account.activity.templates.statusChange"
 					defaults="<actor>{{actor}}</actor> {{action}} <primary>{{primaryEntity}}</primary> status from <from>{{from}}</from> to <to>{{to}}</to>"
-						values={{
-							actor,
-							action,
-							primaryEntity,
-							from: fromLabel,
-							to: toLabel,
-						}}
+					values={{
+						actor,
+						action,
+						primaryEntity,
+						from: fromLabel,
+						to: toLabel,
+					}}
 					components={{
 						actor: <span className="body3" />,
 						primary: primaryNode,

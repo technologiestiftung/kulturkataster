@@ -81,9 +81,9 @@
 				"templates": {
 					"assign": "<actor>{{actor}}</actor> hat <secondary>{{secondaryEntity}}</secondary> <primary>{{primaryEntity}}</primary> {{action}}",
 					"create": "<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> {{action}}",
-					"statusChange": "<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> {{action}} (<from>{{from}}</from> -> <to>{{to}}</to>)",
+					"statusChange": "<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> {{action}} | <from>{{from}}</from> -> <to>{{to}}</to>",
 					"statusChangeNoDiff": "<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> {{action}}",
-					"statusChangeWithSecondary": "<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> für <secondary>{{secondaryEntity}}</secondary> {{action}} (<from>{{from}}</from> -> <to>{{to}}</to>)",
+					"statusChangeWithSecondary": "<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> für <secondary>{{secondaryEntity}}</secondary> {{action}} | <from>{{from}}</from> -> <to>{{to}}</to>",
 					"statusChangeWithSecondaryNoDiff": "<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> für <secondary>{{secondaryEntity}}</secondary> {{action}}"
 				},
 				"unknown": "Unbekannt",
