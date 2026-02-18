@@ -9,11 +9,56 @@ import { useTranslation } from "react-i18next";
 import Setting from "@/icons/settings.svg";
 import Info from "@/icons/info-circle.svg";
 import { logout } from "@/server/actions/auth";
-import { AccountAlertDialog } from "@/components/Account/AccountAlertDialog";
 import Image from "next/image";
 import { LogOut } from "lucide-react";
 import { Profile } from "@/types";
 import { clearAccountStore } from "@/lib/store/accountStore";
+
+type TabConfig = {
+	value: string;
+	path: string;
+	labelKey: string;
+	defaultLabel: string;
+};
+
+const TAB_CONFIGS: TabConfig[] = [
+	{
+		value: "activity",
+		path: "/activity",
+		labelKey: "auth.account.tabs.activity",
+		defaultLabel: "Activity",
+	},
+	{
+		value: "institutions",
+		path: "/institutions",
+		labelKey: "auth.account.tabs.institutions",
+		defaultLabel: "Institutions",
+	},
+	{
+		value: "users",
+		path: "/users",
+		labelKey: "auth.account.tabs.users",
+		defaultLabel: "Users",
+	},
+	{
+		value: "groups",
+		path: "/groups",
+		labelKey: "auth.account.tabs.groups",
+		defaultLabel: "Groups",
+	},
+	{
+		value: "roles",
+		path: "/roles",
+		labelKey: "auth.account.tabs.roles",
+		defaultLabel: "Roles",
+	},
+	{
+		value: "categories",
+		path: "/categories",
+		labelKey: "auth.account.tabs.categories",
+		defaultLabel: "Categories",
+	},
+];
 
 type AccountLayoutClientProps = {
 	children: ReactNode;
@@ -31,17 +76,19 @@ export function AccountLayoutClient({
 	const toLocalePath = useLocalePath();
 	const pathname = usePathname();
 
+	const visibleTabs = TAB_CONFIGS.filter((tab) =>
+		allowedTabs.includes(tab.value),
+	).map((tab) => ({
+		...tab,
+		label: t(tab.labelKey, { defaultValue: tab.defaultLabel }),
+	}));
+
 	const getCurrentTab = () => {
 		if (allowedTabs.length === 0) return "";
-		if (pathname.includes("/profile")) return "profile";
-		if (pathname.includes("/settings")) return "settings";
-		if (pathname.includes("/users")) return "users";
-		if (pathname.includes("/groups")) return "groups";
-		if (pathname.includes("/roles")) return "roles";
-		if (pathname.includes("/categories")) return "categories";
-		if (pathname.includes("/activity")) return "activity";
-		if (pathname.includes("/institutions")) return "institutions";
-		return allowedTabs[0];
+		return (
+			visibleTabs.find((tab) => pathname.includes(tab.path))?.value ??
+			allowedTabs[0]
+		);
 	};
 
 	const handleTabChange = (value: string) => {
@@ -58,33 +105,15 @@ export function AccountLayoutClient({
 			console.error("Logout failed:", result.error);
 		}
 	};
+
 	const profileSettingsLabel = t("auth.account.actions.profileSettings", {
 		defaultValue: "Profile settings",
 	});
-	const faqLabel = t("auth.account.actions.faq", {
-		defaultValue: "FAQ",
-	});
+	const faqLabel = t("auth.account.actions.faq", { defaultValue: "FAQ" });
 	const logoutLabel = t("auth.account.actions.logout", {
 		defaultValue: "Logout",
 	});
-	const activityTabLabel = t("auth.account.tabs.activity", {
-		defaultValue: "Activity",
-	});
-	const institutionsTabLabel = t("auth.account.tabs.institutions", {
-		defaultValue: "Institutions",
-	});
-	const usersTabLabel = t("auth.account.tabs.users", {
-		defaultValue: "Users",
-	});
-	const groupsTabLabel = t("auth.account.tabs.groups", {
-		defaultValue: "Groups",
-	});
-	const rolesTabLabel = t("auth.account.tabs.roles", {
-		defaultValue: "Roles",
-	});
-	const categoriesTabLabel = t("auth.account.tabs.categories", {
-		defaultValue: "Categories",
-	});
+
 	return (
 		<div className="AccountLayoutClient relative min-h-0 h-full">
 			<div className="absolute h-full w-full">
@@ -97,7 +126,6 @@ export function AccountLayoutClient({
 				/>
 			</div>
 			<div className="absolute flex h-full w-full flex-col">
-				<AccountAlertDialog />
 				<div className="space-y-6 p-10 shrink-0">
 					<div className="mt-16">
 						<h1 className="text-3xl font-bold">
@@ -116,6 +144,7 @@ export function AccountLayoutClient({
 							variant="rounded"
 							size="icon-only"
 							tooltip={profileSettingsLabel}
+							tooltipSide="bottom"
 							className="h-14 w-14"
 							aria-label={profileSettingsLabel}
 							onClick={() => router.push(toLocalePath("/account/edit"))}
@@ -125,6 +154,7 @@ export function AccountLayoutClient({
 						<ButtonWithTooltip
 							variant="rounded"
 							size="icon-only"
+							tooltipSide="bottom"
 							tooltip={faqLabel}
 							className="h-14 w-14"
 							aria-label={faqLabel}
@@ -135,6 +165,7 @@ export function AccountLayoutClient({
 						<ButtonWithTooltip
 							variant="rounded"
 							size="icon-only"
+							tooltipSide="bottom"
 							tooltip={logoutLabel}
 							className="h-14 w-14"
 							aria-label={logoutLabel}
@@ -147,28 +178,11 @@ export function AccountLayoutClient({
 				<div className="Account-section flex flex-col min-h-0 flex-1">
 					<Tabs value={getCurrentTab()} onValueChange={handleTabChange}>
 						<TabsList className="px-10">
-							{allowedTabs.includes("activity") && (
-								<TabsTrigger value="activity">{activityTabLabel}</TabsTrigger>
-							)}
-							{allowedTabs.includes("institutions") && (
-								<TabsTrigger value="institutions">
-									{institutionsTabLabel}
+							{visibleTabs.map((tab) => (
+								<TabsTrigger key={tab.value} value={tab.value}>
+									{tab.label}
 								</TabsTrigger>
-							)}
-							{allowedTabs.includes("users") && (
-								<TabsTrigger value="users">{usersTabLabel}</TabsTrigger>
-							)}
-							{allowedTabs.includes("groups") && (
-								<TabsTrigger value="groups">{groupsTabLabel}</TabsTrigger>
-							)}
-							{allowedTabs.includes("roles") && (
-								<TabsTrigger value="roles">{rolesTabLabel}</TabsTrigger>
-							)}
-							{allowedTabs.includes("categories") && (
-								<TabsTrigger value="categories">
-									{categoriesTabLabel}
-								</TabsTrigger>
-							)}
+							))}
 						</TabsList>
 					</Tabs>
 

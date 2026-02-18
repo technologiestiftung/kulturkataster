@@ -5,11 +5,8 @@ import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/navigation";
 import { DialogTitle } from "@/components/ui/dialog";
-import {
-	RoutedEditorModal,
-	useRoutedModalClose,
-} from "@/components/Modals/RoutedEditorModal";
-import { AlertDialog } from "@/components/ui/alert-dialog";
+import { Modal } from "@/components/Modals/Modal";
+import { useRoutedModalClose } from "@/components/Modals/useRoutedModalClose";
 import { FormWrapper } from "@/components/FormWrapper";
 import type { FormWrapperConfig } from "@/components/FormWrapper";
 import { useAccountStore } from "@/lib/store/accountStore";
@@ -22,7 +19,7 @@ import {
 import {
 	createUser,
 	getUserById,
-	removeUser,
+	deleteUser,
 	sendComplianceResend,
 	sendPasswordReset,
 	updateUser,
@@ -31,6 +28,7 @@ import type { UserStatus } from "@/generated/prisma";
 import type { User } from "@/types/user";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import Mail from "@/icons/mail.svg";
+import { showSuccessToast } from "@/lib/utils/feedbackToast";
 
 type UserFormModalProps = {
 	mode: "create" | "edit";
@@ -402,14 +400,6 @@ const getDialogTitle = (
 		? t("userFormModal.dialog.title.create")
 		: t("userFormModal.dialog.title.edit");
 
-const renderNotFoundDialog = (t: (key: string) => string) => (
-	<AlertDialog
-		status="error"
-		title={t("userFormModal.dialog.notFound.title")}
-		description={t("userFormModal.dialog.notFound.description")}
-	/>
-);
-
 const renderDialogBody = (
 	isWaitingForUser: boolean,
 	t: (key: string) => string,
@@ -422,7 +412,6 @@ const renderDialogBody = (
 			<p className="text-foreground">{t("userFormModal.dialog.loading")}</p>
 		);
 	}
-
 	return <FormWrapper key={resolvedUser?.id ?? mode} config={formConfig} />;
 };
 
@@ -438,14 +427,19 @@ export function UserFormModal({
 	const users = useAccountStore((state) => state.users);
 	const roles = useAccountStore((state) => state.roles);
 	const groups = useAccountStore((state) => state.groups);
-	const setAlertDialog = useAccountStore((state) => state.setAlertDialog);
-	const removeUserFromStore = useAccountStore((state) => state.removeUser);
+	const removeUser = useAccountStore((state) => state.removeUser);
 	const institutions =
 		useInstitutionStore((state) => state.allInstitutions) ?? [];
 	const categories = useInstitutionStore((state) => state.categories) ?? [];
 	const [isDeleting, setIsDeleting] = useState(false);
 	const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-	const handleClose = useRoutedModalClose({ returnTo });
+	const [deleteError, setDeleteError] = useState<{
+		title: string;
+		description: string;
+	} | null>(null);
+	const handleClose = useRoutedModalClose({
+		returnTo,
+	});
 
 	const { resolvedUser, isWaitingForUser, showNotFound } = useResolvedUser(
 		mode,
@@ -457,10 +451,7 @@ export function UserFormModal({
 			nextMode === "create"
 				? "userFormModal.feedback.create"
 				: "userFormModal.feedback.update";
-		setAlertDialog({
-			title: t(`${keyPrefix}.title`),
-			description: t(`${keyPrefix}.description`),
-		});
+		showSuccessToast(t(`${keyPrefix}.title`), t(`${keyPrefix}.description`));
 	};
 	const { handleSubmit, submitting } = useUserSubmit(
 		mode,
@@ -532,74 +523,113 @@ export function UserFormModal({
 		handleSuccess,
 	]);
 
-	if (showNotFound && !isDeleting) {
-		return renderNotFoundDialog(t);
-	}
+	const autoCloseError =
+		showNotFound && !isDeleting
+			? {
+					active: true,
+					title: t("userFormModal.dialog.notFound.title"),
+					description: t("userFormModal.dialog.notFound.description"),
+				}
+			: undefined;
 
 	return (
-		<RoutedEditorModal routePath={routePath} onClose={handleClose}>
+		<Modal
+			title={getDialogTitle(mode, t)}
+			variant="editor"
+			hasFooter={false}
+			routePath={routePath}
+			returnTo={returnTo}
+			autoCloseError={autoCloseError}
+			loadingState={{
+				active: isWaitingForUser,
+				label: t("userFormModal.dialog.loading"),
+			}}
+			confirmDialog={
+				showDeleteDialog && resolvedUser
+					? {
+							open: true,
+							status: "warning",
+							title: t("userFormModal.delete.confirmTitle", {
+								defaultValue: "Delete user?",
+							}),
+							description: t("userFormModal.delete.confirmDescription", {
+								defaultValue:
+									"This will permanently remove the user. This action cannot be undone.",
+							}),
+							confirmLabel: t("userFormModal.delete.confirm"),
+							cancelLabel: t("userFormModal.delete.cancel", {
+								defaultValue: "Cancel",
+							}),
+							onCancel: () => setShowDeleteDialog(false),
+							onConfirm: async () => {
+								if (isDeleting) return;
+								setIsDeleting(true);
+								try {
+									handleClose();
+									await deleteUser(resolvedUser.id);
+									queueMicrotask(() => {
+										removeUser(resolvedUser.id);
+										showSuccessToast(
+											t("userFormModal.feedback.delete.title", {
+												defaultValue: "User deleted",
+											}),
+											t("userFormModal.feedback.delete.description", {
+												defaultValue: "The user has been removed successfully.",
+											}),
+										);
+									});
+								} catch {
+									setDeleteError({
+										title: t("userFormModal.delete.errorTitle", {
+											defaultValue: "Delete failed",
+										}),
+										description: t("userFormModal.delete.errorDescription", {
+											defaultValue:
+												"Please try again or contact support if the issue persists.",
+										}),
+									});
+									setShowDeleteDialog(false);
+								} finally {
+									setIsDeleting(false);
+								}
+							},
+							onOpenChange: (open) => {
+								if (!open) setShowDeleteDialog(false);
+							},
+						}
+					: undefined
+			}
+			errorDialog={
+				deleteError
+					? {
+							open: true,
+							title: deleteError.title,
+							description: deleteError.description,
+							confirmLabel: t("close"),
+							onConfirm: () => setDeleteError(null),
+							onOpenChange: (open) => {
+								if (!open) setDeleteError(null);
+							},
+						}
+					: undefined
+			}
+		>
 			<div className="flex h-full flex-col">
 				<div className="px-6 py-8 md:px-10">
 					<DialogTitle className="title">{getDialogTitle(mode, t)}</DialogTitle>
 				</div>
-				<div className="flex-1 overflow-auto px-6 py-6 md:px-10 flex flex-col">
-					{renderDialogBody(
-						isWaitingForUser,
-						t,
-						formConfig,
-						resolvedUser,
-						mode,
-					)}
-				</div>
+				{autoCloseError ? null : (
+					<div className="flex-1 overflow-auto px-6 py-6 md:px-10 flex flex-col">
+						{renderDialogBody(
+							isWaitingForUser,
+							t,
+							formConfig,
+							resolvedUser,
+							mode,
+						)}
+					</div>
+				)}
 			</div>
-			{showDeleteDialog && resolvedUser && (
-				<AlertDialog
-					open
-					status="warning"
-					title={t("userFormModal.delete.confirmTitle", {
-						defaultValue: "Delete user?",
-					})}
-					description={t("userFormModal.delete.confirmDescription", {
-						defaultValue:
-							"This will permanently remove the user. This action cannot be undone.",
-					})}
-					confirmLabel={t("userFormModal.delete.confirm")}
-					cancelLabel={t("userFormModal.delete.cancel", {
-						defaultValue: "Cancel",
-					})}
-					onCancel={() => setShowDeleteDialog(false)}
-					onConfirm={async () => {
-						if (isDeleting) return;
-						setIsDeleting(true);
-						let deleteSucceeded = false;
-						try {
-							await removeUser(resolvedUser.id);
-							removeUserFromStore(resolvedUser.id);
-							deleteSucceeded = true;
-							setShowDeleteDialog(false);
-							handleClose();
-						} catch {
-							setAlertDialog({
-								title: t("userFormModal.delete.errorTitle", {
-									defaultValue: "Delete failed",
-								}),
-								description: t("userFormModal.delete.errorDescription", {
-									defaultValue:
-										"Please try again or contact support if the issue persists.",
-								}),
-							});
-							setShowDeleteDialog(false);
-						} finally {
-							if (!deleteSucceeded) {
-								setIsDeleting(false);
-							}
-						}
-					}}
-					onOpenChange={(open) => {
-						if (!open) setShowDeleteDialog(false);
-					}}
-				/>
-			)}
-		</RoutedEditorModal>
+		</Modal>
 	);
 }

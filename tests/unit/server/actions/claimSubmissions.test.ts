@@ -3,12 +3,16 @@ import {
 	getClaimSubmissionsDetailed,
 	reviewClaimSubmission,
 } from "@/server/actions/submissions";
+import { SubmissionStatus } from "@/generated/prisma";
 
 vi.mock("@/server/actions/auth", () => ({
 	getCurrentUserId: vi.fn().mockResolvedValue("admin-1"),
 }));
 
 const requireAllScopeMock = vi.fn();
+const getTableScopeMock = vi.fn();
+const getScopeUserIdMock = vi.fn();
+const createNoAccessWhereMock = vi.fn();
 
 vi.mock("@/server/utils/rbac", () => ({
 	getAccessContextForUser: vi.fn().mockResolvedValue({
@@ -20,40 +24,46 @@ vi.mock("@/server/utils/rbac", () => ({
 	}),
 	authorizeTable: vi.fn(),
 	requireAllScope: (...args: unknown[]) => requireAllScopeMock(...args),
-	getTableScope: vi.fn(),
+	getTableScope: (...args: unknown[]) => getTableScopeMock(...args),
+	getScopeUserId: (...args: unknown[]) => getScopeUserIdMock(...args),
+	createNoAccessWhere: (...args: unknown[]) => createNoAccessWhereMock(...args),
 	requireScopeOrUser: vi.fn(),
 }));
 
 const submissionFindByIdMock = vi.fn();
-const submissionRemoveMock = vi.fn();
-const submissionUpdateMock = vi.fn();
 
 vi.mock("@/server/data/submissionRepo", () => ({
 	submissionRepo: {
 		findById: (id: number) => submissionFindByIdMock(id),
-		remove: (id: number) => submissionRemoveMock(id),
-		update: (id: number, data: unknown) => submissionUpdateMock(id, data),
 	},
 }));
 
 const prismaSubmissionFindManyMock = vi.fn();
 const prismaInstitutionFindManyMock = vi.fn();
-const prismaInstitutionUpdateMock = vi.fn();
-const prismaUserUpdateMock = vi.fn();
+const prismaInstitutionFindFirstMock = vi.fn();
+const prismaTransactionMock = vi.fn();
+const txSubmissionDeleteMock = vi.fn();
+const txSubmissionUpdateMock = vi.fn();
+const txInstitutionUpdateMock = vi.fn();
+const txUserUpdateMock = vi.fn();
 
 vi.mock("@/server/prisma", () => ({
 	prisma: {
+		$transaction: (...args: unknown[]) => prismaTransactionMock(...args),
 		submission: {
 			findMany: (args: unknown) => prismaSubmissionFindManyMock(args),
 		},
 		institution: {
 			findMany: (args: unknown) => prismaInstitutionFindManyMock(args),
-			update: (args: unknown) => prismaInstitutionUpdateMock(args),
-		},
-		user: {
-			update: (args: unknown) => prismaUserUpdateMock(args),
+			findFirst: (args: unknown) => prismaInstitutionFindFirstMock(args),
 		},
 	},
+}));
+
+const updateSubmissionAuditStatusMock = vi.fn();
+vi.mock("@/server/logic/submissionAudit", () => ({
+	updateSubmissionAuditStatus: (...args: unknown[]) =>
+		updateSubmissionAuditStatusMock(...args),
 }));
 
 const revalidateAccountMock = vi.fn();
@@ -64,14 +74,43 @@ vi.mock("@/server/utils/actionsUtils", () => ({
 describe("server actions: claim submissions", () => {
 	beforeEach(() => {
 		requireAllScopeMock.mockReset();
+		getTableScopeMock.mockReset();
+		getScopeUserIdMock.mockReset();
+		createNoAccessWhereMock.mockReset();
 		submissionFindByIdMock.mockReset();
-		submissionRemoveMock.mockReset();
-		submissionUpdateMock.mockReset();
 		prismaSubmissionFindManyMock.mockReset();
 		prismaInstitutionFindManyMock.mockReset();
-		prismaInstitutionUpdateMock.mockReset();
-		prismaUserUpdateMock.mockReset();
+		prismaInstitutionFindFirstMock.mockReset();
+		prismaTransactionMock.mockReset();
+		txSubmissionDeleteMock.mockReset();
+		txSubmissionUpdateMock.mockReset();
+		txInstitutionUpdateMock.mockReset();
+		txUserUpdateMock.mockReset();
+		updateSubmissionAuditStatusMock.mockReset();
 		revalidateAccountMock.mockReset();
+
+		getTableScopeMock.mockReturnValue("all");
+		getScopeUserIdMock.mockImplementation((scope: string, userId: string) =>
+			scope === "own" ? userId : null,
+		);
+		createNoAccessWhereMock.mockImplementation((baseWhere: unknown) => ({
+			AND: [baseWhere, { id: -1 }],
+		}));
+		prismaInstitutionFindFirstMock.mockResolvedValue({ id: 1 });
+		prismaTransactionMock.mockImplementation(async (callback: unknown) =>
+			(callback as (tx: unknown) => Promise<unknown>)({
+				submission: {
+					delete: (args: unknown) => txSubmissionDeleteMock(args),
+					update: (args: unknown) => txSubmissionUpdateMock(args),
+				},
+				institution: {
+					update: (args: unknown) => txInstitutionUpdateMock(args),
+				},
+				user: {
+					update: (args: unknown) => txUserUpdateMock(args),
+				},
+			}),
+		);
 	});
 
 	it("getClaimSubmissionsDetailed maps submissions to institutions", async () => {
@@ -114,6 +153,7 @@ describe("server actions: claim submissions", () => {
 			type: "claim",
 			entity_id: 10,
 			created_by: "user-1",
+			status: "approval_pending" as SubmissionStatus,
 		});
 
 		const result = await reviewClaimSubmission({
@@ -121,7 +161,9 @@ describe("server actions: claim submissions", () => {
 			decision: "rejected",
 		});
 
-		expect(submissionRemoveMock).toHaveBeenCalledWith(5);
+		expect(txSubmissionDeleteMock).toHaveBeenCalledWith({
+			where: { id: 5 },
+		});
 		expect(revalidateAccountMock).toHaveBeenCalled();
 		expect(result).toEqual({ id: 5, status: "rejected" });
 	});
@@ -132,29 +174,31 @@ describe("server actions: claim submissions", () => {
 			type: "claim",
 			entity_id: 44,
 			created_by: "user-2",
+			status: "approval_pending" as SubmissionStatus,
 		});
-		submissionUpdateMock.mockResolvedValue({ id: 6, status: "approved" });
+		txSubmissionUpdateMock.mockResolvedValue({ id: 6, status: "approved" });
 
 		const result = await reviewClaimSubmission({
 			id: 6,
 			decision: "approved",
 		});
 
-		expect(prismaInstitutionUpdateMock).toHaveBeenCalledWith(
+		expect(txInstitutionUpdateMock).toHaveBeenCalledWith(
 			expect.objectContaining({
 				where: { id: 44 },
 				data: { users: { connect: { id: "user-2" } } },
 			}),
 		);
-		expect(prismaUserUpdateMock).toHaveBeenCalledWith(
+		expect(txUserUpdateMock).toHaveBeenCalledWith(
 			expect.objectContaining({
 				where: { id: "user-2" },
 				data: { institutions: { connect: { id: 44 } } },
 			}),
 		);
-		expect(submissionUpdateMock).toHaveBeenCalledWith(
-			6,
-			expect.objectContaining({ status: "approved" }),
+		expect(txSubmissionUpdateMock).toHaveBeenCalledWith(
+			expect.objectContaining({
+				data: expect.objectContaining({ status: "approved" }),
+			}),
 		);
 		expect(revalidateAccountMock).toHaveBeenCalled();
 		expect(result).toEqual({ id: 6, status: "approved" });
@@ -177,6 +221,7 @@ describe("server actions: claim submissions", () => {
 			type: "claim",
 			entity_id: null,
 			created_by: null,
+			status: "approval_pending" as SubmissionStatus,
 		});
 
 		await expect(

@@ -317,6 +317,10 @@
 			"parent": "Übergeordnet",
 			"subcategories": "Unterkategorien"
 		},
+		"empty": {
+			"title": "Keine Kategorien gefunden.",
+			"description": "Erstellen Sie eine Kategorie, um Inhalte besser zu strukturieren."
+		},
 		"emptyMessage": "Keine Kategorien gefunden.",
 		"subtitle": "{{count}} gesamt",
 		"title": "Kategorien"
@@ -448,6 +452,10 @@
 			"name": "Name",
 			"updatedAt": "Aktualisiert am",
 			"users": "Benutzer*innen"
+		},
+		"empty": {
+			"title": "Keine Gruppen gefunden.",
+			"description": "Erstellen Sie eine Gruppe, um Mitglieder zu organisieren."
 		},
 		"emptyMessage": "Keine Gruppen gefunden.",
 		"searchPlaceholder": "Gruppen durchsuchen...",
@@ -797,6 +805,7 @@
 			},
 			"error": "Überprüfung fehlgeschlagen. {{error}}",
 			"errorUnknown": "Unbekannter Fehler.",
+			"grantSubmitterAccess": "Der einreichenden Person nach Genehmigung Zugriff auf diesen Kulturort geben.",
 			"notesLabel": "Prüfnotizen",
 			"notesPlaceholder": "Optionale Notizen für die Einreichung",
 			"statusLabel": "Status: {{status}}",
@@ -1151,6 +1160,7 @@
 			"tables": {
 				"address": "Adressen",
 				"category": "Kategorien",
+				"entity_audit": "Aktivität",
 				"group": "Gruppen",
 				"institution": "Kulturorte",
 				"role": "Rollen",
@@ -1170,6 +1180,10 @@
 			"name": "Name",
 			"updatedAt": "Aktualisiert am",
 			"users": "Benutzer*innen"
+		},
+		"empty": {
+			"title": "Keine Rollen gefunden.",
+			"description": "Erstellen Sie eine Rolle, um Berechtigungen zu verwalten."
 		},
 		"emptyMessage": "Keine Rollen gefunden.",
 		"searchPlaceholder": "Rollen durchsuchen...",
@@ -1604,7 +1618,11 @@
 	"institutionsTable": {
 		"actions": {
 			"addInstitution": "Kulturort hinzufügen",
-			"claimInstitution": "Meine Kulturorte anfragen"
+			"claimInstitution": "Meine Orte anfragen"
+		},
+		"empty": {
+			"title": "Keine Kulturorte vorhanden.",
+			"description": "Sie können direkt neue Einträge starten."
 		},
 		"type": {
 			"manage": "Verwalten",
@@ -1757,6 +1775,10 @@
 			"accepted": "DSGVO akzeptiert",
 			"rejected": "DSGVO nicht akzeptiert"
 		},
+		"empty": {
+			"title": "Keine Nutzer*innen gefunden.",
+			"description": "Legen Sie eine neue Nutzer*in an, um zu starten."
+		},
 		"emptyMessage": "Keine Nutzer*innen gefunden.",
 		"emptyValue": "—",
 		"institutionsCount_one": "{{count}} Kulturort",
@@ -1777,5 +1799,17 @@
 		"newsletter": "Zum Newsletter anmelden",
 		"subtitle": "Ein Projekt der Kulturraum Berlin gGmbH",
 		"title": "Das Berliner Kulturkataster: Die Kultur der Stadt auf einen Blick"
+	},
+	"userClaims": {
+		"approve": "Annehmen",
+		"claimDate": "Datum der Anfrage",
+		"currentUsers": "Aktuelle Nutzer",
+		"empty": "Keine offenen Anfragen vorhanden.",
+		"institutionAddress": "Adresse",
+		"reject": "Ablehnen",
+		"subtitle": "Überprüfen Sie die Anfragen zur Institutionen-Zugehörigkeit.",
+		"title": "Institutionen-Anfragen prüfen",
+		"unknownInstitution": "Unbekannte Institution",
+		"userGroup": "Benutzergruppe"
 	}
 }

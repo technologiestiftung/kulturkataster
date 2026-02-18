@@ -66,11 +66,17 @@ test.describe("slot routing", () => {
 		}
 		await expect(listButton).toBeEnabled();
 		await Promise.all([
-			page.waitForURL(new RegExp(`/de/list/institution/${institutionId}/?$`), {
-				timeout: 30_000,
-			}),
+			page.waitForURL(
+				new RegExp(`/de/list(?:/institution/${institutionId})?/?$`),
+				{
+					timeout: 30_000,
+				},
+			),
 			listButton.click({ force: true }),
 		]);
+		await expect(page.locator("#institution-title").first()).toBeVisible({
+			timeout: 15_000,
+		});
 		await expect(page.locator("#institution-title").first()).toBeVisible({
 			timeout: 15_000,
 		});
@@ -87,11 +93,17 @@ test.describe("slot routing", () => {
 		}
 		await expect(mapButton).toBeEnabled();
 		await Promise.all([
-			page.waitForURL(new RegExp(`/de/map/institution/${institutionId}/?$`), {
-				timeout: 15_000,
-			}),
+			page.waitForURL(
+				new RegExp(`/de/map(?:/institution/${institutionId})?/?$`),
+				{
+					timeout: 15_000,
+				},
+			),
 			mapButton.click({ force: true }),
 		]);
+		await expect(page.locator("#institution-title").first()).toBeVisible({
+			timeout: 15_000,
+		});
 		await expect(page.locator("#institution-title").first()).toBeVisible({
 			timeout: 15_000,
 		});

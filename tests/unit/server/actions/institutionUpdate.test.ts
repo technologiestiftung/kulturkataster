@@ -21,14 +21,11 @@ vi.mock("@/server/utils/rbac", () => ({
 }));
 
 const updateMock = vi.fn();
-const updateWhereMock = vi.fn();
 const findFirstWithIncludeMock = vi.fn();
 
 vi.mock("@/server/data/institutionRepo", () => ({
 	institutionRepo: {
 		update: (id: number, data: unknown) => updateMock(id, data),
-		updateWhere: (where: unknown, data: unknown) =>
-			updateWhereMock(where, data),
 		findFirstWithInclude: (where: unknown) => findFirstWithIncludeMock(where),
 	},
 }));
@@ -48,7 +45,6 @@ describe("server actions: institutions update", () => {
 	beforeEach(() => {
 		getTableScopeMock.mockReset();
 		updateMock.mockReset();
-		updateWhereMock.mockReset();
 		findFirstWithIncludeMock.mockReset();
 		buildInstitutionScopedWhereMock.mockReset();
 	});
@@ -57,27 +53,26 @@ describe("server actions: institutions update", () => {
 		getTableScopeMock.mockReturnValue("all");
 		updateMock.mockResolvedValue({ id: 1 });
 
-		await updateInstitution({ id: 1, name: "Updated" });
+		await updateInstitution({ id: 1, name: "Updated", address: null });
 
 		expect(updateMock).toHaveBeenCalledWith(
 			1,
 			expect.objectContaining({ name: "Updated" }),
 		);
-		expect(updateWhereMock).not.toHaveBeenCalled();
 	});
 
 	it("updateInstitution uses scoped update for own scope", async () => {
 		getTableScopeMock.mockReturnValue("own");
-		buildInstitutionScopedWhereMock.mockReturnValue({ id: 1 });
-		updateWhereMock.mockResolvedValue({ count: 1 });
-		findFirstWithIncludeMock.mockResolvedValue({ id: 1, name: "Updated" });
+		buildInstitutionScopedWhereMock.mockReturnValue({ id: 1, users: {} });
+		findFirstWithIncludeMock.mockResolvedValue({ id: 1 });
+		updateMock.mockResolvedValue({ id: 1, name: "Updated" });
 
-		await updateInstitution({ id: 1, name: "Updated" });
+		await updateInstitution({ id: 1, name: "Updated", address: null });
 
-		expect(updateWhereMock).toHaveBeenCalledWith(
-			{ id: 1 },
+		expect(findFirstWithIncludeMock).toHaveBeenCalledWith({ id: 1, users: {} });
+		expect(updateMock).toHaveBeenCalledWith(
+			1,
 			expect.objectContaining({ name: "Updated" }),
 		);
-		expect(findFirstWithIncludeMock).toHaveBeenCalledWith({ id: 1 });
 	});
 });

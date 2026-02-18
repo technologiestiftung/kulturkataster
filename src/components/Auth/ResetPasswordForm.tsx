@@ -10,7 +10,7 @@ import { AlertDialog } from "@/components/ui/alert-dialog";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { Button } from "../ui/button";
 
-export function ResetPasswordForm() {
+export function ResetPasswordForm({ onSuccess }: { onSuccess?: () => void }) {
 	const [isLoading, setIsLoading] = useState(false);
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 	const [isReady, setIsReady] = useState(false);
@@ -70,9 +70,11 @@ export function ResetPasswordForm() {
 				setErrorMessage(result.error ?? t("auth.reset.errorFallback"));
 				return;
 			}
-
-			const accountPath = toLocalePath("/login");
-			router.replace(accountPath);
+			if (onSuccess) {
+				onSuccess();
+				return;
+			}
+			router.replace(toLocalePath("/login"));
 		} catch {
 			setErrorMessage(t("auth.reset.errorFallback"));
 		} finally {
@@ -100,7 +102,16 @@ export function ResetPasswordForm() {
 							type: "password",
 							placeholder: t("auth.reset.newPasswordPlaceholder"),
 							required: true,
+							afterField: t("auth.reset.passwordRequirements"),
 							disabled: isLoading || !isReady || !hasToken,
+							validate: (value) => {
+								if (!value) return undefined;
+								const text = String(value);
+								if (text.length < 8) {
+									return t("auth.validation.passwordMin");
+								}
+								return undefined;
+							},
 						},
 						{
 							name: "confirmPassword",

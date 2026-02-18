@@ -3,11 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { DialogTitle } from "@/components/ui/dialog";
-import {
-	RoutedEditorModal,
-	useRoutedModalClose,
-} from "@/components/Modals/RoutedEditorModal";
-import { AlertDialog } from "@/components/ui/alert-dialog";
+import { Modal } from "@/components/Modals/Modal";
+import { useRoutedModalClose } from "@/components/Modals/useRoutedModalClose";
 import { FormWrapper } from "@/components/FormWrapper";
 import type { FormWrapperConfig } from "@/components/FormWrapper";
 import { useAccountStore } from "@/lib/store/accountStore";
@@ -27,6 +24,7 @@ import {
 } from "@/server/actions/groups";
 import type { Group } from "@/types/group";
 import { useRouter } from "next/navigation";
+import { showSuccessToast } from "@/lib/utils/feedbackToast";
 
 type GroupFormModalProps = {
 	mode: "create" | "edit";
@@ -52,14 +50,6 @@ const getDialogTitle = (
 	mode === "create"
 		? t("groupFormModal.dialog.title.create")
 		: t("groupFormModal.dialog.title.edit");
-
-const renderNotFoundDialog = (t: (key: string) => string) => (
-	<AlertDialog
-		status="error"
-		title={t("groupFormModal.dialog.notFound.title")}
-		description={t("groupFormModal.dialog.notFound.description")}
-	/>
-);
 
 const renderDialogBody = (
 	isWaitingForGroup: boolean,
@@ -332,13 +322,16 @@ export function GroupFormModal({
 	const { t: tEnum, i18n } = useTranslation("enumMap");
 	const groups = useAccountStore((state) => state.groups);
 	const users = useAccountStore((state) => state.users);
-	const setAlertDialog = useAccountStore((state) => state.setAlertDialog);
 	const removeGroup = useAccountStore((state) => state.removeGroup);
 	const institutions =
 		useInstitutionStore((state) => state.allInstitutions) ?? [];
 	const categories = useInstitutionStore((state) => state.categories) ?? [];
 	const [isDeleting, setIsDeleting] = useState(false);
 	const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+	const [deleteError, setDeleteError] = useState<{
+		title: string;
+		description: string;
+	} | null>(null);
 	const userOptions = useMemo(
 		() =>
 			users.map((userItem) => {
@@ -375,10 +368,7 @@ export function GroupFormModal({
 			nextMode === "create"
 				? "groupFormModal.feedback.create"
 				: "groupFormModal.feedback.update";
-		setAlertDialog({
-			title: t(`${keyPrefix}.title`),
-			description: t(`${keyPrefix}.description`),
-		});
+		showSuccessToast(t(`${keyPrefix}.title`), t(`${keyPrefix}.description`));
 	};
 	const { handleSubmit, submitting } = useGroupSubmit(
 		mode,
@@ -433,74 +423,114 @@ export function GroupFormModal({
 		handleSuccess,
 	]);
 
-	if (showNotFound && !isDeleting) {
-		return renderNotFoundDialog(t);
-	}
+	const autoCloseError =
+		showNotFound && !isDeleting
+			? {
+					active: true,
+					title: t("groupFormModal.dialog.notFound.title"),
+					description: t("groupFormModal.dialog.notFound.description"),
+				}
+			: undefined;
 
 	return (
-		<RoutedEditorModal routePath={routePath} onClose={handleClose}>
+		<Modal
+			title={getDialogTitle(mode, t)}
+			variant="editor"
+			hasFooter={false}
+			routePath={routePath}
+			returnTo={returnTo}
+			autoCloseError={autoCloseError}
+			loadingState={{
+				active: isWaitingForGroup,
+				label: t("groupFormModal.dialog.loading"),
+			}}
+			confirmDialog={
+				showDeleteDialog && resolvedGroup
+					? {
+							open: true,
+							status: "warning",
+							title: t("groupFormModal.delete.confirmTitle", {
+								defaultValue: "Delete group?",
+							}),
+							description: t("groupFormModal.delete.confirmDescription", {
+								defaultValue:
+									"This will permanently remove the group. This action cannot be undone.",
+							}),
+							confirmLabel: t("groupFormModal.delete.confirm"),
+							cancelLabel: t("groupFormModal.delete.cancel", {
+								defaultValue: "Cancel",
+							}),
+							onCancel: () => setShowDeleteDialog(false),
+							onConfirm: async () => {
+								if (isDeleting) return;
+								setIsDeleting(true);
+								try {
+									handleClose();
+									await deleteGroup(resolvedGroup.id);
+									queueMicrotask(() => {
+										removeGroup(resolvedGroup.id);
+										showSuccessToast(
+											t("groupFormModal.feedback.delete.title", {
+												defaultValue: "Group deleted",
+											}),
+											t("groupFormModal.feedback.delete.description", {
+												defaultValue:
+													"The group has been removed successfully.",
+											}),
+										);
+									});
+								} catch {
+									setDeleteError({
+										title: t("groupFormModal.delete.errorTitle", {
+											defaultValue: "Delete failed",
+										}),
+										description: t("groupFormModal.delete.errorDescription", {
+											defaultValue:
+												"Please try again or contact support if the issue persists.",
+										}),
+									});
+									setShowDeleteDialog(false);
+								} finally {
+									setIsDeleting(false);
+								}
+							},
+							onOpenChange: (open) => {
+								if (!open) setShowDeleteDialog(false);
+							},
+						}
+					: undefined
+			}
+			errorDialog={
+				deleteError
+					? {
+							open: true,
+							title: deleteError.title,
+							description: deleteError.description,
+							confirmLabel: t("close"),
+							onConfirm: () => setDeleteError(null),
+							onOpenChange: (open) => {
+								if (!open) setDeleteError(null);
+							},
+						}
+					: undefined
+			}
+		>
 			<div className="w-full  max-w-3xl mx-auto">
 				<div className="px-6 py-8 md:px-10">
 					<DialogTitle className="title">{getDialogTitle(mode, t)}</DialogTitle>
 				</div>
-				<div className="flex-1 overflow-auto px-6 py-6 md:px-10 flex flex-col">
-					{renderDialogBody(
-						isWaitingForGroup,
-						t,
-						formConfig,
-						resolvedGroup,
-						mode,
-					)}
-				</div>
+				{autoCloseError ? null : (
+					<div className="flex-1 overflow-auto px-6 py-6 md:px-10 flex flex-col">
+						{renderDialogBody(
+							isWaitingForGroup,
+							t,
+							formConfig,
+							resolvedGroup,
+							mode,
+						)}
+					</div>
+				)}
 			</div>
-			{showDeleteDialog && resolvedGroup && (
-				<AlertDialog
-					status="warning"
-					open
-					title={t("groupFormModal.delete.confirmTitle", {
-						defaultValue: "Delete group?",
-					})}
-					description={t("groupFormModal.delete.confirmDescription", {
-						defaultValue:
-							"This will permanently remove the group. This action cannot be undone.",
-					})}
-					confirmLabel={t("groupFormModal.delete.confirm")}
-					cancelLabel={t("groupFormModal.delete.cancel", {
-						defaultValue: "Cancel",
-					})}
-					onCancel={() => setShowDeleteDialog(false)}
-					onConfirm={async () => {
-						if (isDeleting) return;
-						setIsDeleting(true);
-						let deleteSucceeded = false;
-						try {
-							await deleteGroup(resolvedGroup.id);
-							removeGroup(resolvedGroup.id);
-							deleteSucceeded = true;
-							setShowDeleteDialog(false);
-							handleClose();
-						} catch {
-							setAlertDialog({
-								title: t("groupFormModal.delete.errorTitle", {
-									defaultValue: "Delete failed",
-								}),
-								description: t("groupFormModal.delete.errorDescription", {
-									defaultValue:
-										"Please try again or contact support if the issue persists.",
-								}),
-							});
-							setShowDeleteDialog(false);
-						} finally {
-							if (!deleteSucceeded) {
-								setIsDeleting(false);
-							}
-						}
-					}}
-					onOpenChange={(open) => {
-						if (!open) setShowDeleteDialog(false);
-					}}
-				/>
-			)}
-		</RoutedEditorModal>
+		</Modal>
 	);
 }

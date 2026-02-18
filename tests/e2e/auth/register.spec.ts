@@ -143,12 +143,13 @@ test.describe("Auth registration", () => {
 		await expect(createAccountButton).toBeEnabled();
 		await createAccountButton.click();
 
-		const alertDialog = page
-			.locator('[data-slot="dialog-content"]')
-			.filter({ hasText: /Eingabefehler|Fehler/i })
-			.first();
-		await expect(alertDialog).toBeVisible();
-		await alertDialog.locator('[data-slot="dialog-close"]').click();
-		await expect(alertDialog).toBeHidden();
+		await expect(page.getByText("Ungültige E-Mail-Adresse")).toBeVisible();
+		await expect(
+			page.getByText("Passwort muss mindestens 8 Zeichen haben"),
+		).toBeVisible();
+		await expect(
+			page.getByText("Passwörter stimmen nicht überein"),
+		).toBeVisible();
+		await expect(page).toHaveURL(/\/de\/register\/?$/);
 	});
 });

@@ -206,26 +206,25 @@ export function InstitutionDraftIntroModal({
 			containerClassName="p-0 md:p-0 mt-0 md:mt-0"
 			contentWrapperClassName="flex-1"
 			contentClassName=""
-			content={
-				<div className="p-4 space-y-4 flex-1 flex-col max-w-5xl mx-auto w-full mb-20">
-					{showContributionSetup ? (
-						<ContributionSetupContent
-							t={t}
-							mode={mode}
-							setMode={setMode}
-							onContinue={handleContinue}
-							showBackButton={!isAuthenticated}
-							onBack={() => setIsGuestSetupVisible(false)}
-						/>
-					) : (
-						<AuthChoiceContent
-							t={t}
-							onLogin={() => router.push(toLocalePath("/login"))}
-							onGuestContinue={handleGuestContinue}
-						/>
-					)}
-				</div>
-			}
-		/>
+		>
+			<div className="p-4 space-y-4 flex-1 flex-col max-w-5xl mx-auto w-full mb-20">
+				{showContributionSetup ? (
+					<ContributionSetupContent
+						t={t}
+						mode={mode}
+						setMode={setMode}
+						onContinue={handleContinue}
+						showBackButton={!isAuthenticated}
+						onBack={() => setIsGuestSetupVisible(false)}
+					/>
+				) : (
+					<AuthChoiceContent
+						t={t}
+						onLogin={() => router.push(toLocalePath("/login"))}
+						onGuestContinue={handleGuestContinue}
+					/>
+				)}
+			</div>
+		</Modal>
 	);
 }

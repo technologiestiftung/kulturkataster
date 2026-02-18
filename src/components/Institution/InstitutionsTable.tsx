@@ -19,6 +19,7 @@ import {
 	getSubcategories,
 	joinInstitutionIds,
 } from "@/lib/utils/institutionUtils";
+import { buildStreetLine } from "@/lib/utils/formUtils";
 import { Badge } from "../ui/badge";
 import Link from "next/link";
 import {
@@ -26,7 +27,15 @@ import {
 	formatFundingSources,
 	isSubmissionRow,
 } from "@/lib/utils/institutionTableUtils";
+import { institutionSubmissionToDraft } from "@/lib/utils/institutionSubmissionUtils";
 import Send from "@/icons/send.svg";
+import { FilterPanel } from "@/components/Filter/FilterPanel";
+import { useInstitutionFilterCategories } from "@/lib/hooks/useInstitutionFilterCategories";
+import { useInstitutionTableFilters } from "@/lib/hooks/useInstitutionTableFilters";
+import { useInstitutionDraftStore } from "@/lib/store/institutionDraftStore";
+import { canReviewInstitutionSubmissionType } from "@/lib/utils/submissionReviewPermissions";
+import { EmptyActionState } from "@/components/EmptyActionState";
+import Edit from "@/icons/edit.svg";
 
 export function InstitutionsTable() {
 	const router = useRouter();
@@ -36,16 +45,16 @@ export function InstitutionsTable() {
 	const institutionPermissions = useAccountStore(
 		(state) => state.institutionPermissions,
 	);
+	const setDraft = useInstitutionDraftStore((state) => state.setDraft);
+	const setDraftMode = useInstitutionDraftStore((state) => state.setMode);
+	const setDraftStepId = useInstitutionDraftStore((state) => state.setStepId);
+	const resetDraft = useInstitutionDraftStore((state) => state.resetDraft);
 	const canCreateInstitutionDirect = institutionPermissions.create;
 	const canCreateInstitutionViaSubmission =
 		!canCreateInstitutionDirect && institutionPermissions.createSubmission;
 	const canClaimInstitution = institutionPermissions.createSubmission;
 	const canReviewSubmissionType = (type: SubmissionType) => {
-		if (type === "create") return institutionPermissions.create;
-		if (type === "update" || type === "claim")
-			return institutionPermissions.update;
-		if (type === "delete") return institutionPermissions.delete;
-		return false;
+		return canReviewInstitutionSubmissionType(institutionPermissions, type);
 	};
 	const submissions = useMemo(
 		() =>
@@ -61,7 +70,12 @@ export function InstitutionsTable() {
 	);
 	const { t } = useTranslation("content");
 	const { t: tEnum } = useTranslation("enumMap");
-	const categories = useAccountStore((state) => state.categories);
+	const {
+		filterCategoryGroups,
+		flattenedCategories,
+		isFilterCategoriesLoading,
+		retryInitializeFilterCategories,
+	} = useInstitutionFilterCategories();
 	const translateEnum = (prefix: string, value?: string | null) => {
 		if (!value) return "—";
 		const translated = tEnum(`${prefix}.${value}`);
@@ -87,7 +101,7 @@ export function InstitutionsTable() {
 
 	const tableRows = useMemo<InstitutionTableRow[]>(() => {
 		const submissionRows = submissions.map((submission) =>
-			buildSubmissionRow(submission, categories),
+			buildSubmissionRow(submission, flattenedCategories),
 		);
 		const institutionRows = institutions.map((institution) => ({
 			...institution,
@@ -95,7 +109,19 @@ export function InstitutionsTable() {
 			rowKey: `institution-${institution.id}`,
 		}));
 		return [...submissionRows, ...institutionRows];
-	}, [categories, institutions, submissions]);
+	}, [flattenedCategories, institutions, submissions]);
+
+	const canEditInstitutionRow = (row: InstitutionTableRow) =>
+		!isSubmissionRow(row) && institutionPermissions.update;
+
+	const {
+		filters,
+		setFilters,
+		districts,
+		filteredTableRows,
+		categoryCounts,
+		subcategoryCounts,
+	} = useInstitutionTableFilters(tableRows, filterCategoryGroups);
 
 	const tableConfig: DataTableConfig<InstitutionTableRow> = {
 		columns: [
@@ -698,7 +724,7 @@ export function InstitutionsTable() {
 				accessorFn: (row) => row.updated_at,
 			},
 		],
-		data: tableRows,
+		data: filteredTableRows,
 		getRowKey: (row) => row.rowKey ?? row.id,
 		searchable: true,
 		searchPlaceholder: "Search institutions...",
@@ -724,6 +750,25 @@ export function InstitutionsTable() {
 			enabled: true,
 			rowHeight: 65,
 			overscan: 8,
+		},
+		filterModal: {
+			triggerLabel: t("filter.title"),
+			triggerAriaLabel: t("filter.title"),
+			title: t("filter.title"),
+			content: () => (
+				<FilterPanel
+					filters={filters}
+					categoryGroups={filterCategoryGroups}
+					districts={districts}
+					filteredCount={filteredTableRows.length}
+					categoryCounts={categoryCounts}
+					subcategoryCounts={subcategoryCounts}
+					loading={isFilterCategoriesLoading}
+					error={null}
+					onRetry={retryInitializeFilterCategories}
+					onFiltersChange={setFilters}
+				/>
+			),
 		},
 		primaryButton:
 			canCreateInstitutionDirect || canCreateInstitutionViaSubmission
@@ -758,7 +803,49 @@ export function InstitutionsTable() {
 				);
 				return;
 			}
-			router.push(toLocalePath(`/account/institutions/${row.id}/edit`));
+			if (canEditInstitutionRow(row)) {
+				router.push(toLocalePath(`/account/institutions/${row.id}/edit`));
+				return;
+			}
+			if (institutionPermissions.createSubmission) {
+				const institution = row;
+				const baseDraft = institutionSubmissionToDraft({
+					data: institution as unknown as Record<string, unknown>,
+				});
+				const address = baseDraft.address ?? institution.address ?? null;
+				const categoryIds =
+					baseDraft.categoryIds ??
+					institution.categories?.map((category) => category.id) ??
+					[];
+
+				resetDraft();
+				setDraftMode("update");
+				setDraftStepId("review");
+				setDraft({
+					...baseDraft,
+					categoryIds,
+					entityId: institution.id,
+					originalInstitution: institution,
+					"address.streetLine": buildStreetLine(
+						address?.street,
+						address?.street_number,
+					),
+					"address.city": address?.city ?? "",
+					"address.zip": address?.zipcode ?? "",
+					"address.address_suffix": address?.address_suffix ?? "",
+					"address.neighbourhood": address?.neighbourhood ?? "",
+					"address.cultural_area": address?.cultural_area ?? "",
+					"address.lat": address?.lat ?? "",
+					"address.lng": address?.lng ?? "",
+				});
+				router.push(toLocalePath("/institution/submission"));
+			}
+		},
+		getCanEdit: (row) => {
+			if (isSubmissionRow(row)) return true;
+			return (
+				canEditInstitutionRow(row) || institutionPermissions.createSubmission
+			);
 		},
 		onReview: (row) => {
 			if (!isSubmissionRow(row)) return;
@@ -769,6 +856,40 @@ export function InstitutionsTable() {
 			isSubmissionRow(row) && canReviewSubmissionType(row.submissionType),
 		reviewAriaLabel: "Review",
 		emptyMessage: "No institutions found.",
+		emptyState: (
+			<EmptyActionState
+				title={t("institutionsTable.empty.title", {
+					defaultValue: "Keine Kulturorte vorhanden.",
+				})}
+				description={t("institutionsTable.empty.description", {
+					defaultValue: "Sie können direkt neue Einträge starten.",
+				})}
+				actions={[
+					...(canClaimInstitution
+						? [
+								{
+									icon: <Send />,
+									label: t("institutionsTable.actions.claimInstitution"),
+									href: toLocalePath("/account/submissions/claim"),
+								},
+							]
+						: []),
+					...(canCreateInstitutionDirect || canCreateInstitutionViaSubmission
+						? [
+								{
+									icon: <Edit />,
+									label: t("institutionsTable.actions.addInstitution"),
+									href: toLocalePath(
+										canCreateInstitutionDirect
+											? "/account/institutions/new"
+											: "/institution/submission",
+									),
+								},
+							]
+						: []),
+				]}
+			/>
+		),
 	};
 
 	return (

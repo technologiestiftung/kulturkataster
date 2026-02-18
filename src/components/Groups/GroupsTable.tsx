@@ -7,6 +7,8 @@ import { useAccountStore } from "@/lib/store/accountStore";
 import type { Group } from "@/types/group";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
+import { EmptyActionState } from "@/components/EmptyActionState";
+import Plus from "@/icons/plus.svg";
 
 export function GroupsTable() {
 	const groups = useAccountStore((state) => state.groups);
@@ -74,6 +76,24 @@ export function GroupsTable() {
 			label: t("groupTable.actions.add"),
 			onClick: () => router.push(toLocalePath("/account/groups/new")),
 		},
+		emptyState: (
+			<EmptyActionState
+				title={t("groupTable.empty.title", {
+					defaultValue: "Keine Gruppen gefunden.",
+				})}
+				description={t("groupTable.empty.description", {
+					defaultValue:
+						"Erstellen Sie eine Gruppe, um Mitglieder zu organisieren.",
+				})}
+				actions={[
+					{
+						icon: <Plus className="size-5" />,
+						label: t("groupTable.actions.add"),
+						href: toLocalePath("/account/groups/new"),
+					},
+				]}
+			/>
+		),
 		onEdit: (row) =>
 			router.push(toLocalePath(`/account/groups/${row.id}/edit`)),
 		emptyMessage: t("groupTable.emptyMessage"),

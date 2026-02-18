@@ -33,6 +33,8 @@ const buttonVariants = cva(
 					"rounded-full shadow-sm bg-background hover:bg-accent [&_svg]:size-6 border-border border",
 				icon: "bg-secondary border-border rounded-full border [&_svg]:size-5",
 				"rounded-md": "rounded-md",
+				action:
+					"border-border border-2 rounded-sm border-neutral-20  shadow-xs border [&_svg]:size-8 flex-col bg-background hover:bg-neutral-30 flex justify-center items-center text-primary-dark",
 				accordion: "gap-2 justify-start text-primary-dark px-4",
 				tag: "bg-neutral-10 font-light flex items-center justify-center px-4 rounded-full",
 			},
@@ -42,6 +44,7 @@ const buttonVariants = cva(
 				sm: "h-9 px-3",
 				lg: "h-11 px-8",
 				md: "h-10 px-6",
+				action: "h-32 w-40 px-10",
 				icon: "h-10 w-10",
 				"icon-only": "h-12 w-12",
 				"icon-default": "h-6 w-full",

@@ -13,6 +13,7 @@ import Script from "next/script";
 import "./globals.css";
 import { StoreInitializer } from "@/components/StoreInitializer";
 import { ViewModeToggle } from "@/components/Menu/ViewModeToggle";
+import { Toaster } from "@/components/ui/sonner";
 
 // Initialize axe-core for accessibility testing in development
 // Commented out until @axe-core/react is installed
@@ -136,6 +137,7 @@ export default async function RootLayout({
 						<ViewModeToggle />
 						<Footer ariaLabel={footerLabel} />
 					</div>
+					<Toaster />
 					{modal}
 				</I18NProvider>
 

@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 
 dotenv.config({ path: process.env.DOTENV_CONFIG_PATH ?? ".env.test" });
 
-const port = Number(process.env.PORT ?? 3000);
+const port = Number(process.env.PORT ?? 3010);
 const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? `http://localhost:${port}`;
 
 export default defineConfig({
@@ -19,9 +19,15 @@ export default defineConfig({
 		trace: "on-first-retry",
 	},
 	webServer: {
-		command: `npm run build && npm run start -- -p ${port}`,
-		url: `${baseURL}/de/login`,
-		reuseExistingServer: !process.env.CI,
+		command: `
+    npm run build &&
+    rm -rf .next/standalone/.next/static &&
+    rm -rf .next/standalone/public &&
+    mkdir -p .next/standalone/.next &&
+    cp -R .next/static .next/standalone/.next/static &&
+    cp -R public .next/standalone/public &&
+    PORT=${port} node .next/standalone/server.js
+  `,
 		timeout: 180_000,
 	},
 	reporter: [["list"], ["html", { open: "never" }]],

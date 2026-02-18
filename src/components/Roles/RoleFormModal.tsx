@@ -4,11 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { DialogTitle } from "@/components/ui/dialog";
-import {
-	RoutedEditorModal,
-	useRoutedModalClose,
-} from "@/components/Modals/RoutedEditorModal";
-import { AlertDialog } from "@/components/ui/alert-dialog";
+import { Modal } from "@/components/Modals/Modal";
+import { useRoutedModalClose } from "@/components/Modals/useRoutedModalClose";
 import { FormWrapper } from "@/components/FormWrapper";
 import type { FormWrapperConfig } from "@/components/FormWrapper";
 import { useAccountStore } from "@/lib/store/accountStore";
@@ -27,6 +24,7 @@ import type {
 	TablePermissionValue,
 } from "@/components/FormWrapper/types";
 import { getSubmitLabel, toOptionalText } from "@/lib/utils/formUtils";
+import { showSuccessToast } from "@/lib/utils/feedbackToast";
 
 type RoleFormModalProps = {
 	mode: "create" | "edit";
@@ -48,14 +46,6 @@ const getDialogTitle = (
 	mode === "create"
 		? t("roleFormModal.dialog.title.create")
 		: t("roleFormModal.dialog.title.edit");
-
-const renderNotFoundDialog = (t: (key: string) => string) => (
-	<AlertDialog
-		status="error"
-		title={t("roleFormModal.dialog.notFound.title")}
-		description={t("roleFormModal.dialog.notFound.description")}
-	/>
-);
 
 const buildPermissionSnapshot = (
 	resolvedRole: Role | undefined,
@@ -115,6 +105,10 @@ const getTableTargets = (t: (key: string) => string) => [
 	{
 		key: "submission",
 		label: t("roleFormModal.permissions.tables.submission"),
+	},
+	{
+		key: "entity_audit",
+		label: t("roleFormModal.permissions.tables.entity_audit"),
 	},
 	{ key: "user", label: t("roleFormModal.permissions.tables.user") },
 	{ key: "group", label: t("roleFormModal.permissions.tables.group") },
@@ -469,10 +463,13 @@ export function RoleFormModal({
 }: RoleFormModalProps) {
 	const { t } = useTranslation(["content", "enumMap"]);
 	const roles = useAccountStore((state) => state.roles);
-	const setAlertDialog = useAccountStore((state) => state.setAlertDialog);
 	const removeRoleFromStore = useAccountStore((state) => state.removeRole);
 	const [isDeleting, setIsDeleting] = useState(false);
 	const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+	const [deleteError, setDeleteError] = useState<{
+		title: string;
+		description: string;
+	} | null>(null);
 
 	const handleClose = useRoutedModalClose({ returnTo });
 
@@ -483,10 +480,7 @@ export function RoleFormModal({
 			nextMode === "create"
 				? "roleFormModal.feedback.create"
 				: "roleFormModal.feedback.update";
-		setAlertDialog({
-			title: t(`${keyPrefix}.title`),
-			description: t(`${keyPrefix}.description`),
-		});
+		showSuccessToast(t(`${keyPrefix}.title`), t(`${keyPrefix}.description`));
 	};
 	const { handleSubmit, submitting } = useRoleSubmit(
 		mode,
@@ -537,78 +531,117 @@ export function RoleFormModal({
 		handleSuccess,
 	]);
 
-	if (showNotFound && !isDeleting) {
-		return renderNotFoundDialog(t);
-	}
+	const autoCloseError =
+		showNotFound && !isDeleting
+			? {
+					active: true,
+					title: t("roleFormModal.dialog.notFound.title"),
+					description: t("roleFormModal.dialog.notFound.description"),
+				}
+			: undefined;
 
 	return (
-		<RoutedEditorModal routePath={routePath} onClose={handleClose}>
+		<Modal
+			title={getDialogTitle(mode, t)}
+			variant="editor"
+			hasFooter={false}
+			routePath={routePath}
+			returnTo={returnTo}
+			autoCloseError={autoCloseError}
+			loadingState={{
+				active: isWaitingForRole,
+				label: t("roleFormModal.dialog.loading"),
+			}}
+			confirmDialog={
+				showDeleteDialog && resolvedRole
+					? {
+							open: true,
+							status: "warning",
+							title: t("roleFormModal.delete.confirmTitle", {
+								defaultValue: "Delete role?",
+							}),
+							description: t("roleFormModal.delete.confirmDescription", {
+								defaultValue:
+									"This will permanently remove the role. This action cannot be undone.",
+							}),
+							confirmLabel: t("roleFormModal.delete.confirm"),
+							cancelLabel: t("roleFormModal.delete.cancel", {
+								defaultValue: "Cancel",
+							}),
+							onCancel: () => setShowDeleteDialog(false),
+							onConfirm: async () => {
+								if (isDeleting || isSystemRole) return;
+								setIsDeleting(true);
+								try {
+									handleClose();
+									await deleteRole(resolvedRole.id);
+									queueMicrotask(() => {
+										removeRoleFromStore(resolvedRole.id);
+										showSuccessToast(
+											t("roleFormModal.feedback.delete.title", {
+												defaultValue: "Role deleted",
+											}),
+											t("roleFormModal.feedback.delete.description", {
+												defaultValue: "The role has been removed successfully.",
+											}),
+										);
+									});
+								} catch {
+									setDeleteError({
+										title: t("roleFormModal.delete.errorTitle", {
+											defaultValue: "Delete failed",
+										}),
+										description: t("roleFormModal.delete.errorDescription", {
+											defaultValue:
+												"Please try again or contact support if the issue persists.",
+										}),
+									});
+									setShowDeleteDialog(false);
+								} finally {
+									setIsDeleting(false);
+								}
+							},
+							onOpenChange: (open) => {
+								if (!open) setShowDeleteDialog(false);
+							},
+						}
+					: undefined
+			}
+			errorDialog={
+				deleteError
+					? {
+							open: true,
+							title: deleteError.title,
+							description: deleteError.description,
+							confirmLabel: t("close"),
+							onConfirm: () => setDeleteError(null),
+							onOpenChange: (open) => {
+								if (!open) setDeleteError(null);
+							},
+						}
+					: undefined
+			}
+		>
 			<div className="flex h-full flex-col">
 				<div className="px-6 py-8 md:px-10">
 					<DialogTitle className="title">{getDialogTitle(mode, t)}</DialogTitle>
 				</div>
-				<div className="flex-1 overflow-auto px-6 py-6 md:px-10 flex flex-col">
-					{renderDialogBody(
-						isWaitingForRole,
-						t,
-						formConfig,
-						resolvedRole,
-						mode,
-						tableTargets,
-						actionLabels,
-						fieldSections,
-						isSystemRole,
-					)}
-				</div>
+				{autoCloseError ? null : (
+					<div className="flex-1 overflow-auto px-6 py-6 md:px-10 flex flex-col">
+						{renderDialogBody(
+							isWaitingForRole,
+							t,
+							formConfig,
+							resolvedRole,
+							mode,
+							tableTargets,
+							actionLabels,
+							fieldSections,
+							isSystemRole,
+						)}
+					</div>
+				)}
 			</div>
-			{showDeleteDialog && resolvedRole && (
-				<AlertDialog
-					open
-					status="warning"
-					title={t("roleFormModal.delete.confirmTitle", {
-						defaultValue: "Delete role?",
-					})}
-					description={t("roleFormModal.delete.confirmDescription", {
-						defaultValue:
-							"This will permanently remove the role. This action cannot be undone.",
-					})}
-					confirmLabel={t("roleFormModal.delete.confirm")}
-					cancelLabel={t("roleFormModal.delete.cancel", {
-						defaultValue: "Cancel",
-					})}
-					onCancel={() => setShowDeleteDialog(false)}
-					onConfirm={async () => {
-						if (isDeleting || isSystemRole) return;
-						setIsDeleting(true);
-						let deleteSucceeded = false;
-						try {
-							await deleteRole(resolvedRole.id);
-							removeRoleFromStore(resolvedRole.id);
-							deleteSucceeded = true;
-							setShowDeleteDialog(false);
-							handleClose();
-						} catch {
-							setAlertDialog({
-								title: t("roleFormModal.delete.errorTitle", {
-									defaultValue: "Delete failed",
-								}),
-								description: t("roleFormModal.delete.errorDescription", {
-									defaultValue:
-										"Please try again or contact support if the issue persists.",
-								}),
-							});
-							setShowDeleteDialog(false);
-						} finally {
-							if (!deleteSucceeded) {
-								setIsDeleting(false);
-							}
-						}
-					}}
-					onOpenChange={(open) => {
-						if (!open) setShowDeleteDialog(false);
-					}}
-				/>
-			)}
-		</RoutedEditorModal>
+		</Modal>
 	);
 }

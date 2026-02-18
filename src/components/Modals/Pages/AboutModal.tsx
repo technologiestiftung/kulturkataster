@@ -177,8 +177,9 @@ export function AboutModal({ routePath }: { routePath?: string }) {
 			title={t("aboutModal.title")}
 			subtitle={t("aboutModal.subtitle")}
 			routePath={routePath}
-			content={modalContent}
 			hideLinksInModalFooter={["about"]}
-		/>
+		>
+			{modalContent}
+		</Modal>
 	);
 }

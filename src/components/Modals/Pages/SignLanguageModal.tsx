@@ -108,12 +108,13 @@ export function SignLanguageModal({ routePath }: { routePath?: string }) {
 			title={t("signLanguageModal.title")}
 			subtitle={t("signLanguageModal.subtitle")}
 			routePath={routePath}
-			content={signLanguageInformationContent}
 			hideLinksInModalFooter={[
 				"signLanguageInformation",
 				"signLanguageInformationLong",
 				"signLanguageInformationShort",
 			]}
-		/>
+		>
+			{signLanguageInformationContent}
+		</Modal>
 	);
 }
