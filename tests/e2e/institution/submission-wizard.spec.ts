@@ -36,7 +36,9 @@ test.describe("institution submission wizard", () => {
 	) => {
 		const postSubmitRoutePattern =
 			/\/de\/(?:account(?:\/institutions|\/activity)?|map|login|welcome)(?:\/)?$/;
-		const submitButton = page.getByRole("button", { name: "Submission senden" });
+		const submitButton = page.getByRole("button", {
+			name: "Submission senden",
+		});
 		const stepOneIndicator = page.getByText(/Schritt 1 \/ 5/);
 
 		await Promise.race([

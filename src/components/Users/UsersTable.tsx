@@ -13,6 +13,8 @@ import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import type { User } from "@/types/user";
 import { UserFilterPanel, type UserFilters } from "./UserFilterPanel";
 import { Badge } from "../ui/badge";
+import { EmptyActionState } from "@/components/EmptyActionState";
+import Plus from "@/icons/plus.svg";
 
 const defaultFilters: UserFilters = {
 	status: "all",
@@ -274,6 +276,23 @@ export function UsersTable() {
 			label: t("userTable.actions.add"),
 			onClick: () => router.push(toLocalePath("/account/users/new")),
 		},
+		emptyState: (
+			<EmptyActionState
+				title={t("userTable.empty.title", {
+					defaultValue: "Keine Nutzer*innen gefunden.",
+				})}
+				description={t("userTable.empty.description", {
+					defaultValue: "Legen Sie eine neue Nutzer*in an, um zu starten.",
+				})}
+				actions={[
+					{
+						icon: <Plus className="size-5" />,
+						label: t("userTable.actions.add"),
+						href: toLocalePath("/account/users/new"),
+					},
+				]}
+			/>
+		),
 		onReview: (row) =>
 			router.push(toLocalePath(`/account/users/${row.id}/review`)),
 		getCanReview: (row) => (row.submissions?.length ?? 0) > 0,

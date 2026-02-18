@@ -317,6 +317,10 @@
 			"parent": "Übergeordnet",
 			"subcategories": "Unterkategorien"
 		},
+		"empty": {
+			"title": "Keine Kategorien gefunden.",
+			"description": "Erstellen Sie eine Kategorie, um Inhalte besser zu strukturieren."
+		},
 		"emptyMessage": "Keine Kategorien gefunden.",
 		"subtitle": "{{count}} gesamt",
 		"title": "Kategorien"
@@ -448,6 +452,10 @@
 			"name": "Name",
 			"updatedAt": "Aktualisiert am",
 			"users": "Benutzer*innen"
+		},
+		"empty": {
+			"title": "Keine Gruppen gefunden.",
+			"description": "Erstellen Sie eine Gruppe, um Mitglieder zu organisieren."
 		},
 		"emptyMessage": "Keine Gruppen gefunden.",
 		"searchPlaceholder": "Gruppen durchsuchen...",
@@ -1152,6 +1160,7 @@
 			"tables": {
 				"address": "Adressen",
 				"category": "Kategorien",
+				"entity_audit": "Aktivität",
 				"group": "Gruppen",
 				"institution": "Kulturorte",
 				"role": "Rollen",
@@ -1171,6 +1180,10 @@
 			"name": "Name",
 			"updatedAt": "Aktualisiert am",
 			"users": "Benutzer*innen"
+		},
+		"empty": {
+			"title": "Keine Rollen gefunden.",
+			"description": "Erstellen Sie eine Rolle, um Berechtigungen zu verwalten."
 		},
 		"emptyMessage": "Keine Rollen gefunden.",
 		"searchPlaceholder": "Rollen durchsuchen...",
@@ -1605,7 +1618,11 @@
 	"institutionsTable": {
 		"actions": {
 			"addInstitution": "Kulturort hinzufügen",
-			"claimInstitution": "Meine Kulturorte anfragen"
+			"claimInstitution": "Meine Orte anfragen"
+		},
+		"empty": {
+			"title": "Keine Kulturorte vorhanden.",
+			"description": "Sie können direkt neue Einträge starten."
 		},
 		"type": {
 			"manage": "Verwalten",
@@ -1757,6 +1774,10 @@
 		"compliance": {
 			"accepted": "DSGVO akzeptiert",
 			"rejected": "DSGVO nicht akzeptiert"
+		},
+		"empty": {
+			"title": "Keine Nutzer*innen gefunden.",
+			"description": "Legen Sie eine neue Nutzer*in an, um zu starten."
 		},
 		"emptyMessage": "Keine Nutzer*innen gefunden.",
 		"emptyValue": "—",

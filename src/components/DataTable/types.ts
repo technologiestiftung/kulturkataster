@@ -50,6 +50,7 @@ export interface DataTableConfig<T> {
 	enableColumnResizing?: boolean;
 
 	emptyMessage?: string;
+	emptyState?: ReactNode;
 
 	title?: string;
 	subtitle?: string;

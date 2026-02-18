@@ -19,7 +19,7 @@ vi.mock("@/lib/hooks/useLocalePath", () => ({
 }));
 
 vi.mock("@/components/Modals/Modal", () => ({
-	Modal: ({ content }: { content: React.ReactNode }) => <div>{content}</div>,
+	Modal: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }));
 
 describe("InstitutionDraftIntroModal", () => {

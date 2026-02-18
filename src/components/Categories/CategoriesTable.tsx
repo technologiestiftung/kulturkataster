@@ -10,6 +10,8 @@ import type { Category } from "@/types";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { useMemo } from "react";
+import { EmptyActionState } from "@/components/EmptyActionState";
+import Plus from "@/icons/plus.svg";
 
 export function CategoriesTable() {
 	const { t: tEnum } = useTranslation("enumMap");
@@ -122,6 +124,26 @@ export function CategoriesTable() {
 			label: t("categoryTable.actions.add", { defaultValue: "Add category" }),
 			onClick: () => router.push(toLocalePath("/account/categories/new")),
 		},
+		emptyState: (
+			<EmptyActionState
+				title={t("categoryTable.empty.title", {
+					defaultValue: "Keine Kategorien gefunden.",
+				})}
+				description={t("categoryTable.empty.description", {
+					defaultValue:
+						"Erstellen Sie eine Kategorie, um Inhalte besser zu strukturieren.",
+				})}
+				actions={[
+					{
+						icon: <Plus className="size-5" />,
+						label: t("categoryTable.actions.add", {
+							defaultValue: "Add category",
+						}),
+						href: toLocalePath("/account/categories/new"),
+					},
+				]}
+			/>
+		),
 		onEdit: (row) =>
 			router.push(toLocalePath(`/account/categories/${row.id}/edit`)),
 		emptyMessage: t("categoryTable.emptyMessage", {
