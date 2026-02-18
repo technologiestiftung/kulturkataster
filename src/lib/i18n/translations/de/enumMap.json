@@ -44,7 +44,7 @@
 		"accessibility": "Barrierefreiheit",
 		"address": "Adresse",
 		"address_suffix": "Adresszusatz",
-		"usableAreaSize": "Größe der Nutzflächen (m²)",
+		"area": "",
 		"capacity": "Kapazität",
 		"case": "Geoposition",
 		"categories": "Kategorie",
@@ -103,15 +103,16 @@
 		"shared_use_audience": "Verfügbar für Zielgruppe/Sparte",
 		"shared_use_contact_person": "Kontakt für Raumanfragen",
 		"shared_use_info": "Beschreibung der Räume/Flächen",
-		"support_type": "Art der Finanzierung",
 		"source": "Datenquelle",
 		"street": "Straße",
 		"street_number": "Hausnummer",
 		"subcategories": "Unterkategorie",
 		"subcategory": "Unterkategorie",
+		"support_type": "Art der Finanzierung",
 		"tag": "Tags",
 		"tags": "Tags",
 		"updated_at": "Aktualisiert",
+		"usableAreaSize": "Größe der Nutzflächen (m²)",
 		"utilization_status": "Nutzungsstatus",
 		"utilization_status_info": "Nutzungsstatus Detailinfos",
 		"website": "Website",
@@ -128,9 +129,9 @@
 		"state_berlin": "Land Berlin"
 	},
 	"funding_type": {
-		"placeholder": "Art der Förderung auswählen",
 		"institutional_funding": "Institutionell gefördert",
 		"no_funding": "Nicht gefördert",
+		"placeholder": "Art der Förderung auswählen",
 		"temporary_project_funding": "Temporäre Projektförderung",
 		"workspace_program": "Arbeitsraumprogramm"
 	},
@@ -143,27 +144,20 @@
 		"update": "Aktualisieren"
 	},
 	"institution_status": {
-		"archived": "Archiviert",
 		"approval_pending": "Freigabe ausstehend",
+		"archived": "Archiviert",
 		"draft": "Entwurf",
 		"private": "Privat",
 		"public": "Öffentlich",
 		"removal_pending": "Löschung beantragt"
 	},
-	"submission_status": {
-		"draft": "Entwurf",
-		"approval_pending": "Freigabe ausstehend",
-		"approved": "Genehmigt",
-		"rejected": "Abgelehnt",
-		"needs_changes": "Änderungen erforderlich"
-	},
 	"owner_type": {
-		"placeholder": "Eigentümer*innenart auswählen",
 		"district_property": "Bezirkliche Liegenschaft",
 		"federal_property": "Bundesliegenschaft",
 		"municipal_housing_company": "Städtische Wohnungsbaugesellschaft",
 		"other": "Sonstige",
 		"other_public_property": "Sonstige öffentliche Liegenschaft",
+		"placeholder": "Eigentümer*innenart auswählen",
 		"private": "Privat",
 		"state_property": "Landesliegenschaft",
 		"state_property_fund": "Landesliegenschaft (Liegenschaftsfonds)",
@@ -172,10 +166,19 @@
 		"state_property_soda": "Landesliegenschaft (SODA)",
 		"state_property_specialized": "Spezialimmobilie Land"
 	},
+	"protection_status": {
+		"acutely_threatened": "Akut gefährdet",
+		"long_term_secured": "Langfristig gesichert",
+		"medium_term_secured": "Mittelfristig gesichert",
+		"not_yet_secured": "Noch nicht gesichert",
+		"permanently_closed": "Dauerhaft geschlossen",
+		"placeholder": "Sicherungsstatus auswählen",
+		"uncertain": "Unsicher"
+	},
 	"rental_contract_type": {
-		"placeholder": "Vertragsform auswählen",
 		"limited_lease": "Befristete Miete",
 		"organization_ownership": "Eigentum der Organisation",
+		"placeholder": "Vertragsform auswählen",
 		"unlimited_lease": "Unbefristete Miete"
 	},
 	"subcategory": {
@@ -278,6 +281,13 @@
 		"youth_art_schools": "Jugendkunstschulen",
 		"youth_leisure_facilities": "Kinder- und Jugendfreizeiteinrichtungen"
 	},
+	"submission_status": {
+		"approval_pending": "Freigabe ausstehend",
+		"approved": "Genehmigt",
+		"draft": "Entwurf",
+		"needs_changes": "Änderungen erforderlich",
+		"rejected": "Abgelehnt"
+	},
 	"user_role": {
 		"administrator": "Administrator",
 		"district_administration": "Bezirksverwaltung",
@@ -288,21 +298,12 @@
 		"super_administrator": "Super-Administrator"
 	},
 	"utilization_status": {
-		"placeholder": "Nutzungsstatus auswählen",
 		"in_use": "In Nutzung",
+		"permanently_closed": "Dauerhaft geschlossen",
+		"placeholder": "Nutzungsstatus auswählen",
+		"planned_use": "Geplante Nutzung",
 		"potential_space": "Potenzialort",
 		"temporarily_closed": "Vorübergehend geschlossen",
-		"planned_use": "Geplante Nutzung",
-		"permanently_closed": "Dauerhaft geschlossen",
 		"unknown": "Unbekannt"
-	},
-	"protection_status": {
-		"placeholder": "Sicherungsstatus auswählen",
-		"long_term_secured": "Langfristig gesichert",
-		"medium_term_secured": "Mittelfristig gesichert",
-		"uncertain": "Unsicher",
-		"acutely_threatened": "Akut gefährdet",
-		"permanently_closed": "Dauerhaft geschlossen",
-		"not_yet_secured": "Noch nicht gesichert"
 	}
 }

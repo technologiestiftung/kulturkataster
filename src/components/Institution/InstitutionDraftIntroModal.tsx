@@ -9,6 +9,7 @@ import { Modal } from "@/components/Modals/Modal";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { useInstitutionDraftStore } from "@/lib/store/institutionDraftStore";
 import { Label } from "../ui/label";
+import Image from "next/image";
 
 type DraftMode = "new" | "edit";
 
@@ -72,6 +73,7 @@ type ContributionSetupContentProps = {
 	onContinue: () => void;
 	onBack?: () => void;
 	showBackButton?: boolean;
+	showThankYou?: boolean;
 };
 
 function ContributionSetupContent({
@@ -81,24 +83,52 @@ function ContributionSetupContent({
 	onContinue,
 	onBack,
 	showBackButton = false,
+	showThankYou = false,
 }: ContributionSetupContentProps) {
 	return (
 		<>
-			<div className="mt-18">
-				<h1 className="font-bold">{t("institutionDraftIntroModal.title")}</h1>
-				<p className="font-bold">
-					{t("institutionDraftIntroModal.intro.thankYou")}
-				</p>
-			</div>
-			<p>{t("institutionDraftIntroModal.intro.description")}</p>
-			<div className="space-y-2">
-				<h2 className="font-bold">
-					{t("institutionDraftIntroModal.intro.sectionTitle")}
-				</h2>
-				<span className="body2">
-					{t("institutionDraftIntroModal.intro.sectionNote")}
-				</span>
-			</div>
+			{showThankYou ? (
+				<>
+					<div className="h-50 relative w-screen -my-4 left-1/2 -translate-x-1/2 overflow-hidden mb-16">
+						<Image
+							src="/resources/thankyou.png"
+							alt="Thank you background"
+							fill
+							className="object-cover"
+							priority
+						/>
+					</div>
+					<div>
+						<h1 className="font-extrabold">
+							{t("institutionDraftIntroModal.submitSuccess.title")}
+						</h1>
+						<p className="body2 mt-2">
+							{t("institutionDraftIntroModal.submitSuccess.description")}
+						</p>
+					</div>
+				</>
+			) : (
+				<>
+					<div className="mt-18">
+						<h1 className="font-bold">
+							{t("institutionDraftIntroModal.title")}
+						</h1>
+						<p className="font-bold">
+							{t("institutionDraftIntroModal.intro.thankYou")}
+						</p>
+					</div>
+					<p>{t("institutionDraftIntroModal.intro.description")}</p>
+					<div className="space-y-2">
+						<h2 className="font-bold">
+							{t("institutionDraftIntroModal.intro.sectionTitle")}
+						</h2>
+						<span className="body2">
+							{t("institutionDraftIntroModal.intro.sectionNote")}
+						</span>
+					</div>
+				</>
+			)}
+
 			<div className="space-y-2 my-12 rounded-md bg-primary-light/50 p-12">
 				<p className="font-bold">
 					{t("institutionDraftIntroModal.intro.mode.title")}
@@ -152,7 +182,9 @@ function ContributionSetupContent({
 					</Button>
 				) : null}
 				<Button variant="default" onClick={onContinue}>
-					{t("institutionDraftIntroModal.intro.cta")}
+					{showThankYou
+						? t("institutionDraftIntroModal.submitSuccess.cta")
+						: t("institutionDraftIntroModal.intro.cta")}
 				</Button>
 			</div>
 		</>
@@ -162,15 +194,17 @@ function ContributionSetupContent({
 export function InstitutionDraftIntroModal({
 	routePath,
 	isAuthenticated,
+	showThankYou = false,
 }: {
 	routePath?: string;
 	isAuthenticated: boolean;
+	showThankYou?: boolean;
 }) {
 	const router = useRouter();
 	const toLocalePath = useLocalePath();
 	const { t } = useTranslation("content");
 	const [mode, setMode] = useState<DraftMode>("new");
-	const [isGuestSetupVisible, setIsGuestSetupVisible] = useState(false);
+	const [isGuestSetupVisible, setIsGuestSetupVisible] = useState(showThankYou);
 	const resetDraft = useInstitutionDraftStore((state) => state.resetDraft);
 	const setModeInStore = useInstitutionDraftStore((state) => state.setMode);
 
@@ -178,11 +212,11 @@ export function InstitutionDraftIntroModal({
 		resetDraft();
 		if (mode === "edit") {
 			setModeInStore("update");
-			router.push(toLocalePath("/institution/submission/select"));
+			router.replace(toLocalePath("/institution/submission/select"));
 			return;
 		}
 		setModeInStore("create");
-		router.push(toLocalePath("/institution/submission"));
+		router.replace(toLocalePath("/institution/submission"));
 	};
 
 	const handleGuestContinue = () => {
@@ -193,7 +227,7 @@ export function InstitutionDraftIntroModal({
 
 	return (
 		<Modal
-			title="Mitwirken beim Kulturkataster Berlin"
+			title={t("institutionDraftIntroModal.title")}
 			titleClassName="sr-only"
 			variant="fullscreen"
 			routePath={routePath}
@@ -216,6 +250,7 @@ export function InstitutionDraftIntroModal({
 						onContinue={handleContinue}
 						showBackButton={!isAuthenticated}
 						onBack={() => setIsGuestSetupVisible(false)}
+						showThankYou={showThankYou}
 					/>
 				) : (
 					<AuthChoiceContent

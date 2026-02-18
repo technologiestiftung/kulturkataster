@@ -2,7 +2,6 @@
 
 import Filter from "@/components/Filter/Filter";
 import { LocationSearch } from "@/components/Search/LocationSearch";
-import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useState } from "react";
 
 export function SidePanel({
@@ -14,13 +13,11 @@ export function SidePanel({
 }) {
 	const [hasResults, setHasResults] = useState(false);
 	const [sidePanel, setSidePanel] = useState<"search" | "filter" | null>(
-		"search",
+		"filter",
 	);
-	const resetFilters = useInstitutionStore((state) => state.resetFilters);
 
 	const handleShowFilter = () => {
 		if (sidePanel === "filter") {
-			resetFilters();
 			onShowFilter?.();
 			setSidePanel("search");
 			return;
@@ -30,7 +27,6 @@ export function SidePanel({
 
 	const handleShowSearch = () => {
 		if (sidePanel === "filter") {
-			resetFilters();
 			onShowFilter?.();
 		}
 		setSidePanel("search");

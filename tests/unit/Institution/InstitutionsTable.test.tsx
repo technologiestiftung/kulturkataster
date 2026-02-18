@@ -1,0 +1,165 @@
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { render } from "@testing-library/react";
+import { InstitutionsTable } from "@/components/Institution/InstitutionsTable";
+
+const pushMock = vi.fn();
+const dataTableMock = vi.fn();
+
+vi.mock("react-i18next", () => ({
+	useTranslation: () => ({
+		t: (key: string, options?: { defaultValue?: string }) =>
+			options?.defaultValue ??
+			(
+				{
+					"institutionsTable.actions.addInstitution": "Kulturort hinzufügen",
+					"institutionsTable.actions.claimInstitution": "Meine Orte anfragen",
+					"filter.title": "Kulturorte filtern",
+				} as Record<string, string>
+			)[key] ??
+			key,
+	}),
+}));
+
+vi.mock("next/navigation", () => ({
+	useRouter: () => ({ push: pushMock }),
+}));
+
+vi.mock("@/lib/hooks/useLocalePath", () => ({
+	useLocalePath: () => (path: string) => `/de${path}`,
+}));
+
+vi.mock("@/components/DataTable", () => ({
+	DataTable: ({ config }: { config: unknown }) => {
+		dataTableMock(config);
+		return null;
+	},
+}));
+
+vi.mock("@/lib/store/accountStore", () => ({
+	useAccountStore: (
+		selector: (state: {
+			institutions: Array<Record<string, unknown>>;
+			submissions: Array<Record<string, unknown>>;
+			institutionPermissions: {
+				create: boolean;
+				update: boolean;
+				delete: boolean;
+				createSubmission: boolean;
+				reviewSubmission: boolean;
+			};
+		}) => unknown,
+	) =>
+		selector({
+			institutions: [
+				{
+					id: 100,
+					name: "Institution Alpha",
+					status: "public",
+					email: null,
+					phone: null,
+					website: null,
+					parent_organization: null,
+					address: null,
+					categories: [],
+					tags: [],
+					users: [],
+					groups: [],
+					created_at: new Date("2025-01-01"),
+					updated_at: new Date("2025-01-01"),
+				},
+			],
+			submissions: [],
+			institutionPermissions: {
+				create: true,
+				update: true,
+				delete: false,
+				createSubmission: true,
+				reviewSubmission: true,
+			},
+		}),
+}));
+
+vi.mock("@/lib/store/institutionDraftStore", () => ({
+	useInstitutionDraftStore: (
+		selector: (state: {
+			setDraft: (value: unknown) => void;
+			setMode: (value: string) => void;
+			setStepId: (value: string) => void;
+			resetDraft: () => void;
+		}) => unknown,
+	) =>
+		selector({
+			setDraft: vi.fn(),
+			setMode: vi.fn(),
+			setStepId: vi.fn(),
+			resetDraft: vi.fn(),
+		}),
+}));
+
+vi.mock("@/lib/hooks/useInstitutionFilterCategories", () => ({
+	useInstitutionFilterCategories: () => ({
+		filterCategoryGroups: [],
+		flattenedCategories: [],
+		isFilterCategoriesLoading: false,
+		retryInitializeFilterCategories: vi.fn(),
+	}),
+}));
+
+vi.mock("@/lib/hooks/useInstitutionTableFilters", () => ({
+	useInstitutionTableFilters: (tableRows: unknown[]) => ({
+		filters: {},
+		setFilters: vi.fn(),
+		districts: [],
+		filteredTableRows: tableRows,
+		categoryCounts: {},
+		subcategoryCounts: {},
+	}),
+}));
+
+describe("InstitutionsTable", () => {
+	beforeEach(() => {
+		pushMock.mockReset();
+		dataTableMock.mockReset();
+	});
+
+	it("configures search/filter, add and claim actions plus edit/review routing", () => {
+		render(<InstitutionsTable />);
+
+		expect(dataTableMock).toHaveBeenCalledTimes(1);
+		const config = dataTableMock.mock.calls[0][0] as {
+			searchable: boolean;
+			searchPlaceholder: string;
+			filterModal?: { triggerLabel: string };
+			primaryButton?: { label: string; onClick: () => void };
+			secondaryButton?: { onClick: () => void };
+			onEdit: (row: Record<string, unknown>) => void;
+			onReview: (row: Record<string, unknown>) => void;
+			getCanReview: (row: Record<string, unknown>) => boolean;
+		};
+
+		expect(config.searchable).toBe(true);
+		expect(config.searchPlaceholder).toBe("Search institutions...");
+		expect(config.filterModal?.triggerLabel).toBe("Kulturorte filtern");
+		expect(config.primaryButton?.label).toBe("Kulturort hinzufügen");
+		expect(config.secondaryButton).toBeDefined();
+
+		config.primaryButton?.onClick();
+		expect(pushMock).toHaveBeenCalledWith("/de/account/institutions/new");
+
+		config.secondaryButton?.onClick();
+		expect(pushMock).toHaveBeenCalledWith("/de/account/submissions/claim");
+
+		config.onEdit({ rowKind: "institution", id: 100 });
+		expect(pushMock).toHaveBeenCalledWith("/de/account/institutions/100/edit");
+
+		config.onReview({
+			rowKind: "submission",
+			submissionType: "update",
+			submissionId: 55,
+		});
+		expect(pushMock).toHaveBeenCalledWith("/de/account/submissions/55");
+		expect(
+			config.getCanReview({ rowKind: "submission", submissionType: "update" }),
+		).toBe(true);
+	});
+});

@@ -86,11 +86,6 @@ export function RolesTable() {
 		),
 		onEdit: (row) => router.push(toLocalePath(`/account/roles/${row.id}/edit`)),
 		emptyMessage: t("roleTable.emptyMessage"),
-		title: t("roleTable.title"),
-		subtitle:
-			roles.length === 1
-				? t("roleTable.subtitle.singular")
-				: t("roleTable.subtitle.plural", { count: roles.length }),
 	};
 
 	return (

@@ -149,13 +149,6 @@ export function CategoriesTable() {
 		emptyMessage: t("categoryTable.emptyMessage", {
 			defaultValue: "No categories found.",
 		}),
-		title: t("categoryTable.title", { defaultValue: "Categories" }),
-		subtitle: t("categoryTable.subtitle", {
-			defaultValue: `${categories.length} ${
-				categories.length === 1 ? "category" : "categories"
-			} total`,
-			count: categories.length,
-		}),
 	};
 
 	return (

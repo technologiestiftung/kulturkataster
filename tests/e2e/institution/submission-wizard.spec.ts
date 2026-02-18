@@ -50,6 +50,72 @@ test.describe("institution submission wizard", () => {
 		]);
 	};
 
+	const fillById = async (
+		page: import("@playwright/test").Page,
+		id: string,
+		value: string,
+	) => {
+		const field = page.locator(`[id="${id}"]`).first();
+		if ((await field.count()) === 0) return;
+		if (!(await field.isVisible().catch(() => false))) return;
+		await field.fill(value);
+	};
+
+	const checkById = async (
+		page: import("@playwright/test").Page,
+		id: string,
+	) => {
+		const checkbox = page.locator(`[id="${id}"]`).first();
+		if ((await checkbox.count()) === 0) return;
+		if (!(await checkbox.isVisible().catch(() => false))) return;
+		const state = await checkbox.getAttribute("data-state");
+		if (state !== "checked") {
+			await checkbox.click();
+		}
+	};
+
+	const selectFirstOptionById = async (
+		page: import("@playwright/test").Page,
+		id: string,
+	) => {
+		const trigger = page.locator(`[id="${id}"]`).first();
+		if ((await trigger.count()) === 0) return;
+		if (!(await trigger.isVisible().catch(() => false))) return;
+		await trigger.click();
+		const option = page
+			.locator('[data-slot="select-content"]:visible')
+			.last()
+			.locator('[role="option"]:visible')
+			.first();
+		const hasVisibleOption = await option.isVisible().catch(() => false);
+		if (hasVisibleOption) {
+			await option.scrollIntoViewIfNeeded();
+			await option.click({ force: true });
+			return;
+		}
+		// Fallback for flaky portal rendering: select first item via keyboard.
+		await trigger.focus();
+		await page.keyboard.press("ArrowDown");
+		await page.keyboard.press("Enter");
+	};
+
+	const openAllAccordions = async (
+		page: import("@playwright/test").Page,
+		formSelector: string,
+	) => {
+		const form = page.locator(formSelector);
+		const triggers = form.locator('[data-slot="accordion-trigger"]');
+		const count = await triggers.count();
+		for (let i = 0; i < count; i += 1) {
+			const trigger = triggers.nth(i);
+			if (!(await trigger.isVisible().catch(() => false))) continue;
+			const state = await trigger.getAttribute("data-state");
+			if (state !== "open") {
+				await trigger.click();
+			}
+		}
+	};
+
 	test("blocks forward stepper jumps when required fields are missing", async ({
 		page,
 	}) => {
@@ -114,9 +180,68 @@ test.describe("institution submission wizard", () => {
 				.filter({ hasText: uniqueName })
 				.first(),
 		).toBeVisible();
+		await expect(page.getByText(/Kontaktperson Vorname/i)).toHaveCount(0);
+		await expect(
+			page.getByText("contact@example.com", { exact: false }),
+		).toHaveCount(0);
 
 		await page.getByRole("button", { name: "Submission senden" }).click();
 		await waitForPostSubmitOutcome(page);
+	});
+
+	test("supports selecting an existing institution, changing details, and sending update request", async ({
+		page,
+	}) => {
+		await safeGoto(
+			page,
+			"/de/institution/submission/select",
+			/\/de\/institution\/submission\/select\/?$/,
+		);
+
+		const optionRows = page
+			.locator('[role="button"]')
+			.filter({ has: page.locator('[data-slot="checkbox"]') });
+		const optionCount = await optionRows.count();
+		test.skip(
+			optionCount < 1,
+			"Need at least one existing institution in select list.",
+		);
+
+		const originalName = (
+			await optionRows.nth(0).locator("span").first().innerText()
+		).trim();
+		await optionRows.nth(0).click();
+
+		await expect(page).toHaveURL(/\/de\/institution\/submission\/?$/, {
+			timeout: 15_000,
+		});
+		await expect(
+			page.getByRole("button", { name: "Submission senden" }),
+		).toBeVisible({ timeout: 15_000 });
+
+		const editButtons = page.getByRole("button", { name: "Edit" });
+		if ((await editButtons.count()) > 0) {
+			await editButtons.first().click();
+			const nameInput = page.getByLabel("Name");
+			await expect(nameInput).toBeVisible({ timeout: 15_000 });
+			const updatedName = `${originalName} (E2E Update)`;
+			await nameInput.fill(updatedName);
+			await page.getByRole("button", { name: "Änderungen speichern" }).click();
+			await expect(
+				page.getByText(originalName, { exact: false }).first(),
+			).toBeVisible();
+			await expect(
+				page.getByText(updatedName, { exact: false }).first(),
+			).toBeVisible();
+		}
+
+		await page.getByRole("button", { name: "Submission senden" }).click();
+		await expect(page).toHaveURL(/\/de\/institution\/?\?thankyou=1$/, {
+			timeout: 45_000,
+		});
+		await expect(
+			page.getByRole("heading", { name: "Vielen Dank für Ihre Einreichung" }),
+		).toBeVisible({ timeout: 15_000 });
 	});
 
 	test("fills a detailed multi-step draft and submits it for review", async ({
@@ -195,6 +320,127 @@ test.describe("institution submission wizard", () => {
 				.first(),
 		).toBeVisible();
 
+		await page.getByRole("button", { name: "Submission senden" }).click();
+		await waitForPostSubmitOutcome(page);
+	});
+
+	test("fills every single wizard field and submits for review", async ({
+		page,
+	}) => {
+		const uniqueName = `E2E All Fields ${Date.now()}`;
+
+		await expect(page.getByText(/Schritt 1 \/ 5/)).toBeVisible();
+		await fillById(page, "name", uniqueName);
+		await fillById(page, "address.lat", "52.520008");
+		await fillById(page, "address.lng", "13.404954");
+		await fillById(page, "address.streetLine", "Alexanderplatz 1");
+		await fillById(page, "address.address_suffix", "Aufgang B");
+		await fillById(page, "address.zip", "10178");
+		await fillById(page, "address.city", "Berlin");
+		await fillById(page, "address.neighbourhood", "Mitte");
+		await fillById(page, "address.cultural_area", "Zentrum");
+		await selectFirstOptionById(page, "utilization_status");
+		await fillById(
+			page,
+			"utilization_status_info",
+			"Nutzung werktags mit wechselnden Formaten",
+		);
+		await fillById(page, "parent_organization", "Kulturverein Berlin");
+		await fillById(page, "email", `all-fields-${Date.now()}@example.com`);
+		await fillById(page, "phone", "+49 30 123456");
+		await fillById(page, "website", "https://example.org/location");
+		await page
+			.locator('form#institution-basic-form button[type="submit"]')
+			.click();
+
+		await expect(page.getByText(/Schritt 2 \/ 5/)).toBeVisible();
+		await fillById(page, "newCategory", `E2E Vollständig ${Date.now()}`);
+		await page
+			.locator('form#institution-category-form button[type="submit"]')
+			.click();
+
+		await expect(page.getByText(/Schritt 3 \/ 5/)).toBeVisible({
+			timeout: 15_000,
+		});
+		await page.locator('[id="shared_use-yes"]').click();
+		await openAllAccordions(page, "form#institution-shared-use-form");
+		await fillById(
+			page,
+			"shared_use_info",
+			"Raum ist grundsätzlich für Dritte nutzbar.",
+		);
+		await fillById(
+			page,
+			"shared_use_equipment",
+			"Tische, Stühle, WLAN, Grundbeleuchtung",
+		);
+		await fillById(
+			page,
+			"shared_use_audience",
+			"Geeignet für Proben, Lesungen, kleinere Veranstaltungen",
+		);
+		await fillById(page, "shared_use_availability", "Mo-Fr 10:00-18:00");
+		await fillById(
+			page,
+			"shared_use_accessibility",
+			"Erdgeschoss, barrierearm",
+		);
+		await fillById(page, "shared_use_cost", "80 EUR pro Stunde");
+		await fillById(page, "shared_use_contact_person", "Kontakt: +49 30 222");
+		await fillById(page, "legal_form", "e.V.");
+		await selectFirstOptionById(page, "funding_type");
+		const addFundingSource = page
+			.locator("form#institution-shared-use-form button")
+			.filter({ hasText: /hinzuf|add/i })
+			.first();
+		if ((await addFundingSource.count()) > 0) {
+			await addFundingSource.click();
+			await selectFirstOptionById(page, "funding_sources-0-source");
+			await fillById(page, "funding_sources-0-description", "Landesmittel");
+		}
+		await fillById(page, "established_since", "2008-01-01");
+		await fillById(page, "established_until", "2035-12-31");
+		await fillById(page, "closing_reason", "Kein Schließungsgrund");
+		await selectFirstOptionById(page, "owner_type");
+		await fillById(page, "owner_name", "Eigentümer GmbH");
+		await selectFirstOptionById(page, "rental_contract_type");
+		await fillById(page, "rental_contract_end", "2030-12-31");
+		await selectFirstOptionById(page, "protection_status");
+		await fillById(
+			page,
+			"protection_status_info",
+			"Status laut letzter Abstimmung",
+		);
+		await fillById(page, "area", "450");
+		await fillById(page, "number_of_rooms", "8");
+		await fillById(page, "capacity", "280");
+		await fillById(page, "accessibility", "Aufzug vorhanden");
+		await fillById(page, "cost", "Miete abhängig von Nutzungsdauer");
+		await fillById(page, "notes", "Zusätzliche Hinweise für Review");
+		await page
+			.locator('form#institution-shared-use-form button[type="submit"]')
+			.click();
+
+		await expect(page.getByText(/Schritt 4 \/ 5/)).toBeVisible({
+			timeout: 15_000,
+		});
+		await checkById(page, "works_for_organization");
+		await checkById(page, "consent_contact_listing");
+		await fillById(page, "contact_person_first_name", "Max");
+		await fillById(page, "contact_person_last_name", "Mustermann");
+		await fillById(
+			page,
+			"contact_person_email",
+			`contact-all-${Date.now()}@example.com`,
+		);
+		await fillById(page, "contact_person_phone", "+49 30 654321");
+		await page
+			.locator('form#institution-contact-form button[type="submit"]')
+			.click();
+
+		await expect(
+			page.getByRole("button", { name: "Submission senden" }),
+		).toBeVisible({ timeout: 15_000 });
 		await page.getByRole("button", { name: "Submission senden" }).click();
 		await waitForPostSubmitOutcome(page);
 	});
