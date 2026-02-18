@@ -271,7 +271,7 @@ const FloatingLayerButton = memo(
 
 		return (
 			<div
-				className={`fixed bottom-4 z-50 transition-all duration-200 ${getLeftPosition()}`}
+				className={`fixed bottom-4 z-25 transition-all duration-200 ${getLeftPosition()}`}
 			>
 				<div className="relative">
 					{visibleCount > 1 && (

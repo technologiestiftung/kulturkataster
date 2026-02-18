@@ -5,6 +5,7 @@ import { useKeyboardNavigation } from "@/lib/hooks/useKeyboardNavigation";
 import { useSearch } from "@/lib/hooks/useSearch";
 import { searchLocations } from "@/server/actions/searchLocations";
 import { useMapStore } from "@/lib/store/mapStore";
+import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { sanitizeAddressInput } from "@/lib/utils/sanitizerUtils";
 import {
 	animateMapToCoordinates,
@@ -18,9 +19,8 @@ import { useTranslation } from "react-i18next";
 import { getCoordinatesFromAddress } from "@/lib/utils/institutionUtils";
 import { usePathname, useRouter } from "next/navigation";
 import Close from "@/icons/close.svg";
-import FilterIcon from "@/icons/filter.svg";
-import { ButtonWithTooltip } from "../ui/button";
 import { SelectableOptionsList } from "@/components/MultiSelect/SelectableOptionsList";
+import { FilterButtonWithCount } from "@/components/Filter/FilterButtonWithCount";
 
 export const isGeoFeature = (result: SearchResult): result is GeoFeature => {
 	return "place_name" in result && "center" in result;
@@ -46,6 +46,8 @@ export function LocationSearch({
 	const { t } = useTranslation("common");
 	const inputRef = useRef<HTMLInputElement>(null);
 	const { map } = useMapStore();
+	const resetFilters = useInstitutionStore((state) => state.resetFilters);
+
 	const router = useRouter();
 	const pathname = usePathname();
 
@@ -290,15 +292,13 @@ export function LocationSearch({
 					}
 				/>
 				{onFilterClick && (
-					<ButtonWithTooltip
-						variant="rounded"
-						size="icon-only"
-						tooltip="Filter"
+					<FilterButtonWithCount
+						tooltip={t("filter.title", {
+							defaultValue: "Kulturorte filtern",
+						})}
 						className="cursor-pointer"
 						onClick={onFilterClick}
-					>
-						<FilterIcon className="size-5! " />
-					</ButtonWithTooltip>
+					/>
 				)}
 
 				<div ref={statusRef} className="sr-only" aria-live="polite"></div>
@@ -308,6 +308,7 @@ export function LocationSearch({
 				<SelectableOptionsList
 					options={resultOptions}
 					selectedValues={[]}
+					multiSelect={false}
 					showCheckbox={true}
 					variant="search"
 					headingLabel={t("search.suggestions")}
@@ -318,6 +319,7 @@ export function LocationSearch({
 					onToggle={(value) => {
 						const result = resultByValue.get(value);
 						if (result) {
+							resetFilters();
 							handleResultClick(result);
 						}
 					}}

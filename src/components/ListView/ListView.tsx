@@ -310,7 +310,7 @@ const ListView: FC = () => {
 
 			{/* Floating scroll-to-top button */}
 			{showScrollToTop && (
-				<div className="fixed block z-[50] bottom-20 right-0 p-4 overflow-hidden">
+				<div className="fixed block z-25 bottom-20 right-0 p-4 overflow-hidden">
 					<Tooltip>
 						<TooltipTrigger asChild>
 							<Button

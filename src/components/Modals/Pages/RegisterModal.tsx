@@ -38,8 +38,8 @@ export function RegisterModal({
 					<div className="w-full space-y-6 text-left">
 						<div className="h-50 relative w-full overflow-hidden">
 							<Image
-								src="/resources/map.png"
-								alt="Map background"
+								src="/resources/thankyou.png"
+								alt="Thank you background"
 								fill
 								className="object-cover"
 								priority

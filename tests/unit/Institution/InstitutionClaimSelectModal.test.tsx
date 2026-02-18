@@ -2,14 +2,26 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { InstitutionClaimSelectModal } from "@/components/Institution/InstitutionClaimSelectModal";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
+import { useAccountStore } from "@/lib/store/accountStore";
 import { createSubmission } from "@/server/actions/submissions";
 import { searchInstitutions } from "@/server/actions/institutions";
 import { showSuccessToast } from "@/lib/utils/feedbackToast";
 
 vi.mock("react-i18next", () => ({
 	useTranslation: () => ({
-		t: (key: string, options?: { defaultValue?: string }) =>
-			options?.defaultValue ?? key,
+		t: (
+			key: string,
+			options?: { defaultValue?: string; [key: string]: unknown },
+		) => {
+			let text = options?.defaultValue ?? key;
+			if (options) {
+				Object.entries(options).forEach(([k, v]) => {
+					if (k === "defaultValue") return;
+					text = text.replaceAll(`{{${k}}}`, String(v));
+				});
+			}
+			return text;
+		},
 	}),
 }));
 
@@ -32,9 +44,10 @@ vi.mock("@/components/Institution/InstitutionDraftSelectSearch", () => ({
 	}: {
 		onQueryChange: (value: string) => void;
 	}) => (
-		<button type="button" onClick={() => onQueryChange("museum")}>
-			mock-search
-		</button>
+		<input
+			aria-label="institution-search"
+			onChange={(event) => onQueryChange(event.currentTarget.value)}
+		/>
 	),
 }));
 
@@ -84,18 +97,42 @@ describe("InstitutionClaimSelectModal", () => {
 			isLoading: false,
 			error: null,
 		} as never);
+
+		useAccountStore.setState({
+			institutions: [],
+			submissions: [],
+		} as never);
 	});
 
-	it("creates claim submissions for selected institutions and redirects", async () => {
+	it("shows the number of selectable institutions and supports multi-select claim submit", async () => {
+		mockedCreateSubmission
+			.mockResolvedValueOnce({
+				id: 901,
+				entity_type: "institution",
+				entity_id: 10,
+				type: "claim",
+				status: "approval_pending",
+			} as never)
+			.mockResolvedValueOnce({
+				id: 902,
+				entity_type: "institution",
+				entity_id: 20,
+				type: "claim",
+				status: "approval_pending",
+			} as never);
+
 		render(
 			<InstitutionClaimSelectModal routePath="/account/submissions/claim" />,
 		);
 
+		expect(screen.getByText("2 Ergebnisse")).toBeInTheDocument();
+
 		fireEvent.click(screen.getByRole("button", { name: /institution alpha/i }));
+		fireEvent.click(screen.getByRole("button", { name: /institution beta/i }));
 		fireEvent.click(screen.getByRole("button", { name: /anfrage senden/i }));
 
 		await waitFor(() => {
-			expect(mockedCreateSubmission).toHaveBeenCalledTimes(1);
+			expect(mockedCreateSubmission).toHaveBeenCalledTimes(2);
 		});
 
 		expect(mockedCreateSubmission).toHaveBeenCalledWith(
@@ -114,6 +151,31 @@ describe("InstitutionClaimSelectModal", () => {
 				}),
 			}),
 		);
+		expect(mockedCreateSubmission).toHaveBeenCalledWith(
+			expect.objectContaining({
+				entityType: "institution",
+				entityId: 20,
+				type: "claim",
+				status: "approval_pending",
+			}),
+		);
+
+		expect(
+			useAccountStore
+				.getState()
+				.submissions.some(
+					(submission) =>
+						submission.type === "claim" && submission.entity_id === 10,
+				),
+		).toBe(true);
+		expect(
+			useAccountStore
+				.getState()
+				.submissions.some(
+					(submission) =>
+						submission.type === "claim" && submission.entity_id === 20,
+				),
+		).toBe(true);
 		expect(closeModalMock).toHaveBeenCalledTimes(1);
 		expect(mockedShowSuccessToast).toHaveBeenCalledTimes(1);
 	});
@@ -136,7 +198,9 @@ describe("InstitutionClaimSelectModal", () => {
 			<InstitutionClaimSelectModal routePath="/account/submissions/claim" />,
 		);
 
-		fireEvent.click(screen.getByRole("button", { name: /mock-search/i }));
+		fireEvent.change(screen.getByLabelText("institution-search"), {
+			target: { value: "museum" },
+		});
 
 		await waitFor(() => {
 			expect(mockedSearchInstitutions).toHaveBeenCalledWith("museum");
@@ -148,5 +212,53 @@ describe("InstitutionClaimSelectModal", () => {
 		expect(
 			screen.getByRole("button", { name: /institution gamma/i }),
 		).toBeInTheDocument();
+	});
+
+	it("restores full institution list when search query is cleared", async () => {
+		mockedSearchInstitutions.mockResolvedValue([
+			{
+				id: 99,
+				name: "Institution Gamma",
+				address: {
+					street: "Gamma St",
+					street_number: "9",
+					zipcode: "10119",
+					city: "Berlin",
+				},
+			},
+		] as never);
+
+		render(
+			<InstitutionClaimSelectModal routePath="/account/submissions/claim" />,
+		);
+
+		const searchInput = screen.getByLabelText("institution-search");
+
+		fireEvent.change(searchInput, { target: { value: "museum" } });
+
+		await waitFor(() => {
+			expect(mockedSearchInstitutions).toHaveBeenCalledWith("museum");
+		});
+
+		expect(
+			screen.getByRole("button", { name: /institution gamma/i }),
+		).toBeInTheDocument();
+		expect(
+			screen.queryByRole("button", { name: /institution alpha/i }),
+		).toBeNull();
+
+		fireEvent.change(searchInput, { target: { value: "" } });
+
+		await waitFor(() => {
+			expect(
+				screen.getByRole("button", { name: /institution alpha/i }),
+			).toBeInTheDocument();
+		});
+		expect(
+			screen.getByRole("button", { name: /institution beta/i }),
+		).toBeInTheDocument();
+		expect(
+			screen.queryByRole("button", { name: /institution gamma/i }),
+		).toBeNull();
 	});
 });
