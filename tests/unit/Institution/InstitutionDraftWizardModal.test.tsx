@@ -17,8 +17,9 @@ vi.mock("react-i18next", () => ({
 }));
 
 const pushMock = vi.fn();
+const replaceMock = vi.fn();
 vi.mock("next/navigation", () => ({
-	useRouter: () => ({ push: pushMock }),
+	useRouter: () => ({ push: pushMock, replace: replaceMock }),
 }));
 
 vi.mock("@/lib/hooks/useLocalePath", () => ({
@@ -65,13 +66,9 @@ vi.mock("@/components/Modals/Modal", () => ({
 }));
 
 const closeModalMock = vi.fn();
-const closeToThankYouMock = vi.fn();
 const institutionReviewMock = vi.fn();
 vi.mock("@/components/Modals/useRoutedModalClose", () => ({
-	useRoutedModalClose: (args?: { returnTo?: string }) =>
-		args?.returnTo === "/institution?thankyou=1"
-			? closeToThankYouMock
-			: closeModalMock,
+	useRoutedModalClose: () => closeModalMock,
 }));
 
 vi.mock("@/lib/utils/feedbackToast", () => ({
@@ -113,8 +110,8 @@ const mockedShowSuccessToast = vi.mocked(showSuccessToast);
 describe("InstitutionDraftWizardModal submission workflow", () => {
 	beforeEach(() => {
 		pushMock.mockReset();
+		replaceMock.mockReset();
 		closeModalMock.mockReset();
-		closeToThankYouMock.mockReset();
 		institutionReviewMock.mockReset();
 		mockedCreateSubmission.mockReset();
 		mockedCreateSubmission.mockResolvedValue({} as any);
@@ -190,7 +187,7 @@ describe("InstitutionDraftWizardModal submission workflow", () => {
 				data: expect.objectContaining({ newCategory: expect.anything() }),
 			}),
 		);
-		expect(closeToThankYouMock).toHaveBeenCalledTimes(1);
+		expect(replaceMock).toHaveBeenCalledWith("/de/institution?thankyou=1");
 		expect(closeModalMock).not.toHaveBeenCalled();
 		expect(mockedShowSuccessToast).toHaveBeenCalledTimes(1);
 	});
@@ -287,7 +284,7 @@ describe("InstitutionDraftWizardModal submission workflow", () => {
 				}),
 			}),
 		);
-		expect(closeToThankYouMock).toHaveBeenCalledTimes(1);
+		expect(replaceMock).toHaveBeenCalledWith("/de/institution?thankyou=1");
 		expect(closeModalMock).not.toHaveBeenCalled();
 		expect(mockedShowSuccessToast).toHaveBeenCalledTimes(1);
 		expect(mockedShowSuccessToast).toHaveBeenCalledWith(
