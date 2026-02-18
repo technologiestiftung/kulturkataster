@@ -328,7 +328,7 @@ export function Menu({
 				</Sidebar>
 			</nav>
 
-			<div className="fixed bottom-0 left-0 right-0 z-[60] bg-sidebar border-t md:hidden h-20 pointer-events-auto">
+			<div className="fixed bottom-0 left-0 right-0 z-51 bg-sidebar border-t md:hidden h-20 pointer-events-auto">
 				<SidebarMenu className="flex-row justify-around px-2 py-3">
 					{menuItems
 						.filter((item) => item.showInMobile)

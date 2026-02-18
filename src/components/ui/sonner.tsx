@@ -30,11 +30,12 @@ const Toaster = ({ ...props }: ToasterProps) => {
 				),
 			}}
 			toastOptions={{
+				duration: 7000,
 				classNames: {
 					toast:
 						"group toast bg-background! border-border! rounded-sm! shadow-none!",
 					title: "font-extrabold! text-[1rem]! text-foreground! leading-[2rem]",
-					description: "body2! text-[0.875rem]!",
+					description: "body2! text-[0.875rem]! text-foreground!",
 					success: "",
 					error: "border-l-red-500",
 					warning: "border-l-amber-500",

@@ -149,20 +149,18 @@ export async function searchInstitutions(query: string) {
 	const currentUserId = await getCurrentUserId();
 	const ctx = await getAccessContextForUser(currentUserId);
 	authorizeTable(ctx, "institution", "read");
-	const scope = getTableScope(ctx, "institution", "read");
 
 	if (!query || query.trim().length === 0) {
 		return [];
 	}
 
-	const where = buildInstitutionSearchWhere(query);
-	if (!where) return [];
+	const searchWhere = buildInstitutionSearchWhere(query);
+	if (!searchWhere) return [];
 
 	const select = buildInstitutionSelect(ctx);
 	if (!select) return [];
-	const scopedWhere = buildInstitutionScopedWhere(scope, currentUserId, where);
-	if (!scopedWhere && scope !== "all") return [];
-	return scopedWhere
-		? institutionRepo.searchWithSelect(scopedWhere, select)
-		: institutionRepo.searchWithSelect(where, select);
+	const where: Prisma.InstitutionWhereInput = {
+		AND: [searchWhere, { status: { in: ["public", "private", "archived"] } }],
+	};
+	return institutionRepo.searchWithSelect(where, select);
 }

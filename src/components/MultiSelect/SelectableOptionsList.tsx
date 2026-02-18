@@ -19,6 +19,7 @@ type SelectableOptionsListProps = {
 	showCheckbox?: boolean;
 	variant?: "panel" | "search";
 	headingLabel?: string;
+	multiSelect?: boolean;
 	listId?: string;
 	listRef?: RefObject<HTMLDivElement | null>;
 	activeIndex?: number;
@@ -37,6 +38,7 @@ export function SelectableOptionsList({
 	emptyText = "No items found",
 	showCheckbox = true,
 	variant = "search",
+	multiSelect = true,
 	headingLabel,
 	listId,
 	listRef,
@@ -106,7 +108,7 @@ export function SelectableOptionsList({
 						const isChecked = selectedValues.includes(option.value);
 						const isActive = activeIndex === index;
 						return (
-							<button
+							<div
 								key={option.value}
 								onClick={() => onToggle(option.value)}
 								className={cn(
@@ -137,6 +139,7 @@ export function SelectableOptionsList({
 							>
 								{showCheckbox ? (
 									<Checkbox
+										asChild={!multiSelect}
 										checked={isChecked}
 										variant="default"
 										size="default"
@@ -161,7 +164,7 @@ export function SelectableOptionsList({
 										</span>
 									) : null}
 								</span>
-							</button>
+							</div>
 						);
 					})
 				)}

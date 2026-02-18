@@ -23,7 +23,7 @@ export function ViewModeToggle() {
 	if (!isListRoute && !isMapRoute) return null;
 
 	return (
-		<div className="fixed block z-[50] top-0 right-0 p-5 overflow-hidden">
+		<div className="fixed block z-25 top-0 right-0 p-5 overflow-hidden">
 			<div className="flex gap-2 items-center">
 				<Button
 					variant="rounded"

@@ -1,0 +1,52 @@
+import { test, expect } from "@playwright/test";
+import { safeGoto } from "../../helpers/e2eNavigation";
+import { prepareStableUi } from "../../helpers/e2eStableUi";
+import { ADMIN_STORAGE_STATE } from "../../helpers/e2eAuthState";
+
+const hasRealAdminCredentials =
+	!!process.env.E2E_ADMIN_EMAIL && !!process.env.E2E_ADMIN_PASSWORD;
+
+test.describe("submission review", () => {
+	test.setTimeout(90_000);
+	test.use({ storageState: ADMIN_STORAGE_STATE });
+
+	test.beforeEach(async ({ page }) => {
+		test.skip(!hasRealAdminCredentials, "E2E admin credentials not set");
+		await prepareStableUi(page);
+		await safeGoto(page, "/de/account/activity", /\/de\/account\/activity\/?$/);
+	});
+
+	test("review modal opens for pending institution submissions and allows decision", async ({
+		page,
+	}) => {
+		await safeGoto(
+			page,
+			"/de/account/institutions",
+			/\/de\/account\/institutions\/?$/,
+		);
+
+		const reviewButtons = page.getByRole("button", { name: "Review" });
+		const reviewCount = await reviewButtons.count();
+		test.skip(
+			reviewCount < 1,
+			"Need at least one reviewable institution submission.",
+		);
+
+		await reviewButtons.first().click();
+		await expect(page).toHaveURL(/\/de\/account\/submissions\/\d+\/?$/, {
+			timeout: 30_000,
+		});
+
+		await expect(
+			page.getByRole("button", { name: /Genehmigen|Ablehnen/ }).first(),
+		).toBeVisible({ timeout: 15_000 });
+
+		const actionButton = page.getByRole("button", { name: "Ablehnen" });
+		if ((await actionButton.count()) > 0) {
+			await actionButton.first().click();
+			await expect(page).toHaveURL(/\/de\/account\/institutions\/?$/, {
+				timeout: 30_000,
+			});
+		}
+	});
+});
