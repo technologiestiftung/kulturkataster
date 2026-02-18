@@ -21,7 +21,9 @@ describe("institution modal page integration", () => {
 			created_at: new Date().toISOString(),
 		} as User);
 
-		const pageModule = await import("@/app/[locale]/@modal/(.)institution/page");
+		const pageModule = await import(
+			"@/app/[locale]/@modal/(.)institution/page"
+		);
 		const element = await pageModule.default({
 			searchParams: Promise.resolve({ thankyou: "1" }),
 		});
@@ -31,4 +33,3 @@ describe("institution modal page integration", () => {
 		expect(element.props.showThankYou).toBe(true);
 	});
 });
-

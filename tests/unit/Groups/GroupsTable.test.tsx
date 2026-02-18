@@ -28,7 +28,9 @@ vi.mock("@/lib/hooks/useLocalePath", () => ({
 }));
 
 vi.mock("@/lib/store/accountStore", () => ({
-	useAccountStore: (selector: (state: { groups: Array<Record<string, unknown>> }) => unknown) =>
+	useAccountStore: (
+		selector: (state: { groups: Array<Record<string, unknown>> }) => unknown,
+	) =>
 		selector({
 			groups: [
 				{

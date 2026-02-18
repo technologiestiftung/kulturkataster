@@ -10,4 +10,3 @@ describe("account claim page integration", () => {
 		expect(element.props.routePath).toBe("/account/submissions/claim");
 	});
 });
-

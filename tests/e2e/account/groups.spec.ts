@@ -16,11 +16,16 @@ test.describe("groups management", () => {
 		await safeGoto(page, "/de/account/activity", /\/de\/account\/activity\/?$/);
 	});
 
-	test("shows groups table, supports search, create, and edit", async ({ page }) => {
+	test("shows groups table, supports search, create, and edit", async ({
+		page,
+	}) => {
 		await safeGoto(page, "/de/account/groups", /\/de\/account\/groups\/?$/);
 
 		const uniqueName = `E2E Gruppe ${Date.now()}`;
-		await page.getByRole("button", { name: "Gruppe erstellen" }).first().click();
+		await page
+			.getByRole("button", { name: "Gruppe erstellen" })
+			.first()
+			.click();
 		await expect(page).toHaveURL(/\/de\/account\/groups\/new\/?$/, {
 			timeout: 15_000,
 		});
@@ -33,7 +38,9 @@ test.describe("groups management", () => {
 		]);
 
 		await expect(page.getByRole("table")).toBeVisible({ timeout: 15_000 });
-		await expect(page.getByText(uniqueName, { exact: false }).first()).toBeVisible({
+		await expect(
+			page.getByText(uniqueName, { exact: false }).first(),
+		).toBeVisible({
 			timeout: 15_000,
 		});
 
@@ -43,7 +50,9 @@ test.describe("groups management", () => {
 		const searchInput = page.getByPlaceholder("Gruppen durchsuchen...");
 		await expect(searchInput).toBeVisible();
 		await searchInput.fill(uniqueName.slice(0, 6));
-		await expect(page.getByText(uniqueName, { exact: false }).first()).toBeVisible();
+		await expect(
+			page.getByText(uniqueName, { exact: false }).first(),
+		).toBeVisible();
 
 		const row = page.locator("tbody tr", { hasText: uniqueName }).first();
 		await row.getByRole("button", { name: "Edit" }).click();
@@ -58,7 +67,9 @@ test.describe("groups management", () => {
 			page.waitForURL(/\/de\/account\/groups\/?$/, { timeout: 30_000 }),
 			page.getByRole("button", { name: "Änderungen speichern" }).click(),
 		]);
-		await expect(page.getByText(uniqueName, { exact: false }).first()).toBeVisible({
+		await expect(
+			page.getByText(uniqueName, { exact: false }).first(),
+		).toBeVisible({
 			timeout: 15_000,
 		});
 	});

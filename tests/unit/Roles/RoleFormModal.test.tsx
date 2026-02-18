@@ -34,7 +34,13 @@ vi.mock("@/components/ui/dialog", () => ({
 }));
 
 vi.mock("@/components/FormWrapper", () => ({
-	FormWrapper: ({ config }: { config: { onSubmit: (data: Record<string, unknown>) => void | Promise<void> } }) => (
+	FormWrapper: ({
+		config,
+	}: {
+		config: {
+			onSubmit: (data: Record<string, unknown>) => void | Promise<void>;
+		};
+	}) => (
 		<div>
 			<button
 				type="button"
