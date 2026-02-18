@@ -160,8 +160,9 @@ export function SimpleLanguageInformationModal({
 			title={""}
 			subtitle={""}
 			routePath={routePath}
-			content={simpleLanguageInformationContent}
 			hideLinksInModalFooter={["simpleLanguageInformation"]}
-		/>
+		>
+			{simpleLanguageInformationContent}
+		</Modal>
 	);
 }

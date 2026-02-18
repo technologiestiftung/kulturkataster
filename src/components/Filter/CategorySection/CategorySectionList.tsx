@@ -2,7 +2,7 @@
 
 import { FC, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import ContentContainer from "@/components/Content/ContentContainer";
+import { Card } from "@/components/ui/card";
 import { CategorySection } from "@/components/Filter/CategorySection/CategorySection";
 import ChevronDown from "@/icons/chevron-down.svg";
 import ChevronUp from "@/icons/chevron-up.svg";
@@ -271,7 +271,7 @@ export const CategorySectionList: FC<CategorySectionListProps> = ({
 	};
 
 	return (
-		<ContentContainer className="py-6 px-4">
+		<Card variant="filter" className="w-full h-auto py-6 px-4">
 			{collapsible && isCollapsed ? (
 				<div className="flex flex-col gap-2">
 					{selectedCategoryGroups.length === 0 && selectionEmptyLabel && (
@@ -367,6 +367,6 @@ export const CategorySectionList: FC<CategorySectionListProps> = ({
 					)}
 				</div>
 			)}
-		</ContentContainer>
+		</Card>
 	);
 };

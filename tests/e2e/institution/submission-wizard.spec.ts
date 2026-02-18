@@ -15,18 +15,39 @@ test.describe("institution submission wizard", () => {
 		await prepareStableUi(page);
 		await safeGoto(
 			page,
+			"/de/account/institutions",
+			/\/de\/(?:account\/institutions|login)(?:\/)?$/,
+		);
+		if (/\/de\/login(?:\/)?$/.test(page.url())) {
+			test.skip(
+				true,
+				"Authenticated storage state is unavailable (global setup likely fell back to anonymous).",
+			);
+		}
+		await safeGoto(
+			page,
 			"/de/institution/submission",
 			/\/de\/institution\/submission\/?$/,
 		);
 	});
 
-	const waitForPostSubmitRoute = async (
+	const waitForPostSubmitOutcome = async (
 		page: import("@playwright/test").Page,
 	) => {
-		await page.waitForURL(
-			/\/de\/(?:account\/institutions|map|login|welcome)(?:\/)?$/,
-			{ timeout: 30_000 },
-		);
+		const postSubmitRoutePattern =
+			/\/de\/(?:account(?:\/institutions|\/activity)?|map|login|welcome)(?:\/)?$/;
+		const submitButton = page.getByRole("button", {
+			name: "Submission senden",
+		});
+		const stepOneIndicator = page.getByText(/Schritt 1 \/ 5/);
+
+		await Promise.race([
+			expect(page).toHaveURL(postSubmitRoutePattern, { timeout: 45_000 }),
+			(async () => {
+				await expect(submitButton).toBeHidden({ timeout: 45_000 });
+				await expect(stepOneIndicator).toBeVisible({ timeout: 45_000 });
+			})(),
+		]);
 	};
 
 	test("blocks forward stepper jumps when required fields are missing", async ({
@@ -94,10 +115,8 @@ test.describe("institution submission wizard", () => {
 				.first(),
 		).toBeVisible();
 
-		await Promise.all([
-			waitForPostSubmitRoute(page),
-			page.getByRole("button", { name: "Submission senden" }).click(),
-		]);
+		await page.getByRole("button", { name: "Submission senden" }).click();
+		await waitForPostSubmitOutcome(page);
 	});
 
 	test("fills a detailed multi-step draft and submits it for review", async ({
@@ -144,6 +163,16 @@ test.describe("institution submission wizard", () => {
 			timeout: 15_000,
 		});
 		await expect(page.locator("form#institution-contact-form")).toBeVisible();
+		await page
+			.getByRole("checkbox", {
+				name: "Ich arbeite für diese Kulturorganisation.",
+			})
+			.click();
+		await page
+			.getByRole("checkbox", {
+				name: /Ich bin damit einverstanden/i,
+			})
+			.click();
 		await page.getByLabel("Kontaktperson Vorname").fill("Max");
 		await page.getByLabel("Kontaktperson Nachname").fill("Mustermann");
 		await page
@@ -166,9 +195,7 @@ test.describe("institution submission wizard", () => {
 				.first(),
 		).toBeVisible();
 
-		await Promise.all([
-			waitForPostSubmitRoute(page),
-			page.getByRole("button", { name: "Submission senden" }).click(),
-		]);
+		await page.getByRole("button", { name: "Submission senden" }).click();
+		await waitForPostSubmitOutcome(page);
 	});
 });

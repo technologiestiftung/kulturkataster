@@ -1,13 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { Modal } from "@/components/Modals/Modal";
 import { Button } from "@/components/ui/button";
 import { InstitutionDraftSelectSearch } from "@/components/Institution/InstitutionDraftSelectSearch";
 import { SelectableOptionsList } from "@/components/MultiSelect/SelectableOptionsList";
-import { useLocalePath } from "@/lib/hooks/useLocalePath";
+import { useRoutedModalClose } from "@/components/Modals/useRoutedModalClose";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useAccountStore } from "@/lib/store/accountStore";
 import { searchInstitutions } from "@/server/actions/institutions";
@@ -19,19 +18,20 @@ import {
 } from "@/generated/prisma";
 import type { Institution } from "@/types/institution";
 import { Card } from "../ui/card";
-import { AlertDialog } from "../ui/alert-dialog";
 import { JsonValue } from "@/generated/prisma/runtime/client";
+import { showSuccessToast } from "@/lib/utils/feedbackToast";
 
 export function InstitutionClaimSelectModal({
 	routePath,
-	returnTo = "/account/institutions",
+	returnTo,
 }: {
 	routePath?: string;
 	returnTo?: string;
 }) {
 	const { t } = useTranslation("content");
-	const router = useRouter();
-	const toLocalePath = useLocalePath();
+	const closeModal = useRoutedModalClose({
+		returnTo: returnTo ?? "/account/institutions",
+	});
 	const institutions = useInstitutionStore((state) => state.allInstitutions);
 	const isLoading = useInstitutionStore((state) => state.isLoading);
 	const error = useInstitutionStore((state) => state.error);
@@ -47,6 +47,7 @@ export function InstitutionClaimSelectModal({
 	const [searchLoading, setSearchLoading] = useState(false);
 	const [selectedIds, setSelectedIds] = useState<string[]>([]);
 	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [submitError, setSubmitError] = useState<string | null>(null);
 
 	const selectableInstitutions = useMemo(() => {
 		const sourceInstitutions =
@@ -122,6 +123,7 @@ export function InstitutionClaimSelectModal({
 	const handleSubmitClaims = useCallback(async () => {
 		if (selectedIds.length === 0) return;
 		setIsSubmitting(true);
+		setSubmitError(null);
 		try {
 			const institutionsToClaim = selectedIds
 				.map((id) => institutionById.get(id))
@@ -164,11 +166,27 @@ export function InstitutionClaimSelectModal({
 			);
 
 			setSelectedIds([]);
-			router.push(toLocalePath("/account/institutions"));
+			closeModal();
+			showSuccessToast(
+				t("institution.claimSubmitSuccess.title", {
+					defaultValue: "Claim submitted",
+				}),
+				t("institution.claimSubmitSuccess.description", {
+					defaultValue:
+						"Your institution claim request has been submitted for review.",
+				}),
+			);
+		} catch {
+			setSubmitError(
+				t("institution.claimSubmitError", {
+					defaultValue:
+						"The claim request could not be submitted. Please try again.",
+				}),
+			);
 		} finally {
 			setIsSubmitting(false);
 		}
-	}, [institutionById, router, selectedIds, toLocalePath, upsertSubmission]);
+	}, [closeModal, institutionById, selectedIds, t, upsertSubmission]);
 
 	return (
 		<Modal
@@ -188,76 +206,76 @@ export function InstitutionClaimSelectModal({
 			containerClassName="p-0 md:p-0 mt-0 md:mt-0"
 			contentWrapperClassName="flex-1"
 			contentClassName=""
-			content={
-				<div className="p-4 space-y-6 flex-1 flex-col max-w-5xl mx-auto w-full">
-					<div className="mt-18 space-y-2">
-						<h1 className="font-bold">
-							{t("institution.claimSelectTitle", {
-								defaultValue: "Institutionen beanspruchen",
-							})}
-						</h1>
+			errorDialog={
+				!isLoading && (submitError || error)
+					? {
+							open: true,
+							title: t("error"),
+							description: submitError || error || "",
+							confirmLabel: t("close"),
+							onConfirm: () => setSubmitError(null),
+							onOpenChange: (open) => {
+								if (!open) setSubmitError(null);
+							},
+						}
+					: undefined
+			}
+		>
+			<div className="p-4 space-y-6 flex-1 flex-col max-w-5xl mx-auto w-full">
+				<div className="mt-18 space-y-2">
+					<h1 className="font-bold">
+						{t("institution.claimSelectTitle", {
+							defaultValue: "Institutionen beanspruchen",
+						})}
+					</h1>
+					<p className="body2">
+						{t("institution.claimSelectSubtitle", {
+							defaultValue:
+								"Wählen Sie die Institutionen aus, die Sie beanspruchen möchten.",
+						})}
+					</p>
+				</div>
+
+				<Card className="mb-10 p-10 h-full" variant="tertiary">
+					<InstitutionDraftSelectSearch onQueryChange={setQuery} />
+					{isLoading || searchLoading ? (
 						<p className="body2">
-							{t("institution.claimSelectSubtitle", {
-								defaultValue:
-									"Wählen Sie die Institutionen aus, die Sie beanspruchen möchten.",
+							{t("institution.loading", {
+								defaultValue: "Lädt...",
 							})}
 						</p>
-					</div>
-
-					{!isLoading && error && (
-						<AlertDialog
-							title={t("error")}
-							status="error"
-							description={error ?? ""}
-							open={Boolean(error)}
-							confirmLabel={t("close")}
+					) : (
+						<SelectableOptionsList
+							options={selectableOptions}
+							selectedValues={selectedIds}
+							containerClassName="max-h-52 md:max-h-69 overflow-auto"
+							emptyText={t("institution.editSelectEmpty", {
+								defaultValue: "Keine Kulturorte gefunden.",
+							})}
+							onToggle={toggleSelection}
+							variant="panel"
 						/>
 					)}
+				</Card>
 
-					<Card className="space-y-4 mb-10 p-10 h-full" variant="tertiary">
-						<InstitutionDraftSelectSearch onQueryChange={setQuery} />
-						{isLoading || searchLoading ? (
-							<p className="body2">
-								{t("institution.loading", {
-									defaultValue: "Lädt...",
+				<div className="flex flex-wrap gap-3 mb-10">
+					<Button variant="outline" onClick={closeModal}>
+						{t("actions.cancel", { defaultValue: "Abbrechen" })}
+					</Button>
+					<Button
+						onClick={handleSubmitClaims}
+						disabled={selectedIds.length === 0 || isSubmitting}
+					>
+						{isSubmitting
+							? t("institution.claimSubmitting", {
+									defaultValue: "Wird gesendet...",
+								})
+							: t("institution.claimSubmit", {
+									defaultValue: "Anfrage senden",
 								})}
-							</p>
-						) : (
-							<SelectableOptionsList
-								options={selectableOptions}
-								selectedValues={selectedIds}
-								containerClassName="max-h-52 md:max-h-69 overflow-auto"
-								emptyText={t("institution.editSelectEmpty", {
-									defaultValue: "Keine Kulturorte gefunden.",
-								})}
-								onToggle={toggleSelection}
-								variant="panel"
-							/>
-						)}
-					</Card>
-
-					<div className="flex flex-wrap gap-3">
-						<Button
-							variant="outline"
-							onClick={() => router.push(toLocalePath("/account/institutions"))}
-						>
-							{t("actions.cancel", { defaultValue: "Abbrechen" })}
-						</Button>
-						<Button
-							onClick={handleSubmitClaims}
-							disabled={selectedIds.length === 0 || isSubmitting}
-						>
-							{isSubmitting
-								? t("institution.claimSubmitting", {
-										defaultValue: "Wird gesendet...",
-									})
-								: t("institution.claimSubmit", {
-										defaultValue: "Anfrage senden",
-									})}
-						</Button>
-					</div>
+					</Button>
 				</div>
-			}
-		/>
+			</div>
+		</Modal>
 	);
 }

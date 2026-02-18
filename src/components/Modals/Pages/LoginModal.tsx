@@ -19,11 +19,10 @@ export function LoginModal({
 			variant="fullscreen"
 			routePath={routePath}
 			returnTo={returnTo}
-			content={
-				<div className="flex flex-1 items-center justify-center py-12 px-4 w-full">
-					<LoginForm />
-				</div>
-			}
-		/>
+		>
+			<div className="flex flex-1 items-center justify-center py-12 px-4 w-full">
+				<LoginForm />
+			</div>
+		</Modal>
 	);
 }

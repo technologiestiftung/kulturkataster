@@ -95,7 +95,7 @@ export function ListTopbar({
 						onClick={onOpenFilter}
 					>
 						<div className="flex items-center gap-2">
-							<FilterIcon className="size-4! stroke-foreground" />
+							<FilterIcon className="size-5!" />
 						</div>
 					</ButtonWithTooltip>
 					<Label className="font-normal">{t("listView.filterButton")}</Label>

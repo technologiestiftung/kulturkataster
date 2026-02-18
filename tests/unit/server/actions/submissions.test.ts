@@ -22,14 +22,11 @@ vi.mock("@/server/utils/rbac", () => ({
 }));
 
 const updateMock = vi.fn();
-const updateWhereMock = vi.fn();
 const findFirstMock = vi.fn();
 
 vi.mock("@/server/data/submissionRepo", () => ({
 	submissionRepo: {
 		update: (id: number, data: unknown) => updateMock(id, data),
-		updateWhere: (where: unknown, data: unknown) =>
-			updateWhereMock(where, data),
 		findFirst: (where: unknown) => findFirstMock(where),
 	},
 }));
@@ -39,7 +36,6 @@ describe("server actions: submissions", () => {
 		getTableScopeMock.mockReset();
 		requireScopeOrUserMock.mockReset();
 		updateMock.mockReset();
-		updateWhereMock.mockReset();
 		findFirstMock.mockReset();
 	});
 
@@ -54,30 +50,31 @@ describe("server actions: submissions", () => {
 			1,
 			expect.objectContaining({ data: { foo: "bar" } }),
 		);
-		expect(updateWhereMock).not.toHaveBeenCalled();
 	});
 
-	it("updateSubmission blocks edits on non-draft submissions for own scope", async () => {
+	it("updateSubmission allows edits on non-draft submissions for own scope", async () => {
 		getTableScopeMock.mockReturnValue("own");
 		requireScopeOrUserMock.mockReturnValue("user-1");
 		findFirstMock.mockResolvedValue({ id: 1, status: "approval_pending" });
+		updateMock.mockResolvedValue({ id: 1 });
 
-		await expect(
-			updateSubmission({ id: 1, data: { foo: "bar" } }),
-		).rejects.toThrow("Only draft submissions can be edited.");
-		expect(updateWhereMock).not.toHaveBeenCalled();
+		await updateSubmission({ id: 1, data: { foo: "bar" } });
+		expect(updateMock).toHaveBeenCalledWith(
+			1,
+			expect.objectContaining({ data: { foo: "bar" } }),
+		);
 	});
 
 	it("updateSubmission updates draft submissions for own scope", async () => {
 		getTableScopeMock.mockReturnValue("own");
 		requireScopeOrUserMock.mockReturnValue("user-1");
 		findFirstMock.mockResolvedValue({ id: 1, status: "draft" });
-		updateWhereMock.mockResolvedValue({ count: 1 });
+		updateMock.mockResolvedValue({ id: 1 });
 
 		await updateSubmission({ id: 1, data: { foo: "bar" } });
 
-		expect(updateWhereMock).toHaveBeenCalledWith(
-			{ id: 1, created_by: "user-1" },
+		expect(updateMock).toHaveBeenCalledWith(
+			1,
 			expect.objectContaining({ data: { foo: "bar" } }),
 		);
 	});

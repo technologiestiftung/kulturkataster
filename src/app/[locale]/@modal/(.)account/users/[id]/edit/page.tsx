@@ -12,7 +12,6 @@ export default async function EditUserModal({ params }: PageProps) {
 		<UserFormModal
 			mode="edit"
 			userId={id}
-			shouldRefresh={false}
 			routePath={`/account/users/${id}/edit`}
 			returnTo="/account/users"
 		/>
