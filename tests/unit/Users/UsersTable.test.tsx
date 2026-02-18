@@ -29,7 +29,9 @@ vi.mock("@/lib/hooks/useLocalePath", () => ({
 }));
 
 vi.mock("@/lib/store/accountStore", () => ({
-	useAccountStore: (selector: (state: { users: Array<Record<string, unknown>> }) => unknown) =>
+	useAccountStore: (
+		selector: (state: { users: Array<Record<string, unknown>> }) => unknown,
+	) =>
 		selector({
 			users: [
 				{
@@ -91,7 +93,9 @@ describe("UsersTable", () => {
 		config.onReview({ id: "user-1" });
 		expect(pushMock).toHaveBeenCalledWith("/de/account/users/user-1/review");
 
-		expect(config.getCanReview({ submissions: [{ type: "claim" }] })).toBe(true);
+		expect(config.getCanReview({ submissions: [{ type: "claim" }] })).toBe(
+			true,
+		);
 		expect(config.getCanReview({ submissions: [] })).toBe(false);
 	});
 });

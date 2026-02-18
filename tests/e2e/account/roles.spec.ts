@@ -16,19 +16,27 @@ test.describe("roles management", () => {
 		await safeGoto(page, "/de/account/activity", /\/de\/account\/activity\/?$/);
 	});
 
-	test("shows roles table, supports search, create, and edit", async ({ page }) => {
+	test("shows roles table, supports search, create, and edit", async ({
+		page,
+	}) => {
 		await safeGoto(page, "/de/account/roles", /\/de\/account\/roles\/?$/);
 		await expect(page.getByRole("table")).toBeVisible({ timeout: 15_000 });
 
-		const firstRoleName = (await page.locator("tbody tr td").first().innerText()).trim();
+		const firstRoleName = (
+			await page.locator("tbody tr td").first().innerText()
+		).trim();
 
 		const searchLabel = page.getByText("Rollen durchsuchen").first();
 		await expect(searchLabel).toBeVisible();
 		await searchLabel.locator("xpath=preceding-sibling::button[1]").click();
 		const searchInput = page.getByPlaceholder("Rollen durchsuchen...");
 		await expect(searchInput).toBeVisible();
-		await searchInput.fill(firstRoleName.slice(0, Math.min(4, firstRoleName.length)));
-		await expect(page.getByText(firstRoleName, { exact: false }).first()).toBeVisible();
+		await searchInput.fill(
+			firstRoleName.slice(0, Math.min(4, firstRoleName.length)),
+		);
+		await expect(
+			page.getByText(firstRoleName, { exact: false }).first(),
+		).toBeVisible();
 
 		const uniqueName = `E2E Rolle ${Date.now()}`;
 		await page.getByRole("button", { name: "Rolle erstellen" }).first().click();
@@ -63,7 +71,9 @@ test.describe("roles management", () => {
 			page.waitForURL(/\/de\/account\/roles\/?$/, { timeout: 30_000 }),
 			page.getByRole("button", { name: "Änderungen speichern" }).click(),
 		]);
-		await expect(page.getByText(uniqueName, { exact: false }).first()).toBeVisible({
+		await expect(
+			page.getByText(uniqueName, { exact: false }).first(),
+		).toBeVisible({
 			timeout: 15_000,
 		});
 	});

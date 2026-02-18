@@ -61,7 +61,10 @@ test.describe("institution submission wizard", () => {
 		await field.fill(value);
 	};
 
-	const checkById = async (page: import("@playwright/test").Page, id: string) => {
+	const checkById = async (
+		page: import("@playwright/test").Page,
+		id: string,
+	) => {
 		const checkbox = page.locator(`[id="${id}"]`).first();
 		if ((await checkbox.count()) === 0) return;
 		if (!(await checkbox.isVisible().catch(() => false))) return;
@@ -84,9 +87,7 @@ test.describe("institution submission wizard", () => {
 			.last()
 			.locator('[role="option"]:visible')
 			.first();
-		const hasVisibleOption = await option
-			.isVisible()
-			.catch(() => false);
+		const hasVisibleOption = await option.isVisible().catch(() => false);
 		if (hasVisibleOption) {
 			await option.scrollIntoViewIfNeeded();
 			await option.click({ force: true });
@@ -206,11 +207,9 @@ test.describe("institution submission wizard", () => {
 			"Need at least one existing institution in select list.",
 		);
 
-		const originalName = (await optionRows
-			.nth(0)
-			.locator("span")
-			.first()
-			.innerText()).trim();
+		const originalName = (
+			await optionRows.nth(0).locator("span").first().innerText()
+		).trim();
 		await optionRows.nth(0).click();
 
 		await expect(page).toHaveURL(/\/de\/institution\/submission\/?$/, {
@@ -228,8 +227,12 @@ test.describe("institution submission wizard", () => {
 			const updatedName = `${originalName} (E2E Update)`;
 			await nameInput.fill(updatedName);
 			await page.getByRole("button", { name: "Änderungen speichern" }).click();
-			await expect(page.getByText(originalName, { exact: false }).first()).toBeVisible();
-			await expect(page.getByText(updatedName, { exact: false }).first()).toBeVisible();
+			await expect(
+				page.getByText(originalName, { exact: false }).first(),
+			).toBeVisible();
+			await expect(
+				page.getByText(updatedName, { exact: false }).first(),
+			).toBeVisible();
 		}
 
 		await page.getByRole("button", { name: "Submission senden" }).click();
@@ -377,7 +380,11 @@ test.describe("institution submission wizard", () => {
 			"Geeignet für Proben, Lesungen, kleinere Veranstaltungen",
 		);
 		await fillById(page, "shared_use_availability", "Mo-Fr 10:00-18:00");
-		await fillById(page, "shared_use_accessibility", "Erdgeschoss, barrierearm");
+		await fillById(
+			page,
+			"shared_use_accessibility",
+			"Erdgeschoss, barrierearm",
+		);
 		await fillById(page, "shared_use_cost", "80 EUR pro Stunde");
 		await fillById(page, "shared_use_contact_person", "Kontakt: +49 30 222");
 		await fillById(page, "legal_form", "e.V.");

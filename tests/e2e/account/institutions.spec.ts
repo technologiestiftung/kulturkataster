@@ -73,7 +73,9 @@ test.describe("institutions dashboard", () => {
 			.first();
 		if ((await filterButton.count()) > 0) {
 			await filterButton.click();
-			await expect(page.getByText(/Kulturorte filtern|Filter/i).first()).toBeVisible();
+			await expect(
+				page.getByText(/Kulturorte filtern|Filter/i).first(),
+			).toBeVisible();
 			await page.keyboard.press("Escape");
 		}
 
@@ -98,7 +100,9 @@ test.describe("institutions dashboard", () => {
 			await expect(page).toHaveURL(/\/de\/account\/submissions\/\d+\/?$/, {
 				timeout: 30_000,
 			});
-			await expect(page.getByRole("button", { name: "Genehmigen" })).toBeVisible({
+			await expect(
+				page.getByRole("button", { name: "Genehmigen" }),
+			).toBeVisible({
 				timeout: 15_000,
 			});
 			await expect(page.getByRole("button", { name: "Ablehnen" })).toBeVisible({

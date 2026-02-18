@@ -23,7 +23,10 @@ test.describe("users management", () => {
 		await expect(page.getByRole("table")).toBeVisible({ timeout: 15_000 });
 
 		const uniqueEmail = `e2e.user.${Date.now()}@example.com`;
-		await page.getByRole("button", { name: "Nutzer*in hinzufügen" }).first().click();
+		await page
+			.getByRole("button", { name: "Nutzer*in hinzufügen" })
+			.first()
+			.click();
 		await expect(page).toHaveURL(/\/de\/account\/users\/new\/?$/, {
 			timeout: 15_000,
 		});
@@ -45,7 +48,9 @@ test.describe("users management", () => {
 		const searchInput = page.getByPlaceholder("Nutzer*innen suchen...");
 		await expect(searchInput).toBeVisible();
 		await searchInput.fill(uniqueEmail);
-		await expect(page.getByText(uniqueEmail, { exact: false }).first()).toBeVisible();
+		await expect(
+			page.getByText(uniqueEmail, { exact: false }).first(),
+		).toBeVisible();
 
 		const row = page.locator("tbody tr", { hasText: uniqueEmail }).first();
 		await row.getByRole("button", { name: "Edit" }).click();
@@ -60,14 +65,18 @@ test.describe("users management", () => {
 		await expect(page.getByLabel("Rolle")).toBeVisible();
 		await expect(page.getByLabel("Kulturorte")).toBeVisible();
 		await expect(page.getByText("Passwort zurücksetzen")).toBeVisible();
-		await expect(page.getByText("DSGVO-Compliance erneut senden")).toBeVisible();
+		await expect(
+			page.getByText("DSGVO-Compliance erneut senden"),
+		).toBeVisible();
 
 		await page.getByLabel("Nachname").fill("Updated");
 		await Promise.all([
 			page.waitForURL(/\/de\/account\/users\/?$/, { timeout: 30_000 }),
 			page.getByRole("button", { name: "Änderungen speichern" }).click(),
 		]);
-		await expect(page.getByText(uniqueEmail, { exact: false }).first()).toBeVisible({
+		await expect(
+			page.getByText(uniqueEmail, { exact: false }).first(),
+		).toBeVisible({
 			timeout: 15_000,
 		});
 
