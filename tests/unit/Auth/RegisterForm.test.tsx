@@ -257,7 +257,9 @@ describe("RegisterForm", () => {
 		);
 
 		await waitFor(() => {
-			expect(screen.getByText("auth.validation.passwordMin")).toBeInTheDocument();
+			expect(
+				screen.getByText("auth.validation.passwordMin"),
+			).toBeInTheDocument();
 		});
 		expect(mockedRegister).not.toHaveBeenCalled();
 	});
