@@ -27,7 +27,11 @@ test.describe("rbac regular user", () => {
 			"/de/account/institutions",
 			/\/de\/account\/institutions\/?$/,
 		);
-		await expect(page.getByRole("table")).toBeVisible({ timeout: 15_000 });
+		const table = page.getByRole("table");
+		const emptyState = page.getByText(
+			/Keine Kulturorte vorhanden\.?|No institutions found\.?/i,
+		);
+		await expect(table.or(emptyState)).toBeVisible({ timeout: 15_000 });
 	});
 });
 

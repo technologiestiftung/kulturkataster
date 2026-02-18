@@ -188,54 +188,53 @@ export function InstitutionDraftSelectModal({
 			containerClassName="p-0 md:p-0 mt-0 md:mt-0"
 			contentWrapperClassName="flex-1"
 			contentClassName=""
-			content={
-				<div className="p-4 space-y-6 flex-1 flex-col max-w-5xl mx-auto w-full">
-					<div className="mt-18 space-y-2">
-						<h1 className="font-bold">
-							{t("institution.editSelectTitle", {
-								defaultValue: "Bestehenden Kulturort auswählen",
-							})}
-						</h1>
+		>
+			<div className="p-4 space-y-6 flex-1 flex-col max-w-5xl mx-auto w-full">
+				<div className="mt-18 space-y-2">
+					<h1 className="font-bold">
+						{t("institution.editSelectTitle", {
+							defaultValue: "Bestehenden Kulturort auswählen",
+						})}
+					</h1>
+					<p className="body2">
+						{t("institution.editSelectSubtitle", {
+							defaultValue:
+								"Wählen Sie einen bestehenden Kulturort aus, den Sie aktualisieren möchten.",
+						})}
+					</p>
+				</div>
+
+				<Card className="space-y-4 mb-10 p-10 h-full" variant="tertiary">
+					<InstitutionDraftSelectSearch onQueryChange={setQuery} />
+					{isLoading || searchLoading ? (
 						<p className="body2">
-							{t("institution.editSelectSubtitle", {
-								defaultValue:
-									"Wählen Sie einen bestehenden Kulturort aus, den Sie aktualisieren möchten.",
+							{t("institution.loading", {
+								defaultValue: "Lädt...",
 							})}
 						</p>
-					</div>
-
-					<Card className="space-y-4 mb-10 p-10 h-full" variant="tertiary">
-						<InstitutionDraftSelectSearch onQueryChange={setQuery} />
-						{isLoading || searchLoading ? (
-							<p className="body2">
-								{t("institution.loading", {
-									defaultValue: "Lädt...",
-								})}
-							</p>
-						) : null}
-						{error && !isLoading ? (
-							<p className="body2 text-destructive">{error}</p>
-						) : (
-							<SelectableOptionsList
-								options={selectableOptions}
-								selectedValues={[]}
-								containerClassName="max-h-52 md:max-h-69 overflow-auto"
-								emptyText={t("institution.editSelectEmpty", {
-									defaultValue: "Keine Kulturorte gefunden.",
-								})}
-								variant="panel"
-								showCheckbox={false}
-								onToggle={(value) => {
-									const institution = institutionById.get(value);
-									if (institution) {
-										handleSelectInstitution(institution);
-									}
-								}}
-							/>
-						)}
-					</Card>
-				</div>
-			}
-		/>
+					) : null}
+					{error && !isLoading ? (
+						<p className="body2 text-destructive">{error}</p>
+					) : (
+						<SelectableOptionsList
+							options={selectableOptions}
+							selectedValues={[]}
+							containerClassName="max-h-52 md:max-h-69 overflow-auto"
+							emptyText={t("institution.editSelectEmpty", {
+								defaultValue: "Keine Kulturorte gefunden.",
+							})}
+							variant="panel"
+							showCheckbox={false}
+							onToggle={(value) => {
+								const institution = institutionById.get(value);
+								if (institution) {
+									handleSelectInstitution(institution);
+								}
+							}}
+						/>
+					)}
+				</Card>
+			</div>
+		</Modal>
 	);
 }

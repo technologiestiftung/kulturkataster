@@ -1,5 +1,6 @@
 import { getCategories } from "@/server/actions/categories";
 import { getCurrentProfile, getCurrentUser } from "@/server/actions/auth";
+import { getEntityAudits } from "@/server/actions/entityAudits";
 import { getGroups } from "@/server/actions/groups";
 import { getMyInstitutions } from "@/server/actions/institutions";
 import { getRoles } from "@/server/actions/roles";
@@ -21,6 +22,7 @@ export type AccountBootstrapData = {
 	categories: Awaited<ReturnType<typeof getCategories>>;
 	institutions: Awaited<ReturnType<typeof getMyInstitutions>>;
 	submissions: Awaited<ReturnType<typeof getSubmissions>>;
+	entityAudits: Awaited<ReturnType<typeof getEntityAudits>>;
 	institutionFieldPermissions: ReturnType<
 		typeof getFieldPermissionListsForTable
 	>;
@@ -39,6 +41,7 @@ export async function getAccountBootstrapData(): Promise<AccountBootstrapData | 
 		categories,
 		institutions,
 		submissions,
+		entityAudits,
 	] = await Promise.all([
 		getCurrentProfile(),
 		fetchIfAllowed(ctx, "user", "read", getUsers, []),
@@ -47,6 +50,7 @@ export async function getAccountBootstrapData(): Promise<AccountBootstrapData | 
 		fetchIfAllowed(ctx, "category", "update", getCategories, []),
 		fetchIfAllowed(ctx, "institution", "read", getMyInstitutions, []),
 		fetchIfAllowed(ctx, "submission", "read", getSubmissions, []),
+		fetchIfAllowed(ctx, "entity_audit", "read", getEntityAudits, []),
 	]);
 
 	return {
@@ -58,6 +62,7 @@ export async function getAccountBootstrapData(): Promise<AccountBootstrapData | 
 		categories,
 		institutions,
 		submissions,
+		entityAudits,
 		institutionFieldPermissions: getFieldPermissionListsForTable(
 			ctx,
 			"institution",

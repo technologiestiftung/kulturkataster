@@ -21,8 +21,9 @@ export function AccessibilitySettingsModal({
 			title={t("accessibilitySettingsModal.title")}
 			subtitle={t("accessibilitySettingsModal.subtitle")}
 			routePath={routePath}
-			content={content}
 			variant="fullscreen-muted"
-		/>
+		>
+			{content}
+		</Modal>
 	);
 }

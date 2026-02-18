@@ -14,6 +14,7 @@ export default async function EditCategoryModal({
 			categoryId={id}
 			shouldRefresh={false}
 			routePath={`/account/categories/${id}/edit`}
+			returnTo="/account/categories"
 		/>
 	);
 }

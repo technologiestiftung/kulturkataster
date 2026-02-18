@@ -7,6 +7,7 @@ import type { Role } from "@/types/role";
 import type { Profile, User } from "@/types/user";
 import type { Institution, Category } from "@/types";
 import type { Submission } from "@/types/submission";
+import type { EntityAudit } from "@/types/entityAudit";
 import type {
 	InstitutionActionPermissions,
 	InstitutionFieldPermissions,
@@ -20,6 +21,7 @@ type AccountStoreInitializerProps = {
 	categories: Category[];
 	institutions: Institution[];
 	submissions: Submission[];
+	entityAudits: EntityAudit[];
 	institutionPermissions: InstitutionActionPermissions;
 	institutionFieldPermissions: InstitutionFieldPermissions;
 };
@@ -32,6 +34,7 @@ export function AccountStoreInitializer({
 	categories,
 	institutions,
 	submissions,
+	entityAudits,
 	institutionPermissions,
 	institutionFieldPermissions,
 }: AccountStoreInitializerProps) {
@@ -42,6 +45,7 @@ export function AccountStoreInitializer({
 	const setCategories = useAccountStore((state) => state.setCategories);
 	const setInstitutions = useAccountStore((state) => state.setInstitutions);
 	const setSubmissions = useAccountStore((state) => state.setSubmissions);
+	const setEntityAudits = useAccountStore((state) => state.setEntityAudits);
 	const setInstitutionPermissions = useAccountStore(
 		(state) => state.setInstitutionPermissions,
 	);
@@ -76,6 +80,10 @@ export function AccountStoreInitializer({
 	useEffect(() => {
 		setSubmissions(submissions);
 	}, [setSubmissions, submissions]);
+
+	useEffect(() => {
+		setEntityAudits(entityAudits);
+	}, [setEntityAudits, entityAudits]);
 
 	useEffect(() => {
 		setInstitutionPermissions(institutionPermissions);

@@ -200,6 +200,8 @@ export const INSTITUTION_PERMISSION_FIELDS = [
 	"status",
 	"import_identifier",
 	"source",
+	"created_at",
+	"updated_at",
 ] as const satisfies readonly (keyof Institution)[];
 
 export interface GeoFeature {

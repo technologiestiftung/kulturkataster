@@ -166,7 +166,8 @@ export function InformationModal({
 			subtitle={t("informationModal.subtitle")}
 			routePath={routePath}
 			returnTo={returnTo}
-			content={content}
-		/>
+		>
+			{content}
+		</Modal>
 	);
 }

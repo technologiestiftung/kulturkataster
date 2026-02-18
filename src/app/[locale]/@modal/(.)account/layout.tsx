@@ -22,6 +22,7 @@ export default async function AccountModalLayout({
 		categories,
 		institutions,
 		submissions,
+		entityAudits,
 		institutionFieldPermissions,
 	} = accountData;
 	const institutionPermissions = {
@@ -42,6 +43,7 @@ export default async function AccountModalLayout({
 				categories={categories}
 				institutions={institutions}
 				submissions={submissions}
+				entityAudits={entityAudits}
 				institutionPermissions={institutionPermissions}
 				institutionFieldPermissions={institutionFieldPermissions}
 			/>

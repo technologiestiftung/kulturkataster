@@ -33,6 +33,9 @@ import { FilterPanel } from "@/components/Filter/FilterPanel";
 import { useInstitutionFilterCategories } from "@/lib/hooks/useInstitutionFilterCategories";
 import { useInstitutionTableFilters } from "@/lib/hooks/useInstitutionTableFilters";
 import { useInstitutionDraftStore } from "@/lib/store/institutionDraftStore";
+import { canReviewInstitutionSubmissionType } from "@/lib/utils/submissionReviewPermissions";
+import { EmptyActionState } from "@/components/EmptyActionState";
+import Edit from "@/icons/edit.svg";
 
 export function InstitutionsTable() {
 	const router = useRouter();
@@ -51,12 +54,7 @@ export function InstitutionsTable() {
 		!canCreateInstitutionDirect && institutionPermissions.createSubmission;
 	const canClaimInstitution = institutionPermissions.createSubmission;
 	const canReviewSubmissionType = (type: SubmissionType) => {
-		if (!institutionPermissions.reviewSubmission) return false;
-		if (type === "create") return institutionPermissions.create;
-		if (type === "update" || type === "claim")
-			return institutionPermissions.update;
-		if (type === "delete") return institutionPermissions.delete;
-		return false;
+		return canReviewInstitutionSubmissionType(institutionPermissions, type);
 	};
 	const submissions = useMemo(
 		() =>
@@ -858,6 +856,40 @@ export function InstitutionsTable() {
 			isSubmissionRow(row) && canReviewSubmissionType(row.submissionType),
 		reviewAriaLabel: "Review",
 		emptyMessage: "No institutions found.",
+		emptyState: (
+			<EmptyActionState
+				title={t("institutionsTable.empty.title", {
+					defaultValue: "Keine Kulturorte vorhanden.",
+				})}
+				description={t("institutionsTable.empty.description", {
+					defaultValue: "Sie können direkt neue Einträge starten.",
+				})}
+				actions={[
+					...(canClaimInstitution
+						? [
+								{
+									icon: <Send />,
+									label: t("institutionsTable.actions.claimInstitution"),
+									href: toLocalePath("/account/submissions/claim"),
+								},
+							]
+						: []),
+					...(canCreateInstitutionDirect || canCreateInstitutionViaSubmission
+						? [
+								{
+									icon: <Edit />,
+									label: t("institutionsTable.actions.addInstitution"),
+									href: toLocalePath(
+										canCreateInstitutionDirect
+											? "/account/institutions/new"
+											: "/institution/submission",
+									),
+								},
+							]
+						: []),
+				]}
+			/>
+		),
 	};
 
 	return (

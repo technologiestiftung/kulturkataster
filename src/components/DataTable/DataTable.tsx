@@ -610,6 +610,8 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 		}
 		return "Open filters";
 	})();
+	const hasRows = table.getRowModel().rows.length > 0;
+	const showStandaloneEmptyState = !hasRows && Boolean(config.emptyState);
 
 	useEffect(() => {
 		if (!isSearchOpen) return;
@@ -725,7 +727,10 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 				</div>
 			)}
 
-			<div className="relative w-full border border-neutral-20 rounded-md">
+			{showStandaloneEmptyState ? (
+				<div className="w-full h-full">{config.emptyState}</div>
+			) : (
+				<div className="relative w-full border border-neutral-20 rounded-md">
 				<div
 					ref={headerScrollRef}
 					onScroll={handleHeaderScroll}
@@ -792,7 +797,7 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 							className: "sr-only",
 						})}
 						<tbody>
-							{table.getRowModel().rows.length > 0 ? (
+							{hasRows ? (
 								(() => {
 									const rows = table.getRowModel().rows;
 									const virtualRows = shouldVirtualize
@@ -993,7 +998,7 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 										colSpan={table.getVisibleLeafColumns().length}
 										className="h-24 text-center border-b border-r border-neutral-20 first:border-l"
 									>
-										{config.emptyMessage || "No data found."}
+										{config.emptyMessage ?? "No data found."}
 									</td>
 								</tr>
 							)}
@@ -1001,6 +1006,7 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 					</table>
 				</div>
 			</div>
+			)}
 			{config.filterModal ? (
 				<FilterModalWrapper
 					open={isFilterOpen}

@@ -7,6 +7,8 @@ import { useAccountStore } from "@/lib/store/accountStore";
 import type { Role } from "@/types/role";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
+import { EmptyActionState } from "@/components/EmptyActionState";
+import Plus from "@/icons/plus.svg";
 
 export function RolesTable() {
 	const roles = useAccountStore((state) => state.roles);
@@ -64,6 +66,23 @@ export function RolesTable() {
 			label: t("roleTable.actions.add"),
 			onClick: () => router.push(toLocalePath("/account/roles/new")),
 		},
+		emptyState: (
+			<EmptyActionState
+				title={t("roleTable.empty.title", {
+					defaultValue: "Keine Rollen gefunden.",
+				})}
+				description={t("roleTable.empty.description", {
+					defaultValue: "Erstellen Sie eine Rolle, um Berechtigungen zu verwalten.",
+				})}
+				actions={[
+					{
+						icon: <Plus className="size-5" />,
+						label: t("roleTable.actions.add"),
+						href: toLocalePath("/account/roles/new"),
+					},
+				]}
+			/>
+		),
 		onEdit: (row) => router.push(toLocalePath(`/account/roles/${row.id}/edit`)),
 		emptyMessage: t("roleTable.emptyMessage"),
 		title: t("roleTable.title"),

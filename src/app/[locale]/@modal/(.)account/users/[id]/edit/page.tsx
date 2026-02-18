@@ -13,6 +13,7 @@ export default async function EditUserModal({ params }: PageProps) {
 			mode="edit"
 			userId={id}
 			routePath={`/account/users/${id}/edit`}
+			returnTo="/account/users"
 		/>
 	);
 }

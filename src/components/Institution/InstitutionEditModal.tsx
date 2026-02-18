@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { AlertDialog } from "@/components/ui/alert-dialog";
+import { Modal } from "@/components/Modals/Modal";
 import { InstitutionFormModal } from "@/components/Institution/InstitutionFormModal";
 import { useAccountStore } from "@/lib/store/accountStore";
 import {
@@ -12,6 +13,8 @@ import {
 import { createSubmission } from "@/server/actions/submissions";
 import { SubmissionEntityType, SubmissionType } from "@/generated/prisma";
 import type { Institution } from "@/types/institution";
+import { useRouter } from "next/navigation";
+import { showSuccessToast } from "@/lib/utils/feedbackToast";
 
 type InstitutionEditModalProps = {
 	institutionId: string;
@@ -29,7 +32,7 @@ type InstitutionEditModalProps = {
 export function InstitutionEditModal({
 	institutionId,
 	routePath,
-	returnTo = "/account/institutions",
+	returnTo,
 	onSubmit,
 	initialValues,
 	formKey,
@@ -40,13 +43,17 @@ export function InstitutionEditModal({
 }: InstitutionEditModalProps) {
 	const { t } = useTranslation("content");
 	const institutions = useAccountStore((state) => state.institutions);
-	const setAlertDialog = useAccountStore((state) => state.setAlertDialog);
 	const removeInstitution = useAccountStore((state) => state.removeInstitution);
 	const upsertSubmission = useAccountStore((state) => state.upsertSubmission);
 	const [isDeleting, setIsDeleting] = useState(false);
+	const [deleteError, setDeleteError] = useState<{
+		title: string;
+		description: string;
+	} | null>(null);
 	const [fetchedInstitution, setFetchedInstitution] =
 		useState<Institution | null>(null);
 	const [didFetchInstitution, setDidFetchInstitution] = useState(false);
+	const router = useRouter();
 
 	const numericInstitutionId = useMemo(() => {
 		const parsed = Number(institutionId);
@@ -62,6 +69,8 @@ export function InstitutionEditModal({
 		return (
 			<AlertDialog
 				status="error"
+				confirmLabel={t("close")}
+				onConfirm={() => router.back()}
 				title={t("institutionFormModal.dialog.notFound.title")}
 				description={t("institutionFormModal.dialog.notFound.description")}
 			/>
@@ -117,15 +126,15 @@ export function InstitutionEditModal({
 		try {
 			await deleteInstitution(resolvedInstitutionWithFallback.id);
 			removeInstitution(resolvedInstitutionWithFallback.id);
-			setAlertDialog({
-				title: t("institutionFormModal.feedback.delete.title"),
-				description: t("institutionFormModal.feedback.delete.description"),
-			});
+			showSuccessToast(
+				t("institutionFormModal.feedback.delete.title"),
+				t("institutionFormModal.feedback.delete.description"),
+			);
 			return;
 		} catch (error) {
 			if (!isDeleteDeniedError(error)) {
 				setIsDeleting(false);
-				setAlertDialog({
+				setDeleteError({
 					title: t("institutionFormModal.delete.errorTitle", {
 						defaultValue: "Delete failed",
 					}),
@@ -153,15 +162,13 @@ export function InstitutionEditModal({
 				},
 			});
 			upsertSubmission(deleteSubmission);
-			setAlertDialog({
-				title: t("institutionFormModal.feedback.deleteRequest.title"),
-				description: t(
-					"institutionFormModal.feedback.deleteRequest.description",
-				),
-			});
+			showSuccessToast(
+				t("institutionFormModal.feedback.deleteRequest.title"),
+				t("institutionFormModal.feedback.deleteRequest.description"),
+			);
 		} catch {
 			setIsDeleting(false);
-			setAlertDialog({
+			setDeleteError({
 				title: t("institutionFormModal.delete.errorTitle", {
 					defaultValue: "Delete failed",
 				}),
@@ -177,7 +184,6 @@ export function InstitutionEditModal({
 		isDeleteDeniedError,
 		removeInstitution,
 		resolvedInstitutionWithFallback,
-		setAlertDialog,
 		t,
 		upsertSubmission,
 	]);
@@ -188,43 +194,65 @@ export function InstitutionEditModal({
 
 	if (showNotFound) {
 		return (
-			<AlertDialog
-				status="error"
+			<Modal
 				title={t("institutionFormModal.dialog.notFound.title")}
-				description={t("institutionFormModal.dialog.notFound.description")}
+				variant="editor"
+				hasFooter={false}
+				routePath={routePath}
+				returnTo={returnTo}
+				autoCloseError={{
+					active: true,
+					title: t("institutionFormModal.dialog.notFound.title"),
+					description: t("institutionFormModal.dialog.notFound.description"),
+				}}
 			/>
 		);
 	}
 
 	return (
-		<InstitutionFormModal
-			mode="edit"
-			institution={resolvedInstitutionWithFallback}
-			returnTo={returnTo}
-			routePath={routePath}
-			closeConfirmation={{
-				title: t("institutionModalCloseConfirmation.title"),
-				description: t("institutionModalCloseConfirmation.description"),
-				confirmLabel: t("institutionModalCloseConfirmation.confirm"),
-				cancelLabel: t("institutionModalCloseConfirmation.cancel"),
-			}}
-			onSubmit={onSubmit}
-			initialValues={initialValues}
-			formKey={formKey}
-			submitLabel={submitLabel}
-			submitting={submitting}
-			closeOnSubmit={closeOnSubmit}
-			shouldRefresh={shouldRefresh}
-			onDelete={handleDelete}
-			deleteConfig={{
-				confirmDescription: t(
-					"institutionFormModal.delete.confirmDescription",
-					{
-						defaultValue:
-							"If you can delete this institution directly, it will be removed immediately. Otherwise, a delete request will be submitted for review.",
-					},
-				),
-			}}
-		/>
+		<>
+			<InstitutionFormModal
+				mode="edit"
+				institution={resolvedInstitutionWithFallback}
+				returnTo={returnTo}
+				routePath={routePath}
+				closeConfirmation={{
+					title: t("institutionModalCloseConfirmation.title"),
+					description: t("institutionModalCloseConfirmation.description"),
+					confirmLabel: t("institutionModalCloseConfirmation.confirm"),
+					cancelLabel: t("institutionModalCloseConfirmation.cancel"),
+				}}
+				onSubmit={onSubmit}
+				initialValues={initialValues}
+				formKey={formKey}
+				submitLabel={submitLabel}
+				submitting={submitting}
+				closeOnSubmit={closeOnSubmit}
+				shouldRefresh={shouldRefresh}
+				onDelete={handleDelete}
+				deleteConfig={{
+					confirmDescription: t(
+						"institutionFormModal.delete.confirmDescription",
+						{
+							defaultValue:
+								"If you can delete this institution directly, it will be removed immediately. Otherwise, a delete request will be submitted for review.",
+						},
+					),
+				}}
+			/>
+			{deleteError ? (
+				<AlertDialog
+					open
+					status="error"
+					title={deleteError.title}
+					description={deleteError.description}
+					confirmLabel={t("close")}
+					onConfirm={() => setDeleteError(null)}
+					onOpenChange={(open) => {
+						if (!open) setDeleteError(null);
+					}}
+				/>
+			) : null}
+		</>
 	);
 }
