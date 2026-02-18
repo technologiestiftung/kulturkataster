@@ -442,6 +442,11 @@ test.describe("institution submission wizard", () => {
 			page.getByRole("button", { name: "Submission senden" }),
 		).toBeVisible({ timeout: 15_000 });
 		await page.getByRole("button", { name: "Submission senden" }).click();
-		await waitForPostSubmitOutcome(page);
+		await expect(page).toHaveURL(/\/de\/institution\/?\?thankyou=1$/, {
+			timeout: 45_000,
+		});
+		await expect(
+			page.getByRole("heading", { name: "Vielen Dank für Ihre Einreichung" }),
+		).toBeVisible({ timeout: 15_000 });
 	});
 });
