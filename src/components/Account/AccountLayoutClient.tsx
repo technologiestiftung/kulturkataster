@@ -115,7 +115,7 @@ export function AccountLayoutClient({
 	});
 
 	return (
-		<div className="AccountLayoutClient relative min-h-0 h-full">
+		<div className="AccountLayoutClient relative min-h-0 h-full z-30">
 			<div className="absolute h-full w-full">
 				<Image
 					src="/resources/map.png"

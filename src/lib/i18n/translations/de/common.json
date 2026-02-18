@@ -40,6 +40,9 @@
 		"success": "Ein großer Erfolg!",
 		"warning": "Warnung - Jetzt aufpassen!"
 	},
+	"user": {
+		"title": "Mein Konto"
+	},
 	"auth": {
 		"account": {
 			"actions": {
@@ -57,11 +60,11 @@
 					"update": "aktualisiert"
 				},
 				"empty": "Sie haben noch keine Aktivitäten.",
-				"emptyHint": "Folgende Aktionen können Sie hier durchführen.",
 				"emptyActions": {
 					"claimLocations": "Meine Orte anfragen",
 					"contribute": "Mitwirken"
 				},
+				"emptyHint": "Folgende Aktionen können Sie hier durchführen.",
 				"entities": {
 					"address": "Adresse #{{id}}",
 					"category": "Kategorie #{{id}}",
@@ -76,8 +79,17 @@
 					"tag": "Tag #{{id}}",
 					"user": "Nutzer*in ({{email}})"
 				},
+				"hiddenActor": "Redaktion",
 				"itemWithName": "{{item}}: {{name}}",
 				"relationPreposition": "zu",
+				"status": {
+					"approved": "Genehmigt",
+					"completed": "Abgeschlossen",
+					"pending": "Ausstehend",
+					"rejected": "Abgelehnt"
+				},
+				"statusAria": "Status: {{status}}",
+				"system": "System",
 				"templates": {
 					"assign": "<actor>{{actor}}</actor> hat <secondary>{{secondaryEntity}}</secondary> <primary>{{primaryEntity}}</primary> {{action}}",
 					"create": "<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> {{action}}",
@@ -86,16 +98,7 @@
 					"statusChangeWithSecondary": "<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> für <secondary>{{secondaryEntity}}</secondary> {{action}}  <from>{{from}}</from> -> <to>{{to}}</to>",
 					"statusChangeWithSecondaryNoDiff": "<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> für <secondary>{{secondaryEntity}}</secondary> {{action}}"
 				},
-				"unknown": "Unbekannt",
-				"status": {
-					"approved": "Genehmigt",
-					"completed": "Abgeschlossen",
-					"pending": "Ausstehend",
-					"rejected": "Abgelehnt"
-				},
-				"statusAria": "Status: {{status}}",
-				"hiddenActor": "Redaktion",
-				"system": "System"
+				"unknown": "Unbekannt"
 			},
 			"alreadyAccount": "Haben Sie bereits ein Konto beim Kulturkataster?",
 			"backToMap": "Zur Karte",
@@ -162,10 +165,10 @@
 		"login": {
 			"emailLabel": "E-Mail",
 			"emailPlaceholder": "name@beispiel.de",
-			"invalidCredentials": "Ungültige Anmeldedaten. Bitte überprüfen Sie Ihre E-Mail-Adresse und Ihr Passwort.",
 			"errorFallback": "Anmeldung fehlgeschlagen.",
 			"forgotPassword": "Passwort vergessen?",
 			"inactive": "Ihr Konto ist noch nicht freigeschaltet. Bitte wenden Sie sich an den Support.",
+			"invalidCredentials": "Ungültige Anmeldedaten. Bitte überprüfen Sie Ihre E-Mail-Adresse und Ihr Passwort.",
 			"metaTitle": "Anmelden – Kulturkataster",
 			"noAccount": "Sie haben noch keinen Account beim Kulturkataster? ",
 			"passwordLabel": "Passwort",
@@ -357,6 +360,10 @@
 		"backToMap": "Zurück zur Karte",
 		"basicInfoHeading": "Grundinformationen",
 		"categories": "Kategorien",
+		"claimSelectDescription": "Kulturorte, für die Sie berechtigt sind, können Sie Ihrem Profil hinzufügen. Für mehr Vollständigkeit, einen besseren Überblick und die schnellere Bearbeitung.",
+		"claimSelectSearchLabel": "Name oder Adresse des Kulturortes",
+		"claimSelectSubtitle": "Beantragen Sie die Verwaltungs-Rechte für Kulturorte, die zu Ihrem Verband oder Unternehmen gehören.",
+		"claimSelectTitle": "Kulturort beanspruchen",
 		"closingReason": "Schließungsgrund",
 		"contact": "Kontakt",
 		"createdAt": "Erstellt am",
@@ -376,7 +383,6 @@
 		"funding": "Finanzierung",
 		"fundingType": "Art der Finanzierung",
 		"lessInfo": "Weniger Informationen",
-		"loading": "Laden...",
 		"moreInfo": "Mehr Informationen",
 		"notFound": "Kulturort nicht gefunden",
 		"notes": "Zusätzliche Informationen",

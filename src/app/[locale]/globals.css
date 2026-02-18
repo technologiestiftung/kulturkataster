@@ -221,8 +221,8 @@
 
 	h1 {
 		@apply font-extrabold;
-		font-size: 1.5rem;
-		line-height: 2rem;
+		font-size: 2.5rem;
+		line-height: 2.5rem;
 	}
 
 	h2 {

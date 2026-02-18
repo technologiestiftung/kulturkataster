@@ -73,7 +73,6 @@ export function InstitutionDraftSelectModal({
 
 	const [query, setQuery] = useState("");
 	const [searchResults, setSearchResults] = useState<Institution[]>([]);
-	const [searchLoading, setSearchLoading] = useState(false);
 
 	const selectableInstitutions = useMemo(() => {
 		if (query.trim().length === 0) {
@@ -113,7 +112,6 @@ export function InstitutionDraftSelectModal({
 			return;
 		}
 		let active = true;
-		setSearchLoading(true);
 		const handle = setTimeout(() => {
 			void searchInstitutions(query)
 				.then((results) => {
@@ -126,7 +124,6 @@ export function InstitutionDraftSelectModal({
 				})
 				.finally(() => {
 					if (!active) return;
-					setSearchLoading(false);
 				});
 		}, 300);
 
@@ -172,7 +169,7 @@ export function InstitutionDraftSelectModal({
 				"address.lat": address?.lat ?? "",
 				"address.lng": address?.lng ?? "",
 			});
-			router.push(toLocalePath("/institution/submission"));
+			router.replace(toLocalePath("/institution/submission"));
 		},
 		[categories, setDraft, setMode, setStepId, router],
 	);
@@ -206,19 +203,13 @@ export function InstitutionDraftSelectModal({
 
 				<Card className="space-y-4 mb-10 p-10 h-full" variant="tertiary">
 					<InstitutionDraftSelectSearch onQueryChange={setQuery} />
-					{isLoading || searchLoading ? (
-						<p className="body2">
-							{t("institution.loading", {
-								defaultValue: "Lädt...",
-							})}
-						</p>
-					) : null}
 					{error && !isLoading ? (
 						<p className="body2 text-destructive">{error}</p>
 					) : (
 						<SelectableOptionsList
 							options={selectableOptions}
 							selectedValues={[]}
+							multiSelect={false}
 							containerClassName="max-h-52 md:max-h-69 overflow-auto"
 							emptyText={t("institution.editSelectEmpty", {
 								defaultValue: "Keine Kulturorte gefunden.",

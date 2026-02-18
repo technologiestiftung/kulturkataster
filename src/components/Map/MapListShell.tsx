@@ -12,7 +12,7 @@ export function MapListShell() {
 	const normalizedPath = pathname?.replace(/\/$/, "");
 	const isListRoute = /\/list(\/|$)/.test(normalizedPath ?? "");
 	const isMapRoute = /\/map(\/|$)/.test(normalizedPath ?? "");
-	const showMapListShell = isListRoute || isMapRoute;
+	const isAccountRoute = normalizedPath?.includes("/account") ?? false;
 
 	const [lastRouteMode, setLastRouteMode] = useState<"map" | "list">(() =>
 		isListRoute ? "list" : "map",
@@ -32,17 +32,12 @@ export function MapListShell() {
 		}
 	}, [isListRoute, isMapRoute]);
 
-	if (normalizedPath?.includes("/account")) {
+	if (isAccountRoute) {
 		return null;
 	}
 
 	return (
-		<div
-			className={
-				showMapListShell ? "flex flex-1 h-full w-full relative" : "hidden"
-			}
-			aria-hidden={!showMapListShell}
-		>
+		<div className={"flex flex-1 h-full w-full relative"}>
 			<div
 				className={routeMode === "map" ? "h-full w-full relative" : "hidden"}
 				aria-hidden={routeMode !== "map"}

@@ -6,8 +6,8 @@ import { ButtonWithTooltip } from "@/components/ui/button";
 import { SearchInput } from "@/components/ui/search-input";
 import { Label } from "@/components/ui/label";
 import SearchIcon from "@/icons/search.svg";
-import FilterIcon from "@/icons/filter.svg";
 import Close from "@/icons/close.svg";
+import { FilterButtonWithCount } from "@/components/Filter/FilterButtonWithCount";
 
 type ListTopbarProps = {
 	query: string;
@@ -87,17 +87,11 @@ export function ListTopbar({
 			</div>
 			{isSearchOpen ? null : (
 				<div className="flex items-center gap-2">
-					<ButtonWithTooltip
-						type="button"
-						variant="rounded"
-						size="icon-only"
+					<FilterButtonWithCount
 						tooltip={t("listView.filterButton")}
+						className="cursor-pointer"
 						onClick={onOpenFilter}
-					>
-						<div className="flex items-center gap-2">
-							<FilterIcon className="size-5!" />
-						</div>
-					</ButtonWithTooltip>
+					/>
 					<Label className="font-normal">{t("listView.filterButton")}</Label>
 				</div>
 			)}

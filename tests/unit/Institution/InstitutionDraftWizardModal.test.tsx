@@ -65,8 +65,13 @@ vi.mock("@/components/Modals/Modal", () => ({
 }));
 
 const closeModalMock = vi.fn();
+const closeToThankYouMock = vi.fn();
+const institutionReviewMock = vi.fn();
 vi.mock("@/components/Modals/useRoutedModalClose", () => ({
-	useRoutedModalClose: () => closeModalMock,
+	useRoutedModalClose: (args?: { returnTo?: string }) =>
+		args?.returnTo === "/institution?thankyou=1"
+			? closeToThankYouMock
+			: closeModalMock,
 }));
 
 vi.mock("@/lib/utils/feedbackToast", () => ({
@@ -74,7 +79,10 @@ vi.mock("@/lib/utils/feedbackToast", () => ({
 }));
 
 vi.mock("@/components/Institution/InstitutionReview", () => ({
-	InstitutionReview: () => <div>institution-review</div>,
+	InstitutionReview: (props: Record<string, unknown>) => {
+		institutionReviewMock(props);
+		return <div>institution-review</div>;
+	},
 }));
 
 vi.mock("@/components/Institution/InstitutionFormModal", () => ({
@@ -106,6 +114,8 @@ describe("InstitutionDraftWizardModal submission workflow", () => {
 	beforeEach(() => {
 		pushMock.mockReset();
 		closeModalMock.mockReset();
+		closeToThankYouMock.mockReset();
+		institutionReviewMock.mockReset();
 		mockedCreateSubmission.mockReset();
 		mockedCreateSubmission.mockResolvedValue({} as any);
 		mockedBuildAddressFromFormData.mockClear();
@@ -147,7 +157,7 @@ describe("InstitutionDraftWizardModal submission workflow", () => {
 		} as any);
 	});
 
-	it("submits create payload from review step and navigates to account institutions", async () => {
+	it("submits create payload from review step and routes to institution thank-you", async () => {
 		render(<InstitutionDraftWizardModal routePath="/institution/submission" />);
 
 		fireEvent.click(
@@ -180,7 +190,8 @@ describe("InstitutionDraftWizardModal submission workflow", () => {
 				data: expect.objectContaining({ newCategory: expect.anything() }),
 			}),
 		);
-		expect(closeModalMock).toHaveBeenCalledTimes(1);
+		expect(closeToThankYouMock).toHaveBeenCalledTimes(1);
+		expect(closeModalMock).not.toHaveBeenCalled();
 		expect(mockedShowSuccessToast).toHaveBeenCalledTimes(1);
 	});
 
@@ -234,12 +245,23 @@ describe("InstitutionDraftWizardModal submission workflow", () => {
 		);
 	});
 
-	it("submits update payload with entityId and navigates back to institution page", async () => {
+	it("submits update payload with entityId and routes to institution thank-you", async () => {
 		const draftState = useInstitutionDraftStore.getState();
 		draftState.setMode("update");
 		draftState.setDraft({
 			entityId: 55,
-			name: "Existing Institution",
+			name: "Updated Institution Name",
+			website: "https://unchanged.example",
+			originalInstitution: {
+				id: 55,
+				name: "Original Institution Name",
+				website: "https://unchanged.example",
+				address: {
+					street: "Old Street",
+					street_number: "2",
+					city: "Berlin",
+				},
+			},
 		});
 
 		render(<InstitutionDraftWizardModal routePath="/institution/submission" />);
@@ -260,10 +282,45 @@ describe("InstitutionDraftWizardModal submission workflow", () => {
 				entityId: 55,
 				type: "update",
 				status: "approval_pending",
+				diff: expect.objectContaining({
+					name: "Updated Institution Name",
+				}),
 			}),
 		);
-		expect(closeModalMock).toHaveBeenCalledTimes(1);
+		expect(closeToThankYouMock).toHaveBeenCalledTimes(1);
+		expect(closeModalMock).not.toHaveBeenCalled();
 		expect(mockedShowSuccessToast).toHaveBeenCalledTimes(1);
+		expect(mockedShowSuccessToast).toHaveBeenCalledWith(
+			"institutionDraftWizardModal.feedback.submit.title",
+			"institutionDraftWizardModal.feedback.submit.description",
+		);
+	});
+
+	it("passes original and updated values to review overview in update mode", () => {
+		const draftState = useInstitutionDraftStore.getState();
+		draftState.setMode("update");
+		draftState.setDraft({
+			entityId: 55,
+			name: "Updated Name",
+			originalInstitution: {
+				id: 55,
+				name: "Original Name",
+				status: "public",
+			},
+		});
+
+		render(<InstitutionDraftWizardModal routePath="/institution/submission" />);
+
+		expect(institutionReviewMock).toHaveBeenCalled();
+		const lastCall = institutionReviewMock.mock.calls.at(-1)?.[0] as
+			| { data?: Record<string, unknown>; newData?: Record<string, unknown> }
+			| undefined;
+		expect(lastCall?.data).toEqual(
+			expect.objectContaining({ name: "Original Name" }),
+		);
+		expect(lastCall?.newData).toEqual(
+			expect.objectContaining({ name: "Updated Name" }),
+		);
 	});
 
 	it("advances to next step without submitting when canGoNext is true", async () => {
