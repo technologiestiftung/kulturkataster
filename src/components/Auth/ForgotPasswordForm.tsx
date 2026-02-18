@@ -9,10 +9,9 @@ import type { FormWrapperConfig } from "@/components/FormWrapper";
 import { AlertDialog } from "@/components/ui/alert-dialog";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
 
-export function ForgotPasswordForm() {
+export function ForgotPasswordForm({ onSuccess }: { onSuccess?: () => void }) {
 	const [isLoading, setIsLoading] = useState(false);
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
-	const [showSuccess, setShowSuccess] = useState(false);
 	const router = useRouter();
 	const toLocalePath = useLocalePath();
 	const { t } = useTranslation("common");
@@ -28,7 +27,11 @@ export function ForgotPasswordForm() {
 				setErrorMessage(result.error ?? t("auth.forgot.errorFallback"));
 				return;
 			}
-			setShowSuccess(true);
+			if (onSuccess) {
+				onSuccess();
+				return;
+			}
+			router.replace(toLocalePath("/login"));
 		} catch {
 			setErrorMessage(t("auth.forgot.errorFallback"));
 		} finally {
@@ -84,23 +87,6 @@ export function ForgotPasswordForm() {
 				}}
 				confirmLabel={t("close")}
 				onConfirm={() => setErrorMessage(null)}
-			/>
-
-			<AlertDialog
-				title={t("auth.forgot.successTitle")}
-				status="success"
-				description={t("auth.forgot.successMessage")}
-				open={showSuccess}
-				onOpenChange={(open) => {
-					if (!open) {
-						setShowSuccess(false);
-					}
-				}}
-				confirmLabel={t("auth.forgot.successCta")}
-				onConfirm={() => {
-					setShowSuccess(false);
-					router.replace(toLocalePath("/login"));
-				}}
 			/>
 
 			<FormWrapper config={formConfig} />

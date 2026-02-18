@@ -4,6 +4,7 @@ import { InstitutionClaimSelectModal } from "@/components/Institution/Institutio
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { createSubmission } from "@/server/actions/submissions";
 import { searchInstitutions } from "@/server/actions/institutions";
+import { showSuccessToast } from "@/lib/utils/feedbackToast";
 
 vi.mock("react-i18next", () => ({
 	useTranslation: () => ({
@@ -12,17 +13,17 @@ vi.mock("react-i18next", () => ({
 	}),
 }));
 
-const pushMock = vi.fn();
-vi.mock("next/navigation", () => ({
-	useRouter: () => ({ push: pushMock }),
-}));
-
-vi.mock("@/lib/hooks/useLocalePath", () => ({
-	useLocalePath: () => (path: string) => `/de${path}`,
-}));
-
 vi.mock("@/components/Modals/Modal", () => ({
-	Modal: ({ content }: { content: React.ReactNode }) => <div>{content}</div>,
+	Modal: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+}));
+
+const closeModalMock = vi.fn();
+vi.mock("@/components/Modals/useRoutedModalClose", () => ({
+	useRoutedModalClose: () => closeModalMock,
+}));
+
+vi.mock("@/lib/utils/feedbackToast", () => ({
+	showSuccessToast: vi.fn(),
 }));
 
 vi.mock("@/components/Institution/InstitutionDraftSelectSearch", () => ({
@@ -47,13 +48,15 @@ vi.mock("@/server/actions/institutions", () => ({
 
 const mockedCreateSubmission = vi.mocked(createSubmission);
 const mockedSearchInstitutions = vi.mocked(searchInstitutions);
+const mockedShowSuccessToast = vi.mocked(showSuccessToast);
 
 describe("InstitutionClaimSelectModal", () => {
 	beforeEach(() => {
-		pushMock.mockReset();
+		closeModalMock.mockReset();
 		mockedCreateSubmission.mockReset();
 		mockedCreateSubmission.mockResolvedValue({} as never);
 		mockedSearchInstitutions.mockReset();
+		mockedShowSuccessToast.mockReset();
 
 		useInstitutionStore.setState({
 			allInstitutions: [
@@ -111,7 +114,8 @@ describe("InstitutionClaimSelectModal", () => {
 				}),
 			}),
 		);
-		expect(pushMock).toHaveBeenCalledWith("/de/account/institutions");
+		expect(closeModalMock).toHaveBeenCalledTimes(1);
+		expect(mockedShowSuccessToast).toHaveBeenCalledTimes(1);
 	});
 
 	it("uses search results when a query is provided", async () => {

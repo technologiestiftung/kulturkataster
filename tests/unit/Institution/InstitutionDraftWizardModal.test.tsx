@@ -7,6 +7,7 @@ import { useInstitutionDraftStore } from "@/lib/store/institutionDraftStore";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { buildAddressFromFormData } from "@/lib/utils/formUtils";
 import { resolveCategoryIdsFromDraft } from "@/lib/utils/institutionCategoryUtils";
+import { showSuccessToast } from "@/lib/utils/feedbackToast";
 
 vi.mock("react-i18next", () => ({
 	useTranslation: () => ({
@@ -60,7 +61,16 @@ vi.mock("@/components/HorizontalStepper", () => ({
 }));
 
 vi.mock("@/components/Modals/Modal", () => ({
-	Modal: ({ content }: { content: React.ReactNode }) => <div>{content}</div>,
+	Modal: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+}));
+
+const closeModalMock = vi.fn();
+vi.mock("@/components/Modals/useRoutedModalClose", () => ({
+	useRoutedModalClose: () => closeModalMock,
+}));
+
+vi.mock("@/lib/utils/feedbackToast", () => ({
+	showSuccessToast: vi.fn(),
 }));
 
 vi.mock("@/components/Institution/InstitutionReview", () => ({
@@ -90,14 +100,17 @@ const mockedBuildAddressFromFormData = vi.mocked(buildAddressFromFormData);
 const mockedResolveCategoryIdsFromDraft = vi.mocked(
 	resolveCategoryIdsFromDraft,
 );
+const mockedShowSuccessToast = vi.mocked(showSuccessToast);
 
 describe("InstitutionDraftWizardModal submission workflow", () => {
 	beforeEach(() => {
 		pushMock.mockReset();
+		closeModalMock.mockReset();
 		mockedCreateSubmission.mockReset();
 		mockedCreateSubmission.mockResolvedValue({} as any);
 		mockedBuildAddressFromFormData.mockClear();
 		mockedResolveCategoryIdsFromDraft.mockClear();
+		mockedShowSuccessToast.mockReset();
 
 		mockFormSubmitData = {};
 		mockStepperState = {
@@ -167,7 +180,8 @@ describe("InstitutionDraftWizardModal submission workflow", () => {
 				data: expect.objectContaining({ newCategory: expect.anything() }),
 			}),
 		);
-		expect(pushMock).toHaveBeenCalledWith("/de/account/institutions");
+		expect(closeModalMock).toHaveBeenCalledTimes(1);
+		expect(mockedShowSuccessToast).toHaveBeenCalledTimes(1);
 	});
 
 	it("creates separate category submissions for proposed new categories", async () => {
@@ -248,7 +262,8 @@ describe("InstitutionDraftWizardModal submission workflow", () => {
 				status: "approval_pending",
 			}),
 		);
-		expect(pushMock).toHaveBeenCalledWith("/de/institution");
+		expect(closeModalMock).toHaveBeenCalledTimes(1);
+		expect(mockedShowSuccessToast).toHaveBeenCalledTimes(1);
 	});
 
 	it("advances to next step without submitting when canGoNext is true", async () => {

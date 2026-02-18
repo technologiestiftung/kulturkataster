@@ -4,6 +4,7 @@ import type { Role } from "@/types/role";
 import type { Institution } from "@/types/institution";
 import type { Category } from "@/types/category";
 import type { Submission } from "@/types/submission";
+import type { EntityAudit } from "@/types/entityAudit";
 
 export type InstitutionActionPermissions = {
 	create: boolean;
@@ -28,18 +29,19 @@ export type AccountStoreState = {
 	categories: Category[];
 	institutions: Institution[];
 	submissions: Submission[];
+	entityAudits: EntityAudit[];
 	institutionPermissions: InstitutionActionPermissions;
 	institutionFieldPermissions: InstitutionFieldPermissions;
 	selectedUserId: string | null;
 	selectedGroupId: number | null;
 	selectedRoleId: number | null;
-	alertDialog: { title: string; description: string } | null;
 	setCurrentProfile: (profile: Profile | null) => void;
 	setUsers: (users: User[]) => void;
 	setGroups: (groups: Group[]) => void;
 	setRoles: (roles: Role[]) => void;
 	setCategories: (categories: Category[]) => void;
 	setInstitutions: (institutions: Institution[]) => void;
+	setEntityAudits: (entityAudits: EntityAudit[]) => void;
 	setInstitutionPermissions: (
 		permissions: InstitutionActionPermissions,
 	) => void;
@@ -65,10 +67,10 @@ export type AccountStoreState = {
 	addSubmission: (submission: Submission) => void;
 	upsertSubmission: (submission: Submission) => void;
 	removeSubmission: (id: number) => void;
+	addEntityAudit: (entityAudit: EntityAudit) => void;
+	upsertEntityAudit: (entityAudit: EntityAudit) => void;
+	removeEntityAudit: (id: number) => void;
 	setSelectedUserId: (id: string | null) => void;
 	setSelectedGroupId: (id: number | null) => void;
 	setSelectedRoleId: (id: number | null) => void;
-	setAlertDialog: (
-		alert: { title: string; description: string } | null,
-	) => void;
 };

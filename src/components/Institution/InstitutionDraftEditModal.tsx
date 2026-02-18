@@ -20,6 +20,7 @@ import type { Category, FilterState } from "@/types";
 import type { Submission } from "@/types/submission";
 import { useRouter } from "next/navigation";
 import { AlertDialog } from "../ui/alert-dialog";
+import { showSuccessToast } from "@/lib/utils/feedbackToast";
 
 type InstitutionDraftEditModalProps = {
 	returnTo?: string;
@@ -29,7 +30,7 @@ type InstitutionDraftEditModalProps = {
 };
 
 export function InstitutionDraftEditModal({
-	returnTo = "/account/institutions",
+	returnTo,
 	submissionId,
 	shouldRefresh = false,
 	routePath,
@@ -47,7 +48,6 @@ export function InstitutionDraftEditModal({
 	);
 	const upsertSubmission = useAccountStore((state) => state.upsertSubmission);
 	const removeSubmission = useAccountStore((state) => state.removeSubmission);
-	const setAlertDialog = useAccountStore((state) => state.setAlertDialog);
 	const categories = useAccountStore((state) => state.categories);
 	const router = useRouter();
 
@@ -136,14 +136,14 @@ export function InstitutionDraftEditModal({
 		try {
 			await deleteSubmission(submissionId);
 			removeSubmission(submissionId);
-			setAlertDialog({
-				title: t("institutionDraftEditModal.delete.successTitle", {
+			showSuccessToast(
+				t("institutionDraftEditModal.delete.successTitle", {
 					defaultValue: "Entwurf gelöscht",
 				}),
-				description: t("institutionDraftEditModal.delete.successDescription", {
+				t("institutionDraftEditModal.delete.successDescription", {
 					defaultValue: "Die Einreichung wurde gelöscht.",
 				}),
-			});
+			);
 			if (shouldRefresh) {
 				router.refresh();
 			}
@@ -156,7 +156,6 @@ export function InstitutionDraftEditModal({
 		isDeleting,
 		removeSubmission,
 		router,
-		setAlertDialog,
 		shouldRefresh,
 		submissionId,
 		t,

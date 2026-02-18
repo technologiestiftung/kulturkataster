@@ -7,25 +7,18 @@ import { FormWrapper } from "@/components/FormWrapper";
 import type { FormWrapperConfig } from "@/components/FormWrapper";
 import { AlertDialog } from "@/components/ui/alert-dialog";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
-import { useRoutedModalClose } from "@/components/Modals/RoutedEditorModal";
-import { updateUser, removeUser } from "@/server/actions/users";
+import { updateUser, deleteUser } from "@/server/actions/users";
 import { updateMyPassword, logout } from "@/server/actions/auth";
-import { clearAccountStore, useAccountStore } from "@/lib/store/accountStore";
+import { clearAccountStore } from "@/lib/store/accountStore";
+import { splitDisplayName } from "@/lib/utils/userName";
 
 type AccountEditFormProps = {
 	userId: string;
 	email: string | null;
 	firstName?: string | null;
 	lastName?: string | null;
-};
-
-const splitName = (value: string) => {
-	const trimmed = value.trim();
-	if (!trimmed) return { firstName: undefined, lastName: undefined };
-	const parts = trimmed.split(/\s+/);
-	const firstName = parts.shift() ?? "";
-	const lastName = parts.length ? parts.join(" ") : undefined;
-	return { firstName, lastName };
+	onSuccess?: () => void;
+	onCancel?: () => void;
 };
 
 export function AccountEditForm({
@@ -33,15 +26,15 @@ export function AccountEditForm({
 	email,
 	firstName,
 	lastName,
+	onSuccess,
+	onCancel,
 }: AccountEditFormProps) {
 	const router = useRouter();
 	const toLocalePath = useLocalePath();
-	const closeForm = useRoutedModalClose({ returnTo: "/account" });
 	const { t } = useTranslation("common");
 	const [isLoading, setIsLoading] = useState(false);
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 	const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-	const setAlertDialog = useAccountStore((state) => state.setAlertDialog);
 
 	const initialName = useMemo(() => {
 		const parts = [firstName, lastName].filter(Boolean);
@@ -63,7 +56,8 @@ export function AccountEditForm({
 				return;
 			}
 
-			const { firstName: nextFirst, lastName: nextLast } = splitName(nameValue);
+			const { firstName: nextFirst, lastName: nextLast } =
+				splitDisplayName(nameValue);
 
 			await updateUser({
 				id: userId,
@@ -80,11 +74,7 @@ export function AccountEditForm({
 				}
 			}
 
-			setAlertDialog({
-				title: t("auth.accountEdit.successTitle"),
-				description: t("auth.accountEdit.successDescription"),
-			});
-			closeForm();
+			onSuccess?.();
 		} catch (error) {
 			setErrorMessage(
 				error instanceof Error
@@ -105,7 +95,7 @@ export function AccountEditForm({
 		submitDisabled: isLoading,
 		showCancel: true,
 		cancelLabel: t("cancel"),
-		onCancel: closeForm,
+		onCancel,
 		deleteAction: {
 			label: t("auth.accountEdit.deleteAction"),
 			onClick: () => setShowDeleteConfirm(true),
@@ -179,7 +169,7 @@ export function AccountEditForm({
 		setIsLoading(true);
 		setErrorMessage(null);
 		try {
-			await removeUser(userId);
+			await deleteUser(userId);
 			const result = await logout();
 			if (result.ok) {
 				await clearAccountStore();
@@ -216,7 +206,6 @@ export function AccountEditForm({
 				confirmLabel={t("close")}
 				onConfirm={() => setErrorMessage(null)}
 			/>
-
 			<AlertDialog
 				status="warning"
 				title={t("auth.accountEdit.deleteTitle")}

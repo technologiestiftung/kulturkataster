@@ -4,11 +4,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getFieldLabel } from "@/lib/i18n/fieldLabels";
 import { DialogTitle } from "@/components/ui/dialog";
-import {
-	RoutedEditorModal,
-	useRoutedModalClose,
-} from "@/components/Modals/RoutedEditorModal";
-import { AlertDialog } from "@/components/ui/alert-dialog";
+import { Modal } from "@/components/Modals/Modal";
+import { useRoutedModalClose } from "@/components/Modals/useRoutedModalClose";
 import { FormWrapper } from "@/components/FormWrapper";
 import type { FormWrapperConfig, FieldConfig } from "@/components/FormWrapper";
 import { useAccountStore } from "@/lib/store/accountStore";
@@ -34,6 +31,7 @@ import { resolveCategoryIdsFromDraft } from "@/lib/utils/institutionCategoryUtil
 import { TFunction } from "i18next";
 import { useInstitutionPrivateFieldResolver } from "@/lib/hooks/useInstitutionPrivateFieldResolver";
 import { applyInstitutionFieldAccess } from "@/lib/utils/institutionFieldAccess";
+import { showSuccessToast } from "@/lib/utils/feedbackToast";
 type InstitutionFormModalProps = {
 	mode: "create" | "edit";
 	institution?: Institution | null;
@@ -166,14 +164,6 @@ const getDialogTitle = (
 	mode === "create"
 		? t("institutionFormModal.dialog.title.create")
 		: t("institutionFormModal.dialog.title.edit");
-
-const renderNotFoundDialog = (t: (key: string) => string) => (
-	<AlertDialog
-		status="error"
-		title={t("institutionFormModal.dialog.notFound.title")}
-		description={t("institutionFormModal.dialog.notFound.description")}
-	/>
-);
 
 const renderDialogBody = (
 	formConfig: FormWrapperConfig,
@@ -910,7 +900,7 @@ export function InstitutionFormModal({
 	mode,
 	institution,
 	returnTo,
-	onClose,
+	onClose: _onClose,
 	routePath,
 	onSubmit,
 	initialValues,
@@ -927,7 +917,6 @@ export function InstitutionFormModal({
 	const { t } = useTranslation("content");
 	const { t: tEnum } = useTranslation("enumMap");
 	const { isPrivateField } = useInstitutionPrivateFieldResolver();
-	const setAlertDialog = useAccountStore((state) => state.setAlertDialog);
 	const institutionFieldPermissions = useAccountStore(
 		(state) => state.institutionFieldPermissions,
 	);
@@ -984,10 +973,7 @@ export function InstitutionFormModal({
 		}
 	}, []);
 
-	const handleClose = useRoutedModalClose({
-		returnTo: returnTo ?? returnTo,
-		onClose,
-	});
+	const handleClose = useRoutedModalClose({ returnTo });
 
 	const resolvedInstitutionWithFallback = institution ?? undefined;
 	const showNotFoundWithFallback =
@@ -1001,10 +987,7 @@ export function InstitutionFormModal({
 			nextMode === "create"
 				? "institutionFormModal.feedback.create"
 				: "institutionFormModal.feedback.update";
-		setAlertDialog({
-			title: t(`${keyPrefix}.title`),
-			description: t(`${keyPrefix}.description`),
-		});
+		showSuccessToast(t(`${keyPrefix}.title`), t(`${keyPrefix}.description`));
 	};
 
 	const {
@@ -1104,27 +1087,27 @@ export function InstitutionFormModal({
 		};
 	}, [formConfig, institutionFieldPermissions, mode, permissionContext]);
 
-	if (showNotFoundWithFallback) {
-		return renderNotFoundDialog(t);
-	}
+	const autoCloseError = showNotFoundWithFallback
+		? {
+				active: true,
+				title: t("institutionFormModal.dialog.notFound.title"),
+				description: t("institutionFormModal.dialog.notFound.description"),
+			}
+		: undefined;
 
 	const formKeyValue = formKey ?? resolvedInstitutionWithFallback?.id ?? mode;
 
 	const handleDelete = useCallback(async () => {
 		if (!onDelete || isDeleting || resolvedSubmitting) return;
 		setIsDeleting(true);
-		let deleteSucceeded = false;
 		try {
-			await onDelete();
-			deleteSucceeded = true;
-			setShowDeleteDialog(false);
 			handleClose();
+			await onDelete();
+			setShowDeleteDialog(false);
 		} catch {
 			// Keep dialog open so the caller can surface and recover from errors.
 		} finally {
-			if (!deleteSucceeded) {
-				setIsDeleting(false);
-			}
+			setIsDeleting(false);
 		}
 	}, [onDelete, isDeleting, resolvedSubmitting, handleClose]);
 
@@ -1150,10 +1133,45 @@ export function InstitutionFormModal({
 	]);
 
 	return (
-		<RoutedEditorModal
+		<Modal
+			title={getDialogTitle(mode, t)}
+			variant="editor"
+			hasFooter={false}
 			routePath={routePath}
-			onClose={handleClose}
+			returnTo={returnTo}
 			closeConfirmation={closeConfirmation}
+			autoCloseError={autoCloseError}
+			confirmDialog={
+				showDeleteDialog && onDelete
+					? {
+							open: true,
+							status: "warning",
+							title:
+								deleteConfig?.confirmTitle ??
+								t("institutionFormModal.delete.confirmTitle", {
+									defaultValue: "Delete institution?",
+								}),
+							description:
+								deleteConfig?.confirmDescription ??
+								t("institutionFormModal.delete.confirmDescription", {
+									defaultValue: "This action cannot be undone.",
+								}),
+							confirmLabel:
+								deleteConfig?.confirmLabel ??
+								t("institutionFormModal.delete.confirm"),
+							cancelLabel:
+								deleteConfig?.cancelLabel ??
+								t("institutionFormModal.delete.cancel", {
+									defaultValue: "Cancel",
+								}),
+							onCancel: () => setShowDeleteDialog(false),
+							onConfirm: handleDelete,
+							onOpenChange: (open) => {
+								if (!open) setShowDeleteDialog(false);
+							},
+						}
+					: undefined
+			}
 		>
 			<div className="flex h-full flex-col">
 				<div className="px-6 py-8 md:px-10">
@@ -1163,39 +1181,6 @@ export function InstitutionFormModal({
 					{renderDialogBody(formConfigWithDelete, formKeyValue)}
 				</div>
 			</div>
-			{showDeleteDialog && onDelete && (
-				<AlertDialog
-					open
-					status="warning"
-					title={
-						deleteConfig?.confirmTitle ??
-						t("institutionFormModal.delete.confirmTitle", {
-							defaultValue: "Delete institution?",
-						})
-					}
-					description={
-						deleteConfig?.confirmDescription ??
-						t("institutionFormModal.delete.confirmDescription", {
-							defaultValue: "This action cannot be undone.",
-						})
-					}
-					confirmLabel={
-						deleteConfig?.confirmLabel ??
-						t("institutionFormModal.delete.confirm")
-					}
-					cancelLabel={
-						deleteConfig?.cancelLabel ??
-						t("institutionFormModal.delete.cancel", {
-							defaultValue: "Cancel",
-						})
-					}
-					onCancel={() => setShowDeleteDialog(false)}
-					onConfirm={handleDelete}
-					onOpenChange={(open) => {
-						if (!open) setShowDeleteDialog(false);
-					}}
-				/>
-			)}
-		</RoutedEditorModal>
+		</Modal>
 	);
 }

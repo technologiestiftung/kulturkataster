@@ -4,11 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/navigation";
 import { DialogTitle } from "@/components/ui/dialog";
-import {
-	RoutedEditorModal,
-	useRoutedModalClose,
-} from "@/components/Modals/RoutedEditorModal";
-import { AlertDialog } from "@/components/ui/alert-dialog";
+import { Modal } from "@/components/Modals/Modal";
+import { useRoutedModalClose } from "@/components/Modals/useRoutedModalClose";
 import { FormWrapper } from "@/components/FormWrapper";
 import type { FormWrapperConfig } from "@/components/FormWrapper";
 import { useAccountStore } from "@/lib/store/accountStore";
@@ -25,6 +22,7 @@ import {
 	toOptionalNumber,
 	toOptionalText,
 } from "@/lib/utils/formUtils";
+import { showSuccessToast } from "@/lib/utils/feedbackToast";
 
 type CategoryFormModalProps = {
 	mode: "create" | "edit";
@@ -55,20 +53,6 @@ const getDialogTitle = (
 		: t("categoryFormModal.dialog.title.edit", {
 				defaultValue: "Edit category",
 			});
-
-const renderNotFoundDialog = (
-	t: (key: string, options?: { defaultValue?: string }) => string,
-) => (
-	<AlertDialog
-		status="warning"
-		title={t("categoryFormModal.dialog.notFound.title", {
-			defaultValue: "Category not found",
-		})}
-		description={t("categoryFormModal.dialog.notFound.description", {
-			defaultValue: "We couldn't find that category.",
-		})}
-	/>
-);
 
 const renderDialogBody = (
 	isWaitingForCategory: boolean,
@@ -358,15 +342,18 @@ export function CategoryFormModal({
 	categoryId,
 	shouldRefresh = false,
 	routePath,
-	returnTo = "/account/categories",
+	returnTo,
 }: CategoryFormModalProps) {
 	const { t: tEnum } = useTranslation("enumMap");
 	const { t } = useTranslation();
-	const setAlertDialog = useAccountStore((state) => state.setAlertDialog);
 	const categories = useAccountStore((state) => state.categories);
 	const removeCategory = useAccountStore((state) => state.removeCategory);
 	const [isDeleting, setIsDeleting] = useState(false);
 	const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+	const [deleteError, setDeleteError] = useState<{
+		title: string;
+		description: string;
+	} | null>(null);
 
 	const handleClose = useRoutedModalClose({ returnTo });
 
@@ -418,18 +405,18 @@ export function CategoryFormModal({
 			nextMode === "create"
 				? "categoryFormModal.feedback.create"
 				: "categoryFormModal.feedback.update";
-		setAlertDialog({
-			title: t(`${keyPrefix}.title`, {
+		showSuccessToast(
+			t(`${keyPrefix}.title`, {
 				defaultValue:
 					nextMode === "create" ? "Category created" : "Category updated",
 			}),
-			description: t(`${keyPrefix}.description`, {
+			t(`${keyPrefix}.description`, {
 				defaultValue:
 					nextMode === "create"
 						? "Your category is ready to use."
 						: "Your changes have been saved.",
 			}),
-		});
+		);
 	};
 
 	const { handleSubmit, submitting } = useCategorySubmit(
@@ -473,74 +460,123 @@ export function CategoryFormModal({
 		handleClose,
 	]);
 
-	if (showNotFound && !isDeleting) {
-		return renderNotFoundDialog(t);
-	}
+	const autoCloseError =
+		showNotFound && !isDeleting
+			? {
+					active: true,
+					title: t("categoryFormModal.dialog.notFound.title", {
+						defaultValue: "Category not found",
+					}),
+					description: t("categoryFormModal.dialog.notFound.description", {
+						defaultValue: "We couldn't find that category.",
+					}),
+				}
+			: undefined;
 
 	return (
-		<RoutedEditorModal routePath={routePath} onClose={handleClose}>
+		<Modal
+			title={getDialogTitle(mode, t)}
+			variant="editor"
+			hasFooter={false}
+			routePath={routePath}
+			returnTo={returnTo}
+			autoCloseError={autoCloseError}
+			loadingState={{
+				active: isWaitingForCategory,
+				label: t("categoryFormModal.dialog.loading", {
+					defaultValue: "Loading category...",
+				}),
+			}}
+			confirmDialog={
+				showDeleteDialog && resolvedCategory
+					? {
+							open: true,
+							status: "warning",
+							title: t("categoryFormModal.delete.confirmTitle", {
+								defaultValue: "Delete category?",
+							}),
+							description: t("categoryFormModal.delete.confirmDescription", {
+								defaultValue:
+									"This will permanently remove the category. This action cannot be undone.",
+							}),
+							confirmLabel: t("categoryFormModal.delete.confirm"),
+							cancelLabel: t("categoryFormModal.delete.cancel", {
+								defaultValue: "Cancel",
+							}),
+							onCancel: () => setShowDeleteDialog(false),
+							onConfirm: async () => {
+								if (isDeleting) return;
+								setIsDeleting(true);
+								try {
+									handleClose();
+									await deleteCategory(resolvedCategory.id);
+									queueMicrotask(() => {
+										removeCategory(resolvedCategory.id);
+										showSuccessToast(
+											t("categoryFormModal.feedback.delete.title", {
+												defaultValue: "Category deleted",
+											}),
+											t("categoryFormModal.feedback.delete.description", {
+												defaultValue:
+													"The category has been removed successfully.",
+											}),
+										);
+									});
+								} catch {
+									setDeleteError({
+										title: t("categoryFormModal.delete.errorTitle", {
+											defaultValue: "Delete failed",
+										}),
+										description: t(
+											"categoryFormModal.delete.errorDescription",
+											{
+												defaultValue:
+													"Please try again or remove any subcategories first.",
+											},
+										),
+									});
+									setShowDeleteDialog(false);
+								} finally {
+									setIsDeleting(false);
+								}
+							},
+							onOpenChange: (open) => {
+								if (!open) setShowDeleteDialog(false);
+							},
+						}
+					: undefined
+			}
+			errorDialog={
+				deleteError
+					? {
+							open: true,
+							title: deleteError.title,
+							description: deleteError.description,
+							confirmLabel: t("close"),
+							onConfirm: () => setDeleteError(null),
+							onOpenChange: (open) => {
+								if (!open) setDeleteError(null);
+							},
+						}
+					: undefined
+			}
+		>
 			<div className="flex h-full flex-col">
 				<div className="px-6 py-8 md:px-10">
 					<DialogTitle className="title">{getDialogTitle(mode, t)}</DialogTitle>
 				</div>
-				<div className="flex-1 overflow-auto flex flex-col">
-					{renderDialogBody(
-						isWaitingForCategory,
-						t,
-						formConfig,
-						resolvedCategory,
-						mode,
-					)}
-				</div>
+				{autoCloseError ? null : (
+					<div className="flex-1 overflow-auto flex flex-col">
+						{renderDialogBody(
+							isWaitingForCategory,
+							t,
+							formConfig,
+							resolvedCategory,
+							mode,
+						)}
+					</div>
+				)}
 			</div>
-			{showDeleteDialog && resolvedCategory && (
-				<AlertDialog
-					open
-					status="warning"
-					title={t("categoryFormModal.delete.confirmTitle", {
-						defaultValue: "Delete category?",
-					})}
-					description={t("categoryFormModal.delete.confirmDescription", {
-						defaultValue:
-							"This will permanently remove the category. This action cannot be undone.",
-					})}
-					confirmLabel={t("categoryFormModal.delete.confirm")}
-					cancelLabel={t("categoryFormModal.delete.cancel", {
-						defaultValue: "Cancel",
-					})}
-					onCancel={() => setShowDeleteDialog(false)}
-					onConfirm={async () => {
-						if (isDeleting) return;
-						setIsDeleting(true);
-						let deleteSucceeded = false;
-						try {
-							await deleteCategory(resolvedCategory.id);
-							removeCategory(resolvedCategory.id);
-							deleteSucceeded = true;
-							setShowDeleteDialog(false);
-							handleClose();
-						} catch {
-							setAlertDialog({
-								title: t("categoryFormModal.delete.errorTitle", {
-									defaultValue: "Delete failed",
-								}),
-								description: t("categoryFormModal.delete.errorDescription", {
-									defaultValue:
-										"Please try again or remove any subcategories first.",
-								}),
-							});
-							setShowDeleteDialog(false);
-						} finally {
-							if (!deleteSucceeded) {
-								setIsDeleting(false);
-							}
-						}
-					}}
-					onOpenChange={(open) => {
-						if (!open) setShowDeleteDialog(false);
-					}}
-				/>
-			)}
-		</RoutedEditorModal>
+		</Modal>
 	);
 }

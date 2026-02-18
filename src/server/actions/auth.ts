@@ -3,6 +3,27 @@
 import { createAnonClient, createClient } from "@/server/supabase/server";
 import { prisma } from "@/server/prisma";
 
+export async function getInsecureUser() {
+	const session = await getSession();
+	if (!session) return null;
+
+	const user = await getCurrentUser();
+	if (!user) return null;
+
+	return user;
+}
+
+export async function getSession() {
+	const supabase = await createClient();
+	const { data, error } = await supabase.auth.getSession();
+
+	if (error) {
+		return null;
+	}
+
+	return data.session;
+}
+
 export async function getCurrentUser() {
 	const supabase = await createClient();
 	const {

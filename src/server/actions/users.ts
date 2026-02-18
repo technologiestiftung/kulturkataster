@@ -173,7 +173,7 @@ export async function updateUser(input: UserFormInput) {
 	return user;
 }
 
-export async function removeUser(id: string) {
+export async function deleteUser(id: string) {
 	const currentUserId = await getCurrentUserId();
 	const ctx = await getAccessContextForUser(currentUserId);
 	authorizeTable(ctx, "user", "delete");

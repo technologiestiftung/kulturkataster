@@ -141,8 +141,9 @@ export function ImprintModal({ routePath }: { routePath?: string }) {
 			title={tContent("imprintModal.title")}
 			subtitle={tContent("imprintModal.subtitle")}
 			routePath={routePath}
-			content={content}
 			hideLinksInModalFooter={["imprint"]}
-		/>
+		>
+			{content}
+		</Modal>
 	);
 }
