@@ -20,6 +20,7 @@ import type { Institution } from "@/types/institution";
 import { Card } from "../ui/card";
 import { JsonValue } from "@/generated/prisma/runtime/client";
 import { showSuccessToast } from "@/lib/utils/feedbackToast";
+import { Loading } from "../ui/loading";
 
 export function InstitutionClaimSelectModal({
 	routePath,
@@ -85,6 +86,7 @@ export function InstitutionClaimSelectModal({
 	useEffect(() => {
 		if (!query.trim()) {
 			setSearchResults([]);
+			setSearchLoading(false);
 			return;
 		}
 		let active = true;
@@ -222,28 +224,32 @@ export function InstitutionClaimSelectModal({
 			}
 		>
 			<div className="p-4 space-y-6 flex-1 flex-col max-w-5xl mx-auto w-full">
-				<div className="mt-18 space-y-2">
-					<h1 className="font-bold">
-						{t("institution.claimSelectTitle", {
-							defaultValue: "Institutionen beanspruchen",
-						})}
-					</h1>
-					<p className="body2">
-						{t("institution.claimSelectSubtitle", {
-							defaultValue:
-								"Wählen Sie die Institutionen aus, die Sie beanspruchen möchten.",
-						})}
-					</p>
+				<div className="mt-18 space-y-4">
+					<div className="">
+						<h1 className="font-bold">
+							{t("institution.claimSelectTitle", {
+								defaultValue: "Institutionen beanspruchen",
+							})}
+						</h1>
+						<p className="body2 font-bold">
+							{t("institution.claimSelectSubtitle", {
+								defaultValue:
+									"Wählen Sie die Institutionen aus, die Sie beanspruchen möchten.",
+							})}
+						</p>
+					</div>
+					<p className="body2">{t("institution.claimSelectDescription", {})}</p>
 				</div>
 
 				<Card className="mb-10 p-10 h-full" variant="tertiary">
+					<p className="body2 mb-4">
+						{t("institution.claimSelectSearchLabel", {
+							defaultValue: "Name des Kulturortes",
+						})}
+					</p>
 					<InstitutionDraftSelectSearch onQueryChange={setQuery} />
 					{isLoading || searchLoading ? (
-						<p className="body2">
-							{t("institution.loading", {
-								defaultValue: "Lädt...",
-							})}
-						</p>
+						<Loading />
 					) : (
 						<SelectableOptionsList
 							options={selectableOptions}

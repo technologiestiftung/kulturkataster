@@ -10,8 +10,9 @@ vi.mock("react-i18next", () => ({
 }));
 
 const pushMock = vi.fn();
+const replaceMock = vi.fn();
 vi.mock("next/navigation", () => ({
-	useRouter: () => ({ push: pushMock }),
+	useRouter: () => ({ push: pushMock, replace: replaceMock }),
 }));
 
 vi.mock("@/lib/hooks/useLocalePath", () => ({
@@ -25,6 +26,7 @@ vi.mock("@/components/Modals/Modal", () => ({
 describe("InstitutionDraftIntroModal", () => {
 	beforeEach(() => {
 		pushMock.mockReset();
+		replaceMock.mockReset();
 		useInstitutionDraftStore.getState().resetDraft();
 	});
 
@@ -40,7 +42,7 @@ describe("InstitutionDraftIntroModal", () => {
 		);
 
 		expect(useInstitutionDraftStore.getState().mode).toBe("create");
-		expect(pushMock).toHaveBeenCalledWith("/de/institution/submission");
+		expect(replaceMock).toHaveBeenCalledWith("/de/institution/submission");
 	});
 
 	it("authenticated user can select existing location flow", () => {
@@ -58,7 +60,9 @@ describe("InstitutionDraftIntroModal", () => {
 		);
 
 		expect(useInstitutionDraftStore.getState().mode).toBe("update");
-		expect(pushMock).toHaveBeenCalledWith("/de/institution/submission/select");
+		expect(replaceMock).toHaveBeenCalledWith(
+			"/de/institution/submission/select",
+		);
 	});
 
 	it("guest user can choose guest path and then select contribution mode", () => {

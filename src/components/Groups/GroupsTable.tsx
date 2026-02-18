@@ -97,11 +97,6 @@ export function GroupsTable() {
 		onEdit: (row) =>
 			router.push(toLocalePath(`/account/groups/${row.id}/edit`)),
 		emptyMessage: t("groupTable.emptyMessage"),
-		title: t("groupTable.title"),
-		subtitle:
-			groups.length === 1
-				? t("groupTable.subtitle.singular")
-				: t("groupTable.subtitle.plural", { count: groups.length }),
 	};
 
 	return (

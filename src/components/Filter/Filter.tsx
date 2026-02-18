@@ -40,6 +40,7 @@ const Filter: FC<FilterProps> = ({ onSearchClick, onShowFilter }) => {
 	};
 
 	const { t } = useTranslation("content");
+	const { t: tCommon } = useTranslation("common");
 
 	return (
 		<>
@@ -48,7 +49,9 @@ const Filter: FC<FilterProps> = ({ onSearchClick, onShowFilter }) => {
 					<ButtonWithTooltip
 						variant="rounded"
 						size="icon-only"
-						tooltip="Search"
+						tooltip={tCommon("search.searchButton", {
+							defaultValue: "Suchen",
+						})}
 						className="cursor-pointer"
 						onClick={onSearchClick}
 					>
@@ -57,7 +60,9 @@ const Filter: FC<FilterProps> = ({ onSearchClick, onShowFilter }) => {
 				)}
 				<ButtonWithTooltip
 					variant="rounded"
-					tooltip="Filter"
+					tooltip={tCommon("filter.title", {
+						defaultValue: "Kulturorte filtern",
+					})}
 					className="cursor-pointer h-12 flex-1 justify-between"
 					onClick={onShowFilter}
 				>
