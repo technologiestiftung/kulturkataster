@@ -72,7 +72,9 @@ describe("users pages integration", () => {
 	});
 
 	it("renders review page with UserClaimReviewModal", async () => {
-		getClaimSubmissionsDetailedMock.mockResolvedValueOnce([{ submission: { id: 10 } }]);
+		getClaimSubmissionsDetailedMock.mockResolvedValueOnce([
+			{ submission: { id: 10 } },
+		]);
 
 		const pageModule = await import(
 			"@/app/[locale]/account/(dashboard)/users/[id]/review/page"

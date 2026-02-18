@@ -1,7 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { InstitutionDraftEditModal } from "@/components/Institution/InstitutionDraftEditModal";
-import { updateSubmission, getSubmissionById } from "@/server/actions/submissions";
+import {
+	updateSubmission,
+	getSubmissionById,
+} from "@/server/actions/submissions";
 
 const institutionFormModalMock = vi.fn();
 

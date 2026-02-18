@@ -40,9 +40,7 @@ test.describe("institution direct create form", () => {
 			.last()
 			.locator('[role="option"]:visible')
 			.first();
-		const hasVisibleOption = await option
-			.isVisible()
-			.catch(() => false);
+		const hasVisibleOption = await option.isVisible().catch(() => false);
 		if (hasVisibleOption) {
 			await option.scrollIntoViewIfNeeded();
 			await option.click({ force: true });
@@ -88,7 +86,11 @@ test.describe("institution direct create form", () => {
 		await fillById(page, "phone", "+49 30 123456");
 		await fillById(page, "contact_person_first_name", "Anna");
 		await fillById(page, "contact_person_last_name", "Beispiel");
-		await fillById(page, "contact_person_email", `contact-${Date.now()}@example.com`);
+		await fillById(
+			page,
+			"contact_person_email",
+			`contact-${Date.now()}@example.com`,
+		);
 		await fillById(page, "contact_person_phone", "+49 30 654321");
 
 		await fillById(page, "legal_form", "e.V.");
@@ -130,7 +132,9 @@ test.describe("institution direct create form", () => {
 			submitButton.click(),
 		]);
 
-		await expect(page.getByText(uniqueName, { exact: false }).first()).toBeVisible({
+		await expect(
+			page.getByText(uniqueName, { exact: false }).first(),
+		).toBeVisible({
 			timeout: 15_000,
 		});
 	});

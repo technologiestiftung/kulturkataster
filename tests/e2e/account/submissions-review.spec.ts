@@ -27,7 +27,10 @@ test.describe("submission review", () => {
 
 		const reviewButtons = page.getByRole("button", { name: "Review" });
 		const reviewCount = await reviewButtons.count();
-		test.skip(reviewCount < 1, "Need at least one reviewable institution submission.");
+		test.skip(
+			reviewCount < 1,
+			"Need at least one reviewable institution submission.",
+		);
 
 		await reviewButtons.first().click();
 		await expect(page).toHaveURL(/\/de\/account\/submissions\/\d+\/?$/, {

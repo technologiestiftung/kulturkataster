@@ -1,7 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { InstitutionFormModal } from "@/components/Institution/InstitutionFormModal";
-import { createInstitution, updateInstitution } from "@/server/actions/institutions";
+import {
+	createInstitution,
+	updateInstitution,
+} from "@/server/actions/institutions";
 import { showSuccessToast } from "@/lib/utils/feedbackToast";
 
 const closeModalMock = vi.fn();
@@ -30,7 +33,13 @@ vi.mock("@/components/ui/dialog", () => ({
 }));
 
 vi.mock("@/components/FormWrapper", () => ({
-	FormWrapper: ({ config }: { config: { onSubmit: (data: Record<string, unknown>) => void | Promise<void> } }) => (
+	FormWrapper: ({
+		config,
+	}: {
+		config: {
+			onSubmit: (data: Record<string, unknown>) => void | Promise<void>;
+		};
+	}) => (
 		<div>
 			<button
 				type="button"
@@ -102,7 +111,9 @@ vi.mock("@/lib/store/accountStore", () => ({
 
 vi.mock("@/lib/store/institutionStore", () => ({
 	useInstitutionStore: (
-		selector: (state: { categories: Array<Record<string, unknown>> }) => unknown,
+		selector: (state: {
+			categories: Array<Record<string, unknown>>;
+		}) => unknown,
 	) =>
 		selector({
 			categories: [
@@ -128,12 +139,23 @@ describe("InstitutionFormModal", () => {
 		mockedUpdateInstitution.mockReset();
 		mockedShowSuccessToast.mockReset();
 
-		mockedCreateInstitution.mockResolvedValue({ id: 1, name: "New Institution" } as never);
-		mockedUpdateInstitution.mockResolvedValue({ id: 2, name: "Updated Institution" } as never);
+		mockedCreateInstitution.mockResolvedValue({
+			id: 1,
+			name: "New Institution",
+		} as never);
+		mockedUpdateInstitution.mockResolvedValue({
+			id: 2,
+			name: "Updated Institution",
+		} as never);
 	});
 
 	it("creates a new institution", async () => {
-		render(<InstitutionFormModal mode="create" routePath="/account/institutions/new" />);
+		render(
+			<InstitutionFormModal
+				mode="create"
+				routePath="/account/institutions/new"
+			/>,
+		);
 
 		fireEvent.click(screen.getByRole("button", { name: "submit-form" }));
 
@@ -154,12 +176,14 @@ describe("InstitutionFormModal", () => {
 		render(
 			<InstitutionFormModal
 				mode="edit"
-				institution={{
-					id: 2,
-					name: "Existing",
-					address: { id: 9 },
-					categories: [],
-				} as never}
+				institution={
+					{
+						id: 2,
+						name: "Existing",
+						address: { id: 9 },
+						categories: [],
+					} as never
+				}
 				routePath="/account/institutions/2/edit"
 			/>,
 		);

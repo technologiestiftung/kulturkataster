@@ -35,7 +35,13 @@ vi.mock("@/components/ui/dialog", () => ({
 }));
 
 vi.mock("@/components/FormWrapper", () => ({
-	FormWrapper: ({ config }: { config: { onSubmit: (data: Record<string, unknown>) => void | Promise<void> } }) => (
+	FormWrapper: ({
+		config,
+	}: {
+		config: {
+			onSubmit: (data: Record<string, unknown>) => void | Promise<void>;
+		};
+	}) => (
 		<div>
 			<button
 				type="button"
@@ -55,8 +61,12 @@ vi.mock("@/components/FormWrapper", () => ({
 }));
 
 vi.mock("@/lib/store/institutionStore", () => ({
-	useInstitutionStore: (selector: (state: { allInstitutions: unknown[]; categories: unknown[] }) => unknown) =>
-		selector({ allInstitutions: [], categories: [] }),
+	useInstitutionStore: (
+		selector: (state: {
+			allInstitutions: unknown[];
+			categories: unknown[];
+		}) => unknown,
+	) => selector({ allInstitutions: [], categories: [] }),
 }));
 
 vi.mock("@/lib/hooks/useInstitutionMultiSelect", () => ({
