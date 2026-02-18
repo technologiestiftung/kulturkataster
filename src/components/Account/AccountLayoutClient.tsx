@@ -97,7 +97,6 @@ export function AccountLayoutClient({
 	};
 
 	const handleLogout = async () => {
-		router.push(toLocalePath("/"));
 		const result = await logout();
 		if (result.ok) {
 			await clearAccountStore();
