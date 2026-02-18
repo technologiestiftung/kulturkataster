@@ -1,6 +1,7 @@
 "use client";
 
 import type { HTMLAttributes, ReactNode, RefObject } from "react";
+import { useTranslation } from "react-i18next";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 
@@ -25,6 +26,8 @@ type SelectableOptionsListProps = {
 	containerClassName?: string;
 	itemClassName?: string;
 	descriptionClassName?: string;
+	showHeaderCount?: boolean;
+	showHeader?: boolean;
 };
 
 export function SelectableOptionsList({
@@ -42,11 +45,14 @@ export function SelectableOptionsList({
 	containerClassName,
 	itemClassName,
 	descriptionClassName,
+	showHeaderCount = true,
+	showHeader = true,
 }: SelectableOptionsListProps) {
+	const { t } = useTranslation("common");
 	const isPanel = variant === "panel";
 	const wrapperClassName = isPanel
 		? cn(
-				"pointer-events-auto flex rounded-sm border border-input bg-background",
+				"pointer-events-auto flex rounded-sm border border-neutral-20 bg-background",
 				containerClassName,
 			)
 		: cn("h-full space-y-1 pointer-events-auto", containerClassName);
@@ -59,25 +65,39 @@ export function SelectableOptionsList({
 	const baseItemClassName = isPanel
 		? "flex min-w-0 items-center gap-3 border-b border-input px-4 py-3 text-left body3 last:border-b-0"
 		: "py-3 px-2 cursor-pointer rounded body3 border-b";
-	const headingId = headingLabel ? `${listId ?? "options"}-label` : undefined;
+	const headerItemClassName = isPanel
+		? "flex min-w-0 items-center justify-start gap-3 border-b border-input px-2 py-3 text-left body3"
+		: "flex min-w-0 items-center justify-start gap-3 px-2 py-3 body3 border-b";
+	const headingId = `${listId ?? "options"}-label`;
 
 	return (
 		<div className={wrapperClassName}>
-			{headingLabel ? (
-				<span
-					className="body1 font-bold text-neutral-80 mb-2 flex-shrink-0"
-					id={headingId}
-				>
-					{headingLabel}
-				</span>
-			) : null}
 			<div
 				ref={listRef}
 				className={listClassName}
 				role={isPanel ? undefined : "listbox"}
-				aria-labelledby={!isPanel ? headingId : undefined}
+				aria-labelledby={!isPanel && headingLabel ? headingId : undefined}
 				id={!isPanel ? listId : undefined}
 			>
+				{showHeader ? (
+					<div className={headerItemClassName} id={headingId}>
+						{headingLabel ? (
+							<span className="font-medium text-neutral-80">
+								{headingLabel}
+							</span>
+						) : (
+							<span />
+						)}
+						{showHeaderCount ? (
+							<span className="text-neutral-80">
+								{t("multiSelectModal.resultsCountNumber", {
+									number: options.length,
+									defaultValue: "{{number}} Ergebnisse",
+								})}
+							</span>
+						) : null}
+					</div>
+				) : null}
 				{options.length === 0 ? (
 					<p className={emptyClassName}>{emptyText}</p>
 				) : (
@@ -88,7 +108,6 @@ export function SelectableOptionsList({
 						return (
 							<button
 								key={option.value}
-								type="button"
 								onClick={() => onToggle(option.value)}
 								className={cn(
 									baseItemClassName,
@@ -118,14 +137,15 @@ export function SelectableOptionsList({
 							>
 								{showCheckbox ? (
 									<Checkbox
-										asChild
 										checked={isChecked}
-										variant="filter"
-										size="filter"
-									>
-										<span aria-hidden="true" className="pointer-events-none" />
-									</Checkbox>
+										variant="default"
+										size="default"
+										aria-hidden="true"
+										tabIndex={-1}
+										className="pointer-events-none"
+									/>
 								) : null}
+
 								<span className="flex min-w-0 flex-1 flex-col gap-1">
 									<span className={!isPanel ? "font-medium" : undefined}>
 										{option.label}

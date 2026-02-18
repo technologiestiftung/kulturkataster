@@ -236,7 +236,7 @@ export function InstitutionClaimSelectModal({
 					</p>
 				</div>
 
-				<Card className="space-y-4 mb-10 p-10 h-full" variant="tertiary">
+				<Card className="mb-10 p-10 h-full" variant="tertiary">
 					<InstitutionDraftSelectSearch onQueryChange={setQuery} />
 					{isLoading || searchLoading ? (
 						<p className="body2">
@@ -258,7 +258,7 @@ export function InstitutionClaimSelectModal({
 					)}
 				</Card>
 
-				<div className="flex flex-wrap gap-3">
+				<div className="flex flex-wrap gap-3 mb-10">
 					<Button variant="outline" onClick={closeModal}>
 						{t("actions.cancel", { defaultValue: "Abbrechen" })}
 					</Button>

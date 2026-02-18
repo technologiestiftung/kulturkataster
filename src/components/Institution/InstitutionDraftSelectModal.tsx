@@ -224,7 +224,7 @@ export function InstitutionDraftSelectModal({
 								defaultValue: "Keine Kulturorte gefunden.",
 							})}
 							variant="panel"
-							showCheckbox={false}
+							showCheckbox={true}
 							onToggle={(value) => {
 								const institution = institutionById.get(value);
 								if (institution) {

@@ -133,6 +133,7 @@ export function AccountEditForm({
 						name: "password",
 						label: t("auth.accountEdit.passwordLabel"),
 						type: "password",
+						afterField: t("auth.accountEdit.passwordRequirements"),
 						placeholder: t("auth.accountEdit.passwordPlaceholder"),
 						disabled: isLoading,
 						validate: (value) => {
