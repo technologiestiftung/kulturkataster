@@ -451,6 +451,7 @@ export function MultiSelectModal({
 								selectedValues={draftSelected}
 								containerClassName="max-h-60 md:max-h-180"
 								onToggle={handleToggleOption}
+								showCheckbox={true}
 								emptyText={emptyText}
 								variant="panel"
 							/>

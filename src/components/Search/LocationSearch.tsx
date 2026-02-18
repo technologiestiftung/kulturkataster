@@ -308,7 +308,7 @@ export function LocationSearch({
 				<SelectableOptionsList
 					options={resultOptions}
 					selectedValues={[]}
-					showCheckbox={false}
+					showCheckbox={true}
 					variant="search"
 					headingLabel={t("search.suggestions")}
 					listId={listId}
