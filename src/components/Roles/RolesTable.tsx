@@ -72,7 +72,8 @@ export function RolesTable() {
 					defaultValue: "Keine Rollen gefunden.",
 				})}
 				description={t("roleTable.empty.description", {
-					defaultValue: "Erstellen Sie eine Rolle, um Berechtigungen zu verwalten.",
+					defaultValue:
+						"Erstellen Sie eine Rolle, um Berechtigungen zu verwalten.",
 				})}
 				actions={[
 					{
