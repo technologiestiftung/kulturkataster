@@ -102,7 +102,16 @@ export function ResetPasswordForm({ onSuccess }: { onSuccess?: () => void }) {
 							type: "password",
 							placeholder: t("auth.reset.newPasswordPlaceholder"),
 							required: true,
+							afterField: t("auth.reset.passwordRequirements"),
 							disabled: isLoading || !isReady || !hasToken,
+							validate: (value) => {
+								if (!value) return undefined;
+								const text = String(value);
+								if (text.length < 8) {
+									return t("auth.validation.passwordMin");
+								}
+								return undefined;
+							},
 						},
 						{
 							name: "confirmPassword",

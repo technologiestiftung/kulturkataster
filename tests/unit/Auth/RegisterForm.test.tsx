@@ -190,4 +190,75 @@ describe("RegisterForm", () => {
 			expect(onSuccess).toHaveBeenCalled();
 		});
 	});
+
+	it("blocks submit when password is shorter than 8 characters", async () => {
+		render(<RegisterForm />);
+
+		fireEvent.change(screen.getByRole("combobox"), {
+			target: { value: "organization" },
+		});
+
+		fireEvent.change(
+			screen.getByPlaceholderText("auth.register.organizationNamePlaceholder"),
+			{
+				target: { value: "Org" },
+			},
+		);
+		fireEvent.change(
+			screen.getByPlaceholderText(
+				"auth.register.organizationPositionPlaceholder",
+			),
+			{
+				target: { value: "Lead" },
+			},
+		);
+		fireEvent.change(
+			screen.getByPlaceholderText("auth.register.organizationPhonePlaceholder"),
+			{
+				target: { value: "123456" },
+			},
+		);
+		fireEvent.change(
+			screen.getByPlaceholderText("auth.register.firstNamePlaceholder"),
+			{
+				target: { value: "Jane" },
+			},
+		);
+		fireEvent.change(
+			screen.getByPlaceholderText("auth.register.lastNamePlaceholder"),
+			{
+				target: { value: "Doe" },
+			},
+		);
+		fireEvent.change(
+			screen.getByPlaceholderText("auth.register.emailPlaceholder"),
+			{
+				target: { value: "jane@example.com" },
+			},
+		);
+		fireEvent.change(
+			screen.getByPlaceholderText("auth.register.passwordPlaceholder"),
+			{
+				target: { value: "short7" },
+			},
+		);
+		fireEvent.change(
+			screen.getByPlaceholderText("auth.register.confirmPasswordPlaceholder"),
+			{
+				target: { value: "short7" },
+			},
+		);
+		fireEvent.click(
+			screen.getByRole("checkbox", { name: /auth.register.termsIntro/ }),
+		);
+
+		fireEvent.click(
+			screen.getByRole("button", { name: "auth.register.submit" }),
+		);
+
+		await waitFor(() => {
+			expect(screen.getByText("auth.validation.passwordMin")).toBeInTheDocument();
+		});
+		expect(mockedRegister).not.toHaveBeenCalled();
+	});
 });
