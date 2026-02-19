@@ -1509,7 +1509,10 @@ function InstitutionDraftWizardContent({
 						/>
 					</section>
 					<div className="flex items-center justify-end">
-						<Button onClick={() => void handleFinalSubmit(draft)}>
+						<Button
+							id="institution-draft-submit-button"
+							onClick={() => void handleFinalSubmit(draft)}
+						>
 							{t("institutionDraftWizardModal.actions.submit")}
 						</Button>
 					</div>
