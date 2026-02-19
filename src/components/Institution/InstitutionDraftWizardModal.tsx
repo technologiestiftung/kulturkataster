@@ -1587,8 +1587,9 @@ export function InstitutionDraftWizardModal({
 		router.replace(targetPath);
 		if (typeof window !== "undefined") {
 			window.setTimeout(() => {
-				const stuckOnSubmission =
-					window.location.pathname.includes("/institution/submission");
+				const stuckOnSubmission = window.location.pathname.includes(
+					"/institution/submission",
+				);
 				if (stuckOnSubmission) {
 					window.location.replace(targetPath);
 				}
