@@ -252,8 +252,8 @@ function InstitutionDraftWizardContent({
 									.split(",")
 									.map((value) => value.trim())
 									.filter((value) => value.length > 0),
-								),
-							)
+							),
+						)
 					: [];
 			onSubmitted?.();
 			if (proposedCategories.length > 0) {
