@@ -35,7 +35,7 @@ test.describe("institution submission wizard", () => {
 		page: import("@playwright/test").Page,
 	) => {
 		const postSubmitRoutePattern =
-			/\/de\/(?:account(?:\/institutions|\/activity)?|map|login|welcome)(?:\/)?$/;
+			/\/de\/(?:(?:account(?:\/institutions|\/activity)?|map|login|welcome)(?:\/)?|institution\/?\?thankyou=(?:1|true))$/;
 		const submitButton = page.getByRole("button", {
 			name: "Submission senden",
 		});
