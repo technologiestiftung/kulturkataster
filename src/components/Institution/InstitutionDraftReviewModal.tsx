@@ -80,21 +80,9 @@ export function InstitutionDraftReviewModal({
 		if (!shouldAutoCloseMissingSubmission) return;
 		closeModal();
 	}, [shouldAutoCloseMissingSubmission, closeModal]);
-	if (shouldAutoCloseMissingSubmission) return null;
-	if (!resolvedSubmissionWithFallback) {
-		return null;
-	}
-
-	const draft = institutionSubmissionToDraft(resolvedSubmissionWithFallback);
-	const submissionStatus = resolvedSubmissionWithFallback.status;
-	const submissionStatusLabel = (() => {
-		if (!submissionStatus) return "";
-		const key = `submission_status.${submissionStatus}`;
-		const translated = tEnum(key);
-		return translated === key ? submissionStatus : translated;
-	})();
 	const handleReviewAction = useCallback(
 		async (status: "approved" | "rejected") => {
+			if (!resolvedSubmissionWithFallback) return;
 			const success = await handleReview(status);
 			if (!success) {
 				setReviewError(
@@ -127,8 +115,29 @@ export function InstitutionDraftReviewModal({
 				queueMicrotask(() => router.refresh());
 			}
 		},
-		[closeModal, error, handleReview, router, shouldRefresh, t],
+		[
+			closeModal,
+			error,
+			handleReview,
+			resolvedSubmissionWithFallback,
+			router,
+			shouldRefresh,
+			t,
+		],
 	);
+	if (shouldAutoCloseMissingSubmission) return null;
+	if (!resolvedSubmissionWithFallback) {
+		return null;
+	}
+
+	const draft = institutionSubmissionToDraft(resolvedSubmissionWithFallback);
+	const submissionStatus = resolvedSubmissionWithFallback.status;
+	const submissionStatusLabel = (() => {
+		if (!submissionStatus) return "";
+		const key = `submission_status.${submissionStatus}`;
+		const translated = tEnum(key);
+		return translated === key ? submissionStatus : translated;
+	})();
 
 	return (
 		<Modal
