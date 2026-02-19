@@ -12,6 +12,7 @@ import {
 } from "@/components/HorizontalStepper";
 import { Modal } from "@/components/Modals/Modal";
 import { useRoutedModalClose } from "@/components/Modals/useRoutedModalClose";
+import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { getFieldLabel } from "@/lib/i18n/fieldLabels";
 import { InstitutionFormModal } from "@/components/Institution/InstitutionFormModal";
@@ -23,7 +24,6 @@ import {
 } from "@/lib/utils/formUtils";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useInstitutionDraftStore } from "@/lib/store/institutionDraftStore";
-import { useAccountStore } from "@/lib/store/accountStore";
 import { InstitutionReview } from "@/components/Institution/InstitutionReview";
 import { createSubmission } from "@/server/actions/submissions";
 import type { Prisma } from "@/generated/prisma";
@@ -32,6 +32,7 @@ import { resolveCategoryIdsFromDraft } from "@/lib/utils/institutionCategoryUtil
 import { buildSubmissionDiff } from "@/lib/utils/submissionDiff";
 import { Button } from "@/components/ui/button";
 import { showSuccessToast } from "@/lib/utils/feedbackToast";
+import { useLocalePath } from "@/lib/hooks/useLocalePath";
 const stepConfigs: StepConfig[] = [
 	{
 		id: "basic",
@@ -136,7 +137,6 @@ function InstitutionDraftWizardContent({
 	const draft = useInstitutionDraftStore((state) => state.draft);
 	const setDraft = useInstitutionDraftStore((state) => state.setDraft);
 	const setStepId = useInstitutionDraftStore((state) => state.setStepId);
-	const upsertSubmission = useAccountStore((state) => state.upsertSubmission);
 	const draftMode = useInstitutionDraftStore((state) => state.mode);
 	const isUpdateReviewOnly = draftMode === "update";
 	const [editSectionId, setEditSectionId] = useState<string | null>(null);
@@ -244,7 +244,6 @@ function InstitutionDraftWizardContent({
 				diff: submissionDiff as Prisma.InputJsonValue | undefined,
 				meta: submissionMeta,
 			});
-			upsertSubmission(institutionSubmission);
 			const proposedCategories =
 				typeof newCategory === "string"
 					? Array.from(
@@ -256,9 +255,9 @@ function InstitutionDraftWizardContent({
 							),
 						)
 					: [];
-
+			onSubmitted?.();
 			if (proposedCategories.length > 0) {
-				await Promise.allSettled(
+				void Promise.allSettled(
 					proposedCategories.map((key) =>
 						createSubmission({
 							entityType: SubmissionEntityType.category,
@@ -277,9 +276,8 @@ function InstitutionDraftWizardContent({
 					),
 				);
 			}
-			onSubmitted?.();
 		},
-		[categories, draftMode, onSubmitted, upsertSubmission],
+		[categories, draftMode, onSubmitted],
 	);
 
 	const handleStepSubmit = useCallback(
@@ -300,6 +298,27 @@ function InstitutionDraftWizardContent({
 		}
 		onCloseRequest?.();
 	}, [canGoPrevious, onCloseRequest, previousStep]);
+
+	const clearSectionHash = useCallback(() => {
+		if (typeof window === "undefined") return;
+		if (!window.location.hash) return;
+		const { pathname, search } = window.location;
+		window.history.replaceState(null, "", `${pathname}${search}`);
+	}, []);
+
+	const closeSectionEditModal = useCallback(() => {
+		clearSectionHash();
+		setEditModalOpen(false);
+	}, [clearSectionHash]);
+
+	const handleSectionEditSubmit = useCallback(
+		(data: Record<string, unknown>) => {
+			const address = buildAddressFromFormData(data);
+			setDraft({ ...data, address });
+			closeSectionEditModal();
+		},
+		[closeSectionEditModal, setDraft],
+	);
 
 	useEffect(() => {
 		stepSyncSource.current = "stepper";
@@ -1511,7 +1530,10 @@ function InstitutionDraftWizardContent({
 						/>
 					</section>
 					<div className="flex items-center justify-end">
-						<Button onClick={() => void handleFinalSubmit(draft)}>
+						<Button
+							id="institution-draft-submit-button"
+							onClick={() => void handleFinalSubmit(draft)}
+						>
 							{t("institutionDraftWizardModal.actions.submit")}
 						</Button>
 					</div>
@@ -1524,21 +1546,9 @@ function InstitutionDraftWizardContent({
 					mode={draftMode === "update" ? "edit" : "create"}
 					permissionContext="submission"
 					initialValues={draft}
-					onClose={() => {
-						if (typeof window !== "undefined") {
-							const { pathname, search } = window.location;
-							window.history.replaceState(null, "", `${pathname}${search}`);
-						}
-						setEditModalOpen(false);
-					}}
+					onClose={closeSectionEditModal}
 					onSubmit={({ data }) => {
-						const address = buildAddressFromFormData(data);
-						setDraft({ ...data, address });
-						if (typeof window !== "undefined") {
-							const { pathname, search } = window.location;
-							window.history.replaceState(null, "", `${pathname}${search}`);
-						}
-						setEditModalOpen(false);
+						handleSectionEditSubmit(data as Record<string, unknown>);
 					}}
 					formKey={`draft-edit-${editSectionId ?? "default"}`}
 					closeOnSubmit
@@ -1556,11 +1566,10 @@ export function InstitutionDraftWizardModal({
 	initialStepId?: string;
 	routePath?: string;
 }) {
+	const router = useRouter();
+	const toLocalePath = useLocalePath();
 	const { t } = useTranslation("content");
 	const closeModal = useRoutedModalClose({});
-	const closeToThankYou = useRoutedModalClose({
-		returnTo: "/institution?thankyou=1",
-	});
 	const resetDraft = useInstitutionDraftStore((state) => state.resetDraft);
 	const storedStepId = useInstitutionDraftStore((state) => state.stepId);
 	const setStepId = useInstitutionDraftStore((state) => state.setStepId);
@@ -1574,7 +1583,18 @@ export function InstitutionDraftWizardModal({
 	const isValidStep = stepConfigs.some((step) => step.id === initialStepId);
 	const resolvedStepId = isValidStep ? initialStepId : storedStepId;
 	const handleSubmitted = useCallback(() => {
-		closeToThankYou();
+		const targetPath = toLocalePath("/institution?thankyou=1");
+		router.replace(targetPath);
+		if (typeof window !== "undefined") {
+			window.setTimeout(() => {
+				const stuckOnSubmission = window.location.pathname.includes(
+					"/institution/submission",
+				);
+				if (stuckOnSubmission) {
+					window.location.replace(targetPath);
+				}
+			}, 200);
+		}
 		showSuccessToast(
 			t("institutionDraftWizardModal.feedback.submit.title", {
 				defaultValue: "Submission sent",
@@ -1586,7 +1606,7 @@ export function InstitutionDraftWizardModal({
 		queueMicrotask(() => {
 			resetDraft();
 		});
-	}, [closeToThankYou, resetDraft, t]);
+	}, [resetDraft, router, t, toLocalePath]);
 
 	useEffect(() => {
 		if (isUpdateReviewOnly) {
