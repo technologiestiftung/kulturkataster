@@ -299,6 +299,27 @@ function InstitutionDraftWizardContent({
 		onCloseRequest?.();
 	}, [canGoPrevious, onCloseRequest, previousStep]);
 
+	const clearSectionHash = useCallback(() => {
+		if (typeof window === "undefined") return;
+		if (!window.location.hash) return;
+		const { pathname, search } = window.location;
+		window.history.replaceState(null, "", `${pathname}${search}`);
+	}, []);
+
+	const closeSectionEditModal = useCallback(() => {
+		clearSectionHash();
+		setEditModalOpen(false);
+	}, [clearSectionHash]);
+
+	const handleSectionEditSubmit = useCallback(
+		(data: Record<string, unknown>) => {
+			const address = buildAddressFromFormData(data);
+			setDraft({ ...data, address });
+			closeSectionEditModal();
+		},
+		[closeSectionEditModal, setDraft],
+	);
+
 	useEffect(() => {
 		stepSyncSource.current = "stepper";
 		setStepId(currentStepId);
@@ -1525,21 +1546,9 @@ function InstitutionDraftWizardContent({
 					mode={draftMode === "update" ? "edit" : "create"}
 					permissionContext="submission"
 					initialValues={draft}
-					onClose={() => {
-						if (typeof window !== "undefined") {
-							const { pathname, search } = window.location;
-							window.history.replaceState(null, "", `${pathname}${search}`);
-						}
-						setEditModalOpen(false);
-					}}
+					onClose={closeSectionEditModal}
 					onSubmit={({ data }) => {
-						const address = buildAddressFromFormData(data);
-						setDraft({ ...data, address });
-						if (typeof window !== "undefined") {
-							const { pathname, search } = window.location;
-							window.history.replaceState(null, "", `${pathname}${search}`);
-						}
-						setEditModalOpen(false);
+						handleSectionEditSubmit(data as Record<string, unknown>);
 					}}
 					formKey={`draft-edit-${editSectionId ?? "default"}`}
 					closeOnSubmit
@@ -1574,7 +1583,17 @@ export function InstitutionDraftWizardModal({
 	const isValidStep = stepConfigs.some((step) => step.id === initialStepId);
 	const resolvedStepId = isValidStep ? initialStepId : storedStepId;
 	const handleSubmitted = useCallback(() => {
-		router.replace(toLocalePath("/institution?thankyou=1"));
+		const targetPath = toLocalePath("/institution?thankyou=1");
+		router.replace(targetPath);
+		if (typeof window !== "undefined") {
+			window.setTimeout(() => {
+				const stuckOnSubmission =
+					window.location.pathname.includes("/institution/submission");
+				if (stuckOnSubmission) {
+					window.location.replace(targetPath);
+				}
+			}, 200);
+		}
 		showSuccessToast(
 			t("institutionDraftWizardModal.feedback.submit.title", {
 				defaultValue: "Submission sent",
