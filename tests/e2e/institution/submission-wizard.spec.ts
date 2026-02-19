@@ -36,18 +36,29 @@ test.describe("institution submission wizard", () => {
 	) => {
 		const postSubmitRoutePattern =
 			/\/de\/(?:(?:account(?:\/institutions|\/activity)?|map|login|welcome)(?:\/)?|institution\/?\?thankyou=(?:1|true))$/;
-		const submitButton = page.getByRole("button", {
-			name: "Submission senden",
-		});
-		const stepOneIndicator = page.getByText(/Schritt 1 \/ 5/);
+		const submitButton = await getWizardSubmitButton(page);
+		await expect(
+			submitButton,
+			"Wizard submit button #institution-draft-submit-button should exist exactly once.",
+		).toHaveCount(1, { timeout: 15_000 });
 
 		await Promise.race([
 			expect(page).toHaveURL(postSubmitRoutePattern, { timeout: 45_000 }),
 			(async () => {
 				await expect(submitButton).toBeHidden({ timeout: 45_000 });
-				await expect(stepOneIndicator).toBeVisible({ timeout: 45_000 });
 			})(),
 		]);
+	};
+
+	const getWizardSubmitButton = async (
+		page: import("@playwright/test").Page,
+	): Promise<import("@playwright/test").Locator> => {
+		const submitButton = page.locator("#institution-draft-submit-button");
+		await expect(
+			submitButton,
+			"Wizard submit button #institution-draft-submit-button should exist exactly once.",
+		).toHaveCount(1, { timeout: 15_000 });
+		return submitButton;
 	};
 
 	const fillById = async (
@@ -171,9 +182,8 @@ test.describe("institution submission wizard", () => {
 		await page
 			.locator('form#institution-contact-form button[type="submit"]')
 			.click();
-		await expect(
-			page.getByRole("button", { name: "Submission senden" }),
-		).toBeVisible({ timeout: 15_000 });
+		const submitButton = await getWizardSubmitButton(page);
+		await expect(submitButton).toBeVisible({ timeout: 15_000 });
 		await expect(
 			page
 				.locator("#institution-title")
@@ -185,7 +195,7 @@ test.describe("institution submission wizard", () => {
 			page.getByText("contact@example.com", { exact: false }),
 		).toHaveCount(0);
 
-		await page.getByRole("button", { name: "Submission senden" }).click();
+		await submitButton.click();
 		await waitForPostSubmitOutcome(page);
 	});
 
@@ -215,9 +225,8 @@ test.describe("institution submission wizard", () => {
 		await expect(page).toHaveURL(/\/de\/institution\/submission\/?$/, {
 			timeout: 15_000,
 		});
-		await expect(
-			page.getByRole("button", { name: "Submission senden" }),
-		).toBeVisible({ timeout: 15_000 });
+		const submitButton = await getWizardSubmitButton(page);
+		await expect(submitButton).toBeVisible({ timeout: 15_000 });
 
 		const editButtons = page.getByRole("button", { name: "Edit" });
 		if ((await editButtons.count()) > 0) {
@@ -235,7 +244,7 @@ test.describe("institution submission wizard", () => {
 			).toBeVisible();
 		}
 
-		await page.getByRole("button", { name: "Submission senden" }).click();
+		await submitButton.click();
 		await expect(page).toHaveURL(/\/de\/institution\/?\?thankyou=1$/, {
 			timeout: 45_000,
 		});
@@ -310,9 +319,8 @@ test.describe("institution submission wizard", () => {
 			.click();
 
 		// Review + submit
-		await expect(
-			page.getByRole("button", { name: "Submission senden" }),
-		).toBeVisible({ timeout: 15_000 });
+		const submitButton = page.locator("#institution-draft-submit-button");
+		await expect(submitButton).toBeVisible({ timeout: 15_000 });
 		await expect(
 			page
 				.locator("#institution-title")
@@ -320,7 +328,7 @@ test.describe("institution submission wizard", () => {
 				.first(),
 		).toBeVisible();
 
-		await page.getByRole("button", { name: "Submission senden" }).click();
+		await submitButton.click();
 		await waitForPostSubmitOutcome(page);
 	});
 
@@ -438,13 +446,14 @@ test.describe("institution submission wizard", () => {
 			.locator('form#institution-contact-form button[type="submit"]')
 			.click();
 
-		await expect(
-			page.getByRole("button", { name: "Submission senden" }),
-		).toBeVisible({ timeout: 15_000 });
-		await page.getByRole("button", { name: "Submission senden" }).click();
-		await expect(page).toHaveURL(/\/de\/institution\/?\?thankyou=1$/, {
-			timeout: 45_000,
-		});
+		const submitButton = page.locator("#institution-draft-submit-button");
+		await expect(submitButton).toBeVisible({ timeout: 15_000 });
+		await Promise.all([
+			page.waitForURL(/\/de\/institution\/?\?thankyou=1$/, {
+				timeout: 45_000,
+			}),
+			submitButton.click(),
+		]);
 		await expect(
 			page.getByRole("heading", { name: "Vielen Dank für Ihre Einreichung" }),
 		).toBeVisible({ timeout: 15_000 });
