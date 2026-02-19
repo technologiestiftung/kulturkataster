@@ -24,7 +24,6 @@ import {
 } from "@/lib/utils/formUtils";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useInstitutionDraftStore } from "@/lib/store/institutionDraftStore";
-import { useAccountStore } from "@/lib/store/accountStore";
 import { InstitutionReview } from "@/components/Institution/InstitutionReview";
 import { createSubmission } from "@/server/actions/submissions";
 import type { Prisma } from "@/generated/prisma";
@@ -138,7 +137,6 @@ function InstitutionDraftWizardContent({
 	const draft = useInstitutionDraftStore((state) => state.draft);
 	const setDraft = useInstitutionDraftStore((state) => state.setDraft);
 	const setStepId = useInstitutionDraftStore((state) => state.setStepId);
-	const upsertSubmission = useAccountStore((state) => state.upsertSubmission);
 	const draftMode = useInstitutionDraftStore((state) => state.mode);
 	const isUpdateReviewOnly = draftMode === "update";
 	const [editSectionId, setEditSectionId] = useState<string | null>(null);
@@ -254,10 +252,9 @@ function InstitutionDraftWizardContent({
 									.split(",")
 									.map((value) => value.trim())
 									.filter((value) => value.length > 0),
-							),
-						)
+								),
+							)
 					: [];
-			upsertSubmission(institutionSubmission);
 			onSubmitted?.();
 			if (proposedCategories.length > 0) {
 				void Promise.allSettled(
@@ -280,7 +277,7 @@ function InstitutionDraftWizardContent({
 				);
 			}
 		},
-		[categories, draftMode, onSubmitted, upsertSubmission],
+		[categories, draftMode, onSubmitted],
 	);
 
 	const handleStepSubmit = useCallback(
