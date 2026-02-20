@@ -180,6 +180,8 @@ export function InstitutionDraftSelectModal({
 				defaultValue: "Bestehenden Kulturort auswählen",
 			})}
 			titleClassName="sr-only"
+			showBackButton={true}
+			backTo="/institution"
 			variant="fullscreen"
 			routePath={routePath}
 			containerClassName="p-0 md:p-0 mt-0 md:mt-0"

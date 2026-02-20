@@ -9,6 +9,7 @@ import { AlertDialog } from "@/components/ui/alert-dialog";
 import { useRoutedModalClose } from "./useRoutedModalClose";
 import { showErrorToast } from "@/lib/utils/feedbackToast";
 import { Loading } from "@/components/ui/loading";
+import { useRouter } from "next/navigation";
 
 type ModalCloseConfirmation = {
 	title: string;
@@ -58,6 +59,7 @@ interface PageModalProps {
 	open?: boolean;
 	routePath?: string;
 	returnTo?: string;
+	backTo?: string;
 	children?: React.ReactNode;
 	showBackButton?: boolean;
 	hideLinksInModalFooter?: string[];
@@ -82,6 +84,7 @@ export function Modal({
 	open = true,
 	routePath,
 	returnTo,
+	backTo,
 	children,
 	showBackButton,
 	hideLinksInModalFooter,
@@ -98,6 +101,7 @@ export function Modal({
 	loadingState,
 }: PageModalProps) {
 	const pathname = usePathname();
+	const router = useRouter();
 	const performClose = useRoutedModalClose({ returnTo });
 	const [showCloseConfirmation, setShowCloseConfirmation] = useState(false);
 	const [hasHandledAutoCloseError, setHasHandledAutoCloseError] =
@@ -173,7 +177,11 @@ export function Modal({
 				variant={variant}
 				className={dialogContentClassName}
 				showBackButton={showBackButton}
-				onBack={handleCloseRequest}
+				onBack={
+					backTo && showBackButton
+						? () => router.replace(backTo)
+						: handleCloseRequest
+				}
 				onInteractOutside={(event) => {
 					if (!closeOnOutsideInteract) {
 						event.preventDefault();

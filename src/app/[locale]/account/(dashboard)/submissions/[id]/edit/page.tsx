@@ -12,7 +12,7 @@ export default async function InstitutionDraftEditPage({
 	return (
 		<InstitutionDraftEditModal
 			submissionId={Number.isFinite(parsedId) ? parsedId : undefined}
-			returnTo="/account/institutions"
+			returnTo={`/account/submissions/${id}`}
 			shouldRefresh={false}
 			routePath={`/account/submissions/${id}/edit`}
 		/>

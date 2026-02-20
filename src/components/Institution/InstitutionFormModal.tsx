@@ -16,6 +16,7 @@ import {
 	handleAddressBlur,
 	handleLatLngBlur,
 	splitStreetLine,
+	toDate,
 	toOptionalText,
 	toOptionalNumber,
 } from "@/lib/utils/formUtils";
@@ -43,7 +44,6 @@ type InstitutionFormModalProps = {
 		institution?: Institution;
 		mode: InstitutionFormModalProps["mode"];
 	}) => void | Promise<void>;
-	initialValues?: Record<string, unknown>;
 	formKey?: string;
 	submitLabel?: string;
 	submitting?: boolean;
@@ -101,6 +101,14 @@ const buildCategoryFilterState = (
 
 const getInitialValues = (resolvedInstitution?: Institution) => {
 	const address = resolvedInstitution?.address;
+	const dateToInputValue = (value: unknown): string => {
+		const parsed = toDate(value);
+		if (!parsed) return "";
+		const year = parsed.getFullYear();
+		const month = String(parsed.getMonth() + 1).padStart(2, "0");
+		const day = String(parsed.getDate()).padStart(2, "0");
+		return `${year}-${month}-${day}`;
+	};
 	return {
 		name: resolvedInstitution?.name ?? "",
 		parent_organization: resolvedInstitution?.parent_organization ?? "",
@@ -144,15 +152,24 @@ const getInitialValues = (resolvedInstitution?: Institution) => {
 		owner_name: resolvedInstitution?.owner_name ?? "",
 		rental_contract_type:
 			resolvedInstitution?.rental_contract_type ?? undefined,
-		rental_contract_end: resolvedInstitution?.rental_contract_end ?? "",
-		established_since: resolvedInstitution?.established_since ?? "",
-		established_until: resolvedInstitution?.established_until ?? "",
+		rental_contract_end: dateToInputValue(
+			resolvedInstitution?.rental_contract_end,
+		),
+		established_since: dateToInputValue(resolvedInstitution?.established_since),
+		established_until: dateToInputValue(resolvedInstitution?.established_until),
 		closing_reason: resolvedInstitution?.closing_reason ?? "",
 		area: resolvedInstitution?.area ?? "",
 		capacity: resolvedInstitution?.capacity ?? "",
-		number_of_rooms: resolvedInstitution?.number_of_rooms ?? 0,
+		number_of_rooms: resolvedInstitution?.number_of_rooms ?? "",
 		accessibility: resolvedInstitution?.accessibility ?? "",
 		cost: resolvedInstitution?.cost ?? "",
+		shared_use_allowed: resolvedInstitution?.shared_use_allowed ?? false,
+		shared_use_info: resolvedInstitution?.shared_use_info ?? "",
+		shared_use_equipment: resolvedInstitution?.shared_use_equipment ?? "",
+		shared_use_audience: resolvedInstitution?.shared_use_audience ?? "",
+		shared_use_availability: resolvedInstitution?.shared_use_availability ?? "",
+		shared_use_contact_person:
+			resolvedInstitution?.shared_use_contact_person ?? "",
 		notes: resolvedInstitution?.notes ?? "",
 	};
 };
@@ -245,6 +262,20 @@ const useInstitutionSubmit = (
 					)
 			: [];
 
+		const shared_use_allowed =
+			data.shared_use_allowed === true ||
+			data.shared_use_allowed === "true" ||
+			data.shared_use_allowed === "yes";
+		const shared_use_info = toOptionalText(data.shared_use_info);
+		const shared_use_equipment = toOptionalText(data.shared_use_equipment);
+		const shared_use_audience = toOptionalText(data.shared_use_audience);
+		const shared_use_availability = toOptionalText(
+			data.shared_use_availability,
+		);
+		const shared_use_contact_person = toOptionalText(
+			data.shared_use_contact_person,
+		);
+
 		try {
 			if (mode === "create") {
 				const created = await createInstitution({
@@ -256,6 +287,12 @@ const useInstitutionSubmit = (
 					phone,
 					funding_type: funding_type ?? null,
 					funding_sources,
+					shared_use_allowed,
+					shared_use_info,
+					shared_use_equipment,
+					shared_use_audience,
+					shared_use_availability,
+					shared_use_contact_person,
 				});
 				addInstitution(created);
 			} else if (institutionId) {
@@ -269,6 +306,12 @@ const useInstitutionSubmit = (
 					phone,
 					funding_type: funding_type ?? null,
 					funding_sources,
+					shared_use_allowed,
+					shared_use_info,
+					shared_use_equipment,
+					shared_use_audience,
+					shared_use_availability,
+					shared_use_contact_person,
 				});
 				if (updated) {
 					upsertInstitution(updated);
@@ -294,7 +337,6 @@ type InstitutionFormConfigArgs = {
 	tEnum: TFunction;
 	categoryGroups: Category[];
 	resolvedInstitution?: Institution;
-	initialValues?: Record<string, unknown>;
 	submitting: boolean;
 	submitLabel?: string;
 	onSubmit: (data: Record<string, unknown>) => void | Promise<void>;
@@ -318,7 +360,6 @@ const buildInstitutionFormConfig = ({
 	tEnum,
 	categoryGroups,
 	resolvedInstitution,
-	initialValues,
 	submitting,
 	submitLabel,
 	onSubmit,
@@ -329,7 +370,6 @@ const buildInstitutionFormConfig = ({
 }: InstitutionFormConfigArgs): FormWrapperConfig => {
 	const fieldLabel = (key: string, fallback: string) =>
 		getFieldLabel(tEnum, key, fallback);
-
 	return {
 		fields: [
 			{
@@ -754,6 +794,86 @@ const buildInstitutionFormConfig = ({
 				],
 			},
 			{
+				name: "shared_use",
+				type: "section",
+				layout: { columns: 2 },
+				fields: [
+					{
+						name: "shared_use_allowed",
+						label: fieldLabel("shared_use_allowed", "Shared Use Allowed"),
+						type: "radio",
+						radioVariant: "button",
+						layout: { span: "full" },
+						options: [
+							{
+								value: true,
+								label: t("institutionFormModal.form.sharedUse.options.yes"),
+							},
+							{
+								value: false,
+								label: t("institutionFormModal.form.sharedUse.options.no"),
+							},
+						],
+					},
+					{
+						name: "shared_use_info",
+						label: fieldLabel("shared_use_info", "Shared Use Info"),
+						type: "textarea",
+						placeholder: t(
+							"institutionFormModal.form.sharedUse.fields.info.placeholder",
+						),
+						layout: { span: "full" },
+						condition: (formData) => formData.shared_use_allowed === true,
+					},
+					{
+						name: "shared_use_equipment",
+						label: fieldLabel("shared_use_equipment", "Shared Use Equipment"),
+						type: "textarea",
+						placeholder: t(
+							"institutionFormModal.form.sharedUse.fields.equipment.placeholder",
+						),
+						layout: { span: "full" },
+						condition: (formData) => formData.shared_use_allowed === true,
+					},
+					{
+						name: "shared_use_audience",
+						label: fieldLabel("shared_use_audience", "Shared Use Audience"),
+						type: "textarea",
+						placeholder: t(
+							"institutionFormModal.form.sharedUse.fields.audience.placeholder",
+						),
+						layout: { span: "full" },
+						condition: (formData) => formData.shared_use_allowed === true,
+					},
+					{
+						name: "shared_use_availability",
+						label: fieldLabel(
+							"shared_use_availability",
+							"Shared Use Availability",
+						),
+						type: "textarea",
+						placeholder: t(
+							"institutionFormModal.form.sharedUse.fields.availability.placeholder",
+						),
+						layout: { span: "full" },
+						condition: (formData) => formData.shared_use_allowed === true,
+					},
+					{
+						name: "shared_use_contact_person",
+						label: fieldLabel(
+							"shared_use_contact_person",
+							"Shared Use Contact Person",
+						),
+						type: "text",
+						placeholder: t(
+							"institutionFormModal.form.sharedUse.fields.contactPerson.placeholder",
+						),
+						layout: { span: "full" },
+						condition: (formData) => formData.shared_use_allowed === true,
+					},
+				],
+			},
+			{
 				name: "facility",
 				type: "section",
 				layout: { columns: 2 },
@@ -892,7 +1012,7 @@ const buildInstitutionFormConfig = ({
 					loading: t("institutionFormModal.actions.saving"),
 				},
 			}),
-		initialValues: initialValues ?? getInitialValues(resolvedInstitution),
+		initialValues: getInitialValues(resolvedInstitution),
 	};
 };
 
@@ -903,7 +1023,6 @@ export function InstitutionFormModal({
 	onClose: _onClose,
 	routePath,
 	onSubmit,
-	initialValues,
 	formKey,
 	submitLabel,
 	submitting: submittingProp,
@@ -977,10 +1096,7 @@ export function InstitutionFormModal({
 
 	const resolvedInstitutionWithFallback = institution ?? undefined;
 	const showNotFoundWithFallback =
-		mode === "edit" &&
-		!resolvedInstitutionWithFallback &&
-		!initialValues &&
-		!isDeleting;
+		mode === "edit" && !resolvedInstitutionWithFallback && !isDeleting;
 
 	const handleSuccess = (nextMode: InstitutionFormModalProps["mode"]) => {
 		const keyPrefix =
@@ -1048,7 +1164,6 @@ export function InstitutionFormModal({
 				tEnum,
 				categoryGroups: categories,
 				resolvedInstitution: resolvedInstitutionWithFallback,
-				initialValues,
 				submitting: resolvedSubmitting,
 				submitLabel,
 				onSubmit: resolvedSubmitHandler,
@@ -1063,7 +1178,6 @@ export function InstitutionFormModal({
 			tEnum,
 			categories,
 			resolvedInstitutionWithFallback,
-			initialValues,
 			resolvedSubmitting,
 			submitLabel,
 			resolvedSubmitHandler,

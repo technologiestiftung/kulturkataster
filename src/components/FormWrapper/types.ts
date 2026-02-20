@@ -36,13 +36,13 @@ export type TablePermissionValue = {
 	actions: PermissionAction[];
 	scope: PermissionScope;
 };
-
 export interface SelectOption {
 	label: string;
-	value: string;
+	value: string | number | boolean;
+	description?: string;
 	searchText?: string;
 	filterValues?: Record<string, string[]>;
-	parentValue?: string;
+	parentValue?: string | number | boolean;
 }
 
 type FormWrapperSectionConfig = {
