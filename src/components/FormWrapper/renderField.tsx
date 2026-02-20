@@ -194,22 +194,21 @@ const toggleSectionPermissionValue = (
 	return nextValue;
 };
 
-const serializeOptionValue = (value: string | number | boolean): string =>
-	`${typeof value}:${String(value)}`;
+const serializeOptionValue = (value: string | number | boolean): string => {
+	if (typeof value === "string") return value;
+	return `${typeof value}:${String(value)}`;
+};
 
 const deserializeOptionValue = (value: string): string | number | boolean => {
-	const separatorIndex = value.indexOf(":");
-	if (separatorIndex < 0) return value;
-	const type = value.slice(0, separatorIndex);
-	const rawValue = value.slice(separatorIndex + 1);
-	if (type === "boolean") {
-		return rawValue === "true";
+	if (value.startsWith("boolean:")) {
+		return value.slice("boolean:".length) === "true";
 	}
-	if (type === "number") {
+	if (value.startsWith("number:")) {
+		const rawValue = value.slice("number:".length);
 		const parsed = Number(rawValue);
 		return Number.isFinite(parsed) ? parsed : rawValue;
 	}
-	return rawValue;
+	return value;
 };
 
 const getSerializedSelectedValue = (
@@ -223,6 +222,8 @@ const getSerializedSelectedValue = (
 		(option) => option.value === currentValue,
 	);
 	if (matchingOption) return serializeOptionValue(matchingOption.value);
+
+	if (typeof currentValue === "string") return currentValue;
 
 	return undefined;
 };
