@@ -32,6 +32,10 @@ import {
 	SubmissionUpdatePayload,
 } from "@/types/submission";
 import { updateSubmissionAuditStatus } from "@/server/logic/submissionAudit";
+import {
+	normalizeOptionalSubmissionJson,
+	normalizeSubmissionJson,
+} from "@/lib/utils/submissionJsonUtils";
 
 export async function getSubmissions(filter: SubmissionFilter = {}) {
 	const currentUserId = await getCurrentUserId();
@@ -47,7 +51,6 @@ export async function getSubmissions(filter: SubmissionFilter = {}) {
 		created_by: ownerId ? ownerId : (filter.createdBy ?? undefined),
 		reviewed_by: filter.reviewedBy ?? undefined,
 	};
-
 	return submissionRepo.list(where);
 }
 
@@ -127,9 +130,9 @@ export async function createSubmission(input: SubmissionCreatePayload) {
 		entity_id: input.entityId ?? null,
 		type: input.type,
 		status: input.status ?? "approval_pending",
-		data: input.data,
-		diff: input.diff ?? undefined,
-		meta: input.meta ?? undefined,
+		data: normalizeSubmissionJson(input.data),
+		diff: normalizeOptionalSubmissionJson(input.diff),
+		meta: normalizeOptionalSubmissionJson(input.meta),
 		creator: currentUserId ? { connect: { id: currentUserId } } : undefined,
 	});
 }
@@ -142,9 +145,12 @@ export async function updateSubmission(input: SubmissionUpdatePayload) {
 	const ownerId = requireScopeOrUser(scope, currentUserId);
 	if (!ownerId) {
 		return submissionRepo.update(input.id, {
-			data: input.data ?? undefined,
-			diff: input.diff ?? undefined,
-			meta: input.meta ?? undefined,
+			data:
+				input.data !== undefined
+					? normalizeSubmissionJson(input.data)
+					: undefined,
+			diff: normalizeOptionalSubmissionJson(input.diff),
+			meta: normalizeOptionalSubmissionJson(input.meta),
 			status: input.status ?? undefined,
 		});
 	}
@@ -156,9 +162,12 @@ export async function updateSubmission(input: SubmissionUpdatePayload) {
 		throw new Error("Not authorized to update this submission.");
 	}
 	return submissionRepo.update(existing.id, {
-		data: input.data ?? undefined,
-		diff: input.diff ?? undefined,
-		meta: input.meta ?? undefined,
+		data:
+			input.data !== undefined
+				? normalizeSubmissionJson(input.data)
+				: undefined,
+		diff: normalizeOptionalSubmissionJson(input.diff),
+		meta: normalizeOptionalSubmissionJson(input.meta),
 		status: input.status ?? undefined,
 	});
 }

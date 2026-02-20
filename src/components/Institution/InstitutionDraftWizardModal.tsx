@@ -33,6 +33,7 @@ import { buildSubmissionDiff } from "@/lib/utils/submissionDiff";
 import { Button } from "@/components/ui/button";
 import { showSuccessToast } from "@/lib/utils/feedbackToast";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
+import { buildInstitutionForFormFromDraft } from "@/lib/utils/institutionFormAdapter";
 const stepConfigs: StepConfig[] = [
 	{
 		id: "basic",
@@ -300,10 +301,10 @@ function InstitutionDraftWizardContent({
 	}, [canGoPrevious, onCloseRequest, previousStep]);
 
 	const clearSectionHash = useCallback(() => {
-		if (typeof window === "undefined") return;
-		if (!window.location.hash) return;
-		const { pathname, search } = window.location;
-		window.history.replaceState(null, "", `${pathname}${search}`);
+		// if (typeof window === "undefined") return;
+		// if (!window.location.hash) return;
+		// const { pathname, search } = window.location;
+		// window.history.replaceState(null, "", `${pathname}${search}`);
 	}, []);
 
 	const closeSectionEditModal = useCallback(() => {
@@ -1545,7 +1546,7 @@ function InstitutionDraftWizardContent({
 				<InstitutionFormModal
 					mode={draftMode === "update" ? "edit" : "create"}
 					permissionContext="submission"
-					initialValues={draft}
+					institution={buildInstitutionForFormFromDraft(draft, categories)}
 					onClose={closeSectionEditModal}
 					onSubmit={({ data }) => {
 						handleSectionEditSubmit(data as Record<string, unknown>);
@@ -1626,6 +1627,8 @@ export function InstitutionDraftWizardModal({
 			titleClassName="sr-only"
 			variant="fullscreen"
 			routePath={routePath}
+			backTo="/institution"
+			showBackButton={storedStepId === "basic" || isUpdateReviewOnly}
 			closeConfirmation={{
 				title: t("institutionModalCloseConfirmation.title"),
 				description: t("institutionModalCloseConfirmation.description"),

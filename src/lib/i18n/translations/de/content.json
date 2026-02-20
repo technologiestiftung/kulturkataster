@@ -563,9 +563,9 @@
 			"created": "Erstellt",
 			"createdAt": "Erstellt am",
 			"description": "Beschreibung",
-			"kulturorte": "Kulturorte",
+			"institutions": "Kulturorte",
 			"name": "Name",
-			"updatedAt": "Aktualisiert am",
+			"updated": "Aktualisiert am",
 			"users": "Benutzer*innen"
 		},
 		"empty": {
@@ -1231,6 +1231,31 @@
 			},
 			"organization": {
 				"title": "Organisation"
+			},
+			"sharedUse": {
+				"description": "Geben Sie an, ob die Räumlichkeiten für die Mehrfachnutzung zur Verfügung stehen.",
+				"fields": {
+					"audience": {
+						"placeholder": "z. B. geeignet für Tanzproben und Workshops"
+					},
+					"availability": {
+						"placeholder": "z. B. montags und mittwochs 18:00-22:00 Uhr"
+					},
+					"contactPerson": {
+						"placeholder": "z. B. raumanfrage@kulturort.de oder +49 30 1234567"
+					},
+					"equipment": {
+						"placeholder": "z. B. Tische, Stühle, Küche, WLAN, Licht- und Tontechnik"
+					},
+					"info": {
+						"placeholder": "Beschreiben Sie die Räume/Flächen, die für Mehrfachnutzung zur Verfügung stehen"
+					}
+				},
+				"options": {
+					"no": "Nein",
+					"yes": "Ja"
+				},
+				"title": "Mehrfachnutzung"
 			},
 			"status": {
 				"title": "Status"

@@ -194,6 +194,39 @@ const toggleSectionPermissionValue = (
 	return nextValue;
 };
 
+const serializeOptionValue = (value: string | number | boolean): string =>
+	`${typeof value}:${String(value)}`;
+
+const deserializeOptionValue = (value: string): string | number | boolean => {
+	const separatorIndex = value.indexOf(":");
+	if (separatorIndex < 0) return value;
+	const type = value.slice(0, separatorIndex);
+	const rawValue = value.slice(separatorIndex + 1);
+	if (type === "boolean") {
+		return rawValue === "true";
+	}
+	if (type === "number") {
+		const parsed = Number(rawValue);
+		return Number.isFinite(parsed) ? parsed : rawValue;
+	}
+	return rawValue;
+};
+
+const getSerializedSelectedValue = (
+	options: Array<{ value: string | number | boolean }> | undefined,
+	currentValue: unknown,
+): string | undefined => {
+	if (currentValue === undefined || currentValue === null) return undefined;
+	if (!options || options.length === 0) return String(currentValue);
+
+	const matchingOption = options.find(
+		(option) => option.value === currentValue,
+	);
+	if (matchingOption) return serializeOptionValue(matchingOption.value);
+
+	return undefined;
+};
+
 type RenderFieldContentArgs = {
 	field: FormWrapperFieldConfig;
 	formData: Record<string, unknown>;
@@ -304,8 +337,10 @@ const renderFieldContent = (
 
 			{field.type === "select" && (
 				<Select
-					value={value as string}
-					onValueChange={(val) => updateField(field.name, val)}
+					value={getSerializedSelectedValue(field.options, value)}
+					onValueChange={(val) =>
+						updateField(field.name, deserializeOptionValue(val))
+					}
 					disabled={field.disabled}
 				>
 					<SelectTrigger id={field.name}>
@@ -313,8 +348,10 @@ const renderFieldContent = (
 					</SelectTrigger>
 					<SelectContent className="px-3">
 						{field.options?.map((option, index) => (
-							<Fragment key={option.value}>
-								<SelectItem value={option.value}>{option.label}</SelectItem>
+							<Fragment key={serializeOptionValue(option.value)}>
+								<SelectItem value={serializeOptionValue(option.value)}>
+									{option.label}
+								</SelectItem>
 								{index < (field.options?.length || 0) - 1 && (
 									<SelectSeparator />
 								)}
@@ -326,20 +363,25 @@ const renderFieldContent = (
 
 			{field.type === "radio" && (
 				<RadioGroup
-					value={value as string}
-					onValueChange={(val) => updateField(field.name, val)}
+					value={getSerializedSelectedValue(field.options, value)}
+					onValueChange={(val) =>
+						updateField(field.name, deserializeOptionValue(val))
+					}
 					variant={field.radioVariant}
 					disabled={field.disabled}
 				>
 					{field.options?.map((option) => (
-						<div key={option.value} className="flex items-center space-x-2">
+						<div
+							key={serializeOptionValue(option.value)}
+							className="flex items-center space-x-2"
+						>
 							<RadioGroupItem
 								className="bg-background border-input"
-								value={option.value}
-								id={`${field.name}-${option.value}`}
+								value={serializeOptionValue(option.value)}
+								id={`${field.name}-${serializeOptionValue(option.value)}`}
 							/>
 							<Label
-								htmlFor={`${field.name}-${option.value}`}
+								htmlFor={`${field.name}-${serializeOptionValue(option.value)}`}
 								emphasize={false}
 							>
 								{option.label}
@@ -399,6 +441,7 @@ const renderFieldContent = (
 								...filter,
 								options: filter.options.map((option) => ({
 									value: option.value,
+									description: option.description,
 									label: option.label,
 									parentValue: option.parentValue,
 								})),
@@ -408,10 +451,16 @@ const renderFieldContent = (
 						/>
 					) : (
 						field.options?.map((option) => (
-							<div key={option.value} className="flex items-center space-x-2">
+							<div
+								key={option.value as string}
+								className="flex items-center space-x-2"
+							>
 								<Checkbox
 									id={`${field.name}-${option.value}`}
-									checked={(value as string[])?.includes(option.value)}
+									checked={
+										(value as string[])?.includes(option.value as string) ??
+										false
+									}
 									onCheckedChange={(checked) => {
 										const currentValue = (value as string[]) || [];
 										const newValue = checked

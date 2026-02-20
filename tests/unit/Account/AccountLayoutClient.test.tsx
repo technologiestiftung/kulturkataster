@@ -5,11 +5,13 @@ import { AccountLayoutClient } from "@/components/Account/AccountLayoutClient";
 import { logout } from "@/server/actions/auth";
 
 const pushMock = vi.fn();
+const refreshMock = vi.fn();
 let pathnameMock = "/de/account/activity";
 
 vi.mock("next/navigation", () => ({
 	useRouter: () => ({
 		push: pushMock,
+		refresh: refreshMock,
 	}),
 	usePathname: () => pathnameMock,
 }));
@@ -38,10 +40,11 @@ vi.mock("react-i18next", () => ({
 			if (key === "auth.account.subtitle") {
 				return "Meine Profilübersicht";
 			}
-			const dictionary: Record<string, string> = {
+		const dictionary: Record<string, string> = {
 				"auth.account.actions.addInstitution": "Add new institution",
 				"auth.account.actions.profileSettings": "Profile settings",
 				"auth.account.actions.faq": "FAQ",
+				"auth.account.actions.refreshData": "Refresh data",
 				"auth.account.actions.logout": "Logout",
 				"auth.account.tabs.activity": "Activity",
 				"auth.account.tabs.institutions": "Institutions",
@@ -71,6 +74,7 @@ const currentProfile = {
 describe("AccountLayoutClient", () => {
 	beforeEach(() => {
 		pushMock.mockReset();
+		refreshMock.mockReset();
 		mockedLogout.mockReset();
 		pathnameMock = "/de/account/activity";
 	});
@@ -143,6 +147,9 @@ describe("AccountLayoutClient", () => {
 
 		fireEvent.click(screen.getByRole("button", { name: "FAQ" }));
 		expect(pushMock).toHaveBeenCalledWith("/de/account/faq");
+
+		fireEvent.click(screen.getByRole("button", { name: "Refresh data" }));
+		expect(refreshMock).toHaveBeenCalled();
 
 		fireEvent.click(screen.getByRole("button", { name: "Logout" }));
 

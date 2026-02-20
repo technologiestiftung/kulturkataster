@@ -37,6 +37,68 @@ const toOptionalText = (value: unknown): string | null => {
 	return trimmed.length > 0 ? trimmed : null;
 };
 
+const hasDisplayValue = (value: unknown): boolean => {
+	if (value === null || value === undefined) return false;
+	if (typeof value === "string") return value.trim().length > 0;
+	if (Array.isArray(value)) return value.length > 0;
+	return true;
+};
+
+const toDate = (value: unknown): Date | null => {
+	if (value instanceof Date) {
+		return Number.isNaN(value.getTime()) ? null : value;
+	}
+	if (value && typeof value === "object") {
+		const tagged = value as { $type?: unknown; value?: unknown };
+		if (
+			tagged.$type === "DateTime" &&
+			(typeof tagged.value === "string" || typeof tagged.value === "number")
+		) {
+			const parsed = new Date(tagged.value);
+			return Number.isNaN(parsed.getTime()) ? null : parsed;
+		}
+	}
+	if (typeof value === "string" || typeof value === "number") {
+		const parsed = new Date(value);
+		return Number.isNaN(parsed.getTime()) ? null : parsed;
+	}
+	return null;
+};
+
+const formatDateByType = (value: unknown, type: "date" | "year"): string => {
+	const date = toDate(value);
+	if (!date) return String(value ?? "");
+	if (type === "year") return String(date.getFullYear());
+	return date.toLocaleDateString();
+};
+
+const normalizeDateByType = (
+	value: unknown,
+	type: "date" | "year",
+): string | null => {
+	const date = toDate(value);
+	if (!date) {
+		if (value === null || value === undefined) return null;
+		if (typeof value === "string") return value.trim();
+		return String(value);
+	}
+	if (type === "year") return String(date.getFullYear());
+	return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+};
+
+const getNestedValue = (
+	obj: Record<string, unknown>,
+	path?: string,
+): unknown => {
+	if (!path) return undefined;
+	return path.split(".").reduce((current, key) => {
+		if (current && typeof current === "object") {
+			return (current as Record<string, unknown>)[key];
+		}
+		return undefined;
+	}, obj as unknown);
+};
+
 const toStringArray = (value: unknown): string[] => {
 	if (!Array.isArray(value)) return [];
 	return value
@@ -294,6 +356,11 @@ export {
 	toNumberArray,
 	toOptionalNumber,
 	toOptionalText,
+	hasDisplayValue,
+	toDate,
+	formatDateByType,
+	normalizeDateByType,
+	getNestedValue,
 	toStringArray,
 	splitStreetLine,
 	buildStreetLine,
