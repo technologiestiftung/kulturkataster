@@ -1,6 +1,10 @@
 import type { Submission } from "@/types/submission";
 import type { InstitutionForm } from "@/types/institution";
-import { buildAddressFromFormData } from "@/lib/utils/formUtils";
+import {
+	buildAddressFromFormData,
+	toNumberArray,
+	toStringArray,
+} from "@/lib/utils/formUtils";
 import {
 	FundingType,
 	InstitutionStatus,
@@ -13,6 +17,27 @@ import {
 type SubmissionLike =
 	| Submission
 	| { data?: Record<string, unknown> | undefined };
+
+const toDateInput = (value: unknown): Date | undefined => {
+	if (value instanceof Date) {
+		return Number.isNaN(value.getTime()) ? undefined : value;
+	}
+	if (value && typeof value === "object") {
+		const tagged = value as { $type?: unknown; value?: unknown };
+		if (
+			tagged.$type === "DateTime" &&
+			(typeof tagged.value === "string" || typeof tagged.value === "number")
+		) {
+			const parsed = new Date(tagged.value);
+			return Number.isNaN(parsed.getTime()) ? undefined : parsed;
+		}
+	}
+	if (typeof value === "string" || typeof value === "number") {
+		const parsed = new Date(value);
+		return Number.isNaN(parsed.getTime()) ? undefined : parsed;
+	}
+	return undefined;
+};
 
 export const institutionSubmissionToDraft = (
 	submission: SubmissionLike,
@@ -29,14 +54,10 @@ export const institutionSubmissionToDraft = (
 		typeof value === "number" && Number.isFinite(value) ? value : undefined;
 	const toBool = (value: unknown): boolean | undefined =>
 		typeof value === "boolean" ? value : undefined;
-	const toNumberArray = (value: unknown): number[] | undefined =>
-		Array.isArray(value)
-			? value
-					.map((item) => Number(item))
-					.filter((item) => Number.isFinite(item))
-			: undefined;
-	const toStringArray = (value: unknown): string[] | undefined =>
-		Array.isArray(value) ? value.map((item) => String(item)) : undefined;
+	const toOptionalNumberArray = (value: unknown): number[] | undefined =>
+		Array.isArray(value) ? toNumberArray(value) : undefined;
+	const toOptionalStringArray = (value: unknown): string[] | undefined =>
+		Array.isArray(value) ? toStringArray(value) : undefined;
 	const toFundingSources = (
 		value: unknown,
 	): InstitutionForm["funding_sources"] | undefined => {
@@ -90,8 +111,7 @@ export const institutionSubmissionToDraft = (
 		rental_contract_type:
 			(data.rental_contract_type as RentalContractType | undefined) ||
 			undefined,
-		rental_contract_end:
-			(data.rental_contract_end as Date | undefined) || undefined,
+		rental_contract_end: toDateInput(data.rental_contract_end),
 		funding_type: (data.funding_type as FundingType | undefined) || undefined,
 		funding_sources,
 		utilization_status:
@@ -107,10 +127,8 @@ export const institutionSubmissionToDraft = (
 		shared_use_availability: toString(data.shared_use_availability),
 		accessibility: toString(data.accessibility),
 		cost: toString(data.cost),
-		established_since:
-			(data.established_since as Date | undefined) || undefined,
-		established_until:
-			(data.established_until as Date | undefined) || undefined,
+		established_since: toDateInput(data.established_since),
+		established_until: toDateInput(data.established_until),
 		closing_reason: toString(data.closing_reason),
 		notes: toString(data.notes),
 		internal_notes: toString(data.internal_notes),
@@ -124,9 +142,9 @@ export const institutionSubmissionToDraft = (
 		contact_person_phone: toString(data.contact_person_phone),
 		contact_person_id: toNumber(data.contact_person_id),
 		address: address ?? null,
-		categoryIds: toNumberArray(data.categoryIds),
-		tagIds: toNumberArray(data.tagIds),
-		userIds: toStringArray(data.userIds),
-		groupIds: toNumberArray(data.groupIds),
+		categoryIds: toOptionalNumberArray(data.categoryIds),
+		tagIds: toOptionalNumberArray(data.tagIds),
+		userIds: toOptionalStringArray(data.userIds),
+		groupIds: toOptionalNumberArray(data.groupIds),
 	};
 };

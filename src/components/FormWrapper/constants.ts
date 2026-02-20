@@ -7,3 +7,8 @@ export const defaultFilterState: FilterState = {
 	include_closed: false,
 	status: undefined,
 };
+
+export const defaultTableFilterState: FilterState = {
+	...defaultFilterState,
+	include_closed: true,
+};

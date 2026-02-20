@@ -301,17 +301,16 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
 						label: t("auth.register.privacyLink"),
 						labelNode: (
 							<span className="body2 font-normal flex-wrap">
-								{t("auth.register.termsIntro")}
-								<Link
-									href={"https://dsgvo-info.cortina-consult.de/kulturkataster/"}
-									className="text-primary-dark underline"
-									target="_blank"
-								>
-									{t("auth.register.termsLink")}
-								</Link>
-								{t("auth.register.termsSeparator")}
+								{t("auth.register.termsIntro")}{" "}
 								<Link
 									href={toLocalePath("/privacy")}
+									className="text-primary-dark underline"
+								>
+									{t("auth.register.termsLink")}
+								</Link>{" "}
+								{t("auth.register.termsSeparator")}{" "}
+								<Link
+									href={"https://dsgvo-info.cortina-consult.de/kulturkataster/"}
 									className="text-primary-dark underline"
 									target="_blank"
 								>

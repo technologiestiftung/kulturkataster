@@ -287,10 +287,12 @@ const buildUserFormConfig = ({
 						name: "roleId",
 						label: t("userFormModal.form.access.fields.role.label"),
 						type: "select",
+						required: true,
 						options: roles.map((role) => ({
 							value: String(role.id),
 							label: role.name,
 						})),
+						layout: { span: "full" },
 					},
 					{
 						name: "groupIds",
