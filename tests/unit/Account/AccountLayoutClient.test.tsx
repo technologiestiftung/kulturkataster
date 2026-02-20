@@ -40,7 +40,7 @@ vi.mock("react-i18next", () => ({
 			if (key === "auth.account.subtitle") {
 				return "Meine Profilübersicht";
 			}
-		const dictionary: Record<string, string> = {
+			const dictionary: Record<string, string> = {
 				"auth.account.actions.addInstitution": "Add new institution",
 				"auth.account.actions.profileSettings": "Profile settings",
 				"auth.account.actions.faq": "FAQ",
