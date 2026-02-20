@@ -44,4 +44,3 @@ export const normalizeOptionalSubmissionJson = (
 	if (value === null || value === undefined) return undefined;
 	return normalizeSubmissionJson(value);
 };
-

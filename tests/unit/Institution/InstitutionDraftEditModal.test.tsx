@@ -166,7 +166,9 @@ describe("InstitutionDraftEditModal", () => {
 				shared_use_contact_person: "Kontakt: +49 30 222",
 				legal_form: "e.V.",
 				funding_type: "mixed",
-				funding_sources: [{ source_name: "state", description: "Landesmittel" }],
+				funding_sources: [
+					{ source_name: "state", description: "Landesmittel" },
+				],
 				established_since: "2008-01-01",
 				established_until: "2035-12-31",
 				closing_reason: "Kein Schließungsgrund",
@@ -247,23 +249,29 @@ describe("InstitutionDraftEditModal", () => {
 		expect((institution.address as Record<string, unknown>)?.street).toBe(
 			"Alexanderplatz",
 		);
-		expect((institution.address as Record<string, unknown>)?.street_number).toBe(
-			"1",
+		expect(
+			(institution.address as Record<string, unknown>)?.street_number,
+		).toBe("1");
+		expect((institution.address as Record<string, unknown>)?.city).toBe(
+			"Berlin",
 		);
-		expect((institution.address as Record<string, unknown>)?.city).toBe("Berlin");
 		expect((institution.address as Record<string, unknown>)?.zipcode).toBe(
 			"10178",
 		);
 		expect(
 			(institution.address as Record<string, unknown>)?.address_suffix,
 		).toBe("Aufgang B");
-		expect((institution.address as Record<string, unknown>)?.neighbourhood).toBe(
-			"Mitte",
+		expect(
+			(institution.address as Record<string, unknown>)?.neighbourhood,
+		).toBe("Mitte");
+		expect(
+			(institution.address as Record<string, unknown>)?.cultural_area,
+		).toBe("Zentrum");
+		expect((institution.address as Record<string, unknown>)?.lat).toBe(
+			52.520008,
 		);
-		expect((institution.address as Record<string, unknown>)?.cultural_area).toBe(
-			"Zentrum",
+		expect((institution.address as Record<string, unknown>)?.lng).toBe(
+			13.404954,
 		);
-		expect((institution.address as Record<string, unknown>)?.lat).toBe(52.520008);
-		expect((institution.address as Record<string, unknown>)?.lng).toBe(13.404954);
 	});
 });
