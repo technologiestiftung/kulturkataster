@@ -32,4 +32,3 @@ describe("submissionJsonUtils", () => {
 		expect(normalizeOptionalSubmissionJson(null)).toBeUndefined();
 	});
 });
-

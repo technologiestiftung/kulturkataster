@@ -36,13 +36,12 @@ vi.mock("@/components/Modals/Modal", () => ({
 }));
 
 vi.mock("@/components/Institution/InstitutionReview", () => ({
-	InstitutionReview: (props: { onEditSection?: (sectionId: string) => void }) => {
+	InstitutionReview: (props: {
+		onEditSection?: (sectionId: string) => void;
+	}) => {
 		institutionReviewMock(props);
 		return (
-			<button
-				type="button"
-				onClick={() => props.onEditSection?.("details")}
-			>
+			<button type="button" onClick={() => props.onEditSection?.("details")}>
 				InstitutionReview
 			</button>
 		);
