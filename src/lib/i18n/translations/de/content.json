@@ -861,6 +861,11 @@
 				}
 			}
 		},
+		"feedback": {
+			"submit": {
+				"pendingConflict": "Du hast bereits eine offene Einreichung für diesen Kulturort eingereicht."
+			}
+		},
 		"stepLabel": "Schritt {{current}} / {{total}}",
 		"steps": {
 			"basic": {

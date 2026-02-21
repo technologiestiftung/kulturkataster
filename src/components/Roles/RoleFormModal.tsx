@@ -254,6 +254,7 @@ const useRoleSubmit = (
 	onClose: () => void,
 	onSuccess: (mode: RoleFormModalProps["mode"]) => void,
 	shouldRefresh: boolean,
+	onError: (message: string) => void,
 ) => {
 	const router = useRouter();
 	const [submitting, setSubmitting] = useState(false);
@@ -295,6 +296,12 @@ const useRoleSubmit = (
 				router.refresh();
 			}
 			onClose();
+		} catch (error) {
+			const message =
+				error instanceof Error
+					? error.message
+					: "An unexpected error occurred. Please try again.";
+			onError(message);
 		} finally {
 			setSubmitting(false);
 		}
@@ -470,6 +477,7 @@ export function RoleFormModal({
 		title: string;
 		description: string;
 	} | null>(null);
+	const [submitError, setSubmitError] = useState<string | null>(null);
 
 	const handleClose = useRoutedModalClose({ returnTo });
 
@@ -488,6 +496,7 @@ export function RoleFormModal({
 		handleClose,
 		handleSuccess,
 		shouldRefresh,
+		(message) => setSubmitError(message),
 	);
 
 	const tableTargets = useMemo(() => getTableTargets(t), [t]);
@@ -607,20 +616,26 @@ export function RoleFormModal({
 						}
 					: undefined
 			}
-			errorDialog={
-				deleteError
-					? {
-							open: true,
-							title: deleteError.title,
-							description: deleteError.description,
-							confirmLabel: t("close"),
-							onConfirm: () => setDeleteError(null),
-							onOpenChange: (open) => {
-								if (!open) setDeleteError(null);
-							},
-						}
-					: undefined
-			}
+				errorDialog={
+					deleteError || submitError
+						? {
+								open: true,
+								title: deleteError ? deleteError.title : t("error"),
+								description: deleteError?.description ?? submitError ?? "",
+								confirmLabel: t("close"),
+								onConfirm: () => {
+									setDeleteError(null);
+									setSubmitError(null);
+								},
+								onOpenChange: (open) => {
+									if (!open) {
+										setDeleteError(null);
+										setSubmitError(null);
+									}
+								},
+							}
+						: undefined
+				}
 		>
 			<div className="flex h-full flex-col">
 				<div className="px-6 py-8 md:px-10">

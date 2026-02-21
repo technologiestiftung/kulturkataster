@@ -93,6 +93,7 @@ type InstitutionDraftWizardContentProps = {
 	subtitle?: string;
 	onSubmitted?: () => void;
 	onCloseRequest?: () => void;
+	onSubmitError?: (message: string) => void;
 };
 
 function InstitutionDraftWizardContent({
@@ -100,6 +101,7 @@ function InstitutionDraftWizardContent({
 	subtitle,
 	onSubmitted,
 	onCloseRequest,
+	onSubmitError,
 }: InstitutionDraftWizardContentProps) {
 	const { t } = useTranslation("content");
 	const { t: tEnum } = useTranslation("enumMap");
@@ -274,6 +276,24 @@ function InstitutionDraftWizardContent({
 		},
 		[draft, nextStep, setDraft],
 	);
+
+	const handleReviewSubmit = useCallback(async () => {
+		try {
+			await handleFinalSubmit(draft);
+		} catch (error) {
+			const message =
+				error instanceof Error
+					? error.message
+					: t("institutionFormModal.review.errorUnknown", {
+							defaultValue: "Unknown error.",
+						});
+			onSubmitError?.(
+				typeof message === "string" && message.includes("pending")
+					? t("institutionDraftWizardModal.feedback.submit.pendingConflict")
+					: message,
+			);
+		}
+	}, [draft, handleFinalSubmit, onSubmitError, t]);
 
 	const handleCancel = useCallback(() => {
 		if (canGoPrevious) {
@@ -1483,7 +1503,7 @@ function InstitutionDraftWizardContent({
 					<div className="flex items-center justify-end">
 						<Button
 							id="institution-draft-submit-button"
-							onClick={() => void handleFinalSubmit(draft)}
+							onClick={() => void handleReviewSubmit()}
 						>
 							{t("institutionDraftWizardModal.actions.submit")}
 						</Button>
@@ -1492,8 +1512,8 @@ function InstitutionDraftWizardContent({
 			) : (
 				<FormWrapper key={currentStepId} config={currentFormConfig} />
 			)}
-			{editModalOpen ? (
-				<InstitutionFormModal
+				{editModalOpen ? (
+					<InstitutionFormModal
 					mode={draftMode === "update" ? "edit" : "create"}
 					permissionContext="submission"
 					institution={buildInstitutionForFormFromDraft(draft, categories)}
@@ -1502,13 +1522,13 @@ function InstitutionDraftWizardContent({
 						handleSectionEditSubmit(data as Record<string, unknown>);
 					}}
 					formKey={`draft-edit-${editSectionId ?? "default"}`}
-					closeOnSubmit
-					submitLabel={t("institutionFormModal.actions.save")}
-				/>
-			) : null}
-		</div>
-	);
-}
+						closeOnSubmit
+						submitLabel={t("institutionFormModal.actions.save")}
+					/>
+				) : null}
+			</div>
+		);
+	}
 
 export function InstitutionDraftWizardModal({
 	initialStepId,
@@ -1526,6 +1546,7 @@ export function InstitutionDraftWizardModal({
 	const setStepId = useInstitutionDraftStore((state) => state.setStepId);
 	const draftMode = useInstitutionDraftStore((state) => state.mode);
 	const isUpdateReviewOnly = draftMode === "update";
+	const [submitError, setSubmitError] = useState<string | null>(null);
 	const stepConfigs = useMemo<StepConfig[]>(
 		() =>
 			STEP_IDS.map((id) => ({
@@ -1582,7 +1603,7 @@ export function InstitutionDraftWizardModal({
 	}, [initialStepId, isUpdateReviewOnly, isValidStep, setStepId]);
 
 	return (
-		<Modal
+			<Modal
 			title={t("institutionDraftWizardModal.dialog.create.title")}
 			titleClassName="sr-only"
 			variant="fullscreen"
@@ -1595,23 +1616,38 @@ export function InstitutionDraftWizardModal({
 				confirmLabel: t("institutionModalCloseConfirmation.confirm"),
 				cancelLabel: t("institutionModalCloseConfirmation.cancel"),
 			}}
-			containerClassName="p-0 md:p-0 mt-0 md:mt-0"
-			contentWrapperClassName="flex-1"
-			contentClassName=""
-		>
-			<div className="flex min-h-full flex-col bg-background py-10 space-y-10">
-				<HorizontalStepper
+				containerClassName="p-0 md:p-0 mt-0 md:mt-0"
+				contentWrapperClassName="flex-1"
+				contentClassName=""
+				errorDialog={
+					submitError
+						? {
+								open: true,
+								title: t("error"),
+								description: submitError,
+								confirmLabel: t("close"),
+								onConfirm: () => setSubmitError(null),
+								onOpenChange: (open) => {
+									if (!open) setSubmitError(null);
+								},
+							}
+						: undefined
+				}
+			>
+				<div className="flex min-h-full flex-col bg-background py-10 space-y-10">
+					<HorizontalStepper
 					steps={resolvedSteps}
 					initialStepId={isUpdateReviewOnly ? "review" : resolvedStepId}
 				>
-					<InstitutionDraftWizardContent
-						title={t("institutionDraftWizardModal.dialog.create.title")}
-						subtitle={t("institutionDraftWizardModal.dialog.create.subtitle")}
-						onSubmitted={handleSubmitted}
-						onCloseRequest={closeModal}
-					/>
-				</HorizontalStepper>
-			</div>
+						<InstitutionDraftWizardContent
+							title={t("institutionDraftWizardModal.dialog.create.title")}
+							subtitle={t("institutionDraftWizardModal.dialog.create.subtitle")}
+							onSubmitted={handleSubmitted}
+							onCloseRequest={closeModal}
+							onSubmitError={(message) => setSubmitError(message)}
+						/>
+					</HorizontalStepper>
+				</div>
 		</Modal>
 	);
 }
