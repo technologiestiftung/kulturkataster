@@ -1,14 +1,135 @@
 import type { Category } from "@/types";
 import type { Institution } from "@/types/institution";
 import { CategoryStatus } from "@/generated/prisma";
+import type { FilterState } from "@/types";
 import {
 	buildStreetLine,
+	normalizeFundingSources,
 	splitStreetLine,
+	toFormBoolean,
 	toDate,
 	toNumberArray,
 	toOptionalNumber,
 	toOptionalText,
 } from "@/lib/utils/formUtils";
+
+const dateToInputValue = (value: unknown): string => {
+	const parsed = toDate(value);
+	if (!parsed) return "";
+	const year = parsed.getFullYear();
+	const month = String(parsed.getMonth() + 1).padStart(2, "0");
+	const day = String(parsed.getDate()).padStart(2, "0");
+	return `${year}-${month}-${day}`;
+};
+
+export const buildInstitutionCategoryFilterState = (
+	categories: Category[] | undefined,
+): FilterState => {
+	const category_keys = new Set<string>();
+	const child_category_keys = new Set<string>();
+	const categoryMap = new Map<number, Category>();
+
+	(categories ?? []).forEach((category) => {
+		categoryMap.set(category.id, category);
+	});
+
+	(categories ?? []).forEach((category) => {
+		if (category.parent_category_id) {
+			child_category_keys.add(category.key);
+			const parent = categoryMap.get(category.parent_category_id);
+			if (parent) {
+				category_keys.add(parent.key);
+			}
+		} else {
+			category_keys.add(category.key);
+		}
+	});
+
+	return {
+		district_keys: [],
+		category_keys: Array.from(category_keys),
+		child_category_keys: Array.from(child_category_keys),
+		include_closed: false,
+		status: undefined,
+	};
+};
+
+export const buildInstitutionFormInitialValues = (
+	resolvedInstitution?: Institution,
+): Record<string, unknown> => {
+	const address = resolvedInstitution?.address;
+	return {
+		name: resolvedInstitution?.name ?? undefined,
+		parent_organization: resolvedInstitution?.parent_organization ?? undefined,
+		internal_notes: resolvedInstitution?.internal_notes ?? undefined,
+		"address.streetLine": buildStreetLine(
+			address?.street,
+			address?.street_number,
+		),
+		"address.city": address?.city ?? undefined,
+		"address.zip": address?.zipcode ?? undefined,
+		"address.address_suffix": address?.address_suffix ?? undefined,
+		"address.neighbourhood": address?.neighbourhood ?? undefined,
+		"address.cultural_area": address?.cultural_area ?? undefined,
+		"address.lat": address?.lat ?? undefined,
+		"address.lng": address?.lng ?? undefined,
+		categoryIds:
+			resolvedInstitution?.categories?.map((category) => String(category.id)) ??
+			[],
+		categoryFilters: buildInstitutionCategoryFilterState(
+			resolvedInstitution?.categories,
+		),
+		utilization_status: resolvedInstitution?.utilization_status ?? undefined,
+		utilization_status_info:
+			resolvedInstitution?.utilization_status_info ?? undefined,
+		protection_status: resolvedInstitution?.protection_status ?? undefined,
+		protection_status_info:
+			resolvedInstitution?.protection_status_info ?? undefined,
+		website: resolvedInstitution?.website ?? undefined,
+		email: resolvedInstitution?.email ?? undefined,
+		phone: resolvedInstitution?.phone ?? undefined,
+		contact_person_first_name:
+			resolvedInstitution?.contact_person?.first_name ?? undefined,
+		contact_person_last_name:
+			resolvedInstitution?.contact_person?.last_name ?? undefined,
+		contact_person_email:
+			resolvedInstitution?.contact_person?.email ?? undefined,
+		contact_person_phone:
+			resolvedInstitution?.contact_person?.phone ?? undefined,
+		legal_form: resolvedInstitution?.legal_form ?? undefined,
+		funding_type: resolvedInstitution?.funding_type ?? undefined,
+		funding_sources:
+			resolvedInstitution?.funding_sources?.map((source) => ({
+				source_name: source.source_name ?? undefined,
+				description: source.description ?? undefined,
+			})) ?? [],
+		owner_type: resolvedInstitution?.owner_type ?? undefined,
+		owner_name: resolvedInstitution?.owner_name ?? undefined,
+		rental_contract_type:
+			resolvedInstitution?.rental_contract_type ?? undefined,
+		rental_contract_end: dateToInputValue(
+			resolvedInstitution?.rental_contract_end,
+		),
+		established_since: dateToInputValue(resolvedInstitution?.established_since),
+		established_until: dateToInputValue(resolvedInstitution?.established_until),
+		closing_reason: resolvedInstitution?.closing_reason ?? undefined,
+		area: resolvedInstitution?.area ?? undefined,
+		capacity: resolvedInstitution?.capacity ?? undefined,
+		number_of_rooms: resolvedInstitution?.number_of_rooms ?? undefined,
+		accessibility: resolvedInstitution?.accessibility ?? undefined,
+		cost: resolvedInstitution?.cost ?? undefined,
+		shared_use_allowed: resolvedInstitution?.shared_use_allowed ?? false,
+		shared_use_info: resolvedInstitution?.shared_use_info ?? undefined,
+		shared_use_equipment:
+			resolvedInstitution?.shared_use_equipment ?? undefined,
+		shared_use_audience: resolvedInstitution?.shared_use_audience ?? undefined,
+		shared_use_availability:
+			resolvedInstitution?.shared_use_availability ?? undefined,
+		shared_use_contact_person:
+			resolvedInstitution?.shared_use_contact_person ?? undefined,
+		notes: resolvedInstitution?.notes ?? undefined,
+	};
+};
 
 export function buildInstitutionForFormFromDraft(
 	draft: Record<string, unknown>,
@@ -81,9 +202,9 @@ export function buildInstitutionForFormFromDraft(
 		funding_type: (typeof draft.funding_type === "string"
 			? draft.funding_type
 			: null) as Institution["funding_type"] | null,
-		funding_sources: Array.isArray(draft.funding_sources)
-			? (draft.funding_sources as Institution["funding_sources"])
-			: [],
+		funding_sources: normalizeFundingSources(
+			draft.funding_sources,
+		) as Institution["funding_sources"],
 		utilization_status: (typeof draft.utilization_status === "string"
 			? draft.utilization_status
 			: null) as Institution["utilization_status"] | null,
@@ -92,10 +213,7 @@ export function buildInstitutionForFormFromDraft(
 			? draft.protection_status
 			: null) as Institution["protection_status"] | null,
 		protection_status_info: toOptionalText(draft.protection_status_info),
-		shared_use_allowed:
-			typeof draft.shared_use_allowed === "boolean"
-				? draft.shared_use_allowed
-				: false,
+		shared_use_allowed: toFormBoolean(draft.shared_use_allowed),
 		shared_use_info: toOptionalText(draft.shared_use_info),
 		shared_use_equipment: toOptionalText(draft.shared_use_equipment),
 		shared_use_audience: toOptionalText(draft.shared_use_audience),

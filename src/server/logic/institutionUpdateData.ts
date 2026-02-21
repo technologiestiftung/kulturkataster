@@ -4,6 +4,7 @@ import type {
 	InstitutionUpdateForm,
 	InstitutionUpdateInput,
 } from "@/types";
+import { normalizeFundingSources } from "@/lib/utils/formUtils";
 
 const buildAddressUpsert = (address?: InstitutionForm["address"] | null) => {
 	if (!address) return undefined;
@@ -22,24 +23,11 @@ const buildContactPersonConnect = (contactPersonId?: number | null) => {
 	return { connect: { id: contactPersonId } };
 };
 
-const normalizeFundingSourcesWithIds = (
-	fundingSources?: InstitutionForm["funding_sources"] | null,
-) => {
-	if (!fundingSources) return [];
-	return fundingSources
-		.map((source) => ({
-			id: typeof source.id === "number" ? source.id : undefined,
-			source_name: source.source_name?.trim() ?? "",
-			description: source.description?.trim() || null,
-		}))
-		.filter((source) => source.source_name.length > 0);
-};
-
 const buildFundingSourcesUpdate = (
 	fundingSources?: InstitutionForm["funding_sources"] | null,
 ): Prisma.FundingSourceUpdateManyWithoutInstitutionNestedInput | undefined => {
 	if (typeof fundingSources === "undefined") return undefined;
-	const normalized = normalizeFundingSourcesWithIds(fundingSources);
+	const normalized = normalizeFundingSources(fundingSources);
 	const existing = normalized
 		.filter((source) => typeof source.id === "number")
 		.map((source) => ({

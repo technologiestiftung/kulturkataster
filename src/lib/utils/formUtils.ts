@@ -110,6 +110,56 @@ const toStringArray = (value: unknown): string[] => {
 		.filter((item) => item.length > 0);
 };
 
+type NormalizedFundingSource = {
+	id?: number;
+	source_name: string;
+	description: string | null;
+};
+
+const normalizeFundingSources = (
+	value: unknown,
+	fallback?: {
+		source_name?: unknown;
+		description?: unknown;
+	},
+): NormalizedFundingSource[] => {
+	const parseItem = (item: unknown): NormalizedFundingSource | null => {
+		if (!item || typeof item !== "object") return null;
+		const source = item as Record<string, unknown>;
+		const source_name = toOptionalText(source.source_name);
+		if (!source_name) return null;
+		const description = toOptionalText(source.description);
+		const id =
+			typeof source.id === "number" && Number.isFinite(source.id)
+				? source.id
+				: undefined;
+		return {
+			id,
+			source_name,
+			description: description ?? null,
+		};
+	};
+
+	const parsed = Array.isArray(value)
+		? value
+				.map(parseItem)
+				.filter((item): item is NormalizedFundingSource => item !== null)
+		: [];
+
+	if (parsed.length > 0) return parsed;
+
+	const fallbackSourceName = toOptionalText(fallback?.source_name);
+	if (!fallbackSourceName) return parsed;
+
+	const fallbackDescription = toOptionalText(fallback?.description);
+	return [
+		{
+			source_name: fallbackSourceName,
+			description: fallbackDescription ?? null,
+		},
+	];
+};
+
 const splitStreetLine = (value: string) => {
 	const trimmed = value.trim();
 	if (!trimmed) {
@@ -144,6 +194,19 @@ type LatLngBlurOptions = {
 	zipKey?: string;
 	cityKey?: string;
 	neighbourhoodKey?: string;
+};
+
+type InstitutionAddressPayload = {
+	id?: number;
+	street: string;
+	street_number: string;
+	city: string | null;
+	zipcode: string | null;
+	lat: number | null;
+	lng: number | null;
+	address_suffix: string | null;
+	neighbourhood: string | null;
+	cultural_area: string | null;
 };
 
 const handleAddressBlur = (
@@ -352,6 +415,68 @@ const buildAddressFromFormData = (
 	};
 };
 
+const buildInstitutionAddressPayload = (
+	formData: Record<string, unknown>,
+	options?: {
+		addressId?: number;
+		keys?: {
+			streetLineKey?: string;
+			cityKey?: string;
+			zipKey?: string;
+			latKey?: string;
+			lngKey?: string;
+			addressSuffixKey?: string;
+			neighbourhoodKey?: string;
+			culturalAreaKey?: string;
+		};
+	},
+): InstitutionAddressPayload => {
+	const streetLine = toOptionalText(
+		formData[options?.keys?.streetLineKey ?? "address.streetLine"],
+	);
+	const { street, streetNumber } = splitStreetLine(streetLine ?? "");
+	const payload: InstitutionAddressPayload = {
+		street,
+		street_number: streetNumber,
+		city: toOptionalText(formData[options?.keys?.cityKey ?? "address.city"]),
+		zipcode: toOptionalText(formData[options?.keys?.zipKey ?? "address.zip"]),
+		lat: toOptionalNumber(formData[options?.keys?.latKey ?? "address.lat"]) ?? null,
+		lng: toOptionalNumber(formData[options?.keys?.lngKey ?? "address.lng"]) ?? null,
+		address_suffix: toOptionalText(
+			formData[options?.keys?.addressSuffixKey ?? "address.address_suffix"],
+		),
+		neighbourhood: toOptionalText(
+			formData[options?.keys?.neighbourhoodKey ?? "address.neighbourhood"],
+		),
+		cultural_area: toOptionalText(
+			formData[options?.keys?.culturalAreaKey ?? "address.cultural_area"],
+		),
+	};
+	if (typeof options?.addressId === "number") {
+		return { ...payload, id: options.addressId };
+	}
+	return payload;
+};
+
+const toFormBoolean = (value: unknown): boolean =>
+	value === true || value === "true" || value === "yes";
+
+const buildInstitutionSharedFieldsPayload = (
+	formData: Record<string, unknown>,
+) => ({
+	website: toOptionalText(formData.website),
+	email: toOptionalText(formData.email),
+	phone: toOptionalText(formData.phone),
+	funding_type: toOptionalText(formData.funding_type),
+	funding_sources: normalizeFundingSources(formData.funding_sources),
+	shared_use_allowed: toFormBoolean(formData.shared_use_allowed),
+	shared_use_info: toOptionalText(formData.shared_use_info),
+	shared_use_equipment: toOptionalText(formData.shared_use_equipment),
+	shared_use_audience: toOptionalText(formData.shared_use_audience),
+	shared_use_availability: toOptionalText(formData.shared_use_availability),
+	shared_use_contact_person: toOptionalText(formData.shared_use_contact_person),
+});
+
 export {
 	getSubmitLabel,
 	handleAddressBlur,
@@ -365,7 +490,11 @@ export {
 	normalizeDateByType,
 	getNestedValue,
 	toStringArray,
+	normalizeFundingSources,
 	splitStreetLine,
 	buildStreetLine,
 	buildAddressFromFormData,
+	buildInstitutionAddressPayload,
+	buildInstitutionSharedFieldsPayload,
+	toFormBoolean,
 };
