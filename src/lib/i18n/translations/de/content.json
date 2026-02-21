@@ -409,6 +409,14 @@
 						"label": "Schlüssel",
 						"placeholder": "z. B. museen"
 					},
+					"localizedLabelDe": {
+						"label": "Name (Deutsch)",
+						"placeholder": "z. B. Museen"
+					},
+					"localizedLabelEn": {
+						"label": "Name (Englisch)",
+						"placeholder": "z. B. Museums"
+					},
 					"parent": {
 						"label": "Übergeordnete Kategorie",
 						"none": "Keine übergeordnete Kategorie",
