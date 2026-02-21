@@ -13,6 +13,7 @@ import {
 	createCategory,
 	deleteCategory,
 	getCategoryById,
+	getCategoryLocalizedLabels,
 	updateCategory,
 } from "@/server/actions/categories";
 import type { Category } from "@/types";
@@ -22,6 +23,7 @@ import {
 	toOptionalNumber,
 	toOptionalText,
 } from "@/lib/utils/formUtils";
+import { getEligibleParentCategories } from "@/lib/utils/categoryUtils";
 import { showSuccessToast } from "@/lib/utils/feedbackToast";
 
 type CategoryFormModalProps = {
@@ -32,7 +34,10 @@ type CategoryFormModalProps = {
 	returnTo?: string;
 };
 
-const getInitialValues = (resolvedCategory?: Category) => ({
+const getInitialValues = (
+	resolvedCategory?: Category,
+	localizedLabels?: Record<string, string>,
+) => ({
 	key: resolvedCategory?.key ?? "",
 	description: resolvedCategory?.description ?? "",
 	icon: resolvedCategory?.icon ?? "",
@@ -40,6 +45,8 @@ const getInitialValues = (resolvedCategory?: Category) => ({
 	parentCategoryId: resolvedCategory?.parent_category_id
 		? String(resolvedCategory.parent_category_id)
 		: "none",
+	labelDe: localizedLabels?.de ?? "",
+	labelEn: localizedLabels?.en ?? "",
 });
 
 const getDialogTitle = (
@@ -173,6 +180,10 @@ const useCategorySubmit = (
 		const status = (data.status as CategoryStatus | undefined) ?? "active";
 
 		try {
+			const localizedLabels = {
+				de: toOptionalText(data.labelDe) ?? undefined,
+				en: toOptionalText(data.labelEn) ?? undefined,
+			};
 			if (mode === "create") {
 				const created = await createCategory({
 					key: String(data.key ?? ""),
@@ -180,6 +191,7 @@ const useCategorySubmit = (
 					icon,
 					status,
 					parentCategoryId: parentCategoryId ?? null,
+					localizedLabels,
 				});
 				addCategory(created);
 			} else if (numericCategoryId) {
@@ -190,6 +202,7 @@ const useCategorySubmit = (
 					icon,
 					status,
 					parentCategoryId: parentCategoryId ?? null,
+					localizedLabels,
 				});
 				if (updated) {
 					upsertCategory(updated);
@@ -215,6 +228,7 @@ const buildCategoryFormConfig = ({
 	statusOptions,
 	parentOptions,
 	resolvedCategory,
+	localizedLabels,
 	submitting,
 	onSubmit,
 	onCancel,
@@ -224,6 +238,7 @@ const buildCategoryFormConfig = ({
 	statusOptions: { value: string; label: string }[];
 	parentOptions: { value: string; label: string }[];
 	resolvedCategory?: Category;
+	localizedLabels?: Record<string, string>;
 	submitting: boolean;
 	onSubmit: (data: Record<string, unknown>) => void | Promise<void>;
 	onCancel: () => void;
@@ -254,6 +269,49 @@ const buildCategoryFormConfig = ({
 					layout: { span: "half" },
 				},
 				{
+					name: "parentCategoryId",
+					label: t("categoryFormModal.form.details.fields.parent.label", {
+						defaultValue: "Parent category",
+					}),
+					type: "select",
+					options: parentOptions,
+					placeholder: t(
+						"categoryFormModal.form.details.fields.parent.placeholder",
+						{ defaultValue: "Select parent (optional)" },
+					),
+					layout: { span: "half" },
+				},
+				{
+					name: "labelDe",
+					label: t(
+						"categoryFormModal.form.details.fields.localizedLabelDe.label",
+						{
+							defaultValue: "Name (Deutsch)",
+						},
+					),
+					type: "text",
+					placeholder: t(
+						"categoryFormModal.form.details.fields.localizedLabelDe.placeholder",
+						{ defaultValue: "z. B. Museen" },
+					),
+					layout: { span: "half" },
+				},
+				{
+					name: "labelEn",
+					label: t(
+						"categoryFormModal.form.details.fields.localizedLabelEn.label",
+						{
+							defaultValue: "Name (Englisch)",
+						},
+					),
+					type: "text",
+					placeholder: t(
+						"categoryFormModal.form.details.fields.localizedLabelEn.placeholder",
+						{ defaultValue: "e.g. Museums" },
+					),
+					layout: { span: "half" },
+				},
+				{
 					name: "status",
 					label: t("categoryFormModal.form.details.fields.status.label", {
 						defaultValue: "Status",
@@ -261,18 +319,6 @@ const buildCategoryFormConfig = ({
 					type: "select",
 					options: statusOptions,
 					layout: { span: "half" },
-				},
-				{
-					name: "description",
-					label: t("categoryFormModal.form.details.fields.description.label", {
-						defaultValue: "Description",
-					}),
-					type: "textarea",
-					placeholder: t(
-						"categoryFormModal.form.details.fields.description.placeholder",
-						{ defaultValue: "Optional description" },
-					),
-					layout: { span: "full" },
 				},
 				{
 					name: "icon",
@@ -287,22 +333,21 @@ const buildCategoryFormConfig = ({
 					layout: { span: "half" },
 				},
 				{
-					name: "parentCategoryId",
-					label: t("categoryFormModal.form.details.fields.parent.label", {
-						defaultValue: "Parent category",
+					name: "description",
+					label: t("categoryFormModal.form.details.fields.description.label", {
+						defaultValue: "Description",
 					}),
-					type: "select",
-					options: parentOptions,
+					type: "textarea",
 					placeholder: t(
-						"categoryFormModal.form.details.fields.parent.placeholder",
-						{ defaultValue: "Select parent (optional)" },
+						"categoryFormModal.form.details.fields.description.placeholder",
+						{ defaultValue: "Optional description" },
 					),
-					layout: { span: "half" },
+					layout: { span: "full" },
 				},
 			],
 		},
 	],
-	initialValues: getInitialValues(resolvedCategory),
+	initialValues: getInitialValues(resolvedCategory, localizedLabels),
 	onSubmit,
 	submitLabel: getSubmitLabel(mode, submitting, {
 		create: {
@@ -345,11 +390,16 @@ export function CategoryFormModal({
 	returnTo,
 }: CategoryFormModalProps) {
 	const { t: tEnum } = useTranslation("enumMap");
-	const { t } = useTranslation();
+	const { t } = useTranslation("content");
 	const categories = useAccountStore((state) => state.categories);
 	const removeCategory = useAccountStore((state) => state.removeCategory);
 	const [isDeleting, setIsDeleting] = useState(false);
 	const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+	const [localizedLabels, setLocalizedLabels] = useState<
+		Record<string, string>
+	>({});
+	const [hasLoadedLocalizedLabels, setHasLoadedLocalizedLabels] =
+		useState(false);
 	const [deleteError, setDeleteError] = useState<{
 		title: string;
 		description: string;
@@ -363,6 +413,35 @@ export function CategoryFormModal({
 		isWaitingForCategory,
 		showNotFound,
 	} = useResolvedCategory(mode, categoryId, categories);
+
+	useEffect(() => {
+		if (mode !== "edit" || !resolvedCategory) {
+			setLocalizedLabels({});
+			setHasLoadedLocalizedLabels(mode !== "edit");
+			return;
+		}
+		let active = true;
+		setHasLoadedLocalizedLabels(false);
+		void getCategoryLocalizedLabels({
+			key: resolvedCategory.key,
+			parentCategoryId: resolvedCategory.parent_category_id ?? null,
+		})
+			.then((result) => {
+				if (!active) return;
+				setLocalizedLabels(result ?? {});
+			})
+			.catch(() => {
+				if (!active) return;
+				setLocalizedLabels({});
+			})
+			.finally(() => {
+				if (!active) return;
+				setHasLoadedLocalizedLabels(true);
+			});
+		return () => {
+			active = false;
+		};
+	}, [mode, resolvedCategory]);
 
 	const statusOptions = useMemo(
 		() => [
@@ -383,8 +462,9 @@ export function CategoryFormModal({
 	);
 
 	const parentOptions = useMemo(() => {
-		const eligibleParents = categories.filter(
-			(category) => !resolvedCategory || category.id !== resolvedCategory.id,
+		const eligibleParents = getEligibleParentCategories(
+			categories,
+			resolvedCategory?.id,
 		);
 		return [
 			{
@@ -434,6 +514,7 @@ export function CategoryFormModal({
 			statusOptions,
 			parentOptions,
 			resolvedCategory,
+			localizedLabels,
 			submitting,
 			onSubmit: handleSubmit,
 			onCancel: handleClose,
@@ -442,7 +523,9 @@ export function CategoryFormModal({
 		return {
 			...baseConfig,
 			deleteAction: {
-				label: t("categoryFormModal.delete.button"),
+				label: t("categoryFormModal.delete.button", {
+					defaultValue: "Delete",
+				}),
 				onClick: () => setShowDeleteDialog(true),
 				disabled: isDeleting || submitting,
 				className: "p-0!",
@@ -454,6 +537,7 @@ export function CategoryFormModal({
 		statusOptions,
 		parentOptions,
 		resolvedCategory,
+		localizedLabels,
 		submitting,
 		isDeleting,
 		handleSubmit,
@@ -482,7 +566,9 @@ export function CategoryFormModal({
 			returnTo={returnTo}
 			autoCloseError={autoCloseError}
 			loadingState={{
-				active: isWaitingForCategory,
+				active:
+					isWaitingForCategory ||
+					(mode === "edit" && !hasLoadedLocalizedLabels),
 				label: t("categoryFormModal.dialog.loading", {
 					defaultValue: "Loading category...",
 				}),
@@ -566,9 +652,10 @@ export function CategoryFormModal({
 					<DialogTitle className="title">{getDialogTitle(mode, t)}</DialogTitle>
 				</div>
 				{autoCloseError ? null : (
-					<div className="flex-1 overflow-auto flex flex-col">
+					<div className="flex-1 overflow-auto px-6 py-6 md:px-10 flex flex-col">
 						{renderDialogBody(
-							isWaitingForCategory,
+							isWaitingForCategory ||
+								(mode === "edit" && !hasLoadedLocalizedLabels),
 							t,
 							formConfig,
 							resolvedCategory,

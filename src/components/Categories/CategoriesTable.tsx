@@ -2,7 +2,7 @@
 
 import { DataTable } from "@/components/DataTable";
 import type { DataTableConfig } from "@/components/DataTable";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { useAccountStore } from "@/lib/store/accountStore";
 import { StatusDot } from "@/components/ui/status-dot";
@@ -12,6 +12,14 @@ import { useTranslation } from "react-i18next";
 import { useMemo } from "react";
 import { EmptyActionState } from "@/components/EmptyActionState";
 import Plus from "@/icons/plus.svg";
+import Edit from "@/icons/edit.svg";
+
+type CategoryTableRow = Category & {
+	rowKind: "parent" | "child";
+	displayKey: string;
+	parentDisplay: string;
+	childRows: CategoryTableRow[];
+};
 
 export function CategoriesTable() {
 	const { t: tEnum } = useTranslation("enumMap");
@@ -19,22 +27,46 @@ export function CategoriesTable() {
 	const router = useRouter();
 	const toLocalePath = useLocalePath();
 	const categories = useAccountStore((state) => state.categories);
-	const parentCategories = categories
-		.filter((category) => !category.parent_category_id)
-		.map((category) => {
-			return {
-				...category,
-				key: tEnum("category." + category.key),
-			};
-		});
-	const getChildCategories = (parentId: number) =>
-		categories.filter((category) => category.parent_category_id === parentId);
 
-	const parentCategoriesById = useMemo(() => {
-		return new Map(categories.map((category) => [category.id, category.key]));
+	const childCategoriesByParentId = useMemo(() => {
+		const grouped = new Map<number, Category[]>();
+		for (const category of categories) {
+			if (!category.parent_category_id) continue;
+			const current = grouped.get(category.parent_category_id) ?? [];
+			current.push(category);
+			grouped.set(category.parent_category_id, current);
+		}
+		return grouped;
 	}, [categories]);
 
-	const tableConfig: DataTableConfig<Category> = {
+	const parentRows = useMemo<CategoryTableRow[]>(() => {
+		const toParentKey = (key: string) =>
+			tEnum(`category.${key}`, { defaultValue: key });
+		const toChildKey = (key: string) =>
+			tEnum(`subcategory.${key}`, { defaultValue: key });
+		return categories
+			.filter((category) => !category.parent_category_id)
+			.map((parent) => {
+				const childRows: CategoryTableRow[] = (
+					childCategoriesByParentId.get(parent.id) ?? []
+				).map((child) => ({
+					...child,
+					rowKind: "child",
+					displayKey: toChildKey(child.key),
+					parentDisplay: toParentKey(parent.key),
+					childRows: [],
+				}));
+				return {
+					...parent,
+					rowKind: "parent",
+					displayKey: toParentKey(parent.key),
+					parentDisplay: "",
+					childRows,
+				};
+			});
+	}, [categories, childCategoriesByParentId, tEnum]);
+
+	const tableConfig: DataTableConfig<CategoryTableRow> = {
 		columns: [
 			{
 				accessorKey: "status",
@@ -54,10 +86,15 @@ export function CategoriesTable() {
 				},
 			},
 			{
-				accessorKey: "key",
+				accessorKey: "displayKey",
 				header: "Key",
 				enableSorting: true,
 				meta: { pin: "left", truncate: true },
+				cell: ({ row }) => (
+					<span className="inline-flex items-center gap-2">
+						{row.original.displayKey}
+					</span>
+				),
 			},
 			{
 				id: "description",
@@ -70,54 +107,81 @@ export function CategoriesTable() {
 			{
 				id: "parent",
 				header: t("categoryTable.columns.parent", { defaultValue: "Parent" }),
-				accessorFn: (row) => {
-					if (!row.parent_category_id) return "";
-					return parentCategoriesById.get(row.parent_category_id) ?? "";
-				},
+				accessorFn: (row) => row.parentDisplay,
 				enableSorting: true,
 				meta: { truncate: true },
-				cell: ({ row }) => {
-					if (!row.original.parent_category_id) return "—";
-					return (
-						parentCategoriesById.get(row.original.parent_category_id) ?? "—"
-					);
-				},
+				cell: ({ row }) => row.original.parentDisplay || "—",
 			},
 			{
 				id: "children",
 				header: t("categoryTable.columns.subcategories", {
 					defaultValue: "Subcategories",
 				}),
-				accessorFn: (row) => getChildCategories(row.id).length,
+				accessorFn: (row) => row.childRows.length,
 				enableSorting: true,
 				cell: ({ row }) => (
-					<span className="body3">
-						{getChildCategories(row.original.id).length}
-					</span>
+					<span className="body3">{row.original.childRows.length}</span>
 				),
 			},
 		],
-		data: parentCategories,
+		data: parentRows,
 		getRowKey: (row) => row.id,
 		searchable: true,
 		searchPlaceholder: "Search categories...",
 		getSearchableValues: (row) => [
-			row.key,
+			row.displayKey,
 			row.description ?? "",
 			row.status ?? "",
-			(row.parent_category_id &&
-				categories.find((cat) => cat.id === row.parent_category_id)?.key) ||
-				"",
-			...getChildCategories(row.id).map((child) => child.key),
+			row.parentDisplay,
+			...row.childRows.flatMap((child) => [child.displayKey, child.description ?? ""]),
 		],
-		getRowCanExpand: (row) => getChildCategories(row.id).length > 0,
+		getRowCanExpand: (row) => row.childRows.length > 0,
 		renderExpandedRow: (row) => (
-			<div className="flex flex-wrap gap-2 p-3">
-				{getChildCategories(row.id).map((child) => (
-					<Badge key={child.id} variant="secondary">
-						{tEnum("subcategory." + child.key)}
-					</Badge>
-				))}
+			<div className="px-4 py-2">
+				{row.childRows.map((child) => {
+					let tone: "success" | "info" | "warning" | "error" | "neutral" =
+						"neutral";
+					if (child.status === "active") tone = "success";
+					if (child.status === "inactive") tone = "neutral";
+					return (
+						<div
+							key={child.id}
+							className="grid grid-cols-12 items-center gap-3 border-b border-neutral-20 py-3 last:border-b-0"
+						>
+							<div className="col-span-1">
+								<StatusDot tone={tone} label={child.status} showLabel="hover" />
+							</div>
+							<div className="col-span-3 body3 font-semibold truncate">
+								<span className="mr-2 text-neutral-60">↳</span>
+								{child.displayKey}
+							</div>
+							<div className="col-span-4 body3 truncate">
+								{child.description ?? "—"}
+							</div>
+							<div className="col-span-2 body3 truncate">
+								{child.parentDisplay || "—"}
+							</div>
+							<div className="col-span-2 flex justify-end">
+								<Button
+									type="button"
+									size="icon"
+									variant="ghost"
+									onClick={() =>
+										router.push(
+											toLocalePath(`/account/categories/${child.id}/edit`),
+										)
+									}
+									className="h-8 w-8 rounded-full border bg-background border-neutral-20 hover:bg-neutral-5"
+									aria-label={t("categoryTable.actions.editSubcategory", {
+										defaultValue: "Unterkategorie bearbeiten",
+									})}
+								>
+									<Edit className="h-5 w-5 text-neutral-80" />
+								</Button>
+							</div>
+						</div>
+					);
+				})}
 			</div>
 		),
 		primaryButton: {
