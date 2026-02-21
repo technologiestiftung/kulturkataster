@@ -54,7 +54,7 @@
 				"actions": {
 					"create": "erstellt",
 					"delete": "gelöscht",
-					"submission_review_approved": "freigegeben",
+					"submission_review_approved": "genehmigt",
 					"submission_review_completed": "abgeschlossen",
 					"submission_review_rejected": "abgelehnt",
 					"update": "aktualisiert"
@@ -65,6 +65,26 @@
 					"contribute": "Mitwirken"
 				},
 				"emptyHint": "Folgende Aktionen können Sie hier durchführen.",
+				"filters": {
+					"allDates": "Alle",
+					"allStatuses": "Alle Status",
+					"allTypes": "Alle Typen",
+					"allUsers": "Alle Nutzer*innen",
+					"dateValue": {
+						"last30Days": "Letzte 30 Tage",
+						"last7Days": "Letzte 7 Tage",
+						"lastMonth": "Letzter Monat",
+						"thisMonth": "Dieser Monat",
+						"today": "Heute"
+					},
+					"empty": "Keine Aktivitäten für die aktuellen Filter.",
+					"search": "Aktivität durchsuchen",
+					"typeValue": {
+						"assign": "Zuweisung",
+						"create": "Erstellt/Aktualisiert",
+						"status_change": "Statuswechsel"
+					}
+				},
 				"entities": {
 					"address": "Adresse #{{id}}",
 					"category": "Kategorie #{{id}}",
@@ -91,7 +111,7 @@
 				"statusAria": "Status: {{status}}",
 				"system": "System",
 				"templates": {
-					"assign": "<actor>{{actor}}</actor> hat <secondary>{{secondaryEntity}}</secondary> <primary>{{primaryEntity}}</primary> {{action}}",
+					"assign": "<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> für <secondary>{{secondaryEntity}}</secondary> {{action}}",
 					"create": "<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> {{action}}",
 					"statusChange": "<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> {{action}} <from>{{from}}</from> -> <to>{{to}}</to>",
 					"statusChangeNoDiff": "<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> {{action}}",
