@@ -1241,29 +1241,29 @@
 					"description": {
 						"placeholder": "Optionale Beschreibung"
 					},
-						"email": {
-							"placeholder": "kontakt@..."
-						},
-						"name": {
-							"placeholder": "Institutionsname"
-						},
-						"parentOrganization": {
-							"description": "Name der übergeordneten Organisation",
-							"placeholder": "z. B. Kulturverein Berlin e.V."
-						},
-						"parent_organization": {
-							"placeholder": "z. B. Kulturverein Berlin e.V."
-						},
-						"phone": {
-							"placeholder": "+49 ..."
-						},
-						"protection_status_info": {
-							"placeholder": "Zusätzliche Details zum Sicherungsstatus"
-						},
-						"website": {
-							"placeholder": "https://..."
-						}
+					"email": {
+						"placeholder": "kontakt@..."
 					},
+					"name": {
+						"placeholder": "Institutionsname"
+					},
+					"parentOrganization": {
+						"description": "Name der übergeordneten Organisation",
+						"placeholder": "z. B. Kulturverein Berlin e.V."
+					},
+					"parent_organization": {
+						"placeholder": "z. B. Kulturverein Berlin e.V."
+					},
+					"phone": {
+						"placeholder": "+49 ..."
+					},
+					"protection_status_info": {
+						"placeholder": "Zusätzliche Details zum Sicherungsstatus"
+					},
+					"website": {
+						"placeholder": "https://..."
+					}
+				},
 				"title": "Details"
 			},
 			"facility": {

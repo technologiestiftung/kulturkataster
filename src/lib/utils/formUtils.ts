@@ -440,8 +440,12 @@ const buildInstitutionAddressPayload = (
 		street_number: streetNumber,
 		city: toOptionalText(formData[options?.keys?.cityKey ?? "address.city"]),
 		zipcode: toOptionalText(formData[options?.keys?.zipKey ?? "address.zip"]),
-		lat: toOptionalNumber(formData[options?.keys?.latKey ?? "address.lat"]) ?? null,
-		lng: toOptionalNumber(formData[options?.keys?.lngKey ?? "address.lng"]) ?? null,
+		lat:
+			toOptionalNumber(formData[options?.keys?.latKey ?? "address.lat"]) ??
+			null,
+		lng:
+			toOptionalNumber(formData[options?.keys?.lngKey ?? "address.lng"]) ??
+			null,
 		address_suffix: toOptionalText(
 			formData[options?.keys?.addressSuffixKey ?? "address.address_suffix"],
 		),
