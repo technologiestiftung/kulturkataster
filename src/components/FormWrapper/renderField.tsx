@@ -296,7 +296,7 @@ const renderFieldContent = (
 				<Input
 					id={field.name}
 					type={field.type}
-					value={value as string}
+					value={value === undefined || value === null ? "" : String(value)}
 					onChange={(e) => updateField(field.name, e.target.value)}
 					onBlur={(e) => {
 						void handleFieldBlur(field, e.target.value);
@@ -325,7 +325,7 @@ const renderFieldContent = (
 			{field.type === "textarea" && (
 				<Textarea
 					id={field.name}
-					value={value as string}
+					value={value === undefined || value === null ? "" : String(value)}
 					onChange={(e) => updateField(field.name, e.target.value)}
 					onBlur={(e) => {
 						void handleFieldBlur(field, e.target.value);

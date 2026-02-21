@@ -110,46 +110,50 @@ const getInitialValues = (resolvedInstitution?: Institution) => {
 		return `${year}-${month}-${day}`;
 	};
 	return {
-		name: resolvedInstitution?.name ?? "",
-		parent_organization: resolvedInstitution?.parent_organization ?? "",
-		internal_notes: resolvedInstitution?.internal_notes ?? "",
+		name: resolvedInstitution?.name ?? undefined,
+		parent_organization: resolvedInstitution?.parent_organization ?? undefined,
+		internal_notes: resolvedInstitution?.internal_notes ?? undefined,
 		"address.streetLine": buildStreetLine(
 			address?.street,
 			address?.street_number,
 		),
-		"address.city": address?.city ?? "",
-		"address.zip": address?.zipcode ?? "",
-		"address.address_suffix": address?.address_suffix ?? "",
-		"address.neighbourhood": address?.neighbourhood ?? "",
-		"address.cultural_area": address?.cultural_area ?? "",
-		"address.lat": address?.lat ?? "",
-		"address.lng": address?.lng ?? "",
+		"address.city": address?.city ?? undefined,
+		"address.zip": address?.zipcode ?? undefined,
+		"address.address_suffix": address?.address_suffix ?? undefined,
+		"address.neighbourhood": address?.neighbourhood ?? undefined,
+		"address.cultural_area": address?.cultural_area ?? undefined,
+		"address.lat": address?.lat ?? undefined,
+		"address.lng": address?.lng ?? undefined,
 		categoryIds:
 			resolvedInstitution?.categories?.map((category) => String(category.id)) ??
 			[],
 		categoryFilters: buildCategoryFilterState(resolvedInstitution?.categories),
 		utilization_status: resolvedInstitution?.utilization_status ?? undefined,
-		utilization_status_info: resolvedInstitution?.utilization_status_info ?? "",
+		utilization_status_info:
+			resolvedInstitution?.utilization_status_info ?? undefined,
 		protection_status: resolvedInstitution?.protection_status ?? undefined,
-		protection_status_info: resolvedInstitution?.protection_status_info ?? "",
-		website: resolvedInstitution?.website ?? "",
-		email: resolvedInstitution?.email ?? "",
-		phone: resolvedInstitution?.phone ?? "",
+		protection_status_info:
+			resolvedInstitution?.protection_status_info ?? undefined,
+		website: resolvedInstitution?.website ?? undefined,
+		email: resolvedInstitution?.email ?? undefined,
+		phone: resolvedInstitution?.phone ?? undefined,
 		contact_person_first_name:
-			resolvedInstitution?.contact_person?.first_name ?? "",
+			resolvedInstitution?.contact_person?.first_name ?? undefined,
 		contact_person_last_name:
-			resolvedInstitution?.contact_person?.last_name ?? "",
-		contact_person_email: resolvedInstitution?.contact_person?.email ?? "",
-		contact_person_phone: resolvedInstitution?.contact_person?.phone ?? "",
-		legal_form: resolvedInstitution?.legal_form ?? "",
+			resolvedInstitution?.contact_person?.last_name ?? undefined,
+		contact_person_email:
+			resolvedInstitution?.contact_person?.email ?? undefined,
+		contact_person_phone:
+			resolvedInstitution?.contact_person?.phone ?? undefined,
+		legal_form: resolvedInstitution?.legal_form ?? undefined,
 		funding_type: resolvedInstitution?.funding_type ?? undefined,
 		funding_sources:
 			resolvedInstitution?.funding_sources?.map((source) => ({
-				source_name: source.source_name ?? "",
-				description: source.description ?? "",
+				source_name: source.source_name ?? undefined,
+				description: source.description ?? undefined,
 			})) ?? [],
 		owner_type: resolvedInstitution?.owner_type ?? undefined,
-		owner_name: resolvedInstitution?.owner_name ?? "",
+		owner_name: resolvedInstitution?.owner_name ?? undefined,
 		rental_contract_type:
 			resolvedInstitution?.rental_contract_type ?? undefined,
 		rental_contract_end: dateToInputValue(
@@ -157,20 +161,22 @@ const getInitialValues = (resolvedInstitution?: Institution) => {
 		),
 		established_since: dateToInputValue(resolvedInstitution?.established_since),
 		established_until: dateToInputValue(resolvedInstitution?.established_until),
-		closing_reason: resolvedInstitution?.closing_reason ?? "",
-		area: resolvedInstitution?.area ?? "",
-		capacity: resolvedInstitution?.capacity ?? "",
-		number_of_rooms: resolvedInstitution?.number_of_rooms ?? "",
-		accessibility: resolvedInstitution?.accessibility ?? "",
-		cost: resolvedInstitution?.cost ?? "",
+		closing_reason: resolvedInstitution?.closing_reason ?? undefined,
+		area: resolvedInstitution?.area ?? undefined,
+		capacity: resolvedInstitution?.capacity ?? undefined,
+		number_of_rooms: resolvedInstitution?.number_of_rooms ?? undefined,
+		accessibility: resolvedInstitution?.accessibility ?? undefined,
+		cost: resolvedInstitution?.cost ?? undefined,
 		shared_use_allowed: resolvedInstitution?.shared_use_allowed ?? false,
-		shared_use_info: resolvedInstitution?.shared_use_info ?? "",
-		shared_use_equipment: resolvedInstitution?.shared_use_equipment ?? "",
-		shared_use_audience: resolvedInstitution?.shared_use_audience ?? "",
-		shared_use_availability: resolvedInstitution?.shared_use_availability ?? "",
+		shared_use_info: resolvedInstitution?.shared_use_info ?? undefined,
+		shared_use_equipment:
+			resolvedInstitution?.shared_use_equipment ?? undefined,
+		shared_use_audience: resolvedInstitution?.shared_use_audience ?? undefined,
+		shared_use_availability:
+			resolvedInstitution?.shared_use_availability ?? undefined,
 		shared_use_contact_person:
-			resolvedInstitution?.shared_use_contact_person ?? "",
-		notes: resolvedInstitution?.notes ?? "",
+			resolvedInstitution?.shared_use_contact_person ?? undefined,
+		notes: resolvedInstitution?.notes ?? undefined,
 	};
 };
 
@@ -1093,6 +1099,13 @@ export function InstitutionFormModal({
 	}, []);
 
 	const handleClose = useRoutedModalClose({ returnTo });
+	const resolvedClose = useCallback(() => {
+		if (_onClose) {
+			_onClose();
+			return;
+		}
+		handleClose();
+	}, [_onClose, handleClose]);
 
 	const resolvedInstitutionWithFallback = institution ?? undefined;
 	const showNotFoundWithFallback =
@@ -1114,7 +1127,7 @@ export function InstitutionFormModal({
 		resolvedInstitutionWithFallback?.id,
 		resolvedInstitutionWithFallback?.address?.id,
 		categories,
-		handleClose,
+		resolvedClose,
 		handleSuccess,
 		shouldRefresh,
 	);
@@ -1127,14 +1140,14 @@ export function InstitutionFormModal({
 				mode,
 			});
 			if (closeOnSubmit ?? true) {
-				Promise.resolve(maybePromise).then(() => handleClose());
+				Promise.resolve(maybePromise).then(() => resolvedClose());
 			}
 		},
 		[
 			closeOnSubmit,
-			handleClose,
 			mode,
 			onSubmit,
+			resolvedClose,
 			resolvedInstitutionWithFallback,
 		],
 	);
@@ -1167,7 +1180,7 @@ export function InstitutionFormModal({
 				submitting: resolvedSubmitting,
 				submitLabel,
 				onSubmit: resolvedSubmitHandler,
-				onCancel: handleClose,
+				onCancel: resolvedClose,
 				onAddressBlur,
 				onLatLngBlur,
 				isPrivateField: isPrivateFormField,
@@ -1181,7 +1194,7 @@ export function InstitutionFormModal({
 			resolvedSubmitting,
 			submitLabel,
 			resolvedSubmitHandler,
-			handleClose,
+			resolvedClose,
 			onAddressBlur,
 			onLatLngBlur,
 			isPrivateFormField,
@@ -1215,7 +1228,7 @@ export function InstitutionFormModal({
 		if (!onDelete || isDeleting || resolvedSubmitting) return;
 		setIsDeleting(true);
 		try {
-			handleClose();
+			resolvedClose();
 			await onDelete();
 			setShowDeleteDialog(false);
 		} catch {
@@ -1223,7 +1236,7 @@ export function InstitutionFormModal({
 		} finally {
 			setIsDeleting(false);
 		}
-	}, [onDelete, isDeleting, resolvedSubmitting, handleClose]);
+	}, [onDelete, isDeleting, resolvedSubmitting, resolvedClose]);
 
 	const formConfigWithDelete = useMemo(() => {
 		if (!canShowDeleteAction) return formConfigWithFieldAccess;
@@ -1253,6 +1266,7 @@ export function InstitutionFormModal({
 			hasFooter={false}
 			routePath={routePath}
 			returnTo={returnTo}
+			onCloseRequest={resolvedClose}
 			closeConfirmation={closeConfirmation}
 			autoCloseError={autoCloseError}
 			confirmDialog={

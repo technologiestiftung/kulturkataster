@@ -74,6 +74,7 @@ interface PageModalProps {
 	errorDialog?: ModalErrorDialog;
 	autoCloseError?: ModalAutoCloseError;
 	loadingState?: ModalLoadingState;
+	onCloseRequest?: () => void;
 }
 
 export function Modal({
@@ -99,10 +100,18 @@ export function Modal({
 	errorDialog,
 	autoCloseError,
 	loadingState,
+	onCloseRequest,
 }: PageModalProps) {
 	const pathname = usePathname();
 	const router = useRouter();
 	const performClose = useRoutedModalClose({ returnTo });
+	const resolvedPerformClose = useCallback(() => {
+		if (onCloseRequest) {
+			onCloseRequest();
+			return;
+		}
+		performClose();
+	}, [onCloseRequest, performClose]);
 	const [showCloseConfirmation, setShowCloseConfirmation] = useState(false);
 	const [hasHandledAutoCloseError, setHasHandledAutoCloseError] =
 		useState(false);
@@ -135,13 +144,13 @@ export function Modal({
 		if (hasHandledAutoCloseError) return;
 		setHasHandledAutoCloseError(true);
 		showErrorToast(autoCloseError.title, autoCloseError.description);
-		performClose();
+		resolvedPerformClose();
 	}, [
 		autoCloseError?.active,
 		autoCloseError?.description,
 		autoCloseError?.title,
 		hasHandledAutoCloseError,
-		performClose,
+		resolvedPerformClose,
 	]);
 
 	const handleCloseRequest = useCallback(() => {
@@ -149,8 +158,8 @@ export function Modal({
 			setShowCloseConfirmation(true);
 			return;
 		}
-		performClose();
-	}, [resolvedCloseConfirmation, performClose]);
+		resolvedPerformClose();
+	}, [resolvedCloseConfirmation, resolvedPerformClose]);
 
 	const isEditorVariant = variant === "editor";
 	const resolvedContentClassName = contentClassName ?? "body2";
@@ -262,7 +271,7 @@ export function Modal({
 					onCancel={() => setShowCloseConfirmation(false)}
 					onConfirm={() => {
 						setShowCloseConfirmation(false);
-						performClose();
+						resolvedPerformClose();
 					}}
 					onOpenChange={(openState) => {
 						if (!openState) setShowCloseConfirmation(false);
