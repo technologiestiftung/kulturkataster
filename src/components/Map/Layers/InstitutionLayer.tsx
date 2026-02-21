@@ -24,12 +24,15 @@ import { FC, useCallback, useEffect, useMemo, useRef } from "react";
 import { createPoiSvg } from "../MapStyles/createPoiSvg";
 import { useAppStore } from "@/lib/store/appStore";
 import { usePathname } from "next/navigation";
+import { createPoiIconResolver } from "@/lib/utils/poiIconResolver";
+import { getCategoryIconFetchCandidates } from "@/server/actions/categoryIcons";
 
 const styleCache: { [key: string]: Style } = {};
 const svgCache: { [key: string]: string } = {};
-
 const createCachedPoiSvg = (
-	categoryKey: CategoryType,
+	iconKey: string,
+	iconVersion: number,
+	iconRawSvg: string,
 	fillColor: string,
 	strokeColor: string,
 	isPermanentlyClosed: boolean,
@@ -37,14 +40,9 @@ const createCachedPoiSvg = (
 	isLargeTextMode: boolean,
 	state: string,
 ): string => {
-	const cacheKey = `${categoryKey}_${fillColor}_${strokeColor}_${isPermanentlyClosed}_${isContrastMode}_${isLargeTextMode}_${state}`;
+	const cacheKey = `${iconKey}_${iconVersion}_${fillColor}_${strokeColor}_${isPermanentlyClosed}_${isContrastMode}_${isLargeTextMode}_${state}`;
 	if (!svgCache[cacheKey]) {
-		svgCache[cacheKey] = createPoiSvg(
-			categoryKey,
-			fillColor,
-			strokeColor,
-			state,
-		);
+		svgCache[cacheKey] = createPoiSvg(iconRawSvg, fillColor, strokeColor, state);
 	}
 	return svgCache[cacheKey];
 };
@@ -103,6 +101,14 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 	const vectorSourceRef = useRef<VectorSource | null>(null);
 	const offsetVectorSourceRef = useRef<VectorSource | null>(null);
 	const clusterSourceRef = useRef<Cluster | null>(null);
+	const iconResolverRef = useRef(
+		createPoiIconResolver({
+			getFetchCandidates: getCategoryIconFetchCandidates,
+			onIconResolved: () => {
+				vectorLayerRef.current?.changed();
+			},
+		}),
+	);
 
 	const { isContrastMode, isLargeTextMode } = useAppStore();
 
@@ -181,17 +187,29 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 		[proximityThreshold],
 	);
 
-	const getCategoryKey = useCallback((feature: FeatureLike) => {
+	const getCategoryVisual = useCallback((feature: FeatureLike) => {
 		const categories = feature.get("categories");
-
-		return categories && categories.length > 1
-			? "multi_categories"
-			: categories?.[0]?.key || "default";
+		if (categories && categories.length > 1) {
+			return {
+				categoryKey: "multi_categories" as CategoryType,
+				iconHref: null as string | null,
+			};
+		}
+		const firstCategory = categories?.[0];
+		const iconHref =
+			typeof firstCategory?.icon === "string" && firstCategory.icon.trim().length > 0
+				? firstCategory.icon
+				: null;
+		return {
+			categoryKey: (firstCategory?.key || "default") as CategoryType,
+			iconHref,
+		};
 	}, []);
 
 	const createSingleFeatureStyle = useCallback(
 		(
 			categoryKey: CategoryType,
+			iconHref: string | null,
 			isSelected = false,
 			isPermanentlyClosed = false,
 			hasOverlapping = false,
@@ -209,9 +227,17 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 			const strokeColor = getTailwindColor(
 				strokeColors[isPermanentlyClosed ? "closed" : "default"],
 			);
+			const iconRawSvg = iconResolverRef.current.resolveIconRawSvg(
+				iconHref,
+				categoryKey,
+			);
+			const iconVersion = iconResolverRef.current.getIconVersion(iconHref);
+			const iconKey = iconResolverRef.current.getIconKey(iconHref, categoryKey);
 
 			const iconSvg = createCachedPoiSvg(
-				categoryKey,
+				iconKey,
+				iconVersion,
+				iconRawSvg,
 				fillColor,
 				strokeColor,
 				isPermanentlyClosed,
@@ -219,7 +245,6 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 				isLargeTextMode,
 				state,
 			);
-
 			return new Style({
 				image: new Icon({
 					anchor: [0.5, 1],
@@ -228,7 +253,7 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 				}),
 			});
 		},
-		[],
+		[isLargeTextMode],
 	);
 
 	const createClusterStyle = useCallback(
@@ -270,12 +295,14 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 			const hasOverlapping = singleFeature.get("has_overlapping") === true;
 			const isPermanentlyClosed =
 				singleFeature.get("utilization_status") === "permanently_closed";
-			const categoryKey = getCategoryKey(singleFeature);
-			const styleCacheKey = `${categoryKey}_${isSelected}_${hasOverlapping}_${isPermanentlyClosed}_${isContrastMode}_${isLargeTextMode}`;
+			const { categoryKey, iconHref } = getCategoryVisual(singleFeature);
+			const iconVersion = iconResolverRef.current.getIconVersion(iconHref);
+			const styleCacheKey = `${categoryKey}_${iconHref ?? "fallback"}_${iconVersion}_${isSelected}_${hasOverlapping}_${isPermanentlyClosed}_${isContrastMode}_${isLargeTextMode}`;
 
 			if (!styleCache[styleCacheKey])
 				styleCache[styleCacheKey] = createSingleFeatureStyle(
 					categoryKey,
+					iconHref,
 					isSelected,
 					isPermanentlyClosed,
 					hasOverlapping,
@@ -286,7 +313,7 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 		},
 		[
 			createClusterStyle,
-			getCategoryKey,
+			getCategoryVisual,
 			createSingleFeatureStyle,
 			isContrastMode,
 			isLargeTextMode,

@@ -405,6 +405,12 @@
 						"label": "Icon",
 						"placeholder": "Optionaler Icon-Name"
 					},
+					"iconUpload": {
+						"currentFile": "Aktuelle Datei ansehen",
+						"label": "SVG-Icon hochladen",
+						"description": "Optional. Eine SVG-Datei in Supabase Storage hochladen.",
+						"selected": "Ausgewählt: {{name}}"
+					},
 					"key": {
 						"label": "Schlüssel",
 						"placeholder": "z. B. museen"
@@ -436,9 +442,14 @@
 	},
 	"categoryTable": {
 		"actions": {
-			"add": "Kategorie hinzufügen"
+			"add": "Kategorie hinzufügen",
+			"editSubcategory": "Unterkategorie bearbeiten"
 		},
 		"columns": {
+			"description": "Beschreibung",
+			"icon": "Icon",
+			"key": "Name",
+			"status": "Status",
 			"parent": "Übergeordnet",
 			"subcategories": "Unterkategorien"
 		},
@@ -446,7 +457,8 @@
 			"description": "Erstellen Sie eine Kategorie, um Inhalte besser zu strukturieren.",
 			"title": "Keine Kategorien gefunden."
 		},
-		"emptyMessage": "Keine Kategorien gefunden."
+		"emptyMessage": "Keine Kategorien gefunden.",
+		"searchPlaceholder": "Kategorien suchen..."
 	},
 	"downloadModal": {
 		"chooseFormat": "Dateiformat wählen",

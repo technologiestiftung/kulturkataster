@@ -15,6 +15,7 @@ export type FieldType =
 	| "tel"
 	| "url"
 	| "date"
+	| "file"
 	| "textarea"
 	| "select"
 	| "radio"
@@ -202,6 +203,8 @@ type FormWrapperNonSectionFieldConfig = {
 	min?: number;
 	max?: number;
 	step?: number;
+	accept?: string;
+	multiple?: boolean;
 
 	// Grid layout
 	layout?: Layout;

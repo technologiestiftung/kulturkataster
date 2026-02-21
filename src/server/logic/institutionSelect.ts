@@ -18,6 +18,9 @@ const relationDefaults = {
 	categories: {
 		id: true,
 		key: true,
+		icon: true,
+		description: true,
+		status: true,
 		parent_category_id: true,
 	} satisfies Prisma.CategorySelect,
 	tags: {

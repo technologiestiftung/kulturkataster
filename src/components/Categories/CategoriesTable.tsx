@@ -6,13 +6,14 @@ import { Button } from "@/components/ui/button";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { useAccountStore } from "@/lib/store/accountStore";
 import { StatusDot } from "@/components/ui/status-dot";
-import type { Category } from "@/types";
+import { type Category } from "@/types";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { useMemo } from "react";
 import { EmptyActionState } from "@/components/EmptyActionState";
 import Plus from "@/icons/plus.svg";
 import Edit from "@/icons/edit.svg";
+import { CategoryIcon } from "@/components/shared/CategoryIcon";
 
 type CategoryTableRow = Category & {
 	rowKind: "parent" | "child";
@@ -70,7 +71,7 @@ export function CategoriesTable() {
 		columns: [
 			{
 				accessorKey: "status",
-				header: "Status",
+				header: t("categoryTable.columns.status"),
 				meta: { pin: "left" },
 				size: 40,
 				enableSorting: true,
@@ -87,8 +88,9 @@ export function CategoriesTable() {
 			},
 			{
 				accessorKey: "displayKey",
-				header: "Key",
+				header: t("categoryTable.columns.key"),
 				enableSorting: true,
+				size: 200,
 				meta: { pin: "left", truncate: true },
 				cell: ({ row }) => (
 					<span className="inline-flex items-center gap-2">
@@ -97,8 +99,22 @@ export function CategoriesTable() {
 				),
 			},
 			{
+				id: "icon",
+				header: t("categoryTable.columns.icon"),
+				enableSorting: false,
+				size: 40,
+				meta: { pin: "left" },
+				cell: ({ row }) => (
+					<CategoryIcon
+						iconUrl={row.original.icon}
+						categoryKey={row.original.key}
+						className="h-6 w-6"
+					/>
+				),
+			},
+			{
 				id: "description",
-				header: "Description",
+				header: t("categoryTable.columns.description"),
 				accessorFn: (row) => row.description ?? "",
 				enableSorting: true,
 				meta: { truncate: true },
@@ -127,7 +143,7 @@ export function CategoriesTable() {
 		data: parentRows,
 		getRowKey: (row) => row.id,
 		searchable: true,
-		searchPlaceholder: "Search categories...",
+		searchPlaceholder: t("categoryTable.searchPlaceholder"),
 		getSearchableValues: (row) => [
 			row.displayKey,
 			row.description ?? "",
