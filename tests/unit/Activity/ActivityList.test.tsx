@@ -58,7 +58,9 @@ vi.mock("@/components/ui/search-input", () => ({
 		<input
 			aria-label={placeholder ?? "search"}
 			value={value ?? ""}
-			onChange={(event) => onChange?.({ target: { value: event.target.value } })}
+			onChange={(event) =>
+				onChange?.({ target: { value: event.target.value } })
+			}
 		/>
 	),
 }));
@@ -80,9 +82,13 @@ vi.mock("@/components/ui/select", () => ({
 			{children}
 		</select>
 	),
-	SelectTrigger: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+	SelectTrigger: ({ children }: { children: React.ReactNode }) => (
+		<>{children}</>
+	),
 	SelectValue: () => null,
-	SelectContent: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+	SelectContent: ({ children }: { children: React.ReactNode }) => (
+		<>{children}</>
+	),
 	SelectItem: ({
 		value,
 		children,
@@ -100,7 +106,10 @@ vi.mock("@/components/Activity/ActivityItem", () => ({
 			<div>{String(activity.eventType ?? "")}</div>
 			<div>{String(activity.primaryEntity ?? "")}</div>
 			{typeof activity.primaryEntityLink === "string" ? (
-				<a data-testid={`primary-link-${String(activity.id)}`} href={activity.primaryEntityLink}>
+				<a
+					data-testid={`primary-link-${String(activity.id)}`}
+					href={activity.primaryEntityLink}
+				>
 					link
 				</a>
 			) : null}
@@ -247,6 +256,8 @@ describe("ActivityList filters", () => {
 
 		render(<ActivityList />);
 
-		expect(screen.queryByTestId("primary-link-audit:10")).not.toBeInTheDocument();
+		expect(
+			screen.queryByTestId("primary-link-audit:10"),
+		).not.toBeInTheDocument();
 	});
 });

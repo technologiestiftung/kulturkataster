@@ -126,7 +126,7 @@ export function SimpleLanguageInformationModal({
 						{currentKey === "infosAndServices" && <div id="infosAndServices" />}
 						<DialogTitle
 							className={cn(
-								"display text-center md:text-left",
+								"text-center md:text-left",
 								currentKey === "about" ? "mb-10" : "my-10",
 							)}
 						>
