@@ -6,9 +6,9 @@ import {
 } from "@/server/logic/traduoraTermTranslations";
 
 const fetchTraduoraTokenMock = vi.fn().mockResolvedValue("token");
-const fetchLabelsMock = vi.fn().mockResolvedValue([
-	{ id: "label-1", value: "enumMap" },
-]);
+const fetchLabelsMock = vi
+	.fn()
+	.mockResolvedValue([{ id: "label-1", value: "enumMap" }]);
 
 vi.mock("@/server/traduora/cached", () => ({
 	fetchTraduoraToken: () => fetchTraduoraTokenMock(),
@@ -26,9 +26,9 @@ describe("traduoraTermTranslations", () => {
 		expect(
 			getCategoryEnumMapTermKey({ key: "music", parentCategoryId: null }),
 		).toBe("category.music");
-		expect(getCategoryEnumMapTermKey({ key: "clubs", parentCategoryId: 1 })).toBe(
-			"subcategory.clubs",
-		);
+		expect(
+			getCategoryEnumMapTermKey({ key: "clubs", parentCategoryId: 1 }),
+		).toBe("subcategory.clubs");
 	});
 
 	it("reads term translations by locale", async () => {

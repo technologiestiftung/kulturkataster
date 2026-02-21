@@ -50,7 +50,9 @@ vi.mock("@/lib/hooks/useLocalePath", () => ({
 
 vi.mock("@/lib/store/accountStore", () => ({
 	useAccountStore: (
-		selector: (state: { categories: Array<Record<string, unknown>> }) => unknown,
+		selector: (state: {
+			categories: Array<Record<string, unknown>>;
+		}) => unknown,
 	) =>
 		selector({
 			categories: categoriesMock,
@@ -118,7 +120,9 @@ describe("CategoriesTable", () => {
 		expect(searchable.join(" ")).toContain("translated:subcategory.music_sub");
 
 		render(config.renderExpandedRow(config.data[0]! as never));
-		expect(screen.getByText("translated:subcategory.music_sub")).toBeInTheDocument();
+		expect(
+			screen.getByText("translated:subcategory.music_sub"),
+		).toBeInTheDocument();
 
 		fireEvent.click(
 			screen.getByRole("button", { name: "Unterkategorie bearbeiten" }),
