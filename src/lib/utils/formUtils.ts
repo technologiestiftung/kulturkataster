@@ -27,7 +27,10 @@ const toOptionalNumber = (value: unknown): number | undefined => {
 		return Number.isFinite(value) ? value : undefined;
 	}
 	if (typeof value !== "string") return undefined;
-	const parsed = Number(value);
+	const normalized = value.trim();
+	if (normalized.length === 0) return undefined;
+	if (normalized === "undefined" || normalized === "null") return undefined;
+	const parsed = Number(normalized);
 	return Number.isFinite(parsed) ? parsed : undefined;
 };
 
