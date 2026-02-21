@@ -1179,6 +1179,10 @@
 		"form": {
 			"additional": {
 				"fields": {
+					"internal_notes": {
+						"description": "Diese Information wird ausschließlich für befugte Nutzer*innen im geschützten Bereich des Kulturkatasters zugänglich und nicht öffentlich einsehbar sein.",
+						"placeholder": "Interne Notizen"
+					},
 					"notes": {
 						"placeholder": "Weitere Informationen, die für das Kulturkataster relevant sein könnten"
 					}
@@ -1237,26 +1241,29 @@
 					"description": {
 						"placeholder": "Optionale Beschreibung"
 					},
-					"email": {
-						"placeholder": "kontakt@..."
+						"email": {
+							"placeholder": "kontakt@..."
+						},
+						"name": {
+							"placeholder": "Institutionsname"
+						},
+						"parentOrganization": {
+							"description": "Name der übergeordneten Organisation",
+							"placeholder": "z. B. Kulturverein Berlin e.V."
+						},
+						"parent_organization": {
+							"placeholder": "z. B. Kulturverein Berlin e.V."
+						},
+						"phone": {
+							"placeholder": "+49 ..."
+						},
+						"protection_status_info": {
+							"placeholder": "Zusätzliche Details zum Sicherungsstatus"
+						},
+						"website": {
+							"placeholder": "https://..."
+						}
 					},
-					"name": {
-						"placeholder": "Institutionsname"
-					},
-					"parentOrganization": {
-						"description": "Name der übergeordneten Organisation",
-						"placeholder": "z. B. Kulturverein Berlin e.V."
-					},
-					"parent_organization": {
-						"placeholder": "z. B. Kulturverein Berlin e.V."
-					},
-					"phone": {
-						"placeholder": "+49 ..."
-					},
-					"website": {
-						"placeholder": "https://..."
-					}
-				},
 				"title": "Details"
 			},
 			"facility": {

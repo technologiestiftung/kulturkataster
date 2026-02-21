@@ -211,8 +211,8 @@ const mapEntityLink = (
 			if (entityType === "category") {
 				return toLocalePath("/account/categories");
 			}
-			if (entityType === "institution" && entityId && isNumericId(entityId)) {
-				return toLocalePath(`/map/institution/${entityId}`);
+			if (entityType === "institution" && id && isNumericId(id)) {
+				return toLocalePath(`/account/submissions/${id}`);
 			}
 			return toLocalePath(`/account/submissions/${id}`);
 		}
