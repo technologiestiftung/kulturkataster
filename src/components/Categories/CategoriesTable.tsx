@@ -133,7 +133,10 @@ export function CategoriesTable() {
 			row.description ?? "",
 			row.status ?? "",
 			row.parentDisplay,
-			...row.childRows.flatMap((child) => [child.displayKey, child.description ?? ""]),
+			...row.childRows.flatMap((child) => [
+				child.displayKey,
+				child.description ?? "",
+			]),
 		],
 		getRowCanExpand: (row) => row.childRows.length > 0,
 		renderExpandedRow: (row) => (
