@@ -1512,8 +1512,8 @@ function InstitutionDraftWizardContent({
 			) : (
 				<FormWrapper key={currentStepId} config={currentFormConfig} />
 			)}
-				{editModalOpen ? (
-					<InstitutionFormModal
+			{editModalOpen ? (
+				<InstitutionFormModal
 					mode={draftMode === "update" ? "edit" : "create"}
 					permissionContext="submission"
 					institution={buildInstitutionForFormFromDraft(draft, categories)}
@@ -1522,13 +1522,13 @@ function InstitutionDraftWizardContent({
 						handleSectionEditSubmit(data as Record<string, unknown>);
 					}}
 					formKey={`draft-edit-${editSectionId ?? "default"}`}
-						closeOnSubmit
-						submitLabel={t("institutionFormModal.actions.save")}
-					/>
-				) : null}
-			</div>
-		);
-	}
+					closeOnSubmit
+					submitLabel={t("institutionFormModal.actions.save")}
+				/>
+			) : null}
+		</div>
+	);
+}
 
 export function InstitutionDraftWizardModal({
 	initialStepId,
@@ -1603,7 +1603,7 @@ export function InstitutionDraftWizardModal({
 	}, [initialStepId, isUpdateReviewOnly, isValidStep, setStepId]);
 
 	return (
-			<Modal
+		<Modal
 			title={t("institutionDraftWizardModal.dialog.create.title")}
 			titleClassName="sr-only"
 			variant="fullscreen"
@@ -1616,38 +1616,38 @@ export function InstitutionDraftWizardModal({
 				confirmLabel: t("institutionModalCloseConfirmation.confirm"),
 				cancelLabel: t("institutionModalCloseConfirmation.cancel"),
 			}}
-				containerClassName="p-0 md:p-0 mt-0 md:mt-0"
-				contentWrapperClassName="flex-1"
-				contentClassName=""
-				errorDialog={
-					submitError
-						? {
-								open: true,
-								title: t("error"),
-								description: submitError,
-								confirmLabel: t("close"),
-								onConfirm: () => setSubmitError(null),
-								onOpenChange: (open) => {
-									if (!open) setSubmitError(null);
-								},
-							}
-						: undefined
-				}
-			>
-				<div className="flex min-h-full flex-col bg-background py-10 space-y-10">
-					<HorizontalStepper
+			containerClassName="p-0 md:p-0 mt-0 md:mt-0"
+			contentWrapperClassName="flex-1"
+			contentClassName=""
+			errorDialog={
+				submitError
+					? {
+							open: true,
+							title: t("error"),
+							description: submitError,
+							confirmLabel: t("close"),
+							onConfirm: () => setSubmitError(null),
+							onOpenChange: (open) => {
+								if (!open) setSubmitError(null);
+							},
+						}
+					: undefined
+			}
+		>
+			<div className="flex min-h-full flex-col bg-background py-10 space-y-10">
+				<HorizontalStepper
 					steps={resolvedSteps}
 					initialStepId={isUpdateReviewOnly ? "review" : resolvedStepId}
 				>
-						<InstitutionDraftWizardContent
-							title={t("institutionDraftWizardModal.dialog.create.title")}
-							subtitle={t("institutionDraftWizardModal.dialog.create.subtitle")}
-							onSubmitted={handleSubmitted}
-							onCloseRequest={closeModal}
-							onSubmitError={(message) => setSubmitError(message)}
-						/>
-					</HorizontalStepper>
-				</div>
+					<InstitutionDraftWizardContent
+						title={t("institutionDraftWizardModal.dialog.create.title")}
+						subtitle={t("institutionDraftWizardModal.dialog.create.subtitle")}
+						onSubmitted={handleSubmitted}
+						onCloseRequest={closeModal}
+						onSubmitError={(message) => setSubmitError(message)}
+					/>
+				</HorizontalStepper>
+			</div>
 		</Modal>
 	);
 }
