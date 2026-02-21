@@ -42,7 +42,12 @@ const createCachedPoiSvg = (
 ): string => {
 	const cacheKey = `${iconKey}_${iconVersion}_${fillColor}_${strokeColor}_${isPermanentlyClosed}_${isContrastMode}_${isLargeTextMode}_${state}`;
 	if (!svgCache[cacheKey]) {
-		svgCache[cacheKey] = createPoiSvg(iconRawSvg, fillColor, strokeColor, state);
+		svgCache[cacheKey] = createPoiSvg(
+			iconRawSvg,
+			fillColor,
+			strokeColor,
+			state,
+		);
 	}
 	return svgCache[cacheKey];
 };
@@ -197,7 +202,8 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 		}
 		const firstCategory = categories?.[0];
 		const iconHref =
-			typeof firstCategory?.icon === "string" && firstCategory.icon.trim().length > 0
+			typeof firstCategory?.icon === "string" &&
+			firstCategory.icon.trim().length > 0
 				? firstCategory.icon
 				: null;
 		return {

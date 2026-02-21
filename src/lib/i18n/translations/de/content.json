@@ -409,6 +409,7 @@
 						"currentFile": "Aktuelle Datei ansehen",
 						"label": "SVG-Icon hochladen",
 						"description": "Optional. Eine SVG-Datei in Supabase Storage hochladen.",
+						"remove": "Icon entfernen",
 						"selected": "Ausgewählt: {{name}}"
 					},
 					"key": {

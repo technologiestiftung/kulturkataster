@@ -69,8 +69,7 @@ export function createPoiIconResolver({
 		if (!pendingFetch.has(iconHref)) {
 			const request = (async () => {
 				const candidates =
-					candidateCache.get(iconHref) ??
-					(await getFetchCandidates(iconHref));
+					candidateCache.get(iconHref) ?? (await getFetchCandidates(iconHref));
 				candidateCache.set(iconHref, candidates);
 
 				for (const candidate of candidates) {
