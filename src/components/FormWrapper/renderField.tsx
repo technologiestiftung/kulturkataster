@@ -321,14 +321,33 @@ const renderFieldContent = (
 								? Array.from(event.target.files ?? [])
 								: (event.target.files?.[0] ?? null);
 							updateField(field.name, nextValue);
+							if (field.fileRemoveOption?.fieldName && nextValue) {
+								updateField(field.fileRemoveOption.fieldName, false);
+							}
 							void handleFieldBlur(field, nextValue);
 						}}
 						disabled={field.disabled}
 					/>
+					{field.fileRemoveOption ? (
+						<div className="flex items-center space-x-2">
+							<Checkbox
+								id={`${field.name}-remove`}
+								checked={formData[field.fileRemoveOption.fieldName] as boolean}
+								onCheckedChange={(checked) =>
+									updateField(field.fileRemoveOption!.fieldName, checked)
+								}
+								disabled={field.disabled}
+							/>
+							<Label htmlFor={`${field.name}-remove`} emphasize={false}>
+								{field.fileRemoveOption.label}
+							</Label>
+						</div>
+					) : null}
 					{value instanceof File ? (
 						<p className="body3 text-muted-foreground">{value.name}</p>
 					) : null}
-					{Array.isArray(value) && value.every((item) => item instanceof File) ? (
+					{Array.isArray(value) &&
+					value.every((item) => item instanceof File) ? (
 						<p className="body3 text-muted-foreground">
 							{value.map((file) => file.name).join(", ")}
 						</p>

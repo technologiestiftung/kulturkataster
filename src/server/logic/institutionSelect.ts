@@ -48,6 +48,7 @@ const relationDefaults = {
 export const buildInstitutionSelect = (
 	context: AccessContext,
 ): Prisma.InstitutionSelect | null => {
+	const activeCategoriesWhere = { status: "active" as const };
 	const fieldPerms = context.field.institution ?? {};
 	const allowedFields = Object.entries(fieldPerms)
 		.filter(([, actions]) => actions.has("read"))
@@ -72,9 +73,15 @@ export const buildInstitutionSelect = (
 				typeof existing === "object" &&
 				existing !== null &&
 				"select" in existing
-					? (existing as { select: Record<string, boolean> })
+					? (existing as {
+							select: Record<string, boolean>;
+							where?: { status: "active" };
+						})
 					: { select: { id: true } };
 			relationSelect.select[rest.join(".")] = true;
+			if (maybeRelation === "categories") {
+				relationSelect.where = activeCategoriesWhere;
+			}
 			mutableSelect[maybeRelation] = relationSelect;
 			continue;
 		}
@@ -84,7 +91,14 @@ export const buildInstitutionSelect = (
 				? relationDefaults[maybeRelation as keyof typeof relationDefaults]
 				: undefined;
 		if (defaultRelation) {
-			mutableSelect[maybeRelation] = { select: defaultRelation };
+			if (maybeRelation === "categories") {
+				mutableSelect[maybeRelation] = {
+					where: activeCategoriesWhere,
+					select: defaultRelation,
+				};
+			} else {
+				mutableSelect[maybeRelation] = { select: defaultRelation };
+			}
 			continue;
 		}
 

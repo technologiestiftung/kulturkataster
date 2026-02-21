@@ -30,7 +30,13 @@ export function CategoryIcon({
 			: PlaceholderIcon;
 
 	if (!resolvedIconUrl || hasError) {
-		return <FallbackIcon aria-hidden="true" focusable="false" className={className} />;
+		return (
+			<FallbackIcon
+				aria-hidden="true"
+				focusable="false"
+				className={className}
+			/>
+		);
 	}
 
 	return (
