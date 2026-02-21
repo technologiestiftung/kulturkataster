@@ -9,6 +9,7 @@ import {
 import { getCurrentUserId } from "@/server/actions/auth";
 import { CategoryStatus } from "@/generated/prisma";
 import type { Category } from "@/types";
+import { createAdminClient } from "@/server/supabase/server";
 import {
 	getCategoryEnumMapTermKey,
 	getEnumMapTermTranslations,
@@ -33,6 +34,26 @@ type CategoryUpdateInput = {
 	parentCategoryId?: number | null;
 	localizedLabels?: Record<string, string | undefined>;
 };
+
+const CATEGORY_ICON_BUCKET =
+	process.env.SUPABASE_CATEGORY_ICONS_BUCKET ?? "category-icons";
+
+const sanitizeKey = (value: string) =>
+	value
+		.toLowerCase()
+		.trim()
+		.replace(/[^a-z0-9_-]/g, "-")
+		.replace(/-+/g, "-")
+		.replace(/^-|-$/g, "");
+
+const isBucketNotFoundError = (message: string | undefined) =>
+	typeof message === "string" &&
+	message.toLowerCase().includes("bucket not found");
+
+const isAlreadyExistsError = (message: string | undefined) =>
+	typeof message === "string" &&
+	(message.toLowerCase().includes("already exists") ||
+		message.toLowerCase().includes("duplicate"));
 
 export async function getCategories() {
 	const currentUserId = await getCurrentUserId();
@@ -167,4 +188,69 @@ export async function deleteCategory(id: number) {
 
 	await categoryRepo.remove(id);
 	return { id };
+}
+
+export async function uploadCategoryIcon(formData: FormData): Promise<string> {
+	const currentUserId = await getCurrentUserId();
+	const ctx = await getAccessContextForUser(currentUserId);
+	authorizeTable(ctx, "category", "update");
+	requireAllScope(ctx, "category", "update");
+
+	const keyValue = formData.get("key");
+	const fileValue = formData.get("file");
+	const categoryIdValue = formData.get("categoryId");
+
+	if (typeof keyValue !== "string" || !keyValue.trim()) {
+		throw new Error("Category key is required for icon upload.");
+	}
+	if (!(fileValue instanceof File)) {
+		throw new Error("No icon file provided.");
+	}
+
+	const isSvgByMime = fileValue.type === "image/svg+xml";
+	const isSvgByName = fileValue.name.toLowerCase().endsWith(".svg");
+	if (!isSvgByMime && !isSvgByName) {
+		throw new Error("Only SVG files are supported.");
+	}
+
+	const admin = createAdminClient();
+	const safeKey = sanitizeKey(keyValue);
+	const filePath =
+		typeof categoryIdValue === "string" && categoryIdValue
+			? `categories/${sanitizeKey(categoryIdValue)}.svg`
+			: `categories/${safeKey}.svg`;
+
+	const upload = () =>
+		admin.storage.from(CATEGORY_ICON_BUCKET).upload(filePath, fileValue, {
+			cacheControl: "3600",
+			contentType: "image/svg+xml",
+			upsert: true,
+		});
+
+	let { error } = await upload();
+
+	if (error && isBucketNotFoundError(error.message)) {
+		const { error: createBucketError } = await admin.storage.createBucket(
+			CATEGORY_ICON_BUCKET,
+			{
+				public: true,
+				allowedMimeTypes: ["image/svg+xml"],
+			},
+		);
+		if (createBucketError && !isAlreadyExistsError(createBucketError.message)) {
+			throw new Error(
+				`Icon bucket setup failed: ${createBucketError.message}`,
+			);
+		}
+		({ error } = await upload());
+	}
+
+	if (error) {
+		throw new Error(`Icon upload failed: ${error.message}`);
+	}
+
+	const { data } = admin.storage
+		.from(CATEGORY_ICON_BUCKET)
+		.getPublicUrl(filePath);
+	return data.publicUrl;
 }

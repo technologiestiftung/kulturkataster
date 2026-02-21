@@ -14,6 +14,7 @@ import {
 	deleteCategory,
 	getCategoryById,
 	getCategoryLocalizedLabels,
+	uploadCategoryIcon,
 	updateCategory,
 } from "@/server/actions/categories";
 import type { Category } from "@/types";
@@ -173,13 +174,28 @@ const useCategorySubmit = (
 		setSubmitting(true);
 
 		const description = toOptionalText(data.description);
-		const icon = toOptionalText(data.icon);
+		let icon = toOptionalText(data.icon);
 		const parentCategoryRaw = data.parentCategoryId;
 		const parentCategoryId =
 			parentCategoryRaw === "none" ? null : toOptionalNumber(parentCategoryRaw);
 		const status = (data.status as CategoryStatus | undefined) ?? "active";
 
 		try {
+			const iconFile = data.iconFile instanceof File ? data.iconFile : null;
+			if (iconFile) {
+				const key = String(data.key ?? "").trim();
+				if (!key) {
+					throw new Error("Category key is required before icon upload.");
+				}
+				const uploadData = new FormData();
+				uploadData.append("key", key);
+				uploadData.append("file", iconFile);
+				if (mode === "edit" && numericCategoryId) {
+					uploadData.append("categoryId", String(numericCategoryId));
+				}
+				icon = await uploadCategoryIcon(uploadData);
+			}
+
 			const localizedLabels = {
 				de: toOptionalText(data.labelDe) ?? undefined,
 				en: toOptionalText(data.labelEn) ?? undefined,
@@ -266,20 +282,7 @@ const buildCategoryFormConfig = ({
 						"categoryFormModal.form.details.fields.key.placeholder",
 						{ defaultValue: "e.g. museums" },
 					),
-					layout: { span: "half" },
-				},
-				{
-					name: "parentCategoryId",
-					label: t("categoryFormModal.form.details.fields.parent.label", {
-						defaultValue: "Parent category",
-					}),
-					type: "select",
-					options: parentOptions,
-					placeholder: t(
-						"categoryFormModal.form.details.fields.parent.placeholder",
-						{ defaultValue: "Select parent (optional)" },
-					),
-					layout: { span: "half" },
+					layout: { span: "full" },
 				},
 				{
 					name: "labelDe",
@@ -320,16 +323,55 @@ const buildCategoryFormConfig = ({
 					options: statusOptions,
 					layout: { span: "half" },
 				},
+
 				{
-					name: "icon",
-					label: t("categoryFormModal.form.details.fields.icon.label", {
-						defaultValue: "Icon",
+					name: "parentCategoryId",
+					label: t("categoryFormModal.form.details.fields.parent.label", {
+						defaultValue: "Parent category",
 					}),
-					type: "text",
+					type: "select",
+					options: parentOptions,
+					condition: () => {
+						return (
+							resolvedCategory?.child_categories?.length === 0 ||
+							mode === "create"
+						);
+					},
 					placeholder: t(
-						"categoryFormModal.form.details.fields.icon.placeholder",
-						{ defaultValue: "Optional icon name" },
+						"categoryFormModal.form.details.fields.parent.placeholder",
+						{ defaultValue: "Select parent (optional)" },
 					),
+					layout: { span: "half" },
+				},
+				{
+					name: "iconFile",
+					label: t("categoryFormModal.form.details.fields.iconUpload.label", {
+						defaultValue: "SVG Icon Upload",
+					}),
+					type: "file",
+					accept: ".svg,image/svg+xml",
+					condition: () => {
+						return !resolvedCategory?.parent_category_id;
+					},
+					afterField:
+						typeof resolvedCategory?.icon === "string" &&
+						resolvedCategory.icon.trim().length > 0 ? (
+							<div className="mt-1 body3 text-muted-foreground">
+								<a
+									href={resolvedCategory.icon}
+									target="_blank"
+									rel="noreferrer"
+									className="underline"
+								>
+									{t(
+										"categoryFormModal.form.details.fields.iconUpload.currentFile",
+										{
+											defaultValue: "Aktuelle Datei ansehen",
+										},
+									)}
+								</a>
+							</div>
+						) : null,
 					layout: { span: "half" },
 				},
 				{

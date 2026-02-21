@@ -7,11 +7,11 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import { getCategoryIconComponent } from "@/lib/utils/iconUtils"; // Update this import path
 import { Category, ChildCategory } from "@/types";
 import { FC, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useFieldLabel } from "@/lib/hooks/useFieldLabel";
+import { CategoryIcon } from "@/components/shared/CategoryIcon";
 
 interface HoverCardProps {
 	features?: any;
@@ -61,13 +61,15 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 				<CardContent className="p-2 pt-0">
 					<div className="flex flex-col gap-2 ">
 						{featureProperties.categories?.map((category: Category) => {
-							const IconComponent = getCategoryIconComponent(category.key);
-
 							return (
 								<div key={category.id}>
 									<div className="flex items-center gap-2 h-6">
 										<div className="w-6 h-6">
-											<IconComponent aria-hidden="true" focusable="false" />
+											<CategoryIcon
+												iconUrl={category.icon}
+												categoryKey={category.key}
+												className="w-6 h-6"
+											/>
 										</div>
 										<span className="text-base font-bold">
 											{tEnum(`category.${category.key}`)}
