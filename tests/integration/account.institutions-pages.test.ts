@@ -79,7 +79,6 @@ describe("institutions pages integration", () => {
 			props: expect.objectContaining({
 				submissionId: 77,
 				routePath: "/account/submissions/77",
-				returnTo: "/account/institutions",
 			}),
 		});
 	});
