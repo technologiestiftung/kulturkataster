@@ -902,11 +902,23 @@
 		},
 		"form": {
 			"basic": {
+				"email": {
+					"description": "Bitte nach Möglichkeit eine allgemeine E-Mail-Adresse der Kultureinrichtung angeben (z. B. Info- oder Empfangskontakt)."
+				},
 				"name": {
 					"label": "Name des Kulturortes",
 					"placeholder": "z. B. Staatliche Kunsthalle"
 				},
+				"parentOrganization": {
+					"description": "Gibt es eine übergeordnete Organisation, z. B. ein Kulturverband, eine Stiftung oder eine andere Institution?"
+				},
+				"phone": {
+					"description": "Bitte nach Möglichkeit eine allgemeine Telefonnummer der Kultureinrichtung angeben (z. B. Info- oder Empfangskontakt)."
+				},
 				"sectionTitle": "Grundinformationen",
+				"utilizationStatus": {
+					"description": "Gibt an, ob eine Kultureinrichtung aktuell in Betrieb ist oder nicht."
+				},
 				"utilizationStatusInfo": {
 					"label": "Weitere Informationen zum Nutzungsstatus",
 					"placeholder": "Zusätzliche Details zum Nutzungsstatus"
@@ -917,6 +929,9 @@
 					"description": "Mehrere Kategorien bitte durch Komma trennen.",
 					"label": "Neue Kategorie(n) vorschlagen",
 					"placeholder": "z. B. Neue Kategorie"
+				},
+				"validation": {
+					"minSelection": "Bitte wählen Sie mindestens eine Kategorie aus."
 				}
 			},
 			"contact": {
@@ -950,15 +965,19 @@
 				},
 				"accordions": {
 					"accessibility": {
+						"description": "Informationen zur Barrierefreiheit der Kultureinrichtung.",
 						"title": "Barrierefreiheit"
 					},
 					"closing": {
+						"description": "Diese Angabe betrifft nur bereits geschlossene Orte.",
 						"title": "Schließungsgründe"
 					},
 					"cost": {
+						"description": "Angaben zu Eintrittspreisen oder Nutzungskosten.",
 						"title": "Kosten"
 					},
 					"establishment": {
+						"description": "Zeitraum der Nutzung oder Eröffnung am Standort.",
 						"title": "Zeitraum am Standort"
 					},
 					"funding": {
@@ -966,6 +985,7 @@
 						"title": "Art der Förderung"
 					},
 					"fundingSources": {
+						"description": "Geben Sie die Finanzierungsquellen Ihrer Kultureinrichtung an.",
 						"title": "Art der Finanzierung"
 					},
 					"organization": {
@@ -973,6 +993,7 @@
 						"title": "Organisationsform"
 					},
 					"ownership": {
+						"description": "Diese Information wird ausschließlich für befugte Nutzer*innen im geschützten Bereich des Kulturkatasters zugänglich und nicht öffentlich einsehbar sein.",
 						"title": "Eigentumsverhältnisse"
 					},
 					"protection": {
@@ -980,27 +1001,35 @@
 						"title": "Sicherungsstatus"
 					},
 					"rental": {
+						"description": "Diese Information wird ausschließlich für befugte Nutzer*innen im geschützten Bereich des Kulturkatasters zugänglich und nicht öffentlich einsehbar sein.",
 						"title": "Miet- und Nutzungsverhältnisse"
 					},
 					"sharedUseAccessibility": {
+						"description": "Ist der Raum barrierefrei zugänglich? Welche Barrieren sind vorhanden?",
 						"title": "Barrierefreiheit"
 					},
 					"sharedUseAudience": {
+						"description": "Für welche Art von Aktivitäten ist der Raum geeignet? Zum Beispiel: \"geeignet für Tanzproben und Workshops\" oder \"ideal für Lesungen und kleine Konzerte.\"",
 						"title": "Zielgruppe/Sparte"
 					},
 					"sharedUseAvailability": {
+						"description": "Wann kann der Raum genutzt werden? Sind es bestimmte Tage, Tageszeiten oder Zeiträume?",
 						"title": "Zeitliche Verfügbarkeiten"
 					},
 					"sharedUseContactPerson": {
+						"description": "Geben Sie hier bitte einen Kontakt per E-Mail und/oder Telefon an. Sofern es eine Ansprechperson gibt, können Sie den Namen ebenfalls angeben. Sofern Sie hier personenbezogene Daten eintragen, beachten Sie bitte, dass Sie mit Absenden des Formulars der Veröffentlichung dieser Daten im Kulturkataster zustimmen müssen.",
 						"title": "Kontakt für Raumanfragen"
 					},
 					"sharedUseCost": {
+						"description": "Wie hoch sind die Kosten für die Nutzung? Gibt es einen Stunden-, Tages- oder Wochenpreis? Sind die Kosten verhandelbar?",
 						"title": "Kosten"
 					},
 					"sharedUseEquipment": {
+						"description": "Welche Infrastruktur ist vorhanden? Gibt es Tische, Stühle, eine Küche, WLAN, Licht- und Tontechnik? Jedes Detail kann entscheidend sein.",
 						"title": "Ausstattung"
 					},
 					"sharedUseInfo": {
+						"description": "Beschreiben, welche Informationen hier eingetragen werden sollen, evtl. mit Aufzählung von Beispielen",
 						"title": "Beschreibung der Räume/Flächen"
 					},
 					"space": {
@@ -1016,8 +1045,14 @@
 					"placeholder": "z. B. Eintritt frei, 5-10 Euro, ermäßigt 3 Euro"
 				},
 				"datePlaceholder": "DD.MM.YYYY",
+				"datePlaceholderWithYear": "DD.MM.YYYY oder YYYY",
+				"establishment": {
+					"sinceDescription": "Bitte tragen Sie das Datum der erstmaligen Nutzung oder Eröffnung am Standort ein. Falls das genaue Datum nicht bekannt ist, reicht auch die Angabe des Jahres.",
+					"untilDescription": "Bitte tragen Sie das Datum ein, bis zu dem die Kultureinrichtung an diesem Standort aktiv war. Diese Angabe betrifft nur bereits geschlossene Orte. Falls das genaue Datum nicht bekannt ist, reicht auch die Angabe des Jahres."
+				},
 				"fundingSources": {
 					"addButtonLabel": "Finanzierungsquelle hinzufügen",
+					"description": "z. B. Bezirk, Land Berlin, EU, Bund, Stiftung, Kirche, Privat",
 					"descriptionLabel": "Details",
 					"descriptionPlaceholder": "z. B. Förderung seit 2020, jährlich 50.000€",
 					"label": "Finanzierungsquellen",
@@ -1032,6 +1067,7 @@
 					"legalFormPlaceholder": "z. B. e.V., gGmbH, GbR"
 				},
 				"ownerName": {
+					"description": "Bitte geben Sie den Namen der Person oder Organisation an, die Eigentümer*in des Grundstücks oder Gebäudes der Kultureinrichtung ist. Diese Information wird ausschließlich für befugte Nutzer*innen im geschützten Bereich des Kulturkatasters zugänglich und nicht öffentlich einsehbar sein.",
 					"placeholder": "Name der/des Eigentümer*in"
 				},
 				"protectionStatus": {
