@@ -80,6 +80,12 @@ describe("CategoriesTable", () => {
 
 		expect(dataTableMock).toHaveBeenCalledTimes(1);
 		const config = dataTableMock.mock.calls[0][0] as {
+			columns: Array<{
+				id?: string;
+				accessorKey?: string;
+				header: string;
+			}>;
+			searchPlaceholder: string;
 			data: Array<{
 				id: number;
 				displayKey: string;
@@ -105,6 +111,20 @@ describe("CategoriesTable", () => {
 				}>;
 			}) => unknown;
 		};
+
+		const columnHeadersById = Object.fromEntries(
+			config.columns.map((column) => [
+				column.id ?? column.accessorKey ?? "unknown",
+				column.header,
+			]),
+		);
+		expect(columnHeadersById.status).toBe("categoryTable.columns.status");
+		expect(columnHeadersById.displayKey).toBe("categoryTable.columns.key");
+		expect(columnHeadersById.icon).toBe("categoryTable.columns.icon");
+		expect(columnHeadersById.description).toBe(
+			"categoryTable.columns.description",
+		);
+		expect(config.searchPlaceholder).toBe("categoryTable.searchPlaceholder");
 
 		expect(config.data).toHaveLength(2);
 		expect(config.data[0]?.id).toBe(1);

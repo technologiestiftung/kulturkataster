@@ -309,6 +309,33 @@ const renderFieldContent = (
 				/>
 			)}
 
+			{field.type === "file" && (
+				<div className="space-y-2">
+					<Input
+						id={field.name}
+						type="file"
+						accept={field.accept}
+						multiple={field.multiple}
+						onChange={(event) => {
+							const nextValue = field.multiple
+								? Array.from(event.target.files ?? [])
+								: (event.target.files?.[0] ?? null);
+							updateField(field.name, nextValue);
+							void handleFieldBlur(field, nextValue);
+						}}
+						disabled={field.disabled}
+					/>
+					{value instanceof File ? (
+						<p className="body3 text-muted-foreground">{value.name}</p>
+					) : null}
+					{Array.isArray(value) && value.every((item) => item instanceof File) ? (
+						<p className="body3 text-muted-foreground">
+							{value.map((file) => file.name).join(", ")}
+						</p>
+					) : null}
+				</div>
+			)}
+
 			{field.type === "password" && (
 				<PasswordField
 					id={field.name}
