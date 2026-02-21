@@ -105,7 +105,15 @@ function InstitutionDraftWizardContent({
 	const { t: tEnum } = useTranslation("enumMap");
 
 	const fieldLabel = useCallback(
-		(key: string, fallback: string) => getFieldLabel(tEnum, key, fallback),
+		(key: string, _fallback?: string) => getFieldLabel(tEnum, key),
+		[tEnum],
+	);
+	const fieldDescription = useCallback(
+		(key: string) => tEnum(`field_names.${key}.description`),
+		[tEnum],
+	);
+	const fieldPlaceholder = useCallback(
+		(key: string) => tEnum(`field_names.${key}.placeholder`),
 		[tEnum],
 	);
 
@@ -347,17 +355,16 @@ function InstitutionDraftWizardContent({
 					fields: [
 						{
 							name: "name",
-							label: t("institutionDraftWizardModal.form.basic.name.label"),
+							label: fieldLabel("name"),
 							type: "text",
 							layout: { span: "full" },
-							placeholder: t(
-								"institutionDraftWizardModal.form.basic.name.placeholder",
-							),
+							placeholder: fieldPlaceholder("name"),
 							required: true,
 						},
 						{
 							name: "address.map",
-							label: `${fieldLabel("address", "Address")} Map`,
+							fieldMetaKey: "address_map",
+							label: fieldLabel("address_map"),
 							type: "addressMap",
 							layout: { span: "full" },
 							addressMap: {
@@ -370,6 +377,7 @@ function InstitutionDraftWizardContent({
 						},
 						{
 							name: "address.lng",
+							fieldMetaKey: "lng",
 							label: fieldLabel("lng", "Längengrad"),
 							type: "number",
 							layout: { span: "half" },
@@ -377,6 +385,7 @@ function InstitutionDraftWizardContent({
 						},
 						{
 							name: "address.lat",
+							fieldMetaKey: "lat",
 							label: fieldLabel("lat", "Breitengrad"),
 							type: "number",
 							layout: { span: "half" },
@@ -384,62 +393,56 @@ function InstitutionDraftWizardContent({
 						},
 						{
 							name: "address.streetLine",
+							fieldMetaKey: "street",
 							label: `${fieldLabel("street", "Street")} & ${fieldLabel(
 								"street_number",
 								"Number",
 							)}`,
 							type: "text",
 							layout: { span: "full" },
-							placeholder: t(
-								"institutionFormModal.form.details.fields.address.streetLine.placeholder",
-							),
+							placeholder: fieldPlaceholder("street"),
 							onBlur: onAddressBlur,
 						},
 						{
 							name: "address.address_suffix",
+							fieldMetaKey: "address_suffix",
 							label: fieldLabel("address_suffix", "Address Suffix"),
 							type: "text",
 							layout: { span: "full" },
-							placeholder: t(
-								"institutionFormModal.form.details.fields.address.address_suffix.placeholder",
-							),
+							placeholder: fieldPlaceholder("address_suffix"),
 						},
 						{
 							name: "address.zip",
-							label: fieldLabel("zip", "ZIP Code"),
+							fieldMetaKey: "zipcode",
+							label: fieldLabel("zipcode", "ZIP Code"),
 							type: "text",
 							layout: { span: "half" },
-							placeholder: t(
-								"institutionFormModal.form.details.fields.address.zip.placeholder",
-							),
+							placeholder: fieldPlaceholder("zipcode"),
 							onBlur: onAddressBlur,
 						},
 						{
 							name: "address.city",
+							fieldMetaKey: "city",
 							label: fieldLabel("city", "City"),
 							type: "text",
 							layout: { span: "half" },
-							placeholder: t(
-								"institutionFormModal.form.details.fields.address.city.placeholder",
-							),
+							placeholder: fieldPlaceholder("city"),
 							onBlur: onAddressBlur,
 						},
 						{
 							name: "address.neighbourhood",
+							fieldMetaKey: "neighbourhood",
 							label: fieldLabel("neighbourhood", "Neighbourhood"),
 							type: "text",
 							layout: { span: "half" },
-							placeholder: t(
-								"institutionFormModal.form.details.fields.address.neighbourhood.placeholder",
-							),
+							placeholder: fieldPlaceholder("neighbourhood"),
 						},
 						{
 							name: "address.cultural_area",
+							fieldMetaKey: "cultural_area",
 							label: fieldLabel("cultural_area", "Cultural Area"),
 							type: "text",
-							placeholder: t(
-								"institutionFormModal.form.details.fields.address.cultural_areal.placeholder",
-							),
+							placeholder: fieldPlaceholder("cultural_area"),
 						},
 					],
 				},
@@ -451,9 +454,7 @@ function InstitutionDraftWizardContent({
 						{
 							name: "utilization_status",
 							label: fieldLabel("utilization_status", "Utilization Status"),
-							description: t(
-								"institutionDraftWizardModal.form.basic.utilizationStatus.description",
-							),
+							description: fieldDescription("utilization_status"),
 							type: "select",
 							placeholder: tEnum("utilization_status.placeholder"),
 							options: [
@@ -485,54 +486,36 @@ function InstitutionDraftWizardContent({
 						},
 						{
 							name: "utilization_status_info",
-							label: t(
-								"institutionDraftWizardModal.form.basic.utilizationStatusInfo.label",
-							),
+							label: fieldLabel("utilization_status_info"),
 							type: "textarea",
-							placeholder: t(
-								"institutionDraftWizardModal.form.basic.utilizationStatusInfo.placeholder",
-							),
+							placeholder: fieldPlaceholder("utilization_status_info"),
 						},
 						{
 							name: "parent_organization",
 							label: fieldLabel("parent_organization", "Parent Organization"),
-							description: t(
-								"institutionDraftWizardModal.form.basic.parentOrganization.description",
-							),
+							description: fieldDescription("parent_organization"),
 							type: "text",
-							placeholder: t(
-								"institutionFormModal.form.details.fields.parent_organization.placeholder",
-							),
+							placeholder: fieldPlaceholder("parent_organization"),
 						},
 						{
 							name: "email",
-							label: fieldLabel("institution_email", "Email"),
-							description: t(
-								"institutionDraftWizardModal.form.basic.email.description",
-							),
+							label: fieldLabel("email", "Email"),
+							description: fieldDescription("email"),
 							type: "email",
-							placeholder: t(
-								"institutionFormModal.form.details.fields.email.placeholder",
-							),
+							placeholder: fieldPlaceholder("email"),
 						},
 						{
 							name: "phone",
-							label: fieldLabel("institution_phone", "Phone"),
-							description: t(
-								"institutionDraftWizardModal.form.basic.phone.description",
-							),
+							label: fieldLabel("phone", "Phone"),
+							description: fieldDescription("phone"),
 							type: "text",
-							placeholder: t(
-								"institutionFormModal.form.details.fields.phone.placeholder",
-							),
+							placeholder: fieldPlaceholder("phone"),
 						},
 						{
 							name: "website",
-							label: fieldLabel("institution_website", "Website"),
+							label: fieldLabel("website", "Website"),
 							type: "text",
-							placeholder: t(
-								"institutionFormModal.form.details.fields.website.placeholder",
-							),
+							placeholder: fieldPlaceholder("website"),
 						},
 					],
 				},
@@ -570,6 +553,8 @@ function InstitutionDraftWizardContent({
 					fields: [
 						{
 							name: "categoryFilters",
+							fieldMetaKey: "categories",
+							label: fieldLabel("categories"),
 							type: "filterPanel",
 							required: true,
 							validateWithForm: (value, formData) => {
@@ -603,9 +588,7 @@ function InstitutionDraftWizardContent({
 								showSummary: false,
 								showDistricts: false,
 								showClosedToggle: false,
-								selectionEmptyLabel: t(
-									"institutionFormModal.form.details.fields.categories.placeholder",
-								),
+								selectionEmptyLabel: fieldPlaceholder("categories"),
 							},
 						},
 					],
@@ -893,31 +876,21 @@ function InstitutionDraftWizardContent({
 							fields: [
 								{
 									name: "funding_sources",
-									label: t(
-										"institutionDraftWizardModal.form.information.fundingSources.label",
-									),
+									label: fieldLabel("funding_sources"),
 									type: "fundingSources",
-									description: t(
-										"institutionDraftWizardModal.form.information.fundingSources.description",
-									),
+									description: fieldDescription("funding_sources"),
 									fundingSources: {
-										sourceLabel: t(
-											"institutionDraftWizardModal.form.information.fundingSources.sourceLabel",
+										sourceLabel: fieldLabel("funding_source_name"),
+										descriptionLabel: fieldLabel("funding_source_description"),
+										sourcePlaceholder: fieldPlaceholder("funding_source_name"),
+										descriptionPlaceholder: fieldPlaceholder(
+											"funding_source_description",
 										),
-										descriptionLabel: t(
-											"institutionDraftWizardModal.form.information.fundingSources.descriptionLabel",
+										addButtonLabel: tEnum(
+											"field_names.funding_sources.actions.add",
 										),
-										sourcePlaceholder: t(
-											"institutionDraftWizardModal.form.information.fundingSources.sourcePlaceholder",
-										),
-										descriptionPlaceholder: t(
-											"institutionDraftWizardModal.form.information.fundingSources.descriptionPlaceholder",
-										),
-										addButtonLabel: t(
-											"institutionDraftWizardModal.form.information.fundingSources.addButtonLabel",
-										),
-										removeButtonLabel: t(
-											"institutionDraftWizardModal.form.information.fundingSources.removeButtonLabel",
+										removeButtonLabel: tEnum(
+											"field_names.funding_sources.actions.remove",
 										),
 									},
 								},
@@ -1070,13 +1043,9 @@ function InstitutionDraftWizardContent({
 								{
 									name: "owner_name",
 									label: fieldLabel("owner_name", "Eigentümer*in"),
-									description: t(
-										"institutionDraftWizardModal.form.information.ownerName.description",
-									),
+									description: fieldDescription("owner_name"),
 									type: "text",
-									placeholder: t(
-										"institutionDraftWizardModal.form.information.ownerName.placeholder",
-									),
+									placeholder: fieldPlaceholder("owner_name"),
 								},
 							],
 						},
@@ -1203,9 +1172,7 @@ function InstitutionDraftWizardContent({
 										"Sicherungsstatus Detailinfos",
 									),
 									type: "textarea",
-									placeholder: t(
-										"institutionDraftWizardModal.form.information.protectionStatusInfo.placeholder",
-									),
+									placeholder: fieldPlaceholder("protection_status_info"),
 								},
 							],
 						},
@@ -1226,11 +1193,9 @@ function InstitutionDraftWizardContent({
 							fields: [
 								{
 									name: "area",
-									label: fieldLabel("usableAreaSize", "Nutzfläche in m²"),
+									label: fieldLabel("area", "Nutzfläche in m²"),
 									type: "number",
-									placeholder: t(
-										"institutionDraftWizardModal.form.information.space.areaPlaceholder",
-									),
+									placeholder: fieldPlaceholder("area"),
 								},
 								{
 									name: "number_of_rooms",
@@ -1239,17 +1204,13 @@ function InstitutionDraftWizardContent({
 										"Anzahl der Arbeitsräume",
 									),
 									type: "number",
-									placeholder: t(
-										"institutionDraftWizardModal.form.information.space.roomsPlaceholder",
-									),
+									placeholder: fieldPlaceholder("number_of_rooms"),
 								},
 								{
 									name: "capacity",
 									label: fieldLabel("capacity", "Kapazität"),
 									type: "number",
-									placeholder: t(
-										"institutionDraftWizardModal.form.information.space.capacityPlaceholder",
-									),
+									placeholder: fieldPlaceholder("capacity"),
 								},
 							],
 						},
@@ -1270,13 +1231,9 @@ function InstitutionDraftWizardContent({
 							fields: [
 								{
 									name: "accessibility",
-									label: t(
-										"institutionDraftWizardModal.form.information.accessibility.label",
-									),
+									label: fieldLabel("accessibility"),
 									type: "textarea",
-									placeholder: t(
-										"institutionDraftWizardModal.form.information.accessibility.placeholder",
-									),
+									placeholder: fieldPlaceholder("accessibility"),
 								},
 							],
 						},
@@ -1297,13 +1254,9 @@ function InstitutionDraftWizardContent({
 							fields: [
 								{
 									name: "cost",
-									label: t(
-										"institutionDraftWizardModal.form.information.cost.label",
-									),
+									label: fieldLabel("cost"),
 									type: "textarea",
-									placeholder: t(
-										"institutionDraftWizardModal.form.information.cost.placeholder",
-									),
+									placeholder: fieldPlaceholder("cost"),
 								},
 							],
 						},
@@ -1317,9 +1270,7 @@ function InstitutionDraftWizardContent({
 							name: "notes",
 							label: fieldLabel("notes", "Notizen"),
 							type: "textarea",
-							placeholder: t(
-								"institutionDraftWizardModal.form.information.notes.placeholder",
-							),
+							placeholder: fieldPlaceholder("notes"),
 						},
 					],
 				},
@@ -1380,42 +1331,30 @@ function InstitutionDraftWizardContent({
 					fields: [
 						{
 							name: "contact_person_first_name",
-							label: t(
-								"institutionDraftWizardModal.form.contact.firstName.label",
-							),
+							label: fieldLabel("contact_person_first_name"),
 							type: "text",
-							placeholder: t(
-								"institutionDraftWizardModal.form.contact.firstName.placeholder",
-							),
+							placeholder: fieldPlaceholder("contact_person_first_name"),
 							layout: { span: "half" },
 						},
 						{
 							name: "contact_person_last_name",
-							label: t(
-								"institutionDraftWizardModal.form.contact.lastName.label",
-							),
+							label: fieldLabel("contact_person_last_name"),
 							type: "text",
-							placeholder: t(
-								"institutionDraftWizardModal.form.contact.lastName.placeholder",
-							),
+							placeholder: fieldPlaceholder("contact_person_last_name"),
 							layout: { span: "half" },
 						},
 						{
 							name: "contact_person_email",
-							label: t("institutionDraftWizardModal.form.contact.email.label"),
+							label: fieldLabel("contact_person_email"),
 							type: "email",
-							placeholder: t(
-								"institutionDraftWizardModal.form.contact.email.placeholder",
-							),
+							placeholder: fieldPlaceholder("contact_person_email"),
 							layout: { span: "full" },
 						},
 						{
 							name: "contact_person_phone",
-							label: t("institutionDraftWizardModal.form.contact.phone.label"),
+							label: fieldLabel("contact_person_phone"),
 							type: "text",
-							placeholder: t(
-								"institutionDraftWizardModal.form.contact.phone.placeholder",
-							),
+							placeholder: fieldPlaceholder("contact_person_phone"),
 							layout: { span: "full" },
 						},
 					],

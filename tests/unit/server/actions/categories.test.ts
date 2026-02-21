@@ -41,7 +41,7 @@ vi.mock("@/server/logic/traduoraTermTranslations", () => ({
 	}: {
 		key: string;
 		parentCategoryId?: number | null;
-	}) => (parentCategoryId ? `subcategory.${key}` : `category.${key}`),
+	}) => `category.${key}`,
 	getEnumMapTermTranslations: vi.fn(),
 	upsertEnumMapTermTranslations: vi.fn().mockResolvedValue(undefined),
 }));

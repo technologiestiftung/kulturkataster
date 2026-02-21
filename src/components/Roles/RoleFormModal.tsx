@@ -137,7 +137,7 @@ const buildFieldSections = (
 		title: t("roleFormModal.permissions.fields.sections.institution"),
 		fields: INSTITUTION_FIELDS.map((field) => ({
 			key: field,
-			label: t(`field_names.${field}`, {
+			label: t(`field_names.${field}.label`, {
 				ns: "enumMap",
 				defaultValue: formatFieldLabel(field),
 			}),

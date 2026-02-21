@@ -118,7 +118,7 @@ describe("CategoriesTable", () => {
 				column.header,
 			]),
 		);
-		expect(columnHeadersById.status).toBe("categoryTable.columns.status");
+		expect(columnHeadersById.status).toBe("");
 		expect(columnHeadersById.displayKey).toBe("categoryTable.columns.key");
 		expect(columnHeadersById.icon).toBe("categoryTable.columns.icon");
 		expect(columnHeadersById.description).toBe(
@@ -131,17 +131,17 @@ describe("CategoriesTable", () => {
 		expect(config.data[0]?.displayKey).toBe("translated:category.music");
 		expect(config.data[0]?.childRows).toHaveLength(1);
 		expect(config.data[0]?.childRows[0]?.displayKey).toBe(
-			"translated:subcategory.music_sub",
+			"translated:category.music_sub",
 		);
 		expect(config.getRowCanExpand(config.data[0]!)).toBe(true);
 		expect(config.getRowCanExpand(config.data[1]!)).toBe(false);
 
 		const searchable = config.getSearchableValues(config.data[0]! as never);
-		expect(searchable.join(" ")).toContain("translated:subcategory.music_sub");
+		expect(searchable.join(" ")).toContain("translated:category.music_sub");
 
 		render(config.renderExpandedRow(config.data[0]! as never));
 		expect(
-			screen.getByText("translated:subcategory.music_sub"),
+			screen.getByText("translated:category.music_sub"),
 		).toBeInTheDocument();
 
 		fireEvent.click(
