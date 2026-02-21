@@ -9,6 +9,11 @@ import {
 import { getCurrentUserId } from "@/server/actions/auth";
 import { CategoryStatus } from "@/generated/prisma";
 import type { Category } from "@/types";
+import {
+	getCategoryEnumMapTermKey,
+	getEnumMapTermTranslations,
+	upsertEnumMapTermTranslations,
+} from "@/server/logic/traduoraTermTranslations";
 
 type CategoryInput = {
 	key: string;
@@ -16,6 +21,7 @@ type CategoryInput = {
 	icon?: string | null;
 	status?: CategoryStatus;
 	parentCategoryId?: number | null;
+	localizedLabels?: Record<string, string | undefined>;
 };
 
 type CategoryUpdateInput = {
@@ -25,6 +31,7 @@ type CategoryUpdateInput = {
 	icon?: string | null;
 	status?: CategoryStatus;
 	parentCategoryId?: number | null;
+	localizedLabels?: Record<string, string | undefined>;
 };
 
 export async function getCategories() {
@@ -58,7 +65,7 @@ export async function createCategory(input: CategoryInput) {
 	authorizeTable(ctx, "category", "create");
 	requireAllScope(ctx, "category", "create");
 
-	return categoryRepo.create({
+	const created = await categoryRepo.create({
 		key: input.key,
 		description: input.description ?? null,
 		icon: input.icon ?? null,
@@ -69,6 +76,21 @@ export async function createCategory(input: CategoryInput) {
 				: undefined,
 		},
 	});
+
+	if (input.localizedLabels && Object.keys(input.localizedLabels).length > 0) {
+		const termKey = getCategoryEnumMapTermKey({
+			key: created.key,
+			parentCategoryId: created.parent_category_id,
+		});
+		void upsertEnumMapTermTranslations({
+			termKey,
+			translations: input.localizedLabels,
+		}).catch((error) => {
+			console.warn("[category] failed to sync traduora translations", error);
+		});
+	}
+
+	return created;
 }
 
 export async function updateCategory(input: CategoryUpdateInput) {
@@ -90,12 +112,45 @@ export async function updateCategory(input: CategoryUpdateInput) {
 		parentCategoryUpdate = undefined;
 	}
 
-	return categoryRepo.update(input.id, {
+	const updated = await categoryRepo.update(input.id, {
 		key: input.key,
 		description: input.description ?? null,
 		icon: input.icon ?? null,
 		status: input.status,
 		parent_category: parentCategoryUpdate,
+	});
+
+	if (input.localizedLabels && Object.keys(input.localizedLabels).length > 0) {
+		const termKey = getCategoryEnumMapTermKey({
+			key: updated.key,
+			parentCategoryId: updated.parent_category_id,
+		});
+		void upsertEnumMapTermTranslations({
+			termKey,
+			translations: input.localizedLabels,
+		}).catch((error) => {
+			console.warn("[category] failed to sync traduora translations", error);
+		});
+	}
+
+	return updated;
+}
+
+export async function getCategoryLocalizedLabels(params: {
+	key: string;
+	parentCategoryId?: number | null;
+}) {
+	const currentUserId = await getCurrentUserId();
+	const ctx = await getAccessContextForUser(currentUserId);
+	authorizeTable(ctx, "category", "read");
+
+	const termKey = getCategoryEnumMapTermKey({
+		key: params.key,
+		parentCategoryId: params.parentCategoryId,
+	});
+	return getEnumMapTermTranslations({
+		termKey,
+		locales: ["de", "en"],
 	});
 }
 

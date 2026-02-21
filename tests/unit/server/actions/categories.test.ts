@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { deleteCategory, updateCategory } from "@/server/actions/categories";
+import { upsertEnumMapTermTranslations } from "@/server/logic/traduoraTermTranslations";
 
 vi.mock("@/server/actions/auth", () => ({
 	getCurrentUserId: vi.fn().mockResolvedValue("user-1"),
@@ -33,11 +34,28 @@ vi.mock("@/server/data/categoryRepo", () => ({
 	},
 }));
 
+vi.mock("@/server/logic/traduoraTermTranslations", () => ({
+	getCategoryEnumMapTermKey: ({
+		key,
+		parentCategoryId,
+	}: {
+		key: string;
+		parentCategoryId?: number | null;
+	}) => (parentCategoryId ? `subcategory.${key}` : `category.${key}`),
+	getEnumMapTermTranslations: vi.fn(),
+	upsertEnumMapTermTranslations: vi.fn().mockResolvedValue(undefined),
+}));
+
+const upsertEnumMapTermTranslationsMock = vi.mocked(
+	upsertEnumMapTermTranslations,
+);
+
 describe("server actions: categories", () => {
 	beforeEach(() => {
 		findByIdMock.mockReset();
 		updateMock.mockClear();
 		removeMock.mockClear();
+		upsertEnumMapTermTranslationsMock.mockClear();
 	});
 
 	it("deleteCategory blocks deletion when subcategories exist", async () => {
@@ -67,5 +85,29 @@ describe("server actions: categories", () => {
 				parent_category: { disconnect: true },
 			}),
 		);
+	});
+
+	it("updateCategory syncs enumMap translations when localized labels are provided", async () => {
+		updateMock.mockResolvedValueOnce({
+			id: 1,
+			key: "music",
+			parent_category_id: null,
+		});
+		await updateCategory({
+			id: 1,
+			key: "music",
+			localizedLabels: {
+				de: "Musik",
+				en: "Music",
+			},
+		});
+
+		expect(upsertEnumMapTermTranslationsMock).toHaveBeenCalledWith({
+			termKey: "category.music",
+			translations: {
+				de: "Musik",
+				en: "Music",
+			},
+		});
 	});
 });
