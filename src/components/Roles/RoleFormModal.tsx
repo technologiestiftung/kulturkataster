@@ -616,26 +616,26 @@ export function RoleFormModal({
 						}
 					: undefined
 			}
-				errorDialog={
-					deleteError || submitError
-						? {
-								open: true,
-								title: deleteError ? deleteError.title : t("error"),
-								description: deleteError?.description ?? submitError ?? "",
-								confirmLabel: t("close"),
-								onConfirm: () => {
+			errorDialog={
+				deleteError || submitError
+					? {
+							open: true,
+							title: deleteError ? deleteError.title : t("error"),
+							description: deleteError?.description ?? submitError ?? "",
+							confirmLabel: t("close"),
+							onConfirm: () => {
+								setDeleteError(null);
+								setSubmitError(null);
+							},
+							onOpenChange: (open) => {
+								if (!open) {
 									setDeleteError(null);
 									setSubmitError(null);
-								},
-								onOpenChange: (open) => {
-									if (!open) {
-										setDeleteError(null);
-										setSubmitError(null);
-									}
-								},
-							}
-						: undefined
-				}
+								}
+							},
+						}
+					: undefined
+			}
 		>
 			<div className="flex h-full flex-col">
 				<div className="px-6 py-8 md:px-10">
