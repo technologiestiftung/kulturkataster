@@ -81,8 +81,8 @@ export function InstitutionsTable() {
 		const translated = tEnum(`${prefix}.${value}`);
 		return translated === `${prefix}.${value}` ? value : translated;
 	};
-	const headerLabel = (key: string, fallback: string) =>
-		getFieldLabel(tEnum, key, fallback);
+	const headerLabel = (key: string, _fallback?: string) =>
+		getFieldLabel(tEnum, key);
 	const translateFundingSource = (value: string) => {
 		const translated = tEnum(`funding_source.${value}`);
 		return translated === `funding_source.${value}` ? value : translated;
@@ -436,7 +436,7 @@ export function InstitutionsTable() {
 										key={cat.id}
 										className="capitalize truncate"
 									>
-										{`${tEnum("subcategory." + cat.key)}`}
+										{`${tEnum("category." + cat.key)}`}
 									</Badge>
 								),
 							)}

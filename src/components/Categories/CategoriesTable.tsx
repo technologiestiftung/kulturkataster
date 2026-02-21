@@ -51,7 +51,7 @@ export function CategoriesTable() {
 		const toParentKey = (key: string) =>
 			tEnum(`category.${key}`, { defaultValue: key });
 		const toChildKey = (key: string) =>
-			tEnum(`subcategory.${key}`, { defaultValue: key });
+			tEnum(`category.${key}`, { defaultValue: key });
 		return categories
 			.filter((category) => !category.parent_category_id)
 			.map((parent) => {

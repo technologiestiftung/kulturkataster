@@ -144,9 +144,7 @@ export const getCategoryEnumMapTermKey = (params: {
 	key: string;
 	parentCategoryId?: number | null;
 }) => {
-	return params.parentCategoryId
-		? `subcategory.${params.key}`
-		: `category.${params.key}`;
+	return `category.${params.key}`;
 };
 
 export async function getNamespaceTermTranslations(params: {

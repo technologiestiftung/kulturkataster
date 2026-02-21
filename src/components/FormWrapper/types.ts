@@ -99,6 +99,7 @@ type FormWrapperSectionFieldConfig = {
 
 type FormWrapperNonSectionFieldConfig = {
 	name: string;
+	fieldMetaKey?: string;
 	label?: string;
 	labelNode?: ReactNode;
 	type: Exclude<FieldType, "section">;
@@ -111,6 +112,7 @@ type FormWrapperNonSectionFieldConfig = {
 	placeholder?: string;
 	required?: boolean;
 	requiredMessage?: string;
+	errorMessages?: Partial<Record<string, string>>;
 	disabled?: boolean;
 	description?: string;
 	defaultValue?: unknown;

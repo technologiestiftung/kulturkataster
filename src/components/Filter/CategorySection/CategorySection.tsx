@@ -145,7 +145,7 @@ export function CategorySection({
 			<CollapsibleContent className="pl-16 pr-2 space-y-1">
 				{sortedSubcategories.map((subcategory) => {
 					const translatedSubcategoryName =
-						tEnum(`subcategory.${subcategory.key}`) || subcategory.key;
+						tEnum(`category.${subcategory.key}`) || subcategory.key;
 
 					return (
 						<div
