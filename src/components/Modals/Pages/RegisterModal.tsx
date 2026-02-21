@@ -47,7 +47,7 @@ export function RegisterModal({
 						</div>
 						<div className="p-4 md:p-8 mb-64 mt-14 flex justify-center flex-col gap-8 max-w-3xl mx-auto w-full">
 							<div className="space-y-4">
-								<h1 className="display">
+								<h1>
 									{t("auth.register.successTitle", {
 										defaultValue: "Vielen Dank!",
 									})}
