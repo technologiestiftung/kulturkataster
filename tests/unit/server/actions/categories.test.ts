@@ -37,7 +37,6 @@ vi.mock("@/server/data/categoryRepo", () => ({
 vi.mock("@/server/logic/traduoraTermTranslations", () => ({
 	getCategoryEnumMapTermKey: ({
 		key,
-		parentCategoryId,
 	}: {
 		key: string;
 		parentCategoryId?: number | null;
