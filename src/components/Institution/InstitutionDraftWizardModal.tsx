@@ -35,7 +35,13 @@ import { showSuccessToast } from "@/lib/utils/feedbackToast";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { buildInstitutionForFormFromDraft } from "@/lib/utils/institutionFormAdapter";
 const DEFAULT_CREATE_STEP_ID = "basic";
-const STEP_IDS = ["basic", "category", "information", "contact", "review"] as const;
+const STEP_IDS = [
+	"basic",
+	"category",
+	"information",
+	"contact",
+	"review",
+] as const;
 
 const getStepValidatableFields = (
 	fields: FormWrapperFieldConfig[],
@@ -269,11 +275,21 @@ function InstitutionDraftWizardContent({
 		onCloseRequest?.();
 	}, [canGoPrevious, onCloseRequest, previousStep]);
 
+	const setSectionHash = useCallback((sectionId: string) => {
+		if (typeof window === "undefined") return;
+		const { pathname, search } = window.location;
+		const hash = sectionId.trim();
+		const nextUrl = hash
+			? `${pathname}${search}#${hash}`
+			: `${pathname}${search}`;
+		window.history.replaceState(null, "", nextUrl);
+	}, []);
+
 	const clearSectionHash = useCallback(() => {
-		// if (typeof window === "undefined") return;
-		// if (!window.location.hash) return;
-		// const { pathname, search } = window.location;
-		// window.history.replaceState(null, "", `${pathname}${search}`);
+		if (typeof window === "undefined") return;
+		if (!window.location.hash) return;
+		const { pathname, search } = window.location;
+		window.history.replaceState(null, "", `${pathname}${search}`);
 	}, []);
 
 	const closeSectionEditModal = useCallback(() => {
@@ -1519,9 +1535,7 @@ function InstitutionDraftWizardContent({
 							data={originalInstitution ?? draft}
 							newData={originalInstitution ? draft : undefined}
 							onEditSection={(sectionId) => {
-								if (typeof window !== "undefined") {
-									window.location.hash = sectionId;
-								}
+								setSectionHash(sectionId);
 								setEditSectionId(sectionId);
 								setEditModalOpen(true);
 							}}
