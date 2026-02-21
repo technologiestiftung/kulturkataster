@@ -14,6 +14,7 @@ import { EmptyActionState } from "@/components/EmptyActionState";
 import Plus from "@/icons/plus.svg";
 import Edit from "@/icons/edit.svg";
 import { CategoryIcon } from "@/components/shared/CategoryIcon";
+import { CategoryStatus } from "@/generated/prisma";
 
 type CategoryTableRow = Category & {
 	rowKind: "parent" | "child";
@@ -27,6 +28,12 @@ export function CategoriesTable() {
 	const { t } = useTranslation(["content", "common"]);
 	const router = useRouter();
 	const toLocalePath = useLocalePath();
+
+	const getStatusLabel = (status: CategoryStatus | undefined) => {
+		if (status === "active") return t("categoryFormModal.status.active");
+		if (status === "inactive") return t("categoryFormModal.status.inactive");
+		return status ?? "";
+	};
 	const categories = useAccountStore((state) => state.categories);
 
 	const childCategoriesByParentId = useMemo(() => {
@@ -71,18 +78,23 @@ export function CategoriesTable() {
 		columns: [
 			{
 				accessorKey: "status",
-				header: t("categoryTable.columns.status"),
 				meta: { pin: "left" },
-				size: 40,
+				header: "",
+				size: 27,
 				enableSorting: true,
 				cell: ({ row }) => {
 					const category = row.original;
 					let tone: "success" | "info" | "warning" | "error" | "neutral" =
 						"neutral";
 					if (category.status === "active") tone = "success";
-					if (category.status === "inactive") tone = "neutral";
+					if (category.status === "inactive") tone = "error";
+
 					return (
-						<StatusDot tone={tone} label={category.status} showLabel="hover" />
+						<StatusDot
+							tone={tone}
+							label={getStatusLabel(category.status)}
+							showLabel="hover"
+						/>
 					);
 				},
 			},
@@ -102,7 +114,7 @@ export function CategoriesTable() {
 				id: "icon",
 				header: t("categoryTable.columns.icon"),
 				enableSorting: false,
-				size: 40,
+				size: 31,
 				meta: { pin: "left" },
 				cell: ({ row }) => (
 					<CategoryIcon

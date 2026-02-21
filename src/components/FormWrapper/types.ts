@@ -205,6 +205,10 @@ type FormWrapperNonSectionFieldConfig = {
 	step?: number;
 	accept?: string;
 	multiple?: boolean;
+	fileRemoveOption?: {
+		fieldName: string;
+		label: string;
+	};
 
 	// Grid layout
 	layout?: Layout;

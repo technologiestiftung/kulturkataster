@@ -238,9 +238,7 @@ export async function uploadCategoryIcon(formData: FormData): Promise<string> {
 			},
 		);
 		if (createBucketError && !isAlreadyExistsError(createBucketError.message)) {
-			throw new Error(
-				`Icon bucket setup failed: ${createBucketError.message}`,
-			);
+			throw new Error(`Icon bucket setup failed: ${createBucketError.message}`);
 		}
 		({ error } = await upload());
 	}

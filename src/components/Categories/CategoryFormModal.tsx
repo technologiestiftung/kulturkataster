@@ -46,6 +46,7 @@ const getInitialValues = (
 	parentCategoryId: resolvedCategory?.parent_category_id
 		? String(resolvedCategory.parent_category_id)
 		: "none",
+	removeIcon: false,
 	labelDe: localizedLabels?.de ?? "",
 	labelEn: localizedLabels?.en ?? "",
 });
@@ -160,6 +161,7 @@ const useResolvedCategory = (
 const useCategorySubmit = (
 	mode: CategoryFormModalProps["mode"],
 	numericCategoryId: number | undefined,
+	existingIcon: string | null | undefined,
 	onClose: () => void,
 	onSuccess: (mode: CategoryFormModalProps["mode"]) => void,
 	shouldRefresh: boolean,
@@ -174,11 +176,13 @@ const useCategorySubmit = (
 		setSubmitting(true);
 
 		const description = toOptionalText(data.description);
-		let icon = toOptionalText(data.icon);
+		let icon =
+			mode === "edit" ? toOptionalText(existingIcon) : toOptionalText(data.icon);
 		const parentCategoryRaw = data.parentCategoryId;
 		const parentCategoryId =
 			parentCategoryRaw === "none" ? null : toOptionalNumber(parentCategoryRaw);
 		const status = (data.status as CategoryStatus | undefined) ?? "active";
+		const removeIcon = data.removeIcon === true;
 
 		try {
 			const iconFile = data.iconFile instanceof File ? data.iconFile : null;
@@ -194,6 +198,8 @@ const useCategorySubmit = (
 					uploadData.append("categoryId", String(numericCategoryId));
 				}
 				icon = await uploadCategoryIcon(uploadData);
+			} else if (mode === "edit" && removeIcon) {
+				icon = null;
 			}
 
 			const localizedLabels = {
@@ -350,6 +356,19 @@ const buildCategoryFormConfig = ({
 					}),
 					type: "file",
 					accept: ".svg,image/svg+xml",
+					fileRemoveOption:
+						typeof resolvedCategory?.icon === "string" &&
+						resolvedCategory.icon.trim().length > 0
+							? {
+									fieldName: "removeIcon",
+									label: t(
+										"categoryFormModal.form.details.fields.iconUpload.remove",
+										{
+											defaultValue: "Icon entfernen",
+										},
+									),
+								}
+							: undefined,
 					condition: () => {
 						return !resolvedCategory?.parent_category_id;
 					},
@@ -544,6 +563,7 @@ export function CategoryFormModal({
 	const { handleSubmit, submitting } = useCategorySubmit(
 		mode,
 		numericCategoryId,
+		resolvedCategory?.icon,
 		handleClose,
 		handleSuccess,
 		shouldRefresh,

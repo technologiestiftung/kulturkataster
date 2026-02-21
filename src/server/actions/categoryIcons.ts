@@ -25,9 +25,7 @@ export async function getCategoryIconFetchCandidates(
 			candidates.add(`${SUPABASE_URL}/${asPath}`);
 		}
 		if (asPath.startsWith(`${CATEGORY_ICON_BUCKET}/`)) {
-			candidates.add(
-				`${SUPABASE_URL}/storage/v1/object/public/${asPath}`,
-			);
+			candidates.add(`${SUPABASE_URL}/storage/v1/object/public/${asPath}`);
 		}
 		candidates.add(
 			`${SUPABASE_URL}/storage/v1/object/public/${CATEGORY_ICON_BUCKET}/${asPath}`,
