@@ -37,9 +37,9 @@ export type TablePermissionValue = {
 	scope: PermissionScope;
 };
 export interface SelectOption {
-	label: string;
+	label: string | ReactNode;
 	value: string | number | boolean;
-	description?: string;
+	description?: string | ReactNode;
 	searchText?: string;
 	filterValues?: Record<string, string[]>;
 	parentValue?: string | number | boolean;
