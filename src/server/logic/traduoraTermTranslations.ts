@@ -21,7 +21,9 @@ const fetchTerms = async (token: string, labelId?: string) => {
 		},
 	});
 	if (!response.ok) return [];
-	const data = (await response.json()) as { data?: Array<{ id: string; value: string }> };
+	const data = (await response.json()) as {
+		data?: Array<{ id: string; value: string }>;
+	};
 	return data.data ?? [];
 };
 
@@ -69,7 +71,10 @@ const ensureTermId = async (token: string, termValue: string) => {
 		},
 	);
 	if (!response.ok) return null;
-	const data = (await response.json()) as { data?: { id?: string }; id?: string };
+	const data = (await response.json()) as {
+		data?: { id?: string };
+		id?: string;
+	};
 	return data.data?.id ?? data.id ?? null;
 };
 
@@ -109,7 +114,11 @@ const updateTranslation = async (
 	);
 };
 
-const getTranslationByTermId = async (token: string, locale: string, termId: string) => {
+const getTranslationByTermId = async (
+	token: string,
+	locale: string,
+	termId: string,
+) => {
 	const config = getConfig();
 	if (!config) return null;
 	const response = await fetch(
@@ -126,7 +135,8 @@ const getTranslationByTermId = async (token: string, locale: string, termId: str
 		data?: Array<{ termId: string; value: string }>;
 	};
 	return (
-		data.data?.find((translation) => translation.termId === termId)?.value ?? null
+		data.data?.find((translation) => translation.termId === termId)?.value ??
+		null
 	);
 };
 
@@ -134,7 +144,9 @@ export const getCategoryEnumMapTermKey = (params: {
 	key: string;
 	parentCategoryId?: number | null;
 }) => {
-	return params.parentCategoryId ? `subcategory.${params.key}` : `category.${params.key}`;
+	return params.parentCategoryId
+		? `subcategory.${params.key}`
+		: `category.${params.key}`;
 };
 
 export async function getNamespaceTermTranslations(params: {
