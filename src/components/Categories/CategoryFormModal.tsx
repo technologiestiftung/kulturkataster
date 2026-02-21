@@ -177,7 +177,9 @@ const useCategorySubmit = (
 
 		const description = toOptionalText(data.description);
 		let icon =
-			mode === "edit" ? toOptionalText(existingIcon) : toOptionalText(data.icon);
+			mode === "edit"
+				? toOptionalText(existingIcon)
+				: toOptionalText(data.icon);
 		const parentCategoryRaw = data.parentCategoryId;
 		const parentCategoryId =
 			parentCategoryRaw === "none" ? null : toOptionalNumber(parentCategoryRaw);

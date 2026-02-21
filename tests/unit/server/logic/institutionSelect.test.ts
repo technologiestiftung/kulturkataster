@@ -7,7 +7,7 @@ const createContext = (fields: Record<string, Set<string>>) =>
 		field: {
 			institution: fields,
 		},
-	} as unknown as AccessContext);
+	}) as unknown as AccessContext;
 
 describe("buildInstitutionSelect", () => {
 	it("adds active-only where clause for categories relation", () => {
