@@ -133,6 +133,7 @@ const useGroupSubmit = (
 	onClose: () => void,
 	onSuccess: (mode: GroupFormModalProps["mode"]) => void,
 	shouldRefresh: boolean,
+	onError: (message: string) => void,
 ) => {
 	const router = useRouter();
 	const [submitting, setSubmitting] = useState(false);
@@ -175,6 +176,12 @@ const useGroupSubmit = (
 				router.refresh();
 			}
 			onClose();
+		} catch (error) {
+			const message =
+				error instanceof Error
+					? error.message
+					: "An unexpected error occurred. Please try again.";
+			onError(message);
 		} finally {
 			setSubmitting(false);
 		}
@@ -332,6 +339,7 @@ export function GroupFormModal({
 		title: string;
 		description: string;
 	} | null>(null);
+	const [submitError, setSubmitError] = useState<string | null>(null);
 	const userOptions = useMemo(
 		() =>
 			users.map((userItem) => {
@@ -376,6 +384,7 @@ export function GroupFormModal({
 		handleClose,
 		handleSuccess,
 		shouldRefresh,
+		(message) => setSubmitError(message),
 	);
 	const { institutionOptions, filteredInstitutionOptions, filterPanel } =
 		useInstitutionMultiSelect({
@@ -500,20 +509,26 @@ export function GroupFormModal({
 						}
 					: undefined
 			}
-			errorDialog={
-				deleteError
-					? {
-							open: true,
-							title: deleteError.title,
-							description: deleteError.description,
-							confirmLabel: t("close"),
-							onConfirm: () => setDeleteError(null),
-							onOpenChange: (open) => {
-								if (!open) setDeleteError(null);
-							},
-						}
-					: undefined
-			}
+				errorDialog={
+					deleteError || submitError
+						? {
+								open: true,
+								title: deleteError ? deleteError.title : t("error"),
+								description: deleteError?.description ?? submitError ?? "",
+								confirmLabel: t("close"),
+								onConfirm: () => {
+									setDeleteError(null);
+									setSubmitError(null);
+								},
+								onOpenChange: (open) => {
+									if (!open) {
+										setDeleteError(null);
+										setSubmitError(null);
+									}
+								},
+							}
+						: undefined
+				}
 		>
 			<div className="w-full  max-w-3xl mx-auto">
 				<div className="px-6 py-8 md:px-10">

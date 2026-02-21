@@ -86,6 +86,7 @@ const useInstitutionSubmit = (
 	onClose: () => void,
 	onSuccess: (mode: InstitutionFormModalProps["mode"]) => void,
 	shouldRefresh: boolean,
+	onError: (message: string) => void,
 ) => {
 	const [submitting, setSubmitting] = useState(false);
 	const addInstitution = useAccountStore((state) => state.addInstitution);
@@ -165,6 +166,12 @@ const useInstitutionSubmit = (
 				router.refresh();
 			}
 			onClose();
+		} catch (error) {
+			const message =
+				error instanceof Error
+					? error.message
+					: "An unexpected error occurred. Please try again.";
+			onError(message);
 		} finally {
 			setSubmitting(false);
 		}
@@ -872,6 +879,7 @@ export function InstitutionFormModal({
 	const categories = useInstitutionStore((state) => state.categories) ?? [];
 	const [isDeleting, setIsDeleting] = useState(false);
 	const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+	const [submitError, setSubmitError] = useState<string | null>(null);
 	const addressGeocodeState = useRef({
 		lastQuery: "",
 		inflight: false,
@@ -954,17 +962,26 @@ export function InstitutionFormModal({
 		resolvedClose,
 		handleSuccess,
 		shouldRefresh,
+		(message) => setSubmitError(message),
 	);
 
 	const handleCustomSubmit = useCallback(
-		(data: Record<string, unknown>) => {
-			const maybePromise = onSubmit?.({
-				data,
-				institution: resolvedInstitutionWithFallback,
-				mode,
-			});
-			if (closeOnSubmit ?? true) {
-				Promise.resolve(maybePromise).then(() => resolvedClose());
+		async (data: Record<string, unknown>) => {
+			try {
+				await onSubmit?.({
+					data,
+					institution: resolvedInstitutionWithFallback,
+					mode,
+				});
+				if (closeOnSubmit ?? true) {
+					resolvedClose();
+				}
+			} catch (error) {
+				const message =
+					error instanceof Error
+						? error.message
+						: "An unexpected error occurred. Please try again.";
+				setSubmitError(message);
 			}
 		},
 		[
@@ -1120,6 +1137,20 @@ export function InstitutionFormModal({
 							onConfirm: handleDelete,
 							onOpenChange: (open) => {
 								if (!open) setShowDeleteDialog(false);
+							},
+						}
+					: undefined
+			}
+			errorDialog={
+				submitError
+					? {
+							open: true,
+							title: t("error"),
+							description: submitError,
+							confirmLabel: t("close"),
+							onConfirm: () => setSubmitError(null),
+							onOpenChange: (open) => {
+								if (!open) setSubmitError(null);
 							},
 						}
 					: undefined

@@ -165,6 +165,7 @@ const useCategorySubmit = (
 	onClose: () => void,
 	onSuccess: (mode: CategoryFormModalProps["mode"]) => void,
 	shouldRefresh: boolean,
+	onError: (message: string) => void,
 ) => {
 	const router = useRouter();
 	const [submitting, setSubmitting] = useState(false);
@@ -238,6 +239,12 @@ const useCategorySubmit = (
 				router.refresh();
 			}
 			onClose();
+		} catch (error) {
+			const message =
+				error instanceof Error
+					? error.message
+					: "An unexpected error occurred. Please try again.";
+			onError(message);
 		} finally {
 			setSubmitting(false);
 		}
@@ -467,6 +474,7 @@ export function CategoryFormModal({
 		title: string;
 		description: string;
 	} | null>(null);
+	const [submitError, setSubmitError] = useState<string | null>(null);
 
 	const handleClose = useRoutedModalClose({ returnTo });
 
@@ -569,6 +577,7 @@ export function CategoryFormModal({
 		handleClose,
 		handleSuccess,
 		shouldRefresh,
+		(message) => setSubmitError(message),
 	);
 
 	const formConfig = useMemo(() => {
@@ -696,20 +705,26 @@ export function CategoryFormModal({
 						}
 					: undefined
 			}
-			errorDialog={
-				deleteError
-					? {
-							open: true,
-							title: deleteError.title,
-							description: deleteError.description,
-							confirmLabel: t("close"),
-							onConfirm: () => setDeleteError(null),
-							onOpenChange: (open) => {
-								if (!open) setDeleteError(null);
-							},
-						}
-					: undefined
-			}
+				errorDialog={
+					deleteError || submitError
+						? {
+								open: true,
+								title: deleteError ? deleteError.title : t("error"),
+								description: deleteError?.description ?? submitError ?? "",
+								confirmLabel: t("close"),
+								onConfirm: () => {
+									setDeleteError(null);
+									setSubmitError(null);
+								},
+								onOpenChange: (open) => {
+									if (!open) {
+										setDeleteError(null);
+										setSubmitError(null);
+									}
+								},
+							}
+						: undefined
+				}
 		>
 			<div className="flex h-full flex-col">
 				<div className="px-6 py-8 md:px-10">

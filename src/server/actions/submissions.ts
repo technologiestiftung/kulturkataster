@@ -125,13 +125,27 @@ export async function createSubmission(input: SubmissionCreatePayload) {
 	const ctx = await getAccessContextForUser(currentUserId);
 	authorizeTable(ctx, "submission", "create");
 
-	console.log("Creating submission with input:", input);
+	const nextStatus = input.status ?? "approval_pending";
+
+	if (nextStatus === "approval_pending" && typeof input.entityId === "number") {
+		const existingPending = await submissionRepo.findFirst({
+			entity_type: input.entityType,
+			entity_id: input.entityId,
+			type: input.type,
+			status: "approval_pending",
+		});
+		if (existingPending) {
+			throw new Error(
+				"A pending submission already exists for this entity and submission type.",
+			);
+		}
+	}
 
 	return submissionRepo.create({
 		entity_type: input.entityType,
 		entity_id: input.entityId ?? null,
 		type: input.type,
-		status: input.status ?? "approval_pending",
+		status: nextStatus,
 		data: normalizeSubmissionJson(input.data),
 		diff: normalizeOptionalSubmissionJson(input.diff),
 		meta: normalizeOptionalSubmissionJson(input.meta),
@@ -172,25 +186,6 @@ export async function updateSubmission(input: SubmissionUpdatePayload) {
 		meta: normalizeOptionalSubmissionJson(input.meta),
 		status: input.status ?? undefined,
 	});
-}
-
-export async function submitSubmission(id: number) {
-	const currentUserId = await getCurrentUserId();
-	const ctx = await getAccessContextForUser(currentUserId);
-	authorizeTable(ctx, "submission", "update");
-	const scope = getTableScope(ctx, "submission", "update");
-	const ownerId = requireScopeOrUser(scope, currentUserId);
-	if (!ownerId) {
-		return submissionRepo.update(id, { status: "approval_pending" });
-	}
-	const result = await submissionRepo.updateWhere(
-		{ id, created_by: ownerId },
-		{ status: "approval_pending" },
-	);
-	if (result.count === 0) {
-		throw new Error("Not authorized to submit this submission.");
-	}
-	return submissionRepo.findById(id);
 }
 
 export async function reviewSubmission(input: SubmissionReviewPayload) {
