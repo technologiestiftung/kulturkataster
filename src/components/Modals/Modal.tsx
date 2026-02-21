@@ -231,8 +231,8 @@ export function Modal({
 						)}
 					>
 						{title && (
-							<DialogTitle className={cn("display", titleClassName)}>
-								{title}
+							<DialogTitle asChild className={cn(titleClassName)}>
+								<h1>{title}</h1>
 							</DialogTitle>
 						)}
 						{subtitle && (
