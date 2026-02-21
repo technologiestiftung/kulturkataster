@@ -11,21 +11,18 @@ import type { FormWrapperConfig, FieldConfig } from "@/components/FormWrapper";
 import { useAccountStore } from "@/lib/store/accountStore";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import {
-	buildStreetLine,
+	buildInstitutionAddressPayload,
+	buildInstitutionSharedFieldsPayload,
 	getSubmitLabel,
 	handleAddressBlur,
 	handleLatLngBlur,
-	splitStreetLine,
-	toDate,
-	toOptionalText,
-	toOptionalNumber,
 } from "@/lib/utils/formUtils";
 import {
 	createInstitution,
 	updateInstitution,
 } from "@/server/actions/institutions";
 import { geocodeAddress, reverseGeocode } from "@/server/actions/maptiler";
-import type { Category, FilterState } from "@/types";
+import type { Category } from "@/types";
 import type { Institution } from "@/types/institution";
 import { useRouter } from "next/navigation";
 import { resolveCategoryIdsFromDraft } from "@/lib/utils/institutionCategoryUtils";
@@ -33,6 +30,7 @@ import { TFunction } from "i18next";
 import { useInstitutionPrivateFieldResolver } from "@/lib/hooks/useInstitutionPrivateFieldResolver";
 import { applyInstitutionFieldAccess } from "@/lib/utils/institutionFieldAccess";
 import { showSuccessToast } from "@/lib/utils/feedbackToast";
+import { buildInstitutionFormInitialValues } from "@/lib/utils/institutionFormAdapter";
 type InstitutionFormModalProps = {
 	mode: "create" | "edit";
 	institution?: Institution | null;
@@ -65,119 +63,6 @@ type InstitutionFormModalProps = {
 		cancelLabel?: string;
 	};
 	permissionContext?: "institution" | "submission";
-};
-
-const buildCategoryFilterState = (
-	categories: Category[] | undefined,
-): FilterState => {
-	const category_keys = new Set<string>();
-	const child_category_keys = new Set<string>();
-	const categoryMap = new Map<number, Category>();
-
-	(categories ?? []).forEach((category) => {
-		categoryMap.set(category.id, category);
-	});
-
-	(categories ?? []).forEach((category) => {
-		if (category.parent_category_id) {
-			child_category_keys.add(category.key);
-			const parent = categoryMap.get(category.parent_category_id);
-			if (parent) {
-				category_keys.add(parent.key);
-			}
-		} else {
-			category_keys.add(category.key);
-		}
-	});
-
-	return {
-		district_keys: [],
-		category_keys: Array.from(category_keys),
-		child_category_keys: Array.from(child_category_keys),
-		include_closed: false,
-		status: undefined,
-	};
-};
-
-const getInitialValues = (resolvedInstitution?: Institution) => {
-	const address = resolvedInstitution?.address;
-	const dateToInputValue = (value: unknown): string => {
-		const parsed = toDate(value);
-		if (!parsed) return "";
-		const year = parsed.getFullYear();
-		const month = String(parsed.getMonth() + 1).padStart(2, "0");
-		const day = String(parsed.getDate()).padStart(2, "0");
-		return `${year}-${month}-${day}`;
-	};
-	return {
-		name: resolvedInstitution?.name ?? undefined,
-		parent_organization: resolvedInstitution?.parent_organization ?? undefined,
-		internal_notes: resolvedInstitution?.internal_notes ?? undefined,
-		"address.streetLine": buildStreetLine(
-			address?.street,
-			address?.street_number,
-		),
-		"address.city": address?.city ?? undefined,
-		"address.zip": address?.zipcode ?? undefined,
-		"address.address_suffix": address?.address_suffix ?? undefined,
-		"address.neighbourhood": address?.neighbourhood ?? undefined,
-		"address.cultural_area": address?.cultural_area ?? undefined,
-		"address.lat": address?.lat ?? undefined,
-		"address.lng": address?.lng ?? undefined,
-		categoryIds:
-			resolvedInstitution?.categories?.map((category) => String(category.id)) ??
-			[],
-		categoryFilters: buildCategoryFilterState(resolvedInstitution?.categories),
-		utilization_status: resolvedInstitution?.utilization_status ?? undefined,
-		utilization_status_info:
-			resolvedInstitution?.utilization_status_info ?? undefined,
-		protection_status: resolvedInstitution?.protection_status ?? undefined,
-		protection_status_info:
-			resolvedInstitution?.protection_status_info ?? undefined,
-		website: resolvedInstitution?.website ?? undefined,
-		email: resolvedInstitution?.email ?? undefined,
-		phone: resolvedInstitution?.phone ?? undefined,
-		contact_person_first_name:
-			resolvedInstitution?.contact_person?.first_name ?? undefined,
-		contact_person_last_name:
-			resolvedInstitution?.contact_person?.last_name ?? undefined,
-		contact_person_email:
-			resolvedInstitution?.contact_person?.email ?? undefined,
-		contact_person_phone:
-			resolvedInstitution?.contact_person?.phone ?? undefined,
-		legal_form: resolvedInstitution?.legal_form ?? undefined,
-		funding_type: resolvedInstitution?.funding_type ?? undefined,
-		funding_sources:
-			resolvedInstitution?.funding_sources?.map((source) => ({
-				source_name: source.source_name ?? undefined,
-				description: source.description ?? undefined,
-			})) ?? [],
-		owner_type: resolvedInstitution?.owner_type ?? undefined,
-		owner_name: resolvedInstitution?.owner_name ?? undefined,
-		rental_contract_type:
-			resolvedInstitution?.rental_contract_type ?? undefined,
-		rental_contract_end: dateToInputValue(
-			resolvedInstitution?.rental_contract_end,
-		),
-		established_since: dateToInputValue(resolvedInstitution?.established_since),
-		established_until: dateToInputValue(resolvedInstitution?.established_until),
-		closing_reason: resolvedInstitution?.closing_reason ?? undefined,
-		area: resolvedInstitution?.area ?? undefined,
-		capacity: resolvedInstitution?.capacity ?? undefined,
-		number_of_rooms: resolvedInstitution?.number_of_rooms ?? undefined,
-		accessibility: resolvedInstitution?.accessibility ?? undefined,
-		cost: resolvedInstitution?.cost ?? undefined,
-		shared_use_allowed: resolvedInstitution?.shared_use_allowed ?? false,
-		shared_use_info: resolvedInstitution?.shared_use_info ?? undefined,
-		shared_use_equipment:
-			resolvedInstitution?.shared_use_equipment ?? undefined,
-		shared_use_audience: resolvedInstitution?.shared_use_audience ?? undefined,
-		shared_use_availability:
-			resolvedInstitution?.shared_use_availability ?? undefined,
-		shared_use_contact_person:
-			resolvedInstitution?.shared_use_contact_person ?? undefined,
-		notes: resolvedInstitution?.notes ?? undefined,
-	};
 };
 
 const getDialogTitle = (
@@ -215,72 +100,23 @@ const useInstitutionSubmit = (
 			data as Record<string, unknown>,
 			categoryGroups,
 		);
-		const streetLine = toOptionalText(data["address.streetLine"]) ?? "";
-		const city = toOptionalText(data["address.city"]);
-		const zipcode = toOptionalText(data["address.zip"]);
-		const lat = toOptionalNumber(data["address.lat"]);
-		const lng = toOptionalNumber(data["address.lng"]);
-		const address_suffix = toOptionalText(data["address.address_suffix"]);
-		const neighbourhood = toOptionalText(data["address.neighbourhood"]);
-		const cultural_area = toOptionalText(data["address.cultural_area"]);
-
-		const address = (() => {
-			const { street, streetNumber } = splitStreetLine(streetLine);
-			const nextAddress = {
-				street,
-				street_number: streetNumber,
-				city,
-				zipcode,
-				lat,
-				lng,
-				address_suffix,
-				neighbourhood,
-				cultural_area,
-			};
-			if (addressId) {
-				return { ...nextAddress, id: addressId };
-			}
-			return nextAddress;
-		})();
-		const website = toOptionalText(data.website);
-		const email = toOptionalText(data.email);
-		const phone = toOptionalText(data.phone);
-		const funding_type = toOptionalText(data.funding_type) as
+		const address = buildInstitutionAddressPayload(data, { addressId });
+		const {
+			website,
+			email,
+			phone,
+			funding_type: rawFundingType,
+			funding_sources,
+			shared_use_allowed,
+			shared_use_info,
+			shared_use_equipment,
+			shared_use_audience,
+			shared_use_availability,
+			shared_use_contact_person,
+		} = buildInstitutionSharedFieldsPayload(data);
+		const funding_type = rawFundingType as
 			| Institution["funding_type"]
 			| undefined;
-		const funding_sources = Array.isArray(data.funding_sources)
-			? data.funding_sources
-					.map((item) => {
-						const source = item as {
-							source_name?: unknown;
-							description?: unknown;
-						};
-						const source_name = toOptionalText(source.source_name);
-						const description = toOptionalText(source.description);
-						if (!source_name) return null;
-						return { source_name, description: description ?? null };
-					})
-					.filter(
-						(
-							item,
-						): item is { source_name: string; description: string | null } =>
-							item !== null,
-					)
-			: [];
-
-		const shared_use_allowed =
-			data.shared_use_allowed === true ||
-			data.shared_use_allowed === "true" ||
-			data.shared_use_allowed === "yes";
-		const shared_use_info = toOptionalText(data.shared_use_info);
-		const shared_use_equipment = toOptionalText(data.shared_use_equipment);
-		const shared_use_audience = toOptionalText(data.shared_use_audience);
-		const shared_use_availability = toOptionalText(
-			data.shared_use_availability,
-		);
-		const shared_use_contact_person = toOptionalText(
-			data.shared_use_contact_person,
-		);
 
 		try {
 			if (mode === "create") {
@@ -998,6 +834,18 @@ const buildInstitutionFormConfig = ({
 						),
 						layout: { span: "full" },
 					},
+					{
+						name: "internal_notes",
+						label: fieldLabel("internal_notes", "Internal Notes"),
+						type: "textarea",
+						placeholder: t(
+							"institutionFormModal.form.additional.fields.internal_notes.placeholder",
+						),
+						layout: { span: "full" },
+						description: t(
+							"institutionFormModal.form.additional.fields.internal_notes.description",
+						),
+					},
 				],
 			},
 		],
@@ -1018,7 +866,7 @@ const buildInstitutionFormConfig = ({
 					loading: t("institutionFormModal.actions.saving"),
 				},
 			}),
-		initialValues: getInitialValues(resolvedInstitution),
+		initialValues: buildInstitutionFormInitialValues(resolvedInstitution),
 	};
 };
 

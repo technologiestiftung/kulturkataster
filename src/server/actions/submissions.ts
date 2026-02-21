@@ -125,6 +125,8 @@ export async function createSubmission(input: SubmissionCreatePayload) {
 	const ctx = await getAccessContextForUser(currentUserId);
 	authorizeTable(ctx, "submission", "create");
 
+	console.log("Creating submission with input:", input);
+
 	return submissionRepo.create({
 		entity_type: input.entityType,
 		entity_id: input.entityId ?? null,

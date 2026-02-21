@@ -2,6 +2,8 @@ import type { Submission } from "@/types/submission";
 import type { InstitutionForm } from "@/types/institution";
 import {
 	buildAddressFromFormData,
+	normalizeFundingSources,
+	toDate,
 	toNumberArray,
 	toStringArray,
 } from "@/lib/utils/formUtils";
@@ -17,27 +19,6 @@ import {
 type SubmissionLike =
 	| Submission
 	| { data?: Record<string, unknown> | undefined };
-
-const toDateInput = (value: unknown): Date | undefined => {
-	if (value instanceof Date) {
-		return Number.isNaN(value.getTime()) ? undefined : value;
-	}
-	if (value && typeof value === "object") {
-		const tagged = value as { $type?: unknown; value?: unknown };
-		if (
-			tagged.$type === "DateTime" &&
-			(typeof tagged.value === "string" || typeof tagged.value === "number")
-		) {
-			const parsed = new Date(tagged.value);
-			return Number.isNaN(parsed.getTime()) ? undefined : parsed;
-		}
-	}
-	if (typeof value === "string" || typeof value === "number") {
-		const parsed = new Date(value);
-		return Number.isNaN(parsed.getTime()) ? undefined : parsed;
-	}
-	return undefined;
-};
 
 export const institutionSubmissionToDraft = (
 	submission: SubmissionLike,
@@ -58,43 +39,10 @@ export const institutionSubmissionToDraft = (
 		Array.isArray(value) ? toNumberArray(value) : undefined;
 	const toOptionalStringArray = (value: unknown): string[] | undefined =>
 		Array.isArray(value) ? toStringArray(value) : undefined;
-	const toFundingSources = (
-		value: unknown,
-	): InstitutionForm["funding_sources"] | undefined => {
-		if (!Array.isArray(value)) return undefined;
-		const items = value
-			.map((item) => {
-				if (!item || typeof item !== "object") return null;
-				const source = item as Record<string, unknown>;
-				const source_name = toString(source.source_name)?.trim();
-				const description = toString(source.description)?.trim();
-				if (!source_name) return null;
-				return {
-					source_name,
-					description: description || null,
-				};
-			})
-			.filter(
-				(item): item is { source_name: string; description: string | null } =>
-					item !== null,
-			);
-		return items;
-	};
-
-	const fallbackFundingSourceName = toString(data.funding_source_name)?.trim();
-	const fallbackFundingSourceDescription = toString(
-		data.funding_source_description,
-	)?.trim();
-	const funding_sources =
-		toFundingSources(data.funding_sources) ??
-		(fallbackFundingSourceName
-			? [
-					{
-						source_name: fallbackFundingSourceName,
-						description: fallbackFundingSourceDescription || null,
-					},
-				]
-			: undefined);
+	const funding_sources = normalizeFundingSources(data.funding_sources, {
+		source_name: data.funding_source_name,
+		description: data.funding_source_description,
+	});
 
 	return {
 		name: toString(data.name) ?? "",
@@ -111,9 +59,9 @@ export const institutionSubmissionToDraft = (
 		rental_contract_type:
 			(data.rental_contract_type as RentalContractType | undefined) ||
 			undefined,
-		rental_contract_end: toDateInput(data.rental_contract_end),
+		rental_contract_end: toDate(data.rental_contract_end) ?? undefined,
 		funding_type: (data.funding_type as FundingType | undefined) || undefined,
-		funding_sources,
+		funding_sources: funding_sources.length > 0 ? funding_sources : undefined,
 		utilization_status:
 			(data.utilization_status as UtilizationStatus | undefined) || undefined,
 		utilization_status_info: toString(data.utilization_status_info),
@@ -127,8 +75,8 @@ export const institutionSubmissionToDraft = (
 		shared_use_availability: toString(data.shared_use_availability),
 		accessibility: toString(data.accessibility),
 		cost: toString(data.cost),
-		established_since: toDateInput(data.established_since),
-		established_until: toDateInput(data.established_until),
+		established_since: toDate(data.established_since) ?? undefined,
+		established_until: toDate(data.established_until) ?? undefined,
 		closing_reason: toString(data.closing_reason),
 		notes: toString(data.notes),
 		internal_notes: toString(data.internal_notes),

@@ -1607,16 +1607,16 @@ export function InstitutionDraftWizardModal({
 	const handleSubmitted = useCallback(() => {
 		const targetPath = toLocalePath("/institution?thankyou=1");
 		router.replace(targetPath);
-		if (typeof window !== "undefined") {
-			window.setTimeout(() => {
-				const stuckOnSubmission = window.location.pathname.includes(
-					"/institution/submission",
-				);
-				if (stuckOnSubmission) {
-					window.location.replace(targetPath);
-				}
-			}, 200);
-		}
+		// if (typeof window !== "undefined") {
+		// 	window.setTimeout(() => {
+		// 		const stuckOnSubmission = window.location.pathname.includes(
+		// 			"/institution/submission",
+		// 		);
+		// 		if (stuckOnSubmission) {
+		// 			window.location.replace(targetPath);
+		// 		}
+		// 	}, 200);
+		// }
 		showSuccessToast(
 			t("institutionDraftWizardModal.feedback.submit.title", {
 				defaultValue: "Submission sent",
@@ -1625,9 +1625,9 @@ export function InstitutionDraftWizardModal({
 				defaultValue: "Your submission has been sent for review.",
 			}),
 		);
-		queueMicrotask(() => {
-			resetDraft();
-		});
+		// queueMicrotask(() => {
+		// 	resetDraft();
+		// });
 	}, [resetDraft, router, t, toLocalePath]);
 
 	useEffect(() => {
