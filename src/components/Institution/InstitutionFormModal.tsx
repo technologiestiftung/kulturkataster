@@ -210,8 +210,12 @@ const buildInstitutionFormConfig = ({
 	onLatLngBlur,
 	isPrivateField,
 }: InstitutionFormConfigArgs): FormWrapperConfig => {
-	const fieldLabel = (key: string, fallback: string) =>
-		getFieldLabel(tEnum, key, fallback);
+	const fieldLabel = (key: string, _fallback?: string) =>
+		getFieldLabel(tEnum, key);
+	const fieldDescription = (key: string) =>
+		tEnum(`field_names.${key}.description`);
+	const fieldPlaceholder = (key: string) =>
+		tEnum(`field_names.${key}.placeholder`);
 	return {
 		fields: [
 			{
@@ -226,14 +230,10 @@ const buildInstitutionFormConfig = ({
 				fields: [
 					{
 						name: "parent_organization",
-						label: fieldLabel("parent_organization", "Parent Organization"),
+						label: fieldLabel("parent_organization"),
 						type: "text",
-						description: t(
-							"institutionFormModal.form.details.fields.parentOrganization.description",
-						),
-						placeholder: t(
-							"institutionFormModal.form.details.fields.parentOrganization.placeholder",
-						),
+						description: fieldDescription("parent_organization"),
+						placeholder: fieldPlaceholder("parent_organization"),
 						layout: { span: "full" },
 					},
 					{
@@ -241,14 +241,13 @@ const buildInstitutionFormConfig = ({
 						label: fieldLabel("name", "Name"),
 						type: "text",
 						required: true,
-						placeholder: t(
-							"institutionFormModal.form.details.fields.name.placeholder",
-						),
+						placeholder: fieldPlaceholder("name"),
 						layout: { span: "full" },
 					},
 					{
 						name: "categoryFilters",
-						label: "Categories",
+						fieldMetaKey: "categories",
+						label: fieldLabel("categories"),
 						type: "filterPanel",
 						layout: { span: "full" },
 						filterPanel: {
@@ -260,15 +259,14 @@ const buildInstitutionFormConfig = ({
 							showSummary: false,
 							showDistricts: false,
 							showClosedToggle: false,
-							selectionEmptyLabel: t(
-								"institutionFormModal.form.details.fields.categories.placeholder",
-							),
+							selectionEmptyLabel: fieldPlaceholder("categories"),
 						},
 					},
 					{
 						name: "utilization_status",
 						label: fieldLabel("utilization_status", "Utilization Status"),
 						type: "select",
+						description: fieldDescription("utilization_status"),
 						placeholder: tEnum("utilization_status.placeholder"),
 						layout: { span: "full" },
 						options: [
@@ -300,7 +298,8 @@ const buildInstitutionFormConfig = ({
 					},
 					{
 						name: "address.map",
-						label: `${fieldLabel("address", "Address")} Map`,
+						fieldMetaKey: "address_map",
+						label: fieldLabel("address_map"),
 						type: "addressMap",
 						layout: { span: "full" },
 						addressMap: {
@@ -314,6 +313,7 @@ const buildInstitutionFormConfig = ({
 
 					{
 						name: "address.lat",
+						fieldMetaKey: "lat",
 						label: fieldLabel("lat", "Breitengrad"),
 						type: "number",
 						layout: { span: "half" },
@@ -321,6 +321,7 @@ const buildInstitutionFormConfig = ({
 					},
 					{
 						name: "address.lng",
+						fieldMetaKey: "lng",
 						label: fieldLabel("lng", "Längengrad"),
 						type: "number",
 						layout: { span: "half" },
@@ -328,61 +329,55 @@ const buildInstitutionFormConfig = ({
 					},
 					{
 						name: "address.streetLine",
+						fieldMetaKey: "street",
 						label: `${fieldLabel("street", "Street")} & ${fieldLabel(
 							"street_number",
 							"Number",
 						)}`,
 						type: "text",
 						layout: { span: "half" },
-						placeholder: t(
-							"institutionFormModal.form.details.fields.address.streetLine.placeholder",
-						),
+						placeholder: fieldPlaceholder("street"),
 						onBlur: onAddressBlur,
 					},
 					{
 						name: "address.zip",
-						label: fieldLabel("address.zip", "ZIP Code"),
+						fieldMetaKey: "zipcode",
+						label: fieldLabel("zipcode", "ZIP Code"),
 						type: "text",
 						layout: { span: "half" },
-						placeholder: t(
-							"institutionFormModal.form.details.fields.address.zip.placeholder",
-						),
+						placeholder: fieldPlaceholder("zipcode"),
 						onBlur: onAddressBlur,
 					},
 					{
 						name: "address.address_suffix",
-						label: fieldLabel("address.address_suffix", "Address Suffix"),
+						fieldMetaKey: "address_suffix",
+						label: fieldLabel("address_suffix", "Address Suffix"),
 						type: "text",
-						placeholder: t(
-							"institutionFormModal.form.details.fields.address.address_suffix.placeholder",
-						),
+						placeholder: fieldPlaceholder("address_suffix"),
 					},
 					{
 						name: "address.neighbourhood",
-						label: fieldLabel("address.neighbourhood", "Neighbourhood"),
+						fieldMetaKey: "neighbourhood",
+						label: fieldLabel("neighbourhood", "Neighbourhood"),
 						type: "text",
 						layout: { span: "half" },
-						placeholder: t(
-							"institutionFormModal.form.details.fields.address.neighbourhood.placeholder",
-						),
+						placeholder: fieldPlaceholder("neighbourhood"),
 					},
 					{
 						name: "address.city",
-						label: fieldLabel("address.city", "City"),
+						fieldMetaKey: "city",
+						label: fieldLabel("city", "City"),
 						type: "text",
 						layout: { span: "half" },
-						placeholder: t(
-							"institutionFormModal.form.details.fields.address.city.placeholder",
-						),
+						placeholder: fieldPlaceholder("city"),
 						onBlur: onAddressBlur,
 					},
 					{
 						name: "address.cultural_area",
-						label: fieldLabel("address.cultural_area", "Cultural Area"),
+						fieldMetaKey: "cultural_area",
+						label: fieldLabel("cultural_area", "Cultural Area"),
 						type: "text",
-						placeholder: t(
-							"institutionFormModal.form.details.fields.address.cultural_areal.placeholder",
-						),
+						placeholder: fieldPlaceholder("cultural_area"),
 					},
 				],
 			},
@@ -396,27 +391,21 @@ const buildInstitutionFormConfig = ({
 						name: "website",
 						label: fieldLabel("website", "Website"),
 						type: "text",
-						placeholder: t(
-							"institutionFormModal.form.contact.fields.website.placeholder",
-						),
+						placeholder: fieldPlaceholder("website"),
 						layout: { span: "full" },
 					},
 					{
 						name: "email",
 						label: fieldLabel("email", "Email"),
 						type: "email",
-						placeholder: t(
-							"institutionFormModal.form.contact.fields.email.placeholder",
-						),
+						placeholder: fieldPlaceholder("email"),
 						layout: { span: "full" },
 					},
 					{
 						name: "phone",
 						label: fieldLabel("phone", "Phone"),
 						type: "tel",
-						placeholder: t(
-							"institutionFormModal.form.contact.fields.phone.placeholder",
-						),
+						placeholder: fieldPlaceholder("phone"),
 						layout: { span: "full" },
 					},
 					{
@@ -426,7 +415,7 @@ const buildInstitutionFormConfig = ({
 							"Contact Person First Name",
 						),
 						type: "text",
-						placeholder: "e.g. Max",
+						placeholder: fieldPlaceholder("contact_person_first_name"),
 						layout: { span: "half" },
 					},
 					{
@@ -436,21 +425,21 @@ const buildInstitutionFormConfig = ({
 							"Contact Person Last Name",
 						),
 						type: "text",
-						placeholder: "e.g. Mustermann",
+						placeholder: fieldPlaceholder("contact_person_last_name"),
 						layout: { span: "half" },
 					},
 					{
 						name: "contact_person_email",
 						label: fieldLabel("contact_person_email", "Contact Person Email"),
 						type: "email",
-						placeholder: "e.g. max.mustermann@example.com",
+						placeholder: fieldPlaceholder("contact_person_email"),
 						layout: { span: "half" },
 					},
 					{
 						name: "contact_person_phone",
 						label: fieldLabel("contact_person_phone", "Contact Person Phone"),
 						type: "tel",
-						placeholder: "e.g. +49 30 1234567",
+						placeholder: fieldPlaceholder("contact_person_phone"),
 						layout: { span: "half" },
 					},
 				],
@@ -465,7 +454,7 @@ const buildInstitutionFormConfig = ({
 						name: "legal_form",
 						label: fieldLabel("legal_form", "Legal Form"),
 						type: "text",
-						placeholder: "e.g. e.V., gGmbH, GbR",
+						placeholder: fieldPlaceholder("legal_form"),
 						layout: { span: "full" },
 					},
 					{
@@ -529,7 +518,7 @@ const buildInstitutionFormConfig = ({
 						name: "owner_name",
 						label: fieldLabel("owner_name", "Owner Name"),
 						type: "text",
-						placeholder: "e.g. Organization name",
+						placeholder: fieldPlaceholder("owner_name"),
 						layout: { span: "half" },
 					},
 					{
@@ -577,7 +566,7 @@ const buildInstitutionFormConfig = ({
 						name: "closing_reason",
 						label: fieldLabel("closing_reason", "Closing Reason"),
 						type: "textarea",
-						placeholder: "Reason for closure",
+						placeholder: fieldPlaceholder("closing_reason"),
 						layout: { span: "full" },
 					},
 				],
@@ -614,7 +603,7 @@ const buildInstitutionFormConfig = ({
 					},
 					{
 						name: "funding_sources",
-						label: fieldLabel("funding_source_name", "Funding Sources"),
+						label: fieldLabel("funding_sources", "Funding Sources"),
 						type: "fundingSources",
 						layout: { span: "full" },
 						fundingSources: {
@@ -626,11 +615,16 @@ const buildInstitutionFormConfig = ({
 								"funding_source_description",
 								"Funding Source Description",
 							),
-							sourcePlaceholder: "e.g. Land, Bezirk",
-							descriptionPlaceholder:
-								"e.g. Funding through the Berlin workspace program since 2020, 50,000€ annually",
-							addButtonLabel: "Add funding source",
-							removeButtonLabel: "Remove funding source",
+							sourcePlaceholder: tEnum(
+								"field_names.funding_source_name.placeholder",
+							),
+							descriptionPlaceholder: tEnum(
+								"field_names.funding_source_description.placeholder",
+							),
+							addButtonLabel: tEnum("field_names.funding_sources.actions.add"),
+							removeButtonLabel: tEnum(
+								"field_names.funding_sources.actions.remove",
+							),
 						},
 					},
 				],
@@ -661,9 +655,7 @@ const buildInstitutionFormConfig = ({
 						name: "shared_use_info",
 						label: fieldLabel("shared_use_info", "Shared Use Info"),
 						type: "textarea",
-						placeholder: t(
-							"institutionFormModal.form.sharedUse.fields.info.placeholder",
-						),
+						placeholder: fieldPlaceholder("shared_use_info"),
 						layout: { span: "full" },
 						condition: (formData) => formData.shared_use_allowed === true,
 					},
@@ -671,9 +663,7 @@ const buildInstitutionFormConfig = ({
 						name: "shared_use_equipment",
 						label: fieldLabel("shared_use_equipment", "Shared Use Equipment"),
 						type: "textarea",
-						placeholder: t(
-							"institutionFormModal.form.sharedUse.fields.equipment.placeholder",
-						),
+						placeholder: fieldPlaceholder("shared_use_equipment"),
 						layout: { span: "full" },
 						condition: (formData) => formData.shared_use_allowed === true,
 					},
@@ -681,9 +671,7 @@ const buildInstitutionFormConfig = ({
 						name: "shared_use_audience",
 						label: fieldLabel("shared_use_audience", "Shared Use Audience"),
 						type: "textarea",
-						placeholder: t(
-							"institutionFormModal.form.sharedUse.fields.audience.placeholder",
-						),
+						placeholder: fieldPlaceholder("shared_use_audience"),
 						layout: { span: "full" },
 						condition: (formData) => formData.shared_use_allowed === true,
 					},
@@ -694,9 +682,7 @@ const buildInstitutionFormConfig = ({
 							"Shared Use Availability",
 						),
 						type: "textarea",
-						placeholder: t(
-							"institutionFormModal.form.sharedUse.fields.availability.placeholder",
-						),
+						placeholder: fieldPlaceholder("shared_use_availability"),
 						layout: { span: "full" },
 						condition: (formData) => formData.shared_use_allowed === true,
 					},
@@ -707,9 +693,7 @@ const buildInstitutionFormConfig = ({
 							"Shared Use Contact Person",
 						),
 						type: "text",
-						placeholder: t(
-							"institutionFormModal.form.sharedUse.fields.contactPerson.placeholder",
-						),
+						placeholder: fieldPlaceholder("shared_use_contact_person"),
 						layout: { span: "full" },
 						condition: (formData) => formData.shared_use_allowed === true,
 					},
@@ -725,35 +709,35 @@ const buildInstitutionFormConfig = ({
 						name: "area",
 						label: fieldLabel("area", "Area (m²)"),
 						type: "number",
-						placeholder: "e.g. 150",
+						placeholder: fieldPlaceholder("area"),
 						layout: { span: "half" },
 					},
 					{
 						name: "capacity",
 						label: fieldLabel("capacity", "Capacity"),
 						type: "number",
-						placeholder: "e.g. 100",
+						placeholder: fieldPlaceholder("capacity"),
 						layout: { span: "half" },
 					},
 					{
 						name: "number_of_rooms",
 						label: fieldLabel("number_of_rooms", "Number of Rooms"),
 						type: "number",
-						placeholder: "e.g. 5",
+						placeholder: fieldPlaceholder("number_of_rooms"),
 						layout: { span: "half" },
 					},
 					{
 						name: "accessibility",
 						label: fieldLabel("accessibility", "Accessibility"),
 						type: "textarea",
-						placeholder: "Accessibility information",
+						placeholder: fieldPlaceholder("accessibility"),
 						layout: { span: "full" },
 					},
 					{
 						name: "cost",
 						label: fieldLabel("cost", "Cost"),
 						type: "textarea",
-						placeholder: "Cost information",
+						placeholder: fieldPlaceholder("cost"),
 						layout: { span: "full" },
 					},
 				],
@@ -770,7 +754,7 @@ const buildInstitutionFormConfig = ({
 							"Utilization Status Info",
 						),
 						type: "textarea",
-						placeholder: "Additional details about utilization status",
+						placeholder: fieldPlaceholder("utilization_status_info"),
 						layout: { span: "full" },
 					},
 					{
@@ -813,9 +797,7 @@ const buildInstitutionFormConfig = ({
 							"Protection Status Info",
 						),
 						type: "textarea",
-						placeholder: t(
-							"institutionFormModal.form.details.fields.protection_status_info.placeholder",
-						),
+						placeholder: fieldPlaceholder("protection_status_info"),
 						layout: { span: "full" },
 					},
 				],
@@ -829,22 +811,16 @@ const buildInstitutionFormConfig = ({
 						name: "notes",
 						label: fieldLabel("notes", "Notes"),
 						type: "textarea",
-						placeholder: t(
-							"institutionFormModal.form.additional.fields.notes.placeholder",
-						),
+						placeholder: fieldPlaceholder("notes"),
 						layout: { span: "full" },
 					},
 					{
 						name: "internal_notes",
 						label: fieldLabel("internal_notes", "Internal Notes"),
 						type: "textarea",
-						placeholder: t(
-							"institutionFormModal.form.additional.fields.internal_notes.placeholder",
-						),
+						placeholder: fieldPlaceholder("internal_notes"),
 						layout: { span: "full" },
-						description: t(
-							"institutionFormModal.form.additional.fields.internal_notes.description",
-						),
+						description: fieldDescription("internal_notes"),
 					},
 				],
 			},

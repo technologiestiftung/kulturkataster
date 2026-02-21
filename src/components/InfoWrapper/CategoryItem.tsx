@@ -65,7 +65,7 @@ export function CategoryItem({
 									{subCategories?.length
 										? subCategories.map((sub, index, filteredArray) => (
 												<span className="body2" key={sub.id}>
-													{tEnum(`subcategory.${sub.key}`)}
+													{tEnum(`category.${sub.key}`)}
 													{index < filteredArray.length - 1 && ", "}
 												</span>
 											))

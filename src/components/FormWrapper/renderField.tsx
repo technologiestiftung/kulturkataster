@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment, useState } from "react";
+import type { TFunction } from "i18next";
 import { useTranslation } from "react-i18next";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -47,6 +48,11 @@ import { defaultFilterState } from "./constants";
 import Eye from "@/icons/eye.svg";
 import EyeOff from "@/icons/eye-off.svg";
 import { PrivateBadge } from "@/components/shared/PrivateBadge";
+import {
+	getFieldDescription,
+	getFieldLabel,
+	getFieldPlaceholder,
+} from "@/lib/i18n/fieldLabels";
 
 function PasswordField({
 	id,
@@ -230,6 +236,7 @@ const getSerializedSelectedValue = (
 
 type RenderFieldContentArgs = {
 	field: FormWrapperFieldConfig;
+	tEnum: TFunction;
 	formData: Record<string, unknown>;
 	errors: Record<string, string>;
 	touched: Record<string, boolean>;
@@ -245,6 +252,7 @@ type RenderFieldContentArgs = {
 const renderFieldContent = (
 	{
 		field,
+		tEnum,
 		formData,
 		errors,
 		touched,
@@ -256,6 +264,20 @@ const renderFieldContent = (
 ) => {
 	const value = formData[field.name];
 	const error = touched[field.name] ? errors[field.name] : undefined;
+	const fieldMetaKey =
+		field.type === "section" ? field.name : (field.fieldMetaKey ?? field.name);
+	const resolvedLabel =
+		field.type === "section"
+			? field.label
+			: (field.label ?? getFieldLabel(tEnum, fieldMetaKey));
+	const resolvedDescription =
+		field.type === "section"
+			? field.description
+			: (field.description ?? getFieldDescription(tEnum, fieldMetaKey));
+	const resolvedPlaceholder =
+		field.type === "section"
+			? undefined
+			: (field.placeholder ?? getFieldPlaceholder(tEnum, fieldMetaKey));
 
 	const gridClass = getGridClass(field);
 
@@ -267,24 +289,24 @@ const renderFieldContent = (
 				includeLayout && field.className,
 			)}
 		>
-			{(field.label || field.labelNode) &&
+			{(resolvedLabel || field.labelNode) &&
 				field.type !== "checkbox" &&
 				field.type !== "switch" &&
 				field.type !== "tablePermissions" &&
 				field.type !== "fieldPermissions" && (
 					<div className="flex items-center justify-between gap-2">
 						<Label htmlFor={field.name} className="text-neutral-80">
-							{field.labelNode ?? field.label}
+							{field.labelNode ?? resolvedLabel}
 							{field.required && <span className="ml-1">*</span>}
 						</Label>
 						{isPrivate ? <PrivateBadge /> : null}
 					</div>
 				)}
 
-			{field.description &&
+			{resolvedDescription &&
 				field.type !== "tablePermissions" &&
 				field.type !== "fieldPermissions" && (
-					<p className="body2 text-neutral-80 mb-2">{field.description}</p>
+					<p className="body2 text-neutral-80 mb-2">{resolvedDescription}</p>
 				)}
 
 			{(field.type === "text" ||
@@ -301,7 +323,7 @@ const renderFieldContent = (
 					onBlur={(e) => {
 						void handleFieldBlur(field, e.target.value);
 					}}
-					placeholder={field.placeholder}
+					placeholder={resolvedPlaceholder}
 					disabled={field.disabled}
 					min={field.min}
 					max={field.max}
@@ -363,7 +385,7 @@ const renderFieldContent = (
 					onBlur={(val) => {
 						void handleFieldBlur(field, val);
 					}}
-					placeholder={field.placeholder}
+					placeholder={resolvedPlaceholder}
 					disabled={field.disabled}
 				/>
 			)}
@@ -376,7 +398,7 @@ const renderFieldContent = (
 					onBlur={(e) => {
 						void handleFieldBlur(field, e.target.value);
 					}}
-					placeholder={field.placeholder}
+					placeholder={resolvedPlaceholder}
 					disabled={field.disabled}
 					rows={4}
 				/>
@@ -391,7 +413,7 @@ const renderFieldContent = (
 					disabled={field.disabled}
 				>
 					<SelectTrigger id={field.name}>
-						<SelectValue placeholder={field.placeholder || "Select..."} />
+						<SelectValue placeholder={resolvedPlaceholder || "Select..."} />
 					</SelectTrigger>
 					<SelectContent className="px-3">
 						{field.options?.map((option, index) => (
@@ -447,7 +469,7 @@ const renderFieldContent = (
 						disabled={field.disabled}
 					/>
 					<Label htmlFor={field.name} emphasize={false}>
-						{field.labelNode ?? field.label}
+						{field.labelNode ?? resolvedLabel}
 						{field.required && <span className=" ml-1">*</span>}
 					</Label>
 					{isPrivate ? <PrivateBadge /> : null}
@@ -457,7 +479,7 @@ const renderFieldContent = (
 			{field.type === "switch" && (
 				<div className="flex items-center justify-between">
 					<Label htmlFor={field.name} className="font-normal">
-						{field.labelNode ?? field.label}
+						{field.labelNode ?? resolvedLabel}
 						{field.required && <span className=" ml-1">*</span>}
 					</Label>
 					{isPrivate ? <PrivateBadge /> : null}
@@ -474,12 +496,12 @@ const renderFieldContent = (
 				<div className="space-y-2">
 					{field.multiselectVariant === "modal" ? (
 						<MultiSelectModal
-							title={field.label || "Select Items"}
+							title={resolvedLabel || "Select Items"}
 							options={field.options ?? []}
 							filteredOptions={field.multiselectFilteredOptions}
 							selected={(value as string[]) ?? []}
 							onChange={(selected) => updateField(field.name, selected)}
-							placeholder={field.placeholder}
+							placeholder={resolvedPlaceholder}
 							searchPlaceholder={field.searchPlaceholder}
 							emptyText={field.emptyText}
 							previewCount={field.previewCount}
@@ -855,6 +877,7 @@ const renderFieldContent = (
 };
 
 type BuildRenderFieldArgs = {
+	tEnum: TFunction;
 	formData: Record<string, unknown>;
 	errors: Record<string, string>;
 	touched: Record<string, boolean>;
@@ -868,6 +891,7 @@ type BuildRenderFieldArgs = {
 };
 
 export const buildRenderField = ({
+	tEnum,
 	formData,
 	errors,
 	touched,
@@ -948,6 +972,7 @@ export const buildRenderField = ({
 				<Fragment key={field.name}>
 					{renderFieldContent({
 						field,
+						tEnum,
 						formData,
 						errors,
 						touched,
@@ -989,6 +1014,7 @@ export const buildRenderField = ({
 							{renderFieldContent(
 								{
 									field,
+									tEnum,
 									formData,
 									errors,
 									touched,

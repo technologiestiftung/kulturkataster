@@ -281,7 +281,6 @@ const getContent = (
 				<CategoryItem
 					data={data}
 					variant={field.categoryVariant}
-					label={label}
 					description={field.description}
 					isPrivate={isPrivate}
 					action={action}

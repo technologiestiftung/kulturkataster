@@ -85,7 +85,7 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 												.map((subcategory: ChildCategory, index: number) => (
 													<span key={subcategory.id} className="text-base">
 														{index > 0 && ", "}
-														{tEnum(`subcategory.${subcategory.key}`)}
+														{tEnum(`category.${subcategory.key}`)}
 													</span>
 												))}
 										</div>
@@ -102,11 +102,7 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 					{featureProperties.utilization_status && (
 						<div className=" flex gap-1 items-center justify-between">
 							<span className="text-base font-bold">
-								{fieldLabel(
-									"utilization_status",
-									t("institution.utilizationStatus"),
-								)}
-								:
+								{fieldLabel("utilization_status")}:
 							</span>
 							<span className="text-base">
 								{tEnum(
@@ -118,11 +114,7 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 					{!featureProperties.utilization_status && (
 						<div className=" flex gap-1 items-center justify-between">
 							<span className="text-base font-bold">
-								{fieldLabel(
-									"utilization_status",
-									t("institution.utilizationStatus"),
-								)}
-								:
+								{fieldLabel("utilization_status")}:
 							</span>
 							<span className="text-base">{t("unknown")}</span>
 						</div>

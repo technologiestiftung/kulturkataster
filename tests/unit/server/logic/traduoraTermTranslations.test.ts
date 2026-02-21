@@ -22,13 +22,13 @@ describe("traduoraTermTranslations", () => {
 		process.env.TRADUORA_PROJECT_ID = "project-1";
 	});
 
-	it("builds enumMap term keys for categories and subcategories", () => {
+	it("builds enumMap term keys for categories and child categories", () => {
 		expect(
 			getCategoryEnumMapTermKey({ key: "music", parentCategoryId: null }),
 		).toBe("category.music");
 		expect(
 			getCategoryEnumMapTermKey({ key: "clubs", parentCategoryId: 1 }),
-		).toBe("subcategory.clubs");
+		).toBe("category.clubs");
 	});
 
 	it("reads term translations by locale", async () => {

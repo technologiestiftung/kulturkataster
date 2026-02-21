@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import type { TFunction } from "i18next";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { getResponsiveGridClass } from "@/components/shared/sectionLayout";
@@ -9,6 +10,7 @@ import { defaultFilterState } from "./constants";
 import { buildRenderField } from "./renderField";
 import { AlertDialog } from "@/components/ui/alert-dialog";
 import { useTranslation } from "react-i18next";
+import { getFieldError, getFieldLabel } from "@/lib/i18n/fieldLabels";
 
 const getAllFields = (
 	fields: FormWrapperFieldConfig[],
@@ -81,12 +83,25 @@ const validateFieldValue = (
 	value: unknown,
 	nextFormData: Record<string, unknown>,
 	t: (key: string, options?: Record<string, unknown>) => string,
+	tEnum: TFunction,
 ): string | undefined => {
-	const requiredMessage =
+	const fieldMetaKey =
+		field.type === "section" ? field.name : (field.fieldMetaKey ?? field.name);
+	const fieldLabel =
+		field.type === "section"
+			? (field.label ?? getFieldLabel(tEnum, fieldMetaKey))
+			: (field.label ?? getFieldLabel(tEnum, fieldMetaKey));
+	const requiredDefault = t("form.validation.required", {
+		field: fieldLabel,
+	});
+	const requiredMessageRaw =
 		field.requiredMessage ??
-		t("form.validation.required", {
-			field: field.label ?? field.name,
-		});
+		(field.type !== "section" ? field.errorMessages?.required : undefined) ??
+		getFieldError(tEnum, fieldMetaKey, "required");
+	const requiredMessage =
+		requiredMessageRaw === `field_names.${fieldMetaKey}.errors.required`
+			? requiredDefault
+			: requiredMessageRaw;
 
 	if (field.required) {
 		if (field.type === "checkbox" && value !== true) {
@@ -115,6 +130,7 @@ const collectValidationErrors = (
 	fields: FormWrapperFieldConfig[],
 	formData: Record<string, unknown>,
 	t: (key: string, options?: Record<string, unknown>) => string,
+	tEnum: TFunction,
 ) => {
 	const newErrors: Record<string, string> = {};
 
@@ -126,7 +142,13 @@ const collectValidationErrors = (
 			return;
 		}
 
-		const error = validateFieldValue(field, formData[field.name], formData, t);
+		const error = validateFieldValue(
+			field,
+			formData[field.name],
+			formData,
+			t,
+			tEnum,
+		);
 		if (error) {
 			newErrors[field.name] = error;
 		}
@@ -148,6 +170,7 @@ const buildTouchedMap = (fields: FormWrapperFieldConfig[]) => {
 
 export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 	const { t } = useTranslation("common");
+	const { t: tEnum } = useTranslation("enumMap");
 	const onChangeRef = useRef<FormWrapperConfig["onChange"]>(config.onChange);
 	const [formData, setFormData] = useState<Record<string, unknown>>(() =>
 		buildInitialFormData(config),
@@ -187,7 +210,7 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 
 	const validateForm = (): boolean => {
 		const allFields = getAllFields(config.fields);
-		const newErrors = collectValidationErrors(allFields, formData, t);
+		const newErrors = collectValidationErrors(allFields, formData, t, tEnum);
 		setErrors(newErrors);
 		return Object.keys(newErrors).length === 0;
 	};
@@ -206,6 +229,7 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 	};
 
 	const renderField = buildRenderField({
+		tEnum,
 		formData,
 		errors,
 		touched,

@@ -36,8 +36,8 @@ export const getSortedSubcategories = (
 		if (a.key.includes("other") && !b.key.includes("other")) return 1;
 		if (b.key.includes("other") && !a.key.includes("other")) return -1;
 		return collator.compare(
-			translateFn(`subcategory.${a.key}`),
-			translateFn(`subcategory.${b.key}`),
+			translateFn(`category.${a.key}`),
+			translateFn(`category.${b.key}`),
 		);
 	});
 };
