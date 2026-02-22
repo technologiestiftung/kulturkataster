@@ -126,7 +126,7 @@ export function AccountLayoutClient({
 					src="/resources/map.png"
 					alt="Map background"
 					fill
-					className="object-cover"
+					className="object-cover contrast:invert-90"
 					priority
 				/>
 			</div>

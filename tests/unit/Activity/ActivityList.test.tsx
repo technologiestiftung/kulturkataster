@@ -195,7 +195,8 @@ describe("ActivityList filters", () => {
 		const filters = screen.getAllByRole("combobox");
 		const statusSelect = filters[0];
 		const typeSelect = filters[1];
-		const actorSelect = filters[2];
+		const entityTypeSelect = filters[2];
+		const actorSelect = filters[3];
 
 		fireEvent.change(statusSelect, { target: { value: "approved" } });
 		expect(screen.getAllByTestId("activity-row")).toHaveLength(1);
@@ -205,6 +206,10 @@ describe("ActivityList filters", () => {
 		expect(screen.getAllByTestId("activity-row")).toHaveLength(1);
 
 		fireEvent.change(typeSelect, { target: { value: "all" } });
+		fireEvent.change(entityTypeSelect, { target: { value: "category" } });
+		expect(screen.getAllByTestId("activity-row")).toHaveLength(1);
+
+		fireEvent.change(entityTypeSelect, { target: { value: "all" } });
 		fireEvent.change(actorSelect, {
 			target: { value: "Alice Admin (alice@example.com)" },
 		});
@@ -220,7 +225,7 @@ describe("ActivityList filters", () => {
 	it("filters by date presets", () => {
 		render(<ActivityList />);
 
-		const dateSelect = screen.getAllByRole("combobox")[3];
+		const dateSelect = screen.getAllByRole("combobox")[4];
 
 		fireEvent.change(dateSelect, { target: { value: "today" } });
 		expect(screen.getAllByTestId("activity-row")).toHaveLength(1);

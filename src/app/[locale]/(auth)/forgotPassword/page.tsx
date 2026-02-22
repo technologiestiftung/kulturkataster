@@ -18,5 +18,5 @@ export async function generateMetadata({
 
 export default async function ForgotPasswordPage({ params }: PageProps) {
 	await params;
-	return <ForgotPasswordModal routePath="/forgot-password" returnTo="/login" />;
+	return <ForgotPasswordModal routePath="/forgotPassword" returnTo="/login" />;
 }

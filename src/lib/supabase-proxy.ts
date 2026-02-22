@@ -54,7 +54,7 @@ export async function updateSession(request: NextRequest) {
 	const localePrefix = localeMatch ? `/${localeMatch[1]}` : "";
 	const appPath = localePrefix ? pathname.replace(localePrefix, "") : pathname;
 	const isLoginPath = appPath === "/login";
-	const isResetPasswordPath = appPath.startsWith("/reset-password");
+	const isResetPasswordPath = appPath.startsWith("/resetPassword");
 	const isAccountPath = appPath.startsWith("/account");
 
 	const user = data?.claims;
