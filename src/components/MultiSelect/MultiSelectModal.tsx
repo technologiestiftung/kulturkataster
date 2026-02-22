@@ -53,8 +53,9 @@ interface MultiSelectModalProps {
 const hasAnyValue = (values: string[] | undefined) =>
 	Array.isArray(values) && values.length > 0;
 
-const getOptionText = (value: SelectOption["label"] | SelectOption["searchText"]) =>
-	typeof value === "string" ? value : String(value ?? "");
+const getOptionText = (
+	value: SelectOption["label"] | SelectOption["searchText"],
+) => (typeof value === "string" ? value : String(value ?? ""));
 
 export function MultiSelectModal({
 	title,
