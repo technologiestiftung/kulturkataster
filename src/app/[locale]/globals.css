@@ -53,6 +53,10 @@
 	--sidebar-width-icon: 5rem;
 
 	--footer: #f9f8f590;
+
+	--contrast-brand-default: #ca6699;
+	--contrast-neutral-80: #a1d351;
+	--contrast-interaction-default: #a1d351;
 }
 
 :root[data-theme="contrast"] {

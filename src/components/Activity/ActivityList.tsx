@@ -22,16 +22,6 @@ interface ActivityListProps {
 	activities?: Activity[];
 }
 
-const mapAction = (action: EntityAudit["action"]) => {
-	if (action === "create") return "erstellt";
-	if (action === "update") return "aktualisiert";
-	return "löscht";
-};
-
-const mapEntityLabel = (audit: EntityAudit) => {
-	return `${audit.entity_type} #${audit.entity_id}`;
-};
-
 const isNumericId = (value: string) => /^\d+$/.test(value);
 
 const asObject = (value: unknown): Record<string, unknown> | null =>
@@ -169,11 +159,13 @@ const formatEntityLabel = (
 		const email = getEntityEmail(audit);
 		return email ? `Nutzer*in (${email})` : "Nutzer*in";
 	}
-	return t(`auth.account.activity.entities.${audit.entity_type}`, {
-		defaultValue: mapEntityLabel(audit),
-		id: audit.entity_id,
-		email: audit.user?.email,
-	});
+	const translatedType = t(
+		`auth.account.activity.entities.${audit.entity_type}`,
+		{
+			defaultValue: audit.entity_type,
+		},
+	);
+	return `${translatedType} #${audit.entity_id}`;
 };
 
 const normalizeEntityText = (value: string) =>
@@ -228,6 +220,14 @@ const getEventTypeLabel = (
 		defaultValue: "Erstellt/Aktualisiert",
 	});
 };
+
+const getEntityTypeLabel = (
+	entityType: string,
+	t: (key: string, options?: Record<string, unknown>) => string,
+) =>
+	t(`auth.account.activity.entities.${entityType}`, {
+		defaultValue: entityType,
+	});
 
 const isActivityWithinDatePreset = (
 	date: Date | string,
@@ -330,6 +330,7 @@ export function ActivityList({ activities }: ActivityListProps) {
 	const [searchQuery, setSearchQuery] = useState("");
 	const [statusFilter, setStatusFilter] = useState("all");
 	const [typeFilter, setTypeFilter] = useState("all");
+	const [entityTypeFilter, setEntityTypeFilter] = useState("all");
 	const [actorFilter, setActorFilter] = useState("all");
 	const [dateFilter, setDateFilter] = useState("all");
 	const entityAudits = useAccountStore((state) => state.entityAudits) ?? [];
@@ -439,6 +440,7 @@ export function ActivityList({ activities }: ActivityListProps) {
 			id: activityId,
 			date: audit.changed_at,
 			user: audit?.user || null,
+			entityType: primarySource.entity_type,
 			eventType,
 			actor,
 			primaryEntity,
@@ -454,7 +456,9 @@ export function ActivityList({ activities }: ActivityListProps) {
 			from: hasStatusTransition ? fromStatus : undefined,
 			to: hasStatusTransition ? toStatus : undefined,
 			action: t(`auth.account.activity.actions.${actionKey}`, {
-				defaultValue: mapAction(audit.action),
+				defaultValue: t(`auth.account.activity.actions.${audit.action}`, {
+					defaultValue: audit.action,
+				}),
 			}),
 			item: primaryEntity,
 			itemLink: mapEntityLink(audit, toLocalePath, canOpenSubmission),
@@ -564,11 +568,23 @@ export function ActivityList({ activities }: ActivityListProps) {
 				.filter((value) => value.length > 0),
 		),
 	).sort((a, b) => a.localeCompare(b, "de"));
+	const entityTypeOptions = Array.from(
+		new Set(
+			resolvedActivities
+				.map((activity) => activity.entityType?.trim() ?? "")
+				.filter((value) => value.length > 0),
+		),
+	).sort((a, b) =>
+		getEntityTypeLabel(a, t).localeCompare(getEntityTypeLabel(b, t), "de"),
+	);
 	const filteredActivities = resolvedActivities.filter((activity) => {
 		if (statusFilter !== "all" && activity.status !== statusFilter)
 			return false;
 		const eventType = activity.eventType ?? "create";
 		if (typeFilter !== "all" && eventType !== typeFilter) return false;
+		const entityType = activity.entityType?.trim() ?? "";
+		if (entityTypeFilter !== "all" && entityType !== entityTypeFilter)
+			return false;
 		const actor = activity.actor?.trim() ?? "";
 		if (actorFilter !== "all" && actor !== actorFilter) return false;
 		if (!isActivityWithinDatePreset(activity.date, dateFilter, new Date())) {
@@ -591,7 +607,7 @@ export function ActivityList({ activities }: ActivityListProps) {
 
 	return (
 		<div className="space-y-4">
-			<div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
+			<div className="grid gap-3 md:grid-cols-2 xl:grid-cols-6">
 				<SearchInput
 					value={searchQuery}
 					onChange={(event) => setSearchQuery(event.target.value)}
@@ -630,6 +646,23 @@ export function ActivityList({ activities }: ActivityListProps) {
 						{typeOptions.map((eventType) => (
 							<SelectItem key={eventType} value={eventType}>
 								{getEventTypeLabel(eventType, t)}
+							</SelectItem>
+						))}
+					</SelectContent>
+				</Select>
+				<Select value={entityTypeFilter} onValueChange={setEntityTypeFilter}>
+					<SelectTrigger variant="pill">
+						<SelectValue />
+					</SelectTrigger>
+					<SelectContent>
+						<SelectItem value="all">
+							{t("auth.account.activity.filters.allEntities", {
+								defaultValue: "Alle Entitäten",
+							})}
+						</SelectItem>
+						{entityTypeOptions.map((entityType) => (
+							<SelectItem key={entityType} value={entityType}>
+								{getEntityTypeLabel(entityType, t)}
 							</SelectItem>
 						))}
 					</SelectContent>

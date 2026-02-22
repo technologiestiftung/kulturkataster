@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { ForgotPasswordForm } from "@/components/Auth/ForgotPasswordForm";
@@ -18,7 +17,7 @@ vi.mock("next/navigation", () => ({
 	useRouter: () => ({
 		replace: replaceMock,
 	}),
-	usePathname: () => "/de/forgot-password",
+	usePathname: () => "/de/forgotPassword",
 	useParams: () => ({ locale: "de" }),
 }));
 

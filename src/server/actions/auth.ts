@@ -213,7 +213,7 @@ export async function requestPasswordReset(email: string) {
 	const siteUrl = process.env.SITE_URL ?? "http://127.0.0.1:3000";
 	console.log("siteUrl", siteUrl);
 	const { error } = await supabase.auth.resetPasswordForEmail(email, {
-		redirectTo: `${siteUrl}/reset-password`,
+		redirectTo: `${siteUrl}/resetPassword`,
 	});
 
 	if (error) {

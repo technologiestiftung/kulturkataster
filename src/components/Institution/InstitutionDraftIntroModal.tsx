@@ -94,7 +94,7 @@ function ContributionSetupContent({
 							src="/resources/thankyou.png"
 							alt="Thank you background"
 							fill
-							className="object-cover"
+							className="object-cover contrast:invert-90"
 							priority
 						/>
 					</div>
