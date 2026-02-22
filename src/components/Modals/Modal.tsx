@@ -214,10 +214,7 @@ export function Modal({
 						) : null}
 						{loadingState?.active ? (
 							<div className="flex min-h-[260px] w-full flex-col items-center justify-center gap-3 p-6">
-								<Loading size="md" />
-								{loadingState.label ? (
-									<p className="body2 text-foreground">{loadingState.label}</p>
-								) : null}
+								<Loading size="lg" />
 							</div>
 						) : (
 							children

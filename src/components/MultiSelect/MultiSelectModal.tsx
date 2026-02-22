@@ -53,6 +53,9 @@ interface MultiSelectModalProps {
 const hasAnyValue = (values: string[] | undefined) =>
 	Array.isArray(values) && values.length > 0;
 
+const getOptionText = (value: SelectOption["label"] | SelectOption["searchText"]) =>
+	typeof value === "string" ? value : String(value ?? "");
+
 export function MultiSelectModal({
 	title,
 	options,
@@ -81,7 +84,8 @@ export function MultiSelectModal({
 		() => ({
 			id: "label",
 			label: t("multiSelectModal.sort.az"),
-			compare: (a, b) => a.label.localeCompare(b.label),
+			compare: (a, b) =>
+				getOptionText(a.label).localeCompare(getOptionText(b.label)),
 		}),
 		[t],
 	);
@@ -135,7 +139,9 @@ export function MultiSelectModal({
 				return false;
 			}
 			if (query.length > 0) {
-				const haystack = (option.searchText ?? option.label).toLowerCase();
+				const haystack = getOptionText(
+					option.searchText ?? option.label,
+				).toLowerCase();
 				if (!haystack.includes(query)) return false;
 			}
 

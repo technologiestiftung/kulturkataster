@@ -54,15 +54,15 @@ const createCachedPoiSvg = (
 
 const fillColors = {
 	selected: {
-		contrast: "brand-default",
+		contrast: "contrast-brand-default",
 		normal: "brand-default",
 	},
 	closed: {
-		contrast: "black",
+		contrast: "contrast-neutral-80",
 		normal: "neutral-80",
 	},
 	default: {
-		contrast: "cluster-pins",
+		contrast: "contrast-interaction-default",
 		normal: "interaction-default",
 	},
 } as const;
@@ -267,7 +267,7 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 			return new Style({
 				image: new CircleStyle({
 					radius: remToPx(0.9375),
-					fill: new Fill({ color: downIsContrastMode ? "#5617BA" : "#C288FF" }),
+					fill: new Fill({ color: downIsContrastMode ? "#a1d351" : "#C288FF" }),
 				}),
 				text: new Text({
 					text: size.toString(),

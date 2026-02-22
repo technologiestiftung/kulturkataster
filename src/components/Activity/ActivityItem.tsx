@@ -20,6 +20,7 @@ export interface Activity {
 	id?: string;
 	date: Date | string;
 	user: DbUser | null;
+	entityType?: string;
 	eventType?: ActivityEventType;
 	actor?: string;
 	primaryEntity?: string;
@@ -217,8 +218,8 @@ export function ActivityItem({ activity, index }: ActivityItemProps) {
 		if (eventType === "assign") {
 			return (
 				<Trans
-					i18nKey="auth.account.activity.templates.assign"
-					defaults="<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> für <secondary>{{secondaryEntity}}</secondary> {{action}}"
+					i18nKey="auth.account.activity.templates.assignBasedOn"
+					defaults="<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> auf Basis von <secondary>{{secondaryEntity}}</secondary> {{action}}"
 					values={{ actor, action, secondaryEntity, primaryEntity }}
 					components={{
 						actor: <span className="body3" />,
@@ -233,8 +234,8 @@ export function ActivityItem({ activity, index }: ActivityItemProps) {
 			if (secondaryEntity) {
 				return (
 					<Trans
-						i18nKey="auth.account.activity.templates.statusChangeWithSecondaryNoDiff"
-						defaults="<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> für <secondary>{{secondaryEntity}}</secondary> {{action}}"
+						i18nKey="auth.account.activity.templates.statusChangeBasedOnSecondaryNoDiff"
+						defaults="<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> auf Basis von <secondary>{{secondaryEntity}}</secondary> {{action}}"
 						values={{
 							actor,
 							action,

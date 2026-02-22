@@ -21,6 +21,11 @@
 			"title": "Listenansicht der Kulturorte"
 		}
 	},
+	"language": {
+		"de": "Deutsch",
+		"en": "Englisch",
+		"title": "Sprache"
+	},
 	"add": {
 		"title": "Mitwirken"
 	},
@@ -47,6 +52,10 @@
 			"activity": {
 				"actions": {
 					"create": "erstellt",
+					"delete": "gelöscht",
+					"submission_review_approved": "genehmigt",
+					"submission_review_completed": "abgeschlossen",
+					"submission_review_rejected": "abgelehnt",
 					"update": "aktualisiert"
 				},
 				"empty": "Sie haben noch keine Aktivitäten.",
@@ -57,6 +66,7 @@
 				"emptyHint": "Folgende Aktionen können Sie hier durchführen.",
 				"filters": {
 					"allDates": "Alle",
+					"allEntities": "Alle Entitäten",
 					"allStatuses": "Alle Status",
 					"allTypes": "Alle Typen",
 					"allUsers": "Alle Nutzer*innen",
@@ -75,6 +85,20 @@
 						"status_change": "Statuswechsel"
 					}
 				},
+				"entities": {
+					"address": "Adresse",
+					"category": "Kategorie",
+					"contact_person": "Kontaktperson",
+					"funding_source": "Förderquelle",
+					"group": "Gruppe",
+					"institution": "Kulturort",
+					"role": "Rolle",
+					"role_field_permission": "Rollenfeld-Berechtigung",
+					"role_table_permission": "Rollentabellen-Berechtigung",
+					"submission": "Einreichung",
+					"tag": "Tag",
+					"user": "Nutzer*in"
+				},
 				"hiddenActor": "Redaktion",
 				"itemWithName": "{{item}}: {{name}}",
 				"status": {
@@ -86,12 +110,15 @@
 				"statusAria": "Status: {{status}}",
 				"system": "System",
 				"templates": {
-					"assign": "<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> für <secondary>{{secondaryEntity}}</secondary> {{action}}",
+					"assign": "<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> auf Basis von <secondary>{{secondaryEntity}}</secondary> {{action}}",
+					"assignBasedOn": "<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> auf Basis von <secondary>{{secondaryEntity}}</secondary> {{action}}",
 					"create": "<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> {{action}}",
 					"statusChange": "<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> {{action}} <from>{{from}}</from> -> <to>{{to}}</to>",
 					"statusChangeNoDiff": "<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> {{action}}",
-					"statusChangeWithSecondary": "<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> für <secondary>{{secondaryEntity}}</secondary> {{action}}  <from>{{from}}</from> -> <to>{{to}}</to>",
-					"statusChangeWithSecondaryNoDiff": "<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> für <secondary>{{secondaryEntity}}</secondary> {{action}}"
+					"statusChangeBasedOnSecondary": "<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> auf Basis von <secondary>{{secondaryEntity}}</secondary> {{action}}  <from>{{from}}</from> -> <to>{{to}}</to>",
+					"statusChangeBasedOnSecondaryNoDiff": "<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> auf Basis von <secondary>{{secondaryEntity}}</secondary> {{action}}",
+					"statusChangeWithSecondary": "<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> auf Basis von <secondary>{{secondaryEntity}}</secondary> {{action}}  <from>{{from}}</from> -> <to>{{to}}</to>",
+					"statusChangeWithSecondaryNoDiff": "<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> auf Basis von <secondary>{{secondaryEntity}}</secondary> {{action}}"
 				},
 				"unknown": "Unbekannt"
 			},
@@ -302,6 +329,13 @@
 		"title": "Kulturorte filtern"
 	},
 	"footer": {
+		"imprint": "Impressum",
+		"about": "Über das Projekt",
+		"contact": "Kontakt",
+		"privacy": "Datenschutz",
+		"accessibility": "Barrierefreiheit",
+		"simpleLanguageInformation": "Leichte Sprache",
+		"signLanguageInformationShort": "DGS",
 		"address": {
 			"city": "Berlin",
 			"street": "Spandauer Damm 19",

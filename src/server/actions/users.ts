@@ -55,7 +55,7 @@ export async function createUser(input: UserFormInput) {
 	const { data, error } = await supabase.auth.admin.inviteUserByEmail(
 		input.email,
 		{
-			redirectTo: `${siteUrl}/reset-password`,
+			redirectTo: `${siteUrl}/resetPassword`,
 		},
 	);
 
@@ -205,13 +205,13 @@ export async function sendPasswordReset(email: string) {
 	const siteUrl = process.env.SITE_URL ?? "http://127.0.0.1:3000";
 	const supabase = createAdminClient();
 	console.log(
-		`Generating password reset link for ${email} with redirect to ${siteUrl}/reset-password`,
+		`Generating password reset link for ${email} with redirect to ${siteUrl}/resetPassword`,
 	);
 	const { error, data } = await supabase.auth.admin.generateLink({
 		type: "recovery",
 		email,
 		options: {
-			redirectTo: `${siteUrl}/reset-password`,
+			redirectTo: `${siteUrl}/resetPassword`,
 		},
 	});
 
