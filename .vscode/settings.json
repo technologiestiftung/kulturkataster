@@ -31,5 +31,9 @@
 	"i18n-ally.extract.keygenStyle": "nested",
 	"i18n-ally.refactor.templates": ["{key}", "{namespace}.{key}"],
 	"WillLuke.nextjs.addTypesOnSave": true,
-	"WillLuke.nextjs.hasPrompted": true
+	"WillLuke.nextjs.hasPrompted": true,
+	"playwright.env": {},
+	"playwright.reuseBrowser": false,
+	"playwright.showTrace": false,
+	"testing.openTesting": "openOnTestStart"
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment, useState } from "react";
+import type { TFunction } from "i18next";
 import { useTranslation } from "react-i18next";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -47,6 +48,11 @@ import { defaultFilterState } from "./constants";
 import Eye from "@/icons/eye.svg";
 import EyeOff from "@/icons/eye-off.svg";
 import { PrivateBadge } from "@/components/shared/PrivateBadge";
+import {
+	getFieldDescription,
+	getFieldLabel,
+	getFieldPlaceholder,
+} from "@/lib/i18n/fieldLabels";
 
 function PasswordField({
 	id,
@@ -194,8 +200,43 @@ const toggleSectionPermissionValue = (
 	return nextValue;
 };
 
+const serializeOptionValue = (value: string | number | boolean): string => {
+	if (typeof value === "string") return value;
+	return `${typeof value}:${String(value)}`;
+};
+
+const deserializeOptionValue = (value: string): string | number | boolean => {
+	if (value.startsWith("boolean:")) {
+		return value.slice("boolean:".length) === "true";
+	}
+	if (value.startsWith("number:")) {
+		const rawValue = value.slice("number:".length);
+		const parsed = Number(rawValue);
+		return Number.isFinite(parsed) ? parsed : rawValue;
+	}
+	return value;
+};
+
+const getSerializedSelectedValue = (
+	options: Array<{ value: string | number | boolean }> | undefined,
+	currentValue: unknown,
+): string | undefined => {
+	if (currentValue === undefined || currentValue === null) return undefined;
+	if (!options || options.length === 0) return String(currentValue);
+
+	const matchingOption = options.find(
+		(option) => option.value === currentValue,
+	);
+	if (matchingOption) return serializeOptionValue(matchingOption.value);
+
+	if (typeof currentValue === "string") return currentValue;
+
+	return undefined;
+};
+
 type RenderFieldContentArgs = {
 	field: FormWrapperFieldConfig;
+	tEnum: TFunction;
 	formData: Record<string, unknown>;
 	errors: Record<string, string>;
 	touched: Record<string, boolean>;
@@ -211,6 +252,7 @@ type RenderFieldContentArgs = {
 const renderFieldContent = (
 	{
 		field,
+		tEnum,
 		formData,
 		errors,
 		touched,
@@ -222,6 +264,20 @@ const renderFieldContent = (
 ) => {
 	const value = formData[field.name];
 	const error = touched[field.name] ? errors[field.name] : undefined;
+	const fieldMetaKey =
+		field.type === "section" ? field.name : (field.fieldMetaKey ?? field.name);
+	const resolvedLabel =
+		field.type === "section"
+			? field.label
+			: (field.label ?? getFieldLabel(tEnum, fieldMetaKey));
+	const resolvedDescription =
+		field.type === "section"
+			? field.description
+			: (field.description ?? getFieldDescription(tEnum, fieldMetaKey));
+	const resolvedPlaceholder =
+		field.type === "section"
+			? undefined
+			: (field.placeholder ?? getFieldPlaceholder(tEnum, fieldMetaKey));
 
 	const gridClass = getGridClass(field);
 
@@ -233,24 +289,24 @@ const renderFieldContent = (
 				includeLayout && field.className,
 			)}
 		>
-			{(field.label || field.labelNode) &&
+			{(resolvedLabel || field.labelNode) &&
 				field.type !== "checkbox" &&
 				field.type !== "switch" &&
 				field.type !== "tablePermissions" &&
 				field.type !== "fieldPermissions" && (
 					<div className="flex items-center justify-between gap-2">
 						<Label htmlFor={field.name} className="text-neutral-80">
-							{field.labelNode ?? field.label}
+							{field.labelNode ?? resolvedLabel}
 							{field.required && <span className="ml-1">*</span>}
 						</Label>
 						{isPrivate ? <PrivateBadge /> : null}
 					</div>
 				)}
 
-			{field.description &&
+			{resolvedDescription &&
 				field.type !== "tablePermissions" &&
 				field.type !== "fieldPermissions" && (
-					<p className="body2 text-neutral-80 mb-2">{field.description}</p>
+					<p className="body2 text-neutral-80 mb-2">{resolvedDescription}</p>
 				)}
 
 			{(field.type === "text" ||
@@ -262,17 +318,63 @@ const renderFieldContent = (
 				<Input
 					id={field.name}
 					type={field.type}
-					value={value as string}
+					value={value === undefined || value === null ? "" : String(value)}
 					onChange={(e) => updateField(field.name, e.target.value)}
 					onBlur={(e) => {
 						void handleFieldBlur(field, e.target.value);
 					}}
-					placeholder={field.placeholder}
+					placeholder={resolvedPlaceholder}
 					disabled={field.disabled}
 					min={field.min}
 					max={field.max}
 					step={field.step}
 				/>
+			)}
+
+			{field.type === "file" && (
+				<div className="space-y-2">
+					<Input
+						id={field.name}
+						type="file"
+						accept={field.accept}
+						multiple={field.multiple}
+						onChange={(event) => {
+							const nextValue = field.multiple
+								? Array.from(event.target.files ?? [])
+								: (event.target.files?.[0] ?? null);
+							updateField(field.name, nextValue);
+							if (field.fileRemoveOption?.fieldName && nextValue) {
+								updateField(field.fileRemoveOption.fieldName, false);
+							}
+							void handleFieldBlur(field, nextValue);
+						}}
+						disabled={field.disabled}
+					/>
+					{field.fileRemoveOption ? (
+						<div className="flex items-center space-x-2">
+							<Checkbox
+								id={`${field.name}-remove`}
+								checked={formData[field.fileRemoveOption.fieldName] as boolean}
+								onCheckedChange={(checked) =>
+									updateField(field.fileRemoveOption!.fieldName, checked)
+								}
+								disabled={field.disabled}
+							/>
+							<Label htmlFor={`${field.name}-remove`} emphasize={false}>
+								{field.fileRemoveOption.label}
+							</Label>
+						</div>
+					) : null}
+					{value instanceof File ? (
+						<p className="body3 text-muted-foreground">{value.name}</p>
+					) : null}
+					{Array.isArray(value) &&
+					value.every((item) => item instanceof File) ? (
+						<p className="body3 text-muted-foreground">
+							{value.map((file) => file.name).join(", ")}
+						</p>
+					) : null}
+				</div>
 			)}
 
 			{field.type === "password" && (
@@ -283,7 +385,7 @@ const renderFieldContent = (
 					onBlur={(val) => {
 						void handleFieldBlur(field, val);
 					}}
-					placeholder={field.placeholder}
+					placeholder={resolvedPlaceholder}
 					disabled={field.disabled}
 				/>
 			)}
@@ -291,12 +393,12 @@ const renderFieldContent = (
 			{field.type === "textarea" && (
 				<Textarea
 					id={field.name}
-					value={value as string}
+					value={value === undefined || value === null ? "" : String(value)}
 					onChange={(e) => updateField(field.name, e.target.value)}
 					onBlur={(e) => {
 						void handleFieldBlur(field, e.target.value);
 					}}
-					placeholder={field.placeholder}
+					placeholder={resolvedPlaceholder}
 					disabled={field.disabled}
 					rows={4}
 				/>
@@ -304,17 +406,21 @@ const renderFieldContent = (
 
 			{field.type === "select" && (
 				<Select
-					value={value as string}
-					onValueChange={(val) => updateField(field.name, val)}
+					value={getSerializedSelectedValue(field.options, value)}
+					onValueChange={(val) =>
+						updateField(field.name, deserializeOptionValue(val))
+					}
 					disabled={field.disabled}
 				>
 					<SelectTrigger id={field.name}>
-						<SelectValue placeholder={field.placeholder || "Select..."} />
+						<SelectValue placeholder={resolvedPlaceholder || "Select..."} />
 					</SelectTrigger>
 					<SelectContent className="px-3">
 						{field.options?.map((option, index) => (
-							<Fragment key={option.value}>
-								<SelectItem value={option.value}>{option.label}</SelectItem>
+							<Fragment key={serializeOptionValue(option.value)}>
+								<SelectItem value={serializeOptionValue(option.value)}>
+									{option.label}
+								</SelectItem>
 								{index < (field.options?.length || 0) - 1 && (
 									<SelectSeparator />
 								)}
@@ -326,20 +432,25 @@ const renderFieldContent = (
 
 			{field.type === "radio" && (
 				<RadioGroup
-					value={value as string}
-					onValueChange={(val) => updateField(field.name, val)}
+					value={getSerializedSelectedValue(field.options, value)}
+					onValueChange={(val) =>
+						updateField(field.name, deserializeOptionValue(val))
+					}
 					variant={field.radioVariant}
 					disabled={field.disabled}
 				>
 					{field.options?.map((option) => (
-						<div key={option.value} className="flex items-center space-x-2">
+						<div
+							key={serializeOptionValue(option.value)}
+							className="flex items-center space-x-2"
+						>
 							<RadioGroupItem
 								className="bg-background border-input"
-								value={option.value}
-								id={`${field.name}-${option.value}`}
+								value={serializeOptionValue(option.value)}
+								id={`${field.name}-${serializeOptionValue(option.value)}`}
 							/>
 							<Label
-								htmlFor={`${field.name}-${option.value}`}
+								htmlFor={`${field.name}-${serializeOptionValue(option.value)}`}
 								emphasize={false}
 							>
 								{option.label}
@@ -358,7 +469,7 @@ const renderFieldContent = (
 						disabled={field.disabled}
 					/>
 					<Label htmlFor={field.name} emphasize={false}>
-						{field.labelNode ?? field.label}
+						{field.labelNode ?? resolvedLabel}
 						{field.required && <span className=" ml-1">*</span>}
 					</Label>
 					{isPrivate ? <PrivateBadge /> : null}
@@ -368,7 +479,7 @@ const renderFieldContent = (
 			{field.type === "switch" && (
 				<div className="flex items-center justify-between">
 					<Label htmlFor={field.name} className="font-normal">
-						{field.labelNode ?? field.label}
+						{field.labelNode ?? resolvedLabel}
 						{field.required && <span className=" ml-1">*</span>}
 					</Label>
 					{isPrivate ? <PrivateBadge /> : null}
@@ -385,12 +496,12 @@ const renderFieldContent = (
 				<div className="space-y-2">
 					{field.multiselectVariant === "modal" ? (
 						<MultiSelectModal
-							title={field.label || "Select Items"}
+							title={resolvedLabel || "Select Items"}
 							options={field.options ?? []}
 							filteredOptions={field.multiselectFilteredOptions}
 							selected={(value as string[]) ?? []}
 							onChange={(selected) => updateField(field.name, selected)}
-							placeholder={field.placeholder}
+							placeholder={resolvedPlaceholder}
 							searchPlaceholder={field.searchPlaceholder}
 							emptyText={field.emptyText}
 							previewCount={field.previewCount}
@@ -399,6 +510,7 @@ const renderFieldContent = (
 								...filter,
 								options: filter.options.map((option) => ({
 									value: option.value,
+									description: option.description,
 									label: option.label,
 									parentValue: option.parentValue,
 								})),
@@ -408,10 +520,16 @@ const renderFieldContent = (
 						/>
 					) : (
 						field.options?.map((option) => (
-							<div key={option.value} className="flex items-center space-x-2">
+							<div
+								key={option.value as string}
+								className="flex items-center space-x-2"
+							>
 								<Checkbox
 									id={`${field.name}-${option.value}`}
-									checked={(value as string[])?.includes(option.value)}
+									checked={
+										(value as string[])?.includes(option.value as string) ??
+										false
+									}
 									onCheckedChange={(checked) => {
 										const currentValue = (value as string[]) || [];
 										const newValue = checked
@@ -759,6 +877,7 @@ const renderFieldContent = (
 };
 
 type BuildRenderFieldArgs = {
+	tEnum: TFunction;
 	formData: Record<string, unknown>;
 	errors: Record<string, string>;
 	touched: Record<string, boolean>;
@@ -772,6 +891,7 @@ type BuildRenderFieldArgs = {
 };
 
 export const buildRenderField = ({
+	tEnum,
 	formData,
 	errors,
 	touched,
@@ -852,6 +972,7 @@ export const buildRenderField = ({
 				<Fragment key={field.name}>
 					{renderFieldContent({
 						field,
+						tEnum,
 						formData,
 						errors,
 						touched,
@@ -893,6 +1014,7 @@ export const buildRenderField = ({
 							{renderFieldContent(
 								{
 									field,
+									tEnum,
 									formData,
 									errors,
 									touched,

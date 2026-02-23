@@ -35,14 +35,15 @@ function AlertDialog({
 }: AlertDialogProps) {
 	const hasActions = showConfirm || showCancel;
 	const { t } = useTranslation("common");
+	const statusKey = `alert.${status}`;
+	const statusTitle = t(statusKey);
+	const resolvedTitle = statusTitle === statusKey ? title : statusTitle;
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
 			<DialogContent variant="alert" className="p-0" showCloseButton={false}>
 				<div className="flex flex-col gap-4 p-10">
-					<DialogTitle className="body1 font-bold">
-						{t(`alert.${status}`)}
-					</DialogTitle>
+					<DialogTitle className="body1 font-bold">{resolvedTitle}</DialogTitle>
 					<ActionPanel
 						title={title}
 						icon={<InfoCircle className="size-5" />}

@@ -137,7 +137,7 @@ const buildFieldSections = (
 		title: t("roleFormModal.permissions.fields.sections.institution"),
 		fields: INSTITUTION_FIELDS.map((field) => ({
 			key: field,
-			label: t(`field_names.${field}`, {
+			label: t(`field_names.${field}.label`, {
 				ns: "enumMap",
 				defaultValue: formatFieldLabel(field),
 			}),
@@ -254,6 +254,7 @@ const useRoleSubmit = (
 	onClose: () => void,
 	onSuccess: (mode: RoleFormModalProps["mode"]) => void,
 	shouldRefresh: boolean,
+	onError: (message: string) => void,
 ) => {
 	const router = useRouter();
 	const [submitting, setSubmitting] = useState(false);
@@ -295,6 +296,12 @@ const useRoleSubmit = (
 				router.refresh();
 			}
 			onClose();
+		} catch (error) {
+			const message =
+				error instanceof Error
+					? error.message
+					: "An unexpected error occurred. Please try again.";
+			onError(message);
 		} finally {
 			setSubmitting(false);
 		}
@@ -470,6 +477,7 @@ export function RoleFormModal({
 		title: string;
 		description: string;
 	} | null>(null);
+	const [submitError, setSubmitError] = useState<string | null>(null);
 
 	const handleClose = useRoutedModalClose({ returnTo });
 
@@ -488,6 +496,7 @@ export function RoleFormModal({
 		handleClose,
 		handleSuccess,
 		shouldRefresh,
+		(message) => setSubmitError(message),
 	);
 
 	const tableTargets = useMemo(() => getTableTargets(t), [t]);
@@ -608,15 +617,21 @@ export function RoleFormModal({
 					: undefined
 			}
 			errorDialog={
-				deleteError
+				deleteError || submitError
 					? {
 							open: true,
-							title: deleteError.title,
-							description: deleteError.description,
+							title: deleteError ? deleteError.title : t("error"),
+							description: deleteError?.description ?? submitError ?? "",
 							confirmLabel: t("close"),
-							onConfirm: () => setDeleteError(null),
+							onConfirm: () => {
+								setDeleteError(null);
+								setSubmitError(null);
+							},
 							onOpenChange: (open) => {
-								if (!open) setDeleteError(null);
+								if (!open) {
+									setDeleteError(null);
+									setSubmitError(null);
+								}
 							},
 						}
 					: undefined

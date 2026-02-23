@@ -1,6 +1,12 @@
 import type { Submission } from "@/types/submission";
 import type { InstitutionForm } from "@/types/institution";
-import { buildAddressFromFormData } from "@/lib/utils/formUtils";
+import {
+	buildAddressFromFormData,
+	normalizeFundingSources,
+	toDate,
+	toNumberArray,
+	toStringArray,
+} from "@/lib/utils/formUtils";
 import {
 	FundingType,
 	InstitutionStatus,
@@ -29,51 +35,14 @@ export const institutionSubmissionToDraft = (
 		typeof value === "number" && Number.isFinite(value) ? value : undefined;
 	const toBool = (value: unknown): boolean | undefined =>
 		typeof value === "boolean" ? value : undefined;
-	const toNumberArray = (value: unknown): number[] | undefined =>
-		Array.isArray(value)
-			? value
-					.map((item) => Number(item))
-					.filter((item) => Number.isFinite(item))
-			: undefined;
-	const toStringArray = (value: unknown): string[] | undefined =>
-		Array.isArray(value) ? value.map((item) => String(item)) : undefined;
-	const toFundingSources = (
-		value: unknown,
-	): InstitutionForm["funding_sources"] | undefined => {
-		if (!Array.isArray(value)) return undefined;
-		const items = value
-			.map((item) => {
-				if (!item || typeof item !== "object") return null;
-				const source = item as Record<string, unknown>;
-				const source_name = toString(source.source_name)?.trim();
-				const description = toString(source.description)?.trim();
-				if (!source_name) return null;
-				return {
-					source_name,
-					description: description || null,
-				};
-			})
-			.filter(
-				(item): item is { source_name: string; description: string | null } =>
-					item !== null,
-			);
-		return items;
-	};
-
-	const fallbackFundingSourceName = toString(data.funding_source_name)?.trim();
-	const fallbackFundingSourceDescription = toString(
-		data.funding_source_description,
-	)?.trim();
-	const funding_sources =
-		toFundingSources(data.funding_sources) ??
-		(fallbackFundingSourceName
-			? [
-					{
-						source_name: fallbackFundingSourceName,
-						description: fallbackFundingSourceDescription || null,
-					},
-				]
-			: undefined);
+	const toOptionalNumberArray = (value: unknown): number[] | undefined =>
+		Array.isArray(value) ? toNumberArray(value) : undefined;
+	const toOptionalStringArray = (value: unknown): string[] | undefined =>
+		Array.isArray(value) ? toStringArray(value) : undefined;
+	const funding_sources = normalizeFundingSources(data.funding_sources, {
+		source_name: data.funding_source_name,
+		description: data.funding_source_description,
+	});
 
 	return {
 		name: toString(data.name) ?? "",
@@ -90,10 +59,9 @@ export const institutionSubmissionToDraft = (
 		rental_contract_type:
 			(data.rental_contract_type as RentalContractType | undefined) ||
 			undefined,
-		rental_contract_end:
-			(data.rental_contract_end as Date | undefined) || undefined,
+		rental_contract_end: toDate(data.rental_contract_end) ?? undefined,
 		funding_type: (data.funding_type as FundingType | undefined) || undefined,
-		funding_sources,
+		funding_sources: funding_sources.length > 0 ? funding_sources : undefined,
 		utilization_status:
 			(data.utilization_status as UtilizationStatus | undefined) || undefined,
 		utilization_status_info: toString(data.utilization_status_info),
@@ -107,10 +75,8 @@ export const institutionSubmissionToDraft = (
 		shared_use_availability: toString(data.shared_use_availability),
 		accessibility: toString(data.accessibility),
 		cost: toString(data.cost),
-		established_since:
-			(data.established_since as Date | undefined) || undefined,
-		established_until:
-			(data.established_until as Date | undefined) || undefined,
+		established_since: toDate(data.established_since) ?? undefined,
+		established_until: toDate(data.established_until) ?? undefined,
 		closing_reason: toString(data.closing_reason),
 		notes: toString(data.notes),
 		internal_notes: toString(data.internal_notes),
@@ -124,9 +90,9 @@ export const institutionSubmissionToDraft = (
 		contact_person_phone: toString(data.contact_person_phone),
 		contact_person_id: toNumber(data.contact_person_id),
 		address: address ?? null,
-		categoryIds: toNumberArray(data.categoryIds),
-		tagIds: toNumberArray(data.tagIds),
-		userIds: toStringArray(data.userIds),
-		groupIds: toNumberArray(data.groupIds),
+		categoryIds: toOptionalNumberArray(data.categoryIds),
+		tagIds: toOptionalNumberArray(data.tagIds),
+		userIds: toOptionalStringArray(data.userIds),
+		groupIds: toOptionalNumberArray(data.groupIds),
 	};
 };

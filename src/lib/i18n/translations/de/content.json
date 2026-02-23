@@ -12,12 +12,6 @@
 					"Beratung zum Datenschutz: Cortina Consult",
 					"Rechtliche Beratung: Kanzlei Laaser"
 				],
-				"additional[0]": "",
-				"additional[1]": "",
-				"additional[2]": "",
-				"additional[3]": "",
-				"additional[4]": "",
-				"additional[5]": "",
 				"editorial": {
 					"items": [
 						"Ateliers: Atelierbüro im kulturwerk des bbk berlin",
@@ -27,12 +21,6 @@
 						"Projekträume und -initiativen: Netzwerk freier Berliner Projekträume und -initiativen e.V.",
 						"Soziokulturelle Orte und Street-Art-Flächen: Daniel Schneider (Archiv der Jugendkulturen e.V.)"
 					],
-					"items[0]": "",
-					"items[1]": "",
-					"items[2]": "",
-					"items[3]": "",
-					"items[4]": "",
-					"items[5]": "",
 					"title": "Externe Datenredaktion"
 				},
 				"items": [
@@ -41,10 +29,6 @@
 					"Konzept, Beratung und Beteiligungsformate: Studio für unendliche Möglichkeiten",
 					"Design: Common Studio"
 				],
-				"items[0]": "",
-				"items[1]": "",
-				"items[2]": "",
-				"items[3]": "",
 				"title": "Auftragnehmer*innen"
 			},
 			"funding": {
@@ -75,27 +59,6 @@
 					"Senatsverwaltung für Wirtschaft, Energie und Betriebe",
 					"servicezentrum musikschulen (szm)"
 				],
-				"list[0]": "",
-				"list[10]": "",
-				"list[11]": "",
-				"list[12]": "",
-				"list[13]": "",
-				"list[14]": "",
-				"list[15]": "",
-				"list[16]": "",
-				"list[17]": "",
-				"list[18]": "",
-				"list[19]": "",
-				"list[1]": "",
-				"list[20]": "",
-				"list[2]": "",
-				"list[3]": "",
-				"list[4]": "",
-				"list[5]": "",
-				"list[6]": "",
-				"list[7]": "",
-				"list[8]": "",
-				"list[9]": "",
 				"title": "Partner*innen"
 			},
 			"steering": {
@@ -112,17 +75,6 @@
 					"Daniel Brunet (LAFT)",
 					"Benedikt Stoll (Urbane Praxis e.V.)"
 				],
-				"members[0]": "",
-				"members[10]": "",
-				"members[1]": "",
-				"members[2]": "",
-				"members[3]": "",
-				"members[4]": "",
-				"members[5]": "",
-				"members[6]": "",
-				"members[7]": "",
-				"members[8]": "",
-				"members[9]": "",
 				"title": "Steuerungsgremium"
 			},
 			"team": {
@@ -134,12 +86,6 @@
 					"Vergabe und Administration: Doris Antonides-Heidelmeyer",
 					"Technische Projektleitung bis 2024: Metini Krivanish"
 				],
-				"members[0]": "",
-				"members[1]": "",
-				"members[2]": "",
-				"members[3]": "",
-				"members[4]": "",
-				"members[5]": "",
 				"title": "Projektteam"
 			}
 		},
@@ -154,19 +100,13 @@
 				"Sicherung sowie Neuerschließung von Räumen für Kultur: Das Kulturkataster dient als Instrument für ein nachhaltiges Monitoring von Kulturflächen, um deren Erhalt zu unterstützen und neue Räume zu erschließen.",
 				"Gerechte Verteilung von Kulturangeboten im Stadtraum und Chancengerechtigkeit im Hinblick auf Teilhabe: Das Kulturkataster visualisiert Lücken im Kulturangebot und unterstützt die Stadtplanung dabei, ein ausgewogenes und gerechtes Kulturangebot für alle Berliner*innen zu schaffen.",
 				"Verbesserung der Zusammenarbeit zwischen Ressorts, Ebenen und Sektoren: Als flexibles digitales Planungsinstrument stärkt das Kulturkataster die Zusammenarbeit innerhalb der verschiedenen Zuständigkeitsbereiche, Verwaltungsebenen sowie der gesamten Berliner Kulturszene."
-			],
-			"items[0]": "",
-			"items[1]": "",
-			"items[2]": "",
-			"items[3]": ""
+			]
 		},
 		"guidelinesListAriaLabel": "Liste der Richtlinien",
 		"introduction": [
 			"In einer wachsenden Metropole wie Berlin sind Kunst- und Kulturräume knappe Ressourcen. Verdrängung, Raumkonkurrenzen und Standortkonflikte gefährden die Kulturräume Berlins, die für die Stadt eine vielschichtige und entscheidende Rolle spielen. Sie sind Standortfaktor, Tourismusmagnet und Innovationsmotor, dienen der Wissensvermittlung sowie dem Erinnern und fördern den gesellschaftlichen Zusammenhalt, indem sie einen Identitätsrahmen für eine vielfältige und inklusive Stadtgesellschaft bilden. Das Kulturkataster, eine online frei zugängliche Bestandsaufnahme der Berliner Kulturlandschaft auf einer digitalen Karte, ist ein entscheidender Schritt hin zu einer nachhaltigen kulturellen Stadtentwicklung.",
 			"Das Kulturkataster findet in den Richtlinien der Regierungspolitik dieser Legislaturperiode Erwähnung. Ende 2022 wird die Kulturraum Berlin gGmbH von der Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt mit der Konzeption betraut und stellt in zwei Konzeptpapieren (ausgeführt durch das Studio für unendliche Möglichkeiten) die Ausgangssituation und Bedarfe sowie ein Umsetzungskonzept für das Kulturkataster vor. Auch die Umsetzung wird 2024 zur Aufgabe der KRB. Mit der Entwicklung der online-basierten Kartenanwendung beauftragte die KRB die Technologiestiftung Berlin."
 		],
-		"introduction[0]": "",
-		"introduction[1]": "",
 		"simpleLanguageDirect": "Den Bereich „Über das Projekt“ in leichter Sprache finden Sie <link />.",
 		"thanks": "Das Berliner Kulturkataster verdankt seine erfolgreiche Veröffentlichung der Begeisterung, dem Engagement und dem gemeinsamen Wirken aller Personen, für die die Berliner Kulturlandschaft von ebenso großer Bedeutung ist wie für das Projektteam. Diese tiefe Verankerung in der Szene bildet die Grundlage dafür, dass das langfristig ausgerichtete Projekt seine Vision in vollem Umfang entfalten und dynamisch weiterentwickeln kann.",
 		"title": "Über das Projekt",
@@ -178,9 +118,6 @@
 				"Version 2 – Einführung neuer Kulturortkategorien und Aktualisierung der Daten; Einführung eines Log-in-Bereichs; gemeinsame Datenpflege und Zugang für Kulturorte, Verbände und Verwaltung (Veröffentlichung Anfang 2026)",
 				"Version 3 – Aktualisierung und Vervollständigung der Daten; Einbindung neuer Fachkarten aus dem Geoportal; Veröffentlichung von bedrohten Kulturorten; Erweiterung des Log-In-Bereichs (Veröffentlichung Mitte 2026)"
 			],
-			"items[0]": "",
-			"items[1]": "",
-			"items[2]": "",
 			"planned": "Folgende Versionen des Kulturkatasters sind geplant:"
 		}
 	},
@@ -284,60 +221,6 @@
 					"title": "Barriere: Fehlende Rückmeldung bei Interaktionen"
 				}
 			],
-			"barriers[0]": {
-				"description": "",
-				"measures": "",
-				"timeline": "",
-				"title": ""
-			},
-			"barriers[1]": {
-				"description": "",
-				"measures": "",
-				"timeline": "",
-				"title": ""
-			},
-			"barriers[2]": {
-				"description": "",
-				"measures": "",
-				"timeline": "",
-				"title": ""
-			},
-			"barriers[3]": {
-				"description": "",
-				"measures": "",
-				"timeline": "",
-				"title": ""
-			},
-			"barriers[4]": {
-				"description": "",
-				"measures": "",
-				"timeline": "",
-				"title": ""
-			},
-			"barriers[5]": {
-				"description": "",
-				"measures": "",
-				"timeline": "",
-				"title": ""
-			},
-			"barriers[6]": {
-				"description": "",
-				"measures": "",
-				"timeline": "",
-				"title": ""
-			},
-			"barriers[7]": {
-				"description": "",
-				"measures": "",
-				"timeline": "",
-				"title": ""
-			},
-			"barriers[8]": {
-				"description": "",
-				"measures": "",
-				"timeline": "",
-				"title": ""
-			},
 			"description": "Die nachstehend aufgeführten Bereiche sind aus folgenden Gründen nicht barrierefrei:",
 			"descriptionLabel": "Beschreibung",
 			"list_intro": "Teilbereiche, die nicht barrierefrei sind:",
@@ -405,9 +288,24 @@
 						"label": "Icon",
 						"placeholder": "Optionaler Icon-Name"
 					},
+					"iconUpload": {
+						"currentFile": "Aktuelle Datei ansehen",
+						"label": "SVG-Icon hochladen",
+						"description": "Optional. Eine SVG-Datei in Supabase Storage hochladen.",
+						"remove": "Icon entfernen",
+						"selected": "Ausgewählt: {{name}}"
+					},
 					"key": {
 						"label": "Schlüssel",
 						"placeholder": "z. B. museen"
+					},
+					"localizedLabelDe": {
+						"label": "Name (Deutsch)",
+						"placeholder": "z. B. Museen"
+					},
+					"localizedLabelEn": {
+						"label": "Name (Englisch)",
+						"placeholder": "z. B. Museums"
 					},
 					"parent": {
 						"label": "Übergeordnete Kategorie",
@@ -428,9 +326,14 @@
 	},
 	"categoryTable": {
 		"actions": {
-			"add": "Kategorie hinzufügen"
+			"add": "Kategorie hinzufügen",
+			"editSubcategory": "Unterkategorie bearbeiten"
 		},
 		"columns": {
+			"description": "Beschreibung",
+			"icon": "Icon",
+			"key": "Name",
+			"status": "Status",
 			"parent": "Übergeordnet",
 			"subcategories": "Unterkategorien"
 		},
@@ -438,7 +341,8 @@
 			"description": "Erstellen Sie eine Kategorie, um Inhalte besser zu strukturieren.",
 			"title": "Keine Kategorien gefunden."
 		},
-		"emptyMessage": "Keine Kategorien gefunden."
+		"emptyMessage": "Keine Kategorien gefunden.",
+		"searchPlaceholder": "Kategorien suchen..."
 	},
 	"downloadModal": {
 		"chooseFormat": "Dateiformat wählen",
@@ -563,9 +467,9 @@
 			"created": "Erstellt",
 			"createdAt": "Erstellt am",
 			"description": "Beschreibung",
-			"kulturorte": "Kulturorte",
+			"institutions": "Kulturorte",
 			"name": "Name",
-			"updatedAt": "Aktualisiert am",
+			"updated": "Aktualisiert am",
 			"users": "Benutzer*innen"
 		},
 		"empty": {
@@ -681,26 +585,6 @@
 					"question": "Wie kann ich meinen Kulturort aus dem Kulturkataster löschen lassen?"
 				}
 			],
-			"questions[0]": {
-				"answer": "",
-				"question": ""
-			},
-			"questions[1]": {
-				"answer": "",
-				"question": ""
-			},
-			"questions[2]": {
-				"answer": "",
-				"question": ""
-			},
-			"questions[3]": {
-				"answer": "",
-				"question": ""
-			},
-			"questions[4]": {
-				"answer": "",
-				"question": ""
-			},
 			"title": "Fragen & Antworten"
 		},
 		"featuresListAriaLabel": "Liste der verfügbaren Projektfunktionen",
@@ -710,10 +594,6 @@
 			"Sie können uns dabei helfen. Unter diesem [Link https://form.formcentric.com/form/fb8189d9-8887-425d-bdd5-4aec08f7d8d5] können Sie fehlende Kulturorte einreichen und Änderungen vorschlagen. Für Anregungen und Kritik erreichen Sie uns unter: info@kulturkataster.berlin",
 			"Die aktuelle Version des Kulturkatasters ist die Version 1."
 		],
-		"introduction[0]": "",
-		"introduction[1]": "",
-		"introduction[2]": "",
-		"introduction[3]": "",
 		"scope": {
 			"features": [
 				"{{count}} Kulturorte mit den Grundinformationen (Name, vollständige Adresse, allgemeine Kontaktinformationen, Angaben zu Förderung und Finanzierung)",
@@ -722,11 +602,6 @@
 				"Ein Suchfeld, indem Sie nach Adressen und Namen von Kulturorten suchen können.",
 				"Einen Suchfilter, der es ermöglicht, Orte nach Bezirk sowie Kategorie und Unterkategorie zu filtern. Darüber hinaus ist es möglich, geschlossene Kulturorte einzublenden."
 			],
-			"features[0]": "",
-			"features[1]": "",
-			"features[2]": "",
-			"features[3]": "",
-			"features[4]": "",
 			"title": "Umfang Version 1",
 			"upcomingEnhancements": {
 				"items": [
@@ -734,9 +609,6 @@
 					"Informationen in Leichter Sprache",
 					"Barrierearme Listenansicht"
 				],
-				"items[0]": "",
-				"items[1]": "",
-				"items[2]": "",
 				"title": "Folgende Erweiterungen für Version 1 werden bis November 2025 ergänzt"
 			}
 		},
@@ -795,55 +667,6 @@
 					"title": "Kontrast anpassen"
 				}
 			],
-			"guides[0]": {
-				"desktop": "",
-				"mobile": "",
-				"title": ""
-			},
-			"guides[1]": {
-				"desktop": "",
-				"mobile": "",
-				"title": ""
-			},
-			"guides[2]": {
-				"action": "",
-				"desktop": "",
-				"mobile": "",
-				"title": ""
-			},
-			"guides[3]": {
-				"closedPlaces": "",
-				"description": "",
-				"desktop": "",
-				"mobile": "",
-				"title": ""
-			},
-			"guides[4]": {
-				"description": "",
-				"desktop": "",
-				"mobile": "",
-				"title": ""
-			},
-			"guides[5]": {
-				"desktop": "",
-				"instructions": "",
-				"mobile": "",
-				"review": "",
-				"submit": "",
-				"title": ""
-			},
-			"guides[6]": {
-				"action": "",
-				"desktop": "",
-				"mobile": "",
-				"title": ""
-			},
-			"guides[7]": {
-				"action": "",
-				"desktop": "",
-				"mobile": "",
-				"title": ""
-			},
 			"introduction": "Das Kulturkataster Berlin wurde so konzipiert, dass es möglichst intuitiv bedient werden kann. Funktionalitäten orientieren sich an gängigen Kartenanwendungen. Grundlegende Bedienungshinweise haben wir an dieser Stelle für Sie zusammengefasst.",
 			"title": "Bedienung"
 		}
@@ -902,21 +725,16 @@
 		},
 		"form": {
 			"basic": {
-				"name": {
-					"label": "Name des Kulturortes",
-					"placeholder": "z. B. Staatliche Kunsthalle"
-				},
-				"sectionTitle": "Grundinformationen",
-				"utilizationStatusInfo": {
-					"label": "Weitere Informationen zum Nutzungsstatus",
-					"placeholder": "Zusätzliche Details zum Nutzungsstatus"
-				}
+				"sectionTitle": "Grundinformationen"
 			},
 			"category": {
 				"newCategory": {
 					"description": "Mehrere Kategorien bitte durch Komma trennen.",
 					"label": "Neue Kategorie(n) vorschlagen",
 					"placeholder": "z. B. Neue Kategorie"
+				},
+				"validation": {
+					"minSelection": "Bitte wählen Sie mindestens eine Kategorie aus."
 				}
 			},
 			"contact": {
@@ -925,40 +743,24 @@
 					"requestAdminRights": "Ich bin verantwortlich für diesen Kulturort und möchte ihn der Liste in meinem Profil hinzufügen und die Administrationsrechte dafür erhalten.",
 					"title": "Abschließende Angaben",
 					"worksForOrganization": "Ich arbeite für diese Kulturorganisation."
-				},
-				"email": {
-					"label": "Kontaktperson E-Mail",
-					"placeholder": "z. B. max.mustermann@example.com"
-				},
-				"firstName": {
-					"label": "Kontaktperson Vorname",
-					"placeholder": "z. B. Max"
-				},
-				"lastName": {
-					"label": "Kontaktperson Nachname",
-					"placeholder": "z. B. Mustermann"
-				},
-				"phone": {
-					"label": "Kontaktperson Telefon",
-					"placeholder": "z. B. +49 30 1234567"
 				}
 			},
 			"information": {
-				"accessibility": {
-					"label": "Barrierefreiheit",
-					"placeholder": "z. B. Rollstuhlgerecht, Aufzug vorhanden, barrierefreie Toiletten"
-				},
 				"accordions": {
 					"accessibility": {
+						"description": "Informationen zur Barrierefreiheit der Kultureinrichtung.",
 						"title": "Barrierefreiheit"
 					},
 					"closing": {
+						"description": "Diese Angabe betrifft nur bereits geschlossene Orte.",
 						"title": "Schließungsgründe"
 					},
 					"cost": {
+						"description": "Angaben zu Eintrittspreisen oder Nutzungskosten.",
 						"title": "Kosten"
 					},
 					"establishment": {
+						"description": "Zeitraum der Nutzung oder Eröffnung am Standort.",
 						"title": "Zeitraum am Standort"
 					},
 					"funding": {
@@ -966,6 +768,7 @@
 						"title": "Art der Förderung"
 					},
 					"fundingSources": {
+						"description": "Geben Sie die Finanzierungsquellen Ihrer Kultureinrichtung an.",
 						"title": "Art der Finanzierung"
 					},
 					"organization": {
@@ -973,6 +776,7 @@
 						"title": "Organisationsform"
 					},
 					"ownership": {
+						"description": "Diese Information wird ausschließlich für befugte Nutzer*innen im geschützten Bereich des Kulturkatasters zugänglich und nicht öffentlich einsehbar sein.",
 						"title": "Eigentumsverhältnisse"
 					},
 					"protection": {
@@ -980,27 +784,35 @@
 						"title": "Sicherungsstatus"
 					},
 					"rental": {
+						"description": "Diese Information wird ausschließlich für befugte Nutzer*innen im geschützten Bereich des Kulturkatasters zugänglich und nicht öffentlich einsehbar sein.",
 						"title": "Miet- und Nutzungsverhältnisse"
 					},
 					"sharedUseAccessibility": {
+						"description": "Ist der Raum barrierefrei zugänglich? Welche Barrieren sind vorhanden?",
 						"title": "Barrierefreiheit"
 					},
 					"sharedUseAudience": {
+						"description": "Für welche Art von Aktivitäten ist der Raum geeignet? Zum Beispiel: \"geeignet für Tanzproben und Workshops\" oder \"ideal für Lesungen und kleine Konzerte.\"",
 						"title": "Zielgruppe/Sparte"
 					},
 					"sharedUseAvailability": {
+						"description": "Wann kann der Raum genutzt werden? Sind es bestimmte Tage, Tageszeiten oder Zeiträume?",
 						"title": "Zeitliche Verfügbarkeiten"
 					},
 					"sharedUseContactPerson": {
+						"description": "Geben Sie hier bitte einen Kontakt per E-Mail und/oder Telefon an. Sofern es eine Ansprechperson gibt, können Sie den Namen ebenfalls angeben. Sofern Sie hier personenbezogene Daten eintragen, beachten Sie bitte, dass Sie mit Absenden des Formulars der Veröffentlichung dieser Daten im Kulturkataster zustimmen müssen.",
 						"title": "Kontakt für Raumanfragen"
 					},
 					"sharedUseCost": {
+						"description": "Wie hoch sind die Kosten für die Nutzung? Gibt es einen Stunden-, Tages- oder Wochenpreis? Sind die Kosten verhandelbar?",
 						"title": "Kosten"
 					},
 					"sharedUseEquipment": {
+						"description": "Welche Infrastruktur ist vorhanden? Gibt es Tische, Stühle, eine Küche, WLAN, Licht- und Tontechnik? Jedes Detail kann entscheidend sein.",
 						"title": "Ausstattung"
 					},
 					"sharedUseInfo": {
+						"description": "Beschreiben, welche Informationen hier eingetragen werden sollen, evtl. mit Aufzählung von Beispielen",
 						"title": "Beschreibung der Räume/Flächen"
 					},
 					"space": {
@@ -1011,28 +823,14 @@
 				"closingReason": {
 					"placeholder": "Gründe für die Schließung angeben"
 				},
-				"cost": {
-					"label": "Kosten",
-					"placeholder": "z. B. Eintritt frei, 5-10 Euro, ermäßigt 3 Euro"
-				},
 				"datePlaceholder": "DD.MM.YYYY",
-				"fundingSources": {
-					"addButtonLabel": "Finanzierungsquelle hinzufügen",
-					"descriptionLabel": "Details",
-					"descriptionPlaceholder": "z. B. Förderung seit 2020, jährlich 50.000€",
-					"label": "Finanzierungsquellen",
-					"removeButtonLabel": "Entfernen",
-					"sourceLabel": "Art der Finanzierung",
-					"sourcePlaceholder": "z. B. Land Berlin, Bezirk Mitte"
-				},
-				"notes": {
-					"placeholder": "Weitere Informationen, die für das Kulturkataster relevant sein könnten"
+				"datePlaceholderWithYear": "DD.MM.YYYY oder YYYY",
+				"establishment": {
+					"sinceDescription": "Bitte tragen Sie das Datum der erstmaligen Nutzung oder Eröffnung am Standort ein. Falls das genaue Datum nicht bekannt ist, reicht auch die Angabe des Jahres.",
+					"untilDescription": "Bitte tragen Sie das Datum ein, bis zu dem die Kultureinrichtung an diesem Standort aktiv war. Diese Angabe betrifft nur bereits geschlossene Orte. Falls das genaue Datum nicht bekannt ist, reicht auch die Angabe des Jahres."
 				},
 				"organization": {
 					"legalFormPlaceholder": "z. B. e.V., gGmbH, GbR"
-				},
-				"ownerName": {
-					"placeholder": "Name der/des Eigentümer*in"
 				},
 				"protectionStatus": {
 					"acutelyThreatened": "Akut bedroht",
@@ -1041,9 +839,6 @@
 					"notYetSecured": "Noch nicht gesichert",
 					"permanentlyClosed": "Dauerhaft geschlossen",
 					"uncertain": "Unsicher"
-				},
-				"protectionStatusInfo": {
-					"placeholder": "Weitere Informationen zum Sicherungsstatus"
 				},
 				"rentalContract": {
 					"hereditaryBuildingRight": "Erbbaurecht"
@@ -1063,12 +858,12 @@
 						"no": "Nein",
 						"yes": "Ja"
 					}
-				},
-				"space": {
-					"areaPlaceholder": "z. B. 150",
-					"capacityPlaceholder": "z. B. 100 Personen",
-					"roomsPlaceholder": "z. B. 5"
 				}
+			}
+		},
+		"feedback": {
+			"submit": {
+				"pendingConflict": "Du hast bereits eine offene Einreichung für diesen Kulturort eingereicht."
 			}
 		},
 		"stepLabel": "Schritt {{current}} / {{total}}",
@@ -1142,84 +937,15 @@
 		},
 		"form": {
 			"additional": {
-				"fields": {
-					"notes": {
-						"placeholder": "Weitere Informationen, die für das Kulturkataster relevant sein könnten"
-					}
-				},
 				"title": "Zusätzliche Informationen"
 			},
 			"contact": {
-				"fields": {
-					"email": {
-						"placeholder": "kontakt@..."
-					},
-					"phone": {
-						"placeholder": "+49 ..."
-					},
-					"protection_status_info": {
-						"placeholder": "Zusätzliche Details zum Sicherungsstatus"
-					},
-					"website": {
-						"placeholder": "https://..."
-					}
-				},
 				"title": "Kontakt"
 			},
 			"details": {
 				"description": {
 					"create": "Legen Sie einen neuen Kulturort an.",
 					"edit": "Aktualisieren Sie die Kulturorte."
-				},
-				"fields": {
-					"address": {
-						"address_suffix": {
-							"placeholder": "z. B. 2. OG"
-						},
-						"city": {
-							"placeholder": "z. B. Berlin"
-						},
-						"cultural_areal": {
-							"placeholder": "z. B. Kulturforum"
-						},
-						"neighbourhood": {
-							"placeholder": "z. B. Mitte"
-						},
-						"placeholder": "Straße, Hausnummer, PLZ, Ort",
-						"streetLine": {
-							"placeholder": "z. B. Musterstraße 1"
-						},
-						"zip": {
-							"placeholder": "z. B. 10115"
-						}
-					},
-					"categories": {
-						"emptyText": "Keine Kategorien gefunden.",
-						"placeholder": "Kategorien auswählen",
-						"searchPlaceholder": "Kategorien durchsuchen..."
-					},
-					"description": {
-						"placeholder": "Optionale Beschreibung"
-					},
-					"email": {
-						"placeholder": "kontakt@..."
-					},
-					"name": {
-						"placeholder": "Institutionsname"
-					},
-					"parentOrganization": {
-						"description": "Name der übergeordneten Organisation",
-						"placeholder": "z. B. Kulturverein Berlin e.V."
-					},
-					"parent_organization": {
-						"placeholder": "z. B. Kulturverein Berlin e.V."
-					},
-					"phone": {
-						"placeholder": "+49 ..."
-					},
-					"website": {
-						"placeholder": "https://..."
-					}
 				},
 				"title": "Details"
 			},
@@ -1231,6 +957,14 @@
 			},
 			"organization": {
 				"title": "Organisation"
+			},
+			"sharedUse": {
+				"description": "Geben Sie an, ob die Räumlichkeiten für die Mehrfachnutzung zur Verfügung stehen.",
+				"options": {
+					"no": "Nein",
+					"yes": "Ja"
+				},
+				"title": "Mehrfachnutzung"
 			},
 			"status": {
 				"title": "Status"
@@ -1466,60 +1200,6 @@
 				]
 			}
 		],
-		"content[0]": {
-			"title": "",
-			"videos[0]": {
-				"src": "",
-				"title": ""
-			},
-			"videos[1]": {
-				"src": "",
-				"title": ""
-			},
-			"videos[2]": {
-				"src": "",
-				"title": ""
-			}
-		},
-		"content[1]": {
-			"title": "",
-			"videos[0]": {
-				"src": "",
-				"sub": "",
-				"title": ""
-			},
-			"videos[1]": {
-				"src": "",
-				"title": ""
-			},
-			"videos[2]": {
-				"src": "",
-				"title": ""
-			}
-		},
-		"content[2]": {
-			"title": "",
-			"videos[0]": {
-				"src": "",
-				"title": ""
-			},
-			"videos[1]": {
-				"src": "",
-				"title": ""
-			},
-			"videos[2]": {
-				"src": "",
-				"title": ""
-			},
-			"videos[3]": {
-				"src": "",
-				"title": ""
-			},
-			"videos[4]": {
-				"src": "",
-				"title": ""
-			}
-		},
 		"description": "Hier finden Sie alle Informationen zum Kulturkataster Berlin in Deutscher Gebärdensprache (DGS). Die Videos erklären die wichtigsten Inhalte der Website – von „Über das Kulturkataster“ über „Info & Service“ bis hin zu den häufig gestellten Fragen (FAQ). Sie können die einzelnen Videos direkt abspielen.",
 		"subtitle": "Barrierefreie Informationen über das Kulturkataster Berlin",
 		"title": "Gebärdensprache (DGS)"
@@ -1534,11 +1214,6 @@
 					"Ein Ort zum Lernen und Erinnern",
 					"Ein Ort für Zusammen·halt in der Gesellschaft"
 				],
-				"content[0]": "",
-				"content[1]": "",
-				"content[2]": "",
-				"content[3]": "",
-				"content[4]": "",
 				"title": "Sie sind:"
 			},
 			"list2": {
@@ -1547,9 +1222,6 @@
 					"Was braucht Berlin?",
 					"Wie kann man das Kultur·kataster machen?"
 				],
-				"content[0]": "",
-				"content[1]": "",
-				"content[2]": "",
 				"title1": "Ende 2022 bekam die Kultur·raum Berlin gGmbH den Auftrag.",
 				"title2": "Sie sollte überlegen:"
 			},
@@ -1559,9 +1231,6 @@
 					"Damit kann man bessere Politik machen.",
 					"Damit kann man die Stadt gezielt entwickeln."
 				],
-				"content[0]": "",
-				"content[1]": "",
-				"content[2]": "",
 				"title": "1. Kultur·politik mit Fakten machen"
 			},
 			"list4": {
@@ -1570,9 +1239,6 @@
 					"Es hilft beim Schutz von Kultur·orten.",
 					"Es hilft neue Orte zu finden."
 				],
-				"content[0]": "",
-				"content[1]": "",
-				"content[2]": "",
 				"title": "2. Räume für Kultur sichern und neu finden"
 			},
 			"list5": {
@@ -1581,9 +1247,6 @@
 					"So kann man Kultur·orte besser planen.",
 					"Ziel ist: Alle Menschen in Berlin sollen Kultur erleben."
 				],
-				"content[0]": "",
-				"content[1]": "",
-				"content[2]": "",
 				"title": "3. Gerechte Verteilung von Kultur"
 			},
 			"list6": {
@@ -1592,9 +1255,6 @@
 					"Es hilft Behörden und Politik zusammen zu arbeiten.",
 					"Es hilft auch der ganzen Berliner Kultur·szene."
 				],
-				"content[0]": "",
-				"content[1]": "",
-				"content[2]": "",
 				"title": "4. Zusammen·arbeit verbessern"
 			},
 			"list7": {
@@ -1602,8 +1262,6 @@
 					"Immer näher an den echten Zustand kommen.",
 					"Die Kultur von Berlin gut zeigen."
 				],
-				"content[0]": "",
-				"content[1]": "",
 				"title": "Darum ist das Ziel:"
 			},
 			"list8": {
@@ -1615,12 +1273,6 @@
 					"Aktivistinnen und Aktivisten",
 					"Den Kultur·orten selbst"
 				],
-				"content[0]": "",
-				"content[1]": "",
-				"content[2]": "",
-				"content[3]": "",
-				"content[4]": "",
-				"content[5]": "",
 				"title": "Das geht nur zusammen mit:"
 			},
 			"list9": {
@@ -1629,9 +1281,6 @@
 					"Jede Version hat neue Funktionen.",
 					"Jede Version hat aktuelle Infos."
 				],
-				"content[0]": "",
-				"content[1]": "",
-				"content[2]": "",
 				"title1": "Das Kultur·kataster ist ein Lern·prozess.",
 				"title2": "Das heißt:"
 			},
@@ -1716,16 +1365,11 @@
 		"infosAndServices": {
 			"list1": {
 				"content": ["Anfang 2026 Version 2", "Mitte 2026 Version 3"],
-				"content[0]": "",
-				"content[1]": "",
 				"title1": "Das Kultur·kataster wächst immer weiter.",
 				"title2": "Im Jahr 2026 gibt es 2 neue Versionen:"
 			},
 			"list2": {
 				"content": ["Mehr Kultur·ort", "Mehr Infos", "Mehr Funktionen"],
-				"content[0]": "",
-				"content[1]": "",
-				"content[2]": "",
 				"title": "Mit jeder Version gibt es:"
 			},
 			"list3": {
@@ -1738,15 +1382,7 @@
 					"Infos in Deutscher Gebärden·sprache",
 					"Infos in Leichter Sprache",
 					"Barriere·arme Listen·ansicht"
-				],
-				"content[0]": "",
-				"content[1]": "",
-				"content[2]": "",
-				"content[3]": "",
-				"content[4]": "",
-				"content[5]": "",
-				"content[6]": "",
-				"content[7]": ""
+				]
 			},
 			"list4": {
 				"content": [
@@ -1754,9 +1390,7 @@
 					"Nach Kategorien.",
 					"Nach Unter·kategorien."
 				],
-				"content[0]": "",
-				"content[1]": "",
-				"content[2]": "",
+
 				"title": "Sie können Kultur·orte filtern:",
 				"titleBold": "Filtern"
 			},
@@ -1765,8 +1399,6 @@
 					"Nur kurz geschlossene Kultur·orte",
 					"Für immer geschlossene Kultur·orte"
 				],
-				"content[0]": "",
-				"content[1]": "",
 				"title": "Dann sehen Sie auch:"
 			},
 			"list6": {
@@ -1774,8 +1406,6 @@
 					"Einverständnis·erklärung ankreuzen",
 					"Formular abschicken"
 				],
-				"content[0]": "",
-				"content[1]": "",
 				"title": "Dann müssen Sie:"
 			},
 			"list7": {
@@ -1785,17 +1415,11 @@
 					"Künstler·residenzen",
 					"Kultur·organisationen"
 				],
-				"content[0]": "",
-				"content[1]": "",
-				"content[2]": "",
-				"content[3]": "",
 				"title1": "Noch fehlen viele Kategorien.",
 				"title2": "Zum Beispiel:"
 			},
 			"list8": {
 				"content": ["Private Galerien", "Private Kunst·schulen"],
-				"content[0]": "",
-				"content[1]": "",
 				"title1": "Auch in bestehenden Kategorien fehlen Orte.",
 				"title2": "Zum Beispiel:"
 			},
@@ -1805,9 +1429,6 @@
 					"Am Handy oder Tablet: Stift·symbol unten rechts antippen",
 					"Dann den Anweisungen folgen"
 				],
-				"content[0]": "",
-				"content[1]": "",
-				"content[2]": "",
 				"title": "So geht es:"
 			},
 			"subTitle1": "Was ist dabei in Version 1",

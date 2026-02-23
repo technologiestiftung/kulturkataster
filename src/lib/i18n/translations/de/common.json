@@ -3,58 +3,114 @@
 	"accessibility": {
 		"contrast": {
 			"darkMode": "Dunkler Modus",
-			"description": "Aktivieren Sie den Kontrastmodus, um die Lesbarkeit zu verbessern. Dieser Modus erhöht den Kontrast zwischen Text und Hintergrund.",
-			"lightMode": "Heller Modus",
-			"title": "Kontrast anpassen"
+			"lightMode": "Heller Modus"
 		},
 		"fontSize": {
-			"description": "Sie können die Schriftgröße der Website anpassen, um die Lesbarkeit zu verbessern. Nutzen Sie die Schaltflächen unten, um die Schriftgröße zu vergrößern oder zu verkleinern.",
 			"title": "Vergrößerte Schriften"
 		},
 		"signLanguage": {
-			"description": "Dieses Video erklärt die Barrierefreiheit der Website in Gebärdensprache.",
 			"title": "Deutsche Gebärdensprache"
 		},
 		"simpleLanguage": {
-			"description": "Diese Seite bietet Informationen zur Barrierefreiheit in einfacher Sprache.",
 			"title": "Leichte Sprache"
 		},
 		"switchOff": "Aus",
 		"switchOn": "An",
 		"title": "Barrierefreiheit",
 		"viewMode": {
-			"description": "Wechseln Sie zwischen der Kartenansicht und der Listenansicht, um die Kulturorte auf die für Sie angenehmste Weise zu erkunden.",
 			"title": "Listenansicht der Kulturorte"
 		}
 	},
 	"add": {
-		"description": "Fügen Sie einen neuen Kulturort hinzu, indem Sie das Formular ausfüllen. Wir prüfen Ihre Angaben und veröffentlichen den Ort nach Freigabe.",
 		"title": "Mitwirken"
 	},
 	"alert": {
-		"close": "Alarm schließen",
 		"error": "Oh nein! Es gab ein Fehler!",
 		"errorFixFields": "Bitte beheben Sie die hervorgehobenen Fehler.",
 		"errorInput": "Eingabefehler",
-		"info": "Info! Info! Info!",
-		"success": "Ein großer Erfolg!",
-		"warning": "Warnung - Jetzt aufpassen!"
+		"info": "Hinweis",
+		"success": "Erfolg",
+		"warning": "Warnung"
 	},
-	"user": {
-		"title": "Mein Konto"
+	"categoryFormModal": {
+		"status": {
+			"active": "Aktiv",
+			"inactive": "Inaktiv"
+		}
+	},
+	"categoryTable": {
+		"actions": {
+			"add": "Kategorie hinzufügen",
+			"editSubcategory": "Unterkategorie bearbeiten"
+		},
+		"columns": {
+			"description": "Beschreibung",
+			"icon": "Icon",
+			"key": "Name",
+			"parent": "Übergeordnet",
+			"subcategories": "Unterkategorien"
+		},
+		"empty": {
+			"description": "Erstellen Sie eine Kategorie, um Inhalte besser zu strukturieren.",
+			"title": "Keine Kategorien gefunden."
+		},
+		"emptyMessage": "Keine Kategorien gefunden.",
+		"searchPlaceholder": "Kategorien suchen..."
+	},
+	"institutionDraftIntroModal": {
+		"choice": {
+			"guest": {
+				"cta": "Weiter als Gast",
+				"description": "Sie können natürlich auch gern mitwirken, ohne sich bei uns anzumelden.",
+				"title": "Fortfahren ohne Anmeldung"
+			},
+			"login": {
+				"cta": "Zur Anmeldung",
+				"description": "Für die schnellere Bearbeitung Ihrer Einträge und die Übersicht empfehlen wir Ihnen, sich im Kulturkatasterportal anzumelden oder zu registrieren.",
+				"title": "Melden Sie sich an oder registrieren Sie sich, um fortzufahren."
+			},
+			"title": "Wie möchten Sie fortfahren?"
+		},
+		"intro": {
+			"back": "Zurück",
+			"cta": "Weiter",
+			"description": "Zum Mitwirken tragen Sie bitte die benötigten Angaben in die jeweiligen Felder ein und klicken Sie am Ende des Formulars auf „Daten übermitteln“. Unser Redaktionsteam prüft jede Einsendung vor der Veröffentlichung und meldet sich ggfs. bei Rückfragen.",
+			"mode": {
+				"description": "Wählen Sie die passende Kategorie für die Kultureinrichtung aus. Falls mehrere Kategorien zutreffen, wählen Sie die primäre Kategorie aus.",
+				"edit": "Ergänzung oder Änderung eines oder mehrere bestehender Kulturorte",
+				"new": "Neue/n Kulturort/e eintragen",
+				"title": "Möchten Sie eine neue Kultureinrichtung eintragen oder einen bestehenden Datensatz ergänzen bzw. korrigieren? *"
+			},
+			"sectionNote": "Bitte beachten Sie, dass Sie Angaben nur dann machen sollten, wenn Sie sich der Richtigkeit sicher sind und einer Einwilligung zur Veröffentlichung im Kulturkataster zustimmen. Sollten Informationen nur für befugte Nutzer*innen im geschützten Bereich des Kulturkatasters zugänglich und nicht öffentlich einsehbar sein, haben wir dies am jeweiligen Datenfeld gekennzeichnet.",
+			"sectionTitle": "Basisinformation der Kultureinrichtung",
+			"thankYou": "Vielen Dank, dass Sie das Kulturkataster Berlin mit Ihrem Beitrag unterstützen!"
+		},
+		"submitSuccess": {
+			"cta": "Weitere Einreichung starten",
+			"description": "Dank Ihrer Eingabe wächst das Kulturkataster Berlin immer weiter und weiter und ermöglicht so vielen Menschen den Zugang zu neuen Kulturstandorten.",
+			"title": "Vielen Dank für Ihre Einreichung"
+		},
+		"title": "Mitwirken beim Kulturkataster Berlin"
+	},
+	"institutionModalCloseConfirmation": {
+		"cancel": "Abbrechen",
+		"confirm": "Verlassen",
+		"description": "Nicht gespeicherte Eingaben gehen verloren.",
+		"title": "Vorgang verlassen?"
 	},
 	"auth": {
 		"account": {
 			"actions": {
 				"faq": "FAQ",
 				"logout": "Abmelden",
-				"profileSettings": "Profileinstellungen"
+				"profileSettings": "Profileinstellungen",
+				"refreshData": "Daten aktualisieren"
 			},
 			"activity": {
 				"actions": {
 					"create": "erstellt",
 					"delete": "gelöscht",
-					"submission_review_approved": "freigegeben",
+					"submission_review_approved": "genehmigt",
 					"submission_review_completed": "abgeschlossen",
 					"submission_review_rejected": "abgelehnt",
 					"update": "aktualisiert"
@@ -66,22 +122,42 @@
 				},
 				"emptyHint": "Folgende Aktionen können Sie hier durchführen.",
 				"entities": {
-					"address": "Adresse #{{id}}",
-					"category": "Kategorie #{{id}}",
-					"contact_person": "Ansprechperson #{{id}}",
-					"funding_source": "Finanzierungsquelle #{{id}}",
-					"group": "Gruppe #{{id}}",
-					"institution": "Kulturort #{{id}}",
-					"role": "Rolle #{{id}}",
-					"role_field_permission": "Feldberechtigung #{{id}}",
-					"role_table_permission": "Tabellenberechtigung #{{id}}",
-					"submission": "Einreichung #{{id}}",
-					"tag": "Tag #{{id}}",
-					"user": "Nutzer*in ({{email}})"
+					"address": "Adresse",
+					"category": "Kategorie",
+					"contact_person": "Kontaktperson",
+					"funding_source": "Förderquelle",
+					"group": "Gruppe",
+					"institution": "Kulturort",
+					"role": "Rolle",
+					"role_field_permission": "Rollenfeld-Berechtigung",
+					"role_table_permission": "Rollentabellen-Berechtigung",
+					"submission": "Einreichung",
+					"tag": "Tag",
+					"user": "Nutzer*in"
+				},
+				"filters": {
+					"allDates": "Alle",
+					"allEntities": "Alle Entitäten",
+					"allStatuses": "Alle Status",
+					"allTypes": "Alle Typen",
+					"allUsers": "Alle Nutzer*innen",
+					"dateValue": {
+						"last30Days": "Letzte 30 Tage",
+						"last7Days": "Letzte 7 Tage",
+						"lastMonth": "Letzter Monat",
+						"thisMonth": "Dieser Monat",
+						"today": "Heute"
+					},
+					"empty": "Keine Aktivitäten für die aktuellen Filter.",
+					"search": "Aktivität durchsuchen",
+					"typeValue": {
+						"assign": "Zuweisung",
+						"create": "Erstellt/Aktualisiert",
+						"status_change": "Statuswechsel"
+					}
 				},
 				"hiddenActor": "Redaktion",
 				"itemWithName": "{{item}}: {{name}}",
-				"relationPreposition": "zu",
 				"status": {
 					"approved": "Genehmigt",
 					"completed": "Abgeschlossen",
@@ -91,27 +167,43 @@
 				"statusAria": "Status: {{status}}",
 				"system": "System",
 				"templates": {
-					"assign": "<actor>{{actor}}</actor> hat <secondary>{{secondaryEntity}}</secondary> <primary>{{primaryEntity}}</primary> {{action}}",
+					"assign": "<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> auf Basis von <secondary>{{secondaryEntity}}</secondary> {{action}}",
+					"assignBasedOn": "<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> auf Basis von <secondary>{{secondaryEntity}}</secondary> {{action}}",
 					"create": "<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> {{action}}",
 					"statusChange": "<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> {{action}} <from>{{from}}</from> -> <to>{{to}}</to>",
+					"statusChangeBasedOnSecondary": "<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> auf Basis von <secondary>{{secondaryEntity}}</secondary> {{action}}  <from>{{from}}</from> -> <to>{{to}}</to>",
+					"statusChangeBasedOnSecondaryNoDiff": "<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> auf Basis von <secondary>{{secondaryEntity}}</secondary> {{action}}",
 					"statusChangeNoDiff": "<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> {{action}}",
-					"statusChangeWithSecondary": "<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> für <secondary>{{secondaryEntity}}</secondary> {{action}}  <from>{{from}}</from> -> <to>{{to}}</to>",
-					"statusChangeWithSecondaryNoDiff": "<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> für <secondary>{{secondaryEntity}}</secondary> {{action}}"
+					"statusChangeWithSecondary": "<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> auf Basis von <secondary>{{secondaryEntity}}</secondary> {{action}}  <from>{{from}}</from> -> <to>{{to}}</to>",
+					"statusChangeWithSecondaryNoDiff": "<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> auf Basis von <secondary>{{secondaryEntity}}</secondary> {{action}}"
 				},
 				"unknown": "Unbekannt"
 			},
-			"alreadyAccount": "Haben Sie bereits ein Konto beim Kulturkataster?",
-			"backToMap": "Zur Karte",
-			"comingSoon": "Ihr Kontobereich ist bald verfügbar.",
-			"continueGuest": "Als Gast fortfahren",
 			"faqModal": {
-				"placeholder": "Inhalt folgt in einem nächsten Schritt.",
+				"contactSupport": {
+					"description": "Bei Fragen können Sie uns direkt kontaktieren.",
+					"emailLabel": "E-Mail",
+					"phoneLabel": "Telefon",
+					"title": "Kontakt"
+				},
+				"question1": {
+					"answer": "Öffnen Sie die Profileinstellungen und speichern Sie Ihre Änderungen.",
+					"title": "Wie kann ich mein Profil bearbeiten?"
+				},
+				"question2": {
+					"answer": "Unter Kulturorte können Sie Einträge erstellen, bearbeiten und prüfen.",
+					"title": "Wie kann ich Kulturorte verwalten?"
+				},
+				"question3": {
+					"answer": "Nutzen Sie die Funktion Kulturort beanspruchen und reichen Sie den Antrag ein.",
+					"title": "Wie beantrage ich Rechte für einen Kulturort?"
+				},
 				"subtitle": "Häufig gestellte Fragen zum Konto-Bereich.",
+				"technicalSupport": {
+					"emailLabel": "Technischer Support"
+				},
 				"title": "Fragen & Antworten"
 			},
-			"intro": "Erstellen Sie ein Konto für personalisierte Funktionen oder fahren Sie als Gast fort.",
-			"signIn": "Melden Sie sich hier an.",
-			"signUp": "Registrieren",
 			"subtitle": "Meine Profilübersicht",
 			"tabs": {
 				"activity": "Aktivität",
@@ -121,7 +213,6 @@
 				"roles": "Rollen",
 				"users": "Nutzer*innen"
 			},
-			"title": "Konto",
 			"welcome": "Willkommen, {{name}}!"
 		},
 		"accountEdit": {
@@ -149,7 +240,6 @@
 		},
 		"forgot": {
 			"backToSignIn": "Zurück zum Login",
-			"description": "Geben Sie Ihre E-Mail-Adresse ein. Wir senden Ihnen einen Link zum Zurücksetzen Ihres Passworts.",
 			"emailLabel": "E-Mail-Adresse",
 			"emailPlaceholder": "name@beispiel.de",
 			"errorFallback": "Passwort-Reset konnte nicht angefordert werden.",
@@ -157,7 +247,6 @@
 			"submit": "Passwort zurücksetzen",
 			"submitting": "Wird gesendet...",
 			"subtitle": "Wir senden Ihnen einen Link zum Zurücksetzen Ihres Passworts.",
-			"successCta": "Zur Anmeldung",
 			"successMessage": "Bitte prüfen Sie Ihr E-Mail-Postfach. Falls ein Account existiert, haben wir Ihnen einen Link zum Zurücksetzen des Passworts gesendet.",
 			"successTitle": "E-Mail gesendet",
 			"title": "Passwort vergessen"
@@ -196,7 +285,6 @@
 			"administrationPosition": "Was ist ihre Funktion/Position?",
 			"administrationPositionPlaceholder": "Ihre Position eingeben",
 			"alreadyAccount": "Haben Sie bereits ein Konto beim Kulturkataster? ",
-			"confirmEmail": "Bitte bestätigen Sie Ihr Konto über den Link in Ihrer E-Mail.",
 			"confirmPassword": "Passwort wiederholen",
 			"confirmPasswordPlaceholder": "Passwort wiederholen",
 			"districtName": "Bitte nennen Sie Ihren Bezirk",
@@ -244,7 +332,6 @@
 			"confirmPasswordLabel": "Passwort bestätigen",
 			"confirmPasswordPlaceholder": "Passwort bestätigen",
 			"errorFallback": "Passwort konnte nicht aktualisiert werden.",
-			"loading": "Passwort wird vorbereitet…",
 			"metaTitle": "Passwort zurücksetzen – Kulturkataster",
 			"missingToken": "Dieser Link ist ungültig oder abgelaufen. Bitte fordern Sie eine neue Einladung an.",
 			"newPasswordLabel": "Neues Passwort",
@@ -253,6 +340,8 @@
 			"submit": "Passwort festlegen",
 			"submitting": "Passwort wird festgelegt...",
 			"subtitle": "Erstellen Sie ein Passwort, um Ihr Konto zu nutzen.",
+			"successMessage": "Ihr Passwort wurde erfolgreich aktualisiert.",
+			"successTitle": "Passwort aktualisiert",
 			"title": "Passwort festlegen"
 		},
 		"validation": {
@@ -286,9 +375,6 @@
 	"confirm": "Schließen",
 	"delete": "Löschen",
 	"download": {
-		"description": "Laden Sie die Daten der Kulturorte im JSON-Format herunter. Diese Daten können für eigene Anwendungen oder Analysen verwendet werden.",
-		"downloadButton": "Daten herunterladen",
-		"downloading": "Daten werden heruntergeladen...",
 		"title": "Liste herunterladen"
 	},
 	"edit": "Bearbeiten",
@@ -296,11 +382,7 @@
 		"address": "info@kulturkataster.berlin",
 		"label": "E-Mail"
 	},
-	"fileFormat": {
-		"csv": "CSV",
-		"xls": "XLS",
-		"xlsx": "XLSX"
-	},
+	"error": "Fehler",
 	"filter": {
 		"title": "Kulturorte filtern"
 	},
@@ -313,28 +395,18 @@
 			"suffix": "Kulturraum Berlin gGmbH",
 			"zip": "14059"
 		},
+		"contact": "Kontakt",
 		"credit": {
 			"text": "© 2025 - Ein Projekt der Kulturraum Berlin gGmbH, gefördert durch die Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt, mit der technischen Umsetzung durch die Technologiestiftung Berlin."
-		},
-		"email": {
-			"address": "info@kulturkataster.berlin",
-			"label": "E-Mail"
 		},
 		"imprint": "Impressum",
 		"navigation": "Footer-Navigation",
 		"navigationAriaLabel": "Fußzeilen-Navigation",
-		"newsletter": "Newsletter",
-		"openSource": "Das Kulturkataster ist ein <0>Open-Source-Projekt</0>.",
 		"privacy": "Datenschutz",
 		"projectBy": "Ein Projekt der Kulturraum Berlin gGmbH",
 		"signLanguageInformation": "Deutsche Gebärdensprache",
-		"signLanguageInformationLong": "Deutsche Gebärdensprache (DGS)",
 		"signLanguageInformationShort": "DGS",
 		"simpleLanguageInformation": "Leichte Sprache",
-		"telephone": {
-			"label": "Tel.",
-			"number": "+49 30 3030 444 60"
-		},
 		"title": "Kulturkataster Berlin",
 		"welcomeModalLinkListAriaLabel": "Fußzeilen-Navigation der Willkommensansicht"
 	},
@@ -348,78 +420,63 @@
 	"hello": "",
 	"here": "hier",
 	"info": {
-		"open": "Infos öffnen",
 		"title": "Info"
 	},
 	"information": {
 		"title": "Informationen"
 	},
 	"institution": {
-		"additionalInfo": "Zusätzliche Informationen",
-		"address": "Adresse",
 		"backToMap": "Zurück zur Karte",
-		"basicInfoHeading": "Grundinformationen",
-		"categories": "Kategorien",
 		"claimSelectDescription": "Kulturorte, für die Sie berechtigt sind, können Sie Ihrem Profil hinzufügen. Für mehr Vollständigkeit, einen besseren Überblick und die schnellere Bearbeitung.",
 		"claimSelectSearchLabel": "Name oder Adresse des Kulturortes",
 		"claimSelectSubtitle": "Beantragen Sie die Verwaltungs-Rechte für Kulturorte, die zu Ihrem Verband oder Unternehmen gehören.",
 		"claimSelectTitle": "Kulturort beanspruchen",
-		"closingReason": "Schließungsgrund",
-		"contact": "Kontakt",
-		"createdAt": "Erstellt am",
-		"culturalArea": "Kulturareal",
-		"description": "Beschreibung",
 		"details": "Kulturort Details",
-		"district": "Bezirk",
 		"editSelectEmpty": "Keine Kulturorte gefunden.",
 		"editSelectNoAddress": "Keine Adresse hinterlegt",
 		"editSelectSearchPlaceholder": "Kulturort suchen...",
 		"editSelectSubtitle": "Wählen Sie einen bestehenden Kulturort aus, den Sie aktualisieren möchten.",
 		"editSelectTitle": "Bestehenden Kulturort auswählen",
-		"email": "E-Mail",
-		"emailAddress": "E-Mail-Adresse",
-		"establishedSince": "Bestehen am Standort seit",
-		"establishedUntil": "Bestehen am Standort bis",
-		"funding": "Finanzierung",
-		"fundingType": "Art der Finanzierung",
 		"lessInfo": "Weniger Informationen",
 		"moreInfo": "Mehr Informationen",
 		"notFound": "Kulturort nicht gefunden",
-		"notes": "Zusätzliche Informationen",
-		"number_of_rooms": "Anzahl der Arbeitsräume",
-		"organization": "Organisation",
-		"owner": "Eigentümer*in",
-		"ownerType": "Eigentümer*innenart",
-		"parent": "Träger",
-		"parentOrganization": "Dachorganisation",
-		"phone": "Telefon",
-		"phoneNumber": "Telefonnummer",
-		"protectionStatus": "Sicherungsstatus",
-		"sharedUseAllowed": "Offen für Raumanfragen?",
-		"sharedUseAudience": "Verfügbar für Zielgruppe/Sparte",
-		"sharedUseContactPerson": "Kontakt xxfür Raumanfragen",
-		"sharedUseInfo": "Beschreibung Räume/Flächen für Mehrfachnutzung",
-		"showDetails": "Details anzeigen",
-		"source": "Datenquelle",
-		"status": "Status",
-		"subcategories": "Unterkategorien",
-		"subcategory": "Unterkategorie",
-		"subtitle": "Subtitle",
-		"support": "Förderung",
-		"supportType": "Art der Förderung",
-		"unnamed": "Unbenannter Kulturort",
-		"updatedAt": "Aktualisiert am",
-		"usableAreaSize": "Größe der Nutzflächen (m²)",
-		"utilizationStatus": "Nutzungsstatus",
-		"website": "Website"
+		"showDetails": "Details anzeigen"
+	},
+	"institutionFormModal": {
+		"review": {
+			"actions": {
+				"approve": "Annehmen",
+				"reject": "Ablehnen"
+			},
+			"errorDescription": "Bitte versuchen Sie es erneut oder kontaktieren Sie den Support, falls das Problem weiterhin besteht.",
+			"errorTitle": "Überprüfung fehlgeschlagen",
+			"grantSubmitterAccess": "Zugriff gewähren",
+			"notesLabel": "Interne Notizen...",
+			"notesPlaceholder": "Interne Notizen...",
+			"statusLabel": "Status",
+			"success": {
+				"approve": {
+					"description": "Die Einreichung wurde erfolgreich genehmigt.",
+					"title": "Einreichung genehmigt"
+				},
+				"reject": {
+					"description": "Die Einreichung wurde erfolgreich abgelehnt.",
+					"title": "Einreichung abgelehnt"
+				}
+			}
+		}
 	},
 	"kukaLogo": "Kulturkataster - Logo",
 	"kukaLogoButton": "Kulturkataster: Zur Einführung",
+	"language": {
+		"de": "Deutsch",
+		"en": "Englisch",
+		"title": "Sprache"
+	},
 	"listView": {
 		"institutionsListLabel": "Liste der Kulturorte",
 		"noResultsFound": "Keine Kulturorte gefunden :(",
 		"scrollToTop": "Nach oben scrollen",
-		"show": "Zur Listenansicht",
 		"title": "Listenansicht",
 		"tryAdjustingFilters": "Versuchen Sie, die Filter anzupassen. Wenn Sie sicher sind, dass dieser Ort existiert, können Sie ihn über [dieses Formular https://form.formcentric.com/form/fb8189d9-8887-425d-bdd5-4aec08f7d8d5] einreichen."
 	},
@@ -447,16 +504,11 @@
 		},
 		"lookAtLegend": "Legende ansehen",
 		"noLayersAvailable": "Keine Fachkarten verfügbar",
-		"radioGroupAriaLabel": "Ansicht",
-		"show": "Zur Kartenansicht",
 		"title": "Kartenansicht",
 		"zoomIn": "Vergrößern",
 		"zoomOut": "Verkleinern"
 	},
 	"menu": {
-		"backTo": "Zurück zu {{page}}",
-		"backToAriaLabel": "Zurück zu {{title}}",
-		"menuButtonBadge": "{{label}} - {{count}} Filter aktiv",
 		"navigation": "Hauptmenü"
 	},
 	"mobileMenu": {
@@ -487,14 +539,11 @@
 	"save": "Speichern",
 	"search": {
 		"description": "Ganz einfach die Berliner Kulturlandschaft entdecken: Geben Sie einen Kulturortnamen, eine Adresse, einen Bezirk oder Ortsteil in die Suchfunktion ein und wählen Sie das Ergebnis aus den angezeigten Vorschlägen aus. Ihre Auswahl wird direkt auf der Karte angezeigt.",
-		"error": "Fehler bei der Suche. Bitte versuchen Sie es später erneut.",
 		"hint": "Adresse oder Kulturort eingeben",
 		"noResults": "Keine Kulturorte gefunden.",
 		"noResultsFound": "Zu Ihrer Eingabe konnte kein Kulturort oder Adresse gefunden werden. Bitte überprüfen Sie die Angaben und versuchen Sie es erneut.",
-		"placeholder": "Kulturort, Adresse oder Kategorie",
 		"searchButton": "Suchen",
-		"suggestions": "Vorschläge für Ihre Suche",
-		"title": "Suche"
+		"suggestions": "Vorschläge für Ihre Suche"
 	},
 	"sensitiveInformation": "Sensitive Informationen",
 	"siteTitle": "Berliner Kulturkataster",
@@ -505,21 +554,10 @@
 		"labelShort": "Tel.",
 		"number": "+49 (0) 30 3030 444 60"
 	},
+	"toggleSidebar": "Seitenleiste umschalten",
 	"unknown": "Unbekannt",
-	"venue": {
-		"address": "",
-		"backToMap": "",
-		"contact": "",
-		"details": "",
-		"email": "",
-		"funding": "",
-		"notFound": "",
-		"organization": "",
-		"parent": "",
-		"phone": "",
-		"support": "",
-		"unnamed": "",
-		"website": ""
+	"user": {
+		"title": "Mein Konto"
 	},
 	"yes": "Ja"
 }

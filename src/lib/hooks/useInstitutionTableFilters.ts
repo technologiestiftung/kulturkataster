@@ -8,20 +8,13 @@ import {
 	getParentCategories,
 	getSubcategories,
 } from "@/lib/utils/institutionUtils";
-
-const DEFAULT_TABLE_FILTERS: FilterState = {
-	status: undefined,
-	district_keys: [],
-	category_keys: [],
-	child_category_keys: [],
-	include_closed: false,
-};
+import { defaultTableFilterState } from "@/components/FormWrapper/constants";
 
 export function useInstitutionTableFilters(
 	tableRows: InstitutionTableRow[],
 	filterCategoryGroups: Category[],
 ) {
-	const [filters, setFilters] = useState<FilterState>(DEFAULT_TABLE_FILTERS);
+	const [filters, setFilters] = useState<FilterState>(defaultTableFilterState);
 
 	const districts = useMemo(
 		() =>
@@ -29,9 +22,12 @@ export function useInstitutionTableFilters(
 				new Set(
 					tableRows
 						.map((row) => row.address?.district)
-						.filter((district): district is string => Boolean(district)),
+						.filter(
+							(district): district is string =>
+								typeof district === "string" && district.trim().length > 0,
+						),
 				),
-			).sort((a, b) => a.localeCompare(b)),
+			).sort((a, b) => a?.localeCompare(b)),
 		[tableRows],
 	);
 

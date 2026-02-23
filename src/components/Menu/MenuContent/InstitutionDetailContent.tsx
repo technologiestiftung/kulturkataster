@@ -90,10 +90,7 @@ function InstitutionCard({
 								{
 									id: "utilization_status",
 									alwaysShow: true,
-									label: fieldLabel(
-										"utilization_status",
-										t("institution.utilizationStatus"),
-									),
+									label: fieldLabel("utilization_status"),
 									className: "mb-0",
 									type: "status",
 									value: "utilization_status",
@@ -102,10 +99,7 @@ function InstitutionCard({
 								{
 									id: "protection_status",
 									alwaysShow: false,
-									label: fieldLabel(
-										"protection_status",
-										t("institution.protectionStatus"),
-									),
+									label: fieldLabel("protection_status"),
 									type: "status",
 									value: "protection_status",
 									enumKey: "protection_status",

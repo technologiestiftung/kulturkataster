@@ -6,6 +6,8 @@ import { showSuccessToast } from "@/lib/utils/feedbackToast";
 const closeModalMock = vi.fn();
 const handleReviewMock = vi.fn();
 const refreshMock = vi.fn();
+const pushMock = vi.fn();
+const institutionReviewMock = vi.fn();
 
 vi.mock("react-i18next", () => ({
 	useTranslation: () => ({
@@ -22,7 +24,7 @@ vi.mock("react-i18next", () => ({
 }));
 
 vi.mock("next/navigation", () => ({
-	useRouter: () => ({ refresh: refreshMock }),
+	useRouter: () => ({ refresh: refreshMock, push: pushMock }),
 }));
 
 vi.mock("@/lib/hooks/useLocalePath", () => ({
@@ -34,7 +36,16 @@ vi.mock("@/components/Modals/Modal", () => ({
 }));
 
 vi.mock("@/components/Institution/InstitutionReview", () => ({
-	InstitutionReview: () => <div>InstitutionReview</div>,
+	InstitutionReview: (props: {
+		onEditSection?: (sectionId: string) => void;
+	}) => {
+		institutionReviewMock(props);
+		return (
+			<button type="button" onClick={() => props.onEditSection?.("details")}>
+				InstitutionReview
+			</button>
+		);
+	},
 }));
 
 vi.mock("@/components/Modals/useRoutedModalClose", () => ({
@@ -105,6 +116,8 @@ describe("InstitutionDraftReviewModal", () => {
 		handleReviewMock.mockReset();
 		handleReviewMock.mockResolvedValue(true);
 		refreshMock.mockReset();
+		pushMock.mockReset();
+		institutionReviewMock.mockReset();
 		mockedShowSuccessToast.mockReset();
 	});
 
@@ -140,5 +153,22 @@ describe("InstitutionDraftReviewModal", () => {
 		});
 		expect(closeModalMock).toHaveBeenCalledTimes(1);
 		expect(mockedShowSuccessToast).toHaveBeenCalledTimes(1);
+	});
+
+	it("routes to section edit modal from review for submission 343", async () => {
+		render(
+			<InstitutionDraftReviewModal
+				submissionId={343}
+				routePath="/account/submissions/343"
+			/>,
+		);
+
+		fireEvent.click(screen.getByRole("button", { name: "InstitutionReview" }));
+
+		await waitFor(() => {
+			expect(pushMock).toHaveBeenCalledWith(
+				"/de/account/submissions/343/edit#details",
+			);
+		});
 	});
 });

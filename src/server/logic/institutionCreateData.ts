@@ -1,5 +1,6 @@
 import type { Prisma } from "@/generated/prisma";
 import type { InstitutionForm } from "@/types";
+import { normalizeFundingSources } from "@/lib/utils/formUtils";
 
 const buildAddressCreate = (address?: InstitutionForm["address"] | null) => {
 	if (!address) return undefined;
@@ -16,18 +17,6 @@ const buildContactPersonConnect = (contactPersonId?: number | null) => {
 		return { disconnect: true };
 	}
 	return { connect: { id: contactPersonId } };
-};
-
-const normalizeFundingSources = (
-	fundingSources?: InstitutionForm["funding_sources"] | null,
-) => {
-	if (!fundingSources) return [];
-	return fundingSources
-		.map((source) => ({
-			source_name: source.source_name?.trim() ?? "",
-			description: source.description?.trim() || null,
-		}))
-		.filter((source) => source.source_name.length > 0);
 };
 
 export const buildInstitutionCreateData = (
@@ -50,7 +39,14 @@ export const buildInstitutionCreateData = (
 	funding_type: input.funding_type ?? undefined,
 	funding_sources:
 		input.funding_sources !== undefined
-			? { create: normalizeFundingSources(input.funding_sources) }
+			? {
+					create: normalizeFundingSources(input.funding_sources).map(
+						(source) => ({
+							source_name: source.source_name,
+							description: source.description,
+						}),
+					),
+				}
 			: undefined,
 	utilization_status: input.utilization_status ?? undefined,
 	utilization_status_info: input.utilization_status_info ?? null,

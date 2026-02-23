@@ -19,37 +19,25 @@ import ChevronDown from "@/icons/chevron-down.svg";
 import { SelectableOptionsList } from "@/components/MultiSelect/SelectableOptionsList";
 import { cn } from "@/lib/utils";
 import { Checkbox } from "../ui/checkbox";
-export type MultiSelectOption = {
-	value: string;
-	label: string;
-	searchText?: string;
-	filterValues?: Record<string, string[]>;
-	parentValue?: string;
-};
-
-type MultiSelectFilterOption = {
-	value: string;
-	label: string;
-	parentValue?: string;
-};
+import { SelectOption } from "../FormWrapper";
 
 export type MultiSelectFilterConfig = {
 	id: string;
 	label: string;
 	dependsOn?: string;
-	options: MultiSelectFilterOption[];
+	options: SelectOption[];
 };
 
 export type MultiSelectSortOption = {
 	id: string;
 	label: string;
-	compare?: (a: MultiSelectOption, b: MultiSelectOption) => number;
+	compare?: (a: SelectOption, b: SelectOption) => number;
 };
 
 interface MultiSelectModalProps {
 	title: string;
-	options: MultiSelectOption[];
-	filteredOptions?: MultiSelectOption[];
+	options: SelectOption[];
+	filteredOptions?: SelectOption[];
 	selected: string[];
 	onChange: (selected: string[]) => void;
 	placeholder?: string;
@@ -64,6 +52,10 @@ interface MultiSelectModalProps {
 
 const hasAnyValue = (values: string[] | undefined) =>
 	Array.isArray(values) && values.length > 0;
+
+const getOptionText = (
+	value: SelectOption["label"] | SelectOption["searchText"],
+) => (typeof value === "string" ? value : String(value ?? ""));
 
 export function MultiSelectModal({
 	title,
@@ -93,7 +85,8 @@ export function MultiSelectModal({
 		() => ({
 			id: "label",
 			label: t("multiSelectModal.sort.az"),
-			compare: (a, b) => a.label.localeCompare(b.label),
+			compare: (a, b) =>
+				getOptionText(a.label).localeCompare(getOptionText(b.label)),
 		}),
 		[t],
 	);
@@ -125,7 +118,7 @@ export function MultiSelectModal({
 	};
 
 	const selectedOptions = useMemo(
-		() => options.filter((option) => selected.includes(option.value)),
+		() => options.filter((option) => selected.includes(option.value as string)),
 		[options, selected],
 	);
 	const previewSelections = selectedOptions.slice(0, previewCount);
@@ -143,11 +136,13 @@ export function MultiSelectModal({
 		);
 
 		let next = baseOptions.filter((option) => {
-			if (showSelectedOnly && !draftSelected.includes(option.value)) {
+			if (showSelectedOnly && !draftSelected.includes(option.value as string)) {
 				return false;
 			}
 			if (query.length > 0) {
-				const haystack = (option.searchText ?? option.label).toLowerCase();
+				const haystack = getOptionText(
+					option.searchText ?? option.label,
+				).toLowerCase();
 				if (!haystack.includes(query)) return false;
 			}
 
@@ -177,7 +172,9 @@ export function MultiSelectModal({
 
 	const allFilteredSelected =
 		visibleOptions.length > 0 &&
-		visibleOptions.every((option) => draftSelected.includes(option.value));
+		visibleOptions.every((option) =>
+			draftSelected.includes(option.value as string),
+		);
 
 	const handleToggleOption = (value: string) => {
 		if (draftSelected.includes(value)) {
@@ -197,7 +194,7 @@ export function MultiSelectModal({
 			);
 		} else {
 			const next = new Set(draftSelected);
-			visibleOptions.forEach((item) => next.add(item.value));
+			visibleOptions.forEach((item) => next.add(item.value as string));
 			setDraftSelected(Array.from(next));
 		}
 	};
@@ -250,7 +247,7 @@ export function MultiSelectModal({
 				const allowedValues = new Set(
 					filter.options
 						.filter((option) =>
-							allowedParents.includes(option.parentValue ?? ""),
+							allowedParents.includes((option.parentValue as string) ?? ""),
 						)
 						.map((option) => option.value),
 				);
@@ -270,7 +267,7 @@ export function MultiSelectModal({
 				<div className="flex flex-wrap gap-2">
 					{previewSelections.map((option) => (
 						<Badge
-							key={option.value}
+							key={option.value as string}
 							variant="default"
 							className="rounded-full px-3 py-1 text-xs"
 						>
@@ -341,7 +338,7 @@ export function MultiSelectModal({
 															const visibleFilterOptions = filter.dependsOn
 																? filter.options.filter((option) =>
 																		parentValues.includes(
-																			option.parentValue ?? "",
+																			(option.parentValue as string) ?? "",
 																		),
 																	)
 																: filter.options;
@@ -360,17 +357,20 @@ export function MultiSelectModal({
 															return visibleFilterOptions.map((option) => {
 																const isChecked =
 																	activeFilters[filter.id]?.includes(
-																		option.value,
+																		option.value as string,
 																	) ?? false;
 																return (
 																	<label
-																		key={option.value}
+																		key={option.value as string}
 																		className="flex items-center gap-2 body3 text-neutral-80"
 																	>
 																		<Checkbox
 																			checked={isChecked}
 																			onCheckedChange={() =>
-																				updateFilter(filter.id, option.value)
+																				updateFilter(
+																					filter.id,
+																					option.value as string,
+																				)
 																			}
 																		/>
 																		<span className="flex-wrap">

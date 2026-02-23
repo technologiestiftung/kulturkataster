@@ -70,34 +70,34 @@ export function AccountFaqModal({ routePath, returnTo }: AccountFaqModalProps) {
 						</AccordionContent>
 					</AccordionItem>
 				</Accordion>
-				<div className="">
-					<h2 className="mt-8 ">
-						{t("auth.account.faqModal.contactSupport.title", {
-							defaultValue: "Kontakt zum Support",
-						})}
-					</h2>
-					<p className="body1">
-						{t("auth.account.faqModal.contactSupport.description", {
-							defaultValue:
-								"Wenn Sie weitere Fragen haben oder Unterstützung benötigen, kontaktieren Sie bitte unseren Support unter support@example.com.",
-						})}
-					</p>
+				<div className="flex flex-col space-y-4 mt-6">
+					<div>
+						<h2 className="mt-8 ">
+							{t("auth.account.faqModal.contactSupport.title", {
+								defaultValue: "Kontakt zum Support",
+							})}
+						</h2>
+						<p className="body1">
+							{t("auth.account.faqModal.contactSupport.description", {
+								defaultValue:
+									"Wenn Sie weitere Fragen haben oder Unterstützung benötigen, kontaktieren Sie bitte unseren Support unter support@example.com.",
+							})}
+						</p>
+					</div>
 					<div>
 						<strong>
 							{t("auth.account.faqModal.contactSupport.emailLabel", {
 								defaultValue: "Generelle Anfrage:",
 							})}
-						</strong>
+						</strong>{" "}
 						<a href="mailto:support@example.com">support@example.com</a>
 						<br />
 						<strong>
-							{t("auth.account.faqModal.contactSupport.hoursLabel", {
+							{t("auth.account.faqModal.technicalSupport.emailLabel", {
 								defaultValue: "Technischer Support:",
 							})}
 						</strong>{" "}
-						{t("auth.account.faqModal.contactSupport.hours", {
-							defaultValue: "Montag bis Freitag, 9:00 - 17:00 Uhr",
-						})}
+						<a href="mailto:technical@example.com">technical@example.com</a>
 						<br />
 						<strong>
 							{t("auth.account.faqModal.contactSupport.phoneLabel", {
