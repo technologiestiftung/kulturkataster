@@ -308,7 +308,7 @@ test.describe("institution submission wizard", () => {
 		await page.getByLabel("Ansprechperson Vorname").fill("Max");
 		await page.getByLabel("Ansprechperson Nachname").fill("Mustermann");
 		await page
-			.getByLabel("Ansprechperson E-Mail Addresse")
+			.getByLabel("Ansprechperson E-Mail Adresse")
 			.fill(`contact+${Date.now()}@example.com`);
 		await page.getByLabel("Ansprechperson Telefonnummer").fill("+49 30 123456");
 
