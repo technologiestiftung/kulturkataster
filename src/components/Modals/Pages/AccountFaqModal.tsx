@@ -89,7 +89,7 @@ export function AccountFaqModal({ routePath, returnTo }: AccountFaqModalProps) {
 							{t("auth.account.faqModal.contactSupport.emailLabel", {
 								defaultValue: "Generelle Anfrage:",
 							})}
-						</strong>
+						</strong>{" "}
 						<a href="mailto:support@example.com">support@example.com</a>
 						<br />
 						<strong>

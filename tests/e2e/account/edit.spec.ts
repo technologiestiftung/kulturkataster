@@ -22,9 +22,8 @@ test.describe("account edit", () => {
 		await safeGoto(page, "/de/account/edit", /\/de\/account\/edit\/?$/);
 
 		await expect(
-			page.getByRole("heading", {
-				name: "Persönliche Angaben ändern",
-				level: 1,
+			page.locator("h1:not(.sr-only)", {
+				hasText: "Persönliche Angaben ändern",
 			}),
 		).toBeVisible();
 		await expect(page.getByLabel("Ihr Name")).toBeVisible();
@@ -52,9 +51,8 @@ test.describe("account edit", () => {
 				.click({ delay: 100 }),
 		]);
 		await expect(
-			page.getByRole("heading", {
-				name: "Persönliche Angaben ändern",
-				level: 1,
+			page.locator("h1:not(.sr-only)", {
+				hasText: "Persönliche Angaben ändern",
 			}),
 		).toBeVisible();
 	});

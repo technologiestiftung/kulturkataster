@@ -241,9 +241,8 @@ function InstitutionDraftWizardContent({
 							),
 						)
 					: [];
-			onSubmitted?.();
 			if (proposedCategories.length > 0) {
-				void Promise.allSettled(
+				await Promise.allSettled(
 					proposedCategories.map((key) =>
 						createSubmission({
 							entityType: SubmissionEntityType.category,
@@ -262,6 +261,7 @@ function InstitutionDraftWizardContent({
 					),
 				);
 			}
+			onSubmitted?.();
 		},
 		[categories, draftMode, onSubmitted],
 	);
@@ -1541,7 +1541,6 @@ export function InstitutionDraftWizardModal({
 	const toLocalePath = useLocalePath();
 	const { t } = useTranslation("content");
 	const closeModal = useRoutedModalClose({});
-	const resetDraft = useInstitutionDraftStore((state) => state.resetDraft);
 	const storedStepId = useInstitutionDraftStore((state) => state.stepId);
 	const setStepId = useInstitutionDraftStore((state) => state.setStepId);
 	const draftMode = useInstitutionDraftStore((state) => state.mode);
@@ -1564,19 +1563,9 @@ export function InstitutionDraftWizardModal({
 	const resolvedSteps = isUpdateReviewOnly ? reviewOnlySteps : stepConfigs;
 	const isValidStep = STEP_IDS.some((stepId) => stepId === initialStepId);
 	const resolvedStepId = isValidStep ? initialStepId : storedStepId;
-	const handleSubmitted = useCallback(() => {
+	const handleSubmitted = () => {
 		const targetPath = toLocalePath("/institution?thankyou=1");
 		router.replace(targetPath);
-		// if (typeof window !== "undefined") {
-		// 	window.setTimeout(() => {
-		// 		const stuckOnSubmission = window.location.pathname.includes(
-		// 			"/institution/submission",
-		// 		);
-		// 		if (stuckOnSubmission) {
-		// 			window.location.replace(targetPath);
-		// 		}
-		// 	}, 200);
-		// }
 		showSuccessToast(
 			t("institutionDraftWizardModal.feedback.submit.title", {
 				defaultValue: "Submission sent",
@@ -1588,7 +1577,7 @@ export function InstitutionDraftWizardModal({
 		// queueMicrotask(() => {
 		// 	resetDraft();
 		// });
-	}, [resetDraft, router, t, toLocalePath]);
+	};
 
 	useEffect(() => {
 		if (isUpdateReviewOnly) {

@@ -269,7 +269,7 @@ export function InstitutionsTable() {
 				accessorKey: "address.street",
 				header: `${headerLabel("street", "Street")} & ${headerLabel("street_number", "Number")}`,
 				enableSorting: true,
-				size: 150,
+				size: 200,
 				meta: { truncate: true },
 				cell: ({ row }) => {
 					const address = row.original.address;
@@ -321,7 +321,11 @@ export function InstitutionsTable() {
 				size: 150,
 				meta: { truncate: true },
 				cell: ({ row }) => {
-					const district = row.original.address?.district;
+					const districtValue = row.original.address?.district;
+					const district =
+						typeof districtValue === "string" && districtValue.trim().length > 0
+							? districtValue
+							: null;
 					if (!district) return <span className="text-foreground">—</span>;
 					return district;
 				},
@@ -732,7 +736,7 @@ export function InstitutionsTable() {
 			row.name,
 			row.status || "",
 			row.address?.city || "",
-			row.address?.district || "",
+			typeof row.address?.district === "string" ? row.address.district : "",
 			row.address?.street || "",
 			row.address?.zipcode || "",
 			row.address?.neighbourhood || "",
