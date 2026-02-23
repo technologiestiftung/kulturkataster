@@ -22,9 +22,12 @@ export function useInstitutionTableFilters(
 				new Set(
 					tableRows
 						.map((row) => row.address?.district)
-						.filter((district): district is string => Boolean(district)),
+						.filter(
+							(district): district is string =>
+								typeof district === "string" && district.trim().length > 0,
+						),
 				),
-			).sort((a, b) => a.localeCompare(b)),
+			).sort((a, b) => a?.localeCompare(b)),
 		[tableRows],
 	);
 

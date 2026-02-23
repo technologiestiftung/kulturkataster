@@ -34,6 +34,11 @@ test.describe("users management", () => {
 		await page.getByLabel("E-Mail").fill(uniqueEmail);
 		await page.getByLabel("Vorname").fill("E2E");
 		await page.getByLabel("Nachname").fill("User");
+		await page.getByLabel("Rolle").click();
+		await page
+			.locator('[data-slot="select-content"]:visible [role="option"]:visible')
+			.first()
+			.click({ force: true });
 		await Promise.all([
 			page.waitForURL(/\/de\/account\/users\/?$/, { timeout: 30_000 }),
 			page.getByRole("button", { name: "Nutzer*in anlegen" }).last().click(),

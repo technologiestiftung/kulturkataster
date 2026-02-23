@@ -1,0 +1,25 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Playwright: Run Test (Headed + Trace)",
+			"type": "shell",
+			"command": "npx playwright test --headed --trace on ${relativeFile}",
+			"problemMatcher": [],
+			"presentation": {
+				"reveal": "always",
+				"panel": "new"
+			}
+		},
+		{
+			"label": "Playwright: Run All Tests (Headed + Trace)",
+			"type": "shell",
+			"command": "npm run test:e2e:headed",
+			"problemMatcher": [],
+			"presentation": {
+				"reveal": "always",
+				"panel": "new"
+			}
+		}
+	]
+}

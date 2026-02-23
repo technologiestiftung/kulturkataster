@@ -136,9 +136,7 @@ test.describe("institution submission wizard", () => {
 		await expect(page.getByText(/Schritt 1 \/ 5/)).toBeVisible();
 
 		// Even with valid current step, jumping multiple steps ahead is blocked.
-		await page
-			.getByLabel("Name des Kulturortes")
-			.fill("E2E Validation Institution");
+		await fillById(page, "name", "E2E Validation Institution");
 		await page.getByRole("button", { name: "Go to step 5" }).click();
 		await expect(page.getByText(/Schritt 1 \/ 5/)).toBeVisible();
 
@@ -151,9 +149,9 @@ test.describe("institution submission wizard", () => {
 	}) => {
 		const uniqueName = `E2E LatLng ${Date.now()}`;
 
-		await page.getByLabel("Name des Kulturortes").fill(uniqueName);
-		await page.getByLabel("Breitengrad").fill("52.520008");
-		await page.getByLabel("Längengrad").fill("13.404954");
+		await fillById(page, "name", uniqueName);
+		await fillById(page, "address.lat", "52.520008");
+		await fillById(page, "address.lng", "13.404954");
 
 		await page
 			.locator('form#institution-basic-form button[type="submit"]')
@@ -260,9 +258,9 @@ test.describe("institution submission wizard", () => {
 
 		// Step 1: basic details
 		await expect(page.getByText(/Schritt 1 \/ 5/)).toBeVisible();
-		await page.getByLabel("Name des Kulturortes").fill(uniqueName);
-		await page.getByLabel("Breitengrad").fill("52.520008");
-		await page.getByLabel("Längengrad").fill("13.404954");
+		await fillById(page, "name", uniqueName);
+		await fillById(page, "address.lat", "52.520008");
+		await fillById(page, "address.lng", "13.404954");
 		await page
 			.locator('form#institution-basic-form button[type="submit"]')
 			.click();
@@ -307,12 +305,12 @@ test.describe("institution submission wizard", () => {
 				name: /Ich bin damit einverstanden/i,
 			})
 			.click();
-		await page.getByLabel("Kontaktperson Vorname").fill("Max");
-		await page.getByLabel("Kontaktperson Nachname").fill("Mustermann");
+		await page.getByLabel("Ansprechperson Vorname").fill("Max");
+		await page.getByLabel("Ansprechperson Nachname").fill("Mustermann");
 		await page
-			.getByLabel("Kontaktperson E-Mail")
+			.getByLabel("Ansprechperson E-Mail Addresse")
 			.fill(`contact+${Date.now()}@example.com`);
-		await page.getByLabel("Kontaktperson Telefon").fill("+49 30 123456");
+		await page.getByLabel("Ansprechperson Telefonnummer").fill("+49 30 123456");
 
 		await page
 			.locator('form#institution-contact-form button[type="submit"]')
@@ -448,14 +446,7 @@ test.describe("institution submission wizard", () => {
 
 		const submitButton = page.locator("#institution-draft-submit-button");
 		await expect(submitButton).toBeVisible({ timeout: 15_000 });
-		await Promise.all([
-			page.waitForURL(/\/de\/institution\/?\?thankyou=1$/, {
-				timeout: 45_000,
-			}),
-			submitButton.click(),
-		]);
-		await expect(
-			page.getByRole("heading", { name: "Vielen Dank für Ihre Einreichung" }),
-		).toBeVisible({ timeout: 15_000 });
+		await submitButton.click();
+		await waitForPostSubmitOutcome(page);
 	});
 });

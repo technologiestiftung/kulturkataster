@@ -45,7 +45,7 @@ export type SubmissionCreatePayload = {
 	entityType: SubmissionEntityType;
 	entityId?: number | null;
 	type: SubmissionType;
-	data: Prisma.InputJsonValue;
+	data: Prisma.InputJsonValue | null;
 	diff?: Prisma.InputJsonValue | null;
 	meta?: Prisma.InputJsonValue | null;
 	status?: SubmissionStatus;
@@ -53,7 +53,7 @@ export type SubmissionCreatePayload = {
 
 export type SubmissionUpdatePayload = {
 	id: number;
-	data?: Prisma.InputJsonValue;
+	data?: Prisma.InputJsonValue | null;
 	diff?: Prisma.InputJsonValue | null;
 	meta?: Prisma.InputJsonValue | null;
 	status?: SubmissionStatus;

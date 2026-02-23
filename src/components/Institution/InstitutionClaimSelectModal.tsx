@@ -38,6 +38,7 @@ export function InstitutionClaimSelectModal({
 	const error = useInstitutionStore((state) => state.error);
 	const ownedInstitutions = useAccountStore((state) => state.institutions);
 	const upsertSubmission = useAccountStore((state) => state.upsertSubmission);
+	const allSubmissions = useAccountStore((state) => state.submissions);
 	const ownedInstitutionIds = useMemo(
 		() => new Set(ownedInstitutions.map((institution) => institution.id)),
 		[ownedInstitutions],
@@ -54,9 +55,16 @@ export function InstitutionClaimSelectModal({
 		const sourceInstitutions =
 			query.trim().length === 0 ? (institutions ?? []) : searchResults;
 		return sourceInstitutions.filter(
-			(institution) => !ownedInstitutionIds.has(institution.id),
+			(institution) =>
+				!ownedInstitutionIds.has(institution.id) &&
+				!allSubmissions.some(
+					(submission) =>
+						submission.entity_type === "institution" &&
+						submission.entity_id === institution.id &&
+						submission.status === "approval_pending",
+				),
 		);
-	}, [institutions, ownedInstitutionIds, query, searchResults]);
+	}, [institutions, ownedInstitutionIds, allSubmissions, query, searchResults]);
 
 	const selectableOptions = useMemo(
 		() =>
@@ -244,7 +252,7 @@ export function InstitutionClaimSelectModal({
 				<Card className="mb-10 p-10 h-full" variant="tertiary">
 					<p className="body2 mb-4">
 						{t("institution.claimSelectSearchLabel", {
-							defaultValue: "Name des Kulturortes",
+							defaultValue: "Name oder Adresse des Kulturortes",
 						})}
 					</p>
 					<InstitutionDraftSelectSearch onQueryChange={setQuery} />

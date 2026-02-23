@@ -1,6 +1,6 @@
 import { Prisma } from "@/generated/prisma";
 
-type JsonObject = Record<string, Prisma.InputJsonValue>;
+type JsonObject = Record<string, Prisma.InputJsonValue | null>;
 
 const isPlainObject = (value: unknown): value is Record<string, unknown> =>
 	typeof value === "object" && value !== null && !Array.isArray(value);
@@ -10,14 +10,15 @@ const isTaggedDateTime = (
 ): value is { $type: "DateTime"; value: string } =>
 	value.$type === "DateTime" && typeof value.value === "string";
 
-const normalizeUnknownToJson = (value: unknown): Prisma.InputJsonValue => {
+const normalizeNestedJson = (value: unknown): Prisma.InputJsonValue | null => {
 	if (value === null) return null;
 	if (typeof value === "string" || typeof value === "boolean") return value;
-	if (typeof value === "number") return Number.isFinite(value) ? value : null;
+	if (typeof value === "number")
+		return Number.isFinite(value) ? value : String(value);
 	if (value instanceof Date) return value.toISOString();
 	if (Array.isArray(value)) {
 		return value.map((item) =>
-			item === undefined ? null : normalizeUnknownToJson(item),
+			item === undefined ? null : normalizeNestedJson(item),
 		);
 	}
 	if (isPlainObject(value)) {
@@ -27,20 +28,31 @@ const normalizeUnknownToJson = (value: unknown): Prisma.InputJsonValue => {
 		const result: JsonObject = {};
 		for (const [key, nested] of Object.entries(value)) {
 			if (nested === undefined) continue;
-			result[key] = normalizeUnknownToJson(nested);
+			result[key] = normalizeNestedJson(nested);
 		}
 		return result;
 	}
 	return String(value);
 };
 
-export const normalizeSubmissionJson = (
-	value: Prisma.InputJsonValue,
-): Prisma.InputJsonValue => normalizeUnknownToJson(value);
+const normalizeUnknownToJson = (
+	value: unknown,
+): Prisma.InputJsonValue | Prisma.JsonNullValueInput => {
+	if (value === null) return Prisma.JsonNull;
+	const normalized = normalizeNestedJson(value);
+	return normalized === null ? Prisma.JsonNull : normalized;
+};
+
+export function normalizeSubmissionJson(
+	value: Prisma.InputJsonValue | null,
+): Prisma.InputJsonValue | Prisma.JsonNullValueInput {
+	return normalizeUnknownToJson(value);
+}
 
 export const normalizeOptionalSubmissionJson = (
 	value: Prisma.InputJsonValue | null | undefined,
 ): Prisma.InputJsonValue | undefined => {
 	if (value === null || value === undefined) return undefined;
-	return normalizeSubmissionJson(value);
+	const normalized = normalizeNestedJson(value);
+	return normalized === null ? undefined : normalized;
 };
