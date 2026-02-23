@@ -284,7 +284,7 @@
 		},
 		"email": {
 			"label": "E-Mail-Adresse",
-			"description": "Bitte nach Möglichkeit eine allgemeine E-Mail-Adresse der Kultureinrichtung angeben (z. B. Info- oder Empfangskontakt).",
+			"description": "",
 			"placeholder": "name@beispiel.de",
 			"errors": {
 				"required": "Bitte E-Mail-Adresse angeben."

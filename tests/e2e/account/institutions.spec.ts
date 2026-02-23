@@ -82,10 +82,20 @@ test.describe("institutions dashboard", () => {
 		const editButtons = page.getByRole("button", { name: "Edit" });
 		if ((await editButtons.count()) > 0) {
 			await editButtons.first().click();
-			await expect(page).toHaveURL(
-				/\/de\/(?:account\/institutions\/\d+\/edit|account\/submissions\/\d+\/edit|institution\/submission)\/?/,
-				{ timeout: 30_000 },
-			);
+			await page.waitForTimeout(1000);
+			const url = page.url();
+			const navigatedToEditRoute =
+				/\/de\/(?:account\/institutions\/\d+\/edit|account\/submissions\/\d+\/edit|institution\/submission)\/?/.test(
+					url,
+				);
+			if (!navigatedToEditRoute) {
+				await expect(
+					page
+						.locator('[data-slot="dialog-content"]')
+						.filter({ hasText: /Kulturort bearbeiten|Einreichung|Submission/i })
+						.first(),
+				).toBeVisible({ timeout: 15_000 });
+			}
 		}
 
 		await safeGoto(

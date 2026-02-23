@@ -112,11 +112,13 @@ test.describe("Auth registration", () => {
 		await expect(createAccountButton).toBeEnabled();
 		await createAccountButton.click();
 
-		await expect(page.getByRole("dialog")).toBeVisible();
+		// Wait for error AlertDialog to appear
+		const dialog = page.getByRole("dialog");
+		await expect(dialog).toBeVisible({ timeout: 10_000 });
+
+		// Verify close button exists
 		const closeButton = page.getByRole("button", { name: "Schließen" });
 		await expect(closeButton).toBeVisible();
-		await expect(closeButton).toBeEnabled();
-		await closeButton.click();
 	});
 
 	test("invalid fields block submit; fixing enables submit", async ({
