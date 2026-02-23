@@ -1,4 +1,3 @@
-import { getCategoryIconComponent } from "@/lib/utils/iconUtils";
 import {
 	getParentCategories,
 	getSubcategoriesForCategory,
@@ -6,6 +5,7 @@ import {
 import { Institution } from "@/types";
 import { useTranslation } from "react-i18next";
 import { PrivateBadge } from "../shared/PrivateBadge";
+import { CategoryIcon } from "@/components/shared/CategoryIcon";
 
 export function CategoryItem({
 	data,
@@ -38,7 +38,6 @@ export function CategoryItem({
 			<div className="flex justify-between gap-2">
 				<div className="">
 					{categories.map((category) => {
-						const IconComponent = getCategoryIconComponent(category.key);
 						const subCategories = getSubcategoriesForCategory(
 							data,
 							category.id,
@@ -49,9 +48,9 @@ export function CategoryItem({
 								key={category.id}
 								className="flex items-start gap-1 flex-row"
 							>
-								<IconComponent
-									aria-hidden="true"
-									focusable="false"
+								<CategoryIcon
+									iconUrl={category.icon}
+									categoryKey={category.key}
 									className="mr-1 h-6 w-6"
 								/>
 								<div
@@ -66,7 +65,7 @@ export function CategoryItem({
 									{subCategories?.length
 										? subCategories.map((sub, index, filteredArray) => (
 												<span className="body2" key={sub.id}>
-													{tEnum(`subcategory.${sub.key}`)}
+													{tEnum(`category.${sub.key}`)}
 													{index < filteredArray.length - 1 && ", "}
 												</span>
 											))

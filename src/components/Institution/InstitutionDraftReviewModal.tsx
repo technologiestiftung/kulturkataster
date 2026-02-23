@@ -141,7 +141,10 @@ export function InstitutionDraftReviewModal({
 
 	return (
 		<Modal
-			title={t("institutionFormModal.review.title")}
+			title={t(
+				"institutionsTable.type.submission." +
+					resolvedSubmissionWithFallback.type,
+			)}
 			variant="fullscreen"
 			returnTo={returnTo}
 			routePath={routePath}

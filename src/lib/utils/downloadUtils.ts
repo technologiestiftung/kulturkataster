@@ -22,7 +22,7 @@ function translateEnumValue(
 	const enumKeyMappings: Record<string, string> = {
 		district_id: "district_id",
 		categories: "category",
-		subcategories: "subcategory",
+		subcategories: "category",
 		funding_sources: "funding_source",
 		funding_type: "funding_type",
 		status: "institution_status",
@@ -199,7 +199,7 @@ export function prepareDataForExport(
 				if (tempFlattened.hasOwnProperty(columnKey)) {
 					let translatedColumnName = columnKey;
 					if (translateFn) {
-						const translationKey = `field_names.${columnKey}`;
+						const translationKey = `field_names.${columnKey}.label`;
 						const translation = translateFn(translationKey);
 						if (translation !== translationKey) {
 							translatedColumnName = translation;
@@ -212,7 +212,7 @@ export function prepareDataForExport(
 			Object.entries(tempFlattened).forEach(([key, value]) => {
 				let translatedColumnName = key;
 				if (translateFn) {
-					const translationKey = `field_names.${key}`;
+					const translationKey = `field_names.${key}.label`;
 					const translation = translateFn(translationKey);
 					if (translation !== translationKey) {
 						translatedColumnName = translation;

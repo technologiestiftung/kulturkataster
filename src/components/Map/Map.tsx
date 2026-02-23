@@ -27,7 +27,7 @@ const Map: FC = () => {
 	);
 
 	return (
-		<div className="Map-root w-full h-full">
+		<div className="Map-root w-full h-full relative">
 			<SidePanel />
 			{true && <LayerTree />}
 

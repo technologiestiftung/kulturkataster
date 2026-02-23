@@ -94,7 +94,10 @@ const OlMap: FC<OlMapProps> = ({ children }) => {
 	}, [config, destroyMap, setMap]);
 
 	return (
-		<div ref={mapId} className="map w-full h-full bg-slate-300">
+		<div
+			ref={mapId}
+			className="map contrast:invert-90 w-full h-full bg-slate-300"
+		>
 			{children}
 		</div>
 	);

@@ -11,6 +11,12 @@ import {
 	formatFundingSourcesValue,
 } from "@/components/InfoWrapper/FundingSourceItem";
 import {
+	formatDateByType,
+	getNestedValue,
+	hasDisplayValue,
+	normalizeDateByType,
+} from "@/lib/utils/formUtils";
+import {
 	getCoordinatesFromAddress,
 	getParentCategories,
 } from "@/lib/utils/institutionUtils";
@@ -20,19 +26,6 @@ import { CategoryItem } from "./CategoryItem";
 import { useTranslation } from "react-i18next";
 import { getGridClass } from "../shared/sectionLayout";
 import { getEditAction } from "./getEditAction";
-
-const getNestedValue = (
-	obj: Record<string, unknown>,
-	path?: string,
-): unknown => {
-	if (!path) return undefined;
-	return path.split(".").reduce((current, key) => {
-		if (current && typeof current === "object") {
-			return (current as Record<string, unknown>)[key];
-		}
-		return undefined;
-	}, obj as unknown);
-};
 
 const resolveFieldValue = (
 	field: InfoWrapperFieldConfig,
@@ -73,47 +66,6 @@ const resolveHref = (
 	}
 
 	return typeof value === "string" ? value : undefined;
-};
-
-const hasDisplayValue = (value: unknown) => {
-	if (value === null || value === undefined) return false;
-	if (typeof value === "string") return value.trim().length > 0;
-	if (Array.isArray(value)) return value.length > 0;
-	return true;
-};
-
-const toDate = (value: unknown): Date | null => {
-	if (value instanceof Date) {
-		return Number.isNaN(value.getTime()) ? null : value;
-	}
-	if (typeof value === "string" || typeof value === "number") {
-		const parsed = new Date(value);
-		return Number.isNaN(parsed.getTime()) ? null : parsed;
-	}
-	return null;
-};
-
-const formatDateByType = (value: unknown, type: "date" | "year"): string => {
-	const date = toDate(value);
-	if (!date) return String(value ?? "");
-	if (type === "year") return String(date.getFullYear());
-	return date.toLocaleDateString();
-};
-
-const normalizeDateByType = (
-	value: unknown,
-	type: "date" | "year",
-): string | null => {
-	const date = toDate(value);
-	if (!date) {
-		if (value === null || value === undefined) return null;
-		if (typeof value === "string") return value.trim();
-		return String(value);
-	}
-	if (type === "year") {
-		return String(date.getFullYear());
-	}
-	return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
 };
 
 const formatAddressValue = (data: Partial<Institution>) => {
@@ -329,7 +281,6 @@ const getContent = (
 				<CategoryItem
 					data={data}
 					variant={field.categoryVariant}
-					label={label}
 					description={field.description}
 					isPrivate={isPrivate}
 					action={action}

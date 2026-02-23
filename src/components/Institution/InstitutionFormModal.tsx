@@ -11,20 +11,18 @@ import type { FormWrapperConfig, FieldConfig } from "@/components/FormWrapper";
 import { useAccountStore } from "@/lib/store/accountStore";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import {
-	buildStreetLine,
+	buildInstitutionAddressPayload,
+	buildInstitutionSharedFieldsPayload,
 	getSubmitLabel,
 	handleAddressBlur,
 	handleLatLngBlur,
-	splitStreetLine,
-	toOptionalText,
-	toOptionalNumber,
 } from "@/lib/utils/formUtils";
 import {
 	createInstitution,
 	updateInstitution,
 } from "@/server/actions/institutions";
 import { geocodeAddress, reverseGeocode } from "@/server/actions/maptiler";
-import type { Category, FilterState } from "@/types";
+import type { Category } from "@/types";
 import type { Institution } from "@/types/institution";
 import { useRouter } from "next/navigation";
 import { resolveCategoryIdsFromDraft } from "@/lib/utils/institutionCategoryUtils";
@@ -32,6 +30,7 @@ import { TFunction } from "i18next";
 import { useInstitutionPrivateFieldResolver } from "@/lib/hooks/useInstitutionPrivateFieldResolver";
 import { applyInstitutionFieldAccess } from "@/lib/utils/institutionFieldAccess";
 import { showSuccessToast } from "@/lib/utils/feedbackToast";
+import { buildInstitutionFormInitialValues } from "@/lib/utils/institutionFormAdapter";
 type InstitutionFormModalProps = {
 	mode: "create" | "edit";
 	institution?: Institution | null;
@@ -43,7 +42,6 @@ type InstitutionFormModalProps = {
 		institution?: Institution;
 		mode: InstitutionFormModalProps["mode"];
 	}) => void | Promise<void>;
-	initialValues?: Record<string, unknown>;
 	formKey?: string;
 	submitLabel?: string;
 	submitting?: boolean;
@@ -67,96 +65,6 @@ type InstitutionFormModalProps = {
 	permissionContext?: "institution" | "submission";
 };
 
-const buildCategoryFilterState = (
-	categories: Category[] | undefined,
-): FilterState => {
-	const category_keys = new Set<string>();
-	const child_category_keys = new Set<string>();
-	const categoryMap = new Map<number, Category>();
-
-	(categories ?? []).forEach((category) => {
-		categoryMap.set(category.id, category);
-	});
-
-	(categories ?? []).forEach((category) => {
-		if (category.parent_category_id) {
-			child_category_keys.add(category.key);
-			const parent = categoryMap.get(category.parent_category_id);
-			if (parent) {
-				category_keys.add(parent.key);
-			}
-		} else {
-			category_keys.add(category.key);
-		}
-	});
-
-	return {
-		district_keys: [],
-		category_keys: Array.from(category_keys),
-		child_category_keys: Array.from(child_category_keys),
-		include_closed: false,
-		status: undefined,
-	};
-};
-
-const getInitialValues = (resolvedInstitution?: Institution) => {
-	const address = resolvedInstitution?.address;
-	return {
-		name: resolvedInstitution?.name ?? "",
-		parent_organization: resolvedInstitution?.parent_organization ?? "",
-		internal_notes: resolvedInstitution?.internal_notes ?? "",
-		"address.streetLine": buildStreetLine(
-			address?.street,
-			address?.street_number,
-		),
-		"address.city": address?.city ?? "",
-		"address.zip": address?.zipcode ?? "",
-		"address.address_suffix": address?.address_suffix ?? "",
-		"address.neighbourhood": address?.neighbourhood ?? "",
-		"address.cultural_area": address?.cultural_area ?? "",
-		"address.lat": address?.lat ?? "",
-		"address.lng": address?.lng ?? "",
-		categoryIds:
-			resolvedInstitution?.categories?.map((category) => String(category.id)) ??
-			[],
-		categoryFilters: buildCategoryFilterState(resolvedInstitution?.categories),
-		utilization_status: resolvedInstitution?.utilization_status ?? undefined,
-		utilization_status_info: resolvedInstitution?.utilization_status_info ?? "",
-		protection_status: resolvedInstitution?.protection_status ?? undefined,
-		protection_status_info: resolvedInstitution?.protection_status_info ?? "",
-		website: resolvedInstitution?.website ?? "",
-		email: resolvedInstitution?.email ?? "",
-		phone: resolvedInstitution?.phone ?? "",
-		contact_person_first_name:
-			resolvedInstitution?.contact_person?.first_name ?? "",
-		contact_person_last_name:
-			resolvedInstitution?.contact_person?.last_name ?? "",
-		contact_person_email: resolvedInstitution?.contact_person?.email ?? "",
-		contact_person_phone: resolvedInstitution?.contact_person?.phone ?? "",
-		legal_form: resolvedInstitution?.legal_form ?? "",
-		funding_type: resolvedInstitution?.funding_type ?? undefined,
-		funding_sources:
-			resolvedInstitution?.funding_sources?.map((source) => ({
-				source_name: source.source_name ?? "",
-				description: source.description ?? "",
-			})) ?? [],
-		owner_type: resolvedInstitution?.owner_type ?? undefined,
-		owner_name: resolvedInstitution?.owner_name ?? "",
-		rental_contract_type:
-			resolvedInstitution?.rental_contract_type ?? undefined,
-		rental_contract_end: resolvedInstitution?.rental_contract_end ?? "",
-		established_since: resolvedInstitution?.established_since ?? "",
-		established_until: resolvedInstitution?.established_until ?? "",
-		closing_reason: resolvedInstitution?.closing_reason ?? "",
-		area: resolvedInstitution?.area ?? "",
-		capacity: resolvedInstitution?.capacity ?? "",
-		number_of_rooms: resolvedInstitution?.number_of_rooms ?? 0,
-		accessibility: resolvedInstitution?.accessibility ?? "",
-		cost: resolvedInstitution?.cost ?? "",
-		notes: resolvedInstitution?.notes ?? "",
-	};
-};
-
 const getDialogTitle = (
 	mode: InstitutionFormModalProps["mode"],
 	t: (key: string) => string,
@@ -178,6 +86,7 @@ const useInstitutionSubmit = (
 	onClose: () => void,
 	onSuccess: (mode: InstitutionFormModalProps["mode"]) => void,
 	shouldRefresh: boolean,
+	onError: (message: string) => void,
 ) => {
 	const [submitting, setSubmitting] = useState(false);
 	const addInstitution = useAccountStore((state) => state.addInstitution);
@@ -192,58 +101,23 @@ const useInstitutionSubmit = (
 			data as Record<string, unknown>,
 			categoryGroups,
 		);
-		const streetLine = toOptionalText(data["address.streetLine"]) ?? "";
-		const city = toOptionalText(data["address.city"]);
-		const zipcode = toOptionalText(data["address.zip"]);
-		const lat = toOptionalNumber(data["address.lat"]);
-		const lng = toOptionalNumber(data["address.lng"]);
-		const address_suffix = toOptionalText(data["address.address_suffix"]);
-		const neighbourhood = toOptionalText(data["address.neighbourhood"]);
-		const cultural_area = toOptionalText(data["address.cultural_area"]);
-
-		const address = (() => {
-			const { street, streetNumber } = splitStreetLine(streetLine);
-			const nextAddress = {
-				street,
-				street_number: streetNumber,
-				city,
-				zipcode,
-				lat,
-				lng,
-				address_suffix,
-				neighbourhood,
-				cultural_area,
-			};
-			if (addressId) {
-				return { ...nextAddress, id: addressId };
-			}
-			return nextAddress;
-		})();
-		const website = toOptionalText(data.website);
-		const email = toOptionalText(data.email);
-		const phone = toOptionalText(data.phone);
-		const funding_type = toOptionalText(data.funding_type) as
+		const address = buildInstitutionAddressPayload(data, { addressId });
+		const {
+			website,
+			email,
+			phone,
+			funding_type: rawFundingType,
+			funding_sources,
+			shared_use_allowed,
+			shared_use_info,
+			shared_use_equipment,
+			shared_use_audience,
+			shared_use_availability,
+			shared_use_contact_person,
+		} = buildInstitutionSharedFieldsPayload(data);
+		const funding_type = rawFundingType as
 			| Institution["funding_type"]
 			| undefined;
-		const funding_sources = Array.isArray(data.funding_sources)
-			? data.funding_sources
-					.map((item) => {
-						const source = item as {
-							source_name?: unknown;
-							description?: unknown;
-						};
-						const source_name = toOptionalText(source.source_name);
-						const description = toOptionalText(source.description);
-						if (!source_name) return null;
-						return { source_name, description: description ?? null };
-					})
-					.filter(
-						(
-							item,
-						): item is { source_name: string; description: string | null } =>
-							item !== null,
-					)
-			: [];
 
 		try {
 			if (mode === "create") {
@@ -256,6 +130,12 @@ const useInstitutionSubmit = (
 					phone,
 					funding_type: funding_type ?? null,
 					funding_sources,
+					shared_use_allowed,
+					shared_use_info,
+					shared_use_equipment,
+					shared_use_audience,
+					shared_use_availability,
+					shared_use_contact_person,
 				});
 				addInstitution(created);
 			} else if (institutionId) {
@@ -269,6 +149,12 @@ const useInstitutionSubmit = (
 					phone,
 					funding_type: funding_type ?? null,
 					funding_sources,
+					shared_use_allowed,
+					shared_use_info,
+					shared_use_equipment,
+					shared_use_audience,
+					shared_use_availability,
+					shared_use_contact_person,
 				});
 				if (updated) {
 					upsertInstitution(updated);
@@ -280,6 +166,12 @@ const useInstitutionSubmit = (
 				router.refresh();
 			}
 			onClose();
+		} catch (error) {
+			const message =
+				error instanceof Error
+					? error.message
+					: "An unexpected error occurred. Please try again.";
+			onError(message);
 		} finally {
 			setSubmitting(false);
 		}
@@ -294,7 +186,6 @@ type InstitutionFormConfigArgs = {
 	tEnum: TFunction;
 	categoryGroups: Category[];
 	resolvedInstitution?: Institution;
-	initialValues?: Record<string, unknown>;
 	submitting: boolean;
 	submitLabel?: string;
 	onSubmit: (data: Record<string, unknown>) => void | Promise<void>;
@@ -318,7 +209,6 @@ const buildInstitutionFormConfig = ({
 	tEnum,
 	categoryGroups,
 	resolvedInstitution,
-	initialValues,
 	submitting,
 	submitLabel,
 	onSubmit,
@@ -327,9 +217,12 @@ const buildInstitutionFormConfig = ({
 	onLatLngBlur,
 	isPrivateField,
 }: InstitutionFormConfigArgs): FormWrapperConfig => {
-	const fieldLabel = (key: string, fallback: string) =>
-		getFieldLabel(tEnum, key, fallback);
-
+	const fieldLabel = (key: string, _fallback?: string) =>
+		getFieldLabel(tEnum, key);
+	const fieldDescription = (key: string) =>
+		tEnum(`field_names.${key}.description`);
+	const fieldPlaceholder = (key: string) =>
+		tEnum(`field_names.${key}.placeholder`);
 	return {
 		fields: [
 			{
@@ -344,14 +237,10 @@ const buildInstitutionFormConfig = ({
 				fields: [
 					{
 						name: "parent_organization",
-						label: fieldLabel("parent_organization", "Parent Organization"),
+						label: fieldLabel("parent_organization"),
 						type: "text",
-						description: t(
-							"institutionFormModal.form.details.fields.parentOrganization.description",
-						),
-						placeholder: t(
-							"institutionFormModal.form.details.fields.parentOrganization.placeholder",
-						),
+						description: fieldDescription("parent_organization"),
+						placeholder: fieldPlaceholder("parent_organization"),
 						layout: { span: "full" },
 					},
 					{
@@ -359,14 +248,13 @@ const buildInstitutionFormConfig = ({
 						label: fieldLabel("name", "Name"),
 						type: "text",
 						required: true,
-						placeholder: t(
-							"institutionFormModal.form.details.fields.name.placeholder",
-						),
+						placeholder: fieldPlaceholder("name"),
 						layout: { span: "full" },
 					},
 					{
 						name: "categoryFilters",
-						label: "Categories",
+						fieldMetaKey: "categories",
+						label: fieldLabel("categories"),
 						type: "filterPanel",
 						layout: { span: "full" },
 						filterPanel: {
@@ -378,15 +266,14 @@ const buildInstitutionFormConfig = ({
 							showSummary: false,
 							showDistricts: false,
 							showClosedToggle: false,
-							selectionEmptyLabel: t(
-								"institutionFormModal.form.details.fields.categories.placeholder",
-							),
+							selectionEmptyLabel: fieldPlaceholder("categories"),
 						},
 					},
 					{
 						name: "utilization_status",
 						label: fieldLabel("utilization_status", "Utilization Status"),
 						type: "select",
+						description: fieldDescription("utilization_status"),
 						placeholder: tEnum("utilization_status.placeholder"),
 						layout: { span: "full" },
 						options: [
@@ -418,7 +305,8 @@ const buildInstitutionFormConfig = ({
 					},
 					{
 						name: "address.map",
-						label: `${fieldLabel("address", "Address")} Map`,
+						fieldMetaKey: "address_map",
+						label: fieldLabel("address_map"),
 						type: "addressMap",
 						layout: { span: "full" },
 						addressMap: {
@@ -432,6 +320,7 @@ const buildInstitutionFormConfig = ({
 
 					{
 						name: "address.lat",
+						fieldMetaKey: "lat",
 						label: fieldLabel("lat", "Breitengrad"),
 						type: "number",
 						layout: { span: "half" },
@@ -439,6 +328,7 @@ const buildInstitutionFormConfig = ({
 					},
 					{
 						name: "address.lng",
+						fieldMetaKey: "lng",
 						label: fieldLabel("lng", "Längengrad"),
 						type: "number",
 						layout: { span: "half" },
@@ -446,61 +336,55 @@ const buildInstitutionFormConfig = ({
 					},
 					{
 						name: "address.streetLine",
+						fieldMetaKey: "street",
 						label: `${fieldLabel("street", "Street")} & ${fieldLabel(
 							"street_number",
 							"Number",
 						)}`,
 						type: "text",
 						layout: { span: "half" },
-						placeholder: t(
-							"institutionFormModal.form.details.fields.address.streetLine.placeholder",
-						),
+						placeholder: fieldPlaceholder("street"),
 						onBlur: onAddressBlur,
 					},
 					{
 						name: "address.zip",
-						label: fieldLabel("address.zip", "ZIP Code"),
+						fieldMetaKey: "zipcode",
+						label: fieldLabel("zipcode", "ZIP Code"),
 						type: "text",
 						layout: { span: "half" },
-						placeholder: t(
-							"institutionFormModal.form.details.fields.address.zip.placeholder",
-						),
+						placeholder: fieldPlaceholder("zipcode"),
 						onBlur: onAddressBlur,
 					},
 					{
 						name: "address.address_suffix",
-						label: fieldLabel("address.address_suffix", "Address Suffix"),
+						fieldMetaKey: "address_suffix",
+						label: fieldLabel("address_suffix", "Address Suffix"),
 						type: "text",
-						placeholder: t(
-							"institutionFormModal.form.details.fields.address.address_suffix.placeholder",
-						),
+						placeholder: fieldPlaceholder("address_suffix"),
 					},
 					{
 						name: "address.neighbourhood",
-						label: fieldLabel("address.neighbourhood", "Neighbourhood"),
+						fieldMetaKey: "neighbourhood",
+						label: fieldLabel("neighbourhood", "Neighbourhood"),
 						type: "text",
 						layout: { span: "half" },
-						placeholder: t(
-							"institutionFormModal.form.details.fields.address.neighbourhood.placeholder",
-						),
+						placeholder: fieldPlaceholder("neighbourhood"),
 					},
 					{
 						name: "address.city",
-						label: fieldLabel("address.city", "City"),
+						fieldMetaKey: "city",
+						label: fieldLabel("city", "City"),
 						type: "text",
 						layout: { span: "half" },
-						placeholder: t(
-							"institutionFormModal.form.details.fields.address.city.placeholder",
-						),
+						placeholder: fieldPlaceholder("city"),
 						onBlur: onAddressBlur,
 					},
 					{
 						name: "address.cultural_area",
-						label: fieldLabel("address.cultural_area", "Cultural Area"),
+						fieldMetaKey: "cultural_area",
+						label: fieldLabel("cultural_area", "Cultural Area"),
 						type: "text",
-						placeholder: t(
-							"institutionFormModal.form.details.fields.address.cultural_areal.placeholder",
-						),
+						placeholder: fieldPlaceholder("cultural_area"),
 					},
 				],
 			},
@@ -514,27 +398,21 @@ const buildInstitutionFormConfig = ({
 						name: "website",
 						label: fieldLabel("website", "Website"),
 						type: "text",
-						placeholder: t(
-							"institutionFormModal.form.contact.fields.website.placeholder",
-						),
+						placeholder: fieldPlaceholder("website"),
 						layout: { span: "full" },
 					},
 					{
 						name: "email",
 						label: fieldLabel("email", "Email"),
 						type: "email",
-						placeholder: t(
-							"institutionFormModal.form.contact.fields.email.placeholder",
-						),
+						placeholder: fieldPlaceholder("email"),
 						layout: { span: "full" },
 					},
 					{
 						name: "phone",
 						label: fieldLabel("phone", "Phone"),
 						type: "tel",
-						placeholder: t(
-							"institutionFormModal.form.contact.fields.phone.placeholder",
-						),
+						placeholder: fieldPlaceholder("phone"),
 						layout: { span: "full" },
 					},
 					{
@@ -544,7 +422,7 @@ const buildInstitutionFormConfig = ({
 							"Contact Person First Name",
 						),
 						type: "text",
-						placeholder: "e.g. Max",
+						placeholder: fieldPlaceholder("contact_person_first_name"),
 						layout: { span: "half" },
 					},
 					{
@@ -554,21 +432,21 @@ const buildInstitutionFormConfig = ({
 							"Contact Person Last Name",
 						),
 						type: "text",
-						placeholder: "e.g. Mustermann",
+						placeholder: fieldPlaceholder("contact_person_last_name"),
 						layout: { span: "half" },
 					},
 					{
 						name: "contact_person_email",
 						label: fieldLabel("contact_person_email", "Contact Person Email"),
 						type: "email",
-						placeholder: "e.g. max.mustermann@example.com",
+						placeholder: fieldPlaceholder("contact_person_email"),
 						layout: { span: "half" },
 					},
 					{
 						name: "contact_person_phone",
 						label: fieldLabel("contact_person_phone", "Contact Person Phone"),
 						type: "tel",
-						placeholder: "e.g. +49 30 1234567",
+						placeholder: fieldPlaceholder("contact_person_phone"),
 						layout: { span: "half" },
 					},
 				],
@@ -583,7 +461,7 @@ const buildInstitutionFormConfig = ({
 						name: "legal_form",
 						label: fieldLabel("legal_form", "Legal Form"),
 						type: "text",
-						placeholder: "e.g. e.V., gGmbH, GbR",
+						placeholder: fieldPlaceholder("legal_form"),
 						layout: { span: "full" },
 					},
 					{
@@ -647,7 +525,7 @@ const buildInstitutionFormConfig = ({
 						name: "owner_name",
 						label: fieldLabel("owner_name", "Owner Name"),
 						type: "text",
-						placeholder: "e.g. Organization name",
+						placeholder: fieldPlaceholder("owner_name"),
 						layout: { span: "half" },
 					},
 					{
@@ -695,7 +573,7 @@ const buildInstitutionFormConfig = ({
 						name: "closing_reason",
 						label: fieldLabel("closing_reason", "Closing Reason"),
 						type: "textarea",
-						placeholder: "Reason for closure",
+						placeholder: fieldPlaceholder("closing_reason"),
 						layout: { span: "full" },
 					},
 				],
@@ -732,7 +610,7 @@ const buildInstitutionFormConfig = ({
 					},
 					{
 						name: "funding_sources",
-						label: fieldLabel("funding_source_name", "Funding Sources"),
+						label: fieldLabel("funding_sources", "Funding Sources"),
 						type: "fundingSources",
 						layout: { span: "full" },
 						fundingSources: {
@@ -744,12 +622,87 @@ const buildInstitutionFormConfig = ({
 								"funding_source_description",
 								"Funding Source Description",
 							),
-							sourcePlaceholder: "e.g. Land, Bezirk",
-							descriptionPlaceholder:
-								"e.g. Funding through the Berlin workspace program since 2020, 50,000€ annually",
-							addButtonLabel: "Add funding source",
-							removeButtonLabel: "Remove funding source",
+							sourcePlaceholder: tEnum(
+								"field_names.funding_source_name.placeholder",
+							),
+							descriptionPlaceholder: tEnum(
+								"field_names.funding_source_description.placeholder",
+							),
+							addButtonLabel: tEnum("field_names.funding_sources.actions.add"),
+							removeButtonLabel: tEnum(
+								"field_names.funding_sources.actions.remove",
+							),
 						},
+					},
+				],
+			},
+			{
+				name: "shared_use",
+				type: "section",
+				layout: { columns: 2 },
+				fields: [
+					{
+						name: "shared_use_allowed",
+						label: fieldLabel("shared_use_allowed", "Shared Use Allowed"),
+						type: "radio",
+						radioVariant: "button",
+						layout: { span: "full" },
+						options: [
+							{
+								value: true,
+								label: t("institutionFormModal.form.sharedUse.options.yes"),
+							},
+							{
+								value: false,
+								label: t("institutionFormModal.form.sharedUse.options.no"),
+							},
+						],
+					},
+					{
+						name: "shared_use_info",
+						label: fieldLabel("shared_use_info", "Shared Use Info"),
+						type: "textarea",
+						placeholder: fieldPlaceholder("shared_use_info"),
+						layout: { span: "full" },
+						condition: (formData) => formData.shared_use_allowed === true,
+					},
+					{
+						name: "shared_use_equipment",
+						label: fieldLabel("shared_use_equipment", "Shared Use Equipment"),
+						type: "textarea",
+						placeholder: fieldPlaceholder("shared_use_equipment"),
+						layout: { span: "full" },
+						condition: (formData) => formData.shared_use_allowed === true,
+					},
+					{
+						name: "shared_use_audience",
+						label: fieldLabel("shared_use_audience", "Shared Use Audience"),
+						type: "textarea",
+						placeholder: fieldPlaceholder("shared_use_audience"),
+						layout: { span: "full" },
+						condition: (formData) => formData.shared_use_allowed === true,
+					},
+					{
+						name: "shared_use_availability",
+						label: fieldLabel(
+							"shared_use_availability",
+							"Shared Use Availability",
+						),
+						type: "textarea",
+						placeholder: fieldPlaceholder("shared_use_availability"),
+						layout: { span: "full" },
+						condition: (formData) => formData.shared_use_allowed === true,
+					},
+					{
+						name: "shared_use_contact_person",
+						label: fieldLabel(
+							"shared_use_contact_person",
+							"Shared Use Contact Person",
+						),
+						type: "text",
+						placeholder: fieldPlaceholder("shared_use_contact_person"),
+						layout: { span: "full" },
+						condition: (formData) => formData.shared_use_allowed === true,
 					},
 				],
 			},
@@ -763,35 +716,35 @@ const buildInstitutionFormConfig = ({
 						name: "area",
 						label: fieldLabel("area", "Area (m²)"),
 						type: "number",
-						placeholder: "e.g. 150",
+						placeholder: fieldPlaceholder("area"),
 						layout: { span: "half" },
 					},
 					{
 						name: "capacity",
 						label: fieldLabel("capacity", "Capacity"),
 						type: "number",
-						placeholder: "e.g. 100",
+						placeholder: fieldPlaceholder("capacity"),
 						layout: { span: "half" },
 					},
 					{
 						name: "number_of_rooms",
 						label: fieldLabel("number_of_rooms", "Number of Rooms"),
 						type: "number",
-						placeholder: "e.g. 5",
+						placeholder: fieldPlaceholder("number_of_rooms"),
 						layout: { span: "half" },
 					},
 					{
 						name: "accessibility",
 						label: fieldLabel("accessibility", "Accessibility"),
 						type: "textarea",
-						placeholder: "Accessibility information",
+						placeholder: fieldPlaceholder("accessibility"),
 						layout: { span: "full" },
 					},
 					{
 						name: "cost",
 						label: fieldLabel("cost", "Cost"),
 						type: "textarea",
-						placeholder: "Cost information",
+						placeholder: fieldPlaceholder("cost"),
 						layout: { span: "full" },
 					},
 				],
@@ -808,7 +761,7 @@ const buildInstitutionFormConfig = ({
 							"Utilization Status Info",
 						),
 						type: "textarea",
-						placeholder: "Additional details about utilization status",
+						placeholder: fieldPlaceholder("utilization_status_info"),
 						layout: { span: "full" },
 					},
 					{
@@ -851,9 +804,7 @@ const buildInstitutionFormConfig = ({
 							"Protection Status Info",
 						),
 						type: "textarea",
-						placeholder: t(
-							"institutionFormModal.form.details.fields.protection_status_info.placeholder",
-						),
+						placeholder: fieldPlaceholder("protection_status_info"),
 						layout: { span: "full" },
 					},
 				],
@@ -867,10 +818,16 @@ const buildInstitutionFormConfig = ({
 						name: "notes",
 						label: fieldLabel("notes", "Notes"),
 						type: "textarea",
-						placeholder: t(
-							"institutionFormModal.form.additional.fields.notes.placeholder",
-						),
+						placeholder: fieldPlaceholder("notes"),
 						layout: { span: "full" },
+					},
+					{
+						name: "internal_notes",
+						label: fieldLabel("internal_notes", "Internal Notes"),
+						type: "textarea",
+						placeholder: fieldPlaceholder("internal_notes"),
+						layout: { span: "full" },
+						description: fieldDescription("internal_notes"),
 					},
 				],
 			},
@@ -892,7 +849,7 @@ const buildInstitutionFormConfig = ({
 					loading: t("institutionFormModal.actions.saving"),
 				},
 			}),
-		initialValues: initialValues ?? getInitialValues(resolvedInstitution),
+		initialValues: buildInstitutionFormInitialValues(resolvedInstitution),
 	};
 };
 
@@ -903,7 +860,6 @@ export function InstitutionFormModal({
 	onClose: _onClose,
 	routePath,
 	onSubmit,
-	initialValues,
 	formKey,
 	submitLabel,
 	submitting: submittingProp,
@@ -923,6 +879,7 @@ export function InstitutionFormModal({
 	const categories = useInstitutionStore((state) => state.categories) ?? [];
 	const [isDeleting, setIsDeleting] = useState(false);
 	const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+	const [submitError, setSubmitError] = useState<string | null>(null);
 	const addressGeocodeState = useRef({
 		lastQuery: "",
 		inflight: false,
@@ -974,13 +931,17 @@ export function InstitutionFormModal({
 	}, []);
 
 	const handleClose = useRoutedModalClose({ returnTo });
+	const resolvedClose = useCallback(() => {
+		if (_onClose) {
+			_onClose();
+			return;
+		}
+		handleClose();
+	}, [_onClose, handleClose]);
 
 	const resolvedInstitutionWithFallback = institution ?? undefined;
 	const showNotFoundWithFallback =
-		mode === "edit" &&
-		!resolvedInstitutionWithFallback &&
-		!initialValues &&
-		!isDeleting;
+		mode === "edit" && !resolvedInstitutionWithFallback && !isDeleting;
 
 	const handleSuccess = (nextMode: InstitutionFormModalProps["mode"]) => {
 		const keyPrefix =
@@ -998,27 +959,36 @@ export function InstitutionFormModal({
 		resolvedInstitutionWithFallback?.id,
 		resolvedInstitutionWithFallback?.address?.id,
 		categories,
-		handleClose,
+		resolvedClose,
 		handleSuccess,
 		shouldRefresh,
+		(message) => setSubmitError(message),
 	);
 
 	const handleCustomSubmit = useCallback(
-		(data: Record<string, unknown>) => {
-			const maybePromise = onSubmit?.({
-				data,
-				institution: resolvedInstitutionWithFallback,
-				mode,
-			});
-			if (closeOnSubmit ?? true) {
-				Promise.resolve(maybePromise).then(() => handleClose());
+		async (data: Record<string, unknown>) => {
+			try {
+				await onSubmit?.({
+					data,
+					institution: resolvedInstitutionWithFallback,
+					mode,
+				});
+				if (closeOnSubmit ?? true) {
+					resolvedClose();
+				}
+			} catch (error) {
+				const message =
+					error instanceof Error
+						? error.message
+						: "An unexpected error occurred. Please try again.";
+				setSubmitError(message);
 			}
 		},
 		[
 			closeOnSubmit,
-			handleClose,
 			mode,
 			onSubmit,
+			resolvedClose,
 			resolvedInstitutionWithFallback,
 		],
 	);
@@ -1048,11 +1018,10 @@ export function InstitutionFormModal({
 				tEnum,
 				categoryGroups: categories,
 				resolvedInstitution: resolvedInstitutionWithFallback,
-				initialValues,
 				submitting: resolvedSubmitting,
 				submitLabel,
 				onSubmit: resolvedSubmitHandler,
-				onCancel: handleClose,
+				onCancel: resolvedClose,
 				onAddressBlur,
 				onLatLngBlur,
 				isPrivateField: isPrivateFormField,
@@ -1063,11 +1032,10 @@ export function InstitutionFormModal({
 			tEnum,
 			categories,
 			resolvedInstitutionWithFallback,
-			initialValues,
 			resolvedSubmitting,
 			submitLabel,
 			resolvedSubmitHandler,
-			handleClose,
+			resolvedClose,
 			onAddressBlur,
 			onLatLngBlur,
 			isPrivateFormField,
@@ -1101,7 +1069,7 @@ export function InstitutionFormModal({
 		if (!onDelete || isDeleting || resolvedSubmitting) return;
 		setIsDeleting(true);
 		try {
-			handleClose();
+			resolvedClose();
 			await onDelete();
 			setShowDeleteDialog(false);
 		} catch {
@@ -1109,7 +1077,7 @@ export function InstitutionFormModal({
 		} finally {
 			setIsDeleting(false);
 		}
-	}, [onDelete, isDeleting, resolvedSubmitting, handleClose]);
+	}, [onDelete, isDeleting, resolvedSubmitting, resolvedClose]);
 
 	const formConfigWithDelete = useMemo(() => {
 		if (!canShowDeleteAction) return formConfigWithFieldAccess;
@@ -1139,6 +1107,7 @@ export function InstitutionFormModal({
 			hasFooter={false}
 			routePath={routePath}
 			returnTo={returnTo}
+			onCloseRequest={resolvedClose}
 			closeConfirmation={closeConfirmation}
 			autoCloseError={autoCloseError}
 			confirmDialog={
@@ -1168,6 +1137,20 @@ export function InstitutionFormModal({
 							onConfirm: handleDelete,
 							onOpenChange: (open) => {
 								if (!open) setShowDeleteDialog(false);
+							},
+						}
+					: undefined
+			}
+			errorDialog={
+				submitError
+					? {
+							open: true,
+							title: t("error"),
+							description: submitError,
+							confirmLabel: t("close"),
+							onConfirm: () => setSubmitError(null),
+							onOpenChange: (open) => {
+								if (!open) setSubmitError(null);
 							},
 						}
 					: undefined

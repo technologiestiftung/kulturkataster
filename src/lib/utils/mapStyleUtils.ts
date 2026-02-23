@@ -36,6 +36,7 @@ const createImageStyle = (config: StyleConfig) => {
 	if (config.icon) {
 		return new Icon({
 			src: config.icon,
+			crossOrigin: "anonymous",
 			scale: config.iconScale || 1,
 			anchor: [0.5, 0.5],
 			anchorXUnits: "fraction",

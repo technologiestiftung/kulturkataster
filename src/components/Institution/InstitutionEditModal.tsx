@@ -21,7 +21,6 @@ type InstitutionEditModalProps = {
 	routePath?: string;
 	returnTo?: string;
 	onSubmit?: Parameters<typeof InstitutionFormModal>[0]["onSubmit"];
-	initialValues?: Record<string, unknown>;
 	formKey?: string;
 	submitLabel?: string;
 	submitting?: boolean;
@@ -34,7 +33,6 @@ export function InstitutionEditModal({
 	routePath,
 	returnTo,
 	onSubmit,
-	initialValues,
 	formKey,
 	submitLabel,
 	submitting,
@@ -223,7 +221,6 @@ export function InstitutionEditModal({
 					cancelLabel: t("institutionModalCloseConfirmation.cancel"),
 				}}
 				onSubmit={onSubmit}
-				initialValues={initialValues}
 				formKey={formKey}
 				submitLabel={submitLabel}
 				submitting={submitting}

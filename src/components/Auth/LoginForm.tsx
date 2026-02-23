@@ -90,7 +90,7 @@ export function LoginForm() {
 									variant="tertiary"
 									size="tag"
 									className=" underline body2"
-									onClick={() => router.push(toLocalePath("/forgot-password"))}
+									onClick={() => router.push(toLocalePath("/forgotPassword"))}
 									disabled={isLoading}
 								>
 									{t("auth.login.forgotPassword")}

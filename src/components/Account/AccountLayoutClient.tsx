@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useTransition, type ReactNode } from "react";
 import { ButtonWithTooltip } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
@@ -11,6 +11,7 @@ import Info from "@/icons/info-circle.svg";
 import { logout } from "@/server/actions/auth";
 import Image from "next/image";
 import { LogOut } from "lucide-react";
+import { RefreshCw } from "lucide-react";
 import { Profile } from "@/types";
 import { clearAccountStore } from "@/lib/store/accountStore";
 
@@ -73,6 +74,7 @@ export function AccountLayoutClient({
 }: AccountLayoutClientProps) {
 	const { t } = useTranslation("common");
 	const router = useRouter();
+	const [isRefreshing, startRefreshTransition] = useTransition();
 	const toLocalePath = useLocalePath();
 	const pathname = usePathname();
 
@@ -113,6 +115,9 @@ export function AccountLayoutClient({
 	const logoutLabel = t("auth.account.actions.logout", {
 		defaultValue: "Logout",
 	});
+	const refreshLabel = t("auth.account.actions.refreshData", {
+		defaultValue: "Refresh data",
+	});
 
 	return (
 		<div className="AccountLayoutClient relative min-h-0 h-full z-30">
@@ -121,7 +126,7 @@ export function AccountLayoutClient({
 					src="/resources/map.png"
 					alt="Map background"
 					fill
-					className="object-cover"
+					className="object-cover contrast:invert-90"
 					priority
 				/>
 			</div>
@@ -172,6 +177,24 @@ export function AccountLayoutClient({
 							onClick={handleLogout}
 						>
 							<LogOut />
+						</ButtonWithTooltip>
+						<ButtonWithTooltip
+							variant="rounded"
+							size="icon-only"
+							tooltipSide="bottom"
+							tooltip={refreshLabel}
+							className="h-14 w-14"
+							aria-label={refreshLabel}
+							disabled={isRefreshing}
+							onClick={() => {
+								startRefreshTransition(() => {
+									router.refresh();
+								});
+							}}
+						>
+							<RefreshCw
+								className={isRefreshing ? "animate-spin" : undefined}
+							/>
 						</ButtonWithTooltip>
 					</div>
 				</div>

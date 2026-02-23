@@ -41,13 +41,13 @@ export function RegisterModal({
 								src="/resources/thankyou.png"
 								alt="Thank you background"
 								fill
-								className="object-cover"
+								className="object-cover contrast:invert-90"
 								priority
 							/>
 						</div>
 						<div className="p-4 md:p-8 mb-64 mt-14 flex justify-center flex-col gap-8 max-w-3xl mx-auto w-full">
 							<div className="space-y-4">
-								<h1 className="display">
+								<h1>
 									{t("auth.register.successTitle", {
 										defaultValue: "Vielen Dank!",
 									})}

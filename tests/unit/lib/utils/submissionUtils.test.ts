@@ -69,4 +69,28 @@ describe("institutionSubmissionToDraft", () => {
 		expect(result.shared_use_allowed).toBe(true);
 		expect(result.contact_person_id).toBe(7);
 	});
+
+	it("normalizes tagged DateTime objects from submission JSON", () => {
+		const result = institutionSubmissionToDraft({
+			data: {
+				rental_contract_end: {
+					$type: "DateTime",
+					value: "2010-01-01T00:00:00.000Z",
+				},
+				established_since: {
+					$type: "DateTime",
+					value: "2008-05-15T00:00:00.000Z",
+				},
+			},
+		});
+
+		expect(result.rental_contract_end).toBeInstanceOf(Date);
+		expect((result.rental_contract_end as Date).toISOString()).toBe(
+			"2010-01-01T00:00:00.000Z",
+		);
+		expect(result.established_since).toBeInstanceOf(Date);
+		expect((result.established_since as Date).toISOString()).toBe(
+			"2008-05-15T00:00:00.000Z",
+		);
+	});
 });
