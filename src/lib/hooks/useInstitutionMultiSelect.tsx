@@ -113,7 +113,7 @@ const buildInstitutionOption = (
 		(category) => tEnum(`category.${category.key}`) || category.key,
 	);
 	const subcategoryLabels = subcategories.map(
-		(subcategory) => tEnum(`subcategory.${subcategory.key}`) || subcategory.key,
+		(subcategory) => tEnum(`category.${subcategory.key}`) || subcategory.key,
 	);
 	const tagNames =
 		institution.tags?.map((tag) => tag.name).filter(Boolean) ?? [];

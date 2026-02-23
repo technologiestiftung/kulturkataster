@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo } from "react";
-import { useTranslation } from "react-i18next";
 import { useFieldLabel } from "@/lib/hooks/useFieldLabel";
 import { InfoWrapper } from "@/components/InfoWrapper";
 import {
@@ -27,7 +26,6 @@ export function InstitutionReview({
 	newData,
 	onEditSection,
 }: InstitutionReviewProps) {
-	const { t } = useTranslation("common");
 	const fieldLabel = useFieldLabel();
 	const { isPrivateField } = useInstitutionPrivateFieldResolver();
 	const institutionCategories =
@@ -37,8 +35,6 @@ export function InstitutionReview({
 		institutionCategories.length > 0
 			? institutionCategories
 			: accountCategories;
-
-	console.log("data in review", data);
 
 	const editConfig = useMemo(
 		() => ({
@@ -173,10 +169,7 @@ export function InstitutionReview({
 					{
 						id: "utilization_status",
 						alwaysShow: true,
-						label: fieldLabel(
-							"utilization_status",
-							t("institution.utilizationStatus"),
-						),
+						label: fieldLabel("utilization_status"),
 						edit: editConfig.utilization_status,
 						className: "mb-2",
 						type: "status",
@@ -186,10 +179,7 @@ export function InstitutionReview({
 					{
 						id: "protection_status",
 						alwaysShow: false,
-						label: fieldLabel(
-							"protection_status",
-							t("institution.protectionStatus"),
-						),
+						label: fieldLabel("protection_status"),
 						edit: editConfig.protection_status,
 						type: "status",
 						value: "protection_status",

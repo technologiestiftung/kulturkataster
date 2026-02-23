@@ -1,6 +1,11 @@
 import { Address } from "@/generated/prisma";
 import { Institution } from "@/types";
 import { FeatureCollection, GeoJsonProperties, Geometry } from "geojson";
+import {
+	getParentCategories as getParentCategoriesFromCategoryUtils,
+	getSubcategories as getSubcategoriesFromCategoryUtils,
+	getSubcategoriesForCategory as getSubcategoriesForCategoryFromCategoryUtils,
+} from "@/lib/utils/categoryUtils";
 
 export const toFeatureCollection = (
 	institutions: Institution[],
@@ -28,20 +33,15 @@ export const toFeatureCollection = (
 });
 
 export const getParentCategories = (institution: Partial<Institution>) =>
-	institution.categories?.filter((category) => !category.parent_category_id) ||
-	[];
+	getParentCategoriesFromCategoryUtils(institution);
 
 export const getSubcategories = (institution: Partial<Institution>) =>
-	institution.categories?.filter((category) => !!category.parent_category_id) ||
-	[];
+	getSubcategoriesFromCategoryUtils(institution);
 
 export const getSubcategoriesForCategory = (
 	institution: Partial<Institution>,
 	categoryId: number,
-) =>
-	getSubcategories(institution).filter(
-		(subcategory) => subcategory.parent_category_id === categoryId,
-	);
+) => getSubcategoriesForCategoryFromCategoryUtils(institution, categoryId);
 
 export const getCoordinatesFromAddress = (
 	address: Address | null | undefined,

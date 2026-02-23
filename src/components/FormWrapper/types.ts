@@ -15,6 +15,7 @@ export type FieldType =
 	| "tel"
 	| "url"
 	| "date"
+	| "file"
 	| "textarea"
 	| "select"
 	| "radio"
@@ -36,13 +37,13 @@ export type TablePermissionValue = {
 	actions: PermissionAction[];
 	scope: PermissionScope;
 };
-
 export interface SelectOption {
-	label: string;
-	value: string;
+	label: string | ReactNode;
+	value: string | number | boolean;
+	description?: string | ReactNode;
 	searchText?: string;
 	filterValues?: Record<string, string[]>;
-	parentValue?: string;
+	parentValue?: string | number | boolean;
 }
 
 type FormWrapperSectionConfig = {
@@ -98,6 +99,7 @@ type FormWrapperSectionFieldConfig = {
 
 type FormWrapperNonSectionFieldConfig = {
 	name: string;
+	fieldMetaKey?: string;
 	label?: string;
 	labelNode?: ReactNode;
 	type: Exclude<FieldType, "section">;
@@ -110,6 +112,7 @@ type FormWrapperNonSectionFieldConfig = {
 	placeholder?: string;
 	required?: boolean;
 	requiredMessage?: string;
+	errorMessages?: Partial<Record<string, string>>;
 	disabled?: boolean;
 	description?: string;
 	defaultValue?: unknown;
@@ -202,6 +205,12 @@ type FormWrapperNonSectionFieldConfig = {
 	min?: number;
 	max?: number;
 	step?: number;
+	accept?: string;
+	multiple?: boolean;
+	fileRemoveOption?: {
+		fieldName: string;
+		label: string;
+	};
 
 	// Grid layout
 	layout?: Layout;

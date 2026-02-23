@@ -3,10 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { InstitutionFormModal } from "@/components/Institution/InstitutionFormModal";
-import {
-	buildAddressFromFormData,
-	buildStreetLine,
-} from "@/lib/utils/formUtils";
+import { buildAddressFromFormData } from "@/lib/utils/formUtils";
 import { institutionSubmissionToDraft } from "@/lib/utils/institutionSubmissionUtils";
 import { buildSubmissionDiff } from "@/lib/utils/submissionDiff";
 import type { Prisma } from "@/generated/prisma";
@@ -16,11 +13,12 @@ import {
 	updateSubmission,
 } from "@/server/actions/submissions";
 import { useAccountStore } from "@/lib/store/accountStore";
-import type { Category, FilterState } from "@/types";
+import type { Institution } from "@/types/institution";
 import type { Submission } from "@/types/submission";
 import { useRouter } from "next/navigation";
 import { AlertDialog } from "../ui/alert-dialog";
 import { showSuccessToast } from "@/lib/utils/feedbackToast";
+import { buildInstitutionForFormFromDraft } from "@/lib/utils/institutionFormAdapter";
 
 type InstitutionDraftEditModalProps = {
 	returnTo?: string;
@@ -36,32 +34,26 @@ export function InstitutionDraftEditModal({
 	routePath,
 }: InstitutionDraftEditModalProps) {
 	const { t } = useTranslation("content");
-	const allSubmissions = useAccountStore((state) => state.submissions);
-	const submissions = useMemo(
-		() =>
-			allSubmissions.filter(
-				(s) =>
-					s.entity_type === "institution" &&
-					(s.type === "create" || s.type === "update"),
-			),
-		[allSubmissions],
-	);
+	const hasSubmissionId = typeof submissionId === "number";
+	const resolvedSubmission = useAccountStore((state) => {
+		if (!hasSubmissionId) return undefined;
+		return state.submissions.find(
+			(item) =>
+				item.id === submissionId &&
+				item.entity_type === "institution" &&
+				(item.type === "create" || item.type === "update"),
+		);
+	});
 	const upsertSubmission = useAccountStore((state) => state.upsertSubmission);
 	const removeSubmission = useAccountStore((state) => state.removeSubmission);
 	const categories = useAccountStore((state) => state.categories);
 	const router = useRouter();
 
-	const hasSubmissionId = typeof submissionId === "number";
 	const [fetchedSubmission, setFetchedSubmission] = useState<Submission | null>(
 		null,
 	);
 	const [didFetchSubmission, setDidFetchSubmission] = useState(false);
 	const [isDeleting, setIsDeleting] = useState(false);
-
-	const resolvedSubmission = useMemo(() => {
-		if (!hasSubmissionId) return undefined;
-		return submissions.find((item) => item.id === submissionId) ?? undefined;
-	}, [hasSubmissionId, submissions, submissionId]);
 
 	const resolvedSubmissionWithFallback =
 		resolvedSubmission ?? fetchedSubmission ?? undefined;
@@ -161,81 +153,15 @@ export function InstitutionDraftEditModal({
 		t,
 	]);
 
-	const buildCategoryFilterStateFromIds = useCallback(
-		(
-			categoryIds: number[] | undefined,
-			categoryGroups: Category[],
-		): FilterState => {
-			const category_keys = new Set<string>();
-			const child_category_keys = new Set<string>();
-			const categoryMap = new Map<number, Category>();
-			const parentKeyById = new Map<number, string>();
-			categoryGroups.forEach((category) => {
-				categoryMap.set(category.id, category);
-				parentKeyById.set(category.id, category.key);
-				(category.child_categories ?? []).forEach((child) => {
-					categoryMap.set(child.id, child);
-					parentKeyById.set(child.id, category.key);
-				});
-			});
-			(categoryIds ?? []).forEach((id) => {
-				const category = categoryMap.get(id);
-				if (!category) return;
-				if (category.parent_category_id) {
-					child_category_keys.add(category.key);
-					const parentKey =
-						parentKeyById.get(id) ??
-						parentKeyById.get(category.parent_category_id);
-					if (parentKey) {
-						category_keys.add(parentKey);
-					}
-				} else {
-					category_keys.add(category.key);
-				}
-			});
-			return {
-				district_keys: [],
-				category_keys: Array.from(category_keys),
-				child_category_keys: Array.from(child_category_keys),
-				include_closed: false,
-				status: undefined,
-			};
-		},
-		[],
-	);
-
-	const initialValues = useMemo(() => {
+	const institutionForForm = useMemo(() => {
 		const draft = institutionSubmissionToDraft({
 			data: (resolvedSubmissionWithFallback?.data ?? {}) as Record<
 				string,
 				unknown
 			>,
 		});
-		const address = draft.address;
-		return {
-			...draft,
-			categoryIds: draft.categoryIds?.map((id) => String(id)) ?? [],
-			categoryFilters: buildCategoryFilterStateFromIds(
-				draft.categoryIds,
-				categories,
-			),
-			"address.streetLine": buildStreetLine(
-				address?.street,
-				address?.street_number,
-			),
-			"address.city": address?.city ?? "",
-			"address.zip": address?.zipcode ?? "",
-			"address.address_suffix": address?.address_suffix ?? "",
-			"address.neighbourhood": address?.neighbourhood ?? "",
-			"address.cultural_area": address?.cultural_area ?? "",
-			"address.lat": address?.lat ?? "",
-			"address.lng": address?.lng ?? "",
-		};
-	}, [
-		resolvedSubmissionWithFallback,
-		categories,
-		buildCategoryFilterStateFromIds,
-	]);
+		return buildInstitutionForFormFromDraft(draft, categories) as Institution;
+	}, [resolvedSubmissionWithFallback, categories]);
 
 	const isLoading =
 		hasSubmissionId && !resolvedSubmissionWithFallback && !didFetchSubmission;
@@ -272,7 +198,7 @@ export function InstitutionDraftEditModal({
 			formKey={`draft-${submissionId ?? "new"}-${
 				resolvedSubmissionWithFallback ? "loaded" : "loading"
 			}`}
-			initialValues={initialValues}
+			institution={institutionForForm}
 			onSubmit={({ data }) => handleSubmit(data)}
 			onDelete={handleDeleteDraft}
 			deleteConfig={{

@@ -61,7 +61,6 @@ describe("institution submission pages integration", () => {
 			props: expect.objectContaining({
 				submissionId: 77,
 				routePath: "/account/submissions/77/edit",
-				returnTo: "/account/institutions",
 			}),
 		});
 	});

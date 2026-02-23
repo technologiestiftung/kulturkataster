@@ -2,7 +2,7 @@
 
 import ArrowLeft from "@/icons/arrow-narrow-left.svg";
 import Close from "@/icons/close.svg";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
 
@@ -13,6 +13,7 @@ export default function SubmenuLayout({
 }) {
 	const { t } = useTranslation("common");
 	const router = useRouter();
+	const pathname = usePathname();
 	const toLocalePath = useLocalePath();
 
 	const handleBack = () => {
@@ -33,6 +34,10 @@ export default function SubmenuLayout({
 		handleBack();
 	};
 
+	const title = pathname?.includes("/accessibilitySettings")
+		? t("accessibility.title")
+		: t("institution.details");
+
 	return (
 		<div className="flex flex-col h-full">
 			<div className="gap-3.5 p-6 shadow-sm md:shadow-none z-10">
@@ -48,7 +53,7 @@ export default function SubmenuLayout({
 						>
 							<ArrowLeft className="size-6" /> {t("back")}
 						</button>
-						<span className="">{t("institution.details")}</span>
+						<span className="">{title}</span>
 					</div>
 					<button onClick={handleClose} aria-label={t("closeSidebar")}>
 						<Close />

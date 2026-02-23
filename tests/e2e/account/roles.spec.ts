@@ -37,6 +37,7 @@ test.describe("roles management", () => {
 		await expect(
 			page.getByText(firstRoleName, { exact: false }).first(),
 		).toBeVisible();
+		await page.keyboard.press("Escape");
 
 		const uniqueName = `E2E Rolle ${Date.now()}`;
 		await page.getByRole("button", { name: "Rolle erstellen" }).first().click();

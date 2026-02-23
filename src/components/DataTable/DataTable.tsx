@@ -168,7 +168,7 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 			header: "",
 			enableSorting: false,
 			enableGlobalFilter: false,
-			size: 33,
+			size: 38,
 			accessorFn: () => null,
 			meta: { pin: "left" },
 			cell: ({ row }) =>

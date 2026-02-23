@@ -78,4 +78,29 @@ describe("server actions: submissions", () => {
 			expect.objectContaining({ data: { foo: "bar" } }),
 		);
 	});
+
+	it("updateSubmission normalizes tagged DateTime data", async () => {
+		getTableScopeMock.mockReturnValue("all");
+		requireScopeOrUserMock.mockReturnValue(null);
+		updateMock.mockResolvedValue({ id: 1 });
+
+		await updateSubmission({
+			id: 1,
+			data: {
+				established_since: {
+					$type: "DateTime",
+					value: "2019-01-01T00:00:00.000Z",
+				},
+			},
+		});
+
+		expect(updateMock).toHaveBeenCalledWith(
+			1,
+			expect.objectContaining({
+				data: {
+					established_since: "2019-01-01T00:00:00.000Z",
+				},
+			}),
+		);
+	});
 });

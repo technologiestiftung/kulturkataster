@@ -51,12 +51,12 @@ export function WelcomeModal() {
 					</div>
 					<div className="md:w-3/4 flex flex-col items-start space-y-4 md:pr-32 ">
 						<div className="flex flex-col space-y-2">
-							<DialogTitle className="display text-center md:text-left">
-								{t("welcomeModal.title", { ns: "content" })}
+							<DialogTitle asChild className="text-center md:text-left">
+								<h1>{t("welcomeModal.title", { ns: "content" })}</h1>
 							</DialogTitle>
-							<h1 className="text-center md:text-left">
+							<h2 className="text-center md:text-left">
 								{t("welcomeModal.subtitle", { ns: "content" })}
-							</h1>
+							</h2>
 						</div>
 						<div className="flex flex-col md:items-start space-y-2">
 							<div className="space-y-4">

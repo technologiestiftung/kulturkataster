@@ -18,17 +18,23 @@ export default defineConfig({
 		baseURL,
 		trace: "on-first-retry",
 	},
+	projects: [
+		{
+			name: "chromium",
+			use: { browserName: "chromium" },
+		},
+	],
 	webServer: {
-		command: `
-    npm run build &&
-    rm -rf .next/standalone/.next/static &&
-    rm -rf .next/standalone/public &&
-    mkdir -p .next/standalone/.next &&
-    cp -R .next/static .next/standalone/.next/static &&
-    cp -R public .next/standalone/public &&
-    PORT=${port} node .next/standalone/server.js
-  `,
+		command: `npm run build && \\
+      rm -rf .next/standalone/.next/static && \\
+      rm -rf .next/standalone/public && \\
+      mkdir -p .next/standalone/.next && \\
+      cp -R .next/static .next/standalone/.next/static && \\
+      cp -R public .next/standalone/public && \\
+      PORT=${port} node .next/standalone/server.js`,
+		url: baseURL,
 		timeout: 180_000,
+		reuseExistingServer: !process.env.CI,
 	},
 	reporter: [["list"], ["html", { open: "never" }]],
 });

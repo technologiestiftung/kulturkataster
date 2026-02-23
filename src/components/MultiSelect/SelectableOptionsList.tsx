@@ -1,18 +1,13 @@
 "use client";
 
-import type { HTMLAttributes, ReactNode, RefObject } from "react";
+import type { HTMLAttributes, RefObject } from "react";
 import { useTranslation } from "react-i18next";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
-
-export type SelectableOption = {
-	value: string;
-	label: ReactNode;
-	description?: ReactNode;
-};
+import { SelectOption } from "../FormWrapper";
 
 type SelectableOptionsListProps = {
-	options: SelectableOption[];
+	options: SelectOption[];
 	selectedValues: string[];
 	onToggle: (value: string) => void;
 	emptyText?: string;
@@ -105,12 +100,12 @@ export function SelectableOptionsList({
 				) : (
 					options.map((option, index) => {
 						const itemProps = getItemProps?.(index);
-						const isChecked = selectedValues.includes(option.value);
+						const isChecked = selectedValues.includes(option.value as string);
 						const isActive = activeIndex === index;
 						return (
 							<div
-								key={option.value}
-								onClick={() => onToggle(option.value)}
+								key={option.value as string}
+								onClick={() => onToggle(option.value as string)}
 								className={cn(
 									baseItemClassName,
 									!isPanel && isActive && "bg-black/10 contrast:bg-neutral-10",
@@ -133,7 +128,7 @@ export function SelectableOptionsList({
 									itemProps?.onKeyDown?.(event);
 									if (event.key === "Enter" || event.key === " ") {
 										event.preventDefault();
-										onToggle(option.value);
+										onToggle(option.value as string);
 									}
 								}}
 							>

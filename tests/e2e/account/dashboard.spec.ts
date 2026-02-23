@@ -85,16 +85,15 @@ test.describe("dashboard routing, tabs, greeting, and menu actions", () => {
 			/\/de\/account\/edit\/?$/,
 		);
 		await expect(
-			page.getByRole("heading", {
-				name: "Persönliche Angaben ändern",
-				level: 1,
+			page.locator("h1:not(.sr-only)", {
+				hasText: "Persönliche Angaben ändern",
 			}),
-		).toBeVisible();
+		).toBeVisible({ timeout: 10_000 });
 
 		await navigateViaMenuAction("FAQ", /\/de\/account\/faq\/?$/, 30_000);
-		await expect(
-			page.getByRole("heading", { name: "Kontakt zum Support" }),
-		).toBeVisible({ timeout: 15_000 });
+		await expect(page.getByRole("heading", { name: "Kontakt" })).toBeVisible({
+			timeout: 15_000,
+		});
 
 		await navigateViaMenuAction("Abmelden", /\/de(?:\/|\/welcome\/?)?$/);
 

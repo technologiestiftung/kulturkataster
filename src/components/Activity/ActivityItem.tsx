@@ -20,6 +20,7 @@ export interface Activity {
 	id?: string;
 	date: Date | string;
 	user: DbUser | null;
+	entityType?: string;
 	eventType?: ActivityEventType;
 	actor?: string;
 	primaryEntity?: string;
@@ -143,14 +144,6 @@ export function ActivityItem({ activity, index }: ActivityItemProps) {
 	const { t: tContent } = useTranslation("content");
 	const { t: tEnum } = useTranslation("enumMap");
 	const statusLabel = mapStatusLabel(activity.status, t, tContent, tEnum);
-	const fromLabel =
-		typeof activity.from === "string" && activity.from.trim().length > 0
-			? mapStatusLabel(activity.from, t, tContent, tEnum)
-			: "-";
-	const toLabel =
-		typeof activity.to === "string" && activity.to.trim().length > 0
-			? mapStatusLabel(activity.to, t, tContent, tEnum)
-			: "-";
 	const dateLabel = formatDate(activity.date);
 	const dateTimeLabel = formatDateTime(activity.date);
 	const formattedName = activity.user
@@ -175,13 +168,6 @@ export function ActivityItem({ activity, index }: ActivityItemProps) {
 		activity.item ??
 		t("auth.account.activity.unknown");
 	const secondaryEntity = activity.secondaryEntity ?? activity.relation;
-	const hasStatusDiff =
-		typeof activity.from === "string" &&
-		typeof activity.to === "string" &&
-		activity.from.trim().length > 0 &&
-		activity.to.trim().length > 0 &&
-		activity.from !== "-" &&
-		activity.to !== "-";
 
 	let action = activity.action;
 	if (!action) {
@@ -232,13 +218,13 @@ export function ActivityItem({ activity, index }: ActivityItemProps) {
 		if (eventType === "assign") {
 			return (
 				<Trans
-					i18nKey="auth.account.activity.templates.assign"
-					defaults="<actor>{{actor}}</actor> {{action}} <secondary>{{secondaryEntity}}</secondary> to <primary>{{primaryEntity}}</primary>"
+					i18nKey="auth.account.activity.templates.assignBasedOn"
+					defaults="<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> auf Basis von <secondary>{{secondaryEntity}}</secondary> {{action}}"
 					values={{ actor, action, secondaryEntity, primaryEntity }}
 					components={{
 						actor: <span className="body3" />,
-						secondary: secondaryNode,
 						primary: primaryNode,
+						secondary: secondaryNode,
 					}}
 				/>
 			);
@@ -246,80 +232,36 @@ export function ActivityItem({ activity, index }: ActivityItemProps) {
 
 		if (eventType === "status_change") {
 			if (secondaryEntity) {
-				if (!hasStatusDiff) {
-					return (
-						<Trans
-							i18nKey="auth.account.activity.templates.statusChangeWithSecondaryNoDiff"
-							defaults="<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> für <secondary>{{secondaryEntity}}</secondary> {{action}}"
-							values={{
-								actor,
-								action,
-								primaryEntity,
-								secondaryEntity,
-							}}
-							components={{
-								actor: <span className="body3" />,
-								primary: primaryNode,
-								secondary: secondaryNode,
-							}}
-						/>
-					);
-				}
 				return (
 					<Trans
-						i18nKey="auth.account.activity.templates.statusChangeWithSecondary"
-						defaults="<actor>{{actor}}</actor> changed <primary>{{primaryEntity}}</primary> status from <from>{{from}}</from> to <to>{{to}}</to> for <secondary>{{secondaryEntity}}</secondary>"
+						i18nKey="auth.account.activity.templates.statusChangeBasedOnSecondaryNoDiff"
+						defaults="<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> auf Basis von <secondary>{{secondaryEntity}}</secondary> {{action}}"
 						values={{
 							actor,
 							action,
 							primaryEntity,
 							secondaryEntity,
-							from: fromLabel,
-							to: toLabel,
 						}}
 						components={{
 							actor: <span className="body3" />,
 							primary: primaryNode,
-							from: <span className="body3 font-bold" />,
-							to: <span className="body3 font-bold" />,
 							secondary: secondaryNode,
-						}}
-					/>
-				);
-			}
-			if (!hasStatusDiff) {
-				return (
-					<Trans
-						i18nKey="auth.account.activity.templates.statusChangeNoDiff"
-						defaults="<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> {{action}}"
-						values={{
-							actor,
-							action,
-							primaryEntity,
-						}}
-						components={{
-							actor: <span className="body3" />,
-							primary: primaryNode,
 						}}
 					/>
 				);
 			}
 			return (
 				<Trans
-					i18nKey="auth.account.activity.templates.statusChange"
-					defaults="<actor>{{actor}}</actor> {{action}} <primary>{{primaryEntity}}</primary> status from <from>{{from}}</from> to <to>{{to}}</to>"
+					i18nKey="auth.account.activity.templates.statusChangeNoDiff"
+					defaults="<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> {{action}}"
 					values={{
 						actor,
 						action,
 						primaryEntity,
-						from: fromLabel,
-						to: toLabel,
 					}}
 					components={{
 						actor: <span className="body3" />,
 						primary: primaryNode,
-						from: <span className="body3 font-bold" />,
-						to: <span className="body3 font-bold" />,
 					}}
 				/>
 			);

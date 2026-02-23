@@ -101,19 +101,13 @@ const InstitutionCard = memo(function InstitutionCard({
 											},
 											{
 												id: "categories",
-												label: fieldLabel(
-													"categories",
-													t("institution.categories"),
-												),
+												label: fieldLabel("categories"),
 												type: "category",
 											},
 											{
 												id: "utilization_status",
 												type: "status",
-												label: fieldLabel(
-													"utilization_status",
-													t("institution.utilizationStatus"),
-												),
+												label: fieldLabel("utilization_status"),
 												statusVariant: "plain",
 												value: "utilization_status",
 												enumKey: "utilization_status",
@@ -121,10 +115,7 @@ const InstitutionCard = memo(function InstitutionCard({
 											{
 												id: "protection_status",
 												type: "status",
-												label: fieldLabel(
-													"protection_status",
-													t("institution.protectionStatus"),
-												),
+												label: fieldLabel("protection_status"),
 												statusVariant: "plain",
 												value: "protection_status",
 												enumKey: "protection_status",

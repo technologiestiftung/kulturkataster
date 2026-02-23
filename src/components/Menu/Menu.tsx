@@ -103,7 +103,7 @@ const footerItems: MenuItem[] = [
 		id: "accessibility",
 		icon: Accessibility,
 		label: "accessibility.title",
-		route: "/accessibility",
+		route: "/accessibilitySettings",
 		matchPattern: /^\/[^/]+\/accessibility/,
 		showInMobile: false,
 		showInAccount: false,
@@ -127,7 +127,6 @@ const isMenuItemActive = (
 ): boolean => {
 	const normalizedPath = pathname.replace(/\/$/, "");
 
-	// Use matchPattern if provided for more flexible matching
 	if (item.matchPattern) {
 		return item.matchPattern.test(normalizedPath);
 	}
@@ -160,11 +159,13 @@ export function Menu({
 		return match?.[1] ?? null;
 	}, [normalizedPath]);
 
-	const hasSidebarRoute = useMemo(
-		() => Boolean(currentSidebarInstitutionId),
-		[currentSidebarInstitutionId],
+	const isAccessibilitySidebarRoute = useMemo(
+		() => /^\/[^/]+\/accessibilitySettings(?:\/|$)/.test(normalizedPath),
+		[normalizedPath],
 	);
-	const hasSidebarContent = hasSidebarRoute && Boolean(sidebar);
+
+	const hasSidebarContent =
+		Boolean(currentSidebarInstitutionId) || isAccessibilitySidebarRoute;
 
 	const isAccountRoute = useMemo(
 		() => normalizedPath.includes("/account"),

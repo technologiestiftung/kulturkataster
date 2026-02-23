@@ -7,11 +7,11 @@ import {
 	CollapsibleContent,
 	CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { getCategoryIconComponent } from "@/lib/utils/iconUtils";
-import { CategoryType, Category } from "@/types";
+import { Category } from "@/types";
 import Minus from "@/icons/minus.svg";
 import ChevronDown from "@/icons/chevron-down.svg";
 import ChevronUp from "@/icons/chevron-down.svg";
+import { CategoryIcon } from "@/components/shared/CategoryIcon";
 
 import { useTranslation } from "react-i18next";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
@@ -44,7 +44,6 @@ export function CategorySection({
 	subcategoryCounts: subcategoryCountsOverride,
 	mode = "filter",
 }: CategorySectionProps) {
-	const IconComponent = getCategoryIconComponent(group.key as CategoryType);
 	const { t: tEnum, i18n } = useTranslation("enumMap");
 
 	const collator = useMemo(
@@ -104,7 +103,11 @@ export function CategorySection({
 							/>
 						)}
 						<div className="w-6 h-6">
-							<IconComponent aria-hidden="true" focusable="false" />
+							<CategoryIcon
+								iconUrl={group.icon}
+								categoryKey={group.key}
+								className="w-6 h-6"
+							/>
 						</div>
 						<div className="body2 text-left">
 							<span className="font-bold">{translatedCategoryName}</span>
@@ -142,7 +145,7 @@ export function CategorySection({
 			<CollapsibleContent className="pl-16 pr-2 space-y-1">
 				{sortedSubcategories.map((subcategory) => {
 					const translatedSubcategoryName =
-						tEnum(`subcategory.${subcategory.key}`) || subcategory.key;
+						tEnum(`category.${subcategory.key}`) || subcategory.key;
 
 					return (
 						<div

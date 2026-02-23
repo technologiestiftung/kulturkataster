@@ -9,6 +9,7 @@ import { AlertDialog } from "@/components/ui/alert-dialog";
 import { useRoutedModalClose } from "./useRoutedModalClose";
 import { showErrorToast } from "@/lib/utils/feedbackToast";
 import { Loading } from "@/components/ui/loading";
+import { useRouter } from "next/navigation";
 
 type ModalCloseConfirmation = {
 	title: string;
@@ -58,6 +59,7 @@ interface PageModalProps {
 	open?: boolean;
 	routePath?: string;
 	returnTo?: string;
+	backTo?: string;
 	children?: React.ReactNode;
 	showBackButton?: boolean;
 	hideLinksInModalFooter?: string[];
@@ -72,6 +74,7 @@ interface PageModalProps {
 	errorDialog?: ModalErrorDialog;
 	autoCloseError?: ModalAutoCloseError;
 	loadingState?: ModalLoadingState;
+	onCloseRequest?: () => void;
 }
 
 export function Modal({
@@ -82,6 +85,7 @@ export function Modal({
 	open = true,
 	routePath,
 	returnTo,
+	backTo,
 	children,
 	showBackButton,
 	hideLinksInModalFooter,
@@ -96,9 +100,18 @@ export function Modal({
 	errorDialog,
 	autoCloseError,
 	loadingState,
+	onCloseRequest,
 }: PageModalProps) {
 	const pathname = usePathname();
+	const router = useRouter();
 	const performClose = useRoutedModalClose({ returnTo });
+	const resolvedPerformClose = useCallback(() => {
+		if (onCloseRequest) {
+			onCloseRequest();
+			return;
+		}
+		performClose();
+	}, [onCloseRequest, performClose]);
 	const [showCloseConfirmation, setShowCloseConfirmation] = useState(false);
 	const [hasHandledAutoCloseError, setHasHandledAutoCloseError] =
 		useState(false);
@@ -131,13 +144,13 @@ export function Modal({
 		if (hasHandledAutoCloseError) return;
 		setHasHandledAutoCloseError(true);
 		showErrorToast(autoCloseError.title, autoCloseError.description);
-		performClose();
+		resolvedPerformClose();
 	}, [
 		autoCloseError?.active,
 		autoCloseError?.description,
 		autoCloseError?.title,
 		hasHandledAutoCloseError,
-		performClose,
+		resolvedPerformClose,
 	]);
 
 	const handleCloseRequest = useCallback(() => {
@@ -145,8 +158,8 @@ export function Modal({
 			setShowCloseConfirmation(true);
 			return;
 		}
-		performClose();
-	}, [resolvedCloseConfirmation, performClose]);
+		resolvedPerformClose();
+	}, [resolvedCloseConfirmation, resolvedPerformClose]);
 
 	const isEditorVariant = variant === "editor";
 	const resolvedContentClassName = contentClassName ?? "body2";
@@ -173,7 +186,11 @@ export function Modal({
 				variant={variant}
 				className={dialogContentClassName}
 				showBackButton={showBackButton}
-				onBack={handleCloseRequest}
+				onBack={
+					backTo && showBackButton
+						? () => router.replace(backTo)
+						: handleCloseRequest
+				}
 				onInteractOutside={(event) => {
 					if (!closeOnOutsideInteract) {
 						event.preventDefault();
@@ -197,10 +214,7 @@ export function Modal({
 						) : null}
 						{loadingState?.active ? (
 							<div className="flex min-h-[260px] w-full flex-col items-center justify-center gap-3 p-6">
-								<Loading size="md" />
-								{loadingState.label ? (
-									<p className="body2 text-foreground">{loadingState.label}</p>
-								) : null}
+								<Loading size="lg" />
 							</div>
 						) : (
 							children
@@ -214,8 +228,8 @@ export function Modal({
 						)}
 					>
 						{title && (
-							<DialogTitle className={cn("display", titleClassName)}>
-								{title}
+							<DialogTitle asChild className={cn(titleClassName)}>
+								<h1>{title}</h1>
 							</DialogTitle>
 						)}
 						{subtitle && (
@@ -254,7 +268,7 @@ export function Modal({
 					onCancel={() => setShowCloseConfirmation(false)}
 					onConfirm={() => {
 						setShowCloseConfirmation(false);
-						performClose();
+						resolvedPerformClose();
 					}}
 					onOpenChange={(openState) => {
 						if (!openState) setShowCloseConfirmation(false);
