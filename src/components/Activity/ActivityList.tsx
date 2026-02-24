@@ -6,6 +6,7 @@ import { useAccountStore } from "@/lib/store/accountStore";
 import type { EntityAudit } from "@/types/entityAudit";
 import { useTranslation } from "react-i18next";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
+import { formatUserDisplayName } from "@/lib/utils/userName";
 import { SearchInput } from "@/components/ui/search-input";
 import {
 	Select,
@@ -73,10 +74,7 @@ const formatAuditActor = (
 	t: (key: string, options?: Record<string, unknown>) => string,
 ) => {
 	if (audit.user) {
-		const fullName = [audit.user.first_name, audit.user.last_name]
-			.filter((part): part is string => Boolean(part && part.trim().length > 0))
-			.join(" ");
-		return fullName ? `${fullName} (${audit.user.email})` : audit.user.email;
+		return formatUserDisplayName(audit.user) ?? audit.user.email;
 	}
 	if (isActorHidden(audit)) {
 		return t("auth.account.activity.hiddenActor", {
