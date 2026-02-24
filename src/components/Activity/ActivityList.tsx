@@ -151,6 +151,23 @@ const getEntityEmail = (audit: EntityAudit): string | null => {
 	);
 };
 
+const getSubmissionInstitutionId = (
+	audit: EntityAudit | undefined,
+): string | null => {
+	if (!audit || audit.entity_type !== "submission") return null;
+	const newData = asObject(audit.new_data);
+	const oldData = asObject(audit.old_data);
+	const payload = newData ?? oldData;
+	const directValue = payload?.entity_id;
+	if (typeof directValue === "number" && Number.isFinite(directValue)) {
+		return String(directValue);
+	}
+	if (typeof directValue === "string" && directValue.trim().length > 0) {
+		return directValue.trim();
+	}
+	return null;
+};
+
 const formatEntityLabel = (
 	audit: EntityAudit,
 	t: (key: string, options?: Record<string, unknown>) => string,
@@ -428,6 +445,36 @@ export function ActivityList({ activities }: ActivityListProps) {
 			: getStatusLabel(newStatus ?? audit.status, t);
 		const normalizedRelation =
 			relation && relation === primaryEntity ? undefined : relation;
+		const isApprovedUserSubmissionAssignment =
+			intent === "submission_review_approved" &&
+			primarySource.entity_type === "user" &&
+			secondarySource?.entity_type === "submission";
+		let displayPrimaryEntity = primaryEntity;
+		let displayPrimaryEntityLink = mapEntityLink(
+			primarySource,
+			toLocalePath,
+			canOpenSubmission,
+		);
+		let displayEntityType = primarySource.entity_type;
+		if (isApprovedUserSubmissionAssignment) {
+			const institutionId = getSubmissionInstitutionId(secondarySource);
+			const institutionLabel = t("auth.account.activity.entities.institution", {
+				defaultValue: "Kulturort",
+			});
+			const userLabel = normalizeEntityText(
+				formatEntityLabel(primarySource, t),
+			);
+			const institutionEntity = institutionId
+				? `${institutionLabel} #${institutionId}`
+				: institutionLabel;
+			displayPrimaryEntity = `${institutionEntity} dem ${userLabel} hinzugefügt`;
+			displayEntityType = "institution";
+			if (institutionId && isNumericId(institutionId)) {
+				displayPrimaryEntityLink = toLocalePath(
+					`/map/institution/${institutionId}`,
+				);
+			}
+		}
 		let eventType: "status_change" | "assign" | "create";
 		if (hasStatusTransition) {
 			eventType = "status_change";
@@ -440,15 +487,11 @@ export function ActivityList({ activities }: ActivityListProps) {
 			id: activityId,
 			date: audit.changed_at,
 			user: audit?.user || null,
-			entityType: primarySource.entity_type,
+			entityType: displayEntityType,
 			eventType,
 			actor,
-			primaryEntity,
-			primaryEntityLink: mapEntityLink(
-				primarySource,
-				toLocalePath,
-				canOpenSubmission,
-			),
+			primaryEntity: displayPrimaryEntity,
+			primaryEntityLink: displayPrimaryEntityLink,
 			secondaryEntity: normalizedRelation,
 			secondaryEntityLink: secondarySource
 				? mapEntityLink(secondarySource, toLocalePath, canOpenSubmission)
