@@ -717,6 +717,55 @@
 			}
 		},
 		{
+			"id": "Bruecke_Gemeindestr_Sonstige_Str_getrennt_Fahrbahnachse_Decker",
+			"type": "line",
+			"source": "smarttiles_de",
+			"source-layer": "Verkehrslinie",
+			"minzoom": 14,
+			"maxzoom": 22,
+			"filter": [
+				"all",
+				[
+					"in",
+					"klasse",
+					"Gemeindestraße",
+					"Nicht öffentliche Straße",
+					"Sonstige öffentliche Straße"
+				],
+				["==", "fahrbahnachse", 1],
+				[
+					"in",
+					"bauwerk",
+					"Brücke",
+					"Drehbrücke",
+					"Hebebrücke",
+					"Bogenbrücke",
+					"Fachwerkbrücke",
+					"Hochbahn, Hochstraße",
+					"Hängebrücke",
+					"Mehrstöckige Brücke",
+					"Pontonbrücke",
+					"Zugbrücke",
+					"Staudamm",
+					"Staumauer",
+					"Sperrwerk"
+				],
+				["!has", "zustand"]
+			],
+			"layout": { "visibility": "visible", "line-cap": "round" },
+			"paint": {
+				"line-color": "rgb(255,255,255)",
+				"line-opacity": 1,
+				"line-width": {
+					"stops": [
+						[14, 5],
+						[16, 8],
+						[20, 20]
+					]
+				}
+			}
+		},
+		{
 			"id": "Bruecke_Gemeindestr_Sonstige_Str_Decker",
 			"type": "line",
 			"source": "smarttiles_de",
