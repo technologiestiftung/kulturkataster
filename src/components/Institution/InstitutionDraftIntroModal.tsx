@@ -231,12 +231,6 @@ export function InstitutionDraftIntroModal({
 			titleClassName="sr-only"
 			variant="fullscreen"
 			routePath={routePath}
-			closeConfirmation={{
-				title: t("institutionModalCloseConfirmation.title"),
-				description: t("institutionModalCloseConfirmation.description"),
-				confirmLabel: t("institutionModalCloseConfirmation.confirm"),
-				cancelLabel: t("institutionModalCloseConfirmation.cancel"),
-			}}
 			containerClassName="p-0 md:p-0 mt-0 md:mt-0"
 			contentWrapperClassName="flex-1"
 			contentClassName=""
