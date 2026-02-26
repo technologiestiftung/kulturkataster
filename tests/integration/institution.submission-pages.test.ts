@@ -15,6 +15,10 @@ vi.mock("@/components/Institution/InstitutionDraftEditModal", () => ({
 	InstitutionDraftEditModal: () => null,
 }));
 
+vi.mock("@/server/actions/auth", () => ({
+	getCurrentProfile: vi.fn().mockResolvedValue(null),
+}));
+
 describe("institution submission pages integration", () => {
 	it("renders account submission review page with parsed id", async () => {
 		const pageModule = await import(
@@ -38,7 +42,7 @@ describe("institution submission pages integration", () => {
 		const pageModule = await import(
 			"@/app/[locale]/institution/(form)/submission/page"
 		);
-		const result = pageModule.default();
+		const result = await pageModule.default();
 
 		expect(result).toMatchObject({
 			type: InstitutionDraftWizardModal,
