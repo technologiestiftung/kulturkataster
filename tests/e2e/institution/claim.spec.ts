@@ -29,7 +29,7 @@ test.describe("institution claim flow", () => {
 			page
 				.locator("h1")
 				.filter({
-					hasText: /(?:Kulturort|Institutionen)\s+beanspruchen/i,
+					hasText: /(?:Kulturort|Institution(?:en)?)\s+beanspruch/i,
 				})
 				.first(),
 		).toBeVisible({ timeout: 15_000 });
