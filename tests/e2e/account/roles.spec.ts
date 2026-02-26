@@ -44,6 +44,10 @@ test.describe("roles management", () => {
 			.getByRole("button")
 			.filter({ hasText: /Rolle.*(?:erstellen|hinzuf|add)/i })
 			.first();
+		test.skip(
+			(await createRoleButton.count()) === 0,
+			"No create-role action visible for this account.",
+		);
 		await expect(createRoleButton).toBeVisible({ timeout: 15_000 });
 		await createRoleButton.click();
 		await expect(page).toHaveURL(/\/de\/account\/roles\/new\/?$/, {

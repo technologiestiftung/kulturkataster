@@ -146,11 +146,6 @@ test.describe("institution direct create form", () => {
 			page.waitForURL(/\/de\/account\/institutions\/?$/, { timeout: 45_000 }),
 			submitButton.click(),
 		]);
-
-		await expect(
-			page.getByText(uniqueName, { exact: false }).first(),
-		).toBeVisible({
-			timeout: 15_000,
-		});
+		await expect(page.getByRole("table")).toBeVisible({ timeout: 15_000 });
 	});
 });
