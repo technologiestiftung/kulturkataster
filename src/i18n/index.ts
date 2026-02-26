@@ -1,31 +1,10 @@
 import { createInstance, TFunction, i18n, Resource } from "i18next";
 import { initReactI18next } from "react-i18next/initReactI18next";
 import resourcesToBackend from "i18next-resources-to-backend";
+import merge from "lodash/merge";
 import { Locale } from "../types/i18n";
 import { fetchTranslations } from "@/server/actions/fetchTranslations";
 import { allowedLocales, defaultLocale, i18nConfig } from "./config";
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function deepMerge(target: any, source: any): any {
-	if (!source || typeof source !== "object") return target;
-	if (!target || typeof target !== "object") return source;
-
-	const result = { ...target };
-
-	for (const key in source) {
-		if (
-			source[key] &&
-			typeof source[key] === "object" &&
-			!Array.isArray(source[key])
-		) {
-			result[key] = deepMerge(target[key], source[key]);
-		} else {
-			result[key] = source[key];
-		}
-	}
-
-	return result;
-}
 
 export { i18nConfig };
 export { allowedLocales, defaultLocale };
@@ -56,7 +35,8 @@ async function initTranslations(
 						language,
 						namespace,
 					);
-					const merged = deepMerge(
+					const merged = merge(
+						{},
 						localTranslations.default,
 						traduoraTranslations,
 					);
@@ -89,7 +69,7 @@ async function initTranslations(
 		defaultNS: namespaces[0],
 		fallbackNS: namespaces[0],
 		ns: namespaces,
-		preload: options?.resources ? [] : i18nConfig.locales,
+		preload: options?.resources ? [] : [locale],
 	});
 
 	return {
