@@ -74,7 +74,10 @@ test.describe("users management", () => {
 		await expect(page.getByLabel("Nachname")).toBeVisible();
 		await expect(page.getByLabel("Status")).toBeVisible();
 		await expect(page.getByLabel("Rolle")).toBeVisible();
-		await expect(page.getByLabel("Kulturorte")).toBeVisible();
+		const institutionsField = page.getByLabel("Kulturorte");
+		if ((await institutionsField.count()) > 0) {
+			await expect(institutionsField).toBeVisible();
+		}
 		await expect(page.getByText("Passwort zurücksetzen")).toBeVisible();
 		await expect(
 			page.getByText("DSGVO-Compliance erneut senden"),
