@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>E-Mail-Adresse bestaetigen</title>
+  </head>
+  <body style="margin:0;padding:24px;background:#f9fafb;font-family:Arial,Helvetica,sans-serif;color:#111827;">
+    <div style="max-width:620px;margin:0 auto;background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;padding:28px 24px;">
+      <h1 style="margin:0 0 12px 0;font-size:24px;">E-Mail-Adresse bestaetigen</h1>
+      <p style="margin:0 0 20px 0;font-size:16px;line-height:1.6;">
+        Bitte bestaetigen Sie die Aenderung Ihrer E-Mail-Adresse.
+      </p>
+      <a href="{{ .ConfirmationURL }}" style="display:inline-block;background:#1f2937;color:#ffffff;text-decoration:none;padding:12px 18px;border-radius:8px;font-weight:600;">E-Mail bestaetigen</a>
+      <p style="margin:20px 0 0 0;font-size:13px;color:#6b7280;">
+        Neue E-Mail-Adresse: {{ .NewEmail }}
+        <br />Bisherige E-Mail-Adresse: {{ .Email }}
+        <br />Site URL: {{ .SiteURL }}
+        <br />Redirect: {{ .RedirectTo }}
+        <br />Metadata: {{ .Data }}
+      </p>
+    </div>
+  </body>
+</html>
