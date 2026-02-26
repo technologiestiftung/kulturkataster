@@ -54,9 +54,9 @@
 
 	--footer: #f9f8f590;
 
-	--contrast-brand-default: #ca6699;
-	--contrast-neutral-80: #a1d351;
-	--contrast-interaction-default: #a1d351;
+	--contrast-brand-default: #55d494;
+	--contrast-neutral-80: #555b54;
+	--contrast-interaction-default: #c288ff;
 }
 
 :root[data-theme="contrast"] {

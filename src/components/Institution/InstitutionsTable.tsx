@@ -651,24 +651,40 @@ export function InstitutionsTable() {
 				size: 220,
 				meta: { truncate: true },
 			},
+
 			{
-				accessorKey: "contact_person_id",
-				header: headerLabel("contact_person_id", "Contact Person Id"),
+				accessorKey: "contact_person_name",
+				header: headerLabel(
+					"contact_person_first_name",
+					"Contact Person First Name",
+				),
+				enableSorting: true,
+				size: 150,
+				cell: ({ row }) => {
+					const firstName = row.original.contact_person?.first_name || "";
+					const lastName = row.original.contact_person?.last_name || "";
+					const fullName = `${firstName} ${lastName}`.trim();
+					return fullName || <span className="text-foreground">—</span>;
+				},
+				accessorFn: (row) => {
+					const firstName = row.contact_person?.first_name || "";
+					const lastName = row.contact_person?.last_name || "";
+					return `${firstName} ${lastName}`.trim();
+				},
+				meta: { truncate: true },
+			},
+			{
+				accessorKey: "contact_person_email",
+				header: headerLabel("contact_person_email", "Contact Person Email"),
 				enableSorting: true,
 				size: 130,
 			},
+
 			{
-				id: "categoryIds",
-				header: `${headerLabel("categories", "Categories")} Ids`,
-				accessorFn: (row) =>
-					joinInstitutionIds((row.categories ?? []).map((cat) => cat.id)),
+				accessorKey: "contact_person_phone",
+				header: headerLabel("contact_person_phone", "Contact Person Phone"),
 				enableSorting: true,
-				size: 180,
-				meta: { truncate: true },
-				cell: ({ row }) =>
-					joinInstitutionIds(
-						(row.original.categories ?? []).map((cat) => cat.id),
-					),
+				size: 130,
 			},
 			{
 				id: "tagIds",
@@ -680,30 +696,6 @@ export function InstitutionsTable() {
 				meta: { truncate: true },
 				cell: ({ row }) =>
 					joinInstitutionIds((row.original.tags ?? []).map((tag) => tag.id)),
-			},
-			{
-				id: "userIds",
-				header: "User Ids",
-				accessorFn: (row) =>
-					joinInstitutionIds((row.users ?? []).map((user) => user.id)),
-				enableSorting: true,
-				size: 220,
-				meta: { truncate: true },
-				cell: ({ row }) =>
-					joinInstitutionIds((row.original.users ?? []).map((user) => user.id)),
-			},
-			{
-				id: "groupIds",
-				header: "Group Ids",
-				accessorFn: (row) =>
-					joinInstitutionIds((row.groups ?? []).map((group) => group.id)),
-				enableSorting: true,
-				size: 180,
-				meta: { truncate: true },
-				cell: ({ row }) =>
-					joinInstitutionIds(
-						(row.original.groups ?? []).map((group) => group.id),
-					),
 			},
 			{
 				accessorKey: "created_at",
