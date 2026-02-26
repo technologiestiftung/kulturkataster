@@ -54,14 +54,14 @@ export function UserClaimReviewModal({
 	const formatDate = useCallback(
 		(date: Date | string) =>
 			formatDateWithLocale(date, {
-				locale: i18n.resolvedLanguage,
+				locale: i18n?.resolvedLanguage ?? "de",
 				format: {
 					year: "numeric",
 					month: "2-digit",
 					day: "2-digit",
 				},
 			}),
-		[i18n.resolvedLanguage],
+		[i18n?.resolvedLanguage],
 	);
 
 	const formatGroups = useCallback(
