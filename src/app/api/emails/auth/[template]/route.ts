@@ -176,7 +176,7 @@ const renderHtml = (
 		template === "reauthentication" && payload.token
 			? `<p style="margin:0 0 18px 0;font-size:18px;line-height:1.4;">Code: <strong>${escapeHtml(
 					payload.token,
-			  )}</strong></p>`
+				)}</strong></p>`
 			: "";
 
 	return `<!doctype html>
