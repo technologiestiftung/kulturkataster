@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Konto bestaetigen</title>
+  </head>
+  <body style="margin:0;padding:24px;background:#fafaf9;font-family:Arial,Helvetica,sans-serif;color:#111827;">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
+      <tr>
+        <td align="center">
+          <table role="presentation" width="620" cellspacing="0" cellpadding="0" style="max-width:620px;width:100%;background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;">
+            <tr>
+              <td style="padding:28px 24px 8px 24px;font-size:24px;font-weight:700;">Konto bestaetigen</td>
+            </tr>
+            <tr>
+              <td style="padding:0 24px 16px 24px;font-size:16px;line-height:1.6;">
+                Bitte bestaetigen Sie Ihr Konto, um den Registrierungsprozess abzuschliessen.
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:0 24px 24px 24px;">
+                <a href="{{ .ConfirmationURL }}" style="display:inline-block;background:#111827;color:#ffffff;text-decoration:none;padding:12px 18px;border-radius:8px;font-weight:600;">Konto bestaetigen</a>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:0 24px 28px 24px;font-size:13px;color:#6b7280;">
+                Empfaenger: {{ .Email }}
+                <br />Site URL: {{ .SiteURL }}
+                <br />Redirect: {{ .RedirectTo }}
+                <br />Metadata: {{ .Data }}
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
