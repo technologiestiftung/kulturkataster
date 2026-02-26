@@ -1,5 +1,13 @@
 import { InstitutionDraftWizardModal } from "@/components/Institution/InstitutionDraftWizardModal";
+import { getCurrentProfile } from "@/server/actions/auth";
 
-export default function InstitutionSubmissionPage() {
-	return <InstitutionDraftWizardModal routePath="/institution/submission" />;
+export default async function InstitutionSubmissionPage() {
+	const profile = await getCurrentProfile();
+
+	return (
+		<InstitutionDraftWizardModal
+			routePath="/institution/submission"
+			profile={profile}
+		/>
+	);
 }
