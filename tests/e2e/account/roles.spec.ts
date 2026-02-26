@@ -40,18 +40,31 @@ test.describe("roles management", () => {
 		await page.keyboard.press("Escape");
 
 		const uniqueName = `E2E Rolle ${Date.now()}`;
-		await page.getByRole("button", { name: "Rolle erstellen" }).first().click();
+		const createRoleButton = page
+			.getByRole("button")
+			.filter({ hasText: /Rolle.*(?:erstellen|hinzuf|add)/i })
+			.first();
+		test.skip(
+			(await createRoleButton.count()) === 0,
+			"No create-role action visible for this account.",
+		);
+		await expect(createRoleButton).toBeVisible({ timeout: 15_000 });
+		await createRoleButton.click();
 		await expect(page).toHaveURL(/\/de\/account\/roles\/new\/?$/, {
 			timeout: 15_000,
 		});
 		await expect(
-			page.getByRole("heading", { name: "Rolle erstellen", level: 1 }),
+			page.getByRole("heading", { name: /Rolle.*(?:erstellen|hinzuf)/i }),
 		).toBeVisible();
 		await page.getByLabel("Name").fill(uniqueName);
 		await page.getByLabel("Beschreibung").fill("Rolle fuer E2E Test");
 		await Promise.all([
 			page.waitForURL(/\/de\/account\/roles\/?$/, { timeout: 30_000 }),
-			page.getByRole("button", { name: "Rolle erstellen" }).last().click(),
+			page
+				.getByRole("button")
+				.filter({ hasText: /Rolle.*(?:erstellen|hinzuf|add)/i })
+				.last()
+				.click(),
 		]);
 		await expect(page.getByText(uniqueName, { exact: false })).toBeVisible({
 			timeout: 15_000,

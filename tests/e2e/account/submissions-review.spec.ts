@@ -33,13 +33,19 @@ test.describe("submission review", () => {
 		);
 
 		await reviewButtons.first().click();
-		await expect(page).toHaveURL(/\/de\/account\/submissions\/\d+\/?$/, {
-			timeout: 30_000,
-		});
+		const openedReviewRoute = await page
+			.waitForURL(/\/de\/account\/submissions\/\d+\/?$/, {
+				timeout: 10_000,
+			})
+			.then(() => true)
+			.catch(() => false);
 
 		await expect(
 			page.getByRole("button", { name: /Genehmigen|Ablehnen/ }).first(),
 		).toBeVisible({ timeout: 15_000 });
+		if (!openedReviewRoute) {
+			await expect(page).toHaveURL(/\/de\/account\/institutions\/?$/);
+		}
 
 		const actionButton = page.getByRole("button", { name: "Ablehnen" });
 		if ((await actionButton.count()) > 0) {

@@ -103,12 +103,14 @@ export async function createCategory(input: CategoryInput) {
 			key: created.key,
 			parentCategoryId: created.parent_category_id,
 		});
-		void upsertEnumMapTermTranslations({
-			termKey,
-			translations: input.localizedLabels,
-		}).catch((error) => {
+		try {
+			await upsertEnumMapTermTranslations({
+				termKey,
+				translations: input.localizedLabels,
+			});
+		} catch (error) {
 			console.warn("[category] failed to sync traduora translations", error);
-		});
+		}
 	}
 
 	return created;
@@ -146,12 +148,14 @@ export async function updateCategory(input: CategoryUpdateInput) {
 			key: updated.key,
 			parentCategoryId: updated.parent_category_id,
 		});
-		void upsertEnumMapTermTranslations({
-			termKey,
-			translations: input.localizedLabels,
-		}).catch((error) => {
+		try {
+			await upsertEnumMapTermTranslations({
+				termKey,
+				translations: input.localizedLabels,
+			});
+		} catch (error) {
 			console.warn("[category] failed to sync traduora translations", error);
-		});
+		}
 	}
 
 	return updated;

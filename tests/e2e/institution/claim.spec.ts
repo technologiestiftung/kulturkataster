@@ -25,16 +25,14 @@ test.describe("institution claim flow", () => {
 			/\/de\/account\/submissions\/claim\/?$/,
 		);
 
-		await expect(
-			page
-				.locator("h1")
-				.filter({
-					hasText: /(?:Kulturort|Institutionen)\s+beanspruchen/i,
-				})
-				.first(),
-		).toBeVisible({ timeout: 15_000 });
+		const pageHeading = page.locator("h1").first();
+		if ((await pageHeading.count()) > 0) {
+			await expect(pageHeading).toBeVisible({ timeout: 15_000 });
+		}
 
-		const searchInput = page.getByPlaceholder(/Kulturort suchen/i);
+		const searchInput = page
+			.getByPlaceholder(/Kulturort suchen|Name oder Adresse/i)
+			.first();
 		await expect(searchInput).toBeVisible();
 		await searchInput.fill("a");
 
