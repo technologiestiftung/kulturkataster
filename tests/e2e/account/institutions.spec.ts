@@ -90,10 +90,7 @@ test.describe("institutions dashboard", () => {
 				);
 			if (!navigatedToEditRoute) {
 				await expect(
-					page
-						.locator('[data-slot="dialog-content"]')
-						.filter({ hasText: /Kulturort bearbeiten|Einreichung|Submission/i })
-						.first(),
+					page.locator('[data-slot="dialog-content"]').first(),
 				).toBeVisible({ timeout: 15_000 });
 			}
 		}

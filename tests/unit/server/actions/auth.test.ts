@@ -13,7 +13,7 @@ vi.mock("@/server/supabase/server", () => ({
 vi.mock("@/server/prisma", () => ({
 	prisma: {
 		user: {
-			upsert: vi.fn(),
+			create: vi.fn(),
 			findUnique: vi.fn(),
 		},
 		role: {
@@ -23,22 +23,22 @@ vi.mock("@/server/prisma", () => ({
 }));
 
 const mockedCreateClient = vi.mocked(createClient);
-const mockedUpsert = vi.mocked(prisma.user.upsert);
+const mockedCreate = vi.mocked(prisma.user.create);
 const mockedFindUnique = vi.mocked(prisma.user.findUnique);
 const mockedRoleFindUnique = vi.mocked(prisma.role.findUnique);
 
 describe("registerWithEmailPassword", () => {
 	beforeEach(() => {
 		mockedCreateClient.mockReset();
-		mockedUpsert.mockReset();
+		mockedCreate.mockReset();
 		mockedFindUnique.mockReset();
 		mockedRoleFindUnique.mockReset();
 	});
 
-	it("returns a standardized error when Supabase signUp fails", async () => {
+	it("returns needsConfirmation for already-registered signUp errors", async () => {
 		const signUp = vi.fn().mockResolvedValue({
 			data: { user: null, session: null },
-			error: { message: "Duplicate email" },
+			error: { message: "User already registered" },
 		});
 		mockedCreateClient.mockResolvedValue({ auth: { signUp } } as never);
 
@@ -47,8 +47,27 @@ describe("registerWithEmailPassword", () => {
 			password: "password123",
 		});
 
-		expect(result).toEqual({ ok: false, error: "Duplicate email" });
-		expect(mockedUpsert).not.toHaveBeenCalled();
+		expect(result).toEqual({ ok: true, needsConfirmation: true });
+		expect(mockedCreate).not.toHaveBeenCalled();
+	});
+
+	it("returns standardized unavailable error for non-duplicate signUp failures", async () => {
+		const signUp = vi.fn().mockResolvedValue({
+			data: { user: null, session: null },
+			error: { message: "Upstream is down" },
+		});
+		mockedCreateClient.mockResolvedValue({ auth: { signUp } } as never);
+
+		const result = await registerWithEmailPassword({
+			email: "test@example.com",
+			password: "password123",
+		});
+
+		expect(result).toEqual({
+			ok: false,
+			error: "Registration currently unavailable.",
+		});
+		expect(mockedCreate).not.toHaveBeenCalled();
 	});
 
 	it("creates a user row and returns needsConfirmation when no session is returned", async () => {
@@ -60,7 +79,9 @@ describe("registerWithEmailPassword", () => {
 			error: null,
 		});
 		mockedCreateClient.mockResolvedValue({ auth: { signUp } } as never);
-		mockedUpsert.mockResolvedValue({} as never);
+		mockedFindUnique.mockResolvedValueOnce(null as never);
+		mockedRoleFindUnique.mockResolvedValue({ id: 7 } as never);
+		mockedCreate.mockResolvedValue({} as never);
 
 		const result = await registerWithEmailPassword({
 			email: "test@example.com",
@@ -71,7 +92,16 @@ describe("registerWithEmailPassword", () => {
 		});
 
 		expect(result).toEqual({ ok: true, needsConfirmation: true });
-		expect(mockedUpsert).toHaveBeenCalled();
+		expect(mockedCreate).toHaveBeenCalledWith(
+			expect.objectContaining({
+				data: expect.objectContaining({
+					id: "user-1",
+					email: "test@example.com",
+					status: "approval_pending",
+					role: { connect: { id: 7 } },
+				}),
+			}),
+		);
 	});
 
 	it("assigns guest role by default when available", async () => {
@@ -85,7 +115,7 @@ describe("registerWithEmailPassword", () => {
 		mockedCreateClient.mockResolvedValue({ auth: { signUp } } as never);
 		mockedFindUnique.mockResolvedValueOnce(null as never);
 		mockedRoleFindUnique.mockResolvedValue({ id: 7 } as never);
-		mockedUpsert.mockResolvedValue({} as never);
+		mockedCreate.mockResolvedValue({} as never);
 
 		const result = await registerWithEmailPassword({
 			email: "guest@example.com",
@@ -93,16 +123,16 @@ describe("registerWithEmailPassword", () => {
 		});
 
 		expect(result).toEqual({ ok: true, needsConfirmation: true });
-		expect(mockedUpsert).toHaveBeenCalledWith(
+		expect(mockedCreate).toHaveBeenCalledWith(
 			expect.objectContaining({
-				create: expect.objectContaining({
+				data: expect.objectContaining({
 					role: { connect: { id: 7 } },
 				}),
 			}),
 		);
 	});
 
-	it("returns a standardized error when user creation fails", async () => {
+	it("returns needsConfirmation when user create collides with unique constraint", async () => {
 		const signUp = vi.fn().mockResolvedValue({
 			data: {
 				user: { id: "user-2", email: "test@example.com" },
@@ -111,26 +141,48 @@ describe("registerWithEmailPassword", () => {
 			error: null,
 		});
 		mockedCreateClient.mockResolvedValue({ auth: { signUp } } as never);
-		mockedUpsert.mockRejectedValue(new Error("User creation failed."));
+		mockedFindUnique.mockResolvedValueOnce(null as never);
+		mockedRoleFindUnique.mockResolvedValue({ id: 7 } as never);
+		mockedCreate.mockRejectedValue({ code: "P2002" });
 
 		const result = await registerWithEmailPassword({
 			email: "test@example.com",
 			password: "password123",
 		});
 
-		expect(result).toEqual({ ok: false, error: "User creation failed." });
+		expect(result).toEqual({ ok: true, needsConfirmation: true });
+	});
+
+	it("does not create app user when profile already exists", async () => {
+		const signUp = vi.fn().mockResolvedValue({
+			data: {
+				user: { id: "existing-user", email: "existing@example.com" },
+				session: { access_token: "token" },
+			},
+			error: null,
+		});
+		mockedCreateClient.mockResolvedValue({ auth: { signUp } } as never);
+		mockedFindUnique.mockResolvedValueOnce({ id: "existing-user" } as never);
+
+		const result = await registerWithEmailPassword({
+			email: "existing@example.com",
+			password: "password123",
+		});
+
+		expect(result).toEqual({ ok: true, needsConfirmation: false });
+		expect(mockedCreate).not.toHaveBeenCalled();
 	});
 });
 
 describe("loginWithEmailPassword", () => {
 	beforeEach(() => {
 		mockedCreateClient.mockReset();
-		mockedUpsert.mockReset();
+		mockedCreate.mockReset();
 		mockedFindUnique.mockReset();
 		mockedRoleFindUnique.mockReset();
 	});
 
-	it("returns error when Supabase signIn fails", async () => {
+	it("returns invalid_credentials when Supabase signIn fails", async () => {
 		const signInWithPassword = vi.fn().mockResolvedValue({
 			data: { user: null },
 			error: { message: "Invalid credentials" },
@@ -141,7 +193,24 @@ describe("loginWithEmailPassword", () => {
 
 		const result = await loginWithEmailPassword("test@example.com", "bad");
 
-		expect(result).toEqual({ ok: false, error: "Invalid credentials" });
+		expect(result).toEqual({ ok: false, error: "invalid_credentials" });
+	});
+
+	it("returns invalid_credentials and signs out when user profile is missing", async () => {
+		const signInWithPassword = vi.fn().mockResolvedValue({
+			data: { user: { id: "missing-profile" } },
+			error: null,
+		});
+		const signOut = vi.fn().mockResolvedValue({ error: null });
+		mockedCreateClient.mockResolvedValue({
+			auth: { signInWithPassword, signOut },
+		} as never);
+		mockedFindUnique.mockResolvedValue(null as never);
+
+		const result = await loginWithEmailPassword("test@example.com", "ok");
+
+		expect(result).toEqual({ ok: false, error: "invalid_credentials" });
+		expect(signOut).toHaveBeenCalled();
 	});
 
 	it("returns banned when user is banned and signs out", async () => {
@@ -150,17 +219,9 @@ describe("loginWithEmailPassword", () => {
 			error: null,
 		});
 		const signOut = vi.fn().mockResolvedValue({ error: null });
-		const getUser = vi.fn().mockResolvedValue({
-			data: { user: { id: "user-1" } },
-			error: null,
-		});
-		mockedCreateClient
-			.mockResolvedValueOnce({
-				auth: { signInWithPassword, signOut },
-			} as never)
-			.mockResolvedValueOnce({
-				auth: { getUser },
-			} as never);
+		mockedCreateClient.mockResolvedValue({
+			auth: { signInWithPassword, signOut },
+		} as never);
 		mockedFindUnique.mockResolvedValue({
 			id: "user-1",
 			status: "banned",
@@ -172,31 +233,43 @@ describe("loginWithEmailPassword", () => {
 		expect(signOut).toHaveBeenCalled();
 	});
 
-	it("returns ok when user is inactive", async () => {
+	it("returns ok with approvalPending=true when profile is approval_pending", async () => {
 		const signInWithPassword = vi.fn().mockResolvedValue({
 			data: { user: { id: "user-1" } },
 			error: null,
 		});
 		const signOut = vi.fn().mockResolvedValue({ error: null });
-		const getUser = vi.fn().mockResolvedValue({
-			data: { user: { id: "user-1" } },
-			error: null,
-		});
-		mockedCreateClient
-			.mockResolvedValueOnce({
-				auth: { signInWithPassword, signOut },
-			} as never)
-			.mockResolvedValueOnce({
-				auth: { getUser },
-			} as never);
+		mockedCreateClient.mockResolvedValue({
+			auth: { signInWithPassword, signOut },
+		} as never);
 		mockedFindUnique.mockResolvedValue({
 			id: "user-1",
-			status: "inactive",
+			status: "approval_pending",
 		} as never);
 
 		const result = await loginWithEmailPassword("test@example.com", "ok");
 
-		expect(result).toEqual({ ok: true });
+		expect(result).toEqual({ ok: true, approvalPending: true });
+		expect(signOut).not.toHaveBeenCalled();
+	});
+
+	it("returns ok with approvalPending=false for active users", async () => {
+		const signInWithPassword = vi.fn().mockResolvedValue({
+			data: { user: { id: "user-2" } },
+			error: null,
+		});
+		const signOut = vi.fn().mockResolvedValue({ error: null });
+		mockedCreateClient.mockResolvedValue({
+			auth: { signInWithPassword, signOut },
+		} as never);
+		mockedFindUnique.mockResolvedValue({
+			id: "user-2",
+			status: "active",
+		} as never);
+
+		const result = await loginWithEmailPassword("test@example.com", "ok");
+
+		expect(result).toEqual({ ok: true, approvalPending: false });
 		expect(signOut).not.toHaveBeenCalled();
 	});
 });

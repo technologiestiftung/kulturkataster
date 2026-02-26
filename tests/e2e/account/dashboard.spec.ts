@@ -91,9 +91,9 @@ test.describe("dashboard routing, tabs, greeting, and menu actions", () => {
 		).toBeVisible({ timeout: 10_000 });
 
 		await navigateViaMenuAction("FAQ", /\/de\/account\/faq\/?$/, 30_000);
-		await expect(page.getByRole("heading", { name: "Kontakt" })).toBeVisible({
-			timeout: 15_000,
-		});
+		await expect(
+			page.getByRole("heading", { name: /FAQ|Fragen\s*&\s*Antworten/i }),
+		).toBeVisible({ timeout: 15_000 });
 
 		await navigateViaMenuAction("Abmelden", /\/de(?:\/|\/welcome\/?)?$/);
 

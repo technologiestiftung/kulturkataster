@@ -88,7 +88,9 @@ test.describe("Auth registration", () => {
 		]);
 	});
 
-	test("existing email shows error UI", async ({ page }) => {
+	test("existing email still resolves to verify-email success", async ({
+		page,
+	}) => {
 		test.skip(!hasRealExistingEmail, "E2E_USER_EMAIL not set");
 
 		await safeGoto(page, "/de/register", /\/de\/register\/?$/);
@@ -112,13 +114,14 @@ test.describe("Auth registration", () => {
 		await expect(createAccountButton).toBeEnabled();
 		await createAccountButton.click();
 
-		// Wait for error AlertDialog to appear
-		const dialog = page.getByRole("dialog");
-		await expect(dialog).toBeVisible({ timeout: 10_000 });
-
-		// Verify close button exists
-		const closeButton = page.getByRole("button", { name: "Schließen" });
-		await expect(closeButton).toBeVisible();
+		await expect(
+			page.getByRole("heading", { name: "Vielen Dank!" }),
+		).toBeVisible({ timeout: 15_000 });
+		await expect(
+			page.getByText(
+				"In Kürze erhalten Sie eine Bestätigungs-E-Mail mit dem Link zu Ihrem Login.",
+			),
+		).toBeVisible();
 	});
 
 	test("invalid fields block submit; fixing enables submit", async ({

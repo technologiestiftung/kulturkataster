@@ -36,13 +36,12 @@ export function LoginForm() {
 			const result = await loginWithEmailPassword(email, password);
 			if (!result.ok) {
 				let fallback: string;
-				console.error("Login failed:", result.error);
 				if (result.error === "banned") {
 					fallback = t("auth.login.inactive");
-				} else if (result.error === "Invalid login credentials") {
+				} else if (result.error === "invalid_credentials") {
 					fallback = t("auth.login.invalidCredentials");
 				} else {
-					fallback = result.error ?? t("auth.login.errorFallback");
+					fallback = t("auth.login.errorFallback");
 				}
 				setErrorMessage(fallback);
 				return;
