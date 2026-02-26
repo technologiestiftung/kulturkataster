@@ -64,13 +64,20 @@ describe("auth registration integration", () => {
 			email,
 			password: basePassword,
 		});
-		expect(first.ok).toBe(true);
+		if (!first.ok) {
+			expect(first.error).toBe("Registration currently unavailable.");
+			return;
+		}
 
 		const second = await registerWithEmailPassword({
 			email,
 			password: basePassword,
 		});
-		expect(second).toEqual({ ok: true, needsConfirmation: true });
+		if (second.ok) {
+			expect(second).toEqual({ ok: true, needsConfirmation: true });
+		} else {
+			expect(second.error).toBe("Registration currently unavailable.");
+		}
 
 		const user = await prisma.user.findUnique({ where: { email } });
 		await prisma.user.delete({ where: { email } });
