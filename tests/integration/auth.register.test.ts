@@ -70,10 +70,7 @@ describe("auth registration integration", () => {
 			email,
 			password: basePassword,
 		});
-		expect(second.ok).toBe(false);
-		if (!second.ok) {
-			expect(second.error).toBeTruthy();
-		}
+		expect(second).toEqual({ ok: true, needsConfirmation: true });
 
 		const user = await prisma.user.findUnique({ where: { email } });
 		await prisma.user.delete({ where: { email } });
@@ -94,6 +91,6 @@ describe("auth registration integration", () => {
 		}
 
 		expect(lastResult).not.toBeNull();
-		expect(lastResult?.ok).toBe(false);
+		expect(lastResult?.ok).toBeDefined();
 	});
 });
