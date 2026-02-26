@@ -14,7 +14,11 @@ import { Modal } from "@/components/Modals/Modal";
 import { useRoutedModalClose } from "@/components/Modals/useRoutedModalClose";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
-import { getFieldLabel } from "@/lib/i18n/fieldLabels";
+import {
+	getFieldDescription,
+	getFieldPlaceholder,
+	getFieldLabel,
+} from "@/lib/i18n/fieldLabels";
 import { InstitutionFormModal } from "@/components/Institution/InstitutionFormModal";
 import { geocodeAddress, reverseGeocode } from "@/server/actions/maptiler";
 import {
@@ -34,6 +38,7 @@ import { Button } from "@/components/ui/button";
 import { showSuccessToast } from "@/lib/utils/feedbackToast";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { buildInstitutionForFormFromDraft } from "@/lib/utils/institutionFormAdapter";
+import { Profile } from "@/types";
 const DEFAULT_CREATE_STEP_ID = "basic";
 const STEP_IDS = [
 	"basic",
@@ -91,6 +96,7 @@ const validateStepFieldValue = (
 type InstitutionDraftWizardContentProps = {
 	title?: string;
 	subtitle?: string;
+	profile: Profile | null;
 	onSubmitted?: () => void;
 	onCloseRequest?: () => void;
 	onSubmitError?: (message: string) => void;
@@ -99,6 +105,7 @@ type InstitutionDraftWizardContentProps = {
 function InstitutionDraftWizardContent({
 	title,
 	subtitle,
+	profile,
 	onSubmitted,
 	onCloseRequest,
 	onSubmitError,
@@ -111,11 +118,11 @@ function InstitutionDraftWizardContent({
 		[tEnum],
 	);
 	const fieldDescription = useCallback(
-		(key: string) => tEnum(`field_names.${key}.description`),
+		(key: string) => getFieldDescription(tEnum, key),
 		[tEnum],
 	);
 	const fieldPlaceholder = useCallback(
-		(key: string) => tEnum(`field_names.${key}.placeholder`),
+		(key: string) => getFieldPlaceholder(tEnum, key),
 		[tEnum],
 	);
 
@@ -528,7 +535,7 @@ function InstitutionDraftWizardContent({
 							name: "phone",
 							label: fieldLabel("phone", "Phone"),
 							description: fieldDescription("phone"),
-							type: "text",
+							type: "tel",
 							placeholder: fieldPlaceholder("phone"),
 						},
 						{
@@ -1353,6 +1360,7 @@ function InstitutionDraftWizardContent({
 							name: "contact_person_first_name",
 							label: fieldLabel("contact_person_first_name"),
 							type: "text",
+							defaultValue: profile?.first_name || "",
 							placeholder: fieldPlaceholder("contact_person_first_name"),
 							layout: { span: "half" },
 						},
@@ -1360,6 +1368,7 @@ function InstitutionDraftWizardContent({
 							name: "contact_person_last_name",
 							label: fieldLabel("contact_person_last_name"),
 							type: "text",
+							defaultValue: profile?.last_name || "",
 							placeholder: fieldPlaceholder("contact_person_last_name"),
 							layout: { span: "half" },
 						},
@@ -1367,6 +1376,7 @@ function InstitutionDraftWizardContent({
 							name: "contact_person_email",
 							label: fieldLabel("contact_person_email"),
 							type: "email",
+							defaultValue: profile?.email || "",
 							placeholder: fieldPlaceholder("contact_person_email"),
 							layout: { span: "full" },
 						},
@@ -1374,6 +1384,7 @@ function InstitutionDraftWizardContent({
 							name: "contact_person_phone",
 							label: fieldLabel("contact_person_phone"),
 							type: "text",
+							defaultValue: profile?.phone || "",
 							placeholder: fieldPlaceholder("contact_person_phone"),
 							layout: { span: "full" },
 						},
@@ -1533,9 +1544,11 @@ function InstitutionDraftWizardContent({
 export function InstitutionDraftWizardModal({
 	initialStepId,
 	routePath,
+	profile,
 }: {
 	initialStepId?: string;
 	routePath?: string;
+	profile: Profile | null;
 }) {
 	const router = useRouter();
 	const toLocalePath = useLocalePath();
@@ -1633,6 +1646,7 @@ export function InstitutionDraftWizardModal({
 						subtitle={t("institutionDraftWizardModal.dialog.create.subtitle")}
 						onSubmitted={handleSubmitted}
 						onCloseRequest={closeModal}
+						profile={profile}
 						onSubmitError={(message) => setSubmitError(message)}
 					/>
 				</HorizontalStepper>

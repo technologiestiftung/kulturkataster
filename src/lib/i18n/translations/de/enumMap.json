@@ -195,11 +195,19 @@
 			}
 		},
 		"category": {
-			"label": "",
+			"label": "Kategorie",
 			"description": "",
 			"placeholder": "Bitte auswählen",
 			"errors": {
 				"required": "Bitte Kategorie angeben."
+			}
+		},
+		"subcategory": {
+			"label": "Unterkategorie",
+			"description": "",
+			"placeholder": "Bitte auswählen",
+			"errors": {
+				"required": "Bitte Unterkategorie angeben."
 			}
 		},
 		"city": {
@@ -224,6 +232,14 @@
 			"placeholder": "name@beispiel.de",
 			"errors": {
 				"required": "Bitte Ansprechperson E-Mail Adresse angeben."
+			}
+		},
+		"contact_person_name": {
+			"label": "Ansprechperson Name",
+			"description": "",
+			"placeholder": "Bitte eingeben",
+			"errors": {
+				"required": "Bitte Ansprechperson Name angeben."
 			}
 		},
 		"contact_person_first_name": {
@@ -318,6 +334,18 @@
 				"remove": "Finanzierungsquelle entfernen"
 			}
 		},
+		"tags": {
+			"label": "Tags",
+			"description": "",
+			"placeholder": "Bitte eingeben",
+			"errors": {
+				"required": "Bitte Tags angeben."
+			},
+			"actions": {
+				"add": "Tag hinzufügen",
+				"remove": "Tag entfernen"
+			}
+		},
 		"funding_source_description": {
 			"label": "Beschreibung der Finanzierungsquelle",
 			"description": "",
@@ -400,6 +428,30 @@
 			"placeholder": "Bitte eingeben",
 			"errors": {
 				"required": "Bitte Zusätzliche Informationen angeben."
+			}
+		},
+		"id": {
+			"label": "ID",
+			"description": "",
+			"placeholder": "Bitte eingeben",
+			"errors": {
+				"required": "Bitte ID angeben."
+			}
+		},
+		"updated_at": {
+			"label": "Aktualisiert am",
+			"description": "",
+			"placeholder": "TT.MM.JJJJ",
+			"errors": {
+				"required": "Bitte aktualisiert am angeben."
+			}
+		},
+		"created_at": {
+			"label": "Erstellt am",
+			"description": "",
+			"placeholder": "TT.MM.JJJJ",
+			"errors": {
+				"required": "Bitte erstellt am angeben."
 			}
 		},
 		"internal_notes": {
