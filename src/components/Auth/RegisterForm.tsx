@@ -55,12 +55,21 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
 				administrationPhone,
 			});
 			if (!result.ok) {
-				setErrorMessage(result.error ?? t("auth.register.errorFallback"));
+				setErrorMessage(
+					result.error ??
+						t("auth.register.unavailable", {
+							defaultValue: "Registration currently unavailable.",
+						}),
+				);
 				return;
 			}
 			onSuccess?.();
 		} catch {
-			setErrorMessage(t("auth.register.errorFallback"));
+			setErrorMessage(
+				t("auth.register.unavailable", {
+					defaultValue: "Registration currently unavailable.",
+				}),
+			);
 		} finally {
 			setIsLoading(false);
 		}

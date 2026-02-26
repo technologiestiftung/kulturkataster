@@ -2,6 +2,9 @@ import "@testing-library/jest-dom/vitest";
 import { afterEach } from "vitest";
 import { cleanup } from "@testing-library/react";
 import { vi } from "vitest";
+import dotenv from "dotenv";
+
+dotenv.config({ path: process.env.DOTENV_CONFIG_PATH ?? ".env.test" });
 
 afterEach(() => {
 	cleanup();

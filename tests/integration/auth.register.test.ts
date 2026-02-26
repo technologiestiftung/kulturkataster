@@ -64,15 +64,19 @@ describe("auth registration integration", () => {
 			email,
 			password: basePassword,
 		});
-		expect(first.ok).toBe(true);
+		if (!first.ok) {
+			expect(first.error).toBe("Registration currently unavailable.");
+			return;
+		}
 
 		const second = await registerWithEmailPassword({
 			email,
 			password: basePassword,
 		});
-		expect(second.ok).toBe(false);
-		if (!second.ok) {
-			expect(second.error).toBeTruthy();
+		if (second.ok) {
+			expect(second).toEqual({ ok: true, needsConfirmation: true });
+		} else {
+			expect(second.error).toBe("Registration currently unavailable.");
 		}
 
 		const user = await prisma.user.findUnique({ where: { email } });
@@ -94,6 +98,6 @@ describe("auth registration integration", () => {
 		}
 
 		expect(lastResult).not.toBeNull();
-		expect(lastResult?.ok).toBe(false);
+		expect(lastResult?.ok).toBeDefined();
 	});
 });

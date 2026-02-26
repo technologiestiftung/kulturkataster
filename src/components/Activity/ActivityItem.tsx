@@ -8,6 +8,8 @@ import {
 	TooltipContent,
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { formatUserDisplayName } from "@/lib/utils/userName";
+import { formatDateWithLocale } from "@/lib/utils/dateUtils";
 import type {
 	User as DbUser,
 	ActivityStatus as AuditActivityStatus,
@@ -47,30 +49,6 @@ const statusColors: Record<ActivityStatus, string> = {
 	approved: "bg-green-500",
 	rejected: "bg-red-500",
 	completed: "bg-blue-500",
-};
-
-const formatDate = (date: Date | string | null | undefined) => {
-	if (!date) return "-";
-	const parsed = date instanceof Date ? date : new Date(date);
-	if (!Number.isFinite(parsed.getTime())) return "-";
-	return new Intl.DateTimeFormat("de-DE", {
-		day: "2-digit",
-		month: "2-digit",
-		year: "numeric",
-	}).format(parsed);
-};
-
-const formatDateTime = (date: Date | string | null | undefined) => {
-	if (!date) return "-";
-	const parsed = date instanceof Date ? date : new Date(date);
-	if (!Number.isFinite(parsed.getTime())) return "-";
-	return new Intl.DateTimeFormat("de-DE", {
-		day: "2-digit",
-		month: "2-digit",
-		year: "numeric",
-		hour: "2-digit",
-		minute: "2-digit",
-	}).format(parsed);
 };
 
 const mapStatusLabel = (
@@ -140,27 +118,22 @@ const mapStatusLabel = (
 };
 
 export function ActivityItem({ activity, index }: ActivityItemProps) {
-	const { t } = useTranslation("common");
+	const { t, i18n } = useTranslation("common");
 	const { t: tContent } = useTranslation("content");
 	const { t: tEnum } = useTranslation("enumMap");
 	const statusLabel = mapStatusLabel(activity.status, t, tContent, tEnum);
-	const dateLabel = formatDate(activity.date);
-	const dateTimeLabel = formatDateTime(activity.date);
-	const formattedName = activity.user
-		? [activity.user.first_name, activity.user.last_name]
-				.filter((part): part is string =>
-					Boolean(part && part.trim().length > 0),
-				)
-				.join(" ")
-		: "";
-	let fallbackActor: string;
-	if (!activity.user) {
-		fallbackActor = t("auth.account.activity.system");
-	} else if (formattedName) {
-		fallbackActor = `${formattedName} (${activity.user.email})`;
-	} else {
-		fallbackActor = activity.user.email;
-	}
+	const dateTimeLabel = formatDateWithLocale(activity.date, {
+		locale: i18n.resolvedLanguage,
+		format: {
+			day: "2-digit",
+			month: "2-digit",
+			year: "numeric",
+			hour: "2-digit",
+			minute: "2-digit",
+		},
+	});
+	const fallbackActor =
+		formatUserDisplayName(activity.user) ?? t("auth.account.activity.system");
 	const actor = activity.actor ?? fallbackActor;
 	const eventType = activity.eventType;
 	const primaryEntity =
@@ -305,12 +278,7 @@ export function ActivityItem({ activity, index }: ActivityItemProps) {
 
 			<div className="flex-1 min-w-0">
 				<div className="flex items-baseline gap-2 flex-wrap">
-					<Tooltip>
-						<TooltipTrigger asChild>
-							<span className="body3 font-bold cursor-help">{dateLabel}</span>
-						</TooltipTrigger>
-						<TooltipContent side="top">{dateTimeLabel}</TooltipContent>
-					</Tooltip>
+					<span className="body3 font-bold cursor-help">{dateTimeLabel}</span>
 					<span className="body3">•</span>
 					{renderEventMessage()}
 				</div>

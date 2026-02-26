@@ -11,6 +11,7 @@ import { reviewClaimSubmission } from "@/server/actions/submissions";
 import type { ClaimSubmissionDetail } from "@/types/submission";
 import { Card } from "../ui/card";
 import { showSuccessToast } from "@/lib/utils/feedbackToast";
+import { formatDateWithLocale } from "@/lib/utils/dateUtils";
 
 type UserClaimReviewModalProps = {
 	claims: ClaimSubmissionDetail[];
@@ -23,7 +24,7 @@ export function UserClaimReviewModal({
 	routePath,
 	returnTo,
 }: UserClaimReviewModalProps) {
-	const { t } = useTranslation("content");
+	const { t, i18n } = useTranslation("content");
 	const router = useRouter();
 	const [items, setItems] = useState(claims);
 	const [busyIds, setBusyIds] = useState<number[]>([]);
@@ -50,14 +51,18 @@ export function UserClaimReviewModal({
 		[],
 	);
 
-	const formatDate = useCallback((date: Date | string) => {
-		const dateObj = typeof date === "string" ? new Date(date) : date;
-		return dateObj.toLocaleDateString("de-DE", {
-			year: "numeric",
-			month: "2-digit",
-			day: "2-digit",
-		});
-	}, []);
+	const formatDate = useCallback(
+		(date: Date | string) =>
+			formatDateWithLocale(date, {
+				locale: i18n?.resolvedLanguage ?? "de",
+				format: {
+					year: "numeric",
+					month: "2-digit",
+					day: "2-digit",
+				},
+			}),
+		[i18n?.resolvedLanguage],
+	);
 
 	const formatGroups = useCallback(
 		(groups?: Array<{ name: string }> | null) => {
