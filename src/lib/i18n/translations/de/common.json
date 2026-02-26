@@ -32,72 +32,6 @@
 		"success": "Erfolg",
 		"warning": "Warnung"
 	},
-	"categoryFormModal": {
-		"status": {
-			"active": "Aktiv",
-			"inactive": "Inaktiv"
-		}
-	},
-	"categoryTable": {
-		"actions": {
-			"add": "Kategorie hinzufügen",
-			"editSubcategory": "Unterkategorie bearbeiten"
-		},
-		"columns": {
-			"description": "Beschreibung",
-			"icon": "Icon",
-			"key": "Name",
-			"parent": "Übergeordnet",
-			"subcategories": "Unterkategorien"
-		},
-		"empty": {
-			"description": "Erstellen Sie eine Kategorie, um Inhalte besser zu strukturieren.",
-			"title": "Keine Kategorien gefunden."
-		},
-		"emptyMessage": "Keine Kategorien gefunden.",
-		"searchPlaceholder": "Kategorien suchen..."
-	},
-	"institutionDraftIntroModal": {
-		"choice": {
-			"guest": {
-				"cta": "Weiter als Gast",
-				"description": "Sie können natürlich auch gern mitwirken, ohne sich bei uns anzumelden.",
-				"title": "Fortfahren ohne Anmeldung"
-			},
-			"login": {
-				"cta": "Zur Anmeldung",
-				"description": "Für die schnellere Bearbeitung Ihrer Einträge und die Übersicht empfehlen wir Ihnen, sich im Kulturkatasterportal anzumelden oder zu registrieren.",
-				"title": "Melden Sie sich an oder registrieren Sie sich, um fortzufahren."
-			},
-			"title": "Wie möchten Sie fortfahren?"
-		},
-		"intro": {
-			"back": "Zurück",
-			"cta": "Weiter",
-			"description": "Zum Mitwirken tragen Sie bitte die benötigten Angaben in die jeweiligen Felder ein und klicken Sie am Ende des Formulars auf „Daten übermitteln“. Unser Redaktionsteam prüft jede Einsendung vor der Veröffentlichung und meldet sich ggfs. bei Rückfragen.",
-			"mode": {
-				"description": "Wählen Sie die passende Kategorie für die Kultureinrichtung aus. Falls mehrere Kategorien zutreffen, wählen Sie die primäre Kategorie aus.",
-				"edit": "Ergänzung oder Änderung eines oder mehrere bestehender Kulturorte",
-				"new": "Neue/n Kulturort/e eintragen",
-				"title": "Möchten Sie eine neue Kultureinrichtung eintragen oder einen bestehenden Datensatz ergänzen bzw. korrigieren? *"
-			},
-			"sectionNote": "Bitte beachten Sie, dass Sie Angaben nur dann machen sollten, wenn Sie sich der Richtigkeit sicher sind und einer Einwilligung zur Veröffentlichung im Kulturkataster zustimmen. Sollten Informationen nur für befugte Nutzer*innen im geschützten Bereich des Kulturkatasters zugänglich und nicht öffentlich einsehbar sein, haben wir dies am jeweiligen Datenfeld gekennzeichnet.",
-			"sectionTitle": "Basisinformation der Kultureinrichtung",
-			"thankYou": "Vielen Dank, dass Sie das Kulturkataster Berlin mit Ihrem Beitrag unterstützen!"
-		},
-		"submitSuccess": {
-			"cta": "Weitere Einreichung starten",
-			"description": "Dank Ihrer Eingabe wächst das Kulturkataster Berlin immer weiter und weiter und ermöglicht so vielen Menschen den Zugang zu neuen Kulturstandorten.",
-			"title": "Vielen Dank für Ihre Einreichung"
-		},
-		"title": "Mitwirken beim Kulturkataster Berlin"
-	},
-	"institutionModalCloseConfirmation": {
-		"cancel": "Abbrechen",
-		"confirm": "Verlassen",
-		"description": "Nicht gespeicherte Eingaben gehen verloren.",
-		"title": "Vorgang verlassen?"
-	},
 	"auth": {
 		"account": {
 			"actions": {
@@ -298,6 +232,7 @@
 			"emailLabel": "Ihre E-Mail Adresse",
 			"emailPlaceholder": "name@beispiel.de",
 			"errorFallback": "Registrierung fehlgeschlagen.",
+			"unavailable": "Registrierung ist derzeit nicht verfügbar.",
 			"firstName": "Vorname",
 			"firstNamePlaceholder": "Vorname",
 			"lastName": "Nachname",
@@ -320,7 +255,7 @@
 			"submitting": "Konto wird erstellt...",
 			"subtitle": "Wirken Sie mit, Berlins Kulturlandschaft zu gestalten.",
 			"successCta": "Fertig",
-			"successMessage": "In Kürze erhalten Sie eine Bestätigungs-E-Mail mit dem Link zu Ihrem Login.",
+			"successMessage": "Wenn ein Konto mit den angegebenen Daten erstellt werden kann, erhalten Sie in Kürze eine E-Mail mit einem Bestätigungslink.",
 			"successTitle": "Vielen Dank!",
 			"termsIntro": "Ich akzeptiere die",
 			"termsLink": "AGB",
@@ -370,6 +305,31 @@
 		"more": "+{{count}} weitere"
 	},
 	"cancel": "Abbrechen",
+	"categoryFormModal": {
+		"status": {
+			"active": "Aktiv",
+			"inactive": "Inaktiv"
+		}
+	},
+	"categoryTable": {
+		"actions": {
+			"add": "Kategorie hinzufügen",
+			"editSubcategory": "Unterkategorie bearbeiten"
+		},
+		"columns": {
+			"description": "Beschreibung",
+			"icon": "Icon",
+			"key": "Name",
+			"parent": "Übergeordnet",
+			"subcategories": "Unterkategorien"
+		},
+		"empty": {
+			"description": "Erstellen Sie eine Kategorie, um Inhalte besser zu strukturieren.",
+			"title": "Keine Kategorien gefunden."
+		},
+		"emptyMessage": "Keine Kategorien gefunden.",
+		"searchPlaceholder": "Kategorien suchen..."
+	},
 	"close": "Schließen",
 	"closeSidebar": "Seitenleiste schließen",
 	"confirm": "Schließen",
@@ -442,6 +402,41 @@
 		"notFound": "Kulturort nicht gefunden",
 		"showDetails": "Details anzeigen"
 	},
+	"institutionDraftIntroModal": {
+		"choice": {
+			"guest": {
+				"cta": "Weiter als Gast",
+				"description": "Sie können natürlich auch gern mitwirken, ohne sich bei uns anzumelden.",
+				"title": "Fortfahren ohne Anmeldung"
+			},
+			"login": {
+				"cta": "Zur Anmeldung",
+				"description": "Für die schnellere Bearbeitung Ihrer Einträge und die Übersicht empfehlen wir Ihnen, sich im Kulturkatasterportal anzumelden oder zu registrieren.",
+				"title": "Melden Sie sich an oder registrieren Sie sich, um fortzufahren."
+			},
+			"title": "Wie möchten Sie fortfahren?"
+		},
+		"intro": {
+			"back": "Zurück",
+			"cta": "Weiter",
+			"description": "Zum Mitwirken tragen Sie bitte die benötigten Angaben in die jeweiligen Felder ein und klicken Sie am Ende des Formulars auf „Daten übermitteln“. Unser Redaktionsteam prüft jede Einsendung vor der Veröffentlichung und meldet sich ggfs. bei Rückfragen.",
+			"mode": {
+				"description": "Wählen Sie die passende Kategorie für die Kultureinrichtung aus. Falls mehrere Kategorien zutreffen, wählen Sie die primäre Kategorie aus.",
+				"edit": "Ergänzung oder Änderung eines oder mehrere bestehender Kulturorte",
+				"new": "Neue/n Kulturort/e eintragen",
+				"title": "Möchten Sie eine neue Kultureinrichtung eintragen oder einen bestehenden Datensatz ergänzen bzw. korrigieren? *"
+			},
+			"sectionNote": "Bitte beachten Sie, dass Sie Angaben nur dann machen sollten, wenn Sie sich der Richtigkeit sicher sind und einer Einwilligung zur Veröffentlichung im Kulturkataster zustimmen. Sollten Informationen nur für befugte Nutzer*innen im geschützten Bereich des Kulturkatasters zugänglich und nicht öffentlich einsehbar sein, haben wir dies am jeweiligen Datenfeld gekennzeichnet.",
+			"sectionTitle": "Basisinformation der Kultureinrichtung",
+			"thankYou": "Vielen Dank, dass Sie das Kulturkataster Berlin mit Ihrem Beitrag unterstützen!"
+		},
+		"submitSuccess": {
+			"cta": "Weitere Einreichung starten",
+			"description": "Dank Ihrer Eingabe wächst das Kulturkataster Berlin immer weiter und weiter und ermöglicht so vielen Menschen den Zugang zu neuen Kulturstandorten.",
+			"title": "Vielen Dank für Ihre Einreichung"
+		},
+		"title": "Mitwirken beim Kulturkataster Berlin"
+	},
 	"institutionFormModal": {
 		"review": {
 			"actions": {
@@ -465,6 +460,12 @@
 				}
 			}
 		}
+	},
+	"institutionModalCloseConfirmation": {
+		"cancel": "Abbrechen",
+		"confirm": "Verlassen",
+		"description": "Nicht gespeicherte Eingaben gehen verloren.",
+		"title": "Vorgang verlassen?"
 	},
 	"kukaLogo": "Kulturkataster - Logo",
 	"kukaLogoButton": "Kulturkataster: Zur Einführung",
