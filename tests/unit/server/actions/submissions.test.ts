@@ -1,5 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { createSubmission, updateSubmission } from "@/server/actions/submissions";
+import {
+	createSubmission,
+	updateSubmission,
+} from "@/server/actions/submissions";
 import { SubmissionEntityType, SubmissionType } from "@/generated/prisma";
 import { getCurrentUserId } from "@/server/actions/auth";
 
