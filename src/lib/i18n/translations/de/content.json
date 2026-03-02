@@ -725,7 +725,11 @@
 		},
 		"form": {
 			"basic": {
-				"sectionTitle": "Grundinformationen"
+				"sectionTitle": "Grundinformationen",
+				"validation": {
+					"duplicateInstitution": "Ein Kulturort mit diesem Namen und dieser Adresse existiert bereits.",
+					"duplicatePossible": "Möglicher Duplikatseintrag gefunden. Bitte vor dem Absenden prüfen."
+				}
 			},
 			"category": {
 				"newCategory": {

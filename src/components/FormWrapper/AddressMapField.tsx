@@ -32,6 +32,8 @@ type AddressMapAddress = {
 	streetNumber?: string | null;
 	city?: string | null;
 	zipcode?: string | null;
+	district?: string | null;
+	neighbourhood?: string | null;
 };
 
 type AddressMapFieldProps = {

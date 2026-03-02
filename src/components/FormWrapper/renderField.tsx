@@ -635,6 +635,24 @@ const renderFieldContent = (
 							if (field.addressMap.zipField && address.zipcode !== undefined) {
 								updateField(field.addressMap.zipField, address.zipcode);
 							}
+							if (
+								field.addressMap.districtField &&
+								address.district !== undefined
+							) {
+								updateField(
+									field.addressMap.districtField,
+									address.district,
+								);
+							}
+							if (
+								field.addressMap.neighbourhoodField &&
+								address.neighbourhood !== undefined
+							) {
+								updateField(
+									field.addressMap.neighbourhoodField,
+									address.neighbourhood,
+								);
+							}
 						}
 					}}
 				/>

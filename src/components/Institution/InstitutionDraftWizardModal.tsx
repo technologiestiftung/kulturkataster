@@ -1,6 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+	useCallback,
+	useEffect,
+	useMemo,
+	useRef,
+	useState,
+	type ReactNode,
+} from "react";
 import { FormWrapper } from "@/components/FormWrapper";
 import type { FormWrapperConfig } from "@/components/FormWrapper";
 import type { FormWrapperFieldConfig } from "@/components/FormWrapper/types";
@@ -38,6 +45,10 @@ import { Button } from "@/components/ui/button";
 import { showSuccessToast } from "@/lib/utils/feedbackToast";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { buildInstitutionForFormFromDraft } from "@/lib/utils/institutionFormAdapter";
+import {
+	findPotentialInstitutionDuplicates,
+	hasDuplicateInstitutionByNameAndAddress,
+} from "@/lib/utils/institutionDuplicateUtils";
 import { Profile } from "@/types";
 const DEFAULT_CREATE_STEP_ID = "basic";
 const STEP_IDS = [
@@ -110,7 +121,7 @@ function InstitutionDraftWizardContent({
 	onCloseRequest,
 	onSubmitError,
 }: InstitutionDraftWizardContentProps) {
-	const { t } = useTranslation("content");
+	const { t, i18n } = useTranslation("content");
 	const { t: tEnum } = useTranslation("enumMap");
 
 	const fieldLabel = useCallback(
@@ -127,6 +138,8 @@ function InstitutionDraftWizardContent({
 	);
 
 	const categories = useInstitutionStore((state) => state.categories) ?? [];
+	const allInstitutions =
+		useInstitutionStore((state) => state.allInstitutions) ?? [];
 	const draft = useInstitutionDraftStore((state) => state.draft);
 	const setDraft = useInstitutionDraftStore((state) => state.setDraft);
 	const setStepId = useInstitutionDraftStore((state) => state.setStepId);
@@ -159,8 +172,91 @@ function InstitutionDraftWizardContent({
 		lastQuery: "",
 		inflight: false,
 	});
-	const onAddressBlur = handleAddressBlur(addressGeocodeState, geocodeAddress);
-	const onLatLngBlur = handleLatLngBlur(latLngGeocodeState, reverseGeocode);
+	const onAddressBlur = handleAddressBlur(addressGeocodeState, geocodeAddress, {
+		reverseGeocode,
+		districtKey: "address.district",
+		neighbourhoodKey: "address.neighbourhood",
+	});
+	const onLatLngBlur = handleLatLngBlur(latLngGeocodeState, reverseGeocode, {
+		districtKey: "address.district",
+	});
+
+	const duplicateInstitutionMessage = t(
+		"institutionDraftWizardModal.form.basic.validation.duplicateInstitution",
+		{
+			defaultValue: "An institution with this name and address already exists.",
+		},
+	);
+
+	const activeInstitutionId = useMemo(() => {
+		const directId =
+			typeof draft.entityId === "number" && Number.isFinite(draft.entityId)
+				? draft.entityId
+				: null;
+		if (directId !== null) return directId;
+		const originalInstitution =
+			draft.originalInstitution &&
+			typeof draft.originalInstitution === "object" &&
+			typeof (draft.originalInstitution as { id?: unknown }).id === "number"
+				? ((draft.originalInstitution as { id: number }).id ?? null)
+				: null;
+		return originalInstitution;
+	}, [draft.entityId, draft.originalInstitution]);
+
+	const validateDuplicateInstitution = useCallback(
+		(formData: Record<string, unknown>) => {
+			const hasDuplicate = hasDuplicateInstitutionByNameAndAddress({
+				formData,
+				institutions: allInstitutions,
+				currentInstitutionId: activeInstitutionId,
+			});
+			return hasDuplicate ? duplicateInstitutionMessage : undefined;
+		},
+		[activeInstitutionId, allInstitutions, duplicateInstitutionMessage],
+	);
+	const potentialDuplicates = useMemo(() => {
+		const hasHardDuplicate = hasDuplicateInstitutionByNameAndAddress({
+			formData: draft,
+			institutions: allInstitutions,
+			currentInstitutionId: activeInstitutionId,
+		});
+		if (hasHardDuplicate) return [];
+		return findPotentialInstitutionDuplicates({
+			formData: draft,
+			institutions: allInstitutions,
+			currentInstitutionId: activeInstitutionId,
+			maxResults: 3,
+		});
+	}, [activeInstitutionId, allInstitutions, draft]);
+	const localePrefix = i18n.resolvedLanguage === "en" ? "en" : "de";
+	const duplicateWarningText = useMemo<ReactNode>(() => {
+		if (potentialDuplicates.length === 0) return null;
+		const warningText = t(
+			"institutionDraftWizardModal.form.basic.validation.duplicatePossible",
+			{
+				defaultValue:
+					"Possible duplicate found. Please verify before submitting.",
+			},
+		);
+		return (
+			<div className="space-y-1">
+				<p className="body3 text-amber-700">{warningText}</p>
+				<div className="flex flex-wrap gap-2">
+					{potentialDuplicates.map((item) => (
+						<a
+							key={item.id}
+							href={`/${localePrefix}/map/institution/${item.id}`}
+							target="_blank"
+							rel="noreferrer"
+							className="body3 text-amber-700 underline"
+						>
+							{item.name?.trim() || `#${item.id}`}
+						</a>
+					))}
+				</div>
+			</div>
+		);
+	}, [localePrefix, potentialDuplicates, t]);
 	const scrollStepContainerToTop = useCallback(() => {
 		if (typeof window === "undefined") return;
 		const root = wizardRootRef.current;
@@ -387,6 +483,9 @@ function InstitutionDraftWizardContent({
 							layout: { span: "full" },
 							placeholder: fieldPlaceholder("name"),
 							required: true,
+							validateWithForm: (_value, formData) =>
+								validateDuplicateInstitution(formData),
+							afterField: duplicateWarningText,
 						},
 						{
 							name: "address.map",
@@ -400,6 +499,8 @@ function InstitutionDraftWizardContent({
 								streetField: "address.streetLine",
 								cityField: "address.city",
 								zipField: "address.zip",
+								districtField: "address.district",
+								neighbourhoodField: "address.neighbourhood",
 							},
 						},
 						{
@@ -429,6 +530,7 @@ function InstitutionDraftWizardContent({
 							layout: { span: "full" },
 							placeholder: fieldPlaceholder("street"),
 							onBlur: onAddressBlur,
+							afterField: duplicateWarningText,
 						},
 						{
 							name: "address.address_suffix",
@@ -463,6 +565,14 @@ function InstitutionDraftWizardContent({
 							type: "text",
 							layout: { span: "half" },
 							placeholder: fieldPlaceholder("neighbourhood"),
+						},
+						{
+							name: "address.district",
+							fieldMetaKey: "district",
+							label: fieldLabel("district", "District"),
+							type: "text",
+							layout: { span: "half" },
+							placeholder: fieldPlaceholder("district"),
 						},
 						{
 							name: "address.cultural_area",
@@ -571,6 +681,10 @@ function InstitutionDraftWizardContent({
 			handleStepSubmit,
 			onAddressBlur,
 			onLatLngBlur,
+			validateDuplicateInstitution,
+			potentialDuplicates,
+			localePrefix,
+			duplicateWarningText,
 			fieldLabel,
 			t,
 			tEnum,
