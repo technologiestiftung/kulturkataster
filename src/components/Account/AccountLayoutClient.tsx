@@ -1,7 +1,7 @@
 "use client";
 
 import { useTransition, type ReactNode } from "react";
-import { ButtonWithTooltip } from "@/components/ui/button";
+import { ButtonWithTooltip } from "@/components/ui/button-with-tooltip";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { usePathname, useRouter } from "next/navigation";

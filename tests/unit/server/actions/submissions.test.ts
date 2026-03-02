@@ -1,5 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { updateSubmission } from "@/server/actions/submissions";
+import { createSubmission, updateSubmission } from "@/server/actions/submissions";
+import { SubmissionEntityType, SubmissionType } from "@/generated/prisma";
+import { getCurrentUserId } from "@/server/actions/auth";
 
 vi.mock("@/server/actions/auth", () => ({
 	getCurrentUserId: vi.fn().mockResolvedValue("user-1"),
@@ -22,11 +24,13 @@ vi.mock("@/server/utils/rbac", () => ({
 }));
 
 const updateMock = vi.fn();
+const createMock = vi.fn();
 const findFirstMock = vi.fn();
 
 vi.mock("@/server/data/submissionRepo", () => ({
 	submissionRepo: {
 		update: (id: number, data: unknown) => updateMock(id, data),
+		create: (data: unknown) => createMock(data),
 		findFirst: (where: unknown) => findFirstMock(where),
 	},
 }));
@@ -36,7 +40,57 @@ describe("server actions: submissions", () => {
 		getTableScopeMock.mockReset();
 		requireScopeOrUserMock.mockReset();
 		updateMock.mockReset();
+		createMock.mockReset();
 		findFirstMock.mockReset();
+	});
+
+	it("createSubmission checks pending duplicates only for the current user", async () => {
+		getTableScopeMock.mockReturnValue("all");
+		requireScopeOrUserMock.mockReturnValue(null);
+		findFirstMock.mockResolvedValue(null);
+		createMock.mockResolvedValue({ id: 99 });
+
+		await createSubmission({
+			entityType: SubmissionEntityType.institution,
+			entityId: 12,
+			type: SubmissionType.update,
+			status: "approval_pending",
+			data: { name: "A" },
+		});
+
+		expect(findFirstMock).toHaveBeenCalledWith(
+			expect.objectContaining({
+				entity_type: SubmissionEntityType.institution,
+				entity_id: 12,
+				type: SubmissionType.update,
+				status: "approval_pending",
+				created_by: "user-1",
+			}),
+		);
+		expect(createMock).toHaveBeenCalled();
+	});
+
+	it("createSubmission does not run pending duplicate check for anonymous users", async () => {
+		const mockedGetCurrentUserId = vi.mocked(getCurrentUserId);
+		mockedGetCurrentUserId.mockResolvedValueOnce(null);
+		getTableScopeMock.mockReturnValue("all");
+		requireScopeOrUserMock.mockReturnValue(null);
+		createMock.mockResolvedValue({ id: 100 });
+
+		await createSubmission({
+			entityType: SubmissionEntityType.institution,
+			entityId: 22,
+			type: SubmissionType.update,
+			status: "approval_pending",
+			data: { name: "B" },
+		});
+
+		expect(findFirstMock).not.toHaveBeenCalled();
+		expect(createMock).toHaveBeenCalledWith(
+			expect.objectContaining({
+				creator: undefined,
+			}),
+		);
 	});
 
 	it("updateSubmission allows admins to update any submission", async () => {

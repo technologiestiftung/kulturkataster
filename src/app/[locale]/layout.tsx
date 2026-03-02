@@ -5,7 +5,7 @@ import { Menu } from "@/components/Menu/Menu";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { serverSideTranslation } from "@/i18n";
 import I18NProvider from "@/i18n/i18n-provider";
-import { getDirection } from "@/lib/utils";
+import { getDirection } from "@/lib/utils/i18nDirection";
 import { Locale } from "@/types";
 import type { Metadata } from "next";
 import { Barlow } from "next/font/google";

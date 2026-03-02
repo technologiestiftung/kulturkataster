@@ -213,7 +213,7 @@ export function InstitutionsTable() {
 				accessorKey: "email",
 				header: headerLabel("email", "Email"),
 				enableSorting: true,
-				size: 150,
+				size: 250,
 				meta: { truncate: true },
 				cell: ({ row }) => {
 					const email = row.original.email;
@@ -371,7 +371,7 @@ export function InstitutionsTable() {
 				accessorKey: "number_of_rooms",
 				header: headerLabel("number_of_rooms", "Rooms"),
 				enableSorting: true,
-				size: 80,
+				size: 150,
 				cell: ({ row }) =>
 					row.original.number_of_rooms ? (
 						row.original.number_of_rooms.toString()
@@ -462,7 +462,7 @@ export function InstitutionsTable() {
 				accessorKey: "owner_type",
 				header: headerLabel("owner_type", "Owner Type"),
 				enableSorting: true,
-				size: 140,
+				size: 180,
 				meta: { truncate: true },
 				cell: ({ row }) => translateEnum("owner_type", row.original.owner_type),
 			},
@@ -490,7 +490,7 @@ export function InstitutionsTable() {
 				accessorKey: "funding_type",
 				header: headerLabel("funding_type", "Funding Type"),
 				enableSorting: true,
-				size: 140,
+				size: 180,
 				meta: { truncate: true },
 				cell: ({ row }) =>
 					translateEnum("funding_type", row.original.funding_type),
@@ -502,7 +502,7 @@ export function InstitutionsTable() {
 					formatFundingSources(row, { translateFundingSource }),
 				header: headerLabel("funding_sources", "Funding Sources"),
 				enableSorting: true,
-				size: 140,
+				size: 180,
 				meta: { truncate: true },
 				cell: ({ row }) =>
 					formatFundingSources(row.original, { translateFundingSource }),
@@ -599,7 +599,7 @@ export function InstitutionsTable() {
 				accessorKey: "established_since",
 				header: headerLabel("established_since", "Established Since"),
 				enableSorting: true,
-				size: 130,
+				size: 150,
 				cell: ({ row }) =>
 					formatInstitutionDate(row.original.established_since),
 			},
@@ -607,7 +607,7 @@ export function InstitutionsTable() {
 				accessorKey: "established_until",
 				header: headerLabel("established_until", "Established Until"),
 				enableSorting: true,
-				size: 130,
+				size: 150,
 				cell: ({ row }) =>
 					formatInstitutionDate(row.original.established_until),
 			},

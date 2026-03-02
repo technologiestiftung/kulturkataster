@@ -4,7 +4,7 @@ import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { FC, useCallback } from "react";
 import { FilterState } from "@/types";
 import { FilterPanel } from "./FilterPanel";
-import { ButtonWithTooltip } from "../ui/button";
+import { ButtonWithTooltip } from "../ui/button-with-tooltip";
 import FilterIcon from "@/icons/filter.svg";
 import Search from "@/icons/search.svg";
 import Close from "@/icons/close.svg";

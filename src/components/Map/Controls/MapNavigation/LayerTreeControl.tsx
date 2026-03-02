@@ -1,7 +1,7 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-import { ButtonWithTooltip } from "@/components/ui/button";
+import { ButtonWithTooltip } from "@/components/ui/button-with-tooltip";
 import { useIsMobile } from "@/hooks/use-mobile";
 import ContextMapIcon from "@/icons/fachkarten.svg";
 import { useAppStore } from "@/lib/store/appStore";
