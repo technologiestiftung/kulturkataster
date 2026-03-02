@@ -64,7 +64,6 @@ export function ActionPanel({
 					<Button
 						type="button"
 						variant="outline"
-						size="md"
 						disabled={isLoading}
 						onClick={handleAction}
 					>

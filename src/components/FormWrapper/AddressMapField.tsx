@@ -296,7 +296,6 @@ export function AddressMapField({
 				<Button
 					type="button"
 					variant="outline"
-					size="sm"
 					onClick={() => void handleApplySelection()}
 					disabled={disabled || !pendingSelection || isApplyingSelection}
 				>
