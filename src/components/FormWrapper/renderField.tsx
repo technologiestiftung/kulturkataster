@@ -47,6 +47,7 @@ import { FundingSourceField } from "./FundingSourceField";
 import { defaultFilterState } from "./constants";
 import Eye from "@/icons/eye.svg";
 import EyeOff from "@/icons/eye-off.svg";
+import Warning from "@/icons/warning.svg";
 import { PrivateBadge } from "@/components/shared/PrivateBadge";
 import {
 	getFieldDescription,
@@ -270,6 +271,10 @@ const renderFieldContent = (
 ) => {
 	const value = formData[field.name];
 	const error = touched[field.name] ? errors[field.name] : undefined;
+	const hasWarning =
+		!error &&
+		Boolean(field.afterField) &&
+		(field.name === "name" || field.name === "address.streetLine");
 	const allowNullOption =
 		field.type !== "section" && field.allowNullOption === true;
 
@@ -328,20 +333,29 @@ const renderFieldContent = (
 				field.type === "tel" ||
 				field.type === "url" ||
 				field.type === "date") && (
-				<Input
-					id={field.name}
-					type={field.type}
-					value={value === undefined || value === null ? "" : String(value)}
-					onChange={(e) => updateField(field.name, e.target.value)}
-					onBlur={(e) => {
-						void handleFieldBlur(field, e.target.value);
-					}}
-					placeholder={resolvedPlaceholder}
-					disabled={field.disabled}
-					min={field.min}
-					max={field.max}
-					step={field.step}
-				/>
+				<div className="relative">
+					<Input
+						id={field.name}
+						type={field.type}
+						value={value === undefined || value === null ? "" : String(value)}
+						onChange={(e) => updateField(field.name, e.target.value)}
+						onBlur={(e) => {
+							void handleFieldBlur(field, e.target.value);
+						}}
+						placeholder={resolvedPlaceholder}
+						disabled={field.disabled}
+						min={field.min}
+						max={field.max}
+						step={field.step}
+						className={cn(
+							(error || hasWarning) &&
+								"bg-destructive-secondary/20 border-destructive-secondary pr-10",
+						)}
+					/>
+					{(error || hasWarning) && (
+						<Warning className="pointer-events-none absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-destructive-secondary" />
+					)}
+				</div>
 			)}
 
 			{field.type === "file" && (
@@ -404,59 +418,79 @@ const renderFieldContent = (
 			)}
 
 			{field.type === "textarea" && (
-				<Textarea
-					id={field.name}
-					value={value === undefined || value === null ? "" : String(value)}
-					onChange={(e) => updateField(field.name, e.target.value)}
-					onBlur={(e) => {
-						void handleFieldBlur(field, e.target.value);
-					}}
-					placeholder={resolvedPlaceholder}
-					disabled={field.disabled}
-					rows={4}
-				/>
+				<div className="relative">
+					<Textarea
+						id={field.name}
+						value={value === undefined || value === null ? "" : String(value)}
+						onChange={(e) => updateField(field.name, e.target.value)}
+						onBlur={(e) => {
+							void handleFieldBlur(field, e.target.value);
+						}}
+						placeholder={resolvedPlaceholder}
+						disabled={field.disabled}
+						rows={4}
+						className={cn(
+							(error || hasWarning) &&
+								"bg-destructive-secondary/20 border-destructive-secondary pr-10",
+						)}
+					/>
+					{(error || hasWarning) && (
+						<Warning className="pointer-events-none absolute right-3 top-3 h-5 w-5 text-destructive-secondary" />
+					)}
+				</div>
 			)}
 
 			{field.type === "select" && (
-				<Select
-					value={getSerializedSelectedValue(
-						field.options,
-						value,
-						allowNullOption,
-					)}
-					onValueChange={(val) => {
-						if (val === SELECT_NULL_SENTINEL) {
-							updateField(field.name, null);
-							return;
-						}
-						updateField(field.name, deserializeOptionValue(val));
-					}}
-					disabled={field.disabled}
-				>
-					<SelectTrigger id={field.name}>
-						<SelectValue placeholder={resolvedPlaceholder || "Select..."} />
-					</SelectTrigger>
-					<SelectContent className="px-3">
-						{allowNullOption && (
-							<>
-								<SelectItem value={SELECT_NULL_SENTINEL}>
-									{nullOptionLabel}
-								</SelectItem>
-								{(field.options?.length ?? 0) > 0 && <SelectSeparator />}
-							</>
+				<div className="relative">
+					<Select
+						value={getSerializedSelectedValue(
+							field.options,
+							value,
+							allowNullOption,
 						)}
-						{field.options?.map((option, index) => (
-							<Fragment key={serializeOptionValue(option.value)}>
-								<SelectItem value={serializeOptionValue(option.value)}>
-									{option.label}
-								</SelectItem>
-								{index < (field.options?.length || 0) - 1 && (
-									<SelectSeparator />
-								)}
-							</Fragment>
-						))}
-					</SelectContent>
-				</Select>
+						onValueChange={(val) => {
+							if (val === SELECT_NULL_SENTINEL) {
+								updateField(field.name, null);
+								return;
+							}
+							updateField(field.name, deserializeOptionValue(val));
+						}}
+						disabled={field.disabled}
+					>
+						<SelectTrigger
+							id={field.name}
+							className={cn(
+								(error || hasWarning) &&
+									"bg-destructive-secondary/20 border-destructive-secondary pr-12",
+							)}
+						>
+							<SelectValue placeholder={resolvedPlaceholder || "Select..."} />
+						</SelectTrigger>
+						<SelectContent className="px-3">
+							{allowNullOption && (
+								<>
+									<SelectItem value={SELECT_NULL_SENTINEL}>
+										{nullOptionLabel}
+									</SelectItem>
+									{(field.options?.length ?? 0) > 0 && <SelectSeparator />}
+								</>
+							)}
+							{field.options?.map((option, index) => (
+								<Fragment key={serializeOptionValue(option.value)}>
+									<SelectItem value={serializeOptionValue(option.value)}>
+										{option.label}
+									</SelectItem>
+									{index < (field.options?.length || 0) - 1 && (
+										<SelectSeparator />
+									)}
+								</Fragment>
+							))}
+						</SelectContent>
+					</Select>
+					{(error || hasWarning) && (
+						<Warning className="pointer-events-none absolute right-8 top-1/2 h-4 w-4 -translate-y-1/2 text-destructive-secondary" />
+					)}
+				</div>
 			)}
 
 			{field.type === "radio" && (
@@ -914,8 +948,8 @@ const renderFieldContent = (
 				</div>
 			)}
 
+			{error && <p className="body3 text-destructive-secondary">{error}</p>}
 			{field.afterField}
-			{error && <p className="body3 text-destructive">{error}</p>}
 		</div>
 	);
 };

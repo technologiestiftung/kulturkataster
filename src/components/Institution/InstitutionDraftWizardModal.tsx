@@ -240,7 +240,7 @@ function InstitutionDraftWizardContent({
 		);
 		return (
 			<div className="space-y-1">
-				<p className="body3 text-amber-700">{warningText}</p>
+				<p className="body3 text-destructive">{warningText}</p>
 				<div className="flex flex-wrap gap-2">
 					{potentialDuplicates.map((item) => (
 						<a
@@ -248,7 +248,7 @@ function InstitutionDraftWizardContent({
 							href={`/${localePrefix}/map/institution/${item.id}`}
 							target="_blank"
 							rel="noreferrer"
-							className="body3 text-amber-700 underline"
+							className="body3 text-destructive underline"
 						>
 							{item.name?.trim() || `#${item.id}`}
 						</a>
@@ -530,6 +530,8 @@ function InstitutionDraftWizardContent({
 							layout: { span: "full" },
 							placeholder: fieldPlaceholder("street"),
 							onBlur: onAddressBlur,
+							validateWithForm: (_value, formData) =>
+								validateDuplicateInstitution(formData),
 							afterField: duplicateWarningText,
 						},
 						{
