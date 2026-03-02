@@ -49,16 +49,18 @@ const levenshteinDistance = (left: string, right: string): number => {
 	if (left === right) return 0;
 	if (left.length === 0) return right.length;
 	if (right.length === 0) return left.length;
-	const previous = new Array(right.length + 1)
-		.fill(0)
-		.map((_, idx) => idx);
+	const previous = new Array(right.length + 1).fill(0).map((_, idx) => idx);
 	for (let i = 1; i <= left.length; i += 1) {
 		let diagonal = previous[0];
 		previous[0] = i;
 		for (let j = 1; j <= right.length; j += 1) {
 			const temp = previous[j];
 			const cost = left[i - 1] === right[j - 1] ? 0 : 1;
-			previous[j] = Math.min(previous[j] + 1, previous[j - 1] + 1, diagonal + cost);
+			previous[j] = Math.min(
+				previous[j] + 1,
+				previous[j - 1] + 1,
+				diagonal + cost,
+			);
 			diagonal = temp;
 		}
 	}
@@ -161,9 +163,10 @@ export const findPotentialInstitutionDuplicates = ({
 }): Institution[] => {
 	const normalizedName = normalizeCompareValue(formData.name);
 	if (!normalizedName) return [];
-	const formAddressRaw = buildAddressFromFormData(formData) as
-		| Record<string, unknown>
-		| null;
+	const formAddressRaw = buildAddressFromFormData(formData) as Record<
+		string,
+		unknown
+	> | null;
 	if (!formAddressRaw) return [];
 	const formAddress = toAddressLike(formAddressRaw);
 	if (
@@ -215,7 +218,9 @@ export const findPotentialInstitutionDuplicates = ({
 					institutionAddress.lng,
 				) <= 30;
 
-			return (sameZip && streetScore >= 0.9) || (sameZip && sameNumber) || nearBy;
+			return (
+				(sameZip && streetScore >= 0.9) || (sameZip && sameNumber) || nearBy
+			);
 		})
 		.slice(0, maxResults);
 };

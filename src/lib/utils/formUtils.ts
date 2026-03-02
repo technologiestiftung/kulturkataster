@@ -301,7 +301,7 @@ const handleAddressBlur = (
 			} finally {
 				addressGeocodeState.current.inflight = false;
 			}
-			},
+		},
 		[
 			addressGeocodeState,
 			geocodeAddress,
