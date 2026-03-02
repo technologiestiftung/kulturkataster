@@ -121,6 +121,8 @@ type FormWrapperNonSectionFieldConfig = {
 	searchPlaceholder?: string;
 	emptyText?: string;
 	previewCount?: number;
+	allowNullOption?: boolean;
+	nullOptionLabel?: string | ReactNode;
 	multiselectFilterPanel?: ReactNode;
 	multiselectFilteredOptions?: SelectOption[];
 	multiselectFilters?: {

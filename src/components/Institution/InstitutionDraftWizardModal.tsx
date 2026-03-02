@@ -483,31 +483,41 @@ function InstitutionDraftWizardContent({
 							label: fieldLabel("utilization_status", "Utilization Status"),
 							description: fieldDescription("utilization_status"),
 							type: "select",
-							placeholder: tEnum("utilization_status.placeholder"),
+							placeholder: fieldPlaceholder("utilization_status"),
 							options: [
 								{
 									value: "in_use",
-									label: tEnum("utilization_status.in_use"),
+									label: tEnum("field_names.utilization_status.options.in_use"),
 								},
 								{
 									value: "permanently_closed",
-									label: tEnum("utilization_status.permanently_closed"),
+									label: tEnum(
+										"field_names.utilization_status.options.permanently_closed",
+									),
 								},
 								{
 									value: "planned_use",
-									label: tEnum("utilization_status.planned_use"),
+									label: tEnum(
+										"field_names.utilization_status.options.planned_use",
+									),
 								},
 								{
 									value: "potential_space",
-									label: tEnum("utilization_status.potential_space"),
+									label: tEnum(
+										"field_names.utilization_status.options.potential_space",
+									),
 								},
 								{
 									value: "temporarily_closed",
-									label: tEnum("utilization_status.temporarily_closed"),
+									label: tEnum(
+										"field_names.utilization_status.options.temporarily_closed",
+									),
 								},
 								{
 									value: "unknown",
-									label: tEnum("utilization_status.unknown"),
+									label: tEnum(
+										"field_names.utilization_status.options.unknown",
+									),
 								},
 							],
 						},
@@ -861,28 +871,39 @@ function InstitutionDraftWizardContent({
 							fields: [
 								{
 									name: "funding_type",
+									allowNullOption: true,
+									nullOptionLabel: t(
+										"field_names.funding_type.options.unknown",
+									),
+									label: fieldLabel("funding_type", "Funding Type"),
 									type: "select",
 									options: [
 										{
 											value: "workspace_program",
-											label: tEnum("funding_type.workspace_program"),
+											label: tEnum(
+												"field_names.funding_type.options.workspace_program",
+											),
 										},
 										{
 											value: "institutional_funding",
-											label: tEnum("funding_type.institutional_funding"),
+											label: tEnum(
+												"field_names.funding_type.options.institutional_funding",
+											),
 										},
 										{
 											value: "temporary_project_funding",
-											label: tEnum("funding_type.temporary_project_funding"),
+											label: tEnum(
+												"field_names.funding_type.options.temporary_project_funding",
+											),
 										},
 										{
 											value: "no_funding",
-											label: tEnum("funding_type.no_funding"),
+											label: tEnum(
+												"field_names.funding_type.options.no_funding",
+											),
 										},
 									],
-									placeholder: t(
-										"institutionDraftWizardModal.form.information.selectPlaceholder",
-									),
+									placeholder: fieldPlaceholder("funding_type"),
 								},
 							],
 						},
@@ -1020,52 +1041,76 @@ function InstitutionDraftWizardContent({
 									label: fieldLabel("owner_type", "Eigentümer*innenart"),
 									type: "select",
 									options: [
-										{ value: "private", label: tEnum("owner_type.private") },
+										{
+											value: "private",
+											label: tEnum("field_names.owner_type.options.private"),
+										},
 										{
 											value: "federal_property",
-											label: tEnum("owner_type.federal_property"),
+											label: tEnum(
+												"field_names.owner_type.options.federal_property",
+											),
 										},
 										{
 											value: "state_property",
-											label: tEnum("owner_type.state_property"),
+											label: tEnum(
+												"field_names.owner_type.options.state_property",
+											),
 										},
 										{
 											value: "state_property_silb",
-											label: tEnum("owner_type.state_property_silb"),
+											label: tEnum(
+												"field_names.owner_type.options.state_property_silb",
+											),
 										},
 										{
 											value: "state_property_soda",
-											label: tEnum("owner_type.state_property_soda"),
+											label: tEnum(
+												"field_names.owner_type.options.state_property_soda",
+											),
 										},
 										{
 											value: "state_property_other",
-											label: tEnum("owner_type.state_property_other"),
+											label: tEnum(
+												"field_names.owner_type.options.state_property_other",
+											),
 										},
 										{
 											value: "state_property_specialized",
-											label: tEnum("owner_type.state_property_specialized"),
+											label: tEnum(
+												"field_names.owner_type.options.state_property_specialized",
+											),
 										},
 										{
 											value: "state_property_fund",
-											label: tEnum("owner_type.state_property_fund"),
+											label: tEnum(
+												"field_names.owner_type.options.state_property_fund",
+											),
 										},
 										{
 											value: "district_property",
-											label: tEnum("owner_type.district_property"),
+											label: tEnum(
+												"field_names.owner_type.options.district_property",
+											),
 										},
 										{
 											value: "other_public_property",
-											label: tEnum("owner_type.other_public_property"),
+											label: tEnum(
+												"field_names.owner_type.options.other_public_property",
+											),
 										},
 										{
 											value: "municipal_housing_company",
-											label: tEnum("owner_type.municipal_housing_company"),
+											label: tEnum(
+												"field_names.owner_type.options.municipal_housing_company",
+											),
 										},
-										{ value: "other", label: tEnum("owner_type.other") },
+										{
+											value: "other",
+											label: tEnum("field_names.owner_type.options.other"),
+										},
 									],
-									placeholder: t(
-										"institutionDraftWizardModal.form.information.selectPlaceholder",
-									),
+									placeholder: fieldPlaceholder("owner_type"),
 								},
 								{
 									name: "owner_name",
@@ -1098,11 +1143,15 @@ function InstitutionDraftWizardContent({
 									options: [
 										{
 											value: "unlimited_lease",
-											label: tEnum("rental_contract_type.unlimited_lease"),
+											label: tEnum(
+												"field_names.rental_contract_type.options.unlimited_lease",
+											),
 										},
 										{
 											value: "limited_lease",
-											label: tEnum("rental_contract_type.limited_lease"),
+											label: tEnum(
+												"field_names.rental_contract_type.options.limited_lease",
+											),
 										},
 										{
 											value: "hereditary_building_right",
@@ -1113,13 +1162,11 @@ function InstitutionDraftWizardContent({
 										{
 											value: "organization_ownership",
 											label: tEnum(
-												"rental_contract_type.organization_ownership",
+												"field_names.rental_contract_type.options.organization_ownership",
 											),
 										},
 									],
-									placeholder: t(
-										"institutionDraftWizardModal.form.information.selectPlaceholder",
-									),
+									placeholder: fieldPlaceholder("rental_contract_type"),
 								},
 								{
 									name: "rental_contract_end",
@@ -1153,44 +1200,42 @@ function InstitutionDraftWizardContent({
 									options: [
 										{
 											value: "long_term_secured",
-											label: t(
-												"institutionDraftWizardModal.form.information.protectionStatus.longTermSecured",
+											label: tEnum(
+												"field_names.protection_status.options.long_term_secured",
 											),
 										},
 										{
 											value: "medium_term_secured",
-											label: t(
-												"institutionDraftWizardModal.form.information.protectionStatus.mediumTermSecured",
+											label: tEnum(
+												"field_names.protection_status.options.medium_term_secured",
 											),
 										},
 										{
 											value: "uncertain",
-											label: t(
-												"institutionDraftWizardModal.form.information.protectionStatus.uncertain",
+											label: tEnum(
+												"field_names.protection_status.options.uncertain",
 											),
 										},
 										{
 											value: "acutely_threatened",
-											label: t(
-												"institutionDraftWizardModal.form.information.protectionStatus.acutelyThreatened",
+											label: tEnum(
+												"field_names.protection_status.options.acutely_threatened",
 											),
 										},
 										{
 											value: "permanently_closed",
-											label: t(
-												"institutionDraftWizardModal.form.information.protectionStatus.permanentlyClosed",
+											label: tEnum(
+												"field_names.protection_status.options.permanently_closed",
 											),
 										},
 										{
 											value: "not_yet_secured",
-											label: t(
-												"institutionDraftWizardModal.form.information.protectionStatus.notYetSecured",
+											label: tEnum(
+												"field_names.protection_status.options.not_yet_secured",
 											),
 										},
 									],
-									placeholder: t(
-										"institutionDraftWizardModal.form.information.selectPlaceholder",
-									),
+									placeholder: fieldPlaceholder("protection_status"),
 								},
 								{
 									name: "protection_status_info",

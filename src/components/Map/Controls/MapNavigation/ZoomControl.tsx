@@ -1,6 +1,6 @@
 "use client";
 
-import { ButtonWithTooltip } from "@/components/ui/button";
+import { ButtonWithTooltip } from "@/components/ui/button-with-tooltip";
 import { useMapStore } from "@/lib/store/mapStore";
 import { FC, ReactNode, useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";

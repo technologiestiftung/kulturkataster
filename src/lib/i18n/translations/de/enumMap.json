@@ -380,6 +380,13 @@
 			"placeholder": "Bitte auswählen",
 			"errors": {
 				"required": "Bitte Art der Förderung angeben."
+			},
+			"options": {
+				"workspace_program": "Arbeitsraumprogramm",
+				"institutional_funding": "Institutionell gefördert",
+				"temporary_project_funding": "Temporäre Projektförderung",
+				"no_funding": "Nicht gefördert",
+				"unknown": "Unbekannt"
 			}
 		},
 		"lat": {
@@ -484,6 +491,20 @@
 			"placeholder": "Bitte auswählen",
 			"errors": {
 				"required": "Bitte Eigentümer*innenart angeben."
+			},
+			"options": {
+				"private": "Privat",
+				"federal_property": "Bundesliegenschaft",
+				"state_property": "Landesliegenschaft",
+				"state_property_silb": "Landesliegenschaft (SILB)",
+				"state_property_soda": "Landesliegenschaft (SODA)",
+				"state_property_other": "Landesliegenschaft (Sonstige Liegenschaft)",
+				"state_property_specialized": "Spezialimmobilie Land",
+				"state_property_fund": "Landesliegenschaft (Liegenschaftsfonds)",
+				"district_property": "Bezirkliche Liegenschaft",
+				"other_public_property": "Sonstige öffentliche Liegenschaft",
+				"municipal_housing_company": "Städtische Wohnungsbaugesellschaft",
+				"other": "Sonstige"
 			}
 		},
 		"parent_organization": {
@@ -508,6 +529,14 @@
 			"placeholder": "Bitte auswählen",
 			"errors": {
 				"required": "Bitte Sicherungsstatus angeben."
+			},
+			"options": {
+				"long_term_secured": "Langfristig gesichert",
+				"medium_term_secured": "Mittelfristig gesichert",
+				"uncertain": "Unsicher",
+				"acutely_threatened": "Akut gefährdet",
+				"permanently_closed": "Dauerhaft geschlossen",
+				"not_yet_secured": "Noch nicht gesichert"
 			}
 		},
 		"protection_status_info": {
@@ -532,6 +561,11 @@
 			"placeholder": "Bitte auswählen",
 			"errors": {
 				"required": "Bitte Vertragsform angeben."
+			},
+			"options": {
+				"unlimited_lease": "Unbefristete Miete",
+				"limited_lease": "Befristete Miete",
+				"organization_ownership": "Eigentum der Organisation"
 			}
 		},
 		"shared_use_allowed": {
@@ -627,6 +661,14 @@
 			"placeholder": "Bitte auswählen",
 			"errors": {
 				"required": "Bitte Nutzungsstatus angeben."
+			},
+			"options": {
+				"in_use": "In Nutzung",
+				"permanently_closed": "Dauerhaft geschlossen",
+				"planned_use": "Geplante Nutzung",
+				"potential_space": "Potenzialort",
+				"temporarily_closed": "Vorübergehend geschlossen",
+				"unknown": "Unbekannt"
 			}
 		},
 		"utilization_status_info": {

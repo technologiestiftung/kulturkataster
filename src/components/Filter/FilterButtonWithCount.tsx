@@ -1,7 +1,7 @@
 "use client";
 
 import FilterIcon from "@/icons/filter.svg";
-import { ButtonWithTooltip } from "@/components/ui/button";
+import { ButtonWithTooltip } from "@/components/ui/button-with-tooltip";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 
 type FilterButtonWithCountProps = {
