@@ -639,10 +639,7 @@ const renderFieldContent = (
 								field.addressMap.districtField &&
 								address.district !== undefined
 							) {
-								updateField(
-									field.addressMap.districtField,
-									address.district,
-								);
+								updateField(field.addressMap.districtField, address.district);
 							}
 							if (
 								field.addressMap.neighbourhoodField &&

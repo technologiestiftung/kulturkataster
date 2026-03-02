@@ -34,7 +34,7 @@ const createInstitution = ({
 			lat: address.lat ?? null,
 			lng: address.lng ?? null,
 		},
-	} as Institution);
+	}) as Institution;
 
 describe("institutionDuplicateUtils", () => {
 	it("detects hard duplicates using canonicalized name and street", () => {
@@ -159,4 +159,3 @@ describe("institutionDuplicateUtils", () => {
 		expect(matches).toEqual([]);
 	});
 });
-
