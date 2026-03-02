@@ -205,6 +205,8 @@ const serializeOptionValue = (value: string | number | boolean): string => {
 	return `${typeof value}:${String(value)}`;
 };
 
+const SELECT_NULL_SENTINEL = "__FORMWRAPPER_SELECT_NULL__";
+
 const deserializeOptionValue = (value: string): string | number | boolean => {
 	if (value.startsWith("boolean:")) {
 		return value.slice("boolean:".length) === "true";
@@ -220,8 +222,12 @@ const deserializeOptionValue = (value: string): string | number | boolean => {
 const getSerializedSelectedValue = (
 	options: Array<{ value: string | number | boolean }> | undefined,
 	currentValue: unknown,
+	allowNullSelection = false,
 ): string | undefined => {
-	if (currentValue === undefined || currentValue === null) return undefined;
+	if (currentValue === undefined) return undefined;
+	if (currentValue === null) {
+		return allowNullSelection ? SELECT_NULL_SENTINEL : undefined;
+	}
 	if (!options || options.length === 0) return String(currentValue);
 
 	const matchingOption = options.find(
@@ -264,8 +270,15 @@ const renderFieldContent = (
 ) => {
 	const value = formData[field.name];
 	const error = touched[field.name] ? errors[field.name] : undefined;
+	const allowNullOption =
+		field.type !== "section" && field.allowNullOption === true;
+
 	const fieldMetaKey =
 		field.type === "section" ? field.name : (field.fieldMetaKey ?? field.name);
+	const nullOptionLabel =
+		field.type !== "section"
+			? (field.nullOptionLabel ?? getFieldPlaceholder(tEnum, fieldMetaKey))
+			: undefined;
 	const resolvedLabel =
 		field.type === "section"
 			? field.label
@@ -406,16 +419,32 @@ const renderFieldContent = (
 
 			{field.type === "select" && (
 				<Select
-					value={getSerializedSelectedValue(field.options, value)}
-					onValueChange={(val) =>
-						updateField(field.name, deserializeOptionValue(val))
-					}
+					value={getSerializedSelectedValue(
+						field.options,
+						value,
+						allowNullOption,
+					)}
+					onValueChange={(val) => {
+						if (val === SELECT_NULL_SENTINEL) {
+							updateField(field.name, null);
+							return;
+						}
+						updateField(field.name, deserializeOptionValue(val));
+					}}
 					disabled={field.disabled}
 				>
 					<SelectTrigger id={field.name}>
 						<SelectValue placeholder={resolvedPlaceholder || "Select..."} />
 					</SelectTrigger>
 					<SelectContent className="px-3">
+						{allowNullOption && (
+							<>
+								<SelectItem value={SELECT_NULL_SENTINEL}>
+									{nullOptionLabel}
+								</SelectItem>
+								{(field.options?.length ?? 0) > 0 && <SelectSeparator />}
+							</>
+						)}
 						{field.options?.map((option, index) => (
 							<Fragment key={serializeOptionValue(option.value)}>
 								<SelectItem value={serializeOptionValue(option.value)}>

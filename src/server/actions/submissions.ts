@@ -127,16 +127,21 @@ export async function createSubmission(input: SubmissionCreatePayload) {
 
 	const nextStatus = input.status ?? "approval_pending";
 
-	if (nextStatus === "approval_pending" && typeof input.entityId === "number") {
+	if (
+		currentUserId &&
+		nextStatus === "approval_pending" &&
+		typeof input.entityId === "number"
+	) {
 		const existingPending = await submissionRepo.findFirst({
 			entity_type: input.entityType,
 			entity_id: input.entityId,
 			type: input.type,
 			status: "approval_pending",
+			created_by: currentUserId,
 		});
 		if (existingPending) {
 			throw new Error(
-				"A pending submission already exists for this entity and submission type.",
+				"You already have a pending submission for this entity and submission type.",
 			);
 		}
 	}

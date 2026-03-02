@@ -92,6 +92,10 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
 						className: "mt-8",
 						requiredMessage: t("auth.validation.accountTypeRequired"),
 						disabled: isLoading,
+						allowNullOption: true,
+						nullOptionLabel: t("common.selectPlaceholder", {
+							defaultValue: "Select an option",
+						}),
 						placeholder: t("auth.register.accountTypePlaceholder"),
 						options: [
 							{
