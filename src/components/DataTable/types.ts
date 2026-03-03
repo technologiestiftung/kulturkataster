@@ -48,6 +48,9 @@ export interface DataTableConfig<T> {
 	actionsColumnSize?: number;
 
 	enableColumnResizing?: boolean;
+	isPrivateColumn?: (columnId: string) => boolean;
+	renderPrivateColumnIndicator?: (columnId: string) => ReactNode;
+	privateColumnAriaLabel?: string;
 
 	emptyMessage?: string;
 	emptyState?: ReactNode;

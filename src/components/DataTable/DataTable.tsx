@@ -43,6 +43,7 @@ import ArrowNarrowLeft from "@/icons/arrow-narrow-left.svg";
 import ArrowNarrowRight from "@/icons/arrow-narrow-right.svg";
 import { useWindowVirtualizer } from "@tanstack/react-virtual";
 import { compareItems, rankItem } from "@tanstack/match-sorter-utils";
+import { PrivateBadge } from "@/components/shared/PrivateBadge";
 
 const getNestedValue = (obj: Record<string, unknown>, path: string): unknown =>
 	path
@@ -499,6 +500,14 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 										header.column.columnDef.header,
 										header.getContext(),
 									);
+							const isPrivateColumn =
+								!isActions &&
+								(config.isPrivateColumn?.(header.column.id) ?? false);
+							const privateColumnIndicator = isPrivateColumn
+								? (config.renderPrivateColumnIndicator?.(header.column.id) ?? (
+											<PrivateBadge />
+									))
+								: null;
 							const isPinnedLeft = header.column.getIsPinned() === "left";
 							const toggleSorting = header.column.getToggleSortingHandler();
 							const baseClassName = cn(
@@ -565,9 +574,12 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 											</button>
 										</div>
 									) : (
+										<div className="flex flex-col">
 										<div className="flex items-center gap-2">
 											{headerContent}
 											{canSort ? renderSortIndicator(sorted) : null}
+										</div>
+										<div className="flex items-center text-neutral-80 gap-2 font-medium">{privateColumnIndicator}</div>
 										</div>
 									)}
 								</th>
