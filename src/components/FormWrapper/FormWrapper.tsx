@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { TFunction } from "i18next";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -172,6 +172,7 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 	const { t } = useTranslation("common");
 	const { t: tEnum } = useTranslation("enumMap");
 	const onChangeRef = useRef<FormWrapperConfig["onChange"]>(config.onChange);
+	const allFields = useMemo(() => getAllFields(config.fields), [config.fields]);
 	const [formData, setFormData] = useState<Record<string, unknown>>(() =>
 		buildInitialFormData(config),
 	);
@@ -199,17 +200,37 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 		field: FormWrapperFieldConfig,
 		nextValue: unknown,
 	) => {
-		if (!field.onBlur) return;
 		const nextFormData = { ...formData, [field.name]: nextValue };
+		setTouched((prev) => ({ ...prev, [field.name]: true }));
 		try {
-			await field.onBlur(nextValue, nextFormData, updateField);
+			if (field.onBlur) {
+				await field.onBlur(nextValue, nextFormData, updateField);
+			}
 		} catch (error) {
 			console.warn(`Field onBlur failed for ${field.name}`, error);
 		}
+		const fieldError = validateFieldValue(
+			field,
+			nextFormData[field.name],
+			nextFormData,
+			t,
+			tEnum,
+		);
+		setErrors((prev) => {
+			const nextErrors = { ...prev };
+			if (fieldError) {
+				nextErrors[field.name] = fieldError;
+			} else {
+				delete nextErrors[field.name];
+			}
+			if (Object.keys(nextErrors).length === 0) {
+				setFormError(null);
+			}
+			return nextErrors;
+		});
 	};
 
 	const validateForm = (): boolean => {
-		const allFields = getAllFields(config.fields);
 		const newErrors = collectValidationErrors(allFields, formData, t, tEnum);
 		setErrors(newErrors);
 		return Object.keys(newErrors).length === 0;
@@ -218,7 +239,6 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 
-		const allFields = getAllFields(config.fields);
 		setTouched(buildTouchedMap(allFields));
 		if (validateForm()) {
 			setFormError(null);

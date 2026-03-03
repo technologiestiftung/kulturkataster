@@ -28,9 +28,9 @@ export function InfoItem({
 
 	return (
 		<div className={cn(className, "InfoItem flex justify-between items-start")}>
-			<div className="flex flex-wrap gap-1">
+			<div className="flex flex-wrap gap-1 w-full">
 				{label && (
-					<div className="flex items-start justify-between gap-3">
+					<div className="flex items-start justify-between gap-3 w-full">
 						<p className="body2">
 							<strong>{label}:</strong>
 						</p>
