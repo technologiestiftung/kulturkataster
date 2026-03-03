@@ -7,9 +7,9 @@ import { usePathname, useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { InstitutionCard } from "./InstitutionCard";
 import InstitutionCardSkeleton from "./InstitutionCardSkeleton";
+import { AlphabetFilter } from "./AlphabetFilter";
 import { Institution } from "@/types";
 import { ModalFooter } from "../Modals/ModalFooter";
-import Download from "@/icons/download.svg";
 import { ListTopbar } from "./ListTopbar";
 
 import { Button } from "@/components/ui/button";
@@ -51,15 +51,16 @@ const ListView: FC = () => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [showScrollToTop, setShowScrollToTop] = useState(false);
 	const [searchQuery, setSearchQuery] = useState("");
+	const [activeLetter, setActiveLetter] = useState<string | null>(null);
 	const [isFilterOpen, setIsFilterOpen] = useState(false);
 	const sentinelRef = useRef<HTMLDivElement>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
 	const lastFocusedInstitutionIdRef = useRef<string | null>(null);
 
-	const institutionsList = useMemo(() => {
+	const searchFilteredInstitutions = useMemo(() => {
 		if (!institutions) return [];
 		const normalizedQuery = searchQuery.trim().toLowerCase();
-		const filtered = normalizedQuery
+		return normalizedQuery
 			? institutions.filter((institution) => {
 					const address = institution.address;
 					const haystack = [
@@ -77,8 +78,28 @@ const ListView: FC = () => {
 					return haystack.includes(normalizedQuery);
 				})
 			: institutions;
+	}, [institutions, searchQuery]);
 
-		return [...filtered].sort((a, b) => {
+	const enabledLetters = useMemo(() => {
+		const letters = new Set<string>();
+		searchFilteredInstitutions.forEach((institution) => {
+			const firstCharacter = institution.name?.trim().charAt(0).toUpperCase();
+			if (firstCharacter && firstCharacter >= "A" && firstCharacter <= "Z") {
+				letters.add(firstCharacter);
+			}
+		});
+		return letters;
+	}, [searchFilteredInstitutions]);
+
+	const institutionsList = useMemo(() => {
+		const byLetter = activeLetter
+			? searchFilteredInstitutions.filter(
+					(institution) =>
+						institution.name?.trim().charAt(0).toUpperCase() === activeLetter,
+				)
+			: searchFilteredInstitutions;
+
+		return [...byLetter].sort((a, b) => {
 			const nameA = a?.name ?? "";
 			const nameB = b?.name ?? "";
 			const byName = nameA.localeCompare(nameB, "de", {
@@ -89,7 +110,7 @@ const ListView: FC = () => {
 				numeric: true,
 			});
 		});
-	}, [institutions, searchQuery]);
+	}, [searchFilteredInstitutions, activeLetter]);
 
 	const visibleInstitutions = useMemo(() => {
 		return institutionsList.slice(0, visibleCount);
@@ -124,7 +145,13 @@ const ListView: FC = () => {
 
 	useEffect(() => {
 		setVisibleCount(ITEMS_PER_PAGE);
-	}, [searchQuery, institutions]);
+	}, [searchQuery, activeLetter, institutions]);
+
+	useEffect(() => {
+		if (activeLetter && !enabledLetters.has(activeLetter)) {
+			setActiveLetter(null);
+		}
+	}, [activeLetter, enabledLetters]);
 
 	useEffect(() => {
 		if (!selectedInstitutionId) return;
@@ -250,35 +277,32 @@ const ListView: FC = () => {
 						<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 							<span className="body1">{tContent("listView.description")}</span>
 						</div>
-						<ListTopbar
-							query={searchQuery}
-							onQueryChange={(value) => {
-								const nextQuery = value ?? "";
-								if (nextQuery.trim()) {
-									resetFilters();
-								}
-								setSearchQuery(nextQuery);
-							}}
-							onOpenFilter={() => setIsFilterOpen(true)}
-						/>
+						
 
 						<div className="space-y-2">
-							<div className="flex items-center justify-between">
-								{
-									<strong className="body2 ">
-										{tContent("listView.countLabel", {
-											count: institutionsList.length,
-										})}
-									</strong>
-								}
-								<button
-									className="body2 text-primary-dark font-bold flex items-center gap-1 hover:text-primary/80 transition-colors cursor-pointer focus-visible:outline-interaction-dark"
-									aria-label={t("download.title")}
-								>
-									<Download className="h-6 w-6" />
-									{t("download.title")}
-								</button>
+							<div className="flex items-end justify-between gap-4">
+								<strong className="body2 text-nowrap">
+									{tContent("listView.countLabel", {
+										count: institutionsList.length,
+									})}
+								</strong>
+								<ListTopbar
+									query={searchQuery}
+									onQueryChange={(value) => {
+										const nextQuery = value ?? "";
+										if (nextQuery.trim()) {
+											resetFilters();
+										}
+										setSearchQuery(nextQuery);
+									}}
+									onOpenFilter={() => setIsFilterOpen(true)}
+								/>
 							</div>
+							<AlphabetFilter
+								activeLetter={activeLetter}
+								onSelectLetter={setActiveLetter}
+								enabledLetters={enabledLetters}
+							/>
 							{institutionsList.length === 0 && (
 								<div className="text-center p-8 my-8 bg-neutral-10 rounded">
 									<p className="body1 font-bold">
