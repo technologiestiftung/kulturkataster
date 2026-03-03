@@ -141,7 +141,7 @@
 		"accessibility": {
 			"label": "Barrierefreiheit",
 			"description": "",
-			"placeholder": "Bitte eingeben",
+			"placeholder": "Bitte eintragen",
 			"errors": {
 				"required": "Bitte Barrierefreiheit angeben."
 			}
@@ -149,7 +149,7 @@
 		"address": {
 			"label": "Adresse",
 			"description": "",
-			"placeholder": "Bitte eingeben",
+			"placeholder": "Bitte eintragen",
 			"errors": {
 				"required": "Bitte Adresse angeben."
 			}
@@ -237,7 +237,7 @@
 		"contact_person_name": {
 			"label": "Ansprechperson Name",
 			"description": "",
-			"placeholder": "Bitte eingeben",
+			"placeholder": "Bitte eintragen",
 			"errors": {
 				"required": "Bitte Ansprechperson Name angeben."
 			}
@@ -245,7 +245,7 @@
 		"contact_person_first_name": {
 			"label": "Ansprechperson Vorname",
 			"description": "",
-			"placeholder": "Bitte eingeben",
+			"placeholder": "Bitte eintragen",
 			"errors": {
 				"required": "Bitte Ansprechperson Vorname angeben."
 			}
@@ -253,7 +253,7 @@
 		"contact_person_last_name": {
 			"label": "Ansprechperson Nachname",
 			"description": "",
-			"placeholder": "Bitte eingeben",
+			"placeholder": "Bitte eintragen",
 			"errors": {
 				"required": "Bitte Ansprechperson Nachname angeben."
 			}
@@ -269,7 +269,7 @@
 		"cost": {
 			"label": "Kosten",
 			"description": "",
-			"placeholder": "Bitte eingeben",
+			"placeholder": "Bitte eintragen",
 			"errors": {
 				"required": "Bitte Kosten angeben."
 			}
@@ -285,7 +285,7 @@
 		"description": {
 			"label": "Zusätzliche Informationen",
 			"description": "",
-			"placeholder": "Bitte eingeben",
+			"placeholder": "Bitte eintragen",
 			"errors": {
 				"required": "Bitte Zusätzliche Informationen angeben."
 			}
@@ -325,7 +325,7 @@
 		"funding_source": {
 			"label": "Art der Finanzierung",
 			"description": "",
-			"placeholder": "Bitte eingeben",
+			"placeholder": "Bitte eintragen",
 			"errors": {
 				"required": "Bitte Art der Finanzierung angeben."
 			},
@@ -337,7 +337,7 @@
 		"tags": {
 			"label": "Tags",
 			"description": "",
-			"placeholder": "Bitte eingeben",
+			"placeholder": "Bitte eintragen",
 			"errors": {
 				"required": "Bitte Tags angeben."
 			},
@@ -365,7 +365,7 @@
 		"funding_sources": {
 			"label": "Finanzierungsquellen",
 			"description": "",
-			"placeholder": "Bitte eingeben",
+			"placeholder": "Bitte eintragen",
 			"errors": {
 				"required": "Bitte Finanzierungsquellen angeben."
 			},
@@ -392,7 +392,7 @@
 		"lat": {
 			"label": "Breitengrad",
 			"description": "",
-			"placeholder": "Bitte eingeben",
+			"placeholder": "Bitte eintragen",
 			"errors": {
 				"required": "Bitte Breitengrad angeben."
 			}
@@ -400,7 +400,7 @@
 		"legal_form": {
 			"label": "Rechtsform",
 			"description": "",
-			"placeholder": "Bitte eingeben",
+			"placeholder": "Bitte eintragen",
 			"errors": {
 				"required": "Bitte Rechtsform angeben."
 			}
@@ -408,7 +408,7 @@
 		"lng": {
 			"label": "Längengrad",
 			"description": "",
-			"placeholder": "Bitte eingeben",
+			"placeholder": "Bitte eintragen",
 			"errors": {
 				"required": "Bitte Längengrad angeben."
 			}
@@ -416,7 +416,7 @@
 		"name": {
 			"label": "Kultureinrichtung",
 			"description": "",
-			"placeholder": "Bitte eingeben",
+			"placeholder": "Bitte eintragen",
 			"errors": {
 				"required": "Bitte Kultureinrichtung angeben."
 			}
@@ -424,7 +424,7 @@
 		"neighbourhood": {
 			"label": "Stadtteil",
 			"description": "",
-			"placeholder": "Bitte eingeben",
+			"placeholder": "Bitte eintragen",
 			"errors": {
 				"required": "Bitte Stadtteil angeben."
 			}
@@ -432,7 +432,7 @@
 		"notes": {
 			"label": "Zusätzliche Informationen",
 			"description": "",
-			"placeholder": "Bitte eingeben",
+			"placeholder": "Bitte eintragen",
 			"errors": {
 				"required": "Bitte Zusätzliche Informationen angeben."
 			}
@@ -440,7 +440,7 @@
 		"id": {
 			"label": "ID",
 			"description": "",
-			"placeholder": "Bitte eingeben",
+			"placeholder": "Bitte eintragen",
 			"errors": {
 				"required": "Bitte ID angeben."
 			}
@@ -464,7 +464,7 @@
 		"internal_notes": {
 			"label": "Interne Notizen",
 			"description": "Nur für die interne Bearbeitung sichtbar.",
-			"placeholder": "Bitte eingeben",
+			"placeholder": "Bitte eintragen",
 			"errors": {
 				"required": "Bitte Interne Notizen angeben."
 			}
@@ -480,7 +480,7 @@
 		"owner_name": {
 			"label": "Eigentümer*in",
 			"description": "",
-			"placeholder": "Bitte eingeben",
+			"placeholder": "Bitte eintragen",
 			"errors": {
 				"required": "Bitte Eigentümer*in angeben."
 			}
@@ -510,7 +510,7 @@
 		"parent_organization": {
 			"label": "Dachorganisation",
 			"description": "Gibt es eine übergeordnete Organisation, z. B. ein Kulturverband, eine Stiftung oder eine andere Institution?",
-			"placeholder": "Bitte eingeben",
+			"placeholder": "Bitte eintragen",
 			"errors": {
 				"required": "Bitte Dachorganisation angeben."
 			}
@@ -542,7 +542,7 @@
 		"protection_status_info": {
 			"label": "Sicherungsstatus Detailinfos",
 			"description": "",
-			"placeholder": "Bitte eingeben",
+			"placeholder": "Bitte eintragen",
 			"errors": {
 				"required": "Bitte Sicherungsstatus Detailinfos angeben."
 			}
@@ -571,7 +571,7 @@
 		"shared_use_allowed": {
 			"label": "Offen für Raumanfragen?",
 			"description": "",
-			"placeholder": "Bitte eingeben",
+			"placeholder": "Bitte eintragen",
 			"errors": {
 				"required": "Bitte Offen für Raumanfragen? angeben."
 			}
@@ -579,7 +579,7 @@
 		"shared_use_audience": {
 			"label": "Verfügbar für Zielgruppe/Sparte",
 			"description": "",
-			"placeholder": "Bitte eingeben",
+			"placeholder": "Bitte eintragen",
 			"errors": {
 				"required": "Bitte Verfügbar für Zielgruppe/Sparte angeben."
 			}
@@ -587,7 +587,7 @@
 		"shared_use_availability": {
 			"label": "Verfügbarkeit",
 			"description": "",
-			"placeholder": "Bitte eingeben",
+			"placeholder": "Bitte eintragen",
 			"errors": {
 				"required": "Bitte Verfügbarkeit angeben."
 			}
@@ -595,7 +595,7 @@
 		"shared_use_contact_person": {
 			"label": "Kontakt für Raumanfragen",
 			"description": "",
-			"placeholder": "Bitte eingeben",
+			"placeholder": "Bitte eintragen",
 			"errors": {
 				"required": "Bitte Kontakt für Raumanfragen angeben."
 			}
@@ -603,7 +603,7 @@
 		"shared_use_equipment": {
 			"label": "Ausstattung",
 			"description": "",
-			"placeholder": "Bitte eingeben",
+			"placeholder": "Bitte eintragen",
 			"errors": {
 				"required": "Bitte Ausstattung angeben."
 			}
@@ -611,7 +611,7 @@
 		"shared_use_info": {
 			"label": "Beschreibung der Räume/Flächen",
 			"description": "",
-			"placeholder": "Bitte eingeben",
+			"placeholder": "Bitte eintragen",
 			"errors": {
 				"required": "Bitte Beschreibung der Räume/Flächen angeben."
 			}
@@ -674,7 +674,7 @@
 		"utilization_status_info": {
 			"label": "Nutzungsstatus Detailinfos",
 			"description": "",
-			"placeholder": "Bitte eingeben",
+			"placeholder": "Bitte eintragen",
 			"errors": {
 				"required": "Bitte Nutzungsstatus Detailinfos angeben."
 			}
