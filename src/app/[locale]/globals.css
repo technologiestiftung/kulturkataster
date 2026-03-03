@@ -113,6 +113,7 @@
 	--color-accent-foreground: var(--black);
 
 	--color-destructive: var(--highlight-alert);
+	--color-destructive-secondary: var(--fachfarben-dark-pink);
 	--color-destructive-foreground: var(--white);
 
 	--color-border: var(--neutral-20);

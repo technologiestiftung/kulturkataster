@@ -99,7 +99,7 @@ function DialogContent({
 				"fixed z-[70] top-0 md:top-1/2 left-1/2 w-full max-w-314 h-full md:h-auto md:max-h-[calc(100%-5rem)] -translate-x-1/2 md:-translate-y-1/2 md:rounded-lg border flex flex-col",
 			"mobile-menu": "fixed z-[70] h-full inset-0 w-full border-0 p-0",
 			editor:
-				"fixed z-[70] top-0 md:top-1/2 left-1/2 w-full max-w-[calc(100%-2rem)] h-full md:h-auto md:max-h-[calc(100%-5rem)] -translate-x-1/2 md:-translate-y-1/2 md:rounded-lg border md:max-w-5xl flex flex-col overflow-hidden p-12",
+				"fixed z-[70] top-0 md:top-[5rem] left-1/2 w-full max-w-314 h-full md:h-[calc(100%-5rem)] -translate-x-1/2 md:rounded-t-lg border",
 			"multi-select":
 				"bg-neutral-5 fixed z-[75] top-0 md:top-1/2 left-1/2 w-full max-w-[calc(100%-2rem)] h-full md:h-auto md:max-h-[calc(100%-5rem)] -translate-x-1/2 md:-translate-y-1/2 md:rounded-lg border md:max-w-5xl flex flex-col overflow-hidden",
 			alert:
@@ -124,7 +124,7 @@ function DialogContent({
 					variant === "multi-select"
 						? "z-[71]"
 						: variant === "alert"
-							? "bg-black/40"
+							? "bg-black/40 z-[70]"
 							: ""
 				}
 			/>

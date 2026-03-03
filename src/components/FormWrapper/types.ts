@@ -188,6 +188,8 @@ type FormWrapperNonSectionFieldConfig = {
 		streetNumberField?: string;
 		cityField?: string;
 		zipField?: string;
+		districtField?: string;
+		neighbourhoodField?: string;
 		initialZoom?: number;
 	};
 	fundingSources?: {

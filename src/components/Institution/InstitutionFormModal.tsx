@@ -27,10 +27,15 @@ import type { Institution } from "@/types/institution";
 import { useRouter } from "next/navigation";
 import { resolveCategoryIdsFromDraft } from "@/lib/utils/institutionCategoryUtils";
 import { TFunction } from "i18next";
+import type { ReactNode } from "react";
 import { useInstitutionPrivateFieldResolver } from "@/lib/hooks/useInstitutionPrivateFieldResolver";
 import { applyInstitutionFieldAccess } from "@/lib/utils/institutionFieldAccess";
 import { showSuccessToast } from "@/lib/utils/feedbackToast";
 import { buildInstitutionFormInitialValues } from "@/lib/utils/institutionFormAdapter";
+import {
+	findPotentialInstitutionDuplicates,
+	hasDuplicateInstitutionByNameAndAddress,
+} from "@/lib/utils/institutionDuplicateUtils";
 type InstitutionFormModalProps = {
 	mode: "create" | "edit";
 	institution?: Institution | null;
@@ -189,6 +194,7 @@ type InstitutionFormConfigArgs = {
 	submitting: boolean;
 	submitLabel?: string;
 	onSubmit: (data: Record<string, unknown>) => void | Promise<void>;
+	onChange?: (data: Record<string, unknown>) => void;
 	onCancel: () => void;
 	onAddressBlur?: (
 		value: unknown,
@@ -200,6 +206,10 @@ type InstitutionFormConfigArgs = {
 		formData: Record<string, unknown>,
 		updateField: (name: string, value: unknown) => void,
 	) => void | Promise<void>;
+	validateDuplicateInstitution?: (
+		formData: Record<string, unknown>,
+	) => string | undefined;
+	duplicateWarningText?: ReactNode;
 	isPrivateField?: (field: FieldConfig) => boolean;
 };
 
@@ -212,9 +222,12 @@ const buildInstitutionFormConfig = ({
 	submitting,
 	submitLabel,
 	onSubmit,
+	onChange,
 	onCancel,
 	onAddressBlur,
 	onLatLngBlur,
+	validateDuplicateInstitution,
+	duplicateWarningText,
 	isPrivateField,
 }: InstitutionFormConfigArgs): FormWrapperConfig => {
 	const fieldLabel = (key: string, _fallback?: string) =>
@@ -250,6 +263,9 @@ const buildInstitutionFormConfig = ({
 						required: true,
 						placeholder: fieldPlaceholder("name"),
 						layout: { span: "full" },
+						validateWithForm: (_value, formData) =>
+							validateDuplicateInstitution?.(formData),
+						afterField: duplicateWarningText,
 					},
 					{
 						name: "categoryFilters",
@@ -353,6 +369,9 @@ const buildInstitutionFormConfig = ({
 						layout: { span: "half" },
 						placeholder: fieldPlaceholder("street"),
 						onBlur: onAddressBlur,
+						validateWithForm: (_value, formData) =>
+							validateDuplicateInstitution?.(formData),
+						afterField: duplicateWarningText,
 					},
 					{
 						name: "address.zip",
@@ -879,6 +898,7 @@ const buildInstitutionFormConfig = ({
 			},
 		],
 		onSubmit,
+		onChange,
 		isPrivateField,
 		showCancel: true,
 		cancelLabel: t("institutionFormModal.actions.cancel"),
@@ -916,13 +936,15 @@ export function InstitutionFormModal({
 	closeConfirmation,
 	permissionContext = "institution",
 }: InstitutionFormModalProps) {
-	const { t } = useTranslation("content");
+	const { t, i18n } = useTranslation("content");
 	const { t: tEnum } = useTranslation("enumMap");
 	const { isPrivateField } = useInstitutionPrivateFieldResolver();
 	const institutionFieldPermissions = useAccountStore(
 		(state) => state.institutionFieldPermissions,
 	);
 	const categories = useInstitutionStore((state) => state.categories) ?? [];
+	const allInstitutions =
+		useInstitutionStore((state) => state.allInstitutions) ?? [];
 	const [isDeleting, setIsDeleting] = useState(false);
 	const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 	const [submitError, setSubmitError] = useState<string | null>(null);
@@ -986,8 +1008,18 @@ export function InstitutionFormModal({
 	}, [_onClose, handleClose]);
 
 	const resolvedInstitutionWithFallback = institution ?? undefined;
+	const initialFormValues = useMemo(
+		() => buildInstitutionFormInitialValues(resolvedInstitutionWithFallback),
+		[resolvedInstitutionWithFallback],
+	);
+	const [currentFormData, setCurrentFormData] =
+		useState<Record<string, unknown>>(initialFormValues);
 	const showNotFoundWithFallback =
 		mode === "edit" && !resolvedInstitutionWithFallback && !isDeleting;
+
+	useEffect(() => {
+		setCurrentFormData(initialFormValues);
+	}, [initialFormValues]);
 
 	const handleSuccess = (nextMode: InstitutionFormModalProps["mode"]) => {
 		const keyPrefix =
@@ -1041,6 +1073,70 @@ export function InstitutionFormModal({
 
 	const onAddressBlur = handleAddressBlur(addressGeocodeState, geocodeAddress);
 	const onLatLngBlur = handleLatLngBlur(latLngGeocodeState, reverseGeocode);
+	const duplicateInstitutionMessage = t(
+		"institutionDraftWizardModal.form.basic.validation.duplicateInstitution",
+		{
+			defaultValue: "An institution with this name and address already exists.",
+		},
+	);
+	const validateDuplicateInstitution = useCallback(
+		(formData: Record<string, unknown>) => {
+			const hasDuplicate = hasDuplicateInstitutionByNameAndAddress({
+				formData,
+				institutions: allInstitutions,
+				currentInstitutionId: resolvedInstitutionWithFallback?.id,
+			});
+			return hasDuplicate ? duplicateInstitutionMessage : undefined;
+		},
+		[
+			allInstitutions,
+			duplicateInstitutionMessage,
+			resolvedInstitutionWithFallback?.id,
+		],
+	);
+	const potentialDuplicates = useMemo(() => {
+		const hasHardDuplicate = hasDuplicateInstitutionByNameAndAddress({
+			formData: currentFormData,
+			institutions: allInstitutions,
+			currentInstitutionId: resolvedInstitutionWithFallback?.id,
+		});
+		if (hasHardDuplicate) return [];
+		return findPotentialInstitutionDuplicates({
+			formData: currentFormData,
+			institutions: allInstitutions,
+			currentInstitutionId: resolvedInstitutionWithFallback?.id,
+			maxResults: 3,
+		});
+	}, [allInstitutions, currentFormData, resolvedInstitutionWithFallback?.id]);
+	const localePrefix = i18n?.resolvedLanguage === "en" ? "en" : "de";
+	const duplicateWarningText = useMemo(() => {
+		if (potentialDuplicates.length === 0) return null;
+		const warningText = t(
+			"institutionDraftWizardModal.form.basic.validation.duplicatePossible",
+			{
+				defaultValue:
+					"Possible duplicate found. Please verify before submitting.",
+			},
+		);
+		return (
+			<div className="space-y-1">
+				<p className="body3 text-destructive">{warningText}</p>
+				<div className="flex flex-wrap gap-2">
+					{potentialDuplicates.map((item) => (
+						<a
+							key={item.id}
+							href={`/${localePrefix}/map/institution/${item.id}`}
+							target="_blank"
+							rel="noreferrer"
+							className="body3 text-destructive underline"
+						>
+							{item.name?.trim() || `#${item.id}`}
+						</a>
+					))}
+				</div>
+			</div>
+		);
+	}, [localePrefix, potentialDuplicates, t]);
 	const resolvedSubmitting =
 		onSubmit !== undefined ? (submittingProp ?? false) : defaultSubmitting;
 	const resolvedSubmitHandler =
@@ -1067,9 +1163,12 @@ export function InstitutionFormModal({
 				submitting: resolvedSubmitting,
 				submitLabel,
 				onSubmit: resolvedSubmitHandler,
+				onChange: setCurrentFormData,
 				onCancel: resolvedClose,
 				onAddressBlur,
 				onLatLngBlur,
+				validateDuplicateInstitution,
+				duplicateWarningText,
 				isPrivateField: isPrivateFormField,
 			}),
 		[
@@ -1081,9 +1180,12 @@ export function InstitutionFormModal({
 			resolvedSubmitting,
 			submitLabel,
 			resolvedSubmitHandler,
+			setCurrentFormData,
 			resolvedClose,
 			onAddressBlur,
 			onLatLngBlur,
+			validateDuplicateInstitution,
+			duplicateWarningText,
 			isPrivateFormField,
 		],
 	);

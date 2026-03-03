@@ -182,9 +182,20 @@ type AddressBlurOptions = {
 	streetLineKey?: string;
 	zipKey?: string;
 	cityKey?: string;
+	districtKey?: string;
+	neighbourhoodKey?: string;
 	addressSuffixKey?: string;
 	latKey?: string;
 	lngKey?: string;
+	reverseGeocode?: (
+		lat: number,
+		lng: number,
+	) => Promise<{
+		city?: string | null;
+		zipcode?: string | null;
+		district?: string | null;
+		neighbourhood?: string | null;
+	} | null>;
 };
 
 type LatLngBlurOptions = {
@@ -193,6 +204,7 @@ type LatLngBlurOptions = {
 	streetLineKey?: string;
 	zipKey?: string;
 	cityKey?: string;
+	districtKey?: string;
 	neighbourhoodKey?: string;
 };
 
@@ -207,6 +219,32 @@ type InstitutionAddressPayload = {
 	address_suffix: string | null;
 	neighbourhood: string | null;
 	cultural_area: string | null;
+};
+
+const applyReverseGeocodeFields = (
+	reverseResult: {
+		city?: string | null;
+		zipcode?: string | null;
+		district?: string | null;
+		neighbourhood?: string | null;
+	},
+	options: AddressBlurOptions,
+	updateField: (name: string, value: unknown) => void,
+) => {
+	const locationFields: Array<[string, string | null | undefined]> = [
+		[options.cityKey ?? "address.city", reverseResult.city],
+		[options.zipKey ?? "address.zip", reverseResult.zipcode],
+		[options.districtKey ?? "address.district", reverseResult.district],
+		[
+			options.neighbourhoodKey ?? "address.neighbourhood",
+			reverseResult.neighbourhood,
+		],
+	];
+	locationFields.forEach(([key, value]) => {
+		if (value !== null && value !== undefined) {
+			updateField(key, value);
+		}
+	});
 };
 
 const handleAddressBlur = (
@@ -244,13 +282,22 @@ const handleAddressBlur = (
 			addressGeocodeState.current.inflight = true;
 			try {
 				const result = await geocodeAddress(query);
-				if (result) {
-					const latKey = options.latKey ?? "address.lat";
-					const lngKey = options.lngKey ?? "address.lng";
-					updateField(latKey, result.lat);
-					updateField(lngKey, result.lng);
-					addressGeocodeState.current.lastQuery = query;
+				if (!result) return;
+				const latKey = options.latKey ?? "address.lat";
+				const lngKey = options.lngKey ?? "address.lng";
+				updateField(latKey, result.lat);
+				updateField(lngKey, result.lng);
+
+				if (options.reverseGeocode) {
+					const reverseResult = await options.reverseGeocode(
+						result.lat,
+						result.lng,
+					);
+					if (reverseResult) {
+						applyReverseGeocodeFields(reverseResult, options, updateField);
+					}
 				}
+				addressGeocodeState.current.lastQuery = query;
 			} finally {
 				addressGeocodeState.current.inflight = false;
 			}
@@ -260,8 +307,11 @@ const handleAddressBlur = (
 			geocodeAddress,
 			options.addressSuffixKey,
 			options.cityKey,
+			options.districtKey,
 			options.latKey,
 			options.lngKey,
+			options.neighbourhoodKey,
+			options.reverseGeocode,
 			options.streetLineKey,
 			options.zipKey,
 		],
@@ -280,6 +330,7 @@ const handleLatLngBlur = (
 		streetNumber?: string | null;
 		city?: string | null;
 		zipcode?: string | null;
+		district?: string | null;
 		neighbourhood?: string | null;
 	} | null>,
 	options: LatLngBlurOptions = {},
@@ -304,6 +355,7 @@ const handleLatLngBlur = (
 					const streetLineKey = options.streetLineKey ?? "address.streetLine";
 					const cityKey = options.cityKey ?? "address.city";
 					const zipKey = options.zipKey ?? "address.zip";
+					const districtKey = options.districtKey ?? "address.district";
 					const neighbourhoodKey =
 						options.neighbourhoodKey ?? "address.neighbourhood";
 					const streetLine = buildStreetLine(
@@ -319,6 +371,9 @@ const handleLatLngBlur = (
 					if (result.zipcode !== null) {
 						updateField(zipKey, result.zipcode);
 					}
+					if (result.district !== null) {
+						updateField(districtKey, result.district);
+					}
 					if (result.neighbourhood !== null) {
 						updateField(neighbourhoodKey, result.neighbourhood);
 					}
@@ -332,6 +387,7 @@ const handleLatLngBlur = (
 			latLngGeocodeState,
 			reverseGeocode,
 			options.cityKey,
+			options.districtKey,
 			options.latKey,
 			options.lngKey,
 			options.neighbourhoodKey,
