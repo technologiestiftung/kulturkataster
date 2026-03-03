@@ -1108,7 +1108,7 @@ export function InstitutionFormModal({
 			maxResults: 3,
 		});
 	}, [allInstitutions, currentFormData, resolvedInstitutionWithFallback?.id]);
-	const localePrefix = i18n.resolvedLanguage === "en" ? "en" : "de";
+	const localePrefix = i18n?.resolvedLanguage === "en" ? "en" : "de";
 	const duplicateWarningText = useMemo(() => {
 		if (potentialDuplicates.length === 0) return null;
 		const warningText = t(
