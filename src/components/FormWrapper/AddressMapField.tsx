@@ -32,6 +32,8 @@ type AddressMapAddress = {
 	streetNumber?: string | null;
 	city?: string | null;
 	zipcode?: string | null;
+	district?: string | null;
+	neighbourhood?: string | null;
 };
 
 type AddressMapFieldProps = {
@@ -294,7 +296,6 @@ export function AddressMapField({
 				<Button
 					type="button"
 					variant="outline"
-					size="sm"
 					onClick={() => void handleApplySelection()}
 					disabled={disabled || !pendingSelection || isApplyingSelection}
 				>
