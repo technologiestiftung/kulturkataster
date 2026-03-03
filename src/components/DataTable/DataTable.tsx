@@ -505,7 +505,7 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 								(config.isPrivateColumn?.(header.column.id) ?? false);
 							const privateColumnIndicator = isPrivateColumn
 								? (config.renderPrivateColumnIndicator?.(header.column.id) ?? (
-											<PrivateBadge />
+										<PrivateBadge />
 									))
 								: null;
 							const isPinnedLeft = header.column.getIsPinned() === "left";
@@ -575,11 +575,13 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 										</div>
 									) : (
 										<div className="flex flex-col">
-										<div className="flex items-center gap-2">
-											{headerContent}
-											{canSort ? renderSortIndicator(sorted) : null}
-										</div>
-										<div className="flex items-center text-neutral-80 gap-2 font-medium">{privateColumnIndicator}</div>
+											<div className="flex items-center gap-2">
+												{headerContent}
+												{canSort ? renderSortIndicator(sorted) : null}
+											</div>
+											<div className="flex items-center text-neutral-80 gap-2 font-medium">
+												{privateColumnIndicator}
+											</div>
 										</div>
 									)}
 								</th>
