@@ -3,7 +3,7 @@
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { InstitutionCard } from "./InstitutionCard";
 import InstitutionCardSkeleton from "./InstitutionCardSkeleton";
@@ -44,6 +44,7 @@ const ListView: FC = () => {
 		initializeDistricts,
 	} = useInstitutionStore();
 	const router = useRouter();
+	const pathname = usePathname();
 	const toLocalePath = useLocalePath();
 
 	const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
@@ -53,6 +54,7 @@ const ListView: FC = () => {
 	const [isFilterOpen, setIsFilterOpen] = useState(false);
 	const sentinelRef = useRef<HTMLDivElement>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
+	const lastFocusedInstitutionIdRef = useRef<string | null>(null);
 
 	const institutionsList = useMemo(() => {
 		if (!institutions) return [];
@@ -93,6 +95,12 @@ const ListView: FC = () => {
 		return institutionsList.slice(0, visibleCount);
 	}, [institutionsList, visibleCount]);
 
+	const selectedInstitutionId = useMemo(() => {
+		const normalizedPath = pathname?.replace(/\/$/, "") ?? "";
+		const match = normalizedPath.match(/\/list\/institution\/(\d+)$/);
+		return match?.[1] ?? null;
+	}, [pathname]);
+
 	const hasMore = visibleCount < institutionsList.length;
 
 	const loadMore = useCallback(() => {
@@ -117,6 +125,21 @@ const ListView: FC = () => {
 	useEffect(() => {
 		setVisibleCount(ITEMS_PER_PAGE);
 	}, [searchQuery, institutions]);
+
+	useEffect(() => {
+		if (!selectedInstitutionId) return;
+		const selectedIndex = institutionsList.findIndex(
+			(institution) => String(institution.id) === selectedInstitutionId,
+		);
+		if (selectedIndex < 0) return;
+		const requiredVisible = Math.ceil((selectedIndex + 1) / ITEMS_PER_PAGE);
+		const requiredCount = requiredVisible * ITEMS_PER_PAGE;
+		setVisibleCount((prev) =>
+			prev >= requiredCount
+				? prev
+				: Math.min(requiredCount, institutionsList.length),
+		);
+	}, [selectedInstitutionId, institutionsList]);
 
 	useEffect(() => {
 		if (categories === null) {
@@ -159,6 +182,40 @@ const ListView: FC = () => {
 		window.addEventListener("scroll", handleScroll);
 		return () => window.removeEventListener("scroll", handleScroll);
 	}, []);
+
+	useEffect(() => {
+		if (!selectedInstitutionId) return;
+		if (lastFocusedInstitutionIdRef.current === selectedInstitutionId) return;
+		if (
+			!visibleInstitutions.some(
+				(institution) => String(institution.id) === selectedInstitutionId,
+			)
+		) {
+			return;
+		}
+
+		const rafId = requestAnimationFrame(() => {
+			const selectedCard = document.querySelector(
+				`[data-institution-card-id="${selectedInstitutionId}"]`,
+			) as HTMLElement | null;
+			if (!selectedCard) return;
+			selectedCard.focus({ preventScroll: true });
+			selectedCard.scrollIntoView({
+				behavior: "smooth",
+				block: "center",
+				inline: "nearest",
+			});
+			lastFocusedInstitutionIdRef.current = selectedInstitutionId;
+		});
+
+		return () => cancelAnimationFrame(rafId);
+	}, [selectedInstitutionId, visibleInstitutions]);
+
+	useEffect(() => {
+		if (!selectedInstitutionId) {
+			lastFocusedInstitutionIdRef.current = null;
+		}
+	}, [selectedInstitutionId]);
 
 	const scrollToTop = () => {
 		window.scrollTo({
@@ -247,6 +304,12 @@ const ListView: FC = () => {
 										institutionData={institution}
 										onClick={handleInstitutionClick}
 										isCompact={true}
+										isSelected={
+											selectedInstitutionId === String(institution.id)
+										}
+										openDetails={
+											selectedInstitutionId === String(institution.id)
+										}
 									/>
 								))}
 							</div>
