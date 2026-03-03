@@ -250,6 +250,7 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 
 	const renderField = buildRenderField({
 		tEnum,
+		tCommon: t,
 		formData,
 		errors,
 		touched,

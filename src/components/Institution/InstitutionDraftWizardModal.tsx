@@ -9,7 +9,7 @@ import {
 	type ReactNode,
 } from "react";
 import { FormWrapper } from "@/components/FormWrapper";
-import type { FormWrapperConfig } from "@/components/FormWrapper";
+import type { FieldConfig, FormWrapperConfig } from "@/components/FormWrapper";
 import type { FormWrapperFieldConfig } from "@/components/FormWrapper/types";
 import {
 	HorizontalStepper,
@@ -49,6 +49,7 @@ import {
 	findPotentialInstitutionDuplicates,
 	hasDuplicateInstitutionByNameAndAddress,
 } from "@/lib/utils/institutionDuplicateUtils";
+import { useInstitutionPrivateFieldResolver } from "@/lib/hooks/useInstitutionPrivateFieldResolver";
 import { Profile } from "@/types";
 const DEFAULT_CREATE_STEP_ID = "basic";
 const STEP_IDS = [
@@ -123,6 +124,7 @@ function InstitutionDraftWizardContent({
 }: InstitutionDraftWizardContentProps) {
 	const { t, i18n } = useTranslation("content");
 	const { t: tEnum } = useTranslation("enumMap");
+	const { isPrivateField } = useInstitutionPrivateFieldResolver();
 
 	const fieldLabel = useCallback(
 		(key: string, _fallback?: string) => getFieldLabel(tEnum, key),
@@ -257,6 +259,14 @@ function InstitutionDraftWizardContent({
 			</div>
 		);
 	}, [localePrefix, potentialDuplicates, t]);
+	const isPrivateFormField = useCallback(
+		(field: FieldConfig) => {
+			if (field.type === "section" || field.type === "actionPanel")
+				return false;
+			return isPrivateField(field);
+		},
+		[isPrivateField],
+	);
 	const scrollStepContainerToTop = useCallback(() => {
 		if (typeof window === "undefined") return;
 		const root = wizardRootRef.current;
@@ -675,12 +685,14 @@ function InstitutionDraftWizardContent({
 			onCancel: handleCancel,
 			submitLabel: t("institutionDraftWizardModal.actions.next"),
 			showCancel: true,
+			isPrivateField: isPrivateFormField,
 		}),
 		[
 			draft,
 			handleCancel,
 			handleStepChange,
 			handleStepSubmit,
+			isPrivateFormField,
 			onAddressBlur,
 			onLatLngBlur,
 			validateDuplicateInstitution,
@@ -777,8 +789,17 @@ function InstitutionDraftWizardContent({
 			submitLabel: t("institutionDraftWizardModal.actions.next"),
 			showCancel: true,
 			layout: { columns: 2 },
+			isPrivateField: isPrivateFormField,
 		}),
-		[categories, draft, handleCancel, handleStepChange, handleStepSubmit, t],
+		[
+			categories,
+			draft,
+			handleCancel,
+			handleStepChange,
+			handleStepSubmit,
+			isPrivateFormField,
+			t,
+		],
 	);
 
 	const informationFormConfig: FormWrapperConfig = useMemo(
@@ -819,6 +840,7 @@ function InstitutionDraftWizardContent({
 							cardVariant: "none",
 							fieldGap: "gap-0",
 							type: "section",
+							condition: (formData) => formData.shared_use === "yes",
 							fields: [
 								{
 									name: "shared_use_info",
@@ -1459,8 +1481,24 @@ function InstitutionDraftWizardContent({
 							label: fieldLabel("notes", "Notizen"),
 							type: "textarea",
 							placeholder: fieldPlaceholder("notes"),
+							description: t(
+								"institutionDraftWizardModal.form.information.notesDescription",
+							),
 						},
+						{
+							name: "internal_notes",
+							label: fieldLabel("internal_notes", "Interne Notizen"),
+							type: "textarea",
+							placeholder: fieldPlaceholder("internal_notes"),
+							description: t(
+								"institutionDraftWizardModal.form.information.internalNotesDescription",
+							),
+							privateDescription: t(
+								"institutionDraftWizardModal.form.information.internalNotesPrivateDescription",
+							),
+						}
 					],
+
 				},
 			],
 			initialValues: draft,
@@ -1470,6 +1508,7 @@ function InstitutionDraftWizardContent({
 			cancelLabel: t("institutionDraftWizardModal.actions.back"),
 			submitLabel: t("institutionDraftWizardModal.actions.next"),
 			showCancel: true,
+			isPrivateField: isPrivateFormField,
 		}),
 		[
 			draft,
@@ -1477,6 +1516,7 @@ function InstitutionDraftWizardContent({
 			handleStepChange,
 			handleStepSubmit,
 			fieldLabel,
+			isPrivateFormField,
 			t,
 			tEnum,
 		],
@@ -1559,8 +1599,16 @@ function InstitutionDraftWizardContent({
 			cancelLabel: t("institutionDraftWizardModal.actions.back"),
 			submitLabel: t("institutionDraftWizardModal.actions.review"),
 			showCancel: true,
+			isPrivateField: isPrivateFormField,
 		}),
-		[draft, handleCancel, handleStepChange, handleStepSubmit, t],
+		[
+			draft,
+			handleCancel,
+			handleStepChange,
+			handleStepSubmit,
+			isPrivateFormField,
+			t,
+		],
 	);
 
 	const originalInstitution = useMemo(() => {

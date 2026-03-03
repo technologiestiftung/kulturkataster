@@ -786,7 +786,7 @@ const buildInstitutionFormConfig = ({
 						label: fieldLabel("number_of_rooms", "Number of Rooms"),
 						type: "number",
 						placeholder: fieldPlaceholder("number_of_rooms"),
-						layout: { span: "half" },
+						layout: { span: "full" },
 					},
 					{
 						name: "accessibility",
