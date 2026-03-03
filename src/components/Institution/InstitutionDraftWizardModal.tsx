@@ -1496,9 +1496,8 @@ function InstitutionDraftWizardContent({
 							privateDescription: t(
 								"institutionDraftWizardModal.form.information.internalNotesPrivateDescription",
 							),
-						}
+						},
 					],
-
 				},
 			],
 			initialValues: draft,
