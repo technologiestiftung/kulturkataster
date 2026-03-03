@@ -1,9 +1,22 @@
 import type { Institution } from "@/types/institution";
-import {
-	buildAddressFromFormData,
-	toOptionalNumber,
-	toOptionalText,
-} from "@/lib/utils/formUtils";
+import { buildAddressFromFormData } from "@/lib/utils/formUtils";
+
+const toOptionalText = (value: unknown): string | null => {
+	if (typeof value !== "string") return null;
+	const trimmed = value.trim();
+	return trimmed.length > 0 ? trimmed : null;
+};
+
+const toOptionalNumber = (value: unknown): number | undefined => {
+	if (typeof value === "number") {
+		return Number.isFinite(value) ? value : undefined;
+	}
+	if (typeof value !== "string") return undefined;
+	const normalized = value.trim();
+	if (normalized.length === 0) return undefined;
+	const parsed = Number(normalized);
+	return Number.isFinite(parsed) ? parsed : undefined;
+};
 
 const normalizeCompareValue = (value: unknown): string => {
 	if (typeof value !== "string") return "";
