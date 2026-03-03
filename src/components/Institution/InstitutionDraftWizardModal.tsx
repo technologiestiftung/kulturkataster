@@ -228,7 +228,7 @@ function InstitutionDraftWizardContent({
 			maxResults: 3,
 		});
 	}, [activeInstitutionId, allInstitutions, draft]);
-	const localePrefix = i18n.resolvedLanguage === "en" ? "en" : "de";
+	const localePrefix = i18n?.resolvedLanguage === "en" ? "en" : "de";
 	const duplicateWarningText = useMemo<ReactNode>(() => {
 		if (potentialDuplicates.length === 0) return null;
 		const warningText = t(
