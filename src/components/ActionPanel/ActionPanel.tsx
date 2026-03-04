@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "../ui/label";
 import { cn } from "@/lib/utils";
-import { AlertDialog } from "../ui/alert-dialog";
+import { showErrorToast, showSuccessToast } from "@/lib/utils/feedbackToast";
 
 type ActionPanelProps = {
 	children: ReactNode;
@@ -34,7 +34,6 @@ export function ActionPanel({
 	className,
 	icon,
 }: ActionPanelProps) {
-	const [message, setMessage] = useState<string | null>(null);
 	const [isLoading, setIsLoading] = useState(false);
 	const [isSecondaryLoading, setIsSecondaryLoading] = useState(false);
 
@@ -42,13 +41,15 @@ export function ActionPanel({
 		if (!onAction) return;
 
 		setIsLoading(true);
-		setMessage(null);
 		try {
 			const resultMessage = await onAction();
-			setMessage(resultMessage ?? null);
+			showSuccessToast(title, resultMessage ?? undefined);
 		} catch (error) {
 			if (!errorFallback) throw error;
-			setMessage(error instanceof Error ? error.message : errorFallback);
+			showErrorToast(
+				title,
+				error instanceof Error ? error.message : errorFallback,
+			);
 		} finally {
 			setIsLoading(false);
 		}
@@ -58,13 +59,13 @@ export function ActionPanel({
 		if (!onSecondaryAction) return;
 
 		setIsSecondaryLoading(true);
-		setMessage(null);
 		try {
 			const resultMessage = await onSecondaryAction();
-			setMessage(resultMessage ?? null);
+			showSuccessToast(title, resultMessage ?? undefined);
 		} catch (error) {
 			if (!secondaryErrorFallback && !errorFallback) throw error;
-			setMessage(
+			showErrorToast(
+				title,
 				error instanceof Error
 					? error.message
 					: (secondaryErrorFallback ?? errorFallback ?? ""),
@@ -113,17 +114,6 @@ export function ActionPanel({
 					)}
 				</div>
 			</div>
-			<AlertDialog
-				open={!!message}
-				onOpenChange={(open) => {
-					if (!open) setMessage(null);
-				}}
-				title={title}
-				description={message ?? ""}
-				status="success"
-				confirmLabel="OK"
-				onConfirm={() => setMessage(null)}
-			/>
 		</div>
 	);
 }
