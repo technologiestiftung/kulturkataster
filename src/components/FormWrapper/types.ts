@@ -163,7 +163,11 @@ type FormWrapperNonSectionFieldConfig = {
 		actionLabel: string;
 		actionLabelLoading: string;
 		onAction: () => Promise<string | null | undefined>;
+		secondaryActionLabel?: string;
+		secondaryActionLabelLoading?: string;
+		onSecondaryAction?: () => Promise<string | null | undefined>;
 		errorFallback: string;
+		secondaryErrorFallback?: string;
 		className?: string;
 		icon?: ReactNode;
 	};
