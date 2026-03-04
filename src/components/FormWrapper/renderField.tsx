@@ -244,6 +244,7 @@ const getSerializedSelectedValue = (
 type RenderFieldContentArgs = {
 	field: FormWrapperFieldConfig;
 	tEnum: TFunction;
+	tCommon: TFunction;
 	formData: Record<string, unknown>;
 	errors: Record<string, string>;
 	touched: Record<string, boolean>;
@@ -260,6 +261,7 @@ const renderFieldContent = (
 	{
 		field,
 		tEnum,
+		tCommon,
 		formData,
 		errors,
 		touched,
@@ -292,6 +294,12 @@ const renderFieldContent = (
 		field.type === "section"
 			? field.description
 			: (field.description ?? getFieldDescription(tEnum, fieldMetaKey));
+	const resolvedPrivateDescription =
+		field.privateDescription ??
+		tCommon("privateFieldDescription", {
+			defaultValue:
+				"Diese Information wird ausschließlich für befugte Nutzer*innen im geschützten Bereich des Kulturkatasters zugänglich und nicht öffentlich einsehbar sein.",
+		});
 	const resolvedPlaceholder =
 		field.type === "section"
 			? undefined
@@ -317,7 +325,9 @@ const renderFieldContent = (
 							{field.labelNode ?? resolvedLabel}
 							{field.required && <span className="ml-1">*</span>}
 						</Label>
-						{isPrivate ? <PrivateBadge /> : null}
+						{isPrivate ? (
+							<PrivateBadge hoverDescription={resolvedPrivateDescription} />
+						) : null}
 					</div>
 				)}
 
@@ -325,6 +335,13 @@ const renderFieldContent = (
 				field.type !== "tablePermissions" &&
 				field.type !== "fieldPermissions" && (
 					<p className="body2 text-neutral-80 mb-2">{resolvedDescription}</p>
+				)}
+			{isPrivate &&
+				field.type !== "tablePermissions" &&
+				field.type !== "fieldPermissions" && (
+					<p className="body3 text-neutral-80 mb-2 italic">
+						{resolvedPrivateDescription}
+					</p>
 				)}
 
 			{(field.type === "text" ||
@@ -535,7 +552,9 @@ const renderFieldContent = (
 						{field.labelNode ?? resolvedLabel}
 						{field.required && <span className=" ml-1">*</span>}
 					</Label>
-					{isPrivate ? <PrivateBadge /> : null}
+					{isPrivate ? (
+						<PrivateBadge hoverDescription={resolvedPrivateDescription} />
+					) : null}
 				</div>
 			)}
 
@@ -545,7 +564,9 @@ const renderFieldContent = (
 						{field.labelNode ?? resolvedLabel}
 						{field.required && <span className=" ml-1">*</span>}
 					</Label>
-					{isPrivate ? <PrivateBadge /> : null}
+					{isPrivate ? (
+						<PrivateBadge hoverDescription={resolvedPrivateDescription} />
+					) : null}
 					<Switch
 						id={field.name}
 						checked={value as boolean}
@@ -715,7 +736,9 @@ const renderFieldContent = (
 				<div className="flex flex-col gap-1">
 					<div className="flex items-center justify-between gap-2">
 						<Label className="">{field.label}</Label>
-						{isPrivate ? <PrivateBadge /> : null}
+						{isPrivate ? (
+							<PrivateBadge hoverDescription={resolvedPrivateDescription} />
+						) : null}
 					</div>
 					<div className="mt-4 grid gap-4">
 						{field.tablePermissions.tables.map((table) => (
@@ -851,7 +874,9 @@ const renderFieldContent = (
 				<div className="flex flex-col gap-1">
 					<div className="flex items-center justify-between gap-2">
 						<Label className="">{field.label}</Label>
-						{isPrivate ? <PrivateBadge /> : null}
+						{isPrivate ? (
+							<PrivateBadge hoverDescription={resolvedPrivateDescription} />
+						) : null}
 					</div>
 					<div className="mt-4 grid gap-4">
 						{field.fieldPermissions.sections.map((section) => {
@@ -956,6 +981,7 @@ const renderFieldContent = (
 
 type BuildRenderFieldArgs = {
 	tEnum: TFunction;
+	tCommon: TFunction;
 	formData: Record<string, unknown>;
 	errors: Record<string, string>;
 	touched: Record<string, boolean>;
@@ -970,6 +996,7 @@ type BuildRenderFieldArgs = {
 
 export const buildRenderField = ({
 	tEnum,
+	tCommon,
 	formData,
 	errors,
 	touched,
@@ -1051,6 +1078,7 @@ export const buildRenderField = ({
 					{renderFieldContent({
 						field,
 						tEnum,
+						tCommon,
 						formData,
 						errors,
 						touched,
@@ -1093,6 +1121,7 @@ export const buildRenderField = ({
 								{
 									field,
 									tEnum,
+									tCommon,
 									formData,
 									errors,
 									touched,

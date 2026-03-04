@@ -18,12 +18,16 @@ interface InstitutionCardProps {
 	institutionData: Institution;
 	onClick?: (institution: Institution) => void;
 	isCompact?: boolean;
+	isSelected?: boolean;
+	openDetails?: boolean;
 }
 
 const InstitutionCard = memo(function InstitutionCard({
 	institutionData,
 	onClick,
 	isCompact: _isCompact = false,
+	isSelected = false,
+	openDetails = false,
 }: InstitutionCardProps) {
 	const { t } = useTranslation("common");
 	const fieldLabel = useFieldLabel();
@@ -49,15 +53,19 @@ const InstitutionCard = memo(function InstitutionCard({
 		}
 	};
 
-	const cardClassName = `tab-ring w-full rounded-lg overflow-hidden shadow-sm text-left ${
-		onClick ? "cursor-pointer hover:shadow-md transition-shadow" : ""
-	}`;
+	const cardClassName = `tab-ring w-full rounded-lg overflow-hidden text-left transition-shadow ${
+		isSelected
+			? "shadow-md ring-2 ring-primary border border-primary"
+			: "shadow-sm border border-transparent"
+	} ${onClick ? "cursor-pointer hover:shadow-md" : ""}`;
 
 	return (
 		<div
 			className={cardClassName}
 			role={onClick ? "button" : "listitem"}
 			tabIndex={onClick ? 0 : undefined}
+			data-institution-card-id={String(institutionData.id)}
+			aria-selected={isSelected || undefined}
 			onClick={onClick ? handleCardClick : undefined}
 			onKeyDown={onClick ? handleKeyDown : undefined}
 			aria-label={
@@ -143,6 +151,7 @@ const InstitutionCard = memo(function InstitutionCard({
 									columns: 2,
 								},
 								collapsible: true,
+								defaultOpen: openDetails,
 								accordionVariant: "secondary",
 								title: (
 									<>

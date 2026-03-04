@@ -174,7 +174,6 @@ describe("InstitutionDraftWizardModal submission workflow", () => {
 				entityType: "institution",
 				entityId: null,
 				type: "create",
-				status: "approval_pending",
 				data: expect.objectContaining({
 					name: "Draft Institution",
 					address: { street: "Mock Street" },
@@ -219,7 +218,6 @@ describe("InstitutionDraftWizardModal submission workflow", () => {
 			expect.objectContaining({
 				entityType: "institution",
 				type: "create",
-				status: "approval_pending",
 			}),
 		);
 		expect(mockedCreateSubmission.mock.calls[1]?.[0]).toEqual(
@@ -227,7 +225,6 @@ describe("InstitutionDraftWizardModal submission workflow", () => {
 				entityType: "category",
 				entityId: null,
 				type: "create",
-				status: "approval_pending",
 				data: { key: "Atelier" },
 			}),
 		);
@@ -236,7 +233,6 @@ describe("InstitutionDraftWizardModal submission workflow", () => {
 				entityType: "category",
 				entityId: null,
 				type: "create",
-				status: "approval_pending",
 				data: { key: "Probe" },
 			}),
 		);
@@ -278,7 +274,6 @@ describe("InstitutionDraftWizardModal submission workflow", () => {
 				entityType: "institution",
 				entityId: 55,
 				type: "update",
-				status: "approval_pending",
 				diff: expect.objectContaining({
 					name: "Updated Institution Name",
 				}),

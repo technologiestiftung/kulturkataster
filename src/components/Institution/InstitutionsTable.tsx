@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { DataTable } from "@/components/DataTable";
 import type { DataTableConfig } from "@/components/DataTable";
@@ -36,6 +36,7 @@ import { useInstitutionDraftStore } from "@/lib/store/institutionDraftStore";
 import { canReviewInstitutionSubmissionType } from "@/lib/utils/submissionReviewPermissions";
 import { EmptyActionState } from "@/components/EmptyActionState";
 import Edit from "@/icons/edit.svg";
+import { useInstitutionPrivateFieldResolver } from "@/lib/hooks/useInstitutionPrivateFieldResolver";
 
 export function InstitutionsTable() {
 	const router = useRouter();
@@ -69,7 +70,9 @@ export function InstitutionsTable() {
 		[allSubmissions],
 	);
 	const { t } = useTranslation("content");
+	const { t: tCommon } = useTranslation("common");
 	const { t: tEnum } = useTranslation("enumMap");
+	const { isPrivateField } = useInstitutionPrivateFieldResolver();
 	const {
 		filterCategoryGroups,
 		flattenedCategories,
@@ -98,6 +101,13 @@ export function InstitutionsTable() {
 		}
 		return status;
 	};
+	const isPrivateColumn = useCallback(
+		(columnId: string) => {
+			const fieldName = columnId === "owner" ? "owner_name" : columnId;
+			return isPrivateField({ value: fieldName });
+		},
+		[isPrivateField],
+	);
 
 	const tableRows = useMemo<InstitutionTableRow[]>(() => {
 		const submissionRows = submissions.map((submission) =>
@@ -124,6 +134,10 @@ export function InstitutionsTable() {
 	} = useInstitutionTableFilters(tableRows, filterCategoryGroups);
 
 	const tableConfig: DataTableConfig<InstitutionTableRow> = {
+		isPrivateColumn,
+		privateColumnAriaLabel: tCommon("sensitiveInformation", {
+			defaultValue: "Sensitive information",
+		}),
 		columns: [
 			{
 				accessorKey: "status",

@@ -140,7 +140,6 @@ describe("InstitutionClaimSelectModal", () => {
 				entityType: "institution",
 				entityId: 10,
 				type: "claim",
-				status: "approval_pending",
 				data: expect.objectContaining({
 					id: 10,
 					name: "Institution Alpha",
@@ -156,7 +155,6 @@ describe("InstitutionClaimSelectModal", () => {
 				entityType: "institution",
 				entityId: 20,
 				type: "claim",
-				status: "approval_pending",
 			}),
 		);
 
