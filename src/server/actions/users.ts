@@ -13,8 +13,11 @@ import type { UserFormInput } from "@/types/user";
 import { revalidateAccount } from "../utils/actionsUtils";
 import { requireScopeOrUser } from "@/server/utils/rbac";
 import {
+	RoleEmailDecision,
+	RoleEmailTarget,
 	sendAccountDeletedEmail,
 	sendComplianceResendEmail,
+	sendRoleDecisionEmail,
 	sendRoleDecisionEmailIfNeeded,
 } from "@/server/email/dispatcher";
 
@@ -338,4 +341,29 @@ export async function sendComplianceResend(email: string): Promise<void> {
 	});
 
 	return;
+}
+
+export async function sendRoleDecisionEmailManual(input: {
+	userId: string;
+	target: RoleEmailTarget;
+	decision: RoleEmailDecision;
+}): Promise<void> {
+	const currentUserId = await getCurrentUserId();
+	const ctx = await getAccessContextForUser(currentUserId);
+	authorizeTable(ctx, "user", "update");
+	requireAllScope(ctx, "user", "update");
+
+	const user = await userRepo.findById(input.userId);
+	if (!user) {
+		throw new Error("User not found.");
+	}
+
+	await sendRoleDecisionEmail({
+		target: input.target,
+		decision: input.decision,
+		email: user.email,
+		firstName: user.first_name,
+		lastName: user.last_name,
+		metaInfo: user.meta_info,
+	});
 }
