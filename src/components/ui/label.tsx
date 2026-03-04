@@ -7,17 +7,30 @@ import { cn } from "@/lib/utils";
 
 function Label({
 	className,
+	required,
+	emphasize = true,
+	children,
 	...props
-}: React.ComponentProps<typeof LabelPrimitive.Root>) {
+}: React.ComponentProps<typeof LabelPrimitive.Root> & {
+	required?: boolean;
+	emphasize?: boolean;
+}) {
 	return (
 		<LabelPrimitive.Root
 			data-slot="label"
 			className={cn(
-				"flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50",
+				"flex items-center gap-1 body2 text-foreground select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50",
 				className,
 			)}
 			{...props}
-		/>
+		>
+			{emphasize ? <strong>{children}</strong> : children}
+			{required && (
+				<span className="" aria-hidden="true">
+					*
+				</span>
+			)}
+		</LabelPrimitive.Root>
 	);
 }
 

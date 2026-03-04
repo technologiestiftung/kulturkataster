@@ -53,6 +53,10 @@
 	--sidebar-width-icon: 5rem;
 
 	--footer: #f9f8f590;
+
+	--contrast-brand-default: #55d494;
+	--contrast-neutral-80: #555b54;
+	--contrast-interaction-default: #c288ff;
 }
 
 :root[data-theme="contrast"] {
@@ -109,10 +113,11 @@
 	--color-accent-foreground: var(--black);
 
 	--color-destructive: var(--highlight-alert);
+	--color-destructive-secondary: var(--fachfarben-dark-pink);
 	--color-destructive-foreground: var(--white);
 
 	--color-border: var(--neutral-20);
-	--color-input: var(--neutral-20);
+	--color-input: var(--neutral-40);
 	--color-ring: var(--interaction-dark);
 
 	--color-chart-1: var(--fachfarben-yellow);
@@ -203,22 +208,29 @@
 	a {
 		@apply w-fit;
 	}
+	.no-scrollbar {
+		-ms-overflow-style: none;
+		scrollbar-width: none;
+	}
+	.no-scrollbar::-webkit-scrollbar {
+		display: none;
+	}
 }
 
 @layer components {
-	.display {
-		@apply font-extrabold;
-		font-size: 2rem;
-		line-height: 2rem;
-	}
-
 	h1 {
 		@apply font-extrabold;
+		font-size: 2.5rem;
+		line-height: 2.5rem;
+	}
+
+	h2 {
+		@apply font-bold;
 		font-size: 1.5rem;
 		line-height: 2rem;
 	}
 
-	h2 {
+	.title {
 		@apply font-bold;
 		font-size: 1.5rem;
 		line-height: 2rem;
@@ -235,8 +247,8 @@
 	}
 
 	.body3 {
-		font-size: 1.25rem;
-		line-height: 1.75rem;
+		font-size: 0.875rem;
+		line-height: 1.25rem;
 	}
 
 	.button {
@@ -246,10 +258,6 @@
 	}
 
 	@media (min-width: 768px) {
-		.display {
-			font-size: 3.5rem;
-			line-height: 3.5rem;
-		}
 		h1 {
 			font-size: 2rem;
 			line-height: 2.5rem;
@@ -258,6 +266,13 @@
 			font-size: 1.5rem;
 			line-height: 2rem;
 		}
+
+		.title {
+			@apply font-bold;
+			font-size: 1.5rem;
+			line-height: 2rem;
+		}
+
 		.body1 {
 			font-size: 1.25rem;
 			line-height: 1.75rem;
@@ -267,8 +282,8 @@
 			line-height: 1.5rem;
 		}
 		.body3 {
-			font-size: 1rem;
-			line-height: 1.5rem;
+			font-size: 0.875rem;
+			line-height: 1.25rem;
 		}
 		.button {
 			font-size: 1rem;
@@ -295,5 +310,13 @@
 	/* Hide elements with invalid ARIA tablist structure */
 	[role="tablist"] button:not([role="tab"]) {
 		display: none;
+	}
+
+	input[type="search"]::-webkit-search-cancel-button {
+		@apply hidden;
+	}
+	input[type="search"]::-webkit-search-decoration {
+		-webkit-appearance: none;
+		appearance: none;
 	}
 }

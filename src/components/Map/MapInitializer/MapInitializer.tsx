@@ -10,6 +10,7 @@ import {
 	MapConfig,
 } from "@/types";
 import { FC, useEffect } from "react";
+import MapView from "../Map";
 
 const MapInitializer: FC = ({}) => {
 	const setConfig = useMapStore((state) => state.setConfig);
@@ -39,7 +40,11 @@ const MapInitializer: FC = ({}) => {
 		setConfig(enrichedConfig as unknown as MapConfig);
 	}, [setConfig]);
 
-	return null;
+	return (
+		<div className="items-center h-full flex-1 justify-items-center h-full relative w-full">
+			<MapView />
+		</div>
+	);
 };
 
 export default MapInitializer;

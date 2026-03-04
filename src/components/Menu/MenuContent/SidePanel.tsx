@@ -1,0 +1,72 @@
+"use client";
+
+import Filter from "@/components/Filter/Filter";
+import { LocationSearch } from "@/components/Search/LocationSearch";
+import { useState } from "react";
+
+export function SidePanel({
+	onSearchClick,
+	onShowFilter,
+}: {
+	onSearchClick?: () => void;
+	onShowFilter?: () => void;
+}) {
+	const [hasResults, setHasResults] = useState(false);
+	const [sidePanel, setSidePanel] = useState<"search" | "filter" | null>(
+		"filter",
+	);
+
+	const handleShowFilter = () => {
+		if (sidePanel === "filter") {
+			onShowFilter?.();
+			setSidePanel("search");
+			return;
+		}
+		setSidePanel("filter");
+	};
+
+	const handleShowSearch = () => {
+		if (sidePanel === "filter") {
+			onShowFilter?.();
+		}
+		setSidePanel("search");
+		onSearchClick?.();
+	};
+
+	return (
+		<div className="absolute inset-0 h-full pointer-events-none md:inset-y-0 md:left-0 md:max-w-[var(--sidebar-width)] z-8">
+			<div
+				className={`h-full w-full flex-row flex overflow-hidden p-5 transition-colors duration-200 ${hasResults || sidePanel === "filter" ? "bg-secondary shadow-lg" : "pointer-events-none"}`}
+			>
+				<div className="relative h-full flex-1">
+					<div
+						className={`absolute inset-0 transition-all duration-200 ${
+							sidePanel === "search"
+								? "opacity-100 translate-x-0"
+								: "opacity-0 translate-x-3 pointer-events-none"
+						}`}
+					>
+						<LocationSearch
+							onResultsChange={(results) => {
+								setHasResults(results.length > 0);
+							}}
+							onFilterClick={handleShowFilter}
+						/>
+					</div>
+					<div
+						className={`absolute inset-0 transition-all duration-200 ${
+							sidePanel === "filter"
+								? "opacity-100 translate-x-0 pointer-events-auto"
+								: "opacity-0 -translate-x-3 pointer-events-none"
+						}`}
+					>
+						<Filter
+							onSearchClick={handleShowSearch}
+							onShowFilter={handleShowFilter}
+						></Filter>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+}

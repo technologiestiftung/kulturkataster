@@ -7,7 +7,8 @@ import {
 	AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
-import { Button, ButtonWithTooltip } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
+import { ButtonWithTooltip } from "@/components/ui/button-with-tooltip";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -16,7 +17,7 @@ import ContextMapIcon from "@/icons/fachkarten.svg";
 import { useAppStore } from "@/lib/store/appStore";
 import { useMapStore } from "@/lib/store/mapStore";
 import { ManagedLayer } from "@/types";
-import { X } from "lucide-react";
+import X from "@/icons/x.svg";
 import Image from "next/image";
 import {
 	FC,
@@ -188,7 +189,7 @@ const LayerItem = memo<{
 						</span>
 						{serviceNameLang && (
 							<div
-								className={`body2 hidden ${layer.status === "error" ? "text-alert" : ""}`}
+								className={`body2 font-semibold hidden ${layer.status === "error" ? "text-alert" : ""}`}
 							>
 								{layer.status === "error"
 									? "Fachkarte nicht verfügbar. Bitte versuchen Sie es später erneut."
@@ -197,7 +198,7 @@ const LayerItem = memo<{
 						)}
 						{serviceNameMid && (
 							<div
-								className={`body2 ${layer.status === "error" ? "text-alert" : ""}`}
+								className={`body2 font-semibold ${layer.status === "error" ? "text-alert" : ""}`}
 							>
 								{layer.status === "error"
 									? "Fachkarte nicht verfügbar. Bitte versuchen Sie es später erneut."
@@ -271,7 +272,7 @@ const FloatingLayerButton = memo(
 
 		return (
 			<div
-				className={`fixed bottom-4 z-50 transition-all duration-200 ${getLeftPosition()}`}
+				className={`fixed bottom-4 z-25 transition-all duration-200 ${getLeftPosition()}`}
 			>
 				<div className="relative">
 					{visibleCount > 1 && (
@@ -283,7 +284,7 @@ const FloatingLayerButton = memo(
 
 					<ButtonWithTooltip
 						ref={forwardedRef}
-						variant="map-icon"
+						variant="rounded"
 						size="icon"
 						tooltip={t("map.layerTree")}
 						tooltipSide="right"
@@ -330,29 +331,26 @@ FloatingLayerButton.displayName = "FloatingLayerButton";
 const LayerTree: FC = () => {
 	const { t } = useTranslation("common");
 	const { subjectLayers, visibleCount, topVisibleLayer } = useLayerData();
-	const setIsLayerTreeOpen = useMapStore((state) => state.setIsLayerTreeOpen);
-	const { state: sidebarState, isMobile, setOpenMobile } = useSidebar();
+	const { state: sidebarState } = useSidebar();
+	const isLayerTreeOpen = useAppStore((state) => state.isLayerTreeOpen);
+	const setIsLayerTreeOpen = useAppStore((state) => state.setIsLayerTreeOpen);
 	const [isOpen, setIsOpen] = useState(false);
 	const floatingButtonRef = useRef<HTMLButtonElement>(null);
 
 	const handleOpen = useCallback(() => {
-		setIsOpen(true);
-	}, []);
+		setIsLayerTreeOpen(true);
+	}, [setIsLayerTreeOpen]);
 
 	const handleClose = useCallback(() => {
-		setIsOpen(false);
+		setIsLayerTreeOpen(false);
 		setTimeout(() => {
 			floatingButtonRef.current?.focus();
 		}, 0);
-	}, []);
+	}, [setIsLayerTreeOpen]);
 
 	useEffect(() => {
-		if (isOpen && isMobile) {
-			setIsOpen(false);
-			setIsLayerTreeOpen(true);
-			setOpenMobile(true);
-		}
-	}, [isMobile, isOpen, setIsLayerTreeOpen, setOpenMobile]);
+		setIsOpen(isLayerTreeOpen);
+	}, [isLayerTreeOpen]);
 
 	// Handle Escape key to close the dialog
 	useEffect(() => {
@@ -367,10 +365,6 @@ const LayerTree: FC = () => {
 		document.addEventListener("keydown", handleKeyDown);
 		return () => document.removeEventListener("keydown", handleKeyDown);
 	}, [isOpen, handleClose]);
-
-	if (!isOpen && isMobile) {
-		return null;
-	}
 
 	if (!isOpen) {
 		return (
@@ -402,7 +396,7 @@ const LayerTree: FC = () => {
 						onClick={handleClose}
 						aria-label={t("map.closeLayerTree")}
 					>
-						<X className="w-4 h-4" aria-hidden="true" focusable="false" />
+						<X className="size-4" aria-hidden="true" focusable="false" />
 					</Button>
 				</div>
 			</CardHeader>
@@ -435,7 +429,7 @@ export const LayerTreeContent: FC<{
 
 	if (layersToRender.length === 0) {
 		return (
-			<div className="flex items-center justify-center py-8 text-muted-foreground">
+			<div className="flex items-center justify-center py-8 text-foreground">
 				<p>{t("map.noLayersAvailable")}</p>
 			</div>
 		);

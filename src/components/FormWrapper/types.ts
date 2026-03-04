@@ -1,0 +1,284 @@
+import type { ReactNode } from "react";
+import type { Category } from "@/types";
+
+export interface Layout {
+	columns?: 1 | 2;
+	span?: "full" | "half";
+	spanClass?: string;
+}
+
+export type FieldType =
+	| "text"
+	| "email"
+	| "password"
+	| "number"
+	| "tel"
+	| "url"
+	| "date"
+	| "file"
+	| "textarea"
+	| "select"
+	| "radio"
+	| "checkbox"
+	| "switch"
+	| "multiselect"
+	| "addressMap"
+	| "filterPanel"
+	| "actionPanel"
+	| "tablePermissions"
+	| "fieldPermissions"
+	| "fundingSources"
+	| "section";
+
+export type PermissionAction = "read" | "create" | "update" | "delete";
+export type PermissionScope = "own" | "all";
+
+export type TablePermissionValue = {
+	actions: PermissionAction[];
+	scope: PermissionScope;
+};
+export interface SelectOption {
+	label: string | ReactNode;
+	value: string | number | boolean;
+	description?: string | ReactNode;
+	searchText?: string;
+	filterValues?: Record<string, string[]>;
+	parentValue?: string | number | boolean;
+}
+
+type FormWrapperSectionConfig = {
+	title?: string;
+	description?: string;
+	fields: FormWrapperFieldConfig[];
+	cardVariant?: "default" | "secondary" | "tertiary" | "none";
+	collapsible?: boolean;
+	defaultOpen?: boolean;
+	accordionVariant?: "default" | "secondary";
+	accordionTitle?: ReactNode;
+	accordionDescription?: string;
+	privateDescription?: string;
+	className?: string;
+	layout?: Layout;
+	fieldGap?: "gap-0" | "gap-2" | "gap-4" | "gap-6";
+};
+
+type FormWrapperSectionFieldConfig = {
+	name: string;
+	type: "section";
+	label?: string;
+	labelNode?: ReactNode;
+	required?: boolean;
+	requiredMessage?: string;
+	disabled?: boolean;
+	afterField?: ReactNode;
+	defaultValue?: unknown;
+	validate?: (value: unknown) => string | undefined;
+	validateWithForm?: (
+		value: unknown,
+		formData: Record<string, unknown>,
+	) => string | undefined;
+	onBlur?: (
+		value: unknown,
+		formData: Record<string, unknown>,
+		updateField: (name: string, value: unknown) => void,
+	) => void | Promise<void>;
+	section?: FormWrapperSectionConfig;
+	fields?: FormWrapperFieldConfig[];
+	title?: string;
+	description?: string;
+	privateDescription?: string;
+	cardVariant?: "default" | "secondary" | "tertiary" | "none";
+	collapsible?: boolean;
+	defaultOpen?: boolean;
+	accordionVariant?: "default" | "secondary";
+	accordionTitle?: ReactNode;
+	accordionDescription?: string;
+	className?: string;
+	layout?: Layout;
+	fieldGap?: "gap-0" | "gap-2" | "gap-4" | "gap-6";
+	condition?: (formData: Record<string, unknown>) => boolean;
+};
+
+type FormWrapperNonSectionFieldConfig = {
+	name: string;
+	fieldMetaKey?: string;
+	label?: string;
+	labelNode?: ReactNode;
+	type: Exclude<FieldType, "section">;
+	fields?: never;
+	collapsible?: boolean;
+	defaultOpen?: boolean;
+	accordionVariant?: "default" | "secondary";
+	accordionTitle?: ReactNode;
+	accordionDescription?: string;
+	placeholder?: string;
+	required?: boolean;
+	requiredMessage?: string;
+	errorMessages?: Partial<Record<string, string>>;
+	disabled?: boolean;
+	description?: string;
+	privateDescription?: string;
+	defaultValue?: unknown;
+	radioVariant?: "default" | "button";
+	multiselectVariant?: "list" | "modal";
+	searchPlaceholder?: string;
+	emptyText?: string;
+	previewCount?: number;
+	allowNullOption?: boolean;
+	nullOptionLabel?: string | ReactNode;
+	multiselectFilterPanel?: ReactNode;
+	multiselectFilteredOptions?: SelectOption[];
+	multiselectFilters?: {
+		id: string;
+		label: string;
+		dependsOn?: string;
+		options: SelectOption[];
+	}[];
+	multiselectSortOptions?: {
+		id: string;
+		label: string;
+		compare?: (a: SelectOption, b: SelectOption) => number;
+	}[];
+	tablePermissions?: {
+		tables: { key: string; label: string }[];
+		actions?: PermissionAction[];
+		actionLabels?: Partial<Record<PermissionAction, string>>;
+		scopeOptions?: { value: PermissionScope; label: string }[];
+		scopeLabel?: string;
+		scopeDescription?: string;
+	};
+	fieldPermissions?: {
+		sections: {
+			id: string;
+			title: string;
+			fields: { key: string; label: string }[];
+		}[];
+		actions?: PermissionAction[];
+		actionLabels?: Partial<Record<PermissionAction, string>>;
+		fieldLabel?: string;
+	};
+	actionPanel?: {
+		title: string;
+		description: string;
+		actionLabel: string;
+		actionLabelLoading: string;
+		onAction: () => Promise<string | null | undefined>;
+		secondaryActionLabel?: string;
+		secondaryActionLabelLoading?: string;
+		onSecondaryAction?: () => Promise<string | null | undefined>;
+		errorFallback: string;
+		secondaryErrorFallback?: string;
+		className?: string;
+		icon?: ReactNode;
+	};
+	filterPanel?: {
+		categoryGroups: Category[];
+		districts: string[];
+		filteredCount?: number;
+		categoryCounts?: Record<string, number>;
+		subcategoryCounts?: Record<string, number>;
+		loading?: boolean;
+		error?: string | null;
+		onRetry?: () => void;
+		showSummary?: boolean;
+		showDistricts?: boolean;
+		showClosedToggle?: boolean;
+		collapsible?: boolean;
+		defaultCollapsed?: boolean;
+		categorySectionMode?: "filter" | "selection";
+		selectionEmptyLabel?: string;
+	};
+	addressMap?: {
+		latField: string;
+		lngField: string;
+		streetField?: string;
+		streetNumberField?: string;
+		cityField?: string;
+		zipField?: string;
+		districtField?: string;
+		neighbourhoodField?: string;
+		initialZoom?: number;
+	};
+	fundingSources?: {
+		sourceLabel?: string;
+		descriptionLabel?: string;
+		sourcePlaceholder?: string;
+		descriptionPlaceholder?: string;
+		addButtonLabel?: string;
+		removeButtonLabel?: string;
+		maxItems?: number;
+	};
+
+	// For select, radio, checkbox, multiselect
+	options?: SelectOption[];
+
+	// For number inputs
+	min?: number;
+	max?: number;
+	step?: number;
+	accept?: string;
+	multiple?: boolean;
+	fileRemoveOption?: {
+		fieldName: string;
+		label: string;
+	};
+
+	// Grid layout
+	layout?: Layout;
+	className?: string;
+
+	// Custom validation
+	validate?: (value: unknown) => string | undefined;
+	validateWithForm?: (
+		value: unknown,
+		formData: Record<string, unknown>,
+	) => string | undefined;
+	onBlur?: (
+		value: unknown,
+		formData: Record<string, unknown>,
+		updateField: (name: string, value: unknown) => void,
+	) => void | Promise<void>;
+	afterField?: ReactNode;
+
+	// Conditional rendering
+	condition?: (formData: Record<string, unknown>) => boolean;
+};
+
+export type FormWrapperFieldConfig =
+	| FormWrapperSectionFieldConfig
+	| FormWrapperNonSectionFieldConfig;
+
+export interface FormWrapperConfig {
+	// Fields can be regular fields or section fields with nested fields
+	fields: FormWrapperFieldConfig[];
+	// Optional fields rendered after the action buttons
+	footerFields?: FormWrapperFieldConfig[];
+	formId?: string;
+	className?: string;
+
+	// Form-level settings
+	onSubmit: (data: Record<string, unknown>) => void | Promise<void>;
+	onChange?: (data: Record<string, unknown>) => void;
+	submitLabel?: string;
+	submitDisabled?: boolean;
+	showCancel?: boolean;
+	cancelLabel?: string;
+	onCancel?: () => void;
+	deleteAction?: {
+		label: string;
+		onClick: () => void;
+		disabled?: boolean;
+		className?: string;
+	};
+
+	// Initial values
+	initialValues?: Record<string, unknown>;
+
+	// Layout
+	layout?: Layout;
+	cardVariant?: "default" | "secondary" | "none";
+	isPrivateField?: (field: FormWrapperFieldConfig) => boolean;
+
+	// Hide built-in form actions (useful when used inside Dialog or with custom actions)
+	hideActions?: boolean;
+}

@@ -10,6 +10,7 @@ import LayerInitializer from "./LayerInitializer/LayerInitializer";
 import { InstitutionLayer, Layers } from "./Layers";
 import LayerTree from "./LayerTree/LayerTree";
 import { Loading } from "../ui/loading";
+import { SidePanel } from "../Menu/MenuContent/SidePanel";
 
 const LazyOlMap = dynamic(() => import("./OlMap/OlMap"), {
 	ssr: false,
@@ -21,18 +22,21 @@ const LazyOlMap = dynamic(() => import("./OlMap/OlMap"), {
 });
 
 const Map: FC = () => {
-	const institutions = useInstitutionStore(
-		(state) => state.filteredInstitutions,
+	const filteredInstitutionsGeoJSON = useInstitutionStore(
+		(state) => state.filteredInstitutionsGeoJSON,
 	);
 
 	return (
-		<div className="Map-root w-full h-full">
+		<div className="Map-root w-full h-full relative">
+			<SidePanel />
 			{true && <LayerTree />}
 
 			<LazyOlMap>
 				<LayerInitializer />
 				<Layers>
-					{institutions && <InstitutionLayer institutionsData={institutions} />}
+					{filteredInstitutionsGeoJSON && (
+						<InstitutionLayer institutions={filteredInstitutionsGeoJSON} />
+					)}
 				</Layers>
 
 				<MapControls>

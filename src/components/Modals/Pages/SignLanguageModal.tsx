@@ -2,7 +2,7 @@
 
 import { useRef, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { PageModal } from "../PageModal";
+import { Modal } from "../Modal";
 import TextBlock from "@/components/Content/TextBlock";
 import TextWithLinks from "@/components/Content/TextWithLinks";
 import { Loading } from "@/components/ui/loading";
@@ -16,11 +16,6 @@ interface SignLanguageVideoItem {
 interface SignLanguageInformationItem {
 	title: string;
 	videos: SignLanguageVideoItem[];
-}
-
-interface SignLanguageModalProps {
-	open: boolean;
-	onOpenChange: (open: boolean) => void;
 }
 
 export function VideoWithLoader({ src }: { src: string }) {
@@ -62,10 +57,7 @@ export function VideoWithLoader({ src }: { src: string }) {
 	);
 }
 
-export function SignLanguageModal({
-	open,
-	onOpenChange,
-}: SignLanguageModalProps) {
+export function SignLanguageModal({ routePath }: { routePath?: string }) {
 	const { t } = useTranslation("content");
 
 	const content = t("signLanguageModal.content", {
@@ -112,17 +104,17 @@ export function SignLanguageModal({
 	);
 
 	return (
-		<PageModal
-			open={open}
-			onOpenChange={onOpenChange}
+		<Modal
 			title={t("signLanguageModal.title")}
 			subtitle={t("signLanguageModal.subtitle")}
-			content={signLanguageInformationContent}
+			routePath={routePath}
 			hideLinksInModalFooter={[
 				"signLanguageInformation",
 				"signLanguageInformationLong",
 				"signLanguageInformationShort",
 			]}
-		/>
+		>
+			{signLanguageInformationContent}
+		</Modal>
 	);
 }

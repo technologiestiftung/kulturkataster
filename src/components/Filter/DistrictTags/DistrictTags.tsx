@@ -1,14 +1,13 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import Close from "@/icons/close.svg";
-import { District } from "@/types";
 import { FC } from "react";
 import { useTranslation } from "react-i18next";
 
 // Simple district filter component
 interface DistrictTagsProps {
-	districts: District[];
+	districts: string[];
 	selected: string[];
 	onChange: (key: string) => void;
 }
@@ -24,20 +23,16 @@ const DistrictTags: FC<DistrictTagsProps> = ({
 	return (
 		<div className="flex flex-wrap gap-2 mb-4">
 			{districts.map((district) => {
-				if (!district.key) return null;
-				const isSelected = selected.includes(district.key);
-				const translatedName =
-					tEnum(`berlin_district.${district.key}`) ||
-					district.name ||
-					district.key;
+				if (!district) return null;
+				const isSelected = selected.includes(district);
+				const translatedName = tEnum(`${district}`) || district;
 
 				return (
-					<Button
-						key={district.key}
+					<Badge
+						key={district}
 						variant="tag"
-						size="tag"
-						className={isSelected ? "bg-neutral-80 text-background" : ""}
-						onClick={() => onChange(district.key || "")}
+						data-selected={isSelected}
+						onClick={() => onChange(district)}
 						role="switch"
 						aria-checked={isSelected}
 						aria-label={t("filter.districtTagsSwitchAriaLabel", {
@@ -45,12 +40,8 @@ const DistrictTags: FC<DistrictTagsProps> = ({
 						})}
 					>
 						{translatedName}
-						{isSelected && (
-							<span className="ml-0 w-full">
-								<Close size={4} viewBox="0 0 24 24" />
-							</span>
-						)}
-					</Button>
+						{isSelected && <Close className="ml-2 h-3 w-3" />}
+					</Badge>
 				);
 			})}
 		</div>

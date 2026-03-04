@@ -102,16 +102,15 @@
 				"Verbesserung der Zusammenarbeit zwischen Ressorts, Ebenen und Sektoren: Als flexibles digitales Planungsinstrument stärkt das Kulturkataster die Zusammenarbeit innerhalb der verschiedenen Zuständigkeitsbereiche, Verwaltungsebenen sowie der gesamten Berliner Kulturszene."
 			]
 		},
+		"guidelinesListAriaLabel": "Liste der Richtlinien",
 		"introduction": [
 			"In einer wachsenden Metropole wie Berlin sind Kunst- und Kulturräume knappe Ressourcen. Verdrängung, Raumkonkurrenzen und Standortkonflikte gefährden die Kulturräume Berlins, die für die Stadt eine vielschichtige und entscheidende Rolle spielen. Sie sind Standortfaktor, Tourismusmagnet und Innovationsmotor, dienen der Wissensvermittlung sowie dem Erinnern und fördern den gesellschaftlichen Zusammenhalt, indem sie einen Identitätsrahmen für eine vielfältige und inklusive Stadtgesellschaft bilden. Das Kulturkataster, eine online frei zugängliche Bestandsaufnahme der Berliner Kulturlandschaft auf einer digitalen Karte, ist ein entscheidender Schritt hin zu einer nachhaltigen kulturellen Stadtentwicklung.",
 			"Das Kulturkataster findet in den Richtlinien der Regierungspolitik dieser Legislaturperiode Erwähnung. Ende 2022 wird die Kulturraum Berlin gGmbH von der Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt mit der Konzeption betraut und stellt in zwei Konzeptpapieren (ausgeführt durch das Studio für unendliche Möglichkeiten) die Ausgangssituation und Bedarfe sowie ein Umsetzungskonzept für das Kulturkataster vor. Auch die Umsetzung wird 2024 zur Aufgabe der KRB. Mit der Entwicklung der online-basierten Kartenanwendung beauftragte die KRB die Technologiestiftung Berlin."
 		],
 		"simpleLanguageDirect": "Den Bereich „Über das Projekt“ in leichter Sprache finden Sie <link />.",
-		"guidelinesListAriaLabel": "Liste der Richtlinien",
-		"versionListAriaLabel": "Liste der Versionsänderungen",
-		"subtitle": "",
 		"thanks": "Das Berliner Kulturkataster verdankt seine erfolgreiche Veröffentlichung der Begeisterung, dem Engagement und dem gemeinsamen Wirken aller Personen, für die die Berliner Kulturlandschaft von ebenso großer Bedeutung ist wie für das Projektteam. Diese tiefe Verankerung in der Szene bildet die Grundlage dafür, dass das langfristig ausgerichtete Projekt seine Vision in vollem Umfang entfalten und dynamisch weiterentwickeln kann.",
 		"title": "Über das Projekt",
+		"versionListAriaLabel": "Liste der Versionsänderungen",
 		"versions": {
 			"description": "Die Entwicklung Berliner Kulturkatasters erfolgt als lernender Prozess. Das bedeutet, dass in festgelegten zeitlichen Abständen neue Versionen des Kulturkatasters veröffentlicht werden. Zukünftige Versionen sollen neue Funktionalitäten und aktualisierte Informationen zur Verfügung stellen. Dieser Prozess ermöglicht es dem Projektteam, Anmerkungen und Kritik in den fortlaufenden Entwicklungsprozess zu integrieren und lädt die Nutzenden des Kulturkatasters dazu ein, die zukünftige Ausrichtung aktiv mitzugestalten.",
 			"items": [
@@ -223,17 +222,127 @@
 				}
 			],
 			"description": "Die nachstehend aufgeführten Bereiche sind aus folgenden Gründen nicht barrierefrei:",
-			"list_intro": "Teilbereiche, die nicht barrierefrei sind:",
-			"subheading": "Unvereinbarkeit mit BITV 2.0",
-			"title": "Welche Bereiche sind nicht barrierefrei?",
 			"descriptionLabel": "Beschreibung",
+			"list_intro": "Teilbereiche, die nicht barrierefrei sind:",
 			"measuresLabel": "Maßnahmen",
-			"timelineLabel": "Zeitraum"
+			"subheading": "Unvereinbarkeit mit BITV 2.0",
+			"timelineLabel": "Zeitraum",
+			"title": "Welche Bereiche sind nicht barrierefrei?"
 		}
 	},
 	"accessibilitySettingsModal": {
-		"title": "Einstellungen zur Barrierefreiheit",
-		"subtitle": "Hier finden Sie alle Einstellungen rund um die Barrierefreiheit auf der Webseite."
+		"subtitle": "Hier finden Sie alle Einstellungen rund um die Barrierefreiheit auf der Webseite.",
+		"title": "Einstellungen zur Barrierefreiheit"
+	},
+	"categoryFormModal": {
+		"actions": {
+			"cancel": "Abbrechen",
+			"create": "Kategorie erstellen",
+			"createLoading": "Wird erstellt...",
+			"save": "Speichern",
+			"saveLoading": "Wird gespeichert...",
+			"update": "Speichern",
+			"updateLoading": "Wird gespeichert..."
+		},
+		"delete": {
+			"button": "Löschen",
+			"cancel": "Abbrechen",
+			"confirm": "Löschen",
+			"confirmDescription": "Die Kategorie wird dauerhaft entfernt. Diese Aktion kann nicht rückgängig gemacht werden.",
+			"confirmTitle": "Kategorie löschen?",
+			"description": "Die Kategorie wird dauerhaft entfernt.",
+			"errorDescription": "Bitte zuerst alle Unterkategorien entfernen und erneut versuchen.",
+			"errorTitle": "Löschen fehlgeschlagen",
+			"title": "Kategorie löschen"
+		},
+		"dialog": {
+			"loading": "Kategorie wird geladen...",
+			"notFound": {
+				"description": "Diese Kategorie konnte nicht gefunden werden.",
+				"title": "Kategorie nicht gefunden"
+			},
+			"title": {
+				"create": "Kategorie erstellen",
+				"edit": "Kategorie bearbeiten"
+			}
+		},
+		"feedback": {
+			"create": {
+				"description": "Die Kategorie ist jetzt verfügbar.",
+				"title": "Kategorie erstellt"
+			},
+			"update": {
+				"description": "Die Änderungen wurden gespeichert.",
+				"title": "Kategorie aktualisiert"
+			}
+		},
+		"form": {
+			"details": {
+				"description": "Lege fest, wie diese Kategorie angezeigt wird.",
+				"fields": {
+					"description": {
+						"label": "Beschreibung",
+						"placeholder": "Optionale Beschreibung"
+					},
+					"icon": {
+						"label": "Icon",
+						"placeholder": "Optionaler Icon-Name"
+					},
+					"iconUpload": {
+						"currentFile": "Aktuelle Datei ansehen",
+						"label": "SVG-Icon hochladen",
+						"description": "Optional. Eine SVG-Datei in Supabase Storage hochladen.",
+						"remove": "Icon entfernen",
+						"selected": "Ausgewählt: {{name}}"
+					},
+					"key": {
+						"label": "Schlüssel",
+						"placeholder": "z. B. museen"
+					},
+					"localizedLabelDe": {
+						"label": "Name (Deutsch)",
+						"placeholder": "z. B. Museen"
+					},
+					"localizedLabelEn": {
+						"label": "Name (Englisch)",
+						"placeholder": "z. B. Museums"
+					},
+					"parent": {
+						"label": "Übergeordnete Kategorie",
+						"none": "Keine übergeordnete Kategorie",
+						"placeholder": "Übergeordnete Kategorie auswählen (optional)"
+					},
+					"status": {
+						"label": "Status"
+					}
+				},
+				"title": "Kategoriedetails"
+			}
+		},
+		"status": {
+			"active": "Aktiv",
+			"inactive": "Inaktiv"
+		}
+	},
+	"categoryTable": {
+		"actions": {
+			"add": "Kategorie hinzufügen",
+			"editSubcategory": "Unterkategorie bearbeiten"
+		},
+		"columns": {
+			"description": "Beschreibung",
+			"icon": "Icon",
+			"key": "Name",
+			"status": "Status",
+			"parent": "Übergeordnet",
+			"subcategories": "Unterkategorien"
+		},
+		"empty": {
+			"description": "Erstellen Sie eine Kategorie, um Inhalte besser zu strukturieren.",
+			"title": "Keine Kategorien gefunden."
+		},
+		"emptyMessage": "Keine Kategorien gefunden.",
+		"searchPlaceholder": "Kategorien suchen..."
 	},
 	"downloadModal": {
 		"chooseFormat": "Dateiformat wählen",
@@ -245,13 +354,13 @@
 		"title": "Daten als Liste herunterladen"
 	},
 	"filter": {
-		"districtTagsSwitchAriaLabel": "{{translatedName}} ein- oder ausschalten",
 		"categories": {
 			"resetFilters": "Filter zurücksetzen",
 			"setAllFilters": "Alle Filter",
 			"title": "Kategorien"
 		},
 		"displayedInstitutions": "Angezeigte Kulturorte in Berlin",
+		"districtTagsSwitchAriaLabel": "{{translatedName}} ein- oder ausschalten",
 		"districts": {
 			"resetFilters": "Filter zurücksetzen",
 			"setAllFilters": "Alle Filter",
@@ -262,7 +371,113 @@
 		"loading": "Filter werden geladen...",
 		"retry": "Erneut versuchen",
 		"showClosed": "Geschlossene Orte einblenden",
+		"showMoreCategories": "Mehr Kategorien anzeigen",
+		"showSelectedCategories": "Ausgewählte Kategorien anzeigen",
 		"title": "Kulturorte filtern"
+	},
+	"groupFormModal": {
+		"actions": {
+			"cancel": "Abbrechen",
+			"create": "Gruppe erstellen",
+			"creating": "Gruppe wird erstellt...",
+			"save": "Änderungen speichern",
+			"saving": "Änderungen werden gespeichert..."
+		},
+		"delete": {
+			"button": "Löschen",
+			"cancel": "Abbrechen",
+			"confirm": "Löschen",
+			"confirmDescription": "Die Gruppe wird dauerhaft entfernt. Diese Aktion kann nicht rückgängig gemacht werden.",
+			"confirmTitle": "Gruppe löschen?",
+			"errorDescription": "Bitte versuchen Sie es erneut oder kontaktieren Sie den Support, falls das Problem weiterhin besteht.",
+			"errorTitle": "Löschen fehlgeschlagen"
+		},
+		"dialog": {
+			"loading": "Gruppe wird geladen...",
+			"notFound": {
+				"description": "Die ausgewählte Gruppe konnte nicht geladen werden.",
+				"title": "Gruppe nicht gefunden"
+			},
+			"title": {
+				"create": "Gruppe erstellen",
+				"edit": "Gruppe bearbeiten"
+			}
+		},
+		"feedback": {
+			"create": {
+				"description": "Die Gruppe wurde erfolgreich erstellt.",
+				"title": "Gruppe erstellt"
+			},
+			"update": {
+				"description": "Die Änderungen wurden erfolgreich gespeichert.",
+				"title": "Gruppe aktualisiert"
+			}
+		},
+		"form": {
+			"details": {
+				"description": {
+					"create": "Legen Sie eine neue Gruppe an.",
+					"edit": "Aktualisieren Sie den Gruppennamen und die Beschreibung."
+				},
+				"fields": {
+					"description": {
+						"label": "Beschreibung",
+						"placeholder": "Optionale Beschreibung"
+					},
+					"name": {
+						"label": "Name",
+						"placeholder": "Gruppenname"
+					}
+				},
+				"title": "Gruppendetails"
+			},
+			"members": {
+				"fields": {
+					"institutions": {
+						"emptyText": "Keine Kulturorte gefunden",
+						"filters": {
+							"categories": "Kategorien",
+							"districts": "Bezirke",
+							"subcategories": "Unterkategorien",
+							"tags": "Tags"
+						},
+						"label": "Kulturorte",
+						"placeholder": "Kulturorte auswählen",
+						"searchPlaceholder": "Kulturorte suchen..."
+					},
+					"users": {
+						"emptyText": "Keine Benutzer*innen gefunden",
+						"filters": {
+							"role": "Rolle"
+						},
+						"label": "Benutzer*innen",
+						"placeholder": "Benutzer*innen auswählen",
+						"searchPlaceholder": "Benutzer*innen suchen..."
+					}
+				},
+				"title": "Mitglieder"
+			}
+		}
+	},
+	"groupTable": {
+		"actions": {
+			"add": "Gruppe erstellen"
+		},
+		"columns": {
+			"created": "Erstellt",
+			"createdAt": "Erstellt am",
+			"description": "Beschreibung",
+			"institutions": "Kulturorte",
+			"name": "Name",
+			"updated": "Aktualisiert am",
+			"users": "Benutzer*innen"
+		},
+		"empty": {
+			"description": "Erstellen Sie eine Gruppe, um Mitglieder zu organisieren.",
+			"title": "Keine Gruppen gefunden."
+		},
+		"emptyMessage": "Keine Gruppen gefunden.",
+		"searchPlaceholder": "Gruppen durchsuchen..."
 	},
 	"imprintModal": {
 		"chairman": {
@@ -344,7 +559,6 @@
 			"management": "Dirk Förster, Geschäftsführung",
 			"title": "Vertreten durch:"
 		},
-		"subtitle": "",
 		"title": "Impressum"
 	},
 	"informationModal": {
@@ -373,6 +587,7 @@
 			],
 			"title": "Fragen & Antworten"
 		},
+		"featuresListAriaLabel": "Liste der verfügbaren Projektfunktionen",
 		"introduction": [
 			"Seit September 2025 steht Ihnen mit dem Kulturkataster Berlin die erste Version unseres digitalen Werkzeugs zur Verfügung, dass die Berliner Kulturlandschaft systematisch erfasst.",
 			"Das Kulturkataster wächst stetig weiter: Bereits für Anfang 2026 ist Version 2 geplant, und zur Jahresmitte 2026 folgt Version 3. Mit jeder neuen Version nehmen wir weitere Kulturorte auf, ergänzen die Informationen und fügen neue Funktionalitäten hinzu.",
@@ -398,8 +613,8 @@
 			}
 		},
 		"simpleLanguageDirect": "Den Bereich „Infos & Service“ in leichter Sprache finden Sie <link />.",
-		"subtitle": "",
 		"title": "Infos & Service",
+		"upcomingEnhancementsListAriaLabel": "Liste der geplanten Weiterungen und Verbesserungen",
 		"usage": {
 			"guides": [
 				{
@@ -454,15 +669,363 @@
 			],
 			"introduction": "Das Kulturkataster Berlin wurde so konzipiert, dass es möglichst intuitiv bedient werden kann. Funktionalitäten orientieren sich an gängigen Kartenanwendungen. Grundlegende Bedienungshinweise haben wir an dieser Stelle für Sie zusammengefasst.",
 			"title": "Bedienung"
+		}
+	},
+	"institutionDraftIntroModal": {
+		"choice": {
+			"guest": {
+				"cta": "Weiter als Gast",
+				"description": "Sie können natürlich auch gern mitwirken, ohne sich bei uns anzumelden.",
+				"title": "Fortfahren ohne Anmeldung"
+			},
+			"login": {
+				"cta": "Zur Anmeldung",
+				"description": "Für die schnellere Bearbeitung Ihrer Einträge und die Übersicht empfehlen wir Ihnen, sich im Kulturkatasterportal anzumelden oder zu registrieren.",
+				"title": "Melden Sie sich an oder registrieren Sie sich, um fortzufahren."
+			},
+			"title": "Wie möchten Sie fortfahren?"
 		},
-		"featuresListAriaLabel": "Liste der verfügbaren Projektfunktionen",
-		"upcomingEnhancementsListAriaLabel": "Liste der geplanten Weiterungen und Verbesserungen"
+		"intro": {
+			"back": "Zurück",
+			"cta": "Weiter",
+			"description": "Zum Mitwirken tragen Sie bitte die benötigten Angaben in die jeweiligen Felder ein und klicken Sie am Ende des Formulars auf „Daten übermitteln“. Unser Redaktionsteam prüft jede Einsendung vor der Veröffentlichung und meldet sich ggfs. bei Rückfragen.",
+			"mode": {
+				"description": "Wählen Sie die passende Kategorie für die Kultureinrichtung aus. Falls mehrere Kategorien zutreffen, wählen Sie die primäre Kategorie aus.",
+				"edit": "Ergänzung oder Änderung eines oder mehrere bestehender Kulturorte",
+				"new": "Neue/n Kulturort/e eintragen",
+				"title": "Möchten Sie eine neue Kultureinrichtung eintragen oder einen bestehenden Datensatz ergänzen bzw. korrigieren? *"
+			},
+			"sectionNote": "Bitte beachten Sie, dass Sie Angaben nur dann machen sollten, wenn Sie sich der Richtigkeit sicher sind und einer Einwilligung zur Veröffentlichung im Kulturkataster zustimmen. Sollten Informationen nur für befugte Nutzer*innen im geschützten Bereich des Kulturkatasters zugänglich und nicht öffentlich einsehbar sein, haben wir dies am jeweiligen Datenfeld gekennzeichnet.",
+			"sectionTitle": "Basisinformation der Kultureinrichtung",
+			"thankYou": "Vielen Dank, dass Sie das Kulturkataster Berlin mit Ihrem Beitrag unterstützen!"
+		},
+		"submitSuccess": {
+			"cta": "Weitere Einreichung starten",
+			"description": "Dank Ihrer Eingabe wächst das Kulturkataster Berlin immer weiter und weiter und ermöglicht so vielen Menschen den Zugang zu neuen Kulturstandorten.",
+			"title": "Vielen Dank für Ihre Einreichung"
+		},
+		"title": "Mitwirken beim Kulturkataster Berlin"
+	},
+	"institutionDraftWizardModal": {
+		"actions": {
+			"back": "Zurück",
+			"next": "Weiter",
+			"review": "Prüfen",
+			"submit": "Kulturort einreichen"
+		},
+		"dialog": {
+			"create": {
+				"subtitle": "Vervollständigen Sie die folgenden Schritte, um einen neuen Kulturort einzutragen.",
+				"title": "Neuen Kulturort eintragen"
+			},
+			"edit": {
+				"subtitle": "Prüfen und aktualisieren Sie die Angaben zum Kulturort.",
+				"title": "Kulturort bearbeiten"
+			}
+		},
+		"form": {
+			"basic": {
+				"sectionTitle": "Grundinformationen",
+				"validation": {
+					"duplicateInstitution": "Ein Kulturort mit diesem Namen und dieser Adresse existiert bereits.",
+					"duplicatePossible": "Möglicher Duplikatseintrag gefunden. Bitte vor dem Absenden prüfen."
+				}
+			},
+			"category": {
+				"newCategory": {
+					"description": "Mehrere Kategorien bitte durch Komma trennen.",
+					"label": "Neue Kategorie(n) vorschlagen",
+					"placeholder": "z. B. Neue Kategorie"
+				},
+				"validation": {
+					"minSelection": "Bitte wählen Sie mindestens eine Kategorie aus."
+				}
+			},
+			"contact": {
+				"consent": {
+					"contactListing": "Ich bin damit einverstanden, mit meinen Kontaktdaten als Ansprechperson im passwortgeschützten Bereich des Kulturkatasters genannt zu werden.",
+					"requestAdminRights": "Ich bin verantwortlich für diesen Kulturort und möchte ihn der Liste in meinem Profil hinzufügen und die Administrationsrechte dafür erhalten.",
+					"title": "Abschließende Angaben",
+					"worksForOrganization": "Ich arbeite für diese Kulturorganisation."
+				}
+			},
+			"information": {
+				"accordions": {
+					"accessibility": {
+						"description": "Informationen zur Barrierefreiheit der Kultureinrichtung.",
+						"title": "Barrierefreiheit"
+					},
+					"closing": {
+						"description": "Diese Angabe betrifft nur bereits geschlossene Orte.",
+						"title": "Schließungsgründe"
+					},
+					"cost": {
+						"description": "Angaben zu Eintrittspreisen oder Nutzungskosten.",
+						"title": "Kosten"
+					},
+					"establishment": {
+						"description": "Zeitraum der Nutzung oder Eröffnung am Standort.",
+						"title": "Zeitraum am Standort"
+					},
+					"funding": {
+						"description": "Informationen zur Förderung.",
+						"title": "Art der Förderung"
+					},
+					"fundingSources": {
+						"description": "Geben Sie die Finanzierungsquellen Ihrer Kultureinrichtung an.",
+						"title": "Art der Finanzierung"
+					},
+					"organization": {
+						"description": "Rechtsform der Kultureinrichtung.",
+						"title": "Organisationsform"
+					},
+					"ownership": {
+						"description": "Diese Information wird ausschließlich für befugte Nutzer*innen im geschützten Bereich des Kulturkatasters zugänglich und nicht öffentlich einsehbar sein.",
+						"title": "Eigentumsverhältnisse"
+					},
+					"protection": {
+						"description": "Angaben zum Schutz und zur Sicherung des Standorts.",
+						"title": "Sicherungsstatus"
+					},
+					"rental": {
+						"description": "Diese Information wird ausschließlich für befugte Nutzer*innen im geschützten Bereich des Kulturkatasters zugänglich und nicht öffentlich einsehbar sein.",
+						"title": "Miet- und Nutzungsverhältnisse"
+					},
+					"sharedUseAccessibility": {
+						"description": "Ist der Raum barrierefrei zugänglich? Welche Barrieren sind vorhanden?",
+						"title": "Barrierefreiheit"
+					},
+					"sharedUseAudience": {
+						"description": "Für welche Art von Aktivitäten ist der Raum geeignet? Zum Beispiel: \"geeignet für Tanzproben und Workshops\" oder \"ideal für Lesungen und kleine Konzerte.\"",
+						"title": "Zielgruppe/Sparte"
+					},
+					"sharedUseAvailability": {
+						"description": "Wann kann der Raum genutzt werden? Sind es bestimmte Tage, Tageszeiten oder Zeiträume?",
+						"title": "Zeitliche Verfügbarkeiten"
+					},
+					"sharedUseContactPerson": {
+						"description": "Geben Sie hier bitte einen Kontakt per E-Mail und/oder Telefon an. Sofern es eine Ansprechperson gibt, können Sie den Namen ebenfalls angeben. Sofern Sie hier personenbezogene Daten eintragen, beachten Sie bitte, dass Sie mit Absenden des Formulars der Veröffentlichung dieser Daten im Kulturkataster zustimmen müssen.",
+						"title": "Kontakt für Raumanfragen"
+					},
+					"sharedUseCost": {
+						"description": "Wie hoch sind die Kosten für die Nutzung? Gibt es einen Stunden-, Tages- oder Wochenpreis? Sind die Kosten verhandelbar?",
+						"title": "Kosten"
+					},
+					"sharedUseEquipment": {
+						"description": "Welche Infrastruktur ist vorhanden? Gibt es Tische, Stühle, eine Küche, WLAN, Licht- und Tontechnik? Jedes Detail kann entscheidend sein.",
+						"title": "Ausstattung"
+					},
+					"sharedUseInfo": {
+						"description": "Beschreiben, welche Informationen hier eingetragen werden sollen, evtl. mit Aufzählung von Beispielen",
+						"title": "Beschreibung der Räume/Flächen"
+					},
+					"space": {
+						"description": "Angaben zu Fläche, Räumen und Kapazität.",
+						"title": "Räumlichkeiten"
+					}
+				},
+				"closingReason": {
+					"placeholder": "Gründe für die Schließung angeben"
+				},
+				"datePlaceholder": "DD.MM.YYYY",
+				"datePlaceholderWithYear": "DD.MM.YYYY oder YYYY",
+				"establishment": {
+					"sinceDescription": "Bitte tragen Sie das Datum der erstmaligen Nutzung oder Eröffnung am Standort ein. Falls das genaue Datum nicht bekannt ist, reicht auch die Angabe des Jahres.",
+					"untilDescription": "Bitte tragen Sie das Datum ein, bis zu dem die Kultureinrichtung an diesem Standort aktiv war. Diese Angabe betrifft nur bereits geschlossene Orte. Falls das genaue Datum nicht bekannt ist, reicht auch die Angabe des Jahres."
+				},
+				"organization": {
+					"legalFormPlaceholder": "z. B. e.V., gGmbH, GbR"
+				},
+				"notesDescription": "Bitte beachten Sie, dass dieses Feld für die Öffentlichkeit einsehbar ist. Wenn Sie Informationen eintragen möchten, die nur für befugte Nutzer*innen einsehbar sind, tragen Sie diese bitte im Feld \"Interne Notizen\" direkt darunter ein.",
+				"internalNotesDescription": "Interne Hinweise für die Bearbeitung.",
+				"internalNotesPrivateDescription": "Diese Information wird ausschließlich für befugte Nutzer*innen im geschützten Bereich des Kulturkataster zugänglich und nicht öffentlich einsehbar sein.",
+				"protectionStatus": {
+					"acutelyThreatened": "Akut bedroht",
+					"longTermSecured": "Langfristig gesichert",
+					"mediumTermSecured": "Mittelfristig gesichert",
+					"notYetSecured": "Noch nicht gesichert",
+					"permanentlyClosed": "Dauerhaft geschlossen",
+					"uncertain": "Unsicher"
+				},
+				"rentalContract": {
+					"hereditaryBuildingRight": "Erbbaurecht"
+				},
+				"selectPlaceholder": "Bitte auswählen",
+				"sharedUse": {
+					"accessibilityPlaceholder": "Barrierefreiheit beschreiben",
+					"audiencePlaceholder": "Geeignete Zielgruppe/Sparte beschreiben",
+					"availabilityPlaceholder": "Zeitliche Verfügbarkeiten beschreiben",
+					"contactPersonPlaceholder": "Kontakt für Raumanfragen angeben",
+					"costPlaceholder": "Kosten für die Nutzung beschreiben",
+					"detailsLabel": "Details",
+					"equipmentPlaceholder": "Ausstattung beschreiben",
+					"infoPlaceholder": "Beschreibung der Räume/Flächen",
+					"label": "Offen für Raumanfragen",
+					"options": {
+						"no": "Nein",
+						"yes": "Ja"
+					}
+				}
+			}
+		},
+		"feedback": {
+			"submit": {
+				"pendingConflict": "Du hast bereits eine offene Einreichung für diesen Kulturort eingereicht."
+			}
+		},
+		"stepLabel": "Schritt {{current}} / {{total}}",
+		"steps": {
+			"basic": {
+				"subtitle": "Jedes Feld, das Sie im Formular ausfüllen, hilft uns, diesen Ort im Kulturkataster zu ergänzen. Bei einem Großteil der Felder handelt es sich um freiwillige Angaben.",
+				"title": "Neuen Kulturort eintragen"
+			},
+			"category": {
+				"subtitle": "Wählen Sie die passenden Kategorien für den Kulturort aus. Falls etwas fehlt, können Sie neue Kategorien vorschlagen.",
+				"title": "Kategorie zuordnen"
+			},
+			"contact": {
+				"subtitle": "Hinterlegen Sie eine Ansprechperson, damit unser Redaktionsteam Sie bei Rückfragen kontaktieren kann.",
+				"title": "Ansprechperson für Rückfragen"
+			},
+			"information": {
+				"subtitle": "Das Kulturkataster fördert eine solidarische, resiliente Kulturlandschaft, indem es Orte mit freien Kapazitäten mit Organisationen verbindet, die Räume suchen. So werden Leerstände verringert und Ressourcen optimal genutzt. Alle Angaben sind freiwillig.",
+				"title": "Raumanfragen und weitere Angaben"
+			},
+			"review": {
+				"subtitle": "Sie können hier alle Angaben noch einmal einsehen und falls nötig korrigieren.",
+				"title": "Prüfung Ihrer Angaben"
+			}
+		}
+	},
+	"institutionFormModal": {
+		"actions": {
+			"cancel": "Abbrechen",
+			"create": "Erstellen",
+			"creating": "Wird erstellt...",
+			"save": "Speichern",
+			"saving": "Wird gespeichert..."
+		},
+		"delete": {
+			"button": "Löschen",
+			"cancel": "Abbrechen",
+			"confirm": "Löschen",
+			"confirmDescription": "Wenn Sie den Kulturort direkt löschen dürfen, wird er sofort entfernt. Andernfalls wird eine Löschanfrage zur Prüfung eingereicht.",
+			"confirmTitle": "Kulturort löschen?",
+			"errorDescription": "Bitte versuchen Sie es erneut oder kontaktieren Sie den Support, falls das Problem weiterhin besteht.",
+			"errorTitle": "Löschen fehlgeschlagen"
+		},
+		"dialog": {
+			"notFound": {
+				"description": "Der ausgewählter Kulturort konnte nicht geladen werden.",
+				"title": "Kulturort nicht gefunden"
+			},
+			"title": {
+				"create": "Kulturort erstellen",
+				"edit": "Kulturort bearbeiten"
+			}
+		},
+		"feedback": {
+			"create": {
+				"description": "Der Kulturort wurde erfolgreich erstellt.",
+				"title": "Kulturort erstellt"
+			},
+			"delete": {
+				"description": "Der Kulturort wurde dauerhaft entfernt.",
+				"title": "Kulturort gelöscht"
+			},
+			"deleteRequest": {
+				"description": "Ihre Löschanfrage wurde eingereicht und wird geprüft.",
+				"title": "Löschanfrage eingereicht"
+			},
+			"update": {
+				"description": "Die Änderungen wurden erfolgreich gespeichert.",
+				"title": "Kulturort aktualisiert"
+			}
+		},
+		"form": {
+			"additional": {
+				"title": "Zusätzliche Informationen"
+			},
+			"contact": {
+				"title": "Kontakt"
+			},
+			"details": {
+				"description": {
+					"create": "Legen Sie einen neuen Kulturort an.",
+					"edit": "Aktualisieren Sie die Kulturorte."
+				},
+				"title": "Details"
+			},
+			"facility": {
+				"title": "Einrichtung"
+			},
+			"funding": {
+				"title": "Finanzierung"
+			},
+			"organization": {
+				"title": "Organisation"
+			},
+			"sharedUse": {
+				"description": "Geben Sie an, ob die Räumlichkeiten für die Mehrfachnutzung zur Verfügung stehen.",
+				"options": {
+					"no": "Nein",
+					"yes": "Ja"
+				},
+				"title": "Mehrfachnutzung"
+			},
+			"status": {
+				"title": "Status"
+			}
+		},
+		"review": {
+			"actions": {
+				"approve": "Genehmigen",
+				"reject": "Ablehnen"
+			},
+			"error": "Überprüfung fehlgeschlagen. {{error}}",
+			"errorUnknown": "Unbekannter Fehler.",
+			"grantSubmitterAccess": "Der einreichenden Person nach Genehmigung Zugriff auf diesen Kulturort geben.",
+			"notesLabel": "Prüfnotizen",
+			"notesPlaceholder": "Optionale Notizen für die Einreichung",
+			"statusLabel": "Status: {{status}}",
+			"title": "Einreichung prüfen"
+		}
+	},
+	"institutionModalCloseConfirmation": {
+		"cancel": "Abbrechen",
+		"confirm": "Verlassen",
+		"description": "Nicht gespeicherte Eingaben gehen verloren.",
+		"title": "Vorgang verlassen?"
+	},
+	"institutionsTable": {
+		"actions": {
+			"addInstitution": "Kulturort hinzufügen",
+			"claimInstitution": "Meine Orte anfragen"
+		},
+		"empty": {
+			"description": "Sie können direkt neue Einträge starten.",
+			"title": "Keine Kulturorte vorhanden."
+		},
+		"type": {
+			"manage": "Verwalten",
+			"submission": {
+				"claim": "Verwaltung angefragt",
+				"create": "Erstellung angefragt",
+				"delete": "Löschung angefragt",
+				"update": "Änderung angefragt"
+			}
+		}
 	},
 	"listView": {
 		"allLoaded": "Alle Kulturorte geladen",
 		"countLabel": "{{count}} Kulturorte",
 		"description": "Diese Liste zeigt alle Orte, die Sie in den Filtern ausgewählt haben – 1:1 wie auf der Karte. Sie eignet sich besonders für Screenreader.",
+		"filterButton": "Filter",
 		"loadMore": "Weitere Kulturorte laden",
+		"searchButton": "Suchen",
+		"searchClose": "Suche schließen",
+		"searchLabel": "Liste durchsuchen",
+		"searchPlaceholder": "Kulturort, Adresse oder Bezirk",
 		"subtitle": "Ihre Ergebnisse auf einen Blick",
 		"timeline": "Die Entwicklung der Listenansicht ist für das Jahr 2026 geplant.",
 		"title": "Listenansicht"
@@ -471,6 +1034,115 @@
 		"description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",
 		"subtitle": "Hier kommt der Datenschutztext.",
 		"title": "Datenschutz"
+	},
+	"roleFormModal": {
+		"actions": {
+			"cancel": "Abbrechen",
+			"create": "Rolle erstellen",
+			"creating": "Rolle wird erstellt...",
+			"save": "Änderungen speichern",
+			"saving": "Änderungen werden gespeichert..."
+		},
+		"delete": {
+			"button": "Löschen",
+			"cancel": "Abbrechen",
+			"confirm": "Löschen",
+			"confirmDescription": "Die Rolle wird dauerhaft entfernt. Diese Aktion kann nicht rückgängig gemacht werden.",
+			"confirmTitle": "Rolle löschen?",
+			"errorDescription": "Bitte versuchen Sie es erneut oder kontaktieren Sie den Support, falls das Problem weiterhin besteht.",
+			"errorTitle": "Löschen fehlgeschlagen"
+		},
+		"dialog": {
+			"loading": "Rolle wird geladen...",
+			"notFound": {
+				"description": "Die ausgewählte Rolle konnte nicht geladen werden.",
+				"title": "Rolle nicht gefunden"
+			},
+			"title": {
+				"create": "Rolle erstellen",
+				"edit": "Rolle bearbeiten"
+			}
+		},
+		"feedback": {
+			"create": {
+				"description": "Die Rolle wurde erfolgreich erstellt.",
+				"title": "Rolle erstellt"
+			},
+			"update": {
+				"description": "Die Änderungen wurden erfolgreich gespeichert.",
+				"title": "Rolle aktualisiert"
+			}
+		},
+		"form": {
+			"details": {
+				"description": {
+					"create": "Legen Sie eine neue Rolle an.",
+					"edit": "Aktualisieren Sie den Rollennamen und die Beschreibung."
+				},
+				"fields": {
+					"description": {
+						"label": "Beschreibung",
+						"placeholder": "Optionale Beschreibung"
+					},
+					"name": {
+						"label": "Name",
+						"placeholder": "Rollenname"
+					}
+				},
+				"title": "Rollen-Details"
+			}
+		},
+		"permissions": {
+			"fields": {
+				"columnLabel": "Feld",
+				"description": "Begrenzen Sie Aktualisierungen auf bestimmte Kulturort-Felder.",
+				"sections": {
+					"address": "Adressfelder",
+					"institution": "Kulturort-Felder",
+					"relations": "Beziehungen"
+				},
+				"title": "Feldberechtigungen"
+			},
+			"scope": {
+				"all": "Alle",
+				"description": "Eigene: nur eigene Datensätze. Alle: alle Datensätze.",
+				"label": "Bandbreite",
+				"own": "Eigene"
+			},
+			"table": {
+				"description": "Legen Sie fest, welche Aktionen diese Rolle pro Tabelle ausführen darf.",
+				"title": "Tabellenberechtigungen"
+			},
+			"tables": {
+				"address": "Adressen",
+				"category": "Kategorien",
+				"entity_audit": "Aktivität",
+				"group": "Gruppen",
+				"institution": "Kulturorte",
+				"role": "Rollen",
+				"submission": "Kulturort-Anfragen",
+				"user": "Benutzer*innen"
+			},
+			"title": "Berechtigungen"
+		}
+	},
+	"roleTable": {
+		"actions": {
+			"add": "Rolle erstellen"
+		},
+		"columns": {
+			"createdAt": "Erstellt am",
+			"description": "Beschreibung",
+			"name": "Name",
+			"updatedAt": "Aktualisiert am",
+			"users": "Benutzer*innen"
+		},
+		"empty": {
+			"description": "Erstellen Sie eine Rolle, um Berechtigungen zu verwalten.",
+			"title": "Keine Rollen gefunden."
+		},
+		"emptyMessage": "Keine Rollen gefunden.",
+		"searchPlaceholder": "Rollen durchsuchen..."
 	},
 	"signLanguageModal": {
 		"content": [
@@ -725,6 +1397,7 @@
 					"Nach Kategorien.",
 					"Nach Unter·kategorien."
 				],
+
 				"title": "Sie können Kultur·orte filtern:",
 				"titleBold": "Filtern"
 			},
@@ -894,8 +1567,192 @@
 			"title": "Infos & Services"
 		}
 	},
+	"userClaims": {
+		"approve": "Annehmen",
+		"claimDate": "Datum der Anfrage",
+		"currentUsers": "Aktuelle Nutzer",
+		"empty": "Keine offenen Anfragen vorhanden.",
+		"institutionAddress": "Adresse",
+		"reject": "Ablehnen",
+		"subtitle": "Überprüfen Sie die Anfragen zur Institutionen-Zugehörigkeit.",
+		"title": "Institutionen-Anfragen prüfen",
+		"unknownInstitution": "Unbekannte Institution",
+		"userGroup": "Benutzergruppe"
+	},
+	"userFormModal": {
+		"actions": {
+			"cancel": "Abbrechen",
+			"create": "Nutzer*in anlegen",
+			"creating": "Wird angelegt...",
+			"save": "Änderungen speichern",
+			"saving": "Wird gespeichert..."
+		},
+		"complianceResend": {
+			"description": "Senden Sie die DSGVO-Compliance-E-Mail erneut an die Nutzerin oder den Nutzer.",
+			"error": "DSGVO-Compliance-E-Mail konnte nicht gesendet werden.",
+			"send": "DSGVO-Compliance-E-Mail senden",
+			"sending": "Wird gesendet…",
+			"success": "DSGVO-Compliance-E-Mail erfolgreich gesendet.",
+			"title": "DSGVO-Compliance erneut senden"
+		},
+		"delete": {
+			"button": "Löschen",
+			"cancel": "Abbrechen",
+			"confirm": "Löschen",
+			"confirmDescription": "Die Nutzer*in wird dauerhaft entfernt. Diese Aktion kann nicht rückgängig gemacht werden.",
+			"confirmTitle": "Nutzer*in löschen?",
+			"errorDescription": "Bitte versuchen Sie es erneut oder kontaktieren Sie den Support, falls das Problem weiterhin besteht.",
+			"errorTitle": "Löschen fehlgeschlagen"
+		},
+		"dialog": {
+			"loading": "Nutzer*in wird geladen…",
+			"notFound": {
+				"description": "Der Datensatz ist derzeit nicht verfügbar. Bitte versuchen Sie es erneut.",
+				"title": "Nutzer*in nicht gefunden"
+			},
+			"title": {
+				"create": "Nutzer*in hinzufügen",
+				"edit": "Nutzer*in bearbeiten"
+			}
+		},
+		"feedback": {
+			"create": {
+				"description": "Die Nutzer*in wurde erfolgreich erstellt.",
+				"title": "Nutzer*in erstellt"
+			},
+			"update": {
+				"description": "Die Änderungen wurden erfolgreich gespeichert.",
+				"title": "Nutzer*in aktualisiert"
+			}
+		},
+		"form": {
+			"access": {
+				"fields": {
+					"groups": {
+						"emptyText": "Keine Gruppen gefunden",
+						"label": "Gruppen",
+						"placeholder": "Gruppen auswählen",
+						"searchPlaceholder": "Gruppen suchen..."
+					},
+					"institutions": {
+						"emptyText": "Keine Kulturorte gefunden",
+						"filters": {
+							"categories": "Kategorien",
+							"districts": "Bezirke",
+							"subcategories": "Unterkategorien",
+							"tags": "Tags"
+						},
+						"label": "Kulturorte",
+						"placeholder": "Kulturorte auswählen",
+						"searchPlaceholder": "Kulturort suchen..."
+					},
+					"role": {
+						"label": "Rolle"
+					}
+				},
+				"title": "Zugriff & Mitgliedschaften"
+			},
+			"identity": {
+				"description": {
+					"create": "Laden Sie eine neue Nutzerin oder einen neuen Nutzer ein und legen Sie die Zugriffsrechte fest.",
+					"edit": "Profilangaben und Zugriffsrechte aktualisieren."
+				},
+				"fields": {
+					"accountType": {
+						"label": "Kontotyp / Rolle",
+						"placeholder": "Organisation, Bezirk, ..."
+					},
+					"compliance": {
+						"label": "Compliance freigegeben"
+					},
+					"email": {
+						"label": "E-Mail",
+						"placeholder": "name@beispiel.de"
+					},
+					"firstName": {
+						"label": "Vorname",
+						"placeholder": "Max"
+					},
+					"lastName": {
+						"label": "Nachname",
+						"placeholder": "Mustermann"
+					},
+					"status": {
+						"label": "Status"
+					}
+				},
+				"title": "Benutzerdetails"
+			}
+		},
+		"passwordReset": {
+			"description": "Senden Sie eine Reset-E-Mail an die Nutzerin oder den Nutzer.",
+			"error": "Reset-E-Mail konnte nicht gesendet werden.",
+			"send": "Reset-E-Mail senden",
+			"sending": "Wird gesendet…",
+			"success": "E-Mail zum Zurücksetzen des Passworts gesendet.",
+			"title": "Passwort zurücksetzen"
+		},
+		"roleEmails": {
+			"district": {
+				"description": "Freigabe- oder Ablehnungs-E-Mail für Bezirksmitarbeitende senden.",
+				"title": "Rollen-E-Mail: Bezirk"
+			},
+			"error": "Rollen-E-Mail konnte nicht gesendet werden.",
+			"network": {
+				"description": "Freigabe- oder Ablehnungs-E-Mail für Verband/Netzwerk senden.",
+				"title": "Rollen-E-Mail: Verband/Netzwerk"
+			},
+			"sendApprove": "Freigabe-E-Mail senden",
+			"sendReject": "Ablehnungs-E-Mail senden",
+			"sendingApprove": "Freigabe wird gesendet…",
+			"sendingReject": "Ablehnung wird gesendet…",
+			"state": {
+				"description": "Freigabe- oder Ablehnungs-E-Mail für Landesmitarbeitende senden.",
+				"title": "Rollen-E-Mail: Land"
+			},
+			"success": "Rollen-E-Mail erfolgreich gesendet."
+		},
+		"status": {
+			"active": "Aktiv",
+			"approvalPending": "Freigabe ausstehend",
+			"banned": "Gesperrt",
+			"inactive": "Inaktiv"
+		}
+	},
+	"userTable": {
+		"actions": {
+			"add": "Nutzer*in hinzufügen"
+		},
+		"columns": {
+			"access": "Zugriff auf Kulturorte",
+			"claims": "Kulturort Anfragen",
+			"compliance": "Compliance",
+			"createdAt": "Erstellt am",
+			"email": "E-Mail",
+			"firstName": "Vorname",
+			"groups": "Gruppen",
+			"lastName": "Nachname",
+			"role": "Rolle",
+			"status": "Status",
+			"updatedAt": "Aktualisiert am"
+		},
+		"compliance": {
+			"accepted": "DSGVO akzeptiert",
+			"rejected": "DSGVO nicht akzeptiert"
+		},
+		"empty": {
+			"description": "Legen Sie eine neue Nutzer*in an, um zu starten.",
+			"title": "Keine Nutzer*innen gefunden."
+		},
+		"emptyMessage": "Keine Nutzer*innen gefunden.",
+		"emptyValue": "—",
+		"institutionsCount_one": "{{count}} Kulturort",
+		"institutionsCount_other": "{{count}} Kulturorte",
+		"searchPlaceholder": "Nutzer*innen suchen..."
+	},
 	"welcomeModal": {
 		"aboutButton": "Über das Projekt",
+		"accessibilitySettings": "Einstellungen zur Barrierefreiheit",
 		"closeButton": "Schließen",
 		"description1": "Das ist die erste Version des Berliner Kulturkatasters. Das Kulturkataster ist eine digitale Karte, die die Vielfalt der Kulturlandschaft Berlins abbildet und systematisch Kunst- und Kulturorte erfasst. Es dient als zentrale Grundlage für eine faktenbasierte kulturelle Stadtentwicklung. In den kommenden Monaten werden wir diese Version mit neuen Funktionen und Informationen ausbauen.",
 		"description2": "Stärken Sie mit uns dieses Projekt für die Berliner Kultur! Wir freuen uns auf Ihre Anmerkungen.",
@@ -906,7 +1763,6 @@
 		"infoButton": "Infos & Service",
 		"newsletter": "Zum Newsletter anmelden",
 		"subtitle": "Ein Projekt der Kulturraum Berlin gGmbH",
-		"title": "Das Berliner Kulturkataster: Die Kultur der Stadt auf einen Blick",
-		"accessibilitySettings": "Einstellungen zur Barrierefreiheit"
+		"title": "Das Berliner Kulturkataster: Die Kultur der Stadt auf einen Blick"
 	}
 }
