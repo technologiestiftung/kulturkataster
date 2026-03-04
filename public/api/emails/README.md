@@ -36,34 +36,42 @@ Unknown placeholders resolve to an empty string.
 ## Custom Template Catalog
 
 - `custom/claim_approved.html`
+
   - Subject: `Ihr Kulturort {{ .Data.institution_name }} wurde Ihrem Kulturkatasterportal hinzugefügt`
   - Uses: `Data.first_name`, `Data.last_name`, `Data.institution_name`, `Data.portal_url`, `Data.faq_url`
 
 - `custom/claim_rejected.html`
+
   - Subject: `Ihre Anfrage zur Pflege des Kulturorts {{ .Data.institution_name }}`
   - Uses: `Data.first_name`, `Data.last_name`, `Data.institution_name`, `Data.faq_url`
 
 - `custom/role_district_approved.html`
+
   - Subject: `Freigabe als Bezirksmitarbeitende*r für {{ .Data.district }}`
   - Uses: `Data.first_name`, `Data.last_name`, `Data.district`, `Data.portal_url`, `Data.faq_url`
 
 - `custom/role_district_rejected.html`
+
   - Subject: `Ihre Registrierung als Bezirksmitarbeitende*r für {{ .Data.district }}`
   - Uses: `Data.first_name`, `Data.last_name`, `Data.district`, `Data.faq_url`
 
 - `custom/role_state_approved.html`
+
   - Subject: `Freigabe als Landesmitarbeitende*r (Berlin)`
   - Uses: `Data.first_name`, `Data.last_name`, `Data.portal_url`, `Data.faq_url`
 
 - `custom/role_state_rejected.html`
+
   - Subject: `Ihre Registrierung als Landesmitarbeitende*r (Berlin)`
   - Uses: `Data.first_name`, `Data.last_name`, `Data.faq_url`
 
 - `custom/role_network_approved.html`
+
   - Subject: `Freigabe als Mitarbeitende*r eines Verbands/Netzwerks`
   - Uses: `Data.first_name`, `Data.last_name`, `Data.portal_url`, `Data.faq_url`
 
 - `custom/role_network_rejected.html`
+
   - Subject: `Ihre Registrierung als Mitarbeitende*r eines Verbands/Netzwerks`
   - Uses: `Data.first_name`, `Data.last_name`, `Data.faq_url`
 
