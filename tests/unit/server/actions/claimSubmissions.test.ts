@@ -200,8 +200,6 @@ describe("server actions: claim submissions", () => {
 			created_by: "user-2",
 			status: "approval_pending" as SubmissionStatus,
 		});
-		txSubmissionUpdateMock.mockResolvedValue({ id: 6, status: "approved" });
-
 		const result = await reviewClaimSubmission({
 			id: 6,
 			decision: "approved",
@@ -219,13 +217,44 @@ describe("server actions: claim submissions", () => {
 				data: { institutions: { connect: { id: 44 } } },
 			}),
 		);
-		expect(txSubmissionUpdateMock).toHaveBeenCalledWith(
-			expect.objectContaining({
-				data: expect.objectContaining({ status: "approved" }),
-			}),
-		);
+		expect(txSubmissionDeleteMock).toHaveBeenCalledWith({
+			where: { id: 6 },
+		});
+		expect(txSubmissionUpdateMock).not.toHaveBeenCalled();
 		expect(revalidateAccountMock).toHaveBeenCalled();
 		expect(result).toEqual({ id: 6, status: "approved" });
+	});
+
+	it("reviewClaimSubmission allows re-review for rejected claims", async () => {
+		submissionFindByIdMock.mockResolvedValue({
+			id: 66,
+			type: "claim",
+			entity_id: 77,
+			created_by: "user-77",
+			status: "rejected" as SubmissionStatus,
+		});
+
+		const result = await reviewClaimSubmission({
+			id: 66,
+			decision: "approved",
+		});
+
+		expect(txInstitutionUpdateMock).toHaveBeenCalledWith(
+			expect.objectContaining({
+				where: { id: 77 },
+				data: { users: { connect: { id: "user-77" } } },
+			}),
+		);
+		expect(txUserUpdateMock).toHaveBeenCalledWith(
+			expect.objectContaining({
+				where: { id: "user-77" },
+				data: { institutions: { connect: { id: 77 } } },
+			}),
+		);
+		expect(txSubmissionDeleteMock).toHaveBeenCalledWith({
+			where: { id: 66 },
+		});
+		expect(result).toEqual({ id: 66, status: "approved" });
 	});
 
 	it("reviewClaimSubmission throws when submission is not a claim", async () => {

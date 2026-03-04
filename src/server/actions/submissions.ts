@@ -204,9 +204,10 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 	}
 	if (
 		typeof submission.status === "string" &&
-		submission.status !== "approval_pending"
+		submission.status !== "approval_pending" &&
+		submission.status !== "rejected"
 	) {
-		throw new Error("Only pending submissions can be reviewed.");
+		throw new Error("Only pending or rejected submissions can be reviewed.");
 	}
 
 	if (submission.entity_type === "institution") {
@@ -535,8 +536,11 @@ export async function reviewClaimSubmission(input: ClaimReviewPayload) {
 	if (submission.type !== "claim") {
 		throw new Error("Submission is not a claim.");
 	}
-	if (submission.status !== "approval_pending") {
-		throw new Error("Only pending submissions can be reviewed.");
+	if (
+		submission.status !== "approval_pending" &&
+		submission.status !== "rejected"
+	) {
+		throw new Error("Only pending or rejected submissions can be reviewed.");
 	}
 	authorizeTable(ctx, "institution", "update");
 	if (typeof submission.entity_id === "number") {
@@ -617,7 +621,7 @@ export async function reviewClaimSubmission(input: ClaimReviewPayload) {
 				throw new Error("Claim submission missing entity or user.");
 			}
 
-			const updated = await prisma.$transaction(async (tx) => {
+			await prisma.$transaction(async (tx) => {
 				await tx.institution.update({
 					where: { id: entityId },
 					data: { users: { connect: { id: claimantId } } },
@@ -628,17 +632,7 @@ export async function reviewClaimSubmission(input: ClaimReviewPayload) {
 					data: { institutions: { connect: { id: entityId } } },
 				});
 
-				const txUpdated = await tx.submission.update({
-					where: { id: input.id },
-					data: {
-						status: "approved",
-						review_notes: input.reviewNotes ?? undefined,
-						reviewer: currentUserId
-							? { connect: { id: currentUserId } }
-							: undefined,
-						reviewed_at: new Date(),
-					},
-				});
+				await tx.submission.delete({ where: { id: input.id } });
 				await updateSubmissionAuditStatus(
 					{
 						submissionId: input.id,
@@ -648,7 +642,6 @@ export async function reviewClaimSubmission(input: ClaimReviewPayload) {
 					},
 					tx,
 				);
-				return txUpdated;
 			});
 
 			if (claimSubmissionEntityId && claimSubmissionCreatorId) {
@@ -673,7 +666,7 @@ export async function reviewClaimSubmission(input: ClaimReviewPayload) {
 				}
 			}
 			revalidateAccount();
-			return updated;
+			return { id: input.id, status: "approved" as const };
 		},
 	);
 }
