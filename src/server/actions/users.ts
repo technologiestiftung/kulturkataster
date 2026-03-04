@@ -6,12 +6,87 @@ import {
 	getTableScope,
 	requireAllScope,
 } from "@/server/utils/rbac";
-import { getCurrentUserId } from "@/server/actions/auth";
+import { getCurrentUserId, requestPasswordReset } from "@/server/actions/auth";
 import { userRepo } from "@/server/data/userRepo";
 import { createAdminClient, createClient } from "@/server/supabase/server";
 import type { UserFormInput } from "@/types/user";
 import { revalidateAccount } from "../utils/actionsUtils";
 import { requireScopeOrUser } from "@/server/utils/rbac";
+import {
+	sendAccountDeletedEmail,
+	sendComplianceResendEmail,
+	sendRoleDecisionEmailIfNeeded,
+} from "@/server/email/dispatcher";
+
+const buildMirroredUserMetadata = (
+	existingMetadata: unknown,
+	firstName: string | null | undefined,
+	lastName: string | null | undefined,
+) => {
+	const base =
+		existingMetadata && typeof existingMetadata === "object"
+			? (existingMetadata as Record<string, unknown>)
+			: {};
+
+	return {
+		...base,
+		first_name: firstName ?? null,
+		last_name: lastName ?? null,
+	};
+};
+
+const syncAuthUserMetadataAsAdmin = async (userId: string, user: {
+	first_name?: string | null;
+	last_name?: string | null;
+}) => {
+	const supabase = createAdminClient();
+	const { data: authUserData, error: getAuthUserError } =
+		await supabase.auth.admin.getUserById(userId);
+	if (getAuthUserError) {
+		throw new Error(getAuthUserError.message);
+	}
+
+	const metadata = buildMirroredUserMetadata(
+		authUserData.user?.user_metadata,
+		user.first_name,
+		user.last_name,
+	);
+	const { error: updateAuthError } = await supabase.auth.admin.updateUserById(
+		userId,
+		{
+			user_metadata: metadata,
+		},
+	);
+	if (updateAuthError) {
+		throw new Error(updateAuthError.message);
+	}
+};
+
+const syncAuthUserMetadataAsCurrentUser = async (user: {
+	first_name?: string | null;
+	last_name?: string | null;
+}) => {
+	const supabase = await createClient();
+	const {
+		data: { user: authUser },
+		error: getAuthUserError,
+	} = await supabase.auth.getUser();
+	if (getAuthUserError) {
+		throw new Error(getAuthUserError.message);
+	}
+
+	const metadata = buildMirroredUserMetadata(
+		authUser?.user_metadata,
+		user.first_name,
+		user.last_name,
+	);
+	const { error: updateAuthError } = await supabase.auth.updateUser({
+		data: metadata,
+	});
+	if (updateAuthError) {
+		throw new Error(updateAuthError.message);
+	}
+};
 
 export async function getUsers() {
 	const currentUserId = await getCurrentUserId();
@@ -80,6 +155,10 @@ export async function createUser(input: UserFormInput) {
 			? { connect: input.institutionIds.map((id) => ({ id })) }
 			: undefined,
 	});
+	await syncAuthUserMetadataAsAdmin(user.id, {
+		first_name: user.first_name,
+		last_name: user.last_name,
+	});
 	revalidateAccount();
 	return user;
 }
@@ -126,11 +205,20 @@ export async function updateUser(input: UserFormInput) {
 			account_type: input.account_type ?? undefined,
 			meta_info: input.meta_info ?? undefined,
 		});
+		await syncAuthUserMetadataAsCurrentUser({
+			first_name: user.first_name,
+			last_name: user.last_name,
+		});
 		revalidateAccount();
 		return user;
 	}
 
 	const supabase = createAdminClient();
+	const existingUser = await userRepo.findById(input.id);
+	if (!existingUser) {
+		throw new Error("User not found.");
+	}
+
 	const authPayload: {
 		email?: string;
 		banDuration?: string;
@@ -169,6 +257,20 @@ export async function updateUser(input: UserFormInput) {
 			? { set: input.institutionIds.map((id) => ({ id })) }
 			: undefined,
 	});
+	await syncAuthUserMetadataAsAdmin(user.id, {
+		first_name: user.first_name,
+		last_name: user.last_name,
+	});
+
+	await sendRoleDecisionEmailIfNeeded({
+		beforeStatus: existingUser.status,
+		afterStatus: user.status,
+		accountType: user.account_type,
+		email: user.email,
+		firstName: user.first_name,
+		lastName: user.last_name,
+		metaInfo: user.meta_info,
+	});
 	revalidateAccount();
 	return user;
 }
@@ -185,6 +287,7 @@ export async function deleteUser(id: string) {
 		}
 	}
 
+	const existingUser = await userRepo.findById(id);
 	const supabase = createAdminClient();
 	const { error } = await supabase.auth.admin.deleteUser(id);
 	if (error) {
@@ -192,6 +295,13 @@ export async function deleteUser(id: string) {
 	}
 
 	await userRepo.remove(id);
+	if (existingUser?.email) {
+		await sendAccountDeletedEmail({
+			email: existingUser.email,
+			firstName: existingUser.first_name,
+			lastName: existingUser.last_name,
+		});
+	}
 	revalidateAccount();
 	return { id };
 }
@@ -202,28 +312,27 @@ export async function sendPasswordReset(email: string) {
 	authorizeTable(ctx, "user", "update");
 	requireAllScope(ctx, "user", "update");
 
-	const siteUrl = process.env.SITE_URL ?? "http://127.0.0.1:3000";
-	const supabase = createAdminClient();
-	console.log(
-		`Generating password reset link for ${email} with redirect to ${siteUrl}/resetPassword`,
-	);
-	const { error, data } = await supabase.auth.admin.generateLink({
-		type: "recovery",
-		email,
-		options: {
-			redirectTo: `${siteUrl}/resetPassword`,
-		},
-	});
-
-	if (error) {
-		throw new Error(error.message);
+	const result = await requestPasswordReset(email);
+	if (!result.ok) {
+		throw new Error(result.error ?? "Failed to send password reset email.");
 	}
 
-	return { data };
+	return { ok: true as const };
 }
 
 export async function sendComplianceResend(email: string): Promise<void> {
-	// To be implemented
-	console.log(`Resend compliance email to ${email} - Not yet implemented.`);
+	const currentUserId = await getCurrentUserId();
+	const ctx = await getAccessContextForUser(currentUserId);
+	authorizeTable(ctx, "user", "update");
+	requireAllScope(ctx, "user", "update");
+
+	const matchedUsers = await userRepo.search({ email: { equals: email } }, 1);
+	const matchedUser = matchedUsers[0];
+	await sendComplianceResendEmail({
+		email,
+		firstName: matchedUser?.first_name,
+		lastName: matchedUser?.last_name,
+	});
+
 	return;
 }
