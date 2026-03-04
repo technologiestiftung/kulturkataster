@@ -101,7 +101,8 @@ export function ActionPanel({
 								? (secondaryActionLabelLoading ?? actionLabelLoading)
 								: secondaryActionLabel}
 						</Button>
-					)}	{onAction && (
+					)}{" "}
+					{onAction && (
 						<Button
 							type="button"
 							disabled={isLoading || isSecondaryLoading}
