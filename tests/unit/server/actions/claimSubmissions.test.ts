@@ -112,7 +112,9 @@ describe("server actions: claim submissions", () => {
 			AND: [baseWhere, { id: -1 }],
 		}));
 		prismaInstitutionFindFirstMock.mockResolvedValue({ id: 1 });
-		prismaInstitutionFindUniqueMock.mockResolvedValue({ name: "Institution A" });
+		prismaInstitutionFindUniqueMock.mockResolvedValue({
+			name: "Institution A",
+		});
 		prismaUserFindUniqueMock.mockResolvedValue({
 			email: "claimant@example.com",
 			first_name: "Ada",
