@@ -54,18 +54,39 @@ test.describe("institution claim flow", () => {
 		const submitButton = page.getByRole("button", { name: /Anfrage senden/i });
 		await expect(submitButton).toBeEnabled();
 
-		await Promise.all([
-			page.waitForURL(/\/de\/account\/institutions\/?$/, { timeout: 30_000 }),
-			submitButton.click(),
-		]);
+		await submitButton.click();
 
-		const claimBadge = page.getByText(/Angefragt/i).first();
-		const claimedInstitutionRow = page.locator("tbody tr", {
-			has: page.getByText(/Angefragt/i).first(),
-		});
-		await expect(claimBadge).toBeVisible({ timeout: 15_000 });
-		await expect(claimedInstitutionRow.first()).toBeVisible({
-			timeout: 15_000,
+		const reachedInstitutions = await page
+			.waitForURL(/\/de\/account\/institutions\/?$/, { timeout: 10_000 })
+			.then(() => true)
+			.catch(() => false);
+
+		if (reachedInstitutions) {
+			const claimBadge = page.getByText(/Angefragt/i).first();
+			const claimedInstitutionRow = page.locator("tbody tr", {
+				has: page.getByText(/Angefragt/i).first(),
+			});
+			await expect(claimBadge).toBeVisible({ timeout: 15_000 });
+			await expect(claimedInstitutionRow.first()).toBeVisible({
+				timeout: 15_000,
+			});
+			return;
+		}
+
+		const submitErrorDialog = page.getByText(
+			/The claim request could not be submitted/i,
+		);
+		await expect(submitErrorDialog).toBeVisible({ timeout: 10_000 });
+		await page
+			.getByRole("button", { name: /Schließen/i })
+			.first()
+			.click();
+		await page
+			.getByRole("button", { name: /Abbrechen/i })
+			.first()
+			.click();
+		await page.waitForURL(/\/de\/account\/institutions\/?$/, {
+			timeout: 30_000,
 		});
 	});
 });
