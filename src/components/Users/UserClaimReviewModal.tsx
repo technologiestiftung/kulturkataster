@@ -4,14 +4,13 @@ import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/navigation";
 import { Modal } from "@/components/Modals/Modal";
-import { Button } from "@/components/ui/button";
 import { InfoWrapper } from "@/components/InfoWrapper/InfoWrapper";
 import type { InfoWrapperConfig } from "@/components/InfoWrapper/types";
 import { reviewClaimSubmission } from "@/server/actions/submissions";
 import type { ClaimSubmissionDetail } from "@/types/submission";
-import { Card } from "../ui/card";
 import { showSuccessToast } from "@/lib/utils/feedbackToast";
 import { formatDateWithLocale } from "@/lib/utils/dateUtils";
+import { ActionPanel } from "@/components/ActionPanel";
 
 type UserClaimReviewModalProps = {
 	claims: ClaimSubmissionDetail[];
@@ -151,9 +150,45 @@ export function UserClaimReviewModal({
 				) : (
 					<div className="space-y-4">
 						{items.map(({ submission, institution, claimant }) => (
-							<Card
+							<ActionPanel
 								key={submission.id}
-								variant={"filter"}
+								title={
+									(institution?.name ??
+										t("userClaims.unknownInstitution", {
+											defaultValue: "Unbekannte Institution",
+										})) + ` (${institution?.id ?? "—"})`
+								}
+								actionLabel={t("userClaims.approve", {
+									defaultValue: "Annehmen",
+								})}
+								actionLabelLoading={t("userClaims.approve", {
+									defaultValue: "Annehmen",
+								})}
+								onAction={async () => {
+									await handleDecision(submission.id, "approved");
+									return null;
+								}}
+								secondaryActionLabel={t("userClaims.reject", {
+									defaultValue: "Ablehnen",
+								})}
+								secondaryActionLabelLoading={t("userClaims.reject", {
+									defaultValue: "Ablehnen",
+								})}
+								onSecondaryAction={async () => {
+									await handleDecision(submission.id, "rejected");
+									return null;
+								}}
+								errorFallback={t("userClaims.feedback.error.description", {
+									defaultValue:
+										"Please try again or contact support if the issue persists.",
+								})}
+								secondaryErrorFallback={t(
+									"userClaims.feedback.error.description",
+									{
+										defaultValue:
+											"Please try again or contact support if the issue persists.",
+									},
+								)}
 								className="space-y-4"
 							>
 								{(() => {
@@ -161,21 +196,6 @@ export function UserClaimReviewModal({
 										layout: { columns: 1 },
 										alwaysShow: true,
 										fields: [
-											{
-												type: "title",
-												label: t("userClaims.institutionName", {
-													defaultValue: "Institution",
-												}),
-												value: () => {
-													return (
-														(institution?.name ??
-															t("userClaims.unknownInstitution", {
-																defaultValue: "Unbekannte Institution",
-															})) + ` (${institution?.id ?? "—"})`
-													);
-												},
-												alwaysShow: true,
-											},
 											{
 												type: "text",
 												label: t("userClaims.institutionAddress", {
@@ -219,26 +239,7 @@ export function UserClaimReviewModal({
 										<InfoWrapper data={institution ?? {}} config={infoConfig} />
 									);
 								})()}
-								<div className="flex flex-wrap gap-2">
-									<Button
-										variant="outline"
-										onClick={() => handleDecision(submission.id, "rejected")}
-										disabled={isBusy(submission.id)}
-									>
-										{t("userClaims.reject", {
-											defaultValue: "Ablehnen",
-										})}
-									</Button>
-									<Button
-										onClick={() => handleDecision(submission.id, "approved")}
-										disabled={isBusy(submission.id)}
-									>
-										{t("userClaims.approve", {
-											defaultValue: "Annehmen",
-										})}
-									</Button>
-								</div>
-							</Card>
+							</ActionPanel>
 						))}
 					</div>
 				)}

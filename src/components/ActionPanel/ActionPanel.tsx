@@ -11,7 +11,11 @@ type ActionPanelProps = {
 	actionLabel: string;
 	actionLabelLoading: string;
 	onAction?: () => Promise<string | null | undefined>;
+	secondaryActionLabel?: string;
+	secondaryActionLabelLoading?: string;
+	onSecondaryAction?: () => Promise<string | null | undefined>;
 	errorFallback?: string;
+	secondaryErrorFallback?: string;
 	className?: string;
 	icon?: ReactNode;
 };
@@ -22,12 +26,17 @@ export function ActionPanel({
 	actionLabel,
 	actionLabelLoading,
 	onAction,
+	secondaryActionLabel,
+	secondaryActionLabelLoading,
+	onSecondaryAction,
 	errorFallback,
+	secondaryErrorFallback,
 	className,
 	icon,
 }: ActionPanelProps) {
 	const [message, setMessage] = useState<string | null>(null);
 	const [isLoading, setIsLoading] = useState(false);
+	const [isSecondaryLoading, setIsSecondaryLoading] = useState(false);
 
 	const handleAction = async () => {
 		if (!onAction) return;
@@ -45,6 +54,26 @@ export function ActionPanel({
 		}
 	};
 
+	const handleSecondaryAction = async () => {
+		if (!onSecondaryAction) return;
+
+		setIsSecondaryLoading(true);
+		setMessage(null);
+		try {
+			const resultMessage = await onSecondaryAction();
+			setMessage(resultMessage ?? null);
+		} catch (error) {
+			if (!secondaryErrorFallback && !errorFallback) throw error;
+			setMessage(
+				error instanceof Error
+					? error.message
+					: (secondaryErrorFallback ?? errorFallback ?? ""),
+			);
+		} finally {
+			setIsSecondaryLoading(false);
+		}
+	};
+
 	return (
 		<div
 			className={cn(
@@ -58,18 +87,30 @@ export function ActionPanel({
 						{icon && <span className="text-primary-dark">{icon}</span>}
 						{title && <Label className="body2">{title}</Label>}
 					</div>
-					<p className="body2">{children}</p>
+					<div className="body2">{children}</div>
 				</div>
-				{onAction && (
-					<Button
-						type="button"
-						variant="outline"
-						disabled={isLoading}
-						onClick={handleAction}
-					>
-						{isLoading ? actionLabelLoading : actionLabel}
-					</Button>
-				)}
+				<div className="flex flex-wrap gap-2">
+					{onSecondaryAction && secondaryActionLabel && (
+						<Button
+							type="button"
+							variant="outline"
+							disabled={isLoading || isSecondaryLoading}
+							onClick={handleSecondaryAction}
+						>
+							{isSecondaryLoading
+								? (secondaryActionLabelLoading ?? actionLabelLoading)
+								: secondaryActionLabel}
+						</Button>
+					)}	{onAction && (
+						<Button
+							type="button"
+							disabled={isLoading || isSecondaryLoading}
+							onClick={handleAction}
+						>
+							{isLoading ? actionLabelLoading : actionLabel}
+						</Button>
+					)}
+				</div>
 			</div>
 			<AlertDialog
 				open={!!message}

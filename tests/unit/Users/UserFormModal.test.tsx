@@ -89,6 +89,7 @@ vi.mock("@/server/actions/users", () => ({
 	deleteUser: vi.fn(),
 	sendComplianceResend: vi.fn(),
 	sendPasswordReset: vi.fn(),
+	sendRoleDecisionEmailManual: vi.fn(),
 }));
 
 vi.mock("@/lib/utils/feedbackToast", () => ({
