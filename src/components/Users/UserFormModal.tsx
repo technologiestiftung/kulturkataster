@@ -354,8 +354,7 @@ const buildUserFormConfig = ({
 							icon: <Mail className="h-5 w-5 text-primary-dark" />,
 							onAction: async () => {
 								if (!resolvedUser) return null;
-								const data = await sendPasswordReset(resolvedUser.email);
-								console.log("Password reset link sent to:", data);
+								await sendPasswordReset(resolvedUser.email);
 								return t("userFormModal.passwordReset.success");
 							},
 						},

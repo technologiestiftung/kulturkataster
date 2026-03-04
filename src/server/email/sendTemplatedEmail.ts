@@ -1,0 +1,160 @@
+import fs from "node:fs/promises";
+import path from "node:path";
+import nodemailer from "nodemailer";
+
+type TemplateData = Record<string, unknown>;
+
+export type EmailTemplateVariables = {
+	ConfirmationURL?: string;
+	Token?: string;
+	TokenHash?: string;
+	SiteURL?: string;
+	RedirectTo?: string;
+	Data?: TemplateData;
+	Email?: string;
+	NewEmail?: string;
+	OldEmail?: string;
+	Phone?: string;
+	OldPhone?: string;
+	Provider?: string;
+	FactorType?: string;
+};
+
+type SendTemplatedEmailArgs = {
+	to: string;
+	subject: string;
+	templatePath: string;
+	variables?: EmailTemplateVariables;
+};
+
+type EmailRuntimeConfig =
+	| { provider: "noop" }
+	| {
+			provider: "smtp";
+			host: string;
+			port: number;
+			secure: boolean;
+			user: string;
+			pass: string;
+			from: string;
+			replyTo?: string;
+	  };
+
+const EMAIL_TEMPLATE_ROOT = path.join(process.cwd(), "public", "api", "emails");
+const TEMPLATE_PATH_PATTERN = /^[a-zA-Z0-9/_-]+\.html$/;
+
+const getTemplateAbsolutePath = (templatePath: string) => {
+	if (!TEMPLATE_PATH_PATTERN.test(templatePath)) {
+		throw new Error(`Invalid template path: ${templatePath}`);
+	}
+	const absolutePath = path.resolve(EMAIL_TEMPLATE_ROOT, templatePath);
+	if (!absolutePath.startsWith(EMAIL_TEMPLATE_ROOT)) {
+		throw new Error("Template path traversal is not allowed.");
+	}
+	return absolutePath;
+};
+
+const resolvePath = (value: unknown, keyPath: string): unknown => {
+	const keys = keyPath.split(".");
+	let current: unknown = value;
+	for (const key of keys) {
+		if (!current || typeof current !== "object") {
+			return undefined;
+		}
+		current = (current as Record<string, unknown>)[key];
+	}
+	return current;
+};
+
+const renderTemplate = (
+	template: string,
+	variables: EmailTemplateVariables,
+): string => {
+	return template.replace(/{{\s*\.([A-Za-z0-9_.]+)\s*}}/g, (_, keyPath) => {
+		const resolved = resolvePath(variables, keyPath);
+		if (resolved === null || typeof resolved === "undefined") return "";
+		return String(resolved);
+	});
+};
+
+const getEmailRuntimeConfig = (): EmailRuntimeConfig => {
+	const provider = (process.env.EMAIL_PROVIDER ?? "noop").toLowerCase();
+	if (provider === "noop") {
+		return { provider: "noop" };
+	}
+	if (provider !== "smtp") {
+		throw new Error(
+			`Unsupported EMAIL_PROVIDER: ${provider}. Supported values: "smtp", "noop".`,
+		);
+	}
+
+	const host = process.env.SMTP_HOST;
+	const portRaw = process.env.SMTP_PORT;
+	const user = process.env.SMTP_USER;
+	const pass = process.env.SMTP_PASSWORD;
+	const from = process.env.SMTP_SENDER_NAME;
+	const replyTo = process.env.SMTP_REPLY_TO;
+
+	if (!host || !portRaw || !user || !pass || !from) {
+		throw new Error(
+			"Missing SMTP config. Required: SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD, SMTP_SENDER_NAME.",
+		);
+	}
+
+	const port = Number(portRaw);
+	if (!Number.isFinite(port) || port <= 0) {
+		throw new Error(`Invalid SMTP_PORT: ${portRaw}`);
+	}
+
+	const secure = (process.env.SMTP_SECURE ?? "false").toLowerCase() === "true";
+
+	return {
+		provider: "smtp",
+		host,
+		port,
+		secure,
+		user,
+		pass,
+		from,
+		replyTo: replyTo || undefined,
+	};
+};
+
+// Fail fast during module initialization when SMTP is enabled but misconfigured.
+const emailRuntimeConfig = getEmailRuntimeConfig();
+
+export async function sendTemplatedEmail({
+	to,
+	subject,
+	templatePath,
+	variables = {},
+}: SendTemplatedEmailArgs) {
+	const absolutePath = getTemplateAbsolutePath(templatePath);
+	const template = await fs.readFile(absolutePath, "utf8");
+	const html = renderTemplate(template, variables);
+
+	if (emailRuntimeConfig.provider === "noop") {
+		console.info(`[email:no-op] ${subject} -> ${to} (${templatePath})`);
+		return { id: "noop" };
+	}
+
+	const transporter = nodemailer.createTransport({
+		host: emailRuntimeConfig.host,
+		port: emailRuntimeConfig.port,
+		secure: emailRuntimeConfig.secure,
+		auth: {
+			user: emailRuntimeConfig.user,
+			pass: emailRuntimeConfig.pass,
+		},
+	});
+
+	const result = await transporter.sendMail({
+		from: emailRuntimeConfig.from,
+		to,
+		subject,
+		html,
+		replyTo: emailRuntimeConfig.replyTo,
+	});
+
+	return { id: result.messageId ?? null };
+}
