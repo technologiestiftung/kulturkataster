@@ -111,9 +111,9 @@ const getEmailRuntimeConfig = (): EmailRuntimeConfig => {
 		host,
 		port,
 		secure,
-		user,
-		pass,
-		from,
+		user: user || "",
+		pass: pass || "",
+		from: from || "",
 		replyTo: replyTo || undefined,
 	};
 };
