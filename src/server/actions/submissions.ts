@@ -127,10 +127,7 @@ export async function createSubmission(input: SubmissionCreatePayload) {
 
 	const nextStatus = "approval_pending";
 
-	if (
-		currentUserId &&
-		typeof input.entityId === "number"
-	) {
+	if (currentUserId && typeof input.entityId === "number") {
 		const existingPending = await submissionRepo.findFirst({
 			entity_type: input.entityType,
 			entity_id: input.entityId,

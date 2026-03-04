@@ -277,7 +277,6 @@ const ListView: FC = () => {
 						<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 							<span className="body1">{tContent("listView.description")}</span>
 						</div>
-						
 
 						<div className="space-y-2">
 							<div className="flex items-end justify-between gap-4">
