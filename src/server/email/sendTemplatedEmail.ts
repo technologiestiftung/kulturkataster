@@ -34,8 +34,8 @@ type EmailRuntimeConfig =
 			host: string;
 			port: number;
 			secure: boolean;
-			user: string;
-			pass: string;
+			user?: string;
+			pass?: string;
 			from: string;
 			replyTo?: string;
 	  };
@@ -90,8 +90,8 @@ const getEmailRuntimeConfig = (): EmailRuntimeConfig => {
 
 	const host = process.env.SMTP_HOST;
 	const portRaw = process.env.SMTP_PORT;
-	const user = process.env.SMTP_USER;
-	const pass = process.env.SMTP_PASSWORD;
+	const user = process.env.SMTP_USER?.trim();
+	const pass = (process.env.SMTP_PASSWORD ?? process.env.SMTP_PASS)?.trim();
 	const from = process.env.SMTP_SENDER_NAME;
 	const replyTo = process.env.SMTP_REPLY_TO;
 
@@ -111,8 +111,8 @@ const getEmailRuntimeConfig = (): EmailRuntimeConfig => {
 		host,
 		port,
 		secure,
-		user: user || "",
-		pass: pass || "",
+		user: user || undefined,
+		pass: pass || undefined,
 		from: from || "",
 		replyTo: replyTo || undefined,
 	};
@@ -140,10 +140,13 @@ export async function sendTemplatedEmail({
 		host: emailRuntimeConfig.host,
 		port: emailRuntimeConfig.port,
 		secure: emailRuntimeConfig.secure,
-		auth: {
-			user: emailRuntimeConfig.user,
-			pass: emailRuntimeConfig.pass,
-		},
+		auth:
+			emailRuntimeConfig.user && emailRuntimeConfig.pass
+				? {
+						user: emailRuntimeConfig.user,
+						pass: emailRuntimeConfig.pass,
+					}
+				: undefined,
 	});
 
 	const result = await transporter.sendMail({
