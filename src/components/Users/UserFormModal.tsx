@@ -22,6 +22,7 @@ import {
 	deleteUser,
 	sendComplianceResend,
 	sendPasswordReset,
+	sendRoleDecisionEmailManual,
 	updateUser,
 } from "@/server/actions/users";
 import type { UserStatus } from "@/generated/prisma";
@@ -376,6 +377,120 @@ const buildUserFormConfig = ({
 								if (!resolvedUser) return null;
 								await sendComplianceResend(resolvedUser.email);
 								return t("userFormModal.complianceResend.success");
+							},
+						},
+					},
+					{
+						name: "roleDistrictDecision",
+						label: "",
+						type: "actionPanel",
+						layout: { span: "full" },
+						condition: accessCondition,
+						actionPanel: {
+							title: t("userFormModal.roleEmails.district.title"),
+							description: t("userFormModal.roleEmails.district.description"),
+							actionLabel: t("userFormModal.roleEmails.sendApprove"),
+							actionLabelLoading: t("userFormModal.roleEmails.sendingApprove"),
+							secondaryActionLabel: t("userFormModal.roleEmails.sendReject"),
+							secondaryActionLabelLoading: t(
+								"userFormModal.roleEmails.sendingReject",
+							),
+							errorFallback: t("userFormModal.roleEmails.error"),
+							secondaryErrorFallback: t("userFormModal.roleEmails.error"),
+							icon: <Mail className="h-5 w-5 text-primary-dark" />,
+							onAction: async () => {
+								if (!resolvedUser) return null;
+								await sendRoleDecisionEmailManual({
+									userId: resolvedUser.id,
+									target: "district",
+									decision: "approved",
+								});
+								return t("userFormModal.roleEmails.success");
+							},
+							onSecondaryAction: async () => {
+								if (!resolvedUser) return null;
+								await sendRoleDecisionEmailManual({
+									userId: resolvedUser.id,
+									target: "district",
+									decision: "rejected",
+								});
+								return t("userFormModal.roleEmails.success");
+							},
+						},
+					},
+					{
+						name: "roleStateDecision",
+						label: "",
+						type: "actionPanel",
+						layout: { span: "full" },
+						condition: accessCondition,
+						actionPanel: {
+							title: t("userFormModal.roleEmails.state.title"),
+							description: t("userFormModal.roleEmails.state.description"),
+							actionLabel: t("userFormModal.roleEmails.sendApprove"),
+							actionLabelLoading: t("userFormModal.roleEmails.sendingApprove"),
+							secondaryActionLabel: t("userFormModal.roleEmails.sendReject"),
+							secondaryActionLabelLoading: t(
+								"userFormModal.roleEmails.sendingReject",
+							),
+							errorFallback: t("userFormModal.roleEmails.error"),
+							secondaryErrorFallback: t("userFormModal.roleEmails.error"),
+							icon: <Mail className="h-5 w-5 text-primary-dark" />,
+							onAction: async () => {
+								if (!resolvedUser) return null;
+								await sendRoleDecisionEmailManual({
+									userId: resolvedUser.id,
+									target: "state",
+									decision: "approved",
+								});
+								return t("userFormModal.roleEmails.success");
+							},
+							onSecondaryAction: async () => {
+								if (!resolvedUser) return null;
+								await sendRoleDecisionEmailManual({
+									userId: resolvedUser.id,
+									target: "state",
+									decision: "rejected",
+								});
+								return t("userFormModal.roleEmails.success");
+							},
+						},
+					},
+					{
+						name: "roleNetworkDecision",
+						label: "",
+						type: "actionPanel",
+						layout: { span: "full" },
+						condition: accessCondition,
+						actionPanel: {
+							title: t("userFormModal.roleEmails.network.title"),
+							description: t("userFormModal.roleEmails.network.description"),
+							actionLabel: t("userFormModal.roleEmails.sendApprove"),
+							actionLabelLoading: t("userFormModal.roleEmails.sendingApprove"),
+							secondaryActionLabel: t("userFormModal.roleEmails.sendReject"),
+							secondaryActionLabelLoading: t(
+								"userFormModal.roleEmails.sendingReject",
+							),
+							errorFallback: t("userFormModal.roleEmails.error"),
+							secondaryErrorFallback: t("userFormModal.roleEmails.error"),
+							icon: <Mail className="h-5 w-5 text-primary-dark" />,
+							onAction: async () => {
+								if (!resolvedUser) return null;
+								await sendRoleDecisionEmailManual({
+									userId: resolvedUser.id,
+									target: "network",
+									decision: "approved",
+								});
+								return t("userFormModal.roleEmails.success");
+							},
+							onSecondaryAction: async () => {
+								if (!resolvedUser) return null;
+								await sendRoleDecisionEmailManual({
+									userId: resolvedUser.id,
+									target: "network",
+									decision: "rejected",
+								});
+								return t("userFormModal.roleEmails.success");
 							},
 						},
 					},
