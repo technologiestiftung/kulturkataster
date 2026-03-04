@@ -338,7 +338,6 @@ function InstitutionDraftWizardContent({
 					draftMode === "update"
 						? SubmissionType.update
 						: SubmissionType.create,
-				status: "approval_pending",
 				data: payload as Prisma.InputJsonValue,
 				diff: submissionDiff as Prisma.InputJsonValue | undefined,
 				meta: submissionMeta,
@@ -361,7 +360,6 @@ function InstitutionDraftWizardContent({
 							entityType: SubmissionEntityType.category,
 							entityId: null,
 							type: SubmissionType.create,
-							status: "approval_pending",
 							data: { key },
 							meta: {
 								source: "institution_draft",
