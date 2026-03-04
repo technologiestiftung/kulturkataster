@@ -81,7 +81,7 @@ const Legende: FC<LegendeProps> = ({ id, serviceName }) => {
 								)}
 							>
 								{legendItem.textInCircle && (
-									<span className="text-sm text-[#000000]">
+									<span className="body3 text-[#000000]">
 										{legendItem.textInCircle}
 									</span>
 								)}
@@ -95,7 +95,7 @@ const Legende: FC<LegendeProps> = ({ id, serviceName }) => {
 									label: legendItem.label,
 								})}
 								className={cn(
-									"font-bold text-sm tracking-wide",
+									"font-bold body3 tracking-wide",
 									legendItem.color,
 								)}
 							>

@@ -1,11 +1,11 @@
 "use client";
 
-import { ButtonWithTooltip } from "@/components/ui/button";
+import { ButtonWithTooltip } from "@/components/ui/button-with-tooltip";
 import { useMapStore } from "@/lib/store/mapStore";
 import { FC, ReactNode, useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import MinusIcon from "../../../../icons/minus.svg";
-import PlusIcon from "../../../../icons/plus.svg";
+import MinusIcon from "@/icons/minus.svg";
+import PlusIcon from "@/icons/plus.svg";
 
 interface ZoomControlProps {
 	zoomInIcon?: ReactNode;
@@ -13,8 +13,8 @@ interface ZoomControlProps {
 }
 
 const ZoomControl: FC<ZoomControlProps> = ({
-	zoomInIcon = <PlusIcon />,
-	zoomOutIcon = <MinusIcon />,
+	zoomInIcon = <PlusIcon className="size-4" />,
+	zoomOutIcon = <MinusIcon className="size-4" />,
 }) => {
 	const { t } = useTranslation("common");
 	const map = useMapStore((state) => state.map);
@@ -54,7 +54,7 @@ const ZoomControl: FC<ZoomControlProps> = ({
 	return (
 		<div className="hidden md:flex flex-col gap-2">
 			<ButtonWithTooltip
-				variant="map-icon"
+				variant="rounded"
 				size="icon-only"
 				tooltip={t("map.zoomIn")}
 				onClick={handleZoomIn}
@@ -64,7 +64,7 @@ const ZoomControl: FC<ZoomControlProps> = ({
 				{zoomInIcon}
 			</ButtonWithTooltip>
 			<ButtonWithTooltip
-				variant="map-icon"
+				variant="rounded"
 				size="icon-only"
 				tooltip={t("map.zoomOut")}
 				onClick={handleZoomOut}

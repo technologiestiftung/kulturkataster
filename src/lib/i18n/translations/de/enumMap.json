@@ -1,18 +1,4 @@
 {
-	"berlin_district": {
-		"charlottenburg_wilmersdorf": "Charlottenburg-Wilmersdorf",
-		"friedrichshain_kreuzberg": "Friedrichshain-Kreuzberg",
-		"lichtenberg": "Lichtenberg",
-		"marzahn_hellersdorf": "Marzahn-Hellersdorf",
-		"mitte": "Mitte",
-		"neukoelln": "Neukölln",
-		"pankow": "Pankow",
-		"reinickendorf": "Reinickendorf",
-		"spandau": "Spandau",
-		"steglitz_zehlendorf": "Steglitz-Zehlendorf",
-		"tempelhof_schoeneberg": "Tempelhof-Schöneberg",
-		"treptow_koepenick": "Treptow-Köpenick"
-	},
 	"category": {
 		"cinemas": "Kinos",
 		"clubs_music_venues": "Clubs und Musikspielstätten",
@@ -31,150 +17,7 @@
 		"rehearsal_rooms": "Proberäume",
 		"sociocultural_centers": "Soziokulturelle Zentren",
 		"studios": "Ateliers",
-		"urban_art": "Urban Art "
-	},
-	"closing_reason": {
-		"funding_discontinued": "Förderung eingestellt",
-		"lease_expired": "Mietvertrag ausgelaufen",
-		"other": "Sonstiges",
-		"ownership_change": "Eigentümerwechsel"
-	},
-	"district_id": [
-		null,
-		"Treptow-Köpenick",
-		"Pankow",
-		"Lichtenberg",
-		"Friedrichshain-Kreuzberg",
-		"Reinickendorf",
-		"Tempelhof-Schöneberg",
-		"Neukölln",
-		"Mitte",
-		"Marzahn-Hellersdorf",
-		"Charlottenburg-Wilmersdorf",
-		"Steglitz-Zehlendorf",
-		"Spandau"
-	],
-	"field_names": {
-		"address": "Geodaten für Kartenanbindung",
-		"address_suffix": "Adresszusatz",
-		"area": "Größe der Nutzflächen (m²)",
-		"capacity": "Kapazität",
-		"case": "Geoposition",
-		"categories": "Kategorie",
-		"category": "Kategorie",
-		"city": "Ort",
-		"closing_reason": "Schließungsgründe",
-		"contact_person_email": "Ansprechperson E-Mail Adresse",
-		"contact_person_name": "Ansprechperson Vorname",
-		"contact_person_phone": "Ansprechperson Telefonnummer",
-		"contact_person_surname": "Ansprechperson Nachname",
-		"cultural_area": "Kulturareal",
-		"description": "Zusätzliche Informationen",
-		"display_na": "Geodaten OSM",
-		"district": "Bezirk",
-		"email": "E-Mail-Adresse",
-		"established_since": "Bestehen am Standort seit",
-		"established_until": "Bestehen am Standort bis",
-		"funding_source": "Art der Finanzierung",
-		"funding_sources": "Art der Finanzierung",
-		"funding_type": "Art der Förderung",
-		"geo_category": "Geodaten OSM",
-		"geo_type": "Geodaten OSM",
-		"geom": "Geoposition",
-		"id": "ID",
-		"institution_email": "E-Mail-Adresse",
-		"institution_name": "Kultureinrichtung",
-		"institution_phone": "Telefonnummer",
-		"institution_website": "Website",
-		"latlong": "Geodaten OSM",
-		"name": "Kultureinrichtung",
-		"neighbourhood": "Stadtteil",
-		"notes": "Zusätzliche Informationen",
-		"number_of_rooms": "Anzahl der Arbeitsräume",
-		"osm_id": "Geodaten OSM",
-		"owner": "Eigentümer*in",
-		"owner_name": "Eigentümer*in",
-		"owner_type": "Eigentümer*innenart",
-		"parent_organization": "Dachorganisation",
-		"parent_organizations": "Dachorganisation",
-		"phone": "Telefonnummer",
-		"protection_status": "Sicherungsstatus",
-		"protection_status_info": "Sicherungsstatus Detailinfos",
-		"rental_contract_end": "Vertragsende",
-		"rental_contract_type": "Vertragsform",
-		"result_num": "Geodaten OSM",
-		"rooms_count": "Anzahl der Arbeitsräume",
-		"shared_use_allowed": "Offen für Raumanfragen?",
-		"shared_use_audience": "Verfügbar für Zielgruppe/Sparte",
-		"shared_use_contact_person": "Kontakt für Raumanfragen",
-		"shared_use_info": "Beschreibung der Räume/Flächen",
-		"source": "Datenquelle",
-		"street": "Straße",
-		"street_number": "Hausnummer",
-		"subcategories": "Unterkategorie",
-		"subcategory": "Unterkategorie",
-		"tag": "Tags",
-		"tags": "Tags",
-		"updated_at": "Stand",
-		"utilization_status": "Nutzungsstatus",
-		"website": "Website",
-		"zip_code": "PLZ"
-	},
-	"funding_source": {
-		"church": "Kirche",
-		"district": "Bezirk",
-		"eu": "EU",
-		"federal": "Bund",
-		"foundation": "Stiftung",
-		"other": "Sonstiges",
-		"private": "Privat",
-		"state_berlin": "Land Berlin"
-	},
-	"funding_type": {
-		"institutional_funding": "Institutionell gefördert",
-		"no_funding": "Nicht gefördert",
-		"temporary_project_funding": "Temporäre Projektförderung",
-		"workspace_program": "Arbeitsraumprogramm"
-	},
-	"institution_action": {
-		"create": "Erstellen",
-		"delete": "Löschen",
-		"publish": "Veröffentlichen",
-		"read": "Anzeigen",
-		"request_deletion": "Löschung beantragen",
-		"update": "Aktualisieren"
-	},
-	"institution_status": {
-		"archived": "Archiviert",
-		"draft": "Entwurf",
-		"private": "Privat",
-		"public": "Öffentlich",
-		"removal_pending": "Löschung beantragt"
-	},
-	"owner_type": {
-		"district_property": "Bezirkliche Liegenschaft",
-		"federal_property": "Bundesliegenschaft",
-		"municipal_housing_company": "Städtische Wohnungsbaugesellschaft",
-		"other": "Sonstige",
-		"other_public_property": "Sonstige öffentliche Liegenschaft",
-		"private": "Privat",
-		"state_property": "Landesliegenschaft",
-		"state_property_fund": "Landesliegenschaft (Liegenschaftsfonds)",
-		"state_property_other": "Landesliegenschaft (Sonstige Liegenschaft)",
-		"state_property_silb": "Landesliegenschaft (SILB)",
-		"state_property_soda": "Landesliegenschaft (SODA)",
-		"state_property_specialized": "Spezialimmobilie Land"
-	},
-	"protection_status": {
-		"long_term_secured": "Langfristig gesichert",
-		"not_yet_secured": "Noch nicht gesichert"
-	},
-	"rental_contract_type": {
-		"limited_lease": "Befristete Miete",
-		"organization_ownership": "Eigentum der Organisation",
-		"unlimited_lease": "Unbefristete Miete"
-	},
-	"subcategory": {
+		"urban_art": "Urban Art ",
 		"acrobatics": "Akrobatik",
 		"adult_education_centers": "Volkshochschulen",
 		"art_house_cinemas": "Programmkinos",
@@ -232,7 +75,6 @@
 		"neighborhood_centers": "Stadtteil- und Nachbarschaftszentren",
 		"open_air_venues": "Open-Air-Flächen",
 		"opera": "Oper",
-		"other": "Nicht zugeordnet",
 		"others": "Nicht zugeordnet",
 		"outdoor_cinemas": "Freiluftkinos",
 		"performing_arts_contemporary_circus": "Zeitgenössischer Zirkus",
@@ -274,6 +116,656 @@
 		"youth_art_schools": "Jugendkunstschulen",
 		"youth_leisure_facilities": "Kinder- und Jugendfreizeiteinrichtungen"
 	},
+	"closing_reason": {
+		"funding_discontinued": "Förderung eingestellt",
+		"lease_expired": "Mietvertrag ausgelaufen",
+		"other": "Sonstiges",
+		"ownership_change": "Eigentümerwechsel"
+	},
+	"district_id": [
+		null,
+		"Treptow-Köpenick",
+		"Pankow",
+		"Lichtenberg",
+		"Friedrichshain-Kreuzberg",
+		"Reinickendorf",
+		"Tempelhof-Schöneberg",
+		"Neukölln",
+		"Mitte",
+		"Marzahn-Hellersdorf",
+		"Charlottenburg-Wilmersdorf",
+		"Steglitz-Zehlendorf",
+		"Spandau"
+	],
+	"field_names": {
+		"accessibility": {
+			"label": "Barrierefreiheit",
+			"description": "",
+			"placeholder": "Bitte eintragen",
+			"errors": {
+				"required": "Bitte Barrierefreiheit angeben."
+			}
+		},
+		"address": {
+			"label": "Adresse",
+			"description": "",
+			"placeholder": "Bitte eintragen",
+			"errors": {
+				"required": "Bitte Adresse angeben."
+			}
+		},
+		"address_map": {
+			"label": "Adresskarte",
+			"description": "Standort auf der Karte prüfen oder anpassen.",
+			"placeholder": "",
+			"errors": {
+				"required": ""
+			}
+		},
+		"address_suffix": {
+			"label": "Adresszusatz",
+			"description": "",
+			"placeholder": "z. B. 2. OG",
+			"errors": {
+				"required": "Bitte Adresszusatz angeben."
+			}
+		},
+		"area": {
+			"label": "Nutzfläche (m²)",
+			"description": "",
+			"placeholder": "z. B. 10",
+			"errors": {
+				"required": "Bitte Nutzfläche (m²) angeben."
+			}
+		},
+		"capacity": {
+			"label": "Kapazität",
+			"description": "",
+			"placeholder": "z. B. 10",
+			"errors": {
+				"required": "Bitte Kapazität angeben."
+			}
+		},
+		"categories": {
+			"label": "Kategorien",
+			"description": "Passende Kategorien auswählen.",
+			"placeholder": "Bitte auswählen",
+			"errors": {
+				"required": "Bitte Kategorien angeben."
+			}
+		},
+		"category": {
+			"label": "Kategorie",
+			"description": "",
+			"placeholder": "Bitte auswählen",
+			"errors": {
+				"required": "Bitte Kategorie angeben."
+			}
+		},
+		"subcategory": {
+			"label": "Unterkategorie",
+			"description": "",
+			"placeholder": "Bitte auswählen",
+			"errors": {
+				"required": "Bitte Unterkategorie angeben."
+			}
+		},
+		"city": {
+			"label": "Ort",
+			"description": "",
+			"placeholder": "z. B. Berlin",
+			"errors": {
+				"required": "Bitte Ort angeben."
+			}
+		},
+		"closing_reason": {
+			"label": "Schließungsgründe",
+			"description": "",
+			"placeholder": "Bitte auswählen",
+			"errors": {
+				"required": "Bitte Schließungsgründe angeben."
+			}
+		},
+		"contact_person_email": {
+			"label": "Ansprechperson E-Mail Adresse",
+			"description": "",
+			"placeholder": "name@beispiel.de",
+			"errors": {
+				"required": "Bitte Ansprechperson E-Mail Adresse angeben."
+			}
+		},
+		"contact_person_name": {
+			"label": "Ansprechperson Name",
+			"description": "",
+			"placeholder": "Bitte eintragen",
+			"errors": {
+				"required": "Bitte Ansprechperson Name angeben."
+			}
+		},
+		"contact_person_first_name": {
+			"label": "Ansprechperson Vorname",
+			"description": "",
+			"placeholder": "Bitte eintragen",
+			"errors": {
+				"required": "Bitte Ansprechperson Vorname angeben."
+			}
+		},
+		"contact_person_last_name": {
+			"label": "Ansprechperson Nachname",
+			"description": "",
+			"placeholder": "Bitte eintragen",
+			"errors": {
+				"required": "Bitte Ansprechperson Nachname angeben."
+			}
+		},
+		"contact_person_phone": {
+			"label": "Ansprechperson Telefonnummer",
+			"description": "",
+			"placeholder": "+49 ...",
+			"errors": {
+				"required": "Bitte Ansprechperson Telefonnummer angeben."
+			}
+		},
+		"cost": {
+			"label": "Kosten",
+			"description": "",
+			"placeholder": "Bitte eintragen",
+			"errors": {
+				"required": "Bitte Kosten angeben."
+			}
+		},
+		"cultural_area": {
+			"label": "Kulturareal",
+			"description": "",
+			"placeholder": "Bitte auswählen",
+			"errors": {
+				"required": "Bitte Kulturareal angeben."
+			}
+		},
+		"description": {
+			"label": "Zusätzliche Informationen",
+			"description": "",
+			"placeholder": "Bitte eintragen",
+			"errors": {
+				"required": "Bitte Zusätzliche Informationen angeben."
+			}
+		},
+		"district": {
+			"label": "Bezirk",
+			"description": "",
+			"placeholder": "Bitte auswählen",
+			"errors": {
+				"required": "Bitte Bezirk angeben."
+			}
+		},
+		"email": {
+			"label": "E-Mail-Adresse",
+			"description": "",
+			"placeholder": "name@beispiel.de",
+			"errors": {
+				"required": "Bitte E-Mail-Adresse angeben."
+			}
+		},
+		"established_since": {
+			"label": "Bestehen am Standort seit",
+			"description": "",
+			"placeholder": "TT.MM.JJJJ",
+			"errors": {
+				"required": "Bitte Bestehen am Standort seit angeben."
+			}
+		},
+		"established_until": {
+			"label": "Bestehen am Standort bis",
+			"description": "",
+			"placeholder": "TT.MM.JJJJ",
+			"errors": {
+				"required": "Bitte Bestehen am Standort bis angeben."
+			}
+		},
+		"funding_source": {
+			"label": "Art der Finanzierung",
+			"description": "",
+			"placeholder": "Bitte eintragen",
+			"errors": {
+				"required": "Bitte Art der Finanzierung angeben."
+			},
+			"actions": {
+				"add": "Finanzierungsquelle hinzufügen",
+				"remove": "Finanzierungsquelle entfernen"
+			}
+		},
+		"tags": {
+			"label": "Tags",
+			"description": "",
+			"placeholder": "Bitte eintragen",
+			"errors": {
+				"required": "Bitte Tags angeben."
+			},
+			"actions": {
+				"add": "Tag hinzufügen",
+				"remove": "Tag entfernen"
+			}
+		},
+		"funding_source_description": {
+			"label": "Beschreibung der Finanzierungsquelle",
+			"description": "",
+			"placeholder": "z. B. Förderung über das Berliner Arbeitsraumprogramm seit 2020, 50.000€ jährlich",
+			"errors": {
+				"required": "Bitte Beschreibung der Finanzierungsquelle angeben."
+			}
+		},
+		"funding_source_name": {
+			"label": "Name der Finanzierungsquelle",
+			"description": "",
+			"placeholder": "z. B. Land, Bezirk",
+			"errors": {
+				"required": "Bitte Name der Finanzierungsquelle angeben."
+			}
+		},
+		"funding_sources": {
+			"label": "Finanzierungsquellen",
+			"description": "",
+			"placeholder": "Bitte eintragen",
+			"errors": {
+				"required": "Bitte Finanzierungsquellen angeben."
+			},
+			"actions": {
+				"add": "Finanzierungsquelle hinzufügen",
+				"remove": "Finanzierungsquelle entfernen"
+			}
+		},
+		"funding_type": {
+			"label": "Art der Förderung",
+			"description": "",
+			"placeholder": "Bitte auswählen",
+			"errors": {
+				"required": "Bitte Art der Förderung angeben."
+			},
+			"options": {
+				"workspace_program": "Arbeitsraumprogramm",
+				"institutional_funding": "Institutionell gefördert",
+				"temporary_project_funding": "Temporäre Projektförderung",
+				"no_funding": "Nicht gefördert",
+				"unknown": "Unbekannt"
+			}
+		},
+		"lat": {
+			"label": "Breitengrad",
+			"description": "",
+			"placeholder": "Bitte eintragen",
+			"errors": {
+				"required": "Bitte Breitengrad angeben."
+			}
+		},
+		"legal_form": {
+			"label": "Rechtsform",
+			"description": "",
+			"placeholder": "Bitte eintragen",
+			"errors": {
+				"required": "Bitte Rechtsform angeben."
+			}
+		},
+		"lng": {
+			"label": "Längengrad",
+			"description": "",
+			"placeholder": "Bitte eintragen",
+			"errors": {
+				"required": "Bitte Längengrad angeben."
+			}
+		},
+		"name": {
+			"label": "Kultureinrichtung",
+			"description": "",
+			"placeholder": "Bitte eintragen",
+			"errors": {
+				"required": "Bitte Kultureinrichtung angeben."
+			}
+		},
+		"neighbourhood": {
+			"label": "Stadtteil",
+			"description": "",
+			"placeholder": "Bitte eintragen",
+			"errors": {
+				"required": "Bitte Stadtteil angeben."
+			}
+		},
+		"notes": {
+			"label": "Zusätzliche Informationen",
+			"description": "",
+			"placeholder": "Bitte eintragen",
+			"errors": {
+				"required": "Bitte Zusätzliche Informationen angeben."
+			}
+		},
+		"id": {
+			"label": "ID",
+			"description": "",
+			"placeholder": "Bitte eintragen",
+			"errors": {
+				"required": "Bitte ID angeben."
+			}
+		},
+		"updated_at": {
+			"label": "Aktualisiert am",
+			"description": "",
+			"placeholder": "TT.MM.JJJJ",
+			"errors": {
+				"required": "Bitte aktualisiert am angeben."
+			}
+		},
+		"created_at": {
+			"label": "Erstellt am",
+			"description": "",
+			"placeholder": "TT.MM.JJJJ",
+			"errors": {
+				"required": "Bitte erstellt am angeben."
+			}
+		},
+		"internal_notes": {
+			"label": "Interne Notizen",
+			"description": "Nur für die interne Bearbeitung sichtbar.",
+			"placeholder": "Bitte eintragen",
+			"errors": {
+				"required": "Bitte Interne Notizen angeben."
+			}
+		},
+		"number_of_rooms": {
+			"label": "Anzahl der Arbeitsräume",
+			"description": "",
+			"placeholder": "z. B. 10",
+			"errors": {
+				"required": "Bitte Anzahl der Arbeitsräume angeben."
+			}
+		},
+		"owner_name": {
+			"label": "Eigentümer*in",
+			"description": "",
+			"placeholder": "Bitte eintragen",
+			"errors": {
+				"required": "Bitte Eigentümer*in angeben."
+			}
+		},
+		"owner_type": {
+			"label": "Eigentümer*innenart",
+			"description": "",
+			"placeholder": "Bitte auswählen",
+			"errors": {
+				"required": "Bitte Eigentümer*innenart angeben."
+			},
+			"options": {
+				"private": "Privat",
+				"federal_property": "Bundesliegenschaft",
+				"state_property": "Landesliegenschaft",
+				"state_property_silb": "Landesliegenschaft (SILB)",
+				"state_property_soda": "Landesliegenschaft (SODA)",
+				"state_property_other": "Landesliegenschaft (Sonstige Liegenschaft)",
+				"state_property_specialized": "Spezialimmobilie Land",
+				"state_property_fund": "Landesliegenschaft (Liegenschaftsfonds)",
+				"district_property": "Bezirkliche Liegenschaft",
+				"other_public_property": "Sonstige öffentliche Liegenschaft",
+				"municipal_housing_company": "Städtische Wohnungsbaugesellschaft",
+				"other": "Sonstige"
+			}
+		},
+		"parent_organization": {
+			"label": "Dachorganisation",
+			"description": "Gibt es eine übergeordnete Organisation, z. B. ein Kulturverband, eine Stiftung oder eine andere Institution?",
+			"placeholder": "Bitte eintragen",
+			"errors": {
+				"required": "Bitte Dachorganisation angeben."
+			}
+		},
+		"phone": {
+			"label": "Telefonnummer",
+			"description": "Bitte nach Möglichkeit eine allgemeine Telefonnummer der Kultureinrichtung angeben (z. B. Empfangskontakt).",
+			"placeholder": "+49 ...",
+			"errors": {
+				"required": "Bitte Telefonnummer angeben."
+			}
+		},
+		"protection_status": {
+			"label": "Sicherungsstatus",
+			"description": "",
+			"placeholder": "Bitte auswählen",
+			"errors": {
+				"required": "Bitte Sicherungsstatus angeben."
+			},
+			"options": {
+				"long_term_secured": "Langfristig gesichert",
+				"medium_term_secured": "Mittelfristig gesichert",
+				"uncertain": "Unsicher",
+				"acutely_threatened": "Akut gefährdet",
+				"permanently_closed": "Dauerhaft geschlossen",
+				"not_yet_secured": "Noch nicht gesichert"
+			}
+		},
+		"protection_status_info": {
+			"label": "Sicherungsstatus Detailinfos",
+			"description": "",
+			"placeholder": "Bitte eintragen",
+			"errors": {
+				"required": "Bitte Sicherungsstatus Detailinfos angeben."
+			}
+		},
+		"rental_contract_end": {
+			"label": "Vertragsende",
+			"description": "",
+			"placeholder": "TT.MM.JJJJ",
+			"errors": {
+				"required": "Bitte Vertragsende angeben."
+			}
+		},
+		"rental_contract_type": {
+			"label": "Vertragsform",
+			"description": "",
+			"placeholder": "Bitte auswählen",
+			"errors": {
+				"required": "Bitte Vertragsform angeben."
+			},
+			"options": {
+				"unlimited_lease": "Unbefristete Miete",
+				"limited_lease": "Befristete Miete",
+				"organization_ownership": "Eigentum der Organisation"
+			}
+		},
+		"shared_use_allowed": {
+			"label": "Offen für Raumanfragen?",
+			"description": "",
+			"placeholder": "Bitte eintragen",
+			"errors": {
+				"required": "Bitte Offen für Raumanfragen? angeben."
+			}
+		},
+		"shared_use_audience": {
+			"label": "Verfügbar für Zielgruppe/Sparte",
+			"description": "",
+			"placeholder": "Bitte eintragen",
+			"errors": {
+				"required": "Bitte Verfügbar für Zielgruppe/Sparte angeben."
+			}
+		},
+		"shared_use_availability": {
+			"label": "Verfügbarkeit",
+			"description": "",
+			"placeholder": "Bitte eintragen",
+			"errors": {
+				"required": "Bitte Verfügbarkeit angeben."
+			}
+		},
+		"shared_use_contact_person": {
+			"label": "Kontakt für Raumanfragen",
+			"description": "",
+			"placeholder": "Bitte eintragen",
+			"errors": {
+				"required": "Bitte Kontakt für Raumanfragen angeben."
+			}
+		},
+		"shared_use_equipment": {
+			"label": "Ausstattung",
+			"description": "",
+			"placeholder": "Bitte eintragen",
+			"errors": {
+				"required": "Bitte Ausstattung angeben."
+			}
+		},
+		"shared_use_info": {
+			"label": "Beschreibung der Räume/Flächen",
+			"description": "",
+			"placeholder": "Bitte eintragen",
+			"errors": {
+				"required": "Bitte Beschreibung der Räume/Flächen angeben."
+			}
+		},
+		"source": {
+			"label": "Datenquelle",
+			"description": "",
+			"placeholder": "Bitte auswählen",
+			"errors": {
+				"required": "Bitte Datenquelle angeben."
+			}
+		},
+		"street": {
+			"label": "Straße",
+			"placeholder": "z. B. Musterstraße 1",
+			"errors": {
+				"required": "Bitte Straße angeben."
+			}
+		},
+		"street_number": {
+			"label": "Hausnummer",
+			"description": "",
+			"placeholder": "z. B. 12a",
+			"errors": {
+				"required": "Bitte Hausnummer angeben."
+			}
+		},
+		"type": {
+			"label": "Typ",
+			"description": "",
+			"placeholder": "Bitte auswählen",
+			"errors": {
+				"required": "Bitte Typ angeben."
+			}
+		},
+		"support_type": {
+			"label": "Art der Finanzierung",
+			"description": "",
+			"placeholder": "Bitte auswählen",
+			"errors": {
+				"required": "Bitte Art der Finanzierung angeben."
+			}
+		},
+		"utilization_status": {
+			"label": "Nutzungsstatus",
+			"description": "Gibt an, ob eine Kultureinrichtung aktuell in Betrieb ist oder nicht.",
+			"placeholder": "Bitte auswählen",
+			"errors": {
+				"required": "Bitte Nutzungsstatus angeben."
+			},
+			"options": {
+				"in_use": "In Nutzung",
+				"permanently_closed": "Dauerhaft geschlossen",
+				"planned_use": "Geplante Nutzung",
+				"potential_space": "Potenzialort",
+				"temporarily_closed": "Vorübergehend geschlossen",
+				"unknown": "Unbekannt"
+			}
+		},
+		"utilization_status_info": {
+			"label": "Nutzungsstatus Detailinfos",
+			"description": "",
+			"placeholder": "Bitte eintragen",
+			"errors": {
+				"required": "Bitte Nutzungsstatus Detailinfos angeben."
+			}
+		},
+		"website": {
+			"label": "Webseite",
+			"description": "Bitte nach Möglichkeit die allgemeine Webseite der Kultureinrichtung angeben, nicht die von einzelnen Projekten oder Untereinheiten.",
+			"placeholder": "https://...",
+			"errors": {
+				"required": "Bitte Webseite angeben."
+			}
+		},
+		"zipcode": {
+			"label": "Postleitzahl",
+			"description": "",
+			"placeholder": "z. B. 10115",
+			"errors": {
+				"required": "Bitte Postleitzahl angeben."
+			}
+		}
+	},
+	"funding_source": {
+		"church": "Kirche",
+		"district": "Bezirk",
+		"eu": "EU",
+		"federal": "Bund",
+		"foundation": "Stiftung",
+		"other": "Sonstiges",
+		"private": "Privat",
+		"state_berlin": "Land Berlin"
+	},
+	"funding_type": {
+		"institutional_funding": "Institutionell gefördert",
+		"no_funding": "Nicht gefördert",
+		"placeholder": "Art der Förderung auswählen",
+		"temporary_project_funding": "Temporäre Projektförderung",
+		"workspace_program": "Arbeitsraumprogramm"
+	},
+	"institution_action": {
+		"create": "Erstellen",
+		"delete": "Löschen",
+		"publish": "Veröffentlichen",
+		"read": "Anzeigen",
+		"request_deletion": "Löschung beantragen",
+		"update": "Aktualisieren"
+	},
+	"institution_status": {
+		"approval_pending": "Freigabe ausstehend",
+		"archived": "Archiviert",
+		"draft": "Entwurf",
+		"private": "Privat",
+		"public": "Öffentlich",
+		"removal_pending": "Löschung beantragt"
+	},
+	"owner_type": {
+		"district_property": "Bezirkliche Liegenschaft",
+		"federal_property": "Bundesliegenschaft",
+		"municipal_housing_company": "Städtische Wohnungsbaugesellschaft",
+		"other": "Sonstige",
+		"other_public_property": "Sonstige öffentliche Liegenschaft",
+		"placeholder": "Eigentümer*innenart auswählen",
+		"private": "Privat",
+		"state_property": "Landesliegenschaft",
+		"state_property_fund": "Landesliegenschaft (Liegenschaftsfonds)",
+		"state_property_other": "Landesliegenschaft (Sonstige Liegenschaft)",
+		"state_property_silb": "Landesliegenschaft (SILB)",
+		"state_property_soda": "Landesliegenschaft (SODA)",
+		"state_property_specialized": "Spezialimmobilie Land"
+	},
+	"protection_status": {
+		"acutely_threatened": "Akut gefährdet",
+		"long_term_secured": "Langfristig gesichert",
+		"medium_term_secured": "Mittelfristig gesichert",
+		"not_yet_secured": "Noch nicht gesichert",
+		"permanently_closed": "Dauerhaft geschlossen",
+		"placeholder": "Sicherungsstatus auswählen",
+		"uncertain": "Unsicher"
+	},
+	"rental_contract_type": {
+		"limited_lease": "Befristete Miete",
+		"organization_ownership": "Eigentum der Organisation",
+		"placeholder": "Vertragsform auswählen",
+		"unlimited_lease": "Unbefristete Miete"
+	},
+	"submission_status": {
+		"approval_pending": "Freigabe ausstehend",
+		"approved": "Genehmigt",
+		"draft": "Entwurf",
+		"needs_changes": "Änderungen erforderlich",
+		"rejected": "Abgelehnt"
+	},
 	"user_role": {
 		"administrator": "Administrator",
 		"district_administration": "Bezirksverwaltung",
@@ -286,6 +778,7 @@
 	"utilization_status": {
 		"in_use": "In Nutzung",
 		"permanently_closed": "Dauerhaft geschlossen",
+		"placeholder": "Nutzungsstatus auswählen",
 		"planned_use": "Geplante Nutzung",
 		"potential_space": "Potenzialort",
 		"temporarily_closed": "Vorübergehend geschlossen",

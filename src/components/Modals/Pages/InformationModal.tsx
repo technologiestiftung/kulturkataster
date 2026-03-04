@@ -2,10 +2,10 @@
 
 import TextBlock from "@/components/Content/TextBlock";
 import TextWithLinks from "@/components/Content/TextWithLinks";
+import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { Trans, useTranslation } from "react-i18next";
-import { PageModal } from "../PageModal";
-import { useModalStore } from "@/lib/store/modalStore";
+import { Modal } from "../Modal";
 
 interface FaqItem {
 	question: string;
@@ -44,23 +44,17 @@ interface Scope {
 	};
 }
 
-interface InformationModalProps {
-	open: boolean;
-	onOpenChange: (open: boolean) => void;
-}
-
 export function InformationModal({
-	open,
-	onOpenChange,
-}: InformationModalProps) {
+	routePath,
+	returnTo,
+}: {
+	routePath?: string;
+	returnTo?: string;
+}) {
 	const { t } = useTranslation("content");
-	const originalInstitutions = useInstitutionStore(
-		(state) => state.allInstitutions,
-	);
-
-	const institutionCount = originalInstitutions?.features?.length ?? 2.382;
-
-	const { handleFooterItemClick } = useModalStore();
+	const toLocalePath = useLocalePath();
+	const institutions = useInstitutionStore((state) => state.allInstitutions);
+	const institutionCount = institutions?.length;
 
 	const introParagraphs = t("informationModal.introduction", {
 		returnObjects: true,
@@ -79,12 +73,9 @@ export function InformationModal({
 						components={{
 							link: (
 								<a
-									href="#infosAndServices"
+									href={toLocalePath("/simpleLanguage#infosAndServices")}
 									rel="noopener noreferrer"
 									className="text-primary-dark hover:text-primary underline"
-									onClick={() =>
-										handleFooterItemClick("simpleLanguageInformation")
-									}
 								>
 									{t("here")}
 								</a>
@@ -107,7 +98,7 @@ export function InformationModal({
 						if (i === 0) {
 							const dynamicText = item.replace(
 								"{{count}}",
-								institutionCount.toLocaleString("de-DE"),
+								institutionCount?.toLocaleString("de-DE") ?? "0",
 							);
 							return <li key={i}>{dynamicText}</li>;
 						}
@@ -170,12 +161,13 @@ export function InformationModal({
 	);
 
 	return (
-		<PageModal
-			open={open}
-			onOpenChange={onOpenChange}
+		<Modal
 			title={t("informationModal.title")}
 			subtitle={t("informationModal.subtitle")}
-			content={content}
-		/>
+			routePath={routePath}
+			returnTo={returnTo}
+		>
+			{content}
+		</Modal>
 	);
 }

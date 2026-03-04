@@ -2,17 +2,13 @@
 
 import SimpleLanguage from "@/icons/simple-language.svg";
 import SignLanguage from "@/icons/sign-language.svg";
-import FontSize from "@/icons/font-size.svg";
 import List from "@/icons/list.svg";
+import FontSize from "@/icons/font-size.svg";
 import Contrast from "@/icons/contrast.svg";
 import { useAppStore } from "@/lib/store/appStore";
-import { useModalStore } from "@/lib/store/modalStore";
+import { getModalLink } from "@/lib/utils/modalRouting";
+import { usePathname, useRouter } from "next/navigation";
 import { SubMenuOption } from "../SubMenuOption";
-
-interface AccessibilityContentProps {
-	onItemClick?: (itemName: string) => void; // Made optional since we can use the modal store directly
-	openLinksInModal?: boolean;
-}
 
 const accessibilityOptions = [
 	{
@@ -29,7 +25,7 @@ const accessibilityOptions = [
 	},
 	{
 		id: "viewMode",
-		icon: List, // Reusing contrast icon for now
+		icon: List,
 		titleKey: "accessibility.viewMode.title",
 		hasSwitch: true,
 	},
@@ -48,31 +44,33 @@ const accessibilityOptions = [
 	},
 ] as const;
 
-export function AccessibilityContent({
-	onItemClick,
-	openLinksInModal,
-}: AccessibilityContentProps) {
+export function AccessibilityContent() {
 	const {
 		isContrastMode,
 		setIsContrastMode,
 		setBaseFontSize,
 		isLargeTextMode,
 		setIsLargeTextMode,
-		viewMode,
-		setViewMode,
 	} = useAppStore();
+	const pathname = usePathname();
+	const isListRoute = pathname?.replace(/\/$/, "").endsWith("/list");
+	const router = useRouter();
 
-	const {
-		openModal,
-		setAccessibilityModalOpen,
-		setSimpleLanguageInformationModalOpen,
-		setSignLanguageModalOpen,
-	} = useModalStore();
+	const openModalRoute = (id: string) => {
+		const { url, target } = getModalLink(id);
+		if (target === "_blank") {
+			if (typeof window !== "undefined") {
+				window.open(url, "_blank", "noopener,noreferrer");
+			}
+			return;
+		}
+		router.push(url);
+	};
 
 	const handleSwitchChange = (optionId: string, checked: boolean) => {
 		switch (optionId) {
 			case "viewMode":
-				setViewMode(checked ? "list" : "map");
+				router.push(checked ? "/list" : "/map");
 				break;
 			case "fontSize":
 				setIsLargeTextMode(checked);
@@ -89,12 +87,12 @@ export function AccessibilityContent({
 
 	const getSwitchState = (optionId: string) => {
 		switch (optionId) {
+			case "viewMode":
+				return Boolean(isListRoute);
 			case "fontSize":
 				return isLargeTextMode;
 			case "contrast":
 				return isContrastMode;
-			case "viewMode":
-				return viewMode === "list";
 			default:
 				return false;
 		}
@@ -113,21 +111,9 @@ export function AccessibilityContent({
 							? undefined
 							: () => {
 									if (option.id === "simpleLanguage") {
-										if (openLinksInModal) {
-											openModal("simpleLanguageInformation");
-										} else {
-											setSimpleLanguageInformationModalOpen(true);
-										}
+										openModalRoute("simpleLanguage");
 									} else if (option.id === "signLanguage") {
-										if (openLinksInModal) {
-											openModal("signLanguageInformation");
-										} else {
-											setSignLanguageModalOpen(true);
-										}
-									} else if (onItemClick) {
-										onItemClick("accessibility");
-									} else {
-										setAccessibilityModalOpen(true);
+										openModalRoute("signLanguage");
 									}
 								}
 					}

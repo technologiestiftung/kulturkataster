@@ -4,41 +4,22 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import ArrowNarrowRight from "@/icons/arrow-narrow-right.svg";
-import { useModalStore } from "@/lib/store/modalStore";
 import KRBLogo from "@/logos/KRB.svg";
 import KukaLargeLogo from "@/logos/kuka-large.svg";
 import SenateLogo from "@/logos/senate.svg";
 import { useTranslation } from "react-i18next";
 import { ModalFooter } from "../ModalFooter";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { getModalLink } from "@/lib/utils/modalRouting";
+import { useAppStore } from "@/lib/store/appStore";
+import { useLocalePath } from "@/lib/hooks/useLocalePath";
 
-interface WelcomeModalProps {
-	open: boolean;
-	onOpenChange: (open: boolean) => void;
-}
-
-export function WelcomeModal({ open, onOpenChange }: WelcomeModalProps) {
+export function WelcomeModal() {
 	const { t } = useTranslation(["content", "common"]);
-	const { openModal } = useModalStore();
-
-	const handleAboutClick = () => {
-		onOpenChange(false);
-		openModal("about", true);
-	};
-
-	const handleInfoClick = () => {
-		onOpenChange(false);
-		openModal("information", true);
-	};
-
-	const handleAccessibilitySettingsClick = () => {
-		onOpenChange(false);
-		openModal("accessibilitySettings", true);
-	};
-
-	const handleFooterItemClickWelcomeModal = (id: string) => {
-		onOpenChange(false);
-		openModal(id, true);
-	};
+	const { setFirstTimeUser } = useAppStore();
+	const router = useRouter();
+	const toLocalePath = useLocalePath();
 
 	const footerItems = [
 		{ id: "accessibility" },
@@ -47,8 +28,20 @@ export function WelcomeModal({ open, onOpenChange }: WelcomeModalProps) {
 	] as const;
 
 	return (
-		<Dialog open={open} onOpenChange={onOpenChange}>
-			<DialogContent variant="medium" className="flex ">
+		<Dialog
+			open
+			onOpenChange={(open) => {
+				if (!open) {
+					setFirstTimeUser(false);
+					if (typeof window !== "undefined" && window.history.length > 1) {
+						router.back();
+					} else {
+						router.push(toLocalePath("/"));
+					}
+				}
+			}}
+		>
+			<DialogContent variant="centered" className="flex" showBackButton={false}>
 				<div className="flex flex-col md:flex-row gap-8 py-12 md:pt-32 md:pb-12 px-6">
 					<div className="md:w-1/4 flex justify-center align-start h-full">
 						<KukaLargeLogo
@@ -58,12 +51,12 @@ export function WelcomeModal({ open, onOpenChange }: WelcomeModalProps) {
 					</div>
 					<div className="md:w-3/4 flex flex-col items-start space-y-4 md:pr-32 ">
 						<div className="flex flex-col space-y-2">
-							<DialogTitle className="display text-center md:text-left">
-								{t("welcomeModal.title", { ns: "content" })}
+							<DialogTitle asChild className="text-center md:text-left">
+								<h1>{t("welcomeModal.title", { ns: "content" })}</h1>
 							</DialogTitle>
-							<h1 className="text-center md:text-left">
+							<h2 className="text-center md:text-left">
 								{t("welcomeModal.subtitle", { ns: "content" })}
-							</h1>
+							</h2>
 						</div>
 						<div className="flex flex-col md:items-start space-y-2">
 							<div className="space-y-4">
@@ -90,7 +83,10 @@ export function WelcomeModal({ open, onOpenChange }: WelcomeModalProps) {
 								<div className="flex-grow md:flex-none">
 									<Button
 										className="w-full md:w-auto mb-2 md:mb-0 cursor-pointer"
-										onClick={() => onOpenChange(false)}
+										onClick={() => {
+											setFirstTimeUser(false);
+											router.push(toLocalePath("/"));
+										}}
 									>
 										{t("welcomeModal.discoverButton", { ns: "content" })}
 									</Button>
@@ -99,14 +95,14 @@ export function WelcomeModal({ open, onOpenChange }: WelcomeModalProps) {
 									<Button
 										variant="outline"
 										className="w-1/2 md:w-auto cursor-pointer"
-										onClick={handleAboutClick}
+										onClick={() => router.push(toLocalePath("/about"))}
 									>
 										{t("welcomeModal.aboutButton", { ns: "content" })}
 									</Button>
 									<Button
 										variant="outline"
 										className="w-1/2 md:w-auto cursor-pointer"
-										onClick={handleInfoClick}
+										onClick={() => router.push(toLocalePath("/info"))}
 									>
 										{t("welcomeModal.infoButton", { ns: "content" })}
 									</Button>
@@ -115,7 +111,9 @@ export function WelcomeModal({ open, onOpenChange }: WelcomeModalProps) {
 							<div className="mt-4">
 								<Button
 									variant="link"
-									onClick={handleAccessibilitySettingsClick}
+									onClick={() =>
+										router.push(toLocalePath("/accessibilitySettings"))
+									}
 									className="underline body2 text-primary-dark font-semibold p-0 md:p-0 underline-offset-1 rounded-none focus-visible:ring-offset-0"
 								>
 									{t("welcomeModal.accessibilitySettings", { ns: "content" })}
@@ -131,11 +129,11 @@ export function WelcomeModal({ open, onOpenChange }: WelcomeModalProps) {
 								<div className="flex md:w-1/2 md:justify-end justify-around gap-2 space-x-4 md:mx-4">
 									<KRBLogo
 										title="Kulturraum Berlin gGmbH, Logo"
-										className="w-20 md:w-24 h-auto bg-white"
+										className="w-20 md:w-24 h-auto bg-background"
 									/>
 									<SenateLogo
 										title="Logo der Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt, Logo"
-										className="w-32 md:w-42 h-auto bg-white"
+										className="w-32 md:w-42 h-auto bg-background"
 									/>
 								</div>
 							</div>
@@ -153,12 +151,14 @@ export function WelcomeModal({ open, onOpenChange }: WelcomeModalProps) {
 						>
 							{footerItems.map((item) => (
 								<li key={item.id}>
-									<button
-										className="body2 font-bold"
-										onClick={() => handleFooterItemClickWelcomeModal(item.id)}
+									<Link
+										className="body2 font-bold select-none"
+										href={getModalLink(item.id).url}
+										target={getModalLink(item.id).target}
+										rel="noopener noreferrer"
 									>
 										{t(`footer.${item.id}`)}
-									</button>
+									</Link>
 								</li>
 							))}
 						</ul>
