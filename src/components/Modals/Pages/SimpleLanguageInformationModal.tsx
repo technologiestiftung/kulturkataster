@@ -4,16 +4,11 @@ import TextBlock from "@/components/Content/TextBlock";
 import TextWithLinks from "@/components/Content/TextWithLinks";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useTranslation } from "react-i18next";
-import { PageModal } from "../PageModal";
+import { Modal } from "../Modal";
 import { DialogTitle } from "@/components/ui/dialog";
 import keyOrder from "@/lib/utils/keyOrderSimpleLanguage.json";
 import React from "react";
 import { cn } from "@/lib/utils";
-
-interface SimpleLanguageInformationModalProps {
-	open: boolean;
-	onOpenChange: (open: boolean) => void;
-}
 
 interface ListProps {
 	title?: string;
@@ -40,10 +35,8 @@ const RenderContent = ({
 	type: "about" | "infosAndServices";
 	t: (key: string, options?: Record<string, unknown>) => string;
 }) => {
-	const originalInstitutions = useInstitutionStore(
-		(state) => state.allInstitutions,
-	);
-	const institutionCount = originalInstitutions?.features?.length ?? 2.382;
+	const institutions = useInstitutionStore((state) => state.allInstitutions);
+	const institutionCount = institutions?.length ?? 0;
 	const translation = t(`simpleLanguageInformation.${type}.${keyValue}`, {
 		returnObjects: true,
 	});
@@ -105,9 +98,10 @@ const RenderContent = ({
 };
 
 export function SimpleLanguageInformationModal({
-	open,
-	onOpenChange,
-}: SimpleLanguageInformationModalProps) {
+	routePath,
+}: {
+	routePath?: string;
+}) {
 	const { t } = useTranslation("content");
 
 	const content = {
@@ -132,7 +126,7 @@ export function SimpleLanguageInformationModal({
 						{currentKey === "infosAndServices" && <div id="infosAndServices" />}
 						<DialogTitle
 							className={cn(
-								"display text-center md:text-left",
+								"text-center md:text-left",
 								currentKey === "about" ? "mb-10" : "my-10",
 							)}
 						>
@@ -162,13 +156,13 @@ export function SimpleLanguageInformationModal({
 	);
 
 	return (
-		<PageModal
-			open={open}
-			onOpenChange={onOpenChange}
+		<Modal
 			title={""}
 			subtitle={""}
-			content={simpleLanguageInformationContent}
+			routePath={routePath}
 			hideLinksInModalFooter={["simpleLanguageInformation"]}
-		/>
+		>
+			{simpleLanguageInformationContent}
+		</Modal>
 	);
 }

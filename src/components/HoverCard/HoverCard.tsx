@@ -7,10 +7,11 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import { getCategoryIconComponent } from "@/lib/utils/iconUtils"; // Update this import path
-import { Category, Subcategory } from "@/types";
+import { Category, ChildCategory } from "@/types";
 import { FC, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useFieldLabel } from "@/lib/hooks/useFieldLabel";
+import { CategoryIcon } from "@/components/shared/CategoryIcon";
 
 interface HoverCardProps {
 	features?: any;
@@ -33,6 +34,7 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 	const [featureProperties, setFeatureProperties] = useState<any>(null);
 	const { t: tEnum } = useTranslation("enumMap");
 	const { t } = useTranslation("common");
+	const fieldLabel = useFieldLabel();
 
 	useEffect(() => {
 		if (!features) {
@@ -49,25 +51,25 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 
 	return (
 		<div className="HoverCard-root">
-			<Card className="w-80 shadow-lg border-none">
+			<Card className="w-80 shadow-lg border-none contrast:invert-90">
 				<CardHeader className="p-2">
 					<div className="flex gap-2 justify-between">
-						<CardTitle className="text-xl font-bold line-clamp-2 w-full">
-							{featureProperties.name}
-						</CardTitle>
+						<CardTitle className="body1">{featureProperties.name}</CardTitle>
 					</div>
 				</CardHeader>
 
 				<CardContent className="p-2 pt-0">
 					<div className="flex flex-col gap-2 ">
 						{featureProperties.categories?.map((category: Category) => {
-							const IconComponent = getCategoryIconComponent(category.key);
-
 							return (
 								<div key={category.id}>
 									<div className="flex items-center gap-2 h-6">
 										<div className="w-6 h-6">
-											<IconComponent aria-hidden="true" focusable="false" />
+											<CategoryIcon
+												iconUrl={category.icon}
+												categoryKey={category.key}
+												className="w-6 h-6"
+											/>
 										</div>
 										<span className="text-base font-bold">
 											{tEnum(`category.${category.key}`)}
@@ -77,12 +79,13 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 										<div className="pl-8">
 											{featureProperties.subcategories
 												.filter(
-													(sub: Subcategory) => sub.category_id === category.id,
+													(subcategory: ChildCategory) =>
+														subcategory.parent_category_id === category.id,
 												)
-												.map((subcategory: Subcategory, index: number) => (
+												.map((subcategory: ChildCategory, index: number) => (
 													<span key={subcategory.id} className="text-base">
 														{index > 0 && ", "}
-														{tEnum(`subcategory.${subcategory.key}`)}
+														{tEnum(`category.${subcategory.key}`)}
 													</span>
 												))}
 										</div>
@@ -99,7 +102,7 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 					{featureProperties.utilization_status && (
 						<div className=" flex gap-1 items-center justify-between">
 							<span className="text-base font-bold">
-								{t("institution.utilizationStatus")}:
+								{fieldLabel("utilization_status")}:
 							</span>
 							<span className="text-base">
 								{tEnum(
@@ -111,7 +114,7 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 					{!featureProperties.utilization_status && (
 						<div className=" flex gap-1 items-center justify-between">
 							<span className="text-base font-bold">
-								{t("institution.utilizationStatus")}:
+								{fieldLabel("utilization_status")}:
 							</span>
 							<span className="text-base">{t("unknown")}</span>
 						</div>

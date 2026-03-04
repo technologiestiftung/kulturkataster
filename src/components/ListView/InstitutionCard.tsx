@@ -1,199 +1,206 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
 import {
-	Address,
-	Contact,
-	OrganizationInfo,
-	FundingInfo,
-	FacilityInfo,
-	StatusInfo,
-	ToggleButton,
-	AdditionalInfo,
+	organizationInfoConfig,
+	fundingInfoConfig,
+	facilityInfoConfig,
+	statusInfoConfig,
+	contactInfoConfig,
 } from "@/components/Institution";
-import { getCategoryIconComponent } from "@/lib/utils/iconUtils";
-import { Category, Institution, Subcategory } from "@/types";
-import { memo, useState } from "react";
+import { Institution } from "@/types";
+import { memo } from "react";
 import { useTranslation } from "react-i18next";
-
-// Parent organization component
-function ParentOrganization({ name }: { name?: string }) {
-	if (!name) return null;
-	return <p className="body2">{name}</p>;
-}
-
-// Categories display component
-function CategoriesDisplay({
-	categories,
-	subCategories,
-	tEnum,
-}: {
-	categories: Category[];
-	subCategories: Subcategory[];
-	tEnum: (key: string) => string;
-}) {
-	if (!categories?.length) return null;
-
-	return (
-		<div className="flex justify-center gap-2 flex-col">
-			{categories.map((category: Category) => {
-				const IconComponent = getCategoryIconComponent(category.key);
-
-				return (
-					<div key={category.id} className="flex items-center gap-1 flex-wrap">
-						<div>
-							<IconComponent aria-hidden="true" focusable="false" />
-						</div>
-						<span className="body2">{tEnum(`category.${category.key}`)}</span>
-						<span className="body2">•</span>
-						{subCategories?.length
-							? subCategories
-									.filter((sub) => sub.category_id === category.id)
-									.map((sub, index, filteredArray) => (
-										<span className="body2" key={sub.id}>
-											{tEnum(`subcategory.${sub.key}`)}
-											{index < filteredArray.length - 1 && ", "}
-										</span>
-									))
-							: null}
-					</div>
-				);
-			})}
-		</div>
-	);
-}
-
-// Status indicator component
-function StatusIndicator({
-	status,
-	tEnum,
-}: {
-	status: string;
-	tEnum: (key: string) => string;
-}) {
-	const isInUse = status === "in_use";
-	return (
-		<div className="flex items-center gap-2 bg-neutral-5 p-2 flex-wrap">
-			<div
-				className={`w-4 h-4 rounded-full ${isInUse ? "bg-brand-default" : "bg-alert"}`}
-			/>
-			<span className="body2 font-medium">
-				<span className="font-bold">
-					{tEnum("field_names.utilization_status")}:{" "}
-				</span>
-				{tEnum("utilization_status." + status)}
-			</span>
-		</div>
-	);
-}
-
-// Left column content
-function LeftColumn({
-	data,
-	tEnum,
-}: {
-	data: Institution;
-	tEnum: (key: string) => string;
-}) {
-	return (
-		<div className="space-y-3">
-			<ParentOrganization name={data.parent_organizations?.[0]?.name} />
-			<h2 className="h1 font-bold text-foreground">{data.name}</h2>
-			<CategoriesDisplay
-				categories={data.categories || []}
-				subCategories={data.subcategories || []}
-				tEnum={tEnum}
-			/>
-			{data.utilization_status && (
-				<StatusIndicator status={data.utilization_status} tEnum={tEnum} />
-			)}
-			<Address institutionData={data} />
-		</div>
-	);
-}
+import { useFieldLabel } from "@/lib/hooks/useFieldLabel";
+import { InfoWrapper } from "../InfoWrapper";
+import { useInstitutionPrivateFieldResolver } from "@/lib/hooks/useInstitutionPrivateFieldResolver";
 
 interface InstitutionCardProps {
 	institutionData: Institution;
 	onClick?: (institution: Institution) => void;
 	isCompact?: boolean;
+	isSelected?: boolean;
+	openDetails?: boolean;
 }
 
 const InstitutionCard = memo(function InstitutionCard({
 	institutionData,
 	onClick,
 	isCompact: _isCompact = false,
+	isSelected = false,
+	openDetails = false,
 }: InstitutionCardProps) {
-	const { t: tEnum } = useTranslation("enumMap");
 	const { t } = useTranslation("common");
-	const [showMore, setShowMore] = useState(false);
+	const fieldLabel = useFieldLabel();
+	const { isPrivateField } = useInstitutionPrivateFieldResolver();
 
-	const handleCardClick = () => onClick?.(institutionData);
-	const handleToggleInfo = (e: React.MouseEvent) => {
-		e.stopPropagation();
-		setShowMore(!showMore);
+	const handleCardClick = (e: React.MouseEvent | React.KeyboardEvent) => {
+		// Don't trigger card click if clicking on interactive elements inside
+		const target = e.target as HTMLElement;
+		const currentTarget = e.currentTarget as HTMLElement;
+		const interactiveAncestor = target.closest(
+			"button, a, [role='button']",
+		) as HTMLElement | null;
+		if (interactiveAncestor && interactiveAncestor !== currentTarget) {
+			return;
+		}
+		onClick?.(institutionData);
 	};
 
-	const cardClassName = `tab-ring w-full rounded-lg overflow-hidden shadow-sm ${
-		onClick ? "cursor-pointer hover:shadow-md transition-shadow" : ""
-	}`;
+	const handleKeyDown = (e: React.KeyboardEvent) => {
+		if (e.key === "Enter" || e.key === " ") {
+			e.preventDefault();
+			handleCardClick(e);
+		}
+	};
+
+	const cardClassName = `tab-ring w-full rounded-lg overflow-hidden text-left transition-shadow ${
+		isSelected
+			? "shadow-md ring-2 ring-primary border border-primary"
+			: "shadow-sm border border-transparent"
+	} ${onClick ? "cursor-pointer hover:shadow-md" : ""}`;
 
 	return (
-		<Card
+		<div
 			className={cardClassName}
-			role="listitem"
+			role={onClick ? "button" : "listitem"}
 			tabIndex={onClick ? 0 : undefined}
-			onClick={
-				onClick
-					? (e) => {
-							const target = e.target as HTMLElement;
-							if (!target.closest("a, button")) {
-								handleCardClick();
-							}
-						}
-					: undefined
-			}
-			onKeyDown={
-				onClick
-					? (e) => {
-							if (e.key === "Enter" || e.key === " ") {
-								const target = e.target as HTMLElement;
-								if (target === e.currentTarget) {
-									e.preventDefault();
-									handleCardClick();
-								}
-							}
-						}
-					: undefined
-			}
+			data-institution-card-id={String(institutionData.id)}
+			aria-selected={isSelected || undefined}
+			onClick={onClick ? handleCardClick : undefined}
+			onKeyDown={onClick ? handleKeyDown : undefined}
 			aria-label={
 				onClick
 					? `${institutionData.name} - ${t("institution.showDetails")}`
 					: undefined
 			}
 		>
-			<CardContent className="p-4 space-y-2 md:space-y-4">
-				<div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
-					<LeftColumn data={institutionData} tEnum={tEnum} />
-					<Contact institutionData={institutionData} />
-				</div>
-
-				{showMore && (
-					<div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
-						<FundingInfo institutionData={institutionData} />
-						<FacilityInfo institutionData={institutionData} />
-						<OrganizationInfo institutionData={institutionData} />
-						<StatusInfo institutionData={institutionData} />
-						<AdditionalInfo institutionData={institutionData} />
-					</div>
-				)}
-
-				<ToggleButton
-					showMore={showMore}
-					onClick={handleToggleInfo}
-					hasInfo={true}
+			<div className="">
+				<InfoWrapper
+					data={institutionData}
+					config={{
+						className: "bg-background p-4",
+						isPrivateField,
+						showPrivateBadge: true,
+						fields: [
+							{
+								type: "section",
+								cardVariant: "none",
+								layout: {
+									columns: 2,
+									span: "half",
+								},
+								fields: [
+									{
+										type: "section",
+										id: "overview",
+										layout: { span: "half" },
+										cardVariant: "none",
+										fields: [
+											{
+												id: "parent_organization",
+												alwaysShow: false,
+												value: "parent_organization",
+												type: "text",
+											},
+											{
+												id: "name",
+												value: "name",
+												type: "title",
+											},
+											{
+												id: "categories",
+												label: fieldLabel("categories"),
+												type: "category",
+											},
+											{
+												id: "utilization_status",
+												type: "status",
+												label: fieldLabel("utilization_status"),
+												statusVariant: "plain",
+												value: "utilization_status",
+												enumKey: "utilization_status",
+											},
+											{
+												id: "protection_status",
+												type: "status",
+												label: fieldLabel("protection_status"),
+												statusVariant: "plain",
+												value: "protection_status",
+												enumKey: "protection_status",
+											},
+											{
+												id: "address",
+												type: "address",
+												value: "address",
+											},
+										],
+									},
+									{
+										type: "section",
+										id: "contact",
+										layout: { span: "half" },
+										cardVariant: "tertiary",
+										fields: contactInfoConfig,
+									},
+								],
+							},
+							{
+								type: "section",
+								id: "details",
+								layout: {
+									columns: 2,
+								},
+								collapsible: true,
+								defaultOpen: openDetails,
+								accordionVariant: "secondary",
+								title: (
+									<>
+										<span className="group-data-[state=open]:hidden">
+											{t("institution.moreInfo")}
+										</span>
+										<span className="group-data-[state=closed]:hidden">
+											{t("institution.lessInfo")}
+										</span>
+									</>
+								),
+								className: "pt-4",
+								cardVariant: "none",
+								fields: [
+									{
+										type: "section",
+										id: "funding",
+										layout: { span: "half" },
+										cardVariant: "tertiary",
+										fields: fundingInfoConfig,
+									},
+									{
+										type: "section",
+										id: "facility",
+										layout: { span: "half" },
+										cardVariant: "tertiary",
+										fields: facilityInfoConfig,
+									},
+									{
+										type: "section",
+										id: "organization",
+										layout: { span: "half" },
+										cardVariant: "tertiary",
+										fields: organizationInfoConfig,
+									},
+									{
+										type: "section",
+										id: "status-details",
+										layout: { span: "half" },
+										cardVariant: "tertiary",
+										fields: statusInfoConfig,
+									},
+								],
+							},
+						],
+					}}
 				/>
-			</CardContent>
-		</Card>
+			</div>
+		</div>
 	);
 });
 

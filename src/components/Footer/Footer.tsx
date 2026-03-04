@@ -1,9 +1,10 @@
 "use client";
-import { useModalStore } from "@/lib/store/modalStore";
 import { FC } from "react";
 import { useTranslation } from "react-i18next";
 import packageInfo from "../../../package.json";
-import { useAppStore } from "@/lib/store/appStore";
+import { usePathname } from "next/navigation";
+import { getModalLink } from "@/lib/utils/modalRouting";
+import Link from "next/link";
 
 const footerItems = [
 	{ id: "about" },
@@ -20,14 +21,14 @@ interface FooterProps {
 
 const Footer: FC<FooterProps> = ({ ariaLabel }) => {
 	const { t } = useTranslation("common");
-	const { handleFooterItemClick } = useModalStore();
-	const viewMode = useAppStore((state) => state.viewMode);
+	const pathname = usePathname();
+	const isListRoute = pathname?.replace(/\/$/, "").endsWith("/list");
 
-	if (viewMode === "list") return <></>;
+	if (isListRoute) return <></>;
 
 	return (
 		<footer
-			className="Footer-root space-x-14 hidden min-w-fit h-8 bg-footer fixed right-0 bottom-0 md:flex justify-between px-2 py-1 ml-20"
+			className="Footer-root z-51 space-x-14 hidden min-w-fit h-8 bg-footer fixed right-0 bottom-0 md:flex justify-between px-2 py-1 ml-20"
 			role="contentinfo"
 			aria-label={ariaLabel ?? t("footerLandmark")}
 		>
@@ -39,12 +40,14 @@ const Footer: FC<FooterProps> = ({ ariaLabel }) => {
 				<ul className="flex gap-4 body2 font-bold">
 					{footerItems.map((item) => (
 						<li key={item.id}>
-							<button
+							<Link
 								className="body2 font-bold"
-								onClick={() => handleFooterItemClick(item.id)}
+								href={getModalLink(item.id).url}
+								target={getModalLink(item.id).target}
+								rel="noopener noreferrer"
 							>
 								{t(`footer.${item.id}`)}
-							</button>
+							</Link>
 						</li>
 					))}
 					<li className="body2 font-normal">v{packageInfo.version}</li>

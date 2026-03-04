@@ -2,14 +2,9 @@
 
 import TextBlock from "@/components/Content/TextBlock";
 import { useTranslation } from "react-i18next";
-import { PageModal } from "../PageModal";
+import { Modal } from "../Modal";
 
-interface ImprintModalProps {
-	open: boolean;
-	onOpenChange: (open: boolean) => void;
-}
-
-export function ImprintModal({ open, onOpenChange }: ImprintModalProps) {
+export function ImprintModal({ routePath }: { routePath?: string }) {
 	const { t: tContent } = useTranslation("content");
 	const { t } = useTranslation("common");
 
@@ -142,13 +137,13 @@ export function ImprintModal({ open, onOpenChange }: ImprintModalProps) {
 	);
 
 	return (
-		<PageModal
-			open={open}
-			onOpenChange={onOpenChange}
+		<Modal
 			title={tContent("imprintModal.title")}
 			subtitle={tContent("imprintModal.subtitle")}
-			content={content}
+			routePath={routePath}
 			hideLinksInModalFooter={["imprint"]}
-		/>
+		>
+			{content}
+		</Modal>
 	);
 }

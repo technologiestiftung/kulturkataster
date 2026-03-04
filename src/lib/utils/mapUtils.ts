@@ -3,6 +3,7 @@
 import { fromLonLat } from "ol/proj";
 import { Map } from "ol";
 import { Coordinate } from "ol/coordinate";
+import { FeatureCollection, GeoJsonProperties, Geometry } from "geojson";
 
 function transformCoordinates(
 	coordinates: any,
@@ -16,47 +17,64 @@ function transformCoordinates(
  * @param {any} geojson - The GeoJSON object to be transformed.
  * @return {void}
  */
-export function transformGeoJSON(geojson: any, targetProjection = "EPSG:3857") {
-	const transformed = JSON.parse(JSON.stringify(geojson)); // Deep copy
-
-	function transformGeometry(geometry: any) {
+export function transformGeoJSON(
+	collection: FeatureCollection<Geometry, GeoJsonProperties>,
+	targetProjection = "EPSG:3857",
+): FeatureCollection<Geometry, GeoJsonProperties> {
+	function transformGeometry(geometry: Geometry | null | undefined) {
 		if (!geometry) {
-			return;
+			return geometry;
 		}
 
 		if (geometry.type === "Point") {
-			geometry.coordinates = transformCoordinates(
-				geometry.coordinates,
-				targetProjection,
-			);
+			return {
+				...geometry,
+				coordinates: transformCoordinates(
+					geometry.coordinates,
+					targetProjection,
+				),
+			};
 		} else if (
 			geometry.type === "LineString" ||
 			geometry.type === "MultiPoint"
 		) {
-			geometry.coordinates = geometry.coordinates.map(transformCoordinates);
+			return {
+				...geometry,
+				coordinates: geometry.coordinates.map((coord) =>
+					transformCoordinates(coord, targetProjection),
+				),
+			};
 		} else if (
 			geometry.type === "Polygon" ||
 			geometry.type === "MultiLineString"
 		) {
-			geometry.coordinates = geometry.coordinates.map((ring: any) =>
-				ring.map(transformCoordinates),
-			);
+			return {
+				...geometry,
+				coordinates: geometry.coordinates.map((ring) =>
+					ring.map((coord) => transformCoordinates(coord, targetProjection)),
+				),
+			};
 		} else if (geometry.type === "MultiPolygon") {
-			geometry.coordinates = geometry.coordinates.map((polygon: any) =>
-				polygon.map((ring: any) => ring.map(transformCoordinates)),
-			);
+			return {
+				...geometry,
+				coordinates: geometry.coordinates.map((polygon) =>
+					polygon.map((ring) =>
+						ring.map((coord) => transformCoordinates(coord, targetProjection)),
+					),
+				),
+			};
 		}
+
+		return geometry;
 	}
 
-	if (transformed.type === "Feature") {
-		transformGeometry(transformed.geometry);
-	} else if (transformed.type === "FeatureCollection") {
-		transformed.features.forEach((feature: any) =>
-			transformGeometry(feature.geometry),
-		);
-	}
-
-	return transformed;
+	return {
+		...collection,
+		features: collection.features.map((feature) => ({
+			...feature,
+			geometry: transformGeometry(feature.geometry) as Geometry,
+		})),
+	};
 }
 
 export function getEpsgFromCrs(crs: string) {
@@ -64,78 +82,8 @@ export function getEpsgFromCrs(crs: string) {
 	return epsgMatch ? `EPSG:${epsgMatch[1]}` : crs;
 }
 
-// Animation constants
 export const ANIMATION_DURATION = 1000;
-export const DEFAULT_ZOOM = 8;
-
-/**
- * Parses POINT(lng lat) format coordinates from PostGIS
- */
-export const parseLatLongCoordinates = (
-	latlong: string,
-): [number, number] | null => {
-	const match = latlong.toString().match(/POINT\(([^ ]+) ([^ ]+)\)/);
-	if (match) {
-		const [, lng, lat] = match;
-		return [parseFloat(lng), parseFloat(lat)];
-	}
-	return null;
-};
-
-/**
- * Parses coordinates in (lat,lng) format for LocationSearch
- * Returns already transformed coordinates for OpenLayers
- */
-export const parseSearchLatLongCoordinates = (
-	latlong: string,
-): [number, number] | null => {
-	const match = latlong.match(/\(([^,]+),([^)]+)\)/);
-	if (!match) return null;
-
-	const lat = parseFloat(match[1]);
-	const lng = parseFloat(match[2]);
-	if (isNaN(lat) || isNaN(lng)) return null;
-
-	const coords = fromLonLat([lng, lat]);
-	return coords as [number, number];
-};
-
-/**
- * Parses coordinates in (lat,lng) format
- */
-export const parseCaseCoordinates = (
-	caseField: string,
-): [number, number] | null => {
-	const match = caseField.match(/\(([^,]+),([^)]+)\)/);
-	if (!match) return null;
-
-	const lat = parseFloat(match[1]); // latitude first
-	const lng = parseFloat(match[2]); // longitude second
-	if (isNaN(lat) || isNaN(lng)) return null;
-
-	// Transform from WGS84 (lat,lng) to map projection
-	const coords = fromLonLat([lng, lat]);
-	return coords as [number, number];
-};
-
-/**
- * Parses GeoJSON coordinates from st_asgeojson field
- */
-export const parseGeoJsonCoordinates = (
-	st_asgeojson: string,
-): [number, number] | null => {
-	try {
-		const geoJson = JSON.parse(st_asgeojson);
-		if (!geoJson.coordinates || !Array.isArray(geoJson.coordinates))
-			return null;
-
-		const coords = fromLonLat([geoJson.coordinates[0], geoJson.coordinates[1]]);
-		return coords as [number, number];
-	} catch (error) {
-		console.warn("Failed to parse st_asgeojson:", error);
-		return null;
-	}
-};
+export const DEFAULT_ZOOM = 9;
 
 /**
  * Animates the map to the specified coordinates

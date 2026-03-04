@@ -1,16 +1,20 @@
-// Shared building blocks
-export { InfoItem } from "./shared/InfoItem";
-export { InfoSection } from "./shared/InfoSection";
-export { ContactLink } from "./shared/ContactLink";
+export { InfoItem } from "../InfoWrapper/InfoItem";
 
-// Main institution components
-export { Address } from "./Address";
-export { Contact } from "./Contact";
 export { ToggleButton } from "./ToggleButton";
 
-// Extended info components
-export { OrganizationInfo } from "./OrganizationInfo";
-export { FundingInfo } from "./FundingInfo";
-export { FacilityInfo } from "./FacilityInfo";
-export { StatusInfo } from "./StatusInfo";
-export { AdditionalInfo } from "./AdditionalInfo";
+export type {
+	InfoWrapperConfig,
+	InfoWrapperFieldConfig,
+} from "../InfoWrapper/types";
+
+export { InstitutionsTable } from "./InstitutionsTable";
+
+export {
+	addressInfoConfig,
+	contactInfoConfig,
+	organizationInfoConfig,
+	fundingInfoConfig,
+	facilityInfoConfig,
+	statusInfoConfig,
+	additionalInfoConfig,
+} from "../../config/infoConfig/configs";

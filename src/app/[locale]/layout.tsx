@@ -1,17 +1,19 @@
 import { AppPersistenceProvider } from "@/components/AppPersistenceProvider";
 import Footer from "@/components/Footer/Footer";
-import MapInitializer from "@/components/Map/MapInitializer/MapInitializer";
+import { MapListShell } from "@/components/Map/MapListShell";
 import { Menu } from "@/components/Menu/Menu";
-import { ModalProvider } from "@/components/ModalProvider";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { serverSideTranslation } from "@/i18n";
 import I18NProvider from "@/i18n/i18n-provider";
-import { getDirection } from "@/lib/utils";
+import { getDirection } from "@/lib/utils/i18nDirection";
 import { Locale } from "@/types";
 import type { Metadata } from "next";
 import { Barlow } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
+import { StoreInitializer } from "@/components/StoreInitializer";
+import { ViewModeToggle } from "@/components/Menu/ViewModeToggle";
+import { Toaster } from "@/components/ui/sonner";
 
 // Initialize axe-core for accessibility testing in development
 // Commented out until @axe-core/react is installed
@@ -52,15 +54,18 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({
 	children,
+	modal,
+	sidebar,
 	params,
 }: Readonly<{
 	children: React.ReactNode;
+	modal: React.ReactNode;
+	sidebar: React.ReactNode;
 	params: Promise<{ locale: Locale }>;
 }>) {
 	const { locale } = await params;
 	const ns: string[] = ["common", "content", "enumMap"]; // namespace used for this page
 	const { resources } = await serverSideTranslation(locale, ns);
-
 	const localizedResources = resources as Record<
 		string,
 		Record<string, Record<string, unknown>>
@@ -97,6 +102,7 @@ export default async function RootLayout({
 			<body className={`${barlow.className} antialiased`}>
 				<I18NProvider locale={locale} namespaces={ns} resources={resources}>
 					<AppPersistenceProvider />
+					<StoreInitializer />
 					<a
 						href="#main-content"
 						className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-4 focus:left-4 focus:bg-background focus:text-foreground focus:px-4 focus:py-2 focus:rounded-md focus:shadow-lg tab-ring"
@@ -110,7 +116,7 @@ export default async function RootLayout({
 									aria-label={headerLabel}
 									className="flex-shrink-0 w-auto"
 								>
-									<Menu />
+									<Menu sidebar={sidebar} />
 								</header>
 								<SidebarInset asChild className="flex-1 w-0">
 									<main
@@ -120,18 +126,19 @@ export default async function RootLayout({
 										aria-label={mainContentLabel}
 									>
 										<h1 className="sr-only">{siteHeading}</h1>
-										<div className="flex flex-1 flex-col gap-4 h-full w-full pb-20 md:pb-0">
-											<MapInitializer />
+										<div className="flex flex-1 flex-col pb-20 md:pb-0">
+											<MapListShell />
 											{children}
 										</div>
 									</main>
 								</SidebarInset>
 							</div>
 						</SidebarProvider>
-
+						<ViewModeToggle />
 						<Footer ariaLabel={footerLabel} />
 					</div>
-					<ModalProvider />
+					<Toaster />
+					{modal}
 				</I18NProvider>
 
 				<Script id="matomo" strategy="afterInteractive">

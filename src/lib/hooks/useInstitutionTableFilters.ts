@@ -1,0 +1,143 @@
+"use client";
+
+import { useMemo, useState } from "react";
+import type { FilterState, Institution } from "@/types";
+import type { InstitutionTableRow } from "@/types/institution";
+import type { Category } from "@/types/category";
+import {
+	getParentCategories,
+	getSubcategories,
+} from "@/lib/utils/institutionUtils";
+import { defaultTableFilterState } from "@/components/FormWrapper/constants";
+
+export function useInstitutionTableFilters(
+	tableRows: InstitutionTableRow[],
+	filterCategoryGroups: Category[],
+) {
+	const [filters, setFilters] = useState<FilterState>(defaultTableFilterState);
+
+	const districts = useMemo(
+		() =>
+			Array.from(
+				new Set(
+					tableRows
+						.map((row) => row.address?.district)
+						.filter(
+							(district): district is string =>
+								typeof district === "string" && district.trim().length > 0,
+						),
+				),
+			).sort((a, b) => a?.localeCompare(b)),
+		[tableRows],
+	);
+
+	const filteredTableRows = useMemo(() => {
+		return tableRows.filter((row) => {
+			if (
+				!filters.include_closed &&
+				row.utilization_status === "permanently_closed"
+			) {
+				return false;
+			}
+
+			if (
+				filters.district_keys.length > 0 &&
+				(!row.address?.district ||
+					!filters.district_keys.includes(row.address.district))
+			) {
+				return false;
+			}
+
+			const hasCategoryFilters =
+				filters.category_keys.length > 0 ||
+				filters.child_category_keys.length > 0;
+
+			if (!hasCategoryFilters) return true;
+
+			const parentMatches = getParentCategories(
+				row as Partial<Institution>,
+			).some((category) => filters.category_keys.includes(category.key));
+
+			const subcategoryMatches = getSubcategories(
+				row as Partial<Institution>,
+			).some((subcategory) =>
+				filters.child_category_keys.includes(subcategory.key),
+			);
+
+			return parentMatches || subcategoryMatches;
+		});
+	}, [filters, tableRows]);
+
+	const { categoryCounts, subcategoryCounts } = useMemo(() => {
+		const counts = {
+			categoryCounts: {} as Record<string, number>,
+			subcategoryCounts: {} as Record<string, number>,
+		};
+
+		if (filterCategoryGroups.length === 0 || tableRows.length === 0) {
+			return counts;
+		}
+
+		filterCategoryGroups.forEach((category) => {
+			counts.categoryCounts[category.key] = 0;
+			(category.child_categories ?? []).forEach((subcategory) => {
+				counts.subcategoryCounts[subcategory.key] = 0;
+			});
+		});
+
+		tableRows.forEach((row) => {
+			if (
+				!filters.include_closed &&
+				row.utilization_status === "permanently_closed"
+			) {
+				return;
+			}
+
+			if (
+				filters.district_keys.length > 0 &&
+				(!row.address?.district ||
+					!filters.district_keys.includes(row.address.district))
+			) {
+				return;
+			}
+
+			getParentCategories(row as Partial<Institution>).forEach((category) => {
+				if (
+					Object.prototype.hasOwnProperty.call(
+						counts.categoryCounts,
+						category.key,
+					)
+				) {
+					counts.categoryCounts[category.key] += 1;
+				}
+			});
+
+			getSubcategories(row as Partial<Institution>).forEach((subcategory) => {
+				if (
+					Object.prototype.hasOwnProperty.call(
+						counts.subcategoryCounts,
+						subcategory.key,
+					)
+				) {
+					counts.subcategoryCounts[subcategory.key] += 1;
+				}
+			});
+		});
+
+		return counts;
+	}, [
+		filterCategoryGroups,
+		filters.district_keys,
+		filters.include_closed,
+		tableRows,
+	]);
+
+	return {
+		filters,
+		setFilters,
+		districts,
+		filteredTableRows,
+		categoryCounts,
+		subcategoryCounts,
+	};
+}
