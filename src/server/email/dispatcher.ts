@@ -1,6 +1,9 @@
 import type { UserStatus } from "@/generated/prisma";
 import { sendTemplatedEmail } from "@/server/email/sendTemplatedEmail";
 
+export type RoleEmailTarget = "district" | "state" | "network";
+export type RoleEmailDecision = "approved" | "rejected";
+
 const getBaseUrls = () => {
 	const siteUrl = process.env.SITE_URL ?? "http://127.0.0.1:3000";
 	return {
@@ -95,20 +98,14 @@ export async function sendClaimDecisionEmail(params: {
 	}
 }
 
-export async function sendRoleDecisionEmailIfNeeded(params: {
-	beforeStatus: UserStatus;
-	afterStatus: UserStatus;
-	accountType: string | null;
+export async function sendRoleDecisionEmail(params: {
+	target: RoleEmailTarget;
+	decision: RoleEmailDecision;
 	email: string;
 	firstName?: string | null;
 	lastName?: string | null;
 	metaInfo?: unknown;
 }) {
-	if (params.beforeStatus !== "approval_pending") return;
-	if (params.afterStatus !== "active" && params.afterStatus !== "inactive")
-		return;
-
-	const normalizedAccountType = (params.accountType ?? "").trim().toLowerCase();
 	const { siteUrl, portalUrl, faqUrl } = getBaseUrls();
 	const districtFromMeta =
 		params.metaInfo && typeof params.metaInfo === "object"
@@ -119,34 +116,37 @@ export async function sendRoleDecisionEmailIfNeeded(params: {
 				).trim()
 			: "";
 	const districtLabel = districtFromMeta || "Ihrem Bezirk";
-	const isApproved = params.afterStatus === "active";
 
-	let templatePath: string | null = null;
-	let subject: string | null = null;
-	if (normalizedAccountType === "district") {
-		templatePath = isApproved
-			? "custom/role_district_approved.html"
-			: "custom/role_district_rejected.html";
-		subject = isApproved
-			? `Freigabe als Bezirksmitarbeitende*r für ${districtLabel}`
-			: `Ihre Registrierung als Bezirksmitarbeitende*r für ${districtLabel}`;
-	} else if (normalizedAccountType === "administration") {
-		templatePath = isApproved
-			? "custom/role_state_approved.html"
-			: "custom/role_state_rejected.html";
-		subject = isApproved
-			? "Freigabe als Landesmitarbeitende*r (Berlin)"
-			: "Ihre Registrierung als Landesmitarbeitende*r (Berlin)";
-	} else if (normalizedAccountType === "organization") {
-		templatePath = isApproved
-			? "custom/role_network_approved.html"
-			: "custom/role_network_rejected.html";
-		subject = isApproved
-			? "Freigabe als Mitarbeitende*r eines Verbands/Netzwerks"
-			: "Ihre Registrierung als Mitarbeitende*r eines Verbands/Netzwerks";
+	let templatePath: string;
+	let subject: string;
+	if (params.target === "district") {
+		templatePath =
+			params.decision === "approved"
+				? "custom/role_district_approved.html"
+				: "custom/role_district_rejected.html";
+		subject =
+			params.decision === "approved"
+				? `Freigabe als Bezirksmitarbeitende*r für ${districtLabel}`
+				: `Ihre Registrierung als Bezirksmitarbeitende*r für ${districtLabel}`;
+	} else if (params.target === "state") {
+		templatePath =
+			params.decision === "approved"
+				? "custom/role_state_approved.html"
+				: "custom/role_state_rejected.html";
+		subject =
+			params.decision === "approved"
+				? "Freigabe als Landesmitarbeitende*r (Berlin)"
+				: "Ihre Registrierung als Landesmitarbeitende*r (Berlin)";
+	} else {
+		templatePath =
+			params.decision === "approved"
+				? "custom/role_network_approved.html"
+				: "custom/role_network_rejected.html";
+		subject =
+			params.decision === "approved"
+				? "Freigabe als Mitarbeitende*r eines Verbands/Netzwerks"
+				: "Ihre Registrierung als Mitarbeitende*r eines Verbands/Netzwerks";
 	}
-
-	if (!templatePath || !subject) return;
 
 	try {
 		await sendTemplatedEmail({
@@ -168,4 +168,40 @@ export async function sendRoleDecisionEmailIfNeeded(params: {
 	} catch (error) {
 		console.error("[email] role decision notification failed:", error);
 	}
+}
+
+export async function sendRoleDecisionEmailIfNeeded(params: {
+	beforeStatus: UserStatus;
+	afterStatus: UserStatus;
+	accountType: string | null;
+	email: string;
+	firstName?: string | null;
+	lastName?: string | null;
+	metaInfo?: unknown;
+}) {
+	if (params.beforeStatus !== "approval_pending") return;
+	if (params.afterStatus !== "active" && params.afterStatus !== "inactive")
+		return;
+
+	const normalizedAccountType = (params.accountType ?? "").trim().toLowerCase();
+	const decision: RoleEmailDecision =
+		params.afterStatus === "active" ? "approved" : "rejected";
+	let target: RoleEmailTarget | null = null;
+	if (normalizedAccountType === "district") {
+		target = "district";
+	} else if (normalizedAccountType === "administration") {
+		target = "state";
+	} else if (normalizedAccountType === "organization") {
+		target = "network";
+	}
+
+	if (!target) return;
+	await sendRoleDecisionEmail({
+		target,
+		decision,
+		email: params.email,
+		firstName: params.firstName,
+		lastName: params.lastName,
+		metaInfo: params.metaInfo,
+	});
 }

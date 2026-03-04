@@ -724,7 +724,13 @@ const renderFieldContent = (
 					actionLabel={field.actionPanel.actionLabel}
 					actionLabelLoading={field.actionPanel.actionLabelLoading}
 					onAction={field.actionPanel.onAction}
+					secondaryActionLabel={field.actionPanel.secondaryActionLabel}
+					secondaryActionLabelLoading={
+						field.actionPanel.secondaryActionLabelLoading
+					}
+					onSecondaryAction={field.actionPanel.onSecondaryAction}
 					errorFallback={field.actionPanel.errorFallback}
+					secondaryErrorFallback={field.actionPanel.secondaryErrorFallback}
 					icon={field.actionPanel.icon}
 					className={field.actionPanel.className}
 				>

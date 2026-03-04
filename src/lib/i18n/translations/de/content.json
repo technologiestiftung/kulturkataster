@@ -1659,7 +1659,7 @@
 				},
 				"fields": {
 					"accountType": {
-						"label": "Kontotyp",
+						"label": "Kontotyp / Rolle",
 						"placeholder": "Organisation, Bezirk, ..."
 					},
 					"compliance": {
@@ -1691,6 +1691,26 @@
 			"sending": "Wird gesendet…",
 			"success": "E-Mail zum Zurücksetzen des Passworts gesendet.",
 			"title": "Passwort zurücksetzen"
+		},
+		"roleEmails": {
+			"district": {
+				"description": "Freigabe- oder Ablehnungs-E-Mail für Bezirksmitarbeitende senden.",
+				"title": "Rollen-E-Mail: Bezirk"
+			},
+			"error": "Rollen-E-Mail konnte nicht gesendet werden.",
+			"network": {
+				"description": "Freigabe- oder Ablehnungs-E-Mail für Verband/Netzwerk senden.",
+				"title": "Rollen-E-Mail: Verband/Netzwerk"
+			},
+			"sendApprove": "Freigabe-E-Mail senden",
+			"sendReject": "Ablehnungs-E-Mail senden",
+			"sendingApprove": "Freigabe wird gesendet…",
+			"sendingReject": "Ablehnung wird gesendet…",
+			"state": {
+				"description": "Freigabe- oder Ablehnungs-E-Mail für Landesmitarbeitende senden.",
+				"title": "Rollen-E-Mail: Land"
+			},
+			"success": "Rollen-E-Mail erfolgreich gesendet."
 		},
 		"status": {
 			"active": "Aktiv",
