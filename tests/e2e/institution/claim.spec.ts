@@ -77,8 +77,14 @@ test.describe("institution claim flow", () => {
 			/The claim request could not be submitted/i,
 		);
 		await expect(submitErrorDialog).toBeVisible({ timeout: 10_000 });
-		await page.getByRole("button", { name: /Schließen/i }).first().click();
-		await page.getByRole("button", { name: /Abbrechen/i }).first().click();
+		await page
+			.getByRole("button", { name: /Schließen/i })
+			.first()
+			.click();
+		await page
+			.getByRole("button", { name: /Abbrechen/i })
+			.first()
+			.click();
 		await page.waitForURL(/\/de\/account\/institutions\/?$/, {
 			timeout: 30_000,
 		});
