@@ -56,6 +56,7 @@ type FormWrapperSectionConfig = {
 	accordionVariant?: "default" | "secondary";
 	accordionTitle?: ReactNode;
 	accordionDescription?: string;
+	privateDescription?: string;
 	className?: string;
 	layout?: Layout;
 	fieldGap?: "gap-0" | "gap-2" | "gap-4" | "gap-6";
@@ -85,6 +86,7 @@ type FormWrapperSectionFieldConfig = {
 	fields?: FormWrapperFieldConfig[];
 	title?: string;
 	description?: string;
+	privateDescription?: string;
 	cardVariant?: "default" | "secondary" | "tertiary" | "none";
 	collapsible?: boolean;
 	defaultOpen?: boolean;
@@ -115,6 +117,7 @@ type FormWrapperNonSectionFieldConfig = {
 	errorMessages?: Partial<Record<string, string>>;
 	disabled?: boolean;
 	description?: string;
+	privateDescription?: string;
 	defaultValue?: unknown;
 	radioVariant?: "default" | "button";
 	multiselectVariant?: "list" | "modal";

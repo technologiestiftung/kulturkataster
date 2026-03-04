@@ -82,17 +82,11 @@ test.describe("institutions dashboard", () => {
 		const editButtons = page.getByRole("button", { name: "Edit" });
 		if ((await editButtons.count()) > 0) {
 			await editButtons.first().click();
-			await page.waitForTimeout(1000);
-			const url = page.url();
-			const navigatedToEditRoute =
-				/\/de\/(?:account\/institutions\/\d+\/edit|account\/submissions\/\d+\/edit|institution\/submission)\/?/.test(
-					url,
+			await expect
+				.poll(() => page.url(), { timeout: 15_000 })
+				.toMatch(
+					/\/de\/(?:account\/institutions\/\d+\/edit|account\/submissions\/\d+\/edit|institution\/submission)\/?/,
 				);
-			if (!navigatedToEditRoute) {
-				await expect(
-					page.locator('[data-slot="dialog-content"]').first(),
-				).toBeVisible({ timeout: 15_000 });
-			}
 		}
 
 		await safeGoto(

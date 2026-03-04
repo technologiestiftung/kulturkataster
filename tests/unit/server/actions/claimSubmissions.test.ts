@@ -41,6 +41,8 @@ vi.mock("@/server/data/submissionRepo", () => ({
 const prismaSubmissionFindManyMock = vi.fn();
 const prismaInstitutionFindManyMock = vi.fn();
 const prismaInstitutionFindFirstMock = vi.fn();
+const prismaInstitutionFindUniqueMock = vi.fn();
+const prismaUserFindUniqueMock = vi.fn();
 const prismaTransactionMock = vi.fn();
 const txSubmissionDeleteMock = vi.fn();
 const txSubmissionUpdateMock = vi.fn();
@@ -56,8 +58,18 @@ vi.mock("@/server/prisma", () => ({
 		institution: {
 			findMany: (args: unknown) => prismaInstitutionFindManyMock(args),
 			findFirst: (args: unknown) => prismaInstitutionFindFirstMock(args),
+			findUnique: (args: unknown) => prismaInstitutionFindUniqueMock(args),
+		},
+		user: {
+			findUnique: (args: unknown) => prismaUserFindUniqueMock(args),
 		},
 	},
+}));
+
+const sendClaimDecisionEmailMock = vi.fn();
+vi.mock("@/server/email/dispatcher", () => ({
+	sendClaimDecisionEmail: (...args: unknown[]) =>
+		sendClaimDecisionEmailMock(...args),
 }));
 
 const updateSubmissionAuditStatusMock = vi.fn();
@@ -81,6 +93,8 @@ describe("server actions: claim submissions", () => {
 		prismaSubmissionFindManyMock.mockReset();
 		prismaInstitutionFindManyMock.mockReset();
 		prismaInstitutionFindFirstMock.mockReset();
+		prismaInstitutionFindUniqueMock.mockReset();
+		prismaUserFindUniqueMock.mockReset();
 		prismaTransactionMock.mockReset();
 		txSubmissionDeleteMock.mockReset();
 		txSubmissionUpdateMock.mockReset();
@@ -88,6 +102,7 @@ describe("server actions: claim submissions", () => {
 		txUserUpdateMock.mockReset();
 		updateSubmissionAuditStatusMock.mockReset();
 		revalidateAccountMock.mockReset();
+		sendClaimDecisionEmailMock.mockReset();
 
 		getTableScopeMock.mockReturnValue("all");
 		getScopeUserIdMock.mockImplementation((scope: string, userId: string) =>
@@ -97,6 +112,15 @@ describe("server actions: claim submissions", () => {
 			AND: [baseWhere, { id: -1 }],
 		}));
 		prismaInstitutionFindFirstMock.mockResolvedValue({ id: 1 });
+		prismaInstitutionFindUniqueMock.mockResolvedValue({
+			name: "Institution A",
+		});
+		prismaUserFindUniqueMock.mockResolvedValue({
+			email: "claimant@example.com",
+			first_name: "Ada",
+			last_name: "Lovelace",
+		});
+		sendClaimDecisionEmailMock.mockResolvedValue(undefined);
 		prismaTransactionMock.mockImplementation(async (callback: unknown) =>
 			(callback as (tx: unknown) => Promise<unknown>)({
 				submission: {

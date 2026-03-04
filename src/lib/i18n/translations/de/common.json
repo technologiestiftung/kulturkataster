@@ -557,6 +557,7 @@
 		"suggestions": "Vorschläge für Ihre Suche"
 	},
 	"sensitiveInformation": "Sensitive Informationen",
+	"privateFieldDescription": "Diese Information wird ausschließlich für befugte Nutzer*innen im geschützten Bereich des Kulturkatasters zugänglich und nicht öffentlich einsehbar sein.",
 	"siteTitle": "Berliner Kulturkataster",
 	"skipToContent": "Zum Hauptinhalt springen",
 	"success": "Erfolg",
