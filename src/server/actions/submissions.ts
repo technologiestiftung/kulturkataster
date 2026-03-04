@@ -125,11 +125,10 @@ export async function createSubmission(input: SubmissionCreatePayload) {
 	const ctx = await getAccessContextForUser(currentUserId);
 	authorizeTable(ctx, "submission", "create");
 
-	const nextStatus = input.status ?? "approval_pending";
+	const nextStatus = "approval_pending";
 
 	if (
 		currentUserId &&
-		nextStatus === "approval_pending" &&
 		typeof input.entityId === "number"
 	) {
 		const existingPending = await submissionRepo.findFirst({

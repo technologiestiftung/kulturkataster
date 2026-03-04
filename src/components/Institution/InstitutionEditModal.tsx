@@ -150,7 +150,6 @@ export function InstitutionEditModal({
 				entityType: SubmissionEntityType.institution,
 				entityId: resolvedInstitutionWithFallback.id,
 				type: SubmissionType.delete,
-				status: "approval_pending",
 				data: {
 					...resolvedInstitutionWithFallback,
 				},
