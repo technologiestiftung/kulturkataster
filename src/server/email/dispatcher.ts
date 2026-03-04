@@ -105,7 +105,8 @@ export async function sendRoleDecisionEmailIfNeeded(params: {
 	metaInfo?: unknown;
 }) {
 	if (params.beforeStatus !== "approval_pending") return;
-	if (params.afterStatus !== "active" && params.afterStatus !== "inactive") return;
+	if (params.afterStatus !== "active" && params.afterStatus !== "inactive")
+		return;
 
 	const normalizedAccountType = (params.accountType ?? "").trim().toLowerCase();
 	const { siteUrl, portalUrl, faqUrl } = getBaseUrls();
@@ -168,4 +169,3 @@ export async function sendRoleDecisionEmailIfNeeded(params: {
 		console.error("[email] role decision notification failed:", error);
 	}
 }
-

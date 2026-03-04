@@ -35,10 +35,13 @@ const buildMirroredUserMetadata = (
 	};
 };
 
-const syncAuthUserMetadataAsAdmin = async (userId: string, user: {
-	first_name?: string | null;
-	last_name?: string | null;
-}) => {
+const syncAuthUserMetadataAsAdmin = async (
+	userId: string,
+	user: {
+		first_name?: string | null;
+		last_name?: string | null;
+	},
+) => {
 	const supabase = createAdminClient();
 	const { data: authUserData, error: getAuthUserError } =
 		await supabase.auth.admin.getUserById(userId);

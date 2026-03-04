@@ -441,32 +441,32 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 							reviewNotes: input.internalNotes,
 						},
 						tx,
-						);
-					});
-					if (claimSubmissionEntityId && claimSubmissionCreatorId) {
-						const [claimant, institution] = await Promise.all([
-							prisma.user.findUnique({
-								where: { id: claimSubmissionCreatorId },
-								select: { email: true, first_name: true, last_name: true },
-							}),
-							prisma.institution.findUnique({
-								where: { id: claimSubmissionEntityId },
-								select: { name: true },
-							}),
-						]);
-						if (claimant?.email && institution?.name) {
-							await sendClaimDecisionEmail({
-								decision: "approved",
-								email: claimant.email,
-								firstName: claimant.first_name,
-								lastName: claimant.last_name,
-								institutionName: institution.name,
-							});
-						}
+					);
+				});
+				if (claimSubmissionEntityId && claimSubmissionCreatorId) {
+					const [claimant, institution] = await Promise.all([
+						prisma.user.findUnique({
+							where: { id: claimSubmissionCreatorId },
+							select: { email: true, first_name: true, last_name: true },
+						}),
+						prisma.institution.findUnique({
+							where: { id: claimSubmissionEntityId },
+							select: { name: true },
+						}),
+					]);
+					if (claimant?.email && institution?.name) {
+						await sendClaimDecisionEmail({
+							decision: "approved",
+							email: claimant.email,
+							firstName: claimant.first_name,
+							lastName: claimant.last_name,
+							institutionName: institution.name,
+						});
 					}
-					revalidateAccount();
-					return { id: input.id, status: "approved" as const };
 				}
+				revalidateAccount();
+				return { id: input.id, status: "approved" as const };
+			}
 
 			const updated = await prisma.$transaction(async (tx) => {
 				const txUpdated = await tx.submission.update({
@@ -488,37 +488,37 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 						reviewNotes: input.internalNotes,
 					},
 					tx,
-					);
-					return txUpdated;
-				});
-				if (
-					input.status === "rejected" &&
-					claimSubmissionEntityId &&
-					claimSubmissionCreatorId
-				) {
-					const [claimant, institution] = await Promise.all([
-						prisma.user.findUnique({
-							where: { id: claimSubmissionCreatorId },
-							select: { email: true, first_name: true, last_name: true },
-						}),
-						prisma.institution.findUnique({
-							where: { id: claimSubmissionEntityId },
-							select: { name: true },
-						}),
-					]);
-					if (claimant?.email && institution?.name) {
-						await sendClaimDecisionEmail({
-							decision: "rejected",
-							email: claimant.email,
-							firstName: claimant.first_name,
-							lastName: claimant.last_name,
-							institutionName: institution.name,
-						});
-					}
+				);
+				return txUpdated;
+			});
+			if (
+				input.status === "rejected" &&
+				claimSubmissionEntityId &&
+				claimSubmissionCreatorId
+			) {
+				const [claimant, institution] = await Promise.all([
+					prisma.user.findUnique({
+						where: { id: claimSubmissionCreatorId },
+						select: { email: true, first_name: true, last_name: true },
+					}),
+					prisma.institution.findUnique({
+						where: { id: claimSubmissionEntityId },
+						select: { name: true },
+					}),
+				]);
+				if (claimant?.email && institution?.name) {
+					await sendClaimDecisionEmail({
+						decision: "rejected",
+						email: claimant.email,
+						firstName: claimant.first_name,
+						lastName: claimant.last_name,
+						institutionName: institution.name,
+					});
 				}
-				revalidateAccount();
-				return updated;
-			},
+			}
+			revalidateAccount();
+			return updated;
+		},
 	);
 }
 
@@ -584,32 +584,32 @@ export async function reviewClaimSubmission(input: ClaimReviewPayload) {
 							reviewNotes: input.reviewNotes,
 						},
 						tx,
-						);
-					});
-					if (claimSubmissionEntityId && claimSubmissionCreatorId) {
-						const [claimant, institution] = await Promise.all([
-							prisma.user.findUnique({
-								where: { id: claimSubmissionCreatorId },
-								select: { email: true, first_name: true, last_name: true },
-							}),
-							prisma.institution.findUnique({
-								where: { id: claimSubmissionEntityId },
-								select: { name: true },
-							}),
-						]);
-						if (claimant?.email && institution?.name) {
-							await sendClaimDecisionEmail({
-								decision: "rejected",
-								email: claimant.email,
-								firstName: claimant.first_name,
-								lastName: claimant.last_name,
-								institutionName: institution.name,
-							});
-						}
+					);
+				});
+				if (claimSubmissionEntityId && claimSubmissionCreatorId) {
+					const [claimant, institution] = await Promise.all([
+						prisma.user.findUnique({
+							where: { id: claimSubmissionCreatorId },
+							select: { email: true, first_name: true, last_name: true },
+						}),
+						prisma.institution.findUnique({
+							where: { id: claimSubmissionEntityId },
+							select: { name: true },
+						}),
+					]);
+					if (claimant?.email && institution?.name) {
+						await sendClaimDecisionEmail({
+							decision: "rejected",
+							email: claimant.email,
+							firstName: claimant.first_name,
+							lastName: claimant.last_name,
+							institutionName: institution.name,
+						});
 					}
-					revalidateAccount();
-					return { id: input.id, status: "rejected" as const };
 				}
+				revalidateAccount();
+				return { id: input.id, status: "rejected" as const };
+			}
 
 			const entityId = submission.entity_id;
 			const claimantId = submission.created_by;
@@ -649,32 +649,32 @@ export async function reviewClaimSubmission(input: ClaimReviewPayload) {
 					tx,
 				);
 				return txUpdated;
-				});
+			});
 
-				if (claimSubmissionEntityId && claimSubmissionCreatorId) {
-					const [claimant, institution] = await Promise.all([
-						prisma.user.findUnique({
-							where: { id: claimSubmissionCreatorId },
-							select: { email: true, first_name: true, last_name: true },
-						}),
-						prisma.institution.findUnique({
-							where: { id: claimSubmissionEntityId },
-							select: { name: true },
-						}),
-					]);
-					if (claimant?.email && institution?.name) {
-						await sendClaimDecisionEmail({
-							decision: "approved",
-							email: claimant.email,
-							firstName: claimant.first_name,
-							lastName: claimant.last_name,
-							institutionName: institution.name,
-						});
-					}
+			if (claimSubmissionEntityId && claimSubmissionCreatorId) {
+				const [claimant, institution] = await Promise.all([
+					prisma.user.findUnique({
+						where: { id: claimSubmissionCreatorId },
+						select: { email: true, first_name: true, last_name: true },
+					}),
+					prisma.institution.findUnique({
+						where: { id: claimSubmissionEntityId },
+						select: { name: true },
+					}),
+				]);
+				if (claimant?.email && institution?.name) {
+					await sendClaimDecisionEmail({
+						decision: "approved",
+						email: claimant.email,
+						firstName: claimant.first_name,
+						lastName: claimant.last_name,
+						institutionName: institution.name,
+					});
 				}
-				revalidateAccount();
-				return updated;
-			},
+			}
+			revalidateAccount();
+			return updated;
+		},
 	);
 }
 
