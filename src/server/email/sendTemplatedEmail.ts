@@ -95,10 +95,8 @@ const getEmailRuntimeConfig = (): EmailRuntimeConfig => {
 	const from = process.env.SMTP_SENDER_NAME;
 	const replyTo = process.env.SMTP_REPLY_TO;
 
-	if (!host || !portRaw ) {
-		throw new Error(
-			"Missing SMTP config. Required: SMTP_HOST, SMTP_PORT",
-		);
+	if (!host || !portRaw) {
+		throw new Error("Missing SMTP config. Required: SMTP_HOST, SMTP_PORT");
 	}
 
 	const port = Number(portRaw);
