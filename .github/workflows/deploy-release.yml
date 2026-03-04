@@ -1,25 +1,34 @@
-name: Deploy to Container Registry
+name: Deploy App (Release)
 
 on:
-  push:
-    branches: [main, dev, release/*]
-  release:
-    types: [published]
   workflow_dispatch:
+    inputs:
+      deploy_track:
+        description: "Deployment track"
+        required: true
+        type: choice
+        options:
+          - main
+          - dev
+      release_tag:
+        description: "Release tag (e.g. v1.2.3)"
+        required: true
+        type: string
 
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-  DEPLOY_TRACK: ${{ github.event_name == 'release' && github.event.release.target_commitish || github.ref_name }}
+  DEPLOY_TRACK: ${{ inputs.deploy_track }}
+  RELEASE_TAG: ${{ inputs.release_tag }}
 
 concurrency:
-  group: deploy-${{ github.ref }}
+  group: deploy-release-${{ inputs.deploy_track }}-${{ inputs.release_tag }}
   cancel-in-progress: false
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    environment: ${{ ((github.event_name == 'release' && github.event.release.target_commitish == 'main') || (github.event_name != 'release' && github.ref_name == 'main')) && 'main' || 'dev' }}
+    environment: ${{ inputs.deploy_track == 'main' && 'main' || 'dev' }}
     permissions:
       contents: read
       packages: write
@@ -44,15 +53,8 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=ref,event=branch,enable=${{ github.event_name != 'release' }}
-            type=ref,event=pr,enable=${{ github.event_name == 'pull_request' }}
-            type=semver,pattern=v{{version}},enable=${{ github.event_name == 'release' && !github.event.release.prerelease }}
-            type=semver,pattern=v{{major}}.{{minor}},enable=${{ github.event_name == 'release' && !github.event.release.prerelease }}
-            type=semver,pattern=v{{major}},enable=${{ github.event_name == 'release' && !github.event.release.prerelease }}
-            type=raw,value=${{ github.event.release.tag_name }},enable=${{ github.event_name == 'release' && !github.event.release.prerelease }}
-            type=raw,value=dev-${{ github.event.release.tag_name }},enable=${{ github.event_name == 'release' && github.event.release.prerelease }}
-            type=raw,value=latest,enable=${{ env.DEPLOY_TRACK == 'main' && github.event_name != 'release' }}
-            type=raw,value=dev-latest,enable=${{ env.DEPLOY_TRACK == 'dev' && github.event_name != 'release' }}
+            type=raw,value=${{ inputs.release_tag }},enable=${{ inputs.deploy_track == 'main' }}
+            type=raw,value=dev-${{ inputs.release_tag }},enable=${{ inputs.deploy_track == 'dev' }}
           flavor: |
             latest=false
 
@@ -79,7 +81,7 @@ jobs:
 
   backup:
     runs-on: ubuntu-latest
-    environment: ${{ ((github.event_name == 'release' && github.event.release.target_commitish == 'main') || (github.event_name != 'release' && github.ref_name == 'main')) && 'main' || 'dev' }}
+    environment: ${{ inputs.deploy_track == 'main' && 'main' || 'dev' }}
     permissions:
       contents: read
 
@@ -88,7 +90,6 @@ jobs:
         run: |
           SUPAVISOR_URL="postgresql://postgres.${{ vars.SUPABASE_TENANT_ID }}:${{ secrets.SUPABASE_DB_PASSWORD }}@supavisor-transaction.kuka-api.ionos-${{ env.DEPLOY_TRACK }}.ds-apps.tsb-berlin.de:443/postgres?sslmode=require"
 
-          # Create local backup directory
           mkdir -p ./backups
 
           TIMESTAMP=$(date +%F_%H%M%S)
@@ -98,10 +99,8 @@ jobs:
 
           echo "Creating database backup via Supavisor pooler..."
 
-          # Install PostgreSQL client for pg_dump
           sudo apt-get update && sudo apt-get install -y postgresql-client
 
-          # Create full backup (schema + data)
           echo "Creating full backup..."
           if pg_dump "$SUPAVISOR_URL" > "$FULL_BACKUP"; then
             echo "Full backup created: $(ls -lh $FULL_BACKUP)"
@@ -110,7 +109,6 @@ jobs:
             exit 1
           fi
 
-          # Create data-only backup
           echo "Creating data-only backup..."
           if pg_dump "$SUPAVISOR_URL" --data-only > "$DATA_BACKUP"; then
             echo "Data-only backup created: $(ls -lh $DATA_BACKUP)"
@@ -119,14 +117,12 @@ jobs:
             rm -f "$DATA_BACKUP"
           fi
 
-          # Verify backups
           if [ ! -s "$FULL_BACKUP" ]; then
             echo "Full backup is empty"
             exit 1
           fi
 
           echo "Backup(s) completed successfully"
-          echo "Files created:"
           ls -lah ./backups/
 
       - name: Upload backup artifacts
@@ -141,7 +137,7 @@ jobs:
   migrations:
     runs-on: ubuntu-latest
     needs: [backup]
-    environment: ${{ ((github.event_name == 'release' && github.event.release.target_commitish == 'main') || (github.event_name != 'release' && github.ref_name == 'main')) && 'main' || 'dev' }}
+    environment: ${{ inputs.deploy_track == 'main' && 'main' || 'dev' }}
     permissions:
       contents: read
 
@@ -160,17 +156,11 @@ jobs:
 
       - name: Run Prisma migrations
         run: |
-          # Build database URL for Supavisor transaction pooler
           SUPAVISOR_URL="postgresql://postgres.${{ vars.SUPABASE_TENANT_ID }}:${{ secrets.SUPABASE_DB_PASSWORD }}@supavisor-session.kuka-api.ionos-${{ env.DEPLOY_TRACK }}.ds-apps.tsb-berlin.de:443/postgres?sslmode=require"
           echo "Running Prisma migrations via Supavisor transaction pooler..."
 
-          # Test database connection
           export DATABASE_URL="${SUPAVISOR_URL}"
-
-          # Generate Prisma client
           npx prisma generate
-
-          # Apply existing migrations
           npx prisma migrate deploy
 
           echo "Prisma migrations completed successfully"
@@ -178,7 +168,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: [build, migrations]
-    environment: ${{ ((github.event_name == 'release' && github.event.release.target_commitish == 'main') || (github.event_name != 'release' && github.ref_name == 'main')) && 'main' || 'dev' }}
+    environment: ${{ inputs.deploy_track == 'main' && 'main' || 'dev' }}
     permissions:
       contents: write
 
