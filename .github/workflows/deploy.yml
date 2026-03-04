@@ -44,11 +44,11 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=ref,event=branch
-            type=ref,event=pr
-            type=semver,pattern=v{{version}}
-            type=semver,pattern=v{{major}}.{{minor}}
-            type=semver,pattern=v{{major}}
+            type=ref,event=branch,enable=${{ github.event_name != 'release' }}
+            type=ref,event=pr,enable=${{ github.event_name == 'pull_request' }}
+            type=semver,pattern=v{{version}},enable=${{ github.event_name == 'release' && !github.event.release.prerelease }}
+            type=semver,pattern=v{{major}}.{{minor}},enable=${{ github.event_name == 'release' && !github.event.release.prerelease }}
+            type=semver,pattern=v{{major}},enable=${{ github.event_name == 'release' && !github.event.release.prerelease }}
             type=raw,value=${{ github.event.release.tag_name }},enable=${{ github.event_name == 'release' && !github.event.release.prerelease }}
             type=raw,value=dev-${{ github.event.release.tag_name }},enable=${{ github.event_name == 'release' && github.event.release.prerelease }}
             type=raw,value=latest,enable=${{ env.DEPLOY_TRACK == 'main' && github.event_name != 'release' }}
