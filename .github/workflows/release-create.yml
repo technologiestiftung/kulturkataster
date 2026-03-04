@@ -1,0 +1,114 @@
+name: Create Release and Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version type'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Configure git
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+      - name: Calculate next version, commit, and create tag
+        id: version
+        run: |
+          LATEST_TAG=$(git tag --list 'v[0-9]*' --sort=-v:refname | head -n1)
+          if [ -z "$LATEST_TAG" ]; then
+            LATEST_TAG="v0.0.0"
+          fi
+
+          LATEST_VERSION="${LATEST_TAG#v}"
+          NEW_VERSION=$(node -e '
+            const bumpType = process.argv[1];
+            const parts = process.argv[2].split(".").map(Number);
+            if (parts.length !== 3 || parts.some(Number.isNaN)) {
+              throw new Error(`Invalid semantic version: ${process.argv[2]}`);
+            }
+            const [major, minor, patch] = parts;
+            if (bumpType === "major") {
+              process.stdout.write(`${major + 1}.0.0`);
+            } else if (bumpType === "minor") {
+              process.stdout.write(`${major}.${minor + 1}.0`);
+            } else if (bumpType === "patch") {
+              process.stdout.write(`${major}.${minor}.${patch + 1}`);
+            } else {
+              throw new Error(`Unsupported version bump type: ${bumpType}`);
+            }
+          ' "${{ github.event.inputs.version }}" "$LATEST_VERSION")
+
+          echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "branch=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+
+          npm version "$NEW_VERSION" --no-git-tag-version
+          git add package.json package-lock.json
+          git commit -m "chore: bump version to $NEW_VERSION"
+          git push origin HEAD
+
+          if git rev-parse "v$NEW_VERSION" >/dev/null 2>&1; then
+            echo "Tag v$NEW_VERSION already exists."
+            exit 1
+          fi
+
+          git tag "v$NEW_VERSION"
+          git push origin "v$NEW_VERSION"
+
+      - name: Create Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ "${{ github.ref_name }}" != "main" ]; then
+            PRERELEASE_FLAG="--prerelease"
+          else
+            PRERELEASE_FLAG=""
+          fi
+
+          gh release create "v${{ steps.version.outputs.version }}" \
+            --title "Release v${{ steps.version.outputs.version }}" \
+            --notes "Release v${{ steps.version.outputs.version }}
+
+          **Branch:** ${{ github.ref_name }}
+          **Commit:** ${{ github.sha }}" \
+            $PRERELEASE_FLAG
+
+      - name: Trigger release deploy workflow
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ "${{ github.ref_name }}" = "main" ]; then
+            DEPLOY_TRACK="main"
+          else
+            DEPLOY_TRACK="dev"
+          fi
+
+          gh workflow run deploy-release.yml \
+            --ref "${{ github.ref_name }}" \
+            -f deploy_track="${DEPLOY_TRACK}" \
+            -f release_tag="v${{ steps.version.outputs.version }}"
