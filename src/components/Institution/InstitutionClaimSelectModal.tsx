@@ -145,7 +145,6 @@ export function InstitutionClaimSelectModal({
 						entityType: SubmissionEntityType.institution,
 						entityId: institution.id,
 						type: SubmissionType.claim,
-						status: "approval_pending",
 						data: {
 							...institution,
 						},

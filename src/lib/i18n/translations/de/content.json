@@ -836,6 +836,9 @@
 				"organization": {
 					"legalFormPlaceholder": "z. B. e.V., gGmbH, GbR"
 				},
+				"notesDescription": "Bitte beachten Sie, dass dieses Feld für die Öffentlichkeit einsehbar ist. Wenn Sie Informationen eintragen möchten, die nur für befugte Nutzer*innen einsehbar sind, tragen Sie diese bitte im Feld \"Interne Notizen\" direkt darunter ein.",
+				"internalNotesDescription": "Interne Hinweise für die Bearbeitung.",
+				"internalNotesPrivateDescription": "Diese Information wird ausschließlich für befugte Nutzer*innen im geschützten Bereich des Kulturkataster zugänglich und nicht öffentlich einsehbar sein.",
 				"protectionStatus": {
 					"acutelyThreatened": "Akut bedroht",
 					"longTermSecured": "Langfristig gesichert",

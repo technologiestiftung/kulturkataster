@@ -23,7 +23,7 @@ import Download from "@/icons/download.svg";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { useAppStore } from "@/lib/store/appStore";
 import KukaSmallLogo from "@/logos/kuka-small.svg";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { usePathname, useRouter } from "next/navigation";
 
@@ -164,8 +164,18 @@ export function Menu({
 		[normalizedPath],
 	);
 
+	const isMapRoute = useMemo(
+		() => /^\/[^/]+\/map(?:\/|$)/.test(normalizedPath),
+		[normalizedPath],
+	);
+
 	const hasSidebarContent =
 		Boolean(currentSidebarInstitutionId) || isAccessibilitySidebarRoute;
+	const showSecondarySidebar = hasSidebarContent && isMapRoute;
+	const [isSecondarySidebarMounted, setIsSecondarySidebarMounted] =
+		useState(showSecondarySidebar);
+	const [isSecondarySidebarVisible, setIsSecondarySidebarVisible] =
+		useState(showSecondarySidebar);
 
 	const isAccountRoute = useMemo(
 		() => normalizedPath.includes("/account"),
@@ -180,15 +190,37 @@ export function Menu({
 	}, [isAccountRoute, setOpen, setOpenMobile]);
 
 	useEffect(() => {
-		if (!hasSidebarContent) {
+		if (!showSecondarySidebar) {
 			setOpen(false);
 			setOpenMobile(false);
 			return;
 		}
 		if (!isAccountRoute) {
-			setOpen(true);
+			setOpen(false);
 		}
-	}, [hasSidebarContent, isAccountRoute, setOpen, setOpenMobile]);
+	}, [showSecondarySidebar, isAccountRoute, setOpen, setOpenMobile]);
+
+	useEffect(() => {
+		let timeoutId: ReturnType<typeof setTimeout> | null = null;
+
+		if (showSecondarySidebar) {
+			setIsSecondarySidebarMounted(true);
+			requestAnimationFrame(() => {
+				setIsSecondarySidebarVisible(true);
+			});
+		} else {
+			setIsSecondarySidebarVisible(false);
+			timeoutId = setTimeout(() => {
+				setIsSecondarySidebarMounted(false);
+			}, 220);
+		}
+
+		return () => {
+			if (timeoutId) {
+				clearTimeout(timeoutId);
+			}
+		};
+	}, [showSecondarySidebar]);
 
 	const handleLogoClick = () => {
 		setFirstTimeUser(true);
@@ -216,15 +248,15 @@ export function Menu({
 
 	return (
 		<>
-			<nav aria-label={t("menu.navigation")}>
+			<nav aria-label={t("menu.navigation")} className="pointer-events-auto">
 				<Sidebar
 					collapsible="icon"
-					className="overflow-hidden *:data-[sidebar=sidebar]:flex-row [&_*]:!transition-none"
+					className="relative overflow-visible *:data-[sidebar=sidebar]:flex-row [&_*]:!transition-none"
 					{...props}
 				>
 					<Sidebar
 						collapsible="none"
-						className="w-[var(--sidebar-width-icon)] min-w-[var(--sidebar-width-icon)] max-w-[var(--sidebar-width-icon)] flex-shrink-0 border-r justify-center hidden md:flex"
+						className="w-[var(--sidebar-width-icon)] min-w-[var(--sidebar-width-icon)] max-w-[var(--sidebar-width-icon)] flex-shrink-0 border-r justify-center hidden md:flex md:fixed md:left-0 md:top-0 md:z-40 md:h-svh"
 					>
 						<SidebarHeader>
 							<div className="my-2">
@@ -308,23 +340,18 @@ export function Menu({
 						</SidebarFooter>
 					</Sidebar>
 
-					{hasSidebarContent && (
-						<Sidebar
-							collapsible="none"
-							className="flex-1 h-full group-data-[collapsible=icon]:hidden flex flex-col"
+					{isSecondarySidebarMounted && (
+						<div
+							className={`pointer-events-none absolute left-[var(--sidebar-width-icon)] top-0 h-full w-[calc(100vw-var(--sidebar-width-icon))] md:max-w-[var(--sidebar-width)] transition-all duration-200 ease-out ${
+								isSecondarySidebarVisible
+									? "translate-x-0 opacity-100"
+									: "translate-x-2 opacity-0"
+							}`}
 						>
-							<SidebarContent className="flex-1 overflow-hidden">
-								<SidebarGroup className="px-0 h-full">
-									<SidebarGroupContent className="h-full overflow-auto focus-visible:outline focus-visible:outline-2 focus-visible:outline-interaction-dark focus-visible:outline-offset-[-2px]">
-										<div className="min-h-full flex flex-col">
-											<div className="flex-1 h-full bg-neutral-10 md:bg-secondary">
-												<div>{sidebar}</div>
-											</div>
-										</div>
-									</SidebarGroupContent>
-								</SidebarGroup>
-							</SidebarContent>
-						</Sidebar>
+							<div className="pointer-events-auto h-full overflow-auto bg-neutral-10 md:bg-secondary shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-interaction-dark focus-visible:outline-offset-[-2px]">
+								{sidebar}
+							</div>
+						</div>
 					)}
 				</Sidebar>
 			</nav>

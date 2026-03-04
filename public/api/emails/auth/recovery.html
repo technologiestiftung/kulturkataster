@@ -3,23 +3,42 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Passwort zuruecksetzen</title>
+    <title>Passwort zurücksetzen</title>
   </head>
-  <body style="margin:0;padding:24px;background:#f4f4f5;font-family:Arial,Helvetica,sans-serif;color:#18181b;">
-    <div style="max-width:620px;margin:0 auto;background:#ffffff;border-radius:12px;padding:28px 24px;">
-      <h1 style="margin:0 0 12px 0;font-size:24px;">Passwort zuruecksetzen</h1>
-      <p style="margin:0 0 18px 0;font-size:16px;line-height:1.6;">
-        Sie haben eine Passwort-Zuruecksetzung angefordert.
-      </p>
-      <p style="margin:0 0 22px 0;">
-        <a href="{{ .ConfirmationURL }}" style="display:inline-block;background:#1f2937;color:#ffffff;text-decoration:none;padding:12px 18px;border-radius:8px;font-weight:600;">Passwort zuruecksetzen</a>
-      </p>
-      <p style="margin:0;font-size:13px;color:#6b7280;">
-        Empfaenger: {{ .Email }}
-        <br />Site URL: {{ .SiteURL }}
-        <br />Redirect: {{ .RedirectTo }}
-        <br />Metadata: {{ .Data }}
-      </p>
-    </div>
+  <body style="margin:0;padding:24px;background:#fafaf9;font-family:Arial,Helvetica,sans-serif;color:#111827;">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
+      <tr>
+        <td align="center">
+          <table role="presentation" width="620" cellspacing="0" cellpadding="0" style="max-width:620px;width:100%;background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;">
+            <tr>
+              <td style="padding:28px 24px 8px 24px;font-size:24px;font-weight:700;">Passwort zurücksetzen</td>
+            </tr>
+            <tr>
+              <td style="padding:0 24px 16px 24px;font-size:16px;line-height:1.6;">
+                <p style="margin:0 0 16px 0;">Guten Tag {{ .Data.firstName }} {{ .Data.lastName }},</p>
+                <p style="margin:0 0 16px 0;">Sie haben angegeben, dass Sie Ihr Passwort für den User-Bereich des Kulturkatasters zurücksetzen möchten. Über den folgenden Link können Sie ein neues Passwort vergeben:</p>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:0 24px 24px 24px;">
+                <a href="{{ .ConfirmationURL }}" style="display:inline-block;background:#111827;color:#ffffff;text-decoration:none;padding:12px 18px;border-radius:8px;font-weight:600;">Passwort zurücksetzen</a>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:0 24px 16px 24px;font-size:16px;line-height:1.6;">
+                <p style="margin:0 0 16px 0;">Falls der Button/Link nicht funktioniert, können Sie den folgenden Link in die Adresszeile Ihres Browsers kopieren und öffnen:</p>
+                <p style="margin:0 0 16px 0;word-break:break-all;color:#6b7280;font-size:14px;">{{ .ConfirmationURL }}</p>
+                <p style="margin:0 0 16px 0;">Wenn Sie kein Zurücksetzen angefordert haben, können Sie diese E-Mail ignorieren – Ihr Passwort bleibt dann unverändert.</p>
+                <p style="margin:0 0 8px 0;">Bei Fragen helfen Ihnen die FAQs im User-Bereich weiter:<br />
+                <a href="{{ .SiteURL }}/faq" style="color:#111827;text-decoration:underline;">{{ .SiteURL }}/faq</a></p>
+                <p style="margin:0 0 16px 0;">Oder wenden Sie sich an unsere Redaktion: <a href="mailto:info@kulturkataster.berlin" style="color:#111827;text-decoration:underline;">info@kulturkataster.berlin</a>.</p>
+                <p style="margin:0 0 8px 0;">Viele Grüße<br />vom Projektteam Kulturkataster</p>
+                <p style="margin:0;font-weight:600;">Kulturraum Berlin gGmbH</p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
   </body>
 </html>
