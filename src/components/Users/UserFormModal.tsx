@@ -390,9 +390,7 @@ const buildUserFormConfig = ({
 							title: t("userFormModal.roleEmails.district.title"),
 							description: t("userFormModal.roleEmails.district.description"),
 							actionLabel: t("userFormModal.roleEmails.sendApprove"),
-							actionLabelLoading: t(
-								"userFormModal.roleEmails.sendingApprove",
-							),
+							actionLabelLoading: t("userFormModal.roleEmails.sendingApprove"),
 							secondaryActionLabel: t("userFormModal.roleEmails.sendReject"),
 							secondaryActionLabelLoading: t(
 								"userFormModal.roleEmails.sendingReject",
@@ -430,9 +428,7 @@ const buildUserFormConfig = ({
 							title: t("userFormModal.roleEmails.state.title"),
 							description: t("userFormModal.roleEmails.state.description"),
 							actionLabel: t("userFormModal.roleEmails.sendApprove"),
-							actionLabelLoading: t(
-								"userFormModal.roleEmails.sendingApprove",
-							),
+							actionLabelLoading: t("userFormModal.roleEmails.sendingApprove"),
 							secondaryActionLabel: t("userFormModal.roleEmails.sendReject"),
 							secondaryActionLabelLoading: t(
 								"userFormModal.roleEmails.sendingReject",
@@ -470,9 +466,7 @@ const buildUserFormConfig = ({
 							title: t("userFormModal.roleEmails.network.title"),
 							description: t("userFormModal.roleEmails.network.description"),
 							actionLabel: t("userFormModal.roleEmails.sendApprove"),
-							actionLabelLoading: t(
-								"userFormModal.roleEmails.sendingApprove",
-							),
+							actionLabelLoading: t("userFormModal.roleEmails.sendingApprove"),
 							secondaryActionLabel: t("userFormModal.roleEmails.sendReject"),
 							secondaryActionLabelLoading: t(
 								"userFormModal.roleEmails.sendingReject",
