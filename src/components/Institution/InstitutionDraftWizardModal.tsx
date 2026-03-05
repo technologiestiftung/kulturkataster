@@ -1276,6 +1276,7 @@ function InstitutionDraftWizardContent({
 									name: "rental_contract_type",
 									label: fieldLabel("rental_contract_type", "Vertragsform"),
 									type: "select",
+									allowNullOption: true,
 									options: [
 										{
 											value: "unlimited_lease",
