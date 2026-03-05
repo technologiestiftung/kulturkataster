@@ -442,7 +442,7 @@
 		},
 		"submitSuccess": {
 			"cta": "Weitere Einreichung starten",
-			"description": "Dank Ihrer Eingabe wächst das Kulturkataster Berlin immer weiter und weiter und ermöglicht so vielen Menschen den Zugang zu neuen Kulturstandorten.",
+			"description": "Dank Ihrer Eingabe wächst das Kulturkataster Berlin immer weiter und weiter und ermöglicht so vielen Menschen den Zugang zu neuen Kulturstandorten. Alle Ihre Einträge können Sie in Ihrem {{ link }} einsehen und verwalten.",
 			"title": "Vielen Dank für Ihre Einreichung"
 		},
 		"title": "Mitwirken beim Kulturkataster Berlin"
@@ -547,6 +547,7 @@
 		"subcategoryHint": "Wählen Sie zuerst eine Kategorie aus."
 	},
 	"no": "Nein",
+	"privateFieldDescription": "Diese Information wird ausschließlich für befugte Nutzer*innen im geschützten Bereich des Kulturkatasters zugänglich und nicht öffentlich einsehbar sein.",
 	"save": "Speichern",
 	"search": {
 		"description": "Ganz einfach die Berliner Kulturlandschaft entdecken: Geben Sie einen Kulturortnamen, eine Adresse, einen Bezirk oder Ortsteil in die Suchfunktion ein und wählen Sie das Ergebnis aus den angezeigten Vorschlägen aus. Ihre Auswahl wird direkt auf der Karte angezeigt.",
@@ -557,7 +558,6 @@
 		"suggestions": "Vorschläge für Ihre Suche"
 	},
 	"sensitiveInformation": "Sensitive Informationen",
-	"privateFieldDescription": "Diese Information wird ausschließlich für befugte Nutzer*innen im geschützten Bereich des Kulturkatasters zugänglich und nicht öffentlich einsehbar sein.",
 	"siteTitle": "Berliner Kulturkataster",
 	"skipToContent": "Zum Hauptinhalt springen",
 	"success": "Erfolg",
