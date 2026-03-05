@@ -276,9 +276,10 @@ export function LocationSearch({
 					}
 					rightSlot={
 						<div className="absolute right-5 top-1/2 transform -translate-y-1/2">
-							{isLoading ? (
+							{isLoading && (
 								<div className="w-5 h-5 border-2 border-neutral-20 border-t-accent rounded-full animate-spin" />
-							) : (
+							)}
+							{!isLoading && searchResults.length > 0 && (
 								<Close
 									onClick={() => {
 										updateQuery("");
