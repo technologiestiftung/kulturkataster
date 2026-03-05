@@ -4,13 +4,47 @@ Sync translation files between local JSON files and Traduora.
 
 ## Commands
 
+### Basic Commands
+
 ```bash
-# Push local translations to Traduora
+# Push local translations to Traduora (new keys only)
 npm run traduora:push
 
-# Pull translations from Traduora to local files
+# Pull translations from Traduora to local files (new keys only)
 npm run traduora:pull
 ```
+
+### Advanced Push Options
+
+```bash
+# Overwrite all translations in Traduora with local values
+npm run traduora:push -- --all
+
+# Mirror local files: overwrite translations AND delete remote keys missing locally
+npm run traduora:push -- --all --prune
+
+# Full mirror: also delete orphan namespaces (labels with no matching local file)
+npm run traduora:push -- --all --prune --prune-orphan-namespaces
+```
+
+### Advanced Pull Options
+
+```bash
+# Overwrite all local translations with Traduora values
+npm run traduora:pull -- --all
+```
+
+### Flag Reference
+
+**Push Flags:**
+
+- `--all` - Overwrite existing translations (default: only add new keys)
+- `--prune` - Delete remote terms that don't exist in local files
+- `--prune-orphan-namespaces` - Delete namespaces/labels with no matching local file
+
+**Pull Flags:**
+
+- `--all` - Overwrite local values with Traduora (default: preserve local values, only add new keys)
 
 ## How It Works
 

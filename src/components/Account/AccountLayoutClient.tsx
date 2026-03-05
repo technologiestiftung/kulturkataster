@@ -126,7 +126,7 @@ export function AccountLayoutClient({
 					src="/resources/map.png"
 					alt="Map background"
 					fill
-					className="object-cover contrast:invert-90"
+					className="object-cover object-top-left contrast:invert-90"
 					priority
 				/>
 			</div>
@@ -209,8 +209,13 @@ export function AccountLayoutClient({
 						</TabsList>
 					</Tabs>
 
-					<div className="pt-6 flex-1 min-h-0 w-full bg-background ">
-						{children}
+					<div className="pt-6 flex-1 min-h-0 w-full bg-background">
+						<div
+							key={pathname}
+							className="h-full motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-1 motion-safe:duration-300"
+						>
+							{children}
+						</div>
 					</div>
 				</div>
 			</div>

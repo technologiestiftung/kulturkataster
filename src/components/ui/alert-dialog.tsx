@@ -42,7 +42,7 @@ function AlertDialog({
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
 			<DialogContent variant="alert" className="p-0" showCloseButton={false}>
-				<div className="flex flex-col gap-4 p-10">
+				<div className="flex flex-col gap-4 p-10 bg-secondary">
 					<DialogTitle className="body1 font-bold">{resolvedTitle}</DialogTitle>
 					<ActionPanel
 						title={title}

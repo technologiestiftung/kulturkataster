@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import type { TFunction } from "i18next";
 import { useTranslation } from "react-i18next";
 import { Input } from "@/components/ui/input";
@@ -54,6 +54,57 @@ import {
 	getFieldLabel,
 	getFieldPlaceholder,
 } from "@/lib/i18n/fieldLabels";
+
+function ScrollReveal({
+	children,
+	className,
+}: {
+	children: React.ReactNode;
+	className?: string;
+}) {
+	const ref = useRef<HTMLDivElement>(null);
+	const [isVisible, setIsVisible] = useState(false);
+
+	useEffect(() => {
+		if (typeof IntersectionObserver === "undefined") {
+			setIsVisible(true);
+			return;
+		}
+
+		const element = ref.current;
+		if (!element) return;
+
+		const observer = new IntersectionObserver(
+			(entries) => {
+				const [entry] = entries;
+				if (entry?.isIntersecting) {
+					setIsVisible(true);
+					observer.disconnect();
+				}
+			},
+			{ threshold: 0.12, rootMargin: "0px 0px -8% 0px" },
+		);
+
+		observer.observe(element);
+
+		return () => observer.disconnect();
+	}, []);
+
+	return (
+		<div
+			ref={ref}
+			className={cn(
+				className,
+				"motion-safe:transition-all motion-safe:duration-500 motion-safe:ease-out",
+				isVisible
+					? "motion-safe:opacity-100 motion-safe:translate-y-0"
+					: "motion-safe:opacity-0 motion-safe:translate-y-3",
+			)}
+		>
+			{children}
+		</div>
+	);
+}
 
 function PasswordField({
 	id,
@@ -1061,39 +1112,47 @@ export const buildRenderField = ({
 			const accordionId = `${field.name}-section`;
 
 			return (
-				<SectionWrapper
-					key={field.name}
-					wrapperId={field.name}
-					wrapperClassName={field.className}
-					spanClassName={spanClass}
-					useAccordion={useAccordion}
-					accordionValue={accordionId}
-					accordionDefaultOpen={field.defaultOpen}
-					accordionVariant={accordionVariant}
-					accordionTriggerClassName=""
-					accordionTitle={accordionTitle}
-					cardVariant={cardVariant}
-					bodyContent={bodyContent}
-				/>
+				<ScrollReveal key={field.name} className={spanClass}>
+					<SectionWrapper
+						wrapperId={field.name}
+						wrapperClassName={field.className}
+						useAccordion={useAccordion}
+						accordionValue={accordionId}
+						accordionDefaultOpen={field.defaultOpen}
+						accordionVariant={accordionVariant}
+						accordionTriggerClassName=""
+						accordionTitle={accordionTitle}
+						cardVariant={cardVariant}
+						bodyContent={bodyContent}
+					/>
+				</ScrollReveal>
 			);
 		}
 
 		if (!field.collapsible) {
+			const gridClass = getGridClass(field);
+
 			return (
-				<Fragment key={field.name}>
-					{renderFieldContent({
-						field,
-						tEnum,
-						tCommon,
-						formData,
-						errors,
-						touched,
-						config,
-						updateField,
-						handleFieldBlur,
-						isPrivate,
-					})}
-				</Fragment>
+				<ScrollReveal
+					key={field.name}
+					className={cn(gridClass, field.className)}
+				>
+					{renderFieldContent(
+						{
+							field,
+							tEnum,
+							tCommon,
+							formData,
+							errors,
+							touched,
+							config,
+							updateField,
+							handleFieldBlur,
+							isPrivate,
+						},
+						false,
+					)}
+				</ScrollReveal>
 			);
 		}
 
@@ -1106,7 +1165,7 @@ export const buildRenderField = ({
 		const gridClass = getGridClass(field);
 
 		return (
-			<div key={field.name} className={cn(gridClass, field.className)}>
+			<ScrollReveal key={field.name} className={cn(gridClass, field.className)}>
 				<Accordion
 					type="single"
 					collapsible
@@ -1141,7 +1200,7 @@ export const buildRenderField = ({
 						</AccordionContent>
 					</AccordionItem>
 				</Accordion>
-			</div>
+			</ScrollReveal>
 		);
 	};
 

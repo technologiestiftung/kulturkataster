@@ -94,6 +94,7 @@ vi.mock("@/server/actions/users", () => ({
 
 vi.mock("@/lib/utils/feedbackToast", () => ({
 	showSuccessToast: vi.fn(),
+	showErrorToast: vi.fn(),
 }));
 
 const mockedCreateUser = vi.mocked(createUser);

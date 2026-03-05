@@ -18,9 +18,11 @@ import {
 import Send from "@/icons/send.svg";
 import Edit from "@/icons/edit.svg";
 import { EmptyActionState } from "@/components/EmptyActionState";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface ActivityListProps {
 	activities?: Activity[];
+	isLoading?: boolean;
 }
 
 const isNumericId = (value: string) => /^\d+$/.test(value);
@@ -339,7 +341,10 @@ const pickRelationAudit = (group: EntityAudit[], primary: EntityAudit) => {
 	)[0];
 };
 
-export function ActivityList({ activities }: ActivityListProps) {
+export function ActivityList({
+	activities,
+	isLoading = false,
+}: ActivityListProps) {
 	const { t } = useTranslation("common");
 	const toLocalePath = useLocalePath();
 	const [searchQuery, setSearchQuery] = useState("");
@@ -565,6 +570,34 @@ export function ActivityList({ activities }: ActivityListProps) {
 				.map((entry) => entry.activity);
 		})();
 
+	if (isLoading) {
+		return (
+			<div className="space-y-4">
+				<div className="grid gap-3 md:grid-cols-2 xl:grid-cols-6">
+					{Array.from({ length: 6 }).map((_, index) => (
+						<Skeleton
+							key={`activity-filter-skeleton-${index}`}
+							className="h-11"
+						/>
+					))}
+				</div>
+				<div className="divide-y divide-border rounded-md border border-border overflow-hidden">
+					{Array.from({ length: 6 }).map((_, index) => (
+						<div key={`activity-row-skeleton-${index}`} className="p-3">
+							<div className="flex items-center gap-3">
+								<Skeleton className="h-4 w-4 rounded-full" />
+								<div className="flex-1 space-y-2">
+									<Skeleton className="h-4 w-28" />
+									<Skeleton className="h-4 w-10/12" />
+								</div>
+							</div>
+						</div>
+					))}
+				</div>
+			</div>
+		);
+	}
+
 	if (resolvedActivities.length === 0) {
 		return (
 			<EmptyActionState
@@ -772,11 +805,13 @@ export function ActivityList({ activities }: ActivityListProps) {
 					</div>
 				) : (
 					filteredActivities.map((activity, index) => (
-						<ActivityItem
+						<div
 							key={activity.id ?? `activity-${activity.date}-${index}`}
-							activity={activity}
-							index={index}
-						/>
+							className="animate-in fade-in-0 slide-in-from-bottom-1 duration-300"
+							style={{ animationDelay: `${Math.min(index, 12) * 28}ms` }}
+						>
+							<ActivityItem activity={activity} index={index} />
+						</div>
 					))
 				)}
 			</div>

@@ -7,6 +7,7 @@ import BackIcon from "@/icons/chevron-left.svg";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
 import { useRestoreFocus } from "@/hooks/use-restore-focus";
+import KukaSmallLogo from "@/logos/kuka-small.svg";
 
 type DialogRootProps = React.ComponentProps<typeof DialogPrimitive.Root>;
 type DialogProps = DialogRootProps;
@@ -131,7 +132,7 @@ function DialogContent({
 			<DialogPrimitive.Content
 				data-slot="dialog-content"
 				className={cn(
-					"bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 z-[61] shadow-lg duration-200 relative",
+					"bg-secondary md:bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 z-[61] shadow-lg duration-200 relative",
 					getVariantStyles(),
 					variant === "fullscreen-muted" && "bg-neutral-10",
 					className,
@@ -145,6 +146,12 @@ function DialogContent({
 				}}
 				{...props}
 			>
+				{!showBackButton && (
+					<div className="absolute top-6 left-4 md:hidden block">
+						<KukaSmallLogo className="size-12" />
+						<span className="sr-only">{t("footer.title")}</span>
+					</div>
+				)}
 				{showBackButton && (
 					<button onClick={onBack} className={backAndCloseClassNames("back")}>
 						<BackIcon className="size-6" />
@@ -160,17 +167,23 @@ function DialogContent({
 						<span className="sr-only">{t("close")}</span>
 					</DialogPrimitive.Close>
 				)}
-				{variant === "mobile-menu" ? (
-					children
-				) : variant === "editor" ? (
-					<div className="flex flex-col h-full w-full overflow-auto">
-						{children}
-					</div>
-				) : (
-					<div className="Modal-Root overflow-auto h-full w-full tab-ring">
-						{children}
-					</div>
-				)}
+				{(() => {
+					if (variant === "mobile-menu") {
+						return children;
+					}
+					if (variant === "editor") {
+						return (
+							<div className="flex flex-col h-full w-full overflow-auto md:mt-0 mt-20">
+								{children}
+							</div>
+						);
+					}
+					return (
+						<div className="Modal-Root overflow-auto h-full w-full tab-ring">
+							{children}
+						</div>
+					);
+				})()}
 			</DialogPrimitive.Content>
 		</DialogPortal>
 	);

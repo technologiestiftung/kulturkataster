@@ -12,6 +12,12 @@ import {
 	SidebarMenuItem,
 	useSidebar,
 } from "@/components/ui/sidebar";
+import {
+	Sheet,
+	SheetContent,
+	SheetHeader,
+	SheetTitle,
+} from "@/components/ui/sheet";
 import Accessibility from "@/icons/accessibility.svg";
 import Edit from "@/icons/edit.svg";
 import InfoCircle from "@/icons/info-circle.svg";
@@ -142,7 +148,7 @@ export function Menu({
 	sidebar,
 	...props
 }: React.ComponentProps<typeof Sidebar> & { sidebar: React.ReactNode }) {
-	const { setOpen, setOpenMobile } = useSidebar();
+	const { setOpen, setOpenMobile, isMobile } = useSidebar();
 	const { t } = useTranslation("common");
 	const router = useRouter();
 	const toLocalePath = useLocalePath();
@@ -222,9 +228,18 @@ export function Menu({
 		};
 	}, [showSecondarySidebar]);
 
+	const isMobileInstitutionDetailRoute =
+		isMobile && Boolean(currentSidebarInstitutionId) && isMapRoute;
+
 	const handleLogoClick = () => {
 		setFirstTimeUser(true);
 		router.push(toLocalePath("/welcome"));
+	};
+
+	const handleMobileDetailsOpenChange = (nextOpen: boolean) => {
+		if (nextOpen) return;
+		if (!currentSidebarInstitutionId) return;
+		router.replace(toLocalePath("/map"));
 	};
 
 	const handleItemClick = (item: MenuItem) => {
@@ -342,13 +357,13 @@ export function Menu({
 
 					{isSecondarySidebarMounted && (
 						<div
-							className={`pointer-events-none absolute left-[var(--sidebar-width-icon)] top-0 h-full w-[calc(100vw-var(--sidebar-width-icon))] md:max-w-[var(--sidebar-width)] transition-all duration-200 ease-out ${
+							className={`hidden md:block pointer-events-none absolute left-[var(--sidebar-width-icon)] top-0 h-full w-[calc(100vw-var(--sidebar-width-icon))] md:max-w-[var(--sidebar-width)] transition-all duration-200 ease-out ${
 								isSecondarySidebarVisible
 									? "translate-x-0 opacity-100"
 									: "translate-x-2 opacity-0"
 							}`}
 						>
-							<div className="pointer-events-auto h-full overflow-auto bg-neutral-10 md:bg-secondary shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-interaction-dark focus-visible:outline-offset-[-2px]">
+							<div className="pointer-events-auto bg-background h-full overflow-auto bg-neutral-10 md:bg-secondary shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-interaction-dark focus-visible:outline-offset-[-2px]">
 								{sidebar}
 							</div>
 						</div>
@@ -357,7 +372,7 @@ export function Menu({
 			</nav>
 
 			<div className="fixed bottom-0 left-0 right-0 z-51 bg-sidebar border-t md:hidden h-20 pointer-events-auto">
-				<SidebarMenu className="flex-row justify-around px-2 py-3">
+				<SidebarMenu className="flex-row justify-around px-2 py-2">
 					{menuItems
 						.filter((item) => item.showInMobile)
 						.map((item) => {
@@ -371,7 +386,7 @@ export function Menu({
 									<SidebarMenuButton
 										onClick={() => handleItemClick(item)}
 										isActive={isActive}
-										className="flex-col gap-1 h-auto py-2 px-2 w-auto size-12"
+										className="flex-col h-auto py-2 px-3 w-auto size-14"
 										aria-label={t(item.label)}
 										aria-current={isActive ? "page" : undefined}
 									>
@@ -385,6 +400,22 @@ export function Menu({
 						})}
 				</SidebarMenu>
 			</div>
+
+			<Sheet
+				open={isMobileInstitutionDetailRoute}
+				onOpenChange={handleMobileDetailsOpenChange}
+			>
+				<SheetContent
+					side="bottom"
+					className="h-[64vh] p-0 bottom-20"
+					onClose={() => handleMobileDetailsOpenChange(false)}
+				>
+					<SheetHeader className="sr-only">
+						<SheetTitle>{t("institution.showDetails")}</SheetTitle>
+					</SheetHeader>
+					<div className="h-full overflow-auto">{sidebar}</div>
+				</SheetContent>
+			</Sheet>
 		</>
 	);
 }
