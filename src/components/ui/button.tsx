@@ -39,7 +39,7 @@ const buttonVariants = cva(
 				md: "h-10 px-6",
 				action: "h-32 w-40 px-10",
 				icon: "h-10 w-10",
-				"icon-only": "h-12 w-12",
+				"icon-only": "h-14 w-14",
 				"icon-default": "h-6 w-full",
 			},
 		},

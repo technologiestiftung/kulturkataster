@@ -63,7 +63,7 @@ const Filter: FC<FilterProps> = ({ onSearchClick, onShowFilter }) => {
 					tooltip={tCommon("filter.title", {
 						defaultValue: "Kulturorte filtern",
 					})}
-					className="cursor-pointer h-12 flex-1 justify-between"
+					className="cursor-pointer h-14 md:mr-0 mr-16 flex-1 justify-between"
 					onClick={onShowFilter}
 				>
 					<div className="flex items-center gap-2">
