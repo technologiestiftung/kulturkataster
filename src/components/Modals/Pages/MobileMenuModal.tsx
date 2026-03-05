@@ -54,11 +54,11 @@ export function MobileMenuModal() {
 		>
 			<DialogContent
 				variant="mobile-menu"
-				className="flex flex-col flex-1 bg-sidebar justify-between"
+				className="h-full bg-sidebar flex flex-col"
 				showCloseButton={false}
 				showBackButton={false}
 			>
-				<DialogHeader className="flex-row items-center justify-between p-4 space-y-0">
+				<DialogHeader className="flex-row shrinkitems-center justify-between p-4 space-y-0">
 					<DialogTitle className="sr-only">{t("mobileMenu.title")}</DialogTitle>
 					<button
 						onClick={() => router.push(toLocalePath("/welcome"))}
@@ -78,9 +78,9 @@ export function MobileMenuModal() {
 						<Close className="w-6 h-6" />
 					</button>
 				</DialogHeader>
-				<div className="overflow-scroll tab-ring">
-					<div className="flex flex-col justify-between flex-1">
-						<div className="flex-1 flex flex-col gap-4 p-4 overflow-auto mb-4">
+				<div className="tab-ring flex w-full flex-1 overflow-auto">
+					<div className="flex flex-col overflow-auto  w-full justify-between">
+						<div className="grow flex flex-col gap-4 p-4">
 							<SubMenuOption
 								key="map"
 								icon={MapIcon}
@@ -126,7 +126,7 @@ export function MobileMenuModal() {
 								</div>
 							</div>
 						</div>
-						<div className="flex gap-4 flex-0 bg-neutral-10 p-4 justify-between items-center">
+						<div className="flex shrink-0 gap-4 bg-neutral-10 p-4 justify-between items-center">
 							<p className="body2">{t("footer.projectBy")}</p>
 							<KRBLogo
 								title="Kulturraum Berlin gGmbH, Logo"

@@ -5,7 +5,7 @@ import { Modal } from "@/components/Modals/Modal";
 import { useTranslation } from "react-i18next";
 import Image from "next/image";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { Button } from "@/components/ui/button";
 
@@ -18,8 +18,22 @@ export function RegisterModal({
 }) {
 	const { t } = useTranslation("common");
 	const router = useRouter();
+	const pathname = usePathname();
+	const searchParams = useSearchParams();
 	const toLocalePath = useLocalePath();
 	const [didRegister, setDidRegister] = useState(false);
+	const didRegisterViaUrl = searchParams.get("registered") === "1";
+	const showSuccess = didRegister || didRegisterViaUrl;
+
+	const handleRegisterSuccess = () => {
+		setDidRegister(true);
+		const params = new URLSearchParams(searchParams.toString());
+		params.set("registered", "1");
+		const query = params.toString();
+		router.replace(query ? `${pathname}?${query}` : pathname, {
+			scroll: false,
+		});
+	};
 
 	return (
 		<Modal
@@ -27,16 +41,15 @@ export function RegisterModal({
 			titleClassName="sr-only"
 			variant="fullscreen"
 			routePath={routePath}
-			containerClassName="p-0 md:p-0 mt-0 md:mt-0"
 			contentWrapperClassName="flex-1"
 			contentClassName=""
 			showBackButton
 			returnTo={returnTo ?? "/login"}
 		>
 			<>
-				{didRegister ? (
+				{showSuccess ? (
 					<div className="w-full space-y-6 text-left">
-						<div className="h-50 relative w-full overflow-hidden">
+						<div className="h-50 relative w-screen -mt-32 -my-4 left-1/2 -translate-x-1/2 overflow-hidden mb-16">
 							<Image
 								src="/resources/thankyou.png"
 								alt="Thank you background"
@@ -73,8 +86,8 @@ export function RegisterModal({
 						</div>
 					</div>
 				) : (
-					<div className="w-full flex flex-1 items-center justify-center py-12 px-4">
-						<RegisterForm onSuccess={() => setDidRegister(true)} />
+					<div className="w-full flex flex-1 items-center justify-center">
+						<RegisterForm onSuccess={handleRegisterSuccess} />
 					</div>
 				)}
 			</>

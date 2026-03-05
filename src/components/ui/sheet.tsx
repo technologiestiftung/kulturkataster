@@ -48,9 +48,11 @@ function SheetContent({
 	className,
 	children,
 	side = "right",
+	onClose,
 	...props
 }: React.ComponentProps<typeof SheetPrimitive.Content> & {
 	side?: "top" | "right" | "bottom" | "left";
+	onClose?: () => void;
 }) {
 	return (
 		<SheetPortal>
@@ -66,14 +68,17 @@ function SheetContent({
 					side === "top" &&
 						"data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top inset-x-0 top-0 h-auto border-b",
 					side === "bottom" &&
-						"data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom inset-x-0 bottom-0 h-auto border-t",
+						"data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom inset-x-0 bottom-0 h-auto border-t rounded-t-xl",
 					className,
 				)}
 				{...props}
 			>
 				{children}
-				<SheetPrimitive.Close className="ring-offset-background focus:ring-ring data-[state=open]:bg-secondary absolute top-4 right-4 rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none">
-					<X className="size-4" aria-hidden="true" focusable="false" />
+				<SheetPrimitive.Close
+					onClick={onClose}
+					className="ring-offset-background focus:ring-ring data-[state=open]:bg-secondary absolute top-6 right-6 z-20 pointer-events-auto rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none"
+				>
+					<X className="size-6" aria-hidden="true" focusable="false" />
 					<span className="sr-only">Close</span>
 				</SheetPrimitive.Close>
 			</SheetPrimitive.Content>
