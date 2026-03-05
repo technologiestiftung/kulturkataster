@@ -65,6 +65,7 @@ vi.mock("@/server/actions/submissions", () => ({
 
 vi.mock("@/lib/utils/feedbackToast", () => ({
 	showSuccessToast: vi.fn(),
+	showErrorToast: vi.fn(),
 }));
 
 const mockedReviewClaimSubmission = vi.mocked(reviewClaimSubmission);

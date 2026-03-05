@@ -190,7 +190,7 @@ export function AccountEditForm({
 	};
 
 	return (
-		<div className="w-full max-w-3xl mx-auto">
+		<div className="w-full md:max-w-3xl mx-auto">
 			<div className="text-start font-bold mb-10">
 				<h1 className="">{t("auth.accountEdit.title")}</h1>
 			</div>

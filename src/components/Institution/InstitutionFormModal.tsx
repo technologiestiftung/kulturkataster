@@ -589,6 +589,7 @@ const buildInstitutionFormConfig = ({
 						type: "select",
 						placeholder: fieldPlaceholder("rental_contract_type"),
 						layout: { span: "half" },
+						allowNullOption: true,
 						options: [
 							{
 								value: "unlimited_lease",

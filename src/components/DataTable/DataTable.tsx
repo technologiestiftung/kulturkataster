@@ -652,7 +652,7 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 						</div>
 					)}
 
-					<div className="flex w-full relative flex-col justify-center items-center md:flex-row gap-2">
+					<div className="flex w-full relative justify-center items-center flex-row gap-2 px-2 md:px-0">
 						{!isSearchOpen && config.primaryButton && (
 							<Button
 								onClick={config.primaryButton.onClick}
@@ -669,7 +669,7 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 								onClick={config.secondaryButton.onClick}
 								variant="outline"
 								size="md"
-								className="bg-primary-light flex-0 text-foreground border-primary rounded-full"
+								className="bg-primary-light max-w-56 text-foreground border-primary rounded-full"
 								aria-label={secondaryButtonAriaLabel}
 							>
 								{config.secondaryButton.label}
@@ -718,7 +718,7 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 										>
 											<Search className="size-5!" />
 										</Button>
-										<Label>{searchLabel}</Label>
+										<Label className="md:block hidden">{searchLabel}</Label>
 									</div>
 								)}
 								{!isSearchOpen && config.filterModal && (
@@ -732,7 +732,9 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 										>
 											<Filter className="size-5!" />
 										</Button>
-										<Label>{config.filterModal.triggerLabel ?? "Filter"}</Label>
+										<Label className="md:block hidden">
+											{config.filterModal.triggerLabel ?? "Filter"}
+										</Label>
 									</div>
 								)}
 							</div>

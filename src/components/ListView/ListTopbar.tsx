@@ -32,7 +32,7 @@ export function ListTopbar({
 	};
 
 	return (
-		<div className="w-full flex flex-col gap-3 md:flex-row md:items-center justify-end sticky">
+		<div className="w-full flex gap-3 flex-row md:items-center justify-end sticky flex-wrap">
 			<div className="relative flex flex-1 justify-end">
 				<div
 					className={[
@@ -81,7 +81,7 @@ export function ListTopbar({
 						>
 							<SearchIcon className="size-4" />
 						</ButtonWithTooltip>
-						<Label className="font-normal">{t("listView.searchLabel")}</Label>
+						<Label emphasize={false}>{t("listView.searchLabel")}</Label>
 					</div>
 				)}
 			</div>
@@ -92,7 +92,7 @@ export function ListTopbar({
 						className="cursor-pointer"
 						onClick={onOpenFilter}
 					/>
-					<Label className="font-normal">{t("listView.filterButton")}</Label>
+					<Label emphasize={false}>{t("listView.filterButton")}</Label>
 				</div>
 			)}
 		</div>
