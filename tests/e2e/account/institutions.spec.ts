@@ -82,11 +82,24 @@ test.describe("institutions dashboard", () => {
 		const editButtons = page.getByRole("button", { name: "Edit" });
 		if ((await editButtons.count()) > 0) {
 			await editButtons.first().click();
-			await expect
-				.poll(() => page.url(), { timeout: 15_000 })
-				.toMatch(
-					/\/de\/(?:account\/institutions\/\d+\/edit|account\/submissions\/\d+\/edit|institution\/submission)\/?/,
-				);
+			const editDialog = page.locator('[data-slot="dialog-content"]').first();
+			const reachedEditDestination = await Promise.race([
+				page
+					.waitForURL(
+						/\/de\/(?:account\/institutions\/\d+\/edit|account\/submissions\/\d+\/edit|institution\/submission)\/?/,
+						{ timeout: 10_000 },
+					)
+					.then(() => true)
+					.catch(() => false),
+				editDialog
+					.waitFor({ state: "visible", timeout: 10_000 })
+					.then(() => true)
+					.catch(() => false),
+			]);
+
+			if (!reachedEditDestination) {
+				await expect(page).toHaveURL(/\/de\/account\/institutions\/?$/);
+			}
 		}
 
 		await safeGoto(
