@@ -36,5 +36,7 @@
 	"playwright.reuseBrowser": false,
 	"playwright.showTrace": false,
 	"testing.openTesting": "openOnTestStart",
-	"testing.automaticallyOpenTestResults": "openOnTestStart"
+	"testing.automaticallyOpenTestResults": "openOnTestStart",
+	"editor.formatOnSave": true,
+	"editor.formatOnPaste": true
 }

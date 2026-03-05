@@ -370,7 +370,7 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
 	};
 
 	return (
-		<div className="w-full max-w-3xl mx-auto ">
+		<div className="w-full md:max-w-3xl mx-auto ">
 			<div className="text-start font-bold">
 				<h1 className="">{t("auth.register.title")}</h1>
 				<p className="body1">{t("auth.register.subtitle")}</p>

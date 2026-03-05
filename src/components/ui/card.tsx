@@ -7,7 +7,7 @@ const cardVariants = cva("text-card-foreground", {
 	variants: {
 		variant: {
 			default: "rounded-lg border bg-card shadow-xs",
-			secondary: "rounded-sm bg-secondary border-0 p-6",
+			secondary: "rounded-sm bg-secondary border-0 md:p-6",
 			tertiary: "rounded-sm bg-secondary border-0 p-4 h-full",
 			none: "",
 			hero: "rounded-t-lg overflow-hidden border-0 p-4",
@@ -65,8 +65,8 @@ CardDescription.displayName = "CardDescription";
 const cardContentVariants = cva("", {
 	variants: {
 		variant: {
-			default: "p-6 pt-0",
-			secondary: "p-6 pt-0",
+			default: "md:p-6 pt-0",
+			secondary: "md:p-6 pt-0",
 			tertiary: "",
 			none: "p-0",
 			hero: "p-0",
