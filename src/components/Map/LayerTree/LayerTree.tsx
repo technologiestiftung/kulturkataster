@@ -385,18 +385,17 @@ const LayerTree: FC = () => {
 			aria-label={t("map.layerTreeTitle")}
 		>
 			<CardHeader className="shadow-sm p-1 pl-6">
-				<div className="flex items-center justify-between">
+				<div className="flex items-center h-14 justify-between">
 					<CardTitle className="body1 font-bold">
 						{t("map.layerTreeTitle")}
 					</CardTitle>
 					<Button
 						variant="ghost"
-						size="sm"
-						className="w-14 h-14 p-0"
 						onClick={handleClose}
+						size="icon-only"
 						aria-label={t("map.closeLayerTree")}
 					>
-						<X className="size-4" aria-hidden="true" focusable="false" />
+						<X className="size-6!" aria-hidden="true" focusable="false" />
 					</Button>
 				</div>
 			</CardHeader>

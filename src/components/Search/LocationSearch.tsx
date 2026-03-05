@@ -297,7 +297,7 @@ export function LocationSearch({
 						tooltip={t("filter.title", {
 							defaultValue: "Kulturorte filtern",
 						})}
-						className="cursor-pointer relative right-16 md:right-0 bg-neutral-80 md:bg-background md:text-foreground text-popover scale-90 md:scale-100 md:invert-0"
+						className="cursor-pointer relative right-16 md:right-0 bg-neutral-80 hover:bg-neutral-70 md:bg-accent md:bg-background md:text-foreground text-popover scale-90 md:scale-100 md:invert-0"
 						onClick={onFilterClick}
 					/>
 				)}
