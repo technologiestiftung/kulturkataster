@@ -230,7 +230,7 @@ export function InstitutionClaimSelectModal({
 					: undefined
 			}
 		>
-			<div className="p-4 space-y-6 flex-1 flex-col max-w-5xl mx-auto w-full">
+			<div className="md:p-4 space-y-6 flex-1 flex-col max-w-5xl mx-auto w-full">
 				<div className="mt-18 space-y-4">
 					<div className="">
 						<h1 className="font-bold">
