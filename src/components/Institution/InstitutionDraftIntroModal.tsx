@@ -93,7 +93,7 @@ function ContributionSetupContent({
 		<>
 			{showThankYou ? (
 				<div className="animate-in fade-in-0 zoom-in-95 slide-in-from-bottom-2 duration-500">
-					<div className="h-50 relative w-screen -my-4 left-1/2 -translate-x-1/2 overflow-hidden mb-16">
+					<div className="h-50 relative w-screen -my-4 left-1/2 -mt-26 -translate-x-1/2 overflow-hidden mb-16">
 						<Image
 							src="/resources/thankyou.png"
 							alt="Thank you background"
@@ -271,11 +271,11 @@ export function InstitutionDraftIntroModal({
 			titleClassName="sr-only"
 			variant="fullscreen"
 			routePath={routePath}
-			containerClassName="p-0 md:p-0 mt-0 md:mt-0"
+			containerClassName=""
 			contentWrapperClassName="flex-1"
 			contentClassName=""
 		>
-			<div className="p-4 space-y-4 flex-1 flex-col max-w-5xl mx-auto w-full mb-20">
+			<div className="space-y-4 flex-1 flex-col max-w-5xl mx-auto w-full mb-20">
 				{showContributionSetup ? (
 					<ContributionSetupContent
 						t={t}

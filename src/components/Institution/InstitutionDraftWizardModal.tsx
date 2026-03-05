@@ -1694,7 +1694,7 @@ function InstitutionDraftWizardContent({
 			</div>
 
 			{!isUpdateReviewOnly && (
-				<div className="mb-8 flex flex-col items-center space-y-2 mx-24">
+				<div className="mb-8 flex flex-col items-center space-y-2 md:mx-24">
 					<StepIndicator />
 					<span className="body2">
 						{t("institutionDraftWizardModal.stepLabel", {
@@ -1825,7 +1825,7 @@ export function InstitutionDraftWizardModal({
 				confirmLabel: t("institutionModalCloseConfirmation.confirm"),
 				cancelLabel: t("institutionModalCloseConfirmation.cancel"),
 			}}
-			containerClassName="p-0 md:p-0 mt-0 md:mt-0"
+			containerClassName=""
 			contentWrapperClassName="flex-1"
 			contentClassName=""
 			errorDialog={
@@ -1843,7 +1843,7 @@ export function InstitutionDraftWizardModal({
 					: undefined
 			}
 		>
-			<div className="flex min-h-full flex-col bg-background py-10 space-y-10">
+			<div className="flex min-h-full flex-col md:bg-background py-10 space-y-10">
 				<HorizontalStepper
 					steps={resolvedSteps}
 					initialStepId={isUpdateReviewOnly ? "review" : resolvedStepId}
