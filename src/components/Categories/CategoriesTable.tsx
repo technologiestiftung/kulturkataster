@@ -99,18 +99,6 @@ export function CategoriesTable() {
 				},
 			},
 			{
-				accessorKey: "displayKey",
-				header: t("categoryTable.columns.key"),
-				enableSorting: true,
-				size: 180,
-				meta: { pin: "left", truncate: true },
-				cell: ({ row }) => (
-					<span className="inline-flex items-center gap-2">
-						{row.original.displayKey}
-					</span>
-				),
-			},
-			{
 				id: "icon",
 				header: t("categoryTable.columns.icon"),
 				enableSorting: false,
@@ -122,6 +110,18 @@ export function CategoriesTable() {
 						categoryKey={row.original.key}
 						className="h-6 w-6"
 					/>
+				),
+			},
+			{
+				accessorKey: "displayKey",
+				header: t("categoryTable.columns.key"),
+				enableSorting: true,
+				size: 180,
+				meta: { pin: "left", truncate: true },
+				cell: ({ row }) => (
+					<span className="inline-flex items-center gap-2">
+						{row.original.displayKey}
+					</span>
 				),
 			},
 			{

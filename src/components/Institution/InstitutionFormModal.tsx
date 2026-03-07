@@ -7,6 +7,7 @@ import { DialogTitle } from "@/components/ui/dialog";
 import { Modal } from "@/components/Modals/Modal";
 import { useRoutedModalClose } from "@/components/Modals/useRoutedModalClose";
 import { FormWrapper } from "@/components/FormWrapper";
+import { FormWrapperLoadingSkeleton } from "@/components/FormWrapper/FormWrapperLoadingSkeleton";
 import type { FormWrapperConfig, FieldConfig } from "@/components/FormWrapper";
 import { useAccountStore } from "@/lib/store/accountStore";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
@@ -80,9 +81,15 @@ const getDialogTitle = (
 		: t("institutionFormModal.dialog.title.edit");
 
 const renderDialogBody = (
+	isWaitingForInstitution: boolean,
 	formConfig: FormWrapperConfig,
 	formKey: string | number,
-) => <FormWrapper key={formKey} config={formConfig} />;
+) =>
+	isWaitingForInstitution ? (
+		<FormWrapperLoadingSkeleton fieldRows={8} />
+	) : (
+		<FormWrapper key={formKey} config={formConfig} />
+	);
 
 const useInstitutionSubmit = (
 	mode: InstitutionFormModalProps["mode"],
@@ -1210,6 +1217,8 @@ export function InstitutionFormModal({
 				description: t("institutionFormModal.dialog.notFound.description"),
 			}
 		: undefined;
+	const isWaitingForInstitution =
+		mode === "edit" && !resolvedInstitutionWithFallback && !showNotFoundWithFallback;
 
 	const formKeyValue = formKey ?? resolvedInstitutionWithFallback?.id ?? mode;
 
@@ -1309,7 +1318,11 @@ export function InstitutionFormModal({
 					<DialogTitle className="title">{getDialogTitle(mode, t)}</DialogTitle>
 				</div>
 				<div className="flex-1 overflow-auto px-6 py-6 md:px-10 flex flex-col">
-					{renderDialogBody(formConfigWithDelete, formKeyValue)}
+					{renderDialogBody(
+						isWaitingForInstitution,
+						formConfigWithDelete,
+						formKeyValue,
+					)}
 				</div>
 			</div>
 		</Modal>

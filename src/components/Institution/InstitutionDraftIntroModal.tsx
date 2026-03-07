@@ -93,7 +93,7 @@ function ContributionSetupContent({
 		<>
 			{showThankYou ? (
 				<div className="motion-safe:animate-in motion-safe:fade-in-0 motion-safe:zoom-in-95 motion-safe:slide-in-from-bottom-2 motion-safe:duration-500">
-					<div className="h-50 relative w-screen -my-4 left-1/2 -mt-26 -translate-x-1/2 overflow-hidden mb-16">
+					<div className="h-50 relative w-screen -my-4 left-1/2 -mt-20 -translate-x-1/2 overflow-hidden mb-16">
 						<Image
 							src="/resources/thankyou.png"
 							alt="Thank you background"

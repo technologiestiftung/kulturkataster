@@ -49,7 +49,7 @@ export const getEditAction = ({
 				variant="surface"
 				iconSize="sm"
 				radius={"full"}
-				className={cn(className, "bg-background")}
+				className={cn(className, "bg-background z-1")}
 				onClick={() => edit.onClick?.(data as Institution)}
 				aria-label={ariaLabel}
 			>
