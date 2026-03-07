@@ -18,12 +18,12 @@ import {
 	TooltipContent,
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Loading } from "@/components/ui/loading";
 import ArrowNarrowUp from "@/icons/arrow-narrow-up.svg";
 import TextWithLinks from "../Content/TextWithLinks";
 import { FilterModalWrapper } from "@/components/Filter/FilterModalWrapper";
 import { FilterPanel } from "@/components/Filter/FilterPanel";
 import { getAccessibleScrollBehavior } from "@/lib/utils/motion";
+import { ListViewSkeleton } from "./ListViewSkeleton";
 
 const ITEMS_PER_PAGE = 20;
 const MAX_STAGGERED_ANIMATION_ITEMS = 12;
@@ -149,9 +149,14 @@ const ListView: FC = () => {
 
 	const handleInstitutionClick = useCallback(
 		(institution: Institution) => {
-			router.push(toLocalePath(`/list/institution/${institution.id}`));
+			const institutionId = String(institution.id);
+			if (selectedInstitutionId === institutionId) {
+				router.push(toLocalePath("/list"));
+				return;
+			}
+			router.push(toLocalePath(`/list/institution/${institutionId}`));
 		},
-		[router, toLocalePath],
+		[router, selectedInstitutionId, toLocalePath],
 	);
 
 	useEffect(() => {
@@ -271,11 +276,7 @@ const ListView: FC = () => {
 	};
 
 	if (!institutions) {
-		return (
-			<div className="ListView-root w-full h-full flex items-center justify-center">
-				<Loading size="lg" />
-			</div>
-		);
+		return <ListViewSkeleton />;
 	}
 
 	const loadingFilters = categories === null || districts.length === 0;

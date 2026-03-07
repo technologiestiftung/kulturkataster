@@ -33,6 +33,7 @@ import { CategorySectionList } from "@/components/Filter/CategorySection/Categor
 import { MultiSelectModal } from "@/components/MultiSelect/MultiSelectModal";
 import { ActionPanel } from "@/components/ActionPanel";
 import { cn } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/skeleton";
 import { buildStreetLine, toOptionalNumber } from "@/lib/utils/formUtils";
 import type { FilterState } from "@/types";
 import type {
@@ -91,17 +92,22 @@ function ScrollReveal({
 	}, []);
 
 	return (
-		<div
-			ref={ref}
-			className={cn(
-				className,
-				"motion-safe:transition-all motion-safe:duration-500 motion-safe:ease-out",
-				isVisible
-					? "motion-safe:opacity-100 motion-safe:translate-y-0"
-					: "motion-safe:opacity-0 motion-safe:translate-y-3",
+		<div ref={ref} className={cn("relative", className)}>
+			{!isVisible && (
+				<div className="pointer-events-none absolute inset-0 z-10">
+					<Skeleton className="h-full w-full rounded-md" />
+				</div>
 			)}
-		>
-			{children}
+			<div
+				className={cn(
+					"motion-safe:transition-all motion-safe:duration-500 motion-safe:ease-out",
+					isVisible
+						? "motion-safe:opacity-100 motion-safe:translate-y-0"
+						: "motion-safe:opacity-0 motion-safe:translate-y-3",
+				)}
+			>
+				{children}
+			</div>
 		</div>
 	);
 }
