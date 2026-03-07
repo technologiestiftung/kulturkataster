@@ -92,7 +92,7 @@ function ContributionSetupContent({
 	return (
 		<>
 			{showThankYou ? (
-				<div className="animate-in fade-in-0 zoom-in-95 slide-in-from-bottom-2 duration-500">
+				<div className="motion-safe:animate-in motion-safe:fade-in-0 motion-safe:zoom-in-95 motion-safe:slide-in-from-bottom-2 motion-safe:duration-500">
 					<div className="h-50 relative w-screen -my-4 left-1/2 -mt-26 -translate-x-1/2 overflow-hidden mb-16">
 						<Image
 							src="/resources/thankyou.png"
@@ -102,7 +102,7 @@ function ContributionSetupContent({
 							priority
 						/>
 					</div>
-					<div className="animate-in fade-in-0 slide-in-from-bottom-1 duration-700">
+					<div className="motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-1 motion-safe:duration-700">
 						<h1 className="font-extrabold">
 							{t("institutionDraftIntroModal.submitSuccess.title")}
 						</h1>

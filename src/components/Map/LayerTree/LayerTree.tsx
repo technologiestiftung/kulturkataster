@@ -16,6 +16,7 @@ import { useSidebar } from "@/components/ui/sidebar";
 import ContextMapIcon from "@/icons/fachkarten.svg";
 import { useAppStore } from "@/lib/store/appStore";
 import { useMapStore } from "@/lib/store/mapStore";
+import { getAccessibleScrollBehavior } from "@/lib/utils/motion";
 import { ManagedLayer } from "@/types";
 import X from "@/icons/x.svg";
 import Image from "next/image";
@@ -155,7 +156,7 @@ const LayerItem = memo<{
 		if (openLegendLayerId === layer.id) {
 			const timer = setTimeout(() => {
 				accordionContentRef.current?.scrollIntoView({
-					behavior: "smooth",
+					behavior: getAccessibleScrollBehavior(),
 					block: "nearest",
 				});
 			}, 150);

@@ -807,7 +807,7 @@ export function ActivityList({
 					filteredActivities.map((activity, index) => (
 						<div
 							key={activity.id ?? `activity-${activity.date}-${index}`}
-							className="animate-in fade-in-0 slide-in-from-bottom-1 duration-300"
+							className="motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-1 motion-safe:duration-300"
 							style={{ animationDelay: `${Math.min(index, 12) * 28}ms` }}
 						>
 							<ActivityItem activity={activity} index={index} />

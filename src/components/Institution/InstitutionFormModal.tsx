@@ -32,6 +32,7 @@ import { useInstitutionPrivateFieldResolver } from "@/lib/hooks/useInstitutionPr
 import { applyInstitutionFieldAccess } from "@/lib/utils/institutionFieldAccess";
 import { showSuccessToast } from "@/lib/utils/feedbackToast";
 import { buildInstitutionFormInitialValues } from "@/lib/utils/institutionFormAdapter";
+import { getAccessibleScrollBehavior } from "@/lib/utils/motion";
 import {
 	findPotentialInstitutionDuplicates,
 	hasDuplicateInstitutionByNameAndAddress,
@@ -959,7 +960,10 @@ export function InstitutionFormModal({
 			setTimeout(() => {
 				const element = document.getElementById(hash);
 				if (element) {
-					element.scrollIntoView({ behavior: "smooth", block: "center" });
+					element.scrollIntoView({
+						behavior: getAccessibleScrollBehavior(),
+						block: "center",
+					});
 					if (typeof element.animate === "function") {
 						element.animate(
 							[

@@ -23,6 +23,7 @@ import ArrowNarrowUp from "@/icons/arrow-narrow-up.svg";
 import TextWithLinks from "../Content/TextWithLinks";
 import { FilterModalWrapper } from "@/components/Filter/FilterModalWrapper";
 import { FilterPanel } from "@/components/Filter/FilterPanel";
+import { getAccessibleScrollBehavior } from "@/lib/utils/motion";
 
 const ITEMS_PER_PAGE = 20;
 const MAX_STAGGERED_ANIMATION_ITEMS = 12;
@@ -246,7 +247,7 @@ const ListView: FC = () => {
 			if (!selectedCard) return;
 			selectedCard.focus({ preventScroll: true });
 			selectedCard.scrollIntoView({
-				behavior: "smooth",
+				behavior: getAccessibleScrollBehavior(),
 				block: "center",
 				inline: "nearest",
 			});
@@ -265,7 +266,7 @@ const ListView: FC = () => {
 	const scrollToTop = () => {
 		window.scrollTo({
 			top: 0,
-			behavior: "smooth",
+			behavior: getAccessibleScrollBehavior(),
 		});
 	};
 
