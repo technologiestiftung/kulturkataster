@@ -21,7 +21,7 @@ const selectTriggerVariants = cva(
 		variants: {
 			variant: {
 				default: "h-14 rounded-sm border border-input",
-				pill: "h-12 rounded-full border border-border shadow-sm",
+				pill: "h-14 rounded-full border border-border shadow-sm",
 			},
 		},
 		defaultVariants: {

@@ -656,9 +656,10 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 						{!isSearchOpen && config.primaryButton && (
 							<Button
 								onClick={config.primaryButton.onClick}
-								variant="rounded"
+								radius="full"
+								variant="surface"
 								className="bg-primary"
-								size="icon"
+								iconSize="lg"
 								aria-label={primaryButtonAriaLabel}
 							>
 								<Plus className="size-6" />
@@ -668,7 +669,7 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 							<Button
 								onClick={config.secondaryButton.onClick}
 								variant="outline"
-								size="md"
+								size="lg"
 								className="bg-primary-light max-w-56 text-foreground border-primary rounded-full"
 								aria-label={secondaryButtonAriaLabel}
 							>
@@ -712,8 +713,9 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 									<div className="gap-2 flex items-center">
 										<Button
 											type="button"
-											variant="rounded"
-											size="icon"
+											radius="full"
+											variant="surface"
+											iconSize="lg"
 											onClick={() => setIsSearchOpen(true)}
 										>
 											<Search className="size-5!" />
@@ -726,8 +728,9 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 										<Button
 											type="button"
 											onClick={() => setIsFilterOpen(true)}
-											variant="rounded"
-											size="icon"
+											radius="full"
+											variant="surface"
+											iconSize="lg"
 											aria-label={filterButtonAriaLabel}
 										>
 											<Filter className="size-5!" />
@@ -941,32 +944,32 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 																					) ??
 																						true) ? (
 																						<Button
-																							size="icon"
-																							variant="ghost"
+																							iconSize="sm"
+																							variant="surface"
+																							radius="full"
 																							onClick={(event) => {
 																								event.stopPropagation();
 																								config.onReview?.(row.original);
 																							}}
-																							className="h-8 w-8 rounded-full border bg-background border-neutral-20 hover:bg-neutral-5"
 																							aria-label={
 																								config.reviewAriaLabel ??
 																								"Review"
 																							}
 																						>
-																							<Eye className="h-5 w-5 text-neutral-80" />
+																							<Eye />
 																						</Button>
 																					) : null}
 																					{config.onEdit &&
 																					(config.getCanEdit?.(row.original) ??
 																						true) ? (
 																						<Button
-																							size="icon"
-																							variant="ghost"
+																							iconSize="sm"
+																							variant="surface"
+																							radius="full"
 																							onClick={(event) => {
 																								event.stopPropagation();
 																								config.onEdit?.(row.original);
 																							}}
-																							className="h-8 w-8 rounded-full border bg-background border-neutral-20 hover:bg-neutral-5"
 																							aria-label="Edit"
 																						>
 																							<Edit className="h-5 w-5 text-neutral-80" />

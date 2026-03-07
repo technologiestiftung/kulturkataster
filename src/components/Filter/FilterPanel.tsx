@@ -116,7 +116,7 @@ export const FilterPanel: FC<FilterPanelProps> = ({
 						{t("filter.error", { ns: "content" })}
 					</div>
 					{onRetry && (
-						<Button size="sm" variant="rounded-md" onClick={onRetry}>
+						<Button size="sm" radius="md" onClick={onRetry}>
 							{t("filter.retry", { ns: "content" })}
 						</Button>
 					)}

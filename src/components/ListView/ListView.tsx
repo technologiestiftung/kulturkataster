@@ -25,6 +25,8 @@ import { FilterModalWrapper } from "@/components/Filter/FilterModalWrapper";
 import { FilterPanel } from "@/components/Filter/FilterPanel";
 
 const ITEMS_PER_PAGE = 20;
+const MAX_STAGGERED_ANIMATION_ITEMS = 12;
+const STAGGER_DELAY_MS = 35;
 
 const ListView: FC = () => {
 	const { t } = useTranslation("common");
@@ -53,9 +55,11 @@ const ListView: FC = () => {
 	const [searchQuery, setSearchQuery] = useState("");
 	const [activeLetter, setActiveLetter] = useState<string | null>(null);
 	const [isFilterOpen, setIsFilterOpen] = useState(false);
+	const [resultsAnimationKey, setResultsAnimationKey] = useState(0);
 	const sentinelRef = useRef<HTMLDivElement>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
 	const lastFocusedInstitutionIdRef = useRef<string | null>(null);
+	const previousResultsSignatureRef = useRef<string | null>(null);
 
 	const searchFilteredInstitutions = useMemo(() => {
 		if (!institutions) return [];
@@ -112,6 +116,12 @@ const ListView: FC = () => {
 		});
 	}, [searchFilteredInstitutions, activeLetter]);
 
+	const resultsSignature = useMemo(
+		() =>
+			institutionsList.map((institution) => String(institution.id)).join("|"),
+		[institutionsList],
+	);
+
 	const visibleInstitutions = useMemo(() => {
 		return institutionsList.slice(0, visibleCount);
 	}, [institutionsList, visibleCount]);
@@ -146,6 +156,14 @@ const ListView: FC = () => {
 	useEffect(() => {
 		setVisibleCount(ITEMS_PER_PAGE);
 	}, [searchQuery, activeLetter, institutions]);
+
+	useEffect(() => {
+		const previousSignature = previousResultsSignatureRef.current;
+		if (previousSignature !== null && previousSignature !== resultsSignature) {
+			setResultsAnimationKey((previous) => previous + 1);
+		}
+		previousResultsSignatureRef.current = resultsSignature;
+	}, [resultsSignature]);
 
 	useEffect(() => {
 		if (activeLetter && !enabledLetters.has(activeLetter)) {
@@ -321,19 +339,29 @@ const ListView: FC = () => {
 								className="space-y-2"
 								aria-label={t("listView.institutionsListLabel")}
 							>
-								{visibleInstitutions.map((institution) => (
-									<InstitutionCard
-										key={institution.id}
-										institutionData={institution}
-										onClick={handleInstitutionClick}
-										isCompact={true}
-										isSelected={
-											selectedInstitutionId === String(institution.id)
-										}
-										openDetails={
-											selectedInstitutionId === String(institution.id)
-										}
-									/>
+								{visibleInstitutions.map((institution, index) => (
+									<div
+										key={`${resultsAnimationKey}-${institution.id}`}
+										className="motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-1 motion-safe:duration-300 motion-safe:ease-out"
+										style={{
+											animationDelay: `${
+												Math.min(index, MAX_STAGGERED_ANIMATION_ITEMS) *
+												STAGGER_DELAY_MS
+											}ms`,
+										}}
+									>
+										<InstitutionCard
+											institutionData={institution}
+											onClick={handleInstitutionClick}
+											isCompact={true}
+											isSelected={
+												selectedInstitutionId === String(institution.id)
+											}
+											openDetails={
+												selectedInstitutionId === String(institution.id)
+											}
+										/>
+									</div>
 								))}
 							</div>
 
@@ -401,8 +429,9 @@ const ListView: FC = () => {
 						<TooltipTrigger asChild>
 							<Button
 								onClick={scrollToTop}
-								variant="rounded"
-								size="icon-only"
+								radius="full"
+								variant="surface"
+								iconSize="lg"
 								className="cursor-pointer"
 								aria-label={t("listView.scrollToTop")}
 							>

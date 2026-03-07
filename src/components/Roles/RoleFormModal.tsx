@@ -334,11 +334,6 @@ const buildRoleFormConfig = ({
 		{
 			name: "detailsSection",
 			type: "section",
-			title: t("roleFormModal.form.details.title"),
-			description:
-				mode === "create"
-					? t("roleFormModal.form.details.description.create")
-					: t("roleFormModal.form.details.description.edit"),
 			fields: [
 				{
 					name: "name",
