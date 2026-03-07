@@ -68,7 +68,11 @@ export async function getClaimSubmissionsDetailed(
 		include: {
 			creator: {
 				include: {
-					role: true,
+					role: {
+						include: {
+							table_permissions: true,
+						},
+					},
 					groups: true,
 					institutions: true,
 					submissions: true,
