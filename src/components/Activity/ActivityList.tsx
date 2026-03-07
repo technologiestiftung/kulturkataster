@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { ActivityItem, type Activity } from "./ActivityItem";
 import { useAccountStore } from "@/lib/store/accountStore";
 import type { EntityAudit } from "@/types/entityAudit";
@@ -353,7 +353,6 @@ export function ActivityList({
 	const [entityTypeFilter, setEntityTypeFilter] = useState("all");
 	const [actorFilter, setActorFilter] = useState("all");
 	const [dateFilter, setDateFilter] = useState("all");
-	const [isListTransitioning, setIsListTransitioning] = useState(false);
 	const entityAudits = useAccountStore((state) => state.entityAudits) ?? [];
 	const submissions = useAccountStore((state) => state.submissions) ?? [];
 	const submissionIdSet = useMemo(
@@ -656,28 +655,6 @@ export function ActivityList({
 		return searchable.includes(query);
 	});
 
-	useEffect(() => {
-		if (filteredActivities.length === 0) {
-			setIsListTransitioning(false);
-			return;
-		}
-		setIsListTransitioning(true);
-		const timeoutId = window.setTimeout(() => {
-			setIsListTransitioning(false);
-		}, 220);
-
-		return () => window.clearTimeout(timeoutId);
-	}, [
-		statusFilter,
-		typeFilter,
-		entityTypeFilter,
-		actorFilter,
-		dateFilter,
-		searchQuery,
-		resolvedActivities.length,
-		filteredActivities.length,
-	]);
-
 	const renderListContent = () => {
 		if (filteredActivities.length === 0) {
 			return (
@@ -686,14 +663,6 @@ export function ActivityList({
 						defaultValue: "Keine Aktivitäten für die aktuellen Filter.",
 					})}
 				</div>
-			);
-		}
-
-		if (isListTransitioning) {
-			return (
-				<ActivityListSkeleton
-					rowCount={Math.min(filteredActivities.length, 6)}
-				/>
 			);
 		}
 
