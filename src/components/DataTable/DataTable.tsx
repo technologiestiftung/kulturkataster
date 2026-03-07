@@ -35,6 +35,7 @@ import Close from "@/icons/close.svg";
 import type { DataTableConfig } from "./types";
 import { Label } from "@radix-ui/react-label";
 import { cn } from "@/lib/utils";
+import { getAccessibleScrollBehavior } from "@/lib/utils/motion";
 import ChevronUp from "@/icons/chevron-up.svg";
 import ChevronDown from "@/icons/chevron-down.svg";
 import Edit from "@/icons/edit.svg";
@@ -367,7 +368,7 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 		const offset = approxColWidth * 3;
 		container.scrollBy({
 			left: direction === "right" ? offset : -offset,
-			behavior: "smooth",
+			behavior: getAccessibleScrollBehavior(),
 		});
 	}, []);
 
