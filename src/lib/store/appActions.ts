@@ -1,4 +1,5 @@
 import { AppStoreState } from "@/types/app";
+import { applyReducedMotionPreference } from "@/lib/utils/motion";
 
 export const createSetBaseFontSize =
 	(set: (fn: (state: AppStoreState) => Partial<AppStoreState>) => void) =>
@@ -17,4 +18,11 @@ export const createSetContrastMode =
 			document.documentElement.removeAttribute("data-theme");
 		}
 		set(() => ({ isContrastMode: enabled }));
+	};
+
+export const createSetReducedMotion =
+	(set: (fn: (state: AppStoreState) => Partial<AppStoreState>) => void) =>
+	(enabled: boolean) => {
+		applyReducedMotionPreference(enabled);
+		set(() => ({ isReducedMotion: enabled }));
 	};
