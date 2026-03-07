@@ -12,11 +12,12 @@ export function ViewModeToggle() {
 	const toLocalePath = useLocalePath();
 
 	return (
-		<div className="fixed block z-65 top-0 right-0 p-5 overflow-hidden">
+		<div className="fixed block z-65 top-0 right-0 p-4 overflow-hidden">
 			<div className="flex gap-2 items-center">
 				<Button
-					variant="rounded"
-					size="icon-only"
+					radius="full"
+					variant="surface"
+					iconSize="lg"
 					title={t("mobileMenu.title")}
 					onClick={() => router.push(toLocalePath("/mobileMenu"))}
 					aria-label={t("mobileMenu.title")}

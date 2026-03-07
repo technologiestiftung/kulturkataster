@@ -175,9 +175,9 @@ export function Menu({
 		[normalizedPath],
 	);
 
-	const hasSidebarContent =
-		Boolean(currentSidebarInstitutionId) || isAccessibilitySidebarRoute;
-	const showSecondarySidebar = hasSidebarContent && isMapRoute;
+	const showSecondarySidebar =
+		isAccessibilitySidebarRoute ||
+		(Boolean(currentSidebarInstitutionId) && isMapRoute);
 	const [isSecondarySidebarMounted, setIsSecondarySidebarMounted] =
 		useState(showSecondarySidebar);
 	const [isSecondarySidebarVisible, setIsSecondarySidebarVisible] =
@@ -357,7 +357,7 @@ export function Menu({
 
 					{isSecondarySidebarMounted && (
 						<div
-							className={`hidden md:block pointer-events-none absolute left-[var(--sidebar-width-icon)] top-0 h-full w-[calc(100vw-var(--sidebar-width-icon))] md:max-w-[var(--sidebar-width)] transition-all duration-200 ease-out ${
+							className={`hidden md:block pointer-events-none fixed left-[var(--sidebar-width-icon)] top-0 h-svh w-[calc(100vw-var(--sidebar-width-icon))] md:max-w-[var(--sidebar-width)] transition-all duration-200 ease-out ${
 								isSecondarySidebarVisible
 									? "translate-x-0 opacity-100"
 									: "translate-x-2 opacity-0"

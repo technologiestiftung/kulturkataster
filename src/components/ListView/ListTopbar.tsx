@@ -71,8 +71,9 @@ export function ListTopbar({
 					<div className="gap-2 flex items-center">
 						<ButtonWithTooltip
 							type="button"
-							variant="rounded"
-							size="icon-only"
+							radius="full"
+							variant="surface"
+							iconSize="lg"
 							tooltip={t("listView.searchButton")}
 							onClick={() => {
 								setIsSearchOpen(true);

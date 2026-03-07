@@ -8,6 +8,7 @@ import { DialogTitle } from "@/components/ui/dialog";
 import { Modal } from "@/components/Modals/Modal";
 import { useRoutedModalClose } from "@/components/Modals/useRoutedModalClose";
 import { FormWrapper } from "@/components/FormWrapper";
+import { FormWrapperLoadingSkeleton } from "@/components/FormWrapper/FormWrapperLoadingSkeleton";
 import type { FormWrapperConfig } from "@/components/FormWrapper";
 import { useAccountStore } from "@/lib/store/accountStore";
 import { useInstitutionMultiSelect } from "@/lib/hooks/useInstitutionMultiSelect";
@@ -219,10 +220,6 @@ const buildUserFormConfig = ({
 	onSubmit,
 	onCancel,
 }: UserFormConfigArgs): FormWrapperConfig => {
-	const identityDescription =
-		mode === "create"
-			? t("userFormModal.form.identity.description.create")
-			: t("userFormModal.form.identity.description.edit");
 	const accessCondition = () => mode === "edit" && Boolean(resolvedUser);
 
 	return {
@@ -230,8 +227,6 @@ const buildUserFormConfig = ({
 			{
 				name: "identitySection",
 				type: "section",
-				title: t("userFormModal.form.identity.title"),
-				description: identityDescription,
 				layout: { columns: 2 },
 				fields: [
 					{
@@ -296,6 +291,7 @@ const buildUserFormConfig = ({
 						label: t("userFormModal.form.access.fields.role.label"),
 						type: "select",
 						required: true,
+						placeholder: t("userFormModal.form.access.fields.role.placeholder"),
 						options: roles.map((role) => ({
 							value: String(role.id),
 							label: role.name,
@@ -525,15 +521,12 @@ const getDialogTitle = (
 
 const renderDialogBody = (
 	isWaitingForUser: boolean,
-	t: (key: string) => string,
 	formConfig: FormWrapperConfig,
 	resolvedUser: User | undefined,
 	mode: UserFormModalProps["mode"],
 ) => {
 	if (isWaitingForUser) {
-		return (
-			<p className="text-foreground">{t("userFormModal.dialog.loading")}</p>
-		);
+		return <FormWrapperLoadingSkeleton />;
 	}
 	return <FormWrapper key={resolvedUser?.id ?? mode} config={formConfig} />;
 };
@@ -665,10 +658,6 @@ export function UserFormModal({
 			routePath={routePath}
 			returnTo={returnTo}
 			autoCloseError={autoCloseError}
-			loadingState={{
-				active: isWaitingForUser,
-				label: t("userFormModal.dialog.loading"),
-			}}
 			confirmDialog={
 				showDeleteDialog && resolvedUser
 					? {
@@ -751,13 +740,7 @@ export function UserFormModal({
 				</div>
 				{autoCloseError ? null : (
 					<div className="flex-1 overflow-auto px-6 py-6 md:px-10 flex flex-col">
-						{renderDialogBody(
-							isWaitingForUser,
-							t,
-							formConfig,
-							resolvedUser,
-							mode,
-						)}
+						{renderDialogBody(isWaitingForUser, formConfig, resolvedUser, mode)}
 					</div>
 				)}
 			</div>

@@ -28,7 +28,7 @@ export function ModalFooter({ hideLinks }: ModalFooterProps) {
 
 	return (
 		<>
-			<div className="ModalFooter-root flex justify-center w-full h-auto bg-secondary px-6 py-12 ">
+			<div className="ModalFooter-root flex justify-center w-full h-auto bg-secondary p-4 md:p-6 py-12 md:mt-12">
 				<div className="w-full flex flex-col md:flex-row md:items-center md:justify-between">
 					<div className="w-4/11 hidden md:flex items-center justify-center">
 						<KukaLargeLogo

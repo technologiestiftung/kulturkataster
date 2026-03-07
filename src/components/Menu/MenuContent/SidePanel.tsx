@@ -55,7 +55,7 @@ export function SidePanel({
 	return (
 		<div className="absolute inset-0 h-full pointer-events-none md:inset-y-0 md:left-0 md:max-w-[var(--sidebar-width)] z-8">
 			<div
-				className={`h-full w-full flex-row flex overflow-hidden p-5 transition-colors duration-200 ${hasResults || sidePanel === "filter" ? "bg-secondary shadow-lg" : "pointer-events-none"}`}
+				className={`h-full w-full flex-row flex overflow-hidden p-4 transition-colors duration-200 ${hasResults || sidePanel === "filter" ? "bg-secondary shadow-lg" : "pointer-events-none"}`}
 			>
 				<div className="relative h-full flex-1">
 					<div

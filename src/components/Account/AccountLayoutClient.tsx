@@ -146,8 +146,9 @@ export function AccountLayoutClient({
 					</div>
 					<div className="Buttons flex flex-wrap space-x-3">
 						<ButtonWithTooltip
-							variant="rounded"
-							size="icon-only"
+							radius="full"
+							variant="surface"
+							iconSize="lg"
 							tooltip={profileSettingsLabel}
 							tooltipSide="bottom"
 							className="h-14 w-14"
@@ -157,8 +158,9 @@ export function AccountLayoutClient({
 							<Setting />
 						</ButtonWithTooltip>
 						<ButtonWithTooltip
-							variant="rounded"
-							size="icon-only"
+							radius="full"
+							variant="surface"
+							iconSize="lg"
 							tooltipSide="bottom"
 							tooltip={faqLabel}
 							className="h-14 w-14"
@@ -168,8 +170,9 @@ export function AccountLayoutClient({
 							<Info />
 						</ButtonWithTooltip>
 						<ButtonWithTooltip
-							variant="rounded"
-							size="icon-only"
+							radius="full"
+							variant="surface"
+							iconSize="lg"
 							tooltipSide="bottom"
 							tooltip={logoutLabel}
 							className="h-14 w-14"
@@ -179,8 +182,9 @@ export function AccountLayoutClient({
 							<LogOut />
 						</ButtonWithTooltip>
 						<ButtonWithTooltip
-							variant="rounded"
-							size="icon-only"
+							radius="full"
+							variant="surface"
+							iconSize="lg"
 							tooltipSide="bottom"
 							tooltip={refreshLabel}
 							className="h-14 w-14"
@@ -193,7 +197,9 @@ export function AccountLayoutClient({
 							}}
 						>
 							<RefreshCw
-								className={isRefreshing ? "animate-spin" : undefined}
+								className={
+									isRefreshing ? "motion-safe:animate-spin" : undefined
+								}
 							/>
 						</ButtonWithTooltip>
 					</div>
