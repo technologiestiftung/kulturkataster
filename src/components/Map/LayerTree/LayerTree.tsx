@@ -16,6 +16,7 @@ import { useSidebar } from "@/components/ui/sidebar";
 import ContextMapIcon from "@/icons/fachkarten.svg";
 import { useAppStore } from "@/lib/store/appStore";
 import { useMapStore } from "@/lib/store/mapStore";
+import { getAccessibleScrollBehavior } from "@/lib/utils/motion";
 import { ManagedLayer } from "@/types";
 import X from "@/icons/x.svg";
 import Image from "next/image";
@@ -155,7 +156,7 @@ const LayerItem = memo<{
 		if (openLegendLayerId === layer.id) {
 			const timer = setTimeout(() => {
 				accordionContentRef.current?.scrollIntoView({
-					behavior: "smooth",
+					behavior: getAccessibleScrollBehavior(),
 					block: "nearest",
 				});
 			}, 150);
@@ -284,8 +285,9 @@ const FloatingLayerButton = memo(
 
 					<ButtonWithTooltip
 						ref={forwardedRef}
-						variant="rounded"
-						size="icon"
+						radius="full"
+						variant="surface"
+						iconSize="lg"
 						tooltip={t("map.layerTree")}
 						tooltipSide="right"
 						className={`relative w-16 h-16 p-0 bg-neutral-80 shadow-lg rounded overflow-hidden flex items-center justify-center cursor-pointer transition-colors hover:bg-neutral-70 focus:outline-none ${
@@ -392,7 +394,7 @@ const LayerTree: FC = () => {
 					<Button
 						variant="ghost"
 						onClick={handleClose}
-						size="icon-only"
+						iconSize="lg"
 						aria-label={t("map.closeLayerTree")}
 					>
 						<X className="size-6!" aria-hidden="true" focusable="false" />

@@ -202,15 +202,28 @@ export function UsersTable() {
 				sortingFn: (rowA, rowB) =>
 					(rowA.original.institutions?.length ?? 0) -
 					(rowB.original.institutions?.length ?? 0),
-				cell: ({ row }) => (
-					<div className="flex flex-col gap-1">
-						<span className="body3">
-							{t("userTable.institutionsCount", {
-								count: row.original.institutions?.length ?? 0,
-							})}
-						</span>
-					</div>
-				),
+				cell: ({ row }) => {
+					const hasInstitutionReadAll = Boolean(
+						row.original.role?.table_permissions?.some(
+							(permission) =>
+								permission.table === "institution" &&
+								permission.action === "read" &&
+								(permission.scope ?? "own") === "all",
+						),
+					);
+
+					return (
+						<div className="flex flex-col gap-1">
+							<span className="body3">
+								{hasInstitutionReadAll
+									? t("userTable.accessAll", { defaultValue: "Alle" })
+									: t("userTable.institutionsCount", {
+											count: row.original.institutions?.length ?? 0,
+										})}
+							</span>
+						</div>
+					);
+				},
 			},
 			{
 				id: "compliance",

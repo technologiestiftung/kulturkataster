@@ -74,7 +74,7 @@ export function RegisterModal({
 							</div>
 							<div>
 								<Button
-									variant="default"
+									variant="primary"
 									className="w-full"
 									onClick={() => router.replace(toLocalePath("/login"))}
 								>

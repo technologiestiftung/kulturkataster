@@ -44,7 +44,7 @@ function AuthChoiceContent({
 					</p>
 				</div>
 				<div className="flex ">
-					<Button variant="default" onClick={onLogin}>
+					<Button variant="primary" onClick={onLogin}>
 						{t("institutionDraftIntroModal.choice.login.cta")}
 					</Button>
 				</div>
@@ -59,7 +59,7 @@ function AuthChoiceContent({
 					</p>
 				</div>
 				<div className="flex">
-					<Button variant="default" onClick={onGuestContinue}>
+					<Button variant="primary" onClick={onGuestContinue}>
 						{t("institutionDraftIntroModal.choice.guest.cta")}
 					</Button>
 				</div>
@@ -92,8 +92,8 @@ function ContributionSetupContent({
 	return (
 		<>
 			{showThankYou ? (
-				<div className="animate-in fade-in-0 zoom-in-95 slide-in-from-bottom-2 duration-500">
-					<div className="h-50 relative w-screen -my-4 left-1/2 -mt-26 -translate-x-1/2 overflow-hidden mb-16">
+				<div className="motion-safe:animate-in motion-safe:fade-in-0 motion-safe:zoom-in-95 motion-safe:slide-in-from-bottom-2 motion-safe:duration-500">
+					<div className="h-50 relative w-screen -my-4 left-1/2 -mt-20 -translate-x-1/2 overflow-hidden mb-16">
 						<Image
 							src="/resources/thankyou.png"
 							alt="Thank you background"
@@ -102,7 +102,7 @@ function ContributionSetupContent({
 							priority
 						/>
 					</div>
-					<div className="animate-in fade-in-0 slide-in-from-bottom-1 duration-700">
+					<div className="motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-1 motion-safe:duration-700">
 						<h1 className="font-extrabold">
 							{t("institutionDraftIntroModal.submitSuccess.title")}
 						</h1>
@@ -196,7 +196,7 @@ function ContributionSetupContent({
 						{t("institutionDraftIntroModal.intro.back")}
 					</Button>
 				) : null}
-				<Button variant="default" onClick={onContinue}>
+				<Button variant="primary" onClick={onContinue}>
 					{showThankYou
 						? t("institutionDraftIntroModal.submitSuccess.cta")
 						: t("institutionDraftIntroModal.intro.cta")}

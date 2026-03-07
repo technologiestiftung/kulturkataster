@@ -9,17 +9,13 @@ import MapNavigationControls from "./Controls/MapNavigation/MapNavigationControl
 import LayerInitializer from "./LayerInitializer/LayerInitializer";
 import { InstitutionLayer, Layers } from "./Layers";
 import LayerTree from "./LayerTree/LayerTree";
-import { Loading } from "../ui/loading";
 import { SidePanel } from "../Menu/MenuContent/SidePanel";
 import { useAppStore } from "@/lib/store/appStore";
+import { MapSkeleton } from "./MapSkeleton";
 
 const LazyOlMap = dynamic(() => import("./OlMap/OlMap"), {
 	ssr: false,
-	loading: () => (
-		<div className="Map-root w-full h-full flex items-center justify-center">
-			<Loading size="lg" />
-		</div>
-	),
+	loading: () => <MapSkeleton />,
 });
 
 const Map: FC = () => {

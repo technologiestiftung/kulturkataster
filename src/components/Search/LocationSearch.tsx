@@ -277,7 +277,7 @@ export function LocationSearch({
 					rightSlot={
 						<div className="absolute right-14 md:right-5 top-1/2 transform -translate-y-1/2">
 							{isLoading && (
-								<div className="w-5 h-5 border-2 border-neutral-20 border-t-accent rounded-full animate-spin" />
+								<div className="w-5 h-5 border-2 border-neutral-20 border-t-accent rounded-full motion-safe:animate-spin" />
 							)}
 							{!isLoading && searchResults.length > 0 && (
 								<Close

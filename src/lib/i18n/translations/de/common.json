@@ -8,6 +8,9 @@
 		"fontSize": {
 			"title": "Vergrößerte Schriften"
 		},
+		"motion": {
+			"title": "Reduzierte Animationen"
+		},
 		"signLanguage": {
 			"title": "Deutsche Gebärdensprache"
 		},

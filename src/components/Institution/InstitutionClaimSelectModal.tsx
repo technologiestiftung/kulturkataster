@@ -248,7 +248,7 @@ export function InstitutionClaimSelectModal({
 					<p className="body2">{t("institution.claimSelectDescription", {})}</p>
 				</div>
 
-				<Card className="mb-10 p-10 h-full" variant="tertiary">
+				<Card className="space-y-4 mb-10 md:p-10 h-full p-0" variant="tertiary">
 					<p className="body2 mb-4">
 						{t("institution.claimSelectSearchLabel", {
 							defaultValue: "Name oder Adresse des Kulturortes",

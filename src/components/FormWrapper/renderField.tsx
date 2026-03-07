@@ -33,6 +33,7 @@ import { CategorySectionList } from "@/components/Filter/CategorySection/Categor
 import { MultiSelectModal } from "@/components/MultiSelect/MultiSelectModal";
 import { ActionPanel } from "@/components/ActionPanel";
 import { cn } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/skeleton";
 import { buildStreetLine, toOptionalNumber } from "@/lib/utils/formUtils";
 import type { FilterState } from "@/types";
 import type {
@@ -91,17 +92,22 @@ function ScrollReveal({
 	}, []);
 
 	return (
-		<div
-			ref={ref}
-			className={cn(
-				className,
-				"motion-safe:transition-all motion-safe:duration-500 motion-safe:ease-out",
-				isVisible
-					? "motion-safe:opacity-100 motion-safe:translate-y-0"
-					: "motion-safe:opacity-0 motion-safe:translate-y-3",
+		<div ref={ref} className={cn("relative", className)}>
+			{!isVisible && (
+				<div className="pointer-events-none absolute inset-0 z-10">
+					<Skeleton className="h-full w-full rounded-md" />
+				</div>
 			)}
-		>
-			{children}
+			<div
+				className={cn(
+					"motion-safe:transition-all motion-safe:duration-500 motion-safe:ease-out",
+					isVisible
+						? "motion-safe:opacity-100 motion-safe:translate-y-0"
+						: "motion-safe:opacity-0 motion-safe:translate-y-3",
+				)}
+			>
+				{children}
+			</div>
 		</div>
 	);
 }
@@ -113,6 +119,7 @@ function PasswordField({
 	onBlur,
 	placeholder,
 	disabled,
+	hasIssue,
 }: {
 	id: string;
 	value: string;
@@ -120,6 +127,7 @@ function PasswordField({
 	onBlur: (value: string) => void;
 	placeholder?: string;
 	disabled?: boolean;
+	hasIssue?: boolean;
 }) {
 	const [showPassword, setShowPassword] = useState(false);
 	const { t } = useTranslation("common");
@@ -134,7 +142,12 @@ function PasswordField({
 				onBlur={(e) => onBlur(e.target.value)}
 				placeholder={placeholder}
 				disabled={disabled}
-				className="pr-12"
+				aria-invalid={hasIssue || undefined}
+				className={cn(
+					"pr-12",
+					hasIssue &&
+						"bg-destructive-secondary/20 border-destructive-secondary pr-10",
+				)}
 			/>
 			<button
 				type="button"
@@ -151,6 +164,9 @@ function PasswordField({
 					<Eye className="h-5 w-5" />
 				)}
 			</button>
+			{hasIssue && (
+				<Warning className="pointer-events-none absolute right-11 top-1/2 h-5 w-5 -translate-y-1/2 text-destructive-secondary" />
+			)}
 		</div>
 	);
 }
@@ -328,6 +344,7 @@ const renderFieldContent = (
 		!error &&
 		Boolean(field.afterField) &&
 		(field.name === "name" || field.name === "address.streetLine");
+	const hasIssue = Boolean(error || hasWarning);
 	const allowNullOption =
 		field.type !== "section" && field.allowNullOption === true;
 
@@ -415,12 +432,13 @@ const renderFieldContent = (
 						min={field.min}
 						max={field.max}
 						step={field.step}
+						aria-invalid={hasIssue || undefined}
 						className={cn(
-							(error || hasWarning) &&
+							hasIssue &&
 								"bg-destructive-secondary/20 border-destructive-secondary pr-10",
 						)}
 					/>
-					{(error || hasWarning) && (
+					{hasIssue && (
 						<Warning className="pointer-events-none absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-destructive-secondary" />
 					)}
 				</div>
@@ -428,28 +446,39 @@ const renderFieldContent = (
 
 			{field.type === "file" && (
 				<div className="space-y-2">
-					<Input
-						id={field.name}
-						type="file"
-						accept={field.accept}
-						multiple={field.multiple}
-						onChange={(event) => {
-							const nextValue = field.multiple
-								? Array.from(event.target.files ?? [])
-								: (event.target.files?.[0] ?? null);
-							updateField(field.name, nextValue);
-							if (field.fileRemoveOption?.fieldName && nextValue) {
-								updateField(field.fileRemoveOption.fieldName, false);
-							}
-							void handleFieldBlur(field, nextValue);
-						}}
-						disabled={field.disabled}
-					/>
+					<div className="relative">
+						<Input
+							id={field.name}
+							type="file"
+							accept={field.accept}
+							multiple={field.multiple}
+							onChange={(event) => {
+								const nextValue = field.multiple
+									? Array.from(event.target.files ?? [])
+									: (event.target.files?.[0] ?? null);
+								updateField(field.name, nextValue);
+								if (field.fileRemoveOption?.fieldName && nextValue) {
+									updateField(field.fileRemoveOption.fieldName, false);
+								}
+								void handleFieldBlur(field, nextValue);
+							}}
+							disabled={field.disabled}
+							aria-invalid={hasIssue || undefined}
+							className={cn(
+								hasIssue &&
+									"bg-destructive-secondary/20 border-destructive-secondary pr-10",
+							)}
+						/>
+						{hasIssue && (
+							<Warning className="pointer-events-none absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-destructive-secondary" />
+						)}
+					</div>
 					{field.fileRemoveOption ? (
 						<div className="flex items-center space-x-2">
 							<Checkbox
 								id={`${field.name}-remove`}
 								checked={formData[field.fileRemoveOption.fieldName] as boolean}
+								aria-invalid={hasIssue || undefined}
 								onCheckedChange={(checked) =>
 									updateField(field.fileRemoveOption!.fieldName, checked)
 								}
@@ -482,6 +511,7 @@ const renderFieldContent = (
 					}}
 					placeholder={resolvedPlaceholder}
 					disabled={field.disabled}
+					hasIssue={hasIssue}
 				/>
 			)}
 
@@ -496,13 +526,14 @@ const renderFieldContent = (
 						}}
 						placeholder={resolvedPlaceholder}
 						disabled={field.disabled}
+						aria-invalid={hasIssue || undefined}
 						rows={4}
 						className={cn(
-							(error || hasWarning) &&
+							hasIssue &&
 								"bg-destructive-secondary/20 border-destructive-secondary pr-10",
 						)}
 					/>
-					{(error || hasWarning) && (
+					{hasIssue && (
 						<Warning className="pointer-events-none absolute right-3 top-3 h-5 w-5 text-destructive-secondary" />
 					)}
 				</div>
@@ -527,8 +558,9 @@ const renderFieldContent = (
 					>
 						<SelectTrigger
 							id={field.name}
+							aria-invalid={hasIssue || undefined}
 							className={cn(
-								(error || hasWarning) &&
+								hasIssue &&
 									"bg-destructive-secondary/20 border-destructive-secondary pr-12",
 							)}
 						>
@@ -555,7 +587,7 @@ const renderFieldContent = (
 							))}
 						</SelectContent>
 					</Select>
-					{(error || hasWarning) && (
+					{hasIssue && (
 						<Warning className="pointer-events-none absolute right-8 top-1/2 h-4 w-4 -translate-y-1/2 text-destructive-secondary" />
 					)}
 				</div>
@@ -567,6 +599,11 @@ const renderFieldContent = (
 					onValueChange={(val) =>
 						updateField(field.name, deserializeOptionValue(val))
 					}
+					aria-invalid={hasIssue || undefined}
+					className={cn(
+						hasIssue &&
+							"rounded-sm border border-destructive-secondary bg-destructive-secondary/10 p-3",
+					)}
 					variant={field.radioVariant}
 					disabled={field.disabled}
 				>
@@ -576,9 +613,13 @@ const renderFieldContent = (
 							className="flex items-center space-x-2"
 						>
 							<RadioGroupItem
-								className="bg-background border-input"
+								className={cn(
+									"bg-background border-input",
+									hasIssue && "border-destructive-secondary",
+								)}
 								value={serializeOptionValue(option.value)}
 								id={`${field.name}-${serializeOptionValue(option.value)}`}
+								aria-invalid={hasIssue || undefined}
 							/>
 							<Label
 								htmlFor={`${field.name}-${serializeOptionValue(option.value)}`}
@@ -592,10 +633,17 @@ const renderFieldContent = (
 			)}
 
 			{field.type === "checkbox" && (
-				<div className="flex items-center space-x-2">
+				<div
+					className={cn(
+						"flex items-center space-x-2",
+						hasIssue &&
+							"rounded-sm border border-destructive-secondary bg-destructive-secondary/10 p-2",
+					)}
+				>
 					<Checkbox
 						id={field.name}
 						checked={value as boolean}
+						aria-invalid={hasIssue || undefined}
 						onCheckedChange={(checked) => updateField(field.name, checked)}
 						disabled={field.disabled}
 					/>
@@ -610,7 +658,13 @@ const renderFieldContent = (
 			)}
 
 			{field.type === "switch" && (
-				<div className="flex items-center justify-between">
+				<div
+					className={cn(
+						"flex items-center justify-between",
+						hasIssue &&
+							"rounded-sm border border-destructive-secondary bg-destructive-secondary/10 p-2",
+					)}
+				>
 					<Label htmlFor={field.name} className="font-normal">
 						{field.labelNode ?? resolvedLabel}
 						{field.required && <span className=" ml-1">*</span>}
@@ -621,6 +675,8 @@ const renderFieldContent = (
 					<Switch
 						id={field.name}
 						checked={value as boolean}
+						aria-invalid={hasIssue || undefined}
+						className={cn(hasIssue && "border-destructive-secondary")}
 						onCheckedChange={(checked) => updateField(field.name, checked)}
 						disabled={field.disabled}
 					/>
@@ -628,7 +684,13 @@ const renderFieldContent = (
 			)}
 
 			{field.type === "multiselect" && (
-				<div className="space-y-2">
+				<div
+					className={cn(
+						"space-y-2",
+						hasIssue &&
+							"rounded-sm border border-destructive-secondary bg-destructive-secondary/10 p-2",
+					)}
+				>
 					{field.multiselectVariant === "modal" ? (
 						<MultiSelectModal
 							title={resolvedLabel || "Select Items"}

@@ -87,8 +87,9 @@ export function LoginForm() {
 								<Button
 									type="button"
 									variant="tertiary"
-									size="tag"
-									className=" underline body2"
+									fullWidth={false}
+									size="inline"
+									className="underline body2"
 									onClick={() => router.push(toLocalePath("/forgotPassword"))}
 									disabled={isLoading}
 								>
@@ -130,8 +131,8 @@ export function LoginForm() {
 				<Button
 					type="button"
 					variant="tertiary"
-					size="tag"
-					className=" underline"
+					size="inline"
+					className="underline body2"
 					onClick={() => router.push(toLocalePath("/register"))}
 					disabled={isLoading}
 				>
