@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { ActivityItem, type Activity } from "./ActivityItem";
 import { useAccountStore } from "@/lib/store/accountStore";
 import type { EntityAudit } from "@/types/entityAudit";
@@ -18,7 +18,7 @@ import {
 import Send from "@/icons/send.svg";
 import Edit from "@/icons/edit.svg";
 import { EmptyActionState } from "@/components/EmptyActionState";
-import { Skeleton } from "@/components/ui/skeleton";
+import { ActivityListSkeleton } from "./ActivityListSkeleton";
 
 interface ActivityListProps {
 	activities?: Activity[];
@@ -353,6 +353,7 @@ export function ActivityList({
 	const [entityTypeFilter, setEntityTypeFilter] = useState("all");
 	const [actorFilter, setActorFilter] = useState("all");
 	const [dateFilter, setDateFilter] = useState("all");
+	const [isListTransitioning, setIsListTransitioning] = useState(false);
 	const entityAudits = useAccountStore((state) => state.entityAudits) ?? [];
 	const submissions = useAccountStore((state) => state.submissions) ?? [];
 	const submissionIdSet = useMemo(
@@ -571,31 +572,7 @@ export function ActivityList({
 		})();
 
 	if (isLoading) {
-		return (
-			<div className="space-y-4">
-				<div className="grid gap-3 md:grid-cols-2 xl:grid-cols-6">
-					{Array.from({ length: 6 }).map((_, index) => (
-						<Skeleton
-							key={`activity-filter-skeleton-${index}`}
-							className="h-11"
-						/>
-					))}
-				</div>
-				<div className="divide-y divide-border rounded-md border border-border overflow-hidden">
-					{Array.from({ length: 6 }).map((_, index) => (
-						<div key={`activity-row-skeleton-${index}`} className="p-3">
-							<div className="flex items-center gap-3">
-								<Skeleton className="h-4 w-4 rounded-full" />
-								<div className="flex-1 space-y-2">
-									<Skeleton className="h-4 w-28" />
-									<Skeleton className="h-4 w-10/12" />
-								</div>
-							</div>
-						</div>
-					))}
-				</div>
-			</div>
-		);
+		return <ActivityListSkeleton showFilters />;
 	}
 
 	if (resolvedActivities.length === 0) {
@@ -678,6 +655,58 @@ export function ActivityList({
 			.toLowerCase();
 		return searchable.includes(query);
 	});
+
+	useEffect(() => {
+		if (filteredActivities.length === 0) {
+			setIsListTransitioning(false);
+			return;
+		}
+		setIsListTransitioning(true);
+		const timeoutId = window.setTimeout(() => {
+			setIsListTransitioning(false);
+		}, 220);
+
+		return () => window.clearTimeout(timeoutId);
+	}, [
+		statusFilter,
+		typeFilter,
+		entityTypeFilter,
+		actorFilter,
+		dateFilter,
+		searchQuery,
+		resolvedActivities.length,
+		filteredActivities.length,
+	]);
+
+	const renderListContent = () => {
+		if (filteredActivities.length === 0) {
+			return (
+				<div className="py-8 body3 text-muted-foreground">
+					{t("auth.account.activity.filters.empty", {
+						defaultValue: "Keine Aktivitäten für die aktuellen Filter.",
+					})}
+				</div>
+			);
+		}
+
+		if (isListTransitioning) {
+			return (
+				<ActivityListSkeleton
+					rowCount={Math.min(filteredActivities.length, 6)}
+				/>
+			);
+		}
+
+		return filteredActivities.map((activity, index) => (
+			<div
+				key={activity.id ?? `activity-${activity.date}-${index}`}
+				className="motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-1 motion-safe:duration-300"
+				style={{ animationDelay: `${Math.min(index, 12) * 28}ms` }}
+			>
+				<ActivityItem activity={activity} index={index} />
+			</div>
+		));
+	};
 
 	return (
 		<div className="space-y-4">
@@ -796,25 +825,7 @@ export function ActivityList({
 					</SelectContent>
 				</Select>
 			</div>
-			<div className="divide-y divide-border">
-				{filteredActivities.length === 0 ? (
-					<div className="py-8 body3 text-muted-foreground">
-						{t("auth.account.activity.filters.empty", {
-							defaultValue: "Keine Aktivitäten für die aktuellen Filter.",
-						})}
-					</div>
-				) : (
-					filteredActivities.map((activity, index) => (
-						<div
-							key={activity.id ?? `activity-${activity.date}-${index}`}
-							className="motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-1 motion-safe:duration-300"
-							style={{ animationDelay: `${Math.min(index, 12) * 28}ms` }}
-						>
-							<ActivityItem activity={activity} index={index} />
-						</div>
-					))
-				)}
-			</div>
+			<div className="divide-y divide-border">{renderListContent()}</div>
 		</div>
 	);
 }
