@@ -53,10 +53,10 @@ function DialogOverlay({
 	...props
 }: React.ComponentProps<typeof DialogPrimitive.Overlay>) {
 	return (
-		<DialogPrimitive.Overlay
+			<DialogPrimitive.Overlay
 			data-slot="dialog-overlay"
 			className={cn(
-				"data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50",
+				"motion-safe:data-[state=open]:animate-in motion-safe:data-[state=closed]:animate-out motion-safe:data-[state=closed]:fade-out-0 motion-safe:data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50",
 				className,
 			)}
 			{...props}
@@ -138,7 +138,7 @@ function DialogContent({
 			<DialogPrimitive.Content
 				data-slot="dialog-content"
 				className={cn(
-					"bg-secondary md:bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 z-[61] shadow-lg duration-200 relative",
+					"bg-secondary md:bg-background motion-safe:data-[state=open]:animate-in motion-safe:data-[state=closed]:animate-out motion-safe:data-[state=closed]:fade-out-0 motion-safe:data-[state=open]:fade-in-0 motion-safe:data-[state=closed]:zoom-out-95 motion-safe:data-[state=open]:zoom-in-95 z-[61] shadow-lg duration-200 relative",
 					getVariantStyles(),
 					variant === "fullscreen-muted" && "bg-neutral-10 md:bg-neutral-10",
 					className,
