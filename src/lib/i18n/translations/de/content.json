@@ -1690,6 +1690,7 @@
 		},
 		"emptyMessage": "Keine Nutzer*innen gefunden.",
 		"emptyValue": "—",
+		"accessAll": "Alle",
 		"institutionsCount_one": "{{count}} Kulturort",
 		"institutionsCount_other": "{{count}} Kulturorte",
 		"searchPlaceholder": "Nutzer*innen suchen..."

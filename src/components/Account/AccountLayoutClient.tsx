@@ -197,7 +197,9 @@ export function AccountLayoutClient({
 							}}
 						>
 							<RefreshCw
-								className={isRefreshing ? "motion-safe:animate-spin" : undefined}
+								className={
+									isRefreshing ? "motion-safe:animate-spin" : undefined
+								}
 							/>
 						</ButtonWithTooltip>
 					</div>

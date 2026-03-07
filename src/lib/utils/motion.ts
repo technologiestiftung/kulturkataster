@@ -1,9 +1,30 @@
-export function getAccessibleScrollBehavior(): "auto" | "smooth" {
-	if (typeof window === "undefined") {
-		return "auto";
+const REDUCED_MOTION_ATTRIBUTE = "data-reduced-motion";
+
+export function applyReducedMotionPreference(enabled: boolean) {
+	if (typeof document === "undefined") return;
+
+	if (enabled) {
+		document.documentElement.setAttribute(REDUCED_MOTION_ATTRIBUTE, "true");
+		return;
 	}
 
-	return window.matchMedia("(prefers-reduced-motion: reduce)").matches
-		? "auto"
-		: "smooth";
+	document.documentElement.removeAttribute(REDUCED_MOTION_ATTRIBUTE);
+}
+
+export function isReducedMotionEnabled(): boolean {
+	if (typeof window === "undefined") {
+		return true;
+	}
+
+	const hasManualReducedMotionPreference =
+		document.documentElement.getAttribute(REDUCED_MOTION_ATTRIBUTE) === "true";
+	if (hasManualReducedMotionPreference) {
+		return true;
+	}
+
+	return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+export function getAccessibleScrollBehavior(): "auto" | "smooth" {
+	return isReducedMotionEnabled() ? "auto" : "smooth";
 }
