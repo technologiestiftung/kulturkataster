@@ -19,7 +19,10 @@ export function ListViewSkeleton() {
 					</div>
 					<div className="grid grid-cols-7 gap-1">
 						{Array.from({ length: 7 }).map((_, index) => (
-							<Skeleton key={`list-view-letter-skeleton-${index}`} className="h-8" />
+							<Skeleton
+								key={`list-view-letter-skeleton-${index}`}
+								className="h-8"
+							/>
 						))}
 					</div>
 					<div className="space-y-2">

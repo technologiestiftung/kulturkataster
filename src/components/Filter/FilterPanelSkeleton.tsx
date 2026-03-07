@@ -47,7 +47,14 @@ export function FilterPanelSkeleton({
 					<div className="space-y-3">
 						{Array.from({ length: 24 }).map((_, index) => {
 							const leftWidths = ["w-20", "w-24", "w-28", "w-32", "w-36"];
-							const rightWidths = ["w-16", "w-24", "w-32", "w-40", "w-52", "w-60"];
+							const rightWidths = [
+								"w-16",
+								"w-24",
+								"w-32",
+								"w-40",
+								"w-52",
+								"w-60",
+							];
 							const leftWidth = leftWidths[index % leftWidths.length];
 							const rightWidth = rightWidths[(index * 3) % rightWidths.length];
 
