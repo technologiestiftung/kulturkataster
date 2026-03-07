@@ -8,7 +8,6 @@ import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
 import { useRestoreFocus } from "@/hooks/use-restore-focus";
 import KukaSmallLogo from "@/logos/kuka-small.svg";
-import { useRouter } from "next/navigation";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { Button } from "./button";
 
@@ -91,7 +90,6 @@ function DialogContent({
 }) {
 	const { t } = useTranslation("common");
 	const focusRef = React.useRef<HTMLDivElement | null>(null);
-	const router = useRouter();
 	const toLocalePath = useLocalePath();
 	const getVariantStyles = () => {
 		const variants = {
@@ -154,15 +152,12 @@ function DialogContent({
 			>
 				{!showBackButton && showLogo && (
 					<div className="absolute top-6 left-4 md:hidden block z-99">
-						<button
-							onClick={() => router.push(toLocalePath("/welcome"))}
-							aria-label={t("kukaLogo")}
-						>
+						<a href={toLocalePath("/welcome")} aria-label={t("kukaLogo")}>
 							<KukaSmallLogo
 								title="Kulturkataster Berlin, Logo"
 								className="size-14 cursor-pointer hover:opacity-80 transition-opacity"
 							/>
-						</button>
+						</a>
 					</div>
 				)}
 				{showBackButton && (
