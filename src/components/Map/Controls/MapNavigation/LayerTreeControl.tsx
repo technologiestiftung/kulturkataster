@@ -66,8 +66,9 @@ const LayerTreeControl: FC = () => {
 	return (
 		<div className="relative">
 			<ButtonWithTooltip
-				variant="rounded"
-				size="icon-only"
+				radius="full"
+				variant="surface"
+				iconSize="lg"
 				tooltip={t("map.layerTree")}
 				tooltipSide="right"
 				onClick={handleLayerTreeOpen}

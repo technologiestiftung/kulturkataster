@@ -44,7 +44,7 @@ function AuthChoiceContent({
 					</p>
 				</div>
 				<div className="flex ">
-					<Button variant="default" onClick={onLogin}>
+					<Button variant="primary" onClick={onLogin}>
 						{t("institutionDraftIntroModal.choice.login.cta")}
 					</Button>
 				</div>
@@ -59,7 +59,7 @@ function AuthChoiceContent({
 					</p>
 				</div>
 				<div className="flex">
-					<Button variant="default" onClick={onGuestContinue}>
+					<Button variant="primary" onClick={onGuestContinue}>
 						{t("institutionDraftIntroModal.choice.guest.cta")}
 					</Button>
 				</div>
@@ -196,7 +196,7 @@ function ContributionSetupContent({
 						{t("institutionDraftIntroModal.intro.back")}
 					</Button>
 				) : null}
-				<Button variant="default" onClick={onContinue}>
+				<Button variant="primary" onClick={onContinue}>
 					{showThankYou
 						? t("institutionDraftIntroModal.submitSuccess.cta")
 						: t("institutionDraftIntroModal.intro.cta")}

@@ -28,8 +28,9 @@ export const getEditAction = ({
 		return (
 			<Button
 				type="button"
-				variant="icon"
-				size="icon"
+				variant="surface"
+				iconSize="lg"
+				radius="full"
 				asChild
 				className={cn(className, "bg-background")}
 				aria-label={ariaLabel}
@@ -45,8 +46,9 @@ export const getEditAction = ({
 		return (
 			<Button
 				type="button"
-				variant="icon"
-				size="icon"
+				variant="surface"
+				iconSize="sm"
+				radius={"full"}
 				className={cn(className, "bg-background")}
 				onClick={() => edit.onClick?.(data as Institution)}
 				aria-label={ariaLabel}

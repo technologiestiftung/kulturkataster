@@ -318,31 +318,12 @@
 				},
 				"title": "Kategoriedetails"
 			}
-		},
-		"status": {
-			"active": "Aktiv",
-			"inactive": "Inaktiv"
 		}
 	},
 	"categoryTable": {
-		"actions": {
-			"add": "Kategorie hinzufügen",
-			"editSubcategory": "Unterkategorie bearbeiten"
-		},
 		"columns": {
-			"description": "Beschreibung",
-			"icon": "Icon",
-			"key": "Name",
-			"status": "Status",
-			"parent": "Übergeordnet",
-			"subcategories": "Unterkategorien"
-		},
-		"empty": {
-			"description": "Erstellen Sie eine Kategorie, um Inhalte besser zu strukturieren.",
-			"title": "Keine Kategorien gefunden."
-		},
-		"emptyMessage": "Keine Kategorien gefunden.",
-		"searchPlaceholder": "Kategorien suchen..."
+			"status": "Status"
+		}
 	},
 	"downloadModal": {
 		"chooseFormat": "Dateiformat wählen",
@@ -372,8 +353,7 @@
 		"retry": "Erneut versuchen",
 		"showClosed": "Geschlossene Orte einblenden",
 		"showMoreCategories": "Mehr Kategorien anzeigen",
-		"showSelectedCategories": "Ausgewählte Kategorien anzeigen",
-		"title": "Kulturorte filtern"
+		"showSelectedCategories": "Ausgewählte Kategorien anzeigen"
 	},
 	"groupFormModal": {
 		"actions": {
@@ -674,39 +654,9 @@
 		}
 	},
 	"institutionDraftIntroModal": {
-		"choice": {
-			"guest": {
-				"cta": "Weiter als Gast",
-				"description": "Sie können natürlich auch gern mitwirken, ohne sich bei uns anzumelden.",
-				"title": "Fortfahren ohne Anmeldung"
-			},
-			"login": {
-				"cta": "Zur Anmeldung",
-				"description": "Für die schnellere Bearbeitung Ihrer Einträge und die Übersicht empfehlen wir Ihnen, sich im Kulturkatasterportal anzumelden oder zu registrieren.",
-				"title": "Melden Sie sich an oder registrieren Sie sich, um fortzufahren."
-			},
-			"title": "Wie möchten Sie fortfahren?"
-		},
-		"intro": {
-			"back": "Zurück",
-			"cta": "Weiter",
-			"description": "Zum Mitwirken tragen Sie bitte die benötigten Angaben in die jeweiligen Felder ein und klicken Sie am Ende des Formulars auf „Daten übermitteln“. Unser Redaktionsteam prüft jede Einsendung vor der Veröffentlichung und meldet sich ggfs. bei Rückfragen.",
-			"mode": {
-				"description": "Wählen Sie die passende Kategorie für die Kultureinrichtung aus. Falls mehrere Kategorien zutreffen, wählen Sie die primäre Kategorie aus.",
-				"edit": "Ergänzung oder Änderung eines oder mehrere bestehender Kulturorte",
-				"new": "Neue/n Kulturort/e eintragen",
-				"title": "Möchten Sie eine neue Kultureinrichtung eintragen oder einen bestehenden Datensatz ergänzen bzw. korrigieren? *"
-			},
-			"sectionNote": "Bitte beachten Sie, dass Sie Angaben nur dann machen sollten, wenn Sie sich der Richtigkeit sicher sind und einer Einwilligung zur Veröffentlichung im Kulturkataster zustimmen. Sollten Informationen nur für befugte Nutzer*innen im geschützten Bereich des Kulturkatasters zugänglich und nicht öffentlich einsehbar sein, haben wir dies am jeweiligen Datenfeld gekennzeichnet.",
-			"sectionTitle": "Basisinformation der Kultureinrichtung",
-			"thankYou": "Vielen Dank, dass Sie das Kulturkataster Berlin mit Ihrem Beitrag unterstützen!"
-		},
 		"submitSuccess": {
-			"cta": "Weitere Einreichung starten",
-			"description": "Dank Ihrer Eingabe wächst das Kulturkataster Berlin immer weiter und weiter und ermöglicht so vielen Menschen den Zugang zu neuen Kulturstandorten.",
-			"title": "Vielen Dank für Ihre Einreichung"
-		},
-		"title": "Mitwirken beim Kulturkataster Berlin"
+			"description": "Dank Ihrer Eingabe wächst das Kulturkataster Berlin immer weiter und weiter und ermöglicht so vielen Menschen den Zugang zu neuen Kulturstandorten."
+		}
 	},
 	"institutionDraftWizardModal": {
 		"actions": {
@@ -981,8 +931,7 @@
 		},
 		"review": {
 			"actions": {
-				"approve": "Genehmigen",
-				"reject": "Ablehnen"
+				"approve": "Genehmigen"
 			},
 			"error": "Überprüfung fehlgeschlagen. {{error}}",
 			"errorUnknown": "Unbekannter Fehler.",
@@ -992,12 +941,6 @@
 			"statusLabel": "Status: {{status}}",
 			"title": "Einreichung prüfen"
 		}
-	},
-	"institutionModalCloseConfirmation": {
-		"cancel": "Abbrechen",
-		"confirm": "Verlassen",
-		"description": "Nicht gespeicherte Eingaben gehen verloren.",
-		"title": "Vorgang verlassen?"
 	},
 	"institutionsTable": {
 		"actions": {
@@ -1029,8 +972,7 @@
 		"searchLabel": "Liste durchsuchen",
 		"searchPlaceholder": "Kulturort, Adresse oder Bezirk",
 		"subtitle": "Ihre Ergebnisse auf einen Blick",
-		"timeline": "Die Entwicklung der Listenansicht ist für das Jahr 2026 geplant.",
-		"title": "Listenansicht"
+		"timeline": "Die Entwicklung der Listenansicht ist für das Jahr 2026 geplant."
 	},
 	"privacyModal": {
 		"description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",
@@ -1399,7 +1341,6 @@
 					"Nach Kategorien.",
 					"Nach Unter·kategorien."
 				],
-
 				"title": "Sie können Kultur·orte filtern:",
 				"titleBold": "Filtern"
 			},
@@ -1649,7 +1590,8 @@
 						"searchPlaceholder": "Kulturort suchen..."
 					},
 					"role": {
-						"label": "Rolle"
+						"label": "Rolle",
+						"placeholder": "Rolle auswählen"
 					}
 				},
 				"title": "Zugriff & Mitgliedschaften"

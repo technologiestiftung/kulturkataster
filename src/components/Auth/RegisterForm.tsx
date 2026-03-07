@@ -118,7 +118,7 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
 						condition: (formData) => formData.accountType === "organization",
 						cardVariant: "none",
 						layout: { span: "full", columns: 1 },
-						className: "bg-neutral-10 p-5 w-full",
+						className: "bg-neutral-10 p-4 w-full",
 						fields: [
 							{
 								name: "organizationName",
@@ -154,7 +154,7 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
 						condition: (formData) => formData.accountType === "district",
 						cardVariant: "none",
 						layout: { span: "full", columns: 1 },
-						className: "bg-neutral-10 p-5 w-full",
+						className: "bg-neutral-10 p-4 w-full",
 						fields: [
 							{
 								name: "districtName",
@@ -196,7 +196,7 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
 						condition: (formData) => formData.accountType === "administration",
 						cardVariant: "none",
 						layout: { span: "full", columns: 1 },
-						className: "bg-neutral-10 p-5 w-full",
+						className: "bg-neutral-10 p-4 w-full",
 						fields: [
 							{
 								name: "administrationName",

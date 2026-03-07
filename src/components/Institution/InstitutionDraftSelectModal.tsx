@@ -203,7 +203,7 @@ export function InstitutionDraftSelectModal({
 					</p>
 				</div>
 
-				<Card className="space-y-4 mb-10 md:p-10 h-full" variant="tertiary">
+				<Card className="space-y-4 mb-10 md:p-10 h-full p-0" variant="tertiary">
 					<InstitutionDraftSelectSearch onQueryChange={setQuery} />
 					{error && !isLoading ? (
 						<p className="body2 text-destructive">{error}</p>

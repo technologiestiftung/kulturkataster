@@ -229,11 +229,6 @@ const buildGroupFormConfig = ({
 			{
 				name: "detailsSection",
 				type: "section",
-				title: t("groupFormModal.form.details.title"),
-				description:
-					mode === "create"
-						? t("groupFormModal.form.details.description.create")
-						: t("groupFormModal.form.details.description.edit"),
 				fields: [
 					{
 						name: "name",

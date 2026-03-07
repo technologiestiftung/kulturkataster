@@ -219,10 +219,6 @@ const buildUserFormConfig = ({
 	onSubmit,
 	onCancel,
 }: UserFormConfigArgs): FormWrapperConfig => {
-	const identityDescription =
-		mode === "create"
-			? t("userFormModal.form.identity.description.create")
-			: t("userFormModal.form.identity.description.edit");
 	const accessCondition = () => mode === "edit" && Boolean(resolvedUser);
 
 	return {
@@ -230,8 +226,6 @@ const buildUserFormConfig = ({
 			{
 				name: "identitySection",
 				type: "section",
-				title: t("userFormModal.form.identity.title"),
-				description: identityDescription,
 				layout: { columns: 2 },
 				fields: [
 					{
@@ -296,6 +290,7 @@ const buildUserFormConfig = ({
 						label: t("userFormModal.form.access.fields.role.label"),
 						type: "select",
 						required: true,
+						placeholder: t("userFormModal.form.access.fields.role.placeholder"),
 						options: roles.map((role) => ({
 							value: String(role.id),
 							label: role.name,
