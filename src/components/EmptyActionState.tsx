@@ -39,7 +39,7 @@ export function EmptyActionState({
 						<Button
 							key={index}
 							variant="action"
-							size="action"
+							size="tile"
 							disabled={action.disabled}
 							onClick={() => {
 								action.onClick?.();

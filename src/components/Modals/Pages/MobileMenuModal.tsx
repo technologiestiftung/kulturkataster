@@ -8,7 +8,6 @@ import {
 	DialogTitle,
 } from "@/components/ui/dialog";
 import { useTranslation } from "react-i18next";
-import KukaSmallLogo from "@/logos/kuka-small.svg";
 import Close from "@/icons/close.svg";
 import KRBLogo from "@/logos/KRB.svg";
 import InfoCircle from "@/icons/info-circle.svg";
@@ -58,17 +57,8 @@ export function MobileMenuModal() {
 				showCloseButton={false}
 				showBackButton={false}
 			>
-				<DialogHeader className="flex-row shrinkitems-center justify-between p-4 space-y-0">
+				<DialogHeader className="flex-row shrinkitems-center justify-end p-4 space-y-0">
 					<DialogTitle className="sr-only">{t("mobileMenu.title")}</DialogTitle>
-					<button
-						onClick={() => router.push(toLocalePath("/welcome"))}
-						aria-label={t("kukaLogo")}
-					>
-						<KukaSmallLogo
-							title="Kulturkataster Berlin, Logo"
-							className="size-14 cursor-pointer hover:opacity-80 transition-opacity"
-						/>
-					</button>
 					<button
 						onClick={closeModal}
 						className="flex items-center justify-center w-14 h-14 rounded-full bg-muted hover:bg-muted/80 transition-colors"

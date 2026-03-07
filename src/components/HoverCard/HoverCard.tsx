@@ -58,7 +58,7 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 					</div>
 				</CardHeader>
 
-				<CardContent className="p-2 pt-0">
+				<CardContent className="p-2 pt-0" variant="none">
 					<div className="flex flex-col gap-2 ">
 						{featureProperties.categories?.map((category: Category) => {
 							return (

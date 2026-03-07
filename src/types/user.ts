@@ -2,7 +2,11 @@ import type { Prisma, UserStatus } from "@/generated/prisma";
 
 export type PrismaUserWithRelations = Prisma.UserGetPayload<{
 	include: {
-		role: true;
+		role: {
+			include: {
+				table_permissions: true;
+			};
+		};
 		groups: true;
 		submissions: true;
 		institutions: { select: { id: true } };

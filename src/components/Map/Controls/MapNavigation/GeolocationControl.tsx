@@ -126,8 +126,9 @@ const GeolocationControl: FC<GeolocationControlProps> = ({
 
 	return (
 		<ButtonWithTooltip
-			variant="rounded"
-			size="icon-only"
+			radius="full"
+			variant="surface"
+			iconSize="lg"
 			tooltip={t("map.geolocate")}
 			onClick={handleGeolocate}
 			className="cursor-pointer"
