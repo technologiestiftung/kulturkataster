@@ -1218,7 +1218,9 @@ export function InstitutionFormModal({
 			}
 		: undefined;
 	const isWaitingForInstitution =
-		mode === "edit" && !resolvedInstitutionWithFallback && !showNotFoundWithFallback;
+		mode === "edit" &&
+		!resolvedInstitutionWithFallback &&
+		!showNotFoundWithFallback;
 
 	const formKeyValue = formKey ?? resolvedInstitutionWithFallback?.id ?? mode;
 

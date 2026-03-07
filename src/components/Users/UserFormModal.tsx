@@ -740,12 +740,7 @@ export function UserFormModal({
 				</div>
 				{autoCloseError ? null : (
 					<div className="flex-1 overflow-auto px-6 py-6 md:px-10 flex flex-col">
-						{renderDialogBody(
-							isWaitingForUser,
-							formConfig,
-							resolvedUser,
-							mode,
-						)}
+						{renderDialogBody(isWaitingForUser, formConfig, resolvedUser, mode)}
 					</div>
 				)}
 			</div>
