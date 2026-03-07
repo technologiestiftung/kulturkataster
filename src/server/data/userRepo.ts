@@ -2,7 +2,11 @@ import { prisma } from "@/server/prisma";
 import { UserCreateInput, UserUpdateInput, UserWhereInput } from "@/types/user";
 
 const include = {
-	role: true,
+	role: {
+		include: {
+			table_permissions: true,
+		},
+	},
 	institutions: { select: { id: true } },
 	submissions: { where: { type: "claim" } },
 	groups: true,
