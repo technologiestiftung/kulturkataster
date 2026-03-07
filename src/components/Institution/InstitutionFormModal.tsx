@@ -241,11 +241,6 @@ const buildInstitutionFormConfig = ({
 			{
 				name: "details",
 				type: "section",
-				title: t("institutionFormModal.form.details.title"),
-				description:
-					mode === "create"
-						? t("institutionFormModal.form.details.description.create")
-						: t("institutionFormModal.form.details.description.edit"),
 				layout: { columns: 2 },
 				fields: [
 					{

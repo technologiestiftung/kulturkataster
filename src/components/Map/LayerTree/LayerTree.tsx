@@ -284,8 +284,9 @@ const FloatingLayerButton = memo(
 
 					<ButtonWithTooltip
 						ref={forwardedRef}
-						variant="rounded"
-						size="icon"
+						radius="full"
+						variant="surface"
+						iconSize="lg"
 						tooltip={t("map.layerTree")}
 						tooltipSide="right"
 						className={`relative w-16 h-16 p-0 bg-neutral-80 shadow-lg rounded overflow-hidden flex items-center justify-center cursor-pointer transition-colors hover:bg-neutral-70 focus:outline-none ${
@@ -392,7 +393,7 @@ const LayerTree: FC = () => {
 					<Button
 						variant="ghost"
 						onClick={handleClose}
-						size="icon-only"
+						iconSize="lg"
 						aria-label={t("map.closeLayerTree")}
 					>
 						<X className="size-6!" aria-hidden="true" focusable="false" />

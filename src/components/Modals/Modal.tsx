@@ -223,7 +223,7 @@ export function Modal({
 				) : (
 					<div
 						className={cn(
-							"flex flex-col w-full flex-1 space-y-4 mt-20 md:mt-8 p-6 mx-auto max-w-4xl",
+							"flex flex-col w-full flex-1 space-y-4 mt-20 md:mt-8 p-4 md:p-6 mx-auto max-w-4xl",
 							containerClassName,
 						)}
 					>
