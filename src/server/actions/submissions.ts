@@ -36,7 +36,10 @@ import {
 	normalizeOptionalSubmissionJson,
 	normalizeSubmissionJson,
 } from "@/lib/utils/submissionJsonUtils";
-import { sendClaimDecisionEmail } from "@/server/email/dispatcher";
+import {
+	sendClaimDecisionEmail,
+	sendSubmissionDecisionEmail,
+} from "@/server/email/dispatcher";
 
 export async function getSubmissions(filter: SubmissionFilter = {}) {
 	const currentUserId = await getCurrentUserId();
@@ -263,6 +266,41 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 			: null;
 	const claimSubmissionCreatorId =
 		submission.type === "claim" ? submission.created_by : null;
+	const standardSubmissionCreatorId =
+		submission.type !== "claim" ? submission.created_by : null;
+	const standardSubmissionDraftName =
+		submission.entity_type === "institution"
+			? institutionSubmissionToDraft(submission).name.trim()
+			: "";
+	const standardSubmissionEntityName =
+		standardSubmissionCreatorId && typeof submission.entity_id === "number"
+			? ((
+					await prisma.institution.findUnique({
+						where: { id: submission.entity_id },
+						select: { name: true },
+					})
+				)?.name?.trim() ?? "")
+			: "";
+
+	const sendStandardSubmissionDecisionEmail = async (
+		decision: "approved" | "rejected",
+	) => {
+		if (!standardSubmissionCreatorId) return;
+		const recipient = await prisma.user.findUnique({
+			where: { id: standardSubmissionCreatorId },
+			select: { email: true, first_name: true, last_name: true },
+		});
+		const institutionName =
+			standardSubmissionDraftName || standardSubmissionEntityName;
+		if (!recipient?.email || !institutionName) return;
+		await sendSubmissionDecisionEmail({
+			decision,
+			email: recipient.email,
+			firstName: recipient.first_name,
+			lastName: recipient.last_name,
+			institutionName,
+		});
+	};
 
 	return runWithAuditContext(
 		{
@@ -469,6 +507,9 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 						});
 					}
 				}
+				if (standardSubmissionCreatorId) {
+					await sendStandardSubmissionDecisionEmail("approved");
+				}
 				revalidateAccount();
 				return { id: input.id, status: "approved" as const };
 			}
@@ -520,6 +561,9 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 						institutionName: institution.name,
 					});
 				}
+			}
+			if (input.status === "rejected" && standardSubmissionCreatorId) {
+				await sendStandardSubmissionDecisionEmail("rejected");
 			}
 			revalidateAccount();
 			return updated;

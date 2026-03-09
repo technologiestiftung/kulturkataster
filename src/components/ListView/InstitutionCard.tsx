@@ -76,6 +76,7 @@ const InstitutionCard = memo(function InstitutionCard({
 		>
 			<div className="">
 				<InfoWrapper
+					key={`${institutionData.id}-${openDetails ? "open" : "closed"}`}
 					data={institutionData}
 					config={{
 						className: "bg-background p-4",

@@ -1,7 +1,93 @@
 <!doctype html>
-<html lang="de"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" /><title>Ihre Registrierung als Bezirksmitarbeitende*r</title></head>
-<body style="margin:0;padding:24px;background:#f8f6f2;font-family:Barlow,Arial,Helvetica,sans-serif;color:#161616;">
-<table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr><td align="center"><table role="presentation" width="620" cellspacing="0" cellpadding="0" style="max-width:620px;width:100%;background:#ffffff;border:1px solid #e2dfdb;border-radius:12px;">
-<tr><td style="padding:28px 24px 8px 24px;font-size:24px;font-weight:700;">Ihre Registrierung als Bezirksmitarbeitende*r fuer {{ .Data.district }}</td></tr>
-<tr><td style="padding:0 24px 16px 24px;font-size:16px;line-height:1.6;"><p style="margin:0 0 16px 0;">Guten Tag {{ .Data.first_name }} {{ .Data.last_name }},</p><p style="margin:0 0 16px 0;">vielen Dank fuer Ihre Registrierung im Kulturkataster als Mitarbeiter*in einer Bezirksverwaltung. Wir haben Ihre Angaben geprueft.</p><p style="margin:0 0 16px 0;">Leider koennen wir Ihre Registrierung fuer {{ .Data.district }} in diesem Fall nicht freischalten. Ihr Benutzerkonto bleibt bestehen; lediglich die Rolle als Bezirksmitarbeiter*in wurde nicht aktiviert.</p><p style="margin:0 0 16px 0;">Antworten auf haeufige Fragen finden Sie in den FAQs im User-Bereich:<br /><a href="{{ .Data.faq_url }}" style="color:#161616;text-decoration:underline;">{{ .Data.faq_url }}</a></p><p style="margin:0 0 16px 0;">Wenn Sie Rueckfragen haben oder mit unserer Entscheidung nicht einverstanden sind, melden Sie sich gern bei der Redaktion unter info@kulturkataster.berlin.</p><p style="margin:0 0 8px 0;">Viele Gruesse<br />vom Projektteam Kulturkataster</p><p style="margin:0;font-weight:600;">Kulturraum Berlin gGmbH</p></td></tr>
-</table></td></tr></table></body></html>
+<html lang="de">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width,initial-scale=1" />
+		<title>Ihre Registrierung als Bezirksmitarbeitende*r</title>
+	</head>
+	<body
+		style="
+			margin: 0;
+			padding: 24px;
+			background: #f8f6f2;
+			font-family: Barlow, Arial, Helvetica, sans-serif;
+			color: #161616;
+		"
+	>
+		<table role="presentation" width="100%" cellspacing="0" cellpadding="0">
+			<tr>
+				<td align="center">
+					<table
+						role="presentation"
+						width="620"
+						cellspacing="0"
+						cellpadding="0"
+						style="
+							max-width: 620px;
+							width: 100%;
+							background: #ffffff;
+							border: 1px solid #e2dfdb;
+							border-radius: 12px;
+						"
+					>
+						<tr>
+							<td
+								style="
+									padding: 28px 24px 8px 24px;
+									font-size: 24px;
+									font-weight: 700;
+								"
+							>
+								Ihre Registrierung als Bezirksmitarbeitende*r für {{
+								.Data.district }}
+							</td>
+						</tr>
+						<tr>
+							<td
+								style="
+									padding: 0 24px 16px 24px;
+									font-size: 16px;
+									line-height: 1.6;
+								"
+							>
+								<p style="margin: 0 0 16px 0">
+									Guten Tag {{ .Data.first_name }} {{ .Data.last_name }},
+								</p>
+								<p style="margin: 0 0 16px 0">
+									vielen Dank für Ihre Registrierung im Kulturkataster als
+									Mitarbeiter*in einer Bezirksverwaltung. Wir haben Ihre Angaben
+									geprüft.
+								</p>
+								<p style="margin: 0 0 16px 0">
+									Leider können wir Ihre Registrierung für {{ .Data.district
+									}} in diesem Fall nicht freischalten. Ihr Benutzerkonto bleibt
+									bestehen; lediglich die Rolle als Bezirksmitarbeiter*in wurde
+									nicht aktiviert.
+								</p>
+								<p style="margin: 0 0 16px 0">
+									Antworten auf häufige Fragen finden Sie in den FAQs im
+									User-Bereich:<br /><a
+										href="{{ .Data.faq_url }}"
+										style="color: #161616; text-decoration: underline"
+										>{{ .Data.faq_url }}</a
+									>
+								</p>
+								<p style="margin: 0 0 16px 0">
+									Wenn Sie Rückfragen haben oder mit unserer Entscheidung nicht
+									einverstanden sind, melden Sie sich gern bei der Redaktion
+									unter info@kulturkataster.berlin.
+								</p>
+								<p style="margin: 0 0 8px 0">
+									Viele Grüße<br />vom Projektteam Kulturkataster
+								</p>
+								<p style="margin: 0; font-weight: 600">
+									Kulturraum Berlin gGmbH
+								</p>
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+	</body>
+</html>
