@@ -38,7 +38,7 @@ export function AlphabetFilter({
 								isActive && "bg-foreground text-background",
 								!isActive &&
 									isEnabled &&
-									"bg-background text-neutral-60 hover:bg-foreground/50 hover:text-background",
+									"bg-background text-foreground hover:bg-foreground/50 hover:text-background",
 								!isActive &&
 									!isEnabled &&
 									"bg-neutral-5 text-neutral-40 cursor-not-allowed",
