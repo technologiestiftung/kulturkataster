@@ -1423,52 +1423,6 @@ function InstitutionDraftWizardContent({
 								},
 							],
 						},
-						{
-							name: "accessibility_accordion",
-							collapsible: true,
-							className: "border-t-1",
-							accordionVariant: "default",
-							accordionTitle: t(
-								"institutionDraftWizardModal.form.information.accordions.accessibility.title",
-							),
-							accordionDescription: t(
-								"institutionDraftWizardModal.form.information.accordions.accessibility.description",
-							),
-							defaultOpen: false,
-							type: "section",
-							cardVariant: "none",
-							fields: [
-								{
-									name: "accessibility",
-									label: fieldLabel("accessibility"),
-									type: "textarea",
-									placeholder: fieldPlaceholder("accessibility"),
-								},
-							],
-						},
-						{
-							name: "cost_accordion",
-							collapsible: true,
-							className: "border-t-1",
-							accordionVariant: "default",
-							accordionTitle: t(
-								"institutionDraftWizardModal.form.information.accordions.cost.title",
-							),
-							accordionDescription: t(
-								"institutionDraftWizardModal.form.information.accordions.cost.description",
-							),
-							defaultOpen: false,
-							type: "section",
-							cardVariant: "none",
-							fields: [
-								{
-									name: "cost",
-									label: fieldLabel("cost"),
-									type: "textarea",
-									placeholder: fieldPlaceholder("cost"),
-								},
-							],
-						},
 					],
 				},
 				{

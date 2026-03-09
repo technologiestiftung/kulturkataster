@@ -25,16 +25,14 @@ export function FilterModalWrapper({
 }: FilterModalWrapperProps) {
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
-			<DialogContent variant="fullscreen-muted" className="p-0">
-				<div className="flex justify-center p-10">
-					<div className="max-w-3xl space-y-4 w-full">
-						<DialogTitle className="sr-only">{title}</DialogTitle>
-						<h2>{title}</h2>
-						{description ? (
-							<DialogDescription>{description}</DialogDescription>
-						) : null}
-						{children}
-					</div>
+			<DialogContent variant="fullscreen-muted" className="p-4">
+				<div className="max-w-3xl space-y-4 w-full place-self-center">
+					<DialogTitle className="sr-only">{title}</DialogTitle>
+					<h2>{title}</h2>
+					{description ? (
+						<DialogDescription>{description}</DialogDescription>
+					) : null}
+					{children}
 				</div>
 			</DialogContent>
 		</Dialog>
