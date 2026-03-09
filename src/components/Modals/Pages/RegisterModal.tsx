@@ -4,7 +4,7 @@ import { RegisterForm } from "@/components/Auth/RegisterForm";
 import { Modal } from "@/components/Modals/Modal";
 import { useTranslation } from "react-i18next";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { Button } from "@/components/ui/button";
@@ -22,8 +22,22 @@ export function RegisterModal({
 	const searchParams = useSearchParams();
 	const toLocalePath = useLocalePath();
 	const [didRegister, setDidRegister] = useState(false);
+	const contentRef = useRef<HTMLDivElement>(null);
 	const didRegisterViaUrl = searchParams.get("registered") === "1";
 	const showSuccess = didRegister || didRegisterViaUrl;
+
+	useEffect(() => {
+		if (!showSuccess) return;
+
+		const rafId = requestAnimationFrame(() => {
+			const modalScrollContainer = contentRef.current?.closest(
+				".Modal-Root",
+			) as HTMLElement | null;
+			modalScrollContainer?.scrollTo({ top: 0, behavior: "auto" });
+		});
+
+		return () => cancelAnimationFrame(rafId);
+	}, [showSuccess]);
 
 	const handleRegisterSuccess = () => {
 		setDidRegister(true);
@@ -31,7 +45,7 @@ export function RegisterModal({
 		params.set("registered", "1");
 		const query = params.toString();
 		router.replace(query ? `${pathname}?${query}` : pathname, {
-			scroll: false,
+			scroll: true,
 		});
 	};
 
@@ -46,7 +60,7 @@ export function RegisterModal({
 			showBackButton
 			returnTo={returnTo ?? "/login"}
 		>
-			<>
+			<div ref={contentRef}>
 				{showSuccess ? (
 					<div className="w-full space-y-6 text-left">
 						<div className="h-50 relative w-screen -mt-32 -my-4 left-1/2 -translate-x-1/2 overflow-hidden mb-16">
@@ -90,7 +104,7 @@ export function RegisterModal({
 						<RegisterForm onSuccess={handleRegisterSuccess} />
 					</div>
 				)}
-			</>
+			</div>
 		</Modal>
 	);
 }

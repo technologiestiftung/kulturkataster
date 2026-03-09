@@ -98,6 +98,45 @@ export async function sendClaimDecisionEmail(params: {
 	}
 }
 
+export async function sendSubmissionDecisionEmail(params: {
+	decision: "approved" | "rejected";
+	email: string;
+	firstName?: string | null;
+	lastName?: string | null;
+	institutionName: string;
+}) {
+	const { siteUrl, portalUrl, faqUrl } = getBaseUrls();
+	const templatePath =
+		params.decision === "approved"
+			? "custom/submission_approved.html"
+			: "custom/submission_rejected.html";
+	const subject =
+		params.decision === "approved"
+			? `Ihr Kulturort ${params.institutionName} wurde Ihrem Kulturkatasterportal hinzugefügt`
+			: `Ihre Anfrage zur Pflege des Kulturorts ${params.institutionName}`;
+
+	try {
+		await sendTemplatedEmail({
+			to: params.email,
+			subject,
+			templatePath,
+			variables: {
+				SiteURL: siteUrl,
+				Email: params.email,
+				Data: {
+					first_name: params.firstName ?? "",
+					last_name: params.lastName ?? "",
+					institution_name: params.institutionName,
+					portal_url: portalUrl,
+					faq_url: faqUrl,
+				},
+			},
+		});
+	} catch (error) {
+		console.error("[email] submission decision notification failed:", error);
+	}
+}
+
 export async function sendRoleDecisionEmail(params: {
 	target: RoleEmailTarget;
 	decision: RoleEmailDecision;
