@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useEffect, useRef, useState } from "react";
+import { Fragment, useState } from "react";
 import type { TFunction } from "i18next";
 import { useTranslation } from "react-i18next";
 import { Input } from "@/components/ui/input";
@@ -33,7 +33,6 @@ import { CategorySectionList } from "@/components/Filter/CategorySection/Categor
 import { MultiSelectModal } from "@/components/MultiSelect/MultiSelectModal";
 import { ActionPanel } from "@/components/ActionPanel";
 import { cn } from "@/lib/utils";
-import { Skeleton } from "@/components/ui/skeleton";
 import { buildStreetLine, toOptionalNumber } from "@/lib/utils/formUtils";
 import type { FilterState } from "@/types";
 import type {
@@ -55,62 +54,7 @@ import {
 	getFieldLabel,
 	getFieldPlaceholder,
 } from "@/lib/i18n/fieldLabels";
-
-function ScrollReveal({
-	children,
-	className,
-}: {
-	children: React.ReactNode;
-	className?: string;
-}) {
-	const ref = useRef<HTMLDivElement>(null);
-	const [isVisible, setIsVisible] = useState(false);
-
-	useEffect(() => {
-		if (typeof IntersectionObserver === "undefined") {
-			setIsVisible(true);
-			return;
-		}
-
-		const element = ref.current;
-		if (!element) return;
-
-		const observer = new IntersectionObserver(
-			(entries) => {
-				const [entry] = entries;
-				if (entry?.isIntersecting) {
-					setIsVisible(true);
-					observer.disconnect();
-				}
-			},
-			{ threshold: 0.12, rootMargin: "0px 0px -8% 0px" },
-		);
-
-		observer.observe(element);
-
-		return () => observer.disconnect();
-	}, []);
-
-	return (
-		<div ref={ref} className={cn("relative", className)}>
-			{!isVisible && (
-				<div className="pointer-events-none absolute inset-0 z-10">
-					<Skeleton className="h-full w-full rounded-md" />
-				</div>
-			)}
-			<div
-				className={cn(
-					"motion-safe:transition-all motion-safe:duration-500 motion-safe:ease-out",
-					isVisible
-						? "motion-safe:opacity-100 motion-safe:translate-y-0"
-						: "motion-safe:opacity-0 motion-safe:translate-y-3",
-				)}
-			>
-				{children}
-			</div>
-		</div>
-	);
-}
+import { ScrollReveal } from "./ScrollReveal";
 
 function PasswordField({
 	id,
@@ -1127,6 +1071,7 @@ export const buildRenderField = ({
 	const renderField = (
 		field: FormWrapperFieldConfig,
 		parentLayoutColumns = config.layout?.columns,
+		isWithinAccordion = false,
 	): React.ReactNode => {
 		if (field.condition && !field.condition(formData)) {
 			return null;
@@ -1165,7 +1110,11 @@ export const buildRenderField = ({
 					{sectionHeader}
 					<div className={cn("grid", field.fieldGap ?? "gap-4", gridClass)}>
 						{field?.fields?.map((nestedField) =>
-							renderField(nestedField, layoutColumns),
+							renderField(
+								nestedField,
+								layoutColumns,
+								isWithinAccordion || useAccordion,
+							),
 						)}
 					</div>
 				</div>
@@ -1174,7 +1123,11 @@ export const buildRenderField = ({
 			const accordionId = `${field.name}-section`;
 
 			return (
-				<ScrollReveal key={field.name} className={spanClass}>
+				<ScrollReveal
+					key={field.name}
+					className={spanClass}
+					disabled={isWithinAccordion}
+				>
 					<SectionWrapper
 						wrapperId={field.name}
 						wrapperClassName={field.className}
@@ -1198,6 +1151,7 @@ export const buildRenderField = ({
 				<ScrollReveal
 					key={field.name}
 					className={cn(gridClass, field.className)}
+					disabled={isWithinAccordion}
 				>
 					{renderFieldContent(
 						{
@@ -1227,7 +1181,11 @@ export const buildRenderField = ({
 		const gridClass = getGridClass(field);
 
 		return (
-			<ScrollReveal key={field.name} className={cn(gridClass, field.className)}>
+			<ScrollReveal
+				key={field.name}
+				className={cn(gridClass, field.className)}
+				disabled={isWithinAccordion}
+			>
 				<Accordion
 					type="single"
 					collapsible

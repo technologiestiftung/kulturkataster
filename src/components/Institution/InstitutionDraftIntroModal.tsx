@@ -110,14 +110,13 @@ function ContributionSetupContent({
 							<Trans
 								i18nKey="institutionDraftIntroModal.submitSuccess.description"
 								ns="content"
-								components={{
-									link: (
-										<Link
-											href={toLocalePath("/account")}
-											className="text-primary underline-offset-4 hover:underline"
-										/>
-									),
-								}}
+								components={[
+									<Link
+										key="account-link"
+										href={toLocalePath("/account")}
+										className="text-primary-dark underline"
+									/>,
+								]}
 							/>
 						</p>
 					</div>
