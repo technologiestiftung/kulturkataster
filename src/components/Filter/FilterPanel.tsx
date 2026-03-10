@@ -164,7 +164,7 @@ export const FilterPanel: FC<FilterPanelProps> = ({
 			{showDistricts && (
 				<Card variant="filter">
 					<div className="flex items-center justify-between mb-4">
-						<h3 className="body1 font-bold">
+						<h3 className="body1 font-bold capitalize">
 							{t("filter.districts.title", { ns: "content" })}
 						</h3>
 						<button
