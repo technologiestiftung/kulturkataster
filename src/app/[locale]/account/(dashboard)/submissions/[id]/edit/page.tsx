@@ -1,20 +1,25 @@
 import { InstitutionDraftEditModal } from "@/components/Institution/InstitutionDraftEditModal";
+import { requirePositiveIntParam } from "@/lib/utils/routeParams";
 
 type InstitutionDraftEditPageProps = {
-	params: Promise<{ id: string }>;
+	params: Promise<{ locale: string; id: string }>;
 };
 
 export default async function InstitutionDraftEditPage({
 	params,
 }: InstitutionDraftEditPageProps) {
-	const { id } = await params;
-	const parsedId = Number(id);
+	const { locale, id } = await params;
+	const parsedId = requirePositiveIntParam(
+		id,
+		`/${locale}/account/institutions`,
+	);
+
 	return (
 		<InstitutionDraftEditModal
-			submissionId={Number.isFinite(parsedId) ? parsedId : undefined}
-			returnTo={`/account/submissions/${id}`}
+			submissionId={parsedId}
+			returnTo={`/account/submissions/${parsedId}`}
 			shouldRefresh={false}
-			routePath={`/account/submissions/${id}/edit`}
+			routePath={`/account/submissions/${parsedId}/edit`}
 		/>
 	);
 }
