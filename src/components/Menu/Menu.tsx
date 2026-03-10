@@ -28,6 +28,8 @@ import ENIcon from "@/icons/lang/en.svg";
 import Download from "@/icons/download.svg";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { useAppStore } from "@/lib/store/appStore";
+import { allowedLocales, defaultLocale } from "@/i18n/config";
+import { localePath } from "@/lib/utils/localePath";
 import KukaSmallLogo from "@/logos/kuka-small.svg";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -144,6 +146,18 @@ const isMenuItemActive = (
 	);
 };
 
+const buildLocaleToggledPath = (
+	pathname: string,
+	targetLocale: string,
+): string => {
+	const withoutLocale =
+		pathname.replace(
+			new RegExp(`^/(${allowedLocales.join("|")})(?=/|$)`),
+			"",
+		) || "/";
+	return localePath(targetLocale, withoutLocale);
+};
+
 export function Menu({
 	sidebar,
 	...props
@@ -159,6 +173,10 @@ export function Menu({
 		() => (pathname ? pathname.replace(/\/$/, "") : ""),
 		[pathname],
 	);
+	const currentLocale = useMemo(() => {
+		const firstSegment = normalizedPath.split("/").filter(Boolean)[0];
+		return allowedLocales.includes(firstSegment) ? firstSegment : defaultLocale;
+	}, [normalizedPath]);
 
 	const currentSidebarInstitutionId = useMemo(() => {
 		const match = normalizedPath.match(/\/(?:map|list)\/institution\/(\d+)$/);
@@ -243,6 +261,20 @@ export function Menu({
 	};
 
 	const handleItemClick = (item: MenuItem) => {
+		if (item.id === "language") {
+			const targetLocale = currentLocale === "de" ? "en" : "de";
+			const toggledPath = buildLocaleToggledPath(
+				normalizedPath || `/${currentLocale}`,
+				targetLocale,
+			);
+			const search =
+				typeof window !== "undefined" ? window.location.search : "";
+			router.push(`${toggledPath}${search}`);
+			setOpen(false);
+			setOpenMobile(false);
+			return;
+		}
+
 		if (item.route && item.route !== "#") {
 			if (
 				(item.id === "map" || item.id === "list") &&
