@@ -75,7 +75,7 @@ test.describe("Auth registration", () => {
 		).toBeVisible();
 		await expect(
 			page.getByText(
-				"In Kürze erhalten Sie eine Bestätigungs-E-Mail mit dem Link zu Ihrem Login.",
+				"Wenn ein Konto mit den angegebenen Daten erstellt werden kann, erhalten Sie in Kürze eine E-Mail mit einem Bestätigungslink.",
 			),
 		).toBeVisible();
 
@@ -119,7 +119,7 @@ test.describe("Auth registration", () => {
 		).toBeVisible({ timeout: 15_000 });
 		await expect(
 			page.getByText(
-				"In Kürze erhalten Sie eine Bestätigungs-E-Mail mit dem Link zu Ihrem Login.",
+				"Wenn ein Konto mit den angegebenen Daten erstellt werden kann, erhalten Sie in Kürze eine E-Mail mit einem Bestätigungslink.",
 			),
 		).toBeVisible();
 	});

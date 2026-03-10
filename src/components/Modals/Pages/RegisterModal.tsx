@@ -82,7 +82,7 @@ export function RegisterModal({
 								<p className="text-foreground">
 									{t("auth.register.successMessage", {
 										defaultValue:
-											"In Kürze erhalten Sie eine Bestätigungs-E-Mail mit dem Link zu Ihrem Login.",
+											"Wenn ein Konto mit den angegebenen Daten erstellt werden kann, erhalten Sie in Kürze eine E-Mail mit einem Bestätigungslink.",
 									})}
 								</p>
 							</div>
