@@ -17,15 +17,6 @@ export const buildInstitutionSearchWhere = (
 					name: { contains: term, mode: Prisma.QueryMode.insensitive },
 				},
 				{
-					website: { contains: term, mode: Prisma.QueryMode.insensitive },
-				},
-				{
-					email: { contains: term, mode: Prisma.QueryMode.insensitive },
-				},
-				{
-					notes: { contains: term, mode: Prisma.QueryMode.insensitive },
-				},
-				{
 					address: {
 						street: { contains: term, mode: Prisma.QueryMode.insensitive },
 					},

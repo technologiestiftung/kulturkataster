@@ -1,0 +1,349 @@
+[
+	{
+		"id": "alkis_bezirke:wfs:bezirksgrenzen",
+		"items": [
+			{
+				"type": "line",
+				"background": "bg-[#6201e0]",
+				"label": "District boundary"
+			},
+			{
+				"type": "wording",
+				"color": "text-neutral-80",
+				"label": "District name",
+				"text": "Mitte"
+			}
+		]
+	},
+	{
+		"id": "alkis_ortsteile:wfs:ortsteile",
+		"items": [
+			{
+				"type": "line",
+				"background": "bg-[#6201e0]",
+				"label": "Locality boundary"
+			},
+			{
+				"type": "wording",
+				"color": "text-neutral-80",
+				"label": "Locality name",
+				"text": "Mitte"
+			}
+		]
+	},
+	{
+		"id": "bplan:a_bp_iv",
+		"items": [
+			{
+				"type": "circle",
+				"background": "bg-[#BBC2DB]",
+				"borderColor": "border-[#343591]",
+				"label": "Development plan, in process"
+			}
+		]
+	},
+	{
+		"id": "bplan:b_bp_fs",
+		"items": [
+			{
+				"type": "circle",
+				"background": "bg-[#E9BEBA]",
+				"borderColor": "border-[#B02D23]",
+				"label": "Development plan, adopted"
+			}
+		]
+	},
+	{
+		"id": "bplan:c_bp_ak",
+		"items": [
+			{
+				"type": "circle",
+				"background": "bg-[#CBCBCB]",
+				"borderColor": "border-[#6A6A6A]",
+				"label": "Development plan, adopted"
+			}
+		]
+	},
+	{
+		"id": "lor_2021:a_lor_plr_2021",
+		"wider": "min-w-[5.1rem]",
+		"items": [
+			{
+				"type": "line",
+				"background": "bg-[#3C89CB]",
+				"label": "Planning area boundary (PLR)"
+			},
+			{
+				"type": "wording",
+				"color": "text-[#3C89CB]",
+				"label": "Number",
+				"text": "01200624"
+			},
+			{
+				"type": "wording",
+				"color": "text-[#3C89CB]",
+				"label": "Name",
+				"text": "Heidestrasse"
+			}
+		]
+	},
+	{
+		"id": "lor_2021:b_lor_bzr_2021",
+		"wider": "min-w-[4.375rem]",
+		"items": [
+			{
+				"type": "line",
+				"background": "bg-[#DC6128]",
+				"label": "District region boundary (BZR)"
+			},
+			{
+				"type": "wording",
+				"color": "text-[#DC6128]",
+				"label": "Number",
+				"text": "012006"
+			},
+			{
+				"type": "wording",
+				"color": "text-[#DC6128]",
+				"label": "Name",
+				"text": "Moabit East"
+			}
+		]
+	},
+	{
+		"id": "lor_2021:c_lor_pgr_2021",
+		"items": [
+			{
+				"type": "line",
+				"background": "bg-[#8BB38F]",
+				"label": "Forecast area boundary (PGR)"
+			},
+			{
+				"type": "wording",
+				"color": "text-[#8BB38F]",
+				"label": "Number",
+				"text": "0120"
+			},
+			{
+				"type": "wording",
+				"color": "text-[#8BB38F]",
+				"label": "Name",
+				"text": "Moabit"
+			}
+		]
+	},
+	{
+		"id": "gemeinschaftsinitiative:gemeinschaftsinitiative",
+		"items": [
+			{
+				"type": "line",
+				"background": "bg-[#D72E74]",
+				"label": "Action areas of the joint initiative"
+			}
+		]
+	},
+	{
+		"id": "ua_einwohnerdichte_2024:ua_einwohnerdichte_2024_entw",
+		"items": [
+			{
+				"type": "title",
+				"label": "Population change compared with the previous year"
+			},
+			{
+				"type": "circle",
+				"background": "bg-[#D6FE7D]",
+				"borderColor": "border-neutral-80",
+				"label": "Decrease of > 10"
+			},
+			{
+				"type": "circle",
+				"background": "bg-[#BB27C5]",
+				"borderColor": "border-neutral-80",
+				"label": "Increase of > 20"
+			}
+		]
+	},
+	{
+		"id": "ua_einwohnerdichte_2024:ua_einwohnerdichte_2024",
+		"items": [
+			{
+				"type": "title",
+				"label": "Population density (residents/ha)"
+			},
+			{
+				"type": "circle",
+				"background": "bg-[#D8FE7E]",
+				"borderColor": "border-neutral-80",
+				"label": "1 - 4",
+				"unit": "Residents per hectare"
+			},
+			{
+				"type": "circle",
+				"background": "bg-[#FDFE54]",
+				"borderColor": "border-neutral-80",
+				"label": "5 - 30",
+				"unit": "Residents per hectare"
+			},
+			{
+				"type": "circle",
+				"background": "bg-[#F7CC76]",
+				"borderColor": "border-neutral-80",
+				"label": "31 - 70",
+				"unit": "Residents per hectare"
+			},
+			{
+				"type": "circle",
+				"background": "bg-[#F19E39]",
+				"borderColor": "border-neutral-80",
+				"label": "71 - 150",
+				"unit": "Residents per hectare"
+			},
+			{
+				"type": "circle",
+				"background": "bg-[#ED712E]",
+				"borderColor": "border-neutral-80",
+				"label": "151 - 250",
+				"unit": "Residents per hectare"
+			},
+			{
+				"type": "circle",
+				"background": "bg-[#EA3323]",
+				"borderColor": "border-neutral-80",
+				"label": "251 - 350",
+				"unit": "Residents per hectare"
+			},
+			{
+				"type": "circle",
+				"background": "bg-[#BB27C4]",
+				"borderColor": "border-neutral-80",
+				"label": "351 - 450",
+				"unit": "Residents per hectare"
+			},
+			{
+				"type": "circle",
+				"background": "bg-[#8B1A95]",
+				"borderColor": "border-neutral-80",
+				"label": "451 - 550",
+				"unit": "Residents per hectare"
+			},
+			{
+				"type": "circle",
+				"background": "bg-[#000194]",
+				"borderColor": "border-neutral-80",
+				"label": "> 500",
+				"unit": "Residents per hectare"
+			}
+		]
+	},
+	{
+		"id": "mss_2023:bc_mss2023_i_sdi",
+		"wider": "min-w-[2rem]",
+		"items": [
+			{
+				"type": "intro",
+				"label": "Area-based overlay of the status index (4 classes) and dynamics index (3 classes) at planning area level (542 PLR) for the overall social inequality index (status/dynamics index) in 12 groups"
+			},
+			{
+				"type": "table"
+			},
+			{
+				"type": "intro",
+				"label": "(Index: 1st position = status, 2nd position = dynamics; box value: number of PLR)"
+			},
+			{
+				"type": "spacer"
+			},
+			{
+				"type": "wording",
+				"color": "text-black contrast:text-white",
+				"label": "high status and positive dynamics",
+				"text": "1+"
+			},
+			{
+				"type": "wording",
+				"color": "text-black contrast:text-white",
+				"label": "high status and stable dynamics",
+				"text": "1+/-"
+			},
+			{
+				"type": "wording",
+				"color": "text-black contrast:text-white",
+				"label": "high status and negative dynamics",
+				"text": "1-"
+			},
+			{
+				"type": "spacer"
+			},
+			{
+				"type": "wording",
+				"color": "text-black contrast:text-white",
+				"label": "medium status and positive dynamics",
+				"text": "2+"
+			},
+			{
+				"type": "wording",
+				"color": "text-black contrast:text-white",
+				"label": "medium status and stable dynamics",
+				"text": "2+/-"
+			},
+			{
+				"type": "wording",
+				"color": "text-black contrast:text-white",
+				"label": "medium status and negative dynamics",
+				"text": "2-"
+			},
+			{
+				"type": "spacer"
+			},
+			{
+				"type": "wording",
+				"color": "text-black contrast:text-white",
+				"label": "low status and positive dynamics",
+				"text": "3+"
+			},
+			{
+				"type": "wording",
+				"color": "text-black contrast:text-white",
+				"label": "low status and stable dynamics",
+				"text": "3+/-"
+			},
+			{
+				"type": "wording",
+				"color": "text-black contrast:text-white",
+				"label": "low status and negative dynamics",
+				"text": "3-"
+			},
+			{
+				"type": "spacer"
+			},
+			{
+				"type": "wording",
+				"color": "text-black contrast:text-white",
+				"label": "very low status and positive dynamics",
+				"text": "4+"
+			},
+			{
+				"type": "wording",
+				"color": "text-black contrast:text-white",
+				"label": "very low status and stable dynamics",
+				"text": "4+/-"
+			},
+			{
+				"type": "wording",
+				"color": "text-black contrast:text-white",
+				"label": "very low status and negative dynamics",
+				"text": "4-"
+			},
+			{
+				"type": "spacer"
+			},
+			{
+				"type": "circle",
+				"background": "bg-[#C0C0C0]",
+				"borderColor": "border-[#555B54]",
+				"label": "Planning area without assignment",
+				"textInCircle": "6"
+			}
+		]
+	}
+]
