@@ -54,7 +54,7 @@ import {
 	getFieldLabel,
 	getFieldPlaceholder,
 } from "@/lib/i18n/fieldLabels";
-import { ScrollReveal } from "./ScrollReveal";
+import { ScrollReveal } from "@/components/shared/ScrollReveal";
 
 function PasswordField({
 	id,

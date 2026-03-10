@@ -1,576 +1,576 @@
 {
-	"about": "Über",
+	"about": "About",
 	"accessibility": {
 		"contrast": {
-			"darkMode": "Dunkler Modus",
-			"lightMode": "Heller Modus"
+			"darkMode": "Dark mode",
+			"lightMode": "Light mode"
 		},
 		"fontSize": {
-			"title": "Vergrößerte Schriften"
+			"title": "Increased font size"
 		},
 		"motion": {
-			"title": "Reduzierte Animationen"
+			"title": "Reduced motion"
 		},
 		"signLanguage": {
-			"title": "Deutsche Gebärdensprache"
+			"title": "German Sign Language"
 		},
 		"simpleLanguage": {
-			"title": "Leichte Sprache"
+			"title": "Plain language"
 		},
-		"switchOff": "Aus",
-		"switchOn": "An",
-		"title": "Barrierefreiheit",
+		"switchOff": "Off",
+		"switchOn": "On",
+		"title": "Accessibility",
 		"viewMode": {
-			"title": "Listenansicht der Kulturorte"
+			"title": "List view of cultural venues"
 		}
 	},
 	"add": {
-		"title": "Mitwirken"
+		"title": "Contribute"
 	},
 	"alert": {
-		"error": "Oh nein! Es gab ein Fehler!",
-		"errorFixFields": "Bitte beheben Sie die hervorgehobenen Fehler.",
-		"errorInput": "Eingabefehler",
-		"info": "Hinweis",
-		"success": "Erfolg",
-		"warning": "Warnung"
+		"error": "Oh no! An error occurred!",
+		"errorFixFields": "Please fix the highlighted errors.",
+		"errorInput": "Input error",
+		"info": "Note",
+		"success": "Success",
+		"warning": "Warning"
 	},
 	"auth": {
 		"account": {
 			"actions": {
 				"faq": "FAQ",
-				"logout": "Abmelden",
-				"profileSettings": "Profileinstellungen",
-				"refreshData": "Daten aktualisieren"
+				"logout": "Log out",
+				"profileSettings": "Profile settings",
+				"refreshData": "Refresh data"
 			},
 			"activity": {
 				"actions": {
-					"create": "erstellt",
-					"delete": "gelöscht",
-					"submission_review_approved": "genehmigt",
-					"submission_review_completed": "abgeschlossen",
-					"submission_review_rejected": "abgelehnt",
-					"update": "aktualisiert"
+					"create": "created",
+					"delete": "deleted",
+					"submission_review_approved": "approved",
+					"submission_review_completed": "completed",
+					"submission_review_rejected": "rejected",
+					"update": "updated"
 				},
-				"empty": "Sie haben noch keine Aktivitäten.",
+				"empty": "You don't have any activity yet.",
 				"emptyActions": {
-					"claimLocations": "Meine Orte anfragen",
-					"contribute": "Mitwirken"
+					"claimLocations": "Request my locations",
+					"contribute": "Contribute"
 				},
-				"emptyHint": "Folgende Aktionen können Sie hier durchführen.",
+				"emptyHint": "You can perform the following actions here.",
 				"entities": {
-					"address": "Adresse",
-					"category": "Kategorie",
-					"contact_person": "Kontaktperson",
-					"funding_source": "Förderquelle",
-					"group": "Gruppe",
-					"institution": "Kulturort",
-					"role": "Rolle",
-					"role_field_permission": "Rollenfeld-Berechtigung",
-					"role_table_permission": "Rollentabellen-Berechtigung",
-					"submission": "Einreichung",
+					"address": "Address",
+					"category": "Category",
+					"contact_person": "Contact person",
+					"funding_source": "Funding source",
+					"group": "Group",
+					"institution": "Cultural venue",
+					"role": "Role",
+					"role_field_permission": "Role field permission",
+					"role_table_permission": "Role table permission",
+					"submission": "Submission",
 					"tag": "Tag",
-					"user": "Nutzer*in"
+					"user": "User"
 				},
 				"filters": {
-					"allDates": "Alle",
-					"allEntities": "Alle Entitäten",
-					"allStatuses": "Alle Status",
-					"allTypes": "Alle Typen",
-					"allUsers": "Alle Nutzer*innen",
+					"allDates": "All",
+					"allEntities": "All entities",
+					"allStatuses": "All statuses",
+					"allTypes": "All types",
+					"allUsers": "All users",
 					"dateValue": {
-						"last30Days": "Letzte 30 Tage",
-						"last7Days": "Letzte 7 Tage",
-						"lastMonth": "Letzter Monat",
-						"thisMonth": "Dieser Monat",
-						"today": "Heute"
+						"last30Days": "Last 30 days",
+						"last7Days": "Last 7 days",
+						"lastMonth": "Last month",
+						"thisMonth": "This month",
+						"today": "Today"
 					},
-					"empty": "Keine Aktivitäten für die aktuellen Filter.",
-					"search": "Aktivität durchsuchen",
+					"empty": "No activity for the current filters.",
+					"search": "Search activity",
 					"typeValue": {
-						"assign": "Zuweisung",
-						"create": "Erstellt/Aktualisiert",
-						"status_change": "Statuswechsel"
+						"assign": "Assignment",
+						"create": "Created/Updated",
+						"status_change": "Status change"
 					}
 				},
-				"hiddenActor": "Redaktion",
+				"hiddenActor": "Editorial team",
 				"itemWithName": "{{item}}: {{name}}",
 				"status": {
-					"approved": "Genehmigt",
-					"completed": "Abgeschlossen",
-					"pending": "Ausstehend",
-					"rejected": "Abgelehnt"
+					"approved": "Approved",
+					"completed": "Completed",
+					"pending": "Pending",
+					"rejected": "Rejected"
 				},
 				"statusAria": "Status: {{status}}",
 				"system": "System",
 				"templates": {
-					"assign": "<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> auf Basis von <secondary>{{secondaryEntity}}</secondary> {{action}}",
-					"assignBasedOn": "<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> auf Basis von <secondary>{{secondaryEntity}}</secondary> {{action}}",
-					"create": "<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> {{action}}",
-					"statusChange": "<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> {{action}} <from>{{from}}</from> -> <to>{{to}}</to>",
-					"statusChangeBasedOnSecondary": "<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> auf Basis von <secondary>{{secondaryEntity}}</secondary> {{action}}  <from>{{from}}</from> -> <to>{{to}}</to>",
-					"statusChangeBasedOnSecondaryNoDiff": "<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> auf Basis von <secondary>{{secondaryEntity}}</secondary> {{action}}",
-					"statusChangeNoDiff": "<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> {{action}}",
-					"statusChangeWithSecondary": "<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> auf Basis von <secondary>{{secondaryEntity}}</secondary> {{action}}  <from>{{from}}</from> -> <to>{{to}}</to>",
-					"statusChangeWithSecondaryNoDiff": "<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> auf Basis von <secondary>{{secondaryEntity}}</secondary> {{action}}"
+					"assign": "<actor>{{actor}}</actor> has {{action}} <primary>{{primaryEntity}}</primary> based on <secondary>{{secondaryEntity}}</secondary>",
+					"assignBasedOn": "<actor>{{actor}}</actor> has {{action}} <primary>{{primaryEntity}}</primary> based on <secondary>{{secondaryEntity}}</secondary>",
+					"create": "<actor>{{actor}}</actor> has {{action}} <primary>{{primaryEntity}}</primary>",
+					"statusChange": "<actor>{{actor}}</actor> has {{action}} <primary>{{primaryEntity}}</primary> from <from>{{from}}</from> to <to>{{to}}</to>",
+					"statusChangeBasedOnSecondary": "<actor>{{actor}}</actor> has {{action}} <primary>{{primaryEntity}}</primary> based on <secondary>{{secondaryEntity}}</secondary> from <from>{{from}}</from> to <to>{{to}}</to>",
+					"statusChangeBasedOnSecondaryNoDiff": "<actor>{{actor}}</actor> has {{action}} <primary>{{primaryEntity}}</primary> based on <secondary>{{secondaryEntity}}</secondary>",
+					"statusChangeNoDiff": "<actor>{{actor}}</actor> has {{action}} <primary>{{primaryEntity}}</primary>",
+					"statusChangeWithSecondary": "<actor>{{actor}}</actor> has {{action}} <primary>{{primaryEntity}}</primary> based on <secondary>{{secondaryEntity}}</secondary> from <from>{{from}}</from> to <to>{{to}}</to>",
+					"statusChangeWithSecondaryNoDiff": "<actor>{{actor}}</actor> has {{action}} <primary>{{primaryEntity}}</primary> based on <secondary>{{secondaryEntity}}</secondary>"
 				},
-				"unknown": "Unbekannt"
+				"unknown": "Unknown"
 			},
 			"faqModal": {
 				"contactSupport": {
-					"description": "Bei Fragen können Sie uns direkt kontaktieren.",
-					"emailLabel": "E-Mail",
-					"phoneLabel": "Telefon",
-					"title": "Kontakt"
+					"description": "If you have any questions, you can contact us directly.",
+					"emailLabel": "Email",
+					"phoneLabel": "Phone",
+					"title": "Contact"
 				},
-				"description": "Diese FAQs beziehen sich ausschließlich auf den User-Bereich des Kulturkatasters, also auf Themen rund um Konto/Account, Rollen- und Rechteverwaltung (Administrationsrechte), das Verwalten von Institutionen sowie redaktionelle Workflows (z. B. Anlegen und Pflegen von Profilen). Allgemeine Fragen zum Auftrag und Nutzen des Kulturkatasters, zu den Umfängen der verschiedenen Versionen sowie zur methodischen Vorgehensweise finden Sie im Bereich \u201EInfos & Services\u201C auf dem Kulturkataster. Die FAQs werden stetig erweitert; falls Ihre Frage hier noch nicht auftaucht, schreiben Sie der Redaktion gern per E-Mail an info@kulturkataster.berlin.",
+				"description": "These FAQs relate exclusively to the user section of the Kulturkataster, covering topics such as accounts, role and permission management (administrative rights), managing institutions, and editorial workflows (e.g., creating and maintaining profiles). General questions about the mission and benefits of the Kulturkataster, the scope of the different versions, and the methodological approach can be found in the “Info & Services” section of the Kulturkataster. The FAQs are constantly being updated; if your question is not yet listed here, please feel free to email the editorial team at info@kulturkataster.berlin.",
 				"question1": {
 					"answer": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam.",
-					"title": "Wie kann ich ein Benutzerkonto für den User-Bereich erstellen?"
+					"title": "How can I create a user account for the user section?"
 				},
 				"question2": {
 					"answer": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam",
-					"title": "Welche Voraussetzungen gelten für die Freischaltung (wer bekommt Zugang)?"
+					"title": "What are the requirements for activation (who gets access)?"
 				},
 				"question3": {
 					"answer": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam",
-					"title": "Wie funktioniert \u201EPasswort vergessen\u201C und wie setze ich mein Passwort zurück?"
+					"title": "How does “Forgot password” work and how do I reset my password?"
 				},
 				"question4": {
 					"answer": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam",
-					"title": "Wie kann ich meine Kontodaten (Name, E-Mail, Passwort) ändern?"
+					"title": "How can I change my account details (name, email, password)?"
 				},
 				"question5": {
 					"answer": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam",
-					"title": "Wie kann ich meinen Account löschen lassen (und was passiert mit meinen Daten)?"
+					"title": "How can I have my account deleted (and what happens to my data)?"
 				},
 				"question6": {
 					"answer": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam",
-					"title": "Wie kann ich eine Institution anlegen oder meinem Account zuordnen?"
+					"title": "How can I create an institution or assign it to my account?"
 				},
 				"question7": {
 					"answer": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam",
-					"title": "Wie kann ich Nutzer*innen einer Institution hinzufügen, entfernen oder verwalten?"
+					"title": "How can I add, remove, or manage users of an institution?"
 				},
 				"question8": {
 					"answer": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam",
-					"title": "Welche Rollen gibt es (z. B. Admin/Redaktion) und welche Berechtigungen haben sie?"
+					"title": "What roles exist (e.g., admin/editorial) and what permissions do they have?"
 				},
 				"question9": {
 					"answer": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam",
-					"title": "Wie lege ich Profile für Verweisungsmitarbeitende an und wie verwalte ich diese?"
+					"title": "How do I create profiles for referral staff and how do I manage them?"
 				},
 				"question10": {
 					"answer": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam",
-					"title": "Wie funktioniert der redaktionelle Workflow (z. B. Entwurf, Prüfung, Freigabe, Veröffentlichung) im User-Bereich?"
+					"title": "How does the editorial workflow (e.g., draft, review, approval, publication) work in the user section?"
 				},
 				"question11": {
 					"answer": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam",
-					"title": "Ich habe immer noch eine Frage!"
+					"title": "I still have a question!"
 				},
-				"subtitle": "Häufig gestellte Fragen zum Konto-Bereich.",
+				"subtitle": "Frequently asked questions about the account section.",
 				"technicalSupport": {
-					"emailLabel": "Technischer Support"
+					"emailLabel": "Technical support"
 				},
-				"title": "Fragen & Antworten"
+				"title": "Questions & Answers"
 			},
-			"subtitle": "Meine Profilübersicht",
+			"subtitle": "My profile overview",
 			"tabs": {
-				"activity": "Aktivität",
-				"categories": "Kategorien",
-				"groups": "Gruppen",
-				"institutions": "Kulturorte",
-				"roles": "Rollen",
-				"users": "Nutzer*innen"
+				"activity": "Activity",
+				"categories": "Categories",
+				"groups": "Groups",
+				"institutions": "Cultural venues",
+				"roles": "Roles",
+				"users": "Users"
 			},
-			"welcome": "Willkommen, {{name}}!"
+			"welcome": "Welcome, {{name}}!"
 		},
 		"accountEdit": {
-			"confirmPasswordLabel": "Passwort bestätigen",
-			"confirmPasswordPlaceholder": "Passwort bestätigen",
-			"deleteAction": "Profil löschen",
-			"deleteConfirm": "Profil löschen",
-			"deleteDescription": "Möchten Sie Ihr Profil wirklich löschen? Dieser Vorgang kann nicht rückgängig gemacht werden.",
-			"deleteError": "Profil konnte nicht gelöscht werden.",
-			"deleteTitle": "Profil löschen",
-			"emailLabel": "E-Mail-Adresse",
-			"emailPlaceholder": "name@beispiel.de",
-			"errorFallback": "Änderungen konnten nicht gespeichert werden.",
-			"metaTitle": "Persönliche Angaben ändern – Kulturkataster",
-			"nameLabel": "Ihr Name",
-			"namePlaceholder": "Vor- und Nachname",
-			"passwordLabel": "Passwort",
-			"passwordPlaceholder": "Neues Passwort",
-			"passwordRequirements": "Passwort muss mindestens 8 Zeichen lang sein.",
-			"submit": "Speichern",
-			"submitting": "Wird gespeichert...",
-			"successDescription": "Ihre persönlichen Angaben wurden erfolgreich aktualisiert.",
-			"successTitle": "Änderungen gespeichert",
-			"title": "Persönliche Angaben ändern"
+			"confirmPasswordLabel": "Confirm password",
+			"confirmPasswordPlaceholder": "Confirm password",
+			"deleteAction": "Delete profile",
+			"deleteConfirm": "Delete profile",
+			"deleteDescription": "Are you sure you want to delete your profile? This action cannot be undone.",
+			"deleteError": "Could not delete profile.",
+			"deleteTitle": "Delete profile",
+			"emailLabel": "Email address",
+			"emailPlaceholder": "name@example.com",
+			"errorFallback": "Changes could not be saved.",
+			"metaTitle": "Edit Personal Information – Kulturkataster",
+			"nameLabel": "Your name",
+			"namePlaceholder": "First and last name",
+			"passwordLabel": "Password",
+			"passwordPlaceholder": "New password",
+			"passwordRequirements": "Password must be at least 8 characters long.",
+			"submit": "Save",
+			"submitting": "Saving...",
+			"successDescription": "Your personal information has been updated successfully.",
+			"successTitle": "Changes saved",
+			"title": "Edit personal information"
 		},
 		"forgot": {
-			"backToSignIn": "Zurück zum Login",
-			"emailLabel": "E-Mail-Adresse",
-			"emailPlaceholder": "name@beispiel.de",
-			"errorFallback": "Passwort-Reset konnte nicht angefordert werden.",
-			"metaTitle": "Passwort vergessen – Kulturkataster",
-			"submit": "Passwort zurücksetzen",
-			"submitting": "Wird gesendet...",
-			"subtitle": "Wir senden Ihnen einen Link zum Zurücksetzen Ihres Passworts.",
-			"successMessage": "Bitte prüfen Sie Ihr E-Mail-Postfach. Falls ein Account existiert, haben wir Ihnen einen Link zum Zurücksetzen des Passworts gesendet.",
-			"successTitle": "E-Mail gesendet",
-			"title": "Passwort vergessen"
+			"backToSignIn": "Back to login",
+			"emailLabel": "Email address",
+			"emailPlaceholder": "name@example.com",
+			"errorFallback": "Password reset could not be requested.",
+			"metaTitle": "Forgot Password – Kulturkataster",
+			"submit": "Reset password",
+			"submitting": "Sending...",
+			"subtitle": "We will send you a link to reset your password.",
+			"successMessage": "Please check your email inbox. If an account exists, we have sent you a link to reset your password.",
+			"successTitle": "Email sent",
+			"title": "Forgot password"
 		},
 		"login": {
-			"emailLabel": "E-Mail",
-			"emailPlaceholder": "name@beispiel.de",
-			"errorFallback": "Anmeldung fehlgeschlagen.",
-			"forgotPassword": "Passwort vergessen?",
-			"inactive": "Ihr Konto ist noch nicht freigeschaltet. Bitte wenden Sie sich an den Support.",
-			"invalidCredentials": "Ungültige Anmeldedaten. Bitte überprüfen Sie Ihre E-Mail-Adresse und Ihr Passwort.",
-			"metaTitle": "Anmelden – Kulturkataster",
-			"noAccount": "Sie haben noch keinen Account beim Kulturkataster? ",
-			"passwordLabel": "Passwort",
-			"passwordPlaceholder": "Geben Sie Ihr Passwort ein",
-			"signUp": "Registrieren Sie sich hier.",
-			"submit": "Anmelden",
-			"submitting": "Wird angemeldet...",
-			"subtitle": "Wirken Sie mit, Berlins Kulturlandschaft zu gestalten.",
-			"title": "Schön, dass Sie da sind."
+			"emailLabel": "Email",
+			"emailPlaceholder": "name@example.com",
+			"errorFallback": "Login failed.",
+			"forgotPassword": "Forgot password?",
+			"inactive": "Your account is not yet activated. Please contact support.",
+			"invalidCredentials": "Invalid login credentials. Please check your email address and password.",
+			"metaTitle": "Login – Kulturkataster",
+			"noAccount": "Don't have an account with Kulturkataster yet? ",
+			"passwordLabel": "Password",
+			"passwordPlaceholder": "Enter your password",
+			"signUp": "Register here.",
+			"submit": "Login",
+			"submitting": "Logging in...",
+			"subtitle": "Help shape Berlin's cultural landscape.",
+			"title": "Welcome back."
 		},
 		"password": {
-			"hide": "Passwort ausblenden",
-			"show": "Passwort anzeigen"
+			"hide": "Hide password",
+			"show": "Show password"
 		},
 		"register": {
-			"accountType": "Arbeiten Sie für eine Organisation oder in der Verwaltung?",
-			"accountTypeAdministration": "Mitarbeiter*in des Landes Berlin",
-			"accountTypeDistrict": "Mitarbeiter*in eines Bezirks",
-			"accountTypeOrganization": "Mitarbeiter*in einer Organisation",
-			"accountTypePlaceholder": "Optionen auswählen",
-			"administrationName": "Für welche Landesbehörde arbeiten Sie?",
-			"administrationNamePlaceholder": "Name der Verwaltung eingeben",
-			"administrationPhone": "Telefonnumer für Rückfragen",
-			"administrationPhonePlaceholder": "Telefonnummer eingeben",
-			"administrationPosition": "Was ist ihre Funktion/Position?",
-			"administrationPositionPlaceholder": "Ihre Position eingeben",
-			"alreadyAccount": "Haben Sie bereits ein Konto beim Kulturkataster? ",
-			"confirmPassword": "Passwort wiederholen",
-			"confirmPasswordPlaceholder": "Passwort wiederholen",
-			"districtName": "Bitte nennen Sie Ihren Bezirk",
-			"districtNamePlaceholder": "Name des Bezirks eingeben",
-			"districtOffice": "Für welche Dienststelle arbeiten Sie?*",
-			"districtOfficePlaceholder": "Name der Dienststelle eingeben",
-			"districtPhone": "Telefonnumer für Rückfragen",
-			"districtPhonePlaceholder": "Telefonnummer eingeben",
-			"districtPosition": "Was ist ihre Funktion/Position?",
-			"districtPositionPlaceholder": "Ihre Position eingeben",
-			"emailLabel": "Ihre E-Mail Adresse",
-			"emailPlaceholder": "name@beispiel.de",
-			"errorFallback": "Registrierung fehlgeschlagen.",
-			"firstName": "Vorname",
-			"firstNamePlaceholder": "Vorname",
-			"lastName": "Nachname",
-			"lastNamePlaceholder": "Nachname",
-			"metaTitle": "Registrieren – Kulturkataster",
-			"newsletterLink": "Newsletter abonnieren.",
-			"newsletterOptInPrefix": "Um auf dem Laufenden zu bleiben, möchte ich auch gleich den",
-			"organizationName": "Bitte nennen Sie den Namen der Organisation",
-			"organizationNamePlaceholder": "Name der Organisation eingeben",
-			"organizationPhone": "Telefonnumer für Rückfragen",
-			"organizationPhonePlaceholder": "Telefonnummer eingeben",
-			"organizationPosition": "Was ist ihre Funktion/Position?",
-			"organizationPositionPlaceholder": "Ihre Position eingeben",
-			"passwordLabel": "Passwort eingeben",
-			"passwordPlaceholder": "Passwort erstellen",
-			"privacyLink": "Datenschutzerklärung",
-			"privacySuffix": "zur Kenntnis genommen.",
-			"signIn": "Melden Sie sich hier an.",
-			"submit": "Konto erstellen",
-			"submitting": "Konto wird erstellt...",
-			"subtitle": "Wirken Sie mit, Berlins Kulturlandschaft zu gestalten.",
-			"successCta": "Fertig",
-			"successMessage": "Wenn ein Konto mit den angegebenen Daten erstellt werden kann, erhalten Sie in Kürze eine E-Mail mit einem Bestätigungslink.",
-			"successTitle": "Vielen Dank!",
-			"termsIntro": "Ich akzeptiere die",
-			"termsLink": "AGB",
-			"termsSeparator": "und habe die",
-			"title": "Registrieren Sie sich hier.",
-			"unavailable": "Registrierung ist derzeit nicht verfügbar."
+			"accountType": "Do you work for an organization or in the administration?",
+			"accountTypeAdministration": "Employee of the State of Berlin",
+			"accountTypeDistrict": "Employee of a district",
+			"accountTypeOrganization": "Employee of an organization",
+			"accountTypePlaceholder": "Select options",
+			"administrationName": "Which state authority do you work for?",
+			"administrationNamePlaceholder": "Enter administration name",
+			"administrationPhone": "Phone number for inquiries",
+			"administrationPhonePlaceholder": "Enter phone number",
+			"administrationPosition": "What is your function/position?",
+			"administrationPositionPlaceholder": "Enter your position",
+			"alreadyAccount": "Do you already have an account with Kulturkataster? ",
+			"confirmPassword": "Repeat password",
+			"confirmPasswordPlaceholder": "Repeat password",
+			"districtName": "Please name your district",
+			"districtNamePlaceholder": "Enter district name",
+			"districtOffice": "Which department do you work for?*",
+			"districtOfficePlaceholder": "Enter department name",
+			"districtPhone": "Phone number for inquiries",
+			"districtPhonePlaceholder": "Enter phone number",
+			"districtPosition": "What is your function/position?",
+			"districtPositionPlaceholder": "Enter your position",
+			"emailLabel": "Your email address",
+			"emailPlaceholder": "name@example.com",
+			"errorFallback": "Registration failed.",
+			"firstName": "First name",
+			"firstNamePlaceholder": "First name",
+			"lastName": "Last name",
+			"lastNamePlaceholder": "Last name",
+			"metaTitle": "Register – Kulturkataster",
+			"newsletterLink": "Subscribe to the newsletter.",
+			"newsletterOptInPrefix": "To stay up to date, I would also like to",
+			"organizationName": "Please name the organization",
+			"organizationNamePlaceholder": "Enter organization name",
+			"organizationPhone": "Phone number for inquiries",
+			"organizationPhonePlaceholder": "Enter phone number",
+			"organizationPosition": "What is your function/position?",
+			"organizationPositionPlaceholder": "Enter your position",
+			"passwordLabel": "Enter password",
+			"passwordPlaceholder": "Create password",
+			"privacyLink": "Privacy Policy",
+			"privacySuffix": "have been acknowledged.",
+			"signIn": "Sign in here.",
+			"submit": "Create account",
+			"submitting": "Creating account...",
+			"subtitle": "Help shape Berlin's cultural landscape.",
+			"successCta": "Done",
+			"successMessage": "If an account can be created with the provided data, you will receive an email with a confirmation link shortly.",
+			"successTitle": "Thank you!",
+			"termsIntro": "I accept the",
+			"termsLink": "Terms and Conditions",
+			"termsSeparator": "and have",
+			"title": "Register here.",
+			"unavailable": "Registration is currently unavailable."
 		},
 		"reset": {
-			"backToLogin": "Zurück zur Anmeldung",
-			"confirmPasswordLabel": "Passwort bestätigen",
-			"confirmPasswordPlaceholder": "Passwort bestätigen",
-			"errorFallback": "Passwort konnte nicht aktualisiert werden.",
-			"metaTitle": "Passwort zurücksetzen – Kulturkataster",
-			"missingToken": "Dieser Link ist ungültig oder abgelaufen. Bitte fordern Sie eine neue Einladung an.",
-			"newPasswordLabel": "Neues Passwort",
-			"newPasswordPlaceholder": "Passwort erstellen",
-			"passwordRequirements": "Passwort muss mindestens 8 Zeichen lang sein.",
-			"submit": "Passwort festlegen",
-			"submitting": "Passwort wird festgelegt...",
-			"subtitle": "Erstellen Sie ein Passwort, um Ihr Konto zu nutzen.",
-			"successMessage": "Ihr Passwort wurde erfolgreich aktualisiert.",
-			"successTitle": "Passwort aktualisiert",
-			"title": "Passwort festlegen"
+			"backToLogin": "Back to login",
+			"confirmPasswordLabel": "Confirm password",
+			"confirmPasswordPlaceholder": "Confirm password",
+			"errorFallback": "Password could not be updated.",
+			"metaTitle": "Reset Password – Kulturkataster",
+			"missingToken": "This link is invalid or expired. Please request a new invitation.",
+			"newPasswordLabel": "New password",
+			"newPasswordPlaceholder": "Create password",
+			"passwordRequirements": "Password must be at least 8 characters long.",
+			"submit": "Set password",
+			"submitting": "Setting password...",
+			"subtitle": "Create a password to use your account.",
+			"successMessage": "Your password has been updated successfully.",
+			"successTitle": "Password updated",
+			"title": "Set password"
 		},
 		"validation": {
-			"acceptTermsRequired": "Sie müssen die Nutzungsbedingungen akzeptieren",
-			"accountTypeRequired": "Kontotyp ist erforderlich",
-			"administrationNameRequired": "Name der Verwaltung ist erforderlich",
-			"administrationPhoneRequired": "Telefonnummer ist erforderlich",
-			"administrationPositionRequired": "Position ist erforderlich",
-			"districtNameRequired": "Name des Bezirks ist erforderlich",
-			"districtOfficeRequired": "Amt ist erforderlich",
-			"districtPhoneRequired": "Telefonnummer ist erforderlich",
-			"districtPositionRequired": "Position ist erforderlich",
-			"emailInvalid": "Ungültige E-Mail-Adresse",
-			"emailRequired": "E-Mail ist erforderlich",
-			"firstNameRequired": "Vorname ist erforderlich",
-			"organizationNameRequired": "Name der Organisation ist erforderlich",
-			"organizationPhoneRequired": "Telefonnummer ist erforderlich",
-			"organizationPositionRequired": "Position ist erforderlich",
-			"passwordMin": "Passwort muss mindestens 8 Zeichen haben",
-			"passwordMismatch": "Passwörter stimmen nicht überein",
-			"passwordRequired": "Passwort ist erforderlich"
+			"acceptTermsRequired": "You must accept the terms of use",
+			"accountTypeRequired": "Account type is required",
+			"administrationNameRequired": "Name of administration is required",
+			"administrationPhoneRequired": "Phone number is required",
+			"administrationPositionRequired": "Position is required",
+			"districtNameRequired": "Name of district is required",
+			"districtOfficeRequired": "Department is required",
+			"districtPhoneRequired": "Phone number is required",
+			"districtPositionRequired": "Position is required",
+			"emailInvalid": "Invalid email address",
+			"emailRequired": "Email is required",
+			"firstNameRequired": "First name is required",
+			"organizationNameRequired": "Name of organization is required",
+			"organizationPhoneRequired": "Phone number is required",
+			"organizationPositionRequired": "Position is required",
+			"passwordMin": "Password must be at least 8 characters",
+			"passwordMismatch": "Passwords do not match",
+			"passwordRequired": "Password is required"
 		}
 	},
-	"back": "Zurück",
+	"back": "Back",
 	"badges": {
-		"more": "+{{count}} weitere"
+		"more": "+{{count}} more"
 	},
-	"cancel": "Abbrechen",
+	"cancel": "Cancel",
 	"categoryFormModal": {
 		"status": {
-			"active": "Aktiv",
-			"inactive": "Inaktiv"
+			"active": "Active",
+			"inactive": "Inactive"
 		}
 	},
 	"categoryTable": {
 		"actions": {
-			"add": "Kategorie hinzufügen",
-			"editSubcategory": "Unterkategorie bearbeiten"
+			"add": "Add category",
+			"editSubcategory": "Edit subcategory"
 		},
 		"columns": {
-			"description": "Beschreibung",
+			"description": "Description",
 			"icon": "Icon",
 			"key": "Name",
-			"parent": "Übergeordnet",
-			"subcategories": "Unterkategorien"
+			"parent": "Parent",
+			"subcategories": "Subcategories"
 		},
 		"empty": {
-			"description": "Erstellen Sie eine Kategorie, um Inhalte besser zu strukturieren.",
-			"title": "Keine Kategorien gefunden."
+			"description": "Create a category to better structure content.",
+			"title": "No categories found."
 		},
-		"emptyMessage": "Keine Kategorien gefunden.",
-		"searchPlaceholder": "Kategorien suchen..."
+		"emptyMessage": "No categories found.",
+		"searchPlaceholder": "Search categories..."
 	},
-	"close": "Schließen",
-	"closeSidebar": "Seitenleiste schließen",
+	"close": "Close",
+	"closeSidebar": "Close sidebar",
 	"common": {
-		"selectPlaceholder": "Nein"
+		"selectPlaceholder": "No"
 	},
-	"confirm": "Schließen",
-	"delete": "Löschen",
+	"confirm": "Close",
+	"delete": "Delete",
 	"download": {
-		"title": "Liste herunterladen"
+		"title": "Download list"
 	},
-	"edit": "Bearbeiten",
+	"edit": "Edit",
 	"email": {
 		"address": "info@kulturkataster.berlin",
-		"label": "E-Mail"
+		"label": "Email"
 	},
-	"error": "Fehler",
+	"error": "Error",
 	"field_names": {
 		"funding_type": {
 			"options": {
-				"unknown": "Keine"
+				"unknown": "None"
 			}
 		}
 	},
 	"filter": {
-		"title": "Kulturorte filtern"
+		"title": "Filter cultural venues"
 	},
 	"footer": {
-		"about": "Über das Projekt",
-		"accessibility": "Barrierefreiheit",
+		"about": "About the project",
+		"accessibility": "Accessibility",
 		"address": {
 			"city": "Berlin",
 			"street": "Spandauer Damm 19",
 			"suffix": "Kulturraum Berlin gGmbH",
 			"zip": "14059"
 		},
-		"contact": "Kontakt",
+		"contact": "Contact",
 		"credit": {
-			"text": "© 2025 - Ein Projekt der Kulturraum Berlin gGmbH, gefördert durch die Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt, mit der technischen Umsetzung durch die Technologiestiftung Berlin."
+			"text": "© 2025 - A project by Kulturraum Berlin gGmbH, funded by the Senate Department for Culture and Social Cohesion, with technical implementation by the Technologiestiftung Berlin."
 		},
-		"imprint": "Impressum",
-		"navigation": "Footer-Navigation",
-		"navigationAriaLabel": "Fußzeilen-Navigation",
-		"privacy": "Datenschutz",
-		"projectBy": "Ein Projekt der Kulturraum Berlin gGmbH",
-		"signLanguageInformation": "Deutsche Gebärdensprache",
+		"imprint": "Imprint",
+		"navigation": "Footer navigation",
+		"navigationAriaLabel": "Footer navigation",
+		"privacy": "Privacy policy",
+		"projectBy": "A project by Kulturraum Berlin gGmbH",
+		"signLanguageInformation": "German Sign Language",
 		"signLanguageInformationShort": "DGS",
-		"simpleLanguageInformation": "Leichte Sprache",
+		"simpleLanguageInformation": "Easy-to-read language",
 		"title": "Kulturkataster Berlin",
-		"welcomeModalLinkListAriaLabel": "Fußzeilen-Navigation der Willkommensansicht"
+		"welcomeModalLinkListAriaLabel": "Welcome view footer navigation"
 	},
-	"footerLandmark": "Fußbereich",
+	"footerLandmark": "Footer",
 	"form": {
 		"validation": {
-			"required": "{{field}} ist erforderlich"
+			"required": "{{field}} is required"
 		}
 	},
-	"headerLandmark": "Seitennavigation",
+	"headerLandmark": "Site navigation",
 	"hello": "",
-	"here": "hier",
+	"here": "here",
 	"info": {
 		"title": "Info"
 	},
 	"information": {
-		"title": "Informationen"
+		"title": "Information"
 	},
 	"institution": {
-		"backToMap": "Zurück zur Karte",
-		"claimSelectDescription": "Kulturorte, für die Sie berechtigt sind, können Sie Ihrem Profil hinzufügen. Für mehr Vollständigkeit, einen besseren Überblick und die schnellere Bearbeitung.",
-		"claimSelectSearchLabel": "Name oder Adresse des Kulturortes",
-		"claimSelectSubtitle": "Beantragen Sie die Verwaltungs-Rechte für Kulturorte, die zu Ihrem Verband oder Unternehmen gehören.",
-		"claimSelectTitle": "Kulturort beanspruchen",
-		"details": "Kulturort Details",
-		"editSelectEmpty": "Keine Kulturorte gefunden.",
-		"editSelectNoAddress": "Keine Adresse hinterlegt",
-		"editSelectSearchPlaceholder": "Kulturort suchen...",
-		"editSelectSubtitle": "Wählen Sie einen bestehenden Kulturort aus, den Sie aktualisieren möchten.",
-		"editSelectTitle": "Bestehenden Kulturort auswählen",
-		"lessInfo": "Weniger Informationen",
-		"moreInfo": "Mehr Informationen",
-		"notFound": "Kulturort nicht gefunden",
-		"showDetails": "Details anzeigen"
+		"backToMap": "Back to map",
+		"claimSelectDescription": "You can add cultural venues you are authorized for to your profile. For more completeness, a better overview, and faster editing.",
+		"claimSelectSearchLabel": "Name or address of the cultural venue",
+		"claimSelectSubtitle": "Request management rights for cultural venues that belong to your association or company.",
+		"claimSelectTitle": "Claim cultural venue",
+		"details": "Cultural venue details",
+		"editSelectEmpty": "No cultural venues found.",
+		"editSelectNoAddress": "No address provided",
+		"editSelectSearchPlaceholder": "Search cultural venue...",
+		"editSelectSubtitle": "Select an existing cultural venue you would like to update.",
+		"editSelectTitle": "Select existing cultural venue",
+		"lessInfo": "Less information",
+		"moreInfo": "More information",
+		"notFound": "Cultural venue not found",
+		"showDetails": "Show details"
 	},
 	"institutionFormModal": {
 		"review": {
 			"actions": {
-				"approve": "Annehmen",
-				"reject": "Ablehnen"
+				"approve": "Approve",
+				"reject": "Reject"
 			},
-			"errorDescription": "Bitte versuchen Sie es erneut oder kontaktieren Sie den Support, falls das Problem weiterhin besteht.",
-			"errorTitle": "Überprüfung fehlgeschlagen",
-			"grantSubmitterAccess": "Zugriff gewähren",
-			"notesLabel": "Interne Notizen...",
-			"notesPlaceholder": "Interne Notizen...",
+			"errorDescription": "Please try again or contact support if the problem persists.",
+			"errorTitle": "Review failed",
+			"grantSubmitterAccess": "Grant access",
+			"notesLabel": "Internal notes...",
+			"notesPlaceholder": "Internal notes...",
 			"statusLabel": "Status",
 			"success": {
 				"approve": {
-					"description": "Die Einreichung wurde erfolgreich genehmigt.",
-					"title": "Einreichung genehmigt"
+					"description": "The submission was successfully approved.",
+					"title": "Submission approved"
 				},
 				"reject": {
-					"description": "Die Einreichung wurde erfolgreich abgelehnt.",
-					"title": "Einreichung abgelehnt"
+					"description": "The submission was successfully rejected.",
+					"title": "Submission rejected"
 				}
 			}
 		}
 	},
 	"institutionModalCloseConfirmation": {
-		"cancel": "Abbrechen",
-		"confirm": "Verlassen",
-		"description": "Nicht gespeicherte Eingaben gehen verloren.",
-		"title": "Vorgang verlassen?"
+		"cancel": "Cancel",
+		"confirm": "Leave",
+		"description": "Unsaved changes will be lost.",
+		"title": "Leave process?"
 	},
 	"kukaLogo": "Kulturkataster - Logo",
-	"kukaLogoButton": "Kulturkataster: Zur Einführung",
+	"kukaLogoButton": "Kulturkataster: To introduction",
 	"language": {
-		"de": "Deutsch",
-		"en": "Englisch",
-		"title": "Sprache"
+		"de": "German",
+		"en": "English",
+		"title": "Language"
 	},
 	"listView": {
-		"institutionsListLabel": "Liste der Kulturorte",
-		"noResultsFound": "Keine Kulturorte gefunden :(",
-		"scrollToTop": "Nach oben scrollen",
-		"title": "Listenansicht",
-		"tryAdjustingFilters": "Versuchen Sie, die Filter anzupassen. Wenn Sie sicher sind, dass dieser Ort existiert, können Sie ihn über [dieses Formular https://form.formcentric.com/form/fb8189d9-8887-425d-bdd5-4aec08f7d8d5] einreichen."
+		"institutionsListLabel": "List of cultural venues",
+		"noResultsFound": "No cultural venues found :(",
+		"scrollToTop": "Scroll to top",
+		"title": "List view",
+		"tryAdjustingFilters": "Try adjusting the filters. If you are sure this location exists, you can submit it via [this form https://form.formcentric.com/form/fb8189d9-8887-425d-bdd5-4aec08f7d8d5]."
 	},
-	"loading": "Laden",
-	"mainContent": "Hauptinhalt",
+	"loading": "Loading",
+	"mainContent": "Main content",
 	"map": {
-		"addressPickerApply": "Position übernehmen",
-		"addressPickerApplyLoading": "Position wird übernommen...",
-		"addressPickerHint": "Bewegen Sie die Karte, um den Pin zu positionieren. Übernehmen Sie die Position anschließend in das Formular.",
-		"availableLayers": "Verfügbare Ebenen",
-		"closeLayerTree": "Fachkarten schließen",
-		"geolocate": "Meinen Standort finden",
-		"layerItemAriaLabel": "Sichtbarkeit von der Karte {{serviceName}} umschalten",
-		"layerItemLegendAriaLabel": "Kartenlegende für die Karte {{serviceName}} anzeigen",
-		"layerTree": "Fachkarten",
-		"layerTreeAriaLabel": "Fachkarten einblenden ({{visibleCount}} sichtbare Karten)",
-		"layerTreeTitle": "Fachkarten",
-		"layerTreeVisibleCountAriaLabel": "{{visibleCount}} sichtbare Karten",
+		"addressPickerApply": "Apply position",
+		"addressPickerApplyLoading": "Applying position...",
+		"addressPickerHint": "Move the map to position the pin. Then apply the position to the form.",
+		"availableLayers": "Available layers",
+		"closeLayerTree": "Close thematic maps",
+		"geolocate": "Find my location",
+		"layerItemAriaLabel": "Toggle visibility of {{serviceName}} map",
+		"layerItemLegendAriaLabel": "Show map legend for {{serviceName}} map",
+		"layerTree": "Thematic maps",
+		"layerTreeAriaLabel": "Show thematic maps ({{visibleCount}} visible maps)",
+		"layerTreeTitle": "Thematic maps",
+		"layerTreeVisibleCountAriaLabel": "{{visibleCount}} visible maps",
 		"legend": {
-			"legendAriaLabels": "Legende für die Fachkarte {{serviceName}}",
-			"legendGesamtIndexAriaLabel": "Tabelle in der Legende des Gesamtindex",
-			"legendGesamtIndexDecriptionSR": "Legende des Gesamtindex. Die Zeilen zeigen {{yAxisLabel}}, die Spalten {{xAxisLabel}}. Die farbigen Kreise enthalten die Indexwerte und die daneben stehenden Angaben die Spannweite.",
-			"legendValueAriaLabel": "Fachkarte {{serviceName}}, Legenden Eintrag {{label}} {{unit}}",
-			"legendValueWordingAriaLabel": "Fachkarte {{serviceName}}, Wert {{value}}, Legenden Eintrag {{label}}"
+			"legendAriaLabels": "Legend for thematic map {{serviceName}}",
+			"legendGesamtIndexAriaLabel": "Table in the overall index legend",
+			"legendGesamtIndexDecriptionSR": "Overall index legend. The rows show {{yAxisLabel}}, the columns show {{xAxisLabel}}. The colored circles contain the index values, and the information next to them shows the range.",
+			"legendValueAriaLabel": "Thematic map {{serviceName}}, legend entry {{label}} {{unit}}",
+			"legendValueWordingAriaLabel": "Thematic map {{serviceName}}, value {{value}}, legend entry {{label}}"
 		},
-		"lookAtLegend": "Legende ansehen",
-		"noLayersAvailable": "Keine Fachkarten verfügbar",
-		"title": "Kartenansicht",
-		"zoomIn": "Vergrößern",
-		"zoomOut": "Verkleinern"
+		"lookAtLegend": "View legend",
+		"noLayersAvailable": "No thematic maps available",
+		"title": "Map view",
+		"zoomIn": "Zoom in",
+		"zoomOut": "Zoom out"
 	},
 	"menu": {
-		"navigation": "Hauptmenü"
+		"navigation": "Main menu"
 	},
 	"mobileMenu": {
-		"title": "Mobile Menü"
+		"title": "Mobile menu"
 	},
 	"multiSelectModal": {
 		"actions": {
-			"apply": "Akzeptieren",
-			"cancel": "Abbrechen",
-			"clearAll": "Alle entfernen",
-			"clearFiltered": "Alles entfernen",
-			"selectFiltered": "Alles auswählen",
-			"showAll": "Alle anzeigen",
-			"showSelected": "Ausgewählte anzeigen"
+			"apply": "Accept",
+			"cancel": "Cancel",
+			"clearAll": "Remove all",
+			"clearFiltered": "Remove all",
+			"selectFiltered": "Select all",
+			"showAll": "Show all",
+			"showSelected": "Show selected"
 		},
-		"filtersTitle": "Filter",
-		"resultsCount": "{{count}} Ergebnisse",
-		"resultsCountNumber": "{{number}} Ergebnisse",
-		"selectedCount": "{{count}} ausgewählt",
-		"selectedMore": "+{{count}} weitere",
+		"filtersTitle": "Filters",
+		"resultsCount": "{{count}} results",
+		"resultsCountNumber": "{{number}} results",
+		"selectedCount": "{{count}} selected",
+		"selectedMore": "+{{count}} more",
 		"sort": {
 			"az": "A-Z"
 		},
-		"sortBy": "Sortieren nach",
-		"subcategoryHint": "Wählen Sie zuerst eine Kategorie aus."
+		"sortBy": "Sort by",
+		"subcategoryHint": "Select a category first."
 	},
-	"no": "Nein",
-	"privateFieldDescription": "Diese Information wird ausschließlich für befugte Nutzer*innen im geschützten Bereich des Kulturkatasters zugänglich und nicht öffentlich einsehbar sein.",
-	"save": "Speichern",
+	"no": "No",
+	"privateFieldDescription": "This information will be accessible exclusively to authorized users in the protected area of the Kulturkataster and will not be publicly visible.",
+	"save": "Save",
 	"search": {
-		"description": "Ganz einfach die Berliner Kulturlandschaft entdecken: Geben Sie einen Kulturortnamen, eine Adresse, einen Bezirk oder Ortsteil in die Suchfunktion ein und wählen Sie das Ergebnis aus den angezeigten Vorschlägen aus. Ihre Auswahl wird direkt auf der Karte angezeigt.",
-		"hint": "Adresse oder Kulturort eingeben",
-		"noResults": "Keine Kulturorte gefunden.",
-		"noResultsFound": "Zu Ihrer Eingabe konnte kein Kulturort oder Adresse gefunden werden. Bitte überprüfen Sie die Angaben und versuchen Sie es erneut.",
-		"searchButton": "Suchen",
-		"suggestions": "Vorschläge für Ihre Suche"
+		"description": "Discover Berlin's cultural landscape easily: Enter a cultural venue name, address, district, or neighborhood into the search function and select the result from the suggestions displayed. Your selection will be shown directly on the map.",
+		"hint": "Enter address or cultural venue",
+		"noResults": "No cultural venues found.",
+		"noResultsFound": "No cultural venue or address could be found for your input. Please check the details and try again.",
+		"searchButton": "Search",
+		"suggestions": "Suggestions for your search"
 	},
-	"sensitiveInformation": "Sensitive Informationen",
-	"siteTitle": "Berliner Kulturkataster",
-	"skipToContent": "Zum Hauptinhalt springen",
-	"success": "Erfolg",
+	"sensitiveInformation": "Sensitive information",
+	"siteTitle": "Berlin Kulturkataster",
+	"skipToContent": "Skip to main content",
+	"success": "Success",
 	"telephone": {
-		"label": "Telefon",
+		"label": "Phone",
 		"labelShort": "Tel.",
 		"number": "+49 (0) 30 3030 444 60"
 	},
-	"toggleSidebar": "Seitenleiste umschalten",
-	"unknown": "Unbekannt",
+	"toggleSidebar": "Toggle sidebar",
+	"unknown": "Unknown",
 	"user": {
-		"title": "Mein Konto"
+		"title": "My account"
 	},
-	"yes": "Ja"
+	"yes": "Yes"
 }
