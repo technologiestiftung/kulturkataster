@@ -655,7 +655,9 @@
 	},
 	"institutionDraftIntroModal": {
 		"submitSuccess": {
-			"description": "Dank Ihrer Eingabe wächst das Kulturkataster Berlin immer weiter und weiter und ermöglicht so vielen Menschen den Zugang zu neuen Kulturstandorten."
+			"cta": "Weitere Einreichung starten",
+			"description": "Dank Ihrer Eingabe wächst das Kulturkataster Berlin immer weiter und weiter und ermöglicht so vielen Menschen den Zugang zu neuen Kulturstandorten. Alle Ihre Einträge können Sie in Ihrem <0>Account</0> einsehen und verwalten.",
+			"title": "Vielen Dank für Ihre Einreichung"
 		}
 	},
 	"institutionDraftWizardModal": {

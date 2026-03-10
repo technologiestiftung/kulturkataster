@@ -1,18 +1,24 @@
 import { InstitutionEditModal } from "@/components/Institution/InstitutionEditModal";
+import { requirePositiveIntParam } from "@/lib/utils/routeParams";
 
 type EditInstitutionPageProps = {
-	params: Promise<{ id: string }>;
+	params: Promise<{ locale: string; id: string }>;
 };
 
 export default async function EditInstitutionPage({
 	params,
 }: EditInstitutionPageProps) {
-	const { id } = await params;
+	const { locale, id } = await params;
+	const parsedId = requirePositiveIntParam(
+		id,
+		`/${locale}/account/institutions`,
+	);
+
 	return (
 		<InstitutionEditModal
-			institutionId={id}
+			institutionId={String(parsedId)}
 			shouldRefresh={false}
-			routePath={`/account/institutions/${id}/edit`}
+			routePath={`/account/institutions/${parsedId}/edit`}
 			returnTo="/account/institutions"
 		/>
 	);
