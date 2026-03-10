@@ -195,14 +195,13 @@ export function CategoriesTable() {
 							<div className="col-span-2 flex justify-end">
 								<Button
 									type="button"
-									iconSize="lg"
-									variant="ghost"
+									variant="icon"
+									iconSize="sm"
 									onClick={() =>
 										router.push(
 											toLocalePath(`/account/categories/${child.id}/edit`),
 										)
 									}
-									className="h-8 w-8 rounded-full border bg-background border-neutral-20 hover:bg-neutral-5"
 									aria-label={t("categoryTable.actions.editSubcategory", {
 										defaultValue: "Unterkategorie bearbeiten",
 									})}
