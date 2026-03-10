@@ -1,0 +1,787 @@
+{
+	"category": {
+		"cinemas": "Cinemas",
+		"clubs_music_venues": "Clubs and music venues",
+		"cultural_urban_development": "Places of cultural urban development",
+		"dance_venues": "Dance venues",
+		"education_places": "Educational institutions",
+		"galleries": "Galleries",
+		"graffiti_areas": "Graffiti Areas",
+		"libraries": "Libraries",
+		"literature_places": "Literature venues",
+		"museums": "Museums",
+		"other": "Other",
+		"performing_arts_venues": "Performing arts venues",
+		"potential_spaces": "Potential spaces",
+		"project_spaces_initiatives": "Project spaces and initiatives",
+		"rehearsal_rooms": "Rehearsal rooms",
+		"sociocultural_centers": "Sociocultural centers",
+		"studios": "Studios",
+		"urban_art": "Urban art",
+		"acrobatics": "Acrobatics",
+		"adult_education_centers": "Adult Education Centers",
+		"art_house_cinemas": "Art House Cinemas",
+		"art_universities": "Art Universities",
+		"bookmobile_libraries": "Bookmobile Libraries",
+		"bookstores": "Bookstores",
+		"cabaret": "Cabaret",
+		"central_state_libraries": "Central State Libraries",
+		"children_circus": "Children Circus",
+		"cinemas_other": "Unassigned",
+		"clubs": "Clubs",
+		"clubs_music_venues_other": "Unassigned",
+		"comedy": "Comedy",
+		"community_empowerment_centers": "Community Empowerment Centers",
+		"concert_halls": "Concert Halls",
+		"concert_venues": "Concert Venues",
+		"cultural_centers": "Cultural Centers",
+		"cultural_urban_development_other": "Unassigned",
+		"curated_cinemas": "Curated Cinemas",
+		"dance_contemporary_circus": "Dance Contemporary Circus",
+		"dance_performance": "Dance Performance",
+		"dance_rehearsal_rooms": "Dance Rehearsal Rooms",
+		"dance_training": "Dance Training",
+		"dance_venues_other": "Unassigned",
+		"dance_young_audience": "Dance Young Audience",
+		"discotheques": "Discotheques",
+		"district_libraries": "District Libraries",
+		"education_places_other": "Unassigned",
+		"exhibition_spaces_galleries": "Exhibition Spaces Galleries",
+		"exhibition_spaces_museums": "Exhibition Spaces Museums",
+		"family_centers": "Family Centers",
+		"galleries_other": "Unassigned",
+		"graffiti_areas_other": "Unassigned",
+		"improvisation": "Improvisation",
+		"intensive_dance_program": "Intensive Dance Program",
+		"jazz_venues": "Jazz Venues",
+		"legal_graffiti_areas": "Legal Graffiti Areas",
+		"libraries_other": "Unassigned",
+		"literature_event_venues": "Literature Event Venues",
+		"literature_houses": "Literature Houses",
+		"literature_organizers": "Literature Organizers",
+		"literature_places_other": "Unassigned",
+		"memorial_sites": "Memorial Sites",
+		"municipal_galleries": "Municipal Galleries",
+		"museums_other": "Unassigned",
+		"music_bars": "Music Bars",
+		"music_rehearsal_rooms": "Music Rehearsal Rooms",
+		"music_theater": "Music Theater",
+		"music_theater_clubs_music_venues": "Music Theater Clubs Music Venues",
+		"music_theater_performing_arts_venues": "Music Theater Performing Arts Venues",
+		"music_theater_venues": "Music Theater Venues",
+		"musical": "Musical",
+		"musiktheater_clubs_music_venues": "Musiktheater Clubs Music Venues",
+		"musiktheater_performing_arts_venues": "Musiktheater Performing Arts Venues",
+		"neighborhood_centers": "Neighborhood Centers",
+		"open_air_venues": "Open Air Venues",
+		"opera": "Opera",
+		"others": "Unassigned",
+		"outdoor_cinemas": "Outdoor Cinemas",
+		"performing_arts_contemporary_circus": "Performing Arts Contemporary Circus",
+		"performing_arts_education": "Performing Arts Education",
+		"performing_arts_performance": "Performing Arts Performance",
+		"performing_arts_rehearsal_rooms": "Performing Arts Rehearsal Rooms",
+		"performing_arts_venues_other": "Unassigned",
+		"performing_arts_young_audience": "Performing Arts Young Audience",
+		"poetry_slam": "Poetry Slam",
+		"potential_cultural_development_spaces": "Potential Cultural Development Spaces",
+		"potential_spaces_other": "Unassigned",
+		"private_collections": "Private Collections",
+		"private_museums": "Private Museums",
+		"private_music_schools": "Private Music Schools",
+		"professional_dance_coaching": "Professional Dance Coaching",
+		"professional_dance_training": "Professional Dance Training",
+		"project_initiatives_general": "Project Initiatives General",
+		"project_spaces_event_centers": "Project Spaces Event Centers",
+		"project_spaces_general": "Project Spaces General",
+		"project_spaces_initiatives_other": "Unassigned",
+		"project_spaces_workspace_program": "Project Spaces Workspace Program",
+		"public_museums": "Public Museums",
+		"public_music_schools": "Public Music Schools",
+		"puppet_figure_object_theater": "Puppet Figure Object Theater",
+		"rehearsal_rooms_other": "Unassigned",
+		"scientific_specialized_libraries": "Scientific Specialized Libraries",
+		"scientific_universal_libraries": "Scientific Universal Libraries",
+		"social_participation_centers": "Social Participation Centers",
+		"sociocultural_centers_other": "Unassigned",
+		"studio_apartments": "Studio Apartments",
+		"studio_houses_free": "Studio Houses Free",
+		"studio_houses_workspace_program": "Studio Houses Workspace Program",
+		"studios_other": "Unassigned",
+		"theater": "Theater",
+		"variety": "Variety",
+		"workplace_patient_prison_libraries": "Workplace Patient Prison Libraries",
+		"workspace_program_rehearsal_rooms": "Workspace Program Rehearsal Rooms",
+		"writing_places": "Writing Places",
+		"youth_art_schools": "Youth Art Schools",
+		"youth_leisure_facilities": "Youth Leisure Facilities"
+	},
+	"closing_reason": {
+		"funding_discontinued": "Funding discontinued",
+		"lease_expired": "Lease expired",
+		"other": "Other",
+		"ownership_change": "Change of ownership"
+	},
+	"district_id": [
+		null,
+		"Treptow-Köpenick",
+		"Pankow",
+		"Lichtenberg",
+		"Friedrichshain-Kreuzberg",
+		"Reinickendorf",
+		"Tempelhof-Schöneberg",
+		"Neukölln",
+		"Mitte",
+		"Marzahn-Hellersdorf",
+		"Charlottenburg-Wilmersdorf",
+		"Steglitz-Zehlendorf",
+		"Spandau"
+	],
+	"field_names": {
+		"accessibility": {
+			"label": "Accessibility",
+			"description": "",
+			"placeholder": "Please enter",
+			"errors": {
+				"required": "Please provide accessibility."
+			}
+		},
+		"address": {
+			"label": "Address",
+			"description": "",
+			"placeholder": "Please enter",
+			"errors": {
+				"required": "Please provide address."
+			}
+		},
+		"address_map": {
+			"label": "Address Map",
+			"description": "Check or adjust the location on the map.",
+			"placeholder": "",
+			"errors": {
+				"required": "Please provide address map."
+			}
+		},
+		"address_suffix": {
+			"label": "Address suffix",
+			"description": "",
+			"placeholder": "Please enter",
+			"errors": {
+				"required": "Please provide address suffix."
+			}
+		},
+		"area": {
+			"label": "Area",
+			"description": "",
+			"placeholder": "Please enter",
+			"errors": {
+				"required": "Please provide area."
+			}
+		},
+		"capacity": {
+			"label": "Capacity",
+			"description": "",
+			"placeholder": "Please select",
+			"errors": {
+				"required": "Please provide capacity."
+			}
+		},
+		"categories": {
+			"label": "Categories",
+			"description": "Select matching categories.",
+			"placeholder": "Please select",
+			"errors": {
+				"required": "Please provide categories."
+			}
+		},
+		"category": {
+			"label": "Category",
+			"description": "",
+			"placeholder": "Please select",
+			"errors": {
+				"required": "Please provide category."
+			}
+		},
+		"subcategory": {
+			"label": "Subcategory",
+			"description": "",
+			"placeholder": "Please select",
+			"errors": {
+				"required": "Please provide subcategory."
+			}
+		},
+		"city": {
+			"label": "City",
+			"description": "",
+			"placeholder": "Please select",
+			"errors": {
+				"required": "Please provide city."
+			}
+		},
+		"closing_reason": {
+			"label": "Closing Reason",
+			"description": "",
+			"placeholder": "Please select",
+			"errors": {
+				"required": "Please provide closing reason."
+			}
+		},
+		"contact_person_email": {
+			"label": "Contact person email",
+			"description": "",
+			"placeholder": "name@example.com",
+			"errors": {
+				"required": "Please provide contact person email."
+			}
+		},
+		"contact_person_name": {
+			"label": "Contact person name",
+			"description": "",
+			"placeholder": "Please enter",
+			"errors": {
+				"required": "Please provide contact person name."
+			}
+		},
+		"contact_person_first_name": {
+			"label": "Contact person first name",
+			"description": "",
+			"placeholder": "Please enter",
+			"errors": {
+				"required": "Please provide contact person first name."
+			}
+		},
+		"contact_person_last_name": {
+			"label": "Contact person last name",
+			"description": "",
+			"placeholder": "Please enter",
+			"errors": {
+				"required": "Please provide contact person last name."
+			}
+		},
+		"contact_person_phone": {
+			"label": "Contact person phone",
+			"description": "",
+			"placeholder": "+49 ...",
+			"errors": {
+				"required": "Please provide contact person phone."
+			}
+		},
+		"cost": {
+			"label": "Cost",
+			"description": "",
+			"placeholder": "Please enter",
+			"errors": {
+				"required": "Please provide cost."
+			}
+		},
+		"cultural_area": {
+			"label": "Cultural Area",
+			"description": "",
+			"placeholder": "Please select",
+			"errors": {
+				"required": "Please provide cultural area."
+			}
+		},
+		"description": {
+			"label": "Description",
+			"description": "",
+			"placeholder": "Please enter",
+			"errors": {
+				"required": "Please provide description."
+			}
+		},
+		"district": {
+			"label": "District",
+			"description": "",
+			"placeholder": "Please select",
+			"errors": {
+				"required": "Please provide district."
+			}
+		},
+		"email": {
+			"label": "Email",
+			"description": "",
+			"placeholder": "name@example.com",
+			"errors": {
+				"required": "Please provide email."
+			}
+		},
+		"established_since": {
+			"label": "Established Since",
+			"description": "",
+			"placeholder": "DD.MM.YYYY",
+			"errors": {
+				"required": "Please provide established since."
+			}
+		},
+		"established_until": {
+			"label": "Established Until",
+			"description": "",
+			"placeholder": "DD.MM.YYYY",
+			"errors": {
+				"required": "Please provide established until."
+			}
+		},
+		"funding_source": {
+			"label": "Funding source",
+			"description": "",
+			"placeholder": "Please select",
+			"errors": {
+				"required": "Please provide funding source."
+			},
+			"actions": {
+				"add": "Finanzierungsquelle hinzufügen",
+				"remove": "Finanzierungsquelle entfernen"
+			}
+		},
+		"tags": {
+			"label": "Tags",
+			"description": "",
+			"placeholder": "Please enter",
+			"errors": {
+				"required": "Please provide tags."
+			},
+			"actions": {
+				"add": "Tag hinzufügen",
+				"remove": "Tag entfernen"
+			}
+		},
+		"funding_source_description": {
+			"label": "Funding Source Description",
+			"description": "",
+			"placeholder": "Please select",
+			"errors": {
+				"required": "Please provide funding source description."
+			}
+		},
+		"funding_source_name": {
+			"label": "Funding Source Name",
+			"description": "",
+			"placeholder": "Please select",
+			"errors": {
+				"required": "Please provide funding source name."
+			}
+		},
+		"funding_sources": {
+			"label": "Funding sources",
+			"description": "",
+			"placeholder": "Please select",
+			"errors": {
+				"required": "Please provide funding sources."
+			},
+			"actions": {
+				"add": "Finanzierungsquelle hinzufügen",
+				"remove": "Finanzierungsquelle entfernen"
+			}
+		},
+		"funding_type": {
+			"label": "Funding Type",
+			"description": "",
+			"placeholder": "Please select",
+			"errors": {
+				"required": "Please provide funding type."
+			},
+			"options": {
+				"workspace_program": "Arbeitsraumprogramm",
+				"institutional_funding": "Institutionell gefördert",
+				"temporary_project_funding": "Temporäre Projektförderung",
+				"no_funding": "Nicht gefördert",
+				"unknown": "Unbekannt"
+			}
+		},
+		"lat": {
+			"label": "Latitude",
+			"description": "",
+			"placeholder": "Please enter",
+			"errors": {
+				"required": "Please provide latitude."
+			}
+		},
+		"legal_form": {
+			"label": "Legal form",
+			"description": "",
+			"placeholder": "Please select",
+			"errors": {
+				"required": "Please provide legal form."
+			}
+		},
+		"lng": {
+			"label": "Longitude",
+			"description": "",
+			"placeholder": "Please enter",
+			"errors": {
+				"required": "Please provide longitude."
+			}
+		},
+		"name": {
+			"label": "Name",
+			"description": "",
+			"placeholder": "Please enter",
+			"errors": {
+				"required": "Please provide name."
+			}
+		},
+		"neighbourhood": {
+			"label": "Neighborhood",
+			"description": "",
+			"placeholder": "Please select",
+			"errors": {
+				"required": "Please provide neighborhood."
+			}
+		},
+		"notes": {
+			"label": "Notes",
+			"description": "",
+			"placeholder": "Please enter",
+			"errors": {
+				"required": "Please provide notes."
+			}
+		},
+		"id": {
+			"label": "ID",
+			"description": "",
+			"placeholder": "Please enter",
+			"errors": {
+				"required": "Please provide id."
+			}
+		},
+		"updated_at": {
+			"label": "Updated at",
+			"description": "",
+			"placeholder": "DD.MM.YYYY",
+			"errors": {
+				"required": "Please provide updated at."
+			}
+		},
+		"created_at": {
+			"label": "Created at",
+			"description": "",
+			"placeholder": "DD.MM.YYYY",
+			"errors": {
+				"required": "Please provide created at."
+			}
+		},
+		"internal_notes": {
+			"label": "Internal Notes",
+			"description": "",
+			"placeholder": "Please enter",
+			"errors": {
+				"required": "Please provide internal notes."
+			}
+		},
+		"number_of_rooms": {
+			"label": "Number Of Rooms",
+			"description": "",
+			"placeholder": "Please enter",
+			"errors": {
+				"required": "Please provide number of rooms."
+			}
+		},
+		"owner_name": {
+			"label": "Owner Name",
+			"description": "",
+			"placeholder": "Please enter",
+			"errors": {
+				"required": "Please provide owner name."
+			}
+		},
+		"owner_type": {
+			"label": "Owner type",
+			"description": "",
+			"placeholder": "Please select",
+			"errors": {
+				"required": "Please provide owner type."
+			},
+			"options": {
+				"private": "Privat",
+				"federal_property": "Bundesliegenschaft",
+				"state_property": "Landesliegenschaft",
+				"state_property_silb": "Landesliegenschaft (SILB)",
+				"state_property_soda": "Landesliegenschaft (SODA)",
+				"state_property_other": "Landesliegenschaft (Sonstige Liegenschaft)",
+				"state_property_specialized": "Spezialimmobilie Land",
+				"state_property_fund": "Landesliegenschaft (Liegenschaftsfonds)",
+				"district_property": "Bezirkliche Liegenschaft",
+				"other_public_property": "Sonstige öffentliche Liegenschaft",
+				"municipal_housing_company": "Städtische Wohnungsbaugesellschaft",
+				"other": "Sonstige"
+			}
+		},
+		"parent_organization": {
+			"label": "Parent Organization",
+			"description": "",
+			"placeholder": "Please enter",
+			"errors": {
+				"required": "Please provide parent organization."
+			}
+		},
+		"phone": {
+			"label": "Phone",
+			"description": "",
+			"placeholder": "+49 ...",
+			"errors": {
+				"required": "Please provide phone."
+			}
+		},
+		"protection_status": {
+			"label": "Protection status",
+			"description": "",
+			"placeholder": "Please enter",
+			"errors": {
+				"required": "Please provide protection status."
+			},
+			"options": {
+				"long_term_secured": "Langfristig gesichert",
+				"medium_term_secured": "Mittelfristig gesichert",
+				"uncertain": "Unsicher",
+				"acutely_threatened": "Akut gefährdet",
+				"permanently_closed": "Dauerhaft geschlossen",
+				"not_yet_secured": "Noch nicht gesichert"
+			}
+		},
+		"protection_status_info": {
+			"label": "Protection status info",
+			"description": "",
+			"placeholder": "Please enter",
+			"errors": {
+				"required": "Please provide protection status info."
+			}
+		},
+		"rental_contract_end": {
+			"label": "Rental Contract End",
+			"description": "",
+			"placeholder": "DD.MM.YYYY",
+			"errors": {
+				"required": "Please provide rental contract end."
+			}
+		},
+		"rental_contract_type": {
+			"label": "Rental Contract Type",
+			"description": "",
+			"placeholder": "Please select",
+			"errors": {
+				"required": "Please provide rental contract type."
+			},
+			"options": {
+				"unlimited_lease": "Unbefristete Miete",
+				"limited_lease": "Befristete Miete",
+				"organization_ownership": "Eigentum der Organisation"
+			}
+		},
+		"shared_use_allowed": {
+			"label": "Shared Use Allowed",
+			"description": "",
+			"placeholder": "Please enter",
+			"errors": {
+				"required": "Please provide shared use allowed."
+			}
+		},
+		"shared_use_audience": {
+			"label": "Shared Use Audience",
+			"description": "",
+			"placeholder": "Please enter",
+			"errors": {
+				"required": "Please provide shared use audience."
+			}
+		},
+		"shared_use_availability": {
+			"label": "Shared Use Availability",
+			"description": "",
+			"placeholder": "Please enter",
+			"errors": {
+				"required": "Please provide shared use availability."
+			}
+		},
+		"shared_use_contact_person": {
+			"label": "Shared Use Contact Person",
+			"description": "",
+			"placeholder": "Please enter",
+			"errors": {
+				"required": "Please provide shared use contact person."
+			}
+		},
+		"shared_use_equipment": {
+			"label": "Shared Use Equipment",
+			"description": "",
+			"placeholder": "Please enter",
+			"errors": {
+				"required": "Please provide shared use equipment."
+			}
+		},
+		"shared_use_info": {
+			"label": "Shared Use Info",
+			"description": "",
+			"placeholder": "Please enter",
+			"errors": {
+				"required": "Please provide shared use info."
+			}
+		},
+		"source": {
+			"label": "Source",
+			"description": "",
+			"placeholder": "Please enter",
+			"errors": {
+				"required": "Please provide source."
+			}
+		},
+		"street": {
+			"label": "Street",
+			"placeholder": "Please enter",
+			"errors": {
+				"required": "Please provide street."
+			}
+		},
+		"street_number": {
+			"label": "Street number",
+			"description": "",
+			"placeholder": "Please enter",
+			"errors": {
+				"required": "Please provide street number."
+			}
+		},
+		"type": {
+			"label": "Type",
+			"description": "",
+			"placeholder": "Please enter",
+			"errors": {
+				"required": "Please provide type."
+			}
+		},
+		"support_type": {
+			"label": "Support type",
+			"description": "",
+			"placeholder": "Please enter",
+			"errors": {
+				"required": "Please provide support type."
+			}
+		},
+		"utilization_status": {
+			"label": "Utilization Status",
+			"description": "",
+			"placeholder": "Please enter",
+			"errors": {
+				"required": "Please provide utilization status."
+			},
+			"options": {
+				"in_use": "In Nutzung",
+				"permanently_closed": "Dauerhaft geschlossen",
+				"planned_use": "Geplante Nutzung",
+				"potential_space": "Potenzialort",
+				"temporarily_closed": "Vorübergehend geschlossen",
+				"unknown": "Unbekannt"
+			}
+		},
+		"utilization_status_info": {
+			"label": "Utilization status info",
+			"description": "",
+			"placeholder": "Please enter",
+			"errors": {
+				"required": "Please provide utilization status info."
+			}
+		},
+		"website": {
+			"label": "Website",
+			"description": "",
+			"placeholder": "Please enter",
+			"errors": {
+				"required": "Please provide website."
+			}
+		},
+		"zipcode": {
+			"label": "Postal code",
+			"description": "",
+			"placeholder": "Please enter",
+			"errors": {
+				"required": "Please provide postal code."
+			}
+		}
+	},
+	"funding_source": {
+		"church": "Church",
+		"district": "District",
+		"eu": "Eu",
+		"federal": "Federal",
+		"foundation": "Foundation",
+		"other": "Other",
+		"private": "Private",
+		"state_berlin": "State Berlin"
+	},
+	"funding_type": {
+		"institutional_funding": "Institutional Funding",
+		"no_funding": "No Funding",
+		"placeholder": "Placeholder",
+		"temporary_project_funding": "Temporary Project Funding",
+		"workspace_program": "Workspace Program"
+	},
+	"institution_action": {
+		"create": "Create",
+		"delete": "Delete",
+		"publish": "Publish",
+		"read": "Read",
+		"request_deletion": "Request Deletion",
+		"update": "Update"
+	},
+	"institution_status": {
+		"approval_pending": "Approval Pending",
+		"archived": "Archived",
+		"draft": "Draft",
+		"private": "Private",
+		"public": "Public",
+		"removal_pending": "Removal Pending"
+	},
+	"owner_type": {
+		"district_property": "District Property",
+		"federal_property": "Federal Property",
+		"municipal_housing_company": "Municipal Housing Company",
+		"other": "Other",
+		"other_public_property": "Other Public Property",
+		"placeholder": "Placeholder",
+		"private": "Private",
+		"state_property": "State Property",
+		"state_property_fund": "State Property Fund",
+		"state_property_other": "State Property Other",
+		"state_property_silb": "State Property Silb",
+		"state_property_soda": "State Property Soda",
+		"state_property_specialized": "State Property Specialized"
+	},
+	"protection_status": {
+		"acutely_threatened": "Acutely Threatened",
+		"long_term_secured": "Long Term Secured",
+		"medium_term_secured": "Medium Term Secured",
+		"not_yet_secured": "Not Yet Secured",
+		"permanently_closed": "Permanently Closed",
+		"placeholder": "Placeholder",
+		"uncertain": "Uncertain"
+	},
+	"rental_contract_type": {
+		"limited_lease": "Limited Lease",
+		"organization_ownership": "Organization Ownership",
+		"placeholder": "Placeholder",
+		"unlimited_lease": "Unlimited Lease"
+	},
+	"submission_status": {
+		"approval_pending": "Approval Pending",
+		"approved": "Approved",
+		"draft": "Draft",
+		"needs_changes": "Needs Changes",
+		"rejected": "Rejected"
+	},
+	"user_role": {
+		"administrator": "Administrator",
+		"district_administration": "District Administration",
+		"division_association": "Division Association",
+		"institution": "Institution",
+		"public": "Public",
+		"state_administration": "State Administration",
+		"super_administrator": "Super Administrator"
+	},
+	"utilization_status": {
+		"in_use": "In Use",
+		"permanently_closed": "Permanently Closed",
+		"placeholder": "Placeholder",
+		"planned_use": "Planned Use",
+		"potential_space": "Potential Space",
+		"temporarily_closed": "Temporarily Closed",
+		"unknown": "Unknown"
+	}
+}

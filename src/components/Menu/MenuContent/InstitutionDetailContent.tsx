@@ -58,7 +58,7 @@ function InstitutionCard({
 							type: "section",
 							id: "header",
 							cardVariant: "none",
-							className: "mb-0",
+							className: "mb-0 [&>*]:space-y-0",
 							fields: [
 								{
 									type: "section",
