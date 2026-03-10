@@ -31,7 +31,7 @@ const buttonVariants = cva(
 				sm: "h-9 px-3",
 				md: "h-14 md:h-12 px-6",
 				lg: "h-14 px-8",
-				tile: "h-32 w-40 px-10 flex-none",
+				tile: "h-32 w-40 px-10 flex-none [&_svg]:size-6",
 				inline: "h-6",
 			},
 			iconSize: {
