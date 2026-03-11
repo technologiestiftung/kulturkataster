@@ -5,6 +5,11 @@ export async function getMaptilerKey(): Promise<string | null> {
 	return apiKey ?? null;
 }
 
+export async function getMapBoundingBox(): Promise<string | null> {
+	const bbox = process.env.MAP_BOUNDING_BOX;
+	return bbox ?? null;
+}
+
 export type ReverseGeocodeResult = {
 	street?: string | null;
 	streetNumber?: string | null;
@@ -23,14 +28,25 @@ export async function geocodeAddress(
 	query: string,
 ): Promise<GeocodeResult | null> {
 	const apiKey = process.env.MAPTILER_API_KEY;
+	const bbox = process.env.MAP_BOUNDING_BOX;
 	if (!apiKey) {
 		console.warn("MAPTILER_API_KEY is not configured.");
+		return null;
+	}
+	if (!bbox) {
+		console.warn("MAP_BOUNDING_BOX is not configured.");
 		return null;
 	}
 
 	const encoded = encodeURIComponent(query.trim());
 	if (!encoded) return null;
-	const url = `https://api.maptiler.com/geocoding/${encoded}.json?key=${apiKey}`;
+	const params = new URLSearchParams({
+		key: apiKey,
+		country: "de",
+		bbox,
+		autocomplete: "true",
+	});
+	const url = `https://api.maptiler.com/geocoding/${encoded}.json?${params.toString()}`;
 
 	try {
 		const response = await fetch(url);
