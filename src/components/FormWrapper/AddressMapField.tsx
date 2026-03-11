@@ -14,7 +14,11 @@ import { fromLonLat, toLonLat } from "ol/proj";
 import "ol/ol.css";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
-import { getMaptilerKey, reverseGeocode } from "@/server/actions/maptiler";
+import {
+	getMapBoundingBox,
+	getMaptilerKey,
+	reverseGeocode,
+} from "@/server/actions/maptiler";
 import { Button } from "@/components/ui/button";
 
 type AddressMapValue = {
@@ -36,6 +40,8 @@ type AddressMapAddress = {
 	neighbourhood?: string | null;
 };
 
+type GeoBoundingBox = [number, number, number, number];
+
 type AddressMapFieldProps = {
 	value: AddressMapValue;
 	onChange: (payload: {
@@ -48,6 +54,30 @@ type AddressMapFieldProps = {
 };
 
 const DEFAULT_CENTER: [number, number] = [13.405, 52.52];
+
+const parseBoundingBox = (raw: string | null): GeoBoundingBox | null => {
+	if (!raw) return null;
+	const values = raw.split(",").map((value) => Number(value.trim()));
+	if (values.length !== 4 || values.some((value) => !Number.isFinite(value))) {
+		return null;
+	}
+	const [west, south, east, north] = values;
+	if (west >= east || south >= north) return null;
+	return [west, south, east, north];
+};
+
+const clampToBoundingBox = (
+	lng: number,
+	lat: number,
+	bbox: GeoBoundingBox | null,
+): [number, number] => {
+	if (!bbox) return [lng, lat];
+	const [west, south, east, north] = bbox;
+	return [
+		Math.min(Math.max(lng, west), east),
+		Math.min(Math.max(lat, south), north),
+	];
+};
 
 export function AddressMapField({
 	value,
@@ -62,6 +92,9 @@ export function AddressMapField({
 	const markerFeature = useRef<Feature<Point> | null>(null);
 	const [mapError, setMapError] = useState<string | null>(null);
 	const [maptilerKey, setMaptilerKey] = useState<string | null>(null);
+	const [mapBoundingBox, setMapBoundingBox] = useState<GeoBoundingBox | null>(
+		null,
+	);
 	const [pendingSelection, setPendingSelection] =
 		useState<AddressMapSelection | null>(null);
 	const [isApplyingSelection, setIsApplyingSelection] = useState(false);
@@ -91,24 +124,32 @@ export function AddressMapField({
 
 	useEffect(() => {
 		let active = true;
-		const loadKey = async () => {
+		const loadMapConfig = async () => {
 			try {
-				const key = await getMaptilerKey();
+				const [key, rawBbox] = await Promise.all([
+					getMaptilerKey(),
+					getMapBoundingBox(),
+				]);
 				if (!active) return;
 				if (!key) {
 					setMapError("MapTiler API key is missing.");
 					return;
 				}
+				const parsedBbox = parseBoundingBox(rawBbox);
+				if (rawBbox && !parsedBbox) {
+					console.warn("MAP_BOUNDING_BOX is invalid. Map is not bounds-limited.");
+				}
 				setMaptilerKey(key);
+				setMapBoundingBox(parsedBbox);
 			} catch (error) {
 				if (active) {
-					setMapError("Failed to load MapTiler API key.");
+					setMapError("Failed to load map configuration.");
 				}
-				console.warn("Failed to load MapTiler key:", error);
+				console.warn("Failed to load map configuration:", error);
 			}
 		};
 		if (!maptilerKey && !mapError) {
-			loadKey();
+			loadMapConfig();
 		}
 		return () => {
 			active = false;
@@ -143,12 +184,33 @@ export function AddressMapField({
 				value.lat !== null && value.lng !== null
 					? [value.lng, value.lat]
 					: DEFAULT_CENTER;
+			const [initialLng, initialLat] = clampToBoundingBox(
+				initialCenter[0],
+				initialCenter[1],
+				mapBoundingBox,
+			);
+
+			const projectedExtent = mapBoundingBox
+				? (() => {
+						const [west, south, east, north] = mapBoundingBox;
+						const [minX, minY] = fromLonLat([west, south]);
+						const [maxX, maxY] = fromLonLat([east, north]);
+						return [
+							Math.min(minX, maxX),
+							Math.min(minY, maxY),
+							Math.max(minX, maxX),
+							Math.max(minY, maxY),
+						] as [number, number, number, number];
+					})()
+				: undefined;
 
 			const view = new View({
-				center: fromLonLat(initialCenter),
+				center: fromLonLat([initialLng, initialLat]),
 				zoom: initialZoom,
 				minZoom: 3,
 				maxZoom: 20,
+				extent: projectedExtent,
+				constrainOnlyCenter: true,
 			});
 
 			const map = new Map({
@@ -201,8 +263,16 @@ export function AddressMapField({
 				const center = map.getView().getCenter();
 				if (!center) return;
 				const [lng, lat] = toLonLat(center);
-				setMarker(lng, lat);
-				setPendingSelection({ lat, lng });
+				const [nextLng, nextLat] = clampToBoundingBox(
+					lng,
+					lat,
+					mapBoundingBox,
+				);
+				if (nextLng !== lng || nextLat !== lat) {
+					map.getView().setCenter(fromLonLat([nextLng, nextLat]));
+				}
+				setMarker(nextLng, nextLat);
+				setPendingSelection({ lat: nextLat, lng: nextLng });
 			}, 300);
 		};
 
@@ -224,14 +294,19 @@ export function AddressMapField({
 			map.setTarget(undefined);
 			mapInstance.current = null;
 		};
-	}, [initialZoom, maptilerKey, setMarker]);
+	}, [initialZoom, mapBoundingBox, maptilerKey, setMarker]);
 
 	useEffect(() => {
 		if (!mapInstance.current) return;
 		if (value.lat === null || value.lng === null) return;
-		setMarker(value.lng, value.lat);
+		const [nextLng, nextLat] = clampToBoundingBox(
+			value.lng,
+			value.lat,
+			mapBoundingBox,
+		);
+		setMarker(nextLng, nextLat);
 		const view = mapInstance.current.getView();
-		const nextCenter = fromLonLat([value.lng, value.lat]);
+		const nextCenter = fromLonLat([nextLng, nextLat]);
 		const currentCenter = view.getCenter();
 		if (
 			currentCenter &&
@@ -241,7 +316,7 @@ export function AddressMapField({
 			return;
 		}
 		view.setCenter(nextCenter);
-	}, [setMarker, value.lat, value.lng]);
+	}, [mapBoundingBox, setMarker, value.lat, value.lng]);
 
 	const handleApplySelection = useCallback(async () => {
 		if (disabled || !pendingSelection || isApplyingSelection) return;
