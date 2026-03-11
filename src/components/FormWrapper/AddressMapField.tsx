@@ -137,7 +137,9 @@ export function AddressMapField({
 				}
 				const parsedBbox = parseBoundingBox(rawBbox);
 				if (rawBbox && !parsedBbox) {
-					console.warn("MAP_BOUNDING_BOX is invalid. Map is not bounds-limited.");
+					console.warn(
+						"MAP_BOUNDING_BOX is invalid. Map is not bounds-limited.",
+					);
 				}
 				setMaptilerKey(key);
 				setMapBoundingBox(parsedBbox);
@@ -263,11 +265,7 @@ export function AddressMapField({
 				const center = map.getView().getCenter();
 				if (!center) return;
 				const [lng, lat] = toLonLat(center);
-				const [nextLng, nextLat] = clampToBoundingBox(
-					lng,
-					lat,
-					mapBoundingBox,
-				);
+				const [nextLng, nextLat] = clampToBoundingBox(lng, lat, mapBoundingBox);
 				if (nextLng !== lng || nextLat !== lat) {
 					map.getView().setCenter(fromLonLat([nextLng, nextLat]));
 				}
