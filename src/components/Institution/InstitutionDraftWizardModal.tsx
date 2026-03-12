@@ -31,7 +31,6 @@ import { geocodeAddress, reverseGeocode } from "@/server/actions/maptiler";
 import {
 	buildAddressFromFormData,
 	handleAddressBlur,
-	handleLatLngBlur,
 } from "@/lib/utils/formUtils";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useInstitutionDraftStore } from "@/lib/store/institutionDraftStore";
@@ -170,17 +169,11 @@ function InstitutionDraftWizardContent({
 		lastQuery: "",
 		inflight: false,
 	});
-	const latLngGeocodeState = useRef({
-		lastQuery: "",
-		inflight: false,
-	});
+
 	const onAddressBlur = handleAddressBlur(addressGeocodeState, geocodeAddress, {
 		reverseGeocode,
 		districtKey: "address.district",
 		neighbourhoodKey: "address.neighbourhood",
-	});
-	const onLatLngBlur = handleLatLngBlur(latLngGeocodeState, reverseGeocode, {
-		districtKey: "address.district",
 	});
 
 	const duplicateInstitutionMessage = t(
@@ -517,7 +510,6 @@ function InstitutionDraftWizardContent({
 							label: fieldLabel("lng", "Längengrad"),
 							type: "number",
 							layout: { span: "half" },
-							onBlur: onLatLngBlur,
 						},
 						{
 							name: "address.lat",
@@ -525,7 +517,6 @@ function InstitutionDraftWizardContent({
 							label: fieldLabel("lat", "Breitengrad"),
 							type: "number",
 							layout: { span: "half" },
-							onBlur: onLatLngBlur,
 						},
 						{
 							name: "address.streetLine",
@@ -589,6 +580,7 @@ function InstitutionDraftWizardContent({
 							fieldMetaKey: "cultural_area",
 							label: fieldLabel("cultural_area", "Cultural Area"),
 							type: "text",
+							layout: { span: "full" },
 							placeholder: fieldPlaceholder("cultural_area"),
 						},
 					],
@@ -692,7 +684,6 @@ function InstitutionDraftWizardContent({
 			handleStepSubmit,
 			isPrivateFormField,
 			onAddressBlur,
-			onLatLngBlur,
 			validateDuplicateInstitution,
 			potentialDuplicates,
 			localePrefix,

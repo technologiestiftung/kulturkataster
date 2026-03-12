@@ -29,7 +29,6 @@ import ArrowNarrowUp from "@/icons/arrow-narrow-up.svg";
 import TextWithLinks from "../Content/TextWithLinks";
 import { FilterModalWrapper } from "@/components/Filter/FilterModalWrapper";
 import { FilterPanel } from "@/components/Filter/FilterPanel";
-import { getAccessibleScrollBehavior } from "@/lib/utils/motion";
 import { ListViewSkeleton } from "./ListViewSkeleton";
 import { useWindowVirtualizer } from "@tanstack/react-virtual";
 
@@ -84,6 +83,7 @@ const ListView: FC = () => {
 	const previousSearchActiveRef = useRef(false);
 	const listScrollOffsetRef = useRef(readStoredListScrollOffset());
 	const hasRestoredListScrollRef = useRef(false);
+	const rowElementMapRef = useRef(new Map<string, HTMLDivElement>());
 
 	const sortedInstitutions = useMemo(() => {
 		if (!institutions) return [];
@@ -188,6 +188,27 @@ const ListView: FC = () => {
 	}, [institutionsList, selectedInstitutionId]);
 
 	useEffect(() => {
+		if (!selectedInstitutionId) return;
+
+		const selectedRowElement =
+			rowElementMapRef.current.get(selectedInstitutionId) ?? null;
+		if (!selectedRowElement || typeof ResizeObserver === "undefined") {
+			return;
+		}
+
+		const observer = new ResizeObserver((entries) => {
+			for (const entry of entries) {
+				if (entry.contentRect.height <= 0) continue;
+				rowVirtualizerRef.current.measure();
+			}
+		});
+
+		observer.observe(selectedRowElement);
+
+		return () => observer.disconnect();
+	}, [selectedInstitutionId]);
+
+	useEffect(() => {
 		if (activeLetter && !enabledLetters.has(activeLetter)) {
 			setActiveLetter(null);
 		}
@@ -211,9 +232,7 @@ const ListView: FC = () => {
 					window.pageYOffset || document.documentElement.scrollTop;
 				listScrollOffsetRef.current = scrollTop;
 				setShowScrollToTop(scrollTop > 400);
-				if (selectedInstitutionId === null) {
-					writeStoredListScrollOffset(scrollTop);
-				}
+				writeStoredListScrollOffset(scrollTop);
 			}, 100);
 		};
 
@@ -276,11 +295,17 @@ const ListView: FC = () => {
 
 		pendingTopScrollAfterDeselectRef.current = false;
 		lastSyncedSelectionRef.current = null;
+		hasRestoredListScrollRef.current = true;
+		listScrollOffsetRef.current = 0;
+		writeStoredListScrollOffset(0);
+		setShowScrollToTop(false);
 
 		rowVirtualizerRef.current.scrollToOffset(0, { behavior: "auto" });
 		window.scrollTo({ top: 0, behavior: "auto" });
-		writeStoredListScrollOffset(0);
-		hasRestoredListScrollRef.current = true;
+		requestAnimationFrame(() => {
+			rowVirtualizerRef.current.scrollToOffset(0, { behavior: "auto" });
+			window.scrollTo({ top: 0, behavior: "auto" });
+		});
 	}, [selectedInstitutionId]);
 
 	useEffect(() => {
@@ -323,15 +348,19 @@ const ListView: FC = () => {
 
 	const scrollToTop = () => {
 		if (selectedInstitutionId) {
+			writeStoredListScrollOffset(0);
+			listScrollOffsetRef.current = 0;
 			pendingTopScrollAfterDeselectRef.current = true;
+			hasRestoredListScrollRef.current = false;
 			router.replace(toLocalePath("/list"), { scroll: false });
 			return;
 		}
 
-		const behavior = getAccessibleScrollBehavior();
-		rowVirtualizerRef.current.scrollToOffset(0, { behavior });
-		window.scrollTo({ top: 0, behavior });
+		rowVirtualizerRef.current.scrollToOffset(0, { behavior: "auto" });
+		window.scrollTo({ top: 0, behavior: "auto" });
 		writeStoredListScrollOffset(0);
+		listScrollOffsetRef.current = 0;
+		setShowScrollToTop(false);
 	};
 
 	if (!institutions) {
@@ -412,7 +441,18 @@ const ListView: FC = () => {
 													<div
 														key={institution.id}
 														data-index={virtualRow.index}
-														ref={rowVirtualizer.measureElement}
+														data-institution-id={institutionId}
+														ref={(element) => {
+															rowVirtualizer.measureElement(element);
+															if (element) {
+																rowElementMapRef.current.set(
+																	institutionId,
+																	element,
+																);
+																return;
+															}
+															rowElementMapRef.current.delete(institutionId);
+														}}
 														className="absolute left-0 top-0 w-full py-1"
 														style={{
 															transform: `translateY(${virtualRow.start}px)`,
