@@ -679,7 +679,7 @@ export function ActivityList({
 
 	return (
 		<div className="space-y-4">
-			<div className="grid gap-3 md:grid-cols-2 xl:grid-cols-6">
+			<div className="gap-3 md:grid-cols-2 xl:grid-cols-6 md:grid hidden">
 				<SearchInput
 					value={searchQuery}
 					onChange={(event) => setSearchQuery(event.target.value)}
