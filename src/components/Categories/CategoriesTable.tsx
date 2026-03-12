@@ -195,7 +195,8 @@ export function CategoriesTable() {
 							<div className="col-span-2 flex justify-end">
 								<Button
 									type="button"
-									variant="icon"
+									variant="surface"
+									radius="full"
 									iconSize="sm"
 									onClick={() =>
 										router.push(

@@ -233,8 +233,14 @@ export function AccountFaqModal({ routePath, returnTo }: AccountFaqModalProps) {
 								{t("auth.account.faqModal.contactSupport.emailLabel", {
 									defaultValue: "Generelle Anfrage:",
 								})}
+								:
 							</strong>{" "}
-							<a href="mailto:support@example.com">support@example.com</a>
+							<a
+								href="mailto:info@kulturkataster.berlin"
+								className="text-primary-dark underline"
+							>
+								info@kulturkataster.berlin
+							</a>
 						</div>
 					</div>
 				</div>
