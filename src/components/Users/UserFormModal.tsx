@@ -21,7 +21,6 @@ import {
 	createUser,
 	getUserById,
 	deleteUser,
-	sendComplianceResend,
 	sendPasswordReset,
 	sendRoleDecisionEmailManual,
 	updateUser,
@@ -273,12 +272,6 @@ const buildUserFormConfig = ({
 							"userFormModal.form.identity.fields.accountType.placeholder",
 						),
 					},
-					{
-						name: "compliance",
-						label: t("userFormModal.form.identity.fields.compliance.label"),
-						type: "switch",
-						layout: { span: "full" },
-					},
 				],
 			},
 			{
@@ -353,26 +346,6 @@ const buildUserFormConfig = ({
 								if (!resolvedUser) return null;
 								await sendPasswordReset(resolvedUser.email);
 								return t("userFormModal.passwordReset.success");
-							},
-						},
-					},
-					{
-						name: "complianceResend",
-						label: "",
-						type: "actionPanel",
-						layout: { span: "full" },
-						condition: accessCondition,
-						actionPanel: {
-							title: t("userFormModal.complianceResend.title"),
-							description: t("userFormModal.complianceResend.description"),
-							actionLabel: t("userFormModal.complianceResend.send"),
-							actionLabelLoading: t("userFormModal.complianceResend.sending"),
-							errorFallback: t("userFormModal.complianceResend.error"),
-							icon: <Mail className="h-5 w-5 text-primary-dark" />,
-							onAction: async () => {
-								if (!resolvedUser) return null;
-								await sendComplianceResend(resolvedUser.email);
-								return t("userFormModal.complianceResend.success");
 							},
 						},
 					},
