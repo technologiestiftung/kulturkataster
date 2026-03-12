@@ -35,7 +35,7 @@ import Legende from "./Legende";
 // Constants
 const LAYER_THUMBNAIL_SIZE = 80;
 const FLOATING_BUTTON_SIZE = 64;
-const SIDEBAR_COLLAPSED_OFFSET = "left-24";
+const SIDEBAR_COLLAPSED_OFFSET = "left-4";
 const SIDEBAR_EXPANDED_OFFSET = "left-[494px]";
 const SIDEBAR_EXPANDED_OFFSET_LARGE_TEXT = "left-[554px]";
 
@@ -273,7 +273,7 @@ const FloatingLayerButton = memo(
 
 		return (
 			<div
-				className={`fixed bottom-4 z-25 transition-all duration-200 ${getLeftPosition()}`}
+				className={`absolute bottom-4 md:block hidden z-25 transition-all duration-200 ${getLeftPosition()}`}
 			>
 				<div className="relative">
 					{visibleCount > 1 && (
