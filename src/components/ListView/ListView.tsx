@@ -78,12 +78,14 @@ const ListView: FC = () => {
 	const deferredSearchQuery = useDeferredValue(searchQuery);
 	const [activeLetter, setActiveLetter] = useState<string | null>(null);
 	const [isFilterOpen, setIsFilterOpen] = useState(false);
+	const [listScrollMargin, setListScrollMargin] = useState(0);
 	const lastSyncedSelectionRef = useRef<string | null>(null);
 	const pendingTopScrollAfterDeselectRef = useRef(false);
 	const previousSearchActiveRef = useRef(false);
 	const listScrollOffsetRef = useRef(readStoredListScrollOffset());
 	const hasRestoredListScrollRef = useRef(false);
 	const rowElementMapRef = useRef(new Map<string, HTMLDivElement>());
+	const listContainerRef = useRef<HTMLDivElement | null>(null);
 
 	const sortedInstitutions = useMemo(() => {
 		if (!institutions) return [];
@@ -167,6 +169,7 @@ const ListView: FC = () => {
 		estimateSize: () => LIST_ITEM_ESTIMATE_SIZE,
 		overscan: LIST_OVERSCAN,
 		getItemKey: (index) => institutionsList[index]?.id ?? index,
+		scrollMargin: listScrollMargin,
 	});
 	const rowVirtualizerRef = useRef(rowVirtualizer);
 	rowVirtualizerRef.current = rowVirtualizer;
@@ -186,6 +189,23 @@ const ListView: FC = () => {
 	useEffect(() => {
 		rowVirtualizerRef.current.measure();
 	}, [institutionsList, selectedInstitutionId]);
+
+	useEffect(() => {
+		const updateListScrollMargin = () => {
+			const listElement = listContainerRef.current;
+			if (!listElement) return;
+			const nextScrollMargin =
+				listElement.getBoundingClientRect().top + window.scrollY;
+			setListScrollMargin((current) =>
+				Math.abs(current - nextScrollMargin) < 1 ? current : nextScrollMargin,
+			);
+		};
+
+		updateListScrollMargin();
+		window.addEventListener("resize", updateListScrollMargin);
+
+		return () => window.removeEventListener("resize", updateListScrollMargin);
+	}, [institutionsList.length]);
 
 	useEffect(() => {
 		if (!selectedInstitutionId) return;
@@ -263,7 +283,7 @@ const ListView: FC = () => {
 		lastSyncedSelectionRef.current = syncKey;
 
 		rowVirtualizerRef.current.scrollToIndex(selectedIndex, {
-			align: "start",
+			align: "center",
 			behavior: "auto",
 		});
 
@@ -422,6 +442,7 @@ const ListView: FC = () => {
 								role="list"
 								className=""
 								aria-label={t("listView.institutionsListLabel")}
+								ref={listContainerRef}
 							>
 								{(() => {
 									const virtualRows = rowVirtualizer.getVirtualItems();
@@ -455,7 +476,7 @@ const ListView: FC = () => {
 														}}
 														className="absolute left-0 top-0 w-full py-1"
 														style={{
-															transform: `translateY(${virtualRow.start}px)`,
+															transform: `translateY(${virtualRow.start - listScrollMargin}px)`,
 														}}
 													>
 														<InstitutionCard
