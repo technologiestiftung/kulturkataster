@@ -148,12 +148,16 @@ test.describe("ListView Selection Behavior", () => {
 		await page.goto("/de/list");
 		await page.waitForLoadState("networkidle");
 
-		const targetCard = page.locator(cardSelector).nth(12);
-		await targetCard.scrollIntoViewIfNeeded();
+		await page.evaluate(() => window.scrollTo(0, 1600));
 		await page.waitForTimeout(250);
 
-		const scrollYBeforeSelection = await page.evaluate(() => window.pageYOffset);
+		const scrollYBeforeSelection = await page.evaluate(
+			() => window.pageYOffset,
+		);
 		expect(scrollYBeforeSelection).toBeGreaterThan(400);
+
+		const targetCard = page.locator(`${cardSelector}:visible`).first();
+		await expect(targetCard).toBeVisible();
 
 		await targetCard.click();
 		await page.waitForURL(/\/list\/institution\/\d+/);
