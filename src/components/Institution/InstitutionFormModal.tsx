@@ -16,7 +16,6 @@ import {
 	buildInstitutionSharedFieldsPayload,
 	getSubmitLabel,
 	handleAddressBlur,
-	handleLatLngBlur,
 } from "@/lib/utils/formUtils";
 import {
 	createInstitution,
@@ -209,11 +208,6 @@ type InstitutionFormConfigArgs = {
 		formData: Record<string, unknown>,
 		updateField: (name: string, value: unknown) => void,
 	) => void | Promise<void>;
-	onLatLngBlur?: (
-		value: unknown,
-		formData: Record<string, unknown>,
-		updateField: (name: string, value: unknown) => void,
-	) => void | Promise<void>;
 	validateDuplicateInstitution?: (
 		formData: Record<string, unknown>,
 	) => string | undefined;
@@ -233,7 +227,6 @@ const buildInstitutionFormConfig = ({
 	onChange,
 	onCancel,
 	onAddressBlur,
-	onLatLngBlur,
 	validateDuplicateInstitution,
 	duplicateWarningText,
 	isPrivateField,
@@ -342,6 +335,8 @@ const buildInstitutionFormConfig = ({
 							streetField: "address.streetLine",
 							cityField: "address.city",
 							zipField: "address.zip",
+							districtField: "address.district",
+							neighbourhoodField: "address.neighbourhood",
 						},
 					},
 
@@ -351,7 +346,6 @@ const buildInstitutionFormConfig = ({
 						label: fieldLabel("lat", "Breitengrad"),
 						type: "number",
 						layout: { span: "half" },
-						onBlur: onLatLngBlur,
 					},
 					{
 						name: "address.lng",
@@ -359,7 +353,6 @@ const buildInstitutionFormConfig = ({
 						label: fieldLabel("lng", "Längengrad"),
 						type: "number",
 						layout: { span: "half" },
-						onBlur: onLatLngBlur,
 					},
 					{
 						name: "address.streetLine",
@@ -369,12 +362,20 @@ const buildInstitutionFormConfig = ({
 							"Number",
 						)}`,
 						type: "text",
-						layout: { span: "half" },
 						placeholder: fieldPlaceholder("street"),
 						onBlur: onAddressBlur,
+						layout: { span: "full" },
 						validateWithForm: (_value, formData) =>
 							validateDuplicateInstitution?.(formData),
 						afterField: duplicateWarningText,
+					},
+					{
+						name: "address.address_suffix",
+						fieldMetaKey: "address_suffix",
+						label: fieldLabel("address_suffix", "Address Suffix"),
+						type: "text",
+						layout: { span: "full" },
+						placeholder: fieldPlaceholder("address_suffix"),
 					},
 					{
 						name: "address.zip",
@@ -386,11 +387,13 @@ const buildInstitutionFormConfig = ({
 						onBlur: onAddressBlur,
 					},
 					{
-						name: "address.address_suffix",
-						fieldMetaKey: "address_suffix",
-						label: fieldLabel("address_suffix", "Address Suffix"),
+						name: "address.city",
+						fieldMetaKey: "city",
+						label: fieldLabel("city", "City"),
 						type: "text",
-						placeholder: fieldPlaceholder("address_suffix"),
+						layout: { span: "half" },
+						placeholder: fieldPlaceholder("city"),
+						onBlur: onAddressBlur,
 					},
 					{
 						name: "address.neighbourhood",
@@ -401,19 +404,19 @@ const buildInstitutionFormConfig = ({
 						placeholder: fieldPlaceholder("neighbourhood"),
 					},
 					{
-						name: "address.city",
-						fieldMetaKey: "city",
-						label: fieldLabel("city", "City"),
+						name: "address.district",
+						fieldMetaKey: "district",
+						label: fieldLabel("district", "District"),
 						type: "text",
 						layout: { span: "half" },
-						placeholder: fieldPlaceholder("city"),
-						onBlur: onAddressBlur,
+						placeholder: fieldPlaceholder("district"),
 					},
 					{
 						name: "address.cultural_area",
 						fieldMetaKey: "cultural_area",
 						label: fieldLabel("cultural_area", "Cultural Area"),
 						type: "text",
+						layout: { span: "full" },
 						placeholder: fieldPlaceholder("cultural_area"),
 					},
 				],
@@ -956,10 +959,6 @@ export function InstitutionFormModal({
 		lastQuery: "",
 		inflight: false,
 	});
-	const latLngGeocodeState = useRef({
-		lastQuery: "",
-		inflight: false,
-	});
 
 	useEffect(() => {
 		const hash = window.location.hash.slice(1);
@@ -1078,8 +1077,11 @@ export function InstitutionFormModal({
 		],
 	);
 
-	const onAddressBlur = handleAddressBlur(addressGeocodeState, geocodeAddress);
-	const onLatLngBlur = handleLatLngBlur(latLngGeocodeState, reverseGeocode);
+	const onAddressBlur = handleAddressBlur(addressGeocodeState, geocodeAddress, {
+		reverseGeocode,
+		districtKey: "address.district",
+		neighbourhoodKey: "address.neighbourhood",
+	});
 	const duplicateInstitutionMessage = t(
 		"institutionDraftWizardModal.form.basic.validation.duplicateInstitution",
 		{
@@ -1173,7 +1175,6 @@ export function InstitutionFormModal({
 				onChange: setCurrentFormData,
 				onCancel: resolvedClose,
 				onAddressBlur,
-				onLatLngBlur,
 				validateDuplicateInstitution,
 				duplicateWarningText,
 				isPrivateField: isPrivateFormField,
@@ -1190,7 +1191,6 @@ export function InstitutionFormModal({
 			setCurrentFormData,
 			resolvedClose,
 			onAddressBlur,
-			onLatLngBlur,
 			validateDuplicateInstitution,
 			duplicateWarningText,
 			isPrivateFormField,
