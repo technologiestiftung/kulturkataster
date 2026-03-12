@@ -255,7 +255,7 @@ describe("ListView", () => {
 		render(<ListView />);
 		expect(mockScrollToIndex).toHaveBeenCalledWith(
 			1,
-			expect.objectContaining({ align: "start", behavior: "auto" }),
+			expect.objectContaining({ align: "center", behavior: "auto" }),
 		);
 	});
 
