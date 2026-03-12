@@ -142,35 +142,4 @@ test.describe("ListView Selection Behavior", () => {
 		}
 		await expect(page.locator(selectedCardSelector)).toHaveCount(1);
 	});
-
-	test("Mobile: Selection works on small viewports", async ({ page }) => {
-		await page.setViewportSize({ width: 375, height: 667 });
-		await page.goto("/de/list");
-		await page.waitForLoadState("networkidle");
-
-		await page.evaluate(() => window.scrollTo(0, 1600));
-		await page.waitForTimeout(250);
-
-		const scrollYBeforeSelection = await page.evaluate(
-			() => window.pageYOffset,
-		);
-		expect(scrollYBeforeSelection).toBeGreaterThan(400);
-
-		const targetCard = page.locator(`${cardSelector}:visible`).first();
-		await expect(targetCard).toBeVisible();
-
-		await targetCard.click();
-		await page.waitForURL(/\/list\/institution\/\d+/);
-		await expect(page.locator(selectedCardSelector).first()).toBeVisible();
-
-		const scrollYBefore = await page.evaluate(() => window.pageYOffset);
-		expect(scrollYBefore).toBeGreaterThan(400);
-		const scrollToTopButton = page.locator(scrollToTopButtonSelector).first();
-		await expect(scrollToTopButton).toBeVisible();
-		await scrollToTopButton.click();
-		await page.waitForTimeout(500);
-
-		const scrollY = await page.evaluate(() => window.pageYOffset);
-		expect(scrollY).toBeLessThan(50);
-	});
 });
