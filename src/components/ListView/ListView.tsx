@@ -2,7 +2,15 @@
 
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
-import { FC, useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
+import {
+	FC,
+	useCallback,
+	useDeferredValue,
+	useEffect,
+	useMemo,
+	useRef,
+	useState,
+} from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { InstitutionCard } from "./InstitutionCard";
@@ -224,9 +232,7 @@ const ListView: FC = () => {
 					window.pageYOffset || document.documentElement.scrollTop;
 				listScrollOffsetRef.current = scrollTop;
 				setShowScrollToTop(scrollTop > 400);
-				if (selectedInstitutionId === null) {
-					writeStoredListScrollOffset(scrollTop);
-				}
+				writeStoredListScrollOffset(scrollTop);
 			}, 100);
 		};
 
@@ -439,7 +445,10 @@ const ListView: FC = () => {
 														ref={(element) => {
 															rowVirtualizer.measureElement(element);
 															if (element) {
-																rowElementMapRef.current.set(institutionId, element);
+																rowElementMapRef.current.set(
+																	institutionId,
+																	element,
+																);
 																return;
 															}
 															rowElementMapRef.current.delete(institutionId);
@@ -453,8 +462,12 @@ const ListView: FC = () => {
 															institutionData={institution}
 															onClick={handleInstitutionClick}
 															isCompact={true}
-															isSelected={selectedInstitutionId === institutionId}
-															openDetails={selectedInstitutionId === institutionId}
+															isSelected={
+																selectedInstitutionId === institutionId
+															}
+															openDetails={
+																selectedInstitutionId === institutionId
+															}
 														/>
 													</div>
 												);
