@@ -54,7 +54,9 @@ const institutionBaseSchema = z.object({
 	phone: optionalTelSchema("Phone must be a valid phone number."),
 	email: optionalEmailSchema("Email must be a valid email address."),
 	area: optionalNumberSchema("Area must be a valid number."),
-	number_of_rooms: optionalNumberSchema("Number of rooms must be a valid number."),
+	number_of_rooms: optionalNumberSchema(
+		"Number of rooms must be a valid number.",
+	),
 	parent_organization: optionalTextSchema(),
 	legal_form: optionalTextSchema(),
 	capacity: optionalNumberSchema("Capacity must be a valid number."),
