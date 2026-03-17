@@ -17,6 +17,11 @@ import { buildInstitutionCreateData } from "@/server/logic/institutionCreateData
 import { buildInstitutionUpdateData } from "@/server/logic/institutionUpdateData";
 import { buildInstitutionPermissionFields } from "@/lib/utils/institutionPermissionUtils";
 import { revalidateAccount } from "../utils/actionsUtils";
+import {
+	validateInstitutionCreateInput,
+	validateInstitutionUpdateInput,
+} from "@/server/validation/institutions";
+import { assertPositiveInteger } from "@/server/validation/common";
 
 export async function getInstitutions() {
 	const currentUserId = await getCurrentUserId();
@@ -53,10 +58,11 @@ export async function getMyInstitutions() {
 }
 
 export async function getInstitutionById(id: number) {
+	const validatedId = assertPositiveInteger(id, "Institution id must be positive.");
 	const currentUserId = await getCurrentUserId();
 	const ctx = await getAccessContextForUser(currentUserId);
 	authorizeTable(ctx, "institution", "read");
-	const baseWhere = { id };
+	const baseWhere = { id: validatedId };
 	return institutionRepo.findFirstWithInclude(baseWhere);
 }
 
@@ -67,41 +73,43 @@ const buildInstitutionFieldList = (
 };
 
 export async function createInstitution(input: InstitutionForm) {
+	const validatedInput = validateInstitutionCreateInput(input);
 	const currentUserId = await getCurrentUserId();
 	const ctx = await getAccessContextForUser(currentUserId);
-	const { fields } = buildInstitutionFieldList(input);
+	const { fields } = buildInstitutionFieldList(validatedInput);
 	authorizeTable(ctx, "institution", "create");
 	if (fields.length > 0) {
 		authorizeFields(ctx, "institution", fields, "create");
 	}
 
 	const institution = await institutionRepo.create(
-		buildInstitutionCreateData(input, currentUserId),
+		buildInstitutionCreateData(validatedInput, currentUserId),
 	);
 	revalidateAccount();
 	return institution;
 }
 
 export async function updateInstitution(input: InstitutionUpdateForm) {
+	const validatedInput = validateInstitutionUpdateInput(input);
 	const currentUserId = await getCurrentUserId();
 	const ctx = await getAccessContextForUser(currentUserId);
-	const { fields } = buildInstitutionFieldList(input);
+	const { fields } = buildInstitutionFieldList(validatedInput);
 	authorizeTable(ctx, "institution", "update");
 	const scope = getTableScope(ctx, "institution", "update");
 	if (fields.length > 0) {
 		authorizeFields(ctx, "institution", fields, "update");
 	}
 
-	const data = buildInstitutionUpdateData(input, currentUserId);
+	const data = buildInstitutionUpdateData(validatedInput, currentUserId);
 
 	if (scope === "all") {
-		const institution = await institutionRepo.update(input.id, data);
+		const institution = await institutionRepo.update(validatedInput.id, data);
 		revalidateAccount();
 		return institution;
 	}
 
 	const accessWhere = buildInstitutionScopedWhere(scope, currentUserId, {
-		id: input.id,
+		id: validatedInput.id,
 	});
 	if (!accessWhere) {
 		throw new Error("User must be authenticated to update institutions.");
@@ -120,17 +128,18 @@ export async function updateInstitution(input: InstitutionUpdateForm) {
 }
 
 export async function deleteInstitution(id: number) {
+	const validatedId = assertPositiveInteger(id, "Institution id must be positive.");
 	const currentUserId = await getCurrentUserId();
 	const ctx = await getAccessContextForUser(currentUserId);
 	authorizeTable(ctx, "institution", "delete");
 	const scope = getTableScope(ctx, "institution", "delete");
 	if (scope === "all") {
-		await institutionRepo.remove(id);
+		await institutionRepo.remove(validatedId);
 		revalidateAccount();
-		return { id };
+		return { id: validatedId };
 	}
 	const accessWhere = buildInstitutionScopedWhere(scope, currentUserId, {
-		id,
+		id: validatedId,
 	});
 	if (!accessWhere) {
 		throw new Error("User must be authenticated to delete institutions.");
@@ -142,19 +151,20 @@ export async function deleteInstitution(id: number) {
 	}
 	await institutionRepo.remove(authorizedInstitution.id);
 	revalidateAccount();
-	return { id };
+	return { id: validatedId };
 }
 
 export async function searchInstitutions(query: string) {
+	const normalizedQuery = query.trim();
 	const currentUserId = await getCurrentUserId();
 	const ctx = await getAccessContextForUser(currentUserId);
 	authorizeTable(ctx, "institution", "read");
 
-	if (!query || query.trim().length === 0) {
+	if (normalizedQuery.length === 0) {
 		return [];
 	}
 
-	const searchWhere = buildInstitutionSearchWhere(query);
+	const searchWhere = buildInstitutionSearchWhere(normalizedQuery);
 	if (!searchWhere) return [];
 
 	const select = buildInstitutionSelect(ctx);
