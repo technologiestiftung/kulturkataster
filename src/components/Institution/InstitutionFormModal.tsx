@@ -430,7 +430,7 @@ const buildInstitutionFormConfig = ({
 					{
 						name: "website",
 						label: fieldLabel("website", "Website"),
-						type: "text",
+						type: "url",
 						placeholder: fieldPlaceholder("website"),
 						layout: { span: "full" },
 					},
@@ -1088,6 +1088,7 @@ export function InstitutionFormModal({
 			defaultValue: "An institution with this name and address already exists.",
 		},
 	);
+
 	const validateDuplicateInstitution = useCallback(
 		(formData: Record<string, unknown>) => {
 			const hasDuplicate = hasDuplicateInstitutionByNameAndAddress({

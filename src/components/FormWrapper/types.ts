@@ -46,6 +46,18 @@ export interface SelectOption {
 	parentValue?: string | number | boolean;
 }
 
+export type FieldNormalizer = (
+	value: unknown,
+	formData: Record<string, unknown>,
+) => unknown;
+
+export type FieldValidator = ((
+	value: unknown,
+	formData: Record<string, unknown>,
+) => string | undefined) & {
+	normalize?: FieldNormalizer;
+};
+
 type FormWrapperSectionConfig = {
 	title?: string;
 	description?: string;
@@ -72,6 +84,7 @@ type FormWrapperSectionFieldConfig = {
 	disabled?: boolean;
 	afterField?: ReactNode;
 	defaultValue?: unknown;
+	validators?: FieldValidator[];
 	validate?: (value: unknown) => string | undefined;
 	validateWithForm?: (
 		value: unknown,
@@ -228,6 +241,7 @@ type FormWrapperNonSectionFieldConfig = {
 	className?: string;
 
 	// Custom validation
+	validators?: FieldValidator[];
 	validate?: (value: unknown) => string | undefined;
 	validateWithForm?: (
 		value: unknown,
