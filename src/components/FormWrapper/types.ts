@@ -85,11 +85,6 @@ type FormWrapperSectionFieldConfig = {
 	afterField?: ReactNode;
 	defaultValue?: unknown;
 	validators?: FieldValidator[];
-	validate?: (value: unknown) => string | undefined;
-	validateWithForm?: (
-		value: unknown,
-		formData: Record<string, unknown>,
-	) => string | undefined;
 	onBlur?: (
 		value: unknown,
 		formData: Record<string, unknown>,
@@ -242,11 +237,6 @@ type FormWrapperNonSectionFieldConfig = {
 
 	// Custom validation
 	validators?: FieldValidator[];
-	validate?: (value: unknown) => string | undefined;
-	validateWithForm?: (
-		value: unknown,
-		formData: Record<string, unknown>,
-	) => string | undefined;
 	onBlur?: (
 		value: unknown,
 		formData: Record<string, unknown>,
