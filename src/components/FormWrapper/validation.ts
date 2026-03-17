@@ -140,10 +140,7 @@ const buildTypeValidator = (
 export const required = (message: string): FieldValidator =>
 	withNormalizer((value) => (isEmptyValue(value) ? message : undefined));
 
-export const minLength = (
-	length: number,
-	message: string,
-): FieldValidator =>
+export const minLength = (length: number, message: string): FieldValidator =>
 	withNormalizer((value) => {
 		if (typeof value !== "string" || value.length === 0) {
 			return undefined;
