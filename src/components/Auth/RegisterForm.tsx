@@ -4,7 +4,11 @@ import { useState } from "react";
 import Link from "next/link";
 import { registerWithEmailPassword } from "@/server/actions/auth";
 import { useTranslation } from "react-i18next";
-import { FormWrapper } from "@/components/FormWrapper";
+import {
+	email as emailValidator,
+	FormWrapper,
+	matchesField,
+} from "@/components/FormWrapper";
 import type { FormWrapperConfig } from "@/components/FormWrapper";
 import { AlertDialog } from "@/components/ui/alert-dialog";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
@@ -260,14 +264,7 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
 						disabled: isLoading,
 						layout: { span: "full" },
 						placeholder: t("auth.register.emailPlaceholder"),
-						validate: (value) => {
-							if (typeof value !== "string" || value.trim().length === 0) {
-								return undefined;
-							}
-							return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
-								? undefined
-								: t("auth.validation.emailInvalid");
-						},
+						validators: [emailValidator(t("auth.validation.emailInvalid"))],
 					},
 					{
 						name: "password",
@@ -297,10 +294,9 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
 						requiredMessage: t("auth.validation.passwordRequired"),
 						disabled: isLoading,
 						placeholder: t("auth.register.confirmPasswordPlaceholder"),
-						validateWithForm: (value, formData) =>
-							value !== formData.password
-								? t("auth.validation.passwordMismatch")
-								: undefined,
+						validators: [
+							matchesField("password", t("auth.validation.passwordMismatch")),
+						],
 					},
 				],
 			},

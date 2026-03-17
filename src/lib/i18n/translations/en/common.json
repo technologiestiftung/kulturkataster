@@ -419,6 +419,10 @@
 	"footerLandmark": "Footer",
 	"form": {
 		"validation": {
+			"invalidEmail": "Invalid email address",
+			"invalidNumber": "Invalid number",
+			"invalidPhone": "Invalid phone number",
+			"invalidUrl": "Invalid URL",
 			"required": "{{field}} is required"
 		}
 	},

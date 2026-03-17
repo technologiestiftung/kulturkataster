@@ -663,7 +663,7 @@ function InstitutionDraftWizardContent({
 						{
 							name: "website",
 							label: fieldLabel("website", "Website"),
-							type: "text",
+							type: "url",
 							placeholder: fieldPlaceholder("website"),
 						},
 					],
@@ -1527,7 +1527,7 @@ function InstitutionDraftWizardContent({
 						{
 							name: "contact_person_phone",
 							label: fieldLabel("contact_person_phone"),
-							type: "text",
+							type: "tel",
 							defaultValue: profile?.phone || "",
 							placeholder: fieldPlaceholder("contact_person_phone"),
 							layout: { span: "full" },
