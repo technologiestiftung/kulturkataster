@@ -65,7 +65,10 @@ export const isValidUrlValue = (value: string) => {
 export const positiveIntegerSchema = (message: string) =>
 	z.preprocess(
 		stringToNumberInput,
-		z.number().int(message).refine((value) => value > 0, message),
+		z
+			.number()
+			.int(message)
+			.refine((value) => value > 0, message),
 	);
 
 export const assertPositiveInteger = (value: unknown, message: string) =>
@@ -140,9 +143,7 @@ export const stringIdArraySchema = (message: string) =>
 export const recordSchema = (message: string) =>
 	z.record(z.string(), z.unknown(), { message });
 
-export const parseWithSchema = <T>(
-	schema: z.ZodType<T>,
-	input: unknown,
-): T => schema.parse(input);
+export const parseWithSchema = <T>(schema: z.ZodType<T>, input: unknown): T =>
+	schema.parse(input);
 
 export { z };
