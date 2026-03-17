@@ -40,6 +40,13 @@ import {
 	sendClaimDecisionEmail,
 	sendSubmissionDecisionEmail,
 } from "@/server/email/dispatcher";
+import {
+	validateClaimReviewInput,
+	validateSubmissionCreateInput,
+	validateSubmissionId,
+	validateSubmissionReviewInput,
+	validateSubmissionUpdateInput,
+} from "@/server/validation/submissions";
 
 export async function getSubmissions(filter: SubmissionFilter = {}) {
 	const currentUserId = await getCurrentUserId();
@@ -117,29 +124,31 @@ export async function getClaimSubmissionsDetailed(
 }
 
 export async function getSubmissionById(id: number) {
+	const validatedId = validateSubmissionId(id);
 	const currentUserId = await getCurrentUserId();
 	const ctx = await getAccessContextForUser(currentUserId);
 	authorizeTable(ctx, "submission", "read");
 	const scope = getTableScope(ctx, "submission", "read");
 	const ownerId = requireScopeOrUser(scope, currentUserId);
 	if (!ownerId) {
-		return submissionRepo.findById(id);
+		return submissionRepo.findById(validatedId);
 	}
-	return submissionRepo.findFirst({ id, created_by: ownerId });
+	return submissionRepo.findFirst({ id: validatedId, created_by: ownerId });
 }
 
 export async function createSubmission(input: SubmissionCreatePayload) {
+	const validatedInput = validateSubmissionCreateInput(input);
 	const currentUserId = await getCurrentUserId();
 	const ctx = await getAccessContextForUser(currentUserId);
 	authorizeTable(ctx, "submission", "create");
 
 	const nextStatus = "approval_pending";
 
-	if (currentUserId && typeof input.entityId === "number") {
+	if (currentUserId && typeof validatedInput.entityId === "number") {
 		const existingPending = await submissionRepo.findFirst({
-			entity_type: input.entityType,
-			entity_id: input.entityId,
-			type: input.type,
+			entity_type: validatedInput.entityType,
+			entity_id: validatedInput.entityId,
+			type: validatedInput.type,
 			status: "approval_pending",
 			created_by: currentUserId,
 		});
@@ -151,36 +160,37 @@ export async function createSubmission(input: SubmissionCreatePayload) {
 	}
 
 	return submissionRepo.create({
-		entity_type: input.entityType,
-		entity_id: input.entityId ?? null,
-		type: input.type,
+		entity_type: validatedInput.entityType,
+		entity_id: validatedInput.entityId ?? null,
+		type: validatedInput.type,
 		status: nextStatus,
-		data: normalizeSubmissionJson(input.data),
-		diff: normalizeOptionalSubmissionJson(input.diff),
-		meta: normalizeOptionalSubmissionJson(input.meta),
+		data: normalizeSubmissionJson(validatedInput.data),
+		diff: normalizeOptionalSubmissionJson(validatedInput.diff),
+		meta: normalizeOptionalSubmissionJson(validatedInput.meta),
 		creator: currentUserId ? { connect: { id: currentUserId } } : undefined,
 	});
 }
 
 export async function updateSubmission(input: SubmissionUpdatePayload) {
+	const validatedInput = validateSubmissionUpdateInput(input);
 	const currentUserId = await getCurrentUserId();
 	const ctx = await getAccessContextForUser(currentUserId);
 	authorizeTable(ctx, "submission", "update");
 	const scope = getTableScope(ctx, "submission", "update");
 	const ownerId = requireScopeOrUser(scope, currentUserId);
 	if (!ownerId) {
-		return submissionRepo.update(input.id, {
+		return submissionRepo.update(validatedInput.id, {
 			data:
-				input.data !== undefined
-					? normalizeSubmissionJson(input.data)
+				validatedInput.data !== undefined
+					? normalizeSubmissionJson(validatedInput.data)
 					: undefined,
-			diff: normalizeOptionalSubmissionJson(input.diff),
-			meta: normalizeOptionalSubmissionJson(input.meta),
-			status: input.status ?? undefined,
+			diff: normalizeOptionalSubmissionJson(validatedInput.diff),
+			meta: normalizeOptionalSubmissionJson(validatedInput.meta),
+			status: validatedInput.status ?? undefined,
 		});
 	}
 	const existing = await submissionRepo.findFirst({
-		id: input.id,
+		id: validatedInput.id,
 		created_by: ownerId,
 	});
 	if (!existing) {
@@ -188,24 +198,25 @@ export async function updateSubmission(input: SubmissionUpdatePayload) {
 	}
 	return submissionRepo.update(existing.id, {
 		data:
-			input.data !== undefined
-				? normalizeSubmissionJson(input.data)
+			validatedInput.data !== undefined
+				? normalizeSubmissionJson(validatedInput.data)
 				: undefined,
-		diff: normalizeOptionalSubmissionJson(input.diff),
-		meta: normalizeOptionalSubmissionJson(input.meta),
-		status: input.status ?? undefined,
+		diff: normalizeOptionalSubmissionJson(validatedInput.diff),
+		meta: normalizeOptionalSubmissionJson(validatedInput.meta),
+		status: validatedInput.status ?? undefined,
 	});
 }
 
 export async function reviewSubmission(input: SubmissionReviewPayload) {
+	const validatedInput = validateSubmissionReviewInput(input);
 	const currentUserId = await getCurrentUserId();
 	const ctx = await getAccessContextForUser(currentUserId);
 	authorizeTable(ctx, "submission", "update");
 	const scope = getTableScope(ctx, "submission", "update");
 	const ownerId = requireScopeOrUser(scope, currentUserId);
 	const submission = ownerId
-		? await submissionRepo.findFirst({ id: input.id, created_by: ownerId })
-		: await submissionRepo.findById(input.id);
+		? await submissionRepo.findFirst({ id: validatedInput.id, created_by: ownerId })
+		: await submissionRepo.findById(validatedInput.id);
 	if (!submission) {
 		throw new Error("Not authorized to review this submission.");
 	}
@@ -252,14 +263,14 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 		}
 	}
 	let intent: AuditContext["intent"];
-	if (input.status === "approved") {
+	if (validatedInput.status === "approved") {
 		intent = "submission_review_approved";
-	} else if (input.status === "rejected") {
+	} else if (validatedInput.status === "rejected") {
 		intent = "submission_review_rejected";
 	} else {
 		intent = "submission_review_completed";
 	}
-	const correlationId = `submission:${input.id}:review:${Date.now()}`;
+	const correlationId = `submission:${validatedInput.id}:review:${Date.now()}`;
 	const claimSubmissionEntityId =
 		submission.type === "claim" && typeof submission.entity_id === "number"
 			? submission.entity_id
@@ -306,12 +317,12 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 		{
 			correlationId,
 			rootEntityType: "submission",
-			rootEntityId: String(input.id),
+			rootEntityId: String(validatedInput.id),
 			actorUserId: currentUserId,
 			intent,
 		},
 		async () => {
-			if (input.status === "approved") {
+			if (validatedInput.status === "approved") {
 				if (submission.entity_type !== "institution") {
 					throw new Error("Only institution submissions can be reviewed.");
 				}
@@ -320,8 +331,8 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 				const draftWithInternalNotes = {
 					...draft,
 					internal_notes:
-						typeof input.internalNotes === "string"
-							? input.internalNotes
+						typeof validatedInput.internalNotes === "string"
+							? validatedInput.internalNotes
 							: draft.internal_notes,
 				};
 				await prisma.$transaction(async (tx) => {
@@ -365,7 +376,8 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 						const requestClaimOnApproval =
 							submissionMeta?.request_claim_on_approval === true;
 						const shouldGrantSubmitterAccess =
-							requestClaimOnApproval && input.grantSubmitterAccess === true;
+							requestClaimOnApproval &&
+							validatedInput.grantSubmitterAccess === true;
 
 						if (shouldGrantSubmitterAccess) {
 							if (!submission.created_by) {
@@ -475,13 +487,13 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 						});
 					}
 
-					await tx.submission.delete({ where: { id: input.id } });
+					await tx.submission.delete({ where: { id: validatedInput.id } });
 					await updateSubmissionAuditStatus(
 						{
-							submissionId: input.id,
+							submissionId: validatedInput.id,
 							status: "approved",
 							reviewerId: currentUserId,
-							reviewNotes: input.internalNotes,
+							reviewNotes: validatedInput.internalNotes,
 						},
 						tx,
 					);
@@ -511,15 +523,15 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 					await sendStandardSubmissionDecisionEmail("approved");
 				}
 				revalidateAccount();
-				return { id: input.id, status: "approved" as const };
+				return { id: validatedInput.id, status: "approved" as const };
 			}
 
 			const updated = await prisma.$transaction(async (tx) => {
 				const txUpdated = await tx.submission.update({
-					where: { id: input.id },
+					where: { id: validatedInput.id },
 					data: {
-						status: input.status,
-						review_notes: input.internalNotes ?? undefined,
+						status: validatedInput.status,
+						review_notes: validatedInput.internalNotes ?? undefined,
 						reviewer: currentUserId
 							? { connect: { id: currentUserId } }
 							: undefined,
@@ -528,17 +540,18 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 				});
 				await updateSubmissionAuditStatus(
 					{
-						submissionId: input.id,
-						status: input.status === "rejected" ? "rejected" : "completed",
+						submissionId: validatedInput.id,
+						status:
+							validatedInput.status === "rejected" ? "rejected" : "completed",
 						reviewerId: currentUserId,
-						reviewNotes: input.internalNotes,
+						reviewNotes: validatedInput.internalNotes,
 					},
 					tx,
 				);
 				return txUpdated;
 			});
 			if (
-				input.status === "rejected" &&
+				validatedInput.status === "rejected" &&
 				claimSubmissionEntityId &&
 				claimSubmissionCreatorId
 			) {
@@ -562,7 +575,7 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 					});
 				}
 			}
-			if (input.status === "rejected" && standardSubmissionCreatorId) {
+			if (validatedInput.status === "rejected" && standardSubmissionCreatorId) {
 				await sendStandardSubmissionDecisionEmail("rejected");
 			}
 			revalidateAccount();
@@ -572,12 +585,13 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 }
 
 export async function reviewClaimSubmission(input: ClaimReviewPayload) {
+	const validatedInput = validateClaimReviewInput(input);
 	const currentUserId = await getCurrentUserId();
 	const ctx = await getAccessContextForUser(currentUserId);
 	authorizeTable(ctx, "submission", "update");
 	requireAllScope(ctx, "submission", "update");
 
-	const submission = await submissionRepo.findById(input.id);
+	const submission = await submissionRepo.findById(validatedInput.id);
 	if (!submission) {
 		throw new Error("Claim submission not found.");
 	}
@@ -609,10 +623,10 @@ export async function reviewClaimSubmission(input: ClaimReviewPayload) {
 		}
 	}
 	const intent: AuditContext["intent"] =
-		input.decision === "approved"
+		validatedInput.decision === "approved"
 			? "submission_review_approved"
 			: "submission_review_rejected";
-	const correlationId = `submission:${input.id}:review:${Date.now()}`;
+	const correlationId = `submission:${validatedInput.id}:review:${Date.now()}`;
 	const claimSubmissionEntityId =
 		typeof submission.entity_id === "number" ? submission.entity_id : null;
 	const claimSubmissionCreatorId = submission.created_by;
@@ -620,20 +634,20 @@ export async function reviewClaimSubmission(input: ClaimReviewPayload) {
 		{
 			correlationId,
 			rootEntityType: "submission",
-			rootEntityId: String(input.id),
+			rootEntityId: String(validatedInput.id),
 			actorUserId: currentUserId,
 			intent,
 		},
 		async () => {
-			if (input.decision === "rejected") {
+			if (validatedInput.decision === "rejected") {
 				await prisma.$transaction(async (tx) => {
-					await tx.submission.delete({ where: { id: input.id } });
+					await tx.submission.delete({ where: { id: validatedInput.id } });
 					await updateSubmissionAuditStatus(
 						{
-							submissionId: input.id,
+							submissionId: validatedInput.id,
 							status: "rejected",
 							reviewerId: currentUserId,
-							reviewNotes: input.reviewNotes,
+							reviewNotes: validatedInput.reviewNotes,
 						},
 						tx,
 					);
@@ -660,7 +674,7 @@ export async function reviewClaimSubmission(input: ClaimReviewPayload) {
 					}
 				}
 				revalidateAccount();
-				return { id: input.id, status: "rejected" as const };
+				return { id: validatedInput.id, status: "rejected" as const };
 			}
 
 			const entityId = submission.entity_id;
@@ -680,13 +694,13 @@ export async function reviewClaimSubmission(input: ClaimReviewPayload) {
 					data: { institutions: { connect: { id: entityId } } },
 				});
 
-				await tx.submission.delete({ where: { id: input.id } });
+				await tx.submission.delete({ where: { id: validatedInput.id } });
 				await updateSubmissionAuditStatus(
 					{
-						submissionId: input.id,
+						submissionId: validatedInput.id,
 						status: "approved",
 						reviewerId: currentUserId,
-						reviewNotes: input.reviewNotes,
+						reviewNotes: validatedInput.reviewNotes,
 					},
 					tx,
 				);
@@ -714,28 +728,29 @@ export async function reviewClaimSubmission(input: ClaimReviewPayload) {
 				}
 			}
 			revalidateAccount();
-			return { id: input.id, status: "approved" as const };
+			return { id: validatedInput.id, status: "approved" as const };
 		},
 	);
 }
 
 export async function deleteSubmission(id: number) {
+	const validatedId = validateSubmissionId(id);
 	const currentUserId = await getCurrentUserId();
 	const ctx = await getAccessContextForUser(currentUserId);
 	authorizeTable(ctx, "submission", "delete");
 	const scope = getTableScope(ctx, "submission", "delete");
 	const ownerId = requireScopeOrUser(scope, currentUserId);
 	if (!ownerId) {
-		await submissionRepo.remove(id);
-		return { id };
+		await submissionRepo.remove(validatedId);
+		return { id: validatedId };
 	}
 	const existing = await submissionRepo.findFirst({
-		id,
+		id: validatedId,
 		created_by: ownerId,
 	});
 	if (!existing) {
 		throw new Error("Not authorized to delete this submission.");
 	}
 	await submissionRepo.remove(existing.id);
-	return { id };
+	return { id: validatedId };
 }
