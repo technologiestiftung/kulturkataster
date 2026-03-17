@@ -1,5 +1,13 @@
 export { FormWrapper } from "./FormWrapper";
-export { email, matchesField, numeric, required, tel, url } from "./validation";
+export {
+	email,
+	matchesField,
+	minLength,
+	numeric,
+	required,
+	tel,
+	url,
+} from "./validation";
 export type {
 	FieldValidator,
 	FormWrapperConfig,

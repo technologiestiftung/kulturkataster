@@ -8,6 +8,7 @@ import {
 	email as emailValidator,
 	FormWrapper,
 	matchesField,
+	minLength,
 } from "@/components/FormWrapper";
 import type { FormWrapperConfig } from "@/components/FormWrapper";
 import { AlertDialog } from "@/components/ui/alert-dialog";
@@ -276,14 +277,7 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
 						layout: { span: "full" },
 						afterField: t("auth.accountEdit.passwordRequirements"),
 						placeholder: t("auth.register.passwordPlaceholder"),
-						validate: (value) => {
-							if (typeof value !== "string" || value.length === 0) {
-								return undefined;
-							}
-							return value.length < 8
-								? t("auth.validation.passwordMin")
-								: undefined;
-						},
+						validators: [minLength(8, t("auth.validation.passwordMin"))],
 					},
 					{
 						name: "confirmPassword",
@@ -330,9 +324,8 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
 						),
 						type: "checkbox",
 						required: true,
+						requiredMessage: t("auth.validation.acceptTermsRequired"),
 						disabled: isLoading,
-						validate: (value) =>
-							value ? undefined : t("auth.validation.acceptTermsRequired"),
 					},
 					{
 						name: "subscribeNewsletter",
