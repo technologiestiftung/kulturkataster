@@ -419,6 +419,10 @@
 	"footerLandmark": "Fußbereich",
 	"form": {
 		"validation": {
+			"invalidEmail": "Ungültige E-Mail-Adresse",
+			"invalidNumber": "Ungültige Zahl",
+			"invalidPhone": "Ungültige Telefonnummer",
+			"invalidUrl": "Ungültige URL",
 			"required": "{{field}} ist erforderlich"
 		}
 	},

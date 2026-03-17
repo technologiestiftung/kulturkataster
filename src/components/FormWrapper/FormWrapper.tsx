@@ -10,7 +10,7 @@ import { defaultFilterState } from "./constants";
 import { buildRenderField } from "./renderField";
 import { AlertDialog } from "@/components/ui/alert-dialog";
 import { useTranslation } from "react-i18next";
-import { getFieldError, getFieldLabel } from "@/lib/i18n/fieldLabels";
+import { normalizeFieldValue, validateFieldValue } from "./validation";
 
 const getAllFields = (
 	fields: FormWrapperFieldConfig[],
@@ -76,54 +76,6 @@ const buildInitialFormData = (config: FormWrapperConfig) => {
 	});
 
 	return initialData;
-};
-
-const validateFieldValue = (
-	field: FormWrapperFieldConfig,
-	value: unknown,
-	nextFormData: Record<string, unknown>,
-	t: (key: string, options?: Record<string, unknown>) => string,
-	tEnum: TFunction,
-): string | undefined => {
-	const fieldMetaKey =
-		field.type === "section" ? field.name : (field.fieldMetaKey ?? field.name);
-	const fieldLabel =
-		field.type === "section"
-			? (field.label ?? getFieldLabel(tEnum, fieldMetaKey))
-			: (field.label ?? getFieldLabel(tEnum, fieldMetaKey));
-	const requiredDefault = t("form.validation.required", {
-		field: fieldLabel,
-	});
-	const requiredMessageRaw =
-		field.requiredMessage ??
-		(field.type !== "section" ? field.errorMessages?.required : undefined) ??
-		getFieldError(tEnum, fieldMetaKey, "required");
-	const requiredMessage =
-		requiredMessageRaw === `field_names.${fieldMetaKey}.errors.required`
-			? requiredDefault
-			: requiredMessageRaw;
-
-	if (field.required) {
-		if (field.type === "checkbox" && value !== true) {
-			return requiredMessage;
-		}
-		if (value === undefined || value === null || value === "") {
-			return requiredMessage;
-		}
-		if (Array.isArray(value) && value.length === 0) {
-			return requiredMessage;
-		}
-	}
-
-	if (field.validate) {
-		return field.validate(value);
-	}
-
-	if (field.validateWithForm) {
-		return field.validateWithForm(value, nextFormData);
-	}
-
-	return undefined;
 };
 
 const collectValidationErrors = (
@@ -200,11 +152,21 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 		field: FormWrapperFieldConfig,
 		nextValue: unknown,
 	) => {
-		const nextFormData = { ...formData, [field.name]: nextValue };
+		const normalizedValue = normalizeFieldValue(
+			field,
+			nextValue,
+			{ ...formData, [field.name]: nextValue },
+			t,
+			tEnum,
+		);
+		const nextFormData = { ...formData, [field.name]: normalizedValue };
 		setTouched((prev) => ({ ...prev, [field.name]: true }));
+		if (normalizedValue !== formData[field.name]) {
+			setFormData(nextFormData);
+		}
 		try {
 			if (field.onBlur) {
-				await field.onBlur(nextValue, nextFormData, updateField);
+				await field.onBlur(normalizedValue, nextFormData, updateField);
 			}
 		} catch (error) {
 			console.warn(`Field onBlur failed for ${field.name}`, error);
@@ -231,7 +193,19 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 	};
 
 	const validateForm = (): boolean => {
-		const newErrors = collectValidationErrors(allFields, formData, t, tEnum);
+		const normalizedFormData = Object.fromEntries(
+			allFields.map((field) => [
+				field.name,
+				normalizeFieldValue(field, formData[field.name], formData, t, tEnum),
+			]),
+		);
+		const newErrors = collectValidationErrors(
+			allFields,
+			normalizedFormData,
+			t,
+			tEnum,
+		);
+		setFormData((prev) => ({ ...prev, ...normalizedFormData }));
 		setErrors(newErrors);
 		return Object.keys(newErrors).length === 0;
 	};
@@ -242,7 +216,14 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 		setTouched(buildTouchedMap(allFields));
 		if (validateForm()) {
 			setFormError(null);
-			await config.onSubmit(formData);
+			const normalizedFormData = Object.fromEntries(
+				allFields.map((field) => [
+					field.name,
+					normalizeFieldValue(field, formData[field.name], formData, t, tEnum),
+				]),
+			);
+			setFormData((prev) => ({ ...prev, ...normalizedFormData }));
+			await config.onSubmit({ ...formData, ...normalizedFormData });
 		} else {
 			setFormError(t("alert.errorFixFields"));
 		}
