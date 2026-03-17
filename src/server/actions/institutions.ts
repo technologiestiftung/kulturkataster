@@ -58,7 +58,10 @@ export async function getMyInstitutions() {
 }
 
 export async function getInstitutionById(id: number) {
-	const validatedId = assertPositiveInteger(id, "Institution id must be positive.");
+	const validatedId = assertPositiveInteger(
+		id,
+		"Institution id must be positive.",
+	);
 	const currentUserId = await getCurrentUserId();
 	const ctx = await getAccessContextForUser(currentUserId);
 	authorizeTable(ctx, "institution", "read");
@@ -128,7 +131,10 @@ export async function updateInstitution(input: InstitutionUpdateForm) {
 }
 
 export async function deleteInstitution(id: number) {
-	const validatedId = assertPositiveInteger(id, "Institution id must be positive.");
+	const validatedId = assertPositiveInteger(
+		id,
+		"Institution id must be positive.",
+	);
 	const currentUserId = await getCurrentUserId();
 	const ctx = await getAccessContextForUser(currentUserId);
 	authorizeTable(ctx, "institution", "delete");

@@ -93,7 +93,10 @@ const validateStepFieldValue = (
 		}
 	}
 
-	if (field.type !== "section" && field.validators?.some((validator) => validator(value, formData))) {
+	if (
+		field.type !== "section" &&
+		field.validators?.some((validator) => validator(value, formData))
+	) {
 		return false;
 	}
 

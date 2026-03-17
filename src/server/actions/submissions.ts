@@ -215,7 +215,10 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 	const scope = getTableScope(ctx, "submission", "update");
 	const ownerId = requireScopeOrUser(scope, currentUserId);
 	const submission = ownerId
-		? await submissionRepo.findFirst({ id: validatedInput.id, created_by: ownerId })
+		? await submissionRepo.findFirst({
+				id: validatedInput.id,
+				created_by: ownerId,
+			})
 		: await submissionRepo.findById(validatedInput.id);
 	if (!submission) {
 		throw new Error("Not authorized to review this submission.");
