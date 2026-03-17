@@ -484,8 +484,9 @@ function InstitutionDraftWizardContent({
 							layout: { span: "full" },
 							placeholder: fieldPlaceholder("name"),
 							required: true,
-							validateWithForm: (_value, formData) =>
-								validateDuplicateInstitution(formData),
+							validators: [
+								(_value, formData) => validateDuplicateInstitution(formData),
+							],
 							afterField: duplicateWarningText,
 						},
 						{
@@ -529,8 +530,9 @@ function InstitutionDraftWizardContent({
 							layout: { span: "full" },
 							placeholder: fieldPlaceholder("street"),
 							onBlur: onAddressBlur,
-							validateWithForm: (_value, formData) =>
-								validateDuplicateInstitution(formData),
+							validators: [
+								(_value, formData) => validateDuplicateInstitution(formData),
+							],
 							afterField: duplicateWarningText,
 						},
 						{
@@ -711,29 +713,31 @@ function InstitutionDraftWizardContent({
 							label: fieldLabel("categories"),
 							type: "filterPanel",
 							required: true,
-							validateWithForm: (value, formData) => {
-								const filters = value as
-									| {
-											category_keys?: string[];
-											child_category_keys?: string[];
-									  }
-									| undefined;
-								const hasSelectedCategories =
-									(filters?.category_keys?.length ?? 0) > 0 ||
-									(filters?.child_category_keys?.length ?? 0) > 0;
-								const rawNewCategory = formData.newCategory;
-								const hasProposedCategory =
-									typeof rawNewCategory === "string" &&
-									rawNewCategory
-										.split(",")
-										.map((item) => item.trim())
-										.some((item) => item.length > 0);
-								return hasSelectedCategories || hasProposedCategory
-									? undefined
-									: t(
-											"institutionDraftWizardModal.form.category.validation.minSelection",
-										);
-							},
+							validators: [
+								(value, formData) => {
+									const filters = value as
+										| {
+												category_keys?: string[];
+												child_category_keys?: string[];
+										  }
+										| undefined;
+									const hasSelectedCategories =
+										(filters?.category_keys?.length ?? 0) > 0 ||
+										(filters?.child_category_keys?.length ?? 0) > 0;
+									const rawNewCategory = formData.newCategory;
+									const hasProposedCategory =
+										typeof rawNewCategory === "string" &&
+										rawNewCategory
+											.split(",")
+											.map((item) => item.trim())
+											.some((item) => item.length > 0);
+									return hasSelectedCategories || hasProposedCategory
+										? undefined
+										: t(
+												"institutionDraftWizardModal.form.category.validation.minSelection",
+											);
+								},
+							],
 							layout: { span: "full" },
 							filterPanel: {
 								categoryGroups: categories,

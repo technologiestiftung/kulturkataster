@@ -14,10 +14,12 @@ const IPV4_HOST_REGEX =
 const IPV6_HOST_REGEX = /^\[[0-9a-f:]+\]$/i;
 
 const withNormalizer = (
-	validate: (value: unknown, formData: Record<string, unknown>) => string | undefined,
+	validate: (
+		value: unknown,
+		formData: Record<string, unknown>,
+	) => string | undefined,
 	normalize?: FieldNormalizer,
-): FieldValidator =>
-	Object.assign(validate, normalize ? { normalize } : {});
+): FieldValidator => Object.assign(validate, normalize ? { normalize } : {});
 
 const isEmptyValue = (value: unknown) =>
 	value === undefined ||
@@ -67,11 +69,7 @@ const getTypeValidationMessage = (
 	field: FormWrapperFieldConfig,
 	t: (key: string, options?: Record<string, unknown>) => string,
 	tEnum: TFunction,
-	fallbackKey:
-		| "invalidEmail"
-		| "invalidNumber"
-		| "invalidPhone"
-		| "invalidUrl",
+	fallbackKey: "invalidEmail" | "invalidNumber" | "invalidPhone" | "invalidUrl",
 ) => {
 	const fieldMetaKey = getFieldMetaKey(field);
 	const fieldMessage =
@@ -139,24 +137,19 @@ const buildTypeValidator = (
 	return undefined;
 };
 
-const getLegacyValidators = (field: FormWrapperFieldConfig): FieldValidator[] => {
-	const validators: FieldValidator[] = [];
-
-	if (field.validate) {
-		validators.push(withNormalizer((value) => field.validate?.(value)));
-	}
-
-	if (field.validateWithForm) {
-		validators.push(
-			withNormalizer((value, formData) => field.validateWithForm?.(value, formData)),
-		);
-	}
-
-	return validators;
-};
-
 export const required = (message: string): FieldValidator =>
 	withNormalizer((value) => (isEmptyValue(value) ? message : undefined));
+
+export const minLength = (
+	length: number,
+	message: string,
+): FieldValidator =>
+	withNormalizer((value) => {
+		if (typeof value !== "string" || value.length === 0) {
+			return undefined;
+		}
+		return value.length < length ? message : undefined;
+	});
 
 export const email = (message: string): FieldValidator =>
 	withNormalizer((value) => {
@@ -226,7 +219,7 @@ const getFieldValidators = (
 					...(typeValidator ? [typeValidator] : []),
 				];
 
-	return [...validators, ...getLegacyValidators(field)];
+	return validators;
 };
 
 export const normalizeFieldValue = (
@@ -238,7 +231,9 @@ export const normalizeFieldValue = (
 ) =>
 	getFieldValidators(field, t, tEnum).reduce(
 		(nextValue, validator) =>
-			validator.normalize ? validator.normalize(nextValue, formData) : nextValue,
+			validator.normalize
+				? validator.normalize(nextValue, formData)
+				: nextValue,
 		value,
 	);
 

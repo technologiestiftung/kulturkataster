@@ -259,8 +259,9 @@ const buildInstitutionFormConfig = ({
 						required: true,
 						placeholder: fieldPlaceholder("name"),
 						layout: { span: "full" },
-						validateWithForm: (_value, formData) =>
-							validateDuplicateInstitution?.(formData),
+						validators: [
+							(_value, formData) => validateDuplicateInstitution?.(formData),
+						],
 						afterField: duplicateWarningText,
 					},
 					{
@@ -365,8 +366,9 @@ const buildInstitutionFormConfig = ({
 						placeholder: fieldPlaceholder("street"),
 						onBlur: onAddressBlur,
 						layout: { span: "full" },
-						validateWithForm: (_value, formData) =>
-							validateDuplicateInstitution?.(formData),
+						validators: [
+							(_value, formData) => validateDuplicateInstitution?.(formData),
+						],
 						afterField: duplicateWarningText,
 					},
 					{
