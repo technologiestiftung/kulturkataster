@@ -90,7 +90,9 @@ describe("RolesTable", () => {
 			columns: Array<{
 				id?: string;
 				accessorKey?: string;
-				cell?: (args: { row: { original: Record<string, unknown> } }) => unknown;
+				cell?: (args: {
+					row: { original: Record<string, unknown> };
+				}) => unknown;
 			}>;
 		};
 
