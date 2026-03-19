@@ -38,6 +38,15 @@ type RoleWithPermissions = Role & {
 	field_permissions: RoleFieldPermission[];
 };
 
+const getDefaultRoleWithPermissions = () =>
+	prisma.role.findFirst({
+		where: { is_guest: true },
+		include: {
+			table_permissions: true,
+			field_permissions: true,
+		},
+	});
+
 const buildTablePerms = (
 	permissions: RoleTablePermission[] = [],
 ): TablePermissionMap => {
@@ -220,14 +229,8 @@ export const getAccessContextForUser = async (
 	userId: string | null,
 ): Promise<AccessContext> => {
 	if (!userId) {
-		const guestRole = await prisma.role.findFirst({
-			where: { name: "guest", is_system: true },
-			include: {
-				table_permissions: true,
-				field_permissions: true,
-			},
-		});
-		return buildAccessContext(guestRole ?? null);
+		const defaultRole = await getDefaultRoleWithPermissions();
+		return buildAccessContext(defaultRole ?? null);
 	}
 
 	const user = await prisma.user.findUnique({
@@ -271,7 +274,20 @@ export const getSystemRoleReadableFieldsForTable = async (
 export const getGuestReadableFieldsForTable = async (
 	table: string,
 ): Promise<string[]> => {
-	return getSystemRoleReadableFieldsForTable("guest", table);
+	const role = await prisma.role.findFirst({
+		where: { is_guest: true },
+		include: {
+			field_permissions: true,
+		},
+	});
+	if (!role) return [];
+	const readableFields = role.field_permissions
+		.filter(
+			(permission) =>
+				permission.table === table && permission.action === "read",
+		)
+		.map((permission) => permission.field);
+	return Array.from(new Set(readableFields));
 };
 
 export const getFieldPermissionListsForTable = (

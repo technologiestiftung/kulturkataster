@@ -1104,6 +1104,9 @@
 		"actions": {
 			"add": "Rolle erstellen"
 		},
+		"badges": {
+			"guest": "Gastrolle"
+		},
 		"columns": {
 			"createdAt": "Erstellt am",
 			"description": "Beschreibung",
