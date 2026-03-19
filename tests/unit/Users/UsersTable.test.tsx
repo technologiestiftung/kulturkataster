@@ -105,7 +105,9 @@ describe("UsersTable", () => {
 		const config = dataTableMock.mock.calls[0][0] as {
 			columns: Array<{
 				id?: string;
-				cell?: (args: { row: { original: Record<string, unknown> } }) => unknown;
+				cell?: (args: {
+					row: { original: Record<string, unknown> };
+				}) => unknown;
 			}>;
 		};
 
