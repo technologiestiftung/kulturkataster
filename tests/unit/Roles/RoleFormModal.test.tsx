@@ -48,6 +48,7 @@ vi.mock("@/components/FormWrapper", () => ({
 					void config.onSubmit({
 						name: "Updated role",
 						description: "Updated description",
+						is_guest: true,
 						tablePermissions: {},
 						fieldPermissions: {},
 					})
@@ -88,6 +89,7 @@ describe("RoleFormModal", () => {
 					name: "Existing role",
 					description: "Desc",
 					is_system: false,
+					is_guest: false,
 					created_at: new Date("2025-01-01"),
 					updated_at: new Date("2025-01-01"),
 					table_permissions: [],
@@ -104,6 +106,7 @@ describe("RoleFormModal", () => {
 			name: "Updated role",
 			description: "Updated description",
 			is_system: false,
+			is_guest: true,
 			created_at: new Date("2025-01-01"),
 			updated_at: new Date("2025-01-01"),
 			table_permissions: [],
@@ -119,6 +122,7 @@ describe("RoleFormModal", () => {
 				expect.objectContaining({
 					name: "Updated role",
 					description: "Updated description",
+					is_guest: true,
 				}),
 			);
 		});
@@ -132,6 +136,7 @@ describe("RoleFormModal", () => {
 			name: "Updated role",
 			description: "Updated description",
 			is_system: false,
+			is_guest: true,
 			created_at: new Date("2025-01-01"),
 			updated_at: new Date("2025-01-02"),
 			table_permissions: [],
@@ -154,6 +159,7 @@ describe("RoleFormModal", () => {
 					id: 12,
 					name: "Updated role",
 					description: "Updated description",
+					is_guest: true,
 				}),
 			);
 		});
