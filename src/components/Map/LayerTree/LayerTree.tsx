@@ -331,11 +331,11 @@ const FloatingLayerButton = memo(
 
 FloatingLayerButton.displayName = "FloatingLayerButton";
 
-// Main LayerTree component
+// Main LayerTree component (desktop only - mobile handled via Sheet in Menu)
 const LayerTree: FC = () => {
 	const { t } = useTranslation("common");
 	const { subjectLayers, visibleCount, topVisibleLayer } = useLayerData();
-	const { state: sidebarState } = useSidebar();
+	const { state: sidebarState, isMobile } = useSidebar();
 	const isLayerTreeOpen = useAppStore((state) => state.isLayerTreeOpen);
 	const setIsLayerTreeOpen = useAppStore((state) => state.setIsLayerTreeOpen);
 	const [isOpen, setIsOpen] = useState(false);
@@ -370,7 +370,7 @@ const LayerTree: FC = () => {
 		return () => document.removeEventListener("keydown", handleKeyDown);
 	}, [isOpen, handleClose]);
 
-	if (!isOpen) {
+	if (!isOpen || isMobile) {
 		return (
 			<FloatingLayerButton
 				visibleCount={visibleCount}
