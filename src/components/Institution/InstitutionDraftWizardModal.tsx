@@ -50,6 +50,7 @@ import {
 } from "@/lib/utils/institutionDuplicateUtils";
 import { useInstitutionPrivateFieldResolver } from "@/lib/hooks/useInstitutionPrivateFieldResolver";
 import { Profile } from "@/types";
+import { reportClientTelemetry } from "@/lib/utils/clientTelemetry";
 const DEFAULT_CREATE_STEP_ID = "basic";
 const STEP_IDS = [
 	"basic",
@@ -384,6 +385,15 @@ function InstitutionDraftWizardContent({
 		try {
 			await handleFinalSubmit(draft);
 		} catch (error) {
+			reportClientTelemetry({
+				level: "error",
+				event: "institution_draft.submit_failed",
+				error,
+				metadata: {
+					step_id: currentStepId,
+					draft_mode: draftMode,
+				},
+			});
 			const message =
 				error instanceof Error
 					? error.message
@@ -396,7 +406,7 @@ function InstitutionDraftWizardContent({
 					: message,
 			);
 		}
-	}, [draft, handleFinalSubmit, onSubmitError, t]);
+	}, [currentStepId, draft, draftMode, handleFinalSubmit, onSubmitError, t]);
 
 	const handleCancel = useCallback(() => {
 		if (canGoPrevious) {

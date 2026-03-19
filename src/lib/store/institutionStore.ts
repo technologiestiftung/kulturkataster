@@ -15,6 +15,7 @@ import {
 	toFeatureCollection,
 } from "../utils/institutionUtils";
 import { getInstitutions } from "@/server/actions/institutions";
+import { reportClientTelemetry } from "@/lib/utils/clientTelemetry";
 
 const defaultFilters: InstitutionStoreState["filters"] = {
 	status: undefined,
@@ -152,7 +153,11 @@ export const useInstitutionStore = create<InstitutionStoreState>()(
 						isLoading: false,
 					});
 				} catch (error) {
-					console.error("Failed to initialize categories:", error);
+					reportClientTelemetry({
+						level: "error",
+						event: "institution_store.categories_init.failed",
+						error,
+					});
 					set({
 						isLoading: false,
 						error:
@@ -168,7 +173,11 @@ export const useInstitutionStore = create<InstitutionStoreState>()(
 					const districts = await getDistricts();
 					set({ districts, isLoading: false });
 				} catch (error) {
-					console.error("Failed to initialize districts:", error);
+					reportClientTelemetry({
+						level: "error",
+						event: "institution_store.districts_init.failed",
+						error,
+					});
 					set({
 						isLoading: false,
 						error:
@@ -212,7 +221,11 @@ export const useInstitutionStore = create<InstitutionStoreState>()(
 						isLoading: false,
 					});
 				} catch (error) {
-					console.error("Failed to initialize institutions:", error);
+					reportClientTelemetry({
+						level: "error",
+						event: "institution_store.institutions_init.failed",
+						error,
+					});
 					set({
 						isLoading: false,
 						error:

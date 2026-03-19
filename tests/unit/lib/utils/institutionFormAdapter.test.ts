@@ -27,4 +27,18 @@ describe("buildInstitutionForFormFromDraft", () => {
 			"2035-12-31T00:00:00.000Z",
 		);
 	});
+
+	it("prefers the original institution id for review edit flows", () => {
+		const result = buildInstitutionForFormFromDraft({
+			id: 999,
+			entityId: 55,
+			originalInstitution: {
+				id: 55,
+				name: "Existing Institution",
+			},
+			name: "Existing Institution",
+		});
+
+		expect(result.id).toBe(55);
+	});
 });

@@ -70,7 +70,8 @@
 					"role_table_permission": "Rollentabellen-Berechtigung",
 					"submission": "Einreichung",
 					"tag": "Tag",
-					"user": "Nutzer*in"
+					"user": "Nutzer*in",
+					"userWithEmail": "{{entity}} ({{email}})"
 				},
 				"filters": {
 					"allDates": "Alle",
@@ -511,6 +512,7 @@
 		"layerTreeAriaLabel": "Fachkarten einblenden ({{visibleCount}} sichtbare Karten)",
 		"layerTreeTitle": "Fachkarten",
 		"layerTreeVisibleCountAriaLabel": "{{visibleCount}} sichtbare Karten",
+		"unnamedLayer": "Unbenannte Fachkarte",
 		"legend": {
 			"legendAriaLabels": "Legende für die Fachkarte {{serviceName}}",
 			"legendGesamtIndexAriaLabel": "Tabelle in der Legende des Gesamtindex",

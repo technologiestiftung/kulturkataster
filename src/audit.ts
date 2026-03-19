@@ -159,10 +159,11 @@ export function createAuditMiddleware(client: AuditClient) {
 				},
 			});
 		} catch (error) {
-			console.warn("[audit] Failed to persist audit entry", {
+			logger.warn("audit.persist.failed", {
 				action,
 				model,
 				entityId,
+				subsystem: "db",
 				error,
 			});
 		}
@@ -279,3 +280,4 @@ export function createAuditMiddleware(client: AuditClient) {
 		},
 	});
 }
+import { logger } from "@/server/logging/logger";
