@@ -175,8 +175,8 @@ export async function registerWithEmailPassword(params: {
 				});
 				if (existing) return;
 
-				const guestRole = await prisma.role.findUnique({
-					where: { name: "guest" },
+				const guestRole = await prisma.role.findFirst({
+					where: { is_guest: true },
 					select: { id: true },
 				});
 				const metaInfo = buildMetaInfo();
