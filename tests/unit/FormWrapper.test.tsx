@@ -400,11 +400,13 @@ describe("FormWrapper", () => {
 								name: "age",
 								label: "Age",
 								type: "number",
-								validate: (value: unknown) => {
-									const num = Number(value);
-									if (num < 18) return "Must be 18 or older";
-									return undefined;
-								},
+								validators: [
+									(value: unknown) => {
+										const num = Number(value);
+										if (num < 18) return "Must be 18 or older";
+										return undefined;
+									},
+								],
 							},
 						],
 					},

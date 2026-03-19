@@ -80,7 +80,12 @@ export async function runWithServerRequestContext<T>(
 	callback: () => Promise<T>,
 	overrides: Partial<RequestContext> = {},
 ): Promise<T> {
-	const requestHeaders = await headers();
+	let requestHeaders: HeaderReader;
+	try {
+		requestHeaders = await headers();
+	} catch {
+		requestHeaders = new Headers();
+	}
 
 	return runWithRequestContext(
 		{
