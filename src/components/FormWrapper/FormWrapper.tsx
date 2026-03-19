@@ -11,6 +11,7 @@ import { buildRenderField } from "./renderField";
 import { AlertDialog } from "@/components/ui/alert-dialog";
 import { useTranslation } from "react-i18next";
 import { normalizeFieldValue, validateFieldValue } from "./validation";
+import { reportClientTelemetry } from "@/lib/utils/clientTelemetry";
 
 const getAllFields = (
 	fields: FormWrapperFieldConfig[],
@@ -169,7 +170,14 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 				await field.onBlur(normalizedValue, nextFormData, updateField);
 			}
 		} catch (error) {
-			console.warn(`Field onBlur failed for ${field.name}`, error);
+			reportClientTelemetry({
+				level: "warn",
+				event: "form_wrapper.field_blur.failed",
+				error,
+				metadata: {
+					field_name: field.name,
+				},
+			});
 		}
 		const fieldError = validateFieldValue(
 			field,

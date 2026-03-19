@@ -1,5 +1,7 @@
 "use server";
 
+import { logger } from "@/server/logging/logger";
+
 export async function getMaptilerKey(): Promise<string | null> {
 	const apiKey = process.env.MAPTILER_API_KEY;
 	return apiKey ?? null;
@@ -30,11 +32,17 @@ export async function geocodeAddress(
 	const apiKey = process.env.MAPTILER_API_KEY;
 	const bbox = process.env.MAP_BOUNDING_BOX;
 	if (!apiKey) {
-		console.warn("MAPTILER_API_KEY is not configured.");
+		logger.warn("maptiler.geocode.misconfigured", {
+			subsystem: "map",
+			missing_env: "MAPTILER_API_KEY",
+		});
 		return null;
 	}
 	if (!bbox) {
-		console.warn("MAP_BOUNDING_BOX is not configured.");
+		logger.warn("maptiler.geocode.misconfigured", {
+			subsystem: "map",
+			missing_env: "MAP_BOUNDING_BOX",
+		});
 		return null;
 	}
 
@@ -49,9 +57,34 @@ export async function geocodeAddress(
 	const url = `https://api.maptiler.com/geocoding/${encoded}.json?${params.toString()}`;
 
 	try {
-		const response = await fetch(url);
+		const response = await logger.time(
+			{
+				level: "info",
+				event: "maptiler.geocode.request.completed",
+				successData: {
+					provider: "maptiler",
+					query_length: query.trim().length,
+				},
+				errorEvent: "maptiler.geocode.request.failed",
+				errorData: {
+					provider: "maptiler",
+					query_length: query.trim().length,
+				},
+				slowThresholdMs: 1500,
+				slowEvent: "maptiler.geocode.request.slow",
+				slowData: {
+					provider: "maptiler",
+					query_length: query.trim().length,
+				},
+			},
+			() => fetch(url),
+		);
 		if (!response.ok) {
-			console.warn(`Geocode failed with status: ${response.status}`);
+			logger.warn("maptiler.geocode.http_error", {
+				subsystem: "map",
+				http_status: response.status,
+				query_length: query.trim().length,
+			});
 			return null;
 		}
 		const data = await response.json();
@@ -62,7 +95,11 @@ export async function geocodeAddress(
 		if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
 		return { lat, lng };
 	} catch (error) {
-		console.warn("Geocode error:", error);
+		logger.warn("maptiler.geocode.failed", {
+			subsystem: "map",
+			query_length: query.trim().length,
+			error: error instanceof Error ? error.message : String(error),
+		});
 		return null;
 	}
 }
@@ -73,16 +110,40 @@ export async function reverseGeocode(
 ): Promise<ReverseGeocodeResult | null> {
 	const apiKey = process.env.MAPTILER_API_KEY;
 	if (!apiKey) {
-		console.warn("MAPTILER_API_KEY is not configured.");
+		logger.warn("maptiler.reverse_geocode.misconfigured", {
+			subsystem: "map",
+			missing_env: "MAPTILER_API_KEY",
+		});
 		return null;
 	}
 
 	const url = `https://api.maptiler.com/geocoding/${lng},${lat}.json?key=${apiKey}`;
 
 	try {
-		const response = await fetch(url);
+		const response = await logger.time(
+			{
+				level: "info",
+				event: "maptiler.reverse_geocode.request.completed",
+				successData: {
+					provider: "maptiler",
+				},
+				errorEvent: "maptiler.reverse_geocode.request.failed",
+				errorData: {
+					provider: "maptiler",
+				},
+				slowThresholdMs: 1500,
+				slowEvent: "maptiler.reverse_geocode.request.slow",
+				slowData: {
+					provider: "maptiler",
+				},
+			},
+			() => fetch(url),
+		);
 		if (!response.ok) {
-			console.warn(`Reverse geocode failed with status: ${response.status}`);
+			logger.warn("maptiler.reverse_geocode.http_error", {
+				subsystem: "map",
+				http_status: response.status,
+			});
 			return null;
 		}
 		const data = await response.json();
@@ -122,7 +183,10 @@ export async function reverseGeocode(
 			zipcode,
 		};
 	} catch (error) {
-		console.warn("Reverse geocode error:", error);
+		logger.warn("maptiler.reverse_geocode.failed", {
+			subsystem: "map",
+			error: error instanceof Error ? error.message : String(error),
+		});
 		return null;
 	}
 }

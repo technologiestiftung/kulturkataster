@@ -1,5 +1,6 @@
 import type { UserStatus } from "@/generated/prisma";
 import { sendTemplatedEmail } from "@/server/email/sendTemplatedEmail";
+import { logger } from "@/server/logging/logger";
 
 export type RoleEmailTarget = "district" | "state" | "network";
 export type RoleEmailDecision = "approved" | "rejected";
@@ -55,7 +56,11 @@ export async function sendAccountDeletedEmail(params: {
 			},
 		});
 	} catch (error) {
-		console.error("[email] account deleted notification failed:", error);
+		logger.error("email.account_deleted.failed", error, {
+			subsystem: "email",
+			email_to: params.email,
+			template: "custom/account_deleted.html",
+		});
 	}
 }
 
@@ -94,7 +99,13 @@ export async function sendClaimDecisionEmail(params: {
 			},
 		});
 	} catch (error) {
-		console.error("[email] claim decision notification failed:", error);
+		logger.error("email.claim_decision.failed", error, {
+			subsystem: "email",
+			email_to: params.email,
+			template: templatePath,
+			decision: params.decision,
+			institution_name: params.institutionName,
+		});
 	}
 }
 
@@ -133,7 +144,13 @@ export async function sendSubmissionDecisionEmail(params: {
 			},
 		});
 	} catch (error) {
-		console.error("[email] submission decision notification failed:", error);
+		logger.error("email.submission_decision.failed", error, {
+			subsystem: "email",
+			email_to: params.email,
+			template: templatePath,
+			decision: params.decision,
+			institution_name: params.institutionName,
+		});
 	}
 }
 
@@ -205,7 +222,13 @@ export async function sendRoleDecisionEmail(params: {
 			},
 		});
 	} catch (error) {
-		console.error("[email] role decision notification failed:", error);
+		logger.error("email.role_decision.failed", error, {
+			subsystem: "email",
+			email_to: params.email,
+			template: templatePath,
+			target: params.target,
+			decision: params.decision,
+		});
 	}
 }
 

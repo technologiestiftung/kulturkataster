@@ -20,6 +20,11 @@ import {
 	sendRoleDecisionEmail,
 	sendRoleDecisionEmailIfNeeded,
 } from "@/server/email/dispatcher";
+import { logger } from "@/server/logging/logger";
+import {
+	runWithServerRequestContext,
+	setRequestContext,
+} from "@/server/logging/requestContext";
 
 const buildMirroredUserMetadata = (
 	existingMetadata: unknown,
@@ -126,221 +131,325 @@ export async function getUserById(id: string) {
 }
 
 export async function createUser(input: UserFormInput) {
-	const currentUserId = await getCurrentUserId();
-	const ctx = await getAccessContextForUser(currentUserId);
-	authorizeTable(ctx, "user", "create");
-	requireAllScope(ctx, "user", "create");
+	return runWithServerRequestContext(
+		async () => {
+			const currentUserId = await getCurrentUserId();
+			setRequestContext({ userId: currentUserId });
+			const ctx = await getAccessContextForUser(currentUserId);
+			authorizeTable(ctx, "user", "create");
+			requireAllScope(ctx, "user", "create");
 
-	const supabase = createAdminClient();
-	const siteUrl = process.env.SITE_URL ?? "http://127.0.0.1:3000";
-	const { data, error } = await supabase.auth.admin.inviteUserByEmail(
-		input.email,
-		{
-			redirectTo: `${siteUrl}/resetPassword`,
+			const supabase = createAdminClient();
+			const siteUrl = process.env.SITE_URL ?? "http://127.0.0.1:3000";
+			const { data, error } = await supabase.auth.admin.inviteUserByEmail(
+				input.email,
+				{
+					redirectTo: `${siteUrl}/resetPassword`,
+				},
+			);
+
+			if (error || !data.user) {
+				logger.error("user.create.auth_invite_failed", error, {
+					subsystem: "auth",
+					actor_user_id: currentUserId,
+					email: input.email,
+				});
+				throw new Error(error?.message || "Failed to create auth user.");
+			}
+
+			let user;
+			try {
+				user = await userRepo.create({
+					id: data.user.id,
+					email: input.email,
+					first_name: input.first_name ?? undefined,
+					last_name: input.last_name ?? undefined,
+					status: input.status ?? undefined,
+					compliance: input.compliance ?? undefined,
+					meta_info: input.meta_info ?? undefined,
+					account_type: input.account_type ?? undefined,
+					role: input.roleId ? { connect: { id: input.roleId } } : undefined,
+					groups: input.groupIds
+						? { connect: input.groupIds.map((id) => ({ id })) }
+						: undefined,
+					institutions: input.institutionIds
+						? { connect: input.institutionIds.map((id) => ({ id })) }
+						: undefined,
+				});
+			} catch (dbError) {
+				logger.error("user.create.db_failed", dbError, {
+					subsystem: "user",
+					db_subsystem: "db",
+					actor_user_id: currentUserId,
+					target_user_id: data.user.id,
+					email: input.email,
+				});
+				throw dbError;
+			}
+			await syncAuthUserMetadataAsAdmin(user.id, {
+				first_name: user.first_name,
+				last_name: user.last_name,
+			});
+			revalidateAccount();
+			return user;
 		},
+		{ route: "server_action:users.createUser" },
 	);
-
-	if (error || !data.user) {
-		throw new Error(error?.message || "Failed to create auth user.");
-	}
-
-	const user = await userRepo.create({
-		id: data.user.id,
-		email: input.email,
-		first_name: input.first_name ?? undefined,
-		last_name: input.last_name ?? undefined,
-		status: input.status ?? undefined,
-		compliance: input.compliance ?? undefined,
-		meta_info: input.meta_info ?? undefined,
-		account_type: input.account_type ?? undefined,
-		role: input.roleId ? { connect: { id: input.roleId } } : undefined,
-		groups: input.groupIds
-			? { connect: input.groupIds.map((id) => ({ id })) }
-			: undefined,
-		institutions: input.institutionIds
-			? { connect: input.institutionIds.map((id) => ({ id })) }
-			: undefined,
-	});
-	await syncAuthUserMetadataAsAdmin(user.id, {
-		first_name: user.first_name,
-		last_name: user.last_name,
-	});
-	revalidateAccount();
-	return user;
 }
 
 export async function updateUser(input: UserFormInput) {
-	const currentUserId = await getCurrentUserId();
-	const ctx = await getAccessContextForUser(currentUserId);
-	authorizeTable(ctx, "user", "update");
-	const scope = getTableScope(ctx, "user", "update");
+	return runWithServerRequestContext(
+		async () => {
+			const currentUserId = await getCurrentUserId();
+			setRequestContext({ userId: currentUserId });
+			const ctx = await getAccessContextForUser(currentUserId);
+			authorizeTable(ctx, "user", "update");
+			const scope = getTableScope(ctx, "user", "update");
 
-	if (!input.id) {
-		throw new Error("User id is required for update.");
-	}
+			if (!input.id) {
+				throw new Error("User id is required for update.");
+			}
 
-	if (scope !== "all") {
-		const ownerId = requireScopeOrUser(scope, currentUserId);
-		if (!ownerId || input.id !== ownerId) {
-			throw new Error("Not authorized to update this user.");
-		}
-		if (
-			typeof input.status !== "undefined" ||
-			typeof input.compliance !== "undefined" ||
-			typeof input.roleId !== "undefined" ||
-			typeof input.groupIds !== "undefined" ||
-			typeof input.institutionIds !== "undefined"
-		) {
-			throw new Error("Not authorized to update restricted user fields.");
-		}
+			if (scope !== "all") {
+				const ownerId = requireScopeOrUser(scope, currentUserId);
+				if (!ownerId || input.id !== ownerId) {
+					throw new Error("Not authorized to update this user.");
+				}
+				if (
+					typeof input.status !== "undefined" ||
+					typeof input.compliance !== "undefined" ||
+					typeof input.roleId !== "undefined" ||
+					typeof input.groupIds !== "undefined" ||
+					typeof input.institutionIds !== "undefined"
+				) {
+					throw new Error("Not authorized to update restricted user fields.");
+				}
 
-		const supabase = await createClient();
-		if (input.email) {
-			const { error: authUpdateError } = await supabase.auth.updateUser({
+				const supabase = await createClient();
+				if (input.email) {
+					const { error: authUpdateError } = await supabase.auth.updateUser({
+						email: input.email,
+					});
+					if (authUpdateError) {
+						logger.error("user.update.self_auth_failed", authUpdateError, {
+							subsystem: "auth",
+							actor_user_id: currentUserId,
+							target_user_id: input.id,
+						});
+						throw new Error(authUpdateError.message);
+					}
+				}
+
+				let user;
+				try {
+					user = await userRepo.update(input.id, {
+						email: input.email,
+						first_name: input.first_name ?? undefined,
+						last_name: input.last_name ?? undefined,
+						account_type: input.account_type ?? undefined,
+						meta_info: input.meta_info ?? undefined,
+					});
+				} catch (error) {
+					logger.error("user.update.db_failed", error, {
+						subsystem: "user",
+						db_subsystem: "db",
+						actor_user_id: currentUserId,
+						target_user_id: input.id,
+					});
+					throw error;
+				}
+				await syncAuthUserMetadataAsCurrentUser({
+					first_name: user.first_name,
+					last_name: user.last_name,
+				});
+				revalidateAccount();
+				return user;
+			}
+
+			const supabase = createAdminClient();
+			const existingUser = await userRepo.findById(input.id);
+			if (!existingUser) {
+				throw new Error("User not found.");
+			}
+
+			const authPayload: {
+				email?: string;
+				banDuration?: string;
+			} = {
 				email: input.email,
-			});
+			};
+
+			if (input.status === "banned") {
+				authPayload.banDuration = "876000h";
+			} else if (input.status === "active") {
+				authPayload.banDuration = "0s";
+			}
+
+			const { error: authUpdateError } =
+				await supabase.auth.admin.updateUserById(input.id, authPayload);
+
 			if (authUpdateError) {
+				logger.error("user.update.admin_auth_failed", authUpdateError, {
+					subsystem: "auth",
+					actor_user_id: currentUserId,
+					target_user_id: input.id,
+				});
 				throw new Error(authUpdateError.message);
 			}
-		}
 
-		const user = await userRepo.update(input.id, {
-			email: input.email,
-			first_name: input.first_name ?? undefined,
-			last_name: input.last_name ?? undefined,
-			account_type: input.account_type ?? undefined,
-			meta_info: input.meta_info ?? undefined,
-		});
-		await syncAuthUserMetadataAsCurrentUser({
-			first_name: user.first_name,
-			last_name: user.last_name,
-		});
-		revalidateAccount();
-		return user;
-	}
+			let user;
+			try {
+				user = await userRepo.update(input.id, {
+					email: input.email,
+					first_name: input.first_name ?? undefined,
+					last_name: input.last_name ?? undefined,
+					status: input.status ?? undefined,
+					compliance: input.compliance ?? undefined,
+					meta_info: input.meta_info ?? undefined,
+					account_type: input.account_type ?? undefined,
+					role: input.roleId ? { connect: { id: input.roleId } } : undefined,
+					groups: input.groupIds
+						? { set: input.groupIds.map((id) => ({ id })) }
+						: undefined,
+					institutions: input.institutionIds
+						? { set: input.institutionIds.map((id) => ({ id })) }
+						: undefined,
+				});
+			} catch (error) {
+				logger.error("user.update.db_failed", error, {
+					subsystem: "user",
+					db_subsystem: "db",
+					actor_user_id: currentUserId,
+					target_user_id: input.id,
+				});
+				throw error;
+			}
+			await syncAuthUserMetadataAsAdmin(user.id, {
+				first_name: user.first_name,
+				last_name: user.last_name,
+			});
 
-	const supabase = createAdminClient();
-	const existingUser = await userRepo.findById(input.id);
-	if (!existingUser) {
-		throw new Error("User not found.");
-	}
-
-	const authPayload: {
-		email?: string;
-		banDuration?: string;
-	} = {
-		email: input.email,
-	};
-
-	if (input.status === "banned") {
-		authPayload.banDuration = "876000h";
-	} else if (input.status === "active") {
-		authPayload.banDuration = "0s";
-	}
-
-	const { error: authUpdateError } = await supabase.auth.admin.updateUserById(
-		input.id,
-		authPayload,
+			await sendRoleDecisionEmailIfNeeded({
+				beforeStatus: existingUser.status,
+				afterStatus: user.status,
+				accountType: user.account_type,
+				email: user.email,
+				firstName: user.first_name,
+				lastName: user.last_name,
+				metaInfo: user.meta_info,
+			});
+			revalidateAccount();
+			return user;
+		},
+		{ route: "server_action:users.updateUser" },
 	);
-
-	if (authUpdateError) {
-		throw new Error(authUpdateError.message);
-	}
-
-	const user = await userRepo.update(input.id, {
-		email: input.email,
-		first_name: input.first_name ?? undefined,
-		last_name: input.last_name ?? undefined,
-		status: input.status ?? undefined,
-		compliance: input.compliance ?? undefined,
-		meta_info: input.meta_info ?? undefined,
-		account_type: input.account_type ?? undefined,
-		role: input.roleId ? { connect: { id: input.roleId } } : undefined,
-		groups: input.groupIds
-			? { set: input.groupIds.map((id) => ({ id })) }
-			: undefined,
-		institutions: input.institutionIds
-			? { set: input.institutionIds.map((id) => ({ id })) }
-			: undefined,
-	});
-	await syncAuthUserMetadataAsAdmin(user.id, {
-		first_name: user.first_name,
-		last_name: user.last_name,
-	});
-
-	await sendRoleDecisionEmailIfNeeded({
-		beforeStatus: existingUser.status,
-		afterStatus: user.status,
-		accountType: user.account_type,
-		email: user.email,
-		firstName: user.first_name,
-		lastName: user.last_name,
-		metaInfo: user.meta_info,
-	});
-	revalidateAccount();
-	return user;
 }
 
 export async function deleteUser(id: string) {
-	const currentUserId = await getCurrentUserId();
-	const ctx = await getAccessContextForUser(currentUserId);
-	authorizeTable(ctx, "user", "delete");
-	const scope = getTableScope(ctx, "user", "delete");
-	if (scope !== "all") {
-		const ownerId = requireScopeOrUser(scope, currentUserId);
-		if (!ownerId || id !== ownerId) {
-			throw new Error("Not authorized to delete users.");
-		}
-	}
+	return runWithServerRequestContext(
+		async () => {
+			const currentUserId = await getCurrentUserId();
+			setRequestContext({ userId: currentUserId });
+			const ctx = await getAccessContextForUser(currentUserId);
+			authorizeTable(ctx, "user", "delete");
+			const scope = getTableScope(ctx, "user", "delete");
+			if (scope !== "all") {
+				const ownerId = requireScopeOrUser(scope, currentUserId);
+				if (!ownerId || id !== ownerId) {
+					throw new Error("Not authorized to delete users.");
+				}
+			}
 
-	const existingUser = await userRepo.findById(id);
-	const supabase = createAdminClient();
-	const { error } = await supabase.auth.admin.deleteUser(id);
-	if (error) {
-		throw new Error(error.message);
-	}
+			const existingUser = await userRepo.findById(id);
+			const supabase = createAdminClient();
+			const { error } = await supabase.auth.admin.deleteUser(id);
+			if (error) {
+				logger.error("user.delete.auth_failed", error, {
+					subsystem: "auth",
+					actor_user_id: currentUserId,
+					target_user_id: id,
+				});
+				throw new Error(error.message);
+			}
 
-	await userRepo.remove(id);
-	if (existingUser?.email) {
-		await sendAccountDeletedEmail({
-			email: existingUser.email,
-			firstName: existingUser.first_name,
-			lastName: existingUser.last_name,
-		});
-	}
-	revalidateAccount();
-	return { id };
+			try {
+				await userRepo.remove(id);
+			} catch (dbError) {
+				logger.error("user.delete.db_failed", dbError, {
+					subsystem: "user",
+					db_subsystem: "db",
+					actor_user_id: currentUserId,
+					target_user_id: id,
+				});
+				throw dbError;
+			}
+			if (existingUser?.email) {
+				await sendAccountDeletedEmail({
+					email: existingUser.email,
+					firstName: existingUser.first_name,
+					lastName: existingUser.last_name,
+				});
+			}
+			revalidateAccount();
+			return { id };
+		},
+		{ route: "server_action:users.deleteUser" },
+	);
 }
 
 export async function sendPasswordReset(email: string) {
-	const currentUserId = await getCurrentUserId();
-	const ctx = await getAccessContextForUser(currentUserId);
-	authorizeTable(ctx, "user", "update");
-	requireAllScope(ctx, "user", "update");
+	return runWithServerRequestContext(
+		async () => {
+			const currentUserId = await getCurrentUserId();
+			setRequestContext({ userId: currentUserId });
+			const ctx = await getAccessContextForUser(currentUserId);
+			authorizeTable(ctx, "user", "update");
+			requireAllScope(ctx, "user", "update");
 
-	const result = await requestPasswordReset(email);
-	if (!result.ok) {
-		throw new Error(result.error ?? "Failed to send password reset email.");
-	}
+			const result = await requestPasswordReset(email);
+			if (!result.ok) {
+				logger.error(
+					"user.password_reset.request_failed",
+					new Error(result.error ?? "Failed to send password reset email."),
+					{
+						subsystem: "auth",
+						actor_user_id: currentUserId,
+						email,
+					},
+				);
+				throw new Error(result.error ?? "Failed to send password reset email.");
+			}
 
-	return { ok: true as const };
+			return { ok: true as const };
+		},
+		{ route: "server_action:users.sendPasswordReset" },
+	);
 }
 
 export async function sendComplianceResend(email: string): Promise<void> {
-	const currentUserId = await getCurrentUserId();
-	const ctx = await getAccessContextForUser(currentUserId);
-	authorizeTable(ctx, "user", "update");
-	requireAllScope(ctx, "user", "update");
+	return runWithServerRequestContext(
+		async () => {
+			const currentUserId = await getCurrentUserId();
+			setRequestContext({ userId: currentUserId });
+			const ctx = await getAccessContextForUser(currentUserId);
+			authorizeTable(ctx, "user", "update");
+			requireAllScope(ctx, "user", "update");
 
-	const matchedUsers = await userRepo.search({ email: { equals: email } }, 1);
-	const matchedUser = matchedUsers[0];
-	await sendComplianceResendEmail({
-		email,
-		firstName: matchedUser?.first_name,
-		lastName: matchedUser?.last_name,
-	});
+			const matchedUsers = await userRepo.search(
+				{ email: { equals: email } },
+				1,
+			);
+			const matchedUser = matchedUsers[0];
+			await sendComplianceResendEmail({
+				email,
+				firstName: matchedUser?.first_name,
+				lastName: matchedUser?.last_name,
+			});
 
-	return;
+			return;
+		},
+		{ route: "server_action:users.sendComplianceResend" },
+	);
 }
 
 export async function sendRoleDecisionEmailManual(input: {
@@ -348,22 +457,28 @@ export async function sendRoleDecisionEmailManual(input: {
 	target: RoleEmailTarget;
 	decision: RoleEmailDecision;
 }): Promise<void> {
-	const currentUserId = await getCurrentUserId();
-	const ctx = await getAccessContextForUser(currentUserId);
-	authorizeTable(ctx, "user", "update");
-	requireAllScope(ctx, "user", "update");
+	return runWithServerRequestContext(
+		async () => {
+			const currentUserId = await getCurrentUserId();
+			setRequestContext({ userId: currentUserId });
+			const ctx = await getAccessContextForUser(currentUserId);
+			authorizeTable(ctx, "user", "update");
+			requireAllScope(ctx, "user", "update");
 
-	const user = await userRepo.findById(input.userId);
-	if (!user) {
-		throw new Error("User not found.");
-	}
+			const user = await userRepo.findById(input.userId);
+			if (!user) {
+				throw new Error("User not found.");
+			}
 
-	await sendRoleDecisionEmail({
-		target: input.target,
-		decision: input.decision,
-		email: user.email,
-		firstName: user.first_name,
-		lastName: user.last_name,
-		metaInfo: user.meta_info,
-	});
+			await sendRoleDecisionEmail({
+				target: input.target,
+				decision: input.decision,
+				email: user.email,
+				firstName: user.first_name,
+				lastName: user.last_name,
+				metaInfo: user.meta_info,
+			});
+		},
+		{ route: "server_action:users.sendRoleDecisionEmailManual" },
+	);
 }

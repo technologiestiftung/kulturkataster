@@ -37,6 +37,7 @@ import {
 	findPotentialInstitutionDuplicates,
 	hasDuplicateInstitutionByNameAndAddress,
 } from "@/lib/utils/institutionDuplicateUtils";
+import { reportClientTelemetry } from "@/lib/utils/clientTelemetry";
 type InstitutionFormModalProps = {
 	mode: "create" | "edit";
 	institution?: Institution | null;
@@ -99,6 +100,7 @@ const useInstitutionSubmit = (
 	onSuccess: (mode: InstitutionFormModalProps["mode"]) => void,
 	shouldRefresh: boolean,
 	onError: (message: string) => void,
+	permissionContext: InstitutionFormModalProps["permissionContext"],
 ) => {
 	const [submitting, setSubmitting] = useState(false);
 	const addInstitution = useAccountStore((state) => state.addInstitution);
@@ -179,6 +181,18 @@ const useInstitutionSubmit = (
 			}
 			onClose();
 		} catch (error) {
+			reportClientTelemetry({
+				level: "error",
+				event: "institution.form.submit_failed",
+				error,
+				metadata: {
+					mode,
+					institution_id: institutionId,
+					address_id: addressId,
+					category_count: categoryIds.length,
+					permission_context: permissionContext,
+				},
+			});
 			const message =
 				error instanceof Error
 					? error.message
@@ -1049,6 +1063,7 @@ export function InstitutionFormModal({
 		handleSuccess,
 		shouldRefresh,
 		(message) => setSubmitError(message),
+		permissionContext,
 	);
 
 	const handleCustomSubmit = useCallback(
@@ -1063,6 +1078,16 @@ export function InstitutionFormModal({
 					resolvedClose();
 				}
 			} catch (error) {
+				reportClientTelemetry({
+					level: "error",
+					event: "institution.form.custom_submit_failed",
+					error,
+					metadata: {
+						mode,
+						institution_id: resolvedInstitutionWithFallback?.id,
+						permission_context: permissionContext,
+					},
+				});
 				const message =
 					error instanceof Error
 						? error.message
@@ -1074,6 +1099,7 @@ export function InstitutionFormModal({
 			closeOnSubmit,
 			mode,
 			onSubmit,
+			permissionContext,
 			resolvedClose,
 			resolvedInstitutionWithFallback,
 		],
@@ -1093,8 +1119,9 @@ export function InstitutionFormModal({
 
 	const validateDuplicateInstitution = useCallback(
 		(formData: Record<string, unknown>) => {
+			const mergedFormData = { ...currentFormData, ...formData };
 			const hasDuplicate = hasDuplicateInstitutionByNameAndAddress({
-				formData,
+				formData: mergedFormData,
 				institutions: allInstitutions,
 				currentInstitutionId: resolvedInstitutionWithFallback?.id,
 			});
@@ -1102,6 +1129,7 @@ export function InstitutionFormModal({
 		},
 		[
 			allInstitutions,
+			currentFormData,
 			duplicateInstitutionMessage,
 			resolvedInstitutionWithFallback?.id,
 		],

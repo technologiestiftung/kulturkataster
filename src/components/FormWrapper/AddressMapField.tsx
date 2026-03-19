@@ -20,6 +20,7 @@ import {
 	reverseGeocode,
 } from "@/server/actions/maptiler";
 import { Button } from "@/components/ui/button";
+import { reportClientTelemetry } from "@/lib/utils/clientTelemetry";
 
 type AddressMapValue = {
 	lat: number | null;
@@ -137,9 +138,13 @@ export function AddressMapField({
 				}
 				const parsedBbox = parseBoundingBox(rawBbox);
 				if (rawBbox && !parsedBbox) {
-					console.warn(
-						"MAP_BOUNDING_BOX is invalid. Map is not bounds-limited.",
-					);
+					reportClientTelemetry({
+						level: "warn",
+						event: "address_map.config.invalid_bounding_box",
+						metadata: {
+							has_raw_bbox: true,
+						},
+					});
 				}
 				setMaptilerKey(key);
 				setMapBoundingBox(parsedBbox);
@@ -147,7 +152,11 @@ export function AddressMapField({
 				if (active) {
 					setMapError("Failed to load map configuration.");
 				}
-				console.warn("Failed to load map configuration:", error);
+				reportClientTelemetry({
+					level: "warn",
+					event: "address_map.config.load_failed",
+					error,
+				});
 			}
 		};
 		if (!maptilerKey && !mapError) {
@@ -330,7 +339,11 @@ export function AddressMapField({
 				address: address ?? undefined,
 			});
 		} catch (error) {
-			console.warn("Reverse geocode failed", error);
+			reportClientTelemetry({
+				level: "warn",
+				event: "address_map.reverse_geocode.failed",
+				error,
+			});
 			onChangeRef.current({
 				lat: pendingSelection.lat,
 				lng: pendingSelection.lng,

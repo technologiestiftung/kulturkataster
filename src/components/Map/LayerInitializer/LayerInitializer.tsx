@@ -19,6 +19,7 @@ import TileWMS from "ol/source/TileWMS";
 import VectorSource from "ol/source/Vector";
 import WMTS, { optionsFromCapabilities } from "ol/source/WMTS";
 import { FC, useCallback, useEffect, useState } from "react";
+import { reportClientTelemetry } from "@/lib/utils/clientTelemetry";
 
 interface WMTSCapabilitiesMap {
 	[url: string]: any;
@@ -89,10 +90,11 @@ const LayerInitializer: FC = () => {
 
 				setWmtsCapabilities(capabilitiesMap);
 			} catch (error) {
-				console.error(
-					"[LayerInitializer] Error loading WMTS capabilities:",
+				reportClientTelemetry({
+					level: "error",
+					event: "map.layer_initializer.wmts_capabilities_load.failed",
 					error,
-				);
+				});
 			} finally {
 				setCapabilitiesLoaded(true);
 			}
@@ -223,9 +225,14 @@ const LayerInitializer: FC = () => {
 						serviceConfig.styleId,
 					);
 					if (!styleApplied) {
-						console.warn(
-							`Failed to apply style "${serviceConfig.styleId}" to layer`,
-						);
+						reportClientTelemetry({
+							level: "warn",
+							event: "map.layer_initializer.style_apply.failed",
+							metadata: {
+								style_id: serviceConfig.styleId,
+								layer_type: "WFS",
+							},
+						});
 					}
 				}
 
@@ -314,9 +321,13 @@ const LayerInitializer: FC = () => {
 				const { service: serviceConfig } = layerConfig;
 
 				if (!serviceConfig) {
-					console.warn(
-						`[LayerInitializer] Layer ${layerConfig.id} has no service config. Skipping.`,
-					);
+					reportClientTelemetry({
+						level: "warn",
+						event: "map.layer_initializer.layer_config.missing_service",
+						metadata: {
+							layer_id: layerConfig.id,
+						},
+					});
 					return;
 				}
 
@@ -344,10 +355,15 @@ const LayerInitializer: FC = () => {
 					managedLayers.push(managedLayer);
 					map?.addLayer(olLayer);
 				} else {
-					console.error(
-						`[LayerInitializer] Failed to create layer ${layerConfig.id}:`,
+					reportClientTelemetry({
+						level: "error",
+						event: "map.layer_initializer.layer_create.failed",
 						error,
-					);
+						metadata: {
+							layer_id: layerConfig.id,
+							layer_type: layerType,
+						},
+					});
 				}
 			});
 
