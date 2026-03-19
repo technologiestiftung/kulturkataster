@@ -1,10 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import {
+	buildForwardedRequestHeaders,
+	REQUEST_ID_HEADER,
+} from "@/server/logging/requestContext";
 
-export async function updateSession(request: NextRequest) {
+export async function updateSession(
+	request: NextRequest,
+	forwardedHeaders = buildForwardedRequestHeaders(request.headers, {
+		method: request.method,
+		pathname: request.nextUrl.pathname,
+	}),
+) {
 	let supabaseResponse = NextResponse.next({
-		request,
+		request: {
+			headers: forwardedHeaders,
+		},
 	});
 
 	// With Fluid compute, don't put this client in a global environment
@@ -23,7 +35,9 @@ export async function updateSession(request: NextRequest) {
 							request.cookies.set(name, value),
 					);
 					supabaseResponse = NextResponse.next({
-						request,
+						request: {
+							headers: forwardedHeaders,
+						},
 					});
 					cookiesToSet.forEach(
 						({
@@ -61,13 +75,23 @@ export async function updateSession(request: NextRequest) {
 	if (!user && !isLoginPath && !isResetPasswordPath && isAccountPath) {
 		const url = request.nextUrl.clone();
 		url.pathname = `${localePrefix}/login`;
-		return NextResponse.redirect(url);
+		const response = NextResponse.redirect(url);
+		const requestId = forwardedHeaders.get(REQUEST_ID_HEADER);
+		if (requestId) {
+			response.headers.set(REQUEST_ID_HEADER, requestId);
+		}
+		return response;
 	}
 
 	if (user && (isLoginPath || isResetPasswordPath)) {
 		const url = request.nextUrl.clone();
 		url.pathname = `${localePrefix}/account`;
-		return NextResponse.redirect(url);
+		const response = NextResponse.redirect(url);
+		const requestId = forwardedHeaders.get(REQUEST_ID_HEADER);
+		if (requestId) {
+			response.headers.set(REQUEST_ID_HEADER, requestId);
+		}
+		return response;
 	}
 
 	// IMPORTANT: You *must* return the supabaseResponse object as it is. If you're
@@ -82,6 +106,11 @@ export async function updateSession(request: NextRequest) {
 	//    return myNewResponse
 	// If this is not done, you may be causing the browser and server to go out
 	// of sync and terminate the user's session prematurely!
+
+	const requestId = forwardedHeaders.get(REQUEST_ID_HEADER);
+	if (requestId) {
+		supabaseResponse.headers.set(REQUEST_ID_HEADER, requestId);
+	}
 
 	return supabaseResponse;
 }

@@ -164,7 +164,9 @@ const LayerItem = memo<{
 		}
 	}, [openLegendLayerId, layer.id]);
 
-	const serviceName = layer.config.service.name;
+	const serviceName =
+		layer.config.service.name?.trim() ||
+		t("map.unnamedLayer", { defaultValue: "Unbenannte Fachkarte" });
 	const serviceNameLang = layer.config.service.name_lang;
 	const serviceNameMid = layer.config.service.name_mid;
 

@@ -5,6 +5,7 @@ import { Point } from "ol/geom";
 import VectorLayer from "ol/layer/Vector";
 import { Vector as VectorSource } from "ol/source";
 import { Circle, Fill, Icon, Stroke, Style, Text } from "ol/style";
+import { reportClientTelemetry } from "@/lib/utils/clientTelemetry";
 
 interface StyleConfig {
 	polygonStrokeWidth?: number;
@@ -129,7 +130,13 @@ export const applyStyleToLayer = (
 ): boolean => {
 	const config = getStyleConfig(styleId);
 	if (!config) {
-		console.warn(`Style with ID "${styleId}" not found`);
+		reportClientTelemetry({
+			level: "warn",
+			event: "map.style.not_found",
+			metadata: {
+				style_id: styleId,
+			},
+		});
 		return false;
 	}
 

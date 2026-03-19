@@ -135,6 +135,16 @@ export function buildInstitutionForFormFromDraft(
 	draft: Record<string, unknown>,
 	categoryGroups: Category[] = [],
 ): Institution {
+	const originalInstitution =
+		typeof draft.originalInstitution === "object" &&
+		draft.originalInstitution !== null
+			? (draft.originalInstitution as Record<string, unknown>)
+			: null;
+
+	const institutionId =
+		toOptionalNumber(draft.entityId) ??
+		toOptionalNumber(originalInstitution?.id) ??
+		0;
 	const nestedAddress =
 		typeof draft.address === "object" && draft.address !== null
 			? (draft.address as Record<string, unknown>)
@@ -179,7 +189,7 @@ export function buildInstitutionForFormFromDraft(
 		}));
 
 	return {
-		id: toOptionalNumber(draft.id) ?? 0,
+		id: institutionId,
 		name: toOptionalText(draft.name) ?? "",
 		status: "public",
 		website: toOptionalText(draft.website),

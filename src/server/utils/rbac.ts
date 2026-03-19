@@ -5,6 +5,7 @@ import {
 	RoleFieldPermission,
 	RoleTablePermission,
 } from "@/generated/prisma";
+import { logger } from "../logging/logger";
 
 export type Action = PrismaAction;
 
@@ -110,6 +111,14 @@ export const requireAllScope = (
 	message?: string,
 ): void => {
 	if (getTableScope(context, table, action) !== "all") {
+		logger.warn("rbac.scope.denied", {
+			subsystem: "rbac",
+			role: context.role ?? "guest",
+			table,
+			action,
+			required_scope: "all",
+			actual_scope: getTableScope(context, table, action),
+		});
 		const error = new Error(
 			message ?? `Global ${action} access required for ${table}.`,
 		) as Error & RBACErrorMeta;
@@ -166,6 +175,12 @@ export const authorizeTable = (
 	action: Action,
 ): void => {
 	if (!canTable(context, table, action)) {
+		logger.warn("rbac.table.denied", {
+			subsystem: "rbac",
+			role: context.role ?? "guest",
+			table,
+			action,
+		});
 		const error = new Error(
 			`Role "${context.role ?? "guest"}" lacks ${action} on ${table}`,
 		) as Error & RBACErrorMeta;
@@ -184,6 +199,13 @@ export const authorizeFields = (
 ): void => {
 	if (fields.length === 0) return;
 	if (!canFields(context, table, fields, action)) {
+		logger.warn("rbac.fields.denied", {
+			subsystem: "rbac",
+			role: context.role ?? "guest",
+			table,
+			action,
+			fields,
+		});
 		const error = new Error(
 			`Role "${context.role ?? "guest"}" lacks ${action} on some fields of ${table}`,
 		) as Error & RBACErrorMeta;

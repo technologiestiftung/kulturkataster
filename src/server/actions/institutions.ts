@@ -22,6 +22,11 @@ import {
 	validateInstitutionUpdateInput,
 } from "@/server/validation/institutions";
 import { assertPositiveInteger } from "@/server/validation/common";
+import {
+	runWithServerRequestContext,
+	setRequestContext,
+} from "@/server/logging/requestContext";
+import { logger } from "@/server/logging/logger";
 
 export async function getInstitutions() {
 	const currentUserId = await getCurrentUserId();
@@ -76,88 +81,158 @@ const buildInstitutionFieldList = (
 };
 
 export async function createInstitution(input: InstitutionForm) {
-	const validatedInput = validateInstitutionCreateInput(input);
-	const currentUserId = await getCurrentUserId();
-	const ctx = await getAccessContextForUser(currentUserId);
-	const { fields } = buildInstitutionFieldList(validatedInput);
-	authorizeTable(ctx, "institution", "create");
-	if (fields.length > 0) {
-		authorizeFields(ctx, "institution", fields, "create");
-	}
+	return runWithServerRequestContext(
+		async () => {
+			const validatedInput = validateInstitutionCreateInput(input);
+			const currentUserId = await getCurrentUserId();
+			setRequestContext({ userId: currentUserId });
+			const ctx = await getAccessContextForUser(currentUserId);
+			const { fields } = buildInstitutionFieldList(validatedInput);
+			authorizeTable(ctx, "institution", "create");
+			if (fields.length > 0) {
+				authorizeFields(ctx, "institution", fields, "create");
+			}
 
-	const institution = await institutionRepo.create(
-		buildInstitutionCreateData(validatedInput, currentUserId),
+			let institution;
+			try {
+				institution = await institutionRepo.create(
+					buildInstitutionCreateData(validatedInput, currentUserId),
+				);
+			} catch (error) {
+				logger.error("institution.create.db_failed", error, {
+					subsystem: "institution",
+					db_subsystem: "db",
+					actor_user_id: currentUserId,
+				});
+				throw error;
+			}
+			revalidateAccount();
+			return institution;
+		},
+		{ route: "server_action:institutions.createInstitution" },
 	);
-	revalidateAccount();
-	return institution;
 }
 
 export async function updateInstitution(input: InstitutionUpdateForm) {
-	const validatedInput = validateInstitutionUpdateInput(input);
-	const currentUserId = await getCurrentUserId();
-	const ctx = await getAccessContextForUser(currentUserId);
-	const { fields } = buildInstitutionFieldList(validatedInput);
-	authorizeTable(ctx, "institution", "update");
-	const scope = getTableScope(ctx, "institution", "update");
-	if (fields.length > 0) {
-		authorizeFields(ctx, "institution", fields, "update");
-	}
+	return runWithServerRequestContext(
+		async () => {
+			const validatedInput = validateInstitutionUpdateInput(input);
+			const currentUserId = await getCurrentUserId();
+			setRequestContext({ userId: currentUserId });
+			const ctx = await getAccessContextForUser(currentUserId);
+			const { fields } = buildInstitutionFieldList(validatedInput);
+			authorizeTable(ctx, "institution", "update");
+			const scope = getTableScope(ctx, "institution", "update");
+			if (fields.length > 0) {
+				authorizeFields(ctx, "institution", fields, "update");
+			}
 
-	const data = buildInstitutionUpdateData(validatedInput, currentUserId);
+			const data = buildInstitutionUpdateData(validatedInput, currentUserId);
 
-	if (scope === "all") {
-		const institution = await institutionRepo.update(validatedInput.id, data);
-		revalidateAccount();
-		return institution;
-	}
+			if (scope === "all") {
+				let institution;
+				try {
+					institution = await institutionRepo.update(validatedInput.id, data);
+				} catch (error) {
+					logger.error("institution.update.db_failed", error, {
+						subsystem: "institution",
+						db_subsystem: "db",
+						actor_user_id: currentUserId,
+						institution_id: validatedInput.id,
+					});
+					throw error;
+				}
+				revalidateAccount();
+				return institution;
+			}
 
-	const accessWhere = buildInstitutionScopedWhere(scope, currentUserId, {
-		id: validatedInput.id,
-	});
-	if (!accessWhere) {
-		throw new Error("User must be authenticated to update institutions.");
-	}
-	const authorizedInstitution =
-		await institutionRepo.findFirstWithInclude(accessWhere);
-	if (!authorizedInstitution) {
-		throw new Error("Not authorized to update this institution.");
-	}
-	const institution = await institutionRepo.update(
-		authorizedInstitution.id,
-		data,
+			const accessWhere = buildInstitutionScopedWhere(scope, currentUserId, {
+				id: validatedInput.id,
+			});
+			if (!accessWhere) {
+				throw new Error("User must be authenticated to update institutions.");
+			}
+			const authorizedInstitution =
+				await institutionRepo.findFirstWithInclude(accessWhere);
+			if (!authorizedInstitution) {
+				throw new Error("Not authorized to update this institution.");
+			}
+			let institution;
+			try {
+				institution = await institutionRepo.update(
+					authorizedInstitution.id,
+					data,
+				);
+			} catch (error) {
+				logger.error("institution.update.db_failed", error, {
+					subsystem: "institution",
+					db_subsystem: "db",
+					actor_user_id: currentUserId,
+					institution_id: authorizedInstitution.id,
+				});
+				throw error;
+			}
+			revalidateAccount();
+			return institution;
+		},
+		{ route: "server_action:institutions.updateInstitution" },
 	);
-	revalidateAccount();
-	return institution;
 }
 
 export async function deleteInstitution(id: number) {
-	const validatedId = assertPositiveInteger(
-		id,
-		"Institution id must be positive.",
+	return runWithServerRequestContext(
+		async () => {
+			const validatedId = assertPositiveInteger(
+				id,
+				"Institution id must be positive.",
+			);
+			const currentUserId = await getCurrentUserId();
+			setRequestContext({ userId: currentUserId });
+			const ctx = await getAccessContextForUser(currentUserId);
+			authorizeTable(ctx, "institution", "delete");
+			const scope = getTableScope(ctx, "institution", "delete");
+			if (scope === "all") {
+				try {
+					await institutionRepo.remove(validatedId);
+				} catch (error) {
+					logger.error("institution.delete.db_failed", error, {
+						subsystem: "institution",
+						db_subsystem: "db",
+						actor_user_id: currentUserId,
+						institution_id: validatedId,
+					});
+					throw error;
+				}
+				revalidateAccount();
+				return { id: validatedId };
+			}
+			const accessWhere = buildInstitutionScopedWhere(scope, currentUserId, {
+				id: validatedId,
+			});
+			if (!accessWhere) {
+				throw new Error("User must be authenticated to delete institutions.");
+			}
+			const authorizedInstitution =
+				await institutionRepo.findFirstWithInclude(accessWhere);
+			if (!authorizedInstitution) {
+				throw new Error("Not authorized to delete this institution.");
+			}
+			try {
+				await institutionRepo.remove(authorizedInstitution.id);
+			} catch (error) {
+				logger.error("institution.delete.db_failed", error, {
+					subsystem: "institution",
+					db_subsystem: "db",
+					actor_user_id: currentUserId,
+					institution_id: authorizedInstitution.id,
+				});
+				throw error;
+			}
+			revalidateAccount();
+			return { id: validatedId };
+		},
+		{ route: "server_action:institutions.deleteInstitution" },
 	);
-	const currentUserId = await getCurrentUserId();
-	const ctx = await getAccessContextForUser(currentUserId);
-	authorizeTable(ctx, "institution", "delete");
-	const scope = getTableScope(ctx, "institution", "delete");
-	if (scope === "all") {
-		await institutionRepo.remove(validatedId);
-		revalidateAccount();
-		return { id: validatedId };
-	}
-	const accessWhere = buildInstitutionScopedWhere(scope, currentUserId, {
-		id: validatedId,
-	});
-	if (!accessWhere) {
-		throw new Error("User must be authenticated to delete institutions.");
-	}
-	const authorizedInstitution =
-		await institutionRepo.findFirstWithInclude(accessWhere);
-	if (!authorizedInstitution) {
-		throw new Error("Not authorized to delete this institution.");
-	}
-	await institutionRepo.remove(authorizedInstitution.id);
-	revalidateAccount();
-	return { id: validatedId };
 }
 
 export async function searchInstitutions(query: string) {

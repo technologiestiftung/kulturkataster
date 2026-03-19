@@ -19,6 +19,7 @@ import { useRouter } from "next/navigation";
 import { AlertDialog } from "../ui/alert-dialog";
 import { showSuccessToast } from "@/lib/utils/feedbackToast";
 import { buildInstitutionForFormFromDraft } from "@/lib/utils/institutionFormAdapter";
+import { reportClientTelemetry } from "@/lib/utils/clientTelemetry";
 
 type InstitutionDraftEditModalProps = {
 	returnTo?: string;
@@ -66,7 +67,15 @@ export function InstitutionDraftEditModal({
 				const result = await getSubmissionById(submissionId);
 				if (!active) return;
 				setFetchedSubmission(result ?? null);
-			} catch {
+			} catch (error) {
+				reportClientTelemetry({
+					level: "warn",
+					event: "institution_draft.edit.fetch_failed",
+					error,
+					metadata: {
+						submission_id: submissionId,
+					},
+				});
 				if (active) {
 					setFetchedSubmission(null);
 				}
@@ -84,31 +93,45 @@ export function InstitutionDraftEditModal({
 
 	const handleSubmit = useCallback(
 		async (data: Record<string, unknown>) => {
-			const payload: Record<string, unknown> = {
-				...data,
-				address: buildAddressFromFormData(data),
-			};
-			if (!resolvedSubmissionWithFallback || !hasSubmissionId) return;
-			const sourceInstitution =
-				resolvedSubmissionWithFallback.type === "update" &&
-				typeof payload.originalInstitution === "object" &&
-				payload.originalInstitution !== null
-					? (payload.originalInstitution as Record<string, unknown>)
-					: undefined;
-			const submissionDiff =
-				resolvedSubmissionWithFallback.type === "update"
-					? buildSubmissionDiff(payload, sourceInstitution)
-					: undefined;
-			const updated = await updateSubmission({
-				id: submissionId,
-				data: payload as Prisma.InputJsonValue,
-				diff: submissionDiff as Prisma.InputJsonValue | undefined,
-			});
-			if (updated) {
-				upsertSubmission(updated);
-			}
-			if (shouldRefresh) {
-				router.refresh();
+			try {
+				const payload: Record<string, unknown> = {
+					...data,
+					address: buildAddressFromFormData(data),
+				};
+				if (!resolvedSubmissionWithFallback || !hasSubmissionId) return;
+				const sourceInstitution =
+					resolvedSubmissionWithFallback.type === "update" &&
+					typeof payload.originalInstitution === "object" &&
+					payload.originalInstitution !== null
+						? (payload.originalInstitution as Record<string, unknown>)
+						: undefined;
+				const submissionDiff =
+					resolvedSubmissionWithFallback.type === "update"
+						? buildSubmissionDiff(payload, sourceInstitution)
+						: undefined;
+				const updated = await updateSubmission({
+					id: submissionId,
+					data: payload as Prisma.InputJsonValue,
+					diff: submissionDiff as Prisma.InputJsonValue | undefined,
+				});
+				if (updated) {
+					upsertSubmission(updated);
+				}
+				if (shouldRefresh) {
+					router.refresh();
+				}
+			} catch (error) {
+				reportClientTelemetry({
+					level: "error",
+					event: "institution_draft.edit.submit_failed",
+					error,
+					metadata: {
+						submission_id: submissionId,
+						submission_type: resolvedSubmissionWithFallback?.type,
+						entity_id: resolvedSubmissionWithFallback?.entity_id,
+					},
+				});
+				throw error;
 			}
 		},
 		[
@@ -140,6 +163,14 @@ export function InstitutionDraftEditModal({
 				router.refresh();
 			}
 		} catch (error) {
+			reportClientTelemetry({
+				level: "error",
+				event: "institution_draft.edit.delete_failed",
+				error,
+				metadata: {
+					submission_id: submissionId,
+				},
+			});
 			setIsDeleting(false);
 			throw error;
 		}
@@ -160,7 +191,13 @@ export function InstitutionDraftEditModal({
 				unknown
 			>,
 		});
-		return buildInstitutionForFormFromDraft(draft, categories) as Institution;
+		return buildInstitutionForFormFromDraft(
+			{
+				...draft,
+				entityId: resolvedSubmissionWithFallback?.entity_id ?? undefined,
+			},
+			categories,
+		) as Institution;
 	}, [resolvedSubmissionWithFallback, categories]);
 
 	const isLoading =
