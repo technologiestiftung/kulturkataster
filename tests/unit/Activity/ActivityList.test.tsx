@@ -361,7 +361,7 @@ describe("ActivityList filters", () => {
 		);
 	});
 
-	it("links user activities to account edit when the current user cannot read all users", () => {
+	it("links current user activities to account edit when the current user cannot read all users", () => {
 		mockState = {
 			currentProfile: {
 				id: "current-user",
@@ -381,7 +381,7 @@ describe("ActivityList filters", () => {
 				makeAudit({
 					id: 21,
 					entity_type: "user",
-					entity_id: "3a6ec09c-712c-42fc-ae0a-28dda26ec42e",
+					entity_id: "current-user",
 					new_data: { email: "person@example.com" },
 					user: null,
 				}),
