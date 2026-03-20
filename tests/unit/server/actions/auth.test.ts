@@ -17,7 +17,7 @@ vi.mock("@/server/prisma", () => ({
 			findUnique: vi.fn(),
 		},
 		role: {
-			findUnique: vi.fn(),
+			findFirst: vi.fn(),
 		},
 	},
 }));
@@ -25,14 +25,14 @@ vi.mock("@/server/prisma", () => ({
 const mockedCreateClient = vi.mocked(createClient);
 const mockedCreate = vi.mocked(prisma.user.create);
 const mockedFindUnique = vi.mocked(prisma.user.findUnique);
-const mockedRoleFindUnique = vi.mocked(prisma.role.findUnique);
+const mockedRoleFindFirst = vi.mocked(prisma.role.findFirst);
 
 describe("registerWithEmailPassword", () => {
 	beforeEach(() => {
 		mockedCreateClient.mockReset();
 		mockedCreate.mockReset();
 		mockedFindUnique.mockReset();
-		mockedRoleFindUnique.mockReset();
+		mockedRoleFindFirst.mockReset();
 	});
 
 	it("returns needsConfirmation for already-registered signUp errors", async () => {
@@ -80,7 +80,7 @@ describe("registerWithEmailPassword", () => {
 		});
 		mockedCreateClient.mockResolvedValue({ auth: { signUp } } as never);
 		mockedFindUnique.mockResolvedValueOnce(null as never);
-		mockedRoleFindUnique.mockResolvedValue({ id: 7 } as never);
+		mockedRoleFindFirst.mockResolvedValue({ id: 7 } as never);
 		mockedCreate.mockResolvedValue({} as never);
 
 		const result = await registerWithEmailPassword({
@@ -114,7 +114,7 @@ describe("registerWithEmailPassword", () => {
 		});
 		mockedCreateClient.mockResolvedValue({ auth: { signUp } } as never);
 		mockedFindUnique.mockResolvedValueOnce(null as never);
-		mockedRoleFindUnique.mockResolvedValue({ id: 7 } as never);
+		mockedRoleFindFirst.mockResolvedValue({ id: 7 } as never);
 		mockedCreate.mockResolvedValue({} as never);
 
 		const result = await registerWithEmailPassword({
@@ -142,7 +142,7 @@ describe("registerWithEmailPassword", () => {
 		});
 		mockedCreateClient.mockResolvedValue({ auth: { signUp } } as never);
 		mockedFindUnique.mockResolvedValueOnce(null as never);
-		mockedRoleFindUnique.mockResolvedValue({ id: 7 } as never);
+		mockedRoleFindFirst.mockResolvedValue({ id: 7 } as never);
 		mockedCreate.mockRejectedValue({ code: "P2002" });
 
 		const result = await registerWithEmailPassword({
@@ -179,7 +179,7 @@ describe("loginWithEmailPassword", () => {
 		mockedCreateClient.mockReset();
 		mockedCreate.mockReset();
 		mockedFindUnique.mockReset();
-		mockedRoleFindUnique.mockReset();
+		mockedRoleFindFirst.mockReset();
 	});
 
 	it("returns invalid_credentials when Supabase signIn fails", async () => {
