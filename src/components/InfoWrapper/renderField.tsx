@@ -265,6 +265,7 @@ const getContent = (
 			);
 		}
 		case "link":
+		case "url":
 		case "email":
 		case "phone":
 			return (

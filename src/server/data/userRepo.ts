@@ -33,8 +33,8 @@ export const userRepo = {
 				});
 			}
 			if (!existing.role_id) {
-				const guestRole = await prisma.role.findUnique({
-					where: { name: "guest" },
+				const guestRole = await prisma.role.findFirst({
+					where: { is_guest: true },
 					select: { id: true },
 				});
 				if (guestRole) {
@@ -48,8 +48,8 @@ export const userRepo = {
 			return existing;
 		}
 
-		const guestRole = await prisma.role.findUnique({
-			where: { name: "guest" },
+		const guestRole = await prisma.role.findFirst({
+			where: { is_guest: true },
 			select: { id: true },
 		});
 

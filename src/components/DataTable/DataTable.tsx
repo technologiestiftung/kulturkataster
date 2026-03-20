@@ -653,13 +653,13 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 						</div>
 					)}
 
-					<div className="flex w-full relative justify-center items-center flex-row gap-2 px-2 md:px-0">
+					<div className="flex w-full overflow-x-auto relative justify-center items-center flex-row gap-2 px-2 md:px-0">
 						{!isSearchOpen && config.primaryButton && (
 							<Button
 								onClick={config.primaryButton.onClick}
 								radius="full"
 								variant="surface"
-								className="bg-primary"
+								className="bg-primary shrink-0"
 								iconSize="lg"
 								aria-label={primaryButtonAriaLabel}
 							>
@@ -671,7 +671,7 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 								onClick={config.secondaryButton.onClick}
 								variant="outline"
 								size="lg"
-								className="bg-primary-light max-w-56 text-foreground border-primary rounded-full"
+								className="bg-primary-light  max-w-56 text-foreground border-primary rounded-full [&_svg]:size-6"
 								aria-label={secondaryButtonAriaLabel}
 							>
 								{config.secondaryButton.label}

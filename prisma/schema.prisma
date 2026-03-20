@@ -326,6 +326,7 @@ model Role {
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
   is_system  Boolean  @default(false)
+  is_guest  Boolean  @default(false)
 
   users                  User[]
   table_permissions      RoleTablePermission[]

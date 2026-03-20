@@ -10,6 +10,11 @@ import { showSuccessToast } from "@/lib/utils/feedbackToast";
 const closeModalMock = vi.fn();
 const addInstitutionMock = vi.fn();
 const upsertInstitutionMock = vi.fn();
+let lastFormConfig: {
+	onSubmit: (data: Record<string, unknown>) => void | Promise<void>;
+	onChange?: (data: Record<string, unknown>) => void;
+	fields?: Array<Record<string, unknown>>;
+} | null = null;
 
 vi.mock("react-i18next", () => ({
 	useTranslation: () => ({
@@ -38,31 +43,36 @@ vi.mock("@/components/FormWrapper", () => ({
 	}: {
 		config: {
 			onSubmit: (data: Record<string, unknown>) => void | Promise<void>;
+			onChange?: (data: Record<string, unknown>) => void;
+			fields?: Array<Record<string, unknown>>;
 		};
-	}) => (
-		<div>
-			<button
-				type="button"
-				onClick={() =>
-					void config.onSubmit({
-						name: "New Institution",
-						categoryIds: ["1"],
-						"address.streetLine": "Main 1",
-						"address.city": "Berlin",
-						"address.zip": "10115",
-						"address.lat": "52.5",
-						"address.lng": "13.4",
-						website: "https://example.com",
-						email: "contact@example.com",
-						phone: "+49 30 123",
-						funding_sources: [],
-					})
-				}
-			>
-				submit-form
-			</button>
-		</div>
-	),
+	}) => {
+		lastFormConfig = config;
+		return (
+			<div>
+				<button
+					type="button"
+					onClick={() =>
+						void config.onSubmit({
+							name: "New Institution",
+							categoryIds: ["1"],
+							"address.streetLine": "Main 1",
+							"address.city": "Berlin",
+							"address.zip": "10115",
+							"address.lat": "52.5",
+							"address.lng": "13.4",
+							website: "https://example.com",
+							email: "contact@example.com",
+							phone: "+49 30 123",
+							funding_sources: [],
+						})
+					}
+				>
+					submit-form
+				</button>
+			</div>
+		);
+	},
 }));
 
 vi.mock("@/server/actions/institutions", () => ({
@@ -135,6 +145,7 @@ describe("InstitutionFormModal", () => {
 		closeModalMock.mockReset();
 		addInstitutionMock.mockReset();
 		upsertInstitutionMock.mockReset();
+		lastFormConfig = null;
 		mockedCreateInstitution.mockReset();
 		mockedUpdateInstitution.mockReset();
 		mockedShowSuccessToast.mockReset();
@@ -201,5 +212,62 @@ describe("InstitutionFormModal", () => {
 		expect(upsertInstitutionMock).toHaveBeenCalledTimes(1);
 		expect(mockedShowSuccessToast).toHaveBeenCalledTimes(1);
 		expect(closeModalMock).toHaveBeenCalledTimes(1);
+	});
+
+	it("does not flag the edited institution itself as duplicate when validator receives partial form data", () => {
+		render(
+			<InstitutionFormModal
+				mode="edit"
+				institution={
+					{
+						id: 2,
+						name: "Existing",
+						address: {
+							id: 9,
+							street: "Main",
+							street_number: "1",
+							zipcode: "10115",
+							city: "Berlin",
+						},
+						categories: [],
+					} as never
+				}
+				routePath="/account/institutions/2/edit"
+			/>,
+		);
+
+		lastFormConfig?.onChange?.({
+			name: "Existing",
+			"address.streetLine": "Main 1",
+			"address.city": "Berlin",
+			"address.zip": "10115",
+		});
+
+		const basicSection = lastFormConfig?.fields?.[0] as
+			| { fields?: Array<Record<string, unknown>> }
+			| undefined;
+		const nameField = basicSection?.fields?.find(
+			(field) => field.name === "name",
+		) as
+			| {
+					validators?: Array<
+						(
+							value: unknown,
+							formData: Record<string, unknown>,
+						) => string | undefined
+					>;
+			  }
+			| undefined;
+		const duplicateValidator = nameField?.validators?.[0];
+
+		expect(typeof duplicateValidator).toBe("function");
+		expect(
+			duplicateValidator?.("Existing", {
+				name: "Existing",
+				"address.streetLine": "Main 1",
+				"address.city": "Berlin",
+				"address.zip": "10115",
+			}),
+		).toBeUndefined();
 	});
 });

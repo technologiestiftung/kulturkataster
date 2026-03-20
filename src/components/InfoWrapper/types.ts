@@ -18,6 +18,7 @@ export type InfoWrapperFieldType =
 	| "year"
 	| "boolean"
 	| "status"
+	| "url"
 	| "category"
 	| "fundingSources"
 	| "address"

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { ActivityItem, type Activity } from "./ActivityItem";
 import { useAccountStore } from "@/lib/store/accountStore";
 import type { EntityAudit } from "@/types/entityAudit";
@@ -173,8 +173,17 @@ const formatEntityLabel = (
 	t: (key: string, options?: Record<string, unknown>) => string,
 ) => {
 	if (audit.entity_type === "user") {
+		const userLabel = t("auth.account.activity.entities.user", {
+			defaultValue: "Nutzer*in",
+		});
 		const email = getEntityEmail(audit);
-		return email ? `Nutzer*in (${email})` : "Nutzer*in";
+		return email
+			? t("auth.account.activity.entities.userWithEmail", {
+					defaultValue: `${userLabel} (${email})`,
+					entity: userLabel,
+					email,
+				})
+			: userLabel;
 	}
 	const translatedType = t(
 		`auth.account.activity.entities.${audit.entity_type}`,
@@ -289,10 +298,12 @@ const mapEntityLink = (
 	audit: EntityAudit,
 	toLocalePath: (path: string) => string,
 	canOpenSubmission: (id: number) => boolean,
+	canReadAllUsers: boolean,
+	currentUserId?: string | null,
 ) => {
 	if (audit.action === "delete") return undefined;
-	if (!isNumericId(audit.entity_id)) return undefined;
 	const id = audit.entity_id;
+	if (audit.entity_type !== "user" && !isNumericId(id)) return undefined;
 	switch (audit.entity_type) {
 		case "submission": {
 			const numericSubmissionId = Number(id);
@@ -313,7 +324,12 @@ const mapEntityLink = (
 		case "role":
 			return toLocalePath(`/account/roles/${id}/edit`);
 		case "user":
-			return toLocalePath(`/account/users/${id}/edit`);
+			if (canReadAllUsers) {
+				return toLocalePath(`/account/users/${id}/edit`);
+			}
+			return typeof id === "string" && currentUserId === id
+				? toLocalePath("/account/edit")
+				: undefined;
 		default:
 			return undefined;
 	}
@@ -347,6 +363,9 @@ export function ActivityList({
 }: ActivityListProps) {
 	const { t } = useTranslation("common");
 	const toLocalePath = useLocalePath();
+	const [hasHydrated, setHasHydrated] = useState(() =>
+		useAccountStore.persist.hasHydrated(),
+	);
 	const [searchQuery, setSearchQuery] = useState("");
 	const [statusFilter, setStatusFilter] = useState("all");
 	const [typeFilter, setTypeFilter] = useState("all");
@@ -354,7 +373,24 @@ export function ActivityList({
 	const [actorFilter, setActorFilter] = useState("all");
 	const [dateFilter, setDateFilter] = useState("all");
 	const entityAudits = useAccountStore((state) => state.entityAudits) ?? [];
+	const currentProfile = useAccountStore((state) => state.currentProfile);
+	const users = useAccountStore((state) => state.users) ?? [];
 	const submissions = useAccountStore((state) => state.submissions) ?? [];
+	const currentUserId = currentProfile?.id ?? null;
+	const canReadAllUsers = useMemo(() => {
+		if (!currentProfile) return false;
+		const currentUser =
+			users.find((user) => user.id === currentProfile.id) ??
+			users.find((user) => user.email === currentProfile.email);
+		return Boolean(
+			currentUser?.role?.table_permissions?.some(
+				(permission) =>
+					permission.table === "user" &&
+					permission.action === "read" &&
+					(permission.scope ?? "own") === "all",
+			),
+		);
+	}, [currentProfile, users]);
 	const submissionIdSet = useMemo(
 		() => new Set(submissions.map((submission) => submission.id)),
 		[submissions],
@@ -377,6 +413,17 @@ export function ActivityList({
 		},
 		[deletedSubmissionIdSet, submissionIdSet],
 	);
+
+	useEffect(() => {
+		if (useAccountStore.persist.hasHydrated()) {
+			setHasHydrated(true);
+			return;
+		}
+
+		return useAccountStore.persist.onFinishHydration(() => {
+			setHasHydrated(true);
+		});
+	}, []);
 
 	const mapAuditToActivity = (
 		audit: EntityAudit,
@@ -457,6 +504,8 @@ export function ActivityList({
 			primarySource,
 			toLocalePath,
 			canOpenSubmission,
+			canReadAllUsers,
+			currentUserId,
 		);
 		let displayEntityType = primarySource.entity_type;
 		if (isApprovedUserSubmissionAssignment) {
@@ -497,7 +546,13 @@ export function ActivityList({
 			primaryEntityLink: displayPrimaryEntityLink,
 			secondaryEntity: normalizedRelation,
 			secondaryEntityLink: secondarySource
-				? mapEntityLink(secondarySource, toLocalePath, canOpenSubmission)
+				? mapEntityLink(
+						secondarySource,
+						toLocalePath,
+						canOpenSubmission,
+						canReadAllUsers,
+						currentUserId,
+					)
 				: undefined,
 			from: hasStatusTransition ? fromStatus : undefined,
 			to: hasStatusTransition ? toStatus : undefined,
@@ -507,10 +562,22 @@ export function ActivityList({
 				}),
 			}),
 			item: primaryEntity,
-			itemLink: mapEntityLink(audit, toLocalePath, canOpenSubmission),
+			itemLink: mapEntityLink(
+				audit,
+				toLocalePath,
+				canOpenSubmission,
+				canReadAllUsers,
+				currentUserId,
+			),
 			relation: normalizedRelation,
 			relationLink: secondarySource
-				? mapEntityLink(secondarySource, toLocalePath, canOpenSubmission)
+				? mapEntityLink(
+						secondarySource,
+						toLocalePath,
+						canOpenSubmission,
+						canReadAllUsers,
+						currentUserId,
+					)
 				: undefined,
 			status: audit.status,
 		};
@@ -570,7 +637,7 @@ export function ActivityList({
 				.map((entry) => entry.activity);
 		})();
 
-	if (isLoading) {
+	if (isLoading || (!activities && !hasHydrated)) {
 		return <ActivityListSkeleton showFilters />;
 	}
 
@@ -679,7 +746,7 @@ export function ActivityList({
 
 	return (
 		<div className="space-y-4">
-			<div className="grid gap-3 md:grid-cols-2 xl:grid-cols-6">
+			<div className="gap-3 md:grid-cols-2 xl:grid-cols-6 md:grid hidden">
 				<SearchInput
 					value={searchQuery}
 					onChange={(event) => setSearchQuery(event.target.value)}
