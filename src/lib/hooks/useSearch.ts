@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { reportClientTelemetry } from "@/lib/utils/clientTelemetry";
 
 /**
  * Props for the useSearch hook.
@@ -85,7 +86,14 @@ export function useSearch<T>({
 			}
 		} catch (error) {
 			if (currentRequestId === requestId + 1) {
-				console.error("Error searching:", error);
+				reportClientTelemetry({
+					level: "warn",
+					event: "search.query.failed",
+					error,
+					metadata: {
+						query_length: query.trim().length,
+					},
+				});
 				setResults([]);
 				setResultErrorMessage(
 					"Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",

@@ -70,7 +70,8 @@
 					"role_table_permission": "Role table permission",
 					"submission": "Submission",
 					"tag": "Tag",
-					"user": "User"
+					"user": "User",
+					"userWithEmail": "{{entity}} ({{email}})"
 				},
 				"filters": {
 					"allDates": "All",
@@ -419,6 +420,10 @@
 	"footerLandmark": "Footer",
 	"form": {
 		"validation": {
+			"invalidEmail": "Invalid email address",
+			"invalidNumber": "Invalid number",
+			"invalidPhone": "Invalid phone number",
+			"invalidUrl": "Invalid URL",
 			"required": "{{field}} is required"
 		}
 	},
@@ -507,6 +512,7 @@
 		"layerTreeAriaLabel": "Show thematic maps ({{visibleCount}} visible maps)",
 		"layerTreeTitle": "Thematic maps",
 		"layerTreeVisibleCountAriaLabel": "{{visibleCount}} visible maps",
+		"unnamedLayer": "Unnamed thematic map",
 		"legend": {
 			"legendAriaLabels": "Legend for thematic map {{serviceName}}",
 			"legendGesamtIndexAriaLabel": "Table in the overall index legend",

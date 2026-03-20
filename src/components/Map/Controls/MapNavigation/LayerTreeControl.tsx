@@ -44,12 +44,16 @@ const LayerTreeControl: FC = () => {
 		setIsLayerTreeOpen(!isLayerTreeOpen);
 	};
 
+	const topVisibleLayerName =
+		topVisibleLayer?.config.service.name?.trim() ||
+		t("map.unnamedLayer", { defaultValue: "Unbenannte Fachkarte" });
+
 	const renderThumbnail = () => {
 		if (topVisibleLayer?.config.service.preview?.src) {
 			return (
 				<Image
 					src={topVisibleLayer.config.service.preview.src}
-					alt={topVisibleLayer.config.service.name}
+					alt={topVisibleLayerName}
 					width={64}
 					height={64}
 					className="w-full h-full object-cover"

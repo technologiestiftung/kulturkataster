@@ -1104,6 +1104,9 @@
 		"actions": {
 			"add": "Create role"
 		},
+		"badges": {
+			"guest": "Guest role"
+		},
 		"columns": {
 			"createdAt": "Created on",
 			"description": "Description",

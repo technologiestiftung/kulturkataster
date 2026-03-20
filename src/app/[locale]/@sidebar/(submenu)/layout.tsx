@@ -40,7 +40,7 @@ export default function SubmenuLayout({
 
 	return (
 		<div className="flex flex-col h-full">
-			<div className="gap-3.5 p-2  md:p-6 h-16 shrink-0 md:h-auto shadow-sm md:shadow-none z-10">
+			<div className="gap-3.5 p-2 md:p-6 h-16 shrink-0 md:h-auto shadow-sm md:shadow-none z-10">
 				<div className="md:hidden flex justify-center pb-2">
 					<div className="w-10 h-1 bg-muted-foreground/90 rounded-full"></div>
 				</div>

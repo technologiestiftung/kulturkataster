@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { setPasswordWithTokens } from "@/server/actions/auth";
-import { FormWrapper } from "@/components/FormWrapper";
+import { FormWrapper, minLength } from "@/components/FormWrapper";
 import type { FormWrapperConfig } from "@/components/FormWrapper";
 import { AlertDialog } from "@/components/ui/alert-dialog";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
@@ -104,14 +104,7 @@ export function ResetPasswordForm({ onSuccess }: { onSuccess?: () => void }) {
 							required: true,
 							afterField: t("auth.reset.passwordRequirements"),
 							disabled: isLoading || !isReady || !hasToken,
-							validate: (value) => {
-								if (!value) return undefined;
-								const text = String(value);
-								if (text.length < 8) {
-									return t("auth.validation.passwordMin");
-								}
-								return undefined;
-							},
+							validators: [minLength(8, t("auth.validation.passwordMin"))],
 						},
 						{
 							name: "confirmPassword",

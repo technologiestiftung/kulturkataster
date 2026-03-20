@@ -9,6 +9,11 @@ import {
 	getTableScope,
 	requireScopeOrUser,
 } from "@/server/utils/rbac";
+import {
+	runWithServerRequestContext,
+	setRequestContext,
+} from "@/server/logging/requestContext";
+import { logger } from "@/server/logging/logger";
 
 type EntityAuditRow = Prisma.EntityAuditGetPayload<{ include: { user: true } }>;
 
@@ -49,43 +54,81 @@ const redactForeignAudit = (audit: EntityAuditRow): EntityAuditRow => {
 };
 
 export async function getEntityAudits() {
-	const currentUserId = await getCurrentUserId();
-	const ctx = await getAccessContextForUser(currentUserId);
-	authorizeTable(ctx, "entity_audit", "read");
-	const scope = getTableScope(ctx, "entity_audit", "read");
-	const ownerId = requireScopeOrUser(
-		scope,
-		currentUserId,
-		"User must be authenticated to access activity logs.",
-	);
-	if (!ownerId) {
-		return entityAuditRepo.list();
-	}
+	return runWithServerRequestContext(
+		async () => {
+			const currentUserId = await getCurrentUserId();
+			setRequestContext({ userId: currentUserId });
+			const ctx = await getAccessContextForUser(currentUserId);
+			authorizeTable(ctx, "entity_audit", "read");
+			const scope = getTableScope(ctx, "entity_audit", "read");
+			const ownerId = requireScopeOrUser(
+				scope,
+				currentUserId,
+				"User must be authenticated to access activity logs.",
+			);
+			if (!ownerId) {
+				try {
+					return await entityAuditRepo.list();
+				} catch (error) {
+					logger.error("entity_audit.list.db_failed", error, {
+						subsystem: "audit",
+						db_subsystem: "db",
+						actor_user_id: currentUserId,
+					});
+					throw error;
+				}
+			}
 
-	const ownAudits = await entityAuditRepo.list({ changed_by: ownerId });
-	const correlationIds = Array.from(
-		new Set(
-			ownAudits
-				.map((audit) => getCorrelationId(audit.meta_info))
-				.filter((correlationId): correlationId is string =>
-					Boolean(correlationId),
+			let ownAudits;
+			try {
+				ownAudits = await entityAuditRepo.list({ changed_by: ownerId });
+			} catch (error) {
+				logger.error("entity_audit.list_own.db_failed", error, {
+					subsystem: "audit",
+					db_subsystem: "db",
+					actor_user_id: currentUserId,
+					target_user_id: ownerId,
+				});
+				throw error;
+			}
+			const correlationIds = Array.from(
+				new Set(
+					ownAudits
+						.map((audit) => getCorrelationId(audit.meta_info))
+						.filter((correlationId): correlationId is string =>
+							Boolean(correlationId),
+						),
 				),
-		),
+			);
+			if (correlationIds.length === 0) {
+				return ownAudits;
+			}
+
+			let relatedAudits;
+			try {
+				relatedAudits =
+					await entityAuditRepo.listByCorrelationIds(correlationIds);
+			} catch (error) {
+				logger.error("entity_audit.list_related.db_failed", error, {
+					subsystem: "audit",
+					db_subsystem: "db",
+					actor_user_id: currentUserId,
+					target_user_id: ownerId,
+					correlation_ids_count: correlationIds.length,
+				});
+				throw error;
+			}
+			const merged = new Map<number, EntityAuditRow>();
+			for (const audit of [...ownAudits, ...relatedAudits]) {
+				merged.set(audit.id, audit);
+			}
+
+			return Array.from(merged.values())
+				.map((audit) =>
+					audit.changed_by === ownerId ? audit : redactForeignAudit(audit),
+				)
+				.sort((a, b) => b.changed_at.getTime() - a.changed_at.getTime());
+		},
+		{ route: "server_action:entityAudits.getEntityAudits" },
 	);
-	if (correlationIds.length === 0) {
-		return ownAudits;
-	}
-
-	const relatedAudits =
-		await entityAuditRepo.listByCorrelationIds(correlationIds);
-	const merged = new Map<number, EntityAuditRow>();
-	for (const audit of [...ownAudits, ...relatedAudits]) {
-		merged.set(audit.id, audit);
-	}
-
-	return Array.from(merged.values())
-		.map((audit) =>
-			audit.changed_by === ownerId ? audit : redactForeignAudit(audit),
-		)
-		.sort((a, b) => b.changed_at.getTime() - a.changed_at.getTime());
 }

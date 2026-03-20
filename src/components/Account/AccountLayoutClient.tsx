@@ -14,6 +14,7 @@ import { LogOut } from "lucide-react";
 import { RefreshCw } from "lucide-react";
 import { Profile } from "@/types";
 import { clearAccountStore } from "@/lib/store/accountStore";
+import { reportClientTelemetry } from "@/lib/utils/clientTelemetry";
 
 type TabConfig = {
 	value: string;
@@ -104,7 +105,11 @@ export function AccountLayoutClient({
 			await clearAccountStore();
 			router.push(toLocalePath("/"));
 		} else {
-			console.error("Logout failed:", result.error);
+			reportClientTelemetry({
+				level: "error",
+				event: "account.logout.failed",
+				error: result.error,
+			});
 		}
 	};
 
