@@ -19,6 +19,7 @@ export const roleRepo = {
 			data: {
 				name: data.name,
 				description: data.description ?? null,
+				is_guest: data.is_guest ?? false,
 				table_permissions: data.tablePermissions
 					? {
 							create: data.tablePermissions.map((permission) => ({
@@ -46,6 +47,7 @@ export const roleRepo = {
 			data: {
 				name: data.name,
 				description: data.description ?? undefined,
+				is_guest: data.is_guest,
 				table_permissions: data.tablePermissions
 					? {
 							deleteMany: {},

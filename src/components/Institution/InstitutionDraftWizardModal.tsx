@@ -50,6 +50,7 @@ import {
 } from "@/lib/utils/institutionDuplicateUtils";
 import { useInstitutionPrivateFieldResolver } from "@/lib/hooks/useInstitutionPrivateFieldResolver";
 import { Profile } from "@/types";
+import { reportClientTelemetry } from "@/lib/utils/clientTelemetry";
 const DEFAULT_CREATE_STEP_ID = "basic";
 const STEP_IDS = [
 	"basic",
@@ -93,11 +94,10 @@ const validateStepFieldValue = (
 		}
 	}
 
-	if (field.validate && field.validate(value)) {
-		return false;
-	}
-
-	if (field.validateWithForm && field.validateWithForm(value, formData)) {
+	if (
+		field.type !== "section" &&
+		field.validators?.some((validator) => validator(value, formData))
+	) {
 		return false;
 	}
 
@@ -385,6 +385,15 @@ function InstitutionDraftWizardContent({
 		try {
 			await handleFinalSubmit(draft);
 		} catch (error) {
+			reportClientTelemetry({
+				level: "error",
+				event: "institution_draft.submit_failed",
+				error,
+				metadata: {
+					step_id: currentStepId,
+					draft_mode: draftMode,
+				},
+			});
 			const message =
 				error instanceof Error
 					? error.message
@@ -397,7 +406,7 @@ function InstitutionDraftWizardContent({
 					: message,
 			);
 		}
-	}, [draft, handleFinalSubmit, onSubmitError, t]);
+	}, [currentStepId, draft, draftMode, handleFinalSubmit, onSubmitError, t]);
 
 	const handleCancel = useCallback(() => {
 		if (canGoPrevious) {
@@ -484,8 +493,9 @@ function InstitutionDraftWizardContent({
 							layout: { span: "full" },
 							placeholder: fieldPlaceholder("name"),
 							required: true,
-							validateWithForm: (_value, formData) =>
-								validateDuplicateInstitution(formData),
+							validators: [
+								(_value, formData) => validateDuplicateInstitution(formData),
+							],
 							afterField: duplicateWarningText,
 						},
 						{
@@ -529,8 +539,9 @@ function InstitutionDraftWizardContent({
 							layout: { span: "full" },
 							placeholder: fieldPlaceholder("street"),
 							onBlur: onAddressBlur,
-							validateWithForm: (_value, formData) =>
-								validateDuplicateInstitution(formData),
+							validators: [
+								(_value, formData) => validateDuplicateInstitution(formData),
+							],
 							afterField: duplicateWarningText,
 						},
 						{
@@ -663,7 +674,7 @@ function InstitutionDraftWizardContent({
 						{
 							name: "website",
 							label: fieldLabel("website", "Website"),
-							type: "text",
+							type: "url",
 							placeholder: fieldPlaceholder("website"),
 						},
 					],
@@ -711,29 +722,31 @@ function InstitutionDraftWizardContent({
 							label: fieldLabel("categories"),
 							type: "filterPanel",
 							required: true,
-							validateWithForm: (value, formData) => {
-								const filters = value as
-									| {
-											category_keys?: string[];
-											child_category_keys?: string[];
-									  }
-									| undefined;
-								const hasSelectedCategories =
-									(filters?.category_keys?.length ?? 0) > 0 ||
-									(filters?.child_category_keys?.length ?? 0) > 0;
-								const rawNewCategory = formData.newCategory;
-								const hasProposedCategory =
-									typeof rawNewCategory === "string" &&
-									rawNewCategory
-										.split(",")
-										.map((item) => item.trim())
-										.some((item) => item.length > 0);
-								return hasSelectedCategories || hasProposedCategory
-									? undefined
-									: t(
-											"institutionDraftWizardModal.form.category.validation.minSelection",
-										);
-							},
+							validators: [
+								(value, formData) => {
+									const filters = value as
+										| {
+												category_keys?: string[];
+												child_category_keys?: string[];
+										  }
+										| undefined;
+									const hasSelectedCategories =
+										(filters?.category_keys?.length ?? 0) > 0 ||
+										(filters?.child_category_keys?.length ?? 0) > 0;
+									const rawNewCategory = formData.newCategory;
+									const hasProposedCategory =
+										typeof rawNewCategory === "string" &&
+										rawNewCategory
+											.split(",")
+											.map((item) => item.trim())
+											.some((item) => item.length > 0);
+									return hasSelectedCategories || hasProposedCategory
+										? undefined
+										: t(
+												"institutionDraftWizardModal.form.category.validation.minSelection",
+											);
+								},
+							],
 							layout: { span: "full" },
 							filterPanel: {
 								categoryGroups: categories,
@@ -1527,7 +1540,7 @@ function InstitutionDraftWizardContent({
 						{
 							name: "contact_person_phone",
 							label: fieldLabel("contact_person_phone"),
-							type: "text",
+							type: "tel",
 							defaultValue: profile?.phone || "",
 							placeholder: fieldPlaceholder("contact_person_phone"),
 							layout: { span: "full" },

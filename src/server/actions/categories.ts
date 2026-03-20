@@ -15,6 +15,11 @@ import {
 	getEnumMapTermTranslations,
 	upsertEnumMapTermTranslations,
 } from "@/server/logic/traduoraTermTranslations";
+import {
+	runWithServerRequestContext,
+	setRequestContext,
+} from "@/server/logging/requestContext";
+import { logger } from "../logging/logger";
 
 type CategoryInput = {
 	key: string;
@@ -57,6 +62,7 @@ const isAlreadyExistsError = (message: string | undefined) =>
 
 export async function getCategories() {
 	const currentUserId = await getCurrentUserId();
+
 	const ctx = await getAccessContextForUser(currentUserId);
 	authorizeTable(ctx, "category", "read");
 
@@ -81,84 +87,135 @@ export async function getCategoryById(id: number) {
 }
 
 export async function createCategory(input: CategoryInput) {
-	const currentUserId = await getCurrentUserId();
-	const ctx = await getAccessContextForUser(currentUserId);
-	authorizeTable(ctx, "category", "create");
-	requireAllScope(ctx, "category", "create");
+	return runWithServerRequestContext(
+		async () => {
+			const currentUserId = await getCurrentUserId();
+			setRequestContext({ userId: currentUserId });
+			const ctx = await getAccessContextForUser(currentUserId);
+			authorizeTable(ctx, "category", "create");
+			requireAllScope(ctx, "category", "create");
 
-	const created = await categoryRepo.create({
-		key: input.key,
-		description: input.description ?? null,
-		icon: input.icon ?? null,
-		status: input.status ?? "active",
-		parent_category: {
-			connect: input.parentCategoryId
-				? { id: input.parentCategoryId }
-				: undefined,
+			let created;
+			try {
+				created = await categoryRepo.create({
+					key: input.key,
+					description: input.description ?? null,
+					icon: input.icon ?? null,
+					status: input.status ?? "active",
+					parent_category: {
+						connect: input.parentCategoryId
+							? { id: input.parentCategoryId }
+							: undefined,
+					},
+				});
+			} catch (error) {
+				logger.error("category.create.db_failed", error, {
+					subsystem: "category",
+					db_subsystem: "db",
+					actor_user_id: currentUserId,
+					category_key: input.key,
+				});
+				throw error;
+			}
+
+			if (
+				input.localizedLabels &&
+				Object.keys(input.localizedLabels).length > 0
+			) {
+				const termKey = getCategoryEnumMapTermKey({
+					key: created.key,
+					parentCategoryId: created.parent_category_id,
+				});
+				try {
+					await upsertEnumMapTermTranslations({
+						termKey,
+						translations: input.localizedLabels,
+					});
+				} catch (error) {
+					logger.warn("category.translations.sync_failed", {
+						subsystem: "translations",
+						term_key: termKey,
+						category_key: created.key,
+						error: error instanceof Error ? error.message : String(error),
+					});
+				}
+			}
+
+			return created;
 		},
-	});
-
-	if (input.localizedLabels && Object.keys(input.localizedLabels).length > 0) {
-		const termKey = getCategoryEnumMapTermKey({
-			key: created.key,
-			parentCategoryId: created.parent_category_id,
-		});
-		try {
-			await upsertEnumMapTermTranslations({
-				termKey,
-				translations: input.localizedLabels,
-			});
-		} catch (error) {
-			console.warn("[category] failed to sync traduora translations", error);
-		}
-	}
-
-	return created;
+		{ route: "server_action:categories.createCategory" },
+	);
 }
 
 export async function updateCategory(input: CategoryUpdateInput) {
-	const currentUserId = await getCurrentUserId();
-	const ctx = await getAccessContextForUser(currentUserId);
-	authorizeTable(ctx, "category", "update");
-	requireAllScope(ctx, "category", "update");
+	return runWithServerRequestContext(
+		async () => {
+			const currentUserId = await getCurrentUserId();
+			setRequestContext({ userId: currentUserId });
+			const ctx = await getAccessContextForUser(currentUserId);
+			authorizeTable(ctx, "category", "update");
+			requireAllScope(ctx, "category", "update");
 
-	if (input.parentCategoryId && input.parentCategoryId === input.id) {
-		throw new Error("Category cannot be its own parent.");
-	}
+			if (input.parentCategoryId && input.parentCategoryId === input.id) {
+				throw new Error("Category cannot be its own parent.");
+			}
 
-	let parentCategoryUpdate;
-	if (input.parentCategoryId === null) {
-		parentCategoryUpdate = { disconnect: true };
-	} else if (input.parentCategoryId) {
-		parentCategoryUpdate = { connect: { id: input.parentCategoryId } };
-	} else {
-		parentCategoryUpdate = undefined;
-	}
+			let parentCategoryUpdate;
+			if (input.parentCategoryId === null) {
+				parentCategoryUpdate = { disconnect: true };
+			} else if (input.parentCategoryId) {
+				parentCategoryUpdate = { connect: { id: input.parentCategoryId } };
+			} else {
+				parentCategoryUpdate = undefined;
+			}
 
-	const updated = await categoryRepo.update(input.id, {
-		key: input.key,
-		description: input.description ?? null,
-		icon: input.icon ?? null,
-		status: input.status,
-		parent_category: parentCategoryUpdate,
-	});
+			let updated;
+			try {
+				updated = await categoryRepo.update(input.id, {
+					key: input.key,
+					description: input.description ?? null,
+					icon: input.icon ?? null,
+					status: input.status,
+					parent_category: parentCategoryUpdate,
+				});
+			} catch (error) {
+				logger.error("category.update.db_failed", error, {
+					subsystem: "category",
+					db_subsystem: "db",
+					actor_user_id: currentUserId,
+					category_id: input.id,
+				});
+				throw error;
+			}
 
-	if (input.localizedLabels && Object.keys(input.localizedLabels).length > 0) {
-		const termKey = getCategoryEnumMapTermKey({
-			key: updated.key,
-			parentCategoryId: updated.parent_category_id,
-		});
-		try {
-			await upsertEnumMapTermTranslations({
-				termKey,
-				translations: input.localizedLabels,
-			});
-		} catch (error) {
-			console.warn("[category] failed to sync traduora translations", error);
-		}
-	}
+			if (
+				input.localizedLabels &&
+				Object.keys(input.localizedLabels).length > 0
+			) {
+				const termKey = getCategoryEnumMapTermKey({
+					key: updated.key,
+					parentCategoryId: updated.parent_category_id,
+				});
+				try {
+					await upsertEnumMapTermTranslations({
+						termKey,
+						translations: input.localizedLabels,
+					});
+				} catch (error) {
+					logger.warn("category.translations.sync_failed", {
+						subsystem: "translations",
+						term_key: termKey,
+						category_id: updated.id,
+						category_key: updated.key,
+						error: error instanceof Error ? error.message : String(error),
+					});
+				}
+			}
 
-	return updated;
+			return updated;
+		},
+		{ route: "server_action:categories.updateCategory" },
+	);
 }
 
 export async function getCategoryLocalizedLabels(params: {
@@ -180,79 +237,117 @@ export async function getCategoryLocalizedLabels(params: {
 }
 
 export async function deleteCategory(id: number) {
-	const currentUserId = await getCurrentUserId();
-	const ctx = await getAccessContextForUser(currentUserId);
-	authorizeTable(ctx, "category", "delete");
-	requireAllScope(ctx, "category", "delete");
+	return runWithServerRequestContext(
+		async () => {
+			const currentUserId = await getCurrentUserId();
+			setRequestContext({ userId: currentUserId });
+			const ctx = await getAccessContextForUser(currentUserId);
+			authorizeTable(ctx, "category", "delete");
+			requireAllScope(ctx, "category", "delete");
 
-	const category = await categoryRepo.findById(id);
-	if (category?.child_categories?.length) {
-		throw new Error("Category has subcategories and cannot be deleted.");
-	}
+			let category;
+			try {
+				category = await categoryRepo.findById(id);
+			} catch (error) {
+				logger.error("category.delete.lookup_db_failed", error, {
+					subsystem: "category",
+					db_subsystem: "db",
+					actor_user_id: currentUserId,
+					category_id: id,
+				});
+				throw error;
+			}
+			if (category?.child_categories?.length) {
+				throw new Error("Category has subcategories and cannot be deleted.");
+			}
 
-	await categoryRepo.remove(id);
-	return { id };
+			try {
+				await categoryRepo.remove(id);
+			} catch (error) {
+				logger.error("category.delete.db_failed", error, {
+					subsystem: "category",
+					db_subsystem: "db",
+					actor_user_id: currentUserId,
+					category_id: id,
+				});
+				throw error;
+			}
+			return { id };
+		},
+		{ route: "server_action:categories.deleteCategory" },
+	);
 }
 
 export async function uploadCategoryIcon(formData: FormData): Promise<string> {
-	const currentUserId = await getCurrentUserId();
-	const ctx = await getAccessContextForUser(currentUserId);
-	authorizeTable(ctx, "category", "update");
-	requireAllScope(ctx, "category", "update");
+	return runWithServerRequestContext(
+		async () => {
+			const currentUserId = await getCurrentUserId();
+			setRequestContext({ userId: currentUserId });
+			const ctx = await getAccessContextForUser(currentUserId);
+			authorizeTable(ctx, "category", "update");
+			requireAllScope(ctx, "category", "update");
 
-	const keyValue = formData.get("key");
-	const fileValue = formData.get("file");
-	const categoryIdValue = formData.get("categoryId");
+			const keyValue = formData.get("key");
+			const fileValue = formData.get("file");
+			const categoryIdValue = formData.get("categoryId");
 
-	if (typeof keyValue !== "string" || !keyValue.trim()) {
-		throw new Error("Category key is required for icon upload.");
-	}
-	if (!(fileValue instanceof File)) {
-		throw new Error("No icon file provided.");
-	}
+			if (typeof keyValue !== "string" || !keyValue.trim()) {
+				throw new Error("Category key is required for icon upload.");
+			}
+			if (!(fileValue instanceof File)) {
+				throw new Error("No icon file provided.");
+			}
 
-	const isSvgByMime = fileValue.type === "image/svg+xml";
-	const isSvgByName = fileValue.name.toLowerCase().endsWith(".svg");
-	if (!isSvgByMime && !isSvgByName) {
-		throw new Error("Only SVG files are supported.");
-	}
+			const isSvgByMime = fileValue.type === "image/svg+xml";
+			const isSvgByName = fileValue.name.toLowerCase().endsWith(".svg");
+			if (!isSvgByMime && !isSvgByName) {
+				throw new Error("Only SVG files are supported.");
+			}
 
-	const admin = createAdminClient();
-	const safeKey = sanitizeKey(keyValue);
-	const filePath =
-		typeof categoryIdValue === "string" && categoryIdValue
-			? `categories/${sanitizeKey(categoryIdValue)}.svg`
-			: `categories/${safeKey}.svg`;
+			const admin = createAdminClient();
+			const safeKey = sanitizeKey(keyValue);
+			const filePath =
+				typeof categoryIdValue === "string" && categoryIdValue
+					? `categories/${sanitizeKey(categoryIdValue)}.svg`
+					: `categories/${safeKey}.svg`;
 
-	const upload = () =>
-		admin.storage.from(CATEGORY_ICON_BUCKET).upload(filePath, fileValue, {
-			cacheControl: "3600",
-			contentType: "image/svg+xml",
-			upsert: true,
-		});
+			const upload = () =>
+				admin.storage.from(CATEGORY_ICON_BUCKET).upload(filePath, fileValue, {
+					cacheControl: "3600",
+					contentType: "image/svg+xml",
+					upsert: true,
+				});
 
-	let { error } = await upload();
+			let { error } = await upload();
 
-	if (error && isBucketNotFoundError(error.message)) {
-		const { error: createBucketError } = await admin.storage.createBucket(
-			CATEGORY_ICON_BUCKET,
-			{
-				public: true,
-				allowedMimeTypes: ["image/svg+xml"],
-			},
-		);
-		if (createBucketError && !isAlreadyExistsError(createBucketError.message)) {
-			throw new Error(`Icon bucket setup failed: ${createBucketError.message}`);
-		}
-		({ error } = await upload());
-	}
+			if (error && isBucketNotFoundError(error.message)) {
+				const { error: createBucketError } = await admin.storage.createBucket(
+					CATEGORY_ICON_BUCKET,
+					{
+						public: true,
+						allowedMimeTypes: ["image/svg+xml"],
+					},
+				);
+				if (
+					createBucketError &&
+					!isAlreadyExistsError(createBucketError.message)
+				) {
+					throw new Error(
+						`Icon bucket setup failed: ${createBucketError.message}`,
+					);
+				}
+				({ error } = await upload());
+			}
 
-	if (error) {
-		throw new Error(`Icon upload failed: ${error.message}`);
-	}
+			if (error) {
+				throw new Error(`Icon upload failed: ${error.message}`);
+			}
 
-	const { data } = admin.storage
-		.from(CATEGORY_ICON_BUCKET)
-		.getPublicUrl(filePath);
-	return data.publicUrl;
+			const { data } = admin.storage
+				.from(CATEGORY_ICON_BUCKET)
+				.getPublicUrl(filePath);
+			return data.publicUrl;
+		},
+		{ route: "server_action:categories.uploadCategoryIcon" },
+	);
 }

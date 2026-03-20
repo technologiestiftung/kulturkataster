@@ -12,6 +12,7 @@ import { getModalLink } from "@/lib/utils/modalRouting";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { useRouter } from "next/navigation";
 import { SubMenuOption } from "../SubMenuOption";
+import { reportClientTelemetry } from "@/lib/utils/clientTelemetry";
 
 const accessibilityOptions = [
 	{
@@ -96,7 +97,13 @@ export function AccessibilityContent() {
 				setIsReducedMotion(checked);
 				break;
 			default:
-				console.warn(`Unknown option ID: ${optionId}`);
+				reportClientTelemetry({
+					level: "warn",
+					event: "accessibility.option.unknown",
+					metadata: {
+						option_id: optionId,
+					},
+				});
 				break;
 		}
 	};

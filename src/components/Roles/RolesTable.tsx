@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { EmptyActionState } from "@/components/EmptyActionState";
 import Plus from "@/icons/plus.svg";
+import { Badge } from "@/components/ui/badge";
 
 export function RolesTable() {
 	const roles = useAccountStore((state) => state.roles);
@@ -23,6 +24,16 @@ export function RolesTable() {
 				header: t("roleTable.columns.name"),
 				enableSorting: true,
 				meta: { pin: "left", truncate: true },
+				cell: ({ row }) => (
+					<div className="flex items-center gap-2">
+						<span>{row.original.name}</span>
+						{row.original.is_guest ? (
+							<Badge variant="default">
+								{t("roleTable.badges.guest", { defaultValue: "Guest role" })}
+							</Badge>
+						) : null}
+					</div>
+				),
 			},
 			{
 				accessorKey: "description",

@@ -34,6 +34,7 @@ import KukaSmallLogo from "@/logos/kuka-small.svg";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { usePathname, useRouter } from "next/navigation";
+import { LayerTreeContent } from "@/components/Map/LayerTree/LayerTree";
 
 type MenuItem = {
 	id: string;
@@ -249,6 +250,11 @@ export function Menu({
 	const isMobileInstitutionDetailRoute =
 		isMobile && Boolean(currentSidebarInstitutionId) && isMapRoute;
 
+	const isLayerTreeOpen = useAppStore((state) => state.isLayerTreeOpen);
+	const setIsLayerTreeOpen = useAppStore((state) => state.setIsLayerTreeOpen);
+
+	const isMobileLayerTreeRoute = isMobile && isLayerTreeOpen && isMapRoute;
+
 	const handleLogoClick = () => {
 		setFirstTimeUser(true);
 		router.push(toLocalePath("/welcome"));
@@ -258,6 +264,10 @@ export function Menu({
 		if (nextOpen) return;
 		if (!currentSidebarInstitutionId) return;
 		router.replace(toLocalePath("/map"));
+	};
+
+	const handleMobileLayerTreeOpenChange = (nextOpen: boolean) => {
+		setIsLayerTreeOpen(nextOpen);
 	};
 
 	const handleItemClick = (item: MenuItem) => {
@@ -434,18 +444,52 @@ export function Menu({
 			</div>
 
 			<Sheet
-				open={isMobileInstitutionDetailRoute}
-				onOpenChange={handleMobileDetailsOpenChange}
+				open={isMobileInstitutionDetailRoute || isMobileLayerTreeRoute}
+				onOpenChange={(open) => {
+					if (isMobileInstitutionDetailRoute) {
+						handleMobileDetailsOpenChange(open);
+					} else if (isMobileLayerTreeRoute) {
+						handleMobileLayerTreeOpenChange(open);
+					}
+				}}
 			>
 				<SheetContent
 					side="bottom"
-					className="h-[64vh] p-0 bottom-20"
-					onClose={() => handleMobileDetailsOpenChange(false)}
+					className="h-[80vh] p-0 bottom-20"
+					onClose={() => {
+						if (isMobileInstitutionDetailRoute) {
+							handleMobileDetailsOpenChange(false);
+						} else if (isMobileLayerTreeRoute) {
+							handleMobileLayerTreeOpenChange(false);
+						}
+					}}
 				>
+					{
+						//TODO: refactor this as we have the same header institution details and layer tree and only the title changes
+						isMobileLayerTreeRoute && (
+							<div className="gap-3.5 p-2 h-16 shrink-0 shadow-sm z-10">
+								<div className="flex justify-center pb-2">
+									<div className="w-10 h-1 bg-muted-foreground/90 rounded-full"></div>
+								</div>
+							</div>
+						)
+					}
 					<SheetHeader className="sr-only">
-						<SheetTitle>{t("institution.showDetails")}</SheetTitle>
+						<SheetTitle>
+							{isMobileInstitutionDetailRoute
+								? t("institution.showDetails")
+								: t("map.layerTreeTitle")}
+						</SheetTitle>
 					</SheetHeader>
-					<div className="h-full overflow-auto">{sidebar}</div>
+					<div
+						className={
+							isMobileInstitutionDetailRoute
+								? "h-full overflow-auto"
+								: "flex-1 overflow-auto p-2"
+						}
+					>
+						{isMobileInstitutionDetailRoute ? sidebar : <LayerTreeContent />}
+					</div>
 				</SheetContent>
 			</Sheet>
 		</>
