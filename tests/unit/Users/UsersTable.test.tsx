@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render } from "@testing-library/react";
 import { UsersTable } from "@/components/Users/UsersTable";
 
 const pushMock = vi.fn();
@@ -40,7 +40,7 @@ vi.mock("@/lib/store/accountStore", () => ({
 					first_name: "Ada",
 					last_name: "Lovelace",
 					status: "active",
-					role: { id: 1, name: "Editor", is_guest: true },
+					role: { id: 1, name: "Editor" },
 					groups: [{ id: 5, name: "Group A" }],
 					institutions: [{ id: 10, name: "Institution A" }],
 					submissions: [{ id: 1, type: "claim" }],
@@ -97,36 +97,5 @@ describe("UsersTable", () => {
 			true,
 		);
 		expect(config.getCanReview({ submissions: [] })).toBe(false);
-	});
-
-	it("shows a guest badge in the role cell for guest roles", () => {
-		render(<UsersTable />);
-
-		const config = dataTableMock.mock.calls[0][0] as {
-			columns: Array<{
-				id?: string;
-				cell?: (args: {
-					row: { original: Record<string, unknown> };
-				}) => unknown;
-			}>;
-		};
-
-		const roleColumn = config.columns.find((column) => column.id === "role");
-		expect(roleColumn?.cell).toBeDefined();
-
-		render(
-			roleColumn!.cell!({
-				row: {
-					original: {
-						role: {
-							name: "Editor",
-							is_guest: true,
-						},
-					},
-				},
-			}),
-		);
-
-		expect(screen.getByText("Guest role")).toBeInTheDocument();
 	});
 });

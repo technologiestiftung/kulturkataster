@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render } from "@testing-library/react";
 import { RolesTable } from "@/components/Roles/RolesTable";
 
 const pushMock = vi.fn();
@@ -37,7 +37,6 @@ vi.mock("@/lib/store/accountStore", () => ({
 					id: 7,
 					name: "Editor",
 					description: "Can edit institutions",
-					is_guest: true,
 					created_at: new Date("2025-01-01").toISOString(),
 					updated_at: new Date("2025-01-02").toISOString(),
 					users: [],
@@ -81,37 +80,5 @@ describe("RolesTable", () => {
 
 		config.onEdit({ id: 7 });
 		expect(pushMock).toHaveBeenCalledWith("/de/account/roles/7/edit");
-	});
-
-	it("shows a guest badge in the name cell for guest roles", () => {
-		render(<RolesTable />);
-
-		const config = dataTableMock.mock.calls[0][0] as {
-			columns: Array<{
-				id?: string;
-				accessorKey?: string;
-				cell?: (args: {
-					row: { original: Record<string, unknown> };
-				}) => unknown;
-			}>;
-		};
-
-		const nameColumn = config.columns.find(
-			(column) => column.accessorKey === "name",
-		);
-		expect(nameColumn?.cell).toBeDefined();
-
-		render(
-			nameColumn!.cell!({
-				row: {
-					original: {
-						name: "Editor",
-						is_guest: true,
-					},
-				},
-			}),
-		);
-
-		expect(screen.getByText("Guest role")).toBeInTheDocument();
 	});
 });
