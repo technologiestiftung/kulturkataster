@@ -125,14 +125,18 @@ jobs:
           echo "Backup(s) completed successfully"
           ls -lah ./backups/
 
-      - name: Upload backup artifacts
-        uses: actions/upload-artifact@v4
+      - name: Upload backups to IONOS S3
         if: always()
-        with:
-          name: database-backups-${{ env.DEPLOY_TRACK }}-${{ github.run_number }}
-          path: ./backups/
-          retention-days: 30
-          compression-level: 9
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.IONOS_S3_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.IONOS_S3_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ vars.IONOS_S3_REGION }}
+          IONOS_S3_ENDPOINT: ${{ vars.IONOS_S3_ENDPOINT }}
+          IONOS_S3_BUCKET: ${{ vars.IONOS_S3_BUCKET }}
+        run: |
+          aws s3 cp ./backups/ "s3://${IONOS_S3_BUCKET}/${{ github.run_number }}/" \
+            --recursive \
+            --endpoint-url "${IONOS_S3_ENDPOINT}"
 
   migrations:
     runs-on: ubuntu-latest
