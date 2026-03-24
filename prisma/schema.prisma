@@ -192,7 +192,7 @@ model Institution {
   utilization_status_info  String?
   protection_status       ProtectionStatus?
   protection_status_info   String?
-  shared_use_allowed      Boolean             @default(false)
+  shared_use_allowed      Boolean?
   shared_use_info         String?
   shared_use_equipment    String?
   shared_use_audience     String?
