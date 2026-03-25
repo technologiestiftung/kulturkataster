@@ -290,8 +290,8 @@
 					},
 					"iconUpload": {
 						"currentFile": "Aktuelle Datei ansehen",
-						"label": "SVG-Icon hochladen",
 						"description": "Optional. Eine SVG-Datei in Supabase Storage hochladen.",
+						"label": "SVG-Icon hochladen",
 						"remove": "Icon entfernen",
 						"selected": "Ausgewählt: {{name}}"
 					},
@@ -460,7 +460,6 @@
 		"searchPlaceholder": "Gruppen durchsuchen..."
 	},
 	"imprintModal": {
-		"subtitle": "Kulturraum Berlin gGmbH",
 		"chairman": {
 			"name": "Cerstin Richter-Kotowski, Staatssekretärin der Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt",
 			"title": "Vorsitzende des Aufsichtsrats"
@@ -540,10 +539,10 @@
 			"management": "Dirk Förster, Geschäftsführung",
 			"title": "Vertreten durch:"
 		},
+		"subtitle": "Kulturraum Berlin gGmbH",
 		"title": "Impressum"
 	},
 	"informationModal": {
-		"subtitle": "Hier finden Sie weitere Informationen zum Kulturkataster Berlin.",
 		"faq": {
 			"questions": [
 				{
@@ -595,6 +594,7 @@
 			}
 		},
 		"simpleLanguageDirect": "Den Bereich „Infos & Service“ in leichter Sprache finden Sie <link />.",
+		"subtitle": "Hier finden Sie weitere Informationen zum Kulturkataster Berlin.",
 		"title": "Infos & Service",
 		"upcomingEnhancementsListAriaLabel": "Liste der geplanten Weiterungen und Verbesserungen",
 		"usage": {
@@ -703,6 +703,13 @@
 			"edit": {
 				"subtitle": "Prüfen und aktualisieren Sie die Angaben zum Kulturort.",
 				"title": "Kulturort bearbeiten"
+			}
+		},
+		"feedback": {
+			"submit": {
+				"description": "Vielen Dank für Ihre Einreichung! Das Redaktionsteam wird Ihren Eintrag prüfen und sich bei Rückfragen gegebenenfalls per E-Mail bei Ihnen melden. Wir bitten Sie um Verständnis, dass dieser Prozess einige Zeit in Anspruch nehmen kann, da wir gegebenenfalls auch Fachexpert*innen in den Entscheidungsprozess einbeziehen werden.",
+				"pendingConflict": "Du hast bereits eine offene Einreichung für diesen Kulturort eingereicht.",
+				"title": "Einreichung erfolgreich"
 			}
 		},
 		"form": {
@@ -815,12 +822,12 @@
 					"sinceDescription": "Bitte tragen Sie das Datum der erstmaligen Nutzung oder Eröffnung am Standort ein. Falls das genaue Datum nicht bekannt ist, reicht auch die Angabe des Jahres.",
 					"untilDescription": "Bitte tragen Sie das Datum ein, bis zu dem die Kultureinrichtung an diesem Standort aktiv war. Diese Angabe betrifft nur bereits geschlossene Orte. Falls das genaue Datum nicht bekannt ist, reicht auch die Angabe des Jahres."
 				},
+				"internalNotesDescription": "",
+				"internalNotesPrivateDescription": "Diese Information wird ausschließlich für befugte Nutzer*innen im geschützten Bereich des Kulturkataster zugänglich und nicht öffentlich einsehbar sein.",
+				"notesDescription": "Bitte beachten Sie, dass dieses Feld für die Öffentlichkeit einsehbar ist. Wenn Sie Informationen eintragen möchten, die nur für befugte Nutzer*innen einsehbar sind, tragen Sie diese bitte im Feld \"Interne Notizen\" direkt darunter ein.",
 				"organization": {
 					"legalFormPlaceholder": "z. B. e.V., gGmbH, GbR"
 				},
-				"notesDescription": "Bitte beachten Sie, dass dieses Feld für die Öffentlichkeit einsehbar ist. Wenn Sie Informationen eintragen möchten, die nur für befugte Nutzer*innen einsehbar sind, tragen Sie diese bitte im Feld \"Interne Notizen\" direkt darunter ein.",
-				"internalNotesDescription": "",
-				"internalNotesPrivateDescription": "Diese Information wird ausschließlich für befugte Nutzer*innen im geschützten Bereich des Kulturkataster zugänglich und nicht öffentlich einsehbar sein.",
 				"protectionStatus": {
 					"acutelyThreatened": "Akut bedroht",
 					"longTermSecured": "Langfristig gesichert",
@@ -848,11 +855,6 @@
 						"yes": "Ja"
 					}
 				}
-			}
-		},
-		"feedback": {
-			"submit": {
-				"pendingConflict": "Du hast bereits eine offene Einreichung für diesen Kulturort eingereicht."
 			}
 		},
 		"stepLabel": "Schritt {{current}} / {{total}}",
@@ -973,6 +975,12 @@
 		}
 	},
 	"institutionsTable": {
+		"filter": {
+			"title": "Kulturorte filtern"
+		},
+		"search": {
+			"title": "Kulturorte suchen"
+		},
 		"actions": {
 			"addInstitution": "Kulturort hinzufügen",
 			"claimInstitution": "Meine Orte anfragen"
@@ -1697,6 +1705,7 @@
 		}
 	},
 	"userTable": {
+		"accessAll": "Alle",
 		"actions": {
 			"add": "Nutzer*in hinzufügen"
 		},
@@ -1723,7 +1732,6 @@
 		},
 		"emptyMessage": "Keine Nutzer*innen gefunden.",
 		"emptyValue": "—",
-		"accessAll": "Alle",
 		"institutionsCount_one": "{{count}} Kulturort",
 		"institutionsCount_other": "{{count}} Kulturorte",
 		"searchPlaceholder": "Nutzer*innen suchen..."

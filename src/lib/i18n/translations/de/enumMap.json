@@ -386,7 +386,8 @@
 				"institutional_funding": "Institutionell gefördert",
 				"temporary_project_funding": "Temporäre Projektförderung",
 				"no_funding": "Nicht gefördert",
-				"unknown": "Unbekannt"
+				"unknown": "Unbekannt",
+				"none": "Keine Angabe"
 			}
 		},
 		"lat": {
@@ -504,7 +505,8 @@
 				"district_property": "Bezirkliche Liegenschaft",
 				"other_public_property": "Sonstige öffentliche Liegenschaft",
 				"municipal_housing_company": "Städtische Wohnungsbaugesellschaft",
-				"other": "Sonstige"
+				"other": "Sonstige",
+				"none": "Keine Angabe"
 			}
 		},
 		"parent_organization": {
@@ -536,7 +538,9 @@
 				"uncertain": "Unsicher",
 				"acutely_threatened": "Akut gefährdet",
 				"permanently_closed": "Dauerhaft geschlossen",
-				"not_yet_secured": "Noch nicht gesichert"
+				"not_yet_secured": "Noch nicht gesichert",
+				"unknown": "Unbekannt",
+				"none": "Keine Angabe"
 			}
 		},
 		"protection_status_info": {
@@ -565,7 +569,8 @@
 			"options": {
 				"unlimited_lease": "Unbefristete Miete",
 				"limited_lease": "Befristete Miete",
-				"organization_ownership": "Eigentum der Organisation"
+				"organization_ownership": "Eigentum der Organisation",
+				"none": "Keine Angabe"
 			}
 		},
 		"shared_use_allowed": {
@@ -668,7 +673,8 @@
 				"planned_use": "Geplante Nutzung",
 				"potential_space": "Potenzialort",
 				"temporarily_closed": "Vorübergehend geschlossen",
-				"unknown": "Unbekannt"
+				"unknown": "Unbekannt",
+				"none": "Keine Angabe"
 			}
 		},
 		"utilization_status_info": {
@@ -757,7 +763,8 @@
 		"limited_lease": "Befristete Miete",
 		"organization_ownership": "Eigentum der Organisation",
 		"placeholder": "Vertragsform auswählen",
-		"unlimited_lease": "Unbefristete Miete"
+		"unlimited_lease": "Unbefristete Miete",
+		"leasehold": "Erbbaurecht"
 	},
 	"submission_status": {
 		"approval_pending": "Freigabe ausstehend",
@@ -782,6 +789,7 @@
 		"planned_use": "Geplante Nutzung",
 		"potential_space": "Potenzialort",
 		"temporarily_closed": "Vorübergehend geschlossen",
-		"unknown": "Unbekannt"
+		"unknown": "Unbekannt",
+		"none": "Keine Angabe"
 	}
 }
