@@ -1012,8 +1012,8 @@ function InstitutionDraftWizardContent({
 								{
 									name: "funding_type",
 									allowNullOption: true,
-									nullOptionLabel: t(
-										"field_names.funding_type.options.unknown",
+									nullOptionLabel: tEnum(
+										"field_names.funding_type.options.none",
 									),
 									label: fieldLabel("funding_type", "Funding Type"),
 									type: "select",
@@ -1066,6 +1066,8 @@ function InstitutionDraftWizardContent({
 									name: "funding_sources",
 									label: fieldLabel("funding_sources"),
 									type: "fundingSources",
+									allowNullOption: true,
+									nullOptionLabel: t("field_names.funding_type.options.none"),
 									description: fieldDescription("funding_sources"),
 									fundingSources: {
 										sourceLabel: fieldLabel("funding_source_name"),
