@@ -290,8 +290,8 @@
 					},
 					"iconUpload": {
 						"currentFile": "View current file",
-						"label": "Upload SVG icon",
 						"description": "Optional. ",
+						"label": "Upload SVG icon",
 						"remove": "Remove icon",
 						"selected": "Selected: {{name}}"
 					},
@@ -460,7 +460,6 @@
 		"searchPlaceholder": "Browse groups..."
 	},
 	"imprintModal": {
-		"subtitle": "Kulturraum Berlin gGmbH",
 		"chairman": {
 			"name": "Cerstin Richter-Kotowski, State Secretary of the Senate Department for Culture and Social Cohesion",
 			"title": "Chairwoman of the Supervisory Board"
@@ -540,10 +539,10 @@
 			"management": "Dirk Förster, management",
 			"title": "Represented by:"
 		},
+		"subtitle": "Kulturraum Berlin gGmbH",
 		"title": "imprint"
 	},
 	"informationModal": {
-		"subtitle": "Here you can find further information about the Berlin cultural register.",
 		"faq": {
 			"questions": [
 				{
@@ -595,6 +594,7 @@
 			}
 		},
 		"simpleLanguageDirect": "You can find the “Info & Service” section in simple language <link />.",
+		"subtitle": "Here you can find further information about the Berlin cultural register.",
 		"title": "Information & Service",
 		"upcomingEnhancementsListAriaLabel": "List of planned enhancements and improvements",
 		"usage": {
@@ -703,6 +703,11 @@
 			"edit": {
 				"subtitle": "Check and update cultural location information.",
 				"title": "Edit cultural location"
+			}
+		},
+		"feedback": {
+			"submit": {
+				"pendingConflict": "You have already submitted an open submission for this cultural venue."
 			}
 		},
 		"form": {
@@ -815,12 +820,12 @@
 					"sinceDescription": "Please enter the date of first use or opening at the location. ",
 					"untilDescription": "Please enter the date until which the cultural institution was active at this location. "
 				},
+				"internalNotesDescription": "",
+				"internalNotesPrivateDescription": "This information will only be accessible to authorized users in the protected area of ​​the cultural register and will not be publicly viewable.",
+				"notesDescription": "Please note that this field is visible to the public. ",
 				"organization": {
 					"legalFormPlaceholder": "e.g. "
 				},
-				"notesDescription": "Please note that this field is visible to the public. ",
-				"internalNotesDescription": "",
-				"internalNotesPrivateDescription": "This information will only be accessible to authorized users in the protected area of ​​the cultural register and will not be publicly viewable.",
 				"protectionStatus": {
 					"acutelyThreatened": "Acutely threatened",
 					"longTermSecured": "Secured in the long term",
@@ -848,11 +853,6 @@
 						"yes": "Yes"
 					}
 				}
-			}
-		},
-		"feedback": {
-			"submit": {
-				"pendingConflict": "You have already submitted an open submission for this cultural venue."
 			}
 		},
 		"stepLabel": "Step {{current}} / {{total}}",
@@ -1690,6 +1690,7 @@
 		}
 	},
 	"userTable": {
+		"accessAll": "All",
 		"actions": {
 			"add": "Add user"
 		},
@@ -1716,7 +1717,6 @@
 		},
 		"emptyMessage": "No users found.",
 		"emptyValue": "—",
-		"accessAll": "All",
 		"institutionsCount_one": "{{count}} Cultural place",
 		"institutionsCount_other": "{{count}} Cultural places",
 		"searchPlaceholder": "Search users..."

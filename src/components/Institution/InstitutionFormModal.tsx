@@ -300,6 +300,10 @@ const buildInstitutionFormConfig = ({
 						name: "utilization_status",
 						label: fieldLabel("utilization_status", "Utilization Status"),
 						type: "select",
+						allowNullOption: true,
+						nullOptionLabel: tEnum(
+							"field_names.utilization_status.options.none",
+						),
 						description: fieldDescription("utilization_status"),
 						placeholder: fieldPlaceholder("utilization_status"),
 						layout: { span: "full" },
@@ -518,6 +522,8 @@ const buildInstitutionFormConfig = ({
 						label: fieldLabel("owner_type", "Owner Type"),
 						type: "select",
 						placeholder: fieldPlaceholder("owner_type"),
+						allowNullOption: true,
+						nullOptionLabel: tEnum("field_names.owner_type.options.none"),
 						layout: { span: "half" },
 						options: [
 							{
@@ -657,6 +663,7 @@ const buildInstitutionFormConfig = ({
 				fields: [
 					{
 						name: "funding_type",
+						allowNullOption: true,
 						label: fieldLabel("funding_type", "Funding Type"),
 						type: "select",
 						placeholder: fieldPlaceholder("funding_type"),
@@ -691,6 +698,11 @@ const buildInstitutionFormConfig = ({
 						label: fieldLabel("funding_sources", "Funding Sources"),
 						type: "fundingSources",
 						layout: { span: "full" },
+						allowNullOption: true,
+						nullOptionLabel: fieldLabel(
+							"funding_source_name.null_option",
+							"Funding Source Name",
+						),
 						fundingSources: {
 							sourceLabel: fieldLabel(
 								"funding_source_name",
