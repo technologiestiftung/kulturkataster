@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { getStatusLevel } from "./types";
+import { StatusLevelMap } from "./types";
 import { PrivateBadge } from "../shared/PrivateBadge";
 
 export function StatusItem({
@@ -22,24 +22,38 @@ export function StatusItem({
 	if (!value || typeof value !== "string") return null;
 	const labelKey = `${enumKey}.${value}`;
 	const showCircle = variant === "plain" || !label;
-	const isPositive = getStatusLevel(value) === "positive";
+	const hasKnownStatusLevel = Object.hasOwn(StatusLevelMap, value);
+	const isInUse = value === "in_use";
+	const isPermanentlyClosed = value === "permanently_closed";
+
+	let accentClass = "bg-alert";
+	if (isInUse) {
+		accentClass = "bg-brand-light";
+	} else if (isPermanentlyClosed) {
+		accentClass = "bg-alert";
+	} else if (hasKnownStatusLevel) {
+		accentClass = "bg-chart-2";
+	}
+
+	let circleClass = "bg-alert";
+	if (isInUse) {
+		circleClass = "bg-brand-default";
+	} else if (isPermanentlyClosed) {
+		circleClass = "bg-alert";
+	} else if (hasKnownStatusLevel) {
+		circleClass = "bg-chart-2";
+	}
 
 	const wrapperClassName =
 		variant === "plain"
 			? "flex items-center w-full gap-2 p-4 flex-wrap bg-secondary"
 			: `flex items-center w-full gap-2 p-4 flex-wrap ${
-					label && isPositive ? "bg-brand-light" : "bg-alert"
+					label ? accentClass : "bg-secondary"
 				}`;
 
 	return (
 		<div className={wrapperClassName}>
-			{showCircle && (
-				<div
-					className={`w-4 h-4 rounded-full ${
-						isPositive ? "bg-brand-default" : "bg-alert"
-					}`}
-				/>
-			)}
+			{showCircle && <div className={`w-4 h-4 rounded-full ${circleClass}`} />}
 			{label && <strong className="body2">{label}:</strong>}
 			<span className="body2 font-medium">{tEnum(labelKey)}</span>
 			{isPrivate ? <PrivateBadge /> : null}

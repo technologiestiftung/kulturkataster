@@ -166,13 +166,30 @@ export function InstitutionDraftReviewModal({
 		const translated = tEnum(key);
 		return translated === key ? submissionStatus : translated;
 	})();
+	const submissionTypeLabel = t(
+		`institutionsTable.type.submissionBase.${resolvedSubmissionWithFallback.type}`,
+		{
+			defaultValue: resolvedSubmissionWithFallback.type,
+		},
+	);
+	const submissionTitle =
+		submissionStatus === "approved" ||
+		submissionStatus === "rejected" ||
+		submissionStatus === "needs_changes"
+			? t(`institutionsTable.type.submissionStatus.${submissionStatus}`, {
+					type: submissionTypeLabel,
+					defaultValue: submissionTypeLabel,
+				})
+			: t(
+					`institutionsTable.type.submission.${resolvedSubmissionWithFallback.type}`,
+					{
+						defaultValue: resolvedSubmissionWithFallback.type,
+					},
+				);
 
 	return (
 		<Modal
-			title={t(
-				"institutionsTable.type.submission." +
-					resolvedSubmissionWithFallback.type,
-			)}
+			title={submissionTitle}
 			variant="fullscreen"
 			returnTo={returnTo}
 			routePath={routePath}

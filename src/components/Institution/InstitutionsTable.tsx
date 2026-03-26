@@ -101,6 +101,27 @@ export function InstitutionsTable() {
 		}
 		return status;
 	};
+	const getSubmissionTypeLabel = (
+		type: SubmissionType,
+		status?: string | null,
+	) => {
+		const baseTypeLabel = t(`institutionsTable.type.submissionBase.${type}`, {
+			defaultValue: type,
+		});
+		if (
+			status === "approved" ||
+			status === "rejected" ||
+			status === "needs_changes"
+		) {
+			return t(`institutionsTable.type.submissionStatus.${status}`, {
+				type: baseTypeLabel,
+				defaultValue: baseTypeLabel,
+			});
+		}
+		return t(`institutionsTable.type.submission.${type}`, {
+			defaultValue: type,
+		});
+	};
 	const isPrivateColumn = useCallback(
 		(columnId: string) => {
 			const fieldName = columnId === "owner" ? "owner_name" : columnId;
@@ -183,9 +204,9 @@ export function InstitutionsTable() {
 					if (row.original.rowKind === "submission") {
 						return (
 							<p className="capitalize text-wrap self-center text-center  flex-wrap ">
-								{t(
-									`institutionsTable.type.submission.${row.original.submissionType}`,
-									{ defaultValue: row.original.submissionType },
+								{getSubmissionTypeLabel(
+									row.original.submissionType,
+									row.original.status,
 								)}
 							</p>
 						);

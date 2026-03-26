@@ -569,6 +569,7 @@
 			"options": {
 				"unlimited_lease": "Unbefristete Miete",
 				"limited_lease": "Befristete Miete",
+				"hereditary_building_right": "Erbbaurecht",
 				"organization_ownership": "Eigentum der Organisation",
 				"leasehold": "Erbbaurecht",
 				"none": "Keine Angabe"
@@ -580,6 +581,18 @@
 			"placeholder": "Bitte eintragen",
 			"errors": {
 				"required": "Bitte Offen für Raumanfragen? angeben."
+			},
+			"options": {
+				"yes": "Ja",
+				"no": "Nein"
+			}
+		},
+		"shared_use_accessibility": {
+			"label": "Barrierefreiheit",
+			"description": "",
+			"placeholder": "Barrierefreiheit für die Mehrfachnutzung beschreiben",
+			"errors": {
+				"required": "Bitte Angaben zur Barrierefreiheit für die Mehrfachnutzung machen."
 			}
 		},
 		"shared_use_audience": {
