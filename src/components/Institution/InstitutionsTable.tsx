@@ -716,8 +716,7 @@ export function InstitutionsTable() {
 				header: headerLabel("contact_person_email", "Contact Person Email"),
 				enableSorting: true,
 				size: 130,
-				cell: ({ row }) =>
-					renderTextValue(row.original.contact_person?.email),
+				cell: ({ row }) => renderTextValue(row.original.contact_person?.email),
 			},
 
 			{
@@ -725,8 +724,7 @@ export function InstitutionsTable() {
 				header: headerLabel("contact_person_phone", "Contact Person Phone"),
 				enableSorting: true,
 				size: 130,
-				cell: ({ row }) =>
-					renderTextValue(row.original.contact_person?.phone),
+				cell: ({ row }) => renderTextValue(row.original.contact_person?.phone),
 			},
 			{
 				accessorKey: "notes",
