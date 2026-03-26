@@ -70,6 +70,10 @@ type UserFormConfigArgs = {
 	submitting: boolean;
 	onSubmit: (data: Record<string, unknown>) => void | Promise<void>;
 	onCancel: () => void;
+	onSendRoleDecision: (
+		target: "district" | "state" | "network",
+		decision: "approved" | "rejected",
+	) => Promise<string | null>;
 };
 
 type UseResolvedUserResult = {
@@ -218,6 +222,7 @@ const buildUserFormConfig = ({
 	submitting,
 	onSubmit,
 	onCancel,
+	onSendRoleDecision,
 }: UserFormConfigArgs): FormWrapperConfig => {
 	const accessCondition = () => mode === "edit" && Boolean(resolvedUser);
 
@@ -367,24 +372,9 @@ const buildUserFormConfig = ({
 							errorFallback: t("userFormModal.roleEmails.error"),
 							secondaryErrorFallback: t("userFormModal.roleEmails.error"),
 							icon: <Mail className="h-5 w-5 text-primary-dark" />,
-							onAction: async () => {
-								if (!resolvedUser) return null;
-								await sendRoleDecisionEmailManual({
-									userId: resolvedUser.id,
-									target: "district",
-									decision: "approved",
-								});
-								return t("userFormModal.roleEmails.success");
-							},
-							onSecondaryAction: async () => {
-								if (!resolvedUser) return null;
-								await sendRoleDecisionEmailManual({
-									userId: resolvedUser.id,
-									target: "district",
-									decision: "rejected",
-								});
-								return t("userFormModal.roleEmails.success");
-							},
+							onAction: () => onSendRoleDecision("district", "approved"),
+							onSecondaryAction: () =>
+								onSendRoleDecision("district", "rejected"),
 						},
 					},
 					{
@@ -405,24 +395,8 @@ const buildUserFormConfig = ({
 							errorFallback: t("userFormModal.roleEmails.error"),
 							secondaryErrorFallback: t("userFormModal.roleEmails.error"),
 							icon: <Mail className="h-5 w-5 text-primary-dark" />,
-							onAction: async () => {
-								if (!resolvedUser) return null;
-								await sendRoleDecisionEmailManual({
-									userId: resolvedUser.id,
-									target: "state",
-									decision: "approved",
-								});
-								return t("userFormModal.roleEmails.success");
-							},
-							onSecondaryAction: async () => {
-								if (!resolvedUser) return null;
-								await sendRoleDecisionEmailManual({
-									userId: resolvedUser.id,
-									target: "state",
-									decision: "rejected",
-								});
-								return t("userFormModal.roleEmails.success");
-							},
+							onAction: () => onSendRoleDecision("state", "approved"),
+							onSecondaryAction: () => onSendRoleDecision("state", "rejected"),
 						},
 					},
 					{
@@ -443,24 +417,9 @@ const buildUserFormConfig = ({
 							errorFallback: t("userFormModal.roleEmails.error"),
 							secondaryErrorFallback: t("userFormModal.roleEmails.error"),
 							icon: <Mail className="h-5 w-5 text-primary-dark" />,
-							onAction: async () => {
-								if (!resolvedUser) return null;
-								await sendRoleDecisionEmailManual({
-									userId: resolvedUser.id,
-									target: "network",
-									decision: "approved",
-								});
-								return t("userFormModal.roleEmails.success");
-							},
-							onSecondaryAction: async () => {
-								if (!resolvedUser) return null;
-								await sendRoleDecisionEmailManual({
-									userId: resolvedUser.id,
-									target: "network",
-									decision: "rejected",
-								});
-								return t("userFormModal.roleEmails.success");
-							},
+							onAction: () => onSendRoleDecision("network", "approved"),
+							onSecondaryAction: () =>
+								onSendRoleDecision("network", "rejected"),
 						},
 					},
 				],
@@ -517,6 +476,7 @@ export function UserFormModal({
 	const roles = useAccountStore((state) => state.roles);
 	const groups = useAccountStore((state) => state.groups);
 	const removeUser = useAccountStore((state) => state.removeUser);
+	const upsertUser = useAccountStore((state) => state.upsertUser);
 	const institutions =
 		useInstitutionStore((state) => state.allInstitutions) ?? [];
 	const categories = useInstitutionStore((state) => state.categories) ?? [];
@@ -542,6 +502,19 @@ export function UserFormModal({
 				? "userFormModal.feedback.create"
 				: "userFormModal.feedback.update";
 		showSuccessToast(t(`${keyPrefix}.title`), t(`${keyPrefix}.description`));
+	};
+	const handleSendRoleDecision = async (
+		target: "district" | "state" | "network",
+		decision: "approved" | "rejected",
+	) => {
+		if (!resolvedUser) return null;
+		const updatedUser = await sendRoleDecisionEmailManual({
+			userId: resolvedUser.id,
+			target,
+			decision,
+		});
+		upsertUser(updatedUser);
+		return t("userFormModal.roleEmails.success");
 	};
 	const { handleSubmit, submitting } = useUserSubmit(
 		mode,
@@ -586,6 +559,7 @@ export function UserFormModal({
 			submitting,
 			onSubmit: handleSubmit,
 			onCancel: handleClose,
+			onSendRoleDecision: handleSendRoleDecision,
 		});
 		if (mode !== "edit" || !resolvedUser) return baseConfig;
 		return {
@@ -611,7 +585,7 @@ export function UserFormModal({
 		isDeleting,
 		handleSubmit,
 		handleClose,
-		handleSuccess,
+		handleSendRoleDecision,
 	]);
 
 	const autoCloseError =

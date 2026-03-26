@@ -637,6 +637,12 @@ const buildInstitutionFormConfig = ({
 									"field_names.rental_contract_type.options.organization_ownership",
 								),
 							},
+							{
+								value: "leasehold",
+								label: tEnum(
+									"field_names.rental_contract_type.options.leasehold",
+								),
+							},
 						],
 					},
 					{
@@ -699,10 +705,7 @@ const buildInstitutionFormConfig = ({
 						type: "fundingSources",
 						layout: { span: "full" },
 						allowNullOption: true,
-						nullOptionLabel: fieldLabel(
-							"funding_source_name.null_option",
-							"Funding Source Name",
-						),
+						nullOptionLabel: tEnum("funding_source.none"),
 						fundingSources: {
 							sourceLabel: fieldLabel(
 								"funding_source_name",
@@ -855,9 +858,24 @@ const buildInstitutionFormConfig = ({
 						layout: { span: "full" },
 					},
 					{
+						name: "utilization_status_internal_notes",
+						label: fieldLabel(
+							"utilization_status_internal_notes",
+							"Utilization Status Internal Notes",
+						),
+						type: "textarea",
+						placeholder: fieldPlaceholder("utilization_status_internal_notes"),
+						layout: { span: "full" },
+					},
+					{
 						name: "protection_status",
 						label: fieldLabel("protection_status", "Protection Status"),
 						type: "select",
+						allowNullOption: true,
+						nullOptionLabel: tEnum(
+							"field_names.protection_status.options.none",
+						),
+						description: fieldDescription("protection_status"),
 						placeholder: fieldPlaceholder("protection_status"),
 						layout: { span: "full" },
 						options: [

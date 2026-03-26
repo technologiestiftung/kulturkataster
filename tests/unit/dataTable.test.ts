@@ -1,6 +1,7 @@
 import React from "react";
 import { describe, expect, it, vi } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { DataTable } from "@/components/DataTable/DataTable";
 import type { DataTableConfig } from "@/components/DataTable";
 
@@ -74,5 +75,37 @@ describe("DataTable", () => {
 		const markup = buildMarkup();
 		const tabIndexMatches = markup.match(/tabindex="0"/g) ?? [];
 		expect(tabIndexMatches.length).toBe(1);
+	});
+
+	it("includes row ids in the global search index", () => {
+		const config: DataTableConfig<Row> = {
+			columns: [
+				{
+					accessorKey: "name",
+					header: "Name",
+					enableSorting: true,
+				},
+				{
+					accessorKey: "status",
+					header: "Status",
+				},
+			],
+			data: [
+				{ id: 101, name: "Alpha", status: "Active" },
+				{ id: 202, name: "Beta", status: "Draft" },
+			],
+			getRowKey: (row) => row.id,
+			getSearchableValues: (row) => [row.name, row.status],
+			searchable: true,
+		};
+
+		render(React.createElement(DataTable<Row>, { config }));
+
+		fireEvent.change(screen.getByPlaceholderText("Search..."), {
+			target: { value: "202" },
+		});
+
+		expect(screen.getByText("Beta")).toBeInTheDocument();
+		expect(screen.queryByText("Alpha")).not.toBeInTheDocument();
 	});
 });

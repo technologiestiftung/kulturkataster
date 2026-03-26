@@ -818,12 +818,13 @@ const renderFieldContent = (
 									const normalizedValue =
 										normalizeTablePermissionValue(permissionValue);
 									const currentTable = normalizedValue[table.key];
-									const actions = field.tablePermissions?.actions ?? [
-										"read",
-										"create",
-										"update",
-										"delete",
-									];
+									const actions = table.actions ??
+										field.tablePermissions?.actions ?? [
+											"read",
+											"create",
+											"update",
+											"delete",
+										];
 									return (
 										<>
 											<p className="body3 ">{table.label}</p>

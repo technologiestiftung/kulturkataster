@@ -15,7 +15,11 @@ import type {
 	ActivityStatus as AuditActivityStatus,
 } from "@/generated/prisma";
 
-export type ActivityStatus = AuditActivityStatus;
+export type ActivityStatus =
+	| AuditActivityStatus
+	| "active"
+	| "inactive"
+	| "banned";
 export type ActivityEventType = "create" | "assign" | "status_change";
 
 export interface Activity {
@@ -44,11 +48,14 @@ interface ActivityItemProps {
 	index: number;
 }
 
-const statusColors: Record<ActivityStatus, string> = {
+const statusColors: Record<string, string> = {
 	approval_pending: "bg-muted-foreground",
 	approved: "bg-green-500",
 	rejected: "bg-red-500",
 	completed: "bg-blue-500",
+	active: "bg-green-500",
+	inactive: "bg-neutral-50",
+	banned: "bg-red-500",
 };
 
 const mapStatusLabel = (
@@ -265,7 +272,7 @@ export function ActivityItem({ activity, index }: ActivityItemProps) {
 					<div
 						className={cn(
 							"w-4 h-4 rounded-full flex-shrink-0 cursor-help",
-							statusColors[activity.status],
+							statusColors[activity.status] ?? "bg-blue-500",
 						)}
 						aria-label={t("auth.account.activity.statusAria", {
 							status: statusLabel,

@@ -27,6 +27,7 @@ import type { AuditContext } from "@/server/utils/auditContext";
 import {
 	ClaimReviewPayload,
 	SubmissionCreatePayload,
+	SubmissionNoteCreatePayload,
 	SubmissionFilter,
 	SubmissionReviewPayload,
 	SubmissionUpdatePayload,
@@ -44,6 +45,7 @@ import {
 	validateClaimReviewInput,
 	validateSubmissionCreateInput,
 	validateSubmissionId,
+	validateSubmissionNoteCreateInput,
 	validateSubmissionReviewInput,
 	validateSubmissionUpdateInput,
 } from "@/server/validation/submissions";
@@ -461,6 +463,11 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 							intent,
 						},
 						async () => {
+							const trimmedInternalNotes =
+								typeof validatedInput.internalNotes === "string" &&
+								validatedInput.internalNotes.trim().length > 0
+									? validatedInput.internalNotes.trim()
+									: null;
 							if (validatedInput.status === "approved") {
 								if (submission.entity_type !== "institution") {
 									throw new Error(
@@ -660,6 +667,20 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 											});
 										}
 
+										if (trimmedInternalNotes) {
+											await tx.submissionNote.create({
+												data: {
+													submission: {
+														connect: { id: validatedInput.id },
+													},
+													note: trimmedInternalNotes,
+													creator: currentUserId
+														? { connect: { id: currentUserId } }
+														: undefined,
+												},
+											});
+										}
+
 										await tx.submission.delete({
 											where: { id: validatedInput.id },
 										});
@@ -668,7 +689,7 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 												submissionId: validatedInput.id,
 												status: "approved",
 												reviewerId: currentUserId,
-												reviewNotes: validatedInput.internalNotes,
+												reviewNotes: trimmedInternalNotes,
 											},
 											tx,
 										);
@@ -720,11 +741,23 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 							let updated;
 							try {
 								updated = await prisma.$transaction(async (tx) => {
+									if (trimmedInternalNotes) {
+										await tx.submissionNote.create({
+											data: {
+												submission: {
+													connect: { id: validatedInput.id },
+												},
+												note: trimmedInternalNotes,
+												creator: currentUserId
+													? { connect: { id: currentUserId } }
+													: undefined,
+											},
+										});
+									}
 									const txUpdated = await tx.submission.update({
 										where: { id: validatedInput.id },
 										data: {
 											status: validatedInput.status,
-											review_notes: validatedInput.internalNotes ?? undefined,
 											reviewer: currentUserId
 												? { connect: { id: currentUserId } }
 												: undefined,
@@ -739,7 +772,7 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 													? "rejected"
 													: "completed",
 											reviewerId: currentUserId,
-											reviewNotes: validatedInput.internalNotes,
+											reviewNotes: trimmedInternalNotes,
 										},
 										tx,
 									);
@@ -795,6 +828,65 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 			);
 		},
 		{ route: "server_action:submissions.reviewSubmission" },
+	);
+}
+
+export async function saveSubmissionNote(input: SubmissionNoteCreatePayload) {
+	return runWithServerRequestContext(
+		async () => {
+			const validatedInput = validateSubmissionNoteCreateInput(input);
+			const currentUserId = await getCurrentUserId();
+			setRequestContext({ userId: currentUserId });
+			const ctx = await getAccessContextForUser(currentUserId);
+			authorizeTable(ctx, "submission", "update");
+			const scope = getTableScope(ctx, "submission", "update");
+			const ownerId = requireScopeOrUser(scope, currentUserId);
+			const submission = ownerId
+				? await submissionRepo.findFirst({
+						id: validatedInput.submissionId,
+						created_by: ownerId,
+					})
+				: await submissionRepo.findById(validatedInput.submissionId);
+			if (!submission) {
+				throw new Error("Not authorized to add notes to this submission.");
+			}
+			if (
+				typeof submission.status === "string" &&
+				submission.status !== "approval_pending" &&
+				submission.status !== "rejected"
+			) {
+				throw new Error(
+					"Notes can only be added to pending or rejected submissions.",
+				);
+			}
+
+			try {
+				await submissionRepo.createNote({
+					submission: { connect: { id: validatedInput.submissionId } },
+					note: validatedInput.note,
+					creator: currentUserId
+						? { connect: { id: currentUserId } }
+						: undefined,
+				});
+				const updatedSubmission = await submissionRepo.findById(
+					validatedInput.submissionId,
+				);
+				if (!updatedSubmission) {
+					throw new Error("Submission not found after saving note.");
+				}
+				revalidateAccount();
+				return updatedSubmission;
+			} catch (error) {
+				logger.error("submission.note_create.db_failed", error, {
+					subsystem: "submission",
+					db_subsystem: "db",
+					actor_user_id: currentUserId,
+					submission_id: validatedInput.submissionId,
+				});
+				throw error;
+			}
+		},
+		{ route: "server_action:submissions.saveSubmissionNote" },
 	);
 }
 

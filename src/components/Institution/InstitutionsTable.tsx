@@ -224,6 +224,17 @@ export function InstitutionsTable() {
 				},
 			},
 			{
+				accessorKey: "parent_organization",
+				header: headerLabel("parent_organization", "Parent Organization"),
+				enableSorting: true,
+				size: 250,
+				meta: { truncate: true },
+				cell: ({ row }) =>
+					row.original.parent_organization || (
+						<span className="text-foreground">—</span>
+					),
+			},
+			{
 				accessorKey: "email",
 				header: headerLabel("email", "Email"),
 				enableSorting: true,
@@ -280,6 +291,19 @@ export function InstitutionsTable() {
 				},
 			},
 			{
+				accessorKey: "address.cultural_area",
+				header: headerLabel("cultural_area", "Cultural Area"),
+				enableSorting: true,
+				size: 150,
+				meta: { truncate: true },
+				cell: ({ row }) => {
+					const culturalArea = row.original.address?.cultural_area;
+
+					if (!culturalArea) return <span className="text-foreground">—</span>;
+					return culturalArea;
+				},
+			},
+			{
 				accessorKey: "address.street",
 				header: `${headerLabel("street", "Street")} & ${headerLabel("street_number", "Number")}`,
 				enableSorting: true,
@@ -293,15 +317,15 @@ export function InstitutionsTable() {
 				},
 			},
 			{
-				accessorKey: "address.city",
-				header: headerLabel("city", "City"),
+				accessorKey: "address.address_suffix",
+				header: headerLabel("address_suffix", "Address Suffix"),
 				enableSorting: true,
-				size: 100,
+				size: 150,
 				meta: { truncate: true },
 				cell: ({ row }) => {
-					const city = row.original.address?.city;
-					if (!city) return <span className="text-foreground">—</span>;
-					return city;
+					const addressSuffix = row.original.address?.address_suffix;
+					if (!addressSuffix) return <span className="text-foreground">—</span>;
+					return addressSuffix;
 				},
 			},
 			{
@@ -317,15 +341,15 @@ export function InstitutionsTable() {
 				},
 			},
 			{
-				accessorKey: "address.neighbourhood",
-				header: headerLabel("neighbourhood", "Neighbourhood"),
+				accessorKey: "address.city",
+				header: headerLabel("city", "City"),
 				enableSorting: true,
-				size: 150,
+				size: 100,
 				meta: { truncate: true },
 				cell: ({ row }) => {
-					const neighbourhood = row.original.address?.neighbourhood;
-					if (!neighbourhood) return <span className="text-foreground">—</span>;
-					return neighbourhood;
+					const city = row.original.address?.city;
+					if (!city) return <span className="text-foreground">—</span>;
+					return city;
 				},
 			},
 			{
@@ -345,74 +369,16 @@ export function InstitutionsTable() {
 				},
 			},
 			{
-				accessorKey: "address.cultural_area",
-				header: headerLabel("cultural_area", "Cultural Area"),
+				accessorKey: "address.neighbourhood",
+				header: headerLabel("neighbourhood", "Neighbourhood"),
 				enableSorting: true,
 				size: 150,
 				meta: { truncate: true },
 				cell: ({ row }) => {
-					const culturalArea = row.original.address?.cultural_area;
-
-					if (!culturalArea) return <span className="text-foreground">—</span>;
-					return culturalArea;
+					const neighbourhood = row.original.address?.neighbourhood;
+					if (!neighbourhood) return <span className="text-foreground">—</span>;
+					return neighbourhood;
 				},
-			},
-			{
-				accessorKey: "parent_organization",
-				header: headerLabel("parent_organization", "Parent Organization"),
-				enableSorting: true,
-				size: 250,
-				meta: { truncate: true },
-				cell: ({ row }) =>
-					row.original.parent_organization || (
-						<span className="text-foreground">—</span>
-					),
-			},
-			{
-				accessorKey: "area",
-				header: headerLabel("area", "Area (m2)"),
-				enableSorting: true,
-				size: 90,
-				meta: { truncate: true },
-				cell: ({ row }) =>
-					row.original.area ? (
-						row.original.area.toString()
-					) : (
-						<span className="text-foreground">—</span>
-					),
-			},
-			{
-				accessorKey: "number_of_rooms",
-				header: headerLabel("number_of_rooms", "Rooms"),
-				enableSorting: true,
-				size: 150,
-				cell: ({ row }) =>
-					row.original.number_of_rooms ? (
-						row.original.number_of_rooms.toString()
-					) : (
-						<span className="text-foreground">—</span>
-					),
-			},
-			{
-				accessorKey: "legal_form",
-				header: headerLabel("legal_form", "Legal Form"),
-				enableSorting: true,
-				size: 150,
-				meta: { truncate: true },
-				cell: ({ row }) =>
-					row.original.legal_form || <span className="text-foreground">—</span>,
-			},
-			{
-				accessorKey: "capacity",
-				header: headerLabel("capacity", "Capacity"),
-				enableSorting: true,
-				size: 90,
-				cell: ({ row }) =>
-					row.original.capacity ? (
-						row.original.capacity.toString()
-					) : (
-						<span className="text-foreground">—</span>
-					),
 			},
 			{
 				id: "category",
@@ -421,10 +387,13 @@ export function InstitutionsTable() {
 				enableSorting: true,
 				size: 333,
 				cell: ({ row }) => {
+					const categories = getParentCategories(
+						row.original as Partial<Institution>,
+					);
 					return (
 						<div className="gap-1 flex-wrap flex">
-							{getParentCategories(row.original as Partial<Institution>).map(
-								(cat) => (
+							{categories.length > 0 ? (
+								categories.map((cat) => (
 									<Badge
 										variant="outline"
 										key={cat.id}
@@ -432,7 +401,9 @@ export function InstitutionsTable() {
 									>
 										{`${tEnum("category." + cat.key)}`}
 									</Badge>
-								),
+								))
+							) : (
+								<span className="text-foreground">—</span>
 							)}
 						</div>
 					);
@@ -445,10 +416,13 @@ export function InstitutionsTable() {
 				enableSorting: true,
 				size: 333,
 				cell: ({ row }) => {
+					const subcategories = getSubcategories(
+						row.original as Partial<Institution>,
+					);
 					return (
 						<div className="gap-1 flex-wrap flex">
-							{getSubcategories(row.original as Partial<Institution>).map(
-								(cat) => (
+							{subcategories.length > 0 ? (
+								subcategories.map((cat) => (
 									<Badge
 										variant="outline"
 										key={cat.id}
@@ -456,11 +430,87 @@ export function InstitutionsTable() {
 									>
 										{`${tEnum("category." + cat.key)}`}
 									</Badge>
-								),
+								))
+							) : (
+								<span className="text-foreground">—</span>
 							)}
 						</div>
 					);
 				},
+			},
+			{
+				accessorKey: "utilization_status",
+				header: headerLabel("utilization_status", "Utilization Status"),
+				enableSorting: true,
+				size: 160,
+				meta: { truncate: true },
+				cell: ({ row }) =>
+					translateEnum("utilization_status", row.original.utilization_status),
+			},
+			{
+				accessorKey: "utilization_status_info",
+				header: headerLabel(
+					"utilization_status_info",
+					"Utilization Status Info",
+				),
+				enableSorting: true,
+				size: 200,
+				meta: { truncate: true },
+			},
+			{
+				accessorKey: "utilization_status_internal_notes",
+				header: headerLabel(
+					"utilization_status_internal_notes",
+					"Utilization Status Internal Notes",
+				),
+				enableSorting: true,
+				size: 200,
+				meta: { truncate: true },
+			},
+			{
+				accessorKey: "protection_status",
+				header: headerLabel("protection_status", "Protection Status"),
+				enableSorting: true,
+				size: 160,
+				meta: { truncate: true },
+				cell: ({ row }) =>
+					translateEnum("protection_status", row.original.protection_status),
+			},
+			{
+				accessorKey: "protection_status_info",
+				header: headerLabel("protection_status_info", "Protection Status Info"),
+				enableSorting: true,
+				size: 200,
+				meta: { truncate: true },
+			},
+			{
+				accessorKey: "legal_form",
+				header: headerLabel("legal_form", "Legal Form"),
+				enableSorting: true,
+				size: 150,
+				meta: { truncate: true },
+				cell: ({ row }) =>
+					row.original.legal_form || <span className="text-foreground">—</span>,
+			},
+			{
+				id: "funding_sources",
+				accessorFn: (row) =>
+					formatFundingSources(row, { translateFundingSource }),
+				header: headerLabel("funding_sources", "Funding Sources"),
+				enableSorting: true,
+				size: 180,
+				meta: { truncate: true },
+				cell: ({ row }) =>
+					formatFundingSources(row.original, { translateFundingSource }),
+			},
+			{
+				accessorKey: "funding_type",
+				header: headerLabel("funding_type", "Funding Type"),
+				enableSorting: true,
+				size: 180,
+				meta: { truncate: true },
+				cell: ({ row }) =>
+					translateEnum("funding_type", row.original.funding_type),
 			},
 			{
 				id: "owner",
@@ -501,60 +551,64 @@ export function InstitutionsTable() {
 					formatInstitutionDate(row.original.rental_contract_end),
 			},
 			{
-				accessorKey: "funding_type",
-				header: headerLabel("funding_type", "Funding Type"),
+				accessorKey: "established_since",
+				header: headerLabel("established_since", "Established Since"),
 				enableSorting: true,
-				size: 180,
-				meta: { truncate: true },
 				cell: ({ row }) =>
-					translateEnum("funding_type", row.original.funding_type),
-			},
-
-			{
-				id: "funding_sources",
-				accessorFn: (row) =>
-					formatFundingSources(row, { translateFundingSource }),
-				header: headerLabel("funding_sources", "Funding Sources"),
-				enableSorting: true,
-				size: 180,
-				meta: { truncate: true },
-				cell: ({ row }) =>
-					formatFundingSources(row.original, { translateFundingSource }),
+					formatInstitutionDate(row.original.established_since),
 			},
 			{
-				accessorKey: "utilization_status",
-				header: headerLabel("utilization_status", "Utilization Status"),
+				accessorKey: "established_until",
+				header: headerLabel("established_until", "Established Until"),
 				enableSorting: true,
-				size: 160,
-				meta: { truncate: true },
 				cell: ({ row }) =>
-					translateEnum("utilization_status", row.original.utilization_status),
+					formatInstitutionDate(row.original.established_until),
 			},
 			{
-				accessorKey: "utilization_status_info",
-				header: headerLabel(
-					"utilization_status_info",
-					"Utilization Status Info",
-				),
+				accessorKey: "closing_reason",
+				header: headerLabel("closing_reason", "Closing Reason"),
 				enableSorting: true,
 				size: 200,
 				meta: { truncate: true },
+				cell: ({ row }) =>
+					translateEnum("closing_reason", row.original.closing_reason),
 			},
 			{
-				accessorKey: "protection_status",
-				header: headerLabel("protection_status", "Protection Status"),
+				accessorKey: "area",
+				header: headerLabel("area", "Area (m2)"),
 				enableSorting: true,
-				size: 160,
+				size: 90,
 				meta: { truncate: true },
 				cell: ({ row }) =>
-					translateEnum("protection_status", row.original.protection_status),
+					row.original.area ? (
+						row.original.area.toString()
+					) : (
+						<span className="text-foreground">—</span>
+					),
 			},
 			{
-				accessorKey: "protection_status_info",
-				header: headerLabel("protection_status_info", "Protection Status Info"),
+				accessorKey: "number_of_rooms",
+				header: headerLabel("number_of_rooms", "Rooms"),
 				enableSorting: true,
-				size: 200,
-				meta: { truncate: true },
+				size: 150,
+				cell: ({ row }) =>
+					row.original.number_of_rooms ? (
+						row.original.number_of_rooms.toString()
+					) : (
+						<span className="text-foreground">—</span>
+					),
+			},
+			{
+				accessorKey: "capacity",
+				header: headerLabel("capacity", "Capacity"),
+				enableSorting: true,
+				size: 90,
+				cell: ({ row }) =>
+					row.original.capacity ? (
+						row.original.capacity.toString()
+					) : (
+						<span className="text-foreground">—</span>
+					),
 			},
 			{
 				accessorKey: "shared_use_allowed",
@@ -610,29 +664,57 @@ export function InstitutionsTable() {
 				meta: { truncate: true },
 			},
 			{
-				accessorKey: "established_since",
-				header: headerLabel("established_since", "Established Since"),
+				accessorKey: "shared_use_contact_person",
+				header: headerLabel(
+					"shared_use_contact_person",
+					"Shared Use Contact Person",
+				),
 				enableSorting: true,
-				size: 150,
-				cell: ({ row }) =>
-					formatInstitutionDate(row.original.established_since),
-			},
-			{
-				accessorKey: "established_until",
-				header: headerLabel("established_until", "Established Until"),
-				enableSorting: true,
-				size: 150,
-				cell: ({ row }) =>
-					formatInstitutionDate(row.original.established_until),
-			},
-			{
-				accessorKey: "closing_reason",
-				header: headerLabel("closing_reason", "Closing Reason"),
-				enableSorting: true,
-				size: 200,
+				size: 220,
 				meta: { truncate: true },
+			},
+			{
+				accessorKey: "contact_person_name",
+				header: headerLabel(
+					"contact_person_first_name",
+					"Contact Person First Name",
+				),
+				enableSorting: true,
+				size: 150,
 				cell: ({ row }) =>
-					translateEnum("closing_reason", row.original.closing_reason),
+					row.original.contact_person?.first_name || (
+						<span className="text-foreground">—</span>
+					),
+				accessorFn: (row) => row.contact_person?.first_name || "",
+				meta: { truncate: true },
+			},
+			{
+				accessorKey: "contact_person_last_name",
+				header: headerLabel(
+					"contact_person_last_name",
+					"Contact Person Last Name",
+				),
+				enableSorting: true,
+				size: 150,
+				cell: ({ row }) =>
+					row.original.contact_person?.last_name || (
+						<span className="text-foreground">—</span>
+					),
+				accessorFn: (row) => row.contact_person?.last_name || "",
+				meta: { truncate: true },
+			},
+			{
+				accessorKey: "contact_person_email",
+				header: headerLabel("contact_person_email", "Contact Person Email"),
+				enableSorting: true,
+				size: 130,
+			},
+
+			{
+				accessorKey: "contact_person_phone",
+				header: headerLabel("contact_person_phone", "Contact Person Phone"),
+				enableSorting: true,
+				size: 130,
 			},
 			{
 				accessorKey: "notes",
@@ -654,51 +736,6 @@ export function InstitutionsTable() {
 				enableSorting: true,
 				size: 160,
 				meta: { truncate: true },
-			},
-			{
-				accessorKey: "shared_use_contact_person",
-				header: headerLabel(
-					"shared_use_contact_person",
-					"Shared Use Contact Person",
-				),
-				enableSorting: true,
-				size: 220,
-				meta: { truncate: true },
-			},
-
-			{
-				accessorKey: "contact_person_name",
-				header: headerLabel(
-					"contact_person_first_name",
-					"Contact Person First Name",
-				),
-				enableSorting: true,
-				size: 150,
-				cell: ({ row }) => {
-					const firstName = row.original.contact_person?.first_name || "";
-					const lastName = row.original.contact_person?.last_name || "";
-					const fullName = `${firstName} ${lastName}`.trim();
-					return fullName || <span className="text-foreground">—</span>;
-				},
-				accessorFn: (row) => {
-					const firstName = row.contact_person?.first_name || "";
-					const lastName = row.contact_person?.last_name || "";
-					return `${firstName} ${lastName}`.trim();
-				},
-				meta: { truncate: true },
-			},
-			{
-				accessorKey: "contact_person_email",
-				header: headerLabel("contact_person_email", "Contact Person Email"),
-				enableSorting: true,
-				size: 130,
-			},
-
-			{
-				accessorKey: "contact_person_phone",
-				header: headerLabel("contact_person_phone", "Contact Person Phone"),
-				enableSorting: true,
-				size: 130,
 			},
 			{
 				id: "tagIds",
@@ -737,7 +774,7 @@ export function InstitutionsTable() {
 		data: filteredTableRows,
 		getRowKey: (row) => row.rowKey ?? row.id,
 		searchable: true,
-		searchPlaceholder: "Search institutions...",
+		searchPlaceholder: t("institutionsTable.search.title"),
 		getSearchableValues: (row) => [
 			row.name,
 			row.status || "",

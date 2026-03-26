@@ -1,5 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { deleteCategory, updateCategory } from "@/server/actions/categories";
+import {
+	createCategory,
+	deleteCategory,
+	updateCategory,
+} from "@/server/actions/categories";
 import { upsertEnumMapTermTranslations } from "@/server/logic/traduoraTermTranslations";
 
 vi.mock("@/server/actions/auth", () => ({
@@ -23,11 +27,13 @@ vi.mock("@/server/utils/rbac", () => ({
 }));
 
 const findByIdMock = vi.fn();
+const createMock = vi.fn().mockResolvedValue({ id: 1, key: "music_space" });
 const updateMock = vi.fn().mockResolvedValue({ id: 1 });
 const removeMock = vi.fn().mockResolvedValue({ id: 1 });
 
 vi.mock("@/server/data/categoryRepo", () => ({
 	categoryRepo: {
+		create: (data: unknown) => createMock(data),
 		findById: (id: number) => findByIdMock(id),
 		update: (id: number, data: unknown) => updateMock(id, data),
 		remove: (id: number) => removeMock(id),
@@ -52,9 +58,25 @@ const upsertEnumMapTermTranslationsMock = vi.mocked(
 describe("server actions: categories", () => {
 	beforeEach(() => {
 		findByIdMock.mockReset();
+		createMock.mockClear();
 		updateMock.mockClear();
 		removeMock.mockClear();
 		upsertEnumMapTermTranslationsMock.mockClear();
+		findByIdMock.mockResolvedValue({
+			id: 1,
+			key: "music_space_live",
+			child_categories: [],
+		});
+	});
+
+	it("createCategory sanitizes keys to lowercase underscores", async () => {
+		await createCategory({ key: "Music Space / Live" });
+
+		expect(createMock).toHaveBeenCalledWith(
+			expect.objectContaining({
+				key: "music_space_live",
+			}),
+		);
 	});
 
 	it("deleteCategory blocks deletion when subcategories exist", async () => {
@@ -86,7 +108,27 @@ describe("server actions: categories", () => {
 		);
 	});
 
+	it("updateCategory does not update the key when the sanitized key is unchanged", async () => {
+		await updateCategory({ id: 1, key: "Music Space / Live" });
+
+		expect(updateMock).toHaveBeenCalledTimes(1);
+		expect(updateMock.mock.calls[0]?.[1]).not.toHaveProperty("key");
+	});
+
+	it("updateCategory rejects changing the key", async () => {
+		await expect(
+			updateCategory({ id: 1, key: "Different Key" }),
+		).rejects.toThrow("Category key cannot be changed.");
+
+		expect(updateMock).not.toHaveBeenCalled();
+	});
+
 	it("updateCategory syncs enumMap translations when localized labels are provided", async () => {
+		findByIdMock.mockResolvedValueOnce({
+			id: 1,
+			key: "music",
+			child_categories: [],
+		});
 		updateMock.mockResolvedValueOnce({
 			id: 1,
 			key: "music",

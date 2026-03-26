@@ -7,6 +7,25 @@ import { useAccountStore } from "@/lib/store/accountStore";
 
 const closeModalMock = vi.fn();
 const refreshMock = vi.fn();
+let lastFormConfig: {
+	fields?: Array<Record<string, unknown>>;
+	onSubmit: (data: Record<string, unknown>) => void | Promise<void>;
+} | null = null;
+
+const findFieldByName = (
+	fields: Array<Record<string, unknown>> | undefined,
+	name: string,
+): Record<string, unknown> | undefined => {
+	if (!fields) return undefined;
+	for (const field of fields) {
+		if (field.name === name) return field;
+		const nested = Array.isArray(field.fields)
+			? findFieldByName(field.fields as Array<Record<string, unknown>>, name)
+			: undefined;
+		if (nested) return nested;
+	}
+	return undefined;
+};
 
 vi.mock("react-i18next", () => ({
 	useTranslation: () => ({
@@ -38,25 +57,29 @@ vi.mock("@/components/FormWrapper", () => ({
 		config,
 	}: {
 		config: {
+			fields?: Array<Record<string, unknown>>;
 			onSubmit: (data: Record<string, unknown>) => void | Promise<void>;
 		};
-	}) => (
-		<div>
-			<button
-				type="button"
-				onClick={() =>
-					void config.onSubmit({
-						name: "Updated role",
-						description: "Updated description",
-						tablePermissions: {},
-						fieldPermissions: {},
-					})
-				}
-			>
-				Submit
-			</button>
-		</div>
-	),
+	}) => {
+		lastFormConfig = config;
+		return (
+			<div>
+				<button
+					type="button"
+					onClick={() =>
+						void config.onSubmit({
+							name: "Updated role",
+							description: "Updated description",
+							tablePermissions: {},
+							fieldPermissions: {},
+						})
+					}
+				>
+					Submit
+				</button>
+			</div>
+		);
+	},
 }));
 
 vi.mock("@/server/actions/roles", () => ({
@@ -81,6 +104,7 @@ describe("RoleFormModal", () => {
 		mockedCreateRole.mockReset();
 		mockedUpdateRole.mockReset();
 		mockedShowSuccessToast.mockReset();
+		lastFormConfig = null;
 		useAccountStore.setState({
 			roles: [
 				{
@@ -159,5 +183,34 @@ describe("RoleFormModal", () => {
 		});
 		expect(mockedShowSuccessToast).toHaveBeenCalledTimes(1);
 		expect(closeModalMock).toHaveBeenCalledTimes(1);
+	});
+
+	it("limits address and audit permissions to read only", () => {
+		render(<RoleFormModal mode="create" routePath="/account/roles/new" />);
+
+		const tablePermissionsField = findFieldByName(
+			lastFormConfig?.fields as Array<Record<string, unknown>> | undefined,
+			"tablePermissions",
+		) as
+			| {
+					tablePermissions?: {
+						tables?: Array<{
+							key: string;
+							actions?: string[];
+						}>;
+					};
+			  }
+			| undefined;
+
+		const addressTable = tablePermissionsField?.tablePermissions?.tables?.find(
+			(table) => table.key === "address",
+		);
+		const entityAuditTable =
+			tablePermissionsField?.tablePermissions?.tables?.find(
+				(table) => table.key === "entity_audit",
+			);
+
+		expect(addressTable?.actions).toEqual(["read"]);
+		expect(entityAuditTable?.actions).toEqual(["read"]);
 	});
 });
