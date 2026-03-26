@@ -343,6 +343,20 @@ const buildInstitutionFormConfig = ({
 						],
 					},
 					{
+						name: "utilization_status_info",
+						label: fieldLabel("utilization_status_info"),
+						type: "textarea",
+						placeholder: fieldPlaceholder("utilization_status_info"),
+						layout: { span: "full" },
+					},
+					{
+						name: "utilization_status_internal_notes",
+						label: fieldLabel("utilization_status_internal_notes"),
+						type: "textarea",
+						placeholder: fieldPlaceholder("utilization_status_internal_notes"),
+						layout: { span: "full" },
+					},
+					{
 						name: "address.map",
 						fieldMetaKey: "address_map",
 						label: fieldLabel("address_map"),
