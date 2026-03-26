@@ -535,9 +535,10 @@
 			},
 			"label": "Rental Contract Type",
 			"options": {
-				"limited_lease": "Befristete Miete",
-				"organization_ownership": "Eigentum der Organisation",
-				"unlimited_lease": "Unbefristete Miete"
+				"limited_lease": "Limited Lease",
+				"hereditary_building_right": "Hereditary Building Right",
+				"organization_ownership": "Organization Ownership",
+				"unlimited_lease": "Unlimited Lease"
 			},
 			"placeholder": "Please select"
 		},
@@ -547,7 +548,19 @@
 				"required": "Please provide shared use allowed."
 			},
 			"label": "Shared Use Allowed",
+			"options": {
+				"yes": "Yes",
+				"no": "No"
+			},
 			"placeholder": "Please enter"
+		},
+		"shared_use_accessibility": {
+			"description": "",
+			"errors": {
+				"required": "Please provide shared use accessibility."
+			},
+			"label": "Accessibility",
+			"placeholder": "Describe accessibility for shared use"
 		},
 		"shared_use_audience": {
 			"description": "",
