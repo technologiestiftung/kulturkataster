@@ -208,13 +208,11 @@ const getFieldValidators = (
 	tEnum: TFunction,
 ) => {
 	const typeValidator = buildTypeValidator(field, t, tEnum);
-	const validators =
-		field.type !== "section" && field.validators && field.validators.length > 0
-			? field.validators
-			: [
-					...(field.required ? [buildRequiredValidator(field, t, tEnum)] : []),
-					...(typeValidator ? [typeValidator] : []),
-				];
+	const validators = [
+		...(field.required ? [buildRequiredValidator(field, t, tEnum)] : []),
+		...(typeValidator ? [typeValidator] : []),
+		...(field.type !== "section" && field.validators ? field.validators : []),
+	];
 
 	return validators;
 };

@@ -119,9 +119,4 @@ export const StatusLevelMap: Record<string, number> = {
 	long_term_secured: 0,
 };
 
-export function getStatusLevel(value: string): "positive" | "negative" {
-	const level = StatusLevelMap[value];
-	return level === 0 ? "positive" : "negative";
-}
-
 export type { InfoWrapperFieldType as FieldValueType };
