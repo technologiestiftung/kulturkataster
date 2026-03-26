@@ -1077,21 +1077,21 @@ const buildInstitutionFormConfig = ({
 					},
 				],
 			},
-				{
-					name: "additional_section",
-					type: "section",
-					fields: [
-						{
-							name: "source",
-							label: fieldLabel("source", "Datenquelle"),
-							type: "text",
-							placeholder: fieldPlaceholder("source"),
-							description: fieldDescription("source"),
-						},
-						{
-							name: "notes",
-							label: fieldLabel("notes", "Notizen"),
-							type: "textarea",
+			{
+				name: "additional_section",
+				type: "section",
+				fields: [
+					{
+						name: "source",
+						label: fieldLabel("source", "Datenquelle"),
+						type: "text",
+						placeholder: fieldPlaceholder("source"),
+						description: fieldDescription("source"),
+					},
+					{
+						name: "notes",
+						label: fieldLabel("notes", "Notizen"),
+						type: "textarea",
 						placeholder: fieldPlaceholder("notes"),
 						description: fieldDescription("notes"),
 					},

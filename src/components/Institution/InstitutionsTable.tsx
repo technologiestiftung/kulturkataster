@@ -90,6 +90,17 @@ export function InstitutionsTable() {
 		const translated = tEnum(`funding_source.${value}`);
 		return translated === `funding_source.${value}` ? value : translated;
 	};
+	const renderEmptyValue = () => <span className="text-foreground">—</span>;
+	const renderTextValue = (value?: string | null) => {
+		if (typeof value !== "string" || value.trim().length === 0) {
+			return renderEmptyValue();
+		}
+		return value;
+	};
+	const renderNumericValue = (value?: number | null) => {
+		if (typeof value !== "number") return renderEmptyValue();
+		return value.toString();
+	};
 	const getStatusLabel = (status: InstitutionStatus | string) => {
 		const institutionStatus = tEnum(`institution_status.${status}`);
 		if (institutionStatus !== `institution_status.${status}`) {
@@ -250,10 +261,7 @@ export function InstitutionsTable() {
 				enableSorting: true,
 				size: 250,
 				meta: { truncate: true },
-				cell: ({ row }) =>
-					row.original.parent_organization || (
-						<span className="text-foreground">—</span>
-					),
+				cell: ({ row }) => renderTextValue(row.original.parent_organization),
 			},
 			{
 				accessorKey: "email",
@@ -320,8 +328,7 @@ export function InstitutionsTable() {
 				cell: ({ row }) => {
 					const culturalArea = row.original.address?.cultural_area;
 
-					if (!culturalArea) return <span className="text-foreground">—</span>;
-					return culturalArea;
+					return renderTextValue(culturalArea);
 				},
 			},
 			{
@@ -345,8 +352,7 @@ export function InstitutionsTable() {
 				meta: { truncate: true },
 				cell: ({ row }) => {
 					const addressSuffix = row.original.address?.address_suffix;
-					if (!addressSuffix) return <span className="text-foreground">—</span>;
-					return addressSuffix;
+					return renderTextValue(addressSuffix);
 				},
 			},
 			{
@@ -357,8 +363,7 @@ export function InstitutionsTable() {
 				meta: { truncate: true },
 				cell: ({ row }) => {
 					const zipcode = row.original.address?.zipcode;
-					if (!zipcode) return <span className="text-foreground">—</span>;
-					return zipcode;
+					return renderTextValue(zipcode);
 				},
 			},
 			{
@@ -369,8 +374,7 @@ export function InstitutionsTable() {
 				meta: { truncate: true },
 				cell: ({ row }) => {
 					const city = row.original.address?.city;
-					if (!city) return <span className="text-foreground">—</span>;
-					return city;
+					return renderTextValue(city);
 				},
 			},
 			{
@@ -385,8 +389,7 @@ export function InstitutionsTable() {
 						typeof districtValue === "string" && districtValue.trim().length > 0
 							? districtValue
 							: null;
-					if (!district) return <span className="text-foreground">—</span>;
-					return district;
+					return renderTextValue(district);
 				},
 			},
 			{
@@ -397,8 +400,7 @@ export function InstitutionsTable() {
 				meta: { truncate: true },
 				cell: ({ row }) => {
 					const neighbourhood = row.original.address?.neighbourhood;
-					if (!neighbourhood) return <span className="text-foreground">—</span>;
-					return neighbourhood;
+					return renderTextValue(neighbourhood);
 				},
 			},
 			{
@@ -483,6 +485,7 @@ export function InstitutionsTable() {
 				enableSorting: true,
 				size: 200,
 				meta: { truncate: true },
+				cell: ({ row }) => renderTextValue(row.original.protection_status_info),
 			},
 			{
 				accessorKey: "protection_status_internal_notes",
@@ -493,6 +496,8 @@ export function InstitutionsTable() {
 				enableSorting: true,
 				size: 220,
 				meta: { truncate: true },
+				cell: ({ row }) =>
+					renderTextValue(row.original.protection_status_internal_notes),
 			},
 			{
 				accessorKey: "legal_form",
@@ -500,8 +505,7 @@ export function InstitutionsTable() {
 				enableSorting: true,
 				size: 150,
 				meta: { truncate: true },
-				cell: ({ row }) =>
-					row.original.legal_form || <span className="text-foreground">—</span>,
+				cell: ({ row }) => renderTextValue(row.original.legal_form),
 			},
 			{
 				id: "funding_sources",
@@ -530,8 +534,7 @@ export function InstitutionsTable() {
 				enableSorting: true,
 				size: 150,
 				meta: { truncate: true },
-				cell: ({ row }) =>
-					row.original.owner_name || <span className="text-foreground">—</span>,
+				cell: ({ row }) => renderTextValue(row.original.owner_name),
 			},
 			{
 				accessorKey: "owner_type",
@@ -590,36 +593,21 @@ export function InstitutionsTable() {
 				enableSorting: true,
 				size: 90,
 				meta: { truncate: true },
-				cell: ({ row }) =>
-					row.original.area ? (
-						row.original.area.toString()
-					) : (
-						<span className="text-foreground">—</span>
-					),
+				cell: ({ row }) => renderNumericValue(row.original.area),
 			},
 			{
 				accessorKey: "number_of_rooms",
 				header: headerLabel("number_of_rooms", "Rooms"),
 				enableSorting: true,
 				size: 150,
-				cell: ({ row }) =>
-					row.original.number_of_rooms ? (
-						row.original.number_of_rooms.toString()
-					) : (
-						<span className="text-foreground">—</span>
-					),
+				cell: ({ row }) => renderNumericValue(row.original.number_of_rooms),
 			},
 			{
 				accessorKey: "capacity",
 				header: headerLabel("capacity", "Capacity"),
 				enableSorting: true,
 				size: 90,
-				cell: ({ row }) =>
-					row.original.capacity ? (
-						row.original.capacity.toString()
-					) : (
-						<span className="text-foreground">—</span>
-					),
+				cell: ({ row }) => renderNumericValue(row.original.capacity),
 			},
 			{
 				accessorKey: "shared_use_allowed",
@@ -635,6 +623,7 @@ export function InstitutionsTable() {
 				enableSorting: true,
 				size: 200,
 				meta: { truncate: true },
+				cell: ({ row }) => renderTextValue(row.original.shared_use_info),
 			},
 			{
 				accessorKey: "shared_use_equipment",
@@ -642,6 +631,7 @@ export function InstitutionsTable() {
 				enableSorting: true,
 				size: 200,
 				meta: { truncate: true },
+				cell: ({ row }) => renderTextValue(row.original.shared_use_equipment),
 			},
 			{
 				accessorKey: "shared_use_audience",
@@ -649,6 +639,7 @@ export function InstitutionsTable() {
 				enableSorting: true,
 				size: 200,
 				meta: { truncate: true },
+				cell: ({ row }) => renderTextValue(row.original.shared_use_audience),
 			},
 			{
 				accessorKey: "shared_use_availability",
@@ -659,6 +650,8 @@ export function InstitutionsTable() {
 				enableSorting: true,
 				size: 200,
 				meta: { truncate: true },
+				cell: ({ row }) =>
+					renderTextValue(row.original.shared_use_availability),
 			},
 			{
 				accessorKey: "accessibility",
@@ -666,6 +659,7 @@ export function InstitutionsTable() {
 				enableSorting: true,
 				size: 160,
 				meta: { truncate: true },
+				cell: ({ row }) => renderTextValue(row.original.accessibility),
 			},
 			{
 				accessorKey: "cost",
@@ -673,6 +667,7 @@ export function InstitutionsTable() {
 				enableSorting: true,
 				size: 140,
 				meta: { truncate: true },
+				cell: ({ row }) => renderTextValue(row.original.cost),
 			},
 			{
 				accessorKey: "shared_use_contact_person",
@@ -683,6 +678,8 @@ export function InstitutionsTable() {
 				enableSorting: true,
 				size: 220,
 				meta: { truncate: true },
+				cell: ({ row }) =>
+					renderTextValue(row.original.shared_use_contact_person),
 			},
 			{
 				accessorKey: "contact_person_name",
@@ -719,6 +716,8 @@ export function InstitutionsTable() {
 				header: headerLabel("contact_person_email", "Contact Person Email"),
 				enableSorting: true,
 				size: 130,
+				cell: ({ row }) =>
+					renderTextValue(row.original.contact_person?.email),
 			},
 
 			{
@@ -726,6 +725,8 @@ export function InstitutionsTable() {
 				header: headerLabel("contact_person_phone", "Contact Person Phone"),
 				enableSorting: true,
 				size: 130,
+				cell: ({ row }) =>
+					renderTextValue(row.original.contact_person?.phone),
 			},
 			{
 				accessorKey: "notes",
@@ -733,6 +734,7 @@ export function InstitutionsTable() {
 				enableSorting: true,
 				size: 200,
 				meta: { truncate: true },
+				cell: ({ row }) => renderTextValue(row.original.notes),
 			},
 			{
 				accessorKey: "internal_notes",
@@ -740,6 +742,7 @@ export function InstitutionsTable() {
 				enableSorting: true,
 				size: 200,
 				meta: { truncate: true },
+				cell: ({ row }) => renderTextValue(row.original.internal_notes),
 			},
 			{
 				accessorKey: "source",
@@ -747,6 +750,7 @@ export function InstitutionsTable() {
 				enableSorting: true,
 				size: 160,
 				meta: { truncate: true },
+				cell: ({ row }) => renderTextValue(row.original.source),
 			},
 			{
 				id: "tagIds",
