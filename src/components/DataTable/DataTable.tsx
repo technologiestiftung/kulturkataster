@@ -158,7 +158,8 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 							}
 							return "";
 						});
-				return values.filter(Boolean).join(" ");
+				const rowKey = config.getRowKey(row);
+				return [...values, String(rowKey)].filter(Boolean).join(" ");
 			},
 		};
 	}, [config, fuzzyFilter, fuzzySort, globalSearchColumnId, normalizedColumns]);
@@ -191,6 +192,8 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 				) : null,
 		};
 	}, [expandColumnId, hasExpandedRow]);
+
+	const renderEmptyValue = () => <span className="text-foreground">—</span>;
 
 	const columns = useMemo<ColumnDef<T, unknown>[]>(() => {
 		const baseColumns = [
@@ -901,6 +904,7 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 																		cell.column.columnDef.cell,
 																		cell.getContext(),
 																	);
+																	const rawValue = cell.getValue();
 																	const shouldTruncate = Boolean(
 																		cell.column.columnDef.meta?.truncate,
 																	);
@@ -987,7 +991,11 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 																			style={pinning.style}
 																			headers={getHeaderId(cell.column.id)}
 																		>
-																			{content}
+																			{content ??
+																				(cell.column.id !== expandColumnId &&
+																				rawValue === null
+																					? renderEmptyValue()
+																					: null)}
 																		</td>
 																	);
 																})}

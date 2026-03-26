@@ -7,6 +7,7 @@ import type { Prisma } from "@/generated/prisma";
 import type {
 	ClaimReviewPayload,
 	SubmissionCreatePayload,
+	SubmissionNoteCreatePayload,
 	SubmissionReviewPayload,
 	SubmissionUpdatePayload,
 } from "@/types/submission";
@@ -77,6 +78,13 @@ const submissionReviewSchema = z
 	})
 	.transform((value): SubmissionReviewPayload => value);
 
+const submissionNoteCreateSchema = z
+	.object({
+		submissionId: positiveIntegerSchema("Submission id must be positive."),
+		note: z.string().trim().min(1, "Submission note must not be empty."),
+	})
+	.transform((value): SubmissionNoteCreatePayload => value);
+
 const claimReviewSchema = z
 	.object({
 		id: positiveIntegerSchema("Submission id must be positive."),
@@ -93,6 +101,10 @@ export const validateSubmissionUpdateInput = (input: SubmissionUpdatePayload) =>
 
 export const validateSubmissionReviewInput = (input: SubmissionReviewPayload) =>
 	parseWithSchema(submissionReviewSchema, input);
+
+export const validateSubmissionNoteCreateInput = (
+	input: SubmissionNoteCreatePayload,
+) => parseWithSchema(submissionNoteCreateSchema, input);
 
 export const validateClaimReviewInput = (input: ClaimReviewPayload) =>
 	parseWithSchema(claimReviewSchema, input);

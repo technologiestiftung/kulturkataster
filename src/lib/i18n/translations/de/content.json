@@ -290,8 +290,8 @@
 					},
 					"iconUpload": {
 						"currentFile": "Aktuelle Datei ansehen",
-						"label": "SVG-Icon hochladen",
 						"description": "Optional. Eine SVG-Datei in Supabase Storage hochladen.",
+						"label": "SVG-Icon hochladen",
 						"remove": "Icon entfernen",
 						"selected": "Ausgewählt: {{name}}"
 					},
@@ -460,7 +460,6 @@
 		"searchPlaceholder": "Gruppen durchsuchen..."
 	},
 	"imprintModal": {
-		"subtitle": "Kulturraum Berlin gGmbH",
 		"chairman": {
 			"name": "Cerstin Richter-Kotowski, Staatssekretärin der Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt",
 			"title": "Vorsitzende des Aufsichtsrats"
@@ -540,10 +539,10 @@
 			"management": "Dirk Förster, Geschäftsführung",
 			"title": "Vertreten durch:"
 		},
+		"subtitle": "Kulturraum Berlin gGmbH",
 		"title": "Impressum"
 	},
 	"informationModal": {
-		"subtitle": "Hier finden Sie weitere Informationen zum Kulturkataster Berlin.",
 		"faq": {
 			"questions": [
 				{
@@ -595,6 +594,7 @@
 			}
 		},
 		"simpleLanguageDirect": "Den Bereich „Infos & Service“ in leichter Sprache finden Sie <link />.",
+		"subtitle": "Hier finden Sie weitere Informationen zum Kulturkataster Berlin.",
 		"title": "Infos & Service",
 		"upcomingEnhancementsListAriaLabel": "Liste der geplanten Weiterungen und Verbesserungen",
 		"usage": {
@@ -705,154 +705,11 @@
 				"title": "Kulturort bearbeiten"
 			}
 		},
-		"form": {
-			"basic": {
-				"sectionTitle": "Grundinformationen",
-				"validation": {
-					"duplicateInstitution": "Ein Kulturort mit diesem Namen und dieser Adresse existiert bereits.",
-					"duplicatePossible": "Möglicher Duplikatseintrag gefunden. Bitte vor dem Absenden prüfen."
-				}
-			},
-			"category": {
-				"newCategory": {
-					"description": "Mehrere Kategorien bitte durch Komma trennen.",
-					"label": "Neue Kategorie(n) vorschlagen",
-					"placeholder": "z. B. Neue Kategorie"
-				},
-				"validation": {
-					"minSelection": "Bitte wählen Sie mindestens eine Kategorie aus."
-				}
-			},
-			"contact": {
-				"consent": {
-					"contactListing": "Ich bin damit einverstanden, mit meinen Kontaktdaten als Ansprechperson im passwortgeschützten Bereich des Kulturkatasters genannt zu werden.",
-					"requestAdminRights": "Ich bin verantwortlich für diesen Kulturort und möchte ihn der Liste in meinem Profil hinzufügen und die Administrationsrechte dafür erhalten.",
-					"title": "Abschließende Angaben",
-					"worksForOrganization": "Ich arbeite für diese Kulturorganisation."
-				}
-			},
-			"information": {
-				"accordions": {
-					"accessibility": {
-						"description": "Informationen zur Barrierefreiheit der Kultureinrichtung.",
-						"title": "Barrierefreiheit"
-					},
-					"closing": {
-						"description": "Diese Angabe betrifft nur bereits geschlossene Orte.",
-						"title": "Schließungsgründe"
-					},
-					"cost": {
-						"description": "Angaben zu Eintrittspreisen oder Nutzungskosten.",
-						"title": "Kosten"
-					},
-					"establishment": {
-						"description": "Zeitraum der Nutzung oder Eröffnung am Standort.",
-						"title": "Zeitraum am Standort"
-					},
-					"funding": {
-						"description": "Informationen zur Förderung.",
-						"title": "Art der Förderung"
-					},
-					"fundingSources": {
-						"description": "Geben Sie die Finanzierungsquellen Ihrer Kultureinrichtung an.",
-						"title": "Art der Finanzierung"
-					},
-					"organization": {
-						"description": "Rechtsform der Kultureinrichtung.",
-						"title": "Organisationsform"
-					},
-					"ownership": {
-						"description": "Diese Information wird ausschließlich für befugte Nutzer*innen im geschützten Bereich des Kulturkatasters zugänglich und nicht öffentlich einsehbar sein.",
-						"title": "Eigentumsverhältnisse"
-					},
-					"protection": {
-						"description": "Angaben zum Schutz und zur Sicherung des Standorts.",
-						"title": "Sicherungsstatus"
-					},
-					"rental": {
-						"description": "Diese Information wird ausschließlich für befugte Nutzer*innen im geschützten Bereich des Kulturkatasters zugänglich und nicht öffentlich einsehbar sein.",
-						"title": "Miet- und Nutzungsverhältnisse"
-					},
-					"sharedUseAccessibility": {
-						"description": "Ist der Raum barrierefrei zugänglich? Welche Barrieren sind vorhanden?",
-						"title": "Barrierefreiheit"
-					},
-					"sharedUseAudience": {
-						"description": "Für welche Art von Aktivitäten ist der Raum geeignet? Zum Beispiel: \"geeignet für Tanzproben und Workshops\" oder \"ideal für Lesungen und kleine Konzerte.\"",
-						"title": "Zielgruppe/Sparte"
-					},
-					"sharedUseAvailability": {
-						"description": "Wann kann der Raum genutzt werden? Sind es bestimmte Tage, Tageszeiten oder Zeiträume?",
-						"title": "Zeitliche Verfügbarkeiten"
-					},
-					"sharedUseContactPerson": {
-						"description": "Geben Sie hier bitte einen Kontakt per E-Mail und/oder Telefon an. Sofern es eine Ansprechperson gibt, können Sie den Namen ebenfalls angeben. Sofern Sie hier personenbezogene Daten eintragen, beachten Sie bitte, dass Sie mit Absenden des Formulars der Veröffentlichung dieser Daten im Kulturkataster zustimmen müssen.",
-						"title": "Kontakt für Raumanfragen"
-					},
-					"sharedUseCost": {
-						"description": "Wie hoch sind die Kosten für die Nutzung? Gibt es einen Stunden-, Tages- oder Wochenpreis? Sind die Kosten verhandelbar?",
-						"title": "Kosten"
-					},
-					"sharedUseEquipment": {
-						"description": "Welche Infrastruktur ist vorhanden? Gibt es Tische, Stühle, eine Küche, WLAN, Licht- und Tontechnik? Jedes Detail kann entscheidend sein.",
-						"title": "Ausstattung"
-					},
-					"sharedUseInfo": {
-						"description": "Beschreiben, welche Informationen hier eingetragen werden sollen, evtl. mit Aufzählung von Beispielen",
-						"title": "Beschreibung der Räume/Flächen"
-					},
-					"space": {
-						"description": "Angaben zu Fläche, Räumen und Kapazität.",
-						"title": "Räumlichkeiten"
-					}
-				},
-				"closingReason": {
-					"placeholder": "Gründe für die Schließung angeben"
-				},
-				"datePlaceholder": "DD.MM.YYYY",
-				"datePlaceholderWithYear": "DD.MM.YYYY oder YYYY",
-				"establishment": {
-					"sinceDescription": "Bitte tragen Sie das Datum der erstmaligen Nutzung oder Eröffnung am Standort ein. Falls das genaue Datum nicht bekannt ist, reicht auch die Angabe des Jahres.",
-					"untilDescription": "Bitte tragen Sie das Datum ein, bis zu dem die Kultureinrichtung an diesem Standort aktiv war. Diese Angabe betrifft nur bereits geschlossene Orte. Falls das genaue Datum nicht bekannt ist, reicht auch die Angabe des Jahres."
-				},
-				"organization": {
-					"legalFormPlaceholder": "z. B. e.V., gGmbH, GbR"
-				},
-				"notesDescription": "Bitte beachten Sie, dass dieses Feld für die Öffentlichkeit einsehbar ist. Wenn Sie Informationen eintragen möchten, die nur für befugte Nutzer*innen einsehbar sind, tragen Sie diese bitte im Feld \"Interne Notizen\" direkt darunter ein.",
-				"internalNotesDescription": "",
-				"internalNotesPrivateDescription": "Diese Information wird ausschließlich für befugte Nutzer*innen im geschützten Bereich des Kulturkataster zugänglich und nicht öffentlich einsehbar sein.",
-				"protectionStatus": {
-					"acutelyThreatened": "Akut bedroht",
-					"longTermSecured": "Langfristig gesichert",
-					"mediumTermSecured": "Mittelfristig gesichert",
-					"notYetSecured": "Noch nicht gesichert",
-					"permanentlyClosed": "Dauerhaft geschlossen",
-					"uncertain": "Unsicher"
-				},
-				"rentalContract": {
-					"hereditaryBuildingRight": "Erbbaurecht"
-				},
-				"selectPlaceholder": "Bitte auswählen",
-				"sharedUse": {
-					"accessibilityPlaceholder": "Barrierefreiheit beschreiben",
-					"audiencePlaceholder": "Geeignete Zielgruppe/Sparte beschreiben",
-					"availabilityPlaceholder": "Zeitliche Verfügbarkeiten beschreiben",
-					"contactPersonPlaceholder": "Kontakt für Raumanfragen angeben",
-					"costPlaceholder": "Kosten für die Nutzung beschreiben",
-					"detailsLabel": "Details",
-					"equipmentPlaceholder": "Ausstattung beschreiben",
-					"infoPlaceholder": "Beschreibung der Räume/Flächen",
-					"label": "Offen für Raumanfragen",
-					"options": {
-						"no": "Nein",
-						"yes": "Ja"
-					}
-				}
-			}
-		},
 		"feedback": {
 			"submit": {
-				"pendingConflict": "Du hast bereits eine offene Einreichung für diesen Kulturort eingereicht."
+				"description": "Vielen Dank für Ihre Einreichung! Das Redaktionsteam wird Ihren Eintrag prüfen und sich bei Rückfragen gegebenenfalls per E-Mail bei Ihnen melden. Wir bitten Sie um Verständnis, dass dieser Prozess einige Zeit in Anspruch nehmen kann, da wir gegebenenfalls auch Fachexpert*innen in den Entscheidungsprozess einbeziehen werden.",
+				"pendingConflict": "Du hast bereits eine offene Einreichung für diesen Kulturort eingereicht.",
+				"title": "Einreichung erfolgreich"
 			}
 		},
 		"stepLabel": "Schritt {{current}} / {{total}}",
@@ -928,7 +785,29 @@
 			"additional": {
 				"title": "Zusätzliche Informationen"
 			},
+			"basic": {
+				"sectionTitle": "Grundinformationen"
+			},
+			"category": {
+				"newCategory": {
+					"description": "Mehrere Kategorien bitte durch Komma trennen.",
+					"label": "Neue Kategorie(n) vorschlagen",
+					"placeholder": "z. B. Neue Kategorie"
+				},
+				"validation": {
+					"minSelection": "Bitte wählen Sie mindestens eine Kategorie aus."
+				}
+			},
 			"contact": {
+				"consent": {
+					"contactListing": "Ich bin damit einverstanden, mit meinen Kontaktdaten als Ansprechperson im passwortgeschützten Bereich des Kulturkatasters genannt zu werden.",
+					"title": "Abschließende Angaben",
+					"worksForOrganization": "Ich arbeite für diese Kulturorganisation.",
+					"worksForOrganizationOptions": {
+						"no": "Nein",
+						"yes": "Ja"
+					}
+				},
 				"title": "Kontakt"
 			},
 			"details": {
@@ -936,7 +815,11 @@
 					"create": "Legen Sie einen neuen Kulturort an.",
 					"edit": "Aktualisieren Sie die Kulturorte."
 				},
-				"title": "Details"
+				"validation": {
+					"duplicateInstitution": "Ein Kulturort mit diesem Namen und dieser Adresse existiert bereits.",
+					"duplicatePossible": "Möglicher Duplikatseintrag gefunden. Bitte vor dem Absenden prüfen."
+				},
+				"title": "Detailinformationen zur Kultureinrichtung"
 			},
 			"facility": {
 				"title": "Einrichtung"
@@ -947,12 +830,80 @@
 			"organization": {
 				"title": "Organisation"
 			},
+			"information": {
+				"accordions": {
+					"closing": {
+						"description": "Diese Angabe betrifft nur bereits geschlossene Orte.",
+						"title": "Schließungsgründe"
+					},
+					"establishment": {
+						"description": "Zeitraum der Nutzung oder Eröffnung am Standort.",
+						"title": "Zeitraum am Standort"
+					},
+					"funding": {
+						"description": "Informationen zur Förderung.",
+						"title": "Art der Förderung"
+					},
+					"fundingSources": {
+						"description": "Geben Sie die Finanzierungsquellen Ihrer Kultureinrichtung an.",
+						"title": "Art der Finanzierung"
+					},
+					"organization": {
+						"description": "Rechtsform der Kultureinrichtung.",
+						"title": "Organisationsform"
+					},
+					"ownership": {
+						"description": "Diese Information wird ausschließlich für befugte Nutzer*innen im geschützten Bereich des Kulturkatasters zugänglich und nicht öffentlich einsehbar sein.",
+						"title": "Eigentumsverhältnisse"
+					},
+					"protection": {
+						"description": "Angaben zum Schutz und zur Sicherung des Standorts.",
+						"title": "Sicherungsstatus"
+					},
+					"rental": {
+						"description": "Diese Information wird ausschließlich für befugte Nutzer*innen im geschützten Bereich des Kulturkatasters zugänglich und nicht öffentlich einsehbar sein.",
+						"title": "Miet- und Nutzungsverhältnisse"
+					},
+					"sharedUseAccessibility": {
+						"description": "Ist der Raum barrierefrei zugänglich? Welche Barrieren sind vorhanden?",
+						"title": "Barrierefreiheit"
+					},
+					"sharedUseAudience": {
+						"description": "Für welche Art von Aktivitäten ist der Raum geeignet? Zum Beispiel: \"geeignet für Tanzproben und Workshops\" oder \"ideal für Lesungen und kleine Konzerte.\"",
+						"title": "Zielgruppe/Sparte"
+					},
+					"sharedUseAvailability": {
+						"description": "Wann kann der Raum genutzt werden? Sind es bestimmte Tage, Tageszeiten oder Zeiträume?",
+						"title": "Zeitliche Verfügbarkeiten"
+					},
+					"sharedUseContactPerson": {
+						"description": "Geben Sie hier bitte einen Kontakt per E-Mail und/oder Telefon an. Sofern es eine Ansprechperson gibt, können Sie den Namen ebenfalls angeben. Sofern Sie hier personenbezogene Daten eintragen, beachten Sie bitte, dass Sie mit Absenden des Formulars der Veröffentlichung dieser Daten im Kulturkataster zustimmen müssen.",
+						"title": "Kontakt für Raumanfragen"
+					},
+					"sharedUseCost": {
+						"description": "Wie hoch sind die Kosten für die Nutzung? Gibt es einen Stunden-, Tages- oder Wochenpreis? Sind die Kosten verhandelbar?",
+						"title": "Kosten"
+					},
+					"sharedUseEquipment": {
+						"description": "Welche Infrastruktur ist vorhanden? Gibt es Tische, Stühle, eine Küche, WLAN, Licht- und Tontechnik? Jedes Detail kann entscheidend sein.",
+						"title": "Ausstattung"
+					},
+					"sharedUseInfo": {
+						"description": "Beschreiben, welche Informationen hier eingetragen werden sollen, evtl. mit Aufzählung von Beispielen",
+						"title": "Beschreibung der Räume/Flächen"
+					},
+					"space": {
+						"description": "Angaben zu Fläche, Räumen und Kapazität.",
+						"title": "Räumlichkeiten"
+					}
+				},
+				"internalNotesPrivateDescription": "Diese Information wird ausschließlich für befugte Nutzer*innen im geschützten Bereich des Kulturkataster zugänglich und nicht öffentlich einsehbar sein.",
+				"sharedUse": {
+					"detailsLabel": "Details"
+				}
+			},
 			"sharedUse": {
 				"description": "Geben Sie an, ob die Räumlichkeiten für die Mehrfachnutzung zur Verfügung stehen.",
-				"options": {
-					"no": "Nein",
-					"yes": "Ja"
-				},
 				"title": "Mehrfachnutzung"
 			},
 			"status": {
@@ -961,18 +912,33 @@
 		},
 		"review": {
 			"actions": {
-				"approve": "Genehmigen"
+				"approve": "Genehmigen",
+				"saveNotes": "Notizen speichern"
 			},
 			"error": "Überprüfung fehlgeschlagen. {{error}}",
 			"errorUnknown": "Unbekannter Fehler.",
 			"grantSubmitterAccess": "Der einreichenden Person nach Genehmigung Zugriff auf diesen Kulturort geben.",
+			"noteMeta": "{{author}} am {{date}}",
 			"notesLabel": "Prüfnotizen",
 			"notesPlaceholder": "Optionale Notizen für die Einreichung",
+			"previousNotesLabel": "Bisherige Notizen",
+			"success": {
+				"saveNotes": {
+					"description": "Die Prüfnotizen wurden gespeichert.",
+					"title": "Notizen gespeichert"
+				}
+			},
 			"statusLabel": "Status: {{status}}",
 			"title": "Einreichung prüfen"
 		}
 	},
 	"institutionsTable": {
+		"filter": {
+			"title": "Kulturorte filtern"
+		},
+		"search": {
+			"title": "Kulturorte suchen"
+		},
 		"actions": {
 			"addInstitution": "Kulturort hinzufügen",
 			"claimInstitution": "Meine Orte anfragen"
@@ -983,11 +949,22 @@
 		},
 		"type": {
 			"manage": "Verwalten",
+			"submissionBase": {
+				"claim": "Verwaltung",
+				"create": "Erstellung",
+				"delete": "Löschung",
+				"update": "Änderung"
+			},
 			"submission": {
 				"claim": "Verwaltung angefragt",
 				"create": "Erstellung angefragt",
 				"delete": "Löschung angefragt",
 				"update": "Änderung angefragt"
+			},
+			"submissionStatus": {
+				"approved": "{{type}} bestätigt",
+				"needs_changes": "{{type}} mit Änderungswunsch",
+				"rejected": "{{type}} abgelehnt"
 			}
 		}
 	},
@@ -1697,6 +1674,7 @@
 		}
 	},
 	"userTable": {
+		"accessAll": "Alle",
 		"actions": {
 			"add": "Nutzer*in hinzufügen"
 		},
@@ -1723,7 +1701,6 @@
 		},
 		"emptyMessage": "Keine Nutzer*innen gefunden.",
 		"emptyValue": "—",
-		"accessAll": "Alle",
 		"institutionsCount_one": "{{count}} Kulturort",
 		"institutionsCount_other": "{{count}} Kulturorte",
 		"searchPlaceholder": "Nutzer*innen suchen..."

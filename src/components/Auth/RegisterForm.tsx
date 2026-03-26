@@ -327,26 +327,26 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
 						requiredMessage: t("auth.validation.acceptTermsRequired"),
 						disabled: isLoading,
 					},
-					{
-						name: "subscribeNewsletter",
-						label: t("auth.register.newsletterOptInPrefix"),
-						labelNode: (
-							<span className="body2 font-normal">
-								{t("auth.register.newsletterOptInPrefix")}{" "}
-								<Link
-									href={
-										"https://flow.cleverreach.com/fl/21a1a529-f085-4bd1-8e53-d657c3ccc1de/"
-									}
-									className="text-primary-dark underline"
-									target="_blank"
-								>
-									{t("auth.register.newsletterLink")}
-								</Link>
-							</span>
-						),
-						type: "checkbox",
-						disabled: isLoading,
-					},
+					// {
+					// 	name: "subscribeNewsletter",
+					// 	label: t("auth.register.newsletterOptInPrefix"),
+					// 	labelNode: (
+					// 		<span className="body2 font-normal">
+					// 			{t("auth.register.newsletterOptInPrefix")}{" "}
+					// 			<Link
+					// 				href={
+					// 					"https://flow.cleverreach.com/fl/21a1a529-f085-4bd1-8e53-d657c3ccc1de/"
+					// 				}
+					// 				className="text-primary-dark underline"
+					// 				target="_blank"
+					// 			>
+					// 				{t("auth.register.newsletterLink")}
+					// 			</Link>
+					// 		</span>
+					// 	),
+					// 	type: "checkbox",
+					// 	disabled: isLoading,
+					// },
 				],
 			},
 		],

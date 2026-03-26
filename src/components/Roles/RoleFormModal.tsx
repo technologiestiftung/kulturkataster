@@ -110,11 +110,16 @@ const getTableTargets = (t: (key: string) => string) => [
 	{
 		key: "entity_audit",
 		label: t("roleFormModal.permissions.tables.entity_audit"),
+		actions: ["read"] as PermissionAction[],
 	},
 	{ key: "user", label: t("roleFormModal.permissions.tables.user") },
 	{ key: "group", label: t("roleFormModal.permissions.tables.group") },
 	{ key: "role", label: t("roleFormModal.permissions.tables.role") },
-	{ key: "address", label: t("roleFormModal.permissions.tables.address") },
+	{
+		key: "address",
+		label: t("roleFormModal.permissions.tables.address"),
+		actions: ["read"] as PermissionAction[],
+	},
 	{
 		key: "category",
 		label: t("roleFormModal.permissions.tables.category"),
