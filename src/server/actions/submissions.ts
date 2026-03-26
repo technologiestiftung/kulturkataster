@@ -16,7 +16,7 @@ import {
 	requireScopeOrUser,
 } from "@/server/utils/rbac";
 import { revalidateAccount } from "@/server/utils/actionsUtils";
-import { ClaimSubmissionDetail } from "@/types";
+import { ClaimSubmission, ClaimSubmissionDetail } from "@/types";
 import {
 	buildInstitutionPermissionFields,
 	filterInstitutionInputByPermissionFields,
@@ -55,19 +55,6 @@ import {
 	setRequestContext,
 } from "@/server/logging/requestContext";
 
-type ClaimSubmissionRow = Prisma.SubmissionGetPayload<{
-	include: {
-		creator: {
-			include: {
-				role: { include: { table_permissions: true } };
-				groups: true;
-				institutions: true;
-				submissions: true;
-			};
-		};
-	};
-}>;
-
 type ClaimInstitutionRow = Prisma.InstitutionGetPayload<{
 	include: {
 		address: true;
@@ -103,12 +90,20 @@ export async function getClaimSubmissionsDetailed(
 	const ctx = await getAccessContextForUser(currentUserId);
 	authorizeTable(ctx, "submission", "read");
 	requireAllScope(ctx, "submission", "read");
-	let submissions: ClaimSubmissionRow[];
+	let submissions: ClaimSubmission[];
 	try {
 		submissions = await prisma.submission.findMany({
 			where: { type: "claim", created_by: userId ?? undefined },
 			orderBy: { created_at: "desc" },
 			include: {
+				notes: {
+					include: {
+						creator: true,
+					},
+					orderBy: {
+						created_at: "desc",
+					},
+				},
 				creator: {
 					include: {
 						role: {
