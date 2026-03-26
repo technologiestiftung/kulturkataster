@@ -147,10 +147,10 @@ export function InstitutionClaimSelectModal({
 				),
 			);
 			createdSubmissions.forEach((submission) => {
-					if (submission) {
-						upsertSubmission(submission);
-					}
-				});
+				if (submission) {
+					upsertSubmission(submission);
+				}
+			});
 
 			setSelectedIds([]);
 			closeModal();
