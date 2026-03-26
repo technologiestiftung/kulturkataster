@@ -52,6 +52,7 @@ export type InstitutionTableBase = {
 	utilization_status_internal_notes?: Institution["utilization_status_internal_notes"];
 	protection_status?: Institution["protection_status"];
 	protection_status_info?: Institution["protection_status_info"];
+	protection_status_internal_notes?: Institution["protection_status_internal_notes"];
 	shared_use_allowed?: Institution["shared_use_allowed"];
 	shared_use_info?: Institution["shared_use_info"];
 	shared_use_equipment?: Institution["shared_use_equipment"];
@@ -128,6 +129,7 @@ export type InstitutionForm = {
 	utilization_status_internal_notes?: string | null;
 	protection_status?: ProtectionStatus | null;
 	protection_status_info?: string | null;
+	protection_status_internal_notes?: string | null;
 	shared_use_allowed?: boolean | null;
 	shared_use_info?: string | null;
 	shared_use_equipment?: string | null;
@@ -187,6 +189,7 @@ export const INSTITUTION_PERMISSION_FIELDS = [
 	"utilization_status_internal_notes",
 	"protection_status",
 	"protection_status_info",
+	"protection_status_internal_notes",
 	"shared_use_allowed",
 	"shared_use_info",
 	"shared_use_equipment",

@@ -65,9 +65,15 @@ export const institutionSubmissionToDraft = (
 		utilization_status:
 			(data.utilization_status as UtilizationStatus | undefined) || undefined,
 		utilization_status_info: toString(data.utilization_status_info),
+		utilization_status_internal_notes: toString(
+			data.utilization_status_internal_notes,
+		),
 		protection_status:
 			(data.protection_status as ProtectionStatus | undefined) || undefined,
 		protection_status_info: toString(data.protection_status_info),
+		protection_status_internal_notes: toString(
+			data.protection_status_internal_notes,
+		),
 		shared_use_allowed: toBool(data.shared_use_allowed),
 		shared_use_info: toString(data.shared_use_info),
 		shared_use_equipment: toString(data.shared_use_equipment),

@@ -432,20 +432,20 @@ describe("InstitutionDraftWizardModal submission workflow", () => {
 		expect(validationFn?.()).toBe(true);
 	});
 
-	it("includes utilization status internal notes in the status step form config", () => {
-		mockStepperState.currentStepId = "status";
+	it("includes protection status internal notes in the information step form config", () => {
+		mockStepperState.currentStepId = "information";
 		mockStepperState.currentStepIndex = 2;
 
 		render(<InstitutionDraftWizardModal routePath="/institution/submission" />);
 
 		const field = findFieldByName(
 			lastFormConfig?.fields as Array<Record<string, unknown>> | undefined,
-			"utilization_status_internal_notes",
+			"protection_status_internal_notes",
 		);
 
 		expect(field).toEqual(
 			expect.objectContaining({
-				name: "utilization_status_internal_notes",
+				name: "protection_status_internal_notes",
 				type: "textarea",
 			}),
 		);

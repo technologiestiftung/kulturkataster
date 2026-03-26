@@ -61,6 +61,7 @@ export const buildInstitutionFormInitialValues = (
 	return {
 		name: resolvedInstitution?.name ?? undefined,
 		parent_organization: resolvedInstitution?.parent_organization ?? undefined,
+		source: resolvedInstitution?.source ?? undefined,
 		internal_notes: resolvedInstitution?.internal_notes ?? undefined,
 		"address.streetLine": buildStreetLine(
 			address?.street,
@@ -82,9 +83,13 @@ export const buildInstitutionFormInitialValues = (
 		utilization_status: resolvedInstitution?.utilization_status ?? undefined,
 		utilization_status_info:
 			resolvedInstitution?.utilization_status_info ?? undefined,
+		utilization_status_internal_notes:
+			resolvedInstitution?.utilization_status_internal_notes ?? undefined,
 		protection_status: resolvedInstitution?.protection_status ?? undefined,
 		protection_status_info:
 			resolvedInstitution?.protection_status_info ?? undefined,
+		protection_status_internal_notes:
+			resolvedInstitution?.protection_status_internal_notes ?? undefined,
 		website: resolvedInstitution?.website ?? undefined,
 		email: resolvedInstitution?.email ?? undefined,
 		phone: resolvedInstitution?.phone ?? undefined,
@@ -219,10 +224,16 @@ export function buildInstitutionForFormFromDraft(
 			? draft.utilization_status
 			: null) as Institution["utilization_status"] | null,
 		utilization_status_info: toOptionalText(draft.utilization_status_info),
+		utilization_status_internal_notes: toOptionalText(
+			draft.utilization_status_internal_notes,
+		),
 		protection_status: (typeof draft.protection_status === "string"
 			? draft.protection_status
 			: null) as Institution["protection_status"] | null,
 		protection_status_info: toOptionalText(draft.protection_status_info),
+		protection_status_internal_notes: toOptionalText(
+			draft.protection_status_internal_notes,
+		),
 		shared_use_allowed: toFormBoolean(draft.shared_use_allowed),
 		shared_use_info: toOptionalText(draft.shared_use_info),
 		shared_use_equipment: toOptionalText(draft.shared_use_equipment),

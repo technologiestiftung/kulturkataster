@@ -116,22 +116,7 @@ const useInstitutionSubmit = (
 			categoryGroups,
 		);
 		const address = buildInstitutionAddressPayload(data, { addressId });
-		const {
-			website,
-			email,
-			phone,
-			funding_type: rawFundingType,
-			funding_sources,
-			shared_use_allowed,
-			shared_use_info,
-			shared_use_equipment,
-			shared_use_audience,
-			shared_use_availability,
-			shared_use_contact_person,
-		} = buildInstitutionSharedFieldsPayload(data);
-		const funding_type = rawFundingType as
-			| Institution["funding_type"]
-			| undefined;
+		const sharedPayload = buildInstitutionSharedFieldsPayload(data);
 
 		try {
 			if (mode === "create") {
@@ -139,17 +124,7 @@ const useInstitutionSubmit = (
 					name: String(data.name ?? ""),
 					address,
 					categoryIds: categoryIds.length > 0 ? categoryIds : [],
-					website,
-					email,
-					phone,
-					funding_type: funding_type ?? null,
-					funding_sources,
-					shared_use_allowed,
-					shared_use_info,
-					shared_use_equipment,
-					shared_use_audience,
-					shared_use_availability,
-					shared_use_contact_person,
+					...sharedPayload,
 				});
 				addInstitution(created);
 			} else if (institutionId) {
@@ -158,17 +133,7 @@ const useInstitutionSubmit = (
 					name: String(data.name ?? ""),
 					address,
 					categoryIds,
-					website,
-					email,
-					phone,
-					funding_type: funding_type ?? null,
-					funding_sources,
-					shared_use_allowed,
-					shared_use_info,
-					shared_use_equipment,
-					shared_use_audience,
-					shared_use_availability,
-					shared_use_contact_person,
+					...sharedPayload,
 				});
 				if (updated) {
 					upsertInstitution(updated);
@@ -341,20 +306,6 @@ const buildInstitutionFormConfig = ({
 								label: tEnum("field_names.utilization_status.options.unknown"),
 							},
 						],
-					},
-					{
-						name: "utilization_status_info",
-						label: fieldLabel("utilization_status_info"),
-						type: "textarea",
-						placeholder: fieldPlaceholder("utilization_status_info"),
-						layout: { span: "full" },
-					},
-					{
-						name: "utilization_status_internal_notes",
-						label: fieldLabel("utilization_status_internal_notes"),
-						type: "textarea",
-						placeholder: fieldPlaceholder("utilization_status_internal_notes"),
-						layout: { span: "full" },
 					},
 					{
 						name: "address.map",
@@ -1076,6 +1027,17 @@ const buildInstitutionFormConfig = ({
 								type: "textarea",
 								placeholder: fieldPlaceholder("protection_status_info"),
 							},
+							{
+								name: "protection_status_internal_notes",
+								label: fieldLabel(
+									"protection_status_internal_notes",
+									"Sicherungsstatus Interne Notizen",
+								),
+								type: "textarea",
+								placeholder: fieldPlaceholder(
+									"protection_status_internal_notes",
+								),
+							},
 						],
 					},
 					{
@@ -1115,14 +1077,21 @@ const buildInstitutionFormConfig = ({
 					},
 				],
 			},
-			{
-				name: "additional_section",
-				type: "section",
-				fields: [
-					{
-						name: "notes",
-						label: fieldLabel("notes", "Notizen"),
-						type: "textarea",
+				{
+					name: "additional_section",
+					type: "section",
+					fields: [
+						{
+							name: "source",
+							label: fieldLabel("source", "Datenquelle"),
+							type: "text",
+							placeholder: fieldPlaceholder("source"),
+							description: fieldDescription("source"),
+						},
+						{
+							name: "notes",
+							label: fieldLabel("notes", "Notizen"),
+							type: "textarea",
 						placeholder: fieldPlaceholder("notes"),
 						description: fieldDescription("notes"),
 					},

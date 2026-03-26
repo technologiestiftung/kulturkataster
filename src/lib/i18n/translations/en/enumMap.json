@@ -520,6 +520,14 @@
 			"label": "Protection status info",
 			"placeholder": "Please enter"
 		},
+		"protection_status_internal_notes": {
+			"description": "",
+			"errors": {
+				"required": "Please provide protection status internal notes."
+			},
+			"label": "Protection status internal notes",
+			"placeholder": "Please enter"
+		},
 		"rental_contract_end": {
 			"description": "",
 			"errors": {

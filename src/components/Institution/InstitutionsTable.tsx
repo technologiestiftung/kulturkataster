@@ -469,26 +469,6 @@ export function InstitutionsTable() {
 					translateEnum("utilization_status", row.original.utilization_status),
 			},
 			{
-				accessorKey: "utilization_status_info",
-				header: headerLabel(
-					"utilization_status_info",
-					"Utilization Status Info",
-				),
-				enableSorting: true,
-				size: 200,
-				meta: { truncate: true },
-			},
-			{
-				accessorKey: "utilization_status_internal_notes",
-				header: headerLabel(
-					"utilization_status_internal_notes",
-					"Utilization Status Internal Notes",
-				),
-				enableSorting: true,
-				size: 200,
-				meta: { truncate: true },
-			},
-			{
 				accessorKey: "protection_status",
 				header: headerLabel("protection_status", "Protection Status"),
 				enableSorting: true,
@@ -502,6 +482,16 @@ export function InstitutionsTable() {
 				header: headerLabel("protection_status_info", "Protection Status Info"),
 				enableSorting: true,
 				size: 200,
+				meta: { truncate: true },
+			},
+			{
+				accessorKey: "protection_status_internal_notes",
+				header: headerLabel(
+					"protection_status_internal_notes",
+					"Protection Status Internal Notes",
+				),
+				enableSorting: true,
+				size: 220,
 				meta: { truncate: true },
 			},
 			{
