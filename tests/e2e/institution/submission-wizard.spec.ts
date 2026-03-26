@@ -295,15 +295,11 @@ test.describe("institution submission wizard", () => {
 			timeout: 15_000,
 		});
 		await expect(page.locator("form#institution-contact-form")).toBeVisible();
-		await page
-			.locator('[id="works_for_organization-boolean:true"]')
-			.click();
+		await page.locator('[id="works_for_organization-boolean:true"]').click();
 		await expect(
 			page.locator('[id="consent_contact_listing-boolean:true"]'),
 		).toBeVisible();
-		await page
-			.locator('[id="consent_contact_listing-boolean:true"]')
-			.click();
+		await page.locator('[id="consent_contact_listing-boolean:true"]').click();
 		await page.getByLabel("Ansprechperson Vorname").fill("Max");
 		await page.getByLabel("Ansprechperson Nachname").fill("Mustermann");
 		await page
