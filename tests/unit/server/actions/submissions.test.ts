@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
 	createSubmission,
+	saveSubmissionNote,
 	updateSubmission,
 } from "@/server/actions/submissions";
 import { SubmissionEntityType, SubmissionType } from "@/generated/prisma";
@@ -8,6 +9,10 @@ import { getCurrentUserId } from "@/server/actions/auth";
 
 vi.mock("@/server/actions/auth", () => ({
 	getCurrentUserId: vi.fn().mockResolvedValue("user-1"),
+}));
+
+vi.mock("@/server/utils/actionsUtils", () => ({
+	revalidateAccount: vi.fn(),
 }));
 
 const getTableScopeMock = vi.fn();
@@ -28,12 +33,16 @@ vi.mock("@/server/utils/rbac", () => ({
 
 const updateMock = vi.fn();
 const createMock = vi.fn();
+const createNoteMock = vi.fn();
+const findByIdMock = vi.fn();
 const findFirstMock = vi.fn();
 
 vi.mock("@/server/data/submissionRepo", () => ({
 	submissionRepo: {
 		update: (id: number, data: unknown) => updateMock(id, data),
 		create: (data: unknown) => createMock(data),
+		createNote: (data: unknown) => createNoteMock(data),
+		findById: (id: number) => findByIdMock(id),
 		findFirst: (where: unknown) => findFirstMock(where),
 	},
 }));
@@ -44,6 +53,8 @@ describe("server actions: submissions", () => {
 		requireScopeOrUserMock.mockReset();
 		updateMock.mockReset();
 		createMock.mockReset();
+		createNoteMock.mockReset();
+		findByIdMock.mockReset();
 		findFirstMock.mockReset();
 	});
 
@@ -157,6 +168,41 @@ describe("server actions: submissions", () => {
 				data: {
 					established_since: "2019-01-01T00:00:00.000Z",
 				},
+			}),
+		);
+	});
+
+	it("saveSubmissionNote creates a note and returns the refreshed submission", async () => {
+		getTableScopeMock.mockReturnValue("all");
+		requireScopeOrUserMock.mockReturnValue(null);
+		findByIdMock
+			.mockResolvedValueOnce({
+				id: 7,
+				status: "approval_pending",
+				created_by: "user-1",
+			})
+			.mockResolvedValueOnce({
+				id: 7,
+				status: "approval_pending",
+				notes: [{ id: 1, note: "Review note" }],
+			});
+		createNoteMock.mockResolvedValue({ id: 1 });
+
+		const result = await saveSubmissionNote({
+			submissionId: 7,
+			note: "Review note",
+		});
+
+		expect(createNoteMock).toHaveBeenCalledWith(
+			expect.objectContaining({
+				note: "Review note",
+				submission: { connect: { id: 7 } },
+			}),
+		);
+		expect(result).toEqual(
+			expect.objectContaining({
+				id: 7,
+				notes: [{ id: 1, note: "Review note" }],
 			}),
 		);
 	});

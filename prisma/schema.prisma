@@ -34,6 +34,7 @@ enum RentalContractType {
   limited_lease
   hereditary_building_right
   organization_ownership
+  leasehold
 }
 
 enum FundingType {
@@ -190,9 +191,11 @@ model Institution {
   funding_type            FundingType?
   utilization_status      UtilizationStatus?
   utilization_status_info  String?
+  utilization_status_internal_notes  String?
   protection_status       ProtectionStatus?
   protection_status_info   String?
   shared_use_allowed      Boolean?
+  protection_status_internal_notes String?
   shared_use_info         String?
   shared_use_equipment    String?
   shared_use_audience     String?
@@ -307,11 +310,12 @@ model User {
   role                 Role?         @relation(fields: [role_id], references: [id])
   groups               Group[]
   institutions         Institution[]
-  created_institutions Institution[] @relation("InstitutionCreator")
-  updated_institutions Institution[] @relation("InstitutionUpdater")
-  submissions         Submission[] @relation("SubmissionCreator")
-  reviewed_submissions Submission[] @relation("SubmissionReviewer")
-  entity_audits        EntityAudit[] @relation("EntityAuditUser")
+  created_institutions Institution[]    @relation("InstitutionCreator")
+  updated_institutions Institution[]    @relation("InstitutionUpdater")
+  submissions          Submission[]     @relation("SubmissionCreator")
+  reviewed_submissions Submission[]     @relation("SubmissionReviewer")
+  submission_notes     SubmissionNote[] @relation("SubmissionNoteCreator")
+  entity_audits        EntityAudit[]    @relation("EntityAuditUser")
 
   @@index([email])
   @@index([role_id])
@@ -388,7 +392,6 @@ model Submission {
   data         Json
   diff         Json?
   meta         Json?
-  review_notes String?
   created_by   String?              @db.Uuid
   reviewed_by  String?              @db.Uuid
   created_at   DateTime             @default(now())
@@ -397,6 +400,7 @@ model Submission {
 
   creator  User? @relation("SubmissionCreator", fields: [created_by], references: [id])
   reviewer User? @relation("SubmissionReviewer", fields: [reviewed_by], references: [id])
+  notes    SubmissionNote[]
 
   @@index([entity_type])
   @@index([entity_id])
@@ -405,6 +409,24 @@ model Submission {
   @@index([created_by])
   @@index([reviewed_by])
   @@map("submission")
+}
+
+model SubmissionNote {
+  id            Int      @id @default(autoincrement())
+  submission_id Int
+  note          String
+  created_by    String?  @db.Uuid
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+  meta          Json?
+
+  submission Submission @relation(fields: [submission_id], references: [id], onDelete: Cascade)
+  creator    User?      @relation("SubmissionNoteCreator", fields: [created_by], references: [id])
+
+  @@index([submission_id])
+  @@index([created_by])
+  @@index([created_at])
+  @@map("submission_note")
 }
 
 // ============================================
@@ -428,6 +450,7 @@ enum AuditEntityType {
   role
   group
   submission
+  submission_note
   role_table_permission
   role_field_permission
 }

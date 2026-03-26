@@ -50,8 +50,12 @@ export const buildInstitutionCreateData = (
 			: undefined,
 	utilization_status: input.utilization_status ?? undefined,
 	utilization_status_info: input.utilization_status_info ?? null,
+	utilization_status_internal_notes:
+		input.utilization_status_internal_notes ?? null,
 	protection_status: input.protection_status ?? undefined,
 	protection_status_info: input.protection_status_info ?? null,
+	protection_status_internal_notes:
+		input.protection_status_internal_notes ?? null,
 	shared_use_allowed: input.shared_use_allowed ?? false,
 	shared_use_info: input.shared_use_info ?? null,
 	shared_use_equipment: input.shared_use_equipment ?? null,

@@ -49,8 +49,10 @@ export type InstitutionTableBase = {
 	funding_sources?: FundingSourceInput[] | FundingSource[] | null;
 	utilization_status?: Institution["utilization_status"];
 	utilization_status_info?: Institution["utilization_status_info"];
+	utilization_status_internal_notes?: Institution["utilization_status_internal_notes"];
 	protection_status?: Institution["protection_status"];
 	protection_status_info?: Institution["protection_status_info"];
+	protection_status_internal_notes?: Institution["protection_status_internal_notes"];
 	shared_use_allowed?: Institution["shared_use_allowed"];
 	shared_use_info?: Institution["shared_use_info"];
 	shared_use_equipment?: Institution["shared_use_equipment"];
@@ -124,8 +126,10 @@ export type InstitutionForm = {
 	funding_sources?: FundingSourceInput[] | null;
 	utilization_status?: UtilizationStatus | null;
 	utilization_status_info?: string | null;
+	utilization_status_internal_notes?: string | null;
 	protection_status?: ProtectionStatus | null;
 	protection_status_info?: string | null;
+	protection_status_internal_notes?: string | null;
 	shared_use_allowed?: boolean | null;
 	shared_use_info?: string | null;
 	shared_use_equipment?: string | null;
@@ -182,8 +186,10 @@ export const INSTITUTION_PERMISSION_FIELDS = [
 	"funding_sources",
 	"utilization_status",
 	"utilization_status_info",
+	"utilization_status_internal_notes",
 	"protection_status",
 	"protection_status_info",
+	"protection_status_internal_notes",
 	"shared_use_allowed",
 	"shared_use_info",
 	"shared_use_equipment",

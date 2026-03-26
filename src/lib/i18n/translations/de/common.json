@@ -124,10 +124,18 @@
 					"phoneLabel": "Telefon",
 					"title": "Kontakt"
 				},
-				"description": "Diese FAQs beziehen sich ausschließlich auf den User-Bereich des Kulturkatasters, also auf Themen rund um Konto/Account, Rollen- und Rechteverwaltung (Administrationsrechte), das Verwalten von Institutionen sowie redaktionelle Workflows (z. B. Anlegen und Pflegen von Profilen). Allgemeine Fragen zum Auftrag und Nutzen des Kulturkatasters, zu den Umfängen der verschiedenen Versionen sowie zur methodischen Vorgehensweise finden Sie im Bereich \u201EInfos & Services\u201C auf dem Kulturkataster. Die FAQs werden stetig erweitert; falls Ihre Frage hier noch nicht auftaucht, schreiben Sie der Redaktion gern per E-Mail an info@kulturkataster.berlin.",
+				"description": "Diese FAQs beziehen sich ausschließlich auf den User-Bereich des Kulturkatasters, also auf Themen rund um Konto/Account, Rollen- und Rechteverwaltung (Administrationsrechte), das Verwalten von Institutionen sowie redaktionelle Workflows (z. B. Anlegen und Pflegen von Profilen). Allgemeine Fragen zum Auftrag und Nutzen des Kulturkatasters, zu den Umfängen der verschiedenen Versionen sowie zur methodischen Vorgehensweise finden Sie im Bereich „Infos & Services“ auf dem Kulturkataster. Die FAQs werden stetig erweitert; falls Ihre Frage hier noch nicht auftaucht, schreiben Sie der Redaktion gern per E-Mail an info@kulturkataster.berlin.",
 				"question1": {
 					"answer": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam.",
 					"title": "Wie kann ich ein Benutzerkonto für den User-Bereich erstellen?"
+				},
+				"question10": {
+					"answer": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam",
+					"title": "Wie funktioniert der redaktionelle Workflow (z. B. Entwurf, Prüfung, Freigabe, Veröffentlichung) im User-Bereich?"
+				},
+				"question11": {
+					"answer": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam",
+					"title": "Ich habe immer noch eine Frage!"
 				},
 				"question2": {
 					"answer": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam",
@@ -135,7 +143,7 @@
 				},
 				"question3": {
 					"answer": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam",
-					"title": "Wie funktioniert \u201EPasswort vergessen\u201C und wie setze ich mein Passwort zurück?"
+					"title": "Wie funktioniert „Passwort vergessen“ und wie setze ich mein Passwort zurück?"
 				},
 				"question4": {
 					"answer": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam",
@@ -160,14 +168,6 @@
 				"question9": {
 					"answer": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam",
 					"title": "Wie lege ich Profile für Verweisungsmitarbeitende an und wie verwalte ich diese?"
-				},
-				"question10": {
-					"answer": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam",
-					"title": "Wie funktioniert der redaktionelle Workflow (z. B. Entwurf, Prüfung, Freigabe, Veröffentlichung) im User-Bereich?"
-				},
-				"question11": {
-					"answer": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam",
-					"title": "Ich habe immer noch eine Frage!"
 				},
 				"subtitle": "Häufig gestellte Fragen zum Konto-Bereich.",
 				"technicalSupport": {
@@ -512,7 +512,6 @@
 		"layerTreeAriaLabel": "Fachkarten einblenden ({{visibleCount}} sichtbare Karten)",
 		"layerTreeTitle": "Fachkarten",
 		"layerTreeVisibleCountAriaLabel": "{{visibleCount}} sichtbare Karten",
-		"unnamedLayer": "Unbenannte Fachkarte",
 		"legend": {
 			"legendAriaLabels": "Legende für die Fachkarte {{serviceName}}",
 			"legendGesamtIndexAriaLabel": "Tabelle in der Legende des Gesamtindex",
@@ -523,6 +522,7 @@
 		"lookAtLegend": "Legende ansehen",
 		"noLayersAvailable": "Keine Fachkarten verfügbar",
 		"title": "Kartenansicht",
+		"unnamedLayer": "Unbenannte Fachkarte",
 		"zoomIn": "Vergrößern",
 		"zoomOut": "Verkleinern"
 	},
