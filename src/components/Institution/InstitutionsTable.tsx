@@ -795,7 +795,9 @@ export function InstitutionsTable() {
 		data: filteredTableRows,
 		getRowKey: (row) => row.rowKey ?? row.id,
 		searchable: true,
-		searchPlaceholder: t("institutionsTable.search.title"),
+		searchPlaceholder: t("institutionsTable.search.title", {
+			defaultValue: "Search institutions...",
+		}),
 		getSearchableValues: (row) => [
 			row.name,
 			row.status || "",

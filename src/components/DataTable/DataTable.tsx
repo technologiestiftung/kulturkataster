@@ -158,7 +158,8 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 							}
 							return "";
 						});
-				return values.filter(Boolean).join(" ");
+				const rowKey = config.getRowKey(row);
+				return [...values, String(rowKey)].filter(Boolean).join(" ");
 			},
 		};
 	}, [config, fuzzyFilter, fuzzySort, globalSearchColumnId, normalizedColumns]);
