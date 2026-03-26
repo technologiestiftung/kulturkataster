@@ -295,16 +295,11 @@ test.describe("institution submission wizard", () => {
 			timeout: 15_000,
 		});
 		await expect(page.locator("form#institution-contact-form")).toBeVisible();
-		await page
-			.getByRole("checkbox", {
-				name: "Ich arbeite für diese Kulturorganisation.",
-			})
-			.click();
-		await page
-			.getByRole("checkbox", {
-				name: /Ich bin damit einverstanden/i,
-			})
-			.click();
+		await page.locator('[id="works_for_organization-boolean:true"]').click();
+		await expect(
+			page.locator('[id="consent_contact_listing-boolean:true"]'),
+		).toBeVisible();
+		await page.locator('[id="consent_contact_listing-boolean:true"]').click();
 		await page.getByLabel("Ansprechperson Vorname").fill("Max");
 		await page.getByLabel("Ansprechperson Nachname").fill("Mustermann");
 		await page
@@ -346,11 +341,6 @@ test.describe("institution submission wizard", () => {
 		await fillById(page, "address.neighbourhood", "Mitte");
 		await fillById(page, "address.cultural_area", "Zentrum");
 		await selectFirstOptionById(page, "utilization_status");
-		await fillById(
-			page,
-			"utilization_status_info",
-			"Nutzung werktags mit wechselnden Formaten",
-		);
 		await fillById(page, "parent_organization", "Kulturverein Berlin");
 		await fillById(page, "email", `all-fields-${Date.now()}@example.com`);
 		await fillById(page, "phone", "+49 30 123456");
@@ -416,6 +406,11 @@ test.describe("institution submission wizard", () => {
 			page,
 			"protection_status_info",
 			"Status laut letzter Abstimmung",
+		);
+		await fillById(
+			page,
+			"protection_status_internal_notes",
+			"Interne Hinweise zur Sicherung",
 		);
 		await fillById(page, "area", "450");
 		await fillById(page, "number_of_rooms", "8");

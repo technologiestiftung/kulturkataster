@@ -287,6 +287,7 @@ const buildCategoryFormConfig = ({
 					}),
 					required: true,
 					type: "text",
+					disabled: mode === "edit",
 					placeholder: t(
 						"categoryFormModal.form.details.fields.key.placeholder",
 						{ defaultValue: "e.g. museums" },

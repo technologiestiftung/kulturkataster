@@ -290,8 +290,8 @@
 					},
 					"iconUpload": {
 						"currentFile": "View current file",
-						"label": "Upload SVG icon",
 						"description": "Optional. ",
+						"label": "Upload SVG icon",
 						"remove": "Remove icon",
 						"selected": "Selected: {{name}}"
 					},
@@ -460,7 +460,6 @@
 		"searchPlaceholder": "Browse groups..."
 	},
 	"imprintModal": {
-		"subtitle": "Kulturraum Berlin gGmbH",
 		"chairman": {
 			"name": "Cerstin Richter-Kotowski, State Secretary of the Senate Department for Culture and Social Cohesion",
 			"title": "Chairwoman of the Supervisory Board"
@@ -540,10 +539,10 @@
 			"management": "Dirk Förster, management",
 			"title": "Represented by:"
 		},
+		"subtitle": "Kulturraum Berlin gGmbH",
 		"title": "imprint"
 	},
 	"informationModal": {
-		"subtitle": "Here you can find further information about the Berlin cultural register.",
 		"faq": {
 			"questions": [
 				{
@@ -595,6 +594,7 @@
 			}
 		},
 		"simpleLanguageDirect": "You can find the “Info & Service” section in simple language <link />.",
+		"subtitle": "Here you can find further information about the Berlin cultural register.",
 		"title": "Information & Service",
 		"upcomingEnhancementsListAriaLabel": "List of planned enhancements and improvements",
 		"usage": {
@@ -705,151 +705,6 @@
 				"title": "Edit cultural location"
 			}
 		},
-		"form": {
-			"basic": {
-				"sectionTitle": "Basic information",
-				"validation": {
-					"duplicateInstitution": "A cultural venue with this name and address already exists.",
-					"duplicatePossible": "Possible duplicate entry found. "
-				}
-			},
-			"category": {
-				"newCategory": {
-					"description": "Please separate multiple categories with a comma.",
-					"label": "Suggest new category(s).",
-					"placeholder": "e.g. "
-				},
-				"validation": {
-					"minSelection": "Please select at least one category."
-				}
-			},
-			"contact": {
-				"consent": {
-					"contactListing": "I agree to be named as a contact person in the password-protected area of ​​the cultural register using my contact details.",
-					"requestAdminRights": "I am responsible for this cultural venue and would like to add it to the list in my profile and obtain administration rights for it.",
-					"title": "Final information",
-					"worksForOrganization": "I work for this cultural organization."
-				}
-			},
-			"information": {
-				"accordions": {
-					"accessibility": {
-						"description": "Information on the accessibility of the cultural institution.",
-						"title": "Accessibility"
-					},
-					"closing": {
-						"description": "This information only applies to places that are already closed.",
-						"title": "Reasons for closure"
-					},
-					"cost": {
-						"description": "Information on entrance fees or usage costs.",
-						"title": "Cost"
-					},
-					"establishment": {
-						"description": "Period of use or opening at the location.",
-						"title": "Period at the location"
-					},
-					"funding": {
-						"description": "Information about funding.",
-						"title": "Type of funding"
-					},
-					"fundingSources": {
-						"description": "Indicate the sources of funding for your cultural institution.",
-						"title": "Type of financing"
-					},
-					"organization": {
-						"description": "Legal form of the cultural institution.",
-						"title": "Organizational form"
-					},
-					"ownership": {
-						"description": "This information will only be accessible to authorized users in the protected area of ​​the cultural register and will not be publicly viewable.",
-						"title": "Ownership"
-					},
-					"protection": {
-						"description": "Information about the protection and security of the location.",
-						"title": "Backup status"
-					},
-					"rental": {
-						"description": "This information will only be accessible to authorized users in the protected area of ​​the cultural register and will not be publicly viewable.",
-						"title": "Rental and usage relationships"
-					},
-					"sharedUseAccessibility": {
-						"description": "Is the room barrier-free accessible? ",
-						"title": "Accessibility"
-					},
-					"sharedUseAudience": {
-						"description": "What type of activities is the room suitable for? ",
-						"title": "Target group/division"
-					},
-					"sharedUseAvailability": {
-						"description": "When can the room be used? ",
-						"title": "Time availability"
-					},
-					"sharedUseContactPerson": {
-						"description": "Please provide a contact by email and/or telephone here. ",
-						"title": "Contact for room inquiries"
-					},
-					"sharedUseCost": {
-						"description": "How much does it cost to use it? ",
-						"title": "Cost"
-					},
-					"sharedUseEquipment": {
-						"description": "What infrastructure is available? ",
-						"title": "equipment"
-					},
-					"sharedUseInfo": {
-						"description": "Describe what information should be entered here, possibly with a list of examples",
-						"title": "Description of the rooms/areas"
-					},
-					"space": {
-						"description": "Information on area, rooms and capacity.",
-						"title": "Premises"
-					}
-				},
-				"closingReason": {
-					"placeholder": "Provide reasons for closure"
-				},
-				"datePlaceholder": "DD.MM.YYYY",
-				"datePlaceholderWithYear": "DD.MM.YYYY or YYYY",
-				"establishment": {
-					"sinceDescription": "Please enter the date of first use or opening at the location. ",
-					"untilDescription": "Please enter the date until which the cultural institution was active at this location. "
-				},
-				"organization": {
-					"legalFormPlaceholder": "e.g. "
-				},
-				"notesDescription": "Please note that this field is visible to the public. ",
-				"internalNotesDescription": "",
-				"internalNotesPrivateDescription": "This information will only be accessible to authorized users in the protected area of ​​the cultural register and will not be publicly viewable.",
-				"protectionStatus": {
-					"acutelyThreatened": "Acutely threatened",
-					"longTermSecured": "Secured in the long term",
-					"mediumTermSecured": "Secured in the medium term",
-					"notYetSecured": "Not yet secured",
-					"permanentlyClosed": "Permanently closed",
-					"uncertain": "Unsure"
-				},
-				"rentalContract": {
-					"hereditaryBuildingRight": "Leasehold building law"
-				},
-				"selectPlaceholder": "Please select",
-				"sharedUse": {
-					"accessibilityPlaceholder": "Describe accessibility",
-					"audiencePlaceholder": "Describe suitable target group/sector",
-					"availabilityPlaceholder": "Describe time availability",
-					"contactPersonPlaceholder": "Specify contact for room requests",
-					"costPlaceholder": "Describe costs for use",
-					"detailsLabel": "Details",
-					"equipmentPlaceholder": "Describe equipment",
-					"infoPlaceholder": "Description of the rooms/areas",
-					"label": "Open to space requests",
-					"options": {
-						"no": "No",
-						"yes": "Yes"
-					}
-				}
-			}
-		},
 		"feedback": {
 			"submit": {
 				"pendingConflict": "You have already submitted an open submission for this cultural venue."
@@ -928,13 +783,39 @@
 			"additional": {
 				"title": "Additional Information"
 			},
+			"basic": {
+				"sectionTitle": "Basic information"
+			},
+			"category": {
+				"newCategory": {
+					"description": "Separate multiple categories with commas.",
+					"label": "Suggest new category(s)",
+					"placeholder": "e.g. New category"
+				},
+				"validation": {
+					"minSelection": "Please select at least one category."
+				}
+			},
 			"contact": {
+				"consent": {
+					"contactListing": "I agree to be named as a contact person in the password-protected area of the cultural register using my contact details.",
+					"title": "Final information",
+					"worksForOrganization": "I work for this cultural organization.",
+					"worksForOrganizationOptions": {
+						"no": "No",
+						"yes": "Yes"
+					}
+				},
 				"title": "contact"
 			},
 			"details": {
 				"description": {
 					"create": "Create a new cultural location.",
 					"edit": "Update cultural locations."
+				},
+				"validation": {
+					"duplicateInstitution": "A cultural venue with this name and address already exists.",
+					"duplicatePossible": "Possible duplicate entry found. Please verify before submitting."
 				},
 				"title": "Details"
 			},
@@ -947,12 +828,80 @@
 			"organization": {
 				"title": "organization"
 			},
+			"information": {
+				"accordions": {
+					"closing": {
+						"description": "This information only applies to places that are already closed.",
+						"title": "Reasons for closure"
+					},
+					"establishment": {
+						"description": "Period of use or opening at the location.",
+						"title": "Period at the location"
+					},
+					"funding": {
+						"description": "Information about funding.",
+						"title": "Type of funding"
+					},
+					"fundingSources": {
+						"description": "Indicate the sources of funding for your cultural institution.",
+						"title": "Type of financing"
+					},
+					"organization": {
+						"description": "Legal form of the cultural institution.",
+						"title": "Organizational form"
+					},
+					"ownership": {
+						"description": "This information will only be accessible to authorized users in the protected area of ​​the cultural register and will not be publicly viewable.",
+						"title": "Ownership"
+					},
+					"protection": {
+						"description": "Information about the protection and security of the location.",
+						"title": "Backup status"
+					},
+					"rental": {
+						"description": "This information will only be accessible to authorized users in the protected area of ​​the cultural register and will not be publicly viewable.",
+						"title": "Rental and usage relationships"
+					},
+					"sharedUseAccessibility": {
+						"description": "Is the room barrier-free accessible? ",
+						"title": "Accessibility"
+					},
+					"sharedUseAudience": {
+						"description": "What type of activities is the room suitable for? ",
+						"title": "Target group/division"
+					},
+					"sharedUseAvailability": {
+						"description": "When can the room be used? ",
+						"title": "Time availability"
+					},
+					"sharedUseContactPerson": {
+						"description": "Please provide a contact by email and/or telephone here. ",
+						"title": "Contact for room inquiries"
+					},
+					"sharedUseCost": {
+						"description": "How much does it cost to use it? ",
+						"title": "Cost"
+					},
+					"sharedUseEquipment": {
+						"description": "What infrastructure is available? ",
+						"title": "equipment"
+					},
+					"sharedUseInfo": {
+						"description": "Describe what information should be entered here, possibly with a list of examples",
+						"title": "Description of the rooms/areas"
+					},
+					"space": {
+						"description": "Information on area, rooms and capacity.",
+						"title": "Premises"
+					}
+				},
+				"internalNotesPrivateDescription": "This information will only be accessible to authorized users in the protected area of ​​the cultural register and will not be publicly viewable.",
+				"sharedUse": {
+					"detailsLabel": "Details"
+				}
+			},
 			"sharedUse": {
 				"description": "Indicate whether the premises are available for multiple use.",
-				"options": {
-					"no": "No",
-					"yes": "Yes"
-				},
 				"title": "Multiple use"
 			},
 			"status": {
@@ -961,13 +910,22 @@
 		},
 		"review": {
 			"actions": {
-				"approve": "To permit"
+				"approve": "To permit",
+				"saveNotes": "Save notes"
 			},
 			"error": "Verification failed. {{error}}",
 			"errorUnknown": "Unknown error.",
 			"grantSubmitterAccess": "After approval, give the submitter access to this cultural location.",
+			"noteMeta": "{{author}} on {{date}}",
 			"notesLabel": "Inspection notes",
 			"notesPlaceholder": "Optional notes for submission",
+			"previousNotesLabel": "Previous notes",
+			"success": {
+				"saveNotes": {
+					"description": "The review notes have been saved.",
+					"title": "Notes saved"
+				}
+			},
 			"statusLabel": "Status: {{status}}",
 			"title": "Check submission"
 		}
@@ -983,11 +941,22 @@
 		},
 		"type": {
 			"manage": "Administer",
+			"submissionBase": {
+				"claim": "Administration",
+				"create": "Creation",
+				"delete": "Deletion",
+				"update": "Change"
+			},
 			"submission": {
 				"claim": "Administration requested",
 				"create": "Creation requested",
 				"delete": "Deletion requested",
 				"update": "Change requested"
+			},
+			"submissionStatus": {
+				"approved": "{{type}} approved",
+				"needs_changes": "{{type}} needs changes",
+				"rejected": "{{type}} rejected"
 			}
 		}
 	},
@@ -1690,6 +1659,7 @@
 		}
 	},
 	"userTable": {
+		"accessAll": "All",
 		"actions": {
 			"add": "Add user"
 		},
@@ -1716,7 +1686,6 @@
 		},
 		"emptyMessage": "No users found.",
 		"emptyValue": "—",
-		"accessAll": "All",
 		"institutionsCount_one": "{{count}} Cultural place",
 		"institutionsCount_other": "{{count}} Cultural places",
 		"searchPlaceholder": "Search users..."

@@ -14,6 +14,9 @@ import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { useInstitutionSubmissionReview } from "@/lib/hooks/useInstitutionSubmissionReview";
 import { useRoutedModalClose } from "@/components/Modals/useRoutedModalClose";
 import { showSuccessToast } from "@/lib/utils/feedbackToast";
+import { formatUserDisplayName } from "@/lib/utils/userName";
+import { formatDateWithLocale } from "@/lib/utils/dateUtils";
+import { Card, CardContent } from "@/components/ui/card";
 
 type InstitutionDraftReviewModalProps = {
 	submissionId?: number;
@@ -32,6 +35,7 @@ export function InstitutionDraftReviewModal({
 }: InstitutionDraftReviewModalProps) {
 	const { t } = useTranslation("content");
 	const { t: tEnum } = useTranslation("enumMap");
+	const { i18n } = useTranslation();
 	const router = useRouter();
 	const toLocalePath = useLocalePath();
 	const closeModal = useRoutedModalClose({ returnTo });
@@ -65,6 +69,7 @@ export function InstitutionDraftReviewModal({
 		submitting,
 		error,
 		handleReview,
+		handleSaveNote,
 		shouldShowGrantSubmitterAccessToggle,
 		canReviewCurrentSubmission,
 	} = useInstitutionSubmissionReview({
@@ -125,6 +130,29 @@ export function InstitutionDraftReviewModal({
 			t,
 		],
 	);
+
+	const handleSaveNoteAction = useCallback(async () => {
+		if (!resolvedSubmissionWithFallback) return;
+		const success = await handleSaveNote();
+		if (!success) {
+			setReviewError(
+				error ??
+					t("institutionFormModal.review.errorDescription", {
+						defaultValue:
+							"Please try again or contact support if the issue persists.",
+					}),
+			);
+			return;
+		}
+		showSuccessToast(
+			t("institutionFormModal.review.success.saveNotes.title", {
+				defaultValue: "Notes saved",
+			}),
+			t("institutionFormModal.review.success.saveNotes.description", {
+				defaultValue: "Your review notes have been saved.",
+			}),
+		);
+	}, [error, handleSaveNote, resolvedSubmissionWithFallback, t]);
 	if (shouldAutoCloseMissingSubmission) return null;
 	if (!resolvedSubmissionWithFallback) {
 		return null;
@@ -138,13 +166,30 @@ export function InstitutionDraftReviewModal({
 		const translated = tEnum(key);
 		return translated === key ? submissionStatus : translated;
 	})();
+	const submissionTypeLabel = t(
+		`institutionsTable.type.submissionBase.${resolvedSubmissionWithFallback.type}`,
+		{
+			defaultValue: resolvedSubmissionWithFallback.type,
+		},
+	);
+	const submissionTitle =
+		submissionStatus === "approved" ||
+		submissionStatus === "rejected" ||
+		submissionStatus === "needs_changes"
+			? t(`institutionsTable.type.submissionStatus.${submissionStatus}`, {
+					type: submissionTypeLabel,
+					defaultValue: submissionTypeLabel,
+				})
+			: t(
+					`institutionsTable.type.submission.${resolvedSubmissionWithFallback.type}`,
+					{
+						defaultValue: resolvedSubmissionWithFallback.type,
+					},
+				);
 
 	return (
 		<Modal
-			title={t(
-				"institutionsTable.type.submission." +
-					resolvedSubmissionWithFallback.type,
-			)}
+			title={submissionTitle}
 			variant="fullscreen"
 			returnTo={returnTo}
 			routePath={routePath}
@@ -188,7 +233,7 @@ export function InstitutionDraftReviewModal({
 								{t("institutionFormModal.review.notesLabel")}
 							</span>
 							{submissionStatus && (
-								<span className="body2 text-muted-foreground">
+								<span className="body2">
 									{t("institutionFormModal.review.statusLabel", {
 										status: submissionStatusLabel,
 									})}
@@ -196,6 +241,44 @@ export function InstitutionDraftReviewModal({
 							)}
 						</div>
 						<>
+							{resolvedSubmissionWithFallback.notes?.length ? (
+								<div className="space-y-2">
+									<div className="body2 ">
+										{t("institutionFormModal.review.previousNotesLabel", {
+											defaultValue: "Previous notes",
+										})}
+									</div>
+									<div className="space-y-2">
+										{resolvedSubmissionWithFallback.notes.map((note) => (
+											<Card key={note.id} variant="tertiary">
+												<CardContent variant="tertiary" className="p-3">
+													<div className="body3 whitespace-pre-wrap">
+														{note.note}
+													</div>
+													<div className="mt-2 body3 text-muted-foreground">
+														{t("institutionFormModal.review.noteMeta", {
+															defaultValue: "{{author}} am {{date}}",
+															author:
+																formatUserDisplayName(note.creator) ??
+																note.creator?.email ??
+																t("auth.account.activity.system", {
+																	defaultValue: "System",
+																}),
+															date: formatDateWithLocale(note.created_at, {
+																locale: i18n.language,
+																format: {
+																	dateStyle: "medium",
+																	timeStyle: "short",
+																},
+															}),
+														})}
+													</div>
+												</CardContent>
+											</Card>
+										))}
+									</div>
+								</div>
+							) : null}
 							<Textarea
 								value={internalNotes}
 								onChange={(event) => setInternalNotes(event.target.value)}
@@ -228,6 +311,16 @@ export function InstitutionDraftReviewModal({
 									disabled={submitting}
 								>
 									{t("institutionFormModal.review.actions.reject")}
+								</Button>
+								<Button
+									type="button"
+									variant="outline"
+									onClick={() => void handleSaveNoteAction()}
+									disabled={submitting || internalNotes.trim().length === 0}
+								>
+									{t("institutionFormModal.review.actions.saveNotes", {
+										defaultValue: "Save notes",
+									})}
 								</Button>
 								<Button
 									type="button"

@@ -116,22 +116,7 @@ const useInstitutionSubmit = (
 			categoryGroups,
 		);
 		const address = buildInstitutionAddressPayload(data, { addressId });
-		const {
-			website,
-			email,
-			phone,
-			funding_type: rawFundingType,
-			funding_sources,
-			shared_use_allowed,
-			shared_use_info,
-			shared_use_equipment,
-			shared_use_audience,
-			shared_use_availability,
-			shared_use_contact_person,
-		} = buildInstitutionSharedFieldsPayload(data);
-		const funding_type = rawFundingType as
-			| Institution["funding_type"]
-			| undefined;
+		const sharedPayload = buildInstitutionSharedFieldsPayload(data);
 
 		try {
 			if (mode === "create") {
@@ -139,17 +124,7 @@ const useInstitutionSubmit = (
 					name: String(data.name ?? ""),
 					address,
 					categoryIds: categoryIds.length > 0 ? categoryIds : [],
-					website,
-					email,
-					phone,
-					funding_type: funding_type ?? null,
-					funding_sources,
-					shared_use_allowed,
-					shared_use_info,
-					shared_use_equipment,
-					shared_use_audience,
-					shared_use_availability,
-					shared_use_contact_person,
+					...sharedPayload,
 				});
 				addInstitution(created);
 			} else if (institutionId) {
@@ -158,17 +133,7 @@ const useInstitutionSubmit = (
 					name: String(data.name ?? ""),
 					address,
 					categoryIds,
-					website,
-					email,
-					phone,
-					funding_type: funding_type ?? null,
-					funding_sources,
-					shared_use_allowed,
-					shared_use_info,
-					shared_use_equipment,
-					shared_use_audience,
-					shared_use_availability,
-					shared_use_contact_person,
+					...sharedPayload,
 				});
 				if (updated) {
 					upsertInstitution(updated);
@@ -300,6 +265,10 @@ const buildInstitutionFormConfig = ({
 						name: "utilization_status",
 						label: fieldLabel("utilization_status", "Utilization Status"),
 						type: "select",
+						allowNullOption: true,
+						nullOptionLabel: tEnum(
+							"field_names.utilization_status.options.none",
+						),
 						description: fieldDescription("utilization_status"),
 						placeholder: fieldPlaceholder("utilization_status"),
 						layout: { span: "full" },
@@ -501,421 +470,640 @@ const buildInstitutionFormConfig = ({
 				],
 			},
 			{
-				name: "organization",
-				layout: { columns: 2 },
+				name: "shared_use_section",
 				type: "section",
-				title: t("institutionFormModal.form.organization.title"),
 				fields: [
 					{
-						name: "legal_form",
-						label: fieldLabel("legal_form", "Legal Form"),
-						type: "text",
-						placeholder: fieldPlaceholder("legal_form"),
-						layout: { span: "full" },
-					},
-					{
-						name: "owner_type",
-						label: fieldLabel("owner_type", "Owner Type"),
-						type: "select",
-						placeholder: fieldPlaceholder("owner_type"),
-						layout: { span: "half" },
-						options: [
-							{
-								value: "private",
-								label: tEnum("field_names.owner_type.options.private"),
-							},
-							{
-								value: "federal_property",
-								label: tEnum("field_names.owner_type.options.federal_property"),
-							},
-							{
-								value: "state_property",
-								label: tEnum("field_names.owner_type.options.state_property"),
-							},
-							{
-								value: "state_property_silb",
-								label: tEnum(
-									"field_names.owner_type.options.state_property_silb",
-								),
-							},
-							{
-								value: "state_property_soda",
-								label: tEnum(
-									"field_names.owner_type.options.state_property_soda",
-								),
-							},
-							{
-								value: "state_property_other",
-								label: tEnum(
-									"field_names.owner_type.options.state_property_other",
-								),
-							},
-							{
-								value: "state_property_specialized",
-								label: tEnum(
-									"field_names.owner_type.options.state_property_specialized",
-								),
-							},
-							{
-								value: "state_property_fund",
-								label: tEnum(
-									"field_names.owner_type.options.state_property_fund",
-								),
-							},
-							{
-								value: "district_property",
-								label: tEnum(
-									"field_names.owner_type.options.district_property",
-								),
-							},
-							{
-								value: "other_public_property",
-								label: tEnum(
-									"field_names.owner_type.options.other_public_property",
-								),
-							},
-							{
-								value: "municipal_housing_company",
-								label: tEnum(
-									"field_names.owner_type.options.municipal_housing_company",
-								),
-							},
-							{
-								value: "other",
-								label: tEnum("field_names.owner_type.options.other"),
-							},
-						],
-					},
-					{
-						name: "owner_name",
-						label: fieldLabel("owner_name", "Owner Name"),
-						type: "text",
-						placeholder: fieldPlaceholder("owner_name"),
-						layout: { span: "half" },
-					},
-					{
-						name: "established_since",
-						label: fieldLabel("established_since", "Established Since"),
-						type: "date",
-						layout: { span: "half" },
-					},
-					{
-						name: "established_until",
-						label: fieldLabel("established_until", "Established Until"),
-						type: "date",
-						layout: { span: "half" },
-					},
-					{
-						name: "rental_contract_type",
-						label: fieldLabel("rental_contract_type", "Rental Contract Type"),
-						type: "select",
-						placeholder: fieldPlaceholder("rental_contract_type"),
-						layout: { span: "half" },
-						allowNullOption: true,
-						options: [
-							{
-								value: "unlimited_lease",
-								label: tEnum(
-									"field_names.rental_contract_type.options.unlimited_lease",
-								),
-							},
-							{
-								value: "limited_lease",
-								label: tEnum(
-									"field_names.rental_contract_type.options.limited_lease",
-								),
-							},
-							{
-								value: "organization_ownership",
-								label: tEnum(
-									"field_names.rental_contract_type.options.organization_ownership",
-								),
-							},
-						],
-					},
-					{
-						name: "rental_contract_end",
-						label: fieldLabel("rental_contract_end", "Rental Contract End"),
-						type: "date",
-						condition: (formData) =>
-							formData.rental_contract_type === "limited_lease",
-						layout: { span: "half" },
-					},
-					{
-						name: "closing_reason",
-						label: fieldLabel("closing_reason", "Closing Reason"),
-						type: "textarea",
-						placeholder: fieldPlaceholder("closing_reason"),
-						layout: { span: "full" },
-					},
-				],
-			},
-			{
-				name: "funding",
-				type: "section",
-				title: t("institutionFormModal.form.funding.title"),
-				fields: [
-					{
-						name: "funding_type",
-						label: fieldLabel("funding_type", "Funding Type"),
-						type: "select",
-						placeholder: fieldPlaceholder("funding_type"),
-						layout: { span: "full" },
-						options: [
-							{
-								value: "workspace_program",
-								label: tEnum(
-									"field_names.funding_type.options.workspace_program",
-								),
-							},
-							{
-								value: "institutional_funding",
-								label: tEnum(
-									"field_names.funding_type.options.institutional_funding",
-								),
-							},
-							{
-								value: "temporary_project_funding",
-								label: tEnum(
-									"field_names.funding_type.options.temporary_project_funding",
-								),
-							},
-							{
-								value: "no_funding",
-								label: tEnum("field_names.funding_type.options.no_funding"),
-							},
-						],
-					},
-					{
-						name: "funding_sources",
-						label: fieldLabel("funding_sources", "Funding Sources"),
-						type: "fundingSources",
-						layout: { span: "full" },
-						fundingSources: {
-							sourceLabel: fieldLabel(
-								"funding_source_name",
-								"Funding Source Name",
-							),
-							descriptionLabel: fieldLabel(
-								"funding_source_description",
-								"Funding Source Description",
-							),
-							sourcePlaceholder: tEnum(
-								"field_names.funding_source_name.placeholder",
-							),
-							descriptionPlaceholder: tEnum(
-								"field_names.funding_source_description.placeholder",
-							),
-							addButtonLabel: tEnum("field_names.funding_sources.actions.add"),
-							removeButtonLabel: tEnum(
-								"field_names.funding_sources.actions.remove",
-							),
-						},
-					},
-				],
-			},
-			{
-				name: "shared_use",
-				type: "section",
-				layout: { columns: 2 },
-				fields: [
-					{
-						name: "shared_use_allowed",
-						label: fieldLabel("shared_use_allowed", "Shared Use Allowed"),
+						name: "shared_use",
+						label: fieldLabel("shared_use_allowed"),
 						type: "radio",
 						radioVariant: "button",
-						layout: { span: "full" },
 						options: [
 							{
-								value: true,
-								label: t("institutionFormModal.form.sharedUse.options.yes"),
+								value: "yes",
+								label: tEnum("field_names.shared_use_allowed.options.yes"),
 							},
 							{
-								value: false,
-								label: t("institutionFormModal.form.sharedUse.options.no"),
+								value: "no",
+								label: tEnum("field_names.shared_use_allowed.options.no"),
 							},
 						],
 					},
 					{
-						name: "shared_use_info",
-						label: fieldLabel("shared_use_info", "Shared Use Info"),
-						type: "textarea",
-						placeholder: fieldPlaceholder("shared_use_info"),
-						layout: { span: "full" },
-						condition: (formData) => formData.shared_use_allowed === true,
-					},
-					{
-						name: "shared_use_equipment",
-						label: fieldLabel("shared_use_equipment", "Shared Use Equipment"),
-						type: "textarea",
-						placeholder: fieldPlaceholder("shared_use_equipment"),
-						layout: { span: "full" },
-						condition: (formData) => formData.shared_use_allowed === true,
-					},
-					{
-						name: "shared_use_audience",
-						label: fieldLabel("shared_use_audience", "Shared Use Audience"),
-						type: "textarea",
-						placeholder: fieldPlaceholder("shared_use_audience"),
-						layout: { span: "full" },
-						condition: (formData) => formData.shared_use_allowed === true,
-					},
-					{
-						name: "shared_use_availability",
-						label: fieldLabel(
-							"shared_use_availability",
-							"Shared Use Availability",
+						name: "shared_use_details",
+						label: t(
+							"institutionFormModal.form.information.sharedUse.detailsLabel",
 						),
-						type: "textarea",
-						placeholder: fieldPlaceholder("shared_use_availability"),
-						layout: { span: "full" },
-						condition: (formData) => formData.shared_use_allowed === true,
+						cardVariant: "none",
+						fieldGap: "gap-0",
+						type: "section",
+						condition: (formData) => formData.shared_use === "yes",
+						fields: [
+							{
+								name: "shared_use_info",
+								collapsible: true,
+								accordionVariant: "default",
+								accordionTitle: t(
+									"institutionFormModal.form.information.accordions.sharedUseInfo.title",
+								),
+								accordionDescription: t(
+									"institutionFormModal.form.information.accordions.sharedUseInfo.description",
+								),
+								defaultOpen: false,
+								type: "textarea",
+								placeholder: fieldPlaceholder("shared_use_info"),
+							},
+							{
+								name: "shared_use_equipment",
+								collapsible: true,
+								className: "border-t-1",
+								accordionVariant: "default",
+								accordionTitle: t(
+									"institutionFormModal.form.information.accordions.sharedUseEquipment.title",
+								),
+								accordionDescription: t(
+									"institutionFormModal.form.information.accordions.sharedUseEquipment.description",
+								),
+								defaultOpen: false,
+								type: "textarea",
+								placeholder: fieldPlaceholder("shared_use_equipment"),
+							},
+							{
+								name: "shared_use_audience",
+								collapsible: true,
+								className: "border-t-1",
+								accordionVariant: "default",
+								accordionTitle: t(
+									"institutionFormModal.form.information.accordions.sharedUseAudience.title",
+								),
+								accordionDescription: t(
+									"institutionFormModal.form.information.accordions.sharedUseAudience.description",
+								),
+								defaultOpen: false,
+								type: "textarea",
+								placeholder: fieldPlaceholder("shared_use_audience"),
+							},
+							{
+								name: "shared_use_availability",
+								collapsible: true,
+								className: "border-t-1",
+								accordionVariant: "default",
+								accordionTitle: t(
+									"institutionFormModal.form.information.accordions.sharedUseAvailability.title",
+								),
+								accordionDescription: t(
+									"institutionFormModal.form.information.accordions.sharedUseAvailability.description",
+								),
+								defaultOpen: false,
+								type: "textarea",
+								placeholder: fieldPlaceholder("shared_use_availability"),
+							},
+							{
+								name: "shared_use_accessibility",
+								collapsible: true,
+								className: "border-t-1",
+								accordionVariant: "default",
+								accordionTitle: t(
+									"institutionFormModal.form.information.accordions.sharedUseAccessibility.title",
+								),
+								accordionDescription: t(
+									"institutionFormModal.form.information.accordions.sharedUseAccessibility.description",
+								),
+								defaultOpen: false,
+								type: "textarea",
+								placeholder: fieldPlaceholder("shared_use_accessibility"),
+							},
+							{
+								name: "shared_use_cost",
+								className: "border-t-1",
+								collapsible: true,
+								accordionVariant: "default",
+								accordionTitle: t(
+									"institutionFormModal.form.information.accordions.sharedUseCost.title",
+								),
+								accordionDescription: t(
+									"institutionFormModal.form.information.accordions.sharedUseCost.description",
+								),
+								defaultOpen: false,
+								type: "textarea",
+								placeholder: fieldPlaceholder("shared_use_cost"),
+							},
+							{
+								name: "shared_use_contact_person",
+								className: "border-t-1",
+								collapsible: true,
+								accordionVariant: "default",
+								accordionTitle: t(
+									"institutionFormModal.form.information.accordions.sharedUseContactPerson.title",
+								),
+								accordionDescription: t(
+									"institutionFormModal.form.information.accordions.sharedUseContactPerson.description",
+								),
+								defaultOpen: false,
+								type: "text",
+								placeholder: fieldPlaceholder("shared_use_contact_person"),
+							},
+						],
+					},
+				],
+			},
+			{
+				name: "organization_section",
+				type: "section",
+				title: t("institutionFormModal.form.organization.title"),
+				fieldGap: "gap-0",
+				fields: [
+					{
+						name: "organization_type",
+						collapsible: true,
+						accordionVariant: "default",
+						accordionTitle: t(
+							"institutionFormModal.form.information.accordions.organization.title",
+						),
+						accordionDescription: t(
+							"institutionFormModal.form.information.accordions.organization.description",
+						),
+						defaultOpen: false,
+						type: "section",
+						cardVariant: "none",
+						fields: [
+							{
+								name: "legal_form",
+								label: fieldLabel("legal_form"),
+								type: "text",
+								placeholder: fieldPlaceholder("legal_form"),
+							},
+						],
 					},
 					{
-						name: "shared_use_contact_person",
-						label: fieldLabel(
-							"shared_use_contact_person",
-							"Shared Use Contact Person",
+						name: "funding_accordion",
+						collapsible: true,
+						className: "border-t-1",
+						accordionVariant: "default",
+						accordionTitle: t(
+							"institutionFormModal.form.information.accordions.funding.title",
 						),
+						accordionDescription: t(
+							"institutionFormModal.form.information.accordions.funding.description",
+						),
+						defaultOpen: false,
+						type: "section",
+						cardVariant: "none",
+						fields: [
+							{
+								name: "funding_type",
+								allowNullOption: true,
+								nullOptionLabel: tEnum("field_names.funding_type.options.none"),
+								label: fieldLabel("funding_type", "Funding Type"),
+								type: "select",
+								options: [
+									{
+										value: "workspace_program",
+										label: tEnum(
+											"field_names.funding_type.options.workspace_program",
+										),
+									},
+									{
+										value: "institutional_funding",
+										label: tEnum(
+											"field_names.funding_type.options.institutional_funding",
+										),
+									},
+									{
+										value: "temporary_project_funding",
+										label: tEnum(
+											"field_names.funding_type.options.temporary_project_funding",
+										),
+									},
+									{
+										value: "no_funding",
+										label: tEnum("field_names.funding_type.options.no_funding"),
+									},
+								],
+								placeholder: fieldPlaceholder("funding_type"),
+							},
+						],
+					},
+					{
+						name: "funding_sources_accordion",
+						collapsible: true,
+						className: "border-t-1",
+						accordionVariant: "default",
+						accordionTitle: t(
+							"institutionFormModal.form.information.accordions.fundingSources.title",
+						),
+						accordionDescription: t(
+							"institutionFormModal.form.information.accordions.fundingSources.description",
+						),
+						defaultOpen: false,
+						type: "section",
+						cardVariant: "none",
+						fields: [
+							{
+								name: "funding_sources",
+								label: fieldLabel("funding_sources"),
+								type: "fundingSources",
+								allowNullOption: true,
+								nullOptionLabel: tEnum("funding_source.none"),
+								description: fieldDescription("funding_sources"),
+								fundingSources: {
+									sourceLabel: fieldLabel("funding_source_name"),
+									descriptionLabel: fieldLabel("funding_source_description"),
+									sourcePlaceholder: fieldPlaceholder("funding_source_name"),
+									descriptionPlaceholder: fieldPlaceholder(
+										"funding_source_description",
+									),
+									addButtonLabel: tEnum(
+										"field_names.funding_sources.actions.add",
+									),
+									removeButtonLabel: tEnum(
+										"field_names.funding_sources.actions.remove",
+									),
+								},
+							},
+						],
+					},
+				],
+			},
+			{
+				name: "details_section",
+				title: t("institutionFormModal.form.details.title"),
+				type: "section",
+				fieldGap: "gap-0",
+				fields: [
+					{
+						name: "establishment_accordion",
+						collapsible: true,
+						className: "border-t-1",
+						accordionVariant: "default",
+						accordionTitle: t(
+							"institutionFormModal.form.information.accordions.establishment.title",
+						),
+						accordionDescription: t(
+							"institutionFormModal.form.information.accordions.establishment.description",
+						),
+						defaultOpen: false,
+						type: "section",
+						cardVariant: "none",
+						fields: [
+							{
+								name: "established_since",
+								label: fieldLabel(
+									"established_since",
+									"Bestehen am Standort seit",
+								),
+								description: fieldDescription("established_since"),
+								type: "date",
+								placeholder: fieldPlaceholder("established_since"),
+							},
+							{
+								name: "established_until",
+								label: fieldLabel(
+									"established_until",
+									"Bestehen am Standort bis",
+								),
+								description: fieldDescription("established_until"),
+								type: "date",
+								placeholder: fieldPlaceholder("established_until"),
+							},
+						],
+					},
+					{
+						name: "closing_accordion",
+						collapsible: true,
+						className: "border-t-1",
+						accordionVariant: "default",
+						accordionTitle: t(
+							"institutionFormModal.form.information.accordions.closing.title",
+						),
+						accordionDescription: t(
+							"institutionFormModal.form.information.accordions.closing.description",
+						),
+						defaultOpen: false,
+						type: "section",
+						cardVariant: "none",
+						fields: [
+							{
+								name: "closing_reason",
+								label: fieldLabel("closing_reason", "Schließungsgründe"),
+								type: "textarea",
+								placeholder: fieldPlaceholder("closing_reason"),
+							},
+						],
+					},
+					{
+						name: "ownership_accordion",
+						collapsible: true,
+						className: "border-t-1",
+						accordionVariant: "default",
+						accordionTitle: t(
+							"institutionFormModal.form.information.accordions.ownership.title",
+						),
+						accordionDescription: t(
+							"institutionFormModal.form.information.accordions.ownership.description",
+						),
+						defaultOpen: false,
+						type: "section",
+						cardVariant: "none",
+						fields: [
+							{
+								name: "owner_type",
+								label: fieldLabel("owner_type", "Eigentümer*innenart"),
+								type: "select",
+								options: [
+									{
+										value: "private",
+										label: tEnum("field_names.owner_type.options.private"),
+									},
+									{
+										value: "federal_property",
+										label: tEnum(
+											"field_names.owner_type.options.federal_property",
+										),
+									},
+									{
+										value: "state_property",
+										label: tEnum(
+											"field_names.owner_type.options.state_property",
+										),
+									},
+									{
+										value: "state_property_silb",
+										label: tEnum(
+											"field_names.owner_type.options.state_property_silb",
+										),
+									},
+									{
+										value: "state_property_soda",
+										label: tEnum(
+											"field_names.owner_type.options.state_property_soda",
+										),
+									},
+									{
+										value: "state_property_other",
+										label: tEnum(
+											"field_names.owner_type.options.state_property_other",
+										),
+									},
+									{
+										value: "state_property_specialized",
+										label: tEnum(
+											"field_names.owner_type.options.state_property_specialized",
+										),
+									},
+									{
+										value: "state_property_fund",
+										label: tEnum(
+											"field_names.owner_type.options.state_property_fund",
+										),
+									},
+									{
+										value: "district_property",
+										label: tEnum(
+											"field_names.owner_type.options.district_property",
+										),
+									},
+									{
+										value: "other_public_property",
+										label: tEnum(
+											"field_names.owner_type.options.other_public_property",
+										),
+									},
+									{
+										value: "municipal_housing_company",
+										label: tEnum(
+											"field_names.owner_type.options.municipal_housing_company",
+										),
+									},
+									{
+										value: "other",
+										label: tEnum("field_names.owner_type.options.other"),
+									},
+								],
+								placeholder: fieldPlaceholder("owner_type"),
+							},
+							{
+								name: "owner_name",
+								label: fieldLabel("owner_name", "Eigentümer*in"),
+								description: fieldDescription("owner_name"),
+								type: "text",
+								placeholder: fieldPlaceholder("owner_name"),
+							},
+						],
+					},
+					{
+						name: "rental_accordion",
+						collapsible: true,
+						className: "border-t-1",
+						accordionVariant: "default",
+						accordionTitle: t(
+							"institutionFormModal.form.information.accordions.rental.title",
+						),
+						accordionDescription: t(
+							"institutionFormModal.form.information.accordions.rental.description",
+						),
+						defaultOpen: false,
+						type: "section",
+						cardVariant: "none",
+						fields: [
+							{
+								name: "rental_contract_type",
+								label: fieldLabel("rental_contract_type", "Vertragsform"),
+								type: "select",
+								allowNullOption: true,
+								options: [
+									{
+										value: "unlimited_lease",
+										label: tEnum(
+											"field_names.rental_contract_type.options.unlimited_lease",
+										),
+									},
+									{
+										value: "limited_lease",
+										label: tEnum(
+											"field_names.rental_contract_type.options.limited_lease",
+										),
+									},
+									{
+										value: "hereditary_building_right",
+										label: tEnum(
+											"field_names.rental_contract_type.options.hereditary_building_right",
+										),
+									},
+									{
+										value: "organization_ownership",
+										label: tEnum(
+											"field_names.rental_contract_type.options.organization_ownership",
+										),
+									},
+									{
+										value: "leasehold",
+										label: tEnum(
+											"field_names.rental_contract_type.options.leasehold",
+										),
+									},
+								],
+								placeholder: fieldPlaceholder("rental_contract_type"),
+							},
+							{
+								name: "rental_contract_end",
+								label: fieldLabel("rental_contract_end", "Vertragsende"),
+								type: "date",
+								condition: (formData) =>
+									formData.rental_contract_type === "limited_lease",
+								placeholder: fieldPlaceholder("rental_contract_end"),
+							},
+						],
+					},
+					{
+						name: "protection_accordion",
+						collapsible: true,
+						className: "border-t-1",
+						accordionVariant: "default",
+						accordionTitle: t(
+							"institutionFormModal.form.information.accordions.protection.title",
+						),
+						accordionDescription: t(
+							"institutionFormModal.form.information.accordions.protection.description",
+						),
+						defaultOpen: false,
+						type: "section",
+						cardVariant: "none",
+						fields: [
+							{
+								name: "protection_status",
+								label: fieldLabel("protection_status", "Sicherungsstatus"),
+								allowNullOption: true,
+								nullOptionLabel: tEnum(
+									"field_names.protection_status.options.none",
+								),
+								type: "select",
+								options: [
+									{
+										value: "long_term_secured",
+										label: tEnum(
+											"field_names.protection_status.options.long_term_secured",
+										),
+									},
+									{
+										value: "medium_term_secured",
+										label: tEnum(
+											"field_names.protection_status.options.medium_term_secured",
+										),
+									},
+									{
+										value: "uncertain",
+										label: tEnum(
+											"field_names.protection_status.options.uncertain",
+										),
+									},
+									{
+										value: "acutely_threatened",
+										label: tEnum(
+											"field_names.protection_status.options.acutely_threatened",
+										),
+									},
+									{
+										value: "permanently_closed",
+										label: tEnum(
+											"field_names.protection_status.options.permanently_closed",
+										),
+									},
+									{
+										value: "not_yet_secured",
+										label: tEnum(
+											"field_names.protection_status.options.not_yet_secured",
+										),
+									},
+								],
+								placeholder: fieldPlaceholder("protection_status"),
+							},
+							{
+								name: "protection_status_info",
+								label: fieldLabel(
+									"protection_status_info",
+									"Sicherungsstatus Detailinfos",
+								),
+								type: "textarea",
+								placeholder: fieldPlaceholder("protection_status_info"),
+							},
+							{
+								name: "protection_status_internal_notes",
+								label: fieldLabel(
+									"protection_status_internal_notes",
+									"Sicherungsstatus Interne Notizen",
+								),
+								type: "textarea",
+								placeholder: fieldPlaceholder(
+									"protection_status_internal_notes",
+								),
+							},
+						],
+					},
+					{
+						name: "space_accordion",
+						collapsible: true,
+						className: "border-t-1",
+						accordionVariant: "default",
+						accordionTitle: t(
+							"institutionFormModal.form.information.accordions.space.title",
+						),
+						accordionDescription: t(
+							"institutionFormModal.form.information.accordions.space.description",
+						),
+						defaultOpen: false,
+						type: "section",
+						cardVariant: "none",
+						fields: [
+							{
+								name: "area",
+								label: fieldLabel("area", "Nutzfläche in m²"),
+								type: "number",
+								placeholder: fieldPlaceholder("area"),
+							},
+							{
+								name: "number_of_rooms",
+								label: fieldLabel("number_of_rooms", "Anzahl der Arbeitsräume"),
+								type: "number",
+								placeholder: fieldPlaceholder("number_of_rooms"),
+							},
+							{
+								name: "capacity",
+								label: fieldLabel("capacity", "Kapazität"),
+								type: "number",
+								placeholder: fieldPlaceholder("capacity"),
+							},
+						],
+					},
+				],
+			},
+			{
+				name: "additional_section",
+				type: "section",
+				fields: [
+					{
+						name: "source",
+						label: fieldLabel("source", "Datenquelle"),
 						type: "text",
-						placeholder: fieldPlaceholder("shared_use_contact_person"),
-						layout: { span: "full" },
-						condition: (formData) => formData.shared_use_allowed === true,
+						placeholder: fieldPlaceholder("source"),
+						description: fieldDescription("source"),
 					},
-				],
-			},
-			{
-				name: "facility",
-				type: "section",
-				layout: { columns: 2 },
-				title: t("institutionFormModal.form.facility.title"),
-				fields: [
-					{
-						name: "area",
-						label: fieldLabel("area", "Area (m²)"),
-						type: "number",
-						placeholder: fieldPlaceholder("area"),
-						layout: { span: "half" },
-					},
-					{
-						name: "capacity",
-						label: fieldLabel("capacity", "Capacity"),
-						type: "number",
-						placeholder: fieldPlaceholder("capacity"),
-						layout: { span: "half" },
-					},
-					{
-						name: "number_of_rooms",
-						label: fieldLabel("number_of_rooms", "Number of Rooms"),
-						type: "number",
-						placeholder: fieldPlaceholder("number_of_rooms"),
-						layout: { span: "full" },
-					},
-					{
-						name: "accessibility",
-						label: fieldLabel("accessibility", "Accessibility"),
-						type: "textarea",
-						placeholder: fieldPlaceholder("accessibility"),
-						layout: { span: "full" },
-					},
-					{
-						name: "cost",
-						label: fieldLabel("cost", "Cost"),
-						type: "textarea",
-						placeholder: fieldPlaceholder("cost"),
-						layout: { span: "full" },
-					},
-				],
-			},
-			{
-				name: "status",
-				type: "section",
-				title: t("institutionFormModal.form.status.title"),
-				fields: [
-					{
-						name: "utilization_status_info",
-						label: fieldLabel(
-							"utilization_status_info",
-							"Utilization Status Info",
-						),
-						type: "textarea",
-						placeholder: fieldPlaceholder("utilization_status_info"),
-						layout: { span: "full" },
-					},
-					{
-						name: "protection_status",
-						label: fieldLabel("protection_status", "Protection Status"),
-						type: "select",
-						placeholder: fieldPlaceholder("protection_status"),
-						layout: { span: "full" },
-						options: [
-							{
-								value: "long_term_secured",
-								label: tEnum(
-									"field_names.protection_status.options.long_term_secured",
-								),
-							},
-							{
-								value: "medium_term_secured",
-								label: tEnum(
-									"field_names.protection_status.options.medium_term_secured",
-								),
-							},
-							{
-								value: "uncertain",
-								label: tEnum("field_names.protection_status.options.uncertain"),
-							},
-							{
-								value: "acutely_threatened",
-								label: tEnum(
-									"field_names.protection_status.options.acutely_threatened",
-								),
-							},
-							{
-								value: "permanently_closed",
-								label: tEnum(
-									"field_names.protection_status.options.permanently_closed",
-								),
-							},
-							{
-								value: "not_yet_secured",
-								label: tEnum(
-									"field_names.protection_status.options.not_yet_secured",
-								),
-							},
-						],
-					},
-					{
-						name: "protection_status_info",
-						label: fieldLabel(
-							"protection_status_info",
-							"Protection Status Info",
-						),
-						type: "textarea",
-						placeholder: fieldPlaceholder("protection_status_info"),
-						layout: { span: "full" },
-					},
-				],
-			},
-			{
-				name: "additional",
-				type: "section",
-				title: t("institutionFormModal.form.additional.title"),
-				fields: [
 					{
 						name: "notes",
-						label: fieldLabel("notes", "Notes"),
+						label: fieldLabel("notes", "Notizen"),
 						type: "textarea",
 						placeholder: fieldPlaceholder("notes"),
-						layout: { span: "full" },
+						description: fieldDescription("notes"),
 					},
 					{
 						name: "internal_notes",
-						label: fieldLabel("internal_notes", "Internal Notes"),
+						label: fieldLabel("internal_notes", "Interne Notizen"),
 						type: "textarea",
 						placeholder: fieldPlaceholder("internal_notes"),
-						layout: { span: "full" },
 						description: fieldDescription("internal_notes"),
+						privateDescription: t(
+							"institutionFormModal.form.information.internalNotesPrivateDescription",
+						),
 					},
 				],
 			},
@@ -1111,7 +1299,7 @@ export function InstitutionFormModal({
 		neighbourhoodKey: "address.neighbourhood",
 	});
 	const duplicateInstitutionMessage = t(
-		"institutionDraftWizardModal.form.basic.validation.duplicateInstitution",
+		"institutionFormModal.form.details.validation.duplicateInstitution",
 		{
 			defaultValue: "An institution with this name and address already exists.",
 		},
@@ -1152,7 +1340,7 @@ export function InstitutionFormModal({
 	const duplicateWarningText = useMemo(() => {
 		if (potentialDuplicates.length === 0) return null;
 		const warningText = t(
-			"institutionDraftWizardModal.form.basic.validation.duplicatePossible",
+			"institutionFormModal.form.details.validation.duplicatePossible",
 			{
 				defaultValue:
 					"Possible duplicate found. Please verify before submitting.",
