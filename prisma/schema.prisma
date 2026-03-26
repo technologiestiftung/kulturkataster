@@ -195,6 +195,7 @@ model Institution {
   protection_status       ProtectionStatus?
   protection_status_info   String?
   shared_use_allowed      Boolean?
+  protection_status_internal_notes String?
   shared_use_info         String?
   shared_use_equipment    String?
   shared_use_audience     String?

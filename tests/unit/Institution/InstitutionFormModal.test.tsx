@@ -70,16 +70,54 @@ vi.mock("@/components/FormWrapper", () => ({
 					onClick={() =>
 						void config.onSubmit({
 							name: "New Institution",
+							parent_organization: "Kultur Trägerverein",
+							source: "Bezirksamt Mitte",
 							categoryIds: ["1"],
+							utilization_status: "in_use",
 							"address.streetLine": "Main 1",
 							"address.city": "Berlin",
 							"address.zip": "10115",
 							"address.lat": "52.5",
 							"address.lng": "13.4",
+							legal_form: "e.V.",
 							website: "https://example.com",
 							email: "contact@example.com",
 							phone: "+49 30 123",
-							funding_sources: [],
+							owner_type: "public",
+							owner_name: "Eigentümer GmbH",
+							rental_contract_type: "limited_lease",
+							rental_contract_end: "2030-12-31",
+							funding_type: "institutional_funding",
+							funding_sources: [
+								{
+									source_name: "state_berlin",
+									description: "Landesmittel",
+								},
+							],
+							protection_status: "long_term_secured",
+							protection_status_info: "Status bestätigt",
+							protection_status_internal_notes:
+								"Interne Hinweise zum Sicherungsstatus",
+							shared_use_allowed: true,
+							shared_use_info: "Raum ist grundsätzlich für Dritte nutzbar.",
+							shared_use_equipment: "Tische, Stühle",
+							shared_use_audience: "Proben und Lesungen",
+							shared_use_availability: "Mo-Fr 10:00-18:00",
+							shared_use_contact_person: "Kontakt: +49 30 222",
+							accessibility: "Aufzug vorhanden",
+							cost: "Miete je Nutzung",
+							established_since: "2009-01-01",
+							established_until: "2036-12-31",
+							closing_reason: "Kein Schließungsgrund",
+							area: "550",
+							capacity: "320",
+							number_of_rooms: "9",
+							notes: "Öffentliche Notiz",
+							internal_notes: "Interne Notiz",
+							contact_person_first_name: "Anna",
+							contact_person_last_name: "Beispiel",
+							contact_person_email: "contact@example.com",
+							contact_person_phone: "+49 30 654321",
 						})
 					}
 				>
@@ -190,6 +228,52 @@ describe("InstitutionFormModal", () => {
 				expect.objectContaining({
 					name: "New Institution",
 					categoryIds: [1],
+					parent_organization: "Kultur Trägerverein",
+					source: "Bezirksamt Mitte",
+					utilization_status: "in_use",
+					address: expect.objectContaining({
+						street: "Main",
+						street_number: "1",
+						city: "Berlin",
+						zipcode: "10115",
+						lat: 52.5,
+						lng: 13.4,
+					}),
+					website: "https://example.com",
+					email: "contact@example.com",
+					phone: "+49 30 123",
+					legal_form: "e.V.",
+					owner_type: "public",
+					owner_name: "Eigentümer GmbH",
+					rental_contract_type: "limited_lease",
+					rental_contract_end: expect.any(Date),
+					funding_type: "institutional_funding",
+					funding_sources: [
+						{
+							source_name: "state_berlin",
+							description: "Landesmittel",
+						},
+					],
+					protection_status: "long_term_secured",
+					protection_status_info: "Status bestätigt",
+					protection_status_internal_notes:
+						"Interne Hinweise zum Sicherungsstatus",
+					shared_use_allowed: true,
+					shared_use_equipment: "Tische, Stühle",
+					shared_use_audience: "Proben und Lesungen",
+					shared_use_availability: "Mo-Fr 10:00-18:00",
+					shared_use_contact_person: "Kontakt: +49 30 222",
+					accessibility: "Aufzug vorhanden",
+					cost: "Miete je Nutzung",
+					area: 550,
+					capacity: 320,
+					number_of_rooms: 9,
+					notes: "Öffentliche Notiz",
+					internal_notes: "Interne Notiz",
+					contact_person_first_name: "Anna",
+					contact_person_last_name: "Beispiel",
+					contact_person_email: "contact@example.com",
+					contact_person_phone: "+49 30 654321",
 				}),
 			);
 		});
@@ -221,6 +305,53 @@ describe("InstitutionFormModal", () => {
 				expect.objectContaining({
 					id: 2,
 					name: "New Institution",
+					parent_organization: "Kultur Trägerverein",
+					source: "Bezirksamt Mitte",
+					utilization_status: "in_use",
+					address: expect.objectContaining({
+						id: 9,
+						street: "Main",
+						street_number: "1",
+						city: "Berlin",
+						zipcode: "10115",
+						lat: 52.5,
+						lng: 13.4,
+					}),
+					website: "https://example.com",
+					email: "contact@example.com",
+					phone: "+49 30 123",
+					legal_form: "e.V.",
+					owner_type: "public",
+					owner_name: "Eigentümer GmbH",
+					rental_contract_type: "limited_lease",
+					rental_contract_end: expect.any(Date),
+					funding_type: "institutional_funding",
+					funding_sources: [
+						{
+							source_name: "state_berlin",
+							description: "Landesmittel",
+						},
+					],
+					protection_status: "long_term_secured",
+					protection_status_info: "Status bestätigt",
+					protection_status_internal_notes:
+						"Interne Hinweise zum Sicherungsstatus",
+					shared_use_allowed: true,
+					shared_use_equipment: "Tische, Stühle",
+					shared_use_audience: "Proben und Lesungen",
+					shared_use_availability: "Mo-Fr 10:00-18:00",
+					shared_use_contact_person: "Kontakt: +49 30 222",
+					accessibility: "Aufzug vorhanden",
+					cost: "Miete je Nutzung",
+					area: 550,
+					capacity: 320,
+					number_of_rooms: 9,
+					notes: "Öffentliche Notiz",
+					internal_notes: "Interne Notiz",
+					contact_person_first_name: "Anna",
+					contact_person_last_name: "Beispiel",
+					contact_person_email: "contact@example.com",
+					contact_person_phone: "+49 30 654321",
 				}),
 			);
 		});
@@ -286,7 +417,7 @@ describe("InstitutionFormModal", () => {
 		).toBeUndefined();
 	});
 
-	it("includes utilization status internal notes in the form config", () => {
+	it("includes protection status internal notes in the form config", () => {
 		render(
 			<InstitutionFormModal
 				mode="create"
@@ -296,12 +427,12 @@ describe("InstitutionFormModal", () => {
 
 		const field = findFieldByName(
 			lastFormConfig?.fields as Array<Record<string, unknown>> | undefined,
-			"utilization_status_internal_notes",
+			"protection_status_internal_notes",
 		);
 
 		expect(field).toEqual(
 			expect.objectContaining({
-				name: "utilization_status_internal_notes",
+				name: "protection_status_internal_notes",
 				type: "textarea",
 			}),
 		);
