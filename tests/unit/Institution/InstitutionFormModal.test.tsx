@@ -16,6 +16,21 @@ let lastFormConfig: {
 	fields?: Array<Record<string, unknown>>;
 } | null = null;
 
+const findFieldByName = (
+	fields: Array<Record<string, unknown>> | undefined,
+	name: string,
+): Record<string, unknown> | undefined => {
+	if (!fields) return undefined;
+	for (const field of fields) {
+		if (field.name === name) return field;
+		const nested = Array.isArray(field.fields)
+			? findFieldByName(field.fields as Array<Record<string, unknown>>, name)
+			: undefined;
+		if (nested) return nested;
+	}
+	return undefined;
+};
+
 vi.mock("react-i18next", () => ({
 	useTranslation: () => ({
 		t: (key: string, options?: { defaultValue?: string }) =>
@@ -269,5 +284,26 @@ describe("InstitutionFormModal", () => {
 				"address.zip": "10115",
 			}),
 		).toBeUndefined();
+	});
+
+	it("includes utilization status internal notes in the form config", () => {
+		render(
+			<InstitutionFormModal
+				mode="create"
+				routePath="/account/institutions/new"
+			/>,
+		);
+
+		const field = findFieldByName(
+			lastFormConfig?.fields as Array<Record<string, unknown>> | undefined,
+			"utilization_status_internal_notes",
+		);
+
+		expect(field).toEqual(
+			expect.objectContaining({
+				name: "utilization_status_internal_notes",
+				type: "textarea",
+			}),
+		);
 	});
 });

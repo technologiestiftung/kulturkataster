@@ -148,7 +148,11 @@ type FormWrapperNonSectionFieldConfig = {
 		compare?: (a: SelectOption, b: SelectOption) => number;
 	}[];
 	tablePermissions?: {
-		tables: { key: string; label: string }[];
+		tables: {
+			key: string;
+			label: string;
+			actions?: PermissionAction[];
+		}[];
 		actions?: PermissionAction[];
 		actionLabels?: Partial<Record<PermissionAction, string>>;
 		scopeOptions?: { value: PermissionScope; label: string }[];

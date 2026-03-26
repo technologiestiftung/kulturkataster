@@ -35,6 +35,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { usePathname, useRouter } from "next/navigation";
 import { LayerTreeContent } from "@/components/Map/LayerTree/LayerTree";
+import { useAccountStore } from "@/lib/store/accountStore";
 
 type MenuItem = {
 	id: string;
@@ -169,6 +170,8 @@ export function Menu({
 	const toLocalePath = useLocalePath();
 	const pathname = usePathname();
 	const { setFirstTimeUser } = useAppStore();
+	const { currentProfile } = useAccountStore();
+	const isLoggedIn = Boolean(currentProfile);
 
 	const normalizedPath = useMemo(
 		() => (pathname ? pathname.replace(/\/$/, "") : ""),
@@ -359,6 +362,9 @@ export function Menu({
 															aria-current={isActive ? "page" : undefined}
 															className="relative"
 														>
+															{item.id === "user" && isLoggedIn && (
+																<div className="absolute top-3 right-3 bg-brand-default rounded-full size-2.5 flex items-center justify-center" />
+															)}
 															<item.icon />
 														</SidebarMenuButton>
 													</SidebarMenuItem>

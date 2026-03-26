@@ -141,7 +141,7 @@
 		"accessibility": {
 			"label": "Barrierefreiheit",
 			"description": "",
-			"placeholder": "Bitte eintragen",
+			"placeholder": "Barrierefreiheit beschreiben",
 			"errors": {
 				"required": "Bitte Barrierefreiheit angeben."
 			}
@@ -221,7 +221,7 @@
 		"closing_reason": {
 			"label": "Schließungsgründe",
 			"description": "",
-			"placeholder": "Bitte auswählen",
+			"placeholder": "Gründe für die Schließung angeben",
 			"errors": {
 				"required": "Bitte Schließungsgründe angeben."
 			}
@@ -308,16 +308,16 @@
 		},
 		"established_since": {
 			"label": "Bestehen am Standort seit",
-			"description": "",
-			"placeholder": "TT.MM.JJJJ",
+			"description": "Bitte tragen Sie das Datum der erstmaligen Nutzung oder Eröffnung am Standort ein. Falls das genaue Datum nicht bekannt ist, reicht auch die Angabe des Jahres.",
+			"placeholder": "TT.MM.JJJJ oder JJJJ",
 			"errors": {
 				"required": "Bitte Bestehen am Standort seit angeben."
 			}
 		},
 		"established_until": {
 			"label": "Bestehen am Standort bis",
-			"description": "",
-			"placeholder": "TT.MM.JJJJ",
+			"description": "Bitte tragen Sie das Datum ein, bis zu dem die Kultureinrichtung an diesem Standort aktiv war. Diese Angabe betrifft nur bereits geschlossene Orte. Falls das genaue Datum nicht bekannt ist, reicht auch die Angabe des Jahres.",
+			"placeholder": "TT.MM.JJJJ oder JJJJ",
 			"errors": {
 				"required": "Bitte Bestehen am Standort bis angeben."
 			}
@@ -364,7 +364,7 @@
 		},
 		"funding_sources": {
 			"label": "Finanzierungsquellen",
-			"description": "",
+			"description": "Geben Sie die Finanzierungsquellen Ihrer Kultureinrichtung an.",
 			"placeholder": "Bitte eintragen",
 			"errors": {
 				"required": "Bitte Finanzierungsquellen angeben."
@@ -401,7 +401,7 @@
 		"legal_form": {
 			"label": "Rechtsform",
 			"description": "",
-			"placeholder": "Bitte eintragen",
+			"placeholder": "z. B. e.V., gGmbH, GbR",
 			"errors": {
 				"required": "Bitte Rechtsform angeben."
 			}
@@ -432,7 +432,7 @@
 		},
 		"notes": {
 			"label": "Zusätzliche Informationen",
-			"description": "",
+			"description": "Bitte beachten Sie, dass dieses Feld für die Öffentlichkeit einsehbar ist. Wenn Sie Informationen eintragen möchten, die nur für befugte Nutzer*innen einsehbar sind, tragen Sie diese bitte im Feld \"Interne Notizen\" direkt darunter ein.",
 			"placeholder": "Bitte eintragen",
 			"errors": {
 				"required": "Bitte Zusätzliche Informationen angeben."
@@ -464,7 +464,7 @@
 		},
 		"internal_notes": {
 			"label": "Interne Notizen",
-			"description": "Nur für die interne Bearbeitung sichtbar.",
+			"description": "",
 			"placeholder": "Bitte eintragen",
 			"errors": {
 				"required": "Bitte Interne Notizen angeben."
@@ -570,6 +570,7 @@
 				"unlimited_lease": "Unbefristete Miete",
 				"limited_lease": "Befristete Miete",
 				"organization_ownership": "Eigentum der Organisation",
+				"leasehold": "Erbbaurecht",
 				"none": "Keine Angabe"
 			}
 		},
@@ -584,7 +585,7 @@
 		"shared_use_audience": {
 			"label": "Verfügbar für Zielgruppe/Sparte",
 			"description": "",
-			"placeholder": "Bitte eintragen",
+			"placeholder": "Geeignete Zielgruppe/Sparte beschreiben",
 			"errors": {
 				"required": "Bitte Verfügbar für Zielgruppe/Sparte angeben."
 			}
@@ -592,7 +593,7 @@
 		"shared_use_availability": {
 			"label": "Verfügbarkeit",
 			"description": "",
-			"placeholder": "Bitte eintragen",
+			"placeholder": "Zeitliche Verfügbarkeiten beschreiben",
 			"errors": {
 				"required": "Bitte Verfügbarkeit angeben."
 			}
@@ -600,15 +601,23 @@
 		"shared_use_contact_person": {
 			"label": "Kontakt für Raumanfragen",
 			"description": "",
-			"placeholder": "Bitte eintragen",
+			"placeholder": "Kontakt für Raumanfragen angeben",
 			"errors": {
 				"required": "Bitte Kontakt für Raumanfragen angeben."
+			}
+		},
+		"shared_use_cost": {
+			"label": "Kosten",
+			"description": "",
+			"placeholder": "Kosten für die Nutzung beschreiben",
+			"errors": {
+				"required": "Bitte Kosten angeben."
 			}
 		},
 		"shared_use_equipment": {
 			"label": "Ausstattung",
 			"description": "",
-			"placeholder": "Bitte eintragen",
+			"placeholder": "Ausstattung beschreiben",
 			"errors": {
 				"required": "Bitte Ausstattung angeben."
 			}
@@ -616,7 +625,7 @@
 		"shared_use_info": {
 			"label": "Beschreibung der Räume/Flächen",
 			"description": "",
-			"placeholder": "Bitte eintragen",
+			"placeholder": "Beschreibung der Räume/Flächen",
 			"errors": {
 				"required": "Bitte Beschreibung der Räume/Flächen angeben."
 			}
@@ -685,6 +694,14 @@
 				"required": "Bitte Nutzungsstatus Detailinfos angeben."
 			}
 		},
+		"utilization_status_internal_notes": {
+			"label": "Interne Notizen (Nutzungsstatus)",
+			"description": "",
+			"placeholder": "Bitte eintragen",
+			"errors": {
+				"required": "Bitte interne Notizen zum Nutzungsstatus angeben."
+			}
+		},
 		"website": {
 			"label": "Webseite",
 			"description": "Bitte nach Möglichkeit die allgemeine Webseite der Kultureinrichtung angeben, nicht die von einzelnen Projekten oder Untereinheiten.",
@@ -710,14 +727,16 @@
 		"foundation": "Stiftung",
 		"other": "Sonstiges",
 		"private": "Privat",
-		"state_berlin": "Land Berlin"
+		"state_berlin": "Land Berlin",
+		"none": "Keine Angabe"
 	},
 	"funding_type": {
 		"institutional_funding": "Institutionell gefördert",
 		"no_funding": "Nicht gefördert",
 		"placeholder": "Art der Förderung auswählen",
 		"temporary_project_funding": "Temporäre Projektförderung",
-		"workspace_program": "Arbeitsraumprogramm"
+		"workspace_program": "Arbeitsraumprogramm",
+		"none": "Keine Angabe"
 	},
 	"institution_action": {
 		"create": "Erstellen",

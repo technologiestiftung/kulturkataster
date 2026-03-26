@@ -5,21 +5,35 @@ import { showSuccessToast } from "@/lib/utils/feedbackToast";
 
 const closeModalMock = vi.fn();
 const handleReviewMock = vi.fn();
+const handleSaveNoteMock = vi.fn();
+const setInternalNotesMock = vi.fn();
 const refreshMock = vi.fn();
 const pushMock = vi.fn();
 const institutionReviewMock = vi.fn();
 
 vi.mock("react-i18next", () => ({
 	useTranslation: () => ({
-		t: (key: string, options?: { defaultValue?: string }) =>
+		t: (
+			key: string,
+			options?: {
+				defaultValue?: string;
+				author?: string;
+				date?: string;
+			},
+		) =>
 			options?.defaultValue ??
 			(
 				{
 					"institutionFormModal.review.actions.approve": "Genehmigen",
 					"institutionFormModal.review.actions.reject": "Ablehnen",
+					"institutionFormModal.review.actions.saveNotes": "Notizen speichern",
+					"institutionFormModal.review.previousNotesLabel": "Bisherige Notizen",
+					"institutionFormModal.review.noteMeta":
+						`${options?.author ?? ""} am ${options?.date ?? ""}`.trim(),
 				} as Record<string, string>
 			)[key] ??
 			key,
+		i18n: { language: "de" },
 	}),
 }));
 
@@ -89,16 +103,29 @@ vi.mock("@/lib/hooks/useInstitutionSubmissionReview", () => ({
 			status: "approval_pending",
 			type: "update",
 			data: { name: "Draft Name" },
+			notes: [
+				{
+					id: 1,
+					note: "Vorherige Prüfnotiz",
+					created_at: "2026-03-25T10:00:00.000Z",
+					creator: {
+						first_name: "Max",
+						last_name: "Mustermann",
+						email: "max@example.com",
+					},
+				},
+			],
 		},
 		didFetchSubmission: true,
 		originalInstitution: null,
-		internalNotes: "",
-		setInternalNotes: vi.fn(),
+		internalNotes: "Neue Prüfnotiz",
+		setInternalNotes: setInternalNotesMock,
 		grantSubmitterAccess: false,
 		setGrantSubmitterAccess: vi.fn(),
 		submitting: false,
 		error: null,
 		handleReview: handleReviewMock,
+		handleSaveNote: handleSaveNoteMock,
 		shouldShowGrantSubmitterAccessToggle: false,
 		canReviewCurrentSubmission: true,
 	}),
@@ -115,6 +142,9 @@ describe("InstitutionDraftReviewModal", () => {
 		closeModalMock.mockReset();
 		handleReviewMock.mockReset();
 		handleReviewMock.mockResolvedValue(true);
+		handleSaveNoteMock.mockReset();
+		handleSaveNoteMock.mockResolvedValue(true);
+		setInternalNotesMock.mockReset();
 		refreshMock.mockReset();
 		pushMock.mockReset();
 		institutionReviewMock.mockReset();
@@ -152,6 +182,29 @@ describe("InstitutionDraftReviewModal", () => {
 			expect(handleReviewMock).toHaveBeenCalledWith("rejected");
 		});
 		expect(closeModalMock).toHaveBeenCalledTimes(1);
+		expect(mockedShowSuccessToast).toHaveBeenCalledTimes(1);
+	});
+
+	it("shows previous notes and allows saving notes without closing", async () => {
+		render(
+			<InstitutionDraftReviewModal
+				submissionId={11}
+				routePath="/account/submissions/11"
+			/>,
+		);
+
+		expect(screen.getByText("Previous notes")).toBeInTheDocument();
+		expect(screen.getByText("Vorherige Prüfnotiz")).toBeInTheDocument();
+		expect(
+			screen.getByRole("button", { name: "Save notes" }),
+		).toBeInTheDocument();
+
+		fireEvent.click(screen.getByRole("button", { name: "Save notes" }));
+
+		await waitFor(() => {
+			expect(handleSaveNoteMock).toHaveBeenCalledTimes(1);
+		});
+		expect(closeModalMock).not.toHaveBeenCalled();
 		expect(mockedShowSuccessToast).toHaveBeenCalledTimes(1);
 	});
 

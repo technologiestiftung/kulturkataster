@@ -13,6 +13,7 @@ type MockAudit = {
 		first_name?: string | null;
 		last_name?: string | null;
 		email: string;
+		account_type?: string | null;
 	} | null;
 	old_data?: Record<string, unknown> | null;
 	new_data?: Record<string, unknown> | null;
@@ -132,6 +133,7 @@ vi.mock("@/components/Activity/ActivityItem", () => ({
 			<div>{String(activity.actor ?? "")}</div>
 			<div>{String(activity.status ?? "")}</div>
 			<div>{String(activity.eventType ?? "")}</div>
+			<div>{String(activity.action ?? "")}</div>
 			<div>{String(activity.primaryEntity ?? "")}</div>
 			{typeof activity.primaryEntityLink === "string" ? (
 				<a
@@ -242,7 +244,7 @@ describe("ActivityList filters", () => {
 		const actorSelect = filters[3];
 
 		fireEvent.change(statusSelect, { target: { value: "approved" } });
-		expect(screen.getAllByTestId("activity-row")).toHaveLength(1);
+		expect(screen.getAllByTestId("activity-row")).toHaveLength(2);
 
 		fireEvent.change(statusSelect, { target: { value: "all" } });
 		fireEvent.change(typeSelect, { target: { value: "status_change" } });
@@ -263,6 +265,51 @@ describe("ActivityList filters", () => {
 			target: { value: "Die Etage" },
 		});
 		expect(screen.getAllByTestId("activity-row")).toHaveLength(1);
+	});
+
+	it("uses the user entity status for user activities", () => {
+		mockState.entityAudits = [
+			makeAudit({
+				id: 30,
+				action: "update",
+				status: "completed",
+				entity_type: "user",
+				entity_id: "7",
+				old_data: { status: "approval_pending" },
+				new_data: { status: "approved", email: "person@example.com" },
+				user: null,
+			}),
+		];
+
+		render(<ActivityList />);
+
+		expect(screen.getByText("approved")).toBeInTheDocument();
+		expect(screen.queryByText("completed")).not.toBeInTheDocument();
+	});
+
+	it("shows the user account type after the action when available", () => {
+		mockState.entityAudits = [
+			makeAudit({
+				id: 21,
+				entity_type: "user",
+				entity_id: "user-21",
+				user: null,
+				old_data: null,
+				new_data: {
+					email: "person@example.com",
+					account_type: "organization",
+				},
+			}),
+		];
+
+		render(<ActivityList />);
+
+		expect(
+			screen.getByText("Nutzer*in (person@example.com)"),
+		).toBeInTheDocument();
+		expect(
+			screen.getByText("update (Mitarbeiter*in einer Organisation)"),
+		).toBeInTheDocument();
 	});
 
 	it("filters by date presets", () => {

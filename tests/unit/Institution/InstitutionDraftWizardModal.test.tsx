@@ -27,16 +27,35 @@ vi.mock("@/lib/hooks/useLocalePath", () => ({
 }));
 
 let mockFormSubmitData: Record<string, unknown> = {};
+let lastFormConfig: { fields?: Array<Record<string, unknown>> } | null = null;
+
+const findFieldByName = (
+	fields: Array<Record<string, unknown>> | undefined,
+	name: string,
+): Record<string, unknown> | undefined => {
+	if (!fields) return undefined;
+	for (const field of fields) {
+		if (field.name === name) return field;
+		const nested = Array.isArray(field.fields)
+			? findFieldByName(field.fields as Array<Record<string, unknown>>, name)
+			: undefined;
+		if (nested) return nested;
+	}
+	return undefined;
+};
 
 vi.mock("@/components/FormWrapper", () => ({
-	FormWrapper: ({ config }: { config: any }) => (
-		<div>
-			<button onClick={() => config.onSubmit?.(mockFormSubmitData)}>
-				mock-form-submit
-			</button>
-			<button onClick={() => config.onCancel?.()}>mock-form-cancel</button>
-		</div>
-	),
+	FormWrapper: ({ config }: { config: any }) => {
+		lastFormConfig = config;
+		return (
+			<div>
+				<button onClick={() => config.onSubmit?.(mockFormSubmitData)}>
+					mock-form-submit
+				</button>
+				<button onClick={() => config.onCancel?.()}>mock-form-cancel</button>
+			</div>
+		);
+	},
 }));
 
 type MockStepperState = {
@@ -120,6 +139,7 @@ describe("InstitutionDraftWizardModal submission workflow", () => {
 		mockedShowSuccessToast.mockReset();
 
 		mockFormSubmitData = {};
+		lastFormConfig = null;
 		mockStepperState = {
 			currentStepId: "review",
 			currentStepIndex: 4,
@@ -410,5 +430,24 @@ describe("InstitutionDraftWizardModal submission workflow", () => {
 
 		expect(validationFn).toBeDefined();
 		expect(validationFn?.()).toBe(true);
+	});
+
+	it("includes utilization status internal notes in the status step form config", () => {
+		mockStepperState.currentStepId = "status";
+		mockStepperState.currentStepIndex = 2;
+
+		render(<InstitutionDraftWizardModal routePath="/institution/submission" />);
+
+		const field = findFieldByName(
+			lastFormConfig?.fields as Array<Record<string, unknown>> | undefined,
+			"utilization_status_internal_notes",
+		);
+
+		expect(field).toEqual(
+			expect.objectContaining({
+				name: "utilization_status_internal_notes",
+				type: "textarea",
+			}),
+		);
 	});
 });

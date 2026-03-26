@@ -606,6 +606,10 @@ function InstitutionDraftWizardContent({
 							label: fieldLabel("utilization_status", "Utilization Status"),
 							description: fieldDescription("utilization_status"),
 							type: "select",
+							allowNullOption: true,
+							nullOptionLabel: tEnum(
+								"field_names.utilization_status.options.none",
+							),
 							placeholder: fieldPlaceholder("utilization_status"),
 							options: [
 								{
@@ -649,6 +653,14 @@ function InstitutionDraftWizardContent({
 							label: fieldLabel("utilization_status_info"),
 							type: "textarea",
 							placeholder: fieldPlaceholder("utilization_status_info"),
+						},
+						{
+							name: "utilization_status_internal_notes",
+							label: fieldLabel("utilization_status_internal_notes"),
+							type: "textarea",
+							placeholder: fieldPlaceholder(
+								"utilization_status_internal_notes",
+							),
 						},
 						{
 							name: "parent_organization",
@@ -856,9 +868,7 @@ function InstitutionDraftWizardContent({
 									),
 									defaultOpen: false,
 									type: "textarea",
-									placeholder: t(
-										"institutionDraftWizardModal.form.information.sharedUse.infoPlaceholder",
-									),
+									placeholder: fieldPlaceholder("shared_use_info"),
 								},
 								{
 									name: "shared_use_equipment",
@@ -873,9 +883,7 @@ function InstitutionDraftWizardContent({
 									),
 									defaultOpen: false,
 									type: "textarea",
-									placeholder: t(
-										"institutionDraftWizardModal.form.information.sharedUse.equipmentPlaceholder",
-									),
+									placeholder: fieldPlaceholder("shared_use_equipment"),
 								},
 								{
 									name: "shared_use_audience",
@@ -890,9 +898,7 @@ function InstitutionDraftWizardContent({
 									),
 									defaultOpen: false,
 									type: "textarea",
-									placeholder: t(
-										"institutionDraftWizardModal.form.information.sharedUse.audiencePlaceholder",
-									),
+									placeholder: fieldPlaceholder("shared_use_audience"),
 								},
 								{
 									name: "shared_use_availability",
@@ -907,9 +913,7 @@ function InstitutionDraftWizardContent({
 									),
 									defaultOpen: false,
 									type: "textarea",
-									placeholder: t(
-										"institutionDraftWizardModal.form.information.sharedUse.availabilityPlaceholder",
-									),
+									placeholder: fieldPlaceholder("shared_use_availability"),
 								},
 								{
 									name: "shared_use_accessibility",
@@ -924,9 +928,7 @@ function InstitutionDraftWizardContent({
 									),
 									defaultOpen: false,
 									type: "textarea",
-									placeholder: t(
-										"institutionDraftWizardModal.form.information.sharedUse.accessibilityPlaceholder",
-									),
+									placeholder: fieldPlaceholder("accessibility"),
 								},
 								{
 									name: "shared_use_cost",
@@ -941,9 +943,7 @@ function InstitutionDraftWizardContent({
 									),
 									defaultOpen: false,
 									type: "textarea",
-									placeholder: t(
-										"institutionDraftWizardModal.form.information.sharedUse.costPlaceholder",
-									),
+									placeholder: fieldPlaceholder("shared_use_cost"),
 								},
 								{
 									name: "shared_use_contact_person",
@@ -958,9 +958,7 @@ function InstitutionDraftWizardContent({
 									),
 									defaultOpen: false,
 									type: "text",
-									placeholder: t(
-										"institutionDraftWizardModal.form.information.sharedUse.contactPersonPlaceholder",
-									),
+									placeholder: fieldPlaceholder("shared_use_contact_person"),
 								},
 							],
 						},
@@ -988,9 +986,7 @@ function InstitutionDraftWizardContent({
 								{
 									name: "legal_form",
 									type: "text",
-									placeholder: t(
-										"institutionDraftWizardModal.form.information.organization.legalFormPlaceholder",
-									),
+									placeholder: fieldPlaceholder("legal_form"),
 								},
 							],
 						},
@@ -1067,7 +1063,7 @@ function InstitutionDraftWizardContent({
 									label: fieldLabel("funding_sources"),
 									type: "fundingSources",
 									allowNullOption: true,
-									nullOptionLabel: t("field_names.funding_type.options.none"),
+									nullOptionLabel: tEnum("funding_source.none"),
 									description: fieldDescription("funding_sources"),
 									fundingSources: {
 										sourceLabel: fieldLabel("funding_source_name"),
@@ -1114,13 +1110,9 @@ function InstitutionDraftWizardContent({
 										"established_since",
 										"Bestehen am Standort seit",
 									),
-									description: t(
-										"institutionDraftWizardModal.form.information.establishment.sinceDescription",
-									),
+									description: fieldDescription("established_since"),
 									type: "date",
-									placeholder: t(
-										"institutionDraftWizardModal.form.information.datePlaceholderWithYear",
-									),
+									placeholder: fieldPlaceholder("established_since"),
 								},
 								{
 									name: "established_until",
@@ -1128,13 +1120,9 @@ function InstitutionDraftWizardContent({
 										"established_until",
 										"Bestehen am Standort bis",
 									),
-									description: t(
-										"institutionDraftWizardModal.form.information.establishment.untilDescription",
-									),
+									description: fieldDescription("established_until"),
 									type: "date",
-									placeholder: t(
-										"institutionDraftWizardModal.form.information.datePlaceholderWithYear",
-									),
+									placeholder: fieldPlaceholder("established_until"),
 								},
 							],
 						},
@@ -1157,9 +1145,7 @@ function InstitutionDraftWizardContent({
 									name: "closing_reason",
 									label: fieldLabel("closing_reason", "Schließungsgründe"),
 									type: "textarea",
-									placeholder: t(
-										"institutionDraftWizardModal.form.information.closingReason.placeholder",
-									),
+									placeholder: fieldPlaceholder("closing_reason"),
 								},
 							],
 						},
@@ -1308,6 +1294,12 @@ function InstitutionDraftWizardContent({
 												"field_names.rental_contract_type.options.organization_ownership",
 											),
 										},
+										{
+											value: "leasehold",
+											label: tEnum(
+												"field_names.rental_contract_type.options.leasehold",
+											),
+										},
 									],
 									placeholder: fieldPlaceholder("rental_contract_type"),
 								},
@@ -1315,9 +1307,7 @@ function InstitutionDraftWizardContent({
 									name: "rental_contract_end",
 									label: fieldLabel("rental_contract_end", "Vertragsende"),
 									type: "date",
-									placeholder: t(
-										"institutionDraftWizardModal.form.information.datePlaceholder",
-									),
+									placeholder: fieldPlaceholder("rental_contract_end"),
 								},
 							],
 						},
@@ -1339,6 +1329,10 @@ function InstitutionDraftWizardContent({
 								{
 									name: "protection_status",
 									label: fieldLabel("protection_status", "Sicherungsstatus"),
+									allowNullOption: true,
+									nullOptionLabel: tEnum(
+										"field_names.protection_status.options.none",
+									),
 									type: "select",
 									options: [
 										{
@@ -1440,18 +1434,14 @@ function InstitutionDraftWizardContent({
 							label: fieldLabel("notes", "Notizen"),
 							type: "textarea",
 							placeholder: fieldPlaceholder("notes"),
-							description: t(
-								"institutionDraftWizardModal.form.information.notesDescription",
-							),
+							description: fieldDescription("notes"),
 						},
 						{
 							name: "internal_notes",
 							label: fieldLabel("internal_notes", "Interne Notizen"),
 							type: "textarea",
 							placeholder: fieldPlaceholder("internal_notes"),
-							description: t(
-								"institutionDraftWizardModal.form.information.internalNotesDescription",
-							),
+							description: fieldDescription("internal_notes"),
 							privateDescription: t(
 								"institutionDraftWizardModal.form.information.internalNotesPrivateDescription",
 							),
