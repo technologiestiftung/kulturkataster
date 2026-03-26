@@ -144,7 +144,7 @@
 				"required": "Please provide accessibility."
 			},
 			"label": "Accessibility",
-			"placeholder": "Please enter"
+			"placeholder": "Describe accessibility"
 		},
 		"address": {
 			"description": "",
@@ -216,7 +216,7 @@
 				"required": "Please provide closing reason."
 			},
 			"label": "Closing Reason",
-			"placeholder": "Please select"
+			"placeholder": "Provide reasons for closure"
 		},
 		"contact_person_email": {
 			"description": "",
@@ -307,20 +307,20 @@
 			"placeholder": "name@example.com"
 		},
 		"established_since": {
-			"description": "",
+			"description": "Please enter the date of first use or opening at the location. If the exact date is not known, the year alone is sufficient.",
 			"errors": {
 				"required": "Please provide established since."
 			},
 			"label": "Established Since",
-			"placeholder": "DD.MM.YYYY"
+			"placeholder": "DD.MM.YYYY or YYYY"
 		},
 		"established_until": {
-			"description": "",
+			"description": "Please enter the date until which the cultural institution was active at this location. This only applies to places that are already closed. If the exact date is not known, the year alone is sufficient.",
 			"errors": {
 				"required": "Please provide established until."
 			},
 			"label": "Established Until",
-			"placeholder": "DD.MM.YYYY"
+			"placeholder": "DD.MM.YYYY or YYYY"
 		},
 		"funding_source": {
 			"actions": {
@@ -355,7 +355,7 @@
 				"add": "Finanzierungsquelle hinzufügen",
 				"remove": "Finanzierungsquelle entfernen"
 			},
-			"description": "",
+			"description": "Indicate the sources of funding for your cultural institution.",
 			"errors": {
 				"required": "Please provide funding sources."
 			},
@@ -373,7 +373,8 @@
 				"no_funding": "Nicht gefördert",
 				"temporary_project_funding": "Temporäre Projektförderung",
 				"unknown": "Unbekannt",
-				"workspace_program": "Arbeitsraumprogramm"
+				"workspace_program": "Arbeitsraumprogramm",
+				"none": "Keine Angabe"
 			},
 			"placeholder": "Please select"
 		},
@@ -434,7 +435,7 @@
 			"placeholder": "Please select"
 		},
 		"notes": {
-			"description": "",
+			"description": "Please note that this field is visible to the public. If you want to enter information that should only be visible to authorized users, please use the \"Internal notes\" field directly below.",
 			"errors": {
 				"required": "Please provide notes."
 			},
@@ -554,7 +555,7 @@
 				"required": "Please provide shared use audience."
 			},
 			"label": "Shared Use Audience",
-			"placeholder": "Please enter"
+			"placeholder": "Describe suitable target group/sector"
 		},
 		"shared_use_availability": {
 			"description": "",
@@ -562,7 +563,7 @@
 				"required": "Please provide shared use availability."
 			},
 			"label": "Shared Use Availability",
-			"placeholder": "Please enter"
+			"placeholder": "Describe time availability"
 		},
 		"shared_use_contact_person": {
 			"description": "",
@@ -570,7 +571,15 @@
 				"required": "Please provide shared use contact person."
 			},
 			"label": "Shared Use Contact Person",
-			"placeholder": "Please enter"
+			"placeholder": "Specify contact for room requests"
+		},
+		"shared_use_cost": {
+			"description": "",
+			"errors": {
+				"required": "Please provide shared use cost."
+			},
+			"label": "Shared Use Cost",
+			"placeholder": "Describe costs for use"
 		},
 		"shared_use_equipment": {
 			"description": "",
@@ -578,7 +587,7 @@
 				"required": "Please provide shared use equipment."
 			},
 			"label": "Shared Use Equipment",
-			"placeholder": "Please enter"
+			"placeholder": "Describe equipment"
 		},
 		"shared_use_info": {
 			"description": "",
@@ -586,7 +595,7 @@
 				"required": "Please provide shared use info."
 			},
 			"label": "Shared Use Info",
-			"placeholder": "Please enter"
+			"placeholder": "Description of the rooms/areas"
 		},
 		"source": {
 			"description": "",
@@ -679,6 +688,14 @@
 			"label": "Utilization status info",
 			"placeholder": "Please enter"
 		},
+		"utilization_status_internal_notes": {
+			"description": "",
+			"errors": {
+				"required": "Please provide utilization status internal notes."
+			},
+			"label": "Internal Notes (Utilization Status)",
+			"placeholder": "Please enter"
+		},
 		"website": {
 			"description": "",
 			"errors": {
@@ -702,6 +719,7 @@
 		"eu": "Eu",
 		"federal": "Federal",
 		"foundation": "Foundation",
+		"none": "No information",
 		"other": "Other",
 		"private": "Private",
 		"state_berlin": "State Berlin"
@@ -776,6 +794,7 @@
 		"state_administration": "State Administration",
 		"super_administrator": "Super Administrator"
 	},
+	"none": "No information",
 	"utilization_status": {
 		"in_use": "In Use",
 		"permanently_closed": "Permanently Closed",

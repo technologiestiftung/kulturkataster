@@ -811,21 +811,8 @@
 						"title": "Premises"
 					}
 				},
-				"closingReason": {
-					"placeholder": "Provide reasons for closure"
-				},
 				"datePlaceholder": "DD.MM.YYYY",
-				"datePlaceholderWithYear": "DD.MM.YYYY or YYYY",
-				"establishment": {
-					"sinceDescription": "Please enter the date of first use or opening at the location. ",
-					"untilDescription": "Please enter the date until which the cultural institution was active at this location. "
-				},
-				"internalNotesDescription": "",
 				"internalNotesPrivateDescription": "This information will only be accessible to authorized users in the protected area of ​​the cultural register and will not be publicly viewable.",
-				"notesDescription": "Please note that this field is visible to the public. ",
-				"organization": {
-					"legalFormPlaceholder": "e.g. "
-				},
 				"protectionStatus": {
 					"acutelyThreatened": "Acutely threatened",
 					"longTermSecured": "Secured in the long term",
@@ -839,14 +826,7 @@
 				},
 				"selectPlaceholder": "Please select",
 				"sharedUse": {
-					"accessibilityPlaceholder": "Describe accessibility",
-					"audiencePlaceholder": "Describe suitable target group/sector",
-					"availabilityPlaceholder": "Describe time availability",
-					"contactPersonPlaceholder": "Specify contact for room requests",
-					"costPlaceholder": "Describe costs for use",
 					"detailsLabel": "Details",
-					"equipmentPlaceholder": "Describe equipment",
-					"infoPlaceholder": "Description of the rooms/areas",
 					"label": "Open to space requests",
 					"options": {
 						"no": "No",
@@ -961,13 +941,22 @@
 		},
 		"review": {
 			"actions": {
-				"approve": "To permit"
+				"approve": "To permit",
+				"saveNotes": "Save notes"
 			},
 			"error": "Verification failed. {{error}}",
 			"errorUnknown": "Unknown error.",
 			"grantSubmitterAccess": "After approval, give the submitter access to this cultural location.",
+			"noteMeta": "{{author}} on {{date}}",
 			"notesLabel": "Inspection notes",
 			"notesPlaceholder": "Optional notes for submission",
+			"previousNotesLabel": "Previous notes",
+			"success": {
+				"saveNotes": {
+					"description": "The review notes have been saved.",
+					"title": "Notes saved"
+				}
+			},
 			"statusLabel": "Status: {{status}}",
 			"title": "Check submission"
 		}

@@ -10,6 +10,7 @@ import { getCurrentUserId, requestPasswordReset } from "@/server/actions/auth";
 import { userRepo } from "@/server/data/userRepo";
 import { createAdminClient, createClient } from "@/server/supabase/server";
 import type { UserFormInput } from "@/types/user";
+import type { User } from "@/types/user";
 import { revalidateAccount } from "../utils/actionsUtils";
 import { requireScopeOrUser } from "@/server/utils/rbac";
 import {
@@ -456,7 +457,7 @@ export async function sendRoleDecisionEmailManual(input: {
 	userId: string;
 	target: RoleEmailTarget;
 	decision: RoleEmailDecision;
-}): Promise<void> {
+}): Promise<User> {
 	return runWithServerRequestContext(
 		async () => {
 			const currentUserId = await getCurrentUserId();
@@ -478,6 +479,29 @@ export async function sendRoleDecisionEmailManual(input: {
 				lastName: user.last_name,
 				metaInfo: user.meta_info,
 			});
+
+			if (input.decision === "approved" && user.status !== "active") {
+				try {
+					const updatedUser = await userRepo.update(user.id, {
+						status: "active",
+					});
+					revalidateAccount();
+					return updatedUser;
+				} catch (error) {
+					logger.error("user.role_decision.status_update_failed", error, {
+						subsystem: "user",
+						db_subsystem: "db",
+						actor_user_id: currentUserId,
+						target_user_id: user.id,
+						decision: input.decision,
+						target: input.target,
+					});
+					throw error;
+				}
+			}
+
+			revalidateAccount();
+			return user;
 		},
 		{ route: "server_action:users.sendRoleDecisionEmailManual" },
 	);

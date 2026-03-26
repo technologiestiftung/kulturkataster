@@ -47,9 +47,9 @@ const sanitizeKey = (value: string) =>
 	value
 		.toLowerCase()
 		.trim()
-		.replace(/[^a-z0-9_-]/g, "-")
-		.replace(/-+/g, "-")
-		.replace(/^-|-$/g, "");
+		.replace(/[^a-z0-9]+/g, "_")
+		.replace(/_+/g, "_")
+		.replace(/^_|_$/g, "");
 
 const isBucketNotFoundError = (message: string | undefined) =>
 	typeof message === "string" &&
@@ -94,11 +94,12 @@ export async function createCategory(input: CategoryInput) {
 			const ctx = await getAccessContextForUser(currentUserId);
 			authorizeTable(ctx, "category", "create");
 			requireAllScope(ctx, "category", "create");
+			const sanitizedKey = sanitizeKey(input.key);
 
 			let created;
 			try {
 				created = await categoryRepo.create({
-					key: input.key,
+					key: sanitizedKey,
 					description: input.description ?? null,
 					icon: input.icon ?? null,
 					status: input.status ?? "active",
@@ -113,7 +114,7 @@ export async function createCategory(input: CategoryInput) {
 					subsystem: "category",
 					db_subsystem: "db",
 					actor_user_id: currentUserId,
-					category_key: input.key,
+					category_key: sanitizedKey,
 				});
 				throw error;
 			}
@@ -160,6 +161,29 @@ export async function updateCategory(input: CategoryUpdateInput) {
 				throw new Error("Category cannot be its own parent.");
 			}
 
+			let existingCategory;
+			try {
+				existingCategory = await categoryRepo.findById(input.id);
+			} catch (error) {
+				logger.error("category.update.lookup_db_failed", error, {
+					subsystem: "category",
+					db_subsystem: "db",
+					actor_user_id: currentUserId,
+					category_id: input.id,
+				});
+				throw error;
+			}
+			if (!existingCategory) {
+				throw new Error("Category not found.");
+			}
+
+			if (
+				typeof input.key === "string" &&
+				sanitizeKey(input.key) !== existingCategory.key
+			) {
+				throw new Error("Category key cannot be changed.");
+			}
+
 			let parentCategoryUpdate;
 			if (input.parentCategoryId === null) {
 				parentCategoryUpdate = { disconnect: true };
@@ -172,7 +196,6 @@ export async function updateCategory(input: CategoryUpdateInput) {
 			let updated;
 			try {
 				updated = await categoryRepo.update(input.id, {
-					key: input.key,
 					description: input.description ?? null,
 					icon: input.icon ?? null,
 					status: input.status,

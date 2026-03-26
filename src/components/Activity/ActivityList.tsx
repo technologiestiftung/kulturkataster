@@ -151,6 +151,49 @@ const getEntityEmail = (audit: EntityAudit): string | null => {
 	);
 };
 
+const getEntityAccountType = (audit: EntityAudit): string | null => {
+	if (audit.entity_type !== "user") return null;
+	const newData = asObject(audit.new_data);
+	const oldData = asObject(audit.old_data);
+	const accountType =
+		pickString(newData, "account_type") ??
+		pickString(oldData, "account_type") ??
+		(typeof audit.user?.account_type === "string" &&
+		audit.user.account_type.trim().length > 0
+			? audit.user.account_type
+			: null);
+	return accountType?.trim() || null;
+};
+
+const getUserEntityStatus = (audit: EntityAudit): string | null => {
+	if (audit.entity_type !== "user") return null;
+	const newData = asObject(audit.new_data);
+	const oldData = asObject(audit.old_data);
+	return pickString(newData, "status") ?? pickString(oldData, "status");
+};
+
+const getAccountTypeLabel = (
+	accountType: string,
+	t: (key: string, options?: Record<string, unknown>) => string,
+) => {
+	if (accountType === "organization") {
+		return t("auth.register.accountTypeOrganization", {
+			defaultValue: "Mitarbeiter*in einer Organisation",
+		});
+	}
+	if (accountType === "district") {
+		return t("auth.register.accountTypeDistrict", {
+			defaultValue: "Mitarbeiter*in eines Bezirks",
+		});
+	}
+	if (accountType === "administration") {
+		return t("auth.register.accountTypeAdministration", {
+			defaultValue: "Mitarbeiter*in des Landes Berlin",
+		});
+	}
+	return accountType;
+};
+
 const getSubmissionInstitutionId = (
 	audit: EntityAudit | undefined,
 ): string | null => {
@@ -556,11 +599,22 @@ export function ActivityList({
 				: undefined,
 			from: hasStatusTransition ? fromStatus : undefined,
 			to: hasStatusTransition ? toStatus : undefined,
-			action: t(`auth.account.activity.actions.${actionKey}`, {
-				defaultValue: t(`auth.account.activity.actions.${audit.action}`, {
-					defaultValue: audit.action,
-				}),
-			}),
+			action: (() => {
+				const baseAction = t(`auth.account.activity.actions.${actionKey}`, {
+					defaultValue: t(`auth.account.activity.actions.${audit.action}`, {
+						defaultValue: audit.action,
+					}),
+				});
+				const accountType = getEntityAccountType(primarySource);
+				if (primarySource.entity_type !== "user" || !accountType) {
+					return baseAction;
+				}
+				return t("auth.account.activity.actions.withAccountType", {
+					defaultValue: `${baseAction} (${getAccountTypeLabel(accountType, t)})`,
+					action: baseAction,
+					accountType: getAccountTypeLabel(accountType, t),
+				});
+			})(),
 			item: primaryEntity,
 			itemLink: mapEntityLink(
 				audit,
@@ -579,7 +633,8 @@ export function ActivityList({
 						currentUserId,
 					)
 				: undefined,
-			status: audit.status,
+			status: (getUserEntityStatus(primarySource) ??
+				audit.status) as Activity["status"],
 		};
 	};
 

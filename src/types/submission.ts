@@ -8,8 +8,21 @@ import type {
 import type { Institution } from "@/types/institution";
 import type { User } from "@/types/user";
 
-export type Submission =
-	Prisma.SubmissionGetPayload<Prisma.SubmissionDefaultArgs>;
+export type SubmissionNote = Prisma.SubmissionNoteGetPayload<{
+	include: {
+		creator: true;
+	};
+}>;
+
+export type Submission = Prisma.SubmissionGetPayload<{
+	include: {
+		notes: {
+			include: {
+				creator: true;
+			};
+		};
+	};
+}>;
 export type SubmissionCreateInput = Prisma.SubmissionCreateInput;
 export type SubmissionUpdateInput = Prisma.SubmissionUpdateInput;
 export type SubmissionWhereInput = Prisma.SubmissionWhereInput;
@@ -64,6 +77,11 @@ export type SubmissionReviewPayload = {
 	status: Exclude<SubmissionStatus, "draft">;
 	internalNotes?: string | null;
 	grantSubmitterAccess?: boolean;
+};
+
+export type SubmissionNoteCreatePayload = {
+	submissionId: number;
+	note: string;
 };
 
 export type ClaimReviewPayload = {
