@@ -649,20 +649,6 @@ function InstitutionDraftWizardContent({
 							],
 						},
 						{
-							name: "utilization_status_info",
-							label: fieldLabel("utilization_status_info"),
-							type: "textarea",
-							placeholder: fieldPlaceholder("utilization_status_info"),
-						},
-						{
-							name: "utilization_status_internal_notes",
-							label: fieldLabel("utilization_status_internal_notes"),
-							type: "textarea",
-							placeholder: fieldPlaceholder(
-								"utilization_status_internal_notes",
-							),
-						},
-						{
 							name: "parent_organization",
 							label: fieldLabel("parent_organization", "Parent Organization"),
 							description: fieldDescription("parent_organization"),
@@ -1380,6 +1366,17 @@ function InstitutionDraftWizardContent({
 									type: "textarea",
 									placeholder: fieldPlaceholder("protection_status_info"),
 								},
+								{
+									name: "protection_status_internal_notes",
+									label: fieldLabel(
+										"protection_status_internal_notes",
+										"Sicherungsstatus Interne Notizen",
+									),
+									type: "textarea",
+									placeholder: fieldPlaceholder(
+										"protection_status_internal_notes",
+									),
+								},
 							],
 						},
 						{
@@ -1426,6 +1423,13 @@ function InstitutionDraftWizardContent({
 					name: "additional_section",
 					type: "section",
 					fields: [
+						{
+							name: "source",
+							label: fieldLabel("source", "Datenquelle"),
+							type: "text",
+							placeholder: fieldPlaceholder("source"),
+							description: fieldDescription("source"),
+						},
 						{
 							name: "notes",
 							label: fieldLabel("notes", "Notizen"),

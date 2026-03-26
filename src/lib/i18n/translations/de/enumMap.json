@@ -551,6 +551,14 @@
 				"required": "Bitte Sicherungsstatus Detailinfos angeben."
 			}
 		},
+		"protection_status_internal_notes": {
+			"label": "Interne Notizen (Sicherungsstatus)",
+			"description": "",
+			"placeholder": "Bitte eintragen",
+			"errors": {
+				"required": "Bitte interne Notizen zum Sicherungsstatus angeben."
+			}
+		},
 		"rental_contract_end": {
 			"label": "Vertragsende",
 			"description": "",
