@@ -23,12 +23,34 @@ export type Submission = Prisma.SubmissionGetPayload<{
 		};
 	};
 }>;
+
+export type ClaimSubmission = Prisma.SubmissionGetPayload<{
+	include: {
+		notes: {
+			include: {
+				creator: true;
+			};
+		};
+		creator: {
+			include: {
+				role: {
+					include: {
+						table_permissions: true;
+					};
+				};
+				groups: true;
+				institutions: true;
+				submissions: true;
+			};
+		};
+	};
+}>;
 export type SubmissionCreateInput = Prisma.SubmissionCreateInput;
 export type SubmissionUpdateInput = Prisma.SubmissionUpdateInput;
 export type SubmissionWhereInput = Prisma.SubmissionWhereInput;
 
 export type ClaimSubmissionDetail = {
-	submission: Submission;
+	submission: ClaimSubmission;
 	institution: Institution | null;
 	claimant: User | null;
 };
