@@ -295,16 +295,8 @@ test.describe("institution submission wizard", () => {
 			timeout: 15_000,
 		});
 		await expect(page.locator("form#institution-contact-form")).toBeVisible();
-		await page
-			.getByRole("checkbox", {
-				name: "Ich arbeite für diese Kulturorganisation.",
-			})
-			.click();
-		await page
-			.getByRole("checkbox", {
-				name: /Ich bin damit einverstanden/i,
-			})
-			.click();
+		await page.locator('[id="works_for_organization-true"]').click();
+		await page.locator('[id="consent_contact_listing-true"]').click();
 		await page.getByLabel("Ansprechperson Vorname").fill("Max");
 		await page.getByLabel("Ansprechperson Nachname").fill("Mustermann");
 		await page
