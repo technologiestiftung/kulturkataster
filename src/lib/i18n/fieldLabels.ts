@@ -1,21 +1,23 @@
 import type { TFunction } from "i18next";
 
-export const getFieldLabel = (tEnum: TFunction, key: string) => {
+type Translator = TFunction | ((key: string) => string);
+
+export const getFieldLabel = (tEnum: Translator, key: string) => {
 	return tEnum(`field_names.${key}.label`);
 };
 
-export const getFieldDescription = (tEnum: TFunction, key: string) => {
+export const getFieldDescription = (tEnum: Translator, key: string) => {
 	const translationKey = `field_names.${key}.description`;
 	const translated = tEnum(translationKey);
 	return translated === translationKey ? "" : translated;
 };
 
-export const getFieldPlaceholder = (tEnum: TFunction, key: string) => {
+export const getFieldPlaceholder = (tEnum: Translator, key: string) => {
 	return tEnum(`field_names.${key}.placeholder`);
 };
 
 export const getFieldOptionLabel = (
-	tEnum: TFunction,
+	tEnum: Translator,
 	key: string,
 	value: string,
 ) => {
@@ -31,7 +33,7 @@ export const getFieldOptionLabel = (
 };
 
 export const getFieldError = (
-	tEnum: TFunction,
+	tEnum: Translator,
 	key: string,
 	errorKey: string,
 ) => {
