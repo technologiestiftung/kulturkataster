@@ -11,7 +11,7 @@ import { StatusDot } from "../ui/status-dot";
 import { InstitutionStatus } from "@/generated/prisma";
 import type { SubmissionType } from "@/generated/prisma";
 import { useTranslation } from "react-i18next";
-import { getFieldLabel } from "@/lib/i18n/fieldLabels";
+import { getFieldLabel, getFieldOptionLabel } from "@/lib/i18n/fieldLabels";
 import {
 	formatInstitutionBoolean,
 	formatInstitutionDate,
@@ -81,15 +81,12 @@ export function InstitutionsTable() {
 	} = useInstitutionFilterCategories();
 	const translateEnum = (prefix: string, value?: string | null) => {
 		if (!value) return "—";
-		const translated = tEnum(`${prefix}.${value}`);
-		return translated === `${prefix}.${value}` ? value : translated;
+		return getFieldOptionLabel(tEnum, prefix, value);
 	};
+	const translateFundingSource = (value: string) =>
+		getFieldOptionLabel(tEnum, "funding_source", value);
 	const headerLabel = (key: string, _fallback?: string) =>
 		getFieldLabel(tEnum, key);
-	const translateFundingSource = (value: string) => {
-		const translated = tEnum(`funding_source.${value}`);
-		return translated === `funding_source.${value}` ? value : translated;
-	};
 	const renderEmptyValue = () => <span className="text-foreground">—</span>;
 	const renderTextValue = (value?: string | null) => {
 		if (typeof value !== "string" || value.trim().length === 0) {

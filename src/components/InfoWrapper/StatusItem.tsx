@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { StatusLevelMap } from "./types";
 import { PrivateBadge } from "../shared/PrivateBadge";
+import { getFieldOptionLabel } from "@/lib/i18n/fieldLabels";
 
 export function StatusItem({
 	value,
@@ -20,7 +21,6 @@ export function StatusItem({
 	const { t: tEnum } = useTranslation("enumMap");
 
 	if (!value || typeof value !== "string") return null;
-	const labelKey = `${enumKey}.${value}`;
 	const showCircle = variant === "plain" || !label;
 	const hasKnownStatusLevel = Object.hasOwn(StatusLevelMap, value);
 	const isInUse = value === "in_use";
@@ -55,7 +55,9 @@ export function StatusItem({
 		<div className={wrapperClassName}>
 			{showCircle && <div className={`w-4 h-4 rounded-full ${circleClass}`} />}
 			{label && <strong className="body2">{label}:</strong>}
-			<span className="body2 font-medium">{tEnum(labelKey)}</span>
+			<span className="body2 font-medium">
+				{enumKey ? getFieldOptionLabel(tEnum, enumKey, value) : value}
+			</span>
 			{isPrivate ? <PrivateBadge /> : null}
 			<div className="ml-auto flex items-center gap-2">{action}</div>
 		</div>
