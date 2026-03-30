@@ -329,6 +329,17 @@
 			"errors": {
 				"required": "Bitte Art der Finanzierung angeben."
 			},
+			"options": {
+				"church": "Kirche",
+				"district": "Bezirk",
+				"eu": "EU",
+				"federal": "Bund",
+				"foundation": "Stiftung",
+				"other": "Sonstiges",
+				"private": "Privat",
+				"state_berlin": "Land Berlin",
+				"none": "Keine Angabe"
+			},
 			"actions": {
 				"add": "Finanzierungsquelle hinzufügen",
 				"remove": "Finanzierungsquelle entfernen"
@@ -740,25 +751,6 @@
 			}
 		}
 	},
-	"funding_source": {
-		"church": "Kirche",
-		"district": "Bezirk",
-		"eu": "EU",
-		"federal": "Bund",
-		"foundation": "Stiftung",
-		"other": "Sonstiges",
-		"private": "Privat",
-		"state_berlin": "Land Berlin",
-		"none": "Keine Angabe"
-	},
-	"funding_type": {
-		"institutional_funding": "Institutionell gefördert",
-		"no_funding": "Nicht gefördert",
-		"placeholder": "Art der Förderung auswählen",
-		"temporary_project_funding": "Temporäre Projektförderung",
-		"workspace_program": "Arbeitsraumprogramm",
-		"none": "Keine Angabe"
-	},
 	"institution_action": {
 		"create": "Erstellen",
 		"delete": "Löschen",
@@ -775,37 +767,6 @@
 		"public": "Öffentlich",
 		"removal_pending": "Löschung beantragt"
 	},
-	"owner_type": {
-		"district_property": "Bezirkliche Liegenschaft",
-		"federal_property": "Bundesliegenschaft",
-		"municipal_housing_company": "Städtische Wohnungsbaugesellschaft",
-		"other": "Sonstige",
-		"other_public_property": "Sonstige öffentliche Liegenschaft",
-		"placeholder": "Eigentümer*innenart auswählen",
-		"private": "Privat",
-		"state_property": "Landesliegenschaft",
-		"state_property_fund": "Landesliegenschaft (Liegenschaftsfonds)",
-		"state_property_other": "Landesliegenschaft (Sonstige Liegenschaft)",
-		"state_property_silb": "Landesliegenschaft (SILB)",
-		"state_property_soda": "Landesliegenschaft (SODA)",
-		"state_property_specialized": "Spezialimmobilie Land"
-	},
-	"protection_status": {
-		"acutely_threatened": "Akut gefährdet",
-		"long_term_secured": "Langfristig gesichert",
-		"medium_term_secured": "Mittelfristig gesichert",
-		"not_yet_secured": "Noch nicht gesichert",
-		"permanently_closed": "Dauerhaft geschlossen",
-		"placeholder": "Sicherungsstatus auswählen",
-		"uncertain": "Unsicher"
-	},
-	"rental_contract_type": {
-		"limited_lease": "Befristete Miete",
-		"organization_ownership": "Eigentum der Organisation",
-		"placeholder": "Vertragsform auswählen",
-		"unlimited_lease": "Unbefristete Miete",
-		"leasehold": "Erbbaurecht"
-	},
 	"submission_status": {
 		"approval_pending": "Freigabe ausstehend",
 		"approved": "Genehmigt",
@@ -821,15 +782,5 @@
 		"public": "Öffentlich",
 		"state_administration": "Landesverwaltung",
 		"super_administrator": "Super-Administrator"
-	},
-	"utilization_status": {
-		"in_use": "In Nutzung",
-		"permanently_closed": "Dauerhaft geschlossen",
-		"placeholder": "Nutzungsstatus auswählen",
-		"planned_use": "Geplante Nutzung",
-		"potential_space": "Potenzialort",
-		"temporarily_closed": "Vorübergehend geschlossen",
-		"unknown": "Unbekannt",
-		"none": "Keine Angabe"
 	}
 }
