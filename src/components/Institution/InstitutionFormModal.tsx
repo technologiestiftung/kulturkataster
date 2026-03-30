@@ -41,6 +41,7 @@ import { reportClientTelemetry } from "@/lib/utils/clientTelemetry";
 type InstitutionFormModalProps = {
 	mode: "create" | "edit";
 	institution?: Institution | null;
+	currentInstitutionId?: number;
 	onClose?: () => void;
 	routePath?: string;
 	returnTo?: string;
@@ -1133,6 +1134,7 @@ const buildInstitutionFormConfig = ({
 export function InstitutionFormModal({
 	mode,
 	institution,
+	currentInstitutionId,
 	returnTo,
 	onClose: _onClose,
 	routePath,
@@ -1218,6 +1220,8 @@ export function InstitutionFormModal({
 	}, [_onClose, handleClose]);
 
 	const resolvedInstitutionWithFallback = institution ?? undefined;
+	const resolvedCurrentInstitutionId =
+		currentInstitutionId ?? resolvedInstitutionWithFallback?.id;
 	const initialFormValues = useMemo(
 		() => buildInstitutionFormInitialValues(resolvedInstitutionWithFallback),
 		[resolvedInstitutionWithFallback],
@@ -1311,7 +1315,7 @@ export function InstitutionFormModal({
 			const hasDuplicate = hasDuplicateInstitutionByNameAndAddress({
 				formData: mergedFormData,
 				institutions: allInstitutions,
-				currentInstitutionId: resolvedInstitutionWithFallback?.id,
+				currentInstitutionId: resolvedCurrentInstitutionId,
 			});
 			return hasDuplicate ? duplicateInstitutionMessage : undefined;
 		},
@@ -1319,23 +1323,23 @@ export function InstitutionFormModal({
 			allInstitutions,
 			currentFormData,
 			duplicateInstitutionMessage,
-			resolvedInstitutionWithFallback?.id,
+			resolvedCurrentInstitutionId,
 		],
 	);
 	const potentialDuplicates = useMemo(() => {
 		const hasHardDuplicate = hasDuplicateInstitutionByNameAndAddress({
 			formData: currentFormData,
 			institutions: allInstitutions,
-			currentInstitutionId: resolvedInstitutionWithFallback?.id,
+			currentInstitutionId: resolvedCurrentInstitutionId,
 		});
 		if (hasHardDuplicate) return [];
 		return findPotentialInstitutionDuplicates({
 			formData: currentFormData,
 			institutions: allInstitutions,
-			currentInstitutionId: resolvedInstitutionWithFallback?.id,
+			currentInstitutionId: resolvedCurrentInstitutionId,
 			maxResults: 3,
 		});
-	}, [allInstitutions, currentFormData, resolvedInstitutionWithFallback?.id]);
+	}, [allInstitutions, currentFormData, resolvedCurrentInstitutionId]);
 	const localePrefix = i18n?.resolvedLanguage === "en" ? "en" : "de";
 	const duplicateWarningText = useMemo(() => {
 		if (potentialDuplicates.length === 0) return null;

@@ -363,7 +363,7 @@ export function Menu({
 															className="relative"
 														>
 															{item.id === "user" && isLoggedIn && (
-																<div className="absolute top-3 right-3 bg-brand-default rounded-full size-2.5 flex items-center justify-center" />
+																<div className="absolute top-9.5 right-4 bg-brand-default rounded-full size-2.5 flex items-center justify-center" />
 															)}
 															<item.icon />
 														</SidebarMenuButton>

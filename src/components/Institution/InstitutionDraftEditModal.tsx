@@ -224,6 +224,7 @@ export function InstitutionDraftEditModal({
 		<InstitutionFormModal
 			mode="create"
 			permissionContext="submission"
+			currentInstitutionId={resolvedSubmissionWithFallback?.entity_id ?? undefined}
 			returnTo={returnTo}
 			routePath={routePath}
 			closeConfirmation={{
