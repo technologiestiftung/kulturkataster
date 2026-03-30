@@ -705,7 +705,9 @@ const buildInstitutionFormConfig = ({
 								label: fieldLabel("funding_sources"),
 								type: "fundingSources",
 								allowNullOption: true,
-								nullOptionLabel: tEnum("funding_source.none"),
+								nullOptionLabel: tEnum(
+									"field_names.funding_source.options.none",
+								),
 								description: fieldDescription("funding_sources"),
 								fundingSources: {
 									sourceLabel: fieldLabel("funding_source_name"),
@@ -935,12 +937,6 @@ const buildInstitutionFormConfig = ({
 										value: "organization_ownership",
 										label: tEnum(
 											"field_names.rental_contract_type.options.organization_ownership",
-										),
-									},
-									{
-										value: "leasehold",
-										label: tEnum(
-											"field_names.rental_contract_type.options.leasehold",
 										),
 									},
 								],

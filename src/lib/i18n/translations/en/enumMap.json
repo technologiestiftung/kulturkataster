@@ -332,6 +332,17 @@
 				"required": "Please provide funding source."
 			},
 			"label": "Funding source",
+			"options": {
+				"church": "Church",
+				"district": "District",
+				"eu": "Eu",
+				"federal": "Federal",
+				"foundation": "Foundation",
+				"none": "No information",
+				"other": "Other",
+				"private": "Private",
+				"state_berlin": "State Berlin"
+			},
 			"placeholder": "Please select"
 		},
 		"funding_source_description": {
@@ -734,24 +745,6 @@
 			"placeholder": "Please enter"
 		}
 	},
-	"funding_source": {
-		"church": "Church",
-		"district": "District",
-		"eu": "Eu",
-		"federal": "Federal",
-		"foundation": "Foundation",
-		"none": "No information",
-		"other": "Other",
-		"private": "Private",
-		"state_berlin": "State Berlin"
-	},
-	"funding_type": {
-		"institutional_funding": "Institutional Funding",
-		"no_funding": "No Funding",
-		"placeholder": "Placeholder",
-		"temporary_project_funding": "Temporary Project Funding",
-		"workspace_program": "Workspace Program"
-	},
 	"institution_action": {
 		"create": "Create",
 		"delete": "Delete",
@@ -767,37 +760,6 @@
 		"private": "Private",
 		"public": "Public",
 		"removal_pending": "Removal Pending"
-	},
-	"owner_type": {
-		"district_property": "District Property",
-		"federal_property": "Federal Property",
-		"municipal_housing_company": "Municipal Housing Company",
-		"other": "Other",
-		"other_public_property": "Other Public Property",
-		"placeholder": "Placeholder",
-		"private": "Private",
-		"state_property": "State Property",
-		"state_property_fund": "State Property Fund",
-		"state_property_other": "State Property Other",
-		"state_property_silb": "State Property Silb",
-		"state_property_soda": "State Property Soda",
-		"state_property_specialized": "State Property Specialized"
-	},
-	"protection_status": {
-		"acutely_threatened": "Acutely Threatened",
-		"long_term_secured": "Long Term Secured",
-		"medium_term_secured": "Medium Term Secured",
-		"not_yet_secured": "Not Yet Secured",
-		"permanently_closed": "Permanently Closed",
-		"placeholder": "Placeholder",
-		"uncertain": "Uncertain"
-	},
-	"rental_contract_type": {
-		"limited_lease": "Limited Lease",
-		"organization_ownership": "Organization Ownership",
-		"placeholder": "Placeholder",
-		"unlimited_lease": "Unlimited Lease",
-		"leasehold": "Leasehold"
 	},
 	"submission_status": {
 		"approval_pending": "Approval Pending",
@@ -815,14 +777,5 @@
 		"state_administration": "State Administration",
 		"super_administrator": "Super Administrator"
 	},
-	"none": "No information",
-	"utilization_status": {
-		"in_use": "In Use",
-		"permanently_closed": "Permanently Closed",
-		"placeholder": "Placeholder",
-		"planned_use": "Planned Use",
-		"potential_space": "Potential Space",
-		"temporarily_closed": "Temporarily Closed",
-		"unknown": "Unknown"
-	}
+	"none": "No information"
 }

@@ -27,6 +27,7 @@ import { useTranslation } from "react-i18next";
 import { getGridClass } from "../shared/sectionLayout";
 import { getEditAction } from "./getEditAction";
 import { ScrollReveal } from "@/components/shared/ScrollReveal";
+import { getFieldOptionLabel } from "@/lib/i18n/fieldLabels";
 
 const resolveFieldValue = (
 	field: InfoWrapperFieldConfig,
@@ -328,7 +329,7 @@ const getContent = (
 					isPrivate={isPrivate}
 					action={action}
 				>
-					{tEnum(`${field.enumKey}.${String(value)}`)}
+					{getFieldOptionLabel(tEnum, String(field.enumKey), String(value))}
 				</InfoItem>
 			);
 		case "date":
@@ -496,7 +497,11 @@ const renderFieldContent = (
 			return tEnum(labelKey);
 		}
 		if (field.type === "enum") {
-			return tEnum(`${field.enumKey}.${String(displayValue)}`);
+			return getFieldOptionLabel(
+				tEnum,
+				String(field.enumKey),
+				String(displayValue),
+			);
 		}
 		if (field.type === "date" || field.type === "year") {
 			return formatDateByType(displayValue, field.type);

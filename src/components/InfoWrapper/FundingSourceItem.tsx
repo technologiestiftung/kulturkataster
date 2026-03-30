@@ -3,6 +3,7 @@
 import { useTranslation } from "react-i18next";
 import { InfoItem } from "./InfoItem";
 import type { Institution } from "@/types";
+import { getFieldOptionLabel } from "@/lib/i18n/fieldLabels";
 
 export const formatFundingSourcesValue = (
 	data: Partial<Institution>,
@@ -18,10 +19,7 @@ export const formatFundingSourcesValue = (
 						: "";
 				const translatedName = rawName
 					? (() => {
-							const translated = tEnum(`funding_source.${rawName}`);
-							return translated === `funding_source.${rawName}`
-								? rawName
-								: translated;
+							return getFieldOptionLabel(tEnum, "funding_source", rawName);
 						})()
 					: "";
 				const description =
