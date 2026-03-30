@@ -90,33 +90,49 @@ SelectScrollDownButton.displayName =
 const SelectContent = React.forwardRef<
 	React.ElementRef<typeof SelectPrimitive.Content>,
 	React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content>
->(({ className, children, position = "popper", ...props }, ref) => (
-	<SelectPrimitive.Portal>
-		<SelectPrimitive.Content
-			ref={ref}
-			className={cn(
-				"relative z-[100] min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md motion-safe:data-[state=open]:animate-in motion-safe:data-[state=closed]:animate-out motion-safe:data-[state=closed]:fade-out-0 motion-safe:data-[state=open]:fade-in-0 motion-safe:data-[state=closed]:zoom-out-95 motion-safe:data-[state=open]:zoom-in-95 motion-safe:data-[side=bottom]:slide-in-from-top-2 motion-safe:data-[side=left]:slide-in-from-right-2 motion-safe:data-[side=right]:slide-in-from-left-2 motion-safe:data-[side=top]:slide-in-from-bottom-2 origin-[--radix-select-content-transform-origin]",
-				position === "popper" &&
-					"data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
-				className,
-			)}
-			position={position}
-			{...props}
-		>
-			<SelectScrollUpButton />
-			<SelectPrimitive.Viewport
+>(
+	(
+		{
+			className,
+			children,
+			position = "popper",
+			side = "bottom",
+			sideOffset = 4,
+			avoidCollisions = false,
+			...props
+		},
+		ref,
+	) => (
+		<SelectPrimitive.Portal>
+			<SelectPrimitive.Content
+				ref={ref}
 				className={cn(
-					"max-h-[min(24rem,var(--radix-select-content-available-height))] overflow-y-auto p-1",
+					"relative z-[100] min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md motion-safe:data-[state=open]:animate-in motion-safe:data-[state=closed]:animate-out motion-safe:data-[state=closed]:fade-out-0 motion-safe:data-[state=open]:fade-in-0 motion-safe:data-[state=closed]:zoom-out-95 motion-safe:data-[state=open]:zoom-in-95 motion-safe:data-[side=bottom]:slide-in-from-top-2 motion-safe:data-[side=left]:slide-in-from-right-2 motion-safe:data-[side=right]:slide-in-from-left-2 motion-safe:data-[side=top]:slide-in-from-bottom-2 origin-[--radix-select-content-transform-origin]",
 					position === "popper" &&
-						"w-full min-w-[var(--radix-select-trigger-width)]",
+						"data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
+					className,
 				)}
+				position={position}
+				side={side}
+				sideOffset={sideOffset}
+				avoidCollisions={avoidCollisions}
+				{...props}
 			>
-				{children}
-			</SelectPrimitive.Viewport>
-			<SelectScrollDownButton />
-		</SelectPrimitive.Content>
-	</SelectPrimitive.Portal>
-));
+				<SelectScrollUpButton />
+				<SelectPrimitive.Viewport
+					className={cn(
+						"max-h-[min(24rem,var(--radix-select-content-available-height))] overflow-y-auto p-1",
+						position === "popper" &&
+							"w-full min-w-[var(--radix-select-trigger-width)]",
+					)}
+				>
+					{children}
+				</SelectPrimitive.Viewport>
+				<SelectScrollDownButton />
+			</SelectPrimitive.Content>
+		</SelectPrimitive.Portal>
+	),
+);
 SelectContent.displayName = SelectPrimitive.Content.displayName;
 
 const SelectLabel = React.forwardRef<

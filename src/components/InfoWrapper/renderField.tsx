@@ -27,6 +27,7 @@ import { useTranslation } from "react-i18next";
 import { getGridClass } from "../shared/sectionLayout";
 import { getEditAction } from "./getEditAction";
 import { ScrollReveal } from "@/components/shared/ScrollReveal";
+import { getFieldOptionLabel } from "@/lib/i18n/fieldLabels";
 
 const resolveFieldValue = (
 	field: InfoWrapperFieldConfig,
@@ -230,6 +231,9 @@ type RenderFieldContentArgs = {
 	isPrivate: boolean;
 };
 
+const hasRenderableDisplayValue = (value: unknown) =>
+	value !== 0 && hasDisplayValue(value);
+
 const getContent = (
 	field: InfoWrapperFieldConfig,
 	label: string | undefined,
@@ -325,7 +329,7 @@ const getContent = (
 					isPrivate={isPrivate}
 					action={action}
 				>
-					{tEnum(`${field.enumKey}.${String(value)}`)}
+					{getFieldOptionLabel(tEnum, String(field.enumKey), String(value))}
 				</InfoItem>
 			);
 		case "date":
@@ -381,16 +385,16 @@ const renderFieldContent = (
 			case "category":
 				return (
 					Boolean(getParentCategories(data)?.length) ||
-					hasDisplayValue(newValue)
+					hasRenderableDisplayValue(newValue)
 				);
 			case "link":
 			case "email":
 			case "phone":
 				return (
-					hasDisplayValue(value) ||
-					hasDisplayValue(resolvedHref) ||
-					hasDisplayValue(newValue) ||
-					hasDisplayValue(resolvedNewHref)
+					hasRenderableDisplayValue(value) ||
+					hasRenderableDisplayValue(resolvedHref) ||
+					hasRenderableDisplayValue(newValue) ||
+					hasRenderableDisplayValue(resolvedNewHref)
 				);
 			case "status":
 			case "text":
@@ -399,7 +403,10 @@ const renderFieldContent = (
 			case "date":
 			case "year":
 			case "title":
-				return hasDisplayValue(value) || hasDisplayValue(newValue);
+				return (
+					hasRenderableDisplayValue(value) ||
+					hasRenderableDisplayValue(newValue)
+				);
 			default:
 				return true;
 		}
@@ -451,7 +458,10 @@ const renderFieldContent = (
 			case "link":
 			case "email":
 			case "phone":
-				return hasDisplayValue(value) || hasDisplayValue(resolvedHref);
+				return (
+					hasRenderableDisplayValue(value) ||
+					hasRenderableDisplayValue(resolvedHref)
+				);
 			case "status":
 			case "text":
 			case "enum":
@@ -459,15 +469,16 @@ const renderFieldContent = (
 			case "date":
 			case "year":
 			case "title":
-				return hasDisplayValue(value);
+				return hasRenderableDisplayValue(value);
 			default:
-				return hasDisplayValue(value);
+				return hasRenderableDisplayValue(value);
 		}
 	})();
 
 	const hasNew =
 		newData !== undefined &&
-		(hasDisplayValue(newValue) || hasDisplayValue(resolvedNewHref));
+		(hasRenderableDisplayValue(newValue) ||
+			hasRenderableDisplayValue(resolvedNewHref));
 
 	const renderValueDisplay = (
 		displayValue: unknown,
@@ -486,7 +497,11 @@ const renderFieldContent = (
 			return tEnum(labelKey);
 		}
 		if (field.type === "enum") {
-			return tEnum(`${field.enumKey}.${String(displayValue)}`);
+			return getFieldOptionLabel(
+				tEnum,
+				String(field.enumKey),
+				String(displayValue),
+			);
 		}
 		if (field.type === "date" || field.type === "year") {
 			return formatDateByType(displayValue, field.type);
