@@ -12,6 +12,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useTranslation } from "react-i18next";
 import type { FormWrapperFieldConfig } from "./types";
+import { getFieldOptionLabel } from "@/lib/i18n/fieldLabels";
 
 type FundingSourceFormValue = {
 	source_name: string;
@@ -51,7 +52,7 @@ export function FundingSourceField({
 	const nullOptionLabel =
 		typeof field.nullOptionLabel === "string"
 			? field.nullOptionLabel
-			: tEnum("funding_source.none", {
+			: tEnum("field_names.funding_source.options.none", {
 					defaultValue: "Keine Angabe",
 				});
 	const addButtonLabel =
@@ -133,7 +134,7 @@ export function FundingSourceField({
 								)}
 								{fundingSourceOptions.map((option) => (
 									<SelectItem key={option} value={option}>
-										{tEnum(`funding_source.${option}`)}
+										{getFieldOptionLabel(tEnum, "funding_source", option)}
 									</SelectItem>
 								))}
 							</SelectContent>
