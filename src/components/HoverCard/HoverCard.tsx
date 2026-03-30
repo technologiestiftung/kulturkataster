@@ -51,7 +51,7 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 
 	return (
 		<div className="HoverCard-root">
-			<Card className="w-80 shadow-lg border-none contrast:invert-90">
+			<Card className="w-80 shadow-lg border-none ">
 				<CardHeader className="p-2">
 					<div className="flex gap-2 justify-between">
 						<CardTitle className="body1">{featureProperties.name}</CardTitle>
