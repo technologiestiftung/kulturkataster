@@ -28,6 +28,7 @@ export type AccountStoreState = {
 	roles: Role[];
 	categories: Category[];
 	institutions: Institution[];
+	activeInstitutionEdit: Institution | null;
 	submissions: Submission[];
 	entityAudits: EntityAudit[];
 	institutionPermissions: InstitutionActionPermissions;
@@ -41,6 +42,7 @@ export type AccountStoreState = {
 	setRoles: (roles: Role[]) => void;
 	setCategories: (categories: Category[]) => void;
 	setInstitutions: (institutions: Institution[]) => void;
+	setActiveInstitutionEdit: (institution: Institution | null) => void;
 	setEntityAudits: (entityAudits: EntityAudit[]) => void;
 	setInstitutionPermissions: (
 		permissions: InstitutionActionPermissions,
