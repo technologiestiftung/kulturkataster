@@ -253,7 +253,7 @@ const getStatusLabel = (
 			defaultValue: "Pending",
 		});
 	}
-	if (status === "approved") {
+	if (status === "approved" || status === "active") {
 		return t("auth.account.activity.status.approved", {
 			defaultValue: "Approved",
 		});
