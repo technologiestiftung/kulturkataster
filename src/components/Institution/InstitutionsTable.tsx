@@ -46,6 +46,9 @@ export function InstitutionsTable() {
 	const institutionPermissions = useAccountStore(
 		(state) => state.institutionPermissions,
 	);
+	const setActiveInstitutionEdit = useAccountStore(
+		(state) => state.setActiveInstitutionEdit,
+	);
 	const setDraft = useInstitutionDraftStore((state) => state.setDraft);
 	const setDraftMode = useInstitutionDraftStore((state) => state.setMode);
 	const setDraftStepId = useInstitutionDraftStore((state) => state.setStepId);
@@ -152,6 +155,10 @@ export function InstitutionsTable() {
 
 	const canEditInstitutionRow = (row: InstitutionTableRow) =>
 		!isSubmissionRow(row) && institutionPermissions.update;
+	const getInstitutionForEdit = (row: InstitutionTableRow) => {
+		if (isSubmissionRow(row)) return null;
+		return institutions.find((item) => item.id === row.id) ?? null;
+	};
 
 	const {
 		filters,
@@ -863,6 +870,7 @@ export function InstitutionsTable() {
 				return;
 			}
 			if (canEditInstitutionRow(row)) {
+				setActiveInstitutionEdit(getInstitutionForEdit(row));
 				router.push(toLocalePath(`/account/institutions/${row.id}/edit`));
 				return;
 			}
@@ -900,6 +908,20 @@ export function InstitutionsTable() {
 				router.push(toLocalePath("/institution/submission"));
 			}
 		},
+		onEditPrefetch: (row) => {
+			if (isSubmissionRow(row)) {
+				void router.prefetch(
+					toLocalePath(`/account/submissions/${row.submissionId}/edit`),
+				);
+				return;
+			}
+			if (canEditInstitutionRow(row)) {
+				setActiveInstitutionEdit(getInstitutionForEdit(row));
+				void router.prefetch(
+					toLocalePath(`/account/institutions/${row.id}/edit`),
+				);
+			}
+		},
 		getCanEdit: (row) => {
 			if (isSubmissionRow(row)) return true;
 			return (
@@ -910,6 +932,13 @@ export function InstitutionsTable() {
 			if (!isSubmissionRow(row)) return;
 			if (!canReviewSubmissionType(row.submissionType)) return;
 			router.push(toLocalePath(`/account/submissions/${row.submissionId}`));
+		},
+		onReviewPrefetch: (row) => {
+			if (!isSubmissionRow(row)) return;
+			if (!canReviewSubmissionType(row.submissionType)) return;
+			void router.prefetch(
+				toLocalePath(`/account/submissions/${row.submissionId}`),
+			);
 		},
 		getCanReview: (row) =>
 			isSubmissionRow(row) && canReviewSubmissionType(row.submissionType),
