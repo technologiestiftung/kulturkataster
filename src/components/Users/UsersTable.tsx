@@ -308,11 +308,17 @@ export function UsersTable() {
 		),
 		onReview: (row) =>
 			router.push(toLocalePath(`/account/users/${row.id}/review`)),
+		onReviewPrefetch: (row) => {
+			void router.prefetch(toLocalePath(`/account/users/${row.id}/review`));
+		},
 		getCanReview: (row) => (row.submissions?.length ?? 0) > 0,
 		reviewAriaLabel: t("userTable.actions.reviewClaims", {
 			defaultValue: "Claims prüfen",
 		}),
 		onEdit: (row) => router.push(toLocalePath(`/account/users/${row.id}/edit`)),
+		onEditPrefetch: (row) => {
+			void router.prefetch(toLocalePath(`/account/users/${row.id}/edit`));
+		},
 		emptyMessage: t("userTable.emptyMessage"),
 	};
 
