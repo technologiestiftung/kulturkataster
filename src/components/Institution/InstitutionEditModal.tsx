@@ -41,6 +41,12 @@ export function InstitutionEditModal({
 }: InstitutionEditModalProps) {
 	const { t } = useTranslation("content");
 	const institutions = useAccountStore((state) => state.institutions);
+	const activeInstitutionEdit = useAccountStore(
+		(state) => state.activeInstitutionEdit,
+	);
+	const setActiveInstitutionEdit = useAccountStore(
+		(state) => state.setActiveInstitutionEdit,
+	);
 	const removeInstitution = useAccountStore((state) => state.removeInstitution);
 	const upsertSubmission = useAccountStore((state) => state.upsertSubmission);
 	const [isDeleting, setIsDeleting] = useState(false);
@@ -60,8 +66,11 @@ export function InstitutionEditModal({
 
 	const resolvedInstitution = useMemo(() => {
 		if (!numericInstitutionId) return undefined;
+		if (activeInstitutionEdit?.id === numericInstitutionId) {
+			return activeInstitutionEdit;
+		}
 		return institutions.find((item) => item.id === numericInstitutionId);
-	}, [institutions, numericInstitutionId]);
+	}, [activeInstitutionEdit, institutions, numericInstitutionId]);
 
 	if (!numericInstitutionId) {
 		return (
@@ -101,8 +110,19 @@ export function InstitutionEditModal({
 		};
 	}, [didFetchInstitution, numericInstitutionId, resolvedInstitution]);
 
+	useEffect(() => {
+		if (
+			activeInstitutionEdit &&
+			activeInstitutionEdit.id !== numericInstitutionId
+		) {
+			setActiveInstitutionEdit(null);
+		}
+	}, [activeInstitutionEdit, numericInstitutionId, setActiveInstitutionEdit]);
+
 	const resolvedInstitutionWithFallback =
 		resolvedInstitution ?? fetchedInstitution ?? undefined;
+	const isLoadingInstitution =
+		!resolvedInstitutionWithFallback && !didFetchInstitution && !isDeleting;
 	const showNotFound =
 		didFetchInstitution && !resolvedInstitutionWithFallback && !isDeleting;
 
@@ -185,10 +205,6 @@ export function InstitutionEditModal({
 		upsertSubmission,
 	]);
 
-	if (!resolvedInstitutionWithFallback && !didFetchInstitution) {
-		return null;
-	}
-
 	if (showNotFound) {
 		return (
 			<Modal
@@ -211,6 +227,7 @@ export function InstitutionEditModal({
 			<InstitutionFormModal
 				mode="edit"
 				institution={resolvedInstitutionWithFallback}
+				isLoadingInstitution={isLoadingInstitution}
 				returnTo={returnTo}
 				routePath={routePath}
 				closeConfirmation={{
