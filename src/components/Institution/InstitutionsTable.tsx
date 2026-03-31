@@ -880,6 +880,7 @@ export function InstitutionsTable() {
 					data: institution as unknown as Record<string, unknown>,
 				});
 				const address = baseDraft.address ?? institution.address ?? null;
+				const contactPerson = institution.contact_person ?? null;
 				const categoryIds =
 					baseDraft.categoryIds ??
 					institution.categories?.map((category) => category.id) ??
@@ -905,6 +906,20 @@ export function InstitutionsTable() {
 					"address.cultural_area": address?.cultural_area ?? "",
 					"address.lat": address?.lat ?? "",
 					"address.lng": address?.lng ?? "",
+					contact_person_id:
+						baseDraft.contact_person_id ?? contactPerson?.id ?? "",
+					contact_person_first_name:
+						baseDraft.contact_person_first_name ??
+						contactPerson?.first_name ??
+						"",
+					contact_person_last_name:
+						baseDraft.contact_person_last_name ??
+						contactPerson?.last_name ??
+						"",
+					contact_person_email:
+						baseDraft.contact_person_email ?? contactPerson?.email ?? "",
+					contact_person_phone:
+						baseDraft.contact_person_phone ?? contactPerson?.phone ?? "",
 				});
 				router.push(toLocalePath("/institution/submission"));
 			}
