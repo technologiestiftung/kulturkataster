@@ -249,50 +249,46 @@ export async function updateSubmission(input: SubmissionUpdatePayload) {
 			authorizeTable(ctx, "submission", "update");
 			const scope = getTableScope(ctx, "submission", "update");
 			const ownerId = requireScopeOrUser(scope, currentUserId);
-			if (!ownerId) {
-				try {
-					return await submissionRepo.update(validatedInput.id, {
-						data:
-							validatedInput.data !== undefined
-								? normalizeSubmissionJson(validatedInput.data)
-								: undefined,
-						diff: normalizeOptionalSubmissionJson(validatedInput.diff),
-						meta: normalizeOptionalSubmissionJson(validatedInput.meta),
-						status: validatedInput.status ?? undefined,
-					});
-				} catch (error) {
-					logger.error("submission.update.db_failed", error, {
-						subsystem: "submission",
-						db_subsystem: "db",
-						actor_user_id: currentUserId,
-						submission_id: validatedInput.id,
-					});
-					throw error;
+			const where: Prisma.SubmissionWhereInput = ownerId
+				? { id: validatedInput.id, created_by: ownerId }
+				: { id: validatedInput.id };
+			const normalizedUpdate: Prisma.SubmissionUpdateInput = {
+				data:
+					validatedInput.data !== undefined
+						? normalizeSubmissionJson(validatedInput.data)
+						: undefined,
+				diff: normalizeOptionalSubmissionJson(validatedInput.diff),
+				meta: normalizeOptionalSubmissionJson(validatedInput.meta),
+				status: validatedInput.status ?? undefined,
+			};
+
+			if (ownerId) {
+				const existing = await submissionRepo.findFirst(where);
+				if (!existing) {
+					throw new Error("Not authorized to update this submission.");
 				}
 			}
-			const existing = await submissionRepo.findFirst({
-				id: validatedInput.id,
-				created_by: ownerId,
-			});
-			if (!existing) {
-				throw new Error("Not authorized to update this submission.");
-			}
 			try {
-				return await submissionRepo.update(existing.id, {
-					data:
-						validatedInput.data !== undefined
-							? normalizeSubmissionJson(validatedInput.data)
-							: undefined,
-					diff: normalizeOptionalSubmissionJson(validatedInput.diff),
-					meta: normalizeOptionalSubmissionJson(validatedInput.meta),
-					status: validatedInput.status ?? undefined,
-				});
+				const result = await submissionRepo.updateWhere(
+					where,
+					normalizedUpdate,
+				);
+				if (result.count === 0) {
+					throw new Error("Submission no longer exists.");
+				}
+				const updated = ownerId
+					? await submissionRepo.findFirst(where)
+					: await submissionRepo.findById(validatedInput.id);
+				if (!updated) {
+					throw new Error("Submission no longer exists.");
+				}
+				return updated;
 			} catch (error) {
 				logger.error("submission.update.db_failed", error, {
 					subsystem: "submission",
 					db_subsystem: "db",
 					actor_user_id: currentUserId,
-					submission_id: existing.id,
+					submission_id: validatedInput.id,
 				});
 				throw error;
 			}

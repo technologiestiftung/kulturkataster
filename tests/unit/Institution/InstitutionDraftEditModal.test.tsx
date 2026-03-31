@@ -38,6 +38,12 @@ vi.mock("@/components/Institution/InstitutionFormModal", () => ({
 								"address.streetLine": "Main 1",
 								"address.city": "Berlin",
 								"address.zip": "10115",
+								categoryFilters: {
+									district_keys: [],
+									category_keys: ["cat-a"],
+									child_category_keys: [],
+									include_closed: false,
+								},
 							},
 						});
 					}}
@@ -124,6 +130,13 @@ describe("InstitutionDraftEditModal", () => {
 				expect.objectContaining({ id: 11 }),
 			);
 		});
+		expect(mockedUpdateSubmission).toHaveBeenCalledWith(
+			expect.objectContaining({
+				data: expect.objectContaining({
+					categoryIds: [1],
+				}),
+			}),
+		);
 	});
 
 	it("shows not-found alert when submission does not exist", async () => {
