@@ -42,6 +42,7 @@ type InstitutionFormModalProps = {
 	mode: "create" | "edit";
 	institution?: Institution | null;
 	currentInstitutionId?: number;
+	isLoadingInstitution?: boolean;
 	onClose?: () => void;
 	routePath?: string;
 	returnTo?: string;
@@ -1131,6 +1132,7 @@ export function InstitutionFormModal({
 	mode,
 	institution,
 	currentInstitutionId,
+	isLoadingInstitution = false,
 	returnTo,
 	onClose: _onClose,
 	routePath,
@@ -1225,7 +1227,10 @@ export function InstitutionFormModal({
 	const [currentFormData, setCurrentFormData] =
 		useState<Record<string, unknown>>(initialFormValues);
 	const showNotFoundWithFallback =
-		mode === "edit" && !resolvedInstitutionWithFallback && !isDeleting;
+		mode === "edit" &&
+		!isLoadingInstitution &&
+		!resolvedInstitutionWithFallback &&
+		!isDeleting;
 
 	useEffect(() => {
 		setCurrentFormData(initialFormValues);
@@ -1438,8 +1443,8 @@ export function InstitutionFormModal({
 		: undefined;
 	const isWaitingForInstitution =
 		mode === "edit" &&
-		!resolvedInstitutionWithFallback &&
-		!showNotFoundWithFallback;
+		(isLoadingInstitution ||
+			(!resolvedInstitutionWithFallback && !showNotFoundWithFallback));
 
 	const formKeyValue = formKey ?? resolvedInstitutionWithFallback?.id ?? mode;
 

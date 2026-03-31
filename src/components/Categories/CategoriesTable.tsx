@@ -241,6 +241,9 @@ export function CategoriesTable() {
 		),
 		onEdit: (row) =>
 			router.push(toLocalePath(`/account/categories/${row.id}/edit`)),
+		onEditPrefetch: (row) => {
+			void router.prefetch(toLocalePath(`/account/categories/${row.id}/edit`));
+		},
 		emptyMessage: t("categoryTable.emptyMessage", {
 			defaultValue: "No categories found.",
 		}),

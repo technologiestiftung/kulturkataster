@@ -96,6 +96,9 @@ export function RolesTable() {
 			/>
 		),
 		onEdit: (row) => router.push(toLocalePath(`/account/roles/${row.id}/edit`)),
+		onEditPrefetch: (row) => {
+			void router.prefetch(toLocalePath(`/account/roles/${row.id}/edit`));
+		},
 		emptyMessage: t("roleTable.emptyMessage"),
 	};
 
