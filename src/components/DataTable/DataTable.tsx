@@ -953,13 +953,19 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 																							variant="surface"
 																							radius="full"
 																							onMouseEnter={() =>
-																								config.onReviewPrefetch?.(row.original)
+																								config.onReviewPrefetch?.(
+																									row.original,
+																								)
 																							}
 																							onFocus={() =>
-																								config.onReviewPrefetch?.(row.original)
+																								config.onReviewPrefetch?.(
+																									row.original,
+																								)
 																							}
 																							onTouchStart={() =>
-																								config.onReviewPrefetch?.(row.original)
+																								config.onReviewPrefetch?.(
+																									row.original,
+																								)
 																							}
 																							onClick={(event) => {
 																								event.stopPropagation();
@@ -981,13 +987,19 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 																							variant="surface"
 																							radius="full"
 																							onMouseEnter={() =>
-																								config.onEditPrefetch?.(row.original)
+																								config.onEditPrefetch?.(
+																									row.original,
+																								)
 																							}
 																							onFocus={() =>
-																								config.onEditPrefetch?.(row.original)
+																								config.onEditPrefetch?.(
+																									row.original,
+																								)
 																							}
 																							onTouchStart={() =>
-																								config.onEditPrefetch?.(row.original)
+																								config.onEditPrefetch?.(
+																									row.original,
+																								)
 																							}
 																							onClick={(event) => {
 																								event.stopPropagation();
