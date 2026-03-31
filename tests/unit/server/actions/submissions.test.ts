@@ -31,7 +31,7 @@ vi.mock("@/server/utils/rbac", () => ({
 	requireScopeOrUser: (...args: unknown[]) => requireScopeOrUserMock(...args),
 }));
 
-const updateMock = vi.fn();
+const updateWhereMock = vi.fn();
 const createMock = vi.fn();
 const createNoteMock = vi.fn();
 const findByIdMock = vi.fn();
@@ -39,7 +39,8 @@ const findFirstMock = vi.fn();
 
 vi.mock("@/server/data/submissionRepo", () => ({
 	submissionRepo: {
-		update: (id: number, data: unknown) => updateMock(id, data),
+		updateWhere: (where: unknown, data: unknown) =>
+			updateWhereMock(where, data),
 		create: (data: unknown) => createMock(data),
 		createNote: (data: unknown) => createNoteMock(data),
 		findById: (id: number) => findByIdMock(id),
@@ -51,7 +52,7 @@ describe("server actions: submissions", () => {
 	beforeEach(() => {
 		getTableScopeMock.mockReset();
 		requireScopeOrUserMock.mockReset();
-		updateMock.mockReset();
+		updateWhereMock.mockReset();
 		createMock.mockReset();
 		createNoteMock.mockReset();
 		findByIdMock.mockReset();
@@ -110,47 +111,55 @@ describe("server actions: submissions", () => {
 	it("updateSubmission allows admins to update any submission", async () => {
 		getTableScopeMock.mockReturnValue("all");
 		requireScopeOrUserMock.mockReturnValue(null);
-		updateMock.mockResolvedValue({ id: 1 });
+		updateWhereMock.mockResolvedValue({ count: 1 });
+		findByIdMock.mockResolvedValue({ id: 1, data: { foo: "bar" } });
 
-		await updateSubmission({ id: 1, data: { foo: "bar" } });
+		const result = await updateSubmission({ id: 1, data: { foo: "bar" } });
 
-		expect(updateMock).toHaveBeenCalledWith(
-			1,
+		expect(updateWhereMock).toHaveBeenCalledWith(
+			{ id: 1 },
 			expect.objectContaining({ data: { foo: "bar" } }),
 		);
+		expect(result).toEqual({ id: 1, data: { foo: "bar" } });
 	});
 
 	it("updateSubmission allows edits on non-draft submissions for own scope", async () => {
 		getTableScopeMock.mockReturnValue("own");
 		requireScopeOrUserMock.mockReturnValue("user-1");
 		findFirstMock.mockResolvedValue({ id: 1, status: "approval_pending" });
-		updateMock.mockResolvedValue({ id: 1 });
+		updateWhereMock.mockResolvedValue({ count: 1 });
+		findFirstMock.mockResolvedValueOnce({ id: 1, status: "approval_pending" });
+		findFirstMock.mockResolvedValueOnce({ id: 1, data: { foo: "bar" } });
 
-		await updateSubmission({ id: 1, data: { foo: "bar" } });
-		expect(updateMock).toHaveBeenCalledWith(
-			1,
+		const result = await updateSubmission({ id: 1, data: { foo: "bar" } });
+		expect(updateWhereMock).toHaveBeenCalledWith(
+			{ id: 1, created_by: "user-1" },
 			expect.objectContaining({ data: { foo: "bar" } }),
 		);
+		expect(result).toEqual({ id: 1, data: { foo: "bar" } });
 	});
 
 	it("updateSubmission updates draft submissions for own scope", async () => {
 		getTableScopeMock.mockReturnValue("own");
 		requireScopeOrUserMock.mockReturnValue("user-1");
-		findFirstMock.mockResolvedValue({ id: 1, status: "draft" });
-		updateMock.mockResolvedValue({ id: 1 });
+		findFirstMock.mockResolvedValueOnce({ id: 1, status: "draft" });
+		updateWhereMock.mockResolvedValue({ count: 1 });
+		findFirstMock.mockResolvedValueOnce({ id: 1, data: { foo: "bar" } });
 
-		await updateSubmission({ id: 1, data: { foo: "bar" } });
+		const result = await updateSubmission({ id: 1, data: { foo: "bar" } });
 
-		expect(updateMock).toHaveBeenCalledWith(
-			1,
+		expect(updateWhereMock).toHaveBeenCalledWith(
+			{ id: 1, created_by: "user-1" },
 			expect.objectContaining({ data: { foo: "bar" } }),
 		);
+		expect(result).toEqual({ id: 1, data: { foo: "bar" } });
 	});
 
 	it("updateSubmission normalizes tagged DateTime data", async () => {
 		getTableScopeMock.mockReturnValue("all");
 		requireScopeOrUserMock.mockReturnValue(null);
-		updateMock.mockResolvedValue({ id: 1 });
+		updateWhereMock.mockResolvedValue({ count: 1 });
+		findByIdMock.mockResolvedValue({ id: 1 });
 
 		await updateSubmission({
 			id: 1,
@@ -162,13 +171,23 @@ describe("server actions: submissions", () => {
 			},
 		});
 
-		expect(updateMock).toHaveBeenCalledWith(
-			1,
+		expect(updateWhereMock).toHaveBeenCalledWith(
+			{ id: 1 },
 			expect.objectContaining({
 				data: {
 					established_since: "2019-01-01T00:00:00.000Z",
 				},
 			}),
+		);
+	});
+
+	it("updateSubmission throws a controlled error when the submission no longer exists", async () => {
+		getTableScopeMock.mockReturnValue("all");
+		requireScopeOrUserMock.mockReturnValue(null);
+		updateWhereMock.mockResolvedValue({ count: 0 });
+
+		await expect(updateSubmission({ id: 999, data: { foo: "bar" } })).rejects.toThrow(
+			"Submission no longer exists.",
 		);
 	});
 
