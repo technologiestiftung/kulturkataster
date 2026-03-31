@@ -68,6 +68,7 @@ export const buildInstitutionFormInitialValues = (
 			address?.street_number,
 		),
 		"address.city": address?.city ?? undefined,
+		"address.district": address?.district ?? undefined,
 		"address.zip": address?.zipcode ?? undefined,
 		"address.address_suffix": address?.address_suffix ?? undefined,
 		"address.neighbourhood": address?.neighbourhood ?? undefined,
@@ -279,7 +280,9 @@ export function buildInstitutionForFormFromDraft(
 				toOptionalText(draft["address.city"]) ??
 				toOptionalText(nestedAddress?.city) ??
 				"",
-			district: toOptionalText(nestedAddress?.district),
+			district:
+				toOptionalText(draft["address.district"]) ??
+				toOptionalText(nestedAddress?.district),
 			neighbourhood:
 				toOptionalText(draft["address.neighbourhood"]) ??
 				toOptionalText(nestedAddress?.neighbourhood),
