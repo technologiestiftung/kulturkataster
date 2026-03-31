@@ -899,6 +899,7 @@ export function InstitutionsTable() {
 					),
 					"address.city": address?.city ?? "",
 					"address.zip": address?.zipcode ?? "",
+					"address.district": address?.district ?? "",
 					"address.address_suffix": address?.address_suffix ?? "",
 					"address.neighbourhood": address?.neighbourhood ?? "",
 					"address.cultural_area": address?.cultural_area ?? "",
