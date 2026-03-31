@@ -8,10 +8,10 @@ import {
 	splitStreetLine,
 	toFormBoolean,
 	toDate,
-	toNumberArray,
 	toOptionalNumber,
 	toOptionalText,
 } from "@/lib/utils/formUtils";
+import { resolveCategoryIdsFromDraft } from "@/lib/utils/institutionCategoryUtils";
 
 const dateToInputValue = (value: unknown): string => {
 	const parsed = toDate(value);
@@ -163,7 +163,7 @@ export function buildInstitutionForFormFromDraft(
 		);
 	const { street, streetNumber } = splitStreetLine(streetLine ?? "");
 
-	const categoryIds = toNumberArray(draft.categoryIds);
+	const categoryIds = resolveCategoryIdsFromDraft(draft, categoryGroups);
 	const categoryMap = new Map<number, Category>();
 	categoryGroups.forEach((category) => {
 		categoryMap.set(category.id, category);
@@ -175,6 +175,11 @@ export function buildInstitutionForFormFromDraft(
 	const contactPersonNested =
 		typeof draft.contact_person === "object" && draft.contact_person !== null
 			? (draft.contact_person as Record<string, unknown>)
+			: null;
+	const originalContactPerson =
+		typeof originalInstitution?.contact_person === "object" &&
+		originalInstitution.contact_person !== null
+			? (originalInstitution.contact_person as Record<string, unknown>)
 			: null;
 
 	const now = new Date();
@@ -255,16 +260,20 @@ export function buildInstitutionForFormFromDraft(
 			id: toOptionalNumber(contactPersonNested?.id) ?? 0,
 			first_name:
 				toOptionalText(draft.contact_person_first_name) ??
-				toOptionalText(contactPersonNested?.first_name),
+				toOptionalText(contactPersonNested?.first_name) ??
+				toOptionalText(originalContactPerson?.first_name),
 			last_name:
 				toOptionalText(draft.contact_person_last_name) ??
-				toOptionalText(contactPersonNested?.last_name),
+				toOptionalText(contactPersonNested?.last_name) ??
+				toOptionalText(originalContactPerson?.last_name),
 			email:
 				toOptionalText(draft.contact_person_email) ??
-				toOptionalText(contactPersonNested?.email),
+				toOptionalText(contactPersonNested?.email) ??
+				toOptionalText(originalContactPerson?.email),
 			phone:
 				toOptionalText(draft.contact_person_phone) ??
-				toOptionalText(contactPersonNested?.phone),
+				toOptionalText(contactPersonNested?.phone) ??
+				toOptionalText(originalContactPerson?.phone),
 			created_at: now,
 			updated_at: now,
 		},
