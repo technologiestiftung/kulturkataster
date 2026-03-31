@@ -37,12 +37,12 @@ export function MapListShell() {
 	}
 
 	return (
-		<div className={"relative flex min-h-0 flex-1 h-full w-full overflow-hidden"}>
+		<div
+			className={"relative flex min-h-0 flex-1 h-full w-full overflow-hidden"}
+		>
 			<div
 				className={
-					routeMode === "map"
-						? "relative h-full min-h-0 w-full"
-						: "hidden"
+					routeMode === "map" ? "relative h-full min-h-0 w-full" : "hidden"
 				}
 				aria-hidden={routeMode !== "map"}
 			>
@@ -52,7 +52,10 @@ export function MapListShell() {
 			</div>
 			{routeMode === "list" ? (
 				<div className="relative flex-1 h-full min-h-0 w-full items-center justify-items-center">
-					<section className="h-full min-h-0 w-full" aria-label={t("listView.title")}>
+					<section
+						className="h-full min-h-0 w-full"
+						aria-label={t("listView.title")}
+					>
 						<ListView />
 					</section>
 				</div>
