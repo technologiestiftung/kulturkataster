@@ -72,9 +72,7 @@ describe("buildInstitutionForFormFromDraft", () => {
 			updated_at: new Date(),
 		} as never);
 
-		expect(initialValues["address.district"]).toBe(
-			"Friedrichshain-Kreuzberg",
-		);
+		expect(initialValues["address.district"]).toBe("Friedrichshain-Kreuzberg");
 	});
 
 	it("maps district from flat draft fields into the draft edit institution", () => {
@@ -127,8 +125,9 @@ describe("buildInstitutionForFormFromDraft", () => {
 			] as never,
 		);
 
-		expect(result.categories.map((category) => category.id).sort((a, b) => a - b))
-			.toEqual([1, 2]);
+		expect(
+			result.categories.map((category) => category.id).sort((a, b) => a - b),
+		).toEqual([1, 2]);
 	});
 
 	it("hydrates contact person from originalInstitution fallback", () => {

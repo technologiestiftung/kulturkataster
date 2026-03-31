@@ -269,7 +269,10 @@ export async function updateSubmission(input: SubmissionUpdatePayload) {
 				}
 			}
 			try {
-				const result = await submissionRepo.updateWhere(where, normalizedUpdate);
+				const result = await submissionRepo.updateWhere(
+					where,
+					normalizedUpdate,
+				);
 				if (result.count === 0) {
 					throw new Error("Submission no longer exists.");
 				}

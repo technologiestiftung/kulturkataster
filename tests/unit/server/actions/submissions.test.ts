@@ -186,9 +186,9 @@ describe("server actions: submissions", () => {
 		requireScopeOrUserMock.mockReturnValue(null);
 		updateWhereMock.mockResolvedValue({ count: 0 });
 
-		await expect(updateSubmission({ id: 999, data: { foo: "bar" } })).rejects.toThrow(
-			"Submission no longer exists.",
-		);
+		await expect(
+			updateSubmission({ id: 999, data: { foo: "bar" } }),
+		).rejects.toThrow("Submission no longer exists.");
 	});
 
 	it("saveSubmissionNote creates a note and returns the refreshed submission", async () => {
