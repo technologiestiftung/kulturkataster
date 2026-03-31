@@ -46,7 +46,7 @@ const MapInitializer: FC = ({}) => {
 	}, [localizedServices, setConfig]);
 
 	return (
-		<div className="items-center h-full flex-1 justify-items-center h-full relative w-full">
+		<div className="items-center flex-1 justify-items-center h-full relative w-full">
 			<MapView />
 		</div>
 	);
