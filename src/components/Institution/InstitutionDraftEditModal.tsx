@@ -20,6 +20,7 @@ import { AlertDialog } from "../ui/alert-dialog";
 import { showSuccessToast } from "@/lib/utils/feedbackToast";
 import { buildInstitutionForFormFromDraft } from "@/lib/utils/institutionFormAdapter";
 import { reportClientTelemetry } from "@/lib/utils/clientTelemetry";
+import { resolveCategoryIdsFromDraft } from "@/lib/utils/institutionCategoryUtils";
 
 type InstitutionDraftEditModalProps = {
 	returnTo?: string;
@@ -94,9 +95,14 @@ export function InstitutionDraftEditModal({
 	const handleSubmit = useCallback(
 		async (data: Record<string, unknown>) => {
 			try {
+				const categoryIds = resolveCategoryIdsFromDraft(
+					data as Record<string, unknown>,
+					categories,
+				);
 				const payload: Record<string, unknown> = {
 					...data,
 					address: buildAddressFromFormData(data),
+					categoryIds,
 				};
 				if (!resolvedSubmissionWithFallback || !hasSubmissionId) return;
 				const sourceInstitution =
@@ -141,6 +147,7 @@ export function InstitutionDraftEditModal({
 			shouldRefresh,
 			hasSubmissionId,
 			resolvedSubmissionWithFallback,
+			categories,
 		],
 	);
 
