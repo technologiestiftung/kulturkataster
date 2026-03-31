@@ -31,7 +31,7 @@ import { useAppStore } from "@/lib/store/appStore";
 import { allowedLocales, defaultLocale } from "@/i18n/config";
 import { localePath } from "@/lib/utils/localePath";
 import KukaSmallLogo from "@/logos/kuka-small.svg";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { usePathname, useRouter } from "next/navigation";
 import { LayerTreeContent } from "@/components/Map/LayerTree/LayerTree";
@@ -160,6 +160,40 @@ const buildLocaleToggledPath = (
 	return localePath(targetLocale, withoutLocale);
 };
 
+function MobileSheetHandle({
+	onPointerDown,
+}: {
+	onPointerDown?: React.PointerEventHandler<HTMLDivElement>;
+}) {
+	return (
+		<div
+			className="md:hidden flex justify-center pb-2 touch-none"
+			onPointerDown={onPointerDown}
+		>
+			<div className="w-10 h-1 bg-muted-foreground/90 rounded-full"></div>
+		</div>
+	);
+}
+
+function MobileSheetHeader({
+	title,
+	onHandlePointerDown,
+}: {
+	title: string;
+	onHandlePointerDown?: React.PointerEventHandler<HTMLDivElement>;
+}) {
+	return (
+		<>
+			<div className="gap-3.5 p-2 h-16 shrink-0 shadow-sm z-10">
+				<MobileSheetHandle onPointerDown={onHandlePointerDown} />
+			</div>
+			<SheetHeader className="sr-only">
+				<SheetTitle>{title}</SheetTitle>
+			</SheetHeader>
+		</>
+	);
+}
+
 export function Menu({
 	sidebar,
 	...props
@@ -257,6 +291,10 @@ export function Menu({
 	const setIsLayerTreeOpen = useAppStore((state) => state.setIsLayerTreeOpen);
 
 	const isMobileLayerTreeRoute = isMobile && isLayerTreeOpen && isMapRoute;
+	const dragStartYRef = useRef<number | null>(null);
+	const [mobileLayerTreeDragOffset, setMobileLayerTreeDragOffset] = useState(0);
+	const [isDraggingMobileLayerTree, setIsDraggingMobileLayerTree] =
+		useState(false);
 
 	const handleLogoClick = () => {
 		setFirstTimeUser(true);
@@ -272,6 +310,70 @@ export function Menu({
 	const handleMobileLayerTreeOpenChange = (nextOpen: boolean) => {
 		setIsLayerTreeOpen(nextOpen);
 	};
+
+	const resetMobileLayerTreeDrag = () => {
+		dragStartYRef.current = null;
+		setIsDraggingMobileLayerTree(false);
+		setMobileLayerTreeDragOffset(0);
+	};
+
+	const handleMobileLayerTreeDragStart = (clientY: number) => {
+		if (!isMobileLayerTreeRoute) return;
+		dragStartYRef.current = clientY;
+		setIsDraggingMobileLayerTree(true);
+	};
+
+	const handleMobileLayerTreeDragMove = (clientY: number) => {
+		const startY = dragStartYRef.current;
+		if (!isMobileLayerTreeRoute || startY === null) return;
+		setMobileLayerTreeDragOffset(Math.max(0, clientY - startY));
+	};
+
+	const handleMobileLayerTreeDragEnd = () => {
+		if (!isMobileLayerTreeRoute) {
+			resetMobileLayerTreeDrag();
+			return;
+		}
+
+		const closeThreshold = 80;
+		const shouldClose = mobileLayerTreeDragOffset > closeThreshold;
+		resetMobileLayerTreeDrag();
+		if (shouldClose) {
+			handleMobileLayerTreeOpenChange(false);
+		}
+	};
+
+	useEffect(() => {
+		if (!isDraggingMobileLayerTree) return;
+
+		const handlePointerMove = (event: PointerEvent) => {
+			handleMobileLayerTreeDragMove(event.clientY);
+		};
+
+		const handlePointerEnd = () => {
+			handleMobileLayerTreeDragEnd();
+		};
+
+		window.addEventListener("pointermove", handlePointerMove);
+		window.addEventListener("pointerup", handlePointerEnd);
+		window.addEventListener("pointercancel", handlePointerEnd);
+
+		return () => {
+			window.removeEventListener("pointermove", handlePointerMove);
+			window.removeEventListener("pointerup", handlePointerEnd);
+			window.removeEventListener("pointercancel", handlePointerEnd);
+		};
+	}, [
+		isDraggingMobileLayerTree,
+		isMobileLayerTreeRoute,
+		mobileLayerTreeDragOffset,
+	]);
+
+	useEffect(() => {
+		if (!isMobileLayerTreeRoute) {
+			resetMobileLayerTreeDrag();
+		}
+	}, [isMobileLayerTreeRoute]);
 
 	const handleItemClick = (item: MenuItem) => {
 		if (item.id === "language") {
@@ -461,7 +563,17 @@ export function Menu({
 			>
 				<SheetContent
 					side="bottom"
-					className="h-[80vh] p-0 bottom-20"
+					className="h-[60vh] p-0 bottom-20"
+					style={
+						isMobileLayerTreeRoute && mobileLayerTreeDragOffset > 0
+							? {
+									transform: `translateY(${mobileLayerTreeDragOffset}px)`,
+									transitionDuration: isDraggingMobileLayerTree
+										? "0ms"
+										: undefined,
+								}
+							: undefined
+					}
 					onClose={() => {
 						if (isMobileInstitutionDetailRoute) {
 							handleMobileDetailsOpenChange(false);
@@ -470,23 +582,20 @@ export function Menu({
 						}
 					}}
 				>
-					{
-						//TODO: refactor this as we have the same header institution details and layer tree and only the title changes
-						isMobileLayerTreeRoute && (
-							<div className="gap-3.5 p-2 h-16 shrink-0 shadow-sm z-10">
-								<div className="flex justify-center pb-2">
-									<div className="w-10 h-1 bg-muted-foreground/90 rounded-full"></div>
-								</div>
-							</div>
-						)
-					}
-					<SheetHeader className="sr-only">
-						<SheetTitle>
-							{isMobileInstitutionDetailRoute
+					<MobileSheetHeader
+						title={
+							isMobileInstitutionDetailRoute
 								? t("institution.showDetails")
-								: t("map.layerTreeTitle")}
-						</SheetTitle>
-					</SheetHeader>
+								: t("map.layerTreeTitle")
+						}
+						onHandlePointerDown={
+							isMobileLayerTreeRoute
+								? (event) => {
+										handleMobileLayerTreeDragStart(event.clientY);
+									}
+								: undefined
+						}
+					/>
 					<div
 						className={
 							isMobileInstitutionDetailRoute
