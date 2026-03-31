@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { AccountLayoutClient } from "@/components/Account/AccountLayoutClient";
+import { AccountAutoRefresh } from "@/components/Account/AccountAutoRefresh";
 import { AccountStoreInitializer } from "@/components/Account/AccountStoreInitializer";
 import { canTable, getTableScope } from "@/server/utils/rbac";
 import { getAccountBootstrapData } from "@/server/utils/accountBootstrap";
@@ -8,9 +9,17 @@ type AccountLayoutProps = {
 	children: ReactNode;
 };
 
+const resolveAccountAutoRefreshIntervalMs = () => {
+	const rawValue = process.env.ACCOUNT_AUTO_REFRESH_INTERVAL_MS;
+	if (!rawValue) return 10_000;
+	const parsed = Number(rawValue);
+	return Number.isFinite(parsed) && parsed > 0 ? parsed : 10_000;
+};
+
 export default async function AccountLayout({ children }: AccountLayoutProps) {
 	const accountData = await getAccountBootstrapData();
 	if (!accountData) return null;
+	const accountAutoRefreshIntervalMs = resolveAccountAutoRefreshIntervalMs();
 	const {
 		ctx,
 		currentProfile,
@@ -68,6 +77,7 @@ export default async function AccountLayout({ children }: AccountLayoutProps) {
 				institutionPermissions={institutionPermissions}
 				institutionFieldPermissions={institutionFieldPermissions}
 			/>
+			<AccountAutoRefresh intervalMs={accountAutoRefreshIntervalMs} />
 			<AccountLayoutClient
 				allowedTabs={allowedTabs}
 				currentProfile={currentProfile}
