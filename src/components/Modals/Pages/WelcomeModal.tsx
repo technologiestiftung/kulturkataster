@@ -42,7 +42,7 @@ export function WelcomeModal() {
 			}}
 		>
 			<DialogContent variant="centered" className="flex" showBackButton={false}>
-				<div className="flex flex-col md:flex-row gap-8 py-12 md:pt-32 md:pb-12 px-6">
+				<div className="flex flex-col md:flex-row gap-8 py-12 md:pt-32 md:pb-12 px-6 md:bg-transparent bg-background">
 					<div className="md:w-1/4 flex justify-center align-start h-full">
 						<KukaLargeLogo
 							title="Kulturkataster Berlin, Logo"

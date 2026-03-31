@@ -17,7 +17,7 @@ const MapNavigationControls: FC<MapNavigationControlsProps> = ({
 
 	return (
 		<div
-			className={`absolute bottom-10 right-4 flex flex-col gap-2 z-10 ${isMobile && openMobile ? "hidden" : ""}`}
+			className={`absolute pb-12 md:pb-0 bottom-10 right-4 flex flex-col gap-2 z-10 ${isMobile && openMobile ? "hidden" : ""}`}
 		>
 			{/* LayerTree button - only on mobile */}
 			{isMobile && (
