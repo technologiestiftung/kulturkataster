@@ -310,16 +310,7 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
 									className="text-primary-dark underline"
 								>
 									{t("auth.register.termsLink")}
-								</Link>{" "}
-								{t("auth.register.termsSeparator")}{" "}
-								<Link
-									href={"https://dsgvo-info.cortina-consult.de/kulturkataster/"}
-									className="text-primary-dark underline"
-									target="_blank"
-								>
-									{t("auth.register.privacyLink")}
 								</Link>
-								{t("auth.register.privacySuffix")}
 							</span>
 						),
 						type: "checkbox",
