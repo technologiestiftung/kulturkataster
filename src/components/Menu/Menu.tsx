@@ -363,7 +363,11 @@ export function Menu({
 			window.removeEventListener("pointerup", handlePointerEnd);
 			window.removeEventListener("pointercancel", handlePointerEnd);
 		};
-	}, [isDraggingMobileLayerTree, isMobileLayerTreeRoute, mobileLayerTreeDragOffset]);
+	}, [
+		isDraggingMobileLayerTree,
+		isMobileLayerTreeRoute,
+		mobileLayerTreeDragOffset,
+	]);
 
 	useEffect(() => {
 		if (!isMobileLayerTreeRoute) {
@@ -564,7 +568,9 @@ export function Menu({
 						isMobileLayerTreeRoute && mobileLayerTreeDragOffset > 0
 							? {
 									transform: `translateY(${mobileLayerTreeDragOffset}px)`,
-									transitionDuration: isDraggingMobileLayerTree ? "0ms" : undefined,
+									transitionDuration: isDraggingMobileLayerTree
+										? "0ms"
+										: undefined,
 								}
 							: undefined
 					}
