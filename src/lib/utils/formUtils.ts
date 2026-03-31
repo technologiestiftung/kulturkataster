@@ -215,6 +215,7 @@ type InstitutionAddressPayload = {
 	street_number: string;
 	city: string | null;
 	zipcode: string | null;
+	district: string | null;
 	lat: number | null;
 	lng: number | null;
 	address_suffix: string | null;
@@ -480,6 +481,7 @@ const buildInstitutionAddressPayload = (
 			streetLineKey?: string;
 			cityKey?: string;
 			zipKey?: string;
+			districtKey?: string;
 			latKey?: string;
 			lngKey?: string;
 			addressSuffixKey?: string;
@@ -497,6 +499,9 @@ const buildInstitutionAddressPayload = (
 		street_number: streetNumber,
 		city: toOptionalText(formData[options?.keys?.cityKey ?? "address.city"]),
 		zipcode: toOptionalText(formData[options?.keys?.zipKey ?? "address.zip"]),
+		district: toOptionalText(
+			formData[options?.keys?.districtKey ?? "address.district"],
+		),
 		lat:
 			toOptionalNumber(formData[options?.keys?.latKey ?? "address.lat"]) ??
 			null,
