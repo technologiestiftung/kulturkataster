@@ -69,7 +69,7 @@ export function ForgotPasswordForm({ onSuccess }: { onSuccess?: () => void }) {
 	};
 
 	return (
-		<div className="w-full max-w-3xl mx-auto">
+		<div className="w-full md:max-w-3xl mx-auto">
 			<div className="text-start font-bold mb-10">
 				<h1 className="">{t("auth.forgot.title")}</h1>
 				<p className="">{t("auth.forgot.subtitle")}</p>

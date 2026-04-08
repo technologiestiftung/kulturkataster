@@ -2,6 +2,7 @@
 
 import mapConfig from "@/config/config.json";
 import services from "@/config/resources/services.json";
+import servicesEn from "@/config/resources/services.en.json";
 import { useMapStore } from "@/lib/store/mapStore";
 import {
 	LayerElement,
@@ -10,14 +11,18 @@ import {
 	MapConfig,
 } from "@/types";
 import { FC, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import MapView from "../Map";
 
 const MapInitializer: FC = ({}) => {
+	const { i18n } = useTranslation("common");
 	const setConfig = useMapStore((state) => state.setConfig);
+	const isGerman = i18n.resolvedLanguage?.startsWith("de");
+	const localizedServices = isGerman ? services : servicesEn;
 
 	useEffect(() => {
 		const servicesMap = new Map(
-			services.map((service) => [service.id, service]),
+			localizedServices.map((service) => [service.id, service]),
 		);
 
 		const enrichLayerElements = (elements: LayerElementBase[]) =>
@@ -38,10 +43,10 @@ const MapInitializer: FC = ({}) => {
 		);
 
 		setConfig(enrichedConfig as unknown as MapConfig);
-	}, [setConfig]);
+	}, [localizedServices, setConfig]);
 
 	return (
-		<div className="items-center h-full flex-1 justify-items-center h-full relative w-full">
+		<div className="items-center flex-1 justify-items-center h-full relative w-full">
 			<MapView />
 		</div>
 	);

@@ -3,6 +3,10 @@ import { NextResponse } from "next/server";
 import { match } from "@formatjs/intl-localematcher";
 import Negotiator from "negotiator";
 import { allowedLocales, defaultLocale } from "@/i18n/config";
+import {
+	buildForwardedRequestHeaders,
+	REQUEST_ID_HEADER,
+} from "@/server/logging/requestContext";
 import { updateSession } from "./lib/supabase-proxy";
 
 function getPreferredLocale(request: NextRequest): string {
@@ -22,6 +26,11 @@ function pathnameHasLocale(pathname: string): boolean {
 
 export async function proxy(request: NextRequest) {
 	const { pathname } = request.nextUrl;
+	const forwardedHeaders = buildForwardedRequestHeaders(request.headers, {
+		method: request.method,
+		pathname,
+	});
+	const requestId = forwardedHeaders.get(REQUEST_ID_HEADER);
 
 	// Keep API routes and public static resources untouched.
 	if (
@@ -32,11 +41,15 @@ export async function proxy(request: NextRequest) {
 		const locale = getPreferredLocale(request);
 		const url = request.nextUrl.clone();
 		url.pathname = pathname === "/" ? `/${locale}` : `/${locale}${pathname}`;
-		return NextResponse.redirect(url);
+		const response = NextResponse.redirect(url);
+		if (requestId) {
+			response.headers.set(REQUEST_ID_HEADER, requestId);
+		}
+		return response;
 	}
 
 	// update user's auth session
-	return await updateSession(request);
+	return await updateSession(request, forwardedHeaders);
 }
 
 export const config = {

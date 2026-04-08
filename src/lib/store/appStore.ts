@@ -1,7 +1,11 @@
 import { AppStoreState } from "@/types/app";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { createSetBaseFontSize, createSetContrastMode } from "./appActions";
+import {
+	createSetBaseFontSize,
+	createSetContrastMode,
+	createSetReducedMotion,
+} from "./appActions";
 
 export const useAppStore = create<AppStoreState>()(
 	persist(
@@ -21,6 +25,8 @@ export const useAppStore = create<AppStoreState>()(
 				}
 				set({ isLargeTextMode: isLargeText });
 			},
+			isReducedMotion: false,
+			setIsReducedMotion: createSetReducedMotion(set),
 			baseFontSize: 16,
 			setBaseFontSize: createSetBaseFontSize(set),
 			isLayerTreeOpen: false,
@@ -33,6 +39,7 @@ export const useAppStore = create<AppStoreState>()(
 				viewMode: state.viewMode,
 				isContrastMode: state.isContrastMode,
 				isLargeTextMode: state.isLargeTextMode,
+				isReducedMotion: state.isReducedMotion,
 				baseFontSize: state.baseFontSize,
 			}),
 		},

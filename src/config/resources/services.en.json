@@ -1,0 +1,919 @@
+[
+	{
+		"id": "basemap",
+		"name": "Basemap",
+		"epsg": "EPSG:3857",
+		"url": "https://sgx.geodatenzentrum.de/gdz_basemapde_vektor/tiles/v2/bm_web_de_3857/{z}/{x}/{y}.pbf",
+		"typ": "VectorTile",
+		"transparency": 0,
+		"visibility": true,
+		"legend": false,
+		"gfiAttributes": "ignore",
+		"gfiTheme": "default",
+		"vtStyles": [
+			{
+				"id": "basemap_style",
+				"name": "Day view",
+				"url": "/resources/basemap-style.json",
+				"defaultStyle": true
+			}
+		],
+		"preview": {
+			"src": "/resources/preview-img/default.png"
+		}
+	},
+	{
+		"id": "bm_web_gry",
+		"name": "Basemap",
+		"epsg": "EPSG:3857",
+		"url": "https://sgx.geodatenzentrum.de/gdz_basemapde_vektor/tiles/v2/bm_web_de_3857/{z}/{x}/{y}.pbf",
+		"typ": "VectorTile",
+		"transparency": 0,
+		"visibility": true,
+		"legend": false,
+		"gfiAttributes": "ignore",
+		"gfiTheme": "default",
+		"vtStyles": [
+			{
+				"id": "basemap_style",
+				"name": "Grayscale view",
+				"url": "/resources/bm_web_gry.json",
+				"defaultStyle": true
+			}
+		],
+		"preview": {
+			"src": "/resources/preview-img/default.png"
+		}
+	},
+	{
+		"id": "bm_web_gry:contrast",
+		"name": "Basemap",
+		"epsg": "EPSG:3857",
+		"url": "https://sgx.geodatenzentrum.de/gdz_basemapde_vektor/tiles/v2/bm_web_de_3857/{z}/{x}/{y}.pbf",
+		"typ": "VectorTile",
+		"transparency": 0,
+		"visibility": true,
+		"legend": false,
+		"gfiAttributes": "ignore",
+		"gfiTheme": "default",
+		"vtStyles": [
+			{
+				"id": "basemap_style",
+				"name": "Grayscale view",
+				"url": "/resources/bm_web_gry_contrast.json",
+				"defaultStyle": true
+			}
+		],
+		"preview": {
+			"src": "/resources/preview-img/default.png"
+		}
+	},
+	{
+		"id": "hintergrund_default_grau",
+		"name": "Berlin background - WMTS",
+		"name_lang": "basemap.de web raster gray",
+		"capabilitiesUrl": "https://sgx.geodatenzentrum.de/wmts_basemapde/1.0.0/WMTSCapabilities.xml",
+		"url": "https://sgx.geodatenzentrum.de/wmts_basemapde/1.0.0/",
+		"typ": "WMTS",
+		"tileMatrixSet": "DE_EPSG_3857_ADV",
+		"layers": "de_basemapde_web_raster_grau",
+		"optionsFromCapabilities": true,
+		"crs": "http://www.opengis.net/def/crs/EPSG/0/25833",
+		"legend": [
+			"https://sgx.geodatenzentrum.de/wms_basemapde?format=image/png&layer=de_basemapde_web_raster_grau&sld_version=1.1.0&request=GetLegendGraphic&service=WMS&version=1.1.1&styles="
+		],
+		"layerAttribution": "© basemap.de / BKG (month) (year)",
+		"datasets": [
+			{
+				"md_id": "FE1D2837-ABE0-46B5-9821-BB11BAF22531",
+				"rs_id": "https://registry.gdi-de.org/id/de.bund.bkg.csw/68f48957-a20f-3d93-bd62-e59ce6bd99fa",
+				"csw_url": "https://gdk.gdi-de.org/gdi-de/srv/ger/csw",
+				"show_doc_url": "https://gdz.bkg.bund.de/index.php/default/wmts-basemapde-webraster-wmts-basemapde-webraster.html#"
+			}
+		],
+		"preview": {
+			"src": "/resources/preview-img/default.png"
+		}
+	},
+	{
+		"id": "basemap_raster_farbe",
+		"name": "basemap.de web raster color - WMTS",
+		"name_lang": "basemap.de web raster color",
+		"capabilitiesUrl": "https://sgx.geodatenzentrum.de/wmts_basemapde/1.0.0/WMTSCapabilities.xml",
+		"url": "https://sgx.geodatenzentrum.de/wmts_basemapde/1.0.0/",
+		"typ": "WMTS",
+		"tileMatrixSet": "DE_EPSG_3857_ADV",
+		"layers": "de_basemapde_web_raster_farbe",
+		"optionsFromCapabilities": true,
+		"crs": "http://www.opengis.net/def/crs/EPSG/0/25833",
+		"legend": "https://sgx.geodatenzentrum.de/wms_basemapde?format=image%2Fpng&layer=de_basemapde_web_raster_farbe&sld_version=1.1.0&request=GetLegendGraphic&service=WMS&version=1.1.1&styles=",
+		"layerAttribution": "© basemap.de / BKG (month) (year)",
+		"datasets": [
+			{
+				"md_id": "FE1D2837-ABE0-46B5-9821-BB11BAF22531",
+				"rs_id": "https://registry.gdi-de.org/id/de.bund.bkg.csw/68f48957-a20f-3d93-bd62-e59ce6bd99fa",
+				"csw_url": "https://gdk.gdi-de.org/gdi-de/srv/ger/csw",
+				"show_doc_url": "https://gdz.bkg.bund.de/index.php/default/wmts-basemapde-webraster-wmts-basemapde-webraster.html#"
+			}
+		],
+		"preview": {
+			"src": "/resources/preview-img/default.png"
+		}
+	},
+	{
+		"id": "bplan:a_bp_iv",
+		"name": "Development plans, in process",
+		"name_lang": "Development plans, in process (Development planning procedures in Berlin)",
+		"name_mid": "Development planning procedures in Berlin",
+		"crs": "EPSG:25833",
+		"url": "https://gdi.berlin.de/services/wms/bplan",
+		"typ": "WMS",
+		"gfiAttributes": "showAll",
+		"layers": "a_bp_iv",
+		"legend": true,
+		"datasets": [
+			{
+				"md_name": "Development planning procedures in Berlin",
+				"md_id": "38b5dc12-0388-3847-b6d4-193b850c2b95",
+				"rs_id": "https://registry.gdi-de.org/id/de.be.csw/4bfc4a9b-d4f9-3963-84a5-dd6779e0ded4",
+				"csw_url": "https://gdi.berlin.de/geonetwork/srv/ger/csw"
+			}
+		],
+		"format": "image/png",
+		"version": "1.3.0",
+		"featureCount": "5",
+		"gfiTheme": "default",
+		"transparent": true,
+		"singleTile": true,
+		"infoFormat": "application/json",
+		"layerAttribution": "Use of this data is subject to the Data Licence Germany - Zero - Version 2.0. The license is available at https://www.govdata.de/dl-de/zero-2-0.",
+		"preview": {
+			"src": "/resources/preview-img/preview-img-bebauung-verfahren.png"
+		}
+	},
+	{
+		"id": "bplan:b_bp_fs",
+		"name": "Development plans, adopted",
+		"name_lang": "Development plans, adopted (Development planning procedures in Berlin)",
+		"name_mid": "Development planning procedures in Berlin",
+		"crs": "EPSG:25833",
+		"url": "https://gdi.berlin.de/services/wms/bplan",
+		"typ": "WMS",
+		"gfiAttributes": "showAll",
+		"layers": "b_bp_fs",
+		"legend": true,
+		"datasets": [
+			{
+				"md_name": "Development planning procedures in Berlin",
+				"md_id": "38b5dc12-0388-3847-b6d4-193b850c2b95",
+				"rs_id": "https://registry.gdi-de.org/id/de.be.csw/4bfc4a9b-d4f9-3963-84a5-dd6779e0ded4",
+				"csw_url": "https://gdi.berlin.de/geonetwork/srv/ger/csw"
+			}
+		],
+		"format": "image/png",
+		"version": "1.3.0",
+		"featureCount": "5",
+		"gfiTheme": "default",
+		"transparent": true,
+		"singleTile": true,
+		"infoFormat": "application/json",
+		"layerAttribution": "Use of this data is subject to the Data Licence Germany - Zero - Version 2.0. The license is available at https://www.govdata.de/dl-de/zero-2-0.",
+		"preview": {
+			"src": "/resources/preview-img/preview-img-bebauung-festgesetzt.png"
+		}
+	},
+	{
+		"id": "bplan:c_bp_ak",
+		"name": "Development plans, repealed",
+		"name_lang": "Development plans, repealed (Development planning procedures in Berlin)",
+		"name_mid": "Development planning procedures in Berlin",
+		"crs": "EPSG:25833",
+		"url": "https://gdi.berlin.de/services/wms/bplan",
+		"typ": "WMS",
+		"gfiAttributes": "showAll",
+		"layers": "c_bp_ak",
+		"legend": true,
+		"datasets": [
+			{
+				"md_name": "Development planning procedures in Berlin",
+				"md_id": "38b5dc12-0388-3847-b6d4-193b850c2b95",
+				"rs_id": "https://registry.gdi-de.org/id/de.be.csw/4bfc4a9b-d4f9-3963-84a5-dd6779e0ded4",
+				"csw_url": "https://gdi.berlin.de/geonetwork/srv/ger/csw"
+			}
+		],
+		"format": "image/png",
+		"version": "1.3.0",
+		"featureCount": "5",
+		"gfiTheme": "default",
+		"transparent": true,
+		"singleTile": true,
+		"infoFormat": "application/json",
+		"layerAttribution": "Use of this data is subject to the Data Licence Germany - Zero - Version 2.0. The license is available at https://www.govdata.de/dl-de/zero-2-0.",
+		"preview": {
+			"src": "/resources/preview-img/preview-img-bebauung-ausser-kraft.png"
+		}
+	},
+	{
+		"id": "bplan:wfs:c_bp_ak",
+		"name": "Development plans, repealed - WFS",
+		"crs": "urn:ogc:def:crs:EPSG::25833",
+		"url": "https://gdi.berlin.de/services/wfs/bplan",
+		"typ": "WFS",
+		"featureType": "bplan:c_bp_ak",
+		"featureNS": "bplan",
+		"datasets": [
+			{
+				"md_name": "Development planning procedures in Berlin",
+				"md_id": "38b5dc12-0388-3847-b6d4-193b850c2b95",
+				"rs_id": "https://registry.gdi-de.org/id/de.be.csw/4bfc4a9b-d4f9-3963-84a5-dd6779e0ded4",
+				"csw_url": "https://gdi.berlin.de/geonetwork/srv/ger/csw"
+			}
+		],
+		"gfiAttributes": "showAll",
+		"preview": {
+			"src": "/resources/preview-img/default.png"
+		}
+	},
+	{
+		"id": "bplan:wfs:b_bp_fs",
+		"name": "Development plans, adopted - WFS",
+		"crs": "urn:ogc:def:crs:EPSG::25833",
+		"url": "https://gdi.berlin.de/services/wfs/bplan",
+		"typ": "WFS",
+		"featureType": "bplan:b_bp_fs",
+		"featureNS": "bplan",
+		"datasets": [
+			{
+				"md_name": "Development planning procedures in Berlin",
+				"md_id": "38b5dc12-0388-3847-b6d4-193b850c2b95",
+				"rs_id": "https://registry.gdi-de.org/id/de.be.csw/4bfc4a9b-d4f9-3963-84a5-dd6779e0ded4",
+				"csw_url": "https://gdi.berlin.de/geonetwork/srv/ger/csw"
+			}
+		],
+		"gfiAttributes": "showAll",
+		"preview": {
+			"src": "/resources/preview-img/default.png"
+		}
+	},
+	{
+		"id": "bplan:wfs:a_bp_iv",
+		"name": "Development plans, in process - WFS",
+		"crs": "urn:ogc:def:crs:EPSG::25833",
+		"url": "https://gdi.berlin.de/services/wfs/bplan",
+		"typ": "WFS",
+		"featureType": "bplan:a_bp_iv",
+		"featureNS": "bplan",
+		"datasets": [
+			{
+				"md_name": "Development planning procedures in Berlin",
+				"md_id": "38b5dc12-0388-3847-b6d4-193b850c2b95",
+				"rs_id": "https://registry.gdi-de.org/id/de.be.csw/4bfc4a9b-d4f9-3963-84a5-dd6779e0ded4",
+				"csw_url": "https://gdi.berlin.de/geonetwork/srv/ger/csw"
+			}
+		],
+		"gfiAttributes": "showAll",
+		"preview": {
+			"src": "/resources/preview-img/default.png"
+		}
+	},
+	{
+		"id": "alkis_bezirke:wfs:bezirksgrenzen",
+		"name": "District boundaries",
+		"styleId": "bezirksgrenzen",
+		"name_lang": "District boundaries (ALKIS Berlin districts)",
+		"name_mid": "ALKIS Berlin districts",
+		"crs": "urn:ogc:def:crs:EPSG::25833",
+		"url": "https://gdi.berlin.de/services/wfs/alkis_bezirke",
+		"typ": "WFS",
+		"featureType": "alkis_bezirke:bezirksgrenzen",
+		"featureNS": "alkis_bezirke",
+		"datasets": [
+			{
+				"md_name": "ALKIS Berlin districts",
+				"md_id": "0a7c53a5-b29d-3f45-9734-1c811045e6c2",
+				"rs_id": "https://registry.gdi-de.org/id/de.be.csw/cb2897d1-4258-3312-a3db-7ceb2ad86be7",
+				"csw_url": "https://gdi.berlin.de/geonetwork/srv/ger/csw"
+			}
+		],
+		"gfiAttributes": "showAll",
+		"preview": {
+			"src": "/resources/preview-img/preview-img-bezirksgrenzen.png"
+		}
+	},
+	{
+		"id": "alkis_bezirke:bezirksgrenzen",
+		"name": "District boundaries",
+		"name_lang": "District boundaries (ALKIS Berlin districts)",
+		"name_mid": "ALKIS Berlin districts",
+		"crs": "EPSG:25833",
+		"url": "https://gdi.berlin.de/services/wms/alkis_bezirke",
+		"typ": "WMS",
+		"gfiAttributes": "showAll",
+		"layers": "bezirksgrenzen",
+		"legend": true,
+		"datasets": [
+			{
+				"md_name": "ALKIS Berlin districts",
+				"md_id": "0a7c53a5-b29d-3f45-9734-1c811045e6c2",
+				"rs_id": "https://registry.gdi-de.org/id/de.be.csw/cb2897d1-4258-3312-a3db-7ceb2ad86be7",
+				"csw_url": "https://gdi.berlin.de/geonetwork/srv/ger/csw"
+			}
+		],
+		"format": "image/png",
+		"version": "1.3.0",
+		"featureCount": "5",
+		"gfiTheme": "default",
+		"transparent": true,
+		"singleTile": true,
+		"infoFormat": "application/json",
+		"layerAttribution": "Use of this data is subject to the Data Licence Germany - Zero - Version 2.0. The license is available at https://www.govdata.de/dl-de/zero-2-0.",
+		"preview": {
+			"src": "/resources/preview-img/preview-img-bezirksgrenzen.png"
+		}
+	},
+	{
+		"id": "alkis_ortsteile:ortsteile",
+		"name": "Locality boundaries",
+		"name_lang": "Locality boundaries (ALKIS Berlin localities)",
+		"name_mid": "ALKIS Berlin localities",
+		"crs": "EPSG:25833",
+		"url": "https://gdi.berlin.de/services/wms/alkis_ortsteile",
+		"typ": "WMS",
+		"gfiAttributes": "showAll",
+		"layers": "ortsteile",
+		"legend": true,
+		"datasets": [
+			{
+				"md_name": "ALKIS Berlin localities",
+				"md_id": "0a7c53a5-b29d-3f45-9734-1c811045e6c2",
+				"rs_id": "https://registry.gdi-de.org/id/de.be.csw/cb2897d1-4258-3312-a3db-7ceb2ad86be7",
+				"csw_url": "https://gdi.berlin.de/geonetwork/srv/ger/csw"
+			}
+		],
+		"format": "image/png",
+		"version": "1.3.0",
+		"featureCount": "5",
+		"gfiTheme": "default",
+		"transparent": true,
+		"singleTile": true,
+		"infoFormat": "application/json",
+		"layerAttribution": "Use of this data is subject to the Data Licence Germany - Zero - Version 2.0. The license is available at https://www.govdata.de/dl-de/zero-2-0.",
+		"preview": {
+			"src": "/resources/preview-img/preview-img-ortsteile.png"
+		}
+	},
+	{
+		"id": "alkis_ortsteile:wfs:ortsteile",
+		"styleId": "ortsteile",
+		"name": "Locality boundaries",
+		"name_lang": "Locality boundaries (ALKIS Berlin localities)",
+		"name_mid": "ALKIS Berlin localities",
+		"crs": "urn:ogc:def:crs:EPSG::25833",
+		"url": "https://gdi.berlin.de/services/wfs/alkis_ortsteile",
+		"typ": "WFS",
+		"featureType": "alkis_ortsteile:ortsteile",
+		"featureNS": "alkis_ortsteile",
+		"datasets": [
+			{
+				"md_name": "ALKIS Berlin localities",
+				"md_id": "0a7c53a5-b29d-3f45-9734-1c811045e6c2",
+				"rs_id": "https://registry.gdi-de.org/id/de.be.csw/cb2897d1-4258-3312-a3db-7ceb2ad86be7",
+				"csw_url": "https://gdi.berlin.de/geonetwork/srv/ger/csw"
+			}
+		],
+		"gfiAttributes": "showAll",
+		"preview": {
+			"src": "/resources/preview-img/preview-img-ortsteile.png"
+		}
+	},
+	{
+		"id": "lor_2021:wfs:b_lor_bzr_2021",
+		"name": "District regions - WFS",
+		"crs": "urn:ogc:def:crs:EPSG::25833",
+		"url": "https://gdi.berlin.de/services/wfs/lor_2021",
+		"typ": "WFS",
+		"featureType": "lor_2021:b_lor_bzr_2021",
+		"featureNS": "lor_2021",
+		"datasets": [
+			{
+				"md_name": "Socially oriented areas (LOR) (01/01/2021)",
+				"md_id": "5e05b70b-50d6-4164-b0fd-9cdef4e43559",
+				"rs_id": "https://registry.gdi-de.org/id/de.be.csw/1a9ee510-4aec-3a5b-94e5-bc6b25d80c2d",
+				"csw_url": "https://gdi.berlin.de/geonetwork/srv/ger/csw"
+			}
+		],
+		"gfiAttributes": "showAll",
+		"preview": {
+			"src": "/resources/preview-img/default.png"
+		}
+	},
+	{
+		"id": "lor_2021:wfs:a_lor_plr_2021",
+		"name": "Planning areas - WFS",
+		"crs": "urn:ogc:def:crs:EPSG::25833",
+		"url": "https://gdi.berlin.de/services/wfs/lor_2021",
+		"typ": "WFS",
+		"featureType": "lor_2021:a_lor_plr_2021",
+		"featureNS": "lor_2021",
+		"datasets": [
+			{
+				"md_name": "Socially oriented areas (LOR) (01/01/2021)",
+				"md_id": "5e05b70b-50d6-4164-b0fd-9cdef4e43559",
+				"rs_id": "https://registry.gdi-de.org/id/de.be.csw/1a9ee510-4aec-3a5b-94e5-bc6b25d80c2d",
+				"csw_url": "https://gdi.berlin.de/geonetwork/srv/ger/csw"
+			}
+		],
+		"gfiAttributes": "showAll",
+		"preview": {
+			"src": "/resources/preview-img/default.png"
+		}
+	},
+	{
+		"id": "lor_2021:wfs:c_lor_pgr_2021",
+		"name": "Forecast areas - WFS",
+		"crs": "urn:ogc:def:crs:EPSG::25833",
+		"url": "https://gdi.berlin.de/services/wfs/lor_2021",
+		"typ": "WFS",
+		"featureType": "lor_2021:c_lor_pgr_2021",
+		"featureNS": "lor_2021",
+		"datasets": [
+			{
+				"md_name": "Socially oriented areas (LOR) (01/01/2021)",
+				"md_id": "5e05b70b-50d6-4164-b0fd-9cdef4e43559",
+				"rs_id": "https://registry.gdi-de.org/id/de.be.csw/1a9ee510-4aec-3a5b-94e5-bc6b25d80c2d",
+				"csw_url": "https://gdi.berlin.de/geonetwork/srv/ger/csw"
+			}
+		],
+		"gfiAttributes": "showAll",
+		"preview": {
+			"src": "/resources/preview-img/default.png"
+		}
+	},
+	{
+		"id": "lor_2021:a_lor_plr_2021",
+		"name": "Planning areas",
+		"name_lang": "Planning areas (Socially oriented areas (LOR) (01/01/2021))",
+		"name_mid": "Socially oriented areas (LOR) (01/01/2021)",
+		"crs": "EPSG:25833",
+		"url": "https://gdi.berlin.de/services/wms/lor_2021",
+		"typ": "WMS",
+		"gfiAttributes": "showAll",
+		"layers": "a_lor_plr_2021",
+		"legend": true,
+		"datasets": [
+			{
+				"md_name": "Socially oriented areas (LOR) (01/01/2021)",
+				"md_id": "5e05b70b-50d6-4164-b0fd-9cdef4e43559",
+				"rs_id": "https://registry.gdi-de.org/id/de.be.csw/1a9ee510-4aec-3a5b-94e5-bc6b25d80c2d",
+				"csw_url": "https://gdi.berlin.de/geonetwork/srv/ger/csw"
+			}
+		],
+		"format": "image/png",
+		"version": "1.3.0",
+		"featureCount": "5",
+		"gfiTheme": "default",
+		"transparent": true,
+		"singleTile": true,
+		"infoFormat": "application/json",
+		"layerAttribution": "This dataset is published under the CC BY 3.0 Attribution license (see https://creativecommons.org/licenses/by/3.0/de/). Attribution must name: Statistical Office Berlin-Brandenburg.",
+		"preview": {
+			"src": "/resources/preview-img/preview-img-planungsräume.png"
+		}
+	},
+	{
+		"id": "lor_2021:b_lor_bzr_2021",
+		"name": "District regions",
+		"name_lang": "District regions (Socially oriented areas (LOR) (01/01/2021))",
+		"name_mid": "Socially oriented areas (LOR) (01/01/2021)",
+		"crs": "EPSG:25833",
+		"url": "https://gdi.berlin.de/services/wms/lor_2021",
+		"typ": "WMS",
+		"gfiAttributes": "showAll",
+		"layers": "b_lor_bzr_2021",
+		"legend": true,
+		"datasets": [
+			{
+				"md_name": "Socially oriented areas (LOR) (01/01/2021)",
+				"md_id": "5e05b70b-50d6-4164-b0fd-9cdef4e43559",
+				"rs_id": "https://registry.gdi-de.org/id/de.be.csw/1a9ee510-4aec-3a5b-94e5-bc6b25d80c2d",
+				"csw_url": "https://gdi.berlin.de/geonetwork/srv/ger/csw"
+			}
+		],
+		"format": "image/png",
+		"version": "1.3.0",
+		"featureCount": "5",
+		"gfiTheme": "default",
+		"transparent": true,
+		"singleTile": true,
+		"infoFormat": "application/json",
+		"layerAttribution": "This dataset is published under the CC BY 3.0 Attribution license (see https://creativecommons.org/licenses/by/3.0/de/). Attribution must name: Statistical Office Berlin-Brandenburg.",
+		"preview": {
+			"src": "/resources/preview-img/preview-img-bezirksregion.png"
+		}
+	},
+	{
+		"id": "lor_2021:c_lor_pgr_2021",
+		"name": "Forecast areas",
+		"name_lang": "Forecast areas (Socially oriented areas (LOR) (01/01/2021))",
+		"name_mid": "Socially oriented areas (LOR) (01/01/2021)",
+		"crs": "EPSG:25833",
+		"url": "https://gdi.berlin.de/services/wms/lor_2021",
+		"typ": "WMS",
+		"gfiAttributes": "showAll",
+		"layers": "c_lor_pgr_2021",
+		"legend": true,
+		"datasets": [
+			{
+				"md_name": "Socially oriented areas (LOR) (01/01/2021)",
+				"md_id": "5e05b70b-50d6-4164-b0fd-9cdef4e43559",
+				"rs_id": "https://registry.gdi-de.org/id/de.be.csw/1a9ee510-4aec-3a5b-94e5-bc6b25d80c2d",
+				"csw_url": "https://gdi.berlin.de/geonetwork/srv/ger/csw"
+			}
+		],
+		"format": "image/png",
+		"version": "1.3.0",
+		"featureCount": "5",
+		"gfiTheme": "default",
+		"transparent": true,
+		"singleTile": true,
+		"infoFormat": "application/json",
+		"layerAttribution": "This dataset is published under the CC BY 3.0 Attribution license (see https://creativecommons.org/licenses/by/3.0/de/). Attribution must name: Statistical Office Berlin-Brandenburg.",
+		"preview": {
+			"src": "/resources/preview-img/preview-img-prognoseräume.png"
+		}
+	},
+	{
+		"id": "gemeinschaftsinitiative:gemeinschaftsinitiative",
+		"name": "Cross-departmental joint initiative to strengthen socially disadvantaged neighborhoods",
+		"name_lang": "Cross-departmental joint initiative to strengthen socially disadvantaged neighborhoods (Cross-departmental joint initiative to strengthen socially disadvantaged neighborhoods)",
+		"name_mid": "",
+		"crs": "EPSG:25833",
+		"url": "https://gdi.berlin.de/services/wms/gemeinschaftsinitiative",
+		"typ": "WMS",
+		"gfiAttributes": "showAll",
+		"layers": "gemeinschaftsinitiative",
+		"legend": true,
+		"datasets": [
+			{
+				"md_name": "Cross-departmental joint initiative to strengthen socially disadvantaged neighborhoods",
+				"md_id": "0de7c86e-4060-4533-a894-4a902a533abd",
+				"rs_id": "https://registry.gdi-de.org/id/de.be.csw/e39eeed6-9339-32b6-ad70-0914c552d782",
+				"csw_url": "https://gdi.berlin.de/geonetwork/srv/ger/csw"
+			}
+		],
+		"format": "image/png",
+		"version": "1.3.0",
+		"featureCount": "5",
+		"gfiTheme": "default",
+		"transparent": true,
+		"singleTile": true,
+		"infoFormat": "application/json",
+		"layerAttribution": "Use of this data is subject to the Data Licence Germany - Zero - Version 2.0. The license is available at https://www.govdata.de/dl-de/zero-2-0.",
+		"preview": {
+			"src": "/resources/preview-img/preview-img-quartiere.png"
+		}
+	},
+	{
+		"id": "ua_einwohnerdichte_2022:wfs:einwohnerdichte2022",
+		"name": "Population density 2022 - WFS",
+		"crs": "urn:ogc:def:crs:EPSG::25833",
+		"url": "https://gdi.berlin.de/services/wfs/ua_einwohnerdichte_2022",
+		"typ": "WFS",
+		"featureType": "ua_einwohnerdichte_2022:einwohnerdichte2022",
+		"featureNS": "ua_einwohnerdichte_2022",
+		"datasets": [
+			{
+				"md_name": "Population density 2022 (Environmental Atlas)",
+				"md_id": "92f0d342-c999-4318-98fd-791681e10858",
+				"rs_id": "https://registry.gdi-de.org/id/de.be.csw/ad0d7faa-e016-3b75-974b-0737da5a89f3",
+				"csw_url": "https://gdi.berlin.de/geonetwork/srv/ger/csw"
+			}
+		],
+		"gfiAttributes": "showAll",
+		"preview": {
+			"src": "/resources/preview-img/default.png"
+		}
+	},
+	{
+		"id": "ua_einwohnerdichte_2022:wfs:einwohnerdichte2022_entw",
+		"name": "Population change between 2021 and 2022 - WFS",
+		"crs": "urn:ogc:def:crs:EPSG::25833",
+		"url": "https://gdi.berlin.de/services/wfs/ua_einwohnerdichte_2022",
+		"typ": "WFS",
+		"featureType": "ua_einwohnerdichte_2022:einwohnerdichte2022_entw",
+		"featureNS": "ua_einwohnerdichte_2022",
+		"datasets": [
+			{
+				"md_name": "Population density 2022 (Environmental Atlas)",
+				"md_id": "92f0d342-c999-4318-98fd-791681e10858",
+				"rs_id": "https://registry.gdi-de.org/id/de.be.csw/ad0d7faa-e016-3b75-974b-0737da5a89f3",
+				"csw_url": "https://gdi.berlin.de/geonetwork/srv/ger/csw"
+			}
+		],
+		"gfiAttributes": "showAll",
+		"preview": {
+			"src": "/resources/preview-img/default.png"
+		}
+	},
+	{
+		"id": "ua_einwohnerdichte_2023:wfs:einwohnerdichte2023",
+		"name": "Population density 2023 - WFS",
+		"crs": "urn:ogc:def:crs:EPSG::25833",
+		"url": "https://gdi.berlin.de/services/wfs/ua_einwohnerdichte_2023",
+		"typ": "WFS",
+		"featureType": "ua_einwohnerdichte_2023:einwohnerdichte2023",
+		"featureNS": "ua_einwohnerdichte_2023",
+		"datasets": [
+			{
+				"md_name": "Population density 2023 (Environmental Atlas)",
+				"md_id": "ca78eb01-db63-4f50-9823-73c2adbc541b",
+				"rs_id": "https://registry.gdi-de.org/id/de.be.csw/d46e6c1e-05fd-3e99-a48f-5699f1140d46",
+				"csw_url": "https://gdi.berlin.de/geonetwork/srv/ger/csw"
+			}
+		],
+		"gfiAttributes": "showAll",
+		"preview": {
+			"src": "/resources/preview-img/default.png"
+		}
+	},
+	{
+		"id": "ua_einwohnerdichte_2023:wfs:einwohnerdichte2023_entw",
+		"name": "Population change between 2022 and 2023 - WFS",
+		"crs": "urn:ogc:def:crs:EPSG::25833",
+		"url": "https://gdi.berlin.de/services/wfs/ua_einwohnerdichte_2023",
+		"typ": "WFS",
+		"featureType": "ua_einwohnerdichte_2023:einwohnerdichte2023_entw",
+		"featureNS": "ua_einwohnerdichte_2023",
+		"datasets": [
+			{
+				"md_name": "Population density 2023 (Environmental Atlas)",
+				"md_id": "ca78eb01-db63-4f50-9823-73c2adbc541b",
+				"rs_id": "https://registry.gdi-de.org/id/de.be.csw/d46e6c1e-05fd-3e99-a48f-5699f1140d46",
+				"csw_url": "https://gdi.berlin.de/geonetwork/srv/ger/csw"
+			}
+		],
+		"gfiAttributes": "showAll",
+		"preview": {
+			"src": "/resources/preview-img/default.png"
+		}
+	},
+	{
+		"id": "ua_einwohnerdichte_2024:wfs:ua_einwohnerdichte_2024",
+		"name": "Population density 2024 - WFS",
+		"crs": "urn:ogc:def:crs:EPSG::25833",
+		"url": "https://gdi.berlin.de/services/wfs/ua_einwohnerdichte_2024",
+		"typ": "WFS",
+		"featureType": "ua_einwohnerdichte_2024:ua_einwohnerdichte_2024",
+		"featureNS": "ua_einwohnerdichte_2024",
+		"datasets": [
+			{
+				"md_name": "ua_einwohnerdichte_2024",
+				"md_id": "f2fc9f93-b689-4135-a5e1-e63a0b8204de",
+				"rs_id": "https://registry.gdi-de.org/id/de.be.csw/9b4ae418-78a2-34c6-9f68-b935d67eb16e",
+				"csw_url": "https://gdi.berlin.de/geonetwork/srv/ger/csw"
+			}
+		],
+		"gfiAttributes": "showAll",
+		"preview": {
+			"src": "/resources/preview-img/default.png"
+		}
+	},
+	{
+		"id": "ua_einwohnerdichte_2024:wfs:ua_einwohnerdichte_2024_entw",
+		"name": "Population change between 2023 and 2024 - WFS",
+		"crs": "urn:ogc:def:crs:EPSG::25833",
+		"url": "https://gdi.berlin.de/services/wfs/ua_einwohnerdichte_2024",
+		"typ": "WFS",
+		"featureType": "ua_einwohnerdichte_2024:ua_einwohnerdichte_2024_entw",
+		"featureNS": "ua_einwohnerdichte_2024",
+		"datasets": [
+			{
+				"md_name": "ua_einwohnerdichte_2024",
+				"md_id": "f2fc9f93-b689-4135-a5e1-e63a0b8204de",
+				"rs_id": "https://registry.gdi-de.org/id/de.be.csw/9b4ae418-78a2-34c6-9f68-b935d67eb16e",
+				"csw_url": "https://gdi.berlin.de/geonetwork/srv/ger/csw"
+			}
+		],
+		"gfiAttributes": "showAll",
+		"preview": {
+			"src": "/resources/preview-img/default.png"
+		}
+	},
+	{
+		"id": "ua_einwohnerdichte_2022:einwohnerdichte2022",
+		"name": "Population density 2022",
+		"name_lang": "Population density 2022 (Population density 2022 (Environmental Atlas))",
+		"name_mid": "Environmental Atlas",
+		"crs": "EPSG:25833",
+		"url": "https://gdi.berlin.de/services/wms/ua_einwohnerdichte_2022",
+		"typ": "WMS",
+		"gfiAttributes": "showAll",
+		"layers": "einwohnerdichte2022",
+		"legend": true,
+		"datasets": [
+			{
+				"md_name": "Population density 2022 (Environmental Atlas)",
+				"md_id": "92f0d342-c999-4318-98fd-791681e10858",
+				"rs_id": "https://registry.gdi-de.org/id/de.be.csw/ad0d7faa-e016-3b75-974b-0737da5a89f3",
+				"csw_url": "https://gdi.berlin.de/geonetwork/srv/ger/csw"
+			}
+		],
+		"format": "image/png",
+		"version": "1.3.0",
+		"featureCount": "5",
+		"gfiTheme": "default",
+		"transparent": true,
+		"singleTile": true,
+		"infoFormat": "application/json",
+		"layerAttribution": "This dataset is published under the CC BY 3.0 Attribution license (see https://creativecommons.org/licenses/by/3.0/de/). Attribution must name: Statistical Office Berlin-Brandenburg.",
+		"preview": {
+			"src": "/resources/preview-img/preview-img-einwohnerdichte.png"
+		}
+	},
+	{
+		"id": "ua_einwohnerdichte_2022:einwohnerdichte2022_entw",
+		"name": "Population change between 2021 and 2022",
+		"name_lang": "Population change between 2021 and 2022 (Population density 2022 (Environmental Atlas))",
+		"name_mid": "Population density 2022 (Environmental Atlas)",
+		"crs": "EPSG:25833",
+		"url": "https://gdi.berlin.de/services/wms/ua_einwohnerdichte_2022",
+		"typ": "WMS",
+		"gfiAttributes": "showAll",
+		"layers": "einwohnerdichte2022_entw",
+		"legend": true,
+		"datasets": [
+			{
+				"md_name": "Population density 2022 (Environmental Atlas)",
+				"md_id": "92f0d342-c999-4318-98fd-791681e10858",
+				"rs_id": "https://registry.gdi-de.org/id/de.be.csw/ad0d7faa-e016-3b75-974b-0737da5a89f3",
+				"csw_url": "https://gdi.berlin.de/geonetwork/srv/ger/csw"
+			}
+		],
+		"format": "image/png",
+		"version": "1.3.0",
+		"featureCount": "5",
+		"gfiTheme": "default",
+		"transparent": true,
+		"singleTile": true,
+		"infoFormat": "application/json",
+		"layerAttribution": "This dataset is published under the CC BY 3.0 Attribution license (see https://creativecommons.org/licenses/by/3.0/de/). Attribution must name: Statistical Office Berlin-Brandenburg.",
+		"preview": {
+			"src": "/resources/preview-img/preview-img-einwohnerentwicklung.png"
+		}
+	},
+	{
+		"id": "ua_einwohnerdichte_2023:einwohnerdichte2023",
+		"name": "Population density 2023",
+		"name_lang": "Population density 2023 (Population density 2023 (Environmental Atlas))",
+		"name_mid": "Environmental Atlas",
+		"crs": "EPSG:25833",
+		"url": "https://gdi.berlin.de/services/wms/ua_einwohnerdichte_2023",
+		"typ": "WMS",
+		"gfiAttributes": "showAll",
+		"layers": "einwohnerdichte2023",
+		"legend": true,
+		"datasets": [
+			{
+				"md_name": "Population density 2023 (Environmental Atlas)",
+				"md_id": "ca78eb01-db63-4f50-9823-73c2adbc541b",
+				"rs_id": "https://registry.gdi-de.org/id/de.be.csw/d46e6c1e-05fd-3e99-a48f-5699f1140d46",
+				"csw_url": "https://gdi.berlin.de/geonetwork/srv/ger/csw"
+			}
+		],
+		"format": "image/png",
+		"version": "1.3.0",
+		"featureCount": "5",
+		"gfiTheme": "default",
+		"transparent": true,
+		"singleTile": true,
+		"infoFormat": "application/json",
+		"layerAttribution": "This dataset is published under the CC BY 3.0 Attribution license (see https://creativecommons.org/licenses/by/3.0/de/). Attribution must name: Statistical Office Berlin-Brandenburg.",
+		"preview": {
+			"src": "/resources/preview-img/preview-img-einwohnerdichte.png"
+		}
+	},
+	{
+		"id": "ua_einwohnerdichte_2023:einwohnerdichte2023_entw",
+		"name": "Population change between 2022 and 2023",
+		"name_lang": "Population change between 2022 and 2023 (Population density 2023 (Environmental Atlas))",
+		"name_mid": "Population density 2023 (Environmental Atlas)",
+		"crs": "EPSG:25833",
+		"url": "https://gdi.berlin.de/services/wms/ua_einwohnerdichte_2023",
+		"typ": "WMS",
+		"gfiAttributes": "showAll",
+		"layers": "einwohnerdichte2023_entw",
+		"legend": true,
+		"datasets": [
+			{
+				"md_name": "Population density 2023 (Environmental Atlas)",
+				"md_id": "ca78eb01-db63-4f50-9823-73c2adbc541b",
+				"rs_id": "https://registry.gdi-de.org/id/de.be.csw/d46e6c1e-05fd-3e99-a48f-5699f1140d46",
+				"csw_url": "https://gdi.berlin.de/geonetwork/srv/ger/csw"
+			}
+		],
+		"format": "image/png",
+		"version": "1.3.0",
+		"featureCount": "5",
+		"gfiTheme": "default",
+		"transparent": true,
+		"singleTile": true,
+		"infoFormat": "application/json",
+		"layerAttribution": "This dataset is published under the CC BY 3.0 Attribution license (see https://creativecommons.org/licenses/by/3.0/de/). Attribution must name: Statistical Office Berlin-Brandenburg.",
+		"preview": {
+			"src": "/resources/preview-img/preview-img-einwohnerentwicklung.png"
+		}
+	},
+	{
+		"id": "ua_einwohnerdichte_2024:ua_einwohnerdichte_2024",
+		"name": "Population density 2024",
+		"name_lang": "Population density 2024 (Population density 2024 (Environmental Atlas))",
+		"name_mid": "Environmental Atlas",
+		"crs": "EPSG:25833",
+		"url": "https://gdi.berlin.de/services/wms/ua_einwohnerdichte_2024",
+		"typ": "WMS",
+		"gfiAttributes": "showAll",
+		"layers": "ua_einwohnerdichte_2024",
+		"legend": true,
+		"datasets": [
+			{
+				"md_name": "Population density 2024 (Environmental Atlas)",
+				"md_id": "f2fc9f93-b689-4135-a5e1-e63a0b8204de",
+				"rs_id": "https://registry.gdi-de.org/id/de.be.csw/9b4ae418-78a2-34c6-9f68-b935d67eb16e",
+				"csw_url": "https://gdi.berlin.de/geonetwork/srv/ger/csw"
+			}
+		],
+		"format": "image/png",
+		"version": "1.3.0",
+		"featureCount": "5",
+		"gfiTheme": "default",
+		"transparent": true,
+		"singleTile": true,
+		"infoFormat": "application/json",
+		"layerAttribution": "Use of this data is subject to the Data Licence Germany - Zero - Version 2.0. The license is available at https://www.govdata.de/dl-de/zero-2-0.",
+		"preview": {
+			"src": "/resources/preview-img/preview-img-einwohnerdichte.png"
+		}
+	},
+	{
+		"id": "ua_einwohnerdichte_2024:ua_einwohnerdichte_2024_entw",
+		"name": "Population change between 2023 and 2024",
+		"name_lang": "Population change between 2023 and 2024 (Population density 2024 (Environmental Atlas))",
+		"name_mid": "Population density 2024 (Environmental Atlas)",
+		"crs": "EPSG:25833",
+		"url": "https://gdi.berlin.de/services/wms/ua_einwohnerdichte_2024",
+		"typ": "WMS",
+		"gfiAttributes": "showAll",
+		"layers": "ua_einwohnerdichte_2024_entw",
+		"legend": true,
+		"datasets": [
+			{
+				"md_name": "Population density 2024 (Environmental Atlas)",
+				"md_id": "f2fc9f93-b689-4135-a5e1-e63a0b8204de",
+				"rs_id": "https://registry.gdi-de.org/id/de.be.csw/9b4ae418-78a2-34c6-9f68-b935d67eb16e",
+				"csw_url": "https://gdi.berlin.de/geonetwork/srv/ger/csw"
+			}
+		],
+		"format": "image/png",
+		"version": "1.3.0",
+		"featureCount": "5",
+		"gfiTheme": "default",
+		"transparent": true,
+		"singleTile": true,
+		"infoFormat": "application/json",
+		"layerAttribution": "Use of this data is subject to the Data Licence Germany - Zero - Version 2.0. The license is available at https://www.govdata.de/dl-de/zero-2-0.",
+		"preview": {
+			"src": "/resources/preview-img/preview-img-einwohnerentwicklung.png"
+		}
+	},
+	{
+		"id": "mss_2023:bc_mss2023_i_sdi",
+		"name": "Overall social inequality index (status/dynamics index)",
+		"name_lang": "Overall social inequality index (status/dynamics index) (Monitoring Social Urban Development (MSS) 2023)",
+		"name_mid": "Monitoring Social Urban Development (MSS) 2023",
+		"crs": "EPSG:25833",
+		"url": "https://gdi.berlin.de/services/wms/mss_2023",
+		"typ": "WMS",
+		"gfiAttributes": "showAll",
+		"layers": "bc_mss2023_i_sdi",
+		"legend": true,
+		"datasets": [
+			{
+				"md_name": "Monitoring Social Urban Development (MSS) 2023",
+				"md_id": "ba4a911f-b071-4be4-a164-e86fa9bfb6ba",
+				"rs_id": "https://registry.gdi-de.org/id/de.be.csw/605f3ec5-18d0-38f1-9c67-db52b2a358c1",
+				"csw_url": "https://gdi.berlin.de/geonetwork/srv/ger/csw"
+			}
+		],
+		"format": "image/png",
+		"version": "1.3.0",
+		"featureCount": "10",
+		"gfiTheme": "default",
+		"transparent": true,
+		"singleTile": true,
+		"infoFormat": "application/json",
+		"layerAttribution": "Use of this data is subject to the Data Licence Germany - Zero - Version 2.0. The license is available at https://www.govdata.de/dl-de/zero-2-0.",
+		"preview": {
+			"src": "/resources/preview-img/preview-img-soziale-stadtentwicklung.png"
+		}
+	}
+]

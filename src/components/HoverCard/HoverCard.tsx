@@ -10,6 +10,7 @@ import {
 import { Category, ChildCategory } from "@/types";
 import { FC, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { getFieldOptionLabel } from "@/lib/i18n/fieldLabels";
 import { useFieldLabel } from "@/lib/hooks/useFieldLabel";
 import { CategoryIcon } from "@/components/shared/CategoryIcon";
 
@@ -51,14 +52,14 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 
 	return (
 		<div className="HoverCard-root">
-			<Card className="w-80 shadow-lg border-none contrast:invert-90">
+			<Card className="w-80 shadow-lg border-none ">
 				<CardHeader className="p-2">
 					<div className="flex gap-2 justify-between">
 						<CardTitle className="body1">{featureProperties.name}</CardTitle>
 					</div>
 				</CardHeader>
 
-				<CardContent className="p-2 pt-0">
+				<CardContent className="p-2 pt-0" variant="none">
 					<div className="flex flex-col gap-2 ">
 						{featureProperties.categories?.map((category: Category) => {
 							return (
@@ -105,8 +106,10 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 								{fieldLabel("utilization_status")}:
 							</span>
 							<span className="text-base">
-								{tEnum(
-									`utilization_status.${featureProperties.utilization_status}`,
+								{getFieldOptionLabel(
+									tEnum,
+									"utilization_status",
+									featureProperties.utilization_status,
 								)}
 							</span>
 						</div>

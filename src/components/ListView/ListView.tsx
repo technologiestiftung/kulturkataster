@@ -2,11 +2,18 @@
 
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
-import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+	FC,
+	useCallback,
+	useDeferredValue,
+	useEffect,
+	useMemo,
+	useRef,
+	useState,
+} from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { InstitutionCard } from "./InstitutionCard";
-import InstitutionCardSkeleton from "./InstitutionCardSkeleton";
 import { AlphabetFilter } from "./AlphabetFilter";
 import { Institution } from "@/types";
 import { ModalFooter } from "../Modals/ModalFooter";
@@ -18,13 +25,32 @@ import {
 	TooltipContent,
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Loading } from "@/components/ui/loading";
 import ArrowNarrowUp from "@/icons/arrow-narrow-up.svg";
 import TextWithLinks from "../Content/TextWithLinks";
 import { FilterModalWrapper } from "@/components/Filter/FilterModalWrapper";
 import { FilterPanel } from "@/components/Filter/FilterPanel";
+import { ListViewSkeleton } from "./ListViewSkeleton";
+import { useWindowVirtualizer } from "@tanstack/react-virtual";
 
-const ITEMS_PER_PAGE = 20;
+const LIST_ITEM_ESTIMATE_SIZE = 320;
+const LIST_OVERSCAN = 8;
+const LIST_SCROLL_STORAGE_KEY = "listView.scrollTop";
+
+const readStoredListScrollOffset = (): number => {
+	if (typeof window === "undefined") return 0;
+	const raw = window.sessionStorage.getItem(LIST_SCROLL_STORAGE_KEY);
+	if (!raw) return 0;
+	const parsed = Number(raw);
+	return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
+};
+
+const writeStoredListScrollOffset = (offset: number) => {
+	if (typeof window === "undefined") return;
+	window.sessionStorage.setItem(
+		LIST_SCROLL_STORAGE_KEY,
+		String(Math.max(0, Math.floor(offset))),
+	);
+};
 
 const ListView: FC = () => {
 	const { t } = useTranslation("common");
@@ -47,38 +73,69 @@ const ListView: FC = () => {
 	const pathname = usePathname();
 	const toLocalePath = useLocalePath();
 
-	const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
-	const [isLoading, setIsLoading] = useState(false);
 	const [showScrollToTop, setShowScrollToTop] = useState(false);
 	const [searchQuery, setSearchQuery] = useState("");
+	const deferredSearchQuery = useDeferredValue(searchQuery);
 	const [activeLetter, setActiveLetter] = useState<string | null>(null);
 	const [isFilterOpen, setIsFilterOpen] = useState(false);
-	const sentinelRef = useRef<HTMLDivElement>(null);
-	const containerRef = useRef<HTMLDivElement>(null);
-	const lastFocusedInstitutionIdRef = useRef<string | null>(null);
+	const [listScrollMargin, setListScrollMargin] = useState(0);
+	const lastSyncedSelectionRef = useRef<string | null>(null);
+	const pendingTopScrollAfterDeselectRef = useRef(false);
+	const previousSearchActiveRef = useRef(false);
+	const listScrollOffsetRef = useRef(readStoredListScrollOffset());
+	const hasRestoredListScrollRef = useRef(false);
+	const rowElementMapRef = useRef(new Map<string, HTMLDivElement>());
+	const listContainerRef = useRef<HTMLDivElement | null>(null);
+
+	const sortedInstitutions = useMemo(() => {
+		if (!institutions) return [];
+		return [...institutions].sort((a, b) => {
+			const nameA = a?.name ?? "";
+			const nameB = b?.name ?? "";
+			const byName = nameA.localeCompare(nameB, "de", {
+				sensitivity: "base",
+			});
+			if (byName !== 0) return byName;
+			return String(a?.id ?? "").localeCompare(String(b?.id ?? ""), "de", {
+				numeric: true,
+			});
+		});
+	}, [institutions]);
+
+	const searchableInstitutions = useMemo(
+		() =>
+			sortedInstitutions.map((institution) => {
+				const address = institution.address;
+				const searchableText = [
+					institution.name,
+					address?.street,
+					address?.street_number,
+					address?.zipcode,
+					address?.city,
+					address?.district,
+					address?.neighbourhood,
+				]
+					.filter(Boolean)
+					.join(" ")
+					.toLowerCase();
+				return { institution, searchableText };
+			}),
+		[sortedInstitutions],
+	);
+
+	const normalizedDeferredQuery = useMemo(
+		() => deferredSearchQuery.trim().toLowerCase(),
+		[deferredSearchQuery],
+	);
 
 	const searchFilteredInstitutions = useMemo(() => {
-		if (!institutions) return [];
-		const normalizedQuery = searchQuery.trim().toLowerCase();
-		return normalizedQuery
-			? institutions.filter((institution) => {
-					const address = institution.address;
-					const haystack = [
-						institution.name,
-						address?.street,
-						address?.street_number,
-						address?.zipcode,
-						address?.city,
-						address?.district,
-						address?.neighbourhood,
-					]
-						.filter(Boolean)
-						.join(" ")
-						.toLowerCase();
-					return haystack.includes(normalizedQuery);
-				})
-			: institutions;
-	}, [institutions, searchQuery]);
+		if (!normalizedDeferredQuery) {
+			return sortedInstitutions;
+		}
+		return searchableInstitutions
+			.filter((entry) => entry.searchableText.includes(normalizedDeferredQuery))
+			.map((entry) => entry.institution);
+	}, [normalizedDeferredQuery, searchableInstitutions, sortedInstitutions]);
 
 	const enabledLetters = useMemo(() => {
 		const letters = new Set<string>();
@@ -98,75 +155,84 @@ const ListView: FC = () => {
 						institution.name?.trim().charAt(0).toUpperCase() === activeLetter,
 				)
 			: searchFilteredInstitutions;
-
-		return [...byLetter].sort((a, b) => {
-			const nameA = a?.name ?? "";
-			const nameB = b?.name ?? "";
-			const byName = nameA.localeCompare(nameB, "de", {
-				sensitivity: "base",
-			});
-			if (byName !== 0) return byName;
-			return String(a?.id ?? "").localeCompare(String(b?.id ?? ""), "de", {
-				numeric: true,
-			});
-		});
+		return byLetter;
 	}, [searchFilteredInstitutions, activeLetter]);
-
-	const visibleInstitutions = useMemo(() => {
-		return institutionsList.slice(0, visibleCount);
-	}, [institutionsList, visibleCount]);
 
 	const selectedInstitutionId = useMemo(() => {
 		const normalizedPath = pathname?.replace(/\/$/, "") ?? "";
-		const match = normalizedPath.match(/\/list\/institution\/(\d+)$/);
+		const match = normalizedPath.match(/\/list\/institution\/(\d+)(?:\/.*)?$/);
 		return match?.[1] ?? null;
 	}, [pathname]);
 
-	const hasMore = visibleCount < institutionsList.length;
-
-	const loadMore = useCallback(() => {
-		if (isLoading || !hasMore) return;
-
-		setIsLoading(true);
-		setTimeout(() => {
-			setVisibleCount((prev) =>
-				Math.min(prev + ITEMS_PER_PAGE, institutionsList.length),
-			);
-			setIsLoading(false);
-		}, 100);
-	}, [isLoading, hasMore, institutionsList.length]);
+	const rowVirtualizer = useWindowVirtualizer({
+		count: institutionsList.length,
+		estimateSize: () => LIST_ITEM_ESTIMATE_SIZE,
+		overscan: LIST_OVERSCAN,
+		getItemKey: (index) => institutionsList[index]?.id ?? index,
+		scrollMargin: listScrollMargin,
+	});
+	const rowVirtualizerRef = useRef(rowVirtualizer);
+	rowVirtualizerRef.current = rowVirtualizer;
 
 	const handleInstitutionClick = useCallback(
 		(institution: Institution) => {
-			router.push(toLocalePath(`/list/institution/${institution.id}`));
+			const institutionId = String(institution.id);
+			if (selectedInstitutionId === institutionId) {
+				router.push(toLocalePath("/list"));
+				return;
+			}
+			router.push(toLocalePath(`/list/institution/${institutionId}`));
 		},
-		[router, toLocalePath],
+		[router, selectedInstitutionId, toLocalePath],
 	);
 
 	useEffect(() => {
-		setVisibleCount(ITEMS_PER_PAGE);
-	}, [searchQuery, activeLetter, institutions]);
+		rowVirtualizerRef.current.measure();
+	}, [institutionsList, selectedInstitutionId]);
+
+	useEffect(() => {
+		const updateListScrollMargin = () => {
+			const listElement = listContainerRef.current;
+			if (!listElement) return;
+			const nextScrollMargin =
+				listElement.getBoundingClientRect().top + window.scrollY;
+			setListScrollMargin((current) =>
+				Math.abs(current - nextScrollMargin) < 1 ? current : nextScrollMargin,
+			);
+		};
+
+		updateListScrollMargin();
+		window.addEventListener("resize", updateListScrollMargin);
+
+		return () => window.removeEventListener("resize", updateListScrollMargin);
+	}, [institutionsList.length]);
+
+	useEffect(() => {
+		if (!selectedInstitutionId) return;
+
+		const selectedRowElement =
+			rowElementMapRef.current.get(selectedInstitutionId) ?? null;
+		if (!selectedRowElement || typeof ResizeObserver === "undefined") {
+			return;
+		}
+
+		const observer = new ResizeObserver((entries) => {
+			for (const entry of entries) {
+				if (entry.contentRect.height <= 0) continue;
+				rowVirtualizerRef.current.measure();
+			}
+		});
+
+		observer.observe(selectedRowElement);
+
+		return () => observer.disconnect();
+	}, [selectedInstitutionId]);
 
 	useEffect(() => {
 		if (activeLetter && !enabledLetters.has(activeLetter)) {
 			setActiveLetter(null);
 		}
 	}, [activeLetter, enabledLetters]);
-
-	useEffect(() => {
-		if (!selectedInstitutionId) return;
-		const selectedIndex = institutionsList.findIndex(
-			(institution) => String(institution.id) === selectedInstitutionId,
-		);
-		if (selectedIndex < 0) return;
-		const requiredVisible = Math.ceil((selectedIndex + 1) / ITEMS_PER_PAGE);
-		const requiredCount = requiredVisible * ITEMS_PER_PAGE;
-		setVisibleCount((prev) =>
-			prev >= requiredCount
-				? prev
-				: Math.min(requiredCount, institutionsList.length),
-		);
-	}, [selectedInstitutionId, institutionsList]);
 
 	useEffect(() => {
 		if (categories === null) {
@@ -177,86 +243,148 @@ const ListView: FC = () => {
 		}
 	}, [categories, districts.length, initializeCategories, initializeDistricts]);
 
-	// Intersection Observer for infinite scroll
 	useEffect(() => {
-		const sentinel = sentinelRef.current;
-		if (!sentinel) return;
-
-		const observer = new IntersectionObserver(
-			(entries) => {
-				const entry = entries[0];
-				if (entry.isIntersecting && hasMore && !isLoading) {
-					loadMore();
-				}
-			},
-			{
-				rootMargin: "100px", // Start loading when sentinel is 100px away from viewport
-				threshold: 0,
-			},
-		);
-
-		observer.observe(sentinel);
-		return () => observer.disconnect();
-	}, [hasMore, isLoading, loadMore]);
-
-	useEffect(() => {
+		let timeoutId: ReturnType<typeof setTimeout>;
 		const handleScroll = () => {
-			const scrollTop =
-				window.pageYOffset || document.documentElement.scrollTop;
-			setShowScrollToTop(scrollTop > 400);
+			clearTimeout(timeoutId);
+			timeoutId = setTimeout(() => {
+				const scrollTop =
+					window.pageYOffset || document.documentElement.scrollTop;
+				listScrollOffsetRef.current = scrollTop;
+				setShowScrollToTop(scrollTop > 400);
+				writeStoredListScrollOffset(scrollTop);
+			}, 100);
 		};
 
-		window.addEventListener("scroll", handleScroll);
-		return () => window.removeEventListener("scroll", handleScroll);
-	}, []);
+		window.addEventListener("scroll", handleScroll, { passive: true });
+		handleScroll();
 
-	useEffect(() => {
-		if (!selectedInstitutionId) return;
-		if (lastFocusedInstitutionIdRef.current === selectedInstitutionId) return;
-		if (
-			!visibleInstitutions.some(
-				(institution) => String(institution.id) === selectedInstitutionId,
-			)
-		) {
-			return;
-		}
-
-		const rafId = requestAnimationFrame(() => {
-			const selectedCard = document.querySelector(
-				`[data-institution-card-id="${selectedInstitutionId}"]`,
-			) as HTMLElement | null;
-			if (!selectedCard) return;
-			selectedCard.focus({ preventScroll: true });
-			selectedCard.scrollIntoView({
-				behavior: "smooth",
-				block: "center",
-				inline: "nearest",
-			});
-			lastFocusedInstitutionIdRef.current = selectedInstitutionId;
-		});
-
-		return () => cancelAnimationFrame(rafId);
-	}, [selectedInstitutionId, visibleInstitutions]);
+		return () => {
+			window.removeEventListener("scroll", handleScroll);
+			clearTimeout(timeoutId);
+		};
+	}, [selectedInstitutionId]);
 
 	useEffect(() => {
 		if (!selectedInstitutionId) {
-			lastFocusedInstitutionIdRef.current = null;
+			lastSyncedSelectionRef.current = null;
+			return;
 		}
+
+		const syncKey = selectedInstitutionId;
+		if (lastSyncedSelectionRef.current === syncKey) return;
+
+		const selectedIndex = institutionsList.findIndex(
+			(institution) => String(institution.id) === selectedInstitutionId,
+		);
+
+		if (selectedIndex < 0) return;
+
+		lastSyncedSelectionRef.current = syncKey;
+
+		rowVirtualizerRef.current.scrollToIndex(selectedIndex, {
+			align: "center",
+			behavior: "auto",
+		});
+
+		let attempts = 0;
+		let rafId = 0;
+		const focusWhenReady = () => {
+			attempts += 1;
+			rafId = requestAnimationFrame(() => {
+				const selectedCard = document.querySelector(
+					`[data-institution-card-id="${selectedInstitutionId}"]`,
+				) as HTMLElement | null;
+				if (!selectedCard) {
+					if (attempts < 10) {
+						focusWhenReady();
+					}
+					return;
+				}
+				selectedCard.focus({ preventScroll: true });
+			});
+		};
+		focusWhenReady();
+
+		return () => cancelAnimationFrame(rafId);
+	}, [selectedInstitutionId, institutionsList]);
+
+	useEffect(() => {
+		if (selectedInstitutionId !== null) return;
+		if (!pendingTopScrollAfterDeselectRef.current) return;
+
+		pendingTopScrollAfterDeselectRef.current = false;
+		lastSyncedSelectionRef.current = null;
+		hasRestoredListScrollRef.current = true;
+		listScrollOffsetRef.current = 0;
+		writeStoredListScrollOffset(0);
+		setShowScrollToTop(false);
+
+		rowVirtualizerRef.current.scrollToOffset(0, { behavior: "auto" });
+		window.scrollTo({ top: 0, behavior: "auto" });
+		requestAnimationFrame(() => {
+			rowVirtualizerRef.current.scrollToOffset(0, { behavior: "auto" });
+			window.scrollTo({ top: 0, behavior: "auto" });
+		});
 	}, [selectedInstitutionId]);
 
-	const scrollToTop = () => {
-		window.scrollTo({
-			top: 0,
-			behavior: "smooth",
+	useEffect(() => {
+		if (selectedInstitutionId !== null) {
+			hasRestoredListScrollRef.current = false;
+			return;
+		}
+		if (pendingTopScrollAfterDeselectRef.current) return;
+		if (hasRestoredListScrollRef.current) return;
+
+		const offset = readStoredListScrollOffset();
+		if (offset <= 0) {
+			hasRestoredListScrollRef.current = true;
+			return;
+		}
+
+		hasRestoredListScrollRef.current = true;
+		rowVirtualizerRef.current.scrollToOffset(offset, { behavior: "auto" });
+		requestAnimationFrame(() => {
+			window.scrollTo({ top: offset, behavior: "auto" });
 		});
+	}, [selectedInstitutionId, institutionsList.length]);
+
+	useEffect(() => {
+		const isSearching = normalizedDeferredQuery.length > 0;
+		if (isSearching && !previousSearchActiveRef.current) {
+			if (selectedInstitutionId) {
+				router.replace(toLocalePath("/list"), { scroll: false });
+			}
+			resetFilters();
+		}
+		previousSearchActiveRef.current = isSearching;
+	}, [
+		normalizedDeferredQuery,
+		selectedInstitutionId,
+		router,
+		toLocalePath,
+		resetFilters,
+	]);
+
+	const scrollToTop = () => {
+		if (selectedInstitutionId) {
+			writeStoredListScrollOffset(0);
+			listScrollOffsetRef.current = 0;
+			pendingTopScrollAfterDeselectRef.current = true;
+			hasRestoredListScrollRef.current = false;
+			router.replace(toLocalePath("/list"), { scroll: false });
+			return;
+		}
+
+		rowVirtualizerRef.current.scrollToOffset(0, { behavior: "auto" });
+		window.scrollTo({ top: 0, behavior: "auto" });
+		writeStoredListScrollOffset(0);
+		listScrollOffsetRef.current = 0;
+		setShowScrollToTop(false);
 	};
 
 	if (!institutions) {
-		return (
-			<div className="ListView-root w-full h-full flex items-center justify-center">
-				<Loading size="lg" />
-			</div>
-		);
+		return <ListViewSkeleton />;
 	}
 
 	const loadingFilters = categories === null || districts.length === 0;
@@ -267,7 +395,7 @@ const ListView: FC = () => {
 
 	return (
 		<div className="ListView-root w-full h-full flex flex-col items-center bg-neutral-10">
-			<div ref={containerRef} className="h-full overflow-auto max-w-5xl ">
+			<div className="h-full w-full max-w-5xl ">
 				<div className="p-4 mt-20">
 					<div className="space-y-6 flex flex-col">
 						<div className="space-y-2">
@@ -279,7 +407,7 @@ const ListView: FC = () => {
 						</div>
 
 						<div className="space-y-2">
-							<div className="flex items-end justify-between gap-4">
+							<div className="flex items-end justify-between gap-4 md:flex-row flex-col">
 								<strong className="body2 text-nowrap">
 									{tContent("listView.countLabel", {
 										count: institutionsList.length,
@@ -287,13 +415,7 @@ const ListView: FC = () => {
 								</strong>
 								<ListTopbar
 									query={searchQuery}
-									onQueryChange={(value) => {
-										const nextQuery = value ?? "";
-										if (nextQuery.trim()) {
-											resetFilters();
-										}
-										setSearchQuery(nextQuery);
-									}}
+									onQueryChange={(value) => setSearchQuery(value ?? "")}
 									onOpenFilter={() => setIsFilterOpen(true)}
 								/>
 							</div>
@@ -318,58 +440,63 @@ const ListView: FC = () => {
 							)}
 							<div
 								role="list"
-								className="space-y-2"
+								className=""
 								aria-label={t("listView.institutionsListLabel")}
+								ref={listContainerRef}
 							>
-								{visibleInstitutions.map((institution) => (
-									<InstitutionCard
-										key={institution.id}
-										institutionData={institution}
-										onClick={handleInstitutionClick}
-										isCompact={true}
-										isSelected={
-											selectedInstitutionId === String(institution.id)
-										}
-										openDetails={
-											selectedInstitutionId === String(institution.id)
-										}
-									/>
-								))}
-							</div>
+								{(() => {
+									const virtualRows = rowVirtualizer.getVirtualItems();
+									const totalSize = rowVirtualizer.getTotalSize();
 
-							{/* Loading indicator */}
-							{isLoading && (
-								<>
-									{[...Array(3)].map((_, index) => (
-										<InstitutionCardSkeleton key={index} />
-									))}
-								</>
-							)}
-
-							{/* Sentinel for intersection observer */}
-							{hasMore && (
-								<div
-									ref={sentinelRef}
-									className="h-4 flex justify-center items-center"
-								>
-									{!isLoading && (
-										<div className="body1 font-bold">
-											{tContent("listView.loadingMore")}
+									return (
+										<div
+											aria-hidden={institutionsList.length === 0}
+											className="relative"
+											style={{ height: totalSize }}
+										>
+											{virtualRows.map((virtualRow) => {
+												const institution = institutionsList[virtualRow.index];
+												if (!institution) return null;
+												const institutionId = String(institution.id);
+												return (
+													<div
+														key={institution.id}
+														data-index={virtualRow.index}
+														data-institution-id={institutionId}
+														ref={(element) => {
+															rowVirtualizer.measureElement(element);
+															if (element) {
+																rowElementMapRef.current.set(
+																	institutionId,
+																	element,
+																);
+																return;
+															}
+															rowElementMapRef.current.delete(institutionId);
+														}}
+														className="absolute left-0 top-0 w-full py-1"
+														style={{
+															transform: `translateY(${virtualRow.start - listScrollMargin}px)`,
+														}}
+													>
+														<InstitutionCard
+															institutionData={institution}
+															onClick={handleInstitutionClick}
+															isCompact={true}
+															isSelected={
+																selectedInstitutionId === institutionId
+															}
+															openDetails={
+																selectedInstitutionId === institutionId
+															}
+														/>
+													</div>
+												);
+											})}
 										</div>
-									)}
-								</div>
-							)}
-
-							{/* End indicator */}
-							{!hasMore && institutionsList.length > ITEMS_PER_PAGE && (
-								<div className="flex justify-center py-4">
-									<div className="body1 font-bold">
-										{tContent("listView.allLoaded", {
-											count: institutionsList.length,
-										})}
-									</div>
-								</div>
-							)}
+									);
+								})()}
+							</div>
 						</div>
 					</div>
 				</div>
@@ -401,8 +528,10 @@ const ListView: FC = () => {
 						<TooltipTrigger asChild>
 							<Button
 								onClick={scrollToTop}
-								variant="rounded"
-								size="icon-only"
+								radius="full"
+								variant="surface"
+								iconSize="lg"
+								data-testid="list-scroll-top"
 								className="cursor-pointer"
 								aria-label={t("listView.scrollToTop")}
 							>

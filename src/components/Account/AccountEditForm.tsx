@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
-import { FormWrapper } from "@/components/FormWrapper";
+import { FormWrapper, minLength } from "@/components/FormWrapper";
 import type { FormWrapperConfig } from "@/components/FormWrapper";
 import { AlertDialog } from "@/components/ui/alert-dialog";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
@@ -136,14 +136,7 @@ export function AccountEditForm({
 						afterField: t("auth.accountEdit.passwordRequirements"),
 						placeholder: t("auth.accountEdit.passwordPlaceholder"),
 						disabled: isLoading,
-						validate: (value) => {
-							if (!value) return undefined;
-							const text = String(value);
-							if (text.length < 8) {
-								return t("auth.validation.passwordMin");
-							}
-							return undefined;
-						},
+						validators: [minLength(8, t("auth.validation.passwordMin"))],
 					},
 					{
 						name: "confirmPassword",
@@ -151,15 +144,17 @@ export function AccountEditForm({
 						type: "password",
 						placeholder: t("auth.accountEdit.confirmPasswordPlaceholder"),
 						disabled: isLoading,
-						validateWithForm: (value, formData) => {
-							const passwordValue = String(formData.password ?? "");
-							if (!passwordValue) return undefined;
-							const confirmValue = String(value ?? "");
-							if (confirmValue !== passwordValue) {
-								return t("auth.validation.passwordMismatch");
-							}
-							return undefined;
-						},
+						validators: [
+							(value, formData) => {
+								const passwordValue = String(formData.password ?? "");
+								if (!passwordValue) return undefined;
+								const confirmValue = String(value ?? "");
+								if (confirmValue !== passwordValue) {
+									return t("auth.validation.passwordMismatch");
+								}
+								return undefined;
+							},
+						],
 					},
 				],
 			},
@@ -190,7 +185,7 @@ export function AccountEditForm({
 	};
 
 	return (
-		<div className="w-full max-w-3xl mx-auto">
+		<div className="w-full md:max-w-3xl mx-auto">
 			<div className="text-start font-bold mb-10">
 				<h1 className="">{t("auth.accountEdit.title")}</h1>
 			</div>

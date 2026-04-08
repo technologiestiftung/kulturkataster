@@ -9,6 +9,7 @@ import proj4 from "proj4";
 import React, { FC, useEffect, useRef } from "react";
 import "../../../../node_modules/ol/ol.css";
 import { useMapStore } from "../../../lib/store/mapStore";
+import { reportClientTelemetry } from "@/lib/utils/clientTelemetry";
 
 if (appConfig?.namedProjections?.length) {
 	appConfig.namedProjections.forEach(([name, def]) => {
@@ -54,13 +55,21 @@ const OlMap: FC<OlMapProps> = ({ children }) => {
 			Math.min(mapViewConfig.startZoomLevel, resolutions.length - 1),
 		);
 		if (startZoomLevel !== mapViewConfig.startZoomLevel) {
-			console.warn(
-				`[OlMap] Start zoom level ${mapViewConfig.startZoomLevel} is out of range. Using ${startZoomLevel} instead.`,
-			);
+			reportClientTelemetry({
+				level: "warn",
+				event: "map.ol_map.start_zoom.out_of_range",
+				metadata: {
+					requested_zoom_level: mapViewConfig.startZoomLevel,
+					applied_zoom_level: startZoomLevel,
+				},
+			});
 		}
 
 		if (!mapId.current) {
-			console.error("[OlMap] mapId.current is not defined");
+			reportClientTelemetry({
+				level: "error",
+				event: "map.ol_map.target.missing",
+			});
 			return;
 		}
 
@@ -89,15 +98,16 @@ const OlMap: FC<OlMapProps> = ({ children }) => {
 				destroyMap();
 			};
 		} catch (error) {
-			console.error("[OlMap] Error initializing map:", error);
+			reportClientTelemetry({
+				level: "error",
+				event: "map.ol_map.init.failed",
+				error,
+			});
 		}
 	}, [config, destroyMap, setMap]);
 
 	return (
-		<div
-			ref={mapId}
-			className="map contrast:invert-90 w-full h-full bg-slate-300"
-		>
+		<div ref={mapId} className="map w-full h-full bg-slate-300">
 			{children}
 		</div>
 	);

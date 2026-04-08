@@ -8,7 +8,6 @@ import { InfoWrapper } from "@/components/InfoWrapper/InfoWrapper";
 import type { InfoWrapperConfig } from "@/components/InfoWrapper/types";
 import { reviewClaimSubmission } from "@/server/actions/submissions";
 import type { ClaimSubmissionDetail } from "@/types/submission";
-import { showSuccessToast } from "@/lib/utils/feedbackToast";
 import { formatDateWithLocale } from "@/lib/utils/dateUtils";
 import { ActionPanel } from "@/components/ActionPanel";
 
@@ -78,30 +77,15 @@ export function UserClaimReviewModal({
 			try {
 				await reviewClaimSubmission({ id, decision });
 				setItems((prev) => prev.filter((item) => item.submission.id !== id));
-				showSuccessToast(
-					decision === "approved"
-						? t("userClaims.feedback.approve.title", {
-								defaultValue: "Claim approved",
-							})
-						: t("userClaims.feedback.reject.title", {
-								defaultValue: "Claim rejected",
-							}),
-					decision === "approved"
-						? t("userClaims.feedback.approve.description", {
-								defaultValue: "The claim has been approved successfully.",
-							})
-						: t("userClaims.feedback.reject.description", {
-								defaultValue: "The claim has been rejected successfully.",
-							}),
-				);
 				router.refresh();
-			} catch {
+			} catch (error) {
 				setReviewError(
 					t("userClaims.feedback.error.description", {
 						defaultValue:
 							"Please try again or contact support if the issue persists.",
 					}),
 				);
+				throw error;
 			} finally {
 				setBusyIds((prev) => prev.filter((entry) => entry !== id));
 			}

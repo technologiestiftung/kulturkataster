@@ -141,7 +141,7 @@
 		"accessibility": {
 			"label": "Barrierefreiheit",
 			"description": "",
-			"placeholder": "Bitte eintragen",
+			"placeholder": "Barrierefreiheit beschreiben",
 			"errors": {
 				"required": "Bitte Barrierefreiheit angeben."
 			}
@@ -221,7 +221,7 @@
 		"closing_reason": {
 			"label": "Schließungsgründe",
 			"description": "",
-			"placeholder": "Bitte auswählen",
+			"placeholder": "Gründe für die Schließung angeben",
 			"errors": {
 				"required": "Bitte Schließungsgründe angeben."
 			}
@@ -308,16 +308,16 @@
 		},
 		"established_since": {
 			"label": "Bestehen am Standort seit",
-			"description": "",
-			"placeholder": "TT.MM.JJJJ",
+			"description": "Bitte tragen Sie das Datum der erstmaligen Nutzung oder Eröffnung am Standort ein. Falls das genaue Datum nicht bekannt ist, reicht auch die Angabe des Jahres.",
+			"placeholder": "TT.MM.JJJJ oder JJJJ",
 			"errors": {
 				"required": "Bitte Bestehen am Standort seit angeben."
 			}
 		},
 		"established_until": {
 			"label": "Bestehen am Standort bis",
-			"description": "",
-			"placeholder": "TT.MM.JJJJ",
+			"description": "Bitte tragen Sie das Datum ein, bis zu dem die Kultureinrichtung an diesem Standort aktiv war. Diese Angabe betrifft nur bereits geschlossene Orte. Falls das genaue Datum nicht bekannt ist, reicht auch die Angabe des Jahres.",
+			"placeholder": "TT.MM.JJJJ oder JJJJ",
 			"errors": {
 				"required": "Bitte Bestehen am Standort bis angeben."
 			}
@@ -328,6 +328,17 @@
 			"placeholder": "Bitte eintragen",
 			"errors": {
 				"required": "Bitte Art der Finanzierung angeben."
+			},
+			"options": {
+				"church": "Kirche",
+				"district": "Bezirk",
+				"eu": "EU",
+				"federal": "Bund",
+				"foundation": "Stiftung",
+				"other": "Sonstiges",
+				"private": "Privat",
+				"state_berlin": "Land Berlin",
+				"none": "Keine Angabe"
 			},
 			"actions": {
 				"add": "Finanzierungsquelle hinzufügen",
@@ -364,7 +375,7 @@
 		},
 		"funding_sources": {
 			"label": "Finanzierungsquellen",
-			"description": "",
+			"description": "Geben Sie die Finanzierungsquellen Ihrer Kultureinrichtung an.",
 			"placeholder": "Bitte eintragen",
 			"errors": {
 				"required": "Bitte Finanzierungsquellen angeben."
@@ -386,7 +397,8 @@
 				"institutional_funding": "Institutionell gefördert",
 				"temporary_project_funding": "Temporäre Projektförderung",
 				"no_funding": "Nicht gefördert",
-				"unknown": "Unbekannt"
+				"unknown": "Unbekannt",
+				"none": "Keine Angabe"
 			}
 		},
 		"lat": {
@@ -400,7 +412,7 @@
 		"legal_form": {
 			"label": "Rechtsform",
 			"description": "",
-			"placeholder": "Bitte eintragen",
+			"placeholder": "z. B. e.V., gGmbH, GbR",
 			"errors": {
 				"required": "Bitte Rechtsform angeben."
 			}
@@ -431,7 +443,7 @@
 		},
 		"notes": {
 			"label": "Zusätzliche Informationen",
-			"description": "",
+			"description": "Bitte beachten Sie, dass dieses Feld für die Öffentlichkeit einsehbar ist. Wenn Sie Informationen eintragen möchten, die nur für befugte Nutzer*innen einsehbar sind, tragen Sie diese bitte im Feld \"Interne Notizen\" direkt darunter ein.",
 			"placeholder": "Bitte eintragen",
 			"errors": {
 				"required": "Bitte Zusätzliche Informationen angeben."
@@ -463,7 +475,7 @@
 		},
 		"internal_notes": {
 			"label": "Interne Notizen",
-			"description": "Nur für die interne Bearbeitung sichtbar.",
+			"description": "",
 			"placeholder": "Bitte eintragen",
 			"errors": {
 				"required": "Bitte Interne Notizen angeben."
@@ -504,7 +516,8 @@
 				"district_property": "Bezirkliche Liegenschaft",
 				"other_public_property": "Sonstige öffentliche Liegenschaft",
 				"municipal_housing_company": "Städtische Wohnungsbaugesellschaft",
-				"other": "Sonstige"
+				"other": "Sonstige",
+				"none": "Keine Angabe"
 			}
 		},
 		"parent_organization": {
@@ -536,7 +549,9 @@
 				"uncertain": "Unsicher",
 				"acutely_threatened": "Akut gefährdet",
 				"permanently_closed": "Dauerhaft geschlossen",
-				"not_yet_secured": "Noch nicht gesichert"
+				"not_yet_secured": "Noch nicht gesichert",
+				"unknown": "Unbekannt",
+				"none": "Keine Angabe"
 			}
 		},
 		"protection_status_info": {
@@ -545,6 +560,14 @@
 			"placeholder": "Bitte eintragen",
 			"errors": {
 				"required": "Bitte Sicherungsstatus Detailinfos angeben."
+			}
+		},
+		"protection_status_internal_notes": {
+			"label": "Interne Notizen (Sicherungsstatus)",
+			"description": "",
+			"placeholder": "Bitte eintragen",
+			"errors": {
+				"required": "Bitte interne Notizen zum Sicherungsstatus angeben."
 			}
 		},
 		"rental_contract_end": {
@@ -565,7 +588,10 @@
 			"options": {
 				"unlimited_lease": "Unbefristete Miete",
 				"limited_lease": "Befristete Miete",
-				"organization_ownership": "Eigentum der Organisation"
+				"hereditary_building_right": "Erbbaurecht",
+				"organization_ownership": "Eigentum der Organisation",
+				"leasehold": "Erbbaurecht",
+				"none": "Keine Angabe"
 			}
 		},
 		"shared_use_allowed": {
@@ -574,12 +600,24 @@
 			"placeholder": "Bitte eintragen",
 			"errors": {
 				"required": "Bitte Offen für Raumanfragen? angeben."
+			},
+			"options": {
+				"yes": "Ja",
+				"no": "Nein"
+			}
+		},
+		"shared_use_accessibility": {
+			"label": "Barrierefreiheit",
+			"description": "",
+			"placeholder": "Barrierefreiheit für die Mehrfachnutzung beschreiben",
+			"errors": {
+				"required": "Bitte Angaben zur Barrierefreiheit für die Mehrfachnutzung machen."
 			}
 		},
 		"shared_use_audience": {
 			"label": "Verfügbar für Zielgruppe/Sparte",
 			"description": "",
-			"placeholder": "Bitte eintragen",
+			"placeholder": "Geeignete Zielgruppe/Sparte beschreiben",
 			"errors": {
 				"required": "Bitte Verfügbar für Zielgruppe/Sparte angeben."
 			}
@@ -587,7 +625,7 @@
 		"shared_use_availability": {
 			"label": "Verfügbarkeit",
 			"description": "",
-			"placeholder": "Bitte eintragen",
+			"placeholder": "Zeitliche Verfügbarkeiten beschreiben",
 			"errors": {
 				"required": "Bitte Verfügbarkeit angeben."
 			}
@@ -595,15 +633,23 @@
 		"shared_use_contact_person": {
 			"label": "Kontakt für Raumanfragen",
 			"description": "",
-			"placeholder": "Bitte eintragen",
+			"placeholder": "Kontakt für Raumanfragen angeben",
 			"errors": {
 				"required": "Bitte Kontakt für Raumanfragen angeben."
+			}
+		},
+		"shared_use_cost": {
+			"label": "Kosten",
+			"description": "",
+			"placeholder": "Kosten für die Nutzung beschreiben",
+			"errors": {
+				"required": "Bitte Kosten angeben."
 			}
 		},
 		"shared_use_equipment": {
 			"label": "Ausstattung",
 			"description": "",
-			"placeholder": "Bitte eintragen",
+			"placeholder": "Ausstattung beschreiben",
 			"errors": {
 				"required": "Bitte Ausstattung angeben."
 			}
@@ -611,7 +657,7 @@
 		"shared_use_info": {
 			"label": "Beschreibung der Räume/Flächen",
 			"description": "",
-			"placeholder": "Bitte eintragen",
+			"placeholder": "Beschreibung der Räume/Flächen",
 			"errors": {
 				"required": "Bitte Beschreibung der Räume/Flächen angeben."
 			}
@@ -668,7 +714,8 @@
 				"planned_use": "Geplante Nutzung",
 				"potential_space": "Potenzialort",
 				"temporarily_closed": "Vorübergehend geschlossen",
-				"unknown": "Unbekannt"
+				"unknown": "Unbekannt",
+				"none": "Keine Angabe"
 			}
 		},
 		"utilization_status_info": {
@@ -677,6 +724,14 @@
 			"placeholder": "Bitte eintragen",
 			"errors": {
 				"required": "Bitte Nutzungsstatus Detailinfos angeben."
+			}
+		},
+		"utilization_status_internal_notes": {
+			"label": "Interne Notizen (Nutzungsstatus)",
+			"description": "",
+			"placeholder": "Bitte eintragen",
+			"errors": {
+				"required": "Bitte interne Notizen zum Nutzungsstatus angeben."
 			}
 		},
 		"website": {
@@ -696,23 +751,6 @@
 			}
 		}
 	},
-	"funding_source": {
-		"church": "Kirche",
-		"district": "Bezirk",
-		"eu": "EU",
-		"federal": "Bund",
-		"foundation": "Stiftung",
-		"other": "Sonstiges",
-		"private": "Privat",
-		"state_berlin": "Land Berlin"
-	},
-	"funding_type": {
-		"institutional_funding": "Institutionell gefördert",
-		"no_funding": "Nicht gefördert",
-		"placeholder": "Art der Förderung auswählen",
-		"temporary_project_funding": "Temporäre Projektförderung",
-		"workspace_program": "Arbeitsraumprogramm"
-	},
 	"institution_action": {
 		"create": "Erstellen",
 		"delete": "Löschen",
@@ -729,36 +767,6 @@
 		"public": "Öffentlich",
 		"removal_pending": "Löschung beantragt"
 	},
-	"owner_type": {
-		"district_property": "Bezirkliche Liegenschaft",
-		"federal_property": "Bundesliegenschaft",
-		"municipal_housing_company": "Städtische Wohnungsbaugesellschaft",
-		"other": "Sonstige",
-		"other_public_property": "Sonstige öffentliche Liegenschaft",
-		"placeholder": "Eigentümer*innenart auswählen",
-		"private": "Privat",
-		"state_property": "Landesliegenschaft",
-		"state_property_fund": "Landesliegenschaft (Liegenschaftsfonds)",
-		"state_property_other": "Landesliegenschaft (Sonstige Liegenschaft)",
-		"state_property_silb": "Landesliegenschaft (SILB)",
-		"state_property_soda": "Landesliegenschaft (SODA)",
-		"state_property_specialized": "Spezialimmobilie Land"
-	},
-	"protection_status": {
-		"acutely_threatened": "Akut gefährdet",
-		"long_term_secured": "Langfristig gesichert",
-		"medium_term_secured": "Mittelfristig gesichert",
-		"not_yet_secured": "Noch nicht gesichert",
-		"permanently_closed": "Dauerhaft geschlossen",
-		"placeholder": "Sicherungsstatus auswählen",
-		"uncertain": "Unsicher"
-	},
-	"rental_contract_type": {
-		"limited_lease": "Befristete Miete",
-		"organization_ownership": "Eigentum der Organisation",
-		"placeholder": "Vertragsform auswählen",
-		"unlimited_lease": "Unbefristete Miete"
-	},
 	"submission_status": {
 		"approval_pending": "Freigabe ausstehend",
 		"approved": "Genehmigt",
@@ -774,14 +782,5 @@
 		"public": "Öffentlich",
 		"state_administration": "Landesverwaltung",
 		"super_administrator": "Super-Administrator"
-	},
-	"utilization_status": {
-		"in_use": "In Nutzung",
-		"permanently_closed": "Dauerhaft geschlossen",
-		"placeholder": "Nutzungsstatus auswählen",
-		"planned_use": "Geplante Nutzung",
-		"potential_space": "Potenzialort",
-		"temporarily_closed": "Vorübergehend geschlossen",
-		"unknown": "Unbekannt"
 	}
 }

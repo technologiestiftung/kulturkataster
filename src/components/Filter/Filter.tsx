@@ -47,8 +47,9 @@ const Filter: FC<FilterProps> = ({ onSearchClick, onShowFilter }) => {
 			<div className="mb-8 flex w-full items-center gap-2 flex-row">
 				{onSearchClick && (
 					<ButtonWithTooltip
-						variant="rounded"
-						size="icon-only"
+						radius="full"
+						variant="surface"
+						iconSize="lg"
 						tooltip={tCommon("search.searchButton", {
 							defaultValue: "Suchen",
 						})}
@@ -59,11 +60,12 @@ const Filter: FC<FilterProps> = ({ onSearchClick, onShowFilter }) => {
 					</ButtonWithTooltip>
 				)}
 				<ButtonWithTooltip
-					variant="rounded"
+					radius="full"
+					variant="surface"
 					tooltip={tCommon("filter.title", {
 						defaultValue: "Kulturorte filtern",
 					})}
-					className="cursor-pointer h-12 flex-1 justify-between"
+					className="cursor-pointer h-14 md:mr-0 mr-16 flex-1 justify-between [&_svg]:size-6"
 					onClick={onShowFilter}
 				>
 					<div className="flex items-center gap-2">

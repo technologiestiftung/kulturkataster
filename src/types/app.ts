@@ -7,6 +7,8 @@ export interface AppStoreState {
 	setIsContrastMode: (isContrast: boolean) => void;
 	isLargeTextMode: boolean;
 	setIsLargeTextMode: (isLargeText: boolean) => void;
+	isReducedMotion: boolean;
+	setIsReducedMotion: (isReducedMotion: boolean) => void;
 	baseFontSize: number;
 	setBaseFontSize: (size: number) => void;
 	isLayerTreeOpen: boolean;

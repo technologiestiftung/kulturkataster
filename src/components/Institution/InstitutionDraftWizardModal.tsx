@@ -31,7 +31,6 @@ import { geocodeAddress, reverseGeocode } from "@/server/actions/maptiler";
 import {
 	buildAddressFromFormData,
 	handleAddressBlur,
-	handleLatLngBlur,
 } from "@/lib/utils/formUtils";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useInstitutionDraftStore } from "@/lib/store/institutionDraftStore";
@@ -51,6 +50,7 @@ import {
 } from "@/lib/utils/institutionDuplicateUtils";
 import { useInstitutionPrivateFieldResolver } from "@/lib/hooks/useInstitutionPrivateFieldResolver";
 import { Profile } from "@/types";
+import { reportClientTelemetry } from "@/lib/utils/clientTelemetry";
 const DEFAULT_CREATE_STEP_ID = "basic";
 const STEP_IDS = [
 	"basic",
@@ -94,11 +94,10 @@ const validateStepFieldValue = (
 		}
 	}
 
-	if (field.validate && field.validate(value)) {
-		return false;
-	}
-
-	if (field.validateWithForm && field.validateWithForm(value, formData)) {
+	if (
+		field.type !== "section" &&
+		field.validators?.some((validator) => validator(value, formData))
+	) {
 		return false;
 	}
 
@@ -170,21 +169,15 @@ function InstitutionDraftWizardContent({
 		lastQuery: "",
 		inflight: false,
 	});
-	const latLngGeocodeState = useRef({
-		lastQuery: "",
-		inflight: false,
-	});
+
 	const onAddressBlur = handleAddressBlur(addressGeocodeState, geocodeAddress, {
 		reverseGeocode,
 		districtKey: "address.district",
 		neighbourhoodKey: "address.neighbourhood",
 	});
-	const onLatLngBlur = handleLatLngBlur(latLngGeocodeState, reverseGeocode, {
-		districtKey: "address.district",
-	});
 
 	const duplicateInstitutionMessage = t(
-		"institutionDraftWizardModal.form.basic.validation.duplicateInstitution",
+		"institutionFormModal.form.details.validation.duplicateInstitution",
 		{
 			defaultValue: "An institution with this name and address already exists.",
 		},
@@ -234,7 +227,7 @@ function InstitutionDraftWizardContent({
 	const duplicateWarningText = useMemo<ReactNode>(() => {
 		if (potentialDuplicates.length === 0) return null;
 		const warningText = t(
-			"institutionDraftWizardModal.form.basic.validation.duplicatePossible",
+			"institutionFormModal.form.details.validation.duplicatePossible",
 			{
 				defaultValue:
 					"Possible duplicate found. Please verify before submitting.",
@@ -392,6 +385,15 @@ function InstitutionDraftWizardContent({
 		try {
 			await handleFinalSubmit(draft);
 		} catch (error) {
+			reportClientTelemetry({
+				level: "error",
+				event: "institution_draft.submit_failed",
+				error,
+				metadata: {
+					step_id: currentStepId,
+					draft_mode: draftMode,
+				},
+			});
 			const message =
 				error instanceof Error
 					? error.message
@@ -404,7 +406,7 @@ function InstitutionDraftWizardContent({
 					: message,
 			);
 		}
-	}, [draft, handleFinalSubmit, onSubmitError, t]);
+	}, [currentStepId, draft, draftMode, handleFinalSubmit, onSubmitError, t]);
 
 	const handleCancel = useCallback(() => {
 		if (canGoPrevious) {
@@ -481,7 +483,7 @@ function InstitutionDraftWizardContent({
 				{
 					name: "basicSection",
 					type: "section",
-					title: t("institutionDraftWizardModal.form.basic.sectionTitle"),
+					title: t("institutionFormModal.form.basic.sectionTitle"),
 					layout: { columns: 2 },
 					fields: [
 						{
@@ -491,8 +493,9 @@ function InstitutionDraftWizardContent({
 							layout: { span: "full" },
 							placeholder: fieldPlaceholder("name"),
 							required: true,
-							validateWithForm: (_value, formData) =>
-								validateDuplicateInstitution(formData),
+							validators: [
+								(_value, formData) => validateDuplicateInstitution(formData),
+							],
 							afterField: duplicateWarningText,
 						},
 						{
@@ -517,7 +520,6 @@ function InstitutionDraftWizardContent({
 							label: fieldLabel("lng", "Längengrad"),
 							type: "number",
 							layout: { span: "half" },
-							onBlur: onLatLngBlur,
 						},
 						{
 							name: "address.lat",
@@ -525,7 +527,6 @@ function InstitutionDraftWizardContent({
 							label: fieldLabel("lat", "Breitengrad"),
 							type: "number",
 							layout: { span: "half" },
-							onBlur: onLatLngBlur,
 						},
 						{
 							name: "address.streetLine",
@@ -538,8 +539,9 @@ function InstitutionDraftWizardContent({
 							layout: { span: "full" },
 							placeholder: fieldPlaceholder("street"),
 							onBlur: onAddressBlur,
-							validateWithForm: (_value, formData) =>
-								validateDuplicateInstitution(formData),
+							validators: [
+								(_value, formData) => validateDuplicateInstitution(formData),
+							],
 							afterField: duplicateWarningText,
 						},
 						{
@@ -589,6 +591,7 @@ function InstitutionDraftWizardContent({
 							fieldMetaKey: "cultural_area",
 							label: fieldLabel("cultural_area", "Cultural Area"),
 							type: "text",
+							layout: { span: "full" },
 							placeholder: fieldPlaceholder("cultural_area"),
 						},
 					],
@@ -603,6 +606,10 @@ function InstitutionDraftWizardContent({
 							label: fieldLabel("utilization_status", "Utilization Status"),
 							description: fieldDescription("utilization_status"),
 							type: "select",
+							allowNullOption: true,
+							nullOptionLabel: tEnum(
+								"field_names.utilization_status.options.none",
+							),
 							placeholder: fieldPlaceholder("utilization_status"),
 							options: [
 								{
@@ -642,12 +649,6 @@ function InstitutionDraftWizardContent({
 							],
 						},
 						{
-							name: "utilization_status_info",
-							label: fieldLabel("utilization_status_info"),
-							type: "textarea",
-							placeholder: fieldPlaceholder("utilization_status_info"),
-						},
-						{
 							name: "parent_organization",
 							label: fieldLabel("parent_organization", "Parent Organization"),
 							description: fieldDescription("parent_organization"),
@@ -671,7 +672,7 @@ function InstitutionDraftWizardContent({
 						{
 							name: "website",
 							label: fieldLabel("website", "Website"),
-							type: "text",
+							type: "url",
 							placeholder: fieldPlaceholder("website"),
 						},
 					],
@@ -692,7 +693,6 @@ function InstitutionDraftWizardContent({
 			handleStepSubmit,
 			isPrivateFormField,
 			onAddressBlur,
-			onLatLngBlur,
 			validateDuplicateInstitution,
 			potentialDuplicates,
 			localePrefix,
@@ -720,29 +720,31 @@ function InstitutionDraftWizardContent({
 							label: fieldLabel("categories"),
 							type: "filterPanel",
 							required: true,
-							validateWithForm: (value, formData) => {
-								const filters = value as
-									| {
-											category_keys?: string[];
-											child_category_keys?: string[];
-									  }
-									| undefined;
-								const hasSelectedCategories =
-									(filters?.category_keys?.length ?? 0) > 0 ||
-									(filters?.child_category_keys?.length ?? 0) > 0;
-								const rawNewCategory = formData.newCategory;
-								const hasProposedCategory =
-									typeof rawNewCategory === "string" &&
-									rawNewCategory
-										.split(",")
-										.map((item) => item.trim())
-										.some((item) => item.length > 0);
-								return hasSelectedCategories || hasProposedCategory
-									? undefined
-									: t(
-											"institutionDraftWizardModal.form.category.validation.minSelection",
-										);
-							},
+							validators: [
+								(value, formData) => {
+									const filters = value as
+										| {
+												category_keys?: string[];
+												child_category_keys?: string[];
+										  }
+										| undefined;
+									const hasSelectedCategories =
+										(filters?.category_keys?.length ?? 0) > 0 ||
+										(filters?.child_category_keys?.length ?? 0) > 0;
+									const rawNewCategory = formData.newCategory;
+									const hasProposedCategory =
+										typeof rawNewCategory === "string" &&
+										rawNewCategory
+											.split(",")
+											.map((item) => item.trim())
+											.some((item) => item.length > 0);
+									return hasSelectedCategories || hasProposedCategory
+										? undefined
+										: t(
+												"institutionFormModal.form.category.validation.minSelection",
+											);
+								},
+							],
 							layout: { span: "full" },
 							filterPanel: {
 								categoryGroups: categories,
@@ -763,16 +765,14 @@ function InstitutionDraftWizardContent({
 					fields: [
 						{
 							name: "newCategory",
-							label: t(
-								"institutionDraftWizardModal.form.category.newCategory.label",
-							),
+							label: t("institutionFormModal.form.category.newCategory.label"),
 							description: t(
-								"institutionDraftWizardModal.form.category.newCategory.description",
+								"institutionFormModal.form.category.newCategory.description",
 							),
 							className: "mt-4",
 							type: "text",
 							placeholder: t(
-								"institutionDraftWizardModal.form.category.newCategory.placeholder",
+								"institutionFormModal.form.category.newCategory.placeholder",
 							),
 							layout: { span: "full" },
 						},
@@ -810,30 +810,24 @@ function InstitutionDraftWizardContent({
 					fields: [
 						{
 							name: "shared_use",
-							label: t(
-								"institutionDraftWizardModal.form.information.sharedUse.label",
-							),
+							label: fieldLabel("shared_use_allowed"),
 							type: "radio",
 							radioVariant: "button",
 							options: [
 								{
 									value: "yes",
-									label: t(
-										"institutionDraftWizardModal.form.information.sharedUse.options.yes",
-									),
+									label: tEnum("field_names.shared_use_allowed.options.yes"),
 								},
 								{
 									value: "no",
-									label: t(
-										"institutionDraftWizardModal.form.information.sharedUse.options.no",
-									),
+									label: tEnum("field_names.shared_use_allowed.options.no"),
 								},
 							],
 						},
 						{
 							name: "shared_use_details",
 							label: t(
-								"institutionDraftWizardModal.form.information.sharedUse.detailsLabel",
+								"institutionFormModal.form.information.sharedUse.detailsLabel",
 							),
 							cardVariant: "none",
 							fieldGap: "gap-0",
@@ -845,16 +839,14 @@ function InstitutionDraftWizardContent({
 									collapsible: true,
 									accordionVariant: "default",
 									accordionTitle: t(
-										"institutionDraftWizardModal.form.information.accordions.sharedUseInfo.title",
+										"institutionFormModal.form.information.accordions.sharedUseInfo.title",
 									),
 									accordionDescription: t(
-										"institutionDraftWizardModal.form.information.accordions.sharedUseInfo.description",
+										"institutionFormModal.form.information.accordions.sharedUseInfo.description",
 									),
 									defaultOpen: false,
 									type: "textarea",
-									placeholder: t(
-										"institutionDraftWizardModal.form.information.sharedUse.infoPlaceholder",
-									),
+									placeholder: fieldPlaceholder("shared_use_info"),
 								},
 								{
 									name: "shared_use_equipment",
@@ -862,16 +854,14 @@ function InstitutionDraftWizardContent({
 									className: "border-t-1",
 									accordionVariant: "default",
 									accordionTitle: t(
-										"institutionDraftWizardModal.form.information.accordions.sharedUseEquipment.title",
+										"institutionFormModal.form.information.accordions.sharedUseEquipment.title",
 									),
 									accordionDescription: t(
-										"institutionDraftWizardModal.form.information.accordions.sharedUseEquipment.description",
+										"institutionFormModal.form.information.accordions.sharedUseEquipment.description",
 									),
 									defaultOpen: false,
 									type: "textarea",
-									placeholder: t(
-										"institutionDraftWizardModal.form.information.sharedUse.equipmentPlaceholder",
-									),
+									placeholder: fieldPlaceholder("shared_use_equipment"),
 								},
 								{
 									name: "shared_use_audience",
@@ -879,16 +869,14 @@ function InstitutionDraftWizardContent({
 									className: "border-t-1",
 									accordionVariant: "default",
 									accordionTitle: t(
-										"institutionDraftWizardModal.form.information.accordions.sharedUseAudience.title",
+										"institutionFormModal.form.information.accordions.sharedUseAudience.title",
 									),
 									accordionDescription: t(
-										"institutionDraftWizardModal.form.information.accordions.sharedUseAudience.description",
+										"institutionFormModal.form.information.accordions.sharedUseAudience.description",
 									),
 									defaultOpen: false,
 									type: "textarea",
-									placeholder: t(
-										"institutionDraftWizardModal.form.information.sharedUse.audiencePlaceholder",
-									),
+									placeholder: fieldPlaceholder("shared_use_audience"),
 								},
 								{
 									name: "shared_use_availability",
@@ -896,16 +884,14 @@ function InstitutionDraftWizardContent({
 									className: "border-t-1",
 									accordionVariant: "default",
 									accordionTitle: t(
-										"institutionDraftWizardModal.form.information.accordions.sharedUseAvailability.title",
+										"institutionFormModal.form.information.accordions.sharedUseAvailability.title",
 									),
 									accordionDescription: t(
-										"institutionDraftWizardModal.form.information.accordions.sharedUseAvailability.description",
+										"institutionFormModal.form.information.accordions.sharedUseAvailability.description",
 									),
 									defaultOpen: false,
 									type: "textarea",
-									placeholder: t(
-										"institutionDraftWizardModal.form.information.sharedUse.availabilityPlaceholder",
-									),
+									placeholder: fieldPlaceholder("shared_use_availability"),
 								},
 								{
 									name: "shared_use_accessibility",
@@ -913,16 +899,14 @@ function InstitutionDraftWizardContent({
 									className: "border-t-1",
 									accordionVariant: "default",
 									accordionTitle: t(
-										"institutionDraftWizardModal.form.information.accordions.sharedUseAccessibility.title",
+										"institutionFormModal.form.information.accordions.sharedUseAccessibility.title",
 									),
 									accordionDescription: t(
-										"institutionDraftWizardModal.form.information.accordions.sharedUseAccessibility.description",
+										"institutionFormModal.form.information.accordions.sharedUseAccessibility.description",
 									),
 									defaultOpen: false,
 									type: "textarea",
-									placeholder: t(
-										"institutionDraftWizardModal.form.information.sharedUse.accessibilityPlaceholder",
-									),
+									placeholder: fieldPlaceholder("shared_use_accessibility"),
 								},
 								{
 									name: "shared_use_cost",
@@ -930,16 +914,14 @@ function InstitutionDraftWizardContent({
 									collapsible: true,
 									accordionVariant: "default",
 									accordionTitle: t(
-										"institutionDraftWizardModal.form.information.accordions.sharedUseCost.title",
+										"institutionFormModal.form.information.accordions.sharedUseCost.title",
 									),
 									accordionDescription: t(
-										"institutionDraftWizardModal.form.information.accordions.sharedUseCost.description",
+										"institutionFormModal.form.information.accordions.sharedUseCost.description",
 									),
 									defaultOpen: false,
 									type: "textarea",
-									placeholder: t(
-										"institutionDraftWizardModal.form.information.sharedUse.costPlaceholder",
-									),
+									placeholder: fieldPlaceholder("shared_use_cost"),
 								},
 								{
 									name: "shared_use_contact_person",
@@ -947,16 +929,14 @@ function InstitutionDraftWizardContent({
 									collapsible: true,
 									accordionVariant: "default",
 									accordionTitle: t(
-										"institutionDraftWizardModal.form.information.accordions.sharedUseContactPerson.title",
+										"institutionFormModal.form.information.accordions.sharedUseContactPerson.title",
 									),
 									accordionDescription: t(
-										"institutionDraftWizardModal.form.information.accordions.sharedUseContactPerson.description",
+										"institutionFormModal.form.information.accordions.sharedUseContactPerson.description",
 									),
 									defaultOpen: false,
 									type: "text",
-									placeholder: t(
-										"institutionDraftWizardModal.form.information.sharedUse.contactPersonPlaceholder",
-									),
+									placeholder: fieldPlaceholder("shared_use_contact_person"),
 								},
 							],
 						},
@@ -965,6 +945,7 @@ function InstitutionDraftWizardContent({
 				{
 					name: "organization_section",
 					type: "section",
+					title: t("institutionFormModal.form.organization.title"),
 					fieldGap: "gap-0",
 					fields: [
 						{
@@ -972,10 +953,10 @@ function InstitutionDraftWizardContent({
 							collapsible: true,
 							accordionVariant: "default",
 							accordionTitle: t(
-								"institutionDraftWizardModal.form.information.accordions.organization.title",
+								"institutionFormModal.form.information.accordions.organization.title",
 							),
 							accordionDescription: t(
-								"institutionDraftWizardModal.form.information.accordions.organization.description",
+								"institutionFormModal.form.information.accordions.organization.description",
 							),
 							defaultOpen: false,
 							type: "section",
@@ -983,10 +964,9 @@ function InstitutionDraftWizardContent({
 							fields: [
 								{
 									name: "legal_form",
+									label: fieldLabel("legal_form"),
 									type: "text",
-									placeholder: t(
-										"institutionDraftWizardModal.form.information.organization.legalFormPlaceholder",
-									),
+									placeholder: fieldPlaceholder("legal_form"),
 								},
 							],
 						},
@@ -996,10 +976,10 @@ function InstitutionDraftWizardContent({
 							className: "border-t-1",
 							accordionVariant: "default",
 							accordionTitle: t(
-								"institutionDraftWizardModal.form.information.accordions.funding.title",
+								"institutionFormModal.form.information.accordions.funding.title",
 							),
 							accordionDescription: t(
-								"institutionDraftWizardModal.form.information.accordions.funding.description",
+								"institutionFormModal.form.information.accordions.funding.description",
 							),
 							defaultOpen: false,
 							type: "section",
@@ -1008,8 +988,8 @@ function InstitutionDraftWizardContent({
 								{
 									name: "funding_type",
 									allowNullOption: true,
-									nullOptionLabel: t(
-										"field_names.funding_type.options.unknown",
+									nullOptionLabel: tEnum(
+										"field_names.funding_type.options.none",
 									),
 									label: fieldLabel("funding_type", "Funding Type"),
 									type: "select",
@@ -1049,10 +1029,10 @@ function InstitutionDraftWizardContent({
 							className: "border-t-1",
 							accordionVariant: "default",
 							accordionTitle: t(
-								"institutionDraftWizardModal.form.information.accordions.fundingSources.title",
+								"institutionFormModal.form.information.accordions.fundingSources.title",
 							),
 							accordionDescription: t(
-								"institutionDraftWizardModal.form.information.accordions.fundingSources.description",
+								"institutionFormModal.form.information.accordions.fundingSources.description",
 							),
 							defaultOpen: false,
 							type: "section",
@@ -1062,6 +1042,10 @@ function InstitutionDraftWizardContent({
 									name: "funding_sources",
 									label: fieldLabel("funding_sources"),
 									type: "fundingSources",
+									allowNullOption: true,
+									nullOptionLabel: tEnum(
+										"field_names.funding_source.options.none",
+									),
 									description: fieldDescription("funding_sources"),
 									fundingSources: {
 										sourceLabel: fieldLabel("funding_source_name"),
@@ -1084,6 +1068,7 @@ function InstitutionDraftWizardContent({
 				},
 				{
 					name: "details_section",
+					title: t("institutionFormModal.form.details.title"),
 					type: "section",
 					fieldGap: "gap-0",
 					fields: [
@@ -1093,10 +1078,10 @@ function InstitutionDraftWizardContent({
 							className: "border-t-1",
 							accordionVariant: "default",
 							accordionTitle: t(
-								"institutionDraftWizardModal.form.information.accordions.establishment.title",
+								"institutionFormModal.form.information.accordions.establishment.title",
 							),
 							accordionDescription: t(
-								"institutionDraftWizardModal.form.information.accordions.establishment.description",
+								"institutionFormModal.form.information.accordions.establishment.description",
 							),
 							defaultOpen: false,
 							type: "section",
@@ -1108,13 +1093,9 @@ function InstitutionDraftWizardContent({
 										"established_since",
 										"Bestehen am Standort seit",
 									),
-									description: t(
-										"institutionDraftWizardModal.form.information.establishment.sinceDescription",
-									),
+									description: fieldDescription("established_since"),
 									type: "date",
-									placeholder: t(
-										"institutionDraftWizardModal.form.information.datePlaceholderWithYear",
-									),
+									placeholder: fieldPlaceholder("established_since"),
 								},
 								{
 									name: "established_until",
@@ -1122,13 +1103,9 @@ function InstitutionDraftWizardContent({
 										"established_until",
 										"Bestehen am Standort bis",
 									),
-									description: t(
-										"institutionDraftWizardModal.form.information.establishment.untilDescription",
-									),
+									description: fieldDescription("established_until"),
 									type: "date",
-									placeholder: t(
-										"institutionDraftWizardModal.form.information.datePlaceholderWithYear",
-									),
+									placeholder: fieldPlaceholder("established_until"),
 								},
 							],
 						},
@@ -1138,10 +1115,10 @@ function InstitutionDraftWizardContent({
 							className: "border-t-1",
 							accordionVariant: "default",
 							accordionTitle: t(
-								"institutionDraftWizardModal.form.information.accordions.closing.title",
+								"institutionFormModal.form.information.accordions.closing.title",
 							),
 							accordionDescription: t(
-								"institutionDraftWizardModal.form.information.accordions.closing.description",
+								"institutionFormModal.form.information.accordions.closing.description",
 							),
 							defaultOpen: false,
 							type: "section",
@@ -1151,9 +1128,7 @@ function InstitutionDraftWizardContent({
 									name: "closing_reason",
 									label: fieldLabel("closing_reason", "Schließungsgründe"),
 									type: "textarea",
-									placeholder: t(
-										"institutionDraftWizardModal.form.information.closingReason.placeholder",
-									),
+									placeholder: fieldPlaceholder("closing_reason"),
 								},
 							],
 						},
@@ -1163,10 +1138,10 @@ function InstitutionDraftWizardContent({
 							className: "border-t-1",
 							accordionVariant: "default",
 							accordionTitle: t(
-								"institutionDraftWizardModal.form.information.accordions.ownership.title",
+								"institutionFormModal.form.information.accordions.ownership.title",
 							),
 							accordionDescription: t(
-								"institutionDraftWizardModal.form.information.accordions.ownership.description",
+								"institutionFormModal.form.information.accordions.ownership.description",
 							),
 							defaultOpen: false,
 							type: "section",
@@ -1263,10 +1238,10 @@ function InstitutionDraftWizardContent({
 							className: "border-t-1",
 							accordionVariant: "default",
 							accordionTitle: t(
-								"institutionDraftWizardModal.form.information.accordions.rental.title",
+								"institutionFormModal.form.information.accordions.rental.title",
 							),
 							accordionDescription: t(
-								"institutionDraftWizardModal.form.information.accordions.rental.description",
+								"institutionFormModal.form.information.accordions.rental.description",
 							),
 							defaultOpen: false,
 							type: "section",
@@ -1276,6 +1251,7 @@ function InstitutionDraftWizardContent({
 									name: "rental_contract_type",
 									label: fieldLabel("rental_contract_type", "Vertragsform"),
 									type: "select",
+									allowNullOption: true,
 									options: [
 										{
 											value: "unlimited_lease",
@@ -1291,8 +1267,8 @@ function InstitutionDraftWizardContent({
 										},
 										{
 											value: "hereditary_building_right",
-											label: t(
-												"institutionDraftWizardModal.form.information.rentalContract.hereditaryBuildingRight",
+											label: tEnum(
+												"field_names.rental_contract_type.options.hereditary_building_right",
 											),
 										},
 										{
@@ -1308,9 +1284,9 @@ function InstitutionDraftWizardContent({
 									name: "rental_contract_end",
 									label: fieldLabel("rental_contract_end", "Vertragsende"),
 									type: "date",
-									placeholder: t(
-										"institutionDraftWizardModal.form.information.datePlaceholder",
-									),
+									condition: (formData) =>
+										formData.rental_contract_type === "limited_lease",
+									placeholder: fieldPlaceholder("rental_contract_end"),
 								},
 							],
 						},
@@ -1320,10 +1296,10 @@ function InstitutionDraftWizardContent({
 							className: "border-t-1",
 							accordionVariant: "default",
 							accordionTitle: t(
-								"institutionDraftWizardModal.form.information.accordions.protection.title",
+								"institutionFormModal.form.information.accordions.protection.title",
 							),
 							accordionDescription: t(
-								"institutionDraftWizardModal.form.information.accordions.protection.description",
+								"institutionFormModal.form.information.accordions.protection.description",
 							),
 							defaultOpen: false,
 							type: "section",
@@ -1332,6 +1308,10 @@ function InstitutionDraftWizardContent({
 								{
 									name: "protection_status",
 									label: fieldLabel("protection_status", "Sicherungsstatus"),
+									allowNullOption: true,
+									nullOptionLabel: tEnum(
+										"field_names.protection_status.options.none",
+									),
 									type: "select",
 									options: [
 										{
@@ -1382,6 +1362,17 @@ function InstitutionDraftWizardContent({
 									type: "textarea",
 									placeholder: fieldPlaceholder("protection_status_info"),
 								},
+								{
+									name: "protection_status_internal_notes",
+									label: fieldLabel(
+										"protection_status_internal_notes",
+										"Sicherungsstatus Interne Notizen",
+									),
+									type: "textarea",
+									placeholder: fieldPlaceholder(
+										"protection_status_internal_notes",
+									),
+								},
 							],
 						},
 						{
@@ -1390,10 +1381,10 @@ function InstitutionDraftWizardContent({
 							className: "border-t-1",
 							accordionVariant: "default",
 							accordionTitle: t(
-								"institutionDraftWizardModal.form.information.accordions.space.title",
+								"institutionFormModal.form.information.accordions.space.title",
 							),
 							accordionDescription: t(
-								"institutionDraftWizardModal.form.information.accordions.space.description",
+								"institutionFormModal.form.information.accordions.space.description",
 							),
 							defaultOpen: false,
 							type: "section",
@@ -1422,52 +1413,6 @@ function InstitutionDraftWizardContent({
 								},
 							],
 						},
-						{
-							name: "accessibility_accordion",
-							collapsible: true,
-							className: "border-t-1",
-							accordionVariant: "default",
-							accordionTitle: t(
-								"institutionDraftWizardModal.form.information.accordions.accessibility.title",
-							),
-							accordionDescription: t(
-								"institutionDraftWizardModal.form.information.accordions.accessibility.description",
-							),
-							defaultOpen: false,
-							type: "section",
-							cardVariant: "none",
-							fields: [
-								{
-									name: "accessibility",
-									label: fieldLabel("accessibility"),
-									type: "textarea",
-									placeholder: fieldPlaceholder("accessibility"),
-								},
-							],
-						},
-						{
-							name: "cost_accordion",
-							collapsible: true,
-							className: "border-t-1",
-							accordionVariant: "default",
-							accordionTitle: t(
-								"institutionDraftWizardModal.form.information.accordions.cost.title",
-							),
-							accordionDescription: t(
-								"institutionDraftWizardModal.form.information.accordions.cost.description",
-							),
-							defaultOpen: false,
-							type: "section",
-							cardVariant: "none",
-							fields: [
-								{
-									name: "cost",
-									label: fieldLabel("cost"),
-									type: "textarea",
-									placeholder: fieldPlaceholder("cost"),
-								},
-							],
-						},
 					],
 				},
 				{
@@ -1475,24 +1420,27 @@ function InstitutionDraftWizardContent({
 					type: "section",
 					fields: [
 						{
+							name: "source",
+							label: fieldLabel("source", "Datenquelle"),
+							type: "text",
+							placeholder: fieldPlaceholder("source"),
+							description: fieldDescription("source"),
+						},
+						{
 							name: "notes",
 							label: fieldLabel("notes", "Notizen"),
 							type: "textarea",
 							placeholder: fieldPlaceholder("notes"),
-							description: t(
-								"institutionDraftWizardModal.form.information.notesDescription",
-							),
+							description: fieldDescription("notes"),
 						},
 						{
 							name: "internal_notes",
 							label: fieldLabel("internal_notes", "Interne Notizen"),
 							type: "textarea",
 							placeholder: fieldPlaceholder("internal_notes"),
-							description: t(
-								"institutionDraftWizardModal.form.information.internalNotesDescription",
-							),
+							description: fieldDescription("internal_notes"),
 							privateDescription: t(
-								"institutionDraftWizardModal.form.information.internalNotesPrivateDescription",
+								"institutionFormModal.form.information.internalNotesPrivateDescription",
 							),
 						},
 					],
@@ -1526,23 +1474,55 @@ function InstitutionDraftWizardContent({
 				{
 					name: "consentSection",
 					type: "section",
-					title: t("institutionDraftWizardModal.form.contact.consent.title"),
+					title: t("institutionFormModal.form.contact.consent.title"),
 					layout: { span: "full" },
 					fields: [
 						{
 							name: "works_for_organization",
 							label: t(
-								"institutionDraftWizardModal.form.contact.consent.worksForOrganization",
+								"institutionFormModal.form.contact.consent.worksForOrganization",
 							),
-							type: "checkbox",
+							type: "radio",
+							radioVariant: "button",
+							options: [
+								{
+									value: true,
+									label: t(
+										"institutionFormModal.form.contact.consent.worksForOrganizationOptions.yes",
+									),
+								},
+								{
+									value: false,
+									label: t(
+										"institutionFormModal.form.contact.consent.worksForOrganizationOptions.no",
+									),
+								},
+							],
+							defaultValue: false,
 						},
 						{
 							name: "consent_contact_listing",
 							label: t(
-								"institutionDraftWizardModal.form.contact.consent.contactListing",
+								"institutionFormModal.form.contact.consent.contactListing",
 							),
 							condition: (formData) => formData.works_for_organization === true,
-							type: "checkbox",
+							type: "radio",
+							radioVariant: "button",
+							options: [
+								{
+									value: true,
+									label: t(
+										"institutionFormModal.form.contact.consent.worksForOrganizationOptions.yes",
+									),
+								},
+								{
+									value: false,
+									label: t(
+										"institutionFormModal.form.contact.consent.worksForOrganizationOptions.no",
+									),
+								},
+							],
+							defaultValue: false,
 						},
 					],
 				},
@@ -1581,7 +1561,7 @@ function InstitutionDraftWizardContent({
 						{
 							name: "contact_person_phone",
 							label: fieldLabel("contact_person_phone"),
-							type: "text",
+							type: "tel",
 							defaultValue: profile?.phone || "",
 							placeholder: fieldPlaceholder("contact_person_phone"),
 							layout: { span: "full" },
@@ -1693,7 +1673,7 @@ function InstitutionDraftWizardContent({
 			</div>
 
 			{!isUpdateReviewOnly && (
-				<div className="mb-8 flex flex-col items-center space-y-2 mx-24">
+				<div className="mb-8 flex flex-col items-center space-y-2 md:mx-24">
 					<StepIndicator />
 					<span className="body2">
 						{t("institutionDraftWizardModal.stepLabel", {
@@ -1824,7 +1804,7 @@ export function InstitutionDraftWizardModal({
 				confirmLabel: t("institutionModalCloseConfirmation.confirm"),
 				cancelLabel: t("institutionModalCloseConfirmation.cancel"),
 			}}
-			containerClassName="p-0 md:p-0 mt-0 md:mt-0"
+			containerClassName=""
 			contentWrapperClassName="flex-1"
 			contentClassName=""
 			errorDialog={
@@ -1842,7 +1822,7 @@ export function InstitutionDraftWizardModal({
 					: undefined
 			}
 		>
-			<div className="flex min-h-full flex-col bg-background py-10 space-y-10">
+			<div className="flex min-h-full flex-col md:bg-background py-10 space-y-10">
 				<HorizontalStepper
 					steps={resolvedSteps}
 					initialStepId={isUpdateReviewOnly ? "review" : resolvedStepId}

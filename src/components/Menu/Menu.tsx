@@ -12,6 +12,12 @@ import {
 	SidebarMenuItem,
 	useSidebar,
 } from "@/components/ui/sidebar";
+import {
+	Sheet,
+	SheetContent,
+	SheetHeader,
+	SheetTitle,
+} from "@/components/ui/sheet";
 import Accessibility from "@/icons/accessibility.svg";
 import Edit from "@/icons/edit.svg";
 import InfoCircle from "@/icons/info-circle.svg";
@@ -22,10 +28,14 @@ import ENIcon from "@/icons/lang/en.svg";
 import Download from "@/icons/download.svg";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { useAppStore } from "@/lib/store/appStore";
+import { allowedLocales, defaultLocale } from "@/i18n/config";
+import { localePath } from "@/lib/utils/localePath";
 import KukaSmallLogo from "@/logos/kuka-small.svg";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { usePathname, useRouter } from "next/navigation";
+import { LayerTreeContent } from "@/components/Map/LayerTree/LayerTree";
+import { useAccountStore } from "@/lib/store/accountStore";
 
 type MenuItem = {
 	id: string;
@@ -138,21 +148,73 @@ const isMenuItemActive = (
 	);
 };
 
+const buildLocaleToggledPath = (
+	pathname: string,
+	targetLocale: string,
+): string => {
+	const withoutLocale =
+		pathname.replace(
+			new RegExp(`^/(${allowedLocales.join("|")})(?=/|$)`),
+			"",
+		) || "/";
+	return localePath(targetLocale, withoutLocale);
+};
+
+function MobileSheetHandle({
+	onPointerDown,
+}: {
+	onPointerDown?: React.PointerEventHandler<HTMLDivElement>;
+}) {
+	return (
+		<div
+			className="md:hidden flex justify-center pb-2 touch-none"
+			onPointerDown={onPointerDown}
+		>
+			<div className="w-10 h-1 bg-muted-foreground/90 rounded-full"></div>
+		</div>
+	);
+}
+
+function MobileSheetHeader({
+	title,
+	onHandlePointerDown,
+}: {
+	title: string;
+	onHandlePointerDown?: React.PointerEventHandler<HTMLDivElement>;
+}) {
+	return (
+		<>
+			<div className="gap-3.5 p-2 h-16 shrink-0 shadow-sm z-10">
+				<MobileSheetHandle onPointerDown={onHandlePointerDown} />
+			</div>
+			<SheetHeader className="sr-only">
+				<SheetTitle>{title}</SheetTitle>
+			</SheetHeader>
+		</>
+	);
+}
+
 export function Menu({
 	sidebar,
 	...props
 }: React.ComponentProps<typeof Sidebar> & { sidebar: React.ReactNode }) {
-	const { setOpen, setOpenMobile } = useSidebar();
+	const { setOpen, setOpenMobile, isMobile } = useSidebar();
 	const { t } = useTranslation("common");
 	const router = useRouter();
 	const toLocalePath = useLocalePath();
 	const pathname = usePathname();
 	const { setFirstTimeUser } = useAppStore();
+	const { currentProfile } = useAccountStore();
+	const isLoggedIn = Boolean(currentProfile);
 
 	const normalizedPath = useMemo(
 		() => (pathname ? pathname.replace(/\/$/, "") : ""),
 		[pathname],
 	);
+	const currentLocale = useMemo(() => {
+		const firstSegment = normalizedPath.split("/").filter(Boolean)[0];
+		return allowedLocales.includes(firstSegment) ? firstSegment : defaultLocale;
+	}, [normalizedPath]);
 
 	const currentSidebarInstitutionId = useMemo(() => {
 		const match = normalizedPath.match(/\/(?:map|list)\/institution\/(\d+)$/);
@@ -169,9 +231,9 @@ export function Menu({
 		[normalizedPath],
 	);
 
-	const hasSidebarContent =
-		Boolean(currentSidebarInstitutionId) || isAccessibilitySidebarRoute;
-	const showSecondarySidebar = hasSidebarContent && isMapRoute;
+	const showSecondarySidebar =
+		isAccessibilitySidebarRoute ||
+		(Boolean(currentSidebarInstitutionId) && isMapRoute);
 	const [isSecondarySidebarMounted, setIsSecondarySidebarMounted] =
 		useState(showSecondarySidebar);
 	const [isSecondarySidebarVisible, setIsSecondarySidebarVisible] =
@@ -222,12 +284,112 @@ export function Menu({
 		};
 	}, [showSecondarySidebar]);
 
+	const isMobileInstitutionDetailRoute =
+		isMobile && Boolean(currentSidebarInstitutionId) && isMapRoute;
+
+	const isLayerTreeOpen = useAppStore((state) => state.isLayerTreeOpen);
+	const setIsLayerTreeOpen = useAppStore((state) => state.setIsLayerTreeOpen);
+
+	const isMobileLayerTreeRoute = isMobile && isLayerTreeOpen && isMapRoute;
+	const dragStartYRef = useRef<number | null>(null);
+	const [mobileLayerTreeDragOffset, setMobileLayerTreeDragOffset] = useState(0);
+	const [isDraggingMobileLayerTree, setIsDraggingMobileLayerTree] =
+		useState(false);
+
 	const handleLogoClick = () => {
 		setFirstTimeUser(true);
 		router.push(toLocalePath("/welcome"));
 	};
 
+	const handleMobileDetailsOpenChange = (nextOpen: boolean) => {
+		if (nextOpen) return;
+		if (!currentSidebarInstitutionId) return;
+		router.replace(toLocalePath("/map"));
+	};
+
+	const handleMobileLayerTreeOpenChange = (nextOpen: boolean) => {
+		setIsLayerTreeOpen(nextOpen);
+	};
+
+	const resetMobileLayerTreeDrag = () => {
+		dragStartYRef.current = null;
+		setIsDraggingMobileLayerTree(false);
+		setMobileLayerTreeDragOffset(0);
+	};
+
+	const handleMobileLayerTreeDragStart = (clientY: number) => {
+		if (!isMobileLayerTreeRoute) return;
+		dragStartYRef.current = clientY;
+		setIsDraggingMobileLayerTree(true);
+	};
+
+	const handleMobileLayerTreeDragMove = (clientY: number) => {
+		const startY = dragStartYRef.current;
+		if (!isMobileLayerTreeRoute || startY === null) return;
+		setMobileLayerTreeDragOffset(Math.max(0, clientY - startY));
+	};
+
+	const handleMobileLayerTreeDragEnd = () => {
+		if (!isMobileLayerTreeRoute) {
+			resetMobileLayerTreeDrag();
+			return;
+		}
+
+		const closeThreshold = 80;
+		const shouldClose = mobileLayerTreeDragOffset > closeThreshold;
+		resetMobileLayerTreeDrag();
+		if (shouldClose) {
+			handleMobileLayerTreeOpenChange(false);
+		}
+	};
+
+	useEffect(() => {
+		if (!isDraggingMobileLayerTree) return;
+
+		const handlePointerMove = (event: PointerEvent) => {
+			handleMobileLayerTreeDragMove(event.clientY);
+		};
+
+		const handlePointerEnd = () => {
+			handleMobileLayerTreeDragEnd();
+		};
+
+		window.addEventListener("pointermove", handlePointerMove);
+		window.addEventListener("pointerup", handlePointerEnd);
+		window.addEventListener("pointercancel", handlePointerEnd);
+
+		return () => {
+			window.removeEventListener("pointermove", handlePointerMove);
+			window.removeEventListener("pointerup", handlePointerEnd);
+			window.removeEventListener("pointercancel", handlePointerEnd);
+		};
+	}, [
+		isDraggingMobileLayerTree,
+		isMobileLayerTreeRoute,
+		mobileLayerTreeDragOffset,
+	]);
+
+	useEffect(() => {
+		if (!isMobileLayerTreeRoute) {
+			resetMobileLayerTreeDrag();
+		}
+	}, [isMobileLayerTreeRoute]);
+
 	const handleItemClick = (item: MenuItem) => {
+		if (item.id === "language") {
+			const targetLocale = currentLocale === "de" ? "en" : "de";
+			const toggledPath = buildLocaleToggledPath(
+				normalizedPath || `/${currentLocale}`,
+				targetLocale,
+			);
+			const search =
+				typeof window !== "undefined" ? window.location.search : "";
+			router.push(`${toggledPath}${search}`);
+			setOpen(false);
+			setOpenMobile(false);
+			return;
+		}
+
 		if (item.route && item.route !== "#") {
 			if (
 				(item.id === "map" || item.id === "list") &&
@@ -302,6 +464,9 @@ export function Menu({
 															aria-current={isActive ? "page" : undefined}
 															className="relative"
 														>
+															{item.id === "user" && isLoggedIn && (
+																<div className="absolute top-9.5 right-4 bg-brand-default rounded-full size-2.5 flex items-center justify-center" />
+															)}
 															<item.icon />
 														</SidebarMenuButton>
 													</SidebarMenuItem>
@@ -342,13 +507,13 @@ export function Menu({
 
 					{isSecondarySidebarMounted && (
 						<div
-							className={`pointer-events-none absolute left-[var(--sidebar-width-icon)] top-0 h-full w-[calc(100vw-var(--sidebar-width-icon))] md:max-w-[var(--sidebar-width)] transition-all duration-200 ease-out ${
+							className={`hidden md:block pointer-events-none fixed left-[var(--sidebar-width-icon)] top-0 h-svh w-[calc(100vw-var(--sidebar-width-icon))] md:max-w-[var(--sidebar-width)] transition-all duration-200 ease-out ${
 								isSecondarySidebarVisible
 									? "translate-x-0 opacity-100"
 									: "translate-x-2 opacity-0"
 							}`}
 						>
-							<div className="pointer-events-auto h-full overflow-auto bg-neutral-10 md:bg-secondary shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-interaction-dark focus-visible:outline-offset-[-2px]">
+							<div className="pointer-events-auto bg-background h-full overflow-auto bg-neutral-10 md:bg-secondary shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-interaction-dark focus-visible:outline-offset-[-2px]">
 								{sidebar}
 							</div>
 						</div>
@@ -357,7 +522,7 @@ export function Menu({
 			</nav>
 
 			<div className="fixed bottom-0 left-0 right-0 z-51 bg-sidebar border-t md:hidden h-20 pointer-events-auto">
-				<SidebarMenu className="flex-row justify-around px-2 py-3">
+				<SidebarMenu className="flex-row justify-around px-2 py-2">
 					{menuItems
 						.filter((item) => item.showInMobile)
 						.map((item) => {
@@ -371,7 +536,7 @@ export function Menu({
 									<SidebarMenuButton
 										onClick={() => handleItemClick(item)}
 										isActive={isActive}
-										className="flex-col gap-1 h-auto py-2 px-2 w-auto size-12"
+										className="flex-col h-auto py-2 px-3 w-auto size-14"
 										aria-label={t(item.label)}
 										aria-current={isActive ? "page" : undefined}
 									>
@@ -385,6 +550,63 @@ export function Menu({
 						})}
 				</SidebarMenu>
 			</div>
+
+			<Sheet
+				open={isMobileInstitutionDetailRoute || isMobileLayerTreeRoute}
+				onOpenChange={(open) => {
+					if (isMobileInstitutionDetailRoute) {
+						handleMobileDetailsOpenChange(open);
+					} else if (isMobileLayerTreeRoute) {
+						handleMobileLayerTreeOpenChange(open);
+					}
+				}}
+			>
+				<SheetContent
+					side="bottom"
+					className="h-[60vh] p-0 bottom-20"
+					style={
+						isMobileLayerTreeRoute && mobileLayerTreeDragOffset > 0
+							? {
+									transform: `translateY(${mobileLayerTreeDragOffset}px)`,
+									transitionDuration: isDraggingMobileLayerTree
+										? "0ms"
+										: undefined,
+								}
+							: undefined
+					}
+					onClose={() => {
+						if (isMobileInstitutionDetailRoute) {
+							handleMobileDetailsOpenChange(false);
+						} else if (isMobileLayerTreeRoute) {
+							handleMobileLayerTreeOpenChange(false);
+						}
+					}}
+				>
+					<MobileSheetHeader
+						title={
+							isMobileInstitutionDetailRoute
+								? t("institution.showDetails")
+								: t("map.layerTreeTitle")
+						}
+						onHandlePointerDown={
+							isMobileLayerTreeRoute
+								? (event) => {
+										handleMobileLayerTreeDragStart(event.clientY);
+									}
+								: undefined
+						}
+					/>
+					<div
+						className={
+							isMobileInstitutionDetailRoute
+								? "h-full overflow-auto"
+								: "flex-1 overflow-auto p-2"
+						}
+					>
+						{isMobileInstitutionDetailRoute ? sidebar : <LayerTreeContent />}
+					</div>
+				</SheetContent>
+			</Sheet>
 		</>
 	);
 }

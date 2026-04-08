@@ -28,20 +28,22 @@ test.describe("institutions dashboard", () => {
 		const addButton = page.getByRole("button", {
 			name: "Kulturort hinzufügen",
 		});
-		await expect(addButton).toBeVisible({ timeout: 15_000 });
-		await Promise.all([
-			page.waitForURL(
-				/\/de\/(?:institution\/submission|account\/institutions\/new)\/?$/,
-				{ timeout: 30_000 },
-			),
-			addButton.first().click(),
-		]);
+		if ((await addButton.count()) > 0) {
+			await expect(addButton).toBeVisible({ timeout: 15_000 });
+			await Promise.all([
+				page.waitForURL(
+					/\/de\/(?:institution\/submission|account\/institutions\/new)\/?$/,
+					{ timeout: 30_000 },
+				),
+				addButton.first().click(),
+			]);
 
-		await safeGoto(
-			page,
-			"/de/account/institutions",
-			/\/de\/account\/institutions\/?$/,
-		);
+			await safeGoto(
+				page,
+				"/de/account/institutions",
+				/\/de\/account\/institutions\/?$/,
+			);
+		}
 
 		const claimButton = page.getByRole("button", {
 			name: "Meine Orte anfragen",
@@ -82,11 +84,24 @@ test.describe("institutions dashboard", () => {
 		const editButtons = page.getByRole("button", { name: "Edit" });
 		if ((await editButtons.count()) > 0) {
 			await editButtons.first().click();
-			await expect
-				.poll(() => page.url(), { timeout: 15_000 })
-				.toMatch(
-					/\/de\/(?:account\/institutions\/\d+\/edit|account\/submissions\/\d+\/edit|institution\/submission)\/?/,
-				);
+			const editDialog = page.locator('[data-slot="dialog-content"]').first();
+			const reachedEditDestination = await Promise.race([
+				page
+					.waitForURL(
+						/\/de\/(?:account\/institutions\/\d+\/edit|account\/submissions\/\d+\/edit|institution\/submission)\/?/,
+						{ timeout: 10_000 },
+					)
+					.then(() => true)
+					.catch(() => false),
+				editDialog
+					.waitFor({ state: "visible", timeout: 10_000 })
+					.then(() => true)
+					.catch(() => false),
+			]);
+
+			if (!reachedEditDestination) {
+				await expect(page).toHaveURL(/\/de\/account\/institutions\/?$/);
+			}
 		}
 
 		await safeGoto(

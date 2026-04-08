@@ -54,6 +54,7 @@ import {
 	getFieldLabel,
 	getFieldPlaceholder,
 } from "@/lib/i18n/fieldLabels";
+import { ScrollReveal } from "@/components/shared/ScrollReveal";
 
 function PasswordField({
 	id,
@@ -62,6 +63,7 @@ function PasswordField({
 	onBlur,
 	placeholder,
 	disabled,
+	hasIssue,
 }: {
 	id: string;
 	value: string;
@@ -69,6 +71,7 @@ function PasswordField({
 	onBlur: (value: string) => void;
 	placeholder?: string;
 	disabled?: boolean;
+	hasIssue?: boolean;
 }) {
 	const [showPassword, setShowPassword] = useState(false);
 	const { t } = useTranslation("common");
@@ -83,7 +86,12 @@ function PasswordField({
 				onBlur={(e) => onBlur(e.target.value)}
 				placeholder={placeholder}
 				disabled={disabled}
-				className="pr-12"
+				aria-invalid={hasIssue || undefined}
+				className={cn(
+					"pr-12",
+					hasIssue &&
+						"bg-destructive-secondary/20 border-destructive-secondary pr-10",
+				)}
 			/>
 			<button
 				type="button"
@@ -100,6 +108,9 @@ function PasswordField({
 					<Eye className="h-5 w-5" />
 				)}
 			</button>
+			{hasIssue && (
+				<Warning className="pointer-events-none absolute right-11 top-1/2 h-5 w-5 -translate-y-1/2 text-destructive-secondary" />
+			)}
 		</div>
 	);
 }
@@ -277,6 +288,7 @@ const renderFieldContent = (
 		!error &&
 		Boolean(field.afterField) &&
 		(field.name === "name" || field.name === "address.streetLine");
+	const hasIssue = Boolean(error || hasWarning);
 	const allowNullOption =
 		field.type !== "section" && field.allowNullOption === true;
 
@@ -364,12 +376,13 @@ const renderFieldContent = (
 						min={field.min}
 						max={field.max}
 						step={field.step}
+						aria-invalid={hasIssue || undefined}
 						className={cn(
-							(error || hasWarning) &&
+							hasIssue &&
 								"bg-destructive-secondary/20 border-destructive-secondary pr-10",
 						)}
 					/>
-					{(error || hasWarning) && (
+					{hasIssue && (
 						<Warning className="pointer-events-none absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-destructive-secondary" />
 					)}
 				</div>
@@ -377,28 +390,39 @@ const renderFieldContent = (
 
 			{field.type === "file" && (
 				<div className="space-y-2">
-					<Input
-						id={field.name}
-						type="file"
-						accept={field.accept}
-						multiple={field.multiple}
-						onChange={(event) => {
-							const nextValue = field.multiple
-								? Array.from(event.target.files ?? [])
-								: (event.target.files?.[0] ?? null);
-							updateField(field.name, nextValue);
-							if (field.fileRemoveOption?.fieldName && nextValue) {
-								updateField(field.fileRemoveOption.fieldName, false);
-							}
-							void handleFieldBlur(field, nextValue);
-						}}
-						disabled={field.disabled}
-					/>
+					<div className="relative">
+						<Input
+							id={field.name}
+							type="file"
+							accept={field.accept}
+							multiple={field.multiple}
+							onChange={(event) => {
+								const nextValue = field.multiple
+									? Array.from(event.target.files ?? [])
+									: (event.target.files?.[0] ?? null);
+								updateField(field.name, nextValue);
+								if (field.fileRemoveOption?.fieldName && nextValue) {
+									updateField(field.fileRemoveOption.fieldName, false);
+								}
+								void handleFieldBlur(field, nextValue);
+							}}
+							disabled={field.disabled}
+							aria-invalid={hasIssue || undefined}
+							className={cn(
+								hasIssue &&
+									"bg-destructive-secondary/20 border-destructive-secondary pr-10",
+							)}
+						/>
+						{hasIssue && (
+							<Warning className="pointer-events-none absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-destructive-secondary" />
+						)}
+					</div>
 					{field.fileRemoveOption ? (
 						<div className="flex items-center space-x-2">
 							<Checkbox
 								id={`${field.name}-remove`}
 								checked={formData[field.fileRemoveOption.fieldName] as boolean}
+								aria-invalid={hasIssue || undefined}
 								onCheckedChange={(checked) =>
 									updateField(field.fileRemoveOption!.fieldName, checked)
 								}
@@ -431,6 +455,7 @@ const renderFieldContent = (
 					}}
 					placeholder={resolvedPlaceholder}
 					disabled={field.disabled}
+					hasIssue={hasIssue}
 				/>
 			)}
 
@@ -445,13 +470,14 @@ const renderFieldContent = (
 						}}
 						placeholder={resolvedPlaceholder}
 						disabled={field.disabled}
+						aria-invalid={hasIssue || undefined}
 						rows={4}
 						className={cn(
-							(error || hasWarning) &&
+							hasIssue &&
 								"bg-destructive-secondary/20 border-destructive-secondary pr-10",
 						)}
 					/>
-					{(error || hasWarning) && (
+					{hasIssue && (
 						<Warning className="pointer-events-none absolute right-3 top-3 h-5 w-5 text-destructive-secondary" />
 					)}
 				</div>
@@ -476,8 +502,9 @@ const renderFieldContent = (
 					>
 						<SelectTrigger
 							id={field.name}
+							aria-invalid={hasIssue || undefined}
 							className={cn(
-								(error || hasWarning) &&
+								hasIssue &&
 									"bg-destructive-secondary/20 border-destructive-secondary pr-12",
 							)}
 						>
@@ -504,7 +531,7 @@ const renderFieldContent = (
 							))}
 						</SelectContent>
 					</Select>
-					{(error || hasWarning) && (
+					{hasIssue && (
 						<Warning className="pointer-events-none absolute right-8 top-1/2 h-4 w-4 -translate-y-1/2 text-destructive-secondary" />
 					)}
 				</div>
@@ -516,6 +543,11 @@ const renderFieldContent = (
 					onValueChange={(val) =>
 						updateField(field.name, deserializeOptionValue(val))
 					}
+					aria-invalid={hasIssue || undefined}
+					className={cn(
+						hasIssue &&
+							"rounded-sm border border-destructive-secondary bg-destructive-secondary/10 p-3",
+					)}
 					variant={field.radioVariant}
 					disabled={field.disabled}
 				>
@@ -525,9 +557,13 @@ const renderFieldContent = (
 							className="flex items-center space-x-2"
 						>
 							<RadioGroupItem
-								className="bg-background border-input"
+								className={cn(
+									"bg-background border-input",
+									hasIssue && "border-destructive-secondary",
+								)}
 								value={serializeOptionValue(option.value)}
 								id={`${field.name}-${serializeOptionValue(option.value)}`}
+								aria-invalid={hasIssue || undefined}
 							/>
 							<Label
 								htmlFor={`${field.name}-${serializeOptionValue(option.value)}`}
@@ -541,10 +577,17 @@ const renderFieldContent = (
 			)}
 
 			{field.type === "checkbox" && (
-				<div className="flex items-center space-x-2">
+				<div
+					className={cn(
+						"flex items-center space-x-2",
+						hasIssue &&
+							"rounded-sm border border-destructive-secondary bg-destructive-secondary/10 p-2",
+					)}
+				>
 					<Checkbox
 						id={field.name}
 						checked={value as boolean}
+						aria-invalid={hasIssue || undefined}
 						onCheckedChange={(checked) => updateField(field.name, checked)}
 						disabled={field.disabled}
 					/>
@@ -559,7 +602,13 @@ const renderFieldContent = (
 			)}
 
 			{field.type === "switch" && (
-				<div className="flex items-center justify-between">
+				<div
+					className={cn(
+						"flex items-center justify-between",
+						hasIssue &&
+							"rounded-sm border border-destructive-secondary bg-destructive-secondary/10 p-2",
+					)}
+				>
 					<Label htmlFor={field.name} className="font-normal">
 						{field.labelNode ?? resolvedLabel}
 						{field.required && <span className=" ml-1">*</span>}
@@ -570,6 +619,8 @@ const renderFieldContent = (
 					<Switch
 						id={field.name}
 						checked={value as boolean}
+						aria-invalid={hasIssue || undefined}
+						className={cn(hasIssue && "border-destructive-secondary")}
 						onCheckedChange={(checked) => updateField(field.name, checked)}
 						disabled={field.disabled}
 					/>
@@ -577,7 +628,13 @@ const renderFieldContent = (
 			)}
 
 			{field.type === "multiselect" && (
-				<div className="space-y-2">
+				<div
+					className={cn(
+						"space-y-2",
+						hasIssue &&
+							"rounded-sm border border-destructive-secondary bg-destructive-secondary/10 p-2",
+					)}
+				>
 					{field.multiselectVariant === "modal" ? (
 						<MultiSelectModal
 							title={resolvedLabel || "Select Items"}
@@ -761,12 +818,13 @@ const renderFieldContent = (
 									const normalizedValue =
 										normalizeTablePermissionValue(permissionValue);
 									const currentTable = normalizedValue[table.key];
-									const actions = field.tablePermissions?.actions ?? [
-										"read",
-										"create",
-										"update",
-										"delete",
-									];
+									const actions = table.actions ??
+										field.tablePermissions?.actions ?? [
+											"read",
+											"create",
+											"update",
+											"delete",
+										];
 									return (
 										<>
 											<p className="body3 ">{table.label}</p>
@@ -1014,6 +1072,7 @@ export const buildRenderField = ({
 	const renderField = (
 		field: FormWrapperFieldConfig,
 		parentLayoutColumns = config.layout?.columns,
+		isWithinAccordion = false,
 	): React.ReactNode => {
 		if (field.condition && !field.condition(formData)) {
 			return null;
@@ -1052,7 +1111,11 @@ export const buildRenderField = ({
 					{sectionHeader}
 					<div className={cn("grid", field.fieldGap ?? "gap-4", gridClass)}>
 						{field?.fields?.map((nestedField) =>
-							renderField(nestedField, layoutColumns),
+							renderField(
+								nestedField,
+								layoutColumns,
+								isWithinAccordion || useAccordion,
+							),
 						)}
 					</div>
 				</div>
@@ -1061,39 +1124,52 @@ export const buildRenderField = ({
 			const accordionId = `${field.name}-section`;
 
 			return (
-				<SectionWrapper
+				<ScrollReveal
 					key={field.name}
-					wrapperId={field.name}
-					wrapperClassName={field.className}
-					spanClassName={spanClass}
-					useAccordion={useAccordion}
-					accordionValue={accordionId}
-					accordionDefaultOpen={field.defaultOpen}
-					accordionVariant={accordionVariant}
-					accordionTriggerClassName=""
-					accordionTitle={accordionTitle}
-					cardVariant={cardVariant}
-					bodyContent={bodyContent}
-				/>
+					className={spanClass}
+					disabled={isWithinAccordion}
+				>
+					<SectionWrapper
+						wrapperId={field.name}
+						wrapperClassName={field.className}
+						useAccordion={useAccordion}
+						accordionValue={accordionId}
+						accordionDefaultOpen={field.defaultOpen}
+						accordionVariant={accordionVariant}
+						accordionTriggerClassName=""
+						accordionTitle={accordionTitle}
+						cardVariant={cardVariant}
+						bodyContent={bodyContent}
+					/>
+				</ScrollReveal>
 			);
 		}
 
 		if (!field.collapsible) {
+			const gridClass = getGridClass(field);
+
 			return (
-				<Fragment key={field.name}>
-					{renderFieldContent({
-						field,
-						tEnum,
-						tCommon,
-						formData,
-						errors,
-						touched,
-						config,
-						updateField,
-						handleFieldBlur,
-						isPrivate,
-					})}
-				</Fragment>
+				<ScrollReveal
+					key={field.name}
+					className={cn(gridClass, field.className)}
+					disabled={isWithinAccordion}
+				>
+					{renderFieldContent(
+						{
+							field,
+							tEnum,
+							tCommon,
+							formData,
+							errors,
+							touched,
+							config,
+							updateField,
+							handleFieldBlur,
+							isPrivate,
+						},
+						false,
+					)}
+				</ScrollReveal>
 			);
 		}
 
@@ -1106,7 +1182,11 @@ export const buildRenderField = ({
 		const gridClass = getGridClass(field);
 
 		return (
-			<div key={field.name} className={cn(gridClass, field.className)}>
+			<ScrollReveal
+				key={field.name}
+				className={cn(gridClass, field.className)}
+				disabled={isWithinAccordion}
+			>
 				<Accordion
 					type="single"
 					collapsible
@@ -1141,7 +1221,7 @@ export const buildRenderField = ({
 						</AccordionContent>
 					</AccordionItem>
 				</Accordion>
-			</div>
+			</ScrollReveal>
 		);
 	};
 

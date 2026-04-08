@@ -1,5 +1,6 @@
 import type { UserStatus } from "@/generated/prisma";
 import { sendTemplatedEmail } from "@/server/email/sendTemplatedEmail";
+import { logger } from "@/server/logging/logger";
 
 export type RoleEmailTarget = "district" | "state" | "network";
 export type RoleEmailDecision = "approved" | "rejected";
@@ -55,7 +56,11 @@ export async function sendAccountDeletedEmail(params: {
 			},
 		});
 	} catch (error) {
-		console.error("[email] account deleted notification failed:", error);
+		logger.error("email.account_deleted.failed", error, {
+			subsystem: "email",
+			email_to: params.email,
+			template: "custom/account_deleted.html",
+		});
 	}
 }
 
@@ -94,7 +99,58 @@ export async function sendClaimDecisionEmail(params: {
 			},
 		});
 	} catch (error) {
-		console.error("[email] claim decision notification failed:", error);
+		logger.error("email.claim_decision.failed", error, {
+			subsystem: "email",
+			email_to: params.email,
+			template: templatePath,
+			decision: params.decision,
+			institution_name: params.institutionName,
+		});
+	}
+}
+
+export async function sendSubmissionDecisionEmail(params: {
+	decision: "approved" | "rejected";
+	email: string;
+	firstName?: string | null;
+	lastName?: string | null;
+	institutionName: string;
+}) {
+	const { siteUrl, portalUrl, faqUrl } = getBaseUrls();
+	const templatePath =
+		params.decision === "approved"
+			? "custom/submission_approved.html"
+			: "custom/submission_rejected.html";
+	const subject =
+		params.decision === "approved"
+			? `Ihr Kulturort ${params.institutionName} wurde Ihrem Kulturkatasterportal hinzugefügt`
+			: `Ihre Anfrage zur Pflege des Kulturorts ${params.institutionName}`;
+
+	try {
+		await sendTemplatedEmail({
+			to: params.email,
+			subject,
+			templatePath,
+			variables: {
+				SiteURL: siteUrl,
+				Email: params.email,
+				Data: {
+					first_name: params.firstName ?? "",
+					last_name: params.lastName ?? "",
+					institution_name: params.institutionName,
+					portal_url: portalUrl,
+					faq_url: faqUrl,
+				},
+			},
+		});
+	} catch (error) {
+		logger.error("email.submission_decision.failed", error, {
+			subsystem: "email",
+			email_to: params.email,
+			template: templatePath,
+			decision: params.decision,
+			institution_name: params.institutionName,
+		});
 	}
 }
 
@@ -166,7 +222,13 @@ export async function sendRoleDecisionEmail(params: {
 			},
 		});
 	} catch (error) {
-		console.error("[email] role decision notification failed:", error);
+		logger.error("email.role_decision.failed", error, {
+			subsystem: "email",
+			email_to: params.email,
+			template: templatePath,
+			target: params.target,
+			decision: params.decision,
+		});
 	}
 }
 

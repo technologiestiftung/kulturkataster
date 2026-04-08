@@ -22,7 +22,7 @@ function Loading({
 			<div className={cn("flex items-center justify-center", className)}>
 				<div
 					className={cn(
-						"animate-spin rounded-full border-4 border-gray-300 border-t-primary",
+						"motion-safe:animate-spin rounded-full border-4 border-gray-300 border-t-primary",
 						sizeClasses[size],
 					)}
 				/>
@@ -35,9 +35,9 @@ function Loading({
 			<div
 				className={cn("flex items-center justify-center space-x-1", className)}
 			>
-				<div className="w-2 h-2 bg-primary rounded-full animate-bounce [animation-delay:-0.3s]"></div>
-				<div className="w-2 h-2 bg-primary rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-				<div className="w-2 h-2 bg-primary rounded-full animate-bounce"></div>
+				<div className="w-2 h-2 bg-primary rounded-full motion-safe:animate-bounce [animation-delay:-0.3s]"></div>
+				<div className="w-2 h-2 bg-primary rounded-full motion-safe:animate-bounce [animation-delay:-0.15s]"></div>
+				<div className="w-2 h-2 bg-primary rounded-full motion-safe:animate-bounce"></div>
 			</div>
 		);
 	}
@@ -47,7 +47,7 @@ function Loading({
 			<div className={cn("flex items-center justify-center", className)}>
 				<div
 					className={cn(
-						"bg-primary rounded-full animate-pulse",
+						"bg-primary rounded-full motion-safe:animate-pulse",
 						sizeClasses[size],
 					)}
 				/>

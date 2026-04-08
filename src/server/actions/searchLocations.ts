@@ -1,6 +1,7 @@
 "use server";
 
 import { searchInstitutions } from "@/server/actions/institutions";
+import { logger } from "@/server/logging/logger";
 import { Institution, GeoFeature, SearchResult } from "@/types/institution";
 
 interface SearchLocationsResult {
@@ -44,7 +45,10 @@ export async function searchLocations(
 			allResults,
 		};
 	} catch (error) {
-		console.error("Search locations error:", error);
+		logger.error("search.locations.failed", error, {
+			subsystem: "search",
+			query_length: query.trim().length,
+		});
 		return {
 			institutions: [],
 			addresses: [],
@@ -65,17 +69,48 @@ async function searchAddresses(query: string): Promise<GeoFeature[]> {
 			query,
 		)}.json?key=${apiKey}${bbox ? `&bbox=${bbox}` : ""}`;
 
-		const response = await fetch(url);
+		const response = await logger.time(
+			{
+				level: "info",
+				event: "search.addresses.request.completed",
+				successData: {
+					query_length: query.trim().length,
+					provider: "maptiler",
+				},
+				errorEvent: "search.addresses.request.failed",
+				errorData: {
+					query_length: query.trim().length,
+					provider: "maptiler",
+				},
+				slowThresholdMs: 1500,
+				slowEvent: "search.addresses.request.slow",
+				slowData: {
+					query_length: query.trim().length,
+					provider: "maptiler",
+				},
+			},
+			() => fetch(url),
+		);
 
 		if (!response.ok) {
-			console.warn(`Address search failed with status: ${response.status}`);
+			logger.warn("search.addresses.http_error", {
+				subsystem: "search",
+				http_status: response.status,
+				query_length: query.trim().length,
+				provider: "maptiler",
+			});
 			return [];
 		}
 
 		const data = await response.json();
 		return data.features || [];
 	} catch (error) {
-		console.warn("Address search error:", error);
+		logger.warn("search.addresses.failed", {
+			subsystem: "search",
+			query_length: query.trim().length,
+			provider: "maptiler",
+			error: error instanceof Error ? error.message : String(error),
+		});
 		return [];
 	}
 }

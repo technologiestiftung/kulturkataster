@@ -26,7 +26,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
 				warning: <TriangleAlert className="h-4 w-4 text-amber-500" />,
 				error: <OctagonX className="h-4 w-4 text-red-500" />,
 				loading: (
-					<LoaderCircle className="h-4 w-4 animate-spin text-muted-foreground" />
+					<LoaderCircle className="h-4 w-4 motion-safe:animate-spin text-muted-foreground" />
 				),
 			}}
 			toastOptions={{

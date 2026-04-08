@@ -1,5 +1,7 @@
 "use cache";
 
+import { logger } from "@/server/logging/logger";
+
 /**
  * Fetches and caches a Traduora access token using client credentials.
  */
@@ -20,7 +22,11 @@ export async function fetchTraduoraToken(): Promise<string | null> {
 
 	if (!res.ok) {
 		const errorText = await res.text();
-		console.error(`Traduora token error (${res.status}):`, errorText);
+		logger.error("traduora.token.fetch_failed", undefined, {
+			subsystem: "translations",
+			http_status: res.status,
+			response_body: errorText,
+		});
 		throw new Error(`Failed to retrieve Traduora token. Status: ${res.status}`);
 	}
 
@@ -48,7 +54,11 @@ export async function fetchLabels(
 	);
 
 	if (!labelsRes.ok) {
-		console.error(`Failed to fetch labels: ${labelsRes.status}`);
+		logger.error("traduora.labels.fetch_failed", undefined, {
+			subsystem: "translations",
+			http_status: labelsRes.status,
+			project_id: projectId,
+		});
 		throw new Error(`Failed to fetch labels: ${labelsRes.status}`);
 	}
 

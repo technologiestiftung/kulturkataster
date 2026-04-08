@@ -99,18 +99,6 @@ export function CategoriesTable() {
 				},
 			},
 			{
-				accessorKey: "displayKey",
-				header: t("categoryTable.columns.key"),
-				enableSorting: true,
-				size: 200,
-				meta: { pin: "left", truncate: true },
-				cell: ({ row }) => (
-					<span className="inline-flex items-center gap-2">
-						{row.original.displayKey}
-					</span>
-				),
-			},
-			{
 				id: "icon",
 				header: t("categoryTable.columns.icon"),
 				enableSorting: false,
@@ -122,6 +110,18 @@ export function CategoriesTable() {
 						categoryKey={row.original.key}
 						className="h-6 w-6"
 					/>
+				),
+			},
+			{
+				accessorKey: "displayKey",
+				header: t("categoryTable.columns.key"),
+				enableSorting: true,
+				size: 180,
+				meta: { pin: "left", truncate: true },
+				cell: ({ row }) => (
+					<span className="inline-flex items-center gap-2">
+						{row.original.displayKey}
+					</span>
 				),
 			},
 			{
@@ -195,14 +195,14 @@ export function CategoriesTable() {
 							<div className="col-span-2 flex justify-end">
 								<Button
 									type="button"
-									size="icon"
-									variant="ghost"
+									variant="surface"
+									radius="full"
+									iconSize="sm"
 									onClick={() =>
 										router.push(
 											toLocalePath(`/account/categories/${child.id}/edit`),
 										)
 									}
-									className="h-8 w-8 rounded-full border bg-background border-neutral-20 hover:bg-neutral-5"
 									aria-label={t("categoryTable.actions.editSubcategory", {
 										defaultValue: "Unterkategorie bearbeiten",
 									})}
@@ -241,6 +241,9 @@ export function CategoriesTable() {
 		),
 		onEdit: (row) =>
 			router.push(toLocalePath(`/account/categories/${row.id}/edit`)),
+		onEditPrefetch: (row) => {
+			void router.prefetch(toLocalePath(`/account/categories/${row.id}/edit`));
+		},
 		emptyMessage: t("categoryTable.emptyMessage", {
 			defaultValue: "No categories found.",
 		}),

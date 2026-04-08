@@ -96,6 +96,9 @@ export function GroupsTable() {
 		),
 		onEdit: (row) =>
 			router.push(toLocalePath(`/account/groups/${row.id}/edit`)),
+		onEditPrefetch: (row) => {
+			void router.prefetch(toLocalePath(`/account/groups/${row.id}/edit`));
+		},
 		emptyMessage: t("groupTable.emptyMessage"),
 	};
 

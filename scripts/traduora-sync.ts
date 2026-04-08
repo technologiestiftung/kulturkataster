@@ -368,6 +368,44 @@ function deepMerge(target: any, source: any): any {
 }
 
 /**
+ * Remove literal bracket notation keys that conflict with arrays
+ * e.g., if an object has both `items: [...]` and `items[0]: ""`, remove the latter
+ */
+function removeLiteralBracketKeys(obj: any): any {
+	if (obj === null || obj === undefined || typeof obj !== "object") {
+		return obj;
+	}
+
+	if (Array.isArray(obj)) {
+		return obj.map((item) => removeLiteralBracketKeys(item));
+	}
+
+	const cleaned: Record<string, any> = {};
+	const keysToRemove = new Set<string>();
+
+	// First pass: identify keys that look like array notation
+	for (const key of Object.keys(obj)) {
+		if (/^.+\[\d+\]$/.test(key)) {
+			// This key looks like "items[0]" or "foo[123]"
+			const baseKey = key.replace(/\[\d+\]$/, "");
+			// If there's a corresponding array property, mark this for removal
+			if (Array.isArray(obj[baseKey])) {
+				keysToRemove.add(key);
+			}
+		}
+	}
+
+	// Second pass: copy non-removed keys and recursively clean
+	for (const [key, value] of Object.entries(obj)) {
+		if (!keysToRemove.has(key)) {
+			cleaned[key] = removeLiteralBracketKeys(value);
+		}
+	}
+
+	return cleaned;
+}
+
+/**
  * Flatten nested JSON object to dot notation
  */
 function flattenObject(obj: any, prefix = ""): Record<string, string> {
@@ -537,7 +575,9 @@ async function pushToTraduora(
 			const namespaceKey = namespace.toLowerCase();
 			const filePath = path.join(localeDir, namespaceFile);
 			const content = JSON.parse(fs.readFileSync(filePath, "utf-8"));
-			const flatTranslations = flattenObject(content);
+			// Clean up literal bracket keys before flattening
+			const cleanedContent = removeLiteralBracketKeys(content);
+			const flatTranslations = flattenObject(cleanedContent);
 			if (!namespaceKeysByName.has(namespaceKey)) {
 				namespaceKeysByName.set(namespaceKey, new Set<string>());
 			}
@@ -570,8 +610,11 @@ async function pushToTraduora(
 			const filePath = path.join(localeDir, namespaceFile);
 			const content = JSON.parse(fs.readFileSync(filePath, "utf-8"));
 
+			// Clean up any literal bracket notation keys before flattening
+			const cleanedContent = removeLiteralBracketKeys(content);
+
 			// Flatten the translations
-			const flatTranslations = flattenObject(content);
+			const flatTranslations = flattenObject(cleanedContent);
 			console.log(
 				`    ℹ Found ${Object.keys(flatTranslations).length} translation keys`,
 			);
@@ -727,6 +770,10 @@ async function pullFromTraduora(overwriteAll: boolean = false): Promise<void> {
 			// Unflatten to nested structure
 			const traduoraTranslations = unflattenObject(flatTranslations);
 
+			// Clean up any literal bracket notation keys from Traduora data
+			const cleanedTraduoraTranslations =
+				removeLiteralBracketKeys(traduoraTranslations);
+
 			// Read existing local file to preserve local-only keys
 			// Check for both camelCase and other case variants
 			// Convert first letter to lowercase to match existing convention (common, content, enumMap)
@@ -739,7 +786,7 @@ async function pullFromTraduora(overwriteAll: boolean = false): Promise<void> {
 				label.value.toLowerCase() + ".json",
 			);
 
-			let mergedTranslations = traduoraTranslations;
+			let mergedTranslations = cleanedTraduoraTranslations;
 			// Check for existing file in multiple case variations
 			let existingFilePath: string | null = null;
 			if (fs.existsSync(normalizedFilePath)) {
@@ -755,15 +802,24 @@ async function pullFromTraduora(overwriteAll: boolean = false): Promise<void> {
 					const localContent = JSON.parse(
 						fs.readFileSync(existingFilePath, "utf-8"),
 					);
+					// Clean up any literal bracket notation keys from local file too
+					const cleanedLocalContent = removeLiteralBracketKeys(localContent);
+
 					if (overwriteAll) {
 						// Overwrite all: Traduora values replace local values completely
-						mergedTranslations = deepMerge(localContent, traduoraTranslations);
+						mergedTranslations = deepMerge(
+							cleanedLocalContent,
+							cleanedTraduoraTranslations,
+						);
 						console.log(
 							`    ℹ Merged with existing local translations (Traduora overwriting)`,
 						);
 					} else {
 						// New keys only: Keep existing local values, only add new keys from Traduora
-						mergedTranslations = deepMerge(traduoraTranslations, localContent);
+						mergedTranslations = deepMerge(
+							cleanedTraduoraTranslations,
+							cleanedLocalContent,
+						);
 						console.log(
 							`    ℹ Merged with existing local translations (preserving local values)`,
 						);

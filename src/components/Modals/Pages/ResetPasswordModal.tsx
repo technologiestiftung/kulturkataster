@@ -24,7 +24,7 @@ export function ResetPasswordModal({
 			routePath={routePath}
 			returnTo={returnTo}
 		>
-			<div className="flex flex-1 items-center justify-center py-12 px-4 w-full">
+			<div className="flex flex-1 items-center justify-center md:py-12 md:px-4 w-full">
 				<ResetPasswordForm
 					onSuccess={() => {
 						closeModal();

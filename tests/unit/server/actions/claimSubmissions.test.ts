@@ -67,9 +67,12 @@ vi.mock("@/server/prisma", () => ({
 }));
 
 const sendClaimDecisionEmailMock = vi.fn();
+const sendSubmissionDecisionEmailMock = vi.fn();
 vi.mock("@/server/email/dispatcher", () => ({
 	sendClaimDecisionEmail: (...args: unknown[]) =>
 		sendClaimDecisionEmailMock(...args),
+	sendSubmissionDecisionEmail: (...args: unknown[]) =>
+		sendSubmissionDecisionEmailMock(...args),
 }));
 
 const updateSubmissionAuditStatusMock = vi.fn();
@@ -103,6 +106,7 @@ describe("server actions: claim submissions", () => {
 		updateSubmissionAuditStatusMock.mockReset();
 		revalidateAccountMock.mockReset();
 		sendClaimDecisionEmailMock.mockReset();
+		sendSubmissionDecisionEmailMock.mockReset();
 
 		getTableScopeMock.mockReturnValue("all");
 		getScopeUserIdMock.mockImplementation((scope: string, userId: string) =>
@@ -121,6 +125,7 @@ describe("server actions: claim submissions", () => {
 			last_name: "Lovelace",
 		});
 		sendClaimDecisionEmailMock.mockResolvedValue(undefined);
+		sendSubmissionDecisionEmailMock.mockResolvedValue(undefined);
 		prismaTransactionMock.mockImplementation(async (callback: unknown) =>
 			(callback as (tx: unknown) => Promise<unknown>)({
 				submission: {

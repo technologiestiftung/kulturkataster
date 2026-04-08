@@ -8,11 +8,11 @@ import {
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-export interface ButtonWithTooltipProps extends ButtonProps {
+export type ButtonWithTooltipProps = ButtonProps & {
 	tooltip: string | React.ComponentProps<typeof TooltipContent>;
 	tooltipSide?: "top" | "right" | "bottom" | "left";
 	delayDuration?: number;
-}
+};
 
 export const ButtonWithTooltip = React.forwardRef<
 	HTMLButtonElement,

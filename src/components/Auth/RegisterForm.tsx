@@ -4,7 +4,12 @@ import { useState } from "react";
 import Link from "next/link";
 import { registerWithEmailPassword } from "@/server/actions/auth";
 import { useTranslation } from "react-i18next";
-import { FormWrapper } from "@/components/FormWrapper";
+import {
+	email as emailValidator,
+	FormWrapper,
+	matchesField,
+	minLength,
+} from "@/components/FormWrapper";
 import type { FormWrapperConfig } from "@/components/FormWrapper";
 import { AlertDialog } from "@/components/ui/alert-dialog";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
@@ -118,7 +123,7 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
 						condition: (formData) => formData.accountType === "organization",
 						cardVariant: "none",
 						layout: { span: "full", columns: 1 },
-						className: "bg-neutral-10 p-5 w-full",
+						className: "bg-neutral-10 p-4 w-full",
 						fields: [
 							{
 								name: "organizationName",
@@ -154,7 +159,7 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
 						condition: (formData) => formData.accountType === "district",
 						cardVariant: "none",
 						layout: { span: "full", columns: 1 },
-						className: "bg-neutral-10 p-5 w-full",
+						className: "bg-neutral-10 p-4 w-full",
 						fields: [
 							{
 								name: "districtName",
@@ -196,7 +201,7 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
 						condition: (formData) => formData.accountType === "administration",
 						cardVariant: "none",
 						layout: { span: "full", columns: 1 },
-						className: "bg-neutral-10 p-5 w-full",
+						className: "bg-neutral-10 p-4 w-full",
 						fields: [
 							{
 								name: "administrationName",
@@ -260,14 +265,7 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
 						disabled: isLoading,
 						layout: { span: "full" },
 						placeholder: t("auth.register.emailPlaceholder"),
-						validate: (value) => {
-							if (typeof value !== "string" || value.trim().length === 0) {
-								return undefined;
-							}
-							return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
-								? undefined
-								: t("auth.validation.emailInvalid");
-						},
+						validators: [emailValidator(t("auth.validation.emailInvalid"))],
 					},
 					{
 						name: "password",
@@ -279,14 +277,7 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
 						layout: { span: "full" },
 						afterField: t("auth.accountEdit.passwordRequirements"),
 						placeholder: t("auth.register.passwordPlaceholder"),
-						validate: (value) => {
-							if (typeof value !== "string" || value.length === 0) {
-								return undefined;
-							}
-							return value.length < 8
-								? t("auth.validation.passwordMin")
-								: undefined;
-						},
+						validators: [minLength(8, t("auth.validation.passwordMin"))],
 					},
 					{
 						name: "confirmPassword",
@@ -297,10 +288,9 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
 						requiredMessage: t("auth.validation.passwordRequired"),
 						disabled: isLoading,
 						placeholder: t("auth.register.confirmPasswordPlaceholder"),
-						validateWithForm: (value, formData) =>
-							value !== formData.password
-								? t("auth.validation.passwordMismatch")
-								: undefined,
+						validators: [
+							matchesField("password", t("auth.validation.passwordMismatch")),
+						],
 					},
 				],
 			},
@@ -320,44 +310,34 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
 									className="text-primary-dark underline"
 								>
 									{t("auth.register.termsLink")}
-								</Link>{" "}
-								{t("auth.register.termsSeparator")}{" "}
-								<Link
-									href={"https://dsgvo-info.cortina-consult.de/kulturkataster/"}
-									className="text-primary-dark underline"
-									target="_blank"
-								>
-									{t("auth.register.privacyLink")}
 								</Link>
-								{t("auth.register.privacySuffix")}
 							</span>
 						),
 						type: "checkbox",
 						required: true,
-						disabled: isLoading,
-						validate: (value) =>
-							value ? undefined : t("auth.validation.acceptTermsRequired"),
-					},
-					{
-						name: "subscribeNewsletter",
-						label: t("auth.register.newsletterOptInPrefix"),
-						labelNode: (
-							<span className="body2 font-normal">
-								{t("auth.register.newsletterOptInPrefix")}{" "}
-								<Link
-									href={
-										"https://flow.cleverreach.com/fl/21a1a529-f085-4bd1-8e53-d657c3ccc1de/"
-									}
-									className="text-primary-dark underline"
-									target="_blank"
-								>
-									{t("auth.register.newsletterLink")}
-								</Link>
-							</span>
-						),
-						type: "checkbox",
+						requiredMessage: t("auth.validation.acceptTermsRequired"),
 						disabled: isLoading,
 					},
+					// {
+					// 	name: "subscribeNewsletter",
+					// 	label: t("auth.register.newsletterOptInPrefix"),
+					// 	labelNode: (
+					// 		<span className="body2 font-normal">
+					// 			{t("auth.register.newsletterOptInPrefix")}{" "}
+					// 			<Link
+					// 				href={
+					// 					"https://flow.cleverreach.com/fl/21a1a529-f085-4bd1-8e53-d657c3ccc1de/"
+					// 				}
+					// 				className="text-primary-dark underline"
+					// 				target="_blank"
+					// 			>
+					// 				{t("auth.register.newsletterLink")}
+					// 			</Link>
+					// 		</span>
+					// 	),
+					// 	type: "checkbox",
+					// 	disabled: isLoading,
+					// },
 				],
 			},
 		],
@@ -370,7 +350,7 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
 	};
 
 	return (
-		<div className="w-full max-w-3xl mx-auto ">
+		<div className="w-full md:max-w-3xl mx-auto ">
 			<div className="text-start font-bold">
 				<h1 className="">{t("auth.register.title")}</h1>
 				<p className="body1">{t("auth.register.subtitle")}</p>

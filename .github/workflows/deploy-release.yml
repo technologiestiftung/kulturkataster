@@ -1,37 +1,69 @@
 name: Deploy App (Release)
 
 on:
+  push:
+    branches:
+      - "release/v*"
+      - "release/dev-v*"
   workflow_dispatch:
-    inputs:
-      deploy_track:
-        description: "Deployment track"
-        required: true
-        type: choice
-        options:
-          - main
-          - dev
-      release_tag:
-        description: "Release tag (e.g. v1.2.3)"
-        required: true
-        type: string
 
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-  DEPLOY_TRACK: ${{ inputs.deploy_track }}
-  RELEASE_TAG: ${{ inputs.release_tag }}
 
 concurrency:
-  group: deploy-release-${{ inputs.deploy_track }}-${{ inputs.release_tag }}
+  group: deploy-release-${{ github.ref_name }}
   cancel-in-progress: false
 
 jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      deploy_track: ${{ steps.release.outputs.deploy_track }}
+      environment_name: ${{ steps.release.outputs.environment_name }}
+      environment_label: ${{ steps.release.outputs.environment_label }}
+      release_tag: ${{ steps.release.outputs.release_tag }}
+
+    steps:
+      - name: Derive release metadata from branch name
+        id: release
+        run: |
+          BRANCH="${GITHUB_REF_NAME}"
+
+          case "$BRANCH" in
+            release/v*)
+              DEPLOY_TRACK="main"
+              ENVIRONMENT_NAME="main"
+              ENVIRONMENT_LABEL="prod"
+              RELEASE_TAG="${BRANCH#release/}"
+              ;;
+            release/dev-v*)
+              DEPLOY_TRACK="dev"
+              ENVIRONMENT_NAME="dev"
+              ENVIRONMENT_LABEL="dev"
+              RELEASE_TAG="${BRANCH#release/dev-}"
+              ;;
+            *)
+              echo "Unsupported release branch: $BRANCH"
+              exit 1
+              ;;
+          esac
+
+          echo "deploy_track=${DEPLOY_TRACK}" >> "$GITHUB_OUTPUT"
+          echo "environment_name=${ENVIRONMENT_NAME}" >> "$GITHUB_OUTPUT"
+          echo "environment_label=${ENVIRONMENT_LABEL}" >> "$GITHUB_OUTPUT"
+          echo "release_tag=${RELEASE_TAG}" >> "$GITHUB_OUTPUT"
+
   build:
     runs-on: ubuntu-latest
-    environment: ${{ inputs.deploy_track == 'main' && 'main' || 'dev' }}
+    needs: prepare
+    environment: ${{ needs.prepare.outputs.environment_name }}
     permissions:
       contents: read
       packages: write
+    env:
+      DEPLOY_TRACK: ${{ needs.prepare.outputs.deploy_track }}
+      RELEASE_TAG: ${{ needs.prepare.outputs.release_tag }}
 
     steps:
       - name: Checkout repository
@@ -53,8 +85,8 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=raw,value=${{ inputs.release_tag }},enable=${{ inputs.deploy_track == 'main' }}
-            type=raw,value=dev-${{ inputs.release_tag }},enable=${{ inputs.deploy_track == 'dev' }}
+            type=raw,value=${{ env.RELEASE_TAG }},enable=${{ env.DEPLOY_TRACK == 'main' }}
+            type=raw,value=dev-${{ env.RELEASE_TAG }},enable=${{ env.DEPLOY_TRACK == 'dev' }}
           flavor: |
             latest=false
 
@@ -81,21 +113,24 @@ jobs:
 
   backup:
     runs-on: ubuntu-latest
-    environment: ${{ inputs.deploy_track == 'main' && 'main' || 'dev' }}
+    needs: prepare
+    environment: ${{ needs.prepare.outputs.environment_name }}
     permissions:
       contents: read
+    env:
+      DEPLOY_TRACK: ${{ needs.prepare.outputs.deploy_track }}
+      ENVIRONMENT_LABEL: ${{ needs.prepare.outputs.environment_label }}
 
     steps:
       - name: Create database backup via Supavisor
         run: |
-          SUPAVISOR_URL="postgresql://postgres.${{ vars.SUPABASE_TENANT_ID }}:${{ secrets.SUPABASE_DB_PASSWORD }}@supavisor-transaction.kuka-api.ionos-${{ env.DEPLOY_TRACK }}.ds-apps.tsb-berlin.de:443/postgres?sslmode=require"
+          SUPAVISOR_URL="postgresql://postgres.${{ vars.SUPABASE_TENANT_ID }}:${{ secrets.SUPABASE_DB_PASSWORD }}@supavisor-transaction.kuka-api.ionos-${DEPLOY_TRACK}.ds-apps.tsb-berlin.de:443/postgres?sslmode=require"
 
           mkdir -p ./backups
 
           TIMESTAMP=$(date +%F_%H%M%S)
-          ENVIRONMENT="${{ env.DEPLOY_TRACK == 'main' && 'prod' || 'dev' }}"
-          FULL_BACKUP="./backups/full_backup_${ENVIRONMENT}_${TIMESTAMP}.sql"
-          DATA_BACKUP="./backups/data_only_${ENVIRONMENT}_${TIMESTAMP}.sql"
+          FULL_BACKUP="./backups/full_backup_${ENVIRONMENT_LABEL}_${TIMESTAMP}.sql"
+          DATA_BACKUP="./backups/data_only_${ENVIRONMENT_LABEL}_${TIMESTAMP}.sql"
 
           echo "Creating database backup via Supavisor pooler..."
 
@@ -125,21 +160,27 @@ jobs:
           echo "Backup(s) completed successfully"
           ls -lah ./backups/
 
-      - name: Upload backup artifacts
-        uses: actions/upload-artifact@v4
+      - name: Upload backups to IONOS S3
         if: always()
-        with:
-          name: database-backups-${{ env.DEPLOY_TRACK }}-${{ github.run_number }}
-          path: ./backups/
-          retention-days: 30
-          compression-level: 9
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.IONOS_S3_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.IONOS_S3_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ vars.IONOS_S3_REGION }}
+          IONOS_S3_ENDPOINT: ${{ vars.IONOS_S3_ENDPOINT }}
+          IONOS_S3_BUCKET: ${{ vars.IONOS_S3_BUCKET }}
+        run: |
+          aws s3 cp ./backups/ "s3://${IONOS_S3_BUCKET}/${{ github.run_number }}/" \
+            --recursive \
+            --endpoint-url "${IONOS_S3_ENDPOINT}"
 
   migrations:
     runs-on: ubuntu-latest
-    needs: [backup]
-    environment: ${{ inputs.deploy_track == 'main' && 'main' || 'dev' }}
+    needs: [prepare, backup]
+    environment: ${{ needs.prepare.outputs.environment_name }}
     permissions:
       contents: read
+    env:
+      DEPLOY_TRACK: ${{ needs.prepare.outputs.deploy_track }}
 
     steps:
       - name: Checkout repository
@@ -156,7 +197,7 @@ jobs:
 
       - name: Run Prisma migrations
         run: |
-          SUPAVISOR_URL="postgresql://postgres.${{ vars.SUPABASE_TENANT_ID }}:${{ secrets.SUPABASE_DB_PASSWORD }}@supavisor-session.kuka-api.ionos-${{ env.DEPLOY_TRACK }}.ds-apps.tsb-berlin.de:443/postgres?sslmode=require"
+          SUPAVISOR_URL="postgresql://postgres.${{ vars.SUPABASE_TENANT_ID }}:${{ secrets.SUPABASE_DB_PASSWORD }}@supavisor-session.kuka-api.ionos-${DEPLOY_TRACK}.ds-apps.tsb-berlin.de:443/postgres?sslmode=require"
           echo "Running Prisma migrations via Supavisor transaction pooler..."
 
           export DATABASE_URL="${SUPAVISOR_URL}"
@@ -167,10 +208,13 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    needs: [build, migrations]
-    environment: ${{ inputs.deploy_track == 'main' && 'main' || 'dev' }}
+    needs: [prepare, build, migrations]
+    environment: ${{ needs.prepare.outputs.environment_name }}
     permissions:
       contents: write
+    env:
+      DEPLOY_TRACK: ${{ needs.prepare.outputs.deploy_track }}
+      ENVIRONMENT_LABEL: ${{ needs.prepare.outputs.environment_label }}
 
     steps:
       - name: Checkout repository
@@ -182,11 +226,10 @@ jobs:
           git config user.email "actions@github.com"
 
           TIMESTAMP=$(date +%Y%m%d-%H%M%S)
-          ENVIRONMENT="${{ env.DEPLOY_TRACK == 'main' && 'prod' || 'dev' }}"
-          TAG_NAME="deploy-${ENVIRONMENT}-${TIMESTAMP}"
+          TAG_NAME="deploy-${ENVIRONMENT_LABEL}-${TIMESTAMP}"
 
           echo "Creating deployment tag: ${TAG_NAME}"
-          git tag -a "${TAG_NAME}" -m "Frontend deployment to ${ENVIRONMENT} at $(date)"
+          git tag -a "${TAG_NAME}" -m "Frontend deployment to ${ENVIRONMENT_LABEL} at $(date)"
 
           if ! git push origin "${TAG_NAME}"; then
             echo "Failed to push deployment tag"

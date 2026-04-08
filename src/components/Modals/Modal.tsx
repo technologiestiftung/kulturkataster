@@ -213,7 +213,7 @@ export function Modal({
 							<DialogTitle className="sr-only">{title}</DialogTitle>
 						) : null}
 						{loadingState?.active ? (
-							<div className="flex min-h-[260px] w-full flex-col items-center justify-center gap-3 p-6">
+							<div className="flex min-h-[260px] w-full flex-col items-center justify-center gap-3 p-6 md:mt-0 mt-20">
 								<Loading size="lg" />
 							</div>
 						) : (
@@ -223,7 +223,7 @@ export function Modal({
 				) : (
 					<div
 						className={cn(
-							"flex flex-col w-full flex-1 space-y-4 mt-16 md:mt-8 p-6 md:p-24",
+							"flex flex-col w-full flex-1 space-y-4 mt-20 md:mt-8 p-4 md:p-6 mx-auto max-w-4xl",
 							containerClassName,
 						)}
 					>
