@@ -3,8 +3,9 @@ name: Deploy App (Release)
 on:
   push:
     branches:
-      - release-v*
-      - release-dev-v*
+      - "release/v*"
+      - "release/dev-v*"
+  workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
@@ -30,17 +31,17 @@ jobs:
           BRANCH="${GITHUB_REF_NAME}"
 
           case "$BRANCH" in
-            release-v*)
+            release/v*)
               DEPLOY_TRACK="main"
               ENVIRONMENT_NAME="main"
               ENVIRONMENT_LABEL="prod"
-              RELEASE_TAG="${BRANCH#release-}"
+              RELEASE_TAG="${BRANCH#release/}"
               ;;
-            release-dev-v*)
+            release/dev-v*)
               DEPLOY_TRACK="dev"
               ENVIRONMENT_NAME="dev"
               ENVIRONMENT_LABEL="dev"
-              RELEASE_TAG="${BRANCH#release-dev-}"
+              RELEASE_TAG="${BRANCH#release/dev-}"
               ;;
             *)
               echo "Unsupported release branch: $BRANCH"
