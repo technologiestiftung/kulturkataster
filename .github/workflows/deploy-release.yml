@@ -3,9 +3,7 @@ name: Deploy App (Release)
 on:
   push:
     branches:
-      - "release/main-v*"
       - "release/v*"
-      - "release/dev-v*"
   workflow_dispatch:
 
 env:
@@ -32,23 +30,17 @@ jobs:
           BRANCH="${GITHUB_REF_NAME}"
 
           case "$BRANCH" in
-            release/main-v*)
-              DEPLOY_TRACK="main"
-              ENVIRONMENT_NAME="main"
-              ENVIRONMENT_LABEL="prod"
-              RELEASE_TAG="${BRANCH#release/main-}"
+            release/v*-dev.*)
+              DEPLOY_TRACK="dev"
+              ENVIRONMENT_NAME="dev"
+              ENVIRONMENT_LABEL="dev"
+              RELEASE_TAG="${BRANCH#release/}"
               ;;
             release/v*)
               DEPLOY_TRACK="main"
               ENVIRONMENT_NAME="main"
               ENVIRONMENT_LABEL="prod"
               RELEASE_TAG="${BRANCH#release/}"
-              ;;
-            release/dev-v*)
-              DEPLOY_TRACK="dev"
-              ENVIRONMENT_NAME="dev"
-              ENVIRONMENT_LABEL="dev"
-              RELEASE_TAG="${BRANCH#release/dev-}"
               ;;
             *)
               echo "Unsupported release branch: $BRANCH"
