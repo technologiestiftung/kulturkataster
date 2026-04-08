@@ -8,6 +8,7 @@ import { DialogTitle } from "@/components/ui/dialog";
 import { Modal } from "@/components/Modals/Modal";
 import { useRoutedModalClose } from "@/components/Modals/useRoutedModalClose";
 import { FormWrapper } from "@/components/FormWrapper";
+import { FormWrapperLoadingSkeleton } from "@/components/FormWrapper/FormWrapperLoadingSkeleton";
 import type { FormWrapperConfig } from "@/components/FormWrapper";
 import { useAccountStore } from "@/lib/store/accountStore";
 import { useInstitutionMultiSelect } from "@/lib/hooks/useInstitutionMultiSelect";
@@ -20,7 +21,6 @@ import {
 	createUser,
 	getUserById,
 	deleteUser,
-	sendComplianceResend,
 	sendPasswordReset,
 	sendRoleDecisionEmailManual,
 	updateUser,
@@ -70,6 +70,10 @@ type UserFormConfigArgs = {
 	submitting: boolean;
 	onSubmit: (data: Record<string, unknown>) => void | Promise<void>;
 	onCancel: () => void;
+	onSendRoleDecision: (
+		target: "district" | "state" | "network",
+		decision: "approved" | "rejected",
+	) => Promise<string | null>;
 };
 
 type UseResolvedUserResult = {
@@ -218,11 +222,8 @@ const buildUserFormConfig = ({
 	submitting,
 	onSubmit,
 	onCancel,
+	onSendRoleDecision,
 }: UserFormConfigArgs): FormWrapperConfig => {
-	const identityDescription =
-		mode === "create"
-			? t("userFormModal.form.identity.description.create")
-			: t("userFormModal.form.identity.description.edit");
 	const accessCondition = () => mode === "edit" && Boolean(resolvedUser);
 
 	return {
@@ -230,8 +231,6 @@ const buildUserFormConfig = ({
 			{
 				name: "identitySection",
 				type: "section",
-				title: t("userFormModal.form.identity.title"),
-				description: identityDescription,
 				layout: { columns: 2 },
 				fields: [
 					{
@@ -278,12 +277,6 @@ const buildUserFormConfig = ({
 							"userFormModal.form.identity.fields.accountType.placeholder",
 						),
 					},
-					{
-						name: "compliance",
-						label: t("userFormModal.form.identity.fields.compliance.label"),
-						type: "switch",
-						layout: { span: "full" },
-					},
 				],
 			},
 			{
@@ -296,6 +289,7 @@ const buildUserFormConfig = ({
 						label: t("userFormModal.form.access.fields.role.label"),
 						type: "select",
 						required: true,
+						placeholder: t("userFormModal.form.access.fields.role.placeholder"),
 						options: roles.map((role) => ({
 							value: String(role.id),
 							label: role.name,
@@ -361,26 +355,6 @@ const buildUserFormConfig = ({
 						},
 					},
 					{
-						name: "complianceResend",
-						label: "",
-						type: "actionPanel",
-						layout: { span: "full" },
-						condition: accessCondition,
-						actionPanel: {
-							title: t("userFormModal.complianceResend.title"),
-							description: t("userFormModal.complianceResend.description"),
-							actionLabel: t("userFormModal.complianceResend.send"),
-							actionLabelLoading: t("userFormModal.complianceResend.sending"),
-							errorFallback: t("userFormModal.complianceResend.error"),
-							icon: <Mail className="h-5 w-5 text-primary-dark" />,
-							onAction: async () => {
-								if (!resolvedUser) return null;
-								await sendComplianceResend(resolvedUser.email);
-								return t("userFormModal.complianceResend.success");
-							},
-						},
-					},
-					{
 						name: "roleDistrictDecision",
 						label: "",
 						type: "actionPanel",
@@ -398,24 +372,9 @@ const buildUserFormConfig = ({
 							errorFallback: t("userFormModal.roleEmails.error"),
 							secondaryErrorFallback: t("userFormModal.roleEmails.error"),
 							icon: <Mail className="h-5 w-5 text-primary-dark" />,
-							onAction: async () => {
-								if (!resolvedUser) return null;
-								await sendRoleDecisionEmailManual({
-									userId: resolvedUser.id,
-									target: "district",
-									decision: "approved",
-								});
-								return t("userFormModal.roleEmails.success");
-							},
-							onSecondaryAction: async () => {
-								if (!resolvedUser) return null;
-								await sendRoleDecisionEmailManual({
-									userId: resolvedUser.id,
-									target: "district",
-									decision: "rejected",
-								});
-								return t("userFormModal.roleEmails.success");
-							},
+							onAction: () => onSendRoleDecision("district", "approved"),
+							onSecondaryAction: () =>
+								onSendRoleDecision("district", "rejected"),
 						},
 					},
 					{
@@ -436,24 +395,8 @@ const buildUserFormConfig = ({
 							errorFallback: t("userFormModal.roleEmails.error"),
 							secondaryErrorFallback: t("userFormModal.roleEmails.error"),
 							icon: <Mail className="h-5 w-5 text-primary-dark" />,
-							onAction: async () => {
-								if (!resolvedUser) return null;
-								await sendRoleDecisionEmailManual({
-									userId: resolvedUser.id,
-									target: "state",
-									decision: "approved",
-								});
-								return t("userFormModal.roleEmails.success");
-							},
-							onSecondaryAction: async () => {
-								if (!resolvedUser) return null;
-								await sendRoleDecisionEmailManual({
-									userId: resolvedUser.id,
-									target: "state",
-									decision: "rejected",
-								});
-								return t("userFormModal.roleEmails.success");
-							},
+							onAction: () => onSendRoleDecision("state", "approved"),
+							onSecondaryAction: () => onSendRoleDecision("state", "rejected"),
 						},
 					},
 					{
@@ -474,24 +417,9 @@ const buildUserFormConfig = ({
 							errorFallback: t("userFormModal.roleEmails.error"),
 							secondaryErrorFallback: t("userFormModal.roleEmails.error"),
 							icon: <Mail className="h-5 w-5 text-primary-dark" />,
-							onAction: async () => {
-								if (!resolvedUser) return null;
-								await sendRoleDecisionEmailManual({
-									userId: resolvedUser.id,
-									target: "network",
-									decision: "approved",
-								});
-								return t("userFormModal.roleEmails.success");
-							},
-							onSecondaryAction: async () => {
-								if (!resolvedUser) return null;
-								await sendRoleDecisionEmailManual({
-									userId: resolvedUser.id,
-									target: "network",
-									decision: "rejected",
-								});
-								return t("userFormModal.roleEmails.success");
-							},
+							onAction: () => onSendRoleDecision("network", "approved"),
+							onSecondaryAction: () =>
+								onSendRoleDecision("network", "rejected"),
 						},
 					},
 				],
@@ -525,15 +453,12 @@ const getDialogTitle = (
 
 const renderDialogBody = (
 	isWaitingForUser: boolean,
-	t: (key: string) => string,
 	formConfig: FormWrapperConfig,
 	resolvedUser: User | undefined,
 	mode: UserFormModalProps["mode"],
 ) => {
 	if (isWaitingForUser) {
-		return (
-			<p className="text-foreground">{t("userFormModal.dialog.loading")}</p>
-		);
+		return <FormWrapperLoadingSkeleton />;
 	}
 	return <FormWrapper key={resolvedUser?.id ?? mode} config={formConfig} />;
 };
@@ -551,6 +476,7 @@ export function UserFormModal({
 	const roles = useAccountStore((state) => state.roles);
 	const groups = useAccountStore((state) => state.groups);
 	const removeUser = useAccountStore((state) => state.removeUser);
+	const upsertUser = useAccountStore((state) => state.upsertUser);
 	const institutions =
 		useInstitutionStore((state) => state.allInstitutions) ?? [];
 	const categories = useInstitutionStore((state) => state.categories) ?? [];
@@ -576,6 +502,19 @@ export function UserFormModal({
 				? "userFormModal.feedback.create"
 				: "userFormModal.feedback.update";
 		showSuccessToast(t(`${keyPrefix}.title`), t(`${keyPrefix}.description`));
+	};
+	const handleSendRoleDecision = async (
+		target: "district" | "state" | "network",
+		decision: "approved" | "rejected",
+	) => {
+		if (!resolvedUser) return null;
+		const updatedUser = await sendRoleDecisionEmailManual({
+			userId: resolvedUser.id,
+			target,
+			decision,
+		});
+		upsertUser(updatedUser);
+		return t("userFormModal.roleEmails.success");
 	};
 	const { handleSubmit, submitting } = useUserSubmit(
 		mode,
@@ -620,6 +559,7 @@ export function UserFormModal({
 			submitting,
 			onSubmit: handleSubmit,
 			onCancel: handleClose,
+			onSendRoleDecision: handleSendRoleDecision,
 		});
 		if (mode !== "edit" || !resolvedUser) return baseConfig;
 		return {
@@ -645,7 +585,7 @@ export function UserFormModal({
 		isDeleting,
 		handleSubmit,
 		handleClose,
-		handleSuccess,
+		handleSendRoleDecision,
 	]);
 
 	const autoCloseError =
@@ -665,10 +605,6 @@ export function UserFormModal({
 			routePath={routePath}
 			returnTo={returnTo}
 			autoCloseError={autoCloseError}
-			loadingState={{
-				active: isWaitingForUser,
-				label: t("userFormModal.dialog.loading"),
-			}}
 			confirmDialog={
 				showDeleteDialog && resolvedUser
 					? {
@@ -751,13 +687,7 @@ export function UserFormModal({
 				</div>
 				{autoCloseError ? null : (
 					<div className="flex-1 overflow-auto px-6 py-6 md:px-10 flex flex-col">
-						{renderDialogBody(
-							isWaitingForUser,
-							t,
-							formConfig,
-							resolvedUser,
-							mode,
-						)}
+						{renderDialogBody(isWaitingForUser, formConfig, resolvedUser, mode)}
 					</div>
 				)}
 			</div>

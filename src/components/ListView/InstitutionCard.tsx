@@ -53,7 +53,7 @@ const InstitutionCard = memo(function InstitutionCard({
 		}
 	};
 
-	const cardClassName = `tab-ring w-full rounded-lg overflow-hidden text-left transition-shadow ${
+	const cardClassName = `tab-ring hover:scale-102 transition duration-500 ease-out transform-gpu will-change-transform w-full rounded-lg overflow-hidden text-left ${
 		isSelected
 			? "shadow-md ring-2 ring-primary border border-primary"
 			: "shadow-sm border border-transparent"
@@ -76,6 +76,7 @@ const InstitutionCard = memo(function InstitutionCard({
 		>
 			<div className="">
 				<InfoWrapper
+					key={`${institutionData.id}-${openDetails ? "open" : "closed"}`}
 					data={institutionData}
 					config={{
 						className: "bg-background p-4",

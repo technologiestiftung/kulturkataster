@@ -32,7 +32,7 @@ const Footer: FC<FooterProps> = ({ ariaLabel }) => {
 			role="contentinfo"
 			aria-label={ariaLabel ?? t("footerLandmark")}
 		>
-			<div className="body2 flex items-center gap-1">
+			<div className="body2 flex items-center gap-1 text-nowrap truncate">
 				<p>{t("footer.projectBy")}</p>
 			</div>
 

@@ -14,6 +14,7 @@ import { LogOut } from "lucide-react";
 import { RefreshCw } from "lucide-react";
 import { Profile } from "@/types";
 import { clearAccountStore } from "@/lib/store/accountStore";
+import { reportClientTelemetry } from "@/lib/utils/clientTelemetry";
 
 type TabConfig = {
 	value: string;
@@ -104,7 +105,11 @@ export function AccountLayoutClient({
 			await clearAccountStore();
 			router.push(toLocalePath("/"));
 		} else {
-			console.error("Logout failed:", result.error);
+			reportClientTelemetry({
+				level: "error",
+				event: "account.logout.failed",
+				error: result.error,
+			});
 		}
 	};
 
@@ -126,7 +131,7 @@ export function AccountLayoutClient({
 					src="/resources/map.png"
 					alt="Map background"
 					fill
-					className="object-cover contrast:invert-90"
+					className="object-cover object-top-left contrast:invert-90"
 					priority
 				/>
 			</div>
@@ -146,8 +151,9 @@ export function AccountLayoutClient({
 					</div>
 					<div className="Buttons flex flex-wrap space-x-3">
 						<ButtonWithTooltip
-							variant="rounded"
-							size="icon-only"
+							radius="full"
+							variant="surface"
+							iconSize="lg"
 							tooltip={profileSettingsLabel}
 							tooltipSide="bottom"
 							className="h-14 w-14"
@@ -157,8 +163,9 @@ export function AccountLayoutClient({
 							<Setting />
 						</ButtonWithTooltip>
 						<ButtonWithTooltip
-							variant="rounded"
-							size="icon-only"
+							radius="full"
+							variant="surface"
+							iconSize="lg"
 							tooltipSide="bottom"
 							tooltip={faqLabel}
 							className="h-14 w-14"
@@ -168,8 +175,9 @@ export function AccountLayoutClient({
 							<Info />
 						</ButtonWithTooltip>
 						<ButtonWithTooltip
-							variant="rounded"
-							size="icon-only"
+							radius="full"
+							variant="surface"
+							iconSize="lg"
 							tooltipSide="bottom"
 							tooltip={logoutLabel}
 							className="h-14 w-14"
@@ -179,8 +187,9 @@ export function AccountLayoutClient({
 							<LogOut />
 						</ButtonWithTooltip>
 						<ButtonWithTooltip
-							variant="rounded"
-							size="icon-only"
+							radius="full"
+							variant="surface"
+							iconSize="lg"
 							tooltipSide="bottom"
 							tooltip={refreshLabel}
 							className="h-14 w-14"
@@ -193,7 +202,9 @@ export function AccountLayoutClient({
 							}}
 						>
 							<RefreshCw
-								className={isRefreshing ? "animate-spin" : undefined}
+								className={
+									isRefreshing ? "motion-safe:animate-spin" : undefined
+								}
 							/>
 						</ButtonWithTooltip>
 					</div>
@@ -209,8 +220,13 @@ export function AccountLayoutClient({
 						</TabsList>
 					</Tabs>
 
-					<div className="pt-6 flex-1 min-h-0 w-full bg-background ">
-						{children}
+					<div className="pt-6 flex-1 min-h-0 w-full bg-background">
+						<div
+							key={pathname}
+							className="h-full motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-1 motion-safe:duration-300"
+						>
+							{children}
+						</div>
 					</div>
 				</div>
 			</div>

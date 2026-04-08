@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
+import confetti from "canvas-confetti";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Modal } from "@/components/Modals/Modal";
@@ -42,7 +44,7 @@ function AuthChoiceContent({
 					</p>
 				</div>
 				<div className="flex ">
-					<Button variant="default" onClick={onLogin}>
+					<Button variant="primary" onClick={onLogin}>
 						{t("institutionDraftIntroModal.choice.login.cta")}
 					</Button>
 				</div>
@@ -57,7 +59,7 @@ function AuthChoiceContent({
 					</p>
 				</div>
 				<div className="flex">
-					<Button variant="default" onClick={onGuestContinue}>
+					<Button variant="primary" onClick={onGuestContinue}>
 						{t("institutionDraftIntroModal.choice.guest.cta")}
 					</Button>
 				</div>
@@ -68,6 +70,7 @@ function AuthChoiceContent({
 
 type ContributionSetupContentProps = {
 	t: (key: string) => string;
+	toLocalePath: (path: string) => string;
 	mode: DraftMode;
 	setMode: (mode: DraftMode) => void;
 	onContinue: () => void;
@@ -78,6 +81,7 @@ type ContributionSetupContentProps = {
 
 function ContributionSetupContent({
 	t,
+	toLocalePath,
 	mode,
 	setMode,
 	onContinue,
@@ -88,8 +92,8 @@ function ContributionSetupContent({
 	return (
 		<>
 			{showThankYou ? (
-				<>
-					<div className="h-50 relative w-screen -my-4 left-1/2 -translate-x-1/2 overflow-hidden mb-16">
+				<div className="motion-safe:animate-in motion-safe:fade-in-0 motion-safe:zoom-in-95 motion-safe:slide-in-from-bottom-2 motion-safe:duration-500">
+					<div className="h-50 relative w-screen -my-4 left-1/2 -mt-20 -translate-x-1/2 overflow-hidden mb-16">
 						<Image
 							src="/resources/thankyou.png"
 							alt="Thank you background"
@@ -98,15 +102,25 @@ function ContributionSetupContent({
 							priority
 						/>
 					</div>
-					<div>
+					<div className="motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-1 motion-safe:duration-700">
 						<h1 className="font-extrabold">
 							{t("institutionDraftIntroModal.submitSuccess.title")}
 						</h1>
 						<p className="body2 mt-2">
-							{t("institutionDraftIntroModal.submitSuccess.description")}
+							<Trans
+								i18nKey="institutionDraftIntroModal.submitSuccess.description"
+								ns="content"
+								components={[
+									<Link
+										key="account-link"
+										href={toLocalePath("/account")}
+										className="text-primary-dark underline"
+									/>,
+								]}
+							/>
 						</p>
 					</div>
-				</>
+				</div>
 			) : (
 				<>
 					<div className="mt-18">
@@ -181,7 +195,7 @@ function ContributionSetupContent({
 						{t("institutionDraftIntroModal.intro.back")}
 					</Button>
 				) : null}
-				<Button variant="default" onClick={onContinue}>
+				<Button variant="primary" onClick={onContinue}>
 					{showThankYou
 						? t("institutionDraftIntroModal.submitSuccess.cta")
 						: t("institutionDraftIntroModal.intro.cta")}
@@ -207,6 +221,31 @@ export function InstitutionDraftIntroModal({
 	const [isGuestSetupVisible, setIsGuestSetupVisible] = useState(showThankYou);
 	const resetDraft = useInstitutionDraftStore((state) => state.resetDraft);
 	const setModeInStore = useInstitutionDraftStore((state) => state.setMode);
+	const hasPlayedConfettiRef = useRef(false);
+
+	useEffect(() => {
+		if (!showThankYou || hasPlayedConfettiRef.current) return;
+
+		hasPlayedConfettiRef.current = true;
+
+		const baseConfig = {
+			particleCount: 70,
+			spread: 70,
+			startVelocity: 45,
+			gravity: 0.9,
+			scalar: 0.9,
+			origin: { y: 0.42 },
+		};
+
+		confetti({ ...baseConfig, origin: { x: 0.2, y: 0.42 } });
+		confetti({ ...baseConfig, origin: { x: 0.8, y: 0.42 } });
+		confetti({
+			particleCount: 90,
+			spread: 100,
+			startVelocity: 38,
+			origin: { x: 0.5, y: 0.35 },
+		});
+	}, [showThankYou]);
 
 	const handleContinue = () => {
 		resetDraft();
@@ -231,14 +270,15 @@ export function InstitutionDraftIntroModal({
 			titleClassName="sr-only"
 			variant="fullscreen"
 			routePath={routePath}
-			containerClassName="p-0 md:p-0 mt-0 md:mt-0"
+			containerClassName=""
 			contentWrapperClassName="flex-1"
 			contentClassName=""
 		>
-			<div className="p-4 space-y-4 flex-1 flex-col max-w-5xl mx-auto w-full mb-20">
+			<div className="space-y-4 flex-1 flex-col max-w-5xl mx-auto w-full mb-20">
 				{showContributionSetup ? (
 					<ContributionSetupContent
 						t={t}
+						toLocalePath={toLocalePath}
 						mode={mode}
 						setMode={setMode}
 						onContinue={handleContinue}

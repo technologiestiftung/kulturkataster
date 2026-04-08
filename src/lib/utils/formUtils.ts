@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+import type { InstitutionForm } from "@/types/institution";
 
 type SubmitLabelText = {
 	default: string;
@@ -214,6 +215,7 @@ type InstitutionAddressPayload = {
 	street_number: string;
 	city: string | null;
 	zipcode: string | null;
+	district: string | null;
 	lat: number | null;
 	lng: number | null;
 	address_suffix: string | null;
@@ -479,6 +481,7 @@ const buildInstitutionAddressPayload = (
 			streetLineKey?: string;
 			cityKey?: string;
 			zipKey?: string;
+			districtKey?: string;
 			latKey?: string;
 			lngKey?: string;
 			addressSuffixKey?: string;
@@ -496,6 +499,9 @@ const buildInstitutionAddressPayload = (
 		street_number: streetNumber,
 		city: toOptionalText(formData[options?.keys?.cityKey ?? "address.city"]),
 		zipcode: toOptionalText(formData[options?.keys?.zipKey ?? "address.zip"]),
+		district: toOptionalText(
+			formData[options?.keys?.districtKey ?? "address.district"],
+		),
 		lat:
 			toOptionalNumber(formData[options?.keys?.latKey ?? "address.lat"]) ??
 			null,
@@ -523,19 +529,65 @@ const toFormBoolean = (value: unknown): boolean =>
 
 const buildInstitutionSharedFieldsPayload = (
 	formData: Record<string, unknown>,
-) => ({
-	website: toOptionalText(formData.website),
-	email: toOptionalText(formData.email),
-	phone: toOptionalText(formData.phone),
-	funding_type: toOptionalText(formData.funding_type),
-	funding_sources: normalizeFundingSources(formData.funding_sources),
-	shared_use_allowed: toFormBoolean(formData.shared_use_allowed),
-	shared_use_info: toOptionalText(formData.shared_use_info),
-	shared_use_equipment: toOptionalText(formData.shared_use_equipment),
-	shared_use_audience: toOptionalText(formData.shared_use_audience),
-	shared_use_availability: toOptionalText(formData.shared_use_availability),
-	shared_use_contact_person: toOptionalText(formData.shared_use_contact_person),
-});
+) =>
+	({
+		website: toOptionalText(formData.website),
+		email: toOptionalText(formData.email),
+		phone: toOptionalText(formData.phone),
+		parent_organization: toOptionalText(formData.parent_organization),
+		legal_form: toOptionalText(formData.legal_form),
+		owner_name: toOptionalText(formData.owner_name),
+		owner_type: toOptionalText(
+			formData.owner_type,
+		) as InstitutionForm["owner_type"],
+		rental_contract_type: toOptionalText(
+			formData.rental_contract_type,
+		) as InstitutionForm["rental_contract_type"],
+		rental_contract_end: toDate(formData.rental_contract_end),
+		funding_type: toOptionalText(
+			formData.funding_type,
+		) as InstitutionForm["funding_type"],
+		funding_sources: normalizeFundingSources(formData.funding_sources),
+		utilization_status: toOptionalText(
+			formData.utilization_status,
+		) as InstitutionForm["utilization_status"],
+		utilization_status_info: toOptionalText(formData.utilization_status_info),
+		utilization_status_internal_notes: toOptionalText(
+			formData.utilization_status_internal_notes,
+		),
+		protection_status: toOptionalText(
+			formData.protection_status,
+		) as InstitutionForm["protection_status"],
+		protection_status_info: toOptionalText(formData.protection_status_info),
+		protection_status_internal_notes: toOptionalText(
+			formData.protection_status_internal_notes,
+		),
+		shared_use_allowed: toFormBoolean(formData.shared_use_allowed),
+		shared_use_info: toOptionalText(formData.shared_use_info),
+		shared_use_equipment: toOptionalText(formData.shared_use_equipment),
+		shared_use_audience: toOptionalText(formData.shared_use_audience),
+		shared_use_availability: toOptionalText(formData.shared_use_availability),
+		shared_use_contact_person: toOptionalText(
+			formData.shared_use_contact_person,
+		),
+		accessibility: toOptionalText(formData.accessibility),
+		cost: toOptionalText(formData.cost),
+		established_since: toDate(formData.established_since),
+		established_until: toDate(formData.established_until),
+		closing_reason: toOptionalText(formData.closing_reason),
+		notes: toOptionalText(formData.notes),
+		internal_notes: toOptionalText(formData.internal_notes),
+		source: toOptionalText(formData.source),
+		contact_person_first_name: toOptionalText(
+			formData.contact_person_first_name,
+		),
+		contact_person_last_name: toOptionalText(formData.contact_person_last_name),
+		contact_person_email: toOptionalText(formData.contact_person_email),
+		contact_person_phone: toOptionalText(formData.contact_person_phone),
+		area: toOptionalNumber(formData.area),
+		number_of_rooms: toOptionalNumber(formData.number_of_rooms),
+		capacity: toOptionalNumber(formData.capacity),
+	}) satisfies Partial<InstitutionForm>;
 
 export {
 	getSubmitLabel,

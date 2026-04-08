@@ -37,27 +37,29 @@ export function MapListShell() {
 	}
 
 	return (
-		<div className={"flex flex-1 h-full w-full relative"}>
+		<div
+			className={"relative flex min-h-0 flex-1 h-full w-full overflow-hidden"}
+		>
 			<div
-				className={routeMode === "map" ? "h-full w-full relative" : "hidden"}
+				className={
+					routeMode === "map" ? "relative h-full min-h-0 w-full" : "hidden"
+				}
 				aria-hidden={routeMode !== "map"}
 			>
-				<section className="h-full w-full" aria-label={t("map.title")}>
+				<section className="h-full min-h-0 w-full" aria-label={t("map.title")}>
 					<MapInitializer />
 				</section>
 			</div>
-			<div
-				className={
-					routeMode === "list"
-						? "items-center flex-1 h-full justify-items-center h-full relative w-full"
-						: "hidden"
-				}
-				aria-hidden={routeMode !== "list"}
-			>
-				<section className="h-full w-full" aria-label={t("listView.title")}>
-					<ListView />
-				</section>
-			</div>
+			{routeMode === "list" ? (
+				<div className="relative flex-1 h-full min-h-0 w-full items-center justify-items-center">
+					<section
+						className="h-full min-h-0 w-full"
+						aria-label={t("listView.title")}
+					>
+						<ListView />
+					</section>
+				</div>
+			) : null}
 		</div>
 	);
 }

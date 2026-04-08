@@ -87,8 +87,9 @@ export function LoginForm() {
 								<Button
 									type="button"
 									variant="tertiary"
-									size="tag"
-									className=" underline body2"
+									fullWidth={false}
+									size="inline"
+									className="underline body2"
 									onClick={() => router.push(toLocalePath("/forgotPassword"))}
 									disabled={isLoading}
 								>
@@ -103,7 +104,7 @@ export function LoginForm() {
 	};
 
 	return (
-		<div className="w-full max-w-3xl mx-auto">
+		<div className="w-full md:max-w-3xl mx-auto">
 			<div className="text-start font-bold mb-10">
 				<h1 className="">{t("auth.login.title")}</h1>
 				<p className="">{t("auth.login.subtitle")}</p>
@@ -130,8 +131,8 @@ export function LoginForm() {
 				<Button
 					type="button"
 					variant="tertiary"
-					size="tag"
-					className=" underline"
+					size="inline"
+					className="underline body2"
 					onClick={() => router.push(toLocalePath("/register"))}
 					disabled={isLoading}
 				>

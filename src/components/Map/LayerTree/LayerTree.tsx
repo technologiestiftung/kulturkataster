@@ -16,6 +16,7 @@ import { useSidebar } from "@/components/ui/sidebar";
 import ContextMapIcon from "@/icons/fachkarten.svg";
 import { useAppStore } from "@/lib/store/appStore";
 import { useMapStore } from "@/lib/store/mapStore";
+import { getAccessibleScrollBehavior } from "@/lib/utils/motion";
 import { ManagedLayer } from "@/types";
 import X from "@/icons/x.svg";
 import Image from "next/image";
@@ -34,7 +35,7 @@ import Legende from "./Legende";
 // Constants
 const LAYER_THUMBNAIL_SIZE = 80;
 const FLOATING_BUTTON_SIZE = 64;
-const SIDEBAR_COLLAPSED_OFFSET = "left-24";
+const SIDEBAR_COLLAPSED_OFFSET = "left-4";
 const SIDEBAR_EXPANDED_OFFSET = "left-[494px]";
 const SIDEBAR_EXPANDED_OFFSET_LARGE_TEXT = "left-[554px]";
 
@@ -155,7 +156,7 @@ const LayerItem = memo<{
 		if (openLegendLayerId === layer.id) {
 			const timer = setTimeout(() => {
 				accordionContentRef.current?.scrollIntoView({
-					behavior: "smooth",
+					behavior: getAccessibleScrollBehavior(),
 					block: "nearest",
 				});
 			}, 150);
@@ -163,7 +164,9 @@ const LayerItem = memo<{
 		}
 	}, [openLegendLayerId, layer.id]);
 
-	const serviceName = layer.config.service.name;
+	const serviceName =
+		layer.config.service.name?.trim() ||
+		t("map.unnamedLayer", { defaultValue: "Unbenannte Fachkarte" });
 	const serviceNameLang = layer.config.service.name_lang;
 	const serviceNameMid = layer.config.service.name_mid;
 
@@ -272,7 +275,7 @@ const FloatingLayerButton = memo(
 
 		return (
 			<div
-				className={`fixed bottom-4 z-25 transition-all duration-200 ${getLeftPosition()}`}
+				className={`absolute bottom-4 md:block hidden z-25 transition-all duration-200 ${getLeftPosition()}`}
 			>
 				<div className="relative">
 					{visibleCount > 1 && (
@@ -284,8 +287,9 @@ const FloatingLayerButton = memo(
 
 					<ButtonWithTooltip
 						ref={forwardedRef}
-						variant="rounded"
-						size="icon"
+						radius="full"
+						variant="surface"
+						iconSize="lg"
 						tooltip={t("map.layerTree")}
 						tooltipSide="right"
 						className={`relative w-16 h-16 p-0 bg-neutral-80 shadow-lg rounded overflow-hidden flex items-center justify-center cursor-pointer transition-colors hover:bg-neutral-70 focus:outline-none ${
@@ -327,11 +331,11 @@ const FloatingLayerButton = memo(
 
 FloatingLayerButton.displayName = "FloatingLayerButton";
 
-// Main LayerTree component
+// Main LayerTree component (desktop only - mobile handled via Sheet in Menu)
 const LayerTree: FC = () => {
 	const { t } = useTranslation("common");
 	const { subjectLayers, visibleCount, topVisibleLayer } = useLayerData();
-	const { state: sidebarState } = useSidebar();
+	const { state: sidebarState, isMobile } = useSidebar();
 	const isLayerTreeOpen = useAppStore((state) => state.isLayerTreeOpen);
 	const setIsLayerTreeOpen = useAppStore((state) => state.setIsLayerTreeOpen);
 	const [isOpen, setIsOpen] = useState(false);
@@ -366,7 +370,7 @@ const LayerTree: FC = () => {
 		return () => document.removeEventListener("keydown", handleKeyDown);
 	}, [isOpen, handleClose]);
 
-	if (!isOpen) {
+	if (!isOpen || isMobile) {
 		return (
 			<FloatingLayerButton
 				visibleCount={visibleCount}
@@ -385,18 +389,17 @@ const LayerTree: FC = () => {
 			aria-label={t("map.layerTreeTitle")}
 		>
 			<CardHeader className="shadow-sm p-1 pl-6">
-				<div className="flex items-center justify-between">
+				<div className="flex items-center h-14 justify-between">
 					<CardTitle className="body1 font-bold">
 						{t("map.layerTreeTitle")}
 					</CardTitle>
 					<Button
 						variant="ghost"
-						size="sm"
-						className="w-14 h-14 p-0"
 						onClick={handleClose}
+						iconSize="lg"
 						aria-label={t("map.closeLayerTree")}
 					>
-						<X className="size-4" aria-hidden="true" focusable="false" />
+						<X className="size-6!" aria-hidden="true" focusable="false" />
 					</Button>
 				</div>
 			</CardHeader>

@@ -1,19 +1,22 @@
 import { CategoryFormModal } from "@/components/Categories";
+import { requirePositiveIntParam } from "@/lib/utils/routeParams";
 
 type EditCategoryPageProps = {
-	params: Promise<{ id: string }>;
+	params: Promise<{ locale: string; id: string }>;
 };
 
 export default async function EditCategoryPage({
 	params,
 }: EditCategoryPageProps) {
-	const { id } = await params;
+	const { locale, id } = await params;
+	const parsedId = requirePositiveIntParam(id, `/${locale}/account/categories`);
+
 	return (
 		<CategoryFormModal
 			mode="edit"
-			categoryId={id}
+			categoryId={String(parsedId)}
 			shouldRefresh={false}
-			routePath={`/account/categories/${id}/edit`}
+			routePath={`/account/categories/${parsedId}/edit`}
 			returnTo="/account/categories"
 		/>
 	);

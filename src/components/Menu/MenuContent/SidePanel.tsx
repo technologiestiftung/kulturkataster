@@ -2,21 +2,39 @@
 
 import Filter from "@/components/Filter/Filter";
 import { LocationSearch } from "@/components/Search/LocationSearch";
-import { useState } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { useEffect, useState } from "react";
 
 export function SidePanel({
 	onSearchClick,
 	onShowFilter,
+	isBlocked = false,
+	onPanelOpen,
 }: {
 	onSearchClick?: () => void;
 	onShowFilter?: () => void;
+	isBlocked?: boolean;
+	onPanelOpen?: () => void;
 }) {
+	const isMobile = useIsMobile();
 	const [hasResults, setHasResults] = useState(false);
-	const [sidePanel, setSidePanel] = useState<"search" | "filter" | null>(
-		"filter",
-	);
+	const [sidePanel, setSidePanel] = useState<"search" | "filter" | null>(null);
+
+	useEffect(() => {
+		setSidePanel(isMobile ? "search" : "filter");
+	}, [isMobile]);
+
+	useEffect(() => {
+		if (isBlocked) {
+			setSidePanel("search");
+			setHasResults(false);
+			return;
+		}
+		setSidePanel((prev) => prev ?? (isMobile ? "search" : "filter"));
+	}, [isBlocked, isMobile]);
 
 	const handleShowFilter = () => {
+		onPanelOpen?.();
 		if (sidePanel === "filter") {
 			onShowFilter?.();
 			setSidePanel("search");
@@ -26,6 +44,7 @@ export function SidePanel({
 	};
 
 	const handleShowSearch = () => {
+		onPanelOpen?.();
 		if (sidePanel === "filter") {
 			onShowFilter?.();
 		}
@@ -36,7 +55,7 @@ export function SidePanel({
 	return (
 		<div className="absolute inset-0 h-full pointer-events-none md:inset-y-0 md:left-0 md:max-w-[var(--sidebar-width)] z-8">
 			<div
-				className={`h-full w-full flex-row flex overflow-hidden p-5 transition-colors duration-200 ${hasResults || sidePanel === "filter" ? "bg-secondary shadow-lg" : "pointer-events-none"}`}
+				className={`h-full w-full flex-row flex overflow-hidden p-4 transition-colors duration-200 ${hasResults || sidePanel === "filter" ? "bg-secondary shadow-lg" : "pointer-events-none"}`}
 			>
 				<div className="relative h-full flex-1">
 					<div
@@ -47,6 +66,7 @@ export function SidePanel({
 						}`}
 					>
 						<LocationSearch
+							showResults={!isBlocked}
 							onResultsChange={(results) => {
 								setHasResults(results.length > 0);
 							}}

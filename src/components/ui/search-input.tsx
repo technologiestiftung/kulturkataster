@@ -28,7 +28,7 @@ const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
 					iconPosition={iconPosition}
 					className={cn(
 						className,
-						"h-12 bg-background border-border border shadow-sm rounded-full",
+						"h-14 bg-background border-border border shadow-sm rounded-full truncate pr-16 md:pr-0",
 					)}
 					{...props}
 				/>

@@ -7,6 +7,9 @@ import BackIcon from "@/icons/chevron-left.svg";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
 import { useRestoreFocus } from "@/hooks/use-restore-focus";
+import KukaSmallLogo from "@/logos/kuka-small.svg";
+import { useLocalePath } from "@/lib/hooks/useLocalePath";
+import { Button } from "./button";
 
 type DialogRootProps = React.ComponentProps<typeof DialogPrimitive.Root>;
 type DialogProps = DialogRootProps;
@@ -52,7 +55,7 @@ function DialogOverlay({
 		<DialogPrimitive.Overlay
 			data-slot="dialog-overlay"
 			className={cn(
-				"data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50",
+				"motion-safe:data-[state=open]:animate-in motion-safe:data-[state=closed]:animate-out motion-safe:data-[state=closed]:fade-out-0 motion-safe:data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50",
 				className,
 			)}
 			{...props}
@@ -66,12 +69,14 @@ function DialogContent({
 	showCloseButton = true,
 	variant = "standard",
 	showBackButton = false,
+	showLogo = true,
 	onBack,
 	...props
 }: React.ComponentProps<typeof DialogPrimitive.Content> & {
 	showCloseButton?: boolean;
 	showBackButton?: boolean;
 	onBack?: () => void;
+	showLogo?: boolean;
 	variant?:
 		| "standard"
 		| "fullscreen-inset"
@@ -85,7 +90,7 @@ function DialogContent({
 }) {
 	const { t } = useTranslation("common");
 	const focusRef = React.useRef<HTMLDivElement | null>(null);
-
+	const toLocalePath = useLocalePath();
 	const getVariantStyles = () => {
 		const variants = {
 			standard:
@@ -94,7 +99,7 @@ function DialogContent({
 			fullscreen:
 				"fixed z-[70] top-0 md:top-[5rem] left-1/2 w-full max-w-314 h-full md:h-[calc(100%-5rem)] -translate-x-1/2 md:rounded-t-lg border",
 			"fullscreen-muted":
-				"fixed z-[70] top-0 md:top-[5rem] left-1/2 w-full max-w-314 h-full md:h-[calc(100%-5rem)] -translate-x-1/2 md:rounded-t-lg border",
+				"fixed z-[70]  top-0 md:top-[5rem] left-1/2 w-full max-w-314 h-full md:h-[calc(100%-5rem)] -translate-x-1/2 md:rounded-t-lg border",
 			centered:
 				"fixed z-[70] top-0 md:top-1/2 left-1/2 w-full max-w-314 h-full md:h-auto md:max-h-[calc(100%-5rem)] -translate-x-1/2 md:-translate-y-1/2 md:rounded-lg border flex flex-col",
 			"mobile-menu": "fixed z-[70] h-full inset-0 w-full border-0 p-0",
@@ -111,8 +116,8 @@ function DialogContent({
 
 	const backAndCloseClassNames = (type: "back" | "close") => {
 		return cn(
-			"ring-offset-background focus:ring-ring fixed top-6 z-[80] rounded-full bg-background p-3 shadow-sm transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-6",
-			type === "back" ? "left-6 md:left-6" : "right-6 md:right-6",
+			"fixed top-4 md:top-6 z-[80]",
+			type === "back" ? "left-4 md:left-6" : "right-4 md:right-6",
 			"",
 		);
 	};
@@ -131,9 +136,9 @@ function DialogContent({
 			<DialogPrimitive.Content
 				data-slot="dialog-content"
 				className={cn(
-					"bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 z-[61] shadow-lg duration-200 relative",
+					"bg-secondary md:bg-background motion-safe:data-[state=open]:animate-in motion-safe:data-[state=closed]:animate-out motion-safe:data-[state=closed]:fade-out-0 motion-safe:data-[state=open]:fade-in-0 motion-safe:data-[state=closed]:zoom-out-95 motion-safe:data-[state=open]:zoom-in-95 z-[61] shadow-lg duration-200 relative",
 					getVariantStyles(),
-					variant === "fullscreen-muted" && "bg-neutral-10",
+					variant === "fullscreen-muted" && "bg-neutral-10 md:bg-neutral-10",
 					className,
 				)}
 				aria-describedby={undefined}
@@ -145,32 +150,62 @@ function DialogContent({
 				}}
 				{...props}
 			>
+				{!showBackButton && showLogo && (
+					<div className="absolute top-6 left-4 md:hidden block z-99">
+						<a href={toLocalePath("/welcome")} aria-label={t("kukaLogo")}>
+							<KukaSmallLogo
+								title="Kulturkataster Berlin, Logo"
+								className="size-14 cursor-pointer hover:opacity-80 transition-opacity"
+							/>
+						</a>
+					</div>
+				)}
 				{showBackButton && (
-					<button onClick={onBack} className={backAndCloseClassNames("back")}>
-						<BackIcon className="size-6" />
+					<Button
+						variant="icon"
+						iconSize="lg"
+						radius="full"
+						onClick={onBack}
+						className={backAndCloseClassNames("back")}
+					>
+						<BackIcon />
 						<span className="sr-only">{t("back")}</span>
-					</button>
+					</Button>
 				)}
 				{showCloseButton && (
 					<DialogPrimitive.Close
+						asChild
 						data-slot="dialog-close"
-						className={backAndCloseClassNames("close")}
+						className="absolute"
 					>
-						<Close className="size-6" />
-						<span className="sr-only">{t("close")}</span>
+						<Button
+							variant="icon"
+							iconSize="lg"
+							radius="full"
+							className={backAndCloseClassNames("close")}
+						>
+							<Close />
+							<span className="sr-only">{t("close")}</span>
+						</Button>
 					</DialogPrimitive.Close>
 				)}
-				{variant === "mobile-menu" ? (
-					children
-				) : variant === "editor" ? (
-					<div className="flex flex-col h-full w-full overflow-auto">
-						{children}
-					</div>
-				) : (
-					<div className="Modal-Root overflow-auto h-full w-full tab-ring">
-						{children}
-					</div>
-				)}
+				{(() => {
+					if (variant === "mobile-menu") {
+						return children;
+					}
+					if (variant === "editor") {
+						return (
+							<div className="flex flex-col h-full w-full overflow-auto md:mt-0 mt-20">
+								{children}
+							</div>
+						);
+					}
+					return (
+						<div className="Modal-Root overflow-auto h-full w-full tab-ring">
+							{children}
+						</div>
+					);
+				})()}
 			</DialogPrimitive.Content>
 		</DialogPortal>
 	);

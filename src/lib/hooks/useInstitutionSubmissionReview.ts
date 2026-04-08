@@ -6,11 +6,13 @@ import { getInstitutionById } from "@/server/actions/institutions";
 import {
 	getSubmissionById,
 	reviewSubmission,
+	saveSubmissionNote,
 } from "@/server/actions/submissions";
 import type { Institution } from "@/types/institution";
 import type { InstitutionActionPermissions } from "@/types/account";
 import type { Submission } from "@/types/submission";
 import { canReviewInstitutionSubmissionType } from "@/lib/utils/submissionReviewPermissions";
+import { reportClientTelemetry } from "@/lib/utils/clientTelemetry";
 
 type UseInstitutionSubmissionReviewParams = {
 	submissionId?: number;
@@ -56,7 +58,15 @@ export function useInstitutionSubmissionReview({
 				const result = await getSubmissionById(submissionId);
 				if (!active) return;
 				setFetchedSubmission(result ?? null);
-			} catch {
+			} catch (_error) {
+				reportClientTelemetry({
+					level: "warn",
+					event: "institution_submission.review.fetch_submission_failed",
+					error: _error,
+					metadata: {
+						submission_id: submissionId,
+					},
+				});
 				if (active) {
 					setFetchedSubmission(null);
 				}
@@ -107,7 +117,16 @@ export function useInstitutionSubmissionReview({
 				const result = await getInstitutionById(entityId);
 				if (!active) return;
 				setOriginalInstitution(result ?? null);
-			} catch {
+			} catch (_error) {
+				reportClientTelemetry({
+					level: "warn",
+					event: "institution_submission.review.fetch_institution_failed",
+					error: _error,
+					metadata: {
+						submission_id: resolvedSubmissionWithFallback?.id,
+						entity_id: entityId,
+					},
+				});
 				if (active) {
 					setOriginalInstitution(null);
 				}
@@ -124,19 +143,9 @@ export function useInstitutionSubmissionReview({
 	}, [
 		didFetchInstitution,
 		originalInstitution,
+		resolvedSubmissionWithFallback?.id,
 		resolvedSubmissionWithFallback?.entity_id,
 	]);
-
-	useEffect(() => {
-		if (!resolvedSubmissionWithFallback || internalNotes) return;
-		const existingNotes =
-			typeof resolvedSubmissionWithFallback.review_notes === "string"
-				? resolvedSubmissionWithFallback.review_notes
-				: "";
-		if (existingNotes) {
-			setInternalNotes(existingNotes);
-		}
-	}, [resolvedSubmissionWithFallback, internalNotes]);
 
 	useEffect(() => {
 		setGrantSubmitterAccess(false);
@@ -200,11 +209,17 @@ export function useInstitutionSubmissionReview({
 				}
 				return true;
 			} catch (err) {
-				console.error(
-					"Failed to review submission:",
-					resolvedSubmissionWithFallback.id,
-					err,
-				);
+				reportClientTelemetry({
+					level: "error",
+					event: "institution_submission.review.submit_failed",
+					error: err,
+					metadata: {
+						submission_id: resolvedSubmissionWithFallback.id,
+						submission_type: resolvedSubmissionWithFallback.type,
+						entity_id: resolvedSubmissionWithFallback.entity_id,
+						status,
+					},
+				});
 				const errorMessage = formatReviewError(err);
 				setError(
 					t("institutionFormModal.review.error", {
@@ -230,6 +245,55 @@ export function useInstitutionSubmissionReview({
 		],
 	);
 
+	const handleSaveNote = useCallback(async (): Promise<boolean> => {
+		if (!resolvedSubmissionWithFallback) return false;
+		if (!canReviewCurrentSubmission) return false;
+		if (submitting) return false;
+
+		const note = internalNotes.trim();
+		if (!note) return false;
+
+		setSubmitting(true);
+		setError(null);
+		try {
+			const updatedSubmission = await saveSubmissionNote({
+				submissionId: resolvedSubmissionWithFallback.id,
+				note,
+			});
+			upsertSubmission(updatedSubmission as Submission);
+			setInternalNotes("");
+			return true;
+		} catch (err) {
+			reportClientTelemetry({
+				level: "error",
+				event: "institution_submission.review.save_note_failed",
+				error: err,
+				metadata: {
+					submission_id: resolvedSubmissionWithFallback.id,
+					submission_type: resolvedSubmissionWithFallback.type,
+					entity_id: resolvedSubmissionWithFallback.entity_id,
+				},
+			});
+			const errorMessage = formatReviewError(err);
+			setError(
+				t("institutionFormModal.review.error", {
+					error: errorMessage,
+				}),
+			);
+			return false;
+		} finally {
+			setSubmitting(false);
+		}
+	}, [
+		canReviewCurrentSubmission,
+		formatReviewError,
+		internalNotes,
+		resolvedSubmissionWithFallback,
+		submitting,
+		t,
+		upsertSubmission,
+	]);
+
 	return {
 		hasSubmissionId,
 		resolvedSubmissionWithFallback,
@@ -242,6 +306,7 @@ export function useInstitutionSubmissionReview({
 		submitting,
 		error,
 		handleReview,
+		handleSaveNote,
 		shouldShowGrantSubmitterAccessToggle,
 		canReviewCurrentSubmission,
 	};

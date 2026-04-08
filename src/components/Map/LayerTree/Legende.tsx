@@ -3,6 +3,7 @@
 
 import { FC } from "react";
 import rawLegenden from "@/config/resources/legenden.json";
+import rawLegendenEn from "@/config/resources/legenden.en.json";
 import { cn } from "@/lib/utils";
 import GesamtIndexTabelle from "./GesamtIndexTabelle";
 import { useTranslation } from "react-i18next";
@@ -30,8 +31,10 @@ type LegendItem = {
 };
 
 const Legende: FC<LegendeProps> = ({ id, serviceName }) => {
-	const { t } = useTranslation("common");
-	const legenden = rawLegenden as LegendItem[];
+	const { t, i18n } = useTranslation("common");
+	const legenden = (
+		i18n.resolvedLanguage?.startsWith("de") ? rawLegenden : rawLegendenEn
+	) as LegendItem[];
 	const item: LegendItem | undefined = legenden.find(
 		(legend) => legend.id === id,
 	);

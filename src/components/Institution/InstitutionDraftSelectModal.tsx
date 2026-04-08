@@ -184,11 +184,11 @@ export function InstitutionDraftSelectModal({
 			backTo="/institution"
 			variant="fullscreen"
 			routePath={routePath}
-			containerClassName="p-0 md:p-0 mt-0 md:mt-0"
+			containerClassName=""
 			contentWrapperClassName="flex-1"
 			contentClassName=""
 		>
-			<div className="p-4 space-y-6 flex-1 flex-col max-w-5xl mx-auto w-full">
+			<div className="md:p-4 space-y-6 flex-1 flex-col max-w-5xl mx-auto w-full">
 				<div className="mt-18 space-y-2">
 					<h1 className="font-bold">
 						{t("institution.editSelectTitle", {
@@ -203,7 +203,7 @@ export function InstitutionDraftSelectModal({
 					</p>
 				</div>
 
-				<Card className="space-y-4 mb-10 p-10 h-full" variant="tertiary">
+				<Card className="space-y-4 mb-10 md:p-10 h-full p-0" variant="tertiary">
 					<InstitutionDraftSelectSearch onQueryChange={setQuery} />
 					{error && !isLoading ? (
 						<p className="body2 text-destructive">{error}</p>

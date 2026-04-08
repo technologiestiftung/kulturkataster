@@ -6,6 +6,8 @@ import { safeGoto } from "../../helpers/e2eNavigation";
 const registerEmail = process.env.E2E_REGISTER_EMAIL;
 const existingEmail = process.env.E2E_USER_EMAIL;
 const registerPassword = process.env.E2E_REGISTER_PASSWORD ?? "Password123!";
+const verifyEmailSuccessMessage =
+	"Wenn ein Konto mit den angegebenen Daten erstellt werden kann, erhalten Sie in Kürze eine E-Mail mit einem Bestätigungslink.";
 
 const selectAccountType = async (page: any, label: string) => {
 	const accountTypeTrigger = page.getByLabel(
@@ -74,9 +76,7 @@ test.describe("Auth registration", () => {
 			page.getByRole("heading", { name: "Vielen Dank!" }),
 		).toBeVisible();
 		await expect(
-			page.getByText(
-				"In Kürze erhalten Sie eine Bestätigungs-E-Mail mit dem Link zu Ihrem Login.",
-			),
+			page.getByText(verifyEmailSuccessMessage).last(),
 		).toBeVisible();
 
 		const doneButton = page.getByRole("button", { name: "Fertig" });
@@ -118,9 +118,7 @@ test.describe("Auth registration", () => {
 			page.getByRole("heading", { name: "Vielen Dank!" }),
 		).toBeVisible({ timeout: 15_000 });
 		await expect(
-			page.getByText(
-				"In Kürze erhalten Sie eine Bestätigungs-E-Mail mit dem Link zu Ihrem Login.",
-			),
+			page.getByText(verifyEmailSuccessMessage).last(),
 		).toBeVisible();
 	});
 

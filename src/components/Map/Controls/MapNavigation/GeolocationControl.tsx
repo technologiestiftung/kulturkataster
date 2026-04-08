@@ -12,6 +12,7 @@ import VectorSource from "ol/source/Vector";
 import { Icon, Style } from "ol/style";
 import { FC, ReactNode, useCallback, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
+import { reportClientTelemetry } from "@/lib/utils/clientTelemetry";
 
 interface GeolocationControlProps {
 	geolocateIcon?: ReactNode;
@@ -99,7 +100,11 @@ const GeolocationControl: FC<GeolocationControlProps> = ({
 					});
 				},
 				(error) => {
-					console.error("Geolocation error:", error);
+					reportClientTelemetry({
+						level: "warn",
+						event: "map.geolocation.failed",
+						error,
+					});
 					setUserLocation({
 						coordinates: null,
 						accuracy: undefined,
@@ -118,7 +123,10 @@ const GeolocationControl: FC<GeolocationControlProps> = ({
 				},
 			);
 		} else {
-			console.error("Geolocation is not supported by this browser.");
+			reportClientTelemetry({
+				level: "warn",
+				event: "map.geolocation.unsupported",
+			});
 		}
 	}, [map, onGeolocate, setUserLocation]);
 
@@ -126,8 +134,9 @@ const GeolocationControl: FC<GeolocationControlProps> = ({
 
 	return (
 		<ButtonWithTooltip
-			variant="rounded"
-			size="icon-only"
+			radius="full"
+			variant="surface"
+			iconSize="lg"
 			tooltip={t("map.geolocate")}
 			onClick={handleGeolocate}
 			className="cursor-pointer"

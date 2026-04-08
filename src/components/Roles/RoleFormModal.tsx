@@ -7,6 +7,7 @@ import { DialogTitle } from "@/components/ui/dialog";
 import { Modal } from "@/components/Modals/Modal";
 import { useRoutedModalClose } from "@/components/Modals/useRoutedModalClose";
 import { FormWrapper } from "@/components/FormWrapper";
+import { FormWrapperLoadingSkeleton } from "@/components/FormWrapper/FormWrapperLoadingSkeleton";
 import type { FormWrapperConfig } from "@/components/FormWrapper";
 import { useAccountStore } from "@/lib/store/accountStore";
 import {
@@ -109,11 +110,16 @@ const getTableTargets = (t: (key: string) => string) => [
 	{
 		key: "entity_audit",
 		label: t("roleFormModal.permissions.tables.entity_audit"),
+		actions: ["read"] as PermissionAction[],
 	},
 	{ key: "user", label: t("roleFormModal.permissions.tables.user") },
 	{ key: "group", label: t("roleFormModal.permissions.tables.group") },
 	{ key: "role", label: t("roleFormModal.permissions.tables.role") },
-	{ key: "address", label: t("roleFormModal.permissions.tables.address") },
+	{
+		key: "address",
+		label: t("roleFormModal.permissions.tables.address"),
+		actions: ["read"] as PermissionAction[],
+	},
 	{
 		key: "category",
 		label: t("roleFormModal.permissions.tables.category"),
@@ -334,11 +340,6 @@ const buildRoleFormConfig = ({
 		{
 			name: "detailsSection",
 			type: "section",
-			title: t("roleFormModal.form.details.title"),
-			description:
-				mode === "create"
-					? t("roleFormModal.form.details.description.create")
-					: t("roleFormModal.form.details.description.edit"),
 			fields: [
 				{
 					name: "name",
@@ -398,9 +399,7 @@ const renderDialogBody = (
 	isSystemRole: boolean,
 ) => {
 	if (isWaitingForRole) {
-		return (
-			<p className="text-foreground">{t("roleFormModal.dialog.loading")}</p>
-		);
+		return <FormWrapperLoadingSkeleton />;
 	}
 
 	return (
@@ -557,10 +556,6 @@ export function RoleFormModal({
 			routePath={routePath}
 			returnTo={returnTo}
 			autoCloseError={autoCloseError}
-			loadingState={{
-				active: isWaitingForRole,
-				label: t("roleFormModal.dialog.loading"),
-			}}
 			confirmDialog={
 				showDeleteDialog && resolvedRole
 					? {

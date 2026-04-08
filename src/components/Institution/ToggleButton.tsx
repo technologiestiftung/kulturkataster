@@ -26,7 +26,7 @@ export function ToggleButton({
 		<div className="mt-4">
 			<Button
 				variant="accordion"
-				size="icon-default"
+				size="inline"
 				onClick={onClick}
 				className={`text-primary-dark hover:text-primary-dark ${className}`}
 			>

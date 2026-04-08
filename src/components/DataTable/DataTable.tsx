@@ -35,6 +35,7 @@ import Close from "@/icons/close.svg";
 import type { DataTableConfig } from "./types";
 import { Label } from "@radix-ui/react-label";
 import { cn } from "@/lib/utils";
+import { getAccessibleScrollBehavior } from "@/lib/utils/motion";
 import ChevronUp from "@/icons/chevron-up.svg";
 import ChevronDown from "@/icons/chevron-down.svg";
 import Edit from "@/icons/edit.svg";
@@ -157,7 +158,8 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 							}
 							return "";
 						});
-				return values.filter(Boolean).join(" ");
+				const rowKey = config.getRowKey(row);
+				return [...values, String(rowKey)].filter(Boolean).join(" ");
 			},
 		};
 	}, [config, fuzzyFilter, fuzzySort, globalSearchColumnId, normalizedColumns]);
@@ -190,6 +192,8 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 				) : null,
 		};
 	}, [expandColumnId, hasExpandedRow]);
+
+	const renderEmptyValue = () => <span className="text-foreground">—</span>;
 
 	const columns = useMemo<ColumnDef<T, unknown>[]>(() => {
 		const baseColumns = [
@@ -367,7 +371,7 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 		const offset = approxColWidth * 3;
 		container.scrollBy({
 			left: direction === "right" ? offset : -offset,
-			behavior: "smooth",
+			behavior: getAccessibleScrollBehavior(),
 		});
 	}, []);
 
@@ -652,13 +656,14 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 						</div>
 					)}
 
-					<div className="flex w-full relative flex-col justify-center items-center md:flex-row gap-2">
+					<div className="flex w-full overflow-x-auto relative justify-center items-center flex-row gap-2 px-2 md:px-0">
 						{!isSearchOpen && config.primaryButton && (
 							<Button
 								onClick={config.primaryButton.onClick}
-								variant="rounded"
-								className="bg-primary"
-								size="icon"
+								radius="full"
+								variant="surface"
+								className="bg-primary shrink-0"
+								iconSize="lg"
 								aria-label={primaryButtonAriaLabel}
 							>
 								<Plus className="size-6" />
@@ -668,8 +673,8 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 							<Button
 								onClick={config.secondaryButton.onClick}
 								variant="outline"
-								size="md"
-								className="bg-primary-light flex-0 text-foreground border-primary rounded-full"
+								size="lg"
+								className="bg-primary-light  max-w-56 text-foreground border-primary rounded-full [&_svg]:size-6"
 								aria-label={secondaryButtonAriaLabel}
 							>
 								{config.secondaryButton.label}
@@ -712,13 +717,14 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 									<div className="gap-2 flex items-center">
 										<Button
 											type="button"
-											variant="rounded"
-											size="icon"
+											radius="full"
+											variant="surface"
+											iconSize="lg"
 											onClick={() => setIsSearchOpen(true)}
 										>
 											<Search className="size-5!" />
 										</Button>
-										<Label>{searchLabel}</Label>
+										<Label className="md:block hidden">{searchLabel}</Label>
 									</div>
 								)}
 								{!isSearchOpen && config.filterModal && (
@@ -726,13 +732,16 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 										<Button
 											type="button"
 											onClick={() => setIsFilterOpen(true)}
-											variant="rounded"
-											size="icon"
+											radius="full"
+											variant="surface"
+											iconSize="lg"
 											aria-label={filterButtonAriaLabel}
 										>
 											<Filter className="size-5!" />
 										</Button>
-										<Label>{config.filterModal.triggerLabel ?? "Filter"}</Label>
+										<Label className="md:block hidden">
+											{config.filterModal.triggerLabel ?? "Filter"}
+										</Label>
 									</div>
 								)}
 							</div>
@@ -895,6 +904,7 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 																		cell.column.columnDef.cell,
 																		cell.getContext(),
 																	);
+																	const rawValue = cell.getValue();
 																	const shouldTruncate = Boolean(
 																		cell.column.columnDef.meta?.truncate,
 																	);
@@ -939,32 +949,62 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 																					) ??
 																						true) ? (
 																						<Button
-																							size="icon"
-																							variant="ghost"
+																							iconSize="sm"
+																							variant="surface"
+																							radius="full"
+																							onMouseEnter={() =>
+																								config.onReviewPrefetch?.(
+																									row.original,
+																								)
+																							}
+																							onFocus={() =>
+																								config.onReviewPrefetch?.(
+																									row.original,
+																								)
+																							}
+																							onTouchStart={() =>
+																								config.onReviewPrefetch?.(
+																									row.original,
+																								)
+																							}
 																							onClick={(event) => {
 																								event.stopPropagation();
 																								config.onReview?.(row.original);
 																							}}
-																							className="h-8 w-8 rounded-full border bg-background border-neutral-20 hover:bg-neutral-5"
 																							aria-label={
 																								config.reviewAriaLabel ??
 																								"Review"
 																							}
 																						>
-																							<Eye className="h-5 w-5 text-neutral-80" />
+																							<Eye />
 																						</Button>
 																					) : null}
 																					{config.onEdit &&
 																					(config.getCanEdit?.(row.original) ??
 																						true) ? (
 																						<Button
-																							size="icon"
-																							variant="ghost"
+																							iconSize="sm"
+																							variant="surface"
+																							radius="full"
+																							onMouseEnter={() =>
+																								config.onEditPrefetch?.(
+																									row.original,
+																								)
+																							}
+																							onFocus={() =>
+																								config.onEditPrefetch?.(
+																									row.original,
+																								)
+																							}
+																							onTouchStart={() =>
+																								config.onEditPrefetch?.(
+																									row.original,
+																								)
+																							}
 																							onClick={(event) => {
 																								event.stopPropagation();
 																								config.onEdit?.(row.original);
 																							}}
-																							className="h-8 w-8 rounded-full border bg-background border-neutral-20 hover:bg-neutral-5"
 																							aria-label="Edit"
 																						>
 																							<Edit className="h-5 w-5 text-neutral-80" />
@@ -981,7 +1021,11 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 																			style={pinning.style}
 																			headers={getHeaderId(cell.column.id)}
 																		>
-																			{content}
+																			{content ??
+																				(cell.column.id !== expandColumnId &&
+																				rawValue === null
+																					? renderEmptyValue()
+																					: null)}
 																		</td>
 																	);
 																})}

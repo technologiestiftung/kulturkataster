@@ -1,12 +1,12 @@
-name: Create Release and Deploy
+name: Create Release Branch
 
 on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version type'
+        description: "Version type"
         required: true
-        default: 'patch'
+        default: "patch"
         type: choice
         options:
           - patch
@@ -30,16 +30,33 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
 
       - name: Configure git
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
 
-      - name: Calculate next version, commit, and create tag
-        id: version
+      - name: Calculate next version and create release branch
+        id: release
         run: |
+          SOURCE_BRANCH="${GITHUB_REF_NAME}"
+
+          case "$SOURCE_BRANCH" in
+            main)
+              RELEASE_BRANCH_PREFIX="release/v"
+              IS_PRERELEASE="false"
+              ;;
+            dev)
+              RELEASE_BRANCH_PREFIX="release/dev-v"
+              IS_PRERELEASE="true"
+              ;;
+            *)
+              echo "Releases can only be created from main or dev. Current branch: $SOURCE_BRANCH"
+              exit 1
+              ;;
+          esac
+
           LATEST_TAG=$(git tag --list 'v[0-9]*' --sort=-v:refname | head -n1)
           if [ -z "$LATEST_TAG" ]; then
             LATEST_TAG="v0.0.0"
@@ -64,51 +81,56 @@ jobs:
             }
           ' "${{ github.event.inputs.version }}" "$LATEST_VERSION")
 
-          echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
-          echo "branch=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+          RELEASE_BRANCH="${RELEASE_BRANCH_PREFIX}${NEW_VERSION}"
 
-          npm version "$NEW_VERSION" --no-git-tag-version
-          git add package.json package-lock.json
-          git commit -m "chore: bump version to $NEW_VERSION"
-          git push origin HEAD
-
-          if git rev-parse "v$NEW_VERSION" >/dev/null 2>&1; then
-            echo "Tag v$NEW_VERSION already exists."
+          if git ls-remote --exit-code --heads origin "${RELEASE_BRANCH}" >/dev/null 2>&1 || \
+            git show-ref --verify --quiet "refs/heads/${RELEASE_BRANCH}"; then
+            echo "Release branch ${RELEASE_BRANCH} already exists."
             exit 1
           fi
 
-          git tag "v$NEW_VERSION"
-          git push origin "v$NEW_VERSION"
+          if git rev-parse "v${NEW_VERSION}" >/dev/null 2>&1; then
+            echo "Tag v${NEW_VERSION} already exists."
+            exit 1
+          fi
 
-      - name: Create Release
+          git checkout -b "${RELEASE_BRANCH}"
+
+          npm version "${NEW_VERSION}" --no-git-tag-version
+          git add package.json package-lock.json
+          git commit -m "chore: bump version to ${NEW_VERSION}"
+
+          git push origin "${RELEASE_BRANCH}"
+          git tag "v${NEW_VERSION}"
+          git push origin "v${NEW_VERSION}"
+
+          echo "version=${NEW_VERSION}" >> "$GITHUB_OUTPUT"
+          echo "release_branch=${RELEASE_BRANCH}" >> "$GITHUB_OUTPUT"
+          echo "source_branch=${SOURCE_BRANCH}" >> "$GITHUB_OUTPUT"
+          echo "is_prerelease=${IS_PRERELEASE}" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if [ "${{ github.ref_name }}" != "main" ]; then
-            PRERELEASE_FLAG="--prerelease"
-          else
-            PRERELEASE_FLAG=""
+          RELEASE_ARGS=()
+          if [ "${{ steps.release.outputs.is_prerelease }}" = "true" ]; then
+            RELEASE_ARGS+=(--prerelease)
           fi
 
-          gh release create "v${{ steps.version.outputs.version }}" \
-            --title "Release v${{ steps.version.outputs.version }}" \
-            --notes "Release v${{ steps.version.outputs.version }}
+          gh release create "v${{ steps.release.outputs.version }}" \
+            --target "${{ steps.release.outputs.release_branch }}" \
+            --title "Release v${{ steps.release.outputs.version }}" \
+            --notes "Release v${{ steps.release.outputs.version }}
 
-          **Branch:** ${{ github.ref_name }}
-          **Commit:** ${{ github.sha }}" \
-            $PRERELEASE_FLAG
+          **Source branch:** ${{ steps.release.outputs.source_branch }}
+          **Release branch:** ${{ steps.release.outputs.release_branch }}
+          **Commit:** $(git rev-parse HEAD)" \
+            "${RELEASE_ARGS[@]}"
 
       - name: Trigger release deploy workflow
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if [ "${{ github.ref_name }}" = "main" ]; then
-            DEPLOY_TRACK="main"
-          else
-            DEPLOY_TRACK="dev"
-          fi
-
           gh workflow run deploy-release.yml \
-            --ref "${{ github.ref_name }}" \
-            -f deploy_track="${DEPLOY_TRACK}" \
-            -f release_tag="v${{ steps.version.outputs.version }}"
+            --ref "${{ steps.release.outputs.release_branch }}"

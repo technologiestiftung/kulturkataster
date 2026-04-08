@@ -11,14 +11,9 @@ import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useAccountStore } from "@/lib/store/accountStore";
 import { searchInstitutions } from "@/server/actions/institutions";
 import { createSubmission } from "@/server/actions/submissions";
-import {
-	$Enums,
-	SubmissionEntityType,
-	SubmissionType,
-} from "@/generated/prisma";
+import { SubmissionEntityType, SubmissionType } from "@/generated/prisma";
 import type { Institution } from "@/types/institution";
 import { Card } from "../ui/card";
-import { JsonValue } from "@/generated/prisma/runtime/client";
 import { showSuccessToast } from "@/lib/utils/feedbackToast";
 import { Loading } from "../ui/loading";
 
@@ -151,28 +146,11 @@ export function InstitutionClaimSelectModal({
 					}),
 				),
 			);
-			createdSubmissions.forEach(
-				(submission: {
-					data: JsonValue;
-					id: number;
-					entity_type: $Enums.SubmissionEntityType;
-					entity_id: number | null;
-					status: $Enums.SubmissionStatus;
-					type: $Enums.SubmissionType;
-					diff: JsonValue | null;
-					meta: JsonValue | null;
-					review_notes: string | null;
-					created_by: string | null;
-					reviewed_by: string | null;
-					created_at: Date;
-					updated_at: Date;
-					reviewed_at: Date | null;
-				}) => {
-					if (submission) {
-						upsertSubmission(submission);
-					}
-				},
-			);
+			createdSubmissions.forEach((submission) => {
+				if (submission) {
+					upsertSubmission(submission);
+				}
+			});
 
 			setSelectedIds([]);
 			closeModal();
@@ -212,7 +190,7 @@ export function InstitutionClaimSelectModal({
 				confirmLabel: t("institutionModalCloseConfirmation.confirm"),
 				cancelLabel: t("institutionModalCloseConfirmation.cancel"),
 			}}
-			containerClassName="p-0 md:p-0 mt-0 md:mt-0"
+			containerClassName=""
 			contentWrapperClassName="flex-1"
 			contentClassName=""
 			errorDialog={
@@ -230,7 +208,7 @@ export function InstitutionClaimSelectModal({
 					: undefined
 			}
 		>
-			<div className="p-4 space-y-6 flex-1 flex-col max-w-5xl mx-auto w-full">
+			<div className="md:p-4 space-y-6 flex-1 flex-col max-w-5xl mx-auto w-full">
 				<div className="mt-18 space-y-4">
 					<div className="">
 						<h1 className="font-bold">
@@ -248,7 +226,7 @@ export function InstitutionClaimSelectModal({
 					<p className="body2">{t("institution.claimSelectDescription", {})}</p>
 				</div>
 
-				<Card className="mb-10 p-10 h-full" variant="tertiary">
+				<Card className="space-y-4 mb-10 md:p-10 h-full p-0" variant="tertiary">
 					<p className="body2 mb-4">
 						{t("institution.claimSelectSearchLabel", {
 							defaultValue: "Name oder Adresse des Kulturortes",

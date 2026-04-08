@@ -1,6 +1,7 @@
 import { ActivityStatus, Prisma } from "./generated/prisma";
 import { getAuditContext } from "@/server/utils/auditContext";
 import { createClient } from "@/server/supabase/server";
+import { logger } from "@/server/logging/logger";
 
 type AuditAction = "create" | "update" | "delete";
 type AuditEntityType =
@@ -159,10 +160,11 @@ export function createAuditMiddleware(client: AuditClient) {
 				},
 			});
 		} catch (error) {
-			console.warn("[audit] Failed to persist audit entry", {
+			logger.warn("audit.persist.failed", {
 				action,
 				model,
 				entityId,
+				subsystem: "db",
 				error,
 			});
 		}

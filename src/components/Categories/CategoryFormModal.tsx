@@ -7,6 +7,7 @@ import { DialogTitle } from "@/components/ui/dialog";
 import { Modal } from "@/components/Modals/Modal";
 import { useRoutedModalClose } from "@/components/Modals/useRoutedModalClose";
 import { FormWrapper } from "@/components/FormWrapper";
+import { FormWrapperLoadingSkeleton } from "@/components/FormWrapper/FormWrapperLoadingSkeleton";
 import type { FormWrapperConfig } from "@/components/FormWrapper";
 import { useAccountStore } from "@/lib/store/accountStore";
 import {
@@ -65,19 +66,12 @@ const getDialogTitle = (
 
 const renderDialogBody = (
 	isWaitingForCategory: boolean,
-	t: (key: string, options?: { defaultValue?: string }) => string,
 	formConfig: FormWrapperConfig,
 	resolvedCategory: Category | undefined,
 	mode: CategoryFormModalProps["mode"],
 ) => {
 	if (isWaitingForCategory) {
-		return (
-			<p className="text-foreground">
-				{t("categoryFormModal.dialog.loading", {
-					defaultValue: "Loading category...",
-				})}
-			</p>
-		);
+		return <FormWrapperLoadingSkeleton />;
 	}
 
 	return <FormWrapper key={resolvedCategory?.id ?? mode} config={formConfig} />;
@@ -293,6 +287,7 @@ const buildCategoryFormConfig = ({
 					}),
 					required: true,
 					type: "text",
+					disabled: mode === "edit",
 					placeholder: t(
 						"categoryFormModal.form.details.fields.key.placeholder",
 						{ defaultValue: "e.g. museums" },
@@ -638,14 +633,6 @@ export function CategoryFormModal({
 			routePath={routePath}
 			returnTo={returnTo}
 			autoCloseError={autoCloseError}
-			loadingState={{
-				active:
-					isWaitingForCategory ||
-					(mode === "edit" && !hasLoadedLocalizedLabels),
-				label: t("categoryFormModal.dialog.loading", {
-					defaultValue: "Loading category...",
-				}),
-			}}
 			confirmDialog={
 				showDeleteDialog && resolvedCategory
 					? {
@@ -735,7 +722,6 @@ export function CategoryFormModal({
 						{renderDialogBody(
 							isWaitingForCategory ||
 								(mode === "edit" && !hasLoadedLocalizedLabels),
-							t,
 							formConfig,
 							resolvedCategory,
 							mode,

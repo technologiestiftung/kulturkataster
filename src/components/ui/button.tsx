@@ -4,64 +4,111 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-	"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-sm button ring-offset-background transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+	"inline-flex items-center justify-center gap-2 md:whitespace-nowrap rounded-sm button ring-offset-background transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
 	{
 		variants: {
 			variant: {
-				default:
-					"bg-primary flex-1 text-primary-foreground hover:bg-primary/90 ",
+				primary: "bg-primary text-primary-foreground hover:bg-primary/90",
 				destructive:
-					"bg-destructive flex-1 text-destructive-foreground hover:bg-destructive/90",
+					"bg-destructive text-destructive-foreground hover:bg-destructive/90",
 				outline:
-					"border flex-1 border-input text-primary-dark bg-background hover:bg-accent hover:text-accent-foreground",
+					"border border-input text-primary-dark bg-background hover:bg-accent hover:text-accent-foreground",
 				secondary:
 					"bg-secondary text-secondary-foreground hover:bg-secondary/80",
 				tertiary:
 					"text-primary-dark underline-offset-4 hover:underline p-0 m-0 font-normal",
 				ghost: "hover:bg-accent hover:text-accent-foreground",
-				"menu-icon":
-					" z-10 flex items-center justify-center [&_svg]:size-6 rounded-full transition-colors duration-300 cursor-pointer ",
 				link: "text-primary underline-offset-4 hover:underline",
-				rounded:
-					"rounded-full shadow-sm bg-background hover:bg-accent [&_svg]:size-6 border-border border",
-				icon: "bg-secondary border-border rounded-full border [&_svg]:size-5",
-				"rounded-md": "rounded-md",
+				surface: "shadow-sm bg-background hover:bg-accent border-border border",
+				icon: "bg-background",
 				action:
-					"border-border border-2 rounded-sm border-neutral-20  shadow-xs border [&_svg]:size-8 flex-col bg-background hover:bg-neutral-30 flex justify-center items-center text-primary-dark",
+					"border-border border-2 rounded-sm border-neutral-20 shadow-xs border flex-col bg-background hover:bg-neutral-30 flex justify-center items-center text-primary-dark",
 				accordion: "gap-2 justify-start text-primary-dark px-4",
 				tag: "bg-neutral-10 font-light flex items-center justify-center px-4 rounded-full",
 			},
 			size: {
-				default: "px-4.5 py-2.5 md:px-7 md:py-4",
-				tag: "h-6",
+				default: "px-4.5 md:px-7 py-4",
 				sm: "h-9 px-3",
-				lg: "h-11 px-8",
-				md: "h-10 px-6",
-				action: "h-32 w-40 px-10",
-				icon: "h-10 w-10",
-				"icon-only": "h-12 w-12",
-				"icon-default": "h-6 w-full",
+				md: "h-14 md:h-12 px-6",
+				lg: "h-14 px-8",
+				tile: "h-32 w-40 px-10 flex-none [&_svg]:size-6",
+				inline: "h-6",
+			},
+			iconSize: {
+				sm: "h-10 w-10 flex-none [&_svg]:size-4",
+				md: "h-14 w-14 md:h-12 md:w-12 flex-none [&_svg]:size-6 md:[&_svg]:size-5",
+				lg: "h-14 w-14 flex-none [&_svg]:size-6",
+			},
+			radius: {
+				sm: "rounded-sm",
+				md: "rounded-md",
+				full: "rounded-full",
+			},
+			fullWidth: {
+				true: "flex-1",
+				false: "",
 			},
 		},
 		defaultVariants: {
-			variant: "default",
+			variant: "primary",
 			size: "default",
+			radius: "sm",
+			fullWidth: true,
 		},
 	},
 );
 
-export interface ButtonProps
-	extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-		VariantProps<typeof buttonVariants> {
+type ButtonVariants = VariantProps<typeof buttonVariants>;
+
+type ButtonBaseProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
 	asChild?: boolean;
-}
+	children?: React.ReactNode;
+	variant?: ButtonVariants["variant"];
+	radius?: ButtonVariants["radius"];
+	fullWidth?: ButtonVariants["fullWidth"];
+};
+
+type ButtonWithSize = {
+	size?: ButtonVariants["size"];
+	iconSize?: never;
+};
+
+type ButtonWithIconSize = {
+	size?: never;
+	iconSize: NonNullable<ButtonVariants["iconSize"]>;
+};
+
+export type ButtonProps = ButtonBaseProps &
+	(ButtonWithSize | ButtonWithIconSize);
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-	({ className, variant, size, asChild = false, ...props }, ref) => {
+	(
+		{
+			className,
+			variant,
+			size,
+			iconSize,
+			radius,
+			fullWidth,
+			asChild = false,
+			...props
+		},
+		ref,
+	) => {
 		const Comp = asChild ? Slot : "button";
+
 		return (
 			<Comp
-				className={cn(buttonVariants({ variant, size, className }))}
+				className={cn(
+					buttonVariants({
+						variant,
+						size: iconSize ? null : size,
+						iconSize,
+						radius,
+						fullWidth: iconSize ? false : fullWidth,
+					}),
+					className,
+				)}
 				ref={ref}
 				{...props}
 			/>

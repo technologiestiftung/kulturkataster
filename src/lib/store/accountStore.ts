@@ -12,6 +12,7 @@ const accountStoreInitialState = {
 	roles: [],
 	categories: [],
 	institutions: [],
+	activeInstitutionEdit: null,
 	submissions: [],
 	entityAudits: [],
 	institutionPermissions: {
@@ -134,6 +135,10 @@ export const useAccountStore = create<AccountStoreState>()(
 				setInstitutions: (institutions) =>
 					set((state) => {
 						state.institutions = institutions;
+					}),
+				setActiveInstitutionEdit: (institution) =>
+					set((state) => {
+						state.activeInstitutionEdit = institution;
 					}),
 				setInstitutionPermissions: (permissions) =>
 					set((state) => {

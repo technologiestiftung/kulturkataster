@@ -134,9 +134,13 @@ test.describe("institution direct create form", () => {
 		await fillById(page, "accessibility", "Barrierearm, Aufzug vorhanden");
 		await fillById(page, "cost", "Miete je Nutzung");
 
-		await fillById(page, "utilization_status_info", "Regelbetrieb werktags");
 		await selectFirstOptionById(page, "protection_status");
 		await fillById(page, "protection_status_info", "Status bestätigt");
+		await fillById(
+			page,
+			"protection_status_internal_notes",
+			"Interne Absicherungshinweise",
+		);
 		await fillById(page, "notes", "E2E komplette Formularprüfung");
 
 		const submitButton = page

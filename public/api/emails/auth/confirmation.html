@@ -1,41 +1,121 @@
 <!doctype html>
 <html lang="de">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Bitte bestätigen Sie Ihre E-Mail-Adresse für das Kulturkataster</title>
-  </head>
-  <body style="margin:0;padding:24px;background:#f8f6f2;font-family:Barlow,Arial,Helvetica,sans-serif;color:#161616;">
-    <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
-      <tr>
-        <td align="center">
-          <table role="presentation" width="620" cellspacing="0" cellpadding="0" style="max-width:620px;width:100%;background:#ffffff;border:1px solid #e2dfdb;border-radius:12px;">
-            <tr>
-              <td style="padding:28px 24px 8px 24px;font-size:24px;line-height:1.2;font-weight:700;">Bitte bestätigen Sie Ihre E-Mail-Adresse für das Kulturkataster</td>
-            </tr>
-            <tr>
-              <td style="padding:0 24px 16px 24px;font-size:16px;line-height:1.6;">
-                <p style="margin:0 0 16px 0;">Guten Tag {{ .Data.firstName }} {{ .Data.lastName }},</p>
-                <p style="margin:0 0 16px 0;">vielen Dank für Ihre Registrierung im Kulturkataster. Damit wir sicherstellen können, dass Ihre E-Mail-Adresse korrekt ist, bitten wir Sie um eine kurze Bestätigung.</p>
-              </td>
-            </tr>
-            <tr>
-              <td style="padding:0 24px 24px 24px;">
-                <a href="{{ .ConfirmationURL }}" style="display:inline-block;background:#c288ff;color:#161616;text-decoration:none;padding:12px 18px;border-radius:4px;font-size:16px;line-height:1.5;font-weight:700;">E-Mail-Adresse bestätigen</a>
-              </td>
-            </tr>
-            <tr>
-              <td style="padding:0 24px 16px 24px;font-size:16px;line-height:1.6;">
-                <p style="margin:0 0 8px 0;font-weight:700;">Hinweis zur Registrierung als Verwaltungsmitarbeiter*in oder für einen Verband/Netzwerk</p>
-                <p style="margin:0 0 16px 0;">Sollten Sie sich als Mitarbeiter*in einer Bezirksverwaltung, der Landesverwaltung Berlin oder eines Spartenverbands/Netzwerkes registriert haben, prüft unsere Redaktion Ihre Angaben. Nach Abschluss der Prüfung melden wir uns hierzu nochmals per E-Mail bei Ihnen.</p>
-                <p style="margin:0 0 16px 0;">Wenn Sie sich nicht selbst registriert haben, können Sie diese E-Mail ignorieren. Bei Fragen hilft Ihnen unser Team gern weiter.</p>
-                <p style="margin:0 0 8px 0;">Viele Grüße<br />vom Projektteam Kulturkataster</p>
-                <p style="margin:0;font-weight:700;">Kulturraum Berlin gGmbH</p>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
-  </body>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width,initial-scale=1" />
+		<title>
+			Bitte bestätigen Sie Ihre E-Mail-Adresse für das Kulturkataster
+		</title>
+	</head>
+	<body
+		style="
+			margin: 0;
+			padding: 24px;
+			background: #f8f6f2;
+			font-family: Barlow, Arial, Helvetica, sans-serif;
+			color: #161616;
+		"
+	>
+		<table role="presentation" width="100%" cellspacing="0" cellpadding="0">
+			<tr>
+				<td align="center">
+					<table
+						role="presentation"
+						width="620"
+						cellspacing="0"
+						cellpadding="0"
+						style="
+							max-width: 620px;
+							width: 100%;
+							background: #ffffff;
+							border: 1px solid #e2dfdb;
+							border-radius: 12px;
+						"
+					>
+						<tr>
+							<td
+								style="
+									padding: 28px 24px 8px 24px;
+									font-size: 24px;
+									line-height: 1.2;
+									font-weight: 700;
+								"
+							>
+								Bitte bestätigen Sie Ihre E-Mail-Adresse für das Kulturkataster
+							</td>
+						</tr>
+						<tr>
+							<td
+								style="
+									padding: 0 24px 16px 24px;
+									font-size: 16px;
+									line-height: 1.6;
+								"
+							>
+								<p style="margin: 0 0 16px 0">
+									Guten Tag {{ .Data.first_name }} {{ .Data.last_name }},
+								</p>
+								<p style="margin: 0 0 16px 0">
+									vielen Dank für Ihre Registrierung im Kulturkataster. Damit
+									wir sicherstellen können, dass Ihre E-Mail-Adresse korrekt
+									ist, bitten wir Sie um eine kurze Bestätigung.
+								</p>
+							</td>
+						</tr>
+						<tr>
+							<td style="padding: 0 24px 24px 24px">
+								<a
+									href="{{ .ConfirmationURL }}"
+									style="
+										display: inline-block;
+										background: #c288ff;
+										color: #161616;
+										text-decoration: none;
+										padding: 12px 18px;
+										border-radius: 4px;
+										font-size: 16px;
+										line-height: 1.5;
+										font-weight: 700;
+									"
+									>E-Mail-Adresse bestätigen</a
+								>
+							</td>
+						</tr>
+						<tr>
+							<td
+								style="
+									padding: 0 24px 16px 24px;
+									font-size: 16px;
+									line-height: 1.6;
+								"
+							>
+								<p style="margin: 0 0 8px 0; font-weight: 700">
+									Hinweis zur Registrierung als Verwaltungsmitarbeiter*in oder
+									für einen Verband/Netzwerk
+								</p>
+								<p style="margin: 0 0 16px 0">
+									Sollten Sie sich als Mitarbeiter*in einer Bezirksverwaltung,
+									der Landesverwaltung Berlin oder eines
+									Spartenverbands/Netzwerkes registriert haben, prüft unsere
+									Redaktion Ihre Angaben. Nach Abschluss der Prüfung melden wir
+									uns hierzu nochmals per E-Mail bei Ihnen.
+								</p>
+								<p style="margin: 0 0 16px 0">
+									Wenn Sie sich nicht selbst registriert haben, können Sie diese
+									E-Mail ignorieren. Bei Fragen hilft Ihnen unser Team gern
+									weiter.
+								</p>
+								<p style="margin: 0 0 8px 0">
+									Viele Grüße<br />vom Projektteam Kulturkataster
+								</p>
+								<p style="margin: 0; font-weight: 700">
+									Kulturraum Berlin gGmbH
+								</p>
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+	</body>
 </html>
