@@ -13,6 +13,7 @@ const categories: Category[] = [
 
 const submission = {
 	id: 10,
+	notes: [],
 	status: "approval_pending",
 	created_at: new Date("2024-01-01T10:00:00Z"),
 	updated_at: new Date("2024-02-01T10:00:00Z"),
@@ -22,7 +23,7 @@ const submission = {
 		categoryIds: ["2", 1],
 	},
 	type: "create",
-} as Submission;
+} as unknown as Submission;
 
 describe("institutionTableUtils", () => {
 	it("builds a submission row with mapped fields", () => {
@@ -52,7 +53,7 @@ describe("institutionTableUtils", () => {
 					"address.lat": 52.52,
 					"address.lng": 13.405,
 				},
-			} as Submission,
+			} as unknown as Submission,
 			categories,
 		);
 

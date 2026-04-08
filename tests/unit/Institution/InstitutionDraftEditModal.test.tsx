@@ -38,6 +38,12 @@ vi.mock("@/components/Institution/InstitutionFormModal", () => ({
 								"address.streetLine": "Main 1",
 								"address.city": "Berlin",
 								"address.zip": "10115",
+								categoryFilters: {
+									district_keys: [],
+									category_keys: ["cat-a"],
+									child_category_keys: [],
+									include_closed: false,
+								},
 							},
 						});
 					}}
@@ -124,6 +130,13 @@ describe("InstitutionDraftEditModal", () => {
 				expect.objectContaining({ id: 11 }),
 			);
 		});
+		expect(mockedUpdateSubmission).toHaveBeenCalledWith(
+			expect.objectContaining({
+				data: expect.objectContaining({
+					categoryIds: [1],
+				}),
+			}),
+		);
 	});
 
 	it("shows not-found alert when submission does not exist", async () => {
@@ -273,5 +286,39 @@ describe("InstitutionDraftEditModal", () => {
 		expect((institution.address as Record<string, unknown>)?.lng).toBe(
 			13.404954,
 		);
+	});
+
+	it("passes submission entity_id through to the institution form", async () => {
+		mockSubmissions.length = 0;
+		mockSubmissions.push({
+			id: 501,
+			entity_type: "institution",
+			entity_id: 77,
+			type: "update",
+			data: {
+				name: "Existing Institution Draft",
+				address: {
+					street: "Main",
+					street_number: "1",
+					city: "Berlin",
+				},
+			},
+		});
+
+		render(
+			<InstitutionDraftEditModal
+				submissionId={501}
+				routePath="/account/submissions/501/edit"
+			/>,
+		);
+
+		await waitFor(() => {
+			expect(institutionFormModalMock).toHaveBeenCalled();
+		});
+
+		const latestProps = institutionFormModalMock.mock.calls.at(-1)?.[0] as {
+			institution?: Record<string, unknown>;
+		};
+		expect(latestProps.institution?.id).toBe(77);
 	});
 });

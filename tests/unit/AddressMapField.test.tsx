@@ -25,10 +25,12 @@ vi.mock("react-i18next", () => ({
 
 // Mock server actions
 const mockGetMaptilerKey = vi.fn();
+const mockGetMapBoundingBox = vi.fn();
 const mockReverseGeocode = vi.fn();
 
 vi.mock("@/server/actions/maptiler", () => ({
 	getMaptilerKey: () => mockGetMaptilerKey(),
+	getMapBoundingBox: () => mockGetMapBoundingBox(),
 	reverseGeocode: (lat: number, lng: number) => mockReverseGeocode(lat, lng),
 }));
 
@@ -140,6 +142,7 @@ describe("AddressMapField", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		mockGetMaptilerKey.mockResolvedValue("test-api-key");
+		mockGetMapBoundingBox.mockResolvedValue(null);
 		mockReverseGeocode.mockResolvedValue({
 			street: "Hauptstraße",
 			streetNumber: "123",
@@ -226,7 +229,7 @@ describe("AddressMapField", () => {
 
 			await waitFor(() => {
 				expect(
-					screen.getByText(/Failed to load MapTiler API key/i),
+					screen.getByText(/Failed to load map configuration./i),
 				).toBeInTheDocument();
 			});
 		});

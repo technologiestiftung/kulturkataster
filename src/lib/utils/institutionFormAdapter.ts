@@ -8,10 +8,10 @@ import {
 	splitStreetLine,
 	toFormBoolean,
 	toDate,
-	toNumberArray,
 	toOptionalNumber,
 	toOptionalText,
 } from "@/lib/utils/formUtils";
+import { resolveCategoryIdsFromDraft } from "@/lib/utils/institutionCategoryUtils";
 
 const dateToInputValue = (value: unknown): string => {
 	const parsed = toDate(value);
@@ -61,12 +61,14 @@ export const buildInstitutionFormInitialValues = (
 	return {
 		name: resolvedInstitution?.name ?? undefined,
 		parent_organization: resolvedInstitution?.parent_organization ?? undefined,
+		source: resolvedInstitution?.source ?? undefined,
 		internal_notes: resolvedInstitution?.internal_notes ?? undefined,
 		"address.streetLine": buildStreetLine(
 			address?.street,
 			address?.street_number,
 		),
 		"address.city": address?.city ?? undefined,
+		"address.district": address?.district ?? undefined,
 		"address.zip": address?.zipcode ?? undefined,
 		"address.address_suffix": address?.address_suffix ?? undefined,
 		"address.neighbourhood": address?.neighbourhood ?? undefined,
@@ -82,9 +84,13 @@ export const buildInstitutionFormInitialValues = (
 		utilization_status: resolvedInstitution?.utilization_status ?? undefined,
 		utilization_status_info:
 			resolvedInstitution?.utilization_status_info ?? undefined,
+		utilization_status_internal_notes:
+			resolvedInstitution?.utilization_status_internal_notes ?? undefined,
 		protection_status: resolvedInstitution?.protection_status ?? undefined,
 		protection_status_info:
 			resolvedInstitution?.protection_status_info ?? undefined,
+		protection_status_internal_notes:
+			resolvedInstitution?.protection_status_internal_notes ?? undefined,
 		website: resolvedInstitution?.website ?? undefined,
 		email: resolvedInstitution?.email ?? undefined,
 		phone: resolvedInstitution?.phone ?? undefined,
@@ -135,6 +141,16 @@ export function buildInstitutionForFormFromDraft(
 	draft: Record<string, unknown>,
 	categoryGroups: Category[] = [],
 ): Institution {
+	const originalInstitution =
+		typeof draft.originalInstitution === "object" &&
+		draft.originalInstitution !== null
+			? (draft.originalInstitution as Record<string, unknown>)
+			: null;
+
+	const institutionId =
+		toOptionalNumber(draft.entityId) ??
+		toOptionalNumber(originalInstitution?.id) ??
+		0;
 	const nestedAddress =
 		typeof draft.address === "object" && draft.address !== null
 			? (draft.address as Record<string, unknown>)
@@ -147,7 +163,7 @@ export function buildInstitutionForFormFromDraft(
 		);
 	const { street, streetNumber } = splitStreetLine(streetLine ?? "");
 
-	const categoryIds = toNumberArray(draft.categoryIds);
+	const categoryIds = resolveCategoryIdsFromDraft(draft, categoryGroups);
 	const categoryMap = new Map<number, Category>();
 	categoryGroups.forEach((category) => {
 		categoryMap.set(category.id, category);
@@ -159,6 +175,11 @@ export function buildInstitutionForFormFromDraft(
 	const contactPersonNested =
 		typeof draft.contact_person === "object" && draft.contact_person !== null
 			? (draft.contact_person as Record<string, unknown>)
+			: null;
+	const originalContactPerson =
+		typeof originalInstitution?.contact_person === "object" &&
+		originalInstitution.contact_person !== null
+			? (originalInstitution.contact_person as Record<string, unknown>)
 			: null;
 
 	const now = new Date();
@@ -179,7 +200,7 @@ export function buildInstitutionForFormFromDraft(
 		}));
 
 	return {
-		id: toOptionalNumber(draft.id) ?? 0,
+		id: institutionId,
 		name: toOptionalText(draft.name) ?? "",
 		status: "public",
 		website: toOptionalText(draft.website),
@@ -209,10 +230,16 @@ export function buildInstitutionForFormFromDraft(
 			? draft.utilization_status
 			: null) as Institution["utilization_status"] | null,
 		utilization_status_info: toOptionalText(draft.utilization_status_info),
+		utilization_status_internal_notes: toOptionalText(
+			draft.utilization_status_internal_notes,
+		),
 		protection_status: (typeof draft.protection_status === "string"
 			? draft.protection_status
 			: null) as Institution["protection_status"] | null,
 		protection_status_info: toOptionalText(draft.protection_status_info),
+		protection_status_internal_notes: toOptionalText(
+			draft.protection_status_internal_notes,
+		),
 		shared_use_allowed: toFormBoolean(draft.shared_use_allowed),
 		shared_use_info: toOptionalText(draft.shared_use_info),
 		shared_use_equipment: toOptionalText(draft.shared_use_equipment),
@@ -233,16 +260,20 @@ export function buildInstitutionForFormFromDraft(
 			id: toOptionalNumber(contactPersonNested?.id) ?? 0,
 			first_name:
 				toOptionalText(draft.contact_person_first_name) ??
-				toOptionalText(contactPersonNested?.first_name),
+				toOptionalText(contactPersonNested?.first_name) ??
+				toOptionalText(originalContactPerson?.first_name),
 			last_name:
 				toOptionalText(draft.contact_person_last_name) ??
-				toOptionalText(contactPersonNested?.last_name),
+				toOptionalText(contactPersonNested?.last_name) ??
+				toOptionalText(originalContactPerson?.last_name),
 			email:
 				toOptionalText(draft.contact_person_email) ??
-				toOptionalText(contactPersonNested?.email),
+				toOptionalText(contactPersonNested?.email) ??
+				toOptionalText(originalContactPerson?.email),
 			phone:
 				toOptionalText(draft.contact_person_phone) ??
-				toOptionalText(contactPersonNested?.phone),
+				toOptionalText(contactPersonNested?.phone) ??
+				toOptionalText(originalContactPerson?.phone),
 			created_at: now,
 			updated_at: now,
 		},
@@ -258,7 +289,9 @@ export function buildInstitutionForFormFromDraft(
 				toOptionalText(draft["address.city"]) ??
 				toOptionalText(nestedAddress?.city) ??
 				"",
-			district: toOptionalText(nestedAddress?.district),
+			district:
+				toOptionalText(draft["address.district"]) ??
+				toOptionalText(nestedAddress?.district),
 			neighbourhood:
 				toOptionalText(draft["address.neighbourhood"]) ??
 				toOptionalText(nestedAddress?.neighbourhood),

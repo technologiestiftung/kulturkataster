@@ -257,7 +257,7 @@ export function LocationSearch({
 				query={query}
 				className="order-last"
 			/> */}
-			<div className="mb-8 flex w-full items-center gap-2  flex-row pointer-events-auto">
+			<div className="mb-8 flex w-full items-center gap-2 flex-row pointer-events-auto">
 				<SearchInput
 					ref={inputRef}
 					placeholder={placeholder ?? t("search.hint")}
@@ -275,10 +275,11 @@ export function LocationSearch({
 						searchResults.length > 0 ? activeDescendantId : undefined
 					}
 					rightSlot={
-						<div className="absolute right-5 top-1/2 transform -translate-y-1/2">
-							{isLoading ? (
-								<div className="w-5 h-5 border-2 border-neutral-20 border-t-accent rounded-full animate-spin" />
-							) : (
+						<div className="absolute right-14 md:right-5 top-1/2 transform -translate-y-1/2">
+							{isLoading && (
+								<div className="w-5 h-5 border-2 border-neutral-20 border-t-accent rounded-full motion-safe:animate-spin" />
+							)}
+							{!isLoading && searchResults.length > 0 && (
 								<Close
 									onClick={() => {
 										updateQuery("");
@@ -296,7 +297,7 @@ export function LocationSearch({
 						tooltip={t("filter.title", {
 							defaultValue: "Kulturorte filtern",
 						})}
-						className="cursor-pointer"
+						className="cursor-pointer relative right-16 md:right-0 bg-neutral-80 hover:bg-neutral-70 md:bg-accent md:bg-background md:text-foreground text-popover scale-90 md:scale-100 md:invert-0"
 						onClick={onFilterClick}
 					/>
 				)}

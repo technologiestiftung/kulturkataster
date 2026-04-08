@@ -88,7 +88,19 @@
 	--footer: #2b322990;
 }
 
+:root[data-reduced-motion="true"] *,
+:root[data-reduced-motion="true"] *::before,
+:root[data-reduced-motion="true"] *::after {
+	animation-duration: 0.01ms !important;
+	animation-iteration-count: 1 !important;
+	transition-duration: 0s !important;
+	scroll-behavior: auto !important;
+}
+
 @theme {
+	--animate-accordion-down: accordion-down 0.28s ease-out;
+	--animate-accordion-up: accordion-up 0.24s ease-in;
+
 	--color-background: var(--white);
 	--color-foreground: var(--black);
 
@@ -159,6 +171,28 @@
 	--shadow-sm: var(--shadow-200);
 	--shadow-md: var(--shadow-300);
 	--shadow-lg: var(--shadow-400);
+}
+
+@keyframes accordion-down {
+	from {
+		height: 0;
+		opacity: 0;
+	}
+	to {
+		height: var(--radix-accordion-content-height);
+		opacity: 1;
+	}
+}
+
+@keyframes accordion-up {
+	from {
+		height: var(--radix-accordion-content-height);
+		opacity: 1;
+	}
+	to {
+		height: 0;
+		opacity: 0;
+	}
 }
 
 /*

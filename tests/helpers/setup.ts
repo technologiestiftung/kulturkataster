@@ -42,3 +42,7 @@ vi.mock("@/icons/close.svg", () => ({ default: SvgMock }));
 vi.mock("@/icons/chevron-left.svg", () => ({ default: SvgMock }));
 vi.mock("@/icons/info-circle.svg", () => ({ default: SvgMock }));
 vi.mock("@/icons/warning.svg", () => ({ default: SvgMock }));
+vi.mock("@/logos/kuka-small.svg", () => ({ default: SvgMock }));
+vi.mock("@/logos/kuka-large.svg", () => ({ default: SvgMock }));
+vi.mock("@/logos/KRB.svg", () => ({ default: SvgMock }));
+vi.mock("@/logos/senate.svg", () => ({ default: SvgMock }));

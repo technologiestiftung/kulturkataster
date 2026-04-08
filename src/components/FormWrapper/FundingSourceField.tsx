@@ -12,6 +12,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useTranslation } from "react-i18next";
 import type { FormWrapperFieldConfig } from "./types";
+import { getFieldOptionLabel } from "@/lib/i18n/fieldLabels";
 
 type FundingSourceFormValue = {
 	source_name: string;
@@ -23,6 +24,8 @@ type FundingSourceFieldProps = {
 	value: unknown;
 	updateField: (name: string, value: unknown) => void;
 };
+
+const SELECT_NULL_SENTINEL = "__FORMWRAPPER_FUNDING_SOURCE_NULL__";
 
 export function FundingSourceField({
 	field,
@@ -45,6 +48,13 @@ export function FundingSourceField({
 	const sourcePlaceholder = field.fundingSources?.sourcePlaceholder ?? "";
 	const descriptionPlaceholder =
 		field.fundingSources?.descriptionPlaceholder ?? "";
+	const allowNullOption = field.allowNullOption === true;
+	const nullOptionLabel =
+		typeof field.nullOptionLabel === "string"
+			? field.nullOptionLabel
+			: tEnum("field_names.funding_source.options.none", {
+					defaultValue: "Keine Angabe",
+				});
 	const addButtonLabel =
 		field.fundingSources?.addButtonLabel ?? "Add funding source";
 	const removeButtonLabel = field.fundingSources?.removeButtonLabel ?? "Remove";
@@ -93,9 +103,21 @@ export function FundingSourceField({
 							{sourceLabel}
 						</Label>
 						<Select
-							value={item.source_name ?? ""}
+							value={(() => {
+								if (item.source_name && item.source_name.length > 0) {
+									return item.source_name;
+								}
+								if (allowNullOption) {
+									return SELECT_NULL_SENTINEL;
+								}
+								return "";
+							})()}
 							onValueChange={(nextValue) =>
-								updateItem(index, "source_name", nextValue)
+								updateItem(
+									index,
+									"source_name",
+									nextValue === SELECT_NULL_SENTINEL ? "" : nextValue,
+								)
 							}
 							disabled={field.disabled}
 						>
@@ -103,9 +125,16 @@ export function FundingSourceField({
 								<SelectValue placeholder={sourcePlaceholder || sourceLabel} />
 							</SelectTrigger>
 							<SelectContent>
+								{allowNullOption && (
+									<>
+										<SelectItem value={SELECT_NULL_SENTINEL}>
+											{nullOptionLabel}
+										</SelectItem>
+									</>
+								)}
 								{fundingSourceOptions.map((option) => (
 									<SelectItem key={option} value={option}>
-										{tEnum(`funding_source.${option}`)}
+										{getFieldOptionLabel(tEnum, "funding_source", option)}
 									</SelectItem>
 								))}
 							</SelectContent>

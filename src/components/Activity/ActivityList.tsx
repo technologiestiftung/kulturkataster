@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { ActivityItem, type Activity } from "./ActivityItem";
 import { useAccountStore } from "@/lib/store/accountStore";
 import type { EntityAudit } from "@/types/entityAudit";
@@ -18,9 +18,11 @@ import {
 import Send from "@/icons/send.svg";
 import Edit from "@/icons/edit.svg";
 import { EmptyActionState } from "@/components/EmptyActionState";
+import { ActivityListSkeleton } from "./ActivityListSkeleton";
 
 interface ActivityListProps {
 	activities?: Activity[];
+	isLoading?: boolean;
 }
 
 const isNumericId = (value: string) => /^\d+$/.test(value);
@@ -149,6 +151,49 @@ const getEntityEmail = (audit: EntityAudit): string | null => {
 	);
 };
 
+const getEntityAccountType = (audit: EntityAudit): string | null => {
+	if (audit.entity_type !== "user") return null;
+	const newData = asObject(audit.new_data);
+	const oldData = asObject(audit.old_data);
+	const accountType =
+		pickString(newData, "account_type") ??
+		pickString(oldData, "account_type") ??
+		(typeof audit.user?.account_type === "string" &&
+		audit.user.account_type.trim().length > 0
+			? audit.user.account_type
+			: null);
+	return accountType?.trim() || null;
+};
+
+const getUserEntityStatus = (audit: EntityAudit): string | null => {
+	if (audit.entity_type !== "user") return null;
+	const newData = asObject(audit.new_data);
+	const oldData = asObject(audit.old_data);
+	return pickString(newData, "status") ?? pickString(oldData, "status");
+};
+
+const getAccountTypeLabel = (
+	accountType: string,
+	t: (key: string, options?: Record<string, unknown>) => string,
+) => {
+	if (accountType === "organization") {
+		return t("auth.register.accountTypeOrganization", {
+			defaultValue: "Mitarbeiter*in einer Organisation",
+		});
+	}
+	if (accountType === "district") {
+		return t("auth.register.accountTypeDistrict", {
+			defaultValue: "Mitarbeiter*in eines Bezirks",
+		});
+	}
+	if (accountType === "administration") {
+		return t("auth.register.accountTypeAdministration", {
+			defaultValue: "Mitarbeiter*in des Landes Berlin",
+		});
+	}
+	return accountType;
+};
+
 const getSubmissionInstitutionId = (
 	audit: EntityAudit | undefined,
 ): string | null => {
@@ -171,8 +216,17 @@ const formatEntityLabel = (
 	t: (key: string, options?: Record<string, unknown>) => string,
 ) => {
 	if (audit.entity_type === "user") {
+		const userLabel = t("auth.account.activity.entities.user", {
+			defaultValue: "Nutzer*in",
+		});
 		const email = getEntityEmail(audit);
-		return email ? `Nutzer*in (${email})` : "Nutzer*in";
+		return email
+			? t("auth.account.activity.entities.userWithEmail", {
+					defaultValue: `${userLabel} (${email})`,
+					entity: userLabel,
+					email,
+				})
+			: userLabel;
 	}
 	const translatedType = t(
 		`auth.account.activity.entities.${audit.entity_type}`,
@@ -199,7 +253,7 @@ const getStatusLabel = (
 			defaultValue: "Pending",
 		});
 	}
-	if (status === "approved") {
+	if (status === "approved" || status === "active") {
 		return t("auth.account.activity.status.approved", {
 			defaultValue: "Approved",
 		});
@@ -287,10 +341,12 @@ const mapEntityLink = (
 	audit: EntityAudit,
 	toLocalePath: (path: string) => string,
 	canOpenSubmission: (id: number) => boolean,
+	canReadAllUsers: boolean,
+	currentUserId?: string | null,
 ) => {
 	if (audit.action === "delete") return undefined;
-	if (!isNumericId(audit.entity_id)) return undefined;
 	const id = audit.entity_id;
+	if (audit.entity_type !== "user" && !isNumericId(id)) return undefined;
 	switch (audit.entity_type) {
 		case "submission": {
 			const numericSubmissionId = Number(id);
@@ -311,7 +367,12 @@ const mapEntityLink = (
 		case "role":
 			return toLocalePath(`/account/roles/${id}/edit`);
 		case "user":
-			return toLocalePath(`/account/users/${id}/edit`);
+			if (canReadAllUsers) {
+				return toLocalePath(`/account/users/${id}/edit`);
+			}
+			return typeof id === "string" && currentUserId === id
+				? toLocalePath("/account/edit")
+				: undefined;
 		default:
 			return undefined;
 	}
@@ -339,9 +400,15 @@ const pickRelationAudit = (group: EntityAudit[], primary: EntityAudit) => {
 	)[0];
 };
 
-export function ActivityList({ activities }: ActivityListProps) {
+export function ActivityList({
+	activities,
+	isLoading = false,
+}: ActivityListProps) {
 	const { t } = useTranslation("common");
 	const toLocalePath = useLocalePath();
+	const [hasHydrated, setHasHydrated] = useState(() =>
+		useAccountStore.persist.hasHydrated(),
+	);
 	const [searchQuery, setSearchQuery] = useState("");
 	const [statusFilter, setStatusFilter] = useState("all");
 	const [typeFilter, setTypeFilter] = useState("all");
@@ -349,7 +416,24 @@ export function ActivityList({ activities }: ActivityListProps) {
 	const [actorFilter, setActorFilter] = useState("all");
 	const [dateFilter, setDateFilter] = useState("all");
 	const entityAudits = useAccountStore((state) => state.entityAudits) ?? [];
+	const currentProfile = useAccountStore((state) => state.currentProfile);
+	const users = useAccountStore((state) => state.users) ?? [];
 	const submissions = useAccountStore((state) => state.submissions) ?? [];
+	const currentUserId = currentProfile?.id ?? null;
+	const canReadAllUsers = useMemo(() => {
+		if (!currentProfile) return false;
+		const currentUser =
+			users.find((user) => user.id === currentProfile.id) ??
+			users.find((user) => user.email === currentProfile.email);
+		return Boolean(
+			currentUser?.role?.table_permissions?.some(
+				(permission) =>
+					permission.table === "user" &&
+					permission.action === "read" &&
+					(permission.scope ?? "own") === "all",
+			),
+		);
+	}, [currentProfile, users]);
 	const submissionIdSet = useMemo(
 		() => new Set(submissions.map((submission) => submission.id)),
 		[submissions],
@@ -372,6 +456,17 @@ export function ActivityList({ activities }: ActivityListProps) {
 		},
 		[deletedSubmissionIdSet, submissionIdSet],
 	);
+
+	useEffect(() => {
+		if (useAccountStore.persist.hasHydrated()) {
+			setHasHydrated(true);
+			return;
+		}
+
+		return useAccountStore.persist.onFinishHydration(() => {
+			setHasHydrated(true);
+		});
+	}, []);
 
 	const mapAuditToActivity = (
 		audit: EntityAudit,
@@ -452,6 +547,8 @@ export function ActivityList({ activities }: ActivityListProps) {
 			primarySource,
 			toLocalePath,
 			canOpenSubmission,
+			canReadAllUsers,
+			currentUserId,
 		);
 		let displayEntityType = primarySource.entity_type;
 		if (isApprovedUserSubmissionAssignment) {
@@ -492,22 +589,52 @@ export function ActivityList({ activities }: ActivityListProps) {
 			primaryEntityLink: displayPrimaryEntityLink,
 			secondaryEntity: normalizedRelation,
 			secondaryEntityLink: secondarySource
-				? mapEntityLink(secondarySource, toLocalePath, canOpenSubmission)
+				? mapEntityLink(
+						secondarySource,
+						toLocalePath,
+						canOpenSubmission,
+						canReadAllUsers,
+						currentUserId,
+					)
 				: undefined,
 			from: hasStatusTransition ? fromStatus : undefined,
 			to: hasStatusTransition ? toStatus : undefined,
-			action: t(`auth.account.activity.actions.${actionKey}`, {
-				defaultValue: t(`auth.account.activity.actions.${audit.action}`, {
-					defaultValue: audit.action,
-				}),
-			}),
+			action: (() => {
+				const baseAction = t(`auth.account.activity.actions.${actionKey}`, {
+					defaultValue: t(`auth.account.activity.actions.${audit.action}`, {
+						defaultValue: audit.action,
+					}),
+				});
+				const accountType = getEntityAccountType(primarySource);
+				if (primarySource.entity_type !== "user" || !accountType) {
+					return baseAction;
+				}
+				return t("auth.account.activity.actions.withAccountType", {
+					defaultValue: `${baseAction} (${getAccountTypeLabel(accountType, t)})`,
+					action: baseAction,
+					accountType: getAccountTypeLabel(accountType, t),
+				});
+			})(),
 			item: primaryEntity,
-			itemLink: mapEntityLink(audit, toLocalePath, canOpenSubmission),
+			itemLink: mapEntityLink(
+				audit,
+				toLocalePath,
+				canOpenSubmission,
+				canReadAllUsers,
+				currentUserId,
+			),
 			relation: normalizedRelation,
 			relationLink: secondarySource
-				? mapEntityLink(secondarySource, toLocalePath, canOpenSubmission)
+				? mapEntityLink(
+						secondarySource,
+						toLocalePath,
+						canOpenSubmission,
+						canReadAllUsers,
+						currentUserId,
+					)
 				: undefined,
-			status: audit.status,
+			status: (getUserEntityStatus(primarySource) ??
+				audit.status) as Activity["status"],
 		};
 	};
 
@@ -564,6 +691,10 @@ export function ActivityList({ activities }: ActivityListProps) {
 				.sort((a, b) => b.changedAt - a.changedAt)
 				.map((entry) => entry.activity);
 		})();
+
+	if (isLoading || (!activities && !hasHydrated)) {
+		return <ActivityListSkeleton showFilters />;
+	}
 
 	if (resolvedActivities.length === 0) {
 		return (
@@ -646,9 +777,31 @@ export function ActivityList({ activities }: ActivityListProps) {
 		return searchable.includes(query);
 	});
 
+	const renderListContent = () => {
+		if (filteredActivities.length === 0) {
+			return (
+				<div className="py-8 body3 text-muted-foreground">
+					{t("auth.account.activity.filters.empty", {
+						defaultValue: "Keine Aktivitäten für die aktuellen Filter.",
+					})}
+				</div>
+			);
+		}
+
+		return filteredActivities.map((activity, index) => (
+			<div
+				key={activity.id ?? `activity-${activity.date}-${index}`}
+				className="motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-1 motion-safe:duration-300"
+				style={{ animationDelay: `${Math.min(index, 12) * 28}ms` }}
+			>
+				<ActivityItem activity={activity} index={index} />
+			</div>
+		));
+	};
+
 	return (
 		<div className="space-y-4">
-			<div className="grid gap-3 md:grid-cols-2 xl:grid-cols-6">
+			<div className="gap-3 md:grid-cols-2 xl:grid-cols-6 md:grid hidden">
 				<SearchInput
 					value={searchQuery}
 					onChange={(event) => setSearchQuery(event.target.value)}
@@ -763,23 +916,7 @@ export function ActivityList({ activities }: ActivityListProps) {
 					</SelectContent>
 				</Select>
 			</div>
-			<div className="divide-y divide-border">
-				{filteredActivities.length === 0 ? (
-					<div className="py-8 body3 text-muted-foreground">
-						{t("auth.account.activity.filters.empty", {
-							defaultValue: "Keine Aktivitäten für die aktuellen Filter.",
-						})}
-					</div>
-				) : (
-					filteredActivities.map((activity, index) => (
-						<ActivityItem
-							key={activity.id ?? `activity-${activity.date}-${index}`}
-							activity={activity}
-							index={index}
-						/>
-					))
-				)}
-			</div>
+			<div className="divide-y divide-border">{renderListContent()}</div>
 		</div>
 	);
 }

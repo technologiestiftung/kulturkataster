@@ -109,24 +109,24 @@ export default async function RootLayout({
 					>
 						{skipToContentLabel}
 					</a>
-					<div className="flex min-h-screen flex-col">
+					<div className="flex min-h-dvh flex-col">
 						<SidebarProvider>
-							<div className="flex flex-1 w-full">
+							<div className="flex min-h-0 flex-1 w-full">
 								<header
 									aria-label={headerLabel}
 									className="flex-shrink-0 w-auto"
 								>
 									<Menu sidebar={sidebar} />
 								</header>
-								<SidebarInset asChild className="flex-1 w-0">
+								<SidebarInset asChild className="min-h-0 flex-1 w-0">
 									<main
 										id="main-content"
-										className="focus:outline-none"
+										className="min-h-0 focus:outline-none"
 										tabIndex={-1}
 										aria-label={mainContentLabel}
 									>
 										<h1 className="sr-only">{siteHeading}</h1>
-										<div className="flex flex-1 flex-col pb-20 md:pb-0">
+										<div className="flex min-h-0 flex-1 flex-col">
 											<MapListShell />
 											{children}
 										</div>

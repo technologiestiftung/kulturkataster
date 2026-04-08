@@ -1,6 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import nodemailer from "nodemailer";
+import { logger } from "@/server/logging/logger";
 
 type TemplateData = Record<string, unknown>;
 
@@ -127,35 +128,70 @@ export async function sendTemplatedEmail({
 	templatePath,
 	variables = {},
 }: SendTemplatedEmailArgs) {
-	const absolutePath = getTemplateAbsolutePath(templatePath);
-	const template = await fs.readFile(absolutePath, "utf8");
-	const html = renderTemplate(template, variables);
+	return logger.time(
+		{
+			level: "info",
+			event: "email.send.completed",
+			successData: {
+				subsystem: "email",
+				email_to: to,
+				template: templatePath,
+				subject,
+				provider: emailRuntimeConfig.provider,
+			},
+			errorEvent: "email.send.failed",
+			errorData: {
+				subsystem: "email",
+				email_to: to,
+				template: templatePath,
+				subject,
+				provider: emailRuntimeConfig.provider,
+			},
+			slowThresholdMs: 2000,
+			slowEvent: "email.send.slow",
+			slowData: {
+				subsystem: "email",
+				email_to: to,
+				template: templatePath,
+				provider: emailRuntimeConfig.provider,
+			},
+		},
+		async () => {
+			const absolutePath = getTemplateAbsolutePath(templatePath);
+			const template = await fs.readFile(absolutePath, "utf8");
+			const html = renderTemplate(template, variables);
 
-	if (emailRuntimeConfig.provider === "noop") {
-		console.info(`[email:no-op] ${subject} -> ${to} (${templatePath})`);
-		return { id: "noop" };
-	}
+			if (emailRuntimeConfig.provider === "noop") {
+				logger.info("email.send.noop", {
+					subsystem: "email",
+					email_to: to,
+					template: templatePath,
+					subject,
+				});
+				return { id: "noop" };
+			}
 
-	const transporter = nodemailer.createTransport({
-		host: emailRuntimeConfig.host,
-		port: emailRuntimeConfig.port,
-		secure: emailRuntimeConfig.secure,
-		auth:
-			emailRuntimeConfig.user && emailRuntimeConfig.pass
-				? {
-						user: emailRuntimeConfig.user,
-						pass: emailRuntimeConfig.pass,
-					}
-				: undefined,
-	});
+			const transporter = nodemailer.createTransport({
+				host: emailRuntimeConfig.host,
+				port: emailRuntimeConfig.port,
+				secure: emailRuntimeConfig.secure,
+				auth:
+					emailRuntimeConfig.user && emailRuntimeConfig.pass
+						? {
+								user: emailRuntimeConfig.user,
+								pass: emailRuntimeConfig.pass,
+							}
+						: undefined,
+			});
 
-	const result = await transporter.sendMail({
-		from: emailRuntimeConfig.from,
-		to,
-		subject,
-		html,
-		replyTo: emailRuntimeConfig.replyTo,
-	});
-
-	return { id: result.messageId ?? null };
+			const result = await transporter.sendMail({
+				from: emailRuntimeConfig.from,
+				to,
+				subject,
+				html,
+				replyTo: emailRuntimeConfig.replyTo,
+			});
+			return { id: result.messageId ?? null };
+		},
+	);
 }

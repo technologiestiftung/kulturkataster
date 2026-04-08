@@ -46,6 +46,18 @@ export interface SelectOption {
 	parentValue?: string | number | boolean;
 }
 
+export type FieldNormalizer = (
+	value: unknown,
+	formData: Record<string, unknown>,
+) => unknown;
+
+export type FieldValidator = ((
+	value: unknown,
+	formData: Record<string, unknown>,
+) => string | undefined) & {
+	normalize?: FieldNormalizer;
+};
+
 type FormWrapperSectionConfig = {
 	title?: string;
 	description?: string;
@@ -72,11 +84,7 @@ type FormWrapperSectionFieldConfig = {
 	disabled?: boolean;
 	afterField?: ReactNode;
 	defaultValue?: unknown;
-	validate?: (value: unknown) => string | undefined;
-	validateWithForm?: (
-		value: unknown,
-		formData: Record<string, unknown>,
-	) => string | undefined;
+	validators?: FieldValidator[];
 	onBlur?: (
 		value: unknown,
 		formData: Record<string, unknown>,
@@ -140,7 +148,11 @@ type FormWrapperNonSectionFieldConfig = {
 		compare?: (a: SelectOption, b: SelectOption) => number;
 	}[];
 	tablePermissions?: {
-		tables: { key: string; label: string }[];
+		tables: {
+			key: string;
+			label: string;
+			actions?: PermissionAction[];
+		}[];
 		actions?: PermissionAction[];
 		actionLabels?: Partial<Record<PermissionAction, string>>;
 		scopeOptions?: { value: PermissionScope; label: string }[];
@@ -228,11 +240,7 @@ type FormWrapperNonSectionFieldConfig = {
 	className?: string;
 
 	// Custom validation
-	validate?: (value: unknown) => string | undefined;
-	validateWithForm?: (
-		value: unknown,
-		formData: Record<string, unknown>,
-	) => string | undefined;
+	validators?: FieldValidator[];
 	onBlur?: (
 		value: unknown,
 		formData: Record<string, unknown>,

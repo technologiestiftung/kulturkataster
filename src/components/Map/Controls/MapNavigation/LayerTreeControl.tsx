@@ -44,12 +44,16 @@ const LayerTreeControl: FC = () => {
 		setIsLayerTreeOpen(!isLayerTreeOpen);
 	};
 
+	const topVisibleLayerName =
+		topVisibleLayer?.config.service.name?.trim() ||
+		t("map.unnamedLayer", { defaultValue: "Unbenannte Fachkarte" });
+
 	const renderThumbnail = () => {
 		if (topVisibleLayer?.config.service.preview?.src) {
 			return (
 				<Image
 					src={topVisibleLayer.config.service.preview.src}
-					alt={topVisibleLayer.config.service.name}
+					alt={topVisibleLayerName}
 					width={64}
 					height={64}
 					className="w-full h-full object-cover"
@@ -66,12 +70,13 @@ const LayerTreeControl: FC = () => {
 	return (
 		<div className="relative">
 			<ButtonWithTooltip
-				variant="rounded"
-				size="icon-only"
+				radius="full"
+				variant="surface"
+				iconSize="lg"
 				tooltip={t("map.layerTree")}
 				tooltipSide="right"
 				onClick={handleLayerTreeOpen}
-				className={`relative w-12 h-12 p-0 bg-neutral-80 overflow-hidden cursor-pointer`}
+				className={`p-0 bg-neutral-80 overflow-hidden cursor-pointer md:hover:bg-accent hover:bg-neutral-70`}
 			>
 				<div className="w-full h-full flex items-center justify-center">
 					{useIsMobile() ? (

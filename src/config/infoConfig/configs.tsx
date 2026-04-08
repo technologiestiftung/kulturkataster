@@ -189,6 +189,11 @@ export const statusInfoConfig: InfoWrapperFieldConfig[] = [
 		type: "text",
 	},
 	{
+		value: "utilization_status_internal_notes",
+		labelKey: "field_names.utilization_status_internal_notes.label",
+		type: "text",
+	},
+	{
 		value: "protection_status",
 		labelKey: "field_names.protection_status.label",
 		type: "enum",

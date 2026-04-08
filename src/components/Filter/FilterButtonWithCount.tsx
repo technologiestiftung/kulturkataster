@@ -9,7 +9,7 @@ type FilterButtonWithCountProps = {
 	tooltip: string;
 	className?: string;
 	showCount?: boolean;
-	size?: "default" | "icon-only" | "action";
+	size?: "default" | "action";
 };
 
 export function FilterButtonWithCount({
@@ -17,7 +17,6 @@ export function FilterButtonWithCount({
 	tooltip,
 	className,
 	showCount = true,
-	size = "icon-only",
 }: FilterButtonWithCountProps) {
 	const filters = useInstitutionStore((state) => state.filters);
 	const activeFilterCount =
@@ -29,8 +28,9 @@ export function FilterButtonWithCount({
 
 	return (
 		<ButtonWithTooltip
-			variant="rounded"
-			size={size}
+			radius="full"
+			variant="surface"
+			iconSize="lg"
 			tooltip={tooltip}
 			className={className}
 			onClick={onClick}

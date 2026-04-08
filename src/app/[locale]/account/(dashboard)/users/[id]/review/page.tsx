@@ -1,5 +1,5 @@
-import { getClaimSubmissionsDetailed } from "@/server/actions/submissions";
 import { UserClaimReviewModal } from "@/components/Users/UserClaimReviewModal";
+import { getClaimSubmissionsDetailed } from "@/server/actions/submissions";
 
 export default async function UserClaimsReviewPage({
 	params,
@@ -7,6 +7,7 @@ export default async function UserClaimsReviewPage({
 	params: Promise<{ id: string }>;
 }) {
 	const { id } = await params;
+
 	const claims = await getClaimSubmissionsDetailed(id);
 	return (
 		<UserClaimReviewModal

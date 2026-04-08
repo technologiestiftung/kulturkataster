@@ -42,15 +42,9 @@ async function initTranslations(
 					);
 					return merged;
 				} catch {
-					console.warn(
-						`Traduora failed, using local translations for ${language}/${namespace}`,
-					);
 					return localTranslations.default;
 				}
 			} catch {
-				console.warn(
-					`No local translations found for ${language}/${namespace}, trying Traduora only`,
-				);
 				const translations = await fetchTranslations(language, namespace);
 				return translations;
 			}

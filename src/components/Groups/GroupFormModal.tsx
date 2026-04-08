@@ -6,6 +6,7 @@ import { DialogTitle } from "@/components/ui/dialog";
 import { Modal } from "@/components/Modals/Modal";
 import { useRoutedModalClose } from "@/components/Modals/useRoutedModalClose";
 import { FormWrapper } from "@/components/FormWrapper";
+import { FormWrapperLoadingSkeleton } from "@/components/FormWrapper/FormWrapperLoadingSkeleton";
 import type { FormWrapperConfig } from "@/components/FormWrapper";
 import { useAccountStore } from "@/lib/store/accountStore";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
@@ -53,15 +54,12 @@ const getDialogTitle = (
 
 const renderDialogBody = (
 	isWaitingForGroup: boolean,
-	t: (key: string) => string,
 	formConfig: FormWrapperConfig,
 	resolvedGroup: Group | undefined,
 	mode: GroupFormModalProps["mode"],
 ) => {
 	if (isWaitingForGroup) {
-		return (
-			<p className="text-foreground">{t("groupFormModal.dialog.loading")}</p>
-		);
+		return <FormWrapperLoadingSkeleton />;
 	}
 
 	return <FormWrapper key={resolvedGroup?.id ?? mode} config={formConfig} />;
@@ -229,11 +227,6 @@ const buildGroupFormConfig = ({
 			{
 				name: "detailsSection",
 				type: "section",
-				title: t("groupFormModal.form.details.title"),
-				description:
-					mode === "create"
-						? t("groupFormModal.form.details.description.create")
-						: t("groupFormModal.form.details.description.edit"),
 				fields: [
 					{
 						name: "name",
@@ -449,10 +442,6 @@ export function GroupFormModal({
 			routePath={routePath}
 			returnTo={returnTo}
 			autoCloseError={autoCloseError}
-			loadingState={{
-				active: isWaitingForGroup,
-				label: t("groupFormModal.dialog.loading"),
-			}}
 			confirmDialog={
 				showDeleteDialog && resolvedGroup
 					? {
@@ -538,7 +527,6 @@ export function GroupFormModal({
 					<div className="flex-1 overflow-auto px-6 py-6 md:px-10 flex flex-col">
 						{renderDialogBody(
 							isWaitingForGroup,
-							t,
 							formConfig,
 							resolvedGroup,
 							mode,

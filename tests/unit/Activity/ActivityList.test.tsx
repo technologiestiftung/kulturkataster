@@ -13,6 +13,7 @@ type MockAudit = {
 		first_name?: string | null;
 		last_name?: string | null;
 		email: string;
+		account_type?: string | null;
 	} | null;
 	old_data?: Record<string, unknown> | null;
 	new_data?: Record<string, unknown> | null;
@@ -20,11 +21,25 @@ type MockAudit = {
 };
 
 type MockState = {
+	currentProfile: { id: string; email: string } | null;
+	users: Array<{
+		id: string;
+		email: string;
+		role?: {
+			table_permissions?: Array<{
+				table: string;
+				action: string;
+				scope?: string | null;
+			}>;
+		} | null;
+	}>;
 	entityAudits: MockAudit[];
 	submissions: Array<{ id: number }>;
 };
 
 let mockState: MockState = {
+	currentProfile: null,
+	users: [],
 	entityAudits: [],
 	submissions: [],
 };
@@ -44,6 +59,20 @@ vi.mock("@/lib/store/accountStore", () => ({
 	useAccountStore: (selector: (state: MockState) => unknown) =>
 		selector(mockState),
 }));
+
+import { useAccountStore } from "@/lib/store/accountStore";
+
+(
+	useAccountStore as typeof useAccountStore & {
+		persist: {
+			hasHydrated: () => boolean;
+			onFinishHydration: () => () => void;
+		};
+	}
+).persist = {
+	hasHydrated: () => true,
+	onFinishHydration: () => () => undefined,
+};
 
 vi.mock("@/components/ui/search-input", () => ({
 	SearchInput: ({
@@ -104,6 +133,7 @@ vi.mock("@/components/Activity/ActivityItem", () => ({
 			<div>{String(activity.actor ?? "")}</div>
 			<div>{String(activity.status ?? "")}</div>
 			<div>{String(activity.eventType ?? "")}</div>
+			<div>{String(activity.action ?? "")}</div>
 			<div>{String(activity.primaryEntity ?? "")}</div>
 			{typeof activity.primaryEntityLink === "string" ? (
 				<a
@@ -145,6 +175,21 @@ describe("ActivityList filters", () => {
 		const tenDaysAgo = new Date(now.getTime() - 10 * 24 * 60 * 60 * 1000);
 		const fortyDaysAgo = new Date(now.getTime() - 40 * 24 * 60 * 60 * 1000);
 		mockState = {
+			currentProfile: {
+				id: "current-user",
+				email: "current@example.com",
+			},
+			users: [
+				{
+					id: "current-user",
+					email: "current@example.com",
+					role: {
+						table_permissions: [
+							{ table: "user", action: "read", scope: "all" },
+						],
+					},
+				},
+			],
 			submissions: [],
 			entityAudits: [
 				makeAudit({
@@ -199,7 +244,7 @@ describe("ActivityList filters", () => {
 		const actorSelect = filters[3];
 
 		fireEvent.change(statusSelect, { target: { value: "approved" } });
-		expect(screen.getAllByTestId("activity-row")).toHaveLength(1);
+		expect(screen.getAllByTestId("activity-row")).toHaveLength(2);
 
 		fireEvent.change(statusSelect, { target: { value: "all" } });
 		fireEvent.change(typeSelect, { target: { value: "status_change" } });
@@ -222,6 +267,51 @@ describe("ActivityList filters", () => {
 		expect(screen.getAllByTestId("activity-row")).toHaveLength(1);
 	});
 
+	it("uses the user entity status for user activities", () => {
+		mockState.entityAudits = [
+			makeAudit({
+				id: 30,
+				action: "update",
+				status: "completed",
+				entity_type: "user",
+				entity_id: "7",
+				old_data: { status: "approval_pending" },
+				new_data: { status: "approved", email: "person@example.com" },
+				user: null,
+			}),
+		];
+
+		render(<ActivityList />);
+
+		expect(screen.getByText("approved")).toBeInTheDocument();
+		expect(screen.queryByText("completed")).not.toBeInTheDocument();
+	});
+
+	it("shows the user account type after the action when available", () => {
+		mockState.entityAudits = [
+			makeAudit({
+				id: 21,
+				entity_type: "user",
+				entity_id: "user-21",
+				user: null,
+				old_data: null,
+				new_data: {
+					email: "person@example.com",
+					account_type: "organization",
+				},
+			}),
+		];
+
+		render(<ActivityList />);
+
+		expect(
+			screen.getByText("Nutzer*in (person@example.com)"),
+		).toBeInTheDocument();
+		expect(
+			screen.getByText("update (Mitarbeiter*in einer Organisation)"),
+		).toBeInTheDocument();
+	});
+
 	it("filters by date presets", () => {
 		render(<ActivityList />);
 
@@ -239,6 +329,21 @@ describe("ActivityList filters", () => {
 
 	it("does not link deleted submission activities", () => {
 		mockState = {
+			currentProfile: {
+				id: "current-user",
+				email: "current@example.com",
+			},
+			users: [
+				{
+					id: "current-user",
+					email: "current@example.com",
+					role: {
+						table_permissions: [
+							{ table: "user", action: "read", scope: "all" },
+						],
+					},
+				},
+			],
 			submissions: [],
 			entityAudits: [
 				makeAudit({
@@ -264,5 +369,77 @@ describe("ActivityList filters", () => {
 		expect(
 			screen.queryByTestId("primary-link-audit:10"),
 		).not.toBeInTheDocument();
+	});
+
+	it("links user activities to the user edit page when the current user can read all users", () => {
+		mockState = {
+			currentProfile: {
+				id: "current-user",
+				email: "current@example.com",
+			},
+			users: [
+				{
+					id: "current-user",
+					email: "current@example.com",
+					role: {
+						table_permissions: [
+							{ table: "user", action: "read", scope: "all" },
+						],
+					},
+				},
+			],
+			submissions: [],
+			entityAudits: [
+				makeAudit({
+					id: 20,
+					entity_type: "user",
+					entity_id: "3a6ec09c-712c-42fc-ae0a-28dda26ec42e",
+					new_data: { email: "person@example.com" },
+					user: null,
+				}),
+			],
+		};
+
+		render(<ActivityList />);
+
+		expect(screen.getByTestId("primary-link-audit:20")).toHaveAttribute(
+			"href",
+			"/de/account/users/3a6ec09c-712c-42fc-ae0a-28dda26ec42e/edit",
+		);
+	});
+
+	it("links current user activities to account edit when the current user cannot read all users", () => {
+		mockState = {
+			currentProfile: {
+				id: "current-user",
+				email: "current@example.com",
+			},
+			users: [
+				{
+					id: "current-user",
+					email: "current@example.com",
+					role: {
+						table_permissions: [],
+					},
+				},
+			],
+			submissions: [],
+			entityAudits: [
+				makeAudit({
+					id: 21,
+					entity_type: "user",
+					entity_id: "current-user",
+					new_data: { email: "person@example.com" },
+					user: null,
+				}),
+			],
+		};
+
+		render(<ActivityList />);
+
+		expect(screen.getByTestId("primary-link-audit:21")).toHaveAttribute(
+			"href",
+			"/de/account/edit",
+		);
 	});
 });

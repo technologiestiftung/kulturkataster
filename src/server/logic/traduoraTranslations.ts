@@ -2,6 +2,7 @@
 /* eslint-disable complexity */
 
 import { fetchLabels, fetchTraduoraToken } from "@/server/traduora/cached";
+import { logger } from "@/server/logging/logger";
 
 async function getLabelIdByName(
 	projectId: string,
@@ -71,7 +72,13 @@ export async function fetchTraduoraTranslations(
 
 	if (!termsRes.ok) {
 		const errorText = await termsRes.text();
-		console.error(`Traduora terms API error (${termsRes.status}):`, errorText);
+		logger.error("traduora.terms.fetch_failed", undefined, {
+			subsystem: "translations",
+			http_status: termsRes.status,
+			locale,
+			namespace: namespace ?? null,
+			response_body: errorText,
+		});
 		throw new Error(`Failed to fetch terms. Status: ${termsRes.status}`);
 	}
 
@@ -90,10 +97,13 @@ export async function fetchTraduoraTranslations(
 
 	if (!translationsRes.ok) {
 		const errorText = await translationsRes.text();
-		console.error(
-			`Traduora translations API error (${translationsRes.status}):`,
-			errorText,
-		);
+		logger.error("traduora.translations.fetch_failed", undefined, {
+			subsystem: "translations",
+			http_status: translationsRes.status,
+			locale,
+			namespace: namespace ?? null,
+			response_body: errorText,
+		});
 		throw new Error(
 			`Failed to fetch translations for locale: ${locale}. Status: ${translationsRes.status}`,
 		);
@@ -101,11 +111,13 @@ export async function fetchTraduoraTranslations(
 
 	const translations = (await translationsRes.json()).data;
 	if (!Array.isArray(translations)) {
-		console.error(
-			"Translations response is not an array:",
-			typeof translations,
-			translations,
-		);
+		logger.error("traduora.translations.invalid_response", undefined, {
+			subsystem: "translations",
+			locale,
+			namespace: namespace ?? null,
+			response_type: typeof translations,
+			response_value: translations,
+		});
 		throw new Error(
 			`Invalid translations response format for locale: ${locale}`,
 		);

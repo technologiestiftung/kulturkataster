@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card";
 import { CategorySectionList } from "@/components/Filter/CategorySection/CategorySectionList";
 import DistrictTags from "@/components/Filter/DistrictTags/DistrictTags";
 import { Button } from "@/components/ui/button";
-import { Loading } from "@/components/ui/loading";
+import { FilterPanelSkeleton } from "@/components/Filter/FilterPanelSkeleton";
 import EyeOff from "@/icons/eye-off.svg";
 import Eye from "@/icons/eye.svg";
 import type { Category, FilterState } from "@/types";
@@ -102,9 +102,11 @@ export const FilterPanel: FC<FilterPanelProps> = ({
 
 	if (loading) {
 		return (
-			<div className="Filter-root h-full w-full p-4 flex justify-center items-center">
-				<Loading size="md" />
-			</div>
+			<FilterPanelSkeleton
+				showSummary={showSummary}
+				showDistricts={showDistricts}
+				showClosedToggle={showClosedToggle}
+			/>
 		);
 	}
 
@@ -116,7 +118,7 @@ export const FilterPanel: FC<FilterPanelProps> = ({
 						{t("filter.error", { ns: "content" })}
 					</div>
 					{onRetry && (
-						<Button size="sm" variant="rounded-md" onClick={onRetry}>
+						<Button size="sm" radius="md" onClick={onRetry}>
 							{t("filter.retry", { ns: "content" })}
 						</Button>
 					)}
@@ -162,7 +164,7 @@ export const FilterPanel: FC<FilterPanelProps> = ({
 			{showDistricts && (
 				<Card variant="filter">
 					<div className="flex items-center justify-between mb-4">
-						<h3 className="body1 font-bold">
+						<h3 className="body1 font-bold capitalize">
 							{t("filter.districts.title", { ns: "content" })}
 						</h3>
 						<button

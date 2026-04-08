@@ -5,6 +5,7 @@ import {
 	RoleFieldPermission,
 	RoleTablePermission,
 } from "@/generated/prisma";
+import { logger } from "../logging/logger";
 
 export type Action = PrismaAction;
 
@@ -36,6 +37,15 @@ type RoleWithPermissions = Role & {
 	table_permissions: RoleTablePermission[];
 	field_permissions: RoleFieldPermission[];
 };
+
+const getDefaultRoleWithPermissions = () =>
+	prisma.role.findFirst({
+		where: { is_guest: true },
+		include: {
+			table_permissions: true,
+			field_permissions: true,
+		},
+	});
 
 const buildTablePerms = (
 	permissions: RoleTablePermission[] = [],
@@ -110,6 +120,14 @@ export const requireAllScope = (
 	message?: string,
 ): void => {
 	if (getTableScope(context, table, action) !== "all") {
+		logger.warn("rbac.scope.denied", {
+			subsystem: "rbac",
+			role: context.role ?? "guest",
+			table,
+			action,
+			required_scope: "all",
+			actual_scope: getTableScope(context, table, action),
+		});
 		const error = new Error(
 			message ?? `Global ${action} access required for ${table}.`,
 		) as Error & RBACErrorMeta;
@@ -166,6 +184,12 @@ export const authorizeTable = (
 	action: Action,
 ): void => {
 	if (!canTable(context, table, action)) {
+		logger.warn("rbac.table.denied", {
+			subsystem: "rbac",
+			role: context.role ?? "guest",
+			table,
+			action,
+		});
 		const error = new Error(
 			`Role "${context.role ?? "guest"}" lacks ${action} on ${table}`,
 		) as Error & RBACErrorMeta;
@@ -184,6 +208,13 @@ export const authorizeFields = (
 ): void => {
 	if (fields.length === 0) return;
 	if (!canFields(context, table, fields, action)) {
+		logger.warn("rbac.fields.denied", {
+			subsystem: "rbac",
+			role: context.role ?? "guest",
+			table,
+			action,
+			fields,
+		});
 		const error = new Error(
 			`Role "${context.role ?? "guest"}" lacks ${action} on some fields of ${table}`,
 		) as Error & RBACErrorMeta;
@@ -198,14 +229,8 @@ export const getAccessContextForUser = async (
 	userId: string | null,
 ): Promise<AccessContext> => {
 	if (!userId) {
-		const guestRole = await prisma.role.findFirst({
-			where: { name: "guest", is_system: true },
-			include: {
-				table_permissions: true,
-				field_permissions: true,
-			},
-		});
-		return buildAccessContext(guestRole ?? null);
+		const defaultRole = await getDefaultRoleWithPermissions();
+		return buildAccessContext(defaultRole ?? null);
 	}
 
 	const user = await prisma.user.findUnique({
@@ -249,7 +274,20 @@ export const getSystemRoleReadableFieldsForTable = async (
 export const getGuestReadableFieldsForTable = async (
 	table: string,
 ): Promise<string[]> => {
-	return getSystemRoleReadableFieldsForTable("guest", table);
+	const role = await prisma.role.findFirst({
+		where: { is_guest: true },
+		include: {
+			field_permissions: true,
+		},
+	});
+	if (!role) return [];
+	const readableFields = role.field_permissions
+		.filter(
+			(permission) =>
+				permission.table === table && permission.action === "read",
+		)
+		.map((permission) => permission.field);
+	return Array.from(new Set(readableFields));
 };
 
 export const getFieldPermissionListsForTable = (

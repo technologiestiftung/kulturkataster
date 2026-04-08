@@ -11,6 +11,7 @@ import {
 	getSpanClass,
 } from "@/components/shared/sectionLayout";
 import { getEditAction } from "./getEditAction";
+import { ScrollReveal } from "@/components/shared/ScrollReveal";
 
 export function InfoWrapper({
 	data,
@@ -136,31 +137,31 @@ export function InfoWrapper({
 				);
 
 				const renderedSection = (
-					<SectionWrapper
-						key={wrapperKey}
-						wrapperId={wrapperId}
-						wrapperClassName={cn(layoutProps?.className, "flex flex-col")}
-						spanClassName={layoutProps?.spanClass}
-						useAccordion={useAccordion}
-						accordionValue={wrapperKey}
-						accordionDefaultOpen={defaultOpen}
-						accordionVariant={accordionVariant}
-						accordionTriggerClassName="text-lg font-semibold"
-						accordionTitle={
-							field.title ?? field.description ?? field.id ?? "Details"
-						}
-						accordionAction={useAccordion ? editButton : undefined}
-						cardVariant={sectionCardVariant}
-						cardClassName={heroToneClassName}
-						bodyContent={bodyContent}
-						onClick={
-							field.onClick
-								? () => field.onClick?.(data as Institution)
-								: undefined
-						}
-						onClickAriaLabel={field.onClickAriaLabel}
-						onClickAsButton={!showEditButtonInBody}
-					/>
+					<ScrollReveal key={wrapperKey} className={layoutProps?.spanClass}>
+						<SectionWrapper
+							wrapperId={wrapperId}
+							wrapperClassName={cn(layoutProps?.className, "flex flex-col")}
+							useAccordion={useAccordion}
+							accordionValue={wrapperKey}
+							accordionDefaultOpen={defaultOpen}
+							accordionVariant={accordionVariant}
+							accordionTriggerClassName="text-lg font-semibold"
+							accordionTitle={
+								field.title ?? field.description ?? field.id ?? "Details"
+							}
+							accordionAction={useAccordion ? editButton : undefined}
+							cardVariant={sectionCardVariant}
+							cardClassName={heroToneClassName}
+							bodyContent={bodyContent}
+							onClick={
+								field.onClick
+									? () => field.onClick?.(data as Institution)
+									: undefined
+							}
+							onClickAriaLabel={field.onClickAriaLabel}
+							onClickAsButton={!showEditButtonInBody}
+						/>
+					</ScrollReveal>
 				);
 
 				if (renderedSection) nodes.push(renderedSection);

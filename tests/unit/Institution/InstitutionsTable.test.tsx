@@ -3,6 +3,7 @@ import { render } from "@testing-library/react";
 import { InstitutionsTable } from "@/components/Institution/InstitutionsTable";
 
 const pushMock = vi.fn();
+const prefetchMock = vi.fn();
 const dataTableMock = vi.fn();
 
 vi.mock("react-i18next", () => ({
@@ -21,7 +22,7 @@ vi.mock("react-i18next", () => ({
 }));
 
 vi.mock("next/navigation", () => ({
-	useRouter: () => ({ push: pushMock }),
+	useRouter: () => ({ push: pushMock, prefetch: prefetchMock }),
 }));
 
 vi.mock("@/lib/hooks/useLocalePath", () => ({
@@ -47,6 +48,7 @@ vi.mock("@/lib/store/accountStore", () => ({
 				createSubmission: boolean;
 				reviewSubmission: boolean;
 			};
+			setActiveInstitutionEdit: (institution: unknown) => void;
 		}) => unknown,
 	) =>
 		selector({
@@ -76,6 +78,7 @@ vi.mock("@/lib/store/accountStore", () => ({
 				createSubmission: true,
 				reviewSubmission: true,
 			},
+			setActiveInstitutionEdit: vi.fn(),
 		}),
 }));
 
@@ -119,6 +122,7 @@ vi.mock("@/lib/hooks/useInstitutionTableFilters", () => ({
 describe("InstitutionsTable", () => {
 	beforeEach(() => {
 		pushMock.mockReset();
+		prefetchMock.mockReset();
 		dataTableMock.mockReset();
 	});
 

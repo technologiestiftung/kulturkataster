@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Ihre Anfrage zur Pflege des Kulturorts</title>
+  </head>
+  <body style="margin:0;padding:24px;background:#f8f6f2;font-family:Barlow,Arial,Helvetica,sans-serif;color:#161616;">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr><td align="center">
+      <table role="presentation" width="620" cellspacing="0" cellpadding="0" style="max-width:620px;width:100%;background:#ffffff;border:1px solid #e2dfdb;border-radius:12px;">
+        <tr><td style="padding:28px 24px 8px 24px;font-size:24px;font-weight:700;">Ihre Anfrage zur Pflege des Kulturorts {{ .Data.institution_name }}</td></tr>
+        <tr><td style="padding:0 24px 16px 24px;font-size:16px;line-height:1.6;">
+          <p style="margin:0 0 16px 0;">Guten Tag {{ .Data.first_name }} {{ .Data.last_name }},</p>
+          <p style="margin:0 0 16px 0;">vielen Dank für Ihre Anfrage, den Kulturort {{ .Data.institution_name }} im Kulturkataster zu pflegen. Wir haben Ihre Angaben geprüft.</p>
+          <p style="margin:0 0 16px 0;">Leider können wir Ihrer Anfrage in diesem Fall nicht nachkommen. Das kann z. B. daran liegen, dass die Zugehörigkeit zum Kulturort nicht ausreichend nachvollziehbar ist oder der Kulturort bereits einer anderen zuständigen Person zugeordnet ist.</p>
+          <p style="margin:0 0 16px 0;">Hilfreiche Informationen finden Sie in den FAQs im User-Bereich:<br /><a href="{{ .Data.faq_url }}" style="color:#161616;text-decoration:underline;">{{ .Data.faq_url }}</a></p>
+          <p style="margin:0 0 16px 0;">Sollten Sie darüber hinaus Fragen haben oder weitere Hinweise zur Zuordnung geben wollen, können Sie sich gern an unsere Redaktion wenden: <a href="mailto:info@kulturkataster.berlin" style="color:#161616;text-decoration:underline;">info@kulturkataster.berlin</a>.</p>
+          <p style="margin:0 0 8px 0;">Viele Grüße<br />vom Projektteam Kulturkataster</p>
+          <p style="margin:0;font-weight:600;">Kulturraum Berlin gGmbH</p>
+        </td></tr>
+      </table>
+    </td></tr></table>
+  </body>
+</html>
