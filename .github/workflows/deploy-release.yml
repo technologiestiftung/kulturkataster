@@ -3,6 +3,7 @@ name: Deploy App (Release)
 on:
   push:
     branches:
+      - "release/main-v*"
       - "release/v*"
       - "release/dev-v*"
   workflow_dispatch:
@@ -31,6 +32,12 @@ jobs:
           BRANCH="${GITHUB_REF_NAME}"
 
           case "$BRANCH" in
+            release/main-v*)
+              DEPLOY_TRACK="main"
+              ENVIRONMENT_NAME="main"
+              ENVIRONMENT_LABEL="prod"
+              RELEASE_TAG="${BRANCH#release/main-}"
+              ;;
             release/v*)
               DEPLOY_TRACK="main"
               ENVIRONMENT_NAME="main"
