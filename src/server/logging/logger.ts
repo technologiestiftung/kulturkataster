@@ -7,6 +7,7 @@ import {
 import { OTLPLogExporter } from "@opentelemetry/exporter-logs-otlp-http";
 import { resourceFromAttributes } from "@opentelemetry/resources";
 import { ATTR_SERVICE_NAME } from "@opentelemetry/semantic-conventions";
+import packageInfo from "../../../package.json";
 import { getRequestContext } from "@/server/logging/requestContext";
 
 export type LogLevel = "debug" | "info" | "warn" | "error";
@@ -60,7 +61,7 @@ const loggerProvider = new LoggerProvider({
 	processors: [new BatchLogRecordProcessor(new OTLPLogExporter({}))],
 });
 
-const otelLogger = loggerProvider.getLogger("app.logger", "1.0.0");
+const otelLogger = loggerProvider.getLogger("app.logger", packageInfo.version);
 
 function serializeError(error: unknown): SerializableError {
 	if (error instanceof Error) {

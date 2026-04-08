@@ -355,6 +355,7 @@ const renderFieldContent = (
 ) => {
 	const { t: tEnum } = useTranslation("enumMap");
 	const { t: tCommon } = useTranslation("common");
+	const { t: tContent } = useTranslation("content");
 	const value = resolveFieldValue(field, data);
 	const resolvedHref = resolveHref(field, value, data);
 	const action = getEditAction({
@@ -621,7 +622,9 @@ const renderFieldContent = (
 					)}
 					<h1 id="institution-title" className="font-bold wrap-anywhere">
 						<span className="bg-primary-light px-1">
-							{hasOriginal ? "Edited: " : "Addition: "}
+							{hasOriginal
+								? tContent("infoWrapper.diffLabel.edited")
+								: tContent("infoWrapper.diffLabel.addition")}
 						</span>
 						<span className="bg-primary-light px-1">{newDisplay}</span>
 					</h1>
@@ -647,7 +650,9 @@ const renderFieldContent = (
 					) : null}
 					<span className={cn(hasOriginal ? "block mt-1" : "")}>
 						<span className="bg-primary-light px-1">
-							{hasOriginal ? "Edited: " : "Addition: "}
+							{hasOriginal
+								? tContent("infoWrapper.diffLabel.edited")
+								: tContent("infoWrapper.diffLabel.addition")}
 						</span>
 						<span className="bg-primary-light px-1">{newDisplay}</span>
 					</span>
