@@ -459,6 +459,12 @@
 		"emptyMessage": "Keine Gruppen gefunden.",
 		"searchPlaceholder": "Gruppen durchsuchen..."
 	},
+	"infoWrapper": {
+		"diffLabel": {
+			"addition": "Ergänzung: ",
+			"edited": "Bearbeitet: "
+		}
+	},
 	"imprintModal": {
 		"chairman": {
 			"name": "Cerstin Richter-Kotowski, Staatssekretärin der Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt",

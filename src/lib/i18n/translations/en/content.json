@@ -459,6 +459,12 @@
 		"emptyMessage": "No groups found.",
 		"searchPlaceholder": "Browse groups..."
 	},
+	"infoWrapper": {
+		"diffLabel": {
+			"addition": "Addition: ",
+			"edited": "Edited: "
+		}
+	},
 	"imprintModal": {
 		"chairman": {
 			"name": "Cerstin Richter-Kotowski, State Secretary of the Senate Department for Culture and Social Cohesion",

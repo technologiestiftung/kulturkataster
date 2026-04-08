@@ -1,0 +1,978 @@
+{
+	"title": "Kulturkataster Logs",
+	"description": "Operational log dashboard for kulturkataster-frontend. Focuses on warn/error telemetry across client, server, and DB-tagged failures.",
+	"tags": ["logs", "frontend", "kulturkataster"],
+	"image": "",
+	"uploadedGrafana": false,
+	"version": "v4",
+	"panelMap": {},
+	"variables": {},
+	"layout": [
+		{
+			"h": 4,
+			"i": "11111111-1111-4111-8111-111111111111",
+			"moved": false,
+			"static": false,
+			"w": 3,
+			"x": 0,
+			"y": 0
+		},
+		{
+			"h": 4,
+			"i": "22222222-2222-4222-8222-222222222222",
+			"moved": false,
+			"static": false,
+			"w": 3,
+			"x": 3,
+			"y": 0
+		},
+		{
+			"h": 4,
+			"i": "33333333-3333-4333-8333-333333333333",
+			"moved": false,
+			"static": false,
+			"w": 3,
+			"x": 6,
+			"y": 0
+		},
+		{
+			"h": 4,
+			"i": "44444444-4444-4444-8444-444444444444",
+			"moved": false,
+			"static": false,
+			"w": 3,
+			"x": 9,
+			"y": 0
+		},
+		{
+			"h": 6,
+			"i": "55555555-5555-4555-8555-555555555555",
+			"moved": false,
+			"static": false,
+			"w": 6,
+			"x": 0,
+			"y": 4
+		},
+		{
+			"h": 6,
+			"i": "66666666-6666-4666-8666-666666666666",
+			"moved": false,
+			"static": false,
+			"w": 6,
+			"x": 6,
+			"y": 4
+		},
+		{
+			"h": 6,
+			"i": "77777777-7777-4777-8777-777777777777",
+			"moved": false,
+			"static": false,
+			"w": 6,
+			"x": 0,
+			"y": 10
+		},
+		{
+			"h": 6,
+			"i": "88888888-8888-4888-8888-888888888888",
+			"moved": false,
+			"static": false,
+			"w": 6,
+			"x": 6,
+			"y": 10
+		}
+	],
+	"widgets": [
+		{
+			"bucketCount": 30,
+			"bucketWidth": 0,
+			"columnUnits": {},
+			"contextLinks": {
+				"linksData": []
+			},
+			"customLegendColors": {},
+			"decimalPrecision": 2,
+			"description": "",
+			"fillSpans": false,
+			"id": "11111111-1111-4111-8111-111111111111",
+			"isLogScale": false,
+			"legendPosition": "bottom",
+			"mergeAllActiveQueries": false,
+			"nullZeroValues": "zero",
+			"opacity": "1",
+			"panelTypes": "value",
+			"query": {
+				"builder": {
+					"queryData": [
+						{
+							"aggregations": [
+								{
+									"expression": "count()"
+								}
+							],
+							"dataSource": "logs",
+							"disabled": false,
+							"expression": "A",
+							"filter": {
+								"expression": "service.name = 'kulturkataster-frontend' severity_text = 'ERROR'"
+							},
+							"functions": [],
+							"groupBy": [],
+							"having": {
+								"expression": ""
+							},
+							"legend": "Errors",
+							"limit": null,
+							"orderBy": [],
+							"queryName": "A",
+							"source": "",
+							"stepInterval": null
+						}
+					],
+					"queryFormulas": [],
+					"queryTraceOperator": []
+				},
+				"clickhouse_sql": [
+					{
+						"disabled": false,
+						"legend": "",
+						"name": "A",
+						"query": ""
+					}
+				],
+				"id": "11111111-aaaa-4aaa-8aaa-111111111111",
+				"promql": [
+					{
+						"disabled": false,
+						"legend": "",
+						"name": "A",
+						"query": ""
+					}
+				],
+				"queryType": "builder",
+				"unit": ""
+			},
+			"selectedLogFields": [
+				{
+					"dataType": "",
+					"fieldContext": "log",
+					"fieldDataType": "",
+					"isIndexed": false,
+					"name": "timestamp",
+					"signal": "logs",
+					"type": "log"
+				},
+				{
+					"dataType": "",
+					"fieldContext": "log",
+					"fieldDataType": "",
+					"isIndexed": false,
+					"name": "body",
+					"signal": "logs",
+					"type": "log"
+				}
+			],
+			"selectedTracesFields": [],
+			"softMax": 0,
+			"softMin": 0,
+			"stackedBarChart": false,
+			"thresholds": [],
+			"timePreferance": "GLOBAL_TIME",
+			"title": "Errors",
+			"yAxisUnit": "none"
+		},
+		{
+			"bucketCount": 30,
+			"bucketWidth": 0,
+			"columnUnits": {},
+			"contextLinks": {
+				"linksData": []
+			},
+			"customLegendColors": {},
+			"decimalPrecision": 2,
+			"description": "",
+			"fillSpans": false,
+			"id": "22222222-2222-4222-8222-222222222222",
+			"isLogScale": false,
+			"legendPosition": "bottom",
+			"mergeAllActiveQueries": false,
+			"nullZeroValues": "zero",
+			"opacity": "1",
+			"panelTypes": "value",
+			"query": {
+				"builder": {
+					"queryData": [
+						{
+							"aggregations": [
+								{
+									"expression": "count()"
+								}
+							],
+							"dataSource": "logs",
+							"disabled": false,
+							"expression": "A",
+							"filter": {
+								"expression": "service.name = 'kulturkataster-frontend' severity_text = 'WARN'"
+							},
+							"functions": [],
+							"groupBy": [],
+							"having": {
+								"expression": ""
+							},
+							"legend": "Warnings",
+							"limit": null,
+							"orderBy": [],
+							"queryName": "A",
+							"source": "",
+							"stepInterval": null
+						}
+					],
+					"queryFormulas": [],
+					"queryTraceOperator": []
+				},
+				"clickhouse_sql": [
+					{
+						"disabled": false,
+						"legend": "",
+						"name": "A",
+						"query": ""
+					}
+				],
+				"id": "22222222-bbbb-4bbb-8bbb-222222222222",
+				"promql": [
+					{
+						"disabled": false,
+						"legend": "",
+						"name": "A",
+						"query": ""
+					}
+				],
+				"queryType": "builder",
+				"unit": ""
+			},
+			"selectedLogFields": [
+				{
+					"dataType": "",
+					"fieldContext": "log",
+					"fieldDataType": "",
+					"isIndexed": false,
+					"name": "timestamp",
+					"signal": "logs",
+					"type": "log"
+				},
+				{
+					"dataType": "",
+					"fieldContext": "log",
+					"fieldDataType": "",
+					"isIndexed": false,
+					"name": "body",
+					"signal": "logs",
+					"type": "log"
+				}
+			],
+			"selectedTracesFields": [],
+			"softMax": 0,
+			"softMin": 0,
+			"stackedBarChart": false,
+			"thresholds": [],
+			"timePreferance": "GLOBAL_TIME",
+			"title": "Warnings",
+			"yAxisUnit": "none"
+		},
+		{
+			"bucketCount": 30,
+			"bucketWidth": 0,
+			"columnUnits": {},
+			"contextLinks": {
+				"linksData": []
+			},
+			"customLegendColors": {},
+			"decimalPrecision": 2,
+			"description": "",
+			"fillSpans": false,
+			"id": "33333333-3333-4333-8333-333333333333",
+			"isLogScale": false,
+			"legendPosition": "bottom",
+			"mergeAllActiveQueries": false,
+			"nullZeroValues": "zero",
+			"opacity": "1",
+			"panelTypes": "value",
+			"query": {
+				"builder": {
+					"queryData": [
+						{
+							"aggregations": [
+								{
+									"expression": "count()"
+								}
+							],
+							"dataSource": "logs",
+							"disabled": false,
+							"expression": "A",
+							"filter": {
+								"expression": "service.name = 'kulturkataster-frontend' source = 'client' severity_text IN ['WARN', 'ERROR']"
+							},
+							"functions": [],
+							"groupBy": [],
+							"having": {
+								"expression": ""
+							},
+							"legend": "Client issues",
+							"limit": null,
+							"orderBy": [],
+							"queryName": "A",
+							"source": "",
+							"stepInterval": null
+						}
+					],
+					"queryFormulas": [],
+					"queryTraceOperator": []
+				},
+				"clickhouse_sql": [
+					{
+						"disabled": false,
+						"legend": "",
+						"name": "A",
+						"query": ""
+					}
+				],
+				"id": "33333333-cccc-4ccc-8ccc-333333333333",
+				"promql": [
+					{
+						"disabled": false,
+						"legend": "",
+						"name": "A",
+						"query": ""
+					}
+				],
+				"queryType": "builder",
+				"unit": ""
+			},
+			"selectedLogFields": [
+				{
+					"dataType": "",
+					"fieldContext": "log",
+					"fieldDataType": "",
+					"isIndexed": false,
+					"name": "timestamp",
+					"signal": "logs",
+					"type": "log"
+				},
+				{
+					"dataType": "",
+					"fieldContext": "log",
+					"fieldDataType": "",
+					"isIndexed": false,
+					"name": "body",
+					"signal": "logs",
+					"type": "log"
+				}
+			],
+			"selectedTracesFields": [],
+			"softMax": 0,
+			"softMin": 0,
+			"stackedBarChart": false,
+			"thresholds": [],
+			"timePreferance": "GLOBAL_TIME",
+			"title": "Client Issues",
+			"yAxisUnit": "none"
+		},
+		{
+			"bucketCount": 30,
+			"bucketWidth": 0,
+			"columnUnits": {},
+			"contextLinks": {
+				"linksData": []
+			},
+			"customLegendColors": {},
+			"decimalPrecision": 2,
+			"description": "",
+			"fillSpans": false,
+			"id": "44444444-4444-4444-8444-444444444444",
+			"isLogScale": false,
+			"legendPosition": "bottom",
+			"mergeAllActiveQueries": false,
+			"nullZeroValues": "zero",
+			"opacity": "1",
+			"panelTypes": "value",
+			"query": {
+				"builder": {
+					"queryData": [
+						{
+							"aggregations": [
+								{
+									"expression": "count()"
+								}
+							],
+							"dataSource": "logs",
+							"disabled": false,
+							"expression": "A",
+							"filter": {
+								"expression": "service.name = 'kulturkataster-frontend' db_subsystem = 'db' severity_text IN ['WARN', 'ERROR']"
+							},
+							"functions": [],
+							"groupBy": [],
+							"having": {
+								"expression": ""
+							},
+							"legend": "DB-tagged failures",
+							"limit": null,
+							"orderBy": [],
+							"queryName": "A",
+							"source": "",
+							"stepInterval": null
+						}
+					],
+					"queryFormulas": [],
+					"queryTraceOperator": []
+				},
+				"clickhouse_sql": [
+					{
+						"disabled": false,
+						"legend": "",
+						"name": "A",
+						"query": ""
+					}
+				],
+				"id": "44444444-dddd-4ddd-8ddd-444444444444",
+				"promql": [
+					{
+						"disabled": false,
+						"legend": "",
+						"name": "A",
+						"query": ""
+					}
+				],
+				"queryType": "builder",
+				"unit": ""
+			},
+			"selectedLogFields": [
+				{
+					"dataType": "",
+					"fieldContext": "log",
+					"fieldDataType": "",
+					"isIndexed": false,
+					"name": "timestamp",
+					"signal": "logs",
+					"type": "log"
+				},
+				{
+					"dataType": "",
+					"fieldContext": "log",
+					"fieldDataType": "",
+					"isIndexed": false,
+					"name": "body",
+					"signal": "logs",
+					"type": "log"
+				}
+			],
+			"selectedTracesFields": [],
+			"softMax": 0,
+			"softMin": 0,
+			"stackedBarChart": false,
+			"thresholds": [],
+			"timePreferance": "GLOBAL_TIME",
+			"title": "DB-tagged Failures",
+			"yAxisUnit": "none"
+		},
+		{
+			"bucketCount": 30,
+			"bucketWidth": 0,
+			"columnUnits": {},
+			"contextLinks": {
+				"linksData": []
+			},
+			"customLegendColors": {},
+			"decimalPrecision": 2,
+			"description": "",
+			"fillSpans": false,
+			"id": "55555555-5555-4555-8555-555555555555",
+			"isLogScale": false,
+			"legendPosition": "bottom",
+			"mergeAllActiveQueries": false,
+			"nullZeroValues": "zero",
+			"opacity": "1",
+			"panelTypes": "graph",
+			"query": {
+				"builder": {
+					"queryData": [
+						{
+							"aggregations": [
+								{
+									"expression": "count()"
+								}
+							],
+							"dataSource": "logs",
+							"disabled": false,
+							"expression": "A",
+							"filter": {
+								"expression": "service.name = 'kulturkataster-frontend' source = 'server' severity_text IN ['WARN', 'ERROR']"
+							},
+							"functions": [],
+							"groupBy": [],
+							"having": {
+								"expression": ""
+							},
+							"legend": "Server issues",
+							"limit": null,
+							"orderBy": [],
+							"queryName": "A",
+							"source": "",
+							"stepInterval": null
+						},
+						{
+							"aggregations": [
+								{
+									"expression": "count()"
+								}
+							],
+							"dataSource": "logs",
+							"disabled": false,
+							"expression": "B",
+							"filter": {
+								"expression": "service.name = 'kulturkataster-frontend' source = 'client' severity_text IN ['WARN', 'ERROR']"
+							},
+							"functions": [],
+							"groupBy": [],
+							"having": {
+								"expression": ""
+							},
+							"legend": "Client issues",
+							"limit": null,
+							"orderBy": [],
+							"queryName": "B",
+							"source": "",
+							"stepInterval": null
+						}
+					],
+					"queryFormulas": [],
+					"queryTraceOperator": []
+				},
+				"clickhouse_sql": [
+					{
+						"disabled": false,
+						"legend": "",
+						"name": "A",
+						"query": ""
+					},
+					{
+						"disabled": false,
+						"legend": "",
+						"name": "B",
+						"query": ""
+					}
+				],
+				"id": "55555555-eeee-4eee-8eee-555555555555",
+				"promql": [
+					{
+						"disabled": false,
+						"legend": "",
+						"name": "A",
+						"query": ""
+					},
+					{
+						"disabled": false,
+						"legend": "",
+						"name": "B",
+						"query": ""
+					}
+				],
+				"queryType": "builder",
+				"unit": ""
+			},
+			"selectedLogFields": [
+				{
+					"dataType": "",
+					"fieldContext": "log",
+					"fieldDataType": "",
+					"isIndexed": false,
+					"name": "timestamp",
+					"signal": "logs",
+					"type": "log"
+				},
+				{
+					"dataType": "",
+					"fieldContext": "log",
+					"fieldDataType": "",
+					"isIndexed": false,
+					"name": "body",
+					"signal": "logs",
+					"type": "log"
+				}
+			],
+			"selectedTracesFields": [],
+			"softMax": 0,
+			"softMin": 0,
+			"stackedBarChart": false,
+			"thresholds": [],
+			"timePreferance": "GLOBAL_TIME",
+			"title": "Warn/Error Trend",
+			"yAxisUnit": "none"
+		},
+		{
+			"bucketCount": 30,
+			"bucketWidth": 0,
+			"columnUnits": {
+				"A.count()": "short"
+			},
+			"columnWidths": {
+				"A.count()": 120,
+				"source": 120,
+				"subsystem": 160
+			},
+			"contextLinks": {
+				"linksData": []
+			},
+			"customLegendColors": {},
+			"decimalPrecision": 2,
+			"description": "",
+			"fillSpans": false,
+			"id": "66666666-6666-4666-8666-666666666666",
+			"isLogScale": false,
+			"legendPosition": "bottom",
+			"mergeAllActiveQueries": false,
+			"nullZeroValues": "zero",
+			"opacity": "1",
+			"panelTypes": "table",
+			"query": {
+				"builder": {
+					"queryData": [
+						{
+							"aggregations": [
+								{
+									"expression": "count()"
+								}
+							],
+							"dataSource": "logs",
+							"disabled": false,
+							"expression": "A",
+							"filter": {
+								"expression": "service.name = 'kulturkataster-frontend' severity_text IN ['WARN', 'ERROR']"
+							},
+							"functions": [],
+							"groupBy": [
+								{
+									"dataType": "string",
+									"id": "source--string--attribute",
+									"isColumn": false,
+									"isJSON": false,
+									"key": "source",
+									"type": "attribute"
+								},
+								{
+									"dataType": "string",
+									"id": "subsystem--string--attribute",
+									"isColumn": false,
+									"isJSON": false,
+									"key": "subsystem",
+									"type": "attribute"
+								}
+							],
+							"having": {
+								"expression": ""
+							},
+							"legend": "",
+							"limit": null,
+							"orderBy": [],
+							"queryName": "A",
+							"source": "",
+							"stepInterval": null
+						}
+					],
+					"queryFormulas": [],
+					"queryTraceOperator": []
+				},
+				"clickhouse_sql": [
+					{
+						"disabled": false,
+						"legend": "",
+						"name": "A",
+						"query": ""
+					}
+				],
+				"id": "66666666-ffff-4fff-8fff-666666666666",
+				"promql": [
+					{
+						"disabled": false,
+						"legend": "",
+						"name": "A",
+						"query": ""
+					}
+				],
+				"queryType": "builder",
+				"unit": ""
+			},
+			"selectedLogFields": [
+				{
+					"dataType": "",
+					"fieldContext": "log",
+					"fieldDataType": "",
+					"isIndexed": false,
+					"name": "timestamp",
+					"signal": "logs",
+					"type": "log"
+				},
+				{
+					"dataType": "",
+					"fieldContext": "log",
+					"fieldDataType": "",
+					"isIndexed": false,
+					"name": "body",
+					"signal": "logs",
+					"type": "log"
+				}
+			],
+			"selectedTracesFields": [],
+			"softMax": 0,
+			"softMin": 0,
+			"stackedBarChart": false,
+			"thresholds": [],
+			"timePreferance": "GLOBAL_TIME",
+			"title": "Issues by Source and Subsystem",
+			"yAxisUnit": "none"
+		},
+		{
+			"bucketCount": 30,
+			"bucketWidth": 0,
+			"columnUnits": {
+				"A.count()": "short"
+			},
+			"columnWidths": {
+				"A.count()": 120,
+				"event": 260,
+				"subsystem": 160
+			},
+			"contextLinks": {
+				"linksData": []
+			},
+			"customLegendColors": {},
+			"decimalPrecision": 2,
+			"description": "",
+			"fillSpans": false,
+			"id": "77777777-7777-4777-8777-777777777777",
+			"isLogScale": false,
+			"legendPosition": "bottom",
+			"mergeAllActiveQueries": false,
+			"nullZeroValues": "zero",
+			"opacity": "1",
+			"panelTypes": "table",
+			"query": {
+				"builder": {
+					"queryData": [
+						{
+							"aggregations": [
+								{
+									"expression": "count()"
+								}
+							],
+							"dataSource": "logs",
+							"disabled": false,
+							"expression": "A",
+							"filter": {
+								"expression": "service.name = 'kulturkataster-frontend' severity_text = 'ERROR'"
+							},
+							"functions": [],
+							"groupBy": [
+								{
+									"dataType": "string",
+									"id": "subsystem--string--attribute",
+									"isColumn": false,
+									"isJSON": false,
+									"key": "subsystem",
+									"type": "attribute"
+								},
+								{
+									"dataType": "string",
+									"id": "event--string--attribute",
+									"isColumn": false,
+									"isJSON": false,
+									"key": "event",
+									"type": "attribute"
+								}
+							],
+							"having": {
+								"expression": ""
+							},
+							"legend": "",
+							"limit": null,
+							"orderBy": [],
+							"queryName": "A",
+							"source": "",
+							"stepInterval": null
+						}
+					],
+					"queryFormulas": [],
+					"queryTraceOperator": []
+				},
+				"clickhouse_sql": [
+					{
+						"disabled": false,
+						"legend": "",
+						"name": "A",
+						"query": ""
+					}
+				],
+				"id": "77777777-1111-4111-8111-777777777777",
+				"promql": [
+					{
+						"disabled": false,
+						"legend": "",
+						"name": "A",
+						"query": ""
+					}
+				],
+				"queryType": "builder",
+				"unit": ""
+			},
+			"selectedLogFields": [
+				{
+					"dataType": "",
+					"fieldContext": "log",
+					"fieldDataType": "",
+					"isIndexed": false,
+					"name": "timestamp",
+					"signal": "logs",
+					"type": "log"
+				},
+				{
+					"dataType": "",
+					"fieldContext": "log",
+					"fieldDataType": "",
+					"isIndexed": false,
+					"name": "body",
+					"signal": "logs",
+					"type": "log"
+				}
+			],
+			"selectedTracesFields": [],
+			"softMax": 0,
+			"softMin": 0,
+			"stackedBarChart": false,
+			"thresholds": [],
+			"timePreferance": "GLOBAL_TIME",
+			"title": "Errors by Event",
+			"yAxisUnit": "none"
+		},
+		{
+			"bucketCount": 30,
+			"bucketWidth": 0,
+			"columnUnits": {
+				"A.count()": "short"
+			},
+			"columnWidths": {
+				"A.count()": 120,
+				"event": 260,
+				"request_id": 220
+			},
+			"contextLinks": {
+				"linksData": []
+			},
+			"customLegendColors": {},
+			"decimalPrecision": 2,
+			"description": "",
+			"fillSpans": false,
+			"id": "88888888-8888-4888-8888-888888888888",
+			"isLogScale": false,
+			"legendPosition": "bottom",
+			"mergeAllActiveQueries": false,
+			"nullZeroValues": "zero",
+			"opacity": "1",
+			"panelTypes": "table",
+			"query": {
+				"builder": {
+					"queryData": [
+						{
+							"aggregations": [
+								{
+									"expression": "count()"
+								}
+							],
+							"dataSource": "logs",
+							"disabled": false,
+							"expression": "A",
+							"filter": {
+								"expression": "service.name = 'kulturkataster-frontend' severity_text IN ['WARN', 'ERROR']"
+							},
+							"functions": [],
+							"groupBy": [
+								{
+									"dataType": "string",
+									"id": "event--string--attribute",
+									"isColumn": false,
+									"isJSON": false,
+									"key": "event",
+									"type": "attribute"
+								},
+								{
+									"dataType": "string",
+									"id": "request_id--string--attribute",
+									"isColumn": false,
+									"isJSON": false,
+									"key": "request_id",
+									"type": "attribute"
+								}
+							],
+							"having": {
+								"expression": ""
+							},
+							"legend": "",
+							"limit": 20,
+							"orderBy": [],
+							"queryName": "A",
+							"source": "",
+							"stepInterval": null
+						}
+					],
+					"queryFormulas": [],
+					"queryTraceOperator": []
+				},
+				"clickhouse_sql": [
+					{
+						"disabled": false,
+						"legend": "",
+						"name": "A",
+						"query": ""
+					}
+				],
+				"id": "88888888-2222-4222-8222-888888888888",
+				"promql": [
+					{
+						"disabled": false,
+						"legend": "",
+						"name": "A",
+						"query": ""
+					}
+				],
+				"queryType": "builder",
+				"unit": ""
+			},
+			"selectedLogFields": [
+				{
+					"dataType": "",
+					"fieldContext": "log",
+					"fieldDataType": "",
+					"isIndexed": false,
+					"name": "timestamp",
+					"signal": "logs",
+					"type": "log"
+				},
+				{
+					"dataType": "",
+					"fieldContext": "log",
+					"fieldDataType": "",
+					"isIndexed": false,
+					"name": "body",
+					"signal": "logs",
+					"type": "log"
+				}
+			],
+			"selectedTracesFields": [],
+			"softMax": 0,
+			"softMin": 0,
+			"stackedBarChart": false,
+			"thresholds": [],
+			"timePreferance": "GLOBAL_TIME",
+			"title": "Recent Event Buckets",
+			"yAxisUnit": "none"
+		}
+	]
+}
