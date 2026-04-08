@@ -85,7 +85,7 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
             type=raw,value=${{ env.RELEASE_TAG }},enable=${{ env.DEPLOY_TRACK == 'main' }}
-            type=raw,value=dev-${{ env.RELEASE_TAG }},enable=${{ env.DEPLOY_TRACK == 'dev' }}
+            type=raw,value=${{ env.RELEASE_TAG }},enable=${{ env.DEPLOY_TRACK == 'dev' }}
           flavor: |
             latest=false
 
