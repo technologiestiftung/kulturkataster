@@ -532,7 +532,6 @@ export function UserFormModal({
 				label: t("userFormModal.status.approvalPending"),
 			},
 			{ value: "active", label: t("userFormModal.status.active") },
-			{ value: "inactive", label: t("userFormModal.status.inactive") },
 			{ value: "banned", label: t("userFormModal.status.banned") },
 		],
 		[t],

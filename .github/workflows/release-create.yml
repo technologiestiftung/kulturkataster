@@ -42,46 +42,86 @@ jobs:
         run: |
           SOURCE_BRANCH="${GITHUB_REF_NAME}"
 
-          case "$SOURCE_BRANCH" in
-            main)
-              RELEASE_BRANCH_PREFIX="release/v"
-              IS_PRERELEASE="false"
-              ;;
-            dev)
-              RELEASE_BRANCH_PREFIX="release/dev-v"
-              IS_PRERELEASE="true"
-              ;;
-            *)
-              echo "Releases can only be created from main or dev. Current branch: $SOURCE_BRANCH"
-              exit 1
-              ;;
-          esac
-
-          LATEST_TAG=$(git tag --list 'v[0-9]*' --sort=-v:refname | head -n1)
-          if [ -z "$LATEST_TAG" ]; then
-            LATEST_TAG="v0.0.0"
+          if [ "$SOURCE_BRANCH" != "main" ] && [ "$SOURCE_BRANCH" != "dev" ]; then
+            echo "Releases can only be created from main or dev. Current branch: $SOURCE_BRANCH"
+            exit 1
           fi
 
-          LATEST_VERSION="${LATEST_TAG#v}"
-          NEW_VERSION=$(node -e '
-            const bumpType = process.argv[1];
-            const parts = process.argv[2].split(".").map(Number);
-            if (parts.length !== 3 || parts.some(Number.isNaN)) {
-              throw new Error(`Invalid semantic version: ${process.argv[2]}`);
-            }
-            const [major, minor, patch] = parts;
-            if (bumpType === "major") {
-              process.stdout.write(`${major + 1}.0.0`);
-            } else if (bumpType === "minor") {
-              process.stdout.write(`${major}.${minor + 1}.0`);
-            } else if (bumpType === "patch") {
-              process.stdout.write(`${major}.${minor}.${patch + 1}`);
-            } else {
-              throw new Error(`Unsupported version bump type: ${bumpType}`);
-            }
-          ' "${{ github.event.inputs.version }}" "$LATEST_VERSION")
+          VERSION_INFO=$(node - <<'EOF'
+          const { execSync } = require("child_process");
 
-          RELEASE_BRANCH="${RELEASE_BRANCH_PREFIX}${NEW_VERSION}"
+          const sourceBranch = process.env.SOURCE_BRANCH;
+          const bumpType = process.env.BUMP_TYPE;
+
+          const tags = execSync("git tag --list", { encoding: "utf8" })
+            .split("\n")
+            .map((tag) => tag.trim())
+            .filter(Boolean);
+
+          const stableTags = tags
+            .map((tag) => {
+              const match = /^v(\d+)\.(\d+)\.(\d+)$/.exec(tag);
+              if (!match) return null;
+              return {
+                tag,
+                version: [Number(match[1]), Number(match[2]), Number(match[3])],
+              };
+            })
+            .filter(Boolean)
+            .sort((a, b) => {
+              for (let index = 0; index < 3; index += 1) {
+                if (a.version[index] !== b.version[index]) {
+                  return b.version[index] - a.version[index];
+                }
+              }
+              return 0;
+            });
+
+          const latestStable = stableTags[0]?.version ?? [0, 0, 0];
+          const [major, minor, patch] = latestStable;
+
+          let nextStable;
+          if (bumpType === "major") {
+            nextStable = [major + 1, 0, 0];
+          } else if (bumpType === "minor") {
+            nextStable = [major, minor + 1, 0];
+          } else if (bumpType === "patch") {
+            nextStable = [major, minor, patch + 1];
+          } else {
+            throw new Error(`Unsupported version bump type: ${bumpType}`);
+          }
+
+          const baseVersion = nextStable.join(".");
+
+          if (sourceBranch === "main") {
+            process.stdout.write(JSON.stringify({
+              version: baseVersion,
+              releaseBranch: `release/v${baseVersion}`,
+              isPrerelease: false,
+            }));
+            process.exit(0);
+          }
+
+          const prereleasePattern = new RegExp(`^v${baseVersion.replace(/\./g, "\\.")}-dev\\.(\\d+)$`);
+          const nextPrereleaseNumber = tags.reduce((max, tag) => {
+            const match = prereleasePattern.exec(tag);
+            if (!match) return max;
+            return Math.max(max, Number(match[1]));
+          }, 0) + 1;
+
+          const prereleaseVersion = `${baseVersion}-dev.${nextPrereleaseNumber}`;
+
+          process.stdout.write(JSON.stringify({
+            version: prereleaseVersion,
+            releaseBranch: `release/v${prereleaseVersion}`,
+            isPrerelease: true,
+          }));
+          EOF
+          )
+
+          NEW_VERSION=$(node -e 'const info = JSON.parse(process.argv[1]); process.stdout.write(info.version);' "$VERSION_INFO")
+          RELEASE_BRANCH=$(node -e 'const info = JSON.parse(process.argv[1]); process.stdout.write(info.releaseBranch);' "$VERSION_INFO")
+          IS_PRERELEASE=$(node -e 'const info = JSON.parse(process.argv[1]); process.stdout.write(String(info.isPrerelease));' "$VERSION_INFO")
 
           if git ls-remote --exit-code --heads origin "${RELEASE_BRANCH}" >/dev/null 2>&1 || \
             git show-ref --verify --quiet "refs/heads/${RELEASE_BRANCH}"; then
@@ -108,6 +148,9 @@ jobs:
           echo "release_branch=${RELEASE_BRANCH}" >> "$GITHUB_OUTPUT"
           echo "source_branch=${SOURCE_BRANCH}" >> "$GITHUB_OUTPUT"
           echo "is_prerelease=${IS_PRERELEASE}" >> "$GITHUB_OUTPUT"
+        env:
+          SOURCE_BRANCH: ${{ github.ref_name }}
+          BUMP_TYPE: ${{ github.event.inputs.version }}
 
       - name: Create GitHub Release
         env:
