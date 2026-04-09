@@ -21,11 +21,7 @@ type AuthChoiceContentProps = {
 	onGuestContinue: () => void;
 };
 
-function AuthChoiceContent({
-	t,
-	onLogin,
-	onGuestContinue,
-}: AuthChoiceContentProps) {
+function AuthChoiceContent({ t, onGuestContinue }: AuthChoiceContentProps) {
 	return (
 		<div className="my-18 space-y-10">
 			<div>
@@ -43,11 +39,11 @@ function AuthChoiceContent({
 						{t("institutionDraftIntroModal.choice.login.description")}
 					</p>
 				</div>
-				<div className="flex ">
+				{/* <div className="flex ">
 					<Button variant="primary" onClick={onLogin}>
 						{t("institutionDraftIntroModal.choice.login.cta")}
 					</Button>
-				</div>
+				</div> */}
 			</div>
 			<div className="space-y-2">
 				<div>
