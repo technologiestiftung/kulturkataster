@@ -2,9 +2,7 @@ import { describe, expect, it, vi, beforeEach } from "vitest";
 import type { Prisma } from "@/generated/prisma";
 import { getCategoriesWithSubcategories } from "@/server/actions/categories";
 import { getDistricts } from "@/server/actions/addresses";
-import {
-	searchInstitutions,
-} from "@/server/actions/institutions";
+import { searchInstitutions } from "@/server/actions/institutions";
 
 vi.mock("@/server/actions/auth", () => ({
 	getCurrentUserId: vi.fn().mockResolvedValue("user-1"),
