@@ -65,7 +65,12 @@ type GroupUpdateInput = GroupInput & { id: number };
 
 export async function createGroup(
 	input: GroupInput,
-): Promise<ActionResult<Awaited<ReturnType<typeof groupRepo.create>>, GroupActionErrorCode>> {
+): Promise<
+	ActionResult<
+		Awaited<ReturnType<typeof groupRepo.create>>,
+		GroupActionErrorCode
+	>
+> {
 	return runWithServerRequestContext(
 		async () => {
 			const currentUserId = await getCurrentUserId();
@@ -94,7 +99,12 @@ export async function createGroup(
 
 export async function updateGroup(
 	input: GroupUpdateInput,
-): Promise<ActionResult<Awaited<ReturnType<typeof groupRepo.update>>, GroupActionErrorCode>> {
+): Promise<
+	ActionResult<
+		Awaited<ReturnType<typeof groupRepo.update>>,
+		GroupActionErrorCode
+	>
+> {
 	return runWithServerRequestContext(
 		async () => {
 			const currentUserId = await getCurrentUserId();

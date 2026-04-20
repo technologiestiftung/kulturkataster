@@ -7,7 +7,9 @@ const include = {
 	users: true,
 } as const;
 
-const dedupeTablePermissions = (permissions?: RoleCreateInput["tablePermissions"]) => {
+const dedupeTablePermissions = (
+	permissions?: RoleCreateInput["tablePermissions"],
+) => {
 	if (!permissions) return undefined;
 
 	const uniquePermissions = new Map<
@@ -25,7 +27,9 @@ const dedupeTablePermissions = (permissions?: RoleCreateInput["tablePermissions"
 	return [...uniquePermissions.values()];
 };
 
-const dedupeFieldPermissions = (permissions?: RoleCreateInput["fieldPermissions"]) => {
+const dedupeFieldPermissions = (
+	permissions?: RoleCreateInput["fieldPermissions"],
+) => {
 	if (!permissions) return undefined;
 
 	const uniquePermissions = new Map<
