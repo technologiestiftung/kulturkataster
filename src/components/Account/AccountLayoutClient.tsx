@@ -15,7 +15,10 @@ import { RefreshCw } from "lucide-react";
 import { Profile } from "@/types";
 import { clearAccountStore } from "@/lib/store/accountStore";
 import { reportClientTelemetry } from "@/lib/utils/clientTelemetry";
-import { devTimings, installModalNavigationTiming } from "@/lib/utils/devTimings";
+import {
+	devTimings,
+	installModalNavigationTiming,
+} from "@/lib/utils/devTimings";
 
 type TabConfig = {
 	value: string;
