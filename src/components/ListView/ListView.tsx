@@ -66,8 +66,7 @@ const ListView: FC = () => {
 		subcategoryCounts,
 		categories,
 		districts,
-		initializeCategories,
-		initializeDistricts,
+		initializePublicData,
 	} = useInstitutionStore();
 	const router = useRouter();
 	const pathname = usePathname();
@@ -235,13 +234,10 @@ const ListView: FC = () => {
 	}, [activeLetter, enabledLetters]);
 
 	useEffect(() => {
-		if (categories === null) {
-			initializeCategories();
+		if (categories === null || districts.length === 0) {
+			void initializePublicData();
 		}
-		if (districts.length === 0) {
-			initializeDistricts();
-		}
-	}, [categories, districts.length, initializeCategories, initializeDistricts]);
+	}, [categories, districts.length, initializePublicData]);
 
 	useEffect(() => {
 		let timeoutId: ReturnType<typeof setTimeout>;
@@ -389,8 +385,7 @@ const ListView: FC = () => {
 
 	const loadingFilters = categories === null || districts.length === 0;
 	const handleFilterRetry = () => {
-		initializeCategories();
-		initializeDistricts();
+		void initializePublicData();
 	};
 
 	return (

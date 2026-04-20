@@ -21,8 +21,7 @@ type InstitutionStoreState = {
 		subcategories: [];
 	}> | null;
 	districts: string[];
-	initializeCategories: ReturnType<typeof vi.fn>;
-	initializeDistricts: ReturnType<typeof vi.fn>;
+	initializePublicData: ReturnType<typeof vi.fn>;
 };
 
 const storeState: InstitutionStoreState = {
@@ -34,8 +33,7 @@ const storeState: InstitutionStoreState = {
 	subcategoryCounts: {},
 	categories: [{ id: 1, key: "theater", name: "Theater", subcategories: [] }],
 	districts: ["Mitte"],
-	initializeCategories: vi.fn(),
-	initializeDistricts: vi.fn(),
+	initializePublicData: vi.fn(),
 };
 
 const mockScrollToIndex = vi.fn();
