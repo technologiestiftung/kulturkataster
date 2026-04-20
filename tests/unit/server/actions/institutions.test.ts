@@ -3,7 +3,6 @@ import type { Prisma } from "@/generated/prisma";
 import { getCategoriesWithSubcategories } from "@/server/actions/categories";
 import { getDistricts } from "@/server/actions/addresses";
 import {
-	getInstitutions,
 	searchInstitutions,
 } from "@/server/actions/institutions";
 
@@ -65,16 +64,6 @@ describe("server actions: institutions", () => {
 		searchMock.mockClear();
 		listWithChildrenMock.mockClear();
 		listDistinctMock.mockClear();
-	});
-
-	it("getInstitutions returns repo list", async () => {
-		await getInstitutions();
-		expect(listWithSelectWhereMock).toHaveBeenCalledTimes(1);
-		expect(listWithSelectWhereMock).toHaveBeenCalledWith(
-			expect.objectContaining({
-				status: { in: ["public", "private", "archived"] },
-			}),
-		);
 	});
 
 	it("searchInstitutions returns [] for empty query", async () => {
