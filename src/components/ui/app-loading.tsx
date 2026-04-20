@@ -9,7 +9,7 @@ export function AppLoading({ overlay = false }: AppLoadingProps) {
 		<div
 			className={
 				overlay
-					? "fixed inset-0 z-50 flex items-center justify-center bg-background/30 backdrop-blur-sm"
+					? "fixed inset-0 z-50 flex items-center justify-center bg-foreground/30 backdrop-blur-sm"
 					: "flex h-full w-full items-center justify-center"
 			}
 		>
