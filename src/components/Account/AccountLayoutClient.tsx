@@ -1,6 +1,6 @@
 "use client";
 
-import { useTransition, type ReactNode } from "react";
+import { useTransition, useEffect, useRef, type ReactNode } from "react";
 import { ButtonWithTooltip } from "@/components/ui/button-with-tooltip";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
@@ -15,6 +15,7 @@ import { RefreshCw } from "lucide-react";
 import { Profile } from "@/types";
 import { clearAccountStore } from "@/lib/store/accountStore";
 import { reportClientTelemetry } from "@/lib/utils/clientTelemetry";
+import { devTimings, installModalNavigationTiming } from "@/lib/utils/devTimings";
 
 type TabConfig = {
 	value: string;
@@ -86,6 +87,19 @@ export function AccountLayoutClient({
 		label: t(tab.labelKey, { defaultValue: tab.defaultLabel }),
 	}));
 
+	useEffect(() => {
+		return installModalNavigationTiming();
+	}, []);
+
+	const isFirstRender = useRef(true);
+	useEffect(() => {
+		if (isFirstRender.current) {
+			isFirstRender.current = false;
+			return;
+		}
+		devTimings.end();
+	}, [pathname]);
+
 	const getCurrentTab = () => {
 		if (allowedTabs.length === 0) return "";
 		return (
@@ -96,6 +110,7 @@ export function AccountLayoutClient({
 
 	const handleTabChange = (value: string) => {
 		if (!allowedTabs.includes(value)) return;
+		devTimings.start(`tab switch → ${value}`);
 		router.push(toLocalePath(`/account/${value}`));
 	};
 
