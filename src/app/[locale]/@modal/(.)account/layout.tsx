@@ -8,9 +8,5 @@ type AccountModalLayoutProps = {
 export default function AccountModalLayout({
 	children,
 }: AccountModalLayoutProps) {
-	return (
-		<Suspense fallback={<AppLoading overlay />}>
-			{children}
-		</Suspense>
-	);
+	return <Suspense fallback={<AppLoading overlay />}>{children}</Suspense>;
 }
