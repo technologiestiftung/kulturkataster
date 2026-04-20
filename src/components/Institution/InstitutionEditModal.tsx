@@ -130,7 +130,9 @@ export function InstitutionEditModal({
 		if (!resolvedInstitutionWithFallback || isDeleting) return;
 		setIsDeleting(true);
 
-		const deleteResult = await deleteInstitution(resolvedInstitutionWithFallback.id);
+		const deleteResult = await deleteInstitution(
+			resolvedInstitutionWithFallback.id,
+		);
 		if (deleteResult.ok) {
 			removeInstitution(resolvedInstitutionWithFallback.id);
 			showSuccessToast(

@@ -543,13 +543,13 @@ export async function sendRoleDecisionEmailManual(input: {
 			}
 
 			if (input.decision === "approved" && user.status !== "active") {
-					try {
-						const updatedUser = await userRepo.update(user.id, {
-							status: "active",
-						});
-						revalidateAccount();
-						return actionOk(updatedUser);
-					} catch (error) {
+				try {
+					const updatedUser = await userRepo.update(user.id, {
+						status: "active",
+					});
+					revalidateAccount();
+					return actionOk(updatedUser);
+				} catch (error) {
 					logger.error("user.role_decision.status_update_failed", error, {
 						subsystem: "user",
 						db_subsystem: "db",
