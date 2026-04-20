@@ -244,6 +244,15 @@
 			"update": "Speichern",
 			"updateLoading": "Wird gespeichert..."
 		},
+		"errors": {
+			"forbidden": "Sie dürfen diese Kategorie nicht ändern.",
+			"hasSubcategories": "Bitte entfernen Sie zuerst alle Unterkategorien, bevor Sie diese Kategorie löschen.",
+			"keyLocked": "Der Kategorien-Schlüssel kann nicht geändert werden.",
+			"keyTaken": "Eine Kategorie mit diesem Schlüssel existiert bereits.",
+			"notFound": "Die ausgewählte Kategorie existiert nicht mehr.",
+			"selfParent": "Eine Kategorie kann nicht ihre eigene Oberkategorie sein.",
+			"unexpected": "Die Kategorie konnte nicht gespeichert werden. Bitte versuchen Sie es erneut."
+		},
 		"delete": {
 			"button": "Löschen",
 			"cancel": "Abbrechen",
@@ -362,6 +371,12 @@
 			"creating": "Gruppe wird erstellt...",
 			"save": "Änderungen speichern",
 			"saving": "Änderungen werden gespeichert..."
+		},
+		"errors": {
+			"forbidden": "Sie dürfen diese Gruppe nicht ändern.",
+			"nameTaken": "Eine Gruppe mit diesem Namen existiert bereits.",
+			"notFound": "Die ausgewählte Gruppe existiert nicht mehr.",
+			"unexpected": "Die Gruppe konnte nicht gespeichert werden. Bitte versuchen Sie es erneut."
 		},
 		"delete": {
 			"button": "Löschen",
@@ -750,6 +765,12 @@
 			"save": "Speichern",
 			"saving": "Wird gespeichert..."
 		},
+		"errors": {
+			"forbidden": "Sie dürfen diesen Kulturort nicht ändern.",
+			"invalidInput": "Bitte prüfen Sie die eingegebenen Daten und versuchen Sie es erneut.",
+			"notFound": "Der ausgewählte Kulturort existiert nicht mehr.",
+			"unexpected": "Der Kulturort konnte nicht gespeichert werden. Bitte versuchen Sie es erneut."
+		},
 		"delete": {
 			"button": "Löschen",
 			"cancel": "Abbrechen",
@@ -999,6 +1020,13 @@
 			"creating": "Rolle wird erstellt...",
 			"save": "Änderungen speichern",
 			"saving": "Änderungen werden gespeichert..."
+		},
+		"errors": {
+			"forbidden": "Sie dürfen diese Rolle nicht ändern.",
+			"nameTaken": "Eine Rolle mit diesem Namen existiert bereits.",
+			"notFound": "Die ausgewählte Rolle existiert nicht mehr.",
+			"systemRole": "Systemrollen können nicht gelöscht werden.",
+			"unexpected": "Die Rolle konnte nicht gespeichert werden. Bitte versuchen Sie es erneut."
 		},
 		"delete": {
 			"button": "Löschen",
@@ -1545,6 +1573,13 @@
 			"creating": "Wird angelegt...",
 			"save": "Änderungen speichern",
 			"saving": "Wird gespeichert..."
+		},
+		"errors": {
+			"emailTaken": "Eine Nutzerin oder ein Nutzer mit dieser E-Mail-Adresse existiert bereits.",
+			"forbidden": "Sie dürfen diese Nutzerin oder diesen Nutzer nicht ändern.",
+			"invalidInput": "Bitte prüfen Sie die eingegebenen Daten und versuchen Sie es erneut.",
+			"notFound": "Die ausgewählte Nutzerin oder der ausgewählte Nutzer existiert nicht mehr.",
+			"unexpected": "Die Nutzerin oder der Nutzer konnte nicht gespeichert werden. Bitte versuchen Sie es erneut."
 		},
 		"complianceResend": {
 			"description": "Senden Sie die DSGVO-Compliance-E-Mail erneut an die Nutzerin oder den Nutzer.",

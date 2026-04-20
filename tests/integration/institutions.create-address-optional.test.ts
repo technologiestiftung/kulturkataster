@@ -54,7 +54,10 @@ describe("createInstitution integration", () => {
 					lng: 13.404954,
 				} as never,
 			}),
-		).resolves.toEqual({ id: 1, name: "LatLng only" });
+		).resolves.toEqual({
+			ok: true,
+			data: { id: 1, name: "LatLng only" },
+		});
 
 		expect(createMock).toHaveBeenCalledWith(
 			expect.objectContaining({
@@ -137,7 +140,10 @@ describe("createInstitution integration", () => {
 				userIds: ["user-a", "user-b"],
 				groupIds: [50, 60],
 			}),
-		).resolves.toEqual({ id: 1, name: "LatLng only" });
+		).resolves.toEqual({
+			ok: true,
+			data: { id: 1, name: "LatLng only" },
+		});
 
 		expect(createMock).toHaveBeenCalledWith(
 			expect.objectContaining({

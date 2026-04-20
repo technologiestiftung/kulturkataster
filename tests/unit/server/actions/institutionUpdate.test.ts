@@ -53,8 +53,9 @@ describe("server actions: institutions update", () => {
 		getTableScopeMock.mockReturnValue("all");
 		updateMock.mockResolvedValue({ id: 1 });
 
-		await updateInstitution({ id: 1, name: "Updated", address: null });
+		const result = await updateInstitution({ id: 1, name: "Updated", address: null });
 
+		expect(result).toMatchObject({ ok: true });
 		expect(updateMock).toHaveBeenCalledWith(
 			1,
 			expect.objectContaining({ name: "Updated" }),
@@ -67,8 +68,9 @@ describe("server actions: institutions update", () => {
 		findFirstWithIncludeMock.mockResolvedValue({ id: 1 });
 		updateMock.mockResolvedValue({ id: 1, name: "Updated" });
 
-		await updateInstitution({ id: 1, name: "Updated", address: null });
+		const result = await updateInstitution({ id: 1, name: "Updated", address: null });
 
+		expect(result).toMatchObject({ ok: true });
 		expect(findFirstWithIncludeMock).toHaveBeenCalledWith({ id: 1, users: {} });
 		expect(updateMock).toHaveBeenCalledWith(
 			1,

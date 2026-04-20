@@ -72,7 +72,7 @@ describe("AccountEditForm", () => {
 	});
 
 	it("submits updated profile data", async () => {
-		mockedUpdateUser.mockResolvedValue({} as any);
+		mockedUpdateUser.mockResolvedValue({ ok: true, data: {} } as any);
 		mockedUpdatePassword.mockResolvedValue({ ok: true });
 
 		render(
@@ -104,7 +104,7 @@ describe("AccountEditForm", () => {
 	});
 
 	it("updates password when provided", async () => {
-		mockedUpdateUser.mockResolvedValue({} as any);
+		mockedUpdateUser.mockResolvedValue({ ok: true, data: {} } as any);
 		mockedUpdatePassword.mockResolvedValue({ ok: true });
 
 		render(
@@ -169,7 +169,10 @@ describe("AccountEditForm", () => {
 	});
 
 	it("deletes profile after confirmation", async () => {
-		mockedDeleteUser.mockResolvedValue({ id: "user-1" } as any);
+		mockedDeleteUser.mockResolvedValue({
+			ok: true,
+			data: { id: "user-1" },
+		} as any);
 		mockedLogout.mockResolvedValue({ ok: true });
 
 		render(

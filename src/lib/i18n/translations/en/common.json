@@ -196,6 +196,13 @@
 			"deleteTitle": "Delete profile",
 			"emailLabel": "Email address",
 			"emailPlaceholder": "name@example.com",
+			"errors": {
+				"emailTaken": "A user with this email address already exists.",
+				"forbidden": "You are not allowed to change this profile.",
+				"invalidInput": "Please check the entered data and try again.",
+				"notFound": "This profile no longer exists.",
+				"unexpected": "Changes could not be saved."
+			},
 			"errorFallback": "Changes could not be saved.",
 			"metaTitle": "Edit Personal Information – Kulturkataster",
 			"nameLabel": "Your name",

@@ -1,5 +1,11 @@
 "use server";
 
+import {
+	actionError,
+	actionOk,
+	getActionErrorCode,
+	type ActionResult,
+} from "@/lib/actions/actionResult";
 import { categoryRepo } from "@/server/data/categoryRepo";
 import {
 	authorizeTable,
@@ -20,6 +26,27 @@ import {
 	setRequestContext,
 } from "@/server/logging/requestContext";
 import { logger } from "../logging/logger";
+
+export type CategoryActionErrorCode =
+	| "keyTaken"
+	| "notFound"
+	| "keyLocked"
+	| "selfParent"
+	| "hasSubcategories"
+	| "forbidden"
+	| "unexpected";
+
+const classifyCategoryActionError = (
+	error: unknown,
+): CategoryActionErrorCode => {
+	const errorCode = getActionErrorCode(error);
+	if (errorCode === "P2002") return "keyTaken";
+	if (errorCode === "P2025") return "notFound";
+	if (error instanceof Error && error.name === "RBACError") {
+		return "forbidden";
+	}
+	return "unexpected";
+};
 
 type CategoryInput = {
 	key: string;
@@ -86,7 +113,11 @@ export async function getCategoryById(id: number) {
 	return categoryRepo.findById(id);
 }
 
-export async function createCategory(input: CategoryInput) {
+export async function createCategory(
+	input: CategoryInput,
+): Promise<
+	ActionResult<Awaited<ReturnType<typeof categoryRepo.create>>, CategoryActionErrorCode>
+> {
 	return runWithServerRequestContext(
 		async () => {
 			const currentUserId = await getCurrentUserId();
@@ -116,7 +147,7 @@ export async function createCategory(input: CategoryInput) {
 					actor_user_id: currentUserId,
 					category_key: sanitizedKey,
 				});
-				throw error;
+				return actionError(classifyCategoryActionError(error));
 			}
 
 			if (
@@ -142,13 +173,17 @@ export async function createCategory(input: CategoryInput) {
 				}
 			}
 
-			return created;
+			return actionOk(created);
 		},
 		{ route: "server_action:categories.createCategory" },
 	);
 }
 
-export async function updateCategory(input: CategoryUpdateInput) {
+export async function updateCategory(
+	input: CategoryUpdateInput,
+): Promise<
+	ActionResult<Awaited<ReturnType<typeof categoryRepo.update>>, CategoryActionErrorCode>
+> {
 	return runWithServerRequestContext(
 		async () => {
 			const currentUserId = await getCurrentUserId();
@@ -158,7 +193,7 @@ export async function updateCategory(input: CategoryUpdateInput) {
 			requireAllScope(ctx, "category", "update");
 
 			if (input.parentCategoryId && input.parentCategoryId === input.id) {
-				throw new Error("Category cannot be its own parent.");
+				return actionError("selfParent");
 			}
 
 			let existingCategory;
@@ -171,17 +206,17 @@ export async function updateCategory(input: CategoryUpdateInput) {
 					actor_user_id: currentUserId,
 					category_id: input.id,
 				});
-				throw error;
+				return actionError(classifyCategoryActionError(error));
 			}
 			if (!existingCategory) {
-				throw new Error("Category not found.");
+				return actionError("notFound");
 			}
 
 			if (
 				typeof input.key === "string" &&
 				sanitizeKey(input.key) !== existingCategory.key
 			) {
-				throw new Error("Category key cannot be changed.");
+				return actionError("keyLocked");
 			}
 
 			let parentCategoryUpdate;
@@ -208,7 +243,7 @@ export async function updateCategory(input: CategoryUpdateInput) {
 					actor_user_id: currentUserId,
 					category_id: input.id,
 				});
-				throw error;
+				return actionError(classifyCategoryActionError(error));
 			}
 
 			if (
@@ -235,7 +270,7 @@ export async function updateCategory(input: CategoryUpdateInput) {
 				}
 			}
 
-			return updated;
+			return actionOk(updated);
 		},
 		{ route: "server_action:categories.updateCategory" },
 	);
@@ -259,7 +294,9 @@ export async function getCategoryLocalizedLabels(params: {
 	});
 }
 
-export async function deleteCategory(id: number) {
+export async function deleteCategory(
+	id: number,
+): Promise<ActionResult<{ id: number }, CategoryActionErrorCode>> {
 	return runWithServerRequestContext(
 		async () => {
 			const currentUserId = await getCurrentUserId();
@@ -278,10 +315,10 @@ export async function deleteCategory(id: number) {
 					actor_user_id: currentUserId,
 					category_id: id,
 				});
-				throw error;
+				return actionError(classifyCategoryActionError(error));
 			}
 			if (category?.child_categories?.length) {
-				throw new Error("Category has subcategories and cannot be deleted.");
+				return actionError("hasSubcategories");
 			}
 
 			try {
@@ -293,9 +330,9 @@ export async function deleteCategory(id: number) {
 					actor_user_id: currentUserId,
 					category_id: id,
 				});
-				throw error;
+				return actionError(classifyCategoryActionError(error));
 			}
-			return { id };
+			return actionOk({ id });
 		},
 		{ route: "server_action:categories.deleteCategory" },
 	);
