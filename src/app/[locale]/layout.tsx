@@ -12,6 +12,7 @@ import { Barlow } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { StoreInitializer } from "@/components/StoreInitializer";
+import { StoreAutoRefresh } from "@/components/StoreAutoRefresh";
 import { ViewModeToggle } from "@/components/Menu/ViewModeToggle";
 import { Toaster } from "@/components/ui/sonner";
 
@@ -103,6 +104,7 @@ export default async function RootLayout({
 				<I18NProvider locale={locale} namespaces={ns} resources={resources}>
 					<AppPersistenceProvider />
 					<StoreInitializer />
+					<StoreAutoRefresh />
 					<a
 						href="#main-content"
 						className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-4 focus:left-4 focus:bg-background focus:text-foreground focus:px-4 focus:py-2 focus:rounded-md focus:shadow-lg tab-ring"
