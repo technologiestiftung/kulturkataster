@@ -116,7 +116,10 @@ export async function getCategoryById(id: number) {
 export async function createCategory(
 	input: CategoryInput,
 ): Promise<
-	ActionResult<Awaited<ReturnType<typeof categoryRepo.create>>, CategoryActionErrorCode>
+	ActionResult<
+		Awaited<ReturnType<typeof categoryRepo.create>>,
+		CategoryActionErrorCode
+	>
 > {
 	return runWithServerRequestContext(
 		async () => {
@@ -182,7 +185,10 @@ export async function createCategory(
 export async function updateCategory(
 	input: CategoryUpdateInput,
 ): Promise<
-	ActionResult<Awaited<ReturnType<typeof categoryRepo.update>>, CategoryActionErrorCode>
+	ActionResult<
+		Awaited<ReturnType<typeof categoryRepo.update>>,
+		CategoryActionErrorCode
+	>
 > {
 	return runWithServerRequestContext(
 		async () => {

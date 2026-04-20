@@ -74,10 +74,7 @@ type InstitutionFormModalProps = {
 	permissionContext?: "institution" | "submission";
 };
 
-const translateInstitutionFormError = (
-	t: TFunction,
-	errorCode: string,
-) => {
+const translateInstitutionFormError = (t: TFunction, errorCode: string) => {
 	switch (errorCode) {
 		case "notFound":
 			return t("institutionFormModal.errors.notFound", {
@@ -1288,8 +1285,7 @@ export function InstitutionFormModal({
 		resolvedClose,
 		handleSuccess,
 		shouldRefresh,
-		(errorCode) =>
-			setSubmitError(translateInstitutionFormError(t, errorCode)),
+		(errorCode) => setSubmitError(translateInstitutionFormError(t, errorCode)),
 		permissionContext,
 	);
 
