@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { useAccountStore } from "@/lib/store/accountStore";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import type { Category } from "@/types/category";
@@ -10,19 +10,13 @@ export function useInstitutionFilterCategories() {
 	const filterCategoriesFromInstitutionStore = useInstitutionStore(
 		(state) => state.categories,
 	);
-	const initializeFilterCategories = useInstitutionStore(
-		(state) => state.initializeCategories,
+	const initializePublicData = useInstitutionStore(
+		(state) => state.initializePublicData,
 	);
 
-	useEffect(() => {
-		if (filterCategoriesFromInstitutionStore === null) {
-			void initializeFilterCategories();
-		}
-	}, [filterCategoriesFromInstitutionStore, initializeFilterCategories]);
-
 	const retryInitializeFilterCategories = useCallback(() => {
-		void initializeFilterCategories();
-	}, [initializeFilterCategories]);
+		void initializePublicData();
+	}, [initializePublicData]);
 
 	const filterCategoryGroups = filterCategoriesFromInstitutionStore ?? [];
 
