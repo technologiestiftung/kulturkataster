@@ -6,12 +6,14 @@ import { logout } from "@/server/actions/auth";
 
 const pushMock = vi.fn();
 const refreshMock = vi.fn();
+const prefetchMock = vi.fn();
 let pathnameMock = "/de/account/activity";
 
 vi.mock("next/navigation", () => ({
 	useRouter: () => ({
 		push: pushMock,
 		refresh: refreshMock,
+		prefetch: prefetchMock,
 	}),
 	usePathname: () => pathnameMock,
 }));

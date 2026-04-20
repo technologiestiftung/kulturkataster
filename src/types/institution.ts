@@ -247,11 +247,10 @@ export interface InstitutionStoreState {
 	isLoading: boolean;
 	error: string | null;
 	setCategories: (categories: Category[] | null) => void;
+	setDistricts: (districts: string[]) => void;
 	setInstitutions: (institutions: Institution[] | null) => void;
 	setFilters: (filters: FilterState) => void;
 	resetFilters: () => void;
 	clearError: () => void;
-	initializeCategories: () => Promise<void>;
-	initializeDistricts: () => Promise<void>;
-	initializeInstitutions: () => Promise<void>;
+	initializePublicData: () => Promise<void>;
 }
