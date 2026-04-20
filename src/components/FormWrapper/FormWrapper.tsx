@@ -235,9 +235,7 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 			try {
 				await config.onSubmit({ ...formData, ...normalizedFormData });
 			} catch (error) {
-				setFormError(
-					error instanceof Error ? error.message : t("alert.error"),
-				);
+				setFormError(error instanceof Error ? error.message : t("alert.error"));
 			}
 		}
 	};
