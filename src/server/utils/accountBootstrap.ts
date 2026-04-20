@@ -1,14 +1,10 @@
-import type { getCategories } from "@/server/actions/categories";
 import { getCurrentUser } from "@/server/actions/auth";
 import type { getCurrentProfile } from "@/server/actions/auth";
-import type { getEntityAudits } from "@/server/actions/entityAudits";
-import type { getGroups } from "@/server/actions/groups";
-import type { getMyInstitutions } from "@/server/actions/institutions";
-import type { getRoles } from "@/server/actions/roles";
-import type { getSubmissions } from "@/server/actions/submissions";
-import type { getUsers } from "@/server/actions/users";
 import { prisma } from "@/server/prisma";
-import { loadAccountData } from "@/server/utils/accountData";
+import {
+	loadAccountData,
+	type AccountDataPayload,
+} from "@/server/utils/accountData";
 import {
 	getAccessContextForUser,
 	getFieldPermissionListsForTable,
@@ -18,13 +14,13 @@ import {
 export type AccountBootstrapData = {
 	ctx: AccessContext;
 	currentProfile: Awaited<ReturnType<typeof getCurrentProfile>>;
-	users: Awaited<ReturnType<typeof getUsers>>;
-	groups: Awaited<ReturnType<typeof getGroups>>;
-	roles: Awaited<ReturnType<typeof getRoles>>;
-	categories: Awaited<ReturnType<typeof getCategories>>;
-	institutions: Awaited<ReturnType<typeof getMyInstitutions>>;
-	submissions: Awaited<ReturnType<typeof getSubmissions>>;
-	entityAudits: Awaited<ReturnType<typeof getEntityAudits>>;
+	users: AccountDataPayload["users"];
+	groups: AccountDataPayload["groups"];
+	roles: AccountDataPayload["roles"];
+	categories: AccountDataPayload["categories"];
+	institutions: AccountDataPayload["institutions"];
+	submissions: AccountDataPayload["submissions"];
+	entityAudits: AccountDataPayload["entityAudits"];
 	institutionFieldPermissions: ReturnType<
 		typeof getFieldPermissionListsForTable
 	>;
