@@ -7,9 +7,7 @@ import {
 } from "@/server/utils/accountData";
 import { getAccessContextForUser } from "@/server/utils/rbac";
 
-export async function getAccountRefreshData(): Promise<
-	Partial<AccountDataPayload> | null
-> {
+export async function getAccountRefreshData(): Promise<Partial<AccountDataPayload> | null> {
 	const user = await getCurrentUser();
 	if (!user) return null;
 
