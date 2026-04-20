@@ -133,6 +133,7 @@ describe("AccountAutoRefresh", () => {
 	});
 
 	it("enables polling only for stable account tabs", () => {
+		expect(isAccountAutoRefreshPathEnabled("/de/account/")).toBe(true);
 		expect(isAccountAutoRefreshPathEnabled("/de/account/activity")).toBe(true);
 		expect(isAccountAutoRefreshPathEnabled("/de/account/users")).toBe(true);
 		expect(isAccountAutoRefreshPathEnabled("/de/account/institutions")).toBe(
