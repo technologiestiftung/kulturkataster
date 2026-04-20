@@ -28,19 +28,6 @@ import {
 } from "@/server/logging/requestContext";
 import { logger } from "@/server/logging/logger";
 
-export async function getInstitutions() {
-	const currentUserId = await getCurrentUserId();
-	const ctx = await getAccessContextForUser(currentUserId);
-	authorizeTable(ctx, "institution", "read");
-
-	const select = buildInstitutionSelect(ctx);
-	if (!select) return [];
-	const where: Prisma.InstitutionWhereInput = {
-		status: { in: ["public", "private", "archived"] },
-	};
-	return institutionRepo.listWithSelectWhere(where, select);
-}
-
 export async function getMyInstitutions() {
 	const currentUserId = await getCurrentUserId();
 	const ctx = await getAccessContextForUser(currentUserId);
