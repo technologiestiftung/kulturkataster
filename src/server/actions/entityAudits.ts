@@ -56,78 +56,87 @@ const redactForeignAudit = (audit: EntityAuditRow): EntityAuditRow => {
 export async function getEntityAudits() {
 	return runWithServerRequestContext(
 		async () => {
-			const currentUserId = await getCurrentUserId();
-			setRequestContext({ userId: currentUserId });
-			const ctx = await getAccessContextForUser(currentUserId);
-			authorizeTable(ctx, "entity_audit", "read");
-			const scope = getTableScope(ctx, "entity_audit", "read");
-			const ownerId = requireScopeOrUser(
-				scope,
-				currentUserId,
-				"User must be authenticated to access activity logs.",
-			);
-			if (!ownerId) {
+			try {
+				const currentUserId = await getCurrentUserId();
+				setRequestContext({ userId: currentUserId });
+				const ctx = await getAccessContextForUser(currentUserId);
+				authorizeTable(ctx, "entity_audit", "read");
+				const scope = getTableScope(ctx, "entity_audit", "read");
+				const ownerId = requireScopeOrUser(
+					scope,
+					currentUserId,
+					"User must be authenticated to access activity logs.",
+				);
+				if (!ownerId) {
+					try {
+						return await entityAuditRepo.list();
+					} catch (error) {
+						logger.error("entity_audit.list.db_failed", error, {
+							subsystem: "audit",
+							db_subsystem: "db",
+							actor_user_id: currentUserId,
+						});
+						return [];
+					}
+				}
+
+				let ownAudits;
 				try {
-					return await entityAuditRepo.list();
+					ownAudits = await entityAuditRepo.list({ changed_by: ownerId });
 				} catch (error) {
-					logger.error("entity_audit.list.db_failed", error, {
+					logger.error("entity_audit.list_own.db_failed", error, {
 						subsystem: "audit",
 						db_subsystem: "db",
 						actor_user_id: currentUserId,
+						target_user_id: ownerId,
 					});
-					throw error;
+					return [];
 				}
-			}
 
-			let ownAudits;
-			try {
-				ownAudits = await entityAuditRepo.list({ changed_by: ownerId });
+				const correlationIds = Array.from(
+					new Set(
+						ownAudits
+							.map((audit) => getCorrelationId(audit.meta_info))
+							.filter((correlationId): correlationId is string =>
+								Boolean(correlationId),
+							),
+					),
+				);
+				if (correlationIds.length === 0) {
+					return ownAudits;
+				}
+
+				let relatedAudits;
+				try {
+					relatedAudits =
+						await entityAuditRepo.listByCorrelationIds(correlationIds);
+				} catch (error) {
+					logger.error("entity_audit.list_related.db_failed", error, {
+						subsystem: "audit",
+						db_subsystem: "db",
+						actor_user_id: currentUserId,
+						target_user_id: ownerId,
+						correlation_ids_count: correlationIds.length,
+					});
+					return ownAudits;
+				}
+				const merged = new Map<number, EntityAuditRow>();
+				for (const audit of [...ownAudits, ...relatedAudits]) {
+					merged.set(audit.id, audit);
+				}
+
+				return Array.from(merged.values())
+					.map((audit) =>
+						audit.changed_by === ownerId ? audit : redactForeignAudit(audit),
+					)
+					.sort((a, b) => b.changed_at.getTime() - a.changed_at.getTime());
 			} catch (error) {
-				logger.error("entity_audit.list_own.db_failed", error, {
+				logger.warn("entity_audit.list.failed", {
 					subsystem: "audit",
-					db_subsystem: "db",
-					actor_user_id: currentUserId,
-					target_user_id: ownerId,
+					error: error instanceof Error ? error.message : String(error),
 				});
-				throw error;
+				return [];
 			}
-			const correlationIds = Array.from(
-				new Set(
-					ownAudits
-						.map((audit) => getCorrelationId(audit.meta_info))
-						.filter((correlationId): correlationId is string =>
-							Boolean(correlationId),
-						),
-				),
-			);
-			if (correlationIds.length === 0) {
-				return ownAudits;
-			}
-
-			let relatedAudits;
-			try {
-				relatedAudits =
-					await entityAuditRepo.listByCorrelationIds(correlationIds);
-			} catch (error) {
-				logger.error("entity_audit.list_related.db_failed", error, {
-					subsystem: "audit",
-					db_subsystem: "db",
-					actor_user_id: currentUserId,
-					target_user_id: ownerId,
-					correlation_ids_count: correlationIds.length,
-				});
-				throw error;
-			}
-			const merged = new Map<number, EntityAuditRow>();
-			for (const audit of [...ownAudits, ...relatedAudits]) {
-				merged.set(audit.id, audit);
-			}
-
-			return Array.from(merged.values())
-				.map((audit) =>
-					audit.changed_by === ownerId ? audit : redactForeignAudit(audit),
-				)
-				.sort((a, b) => b.changed_at.getTime() - a.changed_at.getTime());
 		},
 		{ route: "server_action:entityAudits.getEntityAudits" },
 	);
