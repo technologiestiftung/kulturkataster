@@ -2,7 +2,7 @@
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { ModalFooter } from "./ModalFooter";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { AlertDialog } from "@/components/ui/alert-dialog";
@@ -10,6 +10,7 @@ import { useRoutedModalClose } from "./useRoutedModalClose";
 import { showErrorToast } from "@/lib/utils/feedbackToast";
 import { Loading } from "@/components/ui/loading";
 import { useRouter } from "next/navigation";
+import { devTimings } from "@/lib/utils/devTimings";
 
 type ModalCloseConfirmation = {
 	title: string;
@@ -105,6 +106,13 @@ export function Modal({
 	const pathname = usePathname();
 	const router = useRouter();
 	const performClose = useRoutedModalClose({ returnTo });
+	const hasLoggedOpenTiming = useRef(false);
+	useEffect(() => {
+		if (!hasLoggedOpenTiming.current) {
+			hasLoggedOpenTiming.current = true;
+			devTimings.end();
+		}
+	}, []);
 	const resolvedPerformClose = useCallback(() => {
 		if (onCloseRequest) {
 			onCloseRequest();
