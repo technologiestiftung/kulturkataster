@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 import { useAccountStore } from "@/lib/store/accountStore";
 import { getUsers } from "@/server/actions/users";
 import { getGroups } from "@/server/actions/groups";
@@ -11,6 +12,14 @@ import { getSubmissions } from "@/server/actions/submissions";
 import { getEntityAudits } from "@/server/actions/entityAudits";
 
 const DEFAULT_ACCOUNT_AUTO_REFRESH_INTERVAL_MS = 10_000;
+const ACCOUNT_AUTO_REFRESH_ENABLED_PATHS = new Set([
+	"/account",
+	"/account/activity",
+	"/account/users",
+	"/account/groups",
+	"/account/roles",
+	"/account/categories",
+]);
 
 const applySettledValue = <T,>(
 	result: PromiseSettledResult<T>,
@@ -21,11 +30,36 @@ const applySettledValue = <T,>(
 	}
 };
 
+const normalizeAccountPathname = (pathname: string | null) => {
+	if (!pathname) return null;
+
+	const normalizedPathname =
+		pathname.length > 1 && pathname.endsWith("/")
+			? pathname.slice(0, -1)
+			: pathname;
+	const accountSegmentIndex = normalizedPathname.indexOf("/account");
+
+	if (accountSegmentIndex === -1) {
+		return normalizedPathname;
+	}
+
+	return normalizedPathname.slice(accountSegmentIndex);
+};
+
+export const isAccountAutoRefreshPathEnabled = (pathname: string | null) => {
+	const normalizedPathname = normalizeAccountPathname(pathname);
+	return (
+		normalizedPathname !== null &&
+		ACCOUNT_AUTO_REFRESH_ENABLED_PATHS.has(normalizedPathname)
+	);
+};
+
 export function AccountAutoRefresh({
 	intervalMs = DEFAULT_ACCOUNT_AUTO_REFRESH_INTERVAL_MS,
 }: {
 	intervalMs?: number;
 }) {
+	const pathname = usePathname();
 	const setUsers = useAccountStore((state) => state.setUsers);
 	const setGroups = useAccountStore((state) => state.setGroups);
 	const setRoles = useAccountStore((state) => state.setRoles);
@@ -34,13 +68,16 @@ export function AccountAutoRefresh({
 	const setSubmissions = useAccountStore((state) => state.setSubmissions);
 	const setEntityAudits = useAccountStore((state) => state.setEntityAudits);
 	const isRefreshingRef = useRef(false);
+	const isPollingEnabledForPath = isAccountAutoRefreshPathEnabled(pathname);
 
 	useEffect(() => {
 		let cancelled = false;
 		let intervalId: ReturnType<typeof setInterval> | null = null;
 
 		const refresh = async () => {
-			if (cancelled || isRefreshingRef.current) return;
+			if (cancelled || isRefreshingRef.current || !isPollingEnabledForPath) {
+				return;
+			}
 			if (document.visibilityState !== "visible") return;
 
 			isRefreshingRef.current = true;
@@ -78,7 +115,7 @@ export function AccountAutoRefresh({
 		};
 
 		const startPolling = () => {
-			if (intervalId) return;
+			if (intervalId || !isPollingEnabledForPath) return;
 			intervalId = setInterval(refresh, intervalMs);
 		};
 
@@ -89,6 +126,10 @@ export function AccountAutoRefresh({
 		};
 
 		const handleVisibilityChange = () => {
+			if (!isPollingEnabledForPath) {
+				stopPolling();
+				return;
+			}
 			if (document.visibilityState === "visible") {
 				void refresh();
 				startPolling();
@@ -97,8 +138,10 @@ export function AccountAutoRefresh({
 			stopPolling();
 		};
 
-		if (document.visibilityState === "visible") {
+		if (isPollingEnabledForPath && document.visibilityState === "visible") {
 			startPolling();
+		} else {
+			stopPolling();
 		}
 
 		document.addEventListener("visibilitychange", handleVisibilityChange);
@@ -117,6 +160,7 @@ export function AccountAutoRefresh({
 		setSubmissions,
 		setUsers,
 		intervalMs,
+		isPollingEnabledForPath,
 	]);
 
 	return null;
