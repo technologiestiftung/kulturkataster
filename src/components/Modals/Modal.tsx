@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import { AlertDialog } from "@/components/ui/alert-dialog";
 import { useRoutedModalClose } from "./useRoutedModalClose";
 import { showErrorToast } from "@/lib/utils/feedbackToast";
-import { Loading } from "@/components/ui/loading";
+import { AppLoading } from "@/components/ui/app-loading";
 import { useRouter } from "next/navigation";
 import { devTimings } from "@/lib/utils/devTimings";
 
@@ -222,7 +222,7 @@ export function Modal({
 						) : null}
 						{loadingState?.active ? (
 							<div className="flex min-h-[260px] w-full flex-col items-center justify-center gap-3 p-6 md:mt-0 mt-20">
-								<Loading size="lg" />
+								<AppLoading />
 							</div>
 						) : (
 							children
@@ -247,7 +247,7 @@ export function Modal({
 							<div className={resolvedContentClassName}>
 								{loadingState?.active ? (
 									<div className="flex min-h-[220px] w-full flex-col items-center justify-center gap-3">
-										<Loading size="md" />
+										<AppLoading />
 										{loadingState.label ? (
 											<p className="body2 text-foreground">
 												{loadingState.label}
