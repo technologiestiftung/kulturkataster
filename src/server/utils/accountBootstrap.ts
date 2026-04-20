@@ -1,17 +1,19 @@
-import { getCategories } from "@/server/actions/categories";
-import { getCurrentProfile, getCurrentUser } from "@/server/actions/auth";
-import { getEntityAudits } from "@/server/actions/entityAudits";
-import { getGroups } from "@/server/actions/groups";
-import { getMyInstitutions } from "@/server/actions/institutions";
-import { getRoles } from "@/server/actions/roles";
-import { getSubmissions } from "@/server/actions/submissions";
-import { getUsers } from "@/server/actions/users";
+import type { getCategories } from "@/server/actions/categories";
+import { getCurrentUser } from "@/server/actions/auth";
+import type { getCurrentProfile } from "@/server/actions/auth";
+import type { getEntityAudits } from "@/server/actions/entityAudits";
+import type { getGroups } from "@/server/actions/groups";
+import type { getMyInstitutions } from "@/server/actions/institutions";
+import type { getRoles } from "@/server/actions/roles";
+import type { getSubmissions } from "@/server/actions/submissions";
+import type { getUsers } from "@/server/actions/users";
+import { prisma } from "@/server/prisma";
+import { loadAccountData } from "@/server/utils/accountData";
 import {
 	getAccessContextForUser,
 	getFieldPermissionListsForTable,
 	type AccessContext,
 } from "@/server/utils/rbac";
-import { fetchIfAllowed } from "@/server/utils/rbacHelpers";
 
 export type AccountBootstrapData = {
 	ctx: AccessContext;
@@ -33,36 +35,18 @@ export async function getAccountBootstrapData(): Promise<AccountBootstrapData | 
 	if (!user) return null;
 
 	const ctx = await getAccessContextForUser(user.id);
-	const [
-		currentProfile,
-		users,
-		groups,
-		roles,
-		categories,
-		institutions,
-		submissions,
-		entityAudits,
-	] = await Promise.all([
-		getCurrentProfile(),
-		fetchIfAllowed(ctx, "user", "read", getUsers, []),
-		fetchIfAllowed(ctx, "group", "read", getGroups, []),
-		fetchIfAllowed(ctx, "role", "read", getRoles, []),
-		fetchIfAllowed(ctx, "category", "update", getCategories, []),
-		fetchIfAllowed(ctx, "institution", "read", getMyInstitutions, []),
-		fetchIfAllowed(ctx, "submission", "read", getSubmissions, []),
-		fetchIfAllowed(ctx, "entity_audit", "read", getEntityAudits, []),
+	const [currentProfile, accountData] = await Promise.all([
+		prisma.user.findUnique({ where: { id: user.id } }),
+		loadAccountData({
+			ctx,
+			currentUserId: user.id,
+		}),
 	]);
 
 	return {
 		ctx,
 		currentProfile,
-		users,
-		groups,
-		roles,
-		categories,
-		institutions,
-		submissions,
-		entityAudits,
+		...accountData,
 		institutionFieldPermissions: getFieldPermissionListsForTable(
 			ctx,
 			"institution",
