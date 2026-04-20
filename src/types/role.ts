@@ -45,3 +45,10 @@ export type RoleCreateInput = RoleCreatePayload;
 export type RoleUpdateInput = RoleUpdatePayload & { id: number };
 
 export type RoleWhereInput = Prisma.RoleWhereInput;
+
+export type RoleActionErrorCode =
+	| "nameTaken"
+	| "notFound"
+	| "forbidden"
+	| "systemRole"
+	| "unexpected";

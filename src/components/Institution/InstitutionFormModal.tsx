@@ -74,6 +74,31 @@ type InstitutionFormModalProps = {
 	permissionContext?: "institution" | "submission";
 };
 
+const translateInstitutionFormError = (
+	t: TFunction,
+	errorCode: string,
+) => {
+	switch (errorCode) {
+		case "notFound":
+			return t("institutionFormModal.errors.notFound", {
+				defaultValue: "The selected cultural venue no longer exists.",
+			});
+		case "forbidden":
+			return t("institutionFormModal.errors.forbidden", {
+				defaultValue: "You are not allowed to change this cultural venue.",
+			});
+		case "invalidInput":
+			return t("institutionFormModal.errors.invalidInput", {
+				defaultValue: "Please check the entered data and try again.",
+			});
+		default:
+			return t("institutionFormModal.errors.unexpected", {
+				defaultValue:
+					"The cultural venue could not be saved. Please try again.",
+			});
+	}
+};
+
 const getDialogTitle = (
 	mode: InstitutionFormModalProps["mode"],
 	t: (key: string) => string,
@@ -122,23 +147,31 @@ const useInstitutionSubmit = (
 
 		try {
 			if (mode === "create") {
-				const created = await createInstitution({
+				const result = await createInstitution({
 					name: String(data.name ?? ""),
 					address,
 					categoryIds: categoryIds.length > 0 ? categoryIds : [],
 					...sharedPayload,
 				});
-				addInstitution(created);
+				if (!result.ok) {
+					onError(result.error);
+					return;
+				}
+				addInstitution(result.data);
 			} else if (institutionId) {
-				const updated = await updateInstitution({
+				const result = await updateInstitution({
 					id: institutionId,
 					name: String(data.name ?? ""),
 					address,
 					categoryIds,
 					...sharedPayload,
 				});
-				if (updated) {
-					upsertInstitution(updated);
+				if (!result.ok) {
+					onError(result.error);
+					return;
+				}
+				if (result.data) {
+					upsertInstitution(result.data);
 				}
 			}
 
@@ -1255,7 +1288,8 @@ export function InstitutionFormModal({
 		resolvedClose,
 		handleSuccess,
 		shouldRefresh,
-		(message) => setSubmitError(message),
+		(errorCode) =>
+			setSubmitError(translateInstitutionFormError(t, errorCode)),
 		permissionContext,
 	);
 

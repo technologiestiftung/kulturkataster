@@ -117,13 +117,16 @@ describe("GroupFormModal", () => {
 
 	it("creates a group in create mode", async () => {
 		mockedCreateGroup.mockResolvedValueOnce({
-			id: 99,
-			name: "Updated group",
-			description: "Updated description",
-			created_at: new Date("2025-01-01"),
-			updated_at: new Date("2025-01-01"),
-			users: [],
-			institutions: [],
+			ok: true,
+			data: {
+				id: 99,
+				name: "Updated group",
+				description: "Updated description",
+				created_at: new Date("2025-01-01"),
+				updated_at: new Date("2025-01-01"),
+				users: [],
+				institutions: [],
+			},
 		} as never);
 
 		render(<GroupFormModal mode="create" routePath="/account/groups/new" />);
@@ -143,13 +146,16 @@ describe("GroupFormModal", () => {
 
 	it("updates an existing group in edit mode", async () => {
 		mockedUpdateGroup.mockResolvedValueOnce({
-			id: 21,
-			name: "Updated group",
-			description: "Updated description",
-			created_at: new Date("2025-01-01"),
-			updated_at: new Date("2025-01-02"),
-			users: [],
-			institutions: [],
+			ok: true,
+			data: {
+				id: 21,
+				name: "Updated group",
+				description: "Updated description",
+				created_at: new Date("2025-01-01"),
+				updated_at: new Date("2025-01-02"),
+				users: [],
+				institutions: [],
+			},
 		} as never);
 
 		render(

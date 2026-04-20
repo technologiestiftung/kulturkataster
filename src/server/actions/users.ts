@@ -1,6 +1,12 @@
 "use server";
 
 import {
+	actionError,
+	actionOk,
+	getActionErrorCode,
+	type ActionResult,
+} from "@/lib/actions/actionResult";
+import {
 	authorizeTable,
 	getAccessContextForUser,
 	getTableScope,
@@ -26,6 +32,23 @@ import {
 	runWithServerRequestContext,
 	setRequestContext,
 } from "@/server/logging/requestContext";
+
+export type UserActionErrorCode =
+	| "emailTaken"
+	| "notFound"
+	| "forbidden"
+	| "invalidInput"
+	| "unexpected";
+
+const classifyUserActionError = (error: unknown): UserActionErrorCode => {
+	const errorCode = getActionErrorCode(error);
+	if (errorCode === "P2002") return "emailTaken";
+	if (errorCode === "P2025") return "notFound";
+	if (error instanceof Error && error.name === "RBACError") {
+		return "forbidden";
+	}
+	return "unexpected";
+};
 
 const buildMirroredUserMetadata = (
 	existingMetadata: unknown,
@@ -131,7 +154,9 @@ export async function getUserById(id: string) {
 	return userRepo.findById(id);
 }
 
-export async function createUser(input: UserFormInput) {
+export async function createUser(
+	input: UserFormInput,
+): Promise<ActionResult<User, UserActionErrorCode>> {
 	return runWithServerRequestContext(
 		async () => {
 			const currentUserId = await getCurrentUserId();
@@ -155,7 +180,7 @@ export async function createUser(input: UserFormInput) {
 					actor_user_id: currentUserId,
 					email: input.email,
 				});
-				throw new Error(error?.message || "Failed to create auth user.");
+				return actionError("unexpected");
 			}
 
 			let user;
@@ -185,20 +210,22 @@ export async function createUser(input: UserFormInput) {
 					target_user_id: data.user.id,
 					email: input.email,
 				});
-				throw dbError;
+				return actionError(classifyUserActionError(dbError));
 			}
 			await syncAuthUserMetadataAsAdmin(user.id, {
 				first_name: user.first_name,
 				last_name: user.last_name,
 			});
 			revalidateAccount();
-			return user;
+			return actionOk(user);
 		},
 		{ route: "server_action:users.createUser" },
 	);
 }
 
-export async function updateUser(input: UserFormInput) {
+export async function updateUser(
+	input: UserFormInput,
+): Promise<ActionResult<User, UserActionErrorCode>> {
 	return runWithServerRequestContext(
 		async () => {
 			const currentUserId = await getCurrentUserId();
@@ -208,13 +235,13 @@ export async function updateUser(input: UserFormInput) {
 			const scope = getTableScope(ctx, "user", "update");
 
 			if (!input.id) {
-				throw new Error("User id is required for update.");
+				return actionError("invalidInput");
 			}
 
 			if (scope !== "all") {
 				const ownerId = requireScopeOrUser(scope, currentUserId);
 				if (!ownerId || input.id !== ownerId) {
-					throw new Error("Not authorized to update this user.");
+					return actionError("forbidden");
 				}
 				if (
 					typeof input.status !== "undefined" ||
@@ -223,7 +250,7 @@ export async function updateUser(input: UserFormInput) {
 					typeof input.groupIds !== "undefined" ||
 					typeof input.institutionIds !== "undefined"
 				) {
-					throw new Error("Not authorized to update restricted user fields.");
+					return actionError("forbidden");
 				}
 
 				const supabase = await createClient();
@@ -237,7 +264,7 @@ export async function updateUser(input: UserFormInput) {
 							actor_user_id: currentUserId,
 							target_user_id: input.id,
 						});
-						throw new Error(authUpdateError.message);
+						return actionError("unexpected");
 					}
 				}
 
@@ -257,20 +284,20 @@ export async function updateUser(input: UserFormInput) {
 						actor_user_id: currentUserId,
 						target_user_id: input.id,
 					});
-					throw error;
+					return actionError(classifyUserActionError(error));
 				}
 				await syncAuthUserMetadataAsCurrentUser({
 					first_name: user.first_name,
 					last_name: user.last_name,
 				});
 				revalidateAccount();
-				return user;
+				return actionOk(user);
 			}
 
 			const supabase = createAdminClient();
 			const existingUser = await userRepo.findById(input.id);
 			if (!existingUser) {
-				throw new Error("User not found.");
+				return actionError("notFound");
 			}
 
 			const authPayload: {
@@ -295,7 +322,7 @@ export async function updateUser(input: UserFormInput) {
 					actor_user_id: currentUserId,
 					target_user_id: input.id,
 				});
-				throw new Error(authUpdateError.message);
+				return actionError("unexpected");
 			}
 
 			let user;
@@ -323,7 +350,7 @@ export async function updateUser(input: UserFormInput) {
 					actor_user_id: currentUserId,
 					target_user_id: input.id,
 				});
-				throw error;
+				return actionError(classifyUserActionError(error));
 			}
 			await syncAuthUserMetadataAsAdmin(user.id, {
 				first_name: user.first_name,
@@ -340,13 +367,15 @@ export async function updateUser(input: UserFormInput) {
 				metaInfo: user.meta_info,
 			});
 			revalidateAccount();
-			return user;
+			return actionOk(user);
 		},
 		{ route: "server_action:users.updateUser" },
 	);
 }
 
-export async function deleteUser(id: string) {
+export async function deleteUser(
+	id: string,
+): Promise<ActionResult<{ id: string }, UserActionErrorCode>> {
 	return runWithServerRequestContext(
 		async () => {
 			const currentUserId = await getCurrentUserId();
@@ -357,7 +386,7 @@ export async function deleteUser(id: string) {
 			if (scope !== "all") {
 				const ownerId = requireScopeOrUser(scope, currentUserId);
 				if (!ownerId || id !== ownerId) {
-					throw new Error("Not authorized to delete users.");
+					return actionError("forbidden");
 				}
 			}
 
@@ -370,7 +399,7 @@ export async function deleteUser(id: string) {
 					actor_user_id: currentUserId,
 					target_user_id: id,
 				});
-				throw new Error(error.message);
+				return actionError("unexpected");
 			}
 
 			try {
@@ -382,7 +411,7 @@ export async function deleteUser(id: string) {
 					actor_user_id: currentUserId,
 					target_user_id: id,
 				});
-				throw dbError;
+				return actionError(classifyUserActionError(dbError));
 			}
 			if (existingUser?.email) {
 				await sendAccountDeletedEmail({
@@ -392,13 +421,15 @@ export async function deleteUser(id: string) {
 				});
 			}
 			revalidateAccount();
-			return { id };
+			return actionOk({ id });
 		},
 		{ route: "server_action:users.deleteUser" },
 	);
 }
 
-export async function sendPasswordReset(email: string) {
+export async function sendPasswordReset(
+	email: string,
+): Promise<ActionResult<{ ok: true }, UserActionErrorCode>> {
 	return runWithServerRequestContext(
 		async () => {
 			const currentUserId = await getCurrentUserId();
@@ -407,27 +438,38 @@ export async function sendPasswordReset(email: string) {
 			authorizeTable(ctx, "user", "update");
 			requireAllScope(ctx, "user", "update");
 
-			const result = await requestPasswordReset(email);
-			if (!result.ok) {
-				logger.error(
-					"user.password_reset.request_failed",
-					new Error(result.error ?? "Failed to send password reset email."),
-					{
-						subsystem: "auth",
-						actor_user_id: currentUserId,
-						email,
-					},
-				);
-				throw new Error(result.error ?? "Failed to send password reset email.");
-			}
+			try {
+				const result = await requestPasswordReset(email);
+				if (!result.ok) {
+					logger.error(
+						"user.password_reset.request_failed",
+						new Error(result.error ?? "Failed to send password reset email."),
+						{
+							subsystem: "auth",
+							actor_user_id: currentUserId,
+							email,
+						},
+					);
+					return actionError("unexpected");
+				}
 
-			return { ok: true as const };
+				return actionOk({ ok: true as const });
+			} catch (error) {
+				logger.error("user.password_reset.unexpected_failed", error, {
+					subsystem: "auth",
+					actor_user_id: currentUserId,
+					email,
+				});
+				return actionError("unexpected");
+			}
 		},
 		{ route: "server_action:users.sendPasswordReset" },
 	);
 }
 
-export async function sendComplianceResend(email: string): Promise<void> {
+export async function sendComplianceResend(
+	email: string,
+): Promise<ActionResult<{ ok: true }, UserActionErrorCode>> {
 	return runWithServerRequestContext(
 		async () => {
 			const currentUserId = await getCurrentUserId();
@@ -436,18 +478,27 @@ export async function sendComplianceResend(email: string): Promise<void> {
 			authorizeTable(ctx, "user", "update");
 			requireAllScope(ctx, "user", "update");
 
-			const matchedUsers = await userRepo.search(
-				{ email: { equals: email } },
-				1,
-			);
-			const matchedUser = matchedUsers[0];
-			await sendComplianceResendEmail({
-				email,
-				firstName: matchedUser?.first_name,
-				lastName: matchedUser?.last_name,
-			});
+			try {
+				const matchedUsers = await userRepo.search(
+					{ email: { equals: email } },
+					1,
+				);
+				const matchedUser = matchedUsers[0];
+				await sendComplianceResendEmail({
+					email,
+					firstName: matchedUser?.first_name,
+					lastName: matchedUser?.last_name,
+				});
 
-			return;
+				return actionOk({ ok: true as const });
+			} catch (error) {
+				logger.error("user.compliance_resend.failed", error, {
+					subsystem: "auth",
+					actor_user_id: currentUserId,
+					email,
+				});
+				return actionError("unexpected");
+			}
 		},
 		{ route: "server_action:users.sendComplianceResend" },
 	);
@@ -457,7 +508,7 @@ export async function sendRoleDecisionEmailManual(input: {
 	userId: string;
 	target: RoleEmailTarget;
 	decision: RoleEmailDecision;
-}): Promise<User> {
+}): Promise<ActionResult<User, UserActionErrorCode>> {
 	return runWithServerRequestContext(
 		async () => {
 			const currentUserId = await getCurrentUserId();
@@ -468,26 +519,37 @@ export async function sendRoleDecisionEmailManual(input: {
 
 			const user = await userRepo.findById(input.userId);
 			if (!user) {
-				throw new Error("User not found.");
+				return actionError("notFound");
 			}
 
-			await sendRoleDecisionEmail({
-				target: input.target,
-				decision: input.decision,
-				email: user.email,
-				firstName: user.first_name,
-				lastName: user.last_name,
-				metaInfo: user.meta_info,
-			});
+			try {
+				await sendRoleDecisionEmail({
+					target: input.target,
+					decision: input.decision,
+					email: user.email,
+					firstName: user.first_name,
+					lastName: user.last_name,
+					metaInfo: user.meta_info,
+				});
+			} catch (error) {
+				logger.error("user.role_decision.email_failed", error, {
+					subsystem: "auth",
+					actor_user_id: currentUserId,
+					target_user_id: user.id,
+					decision: input.decision,
+					target: input.target,
+				});
+				return actionError("unexpected");
+			}
 
 			if (input.decision === "approved" && user.status !== "active") {
-				try {
-					const updatedUser = await userRepo.update(user.id, {
-						status: "active",
-					});
-					revalidateAccount();
-					return updatedUser;
-				} catch (error) {
+					try {
+						const updatedUser = await userRepo.update(user.id, {
+							status: "active",
+						});
+						revalidateAccount();
+						return actionOk(updatedUser);
+					} catch (error) {
 					logger.error("user.role_decision.status_update_failed", error, {
 						subsystem: "user",
 						db_subsystem: "db",
@@ -496,12 +558,12 @@ export async function sendRoleDecisionEmailManual(input: {
 						decision: input.decision,
 						target: input.target,
 					});
-					throw error;
+					return actionError(classifyUserActionError(error));
 				}
 			}
 
 			revalidateAccount();
-			return user;
+			return actionOk(user);
 		},
 		{ route: "server_action:users.sendRoleDecisionEmailManual" },
 	);

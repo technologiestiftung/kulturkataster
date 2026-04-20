@@ -126,43 +126,32 @@ export function InstitutionEditModal({
 	const showNotFound =
 		didFetchInstitution && !resolvedInstitutionWithFallback && !isDeleting;
 
-	const isDeleteDeniedError = useCallback((error: unknown) => {
-		if (!(error instanceof Error)) return false;
-		if (error.name === "RBACError") return true;
-		const message = error.message.toLowerCase();
-		return (
-			message.includes("not authorized") ||
-			message.includes("lacks delete") ||
-			message.includes("global delete access required")
-		);
-	}, []);
-
 	const handleDelete = useCallback(async () => {
 		if (!resolvedInstitutionWithFallback || isDeleting) return;
 		setIsDeleting(true);
 
-		try {
-			await deleteInstitution(resolvedInstitutionWithFallback.id);
+		const deleteResult = await deleteInstitution(resolvedInstitutionWithFallback.id);
+		if (deleteResult.ok) {
 			removeInstitution(resolvedInstitutionWithFallback.id);
 			showSuccessToast(
 				t("institutionFormModal.feedback.delete.title"),
 				t("institutionFormModal.feedback.delete.description"),
 			);
 			return;
-		} catch (error) {
-			if (!isDeleteDeniedError(error)) {
-				setIsDeleting(false);
-				setDeleteError({
-					title: t("institutionFormModal.delete.errorTitle", {
-						defaultValue: "Delete failed",
-					}),
-					description: t("institutionFormModal.delete.errorDescription", {
-						defaultValue:
-							"Please try again or contact support if the issue persists.",
-					}),
-				});
-				throw error;
-			}
+		}
+
+		if (deleteResult.error !== "forbidden") {
+			setIsDeleting(false);
+			setDeleteError({
+				title: t("institutionFormModal.delete.errorTitle", {
+					defaultValue: "Delete failed",
+				}),
+				description: t("institutionFormModal.delete.errorDescription", {
+					defaultValue:
+						"Please try again or contact support if the issue persists.",
+				}),
+			});
+			throw new Error("delete-failed");
 		}
 
 		try {
@@ -198,7 +187,6 @@ export function InstitutionEditModal({
 		}
 	}, [
 		isDeleting,
-		isDeleteDeniedError,
 		removeInstitution,
 		resolvedInstitutionWithFallback,
 		t,

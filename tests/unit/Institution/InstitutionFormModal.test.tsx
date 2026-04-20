@@ -204,12 +204,18 @@ describe("InstitutionFormModal", () => {
 		mockedShowSuccessToast.mockReset();
 
 		mockedCreateInstitution.mockResolvedValue({
-			id: 1,
-			name: "New Institution",
+			ok: true,
+			data: {
+				id: 1,
+				name: "New Institution",
+			},
 		} as never);
 		mockedUpdateInstitution.mockResolvedValue({
-			id: 2,
-			name: "Updated Institution",
+			ok: true,
+			data: {
+				id: 2,
+				name: "Updated Institution",
+			},
 		} as never);
 	});
 

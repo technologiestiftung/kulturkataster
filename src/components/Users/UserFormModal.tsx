@@ -129,6 +129,52 @@ const useResolvedUser = (
 	return { resolvedUser, isWaitingForUser, showNotFound };
 };
 
+const translateUserFormError = (
+	t: (key: string) => string,
+	errorCode: string,
+) => {
+	switch (errorCode) {
+		case "emailTaken":
+			return t("userFormModal.errors.emailTaken");
+		case "notFound":
+			return t("userFormModal.errors.notFound");
+		case "forbidden":
+			return t("userFormModal.errors.forbidden");
+		case "invalidInput":
+			return t("userFormModal.errors.invalidInput");
+		default:
+			return t("userFormModal.errors.unexpected");
+	}
+};
+
+const translateUserPasswordResetError = (
+	t: (key: string) => string,
+	errorCode: string,
+) => {
+	switch (errorCode) {
+		case "notFound":
+			return t("userFormModal.errors.notFound");
+		case "forbidden":
+			return t("userFormModal.errors.forbidden");
+		default:
+			return t("userFormModal.passwordReset.error");
+	}
+};
+
+const translateUserRoleEmailError = (
+	t: (key: string) => string,
+	errorCode: string,
+) => {
+	switch (errorCode) {
+		case "notFound":
+			return t("userFormModal.errors.notFound");
+		case "forbidden":
+			return t("userFormModal.errors.forbidden");
+		default:
+			return t("userFormModal.roleEmails.error");
+	}
+};
+
 const useUserSubmit = (
 	mode: UserFormModalProps["mode"],
 	userId: string | undefined,
@@ -153,7 +199,7 @@ const useUserSubmit = (
 
 		try {
 			if (mode === "create") {
-				const created = await createUser({
+				const result = await createUser({
 					email: String(data.email ?? ""),
 					first_name: String(data.first_name ?? ""),
 					last_name: String(data.last_name ?? ""),
@@ -168,9 +214,13 @@ const useUserSubmit = (
 					institutionIds:
 						institutionIds.length > 0 ? institutionIds : undefined,
 				});
-				addUser(created);
+				if (!result.ok) {
+					onError(result.error);
+					return;
+				}
+				addUser(result.data);
 			} else if (userId) {
-				const updated = await updateUser({
+				const result = await updateUser({
 					id: userId,
 					email: String(data.email ?? ""),
 					first_name: String(data.first_name ?? ""),
@@ -185,8 +235,12 @@ const useUserSubmit = (
 					groupIds,
 					institutionIds,
 				});
-				if (updated) {
-					upsertUser(updated);
+				if (!result.ok) {
+					onError(result.error);
+					return;
+				}
+				if (result.data) {
+					upsertUser(result.data);
 				}
 			}
 
@@ -349,7 +403,12 @@ const buildUserFormConfig = ({
 							icon: <Mail className="h-5 w-5 text-primary-dark" />,
 							onAction: async () => {
 								if (!resolvedUser) return null;
-								await sendPasswordReset(resolvedUser.email);
+								const result = await sendPasswordReset(resolvedUser.email);
+								if (!result.ok) {
+									throw new Error(
+										translateUserPasswordResetError(t, result.error),
+									);
+								}
 								return t("userFormModal.passwordReset.success");
 							},
 						},
@@ -508,12 +567,15 @@ export function UserFormModal({
 		decision: "approved" | "rejected",
 	) => {
 		if (!resolvedUser) return null;
-		const updatedUser = await sendRoleDecisionEmailManual({
+		const result = await sendRoleDecisionEmailManual({
 			userId: resolvedUser.id,
 			target,
 			decision,
 		});
-		upsertUser(updatedUser);
+		if (!result.ok) {
+			throw new Error(translateUserRoleEmailError(t, result.error));
+		}
+		upsertUser(result.data);
 		return t("userFormModal.roleEmails.success");
 	};
 	const { handleSubmit, submitting } = useUserSubmit(
@@ -522,7 +584,7 @@ export function UserFormModal({
 		handleClose,
 		handleSuccess,
 		shouldRefresh,
-		(message) => setSubmitError(message),
+		(errorCode) => setSubmitError(translateUserFormError(t, errorCode)),
 	);
 
 	const statusOptions = useMemo(
@@ -624,9 +686,20 @@ export function UserFormModal({
 							onConfirm: async () => {
 								if (isDeleting) return;
 								setIsDeleting(true);
+								const result = await deleteUser(resolvedUser.id);
+								if (!result.ok) {
+									setDeleteError({
+										title: t("userFormModal.delete.errorTitle", {
+											defaultValue: "Delete failed",
+										}),
+										description: translateUserFormError(t, result.error),
+									});
+									setShowDeleteDialog(false);
+									setIsDeleting(false);
+									return;
+								}
+								handleClose();
 								try {
-									handleClose();
-									await deleteUser(resolvedUser.id);
 									queueMicrotask(() => {
 										removeUser(resolvedUser.id);
 										showSuccessToast(
@@ -638,17 +711,6 @@ export function UserFormModal({
 											}),
 										);
 									});
-								} catch {
-									setDeleteError({
-										title: t("userFormModal.delete.errorTitle", {
-											defaultValue: "Delete failed",
-										}),
-										description: t("userFormModal.delete.errorDescription", {
-											defaultValue:
-												"Please try again or contact support if the issue persists.",
-										}),
-									});
-									setShowDeleteDialog(false);
 								} finally {
 									setIsDeleting(false);
 								}

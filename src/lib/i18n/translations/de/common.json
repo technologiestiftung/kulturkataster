@@ -196,6 +196,13 @@
 			"deleteTitle": "Profil löschen",
 			"emailLabel": "E-Mail-Adresse",
 			"emailPlaceholder": "name@beispiel.de",
+			"errors": {
+				"emailTaken": "Eine Nutzerin oder ein Nutzer mit dieser E-Mail-Adresse existiert bereits.",
+				"forbidden": "Sie dürfen dieses Profil nicht ändern.",
+				"invalidInput": "Bitte prüfen Sie die eingegebenen Daten und versuchen Sie es erneut.",
+				"notFound": "Dieses Profil existiert nicht mehr.",
+				"unexpected": "Änderungen konnten nicht gespeichert werden."
+			},
 			"errorFallback": "Änderungen konnten nicht gespeichert werden.",
 			"metaTitle": "Persönliche Angaben ändern – Kulturkataster",
 			"nameLabel": "Ihr Name",
