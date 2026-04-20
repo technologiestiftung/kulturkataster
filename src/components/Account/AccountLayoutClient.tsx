@@ -94,6 +94,12 @@ export function AccountLayoutClient({
 		return installModalNavigationTiming();
 	}, []);
 
+	useEffect(() => {
+		visibleTabs.forEach((tab) => {
+			router.prefetch(toLocalePath(`/account/${tab.value}`));
+		});
+	}, []);
+
 	const isFirstRender = useRef(true);
 	useEffect(() => {
 		if (isFirstRender.current) {
