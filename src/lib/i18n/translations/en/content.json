@@ -244,6 +244,15 @@
 			"update": "Save",
 			"updateLoading": "Saved..."
 		},
+		"errors": {
+			"forbidden": "You are not allowed to change this category.",
+			"hasSubcategories": "Please remove all subcategories before deleting this category.",
+			"keyLocked": "The category key cannot be changed.",
+			"keyTaken": "A category with this key already exists.",
+			"notFound": "The selected category no longer exists.",
+			"selfParent": "A category cannot be its own parent.",
+			"unexpected": "The category could not be saved. Please try again."
+		},
 		"delete": {
 			"button": "Delete",
 			"cancel": "Cancel",
@@ -363,6 +372,12 @@
 			"creating": "Group is created...",
 			"save": "save Changes",
 			"saving": "Changes are saved..."
+		},
+		"errors": {
+			"forbidden": "You are not allowed to change this group.",
+			"nameTaken": "A group with this name already exists.",
+			"notFound": "The selected group no longer exists.",
+			"unexpected": "The group could not be saved. Please try again."
 		},
 		"delete": {
 			"button": "Delete",
@@ -749,6 +764,12 @@
 			"save": "Save",
 			"saving": "Saved..."
 		},
+		"errors": {
+			"forbidden": "You are not allowed to change this cultural venue.",
+			"invalidInput": "Please check the entered data and try again.",
+			"notFound": "The selected cultural venue no longer exists.",
+			"unexpected": "The cultural venue could not be saved. Please try again."
+		},
 		"delete": {
 			"button": "Delete",
 			"cancel": "Cancel",
@@ -993,6 +1014,13 @@
 			"creating": "Role is being created...",
 			"save": "save Changes",
 			"saving": "Changes are saved..."
+		},
+		"errors": {
+			"forbidden": "You are not allowed to change this role.",
+			"nameTaken": "A role with this name already exists.",
+			"notFound": "The selected role no longer exists.",
+			"systemRole": "System roles cannot be deleted.",
+			"unexpected": "The role could not be saved. Please try again."
 		},
 		"delete": {
 			"button": "Delete",
@@ -1532,6 +1560,13 @@
 			"creating": "Being created...",
 			"save": "save Changes",
 			"saving": "Saved..."
+		},
+		"errors": {
+			"emailTaken": "A user with this email address already exists.",
+			"forbidden": "You are not allowed to change this user.",
+			"invalidInput": "Please check the entered data and try again.",
+			"notFound": "The selected user no longer exists.",
+			"unexpected": "The user could not be saved. Please try again."
 		},
 		"complianceResend": {
 			"description": "Resend the GDPR compliance email to the user.",
