@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { useAccountStore } from "@/lib/store/accountStore";
 import { getAccountRefreshData } from "@/server/actions/account";
+import type { AccountStoreState } from "@/types/account";
 
 const DEFAULT_ACCOUNT_AUTO_REFRESH_INTERVAL_MS = 10_000;
 const ACCOUNT_AUTO_REFRESH_ENABLED_PATHS = new Set([
@@ -42,13 +43,13 @@ export const isAccountAutoRefreshPathEnabled = (pathname: string | null) => {
 const applyRefreshedAccountData = (
 	refreshedData: Awaited<ReturnType<typeof getAccountRefreshData>>,
 	setters: {
-		setUsers: ReturnType<typeof useAccountStore>["setUsers"];
-		setGroups: ReturnType<typeof useAccountStore>["setGroups"];
-		setRoles: ReturnType<typeof useAccountStore>["setRoles"];
-		setCategories: ReturnType<typeof useAccountStore>["setCategories"];
-		setInstitutions: ReturnType<typeof useAccountStore>["setInstitutions"];
-		setSubmissions: ReturnType<typeof useAccountStore>["setSubmissions"];
-		setEntityAudits: ReturnType<typeof useAccountStore>["setEntityAudits"];
+		setUsers: AccountStoreState["setUsers"];
+		setGroups: AccountStoreState["setGroups"];
+		setRoles: AccountStoreState["setRoles"];
+		setCategories: AccountStoreState["setCategories"];
+		setInstitutions: AccountStoreState["setInstitutions"];
+		setSubmissions: AccountStoreState["setSubmissions"];
+		setEntityAudits: AccountStoreState["setEntityAudits"];
 	},
 ) => {
 	if (!refreshedData) return;
