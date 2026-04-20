@@ -14,15 +14,16 @@ import {
 	requireScopeOrUser,
 	type AccessContext,
 } from "@/server/utils/rbac";
+import type { AccountStoreState } from "@/types/account";
 
 export type AccountDataPayload = {
-	users: Awaited<ReturnType<typeof userRepo.list>> | Awaited<ReturnType<typeof userRepo.findById>>[];
-	groups: Awaited<ReturnType<typeof groupRepo.list>>;
-	roles: Awaited<ReturnType<typeof roleRepo.list>>;
-	categories: Awaited<ReturnType<typeof categoryRepo.listAll>>;
-	institutions: Awaited<ReturnType<typeof institutionRepo.listWithSelect>>;
-	submissions: Awaited<ReturnType<typeof submissionRepo.list>>;
-	entityAudits: Awaited<ReturnType<typeof entityAuditRepo.list>>;
+	users: AccountStoreState["users"];
+	groups: AccountStoreState["groups"];
+	roles: AccountStoreState["roles"];
+	categories: AccountStoreState["categories"];
+	institutions: AccountStoreState["institutions"];
+	submissions: AccountStoreState["submissions"];
+	entityAudits: AccountStoreState["entityAudits"];
 };
 
 type EntityAuditRow = Awaited<ReturnType<typeof entityAuditRepo.list>>[number];
@@ -234,7 +235,10 @@ export async function loadAccountDataBestEffort(
 	args: AccountDataLoaderArgs,
 ): Promise<Partial<AccountDataPayload>> {
 	const loaderEntries = Object.entries(ACCOUNT_DATA_LOADERS) as Array<
-		[keyof AccountDataPayload, (args: AccountDataLoaderArgs) => Promise<unknown>]
+		[
+			keyof AccountDataPayload,
+			(args: AccountDataLoaderArgs) => Promise<unknown>,
+		]
 	>;
 	const settledResults = await Promise.allSettled(
 		loaderEntries.map(([, loader]) => loader(args)),

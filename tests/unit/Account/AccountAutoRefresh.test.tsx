@@ -47,7 +47,8 @@ vi.mock("@/lib/store/accountStore", () => ({
 }));
 
 vi.mock("@/server/actions/account", () => ({
-	getAccountRefreshData: (...args: unknown[]) => getAccountRefreshDataMock(...args),
+	getAccountRefreshData: (...args: unknown[]) =>
+		getAccountRefreshDataMock(...args),
 }));
 
 describe("AccountAutoRefresh", () => {
