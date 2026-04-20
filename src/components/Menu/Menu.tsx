@@ -22,6 +22,7 @@ import Accessibility from "@/icons/accessibility.svg";
 import Edit from "@/icons/edit.svg";
 import InfoCircle from "@/icons/info-circle.svg";
 import ListIcon from "@/icons/list.svg";
+import UserIcon from "@/icons/user.svg";
 import MapIcon from "@/icons/map.svg";
 import ENIcon from "@/icons/lang/en.svg";
 import Download from "@/icons/download.svg";
@@ -75,16 +76,16 @@ const menuItems: MenuItem[] = [
 		showInAccount: true,
 		showInMap: true,
 	},
-	// {
-	// 	id: "user",
-	// 	icon: UserIcon,
-	// 	showInMobile: true,
-	// 	showInAccount: true,
-	// 	showInMap: true,
-	// 	label: "user.title",
-	// 	route: "/account",
-	// 	matchPattern: /^\/[^/]+\/account/,
-	// },
+	{
+		id: "user",
+		icon: UserIcon,
+		showInMobile: true,
+		showInAccount: true,
+		showInMap: true,
+		label: "user.title",
+		route: "/account",
+		matchPattern: /^\/[^/]+\/account/,
+	},
 ];
 
 const footerItems: MenuItem[] = [
