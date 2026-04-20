@@ -3,13 +3,7 @@
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { useAccountStore } from "@/lib/store/accountStore";
-import { getUsers } from "@/server/actions/users";
-import { getGroups } from "@/server/actions/groups";
-import { getRoles } from "@/server/actions/roles";
-import { getCategories } from "@/server/actions/categories";
-import { getMyInstitutions } from "@/server/actions/institutions";
-import { getSubmissions } from "@/server/actions/submissions";
-import { getEntityAudits } from "@/server/actions/entityAudits";
+import { getAccountRefreshData } from "@/server/actions/account";
 
 const DEFAULT_ACCOUNT_AUTO_REFRESH_INTERVAL_MS = 10_000;
 const ACCOUNT_AUTO_REFRESH_ENABLED_PATHS = new Set([
@@ -20,15 +14,6 @@ const ACCOUNT_AUTO_REFRESH_ENABLED_PATHS = new Set([
 	"/account/roles",
 	"/account/categories",
 ]);
-
-const applySettledValue = <T,>(
-	result: PromiseSettledResult<T>,
-	setter: (value: T) => void,
-) => {
-	if (result.status === "fulfilled") {
-		setter(result.value);
-	}
-};
 
 const normalizeAccountPathname = (pathname: string | null) => {
 	if (!pathname) return null;
@@ -52,6 +37,43 @@ export const isAccountAutoRefreshPathEnabled = (pathname: string | null) => {
 		normalizedPathname !== null &&
 		ACCOUNT_AUTO_REFRESH_ENABLED_PATHS.has(normalizedPathname)
 	);
+};
+
+const applyRefreshedAccountData = (
+	refreshedData: Awaited<ReturnType<typeof getAccountRefreshData>>,
+	setters: {
+		setUsers: ReturnType<typeof useAccountStore>["setUsers"];
+		setGroups: ReturnType<typeof useAccountStore>["setGroups"];
+		setRoles: ReturnType<typeof useAccountStore>["setRoles"];
+		setCategories: ReturnType<typeof useAccountStore>["setCategories"];
+		setInstitutions: ReturnType<typeof useAccountStore>["setInstitutions"];
+		setSubmissions: ReturnType<typeof useAccountStore>["setSubmissions"];
+		setEntityAudits: ReturnType<typeof useAccountStore>["setEntityAudits"];
+	},
+) => {
+	if (!refreshedData) return;
+
+	if (refreshedData.users !== undefined) {
+		setters.setUsers(refreshedData.users);
+	}
+	if (refreshedData.groups !== undefined) {
+		setters.setGroups(refreshedData.groups);
+	}
+	if (refreshedData.roles !== undefined) {
+		setters.setRoles(refreshedData.roles);
+	}
+	if (refreshedData.categories !== undefined) {
+		setters.setCategories(refreshedData.categories);
+	}
+	if (refreshedData.institutions !== undefined) {
+		setters.setInstitutions(refreshedData.institutions);
+	}
+	if (refreshedData.submissions !== undefined) {
+		setters.setSubmissions(refreshedData.submissions);
+	}
+	if (refreshedData.entityAudits !== undefined) {
+		setters.setEntityAudits(refreshedData.entityAudits);
+	}
 };
 
 export function AccountAutoRefresh({
@@ -82,33 +104,17 @@ export function AccountAutoRefresh({
 
 			isRefreshingRef.current = true;
 			try {
-				const [
-					usersResult,
-					groupsResult,
-					rolesResult,
-					categoriesResult,
-					institutionsResult,
-					submissionsResult,
-					entityAuditsResult,
-				] = await Promise.allSettled([
-					getUsers(),
-					getGroups(),
-					getRoles(),
-					getCategories(),
-					getMyInstitutions(),
-					getSubmissions(),
-					getEntityAudits(),
-				]);
-
+				const refreshedData = await getAccountRefreshData();
 				if (cancelled) return;
-
-				applySettledValue(usersResult, setUsers);
-				applySettledValue(groupsResult, setGroups);
-				applySettledValue(rolesResult, setRoles);
-				applySettledValue(categoriesResult, setCategories);
-				applySettledValue(institutionsResult, setInstitutions);
-				applySettledValue(submissionsResult, setSubmissions);
-				applySettledValue(entityAuditsResult, setEntityAudits);
+				applyRefreshedAccountData(refreshedData, {
+					setUsers,
+					setGroups,
+					setRoles,
+					setCategories,
+					setInstitutions,
+					setSubmissions,
+					setEntityAudits,
+				});
 			} finally {
 				isRefreshingRef.current = false;
 			}
