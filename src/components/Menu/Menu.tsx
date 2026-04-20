@@ -23,6 +23,7 @@ import Edit from "@/icons/edit.svg";
 import InfoCircle from "@/icons/info-circle.svg";
 import ListIcon from "@/icons/list.svg";
 import MapIcon from "@/icons/map.svg";
+import DEIcon from "@/icons/lang/de.svg";
 import ENIcon from "@/icons/lang/en.svg";
 import Download from "@/icons/download.svg";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
@@ -120,7 +121,7 @@ const footerItems: MenuItem[] = [
 	},
 	{
 		id: "language",
-		icon: ENIcon,
+		icon: DEIcon,
 		label: "language.title",
 		route: "#",
 		showInMobile: false,
@@ -483,6 +484,10 @@ export function Menu({
 										normalizedPath,
 										toLocalePath,
 									);
+									let Icon = item.icon;
+									if (item.id === "language") {
+										Icon = currentLocale !== "de" ? DEIcon : ENIcon;
+									}
 									return (
 										<SidebarMenuItem key={item.id}>
 											<SidebarMenuButton
@@ -495,7 +500,7 @@ export function Menu({
 												aria-label={t(item.label)}
 												aria-current={isActive ? "page" : undefined}
 											>
-												<item.icon />
+												<Icon />
 											</SidebarMenuButton>
 										</SidebarMenuItem>
 									);
