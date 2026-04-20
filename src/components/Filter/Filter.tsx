@@ -24,16 +24,14 @@ const Filter: FC<FilterProps> = ({ onSearchClick, onShowFilter }) => {
 		subcategoryCounts,
 		categories,
 		districts,
-		initializeCategories,
-		initializeDistricts,
+		initializePublicData,
 	} = useInstitutionStore();
 
 	const loading = categories === null || districts.length === 0;
 
 	const retry = useCallback(() => {
-		initializeCategories();
-		initializeDistricts();
-	}, [initializeCategories, initializeDistricts]);
+		void initializePublicData();
+	}, [initializePublicData]);
 
 	const updateFilters = (newFilters: FilterState) => {
 		setFilters(newFilters);

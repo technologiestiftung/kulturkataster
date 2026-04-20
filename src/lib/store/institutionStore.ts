@@ -1,5 +1,3 @@
-import { getCategoriesWithSubcategories } from "@/server/actions/categories";
-import { getDistricts } from "@/server/actions/addresses";
 import { Institution, InstitutionStoreState } from "@/types";
 import { create } from "zustand";
 import { devtools, subscribeWithSelector } from "zustand/middleware";
@@ -14,7 +12,7 @@ import {
 	getSubcategories,
 	toFeatureCollection,
 } from "../utils/institutionUtils";
-import { getInstitutions } from "@/server/actions/institutions";
+import { getPublicInstitutionData } from "@/server/actions/publicInstitutionData";
 import { reportClientTelemetry } from "@/lib/utils/clientTelemetry";
 
 const defaultFilters: InstitutionStoreState["filters"] = {
@@ -138,71 +136,26 @@ export const useInstitutionStore = create<InstitutionStoreState>()(
 			resetFilters: () => applyFilters(defaultFilters, set, get),
 			categories: null,
 			setCategories: (categories) => set({ categories }),
+			setDistricts: (districts) => set({ districts }),
 			clearError: () => set({ error: null }),
-			initializeCategories: async () => {
+			initializePublicData: async () => {
 				set({ isLoading: true, error: null });
 				try {
-					const categories = await getCategoriesWithSubcategories();
-					const currentState = { ...get(), categories };
-					const { categoryCounts, subcategoryCounts } =
-						computeCounts(currentState);
-					set({
+					const { institutions, categories, districts } =
+						await getPublicInstitutionData();
+					const newState = {
+						allInstitutions: institutions,
 						categories,
-						categoryCounts,
-						subcategoryCounts,
-						isLoading: false,
-					});
-				} catch (error) {
-					reportClientTelemetry({
-						level: "error",
-						event: "institution_store.categories_init.failed",
-						error,
-					});
-					set({
-						isLoading: false,
-						error:
-							error instanceof Error
-								? error.message
-								: "Failed to initialize categories.",
-					});
-				}
-			},
-			initializeDistricts: async () => {
-				set({ isLoading: true, error: null });
-				try {
-					const districts = await getDistricts();
-					set({ districts, isLoading: false });
-				} catch (error) {
-					reportClientTelemetry({
-						level: "error",
-						event: "institution_store.districts_init.failed",
-						error,
-					});
-					set({
-						isLoading: false,
-						error:
-							error instanceof Error
-								? error.message
-								: "Failed to initialize districts.",
-					});
-				}
-			},
-			initializeInstitutions: async () => {
-				set({ isLoading: true, error: null });
-				try {
-					const institutionsData = await getInstitutions();
-					const newState = { allInstitutions: institutionsData };
+						districts,
+					};
 					const currentState = { ...get(), ...newState };
 					const filteredInstitutions =
 						computeFilteredInstitutions(currentState);
 					const allInstitutionsGeoJSON =
-						institutionsData && institutionsData.length > 0
-							? toFeatureCollection(institutionsData)
-							: null;
+						institutions.length > 0 ? toFeatureCollection(institutions) : null;
 					const filteredInstitutionsGeoJSON = filteredInstitutions
 						? toFeatureCollection(filteredInstitutions)
 						: null;
-
 					const stateWithFiltered = {
 						...currentState,
 						filteredInstitutions,
@@ -223,7 +176,7 @@ export const useInstitutionStore = create<InstitutionStoreState>()(
 				} catch (error) {
 					reportClientTelemetry({
 						level: "error",
-						event: "institution_store.institutions_init.failed",
+						event: "institution_store.public_init.failed",
 						error,
 					});
 					set({
@@ -231,7 +184,7 @@ export const useInstitutionStore = create<InstitutionStoreState>()(
 						error:
 							error instanceof Error
 								? error.message
-								: "Failed to initialize institutions.",
+								: "Failed to initialize public institution data.",
 					});
 				}
 			},
