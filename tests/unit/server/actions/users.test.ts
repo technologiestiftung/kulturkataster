@@ -129,7 +129,10 @@ describe("server actions: users", () => {
 			}),
 		);
 		expect(update).toHaveBeenCalledWith("user-1", { status: "active" });
-		expect(result.status).toBe("active");
+		expect(result).toMatchObject({
+			ok: true,
+			data: expect.objectContaining({ status: "active" }),
+		});
 		expect(revalidateAccount).toHaveBeenCalledTimes(1);
 	});
 
@@ -157,7 +160,10 @@ describe("server actions: users", () => {
 			}),
 		);
 		expect(update).not.toHaveBeenCalled();
-		expect(result.status).toBe("approval_pending");
+		expect(result).toMatchObject({
+			ok: true,
+			data: expect.objectContaining({ status: "approval_pending" }),
+		});
 		expect(revalidateAccount).toHaveBeenCalledTimes(1);
 	});
 });

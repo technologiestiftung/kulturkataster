@@ -152,6 +152,43 @@ const useResolvedCategory = (
 	};
 };
 
+const translateCategoryFormError = (
+	t: (key: string, options?: { defaultValue?: string }) => string,
+	errorCode: string,
+) => {
+	switch (errorCode) {
+		case "keyTaken":
+			return t("categoryFormModal.errors.keyTaken", {
+				defaultValue: "A category with this key already exists.",
+			});
+		case "notFound":
+			return t("categoryFormModal.errors.notFound", {
+				defaultValue: "The selected category no longer exists.",
+			});
+		case "keyLocked":
+			return t("categoryFormModal.errors.keyLocked", {
+				defaultValue: "The category key cannot be changed.",
+			});
+		case "selfParent":
+			return t("categoryFormModal.errors.selfParent", {
+				defaultValue: "A category cannot be its own parent.",
+			});
+		case "hasSubcategories":
+			return t("categoryFormModal.errors.hasSubcategories", {
+				defaultValue:
+					"Please remove all subcategories before deleting this category.",
+			});
+		case "forbidden":
+			return t("categoryFormModal.errors.forbidden", {
+				defaultValue: "You are not allowed to change this category.",
+			});
+		default:
+			return t("categoryFormModal.errors.unexpected", {
+				defaultValue: "The category could not be saved. Please try again.",
+			});
+	}
+};
+
 const useCategorySubmit = (
 	mode: CategoryFormModalProps["mode"],
 	numericCategoryId: number | undefined,
@@ -204,7 +241,7 @@ const useCategorySubmit = (
 				en: toOptionalText(data.labelEn) ?? undefined,
 			};
 			if (mode === "create") {
-				const created = await createCategory({
+				const result = await createCategory({
 					key: String(data.key ?? ""),
 					description,
 					icon,
@@ -212,9 +249,13 @@ const useCategorySubmit = (
 					parentCategoryId: parentCategoryId ?? null,
 					localizedLabels,
 				});
-				addCategory(created);
+				if (!result.ok) {
+					onError(result.error);
+					return;
+				}
+				addCategory(result.data);
 			} else if (numericCategoryId) {
-				const updated = await updateCategory({
+				const result = await updateCategory({
 					id: numericCategoryId,
 					key: String(data.key ?? ""),
 					description,
@@ -223,8 +264,12 @@ const useCategorySubmit = (
 					parentCategoryId: parentCategoryId ?? null,
 					localizedLabels,
 				});
-				if (updated) {
-					upsertCategory(updated);
+				if (!result.ok) {
+					onError(result.error);
+					return;
+				}
+				if (result.data) {
+					upsertCategory(result.data);
 				}
 			}
 
@@ -572,7 +617,7 @@ export function CategoryFormModal({
 		handleClose,
 		handleSuccess,
 		shouldRefresh,
-		(message) => setSubmitError(message),
+		(errorCode) => setSubmitError(translateCategoryFormError(t, errorCode)),
 	);
 
 	const formConfig = useMemo(() => {
@@ -653,9 +698,20 @@ export function CategoryFormModal({
 							onConfirm: async () => {
 								if (isDeleting) return;
 								setIsDeleting(true);
+								const result = await deleteCategory(resolvedCategory.id);
+								if (!result.ok) {
+									setDeleteError({
+										title: t("categoryFormModal.delete.errorTitle", {
+											defaultValue: "Delete failed",
+										}),
+										description: translateCategoryFormError(t, result.error),
+									});
+									setShowDeleteDialog(false);
+									setIsDeleting(false);
+									return;
+								}
+								handleClose();
 								try {
-									handleClose();
-									await deleteCategory(resolvedCategory.id);
 									queueMicrotask(() => {
 										removeCategory(resolvedCategory.id);
 										showSuccessToast(
@@ -668,20 +724,6 @@ export function CategoryFormModal({
 											}),
 										);
 									});
-								} catch {
-									setDeleteError({
-										title: t("categoryFormModal.delete.errorTitle", {
-											defaultValue: "Delete failed",
-										}),
-										description: t(
-											"categoryFormModal.delete.errorDescription",
-											{
-												defaultValue:
-													"Please try again or remove any subcategories first.",
-											},
-										),
-									});
-									setShowDeleteDialog(false);
 								} finally {
 									setIsDeleting(false);
 								}

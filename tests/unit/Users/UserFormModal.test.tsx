@@ -133,19 +133,22 @@ describe("UserFormModal", () => {
 
 	it("creates a user in create mode", async () => {
 		mockedCreateUser.mockResolvedValueOnce({
-			id: "user-created",
-			email: "updated@example.com",
-			first_name: "Ada",
-			last_name: "Lovelace",
-			status: "active",
-			account_type: "org",
-			compliance: true,
-			created_at: new Date("2025-01-01"),
-			updated_at: new Date("2025-01-01"),
-			role: null,
-			groups: [],
-			institutions: [],
-			submissions: [],
+			ok: true,
+			data: {
+				id: "user-created",
+				email: "updated@example.com",
+				first_name: "Ada",
+				last_name: "Lovelace",
+				status: "active",
+				account_type: "org",
+				compliance: true,
+				created_at: new Date("2025-01-01"),
+				updated_at: new Date("2025-01-01"),
+				role: null,
+				groups: [],
+				institutions: [],
+				submissions: [],
+			},
 		} as never);
 
 		render(<UserFormModal mode="create" routePath="/account/users/new" />);
@@ -166,19 +169,22 @@ describe("UserFormModal", () => {
 
 	it("updates a user in edit mode", async () => {
 		mockedUpdateUser.mockResolvedValueOnce({
-			id: "user-1",
-			email: "updated@example.com",
-			first_name: "Ada",
-			last_name: "Lovelace",
-			status: "active",
-			account_type: "org",
-			compliance: true,
-			created_at: new Date("2025-01-01"),
-			updated_at: new Date("2025-01-02"),
-			role: null,
-			groups: [],
-			institutions: [],
-			submissions: [],
+			ok: true,
+			data: {
+				id: "user-1",
+				email: "updated@example.com",
+				first_name: "Ada",
+				last_name: "Lovelace",
+				status: "active",
+				account_type: "org",
+				compliance: true,
+				created_at: new Date("2025-01-01"),
+				updated_at: new Date("2025-01-02"),
+				role: null,
+				groups: [],
+				institutions: [],
+				submissions: [],
+			},
 		} as never);
 
 		render(
