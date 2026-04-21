@@ -125,6 +125,10 @@ enum PermissionScope {
   all
 }
 
+enum EmailTemplateKind {
+  auth
+  custom
+}
 
 // ============================================
 // CORE MODELS
@@ -332,9 +336,10 @@ model Role {
   is_system  Boolean  @default(false)
   is_guest  Boolean  @default(false)
 
-  users                  User[]
-  table_permissions      RoleTablePermission[]
-  field_permissions      RoleFieldPermission[]
+  users                    User[]
+  table_permissions        RoleTablePermission[]
+  field_permissions        RoleFieldPermission[]
+  email_template_audiences EmailTemplateAudience[]
 
   @@map("role")
 }
@@ -377,10 +382,55 @@ model Group {
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
 
-  users        User[]
-  institutions Institution[]
+  users                    User[]
+  institutions             Institution[]
+  email_template_audiences EmailTemplateAudience[]
 
   @@map("group")
+}
+
+model EmailTemplate {
+  id          Int               @id @default(autoincrement())
+  key         String            @unique
+  path        String            @unique
+  kind        EmailTemplateKind @default(custom)
+  name        String?
+  description String?
+  subject     String?
+  html        String            @db.Text
+  text        String?           @db.Text
+  metadata    Json?
+  is_active   Boolean           @default(true)
+  created_at  DateTime          @default(now())
+  updated_at  DateTime          @updatedAt
+
+  audiences EmailTemplateAudience[]
+
+  @@index([kind])
+  @@index([is_active])
+  @@map("email_template")
+}
+
+model EmailTemplateAudience {
+  id          Int      @id @default(autoincrement())
+  template_id Int
+  role_id     Int?
+  group_id    Int?
+  metadata    Json?
+  priority    Int      @default(0)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  template EmailTemplate @relation(fields: [template_id], references: [id], onDelete: Cascade)
+  role     Role?         @relation(fields: [role_id], references: [id], onDelete: Cascade)
+  group    Group?        @relation(fields: [group_id], references: [id], onDelete: Cascade)
+
+  @@unique([template_id, role_id, group_id])
+  @@index([template_id])
+  @@index([role_id])
+  @@index([group_id])
+  @@index([priority])
+  @@map("email_template_audience")
 }
 
 model Submission {

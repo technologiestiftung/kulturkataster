@@ -83,7 +83,6 @@ export const isAccountAutoRefreshPathEnabled = (pathname: string | null) => {
 	);
 };
 
-
 export function AccountAutoRefresh({
 	intervalMs = DEFAULT_ACCOUNT_AUTO_REFRESH_INTERVAL_MS,
 }: {

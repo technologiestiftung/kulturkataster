@@ -1696,6 +1696,44 @@
 			"success": "Password reset email sent.",
 			"title": "Reset password"
 		},
+		"templateEmail": {
+			"description": "Choose a database template and send it to this user.",
+			"error": "Email could not be sent.",
+			"loadError": "Email templates could not be loaded.",
+			"loading": "Loading templates…",
+			"placeholder": "Select template",
+			"selectLabel": "Template",
+			"send": "Send template",
+			"sending": "Sending…",
+			"success": "Email sent successfully.",
+			"title": "Send email template",
+			"templates": {
+				"auth": {
+					"confirmation": "Email Confirmation",
+					"email_change": "Confirm Email Change",
+					"email_changed": "Email Address Changed",
+					"invite": "Invitation",
+					"magic_link": "Magic Link",
+					"password_changed": "Password Changed",
+					"reauthentication": "Reauthentication",
+					"recovery": "Password Recovery"
+				},
+				"custom": {
+					"account_deleted": "Account Deleted",
+					"claim_approved": "Claim Approved",
+					"claim_rejected": "Claim Rejected",
+					"compliance_resend": "Compliance Resend",
+					"role_district_approved": "District Role Approved",
+					"role_district_rejected": "District Role Rejected",
+					"role_network_approved": "Network Role Approved",
+					"role_network_rejected": "Network Role Rejected",
+					"role_state_approved": "State Role Approved",
+					"role_state_rejected": "State Role Rejected",
+					"submission_approved": "Submission Approved",
+					"submission_rejected": "Submission Rejected"
+				}
+			}
+		},
 		"roleEmails": {
 			"district": {
 				"description": "Send approval or rejection email for district employees.",
