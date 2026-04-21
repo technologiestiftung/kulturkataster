@@ -21,15 +21,26 @@ import {
 	createUser,
 	getUserById,
 	deleteUser,
+	getUserEmailTemplateOptions,
 	sendPasswordReset,
-	sendRoleDecisionEmailManual,
+	sendUserEmailTemplate,
 	updateUser,
+	type UserEmailTemplateOption,
 } from "@/server/actions/users";
 import type { UserStatus } from "@/generated/prisma";
 import type { User } from "@/types/user";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import Mail from "@/icons/mail.svg";
-import { showSuccessToast } from "@/lib/utils/feedbackToast";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
+import { showErrorToast, showSuccessToast } from "@/lib/utils/feedbackToast";
 import { triggerAccountRefresh } from "@/components/Account/AccountAutoRefresh";
 
 type UserFormModalProps = {
@@ -71,10 +82,6 @@ type UserFormConfigArgs = {
 	submitting: boolean;
 	onSubmit: (data: Record<string, unknown>) => void | Promise<void>;
 	onCancel: () => void;
-	onSendRoleDecision: (
-		target: "district" | "state" | "network",
-		decision: "approved" | "rejected",
-	) => Promise<string | null>;
 };
 
 type UseResolvedUserResult = {
@@ -159,20 +166,6 @@ const translateUserPasswordResetError = (
 			return t("userFormModal.errors.forbidden");
 		default:
 			return t("userFormModal.passwordReset.error");
-	}
-};
-
-const translateUserRoleEmailError = (
-	t: (key: string) => string,
-	errorCode: string,
-) => {
-	switch (errorCode) {
-		case "notFound":
-			return t("userFormModal.errors.notFound");
-		case "forbidden":
-			return t("userFormModal.errors.forbidden");
-		default:
-			return t("userFormModal.roleEmails.error");
 	}
 };
 
@@ -278,7 +271,6 @@ const buildUserFormConfig = ({
 	submitting,
 	onSubmit,
 	onCancel,
-	onSendRoleDecision,
 }: UserFormConfigArgs): FormWrapperConfig => {
 	const accessCondition = () => mode === "edit" && Boolean(resolvedUser);
 
@@ -374,6 +366,9 @@ const buildUserFormConfig = ({
 						name: "institutionIds",
 						label: t("userFormModal.form.access.fields.institutions.label"),
 						type: "multiselect",
+						afterField: resolvedUser ? (
+							<UserTemplateEmailPanel user={resolvedUser} t={t} />
+						) : undefined,
 						multiselectVariant: "modal",
 						placeholder: t(
 							"userFormModal.form.access.fields.institutions.placeholder",
@@ -413,74 +408,6 @@ const buildUserFormConfig = ({
 								}
 								return t("userFormModal.passwordReset.success");
 							},
-						},
-					},
-					{
-						name: "roleDistrictDecision",
-						label: "",
-						type: "actionPanel",
-						layout: { span: "full" },
-						condition: accessCondition,
-						actionPanel: {
-							title: t("userFormModal.roleEmails.district.title"),
-							description: t("userFormModal.roleEmails.district.description"),
-							actionLabel: t("userFormModal.roleEmails.sendApprove"),
-							actionLabelLoading: t("userFormModal.roleEmails.sendingApprove"),
-							secondaryActionLabel: t("userFormModal.roleEmails.sendReject"),
-							secondaryActionLabelLoading: t(
-								"userFormModal.roleEmails.sendingReject",
-							),
-							errorFallback: t("userFormModal.roleEmails.error"),
-							secondaryErrorFallback: t("userFormModal.roleEmails.error"),
-							icon: <Mail className="h-5 w-5 text-primary-dark" />,
-							onAction: () => onSendRoleDecision("district", "approved"),
-							onSecondaryAction: () =>
-								onSendRoleDecision("district", "rejected"),
-						},
-					},
-					{
-						name: "roleStateDecision",
-						label: "",
-						type: "actionPanel",
-						layout: { span: "full" },
-						condition: accessCondition,
-						actionPanel: {
-							title: t("userFormModal.roleEmails.state.title"),
-							description: t("userFormModal.roleEmails.state.description"),
-							actionLabel: t("userFormModal.roleEmails.sendApprove"),
-							actionLabelLoading: t("userFormModal.roleEmails.sendingApprove"),
-							secondaryActionLabel: t("userFormModal.roleEmails.sendReject"),
-							secondaryActionLabelLoading: t(
-								"userFormModal.roleEmails.sendingReject",
-							),
-							errorFallback: t("userFormModal.roleEmails.error"),
-							secondaryErrorFallback: t("userFormModal.roleEmails.error"),
-							icon: <Mail className="h-5 w-5 text-primary-dark" />,
-							onAction: () => onSendRoleDecision("state", "approved"),
-							onSecondaryAction: () => onSendRoleDecision("state", "rejected"),
-						},
-					},
-					{
-						name: "roleNetworkDecision",
-						label: "",
-						type: "actionPanel",
-						layout: { span: "full" },
-						condition: accessCondition,
-						actionPanel: {
-							title: t("userFormModal.roleEmails.network.title"),
-							description: t("userFormModal.roleEmails.network.description"),
-							actionLabel: t("userFormModal.roleEmails.sendApprove"),
-							actionLabelLoading: t("userFormModal.roleEmails.sendingApprove"),
-							secondaryActionLabel: t("userFormModal.roleEmails.sendReject"),
-							secondaryActionLabelLoading: t(
-								"userFormModal.roleEmails.sendingReject",
-							),
-							errorFallback: t("userFormModal.roleEmails.error"),
-							secondaryErrorFallback: t("userFormModal.roleEmails.error"),
-							icon: <Mail className="h-5 w-5 text-primary-dark" />,
-							onAction: () => onSendRoleDecision("network", "approved"),
-							onSecondaryAction: () =>
-								onSendRoleDecision("network", "rejected"),
 						},
 					},
 				],
@@ -524,6 +451,140 @@ const renderDialogBody = (
 	return <FormWrapper key={resolvedUser?.id ?? mode} config={formConfig} />;
 };
 
+function UserTemplateEmailPanel({
+	user,
+	t,
+}: {
+	user: User;
+	t: (key: string) => string;
+}) {
+	const [templates, setTemplates] = useState<UserEmailTemplateOption[]>([]);
+	const [selectedTemplatePath, setSelectedTemplatePath] = useState("");
+	const [isLoadingTemplates, setIsLoadingTemplates] = useState(true);
+	const [isSending, setIsSending] = useState(false);
+
+	useEffect(() => {
+		let isMounted = true;
+		setIsLoadingTemplates(true);
+		void getUserEmailTemplateOptions()
+			.then((result) => {
+				if (!isMounted) return;
+				if (!result.ok) {
+					showErrorToast(
+						t("userFormModal.templateEmail.title"),
+						t("userFormModal.templateEmail.loadError"),
+					);
+					setTemplates([]);
+					return;
+				}
+				setTemplates(result.data);
+				setSelectedTemplatePath(
+					(current) => current || result.data[0]?.path || "",
+				);
+			})
+			.catch(() => {
+				if (!isMounted) return;
+				showErrorToast(
+					t("userFormModal.templateEmail.title"),
+					t("userFormModal.templateEmail.loadError"),
+				);
+			})
+			.finally(() => {
+				if (!isMounted) return;
+				setIsLoadingTemplates(false);
+			});
+
+		return () => {
+			isMounted = false;
+		};
+	}, [t]);
+
+	const handleSendTemplate = async () => {
+		if (!selectedTemplatePath || isSending) return;
+		setIsSending(true);
+		try {
+			const result = await sendUserEmailTemplate({
+				userId: user.id,
+				templatePath: selectedTemplatePath,
+			});
+			if (!result.ok) {
+				showErrorToast(
+					t("userFormModal.templateEmail.title"),
+					t("userFormModal.templateEmail.error"),
+				);
+				return;
+			}
+			showSuccessToast(
+				t("userFormModal.templateEmail.title"),
+				t("userFormModal.templateEmail.success"),
+			);
+		} finally {
+			setIsSending(false);
+		}
+	};
+
+	return (
+		<div className="rounded-sm border border-border bg-background p-4">
+			<div className="flex flex-col gap-3">
+				<div className="flex items-center gap-2">
+					<Mail className="h-5 w-5 text-primary-dark" />
+					<Label className="body2">
+						{t("userFormModal.templateEmail.title")}
+					</Label>
+				</div>
+				<p className="body2 text-neutral-80">
+					{t("userFormModal.templateEmail.description")}
+				</p>
+				<div className="flex flex-col gap-2 ">
+					<div className="flex-1 space-y-1">
+						<Label htmlFor="user-email-template">
+							{t("userFormModal.templateEmail.selectLabel")}
+						</Label>
+						<Select
+							value={selectedTemplatePath}
+							onValueChange={setSelectedTemplatePath}
+							disabled={
+								isLoadingTemplates || templates.length === 0 || isSending
+							}
+						>
+							<SelectTrigger id="user-email-template">
+								<SelectValue
+									placeholder={
+										isLoadingTemplates
+											? t("userFormModal.templateEmail.loading")
+											: t("userFormModal.templateEmail.placeholder")
+									}
+								/>
+							</SelectTrigger>
+							<SelectContent>
+								{templates.map((template) => (
+									<SelectItem key={template.path} value={template.path}>
+										{t(
+											`userFormModal.templateEmail.templates.${template.key}`,
+											{
+												defaultValue: template.name ?? template.key,
+											},
+										)}
+									</SelectItem>
+								))}
+							</SelectContent>
+						</Select>
+					</div>
+					<Button
+						type="button"
+						disabled={!selectedTemplatePath || isLoadingTemplates || isSending}
+						onClick={handleSendTemplate}
+					>
+						{isSending
+							? t("userFormModal.templateEmail.sending")
+							: t("userFormModal.templateEmail.send")}
+					</Button>
+				</div>
+			</div>
+		</div>
+	);
+}
+
 export function UserFormModal({
 	mode,
 	userId,
@@ -537,7 +598,6 @@ export function UserFormModal({
 	const roles = useAccountStore((state) => state.roles);
 	const groups = useAccountStore((state) => state.groups);
 	const removeUser = useAccountStore((state) => state.removeUser);
-	const upsertUser = useAccountStore((state) => state.upsertUser);
 	const institutions =
 		useInstitutionStore((state) => state.allInstitutions) ?? [];
 	const categories = useInstitutionStore((state) => state.categories) ?? [];
@@ -563,22 +623,6 @@ export function UserFormModal({
 				? "userFormModal.feedback.create"
 				: "userFormModal.feedback.update";
 		showSuccessToast(t(`${keyPrefix}.title`), t(`${keyPrefix}.description`));
-	};
-	const handleSendRoleDecision = async (
-		target: "district" | "state" | "network",
-		decision: "approved" | "rejected",
-	) => {
-		if (!resolvedUser) return null;
-		const result = await sendRoleDecisionEmailManual({
-			userId: resolvedUser.id,
-			target,
-			decision,
-		});
-		if (!result.ok) {
-			throw new Error(translateUserRoleEmailError(t, result.error));
-		}
-		upsertUser(result.data);
-		return t("userFormModal.roleEmails.success");
 	};
 	const { handleSubmit, submitting } = useUserSubmit(
 		mode,
@@ -622,7 +666,6 @@ export function UserFormModal({
 			submitting,
 			onSubmit: handleSubmit,
 			onCancel: handleClose,
-			onSendRoleDecision: handleSendRoleDecision,
 		});
 		if (mode !== "edit" || !resolvedUser) return baseConfig;
 		return {
@@ -648,7 +691,6 @@ export function UserFormModal({
 		isDeleting,
 		handleSubmit,
 		handleClose,
-		handleSendRoleDecision,
 	]);
 
 	const autoCloseError =
@@ -750,7 +792,7 @@ export function UserFormModal({
 					<DialogTitle className="title">{getDialogTitle(mode, t)}</DialogTitle>
 				</div>
 				{autoCloseError ? null : (
-					<div className="flex-1 overflow-auto px-6 py-6 md:px-10 flex flex-col">
+					<div className="flex-1 overflow-auto px-6 py-6 md:px-10 flex flex-col gap-4">
 						{renderDialogBody(isWaitingForUser, formConfig, resolvedUser, mode)}
 					</div>
 				)}
