@@ -33,6 +33,8 @@ export function useInstitutionSubmissionReview({
 	const hasSubmissionId = typeof submissionId === "number";
 	const [internalNotes, setInternalNotes] = useState("");
 	const [grantSubmitterAccess, setGrantSubmitterAccess] = useState(false);
+	const [attachUserIds, setAttachUserIds] = useState<string[]>([]);
+	const [attachGroupIds, setAttachGroupIds] = useState<number[]>([]);
 	const [submitting, setSubmitting] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [fetchedSubmission, setFetchedSubmission] = useState<Submission | null>(
@@ -149,6 +151,8 @@ export function useInstitutionSubmissionReview({
 
 	useEffect(() => {
 		setGrantSubmitterAccess(false);
+		setAttachUserIds([]);
+		setAttachGroupIds([]);
 	}, [resolvedSubmissionWithFallback?.id]);
 
 	const formatReviewError = (err: unknown) => {
@@ -201,6 +205,8 @@ export function useInstitutionSubmissionReview({
 					grantSubmitterAccess: shouldShowGrantSubmitterAccessToggle
 						? grantSubmitterAccess
 						: undefined,
+					attachUserIds: status === "approved" ? attachUserIds : undefined,
+					attachGroupIds: status === "approved" ? attachGroupIds : undefined,
 				});
 				if (status === "approved") {
 					removeSubmission(resolvedSubmissionWithFallback.id);
@@ -232,6 +238,8 @@ export function useInstitutionSubmissionReview({
 			}
 		},
 		[
+			attachGroupIds,
+			attachUserIds,
 			canReviewCurrentSubmission,
 			formatReviewError,
 			grantSubmitterAccess,
@@ -303,6 +311,10 @@ export function useInstitutionSubmissionReview({
 		setInternalNotes,
 		grantSubmitterAccess,
 		setGrantSubmitterAccess,
+		attachUserIds,
+		setAttachUserIds,
+		attachGroupIds,
+		setAttachGroupIds,
 		submitting,
 		error,
 		handleReview,
