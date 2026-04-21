@@ -937,8 +937,9 @@
 		},
 		"review": {
 			"actions": {
-				"approve": "To permit",
-				"saveNotes": "Save notes"
+				"approve": "Approve",
+				"saveNotes": "Save notes",
+				"reject": "Reject"
 			},
 			"error": "Verification failed. {{error}}",
 			"errorUnknown": "Unknown error.",
@@ -951,10 +952,31 @@
 				"saveNotes": {
 					"description": "The review notes have been saved.",
 					"title": "Notes saved"
+				},
+				"approve": {
+					"title": "Submission approved",
+					"description": "The submission has been approved successfully."
+				},
+				"reject": {
+					"title": "Submission rejected",
+					"description": "The submission has been rejected successfully."
 				}
 			},
 			"statusLabel": "Status: {{status}}",
-			"title": "Check submission"
+			"title": "Check submission",
+			"errorTitle": "Review failed",
+			"errorDescription": "Please try again or contact support if the issue persists.",
+			"attachOnApproval": "Attach on approval",
+			"attachUsers": {
+				"title": "Select users",
+				"placeholder": "Users",
+				"searchPlaceholder": "Search users..."
+			},
+			"attachGroups": {
+				"title": "Select groups",
+				"placeholder": "Groups",
+				"searchPlaceholder": "Search groups..."
+			}
 		}
 	},
 	"institutionsTable": {
@@ -1745,5 +1767,11 @@
 		"newsletter": "Sign up for the newsletter",
 		"subtitle": "A project by Kulturraum Berlin gGmbH",
 		"title": "The Berlin cultural register: The city's culture at a glance"
+	},
+	"institutionModalCloseConfirmation": {
+		"title": "Close form?",
+		"description": "Your unsaved changes will be lost.",
+		"confirm": "Close",
+		"cancel": "Cancel"
 	}
 }

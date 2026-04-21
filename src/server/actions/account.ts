@@ -8,16 +8,15 @@ import {
 } from "@/server/utils/accountData";
 import { getAccessContextForUser } from "@/server/utils/rbac";
 
-export async function getAccountRefreshData(): Promise<Partial<AccountDataPayload> | null> {
+export async function getAccountRefreshData(
+	keys?: Array<keyof AccountDataPayload>,
+): Promise<Partial<AccountDataPayload> | null> {
 	try {
 		const user = await getCurrentUser();
 		if (!user) return null;
 
 		const ctx = await getAccessContextForUser(user.id);
-		return loadAccountDataBestEffort({
-			ctx,
-			currentUserId: user.id,
-		});
+		return loadAccountDataBestEffort({ ctx, currentUserId: user.id }, keys);
 	} catch (error) {
 		logger.warn("account.refresh.failed", {
 			subsystem: "account",

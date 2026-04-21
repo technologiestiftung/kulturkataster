@@ -27,6 +27,7 @@ import {
 } from "@/lib/utils/formUtils";
 import { getEligibleParentCategories } from "@/lib/utils/categoryUtils";
 import { showSuccessToast } from "@/lib/utils/feedbackToast";
+import { triggerAccountRefresh } from "@/components/Account/AccountAutoRefresh";
 
 type CategoryFormModalProps = {
 	mode: "create" | "edit";
@@ -274,6 +275,7 @@ const useCategorySubmit = (
 			}
 
 			onSuccess(mode);
+			triggerAccountRefresh(["categories", "entityAudits"]);
 			if (shouldRefresh) {
 				router.refresh();
 			}
@@ -711,6 +713,7 @@ export function CategoryFormModal({
 									return;
 								}
 								handleClose();
+								triggerAccountRefresh(["categories", "entityAudits"]);
 								try {
 									queueMicrotask(() => {
 										removeCategory(resolvedCategory.id);

@@ -31,6 +31,7 @@ import type { ReactNode } from "react";
 import { useInstitutionPrivateFieldResolver } from "@/lib/hooks/useInstitutionPrivateFieldResolver";
 import { applyInstitutionFieldAccess } from "@/lib/utils/institutionFieldAccess";
 import { showSuccessToast } from "@/lib/utils/feedbackToast";
+import { triggerAccountRefresh } from "@/components/Account/AccountAutoRefresh";
 import { buildInstitutionFormInitialValues } from "@/lib/utils/institutionFormAdapter";
 import { getAccessibleScrollBehavior } from "@/lib/utils/motion";
 import {
@@ -173,6 +174,7 @@ const useInstitutionSubmit = (
 			}
 
 			onSuccess(mode);
+			triggerAccountRefresh(["institutions", "entityAudits"]);
 			if (shouldRefresh) {
 				router.refresh();
 			}

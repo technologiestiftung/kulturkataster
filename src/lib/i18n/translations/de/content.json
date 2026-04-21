@@ -940,7 +940,8 @@
 		"review": {
 			"actions": {
 				"approve": "Genehmigen",
-				"saveNotes": "Notizen speichern"
+				"saveNotes": "Notizen speichern",
+				"reject": "Ablehnen"
 			},
 			"error": "Überprüfung fehlgeschlagen. {{error}}",
 			"errorUnknown": "Unbekannter Fehler.",
@@ -953,10 +954,31 @@
 				"saveNotes": {
 					"description": "Die Prüfnotizen wurden gespeichert.",
 					"title": "Notizen gespeichert"
+				},
+				"approve": {
+					"title": "Einreichung genehmigt",
+					"description": "Die Einreichung wurde erfolgreich genehmigt."
+				},
+				"reject": {
+					"title": "Einreichung abgelehnt",
+					"description": "Die Einreichung wurde erfolgreich abgelehnt."
 				}
 			},
 			"statusLabel": "Status: {{status}}",
-			"title": "Einreichung prüfen"
+			"title": "Einreichung prüfen",
+			"errorTitle": "Überprüfung fehlgeschlagen",
+			"errorDescription": "Bitte versuchen Sie es erneut oder kontaktieren Sie den Support, falls das Problem weiterhin besteht.",
+			"attachOnApproval": "Bei Genehmigung zuweisen",
+			"attachUsers": {
+				"title": "Nutzer*innen auswählen",
+				"placeholder": "Nutzer*innen",
+				"searchPlaceholder": "Nutzer*innen suchen..."
+			},
+			"attachGroups": {
+				"title": "Gruppen auswählen",
+				"placeholder": "Gruppen",
+				"searchPlaceholder": "Gruppen suchen..."
+			}
 		}
 	},
 	"institutionsTable": {
@@ -1760,5 +1782,11 @@
 		"newsletter": "Zum Newsletter anmelden",
 		"subtitle": "Ein Projekt der Kulturraum Berlin gGmbH",
 		"title": "Das Berliner Kulturkataster: Die Kultur der Stadt auf einen Blick"
+	},
+	"institutionModalCloseConfirmation": {
+		"title": "Formular schließen?",
+		"description": "Ihre nicht gespeicherten Änderungen gehen verloren.",
+		"confirm": "Schließen",
+		"cancel": "Abbrechen"
 	}
 }

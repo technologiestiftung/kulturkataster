@@ -15,6 +15,7 @@ import { SubmissionEntityType, SubmissionType } from "@/generated/prisma";
 import type { Institution } from "@/types/institution";
 import { useRouter } from "next/navigation";
 import { showSuccessToast } from "@/lib/utils/feedbackToast";
+import { triggerAccountRefresh } from "@/components/Account/AccountAutoRefresh";
 
 type InstitutionEditModalProps = {
 	institutionId: string;
@@ -135,6 +136,7 @@ export function InstitutionEditModal({
 		);
 		if (deleteResult.ok) {
 			removeInstitution(resolvedInstitutionWithFallback.id);
+			triggerAccountRefresh(["institutions", "entityAudits"]);
 			showSuccessToast(
 				t("institutionFormModal.feedback.delete.title"),
 				t("institutionFormModal.feedback.delete.description"),
@@ -170,6 +172,7 @@ export function InstitutionEditModal({
 				},
 			});
 			upsertSubmission(deleteSubmission);
+			triggerAccountRefresh(["submissions", "entityAudits"]);
 			showSuccessToast(
 				t("institutionFormModal.feedback.deleteRequest.title"),
 				t("institutionFormModal.feedback.deleteRequest.description"),
