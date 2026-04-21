@@ -198,8 +198,18 @@ describe("getUserEmailTemplateOptions", () => {
 
 	it("returns active custom templates", async () => {
 		const templates = [
-			{ key: "custom.claim_approved", path: "custom/claim_approved.html", name: "Claim bestätigt", subject: null },
-			{ key: "custom.submission_approved", path: "custom/submission_approved.html", name: "Einreichung bestätigt", subject: null },
+			{
+				key: "custom.claim_approved",
+				path: "custom/claim_approved.html",
+				name: "Claim bestätigt",
+				subject: null,
+			},
+			{
+				key: "custom.submission_approved",
+				path: "custom/submission_approved.html",
+				name: "Einreichung bestätigt",
+				subject: null,
+			},
 		];
 		listActiveCustom.mockResolvedValue(templates);
 
