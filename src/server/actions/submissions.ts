@@ -544,6 +544,34 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 													},
 												});
 											}
+
+											const hasAttachUsers =
+												validatedInput.attachUserIds &&
+												validatedInput.attachUserIds.length > 0;
+											const hasAttachGroups =
+												validatedInput.attachGroupIds &&
+												validatedInput.attachGroupIds.length > 0;
+											if (hasAttachUsers || hasAttachGroups) {
+												await tx.institution.update({
+													where: { id: createdInstitution.id },
+													data: {
+														...(hasAttachUsers && {
+															users: {
+																connect: validatedInput.attachUserIds!.map(
+																	(id) => ({ id }),
+																),
+															},
+														}),
+														...(hasAttachGroups && {
+															groups: {
+																connect: validatedInput.attachGroupIds!.map(
+																	(id) => ({ id }),
+																),
+															},
+														}),
+													},
+												});
+											}
 										}
 
 										if (submission.type === "update") {
@@ -605,6 +633,34 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 													currentUserId,
 												),
 											});
+
+											const hasAttachUsers =
+												validatedInput.attachUserIds &&
+												validatedInput.attachUserIds.length > 0;
+											const hasAttachGroups =
+												validatedInput.attachGroupIds &&
+												validatedInput.attachGroupIds.length > 0;
+											if (hasAttachUsers || hasAttachGroups) {
+												await tx.institution.update({
+													where: { id: submission.entity_id },
+													data: {
+														...(hasAttachUsers && {
+															users: {
+																connect: validatedInput.attachUserIds!.map(
+																	(id) => ({ id }),
+																),
+															},
+														}),
+														...(hasAttachGroups && {
+															groups: {
+																connect: validatedInput.attachGroupIds!.map(
+																	(id) => ({ id }),
+																),
+															},
+														}),
+													},
+												});
+											}
 										}
 
 										if (submission.type === "claim") {
