@@ -4,7 +4,6 @@ import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { useAccountStore } from "@/lib/store/accountStore";
 import { getAccountRefreshData } from "@/server/actions/account";
-import type { AccountStoreState } from "@/types/account";
 import type { AccountDataPayload } from "@/server/utils/accountData";
 
 type RefreshKeys = Array<keyof AccountDataPayload>;
@@ -84,42 +83,6 @@ export const isAccountAutoRefreshPathEnabled = (pathname: string | null) => {
 	);
 };
 
-const applyRefreshedAccountData = (
-	refreshedData: Awaited<ReturnType<typeof getAccountRefreshData>>,
-	setters: {
-		setUsers: AccountStoreState["setUsers"];
-		setGroups: AccountStoreState["setGroups"];
-		setRoles: AccountStoreState["setRoles"];
-		setCategories: AccountStoreState["setCategories"];
-		setInstitutions: AccountStoreState["setInstitutions"];
-		setSubmissions: AccountStoreState["setSubmissions"];
-		setEntityAudits: AccountStoreState["setEntityAudits"];
-	},
-) => {
-	if (!refreshedData) return;
-
-	if (refreshedData.users !== undefined) {
-		setters.setUsers(refreshedData.users);
-	}
-	if (refreshedData.groups !== undefined) {
-		setters.setGroups(refreshedData.groups);
-	}
-	if (refreshedData.roles !== undefined) {
-		setters.setRoles(refreshedData.roles);
-	}
-	if (refreshedData.categories !== undefined) {
-		setters.setCategories(refreshedData.categories);
-	}
-	if (refreshedData.institutions !== undefined) {
-		setters.setInstitutions(refreshedData.institutions);
-	}
-	if (refreshedData.submissions !== undefined) {
-		setters.setSubmissions(refreshedData.submissions);
-	}
-	if (refreshedData.entityAudits !== undefined) {
-		setters.setEntityAudits(refreshedData.entityAudits);
-	}
-};
 
 export function AccountAutoRefresh({
 	intervalMs = DEFAULT_ACCOUNT_AUTO_REFRESH_INTERVAL_MS,
@@ -127,13 +90,7 @@ export function AccountAutoRefresh({
 	intervalMs?: number;
 }) {
 	const pathname = usePathname();
-	const setUsers = useAccountStore((state) => state.setUsers);
-	const setGroups = useAccountStore((state) => state.setGroups);
-	const setRoles = useAccountStore((state) => state.setRoles);
-	const setCategories = useAccountStore((state) => state.setCategories);
-	const setInstitutions = useAccountStore((state) => state.setInstitutions);
-	const setSubmissions = useAccountStore((state) => state.setSubmissions);
-	const setEntityAudits = useAccountStore((state) => state.setEntityAudits);
+	const setAccountData = useAccountStore((state) => state.setAccountData);
 	const isRefreshingRef = useRef(false);
 	const isPollingEnabledForPath = isAccountAutoRefreshPathEnabled(pathname);
 
@@ -150,15 +107,7 @@ export function AccountAutoRefresh({
 			try {
 				const refreshedData = await getAccountRefreshData(keys);
 				if (cancelled) return;
-				applyRefreshedAccountData(refreshedData, {
-					setUsers,
-					setGroups,
-					setRoles,
-					setCategories,
-					setInstitutions,
-					setSubmissions,
-					setEntityAudits,
-				});
+				if (refreshedData) setAccountData(refreshedData);
 				markRefreshed(keys ?? [...ALL_KEYS]);
 			} finally {
 				isRefreshingRef.current = false;
@@ -216,17 +165,7 @@ export function AccountAutoRefresh({
 			stopPolling();
 			document.removeEventListener("visibilitychange", handleVisibilityChange);
 		};
-	}, [
-		setCategories,
-		setEntityAudits,
-		setGroups,
-		setInstitutions,
-		setRoles,
-		setSubmissions,
-		setUsers,
-		intervalMs,
-		isPollingEnabledForPath,
-	]);
+	}, [setAccountData, intervalMs, isPollingEnabledForPath]);
 
 	return null;
 }
