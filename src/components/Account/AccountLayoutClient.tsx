@@ -234,7 +234,11 @@ export function AccountLayoutClient({
 					</div>
 				</div>
 				<div className="Account-section flex flex-col min-h-0 flex-1">
-					<Tabs value={getCurrentTab()} onValueChange={handleTabChange}>
+					<Tabs
+						id="account-tabs"
+						value={getCurrentTab()}
+						onValueChange={handleTabChange}
+					>
 						<TabsList className="px-10">
 							{visibleTabs.map((tab) => (
 								<TabsTrigger key={tab.value} value={tab.value}>

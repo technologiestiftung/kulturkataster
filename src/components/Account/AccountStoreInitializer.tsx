@@ -52,6 +52,7 @@ export function AccountStoreInitializer({
 	const setInstitutionFieldPermissions = useAccountStore(
 		(state) => state.setInstitutionFieldPermissions,
 	);
+	const setInitialized = useAccountStore((state) => state.setInitialized);
 
 	useEffect(() => {
 		setCurrentProfile(currentProfile);
@@ -92,6 +93,10 @@ export function AccountStoreInitializer({
 	useEffect(() => {
 		setInstitutionFieldPermissions(institutionFieldPermissions);
 	}, [setInstitutionFieldPermissions, institutionFieldPermissions]);
+
+	useEffect(() => {
+		setInitialized();
+	}, [setInitialized]);
 
 	return null;
 }

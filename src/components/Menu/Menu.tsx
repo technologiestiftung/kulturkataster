@@ -390,6 +390,13 @@ export function Menu({
 			return;
 		}
 
+		if (item.id === "user" && !isLoggedIn) {
+			router.push(toLocalePath("/login"));
+			setOpen(false);
+			setOpenMobile(false);
+			return;
+		}
+
 		if (item.route && item.route !== "#") {
 			if (
 				(item.id === "map" || item.id === "list") &&
