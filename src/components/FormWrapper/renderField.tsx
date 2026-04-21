@@ -33,6 +33,7 @@ import { CategorySectionList } from "@/components/Filter/CategorySection/Categor
 import { MultiSelectModal } from "@/components/MultiSelect/MultiSelectModal";
 import { ActionPanel } from "@/components/ActionPanel";
 import { cn } from "@/lib/utils";
+import dynamic from "next/dynamic";
 import { buildStreetLine, toOptionalNumber } from "@/lib/utils/formUtils";
 import type { FilterState } from "@/types";
 import type {
@@ -42,7 +43,12 @@ import type {
 	PermissionScope,
 	TablePermissionValue,
 } from "./types";
-import { AddressMapField } from "./AddressMapField";
+
+const AddressMapField = dynamic(
+	() =>
+		import("./AddressMapField").then((m) => ({ default: m.AddressMapField })),
+	{ ssr: false },
+);
 import { FundingSourceField } from "./FundingSourceField";
 import { defaultFilterState } from "./constants";
 import Eye from "@/icons/eye.svg";

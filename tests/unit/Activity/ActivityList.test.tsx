@@ -60,20 +60,6 @@ vi.mock("@/lib/store/accountStore", () => ({
 		selector(mockState),
 }));
 
-import { useAccountStore } from "@/lib/store/accountStore";
-
-(
-	useAccountStore as typeof useAccountStore & {
-		persist: {
-			hasHydrated: () => boolean;
-			onFinishHydration: () => () => void;
-		};
-	}
-).persist = {
-	hasHydrated: () => true,
-	onFinishHydration: () => () => undefined,
-};
-
 vi.mock("@/components/ui/search-input", () => ({
 	SearchInput: ({
 		value,
