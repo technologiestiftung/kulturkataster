@@ -1711,6 +1711,44 @@
 			"success": "E-Mail zum Zurücksetzen des Passworts gesendet.",
 			"title": "Passwort zurücksetzen"
 		},
+		"templateEmail": {
+			"description": "Wählen Sie eine Vorlage aus der Datenbank und senden Sie sie an diese Nutzerin oder diesen Nutzer.",
+			"error": "E-Mail konnte nicht gesendet werden.",
+			"loadError": "E-Mail-Vorlagen konnten nicht geladen werden.",
+			"loading": "Vorlagen werden geladen…",
+			"placeholder": "Vorlage auswählen",
+			"selectLabel": "Vorlage",
+			"send": "Vorlage senden",
+			"sending": "Wird gesendet…",
+			"success": "E-Mail erfolgreich gesendet.",
+			"title": "E-Mail-Vorlage senden",
+			"templates": {
+				"auth": {
+					"confirmation": "E-Mail-Bestätigung",
+					"email_change": "E-Mail-Änderung bestätigen",
+					"email_changed": "E-Mail-Adresse geändert",
+					"invite": "Einladung",
+					"magic_link": "Magic Link",
+					"password_changed": "Passwort geändert",
+					"reauthentication": "Erneute Authentifizierung",
+					"recovery": "Passwort zurücksetzen"
+				},
+				"custom": {
+					"account_deleted": "Konto gelöscht",
+					"claim_approved": "Claim bestätigt",
+					"claim_rejected": "Claim abgelehnt",
+					"compliance_resend": "Compliance erneut senden",
+					"role_district_approved": "Bezirksrolle bestätigt",
+					"role_district_rejected": "Bezirksrolle abgelehnt",
+					"role_network_approved": "Netzwerkrolle bestätigt",
+					"role_network_rejected": "Netzwerkrolle abgelehnt",
+					"role_state_approved": "Landesrolle bestätigt",
+					"role_state_rejected": "Landesrolle abgelehnt",
+					"submission_approved": "Einreichung bestätigt",
+					"submission_rejected": "Einreichung abgelehnt"
+				}
+			}
+		},
 		"roleEmails": {
 			"district": {
 				"description": "Freigabe- oder Ablehnungs-E-Mail für Bezirksmitarbeitende senden.",

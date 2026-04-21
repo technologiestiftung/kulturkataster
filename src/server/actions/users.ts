@@ -27,6 +27,12 @@ import {
 	sendRoleDecisionEmail,
 	sendRoleDecisionEmailIfNeeded,
 } from "@/server/email/dispatcher";
+import { sendTemplatedEmail } from "@/server/email/sendTemplatedEmail";
+import {
+	emailTemplateRepo,
+	type EmailTemplateOption,
+} from "@/server/data/emailTemplateRepo";
+import { normalizeEmailTemplatePath } from "@/server/email/templates";
 import { logger } from "@/server/logging/logger";
 import {
 	runWithServerRequestContext,
@@ -39,6 +45,8 @@ export type UserActionErrorCode =
 	| "forbidden"
 	| "invalidInput"
 	| "unexpected";
+
+export type UserEmailTemplateOption = EmailTemplateOption;
 
 const classifyUserActionError = (error: unknown): UserActionErrorCode => {
 	const errorCode = getActionErrorCode(error);
@@ -566,5 +574,93 @@ export async function sendRoleDecisionEmailManual(input: {
 			return actionOk(user);
 		},
 		{ route: "server_action:users.sendRoleDecisionEmailManual" },
+	);
+}
+
+export async function getUserEmailTemplateOptions(): Promise<
+	ActionResult<EmailTemplateOption[], UserActionErrorCode>
+> {
+	return runWithServerRequestContext(
+		async () => {
+			const currentUserId = await getCurrentUserId();
+			setRequestContext({ userId: currentUserId });
+			const ctx = await getAccessContextForUser(currentUserId);
+			authorizeTable(ctx, "user", "update");
+			requireAllScope(ctx, "user", "update");
+
+			try {
+				const templates = await emailTemplateRepo.listActiveCustom();
+				return actionOk(templates);
+			} catch (error) {
+				logger.error("user.email_templates.list_failed", error, {
+					subsystem: "email",
+					actor_user_id: currentUserId,
+				});
+				return actionError("unexpected");
+			}
+		},
+		{ route: "server_action:users.getUserEmailTemplateOptions" },
+	);
+}
+
+export async function sendUserEmailTemplate(input: {
+	userId: string;
+	templatePath: string;
+}): Promise<ActionResult<{ ok: true }, UserActionErrorCode>> {
+	return runWithServerRequestContext(
+		async () => {
+			const currentUserId = await getCurrentUserId();
+			setRequestContext({ userId: currentUserId });
+			const ctx = await getAccessContextForUser(currentUserId);
+			authorizeTable(ctx, "user", "update");
+			requireAllScope(ctx, "user", "update");
+
+			let templatePath: string;
+			try {
+				templatePath = normalizeEmailTemplatePath(input.templatePath);
+			} catch {
+				return actionError("invalidInput");
+			}
+
+			const user = await userRepo.findById(input.userId);
+			if (!user) {
+				return actionError("notFound");
+			}
+
+			try {
+				const template = await emailTemplateRepo.findActiveByPath(templatePath);
+				if (!template) {
+					return actionError("notFound");
+				}
+
+				const siteUrl = process.env.SITE_URL ?? "http://127.0.0.1:3000";
+				await sendTemplatedEmail({
+					to: user.email,
+					subject: template.subject ?? template.name ?? "Kulturkataster",
+					templatePath,
+					variables: {
+						SiteURL: siteUrl,
+						Email: user.email,
+						Data: {
+							first_name: user.first_name ?? "",
+							last_name: user.last_name ?? "",
+							portal_url: `${siteUrl}/account`,
+							faq_url: `${siteUrl}/account/faq`,
+						},
+					},
+				});
+
+				return actionOk({ ok: true as const });
+			} catch (error) {
+				logger.error("user.email_template.send_failed", error, {
+					subsystem: "email",
+					actor_user_id: currentUserId,
+					target_user_id: user.id,
+					template: templatePath,
+				});
+				return actionError("unexpected");
+			}
+		},
+		{ route: "server_action:users.sendUserEmailTemplate" },
 	);
 }
