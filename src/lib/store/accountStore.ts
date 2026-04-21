@@ -6,6 +6,7 @@ import { createJSONStorage, devtools, persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 
 const accountStoreInitialState = {
+	isInitialized: false,
 	currentProfile: null,
 	users: [],
 	groups: [],
@@ -38,6 +39,10 @@ export const useAccountStore = create<AccountStoreState>()(
 		devtools(
 			immer((set) => ({
 				...accountStoreInitialState,
+				setInitialized: () =>
+					set((state) => {
+						state.isInitialized = true;
+					}),
 				setCurrentProfile: (profile) =>
 					set((state) => {
 						state.currentProfile = profile;
@@ -233,7 +238,11 @@ export const useAccountStore = create<AccountStoreState>()(
 					}),
 			})),
 		),
-		{ name: "account-storage", storage: createJSONStorage(() => idbStorage) },
+		{
+			name: "account-storage",
+			storage: createJSONStorage(() => idbStorage),
+			partialize: ({ isInitialized: _isInitialized, ...rest }) => rest,
+		},
 	),
 );
 
