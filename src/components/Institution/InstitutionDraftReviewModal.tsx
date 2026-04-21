@@ -17,6 +17,7 @@ import { showSuccessToast } from "@/lib/utils/feedbackToast";
 import { formatUserDisplayName } from "@/lib/utils/userName";
 import { formatDateWithLocale } from "@/lib/utils/dateUtils";
 import { Card, CardContent } from "@/components/ui/card";
+import { MultiSelectModal } from "@/components/MultiSelect/MultiSelectModal";
 
 type InstitutionDraftReviewModalProps = {
 	submissionId?: number;
@@ -45,6 +46,8 @@ export function InstitutionDraftReviewModal({
 	const institutionPermissions = useAccountStore(
 		(state) => state.institutionPermissions,
 	);
+	const allUsers = useAccountStore((state) => state.users);
+	const allGroups = useAccountStore((state) => state.groups);
 	const upsertSubmission = useAccountStore((state) => state.upsertSubmission);
 	const removeSubmission = useAccountStore((state) => state.removeSubmission);
 	const submissions = useMemo(
@@ -66,6 +69,10 @@ export function InstitutionDraftReviewModal({
 		setInternalNotes,
 		grantSubmitterAccess,
 		setGrantSubmitterAccess,
+		attachUserIds,
+		setAttachUserIds,
+		attachGroupIds,
+		setAttachGroupIds,
 		submitting,
 		error,
 		handleReview,
@@ -153,6 +160,27 @@ export function InstitutionDraftReviewModal({
 			}),
 		);
 	}, [error, handleSaveNote, resolvedSubmissionWithFallback, t]);
+
+	const userOptions = useMemo(
+		() =>
+			allUsers.map((user) => ({
+				value: user.id,
+				label: formatUserDisplayName(user) ?? user.email,
+				searchText: `${formatUserDisplayName(user) ?? ""} ${user.email}`,
+			})),
+		[allUsers],
+	);
+
+	const groupOptions = useMemo(
+		() =>
+			allGroups.map((group) => ({
+				value: String(group.id),
+				label: group.name,
+				searchText: group.name,
+			})),
+		[allGroups],
+	);
+
 	if (shouldAutoCloseMissingSubmission) return null;
 	if (!resolvedSubmissionWithFallback) {
 		return null;
@@ -303,6 +331,61 @@ export function InstitutionDraftReviewModal({
 									</span>
 								</label>
 							) : null}
+							{(userOptions.length > 0 || groupOptions.length > 0) && (
+								<div className="space-y-3">
+									<span className="body2">
+										{t("institutionFormModal.review.attachOnApproval", {
+											defaultValue: "Attach on approval",
+										})}
+									</span>
+									<div className="flex flex-col gap-3">
+										{userOptions.length > 0 && (
+											<div className="flex-1">
+												<MultiSelectModal
+													title={t(
+														"institutionFormModal.review.attachUsers.title",
+														{ defaultValue: "Select users" },
+													)}
+													placeholder={t(
+														"institutionFormModal.review.attachUsers.placeholder",
+														{ defaultValue: "Users" },
+													)}
+													searchPlaceholder={t(
+														"institutionFormModal.review.attachUsers.searchPlaceholder",
+														{ defaultValue: "Search users..." },
+													)}
+													options={userOptions}
+													selected={attachUserIds}
+													onChange={setAttachUserIds}
+													disabled={submitting}
+												/>
+											</div>
+										)}
+										{groupOptions.length > 0 && (
+											<div className="flex-1">
+												<MultiSelectModal
+													title={t(
+														"institutionFormModal.review.attachGroups.title",
+														{ defaultValue: "Select groups" },
+													)}
+													placeholder={t(
+														"institutionFormModal.review.attachGroups.placeholder",
+														{ defaultValue: "Groups" },
+													)}
+													searchPlaceholder={t(
+														"institutionFormModal.review.attachGroups.searchPlaceholder",
+														{ defaultValue: "Search groups..." },
+													)}
+													options={groupOptions}
+													selected={attachGroupIds.map(String)}
+													onChange={(ids) => setAttachGroupIds(ids.map(Number))}
+													disabled={submitting}
+												/>
+											</div>
+										)}
+									</div>
+								</div>
+							)}
 							<div className="flex items-center justify-end gap-3">
 								<Button
 									type="button"
