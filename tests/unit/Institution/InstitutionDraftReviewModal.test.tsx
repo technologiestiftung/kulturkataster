@@ -70,6 +70,8 @@ vi.mock("@/lib/store/accountStore", () => ({
 	useAccountStore: (
 		selector: (state: {
 			submissions: unknown[];
+			users: unknown[];
+			groups: unknown[];
 			institutionPermissions: {
 				create: boolean;
 				update: boolean;
@@ -83,6 +85,8 @@ vi.mock("@/lib/store/accountStore", () => ({
 	) =>
 		selector({
 			submissions: [],
+			users: [],
+			groups: [],
 			institutionPermissions: {
 				create: true,
 				update: true,
@@ -129,6 +133,10 @@ vi.mock("@/lib/hooks/useInstitutionSubmissionReview", () => ({
 		shouldShowGrantSubmitterAccessToggle: false,
 		canReviewCurrentSubmission: true,
 	}),
+}));
+
+vi.mock("@/components/Account/AccountAutoRefresh", () => ({
+	triggerAccountRefresh: vi.fn(),
 }));
 
 vi.mock("@/lib/utils/feedbackToast", () => ({
@@ -193,7 +201,7 @@ describe("InstitutionDraftReviewModal", () => {
 			/>,
 		);
 
-		expect(screen.getByText("Previous notes")).toBeInTheDocument();
+		expect(screen.getByText("Bisherige Notizen")).toBeInTheDocument();
 		expect(screen.getByText("Vorherige Prüfnotiz")).toBeInTheDocument();
 		expect(
 			screen.getByRole("button", { name: "Save notes" }),

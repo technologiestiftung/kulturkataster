@@ -85,11 +85,12 @@ describe("AccountAutoRefresh", () => {
 	it("polls on stable dashboard routes", async () => {
 		render(<AccountAutoRefresh intervalMs={1_000} />);
 
+		// Immediate refresh fires on mount; interval fires after 1000ms → 2 calls total
 		await act(async () => {
 			await vi.advanceTimersByTimeAsync(1_000);
 		});
 
-		expect(getAccountRefreshDataMock).toHaveBeenCalledTimes(1);
+		expect(getAccountRefreshDataMock).toHaveBeenCalledTimes(2);
 		expect(setUsers).toHaveBeenCalledWith([]);
 		expect(setGroups).toHaveBeenCalledWith([]);
 		expect(setRoles).toHaveBeenCalledWith([]);
@@ -119,9 +120,8 @@ describe("AccountAutoRefresh", () => {
 
 		render(<AccountAutoRefresh intervalMs={1_000} />);
 
-		await act(async () => {
-			await vi.advanceTimersByTimeAsync(1_000);
-		});
+		// Only let the immediate refresh settle (no interval advance)
+		await act(async () => {});
 
 		expect(setUsers).toHaveBeenCalledWith([{ id: "user-1" }]);
 		expect(setSubmissions).toHaveBeenCalledWith([{ id: 5 }]);

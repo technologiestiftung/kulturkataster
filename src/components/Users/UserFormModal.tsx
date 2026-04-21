@@ -30,6 +30,7 @@ import type { User } from "@/types/user";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import Mail from "@/icons/mail.svg";
 import { showSuccessToast } from "@/lib/utils/feedbackToast";
+import { triggerAccountRefresh } from "@/components/Account/AccountAutoRefresh";
 
 type UserFormModalProps = {
 	mode: "create" | "edit";
@@ -245,6 +246,7 @@ const useUserSubmit = (
 			}
 
 			onSuccess(mode);
+			triggerAccountRefresh(["users", "entityAudits"]);
 			if (shouldRefresh) {
 				router.refresh();
 			}
@@ -699,6 +701,7 @@ export function UserFormModal({
 									return;
 								}
 								handleClose();
+								triggerAccountRefresh(["users", "entityAudits"]);
 								try {
 									queueMicrotask(() => {
 										removeUser(resolvedUser.id);
