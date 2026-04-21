@@ -77,4 +77,13 @@ export type AccountStoreState = {
 	setSelectedUserId: (id: string | null) => void;
 	setSelectedGroupId: (id: number | null) => void;
 	setSelectedRoleId: (id: number | null) => void;
+	setAccountData: (data: {
+		users?: User[];
+		groups?: Group[];
+		roles?: Role[];
+		categories?: Category[];
+		institutions?: Institution[];
+		submissions?: Submission[];
+		entityAudits?: EntityAudit[];
+	}) => void;
 };

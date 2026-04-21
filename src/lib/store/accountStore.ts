@@ -236,12 +236,30 @@ export const useAccountStore = create<AccountStoreState>()(
 					set((state) => {
 						state.selectedRoleId = id;
 					}),
+				setAccountData: (data) =>
+					set((state) => {
+						if (data.users !== undefined) state.users = data.users;
+						if (data.groups !== undefined) state.groups = data.groups;
+						if (data.roles !== undefined) state.roles = data.roles;
+						if (data.categories !== undefined) state.categories = data.categories;
+						if (data.institutions !== undefined) state.institutions = data.institutions;
+						if (data.submissions !== undefined) state.submissions = data.submissions;
+						if (data.entityAudits !== undefined) state.entityAudits = data.entityAudits;
+					}),
 			})),
 		),
 		{
 			name: "account-storage",
 			storage: createJSONStorage(() => idbStorage),
-			partialize: ({ isInitialized: _isInitialized, ...rest }) => rest,
+			partialize: ({
+				isInitialized: _isInitialized,
+				users: _users,
+				institutions: _institutions,
+				submissions: _submissions,
+				entityAudits: _entityAudits,
+				activeInstitutionEdit: _activeInstitutionEdit,
+				...rest
+			}) => rest,
 		},
 	),
 );
