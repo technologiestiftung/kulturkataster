@@ -4,9 +4,11 @@ import { AccountAutoRefresh } from "@/components/Account/AccountAutoRefresh";
 import { AccountStoreInitializer } from "@/components/Account/AccountStoreInitializer";
 import { canTable, getTableScope } from "@/server/utils/rbac";
 import { getAccountBootstrapData } from "@/server/utils/accountBootstrap";
+import { redirect } from "next/navigation";
 
 type AccountLayoutProps = {
 	children: ReactNode;
+	params: Promise<{ locale: string }>;
 };
 
 const resolveAccountAutoRefreshIntervalMs = () => {
@@ -16,10 +18,14 @@ const resolveAccountAutoRefreshIntervalMs = () => {
 	return Number.isFinite(parsed) && parsed > 0 ? parsed : 10_000;
 };
 
-export default async function AccountLayout({ children }: AccountLayoutProps) {
+export default async function AccountLayout({
+	children,
+	params,
+}: AccountLayoutProps) {
+	const { locale } = await params;
 	const accountData = await getAccountBootstrapData();
-	if (!accountData) return null;
 	const accountAutoRefreshIntervalMs = resolveAccountAutoRefreshIntervalMs();
+	if (!accountData) redirect(`/${locale}/login`);
 	const {
 		ctx,
 		currentProfile,

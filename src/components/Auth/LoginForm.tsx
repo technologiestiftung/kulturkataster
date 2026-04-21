@@ -19,10 +19,6 @@ export function LoginForm() {
 
 	const navigateToAccount = () => {
 		const accountPath = toLocalePath("/account");
-		if (typeof window !== "undefined") {
-			window.location.assign(accountPath);
-			return;
-		}
 		router.replace(accountPath);
 	};
 
