@@ -129,7 +129,9 @@ const mockedCreateUser = vi.mocked(createUser);
 const mockedUpdateUser = vi.mocked(updateUser);
 const mockedShowSuccessToast = vi.mocked(showSuccessToast);
 const mockedShowErrorToast = vi.mocked(showErrorToast);
-const mockedGetUserEmailTemplateOptions = vi.mocked(getUserEmailTemplateOptions);
+const mockedGetUserEmailTemplateOptions = vi.mocked(
+	getUserEmailTemplateOptions,
+);
 const mockedSendUserEmailTemplate = vi.mocked(sendUserEmailTemplate);
 
 describe("UserFormModal", () => {
@@ -262,15 +264,27 @@ describe("UserTemplateEmailPanel", () => {
 		mockedSendUserEmailTemplate.mockReset();
 		mockedShowSuccessToast.mockReset();
 		mockedShowErrorToast.mockReset();
-		useAccountStore.setState({ users: [editUser], roles: [], groups: [] } as never);
+		useAccountStore.setState({
+			users: [editUser],
+			roles: [],
+			groups: [],
+		} as never);
 	});
 
 	it("loads and displays templates in edit mode", async () => {
 		mockedGetUserEmailTemplateOptions.mockResolvedValue({
 			ok: true,
 			data: [
-				{ key: "custom.claim_approved", path: "custom/claim_approved.html", name: "Claim bestätigt" },
-				{ key: "custom.submission_approved", path: "custom/submission_approved.html", name: "Einreichung bestätigt" },
+				{
+					key: "custom.claim_approved",
+					path: "custom/claim_approved.html",
+					name: "Claim bestätigt",
+				},
+				{
+					key: "custom.submission_approved",
+					path: "custom/submission_approved.html",
+					name: "Einreichung bestätigt",
+				},
 			],
 		} as never);
 
@@ -285,7 +299,11 @@ describe("UserTemplateEmailPanel", () => {
 		mockedGetUserEmailTemplateOptions.mockResolvedValue({
 			ok: true,
 			data: [
-				{ key: "custom.claim_approved", path: "custom/claim_approved.html", name: "Claim bestätigt" },
+				{
+					key: "custom.claim_approved",
+					path: "custom/claim_approved.html",
+					name: "Claim bestätigt",
+				},
 			],
 		} as never);
 		mockedSendUserEmailTemplate.mockResolvedValue({ ok: true } as never);
@@ -297,7 +315,9 @@ describe("UserTemplateEmailPanel", () => {
 		});
 
 		fireEvent.click(
-			screen.getByRole("button", { name: /userFormModal\.templateEmail\.send/i }),
+			screen.getByRole("button", {
+				name: /userFormModal\.templateEmail\.send/i,
+			}),
 		);
 
 		await waitFor(() => {
@@ -313,10 +333,17 @@ describe("UserTemplateEmailPanel", () => {
 		mockedGetUserEmailTemplateOptions.mockResolvedValue({
 			ok: true,
 			data: [
-				{ key: "custom.claim_approved", path: "custom/claim_approved.html", name: "Claim bestätigt" },
+				{
+					key: "custom.claim_approved",
+					path: "custom/claim_approved.html",
+					name: "Claim bestätigt",
+				},
 			],
 		} as never);
-		mockedSendUserEmailTemplate.mockResolvedValue({ ok: false, error: "unexpected" } as never);
+		mockedSendUserEmailTemplate.mockResolvedValue({
+			ok: false,
+			error: "unexpected",
+		} as never);
 
 		render(<UserFormModal mode="edit" userId="user-1" />);
 
@@ -325,7 +352,9 @@ describe("UserTemplateEmailPanel", () => {
 		});
 
 		fireEvent.click(
-			screen.getByRole("button", { name: /userFormModal\.templateEmail\.send/i }),
+			screen.getByRole("button", {
+				name: /userFormModal\.templateEmail\.send/i,
+			}),
 		);
 
 		await waitFor(() => {
