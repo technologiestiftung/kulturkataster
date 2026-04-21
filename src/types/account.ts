@@ -22,6 +22,7 @@ export type InstitutionFieldPermissions = {
 };
 
 export type AccountStoreState = {
+	isInitialized: boolean;
 	currentProfile: Profile | null;
 	users: User[];
 	groups: Group[];
@@ -36,6 +37,7 @@ export type AccountStoreState = {
 	selectedUserId: string | null;
 	selectedGroupId: number | null;
 	selectedRoleId: number | null;
+	setInitialized: () => void;
 	setCurrentProfile: (profile: Profile | null) => void;
 	setUsers: (users: User[]) => void;
 	setGroups: (groups: Group[]) => void;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { ActivityItem, type Activity } from "./ActivityItem";
 import { useAccountStore } from "@/lib/store/accountStore";
 import type { EntityAudit } from "@/types/entityAudit";
@@ -406,9 +406,6 @@ export function ActivityList({
 }: ActivityListProps) {
 	const { t } = useTranslation("common");
 	const toLocalePath = useLocalePath();
-	const [hasHydrated, setHasHydrated] = useState(() =>
-		useAccountStore.persist.hasHydrated(),
-	);
 	const [searchQuery, setSearchQuery] = useState("");
 	const [statusFilter, setStatusFilter] = useState("all");
 	const [typeFilter, setTypeFilter] = useState("all");
@@ -456,17 +453,6 @@ export function ActivityList({
 		},
 		[deletedSubmissionIdSet, submissionIdSet],
 	);
-
-	useEffect(() => {
-		if (useAccountStore.persist.hasHydrated()) {
-			setHasHydrated(true);
-			return;
-		}
-
-		return useAccountStore.persist.onFinishHydration(() => {
-			setHasHydrated(true);
-		});
-	}, []);
 
 	const mapAuditToActivity = (
 		audit: EntityAudit,
@@ -692,7 +678,7 @@ export function ActivityList({
 				.map((entry) => entry.activity);
 		})();
 
-	if (isLoading || (!activities && !hasHydrated)) {
+	if (isLoading) {
 		return <ActivityListSkeleton showFilters />;
 	}
 
