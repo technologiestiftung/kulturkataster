@@ -11,11 +11,46 @@ type RefreshKeys = Array<keyof AccountDataPayload>;
 
 let triggerFn: ((keys?: RefreshKeys) => void) | null = null;
 
+/**
+ * Per-key timestamps of the last successful refresh. Used to skip fetching
+ * keys that were refreshed recently (e.g. by a modal action) when the component
+ * mounts or the user navigates between account tabs.
+ */
+const lastRefreshedAt: Partial<Record<keyof AccountDataPayload, number>> = {};
+
+const ALL_KEYS: ReadonlyArray<keyof AccountDataPayload> = [
+	"users",
+	"groups",
+	"roles",
+	"categories",
+	"institutions",
+	"submissions",
+	"entityAudits",
+];
+
+const markRefreshed = (keys: RefreshKeys) => {
+	const now = Date.now();
+	for (const key of keys) {
+		lastRefreshedAt[key] = now;
+	}
+};
+
+const getStaleKeys = (
+	keys: RefreshKeys,
+	intervalMs: number,
+): RefreshKeys | null => {
+	const now = Date.now();
+	const stale = keys.filter(
+		(key) => now - (lastRefreshedAt[key] ?? 0) >= intervalMs,
+	);
+	return stale.length > 0 ? stale : null;
+};
+
 export function triggerAccountRefresh(keys?: RefreshKeys) {
 	triggerFn?.(keys);
 }
 
-const DEFAULT_ACCOUNT_AUTO_REFRESH_INTERVAL_MS = 10_000;
+const DEFAULT_ACCOUNT_AUTO_REFRESH_INTERVAL_MS = 30_000;
 const ACCOUNT_AUTO_REFRESH_ENABLED_PATHS = new Set([
 	"/account",
 	"/account/activity",
@@ -124,6 +159,7 @@ export function AccountAutoRefresh({
 					setSubmissions,
 					setEntityAudits,
 				});
+				markRefreshed(keys ?? [...ALL_KEYS]);
 			} finally {
 				isRefreshingRef.current = false;
 			}
@@ -156,7 +192,17 @@ export function AccountAutoRefresh({
 		triggerFn = (keys) => void refresh(keys);
 
 		if (isPollingEnabledForPath && document.visibilityState === "visible") {
-			void refresh();
+			// Only fetch keys that haven't been refreshed recently (within the interval).
+			// This avoids redundant DB queries when navigating between account tabs or
+			// right after a modal action already refreshed specific slices.
+			const staleKeys = getStaleKeys([...ALL_KEYS], intervalMs);
+			if (staleKeys !== null) {
+				// If all keys are stale, pass undefined to fetch everything at once.
+				// If only some are stale, pass just those keys for a targeted fetch.
+				const keysToFetch =
+					staleKeys.length === ALL_KEYS.length ? undefined : staleKeys;
+				void refresh(keysToFetch);
+			}
 			startPolling();
 		} else {
 			stopPolling();
