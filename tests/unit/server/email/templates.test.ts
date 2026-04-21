@@ -51,9 +51,9 @@ describe("loadEmailTemplateHtml", () => {
 	it("returns the database template when one is active", async () => {
 		getHtmlByPathMock.mockResolvedValue("<p>From database</p>");
 
-		await expect(
-			loadEmailTemplateHtml("auth/confirmation.html"),
-		).resolves.toBe("<p>From database</p>");
+		await expect(loadEmailTemplateHtml("auth/confirmation.html")).resolves.toBe(
+			"<p>From database</p>",
+		);
 	});
 
 	it("falls back to the filesystem when the database returns null", async () => {
