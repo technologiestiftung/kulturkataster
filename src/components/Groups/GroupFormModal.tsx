@@ -26,6 +26,7 @@ import {
 import type { Group } from "@/types/group";
 import { useRouter } from "next/navigation";
 import { showSuccessToast } from "@/lib/utils/feedbackToast";
+import { triggerAccountRefresh } from "@/components/Account/AccountAutoRefresh";
 
 type GroupFormModalProps = {
 	mode: "create" | "edit";
@@ -194,6 +195,7 @@ const useGroupSubmit = (
 			}
 
 			onSuccess(mode);
+			triggerAccountRefresh(["groups", "entityAudits"]);
 			if (shouldRefresh) {
 				router.refresh();
 			}
@@ -499,6 +501,7 @@ export function GroupFormModal({
 									return;
 								}
 								handleClose();
+								triggerAccountRefresh(["groups", "entityAudits"]);
 								try {
 									queueMicrotask(() => {
 										removeGroup(resolvedGroup.id);

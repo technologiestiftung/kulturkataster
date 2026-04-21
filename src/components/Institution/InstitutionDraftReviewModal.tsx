@@ -18,6 +18,7 @@ import { formatUserDisplayName } from "@/lib/utils/userName";
 import { formatDateWithLocale } from "@/lib/utils/dateUtils";
 import { Card, CardContent } from "@/components/ui/card";
 import { MultiSelectModal } from "@/components/MultiSelect/MultiSelectModal";
+import { triggerAccountRefresh } from "@/components/Account/AccountAutoRefresh";
 
 type InstitutionDraftReviewModalProps = {
 	submissionId?: number;
@@ -98,30 +99,23 @@ export function InstitutionDraftReviewModal({
 			const success = await handleReview(status);
 			if (!success) {
 				setReviewError(
-					error ??
-						t("institutionFormModal.review.errorDescription", {
-							defaultValue:
-								"Please try again or contact support if the issue persists.",
-						}),
+					error ?? t("institutionFormModal.review.errorDescription"),
 				);
 				return;
 			}
 			closeModal();
+			triggerAccountRefresh(
+				status === "approved"
+					? ["submissions", "institutions", "users", "groups", "entityAudits"]
+					: ["submissions", "entityAudits"],
+			);
 			showSuccessToast(
 				status === "approved"
-					? t("institutionFormModal.review.success.approve.title", {
-							defaultValue: "Submission approved",
-						})
-					: t("institutionFormModal.review.success.reject.title", {
-							defaultValue: "Submission rejected",
-						}),
+					? t("institutionFormModal.review.success.approve.title")
+					: t("institutionFormModal.review.success.reject.title"),
 				status === "approved"
-					? t("institutionFormModal.review.success.approve.description", {
-							defaultValue: "The submission has been approved successfully.",
-						})
-					: t("institutionFormModal.review.success.reject.description", {
-							defaultValue: "The submission has been rejected successfully.",
-						}),
+					? t("institutionFormModal.review.success.approve.description")
+					: t("institutionFormModal.review.success.reject.description"),
 			);
 			if (shouldRefresh) {
 				queueMicrotask(() => router.refresh());
@@ -143,21 +137,14 @@ export function InstitutionDraftReviewModal({
 		const success = await handleSaveNote();
 		if (!success) {
 			setReviewError(
-				error ??
-					t("institutionFormModal.review.errorDescription", {
-						defaultValue:
-							"Please try again or contact support if the issue persists.",
-					}),
+				error ?? t("institutionFormModal.review.errorDescription"),
 			);
 			return;
 		}
+		triggerAccountRefresh(["submissions", "entityAudits"]);
 		showSuccessToast(
-			t("institutionFormModal.review.success.saveNotes.title", {
-				defaultValue: "Notes saved",
-			}),
-			t("institutionFormModal.review.success.saveNotes.description", {
-				defaultValue: "Your review notes have been saved.",
-			}),
+			t("institutionFormModal.review.success.saveNotes.title"),
+			t("institutionFormModal.review.success.saveNotes.description"),
 		);
 	}, [error, handleSaveNote, resolvedSubmissionWithFallback, t]);
 
@@ -231,9 +218,7 @@ export function InstitutionDraftReviewModal({
 				reviewError
 					? {
 							open: true,
-							title: t("institutionFormModal.review.errorTitle", {
-								defaultValue: "Review failed",
-							}),
+							title: t("institutionFormModal.review.errorTitle"),
 							description: reviewError,
 							confirmLabel: t("close"),
 							onConfirm: () => setReviewError(null),
@@ -272,9 +257,7 @@ export function InstitutionDraftReviewModal({
 							{resolvedSubmissionWithFallback.notes?.length ? (
 								<div className="space-y-2">
 									<div className="body2 ">
-										{t("institutionFormModal.review.previousNotesLabel", {
-											defaultValue: "Previous notes",
-										})}
+										{t("institutionFormModal.review.previousNotesLabel")}
 									</div>
 									<div className="space-y-2">
 										{resolvedSubmissionWithFallback.notes.map((note) => (
@@ -324,19 +307,14 @@ export function InstitutionDraftReviewModal({
 										disabled={submitting}
 									/>
 									<span className="body2">
-										{t("institutionFormModal.review.grantSubmitterAccess", {
-											defaultValue:
-												"Grant the submitter access to this institution after approval.",
-										})}
+										{t("institutionFormModal.review.grantSubmitterAccess")}
 									</span>
 								</label>
 							) : null}
 							{(userOptions.length > 0 || groupOptions.length > 0) && (
 								<div className="space-y-3">
 									<span className="body2">
-										{t("institutionFormModal.review.attachOnApproval", {
-											defaultValue: "Attach on approval",
-										})}
+										{t("institutionFormModal.review.attachOnApproval")}
 									</span>
 									<div className="flex flex-col gap-3">
 										{userOptions.length > 0 && (
@@ -344,15 +322,12 @@ export function InstitutionDraftReviewModal({
 												<MultiSelectModal
 													title={t(
 														"institutionFormModal.review.attachUsers.title",
-														{ defaultValue: "Select users" },
 													)}
 													placeholder={t(
 														"institutionFormModal.review.attachUsers.placeholder",
-														{ defaultValue: "Users" },
 													)}
 													searchPlaceholder={t(
 														"institutionFormModal.review.attachUsers.searchPlaceholder",
-														{ defaultValue: "Search users..." },
 													)}
 													options={userOptions}
 													selected={attachUserIds}
@@ -366,15 +341,12 @@ export function InstitutionDraftReviewModal({
 												<MultiSelectModal
 													title={t(
 														"institutionFormModal.review.attachGroups.title",
-														{ defaultValue: "Select groups" },
 													)}
 													placeholder={t(
 														"institutionFormModal.review.attachGroups.placeholder",
-														{ defaultValue: "Groups" },
 													)}
 													searchPlaceholder={t(
 														"institutionFormModal.review.attachGroups.searchPlaceholder",
-														{ defaultValue: "Search groups..." },
 													)}
 													options={groupOptions}
 													selected={attachGroupIds.map(String)}

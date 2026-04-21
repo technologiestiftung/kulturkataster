@@ -5,6 +5,15 @@ import { usePathname } from "next/navigation";
 import { useAccountStore } from "@/lib/store/accountStore";
 import { getAccountRefreshData } from "@/server/actions/account";
 import type { AccountStoreState } from "@/types/account";
+import type { AccountDataPayload } from "@/server/utils/accountData";
+
+type RefreshKeys = Array<keyof AccountDataPayload>;
+
+let triggerFn: ((keys?: RefreshKeys) => void) | null = null;
+
+export function triggerAccountRefresh(keys?: RefreshKeys) {
+	triggerFn?.(keys);
+}
 
 const DEFAULT_ACCOUNT_AUTO_REFRESH_INTERVAL_MS = 10_000;
 const ACCOUNT_AUTO_REFRESH_ENABLED_PATHS = new Set([
@@ -97,15 +106,14 @@ export function AccountAutoRefresh({
 		let cancelled = false;
 		let intervalId: ReturnType<typeof setInterval> | null = null;
 
-		const refresh = async () => {
-			if (cancelled || isRefreshingRef.current || !isPollingEnabledForPath) {
-				return;
-			}
+		const refresh = async (keys?: RefreshKeys) => {
+			if (cancelled || isRefreshingRef.current) return;
+			if (!keys && !isPollingEnabledForPath) return;
 			if (document.visibilityState !== "visible") return;
 
 			isRefreshingRef.current = true;
 			try {
-				const refreshedData = await getAccountRefreshData();
+				const refreshedData = await getAccountRefreshData(keys);
 				if (cancelled) return;
 				applyRefreshedAccountData(refreshedData, {
 					setUsers,
@@ -145,7 +153,10 @@ export function AccountAutoRefresh({
 			stopPolling();
 		};
 
+		triggerFn = (keys) => void refresh(keys);
+
 		if (isPollingEnabledForPath && document.visibilityState === "visible") {
+			void refresh();
 			startPolling();
 		} else {
 			stopPolling();
@@ -155,6 +166,7 @@ export function AccountAutoRefresh({
 
 		return () => {
 			cancelled = true;
+			triggerFn = null;
 			stopPolling();
 			document.removeEventListener("visibilitychange", handleVisibilityChange);
 		};
