@@ -6,8 +6,15 @@ import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { getPublicInstitutionRefreshData } from "@/server/actions/publicInstitutionData";
 import type { InstitutionStoreState } from "@/types";
 
-const DEFAULT_PUBLIC_AUTO_REFRESH_INTERVAL_MS = 30_000;
+const DEFAULT_PUBLIC_AUTO_REFRESH_INTERVAL_MS = 60_000;
 const PUBLIC_AUTO_REFRESH_ENABLED_PATHS = new Set(["/map", "/list"]);
+
+/**
+ * Tracks the timestamp of the last successful refresh so that navigating to
+ * /map or /list does not immediately fire a DB query if data was fetched
+ * recently (within the polling interval).
+ */
+let lastPublicRefreshAt = 0;
 
 const normalizePublicPathname = (pathname: string | null) => {
 	if (!pathname) return null;
@@ -96,6 +103,7 @@ export function StoreAutoRefresh({
 					setCategories,
 					setDistricts,
 				});
+				lastPublicRefreshAt = Date.now();
 			} finally {
 				isRefreshingRef.current = false;
 			}
@@ -126,7 +134,12 @@ export function StoreAutoRefresh({
 		};
 
 		if (isPollingEnabledForPath && document.visibilityState === "visible") {
-			refresh();
+			// Only fire an immediate refresh if data is stale (older than the interval).
+			// This avoids redundant DB queries when navigating to map/list pages.
+			const isStale = Date.now() - lastPublicRefreshAt >= intervalMs;
+			if (isStale) {
+				void refresh();
+			}
 			startPolling();
 		} else {
 			stopPolling();
