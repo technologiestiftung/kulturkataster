@@ -30,6 +30,7 @@ import type {
 } from "@/components/FormWrapper/types";
 import { getSubmitLabel, toOptionalText } from "@/lib/utils/formUtils";
 import { showSuccessToast } from "@/lib/utils/feedbackToast";
+import { triggerAccountRefresh } from "@/components/Account/AccountAutoRefresh";
 
 type RoleFormModalProps = {
 	mode: "create" | "edit";
@@ -332,6 +333,7 @@ const useRoleSubmit = (
 			}
 
 			onSuccess(mode);
+			triggerAccountRefresh(["roles", "entityAudits"]);
 			if (shouldRefresh) {
 				router.refresh();
 			}
@@ -619,6 +621,7 @@ export function RoleFormModal({
 									return;
 								}
 								handleClose();
+								triggerAccountRefresh(["roles", "entityAudits"]);
 								try {
 									queueMicrotask(() => {
 										removeRoleFromStore(resolvedRole.id);

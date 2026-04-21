@@ -126,6 +126,7 @@ export function StoreAutoRefresh({
 		};
 
 		if (isPollingEnabledForPath && document.visibilityState === "visible") {
+			refresh();
 			startPolling();
 		} else {
 			stopPolling();
