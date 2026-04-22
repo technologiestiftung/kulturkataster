@@ -783,11 +783,7 @@ const renderFieldContent = (
 			)}
 
 			{field.type === "keyValue" && (
-				<KeyValueField
-					field={field}
-					value={value}
-					updateField={updateField}
-				/>
+				<KeyValueField field={field} value={value} updateField={updateField} />
 			)}
 
 			{field.type === "actionPanel" && field.actionPanel && (

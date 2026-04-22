@@ -341,20 +341,28 @@ const buildUserFormConfig = ({
 						type: "keyValue",
 						layout: { span: "full" },
 						keyValue: {
-							valuePlaceholder: t("userFormModal.form.identity.fields.metaInfo.valuePlaceholder"),
+							valuePlaceholder: t(
+								"userFormModal.form.identity.fields.metaInfo.valuePlaceholder",
+							),
 							allowAdd: false,
 							keyReadOnly: true,
 							keyLabels: {
 								organizationName: tCommon("auth.register.organizationName"),
 								organizationPhone: tCommon("auth.register.organizationPhone"),
-								organizationPosition: tCommon("auth.register.organizationPosition"),
+								organizationPosition: tCommon(
+									"auth.register.organizationPosition",
+								),
 								districtName: tCommon("auth.register.districtName"),
 								districtOffice: tCommon("auth.register.districtOffice"),
 								districtPhone: tCommon("auth.register.districtPhone"),
 								districtPosition: tCommon("auth.register.districtPosition"),
 								administrationName: tCommon("auth.register.administrationName"),
-								administrationPhone: tCommon("auth.register.administrationPhone"),
-								administrationPosition: tCommon("auth.register.administrationPosition"),
+								administrationPhone: tCommon(
+									"auth.register.administrationPhone",
+								),
+								administrationPosition: tCommon(
+									"auth.register.administrationPosition",
+								),
 							},
 						},
 					},
