@@ -283,6 +283,10 @@
 			"update": {
 				"description": "The changes have been saved.",
 				"title": "Category updated"
+			},
+			"delete": {
+				"description": "The category has been removed successfully.",
+				"title": "Category deleted"
 			}
 		},
 		"form": {
@@ -967,6 +971,7 @@
 			"title": "Check submission",
 			"errorTitle": "Review failed",
 			"errorDescription": "Please try again or contact support if the issue persists.",
+			"linkedCategorySubmissions": "New category proposal",
 			"attachOnApproval": "Attach on approval",
 			"attachUsers": {
 				"title": "Select users",
