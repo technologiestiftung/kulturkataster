@@ -60,6 +60,20 @@ export function InstitutionDraftReviewModal({
 			),
 		[allSubmissions],
 	);
+	const linkedCategorySubmissions = useMemo(
+		() =>
+			allSubmissions.filter((submission) => {
+				if (submission.entity_type !== "category") return false;
+				const meta =
+					submission.meta &&
+					typeof submission.meta === "object" &&
+					!Array.isArray(submission.meta)
+						? (submission.meta as Record<string, unknown>)
+						: {};
+				return meta.institutionSubmissionId === submissionId;
+			}),
+		[allSubmissions, submissionId],
+	);
 
 	const {
 		hasSubmissionId,
@@ -239,6 +253,47 @@ export function InstitutionDraftReviewModal({
 						);
 					}}
 				/>
+				{linkedCategorySubmissions.length > 0 ? (
+					<div className="space-x-3 flex">
+						<div className="body2 font-bold">
+							{t("institutionFormModal.review.linkedCategorySubmissions", {
+								defaultValue: "Verknüpfte Kategorie-Vorschläge",
+							})}
+						</div>
+						<div className="flex flex-wrap gap-2">
+							{linkedCategorySubmissions.map((categorySubmission) => {
+								const data =
+									categorySubmission.data &&
+									typeof categorySubmission.data === "object" &&
+									!Array.isArray(categorySubmission.data)
+										? (categorySubmission.data as Record<string, unknown>)
+										: {};
+								const label =
+									typeof data.key === "string" && data.key.trim().length > 0
+										? data.key
+										: `#${categorySubmission.id}`;
+								return (
+									<Button
+										key={categorySubmission.id}
+										type="button"
+										variant="tertiary"
+										size="inline"
+										className="underline"
+										onClick={() =>
+											router.push(
+												toLocalePath(
+													`/account/submissions/${categorySubmission.id}`,
+												),
+											)
+										}
+									>
+										{label}
+									</Button>
+								);
+							})}
+						</div>
+					</div>
+				) : null}
 				{canReviewCurrentSubmission && (
 					<div className="space-y-3">
 						<div className="flex items-center justify-between">
