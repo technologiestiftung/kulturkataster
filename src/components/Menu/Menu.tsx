@@ -443,77 +443,79 @@ export function Menu({
 								</div>
 							</div>
 						</SidebarHeader>
-						<SidebarContent>
-							<SidebarGroup>
-								<SidebarGroupContent>
-									<SidebarMenu>
-										{menuItems
-											.filter((item) =>
-												isAccountRoute ? item.showInAccount : item.showInMap,
-											)
-											.map((item) => {
-												const isActive = isMenuItemActive(
-													item,
-													normalizedPath,
-													toLocalePath,
-												);
+						<div className="flex-1 overflow-auto flex flex-col">
+							<SidebarContent className="flex-none">
+								<SidebarGroup>
+									<SidebarGroupContent>
+										<SidebarMenu>
+											{menuItems
+												.filter((item) =>
+													isAccountRoute ? item.showInAccount : item.showInMap,
+												)
+												.map((item) => {
+													const isActive = isMenuItemActive(
+														item,
+														normalizedPath,
+														toLocalePath,
+													);
 
-												return (
-													<SidebarMenuItem key={item.id}>
-														<SidebarMenuButton
-															tooltip={{
-																children: t(item.label),
-																hidden: false,
-															}}
-															onClick={() => handleItemClick(item)}
-															isActive={isActive}
-															aria-label={t(item.label)}
-															aria-current={isActive ? "page" : undefined}
-															className="relative"
-														>
-															{item.id === "user" && isLoggedIn && (
-																<div className="absolute top-9.5 right-4 bg-brand-default rounded-full size-2.5 flex items-center justify-center" />
-															)}
-															<item.icon />
-														</SidebarMenuButton>
-													</SidebarMenuItem>
-												);
-											})}
-									</SidebarMenu>
-								</SidebarGroupContent>
-							</SidebarGroup>
-						</SidebarContent>
-						<SidebarFooter>
-							<SidebarMenu>
-								{footerItems.map((item) => {
-									const isActive = isMenuItemActive(
-										item,
-										normalizedPath,
-										toLocalePath,
-									);
-									let Icon = item.icon;
-									if (item.id === "language") {
-										Icon = currentLocale !== "de" ? DEIcon : ENIcon;
-									}
-									return (
-										<SidebarMenuItem key={item.id}>
-											<SidebarMenuButton
-												tooltip={{
-													children: t(item.label),
-													hidden: false,
-												}}
-												onClick={() => handleItemClick(item)}
-												isActive={isActive}
-												aria-label={t(item.label)}
-												aria-current={isActive ? "page" : undefined}
-											>
-												<Icon />
-											</SidebarMenuButton>
-										</SidebarMenuItem>
-									);
-								})}
-							</SidebarMenu>
-						</SidebarFooter>
+													return (
+														<SidebarMenuItem key={item.id}>
+															<SidebarMenuButton
+																tooltip={{
+																	children: t(item.label),
+																	hidden: false,
+																}}
+																onClick={() => handleItemClick(item)}
+																isActive={isActive}
+																aria-label={t(item.label)}
+																aria-current={isActive ? "page" : undefined}
+																className="relative"
+															>
+																{item.id === "user" && isLoggedIn && (
+																	<div className="absolute top-9.5 right-4 bg-brand-default rounded-full size-2.5 flex items-center justify-center" />
+																)}
+																<item.icon />
+															</SidebarMenuButton>
+														</SidebarMenuItem>
+													);
+												})}
+										</SidebarMenu>
+									</SidebarGroupContent>
+								</SidebarGroup>
+							</SidebarContent>
+							<SidebarFooter className="mt-auto">
+								<SidebarMenu>
+									{footerItems.map((item) => {
+										const isActive = isMenuItemActive(
+											item,
+											normalizedPath,
+											toLocalePath,
+										);
+										let Icon = item.icon;
+										if (item.id === "language") {
+											Icon = currentLocale !== "de" ? DEIcon : ENIcon;
+										}
+										return (
+											<SidebarMenuItem key={item.id}>
+												<SidebarMenuButton
+													tooltip={{
+														children: t(item.label),
+														hidden: false,
+													}}
+													onClick={() => handleItemClick(item)}
+													isActive={isActive}
+													aria-label={t(item.label)}
+													aria-current={isActive ? "page" : undefined}
+												>
+													<Icon />
+												</SidebarMenuButton>
+											</SidebarMenuItem>
+										);
+									})}
+								</SidebarMenu>
+							</SidebarFooter>
+						</div>
 					</Sidebar>
 
 					{isSecondarySidebarMounted && (
