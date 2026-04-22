@@ -298,6 +298,28 @@ describe("ActivityList filters", () => {
 		).toBeInTheDocument();
 	});
 
+	it("includes the submission type in submission entity labels", () => {
+		mockState.entityAudits = [
+			makeAudit({
+				id: 22,
+				action: "create",
+				entity_type: "submission",
+				entity_id: "172",
+				new_data: {
+					type: "create",
+					entity_type: "institution",
+					data: { name: "Neue Bühne" },
+				},
+			}),
+		];
+
+		render(<ActivityList />);
+
+		expect(
+			screen.getByText("submission (create) [institution] #172: Neue Bühne"),
+		).toBeInTheDocument();
+	});
+
 	it("filters by date presets", () => {
 		render(<ActivityList />);
 
