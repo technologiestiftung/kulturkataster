@@ -391,13 +391,6 @@ export function Menu({
 			return;
 		}
 
-		if (item.id === "user" && !isLoggedIn) {
-			router.push(toLocalePath("/login"));
-			setOpen(false);
-			setOpenMobile(false);
-			return;
-		}
-
 		if (item.route && item.route !== "#") {
 			if (
 				(item.id === "map" || item.id === "list") &&
@@ -444,7 +437,7 @@ export function Menu({
 								</div>
 							</div>
 						</SidebarHeader>
-						<div className="flex-1 overflow-auto flex flex-col">
+						<div className="flex-1 overflow-auto flex flex-col justify-between">
 							<SidebarContent className="flex-none">
 								<SidebarGroup>
 									<SidebarGroupContent>
@@ -485,7 +478,7 @@ export function Menu({
 									</SidebarGroupContent>
 								</SidebarGroup>
 							</SidebarContent>
-							<SidebarFooter className="mt-auto">
+							<SidebarFooter>
 								<SidebarMenu>
 									{footerItems.map((item) => {
 										const isActive = isMenuItemActive(
