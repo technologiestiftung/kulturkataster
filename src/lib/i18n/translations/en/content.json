@@ -1671,6 +1671,13 @@
 						"label": "Account type/role",
 						"placeholder": "organization, district, ..."
 					},
+					"metaInfo": {
+						"add": "Add entry",
+						"keyPlaceholder": "Key",
+						"label": "Additional info",
+						"remove": "Remove",
+						"valuePlaceholder": "Value"
+					},
 					"compliance": {
 						"label": "Compliance released"
 					},
@@ -1702,11 +1709,16 @@
 			"title": "Reset password"
 		},
 		"templateEmail": {
+			"confirmCancel": "Cancel",
+			"confirmDescription": "This email will be sent to {{email}}. Do you want to continue?",
+			"confirmSend": "Send",
+			"confirmTitle": "Really send email?",
 			"description": "Choose a database template and send it to this user.",
 			"error": "Email could not be sent.",
 			"loadError": "Email templates could not be loaded.",
 			"loading": "Loading templates…",
 			"placeholder": "Select template",
+			"preview": "Preview",
 			"selectLabel": "Template",
 			"send": "Send template",
 			"sending": "Sending…",

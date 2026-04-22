@@ -264,11 +264,11 @@ const formatEntityLabel = (
 		const submissionTypeLabel = getSubmissionTypeLabel(audit, t);
 		const submissionEntityTypeLabel = getSubmissionEntityTypeLabel(audit, t);
 
-		const bracketParts = [submissionEntityTypeLabel, submissionTypeLabel]
-			.filter(Boolean)
-			.join(" ");
-		const bracket = bracketParts ? ` [${bracketParts}]` : "";
-		return `${translatedType}${bracket} #${audit.entity_id}`;
+		const typeSuffix = submissionTypeLabel ? ` (${submissionTypeLabel})` : "";
+		const entitySuffix = submissionEntityTypeLabel
+			? ` [${submissionEntityTypeLabel}]`
+			: "";
+		return `${translatedType}${typeSuffix}${entitySuffix} #${audit.entity_id}`;
 	}
 	return `${translatedType} #${audit.entity_id}`;
 };
