@@ -367,7 +367,11 @@ const buildUserFormConfig = ({
 						label: t("userFormModal.form.access.fields.institutions.label"),
 						type: "multiselect",
 						afterField: resolvedUser ? (
-							<UserTemplateEmailPanel user={resolvedUser} t={t} />
+							<UserTemplateEmailPanel
+								key="template-email-panel"
+								user={resolvedUser}
+								t={t}
+							/>
 						) : undefined,
 						multiselectVariant: "modal",
 						placeholder: t(
@@ -561,10 +565,8 @@ function UserTemplateEmailPanel({
 									<SelectItem key={template.path} value={template.path}>
 										{t(
 											`userFormModal.templateEmail.templates.${template.key}`,
-											{
-												defaultValue: template.name ?? template.key,
-											},
-										)}
+										) ||
+											(template.name ?? template.key)}
 									</SelectItem>
 								))}
 							</SelectContent>
