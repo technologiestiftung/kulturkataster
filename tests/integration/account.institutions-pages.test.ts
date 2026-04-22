@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { InstitutionsTable } from "@/components/Institution";
 import { InstitutionFormModal } from "@/components/Institution/InstitutionFormModal";
 import { InstitutionEditModal } from "@/components/Institution/InstitutionEditModal";
-import { InstitutionDraftReviewModal } from "@/components/Institution/InstitutionDraftReviewModal";
+import { SubmissionReviewModal } from "@/components/Institution/SubmissionReviewModal";
 
 vi.mock("@/components/Institution", () => ({
 	InstitutionsTable: () => null,
@@ -20,14 +20,19 @@ vi.mock("@/components/Institution/InstitutionDraftReviewModal", () => ({
 	InstitutionDraftReviewModal: () => null,
 }));
 
+vi.mock("@/components/Institution/SubmissionReviewModal", () => ({
+	SubmissionReviewModal: () => null,
+}));
+
 describe("institutions pages integration", () => {
 	it("renders institutions dashboard page with InstitutionsTable", async () => {
 		const pageModule = await import(
 			"@/app/[locale]/account/(dashboard)/institutions/page"
 		);
 		const result = pageModule.default();
+		const suspense = result.props.children.props.children;
 
-		expect(result.props.children.props.children).toMatchObject({
+		expect(suspense.props.children.props.children).toMatchObject({
 			type: InstitutionsTable,
 		});
 	});
@@ -66,7 +71,7 @@ describe("institutions pages integration", () => {
 		});
 	});
 
-	it("renders submission review page with InstitutionDraftReviewModal", async () => {
+	it("renders submission review page with SubmissionReviewModal", async () => {
 		const pageModule = await import(
 			"@/app/[locale]/@modal/(.)account/submissions/[id]/page"
 		);
@@ -75,7 +80,7 @@ describe("institutions pages integration", () => {
 		});
 
 		expect(result).toMatchObject({
-			type: InstitutionDraftReviewModal,
+			type: SubmissionReviewModal,
 			props: expect.objectContaining({
 				submissionId: 77,
 				routePath: "/account/submissions/77",

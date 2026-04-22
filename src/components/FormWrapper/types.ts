@@ -28,6 +28,7 @@ export type FieldType =
 	| "tablePermissions"
 	| "fieldPermissions"
 	| "fundingSources"
+	| "keyValue"
 	| "section";
 
 export type PermissionAction = "read" | "create" | "update" | "delete";
@@ -219,6 +220,15 @@ type FormWrapperNonSectionFieldConfig = {
 		addButtonLabel?: string;
 		removeButtonLabel?: string;
 		maxItems?: number;
+	};
+	keyValue?: {
+		keyPlaceholder?: string;
+		valuePlaceholder?: string;
+		addButtonLabel?: string;
+		removeButtonLabel?: string;
+		allowAdd?: boolean;
+		keyReadOnly?: boolean;
+		keyLabels?: Record<string, string>;
 	};
 
 	// For select, radio, checkbox, multiselect

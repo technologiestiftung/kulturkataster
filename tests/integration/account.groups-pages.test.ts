@@ -16,8 +16,9 @@ describe("groups pages integration", () => {
 			"@/app/[locale]/account/(dashboard)/groups/page"
 		);
 		const result = pageModule.default();
+		const suspense = result.props.children.props.children;
 
-		expect(result.props.children.props.children).toMatchObject({
+		expect(suspense.props.children.props.children).toMatchObject({
 			type: GroupsTable,
 		});
 	});
