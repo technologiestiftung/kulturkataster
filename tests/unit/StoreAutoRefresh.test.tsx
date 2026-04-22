@@ -88,14 +88,15 @@ describe("StoreAutoRefresh", () => {
 	});
 
 	it("applies partial refresh payloads without overwriting missing slices", async () => {
-		getPublicInstitutionRefreshDataMock.mockResolvedValueOnce({
+		getPublicInstitutionRefreshDataMock.mockResolvedValue({
 			institutions: [{ id: 1 }],
 		});
 
 		render(<StoreAutoRefresh intervalMs={1_000} />);
 
-		// Only let the immediate refresh settle (no interval advance)
-		await act(async () => {});
+		await act(async () => {
+			await vi.advanceTimersByTimeAsync(1_000);
+		});
 
 		expect(setInstitutions).toHaveBeenCalledWith([{ id: 1 }]);
 		expect(setCategories).not.toHaveBeenCalled();
