@@ -73,6 +73,13 @@
 					"user": "Nutzer*in",
 					"userWithEmail": "{{entity}} ({{email}})"
 				},
+				"submissionTypes": {
+					"claim": "angefragt",
+					"create": "erstellt",
+					"delete": "gelöscht",
+					"read": "gelesen",
+					"update": "aktualisiert"
+				},
 				"filters": {
 					"allDates": "Alle",
 					"allEntities": "Alle Entitäten",

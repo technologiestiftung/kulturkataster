@@ -283,6 +283,10 @@
 			"update": {
 				"description": "Die Änderungen wurden gespeichert.",
 				"title": "Kategorie aktualisiert"
+			},
+			"delete": {
+				"description": "Die Kategorie wurde erfolgreich entfernt.",
+				"title": "Kategorie gelöscht"
 			}
 		},
 		"form": {
@@ -968,6 +972,7 @@
 			"title": "Einreichung prüfen",
 			"errorTitle": "Überprüfung fehlgeschlagen",
 			"errorDescription": "Bitte versuchen Sie es erneut oder kontaktieren Sie den Support, falls das Problem weiterhin besteht.",
+			"linkedCategorySubmissions": "Neuer Kategorie-Vorschlag",
 			"attachOnApproval": "Bei Genehmigung zuweisen",
 			"attachUsers": {
 				"title": "Nutzer*innen auswählen",
