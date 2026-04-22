@@ -1684,6 +1684,13 @@
 						"label": "Kontotyp / Rolle",
 						"placeholder": "Organisation, Bezirk, ..."
 					},
+					"metaInfo": {
+						"add": "Eintrag hinzufügen",
+						"keyPlaceholder": "Schlüssel",
+						"label": "Zusatzinfo",
+						"remove": "Entfernen",
+						"valuePlaceholder": "Wert"
+					},
 					"compliance": {
 						"label": "Compliance freigegeben"
 					},
@@ -1715,11 +1722,16 @@
 			"title": "Passwort zurücksetzen"
 		},
 		"templateEmail": {
+			"confirmCancel": "Abbrechen",
+			"confirmDescription": "Diese E-Mail wird an {{email}} gesendet. Möchten Sie fortfahren?",
+			"confirmSend": "Senden",
+			"confirmTitle": "E-Mail wirklich senden?",
 			"description": "Wählen Sie eine Vorlage aus der Datenbank und senden Sie sie an diese Nutzerin oder diesen Nutzer.",
 			"error": "E-Mail konnte nicht gesendet werden.",
 			"loadError": "E-Mail-Vorlagen konnten nicht geladen werden.",
 			"loading": "Vorlagen werden geladen…",
 			"placeholder": "Vorlage auswählen",
+			"preview": "Vorschau",
 			"selectLabel": "Vorlage",
 			"send": "Vorlage senden",
 			"sending": "Wird gesendet…",
@@ -1741,12 +1753,12 @@
 					"claim_approved": "Claim bestätigt",
 					"claim_rejected": "Claim abgelehnt",
 					"compliance_resend": "Compliance erneut senden",
-					"role_district_approved": "Bezirksrolle bestätigt",
-					"role_district_rejected": "Bezirksrolle abgelehnt",
-					"role_network_approved": "Netzwerkrolle bestätigt",
-					"role_network_rejected": "Netzwerkrolle abgelehnt",
-					"role_state_approved": "Landesrolle bestätigt",
-					"role_state_rejected": "Landesrolle abgelehnt",
+					"role_district_approved": "Bezirks-Rolle bestätigt",
+					"role_district_rejected": "Bezirks-Rolle abgelehnt",
+					"role_network_approved": "Verband/Netzwerk-Rolle bestätigt",
+					"role_network_rejected": "Verband/Netzwerk-Rolle abgelehnt",
+					"role_state_approved": "Landes-Rolle bestätigt",
+					"role_state_rejected": "Landes-Rolle abgelehnt",
 					"submission_approved": "Einreichung bestätigt",
 					"submission_rejected": "Einreichung abgelehnt"
 				}

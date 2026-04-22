@@ -1,4 +1,9 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+import { InstitutionClaimSelectModal } from "@/components/Institution/InstitutionClaimSelectModal";
+
+vi.mock("@/components/Institution/InstitutionClaimSelectModal", () => ({
+	InstitutionClaimSelectModal: () => null,
+}));
 
 describe("account claim page integration", () => {
 	it("renders InstitutionClaimSelectModal with claim route path", async () => {
@@ -7,6 +12,11 @@ describe("account claim page integration", () => {
 		);
 		const element = pageModule.default();
 
-		expect(element.props.routePath).toBe("/account/submissions/claim");
+		expect(element).toMatchObject({
+			type: InstitutionClaimSelectModal,
+			props: expect.objectContaining({
+				routePath: "/account/submissions/claim",
+			}),
+		});
 	});
 });
