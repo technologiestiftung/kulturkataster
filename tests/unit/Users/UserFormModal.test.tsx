@@ -34,6 +34,10 @@ vi.mock("@/components/Modals/Modal", () => ({
 }));
 
 vi.mock("@/components/ui/dialog", () => ({
+	Dialog: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+	DialogContent: ({ children }: { children: React.ReactNode }) => (
+		<div>{children}</div>
+	),
 	DialogTitle: ({ children }: { children: React.ReactNode }) => (
 		<div>{children}</div>
 	),
@@ -319,6 +323,11 @@ describe("UserTemplateEmailPanel", () => {
 				name: /userFormModal\.templateEmail\.send/i,
 			}),
 		);
+		fireEvent.click(
+			screen.getByRole("button", {
+				name: /userFormModal\.templateEmail\.confirmSend/i,
+			}),
+		);
 
 		await waitFor(() => {
 			expect(mockedSendUserEmailTemplate).toHaveBeenCalledWith({
@@ -354,6 +363,11 @@ describe("UserTemplateEmailPanel", () => {
 		fireEvent.click(
 			screen.getByRole("button", {
 				name: /userFormModal\.templateEmail\.send/i,
+			}),
+		);
+		fireEvent.click(
+			screen.getByRole("button", {
+				name: /userFormModal\.templateEmail\.confirmSend/i,
 			}),
 		);
 

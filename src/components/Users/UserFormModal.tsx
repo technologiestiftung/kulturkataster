@@ -42,6 +42,7 @@ import {
 } from "@/components/ui/select";
 import { showErrorToast, showSuccessToast } from "@/lib/utils/feedbackToast";
 import { triggerAccountRefresh } from "@/components/Account/AccountAutoRefresh";
+import { AlertDialog } from "@/components/ui/alert-dialog";
 
 type UserFormModalProps = {
 	mode: "create" | "edit";
@@ -57,6 +58,7 @@ const getInitialValues = (resolvedUser?: User) => ({
 	last_name: resolvedUser?.last_name ?? "",
 	status: resolvedUser?.status ?? "approval_pending",
 	account_type: resolvedUser?.account_type ?? "",
+	meta_info: resolvedUser?.meta_info ?? {},
 	compliance: resolvedUser?.compliance ?? false,
 	roleId: resolvedUser?.role?.id ? String(resolvedUser.role.id) : "",
 	groupIds: resolvedUser?.groups?.map((group) => String(group.id)) ?? [],
@@ -68,6 +70,7 @@ const getInitialValues = (resolvedUser?: User) => ({
 type UserFormConfigArgs = {
 	mode: UserFormModalProps["mode"];
 	t: (key: string) => string;
+	tCommon: (key: string) => string;
 	statusOptions: { value: string; label: string }[];
 	roles: { id: number; name: string }[];
 	groups: { id: number; name: string }[];
@@ -189,6 +192,10 @@ const useUserSubmit = (
 		const groupIds = toNumberArray(data.groupIds);
 		const institutionIds = toNumberArray(data.institutionIds);
 		const roleId = toOptionalNumber(data.roleId);
+		const rawMetaInfo =
+			data.meta_info && typeof data.meta_info === "object"
+				? JSON.stringify(data.meta_info)
+				: undefined;
 		const status = (data.status || undefined) as UserStatus | undefined;
 
 		try {
@@ -203,6 +210,7 @@ const useUserSubmit = (
 						typeof data.account_type === "string"
 							? data.account_type
 							: undefined,
+					meta_info: rawMetaInfo,
 					roleId,
 					groupIds: groupIds.length > 0 ? groupIds : undefined,
 					institutionIds:
@@ -225,6 +233,7 @@ const useUserSubmit = (
 						typeof data.account_type === "string"
 							? data.account_type
 							: undefined,
+					meta_info: rawMetaInfo,
 					roleId,
 					groupIds,
 					institutionIds,
@@ -261,6 +270,7 @@ const useUserSubmit = (
 const buildUserFormConfig = ({
 	mode,
 	t,
+	tCommon,
 	statusOptions,
 	roles,
 	groups,
@@ -324,6 +334,29 @@ const buildUserFormConfig = ({
 						placeholder: t(
 							"userFormModal.form.identity.fields.accountType.placeholder",
 						),
+					},
+					{
+						name: "meta_info",
+						label: t("userFormModal.form.identity.fields.metaInfo.label"),
+						type: "keyValue",
+						layout: { span: "full" },
+						keyValue: {
+							valuePlaceholder: t("userFormModal.form.identity.fields.metaInfo.valuePlaceholder"),
+							allowAdd: false,
+							keyReadOnly: true,
+							keyLabels: {
+								organizationName: tCommon("auth.register.organizationName"),
+								organizationPhone: tCommon("auth.register.organizationPhone"),
+								organizationPosition: tCommon("auth.register.organizationPosition"),
+								districtName: tCommon("auth.register.districtName"),
+								districtOffice: tCommon("auth.register.districtOffice"),
+								districtPhone: tCommon("auth.register.districtPhone"),
+								districtPosition: tCommon("auth.register.districtPosition"),
+								administrationName: tCommon("auth.register.administrationName"),
+								administrationPhone: tCommon("auth.register.administrationPhone"),
+								administrationPosition: tCommon("auth.register.administrationPosition"),
+							},
+						},
 					},
 				],
 			},
@@ -466,6 +499,7 @@ function UserTemplateEmailPanel({
 	const [selectedTemplatePath, setSelectedTemplatePath] = useState("");
 	const [isLoadingTemplates, setIsLoadingTemplates] = useState(true);
 	const [isSending, setIsSending] = useState(false);
+	const [showConfirm, setShowConfirm] = useState(false);
 
 	useEffect(() => {
 		let isMounted = true;
@@ -528,7 +562,7 @@ function UserTemplateEmailPanel({
 	};
 
 	return (
-		<div className="rounded-sm border border-border bg-background p-4">
+		<div className="rounded-sm border border-border bg-background p-4 mt-4">
 			<div className="flex flex-col gap-3">
 				<div className="flex items-center gap-2">
 					<Mail className="h-5 w-5 text-primary-dark" />
@@ -541,9 +575,6 @@ function UserTemplateEmailPanel({
 				</p>
 				<div className="flex flex-col gap-2 ">
 					<div className="flex-1 space-y-1">
-						<Label htmlFor="user-email-template">
-							{t("userFormModal.templateEmail.selectLabel")}
-						</Label>
 						<Select
 							value={selectedTemplatePath}
 							onValueChange={setSelectedTemplatePath}
@@ -572,17 +603,50 @@ function UserTemplateEmailPanel({
 							</SelectContent>
 						</Select>
 					</div>
-					<Button
-						type="button"
-						disabled={!selectedTemplatePath || isLoadingTemplates || isSending}
-						onClick={handleSendTemplate}
-					>
-						{isSending
-							? t("userFormModal.templateEmail.sending")
-							: t("userFormModal.templateEmail.send")}
-					</Button>
+					<div className="flex gap-2">
+						<Button
+							type="button"
+							variant="outline"
+							disabled={!selectedTemplatePath || isLoadingTemplates}
+							onClick={() => {
+								if (!selectedTemplatePath) return;
+								window.open(`/api/emails/${selectedTemplatePath}`, "_blank");
+							}}
+						>
+							{t("userFormModal.templateEmail.preview")}
+						</Button>
+						<Button
+							type="button"
+							disabled={
+								!selectedTemplatePath || isLoadingTemplates || isSending
+							}
+							onClick={() => setShowConfirm(true)}
+						>
+							{t("userFormModal.templateEmail.send")}
+						</Button>
+					</div>
 				</div>
 			</div>
+			{showConfirm && (
+				<AlertDialog
+					open
+					status="warning"
+					title={t("userFormModal.templateEmail.confirmTitle")}
+					description={t("userFormModal.templateEmail.confirmDescription", {
+						email: user.email,
+					} as never)}
+					confirmLabel={t("userFormModal.templateEmail.confirmSend")}
+					cancelLabel={t("userFormModal.templateEmail.confirmCancel")}
+					onConfirm={() => {
+						setShowConfirm(false);
+						void handleSendTemplate();
+					}}
+					onCancel={() => setShowConfirm(false)}
+					onOpenChange={(open) => {
+						if (!open) setShowConfirm(false);
+					}}
+				/>
+			)}
 		</div>
 	);
 }
@@ -595,6 +659,7 @@ export function UserFormModal({
 	returnTo,
 }: UserFormModalProps) {
 	const { t } = useTranslation("content");
+	const { t: tCommon } = useTranslation("common");
 	const { t: tEnum, i18n } = useTranslation("enumMap");
 	const users = useAccountStore((state) => state.users);
 	const roles = useAccountStore((state) => state.roles);
@@ -619,6 +684,7 @@ export function UserFormModal({
 		userId,
 		users,
 	);
+
 	const handleSuccess = (nextMode: UserFormModalProps["mode"]) => {
 		const keyPrefix =
 			nextMode === "create"
@@ -658,6 +724,7 @@ export function UserFormModal({
 		const baseConfig = buildUserFormConfig({
 			mode,
 			t,
+			tCommon,
 			statusOptions,
 			roles,
 			groups,
@@ -682,6 +749,7 @@ export function UserFormModal({
 	}, [
 		mode,
 		t,
+		tCommon,
 		statusOptions,
 		roles,
 		groups,

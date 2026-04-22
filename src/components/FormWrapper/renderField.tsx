@@ -50,6 +50,7 @@ const AddressMapField = dynamic(
 	{ ssr: false },
 );
 import { FundingSourceField } from "./FundingSourceField";
+import { KeyValueField } from "./KeyValueField";
 import { defaultFilterState } from "./constants";
 import Eye from "@/icons/eye.svg";
 import EyeOff from "@/icons/eye-off.svg";
@@ -775,6 +776,14 @@ const renderFieldContent = (
 
 			{field.type === "fundingSources" && (
 				<FundingSourceField
+					field={field}
+					value={value}
+					updateField={updateField}
+				/>
+			)}
+
+			{field.type === "keyValue" && (
+				<KeyValueField
 					field={field}
 					value={value}
 					updateField={updateField}

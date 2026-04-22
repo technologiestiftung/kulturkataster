@@ -68,9 +68,7 @@ const normalizeAccountPathname = (pathname: string | null) => {
 			: pathname;
 	const accountSegmentIndex = normalizedPathname.indexOf("/account");
 
-	if (accountSegmentIndex === -1) {
-		return normalizedPathname;
-	}
+	if (accountSegmentIndex === -1) return null;
 
 	return normalizedPathname.slice(accountSegmentIndex);
 };
@@ -106,8 +104,10 @@ export function AccountAutoRefresh({
 			try {
 				const refreshedData = await getAccountRefreshData(keys);
 				if (cancelled) return;
-				if (refreshedData) setAccountData(refreshedData);
-				markRefreshed(keys ?? [...ALL_KEYS]);
+				if (refreshedData) {
+					setAccountData(refreshedData);
+					markRefreshed(keys ?? [...ALL_KEYS]);
+				}
 			} finally {
 				isRefreshingRef.current = false;
 			}
