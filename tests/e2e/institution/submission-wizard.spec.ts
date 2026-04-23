@@ -149,7 +149,7 @@ test.describe("institution submission wizard", () => {
 	}) => {
 		const uniqueName = `E2E LatLng ${Date.now()}`;
 
-		await fillById(page, "name", uniqueName);
+		await page.getByLabel(/Kulturort\*/i).fill(uniqueName);
 		await fillById(page, "address.lat", "52.520008");
 		await fillById(page, "address.lng", "13.404954");
 
