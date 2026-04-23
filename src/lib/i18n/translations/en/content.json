@@ -1034,6 +1034,7 @@
 		"timeline": "The development of the list view is planned for 2026."
 	},
 	"privacyModal": {
+		"body": "*(English translation pending.)*",
 		"description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. ",
 		"subtitle": "Here comes the data protection text.",
 		"title": "Data protection"
