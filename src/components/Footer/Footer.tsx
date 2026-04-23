@@ -53,7 +53,9 @@ const Footer: FC<FooterProps> = ({ ariaLabel, envHint }) => {
 					))}
 					<li className="body2 font-normal">v{packageInfo.version}</li>
 					{envHint && (
-						<li className="body2 font-normal text-muted-foreground">[{envHint}]</li>
+						<li className="body2 font-normal text-muted-foreground">
+							[{envHint}]
+						</li>
 					)}
 				</ul>
 			</nav>

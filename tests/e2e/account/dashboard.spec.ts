@@ -30,38 +30,39 @@ test.describe("dashboard routing, tabs, greeting, and menu actions", () => {
 	});
 
 	test("switches tabs and keeps deep-link after reload", async ({ page }) => {
-		const tabRoutes: Array<{ label: string; route: string; pattern: RegExp }> = [
-			{
-				label: "Aktivität",
-				route: "/de/account/activity",
-				pattern: /\/de\/account\/activity\/?$/,
-			},
-			{
-				label: "Kulturorte",
-				route: "/de/account/institutions",
-				pattern: /\/de\/account\/institutions\/?$/,
-			},
-			{
-				label: "Nutzer*innen",
-				route: "/de/account/users",
-				pattern: /\/de\/account\/users\/?$/,
-			},
-			{
-				label: "Gruppen",
-				route: "/de/account/groups",
-				pattern: /\/de\/account\/groups\/?$/,
-			},
-			{
-				label: "Rollen",
-				route: "/de/account/roles",
-				pattern: /\/de\/account\/roles\/?$/,
-			},
-			{
-				label: "Kategorien",
-				route: "/de/account/categories",
-				pattern: /\/de\/account\/categories\/?$/,
-			},
-		];
+		const tabRoutes: Array<{ label: string; route: string; pattern: RegExp }> =
+			[
+				{
+					label: "Aktivität",
+					route: "/de/account/activity",
+					pattern: /\/de\/account\/activity\/?$/,
+				},
+				{
+					label: "Kulturorte",
+					route: "/de/account/institutions",
+					pattern: /\/de\/account\/institutions\/?$/,
+				},
+				{
+					label: "Nutzer*innen",
+					route: "/de/account/users",
+					pattern: /\/de\/account\/users\/?$/,
+				},
+				{
+					label: "Gruppen",
+					route: "/de/account/groups",
+					pattern: /\/de\/account\/groups\/?$/,
+				},
+				{
+					label: "Rollen",
+					route: "/de/account/roles",
+					pattern: /\/de\/account\/roles\/?$/,
+				},
+				{
+					label: "Kategorien",
+					route: "/de/account/categories",
+					pattern: /\/de\/account\/categories\/?$/,
+				},
+			];
 
 		await safeGoto(page, "/de/account/activity", /\/de\/account\/activity\/?$/);
 
@@ -115,7 +116,10 @@ test.describe("dashboard routing, tabs, greeting, and menu actions", () => {
 			page.getByRole("heading", { name: /FAQ|Fragen\s*&\s*Antworten/i }),
 		).toBeVisible({ timeout: 15_000 });
 
-		await navigateViaMenuAction("Abmelden", /\/de(?:\/|\/map\/?|\/welcome\/?)?$/);
+		await navigateViaMenuAction(
+			"Abmelden",
+			/\/de(?:\/|\/map\/?|\/welcome\/?)?$/,
+		);
 
 		await safeGoto(page, "/de/account/activity", /\/de\/account\/activity\/?$/);
 		await expect(page).toHaveURL(/\/de\/login\/?$/);

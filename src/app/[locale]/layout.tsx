@@ -98,9 +98,10 @@ export default async function RootLayout({
 			? (commonResources.footerLandmark as string)
 			: "Footer";
 	const supabaseUrl = process.env.SUPABASE_URL ?? "";
-	const envHint = supabaseUrl.includes("127.0.0.1") || supabaseUrl.includes("localhost")
-		? "local"
-		: undefined;
+	const envHint =
+		supabaseUrl.includes("127.0.0.1") || supabaseUrl.includes("localhost")
+			? "local"
+			: undefined;
 	const shouldLoadMatomo = envHint !== "local";
 
 	return (
