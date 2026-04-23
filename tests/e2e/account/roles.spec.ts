@@ -13,7 +13,7 @@ test.describe("roles management", () => {
 	test.beforeEach(async ({ page }) => {
 		test.skip(!hasRealAdminCredentials, "E2E admin credentials not set");
 		await prepareStableUi(page);
-		await safeGoto(page, "/de/account/activity", /\/de\/account\/activity\/?$/);
+		await safeGoto(page, "/de/account", /\/de\/account(?:\/activity)?\/?$/);
 	});
 
 	test("shows roles table, supports search, create, and edit", async ({

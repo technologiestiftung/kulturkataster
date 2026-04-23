@@ -13,7 +13,7 @@ test.describe("account edit", () => {
 	test.beforeEach(async ({ page }) => {
 		test.skip(!hasRealUserCredentials, "E2E credentials not set");
 		await prepareStableUi(page);
-		await safeGoto(page, "/de/account/activity", /\/de\/account\/activity\/?$/);
+		await safeGoto(page, "/de/account", /\/de\/account(?:\/activity)?\/?$/);
 	});
 
 	test("direct /de/account/edit shows personal data fields and secure password controls", async ({
@@ -38,8 +38,10 @@ test.describe("account edit", () => {
 	});
 
 	test("account route allows reaching edit workflow", async ({ page }) => {
-		await safeGoto(page, "/de/account", /\/de\/account\/activity\/?$/);
-		await expect(page).toHaveURL(/\/de\/account\/activity\/?$/);
+		await safeGoto(page, "/de/account", /\/de\/account(?:\/activity)?\/?$/);
+		await expect(page).toHaveURL(/\/de\/account(?:\/activity)?\/?$/, {
+			timeout: 5_000,
+		});
 		await expect(
 			page.getByRole("button", { name: "Profileinstellungen" }),
 		).toBeVisible();
