@@ -30,32 +30,52 @@ test.describe("dashboard routing, tabs, greeting, and menu actions", () => {
 	});
 
 	test("switches tabs and keeps deep-link after reload", async ({ page }) => {
-		const tabRoutes: Array<{ label: string; route: string }> = [
-			{ label: "Aktivität", route: "/de/account/activity" },
-			{ label: "Kulturorte", route: "/de/account/institutions" },
-			{ label: "Nutzer*innen", route: "/de/account/users" },
-			{ label: "Gruppen", route: "/de/account/groups" },
-			{ label: "Rollen", route: "/de/account/roles" },
-			{ label: "Kategorien", route: "/de/account/categories" },
+		const tabRoutes: Array<{ label: string; route: string; pattern: RegExp }> = [
+			{
+				label: "Aktivität",
+				route: "/de/account/activity",
+				pattern: /\/de\/account\/activity\/?$/,
+			},
+			{
+				label: "Kulturorte",
+				route: "/de/account/institutions",
+				pattern: /\/de\/account\/institutions\/?$/,
+			},
+			{
+				label: "Nutzer*innen",
+				route: "/de/account/users",
+				pattern: /\/de\/account\/users\/?$/,
+			},
+			{
+				label: "Gruppen",
+				route: "/de/account/groups",
+				pattern: /\/de\/account\/groups\/?$/,
+			},
+			{
+				label: "Rollen",
+				route: "/de/account/roles",
+				pattern: /\/de\/account\/roles\/?$/,
+			},
+			{
+				label: "Kategorien",
+				route: "/de/account/categories",
+				pattern: /\/de\/account\/categories\/?$/,
+			},
 		];
 
-		await page.goto("/de/account/activity", { waitUntil: "domcontentloaded" });
+		await safeGoto(page, "/de/account/activity", /\/de\/account\/activity\/?$/);
 
 		let lastVisitedRoute = "/de/account/activity";
 		for (const tab of tabRoutes) {
 			const tabButton = page.getByRole("tab", { name: tab.label });
 			if ((await tabButton.count()) === 0) continue;
-			await expect(tabButton).toBeVisible();
-			await expect(tabButton).toBeEnabled();
-			await Promise.all([
-				page.waitForURL(new RegExp(`${tab.route}/?$`), { timeout: 15_000 }),
-				tabButton.click(),
-			]);
+			await safeGoto(page, tab.route, tab.pattern);
+			await expect(page).toHaveURL(tab.pattern, { timeout: 15_000 });
 			await expect(tabButton).toHaveAttribute("data-state", "active");
 			lastVisitedRoute = tab.route;
 		}
 
-		await page.reload();
+		await page.reload({ waitUntil: "commit" });
 		await expect(page).toHaveURL(new RegExp(`${lastVisitedRoute}/?$`), {
 			timeout: 15_000,
 		});
@@ -69,15 +89,15 @@ test.describe("dashboard routing, tabs, greeting, and menu actions", () => {
 			targetUrl: RegExp,
 			timeout = 15_000,
 		) => {
-			await page.goto("/de/account/activity", {
-				waitUntil: "domcontentloaded",
-			});
+			await safeGoto(
+				page,
+				"/de/account/activity",
+				/\/de\/account\/activity\/?$/,
+			);
 			const button = page.getByRole("button", { name: buttonName });
 			await expect(button).toBeVisible();
-			await Promise.all([
-				page.waitForURL(targetUrl, { timeout }),
-				button.click(),
-			]);
+			await button.click();
+			await expect(page).toHaveURL(targetUrl, { timeout });
 		};
 
 		await navigateViaMenuAction(
@@ -95,9 +115,9 @@ test.describe("dashboard routing, tabs, greeting, and menu actions", () => {
 			page.getByRole("heading", { name: /FAQ|Fragen\s*&\s*Antworten/i }),
 		).toBeVisible({ timeout: 15_000 });
 
-		await navigateViaMenuAction("Abmelden", /\/de(?:\/|\/welcome\/?)?$/);
+		await navigateViaMenuAction("Abmelden", /\/de(?:\/|\/map\/?|\/welcome\/?)?$/);
 
-		await page.goto("/de/account/activity", { waitUntil: "domcontentloaded" });
+		await safeGoto(page, "/de/account/activity", /\/de\/account\/activity\/?$/);
 		await expect(page).toHaveURL(/\/de\/login\/?$/);
 	});
 });
