@@ -113,7 +113,9 @@ test.describe("dashboard routing, tabs, greeting, and menu actions", () => {
 			}),
 			page.getByRole("button", { name: "Abmelden" }).click(),
 		]);
-		await expect(page).toHaveURL(/\/de(?:\/|\/login\/?|\/map\/?|\/welcome\/?)?$/);
+		await expect(page).toHaveURL(
+			/\/de(?:\/|\/login\/?|\/map\/?|\/welcome\/?)?$/,
+		);
 
 		await page.goto("/de/account/activity", { waitUntil: "commit" });
 		await expect(page).toHaveURL(/\/de\/login\/?$/);
@@ -121,7 +123,10 @@ test.describe("dashboard routing, tabs, greeting, and menu actions", () => {
 		// Restore the admin session so subsequent tests are not affected by the
 		// revoked token. Signing out invalidates the session server-side, so
 		// admin.json must be overwritten with a fresh session before this test ends.
-		await page.getByLabel(/E-?Mail/i).first().fill(process.env.E2E_ADMIN_EMAIL!);
+		await page
+			.getByLabel(/E-?Mail/i)
+			.first()
+			.fill(process.env.E2E_ADMIN_EMAIL!);
 		await page
 			.getByLabel(/Passwort/i)
 			.first()
