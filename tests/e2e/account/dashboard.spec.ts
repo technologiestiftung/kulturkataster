@@ -115,7 +115,7 @@ test.describe("dashboard routing, tabs, greeting, and menu actions", () => {
 			timeout: 15_000,
 		});
 
-		await safeGoto(page, "/de/account/activity", /\/de\/account\/activity\/?$/);
+		await page.goto("/de/account/activity", { waitUntil: "commit" });
 		await expect(page).toHaveURL(/\/de\/login\/?$/);
 	});
 });
