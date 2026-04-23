@@ -186,9 +186,8 @@ const saveStorageState = async ({
 				`[global-setup] ${label} login successful, URL: ${page.url()}`,
 			);
 		} catch (error) {
-			console.warn(
-				`[global-setup] Failed to create ${label} auth state, using anonymous state instead.`,
-				error,
+			throw new Error(
+				`[global-setup] Login for "${label}" failed — check E2E credentials in .env.test. Cause: ${error instanceof Error ? error.message : String(error)}`,
 			);
 		}
 

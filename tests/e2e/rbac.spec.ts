@@ -18,7 +18,7 @@ test.describe("rbac regular user", () => {
 	test.beforeEach(async ({ page }) => {
 		test.skip(!hasRealUserCredentials, "E2E user credentials not set");
 		await prepareStableUi(page);
-		await safeGoto(page, "/de/account/activity", /\/de\/account\/activity\/?$/);
+		await safeGoto(page, "/de/account", /\/de\/account(?:\/activity)?\/?$/);
 	});
 
 	test("regular user can access institutions", async ({ page }) => {
@@ -42,7 +42,7 @@ test.describe("rbac admin", () => {
 	test.beforeEach(async ({ page }) => {
 		test.skip(!hasRealAdminCredentials, "E2E admin credentials not set");
 		await prepareStableUi(page);
-		await safeGoto(page, "/de/account/activity", /\/de\/account\/activity\/?$/);
+		await safeGoto(page, "/de/account", /\/de\/account(?:\/activity)?\/?$/);
 	});
 
 	test("admin sees users tab", async ({ page }) => {
