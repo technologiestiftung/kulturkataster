@@ -39,6 +39,21 @@ export const useAccountStore = create<AccountStoreState>()(
 		devtools(
 			immer((set) => ({
 				...accountStoreInitialState,
+				initializeAccountStore: (data) =>
+					set((state) => {
+						state.currentProfile = data.currentProfile;
+						state.users = data.users;
+						state.groups = data.groups;
+						state.roles = data.roles;
+						state.categories = data.categories;
+						state.institutions = data.institutions;
+						state.submissions = data.submissions;
+						state.entityAudits = data.entityAudits;
+						state.institutionPermissions = data.institutionPermissions;
+						state.institutionFieldPermissions =
+							data.institutionFieldPermissions;
+						state.isInitialized = true;
+					}),
 				setInitialized: () =>
 					set((state) => {
 						state.isInitialized = true;
