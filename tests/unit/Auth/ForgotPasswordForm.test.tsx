@@ -53,7 +53,7 @@ describe("ForgotPasswordForm", () => {
 	});
 
 	it("shows error when reset fails", async () => {
-		mockedRequest.mockResolvedValue({ ok: false, error: "Boom" });
+		mockedRequest.mockResolvedValue({ ok: false, error: "generic_error" });
 
 		render(<ForgotPasswordForm />);
 
@@ -70,6 +70,6 @@ describe("ForgotPasswordForm", () => {
 			expect(mockedRequest).toHaveBeenCalled();
 		});
 
-		expect(screen.getByText("Boom")).toBeInTheDocument();
+		expect(screen.getByText("auth.forgot.errorFallback")).toBeInTheDocument();
 	});
 });
