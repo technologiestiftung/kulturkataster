@@ -13,7 +13,7 @@ test.describe("dashboard routing, tabs, greeting, and menu actions", () => {
 	test.beforeEach(async ({ page }) => {
 		test.skip(!hasRealAdminCredentials, "E2E admin credentials not set");
 		await prepareStableUi(page);
-		await safeGoto(page, "/de/account/activity", /\/de\/account\/activity\/?$/);
+		await safeGoto(page, "/de/account", /\/de\/account(?:\/activity)?\/?$/);
 		await expect(page.getByRole("tab").first()).toBeVisible({
 			timeout: 15_000,
 		});
@@ -64,7 +64,7 @@ test.describe("dashboard routing, tabs, greeting, and menu actions", () => {
 				},
 			];
 
-		await safeGoto(page, "/de/account/activity", /\/de\/account\/activity\/?$/);
+		await safeGoto(page, "/de/account", /\/de\/account(?:\/activity)?\/?$/);
 
 		let lastVisitedRoute = "/de/account/activity";
 		for (const tab of tabRoutes) {
@@ -86,11 +86,7 @@ test.describe("dashboard routing, tabs, greeting, and menu actions", () => {
 		page,
 	}) => {
 		const navigateViaMenuAction = async (buttonName: string) => {
-			await safeGoto(
-				page,
-				"/de/account/activity",
-				/\/de\/account\/activity\/?$/,
-			);
+			await safeGoto(page, "/de/account", /\/de\/account(?:\/activity)?\/?$/);
 			const button = page.getByRole("button", { name: buttonName });
 			await expect(button).toBeVisible();
 			await button.click();
@@ -110,12 +106,30 @@ test.describe("dashboard routing, tabs, greeting, and menu actions", () => {
 			page.getByRole("heading", { name: /FAQ|Fragen\s*&\s*Antworten/i }),
 		).toBeVisible({ timeout: 15_000 });
 
-		await navigateViaMenuAction("Abmelden");
-		await expect(page).toHaveURL(/\/de(?:\/|\/map\/?|\/welcome\/?)?$/, {
-			timeout: 15_000,
-		});
+		await safeGoto(page, "/de/account", /\/de\/account\/activity\/?$/);
+		await Promise.all([
+			page.waitForURL(/\/de(?:\/|\/login\/?|\/map\/?|\/welcome\/?)?$/, {
+				timeout: 15_000,
+			}),
+			page.getByRole("button", { name: "Abmelden" }).click(),
+		]);
+		await expect(page).toHaveURL(/\/de(?:\/|\/login\/?|\/map\/?|\/welcome\/?)?$/);
 
 		await page.goto("/de/account/activity", { waitUntil: "commit" });
 		await expect(page).toHaveURL(/\/de\/login\/?$/);
+
+		// Restore the admin session so subsequent tests are not affected by the
+		// revoked token. Signing out invalidates the session server-side, so
+		// admin.json must be overwritten with a fresh session before this test ends.
+		await page.getByLabel(/E-?Mail/i).first().fill(process.env.E2E_ADMIN_EMAIL!);
+		await page
+			.getByLabel(/Passwort/i)
+			.first()
+			.fill(process.env.E2E_ADMIN_PASSWORD!);
+		await Promise.all([
+			page.waitForURL(/\/de\/account(?:\/.*)?$/, { timeout: 15_000 }),
+			page.getByRole("button", { name: /Anmelden/i }).click(),
+		]);
+		await page.context().storageState({ path: ADMIN_STORAGE_STATE });
 	});
 });
