@@ -728,6 +728,12 @@
 			"edit": {
 				"subtitle": "Check and update cultural location information.",
 				"title": "Edit cultural location"
+			},
+			"submissionCreate": {
+				"title": "Submit cultural location"
+			},
+			"submissionEdit": {
+				"title": "Edit submission"
 			}
 		},
 		"feedback": {
