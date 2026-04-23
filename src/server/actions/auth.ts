@@ -218,7 +218,7 @@ export async function registerWithEmailPassword(params: {
 					email: params.email,
 					account_type: params.accountType ?? null,
 				});
-				return { ok: false, error: "Registration currently unavailable." };
+				return { ok: false, error: "unavailable" as const };
 			}
 
 			if (!data.user?.id) {
@@ -248,7 +248,7 @@ export async function registerWithEmailPassword(params: {
 					account_type: params.accountType ?? null,
 					db_subsystem: "db",
 				});
-				return { ok: false, error: "Registration currently unavailable." };
+				return { ok: false, error: "unavailable" as const };
 			}
 
 			return { ok: true, needsConfirmation: !data.session };
@@ -265,7 +265,7 @@ export async function requestPasswordReset(email: string) {
 	});
 
 	if (error) {
-		return { ok: false, error: error.message };
+		return { ok: false, error: "generic_error" as const };
 	}
 
 	return { ok: true };
@@ -276,7 +276,7 @@ export async function updateMyPassword(password: string) {
 	const { error } = await supabase.auth.updateUser({ password });
 
 	if (error) {
-		return { ok: false, error: error.message };
+		return { ok: false, error: "generic_error" as const };
 	}
 
 	return { ok: true };
@@ -288,7 +288,7 @@ export async function setPasswordWithTokens(params: {
 	password: string;
 }) {
 	if (!params.accessToken || !params.refreshToken) {
-		return { ok: false, error: "Missing session tokens." };
+		return { ok: false, error: "session_expired" as const };
 	}
 
 	const supabase = createAnonClient();
@@ -298,7 +298,7 @@ export async function setPasswordWithTokens(params: {
 	});
 
 	if (sessionError) {
-		return { ok: false, error: sessionError.message };
+		return { ok: false, error: "session_expired" as const };
 	}
 
 	const { error } = await supabase.auth.updateUser({
@@ -306,7 +306,7 @@ export async function setPasswordWithTokens(params: {
 	});
 
 	if (error) {
-		return { ok: false, error: error.message };
+		return { ok: false, error: "generic_error" as const };
 	}
 
 	return { ok: true };
