@@ -91,20 +91,14 @@ export function AccountEditForm({
 			if (password) {
 				const passwordResult = await updateMyPassword(password);
 				if (!passwordResult.ok) {
-					setErrorMessage(
-						passwordResult.error ?? t("auth.accountEdit.errorFallback"),
-					);
+					setErrorMessage(t("auth.accountEdit.errorFallback"));
 					return;
 				}
 			}
 
 			onSuccess?.();
-		} catch (error) {
-			setErrorMessage(
-				error instanceof Error
-					? error.message
-					: t("auth.accountEdit.errorFallback"),
-			);
+		} catch {
+			setErrorMessage(t("auth.accountEdit.errorFallback"));
 		} finally {
 			setIsLoading(false);
 		}
