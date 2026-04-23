@@ -85,4 +85,39 @@ describe("server actions: institutions update", () => {
 			expect.objectContaining({ name: "Updated" }),
 		);
 	});
+
+	it("updateInstitution persists cleared nullable fields as null", async () => {
+		getTableScopeMock.mockReturnValue("all");
+		updateMock.mockResolvedValue({ id: 1 });
+
+		const result = await updateInstitution({
+			id: 1,
+			name: "Updated",
+			address: null,
+			owner_type: null,
+			rental_contract_type: null,
+			funding_type: null,
+			utilization_status: null,
+			established_since: null,
+			established_until: null,
+			protection_status: null,
+			shared_use_allowed: null,
+		});
+
+		expect(result).toMatchObject({ ok: true });
+		expect(updateMock).toHaveBeenCalledWith(
+			1,
+			expect.objectContaining({
+				name: "Updated",
+				owner_type: null,
+				rental_contract_type: null,
+				funding_type: null,
+				utilization_status: null,
+				established_since: null,
+				established_until: null,
+				protection_status: null,
+				shared_use_allowed: null,
+			}),
+		);
+	});
 });

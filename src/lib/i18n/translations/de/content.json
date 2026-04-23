@@ -728,6 +728,12 @@
 			"edit": {
 				"subtitle": "Prüfen und aktualisieren Sie die Angaben zum Kulturort.",
 				"title": "Kulturort bearbeiten"
+			},
+			"submissionCreate": {
+				"title": "Kulturort einreichen"
+			},
+			"submissionEdit": {
+				"title": "Einreichung bearbeiten"
 			}
 		},
 		"feedback": {
