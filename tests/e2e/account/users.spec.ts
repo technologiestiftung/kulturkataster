@@ -34,7 +34,7 @@ test.describe("users management", () => {
 		await page.getByLabel("E-Mail").fill(uniqueEmail);
 		await page.getByLabel("Vorname").fill("E2E");
 		await page.getByLabel("Nachname").fill("User");
-		await page.getByLabel("Rolle").click();
+		await page.getByRole("combobox", { name: /Rolle/ }).click();
 		const roleOption = page
 			.locator('[data-slot="select-content"]:visible [role="option"]:visible')
 			.first();
