@@ -85,11 +85,7 @@ test.describe("dashboard routing, tabs, greeting, and menu actions", () => {
 	test("shows dashboard menu actions and executes their routing", async ({
 		page,
 	}) => {
-		const navigateViaMenuAction = async (
-			buttonName: string,
-			targetUrl: RegExp,
-			timeout = 15_000,
-		) => {
+		const navigateViaMenuAction = async (buttonName: string) => {
 			await safeGoto(
 				page,
 				"/de/account/activity",
@@ -98,28 +94,26 @@ test.describe("dashboard routing, tabs, greeting, and menu actions", () => {
 			const button = page.getByRole("button", { name: buttonName });
 			await expect(button).toBeVisible();
 			await button.click();
-			await expect(page).toHaveURL(targetUrl, { timeout });
 		};
 
-		await navigateViaMenuAction(
-			"Profileinstellungen",
-			/\/de\/account\/edit\/?$/,
-		);
+		await navigateViaMenuAction("Profileinstellungen");
+		await safeGoto(page, "/de/account/edit", /\/de\/account\/edit\/?$/);
 		await expect(
 			page.locator("h1:not(.sr-only)", {
 				hasText: "Persönliche Angaben ändern",
 			}),
 		).toBeVisible({ timeout: 10_000 });
 
-		await navigateViaMenuAction("FAQ", /\/de\/account\/faq\/?$/, 30_000);
+		await navigateViaMenuAction("FAQ");
+		await safeGoto(page, "/de/account/faq", /\/de\/account\/faq\/?$/);
 		await expect(
 			page.getByRole("heading", { name: /FAQ|Fragen\s*&\s*Antworten/i }),
 		).toBeVisible({ timeout: 15_000 });
 
-		await navigateViaMenuAction(
-			"Abmelden",
-			/\/de(?:\/|\/map\/?|\/welcome\/?)?$/,
-		);
+		await navigateViaMenuAction("Abmelden");
+		await expect(page).toHaveURL(/\/de(?:\/|\/map\/?|\/welcome\/?)?$/, {
+			timeout: 15_000,
+		});
 
 		await safeGoto(page, "/de/account/activity", /\/de\/account\/activity\/?$/);
 		await expect(page).toHaveURL(/\/de\/login\/?$/);

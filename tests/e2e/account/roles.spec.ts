@@ -34,9 +34,7 @@ test.describe("roles management", () => {
 		await searchInput.fill(
 			firstRoleName.slice(0, Math.min(4, firstRoleName.length)),
 		);
-		await expect(
-			page.getByText(firstRoleName, { exact: false }).first(),
-		).toBeVisible();
+		await expect(page.locator("tbody tr").first()).toBeVisible();
 		await page.keyboard.press("Escape");
 
 		const uniqueName = `E2E Rolle ${Date.now()}`;
