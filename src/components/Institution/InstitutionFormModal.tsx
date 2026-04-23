@@ -99,11 +99,18 @@ const translateInstitutionFormError = (t: TFunction, errorCode: string) => {
 
 const getDialogTitle = (
 	mode: InstitutionFormModalProps["mode"],
+	permissionContext: InstitutionFormModalProps["permissionContext"],
 	t: (key: string) => string,
-) =>
-	mode === "create"
+): string => {
+	if (permissionContext === "submission") {
+		return mode === "create"
+			? t("institutionDraftWizardModal.dialog.submissionCreate.title")
+			: t("institutionDraftWizardModal.dialog.submissionEdit.title");
+	}
+	return mode === "create"
 		? t("institutionFormModal.dialog.title.create")
 		: t("institutionFormModal.dialog.title.edit");
+};
 
 const renderDialogBody = (
 	isWaitingForInstitution: boolean,
@@ -1517,7 +1524,7 @@ export function InstitutionFormModal({
 
 	return (
 		<Modal
-			title={getDialogTitle(mode, t)}
+			title={getDialogTitle(mode, permissionContext, t)}
 			variant="editor"
 			hasFooter={false}
 			routePath={routePath}
@@ -1573,7 +1580,9 @@ export function InstitutionFormModal({
 		>
 			<div className="flex h-full flex-col">
 				<div className="px-6 py-8 md:px-10">
-					<DialogTitle className="title">{getDialogTitle(mode, t)}</DialogTitle>
+					<DialogTitle className="title">
+						{getDialogTitle(mode, permissionContext, t)}
+					</DialogTitle>
 				</div>
 				<div className="flex-1 overflow-auto px-6 py-6 md:px-10 flex flex-col">
 					{renderDialogBody(
