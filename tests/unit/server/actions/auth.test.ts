@@ -65,7 +65,7 @@ describe("registerWithEmailPassword", () => {
 
 		expect(result).toEqual({
 			ok: false,
-			error: "Registration currently unavailable.",
+			error: "unavailable",
 		});
 		expect(mockedCreate).not.toHaveBeenCalled();
 	});
