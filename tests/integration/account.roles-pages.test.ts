@@ -18,7 +18,7 @@ describe("roles pages integration", () => {
 		const result = pageModule.default();
 		const suspense = result.props.children.props.children;
 
-		expect(suspense.props.children.props.children).toMatchObject({
+		expect(suspense.props.children).toMatchObject({
 			type: RolesTable,
 		});
 	});
