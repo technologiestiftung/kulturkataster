@@ -501,7 +501,7 @@ function UserTemplateEmailPanel({
 	t,
 }: {
 	user: User;
-	t: (key: string) => string;
+	t: (key: string, options?: Record<string, unknown>) => string;
 }) {
 	const [templates, setTemplates] = useState<UserEmailTemplateOption[]>([]);
 	const [selectedTemplatePath, setSelectedTemplatePath] = useState("");

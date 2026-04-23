@@ -37,6 +37,18 @@ export type AccountStoreState = {
 	selectedUserId: string | null;
 	selectedGroupId: number | null;
 	selectedRoleId: number | null;
+	initializeAccountStore: (data: {
+		currentProfile: Profile | null;
+		users: User[];
+		groups: Group[];
+		roles: Role[];
+		categories: Category[];
+		institutions: Institution[];
+		submissions: Submission[];
+		entityAudits: EntityAudit[];
+		institutionPermissions: InstitutionActionPermissions;
+		institutionFieldPermissions: InstitutionFieldPermissions;
+	}) => void;
 	setInitialized: () => void;
 	setCurrentProfile: (profile: Profile | null) => void;
 	setUsers: (users: User[]) => void;
