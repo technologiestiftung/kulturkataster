@@ -17,9 +17,10 @@ const footerItems = [
 
 interface FooterProps {
 	ariaLabel?: string;
+	envHint?: string;
 }
 
-const Footer: FC<FooterProps> = ({ ariaLabel }) => {
+const Footer: FC<FooterProps> = ({ ariaLabel, envHint }) => {
 	const { t } = useTranslation("common");
 	const pathname = usePathname();
 	const isListRoute = pathname?.replace(/\/$/, "").endsWith("/list");
@@ -51,6 +52,9 @@ const Footer: FC<FooterProps> = ({ ariaLabel }) => {
 						</li>
 					))}
 					<li className="body2 font-normal">v{packageInfo.version}</li>
+					{envHint && (
+						<li className="body2 font-normal text-muted-foreground">[{envHint}]</li>
+					)}
 				</ul>
 			</nav>
 		</footer>
