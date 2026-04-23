@@ -67,7 +67,11 @@ export function ResetPasswordForm({ onSuccess }: { onSuccess?: () => void }) {
 				password,
 			});
 			if (!result.ok) {
-				setErrorMessage(result.error ?? t("auth.reset.errorFallback"));
+				setErrorMessage(
+					result.error === "session_expired"
+						? t("auth.reset.missingToken")
+						: t("auth.reset.errorFallback"),
+				);
 				return;
 			}
 			if (onSuccess) {
