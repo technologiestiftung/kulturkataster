@@ -1,7 +1,10 @@
 import nodemailer from "nodemailer";
 import { logger } from "@/server/logging/logger";
 import { loadEmailTemplateBody } from "@/server/email/templates";
-import { isMarkdownTemplate, mdToEmailHtml } from "@/server/email/mdToEmailHtml";
+import {
+	isMarkdownTemplate,
+	mdToEmailHtml,
+} from "@/server/email/mdToEmailHtml";
 
 type TemplateData = Record<string, unknown>;
 
