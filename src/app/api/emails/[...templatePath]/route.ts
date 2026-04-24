@@ -1,5 +1,8 @@
 import { loadEmailTemplateBody } from "@/server/email/templates";
-import { isMarkdownTemplate, mdToEmailHtml } from "@/server/email/mdToEmailHtml";
+import {
+	isMarkdownTemplate,
+	mdToEmailHtml,
+} from "@/server/email/mdToEmailHtml";
 import { NextResponse } from "next/server";
 
 type EmailTemplateRouteContext = {
