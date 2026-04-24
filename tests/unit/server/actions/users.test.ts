@@ -10,7 +10,7 @@ const {
 	sendRoleDecisionEmail,
 	revalidateAccount,
 	loggerError,
-	listActiveCustom,
+	listActive,
 	findActiveByPath,
 	sendTemplatedEmail,
 } = vi.hoisted(() => ({
@@ -23,7 +23,7 @@ const {
 	sendRoleDecisionEmail: vi.fn(),
 	revalidateAccount: vi.fn(),
 	loggerError: vi.fn(),
-	listActiveCustom: vi.fn(),
+	listActive: vi.fn(),
 	findActiveByPath: vi.fn(),
 	sendTemplatedEmail: vi.fn(),
 }));
@@ -87,7 +87,7 @@ vi.mock("@/server/supabase/server", () => ({
 
 vi.mock("@/server/data/emailTemplateRepo", () => ({
 	emailTemplateRepo: {
-		listActiveCustom,
+		listActive,
 		findActiveByPath,
 	},
 }));
@@ -193,7 +193,7 @@ describe("getUserEmailTemplateOptions", () => {
 	beforeEach(() => {
 		getCurrentUserId.mockResolvedValue("admin-1");
 		requireAllScope.mockResolvedValue(undefined);
-		listActiveCustom.mockReset();
+		listActive.mockReset();
 	});
 
 	it("returns active custom templates", async () => {
@@ -211,11 +211,12 @@ describe("getUserEmailTemplateOptions", () => {
 				subject: null,
 			},
 		];
-		listActiveCustom.mockResolvedValue(templates);
+		listActive.mockResolvedValue(templates);
 
 		const result = await getUserEmailTemplateOptions();
 
 		expect(result).toMatchObject({ ok: true, data: templates });
+		expect(listActive).toHaveBeenCalledTimes(1);
 	});
 
 	it("throws when unauthorized", async () => {
