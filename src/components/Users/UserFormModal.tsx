@@ -22,7 +22,6 @@ import {
 	getUserById,
 	deleteUser,
 	sendPasswordReset,
-	sendRoleDecisionEmailManual,
 	updateUser,
 } from "@/server/actions/users";
 import type { UserStatus } from "@/generated/prisma";
@@ -30,6 +29,8 @@ import type { User } from "@/types/user";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import Mail from "@/icons/mail.svg";
 import { showSuccessToast } from "@/lib/utils/feedbackToast";
+import { triggerAccountRefresh } from "@/components/Account/AccountAutoRefresh";
+import { UserTemplateEmailPanel } from "./UserTemplateEmailPanel";
 
 type UserFormModalProps = {
 	mode: "create" | "edit";
@@ -45,6 +46,7 @@ const getInitialValues = (resolvedUser?: User) => ({
 	last_name: resolvedUser?.last_name ?? "",
 	status: resolvedUser?.status ?? "approval_pending",
 	account_type: resolvedUser?.account_type ?? "",
+	meta_info: resolvedUser?.meta_info ?? {},
 	compliance: resolvedUser?.compliance ?? false,
 	roleId: resolvedUser?.role?.id ? String(resolvedUser.role.id) : "",
 	groupIds: resolvedUser?.groups?.map((group) => String(group.id)) ?? [],
@@ -56,6 +58,7 @@ const getInitialValues = (resolvedUser?: User) => ({
 type UserFormConfigArgs = {
 	mode: UserFormModalProps["mode"];
 	t: (key: string) => string;
+	tCommon: (key: string) => string;
 	statusOptions: { value: string; label: string }[];
 	roles: { id: number; name: string }[];
 	groups: { id: number; name: string }[];
@@ -70,10 +73,6 @@ type UserFormConfigArgs = {
 	submitting: boolean;
 	onSubmit: (data: Record<string, unknown>) => void | Promise<void>;
 	onCancel: () => void;
-	onSendRoleDecision: (
-		target: "district" | "state" | "network",
-		decision: "approved" | "rejected",
-	) => Promise<string | null>;
 };
 
 type UseResolvedUserResult = {
@@ -129,6 +128,38 @@ const useResolvedUser = (
 	return { resolvedUser, isWaitingForUser, showNotFound };
 };
 
+const translateUserFormError = (
+	t: (key: string) => string,
+	errorCode: string,
+) => {
+	switch (errorCode) {
+		case "emailTaken":
+			return t("userFormModal.errors.emailTaken");
+		case "notFound":
+			return t("userFormModal.errors.notFound");
+		case "forbidden":
+			return t("userFormModal.errors.forbidden");
+		case "invalidInput":
+			return t("userFormModal.errors.invalidInput");
+		default:
+			return t("userFormModal.errors.unexpected");
+	}
+};
+
+const translateUserPasswordResetError = (
+	t: (key: string) => string,
+	errorCode: string,
+) => {
+	switch (errorCode) {
+		case "notFound":
+			return t("userFormModal.errors.notFound");
+		case "forbidden":
+			return t("userFormModal.errors.forbidden");
+		default:
+			return t("userFormModal.passwordReset.error");
+	}
+};
+
 const useUserSubmit = (
 	mode: UserFormModalProps["mode"],
 	userId: string | undefined,
@@ -149,11 +180,15 @@ const useUserSubmit = (
 		const groupIds = toNumberArray(data.groupIds);
 		const institutionIds = toNumberArray(data.institutionIds);
 		const roleId = toOptionalNumber(data.roleId);
+		const rawMetaInfo =
+			data.meta_info && typeof data.meta_info === "object"
+				? JSON.stringify(data.meta_info)
+				: undefined;
 		const status = (data.status || undefined) as UserStatus | undefined;
 
 		try {
 			if (mode === "create") {
-				const created = await createUser({
+				const result = await createUser({
 					email: String(data.email ?? ""),
 					first_name: String(data.first_name ?? ""),
 					last_name: String(data.last_name ?? ""),
@@ -163,14 +198,19 @@ const useUserSubmit = (
 						typeof data.account_type === "string"
 							? data.account_type
 							: undefined,
+					meta_info: rawMetaInfo,
 					roleId,
 					groupIds: groupIds.length > 0 ? groupIds : undefined,
 					institutionIds:
 						institutionIds.length > 0 ? institutionIds : undefined,
 				});
-				addUser(created);
+				if (!result.ok) {
+					onError(result.error);
+					return;
+				}
+				addUser(result.data);
 			} else if (userId) {
-				const updated = await updateUser({
+				const result = await updateUser({
 					id: userId,
 					email: String(data.email ?? ""),
 					first_name: String(data.first_name ?? ""),
@@ -181,16 +221,22 @@ const useUserSubmit = (
 						typeof data.account_type === "string"
 							? data.account_type
 							: undefined,
+					meta_info: rawMetaInfo,
 					roleId,
 					groupIds,
 					institutionIds,
 				});
-				if (updated) {
-					upsertUser(updated);
+				if (!result.ok) {
+					onError(result.error);
+					return;
+				}
+				if (result.data) {
+					upsertUser(result.data);
 				}
 			}
 
 			onSuccess(mode);
+			triggerAccountRefresh(["users", "entityAudits"]);
 			if (shouldRefresh) {
 				router.refresh();
 			}
@@ -212,6 +258,7 @@ const useUserSubmit = (
 const buildUserFormConfig = ({
 	mode,
 	t,
+	tCommon,
 	statusOptions,
 	roles,
 	groups,
@@ -222,7 +269,6 @@ const buildUserFormConfig = ({
 	submitting,
 	onSubmit,
 	onCancel,
-	onSendRoleDecision,
 }: UserFormConfigArgs): FormWrapperConfig => {
 	const accessCondition = () => mode === "edit" && Boolean(resolvedUser);
 
@@ -276,6 +322,37 @@ const buildUserFormConfig = ({
 						placeholder: t(
 							"userFormModal.form.identity.fields.accountType.placeholder",
 						),
+					},
+					{
+						name: "meta_info",
+						label: t("userFormModal.form.identity.fields.metaInfo.label"),
+						type: "keyValue",
+						layout: { span: "full" },
+						keyValue: {
+							valuePlaceholder: t(
+								"userFormModal.form.identity.fields.metaInfo.valuePlaceholder",
+							),
+							allowAdd: false,
+							keyReadOnly: true,
+							keyLabels: {
+								organizationName: tCommon("auth.register.organizationName"),
+								organizationPhone: tCommon("auth.register.organizationPhone"),
+								organizationPosition: tCommon(
+									"auth.register.organizationPosition",
+								),
+								districtName: tCommon("auth.register.districtName"),
+								districtOffice: tCommon("auth.register.districtOffice"),
+								districtPhone: tCommon("auth.register.districtPhone"),
+								districtPosition: tCommon("auth.register.districtPosition"),
+								administrationName: tCommon("auth.register.administrationName"),
+								administrationPhone: tCommon(
+									"auth.register.administrationPhone",
+								),
+								administrationPosition: tCommon(
+									"auth.register.administrationPosition",
+								),
+							},
+						},
 					},
 				],
 			},
@@ -335,6 +412,15 @@ const buildUserFormConfig = ({
 						layout: { span: "full" },
 					},
 					{
+						name: "templateEmailPanel",
+						type: "custom",
+						layout: { span: "full" },
+						condition: accessCondition,
+						customField: resolvedUser ? (
+							<UserTemplateEmailPanel user={resolvedUser} t={t} />
+						) : null,
+					},
+					{
 						name: "passwordReset",
 						label: "",
 						type: "actionPanel",
@@ -349,77 +435,14 @@ const buildUserFormConfig = ({
 							icon: <Mail className="h-5 w-5 text-primary-dark" />,
 							onAction: async () => {
 								if (!resolvedUser) return null;
-								await sendPasswordReset(resolvedUser.email);
+								const result = await sendPasswordReset(resolvedUser.email);
+								if (!result.ok) {
+									throw new Error(
+										translateUserPasswordResetError(t, result.error),
+									);
+								}
 								return t("userFormModal.passwordReset.success");
 							},
-						},
-					},
-					{
-						name: "roleDistrictDecision",
-						label: "",
-						type: "actionPanel",
-						layout: { span: "full" },
-						condition: accessCondition,
-						actionPanel: {
-							title: t("userFormModal.roleEmails.district.title"),
-							description: t("userFormModal.roleEmails.district.description"),
-							actionLabel: t("userFormModal.roleEmails.sendApprove"),
-							actionLabelLoading: t("userFormModal.roleEmails.sendingApprove"),
-							secondaryActionLabel: t("userFormModal.roleEmails.sendReject"),
-							secondaryActionLabelLoading: t(
-								"userFormModal.roleEmails.sendingReject",
-							),
-							errorFallback: t("userFormModal.roleEmails.error"),
-							secondaryErrorFallback: t("userFormModal.roleEmails.error"),
-							icon: <Mail className="h-5 w-5 text-primary-dark" />,
-							onAction: () => onSendRoleDecision("district", "approved"),
-							onSecondaryAction: () =>
-								onSendRoleDecision("district", "rejected"),
-						},
-					},
-					{
-						name: "roleStateDecision",
-						label: "",
-						type: "actionPanel",
-						layout: { span: "full" },
-						condition: accessCondition,
-						actionPanel: {
-							title: t("userFormModal.roleEmails.state.title"),
-							description: t("userFormModal.roleEmails.state.description"),
-							actionLabel: t("userFormModal.roleEmails.sendApprove"),
-							actionLabelLoading: t("userFormModal.roleEmails.sendingApprove"),
-							secondaryActionLabel: t("userFormModal.roleEmails.sendReject"),
-							secondaryActionLabelLoading: t(
-								"userFormModal.roleEmails.sendingReject",
-							),
-							errorFallback: t("userFormModal.roleEmails.error"),
-							secondaryErrorFallback: t("userFormModal.roleEmails.error"),
-							icon: <Mail className="h-5 w-5 text-primary-dark" />,
-							onAction: () => onSendRoleDecision("state", "approved"),
-							onSecondaryAction: () => onSendRoleDecision("state", "rejected"),
-						},
-					},
-					{
-						name: "roleNetworkDecision",
-						label: "",
-						type: "actionPanel",
-						layout: { span: "full" },
-						condition: accessCondition,
-						actionPanel: {
-							title: t("userFormModal.roleEmails.network.title"),
-							description: t("userFormModal.roleEmails.network.description"),
-							actionLabel: t("userFormModal.roleEmails.sendApprove"),
-							actionLabelLoading: t("userFormModal.roleEmails.sendingApprove"),
-							secondaryActionLabel: t("userFormModal.roleEmails.sendReject"),
-							secondaryActionLabelLoading: t(
-								"userFormModal.roleEmails.sendingReject",
-							),
-							errorFallback: t("userFormModal.roleEmails.error"),
-							secondaryErrorFallback: t("userFormModal.roleEmails.error"),
-							icon: <Mail className="h-5 w-5 text-primary-dark" />,
-							onAction: () => onSendRoleDecision("network", "approved"),
-							onSecondaryAction: () =>
-								onSendRoleDecision("network", "rejected"),
 						},
 					},
 				],
@@ -471,12 +494,12 @@ export function UserFormModal({
 	returnTo,
 }: UserFormModalProps) {
 	const { t } = useTranslation("content");
+	const { t: tCommon } = useTranslation("common");
 	const { t: tEnum, i18n } = useTranslation("enumMap");
 	const users = useAccountStore((state) => state.users);
 	const roles = useAccountStore((state) => state.roles);
 	const groups = useAccountStore((state) => state.groups);
 	const removeUser = useAccountStore((state) => state.removeUser);
-	const upsertUser = useAccountStore((state) => state.upsertUser);
 	const institutions =
 		useInstitutionStore((state) => state.allInstitutions) ?? [];
 	const categories = useInstitutionStore((state) => state.categories) ?? [];
@@ -496,6 +519,7 @@ export function UserFormModal({
 		userId,
 		users,
 	);
+
 	const handleSuccess = (nextMode: UserFormModalProps["mode"]) => {
 		const keyPrefix =
 			nextMode === "create"
@@ -503,26 +527,13 @@ export function UserFormModal({
 				: "userFormModal.feedback.update";
 		showSuccessToast(t(`${keyPrefix}.title`), t(`${keyPrefix}.description`));
 	};
-	const handleSendRoleDecision = async (
-		target: "district" | "state" | "network",
-		decision: "approved" | "rejected",
-	) => {
-		if (!resolvedUser) return null;
-		const updatedUser = await sendRoleDecisionEmailManual({
-			userId: resolvedUser.id,
-			target,
-			decision,
-		});
-		upsertUser(updatedUser);
-		return t("userFormModal.roleEmails.success");
-	};
 	const { handleSubmit, submitting } = useUserSubmit(
 		mode,
 		userId,
 		handleClose,
 		handleSuccess,
 		shouldRefresh,
-		(message) => setSubmitError(message),
+		(errorCode) => setSubmitError(translateUserFormError(t, errorCode)),
 	);
 
 	const statusOptions = useMemo(
@@ -548,6 +559,7 @@ export function UserFormModal({
 		const baseConfig = buildUserFormConfig({
 			mode,
 			t,
+			tCommon,
 			statusOptions,
 			roles,
 			groups,
@@ -558,7 +570,6 @@ export function UserFormModal({
 			submitting,
 			onSubmit: handleSubmit,
 			onCancel: handleClose,
-			onSendRoleDecision: handleSendRoleDecision,
 		});
 		if (mode !== "edit" || !resolvedUser) return baseConfig;
 		return {
@@ -573,6 +584,7 @@ export function UserFormModal({
 	}, [
 		mode,
 		t,
+		tCommon,
 		statusOptions,
 		roles,
 		groups,
@@ -584,7 +596,6 @@ export function UserFormModal({
 		isDeleting,
 		handleSubmit,
 		handleClose,
-		handleSendRoleDecision,
 	]);
 
 	const autoCloseError =
@@ -624,9 +635,21 @@ export function UserFormModal({
 							onConfirm: async () => {
 								if (isDeleting) return;
 								setIsDeleting(true);
+								const result = await deleteUser(resolvedUser.id);
+								if (!result.ok) {
+									setDeleteError({
+										title: t("userFormModal.delete.errorTitle", {
+											defaultValue: "Delete failed",
+										}),
+										description: translateUserFormError(t, result.error),
+									});
+									setShowDeleteDialog(false);
+									setIsDeleting(false);
+									return;
+								}
+								handleClose();
+								triggerAccountRefresh(["users", "entityAudits"]);
 								try {
-									handleClose();
-									await deleteUser(resolvedUser.id);
 									queueMicrotask(() => {
 										removeUser(resolvedUser.id);
 										showSuccessToast(
@@ -638,17 +661,6 @@ export function UserFormModal({
 											}),
 										);
 									});
-								} catch {
-									setDeleteError({
-										title: t("userFormModal.delete.errorTitle", {
-											defaultValue: "Delete failed",
-										}),
-										description: t("userFormModal.delete.errorDescription", {
-											defaultValue:
-												"Please try again or contact support if the issue persists.",
-										}),
-									});
-									setShowDeleteDialog(false);
 								} finally {
 									setIsDeleting(false);
 								}
@@ -685,7 +697,7 @@ export function UserFormModal({
 					<DialogTitle className="title">{getDialogTitle(mode, t)}</DialogTitle>
 				</div>
 				{autoCloseError ? null : (
-					<div className="flex-1 overflow-auto px-6 py-6 md:px-10 flex flex-col">
+					<div className="flex-1 overflow-auto px-6 py-6 md:px-10 flex flex-col gap-4">
 						{renderDialogBody(isWaitingForUser, formConfig, resolvedUser, mode)}
 					</div>
 				)}

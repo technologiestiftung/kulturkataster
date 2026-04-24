@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { ActivityItem, type Activity } from "./ActivityItem";
 import { useAccountStore } from "@/lib/store/accountStore";
 import type { EntityAudit } from "@/types/entityAudit";
@@ -211,6 +211,32 @@ const getSubmissionInstitutionId = (
 	return null;
 };
 
+const getSubmissionTypeLabel = (
+	audit: EntityAudit,
+	t: (key: string, options?: Record<string, unknown>) => string,
+): string | null => {
+	if (audit.entity_type !== "submission") return null;
+	const payload = asObject(audit.new_data) ?? asObject(audit.old_data);
+	const submissionType = pickString(payload, "type");
+	if (!submissionType) return null;
+	return t(`auth.account.activity.submissionTypes.${submissionType}`, {
+		defaultValue: submissionType,
+	});
+};
+
+const getSubmissionEntityTypeLabel = (
+	audit: EntityAudit,
+	t: (key: string, options?: Record<string, unknown>) => string,
+): string | null => {
+	if (audit.entity_type !== "submission") return null;
+	const payload = asObject(audit.new_data) ?? asObject(audit.old_data);
+	const submissionEntityType = pickString(payload, "entity_type");
+	if (!submissionEntityType) return null;
+	return t(`auth.account.activity.entities.${submissionEntityType}`, {
+		defaultValue: submissionEntityType,
+	});
+};
+
 const formatEntityLabel = (
 	audit: EntityAudit,
 	t: (key: string, options?: Record<string, unknown>) => string,
@@ -234,6 +260,16 @@ const formatEntityLabel = (
 			defaultValue: audit.entity_type,
 		},
 	);
+	if (audit.entity_type === "submission") {
+		const submissionTypeLabel = getSubmissionTypeLabel(audit, t);
+		const submissionEntityTypeLabel = getSubmissionEntityTypeLabel(audit, t);
+
+		const typeSuffix = submissionTypeLabel ? ` (${submissionTypeLabel})` : "";
+		const entitySuffix = submissionEntityTypeLabel
+			? ` [${submissionEntityTypeLabel}]`
+			: "";
+		return `${translatedType}${typeSuffix}${entitySuffix} #${audit.entity_id}`;
+	}
 	return `${translatedType} #${audit.entity_id}`;
 };
 
@@ -406,9 +442,6 @@ export function ActivityList({
 }: ActivityListProps) {
 	const { t } = useTranslation("common");
 	const toLocalePath = useLocalePath();
-	const [hasHydrated, setHasHydrated] = useState(() =>
-		useAccountStore.persist.hasHydrated(),
-	);
 	const [searchQuery, setSearchQuery] = useState("");
 	const [statusFilter, setStatusFilter] = useState("all");
 	const [typeFilter, setTypeFilter] = useState("all");
@@ -456,17 +489,6 @@ export function ActivityList({
 		},
 		[deletedSubmissionIdSet, submissionIdSet],
 	);
-
-	useEffect(() => {
-		if (useAccountStore.persist.hasHydrated()) {
-			setHasHydrated(true);
-			return;
-		}
-
-		return useAccountStore.persist.onFinishHydration(() => {
-			setHasHydrated(true);
-		});
-	}, []);
 
 	const mapAuditToActivity = (
 		audit: EntityAudit,
@@ -692,7 +714,7 @@ export function ActivityList({
 				.map((entry) => entry.activity);
 		})();
 
-	if (isLoading || (!activities && !hasHydrated)) {
+	if (isLoading) {
 		return <ActivityListSkeleton showFilters />;
 	}
 

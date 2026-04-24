@@ -70,8 +70,9 @@ describe("server actions: categories", () => {
 	});
 
 	it("createCategory sanitizes keys to lowercase underscores", async () => {
-		await createCategory({ key: "Music Space / Live" });
+		const result = await createCategory({ key: "Music Space / Live" });
 
+		expect(result).toMatchObject({ ok: true });
 		expect(createMock).toHaveBeenCalledWith(
 			expect.objectContaining({
 				key: "music_space_live",
@@ -85,21 +86,23 @@ describe("server actions: categories", () => {
 			child_categories: [{ id: 2 }],
 		});
 
-		await expect(deleteCategory(1)).rejects.toThrow(
-			"Category has subcategories",
-		);
+		const result = await deleteCategory(1);
+
+		expect(result).toEqual({ ok: false, error: "hasSubcategories" });
 		expect(removeMock).not.toHaveBeenCalled();
 	});
 
 	it("deleteCategory removes category without children", async () => {
 		findByIdMock.mockResolvedValue({ id: 1, child_categories: [] });
 
-		await deleteCategory(1);
+		const result = await deleteCategory(1);
+		expect(result).toEqual({ ok: true, data: { id: 1 } });
 		expect(removeMock).toHaveBeenCalledWith(1);
 	});
 
 	it("updateCategory disconnects parent when parentCategoryId is null", async () => {
-		await updateCategory({ id: 1, parentCategoryId: null });
+		const result = await updateCategory({ id: 1, parentCategoryId: null });
+		expect(result).toMatchObject({ ok: true });
 		expect(updateMock).toHaveBeenCalledWith(
 			1,
 			expect.objectContaining({
@@ -109,17 +112,17 @@ describe("server actions: categories", () => {
 	});
 
 	it("updateCategory does not update the key when the sanitized key is unchanged", async () => {
-		await updateCategory({ id: 1, key: "Music Space / Live" });
+		const result = await updateCategory({ id: 1, key: "Music Space / Live" });
 
+		expect(result).toMatchObject({ ok: true });
 		expect(updateMock).toHaveBeenCalledTimes(1);
 		expect(updateMock.mock.calls[0]?.[1]).not.toHaveProperty("key");
 	});
 
 	it("updateCategory rejects changing the key", async () => {
-		await expect(
-			updateCategory({ id: 1, key: "Different Key" }),
-		).rejects.toThrow("Category key cannot be changed.");
+		const result = await updateCategory({ id: 1, key: "Different Key" });
 
+		expect(result).toEqual({ ok: false, error: "keyLocked" });
 		expect(updateMock).not.toHaveBeenCalled();
 	});
 
@@ -134,7 +137,7 @@ describe("server actions: categories", () => {
 			key: "music",
 			parent_category_id: null,
 		});
-		await updateCategory({
+		const result = await updateCategory({
 			id: 1,
 			key: "music",
 			localizedLabels: {
@@ -143,6 +146,7 @@ describe("server actions: categories", () => {
 			},
 		});
 
+		expect(result).toMatchObject({ ok: true });
 		expect(upsertEnumMapTermTranslationsMock).toHaveBeenCalledWith({
 			termKey: "category.music",
 			translations: {

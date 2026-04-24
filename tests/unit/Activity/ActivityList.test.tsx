@@ -60,20 +60,6 @@ vi.mock("@/lib/store/accountStore", () => ({
 		selector(mockState),
 }));
 
-import { useAccountStore } from "@/lib/store/accountStore";
-
-(
-	useAccountStore as typeof useAccountStore & {
-		persist: {
-			hasHydrated: () => boolean;
-			onFinishHydration: () => () => void;
-		};
-	}
-).persist = {
-	hasHydrated: () => true,
-	onFinishHydration: () => () => undefined,
-};
-
 vi.mock("@/components/ui/search-input", () => ({
 	SearchInput: ({
 		value,
@@ -309,6 +295,28 @@ describe("ActivityList filters", () => {
 		).toBeInTheDocument();
 		expect(
 			screen.getByText("update (Mitarbeiter*in einer Organisation)"),
+		).toBeInTheDocument();
+	});
+
+	it("includes the submission type in submission entity labels", () => {
+		mockState.entityAudits = [
+			makeAudit({
+				id: 22,
+				action: "create",
+				entity_type: "submission",
+				entity_id: "172",
+				new_data: {
+					type: "create",
+					entity_type: "institution",
+					data: { name: "Neue Bühne" },
+				},
+			}),
+		];
+
+		render(<ActivityList />);
+
+		expect(
+			screen.getByText("submission (create) [institution] #172: Neue Bühne"),
 		).toBeInTheDocument();
 	});
 

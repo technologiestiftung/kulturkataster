@@ -21,6 +21,24 @@ type AccountEditFormProps = {
 	onCancel?: () => void;
 };
 
+const translateAccountEditError = (
+	t: (key: string) => string,
+	errorCode: string,
+) => {
+	switch (errorCode) {
+		case "emailTaken":
+			return t("auth.accountEdit.errors.emailTaken");
+		case "notFound":
+			return t("auth.accountEdit.errors.notFound");
+		case "forbidden":
+			return t("auth.accountEdit.errors.forbidden");
+		case "invalidInput":
+			return t("auth.accountEdit.errors.invalidInput");
+		default:
+			return t("auth.accountEdit.errors.unexpected");
+	}
+};
+
 export function AccountEditForm({
 	userId,
 	email,
@@ -59,28 +77,28 @@ export function AccountEditForm({
 			const { firstName: nextFirst, lastName: nextLast } =
 				splitDisplayName(nameValue);
 
-			await updateUser({
+			const result = await updateUser({
 				id: userId,
 				email: nextEmail,
 				first_name: nextFirst ?? "",
 				last_name: nextLast ?? "",
 			});
+			if (!result.ok) {
+				setErrorMessage(translateAccountEditError(t, result.error));
+				return;
+			}
 
 			if (password) {
-				const result = await updateMyPassword(password);
-				if (!result.ok) {
-					setErrorMessage(result.error ?? t("auth.accountEdit.errorFallback"));
+				const passwordResult = await updateMyPassword(password);
+				if (!passwordResult.ok) {
+					setErrorMessage(t("auth.accountEdit.errorFallback"));
 					return;
 				}
 			}
 
 			onSuccess?.();
-		} catch (error) {
-			setErrorMessage(
-				error instanceof Error
-					? error.message
-					: t("auth.accountEdit.errorFallback"),
-			);
+		} catch {
+			setErrorMessage(t("auth.accountEdit.errorFallback"));
 		} finally {
 			setIsLoading(false);
 		}
@@ -165,9 +183,13 @@ export function AccountEditForm({
 		setIsLoading(true);
 		setErrorMessage(null);
 		try {
-			await deleteUser(userId);
-			const result = await logout();
-			if (result.ok) {
+			const deleteResult = await deleteUser(userId);
+			if (!deleteResult.ok) {
+				setErrorMessage(translateAccountEditError(t, deleteResult.error));
+				return;
+			}
+			const logoutResult = await logout();
+			if (logoutResult.ok) {
 				await clearAccountStore();
 			}
 			router.replace(toLocalePath("/"));

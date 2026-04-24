@@ -1,6 +1,12 @@
 "use server";
 
 import type { Prisma } from "@/generated/prisma";
+import {
+	actionError,
+	actionOk,
+	getActionErrorCode,
+	type ActionResult,
+} from "@/lib/actions/actionResult";
 import type { InstitutionForm, InstitutionUpdateForm } from "@/types";
 import {
 	authorizeFields,
@@ -27,6 +33,24 @@ import {
 	setRequestContext,
 } from "@/server/logging/requestContext";
 import { logger } from "@/server/logging/logger";
+
+export type InstitutionActionErrorCode =
+	| "notFound"
+	| "forbidden"
+	| "invalidInput"
+	| "unexpected";
+
+const classifyInstitutionActionError = (
+	error: unknown,
+): InstitutionActionErrorCode => {
+	const errorCode = getActionErrorCode(error);
+	if (errorCode === "P2025") return "notFound";
+	if (error instanceof Error) {
+		if (error.name === "RBACError") return "forbidden";
+		if (error.name === "ZodError") return "invalidInput";
+	}
+	return "unexpected";
+};
 
 export async function getMyInstitutions() {
 	const currentUserId = await getCurrentUserId();
@@ -67,10 +91,22 @@ const buildInstitutionFieldList = (
 	return { fields: buildInstitutionPermissionFields(input) };
 };
 
-export async function createInstitution(input: InstitutionForm) {
+export async function createInstitution(
+	input: InstitutionForm,
+): Promise<
+	ActionResult<
+		Awaited<ReturnType<typeof institutionRepo.create>>,
+		InstitutionActionErrorCode
+	>
+> {
 	return runWithServerRequestContext(
 		async () => {
-			const validatedInput = validateInstitutionCreateInput(input);
+			let validatedInput: InstitutionForm;
+			try {
+				validatedInput = validateInstitutionCreateInput(input);
+			} catch (error) {
+				return actionError(classifyInstitutionActionError(error));
+			}
 			const currentUserId = await getCurrentUserId();
 			setRequestContext({ userId: currentUserId });
 			const ctx = await getAccessContextForUser(currentUserId);
@@ -91,19 +127,31 @@ export async function createInstitution(input: InstitutionForm) {
 					db_subsystem: "db",
 					actor_user_id: currentUserId,
 				});
-				throw error;
+				return actionError(classifyInstitutionActionError(error));
 			}
 			revalidateAccount();
-			return institution;
+			return actionOk(institution);
 		},
 		{ route: "server_action:institutions.createInstitution" },
 	);
 }
 
-export async function updateInstitution(input: InstitutionUpdateForm) {
+export async function updateInstitution(
+	input: InstitutionUpdateForm,
+): Promise<
+	ActionResult<
+		Awaited<ReturnType<typeof institutionRepo.update>>,
+		InstitutionActionErrorCode
+	>
+> {
 	return runWithServerRequestContext(
 		async () => {
-			const validatedInput = validateInstitutionUpdateInput(input);
+			let validatedInput: InstitutionUpdateForm;
+			try {
+				validatedInput = validateInstitutionUpdateInput(input);
+			} catch (error) {
+				return actionError(classifyInstitutionActionError(error));
+			}
 			const currentUserId = await getCurrentUserId();
 			setRequestContext({ userId: currentUserId });
 			const ctx = await getAccessContextForUser(currentUserId);
@@ -127,22 +175,22 @@ export async function updateInstitution(input: InstitutionUpdateForm) {
 						actor_user_id: currentUserId,
 						institution_id: validatedInput.id,
 					});
-					throw error;
+					return actionError(classifyInstitutionActionError(error));
 				}
 				revalidateAccount();
-				return institution;
+				return actionOk(institution);
 			}
 
 			const accessWhere = buildInstitutionScopedWhere(scope, currentUserId, {
 				id: validatedInput.id,
 			});
 			if (!accessWhere) {
-				throw new Error("User must be authenticated to update institutions.");
+				return actionError("forbidden");
 			}
 			const authorizedInstitution =
 				await institutionRepo.findFirstWithInclude(accessWhere);
 			if (!authorizedInstitution) {
-				throw new Error("Not authorized to update this institution.");
+				return actionError("forbidden");
 			}
 			let institution;
 			try {
@@ -157,22 +205,29 @@ export async function updateInstitution(input: InstitutionUpdateForm) {
 					actor_user_id: currentUserId,
 					institution_id: authorizedInstitution.id,
 				});
-				throw error;
+				return actionError(classifyInstitutionActionError(error));
 			}
 			revalidateAccount();
-			return institution;
+			return actionOk(institution);
 		},
 		{ route: "server_action:institutions.updateInstitution" },
 	);
 }
 
-export async function deleteInstitution(id: number) {
+export async function deleteInstitution(
+	id: number,
+): Promise<ActionResult<{ id: number }, InstitutionActionErrorCode>> {
 	return runWithServerRequestContext(
 		async () => {
-			const validatedId = assertPositiveInteger(
-				id,
-				"Institution id must be positive.",
-			);
+			let validatedId: number;
+			try {
+				validatedId = assertPositiveInteger(
+					id,
+					"Institution id must be positive.",
+				);
+			} catch (error) {
+				return actionError(classifyInstitutionActionError(error));
+			}
 			const currentUserId = await getCurrentUserId();
 			setRequestContext({ userId: currentUserId });
 			const ctx = await getAccessContextForUser(currentUserId);
@@ -188,21 +243,21 @@ export async function deleteInstitution(id: number) {
 						actor_user_id: currentUserId,
 						institution_id: validatedId,
 					});
-					throw error;
+					return actionError(classifyInstitutionActionError(error));
 				}
 				revalidateAccount();
-				return { id: validatedId };
+				return actionOk({ id: validatedId });
 			}
 			const accessWhere = buildInstitutionScopedWhere(scope, currentUserId, {
 				id: validatedId,
 			});
 			if (!accessWhere) {
-				throw new Error("User must be authenticated to delete institutions.");
+				return actionError("forbidden");
 			}
 			const authorizedInstitution =
 				await institutionRepo.findFirstWithInclude(accessWhere);
 			if (!authorizedInstitution) {
-				throw new Error("Not authorized to delete this institution.");
+				return actionError("forbidden");
 			}
 			try {
 				await institutionRepo.remove(authorizedInstitution.id);
@@ -213,10 +268,10 @@ export async function deleteInstitution(id: number) {
 					actor_user_id: currentUserId,
 					institution_id: authorizedInstitution.id,
 				});
-				throw error;
+				return actionError(classifyInstitutionActionError(error));
 			}
 			revalidateAccount();
-			return { id: validatedId };
+			return actionOk({ id: validatedId });
 		},
 		{ route: "server_action:institutions.deleteInstitution" },
 	);

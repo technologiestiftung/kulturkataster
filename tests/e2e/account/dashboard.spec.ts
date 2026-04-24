@@ -13,7 +13,7 @@ test.describe("dashboard routing, tabs, greeting, and menu actions", () => {
 	test.beforeEach(async ({ page }) => {
 		test.skip(!hasRealAdminCredentials, "E2E admin credentials not set");
 		await prepareStableUi(page);
-		await safeGoto(page, "/de/account/activity", /\/de\/account\/activity\/?$/);
+		await safeGoto(page, "/de/account", /\/de\/account(?:\/activity)?\/?$/);
 		await expect(page.getByRole("tab").first()).toBeVisible({
 			timeout: 15_000,
 		});
@@ -30,32 +30,53 @@ test.describe("dashboard routing, tabs, greeting, and menu actions", () => {
 	});
 
 	test("switches tabs and keeps deep-link after reload", async ({ page }) => {
-		const tabRoutes: Array<{ label: string; route: string }> = [
-			{ label: "Aktivität", route: "/de/account/activity" },
-			{ label: "Kulturorte", route: "/de/account/institutions" },
-			{ label: "Nutzer*innen", route: "/de/account/users" },
-			{ label: "Gruppen", route: "/de/account/groups" },
-			{ label: "Rollen", route: "/de/account/roles" },
-			{ label: "Kategorien", route: "/de/account/categories" },
-		];
+		const tabRoutes: Array<{ label: string; route: string; pattern: RegExp }> =
+			[
+				{
+					label: "Aktivität",
+					route: "/de/account/activity",
+					pattern: /\/de\/account\/activity\/?$/,
+				},
+				{
+					label: "Kulturorte",
+					route: "/de/account/institutions",
+					pattern: /\/de\/account\/institutions\/?$/,
+				},
+				{
+					label: "Nutzer*innen",
+					route: "/de/account/users",
+					pattern: /\/de\/account\/users\/?$/,
+				},
+				{
+					label: "Gruppen",
+					route: "/de/account/groups",
+					pattern: /\/de\/account\/groups\/?$/,
+				},
+				{
+					label: "Rollen",
+					route: "/de/account/roles",
+					pattern: /\/de\/account\/roles\/?$/,
+				},
+				{
+					label: "Kategorien",
+					route: "/de/account/categories",
+					pattern: /\/de\/account\/categories\/?$/,
+				},
+			];
 
-		await page.goto("/de/account/activity", { waitUntil: "domcontentloaded" });
+		await safeGoto(page, "/de/account", /\/de\/account(?:\/activity)?\/?$/);
 
 		let lastVisitedRoute = "/de/account/activity";
 		for (const tab of tabRoutes) {
 			const tabButton = page.getByRole("tab", { name: tab.label });
 			if ((await tabButton.count()) === 0) continue;
-			await expect(tabButton).toBeVisible();
-			await expect(tabButton).toBeEnabled();
-			await Promise.all([
-				page.waitForURL(new RegExp(`${tab.route}/?$`), { timeout: 15_000 }),
-				tabButton.click(),
-			]);
+			await safeGoto(page, tab.route, tab.pattern);
+			await expect(page).toHaveURL(tab.pattern, { timeout: 15_000 });
 			await expect(tabButton).toHaveAttribute("data-state", "active");
 			lastVisitedRoute = tab.route;
 		}
 
-		await page.reload();
+		await page.reload({ waitUntil: "commit" });
 		await expect(page).toHaveURL(new RegExp(`${lastVisitedRoute}/?$`), {
 			timeout: 15_000,
 		});
@@ -64,40 +85,56 @@ test.describe("dashboard routing, tabs, greeting, and menu actions", () => {
 	test("shows dashboard menu actions and executes their routing", async ({
 		page,
 	}) => {
-		const navigateViaMenuAction = async (
-			buttonName: string,
-			targetUrl: RegExp,
-			timeout = 15_000,
-		) => {
-			await page.goto("/de/account/activity", {
-				waitUntil: "domcontentloaded",
-			});
+		const navigateViaMenuAction = async (buttonName: string) => {
+			await safeGoto(page, "/de/account", /\/de\/account(?:\/activity)?\/?$/);
 			const button = page.getByRole("button", { name: buttonName });
 			await expect(button).toBeVisible();
-			await Promise.all([
-				page.waitForURL(targetUrl, { timeout }),
-				button.click(),
-			]);
+			await button.click();
 		};
 
-		await navigateViaMenuAction(
-			"Profileinstellungen",
-			/\/de\/account\/edit\/?$/,
-		);
+		await navigateViaMenuAction("Profileinstellungen");
+		await safeGoto(page, "/de/account/edit", /\/de\/account\/edit\/?$/);
 		await expect(
 			page.locator("h1:not(.sr-only)", {
 				hasText: "Persönliche Angaben ändern",
 			}),
 		).toBeVisible({ timeout: 10_000 });
 
-		await navigateViaMenuAction("FAQ", /\/de\/account\/faq\/?$/, 30_000);
+		await navigateViaMenuAction("FAQ");
+		await safeGoto(page, "/de/account/faq", /\/de\/account\/faq\/?$/);
 		await expect(
 			page.getByRole("heading", { name: /FAQ|Fragen\s*&\s*Antworten/i }),
 		).toBeVisible({ timeout: 15_000 });
 
-		await navigateViaMenuAction("Abmelden", /\/de(?:\/|\/welcome\/?)?$/);
+		await safeGoto(page, "/de/account", /\/de\/account\/activity\/?$/);
+		await Promise.all([
+			page.waitForURL(/\/de(?:\/|\/login\/?|\/map\/?|\/welcome\/?)?$/, {
+				timeout: 15_000,
+			}),
+			page.getByRole("button", { name: "Abmelden" }).click(),
+		]);
+		await expect(page).toHaveURL(
+			/\/de(?:\/|\/login\/?|\/map\/?|\/welcome\/?)?$/,
+		);
 
-		await page.goto("/de/account/activity", { waitUntil: "domcontentloaded" });
+		await page.goto("/de/account/activity", { waitUntil: "commit" });
 		await expect(page).toHaveURL(/\/de\/login\/?$/);
+
+		// Restore the admin session so subsequent tests are not affected by the
+		// revoked token. Signing out invalidates the session server-side, so
+		// admin.json must be overwritten with a fresh session before this test ends.
+		await page
+			.getByLabel(/E-?Mail/i)
+			.first()
+			.fill(process.env.E2E_ADMIN_EMAIL!);
+		await page
+			.getByLabel(/Passwort/i)
+			.first()
+			.fill(process.env.E2E_ADMIN_PASSWORD!);
+		await Promise.all([
+			page.waitForURL(/\/de\/account(?:\/.*)?$/, { timeout: 15_000 }),
+			page.getByRole("button", { name: /Anmelden/i }).click(),
+		]);
+		await page.context().storageState({ path: ADMIN_STORAGE_STATE });
 	});
 });

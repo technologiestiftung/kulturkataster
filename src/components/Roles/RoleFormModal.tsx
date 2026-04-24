@@ -16,7 +16,11 @@ import {
 	getRoleById,
 	updateRole,
 } from "@/server/actions/roles";
-import type { Role, RoleTablePermissionInput } from "@/types/role";
+import type {
+	Role,
+	RoleActionErrorCode,
+	RoleTablePermissionInput,
+} from "@/types/role";
 import { INSTITUTION_PERMISSION_FIELDS } from "@/types/institution";
 import type { Action } from "@/generated/prisma";
 import type {
@@ -26,6 +30,7 @@ import type {
 } from "@/components/FormWrapper/types";
 import { getSubmitLabel, toOptionalText } from "@/lib/utils/formUtils";
 import { showSuccessToast } from "@/lib/utils/feedbackToast";
+import { triggerAccountRefresh } from "@/components/Account/AccountAutoRefresh";
 
 type RoleFormModalProps = {
 	mode: "create" | "edit";
@@ -254,13 +259,35 @@ const buildPermissionInputs = (data: Record<string, unknown>) => {
 	return { tablePermissionsInput, fieldPermissionsInput };
 };
 
+const translateRoleFormError = (
+	t: (key: string, options?: { defaultValue?: string }) => string,
+	errorCode: RoleActionErrorCode,
+) => {
+	switch (errorCode) {
+		case "nameTaken":
+			return t("roleFormModal.errors.nameTaken");
+		case "notFound":
+			return t("roleFormModal.errors.notFound");
+		case "forbidden":
+			return t("roleFormModal.errors.forbidden", {
+				defaultValue: "You are not allowed to change this role.",
+			});
+		case "systemRole":
+			return t("roleFormModal.errors.systemRole", {
+				defaultValue: "System roles cannot be deleted.",
+			});
+		default:
+			return t("roleFormModal.errors.unexpected");
+	}
+};
+
 const useRoleSubmit = (
 	mode: RoleFormModalProps["mode"],
 	numericRoleId: number | undefined,
 	onClose: () => void,
 	onSuccess: (mode: RoleFormModalProps["mode"]) => void,
 	shouldRefresh: boolean,
-	onError: (message: string) => void,
+	onError: (errorCode: RoleActionErrorCode) => void,
 ) => {
 	const router = useRouter();
 	const [submitting, setSubmitting] = useState(false);
@@ -277,37 +304,42 @@ const useRoleSubmit = (
 
 		try {
 			if (mode === "create") {
-				const created = await createRole({
+				const result = await createRole({
 					name: String(data.name ?? ""),
 					description,
 					tablePermissions: tablePermissionsInput,
 					fieldPermissions: fieldPermissionsInput,
 				});
-				addRole(created);
+				if (!result.ok) {
+					onError(result.error);
+					return;
+				}
+				addRole(result.data);
 			} else if (numericRoleId) {
-				const updated = await updateRole({
+				const result = await updateRole({
 					id: numericRoleId,
 					name: String(data.name ?? ""),
 					description,
 					tablePermissions: tablePermissionsInput,
 					fieldPermissions: fieldPermissionsInput,
 				});
-				if (updated) {
-					upsertRole(updated);
+				if (!result.ok) {
+					onError(result.error);
+					return;
+				}
+				if (result.data) {
+					upsertRole(result.data);
 				}
 			}
 
 			onSuccess(mode);
+			triggerAccountRefresh(["roles", "entityAudits"]);
 			if (shouldRefresh) {
 				router.refresh();
 			}
 			onClose();
-		} catch (error) {
-			const message =
-				error instanceof Error
-					? error.message
-					: "An unexpected error occurred. Please try again.";
-			onError(message);
+		} catch {
+			onError("unexpected");
 		} finally {
 			setSubmitting(false);
 		}
@@ -495,7 +527,7 @@ export function RoleFormModal({
 		handleClose,
 		handleSuccess,
 		shouldRefresh,
-		(message) => setSubmitError(message),
+		(errorCode) => setSubmitError(translateRoleFormError(t, errorCode)),
 	);
 
 	const tableTargets = useMemo(() => getTableTargets(t), [t]);
@@ -576,9 +608,21 @@ export function RoleFormModal({
 							onConfirm: async () => {
 								if (isDeleting || isSystemRole) return;
 								setIsDeleting(true);
+								const result = await deleteRole(resolvedRole.id);
+								if (!result.ok) {
+									setDeleteError({
+										title: t("roleFormModal.delete.errorTitle", {
+											defaultValue: "Delete failed",
+										}),
+										description: translateRoleFormError(t, result.error),
+									});
+									setShowDeleteDialog(false);
+									setIsDeleting(false);
+									return;
+								}
+								handleClose();
+								triggerAccountRefresh(["roles", "entityAudits"]);
 								try {
-									handleClose();
-									await deleteRole(resolvedRole.id);
 									queueMicrotask(() => {
 										removeRoleFromStore(resolvedRole.id);
 										showSuccessToast(
@@ -590,17 +634,6 @@ export function RoleFormModal({
 											}),
 										);
 									});
-								} catch {
-									setDeleteError({
-										title: t("roleFormModal.delete.errorTitle", {
-											defaultValue: "Delete failed",
-										}),
-										description: t("roleFormModal.delete.errorDescription", {
-											defaultValue:
-												"Please try again or contact support if the issue persists.",
-										}),
-									});
-									setShowDeleteDialog(false);
 								} finally {
 									setIsDeleting(false);
 								}

@@ -1,6 +1,12 @@
 "use server";
 
 import {
+	actionError,
+	actionOk,
+	getActionErrorCode,
+	type ActionResult,
+} from "@/lib/actions/actionResult";
+import {
 	authorizeTable,
 	getAccessContextForUser,
 	requireAllScope,
@@ -13,6 +19,22 @@ import {
 	setRequestContext,
 } from "@/server/logging/requestContext";
 import { logger } from "@/server/logging/logger";
+
+export type GroupActionErrorCode =
+	| "nameTaken"
+	| "notFound"
+	| "forbidden"
+	| "unexpected";
+
+const classifyGroupActionError = (error: unknown): GroupActionErrorCode => {
+	const errorCode = getActionErrorCode(error);
+	if (errorCode === "P2002") return "nameTaken";
+	if (errorCode === "P2025") return "notFound";
+	if (error instanceof Error && error.name === "RBACError") {
+		return "forbidden";
+	}
+	return "unexpected";
+};
 
 export async function getGroups() {
 	const currentUserId = await getCurrentUserId();
@@ -41,7 +63,14 @@ type GroupInput = {
 
 type GroupUpdateInput = GroupInput & { id: number };
 
-export async function createGroup(input: GroupInput) {
+export async function createGroup(
+	input: GroupInput,
+): Promise<
+	ActionResult<
+		Awaited<ReturnType<typeof groupRepo.create>>,
+		GroupActionErrorCode
+	>
+> {
 	return runWithServerRequestContext(
 		async () => {
 			const currentUserId = await getCurrentUserId();
@@ -59,16 +88,23 @@ export async function createGroup(input: GroupInput) {
 					db_subsystem: "db",
 					actor_user_id: currentUserId,
 				});
-				throw error;
+				return actionError(classifyGroupActionError(error));
 			}
 			revalidateAccount();
-			return group;
+			return actionOk(group);
 		},
 		{ route: "server_action:groups.createGroup" },
 	);
 }
 
-export async function updateGroup(input: GroupUpdateInput) {
+export async function updateGroup(
+	input: GroupUpdateInput,
+): Promise<
+	ActionResult<
+		Awaited<ReturnType<typeof groupRepo.update>>,
+		GroupActionErrorCode
+	>
+> {
 	return runWithServerRequestContext(
 		async () => {
 			const currentUserId = await getCurrentUserId();
@@ -87,16 +123,18 @@ export async function updateGroup(input: GroupUpdateInput) {
 					actor_user_id: currentUserId,
 					group_id: input.id,
 				});
-				throw error;
+				return actionError(classifyGroupActionError(error));
 			}
 			revalidateAccount();
-			return group;
+			return actionOk(group);
 		},
 		{ route: "server_action:groups.updateGroup" },
 	);
 }
 
-export async function deleteGroup(id: number) {
+export async function deleteGroup(
+	id: number,
+): Promise<ActionResult<{ id: number }, GroupActionErrorCode>> {
 	return runWithServerRequestContext(
 		async () => {
 			const currentUserId = await getCurrentUserId();
@@ -114,10 +152,10 @@ export async function deleteGroup(id: number) {
 					actor_user_id: currentUserId,
 					group_id: id,
 				});
-				throw error;
+				return actionError(classifyGroupActionError(error));
 			}
 			revalidateAccount();
-			return { id };
+			return actionOk({ id });
 		},
 		{ route: "server_action:groups.deleteGroup" },
 	);

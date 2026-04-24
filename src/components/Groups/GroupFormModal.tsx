@@ -26,6 +26,7 @@ import {
 import type { Group } from "@/types/group";
 import { useRouter } from "next/navigation";
 import { showSuccessToast } from "@/lib/utils/feedbackToast";
+import { triggerAccountRefresh } from "@/components/Account/AccountAutoRefresh";
 
 type GroupFormModalProps = {
 	mode: "create" | "edit";
@@ -43,6 +44,22 @@ const getInitialValues = (resolvedGroup?: Group) => ({
 		resolvedGroup?.institutions?.map((institution) => String(institution.id)) ??
 		[],
 });
+
+const translateGroupFormError = (
+	t: (key: string) => string,
+	errorCode: string,
+) => {
+	switch (errorCode) {
+		case "nameTaken":
+			return t("groupFormModal.errors.nameTaken");
+		case "notFound":
+			return t("groupFormModal.errors.notFound");
+		case "forbidden":
+			return t("groupFormModal.errors.forbidden");
+		default:
+			return t("groupFormModal.errors.unexpected");
+	}
+};
 
 const getDialogTitle = (
 	mode: GroupFormModalProps["mode"],
@@ -148,28 +165,37 @@ const useGroupSubmit = (
 
 		try {
 			if (mode === "create") {
-				const created = await createGroup({
+				const result = await createGroup({
 					name: String(data.name ?? ""),
 					description,
 					userIds: userIds.length > 0 ? userIds : undefined,
 					institutionIds:
 						institutionIds.length > 0 ? institutionIds : undefined,
 				});
-				addGroup(created);
+				if (!result.ok) {
+					onError(result.error);
+					return;
+				}
+				addGroup(result.data);
 			} else if (numericGroupId) {
-				const updated = await updateGroup({
+				const result = await updateGroup({
 					id: numericGroupId,
 					name: String(data.name ?? ""),
 					description,
 					userIds,
 					institutionIds,
 				});
-				if (updated) {
-					upsertGroup(updated);
+				if (!result.ok) {
+					onError(result.error);
+					return;
+				}
+				if (result.data) {
+					upsertGroup(result.data);
 				}
 			}
 
 			onSuccess(mode);
+			triggerAccountRefresh(["groups", "entityAudits"]);
 			if (shouldRefresh) {
 				router.refresh();
 			}
@@ -377,7 +403,7 @@ export function GroupFormModal({
 		handleClose,
 		handleSuccess,
 		shouldRefresh,
-		(message) => setSubmitError(message),
+		(errorCode) => setSubmitError(translateGroupFormError(t, errorCode)),
 	);
 	const { institutionOptions, filteredInstitutionOptions, filterPanel } =
 		useInstitutionMultiSelect({
@@ -462,9 +488,21 @@ export function GroupFormModal({
 							onConfirm: async () => {
 								if (isDeleting) return;
 								setIsDeleting(true);
+								const result = await deleteGroup(resolvedGroup.id);
+								if (!result.ok) {
+									setDeleteError({
+										title: t("groupFormModal.delete.errorTitle", {
+											defaultValue: "Delete failed",
+										}),
+										description: translateGroupFormError(t, result.error),
+									});
+									setShowDeleteDialog(false);
+									setIsDeleting(false);
+									return;
+								}
+								handleClose();
+								triggerAccountRefresh(["groups", "entityAudits"]);
 								try {
-									handleClose();
-									await deleteGroup(resolvedGroup.id);
 									queueMicrotask(() => {
 										removeGroup(resolvedGroup.id);
 										showSuccessToast(
@@ -477,17 +515,6 @@ export function GroupFormModal({
 											}),
 										);
 									});
-								} catch {
-									setDeleteError({
-										title: t("groupFormModal.delete.errorTitle", {
-											defaultValue: "Delete failed",
-										}),
-										description: t("groupFormModal.delete.errorDescription", {
-											defaultValue:
-												"Please try again or contact support if the issue persists.",
-										}),
-									});
-									setShowDeleteDialog(false);
 								} finally {
 									setIsDeleting(false);
 								}

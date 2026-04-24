@@ -31,6 +31,7 @@ import type { ReactNode } from "react";
 import { useInstitutionPrivateFieldResolver } from "@/lib/hooks/useInstitutionPrivateFieldResolver";
 import { applyInstitutionFieldAccess } from "@/lib/utils/institutionFieldAccess";
 import { showSuccessToast } from "@/lib/utils/feedbackToast";
+import { triggerAccountRefresh } from "@/components/Account/AccountAutoRefresh";
 import { buildInstitutionFormInitialValues } from "@/lib/utils/institutionFormAdapter";
 import { getAccessibleScrollBehavior } from "@/lib/utils/motion";
 import {
@@ -74,13 +75,42 @@ type InstitutionFormModalProps = {
 	permissionContext?: "institution" | "submission";
 };
 
+const translateInstitutionFormError = (t: TFunction, errorCode: string) => {
+	switch (errorCode) {
+		case "notFound":
+			return t("institutionFormModal.errors.notFound", {
+				defaultValue: "The selected cultural venue no longer exists.",
+			});
+		case "forbidden":
+			return t("institutionFormModal.errors.forbidden", {
+				defaultValue: "You are not allowed to change this cultural venue.",
+			});
+		case "invalidInput":
+			return t("institutionFormModal.errors.invalidInput", {
+				defaultValue: "Please check the entered data and try again.",
+			});
+		default:
+			return t("institutionFormModal.errors.unexpected", {
+				defaultValue:
+					"The cultural venue could not be saved. Please try again.",
+			});
+	}
+};
+
 const getDialogTitle = (
 	mode: InstitutionFormModalProps["mode"],
+	permissionContext: InstitutionFormModalProps["permissionContext"],
 	t: (key: string) => string,
-) =>
-	mode === "create"
+): string => {
+	if (permissionContext === "submission") {
+		return mode === "create"
+			? t("institutionDraftWizardModal.dialog.submissionCreate.title")
+			: t("institutionDraftWizardModal.dialog.submissionEdit.title");
+	}
+	return mode === "create"
 		? t("institutionFormModal.dialog.title.create")
 		: t("institutionFormModal.dialog.title.edit");
+};
 
 const renderDialogBody = (
 	isWaitingForInstitution: boolean,
@@ -122,27 +152,36 @@ const useInstitutionSubmit = (
 
 		try {
 			if (mode === "create") {
-				const created = await createInstitution({
+				const result = await createInstitution({
 					name: String(data.name ?? ""),
 					address,
 					categoryIds: categoryIds.length > 0 ? categoryIds : [],
 					...sharedPayload,
 				});
-				addInstitution(created);
+				if (!result.ok) {
+					onError(result.error);
+					return;
+				}
+				addInstitution(result.data);
 			} else if (institutionId) {
-				const updated = await updateInstitution({
+				const result = await updateInstitution({
 					id: institutionId,
 					name: String(data.name ?? ""),
 					address,
 					categoryIds,
 					...sharedPayload,
 				});
-				if (updated) {
-					upsertInstitution(updated);
+				if (!result.ok) {
+					onError(result.error);
+					return;
+				}
+				if (result.data) {
+					upsertInstitution(result.data);
 				}
 			}
 
 			onSuccess(mode);
+			triggerAccountRefresh(["institutions", "entityAudits"]);
 			if (shouldRefresh) {
 				router.refresh();
 			}
@@ -1255,7 +1294,7 @@ export function InstitutionFormModal({
 		resolvedClose,
 		handleSuccess,
 		shouldRefresh,
-		(message) => setSubmitError(message),
+		(errorCode) => setSubmitError(translateInstitutionFormError(t, errorCode)),
 		permissionContext,
 	);
 
@@ -1485,7 +1524,7 @@ export function InstitutionFormModal({
 
 	return (
 		<Modal
-			title={getDialogTitle(mode, t)}
+			title={getDialogTitle(mode, permissionContext, t)}
 			variant="editor"
 			hasFooter={false}
 			routePath={routePath}
@@ -1541,7 +1580,9 @@ export function InstitutionFormModal({
 		>
 			<div className="flex h-full flex-col">
 				<div className="px-6 py-8 md:px-10">
-					<DialogTitle className="title">{getDialogTitle(mode, t)}</DialogTitle>
+					<DialogTitle className="title">
+						{getDialogTitle(mode, permissionContext, t)}
+					</DialogTitle>
 				</div>
 				<div className="flex-1 overflow-auto px-6 py-6 md:px-10 flex flex-col">
 					{renderDialogBody(

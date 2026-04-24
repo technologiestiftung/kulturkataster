@@ -124,15 +124,18 @@ describe("RoleFormModal", () => {
 
 	it("creates a role in create mode", async () => {
 		mockedCreateRole.mockResolvedValueOnce({
-			id: 99,
-			name: "Updated role",
-			description: "Updated description",
-			is_system: false,
-			created_at: new Date("2025-01-01"),
-			updated_at: new Date("2025-01-01"),
-			table_permissions: [],
-			field_permissions: [],
-			users: [],
+			ok: true,
+			data: {
+				id: 99,
+				name: "Updated role",
+				description: "Updated description",
+				is_system: false,
+				created_at: new Date("2025-01-01"),
+				updated_at: new Date("2025-01-01"),
+				table_permissions: [],
+				field_permissions: [],
+				users: [],
+			},
 		} as never);
 
 		render(<RoleFormModal mode="create" routePath="/account/roles/new" />);
@@ -152,15 +155,18 @@ describe("RoleFormModal", () => {
 
 	it("updates an existing role in edit mode", async () => {
 		mockedUpdateRole.mockResolvedValueOnce({
-			id: 12,
-			name: "Updated role",
-			description: "Updated description",
-			is_system: false,
-			created_at: new Date("2025-01-01"),
-			updated_at: new Date("2025-01-02"),
-			table_permissions: [],
-			field_permissions: [],
-			users: [],
+			ok: true,
+			data: {
+				id: 12,
+				name: "Updated role",
+				description: "Updated description",
+				is_system: false,
+				created_at: new Date("2025-01-01"),
+				updated_at: new Date("2025-01-02"),
+				table_permissions: [],
+				field_permissions: [],
+				users: [],
+			},
 		} as never);
 
 		render(
