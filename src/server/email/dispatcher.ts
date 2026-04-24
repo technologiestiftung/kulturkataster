@@ -10,7 +10,8 @@ const getBaseUrls = () => {
 	return {
 		siteUrl,
 		portalUrl: `${siteUrl}/account`,
-		faqUrl: `${siteUrl}/account/faq`,
+		faqUrl: `${siteUrl}/de/account/faq`,
+		faqUrlEn: `${siteUrl}/en/account/faq`,
 	};
 };
 
@@ -44,7 +45,8 @@ export async function sendAccountDeletedEmail(params: {
 	try {
 		await sendTemplatedEmail({
 			to: params.email,
-			subject: "Ihr Kulturkataster-Account wurde gelöscht",
+			subject:
+				"Ihr Kulturkataster-Account wurde gelöscht / Your Kulturkataster account has been deleted",
 			templatePath: "custom/account_deleted.html",
 			variables: {
 				SiteURL: siteUrl,
@@ -71,15 +73,15 @@ export async function sendClaimDecisionEmail(params: {
 	lastName?: string | null;
 	institutionName: string;
 }) {
-	const { siteUrl, portalUrl, faqUrl } = getBaseUrls();
+	const { siteUrl, portalUrl, faqUrl, faqUrlEn } = getBaseUrls();
 	const templatePath =
 		params.decision === "approved"
 			? "custom/claim_approved.html"
 			: "custom/claim_rejected.html";
 	const subject =
 		params.decision === "approved"
-			? `Ihr Kulturort ${params.institutionName} wurde Ihrem Kulturkatasterportal hinzugefügt`
-			: `Ihre Anfrage zur Pflege des Kulturorts ${params.institutionName}`;
+			? `Ihr Kulturort ${params.institutionName} wurde Ihrem Kulturkatasterportal hinzugefügt / Your venue ${params.institutionName} has been added to your Kulturkataster dashboard`
+			: `Ihre Anfrage zur Pflege des Kulturorts ${params.institutionName} / Your request to maintain the venue ${params.institutionName}`;
 
 	try {
 		await sendTemplatedEmail({
@@ -95,6 +97,7 @@ export async function sendClaimDecisionEmail(params: {
 					institution_name: params.institutionName,
 					portal_url: portalUrl,
 					faq_url: faqUrl,
+					faq_url_en: faqUrlEn,
 				},
 			},
 		});
@@ -116,7 +119,7 @@ export async function sendSubmissionDecisionEmail(params: {
 	lastName?: string | null;
 	institutionName: string;
 }) {
-	const { siteUrl, portalUrl, faqUrl } = getBaseUrls();
+	const { siteUrl, portalUrl, faqUrl, faqUrlEn } = getBaseUrls();
 	const templatePath =
 		params.decision === "approved"
 			? "custom/submission_approved.html"
@@ -140,6 +143,7 @@ export async function sendSubmissionDecisionEmail(params: {
 					institution_name: params.institutionName,
 					portal_url: portalUrl,
 					faq_url: faqUrl,
+					faq_url_en: faqUrlEn,
 				},
 			},
 		});
@@ -162,7 +166,7 @@ export async function sendRoleDecisionEmail(params: {
 	lastName?: string | null;
 	metaInfo?: unknown;
 }) {
-	const { siteUrl, portalUrl, faqUrl } = getBaseUrls();
+	const { siteUrl, portalUrl, faqUrl, faqUrlEn } = getBaseUrls();
 	const districtFromMeta =
 		params.metaInfo && typeof params.metaInfo === "object"
 			? String(
@@ -182,7 +186,7 @@ export async function sendRoleDecisionEmail(params: {
 				: "custom/role_district_rejected.html";
 		subject =
 			params.decision === "approved"
-				? `Freigabe als Bezirksmitarbeitende*r für ${districtLabel}`
+				? `Freigabe als Bezirksmitarbeitende*r für ${districtLabel} / Approval as a district administration staff member for ${districtLabel}`
 				: `Ihre Registrierung als Bezirksmitarbeitende*r für ${districtLabel}`;
 	} else if (params.target === "state") {
 		templatePath =
@@ -191,8 +195,8 @@ export async function sendRoleDecisionEmail(params: {
 				: "custom/role_state_rejected.html";
 		subject =
 			params.decision === "approved"
-				? "Freigabe als Landesmitarbeitende*r (Berlin)"
-				: "Ihre Registrierung als Landesmitarbeitende*r (Berlin)";
+				? "Freigabe als Landesmitarbeitende*r (Berlin) / Approval as a Berlin state administration staff member"
+				: "Ihre Registrierung als Landesmitarbeitende*r (Berlin) / Your registration as a Berlin state administration staff member";
 	} else {
 		templatePath =
 			params.decision === "approved"
@@ -200,8 +204,8 @@ export async function sendRoleDecisionEmail(params: {
 				: "custom/role_network_rejected.html";
 		subject =
 			params.decision === "approved"
-				? "Freigabe als Mitarbeitende*r eines Verbands/Netzwerks"
-				: "Ihre Registrierung als Mitarbeitende*r eines Verbands/Netzwerks";
+				? "Freigabe als Mitarbeitende*r eines Verbands/Netzwerks / Approval as an association/network staff member"
+				: "Ihre Registrierung als Mitarbeitende*r eines Verbands/Netzwerks / Your registration as an association/network staff member";
 	}
 
 	try {
@@ -218,6 +222,7 @@ export async function sendRoleDecisionEmail(params: {
 					district: districtLabel,
 					portal_url: portalUrl,
 					faq_url: faqUrl,
+					faq_url_en: faqUrlEn,
 				},
 			},
 		});

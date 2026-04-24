@@ -15,17 +15,17 @@ const optionSelect = {
 } as const;
 
 export const emailTemplateRepo = {
-	getHtmlByPath: async (templatePath: string): Promise<string | null> => {
+	getBodyByPath: async (templatePath: string): Promise<string | null> => {
 		const row = await prisma.emailTemplate.findFirst({
 			where: { path: templatePath, is_active: true },
-			select: { html: true },
+			select: { body: true },
 		});
-		return row?.html ?? null;
+		return row?.body ?? null;
 	},
 
-	listActiveCustom: (): Promise<EmailTemplateOption[]> =>
+	listActive: (): Promise<EmailTemplateOption[]> =>
 		prisma.emailTemplate.findMany({
-			where: { kind: "custom", is_active: true },
+			where: { is_active: true },
 			select: optionSelect,
 			orderBy: [{ name: "asc" }, { path: "asc" }],
 		}),

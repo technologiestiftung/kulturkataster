@@ -1753,8 +1753,8 @@
 				},
 				"custom": {
 					"account_deleted": "Konto gelöscht",
-					"claim_approved": "Claim bestätigt",
-					"claim_rejected": "Claim abgelehnt",
+					"claim_approved": "Bestätigung für “Kulturort beanspruchen”",
+					"claim_rejected": "Ablehnung für “Kulturort beanspruchen”",
 					"compliance_resend": "Compliance erneut senden",
 					"role_district_approved": "Bezirks-Rolle bestätigt",
 					"role_district_rejected": "Bezirks-Rolle abgelehnt",

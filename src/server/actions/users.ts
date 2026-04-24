@@ -589,7 +589,7 @@ export async function getUserEmailTemplateOptions(): Promise<
 			requireAllScope(ctx, "user", "update");
 
 			try {
-				const templates = await emailTemplateRepo.listActiveCustom();
+				const templates = await emailTemplateRepo.listActive();
 				return actionOk(templates);
 			} catch (error) {
 				logger.error("user.email_templates.list_failed", error, {
@@ -645,7 +645,8 @@ export async function sendUserEmailTemplate(input: {
 							first_name: user.first_name ?? "",
 							last_name: user.last_name ?? "",
 							portal_url: `${siteUrl}/account`,
-							faq_url: `${siteUrl}/account/faq`,
+							faq_url: `${siteUrl}/de/account/faq`,
+							faq_url_en: `${siteUrl}/en/account/faq`,
 						},
 					},
 				});
