@@ -397,7 +397,7 @@ model EmailTemplate {
   name        String?
   description String?
   subject     String?
-  html        String            @db.Text
+  body        String            @db.Text
   text        String?           @db.Text
   metadata    Json?
   is_active   Boolean           @default(true)

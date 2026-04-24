@@ -1,12 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
-	loadEmailTemplateHtml,
+	loadEmailTemplateBody,
 	normalizeEmailTemplatePath,
 } from "@/server/email/templates";
 
 vi.mock("@/server/data/emailTemplateRepo", () => ({
 	emailTemplateRepo: {
-		getHtmlByPath: vi.fn(),
+		getBodyByPath: vi.fn(),
 	},
 }));
 
@@ -15,7 +15,7 @@ vi.mock("@/server/logging/logger", () => ({
 }));
 
 import { emailTemplateRepo } from "@/server/data/emailTemplateRepo";
-const getHtmlByPathMock = vi.mocked(emailTemplateRepo.getHtmlByPath);
+const getBodyByPathMock = vi.mocked(emailTemplateRepo.getBodyByPath);
 
 describe("normalizeEmailTemplatePath", () => {
 	it("joins path segments with a slash", () => {
@@ -43,32 +43,32 @@ describe("normalizeEmailTemplatePath", () => {
 	});
 });
 
-describe("loadEmailTemplateHtml", () => {
+describe("loadEmailTemplateBody", () => {
 	beforeEach(() => {
-		getHtmlByPathMock.mockReset();
+		getBodyByPathMock.mockReset();
 	});
 
 	it("returns the database template when one is active", async () => {
-		getHtmlByPathMock.mockResolvedValue("<p>From database</p>");
+		getBodyByPathMock.mockResolvedValue("<p>From database</p>");
 
-		await expect(loadEmailTemplateHtml("auth/confirmation.html")).resolves.toBe(
+		await expect(loadEmailTemplateBody("auth/confirmation.html")).resolves.toBe(
 			"<p>From database</p>",
 		);
 	});
 
 	it("falls back to the filesystem when the database returns null", async () => {
-		getHtmlByPathMock.mockResolvedValue(null);
+		getBodyByPathMock.mockResolvedValue(null);
 
 		await expect(
-			loadEmailTemplateHtml("auth/confirmation.html"),
+			loadEmailTemplateBody("auth/confirmation.html"),
 		).rejects.toThrow();
 	});
 
 	it("falls back to the filesystem when the database lookup throws", async () => {
-		getHtmlByPathMock.mockRejectedValue(new Error("DB error"));
+		getBodyByPathMock.mockRejectedValue(new Error("DB error"));
 
 		await expect(
-			loadEmailTemplateHtml("auth/confirmation.html"),
+			loadEmailTemplateBody("auth/confirmation.html"),
 		).rejects.toThrow();
 	});
 });

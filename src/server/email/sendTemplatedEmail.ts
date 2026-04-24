@@ -1,6 +1,7 @@
 import nodemailer from "nodemailer";
 import { logger } from "@/server/logging/logger";
-import { loadEmailTemplateHtml } from "@/server/email/templates";
+import { loadEmailTemplateBody } from "@/server/email/templates";
+import { isMarkdownTemplate, mdToEmailHtml } from "@/server/email/mdToEmailHtml";
 
 type TemplateData = Record<string, unknown>;
 
@@ -142,8 +143,11 @@ export async function sendTemplatedEmail({
 			},
 		},
 		async () => {
-			const template = await loadEmailTemplateHtml(templatePath);
-			const html = renderTemplate(template, variables);
+			const raw = await loadEmailTemplateBody(templatePath);
+			const rendered = renderTemplate(raw, variables);
+			const html = isMarkdownTemplate(rendered)
+				? await mdToEmailHtml(rendered, subject)
+				: rendered;
 
 			if (emailRuntimeConfig.provider === "noop") {
 				logger.info("email.send.noop", {

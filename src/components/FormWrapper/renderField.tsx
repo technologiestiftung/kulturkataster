@@ -806,6 +806,8 @@ const renderFieldContent = (
 				</ActionPanel>
 			)}
 
+			{field.type === "custom" && field.customField}
+
 			{field.type === "tablePermissions" && field.tablePermissions && (
 				<div className="flex flex-col gap-1">
 					<div className="flex items-center justify-between gap-2">
