@@ -37,11 +37,9 @@ jobs:
 
       - name: Check lockfile sync
         run: |
-          npm install --package-lock-only --ignore-scripts --no-audit --no-fund
-          if ! git diff --quiet -- package.json package-lock.json; then
+          if ! npm ci --dry-run --ignore-scripts --no-audit --no-fund; then
             echo "package-lock.json is out of sync with package.json"
             echo "Run 'npm install' locally and commit the updated lockfile."
-            git diff -- package.json package-lock.json
             exit 1
           fi
 
@@ -69,6 +67,7 @@ jobs:
         run: |
           echo "📥 Pulling translations from Traduora..."
           npm run traduora:sync ${{ steps.action.outputs.action }}
+          npm run format:fix
 
       - name: Push translations to Traduora
         if: startsWith(steps.action.outputs.action, 'push')
