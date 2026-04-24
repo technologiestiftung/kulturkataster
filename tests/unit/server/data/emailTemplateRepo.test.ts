@@ -20,12 +20,12 @@ describe("emailTemplateRepo", () => {
 		findManyMock.mockReset();
 	});
 
-	describe("getHtmlByPath", () => {
+	describe("getBodyByPath", () => {
 		it("returns the html of an active template", async () => {
 			findFirstMock.mockResolvedValue({ html: "<p>Hello</p>" } as never);
 
 			await expect(
-				emailTemplateRepo.getHtmlByPath("auth/confirmation.html"),
+				emailTemplateRepo.getBodyByPath("auth/confirmation.html"),
 			).resolves.toBe("<p>Hello</p>");
 
 			expect(findFirstMock).toHaveBeenCalledWith(
@@ -40,7 +40,7 @@ describe("emailTemplateRepo", () => {
 			findFirstMock.mockResolvedValue(null);
 
 			await expect(
-				emailTemplateRepo.getHtmlByPath("auth/confirmation.html"),
+				emailTemplateRepo.getBodyByPath("auth/confirmation.html"),
 			).resolves.toBeNull();
 		});
 	});
@@ -63,9 +63,7 @@ describe("emailTemplateRepo", () => {
 			];
 			findManyMock.mockResolvedValue(templates as never);
 
-			await expect(emailTemplateRepo.listActiveCustom()).resolves.toEqual(
-				templates,
-			);
+			await expect(emailTemplateRepo.listActive()).resolves.toEqual(templates);
 
 			expect(findManyMock).toHaveBeenCalledWith(
 				expect.objectContaining({

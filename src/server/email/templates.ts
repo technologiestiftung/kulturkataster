@@ -27,12 +27,19 @@ const getTemplateAbsolutePath = (templatePath: string) => {
 	return absolutePath;
 };
 
-export async function loadEmailTemplateHtml(templatePath: string | string[]) {
+/**
+ * Returns the raw template body (markdown or legacy HTML) without any
+ * variable substitution or markdown conversion. Callers are responsible
+ * for calling renderTemplate and mdToEmailHtml in the correct order.
+ */
+export async function loadEmailTemplateBody(
+	templatePath: string | string[],
+): Promise<string> {
 	const normalized = normalizeEmailTemplatePath(templatePath);
 
 	try {
-		const html = await emailTemplateRepo.getHtmlByPath(normalized);
-		if (html !== null) return html;
+		const content = await emailTemplateRepo.getBodyByPath(normalized);
+		if (content !== null) return content;
 	} catch (error) {
 		logger.warn("email.template.db_lookup.failed", {
 			subsystem: "email",

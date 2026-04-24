@@ -22,7 +22,7 @@ const getAllFields = (
 		if (field.type === "section") {
 			if (!field.fields) return;
 			result.push(...getAllFields(field.fields));
-		} else if (field.type !== "actionPanel") {
+		} else if (field.type !== "actionPanel" && field.type !== "custom") {
 			result.push(field);
 		}
 	});
@@ -91,7 +91,7 @@ const collectValidationErrors = (
 		if (field.condition && !field.condition(formData)) {
 			return;
 		}
-		if (field.type === "actionPanel") {
+		if (field.type === "actionPanel" || field.type === "custom") {
 			return;
 		}
 
@@ -113,7 +113,7 @@ const collectValidationErrors = (
 const buildTouchedMap = (fields: FormWrapperFieldConfig[]) => {
 	const allTouched: Record<string, boolean> = {};
 	fields.forEach((field) => {
-		if (field.type === "actionPanel") {
+		if (field.type === "actionPanel" || field.type === "custom") {
 			return;
 		}
 		allTouched[field.name] = true;
