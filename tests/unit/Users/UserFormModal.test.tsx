@@ -53,21 +53,19 @@ type MockFieldConfig = {
 	fields?: MockFieldConfig[];
 };
 
-const collectExtraFields = (fields?: MockFieldConfig[]): React.ReactElement[] => {
+const collectExtraFields = (
+	fields?: MockFieldConfig[],
+): React.ReactElement[] => {
 	if (!fields) return [];
 	const result: React.ReactElement[] = [];
 	let index = 0;
 	for (const field of fields) {
 		if (field.afterField) {
-			result.push(
-				<div key={`after-${index}`}>{field.afterField}</div>,
-			);
+			result.push(<div key={`after-${index}`}>{field.afterField}</div>);
 			index += 1;
 		}
 		if (field.customField) {
-			result.push(
-				<div key={`custom-${index}`}>{field.customField}</div>,
-			);
+			result.push(<div key={`custom-${index}`}>{field.customField}</div>);
 			index += 1;
 		}
 		if (field.fields) result.push(...collectExtraFields(field.fields));
