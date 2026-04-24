@@ -46,7 +46,7 @@ describe("emailTemplateRepo", () => {
 	});
 
 	describe("listActive", () => {
-		it("returns all active custom templates ordered by name", async () => {
+		it("returns all active templates ordered by name", async () => {
 			const templates = [
 				{
 					key: "custom.claim_approved",
@@ -67,7 +67,7 @@ describe("emailTemplateRepo", () => {
 
 			expect(findManyMock).toHaveBeenCalledWith(
 				expect.objectContaining({
-					where: { kind: "custom", is_active: true },
+					where: { is_active: true },
 				}),
 			);
 		});
