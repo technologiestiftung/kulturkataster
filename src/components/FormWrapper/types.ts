@@ -25,6 +25,7 @@ export type FieldType =
 	| "addressMap"
 	| "filterPanel"
 	| "actionPanel"
+	| "custom"
 	| "tablePermissions"
 	| "fieldPermissions"
 	| "fundingSources"
@@ -184,6 +185,7 @@ type FormWrapperNonSectionFieldConfig = {
 		className?: string;
 		icon?: ReactNode;
 	};
+	customField?: ReactNode;
 	filterPanel?: {
 		categoryGroups: Category[];
 		districts: string[];

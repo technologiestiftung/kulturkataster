@@ -1,4 +1,5 @@
-import { loadEmailTemplateHtml } from "@/server/email/templates";
+import { loadEmailTemplateBody } from "@/server/email/templates";
+import { isMarkdownTemplate, mdToEmailHtml } from "@/server/email/mdToEmailHtml";
 import { NextResponse } from "next/server";
 
 type EmailTemplateRouteContext = {
@@ -11,7 +12,10 @@ export async function GET(
 ) {
 	try {
 		const { templatePath } = await params;
-		const html = await loadEmailTemplateHtml(templatePath);
+		const raw = await loadEmailTemplateBody(templatePath);
+		const html = isMarkdownTemplate(raw)
+			? await mdToEmailHtml(raw, "[Preview]")
+			: raw;
 		return new NextResponse(html, {
 			headers: {
 				"content-type": "text/html; charset=utf-8",

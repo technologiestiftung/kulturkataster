@@ -10,7 +10,7 @@ CREATE TABLE "email_template" (
     "name" TEXT,
     "description" TEXT,
     "subject" TEXT,
-    "html" TEXT NOT NULL,
+    "body" TEXT NOT NULL,
     "text" TEXT,
     "metadata" JSONB,
     "is_active" BOOLEAN NOT NULL DEFAULT true,
