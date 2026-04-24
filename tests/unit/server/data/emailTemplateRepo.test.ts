@@ -21,8 +21,8 @@ describe("emailTemplateRepo", () => {
 	});
 
 	describe("getBodyByPath", () => {
-		it("returns the html of an active template", async () => {
-			findFirstMock.mockResolvedValue({ html: "<p>Hello</p>" } as never);
+		it("returns the body of an active template", async () => {
+			findFirstMock.mockResolvedValue({ body: "<p>Hello</p>" } as never);
 
 			await expect(
 				emailTemplateRepo.getBodyByPath("auth/confirmation.html"),
@@ -31,7 +31,7 @@ describe("emailTemplateRepo", () => {
 			expect(findFirstMock).toHaveBeenCalledWith(
 				expect.objectContaining({
 					where: { path: "auth/confirmation.html", is_active: true },
-					select: { html: true },
+					select: { body: true },
 				}),
 			);
 		});
@@ -45,7 +45,7 @@ describe("emailTemplateRepo", () => {
 		});
 	});
 
-	describe("listActiveCustom", () => {
+	describe("listActive", () => {
 		it("returns all active custom templates ordered by name", async () => {
 			const templates = [
 				{
