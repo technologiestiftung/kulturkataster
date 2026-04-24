@@ -66,6 +66,14 @@ type ClaimInstitutionRow = Prisma.InstitutionGetPayload<{
 	};
 }>;
 
+const sanitizeCategoryKey = (value: string) =>
+	value
+		.toLowerCase()
+		.trim()
+		.replace(/[^a-z0-9]+/g, "_")
+		.replace(/_+/g, "_")
+		.replace(/^_|_$/g, "");
+
 export async function getSubmissions(filter: SubmissionFilter = {}) {
 	const currentUserId = await getCurrentUserId();
 	const ctx = await getAccessContextForUser(currentUserId);
@@ -360,6 +368,10 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 					}
 				}
 			}
+			if (submission.entity_type === "category") {
+				authorizeTable(ctx, "category", "create");
+				requireAllScope(ctx, "category", "create");
+			}
 			let intent: AuditContext["intent"];
 			if (validatedInput.status === "approved") {
 				intent = "submission_review_approved";
@@ -460,10 +472,94 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 									? validatedInput.internalNotes.trim()
 									: null;
 							if (validatedInput.status === "approved") {
-								if (submission.entity_type !== "institution") {
+								if (
+									submission.entity_type !== "institution" &&
+									submission.entity_type !== "category"
+								) {
 									throw new Error(
-										"Only institution submissions can be reviewed.",
+										"Only institution or category submissions can be reviewed.",
 									);
+								}
+
+								if (submission.entity_type === "category") {
+									const categoryData =
+										submission.data &&
+										typeof submission.data === "object" &&
+										!Array.isArray(submission.data)
+											? (submission.data as Record<string, unknown>)
+											: {};
+									const rawKey =
+										typeof categoryData.key === "string"
+											? categoryData.key
+											: "";
+									const key = sanitizeCategoryKey(rawKey);
+									if (!key) {
+										throw new Error(
+											"Category submission does not include a key.",
+										);
+									}
+
+									try {
+										await prisma.$transaction(async (tx) => {
+											await tx.category.create({
+												data: {
+													key,
+													description:
+														typeof categoryData.description === "string"
+															? categoryData.description
+															: null,
+													status: "active",
+												},
+											});
+
+											if (trimmedInternalNotes) {
+												await tx.submissionNote.create({
+													data: {
+														submission: {
+															connect: { id: validatedInput.id },
+														},
+														note: trimmedInternalNotes,
+														creator: currentUserId
+															? { connect: { id: currentUserId } }
+															: undefined,
+													},
+												});
+											}
+
+											await tx.submission.delete({
+												where: { id: validatedInput.id },
+											});
+											await updateSubmissionAuditStatus(
+												{
+													submissionId: validatedInput.id,
+													status: "approved",
+													reviewerId: currentUserId,
+													reviewNotes: trimmedInternalNotes,
+												},
+												tx,
+											);
+										});
+									} catch (error) {
+										logger.error(
+											"submission.category_review.db_failed",
+											error,
+											{
+												subsystem: "submission",
+												db_subsystem: "db",
+												actor_user_id: currentUserId,
+												submission_id: validatedInput.id,
+												submission_type: submission.type,
+												entity_type: submission.entity_type,
+											},
+										);
+										throw error;
+									}
+
+									revalidateAccount();
+									return {
+										id: validatedInput.id,
+										status: "approved" as const,
+									};
 								}
 
 								const draft = institutionSubmissionToDraft(submission);
@@ -544,6 +640,34 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 													},
 												});
 											}
+
+											const hasAttachUsers =
+												validatedInput.attachUserIds &&
+												validatedInput.attachUserIds.length > 0;
+											const hasAttachGroups =
+												validatedInput.attachGroupIds &&
+												validatedInput.attachGroupIds.length > 0;
+											if (hasAttachUsers || hasAttachGroups) {
+												await tx.institution.update({
+													where: { id: createdInstitution.id },
+													data: {
+														...(hasAttachUsers && {
+															users: {
+																connect: validatedInput.attachUserIds!.map(
+																	(id) => ({ id }),
+																),
+															},
+														}),
+														...(hasAttachGroups && {
+															groups: {
+																connect: validatedInput.attachGroupIds!.map(
+																	(id) => ({ id }),
+																),
+															},
+														}),
+													},
+												});
+											}
 										}
 
 										if (submission.type === "update") {
@@ -605,6 +729,34 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 													currentUserId,
 												),
 											});
+
+											const hasAttachUsers =
+												validatedInput.attachUserIds &&
+												validatedInput.attachUserIds.length > 0;
+											const hasAttachGroups =
+												validatedInput.attachGroupIds &&
+												validatedInput.attachGroupIds.length > 0;
+											if (hasAttachUsers || hasAttachGroups) {
+												await tx.institution.update({
+													where: { id: submission.entity_id },
+													data: {
+														...(hasAttachUsers && {
+															users: {
+																connect: validatedInput.attachUserIds!.map(
+																	(id) => ({ id }),
+																),
+															},
+														}),
+														...(hasAttachGroups && {
+															groups: {
+																connect: validatedInput.attachGroupIds!.map(
+																	(id) => ({ id }),
+																),
+															},
+														}),
+													},
+												});
+											}
 										}
 
 										if (submission.type === "claim") {

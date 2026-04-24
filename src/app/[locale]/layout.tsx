@@ -97,6 +97,12 @@ export default async function RootLayout({
 		typeof commonResources.footerLandmark === "string"
 			? (commonResources.footerLandmark as string)
 			: "Footer";
+	const supabaseUrl = process.env.SUPABASE_URL ?? "";
+	const envHint =
+		supabaseUrl.includes("127.0.0.1") || supabaseUrl.includes("localhost")
+			? "local"
+			: undefined;
+	const shouldLoadMatomo = envHint !== "local";
 
 	return (
 		<html lang={locale} dir={getDirection(locale)}>
@@ -137,14 +143,15 @@ export default async function RootLayout({
 							</div>
 						</SidebarProvider>
 						<ViewModeToggle />
-						<Footer ariaLabel={footerLabel} />
+						<Footer ariaLabel={footerLabel} envHint={envHint} />
 					</div>
 					<Toaster />
 					{modal}
 				</I18NProvider>
 
-				<Script id="matomo" strategy="afterInteractive">
-					{`
+				{shouldLoadMatomo ? (
+					<Script id="matomo" strategy="afterInteractive">
+						{`
             var _paq = window._paq = window._paq || [];
             _paq.push(['disableCookies']);
             _paq.push(['trackPageView']);
@@ -157,7 +164,8 @@ export default async function RootLayout({
               g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
             })();
           `}
-				</Script>
+					</Script>
+				) : null}
 			</body>
 		</html>
 	);

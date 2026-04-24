@@ -33,6 +33,7 @@ import { CategorySectionList } from "@/components/Filter/CategorySection/Categor
 import { MultiSelectModal } from "@/components/MultiSelect/MultiSelectModal";
 import { ActionPanel } from "@/components/ActionPanel";
 import { cn } from "@/lib/utils";
+import dynamic from "next/dynamic";
 import { buildStreetLine, toOptionalNumber } from "@/lib/utils/formUtils";
 import type { FilterState } from "@/types";
 import type {
@@ -42,8 +43,14 @@ import type {
 	PermissionScope,
 	TablePermissionValue,
 } from "./types";
-import { AddressMapField } from "./AddressMapField";
+
+const AddressMapField = dynamic(
+	() =>
+		import("./AddressMapField").then((m) => ({ default: m.AddressMapField })),
+	{ ssr: false },
+);
 import { FundingSourceField } from "./FundingSourceField";
+import { KeyValueField } from "./KeyValueField";
 import { defaultFilterState } from "./constants";
 import Eye from "@/icons/eye.svg";
 import EyeOff from "@/icons/eye-off.svg";
@@ -775,6 +782,10 @@ const renderFieldContent = (
 				/>
 			)}
 
+			{field.type === "keyValue" && (
+				<KeyValueField field={field} value={value} updateField={updateField} />
+			)}
+
 			{field.type === "actionPanel" && field.actionPanel && (
 				<ActionPanel
 					title={field.actionPanel.title}
@@ -794,6 +805,8 @@ const renderFieldContent = (
 					{field.actionPanel.description}
 				</ActionPanel>
 			)}
+
+			{field.type === "custom" && field.customField}
 
 			{field.type === "tablePermissions" && field.tablePermissions && (
 				<div className="flex flex-col gap-1">

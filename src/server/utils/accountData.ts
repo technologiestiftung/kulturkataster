@@ -155,13 +155,17 @@ export async function loadAccountData(
 
 export async function loadAccountDataBestEffort(
 	args: AccountDataLoaderArgs,
+	keys?: Array<keyof AccountDataPayload>,
 ): Promise<Partial<AccountDataPayload>> {
-	const loaderEntries = Object.entries(ACCOUNT_DATA_LOADERS) as Array<
+	const allEntries = Object.entries(ACCOUNT_DATA_LOADERS) as Array<
 		[
 			keyof AccountDataPayload,
 			(args: AccountDataLoaderArgs) => Promise<unknown>,
 		]
 	>;
+	const loaderEntries = keys
+		? allEntries.filter(([key]) => keys.includes(key))
+		: allEntries;
 	const settledResults = await Promise.allSettled(
 		loaderEntries.map(([, loader]) => loader(args)),
 	);

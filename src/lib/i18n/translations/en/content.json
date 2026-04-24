@@ -244,6 +244,15 @@
 			"update": "Save",
 			"updateLoading": "Saved..."
 		},
+		"errors": {
+			"forbidden": "You are not allowed to change this category.",
+			"hasSubcategories": "Please remove all subcategories before deleting this category.",
+			"keyLocked": "The category key cannot be changed.",
+			"keyTaken": "A category with this key already exists.",
+			"notFound": "The selected category no longer exists.",
+			"selfParent": "A category cannot be its own parent.",
+			"unexpected": "The category could not be saved. Please try again."
+		},
 		"delete": {
 			"button": "Delete",
 			"cancel": "Cancel",
@@ -274,6 +283,10 @@
 			"update": {
 				"description": "The changes have been saved.",
 				"title": "Category updated"
+			},
+			"delete": {
+				"description": "The category has been removed successfully.",
+				"title": "Category deleted"
 			}
 		},
 		"form": {
@@ -362,6 +375,12 @@
 			"creating": "Group is created...",
 			"save": "save Changes",
 			"saving": "Changes are saved..."
+		},
+		"errors": {
+			"forbidden": "You are not allowed to change this group.",
+			"nameTaken": "A group with this name already exists.",
+			"notFound": "The selected group no longer exists.",
+			"unexpected": "The group could not be saved. Please try again."
 		},
 		"delete": {
 			"button": "Delete",
@@ -709,6 +728,12 @@
 			"edit": {
 				"subtitle": "Check and update cultural location information.",
 				"title": "Edit cultural location"
+			},
+			"submissionCreate": {
+				"title": "Submit cultural location"
+			},
+			"submissionEdit": {
+				"title": "Edit submission"
 			}
 		},
 		"feedback": {
@@ -747,6 +772,12 @@
 			"creating": "Being created...",
 			"save": "Save",
 			"saving": "Saved..."
+		},
+		"errors": {
+			"forbidden": "You are not allowed to change this cultural venue.",
+			"invalidInput": "Please check the entered data and try again.",
+			"notFound": "The selected cultural venue no longer exists.",
+			"unexpected": "The cultural venue could not be saved. Please try again."
 		},
 		"delete": {
 			"button": "Delete",
@@ -916,8 +947,9 @@
 		},
 		"review": {
 			"actions": {
-				"approve": "To permit",
-				"saveNotes": "Save notes"
+				"approve": "Approve",
+				"saveNotes": "Save notes",
+				"reject": "Reject"
 			},
 			"error": "Verification failed. {{error}}",
 			"errorUnknown": "Unknown error.",
@@ -930,10 +962,32 @@
 				"saveNotes": {
 					"description": "The review notes have been saved.",
 					"title": "Notes saved"
+				},
+				"approve": {
+					"title": "Submission approved",
+					"description": "The submission has been approved successfully."
+				},
+				"reject": {
+					"title": "Submission rejected",
+					"description": "The submission has been rejected successfully."
 				}
 			},
 			"statusLabel": "Status: {{status}}",
-			"title": "Check submission"
+			"title": "Check submission",
+			"errorTitle": "Review failed",
+			"errorDescription": "Please try again or contact support if the issue persists.",
+			"linkedCategorySubmissions": "New category proposal",
+			"attachOnApproval": "Attach on approval",
+			"attachUsers": {
+				"title": "Select users",
+				"placeholder": "Users",
+				"searchPlaceholder": "Search users..."
+			},
+			"attachGroups": {
+				"title": "Select groups",
+				"placeholder": "Groups",
+				"searchPlaceholder": "Search groups..."
+			}
 		}
 	},
 	"institutionsTable": {
@@ -980,6 +1034,7 @@
 		"timeline": "The development of the list view is planned for 2026."
 	},
 	"privacyModal": {
+		"body": "*(English translation pending.)*",
 		"description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. ",
 		"subtitle": "Here comes the data protection text.",
 		"title": "Data protection"
@@ -991,6 +1046,13 @@
 			"creating": "Role is being created...",
 			"save": "save Changes",
 			"saving": "Changes are saved..."
+		},
+		"errors": {
+			"forbidden": "You are not allowed to change this role.",
+			"nameTaken": "A role with this name already exists.",
+			"notFound": "The selected role no longer exists.",
+			"systemRole": "System roles cannot be deleted.",
+			"unexpected": "The role could not be saved. Please try again."
 		},
 		"delete": {
 			"button": "Delete",
@@ -1531,6 +1593,13 @@
 			"save": "save Changes",
 			"saving": "Saved..."
 		},
+		"errors": {
+			"emailTaken": "A user with this email address already exists.",
+			"forbidden": "You are not allowed to change this user.",
+			"invalidInput": "Please check the entered data and try again.",
+			"notFound": "The selected user no longer exists.",
+			"unexpected": "The user could not be saved. Please try again."
+		},
 		"complianceResend": {
 			"description": "Resend the GDPR compliance email to the user.",
 			"error": "GDPR compliance email could not be sent.",
@@ -1607,6 +1676,13 @@
 						"label": "Account type/role",
 						"placeholder": "organization, district, ..."
 					},
+					"metaInfo": {
+						"add": "Add entry",
+						"keyPlaceholder": "Key",
+						"label": "Additional info",
+						"remove": "Remove",
+						"valuePlaceholder": "Value"
+					},
 					"compliance": {
 						"label": "Compliance released"
 					},
@@ -1636,6 +1712,49 @@
 			"sending": "Will be sent…",
 			"success": "Password reset email sent.",
 			"title": "Reset password"
+		},
+		"templateEmail": {
+			"confirmCancel": "Cancel",
+			"confirmDescription": "This email will be sent to {{email}}. Do you want to continue?",
+			"confirmSend": "Send",
+			"confirmTitle": "Really send email?",
+			"description": "Choose a database template and send it to this user.",
+			"error": "Email could not be sent.",
+			"loadError": "Email templates could not be loaded.",
+			"loading": "Loading templates…",
+			"placeholder": "Select template",
+			"preview": "Preview",
+			"selectLabel": "Template",
+			"send": "Send template",
+			"sending": "Sending…",
+			"success": "Email sent successfully.",
+			"title": "Send email template",
+			"templates": {
+				"auth": {
+					"confirmation": "Email Confirmation",
+					"email_change": "Confirm Email Change",
+					"email_changed": "Email Address Changed",
+					"invite": "Invitation",
+					"magic_link": "Magic Link",
+					"password_changed": "Password Changed",
+					"reauthentication": "Reauthentication",
+					"recovery": "Password Recovery"
+				},
+				"custom": {
+					"account_deleted": "Account Deleted",
+					"claim_approved": "Claim Approved",
+					"claim_rejected": "Claim Rejected",
+					"compliance_resend": "Compliance Resend",
+					"role_district_approved": "District Role Approved",
+					"role_district_rejected": "District Role Rejected",
+					"role_network_approved": "Network Role Approved",
+					"role_network_rejected": "Network Role Rejected",
+					"role_state_approved": "State Role Approved",
+					"role_state_rejected": "State Role Rejected",
+					"submission_approved": "Submission Approved",
+					"submission_rejected": "Submission Rejected"
+				}
+			}
 		},
 		"roleEmails": {
 			"district": {
@@ -1710,5 +1829,11 @@
 		"newsletter": "Sign up for the newsletter",
 		"subtitle": "A project by Kulturraum Berlin gGmbH",
 		"title": "The Berlin cultural register: The city's culture at a glance"
+	},
+	"institutionModalCloseConfirmation": {
+		"title": "Close form?",
+		"description": "Your unsaved changes will be lost.",
+		"confirm": "Close",
+		"cancel": "Cancel"
 	}
 }

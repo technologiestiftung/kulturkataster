@@ -24,7 +24,7 @@ export function ForgotPasswordForm({ onSuccess }: { onSuccess?: () => void }) {
 		try {
 			const result = await requestPasswordReset(email);
 			if (!result.ok) {
-				setErrorMessage(result.error ?? t("auth.forgot.errorFallback"));
+				setErrorMessage(t("auth.forgot.errorFallback"));
 				return;
 			}
 			if (onSuccess) {

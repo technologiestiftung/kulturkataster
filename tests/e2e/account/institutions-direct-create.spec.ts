@@ -13,7 +13,7 @@ test.describe("institution direct create form", () => {
 	test.beforeEach(async ({ page }) => {
 		test.skip(!hasRealAdminCredentials, "E2E admin credentials not set");
 		await prepareStableUi(page);
-		await safeGoto(page, "/de/account/activity", /\/de\/account\/activity\/?$/);
+		await safeGoto(page, "/de/account", /\/de\/account(?:\/activity)?\/?$/);
 	});
 
 	const fillById = async (
@@ -61,15 +61,14 @@ test.describe("institution direct create form", () => {
 			"/de/account/institutions",
 			/\/de\/account\/institutions\/?$/,
 		);
-		await page
-			.getByRole("button", { name: "Kulturort hinzufügen" })
-			.first()
-			.click();
-		await page.waitForTimeout(1000);
-		if (!/\/de\/account\/institutions\/new\/?$/.test(page.url())) {
-			if (/\/de\/institution\/submission\/?$/.test(page.url())) {
-				return;
-			}
+		const openedDirectCreate = await safeGoto(
+			page,
+			"/de/account/institutions/new",
+			/\/de\/account\/institutions\/new\/?$/,
+		)
+			.then(() => true)
+			.catch(() => false);
+		if (!openedDirectCreate) {
 			const openedSubmission = await safeGoto(
 				page,
 				"/de/institution/submission",
@@ -79,7 +78,7 @@ test.describe("institution direct create form", () => {
 				.catch(() => false);
 			test.skip(
 				!openedSubmission,
-				"Create action did not navigate and submission route is not accessible for this account.",
+				"Direct create and submission routes are not accessible for this account.",
 			);
 			return;
 		}

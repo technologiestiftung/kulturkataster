@@ -75,6 +75,11 @@ const submissionReviewSchema = z
 		}),
 		internalNotes: optionalTextSchema().transform((value) => value ?? null),
 		grantSubmitterAccess: z.boolean().optional().default(false),
+		attachUserIds: z.array(z.string().uuid()).optional().default([]),
+		attachGroupIds: z
+			.array(positiveIntegerSchema("Group id must be positive."))
+			.optional()
+			.default([]),
 	})
 	.transform((value): SubmissionReviewPayload => value);
 

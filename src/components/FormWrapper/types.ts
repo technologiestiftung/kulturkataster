@@ -25,9 +25,11 @@ export type FieldType =
 	| "addressMap"
 	| "filterPanel"
 	| "actionPanel"
+	| "custom"
 	| "tablePermissions"
 	| "fieldPermissions"
 	| "fundingSources"
+	| "keyValue"
 	| "section";
 
 export type PermissionAction = "read" | "create" | "update" | "delete";
@@ -183,6 +185,7 @@ type FormWrapperNonSectionFieldConfig = {
 		className?: string;
 		icon?: ReactNode;
 	};
+	customField?: ReactNode;
 	filterPanel?: {
 		categoryGroups: Category[];
 		districts: string[];
@@ -219,6 +222,15 @@ type FormWrapperNonSectionFieldConfig = {
 		addButtonLabel?: string;
 		removeButtonLabel?: string;
 		maxItems?: number;
+	};
+	keyValue?: {
+		keyPlaceholder?: string;
+		valuePlaceholder?: string;
+		addButtonLabel?: string;
+		removeButtonLabel?: string;
+		allowAdd?: boolean;
+		keyReadOnly?: boolean;
+		keyLabels?: Record<string, string>;
 	};
 
 	// For select, radio, checkbox, multiselect

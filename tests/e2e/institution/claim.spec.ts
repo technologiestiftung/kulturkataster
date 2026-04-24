@@ -13,7 +13,7 @@ test.describe("institution claim flow", () => {
 	test.beforeEach(async ({ page }) => {
 		test.skip(!hasRealUserCredentials, "E2E user credentials not set");
 		await prepareStableUi(page);
-		await safeGoto(page, "/de/account/activity", /\/de\/account\/activity\/?$/);
+		await safeGoto(page, "/de/account", /\/de\/account(?:\/activity)?\/?$/);
 	});
 
 	test("supports search, count, multi-select, and returns to institutions table", async ({

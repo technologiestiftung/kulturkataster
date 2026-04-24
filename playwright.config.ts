@@ -14,6 +14,8 @@ export default defineConfig({
 		timeout: 5_000,
 	},
 	workers: 1,
+	forbidOnly: !!process.env.CI,
+	maxFailures: 1,
 	use: {
 		baseURL,
 		trace: "on-first-retry",

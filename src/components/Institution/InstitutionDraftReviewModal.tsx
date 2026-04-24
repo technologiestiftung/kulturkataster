@@ -17,6 +17,8 @@ import { showSuccessToast } from "@/lib/utils/feedbackToast";
 import { formatUserDisplayName } from "@/lib/utils/userName";
 import { formatDateWithLocale } from "@/lib/utils/dateUtils";
 import { Card, CardContent } from "@/components/ui/card";
+import { MultiSelectModal } from "@/components/MultiSelect/MultiSelectModal";
+import { triggerAccountRefresh } from "@/components/Account/AccountAutoRefresh";
 
 type InstitutionDraftReviewModalProps = {
 	submissionId?: number;
@@ -45,6 +47,8 @@ export function InstitutionDraftReviewModal({
 	const institutionPermissions = useAccountStore(
 		(state) => state.institutionPermissions,
 	);
+	const allUsers = useAccountStore((state) => state.users);
+	const allGroups = useAccountStore((state) => state.groups);
 	const upsertSubmission = useAccountStore((state) => state.upsertSubmission);
 	const removeSubmission = useAccountStore((state) => state.removeSubmission);
 	const submissions = useMemo(
@@ -56,6 +60,20 @@ export function InstitutionDraftReviewModal({
 			),
 		[allSubmissions],
 	);
+	const linkedCategorySubmissions = useMemo(
+		() =>
+			allSubmissions.filter((submission) => {
+				if (submission.entity_type !== "category") return false;
+				const meta =
+					submission.meta &&
+					typeof submission.meta === "object" &&
+					!Array.isArray(submission.meta)
+						? (submission.meta as Record<string, unknown>)
+						: {};
+				return meta.institutionSubmissionId === submissionId;
+			}),
+		[allSubmissions, submissionId],
+	);
 
 	const {
 		hasSubmissionId,
@@ -66,6 +84,10 @@ export function InstitutionDraftReviewModal({
 		setInternalNotes,
 		grantSubmitterAccess,
 		setGrantSubmitterAccess,
+		attachUserIds,
+		setAttachUserIds,
+		attachGroupIds,
+		setAttachGroupIds,
 		submitting,
 		error,
 		handleReview,
@@ -91,30 +113,23 @@ export function InstitutionDraftReviewModal({
 			const success = await handleReview(status);
 			if (!success) {
 				setReviewError(
-					error ??
-						t("institutionFormModal.review.errorDescription", {
-							defaultValue:
-								"Please try again or contact support if the issue persists.",
-						}),
+					error ?? t("institutionFormModal.review.errorDescription"),
 				);
 				return;
 			}
 			closeModal();
+			triggerAccountRefresh(
+				status === "approved"
+					? ["submissions", "institutions", "users", "groups", "entityAudits"]
+					: ["submissions", "entityAudits"],
+			);
 			showSuccessToast(
 				status === "approved"
-					? t("institutionFormModal.review.success.approve.title", {
-							defaultValue: "Submission approved",
-						})
-					: t("institutionFormModal.review.success.reject.title", {
-							defaultValue: "Submission rejected",
-						}),
+					? t("institutionFormModal.review.success.approve.title")
+					: t("institutionFormModal.review.success.reject.title"),
 				status === "approved"
-					? t("institutionFormModal.review.success.approve.description", {
-							defaultValue: "The submission has been approved successfully.",
-						})
-					: t("institutionFormModal.review.success.reject.description", {
-							defaultValue: "The submission has been rejected successfully.",
-						}),
+					? t("institutionFormModal.review.success.approve.description")
+					: t("institutionFormModal.review.success.reject.description"),
 			);
 			if (shouldRefresh) {
 				queueMicrotask(() => router.refresh());
@@ -136,23 +151,37 @@ export function InstitutionDraftReviewModal({
 		const success = await handleSaveNote();
 		if (!success) {
 			setReviewError(
-				error ??
-					t("institutionFormModal.review.errorDescription", {
-						defaultValue:
-							"Please try again or contact support if the issue persists.",
-					}),
+				error ?? t("institutionFormModal.review.errorDescription"),
 			);
 			return;
 		}
+		triggerAccountRefresh(["submissions", "entityAudits"]);
 		showSuccessToast(
-			t("institutionFormModal.review.success.saveNotes.title", {
-				defaultValue: "Notes saved",
-			}),
-			t("institutionFormModal.review.success.saveNotes.description", {
-				defaultValue: "Your review notes have been saved.",
-			}),
+			t("institutionFormModal.review.success.saveNotes.title"),
+			t("institutionFormModal.review.success.saveNotes.description"),
 		);
 	}, [error, handleSaveNote, resolvedSubmissionWithFallback, t]);
+
+	const userOptions = useMemo(
+		() =>
+			allUsers.map((user) => ({
+				value: user.id,
+				label: formatUserDisplayName(user) ?? user.email,
+				searchText: `${formatUserDisplayName(user) ?? ""} ${user.email}`,
+			})),
+		[allUsers],
+	);
+
+	const groupOptions = useMemo(
+		() =>
+			allGroups.map((group) => ({
+				value: String(group.id),
+				label: group.name,
+				searchText: group.name,
+			})),
+		[allGroups],
+	);
+
 	if (shouldAutoCloseMissingSubmission) return null;
 	if (!resolvedSubmissionWithFallback) {
 		return null;
@@ -203,9 +232,7 @@ export function InstitutionDraftReviewModal({
 				reviewError
 					? {
 							open: true,
-							title: t("institutionFormModal.review.errorTitle", {
-								defaultValue: "Review failed",
-							}),
+							title: t("institutionFormModal.review.errorTitle"),
 							description: reviewError,
 							confirmLabel: t("close"),
 							onConfirm: () => setReviewError(null),
@@ -226,6 +253,47 @@ export function InstitutionDraftReviewModal({
 						);
 					}}
 				/>
+				{linkedCategorySubmissions.length > 0 ? (
+					<div className="space-x-3 flex">
+						<div className="body2 font-bold">
+							{t("institutionFormModal.review.linkedCategorySubmissions", {
+								defaultValue: "Verknüpfte Kategorie-Vorschläge",
+							})}
+						</div>
+						<div className="flex flex-wrap gap-2">
+							{linkedCategorySubmissions.map((categorySubmission) => {
+								const data =
+									categorySubmission.data &&
+									typeof categorySubmission.data === "object" &&
+									!Array.isArray(categorySubmission.data)
+										? (categorySubmission.data as Record<string, unknown>)
+										: {};
+								const label =
+									typeof data.key === "string" && data.key.trim().length > 0
+										? data.key
+										: `#${categorySubmission.id}`;
+								return (
+									<Button
+										key={categorySubmission.id}
+										type="button"
+										variant="tertiary"
+										size="inline"
+										className="underline"
+										onClick={() =>
+											router.push(
+												toLocalePath(
+													`/account/submissions/${categorySubmission.id}`,
+												),
+											)
+										}
+									>
+										{label}
+									</Button>
+								);
+							})}
+						</div>
+					</div>
+				) : null}
 				{canReviewCurrentSubmission && (
 					<div className="space-y-3">
 						<div className="flex items-center justify-between">
@@ -244,9 +312,7 @@ export function InstitutionDraftReviewModal({
 							{resolvedSubmissionWithFallback.notes?.length ? (
 								<div className="space-y-2">
 									<div className="body2 ">
-										{t("institutionFormModal.review.previousNotesLabel", {
-											defaultValue: "Previous notes",
-										})}
+										{t("institutionFormModal.review.previousNotesLabel")}
 									</div>
 									<div className="space-y-2">
 										{resolvedSubmissionWithFallback.notes.map((note) => (
@@ -296,13 +362,57 @@ export function InstitutionDraftReviewModal({
 										disabled={submitting}
 									/>
 									<span className="body2">
-										{t("institutionFormModal.review.grantSubmitterAccess", {
-											defaultValue:
-												"Grant the submitter access to this institution after approval.",
-										})}
+										{t("institutionFormModal.review.grantSubmitterAccess")}
 									</span>
 								</label>
 							) : null}
+							{(userOptions.length > 0 || groupOptions.length > 0) && (
+								<div className="space-y-3">
+									<span className="body2">
+										{t("institutionFormModal.review.attachOnApproval")}
+									</span>
+									<div className="flex flex-col gap-3">
+										{userOptions.length > 0 && (
+											<div className="flex-1">
+												<MultiSelectModal
+													title={t(
+														"institutionFormModal.review.attachUsers.title",
+													)}
+													placeholder={t(
+														"institutionFormModal.review.attachUsers.placeholder",
+													)}
+													searchPlaceholder={t(
+														"institutionFormModal.review.attachUsers.searchPlaceholder",
+													)}
+													options={userOptions}
+													selected={attachUserIds}
+													onChange={setAttachUserIds}
+													disabled={submitting}
+												/>
+											</div>
+										)}
+										{groupOptions.length > 0 && (
+											<div className="flex-1">
+												<MultiSelectModal
+													title={t(
+														"institutionFormModal.review.attachGroups.title",
+													)}
+													placeholder={t(
+														"institutionFormModal.review.attachGroups.placeholder",
+													)}
+													searchPlaceholder={t(
+														"institutionFormModal.review.attachGroups.searchPlaceholder",
+													)}
+													options={groupOptions}
+													selected={attachGroupIds.map(String)}
+													onChange={(ids) => setAttachGroupIds(ids.map(Number))}
+													disabled={submitting}
+												/>
+											</div>
+										)}
+									</div>
+								</div>
+							)}
 							<div className="flex items-center justify-end gap-3">
 								<Button
 									type="button"

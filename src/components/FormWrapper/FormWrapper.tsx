@@ -22,7 +22,7 @@ const getAllFields = (
 		if (field.type === "section") {
 			if (!field.fields) return;
 			result.push(...getAllFields(field.fields));
-		} else if (field.type !== "actionPanel") {
+		} else if (field.type !== "actionPanel" && field.type !== "custom") {
 			result.push(field);
 		}
 	});
@@ -91,7 +91,7 @@ const collectValidationErrors = (
 		if (field.condition && !field.condition(formData)) {
 			return;
 		}
-		if (field.type === "actionPanel") {
+		if (field.type === "actionPanel" || field.type === "custom") {
 			return;
 		}
 
@@ -113,7 +113,7 @@ const collectValidationErrors = (
 const buildTouchedMap = (fields: FormWrapperFieldConfig[]) => {
 	const allTouched: Record<string, boolean> = {};
 	fields.forEach((field) => {
-		if (field.type === "actionPanel") {
+		if (field.type === "actionPanel" || field.type === "custom") {
 			return;
 		}
 		allTouched[field.name] = true;
@@ -200,7 +200,7 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 		});
 	};
 
-	const validateForm = (): boolean => {
+	const validateForm = (): Record<string, string> => {
 		const normalizedFormData = Object.fromEntries(
 			allFields.map((field) => [
 				field.name,
@@ -215,14 +215,15 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 		);
 		setFormData((prev) => ({ ...prev, ...normalizedFormData }));
 		setErrors(newErrors);
-		return Object.keys(newErrors).length === 0;
+		return newErrors;
 	};
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 
 		setTouched(buildTouchedMap(allFields));
-		if (validateForm()) {
+		const validationErrors = validateForm();
+		if (Object.keys(validationErrors).length === 0) {
 			setFormError(null);
 			const normalizedFormData = Object.fromEntries(
 				allFields.map((field) => [
@@ -231,9 +232,11 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 				]),
 			);
 			setFormData((prev) => ({ ...prev, ...normalizedFormData }));
-			await config.onSubmit({ ...formData, ...normalizedFormData });
-		} else {
-			setFormError(t("alert.errorFixFields"));
+			try {
+				await config.onSubmit({ ...formData, ...normalizedFormData });
+			} catch (error) {
+				setFormError(error instanceof Error ? error.message : t("alert.error"));
+			}
 		}
 	};
 
