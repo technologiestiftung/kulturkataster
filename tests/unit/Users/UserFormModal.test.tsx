@@ -49,15 +49,28 @@ vi.mock("@/icons/mail.svg", () => ({ default: () => null }));
 
 type MockFieldConfig = {
 	afterField?: React.ReactNode;
+	customField?: React.ReactNode;
 	fields?: MockFieldConfig[];
 };
 
-const collectAfterFields = (fields?: MockFieldConfig[]): React.ReactNode[] => {
+const collectExtraFields = (fields?: MockFieldConfig[]): React.ReactElement[] => {
 	if (!fields) return [];
-	const result: React.ReactNode[] = [];
+	const result: React.ReactElement[] = [];
+	let index = 0;
 	for (const field of fields) {
-		if (field.afterField) result.push(field.afterField);
-		if (field.fields) result.push(...collectAfterFields(field.fields));
+		if (field.afterField) {
+			result.push(
+				<div key={`after-${index}`}>{field.afterField}</div>,
+			);
+			index += 1;
+		}
+		if (field.customField) {
+			result.push(
+				<div key={`custom-${index}`}>{field.customField}</div>,
+			);
+			index += 1;
+		}
+		if (field.fields) result.push(...collectExtraFields(field.fields));
 	}
 	return result;
 };
@@ -90,7 +103,7 @@ vi.mock("@/components/FormWrapper", () => ({
 			>
 				Submit
 			</button>
-			{collectAfterFields(config.fields)}
+			{collectExtraFields(config.fields)}
 		</div>
 	),
 }));
