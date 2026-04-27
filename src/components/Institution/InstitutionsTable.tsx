@@ -619,7 +619,7 @@ export function InstitutionsTable() {
 				enableSorting: true,
 				size: 140,
 				cell: ({ row }) =>
-					formatInstitutionBoolean(row.original.shared_use_allowed),
+					formatInstitutionBoolean(row.original.shared_use_allowed, tEnum),
 			},
 			{
 				accessorKey: "shared_use_info",
