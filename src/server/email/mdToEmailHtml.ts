@@ -29,26 +29,61 @@ const S = {
 	btn: "display:inline-block;background:#c288ff;color:#161616;text-decoration:none;padding:12px 18px;border-radius:4px;font-size:16px;line-height:1.5;font-weight:700;margin:0 0 16px 0;",
 };
 
-// ─── Rehype plugin: standalone link → button ──────────────────────────────────
+const STANDALONE_MARKDOWN_LINK_PATTERN = /^\[([^\]]+)\]\((.+)\)$/s;
+const TAG_STYLE_MAP: Partial<Record<Element["tagName"], string>> = {
+	strong: "font-weight:700;",
+	ul: "margin:0 0 16px 0;padding-left:24px;",
+	li: S.p,
+	hr: "border:none;border-top:1px solid #e2dfdb;margin:24px 0;",
+};
+
+function createButtonLinkFromMarkdownText(value: string): Element | null {
+	const match = value.trim().match(STANDALONE_MARKDOWN_LINK_PATTERN);
+	if (!match) return null;
+
+	const [, label, href] = match;
+	return {
+		type: "element",
+		tagName: "a",
+		properties: {
+			href,
+			style: S.btn,
+		},
+		children: [{ type: "text", value: label }],
+	};
+}
+
+function getButtonAnchor(node: Element): Element | null {
+	const nonEmpty = node.children.filter(
+		(c) => !(c.type === "text" && !(c as Text).value.trim()),
+	);
+	if (nonEmpty.length !== 1) return null;
+
+	const child = nonEmpty[0];
+	if (child.type === "element" && (child as Element).tagName === "a") {
+		return child as Element;
+	}
+	if (child.type === "text") {
+		return createButtonLinkFromMarkdownText((child as Text).value);
+	}
+	return null;
+}
 
 function rehypeEmailButton() {
 	return (tree: Parameters<typeof visit>[0]) => {
 		visit(tree, "element", (node: Element) => {
 			if (node.tagName !== "p") return;
 
-			const nonEmpty = node.children.filter(
+			const child = node.children.find(
 				(c) => !(c.type === "text" && !(c as Text).value.trim()),
 			);
-			if (nonEmpty.length !== 1) return;
+			const a = getButtonAnchor(node);
+			if (!a) return;
 
-			const child = nonEmpty[0];
-			if (child.type !== "element" || (child as Element).tagName !== "a")
-				return;
-
-			// Inject button styles onto the <a>
-			const a = child as Element;
+			if (a !== child) {
+				node.children = [a];
+			}
 			a.properties = { ...a.properties, style: S.btn };
-			// Remove default paragraph margin — button has its own
 			node.properties = { ...node.properties, style: "margin:0 0 16px 0;" };
 		});
 	};
@@ -56,50 +91,40 @@ function rehypeEmailButton() {
 
 // ─── Rehype plugin: add inline styles to common elements ─────────────────────
 
+function applyEmailStyles(node: Element) {
+	if (node.tagName === "p") {
+		if (!node.properties?.style) {
+			node.properties = {
+				...node.properties,
+				style: `${S.p}word-break:break-word;`,
+			};
+		}
+		return;
+	}
+
+	if (node.tagName === "a") {
+		if (!node.properties?.style) {
+			node.properties = {
+				...node.properties,
+				style: "color:#161616;text-decoration:underline;",
+			};
+		}
+		return;
+	}
+
+	const style = TAG_STYLE_MAP[node.tagName];
+	if (!style) return;
+
+	node.properties = {
+		...node.properties,
+		style,
+	};
+}
+
 function rehypeEmailStyles() {
 	return (tree: Parameters<typeof visit>[0]) => {
 		visit(tree, "element", (node: Element) => {
-			switch (node.tagName) {
-				case "p":
-					if (!node.properties?.style) {
-						node.properties = {
-							...node.properties,
-							style: `${S.p}word-break:break-word;`,
-						};
-					}
-					break;
-				case "strong":
-					node.properties = {
-						...node.properties,
-						style: "font-weight:700;",
-					};
-					break;
-				case "a":
-					if (!node.properties?.style) {
-						node.properties = {
-							...node.properties,
-							style: "color:#161616;text-decoration:underline;",
-						};
-					}
-					break;
-				case "ul":
-					node.properties = {
-						...node.properties,
-						style: "margin:0 0 16px 0;padding-left:24px;",
-					};
-					break;
-				case "li":
-					node.properties = { ...node.properties, style: S.p };
-					break;
-				case "hr":
-					node.properties = {
-						...node.properties,
-						style: "border:none;border-top:1px solid #e2dfdb;margin:24px 0;",
-					};
-					break;
-				default:
-					break;
-			}
+			applyEmailStyles(node);
 		});
 	};
 }

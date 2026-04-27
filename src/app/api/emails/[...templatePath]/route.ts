@@ -16,9 +16,7 @@ export async function GET(
 	try {
 		const { templatePath } = await params;
 		const raw = await loadEmailTemplateBody(templatePath);
-		const html = isMarkdownTemplate(raw)
-			? await mdToEmailHtml(raw, "[Preview]")
-			: raw;
+		const html = isMarkdownTemplate(raw) ? await mdToEmailHtml(raw, "") : raw;
 		return new NextResponse(html, {
 			headers: {
 				"content-type": "text/html; charset=utf-8",
