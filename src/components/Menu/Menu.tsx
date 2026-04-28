@@ -36,7 +36,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { usePathname, useRouter } from "next/navigation";
 import { LayerTreeContent } from "@/components/Map/LayerTree/LayerTree";
-import { useAccountStore } from "@/lib/store/accountStore";
 
 type MenuItem = {
 	id: string;
@@ -197,16 +196,18 @@ function MobileSheetHeader({
 
 export function Menu({
 	sidebar,
+	isLoggedIn,
 	...props
-}: React.ComponentProps<typeof Sidebar> & { sidebar: React.ReactNode }) {
+}: React.ComponentProps<typeof Sidebar> & {
+	sidebar: React.ReactNode;
+	isLoggedIn: boolean;
+}) {
 	const { setOpen, setOpenMobile, isMobile } = useSidebar();
 	const { t } = useTranslation("common");
 	const router = useRouter();
 	const toLocalePath = useLocalePath();
 	const pathname = usePathname();
 	const { setFirstTimeUser } = useAppStore();
-	const { currentProfile } = useAccountStore();
-	const isLoggedIn = Boolean(currentProfile);
 
 	const normalizedPath = useMemo(
 		() => (pathname ? pathname.replace(/\/$/, "") : ""),

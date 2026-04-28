@@ -1,4 +1,8 @@
 {
+	"boolean": {
+		"true": "Ja",
+		"false": "Nein"
+	},
 	"category": {
 		"cinemas": "Kinos",
 		"clubs_music_venues": "Clubs und Musikspielstätten",

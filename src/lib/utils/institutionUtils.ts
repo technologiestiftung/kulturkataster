@@ -64,9 +64,12 @@ export const formatInstitutionDate = (value?: Date | string | null) => {
 	return date.toLocaleDateString();
 };
 
-export const formatInstitutionBoolean = (value?: boolean | null) => {
-	if (value === true) return "Yes";
-	if (value === false) return "No";
+export const formatInstitutionBoolean = (
+	value: boolean | null | undefined,
+	t: (key: string) => string,
+) => {
+	if (value === true) return t("field_names.shared_use_allowed.options.yes");
+	if (value === false) return t("field_names.shared_use_allowed.options.no");
 	return "—";
 };
 
