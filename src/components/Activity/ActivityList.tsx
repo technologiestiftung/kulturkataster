@@ -522,9 +522,10 @@ export function ActivityList({
 	const institutionPermissions = useAccountStore(
 		(state) => state.institutionPermissions,
 	);
-	const canCreateInstitutions = institutionPermissions.create;
-	const canUpdateInstitutions = institutionPermissions.update;
-	const canReviewSubmissions = institutionPermissions.reviewSubmission ?? false;
+	const canCreateInstitutions = institutionPermissions?.create ?? false;
+	const canUpdateInstitutions = institutionPermissions?.update ?? false;
+	const canReviewSubmissions =
+		institutionPermissions?.reviewSubmission ?? false;
 	const submissionIdSet = useMemo(
 		() => new Set(submissions.map((submission) => submission.id)),
 		[submissions],

@@ -1,3 +1,10 @@
+// Mock SVG imports for icons
+vi.mock('@/icons/minus.svg', () => ({
+	default: () => <svg data-testid="minus-icon" />
+}));
+vi.mock('@/icons/plus.svg', () => ({
+	default: () => <svg data-testid="plus-icon" />
+}));
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 import {
 	act,
