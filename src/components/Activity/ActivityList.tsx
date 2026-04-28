@@ -7,18 +7,11 @@ import type { EntityAudit } from "@/types/entityAudit";
 import { useTranslation } from "react-i18next";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { formatUserDisplayName } from "@/lib/utils/userName";
-import { SearchInput } from "@/components/ui/search-input";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select";
 import Send from "@/icons/send.svg";
 import Edit from "@/icons/edit.svg";
 import { EmptyActionState } from "@/components/EmptyActionState";
 import { ActivityListSkeleton } from "./ActivityListSkeleton";
+import { ActivityFilters } from "./ActivityFilters";
 
 interface ActivityListProps {
 	activities?: Activity[];
@@ -823,121 +816,27 @@ export function ActivityList({
 
 	return (
 		<div className="space-y-4">
-			<div className="gap-3 md:grid-cols-2 xl:grid-cols-6 md:grid hidden">
-				<SearchInput
-					value={searchQuery}
-					onChange={(event) => setSearchQuery(event.target.value)}
-					placeholder={t("auth.account.activity.filters.search", {
-						defaultValue: "Aktivität durchsuchen",
-					})}
-					containerClassName="w-full"
-				/>
-				<Select value={statusFilter} onValueChange={setStatusFilter}>
-					<SelectTrigger variant="pill">
-						<SelectValue />
-					</SelectTrigger>
-					<SelectContent>
-						<SelectItem value="all">
-							{t("auth.account.activity.filters.allStatuses", {
-								defaultValue: "Alle Status",
-							})}
-						</SelectItem>
-						{statusOptions.map((status) => (
-							<SelectItem key={status} value={status}>
-								{getStatusLabel(status, t)}
-							</SelectItem>
-						))}
-					</SelectContent>
-				</Select>
-				<Select value={typeFilter} onValueChange={setTypeFilter}>
-					<SelectTrigger variant="pill">
-						<SelectValue />
-					</SelectTrigger>
-					<SelectContent>
-						<SelectItem value="all">
-							{t("auth.account.activity.filters.allTypes", {
-								defaultValue: "Alle Typen",
-							})}
-						</SelectItem>
-						{typeOptions.map((eventType) => (
-							<SelectItem key={eventType} value={eventType}>
-								{getEventTypeLabel(eventType, t)}
-							</SelectItem>
-						))}
-					</SelectContent>
-				</Select>
-				<Select value={entityTypeFilter} onValueChange={setEntityTypeFilter}>
-					<SelectTrigger variant="pill">
-						<SelectValue />
-					</SelectTrigger>
-					<SelectContent>
-						<SelectItem value="all">
-							{t("auth.account.activity.filters.allEntities", {
-								defaultValue: "Alle Entitäten",
-							})}
-						</SelectItem>
-						{entityTypeOptions.map((entityType) => (
-							<SelectItem key={entityType} value={entityType}>
-								{getEntityTypeLabel(entityType, t)}
-							</SelectItem>
-						))}
-					</SelectContent>
-				</Select>
-				<Select value={actorFilter} onValueChange={setActorFilter}>
-					<SelectTrigger variant="pill">
-						<SelectValue />
-					</SelectTrigger>
-					<SelectContent>
-						<SelectItem value="all">
-							{t("auth.account.activity.filters.allUsers", {
-								defaultValue: "Alle Nutzer*innen",
-							})}
-						</SelectItem>
-						{actorOptions.map((actor) => (
-							<SelectItem key={actor} value={actor}>
-								{actor}
-							</SelectItem>
-						))}
-					</SelectContent>
-				</Select>
-				<Select value={dateFilter} onValueChange={setDateFilter}>
-					<SelectTrigger variant="pill">
-						<SelectValue />
-					</SelectTrigger>
-					<SelectContent>
-						<SelectItem value="all">
-							{t("auth.account.activity.filters.allDates", {
-								defaultValue: "Alle",
-							})}
-						</SelectItem>
-						<SelectItem value="today">
-							{t("auth.account.activity.filters.dateValue.today", {
-								defaultValue: "Heute",
-							})}
-						</SelectItem>
-						<SelectItem value="last_7_days">
-							{t("auth.account.activity.filters.dateValue.last7Days", {
-								defaultValue: "Letzte 7 Tage",
-							})}
-						</SelectItem>
-						<SelectItem value="last_30_days">
-							{t("auth.account.activity.filters.dateValue.last30Days", {
-								defaultValue: "Letzte 30 Tage",
-							})}
-						</SelectItem>
-						<SelectItem value="this_month">
-							{t("auth.account.activity.filters.dateValue.thisMonth", {
-								defaultValue: "Dieser Monat",
-							})}
-						</SelectItem>
-						<SelectItem value="last_month">
-							{t("auth.account.activity.filters.dateValue.lastMonth", {
-								defaultValue: "Letzter Monat",
-							})}
-						</SelectItem>
-					</SelectContent>
-				</Select>
-			</div>
+			<ActivityFilters
+				searchQuery={searchQuery}
+				onSearchChange={setSearchQuery}
+				statusFilter={statusFilter}
+				onStatusChange={setStatusFilter}
+				typeFilter={typeFilter}
+				onTypeChange={setTypeFilter}
+				entityTypeFilter={entityTypeFilter}
+				onEntityTypeChange={setEntityTypeFilter}
+				actorFilter={actorFilter}
+				onActorChange={setActorFilter}
+				dateFilter={dateFilter}
+				onDateChange={setDateFilter}
+				statusOptions={statusOptions}
+				typeOptions={typeOptions}
+				entityTypeOptions={entityTypeOptions}
+				actorOptions={actorOptions}
+				getStatusLabel={(status) => getStatusLabel(status, t)}
+				getEventTypeLabel={(eventType) => getEventTypeLabel(eventType, t)}
+				getEntityTypeLabel={(entityType) => getEntityTypeLabel(entityType, t)}
+			/>
 			<div className="divide-y divide-border">{renderListContent()}</div>
 		</div>
 	);
