@@ -4,6 +4,79 @@ import {
 	buildInstitutionFormInitialValues,
 } from "@/lib/utils/institutionFormAdapter";
 
+describe("buildInstitutionFormInitialValues - shared_use_allowed", () => {
+	const baseInstitution = {
+		categories: [],
+		tags: [],
+		users: [],
+		groups: [],
+		created_at: new Date(),
+		updated_at: new Date(),
+	} as never;
+
+	it("initialises shared_use_allowed as boolean true when institution has true", () => {
+		const result = buildInstitutionFormInitialValues({
+			...baseInstitution,
+			id: 1,
+			name: "Test",
+			shared_use_allowed: true,
+		});
+		expect(result.shared_use_allowed).toBe(true);
+	});
+
+	it("initialises shared_use_allowed as boolean false when institution has false", () => {
+		const result = buildInstitutionFormInitialValues({
+			...baseInstitution,
+			id: 1,
+			name: "Test",
+			shared_use_allowed: false,
+		});
+		expect(result.shared_use_allowed).toBe(false);
+	});
+
+	it("initialises shared_use_allowed as false when institution field is missing", () => {
+		const result = buildInstitutionFormInitialValues({
+			...baseInstitution,
+			id: 1,
+			name: "Test",
+		});
+		expect(result.shared_use_allowed).toBe(false);
+	});
+
+	it("does not initialise shared_use_allowed as a string", () => {
+		const result = buildInstitutionFormInitialValues({
+			...baseInstitution,
+			id: 1,
+			name: "Test",
+			shared_use_allowed: true,
+		});
+		expect(typeof result.shared_use_allowed).toBe("boolean");
+	});
+});
+
+describe("buildInstitutionForFormFromDraft - shared_use_allowed", () => {
+	it("maps boolean true to boolean true", () => {
+		const result = buildInstitutionForFormFromDraft({
+			name: "Draft",
+			shared_use_allowed: true,
+		});
+		expect(result.shared_use_allowed).toBe(true);
+	});
+
+	it("maps boolean false to boolean false", () => {
+		const result = buildInstitutionForFormFromDraft({
+			name: "Draft",
+			shared_use_allowed: false,
+		});
+		expect(result.shared_use_allowed).toBe(false);
+	});
+
+	it("maps missing shared_use_allowed to false", () => {
+		const result = buildInstitutionForFormFromDraft({ name: "Draft" });
+		expect(result.shared_use_allowed).toBe(false);
+	});
+});
+
 describe("buildInstitutionForFormFromDraft", () => {
 	it("keeps Date values for date fields", () => {
 		const rentalEnd = new Date("2030-12-31T00:00:00.000Z");

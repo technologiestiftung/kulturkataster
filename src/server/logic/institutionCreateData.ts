@@ -1,6 +1,7 @@
 import type { Prisma } from "@/generated/prisma";
 import type { InstitutionForm } from "@/types";
 import { normalizeFundingSources } from "@/lib/utils/formUtils";
+import { buildCreateContactPersonRelation } from "./institutionContactPersonData";
 
 const buildAddressCreate = (address?: InstitutionForm["address"] | null) => {
 	if (!address) return undefined;
@@ -9,14 +10,6 @@ const buildAddressCreate = (address?: InstitutionForm["address"] | null) => {
 		return { connect: { id } };
 	}
 	return { create: data };
-};
-
-const buildContactPersonConnect = (contactPersonId?: number | null) => {
-	if (typeof contactPersonId === "undefined") return undefined;
-	if (contactPersonId === null) {
-		return { disconnect: true };
-	}
-	return { connect: { id: contactPersonId } };
 };
 
 export const buildInstitutionCreateData = (
@@ -75,7 +68,7 @@ export const buildInstitutionCreateData = (
 	creator: { connect: { id: currentUserId! } },
 	updater: currentUserId ? { connect: { id: currentUserId } } : undefined,
 	address: buildAddressCreate(input.address),
-	contact_person: buildContactPersonConnect(input.contact_person_id),
+	contact_person: buildCreateContactPersonRelation(input),
 	categories: input.categoryIds
 		? { connect: input.categoryIds.map((id) => ({ id })) }
 		: undefined,

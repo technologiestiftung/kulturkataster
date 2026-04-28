@@ -479,6 +479,13 @@
 		"emptyMessage": "Keine Gruppen gefunden.",
 		"searchPlaceholder": "Gruppen durchsuchen..."
 	},
+	"infoWrapper": {
+		"diffLabel": {
+			"addition": "Ergänzung: ",
+			"edited": "Bearbeitet: ",
+			"removed": "Entfernt"
+		}
+	},
 	"imprintModal": {
 		"chairman": {
 			"name": "Cerstin Richter-Kotowski, Staatssekretärin der Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt",
@@ -561,12 +568,6 @@
 		},
 		"subtitle": "Kulturraum Berlin gGmbH",
 		"title": "Impressum"
-	},
-	"infoWrapper": {
-		"diffLabel": {
-			"addition": "Ergänzung: ",
-			"edited": "Bearbeitet: "
-		}
 	},
 	"informationModal": {
 		"faq": {
@@ -729,6 +730,12 @@
 			"edit": {
 				"subtitle": "Prüfen und aktualisieren Sie die Angaben zum Kulturort.",
 				"title": "Kulturort bearbeiten"
+			},
+			"submissionCreate": {
+				"title": "Eintrag prüfen und einreichen"
+			},
+			"submissionEdit": {
+				"title": "Änderungen prüfen und einreichen"
 			}
 		},
 		"feedback": {
