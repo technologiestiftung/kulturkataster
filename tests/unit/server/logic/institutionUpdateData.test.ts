@@ -49,4 +49,53 @@ describe("buildInstitutionUpdateData", () => {
 
 		expect(result.status).toBeUndefined();
 	});
+
+	it("upserts a related contact person from inline contact fields", () => {
+		const result = buildInstitutionUpdateData(
+			{
+				id: 1,
+				name: "Updated institution",
+				address: null,
+				contact_person_first_name: "Anna",
+				contact_person_last_name: "Beispiel",
+				contact_person_email: "anna@example.com",
+				contact_person_phone: "+49 30 654321",
+			},
+			"user-1",
+		);
+
+		expect(result.contact_person).toEqual({
+			upsert: {
+				create: {
+					first_name: "Anna",
+					last_name: "Beispiel",
+					email: "anna@example.com",
+					phone: "+49 30 654321",
+				},
+				update: {
+					first_name: "Anna",
+					last_name: "Beispiel",
+					email: "anna@example.com",
+					phone: "+49 30 654321",
+				},
+			},
+		});
+	});
+
+	it("disconnects contact person when inline contact fields are explicitly cleared", () => {
+		const result = buildInstitutionUpdateData(
+			{
+				id: 1,
+				name: "Updated institution",
+				address: null,
+				contact_person_first_name: null,
+				contact_person_last_name: null,
+				contact_person_email: null,
+				contact_person_phone: null,
+			},
+			"user-1",
+		);
+
+		expect(result.contact_person).toEqual({ disconnect: true });
+	});
 });
