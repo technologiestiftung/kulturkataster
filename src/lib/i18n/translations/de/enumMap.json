@@ -1,17 +1,7 @@
 {
-	"berlin_district": {
-		"charlottenburg_wilmersdorf": "Charlottenburg-Wilmersdorf",
-		"friedrichshain_kreuzberg": "Friedrichshain-Kreuzberg",
-		"lichtenberg": "Lichtenberg",
-		"marzahn_hellersdorf": "Marzahn-Hellersdorf",
-		"mitte": "Mitte",
-		"neukoelln": "Neukölln",
-		"pankow": "Pankow",
-		"reinickendorf": "Reinickendorf",
-		"spandau": "Spandau",
-		"steglitz_zehlendorf": "Steglitz-Zehlendorf",
-		"tempelhof_schoeneberg": "Tempelhof-Schöneberg",
-		"treptow_koepenick": "Treptow-Köpenick"
+	"boolean": {
+		"true": "Ja",
+		"false": "Nein"
 	},
 	"category": {
 		"acrobatics": "Akrobatik",

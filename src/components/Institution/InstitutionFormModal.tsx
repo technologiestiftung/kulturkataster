@@ -515,17 +515,17 @@ const buildInstitutionFormConfig = ({
 				type: "section",
 				fields: [
 					{
-						name: "shared_use",
+						name: "shared_use_allowed",
 						label: fieldLabel("shared_use_allowed"),
 						type: "radio",
 						radioVariant: "button",
 						options: [
 							{
-								value: "yes",
+								value: true,
 								label: tEnum("field_names.shared_use_allowed.options.yes"),
 							},
 							{
-								value: "no",
+								value: false,
 								label: tEnum("field_names.shared_use_allowed.options.no"),
 							},
 						],
@@ -538,7 +538,7 @@ const buildInstitutionFormConfig = ({
 						cardVariant: "none",
 						fieldGap: "gap-0",
 						type: "section",
-						condition: (formData) => formData.shared_use === "yes",
+						condition: (formData) => formData.shared_use_allowed === true,
 						fields: [
 							{
 								name: "shared_use_info",
@@ -600,7 +600,7 @@ const buildInstitutionFormConfig = ({
 								placeholder: fieldPlaceholder("shared_use_availability"),
 							},
 							{
-								name: "shared_use_accessibility",
+								name: "accessibility",
 								collapsible: true,
 								className: "border-t-1",
 								accordionVariant: "default",
@@ -612,10 +612,10 @@ const buildInstitutionFormConfig = ({
 								),
 								defaultOpen: false,
 								type: "textarea",
-								placeholder: fieldPlaceholder("shared_use_accessibility"),
+								placeholder: fieldPlaceholder("accessibility"),
 							},
 							{
-								name: "shared_use_cost",
+								name: "cost",
 								className: "border-t-1",
 								collapsible: true,
 								accordionVariant: "default",
@@ -627,7 +627,7 @@ const buildInstitutionFormConfig = ({
 								),
 								defaultOpen: false,
 								type: "textarea",
-								placeholder: fieldPlaceholder("shared_use_cost"),
+								placeholder: fieldPlaceholder("cost"),
 							},
 							{
 								name: "shared_use_contact_person",
