@@ -362,6 +362,11 @@
 			"inactive": "Inaktiv"
 		}
 	},
+	"categorySubmissionReview": {
+		"error": {
+			"title": "Überprüfung fehlgeschlagen"
+		}
+	},
 	"categoryTable": {
 		"actions": {
 			"add": "Kategorie hinzufügen",

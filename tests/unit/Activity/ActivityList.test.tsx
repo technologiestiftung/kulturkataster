@@ -1,3 +1,6 @@
+vi.mock("@/icons/send.svg", () => ({ default: () => null }));
+vi.mock("@/icons/edit.svg", () => ({ default: () => null }));
+vi.mock("@/icons/filter.svg", () => ({ default: () => null }));
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { ActivityList } from "@/components/Activity/ActivityList";
@@ -247,7 +250,7 @@ describe("ActivityList filters", () => {
 		expect(screen.getAllByTestId("activity-row")).toHaveLength(1);
 
 		fireEvent.change(actorSelect, { target: { value: "all" } });
-		fireEvent.change(screen.getByRole("textbox"), {
+		fireEvent.change(screen.getAllByRole("textbox")[0], {
 			target: { value: "Die Etage" },
 		});
 		expect(screen.getAllByTestId("activity-row")).toHaveLength(1);
