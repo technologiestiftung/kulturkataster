@@ -77,7 +77,8 @@ export const organizationInfoConfig: InfoWrapperFieldConfig[] = [
 	{
 		value: "closing_reason",
 		labelKey: "field_names.closing_reason.label",
-		type: "text",
+		type: "enum",
+		enumKey: "closing_reason",
 	},
 	{
 		value: "cultural_area",

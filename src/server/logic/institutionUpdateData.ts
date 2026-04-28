@@ -5,6 +5,7 @@ import type {
 	InstitutionUpdateInput,
 } from "@/types";
 import { normalizeFundingSources } from "@/lib/utils/formUtils";
+import { buildUpdateContactPersonRelation } from "./institutionContactPersonData";
 
 const buildAddressUpsert = (address?: InstitutionForm["address"] | null) => {
 	if (!address) return undefined;
@@ -13,14 +14,6 @@ const buildAddressUpsert = (address?: InstitutionForm["address"] | null) => {
 		return { update: data, create: data };
 	}
 	return { create: data };
-};
-
-const buildContactPersonConnect = (contactPersonId?: number | null) => {
-	if (typeof contactPersonId === "undefined") return undefined;
-	if (contactPersonId === null) {
-		return { disconnect: true };
-	}
-	return { connect: { id: contactPersonId } };
 };
 
 const buildFundingSourcesUpdate = (
@@ -105,7 +98,7 @@ export const buildInstitutionUpdateData = (
 	shared_use_contact_person: input.shared_use_contact_person ?? null,
 	updater: currentUserId ? { connect: { id: currentUserId } } : undefined,
 	address: buildAddressUpsert(input.address),
-	contact_person: buildContactPersonConnect(input.contact_person_id),
+	contact_person: buildUpdateContactPersonRelation(input),
 	categories: input.categoryIds
 		? { set: input.categoryIds.map((id) => ({ id })) }
 		: undefined,

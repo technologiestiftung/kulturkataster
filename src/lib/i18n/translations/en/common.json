@@ -362,6 +362,11 @@
 			"inactive": "Inactive"
 		}
 	},
+	"categorySubmissionReview": {
+		"error": {
+			"title": "Review failed"
+		}
+	},
 	"categoryTable": {
 		"actions": {
 			"add": "Add category",
