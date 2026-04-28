@@ -33,11 +33,13 @@ vi.mock("react-i18next", () => ({
 
 // Mock server actions
 const mockGetMaptilerKey = vi.fn();
+const mockGetMapStyleUrl = vi.fn();
 const mockGetMapBoundingBox = vi.fn();
 const mockReverseGeocode = vi.fn();
 
 vi.mock("@/server/actions/maptiler", () => ({
 	getMaptilerKey: () => mockGetMaptilerKey(),
+	getMapStyleUrl: () => mockGetMapStyleUrl(),
 	getMapBoundingBox: () => mockGetMapBoundingBox(),
 	reverseGeocode: (lat: number, lng: number) => mockReverseGeocode(lat, lng),
 }));
@@ -61,6 +63,16 @@ const mockVectorSource = {
 	addFeature: vi.fn(),
 	clear: vi.fn(),
 };
+
+vi.mock("ol-mapbox-style", () => ({
+	applyStyle: vi.fn().mockResolvedValue(undefined),
+}));
+
+vi.mock("ol/layer/VectorTile", () => ({
+	default: vi.fn(function () {
+		return {};
+	}),
+}));
 
 vi.mock("ol/Map", () => ({
 	default: vi.fn(function () {
@@ -150,6 +162,7 @@ describe("AddressMapField", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		mockGetMaptilerKey.mockResolvedValue("test-api-key");
+		mockGetMapStyleUrl.mockResolvedValue("https://mock-style-url");
 		mockGetMapBoundingBox.mockResolvedValue(null);
 		mockReverseGeocode.mockResolvedValue({
 			street: "Hauptstraße",
@@ -225,7 +238,7 @@ describe("AddressMapField", () => {
 
 	describe("API Key Loading", () => {
 		it("shows error when API key fails to load", async () => {
-			mockGetMaptilerKey.mockRejectedValue(new Error("Failed to load key"));
+			mockGetMapStyleUrl.mockRejectedValue(new Error("Failed to load key"));
 
 			const onChange = vi.fn();
 			render(
@@ -243,7 +256,7 @@ describe("AddressMapField", () => {
 		});
 
 		it("shows error when API key is missing", async () => {
-			mockGetMaptilerKey.mockResolvedValue(null);
+			mockGetMapStyleUrl.mockResolvedValue(null);
 
 			const onChange = vi.fn();
 			render(
@@ -270,7 +283,7 @@ describe("AddressMapField", () => {
 			);
 
 			await waitFor(() => {
-				expect(mockGetMaptilerKey).toHaveBeenCalled();
+				expect(mockGetMapStyleUrl).toHaveBeenCalled();
 			});
 		});
 	});
@@ -286,7 +299,7 @@ describe("AddressMapField", () => {
 			);
 
 			await waitFor(() => {
-				expect(mockGetMaptilerKey).toHaveBeenCalled();
+				expect(mockGetMapStyleUrl).toHaveBeenCalled();
 			});
 		});
 
@@ -300,7 +313,7 @@ describe("AddressMapField", () => {
 			);
 
 			await waitFor(() => {
-				expect(mockGetMaptilerKey).toHaveBeenCalled();
+				expect(mockGetMapStyleUrl).toHaveBeenCalled();
 			});
 		});
 	});
@@ -317,7 +330,7 @@ describe("AddressMapField", () => {
 			);
 
 			await waitFor(() => {
-				expect(mockGetMaptilerKey).toHaveBeenCalled();
+				expect(mockGetMapStyleUrl).toHaveBeenCalled();
 			});
 		});
 
@@ -331,7 +344,7 @@ describe("AddressMapField", () => {
 			);
 
 			await waitFor(() => {
-				expect(mockGetMaptilerKey).toHaveBeenCalled();
+				expect(mockGetMapStyleUrl).toHaveBeenCalled();
 			});
 		});
 	});
@@ -533,7 +546,7 @@ describe("AddressMapField", () => {
 			);
 
 			await waitFor(() => {
-				expect(mockGetMaptilerKey).toHaveBeenCalled();
+				expect(mockGetMapStyleUrl).toHaveBeenCalled();
 			});
 
 			// View center should not be called with null coordinates
