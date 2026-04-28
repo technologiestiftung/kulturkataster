@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
 	detailsInfoConfig,
 	facilityInfoConfig,
+	organizationInfoConfig,
 	sharedUseInfoConfig,
 } from "@/config/infoConfig/configs";
 
@@ -45,5 +46,17 @@ describe("facilityInfoConfig", () => {
 			"number_of_rooms",
 			"capacity",
 		]);
+	});
+});
+
+describe("organizationInfoConfig", () => {
+	it("includes the parent organization field", () => {
+		expect(organizationInfoConfig).toEqual(
+			expect.arrayContaining([
+				expect.objectContaining({
+					value: "parent_organization",
+				}),
+			]),
+		);
 	});
 });
