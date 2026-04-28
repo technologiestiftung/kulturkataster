@@ -31,6 +31,7 @@ export function FilterButtonWithCount({
 			radius="full"
 			variant="surface"
 			iconSize="lg"
+			tooltipSide="bottom"
 			tooltip={tooltip}
 			className={className}
 			onClick={onClick}
