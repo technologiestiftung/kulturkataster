@@ -47,6 +47,7 @@ const Filter: FC<FilterProps> = ({ onSearchClick, onShowFilter }) => {
 					<ButtonWithTooltip
 						radius="full"
 						variant="surface"
+						tooltipSide="bottom"
 						iconSize="lg"
 						tooltip={tCommon("search.searchButton", {
 							defaultValue: "Suchen",
@@ -60,6 +61,7 @@ const Filter: FC<FilterProps> = ({ onSearchClick, onShowFilter }) => {
 				<ButtonWithTooltip
 					radius="full"
 					variant="surface"
+					tooltipSide="bottom"
 					tooltip={tCommon("filter.title", {
 						defaultValue: "Kulturorte filtern",
 					})}
