@@ -14,6 +14,7 @@ import {
 	waitFor,
 } from "@testing-library/react";
 import { AddressMapField } from "@/components/FormWrapper/AddressMapField";
+import * as maptiler from "@/server/actions/maptiler";
 
 // Mock i18next
 vi.mock("react-i18next", () => ({
@@ -541,6 +542,13 @@ describe("AddressMapField", () => {
 	});
 
 	describe("Map Dimensions", () => {
+		beforeEach(() => {
+			// Ensure map style URL is always available for these tests
+			vi.spyOn(maptiler, "getMapStyleUrl").mockResolvedValue(
+				"https://mock-style-url",
+			);
+		});
+
 		it("renders map with correct height", async () => {
 			const onChange = vi.fn();
 			const { container } = render(
