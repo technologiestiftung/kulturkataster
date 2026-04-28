@@ -108,6 +108,24 @@ const pickString = (
 	return typeof value === "string" && value.trim().length > 0 ? value : null;
 };
 
+const pickId = (
+	record: Record<string, unknown> | null,
+	key = "id",
+): string | null => {
+	if (!record) return null;
+	const value = record[key];
+	if (typeof value === "number" && Number.isFinite(value)) return String(value);
+	if (typeof value === "string" && value.trim().length > 0) return value.trim();
+	return null;
+};
+
+const firstBulkRow = (audit: EntityAudit): Record<string, unknown> | null => {
+	if (audit.entity_id !== "bulk") return null;
+	const rows = audit.old_data;
+	if (!Array.isArray(rows) || rows.length === 0) return null;
+	return asObject(rows[0]);
+};
+
 const getEntityName = (audit: EntityAudit): string | null => {
 	const newData = asObject(audit.new_data);
 	const oldData = asObject(audit.old_data);
@@ -117,11 +135,17 @@ const getEntityName = (audit: EntityAudit): string | null => {
 	}
 
 	if (audit.entity_type === "submission") {
-		const payload = newData ?? oldData;
+		const bulkRow = firstBulkRow(audit);
+		// For updateMany audits new_data is {args,result}, not the row itself —
+		// prefer the first old row which is the actual submission record.
+		const payload = bulkRow ?? newData ?? oldData;
 		const entityType = pickString(payload, "entity_type");
 		const submissionData = asObject(payload?.data);
 		if (entityType === "institution") {
-			return pickString(submissionData, "name");
+			return (
+				pickString(submissionData, "name") ??
+				pickString(asObject(submissionData?.originalInstitution), "name")
+			);
 		}
 		if (entityType === "category") {
 			return pickString(submissionData, "key");
@@ -187,13 +211,16 @@ const getAccountTypeLabel = (
 	return accountType;
 };
 
+const resolveSubmissionPayload = (
+	audit: EntityAudit,
+): Record<string, unknown> | null =>
+	firstBulkRow(audit) ?? asObject(audit.new_data) ?? asObject(audit.old_data);
+
 const getSubmissionInstitutionId = (
 	audit: EntityAudit | undefined,
 ): string | null => {
 	if (!audit || audit.entity_type !== "submission") return null;
-	const newData = asObject(audit.new_data);
-	const oldData = asObject(audit.old_data);
-	const payload = newData ?? oldData;
+	const payload = resolveSubmissionPayload(audit);
 	const directValue = payload?.entity_id;
 	if (typeof directValue === "number" && Number.isFinite(directValue)) {
 		return String(directValue);
@@ -209,7 +236,7 @@ const getSubmissionTypeLabel = (
 	t: (key: string, options?: Record<string, unknown>) => string,
 ): string | null => {
 	if (audit.entity_type !== "submission") return null;
-	const payload = asObject(audit.new_data) ?? asObject(audit.old_data);
+	const payload = resolveSubmissionPayload(audit);
 	const submissionType = pickString(payload, "type");
 	if (!submissionType) return null;
 	return t(`auth.account.activity.submissionTypes.${submissionType}`, {
@@ -222,7 +249,7 @@ const getSubmissionEntityTypeLabel = (
 	t: (key: string, options?: Record<string, unknown>) => string,
 ): string | null => {
 	if (audit.entity_type !== "submission") return null;
-	const payload = asObject(audit.new_data) ?? asObject(audit.old_data);
+	const payload = resolveSubmissionPayload(audit);
 	const submissionEntityType = pickString(payload, "entity_type");
 	if (!submissionEntityType) return null;
 	return t(`auth.account.activity.entities.${submissionEntityType}`, {
@@ -256,14 +283,25 @@ const formatEntityLabel = (
 	if (audit.entity_type === "submission") {
 		const submissionTypeLabel = getSubmissionTypeLabel(audit, t);
 		const submissionEntityTypeLabel = getSubmissionEntityTypeLabel(audit, t);
+		// For bulk audits resolve the real numeric id from the first old row.
+		const resolvedId =
+			audit.entity_id !== "bulk"
+				? audit.entity_id
+				: (pickId(firstBulkRow(audit)) ?? null);
 
 		const typeSuffix = submissionTypeLabel ? ` (${submissionTypeLabel})` : "";
 		const entitySuffix = submissionEntityTypeLabel
 			? ` [${submissionEntityTypeLabel}]`
 			: "";
-		return `${translatedType}${typeSuffix}${entitySuffix} #${audit.entity_id}`;
+		const idSuffix = resolvedId ? ` #${resolvedId}` : "";
+		return `${translatedType}${typeSuffix}${entitySuffix}${idSuffix}`;
 	}
-	return `${translatedType} #${audit.entity_id}`;
+	const resolvedId =
+		audit.entity_id !== "bulk"
+			? audit.entity_id
+			: (pickId(firstBulkRow(audit)) ?? null);
+	const idSuffix = resolvedId ? ` #${resolvedId}` : "";
+	return `${translatedType}${idSuffix}`;
 };
 
 const normalizeEntityText = (value: string) =>
@@ -372,9 +410,14 @@ const mapEntityLink = (
 	canOpenSubmission: (id: number) => boolean,
 	canReadAllUsers: boolean,
 	currentUserId?: string | null,
+	canCreateInstitutions?: boolean,
+	canUpdateInstitutions?: boolean,
+	canReviewSubmissions?: boolean,
 ) => {
 	if (audit.action === "delete") return undefined;
-	const id = audit.entity_id;
+	// For updateMany audits resolve the real id from the first old row.
+	const rawId = audit.entity_id;
+	const id = rawId === "bulk" ? (pickId(firstBulkRow(audit)) ?? rawId) : rawId;
 	if (audit.entity_type !== "user" && !isNumericId(id)) return undefined;
 	switch (audit.entity_type) {
 		case "submission": {
@@ -383,7 +426,20 @@ const mapEntityLink = (
 				Number.isFinite(numericSubmissionId) &&
 				canOpenSubmission(numericSubmissionId)
 			) {
-				return toLocalePath(`/account/submissions/${id}`);
+				const payload = resolveSubmissionPayload(audit);
+				const submissionType = pickString(payload, "type");
+				const submissionEntityType = pickString(payload, "entity_type");
+				const base = `/account/submissions/${id}`;
+				const isInstitutionCreateOrUpdate =
+					submissionEntityType === "institution" &&
+					(submissionType === "create" || submissionType === "update");
+				if (isInstitutionCreateOrUpdate && canReviewSubmissions === true) {
+					return toLocalePath(base);
+				}
+				const useEditRoute =
+					(submissionType === "create" && canCreateInstitutions === true) ||
+					(submissionType === "update" && canUpdateInstitutions === true);
+				return toLocalePath(useEditRoute ? `${base}/edit` : base);
 			}
 			return undefined;
 		}
@@ -446,11 +502,14 @@ export function ActivityList({
 	const users = useAccountStore((state) => state.users) ?? [];
 	const submissions = useAccountStore((state) => state.submissions) ?? [];
 	const currentUserId = currentProfile?.id ?? null;
+	const currentUser = useMemo(
+		() =>
+			users.find((user) => user.id === currentProfile?.id) ??
+			users.find((user) => user.email === currentProfile?.email),
+		[currentProfile, users],
+	);
 	const canReadAllUsers = useMemo(() => {
 		if (!currentProfile) return false;
-		const currentUser =
-			users.find((user) => user.id === currentProfile.id) ??
-			users.find((user) => user.email === currentProfile.email);
 		return Boolean(
 			currentUser?.role?.table_permissions?.some(
 				(permission) =>
@@ -459,7 +518,13 @@ export function ActivityList({
 					(permission.scope ?? "own") === "all",
 			),
 		);
-	}, [currentProfile, users]);
+	}, [currentProfile, currentUser]);
+	const institutionPermissions = useAccountStore(
+		(state) => state.institutionPermissions,
+	);
+	const canCreateInstitutions = institutionPermissions.create;
+	const canUpdateInstitutions = institutionPermissions.update;
+	const canReviewSubmissions = institutionPermissions.reviewSubmission ?? false;
 	const submissionIdSet = useMemo(
 		() => new Set(submissions.map((submission) => submission.id)),
 		[submissions],
@@ -564,6 +629,9 @@ export function ActivityList({
 			canOpenSubmission,
 			canReadAllUsers,
 			currentUserId,
+			canCreateInstitutions,
+			canUpdateInstitutions,
+			canReviewSubmissions,
 		);
 		let displayEntityType = primarySource.entity_type;
 		if (isApprovedUserSubmissionAssignment) {
@@ -610,6 +678,9 @@ export function ActivityList({
 						canOpenSubmission,
 						canReadAllUsers,
 						currentUserId,
+						canCreateInstitutions,
+						canUpdateInstitutions,
+						canReviewSubmissions,
 					)
 				: undefined,
 			from: hasStatusTransition ? fromStatus : undefined,
@@ -637,6 +708,9 @@ export function ActivityList({
 				canOpenSubmission,
 				canReadAllUsers,
 				currentUserId,
+				canCreateInstitutions,
+				canUpdateInstitutions,
+				canReviewSubmissions,
 			),
 			relation: normalizedRelation,
 			relationLink: secondarySource
@@ -646,6 +720,9 @@ export function ActivityList({
 						canOpenSubmission,
 						canReadAllUsers,
 						currentUserId,
+						canCreateInstitutions,
+						canUpdateInstitutions,
+						canReviewSubmissions,
 					)
 				: undefined,
 			status: (getUserEntityStatus(primarySource) ??
@@ -669,29 +746,54 @@ export function ActivityList({
 				grouped.set(meta.correlationId, existing);
 			}
 
-			const groupedActivities = Array.from(grouped.values()).map((group) => {
-				const first = group[0];
-				const relationMeta = getAuditRelationMeta(first);
-				const primary =
-					group.find(
-						(a) =>
-							a.entity_type === relationMeta.rootEntityType &&
-							a.entity_id === relationMeta.rootEntityId,
-					) ?? group[0];
-				const relationAudit = pickRelationAudit(group, primary);
-				return {
-					id: relationMeta.correlationId ?? `audit:${primary.id}`,
-					changedAt:
-						primary.changed_at instanceof Date
-							? primary.changed_at.getTime()
-							: new Date(primary.changed_at).getTime(),
-					activity: mapAuditToActivity(
-						primary,
-						relationAudit,
-						relationMeta.correlationId ?? `audit:${primary.id}`,
-					),
-				};
-			});
+			const groupedActivities = Array.from(grouped.values()).flatMap(
+				(group) => {
+					// If every audit in the group is a submission, expand into individual
+					// items — these are wizard-create flows (institution + category
+					// submissions) and should each appear as their own activity row.
+					const allSubmissions = group.every(
+						(a) => a.entity_type === "submission",
+					);
+					if (allSubmissions) {
+						return group.map((audit) => ({
+							id: `audit:${audit.id}`,
+							changedAt:
+								audit.changed_at instanceof Date
+									? audit.changed_at.getTime()
+									: new Date(audit.changed_at).getTime(),
+							activity: mapAuditToActivity(
+								audit,
+								undefined,
+								`audit:${audit.id}`,
+							),
+						}));
+					}
+
+					const first = group[0];
+					const relationMeta = getAuditRelationMeta(first);
+					const primary =
+						group.find(
+							(a) =>
+								a.entity_type === relationMeta.rootEntityType &&
+								a.entity_id === relationMeta.rootEntityId,
+						) ?? group[0];
+					const relationAudit = pickRelationAudit(group, primary);
+					return [
+						{
+							id: relationMeta.correlationId ?? `audit:${primary.id}`,
+							changedAt:
+								primary.changed_at instanceof Date
+									? primary.changed_at.getTime()
+									: new Date(primary.changed_at).getTime(),
+							activity: mapAuditToActivity(
+								primary,
+								relationAudit,
+								relationMeta.correlationId ?? `audit:${primary.id}`,
+							),
+						},
+					];
+				},
+			);
 
 			const standaloneActivities = standalone.map((audit) => ({
 				id: `audit:${audit.id}`,
