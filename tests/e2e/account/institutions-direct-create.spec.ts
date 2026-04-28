@@ -455,6 +455,7 @@ test.describe("institution direct create form", () => {
 		await expect(
 			page.locator('[id="shared_use_allowed-boolean:true"]'),
 		).toHaveAttribute("data-state", "checked");
+		await openAllAccordions(page, "form");
 		await expectInputValueById(page, "shared_use_info", expected.sharedUseInfo);
 		await expectInputValueById(
 			page,
