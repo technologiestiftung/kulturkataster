@@ -29,7 +29,7 @@ const S = {
 	btn: "display:inline-block;background:#c288ff;color:#161616;text-decoration:none;padding:12px 18px;border-radius:4px;font-size:16px;line-height:1.5;font-weight:700;margin:0 0 16px 0;",
 };
 
-const STANDALONE_MARKDOWN_LINK_PATTERN = /^\[([^\]]+)\]\((.+)\)$/s;
+const STANDALONE_MARKDOWN_LINK_PATTERN = /^\[([^\]]+)\]\(([\s\S]+)\)$/;
 const TAG_STYLE_MAP: Partial<Record<Element["tagName"], string>> = {
 	strong: "font-weight:700;",
 	ul: "margin:0 0 16px 0;padding-left:24px;",
