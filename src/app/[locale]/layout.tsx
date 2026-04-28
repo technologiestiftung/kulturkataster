@@ -15,6 +15,7 @@ import { StoreInitializer } from "@/components/StoreInitializer";
 import { StoreAutoRefresh } from "@/components/StoreAutoRefresh";
 import { ViewModeToggle } from "@/components/Menu/ViewModeToggle";
 import { Toaster } from "@/components/ui/sonner";
+import { getCurrentProfile } from "@/server/actions/auth";
 
 // Initialize axe-core for accessibility testing in development
 // Commented out until @axe-core/react is installed
@@ -103,6 +104,7 @@ export default async function RootLayout({
 			? "local"
 			: undefined;
 	const shouldLoadMatomo = envHint !== "local";
+	const isLoggedIn = (await getCurrentProfile()) !== null;
 
 	return (
 		<html lang={locale} dir={getDirection(locale)}>
@@ -117,6 +119,7 @@ export default async function RootLayout({
 					>
 						{skipToContentLabel}
 					</a>
+
 					<div className="flex min-h-dvh flex-col">
 						<SidebarProvider>
 							<div className="flex min-h-0 flex-1 w-full">
@@ -124,7 +127,7 @@ export default async function RootLayout({
 									aria-label={headerLabel}
 									className="flex-shrink-0 w-auto"
 								>
-									<Menu sidebar={sidebar} />
+									<Menu sidebar={sidebar} isLoggedIn={isLoggedIn} />
 								</header>
 								<SidebarInset asChild className="min-h-0 flex-1 w-0">
 									<main
