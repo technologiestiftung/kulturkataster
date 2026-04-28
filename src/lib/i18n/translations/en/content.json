@@ -860,10 +860,10 @@
 				"title": "Furnishings"
 			},
 			"funding": {
-				"title": "financing"
+				"title": "Financing"
 			},
 			"organization": {
-				"title": "organization"
+				"title": "Organization"
 			},
 			"information": {
 				"accordions": {
@@ -921,7 +921,7 @@
 					},
 					"sharedUseEquipment": {
 						"description": "What infrastructure is available? ",
-						"title": "equipment"
+						"title": "Equipment"
 					},
 					"sharedUseInfo": {
 						"description": "Describe what information should be entered here, possibly with a list of examples",

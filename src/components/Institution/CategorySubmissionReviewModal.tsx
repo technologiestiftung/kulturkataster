@@ -49,6 +49,9 @@ export function CategorySubmissionReviewModal({
 	const toLocalePath = useLocalePath();
 	const removeSubmission = useAccountStore((state) => state.removeSubmission);
 	const upsertSubmission = useAccountStore((state) => state.upsertSubmission);
+	const institutionPermissions = useAccountStore(
+		(state) => state.institutionPermissions,
+	);
 	const [internalNotes, setInternalNotes] = useState("");
 	const [submitting, setSubmitting] = useState(false);
 	const [reviewError, setReviewError] = useState<string | null>(null);
@@ -67,6 +70,8 @@ export function CategorySubmissionReviewModal({
 	const title = t("categorySubmissionReview.title", {
 		defaultValue: "Kategorie-Vorschlag prüfen",
 	});
+	const canManageCategorySubmission =
+		institutionPermissions.create || institutionPermissions.update;
 
 	const linkedInstitutionName = useMemo(() => {
 		const data = asRecord(linkedInstitutionSubmission?.data);
@@ -77,7 +82,7 @@ export function CategorySubmissionReviewModal({
 
 	const handleReview = useCallback(
 		async (status: "approved" | "rejected") => {
-			if (submitting) return;
+			if (submitting || !canManageCategorySubmission) return;
 			setSubmitting(true);
 			setReviewError(null);
 			try {
@@ -140,6 +145,7 @@ export function CategorySubmissionReviewModal({
 			t,
 			toLocalePath,
 			upsertSubmission,
+			canManageCategorySubmission,
 		],
 	);
 
@@ -153,9 +159,7 @@ export function CategorySubmissionReviewModal({
 				reviewError
 					? {
 							open: true,
-							title: t("categorySubmissionReview.error.title", {
-								defaultValue: "Prüfung fehlgeschlagen",
-							}),
+							title: t("categorySubmissionReview.error.title"),
 							description: reviewError,
 							confirmLabel: t("close"),
 							onConfirm: () => setReviewError(null),
@@ -211,42 +215,46 @@ export function CategorySubmissionReviewModal({
 						)}
 					</div>
 				</div>
-				<div className="space-y-2">
-					<label className="body2" htmlFor="category-review-notes">
-						{t("categorySubmissionReview.notesLabel", {
-							defaultValue: "Interne Notizen",
-						})}
-					</label>
-					<Textarea
-						id="category-review-notes"
-						value={internalNotes}
-						onChange={(event) => setInternalNotes(event.target.value)}
-						rows={4}
-						disabled={submitting}
-					/>
-				</div>
+				{canManageCategorySubmission ? (
+					<>
+						<div className="space-y-2">
+							<label className="body2" htmlFor="category-review-notes">
+								{t("categorySubmissionReview.notesLabel", {
+									defaultValue: "Interne Notizen",
+								})}
+							</label>
+							<Textarea
+								id="category-review-notes"
+								value={internalNotes}
+								onChange={(event) => setInternalNotes(event.target.value)}
+								rows={4}
+								disabled={submitting}
+							/>
+						</div>
 
-				<div className="flex flex-wrap gap-3">
-					<Button
-						type="button"
-						variant="outline"
-						disabled={submitting}
-						onClick={() => void handleReview("rejected")}
-					>
-						{t("categorySubmissionReview.actions.reject", {
-							defaultValue: "Ablehnen",
-						})}
-					</Button>
-					<Button
-						type="button"
-						disabled={submitting}
-						onClick={() => void handleReview("approved")}
-					>
-						{t("categorySubmissionReview.actions.approve", {
-							defaultValue: "Annehmen",
-						})}
-					</Button>
-				</div>
+						<div className="flex flex-wrap gap-3">
+							<Button
+								type="button"
+								variant="outline"
+								disabled={submitting}
+								onClick={() => void handleReview("rejected")}
+							>
+								{t("categorySubmissionReview.actions.reject", {
+									defaultValue: "Ablehnen",
+								})}
+							</Button>
+							<Button
+								type="button"
+								disabled={submitting}
+								onClick={() => void handleReview("approved")}
+							>
+								{t("categorySubmissionReview.actions.approve", {
+									defaultValue: "Annehmen",
+								})}
+							</Button>
+						</div>
+					</>
+				) : null}
 			</div>
 		</Modal>
 	);

@@ -443,4 +443,65 @@ describe("InstitutionFormModal", () => {
 			}),
 		);
 	});
+
+	it("shared_use_allowed field uses boolean option values, not strings", () => {
+		render(
+			<InstitutionFormModal
+				mode="create"
+				routePath="/account/institutions/new"
+			/>,
+		);
+
+		const field = findFieldByName(
+			lastFormConfig?.fields as Array<Record<string, unknown>> | undefined,
+			"shared_use_allowed",
+		);
+
+		expect(field).toBeDefined();
+		const options = field?.options as Array<{ value: unknown }> | undefined;
+		expect(options).toBeDefined();
+		expect(options?.map((o) => o.value)).toEqual([true, false]);
+	});
+
+	it("shared_use_allowed condition triggers on boolean true, not string", () => {
+		render(
+			<InstitutionFormModal
+				mode="create"
+				routePath="/account/institutions/new"
+			/>,
+		);
+
+		const detailsSection = findFieldByName(
+			lastFormConfig?.fields as Array<Record<string, unknown>> | undefined,
+			"shared_use_details",
+		);
+
+		expect(detailsSection).toBeDefined();
+		const condition = detailsSection?.condition as
+			| ((data: Record<string, unknown>) => boolean)
+			| undefined;
+
+		expect(condition?.({ shared_use_allowed: true })).toBe(true);
+		expect(condition?.({ shared_use_allowed: false })).toBe(false);
+		expect(condition?.({ shared_use_allowed: "yes" })).toBe(false);
+	});
+
+	it("submits shared_use_allowed as boolean true to the server action", async () => {
+		render(
+			<InstitutionFormModal
+				mode="create"
+				routePath="/account/institutions/new"
+			/>,
+		);
+
+		fireEvent.click(screen.getByRole("button", { name: "submit-form" }));
+
+		await waitFor(() => {
+			expect(mockedCreateInstitution).toHaveBeenCalledWith(
+				expect.objectContaining({
+					shared_use_allowed: true,
+				}),
+			);
+		});
+	});
 });

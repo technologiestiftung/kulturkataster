@@ -481,7 +481,8 @@
 	"infoWrapper": {
 		"diffLabel": {
 			"addition": "Ergänzung: ",
-			"edited": "Bearbeitet: "
+			"edited": "Bearbeitet: ",
+			"removed": "Entfernt"
 		}
 	},
 	"imprintModal": {
@@ -728,6 +729,12 @@
 			"edit": {
 				"subtitle": "Prüfen und aktualisieren Sie die Angaben zum Kulturort.",
 				"title": "Kulturort bearbeiten"
+			},
+			"submissionCreate": {
+				"title": "Eintrag prüfen und einreichen"
+			},
+			"submissionEdit": {
+				"title": "Änderungen prüfen und einreichen"
 			}
 		},
 		"feedback": {
