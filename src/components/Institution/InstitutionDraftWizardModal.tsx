@@ -1538,7 +1538,10 @@ function InstitutionDraftWizardContent({
 							name: "contact_person_first_name",
 							label: fieldLabel("contact_person_first_name"),
 							type: "text",
-							defaultValue: draft.consent_contact_listing === true ? (profile?.first_name || "") : "",
+							defaultValue:
+								draft.consent_contact_listing === true
+									? profile?.first_name || ""
+									: "",
 							placeholder: fieldPlaceholder("contact_person_first_name"),
 							layout: { span: "half" },
 						},
@@ -1546,7 +1549,10 @@ function InstitutionDraftWizardContent({
 							name: "contact_person_last_name",
 							label: fieldLabel("contact_person_last_name"),
 							type: "text",
-							defaultValue: draft.consent_contact_listing === true ? (profile?.last_name || "") : "",
+							defaultValue:
+								draft.consent_contact_listing === true
+									? profile?.last_name || ""
+									: "",
 							placeholder: fieldPlaceholder("contact_person_last_name"),
 							layout: { span: "half" },
 						},
@@ -1554,7 +1560,10 @@ function InstitutionDraftWizardContent({
 							name: "contact_person_email",
 							label: fieldLabel("contact_person_email"),
 							type: "email",
-							defaultValue: draft.consent_contact_listing === true ? (profile?.email || "") : "",
+							defaultValue:
+								draft.consent_contact_listing === true
+									? profile?.email || ""
+									: "",
 							placeholder: fieldPlaceholder("contact_person_email"),
 							layout: { span: "full" },
 						},
@@ -1562,7 +1571,10 @@ function InstitutionDraftWizardContent({
 							name: "contact_person_phone",
 							label: fieldLabel("contact_person_phone"),
 							type: "tel",
-							defaultValue: draft.consent_contact_listing === true ? (profile?.phone || "") : "",
+							defaultValue:
+								draft.consent_contact_listing === true
+									? profile?.phone || ""
+									: "",
 							placeholder: fieldPlaceholder("contact_person_phone"),
 							layout: { span: "full" },
 						},
