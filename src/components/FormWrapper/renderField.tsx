@@ -338,7 +338,8 @@ const renderFieldContent = (
 				field.type !== "checkbox" &&
 				field.type !== "switch" &&
 				field.type !== "tablePermissions" &&
-				field.type !== "fieldPermissions" && (
+				field.type !== "fieldPermissions" &&
+				field.type !== "custom" && (
 					<div className="flex items-center justify-between gap-2">
 						<Label htmlFor={field.name} className="text-neutral-80">
 							{field.labelNode ?? resolvedLabel}
