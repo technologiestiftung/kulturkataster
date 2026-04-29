@@ -305,10 +305,11 @@ const renderFieldContent = (
 		field.type !== "section"
 			? (field.nullOptionLabel ?? getFieldPlaceholder(tEnum, fieldMetaKey))
 			: undefined;
-	const resolvedLabel =
-		field.type === "section"
-			? field.label
-			: (field.label ?? getFieldLabel(tEnum, fieldMetaKey));
+	const resolvedLabel = (() => {
+		if (field.type === "section") return field.label;
+		if (field.label === null) return null;
+		return field.label ?? getFieldLabel(tEnum, fieldMetaKey);
+	})();
 	const resolvedDescription =
 		field.type === "section"
 			? field.description
@@ -338,7 +339,8 @@ const renderFieldContent = (
 				field.type !== "checkbox" &&
 				field.type !== "switch" &&
 				field.type !== "tablePermissions" &&
-				field.type !== "fieldPermissions" && (
+				field.type !== "fieldPermissions" &&
+				field.type !== "custom" && (
 					<div className="flex items-center justify-between gap-2">
 						<Label htmlFor={field.name} className="text-neutral-80">
 							{field.labelNode ?? resolvedLabel}

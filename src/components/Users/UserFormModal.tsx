@@ -325,7 +325,12 @@ const buildUserFormConfig = ({
 					},
 					{
 						name: "meta_info",
-						label: t("userFormModal.form.identity.fields.metaInfo.label"),
+						label:
+							resolvedUser?.meta_info &&
+							typeof resolvedUser.meta_info === "object" &&
+							Object.keys(resolvedUser.meta_info).length > 0
+								? t("userFormModal.form.identity.fields.metaInfo.label")
+								: null,
 						type: "keyValue",
 						layout: { span: "full" },
 						keyValue: {
