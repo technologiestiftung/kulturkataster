@@ -1,6 +1,7 @@
 import type { TFunction } from "i18next";
 import { getFieldError, getFieldLabel } from "@/lib/i18n/fieldLabels";
 import { normalizeUrl } from "@/lib/utils/sanitizerUtils";
+import { isValidPhoneValue, normalizePhoneInput } from "@/lib/utils/phoneUtils";
 import type {
 	FieldNormalizer,
 	FieldValidator,
@@ -8,7 +9,6 @@ import type {
 } from "./types";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const TEL_REGEX = /^\+?[0-9\s()./-]{3,}$/;
 const IPV4_HOST_REGEX =
 	/^(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}$/;
 const IPV6_HOST_REGEX = /^\[[0-9a-f:]+\]$/i;
@@ -165,12 +165,15 @@ export const numeric = (message: string): FieldValidator =>
 	});
 
 export const tel = (message: string): FieldValidator =>
-	withNormalizer((value) => {
-		if (typeof value !== "string" || value.trim().length === 0) {
-			return undefined;
-		}
-		return TEL_REGEX.test(value.trim()) ? undefined : message;
-	});
+	withNormalizer(
+		(value) => {
+			if (typeof value !== "string" || value.trim().length === 0) {
+				return undefined;
+			}
+			return isValidPhoneValue(value) ? undefined : message;
+		},
+		(value) => (typeof value === "string" ? normalizePhoneInput(value) : value),
+	);
 
 export const url = ({
 	message,
