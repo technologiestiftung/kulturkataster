@@ -736,7 +736,12 @@ export function ActivityList({
 		(() => {
 			const grouped = new Map<string, EntityAudit[]>();
 			const standalone: EntityAudit[] = [];
+			const HIDDEN_ENTITY_TYPES = new Set([
+				"role_table_permission",
+				"role_field_permission",
+			]);
 			for (const audit of entityAudits) {
+				if (HIDDEN_ENTITY_TYPES.has(audit.entity_type)) continue;
 				const meta = getAuditRelationMeta(audit);
 				if (!meta.correlationId) {
 					standalone.push(audit);
