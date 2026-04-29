@@ -1,8 +1,8 @@
 import { z } from "zod";
+import { isValidPhoneValue, normalizePhoneInput } from "@/lib/utils/phoneUtils";
 import { normalizeUrl } from "@/lib/utils/sanitizerUtils";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const TEL_REGEX = /^\+?[0-9\s()./-]{3,}$/;
 const IPV4_HOST_REGEX =
 	/^(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}$/;
 const IPV6_HOST_REGEX = /^\[[0-9a-f:]+\]$/i;
@@ -88,11 +88,15 @@ export const optionalEmailSchema = (message: string) =>
 	});
 
 export const optionalTelSchema = (message: string) =>
-	optionalTextSchema().superRefine((value, ctx) => {
-		if (typeof value === "string" && !TEL_REGEX.test(value)) {
-			ctx.addIssue({ code: z.ZodIssueCode.custom, message });
-		}
-	});
+	optionalTextSchema()
+		.transform((value) =>
+			typeof value === "string" ? normalizePhoneInput(value) : value,
+		)
+		.superRefine((value, ctx) => {
+			if (typeof value === "string" && !isValidPhoneValue(value)) {
+				ctx.addIssue({ code: z.ZodIssueCode.custom, message });
+			}
+		});
 
 export const optionalUrlSchema = (message: string) =>
 	optionalTextSchema()
