@@ -22,6 +22,7 @@ export function AddressItem({
 	const { t: tEnum } = useTranslation("enumMap");
 	const cityName = institution.address?.city;
 	const districtKey = institution.address?.district;
+	const neighbourhood = institution.address?.neighbourhood;
 
 	return (
 		<div className="flex flex-col gap-2">
@@ -48,6 +49,7 @@ export function AddressItem({
 							</p>
 							<div className="flex flex-wrap space-x-1">
 								<p>{institution.address.zipcode}</p>
+								{neighbourhood && <p>{neighbourhood}</p>}
 								{cityName && districtKey && (
 									<p>
 										{cityName}-{tEnum(`${districtKey}`)}
