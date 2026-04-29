@@ -340,13 +340,12 @@
 		}
 	},
 	"downloadModal": {
+		"acknowledgement": "I have read and understood the legal notice",
 		"chooseFormat": "Select file format",
-		"description1": "The cultural cadastre is an open data project that supports the goals of the state of Berlin's open data strategy. ",
-		"description2": "If you would like to use the data for research purposes, your work in the Berlin administration, cultural policy or other understandable purposes, we would be happy to make it available to you. ",
-		"link": "[Link https://form.formcentric.com/form/7dfaf065-24a1-4431-8905-019e123e5dbe] to the request form ",
+		"description": "You can download the list of your cultural venues here as an Excel spreadsheet.",
 		"selectedFilters": "The selection consists of the following filters:",
-		"subtitle": "{{count}} Places to download",
-		"title": "Download data as a list"
+		"subtitle": "{{count}} cultural venues available for download",
+		"title": "Download my data as a list"
 	},
 	"filter": {
 		"categories": {
