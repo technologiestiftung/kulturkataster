@@ -239,6 +239,22 @@ export function InstitutionsTable() {
 				enableSorting: true,
 				meta: { pin: "left" },
 				size: 65,
+				cell: ({ row }) => {
+					const id = String(row.original.id);
+					if (row.original.rowKind !== "institution") {
+						return id;
+					}
+					return (
+						<Link
+							href={toLocalePath(`/map/institution/${id}`)}
+							target="_blank"
+							rel="noreferrer"
+							className="text-primary-dark underline"
+						>
+							{id}
+						</Link>
+					);
+				},
 			},
 			{
 				accessorKey: "name",
