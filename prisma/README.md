@@ -30,6 +30,30 @@ The following npm scripts are available for Prisma operations:
 - `npm run prisma:migrate` - Create and apply migrations in development
 - `npm run prisma:push` - Push schema changes directly to the database (no migration files)
 - `npm run prisma:pull` - Pull the current database schema into your Prisma schema
+- `npm run data:migrate` - Run versioned data-only migrations after schema deploys
+
+## Schema vs Data Migrations
+
+Use Prisma Migrate for schema changes only:
+
+- `prisma/migrations/` contains Prisma-generated schema migrations
+- apply them in production with `npx prisma migrate deploy`
+
+Use `data-migrations/` for data-only changes:
+
+- keep them handwritten in SQL or TypeScript
+- version them with sortable timestamp prefixes
+- run them with `npm run data:migrate`
+- let the runner track applied migrations in `app_data_migrations`
+
+Recommended deployment order:
+
+```bash
+npx prisma migrate deploy
+npm run data:migrate
+npm run build
+npm run start
+```
 
 ## Schema Overview
 

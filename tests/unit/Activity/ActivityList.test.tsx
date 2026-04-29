@@ -2,7 +2,7 @@ vi.mock("@/icons/send.svg", () => ({ default: () => null }));
 vi.mock("@/icons/edit.svg", () => ({ default: () => null }));
 vi.mock("@/icons/filter.svg", () => ({ default: () => null }));
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import { ActivityList } from "@/components/Activity/ActivityList";
 
 type MockAudit = {
@@ -38,6 +38,11 @@ type MockState = {
 	}>;
 	entityAudits: MockAudit[];
 	submissions: Array<{ id: number }>;
+	institutionPermissions?: {
+		create?: boolean;
+		update?: boolean;
+		reviewSubmission?: boolean;
+	} | null;
 };
 
 let mockState: MockState = {
@@ -45,6 +50,7 @@ let mockState: MockState = {
 	users: [],
 	entityAudits: [],
 	submissions: [],
+	institutionPermissions: null,
 };
 
 vi.mock("react-i18next", () => ({
@@ -256,6 +262,131 @@ describe("ActivityList filters", () => {
 		expect(screen.getAllByTestId("activity-row")).toHaveLength(1);
 	});
 
+	it("does not reapply row entry animations when rerendered with the same activities", () => {
+		const { rerender } = render(<ActivityList />);
+
+		expect(screen.getAllByTestId("activity-row")).toHaveLength(3);
+		for (const row of screen.getAllByTestId("activity-row")) {
+			expect(row.parentElement).toHaveClass("motion-safe:animate-in");
+		}
+
+		rerender(<ActivityList />);
+
+		expect(screen.getAllByTestId("activity-row")).toHaveLength(3);
+		for (const row of screen.getAllByTestId("activity-row")) {
+			expect(row.parentElement).not.toHaveClass("motion-safe:animate-in");
+		}
+	});
+
+	it("keeps submission review bulk helper audits collapsed into one activity", () => {
+		const reviewCorrelationId = "submission:270:review:1777418822127";
+
+		mockState.entityAudits = [
+			makeAudit({
+				id: 100,
+				action: "create",
+				entity_type: "submission",
+				entity_id: "270",
+				status: "approval_pending",
+				user: {
+					first_name: "Ex",
+					last_name: "Am",
+					email: "guest@example.de",
+				},
+				new_data: {
+					id: 270,
+					type: "create",
+					entity_type: "institution",
+					status: "approval_pending",
+					data: { name: "E2E All Fields 1777418822127" },
+				},
+				meta_info: null,
+			}),
+			makeAudit({
+				id: 101,
+				action: "update",
+				entity_type: "submission",
+				entity_id: "270",
+				status: "approval_pending",
+				user: {
+					first_name: "Jo",
+					last_name: "H",
+					email: "admin@example.de",
+				},
+				old_data: {
+					id: 270,
+					type: "create",
+					entity_type: "institution",
+					status: "approval_pending",
+					data: { name: "E2E All Fields 1777418822127" },
+				},
+				new_data: {
+					id: 270,
+					type: "create",
+					entity_type: "institution",
+					status: "rejected",
+					data: { name: "E2E All Fields 1777418822127" },
+				},
+				meta_info: {
+					correlation_id: reviewCorrelationId,
+					root_entity_type: "submission",
+					root_entity_id: "270",
+					intent: "submission_review_rejected",
+				},
+			}),
+			makeAudit({
+				id: 102,
+				action: "update",
+				entity_type: "submission",
+				entity_id: "bulk",
+				status: "approval_pending",
+				user: {
+					first_name: "Jo",
+					last_name: "H",
+					email: "admin@example.de",
+				},
+				old_data: [
+					{
+						id: 270,
+						entity_id: 270,
+						type: "create",
+						entity_type: "institution",
+						status: "approval_pending",
+						data: { name: "E2E All Fields 1777418822127" },
+					},
+				],
+				new_data: {
+					args: { data: { status: "rejected" } },
+					result: { count: 1 },
+				},
+				meta_info: {
+					correlation_id: reviewCorrelationId,
+					root_entity_type: "submission",
+					root_entity_id: "270",
+					intent: "submission_review_rejected",
+				},
+			}),
+		];
+
+		render(<ActivityList />);
+
+		const rows = screen.getAllByTestId("activity-row");
+		expect(rows).toHaveLength(2);
+
+		const guestRow = rows.find((row) =>
+			within(row).queryByText("Ex Am (guest@example.de)"),
+		);
+		const adminRow = rows.find((row) =>
+			within(row).queryByText("Jo H (admin@example.de)"),
+		);
+
+		expect(guestRow).toBeDefined();
+		expect(adminRow).toBeDefined();
+		expect(within(guestRow!).getAllByText("create")).toHaveLength(2);
+		expect(within(guestRow!).queryByText("update")).not.toBeInTheDocument();
+		expect(within(adminRow!).getByText("update")).toBeInTheDocument();
+	});
+
 	it("uses the user entity status for user activities", () => {
 		mockState.entityAudits = [
 			makeAudit({
@@ -451,6 +582,46 @@ describe("ActivityList filters", () => {
 		expect(screen.getByTestId("primary-link-audit:21")).toHaveAttribute(
 			"href",
 			"/de/account/edit",
+		);
+	});
+
+	it("does not append /edit for category submission links even when canCreateInstitutions is true", () => {
+		mockState = {
+			currentProfile: { id: "current-user", email: "current@example.com" },
+			users: [
+				{
+					id: "current-user",
+					email: "current@example.com",
+					role: {
+						table_permissions: [
+							{ table: "user", action: "read", scope: "all" },
+						],
+					},
+				},
+			],
+			submissions: [{ id: 165 }],
+			institutionPermissions: { create: true, update: true },
+			entityAudits: [
+				makeAudit({
+					id: 30,
+					action: "create",
+					entity_type: "submission",
+					entity_id: "165",
+					status: "approved",
+					new_data: {
+						type: "create",
+						entity_type: "category",
+						data: { key: "musik" },
+					},
+				}),
+			],
+		};
+
+		render(<ActivityList />);
+
+		expect(screen.getByTestId("primary-link-audit:30")).toHaveAttribute(
+			"href",
+			"/de/account/submissions/165",
 		);
 	});
 });

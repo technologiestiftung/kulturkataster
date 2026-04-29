@@ -461,6 +461,30 @@ describe("FormWrapper", () => {
 				expect(onSubmit).toHaveBeenCalledWith({ name: "John Doe" });
 			});
 		});
+
+		it("accepts phone numbers with invisible formatting characters and normalizes them", async () => {
+			const onSubmit = vi.fn();
+			const config: FormWrapperConfig = {
+				fields: toFields([
+					{
+						id: "main",
+						fields: [{ name: "phone", label: "Phone", type: "tel" }],
+					},
+				]),
+				onSubmit,
+			};
+
+			render(<FormWrapper config={config} />);
+
+			const input = screen.getByLabelText("Phone");
+			fireEvent.change(input, { target: { value: "030 23613314‬" } });
+			fireEvent.blur(input);
+			fireEvent.click(screen.getByRole("button", { name: /Submit/i }));
+
+			await waitFor(() => {
+				expect(onSubmit).toHaveBeenCalledWith({ phone: "030 23613314" });
+			});
+		});
 	});
 
 	describe("Initial Values", () => {
