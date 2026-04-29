@@ -109,6 +109,17 @@ export function AccountLayoutClient({
 		devTimings.end();
 	}, [pathname]);
 
+	const backgroundPathnameRef = useRef(pathname);
+	const lastSegment = pathname.split("/").filter(Boolean).at(-1) ?? "";
+	if (
+		lastSegment !== "edit" &&
+		lastSegment !== "new" &&
+		lastSegment !== "review"
+	) {
+		backgroundPathnameRef.current = pathname;
+	}
+	const contentKey = backgroundPathnameRef.current;
+
 	const getCurrentTab = () => {
 		if (allowedTabs.length === 0) return "";
 		return (
@@ -250,7 +261,7 @@ export function AccountLayoutClient({
 
 					<div className="pt-6 flex-1 min-h-0 w-full bg-background">
 						<div
-							key={pathname}
+							key={contentKey}
 							className="h-full motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-1 motion-safe:duration-300"
 						>
 							{children}
