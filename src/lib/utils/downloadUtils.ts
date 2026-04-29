@@ -87,11 +87,7 @@ function formatScalarValue(
 	if (value === null || value === undefined) return "";
 	if (value instanceof Date) return value.toISOString();
 	if (typeof value === "boolean") {
-		return translateEnumValue(
-			exportKey,
-			value ? "yes" : "no",
-			translateFn,
-		);
+		return translateEnumValue(exportKey, value ? "yes" : "no", translateFn);
 	}
 	if (typeof value === "string" || typeof value === "number") {
 		return translateEnumValue(exportKey, value, translateFn);
