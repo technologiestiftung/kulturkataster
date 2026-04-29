@@ -126,7 +126,7 @@ describe("prepareDataForExport", () => {
 				audience: "internal",
 				translateFn: (key) =>
 					(
-						{
+						({
 							"field_names.name.label": "Name",
 							"institution_status.public": "Öffentlich",
 							"category.theater": "Theater",
@@ -137,7 +137,7 @@ describe("prepareDataForExport", () => {
 							"field_names.utilization_status.options.temporarily_closed":
 								"Vorübergehend geschlossen",
 							"field_names.shared_use_allowed.options.yes": "Ja",
-						} as Record<string, string>
+						}) as Record<string, string>
 					)[key] ?? key,
 			},
 		);
