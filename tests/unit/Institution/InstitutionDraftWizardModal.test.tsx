@@ -432,6 +432,87 @@ describe("InstitutionDraftWizardModal submission workflow", () => {
 		expect(validationFn?.()).toBe(true);
 	});
 
+	it("does not pre-fill contact fields with profile data when consent_contact_listing is not set", () => {
+		mockStepperState.currentStepId = "contact";
+		mockStepperState.currentStepIndex = 3;
+
+		const draftState = useInstitutionDraftStore.getState();
+		draftState.setDraft({ name: "Draft Name" });
+
+		render(
+			<InstitutionDraftWizardModal
+				routePath="/institution/submission"
+				profile={
+					{
+						first_name: "Anna",
+						last_name: "Beispiel",
+						email: "anna@example.com",
+						phone: "+49 30 123",
+					} as any
+				}
+			/>,
+		);
+
+		const firstNameField = findFieldByName(
+			lastFormConfig?.fields as Array<Record<string, unknown>> | undefined,
+			"contact_person_first_name",
+		);
+		const emailField = findFieldByName(
+			lastFormConfig?.fields as Array<Record<string, unknown>> | undefined,
+			"contact_person_email",
+		);
+
+		expect(firstNameField?.defaultValue).toBe("");
+		expect(emailField?.defaultValue).toBe("");
+	});
+
+	it("pre-fills contact fields with profile data when consent_contact_listing is true", () => {
+		mockStepperState.currentStepId = "contact";
+		mockStepperState.currentStepIndex = 3;
+
+		const draftState = useInstitutionDraftStore.getState();
+		draftState.setDraft({
+			name: "Draft Name",
+			consent_contact_listing: true,
+		});
+
+		render(
+			<InstitutionDraftWizardModal
+				routePath="/institution/submission"
+				profile={
+					{
+						first_name: "Anna",
+						last_name: "Beispiel",
+						email: "anna@example.com",
+						phone: "+49 30 123",
+					} as any
+				}
+			/>,
+		);
+
+		const firstNameField = findFieldByName(
+			lastFormConfig?.fields as Array<Record<string, unknown>> | undefined,
+			"contact_person_first_name",
+		);
+		const lastNameField = findFieldByName(
+			lastFormConfig?.fields as Array<Record<string, unknown>> | undefined,
+			"contact_person_last_name",
+		);
+		const emailField = findFieldByName(
+			lastFormConfig?.fields as Array<Record<string, unknown>> | undefined,
+			"contact_person_email",
+		);
+		const phoneField = findFieldByName(
+			lastFormConfig?.fields as Array<Record<string, unknown>> | undefined,
+			"contact_person_phone",
+		);
+
+		expect(firstNameField?.defaultValue).toBe("Anna");
+		expect(lastNameField?.defaultValue).toBe("Beispiel");
+		expect(emailField?.defaultValue).toBe("anna@example.com");
+		expect(phoneField?.defaultValue).toBe("+49 30 123");
+	});
+
 	it("includes protection status internal notes in the information step form config", () => {
 		mockStepperState.currentStepId = "information";
 		mockStepperState.currentStepIndex = 2;
