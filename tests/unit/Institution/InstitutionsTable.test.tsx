@@ -23,6 +23,7 @@ vi.mock("react-i18next", () => ({
 
 vi.mock("next/navigation", () => ({
 	useRouter: () => ({ push: pushMock, prefetch: prefetchMock }),
+	usePathname: () => "/de/account/institutions",
 }));
 
 vi.mock("@/lib/hooks/useLocalePath", () => ({
@@ -136,6 +137,7 @@ describe("InstitutionsTable", () => {
 			filterModal?: { triggerLabel: string };
 			primaryButton?: { label: string; onClick: () => void };
 			secondaryButton?: { onClick: () => void };
+			rightButton?: { label: string; onClick: () => void };
 			onEdit: (row: Record<string, unknown>) => void;
 			onReview: (row: Record<string, unknown>) => void;
 			getCanReview: (row: Record<string, unknown>) => boolean;
@@ -146,6 +148,7 @@ describe("InstitutionsTable", () => {
 		expect(config.filterModal?.triggerLabel).toBe("Kulturorte filtern");
 		expect(config.primaryButton?.label).toBe("Kulturort hinzufügen");
 		expect(config.secondaryButton).toBeDefined();
+		expect(config.rightButton?.label).toBe("Liste herunterladen");
 
 		config.primaryButton?.onClick();
 		expect(pushMock).toHaveBeenCalledWith("/de/account/institutions/new");

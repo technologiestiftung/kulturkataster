@@ -340,13 +340,12 @@
 		}
 	},
 	"downloadModal": {
+		"acknowledgement": "Ich habe die rechtlichen Hinweise gelesen und verstanden",
 		"chooseFormat": "Dateiformat wählen",
-		"description1": "Das Kulturkataster ist ein Open-Data-Projekt, das die Ziele der Open-Data-Strategie des Landes Berlin unterstützt. Die vollständige Datensammlung sowie ihre individuelle Auswahl werden wir Ihnen in einer späteren Ausbaustufe zum direkten Download zur Verfügung stellen.",
-		"description2": "Falls Sie die Daten bereits jetzt für Forschungszwecke, Ihre Arbeit in der Berliner Verwaltung, Kulturpolitik sowie andere nachvollziehbare Zwecke nutzen möchten, stellen wir Ihnen diese gerne zur Verfügung. Bitte füllen Sie dazu unser kurzes Anfrageformular aus.",
-		"link": "[Link https://form.formcentric.com/form/7dfaf065-24a1-4431-8905-019e123e5dbe] zum Anfrageformular ",
+		"description": "Die Liste ihrer Kulturorte können Sie hier als Excel Tabelle herunterladen.",
 		"selectedFilters": "Die Auswahl setzt sich zusammen aus folgenden Filtern:",
-		"subtitle": "{{count}} Orte zum Herunterladen",
-		"title": "Daten als Liste herunterladen"
+		"subtitle": "{{count}} Kulturorte zum Herunterladen",
+		"title": "Meine Daten als Liste herunterladen"
 	},
 	"filter": {
 		"categories": {
