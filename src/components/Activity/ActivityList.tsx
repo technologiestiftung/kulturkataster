@@ -99,6 +99,9 @@ const getAuditIntent = (
 	return null;
 };
 
+const hasSubmissionReviewIntent = (audit: EntityAudit) =>
+	getAuditIntent(audit) !== null;
+
 const pickString = (
 	record: Record<string, unknown> | null,
 	key: string,
@@ -772,13 +775,15 @@ export function ActivityList({
 
 				const groupedActivities = Array.from(grouped.values()).flatMap(
 					(group) => {
-						// If every audit in the group is a submission, expand into individual
-						// items — these are wizard-create flows (institution + category
-						// submissions) and should each appear as their own activity row.
+						// Only expand pure submission groups when they are not review-intent
+						// audit groups. Review flows often include a root submission audit
+						// plus a bulk helper audit under the same correlation id, and those
+						// should stay collapsed into one visible activity.
 						const allSubmissions = group.every(
 							(a) => a.entity_type === "submission",
 						);
-						if (allSubmissions) {
+						const hasReviewIntent = group.some(hasSubmissionReviewIntent);
+						if (allSubmissions && !hasReviewIntent) {
 							return group.map((audit) => ({
 								id: `audit:${audit.id}`,
 								changedAt:
