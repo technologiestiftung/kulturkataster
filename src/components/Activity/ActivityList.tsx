@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ActivityItem, type Activity } from "./ActivityItem";
 import { useAccountStore } from "@/lib/store/accountStore";
 import type { EntityAudit } from "@/types/entityAudit";
@@ -437,8 +437,9 @@ const mapEntityLink = (
 					return toLocalePath(base);
 				}
 				const useEditRoute =
-					(submissionType === "create" && canCreateInstitutions === true) ||
-					(submissionType === "update" && canUpdateInstitutions === true);
+					isInstitutionCreateOrUpdate &&
+					((submissionType === "create" && canCreateInstitutions === true) ||
+						(submissionType === "update" && canUpdateInstitutions === true));
 				return toLocalePath(useEditRoute ? `${base}/edit` : base);
 			}
 			return undefined;
@@ -491,6 +492,7 @@ export function ActivityList({
 }: ActivityListProps) {
 	const { t } = useTranslation("common");
 	const toLocalePath = useLocalePath();
+	const previousVisibleActivitySignatureRef = useRef<string | null>(null);
 	const [searchQuery, setSearchQuery] = useState("");
 	const [statusFilter, setStatusFilter] = useState("all");
 	const [typeFilter, setTypeFilter] = useState("all");
@@ -549,162 +551,84 @@ export function ActivityList({
 		[deletedSubmissionIdSet, submissionIdSet],
 	);
 
-	const mapAuditToActivity = (
-		audit: EntityAudit,
-		relationAudit?: EntityAudit,
-		activityId?: string,
-	): Activity => {
-		const actor = formatAuditActor(audit, t);
-		const intent = getAuditIntent(audit);
-		const actionKey = intent ?? audit.action;
-		const primarySource =
-			intent === "submission_review_approved" && relationAudit
-				? relationAudit
-				: audit;
-		let secondarySource: EntityAudit | undefined;
-		if (relationAudit && relationAudit.id !== primarySource.id) {
-			secondarySource = relationAudit;
-		} else if (audit.id !== primarySource.id) {
-			secondarySource = audit;
-		} else {
-			secondarySource = undefined;
-		}
-		const relationEntityLabel = secondarySource
-			? formatEntityLabel(secondarySource, t)
-			: undefined;
-		const relationEntityName = secondarySource
-			? getEntityName(secondarySource)
-			: null;
-		let relation: string | undefined;
-		if (relationEntityLabel) {
-			if (relationEntityName) {
-				relation = normalizeEntityText(
-					t("auth.account.activity.itemWithName", {
-						defaultValue: `${relationEntityLabel}: ${relationEntityName}`,
-						item: relationEntityLabel,
-						name: relationEntityName,
-					}),
-				);
+	const mapAuditToActivity = useCallback(
+		(
+			audit: EntityAudit,
+			relationAudit?: EntityAudit,
+			activityId?: string,
+		): Activity => {
+			const actor = formatAuditActor(audit, t);
+			const intent = getAuditIntent(audit);
+			const actionKey = intent ?? audit.action;
+			const primarySource =
+				intent === "submission_review_approved" && relationAudit
+					? relationAudit
+					: audit;
+			let secondarySource: EntityAudit | undefined;
+			if (relationAudit && relationAudit.id !== primarySource.id) {
+				secondarySource = relationAudit;
+			} else if (audit.id !== primarySource.id) {
+				secondarySource = audit;
 			} else {
-				relation = normalizeEntityText(relationEntityLabel);
+				secondarySource = undefined;
 			}
-		} else {
-			relation = undefined;
-		}
-		const primaryBase = formatEntityLabel(primarySource, t);
-		const primaryName = getEntityName(primarySource);
-		const primaryEntity = primaryName
-			? normalizeEntityText(
-					t("auth.account.activity.itemWithName", {
-						defaultValue: `${primaryBase}: ${primaryName}`,
-						item: primaryBase,
-						name: primaryName,
-					}),
-				)
-			: normalizeEntityText(primaryBase);
-		const oldData = asObject(audit.old_data);
-		const newData = asObject(audit.new_data);
-		const oldStatus =
-			typeof oldData?.status === "string" ? oldData.status : undefined;
-		const newStatus =
-			typeof newData?.status === "string" ? newData.status : undefined;
-		const hasStatusTransition = intent
-			? false
-			: Boolean(oldStatus && newStatus && oldStatus !== newStatus);
-		const fromStatus = intent
-			? getStatusLabel("approval_pending", t)
-			: getStatusLabel(oldStatus, t);
-		const toStatus = intent
-			? getStatusLabel(audit.status, t)
-			: getStatusLabel(newStatus ?? audit.status, t);
-		const normalizedRelation =
-			relation && relation === primaryEntity ? undefined : relation;
-		const isApprovedUserSubmissionAssignment =
-			intent === "submission_review_approved" &&
-			primarySource.entity_type === "user" &&
-			secondarySource?.entity_type === "submission";
-		let displayPrimaryEntity = primaryEntity;
-		let displayPrimaryEntityLink = mapEntityLink(
-			primarySource,
-			toLocalePath,
-			canOpenSubmission,
-			canReadAllUsers,
-			currentUserId,
-			canCreateInstitutions,
-			canUpdateInstitutions,
-			canReviewSubmissions,
-		);
-		let displayEntityType = primarySource.entity_type;
-		if (isApprovedUserSubmissionAssignment) {
-			const institutionId = getSubmissionInstitutionId(secondarySource);
-			const institutionLabel = t("auth.account.activity.entities.institution", {
-				defaultValue: "Kulturort",
-			});
-			const userLabel = normalizeEntityText(
-				formatEntityLabel(primarySource, t),
-			);
-			const institutionEntity = institutionId
-				? `${institutionLabel} #${institutionId}`
-				: institutionLabel;
-			displayPrimaryEntity = `${institutionEntity} dem ${userLabel} hinzugefügt`;
-			displayEntityType = "institution";
-			if (institutionId && isNumericId(institutionId)) {
-				displayPrimaryEntityLink = toLocalePath(
-					`/map/institution/${institutionId}`,
-				);
-			}
-		}
-		let eventType: "status_change" | "assign" | "create";
-		if (hasStatusTransition) {
-			eventType = "status_change";
-		} else if (normalizedRelation) {
-			eventType = "assign";
-		} else {
-			eventType = "create";
-		}
-		return {
-			id: activityId,
-			date: audit.changed_at,
-			user: audit?.user || null,
-			entityType: displayEntityType,
-			eventType,
-			actor,
-			primaryEntity: displayPrimaryEntity,
-			primaryEntityLink: displayPrimaryEntityLink,
-			secondaryEntity: normalizedRelation,
-			secondaryEntityLink: secondarySource
-				? mapEntityLink(
-						secondarySource,
-						toLocalePath,
-						canOpenSubmission,
-						canReadAllUsers,
-						currentUserId,
-						canCreateInstitutions,
-						canUpdateInstitutions,
-						canReviewSubmissions,
-					)
-				: undefined,
-			from: hasStatusTransition ? fromStatus : undefined,
-			to: hasStatusTransition ? toStatus : undefined,
-			action: (() => {
-				const baseAction = t(`auth.account.activity.actions.${actionKey}`, {
-					defaultValue: t(`auth.account.activity.actions.${audit.action}`, {
-						defaultValue: audit.action,
-					}),
-				});
-				const accountType = getEntityAccountType(primarySource);
-				if (primarySource.entity_type !== "user" || !accountType) {
-					return baseAction;
+			const relationEntityLabel = secondarySource
+				? formatEntityLabel(secondarySource, t)
+				: undefined;
+			const relationEntityName = secondarySource
+				? getEntityName(secondarySource)
+				: null;
+			let relation: string | undefined;
+			if (relationEntityLabel) {
+				if (relationEntityName) {
+					relation = normalizeEntityText(
+						t("auth.account.activity.itemWithName", {
+							defaultValue: `${relationEntityLabel}: ${relationEntityName}`,
+							item: relationEntityLabel,
+							name: relationEntityName,
+						}),
+					);
+				} else {
+					relation = normalizeEntityText(relationEntityLabel);
 				}
-				return t("auth.account.activity.actions.withAccountType", {
-					defaultValue: `${baseAction} (${getAccountTypeLabel(accountType, t)})`,
-					action: baseAction,
-					accountType: getAccountTypeLabel(accountType, t),
-				});
-			})(),
-			item: primaryEntity,
-			itemLink: mapEntityLink(
-				audit,
+			} else {
+				relation = undefined;
+			}
+			const primaryBase = formatEntityLabel(primarySource, t);
+			const primaryName = getEntityName(primarySource);
+			const primaryEntity = primaryName
+				? normalizeEntityText(
+						t("auth.account.activity.itemWithName", {
+							defaultValue: `${primaryBase}: ${primaryName}`,
+							item: primaryBase,
+							name: primaryName,
+						}),
+					)
+				: normalizeEntityText(primaryBase);
+			const oldData = asObject(audit.old_data);
+			const newData = asObject(audit.new_data);
+			const oldStatus =
+				typeof oldData?.status === "string" ? oldData.status : undefined;
+			const newStatus =
+				typeof newData?.status === "string" ? newData.status : undefined;
+			const hasStatusTransition = intent
+				? false
+				: Boolean(oldStatus && newStatus && oldStatus !== newStatus);
+			const fromStatus = intent
+				? getStatusLabel("approval_pending", t)
+				: getStatusLabel(oldStatus, t);
+			const toStatus = intent
+				? getStatusLabel(audit.status, t)
+				: getStatusLabel(newStatus ?? audit.status, t);
+			const normalizedRelation =
+				relation && relation === primaryEntity ? undefined : relation;
+			const isApprovedUserSubmissionAssignment =
+				intent === "submission_review_approved" &&
+				primarySource.entity_type === "user" &&
+				secondarySource?.entity_type === "submission";
+			let displayPrimaryEntity = primaryEntity;
+			let displayPrimaryEntityLink = mapEntityLink(
+				primarySource,
 				toLocalePath,
 				canOpenSubmission,
 				canReadAllUsers,
@@ -712,108 +636,204 @@ export function ActivityList({
 				canCreateInstitutions,
 				canUpdateInstitutions,
 				canReviewSubmissions,
-			),
-			relation: normalizedRelation,
-			relationLink: secondarySource
-				? mapEntityLink(
-						secondarySource,
-						toLocalePath,
-						canOpenSubmission,
-						canReadAllUsers,
-						currentUserId,
-						canCreateInstitutions,
-						canUpdateInstitutions,
-						canReviewSubmissions,
-					)
-				: undefined,
-			status: (getUserEntityStatus(primarySource) ??
-				audit.status) as Activity["status"],
-		};
-	};
-
-	const resolvedActivities =
-		activities ??
-		(() => {
-			const grouped = new Map<string, EntityAudit[]>();
-			const standalone: EntityAudit[] = [];
-			const HIDDEN_ENTITY_TYPES = new Set([
-				"role_table_permission",
-				"role_field_permission",
-			]);
-			for (const audit of entityAudits) {
-				if (HIDDEN_ENTITY_TYPES.has(audit.entity_type)) continue;
-				const meta = getAuditRelationMeta(audit);
-				if (!meta.correlationId) {
-					standalone.push(audit);
-					continue;
-				}
-				const existing = grouped.get(meta.correlationId) ?? [];
-				existing.push(audit);
-				grouped.set(meta.correlationId, existing);
-			}
-
-			const groupedActivities = Array.from(grouped.values()).flatMap(
-				(group) => {
-					// If every audit in the group is a submission, expand into individual
-					// items — these are wizard-create flows (institution + category
-					// submissions) and should each appear as their own activity row.
-					const allSubmissions = group.every(
-						(a) => a.entity_type === "submission",
-					);
-					if (allSubmissions) {
-						return group.map((audit) => ({
-							id: `audit:${audit.id}`,
-							changedAt:
-								audit.changed_at instanceof Date
-									? audit.changed_at.getTime()
-									: new Date(audit.changed_at).getTime(),
-							activity: mapAuditToActivity(
-								audit,
-								undefined,
-								`audit:${audit.id}`,
-							),
-						}));
-					}
-
-					const first = group[0];
-					const relationMeta = getAuditRelationMeta(first);
-					const primary =
-						group.find(
-							(a) =>
-								a.entity_type === relationMeta.rootEntityType &&
-								a.entity_id === relationMeta.rootEntityId,
-						) ?? group[0];
-					const relationAudit = pickRelationAudit(group, primary);
-					return [
-						{
-							id: relationMeta.correlationId ?? `audit:${primary.id}`,
-							changedAt:
-								primary.changed_at instanceof Date
-									? primary.changed_at.getTime()
-									: new Date(primary.changed_at).getTime(),
-							activity: mapAuditToActivity(
-								primary,
-								relationAudit,
-								relationMeta.correlationId ?? `audit:${primary.id}`,
-							),
-						},
-					];
-				},
 			);
+			let displayEntityType = primarySource.entity_type;
+			if (isApprovedUserSubmissionAssignment) {
+				const institutionId = getSubmissionInstitutionId(secondarySource);
+				const institutionLabel = t(
+					"auth.account.activity.entities.institution",
+					{
+						defaultValue: "Kulturort",
+					},
+				);
+				const userLabel = normalizeEntityText(
+					formatEntityLabel(primarySource, t),
+				);
+				const institutionEntity = institutionId
+					? `${institutionLabel} #${institutionId}`
+					: institutionLabel;
+				displayPrimaryEntity = `${institutionEntity} dem ${userLabel} hinzugefügt`;
+				displayEntityType = "institution";
+				if (institutionId && isNumericId(institutionId)) {
+					displayPrimaryEntityLink = toLocalePath(
+						`/map/institution/${institutionId}`,
+					);
+				}
+			}
+			let eventType: "status_change" | "assign" | "create";
+			if (hasStatusTransition) {
+				eventType = "status_change";
+			} else if (normalizedRelation) {
+				eventType = "assign";
+			} else {
+				eventType = "create";
+			}
+			return {
+				id: activityId,
+				date: audit.changed_at,
+				user: audit?.user || null,
+				entityType: displayEntityType,
+				eventType,
+				actor,
+				primaryEntity: displayPrimaryEntity,
+				primaryEntityLink: displayPrimaryEntityLink,
+				secondaryEntity: normalizedRelation,
+				secondaryEntityLink: secondarySource
+					? mapEntityLink(
+							secondarySource,
+							toLocalePath,
+							canOpenSubmission,
+							canReadAllUsers,
+							currentUserId,
+							canCreateInstitutions,
+							canUpdateInstitutions,
+							canReviewSubmissions,
+						)
+					: undefined,
+				from: hasStatusTransition ? fromStatus : undefined,
+				to: hasStatusTransition ? toStatus : undefined,
+				action: (() => {
+					const baseAction = t(`auth.account.activity.actions.${actionKey}`, {
+						defaultValue: t(`auth.account.activity.actions.${audit.action}`, {
+							defaultValue: audit.action,
+						}),
+					});
+					const accountType = getEntityAccountType(primarySource);
+					if (primarySource.entity_type !== "user" || !accountType) {
+						return baseAction;
+					}
+					return t("auth.account.activity.actions.withAccountType", {
+						defaultValue: `${baseAction} (${getAccountTypeLabel(accountType, t)})`,
+						action: baseAction,
+						accountType: getAccountTypeLabel(accountType, t),
+					});
+				})(),
+				item: primaryEntity,
+				itemLink: mapEntityLink(
+					audit,
+					toLocalePath,
+					canOpenSubmission,
+					canReadAllUsers,
+					currentUserId,
+					canCreateInstitutions,
+					canUpdateInstitutions,
+					canReviewSubmissions,
+				),
+				relation: normalizedRelation,
+				relationLink: secondarySource
+					? mapEntityLink(
+							secondarySource,
+							toLocalePath,
+							canOpenSubmission,
+							canReadAllUsers,
+							currentUserId,
+							canCreateInstitutions,
+							canUpdateInstitutions,
+							canReviewSubmissions,
+						)
+					: undefined,
+				status: (getUserEntityStatus(primarySource) ??
+					audit.status) as Activity["status"],
+			};
+		},
+		[
+			t,
+			toLocalePath,
+			canOpenSubmission,
+			canReadAllUsers,
+			currentUserId,
+			canCreateInstitutions,
+			canUpdateInstitutions,
+			canReviewSubmissions,
+		],
+	);
 
-			const standaloneActivities = standalone.map((audit) => ({
-				id: `audit:${audit.id}`,
-				changedAt:
-					audit.changed_at instanceof Date
-						? audit.changed_at.getTime()
-						: new Date(audit.changed_at).getTime(),
-				activity: mapAuditToActivity(audit, undefined, `audit:${audit.id}`),
-			}));
+	const resolvedActivities = useMemo(
+		() =>
+			activities ??
+			(() => {
+				const grouped = new Map<string, EntityAudit[]>();
+				const standalone: EntityAudit[] = [];
+				const HIDDEN_ENTITY_TYPES = new Set([
+					"role_table_permission",
+					"role_field_permission",
+				]);
+				for (const audit of entityAudits) {
+					if (HIDDEN_ENTITY_TYPES.has(audit.entity_type)) continue;
+					const meta = getAuditRelationMeta(audit);
+					if (!meta.correlationId) {
+						standalone.push(audit);
+						continue;
+					}
+					const existing = grouped.get(meta.correlationId) ?? [];
+					existing.push(audit);
+					grouped.set(meta.correlationId, existing);
+				}
 
-			return [...groupedActivities, ...standaloneActivities]
-				.sort((a, b) => b.changedAt - a.changedAt)
-				.map((entry) => entry.activity);
-		})();
+				const groupedActivities = Array.from(grouped.values()).flatMap(
+					(group) => {
+						// If every audit in the group is a submission, expand into individual
+						// items — these are wizard-create flows (institution + category
+						// submissions) and should each appear as their own activity row.
+						const allSubmissions = group.every(
+							(a) => a.entity_type === "submission",
+						);
+						if (allSubmissions) {
+							return group.map((audit) => ({
+								id: `audit:${audit.id}`,
+								changedAt:
+									audit.changed_at instanceof Date
+										? audit.changed_at.getTime()
+										: new Date(audit.changed_at).getTime(),
+								activity: mapAuditToActivity(
+									audit,
+									undefined,
+									`audit:${audit.id}`,
+								),
+							}));
+						}
+
+						const first = group[0];
+						const relationMeta = getAuditRelationMeta(first);
+						const primary =
+							group.find(
+								(a) =>
+									a.entity_type === relationMeta.rootEntityType &&
+									a.entity_id === relationMeta.rootEntityId,
+							) ?? group[0];
+						const relationAudit = pickRelationAudit(group, primary);
+						return [
+							{
+								id: relationMeta.correlationId ?? `audit:${primary.id}`,
+								changedAt:
+									primary.changed_at instanceof Date
+										? primary.changed_at.getTime()
+										: new Date(primary.changed_at).getTime(),
+								activity: mapAuditToActivity(
+									primary,
+									relationAudit,
+									relationMeta.correlationId ?? `audit:${primary.id}`,
+								),
+							},
+						];
+					},
+				);
+
+				const standaloneActivities = standalone.map((audit) => ({
+					id: `audit:${audit.id}`,
+					changedAt:
+						audit.changed_at instanceof Date
+							? audit.changed_at.getTime()
+							: new Date(audit.changed_at).getTime(),
+					activity: mapAuditToActivity(audit, undefined, `audit:${audit.id}`),
+				}));
+
+				return [...groupedActivities, ...standaloneActivities]
+					.sort((a, b) => b.changedAt - a.changedAt)
+					.map((entry) => entry.activity);
+			})(),
+		[activities, entityAudits, mapAuditToActivity],
+	);
 
 	if (isLoading) {
 		return <ActivityListSkeleton showFilters />;
@@ -846,59 +866,105 @@ export function ActivityList({
 		);
 	}
 
-	const statusOptions = Array.from(
-		new Set(resolvedActivities.map((activity) => activity.status)),
-	);
-	const typeOptions = Array.from(
-		new Set(
-			resolvedActivities.map(
-				(activity) => activity.eventType ?? ("create" as const),
+	const statusOptions = useMemo(
+		() =>
+			Array.from(
+				new Set(resolvedActivities.map((activity) => activity.status)),
 			),
-		),
+		[resolvedActivities],
 	);
-	const actorOptions = Array.from(
-		new Set(
-			resolvedActivities
-				.map((activity) => activity.actor?.trim() ?? "")
-				.filter((value) => value.length > 0),
-		),
-	).sort((a, b) => a.localeCompare(b, "de"));
-	const entityTypeOptions = Array.from(
-		new Set(
-			resolvedActivities
-				.map((activity) => activity.entityType?.trim() ?? "")
-				.filter((value) => value.length > 0),
-		),
-	).sort((a, b) =>
-		getEntityTypeLabel(a, t).localeCompare(getEntityTypeLabel(b, t), "de"),
+	const typeOptions = useMemo(
+		() =>
+			Array.from(
+				new Set(
+					resolvedActivities.map(
+						(activity) => activity.eventType ?? ("create" as const),
+					),
+				),
+			),
+		[resolvedActivities],
 	);
-	const filteredActivities = resolvedActivities.filter((activity) => {
-		if (statusFilter !== "all" && activity.status !== statusFilter)
-			return false;
-		const eventType = activity.eventType ?? "create";
-		if (typeFilter !== "all" && eventType !== typeFilter) return false;
-		const entityType = activity.entityType?.trim() ?? "";
-		if (entityTypeFilter !== "all" && entityType !== entityTypeFilter)
-			return false;
-		const actor = activity.actor?.trim() ?? "";
-		if (actorFilter !== "all" && actor !== actorFilter) return false;
-		if (!isActivityWithinDatePreset(activity.date, dateFilter, new Date())) {
-			return false;
-		}
-
+	const actorOptions = useMemo(
+		() =>
+			Array.from(
+				new Set(
+					resolvedActivities
+						.map((activity) => activity.actor?.trim() ?? "")
+						.filter((value) => value.length > 0),
+				),
+			).sort((a, b) => a.localeCompare(b, "de")),
+		[resolvedActivities],
+	);
+	const entityTypeOptions = useMemo(
+		() =>
+			Array.from(
+				new Set(
+					resolvedActivities
+						.map((activity) => activity.entityType?.trim() ?? "")
+						.filter((value) => value.length > 0),
+				),
+			).sort((a, b) =>
+				getEntityTypeLabel(a, t).localeCompare(getEntityTypeLabel(b, t), "de"),
+			),
+		[resolvedActivities, t],
+	);
+	const filteredActivities = useMemo(() => {
 		const query = searchQuery.trim().toLowerCase();
-		if (!query) return true;
-		const searchable = [
-			actor,
-			activity.primaryEntity ?? activity.item ?? "",
-			activity.secondaryEntity ?? activity.relation ?? "",
-			activity.action ?? "",
-			activity.status ?? "",
-		]
-			.join(" ")
-			.toLowerCase();
-		return searchable.includes(query);
-	});
+		const now = new Date();
+		return resolvedActivities.filter((activity) => {
+			if (statusFilter !== "all" && activity.status !== statusFilter) {
+				return false;
+			}
+			const eventType = activity.eventType ?? "create";
+			if (typeFilter !== "all" && eventType !== typeFilter) return false;
+			const entityType = activity.entityType?.trim() ?? "";
+			if (entityTypeFilter !== "all" && entityType !== entityTypeFilter) {
+				return false;
+			}
+			const actor = activity.actor?.trim() ?? "";
+			if (actorFilter !== "all" && actor !== actorFilter) return false;
+			if (!isActivityWithinDatePreset(activity.date, dateFilter, now)) {
+				return false;
+			}
+			if (!query) return true;
+
+			const searchable = [
+				actor,
+				activity.primaryEntity ?? activity.item ?? "",
+				activity.secondaryEntity ?? activity.relation ?? "",
+				activity.action ?? "",
+				activity.status ?? "",
+			]
+				.join(" ")
+				.toLowerCase();
+			return searchable.includes(query);
+		});
+	}, [
+		actorFilter,
+		dateFilter,
+		entityTypeFilter,
+		resolvedActivities,
+		searchQuery,
+		statusFilter,
+		typeFilter,
+	]);
+	const visibleActivitySignature = useMemo(
+		() =>
+			filteredActivities
+				.map(
+					(activity, index) =>
+						activity.id ?? `activity-${String(activity.date)}-${index}`,
+				)
+				.join("|"),
+		[filteredActivities],
+	);
+	const shouldAnimateVisibleActivities =
+		previousVisibleActivitySignatureRef.current === null ||
+		previousVisibleActivitySignatureRef.current !== visibleActivitySignature;
+
+	useEffect(() => {
+		previousVisibleActivitySignatureRef.current = visibleActivitySignature;
+	}, [visibleActivitySignature]);
 
 	const renderListContent = () => {
 		if (filteredActivities.length === 0) {
@@ -914,8 +980,16 @@ export function ActivityList({
 		return filteredActivities.map((activity, index) => (
 			<div
 				key={activity.id ?? `activity-${activity.date}-${index}`}
-				className="motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-1 motion-safe:duration-300"
-				style={{ animationDelay: `${Math.min(index, 12) * 28}ms` }}
+				className={
+					shouldAnimateVisibleActivities
+						? "motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-1 motion-safe:duration-300"
+						: undefined
+				}
+				style={
+					shouldAnimateVisibleActivities
+						? { animationDelay: `${Math.min(index, 12) * 28}ms` }
+						: undefined
+				}
 			>
 				<ActivityItem activity={activity} index={index} />
 			</div>
