@@ -31,6 +31,11 @@ export interface DataTableConfig<T> {
 		onClick: () => void;
 	};
 
+	rightButton?: {
+		label: ReactNode;
+		onClick: () => void;
+	};
+
 	filterModal?: {
 		triggerLabel?: ReactNode;
 		triggerAriaLabel?: string;
