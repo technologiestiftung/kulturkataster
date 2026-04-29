@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { DataTable } from "@/components/DataTable";
 import type { DataTableConfig } from "@/components/DataTable";
@@ -37,6 +37,7 @@ import { canReviewInstitutionSubmissionType } from "@/lib/utils/submissionReview
 import { EmptyActionState } from "@/components/EmptyActionState";
 import Edit from "@/icons/edit.svg";
 import { useInstitutionPrivateFieldResolver } from "@/lib/hooks/useInstitutionPrivateFieldResolver";
+import { DownloadModal } from "@/components/Modals/Pages/DownloadModal";
 
 export function InstitutionsTable() {
 	const router = useRouter();
@@ -57,6 +58,7 @@ export function InstitutionsTable() {
 	const canCreateInstitutionViaSubmission =
 		!canCreateInstitutionDirect && institutionPermissions.createSubmission;
 	const canClaimInstitution = institutionPermissions.createSubmission;
+	const [isDownloadDialogOpen, setIsDownloadDialogOpen] = useState(false);
 	const canReviewSubmissionType = (type: SubmissionType) => {
 		return canReviewInstitutionSubmissionType(institutionPermissions, type);
 	};
@@ -168,6 +170,19 @@ export function InstitutionsTable() {
 		categoryCounts,
 		subcategoryCounts,
 	} = useInstitutionTableFilters(tableRows, filterCategoryGroups);
+	const downloadableInstitutions = useMemo(() => {
+		const visibleInstitutionIds = new Set(
+			filteredTableRows
+				.filter((row) => !isSubmissionRow(row))
+				.map((row) => row.id),
+		);
+		return institutions.filter((institution) =>
+			visibleInstitutionIds.has(institution.id),
+		);
+	}, [filteredTableRows, institutions]);
+	const closeDownloadDialog = useCallback((open: boolean) => {
+		setIsDownloadDialogOpen(open);
+	}, []);
 
 	const tableConfig: DataTableConfig<InstitutionTableRow> = {
 		isPrivateColumn,
@@ -878,6 +893,12 @@ export function InstitutionsTable() {
 						router.push(toLocalePath("/account/submissions/claim")),
 				}
 			: undefined,
+		rightButton: {
+			label: t("institutionsTable.actions.downloadList", {
+				defaultValue: "Liste herunterladen",
+			}),
+			onClick: () => setIsDownloadDialogOpen(true),
+		},
 		onEdit: (row) => {
 			if (isSubmissionRow(row)) {
 				router.push(
@@ -1015,6 +1036,18 @@ export function InstitutionsTable() {
 	return (
 		<>
 			<DataTable config={tableConfig} />
+			<DownloadModal
+				open={isDownloadDialogOpen}
+				onCloseRequest={() => closeDownloadDialog(false)}
+				data={downloadableInstitutions}
+				filename="kulturorte"
+				format="xlsx"
+				translateFn={tEnum}
+				confirmLabel={t("institutionsTable.actions.downloadList", {
+					defaultValue: "Liste herunterladen",
+				})}
+				cancelLabel={tCommon("cancel", { defaultValue: "Cancel" })}
+			/>
 		</>
 	);
 }

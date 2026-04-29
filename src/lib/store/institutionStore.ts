@@ -12,6 +12,7 @@ import {
 	getSubcategories,
 	toFeatureCollection,
 } from "../utils/institutionUtils";
+import { areStoreSliceValuesEqual } from "../utils/storeEquality";
 import { getPublicInstitutionData } from "@/server/actions/publicInstitutionData";
 import { reportClientTelemetry } from "@/lib/utils/clientTelemetry";
 
@@ -178,8 +179,14 @@ export const useInstitutionStore = create<InstitutionStoreState>()(
 			setFilters: (filters) => applyFilters(filters, set, get),
 			resetFilters: () => applyFilters(defaultFilters, set, get),
 			categories: null,
-			setCategories: (categories) => set({ categories }),
-			setDistricts: (districts) => set({ districts }),
+			setCategories: (categories) => {
+				if (areStoreSliceValuesEqual(get().categories, categories)) return;
+				set({ categories });
+			},
+			setDistricts: (districts) => {
+				if (areStoreSliceValuesEqual(get().districts, districts)) return;
+				set({ districts });
+			},
 			clearError: () => set({ error: null }),
 			hydratePublicData: (data) => applyPublicData(data, set, get),
 			initializePublicData: async () => {
@@ -204,6 +211,9 @@ export const useInstitutionStore = create<InstitutionStoreState>()(
 				}
 			},
 			setInstitutions: (institutions) => {
+				if (areStoreSliceValuesEqual(get().allInstitutions, institutions)) {
+					return;
+				}
 				const newState = { allInstitutions: institutions };
 				const currentState = { ...get(), ...newState };
 				const filteredInstitutions = computeFilteredInstitutions(currentState);
