@@ -38,6 +38,11 @@ type MockState = {
 	}>;
 	entityAudits: MockAudit[];
 	submissions: Array<{ id: number }>;
+	institutionPermissions?: {
+		create?: boolean;
+		update?: boolean;
+		reviewSubmission?: boolean;
+	} | null;
 };
 
 let mockState: MockState = {
@@ -45,6 +50,7 @@ let mockState: MockState = {
 	users: [],
 	entityAudits: [],
 	submissions: [],
+	institutionPermissions: null,
 };
 
 vi.mock("react-i18next", () => ({
@@ -256,6 +262,22 @@ describe("ActivityList filters", () => {
 		expect(screen.getAllByTestId("activity-row")).toHaveLength(1);
 	});
 
+	it("does not reapply row entry animations when rerendered with the same activities", () => {
+		const { rerender } = render(<ActivityList />);
+
+		expect(screen.getAllByTestId("activity-row")).toHaveLength(3);
+		for (const row of screen.getAllByTestId("activity-row")) {
+			expect(row.parentElement).toHaveClass("motion-safe:animate-in");
+		}
+
+		rerender(<ActivityList />);
+
+		expect(screen.getAllByTestId("activity-row")).toHaveLength(3);
+		for (const row of screen.getAllByTestId("activity-row")) {
+			expect(row.parentElement).not.toHaveClass("motion-safe:animate-in");
+		}
+	});
+
 	it("uses the user entity status for user activities", () => {
 		mockState.entityAudits = [
 			makeAudit({
@@ -451,6 +473,46 @@ describe("ActivityList filters", () => {
 		expect(screen.getByTestId("primary-link-audit:21")).toHaveAttribute(
 			"href",
 			"/de/account/edit",
+		);
+	});
+
+	it("does not append /edit for category submission links even when canCreateInstitutions is true", () => {
+		mockState = {
+			currentProfile: { id: "current-user", email: "current@example.com" },
+			users: [
+				{
+					id: "current-user",
+					email: "current@example.com",
+					role: {
+						table_permissions: [
+							{ table: "user", action: "read", scope: "all" },
+						],
+					},
+				},
+			],
+			submissions: [{ id: 165 }],
+			institutionPermissions: { create: true, update: true },
+			entityAudits: [
+				makeAudit({
+					id: 30,
+					action: "create",
+					entity_type: "submission",
+					entity_id: "165",
+					status: "approved",
+					new_data: {
+						type: "create",
+						entity_type: "category",
+						data: { key: "musik" },
+					},
+				}),
+			],
+		};
+
+		render(<ActivityList />);
+
+		expect(screen.getByTestId("primary-link-audit:30")).toHaveAttribute(
+			"href",
+			"/de/account/submissions/165",
 		);
 	});
 });
