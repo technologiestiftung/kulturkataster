@@ -1,187 +1,99 @@
 "use client";
 
 import DownloadPDFButton from "@/components/Content/DownloadPDFButton";
-import TextBlock from "@/components/Content/TextBlock";
+import { OrderedList } from "@/components/Content/OrderedList";
+import { VersionsList } from "@/components/Content/VersionsList";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
+import type { Element } from "hast";
 import { Trans, useTranslation } from "react-i18next";
+import ReactMarkdown from "react-markdown";
 import { Modal } from "../Modal";
-
-interface Guidelines {
-	description: string;
-	items: string[];
-}
-
-interface Versions {
-	description: string;
-	planned: string;
-	items: string[];
-}
-
-interface CreditSection {
-	title: string;
-	organization?: string;
-	members?: string[];
-	list?: string[];
-}
-
-interface Contractors {
-	title: string;
-	items: string[];
-	editorial: {
-		title: string;
-		items: string[];
-	};
-	additional: string[];
-}
-
-interface Credits {
-	funding: CreditSection;
-	team: CreditSection;
-	steering: CreditSection;
-	partners: CreditSection;
-	contractors: Contractors;
-}
-
-interface AboutContent {
-	introduction: string[];
-	guidelines: Guidelines;
-	approach: string;
-	concept: string;
-	documentation: {
-		text: string;
-		downloadPDF: string;
-	};
-	versions: Versions;
-	thanks: string;
-	credits: Credits;
-}
 
 export function AboutModal({ routePath }: { routePath?: string }) {
 	const { t } = useTranslation("content");
 	const toLocalePath = useLocalePath();
-
-	const content = t("aboutModal", { returnObjects: true }) as AboutContent;
-
-	const CreditSectionComponent = ({ data }: { data: CreditSection }) => (
-		<div className="mb-8">
-			<p className="body1 font-bold">{data.title}</p>
-			<div className="body2 space-y-1 mt-4">
-				{data.organization && <p>{data.organization}</p>}
-				{data.members?.map((item, i) => <p key={i}>{item}</p>)}
-				{data.list?.map((item, i) => <p key={i}>{item}</p>)}
-			</div>
-		</div>
-	);
-
-	const modalContent = (
-		<div className="space-y-8">
-			<div className="space-y-4 pt-4">
-				<p>
-					<Trans
-						i18nKey="aboutModal.simpleLanguageDirect"
-						ns="content"
-						components={{
-							link: (
-								<a
-									href={toLocalePath("/simpleLanguage")}
-									rel="noopener noreferrer"
-									type="button"
-									className="text-primary-dark hover:text-primary underline bg-transparent border-none p-0 cursor-pointer "
-								>
-									{t("here")}
-								</a>
-							),
-						}}
-					/>
-				</p>
-				{content.introduction.map((paragraph, i) => (
-					<p key={i} className="body2">
-						{paragraph}
-					</p>
-				))}
-			</div>
-
-			<TextBlock text={content.guidelines.description} />
-			<ul
-				className="list-disc pl-5 space-y-2 body2"
-				aria-label={t("aboutModal.guidelinesListAriaLabel")}
-			>
-				{content.guidelines.items.map((item, i) => (
-					<li key={i}>{item}</li>
-				))}
-			</ul>
-
-			<TextBlock text={content.approach} />
-			<TextBlock text={content.concept} />
-
-			<div>
-				<TextBlock text={content.documentation.text} />
-				<DownloadPDFButton
-					className="mt-8"
-					title={content.documentation.downloadPDF}
-				/>
-			</div>
-
-			<TextBlock text={content.versions.description} />
-			<TextBlock text={content.versions.planned} />
-			<ul
-				className="list-disc pl-5 space-y-2 body2"
-				aria-label={t("aboutModal.versionListAriaLabel")}
-			>
-				{content.versions.items.map((item, i) => (
-					<li key={i}>{item}</li>
-				))}
-			</ul>
-
-			<TextBlock text={content.thanks} />
-
-			<div className="space-y-6 mt-8">
-				<CreditSectionComponent data={content.credits.funding} />
-				<CreditSectionComponent data={content.credits.team} />
-				<CreditSectionComponent data={content.credits.steering} />
-				<CreditSectionComponent data={content.credits.partners} />
-
-				<div>
-					<p className="body1 font-bold mt-8 mb-4">
-						{content.credits.contractors.title}
-					</p>
-					<div className="body2 space-y-4">
-						<div className="space-y-2">
-							{content.credits.contractors.items.map((item, i) => (
-								<p key={i}>{item}</p>
-							))}
-						</div>
-						<div>
-							<p className="font-bold mt-8 mb-4">
-								{content.credits.contractors.editorial.title}
-							</p>
-							<div className="space-y-2">
-								{content.credits.contractors.editorial.items.map((item, i) => (
-									<p key={i}>{item}</p>
-								))}
-							</div>
-						</div>
-						<div className="space-y-2">
-							{content.credits.contractors.additional.map((item, i) => (
-								<p key={i}>{item}</p>
-							))}
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	);
-
+	const afterDivider = { current: false };
 	return (
 		<Modal
 			title={t("aboutModal.title")}
-			subtitle={t("aboutModal.subtitle", {
-				defaultValue: " ",
-			})}
+			subtitle={
+				<Trans
+					i18nKey="aboutModal.simpleLanguageDirect"
+					ns="content"
+					components={{
+						link: (
+							<a
+								href={toLocalePath("/simpleLanguage")}
+								rel="noopener noreferrer"
+								className="text-primary-dark hover:text-primary underline"
+							>
+								{t("here")}
+							</a>
+						),
+					}}
+				/>
+			}
+			subtitleClassName="-mt-5 mb-10 font-normal"
 			routePath={routePath}
 			hideLinksInModalFooter={["about"]}
 		>
-			{modalContent}
+			<ReactMarkdown
+				components={{
+					hr: () => {
+						afterDivider.current = true;
+						return null;
+					},
+					h2: ({ children }) => (
+						<p className="body2 font-bold mt-6 mb-1">{children}</p>
+					),
+					h3: ({ children }) => (
+						<p className="body2 font-semibold mt-4 mb-1">{children}</p>
+					),
+					h4: ({ children }) => <p className="body2 -mt-2 mb-3">{children}</p>,
+					p: ({ children }) => (
+						<p
+							className={`${afterDivider.current ? "body2" : "body1"} mb-3`}
+						>
+							{children}
+						</p>
+					),
+					ul: ({ children }) => (
+						<ul className="list-disc pl-5 space-y-2 body2 mb-3">{children}</ul>
+					),
+					ol: ({ node }) => <OrderedList node={node as Element} />,
+					li: ({ children }) => <li>{children}</li>,
+					strong: ({ children }) => (
+						<strong className="font-bold">{children}</strong>
+					),
+					code: ({ children }) => {
+						if (children === "versions-card") {
+							return (
+								<VersionsList
+									label={t("aboutModal.versionsLabel")}
+									items={
+										t("aboutModal.versionsItems", {
+											returnObjects: true,
+										}) as { badge: string; label: string; text: string }[]
+									}
+								/>
+							);
+						}
+						if (children === "documentation-card") {
+							return (
+								<div className="flex items-center gap-6 p-6 rounded-sm bg-neutral-5 my-10">
+									<p className="body2 font-bold flex-1">
+										{t("aboutModal.documentationText")}
+									</p>
+									<DownloadPDFButton title={t("aboutModal.downloadPDF")} />
+								</div>
+							);
+						}
+						return <code>{children}</code>;
+					},
+				}}
+			>
+				{t("aboutModal.body")}
+			</ReactMarkdown>
 		</Modal>
 	);
 }
