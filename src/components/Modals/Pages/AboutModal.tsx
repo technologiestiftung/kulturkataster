@@ -51,9 +51,7 @@ export function AboutModal({ routePath }: { routePath?: string }) {
 					),
 					h4: ({ children }) => <p className="body2 -mt-2 mb-3">{children}</p>,
 					p: ({ children }) => (
-						<p
-							className={`${afterDivider.current ? "body2" : "body1"} mb-3`}
-						>
+						<p className={`${afterDivider.current ? "body2" : "body1"} mb-3`}>
 							{children}
 						</p>
 					),
