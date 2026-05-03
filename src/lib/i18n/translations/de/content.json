@@ -1390,19 +1390,12 @@
 		},
 		"infosAndServices": {
 			"list1": {
-				"content": [
-					"Anfang 2026 Version 2",
-					"Mitte 2026 Version 3"
-				],
+				"content": ["Anfang 2026 Version 2", "Mitte 2026 Version 3"],
 				"title1": "Das Kultur·kataster wächst immer weiter.",
 				"title2": "Im Jahr 2026 gibt es 2 neue Versionen:"
 			},
 			"list2": {
-				"content": [
-					"Mehr Kultur·ort",
-					"Mehr Infos",
-					"Mehr Funktionen"
-				],
+				"content": ["Mehr Kultur·ort", "Mehr Infos", "Mehr Funktionen"],
 				"title": "Mit jeder Version gibt es:"
 			},
 			"list3": {
@@ -1451,10 +1444,7 @@
 				"title2": "Zum Beispiel:"
 			},
 			"list8": {
-				"content": [
-					"Private Galerien",
-					"Private Kunst·schulen"
-				],
+				"content": ["Private Galerien", "Private Kunst·schulen"],
 				"title1": "Auch in bestehenden Kategorien fehlen Orte.",
 				"title2": "Zum Beispiel:"
 			},
