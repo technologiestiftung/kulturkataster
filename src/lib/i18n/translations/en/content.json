@@ -1033,12 +1033,6 @@
 		"subtitle": "Your results at a glance",
 		"timeline": "The development of the list view is planned for 2026."
 	},
-	"privacyModal": {
-		"body": "*(English translation pending.)*",
-		"description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. ",
-		"subtitle": "Here comes the data protection text.",
-		"title": "Data protection"
-	},
 	"roleFormModal": {
 		"actions": {
 			"cancel": "Cancel",
@@ -1385,12 +1379,19 @@
 		},
 		"infosAndServices": {
 			"list1": {
-				"content": ["Early 2026 version 2", "Mid-2026 version 3"],
+				"content": [
+					"Early 2026 version 2",
+					"Mid-2026 version 3"
+				],
 				"title1": "The cultural register continues to grow.",
 				"title2": "In 2026 there will be 2 new versions:"
 			},
 			"list2": {
-				"content": ["More cultural location", "More info", "More features"],
+				"content": [
+					"More cultural location",
+					"More info",
+					"More features"
+				],
 				"title": "With each version there is:"
 			},
 			"list3": {
@@ -1406,7 +1407,11 @@
 				]
 			},
 			"list4": {
-				"content": ["By districts.", "By categories.", "By subcategories."],
+				"content": [
+					"By districts.",
+					"By categories.",
+					"By subcategories."
+				],
 				"title": "You can filter cultural locations:",
 				"titleBold": "Filter"
 			},
@@ -1418,7 +1423,10 @@
 				"title": "Then you will also see:"
 			},
 			"list6": {
-				"content": ["Tick ​​declaration of consent", "Submit form"],
+				"content": [
+					"Tick ​​declaration of consent",
+					"Submit form"
+				],
 				"title": "Then you must:"
 			},
 			"list7": {
@@ -1432,7 +1440,10 @@
 				"title2": "For example:"
 			},
 			"list8": {
-				"content": ["Private Galleries", "Private art schools"],
+				"content": [
+					"Private Galleries",
+					"Private art schools"
+				],
 				"title1": "Places are also missing in existing categories.",
 				"title2": "For example:"
 			},
@@ -1835,5 +1846,12 @@
 		"description": "Your unsaved changes will be lost.",
 		"confirm": "Close",
 		"cancel": "Cancel"
+	},
+	"termsModal": {
+		"body": "*(English translation pending.)*",
+		"description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. ",
+		"title": "Terms of Use (AGB) – Berliner Kulturkataster",
+		"date": "As of: {{date}}",
+		"disclaimer": "These terms of use are a preliminary placeholder for technical implementation. A legally binding final version will be created after legal review."
 	}
 }
