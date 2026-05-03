@@ -10,6 +10,7 @@ const footerItems = [
 	{ id: "about" },
 	{ id: "imprint" },
 	{ id: "privacy" },
+	{ id: "terms" },
 	{ id: "accessibility" },
 	{ id: "simpleLanguageInformation" },
 	{ id: "signLanguageInformationShort" },
