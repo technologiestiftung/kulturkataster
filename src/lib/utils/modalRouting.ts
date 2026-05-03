@@ -24,6 +24,7 @@ const MODAL_ROUTE_MAP: Record<string, ModalLink> = {
 		url: "https://dsgvo-info.cortina-consult.de/kulturkataster/",
 		target: "_blank",
 	},
+	terms: { url: "/terms", target: "_self" },
 };
 
 export const getModalLink = (id: string): ModalLink => {

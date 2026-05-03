@@ -297,7 +297,7 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
 							<span className="body2 font-normal flex-wrap">
 								{t("auth.register.termsIntro")}{" "}
 								<Link
-									href={toLocalePath("/privacy")}
+									href={toLocalePath("/terms")}
 									className="text-primary-dark underline"
 								>
 									{t("auth.register.termsLink")}
