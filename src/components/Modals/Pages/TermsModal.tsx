@@ -4,15 +4,22 @@ import ReactMarkdown from "react-markdown";
 import { useTranslation } from "react-i18next";
 import { Modal } from "../Modal";
 
-export function PrivacyModal({ routePath }: { routePath?: string }) {
-	const { t } = useTranslation(["content", "common"]);
+export function TermsModal({ routePath }: { routePath?: string }) {
+	const { t } = useTranslation("content");
 
 	return (
 		<Modal
-			title={t("privacyModal.title", { ns: "content" })}
-			subtitle={t("privacyModal.subtitle", { ns: "content" })}
+			title={t("termsModal.title")}
+			subtitle={
+				<>
+					<span className="block">
+						{t("termsModal.date", { date: "23.04.2026" })}
+					</span>
+					<span className="block mt-2">{t("termsModal.disclaimer")}</span>
+				</>
+			}
 			routePath={routePath}
-			hideLinksInModalFooter={["privacy"]}
+			hideLinksInModalFooter={["terms"]}
 		>
 			<ReactMarkdown
 				components={{
@@ -34,8 +41,7 @@ export function PrivacyModal({ routePath }: { routePath?: string }) {
 					hr: () => <hr className="my-6 border-border" />,
 				}}
 			>
-				{t("privacyModal.body", {
-					ns: "content",
+				{t("termsModal.body", {
 					date: "23.04.2026",
 					operatorName: "Kulturraum Berlin gGmbH",
 					operatorAddress: "[Anschrift einfügen]",

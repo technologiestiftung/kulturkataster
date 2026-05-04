@@ -1033,12 +1033,6 @@
 		"subtitle": "Your results at a glance",
 		"timeline": "The development of the list view is planned for 2026."
 	},
-	"privacyModal": {
-		"body": "*(English translation pending.)*",
-		"description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. ",
-		"subtitle": "Here comes the data protection text.",
-		"title": "Data protection"
-	},
 	"roleFormModal": {
 		"actions": {
 			"cancel": "Cancel",
@@ -1835,5 +1829,12 @@
 		"description": "Your unsaved changes will be lost.",
 		"confirm": "Close",
 		"cancel": "Cancel"
+	},
+	"termsModal": {
+		"body": "*(English translation pending.)*",
+		"description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. ",
+		"title": "Terms of Use (AGB) – Berliner Kulturkataster",
+		"date": "As of: {{date}}",
+		"disclaimer": "These terms of use are a preliminary placeholder for technical implementation. A legally binding final version will be created after legal review."
 	}
 }
