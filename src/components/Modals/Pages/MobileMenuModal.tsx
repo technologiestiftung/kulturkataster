@@ -23,6 +23,7 @@ const footerItems = [
 	{ id: "about" },
 	{ id: "imprint" },
 	{ id: "privacy" },
+	{ id: "terms" },
 	{ id: "accessibility" },
 ] as const;
 
