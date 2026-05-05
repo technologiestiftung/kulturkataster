@@ -24,6 +24,7 @@ export function SubmissionReviewModal({
 	const [fetchedSubmission, setFetchedSubmission] = useState<Submission | null>(
 		null,
 	);
+	const [didResolveSubmission, setDidResolveSubmission] = useState(false);
 
 	const submission = useMemo(
 		() =>
@@ -34,16 +35,21 @@ export function SubmissionReviewModal({
 	);
 
 	useEffect(() => {
-		if (submission) return;
+		if (submission) {
+			setDidResolveSubmission(true);
+			return;
+		}
 		let isMounted = true;
 		void getSubmissionById(submissionId)
 			.then((result) => {
 				if (!isMounted) return;
 				setFetchedSubmission(result);
+				setDidResolveSubmission(true);
 			})
 			.catch(() => {
 				if (!isMounted) return;
 				setFetchedSubmission(null);
+				setDidResolveSubmission(true);
 			});
 		return () => {
 			isMounted = false;
@@ -64,6 +70,8 @@ export function SubmissionReviewModal({
 	return (
 		<InstitutionDraftReviewModal
 			submissionId={submissionId}
+			submission={submission}
+			didResolveSubmission={didResolveSubmission}
 			returnTo={returnTo}
 			routePath={routePath}
 			shouldRefresh={shouldRefresh}

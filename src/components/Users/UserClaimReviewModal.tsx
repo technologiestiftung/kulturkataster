@@ -10,6 +10,7 @@ import { reviewClaimSubmission } from "@/server/actions/submissions";
 import type { ClaimSubmissionDetail } from "@/types/submission";
 import { formatDateWithLocale } from "@/lib/utils/dateUtils";
 import { ActionPanel } from "@/components/ActionPanel";
+import { formatUserDisplayName } from "@/lib/utils/userName";
 
 type UserClaimReviewModalProps = {
 	claims: ClaimSubmissionDetail[];
@@ -199,6 +200,18 @@ export function UserClaimReviewModal({
 																.map((user) => user.email ?? user.id)
 																.join(", ")
 														: "—",
+												alwaysShow: true,
+											},
+											{
+												type: "text",
+												label: t("userClaims.requestedBy", {
+													defaultValue: "Requested by",
+												}),
+												value: () =>
+													formatUserDisplayName(claimant) ??
+													claimant?.email ??
+													submission.created_by ??
+													"—",
 												alwaysShow: true,
 											},
 											{
