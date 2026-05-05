@@ -1,6 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+	useCallback,
+	useEffect,
+	useLayoutEffect,
+	useMemo,
+	useRef,
+	useState,
+} from "react";
 import { ActivityItem, type Activity } from "./ActivityItem";
 import { useAccountStore } from "@/lib/store/accountStore";
 import type { EntityAudit } from "@/types/entityAudit";
@@ -12,11 +19,40 @@ import Edit from "@/icons/edit.svg";
 import { EmptyActionState } from "@/components/EmptyActionState";
 import { ActivityListSkeleton } from "./ActivityListSkeleton";
 import { ActivityFilters } from "./ActivityFilters";
+import { getEntityAuditsPage } from "@/server/actions/entityAudits";
+import { useWindowVirtualizer } from "@tanstack/react-virtual";
 
 interface ActivityListProps {
 	activities?: Activity[];
 	isLoading?: boolean;
 }
+
+const INITIAL_ACTIVITY_AUDIT_PAGE_SIZE = 200;
+const ACTIVITY_AUDIT_LOAD_MORE_PAGE_SIZE = 100;
+const ACTIVITY_VIRTUALIZATION_THRESHOLD = 40;
+const ACTIVITY_VIRTUAL_ROW_ESTIMATE = 64;
+const ACTIVITY_VIRTUAL_OVERSCAN = 10;
+
+const getAuditChangedAtMs = (audit: EntityAudit) =>
+	audit.changed_at instanceof Date
+		? audit.changed_at.getTime()
+		: new Date(audit.changed_at).getTime();
+
+const sortEntityAuditsDesc = (a: EntityAudit, b: EntityAudit) => {
+	const changedAtDiff = getAuditChangedAtMs(b) - getAuditChangedAtMs(a);
+	return changedAtDiff !== 0 ? changedAtDiff : b.id - a.id;
+};
+
+const mergeEntityAudits = (audits: EntityAudit[]) => {
+	const merged = new Map<number, EntityAudit>();
+	for (const audit of audits) {
+		merged.set(audit.id, audit);
+	}
+	return Array.from(merged.values()).sort(sortEntityAuditsDesc);
+};
+
+const getActivityKey = (activity: Activity, index: number) =>
+	activity.id ?? `activity-${String(activity.date)}-${index}`;
 
 const isNumericId = (value: string) => /^\d+$/.test(value);
 
@@ -506,6 +542,24 @@ export function ActivityList({
 	const currentProfile = useAccountStore((state) => state.currentProfile);
 	const users = useAccountStore((state) => state.users) ?? [];
 	const submissions = useAccountStore((state) => state.submissions) ?? [];
+	const [olderEntityAudits, setOlderEntityAudits] = useState<EntityAudit[]>([]);
+	const [hasMoreAudits, setHasMoreAudits] = useState(
+		() =>
+			!activities && entityAudits.length >= INITIAL_ACTIVITY_AUDIT_PAGE_SIZE,
+	);
+	const [isLoadingMoreAudits, setIsLoadingMoreAudits] = useState(false);
+	const [loadMoreError, setLoadMoreError] = useState<string | null>(null);
+	const loadMoreSentinelRef = useRef<HTMLDivElement | null>(null);
+	const listContainerRef = useRef<HTMLDivElement | null>(null);
+	const previousActivityUserIdRef = useRef<string | null | undefined>(
+		undefined,
+	);
+	const measuredRowHeightsRef = useRef(new Map<string, number>());
+	const [listScrollMargin, setListScrollMargin] = useState(0);
+	const mergedEntityAudits = useMemo(
+		() => mergeEntityAudits([...entityAudits, ...olderEntityAudits]),
+		[entityAudits, olderEntityAudits],
+	);
 	const currentUserId = currentProfile?.id ?? null;
 	const currentUser = useMemo(
 		() =>
@@ -536,7 +590,7 @@ export function ActivityList({
 		[submissions],
 	);
 	const deletedSubmissionIdSet = useMemo(() => {
-		const deletedIds = entityAudits
+		const deletedIds = mergedEntityAudits
 			.filter(
 				(audit) =>
 					audit.entity_type === "submission" && audit.action === "delete",
@@ -544,7 +598,7 @@ export function ActivityList({
 			.map((audit) => Number(audit.entity_id))
 			.filter(Number.isFinite);
 		return new Set(deletedIds);
-	}, [entityAudits]);
+	}, [mergedEntityAudits]);
 	const canOpenSubmission = useCallback(
 		(id: number) => {
 			if (deletedSubmissionIdSet.has(id)) return false;
@@ -553,6 +607,75 @@ export function ActivityList({
 		},
 		[deletedSubmissionIdSet, submissionIdSet],
 	);
+
+	const oldestLoadedAudit = useMemo(
+		() => mergedEntityAudits[mergedEntityAudits.length - 1] ?? null,
+		[mergedEntityAudits],
+	);
+
+	useEffect(() => {
+		if (previousActivityUserIdRef.current === undefined) {
+			previousActivityUserIdRef.current = currentUserId;
+			return;
+		}
+		if (previousActivityUserIdRef.current === currentUserId) return;
+		previousActivityUserIdRef.current = currentUserId;
+		setOlderEntityAudits([]);
+		setHasMoreAudits(
+			!activities && entityAudits.length >= INITIAL_ACTIVITY_AUDIT_PAGE_SIZE,
+		);
+		setLoadMoreError(null);
+	}, [activities, currentUserId, entityAudits.length]);
+
+	const loadMoreAudits = useCallback(async () => {
+		if (
+			activities ||
+			isLoadingMoreAudits ||
+			!hasMoreAudits ||
+			!oldestLoadedAudit
+		) {
+			return;
+		}
+		setIsLoadingMoreAudits(true);
+		setLoadMoreError(null);
+		try {
+			const changedAt = oldestLoadedAudit.changed_at;
+			const result = await getEntityAuditsPage({
+				beforeChangedAt:
+					changedAt instanceof Date
+						? changedAt.toISOString()
+						: new Date(changedAt).toISOString(),
+				beforeId: oldestLoadedAudit.id,
+				take: ACTIVITY_AUDIT_LOAD_MORE_PAGE_SIZE,
+			});
+			setOlderEntityAudits((prev) => [...prev, ...result.audits]);
+			setHasMoreAudits(result.hasMore);
+		} catch {
+			setLoadMoreError(
+				t("auth.account.activity.loadMore.error", {
+					defaultValue: "Weitere Aktivitaeten konnten nicht geladen werden.",
+				}),
+			);
+		} finally {
+			setIsLoadingMoreAudits(false);
+		}
+	}, [activities, hasMoreAudits, isLoadingMoreAudits, oldestLoadedAudit, t]);
+
+	useEffect(() => {
+		if (activities || !hasMoreAudits || isLoadingMoreAudits) return;
+		const target = loadMoreSentinelRef.current;
+		if (!target || typeof IntersectionObserver === "undefined") return;
+		const observer = new IntersectionObserver(
+			(entries) => {
+				if (entries.some((entry) => entry.isIntersecting)) {
+					void loadMoreAudits();
+				}
+			},
+			{ rootMargin: "600px 0px" },
+		);
+		observer.observe(target);
+		return () => observer.disconnect();
+	}, [activities, hasMoreAudits, isLoadingMoreAudits, loadMoreAudits]);
 
 	const mapAuditToActivity = useCallback(
 		(
@@ -761,7 +884,7 @@ export function ActivityList({
 					"role_table_permission",
 					"role_field_permission",
 				]);
-				for (const audit of entityAudits) {
+				for (const audit of mergedEntityAudits) {
 					if (HIDDEN_ENTITY_TYPES.has(audit.entity_type)) continue;
 					const meta = getAuditRelationMeta(audit);
 					if (!meta.correlationId) {
@@ -837,7 +960,7 @@ export function ActivityList({
 					.sort((a, b) => b.changedAt - a.changedAt)
 					.map((entry) => entry.activity);
 			})(),
-		[activities, entityAudits, mapAuditToActivity],
+		[activities, mapAuditToActivity, mergedEntityAudits],
 	);
 
 	if (isLoading) {
@@ -966,10 +1089,54 @@ export function ActivityList({
 	const shouldAnimateVisibleActivities =
 		previousVisibleActivitySignatureRef.current === null ||
 		previousVisibleActivitySignatureRef.current !== visibleActivitySignature;
+	const shouldVirtualize =
+		!activities &&
+		filteredActivities.length >= ACTIVITY_VIRTUALIZATION_THRESHOLD;
+	const rowVirtualizer = useWindowVirtualizer({
+		count: filteredActivities.length,
+		estimateSize: (index) => {
+			const activity = filteredActivities[index];
+			if (!activity) return ACTIVITY_VIRTUAL_ROW_ESTIMATE;
+			return (
+				measuredRowHeightsRef.current.get(getActivityKey(activity, index)) ??
+				ACTIVITY_VIRTUAL_ROW_ESTIMATE
+			);
+		},
+		overscan: ACTIVITY_VIRTUAL_OVERSCAN,
+		scrollMargin: listScrollMargin,
+		enabled: shouldVirtualize,
+		getItemKey: (index) => {
+			const activity = filteredActivities[index];
+			return activity ? getActivityKey(activity, index) : `activity-${index}`;
+		},
+	});
 
-	useEffect(() => {
+	useLayoutEffect(() => {
 		previousVisibleActivitySignatureRef.current = visibleActivitySignature;
 	}, [visibleActivitySignature]);
+
+	useLayoutEffect(() => {
+		if (!shouldVirtualize) return;
+		rowVirtualizer.measure();
+	}, [filteredActivities, rowVirtualizer, shouldVirtualize]);
+
+	useEffect(() => {
+		if (!shouldVirtualize) return;
+		const updateListScrollMargin = () => {
+			const listElement = listContainerRef.current;
+			if (!listElement) return;
+			const nextScrollMargin =
+				listElement.getBoundingClientRect().top + window.scrollY;
+			setListScrollMargin((current) =>
+				Math.abs(current - nextScrollMargin) < 1 ? current : nextScrollMargin,
+			);
+		};
+
+		updateListScrollMargin();
+		window.addEventListener("resize", updateListScrollMargin);
+
+		return () => window.removeEventListener("resize", updateListScrollMargin);
+	}, [shouldVirtualize, filteredActivities.length]);
 
 	const renderListContent = () => {
 		if (filteredActivities.length === 0) {
@@ -977,6 +1144,55 @@ export function ActivityList({
 				<div className="py-8 body3 text-muted-foreground">
 					{t("auth.account.activity.filters.empty", {
 						defaultValue: "Keine Aktivitäten für die aktuellen Filter.",
+					})}
+				</div>
+			);
+		}
+
+		if (shouldVirtualize) {
+			const virtualRows = rowVirtualizer.getVirtualItems();
+			const totalSize = rowVirtualizer.getTotalSize();
+
+			return (
+				<div className="relative" style={{ height: totalSize }}>
+					{virtualRows.map((virtualRow) => {
+						const activity = filteredActivities[virtualRow.index];
+						if (!activity) return null;
+						const key =
+							activity.id ??
+							`activity-${String(activity.date)}-${virtualRow.index}`;
+						return (
+							<div
+								key={key}
+								data-index={virtualRow.index}
+								ref={(element) => {
+									if (!element) return;
+									rowVirtualizer.measureElement(element);
+									const nextHeight = Math.ceil(
+										element.getBoundingClientRect().height,
+									);
+									if (nextHeight <= 0) return;
+									if (measuredRowHeightsRef.current.get(key) === nextHeight) {
+										return;
+									}
+									measuredRowHeightsRef.current.set(key, nextHeight);
+									rowVirtualizer.resizeItem(virtualRow.index, nextHeight);
+								}}
+								className={
+									shouldAnimateVisibleActivities
+										? "absolute left-0 top-0 w-full after:absolute after:bottom-0 after:left-0 after:right-0 after:h-px after:bg-border motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-1 motion-safe:duration-300"
+										: "absolute left-0 top-0 w-full after:absolute after:bottom-0 after:left-0 after:right-0 after:h-px after:bg-border"
+								}
+								style={{
+									transform: `translateY(${virtualRow.start - listScrollMargin}px)`,
+									animationDelay: shouldAnimateVisibleActivities
+										? `${Math.min(virtualRow.index, 12) * 28}ms`
+										: undefined,
+								}}
+							>
+								<ActivityItem activity={activity} index={virtualRow.index} />
+							</div>
+						);
 					})}
 				</div>
 			);
@@ -1024,7 +1240,42 @@ export function ActivityList({
 				getEventTypeLabel={(eventType) => getEventTypeLabel(eventType, t)}
 				getEntityTypeLabel={(entityType) => getEntityTypeLabel(entityType, t)}
 			/>
-			<div className="divide-y divide-border">{renderListContent()}</div>
+			<div
+				ref={listContainerRef}
+				className={shouldVirtualize ? "relative" : "divide-y divide-border"}
+			>
+				{renderListContent()}
+			</div>
+			{!activities ? (
+				<div ref={loadMoreSentinelRef} className="py-4 text-center">
+					{(() => {
+						if (isLoadingMoreAudits) {
+							return (
+								<div className="body3 text-muted-foreground">
+									{t("auth.account.activity.loadMore.loading", {
+										defaultValue: "Weitere Aktivitaeten werden geladen...",
+									})}
+								</div>
+							);
+						}
+						if (loadMoreError) {
+							return (
+								<button
+									type="button"
+									className="body3 underline text-muted-foreground"
+									onClick={() => void loadMoreAudits()}
+								>
+									{loadMoreError}
+								</button>
+							);
+						}
+						if (hasMoreAudits) {
+							return <div className="h-1" />;
+						}
+						return null;
+					})()}
+				</div>
+			) : null}
 		</div>
 	);
 }
