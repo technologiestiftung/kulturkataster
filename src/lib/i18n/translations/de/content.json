@@ -955,6 +955,7 @@
 				"saveNotes": "Notizen speichern",
 				"reject": "Ablehnen"
 			},
+			"requestedBy": "Angefragt von",
 			"error": "Überprüfung fehlgeschlagen. {{error}}",
 			"errorUnknown": "Unbekannter Fehler.",
 			"grantSubmitterAccess": "Der einreichenden Person nach Genehmigung Zugriff auf diesen Kulturort geben.",
@@ -1592,6 +1593,7 @@
 		"empty": "Keine offenen Anfragen vorhanden.",
 		"institutionAddress": "Adresse",
 		"reject": "Ablehnen",
+		"requestedBy": "Angefragt von",
 		"subtitle": "Überprüfen Sie die Anfragen zur Institutionen-Zugehörigkeit.",
 		"title": "Institutionen-Anfragen prüfen",
 		"unknownInstitution": "Unbekannte Institution",

@@ -14,6 +14,7 @@ import { reviewSubmission } from "@/server/actions/submissions";
 import type { Submission } from "@/types/submission";
 import { triggerAccountRefresh } from "@/components/Account/AccountAutoRefresh";
 import { InfoItem } from "@/components/InfoWrapper/InfoItem";
+import { formatUserDisplayName } from "@/lib/utils/userName";
 
 type CategorySubmissionReviewModalProps = {
 	submission: Submission;
@@ -79,6 +80,11 @@ export function CategorySubmissionReviewModal({
 			? data.name
 			: null;
 	}, [linkedInstitutionSubmission]);
+	const requesterLabel =
+		formatUserDisplayName(submission.creator) ??
+		submission.creator?.email ??
+		submission.created_by ??
+		"—";
 
 	const handleReview = useCallback(
 		async (status: "approved" | "rejected") => {
@@ -183,14 +189,21 @@ export function CategorySubmissionReviewModal({
 						</InfoItem>
 					</CardContent>
 				</Card>
-
-				<div className="space-x-3 flex">
-					<div className="body2 font-bold">
-						{t("categorySubmissionReview.fields.linkedInstitution", {
+				<div className="space-y-4">
+					<InfoItem
+						label={t("institutionFormModal.review.requestedBy", {
+							defaultValue: "Requested by",
+						})}
+						alwaysShow
+					>
+						{requesterLabel}
+					</InfoItem>
+					<InfoItem
+						label={t("categorySubmissionReview.fields.linkedInstitution", {
 							defaultValue: "Verknüpfte Kulturort-Einreichung",
 						})}
-					</div>
-					<div className="flex">
+						alwaysShow
+					>
 						{linkedInstitutionSubmissionId ? (
 							<Button
 								type="button"
@@ -211,9 +224,9 @@ export function CategorySubmissionReviewModal({
 									})}
 							</Button>
 						) : (
-							<div className="body2">—</div>
+							"—"
 						)}
-					</div>
+					</InfoItem>
 				</div>
 				{canManageCategorySubmission ? (
 					<>

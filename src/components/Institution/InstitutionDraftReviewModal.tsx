@@ -14,14 +14,18 @@ import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { useInstitutionSubmissionReview } from "@/lib/hooks/useInstitutionSubmissionReview";
 import { useRoutedModalClose } from "@/components/Modals/useRoutedModalClose";
 import { showSuccessToast } from "@/lib/utils/feedbackToast";
+import type { Submission } from "@/types/submission";
 import { formatUserDisplayName } from "@/lib/utils/userName";
 import { formatDateWithLocale } from "@/lib/utils/dateUtils";
 import { Card, CardContent } from "@/components/ui/card";
 import { MultiSelectModal } from "@/components/MultiSelect/MultiSelectModal";
 import { triggerAccountRefresh } from "@/components/Account/AccountAutoRefresh";
+import { InfoItem } from "@/components/InfoWrapper/InfoItem";
 
 type InstitutionDraftReviewModalProps = {
 	submissionId?: number;
+	submission?: Submission | null;
+	didResolveSubmission?: boolean;
 	returnTo?: string;
 	editBasePath?: string;
 	routePath?: string;
@@ -30,6 +34,8 @@ type InstitutionDraftReviewModalProps = {
 
 export function InstitutionDraftReviewModal({
 	submissionId,
+	submission,
+	didResolveSubmission = false,
 	returnTo,
 	editBasePath = "/account/submissions",
 	routePath,
@@ -62,13 +68,13 @@ export function InstitutionDraftReviewModal({
 	);
 	const linkedCategorySubmissions = useMemo(
 		() =>
-			allSubmissions.filter((submission) => {
-				if (submission.entity_type !== "category") return false;
+			allSubmissions.filter((linkedSubmission) => {
+				if (linkedSubmission.entity_type !== "category") return false;
 				const meta =
-					submission.meta &&
-					typeof submission.meta === "object" &&
-					!Array.isArray(submission.meta)
-						? (submission.meta as Record<string, unknown>)
+					linkedSubmission.meta &&
+					typeof linkedSubmission.meta === "object" &&
+					!Array.isArray(linkedSubmission.meta)
+						? (linkedSubmission.meta as Record<string, unknown>)
 						: {};
 				return meta.institutionSubmissionId === submissionId;
 			}),
@@ -78,7 +84,6 @@ export function InstitutionDraftReviewModal({
 	const {
 		hasSubmissionId,
 		resolvedSubmissionWithFallback,
-		didFetchSubmission,
 		originalInstitution,
 		internalNotes,
 		setInternalNotes,
@@ -96,13 +101,15 @@ export function InstitutionDraftReviewModal({
 		canReviewCurrentSubmission,
 	} = useInstitutionSubmissionReview({
 		submissionId,
+		submission,
 		submissions,
 		institutionPermissions,
 		removeSubmission,
 		upsertSubmission,
 	});
 	const shouldAutoCloseMissingSubmission =
-		!hasSubmissionId || (didFetchSubmission && !resolvedSubmissionWithFallback);
+		!hasSubmissionId ||
+		(didResolveSubmission && !resolvedSubmissionWithFallback);
 	useEffect(() => {
 		if (!shouldAutoCloseMissingSubmission) return;
 		closeModal();
@@ -201,6 +208,11 @@ export function InstitutionDraftReviewModal({
 			defaultValue: resolvedSubmissionWithFallback.type,
 		},
 	);
+	const requesterLabel =
+		formatUserDisplayName(resolvedSubmissionWithFallback.creator) ??
+		resolvedSubmissionWithFallback.creator?.email ??
+		resolvedSubmissionWithFallback.created_by ??
+		"—";
 	const submissionTitle =
 		submissionStatus === "approved" ||
 		submissionStatus === "rejected" ||
@@ -352,6 +364,14 @@ export function InstitutionDraftReviewModal({
 								rows={4}
 								disabled={submitting}
 							/>
+							<InfoItem
+								label={t("institutionFormModal.review.requestedBy", {
+									defaultValue: "Requested by",
+								})}
+								alwaysShow
+							>
+								{requesterLabel}
+							</InfoItem>
 							{shouldShowGrantSubmitterAccessToggle ? (
 								<label className="flex items-start gap-3">
 									<Checkbox
