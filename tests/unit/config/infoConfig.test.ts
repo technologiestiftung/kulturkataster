@@ -37,15 +37,13 @@ describe("sharedUseInfoConfig", () => {
 describe("facilityInfoConfig", () => {
 	it("keeps only facility-specific fields", () => {
 		expect(facilityInfoConfig.map((field) => field.value)).toEqual([
-			"area",
-			"capacity",
-			"number_of_rooms",
-			"established_since",
-			"established_until",
 			"utilization_status_info",
 			"utilization_status_internal_notes",
 			"protection_status",
 			"protection_status_info",
+			"area",
+			"number_of_rooms",
+			"capacity",
 		]);
 	});
 });
