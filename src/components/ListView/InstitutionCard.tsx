@@ -1,10 +1,10 @@
 "use client";
 
 import {
+	detailsInfoConfig,
 	organizationInfoConfig,
-	fundingInfoConfig,
 	facilityInfoConfig,
-	statusInfoConfig,
+	sharedUseInfoConfig,
 	contactInfoConfig,
 } from "@/components/Institution";
 import { Institution } from "@/types";
@@ -172,7 +172,7 @@ const InstitutionCard = memo(function InstitutionCard({
 										id: "funding",
 										layout: { span: "half" },
 										cardVariant: "tertiary",
-										fields: fundingInfoConfig,
+										fields: organizationInfoConfig,
 									},
 									{
 										type: "section",
@@ -183,17 +183,17 @@ const InstitutionCard = memo(function InstitutionCard({
 									},
 									{
 										type: "section",
-										id: "organization",
+										id: "shared_use",
 										layout: { span: "half" },
 										cardVariant: "tertiary",
-										fields: organizationInfoConfig,
+										fields: sharedUseInfoConfig,
 									},
 									{
 										type: "section",
-										id: "status-details",
+										id: "organization",
 										layout: { span: "half" },
 										cardVariant: "tertiary",
-										fields: statusInfoConfig,
+										fields: detailsInfoConfig,
 									},
 								],
 							},

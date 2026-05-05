@@ -2,10 +2,9 @@
 
 import { Button } from "@/components/ui/button";
 import {
+	detailsInfoConfig,
 	organizationInfoConfig,
-	fundingInfoConfig,
 	facilityInfoConfig,
-	statusInfoConfig,
 	additionalInfoConfig,
 	contactInfoConfig,
 } from "@/components/Institution";
@@ -153,26 +152,20 @@ function InstitutionCard({
 											id: "organization",
 											alwaysShow: false,
 											cardVariant: "tertiary",
-											fields: organizationInfoConfig,
+											fields: detailsInfoConfig,
 										},
 										{
 											type: "section",
 											id: "funding",
 											alwaysShow: false,
 											cardVariant: "tertiary",
-											fields: fundingInfoConfig,
+											fields: organizationInfoConfig,
 										},
 										{
 											type: "section",
 											id: "facility",
 											cardVariant: "tertiary",
 											fields: facilityInfoConfig,
-										},
-										{
-											type: "section",
-											id: "status",
-											cardVariant: "tertiary",
-											fields: statusInfoConfig,
 										},
 										{
 											type: "section",
