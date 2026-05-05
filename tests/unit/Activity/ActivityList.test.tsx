@@ -2,8 +2,16 @@ vi.mock("@/icons/send.svg", () => ({ default: () => null }));
 vi.mock("@/icons/edit.svg", () => ({ default: () => null }));
 vi.mock("@/icons/filter.svg", () => ({ default: () => null }));
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import {
+	act,
+	fireEvent,
+	render,
+	screen,
+	waitFor,
+	within,
+} from "@testing-library/react";
 import { ActivityList } from "@/components/Activity/ActivityList";
+import { getEntityAuditsPage } from "@/server/actions/entityAudits";
 
 type MockAudit = {
 	id: number;
@@ -52,6 +60,68 @@ let mockState: MockState = {
 	submissions: [],
 	institutionPermissions: null,
 };
+
+type MockIntersectionObserverEntry = {
+	target: Element;
+	isIntersecting: boolean;
+};
+
+const intersectionObserverCallbacks: Array<
+	(entries: MockIntersectionObserverEntry[]) => void
+> = [];
+
+class MockIntersectionObserver {
+	private callback: (entries: MockIntersectionObserverEntry[]) => void;
+
+	constructor(callback: (entries: MockIntersectionObserverEntry[]) => void) {
+		this.callback = callback;
+		intersectionObserverCallbacks.push(callback);
+	}
+
+	observe() {}
+
+	unobserve() {}
+
+	disconnect() {
+		const index = intersectionObserverCallbacks.indexOf(this.callback);
+		if (index >= 0) {
+			intersectionObserverCallbacks.splice(index, 1);
+		}
+	}
+}
+
+const triggerIntersectionObservers = (isIntersecting = true) => {
+	act(() => {
+		for (const callback of intersectionObserverCallbacks) {
+			callback([{ target: document.body, isIntersecting }]);
+		}
+	});
+};
+
+(
+	globalThis as typeof globalThis & {
+		IntersectionObserver: typeof MockIntersectionObserver;
+	}
+).IntersectionObserver = MockIntersectionObserver;
+
+vi.mock("@/server/actions/entityAudits", () => ({
+	getEntityAuditsPage: vi.fn(),
+}));
+
+vi.mock("@tanstack/react-virtual", () => ({
+	useWindowVirtualizer: ({ count }: { count: number }) => ({
+		getVirtualItems: () =>
+			Array.from({ length: count }, (_, index) => ({
+				index,
+				start: index * 64,
+				size: 64,
+			})),
+		getTotalSize: () => count * 64,
+		measure: vi.fn(),
+		measureElement: vi.fn(),
+		resizeItem: vi.fn(),
+	}),
+}));
 
 vi.mock("react-i18next", () => ({
 	useTranslation: () => ({
@@ -166,6 +236,15 @@ const makeAudit = (overrides: Partial<MockAudit>): MockAudit => ({
 
 describe("ActivityList filters", () => {
 	beforeEach(() => {
+		intersectionObserverCallbacks.splice(
+			0,
+			intersectionObserverCallbacks.length,
+		);
+		vi.mocked(getEntityAuditsPage).mockReset();
+		vi.mocked(getEntityAuditsPage).mockResolvedValue({
+			audits: [],
+			hasMore: false,
+		});
 		const now = new Date();
 		const tenDaysAgo = new Date(now.getTime() - 10 * 24 * 60 * 60 * 1000);
 		const fortyDaysAgo = new Date(now.getTime() - 40 * 24 * 60 * 60 * 1000);
@@ -623,5 +702,120 @@ describe("ActivityList filters", () => {
 			"href",
 			"/de/account/submissions/165",
 		);
+	});
+
+	it("loads and appends older audits when the scroll sentinel intersects", async () => {
+		const now = new Date("2026-05-05T12:00:00.000Z");
+		mockState.entityAudits = Array.from({ length: 200 }, (_, index) =>
+			makeAudit({
+				id: index + 1,
+				changed_at: new Date(now.getTime() - index * 60_000),
+				new_data: { name: `Audit ${index + 1}` },
+				user: {
+					first_name: "Loaded",
+					last_name: "User",
+					email: `loaded-${index + 1}@example.com`,
+				},
+			}),
+		);
+
+		vi.mocked(getEntityAuditsPage).mockResolvedValueOnce({
+			audits: [
+				makeAudit({
+					id: 201,
+					changed_at: new Date(now.getTime() - 201 * 60_000),
+					new_data: { name: "Older audit" },
+					user: {
+						first_name: "Older",
+						last_name: "User",
+						email: "older@example.com",
+					},
+				}) as never,
+			],
+			hasMore: false,
+		});
+
+		render(<ActivityList />);
+
+		triggerIntersectionObservers();
+
+		await waitFor(() => {
+			expect(getEntityAuditsPage).toHaveBeenCalledWith(
+				expect.objectContaining({
+					beforeId: 200,
+					take: 100,
+				}),
+			);
+		});
+
+		await waitFor(() => {
+			expect(screen.getAllByTestId("activity-row")).toHaveLength(201);
+		});
+	});
+
+	it("shows a loading state while older audits are being fetched", async () => {
+		const now = new Date("2026-05-05T12:00:00.000Z");
+		mockState.entityAudits = Array.from({ length: 200 }, (_, index) =>
+			makeAudit({
+				id: index + 1,
+				changed_at: new Date(now.getTime() - index * 60_000),
+			}),
+		);
+
+		let resolveFetch:
+			| ((value: { audits: never[]; hasMore: boolean }) => void)
+			| undefined;
+		vi.mocked(getEntityAuditsPage).mockReturnValueOnce(
+			new Promise((resolve) => {
+				resolveFetch = resolve;
+			}),
+		);
+
+		render(<ActivityList />);
+
+		triggerIntersectionObservers();
+
+		expect(
+			screen.getByText("Weitere Aktivitaeten werden geladen..."),
+		).toBeInTheDocument();
+
+		act(() => {
+			resolveFetch?.({ audits: [], hasMore: false });
+		});
+
+		await waitFor(() => {
+			expect(
+				screen.queryByText("Weitere Aktivitaeten werden geladen..."),
+			).toBeNull();
+		});
+	});
+
+	it("shows an error state and retries loading older audits", async () => {
+		const now = new Date("2026-05-05T12:00:00.000Z");
+		mockState.entityAudits = Array.from({ length: 200 }, (_, index) =>
+			makeAudit({
+				id: index + 1,
+				changed_at: new Date(now.getTime() - index * 60_000),
+			}),
+		);
+
+		vi.mocked(getEntityAuditsPage)
+			.mockRejectedValueOnce(new Error("load failed"))
+			.mockResolvedValueOnce({ audits: [], hasMore: false });
+
+		render(<ActivityList />);
+
+		triggerIntersectionObservers();
+
+		const retryButton = await screen.findByRole("button", {
+			name: "Weitere Aktivitaeten konnten nicht geladen werden.",
+		});
+		expect(retryButton).toBeInTheDocument();
+
+		fireEvent.click(retryButton);
+
+		await waitFor(() => {
+			expect(getEntityAuditsPage).toHaveBeenCalledTimes(2);
+		});
 	});
 });
