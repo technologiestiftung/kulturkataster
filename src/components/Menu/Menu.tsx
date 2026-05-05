@@ -22,6 +22,7 @@ import Accessibility from "@/icons/accessibility.svg";
 import Edit from "@/icons/edit.svg";
 import InfoCircle from "@/icons/info-circle.svg";
 import ListIcon from "@/icons/list.svg";
+import UserIcon from "@/icons/user.svg";
 import MapIcon from "@/icons/map.svg";
 import DEIcon from "@/icons/lang/de.svg";
 import ENIcon from "@/icons/lang/en.svg";
@@ -75,16 +76,20 @@ const menuItems: MenuItem[] = [
 		showInAccount: true,
 		showInMap: true,
 	},
-	// {
-	// 	id: "user",
-	// 	icon: UserIcon,
-	// 	showInMobile: true,
-	// 	showInAccount: true,
-	// 	showInMap: true,
-	// 	label: "user.title",
-	// 	route: "/account",
-	// 	matchPattern: /^\/[^/]+\/account/,
-	// },
+	...(process.env.NODE_ENV !== "production"
+		? [
+				{
+					id: "user",
+					icon: UserIcon,
+					showInMobile: true,
+					showInAccount: true,
+					showInMap: true,
+					label: "user.title",
+					route: "/account",
+					matchPattern: /^\/[^/]+\/account/,
+				},
+			]
+		: []),
 ];
 
 const footerItems: MenuItem[] = [
@@ -118,15 +123,19 @@ const footerItems: MenuItem[] = [
 		showInAccount: false,
 		showInMap: false,
 	},
-	{
-		id: "language",
-		icon: DEIcon,
-		label: "language.title",
-		route: "#",
-		showInMobile: false,
-		showInAccount: false,
-		showInMap: false,
-	},
+	...(process.env.NODE_ENV !== "production"
+		? [
+				{
+					id: "language",
+					icon: DEIcon,
+					label: "language.title",
+					route: "#",
+					showInMobile: false,
+					showInAccount: false,
+					showInMap: false,
+				},
+			]
+		: []),
 ];
 
 const isMenuItemActive = (
