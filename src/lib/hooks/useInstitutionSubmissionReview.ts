@@ -4,7 +4,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getInstitutionById } from "@/server/actions/institutions";
 import {
-	getSubmissionById,
 	reviewSubmission,
 	saveSubmissionNote,
 } from "@/server/actions/submissions";
@@ -16,6 +15,7 @@ import { reportClientTelemetry } from "@/lib/utils/clientTelemetry";
 
 type UseInstitutionSubmissionReviewParams = {
 	submissionId?: number;
+	submission?: Submission | null;
 	submissions: Submission[];
 	institutionPermissions: InstitutionActionPermissions;
 	removeSubmission: (id: number) => void;
@@ -24,6 +24,7 @@ type UseInstitutionSubmissionReviewParams = {
 
 export function useInstitutionSubmissionReview({
 	submissionId,
+	submission,
 	submissions,
 	institutionPermissions,
 	removeSubmission,
@@ -37,55 +38,20 @@ export function useInstitutionSubmissionReview({
 	const [attachGroupIds, setAttachGroupIds] = useState<number[]>([]);
 	const [submitting, setSubmitting] = useState(false);
 	const [error, setError] = useState<string | null>(null);
-	const [fetchedSubmission, setFetchedSubmission] = useState<Submission | null>(
-		null,
-	);
-	const [didFetchSubmission, setDidFetchSubmission] = useState(false);
 	const [originalInstitution, setOriginalInstitution] =
 		useState<Institution | null>(null);
 	const [didFetchInstitution, setDidFetchInstitution] = useState(false);
 
-	const resolvedSubmission = useMemo(() => {
+	const resolvedSubmissionWithFallback = useMemo(() => {
 		if (!hasSubmissionId) return undefined;
-		return submissions.find(
-			(item): item is Submission => item.id === submissionId,
+		return (
+			submissions.find(
+				(item): item is Submission => item.id === submissionId,
+			) ??
+			submission ??
+			undefined
 		);
-	}, [hasSubmissionId, submissions, submissionId]);
-
-	useEffect(() => {
-		if (!hasSubmissionId || resolvedSubmission || didFetchSubmission) return;
-		let active = true;
-		const fetchSubmission = async () => {
-			try {
-				const result = await getSubmissionById(submissionId);
-				if (!active) return;
-				setFetchedSubmission(result ?? null);
-			} catch (_error) {
-				reportClientTelemetry({
-					level: "warn",
-					event: "institution_submission.review.fetch_submission_failed",
-					error: _error,
-					metadata: {
-						submission_id: submissionId,
-					},
-				});
-				if (active) {
-					setFetchedSubmission(null);
-				}
-			} finally {
-				if (active) {
-					setDidFetchSubmission(true);
-				}
-			}
-		};
-		void fetchSubmission();
-		return () => {
-			active = false;
-		};
-	}, [didFetchSubmission, hasSubmissionId, resolvedSubmission, submissionId]);
-
-	const resolvedSubmissionWithFallback =
-		resolvedSubmission ?? fetchedSubmission ?? undefined;
+	}, [hasSubmissionId, submission, submissionId, submissions]);
 
 	const shouldShowGrantSubmitterAccessToggle = useMemo(() => {
 		if (!resolvedSubmissionWithFallback) return false;
@@ -305,7 +271,6 @@ export function useInstitutionSubmissionReview({
 	return {
 		hasSubmissionId,
 		resolvedSubmissionWithFallback,
-		didFetchSubmission,
 		originalInstitution,
 		internalNotes,
 		setInternalNotes,
