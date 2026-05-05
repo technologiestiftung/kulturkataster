@@ -952,6 +952,7 @@
 				"saveNotes": "Save notes",
 				"reject": "Reject"
 			},
+			"requestedBy": "Requested by",
 			"error": "Verification failed. {{error}}",
 			"errorUnknown": "Unknown error.",
 			"grantSubmitterAccess": "After approval, give the submitter access to this cultural location.",
@@ -1576,6 +1577,7 @@
 		"empty": "No open requests available.",
 		"institutionAddress": "address",
 		"reject": "Refuse",
+		"requestedBy": "Requested by",
 		"subtitle": "Review institutional affiliation inquiries.",
 		"title": "Check institutional requests",
 		"unknownInstitution": "Unknown institution",
