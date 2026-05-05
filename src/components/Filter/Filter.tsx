@@ -41,8 +41,8 @@ const Filter: FC<FilterProps> = ({ onSearchClick, onShowFilter }) => {
 	const { t: tCommon } = useTranslation("common");
 
 	return (
-		<>
-			<div className="mb-8 flex w-full items-center gap-2 flex-row">
+		<div className="flex h-full w-full flex-col">
+			<div className="mb-8 flex w-full items-center gap-2 flex-row shrink-0">
 				{onSearchClick && (
 					<ButtonWithTooltip
 						radius="full"
@@ -77,20 +77,21 @@ const Filter: FC<FilterProps> = ({ onSearchClick, onShowFilter }) => {
 					<Close />
 				</ButtonWithTooltip>
 			</div>
-
-			<FilterPanel
-				filters={filters}
-				categoryGroups={categories ?? []}
-				districts={districts}
-				filteredCount={filteredInstitutions?.length ?? 0}
-				categoryCounts={categoryCounts}
-				subcategoryCounts={subcategoryCounts}
-				loading={loading}
-				error={null}
-				onRetry={retry}
-				onFiltersChange={updateFilters}
-			/>
-		</>
+			<div className="flex-1 overflow-auto mb-20 md:mb-0">
+				<FilterPanel
+					filters={filters}
+					categoryGroups={categories ?? []}
+					districts={districts}
+					filteredCount={filteredInstitutions?.length ?? 0}
+					categoryCounts={categoryCounts}
+					subcategoryCounts={subcategoryCounts}
+					loading={loading}
+					error={null}
+					onRetry={retry}
+					onFiltersChange={updateFilters}
+				/>
+			</div>
+		</div>
 	);
 };
 
