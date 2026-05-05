@@ -6,10 +6,10 @@ import { InfoWrapper } from "@/components/InfoWrapper";
 import {
 	additionalInfoConfig,
 	contactInfoConfig,
+	detailsInfoConfig,
 	facilityInfoConfig,
-	fundingInfoConfig,
 	organizationInfoConfig,
-	statusInfoConfig,
+	sharedUseInfoConfig,
 } from "@/config/infoConfig/configs";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useAccountStore } from "@/lib/store/accountStore";
@@ -94,10 +94,10 @@ export function InstitutionReview({
 						enabled: true,
 					}
 				: undefined,
-			status: onEditSection
+			sharedUse: onEditSection
 				? {
 						ariaLabel: "Edit",
-						onClick: () => onEditSection("status"),
+						onClick: () => onEditSection("shared_use_section"),
 						enabled: true,
 					}
 				: undefined,
@@ -216,7 +216,7 @@ export function InstitutionReview({
 								alwaysShow: false,
 								edit: editConfig.organization,
 								cardVariant: "tertiary",
-								fields: organizationInfoConfig,
+								fields: detailsInfoConfig,
 							},
 							{
 								type: "section",
@@ -224,7 +224,7 @@ export function InstitutionReview({
 								alwaysShow: false,
 								edit: editConfig.funding,
 								cardVariant: "tertiary",
-								fields: fundingInfoConfig,
+								fields: organizationInfoConfig,
 							},
 							{
 								type: "section",
@@ -235,9 +235,10 @@ export function InstitutionReview({
 							},
 							{
 								type: "section",
-								id: "status",
+								id: "shared_use",
+								edit: editConfig.sharedUse,
 								cardVariant: "tertiary",
-								fields: statusInfoConfig,
+								fields: sharedUseInfoConfig,
 							},
 							{
 								type: "section",
