@@ -32,14 +32,14 @@ export const contactInfoConfig: InfoWrapperFieldConfig[] = [
 		enumKey: "website",
 	},
 	{
-		value: "phone",
-		labelKey: "field_names.phone.label",
-		type: "phone",
-	},
-	{
 		value: "email",
 		labelKey: "field_names.email.label",
 		type: "email",
+	},
+	{
+		value: "phone",
+		labelKey: "field_names.phone.label",
+		type: "phone",
 	},
 	{
 		value: "contact_person_first_name",
@@ -63,16 +63,21 @@ export const contactInfoConfig: InfoWrapperFieldConfig[] = [
 	},
 ];
 
-export const organizationInfoConfig: InfoWrapperFieldConfig[] = [
+export const detailsInfoConfig: InfoWrapperFieldConfig[] = [
 	{
 		value: "parent_organization",
 		labelKey: "field_names.parent_organization.label",
 		type: "text",
 	},
 	{
-		value: "legal_form",
-		labelKey: "field_names.legal_form.label",
-		type: "text",
+		value: "established_since",
+		labelKey: "field_names.established_since.label",
+		type: "year",
+	},
+	{
+		value: "established_until",
+		labelKey: "field_names.established_until.label",
+		type: "year",
 	},
 	{
 		value: "closing_reason",
@@ -107,14 +112,15 @@ export const organizationInfoConfig: InfoWrapperFieldConfig[] = [
 		labelKey: "field_names.rental_contract_end.label",
 		type: "date",
 	},
-	{
-		value: "source",
-		labelKey: "field_names.source.label",
-		type: "text",
-	},
 ];
 
-export const fundingInfoConfig: InfoWrapperFieldConfig[] = [
+export const organizationInfoConfig: InfoWrapperFieldConfig[] = [
+	{
+		value: "legal_form",
+		labelKey: "field_names.legal_form.label",
+		type: "enum",
+		enumKey: "legal_form",
+	},
 	{
 		value: "funding_type",
 		labelKey: "field_names.funding_type.label",
@@ -129,61 +135,6 @@ export const fundingInfoConfig: InfoWrapperFieldConfig[] = [
 ];
 
 export const facilityInfoConfig: InfoWrapperFieldConfig[] = [
-	{
-		value: "area",
-		labelKey: "field_names.area.label",
-		type: "text",
-	},
-	{
-		value: "capacity",
-		labelKey: "field_names.capacity.label",
-		type: "text",
-	},
-	{
-		value: "number_of_rooms",
-		labelKey: "field_names.number_of_rooms.label",
-		type: "text",
-	},
-	{
-		value: "accessibility",
-		labelKey: "field_names.accessibility.label",
-		type: "text",
-	},
-	{
-		value: "cost",
-		labelKey: "field_names.cost.label",
-		type: "text",
-	},
-	{
-		value: "shared_use_info",
-		labelKey: "field_names.shared_use_info.label",
-
-		type: "text",
-		condition: (data) => !!(data.shared_use_allowed && data.shared_use_info),
-	},
-	{
-		value: "shared_use_allowed",
-		labelKey: "field_names.shared_use_allowed.label",
-		type: "boolean",
-	},
-	{
-		value: "shared_use_audience",
-		labelKey: "field_names.shared_use_audience.label",
-		type: "text",
-	},
-	{
-		value: "established_since",
-		labelKey: "field_names.established_since.label",
-		type: "year",
-	},
-	{
-		value: "established_until",
-		labelKey: "field_names.established_until.label",
-		type: "year",
-	},
-];
-
-export const statusInfoConfig: InfoWrapperFieldConfig[] = [
 	{
 		value: "utilization_status_info",
 		labelKey: "field_names.utilization_status_info.label",
@@ -205,12 +156,91 @@ export const statusInfoConfig: InfoWrapperFieldConfig[] = [
 		labelKey: "field_names.protection_status_info.label",
 		type: "text",
 	},
+	{
+		value: "area",
+		labelKey: "field_names.area.label",
+		type: "text",
+	},
+	{
+		value: "number_of_rooms",
+		labelKey: "field_names.number_of_rooms.label",
+		type: "text",
+	},
+	{
+		value: "capacity",
+		labelKey: "field_names.capacity.label",
+		type: "text",
+	},
+];
+
+export const sharedUseInfoConfig: InfoWrapperFieldConfig[] = [
+	{
+		value: "shared_use_allowed",
+		labelKey: "field_names.shared_use_allowed.label",
+		type: "boolean",
+	},
+	{
+		value: "shared_use_info",
+		labelKey: "field_names.shared_use_info.label",
+		type: "text",
+		condition: (data) => !!(data.shared_use_allowed && data.shared_use_info),
+	},
+	{
+		value: "shared_use_equipment",
+		labelKey: "field_names.shared_use_equipment.label",
+		type: "text",
+		condition: (data) =>
+			!!(data.shared_use_allowed && data.shared_use_equipment),
+	},
+	{
+		value: "shared_use_audience",
+		labelKey: "field_names.shared_use_audience.label",
+		type: "text",
+		condition: (data) =>
+			!!(data.shared_use_allowed && data.shared_use_audience),
+	},
+	{
+		value: "shared_use_availability",
+		labelKey: "field_names.shared_use_availability.label",
+		type: "text",
+		condition: (data) =>
+			!!(data.shared_use_allowed && data.shared_use_availability),
+	},
+	{
+		value: "accessibility",
+		labelKey: "field_names.accessibility.label",
+		type: "text",
+		condition: (data) => !!(data.shared_use_allowed && data.accessibility),
+	},
+	{
+		value: "cost",
+		labelKey: "field_names.cost.label",
+		type: "text",
+		condition: (data) => !!(data.shared_use_allowed && data.cost),
+	},
+	{
+		value: "shared_use_contact_person",
+		labelKey: "field_names.shared_use_contact_person.label",
+		type: "text",
+		condition: (data) =>
+			!!(data.shared_use_allowed && data.shared_use_contact_person),
+	},
 ];
 
 export const additionalInfoConfig: InfoWrapperFieldConfig[] = [
 	{
+		value: "source",
+		labelKey: "field_names.source.label",
+		type: "text",
+	},
+	{
 		value: "notes",
 		labelKey: "field_names.notes.label",
+		type: "text",
+	},
+	{
+		value: "internal_notes",
+		labelKey: "field_names.internal_notes.label",
 		type: "text",
 	},
 ];
