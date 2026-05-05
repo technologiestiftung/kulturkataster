@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { getPublicInstitutionRefreshData } from "@/server/actions/publicInstitutionData";
-import type { InstitutionStoreState } from "@/types";
+import type { Category, Institution, InstitutionStoreState } from "@/types";
 
 const DEFAULT_PUBLIC_AUTO_REFRESH_INTERVAL_MS = 60_000;
 const PUBLIC_AUTO_REFRESH_ENABLED_PATHS = new Set(["/map", "/list"]);
@@ -55,21 +55,96 @@ export const isPublicAutoRefreshPathEnabled = (pathname: string | null) => {
 
 const applyRefreshedPublicInstitutionData = (
 	refreshedData: Awaited<ReturnType<typeof getPublicInstitutionRefreshData>>,
+	currentData: {
+		institutions: InstitutionStoreState["allInstitutions"];
+		categories: InstitutionStoreState["categories"];
+		districts: InstitutionStoreState["districts"];
+	},
 	setters: {
 		setInstitutions: InstitutionStoreState["setInstitutions"];
 		setCategories: InstitutionStoreState["setCategories"];
 		setDistricts: InstitutionStoreState["setDistricts"];
 	},
 ) => {
-	if (refreshedData.institutions !== undefined) {
+	if (
+		refreshedData.institutions !== undefined &&
+		!areInstitutionsEquivalent(
+			refreshedData.institutions,
+			currentData.institutions,
+		)
+	) {
 		setters.setInstitutions(refreshedData.institutions);
 	}
-	if (refreshedData.categories !== undefined) {
+	if (
+		refreshedData.categories !== undefined &&
+		!areCategoriesEquivalent(refreshedData.categories, currentData.categories)
+	) {
 		setters.setCategories(refreshedData.categories);
 	}
-	if (refreshedData.districts !== undefined) {
+	if (
+		refreshedData.districts !== undefined &&
+		!areStringArraysEqual(refreshedData.districts, currentData.districts)
+	) {
 		setters.setDistricts(refreshedData.districts);
 	}
+};
+
+const areStringArraysEqual = (
+	left: string[] | null | undefined,
+	right: string[] | null | undefined,
+) => {
+	if (left === right) return true;
+	if (!left || !right) return left === right;
+	if (left.length !== right.length) return false;
+	return left.every((value, index) => value === right[index]);
+};
+
+const toTimeValue = (value: Date | string | null | undefined) => {
+	if (!value) return "";
+	return value instanceof Date ? value.toISOString() : String(value);
+};
+
+const areInstitutionsEquivalent = (
+	left: Institution[] | null | undefined,
+	right: Institution[] | null | undefined,
+) => {
+	if (left === right) return true;
+	if (!left || !right) return left === right;
+	if (left.length !== right.length) return false;
+	return left.every((institution, index) => {
+		const other = right[index];
+		if (!other) return false;
+		return (
+			institution.id === other.id &&
+			institution.name === other.name &&
+			toTimeValue(institution.updated_at) === toTimeValue(other.updated_at)
+		);
+	});
+};
+
+const areCategoriesEquivalent = (
+	left: Category[] | null | undefined,
+	right: Category[] | null | undefined,
+) => {
+	if (left === right) return true;
+	if (!left || !right) return left === right;
+	if (left.length !== right.length) return false;
+	return left.every((category, index) => {
+		const other = right[index];
+		if (!other) return false;
+		const leftChildren = category.child_categories ?? [];
+		const rightChildren = other.child_categories ?? [];
+		return (
+			category.id === other.id &&
+			category.key === other.key &&
+			leftChildren.length === rightChildren.length &&
+			leftChildren.every(
+				(childCategory, childIndex) =>
+					childCategory.id === rightChildren[childIndex]?.id &&
+					childCategory.key === rightChildren[childIndex]?.key,
+			)
+		);
+	});
 };
 
 export function StoreAutoRefresh({
@@ -81,6 +156,9 @@ export function StoreAutoRefresh({
 	const setInstitutions = useInstitutionStore((state) => state.setInstitutions);
 	const setCategories = useInstitutionStore((state) => state.setCategories);
 	const setDistricts = useInstitutionStore((state) => state.setDistricts);
+	const institutions = useInstitutionStore((state) => state.allInstitutions);
+	const categories = useInstitutionStore((state) => state.categories);
+	const districts = useInstitutionStore((state) => state.districts);
 	const isRefreshingRef = useRef(false);
 	const isPollingEnabledForPath = isPublicAutoRefreshPathEnabled(pathname);
 
@@ -98,11 +176,19 @@ export function StoreAutoRefresh({
 			try {
 				const refreshedData = await getPublicInstitutionRefreshData();
 				if (cancelled) return;
-				applyRefreshedPublicInstitutionData(refreshedData, {
-					setInstitutions,
-					setCategories,
-					setDistricts,
-				});
+				applyRefreshedPublicInstitutionData(
+					refreshedData,
+					{
+						institutions,
+						categories,
+						districts,
+					},
+					{
+						setInstitutions,
+						setCategories,
+						setDistricts,
+					},
+				);
 				lastPublicRefreshAt = Date.now();
 			} finally {
 				isRefreshingRef.current = false;
@@ -154,6 +240,9 @@ export function StoreAutoRefresh({
 		};
 	}, [
 		intervalMs,
+		institutions,
+		categories,
+		districts,
 		isPollingEnabledForPath,
 		setCategories,
 		setDistricts,
