@@ -78,7 +78,7 @@ test.describe("users management", () => {
 		if ((await institutionsField.count()) > 0) {
 			await expect(institutionsField).toBeVisible();
 		}
-		await expect(page.getByText("Passwort zurücksetzen")).toBeVisible();
+		await expect(page.getByRole("strong").filter({ hasText: "Passwort zurücksetzen" })).toBeVisible();
 		const dsgvoResend = page.getByText("DSGVO-Compliance erneut senden");
 		if ((await dsgvoResend.count()) > 0) {
 			await expect(dsgvoResend).toBeVisible();
