@@ -68,7 +68,7 @@ export const buildInstitutionFormInitialValues = (
 	const categoryIdsFromInstitution =
 		categoryIdsFromExpandedCategories.length > 0
 			? categoryIdsFromExpandedCategories
-			: fallbackCategoryIds ?? [];
+			: (fallbackCategoryIds ?? []);
 	return {
 		name: resolvedInstitution?.name ?? undefined,
 		parent_organization: resolvedInstitution?.parent_organization ?? undefined,
@@ -89,13 +89,12 @@ export const buildInstitutionFormInitialValues = (
 		categoryIds: categoryIdsFromInstitution.map((categoryId) =>
 			String(categoryId),
 		),
-		categoryFilters:
-			resolvedInstitution?.categories?.length
-				? buildInstitutionCategoryFilterState(resolvedInstitution.categories)
-				: buildCategoryFilterStateFromIds(
-						categoryIdsFromInstitution,
-						categoryGroups,
-					),
+		categoryFilters: resolvedInstitution?.categories?.length
+			? buildInstitutionCategoryFilterState(resolvedInstitution.categories)
+			: buildCategoryFilterStateFromIds(
+					categoryIdsFromInstitution,
+					categoryGroups,
+				),
 		utilization_status: resolvedInstitution?.utilization_status ?? undefined,
 		utilization_status_info:
 			resolvedInstitution?.utilization_status_info ?? undefined,
