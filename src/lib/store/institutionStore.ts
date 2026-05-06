@@ -40,7 +40,9 @@ const applyPublicData = (
 	const currentState = { ...get(), ...newState };
 	const filteredInstitutions = computeFilteredInstitutions(currentState);
 	const allInstitutionsGeoJSON =
-		data.institutions.length > 0 ? toFeatureCollection(data.institutions) : null;
+		data.institutions.length > 0
+			? toFeatureCollection(data.institutions)
+			: null;
 	const filteredInstitutionsGeoJSON = filteredInstitutions
 		? toFeatureCollection(filteredInstitutions)
 		: null;
@@ -50,7 +52,8 @@ const applyPublicData = (
 		allInstitutionsGeoJSON,
 		filteredInstitutionsGeoJSON,
 	};
-	const { categoryCounts, subcategoryCounts } = computeCounts(stateWithFiltered);
+	const { categoryCounts, subcategoryCounts } =
+		computeCounts(stateWithFiltered);
 	set({
 		...newState,
 		filteredInstitutions,

@@ -11,7 +11,8 @@ const closeModalMock = vi.fn();
 const addInstitutionMock = vi.fn();
 const upsertInstitutionMock = vi.fn();
 let mockAccountCategories: Array<Record<string, unknown>> = [];
-let mockInstitutionStoreCategories: Array<Record<string, unknown>> | null = null;
+let mockInstitutionStoreCategories: Array<Record<string, unknown>> | null =
+	null;
 let lastFormConfig: {
 	onSubmit: (data: Record<string, unknown>) => void | Promise<void>;
 	onChange?: (data: Record<string, unknown>) => void;
@@ -398,7 +399,10 @@ describe("InstitutionFormModal", () => {
 			/>,
 		);
 
-		const categoryField = findFieldByName(lastFormConfig?.fields, "categoryFilters");
+		const categoryField = findFieldByName(
+			lastFormConfig?.fields,
+			"categoryFilters",
+		);
 
 		expect(categoryField?.filterPanel).toMatchObject({
 			categoryGroups: [

@@ -141,7 +141,9 @@ function InstitutionDraftWizardContent({
 	);
 
 	const accountCategories = useAccountStore((state) => state.categories);
-	const institutionCategories = useInstitutionStore((state) => state.categories);
+	const institutionCategories = useInstitutionStore(
+		(state) => state.categories,
+	);
 	const institutionList = useInstitutionStore((state) => state.allInstitutions);
 	const categoryGroups = useMemo(
 		() =>
