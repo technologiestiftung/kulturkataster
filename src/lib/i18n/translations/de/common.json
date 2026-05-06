@@ -80,13 +80,6 @@
 					"user": "Nutzer*in",
 					"userWithEmail": "{{entity}} ({{email}})"
 				},
-				"submissionTypes": {
-					"claim": "angefragt",
-					"create": "erstellt",
-					"delete": "gelöscht",
-					"read": "gelesen",
-					"update": "aktualisiert"
-				},
 				"filters": {
 					"allDates": "Alle",
 					"allEntities": "Alle Entitäten",
@@ -121,6 +114,13 @@
 					"rejected": "Abgelehnt"
 				},
 				"statusAria": "Status: {{status}}",
+				"submissionTypes": {
+					"claim": "angefragt",
+					"create": "erstellt",
+					"delete": "gelöscht",
+					"read": "gelesen",
+					"update": "aktualisiert"
+				},
 				"system": "System",
 				"templates": {
 					"assign": "<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> auf Basis von <secondary>{{secondaryEntity}}</secondary> {{action}}",
@@ -214,6 +214,7 @@
 			"deleteTitle": "Profil löschen",
 			"emailLabel": "E-Mail-Adresse",
 			"emailPlaceholder": "name@beispiel.de",
+			"errorFallback": "Änderungen konnten nicht gespeichert werden.",
 			"errors": {
 				"emailTaken": "Eine Nutzerin oder ein Nutzer mit dieser E-Mail-Adresse existiert bereits.",
 				"forbidden": "Sie dürfen dieses Profil nicht ändern.",
@@ -221,7 +222,6 @@
 				"notFound": "Dieses Profil existiert nicht mehr.",
 				"unexpected": "Änderungen konnten nicht gespeichert werden."
 			},
-			"errorFallback": "Änderungen konnten nicht gespeichert werden.",
 			"metaTitle": "Persönliche Angaben ändern – Kulturkataster",
 			"nameLabel": "Ihr Name",
 			"namePlaceholder": "Vor- und Nachname",
@@ -454,7 +454,6 @@
 		"newsletter": "Newsletter",
 		"openSource": "Das Kulturkataster ist ein <0>Open-Source-Projekt</0>.",
 		"privacy": "Datenschutz",
-		"terms": "AGBs",
 		"projectBy": "Ein Projekt der Kulturraum Berlin gGmbH",
 		"signLanguageInformation": "Deutsche Gebärdensprache",
 		"signLanguageInformationLong": "Deutsche Gebärdensprache (DGS)",
@@ -464,6 +463,7 @@
 			"label": "Tel.",
 			"number": "+49 30 3030 444 60"
 		},
+		"terms": "AGBs",
 		"title": "Kulturkataster Berlin",
 		"welcomeModalLinkListAriaLabel": "Fußzeilen-Navigation der Willkommensansicht"
 	},
