@@ -16,6 +16,7 @@ export type SubmissionNote = Prisma.SubmissionNoteGetPayload<{
 
 export type Submission = Prisma.SubmissionGetPayload<{
 	include: {
+		creator: true;
 		notes: {
 			include: {
 				creator: true;

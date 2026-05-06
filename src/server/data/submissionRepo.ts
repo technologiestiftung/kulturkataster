@@ -2,6 +2,7 @@ import { Prisma } from "@/generated/prisma";
 import { prisma } from "@/server/prisma";
 
 const submissionInclude = {
+	creator: true,
 	notes: {
 		include: {
 			creator: true,

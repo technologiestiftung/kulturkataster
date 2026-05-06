@@ -76,16 +76,20 @@ const menuItems: MenuItem[] = [
 		showInAccount: true,
 		showInMap: true,
 	},
-	{
-		id: "user",
-		icon: UserIcon,
-		showInMobile: true,
-		showInAccount: true,
-		showInMap: true,
-		label: "user.title",
-		route: "/account",
-		matchPattern: /^\/[^/]+\/account/,
-	},
+	...(process.env.NODE_ENV !== "production"
+		? [
+				{
+					id: "user",
+					icon: UserIcon,
+					showInMobile: true,
+					showInAccount: true,
+					showInMap: true,
+					label: "user.title",
+					route: "/account",
+					matchPattern: /^\/[^/]+\/account/,
+				},
+			]
+		: []),
 ];
 
 const footerItems: MenuItem[] = [
@@ -119,15 +123,19 @@ const footerItems: MenuItem[] = [
 		showInAccount: false,
 		showInMap: false,
 	},
-	{
-		id: "language",
-		icon: DEIcon,
-		label: "language.title",
-		route: "#",
-		showInMobile: false,
-		showInAccount: false,
-		showInMap: false,
-	},
+	...(process.env.NODE_ENV !== "production"
+		? [
+				{
+					id: "language",
+					icon: DEIcon,
+					label: "language.title",
+					route: "#",
+					showInMobile: false,
+					showInAccount: false,
+					showInMap: false,
+				},
+			]
+		: []),
 ];
 
 const isMenuItemActive = (

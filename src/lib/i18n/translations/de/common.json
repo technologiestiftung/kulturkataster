@@ -103,6 +103,10 @@
 				},
 				"hiddenActor": "Redaktion",
 				"itemWithName": "{{item}}: {{name}}",
+				"loadMore": {
+					"error": "Weitere Aktivitäten konnten nicht geladen werden.",
+					"loading": "Weitere Aktivitäten werden geladen..."
+				},
 				"status": {
 					"approved": "Genehmigt",
 					"completed": "Abgeschlossen",

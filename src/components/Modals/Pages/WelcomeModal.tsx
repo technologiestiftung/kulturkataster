@@ -85,7 +85,14 @@ export function WelcomeModal() {
 										className="w-full md:w-auto mb-2 md:mb-0 cursor-pointer"
 										onClick={() => {
 											setFirstTimeUser(false);
-											router.push(toLocalePath("/"));
+											if (
+												typeof window !== "undefined" &&
+												window.history.length > 1
+											) {
+												router.back();
+											} else {
+												router.push(toLocalePath("/"));
+											}
 										}}
 									>
 										{t("welcomeModal.discoverButton", { ns: "content" })}
