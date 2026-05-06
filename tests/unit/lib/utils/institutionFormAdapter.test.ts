@@ -203,6 +203,56 @@ describe("buildInstitutionForFormFromDraft", () => {
 		).toEqual([1, 2]);
 	});
 
+	it("builds category filters from raw categoryIds when categories are not expanded", () => {
+		const now = new Date();
+		const initialValues = buildInstitutionFormInitialValues(
+			{
+				id: 20,
+				name: "Test",
+				categories: [],
+				tags: [],
+				users: [],
+				groups: [],
+				created_at: now,
+				updated_at: now,
+				categoryIds: [1, 2],
+			} as never,
+			[
+				{
+					id: 1,
+					key: "music",
+					description: null,
+					icon: null,
+					status: "active",
+					parent_category_id: null,
+					created_at: now,
+					updated_at: now,
+					child_categories: [
+						{
+							id: 2,
+							key: "club",
+							description: null,
+							icon: null,
+							status: "active",
+							parent_category_id: 1,
+							created_at: now,
+							updated_at: now,
+						},
+					],
+				},
+			] as never,
+		);
+
+		expect(initialValues.categoryIds).toEqual(["1", "2"]);
+		expect(initialValues.categoryFilters).toEqual({
+			district_keys: [],
+			category_keys: ["music"],
+			child_category_keys: ["club"],
+			include_closed: false,
+			status: undefined,
+		});
+	});
+
 	it("hydrates contact person from originalInstitution fallback", () => {
 		const result = buildInstitutionForFormFromDraft({
 			name: "Draft",
