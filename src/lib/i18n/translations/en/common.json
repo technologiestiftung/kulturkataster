@@ -103,6 +103,10 @@
 				},
 				"hiddenActor": "Editorial team",
 				"itemWithName": "{{item}}: {{name}}",
+				"loadMore": {
+					"error": "More activity could not be loaded.",
+					"loading": "Loading more activity..."
+				},
 				"status": {
 					"approved": "Approved",
 					"completed": "Completed",

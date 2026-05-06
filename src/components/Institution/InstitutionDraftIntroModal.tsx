@@ -43,11 +43,13 @@ function AuthChoiceContent({
 						{t("institutionDraftIntroModal.choice.login.description")}
 					</p>
 				</div>
-				<div className="flex ">
-					<Button variant="primary" onClick={onLogin}>
-						{t("institutionDraftIntroModal.choice.login.cta")}
-					</Button>
-				</div>
+				{process.env.NODE_ENV !== "production" && (
+					<div className="flex ">
+						<Button variant="primary" onClick={onLogin}>
+							{t("institutionDraftIntroModal.choice.login.cta")}
+						</Button>
+					</div>
+				)}
 			</div>
 			<div className="space-y-2">
 				<div>
