@@ -13,12 +13,11 @@ import {
 import { createSubmission } from "@/server/actions/submissions";
 import { SubmissionEntityType, SubmissionType } from "@/generated/prisma";
 import type { Institution } from "@/types/institution";
-import { useRouter } from "next/navigation";
 import { showSuccessToast } from "@/lib/utils/feedbackToast";
 import { triggerAccountRefresh } from "@/components/Account/AccountAutoRefresh";
 
 type InstitutionEditModalProps = {
-	institutionId: string;
+	institutionId: number;
 	routePath?: string;
 	returnTo?: string;
 	onSubmit?: Parameters<typeof InstitutionFormModal>[0]["onSubmit"];
@@ -58,41 +57,22 @@ export function InstitutionEditModal({
 	const [fetchedInstitution, setFetchedInstitution] =
 		useState<Institution | null>(null);
 	const [didFetchInstitution, setDidFetchInstitution] = useState(false);
-	const router = useRouter();
-
-	const numericInstitutionId = useMemo(() => {
-		const parsed = Number(institutionId);
-		return Number.isFinite(parsed) ? parsed : undefined;
-	}, [institutionId]);
 
 	const resolvedInstitution = useMemo(() => {
-		if (!numericInstitutionId) return undefined;
-		if (activeInstitutionEdit?.id === numericInstitutionId) {
+		if (activeInstitutionEdit?.id === institutionId) {
 			return activeInstitutionEdit;
 		}
-		return institutions.find((item) => item.id === numericInstitutionId);
-	}, [activeInstitutionEdit, institutions, numericInstitutionId]);
-
-	if (!numericInstitutionId) {
-		return (
-			<AlertDialog
-				status="error"
-				confirmLabel={t("close")}
-				onConfirm={() => router.back()}
-				title={t("institutionFormModal.dialog.notFound.title")}
-				description={t("institutionFormModal.dialog.notFound.description")}
-			/>
-		);
-	}
+		return institutions.find((item) => item.id === institutionId);
+	}, [activeInstitutionEdit, institutionId, institutions]);
 
 	useEffect(() => {
-		if (!numericInstitutionId || resolvedInstitution || didFetchInstitution) {
+		if (resolvedInstitution || didFetchInstitution) {
 			return;
 		}
 		let active = true;
 		const fetchInstitution = async () => {
 			try {
-				const result = await getInstitutionById(numericInstitutionId);
+				const result = await getInstitutionById(institutionId);
 				if (!active) return;
 				setFetchedInstitution(result ?? null);
 			} catch {
@@ -109,16 +89,13 @@ export function InstitutionEditModal({
 		return () => {
 			active = false;
 		};
-	}, [didFetchInstitution, numericInstitutionId, resolvedInstitution]);
+	}, [didFetchInstitution, institutionId, resolvedInstitution]);
 
 	useEffect(() => {
-		if (
-			activeInstitutionEdit &&
-			activeInstitutionEdit.id !== numericInstitutionId
-		) {
+		if (activeInstitutionEdit && activeInstitutionEdit.id !== institutionId) {
 			setActiveInstitutionEdit(null);
 		}
-	}, [activeInstitutionEdit, numericInstitutionId, setActiveInstitutionEdit]);
+	}, [activeInstitutionEdit, institutionId, setActiveInstitutionEdit]);
 
 	const resolvedInstitutionWithFallback =
 		resolvedInstitution ?? fetchedInstitution ?? undefined;
