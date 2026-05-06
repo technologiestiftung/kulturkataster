@@ -128,9 +128,8 @@ const mockedResolveCategoryIdsFromDraft = vi.mocked(
 const mockedShowSuccessToast = vi.mocked(showSuccessToast);
 
 describe("InstitutionDraftWizardModal submission workflow", () => {
-	const setInstitutionStoreState = (
-		state: Partial<InstitutionStoreState>,
-	) => useInstitutionStore.setState(state);
+	const setInstitutionStoreState = (state: Partial<InstitutionStoreState>) =>
+		useInstitutionStore.setState(state);
 
 	beforeEach(() => {
 		pushMock.mockReset();
