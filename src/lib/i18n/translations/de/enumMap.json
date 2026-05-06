@@ -1,7 +1,7 @@
 {
 	"boolean": {
-		"true": "Ja",
-		"false": "Nein"
+		"false": "Nein",
+		"true": "Ja"
 	},
 	"category": {
 		"acrobatics": "Akrobatik",
@@ -23,12 +23,10 @@
 		"concert_halls": "Konzerthäuser",
 		"concert_venues": "Konzert-Venues",
 		"cultural_centers": "Kulturzentren",
-		"cultural_festivals": "Kulturfestivals",
 		"cultural_urban_development": "Orte der kulturellen Stadtentwicklung",
 		"cultural_urban_development_other": "Nicht zugeordnet",
 		"curated_cinemas": "Kuratierte Kinos",
 		"dance_contemporary_circus": "Zeitgenössischer Zirkus",
-		"dance_festivals": "Tanzfestivals",
 		"dance_performance": "Performance",
 		"dance_rehearsal_rooms": "Tanz",
 		"dance_training": "Training Tanz",
@@ -42,9 +40,8 @@
 		"exhibition_spaces_galleries": "Ausstellungsflächen",
 		"exhibition_spaces_museums": "Ausstellungsflächen",
 		"family_centers": "Familienzentren",
-		"festival_venues": "Festivalorte",
-		"film_festivals": "Filmfestivals",
-		"fine_arts_festivals": "Bildende Kunst Festivals",
+		"festivalort": "Festivalorte",
+		"festivalorte": "Festivalorte",
 		"galleries": "Galerien",
 		"galleries_other": "Nicht zugeordnet",
 		"graffiti_areas": "Graffiti-Flächen",
@@ -56,18 +53,17 @@
 		"libraries": "Bibliotheken",
 		"libraries_other": "Nicht zugeordnet",
 		"literature_event_venues": "Veranstaltungsorte",
-		"literature_festivals": "Literaturfestivals",
 		"literature_houses": "Literaturhäuser",
 		"literature_organizers": "Veranstalter",
 		"literature_places": "Literaturorte",
 		"literature_places_other": "Nicht zugeordnet",
 		"memorial_sites": "Gedenkstätten und Erinnerungsorte",
-		"mowe_festival": "mowe Festival für Kunst und Stadtkultur",
+		"mowe_berlin_festival": "mowe Festival",
+		"mowe_festival": "mowe Festival",
 		"municipal_galleries": "Kommunale Galerien",
 		"museums": "Museen",
 		"museums_other": "Nicht zugeordnet",
 		"music_bars": "Musikbars",
-		"music_festivals": "Musikfestivals",
 		"music_rehearsal_rooms": "Musik",
 		"music_theater": "Musiktheater",
 		"music_theater_clubs_music_venues": "Musiktheater",
@@ -79,12 +75,11 @@
 		"neighborhood_centers": "Stadtteil- und Nachbarschaftszentren",
 		"open_air_venues": "Open-Air-Flächen",
 		"opera": "Oper",
-		"other": "Sonstiges",
+		"other": "Nicht zugeordnet",
 		"others": "Nicht zugeordnet",
 		"outdoor_cinemas": "Freiluftkinos",
 		"performing_arts_contemporary_circus": "Zeitgenössischer Zirkus",
 		"performing_arts_education": "Darstellende Künste",
-		"performing_arts_festivals": "Performing Arts Festivals",
 		"performing_arts_performance": "Performance",
 		"performing_arts_rehearsal_rooms": "Darstellende Künste",
 		"performing_arts_venues": "Spielstätten Darstellende Künste",
@@ -123,7 +118,6 @@
 		"theater": "Theater",
 		"urban_art": "Urban Art ",
 		"variety": "Varieté",
-		"visual_art_festivals": "Bildende Kunst Festivals",
 		"workplace_patient_prison_libraries": "Werkbibliotheken, Patientenbibliotheken und Gefangenenbüchereien",
 		"workspace_program_rehearsal_rooms": "Proberäume im Arbeitsraumprogramm",
 		"writing_places": "Schreibplätze im Arbeitsraumprogramm",
@@ -200,7 +194,6 @@
 			"label": "Kapazität",
 			"placeholder": "z. B. 10"
 		},
-		"case": "Geoposition",
 		"categories": {
 			"description": "Passende Kategorien auswählen.",
 			"errors": {
@@ -273,7 +266,6 @@
 			"label": "Ansprechperson Telefonnummer",
 			"placeholder": "+49 ..."
 		},
-		"contact_person_surname": "Ansprechperson Nachname",
 		"cost": {
 			"description": "",
 			"errors": {
@@ -306,7 +298,6 @@
 			"label": "Zusätzliche Informationen",
 			"placeholder": "Bitte eintragen"
 		},
-		"display_na": "Geodaten OSM",
 		"district": {
 			"description": "",
 			"errors": {
@@ -406,9 +397,6 @@
 			},
 			"placeholder": "Bitte auswählen"
 		},
-		"geo_category": "Geodaten OSM",
-		"geo_type": "Geodaten OSM",
-		"geom": "Geoposition",
 		"id": {
 			"description": "",
 			"errors": {
@@ -417,10 +405,6 @@
 			"label": "ID",
 			"placeholder": "Bitte eintragen"
 		},
-		"institution_email": "E-Mail-Adresse",
-		"institution_name": "Kultureinrichtung",
-		"institution_phone": "Telefonnummer",
-		"institution_website": "Website",
 		"internal_notes": {
 			"description": "",
 			"errors": {
@@ -437,7 +421,6 @@
 			"label": "Breitengrad",
 			"placeholder": "Bitte eintragen"
 		},
-		"latlong": "Geodaten OSM",
 		"legal_form": {
 			"description": "",
 			"errors": {
@@ -486,8 +469,6 @@
 			"label": "Anzahl der Arbeitsräume",
 			"placeholder": "z. B. 10"
 		},
-		"osm_id": "Geodaten OSM",
-		"owner": "Eigentümer*in",
 		"owner_name": {
 			"description": "",
 			"errors": {
@@ -527,7 +508,6 @@
 			"label": "Dachorganisation",
 			"placeholder": "Bitte eintragen"
 		},
-		"parent_organizations": "Dachorganisation",
 		"phone": {
 			"description": "Bitte nach Möglichkeit eine allgemeine Telefonnummer der Kultureinrichtung angeben (z. B. Empfangskontakt).",
 			"errors": {
@@ -594,8 +574,6 @@
 			},
 			"placeholder": "Bitte auswählen"
 		},
-		"result_num": "Geodaten OSM",
-		"rooms_count": "Anzahl der Arbeitsräume",
 		"shared_use_accessibility": {
 			"description": "",
 			"errors": {
@@ -687,7 +665,6 @@
 			"label": "Hausnummer",
 			"placeholder": "z. B. 12a"
 		},
-		"subcategories": "Unterkategorie",
 		"subcategory": {
 			"description": "",
 			"errors": {
@@ -704,7 +681,6 @@
 			"label": "Art der Finanzierung",
 			"placeholder": "Bitte auswählen"
 		},
-		"tag": "Tags",
 		"tags": {
 			"actions": {
 				"add": "Tag hinzufügen",
@@ -774,7 +750,6 @@
 			"label": "Webseite",
 			"placeholder": "https://..."
 		},
-		"zip_code": "PLZ",
 		"zipcode": {
 			"description": "",
 			"errors": {
@@ -790,6 +765,7 @@
 		"eu": "EU",
 		"federal": "Bund",
 		"foundation": "Stiftung",
+		"none": "Keine Angabe",
 		"other": "Sonstiges",
 		"private": "Privat",
 		"state_berlin": "Land Berlin"
@@ -797,6 +773,8 @@
 	"funding_type": {
 		"institutional_funding": "Institutionell gefördert",
 		"no_funding": "Nicht gefördert",
+		"none": "Keine Angabe",
+		"placeholder": "Art der Förderung auswählen",
 		"temporary_project_funding": "Temporäre Projektförderung",
 		"workspace_program": "Arbeitsraumprogramm"
 	},
@@ -822,122 +800,30 @@
 		"municipal_housing_company": "Städtische Wohnungsbaugesellschaft",
 		"other": "Sonstige",
 		"other_public_property": "Sonstige öffentliche Liegenschaft",
+		"placeholder": "Eigentümer*innenart auswählen",
 		"private": "Privat",
 		"state_property": "Landesliegenschaft",
 		"state_property_fund": "Landesliegenschaft (Liegenschaftsfonds)",
 		"state_property_other": "Landesliegenschaft (Sonstige Liegenschaft)",
 		"state_property_silb": "Landesliegenschaft (SILB)",
 		"state_property_soda": "Landesliegenschaft (SODA)",
-		"state_property_specialized": "Landesliegenschaft (Fachvermögen)"
+		"state_property_specialized": "Spezialimmobilie Land"
 	},
 	"protection_status": {
+		"acutely_threatened": "Akut gefährdet",
 		"long_term_secured": "Langfristig gesichert",
-		"not_yet_secured": "Noch nicht gesichert"
+		"medium_term_secured": "Mittelfristig gesichert",
+		"not_yet_secured": "Noch nicht gesichert",
+		"permanently_closed": "Dauerhaft geschlossen",
+		"placeholder": "Sicherungsstatus auswählen",
+		"uncertain": "Unsicher"
 	},
 	"rental_contract_type": {
+		"leasehold": "Erbbaurecht",
 		"limited_lease": "Befristeter Mietvertrag",
 		"organization_ownership": "Eigentum der Organisation",
+		"placeholder": "Vertragsform auswählen",
 		"unlimited_lease": "Unbefristeter Mietvertrag"
-	},
-	"subcategory": {
-		"acrobatics": "Akrobatik",
-		"adult_education_centers": "Volkshochschulen",
-		"art_house_cinemas": "Programmkinos",
-		"art_universities": "Kunsthochschulen",
-		"bookmobile_libraries": "Fahrbibliotheken",
-		"bookstores": "Buchhandlungen",
-		"cabaret": "Kabarett",
-		"central_state_libraries": "Zentral- und Landesbibliotheken",
-		"children_circus": "Kinderzirkus",
-		"cinemas_other": "Nicht zugeordnet",
-		"clubs": "Clubs",
-		"clubs_music_venues_other": "Nicht zugeordnet",
-		"comedy": "Comedy",
-		"community_empowerment_centers": "Community- und Empowerment-Zentren",
-		"concert_halls": "Konzerthäuser",
-		"concert_venues": "Konzert-Venues",
-		"cultural_centers": "Kulturzentren",
-		"cultural_urban_development_other": "Nicht zugeordnet",
-		"curated_cinemas": "Kuratierte Kinos",
-		"dance_contemporary_circus": "Zeitgenössischer Zirkus",
-		"dance_performance": "Performance",
-		"dance_rehearsal_rooms": "Tanz",
-		"dance_training": "Training Tanz",
-		"dance_venues_other": "Nicht zugeordnet",
-		"dance_young_audience": "Junges Publikum",
-		"discotheques": "Discotheken",
-		"district_libraries": "Bezirksbibliotheken",
-		"education_places_other": "Nicht zugeordnet",
-		"exhibition_spaces_galleries": "Ausstellungsflächen",
-		"exhibition_spaces_museums": "Ausstellungsflächen",
-		"family_centers": "Familienzentren",
-		"galleries_other": "Nicht zugeordnet",
-		"graffiti_areas_other": "Nicht zugeordnet",
-		"improvisation": "Improvisation",
-		"intensive_dance_program": "Intensivprogramm Tanz",
-		"jazz_venues": "Jazz-Spielstätten",
-		"legal_graffiti_areas": "Legale Graffitiflächen",
-		"libraries_other": "Nicht zugeordnet",
-		"literature_event_venues": "Veranstaltungsorte",
-		"literature_houses": "Literaturhäuser",
-		"literature_organizers": "Veranstalter",
-		"literature_places_other": "Nicht zugeordnet",
-		"memorial_sites": "Gedenkstätten und Erinnerungsorte",
-		"municipal_galleries": "Kommunale Galerien",
-		"museums_other": "Nicht zugeordnet",
-		"music_bars": "Musikbars",
-		"music_rehearsal_rooms": "Musik",
-		"music_theater": "Musiktheater",
-		"music_theater_clubs_music_venues": "Musiktheater",
-		"music_theater_performing_arts_venues": "Musiktheater",
-		"music_theater_venues": "Musiktheater",
-		"musical": "Musical",
-		"musiktheater_clubs_music_venues": "Musiktheater",
-		"musiktheater_performing_arts_venues": "Musiktheater",
-		"neighborhood_centers": "Stadtteil- und Nachbarschaftszentren",
-		"open_air_venues": "Open-Air-Flächen",
-		"opera": "Oper",
-		"other": "Nicht zugeordnet",
-		"others": "Nicht zugeordnet",
-		"outdoor_cinemas": "Freiluftkinos",
-		"performing_arts_contemporary_circus": "Zeitgenössischer Zirkus",
-		"performing_arts_education": "Darstellende Künste",
-		"performing_arts_performance": "Performance",
-		"performing_arts_rehearsal_rooms": "Darstellende Künste",
-		"performing_arts_venues_other": "Nicht zugeordnet",
-		"performing_arts_young_audience": "Junges Publikum",
-		"poetry_slam": "Poetry Slam",
-		"potential_cultural_development_spaces": "Potenzialorte für kulturelle Stadtentwicklung",
-		"potential_spaces_other": "Nicht zugeordnet",
-		"private_collections": "Privatsammlungen",
-		"private_museums": "Private Museen",
-		"private_music_schools": "Private Musikschulen",
-		"professional_dance_coaching": "Profitraining Tanz",
-		"professional_dance_training": "Berufsausbildung Tanz",
-		"project_initiatives_general": "Projektinitiativen",
-		"project_spaces_event_centers": "Projekträume in einem Veranstaltungszentrum oder Atelierhaus",
-		"project_spaces_general": "Projekträume",
-		"project_spaces_initiatives_other": "Nicht zugeordnet",
-		"project_spaces_workspace_program": "Projekträume im Arbeitsraumprogramm",
-		"public_museums": "Öffentliche Museen",
-		"public_music_schools": "Öffentliche Musikschulen",
-		"puppet_figure_object_theater": "Puppen-/Figuren-/Objekttheater",
-		"rehearsal_rooms_other": "Nicht zugeordnet",
-		"scientific_specialized_libraries": "Wissenschaftliche Spezialbibliotheken",
-		"scientific_universal_libraries": "Wissenschaftliche Universalbibliotheken",
-		"social_participation_centers": "Soziale Teilhabezentren",
-		"sociocultural_centers_other": "Nicht zugeordnet",
-		"studio_apartments": "Atelierwohnungen",
-		"studio_houses_free": "Freie Atelierhäuser",
-		"studio_houses_workspace_program": "Atelierhäuser im Arbeitsraumprogramm",
-		"studios_other": "Nicht zugeordnet",
-		"theater": "Theater",
-		"variety": "Varieté",
-		"workplace_patient_prison_libraries": "Werkbibliotheken, Patientenbibliotheken und Gefangenenbüchereien",
-		"workspace_program_rehearsal_rooms": "Proberäume im Arbeitsraumprogramm",
-		"writing_places": "Schreibplätze im Arbeitsraumprogramm",
-		"youth_art_schools": "Jugendkunstschulen",
-		"youth_leisure_facilities": "Kinder- und Jugendfreizeiteinrichtungen"
 	},
 	"submission_status": {
 		"approval_pending": "Freigabe ausstehend",
@@ -957,7 +843,9 @@
 	},
 	"utilization_status": {
 		"in_use": "In Nutzung",
+		"none": "Keine Angabe",
 		"permanently_closed": "Dauerhaft geschlossen",
+		"placeholder": "Nutzungsstatus auswählen",
 		"planned_use": "Geplante Nutzung",
 		"potential_space": "Potenzialort",
 		"temporarily_closed": "Vorübergehend geschlossen",
