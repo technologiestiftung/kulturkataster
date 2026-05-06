@@ -124,7 +124,7 @@ Wenn Sie kein Zurücksetzen angefordert haben, können Sie diese E-Mail ignorier
 
 Bei Fragen helfen Ihnen die FAQs im User-Bereich weiter:
 
-[{{ .SiteURL }}/de/faq]({{ .SiteURL }}/de/faq)
+[FAQs]({{ .Data.faq_url }})
 
 Oder wenden Sie sich an unsere Redaktion: [info@kulturkataster.berlin](mailto:info@kulturkataster.berlin).
 
@@ -150,7 +150,7 @@ If you did not request a password reset, you can ignore this email — your pass
 
 If you have questions, the FAQs in the user area can help:
 
-[{{ .SiteURL }}/de/faq]({{ .SiteURL }}/de/faq)
+[FAQs]({{ .Data.faq_url }})
 
 Or contact our editorial team: [info@kulturkataster.berlin](mailto:info@kulturkataster.berlin).
 
