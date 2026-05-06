@@ -92,6 +92,7 @@ jobs:
             echo "Changes detected:"
             git status
             git diff --stat
+          fi
 
       - name: Create Pull Request
         if: steps.check_changes.outputs.changes == 'true' && startsWith(steps.action.outputs.action, 'pull')
