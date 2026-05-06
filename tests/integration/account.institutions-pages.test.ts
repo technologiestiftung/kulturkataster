@@ -58,13 +58,13 @@ describe("institutions pages integration", () => {
 			"@/app/[locale]/account/(dashboard)/institutions/[id]/edit/page"
 		);
 		const result = await pageModule.default({
-			params: Promise.resolve({ id: "42" }),
+			params: Promise.resolve({ locale: "de", id: "42" }),
 		});
 
 		expect(result).toMatchObject({
 			type: InstitutionEditModal,
 			props: expect.objectContaining({
-				institutionId: "42",
+				institutionId: 42,
 				routePath: "/account/institutions/42/edit",
 				returnTo: "/account/institutions",
 			}),
@@ -76,7 +76,7 @@ describe("institutions pages integration", () => {
 			"@/app/[locale]/@modal/(.)account/submissions/[id]/page"
 		);
 		const result = await pageModule.default({
-			params: Promise.resolve({ id: "77" }),
+			params: Promise.resolve({ locale: "de", id: "77" }),
 		});
 
 		expect(result).toMatchObject({
