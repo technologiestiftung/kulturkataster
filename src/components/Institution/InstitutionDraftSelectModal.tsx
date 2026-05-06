@@ -6,54 +6,17 @@ import { useTranslation } from "react-i18next";
 import { Modal } from "@/components/Modals/Modal";
 import { InstitutionDraftSelectSearch } from "@/components/Institution/InstitutionDraftSelectSearch";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
+import { useAccountStore } from "@/lib/store/accountStore";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useInstitutionDraftStore } from "@/lib/store/institutionDraftStore";
 import { searchInstitutions } from "@/server/actions/institutions";
 import type { Institution } from "@/types/institution";
-import type { Category, FilterState } from "@/types";
 import { buildStreetLine } from "@/lib/utils/formUtils";
 import { institutionSubmissionToDraft } from "@/lib/utils/institutionSubmissionUtils";
 import { SelectableOptionsList } from "@/components/MultiSelect/SelectableOptionsList";
+import { buildCategoryFilterStateFromIds } from "@/lib/utils/institutionCategoryUtils";
+import { buildCategoryGroups } from "@/lib/utils/categoryUtils";
 import { Card } from "../ui/card";
-
-const buildCategoryFilterStateFromIds = (
-	categoryIds: number[] | undefined,
-	categoryGroups: Category[],
-): FilterState => {
-	const category_keys = new Set<string>();
-	const child_category_keys = new Set<string>();
-	const categoryMap = new Map<number, Category>();
-	const parentKeyById = new Map<number, string>();
-	categoryGroups.forEach((category) => {
-		categoryMap.set(category.id, category);
-		parentKeyById.set(category.id, category.key);
-		(category.child_categories ?? []).forEach((child) => {
-			categoryMap.set(child.id, child);
-			parentKeyById.set(child.id, category.key);
-		});
-	});
-	(categoryIds ?? []).forEach((id) => {
-		const category = categoryMap.get(id);
-		if (!category) return;
-		if (category.parent_category_id) {
-			child_category_keys.add(category.key);
-			const parentKey =
-				parentKeyById.get(id) ?? parentKeyById.get(category.parent_category_id);
-			if (parentKey) {
-				category_keys.add(parentKey);
-			}
-		} else {
-			category_keys.add(category.key);
-		}
-	});
-	return {
-		district_keys: [],
-		category_keys: Array.from(category_keys),
-		child_category_keys: Array.from(child_category_keys),
-		include_closed: false,
-		status: undefined,
-	};
-};
 
 export function InstitutionDraftSelectModal({
 	routePath,
@@ -63,8 +26,18 @@ export function InstitutionDraftSelectModal({
 	const { t } = useTranslation("common");
 	const router = useRouter();
 	const toLocalePath = useLocalePath();
+	const accountCategories = useAccountStore((state) => state.categories);
 	const institutions = useInstitutionStore((state) => state.allInstitutions);
-	const categories = useInstitutionStore((state) => state.categories) ?? [];
+	const institutionCategories = useInstitutionStore(
+		(state) => state.categories,
+	);
+	const categories = useMemo(
+		() =>
+			institutionCategories?.length
+				? institutionCategories
+				: buildCategoryGroups(accountCategories),
+		[institutionCategories, accountCategories],
+	);
 	const isLoading = useInstitutionStore((state) => state.isLoading);
 	const error = useInstitutionStore((state) => state.error);
 	const setDraft = useInstitutionDraftStore((state) => state.setDraft);

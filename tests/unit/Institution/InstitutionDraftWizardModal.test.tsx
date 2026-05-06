@@ -8,6 +8,7 @@ import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { buildAddressFromFormData } from "@/lib/utils/formUtils";
 import { resolveCategoryIdsFromDraft } from "@/lib/utils/institutionCategoryUtils";
 import { showSuccessToast } from "@/lib/utils/feedbackToast";
+import type { InstitutionStoreState } from "@/types/institution";
 
 vi.mock("react-i18next", () => ({
 	useTranslation: () => ({
@@ -127,6 +128,9 @@ const mockedResolveCategoryIdsFromDraft = vi.mocked(
 const mockedShowSuccessToast = vi.mocked(showSuccessToast);
 
 describe("InstitutionDraftWizardModal submission workflow", () => {
+	const setInstitutionStoreState = (state: Partial<InstitutionStoreState>) =>
+		useInstitutionStore.setState(state);
+
 	beforeEach(() => {
 		pushMock.mockReset();
 		replaceMock.mockReset();
@@ -161,7 +165,8 @@ describe("InstitutionDraftWizardModal submission workflow", () => {
 			"address.city": "Berlin",
 		});
 
-		useInstitutionStore.setState({
+		setInstitutionStoreState({
+			initializePublicData: vi.fn(),
 			categories: [
 				{
 					id: 101,
@@ -171,7 +176,8 @@ describe("InstitutionDraftWizardModal submission workflow", () => {
 					child_categories: [],
 				},
 			],
-		} as any);
+			allInstitutions: [],
+		});
 	});
 
 	it("submits create payload from review step and routes to institution thank-you", async () => {

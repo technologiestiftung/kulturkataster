@@ -58,6 +58,37 @@ export const resolveCategoryIdsFromDraft = (
 	return Array.from(selectedIds);
 };
 
+export const buildCategoryFilterStateFromIds = (
+	categoryIds: Array<number | string> | undefined,
+	categories: Category[],
+): FilterState => {
+	const { byId } = buildCategoryIndex(categories);
+	const category_keys = new Set<string>();
+	const child_category_keys = new Set<string>();
+
+	toNumberArray(categoryIds).forEach((id) => {
+		const category = byId.get(id);
+		if (!category) return;
+		if (category.parent_category_id) {
+			child_category_keys.add(category.key);
+			const parent = byId.get(category.parent_category_id);
+			if (parent) {
+				category_keys.add(parent.key);
+			}
+			return;
+		}
+		category_keys.add(category.key);
+	});
+
+	return {
+		district_keys: [],
+		category_keys: Array.from(category_keys),
+		child_category_keys: Array.from(child_category_keys),
+		include_closed: false,
+		status: undefined,
+	};
+};
+
 export const resolveCategoriesFromDraft = (
 	input: Record<string, unknown>,
 	categories: Category[],
