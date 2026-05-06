@@ -73,13 +73,6 @@
 					"user": "User",
 					"userWithEmail": "{{entity}} ({{email}})"
 				},
-				"submissionTypes": {
-					"claim": "claimed",
-					"create": "created",
-					"delete": "deleted",
-					"read": "read",
-					"update": "updated"
-				},
 				"filters": {
 					"allDates": "All",
 					"allEntities": "All entities",
@@ -114,6 +107,13 @@
 					"rejected": "Rejected"
 				},
 				"statusAria": "Status: {{status}}",
+				"submissionTypes": {
+					"claim": "claimed",
+					"create": "created",
+					"delete": "deleted",
+					"read": "read",
+					"update": "updated"
+				},
 				"system": "System",
 				"templates": {
 					"assign": "<actor>{{actor}}</actor> has {{action}} <primary>{{primaryEntity}}</primary> based on <secondary>{{secondaryEntity}}</secondary>",
@@ -207,6 +207,7 @@
 			"deleteTitle": "Delete profile",
 			"emailLabel": "Email address",
 			"emailPlaceholder": "name@example.com",
+			"errorFallback": "Changes could not be saved.",
 			"errors": {
 				"emailTaken": "A user with this email address already exists.",
 				"forbidden": "You are not allowed to change this profile.",
@@ -214,7 +215,6 @@
 				"notFound": "This profile no longer exists.",
 				"unexpected": "Changes could not be saved."
 			},
-			"errorFallback": "Changes could not be saved.",
 			"metaTitle": "Edit Personal Information – Kulturkataster",
 			"nameLabel": "Your name",
 			"namePlaceholder": "First and last name",
@@ -433,11 +433,11 @@
 		"navigation": "Footer navigation",
 		"navigationAriaLabel": "Footer navigation",
 		"privacy": "Privacy policy",
-		"terms": "Terms",
 		"projectBy": "A project by Kulturraum Berlin gGmbH",
 		"signLanguageInformation": "German Sign Language",
 		"signLanguageInformationShort": "DGS",
 		"simpleLanguageInformation": "Easy-to-read language",
+		"terms": "Terms",
 		"title": "Kulturkataster Berlin",
 		"welcomeModalLinkListAriaLabel": "Welcome view footer navigation"
 	},
