@@ -1197,7 +1197,9 @@ export function InstitutionFormModal({
 	const institutionFieldPermissions = useAccountStore(
 		(state) => state.institutionFieldPermissions,
 	);
-	const institutionCategories = useInstitutionStore((state) => state.categories);
+	const institutionCategories = useInstitutionStore(
+		(state) => state.categories,
+	);
 	const categoryGroups = useMemo(
 		() =>
 			institutionCategories?.length
