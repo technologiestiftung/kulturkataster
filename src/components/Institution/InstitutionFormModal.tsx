@@ -39,6 +39,7 @@ import {
 	hasDuplicateInstitutionByNameAndAddress,
 } from "@/lib/utils/institutionDuplicateUtils";
 import { reportClientTelemetry } from "@/lib/utils/clientTelemetry";
+import { buildCategoryGroups } from "@/lib/utils/categoryUtils";
 type InstitutionFormModalProps = {
 	mode: "create" | "edit";
 	institution?: Institution | null;
@@ -1163,7 +1164,10 @@ const buildInstitutionFormConfig = ({
 					loading: t("institutionFormModal.actions.saving"),
 				},
 			}),
-		initialValues: buildInstitutionFormInitialValues(resolvedInstitution),
+		initialValues: buildInstitutionFormInitialValues(
+			resolvedInstitution,
+			categoryGroups,
+		),
 	};
 };
 
@@ -1189,10 +1193,20 @@ export function InstitutionFormModal({
 	const { t, i18n } = useTranslation("content");
 	const { t: tEnum } = useTranslation("enumMap");
 	const { isPrivateField } = useInstitutionPrivateFieldResolver();
+	const accountCategories = useAccountStore((state) => state.categories);
 	const institutionFieldPermissions = useAccountStore(
 		(state) => state.institutionFieldPermissions,
 	);
-	const categories = useInstitutionStore((state) => state.categories) ?? [];
+	const institutionCategories = useInstitutionStore(
+		(state) => state.categories,
+	);
+	const categoryGroups = useMemo(
+		() =>
+			institutionCategories?.length
+				? institutionCategories
+				: buildCategoryGroups(accountCategories),
+		[institutionCategories, accountCategories],
+	);
 	const allInstitutions =
 		useInstitutionStore((state) => state.allInstitutions) ?? [];
 	const [isDeleting, setIsDeleting] = useState(false);
@@ -1260,8 +1274,12 @@ export function InstitutionFormModal({
 	const resolvedCurrentInstitutionId =
 		currentInstitutionId ?? resolvedInstitutionWithFallback?.id;
 	const initialFormValues = useMemo(
-		() => buildInstitutionFormInitialValues(resolvedInstitutionWithFallback),
-		[resolvedInstitutionWithFallback],
+		() =>
+			buildInstitutionFormInitialValues(
+				resolvedInstitutionWithFallback,
+				categoryGroups,
+			),
+		[resolvedInstitutionWithFallback, categoryGroups],
 	);
 	const [currentFormData, setCurrentFormData] =
 		useState<Record<string, unknown>>(initialFormValues);
@@ -1290,7 +1308,7 @@ export function InstitutionFormModal({
 		mode,
 		resolvedInstitutionWithFallback?.id,
 		resolvedInstitutionWithFallback?.address?.id,
-		categories,
+		categoryGroups,
 		resolvedClose,
 		handleSuccess,
 		shouldRefresh,
@@ -1430,7 +1448,7 @@ export function InstitutionFormModal({
 				mode,
 				t,
 				tEnum,
-				categoryGroups: categories,
+				categoryGroups,
 				resolvedInstitution: resolvedInstitutionWithFallback,
 				submitting: resolvedSubmitting,
 				submitLabel,
@@ -1446,7 +1464,7 @@ export function InstitutionFormModal({
 			mode,
 			t,
 			tEnum,
-			categories,
+			categoryGroups,
 			resolvedInstitutionWithFallback,
 			resolvedSubmitting,
 			submitLabel,

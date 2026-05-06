@@ -108,6 +108,7 @@
 			"Das Kulturkataster findet in den Richtlinien der Regierungspolitik dieser Legislaturperiode Erwähnung. Ende 2022 wird die Kulturraum Berlin gGmbH von der Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt mit der Konzeption betraut und stellt in zwei Konzeptpapieren (ausgeführt durch das Studio für unendliche Möglichkeiten) die Ausgangssituation und Bedarfe sowie ein Umsetzungskonzept für das Kulturkataster vor. Auch die Umsetzung wird 2024 zur Aufgabe der KRB. Mit der Entwicklung der online-basierten Kartenanwendung beauftragte die KRB die Technologiestiftung Berlin."
 		],
 		"simpleLanguageDirect": "Den Bereich „Über das Projekt“ in leichter Sprache finden Sie <link />.",
+		"subtitle": " ",
 		"thanks": "Das Berliner Kulturkataster verdankt seine erfolgreiche Veröffentlichung der Begeisterung, dem Engagement und dem gemeinsamen Wirken aller Personen, für die die Berliner Kulturlandschaft von ebenso großer Bedeutung ist wie für das Projektteam. Diese tiefe Verankerung in der Szene bildet die Grundlage dafür, dass das langfristig ausgerichtete Projekt seine Vision in vollem Umfang entfalten und dynamisch weiterentwickeln kann.",
 		"title": "Über das Projekt",
 		"versionListAriaLabel": "Liste der Versionsänderungen",
@@ -244,15 +245,6 @@
 			"update": "Speichern",
 			"updateLoading": "Wird gespeichert..."
 		},
-		"errors": {
-			"forbidden": "Sie dürfen diese Kategorie nicht ändern.",
-			"hasSubcategories": "Bitte entfernen Sie zuerst alle Unterkategorien, bevor Sie diese Kategorie löschen.",
-			"keyLocked": "Der Kategorien-Schlüssel kann nicht geändert werden.",
-			"keyTaken": "Eine Kategorie mit diesem Schlüssel existiert bereits.",
-			"notFound": "Die ausgewählte Kategorie existiert nicht mehr.",
-			"selfParent": "Eine Kategorie kann nicht ihre eigene Oberkategorie sein.",
-			"unexpected": "Die Kategorie konnte nicht gespeichert werden. Bitte versuchen Sie es erneut."
-		},
 		"delete": {
 			"button": "Löschen",
 			"cancel": "Abbrechen",
@@ -275,18 +267,27 @@
 				"edit": "Kategorie bearbeiten"
 			}
 		},
+		"errors": {
+			"forbidden": "Sie dürfen diese Kategorie nicht ändern.",
+			"hasSubcategories": "Bitte entfernen Sie zuerst alle Unterkategorien, bevor Sie diese Kategorie löschen.",
+			"keyLocked": "Der Kategorien-Schlüssel kann nicht geändert werden.",
+			"keyTaken": "Eine Kategorie mit diesem Schlüssel existiert bereits.",
+			"notFound": "Die ausgewählte Kategorie existiert nicht mehr.",
+			"selfParent": "Eine Kategorie kann nicht ihre eigene Oberkategorie sein.",
+			"unexpected": "Die Kategorie konnte nicht gespeichert werden. Bitte versuchen Sie es erneut."
+		},
 		"feedback": {
 			"create": {
 				"description": "Die Kategorie ist jetzt verfügbar.",
 				"title": "Kategorie erstellt"
 			},
-			"update": {
-				"description": "Die Änderungen wurden gespeichert.",
-				"title": "Kategorie aktualisiert"
-			},
 			"delete": {
 				"description": "Die Kategorie wurde erfolgreich entfernt.",
 				"title": "Kategorie gelöscht"
+			},
+			"update": {
+				"description": "Die Änderungen wurden gespeichert.",
+				"title": "Kategorie aktualisiert"
 			}
 		},
 		"form": {
@@ -376,12 +377,6 @@
 			"save": "Änderungen speichern",
 			"saving": "Änderungen werden gespeichert..."
 		},
-		"errors": {
-			"forbidden": "Sie dürfen diese Gruppe nicht ändern.",
-			"nameTaken": "Eine Gruppe mit diesem Namen existiert bereits.",
-			"notFound": "Die ausgewählte Gruppe existiert nicht mehr.",
-			"unexpected": "Die Gruppe konnte nicht gespeichert werden. Bitte versuchen Sie es erneut."
-		},
 		"delete": {
 			"button": "Löschen",
 			"cancel": "Abbrechen",
@@ -401,6 +396,12 @@
 				"create": "Gruppe erstellen",
 				"edit": "Gruppe bearbeiten"
 			}
+		},
+		"errors": {
+			"forbidden": "Sie dürfen diese Gruppe nicht ändern.",
+			"nameTaken": "Eine Gruppe mit diesem Namen existiert bereits.",
+			"notFound": "Die ausgewählte Gruppe existiert nicht mehr.",
+			"unexpected": "Die Gruppe konnte nicht gespeichert werden. Bitte versuchen Sie es erneut."
 		},
 		"feedback": {
 			"create": {
@@ -477,13 +478,6 @@
 		},
 		"emptyMessage": "Keine Gruppen gefunden.",
 		"searchPlaceholder": "Gruppen durchsuchen..."
-	},
-	"infoWrapper": {
-		"diffLabel": {
-			"addition": "Ergänzung: ",
-			"edited": "Bearbeitet: ",
-			"removed": "Entfernt"
-		}
 	},
 	"imprintModal": {
 		"chairman": {
@@ -567,6 +561,13 @@
 		},
 		"subtitle": "Kulturraum Berlin gGmbH",
 		"title": "Impressum"
+	},
+	"infoWrapper": {
+		"diffLabel": {
+			"addition": "Ergänzung: ",
+			"edited": "Bearbeitet: ",
+			"removed": "Entfernt"
+		}
 	},
 	"informationModal": {
 		"faq": {
@@ -744,6 +745,150 @@
 				"title": "Einreichung erfolgreich"
 			}
 		},
+		"form": {
+			"basic": {
+				"sectionTitle": "Grundinformationen",
+				"validation": {
+					"duplicateInstitution": "Ein Kulturort mit diesem Namen und dieser Adresse existiert bereits.",
+					"duplicatePossible": "Möglicher Duplikatseintrag gefunden. Bitte vor dem Absenden prüfen."
+				}
+			},
+			"category": {
+				"newCategory": {
+					"description": "Mehrere Kategorien bitte durch Komma trennen.",
+					"label": "Neue Kategorie(n) vorschlagen",
+					"placeholder": "z. B. Neue Kategorie"
+				},
+				"validation": {
+					"minSelection": "Bitte wählen Sie mindestens eine Kategorie aus."
+				}
+			},
+			"contact": {
+				"consent": {
+					"contactListing": "Ich bin damit einverstanden, mit meinen Kontaktdaten als Ansprechperson im passwortgeschützten Bereich des Kulturkatasters genannt zu werden.",
+					"requestAdminRights": "Ich bin verantwortlich für diesen Kulturort und möchte ihn der Liste in meinem Profil hinzufügen und die Administrationsrechte dafür erhalten.",
+					"title": "Abschließende Angaben",
+					"worksForOrganization": "Ich arbeite für diese Kulturorganisation."
+				}
+			},
+			"information": {
+				"accordions": {
+					"accessibility": {
+						"description": "Informationen zur Barrierefreiheit des Kulturorts.",
+						"title": "Barrierefreiheit"
+					},
+					"closing": {
+						"description": "Diese Angabe betrifft nur bereits geschlossene Orte.",
+						"title": "Schließungsgründe"
+					},
+					"cost": {
+						"description": "Angaben zu Eintrittspreisen oder Nutzungskosten.",
+						"title": "Kosten"
+					},
+					"establishment": {
+						"description": "Zeitraum der Nutzung oder Eröffnung am Standort.",
+						"title": "Zeitraum am Standort"
+					},
+					"funding": {
+						"description": "Informationen zur Förderung.",
+						"title": "Art der Förderung"
+					},
+					"fundingSources": {
+						"description": "Geben Sie die Finanzierungsquellen Ihres Kulturortes an.",
+						"title": "Art der Finanzierung"
+					},
+					"organization": {
+						"description": "Rechtsform des Kulturorts.",
+						"title": "Organisationsform"
+					},
+					"ownership": {
+						"description": "Diese Information wird ausschließlich für befugte Nutzer*innen im geschützten Bereich des Kulturkatasters zugänglich und nicht öffentlich einsehbar sein.",
+						"title": "Eigentumsverhältnisse"
+					},
+					"protection": {
+						"description": "Angaben zum Schutz und zur Sicherung des Standorts.",
+						"title": "Sicherungsstatus"
+					},
+					"rental": {
+						"description": "Diese Information wird ausschließlich für befugte Nutzer*innen im geschützten Bereich des Kulturkatasters zugänglich und nicht öffentlich einsehbar sein.",
+						"title": "Miet- und Nutzungsverhältnisse"
+					},
+					"sharedUseAccessibility": {
+						"description": "Ist der Raum barrierefrei zugänglich? Welche Barrieren sind vorhanden?",
+						"title": "Barrierefreiheit"
+					},
+					"sharedUseAudience": {
+						"description": "Für welche Art von Aktivitäten ist der Raum geeignet? Zum Beispiel: \"geeignet für Tanzproben und Workshops\" oder \"ideal für Lesungen und kleine Konzerte.\"",
+						"title": "Zielgruppe/Sparte"
+					},
+					"sharedUseAvailability": {
+						"description": "Wann kann der Raum genutzt werden? Sind es bestimmte Tage, Tageszeiten oder Zeiträume?",
+						"title": "Zeitliche Verfügbarkeiten"
+					},
+					"sharedUseContactPerson": {
+						"description": "Geben Sie hier bitte einen Kontakt per E-Mail und/oder Telefon an. Sofern es eine Ansprechperson gibt, können Sie den Namen ebenfalls angeben. Sofern Sie hier personenbezogene Daten eintragen, beachten Sie bitte, dass Sie mit Absenden des Formulars der Veröffentlichung dieser Daten im Kulturkataster zustimmen müssen.",
+						"title": "Kontakt für Raumanfragen"
+					},
+					"sharedUseCost": {
+						"description": "Wie hoch sind die Kosten für die Nutzung? Gibt es einen Stunden-, Tages- oder Wochenpreis? Sind die Kosten verhandelbar?",
+						"title": "Kosten"
+					},
+					"sharedUseEquipment": {
+						"description": "Welche Infrastruktur ist vorhanden? Gibt es Tische, Stühle, eine Küche, WLAN, Licht- und Tontechnik? Jedes Detail kann entscheidend sein.",
+						"title": "Ausstattung"
+					},
+					"sharedUseInfo": {
+						"description": "Beschreiben, welche Informationen hier eingetragen werden sollen, evtl. mit Aufzählung von Beispielen",
+						"title": "Beschreibung der Räume/Flächen"
+					},
+					"space": {
+						"description": "Angaben zu Fläche, Räumen und Kapazität.",
+						"title": "Räumlichkeiten"
+					}
+				},
+				"closingReason": {
+					"placeholder": "Gründe für die Schließung angeben"
+				},
+				"datePlaceholder": "DD.MM.YYYY",
+				"datePlaceholderWithYear": "DD.MM.YYYY oder YYYY",
+				"establishment": {
+					"sinceDescription": "Bitte tragen Sie das Datum der erstmaligen Nutzung oder Eröffnung am Standort ein. Falls das genaue Datum nicht bekannt ist, reicht auch die Angabe des Jahres.",
+					"untilDescription": "Bitte tragen Sie das Datum ein, bis zu dem der Kulturort an diesem Standort aktiv war. Diese Angabe betrifft nur bereits geschlossene Orte. Falls das genaue Datum nicht bekannt ist, reicht auch die Angabe des Jahres."
+				},
+				"internalNotesPrivateDescription": "Diese Information wird ausschließlich für befugte Nutzer*innen im geschützten Bereich des Kulturkataster zugänglich und nicht öffentlich einsehbar sein.",
+				"notesDescription": "Bitte beachten Sie, dass dieses Feld für die Öffentlichkeit einsehbar ist. Wenn Sie Informationen eintragen möchten, die nur für befugte Nutzer*innen einsehbar sind, tragen Sie diese bitte im Feld \"Interne Notizen\" direkt darunter ein.",
+				"organization": {
+					"legalFormPlaceholder": "z. B. e.V., gGmbH, GbR"
+				},
+				"protectionStatus": {
+					"acutelyThreatened": "Akut bedroht",
+					"longTermSecured": "Langfristig gesichert",
+					"mediumTermSecured": "Mittelfristig gesichert",
+					"notYetSecured": "Noch nicht gesichert",
+					"permanentlyClosed": "Dauerhaft geschlossen",
+					"uncertain": "Unsicher"
+				},
+				"rentalContract": {
+					"hereditaryBuildingRight": "Erbbaurecht"
+				},
+				"selectPlaceholder": "Bitte auswählen",
+				"sharedUse": {
+					"accessibilityPlaceholder": "Barrierefreiheit beschreiben",
+					"audiencePlaceholder": "Geeignete Zielgruppe/Sparte beschreiben",
+					"availabilityPlaceholder": "Zeitliche Verfügbarkeiten beschreiben",
+					"contactPersonPlaceholder": "Kontakt für Raumanfragen angeben",
+					"costPlaceholder": "Kosten für die Nutzung beschreiben",
+					"detailsLabel": "Details",
+					"equipmentPlaceholder": "Ausstattung beschreiben",
+					"infoPlaceholder": "Beschreibung der Räume/Flächen",
+					"label": "Offen für Raumanfragen",
+					"options": {
+						"no": "Nein",
+						"yes": "Ja"
+					}
+				}
+			}
+		},
 		"stepLabel": "Schritt {{current}} / {{total}}",
 		"steps": {
 			"basic": {
@@ -776,12 +921,6 @@
 			"save": "Speichern",
 			"saving": "Wird gespeichert..."
 		},
-		"errors": {
-			"forbidden": "Sie dürfen diesen Kulturort nicht ändern.",
-			"invalidInput": "Bitte prüfen Sie die eingegebenen Daten und versuchen Sie es erneut.",
-			"notFound": "Der ausgewählte Kulturort existiert nicht mehr.",
-			"unexpected": "Der Kulturort konnte nicht gespeichert werden. Bitte versuchen Sie es erneut."
-		},
 		"delete": {
 			"button": "Löschen",
 			"cancel": "Abbrechen",
@@ -800,6 +939,12 @@
 				"create": "Kulturort erstellen",
 				"edit": "Kulturort bearbeiten"
 			}
+		},
+		"errors": {
+			"forbidden": "Sie dürfen diesen Kulturort nicht ändern.",
+			"invalidInput": "Bitte prüfen Sie die eingegebenen Daten und versuchen Sie es erneut.",
+			"notFound": "Der ausgewählte Kulturort existiert nicht mehr.",
+			"unexpected": "Der Kulturort konnte nicht gespeichert werden. Bitte versuchen Sie es erneut."
 		},
 		"feedback": {
 			"create": {
@@ -853,20 +998,17 @@
 					"create": "Legen Sie einen neuen Kulturort an.",
 					"edit": "Aktualisieren Sie die Kulturorte."
 				},
+				"title": "Detailinformationen zur Kultureinrichtung",
 				"validation": {
 					"duplicateInstitution": "Ein Kulturort mit diesem Namen und dieser Adresse existiert bereits.",
 					"duplicatePossible": "Möglicher Duplikatseintrag gefunden. Bitte vor dem Absenden prüfen."
-				},
-				"title": "Detailinformationen zur Kultureinrichtung"
+				}
 			},
 			"facility": {
 				"title": "Einrichtung"
 			},
 			"funding": {
 				"title": "Finanzierung"
-			},
-			"organization": {
-				"title": "Organisation"
 			},
 			"information": {
 				"accordions": {
@@ -940,8 +1082,15 @@
 					"detailsLabel": "Details"
 				}
 			},
+			"organization": {
+				"title": "Organisation"
+			},
 			"sharedUse": {
 				"description": "Geben Sie an, ob die Räumlichkeiten für die Mehrfachnutzung zur Verfügung stehen.",
+				"options": {
+					"no": "Nein",
+					"yes": "Ja"
+				},
 				"title": "Mehrfachnutzung"
 			},
 			"status": {
@@ -951,56 +1100,56 @@
 		"review": {
 			"actions": {
 				"approve": "Genehmigen",
-				"saveNotes": "Notizen speichern",
-				"reject": "Ablehnen"
+				"reject": "Ablehnen",
+				"saveNotes": "Notizen speichern"
 			},
-			"requestedBy": "Angefragt von",
+			"attachGroups": {
+				"placeholder": "Gruppen",
+				"searchPlaceholder": "Gruppen suchen...",
+				"title": "Gruppen auswählen"
+			},
+			"attachOnApproval": "Bei Genehmigung zuweisen",
+			"attachUsers": {
+				"placeholder": "Nutzer*innen",
+				"searchPlaceholder": "Nutzer*innen suchen...",
+				"title": "Nutzer*innen auswählen"
+			},
 			"error": "Überprüfung fehlgeschlagen. {{error}}",
+			"errorDescription": "Bitte versuchen Sie es erneut oder kontaktieren Sie den Support, falls das Problem weiterhin besteht.",
+			"errorTitle": "Überprüfung fehlgeschlagen",
 			"errorUnknown": "Unbekannter Fehler.",
 			"grantSubmitterAccess": "Der einreichenden Person nach Genehmigung Zugriff auf diesen Kulturort geben.",
+			"linkedCategorySubmissions": "Neuer Kategorie-Vorschlag",
 			"noteMeta": "{{author}} am {{date}}",
 			"notesLabel": "Prüfnotizen",
 			"notesPlaceholder": "Optionale Notizen für die Einreichung",
 			"previousNotesLabel": "Bisherige Notizen",
+			"requestedBy": "Angefragt von",
+			"statusLabel": "Status: {{status}}",
 			"success": {
+				"approve": {
+					"description": "Die Einreichung wurde erfolgreich genehmigt.",
+					"title": "Einreichung genehmigt"
+				},
+				"reject": {
+					"description": "Die Einreichung wurde erfolgreich abgelehnt.",
+					"title": "Einreichung abgelehnt"
+				},
 				"saveNotes": {
 					"description": "Die Prüfnotizen wurden gespeichert.",
 					"title": "Notizen gespeichert"
-				},
-				"approve": {
-					"title": "Einreichung genehmigt",
-					"description": "Die Einreichung wurde erfolgreich genehmigt."
-				},
-				"reject": {
-					"title": "Einreichung abgelehnt",
-					"description": "Die Einreichung wurde erfolgreich abgelehnt."
 				}
 			},
-			"statusLabel": "Status: {{status}}",
-			"title": "Einreichung prüfen",
-			"errorTitle": "Überprüfung fehlgeschlagen",
-			"errorDescription": "Bitte versuchen Sie es erneut oder kontaktieren Sie den Support, falls das Problem weiterhin besteht.",
-			"linkedCategorySubmissions": "Neuer Kategorie-Vorschlag",
-			"attachOnApproval": "Bei Genehmigung zuweisen",
-			"attachUsers": {
-				"title": "Nutzer*innen auswählen",
-				"placeholder": "Nutzer*innen",
-				"searchPlaceholder": "Nutzer*innen suchen..."
-			},
-			"attachGroups": {
-				"title": "Gruppen auswählen",
-				"placeholder": "Gruppen",
-				"searchPlaceholder": "Gruppen suchen..."
-			}
+			"title": "Einreichung prüfen"
 		}
 	},
+	"institutionModalCloseConfirmation": {
+		"cancel": "Abbrechen",
+		"confirm": "Schließen",
+		"description": "Ihre nicht gespeicherten Änderungen gehen verloren.",
+		"title": "Formular schließen?"
+	},
 	"institutionsTable": {
-		"filter": {
-			"title": "Kulturorte filtern"
-		},
-		"search": {
-			"title": "Kulturorte suchen"
-		},
 		"actions": {
 			"addInstitution": "Kulturort hinzufügen",
 			"claimInstitution": "Meine Orte anfragen"
@@ -1009,19 +1158,25 @@
 			"description": "Sie können direkt neue Einträge starten.",
 			"title": "Keine Kulturorte vorhanden."
 		},
+		"filter": {
+			"title": "Kulturorte filtern"
+		},
+		"search": {
+			"title": "Kulturorte suchen"
+		},
 		"type": {
 			"manage": "Verwalten",
-			"submissionBase": {
-				"claim": "Verwaltung",
-				"create": "Erstellung",
-				"delete": "Löschung",
-				"update": "Änderung"
-			},
 			"submission": {
 				"claim": "Verwaltung angefragt",
 				"create": "Erstellung angefragt",
 				"delete": "Löschung angefragt",
 				"update": "Änderung angefragt"
+			},
+			"submissionBase": {
+				"claim": "Verwaltung",
+				"create": "Erstellung",
+				"delete": "Löschung",
+				"update": "Änderung"
 			},
 			"submissionStatus": {
 				"approved": "{{type}} bestätigt",
@@ -1043,6 +1198,11 @@
 		"subtitle": "Ihre Ergebnisse auf einen Blick",
 		"timeline": "Die Entwicklung der Listenansicht ist für das Jahr 2026 geplant."
 	},
+	"privacyModal": {
+		"description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",
+		"subtitle": "Hier kommt der Datenschutztext.",
+		"title": "Datenschutz"
+	},
 	"roleFormModal": {
 		"actions": {
 			"cancel": "Abbrechen",
@@ -1050,13 +1210,6 @@
 			"creating": "Rolle wird erstellt...",
 			"save": "Änderungen speichern",
 			"saving": "Änderungen werden gespeichert..."
-		},
-		"errors": {
-			"forbidden": "Sie dürfen diese Rolle nicht ändern.",
-			"nameTaken": "Eine Rolle mit diesem Namen existiert bereits.",
-			"notFound": "Die ausgewählte Rolle existiert nicht mehr.",
-			"systemRole": "Systemrollen können nicht gelöscht werden.",
-			"unexpected": "Die Rolle konnte nicht gespeichert werden. Bitte versuchen Sie es erneut."
 		},
 		"delete": {
 			"button": "Löschen",
@@ -1077,6 +1230,13 @@
 				"create": "Rolle erstellen",
 				"edit": "Rolle bearbeiten"
 			}
+		},
+		"errors": {
+			"forbidden": "Sie dürfen diese Rolle nicht ändern.",
+			"nameTaken": "Eine Rolle mit diesem Namen existiert bereits.",
+			"notFound": "Die ausgewählte Rolle existiert nicht mehr.",
+			"systemRole": "Systemrollen können nicht gelöscht werden.",
+			"unexpected": "Die Rolle konnte nicht gespeichert werden. Bitte versuchen Sie es erneut."
 		},
 		"feedback": {
 			"create": {
@@ -1584,6 +1744,13 @@
 			"title": "Infos & Services"
 		}
 	},
+	"termsModal": {
+		"body": "## 1. Geltungsbereich und Anbieter\n\nDiese Nutzungsbedingungen regeln die Nutzung der Online-Plattform „Berliner Kulturkataster\" (nachfolgend „Plattform\") inklusive der Funktionen zur Erstellung von Nutzerkonten sowie zur Eingabe, Bearbeitung und Verwaltung von Informationen zu Kulturorten (nachfolgend „Inhalte\").\n\nAnbieter und Betreiber der Plattform ist:\n\n{{operatorName}}\\\n{{operatorAddress}}\\\n{{operatorEmail}}\\\n{{operatorPhone}}\\\n(nachfolgend „Betreiber\").\n\nAbweichende Bedingungen von Nutzerinnen und Nutzern finden keine Anwendung, es sei denn, der Betreiber stimmt ihrer Geltung ausdrücklich schriftlich zu.\n\n## 2. Leistungsbeschreibung\n\nDie Plattform dient der Erfassung, Pflege und Veröffentlichung von Informationen zu Kulturorten in Berlin. Nutzerinnen und Nutzer können (je nach Rolle und Berechtigung) Inhalte einreichen, ändern, ergänzen oder verwalten.\n\nEinreichungen und Änderungen werden grundsätzlich erst nach redaktioneller Prüfung durch den Betreiber bzw. eine beauftragte Redaktion veröffentlicht (Redaktionsvorbehalt). Ein Anspruch auf Veröffentlichung besteht nicht.\n\nDer Betreiber bemüht sich um eine hohe Verfügbarkeit der Plattform, schuldet jedoch keine ununterbrochene Erreichbarkeit. Wartungsarbeiten, Sicherheitsupdates oder technische Störungen können zu Einschränkungen führen.\n\n## 3. Nutzerkonto und Registrierung\n\nFür bestimmte Funktionen (insb. Einreichen und Verwalten von Inhalten) ist die Registrierung eines Nutzerkontos erforderlich.\n\nBei der Registrierung sind wahrheitsgemäße und vollständige Angaben zu machen. Änderungen sind unverzüglich zu aktualisieren.\n\nZugangsdaten sind geheim zu halten und vor dem Zugriff Dritter zu schützen. Nutzerinnen und Nutzer sind für alle Handlungen verantwortlich, die über ihr Konto erfolgen, soweit sie diese zu vertreten haben.\n\nDer Betreiber kann Registrierungen ablehnen oder Konten sperren bzw. löschen, wenn ein begründeter Verdacht auf missbräuchliche Nutzung, falsche Angaben oder Verstöße gegen diese Nutzungsbedingungen besteht.\n\n## 4. Rollen und Berechtigungen\n\nDie Plattform sieht unterschiedliche Nutzergruppen/Rollen vor, die jeweils unterschiedliche Rechte zur Bearbeitung von Inhalten haben können. Dazu können insbesondere zählen:\n\n- **Standardnutzerinnen und -nutzer:** können Inhalte einreichen und – nach Freigabe/Zuordnung – Inhalte zu einem oder mehreren Kulturorten administrieren.\n- **Bezirksmitarbeitende:** können Änderungsvorschläge für Kulturorte innerhalb ihres Bezirks einreichen.\n- **Landesmitarbeitende:** können Inhalte (je nach interner Berechtigung) bearbeiten bzw. Änderungsvorschläge für Kulturorte in Berlin einreichen.\n- **Mitarbeitende von Spartenverbänden:** können Inhalte innerhalb ihrer Sparte (z.B. Galerien, Ateliers o.Ä.) bearbeiten bzw. Änderungsvorschläge einreichen.\n\nDie konkrete Ausgestaltung der Rollen, Zuständigkeiten und Freigaben (z.B. Nachweise, Verifizierung, Zuordnung zu Kulturorten) kann der Betreiber nach pflichtgemäßem Ermessen festlegen und anpassen.\n\nDer Betreiber ist berechtigt, Rollen zuzuweisen, zu ändern oder zu entziehen, wenn dies aus organisatorischen, sicherheitsrelevanten oder rechtlichen Gründen erforderlich ist.\n\n## 5. Einreichung und Bearbeitung von Inhalten\n\nNutzerinnen und Nutzer können Inhalte über die Plattform einreichen oder Änderungsvorschläge zu bestehenden Inhalten abgeben. Dazu können je nach Funktion u.a. Stammdaten, Beschreibungen, Kategorien, Adressdaten, Öffnungszeiten, Kontakt- und Webdaten sowie weitere strukturierte Informationen gehören.\n\nNutzerinnen und Nutzer verpflichten sich, nur solche Inhalte einzureichen, die nach bestem Wissen richtig, aktuell und nicht irreführend sind.\n\nInhalte können vor Veröffentlichung einer redaktionellen Prüfung unterzogen werden. Der Betreiber kann Inhalte bearbeiten, kürzen, ergänzen, zurückweisen oder ablehnen, soweit dies zur Qualitätssicherung, zur Einhaltung der Plattformstandards oder aus rechtlichen Gründen erforderlich ist.\n\nDer Betreiber kann für die Bearbeitung und Veröffentlichung formale Vorgaben (z.B. Datenformate, Pflichtfelder, Qualitätskriterien) festlegen.\n\n## 6. Verbotene Inhalte und Verhaltenspflichten\n\nEs ist untersagt, Inhalte einzureichen oder sonstige Handlungen vorzunehmen, die gegen geltendes Recht, Rechte Dritter oder diese Nutzungsbedingungen verstoßen. Insbesondere untersagt sind:\n\n- rechtswidrige, beleidigende, diskriminierende oder verleumderische Inhalte,\n- Inhalte, die Urheber-, Marken-, Namens-, Persönlichkeits- oder sonstige Rechte Dritter verletzen,\n- das Einstellen personenbezogener Daten Dritter ohne erforderliche Berechtigung (z.B. private Kontaktdaten, nicht-öffentliche Informationen),\n- Spam, irreführende Angaben oder manipulative Inhalte,\n- das Einschleusen von Schadsoftware oder das Ausnutzen von Sicherheitslücken.\n\nNutzerinnen und Nutzer haben die Plattform so zu nutzen, dass deren Sicherheit, Integrität und Verfügbarkeit nicht beeinträchtigt wird.\n\n## 7. Rechte an Inhalten (Nutzungsrechte)\n\nNutzerinnen und Nutzer räumen dem Betreiber an den von ihnen eingereichten Inhalten (einschließlich etwaiger Texte, Bilder, Logos oder sonstiger Materialien, soweit vorhanden) ein unentgeltliches, nicht-ausschließliches, räumlich unbeschränktes und für die Dauer der Schutzfrist gültiges Recht ein,\n\n- die Inhalte im Rahmen der Plattform zu speichern, zu vervielfältigen, zu veröffentlichen, öffentlich zugänglich zu machen und zu verbreiten,\n- die Inhalte zu bearbeiten, zu formatieren, zu kürzen, zu übersetzen oder mit anderen Inhalten zu kombinieren, soweit dies für die Darstellung, Datenqualität oder technische Verarbeitung erforderlich ist,\n- die Inhalte in unterschiedlichen Darstellungsformen (z.B. Web, mobile Darstellung, Exportformate) zu nutzen.\n\nSoweit der Betreiber Funktionen zur Weitergabe, zum Export oder zur Bereitstellung als offene Daten anbietet, kann dies zusätzliche Lizenzangaben erfordern. Einzelheiten können in separaten Hinweisen oder Lizenzbestimmungen geregelt werden.\n\nNutzerinnen und Nutzer sichern zu, dass sie über die erforderlichen Rechte an den eingereichten Inhalten verfügen und keine Rechte Dritter verletzt werden. Sie stellen den Betreiber von Ansprüchen Dritter frei, soweit sie die Rechtsverletzung zu vertreten haben.\n\n## 8. Redaktioneller Vorbehalt und Veröffentlichung\n\nDer Betreiber entscheidet nach pflichtgemäßem Ermessen, ob und in welcher Form Inhalte veröffentlicht werden.\n\nDer Betreiber kann veröffentlichte Inhalte nachträglich ändern, ergänzen, kennzeichnen oder entfernen, wenn dies zur Qualitätssicherung, zur Aktualisierung oder aus rechtlichen Gründen erforderlich ist.\n\nDer Betreiber kann technische oder redaktionelle Hinweise (z.B. „Änderungsvorschlag eingereicht\", „in Prüfung\", „abgelehnt\") anzeigen.\n\n## 9. Meldung von Inhalten und Kontaktstelle\n\nNutzerinnen und Nutzer sowie Dritte können Inhalte melden, wenn der Verdacht besteht, dass diese rechtswidrig sind oder gegen Rechte Dritter verstoßen.\n\nMeldungen können über {{reportingContact}} erfolgen. Eine Meldung sollte den betroffenen Inhalt eindeutig bezeichnen und den Grund der Beanstandung darstellen.\n\nDer Betreiber prüft Meldungen in angemessener Zeit und trifft nach pflichtgemäßem Ermessen geeignete Maßnahmen (z.B. Rückfrage, Korrektur, Sperrung, Entfernung, Ablehnung der Meldung).\n\n## 10. Sperrung, Löschung und Folgen bei Verstößen\n\nBei Verstößen gegen diese Nutzungsbedingungen oder bei begründetem Missbrauchsverdacht kann der Betreiber Inhalte zurückweisen, entfernen, Konten vorübergehend sperren oder dauerhaft löschen.\n\nDer Betreiber kann Nutzerinnen und Nutzer vor Maßnahmen anhören, soweit dies zumutbar ist. In dringenden Fällen (z.B. Sicherheitsrisiko, drohende Rechtsverletzung) kann eine Maßnahme auch ohne vorherige Anhörung erfolgen.\n\n## 11. Haftung\n\nDer Betreiber haftet unbeschränkt bei Vorsatz und grober Fahrlässigkeit sowie bei Verletzung von Leben, Körper oder Gesundheit.\n\nBei einfacher Fahrlässigkeit haftet der Betreiber nur bei Verletzung wesentlicher Vertragspflichten (Kardinalpflichten) und begrenzt auf den typischerweise vorhersehbaren Schaden.\n\nDer Betreiber übernimmt keine Gewähr für die Richtigkeit, Vollständigkeit oder Aktualität von Inhalten, die von Nutzerinnen und Nutzern eingereicht werden. Inhalte geben nicht zwingend die Auffassung des Betreibers wieder.\n\n## 12. Datenschutz\n\nInformationen zur Verarbeitung personenbezogener Daten finden sich in der Datenschutzerklärung der Plattform unter {{privacyLink}}.\n\nSoweit im Rahmen der Plattform Funktionen bereitgestellt werden, die die Verarbeitung personenbezogener Daten erfordern, gelten ergänzend die Hinweise in der Datenschutzerklärung.\n\n## 13. Änderungen der Nutzungsbedingungen\n\nDer Betreiber kann diese Nutzungsbedingungen aus sachlichen Gründen (z.B. Gesetzesänderungen, Funktionsänderungen, Sicherheitsanforderungen) ändern.\n\nRegistrierte Nutzerinnen und Nutzer werden über wesentliche Änderungen in geeigneter Weise informiert (z.B. per E-Mail oder Hinweis bei Login).\n\n**Option A – Zustimmungslösung**: Bei wesentlichen Änderungen ist eine Zustimmung bei nächstem Login erforderlich.\n\n**Option B – Widerspruchslösung**: Änderungen gelten als angenommen, wenn nicht innerhalb von {{objectionDays}} Tagen widersprochen wird; hierauf wird gesondert hingewiesen.\n\n*(Hinweis: Final mit Anwalt abstimmen.)*\n\n## 14. Schlussbestimmungen\n\nEs gilt das Recht der Bundesrepublik Deutschland unter Ausschluss des UN-Kaufrechts.\n\nGerichtsstand ist, soweit gesetzlich zulässig, {{jurisdiction}}.\n\nSollten einzelne Bestimmungen unwirksam sein oder werden, bleibt die Wirksamkeit der übrigen Bestimmungen unberührt. Anstelle der unwirksamen Bestimmung gilt eine Regelung als vereinbart, die dem wirtschaftlichen Zweck am nächsten kommt.\n\n---\n\n## Anhang: Kurzregeln für Inhalte (Content Guidelines)\n\n- Bitte trage Inhalte sachlich, korrekt und nachvollziehbar ein.\n- Verwende nur Bilder/Logos, für die du die Rechte besitzt bzw. die zur Nutzung freigegeben sind.\n- Keine privaten Kontaktdaten oder personenbezogene Daten Dritter ohne Berechtigung.\n- Keine beleidigenden, diskriminierenden oder rechtswidrigen Inhalte.\n- Änderungen werden redaktionell geprüft; es besteht kein Anspruch auf Veröffentlichung.",
+		"date": "Stand: {{date}}",
+		"description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",
+		"disclaimer": "Diese Nutzungsbedingungen sind ein vorläufiger Textbaustein zur technischen Implementierung. Eine rechtsverbindliche Endfassung wird nach juristischer Prüfung erstellt.",
+		"title": "Nutzungsbedingungen (AGB) – Berliner Kulturkataster"
+	},
 	"userClaims": {
 		"approve": "Annehmen",
 		"claimDate": "Datum der Anfrage",
@@ -1604,13 +1771,6 @@
 			"creating": "Wird angelegt...",
 			"save": "Änderungen speichern",
 			"saving": "Wird gespeichert..."
-		},
-		"errors": {
-			"emailTaken": "Eine Nutzerin oder ein Nutzer mit dieser E-Mail-Adresse existiert bereits.",
-			"forbidden": "Sie dürfen diese Nutzerin oder diesen Nutzer nicht ändern.",
-			"invalidInput": "Bitte prüfen Sie die eingegebenen Daten und versuchen Sie es erneut.",
-			"notFound": "Die ausgewählte Nutzerin oder der ausgewählte Nutzer existiert nicht mehr.",
-			"unexpected": "Die Nutzerin oder der Nutzer konnte nicht gespeichert werden. Bitte versuchen Sie es erneut."
 		},
 		"complianceResend": {
 			"description": "Senden Sie die DSGVO-Compliance-E-Mail erneut an die Nutzerin oder den Nutzer.",
@@ -1639,6 +1799,13 @@
 				"create": "Nutzer*in hinzufügen",
 				"edit": "Nutzer*in bearbeiten"
 			}
+		},
+		"errors": {
+			"emailTaken": "Eine Nutzerin oder ein Nutzer mit dieser E-Mail-Adresse existiert bereits.",
+			"forbidden": "Sie dürfen diese Nutzerin oder diesen Nutzer nicht ändern.",
+			"invalidInput": "Bitte prüfen Sie die eingegebenen Daten und versuchen Sie es erneut.",
+			"notFound": "Die ausgewählte Nutzerin oder der ausgewählte Nutzer existiert nicht mehr.",
+			"unexpected": "Die Nutzerin oder der Nutzer konnte nicht gespeichert werden. Bitte versuchen Sie es erneut."
 		},
 		"feedback": {
 			"create": {
@@ -1688,13 +1855,6 @@
 						"label": "Kontotyp / Rolle",
 						"placeholder": "Organisation, Bezirk, ..."
 					},
-					"metaInfo": {
-						"add": "Eintrag hinzufügen",
-						"keyPlaceholder": "Schlüssel",
-						"label": "Zusatzinfo",
-						"remove": "Entfernen",
-						"valuePlaceholder": "Wert"
-					},
 					"compliance": {
 						"label": "Compliance freigegeben"
 					},
@@ -1710,6 +1870,13 @@
 						"label": "Nachname",
 						"placeholder": "Mustermann"
 					},
+					"metaInfo": {
+						"add": "Eintrag hinzufügen",
+						"keyPlaceholder": "Schlüssel",
+						"label": "Zusatzinfo",
+						"remove": "Entfernen",
+						"valuePlaceholder": "Wert"
+					},
 					"status": {
 						"label": "Status"
 					}
@@ -1724,49 +1891,6 @@
 			"sending": "Wird gesendet…",
 			"success": "E-Mail zum Zurücksetzen des Passworts gesendet.",
 			"title": "Passwort zurücksetzen"
-		},
-		"templateEmail": {
-			"confirmCancel": "Abbrechen",
-			"confirmDescription": "Diese E-Mail wird an {{email}} gesendet. Möchten Sie fortfahren?",
-			"confirmSend": "Senden",
-			"confirmTitle": "E-Mail wirklich senden?",
-			"description": "Wählen Sie eine Vorlage aus der Datenbank und senden Sie sie an diese Nutzerin oder diesen Nutzer.",
-			"error": "E-Mail konnte nicht gesendet werden.",
-			"loadError": "E-Mail-Vorlagen konnten nicht geladen werden.",
-			"loading": "Vorlagen werden geladen…",
-			"placeholder": "Vorlage auswählen",
-			"preview": "Vorschau",
-			"selectLabel": "Vorlage",
-			"send": "Vorlage senden",
-			"sending": "Wird gesendet…",
-			"success": "E-Mail erfolgreich gesendet.",
-			"title": "E-Mail-Vorlage senden",
-			"templates": {
-				"auth": {
-					"confirmation": "E-Mail-Bestätigung",
-					"email_change": "E-Mail-Änderung bestätigen",
-					"email_changed": "E-Mail-Adresse geändert",
-					"invite": "Einladung",
-					"magic_link": "Magic Link",
-					"password_changed": "Passwort geändert",
-					"reauthentication": "Erneute Authentifizierung",
-					"recovery": "Passwort zurücksetzen"
-				},
-				"custom": {
-					"account_deleted": "Konto gelöscht",
-					"claim_approved": "Bestätigung für “Kulturort beanspruchen”",
-					"claim_rejected": "Ablehnung für “Kulturort beanspruchen”",
-					"compliance_resend": "Compliance erneut senden",
-					"role_district_approved": "Bezirks-Rolle bestätigt",
-					"role_district_rejected": "Bezirks-Rolle abgelehnt",
-					"role_network_approved": "Verband/Netzwerk-Rolle bestätigt",
-					"role_network_rejected": "Verband/Netzwerk-Rolle abgelehnt",
-					"role_state_approved": "Landes-Rolle bestätigt",
-					"role_state_rejected": "Landes-Rolle abgelehnt",
-					"submission_approved": "Einreichung bestätigt",
-					"submission_rejected": "Einreichung abgelehnt"
-				}
-			}
 		},
 		"roleEmails": {
 			"district": {
@@ -1793,6 +1917,49 @@
 			"approvalPending": "Freigabe ausstehend",
 			"banned": "Gesperrt",
 			"inactive": "Inaktiv"
+		},
+		"templateEmail": {
+			"confirmCancel": "Abbrechen",
+			"confirmDescription": "Diese E-Mail wird an {{email}} gesendet. Möchten Sie fortfahren?",
+			"confirmSend": "Senden",
+			"confirmTitle": "E-Mail wirklich senden?",
+			"description": "Wählen Sie eine Vorlage aus der Datenbank und senden Sie sie an diese Nutzerin oder diesen Nutzer.",
+			"error": "E-Mail konnte nicht gesendet werden.",
+			"loadError": "E-Mail-Vorlagen konnten nicht geladen werden.",
+			"loading": "Vorlagen werden geladen…",
+			"placeholder": "Vorlage auswählen",
+			"preview": "Vorschau",
+			"selectLabel": "Vorlage",
+			"send": "Vorlage senden",
+			"sending": "Wird gesendet…",
+			"success": "E-Mail erfolgreich gesendet.",
+			"templates": {
+				"auth": {
+					"confirmation": "E-Mail-Bestätigung",
+					"email_change": "E-Mail-Änderung bestätigen",
+					"email_changed": "E-Mail-Adresse geändert",
+					"invite": "Einladung",
+					"magic_link": "Magic Link",
+					"password_changed": "Passwort geändert",
+					"reauthentication": "Erneute Authentifizierung",
+					"recovery": "Passwort zurücksetzen"
+				},
+				"custom": {
+					"account_deleted": "Konto gelöscht",
+					"claim_approved": "Bestätigung für “Kulturort beanspruchen”",
+					"claim_rejected": "Ablehnung für “Kulturort beanspruchen”",
+					"compliance_resend": "Compliance erneut senden",
+					"role_district_approved": "Bezirks-Rolle bestätigt",
+					"role_district_rejected": "Bezirks-Rolle abgelehnt",
+					"role_network_approved": "Verband/Netzwerk-Rolle bestätigt",
+					"role_network_rejected": "Verband/Netzwerk-Rolle abgelehnt",
+					"role_state_approved": "Landes-Rolle bestätigt",
+					"role_state_rejected": "Landes-Rolle abgelehnt",
+					"submission_approved": "Einreichung bestätigt",
+					"submission_rejected": "Einreichung abgelehnt"
+				}
+			},
+			"title": "E-Mail-Vorlage senden"
 		}
 	},
 	"userTable": {
@@ -1841,18 +2008,5 @@
 		"newsletter": "Zum Newsletter anmelden",
 		"subtitle": "Ein Projekt der Kulturraum Berlin gGmbH",
 		"title": "Das Berliner Kulturkataster: Die Kultur der Stadt auf einen Blick"
-	},
-	"institutionModalCloseConfirmation": {
-		"title": "Formular schließen?",
-		"description": "Ihre nicht gespeicherten Änderungen gehen verloren.",
-		"confirm": "Schließen",
-		"cancel": "Abbrechen"
-	},
-	"termsModal": {
-		"description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",
-		"title": "Nutzungsbedingungen (AGB) – Berliner Kulturkataster",
-		"body": "## 1. Geltungsbereich und Anbieter\n\nDiese Nutzungsbedingungen regeln die Nutzung der Online-Plattform „Berliner Kulturkataster\" (nachfolgend „Plattform\") inklusive der Funktionen zur Erstellung von Nutzerkonten sowie zur Eingabe, Bearbeitung und Verwaltung von Informationen zu Kulturorten (nachfolgend „Inhalte\").\n\nAnbieter und Betreiber der Plattform ist:\n\n{{operatorName}}\\\n{{operatorAddress}}\\\n{{operatorEmail}}\\\n{{operatorPhone}}\\\n(nachfolgend „Betreiber\").\n\nAbweichende Bedingungen von Nutzerinnen und Nutzern finden keine Anwendung, es sei denn, der Betreiber stimmt ihrer Geltung ausdrücklich schriftlich zu.\n\n## 2. Leistungsbeschreibung\n\nDie Plattform dient der Erfassung, Pflege und Veröffentlichung von Informationen zu Kulturorten in Berlin. Nutzerinnen und Nutzer können (je nach Rolle und Berechtigung) Inhalte einreichen, ändern, ergänzen oder verwalten.\n\nEinreichungen und Änderungen werden grundsätzlich erst nach redaktioneller Prüfung durch den Betreiber bzw. eine beauftragte Redaktion veröffentlicht (Redaktionsvorbehalt). Ein Anspruch auf Veröffentlichung besteht nicht.\n\nDer Betreiber bemüht sich um eine hohe Verfügbarkeit der Plattform, schuldet jedoch keine ununterbrochene Erreichbarkeit. Wartungsarbeiten, Sicherheitsupdates oder technische Störungen können zu Einschränkungen führen.\n\n## 3. Nutzerkonto und Registrierung\n\nFür bestimmte Funktionen (insb. Einreichen und Verwalten von Inhalten) ist die Registrierung eines Nutzerkontos erforderlich.\n\nBei der Registrierung sind wahrheitsgemäße und vollständige Angaben zu machen. Änderungen sind unverzüglich zu aktualisieren.\n\nZugangsdaten sind geheim zu halten und vor dem Zugriff Dritter zu schützen. Nutzerinnen und Nutzer sind für alle Handlungen verantwortlich, die über ihr Konto erfolgen, soweit sie diese zu vertreten haben.\n\nDer Betreiber kann Registrierungen ablehnen oder Konten sperren bzw. löschen, wenn ein begründeter Verdacht auf missbräuchliche Nutzung, falsche Angaben oder Verstöße gegen diese Nutzungsbedingungen besteht.\n\n## 4. Rollen und Berechtigungen\n\nDie Plattform sieht unterschiedliche Nutzergruppen/Rollen vor, die jeweils unterschiedliche Rechte zur Bearbeitung von Inhalten haben können. Dazu können insbesondere zählen:\n\n- **Standardnutzerinnen und -nutzer:** können Inhalte einreichen und – nach Freigabe/Zuordnung – Inhalte zu einem oder mehreren Kulturorten administrieren.\n- **Bezirksmitarbeitende:** können Änderungsvorschläge für Kulturorte innerhalb ihres Bezirks einreichen.\n- **Landesmitarbeitende:** können Inhalte (je nach interner Berechtigung) bearbeiten bzw. Änderungsvorschläge für Kulturorte in Berlin einreichen.\n- **Mitarbeitende von Spartenverbänden:** können Inhalte innerhalb ihrer Sparte (z.B. Galerien, Ateliers o.Ä.) bearbeiten bzw. Änderungsvorschläge einreichen.\n\nDie konkrete Ausgestaltung der Rollen, Zuständigkeiten und Freigaben (z.B. Nachweise, Verifizierung, Zuordnung zu Kulturorten) kann der Betreiber nach pflichtgemäßem Ermessen festlegen und anpassen.\n\nDer Betreiber ist berechtigt, Rollen zuzuweisen, zu ändern oder zu entziehen, wenn dies aus organisatorischen, sicherheitsrelevanten oder rechtlichen Gründen erforderlich ist.\n\n## 5. Einreichung und Bearbeitung von Inhalten\n\nNutzerinnen und Nutzer können Inhalte über die Plattform einreichen oder Änderungsvorschläge zu bestehenden Inhalten abgeben. Dazu können je nach Funktion u.a. Stammdaten, Beschreibungen, Kategorien, Adressdaten, Öffnungszeiten, Kontakt- und Webdaten sowie weitere strukturierte Informationen gehören.\n\nNutzerinnen und Nutzer verpflichten sich, nur solche Inhalte einzureichen, die nach bestem Wissen richtig, aktuell und nicht irreführend sind.\n\nInhalte können vor Veröffentlichung einer redaktionellen Prüfung unterzogen werden. Der Betreiber kann Inhalte bearbeiten, kürzen, ergänzen, zurückweisen oder ablehnen, soweit dies zur Qualitätssicherung, zur Einhaltung der Plattformstandards oder aus rechtlichen Gründen erforderlich ist.\n\nDer Betreiber kann für die Bearbeitung und Veröffentlichung formale Vorgaben (z.B. Datenformate, Pflichtfelder, Qualitätskriterien) festlegen.\n\n## 6. Verbotene Inhalte und Verhaltenspflichten\n\nEs ist untersagt, Inhalte einzureichen oder sonstige Handlungen vorzunehmen, die gegen geltendes Recht, Rechte Dritter oder diese Nutzungsbedingungen verstoßen. Insbesondere untersagt sind:\n\n- rechtswidrige, beleidigende, diskriminierende oder verleumderische Inhalte,\n- Inhalte, die Urheber-, Marken-, Namens-, Persönlichkeits- oder sonstige Rechte Dritter verletzen,\n- das Einstellen personenbezogener Daten Dritter ohne erforderliche Berechtigung (z.B. private Kontaktdaten, nicht-öffentliche Informationen),\n- Spam, irreführende Angaben oder manipulative Inhalte,\n- das Einschleusen von Schadsoftware oder das Ausnutzen von Sicherheitslücken.\n\nNutzerinnen und Nutzer haben die Plattform so zu nutzen, dass deren Sicherheit, Integrität und Verfügbarkeit nicht beeinträchtigt wird.\n\n## 7. Rechte an Inhalten (Nutzungsrechte)\n\nNutzerinnen und Nutzer räumen dem Betreiber an den von ihnen eingereichten Inhalten (einschließlich etwaiger Texte, Bilder, Logos oder sonstiger Materialien, soweit vorhanden) ein unentgeltliches, nicht-ausschließliches, räumlich unbeschränktes und für die Dauer der Schutzfrist gültiges Recht ein,\n\n- die Inhalte im Rahmen der Plattform zu speichern, zu vervielfältigen, zu veröffentlichen, öffentlich zugänglich zu machen und zu verbreiten,\n- die Inhalte zu bearbeiten, zu formatieren, zu kürzen, zu übersetzen oder mit anderen Inhalten zu kombinieren, soweit dies für die Darstellung, Datenqualität oder technische Verarbeitung erforderlich ist,\n- die Inhalte in unterschiedlichen Darstellungsformen (z.B. Web, mobile Darstellung, Exportformate) zu nutzen.\n\nSoweit der Betreiber Funktionen zur Weitergabe, zum Export oder zur Bereitstellung als offene Daten anbietet, kann dies zusätzliche Lizenzangaben erfordern. Einzelheiten können in separaten Hinweisen oder Lizenzbestimmungen geregelt werden.\n\nNutzerinnen und Nutzer sichern zu, dass sie über die erforderlichen Rechte an den eingereichten Inhalten verfügen und keine Rechte Dritter verletzt werden. Sie stellen den Betreiber von Ansprüchen Dritter frei, soweit sie die Rechtsverletzung zu vertreten haben.\n\n## 8. Redaktioneller Vorbehalt und Veröffentlichung\n\nDer Betreiber entscheidet nach pflichtgemäßem Ermessen, ob und in welcher Form Inhalte veröffentlicht werden.\n\nDer Betreiber kann veröffentlichte Inhalte nachträglich ändern, ergänzen, kennzeichnen oder entfernen, wenn dies zur Qualitätssicherung, zur Aktualisierung oder aus rechtlichen Gründen erforderlich ist.\n\nDer Betreiber kann technische oder redaktionelle Hinweise (z.B. „Änderungsvorschlag eingereicht\", „in Prüfung\", „abgelehnt\") anzeigen.\n\n## 9. Meldung von Inhalten und Kontaktstelle\n\nNutzerinnen und Nutzer sowie Dritte können Inhalte melden, wenn der Verdacht besteht, dass diese rechtswidrig sind oder gegen Rechte Dritter verstoßen.\n\nMeldungen können über {{reportingContact}} erfolgen. Eine Meldung sollte den betroffenen Inhalt eindeutig bezeichnen und den Grund der Beanstandung darstellen.\n\nDer Betreiber prüft Meldungen in angemessener Zeit und trifft nach pflichtgemäßem Ermessen geeignete Maßnahmen (z.B. Rückfrage, Korrektur, Sperrung, Entfernung, Ablehnung der Meldung).\n\n## 10. Sperrung, Löschung und Folgen bei Verstößen\n\nBei Verstößen gegen diese Nutzungsbedingungen oder bei begründetem Missbrauchsverdacht kann der Betreiber Inhalte zurückweisen, entfernen, Konten vorübergehend sperren oder dauerhaft löschen.\n\nDer Betreiber kann Nutzerinnen und Nutzer vor Maßnahmen anhören, soweit dies zumutbar ist. In dringenden Fällen (z.B. Sicherheitsrisiko, drohende Rechtsverletzung) kann eine Maßnahme auch ohne vorherige Anhörung erfolgen.\n\n## 11. Haftung\n\nDer Betreiber haftet unbeschränkt bei Vorsatz und grober Fahrlässigkeit sowie bei Verletzung von Leben, Körper oder Gesundheit.\n\nBei einfacher Fahrlässigkeit haftet der Betreiber nur bei Verletzung wesentlicher Vertragspflichten (Kardinalpflichten) und begrenzt auf den typischerweise vorhersehbaren Schaden.\n\nDer Betreiber übernimmt keine Gewähr für die Richtigkeit, Vollständigkeit oder Aktualität von Inhalten, die von Nutzerinnen und Nutzern eingereicht werden. Inhalte geben nicht zwingend die Auffassung des Betreibers wieder.\n\n## 12. Datenschutz\n\nInformationen zur Verarbeitung personenbezogener Daten finden sich in der Datenschutzerklärung der Plattform unter {{privacyLink}}.\n\nSoweit im Rahmen der Plattform Funktionen bereitgestellt werden, die die Verarbeitung personenbezogener Daten erfordern, gelten ergänzend die Hinweise in der Datenschutzerklärung.\n\n## 13. Änderungen der Nutzungsbedingungen\n\nDer Betreiber kann diese Nutzungsbedingungen aus sachlichen Gründen (z.B. Gesetzesänderungen, Funktionsänderungen, Sicherheitsanforderungen) ändern.\n\nRegistrierte Nutzerinnen und Nutzer werden über wesentliche Änderungen in geeigneter Weise informiert (z.B. per E-Mail oder Hinweis bei Login).\n\n**Option A – Zustimmungslösung**: Bei wesentlichen Änderungen ist eine Zustimmung bei nächstem Login erforderlich.\n\n**Option B – Widerspruchslösung**: Änderungen gelten als angenommen, wenn nicht innerhalb von {{objectionDays}} Tagen widersprochen wird; hierauf wird gesondert hingewiesen.\n\n*(Hinweis: Final mit Anwalt abstimmen.)*\n\n## 14. Schlussbestimmungen\n\nEs gilt das Recht der Bundesrepublik Deutschland unter Ausschluss des UN-Kaufrechts.\n\nGerichtsstand ist, soweit gesetzlich zulässig, {{jurisdiction}}.\n\nSollten einzelne Bestimmungen unwirksam sein oder werden, bleibt die Wirksamkeit der übrigen Bestimmungen unberührt. Anstelle der unwirksamen Bestimmung gilt eine Regelung als vereinbart, die dem wirtschaftlichen Zweck am nächsten kommt.\n\n---\n\n## Anhang: Kurzregeln für Inhalte (Content Guidelines)\n\n- Bitte trage Inhalte sachlich, korrekt und nachvollziehbar ein.\n- Verwende nur Bilder/Logos, für die du die Rechte besitzt bzw. die zur Nutzung freigegeben sind.\n- Keine privaten Kontaktdaten oder personenbezogene Daten Dritter ohne Berechtigung.\n- Keine beleidigenden, diskriminierenden oder rechtswidrigen Inhalte.\n- Änderungen werden redaktionell geprüft; es besteht kein Anspruch auf Veröffentlichung.",
-		"date": "Stand: {{date}}",
-		"disclaimer": "Diese Nutzungsbedingungen sind ein vorläufiger Textbaustein zur technischen Implementierung. Eine rechtsverbindliche Endfassung wird nach juristischer Prüfung erstellt."
 	}
 }

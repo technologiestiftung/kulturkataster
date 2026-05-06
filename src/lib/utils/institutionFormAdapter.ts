@@ -11,7 +11,10 @@ import {
 	toOptionalNumber,
 	toOptionalText,
 } from "@/lib/utils/formUtils";
-import { resolveCategoryIdsFromDraft } from "@/lib/utils/institutionCategoryUtils";
+import {
+	buildCategoryFilterStateFromIds,
+	resolveCategoryIdsFromDraft,
+} from "@/lib/utils/institutionCategoryUtils";
 
 const dateToInputValue = (value: unknown): string => {
 	const parsed = toDate(value);
@@ -56,8 +59,16 @@ export const buildInstitutionCategoryFilterState = (
 
 export const buildInstitutionFormInitialValues = (
 	resolvedInstitution?: Institution,
+	categoryGroups: Category[] = [],
 ): Record<string, unknown> => {
 	const address = resolvedInstitution?.address;
+	const fallbackCategoryIds = resolvedInstitution?.categoryIds;
+	const categoryIdsFromExpandedCategories =
+		resolvedInstitution?.categories?.map((category) => category.id) ?? [];
+	const categoryIdsFromInstitution =
+		categoryIdsFromExpandedCategories.length > 0
+			? categoryIdsFromExpandedCategories
+			: (fallbackCategoryIds ?? []);
 	return {
 		name: resolvedInstitution?.name ?? undefined,
 		parent_organization: resolvedInstitution?.parent_organization ?? undefined,
@@ -75,12 +86,15 @@ export const buildInstitutionFormInitialValues = (
 		"address.cultural_area": address?.cultural_area ?? undefined,
 		"address.lat": address?.lat ?? undefined,
 		"address.lng": address?.lng ?? undefined,
-		categoryIds:
-			resolvedInstitution?.categories?.map((category) => String(category.id)) ??
-			[],
-		categoryFilters: buildInstitutionCategoryFilterState(
-			resolvedInstitution?.categories,
+		categoryIds: categoryIdsFromInstitution.map((categoryId) =>
+			String(categoryId),
 		),
+		categoryFilters: resolvedInstitution?.categories?.length
+			? buildInstitutionCategoryFilterState(resolvedInstitution.categories)
+			: buildCategoryFilterStateFromIds(
+					categoryIdsFromInstitution,
+					categoryGroups,
+				),
 		utilization_status: resolvedInstitution?.utilization_status ?? undefined,
 		utilization_status_info:
 			resolvedInstitution?.utilization_status_info ?? undefined,

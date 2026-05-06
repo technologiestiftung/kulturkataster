@@ -76,20 +76,16 @@ const menuItems: MenuItem[] = [
 		showInAccount: true,
 		showInMap: true,
 	},
-	...(process.env.NODE_ENV !== "production"
-		? [
-				{
-					id: "user",
-					icon: UserIcon,
-					showInMobile: true,
-					showInAccount: true,
-					showInMap: true,
-					label: "user.title",
-					route: "/account",
-					matchPattern: /^\/[^/]+\/account/,
-				},
-			]
-		: []),
+	{
+		id: "user",
+		icon: UserIcon,
+		showInMobile: true,
+		showInAccount: true,
+		showInMap: true,
+		label: "user.title",
+		route: "/account",
+		matchPattern: /^\/[^/]+\/account/,
+	},
 ];
 
 const footerItems: MenuItem[] = [

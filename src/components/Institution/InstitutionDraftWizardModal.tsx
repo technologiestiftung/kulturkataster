@@ -32,6 +32,7 @@ import {
 	buildAddressFromFormData,
 	handleAddressBlur,
 } from "@/lib/utils/formUtils";
+import { useAccountStore } from "@/lib/store/accountStore";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useInstitutionDraftStore } from "@/lib/store/institutionDraftStore";
 import { InstitutionReview } from "@/components/Institution/InstitutionReview";
@@ -51,6 +52,7 @@ import {
 import { useInstitutionPrivateFieldResolver } from "@/lib/hooks/useInstitutionPrivateFieldResolver";
 import { Profile } from "@/types";
 import { reportClientTelemetry } from "@/lib/utils/clientTelemetry";
+import { buildCategoryGroups } from "@/lib/utils/categoryUtils";
 const DEFAULT_CREATE_STEP_ID = "basic";
 const STEP_IDS = [
 	"basic",
@@ -138,9 +140,19 @@ function InstitutionDraftWizardContent({
 		[tEnum],
 	);
 
-	const categories = useInstitutionStore((state) => state.categories) ?? [];
-	const allInstitutions =
-		useInstitutionStore((state) => state.allInstitutions) ?? [];
+	const accountCategories = useAccountStore((state) => state.categories);
+	const institutionCategories = useInstitutionStore(
+		(state) => state.categories,
+	);
+	const institutionList = useInstitutionStore((state) => state.allInstitutions);
+	const categoryGroups = useMemo(
+		() =>
+			institutionCategories?.length
+				? institutionCategories
+				: buildCategoryGroups(accountCategories),
+		[institutionCategories, accountCategories],
+	);
+	const allInstitutions = institutionList ?? [];
 	const draft = useInstitutionDraftStore((state) => state.draft);
 	const setDraft = useInstitutionDraftStore((state) => state.setDraft);
 	const setStepId = useInstitutionDraftStore((state) => state.setStepId);
@@ -286,7 +298,7 @@ function InstitutionDraftWizardContent({
 		async (data: Record<string, unknown>) => {
 			const categoryIds = resolveCategoryIdsFromDraft(
 				data as Record<string, unknown>,
-				categories,
+				categoryGroups,
 			);
 			const { entityId, newCategory, ...rest } = data as {
 				entityId?: unknown;
@@ -367,7 +379,7 @@ function InstitutionDraftWizardContent({
 			}
 			onSubmitted?.();
 		},
-		[categories, draftMode, onSubmitted],
+		[categoryGroups, draftMode, onSubmitted],
 	);
 
 	const handleStepSubmit = useCallback(
@@ -747,7 +759,7 @@ function InstitutionDraftWizardContent({
 							],
 							layout: { span: "full" },
 							filterPanel: {
-								categoryGroups: categories,
+								categoryGroups,
 								districts: [],
 								categorySectionMode: "selection",
 								showSummary: false,
@@ -790,7 +802,7 @@ function InstitutionDraftWizardContent({
 			isPrivateField: isPrivateFormField,
 		}),
 		[
-			categories,
+			categoryGroups,
 			draft,
 			handleCancel,
 			handleStepChange,
@@ -1726,7 +1738,7 @@ function InstitutionDraftWizardContent({
 				<InstitutionFormModal
 					mode={draftMode === "update" ? "edit" : "create"}
 					permissionContext="submission"
-					institution={buildInstitutionForFormFromDraft(draft, categories)}
+					institution={buildInstitutionForFormFromDraft(draft, categoryGroups)}
 					onClose={closeSectionEditModal}
 					onSubmit={({ data }) => {
 						handleSectionEditSubmit(data as Record<string, unknown>);

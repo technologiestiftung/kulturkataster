@@ -10,6 +10,9 @@ import { showSuccessToast } from "@/lib/utils/feedbackToast";
 const closeModalMock = vi.fn();
 const addInstitutionMock = vi.fn();
 const upsertInstitutionMock = vi.fn();
+let mockAccountCategories: Array<Record<string, unknown>> = [];
+let mockInstitutionStoreCategories: Array<Record<string, unknown>> | null =
+	null;
 let lastFormConfig: {
 	onSubmit: (data: Record<string, unknown>) => void | Promise<void>;
 	onChange?: (data: Record<string, unknown>) => void;
@@ -158,6 +161,7 @@ vi.mock("@/lib/store/accountStore", () => ({
 				update: string[];
 				delete: string[];
 			};
+			categories: Array<Record<string, unknown>>;
 		}) => unknown,
 	) =>
 		selector({
@@ -169,19 +173,18 @@ vi.mock("@/lib/store/accountStore", () => ({
 				update: [],
 				delete: [],
 			},
+			categories: mockAccountCategories,
 		}),
 }));
 
 vi.mock("@/lib/store/institutionStore", () => ({
 	useInstitutionStore: (
 		selector: (state: {
-			categories: Array<Record<string, unknown>>;
+			categories: Array<Record<string, unknown>> | null;
 		}) => unknown,
 	) =>
 		selector({
-			categories: [
-				{ id: 1, key: "cat-a", parent_category_id: null, child_categories: [] },
-			],
+			categories: mockInstitutionStoreCategories,
 		}),
 }));
 
@@ -198,6 +201,18 @@ describe("InstitutionFormModal", () => {
 		closeModalMock.mockReset();
 		addInstitutionMock.mockReset();
 		upsertInstitutionMock.mockReset();
+		mockAccountCategories = [
+			{ id: 1, key: "cat-a", parent_category_id: null },
+			{ id: 2, key: "cat-b", parent_category_id: 1 },
+		];
+		mockInstitutionStoreCategories = [
+			{
+				id: 1,
+				key: "cat-a",
+				parent_category_id: null,
+				child_categories: [{ id: 2, key: "cat-b", parent_category_id: 1 }],
+			},
+		];
 		lastFormConfig = null;
 		mockedCreateInstitution.mockReset();
 		mockedUpdateInstitution.mockReset();
@@ -364,6 +379,40 @@ describe("InstitutionFormModal", () => {
 		expect(upsertInstitutionMock).toHaveBeenCalledTimes(1);
 		expect(mockedShowSuccessToast).toHaveBeenCalledTimes(1);
 		expect(closeModalMock).toHaveBeenCalledTimes(1);
+	});
+
+	it("falls back to grouped account categories when the public category store is empty", () => {
+		mockInstitutionStoreCategories = null;
+
+		render(
+			<InstitutionFormModal
+				mode="edit"
+				institution={
+					{
+						id: 2,
+						name: "Existing",
+						address: { id: 9 },
+						categories: [],
+					} as never
+				}
+				routePath="/account/institutions/2/edit"
+			/>,
+		);
+
+		const categoryField = findFieldByName(
+			lastFormConfig?.fields,
+			"categoryFilters",
+		);
+
+		expect(categoryField?.filterPanel).toMatchObject({
+			categoryGroups: [
+				{
+					id: 1,
+					key: "cat-a",
+					child_categories: [{ id: 2, key: "cat-b", parent_category_id: 1 }],
+				},
+			],
+		});
 	});
 
 	it("does not flag the edited institution itself as duplicate when validator receives partial form data", () => {

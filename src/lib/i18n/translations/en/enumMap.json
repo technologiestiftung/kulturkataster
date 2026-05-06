@@ -36,6 +36,8 @@
 		"exhibition_spaces_galleries": "Exhibition Spaces Galleries",
 		"exhibition_spaces_museums": "Exhibition Spaces Museums",
 		"family_centers": "Family Centers",
+		"festivalort": "Festival locations",
+		"festivalorte": "Festival locations",
 		"galleries": "Galleries",
 		"galleries_other": "Unassigned",
 		"graffiti_areas": "Graffiti Areas",
@@ -52,6 +54,8 @@
 		"literature_places": "Literature venues",
 		"literature_places_other": "Unassigned",
 		"memorial_sites": "Memorial Sites",
+		"mowe_berlin_festival": "mowe Festival",
+		"mowe_festival": "mowe festival",
 		"municipal_galleries": "Municipal Galleries",
 		"museums": "Museums",
 		"museums_other": "Unassigned",
@@ -382,10 +386,10 @@
 			"options": {
 				"institutional_funding": "Institutionell gefördert",
 				"no_funding": "Nicht gefördert",
+				"none": "Keine Angabe",
 				"temporary_project_funding": "Temporäre Projektförderung",
 				"unknown": "Unbekannt",
-				"workspace_program": "Arbeitsraumprogramm",
-				"none": "Keine Angabe"
+				"workspace_program": "Arbeitsraumprogramm"
 			},
 			"placeholder": "Please select"
 		},
@@ -554,24 +558,12 @@
 			},
 			"label": "Rental Contract Type",
 			"options": {
-				"limited_lease": "Limited Lease",
 				"hereditary_building_right": "Hereditary Building Right",
+				"limited_lease": "Limited Lease",
 				"organization_ownership": "Organization Ownership",
 				"unlimited_lease": "Unlimited Lease"
 			},
 			"placeholder": "Please select"
-		},
-		"shared_use_allowed": {
-			"description": "",
-			"errors": {
-				"required": "Please provide shared use allowed."
-			},
-			"label": "Shared Use Allowed",
-			"options": {
-				"yes": "Yes",
-				"no": "No"
-			},
-			"placeholder": "Please enter"
 		},
 		"shared_use_accessibility": {
 			"description": "",
@@ -580,6 +572,18 @@
 			},
 			"label": "Accessibility",
 			"placeholder": "Describe accessibility for shared use"
+		},
+		"shared_use_allowed": {
+			"description": "",
+			"errors": {
+				"required": "Please provide shared use allowed."
+			},
+			"label": "Shared Use Allowed",
+			"options": {
+				"no": "No",
+				"yes": "Yes"
+			},
+			"placeholder": "Please enter"
 		},
 		"shared_use_audience": {
 			"description": "",
@@ -745,6 +749,24 @@
 			"placeholder": "Please enter"
 		}
 	},
+	"funding_source": {
+		"church": "Church",
+		"district": "District",
+		"eu": "Eu",
+		"federal": "Federal",
+		"foundation": "Foundation",
+		"none": "No information",
+		"other": "Other",
+		"private": "Private",
+		"state_berlin": "State Berlin"
+	},
+	"funding_type": {
+		"institutional_funding": "Institutional Funding",
+		"no_funding": "No Funding",
+		"placeholder": "Placeholder",
+		"temporary_project_funding": "Temporary Project Funding",
+		"workspace_program": "Workspace Program"
+	},
 	"institution_action": {
 		"create": "Create",
 		"delete": "Delete",
@@ -760,6 +782,38 @@
 		"private": "Private",
 		"public": "Public",
 		"removal_pending": "Removal Pending"
+	},
+	"none": "No information",
+	"owner_type": {
+		"district_property": "District Property",
+		"federal_property": "Federal Property",
+		"municipal_housing_company": "Municipal Housing Company",
+		"other": "Other",
+		"other_public_property": "Other Public Property",
+		"placeholder": "Placeholder",
+		"private": "Private",
+		"state_property": "State Property",
+		"state_property_fund": "State Property Fund",
+		"state_property_other": "State Property Other",
+		"state_property_silb": "State Property Silb",
+		"state_property_soda": "State Property Soda",
+		"state_property_specialized": "State Property Specialized"
+	},
+	"protection_status": {
+		"acutely_threatened": "Acutely Threatened",
+		"long_term_secured": "Long Term Secured",
+		"medium_term_secured": "Medium Term Secured",
+		"not_yet_secured": "Not Yet Secured",
+		"permanently_closed": "Permanently Closed",
+		"placeholder": "Placeholder",
+		"uncertain": "Uncertain"
+	},
+	"rental_contract_type": {
+		"leasehold": "Leasehold",
+		"limited_lease": "Limited Lease",
+		"organization_ownership": "Organization Ownership",
+		"placeholder": "Placeholder",
+		"unlimited_lease": "Unlimited Lease"
 	},
 	"submission_status": {
 		"approval_pending": "Approval Pending",
@@ -777,5 +831,13 @@
 		"state_administration": "State Administration",
 		"super_administrator": "Super Administrator"
 	},
-	"none": "No information"
+	"utilization_status": {
+		"in_use": "In Use",
+		"permanently_closed": "Permanently Closed",
+		"placeholder": "Placeholder",
+		"planned_use": "Planned Use",
+		"potential_space": "Potential Space",
+		"temporarily_closed": "Temporarily Closed",
+		"unknown": "Unknown"
+	}
 }
