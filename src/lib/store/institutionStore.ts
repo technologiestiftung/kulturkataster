@@ -23,6 +23,46 @@ const defaultFilters: InstitutionStoreState["filters"] = {
 	include_closed: false,
 };
 
+const applyPublicData = (
+	data: {
+		institutions: Institution[];
+		categories: InstitutionStoreState["categories"];
+		districts: string[];
+	},
+	set: (partial: Partial<InstitutionStoreState>) => void,
+	get: () => InstitutionStoreState,
+) => {
+	const newState = {
+		allInstitutions: data.institutions,
+		categories: data.categories,
+		districts: data.districts,
+	};
+	const currentState = { ...get(), ...newState };
+	const filteredInstitutions = computeFilteredInstitutions(currentState);
+	const allInstitutionsGeoJSON =
+		data.institutions.length > 0 ? toFeatureCollection(data.institutions) : null;
+	const filteredInstitutionsGeoJSON = filteredInstitutions
+		? toFeatureCollection(filteredInstitutions)
+		: null;
+	const stateWithFiltered = {
+		...currentState,
+		filteredInstitutions,
+		allInstitutionsGeoJSON,
+		filteredInstitutionsGeoJSON,
+	};
+	const { categoryCounts, subcategoryCounts } = computeCounts(stateWithFiltered);
+	set({
+		...newState,
+		filteredInstitutions,
+		allInstitutionsGeoJSON,
+		filteredInstitutionsGeoJSON,
+		categoryCounts,
+		subcategoryCounts,
+		isLoading: false,
+		error: null,
+	});
+};
+
 const applyFilters = (
 	filters: InstitutionStoreState["filters"],
 	set: (partial: Partial<InstitutionStoreState>) => void,
@@ -138,41 +178,13 @@ export const useInstitutionStore = create<InstitutionStoreState>()(
 			setCategories: (categories) => set({ categories }),
 			setDistricts: (districts) => set({ districts }),
 			clearError: () => set({ error: null }),
+			hydratePublicData: (data) => applyPublicData(data, set, get),
 			initializePublicData: async () => {
 				set({ isLoading: true, error: null });
 				try {
 					const { institutions, categories, districts } =
 						await getPublicInstitutionData();
-					const newState = {
-						allInstitutions: institutions,
-						categories,
-						districts,
-					};
-					const currentState = { ...get(), ...newState };
-					const filteredInstitutions =
-						computeFilteredInstitutions(currentState);
-					const allInstitutionsGeoJSON =
-						institutions.length > 0 ? toFeatureCollection(institutions) : null;
-					const filteredInstitutionsGeoJSON = filteredInstitutions
-						? toFeatureCollection(filteredInstitutions)
-						: null;
-					const stateWithFiltered = {
-						...currentState,
-						filteredInstitutions,
-						allInstitutionsGeoJSON,
-						filteredInstitutionsGeoJSON,
-					};
-					const { categoryCounts, subcategoryCounts } =
-						computeCounts(stateWithFiltered);
-					set({
-						...newState,
-						filteredInstitutions,
-						allInstitutionsGeoJSON,
-						filteredInstitutionsGeoJSON,
-						categoryCounts,
-						subcategoryCounts,
-						isLoading: false,
-					});
+					applyPublicData({ institutions, categories, districts }, set, get);
 				} catch (error) {
 					reportClientTelemetry({
 						level: "error",
