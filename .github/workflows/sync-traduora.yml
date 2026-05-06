@@ -21,6 +21,7 @@ on:
 jobs:
   sync-translations:
     runs-on: ubuntu-latest
+    environment: ${{ github.ref_name == 'dev' && 'dev' || 'main' }}
 
     steps:
       - name: Checkout repository
@@ -60,10 +61,10 @@ jobs:
       - name: Pull translations from Traduora
         if: startsWith(steps.action.outputs.action, 'pull')
         env:
-          TRADUORA_API_URL: ${{ secrets.TRADUORA_API_URL }}
-          TRADUORA_CLIENT_ID: ${{ secrets.TRADUORA_CLIENT_ID }}
+          TRADUORA_API_URL: ${{ vars.TRADUORA_API_URL }}
+          TRADUORA_CLIENT_ID: ${{ vars.TRADUORA_CLIENT_ID }}
           TRADUORA_CLIENT_SECRET: ${{ secrets.TRADUORA_CLIENT_SECRET }}
-          TRADUORA_PROJECT_ID: ${{ secrets.TRADUORA_PROJECT_ID }}
+          TRADUORA_PROJECT_ID: ${{ vars.TRADUORA_PROJECT_ID }}
         run: |
           echo "📥 Pulling translations from Traduora..."
           npm run traduora:sync ${{ steps.action.outputs.action }}
@@ -72,10 +73,10 @@ jobs:
       - name: Push translations to Traduora
         if: startsWith(steps.action.outputs.action, 'push')
         env:
-          TRADUORA_API_URL: ${{ secrets.TRADUORA_API_URL }}
-          TRADUORA_CLIENT_ID: ${{ secrets.TRADUORA_CLIENT_ID }}
+          TRADUORA_API_URL: ${{ vars.TRADUORA_API_URL }}
+          TRADUORA_CLIENT_ID: ${{ vars.TRADUORA_CLIENT_ID }}
           TRADUORA_CLIENT_SECRET: ${{ secrets.TRADUORA_CLIENT_SECRET }}
-          TRADUORA_PROJECT_ID: ${{ secrets.TRADUORA_PROJECT_ID }}
+          TRADUORA_PROJECT_ID: ${{ vars.TRADUORA_PROJECT_ID }}
         run: |
           echo "📤 Pushing translations to Traduora..."
           npm run traduora:sync ${{ steps.action.outputs.action }}
