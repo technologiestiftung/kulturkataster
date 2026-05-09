@@ -382,10 +382,10 @@
 			"options": {
 				"institutional_funding": "Institutionell gefördert",
 				"no_funding": "Nicht gefördert",
+				"none": "Keine Angabe",
 				"temporary_project_funding": "Temporäre Projektförderung",
 				"unknown": "Unbekannt",
-				"workspace_program": "Arbeitsraumprogramm",
-				"none": "Keine Angabe"
+				"workspace_program": "Arbeitsraumprogramm"
 			},
 			"placeholder": "Please select"
 		},
@@ -554,24 +554,12 @@
 			},
 			"label": "Rental Contract Type",
 			"options": {
-				"limited_lease": "Limited Lease",
 				"hereditary_building_right": "Hereditary Building Right",
+				"limited_lease": "Limited Lease",
 				"organization_ownership": "Organization Ownership",
 				"unlimited_lease": "Unlimited Lease"
 			},
 			"placeholder": "Please select"
-		},
-		"shared_use_allowed": {
-			"description": "",
-			"errors": {
-				"required": "Please provide shared use allowed."
-			},
-			"label": "Shared Use Allowed",
-			"options": {
-				"yes": "Yes",
-				"no": "No"
-			},
-			"placeholder": "Please enter"
 		},
 		"shared_use_accessibility": {
 			"description": "",
@@ -580,6 +568,18 @@
 			},
 			"label": "Accessibility",
 			"placeholder": "Describe accessibility for shared use"
+		},
+		"shared_use_allowed": {
+			"description": "",
+			"errors": {
+				"required": "Please provide shared use allowed."
+			},
+			"label": "Shared Use Allowed",
+			"options": {
+				"no": "No",
+				"yes": "Yes"
+			},
+			"placeholder": "Please enter"
 		},
 		"shared_use_audience": {
 			"description": "",
@@ -761,6 +761,7 @@
 		"public": "Public",
 		"removal_pending": "Removal Pending"
 	},
+	"none": "No information",
 	"submission_status": {
 		"approval_pending": "Approval Pending",
 		"approved": "Approved",
@@ -776,6 +777,5 @@
 		"public": "Public",
 		"state_administration": "State Administration",
 		"super_administrator": "Super Administrator"
-	},
-	"none": "No information"
+	}
 }
