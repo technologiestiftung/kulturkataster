@@ -353,7 +353,8 @@
 		"retry": "Erneut versuchen",
 		"showClosed": "Geschlossene Orte einblenden",
 		"showMoreCategories": "Mehr Kategorien anzeigen",
-		"showSelectedCategories": "Ausgewählte Kategorien anzeigen"
+		"showSelectedCategories": "Ausgewählte Kategorien anzeigen",
+		"title": "Kulturorte filtern"
 	},
 	"groupFormModal": {
 		"actions": {
@@ -459,12 +460,6 @@
 		"emptyMessage": "Keine Gruppen gefunden.",
 		"searchPlaceholder": "Gruppen durchsuchen..."
 	},
-	"infoWrapper": {
-		"diffLabel": {
-			"addition": "Ergänzung: ",
-			"edited": "Bearbeitet: "
-		}
-	},
 	"imprintModal": {
 		"chairman": {
 			"name": "Cerstin Richter-Kotowski, Staatssekretärin der Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt",
@@ -547,6 +542,12 @@
 		},
 		"subtitle": "Kulturraum Berlin gGmbH",
 		"title": "Impressum"
+	},
+	"infoWrapper": {
+		"diffLabel": {
+			"addition": "Ergänzung: ",
+			"edited": "Bearbeitet: "
+		}
 	},
 	"informationModal": {
 		"faq": {
@@ -821,20 +822,17 @@
 					"create": "Legen Sie einen neuen Kulturort an.",
 					"edit": "Aktualisieren Sie die Kulturorte."
 				},
+				"title": "Detailinformationen zur Kultureinrichtung",
 				"validation": {
 					"duplicateInstitution": "Ein Kulturort mit diesem Namen und dieser Adresse existiert bereits.",
 					"duplicatePossible": "Möglicher Duplikatseintrag gefunden. Bitte vor dem Absenden prüfen."
-				},
-				"title": "Detailinformationen zur Kultureinrichtung"
+				}
 			},
 			"facility": {
 				"title": "Einrichtung"
 			},
 			"funding": {
 				"title": "Finanzierung"
-			},
-			"organization": {
-				"title": "Organisation"
 			},
 			"information": {
 				"accordions": {
@@ -908,6 +906,9 @@
 					"detailsLabel": "Details"
 				}
 			},
+			"organization": {
+				"title": "Organisation"
+			},
 			"sharedUse": {
 				"description": "Geben Sie an, ob die Räumlichkeiten für die Mehrfachnutzung zur Verfügung stehen.",
 				"title": "Mehrfachnutzung"
@@ -928,23 +929,17 @@
 			"notesLabel": "Prüfnotizen",
 			"notesPlaceholder": "Optionale Notizen für die Einreichung",
 			"previousNotesLabel": "Bisherige Notizen",
+			"statusLabel": "Status: {{status}}",
 			"success": {
 				"saveNotes": {
 					"description": "Die Prüfnotizen wurden gespeichert.",
 					"title": "Notizen gespeichert"
 				}
 			},
-			"statusLabel": "Status: {{status}}",
 			"title": "Einreichung prüfen"
 		}
 	},
 	"institutionsTable": {
-		"filter": {
-			"title": "Kulturorte filtern"
-		},
-		"search": {
-			"title": "Kulturorte suchen"
-		},
 		"actions": {
 			"addInstitution": "Kulturort hinzufügen",
 			"claimInstitution": "Meine Orte anfragen"
@@ -953,19 +948,25 @@
 			"description": "Sie können direkt neue Einträge starten.",
 			"title": "Keine Kulturorte vorhanden."
 		},
+		"filter": {
+			"title": "Kulturorte filtern"
+		},
+		"search": {
+			"title": "Kulturorte suchen"
+		},
 		"type": {
 			"manage": "Verwalten",
-			"submissionBase": {
-				"claim": "Verwaltung",
-				"create": "Erstellung",
-				"delete": "Löschung",
-				"update": "Änderung"
-			},
 			"submission": {
 				"claim": "Verwaltung angefragt",
 				"create": "Erstellung angefragt",
 				"delete": "Löschung angefragt",
 				"update": "Änderung angefragt"
+			},
+			"submissionBase": {
+				"claim": "Verwaltung",
+				"create": "Erstellung",
+				"delete": "Löschung",
+				"update": "Änderung"
 			},
 			"submissionStatus": {
 				"approved": "{{type}} bestätigt",
@@ -985,7 +986,8 @@
 		"searchLabel": "Liste durchsuchen",
 		"searchPlaceholder": "Kulturort, Adresse oder Bezirk",
 		"subtitle": "Ihre Ergebnisse auf einen Blick",
-		"timeline": "Die Entwicklung der Listenansicht ist für das Jahr 2026 geplant."
+		"timeline": "Die Entwicklung der Listenansicht ist für das Jahr 2026 geplant.",
+		"title": "Listenansicht"
 	},
 	"privacyModal": {
 		"description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",
