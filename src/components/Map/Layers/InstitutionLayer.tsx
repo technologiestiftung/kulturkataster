@@ -83,7 +83,7 @@ interface InstitutionLayerProps {
 
 const InstitutionLayer: FC<InstitutionLayerProps> = ({
 	zIndex = 10000,
-	distance = 500,
+	distance = 200,
 	minZoomForClustering = 0,
 	maxZoomForClustering = 8,
 	institutions,
