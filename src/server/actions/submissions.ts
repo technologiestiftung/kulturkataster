@@ -508,7 +508,7 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 														typeof categoryData.description === "string"
 															? categoryData.description
 															: null,
-													status: "active",
+													status: "inactive",
 												},
 											});
 
