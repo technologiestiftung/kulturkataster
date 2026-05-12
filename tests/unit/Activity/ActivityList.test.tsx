@@ -584,7 +584,9 @@ describe("ActivityList filters", () => {
 
 		expect(optionLabels).toContain("Approved");
 		expect(optionLabels).toContain("Active");
-		expect(optionLabels.filter((label) => label === "Approved")).toHaveLength(1);
+		expect(optionLabels.filter((label) => label === "Approved")).toHaveLength(
+			1,
+		);
 	});
 
 	it("does not link deleted submission activities", () => {
