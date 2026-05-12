@@ -95,7 +95,9 @@ export const CategorySectionList: FC<CategorySectionListProps> = ({
 		).filter((subcategory: ChildCategory) =>
 			safeFilters.child_category_keys.includes(subcategory.key),
 		);
+		const hasSubcategories = (categoryGroup.child_categories ?? []).length > 0;
 		const allSubcategoriesSelected =
+			hasSubcategories &&
 			selectedSubcategoriesInGroup.length ===
 			(categoryGroup.child_categories ?? []).length;
 
