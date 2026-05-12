@@ -194,7 +194,7 @@ export function ActivityFilters({
 	);
 
 	return (
-		<>
+		<div className="sticky top-0 z-20 space-y-3  py-2">
 			{/* Mobile: search + filter sheet trigger */}
 			<div className="md:hidden flex items-center gap-2">
 				<div className="flex-1">
@@ -244,6 +244,6 @@ export function ActivityFilters({
 			<div className="gap-3 md:grid-cols-2 xl:grid-cols-6 md:grid hidden">
 				{controls}
 			</div>
-		</>
+		</div>
 	);
 }
