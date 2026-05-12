@@ -99,7 +99,7 @@ export const CategorySectionList: FC<CategorySectionListProps> = ({
 		const allSubcategoriesSelected =
 			hasSubcategories &&
 			selectedSubcategoriesInGroup.length ===
-			(categoryGroup.child_categories ?? []).length;
+				(categoryGroup.child_categories ?? []).length;
 
 		if (
 			!(isCategorySelected || allSubcategoriesSelected) &&
