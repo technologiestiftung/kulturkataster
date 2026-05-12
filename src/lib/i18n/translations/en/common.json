@@ -578,5 +578,20 @@
 	"user": {
 		"title": "My account"
 	},
+	"venue": {
+		"address": "Address",
+		"backToMap": "Back to Map",
+		"contact": "Contact",
+		"details": "Venue Details",
+		"email": "Email",
+		"funding": "Funding Type",
+		"notFound": "Venue not found",
+		"organization": "Organization",
+		"parent": "Parent Organization",
+		"phone": "Phone",
+		"support": "Support Type",
+		"unnamed": "Unnamed Venue",
+		"website": "Website"
+	},
 	"yes": "Yes"
 }
