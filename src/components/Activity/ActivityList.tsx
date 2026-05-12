@@ -359,7 +359,23 @@ const getStatusLabel = (
 			defaultValue: "Pending",
 		});
 	}
-	if (status === "approved" || status === "active") {
+	if (status === "active") {
+		return t("categoryFormModal.status.active", {
+			defaultValue: "Active",
+		});
+	}
+	if (status === "inactive") {
+		return t("categoryFormModal.status.inactive", {
+			defaultValue: "Inactive",
+		});
+	}
+	if (status === "banned") {
+		return t("userFormModal.status.banned", {
+			ns: "content",
+			defaultValue: "Blocked",
+		});
+	}
+	if (status === "approved") {
 		return t("auth.account.activity.status.approved", {
 			defaultValue: "Approved",
 		});
