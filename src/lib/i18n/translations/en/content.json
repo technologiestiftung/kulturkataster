@@ -1,7 +1,5 @@
 {
 	"aboutModal": {
-		"approach": "The aim of the Berlin cultural cadastre is to capture a cultural landscape that is more diverse, dynamic and interdisciplinary than any other. ",
-		"concept": "A broad concept of culture and a descriptive understanding of culture form the basis of the cultural register. ",
 		"credits": {
 			"contractors": {
 				"additional": [
@@ -59,7 +57,7 @@
 					"Senatsverwaltung für Wirtschaft, Energie und Betriebe",
 					"servicezentrum musikschulen (szm)"
 				],
-				"title": "partners"
+				"title": "Partners"
 			},
 			"steering": {
 				"members": [
@@ -79,12 +77,12 @@
 			},
 			"team": {
 				"members": [
-					"Project management: Daniel Jakobson",
-					"Project management: Ali Deniz Şensöz",
-					"Data editor: Lina Rippel",
-					"Strategic project coordination: Laura Raber",
-					"Allocation and administration: Doris Antonides-Heidelmeyer",
-					"Technical project management until 2024: Metini Krivanish"
+					"**Project management:** Daniel Jakobson",
+					"**Project management:** Ali Deniz Şensöz",
+					"**Data editor:** Lina Rippel",
+					"**Strategic project coordination:** Laura Raber",
+					"**Allocation and administration:** Doris Antonides-Heidelmeyer",
+					"**Technical project management until 2024:** Metini Krivanish"
 				],
 				"title": "Project team"
 			}
@@ -93,29 +91,12 @@
 			"downloadPDF": "Download PDF",
 			"text": "Detailed documentation on the development of the cultural cadastre database can be found here."
 		},
-		"guidelines": {
-			"description": "The framework for the development of the cultural register is formed by four cultural policy guidelines on which the KRB has agreed with the Senate Department for Culture and Social Cohesion:",
-			"items": [
-				"Evidence-based cultural policy and cultural urban development: The Berlin cultural cadastre creates a comprehensive data base about cultural areas in order to enable fact-based cultural policy and targeted urban development.",
-				"Securing and redeveloping spaces for culture: The cultural cadastre serves as an instrument for sustainable monitoring of cultural areas in order to support their preservation and open up new spaces.",
-				"Fair distribution of cultural offerings in the urban space and equal opportunities with regard to participation: The cultural register visualizes gaps in cultural offerings and supports city planning in creating a balanced and fair cultural offering for all Berliners.",
-				"Improving collaboration between departments, levels and sectors: As a flexible digital planning tool, the cultural cadastre strengthens collaboration within the various areas of responsibility, administrative levels and the entire Berlin cultural scene."
-			]
-		},
-		"guidelinesListAriaLabel": "List of policies",
-		"introduction": [
-			"In a growing metropolis like Berlin, art and cultural spaces are scarce resources. ",
-			"The cultural register is mentioned in the government policy guidelines for this legislative period. "
-		],
-		"simpleLanguageDirect": "You can find the “About the project” section in simple language <link />.",
-		"subtitle": " ",
-		"thanks": "The Berlin cultural cadastre owes its successful publication to the enthusiasm, commitment and joint work of all people for whom the Berlin cultural landscape is as important as it is for the project team. ",
+		"thanks": "The Berlin cultural cadastre owes its successful publication to the enthusiasm, commitment and joint work of all people for whom the Berlin cultural landscape is as important as it is for the project team.",
 		"title": "About the project",
 		"subtitle": "",
 		"simpleLanguageDirect": "You can find the “About the project” section in simple language <link />.",
-		"downloadPDF": "Download PDF",
-		"body": "In a growing metropolis like Berlin, art and cultural spaces are scarce resources. \n\nThe cultural register is mentioned in the government policy guidelines for this legislative period. \n\nThe framework for the development of the cultural register is formed by four cultural policy guidelines on which the KRB has agreed with the Senate Department for Culture and Social Cohesion:\n\n1. Evidence-based cultural policy and cultural urban development: The Berlin cultural cadastre creates a comprehensive data base about cultural areas in order to enable fact-based cultural policy and targeted urban development.\n2. Securing and redeveloping spaces for culture: The cultural cadastre serves as an instrument for sustainable monitoring of cultural areas in order to support their preservation and open up new spaces.\n3. Fair distribution of cultural offerings in the urban space and equal opportunities with regard to participation: The cultural register visualizes gaps in cultural offerings and supports city planning in creating a balanced and fair cultural offering for all Berliners.\n4. Improving collaboration between departments, levels and sectors: As a flexible digital planning tool, the cultural cadastre strengthens collaboration within the various areas of responsibility, administrative levels and the entire Berlin cultural scene.\n\nThe aim of the Berlin cultural cadastre is to capture a cultural landscape that is more diverse, dynamic and interdisciplinary than any other. \n\nA broad concept of culture and a descriptive understanding of culture form the basis of the cultural register. \n\n`documentation-card`\n\nThe development of Berlin's cultural register takes place as a learning process. \n\n`versions-card`\n\n---\n\nThe Berlin cultural cadastre owes its successful publication to the enthusiasm, commitment and joint work of all people for whom the Berlin cultural landscape is as important as it is for the project team. \n\n## Financial support\n\nSenate Department for Culture and Social Cohesion\n\n## Project team\n\nProject management: Daniel Jakobson\\\nProject management: Ali Deniz şensöz\\\nData editor: Lina Rippel\\\nStrategic project coordination: Laura Raber\\\nAllocation and administration: Doris Antonides-Heidelmeyer\\\nTechnical project management until 2024: Metini Krivanish\n\n## Steering committee\n\nTobias Schmidt-Pathenheimer (Senate Department for Culture and Social Cohesion)\\\nStrategic advice: Henning Roser (Senate Department for Urban Development, Building and Housing)\\\nStéphane Bauer (District Office Friedrichshain-Kreuzberg)\\\nDaniela Bell (Lichtenberg District Office)\\\nSusanne Roggenhofer (Pankow District Office)\\\nSonja Augart (Room Office Free Scene)\\\nKai Sachse (Club Commission)\\\nSonja Schaudt (Berlin Cultural Conference, State Music Council)\\\nJulia Brodauf (studio office in the kulturwerk of the bbk berlin)\\\nDaniel Brunet (LAFT)\\\nBenedikt Stoll (Urbane Praxis e.V.)\n\n## Partners\n\nAG Kino – Gilde deutscher Filmkunsttheater e.V.\\\nBerliner Museumsverband e.V.\\\nBerliner Projektfonds Urbane Praxis\\\nLiteraturorte: Netzwerk freie Literaturszene Berlin\\\nBörsenverein des Deutschen Buchhandels - Landesverband Berlin-Brandenburg\\\nBundesverband Soziokultur e.V.\\\nDeutscher Bibliotheksverband\\\nIG Jazz Berlin e.V.\\\nInternationale Gesellschaft der Bildenden Künste (IGBK)\\\nIT-Dienstleistungszentrum Berlin (ITDZ)\\\nInstitut für Kulturelle Teilhabeforschung (IKTf)\\\nKulturerbenetz Berlin\\\nLandesverband freie darstellende Künste Berlin e.V. (LAFT Berlin)\\\nLettrétage e.V.\\\nMoabit-Wedding-Kunstfestival - Bezirksamt Mitte\\\nMusicboard Berlin\\\nRaumsonde - Kollektiv Spieltrieb\\\nSchulverzeichnis der Senatsverwaltung für Bildung, Jugend und Familie\\\nSenatsverwaltung für Stadtentwicklung, Bauen und Wohnen\\\nSenatsverwaltung für Wirtschaft, Energie und Betriebe\\\nservicezentrum musikschulen (szm)\n\n## Contractors\n\nTechnical implementation: Technology Foundation Berlin, project management Ninett Rosenfeld\\\nDigital project management: Carsten Hein\\\nConcept, advice and participation formats: Studio for endless possibilities\\\nDesign: Common Studio\n\n### External data editing\n\nAteliers: Studio office in the bbk berlin's cultural work\\\nClubs and music venues: Clubcommission - Network of Berlin Club Culture e.V.\\\nPotential places and places of cultural urban development: Urbane Praxis e.V.\\\nPlaces of Berlin dance: Tanzbüro Berlin - Contemporary Dance Berlin e.V.\\\nProject spaces and initiatives: Network of independent Berlin project spaces and initiatives e.V.\\\nSocio-cultural places and street art areas: Daniel Schneider (Archive of Youth Cultures e.V.)\n\nOnline editorial team: Lilli Berlin\\\nImplementation of German sign language:\\\nImplementation of easy language:\\\nTesting and advice on digital accessibility: adesso SE\\\nAdvice on data protection: Cortina Consult\\\nLegal advice: Law Firm Laaser",
-		"documentationText": "Detailed documentation on the development of the cultural cadastre database can be found here.",
+		"teamPhotoAlt": "Project team of the Berlin cultural cadastre",
+		"body": "In a growing metropolis like Berlin, art and cultural spaces are scarce resources.\n\nThe cultural register is mentioned in the government policy guidelines for this legislative period.\n\nThe framework for the development of the cultural register is formed by four cultural policy guidelines on which the KRB has agreed with the Senate Department for Culture and Social Cohesion:\n\n1. Evidence-based cultural policy and cultural urban development: The Berlin cultural cadastre creates a comprehensive data base about cultural areas in order to enable fact-based cultural policy and targeted urban development.\n2. Securing and redeveloping spaces for culture: The cultural cadastre serves as an instrument for sustainable monitoring of cultural areas in order to support their preservation and open up new spaces.\n3. Fair distribution of cultural offerings in the urban space and equal opportunities with regard to participation: The cultural register visualizes gaps in cultural offerings and supports city planning in creating a balanced and fair cultural offering for all Berliners.\n4. Improving collaboration between departments, levels and sectors: As a flexible digital planning tool, the cultural cadastre strengthens collaboration within the various areas of responsibility, administrative levels and the entire Berlin cultural scene.\n\nThe aim of the Berlin cultural cadastre is to capture a cultural landscape that is more diverse, dynamic and interdisciplinary than any other.\n\nA broad concept of culture and a descriptive understanding of culture form the basis of the cultural register.\n\n`documentation-card`\n\nThe development of Berlin's cultural register takes place as a learning process.\n\n`versions-card`",
 		"versionsLabel": "The following versions of the cultural register are planned:",
 		"versionsItems": [
 			{
