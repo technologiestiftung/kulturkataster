@@ -75,7 +75,7 @@ export function CategorySection({
 	const allSubcategoriesSelected =
 		hasSubcategories &&
 		selectedSubcategoriesInGroup.length ===
-		(group.child_categories || []).length;
+			(group.child_categories || []).length;
 	const someSubcategoriesSelected = selectedSubcategoriesInGroup.length > 0;
 	const categorySelected = selectedCategories.includes(group.key);
 
