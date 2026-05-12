@@ -3,8 +3,15 @@
 import DownloadPDFButton from "@/components/Content/DownloadPDFButton";
 import { OrderedList } from "@/components/Content/OrderedList";
 import { VersionsList } from "@/components/Content/VersionsList";
+import {
+	Accordion,
+	AccordionContent,
+	AccordionItem,
+	AccordionTrigger,
+} from "@/components/ui/accordion";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import type { Element } from "hast";
+import Image from "next/image";
 import { Trans, useTranslation } from "react-i18next";
 import ReactMarkdown from "react-markdown";
 import { Modal } from "../Modal";
@@ -13,6 +20,49 @@ export function AboutModal({ routePath }: { routePath?: string }) {
 	const { t } = useTranslation("content");
 	const toLocalePath = useLocalePath();
 	const afterDivider = { current: false };
+	const teamMembers = t("aboutModal.credits.team.members", {
+		returnObjects: true,
+	}) as string[];
+	const steeringMembers = t("aboutModal.credits.steering.members", {
+		returnObjects: true,
+	}) as string[];
+	const partnerItems = t("aboutModal.credits.partners.list", {
+		returnObjects: true,
+	}) as string[];
+	const contractorItems = t("aboutModal.credits.contractors.items", {
+		returnObjects: true,
+	}) as string[];
+	const contractorAdditionalItems = t(
+		"aboutModal.credits.contractors.additional",
+		{
+			returnObjects: true,
+		},
+	) as string[];
+	const externalEditorialItems = t(
+		"aboutModal.credits.contractors.editorial.items",
+		{
+			returnObjects: true,
+		},
+	) as string[];
+	const renderMarkdownList = (items: string[]) => (
+		<ul className="space-y-2 body2">
+			{items.map((item, index) => (
+				<li key={`${item}-${index}`}>
+					<ReactMarkdown
+						components={{
+							p: ({ children }) => <>{children}</>,
+							strong: ({ children }) => (
+								<strong className="font-bold">{children}</strong>
+							),
+						}}
+					>
+						{item}
+					</ReactMarkdown>
+				</li>
+			))}
+		</ul>
+	);
+
 	return (
 		<Modal
 			title={t("aboutModal.title")}
@@ -80,9 +130,11 @@ export function AboutModal({ routePath }: { routePath?: string }) {
 							return (
 								<div className="flex items-center gap-6 p-6 rounded-sm bg-neutral-5 my-10">
 									<p className="body2 font-bold flex-1">
-										{t("aboutModal.documentationText")}
+										{t("aboutModal.documentation.text")}
 									</p>
-									<DownloadPDFButton title={t("aboutModal.downloadPDF")} />
+									<DownloadPDFButton
+										title={t("aboutModal.documentation.downloadPDF")}
+									/>
 								</div>
 							);
 						}
@@ -92,6 +144,75 @@ export function AboutModal({ routePath }: { routePath?: string }) {
 			>
 				{t("aboutModal.body")}
 			</ReactMarkdown>
+			<div className="mt-10 space-y-8">
+				<p className="body1">{t("aboutModal.thanks")}</p>
+
+				<div className="space-y-3">
+					<p className="body2 font-bold">
+						{t("aboutModal.credits.funding.title")}
+					</p>
+					<p className="body2">
+						{t("aboutModal.credits.funding.organization")}
+					</p>
+				</div>
+
+				<div className="relative aspect-[4/3] w-full overflow-hidden rounded-sm">
+					<Image
+						src="/resources/teamfoto-kulturkataster.jpg"
+						alt={t("aboutModal.teamPhotoAlt", {
+							defaultValue: "Projektteam des Berliner Kulturkatasters",
+						})}
+						fill
+						sizes="(max-width: 768px) 100vw, 720px"
+						className="object-cover"
+					/>
+				</div>
+
+				<div className="space-y-3">
+					<p className="body2 font-bold">
+						{t("aboutModal.credits.team.title")}
+					</p>
+					{renderMarkdownList(teamMembers)}
+				</div>
+
+				<Accordion type="multiple" className="w-full">
+					<AccordionItem value="steering">
+						<AccordionTrigger>
+							{t("aboutModal.credits.steering.title")}
+						</AccordionTrigger>
+						<AccordionContent>
+							{renderMarkdownList(steeringMembers)}
+						</AccordionContent>
+					</AccordionItem>
+					<AccordionItem value="partners">
+						<AccordionTrigger>
+							{t("aboutModal.credits.partners.title")}
+						</AccordionTrigger>
+						<AccordionContent>
+							{renderMarkdownList(partnerItems)}
+						</AccordionContent>
+					</AccordionItem>
+					<AccordionItem value="contractors">
+						<AccordionTrigger>
+							{t("aboutModal.credits.contractors.title")}
+						</AccordionTrigger>
+						<AccordionContent>
+							<div className="space-y-6">
+								{renderMarkdownList(contractorItems)}
+								{renderMarkdownList(contractorAdditionalItems)}
+							</div>
+						</AccordionContent>
+					</AccordionItem>
+					<AccordionItem value="external-editorial">
+						<AccordionTrigger>
+							{t("aboutModal.credits.contractors.editorial.title")}
+						</AccordionTrigger>
+						<AccordionContent>
+							{renderMarkdownList(externalEditorialItems)}
+						</AccordionContent>
+					</AccordionItem>
+				</Accordion>
+			</div>
 		</Modal>
 	);
 }
