@@ -353,7 +353,8 @@
 		"retry": "Try again",
 		"showClosed": "Show closed locations",
 		"showMoreCategories": "Show more categories",
-		"showSelectedCategories": "Show selected categories"
+		"showSelectedCategories": "Show selected categories",
+		"title": "Filter cultural venues"
 	},
 	"groupFormModal": {
 		"actions": {
@@ -459,12 +460,6 @@
 		"emptyMessage": "No groups found.",
 		"searchPlaceholder": "Browse groups..."
 	},
-	"infoWrapper": {
-		"diffLabel": {
-			"addition": "Addition: ",
-			"edited": "Edited: "
-		}
-	},
 	"imprintModal": {
 		"chairman": {
 			"name": "Cerstin Richter-Kotowski, State Secretary of the Senate Department for Culture and Social Cohesion",
@@ -547,6 +542,12 @@
 		},
 		"subtitle": "Kulturraum Berlin gGmbH",
 		"title": "imprint"
+	},
+	"infoWrapper": {
+		"diffLabel": {
+			"addition": "Addition: ",
+			"edited": "Edited: "
+		}
 	},
 	"informationModal": {
 		"faq": {
@@ -819,20 +820,17 @@
 					"create": "Create a new cultural location.",
 					"edit": "Update cultural locations."
 				},
+				"title": "Details",
 				"validation": {
 					"duplicateInstitution": "A cultural venue with this name and address already exists.",
 					"duplicatePossible": "Possible duplicate entry found. Please verify before submitting."
-				},
-				"title": "Details"
+				}
 			},
 			"facility": {
 				"title": "Furnishings"
 			},
 			"funding": {
 				"title": "financing"
-			},
-			"organization": {
-				"title": "organization"
 			},
 			"information": {
 				"accordions": {
@@ -906,6 +904,9 @@
 					"detailsLabel": "Details"
 				}
 			},
+			"organization": {
+				"title": "organization"
+			},
 			"sharedUse": {
 				"description": "Indicate whether the premises are available for multiple use.",
 				"title": "Multiple use"
@@ -926,13 +927,13 @@
 			"notesLabel": "Inspection notes",
 			"notesPlaceholder": "Optional notes for submission",
 			"previousNotesLabel": "Previous notes",
+			"statusLabel": "Status: {{status}}",
 			"success": {
 				"saveNotes": {
 					"description": "The review notes have been saved.",
 					"title": "Notes saved"
 				}
 			},
-			"statusLabel": "Status: {{status}}",
 			"title": "Check submission"
 		}
 	},
@@ -947,17 +948,17 @@
 		},
 		"type": {
 			"manage": "Administer",
-			"submissionBase": {
-				"claim": "Administration",
-				"create": "Creation",
-				"delete": "Deletion",
-				"update": "Change"
-			},
 			"submission": {
 				"claim": "Administration requested",
 				"create": "Creation requested",
 				"delete": "Deletion requested",
 				"update": "Change requested"
+			},
+			"submissionBase": {
+				"claim": "Administration",
+				"create": "Creation",
+				"delete": "Deletion",
+				"update": "Change"
 			},
 			"submissionStatus": {
 				"approved": "{{type}} approved",
@@ -977,7 +978,8 @@
 		"searchLabel": "Search list",
 		"searchPlaceholder": "Cultural location, address or district",
 		"subtitle": "Your results at a glance",
-		"timeline": "The development of the list view is planned for 2026."
+		"timeline": "The development of the list view is planned for 2026.",
+		"title": "List view"
 	},
 	"privacyModal": {
 		"description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. ",
