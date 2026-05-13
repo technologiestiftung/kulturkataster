@@ -273,7 +273,7 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 					{config.fields?.map((field) => renderField(field))}
 				</div>
 				{!config.hideActions && (
-					<div className="flex flex-col">
+					<div className="flex flex-col pb-24 md:pb-0">
 						<AlertDialog
 							title={t("error")}
 							status="error"
