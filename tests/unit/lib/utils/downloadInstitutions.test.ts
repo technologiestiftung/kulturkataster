@@ -1,6 +1,8 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-const getDownloadReadableFieldsMock = vi.fn();
+const { getDownloadReadableFieldsMock } = vi.hoisted(() => ({
+	getDownloadReadableFieldsMock: vi.fn(),
+}));
 
 vi.mock("@/server/actions/permissions", () => ({
 	getDownloadReadableFields: getDownloadReadableFieldsMock,
@@ -25,19 +27,40 @@ const makeInstitution = (): Institution =>
 	}) as unknown as Institution;
 
 describe("downloadInstitutions permission resolution", () => {
-	let blobArg: Blob | null;
+	let blobArg: { text: () => Promise<string> } | null;
+	let OriginalBlob: typeof Blob;
 
 	beforeEach(() => {
 		getDownloadReadableFieldsMock.mockReset();
 		blobArg = null;
+		OriginalBlob = globalThis.Blob;
 
-		URL.createObjectURL = vi.fn((blob: Blob) => {
+		class MockBlob {
+			private content: string;
+
+			constructor(parts: unknown[]) {
+				this.content = parts.map((part) => String(part)).join("");
+			}
+
+			async text() {
+				return this.content;
+			}
+		}
+
+		// @ts-expect-error - test-only blob shim
+		globalThis.Blob = MockBlob;
+
+		URL.createObjectURL = vi.fn((blob: { text: () => Promise<string> }) => {
 			blobArg = blob;
 			return "blob:test";
 		});
 		URL.revokeObjectURL = vi.fn();
 
 		HTMLAnchorElement.prototype.click = vi.fn();
+	});
+
+	afterEach(() => {
+		globalThis.Blob = OriginalBlob;
 	});
 
 	it("uses internal readable fields for logged-in downloads", async () => {
