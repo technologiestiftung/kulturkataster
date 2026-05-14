@@ -618,6 +618,14 @@
 			"label": "Kontakt für Raumanfragen",
 			"placeholder": "Kontakt für Raumanfragen angeben"
 		},
+		"subcategories": {
+			"description": "Passende Unterkategorien auswählen.",
+			"errors": {
+				"required": "Bitte Unterkategorien angeben."
+			},
+			"label": "Unterkategorien",
+			"placeholder": "Bitte auswählen"
+		},
 		"shared_use_cost": {
 			"description": "",
 			"errors": {

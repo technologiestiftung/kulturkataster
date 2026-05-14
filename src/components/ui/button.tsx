@@ -23,6 +23,8 @@ const buttonVariants = cva(
 				icon: "bg-background",
 				action:
 					"border-border border-2 rounded-sm border-neutral-20 shadow-xs border flex-col bg-background hover:bg-neutral-30 flex justify-center items-center text-primary-dark",
+				subaction:
+					"border-border border-2 rounded-sm border-neutral-20 shadow-xs border flex-col bg-neutral-5 hover:bg-neutral-30 flex justify-center items-center",
 				accordion: "gap-2 justify-start text-primary-dark px-4",
 				tag: "bg-neutral-10 font-light flex items-center justify-center px-4 rounded-full",
 			},
