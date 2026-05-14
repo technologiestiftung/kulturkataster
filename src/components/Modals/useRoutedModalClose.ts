@@ -22,6 +22,10 @@ export function useRoutedModalClose({ returnTo }: UseRoutedModalCloseArgs) {
 			router.push(toLocalePath("/"));
 			return;
 		}
-		router.back();
+		if (window.history.length > 1) {
+			router.back();
+			return;
+		}
+		router.replace(toLocalePath("/"));
 	}, [returnTo, router, toLocalePath]);
 }

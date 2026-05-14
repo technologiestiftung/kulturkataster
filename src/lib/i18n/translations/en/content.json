@@ -337,6 +337,20 @@
 		"acknowledgement": "I have read and understood the legal notice",
 		"chooseFormat": "Select file format",
 		"description": "You can download the list of your cultural venues here as an Excel spreadsheet.",
+		"form": {
+			"datenverwendung": "What will you use the data for?",
+			"email": "Your email address",
+			"nachname": "Last name",
+			"placeholders": {
+				"datenverwendung": "Briefly describe the intended use",
+				"email": "name@example.com",
+				"nachname": "Enter last name",
+				"vorname": "Enter first name"
+			},
+			"vorname": "First name"
+		},
+		"guestIntro": "Before you can download the data, we need a few details from you.",
+		"loading": "Loading cultural venues …",
 		"selectedFilters": "The selection consists of the following filters:",
 		"subtitle": "{{count}} cultural venues available for download",
 		"title": "Download my data as a list"

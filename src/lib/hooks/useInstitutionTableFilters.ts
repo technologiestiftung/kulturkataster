@@ -9,6 +9,8 @@ import {
 	getSubcategories,
 } from "@/lib/utils/institutionUtils";
 import { defaultTableFilterState } from "@/components/FormWrapper/constants";
+import { useAccountStore } from "@/lib/store/accountStore";
+import { isSubmissionRow } from "@/lib/utils/institutionTableUtils";
 
 export function useInstitutionTableFilters(
 	tableRows: InstitutionTableRow[],
@@ -132,6 +134,18 @@ export function useInstitutionTableFilters(
 		tableRows,
 	]);
 
+	const institutions = useAccountStore((s) => s.institutions);
+	const downloadableInstitutions = useMemo(() => {
+		const visibleInstitutionIds = new Set(
+			filteredTableRows
+				.filter((row) => !isSubmissionRow(row))
+				.map((row) => row.id),
+		);
+		return institutions.filter((institution) =>
+			visibleInstitutionIds.has(institution.id),
+		);
+	}, [filteredTableRows, institutions]);
+
 	return {
 		filters,
 		setFilters,
@@ -139,5 +153,6 @@ export function useInstitutionTableFilters(
 		filteredTableRows,
 		categoryCounts,
 		subcategoryCounts,
+		downloadableInstitutions,
 	};
 }

@@ -55,8 +55,7 @@ describe("prepareDataForExport", () => {
 			Name: "Alpha",
 			Status: "public",
 			Website: "https://example.de",
-			Street: "Musterstrasse",
-			"Street Number": "12",
+			Street: "Musterstrasse 12",
 			Zipcode: "10115",
 			City: "Berlin",
 			District: "Mitte",
@@ -87,8 +86,7 @@ describe("prepareDataForExport", () => {
 		expect(rows[0]).toMatchObject({
 			Name: "Alpha",
 			Website: "https://example.de",
-			Street: "Musterstrasse",
-			"Street Number": "12",
+			Street: "Musterstrasse 12",
 			Zipcode: "10115",
 			City: "Berlin",
 			District: "Mitte",
@@ -111,6 +109,13 @@ describe("prepareDataForExport", () => {
 					funding_type: "workspace_program",
 					utilization_status: "temporarily_closed",
 					shared_use_allowed: true,
+					funding_sources: [
+						{
+							id: 20,
+							source_name: "workspace_program",
+							description: "Grant",
+						},
+					],
 				} as Institution,
 			],
 			{
@@ -118,6 +123,7 @@ describe("prepareDataForExport", () => {
 					"name",
 					"status",
 					"categories",
+					"funding_sources",
 					"funding_type",
 					"owner_type",
 					"utilization_status",
@@ -128,10 +134,13 @@ describe("prepareDataForExport", () => {
 					(
 						({
 							"field_names.name.label": "Name",
+							"field_names.subcategories.label": "Unterkategorien",
 							"institution_status.public": "Öffentlich",
 							"category.theater": "Theater",
 							"category.dance": "Tanz",
 							"field_names.funding_type.options.workspace_program":
+								"Arbeitsraumprogramm",
+							"field_names.funding_source.options.workspace_program":
 								"Arbeitsraumprogramm",
 							"field_names.owner_type.options.federal_property": "Bund",
 							"field_names.utilization_status.options.temporarily_closed":
@@ -146,11 +155,44 @@ describe("prepareDataForExport", () => {
 			Name: "Alpha",
 			Status: "Öffentlich",
 			Categories: "Theater",
-			Subcategories: "Tanz",
+			Unterkategorien: "Tanz",
+			"Funding Sources": "Arbeitsraumprogramm: Grant",
 			"Funding Type": "Arbeitsraumprogramm",
 			"Owner Type": "Bund",
 			"Utilization Status": "Vorübergehend geschlossen",
 			"Shared Use Allowed": "Ja",
+		});
+	});
+
+	it("translates funding source option values like state_berlin", () => {
+		const rows = prepareDataForExport(
+			[
+				{
+					...makeInstitution(),
+					funding_sources: [
+						{
+							id: 20,
+							source_name: "state_berlin",
+							description: "Grant",
+						},
+					],
+				} as Institution,
+			],
+			{
+				readablePermissionFields: ["funding_sources"],
+				audience: "internal",
+				translateFn: (key) =>
+					(
+						({
+							"field_names.funding_sources.label": "Finanzierungsquellen",
+							"field_names.funding_source.options.state_berlin": "Land Berlin",
+						}) as Record<string, string>
+					)[key] ?? key,
+			},
+		);
+
+		expect(rows[0]).toMatchObject({
+			Finanzierungsquellen: "Land Berlin: Grant",
 		});
 	});
 });

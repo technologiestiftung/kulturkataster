@@ -609,6 +609,14 @@
 			"label": "Shared Use Contact Person",
 			"placeholder": "Specify contact for room requests"
 		},
+		"subcategories": {
+			"description": "Select matching subcategories.",
+			"errors": {
+				"required": "Please provide subcategories."
+			},
+			"label": "Subcategories",
+			"placeholder": "Please select"
+		},
 		"shared_use_cost": {
 			"description": "",
 			"errors": {
