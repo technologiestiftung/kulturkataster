@@ -67,6 +67,10 @@ vi.mock("@/server/actions/downloads", () => ({
 	notifyInstitutionDownload: vi.fn(),
 }));
 
+vi.mock("@/icons/arrow-narrow-right.svg", () => ({
+	default: () => <div data-testid="arrow-icon" />,
+}));
+
 describe("DownloadModal", () => {
 	beforeEach(() => {
 		initializePublicDataMock.mockReset();
