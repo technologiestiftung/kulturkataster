@@ -100,6 +100,21 @@ const isActorHidden = (audit: EntityAudit) => {
 	return meta?.actor_hidden === true;
 };
 
+const getDownloadAuditMeta = (audit: EntityAudit) => {
+	const meta = asObject(audit.meta_info);
+	if (!meta || meta.download_event !== true) return null;
+	const downloadType =
+		typeof meta.download_type === "string" ? meta.download_type : null;
+	if (downloadType !== "institution_export") return null;
+	return {
+		downloadType,
+		requesterName:
+			typeof meta.requester_name === "string" ? meta.requester_name : null,
+		requesterEmail:
+			typeof meta.requester_email === "string" ? meta.requester_email : null,
+	};
+};
+
 const formatAuditActor = (
 	audit: EntityAudit,
 	t: (key: string, options?: Record<string, unknown>) => string,
@@ -699,6 +714,54 @@ export function ActivityList({
 			relationAudit?: EntityAudit,
 			activityId?: string,
 		): Activity => {
+			const downloadMeta = getDownloadAuditMeta(audit);
+			if (downloadMeta) {
+				const payload = asObject(audit.new_data);
+				const format =
+					typeof payload?.format === "string"
+						? payload.format.toUpperCase()
+						: "";
+				const institutionCount =
+					typeof payload?.institution_count === "number"
+						? payload.institution_count
+						: null;
+				const actor =
+					downloadMeta.requesterName ??
+					downloadMeta.requesterEmail ??
+					formatAuditActor(audit, t);
+				const primaryEntity = format
+					? t("auth.account.activity.download.institutionExportWithFormat", {
+							defaultValue: `Kulturorte-Export (${format})`,
+							format,
+						})
+					: t("auth.account.activity.download.institutionExport", {
+							defaultValue: "Kulturorte-Export",
+						});
+				const secondaryEntity =
+					typeof institutionCount === "number"
+						? t("auth.account.activity.download.institutionCount", {
+								defaultValue: `${institutionCount} Kulturorte`,
+								count: institutionCount,
+							})
+						: undefined;
+				return {
+					id: activityId,
+					date: audit.changed_at,
+					user: audit.user ?? null,
+					entityType: "institution",
+					eventType: "create",
+					actor,
+					primaryEntity,
+					secondaryEntity,
+					action: t("auth.account.activity.download.action", {
+						defaultValue: "heruntergeladen",
+					}),
+					item: primaryEntity,
+					relation: secondaryEntity,
+					status: "completed",
+				};
+			}
+
 			const actor = formatAuditActor(audit, t);
 			const intent = getAuditIntent(audit);
 			const actionKey = intent ?? audit.action;

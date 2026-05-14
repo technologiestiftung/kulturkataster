@@ -757,8 +757,8 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 								<Button
 									onClick={config.rightButton.onClick}
 									radius="full"
-									variant="action"
-									iconSize="lg"
+									variant="subaction"
+									iconSize="sm"
 									aria-label={rightButtonAriaLabel}
 								>
 									<Download className="size-5!" />

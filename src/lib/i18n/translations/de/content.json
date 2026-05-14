@@ -337,6 +337,20 @@
 		"acknowledgement": "Ich habe die rechtlichen Hinweise gelesen und verstanden",
 		"chooseFormat": "Dateiformat wählen",
 		"description": "Die Liste ihrer Kulturorte können Sie hier als Excel Tabelle herunterladen.",
+		"form": {
+			"datenverwendung": "Wofür verwenden Sie die Daten?",
+			"email": "Ihre E-Mail-Adresse",
+			"nachname": "Nachname",
+			"placeholders": {
+				"datenverwendung": "Beschreiben Sie kurz den Verwendungszweck",
+				"email": "name@beispiel.de",
+				"nachname": "Nachname eingeben",
+				"vorname": "Vorname eingeben"
+			},
+			"vorname": "Vorname"
+		},
+		"guestIntro": "Bevor Sie die Daten herunterladen können, bitten wir Sie noch um ein paar Informationen.",
+		"loading": "Kulturorte werden geladen …",
 		"selectedFilters": "Die Auswahl setzt sich zusammen aus folgenden Filtern:",
 		"subtitle": "{{count}} Kulturorte zum Herunterladen",
 		"title": "Meine Daten als Liste herunterladen"
