@@ -65,7 +65,7 @@ export function DownloadModal({
 	const isModalVisible = open ?? true;
 	const performClose = useRoutedModalClose({ returnTo });
 	const currentProfile = useAccountStore((s) => s.currentProfile);
-	const isPublicDownloadFlow = data === null;
+	const isPublicDownloadFlow = data === undefined || data === null;
 	const isLoggedIn = !isPublicDownloadFlow && currentProfile !== null;
 	const initializePublicData = useInstitutionStore(
 		(s) => s.initializePublicData,
