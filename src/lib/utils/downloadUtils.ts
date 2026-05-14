@@ -1,10 +1,63 @@
-import { getGuestReadableFields } from "@/server/actions/permissions";
+import { getDownloadReadableFields } from "@/server/actions/permissions";
 import { getFieldOptionLabel } from "@/lib/i18n/fieldLabels";
 import { Institution } from "@/types";
 import { normalizeInstitutionPermissionField } from "@/lib/utils/institutionPermissionField";
 import * as XLSX from "xlsx-js-style";
 
 export type ExportFormat = "csv" | "xlsx" | "xls";
+
+export const DEFAULT_INSTITUTION_EXPORT_COLUMN_ORDER = [
+	"status",
+	"type",
+	"id",
+	"name",
+	"parent_organization",
+	"email",
+	"phone",
+	"website",
+	"cultural_area",
+	"street",
+	"address_suffix",
+	"zipcode",
+	"city",
+	"district",
+	"neighbourhood",
+	"categories",
+	"subcategories",
+	"utilization_status",
+	"protection_status",
+	"protection_status_info",
+	"protection_status_internal_notes",
+	"legal_form",
+	"funding_sources",
+	"funding_type",
+	"owner_name",
+	"owner_type",
+	"rental_contract_type",
+	"rental_contract_end",
+	"established_since",
+	"established_until",
+	"closing_reason",
+	"area",
+	"number_of_rooms",
+	"capacity",
+	"shared_use_allowed",
+	"shared_use_info",
+	"shared_use_equipment",
+	"shared_use_audience",
+	"shared_use_availability",
+	"accessibility",
+	"cost",
+	"shared_use_contact_person",
+	"contact_person_first_name",
+	"contact_person_last_name",
+	"notes",
+	"internal_notes",
+	"source",
+	"created_at",
+	"updated_at",
+] as const;
+
 type ExportAudience = "guest" | "internal";
 type TranslateFn = (key: string, options?: Record<string, unknown>) => string;
 
@@ -13,12 +66,14 @@ interface DownloadData {
 	filename: string;
 	format: ExportFormat;
 	translateFn?: TranslateFn;
+	columnOrder?: string[];
 }
 
 type PrepareDataForExportOptions = {
 	translateFn?: TranslateFn;
 	readablePermissionFields?: Iterable<string>;
 	audience?: ExportAudience;
+	columnOrder?: string[];
 };
 
 type ExportFieldMeta = {
@@ -33,9 +88,11 @@ const enumKeyMappings: Record<string, string> = {
 	status: "institution_status",
 };
 
-const GUEST_RESTRICTED_EXPORT_FIELDS = new Set([
-	"email",
-	"phone",
+// Excluded for guest audience only (visible to logged-in users)
+const GUEST_RESTRICTED_EXPORT_FIELDS: Set<string> = new Set(["email", "phone"]);
+
+// Excluded for all audiences
+const ALWAYS_EXCLUDED_EXPORT_FIELDS: Set<string> = new Set([
 	"contact_person_email",
 	"contact_person_phone",
 ]);
@@ -67,15 +124,16 @@ function translateEnumValue(
 	value: string | number,
 	translateFn?: TranslateFn,
 ): string {
+	const normalizedValue = String(value).trim();
 	if (!translateFn) {
-		return value.toString();
+		return normalizedValue;
 	}
 
 	try {
 		const translationKey = enumKeyMappings[key] ?? key;
-		return getFieldOptionLabel(translateFn, translationKey, String(value));
+		return getFieldOptionLabel(translateFn, translationKey, normalizedValue);
 	} catch {
-		return value.toString();
+		return normalizedValue;
 	}
 }
 
@@ -105,10 +163,15 @@ function extractDisplayValueFromObject(
 		const sourceName = item.source_name;
 		const description = item.description;
 		if (typeof sourceName === "string" && sourceName.trim().length > 0) {
+			const translatedSourceName = translateEnumValue(
+				exportKey,
+				sourceName,
+				translateFn,
+			);
 			if (typeof description === "string" && description.trim().length > 0) {
-				return `${sourceName}: ${description}`;
+				return `${translatedSourceName}: ${description}`;
 			}
-			return sourceName;
+			return translatedSourceName;
 		}
 	}
 
@@ -251,6 +314,7 @@ function isExportFieldAllowed(
 	audience: ExportAudience,
 ): boolean {
 	if (!meta.permissionField) return false;
+	if (ALWAYS_EXCLUDED_EXPORT_FIELDS.has(meta.exportKey)) return false;
 	if (
 		audience === "guest" &&
 		GUEST_RESTRICTED_EXPORT_FIELDS.has(meta.exportKey)
@@ -277,9 +341,16 @@ function collectExportValues(
 		isObjectRecord(value) &&
 		(path[0] === "address" || path[0] === "contact_person")
 	) {
-		Object.entries(value).forEach(([childKey, childValue]) =>
-			collectExportValues(childValue, [...path, childKey], output, options),
-		);
+		const isAddressRoot = path[0] === "address" && path.length === 1;
+		Object.entries(value).forEach(([childKey, childValue]) => {
+			// street_number is merged into the street field
+			if (isAddressRoot && childKey === "street_number") return;
+			const effectiveValue =
+				isAddressRoot && childKey === "street"
+					? [childValue, value["street_number"]].filter(Boolean).join(" ")
+					: childValue;
+			collectExportValues(effectiveValue, [...path, childKey], output, options);
+		});
 		return;
 	}
 
@@ -303,6 +374,7 @@ function collectExportValues(
 			options.translateFn,
 		);
 		Object.entries(entries).forEach(([key, formattedValue]) => {
+			if (ALWAYS_EXCLUDED_EXPORT_FIELDS.has(key)) return;
 			if (
 				options.audience === "guest" &&
 				GUEST_RESTRICTED_EXPORT_FIELDS.has(key)
@@ -384,9 +456,18 @@ export function prepareDataForExport(
 			return output;
 		});
 
+	const preferredOrder = options.columnOrder ?? [];
+	const orderedColumns =
+		preferredOrder.length > 0
+			? [
+					...preferredOrder.filter((key) => columnOrder.includes(key)),
+					...columnOrder.filter((key) => !preferredOrder.includes(key)),
+				]
+			: columnOrder;
+
 	return rows.map((row) => {
 		const flattened: Record<string, string> = {};
-		columnOrder.forEach((fieldKey) => {
+		orderedColumns.forEach((fieldKey) => {
 			flattened[translateColumnName(fieldKey, options.translateFn)] =
 				row.get(fieldKey) ?? "";
 		});
@@ -498,12 +579,15 @@ export async function downloadInstitutions({
 	filename,
 	format,
 	translateFn,
+	columnOrder,
 }: DownloadData) {
-	const guestReadableFields = await getGuestReadableFields("institution");
+	const { readableFields, audience } =
+		await getDownloadReadableFields("institution");
 	const preparedData = prepareDataForExport(data, {
 		translateFn,
-		readablePermissionFields: guestReadableFields,
-		audience: "guest",
+		readablePermissionFields: readableFields,
+		audience,
+		columnOrder,
 	});
 
 	const timestamp = new Date().toISOString().split("T")[0];
