@@ -1,6 +1,15 @@
 import { type ColumnDef } from "@tanstack/react-table";
 import type { ReactNode } from "react";
 
+declare module "@tanstack/react-table" {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	interface ColumnMeta<TData, TValue> {
+		pin?: "left" | "right";
+		truncate?: boolean;
+		exportKey?: string | string[];
+	}
+}
+
 export interface DataTableConfig<T> {
 	columns: ColumnDef<T, unknown>[];
 

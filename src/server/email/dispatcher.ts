@@ -272,3 +272,57 @@ export async function sendRoleDecisionEmailIfNeeded(params: {
 		metaInfo: params.metaInfo,
 	});
 }
+
+export async function sendInstitutionDownloadNotificationEmail(params: {
+	to: string;
+	requesterEmail: string;
+	requesterFirstName?: string | null;
+	requesterLastName?: string | null;
+	filename: string;
+	format: "csv" | "xlsx" | "xls";
+	institutionCount: number;
+	institutionIds: number[];
+	usagePurpose?: string;
+}) {
+	const MAX_LISTED_INSTITUTION_IDS = 10;
+	const requesterName =
+		`${params.requesterFirstName ?? ""} ${params.requesterLastName ?? ""}`.trim() ||
+		params.requesterEmail ||
+		"Unknown";
+	const shouldListInstitutionIds =
+		params.institutionIds.length > 0 &&
+		params.institutionIds.length <= MAX_LISTED_INSTITUTION_IDS;
+
+	try {
+		await sendTemplatedEmail({
+			to: params.to,
+			subject: `Kulturkataster: Datenexport ${params.filename}.${params.format}`,
+			templatePath: "custom/institution_download_notification.html",
+			variables: {
+				Email: params.requesterEmail,
+				Data: {
+					requester_name: requesterName,
+					requester_email: params.requesterEmail,
+					filename: params.filename,
+					format: params.format,
+					institution_count: params.institutionCount,
+					usage_purpose: params.usagePurpose ?? "—",
+					institution_ids: shouldListInstitutionIds
+						? params.institutionIds.join(", ")
+						: `Nicht aufgeführt (${params.institutionIds.length} IDs)`,
+				},
+			},
+		});
+	} catch (error) {
+		logger.error("email.institution_download_notification.failed", error, {
+			subsystem: "email",
+			email_to: params.to,
+			requester_email: params.requesterEmail,
+			template: "custom/institution_download_notification.html",
+			export_filename: params.filename,
+			export_format: params.format,
+			institution_count: params.institutionCount,
+		});
+		throw error;
+	}
+}
