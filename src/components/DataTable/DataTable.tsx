@@ -40,6 +40,7 @@ import ChevronUp from "@/icons/chevron-up.svg";
 import ChevronDown from "@/icons/chevron-down.svg";
 import Edit from "@/icons/edit.svg";
 import Eye from "@/icons/eye.svg";
+import Download from "@/icons/download.svg";
 import ArrowNarrowLeft from "@/icons/arrow-narrow-left.svg";
 import ArrowNarrowRight from "@/icons/arrow-narrow-right.svg";
 import { useWindowVirtualizer } from "@tanstack/react-virtual";
@@ -619,6 +620,10 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 		typeof config.secondaryButton?.label === "string"
 			? config.secondaryButton.label
 			: undefined;
+	const rightButtonAriaLabel =
+		typeof config.rightButton?.label === "string"
+			? config.rightButton.label
+			: undefined;
 	const filterButtonAriaLabel = (() => {
 		if (typeof config.filterModal?.triggerAriaLabel === "string") {
 			return config.filterModal.triggerAriaLabel;
@@ -645,6 +650,7 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 				config.searchable ||
 				config.primaryButton ||
 				config.secondaryButton ||
+				config.rightButton ||
 				config.filterModal) && (
 				<div className="flex flex-col gap-4 w-full">
 					{config.title && (
@@ -744,6 +750,22 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 										</Label>
 									</div>
 								)}
+							</div>
+						)}
+						{!isSearchOpen && config.rightButton && (
+							<div className="gap-2 flex items-center">
+								<Button
+									onClick={config.rightButton.onClick}
+									radius="full"
+									variant="subaction"
+									iconSize="sm"
+									aria-label={rightButtonAriaLabel}
+								>
+									<Download className="size-5!" />
+								</Button>
+								<Label className="md:block hidden">
+									{config.rightButton.label}
+								</Label>
 							</div>
 						)}
 					</div>

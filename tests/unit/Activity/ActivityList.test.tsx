@@ -548,6 +548,47 @@ describe("ActivityList filters", () => {
 		expect(screen.getAllByTestId("activity-row")).toHaveLength(2);
 	});
 
+	it("shows distinct labels for approved and active in the status filter", () => {
+		mockState.entityAudits = [
+			makeAudit({
+				id: 40,
+				entity_type: "submission",
+				entity_id: "40",
+				status: "approved",
+				new_data: {
+					status: "approved",
+					type: "create",
+					entity_type: "institution",
+					data: { name: "Approved submission" },
+				},
+			}),
+			makeAudit({
+				id: 41,
+				entity_type: "user",
+				entity_id: "user-41",
+				status: "completed",
+				new_data: {
+					status: "active",
+					email: "active@example.com",
+				},
+				user: null,
+			}),
+		];
+
+		render(<ActivityList />);
+
+		const statusSelect = screen.getAllByRole("combobox")[0];
+		const optionLabels = within(statusSelect)
+			.getAllByRole("option")
+			.map((option) => option.textContent);
+
+		expect(optionLabels).toContain("Approved");
+		expect(optionLabels).toContain("Active");
+		expect(optionLabels.filter((label) => label === "Approved")).toHaveLength(
+			1,
+		);
+	});
+
 	it("does not link deleted submission activities", () => {
 		mockState = {
 			currentProfile: {

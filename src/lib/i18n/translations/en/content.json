@@ -1,7 +1,5 @@
 {
 	"aboutModal": {
-		"approach": "The aim of the Berlin cultural cadastre is to capture a cultural landscape that is more diverse, dynamic and interdisciplinary than any other. ",
-		"concept": "A broad concept of culture and a descriptive understanding of culture form the basis of the cultural register. ",
 		"credits": {
 			"contractors": {
 				"additional": [
@@ -59,7 +57,7 @@
 					"Senatsverwaltung für Wirtschaft, Energie und Betriebe",
 					"servicezentrum musikschulen (szm)"
 				],
-				"title": "partners"
+				"title": "Partners"
 			},
 			"steering": {
 				"members": [
@@ -79,12 +77,12 @@
 			},
 			"team": {
 				"members": [
-					"Project management: Daniel Jakobson",
-					"Project management: Ali Deniz Şensöz",
-					"Data editor: Lina Rippel",
-					"Strategic project coordination: Laura Raber",
-					"Allocation and administration: Doris Antonides-Heidelmeyer",
-					"Technical project management until 2024: Metini Krivanish"
+					"**Project management:** Daniel Jakobson",
+					"**Project management:** Ali Deniz Şensöz",
+					"**Data editor:** Lina Rippel",
+					"**Strategic project coordination:** Laura Raber",
+					"**Allocation and administration:** Doris Antonides-Heidelmeyer",
+					"**Technical project management until 2024:** Metini Krivanish"
 				],
 				"title": "Project team"
 			}
@@ -93,34 +91,30 @@
 			"downloadPDF": "Download PDF",
 			"text": "Detailed documentation on the development of the cultural cadastre database can be found here."
 		},
-		"guidelines": {
-			"description": "The framework for the development of the cultural register is formed by four cultural policy guidelines on which the KRB has agreed with the Senate Department for Culture and Social Cohesion:",
-			"items": [
-				"Evidence-based cultural policy and cultural urban development: The Berlin cultural cadastre creates a comprehensive data base about cultural areas in order to enable fact-based cultural policy and targeted urban development.",
-				"Securing and redeveloping spaces for culture: The cultural cadastre serves as an instrument for sustainable monitoring of cultural areas in order to support their preservation and open up new spaces.",
-				"Fair distribution of cultural offerings in the urban space and equal opportunities with regard to participation: The cultural register visualizes gaps in cultural offerings and supports city planning in creating a balanced and fair cultural offering for all Berliners.",
-				"Improving collaboration between departments, levels and sectors: As a flexible digital planning tool, the cultural cadastre strengthens collaboration within the various areas of responsibility, administrative levels and the entire Berlin cultural scene."
-			]
-		},
-		"guidelinesListAriaLabel": "List of policies",
-		"introduction": [
-			"In a growing metropolis like Berlin, art and cultural spaces are scarce resources. ",
-			"The cultural register is mentioned in the government policy guidelines for this legislative period. "
-		],
-		"simpleLanguageDirect": "You can find the “About the project” section in simple language <link />.",
-		"subtitle": " ",
-		"thanks": "The Berlin cultural cadastre owes its successful publication to the enthusiasm, commitment and joint work of all people for whom the Berlin cultural landscape is as important as it is for the project team. ",
+		"thanks": "The Berlin cultural cadastre owes its successful publication to the enthusiasm, commitment and joint work of all people for whom the Berlin cultural landscape is as important as it is for the project team.",
 		"title": "About the project",
-		"versionListAriaLabel": "List of version changes",
-		"versions": {
-			"description": "The development of Berlin's cultural register takes place as a learning process. ",
-			"items": [
-				"Version 1 - Inventory of cultural places with basic location information in selected cultural area categories (publication September 2025)",
-				"Version 2 – Introducing new heritage site categories and updating data; ",
-				"Version 3 – updating and completing data; "
-			],
-			"planned": "The following versions of the cultural register are planned:"
-		}
+		"subtitle": "",
+		"simpleLanguageDirect": "You can find the “About the project” section in simple language <link />.",
+		"teamPhotoAlt": "Project team of the Berlin cultural cadastre",
+		"body": "In a growing metropolis like Berlin, art and cultural spaces are scarce resources.\n\nThe cultural register is mentioned in the government policy guidelines for this legislative period.\n\nThe framework for the development of the cultural register is formed by four cultural policy guidelines on which the KRB has agreed with the Senate Department for Culture and Social Cohesion:\n\n1. Evidence-based cultural policy and cultural urban development: The Berlin cultural cadastre creates a comprehensive data base about cultural areas in order to enable fact-based cultural policy and targeted urban development.\n2. Securing and redeveloping spaces for culture: The cultural cadastre serves as an instrument for sustainable monitoring of cultural areas in order to support their preservation and open up new spaces.\n3. Fair distribution of cultural offerings in the urban space and equal opportunities with regard to participation: The cultural register visualizes gaps in cultural offerings and supports city planning in creating a balanced and fair cultural offering for all Berliners.\n4. Improving collaboration between departments, levels and sectors: As a flexible digital planning tool, the cultural cadastre strengthens collaboration within the various areas of responsibility, administrative levels and the entire Berlin cultural scene.\n\nThe aim of the Berlin cultural cadastre is to capture a cultural landscape that is more diverse, dynamic and interdisciplinary than any other.\n\nA broad concept of culture and a descriptive understanding of culture form the basis of the cultural register.\n\n`documentation-card`\n\nThe development of Berlin's cultural register takes place as a learning process.\n\n`versions-card`",
+		"versionsLabel": "The following versions of the cultural register are planned:",
+		"versionsItems": [
+			{
+				"badge": "Version 1",
+				"label": "Inventory of cultural places with basic location information in selected cultural area categories",
+				"text": "Publication September 2025"
+			},
+			{
+				"badge": "Version 2",
+				"label": "Introducing new heritage site categories and updating data; introducing a login area; shared data maintenance and access for cultural venues, associations and administration",
+				"text": "Publication early 2026"
+			},
+			{
+				"badge": "Version 3",
+				"label": "Updating and completing data; integrating new specialist maps from the geoportal; publishing threatened cultural venues; expanding the login area",
+				"text": "Publication mid-2026"
+			}
+		]
 	},
 	"accessibilityModal": {
 		"contact": {
@@ -340,13 +334,26 @@
 		}
 	},
 	"downloadModal": {
+		"acknowledgement": "I have read and understood the legal notice",
 		"chooseFormat": "Select file format",
-		"description1": "The cultural cadastre is an open data project that supports the goals of the state of Berlin's open data strategy. ",
-		"description2": "If you would like to use the data for research purposes, your work in the Berlin administration, cultural policy or other understandable purposes, we would be happy to make it available to you. ",
-		"link": "[Link https://form.formcentric.com/form/7dfaf065-24a1-4431-8905-019e123e5dbe] to the request form ",
+		"description": "You can download the list of your cultural venues here as an Excel spreadsheet.",
+		"form": {
+			"datenverwendung": "What will you use the data for?",
+			"email": "Your email address",
+			"nachname": "Last name",
+			"placeholders": {
+				"datenverwendung": "Briefly describe the intended use",
+				"email": "name@example.com",
+				"nachname": "Enter last name",
+				"vorname": "Enter first name"
+			},
+			"vorname": "First name"
+		},
+		"guestIntro": "Before you can download the data, we need a few details from you.",
+		"loading": "Loading cultural venues …",
 		"selectedFilters": "The selection consists of the following filters:",
-		"subtitle": "{{count}} Places to download",
-		"title": "Download data as a list"
+		"subtitle": "{{count}} cultural venues available for download",
+		"title": "Download my data as a list"
 	},
 	"filter": {
 		"categories": {

@@ -49,7 +49,7 @@ export function AddressItem({
 							</p>
 							<div className="flex flex-wrap space-x-1">
 								<p>{institution.address.zipcode}</p>
-								{neighbourhood && <p>{neighbourhood}</p>}
+								{neighbourhood && <p>{neighbourhood},</p>}
 								{cityName && districtKey && (
 									<p>
 										{cityName}-{tEnum(`${districtKey}`)}
