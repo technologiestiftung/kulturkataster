@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { useFieldLabel } from "@/lib/hooks/useFieldLabel";
 import { InfoWrapper } from "@/components/InfoWrapper";
 import {
@@ -26,6 +27,7 @@ export function InstitutionReview({
 	newData,
 	onEditSection,
 }: InstitutionReviewProps) {
+	const { t } = useTranslation("content");
 	const fieldLabel = useFieldLabel();
 	const { isPrivateField } = useInstitutionPrivateFieldResolver();
 	const institutionCategories =
@@ -134,122 +136,129 @@ export function InstitutionReview({
 	}, [newData, resolveCategoriesForData]);
 
 	return (
-		<InfoWrapper
-			data={resolvedData}
-			newData={resolvedNewData}
-			config={{
-				isPrivateField,
-				showPrivateBadge: true,
-				fields: [
-					{
-						type: "section",
-						id: "header",
-						cardVariant: "none",
-						className: "mb-2",
-						edit: editConfig.details,
-						fields: [
-							{
-								id: "parent_organization",
-								type: "text",
-								value: "parent_organization",
-							},
-							{
-								id: "name",
-								alwaysShow: true,
-								value: "name",
-								type: "title",
-							},
-							{
-								id: "categories",
-								categoryVariant: "default",
-								type: "category",
-							},
-						],
-					},
-					{
-						id: "utilization_status",
-						alwaysShow: true,
-						label: fieldLabel("utilization_status"),
-						edit: editConfig.utilization_status,
-						className: "mb-2",
-						type: "status",
-						value: "utilization_status",
-						enumKey: "utilization_status",
-					},
-					{
-						id: "protection_status",
-						alwaysShow: false,
-						label: fieldLabel("protection_status"),
-						edit: editConfig.protection_status,
-						type: "status",
-						value: "protection_status",
-						enumKey: "protection_status",
-					},
-					{
-						type: "section",
-						id: "details",
-						layout: {
-							columns: 1,
-						},
-						cardVariant: "none",
-						fields: [
-							{
-								id: "address",
-								alwaysShow: true,
-								type: "address",
-								edit: editConfig.address,
-								addressOptions: {
-									showMapLink: false,
-									showCopy: false,
+		<div className="space-y-4 flex flex-col">
+			<div className="flex w-full flex-col items-start gap-4 bg-primary-light/50 px-10 py-6 mt-2">
+				<p className="w-full body2 text-foreground">
+					{t("institutionFormModal.review.previewHint")}
+				</p>
+			</div>
+			<InfoWrapper
+				data={resolvedData}
+				newData={resolvedNewData}
+				config={{
+					isPrivateField,
+					showPrivateBadge: true,
+					fields: [
+						{
+							type: "section",
+							id: "header",
+							cardVariant: "none",
+							className: "mb-2",
+							edit: editConfig.details,
+							fields: [
+								{
+									id: "parent_organization",
+									type: "text",
+									value: "parent_organization",
 								},
+								{
+									id: "name",
+									alwaysShow: true,
+									value: "name",
+									type: "title",
+								},
+								{
+									id: "categories",
+									categoryVariant: "default",
+									type: "category",
+								},
+							],
+						},
+						{
+							id: "utilization_status",
+							alwaysShow: true,
+							label: fieldLabel("utilization_status"),
+							edit: editConfig.utilization_status,
+							className: "mb-2",
+							type: "status",
+							value: "utilization_status",
+							enumKey: "utilization_status",
+						},
+						{
+							id: "protection_status",
+							alwaysShow: false,
+							label: fieldLabel("protection_status"),
+							edit: editConfig.protection_status,
+							type: "status",
+							value: "protection_status",
+							enumKey: "protection_status",
+						},
+						{
+							type: "section",
+							id: "details",
+							layout: {
+								columns: 1,
 							},
-							{
-								type: "section",
-								id: "contact",
-								edit: editConfig.contact,
-								cardVariant: "tertiary",
-								fields: contactInfoConfig,
-							},
-							{
-								type: "section",
-								id: "organization",
-								alwaysShow: false,
-								edit: editConfig.organization,
-								cardVariant: "tertiary",
-								fields: detailsInfoConfig,
-							},
-							{
-								type: "section",
-								id: "funding",
-								alwaysShow: false,
-								edit: editConfig.funding,
-								cardVariant: "tertiary",
-								fields: organizationInfoConfig,
-							},
-							{
-								type: "section",
-								id: "facility",
-								edit: editConfig.facility,
-								cardVariant: "tertiary",
-								fields: facilityInfoConfig,
-							},
-							{
-								type: "section",
-								id: "shared_use",
-								edit: editConfig.sharedUse,
-								cardVariant: "tertiary",
-								fields: sharedUseInfoConfig,
-							},
-							{
-								type: "section",
-								id: "additional",
-								cardVariant: "tertiary",
-								fields: additionalInfoConfig,
-							},
-						],
-					},
-				],
-			}}
-		/>
+							cardVariant: "none",
+							fields: [
+								{
+									id: "address",
+									alwaysShow: true,
+									type: "address",
+									edit: editConfig.address,
+									addressOptions: {
+										showMapLink: false,
+										showCopy: false,
+									},
+								},
+								{
+									type: "section",
+									id: "contact",
+									edit: editConfig.contact,
+									cardVariant: "tertiary",
+									fields: contactInfoConfig,
+								},
+								{
+									type: "section",
+									id: "organization",
+									alwaysShow: false,
+									edit: editConfig.organization,
+									cardVariant: "tertiary",
+									fields: detailsInfoConfig,
+								},
+								{
+									type: "section",
+									id: "funding",
+									alwaysShow: false,
+									edit: editConfig.funding,
+									cardVariant: "tertiary",
+									fields: organizationInfoConfig,
+								},
+								{
+									type: "section",
+									id: "facility",
+									edit: editConfig.facility,
+									cardVariant: "tertiary",
+									fields: facilityInfoConfig,
+								},
+								{
+									type: "section",
+									id: "shared_use",
+									edit: editConfig.sharedUse,
+									cardVariant: "tertiary",
+									fields: sharedUseInfoConfig,
+								},
+								{
+									type: "section",
+									id: "additional",
+									cardVariant: "tertiary",
+									fields: additionalInfoConfig,
+								},
+							],
+						},
+					],
+				}}
+			/>
+		</div>
 	);
 }
