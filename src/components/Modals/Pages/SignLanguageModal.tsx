@@ -3,9 +3,15 @@
 import { useRef, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Modal } from "../Modal";
-import TextBlock from "@/components/Content/TextBlock";
-import TextWithLinks from "@/components/Content/TextWithLinks";
+import ReactMarkdown from "react-markdown";
 import { Loading } from "@/components/ui/loading";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+	Accordion,
+	AccordionContent,
+	AccordionItem,
+	AccordionTrigger,
+} from "@/components/ui/accordion";
 
 interface SignLanguageVideoItem {
 	title: string;
@@ -64,45 +70,6 @@ export function SignLanguageModal({ routePath }: { routePath?: string }) {
 		returnObjects: true,
 	}) as SignLanguageInformationItem[];
 
-	const signLanguageInformationContent = (
-		<>
-			<div className="space-y-10">
-				<p>{t("signLanguageModal.description")}</p>
-
-				{content.map(
-					(
-						contentItem: SignLanguageInformationItem,
-						contentItemIndex: number,
-					) => (
-						<div className="space-y-4" key={contentItemIndex}>
-							<TextBlock titleAs="h2" title={contentItem.title} />
-							{contentItem.videos.map(
-								(
-									contentItemVideo: SignLanguageVideoItem,
-									contentItemVideoIndex: number,
-								) => (
-									<div className="space-y-2" key={contentItemVideoIndex}>
-										<TextWithLinks
-											text={contentItemVideo.title}
-											textVariant="body1 font-bold"
-										/>
-										<VideoWithLoader src={contentItemVideo.src} />
-										{contentItemVideo.sub && (
-											<TextWithLinks
-												text={contentItemVideo.sub}
-												textVariant="body1"
-											/>
-										)}
-									</div>
-								),
-							)}
-						</div>
-					),
-				)}
-			</div>
-		</>
-	);
-
 	return (
 		<Modal
 			title={t("signLanguageModal.title")}
@@ -114,7 +81,54 @@ export function SignLanguageModal({ routePath }: { routePath?: string }) {
 				"signLanguageInformationShort",
 			]}
 		>
-			{signLanguageInformationContent}
+			<p>{t("signLanguageModal.description")}</p>
+			<Tabs defaultValue="tab1" className="w-full mt-10">
+				<TabsList variant="modalTabs">
+					{content.map((item, index) => (
+						<TabsTrigger key={index} value={`tab${index + 1}`}>
+							{item.title}
+						</TabsTrigger>
+					))}
+				</TabsList>
+				{content.map((item, index) => (
+					<TabsContent key={index} value={`tab${index + 1}`}>
+						<Accordion
+							type="single"
+							className="w-full mt-10"
+							defaultValue="video0"
+						>
+							{item.videos.map((video, videoIndex) => (
+								<AccordionItem key={videoIndex} value={`video${videoIndex}`}>
+									<AccordionTrigger>{video.title}</AccordionTrigger>
+									<AccordionContent>
+										<VideoWithLoader src={video.src} />
+										{video.sub && (
+											<div className="mt-4">
+												<ReactMarkdown
+													components={{
+														a: ({ href, children }) => (
+															<a
+																href={href}
+																target="_blank"
+																rel="noopener noreferrer"
+																className="text-primary-dark hover:text-primary underline text-lg"
+															>
+																{children}
+															</a>
+														),
+													}}
+												>
+													{video.sub}
+												</ReactMarkdown>
+											</div>
+										)}
+									</AccordionContent>
+								</AccordionItem>
+							))}
+						</Accordion>
+					</TabsContent>
+				))}
+			</Tabs>
 		</Modal>
 	);
 }

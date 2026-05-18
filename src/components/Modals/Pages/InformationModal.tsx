@@ -73,9 +73,9 @@ export function InformationModal({ routePath }: { routePath?: string }) {
 			</ReactMarkdown>
 			<Tabs defaultValue="tab1" className="w-full mt-10">
 				<TabsList variant="modalTabs">
-					<TabsTrigger value="tab1">Über das Projekt</TabsTrigger>
-					<TabsTrigger value="tab2">Bedienung</TabsTrigger>
-					<TabsTrigger value="tab3">Fragen & Antworten</TabsTrigger>
+					<TabsTrigger value="tab1">{t("infoModal.tabTitles.0")}</TabsTrigger>
+					<TabsTrigger value="tab2">{t("infoModal.tabTitles.1")}</TabsTrigger>
+					<TabsTrigger value="tab3">{t("infoModal.tabTitles.2")}</TabsTrigger>
 				</TabsList>
 				<TabsContent value="tab1">
 					<ReactMarkdown
@@ -149,7 +149,37 @@ export function InformationModal({ routePath }: { routePath?: string }) {
 												>
 													<AccordionTrigger>{item.question}</AccordionTrigger>
 													<AccordionContent>
-														<p className="pl-10">{item.answer}</p>
+														<div className="pl-10">
+															<ReactMarkdown
+																components={{
+																	p: ({ children: markdownChildren }) => (
+																		<p>{markdownChildren}</p>
+																	),
+																	a: ({ href, children: markdownChildren }) => (
+																		<a
+																			href={href}
+																			target="_blank"
+																			rel="noopener noreferrer"
+																			className="text-primary-dark hover:text-primary underline"
+																		>
+																			{markdownChildren}
+																		</a>
+																	),
+																	strong: ({ children: markdownChildren }) => (
+																		<strong className="font-bold">
+																			{markdownChildren}
+																		</strong>
+																	),
+																	h3: ({ children: markdownChildren }) => (
+																		<p className="body2 font-semibold mt-4 mb-1">
+																			{markdownChildren}
+																		</p>
+																	),
+																}}
+															>
+																{item.answer}
+															</ReactMarkdown>
+														</div>
 													</AccordionContent>
 												</AccordionItem>
 											))}
