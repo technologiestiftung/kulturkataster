@@ -39,6 +39,19 @@ const SIDEBAR_COLLAPSED_OFFSET = "left-4";
 const SIDEBAR_EXPANDED_OFFSET = "left-[494px]";
 const SIDEBAR_EXPANDED_OFFSET_LARGE_TEXT = "left-[554px]";
 
+const getLayerTreeOffset = (
+	isSidePanelOpen: boolean,
+	isLargeTextMode: boolean,
+) => {
+	if (!isSidePanelOpen) {
+		return SIDEBAR_COLLAPSED_OFFSET;
+	}
+
+	return isLargeTextMode
+		? SIDEBAR_EXPANDED_OFFSET_LARGE_TEXT
+		: SIDEBAR_EXPANDED_OFFSET;
+};
+
 // Custom hooks
 const useLayerData = () => {
 	const layers = useMapStore((state) => state.layers);
@@ -251,31 +264,23 @@ const FloatingLayerButton = memo(
 	({
 		visibleCount,
 		topVisibleLayer,
-		sidebarState,
+		isSidePanelOpen,
 		onClick,
 		forwardedRef,
 	}: {
 		visibleCount: number;
 		topVisibleLayer: ManagedLayer | null;
-		sidebarState: string;
+		isSidePanelOpen: boolean;
 		onClick: () => void;
 		forwardedRef?: React.RefObject<HTMLButtonElement | null>;
 	}) => {
 		const { isLargeTextMode } = useAppStore();
 		const { t } = useTranslation("common");
-		const getLeftPosition = useCallback(() => {
-			const expandedOffset = isLargeTextMode
-				? SIDEBAR_EXPANDED_OFFSET_LARGE_TEXT
-				: SIDEBAR_EXPANDED_OFFSET;
-
-			return sidebarState === "collapsed"
-				? SIDEBAR_COLLAPSED_OFFSET
-				: expandedOffset;
-		}, [sidebarState, isLargeTextMode]);
+		const offsetClass = getLayerTreeOffset(isSidePanelOpen, isLargeTextMode);
 
 		return (
 			<div
-				className={`absolute bottom-4 md:block hidden z-25 transition-all duration-200 ${getLeftPosition()}`}
+				className={`absolute bottom-4 md:block hidden z-25 transition-all duration-200 ${offsetClass}`}
 			>
 				<div className="relative">
 					{visibleCount > 1 && (
@@ -332,14 +337,18 @@ const FloatingLayerButton = memo(
 FloatingLayerButton.displayName = "FloatingLayerButton";
 
 // Main LayerTree component (desktop only - mobile handled via Sheet in Menu)
-const LayerTree: FC = () => {
+const LayerTree: FC<{
+	isSidePanelOpen?: boolean;
+}> = ({ isSidePanelOpen = false }) => {
 	const { t } = useTranslation("common");
 	const { subjectLayers, visibleCount, topVisibleLayer } = useLayerData();
-	const { state: sidebarState, isMobile } = useSidebar();
+	const { isMobile } = useSidebar();
 	const isLayerTreeOpen = useAppStore((state) => state.isLayerTreeOpen);
 	const setIsLayerTreeOpen = useAppStore((state) => state.setIsLayerTreeOpen);
+	const isLargeTextMode = useAppStore((state) => state.isLargeTextMode);
 	const [isOpen, setIsOpen] = useState(false);
 	const floatingButtonRef = useRef<HTMLButtonElement>(null);
+	const offsetClass = getLayerTreeOffset(isSidePanelOpen, isLargeTextMode);
 
 	const handleOpen = useCallback(() => {
 		setIsLayerTreeOpen(true);
@@ -375,7 +384,7 @@ const LayerTree: FC = () => {
 			<FloatingLayerButton
 				visibleCount={visibleCount}
 				topVisibleLayer={topVisibleLayer}
-				sidebarState={sidebarState}
+				isSidePanelOpen={isSidePanelOpen}
 				onClick={handleOpen}
 				forwardedRef={floatingButtonRef}
 			/>
@@ -384,7 +393,7 @@ const LayerTree: FC = () => {
 
 	return (
 		<Card
-			className={`flex w-full md:w-[400px] max-h-[70vh] absolute bottom-4 z-50 flex-col bg-neutral-5 transition-all duration-200 left-4`}
+			className={`flex w-full md:w-[400px] max-h-[70vh] absolute bottom-4 z-50 flex-col bg-neutral-5 transition-all duration-200 ${offsetClass}`}
 			role="dialog"
 			aria-label={t("map.layerTreeTitle")}
 		>

@@ -10,15 +10,18 @@ export function SidePanel({
 	onShowFilter,
 	isBlocked = false,
 	onPanelOpen,
+	onVisibilityChange,
 }: {
 	onSearchClick?: () => void;
 	onShowFilter?: () => void;
 	isBlocked?: boolean;
 	onPanelOpen?: () => void;
+	onVisibilityChange?: (isVisible: boolean) => void;
 }) {
 	const isMobile = useIsMobile();
 	const [hasResults, setHasResults] = useState(false);
 	const [sidePanel, setSidePanel] = useState<"search" | "filter" | null>(null);
+	const isPanelVisible = hasResults || sidePanel === "filter";
 
 	useEffect(() => {
 		setSidePanel(isMobile ? "search" : "filter");
@@ -32,6 +35,10 @@ export function SidePanel({
 		}
 		setSidePanel((prev) => prev ?? (isMobile ? "search" : "filter"));
 	}, [isBlocked, isMobile]);
+
+	useEffect(() => {
+		onVisibilityChange?.(isPanelVisible);
+	}, [isPanelVisible, onVisibilityChange]);
 
 	const handleShowFilter = () => {
 		onPanelOpen?.();
@@ -55,7 +62,7 @@ export function SidePanel({
 	return (
 		<div className="absolute inset-0 h-full pointer-events-none md:inset-y-0 md:left-0 md:max-w-[var(--sidebar-width)] z-8">
 			<div
-				className={`h-full w-full flex-row flex overflow-hidden p-4 transition-colors duration-200 ${hasResults || sidePanel === "filter" ? "bg-secondary shadow-lg" : "pointer-events-none"}`}
+				className={`h-full w-full flex-row flex overflow-hidden p-4 transition-colors duration-200 ${isPanelVisible ? "bg-secondary shadow-lg" : "pointer-events-none"}`}
 			>
 				<div className="relative h-full flex-1">
 					<div

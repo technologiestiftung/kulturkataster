@@ -15,6 +15,11 @@
 				"startZoomLevel": 2,
 				"options": [
 					{
+						"resolution": 423.2,
+						"scale": 1600000,
+						"zoomLevel": -1
+					},
+					{
 						"resolution": 211.6,
 						"scale": 800000,
 						"zoomLevel": 0

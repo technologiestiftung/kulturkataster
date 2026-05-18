@@ -44,8 +44,11 @@ export function AboutModal({ routePath }: { routePath?: string }) {
 			returnObjects: true,
 		},
 	) as string[];
+	const aboutBodySections = t("aboutModal.bodySections", {
+		returnObjects: true,
+	}) as string[];
 	const renderMarkdownList = (items: string[]) => (
-		<ul className="space-y-2 body2">
+		<ul className="body2">
 			{items.map((item, index) => (
 				<li key={`${item}-${index}`}>
 					<ReactMarkdown
@@ -87,68 +90,85 @@ export function AboutModal({ routePath }: { routePath?: string }) {
 			routePath={routePath}
 			hideLinksInModalFooter={["about"]}
 		>
-			<ReactMarkdown
-				components={{
-					hr: () => {
-						afterDivider.current = true;
-						return null;
-					},
-					h2: ({ children }) => (
-						<p className="body2 font-bold mt-6 mb-1">{children}</p>
-					),
-					h3: ({ children }) => (
-						<p className="body2 font-semibold mt-4 mb-1">{children}</p>
-					),
-					h4: ({ children }) => <p className="body2 -mt-2 mb-3">{children}</p>,
-					p: ({ children }) => (
-						<p className={`${afterDivider.current ? "body2" : "body1"} mb-3`}>
-							{children}
-						</p>
-					),
-					ul: ({ children }) => (
-						<ul className="list-disc pl-5 space-y-2 body2 mb-3">{children}</ul>
-					),
-					ol: ({ node }) => <OrderedList node={node as Element} />,
-					li: ({ children }) => <li>{children}</li>,
-					strong: ({ children }) => (
-						<strong className="font-bold">{children}</strong>
-					),
-					code: ({ children }) => {
-						if (children === "versions-card") {
-							return (
-								<VersionsList
-									label={t("aboutModal.versionsLabel")}
-									items={
-										t("aboutModal.versionsItems", {
-											returnObjects: true,
-										}) as { badge: string; label: string; text: string }[]
-									}
-								/>
-							);
-						}
-						if (children === "documentation-card") {
-							return (
-								<div className="flex items-center gap-6 p-6 rounded-sm bg-neutral-5 my-10">
-									<p className="body2 font-bold flex-1">
-										{t("aboutModal.documentation.text")}
-									</p>
-									<DownloadPDFButton
-										title={t("aboutModal.documentation.downloadPDF")}
-									/>
-								</div>
-							);
-						}
-						return <code>{children}</code>;
-					},
-				}}
-			>
-				{t("aboutModal.body")}
-			</ReactMarkdown>
+			<div className="space-y-3">
+				{aboutBodySections.map((section, index) => (
+					<ReactMarkdown
+						key={`${index}-${section.slice(0, 24)}`}
+						components={{
+							hr: () => {
+								afterDivider.current = true;
+								return null;
+							},
+							h2: ({ children }) => (
+								<h2 className="font-bold mt-6 mb-10">{children}</h2>
+							),
+							h3: ({ children }) => (
+								<p className="body2 font-semibold mt-4 mb-1">{children}</p>
+							),
+							h4: ({ children }) => (
+								<p className="body2 -mt-2 mb-3">{children}</p>
+							),
+							p: ({ children }) => (
+								<p
+									className={`${afterDivider.current ? "body2" : "body1"} mb-3`}
+								>
+									{children}
+								</p>
+							),
+							ul: ({ children }) => (
+								<ul className="list-disc pl-5 space-y-2 body2 mb-3">
+									{children}
+								</ul>
+							),
+							ol: ({ node }) => <OrderedList node={node as Element} />,
+							li: ({ children }) => <li>{children}</li>,
+							strong: ({ children }) => (
+								<strong className="font-bold">{children}</strong>
+							),
+							code: ({ children }) => {
+								if (children === "versions-card") {
+									return (
+										<VersionsList
+											label={t("aboutModal.versionsLabel")}
+											items={
+												t("aboutModal.versionsItems", {
+													returnObjects: true,
+												}) as {
+													badge: string;
+													label: string;
+													text: string;
+												}[]
+											}
+										/>
+									);
+								}
+								if (children === "documentation-card") {
+									return (
+										<div className="flex md:flex-row flex-col items-center gap-6 md:p-6 rounded-sm bg-neutral-5 my-10">
+											<p className="body2 font-bold flex-1">
+												{t("aboutModal.documentation.text")}
+											</p>
+											<DownloadPDFButton
+												className="w-full md:w-auto"
+												fullWidth={true}
+												title={t("aboutModal.documentation.downloadPDF")}
+											/>
+										</div>
+									);
+								}
+								return <code>{children}</code>;
+							},
+						}}
+					>
+						{section}
+					</ReactMarkdown>
+				))}
+			</div>
 			<div className="mt-10 space-y-8">
 				<p className="body1">{t("aboutModal.thanks")}</p>
 
-				<div className="space-y-3">
-					<p className="body2 font-bold">
+				<div className="space-y-0">
+					<p className="body1 font-bold">
 						{t("aboutModal.credits.funding.title")}
 					</p>
 					<p className="body2">
@@ -169,7 +189,7 @@ export function AboutModal({ routePath }: { routePath?: string }) {
 				</div>
 
 				<div className="space-y-3">
-					<p className="body2 font-bold">
+					<p className="body1 font-bold">
 						{t("aboutModal.credits.team.title")}
 					</p>
 					{renderMarkdownList(teamMembers)}

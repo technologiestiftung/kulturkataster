@@ -548,10 +548,13 @@ export function Menu({
 									<SidebarMenuButton
 										onClick={() => handleItemClick(item)}
 										isActive={isActive}
-										className="flex-col h-auto py-2 px-3 w-auto size-14"
+										className="relative flex-col h-auto py-2 px-3 w-auto size-14"
 										aria-label={t(item.label)}
 										aria-current={isActive ? "page" : undefined}
 									>
+										{item.id === "user" && isLoggedIn && (
+											<div className="absolute bottom-2.5 right-2.5 bg-brand-default rounded-full size-2.5 flex items-center justify-center" />
+										)}
 										<item.icon className="size-6" />
 										<span className="text-xs font-medium hidden">
 											{t(item.label)}

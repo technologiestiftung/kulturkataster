@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { prepareDataForExport } from "@/lib/utils/downloadUtils";
+import {
+	DEFAULT_INSTITUTION_EXPORT_COLUMN_ORDER,
+	prepareDataForExport,
+} from "@/lib/utils/downloadUtils";
 import type { Institution } from "@/types";
 
 const makeInstitution = (): Institution =>
@@ -194,5 +197,70 @@ describe("prepareDataForExport", () => {
 		expect(rows[0]).toMatchObject({
 			Finanzierungsquellen: "Land Berlin: Grant",
 		});
+	});
+
+	it("excludes internal-only metadata and keeps utilization status details ordered", () => {
+		const rows = prepareDataForExport(
+			[
+				{
+					...makeInstitution(),
+					utilization_status: "temporarily_closed",
+					utilization_status_info: "Temporarily under renovation",
+					utilization_status_internal_notes: "Internal follow-up",
+					groups: [{ id: 3, name: "Group A" }],
+					users: [{ id: "user-1", name: "User A" }],
+					contact_person: {
+						id: 17,
+						first_name: "Ada",
+						last_name: "Lovelace",
+						email: "ada@example.de",
+						phone: "+49 30 654321",
+					},
+					import_identifier: "legacy-import-42",
+					created_at: new Date("2025-01-01T00:00:00.000Z"),
+					updated_at: new Date("2025-01-02T00:00:00.000Z"),
+				} as unknown as Institution,
+			],
+			{
+				readablePermissionFields: [
+					"status",
+					"utilization_status",
+					"utilization_status_info",
+					"utilization_status_internal_notes",
+					"groups",
+					"users",
+					"contact_person",
+					"import_identifier",
+					"created_at",
+					"updated_at",
+				],
+				audience: "internal",
+				columnOrder: [...DEFAULT_INSTITUTION_EXPORT_COLUMN_ORDER],
+			},
+		);
+
+		expect(rows).toHaveLength(1);
+		expect(rows[0]).toMatchObject({
+			Status: "public",
+			"Utilization Status": "temporarily_closed",
+			"Utilization Status Info": "Temporarily under renovation",
+			"Utilization Status Internal Notes": "Internal follow-up",
+			"Contact Person First Name": "Ada",
+			"Contact Person Last Name": "Lovelace",
+		});
+		expect(rows[0]).not.toHaveProperty("Groups");
+		expect(rows[0]).not.toHaveProperty("Users");
+		expect(rows[0]).not.toHaveProperty("Contact Person Id");
+		expect(rows[0]).not.toHaveProperty("Import Identifier");
+		expect(rows[0]).not.toHaveProperty("Created At");
+		expect(rows[0]).not.toHaveProperty("Updated At");
+		expect(Object.keys(rows[0])).toEqual([
+			"Status",
+			"Utilization Status",
+			"Utilization Status Info",
+			"Utilization Status Internal Notes",
+			"Contact Person First Name",
+			"Contact Person Last Name",
+		]);
 	});
 });

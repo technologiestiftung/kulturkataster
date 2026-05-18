@@ -53,6 +53,13 @@ const buildFundingSourcesUpdate = (
 	};
 };
 
+const preserveNullableNumberUpdate = (
+	value: number | null | undefined,
+): number | null | undefined => {
+	if (value === undefined) return undefined;
+	return value;
+};
+
 export const buildInstitutionUpdateData = (
 	input: InstitutionUpdateForm,
 	currentUserId: string | null,
@@ -61,11 +68,11 @@ export const buildInstitutionUpdateData = (
 	website: input.website ?? null,
 	phone: input.phone ?? null,
 	email: input.email ?? null,
-	area: input.area ?? undefined,
-	number_of_rooms: input.number_of_rooms ?? undefined,
+	area: preserveNullableNumberUpdate(input.area),
+	number_of_rooms: preserveNullableNumberUpdate(input.number_of_rooms),
 	parent_organization: input.parent_organization ?? null,
 	legal_form: input.legal_form ?? null,
-	capacity: input.capacity ?? undefined,
+	capacity: preserveNullableNumberUpdate(input.capacity),
 	owner_name: input.owner_name ?? null,
 	owner_type: input.owner_type ?? null,
 	rental_contract_type: input.rental_contract_type ?? null,
