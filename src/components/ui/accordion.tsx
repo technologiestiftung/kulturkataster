@@ -24,7 +24,7 @@ const accordionTriggerVariants = cva(
 	{
 		variants: {
 			variant: {
-				default: "py-2 [&[data-state=open]>svg]:-rotate-180 font-bold",
+				default: "py-2 [&[data-state=open]>svg]:-rotate-180 font-bold body1",
 				secondary:
 					"py-2 [&[data-state=open]>svg]:-rotate-180 font-bold body2 text-primary-dark gap-2",
 			},
