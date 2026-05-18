@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { InstitutionsTable } from "@/components/Institution/InstitutionsTable";
 
 const pushMock = vi.fn();
@@ -168,5 +168,37 @@ describe("InstitutionsTable", () => {
 		expect(
 			config.getCanReview({ rowKind: "submission", submissionType: "update" }),
 		).toBe(true);
+	});
+
+	it("renders zero numeric table values as a dash", () => {
+		render(<InstitutionsTable />);
+
+		const config = dataTableMock.mock.calls[0][0] as {
+			columns: Array<{
+				accessorKey?: string;
+				cell?: (args: {
+					row: { original: Record<string, unknown> };
+				}) => unknown;
+			}>;
+		};
+		const areaColumn = config.columns.find(
+			(column) => column.accessorKey === "area",
+		);
+
+		expect(areaColumn?.cell).toBeDefined();
+
+		render(
+			<>
+				{areaColumn?.cell?.({
+					row: {
+						original: {
+							area: 0,
+						},
+					},
+				})}
+			</>,
+		);
+
+		expect(screen.getByText("—")).toBeInTheDocument();
 	});
 });
