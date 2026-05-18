@@ -10,6 +10,35 @@ import React, { FC, useEffect, useRef } from "react";
 import "../../../../node_modules/ol/ol.css";
 import { useMapStore } from "../../../lib/store/mapStore";
 import { reportClientTelemetry } from "@/lib/utils/clientTelemetry";
+import { useIsMobile } from "@/hooks/use-mobile";
+
+const INITIAL_DESKTOP_PANEL_WIDTH_VAR = "--sidebar-width";
+const INITIAL_DESKTOP_CENTER_SHIFT_RATIO = 0.5;
+const INITIAL_ZOOM_LEVEL_OFFSET = 1;
+
+const getCssPixelValue = (cssVariableName: string): number => {
+	if (typeof window === "undefined") return 0;
+
+	const rootStyles = getComputedStyle(document.documentElement);
+	const rawValue = rootStyles.getPropertyValue(cssVariableName).trim();
+	if (!rawValue) return 0;
+
+	if (rawValue.endsWith("rem")) {
+		const fontSize = parseFloat(rootStyles.fontSize);
+		const remValue = parseFloat(rawValue);
+		return Number.isFinite(fontSize) && Number.isFinite(remValue)
+			? remValue * fontSize
+			: 0;
+	}
+
+	if (rawValue.endsWith("px")) {
+		const pxValue = parseFloat(rawValue);
+		return Number.isFinite(pxValue) ? pxValue : 0;
+	}
+
+	const numericValue = Number(rawValue);
+	return Number.isFinite(numericValue) ? numericValue : 0;
+};
 
 if (appConfig?.namedProjections?.length) {
 	appConfig.namedProjections.forEach(([name, def]) => {
@@ -28,6 +57,7 @@ const OlMap: FC<OlMapProps> = ({ children }) => {
 	const destroyMap = useMapStore((state) => state.removeMap);
 	const config = useMapStore((state) => state.config);
 	const mapId = useRef<HTMLDivElement>(null);
+	const isMobile = useIsMobile();
 
 	useEffect(() => {
 		if (!config) return;
@@ -50,16 +80,20 @@ const OlMap: FC<OlMapProps> = ({ children }) => {
 			.sort((a, b) => a.zoomLevel - b.zoomLevel)
 			.map((option) => option.resolution);
 
+		const requestedStartZoomLevel = Math.max(
+			0,
+			mapViewConfig.startZoomLevel - INITIAL_ZOOM_LEVEL_OFFSET,
+		);
 		const startZoomLevel = Math.max(
 			0,
-			Math.min(mapViewConfig.startZoomLevel, resolutions.length - 1),
+			Math.min(requestedStartZoomLevel, resolutions.length - 1),
 		);
-		if (startZoomLevel !== mapViewConfig.startZoomLevel) {
+		if (startZoomLevel !== requestedStartZoomLevel) {
 			reportClientTelemetry({
 				level: "warn",
 				event: "map.ol_map.start_zoom.out_of_range",
 				metadata: {
-					requested_zoom_level: mapViewConfig.startZoomLevel,
+					requested_zoom_level: requestedStartZoomLevel,
 					applied_zoom_level: startZoomLevel,
 				},
 			});
@@ -89,6 +123,31 @@ const OlMap: FC<OlMapProps> = ({ children }) => {
 				}),
 			});
 
+			const applyInitialDesktopOffset = () => {
+				if (isMobile) return;
+
+				const mapSize = map.getSize();
+				if (!mapSize) return;
+
+				const sidePanelWidth = getCssPixelValue(
+					INITIAL_DESKTOP_PANEL_WIDTH_VAR,
+				);
+				if (sidePanelWidth <= 0) return;
+
+				const shiftedCenter = map.getCoordinateFromPixel([
+					mapSize[0] / 2 - sidePanelWidth * INITIAL_DESKTOP_CENTER_SHIFT_RATIO,
+					mapSize[1] / 2,
+				]);
+				if (!shiftedCenter) return;
+
+				map.getView().setCenter(shiftedCenter);
+			};
+
+			requestAnimationFrame(() => {
+				map.updateSize();
+				applyInitialDesktopOffset();
+			});
+
 			setMap(map);
 
 			return () => {
@@ -104,7 +163,7 @@ const OlMap: FC<OlMapProps> = ({ children }) => {
 				error,
 			});
 		}
-	}, [config, destroyMap, setMap]);
+	}, [config, destroyMap, isMobile, setMap]);
 
 	return (
 		<div ref={mapId} className="map w-full h-full bg-slate-300">
