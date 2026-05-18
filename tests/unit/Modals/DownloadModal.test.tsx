@@ -82,4 +82,16 @@ describe("DownloadModal", () => {
 		expect(screen.getByText("guest-download-form")).toBeInTheDocument();
 		expect(initializePublicDataMock).toHaveBeenCalledTimes(1);
 	});
+
+	it("hides the guest form in the public download flow for authenticated users", () => {
+		render(<DownloadModal routePath="/download" isAuthenticated />);
+
+		expect(screen.queryByText("guest-download-form")).not.toBeInTheDocument();
+		expect(
+			screen.getByText(
+				"Die Liste ihrer Kulturorte können Sie hier als Excel Tabelle herunterladen.",
+			),
+		).toBeInTheDocument();
+		expect(initializePublicDataMock).toHaveBeenCalledTimes(1);
+	});
 });
