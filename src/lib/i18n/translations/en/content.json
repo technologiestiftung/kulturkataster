@@ -346,7 +346,7 @@
 	"downloadModal": {
 		"acknowledgement": "I have read and understood the legal notice",
 		"chooseFormat": "Select file format",
-		"description": "You can download the list of your cultural venues here as an Excel spreadsheet.",
+		"description": "You can download the list of your cultural venues here in different file formats.",
 		"form": {
 			"datenverwendung": "What will you use the data for?",
 			"email": "Your email address",

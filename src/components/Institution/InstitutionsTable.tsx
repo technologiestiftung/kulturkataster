@@ -17,7 +17,6 @@ import {
 	formatInstitutionDate,
 	getParentCategories,
 	getSubcategories,
-	joinInstitutionIds,
 } from "@/lib/utils/institutionUtils";
 import { buildStreetLine } from "@/lib/utils/formUtils";
 import { Badge } from "../ui/badge";
@@ -793,15 +792,21 @@ export function InstitutionsTable() {
 				cell: ({ row }) => renderTextValue(row.original.source),
 			},
 			{
-				id: "tagIds",
-				header: `${headerLabel("tags", "Tags")} Ids`,
+				id: "tags",
+				header: headerLabel("tags", "Tags"),
 				accessorFn: (row) =>
-					joinInstitutionIds((row.tags ?? []).map((tag) => tag.id)),
+					(row.tags ?? [])
+						.map((tag) => tag.name)
+						.filter((name): name is string => Boolean(name))
+						.join(", ") || "—",
 				enableSorting: true,
 				size: 180,
 				meta: { truncate: true },
 				cell: ({ row }) =>
-					joinInstitutionIds((row.original.tags ?? []).map((tag) => tag.id)),
+					(row.original.tags ?? [])
+						.map((tag) => tag.name)
+						.filter((name): name is string => Boolean(name))
+						.join(", ") || "—",
 			},
 			{
 				accessorKey: "created_at",
@@ -1042,11 +1047,28 @@ export function InstitutionsTable() {
 		),
 	};
 
-	const exportColumnOrder = tableConfig.columns.flatMap((col) => {
-		const key = col.meta?.exportKey;
-		if (!key) return [] as string[];
-		return Array.isArray(key) ? key : [key];
-	});
+	const exportColumnOrder = (() => {
+		const order = Array.from(
+			new Set(
+				tableConfig.columns.flatMap((col) => {
+					const key = col.meta?.exportKey;
+					if (!key) return [] as string[];
+					return Array.isArray(key) ? key : [key];
+				}),
+			),
+		);
+
+		const utilizationStatusIndex = order.indexOf("utilization_status");
+		if (utilizationStatusIndex !== -1) {
+			const utilizationStatusDetails = [
+				"utilization_status_info",
+				"utilization_status_internal_notes",
+			].filter((key) => !order.includes(key));
+			order.splice(utilizationStatusIndex + 1, 0, ...utilizationStatusDetails);
+		}
+
+		return order;
+	})();
 
 	return (
 		<>
@@ -1056,7 +1078,6 @@ export function InstitutionsTable() {
 				onCloseRequest={() => closeDownloadDialog(false)}
 				data={institutions}
 				filename="kulturorte"
-				format="xlsx"
 				translateFn={tEnum}
 				exportColumnOrder={exportColumnOrder}
 				confirmLabel={t("institutionsTable.actions.downloadList", {

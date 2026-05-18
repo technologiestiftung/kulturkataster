@@ -1,8 +1,9 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { DownloadModal } from "@/components/Modals/Pages/DownloadModal";
 
 const initializePublicDataMock = vi.fn();
+const downloadInstitutionsMock = vi.fn();
 
 vi.mock("react-i18next", () => ({
 	useTranslation: () => ({
@@ -31,6 +32,11 @@ vi.mock("@/components/Modals/Modal", () => ({
 
 vi.mock("@/components/FormWrapper/FormWrapper", () => ({
 	FormWrapper: () => <div>guest-download-form</div>,
+}));
+
+vi.mock("@/lib/utils/downloadUtils", () => ({
+	DEFAULT_INSTITUTION_EXPORT_COLUMN_ORDER: ["name"],
+	downloadInstitutions: (...args: unknown[]) => downloadInstitutionsMock(...args),
 }));
 
 vi.mock("@/lib/store/accountStore", () => ({
@@ -74,6 +80,7 @@ vi.mock("@/icons/arrow-narrow-right.svg", () => ({
 describe("DownloadModal", () => {
 	beforeEach(() => {
 		initializePublicDataMock.mockReset();
+		downloadInstitutionsMock.mockReset();
 	});
 
 	it("shows the guest form in the public download flow even if a stale profile exists", () => {
@@ -89,9 +96,66 @@ describe("DownloadModal", () => {
 		expect(screen.queryByText("guest-download-form")).not.toBeInTheDocument();
 		expect(
 			screen.getByText(
-				"Die Liste ihrer Kulturorte können Sie hier als Excel Tabelle herunterladen.",
+				"Die Liste Ihrer Kulturorte können Sie hier in verschiedenen Dateiformaten herunterladen.",
 			),
 		).toBeInTheDocument();
 		expect(initializePublicDataMock).toHaveBeenCalledTimes(1);
+	});
+
+	it("preselects xls and keeps the download button disabled until acknowledged", () => {
+		render(<DownloadModal routePath="/download" isAuthenticated />);
+
+		const downloadButton = screen.getByRole("button", {
+			name: "Liste herunterladen",
+		});
+		expect(screen.getByRole("button", { name: "XLS" })).toHaveAttribute(
+			"aria-pressed",
+			"true",
+		);
+		expect(downloadButton).toBeDisabled();
+
+		fireEvent.click(
+			screen.getByRole("radio", {
+				name: "Ich habe die rechtlichen Hinweise gelesen und verstanden",
+			}),
+		);
+		expect(downloadButton).toBeEnabled();
+	});
+
+	it("allows changing the selected format", () => {
+		render(<DownloadModal routePath="/download" isAuthenticated />);
+
+		fireEvent.click(screen.getByRole("button", { name: "XLSX" }));
+
+		expect(screen.getByRole("button", { name: "XLSX" })).toHaveAttribute(
+			"aria-pressed",
+			"true",
+		);
+		expect(screen.getByRole("button", { name: "XLS" })).toHaveAttribute(
+			"aria-pressed",
+			"false",
+		);
+	});
+
+	it("downloads the selected format", async () => {
+		render(<DownloadModal routePath="/download" isAuthenticated />);
+
+		fireEvent.click(screen.getByRole("button", { name: "CSV" }));
+		fireEvent.click(
+			screen.getByRole("radio", {
+				name: "Ich habe die rechtlichen Hinweise gelesen und verstanden",
+			}),
+		);
+		fireEvent.click(
+			screen.getByRole("button", {
+				name: "Liste herunterladen",
+			}),
+		);
+
+		expect(downloadInstitutionsMock).toHaveBeenCalledWith(
+			expect.objectContaining({
+				format: "csv",
+			}),
+		);
 	});
 });
