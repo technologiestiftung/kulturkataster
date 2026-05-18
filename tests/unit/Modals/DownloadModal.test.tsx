@@ -36,7 +36,8 @@ vi.mock("@/components/FormWrapper/FormWrapper", () => ({
 
 vi.mock("@/lib/utils/downloadUtils", () => ({
 	DEFAULT_INSTITUTION_EXPORT_COLUMN_ORDER: ["name"],
-	downloadInstitutions: (...args: unknown[]) => downloadInstitutionsMock(...args),
+	downloadInstitutions: (...args: unknown[]) =>
+		downloadInstitutionsMock(...args),
 }));
 
 vi.mock("@/lib/store/accountStore", () => ({
