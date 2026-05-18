@@ -6,5 +6,5 @@ export const metadata: Metadata = {
 };
 
 export default function InformationModalPage() {
-	return <InformationModal routePath="/info" returnTo="/" />;
+	return <InformationModal routePath="/info" />;
 }
