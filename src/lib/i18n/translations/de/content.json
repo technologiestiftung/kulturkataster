@@ -346,7 +346,7 @@
 	"downloadModal": {
 		"acknowledgement": "Ich habe die rechtlichen Hinweise gelesen und verstanden",
 		"chooseFormat": "Dateiformat wählen",
-		"description": "Die Liste ihrer Kulturorte können Sie hier als Excel Tabelle herunterladen.",
+		"description": "Die Liste Ihrer Kulturorte können Sie hier in verschiedenen Dateiformaten herunterladen.",
 		"form": {
 			"datenverwendung": "Wofür verwenden Sie die Daten?",
 			"email": "Ihre E-Mail-Adresse",

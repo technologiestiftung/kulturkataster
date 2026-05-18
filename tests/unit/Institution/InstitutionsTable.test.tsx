@@ -5,6 +5,7 @@ import { InstitutionsTable } from "@/components/Institution/InstitutionsTable";
 const pushMock = vi.fn();
 const prefetchMock = vi.fn();
 const dataTableMock = vi.fn();
+const downloadModalMock = vi.fn();
 
 vi.mock("react-i18next", () => ({
 	useTranslation: () => ({
@@ -33,6 +34,13 @@ vi.mock("@/lib/hooks/useLocalePath", () => ({
 vi.mock("@/components/DataTable", () => ({
 	DataTable: ({ config }: { config: unknown }) => {
 		dataTableMock(config);
+		return null;
+	},
+}));
+
+vi.mock("@/components/Modals/Pages/DownloadModal", () => ({
+	DownloadModal: (props: unknown) => {
+		downloadModalMock(props);
 		return null;
 	},
 }));
@@ -125,6 +133,7 @@ describe("InstitutionsTable", () => {
 		pushMock.mockReset();
 		prefetchMock.mockReset();
 		dataTableMock.mockReset();
+		downloadModalMock.mockReset();
 	});
 
 	it("configures search/filter, add and claim actions plus edit/review routing", () => {
@@ -200,5 +209,63 @@ describe("InstitutionsTable", () => {
 		);
 
 		expect(screen.getByText("—")).toBeInTheDocument();
+	});
+
+	it("renders tag names instead of tag ids", () => {
+		render(<InstitutionsTable />);
+
+		const config = dataTableMock.mock.calls[0][0] as {
+			columns: Array<{
+				id?: string;
+				cell?: (args: { row: { original: Record<string, unknown> } }) => unknown;
+			}>;
+		};
+		const tagsColumn = config.columns.find((column) => column.id === "tags");
+
+		expect(tagsColumn?.cell).toBeDefined();
+
+		render(
+			<>
+				{tagsColumn?.cell?.({
+					row: {
+						original: {
+							tags: [
+								{ id: 12, name: "barrier-free" },
+								{ id: 34, name: "late-night" },
+							],
+						},
+					},
+				})}
+			</>,
+		);
+
+		expect(screen.getByText("barrier-free, late-night")).toBeInTheDocument();
+	});
+
+	it("inserts utilization status detail fields into the table-owned export order", () => {
+		render(<InstitutionsTable />);
+
+		expect(downloadModalMock).toHaveBeenCalledTimes(1);
+		const props = downloadModalMock.mock.calls[0][0] as {
+			exportColumnOrder: string[];
+		};
+
+		expect(props.exportColumnOrder).toEqual(
+			expect.arrayContaining([
+				"utilization_status",
+				"utilization_status_info",
+				"utilization_status_internal_notes",
+				"protection_status",
+			]),
+		);
+		expect(
+			props.exportColumnOrder.indexOf("utilization_status_info"),
+		).toBeGreaterThan(props.exportColumnOrder.indexOf("utilization_status"));
+		expect(
+			props.exportColumnOrder.indexOf("utilization_status_info"),
+		).toBeLessThan(props.exportColumnOrder.indexOf("protection_status"));
+		expect(
+			props.exportColumnOrder.indexOf("utilization_status_internal_notes"),
+		).toBeGreaterThan(props.exportColumnOrder.indexOf("utilization_status_info"));
 	});
 });
