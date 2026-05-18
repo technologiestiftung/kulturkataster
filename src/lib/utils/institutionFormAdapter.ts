@@ -133,9 +133,10 @@ export const buildInstitutionFormInitialValues = (
 		established_since: dateToInputValue(resolvedInstitution?.established_since),
 		established_until: dateToInputValue(resolvedInstitution?.established_until),
 		closing_reason: resolvedInstitution?.closing_reason ?? undefined,
-		area: resolvedInstitution?.area ?? undefined,
-		capacity: resolvedInstitution?.capacity ?? undefined,
-		number_of_rooms: resolvedInstitution?.number_of_rooms ?? undefined,
+		area: toOptionalNumber(resolvedInstitution?.area) ?? undefined,
+		capacity: toOptionalNumber(resolvedInstitution?.capacity) ?? undefined,
+		number_of_rooms:
+			toOptionalNumber(resolvedInstitution?.number_of_rooms) ?? undefined,
 		accessibility: resolvedInstitution?.accessibility ?? undefined,
 		cost: resolvedInstitution?.cost ?? undefined,
 		shared_use_allowed: resolvedInstitution?.shared_use_allowed ?? false,

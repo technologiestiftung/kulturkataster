@@ -1,55 +1,67 @@
 import { describe, expect, it } from "vitest";
+import type { Institution } from "@/types/institution";
 import {
 	buildInstitutionForFormFromDraft,
 	buildInstitutionFormInitialValues,
 } from "@/lib/utils/institutionFormAdapter";
 
-describe("buildInstitutionFormInitialValues - shared_use_allowed", () => {
-	const baseInstitution = {
-		categories: [],
-		tags: [],
-		users: [],
-		groups: [],
-		created_at: new Date(),
-		updated_at: new Date(),
-	} as never;
+const baseInstitution = {
+	categories: [],
+	tags: [],
+	users: [],
+	groups: [],
+	created_at: new Date(),
+	updated_at: new Date(),
+} satisfies Partial<Institution>;
 
+const asInstitution = (value: Partial<Institution>) =>
+	value as unknown as Institution;
+
+describe("buildInstitutionFormInitialValues - shared_use_allowed", () => {
 	it("initialises shared_use_allowed as boolean true when institution has true", () => {
-		const result = buildInstitutionFormInitialValues({
-			...baseInstitution,
-			id: 1,
-			name: "Test",
-			shared_use_allowed: true,
-		});
+		const result = buildInstitutionFormInitialValues(
+			asInstitution({
+				...baseInstitution,
+				id: 1,
+				name: "Test",
+				shared_use_allowed: true,
+			}),
+		);
 		expect(result.shared_use_allowed).toBe(true);
 	});
 
 	it("initialises shared_use_allowed as boolean false when institution has false", () => {
-		const result = buildInstitutionFormInitialValues({
-			...baseInstitution,
-			id: 1,
-			name: "Test",
-			shared_use_allowed: false,
-		});
+		const result = buildInstitutionFormInitialValues(
+			asInstitution({
+				...baseInstitution,
+				id: 1,
+				name: "Test",
+				shared_use_allowed: false,
+			}),
+		);
 		expect(result.shared_use_allowed).toBe(false);
 	});
 
 	it("initialises shared_use_allowed as false when institution field is missing", () => {
-		const result = buildInstitutionFormInitialValues({
-			...baseInstitution,
-			id: 1,
-			name: "Test",
-		});
+		const result = buildInstitutionFormInitialValues(
+			asInstitution({
+				...baseInstitution,
+				id: 1,
+				name: "Test",
+			}),
+		);
 		expect(result.shared_use_allowed).toBe(false);
 	});
 
 	it("does not initialise shared_use_allowed as a string", () => {
-		const result = buildInstitutionFormInitialValues({
-			...baseInstitution,
-			id: 1,
-			name: "Test",
-			shared_use_allowed: true,
-		});
+		const result = buildInstitutionFormInitialValues(
+			asInstitution({
+				...baseInstitution,
+				id: 1,
+				name: "Test",
+				shared_use_allowed: true,
+			}),
+		);
 		expect(typeof result.shared_use_allowed).toBe("boolean");
 	});
 });
@@ -146,6 +158,23 @@ describe("buildInstitutionForFormFromDraft", () => {
 		} as never);
 
 		expect(initialValues["address.district"]).toBe("Friedrichshain-Kreuzberg");
+	});
+
+	it("sanitizes legacy placeholder strings in numeric initial values", () => {
+		const initialValues = buildInstitutionFormInitialValues(
+			asInstitution({
+				...baseInstitution,
+				id: 11,
+				name: "Legacy",
+				area: "-" as never,
+				number_of_rooms: "-" as never,
+				capacity: "25" as never,
+			}),
+		);
+
+		expect(initialValues.area).toBeUndefined();
+		expect(initialValues.number_of_rooms).toBeUndefined();
+		expect(initialValues.capacity).toBe(25);
 	});
 
 	it("maps district from flat draft fields into the draft edit institution", () => {

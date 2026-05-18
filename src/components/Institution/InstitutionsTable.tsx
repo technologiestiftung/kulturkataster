@@ -102,6 +102,7 @@ export function InstitutionsTable() {
 	};
 	const renderNumericValue = (value?: number | null) => {
 		if (typeof value !== "number") return renderEmptyValue();
+		if (value === 0) return renderEmptyValue();
 		return value.toString();
 	};
 	const getStatusLabel = (status: InstitutionStatus | string) => {

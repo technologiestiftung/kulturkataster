@@ -8,6 +8,8 @@ describe("buildInstitutionUpdateData", () => {
 				id: 1,
 				name: "Updated institution",
 				address: null,
+				area: null,
+				number_of_rooms: null,
 				owner_type: null,
 				rental_contract_type: null,
 				rental_contract_end: null,
@@ -15,6 +17,7 @@ describe("buildInstitutionUpdateData", () => {
 				utilization_status: null,
 				protection_status: null,
 				shared_use_allowed: null,
+				capacity: null,
 				established_since: null,
 				established_until: null,
 			},
@@ -24,6 +27,8 @@ describe("buildInstitutionUpdateData", () => {
 		expect(result).toEqual(
 			expect.objectContaining({
 				name: "Updated institution",
+				area: null,
+				number_of_rooms: null,
 				owner_type: null,
 				rental_contract_type: null,
 				rental_contract_end: null,
@@ -31,6 +36,7 @@ describe("buildInstitutionUpdateData", () => {
 				utilization_status: null,
 				protection_status: null,
 				shared_use_allowed: null,
+				capacity: null,
 				established_since: null,
 				established_until: null,
 			}),
