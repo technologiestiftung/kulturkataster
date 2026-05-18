@@ -217,7 +217,9 @@ describe("InstitutionsTable", () => {
 		const config = dataTableMock.mock.calls[0][0] as {
 			columns: Array<{
 				id?: string;
-				cell?: (args: { row: { original: Record<string, unknown> } }) => unknown;
+				cell?: (args: {
+					row: { original: Record<string, unknown> };
+				}) => unknown;
 			}>;
 		};
 		const tagsColumn = config.columns.find((column) => column.id === "tags");
@@ -266,6 +268,8 @@ describe("InstitutionsTable", () => {
 		).toBeLessThan(props.exportColumnOrder.indexOf("protection_status"));
 		expect(
 			props.exportColumnOrder.indexOf("utilization_status_internal_notes"),
-		).toBeGreaterThan(props.exportColumnOrder.indexOf("utilization_status_info"));
+		).toBeGreaterThan(
+			props.exportColumnOrder.indexOf("utilization_status_info"),
+		);
 	});
 });
