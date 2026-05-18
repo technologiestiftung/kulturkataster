@@ -485,28 +485,30 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 			if (!f.getId()) f.setId(f.get("id") || `institution-${i}`);
 		});
 
-		const selectedFeature = features.find(
+		const offsetFeatures = processFeaturesForDecluttering(features);
+
+		const offsetSelectedFeature = offsetFeatures.find(
 			(f) =>
 				selectedInstitutionId !== null && f.get("id") === selectedInstitutionId,
 		);
-		const clusterableFeatures = features.filter(
+
+		const offsetClusterableFeatures = offsetFeatures.filter(
 			(f) =>
 				selectedInstitutionId === null || f.get("id") !== selectedInstitutionId,
 		);
 
-		const offsetFeatures = processFeaturesForDecluttering(features);
 		offsetVectorSourceRef.current.clear();
 		offsetVectorSourceRef.current.addFeatures(offsetFeatures);
 
-		const offsetClusterableFeatures =
-			processFeaturesForDecluttering(clusterableFeatures);
 		vectorSourceRef.current.clear();
 		vectorSourceRef.current.addFeatures(offsetClusterableFeatures);
 
 		selectedVectorSourceRef.current?.clear();
 
-		if (selectedFeature) {
-			selectedVectorSourceRef.current?.addFeature(selectedFeature.clone());
+		if (offsetSelectedFeature) {
+			selectedVectorSourceRef.current?.addFeature(
+				offsetSelectedFeature.clone(),
+			);
 		}
 
 		updateLayerSource(map.getView().getZoom() ?? 6);
