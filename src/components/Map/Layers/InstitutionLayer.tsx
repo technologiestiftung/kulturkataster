@@ -85,7 +85,7 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 	zIndex = 10000,
 	distance = 200,
 	minZoomForClustering = 0,
-	maxZoomForClustering = 8,
+	maxZoomForClustering = 6,
 	institutions,
 	proximityThreshold = 40,
 }) => {
