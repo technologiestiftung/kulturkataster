@@ -26,6 +26,7 @@ type DownloadModalProps = {
 	open?: boolean;
 	onCloseRequest?: () => void;
 	returnTo?: string;
+	isAuthenticated?: boolean;
 	hasFooter?: boolean;
 	title?: string;
 	subtitle?: ReactNode;
@@ -48,6 +49,7 @@ export function DownloadModal({
 	open,
 	onCloseRequest,
 	returnTo,
+	isAuthenticated,
 	hasFooter = false,
 	title,
 	subtitle,
@@ -66,7 +68,8 @@ export function DownloadModal({
 	const performClose = useRoutedModalClose({ returnTo });
 	const currentProfile = useAccountStore((s) => s.currentProfile);
 	const isPublicDownloadFlow = data === undefined || data === null;
-	const isLoggedIn = !isPublicDownloadFlow && currentProfile !== null;
+	const isLoggedIn =
+		isAuthenticated ?? (!isPublicDownloadFlow && currentProfile !== null);
 	const initializePublicData = useInstitutionStore(
 		(s) => s.initializePublicData,
 	);
