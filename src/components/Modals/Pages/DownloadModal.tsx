@@ -20,6 +20,7 @@ import { useAccountStore } from "@/lib/store/accountStore";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useRoutedModalClose } from "../useRoutedModalClose";
 import { notifyInstitutionDownload } from "@/server/actions/downloads";
+import { cn } from "@/lib/utils";
 
 type DownloadModalProps = {
 	routePath?: string;
@@ -55,7 +56,7 @@ export function DownloadModal({
 	subtitle,
 	data,
 	filename = "kulturorte",
-	format = "xlsx",
+	format = "xls",
 	translateFn,
 	confirmLabel,
 	cancelLabel,
@@ -84,6 +85,7 @@ export function DownloadModal({
 	const [acknowledgementValue, setAcknowledgementValue] = useState("");
 	const [isDownloading, setIsDownloading] = useState(false);
 	const [guestData, setGuestData] = useState<Record<string, unknown>>({});
+	const [selectedFormat, setSelectedFormat] = useState<ExportFormat>(format);
 	const isGuestFormFilled =
 		!isLoggedIn &&
 		Boolean(
@@ -115,6 +117,7 @@ export function DownloadModal({
 		setAcknowledgementValue("");
 		setIsDownloading(false);
 		setGuestData({});
+		setSelectedFormat(format);
 		if (onCloseRequest) {
 			onCloseRequest();
 			return;
@@ -127,7 +130,7 @@ export function DownloadModal({
 			await downloadInstitutions({
 				data: resolvedData,
 				filename,
-				format,
+				format: selectedFormat,
 				translateFn: translateFn ?? tEnum,
 				columnOrder: exportColumnOrder ?? [
 					...DEFAULT_INSTITUTION_EXPORT_COLUMN_ORDER,
@@ -136,12 +139,12 @@ export function DownloadModal({
 			await onAfterDownload?.({
 				data: resolvedData,
 				filename,
-				format,
+				format: selectedFormat,
 			});
 			if (!onAfterDownload) {
 				await notifyInstitutionDownload({
 					filename,
-					format,
+					format: selectedFormat,
 					institutionCount: resolvedData.length,
 					institutionIds: resolvedData.map((institution) => institution.id),
 					requesterFirstName: String(guestData.vorname ?? ""),
@@ -242,10 +245,36 @@ export function DownloadModal({
 					{t("downloadModal.description", {
 						ns: "content",
 						defaultValue:
-							"Die Liste ihrer Kulturorte können Sie hier als Excel Tabelle herunterladen.",
+							"Die Liste Ihrer Kulturorte können Sie hier in verschiedenen Dateiformaten herunterladen.",
 					})}
 				</p>
 			)}
+			<div className="flex flex-col gap-3">
+				<p className="body2 font-bold">
+					{t("downloadModal.chooseFormat", {
+						ns: "content",
+						defaultValue: "Dateiformat wählen",
+					})}
+				</p>
+				<div className="flex flex-wrap gap-4">
+					{(["xls", "xlsx", "csv"] as const).map((exportFormat) => (
+						<Button
+							key={exportFormat}
+							type="button"
+							variant="outline"
+							fullWidth={false}
+							aria-pressed={selectedFormat === exportFormat}
+							onClick={() => setSelectedFormat(exportFormat)}
+							className={cn(
+								selectedFormat === exportFormat &&
+									"border-primary-dark bg-neutral-5",
+							)}
+						>
+							{exportFormat.toUpperCase()}
+						</Button>
+					))}
+				</div>
+			</div>
 			<div className="flex flex-col md:flex-row gap-3">
 				<Button type="button" variant="outline" onClick={handleClose}>
 					{cancelLabel ?? t("cancel", { ns: "common", defaultValue: "Cancel" })}
