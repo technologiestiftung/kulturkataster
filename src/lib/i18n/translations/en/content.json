@@ -1128,6 +1128,7 @@
 			"noteMeta": "{{author}} on {{date}}",
 			"notesLabel": "Inspection notes",
 			"notesPlaceholder": "Optional notes for submission",
+			"previewHint": "You can add and/or correct further information about the cultural venue by clicking the pencil to switch to edit mode.",
 			"previousNotesLabel": "Previous notes",
 			"requestedBy": "Requested by",
 			"statusLabel": "Status: {{status}}",
