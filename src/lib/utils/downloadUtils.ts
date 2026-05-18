@@ -25,6 +25,8 @@ export const DEFAULT_INSTITUTION_EXPORT_COLUMN_ORDER = [
 	"categories",
 	"subcategories",
 	"utilization_status",
+	"utilization_status_info",
+	"utilization_status_internal_notes",
 	"protection_status",
 	"protection_status_info",
 	"protection_status_internal_notes",
@@ -54,8 +56,6 @@ export const DEFAULT_INSTITUTION_EXPORT_COLUMN_ORDER = [
 	"notes",
 	"internal_notes",
 	"source",
-	"created_at",
-	"updated_at",
 ] as const;
 
 type ExportAudience = "guest" | "internal";
@@ -95,6 +95,12 @@ const GUEST_RESTRICTED_EXPORT_FIELDS: Set<string> = new Set(["email", "phone"]);
 const ALWAYS_EXCLUDED_EXPORT_FIELDS: Set<string> = new Set([
 	"contact_person_email",
 	"contact_person_phone",
+	"contact_person_id",
+	"created_at",
+	"updated_at",
+	"groups",
+	"import_identifier",
+	"users",
 ]);
 
 const isObjectRecord = (value: unknown): value is Record<string, unknown> =>
