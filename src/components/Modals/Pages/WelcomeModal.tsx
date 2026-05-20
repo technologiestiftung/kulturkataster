@@ -156,18 +156,21 @@ export function WelcomeModal() {
 							className="flex gap-4 body2 font-bold justify-end"
 							aria-label={t("footer.welcomeModalLinkListAriaLabel")}
 						>
-							{footerItems.map((item) => (
-								<li key={item.id}>
-									<Link
-										className="body2 font-bold select-none"
-										href={getModalLink(item.id).url}
-										target={getModalLink(item.id).target}
-										rel="noopener noreferrer"
-									>
-										{t(`footer.${item.id}`)}
-									</Link>
-								</li>
-							))}
+							{footerItems.map((item) => {
+								const link = getModalLink(item.id, toLocalePath);
+								return (
+									<li key={item.id}>
+										<Link
+											className="body2 font-bold select-none"
+											href={link.url}
+											target={link.target}
+											rel="noopener noreferrer"
+										>
+											{t(`footer.${item.id}`)}
+										</Link>
+									</li>
+								);
+							})}
 						</ul>
 					</nav>
 				</div>
