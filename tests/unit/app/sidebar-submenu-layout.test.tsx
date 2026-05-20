@@ -24,12 +24,12 @@ vi.mock("react-i18next", () => ({
 	useTranslation: () => ({
 		t: (key: string) =>
 			(
-				{
+				({
 					back: "Zuruck",
 					closeSidebar: "Seitenleiste schliessen",
 					"institution.details": "Details",
 					"accessibility.title": "Barrierefreiheit",
-				} as const
+				}) as const
 			)[key] ?? key,
 	}),
 }));
@@ -79,7 +79,9 @@ describe("SubmenuLayout", () => {
 			</SubmenuLayout>,
 		);
 
-		fireEvent.click(screen.getByRole("button", { name: "Seitenleiste schliessen" }));
+		fireEvent.click(
+			screen.getByRole("button", { name: "Seitenleiste schliessen" }),
+		);
 
 		expect(backMock).not.toHaveBeenCalled();
 		expect(pushMock).toHaveBeenCalledWith("/de/map");
