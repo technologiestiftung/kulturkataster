@@ -48,7 +48,7 @@ export function InformationModal({ routePath }: { routePath?: string }) {
 					}}
 				/>
 			}
-			subtitleClassName="-mt-5 mb-10 font-normal"
+			subtitleClassName="-mt-5 mb-10 font-normal body2"
 			routePath={routePath}
 		>
 			<ReactMarkdown
@@ -60,7 +60,6 @@ export function InformationModal({ routePath }: { routePath?: string }) {
 					a: ({ href, children }) => (
 						<a
 							href={href}
-							target="_blank"
 							rel="noopener noreferrer"
 							className="text-primary-dark hover:text-primary underline"
 						>
@@ -158,7 +157,6 @@ export function InformationModal({ routePath }: { routePath?: string }) {
 																	a: ({ href, children: markdownChildren }) => (
 																		<a
 																			href={href}
-																			target="_blank"
 																			rel="noopener noreferrer"
 																			className="text-primary-dark hover:text-primary underline"
 																		>
@@ -192,6 +190,29 @@ export function InformationModal({ routePath }: { routePath?: string }) {
 					>
 						{t("infoModal.tab3")}
 					</ReactMarkdown>
+					<div className="mt-16">
+						<ReactMarkdown
+							components={{
+								p: ({ children: markdownChildren }) => (
+									<p>{markdownChildren}</p>
+								),
+								a: ({ href, children: markdownChildren }) => (
+									<a
+										href={href}
+										rel="noopener noreferrer"
+										className="text-primary-dark hover:text-primary underline"
+									>
+										{markdownChildren}
+									</a>
+								),
+								strong: ({ children: markdownChildren }) => (
+									<strong className="font-bold">{markdownChildren}</strong>
+								),
+							}}
+						>
+							{t("infoModal.contact")}
+						</ReactMarkdown>
+					</div>
 				</TabsContent>
 			</Tabs>
 		</Modal>
