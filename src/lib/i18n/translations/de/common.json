@@ -318,17 +318,16 @@
 			"successCta": "Fertig",
 			"successMessage": "Wenn ein Konto mit den angegebenen Daten erstellt werden kann, erhalten Sie in Kürze eine E-Mail mit einem Bestätigungslink.",
 			"successTitle": "Vielen Dank!",
+			"register": "Registierung für das Kulturkataster",
 			"termsIntro": "Ich akzeptiere die",
 			"termsLink": "AGB",
 			"termsSeparator": "und habe die",
 			"title": "Registrieren Sie sich hier.",
 			"unavailable": "Registrierung ist derzeit nicht verfügbar.",
 			"newsletterTitle": "Newsletter des Berliner Kulturkatasters",
-			"newsletterUnavailableTitle": "Newsletter-Anmeldung war nicht erfolgreich.",
 			"form": "Anmeldeformular",
-			"newsletterUnavailableDescription": "Bitte probieren Sie es erneut über das <link/> oder kontaktieren Sie uns direkt, wenn Sie den Newsletter abonnieren möchten.",
-			"newsletterSubscriptionSuccessTitle": "Newsletter-Anmeldung war erfolgreich.",
-			"newsletterSubscriptionSuccessDescription": "Vielen Dank! Bitte klicken Sie auf den Link in der E-Mail, die wir Ihnen soeben gesendet haben, um Ihre Anmeldung abzuschließen. Kontrollieren Sie am besten auch Ihren Spam Ordner."
+			"newsletterSubscriptionSuccessTitle": "Anmeldung für den Newsletter zum Kulurkataster",
+			"newsletterSubscriptionSuccessDescription": "Vielen Dank für die Anmeldung zum Newsletter. Bei erfolgreicher Anmeldung erhalten Sie eine E-Mail mit einem Bestätigungslink. Bitte klicken Sie auf den Link, um Ihre Anmeldung abzuschließen. Kontrollieren Sie am Besten auch Ihren Spam-Ordner."
 		},
 		"reset": {
 			"backToLogin": "Zurück zur Anmeldung",

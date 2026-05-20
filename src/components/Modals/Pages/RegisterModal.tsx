@@ -2,7 +2,7 @@
 
 import { RegisterForm } from "@/components/Auth/RegisterForm";
 import { Modal } from "@/components/Modals/Modal";
-import { Trans, useTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -85,6 +85,9 @@ export function RegisterModal({
 										defaultValue: "Vielen Dank!",
 									})}
 								</h1>
+								<p className="text-foreground font-bold">
+									{t("auth.register.register")}
+								</p>
 								<p className="text-foreground">
 									{t("auth.register.successMessage", {
 										defaultValue:
@@ -92,37 +95,16 @@ export function RegisterModal({
 									})}
 								</p>
 							</div>
-							{typeof newsletterRegistration === "string" && (
+							{newsletterRegistration === "success" && (
 								<div className="space-y-4">
-									<h2>{t("auth.register.newsletterTitle")}</h2>
 									<p className="text-foreground font-bold">
+										{t("auth.register.newsletterSubscriptionSuccessTitle")}
+									</p>
+									<p className="text-foreground">
 										{t(
-											`auth.register.newsletter${newsletterRegistration === "success" ? "SubscriptionSuccessTitle" : "UnavailableTitle"}`,
+											"auth.register.newsletterSubscriptionSuccessDescription",
 										)}
 									</p>
-									{newsletterRegistration === "success" ? (
-										<p className="text-foreground">
-											{t(
-												"auth.register.newsletterSubscriptionSuccessDescription",
-											)}
-										</p>
-									) : (
-										<Trans
-											i18nKey="auth.register.newsletterUnavailableDescription"
-											ns="content"
-											components={{
-												link: (
-													<a
-														href={toLocalePath("/newsletter")}
-														rel="noopener noreferrer"
-														className="text-primary-dark hover:text-primary underline"
-													>
-														{t("auth.register.form")}
-													</a>
-												),
-											}}
-										/>
-									)}
 								</div>
 							)}
 							<div>
