@@ -1,6 +1,7 @@
 "use client";
 
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { getModalLink } from "@/lib/utils/modalRouting";
 import KRBLogo from "@/logos/KRB.svg";
 import KukaLargeLogo from "@/logos/kuka-large.svg";
@@ -26,6 +27,7 @@ const footerItems = [
 export function ModalFooter({ hideLinks }: ModalFooterProps) {
 	const { t } = useTranslation("common");
 	const isMobile = useIsMobile();
+	const toLocalePath = useLocalePath();
 
 	return (
 		<>
@@ -67,19 +69,22 @@ export function ModalFooter({ hideLinks }: ModalFooterProps) {
 							<div className="flex flex-col md:flex-row gap-2 md:gap-4 mt-16 font-bold flex-wrap">
 								{footerItems
 									.filter((footerItem) => !hideLinks?.includes(footerItem.id))
-									.map((item) => (
-										<Link
-											key={item.id}
-											className="body2 font-bold select-none"
-											href={getModalLink(item.id).url}
-											target={getModalLink(item.id).target}
-											rel="noopener noreferrer"
-										>
-											{item.id === "signLanguageInformationShort" && isMobile
-												? t(`footer.signLanguageInformation`)
-												: t(`footer.${item.id}`)}
-										</Link>
-									))}
+									.map((item) => {
+										const link = getModalLink(item.id, toLocalePath);
+										return (
+											<Link
+												key={item.id}
+												className="body2 font-bold select-none"
+												href={link.url}
+												target={link.target}
+												rel="noopener noreferrer"
+											>
+												{item.id === "signLanguageInformationShort" && isMobile
+													? t(`footer.signLanguageInformation`)
+													: t(`footer.${item.id}`)}
+											</Link>
+										);
+									})}
 							</div>
 						</div>
 					</div>
