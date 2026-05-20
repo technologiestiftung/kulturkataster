@@ -24,10 +24,6 @@ export function RegisterForm({
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 	const toLocalePath = useLocalePath();
 	const { t } = useTranslation("common");
-	const isDP =
-		typeof window !== "undefined" &&
-		(window.location.host.includes("deploy-preview") ||
-			window.location.host.includes("localhost"));
 
 	const handleSubmit = async (data: Record<string, unknown>) => {
 		const email = String(data.email ?? "");
@@ -53,28 +49,26 @@ export function RegisterForm({
 		setErrorMessage(null);
 
 		try {
-			if (!isDP) {
-				const result = await registerWithEmailPassword({
-					email,
-					password,
-					firstName,
-					lastName,
-					accountType,
-					organizationName,
-					organizationPosition,
-					organizationPhone,
-					districtName,
-					districtOffice,
-					districtPosition,
-					districtPhone,
-					administrationName,
-					administrationPosition,
-					administrationPhone,
-				});
-				if (!result.ok) {
-					setErrorMessage(t("auth.register.unavailable"));
-					return;
-				}
+			const result = await registerWithEmailPassword({
+				email,
+				password,
+				firstName,
+				lastName,
+				accountType,
+				organizationName,
+				organizationPosition,
+				organizationPhone,
+				districtName,
+				districtOffice,
+				districtPosition,
+				districtPhone,
+				administrationName,
+				administrationPosition,
+				administrationPhone,
+			});
+			if (!result.ok) {
+				setErrorMessage(t("auth.register.unavailable"));
+				return;
 			}
 
 			if (subscribeToNewsletter) {
