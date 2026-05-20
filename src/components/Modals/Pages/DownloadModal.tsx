@@ -2,9 +2,10 @@
 
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import { Modal } from "../Modal";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,7 +21,13 @@ import { useAccountStore } from "@/lib/store/accountStore";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useRoutedModalClose } from "../useRoutedModalClose";
 import { notifyInstitutionDownload } from "@/server/actions/downloads";
+import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { cn } from "@/lib/utils";
+
+/** * URL zum Anmelden für den Newsletter. Aktuell wird CleverReach verwendet, da dieser Dienst auch von der Kölner Kulturverwaltung genutzt wird. Sollte dies sich in Zukunft ändern, muss die URL hier angepasst werden.
+ */
+const NEWSLETTER_URL =
+	"https://flow.cleverreach.com/fl/21a1a529-f085-4bd1-8e53-d657c3ccc1de/";
 
 type DownloadModalProps = {
 	routePath?: string;
@@ -67,6 +74,7 @@ export function DownloadModal({
 	const { t: tEnum } = useTranslation("enumMap");
 	const isModalVisible = open ?? true;
 	const performClose = useRoutedModalClose({ returnTo });
+	const toLocalePath = useLocalePath();
 	const currentProfile = useAccountStore((s) => s.currentProfile);
 	const isPublicDownloadFlow = data === undefined || data === null;
 	const isLoggedIn =
@@ -82,7 +90,8 @@ export function DownloadModal({
 	const resolvedData = data ?? allInstitutions ?? filteredInstitutions ?? [];
 	const institutionCount = resolvedData.length;
 	const isHydratingInstitutions = !data && allInstitutions === null;
-	const [acknowledgementValue, setAcknowledgementValue] = useState("");
+	const [hasAcceptedTerms, setHasAcceptedTerms] = useState(false);
+	const [wantsNewsletter, setWantsNewsletter] = useState(false);
 	const [isDownloading, setIsDownloading] = useState(false);
 	const [guestData, setGuestData] = useState<Record<string, unknown>>({});
 	const [selectedFormat, setSelectedFormat] = useState<ExportFormat>(format);
@@ -95,9 +104,7 @@ export function DownloadModal({
 				guestData.datenverwendung,
 		);
 	const canDownload =
-		acknowledgementValue === "accepted" &&
-		!isDownloading &&
-		(isLoggedIn || isGuestFormFilled);
+		hasAcceptedTerms && !isDownloading && (isLoggedIn || isGuestFormFilled);
 
 	useEffect(() => {
 		if (!isModalVisible) return;
@@ -114,7 +121,8 @@ export function DownloadModal({
 	]);
 
 	const handleClose = () => {
-		setAcknowledgementValue("");
+		setHasAcceptedTerms(false);
+		setWantsNewsletter(false);
 		setIsDownloading(false);
 		setGuestData({});
 		setSelectedFormat(format);
@@ -226,8 +234,25 @@ export function DownloadModal({
 		],
 	};
 
+	const actionFormConfig: FormWrapperConfig = {
+		formId: "download-actions-form",
+		fields: [],
+		onSubmit: () => handleDownload(),
+		submitDisabled: !canDownload,
+		submitLabel:
+			confirmLabel ??
+			t("institutionsTable.actions.downloadList", {
+				ns: "content",
+				defaultValue: "Liste herunterladen",
+			}),
+		showCancel: true,
+		cancelLabel:
+			cancelLabel ?? t("cancel", { ns: "common", defaultValue: "Cancel" }),
+		onCancel: handleClose,
+	};
+
 	const content = (
-		<div className="space-y-6 flex flex-col">
+		<div className="flex flex-col">
 			{!isLoggedIn && (
 				<div className="flex flex-col gap-4">
 					<p className="body1">
@@ -249,73 +274,113 @@ export function DownloadModal({
 					})}
 				</p>
 			)}
-			<div className="flex flex-col gap-3">
-				<p className="body2 font-bold">
-					{t("downloadModal.chooseFormat", {
-						ns: "content",
-						defaultValue: "Dateiformat wählen",
-					})}
-				</p>
-				<div className="flex flex-wrap gap-4">
-					{(["xls", "xlsx", "csv"] as const).map((exportFormat) => (
-						<Button
-							key={exportFormat}
-							type="button"
-							variant="outline"
-							fullWidth={false}
-							aria-pressed={selectedFormat === exportFormat}
-							onClick={() => setSelectedFormat(exportFormat)}
-							className={cn(
-								selectedFormat === exportFormat &&
-									"border-primary-dark bg-neutral-5",
-							)}
+			<div className="flex flex-col space-y-4 mt-4">
+				<div className="flex flex-col gap-3">
+					<p className="body2 font-bold">
+						{t("downloadModal.chooseFormat", {
+							ns: "content",
+							defaultValue: "Dateiformat wählen",
+						})}
+					</p>
+					<div className="flex flex-wrap gap-4">
+						{(["xls", "xlsx", "csv"] as const).map((exportFormat) => (
+							<Button
+								key={exportFormat}
+								type="button"
+								variant="outline"
+								fullWidth={false}
+								aria-pressed={selectedFormat === exportFormat}
+								onClick={() => setSelectedFormat(exportFormat)}
+								className={cn(
+									selectedFormat === exportFormat &&
+										"border-primary-dark bg-neutral-5",
+								)}
+							>
+								{exportFormat.toUpperCase()}
+							</Button>
+						))}
+					</div>
+				</div>
+				<div className="flex flex-col gap-3">
+					<div className="flex items-start gap-3">
+						<Checkbox
+							id="download-list-acknowledgement"
+							checked={hasAcceptedTerms}
+							onCheckedChange={(checked) =>
+								setHasAcceptedTerms(checked === true)
+							}
+							required
+							aria-required="true"
+							variant="filter"
+							size="default"
+							className="mt-0.5"
+						/>
+						<Label
+							htmlFor="download-list-acknowledgement"
+							emphasize={false}
+							className="body2 cursor-pointer"
 						>
-							{exportFormat.toUpperCase()}
-						</Button>
-					))}
+							{t("downloadModal.acknowledgementPrefix", {
+								ns: "content",
+								defaultValue: "Ich habe den",
+							})}{" "}
+							<Link
+								href={toLocalePath("/terms")}
+								className="text-primary-dark underline"
+								onClick={(event) => event.stopPropagation()}
+							>
+								{t("downloadModal.acknowledgementLink", {
+									ns: "content",
+									defaultValue: "rechtlichen Hinweis",
+								})}
+							</Link>{" "}
+							{t("downloadModal.acknowledgementSuffix", {
+								ns: "content",
+								defaultValue: "gelesen und verstanden",
+							})}
+							<span className="ml-1">*</span>
+						</Label>
+					</div>
+					{!isLoggedIn && (
+						<div className="flex items-start gap-3">
+							<Checkbox
+								id="download-list-newsletter"
+								checked={wantsNewsletter}
+								onCheckedChange={(checked) =>
+									setWantsNewsletter(checked === true)
+								}
+								variant="filter"
+								size="default"
+								className="mt-0.5"
+							/>
+							<Label
+								htmlFor="download-list-newsletter"
+								emphasize={false}
+								className="body2 cursor-pointer"
+							>
+								{t("auth.register.newsletterOptInPrefix", {
+									ns: "common",
+									defaultValue:
+										"Um auf dem Laufenden zu bleiben, möchte ich auch gleich den",
+								})}{" "}
+								<a
+									href={NEWSLETTER_URL}
+									target="_blank"
+									rel="noreferrer"
+									className="text-primary-dark underline"
+									onClick={(event) => event.stopPropagation()}
+								>
+									{t("auth.register.newsletterLink", {
+										ns: "common",
+										defaultValue: "Newsletter abonnieren.",
+									})}
+								</a>
+							</Label>
+						</div>
+					)}
 				</div>
 			</div>
-			<div className="flex flex-col md:flex-row gap-3">
-				<Button type="button" variant="outline" onClick={handleClose}>
-					{cancelLabel ?? t("cancel", { ns: "common", defaultValue: "Cancel" })}
-				</Button>
-				<Button
-					type="button"
-					disabled={!canDownload}
-					onClick={() => void handleDownload()}
-				>
-					{confirmLabel ??
-						t("institutionsTable.actions.downloadList", {
-							ns: "content",
-							defaultValue: "Liste herunterladen",
-						})}
-				</Button>
-			</div>
-
-			<RadioGroup
-				value={acknowledgementValue}
-				onValueChange={setAcknowledgementValue}
-				className="gap-3"
-			>
-				<div className="flex items-start gap-3">
-					<RadioGroupItem
-						id="download-list-acknowledgement"
-						value="accepted"
-						className="mt-0.5 border-neutral-80"
-					/>
-					<Label
-						htmlFor="download-list-acknowledgement"
-						emphasize={false}
-						className="body2 cursor-pointer mb-8"
-					>
-						{t("downloadModal.acknowledgement", {
-							ns: "content",
-							defaultValue:
-								"Ich habe die rechtlichen Hinweise gelesen und verstanden",
-						})}
-					</Label>
-				</div>
-			</RadioGroup>
+			<FormWrapper config={actionFormConfig} />
 		</div>
 	);
 
