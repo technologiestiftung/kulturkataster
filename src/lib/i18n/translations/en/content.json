@@ -345,6 +345,9 @@
 	},
 	"downloadModal": {
 		"acknowledgement": "I have read and understood the legal notice",
+		"acknowledgementLink": "legal notice",
+		"acknowledgementPrefix": "I have read and understood the",
+		"acknowledgementSuffix": "",
 		"chooseFormat": "Select file format",
 		"description": "You can download the list of your cultural venues here in different file formats.",
 		"form": {

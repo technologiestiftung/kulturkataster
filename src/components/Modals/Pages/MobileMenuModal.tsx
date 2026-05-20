@@ -18,6 +18,7 @@ import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { getModalLink } from "@/lib/utils/modalRouting";
+import Download from "@/icons/download.svg";
 
 const footerItems = [
 	{ id: "about" },
@@ -87,6 +88,12 @@ export function MobileMenuModal() {
 								onClick={() => {
 									router.push(toLocalePath("/list"));
 								}}
+							/>
+							<SubMenuOption
+								key="download"
+								icon={Download}
+								titleKey="download.title"
+								onClick={() => router.push(toLocalePath("/download"))}
 							/>
 							<SubMenuOption
 								key="information"
