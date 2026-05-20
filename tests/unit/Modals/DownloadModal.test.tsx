@@ -31,7 +31,37 @@ vi.mock("@/components/Modals/Modal", () => ({
 }));
 
 vi.mock("@/components/FormWrapper/FormWrapper", () => ({
-	FormWrapper: () => <div>guest-download-form</div>,
+	FormWrapper: ({
+		config,
+	}: {
+		config: {
+			formId?: string;
+			showCancel?: boolean;
+			cancelLabel?: string;
+			onCancel?: () => void;
+			submitLabel?: string;
+			submitDisabled?: boolean;
+			onSubmit?: (data: Record<string, unknown>) => void | Promise<void>;
+		};
+	}) =>
+		config.formId === "guest-download-form" ? (
+			<div>guest-download-form</div>
+		) : (
+			<div>
+				{config.showCancel ? (
+					<button type="button" onClick={config.onCancel}>
+						{config.cancelLabel ?? "Cancel"}
+					</button>
+				) : null}
+				<button
+					type="button"
+					disabled={config.submitDisabled}
+					onClick={() => void config.onSubmit?.({})}
+				>
+					{config.submitLabel ?? "Submit"}
+				</button>
+			</div>
+		),
 }));
 
 vi.mock("@/lib/utils/downloadUtils", () => ({
@@ -68,6 +98,10 @@ vi.mock("@/lib/store/institutionStore", () => ({
 
 vi.mock("@/components/Modals/useRoutedModalClose", () => ({
 	useRoutedModalClose: () => vi.fn(),
+}));
+
+vi.mock("@/lib/hooks/useLocalePath", () => ({
+	useLocalePath: () => (path: string) => `/de${path}`,
 }));
 
 vi.mock("@/server/actions/downloads", () => ({
@@ -116,11 +150,50 @@ describe("DownloadModal", () => {
 		expect(downloadButton).toBeDisabled();
 
 		fireEvent.click(
-			screen.getByRole("radio", {
-				name: "Ich habe die rechtlichen Hinweise gelesen und verstanden",
+			screen.getByRole("checkbox", {
+				name: /Ich habe den rechtlichen Hinweis gelesen und verstanden/i,
 			}),
 		);
 		expect(downloadButton).toBeEnabled();
+	});
+
+	it("renders linked consent copy above the action buttons and hides newsletter for logged-in users", () => {
+		render(<DownloadModal routePath="/download" isAuthenticated />);
+
+		const termsLink = screen.getByRole("link", {
+			name: "rechtlichen Hinweis",
+		});
+		const acknowledgementCheckbox = screen.getByRole("checkbox", {
+			name: /Ich habe den rechtlichen Hinweis gelesen und verstanden/i,
+		});
+		const downloadButton = screen.getByRole("button", {
+			name: "Liste herunterladen",
+		});
+
+		expect(termsLink).toHaveAttribute("href", "/de/terms");
+		expect(
+			screen.queryByRole("link", {
+				name: "Newsletter abonnieren.",
+			}),
+		).not.toBeInTheDocument();
+		expect(
+			acknowledgementCheckbox.compareDocumentPosition(downloadButton) &
+				Node.DOCUMENT_POSITION_FOLLOWING,
+		).not.toBe(0);
+	});
+
+	it("shows newsletter opt-in for guest users", () => {
+		render(<DownloadModal routePath="/download" />);
+
+		const newsletterLink = screen.getByRole("link", {
+			name: "Newsletter abonnieren.",
+		});
+
+		expect(newsletterLink).toHaveAttribute(
+			"href",
+			"https://flow.cleverreach.com/fl/21a1a529-f085-4bd1-8e53-d657c3ccc1de/",
+		);
+		expect(newsletterLink).toHaveAttribute("target", "_blank");
 	});
 
 	it("allows changing the selected format", () => {
@@ -143,8 +216,8 @@ describe("DownloadModal", () => {
 
 		fireEvent.click(screen.getByRole("button", { name: "CSV" }));
 		fireEvent.click(
-			screen.getByRole("radio", {
-				name: "Ich habe die rechtlichen Hinweise gelesen und verstanden",
+			screen.getByRole("checkbox", {
+				name: /Ich habe den rechtlichen Hinweis gelesen und verstanden/i,
 			}),
 		);
 		fireEvent.click(
