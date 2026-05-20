@@ -83,6 +83,7 @@ type FormWrapperSectionFieldConfig = {
 	labelNode?: ReactNode;
 	required?: boolean;
 	requiredMessage?: string;
+	hideRequiredIndicator?: boolean;
 	disabled?: boolean;
 	afterField?: ReactNode;
 	defaultValue?: unknown;
@@ -124,6 +125,7 @@ type FormWrapperNonSectionFieldConfig = {
 	placeholder?: string;
 	required?: boolean;
 	requiredMessage?: string;
+	hideRequiredIndicator?: boolean;
 	errorMessages?: Partial<Record<string, string>>;
 	disabled?: boolean;
 	description?: string;
