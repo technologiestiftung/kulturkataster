@@ -6,6 +6,9 @@ type ModalLink = {
 };
 
 type PathLocalizer = (path: string) => string;
+type ModalLinkOptions = {
+	isMobile?: boolean;
+};
 
 const MODAL_ROUTE_MAP: Record<string, ModalLink> = {
 	about: { url: "/about", target: "_self" },
@@ -32,6 +35,7 @@ const MODAL_ROUTE_MAP: Record<string, ModalLink> = {
 export const getModalLink = (
 	id: string,
 	localizePath?: PathLocalizer,
+	options?: ModalLinkOptions,
 ): ModalLink => {
 	if (!id) {
 		return {
@@ -40,7 +44,12 @@ export const getModalLink = (
 		};
 	}
 
-	const link = MODAL_ROUTE_MAP[id] ?? { url: `/${id}`, target: "_self" };
+	const resolvedId =
+		options?.isMobile && id === "accessibilitySettings" ? "mobileMenu" : id;
+	const link = MODAL_ROUTE_MAP[resolvedId] ?? {
+		url: `/${resolvedId}`,
+		target: "_self",
+	};
 
 	if (link.target === "_self" && localizePath) {
 		return {
