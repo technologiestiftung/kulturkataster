@@ -26,7 +26,8 @@ export function RegisterForm({
 	const { t } = useTranslation("common");
 	const isDP =
 		typeof window !== "undefined" &&
-		window.location.host.includes("deploy-preview");
+		(window.location.host.includes("deploy-preview") ||
+			window.location.host.includes("localhost"));
 
 	const handleSubmit = async (data: Record<string, unknown>) => {
 		const email = String(data.email ?? "");
