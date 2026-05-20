@@ -109,7 +109,6 @@ export function SignLanguageModal({ routePath }: { routePath?: string }) {
 														a: ({ href, children }) => (
 															<a
 																href={href}
-																target="_blank"
 																rel="noopener noreferrer"
 																className="text-primary-dark hover:text-primary underline text-lg"
 															>
