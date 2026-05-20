@@ -73,8 +73,7 @@ export function WelcomeModal() {
 								<ArrowNarrowRight className="stroke-primary-dark size-6" />
 								<a
 									className="underline body2 text-primary-dark font-semibold"
-									target="_blank"
-									href="https://flow.cleverreach.com/fl/21a1a529-f085-4bd1-8e53-d657c3ccc1de/"
+									href="/newsletter"
 								>
 									{t("welcomeModal.newsletter", { ns: "content" })}
 								</a>

@@ -2,12 +2,13 @@
 
 import { RegisterForm } from "@/components/Auth/RegisterForm";
 import { Modal } from "@/components/Modals/Modal";
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { Button } from "@/components/ui/button";
+import { NewsletterSubscriptionStatus } from "@/types/newsletter";
 
 export function RegisterModal({
 	routePath,
@@ -22,6 +23,8 @@ export function RegisterModal({
 	const searchParams = useSearchParams();
 	const toLocalePath = useLocalePath();
 	const [didRegister, setDidRegister] = useState(false);
+	const [newsletterRegistration, setNewsletterRegistration] =
+		useState<NewsletterSubscriptionStatus>(null);
 	const contentRef = useRef<HTMLDivElement>(null);
 	const didRegisterViaUrl = searchParams.get("registered") === "1";
 	const showSuccess = didRegister || didRegisterViaUrl;
@@ -39,8 +42,11 @@ export function RegisterModal({
 		return () => cancelAnimationFrame(rafId);
 	}, [showSuccess]);
 
-	const handleRegisterSuccess = () => {
+	const handleRegisterSuccess = (
+		newsletterRegistrationState: NewsletterSubscriptionStatus,
+	) => {
 		setDidRegister(true);
+		setNewsletterRegistration(newsletterRegistrationState);
 		const params = new URLSearchParams(searchParams.toString());
 		params.set("registered", "1");
 		const query = params.toString();
@@ -86,6 +92,39 @@ export function RegisterModal({
 									})}
 								</p>
 							</div>
+							{typeof newsletterRegistration === "string" && (
+								<div className="space-y-4">
+									<h2>{t("auth.register.newsletterTitle")}</h2>
+									<p className="text-foreground font-bold">
+										{t(
+											`auth.register.newsletter${newsletterRegistration === "success" ? "SubscriptionSuccessTitle" : "UnavailableTitle"}`,
+										)}
+									</p>
+									{newsletterRegistration === "success" ? (
+										<p className="text-foreground">
+											{t(
+												"auth.register.newsletterSubscriptionSuccessDescription",
+											)}
+										</p>
+									) : (
+										<Trans
+											i18nKey="auth.register.newsletterUnavailableDescription"
+											ns="content"
+											components={{
+												link: (
+													<a
+														href={toLocalePath("/newsletter")}
+														rel="noopener noreferrer"
+														className="text-primary-dark hover:text-primary underline"
+													>
+														{t("auth.register.form")}
+													</a>
+												),
+											}}
+										/>
+									)}
+								</div>
+							)}
 							<div>
 								<Button
 									variant="primary"
@@ -101,7 +140,11 @@ export function RegisterModal({
 					</div>
 				) : (
 					<div className="w-full flex flex-1 items-center justify-center">
-						<RegisterForm onSuccess={handleRegisterSuccess} />
+						<RegisterForm
+							onSuccess={(newsletterRegistrationState) =>
+								handleRegisterSuccess(newsletterRegistrationState)
+							}
+						/>
 					</div>
 				)}
 			</div>
