@@ -345,6 +345,9 @@
 	},
 	"downloadModal": {
 		"acknowledgement": "Ich habe die rechtlichen Hinweise gelesen und verstanden",
+		"acknowledgementLink": "rechtlichen Hinweis",
+		"acknowledgementPrefix": "Ich habe den",
+		"acknowledgementSuffix": "gelesen und verstanden",
 		"chooseFormat": "Dateiformat wählen",
 		"description": "Die Liste Ihrer Kulturorte können Sie hier in verschiedenen Dateiformaten herunterladen.",
 		"form": {
