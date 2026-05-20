@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import packageInfo from "../../../package.json";
 import { usePathname } from "next/navigation";
 import { getModalLink } from "@/lib/utils/modalRouting";
+import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import Link from "next/link";
 
 const footerItems = [
@@ -24,6 +25,7 @@ interface FooterProps {
 const Footer: FC<FooterProps> = ({ ariaLabel, envHint }) => {
 	const { t } = useTranslation("common");
 	const pathname = usePathname();
+	const toLocalePath = useLocalePath();
 	const isListRoute = pathname?.replace(/\/$/, "").endsWith("/list");
 
 	if (isListRoute) return <></>;
@@ -42,14 +44,19 @@ const Footer: FC<FooterProps> = ({ ariaLabel, envHint }) => {
 				<ul className="flex gap-4 body2 font-bold">
 					{footerItems.map((item) => (
 						<li key={item.id}>
-							<Link
-								className="body2 font-bold"
-								href={getModalLink(item.id).url}
-								target={getModalLink(item.id).target}
-								rel="noopener noreferrer"
-							>
-								{t(`footer.${item.id}`)}
-							</Link>
+							{(() => {
+								const link = getModalLink(item.id, toLocalePath);
+								return (
+									<Link
+										className="body2 font-bold"
+										href={link.url}
+										target={link.target}
+										rel="noopener noreferrer"
+									>
+										{t(`footer.${item.id}`)}
+									</Link>
+								);
+							})()}
 						</li>
 					))}
 					<li className="body2 font-normal">v{packageInfo.version}</li>

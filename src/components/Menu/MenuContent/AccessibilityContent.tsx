@@ -74,7 +74,7 @@ export function AccessibilityContent() {
 	const toLocalePath = useLocalePath();
 
 	const openModalRoute = (id: string) => {
-		const { url, target } = getModalLink(id);
+		const { url, target } = getModalLink(id, toLocalePath);
 		if (target === "_blank") {
 			if (typeof window !== "undefined") {
 				window.open(url, "_blank", "noopener,noreferrer");
