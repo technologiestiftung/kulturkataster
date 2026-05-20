@@ -72,7 +72,6 @@ export function RegisterForm({
 			}
 
 			if (subscribeToNewsletter) {
-				subscribedToNewsletter = "success";
 				const res = await fetch("/api/newsletter", {
 					method: "POST",
 					headers: {
@@ -83,8 +82,8 @@ export function RegisterForm({
 						name: `${firstName} ${lastName}`,
 					}),
 				});
-				if (!res.ok) {
-					subscribedToNewsletter = "failed";
+				if (res.ok) {
+					subscribedToNewsletter = "success";
 				}
 			}
 

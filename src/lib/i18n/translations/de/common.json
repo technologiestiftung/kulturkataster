@@ -368,7 +368,7 @@
 		},
 		"newsletter": {
 			"consentRequired": "Sie müssen der Verarbeitung Ihrer E-Mail-Adresse für den Newsletter zustimmen.",
-			"consentLabel": "Ja, ich möchte den Newsletter des Berliner Kulturkatasters abonnieren und willige ein, dass meine E‑Mail‑Adresse zu diesem Zweck verarbeitet wird. Meine Einwilligung kann ich jederzeit mit Wirkung für die Zukunft widerrufen.",
+			"consentLabel": "Ja, ich möchte den Newsletter des Berliner Kulturkatasters abonnieren und willige ein, dass meine E‑Mail‑Adresse zu diesem Zweck verarbeitet wird. Meine Einwilligung kann ich jederzeit mit Wirkung für die Zukunft widerrufen. *",
 			"successMessageMail": "Bitte klicken Sie auf den Link in der E-Mail, die wir Ihnen soeben gesendet haben, um Ihre Anmeldung abzuschließen. Kontrollieren Sie am besten auch Ihren Spam Ordner.",
 			"successMessageTitle": "Ihre Anmeldung war erfolgreich",
 			"successMessageDescription": "Ab sofort erhalten Sie unsere Neuigkeiten per E-Mail.",
