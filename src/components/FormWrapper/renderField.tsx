@@ -344,7 +344,9 @@ const renderFieldContent = (
 					<div className="flex items-center justify-between gap-2">
 						<Label htmlFor={field.name} className="text-neutral-80">
 							{field.labelNode ?? resolvedLabel}
-							{field.required && <span className="ml-1">*</span>}
+							{field.required && !field.hideRequiredIndicator && (
+								<span className="ml-1">*</span>
+							)}
 						</Label>
 						{isPrivate ? (
 							<PrivateBadge hoverDescription={resolvedPrivateDescription} />
@@ -602,7 +604,9 @@ const renderFieldContent = (
 					/>
 					<Label htmlFor={field.name} emphasize={false}>
 						{field.labelNode ?? resolvedLabel}
-						{field.required && <span className=" ml-1">*</span>}
+						{field.required && !field.hideRequiredIndicator && (
+							<span className=" ml-1">*</span>
+						)}
 					</Label>
 					{isPrivate ? (
 						<PrivateBadge hoverDescription={resolvedPrivateDescription} />
@@ -620,7 +624,9 @@ const renderFieldContent = (
 				>
 					<Label htmlFor={field.name} className="font-normal">
 						{field.labelNode ?? resolvedLabel}
-						{field.required && <span className=" ml-1">*</span>}
+						{field.required && !field.hideRequiredIndicator && (
+							<span className=" ml-1">*</span>
+						)}
 					</Label>
 					{isPrivate ? (
 						<PrivateBadge hoverDescription={resolvedPrivateDescription} />

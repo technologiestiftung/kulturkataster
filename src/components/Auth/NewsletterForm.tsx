@@ -86,6 +86,7 @@ export function NewsletterForm() {
 						required: true,
 						requiredMessage: t("auth.newsletter.consentRequired"),
 						disabled: isLoading,
+						hideRequiredIndicator: true,
 					},
 				],
 			},
@@ -103,22 +104,24 @@ export function NewsletterForm() {
 						{t("auth.newsletter.successMessageMail")}
 					</p>
 				) : (
-					<Trans
-						i18nKey="auth.newsletter.subtitle"
-						ns="content"
-						components={{
-							link: (
-								<a
-									href="https://dsgvo-info.cortina-consult.de/kulturkataster/"
-									target="_blank"
-									rel="noopener noreferrer"
-									className="text-primary-dark hover:text-primary underline"
-								>
-									{t("auth.newsletter.privacyLink")}
-								</a>
-							),
-						}}
-					/>
+					<div className="font-normal">
+						<Trans
+							i18nKey="auth.newsletter.subtitle"
+							ns="content"
+							components={{
+								link: (
+									<a
+										href="https://dsgvo-info.cortina-consult.de/kulturkataster/"
+										target="_blank"
+										rel="noopener noreferrer"
+										className="text-primary-dark hover:text-primary underline"
+									>
+										{t("auth.newsletter.privacyLink")}
+									</a>
+								),
+							}}
+						/>
+					</div>
 				)}
 			</div>
 
