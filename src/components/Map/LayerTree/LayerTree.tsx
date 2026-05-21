@@ -280,7 +280,7 @@ const FloatingLayerButton = memo(
 
 		return (
 			<div
-				className={`absolute bottom-4 md:block hidden z-25 transition-all duration-200 ${offsetClass}`}
+				className={`absolute bottom-10 md:block hidden z-25 transition-all duration-200 ${offsetClass}`}
 			>
 				<div className="relative">
 					{visibleCount > 1 && (
