@@ -14,12 +14,14 @@ import Link from "next/link";
 import { getModalLink } from "@/lib/utils/modalRouting";
 import { useAppStore } from "@/lib/store/appStore";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export function WelcomeModal() {
 	const { t } = useTranslation(["content", "common"]);
 	const { setFirstTimeUser } = useAppStore();
 	const router = useRouter();
 	const toLocalePath = useLocalePath();
+	const isMobile = useIsMobile();
 
 	const footerItems = [
 		{ id: "accessibility" },
@@ -119,7 +121,11 @@ export function WelcomeModal() {
 								<Button
 									variant="link"
 									onClick={() =>
-										router.push(toLocalePath("/accessibilitySettings"))
+										router.push(
+											getModalLink("accessibilitySettings", toLocalePath, {
+												isMobile,
+											}).url,
+										)
 									}
 									className="underline body2 text-primary-dark font-semibold p-0 md:p-0 underline-offset-1 rounded-none focus-visible:ring-offset-0"
 								>
@@ -156,18 +162,21 @@ export function WelcomeModal() {
 							className="flex gap-4 body2 font-bold justify-end"
 							aria-label={t("footer.welcomeModalLinkListAriaLabel")}
 						>
-							{footerItems.map((item) => (
-								<li key={item.id}>
-									<Link
-										className="body2 font-bold select-none"
-										href={getModalLink(item.id).url}
-										target={getModalLink(item.id).target}
-										rel="noopener noreferrer"
-									>
-										{t(`footer.${item.id}`)}
-									</Link>
-								</li>
-							))}
+							{footerItems.map((item) => {
+								const link = getModalLink(item.id, toLocalePath);
+								return (
+									<li key={item.id}>
+										<Link
+											className="body2 font-bold select-none"
+											href={link.url}
+											target={link.target}
+											rel="noopener noreferrer"
+										>
+											{t(`footer.${item.id}`)}
+										</Link>
+									</li>
+								);
+							})}
 						</ul>
 					</nav>
 				</div>

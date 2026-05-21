@@ -194,9 +194,8 @@ export function ActivityFilters({
 	);
 
 	return (
-		<div className="sticky top-0 z-20 space-y-3  py-2">
-			{/* Mobile: search + filter sheet trigger */}
-			<div className="md:hidden flex items-center gap-2">
+		<div className="sticky top-2 z-20 space-y-3 py-2">
+			<div className="md:hidden flex items-center gap-2 mr-16">
 				<div className="flex-1">
 					<SearchInput
 						value={searchQuery}

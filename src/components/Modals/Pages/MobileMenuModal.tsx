@@ -15,18 +15,9 @@ import { SubMenuOption } from "@/components/Menu/SubMenuOption";
 import MapIcon from "@/icons/map.svg";
 import ListIcon from "@/icons/list.svg";
 import { usePathname, useRouter } from "next/navigation";
-import Link from "next/link";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
-import { getModalLink } from "@/lib/utils/modalRouting";
 import Download from "@/icons/download.svg";
-
-const footerItems = [
-	{ id: "about" },
-	{ id: "imprint" },
-	{ id: "privacy" },
-	{ id: "terms" },
-	{ id: "accessibility" },
-] as const;
+import { ModalFooter } from "../ModalFooter";
 
 export function MobileMenuModal() {
 	const { t } = useTranslation("common");
@@ -108,21 +99,7 @@ export function MobileMenuModal() {
 								</div>
 							</div>
 
-							<div className="space-y-4 mt-auto">
-								<div className="flex flex-col gap-4">
-									{footerItems.map((item) => (
-										<Link
-											key={item.id}
-											className="flex items-center justify-between text-left text-neutral-80"
-											href={getModalLink(item.id).url}
-											target={getModalLink(item.id).target}
-											rel="noopener noreferrer"
-										>
-											<span className="body2">{t(`footer.${item.id}`)}</span>
-										</Link>
-									))}
-								</div>
-							</div>
+							<ModalFooter />
 						</div>
 						<div className="flex shrink-0 gap-4 bg-neutral-10 p-4 justify-between items-center">
 							<p className="body2">{t("footer.projectBy")}</p>
