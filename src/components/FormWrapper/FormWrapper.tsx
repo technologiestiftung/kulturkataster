@@ -287,17 +287,18 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 							confirmLabel={t("close")}
 							onConfirm={() => setFormError(null)}
 						/>
-						<div className="flex items-center justify-end gap-4 mt-4">
+						<div className="flex flex-1 flex-col-reverse items-center w-full justify-center md:justify-end gap-4 mt-4 flex-col md:flex-row">
 							{config.showCancel && (
 								<Button
 									type="button"
 									variant="outline"
+									fullWidth
 									onClick={config.onCancel}
 								>
 									{config.cancelLabel || "Cancel"}
 								</Button>
 							)}
-							<Button type="submit" disabled={config.submitDisabled}>
+							<Button type="submit" disabled={config.submitDisabled} fullWidth>
 								{config.submitLabel || "Submit"}
 							</Button>
 						</div>

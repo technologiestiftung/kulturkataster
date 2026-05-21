@@ -90,8 +90,8 @@ export function ModalFooter({ hideLinks }: ModalFooterProps) {
 					</div>
 				</div>
 			</div>
-			<div className="w-full bg-background flex justify-center">
-				<div className="p-6 mt-4 pb-10 flex-col md:flex md:flex-row md:max-w-5xl space-x-2 md:mb-12 space-y-12 md:space-y-0 items-center">
+			<div className="w-auto bg-background flex justify-center -mx-4 md:mx-0 px-2 md:px-0">
+				<div className="p-6 mt-4 pb-10 flex-col w-full md:w-auto md:flex md:flex-row md:max-w-5xl space-x-2 md:mb-12 space-y-12 md:space-y-0 items-center">
 					<div className="w-full md:w-1/2">
 						<p className="body2 ">
 							{t("footer.credit.text", { ns: "common" })}

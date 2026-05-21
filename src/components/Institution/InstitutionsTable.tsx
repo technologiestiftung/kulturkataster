@@ -274,7 +274,7 @@ export function InstitutionsTable() {
 				accessorKey: "name",
 				header: headerLabel("name", "Name"),
 				enableSorting: true,
-				size: 350,
+				size: 250,
 				meta: { pin: "left", truncate: true, exportKey: "name" },
 				cell: ({ row }) => {
 					const name = row.original.name || "—";
