@@ -94,9 +94,8 @@ describe("StoreAutoRefresh", () => {
 
 		render(<StoreAutoRefresh intervalMs={1_000} />);
 
-		await act(async () => {
-			await vi.advanceTimersByTimeAsync(1_000);
-		});
+		// Only let the immediate refresh settle (no interval advance)
+		await act(async () => {});
 
 		expect(setInstitutions).toHaveBeenCalledWith([{ id: 1 }]);
 		expect(setCategories).not.toHaveBeenCalled();
