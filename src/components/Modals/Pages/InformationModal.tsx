@@ -1,173 +1,220 @@
 "use client";
 
-import TextBlock from "@/components/Content/TextBlock";
-import TextWithLinks from "@/components/Content/TextWithLinks";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { Trans, useTranslation } from "react-i18next";
 import { Modal } from "../Modal";
+import ReactMarkdown from "react-markdown";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { cn } from "@/lib/utils";
+import {
+	Accordion,
+	AccordionContent,
+	AccordionItem,
+	AccordionTrigger,
+} from "@/components/ui/accordion";
 
-interface FaqItem {
+type AccordionEntry = {
 	question: string;
 	answer: string;
-}
+};
 
-interface Faq {
-	title: string;
-	questions: FaqItem[];
-}
-
-interface UsageGuide {
-	title: string;
-	desktop?: string;
-	mobile?: string;
-	description?: string;
-	action?: string;
-	closedPlaces?: string;
-	instructions?: string;
-	submit?: string;
-	review?: string;
-}
-
-interface Usage {
-	title: string;
-	introduction: string;
-	guides: UsageGuide[];
-}
-
-interface Scope {
-	title: string;
-	features: string[];
-	upcomingEnhancements: {
-		title: string;
-		items: string[];
-	};
-}
-
-export function InformationModal({
-	routePath,
-	returnTo,
-}: {
-	routePath?: string;
-	returnTo?: string;
-}) {
+export function InformationModal({ routePath }: { routePath?: string }) {
 	const { t } = useTranslation("content");
 	const toLocalePath = useLocalePath();
 	const institutions = useInstitutionStore((state) => state.allInstitutions);
 	const institutionCount = institutions?.length;
-
-	const introParagraphs = t("informationModal.introduction", {
+	const accordionItems = t("infoModal.accordion", {
 		returnObjects: true,
-	}) as string[];
-	const scope = t("informationModal.scope", { returnObjects: true }) as Scope;
-	const usage = t("informationModal.usage", { returnObjects: true }) as Usage;
-	const faq = t("informationModal.faq", { returnObjects: true }) as Faq;
-
-	const content = (
-		<div className="space-y-10">
-			<div className="space-y-4 pt-4 flex flex-col">
-				<p>
-					<Trans
-						i18nKey="informationModal.simpleLanguageDirect"
-						ns="content"
-						components={{
-							link: (
-								<a
-									href={toLocalePath("/simpleLanguage#infosAndServices")}
-									rel="noopener noreferrer"
-									className="text-primary-dark hover:text-primary underline"
-								>
-									{t("here")}
-								</a>
-							),
-						}}
-					/>
-				</p>
-				{introParagraphs.map((text, index) => (
-					<TextWithLinks key={index} text={text} />
-				))}
-			</div>
-
-			<div className="space-y-4">
-				<TextBlock titleAs="h1" title={scope.title} />
-				<ul
-					className="list-disc pl-5 body2 space-y-1"
-					aria-label={t("informationModal.featuresListAriaLabel")}
-				>
-					{scope.features.map((item, i) => {
-						if (i === 0) {
-							const dynamicText = item.replace(
-								"{{count}}",
-								institutionCount?.toLocaleString("de-DE") ?? "0",
-							);
-							return <li key={i}>{dynamicText}</li>;
-						}
-						return <li key={i}>{item}</li>;
-					})}
-				</ul>
-				<div className="pt-4">
-					<p className="body1 font-bold pb-2">
-						{scope.upcomingEnhancements.title}
-					</p>
-					<ul
-						className="list-disc pl-5 body2 space-y-1"
-						aria-label={t("informationModal.upcomingEnhancementsListAriaLabel")}
-					>
-						{scope.upcomingEnhancements.items.map((item, i) => (
-							<li key={i}>{item}</li>
-						))}
-					</ul>
-				</div>
-			</div>
-
-			<div className="space-y-6">
-				<TextBlock
-					titleAs="h1"
-					titleClassName="mb-2"
-					title={usage.title}
-					text={usage.introduction}
-				/>
-				<div className="space-y-6">
-					{usage.guides.map((guide) => (
-						<div key={guide.title}>
-							<p className="body1 font-bold pb-2">{guide.title}</p>
-							<div className="body2 space-y-2">
-								{guide.description && <p>{guide.description}</p>}
-								{guide.desktop && <p>{guide.desktop}</p>}
-								{guide.mobile && <p>{guide.mobile}</p>}
-								{guide.action && <p>{guide.action}</p>}
-								{guide.closedPlaces && <p>{guide.closedPlaces}</p>}
-								{guide.instructions && <p>{guide.instructions}</p>}
-								{guide.submit && <p>{guide.submit}</p>}
-								{guide.review && <p>{guide.review}</p>}
-							</div>
-						</div>
-					))}
-				</div>
-			</div>
-
-			<div className="space-y-6">
-				<TextBlock titleAs="h1" title={faq.title} />
-				<div className="space-y-6">
-					{faq.questions.map((item) => (
-						<div key={item.question}>
-							<p className="body1 font-bold">{item.question}</p>
-							<TextWithLinks text={item.answer} />
-						</div>
-					))}
-				</div>
-			</div>
-		</div>
-	);
+	}) as AccordionEntry[];
 
 	return (
 		<Modal
-			title={t("informationModal.title")}
-			subtitle={t("informationModal.subtitle")}
+			title={t("infoModal.title")}
+			subtitle={
+				<Trans
+					i18nKey="infoModal.simpleLanguageDirect"
+					ns="content"
+					components={{
+						link: (
+							<a
+								href={toLocalePath("/simpleLanguage#infosAndServices")}
+								rel="noopener noreferrer"
+								className="text-primary-dark hover:text-primary underline"
+							>
+								{t("here")}
+							</a>
+						),
+					}}
+				/>
+			}
+			subtitleClassName="-mt-5 mb-10 font-normal body2"
 			routePath={routePath}
-			returnTo={returnTo}
 		>
-			{content}
+			<ReactMarkdown
+				components={{
+					p: ({ children }) => <p className="mb-3">{children}</p>,
+					strong: ({ children }) => (
+						<strong className="font-bold">{children}</strong>
+					),
+					a: ({ href, children }) => (
+						<a
+							href={href}
+							rel="noopener noreferrer"
+							className="text-primary-dark hover:text-primary underline"
+						>
+							{children}
+						</a>
+					),
+				}}
+			>
+				{t("infoModal.body")}
+			</ReactMarkdown>
+			<Tabs defaultValue="tab1" className="w-full mt-10">
+				<TabsList variant="modalTabs">
+					<TabsTrigger value="tab1">{t("infoModal.tabTitles.0")}</TabsTrigger>
+					<TabsTrigger value="tab2">{t("infoModal.tabTitles.1")}</TabsTrigger>
+					<TabsTrigger value="tab3">{t("infoModal.tabTitles.2")}</TabsTrigger>
+				</TabsList>
+				<TabsContent value="tab1">
+					<ReactMarkdown
+						components={{
+							p: ({ children }) => <p className="mt-8 mb-2">{children}</p>,
+							strong: ({ children }) => (
+								<strong className="font-bold">{children}</strong>
+							),
+							h2: ({ children }) => <h2 className="mb-3 mt-8">{children}</h2>,
+							ul: ({ children }) => (
+								<ul className="list-disc pl-5 space-y-2 body2 mb-3">
+									{children}
+								</ul>
+							),
+							li: ({ children }) => <li className="mb-0">{children}</li>,
+						}}
+					>
+						{t("infoModal.tab1", {
+							count: institutionCount ?? 0,
+						})}
+					</ReactMarkdown>
+				</TabsContent>
+				<TabsContent value="tab2">
+					<ReactMarkdown
+						components={{
+							p: ({ children }) => <p className="mb-2">{children}</p>,
+							h2: ({ children }) => <h2 className="mb-3 mt-8">{children}</h2>,
+							code: ({ children }) => {
+								const value = String(children);
+								if (value.startsWith("image-text-card|")) {
+									const [, src, align, title, rawDescription] =
+										value.split("|");
+									return (
+										<div
+											className={cn(
+												"my-16 flex flex-col gap-6 md:flex-row",
+												align === "right" && "md:flex-row-reverse",
+											)}
+										>
+											<div className="md:w-1/2">
+												<img src={src} alt={title} className="w-full" />
+											</div>
+											<div className="md:w-1/2">
+												<h3 className="font-bold">{title}</h3>
+												<p className="whitespace-pre-line">
+													{rawDescription.replace(/\\n/g, "\n")}
+												</p>
+											</div>
+										</div>
+									);
+								}
+								return <code>{children}</code>;
+							},
+						}}
+					>
+						{t("infoModal.tab2")}
+					</ReactMarkdown>
+				</TabsContent>
+				<TabsContent value="tab3">
+					<ReactMarkdown
+						components={{
+							h2: ({ children }) => <h2 className="mb-6 mt-8">{children}</h2>,
+							code: ({ children }) => {
+								if (children === "accordion") {
+									return (
+										<Accordion type="multiple" className="w-full">
+											{accordionItems.map((item, index) => (
+												<AccordionItem
+													key={item.question}
+													value={`item-${index}`}
+												>
+													<AccordionTrigger>{item.question}</AccordionTrigger>
+													<AccordionContent>
+														<div className="pl-10">
+															<ReactMarkdown
+																components={{
+																	p: ({ children: markdownChildren }) => (
+																		<p>{markdownChildren}</p>
+																	),
+																	a: ({ href, children: markdownChildren }) => (
+																		<a
+																			href={href}
+																			rel="noopener noreferrer"
+																			className="text-primary-dark hover:text-primary underline"
+																		>
+																			{markdownChildren}
+																		</a>
+																	),
+																	strong: ({ children: markdownChildren }) => (
+																		<strong className="font-bold">
+																			{markdownChildren}
+																		</strong>
+																	),
+																	h3: ({ children: markdownChildren }) => (
+																		<p className="body2 font-semibold mt-4 mb-1">
+																			{markdownChildren}
+																		</p>
+																	),
+																}}
+															>
+																{item.answer}
+															</ReactMarkdown>
+														</div>
+													</AccordionContent>
+												</AccordionItem>
+											))}
+										</Accordion>
+									);
+								}
+								return <code>{children}</code>;
+							},
+						}}
+					>
+						{t("infoModal.tab3")}
+					</ReactMarkdown>
+					<div className="mt-16">
+						<ReactMarkdown
+							components={{
+								p: ({ children: markdownChildren }) => (
+									<p>{markdownChildren}</p>
+								),
+								a: ({ href, children: markdownChildren }) => (
+									<a
+										href={href}
+										rel="noopener noreferrer"
+										className="text-primary-dark hover:text-primary underline"
+									>
+										{markdownChildren}
+									</a>
+								),
+								strong: ({ children: markdownChildren }) => (
+									<strong className="font-bold">{markdownChildren}</strong>
+								),
+							}}
+						>
+							{t("infoModal.contact")}
+						</ReactMarkdown>
+					</div>
+				</TabsContent>
+			</Tabs>
 		</Modal>
 	);
 }

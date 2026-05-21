@@ -241,7 +241,7 @@ export function Modal({
 							</DialogTitle>
 						)}
 						{subtitle && (
-							<h2 className={cn("body1", subtitleClassName)}>{subtitle}</h2>
+							<p className={cn("body1", subtitleClassName)}>{subtitle}</p>
 						)}
 						<div className={cn("space-y-4 flex-1", contentWrapperClassName)}>
 							<div className={resolvedContentClassName}>
