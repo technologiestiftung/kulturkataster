@@ -1360,7 +1360,7 @@
 				"videos": [
 					{
 						"src": "https://kulturraeume.berlin/content/uploads/kulturraeume-02akulturkatasterwieunterstuezen.mp4",
-						"sub": "[\"To the participation form\" https://form.formcentric.com/form/fb8189d9-8887-425d-bdd5-4aec08f7d8d5]",
+						"sub": "[\"To the participation form\" /institution]",
 						"title": "A complete cultural register - here's how you can support it"
 					},
 					{
@@ -1706,7 +1706,7 @@
 			"text56": "This is how it works on a cell phone or tablet:",
 			"text57": "Tap the symbol with 3 lines at the top left.",
 			"text59": "If you don't filter anything:",
-			"text6": "Here is the [link https://form.formcentric.com/form/fb8189d9-8887-425d-bdd5-4aec08f7d8d5].",
+			"text6": "Here is the [link /institution].",
 			"text60": "Then all open cultural locations will be shown.",
 			"text62": "You can too",
 			"text63": "show closed places.",

@@ -13,8 +13,14 @@ import {
 import type { FormWrapperConfig } from "@/components/FormWrapper";
 import { AlertDialog } from "@/components/ui/alert-dialog";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
+import { subscribeToNewsletter } from "@/server/actions/newsletter";
+import { NewsletterSubscriptionStatus } from "@/types/newsletter";
 
-export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
+export function RegisterForm({
+	onSuccess,
+}: {
+	onSuccess?: (subscribedToNewsletter: NewsletterSubscriptionStatus) => void;
+}) {
 	const [isLoading, setIsLoading] = useState(false);
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 	const toLocalePath = useLocalePath();
@@ -37,6 +43,8 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
 		const administrationName = String(data.administrationName ?? "");
 		const administrationPosition = String(data.administrationPosition ?? "");
 		const administrationPhone = String(data.administrationPhone ?? "");
+		const wantsNewsletterSubscription = Boolean(data.subscribeNewsletter);
+		let subscribedToNewsletter: NewsletterSubscriptionStatus = null;
 
 		setIsLoading(true);
 		setErrorMessage(null);
@@ -63,7 +71,20 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
 				setErrorMessage(t("auth.register.unavailable"));
 				return;
 			}
-			onSuccess?.();
+
+			if (wantsNewsletterSubscription) {
+				const newsletterResult = await subscribeToNewsletter({
+					email,
+					name: `${firstName} ${lastName}`,
+				});
+				if (newsletterResult.ok) {
+					subscribedToNewsletter = "success";
+				} else {
+					subscribedToNewsletter = "failed";
+				}
+			}
+
+			onSuccess?.(subscribedToNewsletter);
 		} catch {
 			setErrorMessage(t("auth.register.unavailable"));
 		} finally {
@@ -309,26 +330,23 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
 						requiredMessage: t("auth.validation.acceptTermsRequired"),
 						disabled: isLoading,
 					},
-					// {
-					// 	name: "subscribeNewsletter",
-					// 	label: t("auth.register.newsletterOptInPrefix"),
-					// 	labelNode: (
-					// 		<span className="body2 font-normal">
-					// 			{t("auth.register.newsletterOptInPrefix")}{" "}
-					// 			<Link
-					// 				href={
-					// 					"https://flow.cleverreach.com/fl/21a1a529-f085-4bd1-8e53-d657c3ccc1de/"
-					// 				}
-					// 				className="text-primary-dark underline"
-					// 				target="_blank"
-					// 			>
-					// 				{t("auth.register.newsletterLink")}
-					// 			</Link>
-					// 		</span>
-					// 	),
-					// 	type: "checkbox",
-					// 	disabled: isLoading,
-					// },
+					{
+						name: "subscribeNewsletter",
+						label: t("auth.register.newsletterOptInPrefix"),
+						labelNode: (
+							<span className="body2 font-normal">
+								{t("auth.register.newsletterOptInPrefix")}{" "}
+								<Link
+									href="/newsletter"
+									className="text-primary-dark underline"
+								>
+									{t("auth.register.newsletterLink")}
+								</Link>
+							</span>
+						),
+						type: "checkbox",
+						disabled: isLoading,
+					},
 				],
 			},
 		],
