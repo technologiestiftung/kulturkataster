@@ -1,6 +1,6 @@
 {
 	"name": "kulturkataster-frontend",
-	"version": "2.0.30",
+	"version": "2.1.2-dev.13",
 	"private": true,
 	"scripts": {
 		"dev": "next dev",
