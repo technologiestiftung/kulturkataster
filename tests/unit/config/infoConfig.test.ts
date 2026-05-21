@@ -50,13 +50,11 @@ describe("facilityInfoConfig", () => {
 });
 
 describe("organizationInfoConfig", () => {
-	it("includes the parent organization field", () => {
-		expect(organizationInfoConfig).toEqual(
-			expect.arrayContaining([
-				expect.objectContaining({
-					value: "parent_organization",
-				}),
-			]),
-		);
+	it("contains the organization funding fields", () => {
+		expect(organizationInfoConfig.map((field) => field.value)).toEqual([
+			"legal_form",
+			"funding_type",
+			"funding_sources",
+		]);
 	});
 });
