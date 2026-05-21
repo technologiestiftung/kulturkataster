@@ -5,6 +5,7 @@ import { Trans, useTranslation } from "react-i18next";
 import { FormWrapper } from "@/components/FormWrapper";
 import { AlertDialog } from "@/components/ui/alert-dialog";
 import type { FormWrapperConfig } from "@/components/FormWrapper";
+import { subscribeToNewsletter } from "@/server/actions/newsletter";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
@@ -24,18 +25,12 @@ export function NewsletterForm() {
 		setErrorMessage(null);
 
 		try {
-			const res = await fetch("/api/newsletter", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					email,
-					name,
-				}),
+			const result = await subscribeToNewsletter({
+				email,
+				name,
 			});
-			console.log("res :>> ", res);
-			if (!res.ok) {
+
+			if (!result.ok) {
 				throw new Error();
 			}
 			setShowSuccess(true);

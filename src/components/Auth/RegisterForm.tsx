@@ -13,6 +13,7 @@ import {
 import type { FormWrapperConfig } from "@/components/FormWrapper";
 import { AlertDialog } from "@/components/ui/alert-dialog";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
+import { subscribeToNewsletter } from "@/server/actions/newsletter";
 import { NewsletterSubscriptionStatus } from "@/types/newsletter";
 
 export function RegisterForm({
@@ -42,7 +43,7 @@ export function RegisterForm({
 		const administrationName = String(data.administrationName ?? "");
 		const administrationPosition = String(data.administrationPosition ?? "");
 		const administrationPhone = String(data.administrationPhone ?? "");
-		const subscribeToNewsletter = Boolean(data.subscribeNewsletter);
+		const wantsNewsletterSubscription = Boolean(data.subscribeNewsletter);
 		let subscribedToNewsletter: NewsletterSubscriptionStatus = null;
 
 		setIsLoading(true);
@@ -71,19 +72,15 @@ export function RegisterForm({
 				return;
 			}
 
-			if (subscribeToNewsletter) {
-				const res = await fetch("/api/newsletter", {
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({
-						email,
-						name: `${firstName} ${lastName}`,
-					}),
+			if (wantsNewsletterSubscription) {
+				const newsletterResult = await subscribeToNewsletter({
+					email,
+					name: `${firstName} ${lastName}`,
 				});
-				if (res.ok) {
+				if (newsletterResult.ok) {
 					subscribedToNewsletter = "success";
+				} else {
+					subscribedToNewsletter = "failed";
 				}
 			}
 
