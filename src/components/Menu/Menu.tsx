@@ -25,6 +25,7 @@ import ListIcon from "@/icons/list.svg";
 import MapIcon from "@/icons/map.svg";
 import DEIcon from "@/icons/lang/de.svg";
 import ENIcon from "@/icons/lang/en.svg";
+import UserIcon from "@/icons/user.svg";
 import Download from "@/icons/download.svg";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { useAppStore } from "@/lib/store/appStore";
@@ -75,16 +76,16 @@ const menuItems: MenuItem[] = [
 		showInAccount: true,
 		showInMap: true,
 	},
-	// {
-	// 	id: "user",
-	// 	icon: UserIcon,
-	// 	showInMobile: true,
-	// 	showInAccount: true,
-	// 	showInMap: true,
-	// 	label: "user.title",
-	// 	route: "/account",
-	// 	matchPattern: /^\/[^/]+\/account/,
-	// },
+	{
+		id: "user",
+		icon: UserIcon,
+		showInMobile: true,
+		showInAccount: true,
+		showInMap: true,
+		label: "user.title",
+		route: "/account",
+		matchPattern: /^\/[^/]+\/account/,
+	},
 ];
 
 const footerItems: MenuItem[] = [
@@ -118,19 +119,16 @@ const footerItems: MenuItem[] = [
 		showInAccount: false,
 		showInMap: false,
 	},
-	...(process.env.NODE_ENV !== "production"
-		? [
-				{
-					id: "language",
-					icon: DEIcon,
-					label: "language.title",
-					route: "#",
-					showInMobile: false,
-					showInAccount: false,
-					showInMap: false,
-				},
-			]
-		: []),
+
+	{
+		id: "language",
+		icon: DEIcon,
+		label: "language.title",
+		route: "#",
+		showInMobile: false,
+		showInAccount: false,
+		showInMap: false,
+	},
 ];
 
 const isMenuItemActive = (
