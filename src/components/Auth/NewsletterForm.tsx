@@ -1,22 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { Trans, useTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { FormWrapper } from "@/components/FormWrapper";
 import { AlertDialog } from "@/components/ui/alert-dialog";
 import type { FormWrapperConfig } from "@/components/FormWrapper";
 import { subscribeToNewsletter } from "@/server/actions/newsletter";
-import { Button } from "../ui/button";
-import { useRouter } from "next/navigation";
-import { useLocalePath } from "@/lib/hooks/useLocalePath";
 
-export function NewsletterForm() {
+export function NewsletterForm({ onSuccess }: { onSuccess?: () => void }) {
 	const [isLoading, setIsLoading] = useState(false);
-	const [showSuccess, setShowSuccess] = useState(false);
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 	const { t } = useTranslation("common");
-	const router = useRouter();
-	const toLocalePath = useLocalePath();
 
 	const handleSubmit = async (data: Record<string, unknown>) => {
 		const email = String(data.email ?? "");
@@ -33,7 +27,7 @@ export function NewsletterForm() {
 			if (!result.ok) {
 				throw new Error();
 			}
-			setShowSuccess(true);
+			onSuccess?.();
 		} catch {
 			setErrorMessage(t("auth.newsletter.errorFallback"));
 		} finally {
@@ -89,37 +83,7 @@ export function NewsletterForm() {
 	};
 
 	return (
-		<div className="w-full md:max-w-3xl mx-auto">
-			<div className="text-start font-bold mb-10">
-				<h1 className="">
-					{t(`auth.newsletter.${showSuccess ? "thankYou" : "title"}`)}
-				</h1>
-				{showSuccess ? (
-					<p className="text-foreground">
-						{t("auth.newsletter.successMessageMail")}
-					</p>
-				) : (
-					<div className="font-normal">
-						<Trans
-							i18nKey="auth.newsletter.subtitle"
-							ns="content"
-							components={{
-								link: (
-									<a
-										href="https://dsgvo-info.cortina-consult.de/kulturkataster/"
-										target="_blank"
-										rel="noopener noreferrer"
-										className="text-primary-dark hover:text-primary underline"
-									>
-										{t("auth.newsletter.privacyLink")}
-									</a>
-								),
-							}}
-						/>
-					</div>
-				)}
-			</div>
-
+		<div>
 			<AlertDialog
 				title={t("alert.errorInput")}
 				status="error"
@@ -133,20 +97,7 @@ export function NewsletterForm() {
 				confirmLabel={t("close")}
 				onConfirm={() => setErrorMessage(null)}
 			/>
-
-			{showSuccess ? (
-				<Button
-					variant="primary"
-					className="w-full"
-					onClick={() => router.replace(toLocalePath("/map"))}
-				>
-					{t("auth.newsletter.successCta", {
-						defaultValue: "Fertig",
-					})}
-				</Button>
-			) : (
-				<FormWrapper config={formConfig} />
-			)}
+			<FormWrapper config={formConfig} />
 		</div>
 	);
 }
