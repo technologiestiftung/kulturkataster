@@ -445,9 +445,9 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 			: (pinnedOffsets.rightOffsets.get(column.id) ?? 0);
 		return {
 			className: cn(
-				"sticky",
-				isLeft ? "left-0" : "right-0",
-				isHeader ? "z-40 " : "z-30",
+				"md:sticky",
+				isLeft ? "md:left-0" : "md:right-0",
+				isHeader ? "md:z-40" : "md:z-30",
 			),
 			style: { [isLeft ? "left" : "right"]: offset },
 		};
