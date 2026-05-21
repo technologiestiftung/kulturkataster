@@ -21,7 +21,11 @@ type AuthChoiceContentProps = {
 	onGuestContinue: () => void;
 };
 
-function AuthChoiceContent({ t, onGuestContinue }: AuthChoiceContentProps) {
+function AuthChoiceContent({
+	t,
+	onLogin,
+	onGuestContinue,
+}: AuthChoiceContentProps) {
 	return (
 		<div className="my-18 space-y-10">
 			<div>
@@ -39,11 +43,11 @@ function AuthChoiceContent({ t, onGuestContinue }: AuthChoiceContentProps) {
 						{t("institutionDraftIntroModal.choice.login.description")}
 					</p>
 				</div>
-				{/* <div className="flex ">
+				<div className="flex ">
 					<Button variant="primary" onClick={onLogin}>
 						{t("institutionDraftIntroModal.choice.login.cta")}
 					</Button>
-				</div> */}
+				</div>
 			</div>
 			<div className="space-y-2">
 				<div>
@@ -185,7 +189,7 @@ function ContributionSetupContent({
 					</RadioGroup>
 				</div>
 			</div>
-			<div className="flex items-center gap-3">
+			<div className="flex items-center gap-3 flex-col-reverse md:flex-row flex-col">
 				{showBackButton && onBack ? (
 					<Button variant="outline" onClick={onBack}>
 						{t("institutionDraftIntroModal.intro.back")}
