@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
 	detailsInfoConfig,
 	facilityInfoConfig,
+	organizationInfoConfig,
 	sharedUseInfoConfig,
 } from "@/config/infoConfig/configs";
 
@@ -44,6 +45,16 @@ describe("facilityInfoConfig", () => {
 			"area",
 			"number_of_rooms",
 			"capacity",
+		]);
+	});
+});
+
+describe("organizationInfoConfig", () => {
+	it("contains the organization funding fields", () => {
+		expect(organizationInfoConfig.map((field) => field.value)).toEqual([
+			"legal_form",
+			"funding_type",
+			"funding_sources",
 		]);
 	});
 });
