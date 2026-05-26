@@ -47,7 +47,7 @@ const buttonVariants = cva(
 				full: "rounded-full",
 			},
 			fullWidth: {
-				true: "flex-1 w-full md:w-auto",
+				true: "w-full md:flex-1 md:min-w-0",
 				false: "",
 			},
 		},

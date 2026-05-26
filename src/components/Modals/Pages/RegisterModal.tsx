@@ -107,10 +107,10 @@ export function RegisterModal({
 									</p>
 								</div>
 							)}
-							<div>
+							<div className="w-full">
 								<Button
 									variant="primary"
-									className="w-full"
+									fullWidth
 									onClick={() => router.replace(toLocalePath("/login"))}
 								>
 									{t("auth.register.successCta", {
