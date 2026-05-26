@@ -429,7 +429,7 @@ const renderFieldContent = (
 						)}
 					</div>
 					{field.fileRemoveOption ? (
-						<div className="flex items-center space-x-2">
+						<div className="flex items-start space-x-2">
 							<Checkbox
 								id={`${field.name}-remove`}
 								checked={formData[field.fileRemoveOption.fieldName] as boolean}
@@ -565,7 +565,7 @@ const renderFieldContent = (
 					{field.options?.map((option) => (
 						<div
 							key={serializeOptionValue(option.value)}
-							className="flex items-center space-x-2"
+							className="flex items-start space-x-2"
 						>
 							<RadioGroupItem
 								className={cn(
@@ -590,7 +590,7 @@ const renderFieldContent = (
 			{field.type === "checkbox" && (
 				<div
 					className={cn(
-						"flex items-center space-x-2",
+						"flex items-start space-x-2",
 						hasIssue &&
 							"rounded-sm border border-destructive-secondary bg-destructive-secondary/10 p-2",
 					)}
@@ -678,7 +678,7 @@ const renderFieldContent = (
 						field.options?.map((option) => (
 							<div
 								key={option.value as string}
-								className="flex items-center space-x-2"
+								className="flex items-start space-x-2"
 							>
 								<Checkbox
 									id={`${field.name}-${option.value}`}

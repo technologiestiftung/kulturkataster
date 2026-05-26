@@ -158,7 +158,7 @@ function ContributionSetupContent({
 						}
 						className="flex flex-col gap-4"
 					>
-						<div key="new" className="flex items-center space-x-2">
+						<div key="new" className="flex items-start space-x-2">
 							<RadioGroupItem
 								value="new"
 								className="bg-background border-none"
@@ -172,7 +172,7 @@ function ContributionSetupContent({
 								{t("institutionDraftIntroModal.intro.mode.new")}
 							</Label>
 						</div>
-						<div key="edit" className="flex items-center space-x-2">
+						<div key="edit" className="flex items-start space-x-2">
 							<RadioGroupItem
 								value="edit"
 								className="bg-background border-none"
