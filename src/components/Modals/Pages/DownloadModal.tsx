@@ -305,19 +305,18 @@ export function DownloadModal({
 				</div>
 				<div className="flex flex-col gap-3">
 					<div className="space-y-6 flex flex-col my-4">
-						<strong>Vereinbarung über die Datennutzung</strong>
+						<strong>
+							{t("downloadModal.dataUseAgreementTitle", {
+								ns: "content",
+								defaultValue: "Vereinbarung über die Datennutzung",
+							})}
+						</strong>
 						<p className="body2">
-							Ich werde die Daten nicht an Dritte weitergeben, sie
-							ausschließlich im Rahmen der gesetzlichen Vorgaben, insbesondere
-							der DSGVO soweit personenbezogene Daten betroffen sind, sowie nur
-							für die Zwecke des Kulturkatasters nutzen. Zwecke des Kulturkaters
-							sind nicht kommerzieller Natur und sind die systematische
-							Erfassung, Strukturierung und öffentliche Bereitstellung von Daten
-							über Orte kultureller Produktion und Nutzung im Land Berlin, um
-							eine belastbare Datengrundlage für kulturpolitische
-							Entscheidungen, kulturelle Stadtentwicklung sowie für die
-							Zusammenarbeit zwischen Kulturakteur*innen, Verwaltung,
-							Wissenschaft und Öffentlichkeit zu schaffen.
+							{t("downloadModal.dataUseAgreementText", {
+								ns: "content",
+								defaultValue:
+									"Ich werde die Daten nicht an Dritte weitergeben, sie ausschließlich im Rahmen der gesetzlichen Vorgaben, insbesondere der DSGVO soweit personenbezogene Daten betroffen sind, sowie nur für die Zwecke des Kulturkatasters nutzen. Zwecke des Kulturkatasters sind nicht kommerzieller Natur und sind die systematische Erfassung, Strukturierung und öffentliche Bereitstellung von Daten über Orte kultureller Produktion und Nutzung im Land Berlin, um eine belastbare Datengrundlage für kulturpolitische Entscheidungen, kulturelle Stadtentwicklung sowie für die Zusammenarbeit zwischen Kulturakteur*innen, Verwaltung, Wissenschaft und Öffentlichkeit zu schaffen.",
+							})}
 						</p>
 					</div>
 					<div className="flex items-start gap-3">
