@@ -5,11 +5,13 @@ import { loginWithEmailPassword } from "@/server/actions/auth";
 
 const replaceMock = vi.fn();
 const pushMock = vi.fn();
+const prefetchMock = vi.fn();
 
 vi.mock("next/navigation", () => ({
 	useRouter: () => ({
 		push: pushMock,
 		replace: replaceMock,
+		prefetch: prefetchMock,
 	}),
 	usePathname: () => "/de/login",
 }));
@@ -31,6 +33,7 @@ describe("LoginForm", () => {
 		mockedLogin.mockReset();
 		replaceMock.mockReset();
 		pushMock.mockReset();
+		prefetchMock.mockReset();
 	});
 
 	it("uses app router navigation after successful login", async () => {
@@ -58,6 +61,7 @@ describe("LoginForm", () => {
 				"jane@example.com",
 				"password123",
 			);
+			expect(prefetchMock).toHaveBeenCalledWith("/de/account");
 			expect(replaceMock).toHaveBeenCalledWith("/de/account");
 		});
 	});
