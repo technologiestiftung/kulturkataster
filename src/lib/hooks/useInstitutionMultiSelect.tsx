@@ -226,6 +226,7 @@ const useInstitutionMultiSelect = ({
 			categoryCounts={categoryCounts}
 			subcategoryCounts={subcategoryCounts}
 			onFiltersChange={setInstitutionFilters}
+			parentCategorySelectionBehavior="last-child-only"
 		/>
 	);
 
