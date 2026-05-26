@@ -61,9 +61,7 @@ export function LoginForm() {
 
 	const formConfig: FormWrapperConfig = {
 		onSubmit: handleSubmit,
-		submitLabel: isBusy
-			? t("auth.login.submitting")
-			: t("auth.login.submit"),
+		submitLabel: isBusy ? t("auth.login.submitting") : t("auth.login.submit"),
 		submitDisabled: isBusy,
 		layout: { columns: 1 },
 		fields: [
