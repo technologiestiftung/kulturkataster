@@ -6,7 +6,10 @@ import { Card } from "@/components/ui/card";
 import { CategorySection } from "@/components/Filter/CategorySection/CategorySection";
 import ChevronDown from "@/icons/chevron-down.svg";
 import ChevronUp from "@/icons/chevron-up.svg";
-import { getSortedCategories } from "@/lib/utils/filterUtils";
+import {
+	getSortedCategories,
+	getSortedSubcategories,
+} from "@/lib/utils/filterUtils";
 import type { Category, ChildCategory, FilterState } from "@/types";
 
 export type CategorySectionListProps = {
@@ -18,6 +21,10 @@ export type CategorySectionListProps = {
 	collapsible?: boolean;
 	defaultCollapsed?: boolean;
 	categorySectionMode?: "filter" | "selection";
+	parentCategorySelectionBehavior?:
+		| "select-all-children"
+		| "parent-only"
+		| "last-child-only";
 	selectionEmptyLabel?: string;
 	showHeader?: boolean;
 };
@@ -31,6 +38,7 @@ export const CategorySectionList: FC<CategorySectionListProps> = ({
 	collapsible = false,
 	defaultCollapsed = false,
 	categorySectionMode = "filter",
+	parentCategorySelectionBehavior = "select-all-children",
 	selectionEmptyLabel,
 	showHeader = false,
 }) => {
@@ -81,6 +89,62 @@ export const CategorySectionList: FC<CategorySectionListProps> = ({
 		onFiltersChange(normalizedFilters);
 	};
 
+	const resolveParentSelectionSubcategoryKeys = (categoryGroup: Category) => {
+		const groupSubcategoryKeys = (categoryGroup.child_categories ?? []).map(
+			(subcategory: ChildCategory) => subcategory.key,
+		);
+		const nextSubcategories = safeFilters?.child_category_keys.filter(
+			(key) => !groupSubcategoryKeys.includes(key),
+		);
+
+		if (!nextSubcategories) return [];
+		if (parentCategorySelectionBehavior === "parent-only") {
+			return nextSubcategories;
+		}
+		if (parentCategorySelectionBehavior === "last-child-only") {
+			const sortedSubcategories = getSortedSubcategories(
+				categoryGroup,
+				collator,
+				tEnum,
+				() => true,
+			);
+			const lastSubcategory = sortedSubcategories.at(-1);
+			return lastSubcategory
+				? [...nextSubcategories, lastSubcategory.key]
+				: nextSubcategories;
+		}
+		return [...nextSubcategories, ...groupSubcategoryKeys];
+	};
+
+	const isParentCategoryToggleActive = (
+		categoryGroup: Category,
+		selectedSubcategoriesInGroup: ChildCategory[],
+		isCategorySelected: boolean,
+		allSubcategoriesSelected: boolean,
+	) => {
+		if (isCategorySelected || allSubcategoriesSelected) {
+			return true;
+		}
+
+		if (parentCategorySelectionBehavior !== "last-child-only") {
+			return false;
+		}
+
+		const lastSubcategory = getSortedSubcategories(
+			categoryGroup,
+			collator,
+			tEnum,
+			() => true,
+		).at(-1);
+
+		return Boolean(
+			lastSubcategory &&
+				selectedSubcategoriesInGroup.some(
+					(subcategory) => subcategory.key === lastSubcategory.key,
+				),
+		);
+	};
+
 	const toggleCategory = (categoryKey: string) => {
 		if (!safeFilters) return;
 
@@ -100,11 +164,14 @@ export const CategorySectionList: FC<CategorySectionListProps> = ({
 			hasSubcategories &&
 			selectedSubcategoriesInGroup.length ===
 				(categoryGroup.child_categories ?? []).length;
+		const isActiveParentToggle = isParentCategoryToggleActive(
+			categoryGroup,
+			selectedSubcategoriesInGroup,
+			isCategorySelected,
+			allSubcategoriesSelected,
+		);
 
-		if (
-			!(isCategorySelected || allSubcategoriesSelected) &&
-			!openSections.includes(categoryKey)
-		) {
+		if (!isActiveParentToggle && !openSections.includes(categoryKey)) {
 			toggleSection(categoryKey);
 		}
 
@@ -113,7 +180,7 @@ export const CategorySectionList: FC<CategorySectionListProps> = ({
 		);
 
 		if (categorySectionMode === "selection") {
-			if (isCategorySelected || allSubcategoriesSelected) {
+			if (isActiveParentToggle) {
 				const newCategories = safeFilters.category_keys.filter(
 					(c) => c !== categoryKey,
 				);
@@ -131,12 +198,8 @@ export const CategorySectionList: FC<CategorySectionListProps> = ({
 			const newCategories = safeFilters.category_keys.includes(categoryKey)
 				? safeFilters.category_keys
 				: [...safeFilters.category_keys, categoryKey];
-			const newSubcategories = [
-				...safeFilters.child_category_keys.filter(
-					(s) => !groupSubcategoryKeys.includes(s),
-				),
-				...groupSubcategoryKeys,
-			];
+			const newSubcategories =
+				resolveParentSelectionSubcategoryKeys(categoryGroup);
 			updateFilters({
 				...safeFilters,
 				category_keys: newCategories,
@@ -145,7 +208,7 @@ export const CategorySectionList: FC<CategorySectionListProps> = ({
 			return;
 		}
 
-		if (isCategorySelected || allSubcategoriesSelected) {
+		if (isActiveParentToggle) {
 			const newCategories = safeFilters.category_keys.filter(
 				(c) => c !== categoryKey,
 			);
@@ -159,12 +222,8 @@ export const CategorySectionList: FC<CategorySectionListProps> = ({
 				child_category_keys: newSubcategories,
 			});
 		} else {
-			const newSubcategories = [
-				...safeFilters.child_category_keys.filter(
-					(s) => !groupSubcategoryKeys.includes(s),
-				),
-				...groupSubcategoryKeys,
-			];
+			const newSubcategories =
+				resolveParentSelectionSubcategoryKeys(categoryGroup);
 
 			updateFilters({
 				...safeFilters,
