@@ -720,6 +720,9 @@ const renderFieldContent = (
 					collapsible={field.filterPanel.collapsible}
 					defaultCollapsed={field.filterPanel.defaultCollapsed}
 					categorySectionMode={field.filterPanel.categorySectionMode}
+					parentCategorySelectionBehavior={
+						field.filterPanel.parentCategorySelectionBehavior
+					}
 					selectionEmptyLabel={field.filterPanel.selectionEmptyLabel}
 				/>
 			)}
