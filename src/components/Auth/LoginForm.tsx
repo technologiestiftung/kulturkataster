@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { loginWithEmailPassword } from "@/server/actions/auth";
@@ -11,21 +11,26 @@ import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { Button } from "../ui/button";
 
 export function LoginForm() {
-	const [isLoading, setIsLoading] = useState(false);
+	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [isRedirecting, setIsRedirecting] = useState(false);
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 	const router = useRouter();
 	const toLocalePath = useLocalePath();
 	const { t } = useTranslation("common");
 
-	const navigateToAccount = () => {
-		const accountPath = toLocalePath("/account");
-		router.replace(accountPath);
-	};
+	const accountPath = toLocalePath("/account");
+	const isBusy = isSubmitting || isRedirecting;
+
+	useEffect(() => {
+		router.prefetch(accountPath);
+	}, [accountPath, router]);
 
 	const handleSubmit = async (data: Record<string, unknown>) => {
 		const email = String(data.email ?? "");
 		const password = String(data.password ?? "");
-		setIsLoading(true);
+		let shouldKeepBusyState = false;
+		setIsSubmitting(true);
+		setIsRedirecting(false);
 		setErrorMessage(null);
 
 		try {
@@ -42,20 +47,24 @@ export function LoginForm() {
 				setErrorMessage(fallback);
 				return;
 			}
-			navigateToAccount();
+			shouldKeepBusyState = true;
+			setIsRedirecting(true);
+			router.replace(accountPath);
 		} catch {
 			setErrorMessage(t("auth.login.errorFallback"));
 		} finally {
-			setIsLoading(false);
+			if (!shouldKeepBusyState) {
+				setIsSubmitting(false);
+			}
 		}
 	};
 
 	const formConfig: FormWrapperConfig = {
 		onSubmit: handleSubmit,
-		submitLabel: isLoading
+		submitLabel: isBusy
 			? t("auth.login.submitting")
 			: t("auth.login.submit"),
-		submitDisabled: isLoading,
+		submitDisabled: isBusy,
 		layout: { columns: 1 },
 		fields: [
 			{
@@ -69,7 +78,7 @@ export function LoginForm() {
 						type: "email",
 						placeholder: t("auth.login.emailPlaceholder"),
 						required: true,
-						disabled: isLoading,
+						disabled: isBusy,
 					},
 					{
 						name: "password",
@@ -77,7 +86,7 @@ export function LoginForm() {
 						type: "password",
 						placeholder: t("auth.login.passwordPlaceholder"),
 						required: true,
-						disabled: isLoading,
+						disabled: isBusy,
 						afterField: (
 							<div className="flex justify-end">
 								<Button
@@ -87,7 +96,7 @@ export function LoginForm() {
 									size="inline"
 									className="underline body2"
 									onClick={() => router.push(toLocalePath("/forgotPassword"))}
-									disabled={isLoading}
+									disabled={isBusy}
 								>
 									{t("auth.login.forgotPassword")}
 								</Button>
@@ -130,7 +139,7 @@ export function LoginForm() {
 					size="inline"
 					className="underline body2"
 					onClick={() => router.push(toLocalePath("/register"))}
-					disabled={isLoading}
+					disabled={isBusy}
 				>
 					{t("auth.login.signUp")}
 				</Button>
