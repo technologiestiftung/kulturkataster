@@ -125,6 +125,24 @@ vi.mock("@/lib/hooks/useInstitutionTableFilters", () => ({
 		filteredTableRows: tableRows,
 		categoryCounts: {},
 		subcategoryCounts: {},
+		downloadableInstitutions: [
+			{
+				id: 100,
+				name: "Institution Alpha",
+				status: "public",
+				email: null,
+				phone: null,
+				website: null,
+				parent_organization: null,
+				address: null,
+				categories: [],
+				tags: [],
+				users: [],
+				groups: [],
+				created_at: new Date("2025-01-01"),
+				updated_at: new Date("2025-01-01"),
+			},
+		],
 	}),
 }));
 
@@ -271,5 +289,16 @@ describe("InstitutionsTable", () => {
 		).toBeGreaterThan(
 			props.exportColumnOrder.indexOf("utilization_status_info"),
 		);
+	});
+
+	it("passes only downloadable filtered institutions to the download modal", () => {
+		render(<InstitutionsTable />);
+
+		expect(downloadModalMock).toHaveBeenCalledTimes(1);
+		const props = downloadModalMock.mock.calls[0][0] as {
+			data: Array<{ id: number }>;
+		};
+
+		expect(props.data.map((institution) => institution.id)).toEqual([100]);
 	});
 });

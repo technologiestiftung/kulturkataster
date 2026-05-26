@@ -39,6 +39,7 @@ import Edit from "@/icons/edit.svg";
 import { useInstitutionPrivateFieldResolver } from "@/lib/hooks/useInstitutionPrivateFieldResolver";
 import { DownloadModal } from "@/components/Modals/Pages/DownloadModal";
 import { notifyInstitutionDownload } from "@/server/actions/downloads";
+import type { ExportFormat } from "@/lib/utils/downloadUtils";
 
 type InstitutionsFilterPanelProps = {
 	filters: FilterState;
@@ -217,15 +218,20 @@ export function InstitutionsTable() {
 		filteredTableRows,
 		categoryCounts,
 		subcategoryCounts,
+		downloadableInstitutions,
 	} = useInstitutionTableFilters(tableRows, filterCategoryGroups);
-	const handleDownloadNotification = useCallback(async () => {
+	const handleDownloadNotification = useCallback(async (args: {
+		data: Institution[];
+		filename: string;
+		format: ExportFormat;
+	}) => {
 		await notifyInstitutionDownload({
-			filename: "kulturorte",
-			format: "xlsx",
-			institutionCount: institutions.length,
-			institutionIds: institutions.map((institution) => institution.id),
+			filename: args.filename,
+			format: args.format,
+			institutionCount: args.data.length,
+			institutionIds: args.data.map((institution) => institution.id),
 		});
-	}, [institutions]);
+	}, []);
 	const closeDownloadDialog = useCallback((open: boolean) => {
 		setIsDownloadDialogOpen(open);
 	}, []);
@@ -1122,7 +1128,7 @@ export function InstitutionsTable() {
 			<DownloadModal
 				open={isDownloadDialogOpen}
 				onCloseRequest={() => closeDownloadDialog(false)}
-				data={institutions}
+				data={downloadableInstitutions}
 				filename="kulturorte"
 				translateFn={tEnum}
 				exportColumnOrder={exportColumnOrder}
