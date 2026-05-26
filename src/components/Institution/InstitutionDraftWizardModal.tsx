@@ -762,6 +762,7 @@ function InstitutionDraftWizardContent({
 								categoryGroups,
 								districts: [],
 								categorySectionMode: "selection",
+								parentCategorySelectionBehavior: "last-child-only",
 								showSummary: false,
 								showDistricts: false,
 								showClosedToggle: false,

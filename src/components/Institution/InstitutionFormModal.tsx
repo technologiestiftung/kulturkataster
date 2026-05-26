@@ -297,6 +297,7 @@ const buildInstitutionFormConfig = ({
 							collapsible: true,
 							defaultCollapsed: true,
 							categorySectionMode: "selection",
+							parentCategorySelectionBehavior: "last-child-only",
 							showSummary: false,
 							showDistricts: false,
 							showClosedToggle: false,
