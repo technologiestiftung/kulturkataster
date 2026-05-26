@@ -93,8 +93,7 @@ vi.mock("@/lib/store/institutionStore", () => ({
 			allInstitutions: Array<{ id: number; name: string }> | null;
 			isLoading: boolean;
 		}) => unknown,
-	) =>
-		selector(institutionStoreState),
+	) => selector(institutionStoreState),
 }));
 
 vi.mock("@/components/Modals/useRoutedModalClose", () => ({
@@ -238,7 +237,9 @@ describe("DownloadModal", () => {
 		institutionStoreState.filteredInstitutions = [
 			{ id: 1, name: "Filtered Institution" },
 		];
-		institutionStoreState.allInstitutions = [{ id: 2, name: "All Institution" }];
+		institutionStoreState.allInstitutions = [
+			{ id: 2, name: "All Institution" },
+		];
 
 		render(<DownloadModal routePath="/download" isAuthenticated />);
 

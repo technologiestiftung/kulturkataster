@@ -220,18 +220,21 @@ export function InstitutionsTable() {
 		subcategoryCounts,
 		downloadableInstitutions,
 	} = useInstitutionTableFilters(tableRows, filterCategoryGroups);
-	const handleDownloadNotification = useCallback(async (args: {
-		data: Institution[];
-		filename: string;
-		format: ExportFormat;
-	}) => {
-		await notifyInstitutionDownload({
-			filename: args.filename,
-			format: args.format,
-			institutionCount: args.data.length,
-			institutionIds: args.data.map((institution) => institution.id),
-		});
-	}, []);
+	const handleDownloadNotification = useCallback(
+		async (args: {
+			data: Institution[];
+			filename: string;
+			format: ExportFormat;
+		}) => {
+			await notifyInstitutionDownload({
+				filename: args.filename,
+				format: args.format,
+				institutionCount: args.data.length,
+				institutionIds: args.data.map((institution) => institution.id),
+			});
+		},
+		[],
+	);
 	const closeDownloadDialog = useCallback((open: boolean) => {
 		setIsDownloadDialogOpen(open);
 	}, []);
