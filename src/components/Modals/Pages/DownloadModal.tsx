@@ -21,13 +21,9 @@ import { useAccountStore } from "@/lib/store/accountStore";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useRoutedModalClose } from "../useRoutedModalClose";
 import { notifyInstitutionDownload } from "@/server/actions/downloads";
+import { subscribeToNewsletter } from "@/server/actions/newsletter";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { cn } from "@/lib/utils";
-
-/** * URL zum Anmelden für den Newsletter. Aktuell wird CleverReach verwendet, da dieser Dienst auch von der Kölner Kulturverwaltung genutzt wird. Sollte dies sich in Zukunft ändern, muss die URL hier angepasst werden.
- */
-const NEWSLETTER_URL =
-	"https://flow.cleverreach.com/fl/21a1a529-f085-4bd1-8e53-d657c3ccc1de/";
 
 type DownloadModalProps = {
 	routePath?: string;
@@ -159,6 +155,12 @@ export function DownloadModal({
 					requesterLastName: String(guestData.nachname ?? ""),
 					requesterEmail: String(guestData.email ?? ""),
 					usagePurpose: String(guestData.datenverwendung ?? ""),
+				});
+			}
+			if (!isLoggedIn && wantsNewsletter) {
+				await subscribeToNewsletter({
+					email: String(guestData.email ?? ""),
+					name: `${String(guestData.vorname ?? "")} ${String(guestData.nachname ?? "")}`.trim(),
 				});
 			}
 			handleClose();
@@ -363,10 +365,8 @@ export function DownloadModal({
 									defaultValue:
 										"Um auf dem Laufenden zu bleiben, möchte ich auch gleich den",
 								})}{" "}
-								<a
-									href={NEWSLETTER_URL}
-									target="_blank"
-									rel="noreferrer"
+								<Link
+									href={toLocalePath("/newsletter")}
 									className="text-primary-dark underline"
 									onClick={(event) => event.stopPropagation()}
 								>
@@ -374,7 +374,7 @@ export function DownloadModal({
 										ns: "common",
 										defaultValue: "Newsletter abonnieren.",
 									})}
-								</a>
+								</Link>
 							</Label>
 						</div>
 					)}
