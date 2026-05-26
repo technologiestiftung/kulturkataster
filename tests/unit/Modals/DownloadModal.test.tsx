@@ -189,11 +189,8 @@ describe("DownloadModal", () => {
 			name: "Newsletter abonnieren.",
 		});
 
-		expect(newsletterLink).toHaveAttribute(
-			"href",
-			"https://flow.cleverreach.com/fl/21a1a529-f085-4bd1-8e53-d657c3ccc1de/",
-		);
-		expect(newsletterLink).toHaveAttribute("target", "_blank");
+		expect(newsletterLink).toHaveAttribute("href", "/de/newsletter");
+		expect(newsletterLink).not.toHaveAttribute("target");
 	});
 
 	it("allows changing the selected format", () => {
