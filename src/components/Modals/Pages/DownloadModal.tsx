@@ -83,7 +83,7 @@ export function DownloadModal({
 	);
 	const allInstitutions = useInstitutionStore((s) => s.allInstitutions);
 	const isInstitutionStoreLoading = useInstitutionStore((s) => s.isLoading);
-	const resolvedData = data ?? allInstitutions ?? filteredInstitutions ?? [];
+	const resolvedData = data ?? filteredInstitutions ?? allInstitutions ?? [];
 	const institutionCount = resolvedData.length;
 	const isHydratingInstitutions = !data && allInstitutions === null;
 	const [hasAcceptedTerms, setHasAcceptedTerms] = useState(false);
@@ -304,6 +304,22 @@ export function DownloadModal({
 					</div>
 				</div>
 				<div className="flex flex-col gap-3">
+					<div className="space-y-6 flex flex-col my-4">
+						<strong>Vereinbarung über die Datennutzung</strong>
+						<p className="body2">
+							Ich werde die Daten nicht an Dritte weitergeben, sie
+							ausschließlich im Rahmen der gesetzlichen Vorgaben, insbesondere
+							der DSGVO soweit personenbezogene Daten betroffen sind, sowie nur
+							für die Zwecke des Kulturkatasters nutzen. Zwecke des Kulturkaters
+							sind nicht kommerzieller Natur und sind die systematische
+							Erfassung, Strukturierung und öffentliche Bereitstellung von Daten
+							über Orte kultureller Produktion und Nutzung im Land Berlin, um
+							eine belastbare Datengrundlage für kulturpolitische
+							Entscheidungen, kulturelle Stadtentwicklung sowie für die
+							Zusammenarbeit zwischen Kulturakteur*innen, Verwaltung,
+							Wissenschaft und Öffentlichkeit zu schaffen.
+						</p>
+					</div>
 					<div className="flex items-start gap-3">
 						<Checkbox
 							id="download-list-acknowledgement"

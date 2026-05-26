@@ -81,6 +81,13 @@ type ExportFieldMeta = {
 	permissionField: string | null;
 };
 
+const EXCEL_NOTICE_ROWS = 2;
+const EXCEL_NOTICE_MERGE_END_COLUMN = 3;
+const EXCEL_DOWNLOAD_NOTICE_URL =
+	"https://www.kulturkataster.berlin/de/download";
+const EXCEL_NOTICE_TEXT =
+	"Die Daten stammen vom Berliner Kulturkataster. Bitte benennen Sie bei Verwendung das Kulturkataster als Download-Quelle und beachten Sie die rechtlichen Hinweise. www.kulturkataster.berlin Ein Projekt der Kulturraum Berlin gGmbH";
+
 const enumKeyMappings: Record<string, string> = {
 	categories: "category",
 	subcategories: "category",
@@ -508,45 +515,107 @@ function generateCSV(data: Record<string, string>[]): string {
 	return BOM + [csvHeaders, ...csvRows].join("\r\n");
 }
 
-function generateExcelBuffer(
+function applyExcelNotice(ws: XLSX.WorkSheet) {
+	ws["!merges"] = [
+		...(ws["!merges"] ?? []),
+		{
+			s: { r: 0, c: 0 },
+			e: { r: 0, c: EXCEL_NOTICE_MERGE_END_COLUMN },
+		},
+	];
+
+	ws.A1 = {
+		t: "s",
+		v: EXCEL_NOTICE_TEXT,
+		l: {
+			Target: EXCEL_DOWNLOAD_NOTICE_URL,
+			Tooltip: EXCEL_DOWNLOAD_NOTICE_URL,
+		},
+		s: {
+			font: {
+				name: "Arial",
+				sz: 12,
+				bold: true,
+				color: { rgb: "000000" },
+			},
+			alignment: {
+				horizontal: "left",
+				vertical: "top",
+				wrapText: true,
+			},
+		},
+	};
+
+	ws["!rows"] = [{ hpt: 44 }, { hpt: 8 }];
+}
+
+function applyExcelHeaderStyle(ws: XLSX.WorkSheet, headers: string[]) {
+	headers.forEach((_, colIndex) => {
+		const cellAddress = XLSX.utils.encode_cell({
+			r: EXCEL_NOTICE_ROWS,
+			c: colIndex,
+		});
+		if (ws[cellAddress]) {
+			ws[cellAddress].s = {
+				font: {
+					name: "Arial",
+					sz: 11,
+					bold: true,
+				},
+				fill: {
+					patternType: "solid",
+					fgColor: { rgb: "FFFFFF" },
+				},
+				alignment: {
+					horizontal: "center",
+					vertical: "center",
+				},
+				border: {
+					bottom: { style: "thin", color: { rgb: "000000" } },
+				},
+			};
+		}
+	});
+}
+
+function applyExcelColumnWidths(
+	ws: XLSX.WorkSheet,
+	data: Record<string, string>[],
+) {
+	if (data.length === 0) {
+		ws["!cols"] = [{ wch: 60 }, { wch: 18 }, { wch: 18 }, { wch: 18 }];
+		return;
+	}
+
+	const headers = Object.keys(data[0]);
+	ws["!cols"] = headers.map((header, colIndex) => {
+		const maxContentLength = Math.max(
+			header.length,
+			...data.map((row) => String(row[header] ?? "").length),
+		);
+		const minimumWidth = colIndex === 0 ? 30 : 14;
+		const maximumWidth = colIndex === 0 ? 42 : 32;
+		return {
+			wch: Math.min(Math.max(maxContentLength + 2, minimumWidth), maximumWidth),
+		};
+	});
+}
+
+export function generateExcelBuffer(
 	data: Record<string, string>[],
 	format: "xlsx" | "xls",
 ): ArrayBuffer {
-	if (data.length === 0) {
-		const wb = XLSX.utils.book_new();
-		const ws = XLSX.utils.json_to_sheet([]);
-		XLSX.utils.book_append_sheet(wb, ws, "Kulturorte");
-		return XLSX.write(wb, { bookType: format, type: "array" });
-	}
-
 	const wb = XLSX.utils.book_new();
-	const ws = XLSX.utils.json_to_sheet(data);
+	const ws = XLSX.utils.aoa_to_sheet([]);
+	applyExcelNotice(ws);
+
 	if (data.length > 0) {
-		const headers = Object.keys(data[0]);
-		headers.forEach((_, colIndex) => {
-			const cellAddress = XLSX.utils.encode_cell({ r: 0, c: colIndex });
-			if (ws[cellAddress]) {
-				ws[cellAddress].s = {
-					font: {
-						name: "Arial",
-						sz: 11,
-						bold: true,
-					},
-					fill: {
-						patternType: "solid",
-						fgColor: { rgb: "FFFFFF" },
-					},
-					alignment: {
-						horizontal: "center",
-						vertical: "center",
-					},
-					border: {
-						bottom: { style: "thin", color: { rgb: "000000" } },
-					},
-				};
-			}
+		XLSX.utils.sheet_add_json(ws, data, {
+			origin: `A${EXCEL_NOTICE_ROWS + 1}`,
 		});
+		applyExcelHeaderStyle(ws, Object.keys(data[0]));
 	}
+	applyExcelColumnWidths(ws, data);
 
 	XLSX.utils.book_append_sheet(wb, ws, "Kulturorte");
 	return XLSX.write(wb, { bookType: format, type: "array" });

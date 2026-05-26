@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
+import * as XLSX from "xlsx-js-style";
 import {
 	DEFAULT_INSTITUTION_EXPORT_COLUMN_ORDER,
+	generateExcelBuffer,
 	prepareDataForExport,
 } from "@/lib/utils/downloadUtils";
 import type { Institution } from "@/types";
@@ -262,5 +264,37 @@ describe("prepareDataForExport", () => {
 			"Contact Person First Name",
 			"Contact Person Last Name",
 		]);
+	});
+});
+
+describe("generateExcelBuffer", () => {
+	it("adds the Kulturkataster notice above the exported table", () => {
+		const buffer = generateExcelBuffer(
+			[
+				{
+					Status: "Öffentlich",
+					ID: "2646",
+					Kulturort: "Alpha",
+					Webseite: "https://example.de",
+				},
+			],
+			"xlsx",
+		);
+		const workbook = XLSX.read(buffer, { type: "array", cellStyles: true });
+		const worksheet = workbook.Sheets.Kulturorte;
+
+		expect(worksheet.A1?.v).toBe(
+			"Die Daten stammen vom Berliner Kulturkataster. Bitte benennen Sie bei Verwendung das Kulturkataster als Download-Quelle und beachten Sie die rechtlichen Hinweise. www.kulturkataster.berlin Ein Projekt der Kulturraum Berlin gGmbH",
+		);
+		expect(worksheet.A1?.l?.Target).toBe(
+			"https://www.kulturkataster.berlin/de/download",
+		);
+		expect(worksheet.A3?.v).toBe("Status");
+		expect(worksheet.B3?.v).toBe("ID");
+		expect(worksheet.A4?.v).toBe("Öffentlich");
+		expect(worksheet["!merges"]).toEqual(
+			expect.arrayContaining([{ s: { r: 0, c: 0 }, e: { r: 0, c: 3 } }]),
+		);
+		expect(worksheet["!cols"]?.[0]?.wch).toBeGreaterThanOrEqual(30);
 	});
 });
