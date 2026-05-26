@@ -29,6 +29,10 @@ export type FilterPanelProps = {
 	collapsible?: boolean;
 	defaultCollapsed?: boolean;
 	categorySectionMode?: "filter" | "selection";
+	parentCategorySelectionBehavior?:
+		| "select-all-children"
+		| "parent-only"
+		| "last-child-only";
 	selectionEmptyLabel?: string;
 };
 
@@ -49,6 +53,7 @@ export const FilterPanel: FC<FilterPanelProps> = ({
 	collapsible = false,
 	defaultCollapsed = false,
 	categorySectionMode = "filter",
+	parentCategorySelectionBehavior = "select-all-children",
 	selectionEmptyLabel,
 }) => {
 	const { t } = useTranslation(["content", "common"]);
@@ -197,6 +202,7 @@ export const FilterPanel: FC<FilterPanelProps> = ({
 				collapsible={collapsible}
 				defaultCollapsed={defaultCollapsed}
 				categorySectionMode={categorySectionMode}
+				parentCategorySelectionBehavior={parentCategorySelectionBehavior}
 				selectionEmptyLabel={selectionEmptyLabel}
 				showHeader={showCategoryHeader}
 			/>

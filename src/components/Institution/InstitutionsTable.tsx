@@ -1,11 +1,12 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { DataTable } from "@/components/DataTable";
 import type { DataTableConfig } from "@/components/DataTable";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import type { Institution, InstitutionTableRow } from "@/types/institution";
+import type { Category, FilterState } from "@/types";
 import { useAccountStore } from "@/lib/store/accountStore";
 import { StatusDot } from "../ui/status-dot";
 import { InstitutionStatus } from "@/generated/prisma";
@@ -38,6 +39,52 @@ import Edit from "@/icons/edit.svg";
 import { useInstitutionPrivateFieldResolver } from "@/lib/hooks/useInstitutionPrivateFieldResolver";
 import { DownloadModal } from "@/components/Modals/Pages/DownloadModal";
 import { notifyInstitutionDownload } from "@/server/actions/downloads";
+
+type InstitutionsFilterPanelProps = {
+	filters: FilterState;
+	categoryGroups: Category[];
+	districts: string[];
+	filteredCount: number;
+	categoryCounts: Record<string, number>;
+	subcategoryCounts: Record<string, number>;
+	loading: boolean;
+	onRetry: () => void;
+	onFiltersChange: (nextFilters: FilterState) => void;
+};
+
+function InstitutionsFilterPanel({
+	filters,
+	categoryGroups,
+	districts,
+	filteredCount,
+	categoryCounts,
+	subcategoryCounts,
+	loading,
+	onRetry,
+	onFiltersChange,
+}: InstitutionsFilterPanelProps) {
+	useEffect(() => {
+		if (categoryGroups.length === 0) {
+			onRetry();
+		}
+	}, [categoryGroups.length, onRetry]);
+
+	return (
+		<FilterPanel
+			filters={filters}
+			categoryGroups={categoryGroups}
+			districts={districts}
+			filteredCount={filteredCount}
+			categoryCounts={categoryCounts}
+			subcategoryCounts={subcategoryCounts}
+			loading={loading}
+			error={null}
+			onRetry={onRetry}
+			onFiltersChange={onFiltersChange}
+			parentCategorySelectionBehavior="last-child-only"
+		/>
+	);
+}
 
 export function InstitutionsTable() {
 	const router = useRouter();
@@ -867,7 +914,7 @@ export function InstitutionsTable() {
 			triggerAriaLabel: t("filter.title"),
 			title: t("filter.title"),
 			content: () => (
-				<FilterPanel
+				<InstitutionsFilterPanel
 					filters={filters}
 					categoryGroups={filterCategoryGroups}
 					districts={districts}
@@ -875,7 +922,6 @@ export function InstitutionsTable() {
 					categoryCounts={categoryCounts}
 					subcategoryCounts={subcategoryCounts}
 					loading={isFilterCategoriesLoading}
-					error={null}
 					onRetry={retryInitializeFilterCategories}
 					onFiltersChange={setFilters}
 				/>
