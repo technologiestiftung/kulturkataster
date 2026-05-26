@@ -349,6 +349,8 @@
 		"acknowledgementPrefix": "I have read and understood the",
 		"acknowledgementSuffix": "",
 		"chooseFormat": "Select file format",
+		"dataUseAgreementText": "I will not share the data with third parties and will use it exclusively within the limits of legal requirements, in particular the GDPR where personal data is concerned, and only for the purposes of the Kulturkataster. The purposes of the Kulturkataster are non-commercial and comprise the systematic collection, structuring and public provision of data about places of cultural production and use in the State of Berlin, in order to create a reliable data basis for cultural policy decisions, cultural urban development, and collaboration between cultural actors, administration, academia and the public.",
+		"dataUseAgreementTitle": "Data use agreement",
 		"description": "You can download the list of your cultural venues here in different file formats.",
 		"form": {
 			"datenverwendung": "What will you use the data for?",
