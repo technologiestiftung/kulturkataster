@@ -399,6 +399,12 @@
 		"confirm": "Close",
 		"delete": "Delete",
 		"download": {
+			"exportNotice": {
+				"row1": "The data comes from the Berlin Kulturkataster.",
+				"row2": "When using it, please name the Kulturkataster as the download source and observe the legal notices.",
+				"row3": "www.kulturkataster.berlin",
+				"row4": "A project by Kulturraum Berlin gGmbH"
+			},
 			"title": "Download list"
 		},
 		"edit": "Edit",

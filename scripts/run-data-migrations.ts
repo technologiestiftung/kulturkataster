@@ -10,12 +10,6 @@ import type {
 } from "../data-migrations/types";
 
 const MIGRATION_FILENAME_PATTERN = /^\d{12}.*\.(sql|ts)$/;
-const CREATE_MIGRATION_TABLE_SQL = `
-	CREATE TABLE IF NOT EXISTS app_data_migrations (
-		id text PRIMARY KEY,
-		run_at timestamptz NOT NULL DEFAULT now()
-	)
-`;
 
 type LoadedMigration = {
 	filename: string;
@@ -113,10 +107,6 @@ const discoverMigrations = async (): Promise<LoadedMigration[]> => {
 	);
 };
 
-const ensureMigrationTable = async (client: DataMigrationClient) => {
-	await client.$executeRawUnsafe(CREATE_MIGRATION_TABLE_SQL);
-};
-
 const hasMigrationRun = async (
 	client: DataMigrationClient,
 	id: string,
@@ -139,7 +129,6 @@ const runMigration = async (
 ): Promise<"applied" | "skipped"> => {
 	if (migration.transactional) {
 		return prisma.$transaction(async (tx) => {
-			await ensureMigrationTable(tx);
 			if (await hasMigrationRun(tx, migration.id)) {
 				return "skipped";
 			}
@@ -149,7 +138,6 @@ const runMigration = async (
 		});
 	}
 
-	await ensureMigrationTable(prisma);
 	if (await hasMigrationRun(prisma, migration.id)) {
 		return "skipped";
 	}
@@ -192,8 +180,6 @@ const main = async () => {
 	const prisma = new PrismaClient({ adapter });
 
 	try {
-		await ensureMigrationTable(prisma);
-
 		for (const migration of migrations) {
 			const result = await runMigration(prisma, migration);
 			console.log(
