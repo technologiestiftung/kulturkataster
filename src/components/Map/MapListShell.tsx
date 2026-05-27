@@ -38,7 +38,7 @@ export function MapListShell() {
 
 	return (
 		<div
-			className={"relative flex min-h-0 flex-1 h-full w-full overflow-hidden"}
+			className={`relative flex min-h-0 flex-1 h-full w-full ${routeMode === "map" ? "overflow-hidden" : ""}`}
 		>
 			<div
 				className={
