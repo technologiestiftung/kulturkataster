@@ -6,7 +6,8 @@ import type { Category, FilterState } from "@/types";
 
 vi.mock("react-i18next", () => ({
 	useTranslation: (_ns?: string | string[]) => ({
-		t: (key: string) => key,
+		t: (key: string) =>
+			key.startsWith("enumMap.category.") ? key.replace(/^enumMap\./, "") : key,
 		i18n: { language: "de" },
 	}),
 }));

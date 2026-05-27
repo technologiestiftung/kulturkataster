@@ -21,6 +21,12 @@ vi.mock("react-i18next", () => ({
 	useTranslation: () => ({
 		t: (key: string) => {
 			const translations: Record<string, string> = {
+				"common.map.addressPickerHint":
+					"Move the map pin and then apply the position.",
+				"common.map.addressPickerApply": "Apply map position",
+				"common.map.addressPickerApplyLoading": "Applying position...",
+				"common.map.zoomIn": "Zoom in",
+				"common.map.zoomOut": "Zoom out",
 				"map.addressPickerHint":
 					"Move the map pin and then apply the position.",
 				"map.addressPickerApply": "Apply map position",
