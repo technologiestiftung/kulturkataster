@@ -17,12 +17,15 @@ npm run traduora:pull -- --all
 
 ## Flags
 
-- `--all`: overwrite existing target values.
-- `--prune`: on push, delete remote terms that no longer exist locally.
+- `--all`: with `--prune`, reset remote terms before importing local files.
+- `--prune`: on push, delete remote terms that no longer exist locally. Combined
+  with `--all`, deletes all remote terms first, then imports the local files.
 
 ## Data Model
 
-Traduora terms are fully qualified i18n keys:
+Traduora terms are fully qualified i18n keys. Push uploads local files through
+Traduora's `jsonflat` import format, because this deployment returns 404 for
+`jsonnested` imports.
 
 ```text
 common.auth.login
@@ -48,8 +51,8 @@ Each `translation.json` is shaped as:
 }
 ```
 
-The application still uses i18next namespaces (`common`, `content`, `enumMap`).
-The runtime loader reads the matching top-level object from `translation.json`.
+The application uses the single i18next namespace `translation`. The top-level
+`common`, `content`, and `enumMap` keys are part of the translation key path.
 
 ## Environment Variables
 

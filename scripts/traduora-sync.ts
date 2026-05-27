@@ -26,6 +26,15 @@ type TraduoraTranslation = {
 	value: string;
 };
 
+type TraduoraLocale = {
+	id: string;
+	locale: {
+		code: string;
+		language?: string;
+		region?: string;
+	};
+};
+
 type TraduoraData<T> = {
 	data?: T;
 	id?: string;
@@ -36,7 +45,7 @@ type RequestOptions = {
 	method?: string;
 	token?: string;
 	headers?: Record<string, string>;
-	body?: string;
+	body?: string | FormData;
 };
 
 const requiredEnvVars = {
@@ -66,13 +75,18 @@ async function request<T>(
 	options: RequestOptions = {},
 ): Promise<T> {
 	const { token, headers, ...requestOptions } = options;
+	const requestHeaders: Record<string, string> = {
+		...(token ? { Authorization: `Bearer ${token}` } : {}),
+		...headers,
+	};
+
+	if (!(requestOptions.body instanceof FormData)) {
+		requestHeaders["Content-Type"] = "application/json";
+	}
+
 	const response = await fetch(apiUrl(pathname), {
 		...requestOptions,
-		headers: {
-			"Content-Type": "application/json",
-			...(token ? { Authorization: `Bearer ${token}` } : {}),
-			...headers,
-		},
+		headers: requestHeaders,
 	});
 
 	if (!response.ok) {
@@ -117,12 +131,83 @@ async function fetchTerms(token: string) {
 	return response.data ?? [];
 }
 
+async function fetchProjectLocales(token: string) {
+	const response = await request<TraduoraData<TraduoraLocale[]>>(
+		projectPath("/translations"),
+		{ token },
+	);
+	return response.data ?? [];
+}
+
+async function createProjectLocale(token: string, locale: string) {
+	await request<TraduoraData<TraduoraLocale>>(projectPath("/translations"), {
+		method: "POST",
+		token,
+		body: JSON.stringify({ code: locale }),
+	});
+}
+
+async function ensureProjectLocale(
+	token: string,
+	localesByCode: Set<string>,
+	locale: string,
+) {
+	if (localesByCode.has(locale)) return;
+
+	try {
+		await createProjectLocale(token, locale);
+	} catch (error) {
+		if (!(error instanceof Error) || !error.message.includes("409")) {
+			throw error;
+		}
+	}
+
+	localesByCode.add(locale);
+}
+
 async function fetchTranslations(token: string, locale: string) {
 	const response = await request<TraduoraData<TraduoraTranslation[]>>(
 		projectPath(`/translations/${locale}`),
 		{ token },
 	);
 	return response.data ?? [];
+}
+
+type ImportResponse = {
+	terms?: {
+		added?: number;
+		skipped?: number;
+	};
+	translations?: {
+		upserted?: number;
+	};
+};
+
+async function importTranslations(params: {
+	token: string;
+	locale: string;
+	filePath: string;
+}) {
+	const form = new FormData();
+	const fileContent = JSON.stringify(flatten(readJson(params.filePath)));
+	form.append(
+		"file",
+		new Blob([fileContent], { type: "application/json" }),
+		TRANSLATION_FILE,
+	);
+
+	const response = await request<TraduoraData<ImportResponse>>(
+		`${projectPath("/imports")}?locale=${encodeURIComponent(
+			params.locale,
+		)}&format=jsonflat`,
+		{
+			method: "POST",
+			token: params.token,
+			body: form,
+		},
+	);
+
+	return response.data ?? {};
 }
 
 async function createTerm(token: string, value: string) {
@@ -302,6 +387,44 @@ async function ensureRemoteTerm(
 	}
 }
 
+async function pushLocaleWithTerms(params: {
+	token: string;
+	locale: string;
+	localTranslations: Record<string, string>;
+	termByKey: Map<string, TraduoraTerm>;
+	overwriteAll: boolean;
+}) {
+	const remoteTranslations = await fetchTranslations(
+		params.token,
+		params.locale,
+	);
+	const existingByTermId = new Map(
+		remoteTranslations.map((translation) => [
+			translation.termId,
+			translation.value,
+		]),
+	);
+
+	let updated = 0;
+	let skipped = 0;
+	for (const [key, value] of Object.entries(params.localTranslations)) {
+		const termId = await ensureRemoteTerm(params.token, params.termByKey, key);
+		if (!params.overwriteAll && existingByTermId.has(termId)) {
+			skipped++;
+			continue;
+		}
+		await updateTranslation({
+			token: params.token,
+			locale: params.locale,
+			termId,
+			value,
+		});
+		updated++;
+	}
+
+	return { updated, skipped };
+}
+
 async function pushToTraduora(options: {
 	overwriteAll: boolean;
 	pruneMissing: boolean;
@@ -309,33 +432,65 @@ async function pushToTraduora(options: {
 	console.log("Starting Traduora push");
 	const token = await getToken();
 	const localByLocale = loadLocalTranslations();
-	const localKeys = new Set(Object.values(localByLocale).flatMap(Object.keys));
-	const { terms, termByKey } = await getRemoteIndex(token);
+	const localesByCode = new Set(
+		(await fetchProjectLocales(token)).map((item) => item.locale.code),
+	);
 
-	for (const [locale, localTranslations] of Object.entries(localByLocale)) {
-		const remoteTranslations = await fetchTranslations(token, locale);
-		const existingByTermId = new Map(
-			remoteTranslations.map((translation) => [
-				translation.termId,
-				translation.value,
-			]),
-		);
-
-		let updated = 0;
-		let skipped = 0;
-		for (const [key, value] of Object.entries(localTranslations)) {
-			const termId = await ensureRemoteTerm(token, termByKey, key);
-			if (!options.overwriteAll && existingByTermId.has(termId)) {
-				skipped++;
-				continue;
-			}
-			await updateTranslation({ token, locale, termId, value });
-			updated++;
+	if (options.overwriteAll && options.pruneMissing) {
+		const terms = await fetchTerms(token);
+		for (const term of terms) {
+			await deleteTerm(token, term.id);
 		}
-		console.log(`${locale}: updated ${updated}, skipped ${skipped}`);
+		console.log(`Deleted ${terms.length} remote terms before upload`);
 	}
 
-	if (options.pruneMissing) {
+	const remoteIndex = await getRemoteIndex(token);
+	let importUnavailable = false;
+
+	for (const [locale, localTranslations] of Object.entries(localByLocale)) {
+		await ensureProjectLocale(token, localesByCode, locale);
+		if (!importUnavailable) {
+			try {
+				const result = await importTranslations({
+					token,
+					locale,
+					filePath: path.join(TRANSLATIONS_DIR, locale, TRANSLATION_FILE),
+				});
+				console.log(
+					`${locale}: imported ${Object.keys(localTranslations).length} keys, ` +
+						`added ${result.terms?.added ?? 0} terms, ` +
+						`skipped ${result.terms?.skipped ?? 0} terms, ` +
+						`upserted ${result.translations?.upserted ?? 0} translations`,
+				);
+				continue;
+			} catch (error) {
+				if (!(error instanceof Error) || !error.message.includes(" 404 ")) {
+					throw error;
+				}
+				importUnavailable = true;
+				console.warn(
+					"Traduora import endpoint is unavailable; falling back to term uploads.",
+				);
+			}
+		}
+
+		const result = await pushLocaleWithTerms({
+			token,
+			locale,
+			localTranslations,
+			termByKey: remoteIndex.termByKey,
+			overwriteAll: options.overwriteAll,
+		});
+		console.log(
+			`${locale}: uploaded ${result.updated}, skipped ${result.skipped}`,
+		);
+	}
+
+	if (options.pruneMissing && !options.overwriteAll) {
+		const localKeys = new Set(
+			Object.values(localByLocale).flatMap(Object.keys),
+		);
+		const { terms } = await getRemoteIndex(token);
 		let deleted = 0;
 		for (const term of terms) {
 			if (localKeys.has(term.value)) continue;
@@ -351,8 +506,12 @@ async function pullFromTraduora(overwriteAll: boolean) {
 	const token = await getToken();
 	const { terms } = await getRemoteIndex(token);
 	const termById = new Map(terms.map((term) => [term.id, term.value]));
+	const localesByCode = new Set(
+		(await fetchProjectLocales(token)).map((item) => item.locale.code),
+	);
 
 	for (const locale of getLocales()) {
+		await ensureProjectLocale(token, localesByCode, locale);
 		const filePath = path.join(TRANSLATIONS_DIR, locale, TRANSLATION_FILE);
 		const localTranslations = fs.existsSync(filePath)
 			? flatten(readJson(filePath))
@@ -375,6 +534,14 @@ async function pullFromTraduora(overwriteAll: boolean) {
 
 async function main() {
 	const [command, ...flags] = process.argv.slice(2);
+	const supportedFlags = new Set(["--all", "--prune"]);
+	const unknownFlags = flags.filter((flag) => !supportedFlags.has(flag));
+	if (unknownFlags.length > 0) {
+		console.error(`Unknown flag(s): ${unknownFlags.join(", ")}`);
+		console.error("Usage: npm run traduora:sync <push|pull> [--all] [--prune]");
+		process.exit(1);
+	}
+
 	const overwriteAll = flags.includes("--all");
 	const pruneMissing = flags.includes("--prune");
 
