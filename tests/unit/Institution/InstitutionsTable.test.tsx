@@ -9,16 +9,18 @@ const downloadModalMock = vi.fn();
 
 vi.mock("react-i18next", () => ({
 	useTranslation: () => ({
-		t: (key: string, options?: { defaultValue?: string }) =>
-			options?.defaultValue ??
-			(
+		t: (key: string, options?: { defaultValue?: string }) => {
+			const normalizedKey = key.replace(/^content\./, "");
+			return (
+				options?.defaultValue ??
 				{
 					"institutionsTable.actions.addInstitution": "Kulturort hinzufügen",
 					"institutionsTable.actions.claimInstitution": "Meine Orte anfragen",
 					"filter.title": "Kulturorte filtern",
-				} as Record<string, string>
-			)[key] ??
-			key,
+				}[normalizedKey] ??
+				normalizedKey
+			);
+		},
 	}),
 }));
 
@@ -125,6 +127,24 @@ vi.mock("@/lib/hooks/useInstitutionTableFilters", () => ({
 		filteredTableRows: tableRows,
 		categoryCounts: {},
 		subcategoryCounts: {},
+		downloadableInstitutions: [
+			{
+				id: 100,
+				name: "Institution Alpha",
+				status: "public",
+				email: null,
+				phone: null,
+				website: null,
+				parent_organization: null,
+				address: null,
+				categories: [],
+				tags: [],
+				users: [],
+				groups: [],
+				created_at: new Date("2025-01-01"),
+				updated_at: new Date("2025-01-01"),
+			},
+		],
 	}),
 }));
 
@@ -271,5 +291,16 @@ describe("InstitutionsTable", () => {
 		).toBeGreaterThan(
 			props.exportColumnOrder.indexOf("utilization_status_info"),
 		);
+	});
+
+	it("passes only downloadable filtered institutions to the download modal", () => {
+		render(<InstitutionsTable />);
+
+		expect(downloadModalMock).toHaveBeenCalledTimes(1);
+		const props = downloadModalMock.mock.calls[0][0] as {
+			data: Array<{ id: number }>;
+		};
+
+		expect(props.data.map((institution) => institution.id)).toEqual([100]);
 	});
 });

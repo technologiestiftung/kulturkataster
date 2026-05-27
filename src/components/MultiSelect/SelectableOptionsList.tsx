@@ -45,7 +45,7 @@ export function SelectableOptionsList({
 	showHeaderCount = true,
 	showHeader = true,
 }: SelectableOptionsListProps) {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation();
 	const isPanel = variant === "panel";
 	const wrapperClassName = isPanel
 		? cn(
@@ -87,7 +87,7 @@ export function SelectableOptionsList({
 						)}
 						{showHeaderCount ? (
 							<span className="text-neutral-80">
-								{t("multiSelectModal.resultsCountNumber", {
+								{t("common.multiSelectModal.resultsCountNumber", {
 									number: options.length,
 									defaultValue: "{{number}} Ergebnisse",
 								})}

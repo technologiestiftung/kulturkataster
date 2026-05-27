@@ -12,7 +12,7 @@ const mockSubmissions: Array<Record<string, unknown>> = [];
 vi.mock("react-i18next", () => ({
 	useTranslation: () => ({
 		t: (key: string, options?: { defaultValue?: string }) =>
-			options?.defaultValue ?? key,
+			options?.defaultValue ?? key.replace(/^content\./, ""),
 	}),
 }));
 

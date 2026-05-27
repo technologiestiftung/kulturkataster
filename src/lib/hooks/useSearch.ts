@@ -35,7 +35,7 @@ export function useSearch<T>({
 	const [debounceTimeout, setDebounceTimeout] = useState<ReturnType<
 		typeof setTimeout
 	> | null>(null);
-	const { t } = useTranslation("common");
+	const { t } = useTranslation();
 
 	useEffect(() => {
 		return () => {
@@ -107,7 +107,7 @@ export function useSearch<T>({
 	};
 
 	const displayResultError = () => {
-		setResultErrorMessage(t("search.noResultsFound"));
+		setResultErrorMessage(t("common.search.noResultsFound"));
 	};
 
 	return {

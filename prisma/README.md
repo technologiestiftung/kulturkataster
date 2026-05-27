@@ -44,7 +44,8 @@ Use `data-migrations/` for data-only changes:
 - keep them handwritten in SQL or TypeScript
 - version them with sortable timestamp prefixes
 - run them with `npm run data:migrate`
-- let the runner track applied migrations in `app_data_migrations`
+- let the runner track applied migrations in `app_data_migrations`, which is
+  created by Prisma Migrate
 
 Recommended deployment order:
 

@@ -50,8 +50,8 @@ const getDialogTitle = (
 	t: (key: string) => string,
 ) =>
 	mode === "create"
-		? t("roleFormModal.dialog.title.create")
-		: t("roleFormModal.dialog.title.edit");
+		? t("content.roleFormModal.dialog.title.create")
+		: t("content.roleFormModal.dialog.title.edit");
 
 const buildPermissionSnapshot = (
 	resolvedRole: Role | undefined,
@@ -106,50 +106,47 @@ const buildPermissionSnapshot = (
 const getTableTargets = (t: (key: string) => string) => [
 	{
 		key: "institution",
-		label: t("roleFormModal.permissions.tables.institution"),
+		label: t("content.roleFormModal.permissions.tables.institution"),
 	},
 	{
 		key: "submission",
-		label: t("roleFormModal.permissions.tables.submission"),
+		label: t("content.roleFormModal.permissions.tables.submission"),
 	},
 	{
 		key: "entity_audit",
-		label: t("roleFormModal.permissions.tables.entity_audit"),
+		label: t("content.roleFormModal.permissions.tables.entity_audit"),
 		actions: ["read"] as PermissionAction[],
 	},
-	{ key: "user", label: t("roleFormModal.permissions.tables.user") },
-	{ key: "group", label: t("roleFormModal.permissions.tables.group") },
-	{ key: "role", label: t("roleFormModal.permissions.tables.role") },
+	{ key: "user", label: t("content.roleFormModal.permissions.tables.user") },
+	{ key: "group", label: t("content.roleFormModal.permissions.tables.group") },
+	{ key: "role", label: t("content.roleFormModal.permissions.tables.role") },
 	{
 		key: "address",
-		label: t("roleFormModal.permissions.tables.address"),
+		label: t("content.roleFormModal.permissions.tables.address"),
 		actions: ["read"] as PermissionAction[],
 	},
 	{
 		key: "category",
-		label: t("roleFormModal.permissions.tables.category"),
+		label: t("content.roleFormModal.permissions.tables.category"),
 	},
 ];
 
-const getActionLabels = (
-	t: (key: string, options?: { ns?: string }) => string,
-) => ({
-	read: t("institution_action.read", { ns: "enumMap" }),
-	create: t("institution_action.create", { ns: "enumMap" }),
-	update: t("institution_action.update", { ns: "enumMap" }),
-	delete: t("institution_action.delete", { ns: "enumMap" }),
+const getActionLabels = (t: (key: string) => string) => ({
+	read: t("enumMap.institution_action.read"),
+	create: t("enumMap.institution_action.create"),
+	update: t("enumMap.institution_action.update"),
+	delete: t("enumMap.institution_action.delete"),
 });
 
 const buildFieldSections = (
-	t: (key: string, options?: { ns?: string; defaultValue?: string }) => string,
+	t: (key: string, options?: { defaultValue?: string }) => string,
 ) => [
 	{
 		id: "institution",
-		title: t("roleFormModal.permissions.fields.sections.institution"),
+		title: t("content.roleFormModal.permissions.fields.sections.institution"),
 		fields: INSTITUTION_FIELDS.map((field) => ({
 			key: field,
-			label: t(`field_names.${field}.label`, {
-				ns: "enumMap",
+			label: t(`enumMap.field_names.${field}.label`, {
 				defaultValue: formatFieldLabel(field),
 			}),
 		})),
@@ -256,6 +253,7 @@ const buildPermissionInputs = (data: Record<string, unknown>) => {
 			})),
 		),
 	];
+
 	return { tablePermissionsInput, fieldPermissionsInput };
 };
 
@@ -265,19 +263,19 @@ const translateRoleFormError = (
 ) => {
 	switch (errorCode) {
 		case "nameTaken":
-			return t("roleFormModal.errors.nameTaken");
+			return t("content.roleFormModal.errors.nameTaken");
 		case "notFound":
-			return t("roleFormModal.errors.notFound");
+			return t("content.roleFormModal.errors.notFound");
 		case "forbidden":
-			return t("roleFormModal.errors.forbidden", {
+			return t("content.roleFormModal.errors.forbidden", {
 				defaultValue: "You are not allowed to change this role.",
 			});
 		case "systemRole":
-			return t("roleFormModal.errors.systemRole", {
+			return t("content.roleFormModal.errors.systemRole", {
 				defaultValue: "System roles cannot be deleted.",
 			});
 		default:
-			return t("roleFormModal.errors.unexpected");
+			return t("content.roleFormModal.errors.unexpected");
 	}
 };
 
@@ -375,36 +373,41 @@ const buildRoleFormConfig = ({
 			fields: [
 				{
 					name: "name",
-					label: t("roleFormModal.form.details.fields.name.label"),
+					label: t("content.roleFormModal.form.details.fields.name.label"),
 					type: "text",
 					required: true,
-					placeholder: t("roleFormModal.form.details.fields.name.placeholder"),
+					placeholder: t(
+						"content.roleFormModal.form.details.fields.name.placeholder",
+					),
 					layout: { span: "full" },
 				},
 				{
 					name: "description",
-					label: t("roleFormModal.form.details.fields.description.label"),
+					label: t(
+						"content.roleFormModal.form.details.fields.description.label",
+					),
 					type: "textarea",
 					placeholder: t(
-						"roleFormModal.form.details.fields.description.placeholder",
+						"content.roleFormModal.form.details.fields.description.placeholder",
 					),
 					layout: { span: "full" },
 				},
 			],
 		},
 	],
+
 	onSubmit,
 	showCancel: true,
-	cancelLabel: t("roleFormModal.actions.cancel"),
+	cancelLabel: t("content.roleFormModal.actions.cancel"),
 	onCancel,
 	submitLabel: getSubmitLabel(mode, submitting, {
 		create: {
-			default: t("roleFormModal.actions.create"),
-			loading: t("roleFormModal.actions.creating"),
+			default: t("content.roleFormModal.actions.create"),
+			loading: t("content.roleFormModal.actions.creating"),
 		},
 		edit: {
-			default: t("roleFormModal.actions.save"),
-			loading: t("roleFormModal.actions.saving"),
+			default: t("content.roleFormModal.actions.save"),
+			loading: t("content.roleFormModal.actions.saving"),
 		},
 	}),
 	initialValues: {
@@ -444,29 +447,33 @@ const renderDialogBody = (
 					{
 						name: "permissionsSection",
 						type: "section",
-						title: t("roleFormModal.permissions.title"),
+						title: t("content.roleFormModal.permissions.title"),
 						fields: [
 							{
 								name: "tablePermissions",
-								label: t("roleFormModal.permissions.table.title"),
-								description: t("roleFormModal.permissions.table.description"),
+								label: t("content.roleFormModal.permissions.table.title"),
+								description: t(
+									"content.roleFormModal.permissions.table.description",
+								),
 								type: "tablePermissions",
 								disabled: isSystemRole,
 								tablePermissions: {
 									tables: tableTargets,
 									actionLabels,
-									scopeLabel: t("roleFormModal.permissions.scope.label"),
+									scopeLabel: t(
+										"content.roleFormModal.permissions.scope.label",
+									),
 									scopeDescription: t(
-										"roleFormModal.permissions.scope.description",
+										"content.roleFormModal.permissions.scope.description",
 									),
 									scopeOptions: [
 										{
 											value: "own",
-											label: t("roleFormModal.permissions.scope.own"),
+											label: t("content.roleFormModal.permissions.scope.own"),
 										},
 										{
 											value: "all",
-											label: t("roleFormModal.permissions.scope.all"),
+											label: t("content.roleFormModal.permissions.scope.all"),
 										},
 									],
 								},
@@ -474,13 +481,17 @@ const renderDialogBody = (
 							},
 							{
 								name: "fieldPermissions",
-								label: t("roleFormModal.permissions.fields.title"),
-								description: t("roleFormModal.permissions.fields.description"),
+								label: t("content.roleFormModal.permissions.fields.title"),
+								description: t(
+									"content.roleFormModal.permissions.fields.description",
+								),
 								type: "fieldPermissions",
 								fieldPermissions: {
 									sections: fieldSections,
 									actionLabels,
-									fieldLabel: t("roleFormModal.permissions.fields.columnLabel"),
+									fieldLabel: t(
+										"content.roleFormModal.permissions.fields.columnLabel",
+									),
 								},
 								layout: { span: "full" },
 							},
@@ -499,7 +510,7 @@ export function RoleFormModal({
 	routePath,
 	returnTo,
 }: RoleFormModalProps) {
-	const { t } = useTranslation(["content", "enumMap"]);
+	const { t } = useTranslation();
 	const roles = useAccountStore((state) => state.roles);
 	const removeRoleFromStore = useAccountStore((state) => state.removeRole);
 	const [isDeleting, setIsDeleting] = useState(false);
@@ -519,7 +530,10 @@ export function RoleFormModal({
 			nextMode === "create"
 				? "roleFormModal.feedback.create"
 				: "roleFormModal.feedback.update";
-		showSuccessToast(t(`${keyPrefix}.title`), t(`${keyPrefix}.description`));
+		showSuccessToast(
+			t(`content.${keyPrefix}.title`),
+			t(`content.${keyPrefix}.description`),
+		);
 	};
 	const { handleSubmit, submitting } = useRoleSubmit(
 		mode,
@@ -553,7 +567,7 @@ export function RoleFormModal({
 		return {
 			...baseConfig,
 			deleteAction: {
-				label: t("roleFormModal.delete.button"),
+				label: t("content.roleFormModal.delete.button"),
 				onClick: () => setShowDeleteDialog(true),
 				disabled: isDeleting || submitting || isSystemRole,
 				className: "p-0!",
@@ -575,8 +589,8 @@ export function RoleFormModal({
 		showNotFound && !isDeleting
 			? {
 					active: true,
-					title: t("roleFormModal.dialog.notFound.title"),
-					description: t("roleFormModal.dialog.notFound.description"),
+					title: t("content.roleFormModal.dialog.notFound.title"),
+					description: t("content.roleFormModal.dialog.notFound.description"),
 				}
 			: undefined;
 
@@ -593,15 +607,18 @@ export function RoleFormModal({
 					? {
 							open: true,
 							status: "warning",
-							title: t("roleFormModal.delete.confirmTitle", {
+							title: t("content.roleFormModal.delete.confirmTitle", {
 								defaultValue: "Delete role?",
 							}),
-							description: t("roleFormModal.delete.confirmDescription", {
-								defaultValue:
-									"This will permanently remove the role. This action cannot be undone.",
-							}),
-							confirmLabel: t("roleFormModal.delete.confirm"),
-							cancelLabel: t("roleFormModal.delete.cancel", {
+							description: t(
+								"content.roleFormModal.delete.confirmDescription",
+								{
+									defaultValue:
+										"This will permanently remove the role. This action cannot be undone.",
+								},
+							),
+							confirmLabel: t("content.roleFormModal.delete.confirm"),
+							cancelLabel: t("content.roleFormModal.delete.cancel", {
 								defaultValue: "Cancel",
 							}),
 							onCancel: () => setShowDeleteDialog(false),
@@ -611,7 +628,7 @@ export function RoleFormModal({
 								const result = await deleteRole(resolvedRole.id);
 								if (!result.ok) {
 									setDeleteError({
-										title: t("roleFormModal.delete.errorTitle", {
+										title: t("content.roleFormModal.delete.errorTitle", {
 											defaultValue: "Delete failed",
 										}),
 										description: translateRoleFormError(t, result.error),
@@ -626,10 +643,10 @@ export function RoleFormModal({
 									queueMicrotask(() => {
 										removeRoleFromStore(resolvedRole.id);
 										showSuccessToast(
-											t("roleFormModal.feedback.delete.title", {
+											t("content.roleFormModal.feedback.delete.title", {
 												defaultValue: "Role deleted",
 											}),
-											t("roleFormModal.feedback.delete.description", {
+											t("content.roleFormModal.feedback.delete.description", {
 												defaultValue: "The role has been removed successfully.",
 											}),
 										);
@@ -648,9 +665,9 @@ export function RoleFormModal({
 				deleteError || submitError
 					? {
 							open: true,
-							title: deleteError ? deleteError.title : t("error"),
+							title: deleteError ? deleteError.title : t("content.error"),
 							description: deleteError?.description ?? submitError ?? "",
-							confirmLabel: t("close"),
+							confirmLabel: t("content.close"),
 							onConfirm: () => {
 								setDeleteError(null);
 								setSubmitError(null);

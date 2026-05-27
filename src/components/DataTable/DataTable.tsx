@@ -669,7 +669,7 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 								radius="full"
 								variant="surface"
 								className="bg-primary shrink-0"
-								iconSize="lg"
+								iconSize="md"
 								aria-label={primaryButtonAriaLabel}
 							>
 								<Plus className="size-6" />
@@ -679,7 +679,7 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 							<Button
 								onClick={config.secondaryButton.onClick}
 								variant="outline"
-								size="lg"
+								size="md"
 								className="bg-primary-light  max-w-56 text-foreground border-primary rounded-full [&_svg]:size-6"
 								aria-label={secondaryButtonAriaLabel}
 							>
@@ -725,7 +725,7 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 											type="button"
 											radius="full"
 											variant="surface"
-											iconSize="lg"
+											iconSize="md"
 											onClick={() => setIsSearchOpen(true)}
 										>
 											<Search className="size-5!" />
@@ -740,7 +740,7 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 											onClick={() => setIsFilterOpen(true)}
 											radius="full"
 											variant="surface"
-											iconSize="lg"
+											iconSize="md"
 											aria-label={filterButtonAriaLabel}
 										>
 											<Filter className="size-5!" />
@@ -757,8 +757,8 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 								<Button
 									onClick={config.rightButton.onClick}
 									radius="full"
-									variant="subaction"
-									iconSize="sm"
+									variant="surface"
+									iconSize="md"
 									aria-label={rightButtonAriaLabel}
 								>
 									<Download className="size-5!" />

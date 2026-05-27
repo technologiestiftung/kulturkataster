@@ -19,7 +19,7 @@ export function ResetPasswordForm({ onSuccess }: { onSuccess?: () => void }) {
 	const [refreshToken, setRefreshToken] = useState<string | null>(null);
 	const router = useRouter();
 	const toLocalePath = useLocalePath();
-	const { t } = useTranslation("common");
+	const { t } = useTranslation();
 
 	useEffect(() => {
 		const hash = window.location.hash.startsWith("#")
@@ -31,7 +31,7 @@ export function ResetPasswordForm({ onSuccess }: { onSuccess?: () => void }) {
 
 		if (!access || !refresh) {
 			setHasToken(false);
-			setErrorMessage(t("auth.reset.missingToken"));
+			setErrorMessage(t("common.auth.reset.missingToken"));
 			setIsReady(true);
 			return;
 		}
@@ -50,14 +50,14 @@ export function ResetPasswordForm({ onSuccess }: { onSuccess?: () => void }) {
 
 		try {
 			if (!hasToken || !accessToken || !refreshToken) {
-				setErrorMessage(t("auth.reset.missingToken"));
+				setErrorMessage(t("common.auth.reset.missingToken"));
 				return;
 			}
 
 			const password = String(data.password ?? "");
 			const confirmPassword = String(data.confirmPassword ?? "");
 			if (password !== confirmPassword) {
-				setErrorMessage(t("auth.validation.passwordMismatch"));
+				setErrorMessage(t("common.auth.validation.passwordMismatch"));
 				return;
 			}
 
@@ -69,8 +69,8 @@ export function ResetPasswordForm({ onSuccess }: { onSuccess?: () => void }) {
 			if (!result.ok) {
 				setErrorMessage(
 					result.error === "session_expired"
-						? t("auth.reset.missingToken")
-						: t("auth.reset.errorFallback"),
+						? t("common.auth.reset.missingToken")
+						: t("common.auth.reset.errorFallback"),
 				);
 				return;
 			}
@@ -80,7 +80,7 @@ export function ResetPasswordForm({ onSuccess }: { onSuccess?: () => void }) {
 			}
 			router.replace(toLocalePath("/login"));
 		} catch {
-			setErrorMessage(t("auth.reset.errorFallback"));
+			setErrorMessage(t("common.auth.reset.errorFallback"));
 		} finally {
 			setIsLoading(false);
 		}
@@ -90,8 +90,8 @@ export function ResetPasswordForm({ onSuccess }: { onSuccess?: () => void }) {
 		() => ({
 			onSubmit: handleSubmit,
 			submitLabel: isLoading
-				? t("auth.reset.submitting")
-				: t("auth.reset.submit"),
+				? t("common.auth.reset.submitting")
+				: t("common.auth.reset.submit"),
 			submitDisabled: isLoading || !isReady || !hasToken,
 			layout: { columns: 1 },
 			fields: [
@@ -102,19 +102,21 @@ export function ResetPasswordForm({ onSuccess }: { onSuccess?: () => void }) {
 					fields: [
 						{
 							name: "password",
-							label: t("auth.reset.newPasswordLabel"),
+							label: t("common.auth.reset.newPasswordLabel"),
 							type: "password",
-							placeholder: t("auth.reset.newPasswordPlaceholder"),
+							placeholder: t("common.auth.reset.newPasswordPlaceholder"),
 							required: true,
-							afterField: t("auth.reset.passwordRequirements"),
+							afterField: t("common.auth.reset.passwordRequirements"),
 							disabled: isLoading || !isReady || !hasToken,
-							validators: [minLength(8, t("auth.validation.passwordMin"))],
+							validators: [
+								minLength(8, t("common.auth.validation.passwordMin")),
+							],
 						},
 						{
 							name: "confirmPassword",
-							label: t("auth.reset.confirmPasswordLabel"),
+							label: t("common.auth.reset.confirmPasswordLabel"),
 							type: "password",
-							placeholder: t("auth.reset.confirmPasswordPlaceholder"),
+							placeholder: t("common.auth.reset.confirmPasswordPlaceholder"),
 							required: true,
 							disabled: isLoading || !isReady || !hasToken,
 						},
@@ -128,19 +130,19 @@ export function ResetPasswordForm({ onSuccess }: { onSuccess?: () => void }) {
 	return (
 		<div className="w-full max-w-2xl mx-auto space-y-6">
 			<div className="text-start font-bold">
-				<h1 className="">{t("auth.reset.title")}</h1>
-				<p className="">{t("auth.reset.subtitle")}</p>
+				<h1 className="">{t("common.auth.reset.title")}</h1>
+				<p className="">{t("common.auth.reset.subtitle")}</p>
 			</div>
 
 			<AlertDialog
-				title={t("alert.errorInput")}
+				title={t("common.alert.errorInput")}
 				status="error"
 				description={errorMessage ?? ""}
 				open={Boolean(errorMessage)}
 				onOpenChange={(open) => {
 					if (!open) setErrorMessage(null);
 				}}
-				confirmLabel={t("close")}
+				confirmLabel={t("common.close")}
 				onConfirm={() => setErrorMessage(null)}
 			/>
 
@@ -155,7 +157,7 @@ export function ResetPasswordForm({ onSuccess }: { onSuccess?: () => void }) {
 					onClick={() => router.push(toLocalePath("/login"))}
 					disabled={isLoading}
 				>
-					{t("auth.reset.backToLogin")}
+					{t("common.auth.reset.backToLogin")}
 				</Button>
 			</div>
 		</div>

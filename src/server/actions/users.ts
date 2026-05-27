@@ -27,7 +27,7 @@ import {
 	sendRoleDecisionEmail,
 	sendRoleDecisionEmailIfNeeded,
 } from "@/server/email/dispatcher";
-import { sendTemplatedEmail } from "@/server/email/sendTemplatedEmail";
+import { enqueueTemplatedEmail } from "@/server/email/outbox";
 import {
 	emailTemplateRepo,
 	type EmailTemplateOption,
@@ -634,7 +634,7 @@ export async function sendUserEmailTemplate(input: {
 				}
 
 				const siteUrl = process.env.SITE_URL ?? "http://127.0.0.1:3000";
-				await sendTemplatedEmail({
+				await enqueueTemplatedEmail({
 					to: user.email,
 					subject: template.subject ?? template.name ?? "Kulturkataster",
 					templatePath,

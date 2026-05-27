@@ -5,14 +5,20 @@ import type { InfoWrapperConfig } from "@/components/InfoWrapper/types";
 
 vi.mock("react-i18next", () => ({
 	useTranslation: (ns?: string) => ({
-		t: (key: string) =>
-			(
-				({
-					"content:infoWrapper.diffLabel.edited": "edited",
-					"content:infoWrapper.diffLabel.addition": "addition",
-					"content:infoWrapper.diffLabel.removed": "removed",
-				}) as Record<string, string>
-			)[`${ns ?? "default"}:${key}`] ?? key,
+		t: (key: string) => {
+			const normalizedKey = key.replace(/^content\./, "");
+			const labels: Record<string, string> = {
+				"content:infoWrapper.diffLabel.edited": "edited",
+				"content:infoWrapper.diffLabel.addition": "addition",
+				"content:infoWrapper.diffLabel.removed": "removed",
+			};
+
+			return (
+				labels[`${ns ?? "content"}:${normalizedKey}`] ??
+				labels[`content:${normalizedKey}`] ??
+				normalizedKey
+			);
+		},
 		i18n: { resolvedLanguage: "en" },
 	}),
 }));

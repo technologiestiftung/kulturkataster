@@ -15,7 +15,7 @@ import { useTranslation } from "react-i18next";
 import MapView from "../Map";
 
 const MapInitializer: FC = ({}) => {
-	const { i18n } = useTranslation("common");
+	const { i18n } = useTranslation();
 	const setConfig = useMapStore((state) => state.setConfig);
 	const isGerman = i18n.resolvedLanguage?.startsWith("de");
 	const localizedServices = isGerman ? services : servicesEn;

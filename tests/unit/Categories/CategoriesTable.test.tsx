@@ -32,10 +32,10 @@ const categoriesMock = [
 vi.mock("react-i18next", () => ({
 	useTranslation: (ns?: string) => ({
 		t: (key: string, options?: { defaultValue?: string }) => {
-			if (ns === "enumMap") {
-				return `translated:${key}`;
+			if (ns === "enumMap" || key.startsWith("enumMap.category.")) {
+				return `translated:${key.replace(/^enumMap\./, "")}`;
 			}
-			return options?.defaultValue ?? key;
+			return options?.defaultValue ?? key.replace(/^content\./, "");
 		},
 	}),
 }));

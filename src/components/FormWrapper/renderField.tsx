@@ -81,7 +81,7 @@ function PasswordField({
 	hasIssue?: boolean;
 }) {
 	const [showPassword, setShowPassword] = useState(false);
-	const { t } = useTranslation("common");
+	const { t } = useTranslation();
 
 	return (
 		<div className="relative">
@@ -100,11 +100,14 @@ function PasswordField({
 						"bg-destructive-secondary/20 border-destructive-secondary pr-10",
 				)}
 			/>
+
 			<button
 				type="button"
 				className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-80 hover:text-neutral-100"
 				aria-label={
-					showPassword ? t("auth.password.hide") : t("auth.password.show")
+					showPassword
+						? t("common.auth.password.hide")
+						: t("common.auth.password.show")
 				}
 				onClick={() => setShowPassword((prev) => !prev)}
 				disabled={disabled}
@@ -316,7 +319,7 @@ const renderFieldContent = (
 			: (field.description ?? getFieldDescription(tEnum, fieldMetaKey));
 	const resolvedPrivateDescription =
 		field.privateDescription ??
-		tCommon("privateFieldDescription", {
+		tCommon("common.privateFieldDescription", {
 			defaultValue:
 				"Diese Information wird ausschließlich für befugte Nutzer*innen im geschützten Bereich des Kulturkatasters zugänglich und nicht öffentlich einsehbar sein.",
 		});
@@ -393,6 +396,7 @@ const renderFieldContent = (
 								"bg-destructive-secondary/20 border-destructive-secondary pr-10",
 						)}
 					/>
+
 					{hasIssue && (
 						<Warning className="pointer-events-none absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-destructive-secondary" />
 					)}
@@ -424,12 +428,13 @@ const renderFieldContent = (
 									"bg-destructive-secondary/20 border-destructive-secondary pr-10",
 							)}
 						/>
+
 						{hasIssue && (
 							<Warning className="pointer-events-none absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-destructive-secondary" />
 						)}
 					</div>
 					{field.fileRemoveOption ? (
-						<div className="flex items-center space-x-2">
+						<div className="flex items-start space-x-2">
 							<Checkbox
 								id={`${field.name}-remove`}
 								checked={formData[field.fileRemoveOption.fieldName] as boolean}
@@ -439,6 +444,7 @@ const renderFieldContent = (
 								}
 								disabled={field.disabled}
 							/>
+
 							<Label htmlFor={`${field.name}-remove`} emphasize={false}>
 								{field.fileRemoveOption.label}
 							</Label>
@@ -488,6 +494,7 @@ const renderFieldContent = (
 								"bg-destructive-secondary/20 border-destructive-secondary pr-10",
 						)}
 					/>
+
 					{hasIssue && (
 						<Warning className="pointer-events-none absolute right-3 top-3 h-5 w-5 text-destructive-secondary" />
 					)}
@@ -565,7 +572,7 @@ const renderFieldContent = (
 					{field.options?.map((option) => (
 						<div
 							key={serializeOptionValue(option.value)}
-							className="flex items-center space-x-2"
+							className="flex items-start space-x-2"
 						>
 							<RadioGroupItem
 								className={cn(
@@ -576,6 +583,7 @@ const renderFieldContent = (
 								id={`${field.name}-${serializeOptionValue(option.value)}`}
 								aria-invalid={hasIssue || undefined}
 							/>
+
 							<Label
 								htmlFor={`${field.name}-${serializeOptionValue(option.value)}`}
 								emphasize={false}
@@ -590,7 +598,7 @@ const renderFieldContent = (
 			{field.type === "checkbox" && (
 				<div
 					className={cn(
-						"flex items-center space-x-2",
+						"flex items-start space-x-2",
 						hasIssue &&
 							"rounded-sm border border-destructive-secondary bg-destructive-secondary/10 p-2",
 					)}
@@ -602,6 +610,7 @@ const renderFieldContent = (
 						onCheckedChange={(checked) => updateField(field.name, checked)}
 						disabled={field.disabled}
 					/>
+
 					<Label htmlFor={field.name} emphasize={false}>
 						{field.labelNode ?? resolvedLabel}
 						{field.required && !field.hideRequiredIndicator && (
@@ -678,7 +687,7 @@ const renderFieldContent = (
 						field.options?.map((option) => (
 							<div
 								key={option.value as string}
-								className="flex items-center space-x-2"
+								className="flex items-start space-x-2"
 							>
 								<Checkbox
 									id={`${field.name}-${option.value}`}
@@ -695,6 +704,7 @@ const renderFieldContent = (
 									}}
 									disabled={field.disabled}
 								/>
+
 								<Label
 									htmlFor={`${field.name}-${option.value}`}
 									className="font-normal"
@@ -720,6 +730,9 @@ const renderFieldContent = (
 					collapsible={field.filterPanel.collapsible}
 					defaultCollapsed={field.filterPanel.defaultCollapsed}
 					categorySectionMode={field.filterPanel.categorySectionMode}
+					parentCategorySelectionBehavior={
+						field.filterPanel.parentCategorySelectionBehavior
+					}
 					selectionEmptyLabel={field.filterPanel.selectionEmptyLabel}
 				/>
 			)}
@@ -846,6 +859,7 @@ const renderFieldContent = (
 											"update",
 											"delete",
 										];
+
 									return (
 										<>
 											<p className="body3 ">{table.label}</p>
@@ -875,6 +889,7 @@ const renderFieldContent = (
 																}
 																disabled={field.disabled}
 															/>
+
 															<Label
 																htmlFor={checkboxId}
 																className="capitalize"
@@ -973,6 +988,7 @@ const renderFieldContent = (
 								"update",
 								"delete",
 							];
+
 							const sectionKeys = section.fields.map((item) => item.key);
 
 							const toggleSectionAction = (action: PermissionAction) => {

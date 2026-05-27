@@ -1,33 +1,25 @@
 import { describe, expect, it, vi } from "vitest";
 
-const { replaceMock } = vi.hoisted(() => ({
-	replaceMock: vi.fn(),
-}));
-
-vi.mock("next/navigation", () => ({
-	useRouter: () => ({
-		replace: replaceMock,
+const { redirectMock } = vi.hoisted(() => ({
+	redirectMock: vi.fn((path: string) => {
+		throw new Error(`NEXT_REDIRECT:${path}`);
 	}),
 }));
 
-vi.mock("@/lib/hooks/useLocalePath", () => ({
-	useLocalePath: () => (path: string) => `/de${path}`,
+vi.mock("next/navigation", () => ({
+	redirect: redirectMock,
 }));
-
-vi.mock("react", async (importOriginal) => {
-	const actual = await importOriginal<typeof import("react")>();
-	return {
-		...actual,
-		useEffect: (effect: () => void) => effect(),
-	};
-});
 
 describe("account dashboard routing integration", () => {
 	it("/account redirects to /account/activity", async () => {
 		const pageModule = await import("@/app/[locale]/account/(dashboard)/page");
 
-		pageModule.default();
+		await expect(
+			pageModule.default({
+				params: Promise.resolve({ locale: "de" }),
+			}),
+		).rejects.toThrow("NEXT_REDIRECT:/de/account/activity");
 
-		expect(replaceMock).toHaveBeenCalledWith("/de/account/activity");
+		expect(redirectMock).toHaveBeenCalledWith("/de/account/activity");
 	});
 });

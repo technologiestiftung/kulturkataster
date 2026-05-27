@@ -104,7 +104,7 @@ test.describe("institution submission wizard", () => {
 	const selectOptionById = async (
 		page: import("@playwright/test").Page,
 		id: string,
-		optionName: string,
+		optionName: string | string[],
 	) => {
 		const trigger = await getVisibleFieldById(page, id);
 		await trigger.click();
@@ -115,17 +115,33 @@ test.describe("institution submission wizard", () => {
 			`Select "${id}" should expose aria-controls when opened.`,
 		).toBeTruthy();
 
-		const listbox = page.locator(`#${listboxId}`);
+		const listbox = page.locator(`[id="${listboxId}"]`);
+		await expect(listbox).toBeVisible({ timeout: 15_000 });
+		const visibleOptionNames = (
+			await listbox.getByRole("option").allTextContents()
+		)
+			.map((text) => text.trim())
+			.filter(Boolean);
+		const optionNames = Array.isArray(optionName) ? optionName : [optionName];
+		const selectedOptionName = optionNames.find((name) =>
+			visibleOptionNames.includes(name),
+		);
+
+		expect(
+			selectedOptionName,
+			`Expected select "${id}" to show one of: ${optionNames.join(", ")}. Visible options: ${visibleOptionNames.join(", ")}`,
+		).toBeTruthy();
+
 		const option = listbox.getByRole("option", {
-			name: optionName,
+			name: selectedOptionName!,
 			exact: true,
 		});
 		await expect(
 			option,
-			`Expected select "${id}" to show option "${optionName}".`,
+			`Expected select "${id}" to show option "${selectedOptionName}".`,
 		).toBeVisible({ timeout: 15_000 });
 		await option.press("Enter");
-		await expect(trigger).toContainText(optionName);
+		await expect(trigger).toContainText(selectedOptionName!);
 	};
 
 	const chooseRadioValue = async (
@@ -144,7 +160,7 @@ test.describe("institution submission wizard", () => {
 	const expectReviewFieldValue = async (
 		page: import("@playwright/test").Page,
 		label: string,
-		value: string,
+		value: string | string[],
 	) => {
 		const row = page
 			.locator("div")
@@ -152,7 +168,11 @@ test.describe("institution submission wizard", () => {
 				has: page.locator("strong", { hasText: label }),
 			})
 			.first();
-		await expect(row).toContainText(value);
+		const values = Array.isArray(value) ? value : [value];
+		const escapedValues = values.map((item) =>
+			item.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
+		);
+		await expect(row).toContainText(new RegExp(escapedValues.join("|")));
 	};
 
 	const openAllAccordions = async (
@@ -194,7 +214,7 @@ test.describe("institution submission wizard", () => {
 	}) => {
 		const uniqueName = `E2E LatLng ${Date.now()}`;
 
-		await page.getByLabel(/Kulturort\*/i).fill(uniqueName);
+		await fillRequiredById(page, "name", uniqueName);
 		await fillById(page, "address.lat", "52.520008");
 		await fillById(page, "address.lng", "13.404954");
 
@@ -471,11 +491,10 @@ test.describe("institution submission wizard", () => {
 		await selectOptionById(page, "owner_type", ownerTypeLabel);
 		await fillRequiredById(page, "owner_name", "Eigentümer GmbH");
 		rentalContractTypeLabel = "Befristeter Mietvertrag";
-		await selectOptionById(
-			page,
-			"rental_contract_type",
+		await selectOptionById(page, "rental_contract_type", [
 			rentalContractTypeLabel,
-		);
+			"Befristete Miete",
+		]);
 		await fillRequiredById(page, "rental_contract_end", "2030-12-31");
 		protectionStatusLabel = "Langfristig gesichert";
 		await selectOptionById(page, "protection_status", protectionStatusLabel);
@@ -526,16 +545,15 @@ test.describe("institution submission wizard", () => {
 		if (fundingSourceLabel) {
 			await expectReviewFieldValue(
 				page,
-				"Art der Finanzierung:",
+				"Name der Finanzierungsquelle:",
 				`${fundingSourceLabel}: Landesmittel`,
 			);
 		}
 		await expectReviewFieldValue(page, "Eigentümer*innenart:", ownerTypeLabel);
-		await expectReviewFieldValue(
-			page,
-			"Vertragsform:",
+		await expectReviewFieldValue(page, "Vertragsform:", [
 			rentalContractTypeLabel,
-		);
+			"Befristete Miete",
+		]);
 		await expectReviewFieldValue(
 			page,
 			"Sicherungsstatus:",
