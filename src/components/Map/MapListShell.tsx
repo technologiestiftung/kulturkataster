@@ -7,7 +7,7 @@ import ListView from "@/components/ListView/ListView";
 import MapInitializer from "@/components/Map/MapInitializer/MapInitializer";
 
 export function MapListShell() {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation();
 	const pathname = usePathname();
 	const normalizedPath = pathname?.replace(/\/$/, "");
 	const isListRoute = /\/list(\/|$)/.test(normalizedPath ?? "");
@@ -46,7 +46,10 @@ export function MapListShell() {
 				}
 				aria-hidden={routeMode !== "map"}
 			>
-				<section className="h-full min-h-0 w-full" aria-label={t("map.title")}>
+				<section
+					className="h-full min-h-0 w-full"
+					aria-label={t("common.map.title")}
+				>
 					<MapInitializer />
 				</section>
 			</div>
@@ -54,7 +57,7 @@ export function MapListShell() {
 				<div className="relative flex-1 h-full min-h-0 w-full items-center justify-items-center">
 					<section
 						className="h-full min-h-0 w-full"
-						aria-label={t("listView.title")}
+						aria-label={t("common.listView.title")}
 					>
 						<ListView />
 					</section>

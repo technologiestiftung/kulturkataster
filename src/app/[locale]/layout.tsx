@@ -66,13 +66,12 @@ export default async function RootLayout({
 	params: Promise<{ locale: Locale }>;
 }>) {
 	const { locale } = await params;
-	const ns: string[] = ["common", "content", "enumMap"]; // namespace used for this page
-	const { resources } = await serverSideTranslation(locale, ns);
+	const { resources } = await serverSideTranslation(locale);
 	const localizedResources = resources as Record<
 		string,
 		Record<string, Record<string, unknown>>
 	>;
-	const localeResources = localizedResources?.[locale] ?? {};
+	const localeResources = localizedResources?.[locale]?.translation ?? {};
 	const commonResources = (localeResources.common ?? {}) as Record<
 		string,
 		unknown
@@ -109,7 +108,7 @@ export default async function RootLayout({
 	return (
 		<html lang={locale} dir={getDirection(locale)}>
 			<body className={`${barlow.className} antialiased`}>
-				<I18NProvider locale={locale} namespaces={ns} resources={resources}>
+				<I18NProvider locale={locale} resources={resources}>
 					<AppPersistenceProvider />
 					<StoreInitializer />
 					<StoreAutoRefresh />

@@ -23,7 +23,7 @@ export function UserClaimReviewModal({
 	routePath,
 	returnTo,
 }: UserClaimReviewModalProps) {
-	const { t, i18n } = useTranslation("content");
+	const { t, i18n } = useTranslation();
 	const router = useRouter();
 	const [items, setItems] = useState(claims);
 	const [busyIds, setBusyIds] = useState<number[]>([]);
@@ -81,7 +81,7 @@ export function UserClaimReviewModal({
 				router.refresh();
 			} catch (error) {
 				setReviewError(
-					t("userClaims.feedback.error.description", {
+					t("content.userClaims.feedback.error.description", {
 						defaultValue:
 							"Please try again or contact support if the issue persists.",
 					}),
@@ -98,10 +98,10 @@ export function UserClaimReviewModal({
 
 	return (
 		<Modal
-			title={t("userClaims.title", {
+			title={t("content.userClaims.title", {
 				defaultValue: "Institutionen-Anfragen prüfen",
 			})}
-			subtitle={t("userClaims.subtitle", {
+			subtitle={t("content.userClaims.subtitle", {
 				defaultValue:
 					"Hier kannst du die Anfragen von Institutionen überprüfen und entscheiden, ob sie akzeptiert oder abgelehnt werden.",
 			})}
@@ -112,11 +112,11 @@ export function UserClaimReviewModal({
 				reviewError
 					? {
 							open: true,
-							title: t("userClaims.feedback.error.title", {
+							title: t("content.userClaims.feedback.error.title", {
 								defaultValue: "Review failed",
 							}),
 							description: reviewError,
-							confirmLabel: t("close"),
+							confirmLabel: t("content.close"),
 							onConfirm: () => setReviewError(null),
 							onOpenChange: (open) => {
 								if (!open) setReviewError(null);
@@ -128,7 +128,7 @@ export function UserClaimReviewModal({
 			<div className="space-y-6 w-full">
 				{emptyState ? (
 					<p className="body2">
-						{t("userClaims.empty", {
+						{t("content.userClaims.empty", {
 							defaultValue: "Keine offenen Anfragen vorhanden.",
 						})}
 					</p>
@@ -139,36 +139,39 @@ export function UserClaimReviewModal({
 								key={submission.id}
 								title={
 									(institution?.name ??
-										t("userClaims.unknownInstitution", {
+										t("content.userClaims.unknownInstitution", {
 											defaultValue: "Unbekannte Institution",
 										})) + ` (${institution?.id ?? "—"})`
 								}
-								actionLabel={t("userClaims.approve", {
+								actionLabel={t("content.userClaims.approve", {
 									defaultValue: "Annehmen",
 								})}
-								actionLabelLoading={t("userClaims.approve", {
+								actionLabelLoading={t("content.userClaims.approve", {
 									defaultValue: "Annehmen",
 								})}
 								onAction={async () => {
 									await handleDecision(submission.id, "approved");
 									return null;
 								}}
-								secondaryActionLabel={t("userClaims.reject", {
+								secondaryActionLabel={t("content.userClaims.reject", {
 									defaultValue: "Ablehnen",
 								})}
-								secondaryActionLabelLoading={t("userClaims.reject", {
+								secondaryActionLabelLoading={t("content.userClaims.reject", {
 									defaultValue: "Ablehnen",
 								})}
 								onSecondaryAction={async () => {
 									await handleDecision(submission.id, "rejected");
 									return null;
 								}}
-								errorFallback={t("userClaims.feedback.error.description", {
-									defaultValue:
-										"Please try again or contact support if the issue persists.",
-								})}
+								errorFallback={t(
+									"content.userClaims.feedback.error.description",
+									{
+										defaultValue:
+											"Please try again or contact support if the issue persists.",
+									},
+								)}
 								secondaryErrorFallback={t(
-									"userClaims.feedback.error.description",
+									"content.userClaims.feedback.error.description",
 									{
 										defaultValue:
 											"Please try again or contact support if the issue persists.",
@@ -183,7 +186,7 @@ export function UserClaimReviewModal({
 										fields: [
 											{
 												type: "text",
-												label: t("userClaims.institutionAddress", {
+												label: t("content.userClaims.institutionAddress", {
 													defaultValue: "Adresse",
 												}),
 												value: () => formatAddress(institution?.address),
@@ -191,7 +194,7 @@ export function UserClaimReviewModal({
 											},
 											{
 												type: "text",
-												label: t("userClaims.currentUsers", {
+												label: t("content.userClaims.currentUsers", {
 													defaultValue: "Aktuelle Nutzer",
 												}),
 												value: () =>
@@ -204,7 +207,7 @@ export function UserClaimReviewModal({
 											},
 											{
 												type: "text",
-												label: t("userClaims.requestedBy", {
+												label: t("content.userClaims.requestedBy", {
 													defaultValue: "Requested by",
 												}),
 												value: () =>
@@ -216,7 +219,7 @@ export function UserClaimReviewModal({
 											},
 											{
 												type: "text",
-												label: t("userClaims.userGroup", {
+												label: t("content.userClaims.userGroup", {
 													defaultValue: "Benutzergruppe",
 												}),
 												value: () => formatGroups(claimant?.groups),
@@ -224,7 +227,7 @@ export function UserClaimReviewModal({
 											},
 											{
 												type: "text",
-												label: t("userClaims.claimDate", {
+												label: t("content.userClaims.claimDate", {
 													defaultValue: "Datum der Anfrage",
 												}),
 												value: () => formatDate(submission.created_at),

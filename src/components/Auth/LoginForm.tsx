@@ -16,7 +16,7 @@ export function LoginForm() {
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 	const router = useRouter();
 	const toLocalePath = useLocalePath();
-	const { t } = useTranslation("common");
+	const { t } = useTranslation();
 
 	const accountPath = toLocalePath("/account");
 	const isBusy = isSubmitting || isRedirecting;
@@ -38,11 +38,11 @@ export function LoginForm() {
 			if (!result.ok) {
 				let fallback: string;
 				if (result.error === "banned") {
-					fallback = t("auth.login.inactive");
+					fallback = t("common.auth.login.inactive");
 				} else if (result.error === "invalid_credentials") {
-					fallback = t("auth.login.invalidCredentials");
+					fallback = t("common.auth.login.invalidCredentials");
 				} else {
-					fallback = t("auth.login.errorFallback");
+					fallback = t("common.auth.login.errorFallback");
 				}
 				setErrorMessage(fallback);
 				return;
@@ -51,7 +51,7 @@ export function LoginForm() {
 			setIsRedirecting(true);
 			router.replace(accountPath);
 		} catch {
-			setErrorMessage(t("auth.login.errorFallback"));
+			setErrorMessage(t("common.auth.login.errorFallback"));
 		} finally {
 			if (!shouldKeepBusyState) {
 				setIsSubmitting(false);
@@ -61,7 +61,9 @@ export function LoginForm() {
 
 	const formConfig: FormWrapperConfig = {
 		onSubmit: handleSubmit,
-		submitLabel: isBusy ? t("auth.login.submitting") : t("auth.login.submit"),
+		submitLabel: isBusy
+			? t("common.auth.login.submitting")
+			: t("common.auth.login.submit"),
 		submitDisabled: isBusy,
 		layout: { columns: 1 },
 		fields: [
@@ -72,17 +74,17 @@ export function LoginForm() {
 				fields: [
 					{
 						name: "email",
-						label: t("auth.login.emailLabel"),
+						label: t("common.auth.login.emailLabel"),
 						type: "email",
-						placeholder: t("auth.login.emailPlaceholder"),
+						placeholder: t("common.auth.login.emailPlaceholder"),
 						required: true,
 						disabled: isBusy,
 					},
 					{
 						name: "password",
-						label: t("auth.login.passwordLabel"),
+						label: t("common.auth.login.passwordLabel"),
 						type: "password",
-						placeholder: t("auth.login.passwordPlaceholder"),
+						placeholder: t("common.auth.login.passwordPlaceholder"),
 						required: true,
 						disabled: isBusy,
 						afterField: (
@@ -96,7 +98,7 @@ export function LoginForm() {
 									onClick={() => router.push(toLocalePath("/forgotPassword"))}
 									disabled={isBusy}
 								>
-									{t("auth.login.forgotPassword")}
+									{t("common.auth.login.forgotPassword")}
 								</Button>
 							</div>
 						),
@@ -109,12 +111,12 @@ export function LoginForm() {
 	return (
 		<div className="w-full md:max-w-3xl mx-auto">
 			<div className="text-start font-bold mb-10">
-				<h1 className="">{t("auth.login.title")}</h1>
-				<p className="">{t("auth.login.subtitle")}</p>
+				<h1 className="">{t("common.auth.login.title")}</h1>
+				<p className="">{t("common.auth.login.subtitle")}</p>
 			</div>
 
 			<AlertDialog
-				title={t("alert.errorInput")}
+				title={t("common.alert.errorInput")}
 				status="error"
 				description={errorMessage ?? ""}
 				open={Boolean(errorMessage)}
@@ -123,14 +125,14 @@ export function LoginForm() {
 						setErrorMessage(null);
 					}
 				}}
-				confirmLabel={t("close")}
+				confirmLabel={t("common.close")}
 				onConfirm={() => setErrorMessage(null)}
 			/>
 
 			<FormWrapper config={formConfig} />
 
 			<div className="flex flex-col items-center text-center mt-2">
-				<span className="">{t("auth.login.noAccount")} </span>
+				<span className="">{t("common.auth.login.noAccount")} </span>
 				<Button
 					type="button"
 					variant="tertiary"
@@ -139,7 +141,7 @@ export function LoginForm() {
 					onClick={() => router.push(toLocalePath("/register"))}
 					disabled={isBusy}
 				>
-					{t("auth.login.signUp")}
+					{t("common.auth.login.signUp")}
 				</Button>
 			</div>
 		</div>

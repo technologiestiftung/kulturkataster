@@ -30,7 +30,7 @@ export function useInstitutionSubmissionReview({
 	removeSubmission,
 	upsertSubmission,
 }: UseInstitutionSubmissionReviewParams) {
-	const { t } = useTranslation("content");
+	const { t } = useTranslation();
 	const hasSubmissionId = typeof submissionId === "number";
 	const [internalNotes, setInternalNotes] = useState("");
 	const [grantSubmitterAccess, setGrantSubmitterAccess] = useState(false);
@@ -140,7 +140,7 @@ export function useInstitutionSubmissionReview({
 				return withMessage.code;
 			}
 		}
-		return t("institutionFormModal.review.errorUnknown");
+		return t("content.institutionFormModal.review.errorUnknown");
 	};
 
 	const handleReview = useCallback(
@@ -153,7 +153,7 @@ export function useInstitutionSubmissionReview({
 				typeof resolvedSubmissionWithFallback.entity_id !== "number"
 			) {
 				setError(
-					t("institutionFormModal.review.error", {
+					t("content.institutionFormModal.review.error", {
 						error: "Update submission is missing institution id.",
 					}),
 				);
@@ -194,7 +194,7 @@ export function useInstitutionSubmissionReview({
 				});
 				const errorMessage = formatReviewError(err);
 				setError(
-					t("institutionFormModal.review.error", {
+					t("content.institutionFormModal.review.error", {
 						error: errorMessage,
 					}),
 				);
@@ -250,7 +250,7 @@ export function useInstitutionSubmissionReview({
 			});
 			const errorMessage = formatReviewError(err);
 			setError(
-				t("institutionFormModal.review.error", {
+				t("content.institutionFormModal.review.error", {
 					error: errorMessage,
 				}),
 			);

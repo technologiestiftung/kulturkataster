@@ -79,19 +79,19 @@ type InstitutionFormModalProps = {
 const translateInstitutionFormError = (t: TFunction, errorCode: string) => {
 	switch (errorCode) {
 		case "notFound":
-			return t("institutionFormModal.errors.notFound", {
+			return t("content.institutionFormModal.errors.notFound", {
 				defaultValue: "The selected cultural venue no longer exists.",
 			});
 		case "forbidden":
-			return t("institutionFormModal.errors.forbidden", {
+			return t("content.institutionFormModal.errors.forbidden", {
 				defaultValue: "You are not allowed to change this cultural venue.",
 			});
 		case "invalidInput":
-			return t("institutionFormModal.errors.invalidInput", {
+			return t("content.institutionFormModal.errors.invalidInput", {
 				defaultValue: "Please check the entered data and try again.",
 			});
 		default:
-			return t("institutionFormModal.errors.unexpected", {
+			return t("content.institutionFormModal.errors.unexpected", {
 				defaultValue:
 					"The cultural venue could not be saved. Please try again.",
 			});
@@ -105,12 +105,12 @@ const getDialogTitle = (
 ): string => {
 	if (permissionContext === "submission") {
 		return mode === "create"
-			? t("institutionDraftWizardModal.dialog.submissionCreate.title")
-			: t("institutionDraftWizardModal.dialog.submissionEdit.title");
+			? t("content.institutionDraftWizardModal.dialog.submissionCreate.title")
+			: t("content.institutionDraftWizardModal.dialog.submissionEdit.title");
 	}
 	return mode === "create"
-		? t("institutionFormModal.dialog.title.create")
-		: t("institutionFormModal.dialog.title.edit");
+		? t("content.institutionFormModal.dialog.title.create")
+		: t("content.institutionFormModal.dialog.title.edit");
 };
 
 const renderDialogBody = (
@@ -255,9 +255,9 @@ const buildInstitutionFormConfig = ({
 	const fieldLabel = (key: string, _fallback?: string) =>
 		getFieldLabel(tEnum, key);
 	const fieldDescription = (key: string) =>
-		tEnum(`field_names.${key}.description`);
+		tEnum(`enumMap.field_names.${key}.description`);
 	const fieldPlaceholder = (key: string) =>
-		tEnum(`field_names.${key}.placeholder`);
+		tEnum(`enumMap.field_names.${key}.placeholder`);
 	return {
 		fields: [
 			{
@@ -283,6 +283,7 @@ const buildInstitutionFormConfig = ({
 						validators: [
 							(_value, formData) => validateDuplicateInstitution?.(formData),
 						],
+
 						afterField: duplicateWarningText,
 					},
 					{
@@ -310,7 +311,7 @@ const buildInstitutionFormConfig = ({
 						type: "select",
 						allowNullOption: true,
 						nullOptionLabel: tEnum(
-							"field_names.utilization_status.options.none",
+							"enumMap.field_names.utilization_status.options.none",
 						),
 						description: fieldDescription("utilization_status"),
 						placeholder: fieldPlaceholder("utilization_status"),
@@ -318,35 +319,39 @@ const buildInstitutionFormConfig = ({
 						options: [
 							{
 								value: "in_use",
-								label: tEnum("field_names.utilization_status.options.in_use"),
+								label: tEnum(
+									"enumMap.field_names.utilization_status.options.in_use",
+								),
 							},
 							{
 								value: "permanently_closed",
 								label: tEnum(
-									"field_names.utilization_status.options.permanently_closed",
+									"enumMap.field_names.utilization_status.options.permanently_closed",
 								),
 							},
 							{
 								value: "planned_use",
 								label: tEnum(
-									"field_names.utilization_status.options.planned_use",
+									"enumMap.field_names.utilization_status.options.planned_use",
 								),
 							},
 							{
 								value: "potential_space",
 								label: tEnum(
-									"field_names.utilization_status.options.potential_space",
+									"enumMap.field_names.utilization_status.options.potential_space",
 								),
 							},
 							{
 								value: "temporarily_closed",
 								label: tEnum(
-									"field_names.utilization_status.options.temporarily_closed",
+									"enumMap.field_names.utilization_status.options.temporarily_closed",
 								),
 							},
 							{
 								value: "unknown",
-								label: tEnum("field_names.utilization_status.options.unknown"),
+								label: tEnum(
+									"enumMap.field_names.utilization_status.options.unknown",
+								),
 							},
 						],
 					},
@@ -395,6 +400,7 @@ const buildInstitutionFormConfig = ({
 						validators: [
 							(_value, formData) => validateDuplicateInstitution?.(formData),
 						],
+
 						afterField: duplicateWarningText,
 					},
 					{
@@ -453,7 +459,7 @@ const buildInstitutionFormConfig = ({
 				name: "contact",
 				type: "section",
 				layout: { columns: 2 },
-				title: t("institutionFormModal.form.contact.title"),
+				title: t("content.institutionFormModal.form.contact.title"),
 				fields: [
 					{
 						name: "website",
@@ -524,18 +530,22 @@ const buildInstitutionFormConfig = ({
 						options: [
 							{
 								value: true,
-								label: tEnum("field_names.shared_use_allowed.options.yes"),
+								label: tEnum(
+									"enumMap.field_names.shared_use_allowed.options.yes",
+								),
 							},
 							{
 								value: false,
-								label: tEnum("field_names.shared_use_allowed.options.no"),
+								label: tEnum(
+									"enumMap.field_names.shared_use_allowed.options.no",
+								),
 							},
 						],
 					},
 					{
 						name: "shared_use_details",
 						label: t(
-							"institutionFormModal.form.information.sharedUse.detailsLabel",
+							"content.institutionFormModal.form.information.sharedUse.detailsLabel",
 						),
 						cardVariant: "none",
 						fieldGap: "gap-0",
@@ -547,10 +557,10 @@ const buildInstitutionFormConfig = ({
 								collapsible: true,
 								accordionVariant: "default",
 								accordionTitle: t(
-									"institutionFormModal.form.information.accordions.sharedUseInfo.title",
+									"content.institutionFormModal.form.information.accordions.sharedUseInfo.title",
 								),
 								accordionDescription: t(
-									"institutionFormModal.form.information.accordions.sharedUseInfo.description",
+									"content.institutionFormModal.form.information.accordions.sharedUseInfo.description",
 								),
 								defaultOpen: false,
 								type: "textarea",
@@ -562,10 +572,10 @@ const buildInstitutionFormConfig = ({
 								className: "border-t-1",
 								accordionVariant: "default",
 								accordionTitle: t(
-									"institutionFormModal.form.information.accordions.sharedUseEquipment.title",
+									"content.institutionFormModal.form.information.accordions.sharedUseEquipment.title",
 								),
 								accordionDescription: t(
-									"institutionFormModal.form.information.accordions.sharedUseEquipment.description",
+									"content.institutionFormModal.form.information.accordions.sharedUseEquipment.description",
 								),
 								defaultOpen: false,
 								type: "textarea",
@@ -577,10 +587,10 @@ const buildInstitutionFormConfig = ({
 								className: "border-t-1",
 								accordionVariant: "default",
 								accordionTitle: t(
-									"institutionFormModal.form.information.accordions.sharedUseAudience.title",
+									"content.institutionFormModal.form.information.accordions.sharedUseAudience.title",
 								),
 								accordionDescription: t(
-									"institutionFormModal.form.information.accordions.sharedUseAudience.description",
+									"content.institutionFormModal.form.information.accordions.sharedUseAudience.description",
 								),
 								defaultOpen: false,
 								type: "textarea",
@@ -592,10 +602,10 @@ const buildInstitutionFormConfig = ({
 								className: "border-t-1",
 								accordionVariant: "default",
 								accordionTitle: t(
-									"institutionFormModal.form.information.accordions.sharedUseAvailability.title",
+									"content.institutionFormModal.form.information.accordions.sharedUseAvailability.title",
 								),
 								accordionDescription: t(
-									"institutionFormModal.form.information.accordions.sharedUseAvailability.description",
+									"content.institutionFormModal.form.information.accordions.sharedUseAvailability.description",
 								),
 								defaultOpen: false,
 								type: "textarea",
@@ -607,10 +617,10 @@ const buildInstitutionFormConfig = ({
 								className: "border-t-1",
 								accordionVariant: "default",
 								accordionTitle: t(
-									"institutionFormModal.form.information.accordions.sharedUseAccessibility.title",
+									"content.institutionFormModal.form.information.accordions.sharedUseAccessibility.title",
 								),
 								accordionDescription: t(
-									"institutionFormModal.form.information.accordions.sharedUseAccessibility.description",
+									"content.institutionFormModal.form.information.accordions.sharedUseAccessibility.description",
 								),
 								defaultOpen: false,
 								type: "textarea",
@@ -622,10 +632,10 @@ const buildInstitutionFormConfig = ({
 								collapsible: true,
 								accordionVariant: "default",
 								accordionTitle: t(
-									"institutionFormModal.form.information.accordions.sharedUseCost.title",
+									"content.institutionFormModal.form.information.accordions.sharedUseCost.title",
 								),
 								accordionDescription: t(
-									"institutionFormModal.form.information.accordions.sharedUseCost.description",
+									"content.institutionFormModal.form.information.accordions.sharedUseCost.description",
 								),
 								defaultOpen: false,
 								type: "textarea",
@@ -637,10 +647,10 @@ const buildInstitutionFormConfig = ({
 								collapsible: true,
 								accordionVariant: "default",
 								accordionTitle: t(
-									"institutionFormModal.form.information.accordions.sharedUseContactPerson.title",
+									"content.institutionFormModal.form.information.accordions.sharedUseContactPerson.title",
 								),
 								accordionDescription: t(
-									"institutionFormModal.form.information.accordions.sharedUseContactPerson.description",
+									"content.institutionFormModal.form.information.accordions.sharedUseContactPerson.description",
 								),
 								defaultOpen: false,
 								type: "text",
@@ -653,7 +663,7 @@ const buildInstitutionFormConfig = ({
 			{
 				name: "organization_section",
 				type: "section",
-				title: t("institutionFormModal.form.organization.title"),
+				title: t("content.institutionFormModal.form.organization.title"),
 				fieldGap: "gap-0",
 				fields: [
 					{
@@ -661,10 +671,10 @@ const buildInstitutionFormConfig = ({
 						collapsible: true,
 						accordionVariant: "default",
 						accordionTitle: t(
-							"institutionFormModal.form.information.accordions.organization.title",
+							"content.institutionFormModal.form.information.accordions.organization.title",
 						),
 						accordionDescription: t(
-							"institutionFormModal.form.information.accordions.organization.description",
+							"content.institutionFormModal.form.information.accordions.organization.description",
 						),
 						defaultOpen: false,
 						type: "section",
@@ -684,10 +694,10 @@ const buildInstitutionFormConfig = ({
 						className: "border-t-1",
 						accordionVariant: "default",
 						accordionTitle: t(
-							"institutionFormModal.form.information.accordions.funding.title",
+							"content.institutionFormModal.form.information.accordions.funding.title",
 						),
 						accordionDescription: t(
-							"institutionFormModal.form.information.accordions.funding.description",
+							"content.institutionFormModal.form.information.accordions.funding.description",
 						),
 						defaultOpen: false,
 						type: "section",
@@ -696,33 +706,38 @@ const buildInstitutionFormConfig = ({
 							{
 								name: "funding_type",
 								allowNullOption: true,
-								nullOptionLabel: tEnum("field_names.funding_type.options.none"),
+								nullOptionLabel: tEnum(
+									"enumMap.field_names.funding_type.options.none",
+								),
 								label: fieldLabel("funding_type", "Funding Type"),
 								type: "select",
 								options: [
 									{
 										value: "workspace_program",
 										label: tEnum(
-											"field_names.funding_type.options.workspace_program",
+											"enumMap.field_names.funding_type.options.workspace_program",
 										),
 									},
 									{
 										value: "institutional_funding",
 										label: tEnum(
-											"field_names.funding_type.options.institutional_funding",
+											"enumMap.field_names.funding_type.options.institutional_funding",
 										),
 									},
 									{
 										value: "temporary_project_funding",
 										label: tEnum(
-											"field_names.funding_type.options.temporary_project_funding",
+											"enumMap.field_names.funding_type.options.temporary_project_funding",
 										),
 									},
 									{
 										value: "no_funding",
-										label: tEnum("field_names.funding_type.options.no_funding"),
+										label: tEnum(
+											"enumMap.field_names.funding_type.options.no_funding",
+										),
 									},
 								],
+
 								placeholder: fieldPlaceholder("funding_type"),
 							},
 						],
@@ -733,10 +748,10 @@ const buildInstitutionFormConfig = ({
 						className: "border-t-1",
 						accordionVariant: "default",
 						accordionTitle: t(
-							"institutionFormModal.form.information.accordions.fundingSources.title",
+							"content.institutionFormModal.form.information.accordions.fundingSources.title",
 						),
 						accordionDescription: t(
-							"institutionFormModal.form.information.accordions.fundingSources.description",
+							"content.institutionFormModal.form.information.accordions.fundingSources.description",
 						),
 						defaultOpen: false,
 						type: "section",
@@ -748,7 +763,7 @@ const buildInstitutionFormConfig = ({
 								type: "fundingSources",
 								allowNullOption: true,
 								nullOptionLabel: tEnum(
-									"field_names.funding_source.options.none",
+									"enumMap.field_names.funding_source.options.none",
 								),
 								description: fieldDescription("funding_sources"),
 								fundingSources: {
@@ -759,10 +774,10 @@ const buildInstitutionFormConfig = ({
 										"funding_source_description",
 									),
 									addButtonLabel: tEnum(
-										"field_names.funding_sources.actions.add",
+										"enumMap.field_names.funding_sources.actions.add",
 									),
 									removeButtonLabel: tEnum(
-										"field_names.funding_sources.actions.remove",
+										"enumMap.field_names.funding_sources.actions.remove",
 									),
 								},
 							},
@@ -772,7 +787,7 @@ const buildInstitutionFormConfig = ({
 			},
 			{
 				name: "details_section",
-				title: t("institutionFormModal.form.details.title"),
+				title: t("content.institutionFormModal.form.details.title"),
 				type: "section",
 				fieldGap: "gap-0",
 				fields: [
@@ -782,10 +797,10 @@ const buildInstitutionFormConfig = ({
 						className: "border-t-1",
 						accordionVariant: "default",
 						accordionTitle: t(
-							"institutionFormModal.form.information.accordions.establishment.title",
+							"content.institutionFormModal.form.information.accordions.establishment.title",
 						),
 						accordionDescription: t(
-							"institutionFormModal.form.information.accordions.establishment.description",
+							"content.institutionFormModal.form.information.accordions.establishment.description",
 						),
 						defaultOpen: false,
 						type: "section",
@@ -819,10 +834,10 @@ const buildInstitutionFormConfig = ({
 						className: "border-t-1",
 						accordionVariant: "default",
 						accordionTitle: t(
-							"institutionFormModal.form.information.accordions.closing.title",
+							"content.institutionFormModal.form.information.accordions.closing.title",
 						),
 						accordionDescription: t(
-							"institutionFormModal.form.information.accordions.closing.description",
+							"content.institutionFormModal.form.information.accordions.closing.description",
 						),
 						defaultOpen: false,
 						type: "section",
@@ -842,10 +857,10 @@ const buildInstitutionFormConfig = ({
 						className: "border-t-1",
 						accordionVariant: "default",
 						accordionTitle: t(
-							"institutionFormModal.form.information.accordions.ownership.title",
+							"content.institutionFormModal.form.information.accordions.ownership.title",
 						),
 						accordionDescription: t(
-							"institutionFormModal.form.information.accordions.ownership.description",
+							"content.institutionFormModal.form.information.accordions.ownership.description",
 						),
 						defaultOpen: false,
 						type: "section",
@@ -858,73 +873,78 @@ const buildInstitutionFormConfig = ({
 								options: [
 									{
 										value: "private",
-										label: tEnum("field_names.owner_type.options.private"),
+										label: tEnum(
+											"enumMap.field_names.owner_type.options.private",
+										),
 									},
 									{
 										value: "federal_property",
 										label: tEnum(
-											"field_names.owner_type.options.federal_property",
+											"enumMap.field_names.owner_type.options.federal_property",
 										),
 									},
 									{
 										value: "state_property",
 										label: tEnum(
-											"field_names.owner_type.options.state_property",
+											"enumMap.field_names.owner_type.options.state_property",
 										),
 									},
 									{
 										value: "state_property_silb",
 										label: tEnum(
-											"field_names.owner_type.options.state_property_silb",
+											"enumMap.field_names.owner_type.options.state_property_silb",
 										),
 									},
 									{
 										value: "state_property_soda",
 										label: tEnum(
-											"field_names.owner_type.options.state_property_soda",
+											"enumMap.field_names.owner_type.options.state_property_soda",
 										),
 									},
 									{
 										value: "state_property_other",
 										label: tEnum(
-											"field_names.owner_type.options.state_property_other",
+											"enumMap.field_names.owner_type.options.state_property_other",
 										),
 									},
 									{
 										value: "state_property_specialized",
 										label: tEnum(
-											"field_names.owner_type.options.state_property_specialized",
+											"enumMap.field_names.owner_type.options.state_property_specialized",
 										),
 									},
 									{
 										value: "state_property_fund",
 										label: tEnum(
-											"field_names.owner_type.options.state_property_fund",
+											"enumMap.field_names.owner_type.options.state_property_fund",
 										),
 									},
 									{
 										value: "district_property",
 										label: tEnum(
-											"field_names.owner_type.options.district_property",
+											"enumMap.field_names.owner_type.options.district_property",
 										),
 									},
 									{
 										value: "other_public_property",
 										label: tEnum(
-											"field_names.owner_type.options.other_public_property",
+											"enumMap.field_names.owner_type.options.other_public_property",
 										),
 									},
 									{
 										value: "municipal_housing_company",
 										label: tEnum(
-											"field_names.owner_type.options.municipal_housing_company",
+											"enumMap.field_names.owner_type.options.municipal_housing_company",
 										),
 									},
 									{
 										value: "other",
-										label: tEnum("field_names.owner_type.options.other"),
+										label: tEnum(
+											"enumMap.field_names.owner_type.options.other",
+										),
 									},
 								],
+
 								placeholder: fieldPlaceholder("owner_type"),
 							},
 							{
@@ -942,10 +962,10 @@ const buildInstitutionFormConfig = ({
 						className: "border-t-1",
 						accordionVariant: "default",
 						accordionTitle: t(
-							"institutionFormModal.form.information.accordions.rental.title",
+							"content.institutionFormModal.form.information.accordions.rental.title",
 						),
 						accordionDescription: t(
-							"institutionFormModal.form.information.accordions.rental.description",
+							"content.institutionFormModal.form.information.accordions.rental.description",
 						),
 						defaultOpen: false,
 						type: "section",
@@ -960,28 +980,29 @@ const buildInstitutionFormConfig = ({
 									{
 										value: "unlimited_lease",
 										label: tEnum(
-											"field_names.rental_contract_type.options.unlimited_lease",
+											"enumMap.field_names.rental_contract_type.options.unlimited_lease",
 										),
 									},
 									{
 										value: "limited_lease",
 										label: tEnum(
-											"field_names.rental_contract_type.options.limited_lease",
+											"enumMap.field_names.rental_contract_type.options.limited_lease",
 										),
 									},
 									{
 										value: "hereditary_building_right",
 										label: tEnum(
-											"field_names.rental_contract_type.options.hereditary_building_right",
+											"enumMap.field_names.rental_contract_type.options.hereditary_building_right",
 										),
 									},
 									{
 										value: "organization_ownership",
 										label: tEnum(
-											"field_names.rental_contract_type.options.organization_ownership",
+											"enumMap.field_names.rental_contract_type.options.organization_ownership",
 										),
 									},
 								],
+
 								placeholder: fieldPlaceholder("rental_contract_type"),
 							},
 							{
@@ -1000,10 +1021,10 @@ const buildInstitutionFormConfig = ({
 						className: "border-t-1",
 						accordionVariant: "default",
 						accordionTitle: t(
-							"institutionFormModal.form.information.accordions.protection.title",
+							"content.institutionFormModal.form.information.accordions.protection.title",
 						),
 						accordionDescription: t(
-							"institutionFormModal.form.information.accordions.protection.description",
+							"content.institutionFormModal.form.information.accordions.protection.description",
 						),
 						defaultOpen: false,
 						type: "section",
@@ -1014,47 +1035,48 @@ const buildInstitutionFormConfig = ({
 								label: fieldLabel("protection_status", "Sicherungsstatus"),
 								allowNullOption: true,
 								nullOptionLabel: tEnum(
-									"field_names.protection_status.options.none",
+									"enumMap.field_names.protection_status.options.none",
 								),
 								type: "select",
 								options: [
 									{
 										value: "long_term_secured",
 										label: tEnum(
-											"field_names.protection_status.options.long_term_secured",
+											"enumMap.field_names.protection_status.options.long_term_secured",
 										),
 									},
 									{
 										value: "medium_term_secured",
 										label: tEnum(
-											"field_names.protection_status.options.medium_term_secured",
+											"enumMap.field_names.protection_status.options.medium_term_secured",
 										),
 									},
 									{
 										value: "uncertain",
 										label: tEnum(
-											"field_names.protection_status.options.uncertain",
+											"enumMap.field_names.protection_status.options.uncertain",
 										),
 									},
 									{
 										value: "acutely_threatened",
 										label: tEnum(
-											"field_names.protection_status.options.acutely_threatened",
+											"enumMap.field_names.protection_status.options.acutely_threatened",
 										),
 									},
 									{
 										value: "permanently_closed",
 										label: tEnum(
-											"field_names.protection_status.options.permanently_closed",
+											"enumMap.field_names.protection_status.options.permanently_closed",
 										),
 									},
 									{
 										value: "not_yet_secured",
 										label: tEnum(
-											"field_names.protection_status.options.not_yet_secured",
+											"enumMap.field_names.protection_status.options.not_yet_secured",
 										),
 									},
 								],
+
 								placeholder: fieldPlaceholder("protection_status"),
 							},
 							{
@@ -1085,10 +1107,10 @@ const buildInstitutionFormConfig = ({
 						className: "border-t-1",
 						accordionVariant: "default",
 						accordionTitle: t(
-							"institutionFormModal.form.information.accordions.space.title",
+							"content.institutionFormModal.form.information.accordions.space.title",
 						),
 						accordionDescription: t(
-							"institutionFormModal.form.information.accordions.space.description",
+							"content.institutionFormModal.form.information.accordions.space.description",
 						),
 						defaultOpen: false,
 						type: "section",
@@ -1141,28 +1163,29 @@ const buildInstitutionFormConfig = ({
 						placeholder: fieldPlaceholder("internal_notes"),
 						description: fieldDescription("internal_notes"),
 						privateDescription: t(
-							"institutionFormModal.form.information.internalNotesPrivateDescription",
+							"content.institutionFormModal.form.information.internalNotesPrivateDescription",
 						),
 					},
 				],
 			},
 		],
+
 		onSubmit,
 		onChange,
 		isPrivateField,
 		showCancel: true,
-		cancelLabel: t("institutionFormModal.actions.cancel"),
+		cancelLabel: t("content.institutionFormModal.actions.cancel"),
 		onCancel,
 		submitLabel:
 			submitLabel ??
 			getSubmitLabel(mode, submitting, {
 				create: {
-					default: t("institutionFormModal.actions.create"),
-					loading: t("institutionFormModal.actions.creating"),
+					default: t("content.institutionFormModal.actions.create"),
+					loading: t("content.institutionFormModal.actions.creating"),
 				},
 				edit: {
-					default: t("institutionFormModal.actions.save"),
-					loading: t("institutionFormModal.actions.saving"),
+					default: t("content.institutionFormModal.actions.save"),
+					loading: t("content.institutionFormModal.actions.saving"),
 				},
 			}),
 		initialValues: buildInstitutionFormInitialValues(
@@ -1191,8 +1214,8 @@ export function InstitutionFormModal({
 	closeConfirmation,
 	permissionContext = "institution",
 }: InstitutionFormModalProps) {
-	const { t, i18n } = useTranslation("content");
-	const { t: tEnum } = useTranslation("enumMap");
+	const { t, i18n } = useTranslation();
+	const { t: tEnum } = useTranslation();
 	const { isPrivateField } = useInstitutionPrivateFieldResolver();
 	const accountCategories = useAccountStore((state) => state.categories);
 	const institutionFieldPermissions = useAccountStore(
@@ -1250,6 +1273,7 @@ export function InstitutionFormModal({
 										"0 0 0 0 color-mix(in srgb, var(--color-primary-dark) 0%, transparent)",
 								},
 							],
+
 							{
 								duration: 1000,
 								iterations: 5,
@@ -1299,7 +1323,10 @@ export function InstitutionFormModal({
 			nextMode === "create"
 				? "institutionFormModal.feedback.create"
 				: "institutionFormModal.feedback.update";
-		showSuccessToast(t(`${keyPrefix}.title`), t(`${keyPrefix}.description`));
+		showSuccessToast(
+			t(`content.${keyPrefix}.title`),
+			t(`content.${keyPrefix}.description`),
+		);
 	};
 
 	const {
@@ -1362,7 +1389,7 @@ export function InstitutionFormModal({
 		neighbourhoodKey: "address.neighbourhood",
 	});
 	const duplicateInstitutionMessage = t(
-		"institutionFormModal.form.details.validation.duplicateInstitution",
+		"content.institutionFormModal.form.details.validation.duplicateInstitution",
 		{
 			defaultValue: "An institution with this name and address already exists.",
 		},
@@ -1403,7 +1430,7 @@ export function InstitutionFormModal({
 	const duplicateWarningText = useMemo(() => {
 		if (potentialDuplicates.length === 0) return null;
 		const warningText = t(
-			"institutionFormModal.form.details.validation.duplicatePossible",
+			"content.institutionFormModal.form.details.validation.duplicatePossible",
 			{
 				defaultValue:
 					"Possible duplicate found. Please verify before submitting.",
@@ -1495,8 +1522,10 @@ export function InstitutionFormModal({
 	const autoCloseError = showNotFoundWithFallback
 		? {
 				active: true,
-				title: t("institutionFormModal.dialog.notFound.title"),
-				description: t("institutionFormModal.dialog.notFound.description"),
+				title: t("content.institutionFormModal.dialog.notFound.title"),
+				description: t(
+					"content.institutionFormModal.dialog.notFound.description",
+				),
 			}
 		: undefined;
 	const isWaitingForInstitution =
@@ -1526,7 +1555,8 @@ export function InstitutionFormModal({
 			...formConfigWithFieldAccess,
 			deleteAction: {
 				label:
-					deleteConfig?.buttonLabel ?? t("institutionFormModal.delete.button"),
+					deleteConfig?.buttonLabel ??
+					t("content.institutionFormModal.delete.button"),
 				onClick: () => setShowDeleteDialog(true),
 				disabled: isDeleting || resolvedSubmitting,
 				className: "p-0!",
@@ -1558,20 +1588,20 @@ export function InstitutionFormModal({
 							status: "warning",
 							title:
 								deleteConfig?.confirmTitle ??
-								t("institutionFormModal.delete.confirmTitle", {
+								t("content.institutionFormModal.delete.confirmTitle", {
 									defaultValue: "Delete institution?",
 								}),
 							description:
 								deleteConfig?.confirmDescription ??
-								t("institutionFormModal.delete.confirmDescription", {
+								t("content.institutionFormModal.delete.confirmDescription", {
 									defaultValue: "This action cannot be undone.",
 								}),
 							confirmLabel:
 								deleteConfig?.confirmLabel ??
-								t("institutionFormModal.delete.confirm"),
+								t("content.institutionFormModal.delete.confirm"),
 							cancelLabel:
 								deleteConfig?.cancelLabel ??
-								t("institutionFormModal.delete.cancel", {
+								t("content.institutionFormModal.delete.cancel", {
 									defaultValue: "Cancel",
 								}),
 							onCancel: () => setShowDeleteDialog(false),
@@ -1586,9 +1616,9 @@ export function InstitutionFormModal({
 				submitError
 					? {
 							open: true,
-							title: t("error"),
+							title: t("content.error"),
 							description: submitError,
-							confirmLabel: t("close"),
+							confirmLabel: t("content.close"),
 							onConfirm: () => setSubmitError(null),
 							onOpenChange: (open) => {
 								if (!open) setSubmitError(null);

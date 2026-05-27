@@ -204,7 +204,7 @@ export function Menu({
 	isLoggedIn: boolean;
 }) {
 	const { setOpen, setOpenMobile, isMobile } = useSidebar();
-	const { t } = useTranslation("common");
+	const { t } = useTranslation();
 	const router = useRouter();
 	const toLocalePath = useLocalePath();
 	const pathname = usePathname();
@@ -420,7 +420,10 @@ export function Menu({
 
 	return (
 		<>
-			<nav aria-label={t("menu.navigation")} className="pointer-events-auto">
+			<nav
+				aria-label={t("common.menu.navigation")}
+				className="pointer-events-auto"
+			>
 				<Sidebar
 					collapsible="icon"
 					className="relative overflow-visible *:data-[sidebar=sidebar]:flex-row [&_*]:!transition-none"
@@ -436,7 +439,7 @@ export function Menu({
 									<button
 										className=""
 										onClick={handleLogoClick}
-										aria-label={t("kukaLogoButton")}
+										aria-label={t("common.kukaLogoButton")}
 									>
 										<KukaSmallLogo
 											title="Kulturkataster Berlin, Logo"
@@ -466,12 +469,12 @@ export function Menu({
 														<SidebarMenuItem key={item.id}>
 															<SidebarMenuButton
 																tooltip={{
-																	children: t(item.label),
+																	children: t("common." + item.label),
 																	hidden: false,
 																}}
 																onClick={() => handleItemClick(item)}
 																isActive={isActive}
-																aria-label={t(item.label)}
+																aria-label={t("common." + item.label)}
 																aria-current={isActive ? "page" : undefined}
 																className="relative"
 															>
@@ -503,12 +506,12 @@ export function Menu({
 											<SidebarMenuItem key={item.id}>
 												<SidebarMenuButton
 													tooltip={{
-														children: t(item.label),
+														children: t("common." + item.label),
 														hidden: false,
 													}}
 													onClick={() => handleItemClick(item)}
 													isActive={isActive}
-													aria-label={t(item.label)}
+													aria-label={t("common." + item.label)}
 													aria-current={isActive ? "page" : undefined}
 												>
 													<Icon />
@@ -553,7 +556,7 @@ export function Menu({
 										onClick={() => handleItemClick(item)}
 										isActive={isActive}
 										className="relative flex-col h-auto py-2 px-3 w-auto size-14"
-										aria-label={t(item.label)}
+										aria-label={t("common." + item.label)}
 										aria-current={isActive ? "page" : undefined}
 									>
 										{item.id === "user" && isLoggedIn && (
@@ -561,7 +564,7 @@ export function Menu({
 										)}
 										<item.icon className="size-6" />
 										<span className="text-xs font-medium hidden">
-											{t(item.label)}
+											{t("common." + item.label)}
 										</span>
 									</SidebarMenuButton>
 								</SidebarMenuItem>
@@ -604,8 +607,8 @@ export function Menu({
 					<MobileSheetHeader
 						title={
 							isMobileInstitutionDetailRoute
-								? t("institution.showDetails")
-								: t("map.layerTreeTitle")
+								? t("common.institution.showDetails")
+								: t("common.map.layerTreeTitle")
 						}
 						onHandlePointerDown={
 							isMobileLayerTreeRoute
@@ -615,6 +618,7 @@ export function Menu({
 								: undefined
 						}
 					/>
+
 					<div
 						className={
 							isMobileInstitutionDetailRoute

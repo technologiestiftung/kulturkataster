@@ -5,17 +5,19 @@ import { useTranslation } from "react-i18next";
 import { Modal } from "../Modal";
 
 export function TermsModal({ routePath }: { routePath?: string }) {
-	const { t } = useTranslation("content");
+	const { t } = useTranslation();
 
 	return (
 		<Modal
-			title={t("termsModal.title")}
+			title={t("content.termsModal.title")}
 			subtitle={
 				<>
 					<span className="block">
-						{t("termsModal.date", { date: "23.04.2026" })}
+						{t("content.termsModal.date", { date: "23.04.2026" })}
 					</span>
-					<span className="block mt-2">{t("termsModal.disclaimer")}</span>
+					<span className="block mt-2">
+						{t("content.termsModal.disclaimer")}
+					</span>
 				</>
 			}
 			routePath={routePath}
@@ -26,22 +28,26 @@ export function TermsModal({ routePath }: { routePath?: string }) {
 					h1: ({ children }) => (
 						<h1 className="text-2xl font-bold mt-6 mb-2">{children}</h1>
 					),
+
 					h2: ({ children }) => (
 						<h2 className="text-lg font-semibold mt-6 mb-2">{children}</h2>
 					),
+
 					p: ({ children }) => <p className="body1 mb-3">{children}</p>,
 					ul: ({ children }) => (
 						<ul className="list-disc pl-6 mb-3 space-y-1">{children}</ul>
 					),
+
 					li: ({ children }) => <li className="body1">{children}</li>,
 					strong: ({ children }) => (
 						<strong className="font-semibold">{children}</strong>
 					),
+
 					em: ({ children }) => <em className="italic">{children}</em>,
 					hr: () => <hr className="my-6 border-border" />,
 				}}
 			>
-				{t("termsModal.body", {
+				{t("content.termsModal.body", {
 					date: "23.04.2026",
 					operatorName: "Kulturraum Berlin gGmbH",
 					operatorAddress: "[Anschrift einfügen]",

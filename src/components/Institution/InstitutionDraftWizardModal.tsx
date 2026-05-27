@@ -123,8 +123,8 @@ function InstitutionDraftWizardContent({
 	onCloseRequest,
 	onSubmitError,
 }: InstitutionDraftWizardContentProps) {
-	const { t, i18n } = useTranslation("content");
-	const { t: tEnum } = useTranslation("enumMap");
+	const { t, i18n } = useTranslation();
+	const { t: tEnum } = useTranslation();
 	const { isPrivateField } = useInstitutionPrivateFieldResolver();
 
 	const fieldLabel = useCallback(
@@ -189,7 +189,7 @@ function InstitutionDraftWizardContent({
 	});
 
 	const duplicateInstitutionMessage = t(
-		"institutionFormModal.form.details.validation.duplicateInstitution",
+		"content.institutionFormModal.form.details.validation.duplicateInstitution",
 		{
 			defaultValue: "An institution with this name and address already exists.",
 		},
@@ -239,7 +239,7 @@ function InstitutionDraftWizardContent({
 	const duplicateWarningText = useMemo<ReactNode>(() => {
 		if (potentialDuplicates.length === 0) return null;
 		const warningText = t(
-			"institutionFormModal.form.details.validation.duplicatePossible",
+			"content.institutionFormModal.form.details.validation.duplicatePossible",
 			{
 				defaultValue:
 					"Possible duplicate found. Please verify before submitting.",
@@ -409,12 +409,14 @@ function InstitutionDraftWizardContent({
 			const message =
 				error instanceof Error
 					? error.message
-					: t("institutionFormModal.review.errorUnknown", {
+					: t("content.institutionFormModal.review.errorUnknown", {
 							defaultValue: "Unknown error.",
 						});
 			onSubmitError?.(
 				typeof message === "string" && message.includes("pending")
-					? t("institutionDraftWizardModal.feedback.submit.pendingConflict")
+					? t(
+							"content.institutionDraftWizardModal.feedback.submit.pendingConflict",
+						)
 					: message,
 			);
 		}
@@ -495,7 +497,7 @@ function InstitutionDraftWizardContent({
 				{
 					name: "basicSection",
 					type: "section",
-					title: t("institutionFormModal.form.basic.sectionTitle"),
+					title: t("content.institutionFormModal.form.basic.sectionTitle"),
 					layout: { columns: 2 },
 					fields: [
 						{
@@ -508,6 +510,7 @@ function InstitutionDraftWizardContent({
 							validators: [
 								(_value, formData) => validateDuplicateInstitution(formData),
 							],
+
 							afterField: duplicateWarningText,
 						},
 						{
@@ -554,6 +557,7 @@ function InstitutionDraftWizardContent({
 							validators: [
 								(_value, formData) => validateDuplicateInstitution(formData),
 							],
+
 							afterField: duplicateWarningText,
 						},
 						{
@@ -620,42 +624,44 @@ function InstitutionDraftWizardContent({
 							type: "select",
 							allowNullOption: true,
 							nullOptionLabel: tEnum(
-								"field_names.utilization_status.options.none",
+								"enumMap.field_names.utilization_status.options.none",
 							),
 							placeholder: fieldPlaceholder("utilization_status"),
 							options: [
 								{
 									value: "in_use",
-									label: tEnum("field_names.utilization_status.options.in_use"),
+									label: tEnum(
+										"enumMap.field_names.utilization_status.options.in_use",
+									),
 								},
 								{
 									value: "permanently_closed",
 									label: tEnum(
-										"field_names.utilization_status.options.permanently_closed",
+										"enumMap.field_names.utilization_status.options.permanently_closed",
 									),
 								},
 								{
 									value: "planned_use",
 									label: tEnum(
-										"field_names.utilization_status.options.planned_use",
+										"enumMap.field_names.utilization_status.options.planned_use",
 									),
 								},
 								{
 									value: "potential_space",
 									label: tEnum(
-										"field_names.utilization_status.options.potential_space",
+										"enumMap.field_names.utilization_status.options.potential_space",
 									),
 								},
 								{
 									value: "temporarily_closed",
 									label: tEnum(
-										"field_names.utilization_status.options.temporarily_closed",
+										"enumMap.field_names.utilization_status.options.temporarily_closed",
 									),
 								},
 								{
 									value: "unknown",
 									label: tEnum(
-										"field_names.utilization_status.options.unknown",
+										"enumMap.field_names.utilization_status.options.unknown",
 									),
 								},
 							],
@@ -690,11 +696,12 @@ function InstitutionDraftWizardContent({
 					],
 				},
 			],
+
 			initialValues: draft,
 			onChange: handleStepChange,
 			onSubmit: handleStepSubmit,
 			onCancel: handleCancel,
-			submitLabel: t("institutionDraftWizardModal.actions.next"),
+			submitLabel: t("content.institutionDraftWizardModal.actions.next"),
 			showCancel: true,
 			isPrivateField: isPrivateFormField,
 		}),
@@ -753,10 +760,11 @@ function InstitutionDraftWizardContent({
 									return hasSelectedCategories || hasProposedCategory
 										? undefined
 										: t(
-												"institutionFormModal.form.category.validation.minSelection",
+												"content.institutionFormModal.form.category.validation.minSelection",
 											);
 								},
 							],
+
 							layout: { span: "full" },
 							filterPanel: {
 								categoryGroups,
@@ -778,26 +786,29 @@ function InstitutionDraftWizardContent({
 					fields: [
 						{
 							name: "newCategory",
-							label: t("institutionFormModal.form.category.newCategory.label"),
+							label: t(
+								"content.institutionFormModal.form.category.newCategory.label",
+							),
 							description: t(
-								"institutionFormModal.form.category.newCategory.description",
+								"content.institutionFormModal.form.category.newCategory.description",
 							),
 							className: "mt-4",
 							type: "text",
 							placeholder: t(
-								"institutionFormModal.form.category.newCategory.placeholder",
+								"content.institutionFormModal.form.category.newCategory.placeholder",
 							),
 							layout: { span: "full" },
 						},
 					],
 				},
 			],
+
 			initialValues: draft,
 			onChange: handleStepChange,
 			onSubmit: handleStepSubmit,
 			onCancel: handleCancel,
-			cancelLabel: t("institutionDraftWizardModal.actions.back"),
-			submitLabel: t("institutionDraftWizardModal.actions.next"),
+			cancelLabel: t("content.institutionDraftWizardModal.actions.back"),
+			submitLabel: t("content.institutionDraftWizardModal.actions.next"),
 			showCancel: true,
 			layout: { columns: 2 },
 			isPrivateField: isPrivateFormField,
@@ -829,18 +840,22 @@ function InstitutionDraftWizardContent({
 							options: [
 								{
 									value: true,
-									label: tEnum("field_names.shared_use_allowed.options.yes"),
+									label: tEnum(
+										"enumMap.field_names.shared_use_allowed.options.yes",
+									),
 								},
 								{
 									value: false,
-									label: tEnum("field_names.shared_use_allowed.options.no"),
+									label: tEnum(
+										"enumMap.field_names.shared_use_allowed.options.no",
+									),
 								},
 							],
 						},
 						{
 							name: "shared_use_details",
 							label: t(
-								"institutionFormModal.form.information.sharedUse.detailsLabel",
+								"content.institutionFormModal.form.information.sharedUse.detailsLabel",
 							),
 							cardVariant: "none",
 							fieldGap: "gap-0",
@@ -852,10 +867,10 @@ function InstitutionDraftWizardContent({
 									collapsible: true,
 									accordionVariant: "default",
 									accordionTitle: t(
-										"institutionFormModal.form.information.accordions.sharedUseInfo.title",
+										"content.institutionFormModal.form.information.accordions.sharedUseInfo.title",
 									),
 									accordionDescription: t(
-										"institutionFormModal.form.information.accordions.sharedUseInfo.description",
+										"content.institutionFormModal.form.information.accordions.sharedUseInfo.description",
 									),
 									defaultOpen: false,
 									type: "textarea",
@@ -867,10 +882,10 @@ function InstitutionDraftWizardContent({
 									className: "border-t-1",
 									accordionVariant: "default",
 									accordionTitle: t(
-										"institutionFormModal.form.information.accordions.sharedUseEquipment.title",
+										"content.institutionFormModal.form.information.accordions.sharedUseEquipment.title",
 									),
 									accordionDescription: t(
-										"institutionFormModal.form.information.accordions.sharedUseEquipment.description",
+										"content.institutionFormModal.form.information.accordions.sharedUseEquipment.description",
 									),
 									defaultOpen: false,
 									type: "textarea",
@@ -882,10 +897,10 @@ function InstitutionDraftWizardContent({
 									className: "border-t-1",
 									accordionVariant: "default",
 									accordionTitle: t(
-										"institutionFormModal.form.information.accordions.sharedUseAudience.title",
+										"content.institutionFormModal.form.information.accordions.sharedUseAudience.title",
 									),
 									accordionDescription: t(
-										"institutionFormModal.form.information.accordions.sharedUseAudience.description",
+										"content.institutionFormModal.form.information.accordions.sharedUseAudience.description",
 									),
 									defaultOpen: false,
 									type: "textarea",
@@ -897,10 +912,10 @@ function InstitutionDraftWizardContent({
 									className: "border-t-1",
 									accordionVariant: "default",
 									accordionTitle: t(
-										"institutionFormModal.form.information.accordions.sharedUseAvailability.title",
+										"content.institutionFormModal.form.information.accordions.sharedUseAvailability.title",
 									),
 									accordionDescription: t(
-										"institutionFormModal.form.information.accordions.sharedUseAvailability.description",
+										"content.institutionFormModal.form.information.accordions.sharedUseAvailability.description",
 									),
 									defaultOpen: false,
 									type: "textarea",
@@ -912,10 +927,10 @@ function InstitutionDraftWizardContent({
 									className: "border-t-1",
 									accordionVariant: "default",
 									accordionTitle: t(
-										"institutionFormModal.form.information.accordions.sharedUseAccessibility.title",
+										"content.institutionFormModal.form.information.accordions.sharedUseAccessibility.title",
 									),
 									accordionDescription: t(
-										"institutionFormModal.form.information.accordions.sharedUseAccessibility.description",
+										"content.institutionFormModal.form.information.accordions.sharedUseAccessibility.description",
 									),
 									defaultOpen: false,
 									type: "textarea",
@@ -927,10 +942,10 @@ function InstitutionDraftWizardContent({
 									collapsible: true,
 									accordionVariant: "default",
 									accordionTitle: t(
-										"institutionFormModal.form.information.accordions.sharedUseCost.title",
+										"content.institutionFormModal.form.information.accordions.sharedUseCost.title",
 									),
 									accordionDescription: t(
-										"institutionFormModal.form.information.accordions.sharedUseCost.description",
+										"content.institutionFormModal.form.information.accordions.sharedUseCost.description",
 									),
 									defaultOpen: false,
 									type: "textarea",
@@ -942,10 +957,10 @@ function InstitutionDraftWizardContent({
 									collapsible: true,
 									accordionVariant: "default",
 									accordionTitle: t(
-										"institutionFormModal.form.information.accordions.sharedUseContactPerson.title",
+										"content.institutionFormModal.form.information.accordions.sharedUseContactPerson.title",
 									),
 									accordionDescription: t(
-										"institutionFormModal.form.information.accordions.sharedUseContactPerson.description",
+										"content.institutionFormModal.form.information.accordions.sharedUseContactPerson.description",
 									),
 									defaultOpen: false,
 									type: "text",
@@ -958,7 +973,7 @@ function InstitutionDraftWizardContent({
 				{
 					name: "organization_section",
 					type: "section",
-					title: t("institutionFormModal.form.organization.title"),
+					title: t("content.institutionFormModal.form.organization.title"),
 					fieldGap: "gap-0",
 					fields: [
 						{
@@ -966,10 +981,10 @@ function InstitutionDraftWizardContent({
 							collapsible: true,
 							accordionVariant: "default",
 							accordionTitle: t(
-								"institutionFormModal.form.information.accordions.organization.title",
+								"content.institutionFormModal.form.information.accordions.organization.title",
 							),
 							accordionDescription: t(
-								"institutionFormModal.form.information.accordions.organization.description",
+								"content.institutionFormModal.form.information.accordions.organization.description",
 							),
 							defaultOpen: false,
 							type: "section",
@@ -989,10 +1004,10 @@ function InstitutionDraftWizardContent({
 							className: "border-t-1",
 							accordionVariant: "default",
 							accordionTitle: t(
-								"institutionFormModal.form.information.accordions.funding.title",
+								"content.institutionFormModal.form.information.accordions.funding.title",
 							),
 							accordionDescription: t(
-								"institutionFormModal.form.information.accordions.funding.description",
+								"content.institutionFormModal.form.information.accordions.funding.description",
 							),
 							defaultOpen: false,
 							type: "section",
@@ -1002,7 +1017,7 @@ function InstitutionDraftWizardContent({
 									name: "funding_type",
 									allowNullOption: true,
 									nullOptionLabel: tEnum(
-										"field_names.funding_type.options.none",
+										"enumMap.field_names.funding_type.options.none",
 									),
 									label: fieldLabel("funding_type", "Funding Type"),
 									type: "select",
@@ -1010,28 +1025,29 @@ function InstitutionDraftWizardContent({
 										{
 											value: "workspace_program",
 											label: tEnum(
-												"field_names.funding_type.options.workspace_program",
+												"enumMap.field_names.funding_type.options.workspace_program",
 											),
 										},
 										{
 											value: "institutional_funding",
 											label: tEnum(
-												"field_names.funding_type.options.institutional_funding",
+												"enumMap.field_names.funding_type.options.institutional_funding",
 											),
 										},
 										{
 											value: "temporary_project_funding",
 											label: tEnum(
-												"field_names.funding_type.options.temporary_project_funding",
+												"enumMap.field_names.funding_type.options.temporary_project_funding",
 											),
 										},
 										{
 											value: "no_funding",
 											label: tEnum(
-												"field_names.funding_type.options.no_funding",
+												"enumMap.field_names.funding_type.options.no_funding",
 											),
 										},
 									],
+
 									placeholder: fieldPlaceholder("funding_type"),
 								},
 							],
@@ -1042,10 +1058,10 @@ function InstitutionDraftWizardContent({
 							className: "border-t-1",
 							accordionVariant: "default",
 							accordionTitle: t(
-								"institutionFormModal.form.information.accordions.fundingSources.title",
+								"content.institutionFormModal.form.information.accordions.fundingSources.title",
 							),
 							accordionDescription: t(
-								"institutionFormModal.form.information.accordions.fundingSources.description",
+								"content.institutionFormModal.form.information.accordions.fundingSources.description",
 							),
 							defaultOpen: false,
 							type: "section",
@@ -1057,7 +1073,7 @@ function InstitutionDraftWizardContent({
 									type: "fundingSources",
 									allowNullOption: true,
 									nullOptionLabel: tEnum(
-										"field_names.funding_source.options.none",
+										"enumMap.field_names.funding_source.options.none",
 									),
 									description: fieldDescription("funding_sources"),
 									fundingSources: {
@@ -1068,10 +1084,10 @@ function InstitutionDraftWizardContent({
 											"funding_source_description",
 										),
 										addButtonLabel: tEnum(
-											"field_names.funding_sources.actions.add",
+											"enumMap.field_names.funding_sources.actions.add",
 										),
 										removeButtonLabel: tEnum(
-											"field_names.funding_sources.actions.remove",
+											"enumMap.field_names.funding_sources.actions.remove",
 										),
 									},
 								},
@@ -1081,7 +1097,7 @@ function InstitutionDraftWizardContent({
 				},
 				{
 					name: "details_section",
-					title: t("institutionFormModal.form.details.title"),
+					title: t("content.institutionFormModal.form.details.title"),
 					type: "section",
 					fieldGap: "gap-0",
 					fields: [
@@ -1091,10 +1107,10 @@ function InstitutionDraftWizardContent({
 							className: "border-t-1",
 							accordionVariant: "default",
 							accordionTitle: t(
-								"institutionFormModal.form.information.accordions.establishment.title",
+								"content.institutionFormModal.form.information.accordions.establishment.title",
 							),
 							accordionDescription: t(
-								"institutionFormModal.form.information.accordions.establishment.description",
+								"content.institutionFormModal.form.information.accordions.establishment.description",
 							),
 							defaultOpen: false,
 							type: "section",
@@ -1128,10 +1144,10 @@ function InstitutionDraftWizardContent({
 							className: "border-t-1",
 							accordionVariant: "default",
 							accordionTitle: t(
-								"institutionFormModal.form.information.accordions.closing.title",
+								"content.institutionFormModal.form.information.accordions.closing.title",
 							),
 							accordionDescription: t(
-								"institutionFormModal.form.information.accordions.closing.description",
+								"content.institutionFormModal.form.information.accordions.closing.description",
 							),
 							defaultOpen: false,
 							type: "section",
@@ -1151,10 +1167,10 @@ function InstitutionDraftWizardContent({
 							className: "border-t-1",
 							accordionVariant: "default",
 							accordionTitle: t(
-								"institutionFormModal.form.information.accordions.ownership.title",
+								"content.institutionFormModal.form.information.accordions.ownership.title",
 							),
 							accordionDescription: t(
-								"institutionFormModal.form.information.accordions.ownership.description",
+								"content.institutionFormModal.form.information.accordions.ownership.description",
 							),
 							defaultOpen: false,
 							type: "section",
@@ -1167,73 +1183,78 @@ function InstitutionDraftWizardContent({
 									options: [
 										{
 											value: "private",
-											label: tEnum("field_names.owner_type.options.private"),
+											label: tEnum(
+												"enumMap.field_names.owner_type.options.private",
+											),
 										},
 										{
 											value: "federal_property",
 											label: tEnum(
-												"field_names.owner_type.options.federal_property",
+												"enumMap.field_names.owner_type.options.federal_property",
 											),
 										},
 										{
 											value: "state_property",
 											label: tEnum(
-												"field_names.owner_type.options.state_property",
+												"enumMap.field_names.owner_type.options.state_property",
 											),
 										},
 										{
 											value: "state_property_silb",
 											label: tEnum(
-												"field_names.owner_type.options.state_property_silb",
+												"enumMap.field_names.owner_type.options.state_property_silb",
 											),
 										},
 										{
 											value: "state_property_soda",
 											label: tEnum(
-												"field_names.owner_type.options.state_property_soda",
+												"enumMap.field_names.owner_type.options.state_property_soda",
 											),
 										},
 										{
 											value: "state_property_other",
 											label: tEnum(
-												"field_names.owner_type.options.state_property_other",
+												"enumMap.field_names.owner_type.options.state_property_other",
 											),
 										},
 										{
 											value: "state_property_specialized",
 											label: tEnum(
-												"field_names.owner_type.options.state_property_specialized",
+												"enumMap.field_names.owner_type.options.state_property_specialized",
 											),
 										},
 										{
 											value: "state_property_fund",
 											label: tEnum(
-												"field_names.owner_type.options.state_property_fund",
+												"enumMap.field_names.owner_type.options.state_property_fund",
 											),
 										},
 										{
 											value: "district_property",
 											label: tEnum(
-												"field_names.owner_type.options.district_property",
+												"enumMap.field_names.owner_type.options.district_property",
 											),
 										},
 										{
 											value: "other_public_property",
 											label: tEnum(
-												"field_names.owner_type.options.other_public_property",
+												"enumMap.field_names.owner_type.options.other_public_property",
 											),
 										},
 										{
 											value: "municipal_housing_company",
 											label: tEnum(
-												"field_names.owner_type.options.municipal_housing_company",
+												"enumMap.field_names.owner_type.options.municipal_housing_company",
 											),
 										},
 										{
 											value: "other",
-											label: tEnum("field_names.owner_type.options.other"),
+											label: tEnum(
+												"enumMap.field_names.owner_type.options.other",
+											),
 										},
 									],
+
 									placeholder: fieldPlaceholder("owner_type"),
 								},
 								{
@@ -1251,10 +1272,10 @@ function InstitutionDraftWizardContent({
 							className: "border-t-1",
 							accordionVariant: "default",
 							accordionTitle: t(
-								"institutionFormModal.form.information.accordions.rental.title",
+								"content.institutionFormModal.form.information.accordions.rental.title",
 							),
 							accordionDescription: t(
-								"institutionFormModal.form.information.accordions.rental.description",
+								"content.institutionFormModal.form.information.accordions.rental.description",
 							),
 							defaultOpen: false,
 							type: "section",
@@ -1269,28 +1290,29 @@ function InstitutionDraftWizardContent({
 										{
 											value: "unlimited_lease",
 											label: tEnum(
-												"field_names.rental_contract_type.options.unlimited_lease",
+												"enumMap.field_names.rental_contract_type.options.unlimited_lease",
 											),
 										},
 										{
 											value: "limited_lease",
 											label: tEnum(
-												"field_names.rental_contract_type.options.limited_lease",
+												"enumMap.field_names.rental_contract_type.options.limited_lease",
 											),
 										},
 										{
 											value: "hereditary_building_right",
 											label: tEnum(
-												"field_names.rental_contract_type.options.hereditary_building_right",
+												"enumMap.field_names.rental_contract_type.options.hereditary_building_right",
 											),
 										},
 										{
 											value: "organization_ownership",
 											label: tEnum(
-												"field_names.rental_contract_type.options.organization_ownership",
+												"enumMap.field_names.rental_contract_type.options.organization_ownership",
 											),
 										},
 									],
+
 									placeholder: fieldPlaceholder("rental_contract_type"),
 								},
 								{
@@ -1309,10 +1331,10 @@ function InstitutionDraftWizardContent({
 							className: "border-t-1",
 							accordionVariant: "default",
 							accordionTitle: t(
-								"institutionFormModal.form.information.accordions.protection.title",
+								"content.institutionFormModal.form.information.accordions.protection.title",
 							),
 							accordionDescription: t(
-								"institutionFormModal.form.information.accordions.protection.description",
+								"content.institutionFormModal.form.information.accordions.protection.description",
 							),
 							defaultOpen: false,
 							type: "section",
@@ -1323,47 +1345,48 @@ function InstitutionDraftWizardContent({
 									label: fieldLabel("protection_status", "Sicherungsstatus"),
 									allowNullOption: true,
 									nullOptionLabel: tEnum(
-										"field_names.protection_status.options.none",
+										"enumMap.field_names.protection_status.options.none",
 									),
 									type: "select",
 									options: [
 										{
 											value: "long_term_secured",
 											label: tEnum(
-												"field_names.protection_status.options.long_term_secured",
+												"enumMap.field_names.protection_status.options.long_term_secured",
 											),
 										},
 										{
 											value: "medium_term_secured",
 											label: tEnum(
-												"field_names.protection_status.options.medium_term_secured",
+												"enumMap.field_names.protection_status.options.medium_term_secured",
 											),
 										},
 										{
 											value: "uncertain",
 											label: tEnum(
-												"field_names.protection_status.options.uncertain",
+												"enumMap.field_names.protection_status.options.uncertain",
 											),
 										},
 										{
 											value: "acutely_threatened",
 											label: tEnum(
-												"field_names.protection_status.options.acutely_threatened",
+												"enumMap.field_names.protection_status.options.acutely_threatened",
 											),
 										},
 										{
 											value: "permanently_closed",
 											label: tEnum(
-												"field_names.protection_status.options.permanently_closed",
+												"enumMap.field_names.protection_status.options.permanently_closed",
 											),
 										},
 										{
 											value: "not_yet_secured",
 											label: tEnum(
-												"field_names.protection_status.options.not_yet_secured",
+												"enumMap.field_names.protection_status.options.not_yet_secured",
 											),
 										},
 									],
+
 									placeholder: fieldPlaceholder("protection_status"),
 								},
 								{
@@ -1394,10 +1417,10 @@ function InstitutionDraftWizardContent({
 							className: "border-t-1",
 							accordionVariant: "default",
 							accordionTitle: t(
-								"institutionFormModal.form.information.accordions.space.title",
+								"content.institutionFormModal.form.information.accordions.space.title",
 							),
 							accordionDescription: t(
-								"institutionFormModal.form.information.accordions.space.description",
+								"content.institutionFormModal.form.information.accordions.space.description",
 							),
 							defaultOpen: false,
 							type: "section",
@@ -1453,18 +1476,19 @@ function InstitutionDraftWizardContent({
 							placeholder: fieldPlaceholder("internal_notes"),
 							description: fieldDescription("internal_notes"),
 							privateDescription: t(
-								"institutionFormModal.form.information.internalNotesPrivateDescription",
+								"content.institutionFormModal.form.information.internalNotesPrivateDescription",
 							),
 						},
 					],
 				},
 			],
+
 			initialValues: draft,
 			onChange: handleStepChange,
 			onSubmit: handleStepSubmit,
 			onCancel: handleCancel,
-			cancelLabel: t("institutionDraftWizardModal.actions.back"),
-			submitLabel: t("institutionDraftWizardModal.actions.next"),
+			cancelLabel: t("content.institutionDraftWizardModal.actions.back"),
+			submitLabel: t("content.institutionDraftWizardModal.actions.next"),
 			showCancel: true,
 			isPrivateField: isPrivateFormField,
 		}),
@@ -1487,13 +1511,13 @@ function InstitutionDraftWizardContent({
 				{
 					name: "consentSection",
 					type: "section",
-					title: t("institutionFormModal.form.contact.consent.title"),
+					title: t("content.institutionFormModal.form.contact.consent.title"),
 					layout: { span: "full" },
 					fields: [
 						{
 							name: "works_for_organization",
 							label: t(
-								"institutionFormModal.form.contact.consent.worksForOrganization",
+								"content.institutionFormModal.form.contact.consent.worksForOrganization",
 							),
 							type: "radio",
 							radioVariant: "button",
@@ -1501,22 +1525,23 @@ function InstitutionDraftWizardContent({
 								{
 									value: true,
 									label: t(
-										"institutionFormModal.form.contact.consent.worksForOrganizationOptions.yes",
+										"content.institutionFormModal.form.contact.consent.worksForOrganizationOptions.yes",
 									),
 								},
 								{
 									value: false,
 									label: t(
-										"institutionFormModal.form.contact.consent.worksForOrganizationOptions.no",
+										"content.institutionFormModal.form.contact.consent.worksForOrganizationOptions.no",
 									),
 								},
 							],
+
 							defaultValue: false,
 						},
 						{
 							name: "consent_contact_listing",
 							label: t(
-								"institutionFormModal.form.contact.consent.contactListing",
+								"content.institutionFormModal.form.contact.consent.contactListing",
 							),
 							condition: (formData) => formData.works_for_organization === true,
 							type: "radio",
@@ -1525,16 +1550,17 @@ function InstitutionDraftWizardContent({
 								{
 									value: true,
 									label: t(
-										"institutionFormModal.form.contact.consent.worksForOrganizationOptions.yes",
+										"content.institutionFormModal.form.contact.consent.worksForOrganizationOptions.yes",
 									),
 								},
 								{
 									value: false,
 									label: t(
-										"institutionFormModal.form.contact.consent.worksForOrganizationOptions.no",
+										"content.institutionFormModal.form.contact.consent.worksForOrganizationOptions.no",
 									),
 								},
 							],
+
 							defaultValue: false,
 						},
 					],
@@ -1594,12 +1620,13 @@ function InstitutionDraftWizardContent({
 					],
 				},
 			],
+
 			initialValues: draft,
 			onChange: handleStepChange,
 			onSubmit: handleStepSubmit,
 			onCancel: handleCancel,
-			cancelLabel: t("institutionDraftWizardModal.actions.back"),
-			submitLabel: t("institutionDraftWizardModal.actions.review"),
+			cancelLabel: t("content.institutionDraftWizardModal.actions.back"),
+			submitLabel: t("content.institutionDraftWizardModal.actions.review"),
 			showCancel: true,
 			isPrivateField: isPrivateFormField,
 		}),
@@ -1654,9 +1681,11 @@ function InstitutionDraftWizardContent({
 				: "basic";
 		return {
 			title:
-				t(`institutionDraftWizardModal.steps.${stepKey}.title`) || title || "",
+				t(`content.institutionDraftWizardModal.steps.${stepKey}.title`) ||
+				title ||
+				"",
 			subtitle:
-				t(`institutionDraftWizardModal.steps.${stepKey}.subtitle`) ||
+				t(`content.institutionDraftWizardModal.steps.${stepKey}.subtitle`) ||
 				subtitle ||
 				"",
 		};
@@ -1702,7 +1731,7 @@ function InstitutionDraftWizardContent({
 				<div className="mb-8 flex flex-col items-center space-y-2 md:mx-24">
 					<StepIndicator />
 					<span className="body2">
-						{t("institutionDraftWizardModal.stepLabel", {
+						{t("content.institutionDraftWizardModal.stepLabel", {
 							current: currentStepIndex + 1,
 							total: totalSteps,
 						})}
@@ -1728,7 +1757,7 @@ function InstitutionDraftWizardContent({
 							id="institution-draft-submit-button"
 							onClick={() => void handleReviewSubmit()}
 						>
-							{t("institutionDraftWizardModal.actions.submit")}
+							{t("content.institutionDraftWizardModal.actions.submit")}
 						</Button>
 					</div>
 				</div>
@@ -1746,7 +1775,7 @@ function InstitutionDraftWizardContent({
 					}}
 					formKey={`draft-edit-${editSectionId ?? "default"}`}
 					closeOnSubmit
-					submitLabel={t("institutionFormModal.actions.save")}
+					submitLabel={t("content.institutionFormModal.actions.save")}
 				/>
 			) : null}
 		</div>
@@ -1764,7 +1793,7 @@ export function InstitutionDraftWizardModal({
 }) {
 	const router = useRouter();
 	const toLocalePath = useLocalePath();
-	const { t } = useTranslation("content");
+	const { t } = useTranslation();
 	const closeModal = useRoutedModalClose({});
 	const storedStepId = useInstitutionDraftStore((state) => state.stepId);
 	const setStepId = useInstitutionDraftStore((state) => state.setStepId);
@@ -1776,8 +1805,10 @@ export function InstitutionDraftWizardModal({
 			STEP_IDS.map((id) => ({
 				id,
 				icon: null,
-				title: t(`institutionDraftWizardModal.steps.${id}.title`),
-				description: t(`institutionDraftWizardModal.steps.${id}.subtitle`),
+				title: t(`content.institutionDraftWizardModal.steps.${id}.title`),
+				description: t(
+					`content.institutionDraftWizardModal.steps.${id}.subtitle`,
+				),
 			})),
 		[t],
 	);
@@ -1792,10 +1823,10 @@ export function InstitutionDraftWizardModal({
 		const targetPath = toLocalePath("/institution?thankyou=1");
 		router.replace(targetPath);
 		showSuccessToast(
-			t("institutionDraftWizardModal.feedback.submit.title", {
+			t("content.institutionDraftWizardModal.feedback.submit.title", {
 				defaultValue: "Submission sent",
 			}),
-			t("institutionDraftWizardModal.feedback.submit.description", {
+			t("content.institutionDraftWizardModal.feedback.submit.description", {
 				defaultValue: "Your submission has been sent for review.",
 			}),
 		);
@@ -1818,17 +1849,17 @@ export function InstitutionDraftWizardModal({
 
 	return (
 		<Modal
-			title={t("institutionDraftWizardModal.dialog.create.title")}
+			title={t("content.institutionDraftWizardModal.dialog.create.title")}
 			titleClassName="sr-only"
 			variant="fullscreen"
 			routePath={routePath}
 			backTo="/institution"
 			showBackButton={storedStepId === "basic" || isUpdateReviewOnly}
 			closeConfirmation={{
-				title: t("institutionModalCloseConfirmation.title"),
-				description: t("institutionModalCloseConfirmation.description"),
-				confirmLabel: t("institutionModalCloseConfirmation.confirm"),
-				cancelLabel: t("institutionModalCloseConfirmation.cancel"),
+				title: t("content.institutionModalCloseConfirmation.title"),
+				description: t("content.institutionModalCloseConfirmation.description"),
+				confirmLabel: t("content.institutionModalCloseConfirmation.confirm"),
+				cancelLabel: t("content.institutionModalCloseConfirmation.cancel"),
 			}}
 			containerClassName=""
 			contentWrapperClassName="flex-1"
@@ -1837,9 +1868,9 @@ export function InstitutionDraftWizardModal({
 				submitError
 					? {
 							open: true,
-							title: t("error"),
+							title: t("content.error"),
 							description: submitError,
-							confirmLabel: t("close"),
+							confirmLabel: t("content.close"),
 							onConfirm: () => setSubmitError(null),
 							onOpenChange: (open) => {
 								if (!open) setSubmitError(null);
@@ -1854,8 +1885,10 @@ export function InstitutionDraftWizardModal({
 					initialStepId={isUpdateReviewOnly ? "review" : resolvedStepId}
 				>
 					<InstitutionDraftWizardContent
-						title={t("institutionDraftWizardModal.dialog.create.title")}
-						subtitle={t("institutionDraftWizardModal.dialog.create.subtitle")}
+						title={t("content.institutionDraftWizardModal.dialog.create.title")}
+						subtitle={t(
+							"content.institutionDraftWizardModal.dialog.create.subtitle",
+						)}
 						onSubmitted={handleSubmitted}
 						onCloseRequest={closeModal}
 						profile={profile}

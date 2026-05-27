@@ -33,36 +33,3 @@ export async function fetchTraduoraToken(): Promise<string | null> {
 	const data = await res.json();
 	return data.access_token;
 }
-
-/**
- * Fetches and caches project labels
- */
-export async function fetchLabels(
-	projectId: string,
-	token: string,
-): Promise<Array<{ id: string; value: string }>> {
-	const TRADUORA_API_URL = process.env.TRADUORA_API_URL!;
-
-	const labelsRes = await fetch(
-		`${TRADUORA_API_URL}/projects/${projectId}/labels`,
-		{
-			headers: {
-				Authorization: `Bearer ${token}`,
-				"Content-Type": "application/json",
-			},
-		},
-	);
-
-	if (!labelsRes.ok) {
-		logger.error("traduora.labels.fetch_failed", undefined, {
-			subsystem: "translations",
-			http_status: labelsRes.status,
-			project_id: projectId,
-		});
-		throw new Error(`Failed to fetch labels: ${labelsRes.status}`);
-	}
-
-	const labels: Array<{ id: string; value: string }> = (await labelsRes.json())
-		.data;
-	return labels;
-}

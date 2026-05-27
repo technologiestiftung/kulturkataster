@@ -18,7 +18,7 @@ vi.mock("@/components/ui/select", () => ({
 		<select
 			value={value ?? ""}
 			onChange={(event) => onValueChange?.(event.target.value)}
-			aria-label="auth.register.accountType"
+			aria-label="common.auth.register.accountType"
 		>
 			{children}
 		</select>
@@ -57,61 +57,67 @@ describe("RegisterForm", () => {
 		});
 
 		fireEvent.change(
-			screen.getByPlaceholderText("auth.register.organizationNamePlaceholder"),
+			screen.getByPlaceholderText(
+				"common.auth.register.organizationNamePlaceholder",
+			),
 			{
 				target: { value: "Org" },
 			},
 		);
 		fireEvent.change(
 			screen.getByPlaceholderText(
-				"auth.register.organizationPositionPlaceholder",
+				"common.auth.register.organizationPositionPlaceholder",
 			),
 			{
 				target: { value: "Lead" },
 			},
 		);
 		fireEvent.change(
-			screen.getByPlaceholderText("auth.register.organizationPhonePlaceholder"),
+			screen.getByPlaceholderText(
+				"common.auth.register.organizationPhonePlaceholder",
+			),
 			{
 				target: { value: "123456" },
 			},
 		);
 		fireEvent.change(
-			screen.getByPlaceholderText("auth.register.firstNamePlaceholder"),
+			screen.getByPlaceholderText("common.auth.register.firstNamePlaceholder"),
 			{
 				target: { value: "Jane" },
 			},
 		);
 		fireEvent.change(
-			screen.getByPlaceholderText("auth.register.lastNamePlaceholder"),
+			screen.getByPlaceholderText("common.auth.register.lastNamePlaceholder"),
 			{
 				target: { value: "Doe" },
 			},
 		);
 		fireEvent.change(
-			screen.getByPlaceholderText("auth.register.emailPlaceholder"),
+			screen.getByPlaceholderText("common.auth.register.emailPlaceholder"),
 			{
 				target: { value: "invalid-email" },
 			},
 		);
 		fireEvent.change(
-			screen.getByPlaceholderText("auth.register.passwordPlaceholder"),
+			screen.getByPlaceholderText("common.auth.register.passwordPlaceholder"),
 			{
 				target: { value: "password123" },
 			},
 		);
 		fireEvent.change(
-			screen.getByPlaceholderText("auth.register.confirmPasswordPlaceholder"),
+			screen.getByPlaceholderText(
+				"common.auth.register.confirmPasswordPlaceholder",
+			),
 			{
 				target: { value: "password321" },
 			},
 		);
 		fireEvent.click(
-			screen.getByRole("checkbox", { name: /auth.register.termsIntro/ }),
+			screen.getByRole("checkbox", { name: /common.auth.register.termsIntro/ }),
 		);
 
 		fireEvent.click(
-			screen.getByRole("button", { name: "auth.register.submit" }),
+			screen.getByRole("button", { name: "common.auth.register.submit" }),
 		);
 
 		expect(mockedRegister).not.toHaveBeenCalled();
@@ -128,61 +134,67 @@ describe("RegisterForm", () => {
 		});
 
 		fireEvent.change(
-			screen.getByPlaceholderText("auth.register.organizationNamePlaceholder"),
+			screen.getByPlaceholderText(
+				"common.auth.register.organizationNamePlaceholder",
+			),
 			{
 				target: { value: "Org" },
 			},
 		);
 		fireEvent.change(
 			screen.getByPlaceholderText(
-				"auth.register.organizationPositionPlaceholder",
+				"common.auth.register.organizationPositionPlaceholder",
 			),
 			{
 				target: { value: "Lead" },
 			},
 		);
 		fireEvent.change(
-			screen.getByPlaceholderText("auth.register.organizationPhonePlaceholder"),
+			screen.getByPlaceholderText(
+				"common.auth.register.organizationPhonePlaceholder",
+			),
 			{
 				target: { value: "123456" },
 			},
 		);
 		fireEvent.change(
-			screen.getByPlaceholderText("auth.register.firstNamePlaceholder"),
+			screen.getByPlaceholderText("common.auth.register.firstNamePlaceholder"),
 			{
 				target: { value: "Jane" },
 			},
 		);
 		fireEvent.change(
-			screen.getByPlaceholderText("auth.register.lastNamePlaceholder"),
+			screen.getByPlaceholderText("common.auth.register.lastNamePlaceholder"),
 			{
 				target: { value: "Doe" },
 			},
 		);
 		fireEvent.change(
-			screen.getByPlaceholderText("auth.register.emailPlaceholder"),
+			screen.getByPlaceholderText("common.auth.register.emailPlaceholder"),
 			{
 				target: { value: "jane@example.com" },
 			},
 		);
 		fireEvent.change(
-			screen.getByPlaceholderText("auth.register.passwordPlaceholder"),
+			screen.getByPlaceholderText("common.auth.register.passwordPlaceholder"),
 			{
 				target: { value: "password123" },
 			},
 		);
 		fireEvent.change(
-			screen.getByPlaceholderText("auth.register.confirmPasswordPlaceholder"),
+			screen.getByPlaceholderText(
+				"common.auth.register.confirmPasswordPlaceholder",
+			),
 			{
 				target: { value: "password123" },
 			},
 		);
 		fireEvent.click(
-			screen.getByRole("checkbox", { name: /auth.register.termsIntro/ }),
+			screen.getByRole("checkbox", { name: /common.auth.register.termsIntro/ }),
 		);
 
 		fireEvent.click(
-			screen.getByRole("button", { name: "auth.register.submit" }),
+			screen.getByRole("button", { name: "common.auth.register.submit" }),
 		);
 
 		await waitFor(() => {
@@ -199,66 +211,72 @@ describe("RegisterForm", () => {
 		});
 
 		fireEvent.change(
-			screen.getByPlaceholderText("auth.register.organizationNamePlaceholder"),
+			screen.getByPlaceholderText(
+				"common.auth.register.organizationNamePlaceholder",
+			),
 			{
 				target: { value: "Org" },
 			},
 		);
 		fireEvent.change(
 			screen.getByPlaceholderText(
-				"auth.register.organizationPositionPlaceholder",
+				"common.auth.register.organizationPositionPlaceholder",
 			),
 			{
 				target: { value: "Lead" },
 			},
 		);
 		fireEvent.change(
-			screen.getByPlaceholderText("auth.register.organizationPhonePlaceholder"),
+			screen.getByPlaceholderText(
+				"common.auth.register.organizationPhonePlaceholder",
+			),
 			{
 				target: { value: "123456" },
 			},
 		);
 		fireEvent.change(
-			screen.getByPlaceholderText("auth.register.firstNamePlaceholder"),
+			screen.getByPlaceholderText("common.auth.register.firstNamePlaceholder"),
 			{
 				target: { value: "Jane" },
 			},
 		);
 		fireEvent.change(
-			screen.getByPlaceholderText("auth.register.lastNamePlaceholder"),
+			screen.getByPlaceholderText("common.auth.register.lastNamePlaceholder"),
 			{
 				target: { value: "Doe" },
 			},
 		);
 		fireEvent.change(
-			screen.getByPlaceholderText("auth.register.emailPlaceholder"),
+			screen.getByPlaceholderText("common.auth.register.emailPlaceholder"),
 			{
 				target: { value: "jane@example.com" },
 			},
 		);
 		fireEvent.change(
-			screen.getByPlaceholderText("auth.register.passwordPlaceholder"),
+			screen.getByPlaceholderText("common.auth.register.passwordPlaceholder"),
 			{
 				target: { value: "short7" },
 			},
 		);
 		fireEvent.change(
-			screen.getByPlaceholderText("auth.register.confirmPasswordPlaceholder"),
+			screen.getByPlaceholderText(
+				"common.auth.register.confirmPasswordPlaceholder",
+			),
 			{
 				target: { value: "short7" },
 			},
 		);
 		fireEvent.click(
-			screen.getByRole("checkbox", { name: /auth.register.termsIntro/ }),
+			screen.getByRole("checkbox", { name: /common.auth.register.termsIntro/ }),
 		);
 
 		fireEvent.click(
-			screen.getByRole("button", { name: "auth.register.submit" }),
+			screen.getByRole("button", { name: "common.auth.register.submit" }),
 		);
 
 		await waitFor(() => {
 			expect(
-				screen.getByText("auth.validation.passwordMin"),
+				screen.getByText("common.auth.validation.passwordMin"),
 			).toBeInTheDocument();
 		});
 		expect(mockedRegister).not.toHaveBeenCalled();

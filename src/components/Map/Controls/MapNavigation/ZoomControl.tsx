@@ -16,7 +16,7 @@ const ZoomControl: FC<ZoomControlProps> = ({
 	zoomInIcon = <PlusIcon className="size-4" />,
 	zoomOutIcon = <MinusIcon className="size-4" />,
 }) => {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation();
 	const map = useMapStore((state) => state.map);
 
 	const handleZoomIn = useCallback(() => {
@@ -57,10 +57,10 @@ const ZoomControl: FC<ZoomControlProps> = ({
 				radius="full"
 				variant="surface"
 				iconSize="lg"
-				tooltip={t("map.zoomIn")}
+				tooltip={t("common.map.zoomIn")}
 				onClick={handleZoomIn}
 				className="cursor-pointer"
-				aria-label={t("map.zoomIn")}
+				aria-label={t("common.map.zoomIn")}
 			>
 				{zoomInIcon}
 			</ButtonWithTooltip>
@@ -68,10 +68,10 @@ const ZoomControl: FC<ZoomControlProps> = ({
 				radius="full"
 				variant="surface"
 				iconSize="lg"
-				tooltip={t("map.zoomOut")}
+				tooltip={t("common.map.zoomOut")}
 				onClick={handleZoomOut}
 				className="cursor-pointer"
-				aria-label={t("map.zoomOut")}
+				aria-label={t("common.map.zoomOut")}
 			>
 				{zoomOutIcon}
 			</ButtonWithTooltip>

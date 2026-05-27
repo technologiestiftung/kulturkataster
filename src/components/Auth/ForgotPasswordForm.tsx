@@ -14,7 +14,7 @@ export function ForgotPasswordForm({ onSuccess }: { onSuccess?: () => void }) {
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 	const router = useRouter();
 	const toLocalePath = useLocalePath();
-	const { t } = useTranslation("common");
+	const { t } = useTranslation();
 
 	const handleSubmit = async (data: Record<string, unknown>) => {
 		const email = String(data.email ?? "");
@@ -24,7 +24,7 @@ export function ForgotPasswordForm({ onSuccess }: { onSuccess?: () => void }) {
 		try {
 			const result = await requestPasswordReset(email);
 			if (!result.ok) {
-				setErrorMessage(t("auth.forgot.errorFallback"));
+				setErrorMessage(t("common.auth.forgot.errorFallback"));
 				return;
 			}
 			if (onSuccess) {
@@ -33,7 +33,7 @@ export function ForgotPasswordForm({ onSuccess }: { onSuccess?: () => void }) {
 			}
 			router.replace(toLocalePath("/login"));
 		} catch {
-			setErrorMessage(t("auth.forgot.errorFallback"));
+			setErrorMessage(t("common.auth.forgot.errorFallback"));
 		} finally {
 			setIsLoading(false);
 		}
@@ -42,11 +42,11 @@ export function ForgotPasswordForm({ onSuccess }: { onSuccess?: () => void }) {
 	const formConfig: FormWrapperConfig = {
 		onSubmit: handleSubmit,
 		showCancel: true,
-		cancelLabel: t("auth.forgot.backToSignIn"),
+		cancelLabel: t("common.auth.forgot.backToSignIn"),
 		onCancel: () => router.replace(toLocalePath("/login")),
 		submitLabel: isLoading
-			? t("auth.forgot.submitting")
-			: t("auth.forgot.submit"),
+			? t("common.auth.forgot.submitting")
+			: t("common.auth.forgot.submit"),
 		submitDisabled: isLoading,
 		layout: { columns: 1 },
 		fields: [
@@ -57,9 +57,9 @@ export function ForgotPasswordForm({ onSuccess }: { onSuccess?: () => void }) {
 				fields: [
 					{
 						name: "email",
-						label: t("auth.forgot.emailLabel"),
+						label: t("common.auth.forgot.emailLabel"),
 						type: "email",
-						placeholder: t("auth.forgot.emailPlaceholder"),
+						placeholder: t("common.auth.forgot.emailPlaceholder"),
 						required: true,
 						disabled: isLoading,
 					},
@@ -71,12 +71,12 @@ export function ForgotPasswordForm({ onSuccess }: { onSuccess?: () => void }) {
 	return (
 		<div className="w-full md:max-w-3xl mx-auto">
 			<div className="text-start font-bold mb-10">
-				<h1 className="">{t("auth.forgot.title")}</h1>
-				<p className="">{t("auth.forgot.subtitle")}</p>
+				<h1 className="">{t("common.auth.forgot.title")}</h1>
+				<p className="">{t("common.auth.forgot.subtitle")}</p>
 			</div>
 
 			<AlertDialog
-				title={t("error")}
+				title={t("common.error")}
 				status="error"
 				description={errorMessage ?? ""}
 				open={Boolean(errorMessage)}
@@ -85,7 +85,7 @@ export function ForgotPasswordForm({ onSuccess }: { onSuccess?: () => void }) {
 						setErrorMessage(null);
 					}
 				}}
-				confirmLabel={t("close")}
+				confirmLabel={t("common.close")}
 				onConfirm={() => setErrorMessage(null)}
 			/>
 

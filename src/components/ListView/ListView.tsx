@@ -53,8 +53,8 @@ const writeStoredListScrollOffset = (offset: number) => {
 };
 
 const ListView: FC = () => {
-	const { t } = useTranslation("common");
-	const { t: tContent } = useTranslation("content");
+	const { t } = useTranslation();
+	const { t: tContent } = useTranslation();
 	const institutions = useInstitutionStore(
 		(state) => state.filteredInstitutions,
 	);
@@ -394,17 +394,21 @@ const ListView: FC = () => {
 				<div className="p-4 mt-20">
 					<div className="space-y-6 flex flex-col">
 						<div className="space-y-2">
-							<h1>{tContent("listView.title")}</h1>
-							<h2 className="font-bold">{tContent("listView.subtitle")}</h2>
+							<h1>{tContent("content.listView.title")}</h1>
+							<h2 className="font-bold">
+								{tContent("content.listView.subtitle")}
+							</h2>
 						</div>
 						<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-							<span className="body1">{tContent("listView.description")}</span>
+							<span className="body1">
+								{tContent("content.listView.description")}
+							</span>
 						</div>
 
 						<div className="space-y-2">
 							<div className="flex items-end justify-between gap-4 md:flex-row flex-col">
 								<strong className="body2 text-nowrap">
-									{tContent("listView.countLabel", {
+									{tContent("content.listView.countLabel", {
 										count: institutionsList.length,
 									})}
 								</strong>
@@ -419,16 +423,17 @@ const ListView: FC = () => {
 								onSelectLetter={setActiveLetter}
 								enabledLetters={enabledLetters}
 							/>
+
 							{institutionsList.length === 0 && (
 								<div className="text-center p-8 my-8 bg-neutral-10 rounded">
 									<p className="body1 font-bold">
 										<TextWithLinks
-											text={t("listView.noResultsFound")}
+											text={t("common.listView.noResultsFound")}
 										></TextWithLinks>
 									</p>
 									<p className="body2 mt-2">
 										<TextWithLinks
-											text={t("listView.tryAdjustingFilters")}
+											text={t("common.listView.tryAdjustingFilters")}
 										></TextWithLinks>
 									</p>
 								</div>
@@ -436,7 +441,7 @@ const ListView: FC = () => {
 							<div
 								role="list"
 								className=""
-								aria-label={t("listView.institutionsListLabel")}
+								aria-label={t("common.listView.institutionsListLabel")}
 								ref={listContainerRef}
 							>
 								{(() => {
@@ -500,7 +505,7 @@ const ListView: FC = () => {
 			<FilterModalWrapper
 				open={isFilterOpen}
 				onOpenChange={setIsFilterOpen}
-				title={tContent("filter.title")}
+				title={tContent("content.filter.title")}
 			>
 				<FilterPanel
 					filters={filters}
@@ -528,7 +533,7 @@ const ListView: FC = () => {
 								iconSize="lg"
 								data-testid="list-scroll-top"
 								className="cursor-pointer"
-								aria-label={t("listView.scrollToTop")}
+								aria-label={t("common.listView.scrollToTop")}
 							>
 								<ArrowNarrowUp
 									className="size-6"
@@ -538,7 +543,7 @@ const ListView: FC = () => {
 							</Button>
 						</TooltipTrigger>
 						<TooltipContent>
-							<p>{t("listView.scrollToTop")}</p>
+							<p>{t("common.listView.scrollToTop")}</p>
 						</TooltipContent>
 					</Tooltip>
 				</div>

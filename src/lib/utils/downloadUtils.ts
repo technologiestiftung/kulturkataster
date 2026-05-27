@@ -127,7 +127,7 @@ function humanizeFieldKey(key: string) {
 function translateColumnName(key: string, translateFn?: TranslateFn): string {
 	if (!translateFn) return humanizeFieldKey(key);
 
-	const translationKey = `field_names.${key}.label`;
+	const translationKey = `enumMap.field_names.${key}.label`;
 	const translated = translateFn(translationKey);
 	return translated !== translationKey ? translated : humanizeFieldKey(key);
 }
