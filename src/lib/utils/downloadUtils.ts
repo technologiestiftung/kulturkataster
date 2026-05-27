@@ -116,7 +116,10 @@ const ALWAYS_EXCLUDED_EXPORT_FIELDS: Set<string> = new Set([
 ]);
 
 const isObjectRecord = (value: unknown): value is Record<string, unknown> =>
-	typeof value === "object" && value !== null && !Array.isArray(value);
+	typeof value === "object" &&
+	value !== null &&
+	!Array.isArray(value) &&
+	!(value instanceof Date);
 
 function humanizeFieldKey(key: string) {
 	return key
@@ -155,17 +158,39 @@ function translateEnumValue(
 	}
 }
 
+function formatDateValue(value: Date): string {
+	const day = String(value.getUTCDate()).padStart(2, "0");
+	const month = String(value.getUTCMonth() + 1).padStart(2, "0");
+	const year = value.getUTCFullYear();
+	return `${day}.${month}.${year}`;
+}
+
+function parseIsoDateValue(value: string): Date | null {
+	if (!/^\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}(?:\.\d{3})?Z)?$/.test(value)) {
+		return null;
+	}
+
+	const date = new Date(value);
+	return Number.isNaN(date.getTime()) ? null : date;
+}
+
 function formatScalarValue(
 	exportKey: string,
 	value: unknown,
 	translateFn?: TranslateFn,
 ): string {
 	if (value === null || value === undefined) return "";
-	if (value instanceof Date) return value.toISOString();
+	if (value instanceof Date) return formatDateValue(value);
 	if (typeof value === "boolean") {
 		return translateEnumValue(exportKey, value ? "yes" : "no", translateFn);
 	}
-	if (typeof value === "string" || typeof value === "number") {
+	if (typeof value === "string") {
+		const date = parseIsoDateValue(value);
+		return date
+			? formatDateValue(date)
+			: translateEnumValue(exportKey, value, translateFn);
+	}
+	if (typeof value === "number") {
 		return translateEnumValue(exportKey, value, translateFn);
 	}
 	return String(value);
