@@ -14,7 +14,6 @@ import {
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { InstitutionCard } from "./InstitutionCard";
-import { AlphabetFilter } from "./AlphabetFilter";
 import { Institution } from "@/types";
 import { ModalFooter } from "../Modals/ModalFooter";
 import { ListTopbar } from "./ListTopbar";
@@ -406,19 +405,13 @@ const ListView: FC = () => {
 						</div>
 
 						<div className="space-y-2">
-							<div className="flex items-end justify-between gap-4 md:flex-row flex-col">
-								<strong className="body2 text-nowrap">
-									{tContent("content.listView.countLabel", {
-										count: institutionsList.length,
-									})}
-								</strong>
-								<ListTopbar
-									query={searchQuery}
-									onQueryChange={(value) => setSearchQuery(value ?? "")}
-									onOpenFilter={() => setIsFilterOpen(true)}
-								/>
-							</div>
-							<AlphabetFilter
+							<ListTopbar
+								countLabel={tContent("content.listView.countLabel", {
+									count: institutionsList.length,
+								})}
+								query={searchQuery}
+								onQueryChange={(value) => setSearchQuery(value ?? "")}
+								onOpenFilter={() => setIsFilterOpen(true)}
 								activeLetter={activeLetter}
 								onSelectLetter={setActiveLetter}
 								enabledLetters={enabledLetters}
