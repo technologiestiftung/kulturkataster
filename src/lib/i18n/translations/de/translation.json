@@ -3346,10 +3346,10 @@
 				"options": {
 					"hereditary_building_right": "Erbbaurecht",
 					"leasehold": "Erbbaurecht",
-					"limited_lease": "Befristete Miete",
+					"limited_lease": "Befristeter Mietvertrag",
 					"none": "Keine Angabe",
 					"organization_ownership": "Eigentum der Organisation",
-					"unlimited_lease": "Unbefristete Miete"
+					"unlimited_lease": "Unbefristeter Mietvertrag"
 				},
 				"placeholder": "Bitte auswählen"
 			},
