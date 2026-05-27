@@ -68,7 +68,7 @@ jobs:
           TRADUORA_PROJECT_ID: ${{ vars.TRADUORA_PROJECT_ID }}
         run: |
           echo "📥 Pulling translations from Traduora..."
-          npm run traduora:sync ${{ steps.action.outputs.action }}
+          npm run traduora:sync -- ${{ steps.action.outputs.action }}
           npm run format:fix
 
       - name: Push translations to Traduora
@@ -80,7 +80,7 @@ jobs:
           TRADUORA_PROJECT_ID: ${{ vars.TRADUORA_PROJECT_ID }}
         run: |
           echo "📤 Pushing translations to Traduora..."
-          npm run traduora:sync ${{ steps.action.outputs.action }}
+          npm run traduora:sync -- ${{ steps.action.outputs.action }}
 
       - name: Check for changes
         id: check_changes
