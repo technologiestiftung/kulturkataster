@@ -20,7 +20,7 @@ import Download from "@/icons/download.svg";
 import { ModalFooter } from "../ModalFooter";
 
 export function MobileMenuModal() {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation();
 
 	const router = useRouter();
 	const toLocalePath = useLocalePath();
@@ -51,11 +51,13 @@ export function MobileMenuModal() {
 				showBackButton={false}
 			>
 				<DialogHeader className="flex-row shrinkitems-center justify-end p-4 space-y-0">
-					<DialogTitle className="sr-only">{t("mobileMenu.title")}</DialogTitle>
+					<DialogTitle className="sr-only">
+						{t("common.mobileMenu.title")}
+					</DialogTitle>
 					<button
 						onClick={closeModal}
 						className="flex items-center justify-center w-14 h-14 rounded-full bg-muted hover:bg-muted/80 transition-colors"
-						aria-label={t("close")}
+						aria-label={t("common.close")}
 						data-testid="mobile-menu-close"
 					>
 						<Close className="w-6 h-6" />
@@ -72,6 +74,7 @@ export function MobileMenuModal() {
 									router.push(toLocalePath("/map"));
 								}}
 							/>
+
 							<SubMenuOption
 								key="listView"
 								icon={ListIcon}
@@ -80,20 +83,23 @@ export function MobileMenuModal() {
 									router.push(toLocalePath("/list"));
 								}}
 							/>
+
 							<SubMenuOption
 								key="download"
 								icon={Download}
 								titleKey="download.title"
 								onClick={() => router.push(toLocalePath("/download"))}
 							/>
+
 							<SubMenuOption
 								key="information"
 								icon={InfoCircle}
 								titleKey="information.title"
 								onClick={() => router.push(toLocalePath("/info"))}
 							/>
+
 							<div className="space-y-4 flex flex-col">
-								<span className="body2">{t("accessibility.title")}</span>
+								<span className="body2">{t("common.accessibility.title")}</span>
 								<div className="">
 									<AccessibilityContent />
 								</div>
@@ -102,7 +108,7 @@ export function MobileMenuModal() {
 							<ModalFooter />
 						</div>
 						<div className="flex shrink-0 gap-4 bg-neutral-10 p-4 justify-between items-center">
-							<p className="body2">{t("footer.projectBy")}</p>
+							<p className="body2">{t("common.footer.projectBy")}</p>
 							<KRBLogo
 								title="Kulturraum Berlin gGmbH, Logo"
 								className="w-12 h-auto"

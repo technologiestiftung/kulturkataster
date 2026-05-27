@@ -38,7 +38,7 @@ export function UserFilterPanel({
 	onReset,
 	onCancel,
 }: UserFilterPanelProps) {
-	const { t } = useTranslation(["content", "common"]);
+	const { t } = useTranslation();
 
 	const formKey = useMemo(() => JSON.stringify(value), [value]);
 
@@ -49,11 +49,13 @@ export function UserFilterPanel({
 			fields: [
 				{
 					name: "status",
-					label: t("userTable.columns.status", { defaultValue: "Status" }),
+					label: t("content.userTable.columns.status", {
+						defaultValue: "Status",
+					}),
 					type: "select",
 					options: [
 						{
-							label: t("userTable.filter.allStatuses", {
+							label: t("content.userTable.filter.allStatuses", {
 								defaultValue: "All statuses",
 							}),
 							value: "all",
@@ -69,40 +71,41 @@ export function UserFilterPanel({
 				},
 				{
 					name: "role",
-					label: t("userTable.columns.role"),
+					label: t("content.userTable.columns.role"),
 					type: "select",
 					options: roleOptions,
 				},
 				{
 					name: "groups",
-					label: t("userTable.columns.groups"),
+					label: t("content.userTable.columns.groups"),
 					type: "multiselect",
 					multiselectVariant: "list",
 					options: groupOptions,
-					emptyText: t("userTable.emptyValue"),
+					emptyText: t("content.userTable.emptyValue"),
 				},
 				{
 					name: "compliance",
-					label: t("userTable.columns.compliance"),
+					label: t("content.userTable.columns.compliance"),
 					type: "select",
 					options: [
 						{
-							label: t("userTable.filter.allCompliance", {
+							label: t("content.userTable.filter.allCompliance", {
 								defaultValue: "All compliance states",
 							}),
 							value: "all",
 						},
 						{
-							label: t("userTable.compliance.accepted"),
+							label: t("content.userTable.compliance.accepted"),
 							value: "accepted",
 						},
 						{
-							label: t("userTable.compliance.rejected"),
+							label: t("content.userTable.compliance.rejected"),
 							value: "rejected",
 						},
 					],
 				},
 			],
+
 			initialValues: value,
 			onChange: (data) => {
 				onChange({
@@ -129,11 +132,13 @@ export function UserFilterPanel({
 				onApply();
 			},
 			showCancel: true,
-			cancelLabel: t("cancel", { ns: "common" }),
+			cancelLabel: t("common.cancel"),
 			onCancel,
-			submitLabel: t("userTable.filter.apply", { defaultValue: "Apply" }),
+			submitLabel: t("content.userTable.filter.apply", {
+				defaultValue: "Apply",
+			}),
 			deleteAction: {
-				label: t("userTable.filter.reset", { defaultValue: "Reset" }),
+				label: t("content.userTable.filter.reset", { defaultValue: "Reset" }),
 				onClick: onReset,
 				className: "p-0!",
 			},

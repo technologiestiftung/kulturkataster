@@ -12,7 +12,7 @@ import type { InstitutionStoreState } from "@/types/institution";
 
 vi.mock("react-i18next", () => ({
 	useTranslation: () => ({
-		t: (key: string) => key,
+		t: (key: string) => key.replace(/^content\./, ""),
 		i18n: { changeLanguage: () => new Promise(() => {}) },
 	}),
 }));

@@ -85,7 +85,7 @@ export async function updateSession(
 
 	if (user && (isLoginPath || isResetPasswordPath)) {
 		const url = request.nextUrl.clone();
-		url.pathname = `${localePrefix}/account`;
+		url.pathname = `${localePrefix}/account/activity`;
 		const response = NextResponse.redirect(url);
 		const requestId = forwardedHeaders.get(REQUEST_ID_HEADER);
 		if (requestId) {

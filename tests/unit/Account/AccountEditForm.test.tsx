@@ -7,7 +7,7 @@ import { updateMyPassword, logout } from "@/server/actions/auth";
 
 vi.mock("react-i18next", () => ({
 	useTranslation: () => ({
-		t: (key: string) => key,
+		t: (key: string) => key.replace(/^common\./, ""),
 		i18n: {
 			changeLanguage: () => new Promise(() => {}),
 		},

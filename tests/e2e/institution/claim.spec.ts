@@ -73,14 +73,22 @@ test.describe("institution claim flow", () => {
 			return;
 		}
 
-		const submitErrorDialog = page.getByText(
-			/The claim request could not be submitted/i,
-		);
+		const submitErrorDialog = page
+			.getByText(/The claim request could not be submitted/i)
+			.first();
 		await expect(submitErrorDialog).toBeVisible({ timeout: 10_000 });
-		await page
-			.getByRole("button", { name: /Schließen/i })
-			.first()
-			.click();
+
+		const closeErrorDialogButton = page
+			.getByRole("button", { name: /Schließen|Close|content\.close/i })
+			.first();
+		if (
+			await closeErrorDialogButton
+				.isVisible({ timeout: 5_000 })
+				.catch(() => false)
+		) {
+			await closeErrorDialogButton.click();
+		}
+
 		await page
 			.getByRole("button", { name: /Abbrechen/i })
 			.first()

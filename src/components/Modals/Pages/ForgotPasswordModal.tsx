@@ -13,12 +13,12 @@ export function ForgotPasswordModal({
 	routePath?: string;
 	returnTo?: string;
 }) {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation();
 	const closeModal = useRoutedModalClose({ returnTo });
 
 	return (
 		<Modal
-			title={t("auth.forgot.title")}
+			title={t("common.auth.forgot.title")}
 			titleClassName="sr-only"
 			variant="fullscreen"
 			routePath={routePath}
@@ -30,8 +30,8 @@ export function ForgotPasswordModal({
 					onSuccess={() => {
 						closeModal();
 						showSuccessToast(
-							t("auth.forgot.successTitle"),
-							t("auth.forgot.successMessage"),
+							t("common.auth.forgot.successTitle"),
+							t("common.auth.forgot.successMessage"),
 						);
 					}}
 				/>

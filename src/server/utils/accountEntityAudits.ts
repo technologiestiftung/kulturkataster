@@ -61,6 +61,19 @@ const redactForeignAudit = (audit: EntityAuditRow): EntityAuditRow => {
 	};
 };
 
+const redactAuditsNotChangedByOwner = (
+	audits: EntityAuditRow[],
+	ownerId: string | null,
+) => {
+	if (!ownerId) {
+		return audits;
+	}
+
+	return audits.map((audit) =>
+		audit.changed_by === ownerId ? audit : redactForeignAudit(audit),
+	);
+};
+
 export async function loadAccountEntityAudits(args: {
 	ctx: AccessContext;
 	currentUserId: string | null;
@@ -105,7 +118,12 @@ export async function loadAccountEntityAuditsPage(
 	}
 
 	const ownAudits = await entityAuditRepo.list({
-		where: { changed_by: ownerId },
+		where: {
+			OR: [
+				{ changed_by: ownerId },
+				{ entity_type: "user", entity_id: ownerId },
+			],
+		},
 		before: options.before,
 		take: fetchTake,
 	});
@@ -123,7 +141,7 @@ export async function loadAccountEntityAuditsPage(
 
 	if (correlationIds.length === 0) {
 		return {
-			audits: pageOwnAudits,
+			audits: redactAuditsNotChangedByOwner(pageOwnAudits, ownerId),
 			hasMore,
 		};
 	}
@@ -136,14 +154,13 @@ export async function loadAccountEntityAuditsPage(
 	}
 
 	return {
-		audits: Array.from(merged.values())
-			.map((audit) =>
-				audit.changed_by === ownerId ? audit : redactForeignAudit(audit),
-			)
-			.sort((a, b) => {
-				const changedAtDiff = b.changed_at.getTime() - a.changed_at.getTime();
-				return changedAtDiff !== 0 ? changedAtDiff : b.id - a.id;
-			}),
+		audits: redactAuditsNotChangedByOwner(
+			Array.from(merged.values()),
+			ownerId,
+		).sort((a, b) => {
+			const changedAtDiff = b.changed_at.getTime() - a.changed_at.getTime();
+			return changedAtDiff !== 0 ? changedAtDiff : b.id - a.id;
+		}),
 		hasMore,
 	};
 }

@@ -7,16 +7,18 @@ const dataTableMock = vi.fn();
 
 vi.mock("react-i18next", () => ({
 	useTranslation: () => ({
-		t: (key: string, options?: { defaultValue?: string }) =>
-			options?.defaultValue ??
-			(
+		t: (key: string, options?: { defaultValue?: string }) => {
+			const normalizedKey = key.replace(/^content\./, "");
+			return (
+				options?.defaultValue ??
 				{
 					"userTable.actions.add": "Nutzer*in hinzufügen",
 					"userTable.searchPlaceholder": "Nutzer*innen suchen...",
 					"userTable.actions.reviewClaims": "Claims prüfen",
-				} as Record<string, string>
-			)[key] ??
-			key,
+				}[normalizedKey] ??
+				normalizedKey
+			);
+		},
 	}),
 }));
 

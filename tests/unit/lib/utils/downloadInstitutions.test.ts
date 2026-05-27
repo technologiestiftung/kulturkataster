@@ -50,8 +50,10 @@ describe("downloadInstitutions permission resolution", () => {
 		// @ts-expect-error - test-only blob shim
 		globalThis.Blob = MockBlob;
 
-		URL.createObjectURL = vi.fn((blob: { text: () => Promise<string> }) => {
-			blobArg = blob;
+		URL.createObjectURL = vi.fn((blob: Blob | MediaSource) => {
+			if ("text" in blob) {
+				blobArg = blob;
+			}
 			return "blob:test";
 		});
 		URL.revokeObjectURL = vi.fn();
@@ -76,12 +78,12 @@ describe("downloadInstitutions permission resolution", () => {
 			translateFn: (key) =>
 				(
 					({
-						"field_names.name.label": "Name",
-						"field_names.email.label": "E-Mail",
-						"field_names.phone.label": "Telefon",
-						"field_names.street.label": "Straße",
-						"field_names.zipcode.label": "PLZ",
-						"field_names.city.label": "Ort",
+						"enumMap.field_names.name.label": "Name",
+						"enumMap.field_names.email.label": "E-Mail",
+						"enumMap.field_names.phone.label": "Telefon",
+						"enumMap.field_names.street.label": "Straße",
+						"enumMap.field_names.zipcode.label": "PLZ",
+						"enumMap.field_names.city.label": "Ort",
 					}) as Record<string, string>
 				)[key] ?? key,
 		});
@@ -106,12 +108,12 @@ describe("downloadInstitutions permission resolution", () => {
 			translateFn: (key) =>
 				(
 					({
-						"field_names.name.label": "Name",
-						"field_names.email.label": "E-Mail",
-						"field_names.phone.label": "Telefon",
-						"field_names.street.label": "Straße",
-						"field_names.zipcode.label": "PLZ",
-						"field_names.city.label": "Ort",
+						"enumMap.field_names.name.label": "Name",
+						"enumMap.field_names.email.label": "E-Mail",
+						"enumMap.field_names.phone.label": "Telefon",
+						"enumMap.field_names.street.label": "Straße",
+						"enumMap.field_names.zipcode.label": "PLZ",
+						"enumMap.field_names.city.label": "Ort",
 					}) as Record<string, string>
 				)[key] ?? key,
 		});

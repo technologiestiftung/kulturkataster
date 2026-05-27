@@ -10,11 +10,11 @@ export function LoginModal({
 	routePath?: string;
 	returnTo?: string;
 }) {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation();
 
 	return (
 		<Modal
-			title={t("auth.login.title")}
+			title={t("common.auth.login.title")}
 			titleClassName="sr-only"
 			variant="fullscreen"
 			routePath={routePath}

@@ -32,7 +32,7 @@ export function FundingSourceField({
 	value,
 	updateField,
 }: FundingSourceFieldProps) {
-	const { t: tEnum } = useTranslation("enumMap");
+	const { t: tEnum } = useTranslation();
 
 	if (field.type !== "fundingSources") {
 		return null;
@@ -52,7 +52,7 @@ export function FundingSourceField({
 	const nullOptionLabel =
 		typeof field.nullOptionLabel === "string"
 			? field.nullOptionLabel
-			: tEnum("field_names.funding_source.options.none", {
+			: tEnum("enumMap.field_names.funding_source.options.none", {
 					defaultValue: "Keine Angabe",
 				});
 	const addButtonLabel =

@@ -72,7 +72,7 @@ export function MultiSelectModal({
 	filterPanel,
 	disabled = false,
 }: MultiSelectModalProps) {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation();
 	const [open, setOpen] = useState(false);
 	const [searchTerm, setSearchTerm] = useState("");
 	const [draftSelected, setDraftSelected] = useState<string[]>(selected);
@@ -84,7 +84,7 @@ export function MultiSelectModal({
 	const defaultSortOption = useMemo<MultiSelectSortOption>(
 		() => ({
 			id: "label",
-			label: t("multiSelectModal.sort.az"),
+			label: t("common.multiSelectModal.sort.az"),
 			compare: (a, b) =>
 				getOptionText(a.label).localeCompare(getOptionText(b.label)),
 		}),
@@ -276,7 +276,9 @@ export function MultiSelectModal({
 					))}
 					{overflowCount > 0 && (
 						<Badge variant="default" className="rounded-full px-3 py-1 text-xs">
-							{t("multiSelectModal.selectedMore", { count: overflowCount })}
+							{t("common.multiSelectModal.selectedMore", {
+								count: overflowCount,
+							})}
 						</Badge>
 					)}
 				</div>
@@ -304,7 +306,7 @@ export function MultiSelectModal({
 					<div className="flex items-center justify-between bg-neutral-5 px-6 py-5">
 						<DialogTitle className="text-lg font-semibold">{title}</DialogTitle>
 						<div className="body3 text-neutral-60">
-							{t("multiSelectModal.selectedCount", {
+							{t("common.multiSelectModal.selectedCount", {
 								count: draftSelected.length,
 							})}
 						</div>
@@ -323,7 +325,7 @@ export function MultiSelectModal({
 									<div className="px-6 py-5">
 										<div className="flex flex-col gap-4">
 											<p className="body3 font-semibold">
-												{t("multiSelectModal.filtersTitle")}
+												{t("common.multiSelectModal.filtersTitle")}
 											</p>
 											{filters.map((filter) => (
 												<div key={filter.id} className="space-y-2">
@@ -349,7 +351,9 @@ export function MultiSelectModal({
 															) {
 																return (
 																	<p className="text-xs text-foreground">
-																		{t("multiSelectModal.subcategoryHint")}
+																		{t(
+																			"common.multiSelectModal.subcategoryHint",
+																		)}
 																	</p>
 																);
 															}
@@ -373,6 +377,7 @@ export function MultiSelectModal({
 																				)
 																			}
 																		/>
+
 																		<span className="flex-wrap">
 																			{option.label}
 																		</span>
@@ -396,6 +401,7 @@ export function MultiSelectModal({
 									placeholder={searchPlaceholder}
 									className="h-11 rounded-sm"
 								/>
+
 								<div className="flex flex-wrap gap-2">
 									<Button
 										type="button"
@@ -404,8 +410,8 @@ export function MultiSelectModal({
 										disabled={draftSelected.length === 0}
 									>
 										{showSelectedOnly
-											? t("multiSelectModal.actions.showAll")
-											: t("multiSelectModal.actions.showSelected")}
+											? t("common.multiSelectModal.actions.showAll")
+											: t("common.multiSelectModal.actions.showSelected")}
 									</Button>
 									<Button
 										type="button"
@@ -414,8 +420,8 @@ export function MultiSelectModal({
 										disabled={visibleOptions.length === 0}
 									>
 										{allFilteredSelected
-											? t("multiSelectModal.actions.clearFiltered")
-											: t("multiSelectModal.actions.selectFiltered")}
+											? t("common.multiSelectModal.actions.clearFiltered")
+											: t("common.multiSelectModal.actions.selectFiltered")}
 									</Button>
 									<Button
 										type="button"
@@ -423,19 +429,21 @@ export function MultiSelectModal({
 										onClick={handleClear}
 										disabled={draftSelected.length === 0}
 									>
-										{t("multiSelectModal.actions.clearAll")}
+										{t("common.multiSelectModal.actions.clearAll")}
 									</Button>
 								</div>
 							</div>
 							<div className="flex flex-col gap-3 ">
 								<div className="body3 text-foreground">
-									{t("multiSelectModal.resultsCount", {
+									{t("common.multiSelectModal.resultsCount", {
 										count: visibleOptions.length,
 									})}
 								</div>
 								<Select value={sortId} onValueChange={setSortId}>
 									<SelectTrigger className="h-10 rounded-sm border-input ">
-										<SelectValue placeholder={t("multiSelectModal.sortBy")} />
+										<SelectValue
+											placeholder={t("common.multiSelectModal.sortBy")}
+										/>
 									</SelectTrigger>
 									<SelectContent>
 										{resolvedSortOptions.map((option) => (
@@ -455,12 +463,13 @@ export function MultiSelectModal({
 								emptyText={emptyText}
 								variant="panel"
 							/>
+
 							<div className="flex flex-col gap-3 py-4 flex-wrap md:flex-row">
 								<Button type="button" variant="outline" onClick={handleCancel}>
-									{t("multiSelectModal.actions.cancel")}
+									{t("common.multiSelectModal.actions.cancel")}
 								</Button>
 								<Button type="button" onClick={handleApply}>
-									{t("multiSelectModal.actions.apply")}
+									{t("common.multiSelectModal.actions.apply")}
 								</Button>
 							</div>
 						</div>

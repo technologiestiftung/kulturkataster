@@ -4,6 +4,12 @@ import { DownloadModal } from "@/components/Modals/Pages/DownloadModal";
 
 const initializePublicDataMock = vi.fn();
 const downloadInstitutionsMock = vi.fn();
+const institutionStoreState = {
+	initializePublicData: initializePublicDataMock,
+	filteredInstitutions: null as Array<{ id: number; name: string }> | null,
+	allInstitutions: null as Array<{ id: number; name: string }> | null,
+	isLoading: false,
+};
 
 vi.mock("react-i18next", () => ({
 	useTranslation: () => ({
@@ -83,17 +89,11 @@ vi.mock("@/lib/store/institutionStore", () => ({
 	useInstitutionStore: (
 		selector: (state: {
 			initializePublicData: () => void;
-			filteredInstitutions: null;
-			allInstitutions: null;
+			filteredInstitutions: Array<{ id: number; name: string }> | null;
+			allInstitutions: Array<{ id: number; name: string }> | null;
 			isLoading: boolean;
 		}) => unknown,
-	) =>
-		selector({
-			initializePublicData: initializePublicDataMock,
-			filteredInstitutions: null,
-			allInstitutions: null,
-			isLoading: false,
-		}),
+	) => selector(institutionStoreState),
 }));
 
 vi.mock("@/components/Modals/useRoutedModalClose", () => ({
@@ -116,6 +116,9 @@ describe("DownloadModal", () => {
 	beforeEach(() => {
 		initializePublicDataMock.mockReset();
 		downloadInstitutionsMock.mockReset();
+		institutionStoreState.filteredInstitutions = null;
+		institutionStoreState.allInstitutions = null;
+		institutionStoreState.isLoading = false;
 	});
 
 	it("shows the guest form in the public download flow even if a stale profile exists", () => {
@@ -189,11 +192,8 @@ describe("DownloadModal", () => {
 			name: "Newsletter abonnieren.",
 		});
 
-		expect(newsletterLink).toHaveAttribute(
-			"href",
-			"https://flow.cleverreach.com/fl/21a1a529-f085-4bd1-8e53-d657c3ccc1de/",
-		);
-		expect(newsletterLink).toHaveAttribute("target", "_blank");
+		expect(newsletterLink).toHaveAttribute("href", "/de/newsletter");
+		expect(newsletterLink).not.toHaveAttribute("target");
 	});
 
 	it("allows changing the selected format", () => {
@@ -229,6 +229,34 @@ describe("DownloadModal", () => {
 		expect(downloadInstitutionsMock).toHaveBeenCalledWith(
 			expect.objectContaining({
 				format: "csv",
+			}),
+		);
+	});
+
+	it("uses filtered institutions before all institutions in the public flow", () => {
+		institutionStoreState.filteredInstitutions = [
+			{ id: 1, name: "Filtered Institution" },
+		];
+		institutionStoreState.allInstitutions = [
+			{ id: 2, name: "All Institution" },
+		];
+
+		render(<DownloadModal routePath="/download" isAuthenticated />);
+
+		fireEvent.click(
+			screen.getByRole("checkbox", {
+				name: /Ich habe den rechtlichen Hinweis gelesen und verstanden/i,
+			}),
+		);
+		fireEvent.click(
+			screen.getByRole("button", {
+				name: "Liste herunterladen",
+			}),
+		);
+
+		expect(downloadInstitutionsMock).toHaveBeenCalledWith(
+			expect.objectContaining({
+				data: [{ id: 1, name: "Filtered Institution" }],
 			}),
 		);
 	});

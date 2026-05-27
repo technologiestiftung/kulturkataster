@@ -8,10 +8,10 @@ type PrivateBadgeProps = {
 };
 
 export function PrivateBadge({ hoverDescription }: PrivateBadgeProps) {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation();
 	const resolvedHoverDescription =
 		hoverDescription ??
-		t("privateFieldDescription", {
+		t("common.privateFieldDescription", {
 			defaultValue:
 				"Diese Information wird ausschließlich für befugte Nutzer*innen im geschützten Bereich des Kulturkatasters zugänglich und nicht öffentlich einsehbar sein.",
 		});
@@ -23,7 +23,7 @@ export function PrivateBadge({ hoverDescription }: PrivateBadgeProps) {
 			aria-label={resolvedHoverDescription}
 		>
 			<LockIcon className="inline w-3 h-3 mr-1" />
-			{t("sensitiveInformation", {
+			{t("common.sensitiveInformation", {
 				defaultValue: "Sensitive information",
 			})}
 		</span>

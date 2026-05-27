@@ -7,20 +7,14 @@ import { serverSideTranslation } from ".";
 type Props = {
 	children: React.ReactNode;
 	locale: string;
-	namespaces: string[];
 	resources: Record<string, unknown>;
 };
 
-export default function I18NProvider({
-	children,
-	locale,
-	namespaces,
-	resources,
-}: Props) {
+export default function I18NProvider({ children, locale, resources }: Props) {
 	const i18n = createInstance();
 
 	// Initialize client-side i18n instance with resources provided by the server
-	serverSideTranslation(locale, namespaces, { i18nInstance: i18n, resources });
+	serverSideTranslation(locale, { i18nInstance: i18n, resources });
 
 	return <I18nextProvider i18n={i18n}>{children}</I18nextProvider>;
 }

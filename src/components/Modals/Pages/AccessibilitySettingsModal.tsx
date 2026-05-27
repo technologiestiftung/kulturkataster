@@ -8,7 +8,7 @@ export function AccessibilitySettingsModal({
 }: {
 	routePath?: string;
 }) {
-	const { t } = useTranslation("content");
+	const { t } = useTranslation();
 
 	const content = (
 		<div className="mt-8">
@@ -18,8 +18,8 @@ export function AccessibilitySettingsModal({
 
 	return (
 		<Modal
-			title={t("accessibilitySettingsModal.title")}
-			subtitle={t("accessibilitySettingsModal.subtitle")}
+			title={t("content.accessibilitySettingsModal.title")}
+			subtitle={t("content.accessibilitySettingsModal.subtitle")}
 			routePath={routePath}
 			variant="fullscreen-muted"
 		>
