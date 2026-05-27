@@ -17,7 +17,6 @@ const DistrictTags: FC<DistrictTagsProps> = ({
 	selected,
 	onChange,
 }) => {
-	const { t: tEnum } = useTranslation();
 	const { t } = useTranslation();
 
 	return (
@@ -25,7 +24,6 @@ const DistrictTags: FC<DistrictTagsProps> = ({
 			{districts.map((district) => {
 				if (!district) return null;
 				const isSelected = selected.includes(district);
-				const translatedName = tEnum(`enumMap.${district}`) || district;
 
 				return (
 					<Badge
@@ -36,10 +34,10 @@ const DistrictTags: FC<DistrictTagsProps> = ({
 						role="switch"
 						aria-checked={isSelected}
 						aria-label={t("content.filter.districtTagsSwitchAriaLabel", {
-							translatedName,
+							translatedName: district,
 						})}
 					>
-						{translatedName}
+						{district}
 						{isSelected && <Close className="ml-2 h-3 w-3" />}
 					</Badge>
 				);
