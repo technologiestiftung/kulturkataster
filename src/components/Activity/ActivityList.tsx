@@ -1050,43 +1050,6 @@ export function ActivityList({
 		[activities, mapAuditToActivity, mergedEntityAudits],
 	);
 
-	if (isLoading) {
-		return <ActivityListSkeleton showFilters />;
-	}
-
-	if (resolvedActivities.length === 0) {
-		return (
-			<EmptyActionState
-				title={t(
-					"common.auth.account.activity.empty",
-					"Keine Aktivitäten vorhanden.",
-				)}
-				description={t("common.auth.account.activity.emptyHint", {
-					defaultValue: "Sie haben noch keine Aktivitäten.",
-				})}
-				actions={[
-					{
-						icon: <Send />,
-						label: t(
-							"common.auth.account.activity.emptyActions.claimLocations",
-							{
-								defaultValue: "Meine Orte anfragen",
-							},
-						),
-						href: toLocalePath("/account/submissions/claim"),
-					},
-					{
-						icon: <Edit />,
-						label: t("common.auth.account.activity.emptyActions.contribute", {
-							defaultValue: "Mitwirken",
-						}),
-						href: toLocalePath("/institution/submission"),
-					},
-				]}
-			/>
-		);
-	}
-
 	const statusOptions = useMemo(
 		() =>
 			Array.from(
@@ -1230,6 +1193,43 @@ export function ActivityList({
 
 		return () => window.removeEventListener("resize", updateListScrollMargin);
 	}, [shouldVirtualize, filteredActivities.length]);
+
+	if (isLoading) {
+		return <ActivityListSkeleton showFilters />;
+	}
+
+	if (resolvedActivities.length === 0) {
+		return (
+			<EmptyActionState
+				title={t(
+					"common.auth.account.activity.empty",
+					"Keine Aktivitäten vorhanden.",
+				)}
+				description={t("common.auth.account.activity.emptyHint", {
+					defaultValue: "Sie haben noch keine Aktivitäten.",
+				})}
+				actions={[
+					{
+						icon: <Send />,
+						label: t(
+							"common.auth.account.activity.emptyActions.claimLocations",
+							{
+								defaultValue: "Meine Orte anfragen",
+							},
+						),
+						href: toLocalePath("/account/submissions/claim"),
+					},
+					{
+						icon: <Edit />,
+						label: t("common.auth.account.activity.emptyActions.contribute", {
+							defaultValue: "Mitwirken",
+						}),
+						href: toLocalePath("/institution/submission"),
+					},
+				]}
+			/>
+		);
+	}
 
 	const renderListContent = () => {
 		if (filteredActivities.length === 0) {
