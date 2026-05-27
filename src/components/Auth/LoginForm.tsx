@@ -18,7 +18,7 @@ export function LoginForm() {
 	const toLocalePath = useLocalePath();
 	const { t } = useTranslation();
 
-	const accountPath = toLocalePath("/account");
+	const accountPath = toLocalePath("/account/activity");
 	const isBusy = isSubmitting || isRedirecting;
 
 	useEffect(() => {
