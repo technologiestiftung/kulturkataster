@@ -220,7 +220,9 @@ export function Menu({
 	}, [normalizedPath]);
 
 	const currentSidebarInstitutionId = useMemo(() => {
-		const match = normalizedPath.match(/\/(?:map|list)\/institution\/(\d+)$/);
+		const match = normalizedPath.match(
+			/\/(?:map|list)\/institution\/(\d+)(?:\/|$)/,
+		);
 		return match?.[1] ?? null;
 	}, [normalizedPath]);
 
@@ -294,6 +296,10 @@ export function Menu({
 	const setIsLayerTreeOpen = useAppStore((state) => state.setIsLayerTreeOpen);
 
 	const isMobileLayerTreeRoute = isMobile && isLayerTreeOpen && isMapRoute;
+	const isSwitchingInstitutionViewRef = useRef(false);
+	const switchInstitutionViewTimeoutRef = useRef<ReturnType<
+		typeof setTimeout
+	> | null>(null);
 	const dragStartYRef = useRef<number | null>(null);
 	const [mobileLayerTreeDragOffset, setMobileLayerTreeDragOffset] = useState(0);
 	const [isDraggingMobileLayerTree, setIsDraggingMobileLayerTree] =
@@ -304,9 +310,29 @@ export function Menu({
 		router.push(toLocalePath("/welcome"));
 	};
 
+	const markInstitutionViewSwitch = () => {
+		isSwitchingInstitutionViewRef.current = true;
+		if (switchInstitutionViewTimeoutRef.current) {
+			clearTimeout(switchInstitutionViewTimeoutRef.current);
+		}
+		switchInstitutionViewTimeoutRef.current = setTimeout(() => {
+			isSwitchingInstitutionViewRef.current = false;
+			switchInstitutionViewTimeoutRef.current = null;
+		}, 300);
+	};
+
+	useEffect(() => {
+		return () => {
+			if (switchInstitutionViewTimeoutRef.current) {
+				clearTimeout(switchInstitutionViewTimeoutRef.current);
+			}
+		};
+	}, []);
+
 	const handleMobileDetailsOpenChange = (nextOpen: boolean) => {
 		if (nextOpen) return;
 		if (!currentSidebarInstitutionId) return;
+		if (isSwitchingInstitutionViewRef.current) return;
 		router.replace(toLocalePath("/map"));
 	};
 
@@ -405,6 +431,7 @@ export function Menu({
 				(item.id === "map" || item.id === "list") &&
 				currentSidebarInstitutionId
 			) {
+				markInstitutionViewSwitch();
 				router.push(
 					toLocalePath(
 						`/${item.id}/institution/${currentSidebarInstitutionId}`,
