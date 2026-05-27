@@ -9,9 +9,29 @@ import { allowedLocales, defaultLocale, i18nConfig } from "./config";
 export { i18nConfig };
 export { allowedLocales, defaultLocale };
 
+type TranslationBundle = Record<string, unknown>;
+const TRANSLATION_NAMESPACE = "translation";
+
+const remoteTranslationsByLanguage = new Map<
+	string,
+	Promise<TranslationBundle>
+>();
+
+function isTranslationBundle(value: unknown): value is TranslationBundle {
+	return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function fetchRemoteLanguageTranslations(language: string) {
+	const cached = remoteTranslationsByLanguage.get(language);
+	if (cached) return cached;
+
+	const translations = fetchTranslations(language);
+	remoteTranslationsByLanguage.set(language, translations);
+	return translations;
+}
+
 async function initTranslations(
 	locale: string,
-	namespaces: string[],
 	options?: {
 		keyPrefix?: string;
 		i18nInstance?: i18n;
@@ -24,29 +44,26 @@ async function initTranslations(
 
 	const translationLoader = resourcesToBackend(
 		async (language: string, namespace: string) => {
+			if (namespace !== TRANSLATION_NAMESPACE) return {};
+
 			try {
 				// First try to get local translations as fallback
 				const localTranslations = await import(
-					`@/lib/i18n/translations/${language}/${namespace}.json`
+					`@/lib/i18n/translations/${language}/translation.json`
 				);
+				const localTranslationsBundle = localTranslations.default ?? {};
 
 				try {
-					const traduoraTranslations = await fetchTranslations(
-						language,
-						namespace,
-					);
-					const merged = merge(
-						{},
-						localTranslations.default,
-						traduoraTranslations,
-					);
+					const remoteTranslations =
+						await fetchRemoteLanguageTranslations(language);
+					const merged = merge({}, localTranslationsBundle, remoteTranslations);
 					return merged;
 				} catch {
-					return localTranslations.default;
+					return localTranslationsBundle;
 				}
 			} catch {
-				const translations = await fetchTranslations(language, namespace);
-				return translations;
+				const translations = await fetchRemoteLanguageTranslations(language);
+				return isTranslationBundle(translations) ? translations : {};
 			}
 		},
 	);
@@ -60,9 +77,9 @@ async function initTranslations(
 		resources: options?.resources as Resource | undefined,
 		fallbackLng: i18nConfig.defaultLocale,
 		supportedLngs: i18nConfig.locales,
-		defaultNS: namespaces[0],
-		fallbackNS: namespaces[0],
-		ns: namespaces,
+		defaultNS: TRANSLATION_NAMESPACE,
+		fallbackNS: TRANSLATION_NAMESPACE,
+		ns: [TRANSLATION_NAMESPACE],
 		preload: options?.resources ? [] : [locale],
 	});
 
@@ -71,7 +88,7 @@ async function initTranslations(
 		resources: i18nInstance.services.resourceStore.data,
 		t: i18nInstance.getFixedT(
 			locale,
-			namespaces[0],
+			TRANSLATION_NAMESPACE,
 			options?.keyPrefix,
 		) as TFunction<Locale, undefined>,
 	};
@@ -80,12 +97,11 @@ async function initTranslations(
 // Exported function to fetch translations on server components
 export async function serverSideTranslation(
 	locale: string,
-	namespaces: string[],
 	options?: {
 		keyPrefix?: string;
 		i18nInstance?: i18n;
 		resources?: Record<string, unknown>;
 	},
 ) {
-	return await initTranslations(locale, namespaces, options);
+	return await initTranslations(locale, options);
 }

@@ -82,7 +82,7 @@ const formatCategoryValue = (
 	const categories = getParentCategories(data);
 	if (!categories?.length) return "";
 	return categories
-		.map((category) => tEnum(`category.${category.key}`))
+		.map((category) => tEnum(`enumMap.category.${category.key}`))
 		.join(", ");
 };
 
@@ -195,6 +195,7 @@ function AddressField({
 				isPrivate={isPrivate}
 				action={action}
 			/>
+
 			{(showMapLink || showCopy) && (
 				<div className="flex flex-wrap gap-3">
 					{showMapLink && mapHref && (
@@ -259,6 +260,7 @@ const getContent = (
 					action={action}
 				/>
 			);
+
 		case "status": {
 			return (
 				<StatusItem
@@ -285,6 +287,7 @@ const getContent = (
 					{renderLink(value, resolvedHref, field.type)}
 				</InfoItem>
 			);
+
 		case "category":
 			return (
 				<CategoryItem
@@ -295,6 +298,7 @@ const getContent = (
 					action={action}
 				/>
 			);
+
 		case "fundingSources":
 			return (
 				<FundingSourceItem
@@ -305,6 +309,7 @@ const getContent = (
 					action={action}
 				/>
 			);
+
 		case "title":
 			return (
 				<div className="overflow-hidden">
@@ -313,6 +318,7 @@ const getContent = (
 					</h1>
 				</div>
 			);
+
 		case "text":
 			return (
 				<InfoItem
@@ -324,6 +330,7 @@ const getContent = (
 					{String(value)}
 				</InfoItem>
 			);
+
 		case "enum":
 			return (
 				<InfoItem
@@ -335,6 +342,7 @@ const getContent = (
 					{getFieldOptionLabel(tEnum, String(field.enumKey), String(value))}
 				</InfoItem>
 			);
+
 		case "boolean":
 			return (
 				<InfoItem
@@ -343,9 +351,10 @@ const getContent = (
 					isPrivate={isPrivate}
 					action={action}
 				>
-					{tEnum(`boolean.${String(value)}`)}
+					{tEnum(`enumMap.boolean.${String(value)}`)}
 				</InfoItem>
 			);
+
 		case "date":
 		case "year":
 			return (
@@ -358,6 +367,7 @@ const getContent = (
 					{formatDateByType(value, field.type)}
 				</InfoItem>
 			);
+
 		default:
 			return null;
 	}
@@ -367,9 +377,9 @@ const renderFieldContent = (
 	{ field, data, newData, alwaysShow, isPrivate }: RenderFieldContentArgs,
 	includeLayout = true,
 ) => {
-	const { t: tEnum } = useTranslation("enumMap");
-	const { t: tCommon } = useTranslation("common");
-	const { t: tContent } = useTranslation("content");
+	const { t: tEnum } = useTranslation();
+	const { t: tCommon } = useTranslation();
+	const { t: tContent } = useTranslation();
 	const value = resolveFieldValue(field, data);
 	const resolvedHref = resolveHref(field, value, data);
 	const action = getEditAction({
@@ -405,9 +415,9 @@ const renderFieldContent = (
 	const gridClass = getGridClass(field);
 	const translateLabel = (labelKey?: string) => {
 		if (!labelKey) return undefined;
-		const fromEnum = tEnum(labelKey);
+		const fromEnum = tEnum("enumMap." + labelKey);
 		if (fromEnum && fromEnum !== labelKey) return fromEnum;
-		const fromCommon = tCommon(labelKey);
+		const fromCommon = tCommon("common." + labelKey);
 		if (fromCommon && fromCommon !== labelKey) return fromCommon;
 		return labelKey;
 	};
@@ -422,6 +432,7 @@ const renderFieldContent = (
 					Boolean(getParentCategories(data)?.length) ||
 					hasRenderableDisplayValue(newValue)
 				);
+
 			case "link":
 			case "email":
 			case "phone":
@@ -431,6 +442,7 @@ const renderFieldContent = (
 					hasRenderableDisplayValue(newValue) ||
 					hasRenderableDisplayValue(resolvedNewHref)
 				);
+
 			case "status":
 			case "text":
 			case "enum":
@@ -443,6 +455,7 @@ const renderFieldContent = (
 					hasRenderableDisplayValue(value) ||
 					hasRenderableDisplayValue(newValue)
 				);
+
 			default:
 				return true;
 		}
@@ -498,6 +511,7 @@ const renderFieldContent = (
 					hasRenderableDisplayValue(value) ||
 					hasRenderableDisplayValue(resolvedHref)
 				);
+
 			case "status":
 			case "text":
 			case "enum":
@@ -544,7 +558,7 @@ const renderFieldContent = (
 			const labelKey = `${field.enumKey ?? "utilization_status"}.${String(
 				displayValue,
 			)}`;
-			return tEnum(labelKey);
+			return tEnum("enumMap." + labelKey);
 		}
 		if (field.type === "enum") {
 			return getFieldOptionLabel(
@@ -554,7 +568,7 @@ const renderFieldContent = (
 			);
 		}
 		if (field.type === "boolean") {
-			return tEnum(`boolean.${String(displayValue)}`);
+			return tEnum(`enumMap.boolean.${String(displayValue)}`);
 		}
 		if (field.type === "date" || field.type === "year") {
 			return formatDateByType(displayValue, field.type);
@@ -672,8 +686,8 @@ const renderFieldContent = (
 					<h1 id="institution-title" className="font-bold wrap-anywhere">
 						<span className="bg-primary-light px-1">
 							{hasOriginal
-								? tContent("infoWrapper.diffLabel.edited")
-								: tContent("infoWrapper.diffLabel.addition")}
+								? tContent("content.infoWrapper.diffLabel.edited")
+								: tContent("content.infoWrapper.diffLabel.addition")}
 						</span>
 						<span className="bg-primary-light px-1">{newDisplay}</span>
 					</h1>
@@ -700,8 +714,8 @@ const renderFieldContent = (
 					<span className={cn(hasOriginal ? "block mt-1" : "")}>
 						<span className="bg-primary-light px-1">
 							{hasOriginal
-								? tContent("infoWrapper.diffLabel.edited")
-								: tContent("infoWrapper.diffLabel.addition")}
+								? tContent("content.infoWrapper.diffLabel.edited")
+								: tContent("content.infoWrapper.diffLabel.addition")}
 						</span>
 						<span className="bg-primary-light px-1">{newDisplay}</span>
 					</span>
@@ -726,7 +740,7 @@ const renderFieldContent = (
 						{originalDisplay}
 					</h1>
 					<span className="bg-primary-light px-1">
-						{tContent("infoWrapper.diffLabel.removed")}
+						{tContent("content.infoWrapper.diffLabel.removed")}
 					</span>
 				</div>
 			);
@@ -747,7 +761,7 @@ const renderFieldContent = (
 					<span className="line-through">{originalDisplay}</span>
 					<span className="block mt-1">
 						<span className="bg-primary-light px-1">
-							{tContent("infoWrapper.diffLabel.removed")}
+							{tContent("content.infoWrapper.diffLabel.removed")}
 						</span>
 					</span>
 				</InfoItem>

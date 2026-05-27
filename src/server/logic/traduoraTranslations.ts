@@ -1,69 +1,73 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable complexity */
 
-import { fetchLabels, fetchTraduoraToken } from "@/server/traduora/cached";
+import { fetchTraduoraToken } from "@/server/traduora/cached";
 import { logger } from "@/server/logging/logger";
 
-async function getLabelIdByName(
-	projectId: string,
-	token: string,
-	labelName: string,
-): Promise<string | null> {
-	const labels = await fetchLabels(projectId, token);
-	const label = labels.find(
-		(l) => l.value.toLowerCase() === labelName.toLowerCase(),
-	);
-	return label?.id || null;
-}
+type TraduoraTerm = {
+	id: string;
+	value: string;
+};
 
-const convertToArrays = (obj: any): any => {
-	if (typeof obj !== "object" || obj === null) {
-		return obj;
-	}
+type TraduoraTranslation = {
+	termId: string;
+	value: string;
+};
 
-	const keys = Object.keys(obj);
-	const isArrayLike = keys.every((key: string) => /^\d+$/.test(key));
-
-	if (isArrayLike && keys.length > 0) {
-		const maxIndex = Math.max(...keys.map(Number));
-		const arr = new Array(maxIndex + 1);
-		for (const [key, val] of Object.entries(obj)) {
-			arr[parseInt(key)] = convertToArrays(val);
-		}
-		return arr;
-	}
-
+const unflattenObject = (flat: Record<string, string>) => {
 	const result: Record<string, any> = {};
-	for (const [key, val] of Object.entries(obj)) {
-		result[key] = convertToArrays(val);
+
+	for (const [key, value] of Object.entries(flat)) {
+		const parts = key.split(".");
+		let current = result;
+		for (let index = 0; index < parts.length - 1; index++) {
+			const part = parts[index];
+			current[part] ??= {};
+			current = current[part];
+		}
+		current[parts[parts.length - 1]] = value;
 	}
+
 	return result;
+};
+
+const getNamespaceEntries = (
+	terms: TraduoraTerm[],
+	translations: TraduoraTranslation[],
+	namespace?: string,
+) => {
+	const translationByTermId = new Map(
+		translations.map((translation) => [translation.termId, translation.value]),
+	);
+	const namespacePrefix = namespace ? `${namespace}.` : "";
+	const entries: Record<string, string> = {};
+
+	for (const term of terms) {
+		const translation = translationByTermId.get(term.id);
+		if (!translation) continue;
+		if (namespace && !term.value.startsWith(namespacePrefix)) continue;
+
+		const key = namespace
+			? term.value.slice(namespacePrefix.length)
+			: term.value;
+		entries[key] = translation;
+	}
+
+	return entries;
 };
 
 export async function fetchTraduoraTranslations(
 	locale: string,
 	namespace?: string,
-): Promise<Record<string, string>> {
-	const TRADUORA_API_URL = process.env.TRADUORA_API_URL!;
-	const PROJECT_ID = process.env.TRADUORA_PROJECT_ID!;
+): Promise<Record<string, unknown>> {
+	const apiUrl = process.env.TRADUORA_API_URL!;
+	const projectId = process.env.TRADUORA_PROJECT_ID!;
 
 	const token = await fetchTraduoraToken();
 	if (!token) {
 		throw new Error("No Traduora token available");
 	}
 
-	let termsUrl = `${TRADUORA_API_URL}/projects/${PROJECT_ID}/terms`;
-	if (namespace) {
-		const labelId = await getLabelIdByName(PROJECT_ID, token, namespace);
-
-		if (labelId) {
-			termsUrl = `${TRADUORA_API_URL}/projects/${PROJECT_ID}/terms/filter-by-label?labelId=${labelId}`;
-		} else {
-			throw new Error(`Label not found for namespace: ${namespace}`);
-		}
-	}
-
-	const termsRes = await fetch(termsUrl, {
+	const termsRes = await fetch(`${apiUrl}/projects/${projectId}/terms`, {
 		headers: {
 			Authorization: `Bearer ${token}`,
 			"Content-Type": "application/json",
@@ -72,21 +76,15 @@ export async function fetchTraduoraTranslations(
 
 	if (!termsRes.ok) {
 		const errorText = await termsRes.text();
-		logger.error("traduora.terms.fetch_failed", undefined, {
-			subsystem: "translations",
-			http_status: termsRes.status,
-			locale,
-			namespace: namespace ?? null,
-			response_body: errorText,
-		});
-		throw new Error(`Failed to fetch terms. Status: ${termsRes.status}`);
+		throw new Error(
+			`Failed to fetch terms. Status: ${termsRes.status}. ${errorText}`,
+		);
 	}
 
-	const terms: Array<{ id: string; value: string }> = (await termsRes.json())
-		.data;
+	const terms = (await termsRes.json()).data as TraduoraTerm[];
 
 	const translationsRes = await fetch(
-		`${TRADUORA_API_URL}/projects/${PROJECT_ID}/translations/${locale}`,
+		`${apiUrl}/projects/${projectId}/translations/${locale}`,
 		{
 			headers: {
 				Authorization: `Bearer ${token}`,
@@ -97,15 +95,8 @@ export async function fetchTraduoraTranslations(
 
 	if (!translationsRes.ok) {
 		const errorText = await translationsRes.text();
-		logger.error("traduora.translations.fetch_failed", undefined, {
-			subsystem: "translations",
-			http_status: translationsRes.status,
-			locale,
-			namespace: namespace ?? null,
-			response_body: errorText,
-		});
 		throw new Error(
-			`Failed to fetch translations for locale: ${locale}. Status: ${translationsRes.status}`,
+			`Failed to fetch translations for locale: ${locale}. Status: ${translationsRes.status}. ${errorText}`,
 		);
 	}
 
@@ -123,31 +114,11 @@ export async function fetchTraduoraTranslations(
 		);
 	}
 
-	const translationMap = new Map(translations.map((t) => [t.termId, t.value]));
-
-	const data: Record<string, string> = {};
-	for (const term of terms) {
-		const translation = translationMap.get(term.id);
-		if (translation) {
-			data[term.value] = translation;
-		}
-	}
-
-	const nested: Record<string, any> = {};
-	for (const [key, value] of Object.entries(data)) {
-		const keys = key.split(".");
-		let current = nested;
-
-		for (let i = 0; i < keys.length - 1; i++) {
-			const k = keys[i];
-			if (!(k in current)) {
-				current[k] = {};
-			}
-			current = current[k];
-		}
-
-		current[keys[keys.length - 1]] = value;
-	}
-
-	return convertToArrays(nested);
+	return unflattenObject(
+		getNamespaceEntries(
+			terms,
+			translations as TraduoraTranslation[],
+			namespace,
+		),
+	);
 }

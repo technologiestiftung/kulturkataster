@@ -123,11 +123,11 @@ const formatAuditActor = (
 		return formatUserDisplayName(audit.user) ?? audit.user.email;
 	}
 	if (isActorHidden(audit)) {
-		return t("auth.account.activity.hiddenActor", {
+		return t("common.auth.account.activity.hiddenActor", {
 			defaultValue: "Another user",
 		});
 	}
-	return t("auth.account.activity.system");
+	return t("common.auth.account.activity.system");
 };
 
 const getAuditIntent = (
@@ -248,17 +248,17 @@ const getAccountTypeLabel = (
 	t: (key: string, options?: Record<string, unknown>) => string,
 ) => {
 	if (accountType === "organization") {
-		return t("auth.register.accountTypeOrganization", {
+		return t("common.auth.register.accountTypeOrganization", {
 			defaultValue: "Mitarbeiter*in einer Organisation",
 		});
 	}
 	if (accountType === "district") {
-		return t("auth.register.accountTypeDistrict", {
+		return t("common.auth.register.accountTypeDistrict", {
 			defaultValue: "Mitarbeiter*in eines Bezirks",
 		});
 	}
 	if (accountType === "administration") {
-		return t("auth.register.accountTypeAdministration", {
+		return t("common.auth.register.accountTypeAdministration", {
 			defaultValue: "Mitarbeiter*in des Landes Berlin",
 		});
 	}
@@ -293,7 +293,7 @@ const getSubmissionTypeLabel = (
 	const payload = resolveSubmissionPayload(audit);
 	const submissionType = pickString(payload, "type");
 	if (!submissionType) return null;
-	return t(`auth.account.activity.submissionTypes.${submissionType}`, {
+	return t(`common.auth.account.activity.submissionTypes.${submissionType}`, {
 		defaultValue: submissionType,
 	});
 };
@@ -306,7 +306,7 @@ const getSubmissionEntityTypeLabel = (
 	const payload = resolveSubmissionPayload(audit);
 	const submissionEntityType = pickString(payload, "entity_type");
 	if (!submissionEntityType) return null;
-	return t(`auth.account.activity.entities.${submissionEntityType}`, {
+	return t(`common.auth.account.activity.entities.${submissionEntityType}`, {
 		defaultValue: submissionEntityType,
 	});
 };
@@ -316,12 +316,12 @@ const formatEntityLabel = (
 	t: (key: string, options?: Record<string, unknown>) => string,
 ) => {
 	if (audit.entity_type === "user") {
-		const userLabel = t("auth.account.activity.entities.user", {
+		const userLabel = t("common.auth.account.activity.entities.user", {
 			defaultValue: "Nutzer*in",
 		});
 		const email = getEntityEmail(audit);
 		return email
-			? t("auth.account.activity.entities.userWithEmail", {
+			? t("common.auth.account.activity.entities.userWithEmail", {
 					defaultValue: `${userLabel} (${email})`,
 					entity: userLabel,
 					email,
@@ -370,38 +370,37 @@ const getStatusLabel = (
 ) => {
 	if (!status) return "-";
 	if (status === "approval_pending") {
-		return t("auth.account.activity.status.pending", {
+		return t("common.auth.account.activity.status.pending", {
 			defaultValue: "Pending",
 		});
 	}
 	if (status === "active") {
-		return t("categoryFormModal.status.active", {
+		return t("common.categoryFormModal.status.active", {
 			defaultValue: "Active",
 		});
 	}
 	if (status === "inactive") {
-		return t("categoryFormModal.status.inactive", {
+		return t("common.categoryFormModal.status.inactive", {
 			defaultValue: "Inactive",
 		});
 	}
 	if (status === "banned") {
-		return t("userFormModal.status.banned", {
-			ns: "content",
+		return t("content.userFormModal.status.banned", {
 			defaultValue: "Blocked",
 		});
 	}
 	if (status === "approved") {
-		return t("auth.account.activity.status.approved", {
+		return t("common.auth.account.activity.status.approved", {
 			defaultValue: "Approved",
 		});
 	}
 	if (status === "rejected") {
-		return t("auth.account.activity.status.rejected", {
+		return t("common.auth.account.activity.status.rejected", {
 			defaultValue: "Rejected",
 		});
 	}
 	if (status === "completed") {
-		return t("auth.account.activity.status.completed", {
+		return t("common.auth.account.activity.status.completed", {
 			defaultValue: "Completed",
 		});
 	}
@@ -413,16 +412,16 @@ const getEventTypeLabel = (
 	t: (key: string, options?: Record<string, unknown>) => string,
 ) => {
 	if (eventType === "status_change") {
-		return t("auth.account.activity.filters.typeValue.status_change", {
+		return t("common.auth.account.activity.filters.typeValue.status_change", {
 			defaultValue: "Statuswechsel",
 		});
 	}
 	if (eventType === "assign") {
-		return t("auth.account.activity.filters.typeValue.assign", {
+		return t("common.auth.account.activity.filters.typeValue.assign", {
 			defaultValue: "Zuweisung",
 		});
 	}
-	return t("auth.account.activity.filters.typeValue.create", {
+	return t("common.auth.account.activity.filters.typeValue.create", {
 		defaultValue: "Erstellt/Aktualisiert",
 	});
 };
@@ -431,7 +430,7 @@ const getEntityTypeLabel = (
 	entityType: string,
 	t: (key: string, options?: Record<string, unknown>) => string,
 ) =>
-	t(`auth.account.activity.entities.${entityType}`, {
+	t(`common.auth.account.activity.entities.${entityType}`, {
 		defaultValue: entityType,
 	});
 
@@ -560,7 +559,7 @@ export function ActivityList({
 	activities,
 	isLoading = false,
 }: ActivityListProps) {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation();
 	const toLocalePath = useLocalePath();
 	const previousVisibleActivitySignatureRef = useRef<string | null>(null);
 	const [searchQuery, setSearchQuery] = useState("");
@@ -683,7 +682,7 @@ export function ActivityList({
 			setHasMoreAudits(result.hasMore);
 		} catch {
 			setLoadMoreError(
-				t("auth.account.activity.loadMore.error", {
+				t("common.auth.account.activity.loadMore.error", {
 					defaultValue: "Weitere Aktivitaeten konnten nicht geladen werden.",
 				}),
 			);
@@ -730,16 +729,19 @@ export function ActivityList({
 					downloadMeta.requesterEmail ??
 					formatAuditActor(audit, t);
 				const primaryEntity = format
-					? t("auth.account.activity.download.institutionExportWithFormat", {
-							defaultValue: `Kulturorte-Export (${format})`,
-							format,
-						})
-					: t("auth.account.activity.download.institutionExport", {
+					? t(
+							"common.auth.account.activity.download.institutionExportWithFormat",
+							{
+								defaultValue: `Kulturorte-Export (${format})`,
+								format,
+							},
+						)
+					: t("common.auth.account.activity.download.institutionExport", {
 							defaultValue: "Kulturorte-Export",
 						});
 				const secondaryEntity =
 					typeof institutionCount === "number"
-						? t("auth.account.activity.download.institutionCount", {
+						? t("common.auth.account.activity.download.institutionCount", {
 								defaultValue: `${institutionCount} Kulturorte`,
 								count: institutionCount,
 							})
@@ -753,7 +755,7 @@ export function ActivityList({
 					actor,
 					primaryEntity,
 					secondaryEntity,
-					action: t("auth.account.activity.download.action", {
+					action: t("common.auth.account.activity.download.action", {
 						defaultValue: "heruntergeladen",
 					}),
 					item: primaryEntity,
@@ -787,7 +789,7 @@ export function ActivityList({
 			if (relationEntityLabel) {
 				if (relationEntityName) {
 					relation = normalizeEntityText(
-						t("auth.account.activity.itemWithName", {
+						t("common.auth.account.activity.itemWithName", {
 							defaultValue: `${relationEntityLabel}: ${relationEntityName}`,
 							item: relationEntityLabel,
 							name: relationEntityName,
@@ -803,7 +805,7 @@ export function ActivityList({
 			const primaryName = getEntityName(primarySource);
 			const primaryEntity = primaryName
 				? normalizeEntityText(
-						t("auth.account.activity.itemWithName", {
+						t("common.auth.account.activity.itemWithName", {
 							defaultValue: `${primaryBase}: ${primaryName}`,
 							item: primaryBase,
 							name: primaryName,
@@ -846,7 +848,7 @@ export function ActivityList({
 			if (isApprovedUserSubmissionAssignment) {
 				const institutionId = getSubmissionInstitutionId(secondarySource);
 				const institutionLabel = t(
-					"auth.account.activity.entities.institution",
+					"common.auth.account.activity.entities.institution",
 					{
 						defaultValue: "Kulturort",
 					},
@@ -898,16 +900,22 @@ export function ActivityList({
 				from: hasStatusTransition ? fromStatus : undefined,
 				to: hasStatusTransition ? toStatus : undefined,
 				action: (() => {
-					const baseAction = t(`auth.account.activity.actions.${actionKey}`, {
-						defaultValue: t(`auth.account.activity.actions.${audit.action}`, {
-							defaultValue: audit.action,
-						}),
-					});
+					const baseAction = t(
+						`common.auth.account.activity.actions.${actionKey}`,
+						{
+							defaultValue: t(
+								`common.auth.account.activity.actions.${audit.action}`,
+								{
+									defaultValue: audit.action,
+								},
+							),
+						},
+					);
 					const accountType = getEntityAccountType(primarySource);
 					if (primarySource.entity_type !== "user" || !accountType) {
 						return baseAction;
 					}
-					return t("auth.account.activity.actions.withAccountType", {
+					return t("common.auth.account.activity.actions.withAccountType", {
 						defaultValue: `${baseAction} (${getAccountTypeLabel(accountType, t)})`,
 						action: baseAction,
 						accountType: getAccountTypeLabel(accountType, t),
@@ -1049,21 +1057,27 @@ export function ActivityList({
 	if (resolvedActivities.length === 0) {
 		return (
 			<EmptyActionState
-				title={t("auth.account.activity.empty", "Keine Aktivitäten vorhanden.")}
-				description={t("auth.account.activity.emptyHint", {
+				title={t(
+					"common.auth.account.activity.empty",
+					"Keine Aktivitäten vorhanden.",
+				)}
+				description={t("common.auth.account.activity.emptyHint", {
 					defaultValue: "Sie haben noch keine Aktivitäten.",
 				})}
 				actions={[
 					{
 						icon: <Send />,
-						label: t("auth.account.activity.emptyActions.claimLocations", {
-							defaultValue: "Meine Orte anfragen",
-						}),
+						label: t(
+							"common.auth.account.activity.emptyActions.claimLocations",
+							{
+								defaultValue: "Meine Orte anfragen",
+							},
+						),
 						href: toLocalePath("/account/submissions/claim"),
 					},
 					{
 						icon: <Edit />,
-						label: t("auth.account.activity.emptyActions.contribute", {
+						label: t("common.auth.account.activity.emptyActions.contribute", {
 							defaultValue: "Mitwirken",
 						}),
 						href: toLocalePath("/institution/submission"),
@@ -1221,7 +1235,7 @@ export function ActivityList({
 		if (filteredActivities.length === 0) {
 			return (
 				<div className="py-8 body3 text-muted-foreground">
-					{t("auth.account.activity.filters.empty", {
+					{t("common.auth.account.activity.filters.empty", {
 						defaultValue: "Keine Aktivitäten für die aktuellen Filter.",
 					})}
 				</div>
@@ -1319,6 +1333,7 @@ export function ActivityList({
 				getEventTypeLabel={(eventType) => getEventTypeLabel(eventType, t)}
 				getEntityTypeLabel={(entityType) => getEntityTypeLabel(entityType, t)}
 			/>
+
 			<div
 				ref={listContainerRef}
 				className={shouldVirtualize ? "relative" : "divide-y divide-border"}
@@ -1331,7 +1346,7 @@ export function ActivityList({
 						if (isLoadingMoreAudits) {
 							return (
 								<div className="body3 text-muted-foreground">
-									{t("auth.account.activity.loadMore.loading", {
+									{t("common.auth.account.activity.loadMore.loading", {
 										defaultValue: "Weitere Aktivitaeten werden geladen...",
 									})}
 								</div>

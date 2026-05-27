@@ -12,9 +12,9 @@ export async function generateMetadata({
 	params,
 }: PageProps): Promise<Metadata> {
 	const { locale } = await params;
-	const { t } = await serverSideTranslation(locale, ["common"]);
+	const { t } = await serverSideTranslation(locale);
 	return {
-		title: t("auth.accountEdit.metaTitle"),
+		title: t("common.auth.accountEdit.metaTitle"),
 	};
 }
 

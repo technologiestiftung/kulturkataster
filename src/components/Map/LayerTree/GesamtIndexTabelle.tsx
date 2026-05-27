@@ -125,7 +125,7 @@ const TableRows = ({ index }: { index: number }) => {
 };
 
 export default function GesamtIndexTabelle() {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation();
 	const descriptionId = "gesamtindex-beschreibung";
 	return (
 		<div className="relative">
@@ -136,7 +136,7 @@ export default function GesamtIndexTabelle() {
 				<span className="font-bold">{titles.yAxisLabel}</span>
 			</div>
 			<p id={descriptionId} className="sr-only">
-				{t("map.legend.legendGesamtIndexDecriptionSR", {
+				{t("common.map.legend.legendGesamtIndexDecriptionSR", {
 					yAxisLabel: titles.yAxisLabel,
 					xAxisLabel: titles.xAxisLabel,
 				})}
@@ -144,7 +144,7 @@ export default function GesamtIndexTabelle() {
 			<div className="inline-block rounded border border-[#E2DFDB] bg-background body3 w-[calc(100%-1.5rem)] ml-[1.5rem]">
 				<table
 					className="border-collapse table-fixed w-full"
-					aria-label={t("map.legend.legendGesamtIndexAriaLabel")}
+					aria-label={t("common.map.legend.legendGesamtIndexAriaLabel")}
 					aria-describedby={descriptionId}
 				>
 					<thead>

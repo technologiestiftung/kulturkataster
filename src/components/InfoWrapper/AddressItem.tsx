@@ -19,7 +19,7 @@ export function AddressItem({
 	isPrivate = false,
 	action,
 }: InstitutionAddressProps) {
-	const { t: tEnum } = useTranslation("enumMap");
+	const { t: tEnum } = useTranslation();
 	const cityName = institution.address?.city;
 	const districtKey = institution.address?.district;
 	const neighbourhood = institution.address?.neighbourhood;
@@ -52,7 +52,7 @@ export function AddressItem({
 								{neighbourhood && <p>{neighbourhood},</p>}
 								{cityName && districtKey && (
 									<p>
-										{cityName}-{tEnum(`${districtKey}`)}
+										{cityName}-{tEnum(`enumMap.${districtKey}`)}
 									</p>
 								)}
 							</div>

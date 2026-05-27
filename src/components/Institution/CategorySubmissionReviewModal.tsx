@@ -45,7 +45,7 @@ export function CategorySubmissionReviewModal({
 	routePath,
 	shouldRefresh = false,
 }: CategorySubmissionReviewModalProps) {
-	const { t } = useTranslation("content");
+	const { t } = useTranslation();
 	const router = useRouter();
 	const toLocalePath = useLocalePath();
 	const removeSubmission = useAccountStore((state) => state.removeSubmission);
@@ -68,7 +68,7 @@ export function CategorySubmissionReviewModal({
 			: undefined,
 	);
 
-	const title = t("categorySubmissionReview.title", {
+	const title = t("content.categorySubmissionReview.title", {
 		defaultValue: "Kategorie-Vorschlag prüfen",
 	});
 	const canManageCategorySubmission =
@@ -109,17 +109,20 @@ export function CategorySubmissionReviewModal({
 				);
 				showSuccessToast(
 					status === "approved"
-						? t("categorySubmissionReview.success.approve.title", {
+						? t("content.categorySubmissionReview.success.approve.title", {
 								defaultValue: "Kategorie angelegt",
 							})
-						: t("categorySubmissionReview.success.reject.title", {
+						: t("content.categorySubmissionReview.success.reject.title", {
 								defaultValue: "Kategorie-Vorschlag abgelehnt",
 							}),
 					status === "approved"
-						? t("categorySubmissionReview.success.approve.description", {
-								defaultValue: "Der Kategorie-Vorschlag wurde übernommen.",
-							})
-						: t("categorySubmissionReview.success.reject.description", {
+						? t(
+								"content.categorySubmissionReview.success.approve.description",
+								{
+									defaultValue: "Der Kategorie-Vorschlag wurde übernommen.",
+								},
+							)
+						: t("content.categorySubmissionReview.success.reject.description", {
 								defaultValue: "Der Kategorie-Vorschlag wurde abgelehnt.",
 							}),
 				);
@@ -131,7 +134,7 @@ export function CategorySubmissionReviewModal({
 				setReviewError(
 					error instanceof Error
 						? error.message
-						: t("categorySubmissionReview.error.description", {
+						: t("content.categorySubmissionReview.error.description", {
 								defaultValue:
 									"Der Kategorie-Vorschlag konnte nicht geprüft werden.",
 							}),
@@ -165,9 +168,9 @@ export function CategorySubmissionReviewModal({
 				reviewError
 					? {
 							open: true,
-							title: t("categorySubmissionReview.error.title"),
+							title: t("content.categorySubmissionReview.error.title"),
 							description: reviewError,
-							confirmLabel: t("close"),
+							confirmLabel: t("content.close"),
 							onConfirm: () => setReviewError(null),
 							onOpenChange: (open) => {
 								if (!open) setReviewError(null);
@@ -180,7 +183,7 @@ export function CategorySubmissionReviewModal({
 				<Card variant="tertiary">
 					<CardContent variant="tertiary" className="space-y-4 p-4">
 						<InfoItem
-							label={t("categorySubmissionReview.fields.key", {
+							label={t("content.categorySubmissionReview.fields.key", {
 								defaultValue: "Vorgeschlagene Kategorie",
 							})}
 							alwaysShow
@@ -191,7 +194,7 @@ export function CategorySubmissionReviewModal({
 				</Card>
 				<div className="space-y-4">
 					<InfoItem
-						label={t("institutionFormModal.review.requestedBy", {
+						label={t("content.institutionFormModal.review.requestedBy", {
 							defaultValue: "Requested by",
 						})}
 						alwaysShow
@@ -199,9 +202,12 @@ export function CategorySubmissionReviewModal({
 						{requesterLabel}
 					</InfoItem>
 					<InfoItem
-						label={t("categorySubmissionReview.fields.linkedInstitution", {
-							defaultValue: "Verknüpfte Kulturort-Einreichung",
-						})}
+						label={t(
+							"content.categorySubmissionReview.fields.linkedInstitution",
+							{
+								defaultValue: "Verknüpfte Kulturort-Einreichung",
+							},
+						)}
 						alwaysShow
 					>
 						{linkedInstitutionSubmissionId ? (
@@ -219,7 +225,7 @@ export function CategorySubmissionReviewModal({
 								}
 							>
 								{linkedInstitutionName ??
-									t("categorySubmissionReview.linkedSubmission", {
+									t("content.categorySubmissionReview.linkedSubmission", {
 										defaultValue: `Einreichung #${linkedInstitutionSubmissionId}`,
 									})}
 							</Button>
@@ -232,7 +238,7 @@ export function CategorySubmissionReviewModal({
 					<>
 						<div className="space-y-2">
 							<label className="body2" htmlFor="category-review-notes">
-								{t("categorySubmissionReview.notesLabel", {
+								{t("content.categorySubmissionReview.notesLabel", {
 									defaultValue: "Interne Notizen",
 								})}
 							</label>
@@ -252,7 +258,7 @@ export function CategorySubmissionReviewModal({
 								disabled={submitting}
 								onClick={() => void handleReview("rejected")}
 							>
-								{t("categorySubmissionReview.actions.reject", {
+								{t("content.categorySubmissionReview.actions.reject", {
 									defaultValue: "Ablehnen",
 								})}
 							</Button>
@@ -261,7 +267,7 @@ export function CategorySubmissionReviewModal({
 								disabled={submitting}
 								onClick={() => void handleReview("approved")}
 							>
-								{t("categorySubmissionReview.actions.approve", {
+								{t("content.categorySubmissionReview.actions.approve", {
 									defaultValue: "Annehmen",
 								})}
 							</Button>

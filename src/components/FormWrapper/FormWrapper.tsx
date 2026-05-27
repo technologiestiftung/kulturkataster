@@ -122,8 +122,8 @@ const buildTouchedMap = (fields: FormWrapperFieldConfig[]) => {
 };
 
 export function FormWrapper({ config }: { config: FormWrapperConfig }) {
-	const { t } = useTranslation("common");
-	const { t: tEnum } = useTranslation("enumMap");
+	const { t } = useTranslation();
+	const { t: tEnum } = useTranslation();
 	const onChangeRef = useRef<FormWrapperConfig["onChange"]>(config.onChange);
 	const allFields = useMemo(() => getAllFields(config.fields), [config.fields]);
 	const [formData, setFormData] = useState<Record<string, unknown>>(() =>
@@ -235,7 +235,9 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 			try {
 				await config.onSubmit({ ...formData, ...normalizedFormData });
 			} catch (error) {
-				setFormError(error instanceof Error ? error.message : t("alert.error"));
+				setFormError(
+					error instanceof Error ? error.message : t("common.alert.error"),
+				);
 			}
 		}
 	};
@@ -275,7 +277,7 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 				{!config.hideActions && (
 					<div className="flex flex-col pb-24 md:pb-0">
 						<AlertDialog
-							title={t("error")}
+							title={t("common.error")}
 							status="error"
 							description={formError ?? ""}
 							open={Boolean(formError)}
@@ -284,9 +286,10 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 									setFormError(null);
 								}
 							}}
-							confirmLabel={t("close")}
+							confirmLabel={t("common.close")}
 							onConfirm={() => setFormError(null)}
 						/>
+
 						<div className="flex flex-1 flex-col-reverse items-center w-full justify-center md:justify-end gap-4 mt-4 flex-col md:flex-row">
 							{config.showCancel && (
 								<Button

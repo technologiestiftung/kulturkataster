@@ -88,7 +88,7 @@ export function AddressMapField({
 	disabled = false,
 	initialZoom = 15,
 }: AddressMapFieldProps) {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation();
 	const mapRef = useRef<HTMLDivElement | null>(null);
 	const mapInstance = useRef<Map | null>(null);
 	const markerSource = useRef<VectorSource | null>(null);
@@ -380,7 +380,7 @@ export function AddressMapField({
 	return (
 		<div className="space-y-2">
 			<span className="body2 text-foreground mb-1 block">
-				{t("map.addressPickerHint")}
+				{t("common.map.addressPickerHint")}
 			</span>
 			<div
 				className={cn(
@@ -400,7 +400,7 @@ export function AddressMapField({
 						iconSize="sm"
 						onClick={handleZoomIn}
 						disabled={disabled}
-						aria-label={t("map.zoomIn")}
+						aria-label={t("common.map.zoomIn")}
 					>
 						<PlusIcon className="size-4" />
 					</Button>
@@ -411,7 +411,7 @@ export function AddressMapField({
 						iconSize="sm"
 						onClick={handleZoomOut}
 						disabled={disabled}
-						aria-label={t("map.zoomOut")}
+						aria-label={t("common.map.zoomOut")}
 					>
 						<MinusIcon className="size-4" />
 					</Button>
@@ -425,8 +425,8 @@ export function AddressMapField({
 					disabled={disabled || !pendingSelection || isApplyingSelection}
 				>
 					{isApplyingSelection
-						? t("map.addressPickerApplyLoading")
-						: t("map.addressPickerApply")}
+						? t("common.map.addressPickerApplyLoading")
+						: t("common.map.addressPickerApply")}
 				</Button>
 			</div>
 		</div>

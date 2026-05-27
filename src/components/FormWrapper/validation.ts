@@ -77,11 +77,14 @@ const getTypeValidationMessage = (
 	const translatedFieldMessage = getFieldError(tEnum, fieldMetaKey, "invalid");
 
 	if (fieldMessage) return fieldMessage;
-	if (translatedFieldMessage !== `field_names.${fieldMetaKey}.errors.invalid`) {
+	if (
+		translatedFieldMessage !==
+		`enumMap.field_names.${fieldMetaKey}.errors.invalid`
+	) {
 		return translatedFieldMessage;
 	}
 
-	return t(`form.validation.${fallbackKey}`);
+	return t(`common.form.validation.${fallbackKey}`);
 };
 
 const buildRequiredValidator = (
@@ -91,7 +94,7 @@ const buildRequiredValidator = (
 ) => {
 	const fieldMetaKey = getFieldMetaKey(field);
 	const fieldLabel = field.label ?? getFieldLabel(tEnum, fieldMetaKey);
-	const requiredDefault = t("form.validation.required", {
+	const requiredDefault = t("common.form.validation.required", {
 		field: fieldLabel,
 	});
 	const requiredMessageRaw =

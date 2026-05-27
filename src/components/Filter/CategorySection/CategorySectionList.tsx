@@ -42,8 +42,8 @@ export const CategorySectionList: FC<CategorySectionListProps> = ({
 	selectionEmptyLabel,
 	showHeader = false,
 }) => {
-	const { t } = useTranslation(["content"]);
-	const { t: tEnum, i18n } = useTranslation(["enumMap"]);
+	const { t } = useTranslation();
+	const { t: tEnum, i18n } = useTranslation();
 	const [openSections, setOpenSections] = useState<string[]>([]);
 	const [isCollapsed, setIsCollapsed] = useState(
 		collapsible ? defaultCollapsed : false,
@@ -360,13 +360,13 @@ export const CategorySectionList: FC<CategorySectionListProps> = ({
 					<div className="p-2 flex justify-start">
 						<button
 							type="button"
-							aria-label={t("filter.showMoreCategories")}
+							aria-label={t("content.filter.showMoreCategories")}
 							className="inline-flex items-center text-primary-dark"
 							onClick={() => setIsCollapsed(false)}
 						>
 							<ChevronDown className="h-4 w-4" />
 							<span className="ml-2 text-primary-dark font-bold body2">
-								{t("filter.showMoreCategories")}
+								{t("content.filter.showMoreCategories")}
 							</span>
 						</button>
 					</div>
@@ -376,7 +376,7 @@ export const CategorySectionList: FC<CategorySectionListProps> = ({
 					{showHeader && (
 						<div className="flex items-center justify-between mb-4">
 							<h3 className="body1 font-bold">
-								{t("filter.categories.title", { ns: "content" })}
+								{t("content.filter.categories.title")}
 							</h3>
 							<button
 								className="body2 font-light underline"
@@ -387,8 +387,8 @@ export const CategorySectionList: FC<CategorySectionListProps> = ({
 								}
 							>
 								{hasActiveCategoryFilters()
-									? t("filter.categories.resetFilters", { ns: "content" })
-									: t("filter.categories.setAllFilters", { ns: "content" })}
+									? t("content.filter.categories.resetFilters")
+									: t("content.filter.categories.setAllFilters")}
 							</button>
 						</div>
 					)}
@@ -415,13 +415,13 @@ export const CategorySectionList: FC<CategorySectionListProps> = ({
 						<div className="p-2">
 							<button
 								type="button"
-								aria-label={t("filter.showSelectedCategories")}
+								aria-label={t("content.filter.showSelectedCategories")}
 								className="inline-flex items-center text-primary-dark"
 								onClick={() => setIsCollapsed(true)}
 							>
 								<ChevronUp className="h-4 w-4" />
 								<span className="ml-2 text-primary-dark font-bold body2">
-									{t("filter.showSelectedCategories")}
+									{t("content.filter.showSelectedCategories")}
 								</span>
 							</button>
 						</div>

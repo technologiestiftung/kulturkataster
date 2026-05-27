@@ -56,7 +56,7 @@ export const FilterPanel: FC<FilterPanelProps> = ({
 	parentCategorySelectionBehavior = "select-all-children",
 	selectionEmptyLabel,
 }) => {
-	const { t } = useTranslation(["content", "common"]);
+	const { t } = useTranslation();
 	const showCategoryHeader = categorySectionMode !== "selection";
 
 	const updateFilters = (nextFilters: FilterState) => {
@@ -120,11 +120,11 @@ export const FilterPanel: FC<FilterPanelProps> = ({
 			<div className="Filter-root p-4 h-full">
 				<Card variant="filter">
 					<div className="body2 text-alert mb-2">
-						{t("filter.error", { ns: "content" })}
+						{t("content.filter.error")}
 					</div>
 					{onRetry && (
 						<Button size="sm" radius="md" onClick={onRetry}>
-							{t("filter.retry", { ns: "content" })}
+							{t("content.filter.retry")}
 						</Button>
 					)}
 				</Card>
@@ -141,8 +141,7 @@ export const FilterPanel: FC<FilterPanelProps> = ({
 			{showSummary && (
 				<Card variant="filter">
 					<h2 className="body2 font-bold mb-3 pl-2">
-						{t("filter.displayedInstitutions", {
-							ns: "content",
+						{t("content.filter.displayedInstitutions", {
 							count: filteredCount,
 						})}
 					</h2>
@@ -158,8 +157,8 @@ export const FilterPanel: FC<FilterPanelProps> = ({
 							)}
 							<strong className="body2 font-bold">
 								{filters?.include_closed
-									? t("filter.hideClosed", { ns: "content" })
-									: t("filter.showClosed", { ns: "content" })}
+									? t("content.filter.hideClosed")
+									: t("content.filter.showClosed")}
 							</strong>
 						</button>
 					)}
@@ -170,7 +169,7 @@ export const FilterPanel: FC<FilterPanelProps> = ({
 				<Card variant="filter">
 					<div className="flex items-center justify-between mb-4">
 						<h3 className="body1 font-bold capitalize">
-							{t("filter.districts.title", { ns: "content" })}
+							{t("content.filter.districts.title")}
 						</h3>
 						<button
 							className="body2 font-light underline"
@@ -181,8 +180,8 @@ export const FilterPanel: FC<FilterPanelProps> = ({
 							}
 						>
 							{hasActiveDistrictFilters()
-								? t("filter.districts.resetFilters", { ns: "content" })
-								: t("filter.districts.setAllFilters", { ns: "content" })}
+								? t("content.filter.districts.resetFilters")
+								: t("content.filter.districts.setAllFilters")}
 						</button>
 					</div>
 					<DistrictTags
