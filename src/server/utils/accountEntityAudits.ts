@@ -63,11 +63,16 @@ const redactForeignAudit = (audit: EntityAuditRow): EntityAuditRow => {
 
 const redactAuditsNotChangedByOwner = (
 	audits: EntityAuditRow[],
-	ownerId: string,
-) =>
-	audits.map((audit) =>
+	ownerId: string | null,
+) => {
+	if (!ownerId) {
+		return audits;
+	}
+
+	return audits.map((audit) =>
 		audit.changed_by === ownerId ? audit : redactForeignAudit(audit),
 	);
+};
 
 export async function loadAccountEntityAudits(args: {
 	ctx: AccessContext;
@@ -149,14 +154,13 @@ export async function loadAccountEntityAuditsPage(
 	}
 
 	return {
-		audits: Array.from(merged.values())
-			.map((audit) =>
-				audit.changed_by === ownerId ? audit : redactForeignAudit(audit),
-			)
-			.sort((a, b) => {
-				const changedAtDiff = b.changed_at.getTime() - a.changed_at.getTime();
-				return changedAtDiff !== 0 ? changedAtDiff : b.id - a.id;
-			}),
+		audits: redactAuditsNotChangedByOwner(
+			Array.from(merged.values()),
+			ownerId,
+		).sort((a, b) => {
+			const changedAtDiff = b.changed_at.getTime() - a.changed_at.getTime();
+			return changedAtDiff !== 0 ? changedAtDiff : b.id - a.id;
+		}),
 		hasMore,
 	};
 }

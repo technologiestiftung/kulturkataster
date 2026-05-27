@@ -81,12 +81,17 @@ type ExportFieldMeta = {
 	permissionField: string | null;
 };
 
-const EXCEL_NOTICE_ROWS = 2;
+const EXCEL_NOTICE_ROWS = 5;
 const EXCEL_NOTICE_MERGE_END_COLUMN = 3;
 const EXCEL_DOWNLOAD_NOTICE_URL =
 	"https://www.kulturkataster.berlin/de/download";
-const EXCEL_NOTICE_TEXT =
-	"Die Daten stammen vom Berliner Kulturkataster. Bitte benennen Sie bei Verwendung das Kulturkataster als Download-Quelle und beachten Sie die rechtlichen Hinweise. www.kulturkataster.berlin Ein Projekt der Kulturraum Berlin gGmbH";
+const EXCEL_NOTICE_HOME_URL = "https://www.kulturkataster.berlin";
+const EXCEL_NOTICE_DEFAULT_ROWS = [
+	"Die Daten stammen vom Berliner Kulturkataster.",
+	"Bitte benennen Sie bei Verwendung das Kulturkataster als Download-Quelle und beachten Sie die rechtlichen Hinweise.",
+	"www.kulturkataster.berlin",
+	"Ein Projekt der Kulturraum Berlin gGmbH",
+] as const;
 
 const enumKeyMappings: Record<string, string> = {
 	categories: "category",
@@ -515,38 +520,58 @@ function generateCSV(data: Record<string, string>[]): string {
 	return BOM + [csvHeaders, ...csvRows].join("\r\n");
 }
 
-function applyExcelNotice(ws: XLSX.WorkSheet) {
+const getExcelNoticeRows = (translateFn?: TranslateFn) =>
+	EXCEL_NOTICE_DEFAULT_ROWS.map((defaultValue, index) => {
+		if (!translateFn) return defaultValue;
+		return translateFn(`common.download.exportNotice.row${index + 1}`, {
+			defaultValue,
+		});
+	});
+
+function applyExcelNotice(ws: XLSX.WorkSheet, translateFn?: TranslateFn) {
+	const noticeRows = getExcelNoticeRows(translateFn);
 	ws["!merges"] = [
 		...(ws["!merges"] ?? []),
-		{
-			s: { r: 0, c: 0 },
-			e: { r: 0, c: EXCEL_NOTICE_MERGE_END_COLUMN },
-		},
+		...noticeRows.map((_, rowIndex) => ({
+			s: { r: rowIndex, c: 0 },
+			e: { r: rowIndex, c: EXCEL_NOTICE_MERGE_END_COLUMN },
+		})),
 	];
 
-	ws.A1 = {
-		t: "s",
-		v: EXCEL_NOTICE_TEXT,
-		l: {
-			Target: EXCEL_DOWNLOAD_NOTICE_URL,
-			Tooltip: EXCEL_DOWNLOAD_NOTICE_URL,
-		},
-		s: {
-			font: {
-				name: "Arial",
-				sz: 12,
-				bold: true,
-				color: { rgb: "000000" },
+	noticeRows.forEach((noticeText, rowIndex) => {
+		const cellAddress = XLSX.utils.encode_cell({ r: rowIndex, c: 0 });
+		const linkTarget =
+			rowIndex === 2 ? EXCEL_NOTICE_HOME_URL : EXCEL_DOWNLOAD_NOTICE_URL;
+		ws[cellAddress] = {
+			t: "s",
+			v: noticeText,
+			l: {
+				Target: linkTarget,
+				Tooltip: linkTarget,
 			},
-			alignment: {
-				horizontal: "left",
-				vertical: "top",
-				wrapText: true,
+			s: {
+				font: {
+					name: "Arial",
+					sz: 12,
+					bold: true,
+					color: { rgb: "000000" },
+				},
+				alignment: {
+					horizontal: "left",
+					vertical: "top",
+					wrapText: true,
+				},
 			},
-		},
-	};
+		};
+	});
 
-	ws["!rows"] = [{ hpt: 44 }, { hpt: 8 }];
+	ws["!rows"] = [
+		{ hpt: 22 },
+		{ hpt: 32 },
+		{ hpt: 22 },
+		{ hpt: 22 },
+		{ hpt: 8 },
+	];
 }
 
 function applyExcelHeaderStyle(ws: XLSX.WorkSheet, headers: string[]) {
@@ -604,10 +629,11 @@ function applyExcelColumnWidths(
 export function generateExcelBuffer(
 	data: Record<string, string>[],
 	format: "xlsx" | "xls",
+	translateFn?: TranslateFn,
 ): ArrayBuffer {
 	const wb = XLSX.utils.book_new();
 	const ws = XLSX.utils.aoa_to_sheet([]);
-	applyExcelNotice(ws);
+	applyExcelNotice(ws, translateFn);
 
 	if (data.length > 0) {
 		XLSX.utils.sheet_add_json(ws, data, {
@@ -675,7 +701,7 @@ export async function downloadInstitutions({
 			break;
 		}
 		case "xlsx": {
-			const xlsxBuffer = generateExcelBuffer(preparedData, "xlsx");
+			const xlsxBuffer = generateExcelBuffer(preparedData, "xlsx", translateFn);
 			downloadBinaryFile(
 				xlsxBuffer,
 				fullFilename,
@@ -684,7 +710,7 @@ export async function downloadInstitutions({
 			break;
 		}
 		case "xls": {
-			const xlsBuffer = generateExcelBuffer(preparedData, "xls");
+			const xlsBuffer = generateExcelBuffer(preparedData, "xls", translateFn);
 			downloadBinaryFile(xlsBuffer, fullFilename, "application/vnd.ms-excel");
 			break;
 		}

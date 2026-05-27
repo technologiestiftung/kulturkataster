@@ -433,6 +433,31 @@ model EmailTemplateAudience {
   @@map("email_template_audience")
 }
 
+model EmailOutbox {
+  id                  String    @id
+  to                  String
+  subject             String
+  template_path       String
+  variables           Json?
+  metadata            Json?
+  status              String    @default("pending")
+  attempts            Int       @default(0)
+  max_attempts        Int       @default(5)
+  next_attempt_at     DateTime  @default(now())
+  locked_at           DateTime?
+  locked_by           String?
+  last_error          String?
+  provider_message_id String?
+  sent_at             DateTime?
+  created_at          DateTime  @default(now())
+  updated_at          DateTime  @updatedAt
+
+  @@index([status, next_attempt_at])
+  @@index([locked_at])
+  @@index([created_at])
+  @@map("email_outbox")
+}
+
 model Submission {
   id           Int                  @id @default(autoincrement())
   entity_type  SubmissionEntityType
@@ -525,4 +550,12 @@ model EntityAudit {
   @@index([changed_by])
   @@index([changed_at])
   @@map("entity_audit")
+}
+
+model AppDataMigration {
+  id    String   @id
+  runAt DateTime @default(now()) @map("run_at") @db.Timestamptz(6)
+
+  @@map("app_data_migrations")
+  @@ignore
 }

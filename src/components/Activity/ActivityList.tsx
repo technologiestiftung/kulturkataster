@@ -106,12 +106,20 @@ const getDownloadAuditMeta = (audit: EntityAudit) => {
 	const downloadType =
 		typeof meta.download_type === "string" ? meta.download_type : null;
 	if (downloadType !== "institution_export") return null;
+	const requesterName =
+		typeof meta.requester_name === "string" &&
+		meta.requester_name.trim() &&
+		meta.requester_name !== "Unknown"
+			? meta.requester_name
+			: null;
+	const requesterEmail =
+		typeof meta.requester_email === "string" && meta.requester_email.trim()
+			? meta.requester_email
+			: null;
 	return {
 		downloadType,
-		requesterName:
-			typeof meta.requester_name === "string" ? meta.requester_name : null,
-		requesterEmail:
-			typeof meta.requester_email === "string" ? meta.requester_email : null,
+		requesterName,
+		requesterEmail,
 	};
 };
 

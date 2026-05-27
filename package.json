@@ -25,6 +25,7 @@
 		"traduora:sync": "tsx scripts/traduora-sync.ts",
 		"traduora:push": "tsx scripts/traduora-sync.ts push",
 		"traduora:pull": "tsx scripts/traduora-sync.ts pull && npm run format:fix",
+		"email:dispatch": "tsx scripts/process-email-outbox.ts",
 		"fetch-types:dev": "mkdir -p src/types && rm -rf temp-backend && git clone --depth 1 --branch dev git@github.com:technologiestiftung/kulturkataster-backend.git temp-backend && cp temp-backend/types/supabase.ts src/types/supabase.ts && rm -rf temp-backend",
 		"fetch-types:prod": "mkdir -p src/types && rm -rf temp-backend && git clone --depth 1 --branch main git@github.com:technologiestiftung/kulturkataster-backend.git temp-backend && cp temp-backend/types/supabase.ts src/types/supabase.ts && rm -rf temp-backend",
 		"prisma:generate": "prisma generate",

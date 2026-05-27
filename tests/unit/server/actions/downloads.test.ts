@@ -104,7 +104,53 @@ describe("notifyInstitutionDownload", () => {
 		);
 	});
 
-	it("does not throw when the notification email fails", async () => {
+	it("falls back to the authenticated profile when blank requester fields are submitted", async () => {
+		getCurrentUserMock.mockResolvedValue({
+			id: "user-1",
+			email: "auth@example.com",
+		});
+		getCurrentProfileMock.mockResolvedValue({
+			id: "user-1",
+			email: "profile@example.com",
+			first_name: "Ada",
+			last_name: "Lovelace",
+		});
+
+		const result = await notifyInstitutionDownload({
+			filename: "kulturorte",
+			format: "xls",
+			institutionCount: 3,
+			institutionIds: [11, 22, 33],
+			requesterFirstName: "",
+			requesterLastName: "",
+			requesterEmail: "",
+			usagePurpose: "",
+		});
+
+		expect(result).toEqual({ ok: true });
+		expect(entityAuditCreateMock).toHaveBeenCalledWith(
+			expect.objectContaining({
+				data: expect.objectContaining({
+					changed_by: "user-1",
+					meta_info: expect.objectContaining({
+						requester_name: "Ada Lovelace",
+						requester_email: "profile@example.com",
+						usage_purpose: null,
+					}),
+				}),
+			}),
+		);
+		expect(sendInstitutionDownloadNotificationEmailMock).toHaveBeenCalledWith(
+			expect.objectContaining({
+				requesterEmail: "profile@example.com",
+				requesterFirstName: "Ada",
+				requesterLastName: "Lovelace",
+				usagePurpose: undefined,
+			}),
+		);
+	});
+
+	it("returns a notification failure when the notification email cannot be queued", async () => {
 		getCurrentUserMock.mockResolvedValue({
 			id: "user-1",
 			email: "user@example.com",
@@ -126,7 +172,7 @@ describe("notifyInstitutionDownload", () => {
 			institutionIds: [99],
 		});
 
-		expect(result).toEqual({ ok: true });
+		expect(result).toEqual({ ok: false, error: "notificationFailed" });
 		expect(loggerErrorMock).toHaveBeenCalledWith(
 			"download.institution_notification.failed",
 			expect.any(Error),

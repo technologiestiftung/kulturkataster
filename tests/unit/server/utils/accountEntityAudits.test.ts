@@ -107,4 +107,28 @@ describe("loadAccountEntityAuditsPage", () => {
 			user: { id: "current-user" },
 		});
 	});
+
+	it("does not redact audits when the user can read all entity audits", async () => {
+		getTableScope.mockReturnValue("all");
+		requireScopeOrUser.mockReturnValue(null);
+		const adminChangedCurrentUser = makeAudit({
+			id: 2,
+			meta_info: { reason: "role-assignment" },
+			changed_by: "admin-user",
+			user: { id: "admin-user", email: "admin@example.com" },
+		});
+		list.mockResolvedValue([adminChangedCurrentUser]);
+
+		const result = await loadAccountEntityAuditsPage({
+			ctx: {} as Parameters<typeof loadAccountEntityAuditsPage>[0]["ctx"],
+			currentUserId: "current-user",
+		});
+
+		expect(list).toHaveBeenCalledWith({
+			before: undefined,
+			take: 201,
+		});
+		expect(listByCorrelationIds).not.toHaveBeenCalled();
+		expect(result.audits).toEqual([adminChangedCurrentUser]);
+	});
 });

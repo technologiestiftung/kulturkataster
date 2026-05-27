@@ -24,7 +24,7 @@ export type EmailTemplateVariables = {
 	FactorType?: string;
 };
 
-type SendTemplatedEmailArgs = {
+export type SendTemplatedEmailArgs = {
 	to: string;
 	subject: string;
 	templatePath: string;

@@ -287,9 +287,9 @@ export function ActivityItem({ activity, index }: ActivityItemProps) {
 			</Tooltip>
 
 			<div className="flex-1 min-w-0">
-				<div className="flex items-baseline gap-2 flex-wrap">
-					<span className="body3 font-bold cursor-help">{dateTimeLabel}</span>
-					<span className="body3">•</span>
+				<div className="body3 flex items-baseline gap-1 text-wrap flex-wrap">
+					<span className="font-bold cursor-help">{dateTimeLabel}</span>
+					<span className="">•</span>
 					{renderEventMessage()}
 				</div>
 			</div>
