@@ -22,7 +22,7 @@ export function ListTopbar({
 	onOpenFilter,
 	onSearchClick,
 }: ListTopbarProps) {
-	const { t } = useTranslation("content");
+	const { t } = useTranslation();
 	const inputRef = useRef<HTMLInputElement | null>(null);
 	const [isSearchOpen, setIsSearchOpen] = useState(false);
 
@@ -49,8 +49,8 @@ export function ListTopbar({
 						type="search"
 						value={query}
 						onChange={(event) => onQueryChange(event.target.value)}
-						placeholder={t("listView.searchPlaceholder")}
-						aria-label={t("listView.searchLabel")}
+						placeholder={t("content.listView.searchPlaceholder")}
+						aria-label={t("content.listView.searchLabel")}
 						className="w-full pr-12"
 						rightSlot={
 							<button
@@ -60,7 +60,7 @@ export function ListTopbar({
 									setIsSearchOpen(false);
 								}}
 								className="absolute right-4 top-1/2 -translate-y-1/2 text-foreground hover:text-foreground transition-colors"
-								aria-label={t("listView.searchClose")}
+								aria-label={t("content.listView.searchClose")}
 							>
 								<Close className="size-4" />
 							</button>
@@ -74,7 +74,7 @@ export function ListTopbar({
 							radius="full"
 							variant="surface"
 							iconSize="lg"
-							tooltip={t("listView.searchButton")}
+							tooltip={t("content.listView.searchButton")}
 							onClick={() => {
 								setIsSearchOpen(true);
 								requestAnimationFrame(handleSearchClick);
@@ -82,18 +82,19 @@ export function ListTopbar({
 						>
 							<SearchIcon className="size-4" />
 						</ButtonWithTooltip>
-						<Label emphasize={false}>{t("listView.searchLabel")}</Label>
+						<Label emphasize={false}>{t("content.listView.searchLabel")}</Label>
 					</div>
 				)}
 			</div>
 			{isSearchOpen ? null : (
 				<div className="flex items-center gap-2">
 					<FilterButtonWithCount
-						tooltip={t("listView.filterButton")}
+						tooltip={t("content.listView.filterButton")}
 						className="cursor-pointer"
 						onClick={onOpenFilter}
 					/>
-					<Label emphasize={false}>{t("listView.filterButton")}</Label>
+
+					<Label emphasize={false}>{t("content.listView.filterButton")}</Label>
 				</div>
 			)}
 		</div>

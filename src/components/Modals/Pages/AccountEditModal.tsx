@@ -23,12 +23,12 @@ export function AccountEditModal({
 	firstName,
 	lastName,
 }: AccountEditModalProps) {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation();
 	const handleClose = useRoutedModalClose({ returnTo });
 
 	return (
 		<Modal
-			title={t("auth.accountEdit.title")}
+			title={t("common.auth.accountEdit.title")}
 			titleClassName="sr-only"
 			variant="fullscreen"
 			routePath={routePath}
@@ -44,8 +44,8 @@ export function AccountEditModal({
 					onSuccess={() => {
 						handleClose();
 						showSuccessToast(
-							t("auth.accountEdit.successTitle"),
-							t("auth.accountEdit.successDescription"),
+							t("common.auth.accountEdit.successTitle"),
+							t("common.auth.accountEdit.successDescription"),
 						);
 					}}
 				/>

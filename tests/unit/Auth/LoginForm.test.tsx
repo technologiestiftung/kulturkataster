@@ -42,19 +42,21 @@ describe("LoginForm", () => {
 		render(<LoginForm />);
 
 		fireEvent.change(
-			screen.getByPlaceholderText("auth.login.emailPlaceholder"),
+			screen.getByPlaceholderText("common.auth.login.emailPlaceholder"),
 			{
 				target: { value: "jane@example.com" },
 			},
 		);
 		fireEvent.change(
-			screen.getByPlaceholderText("auth.login.passwordPlaceholder"),
+			screen.getByPlaceholderText("common.auth.login.passwordPlaceholder"),
 			{
 				target: { value: "password123" },
 			},
 		);
 
-		fireEvent.click(screen.getByRole("button", { name: "auth.login.submit" }));
+		fireEvent.click(
+			screen.getByRole("button", { name: "common.auth.login.submit" }),
+		);
 
 		await waitFor(() => {
 			expect(mockedLogin).toHaveBeenCalledWith(
@@ -75,23 +77,25 @@ describe("LoginForm", () => {
 		render(<LoginForm />);
 
 		fireEvent.change(
-			screen.getByPlaceholderText("auth.login.emailPlaceholder"),
+			screen.getByPlaceholderText("common.auth.login.emailPlaceholder"),
 			{
 				target: { value: "jane@example.com" },
 			},
 		);
 		fireEvent.change(
-			screen.getByPlaceholderText("auth.login.passwordPlaceholder"),
+			screen.getByPlaceholderText("common.auth.login.passwordPlaceholder"),
 			{
 				target: { value: "wrong-password" },
 			},
 		);
 
-		fireEvent.click(screen.getByRole("button", { name: "auth.login.submit" }));
+		fireEvent.click(
+			screen.getByRole("button", { name: "common.auth.login.submit" }),
+		);
 
 		await waitFor(() => {
 			expect(
-				screen.getByText("auth.login.invalidCredentials"),
+				screen.getByText("common.auth.login.invalidCredentials"),
 			).toBeInTheDocument();
 		});
 		expect(replaceMock).not.toHaveBeenCalled();

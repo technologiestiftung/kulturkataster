@@ -64,7 +64,7 @@ export function ActivityFilters({
 	getEventTypeLabel,
 	getEntityTypeLabel,
 }: ActivityFiltersProps) {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation();
 
 	const activeFilterCount = [
 		statusFilter !== "all",
@@ -80,18 +80,19 @@ export function ActivityFilters({
 			<SearchInput
 				value={searchQuery}
 				onChange={(event) => onSearchChange(event.target.value)}
-				placeholder={t("auth.account.activity.filters.search", {
+				placeholder={t("common.auth.account.activity.filters.search", {
 					defaultValue: "Aktivität durchsuchen",
 				})}
 				containerClassName="w-full"
 			/>
+
 			<Select value={statusFilter} onValueChange={onStatusChange}>
 				<SelectTrigger variant="pill">
 					<SelectValue />
 				</SelectTrigger>
 				<SelectContent>
 					<SelectItem value="all">
-						{t("auth.account.activity.filters.allStatuses", {
+						{t("common.auth.account.activity.filters.allStatuses", {
 							defaultValue: "Alle Status",
 						})}
 					</SelectItem>
@@ -108,7 +109,7 @@ export function ActivityFilters({
 				</SelectTrigger>
 				<SelectContent>
 					<SelectItem value="all">
-						{t("auth.account.activity.filters.allTypes", {
+						{t("common.auth.account.activity.filters.allTypes", {
 							defaultValue: "Alle Typen",
 						})}
 					</SelectItem>
@@ -125,7 +126,7 @@ export function ActivityFilters({
 				</SelectTrigger>
 				<SelectContent>
 					<SelectItem value="all">
-						{t("auth.account.activity.filters.allEntities", {
+						{t("common.auth.account.activity.filters.allEntities", {
 							defaultValue: "Alle Entitäten",
 						})}
 					</SelectItem>
@@ -142,7 +143,7 @@ export function ActivityFilters({
 				</SelectTrigger>
 				<SelectContent>
 					<SelectItem value="all">
-						{t("auth.account.activity.filters.allUsers", {
+						{t("common.auth.account.activity.filters.allUsers", {
 							defaultValue: "Alle Nutzer*innen",
 						})}
 					</SelectItem>
@@ -159,32 +160,32 @@ export function ActivityFilters({
 				</SelectTrigger>
 				<SelectContent>
 					<SelectItem value="all">
-						{t("auth.account.activity.filters.allDates", {
+						{t("common.auth.account.activity.filters.allDates", {
 							defaultValue: "Alle",
 						})}
 					</SelectItem>
 					<SelectItem value="today">
-						{t("auth.account.activity.filters.dateValue.today", {
+						{t("common.auth.account.activity.filters.dateValue.today", {
 							defaultValue: "Heute",
 						})}
 					</SelectItem>
 					<SelectItem value="last_7_days">
-						{t("auth.account.activity.filters.dateValue.last7Days", {
+						{t("common.auth.account.activity.filters.dateValue.last7Days", {
 							defaultValue: "Letzte 7 Tage",
 						})}
 					</SelectItem>
 					<SelectItem value="last_30_days">
-						{t("auth.account.activity.filters.dateValue.last30Days", {
+						{t("common.auth.account.activity.filters.dateValue.last30Days", {
 							defaultValue: "Letzte 30 Tage",
 						})}
 					</SelectItem>
 					<SelectItem value="this_month">
-						{t("auth.account.activity.filters.dateValue.thisMonth", {
+						{t("common.auth.account.activity.filters.dateValue.thisMonth", {
 							defaultValue: "Dieser Monat",
 						})}
 					</SelectItem>
 					<SelectItem value="last_month">
-						{t("auth.account.activity.filters.dateValue.lastMonth", {
+						{t("common.auth.account.activity.filters.dateValue.lastMonth", {
 							defaultValue: "Letzter Monat",
 						})}
 					</SelectItem>
@@ -200,7 +201,7 @@ export function ActivityFilters({
 					<SearchInput
 						value={searchQuery}
 						onChange={(event) => onSearchChange(event.target.value)}
-						placeholder={t("auth.account.activity.filters.search", {
+						placeholder={t("common.auth.account.activity.filters.search", {
 							defaultValue: "Aktivität durchsuchen",
 						})}
 						containerClassName="w-full"
@@ -214,7 +215,7 @@ export function ActivityFilters({
 							radius="full"
 							iconSize="lg"
 							className="relative shrink-0"
-							aria-label={t("auth.account.activity.filters.open", {
+							aria-label={t("common.auth.account.activity.filters.open", {
 								defaultValue: "Filter öffnen",
 							})}
 						>
@@ -229,7 +230,7 @@ export function ActivityFilters({
 					<SheetContent side="bottom" className="pb-safe">
 						<SheetHeader>
 							<SheetTitle>
-								{t("auth.account.activity.filters.title", {
+								{t("common.auth.account.activity.filters.title", {
 									defaultValue: "Filter",
 								})}
 							</SheetTitle>

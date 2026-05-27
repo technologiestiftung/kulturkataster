@@ -17,15 +17,15 @@ const DistrictTags: FC<DistrictTagsProps> = ({
 	selected,
 	onChange,
 }) => {
-	const { t: tEnum } = useTranslation("enumMap");
-	const { t } = useTranslation("content");
+	const { t: tEnum } = useTranslation();
+	const { t } = useTranslation();
 
 	return (
 		<div className="flex flex-wrap gap-2 mb-4">
 			{districts.map((district) => {
 				if (!district) return null;
 				const isSelected = selected.includes(district);
-				const translatedName = tEnum(`${district}`) || district;
+				const translatedName = tEnum(`enumMap.${district}`) || district;
 
 				return (
 					<Badge
@@ -35,7 +35,7 @@ const DistrictTags: FC<DistrictTagsProps> = ({
 						onClick={() => onChange(district)}
 						role="switch"
 						aria-checked={isSelected}
-						aria-label={t("filter.districtTagsSwitchAriaLabel", {
+						aria-label={t("content.filter.districtTagsSwitchAriaLabel", {
 							translatedName,
 						})}
 					>

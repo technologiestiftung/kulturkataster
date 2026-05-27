@@ -37,8 +37,8 @@ const Filter: FC<FilterProps> = ({ onSearchClick, onShowFilter }) => {
 		setFilters(newFilters);
 	};
 
-	const { t } = useTranslation("content");
-	const { t: tCommon } = useTranslation("common");
+	const { t } = useTranslation();
+	const { t: tCommon } = useTranslation();
 
 	return (
 		<div className="flex h-full w-full flex-col">
@@ -49,7 +49,7 @@ const Filter: FC<FilterProps> = ({ onSearchClick, onShowFilter }) => {
 						variant="surface"
 						tooltipSide="bottom"
 						iconSize="lg"
-						tooltip={tCommon("search.searchButton", {
+						tooltip={tCommon("common.search.searchButton", {
 							defaultValue: "Suchen",
 						})}
 						className="cursor-pointer"
@@ -62,7 +62,7 @@ const Filter: FC<FilterProps> = ({ onSearchClick, onShowFilter }) => {
 					radius="full"
 					variant="surface"
 					tooltipSide="bottom"
-					tooltip={tCommon("filter.title", {
+					tooltip={tCommon("common.filter.title", {
 						defaultValue: "Kulturorte filtern",
 					})}
 					className="cursor-pointer h-14 md:mr-0 mr-16 flex-1 justify-between [&_svg]:size-6"
@@ -70,9 +70,7 @@ const Filter: FC<FilterProps> = ({ onSearchClick, onShowFilter }) => {
 				>
 					<div className="flex items-center gap-2">
 						<FilterIcon className="size-5!" />
-						<span className="body2 font-bold">
-							{t("filter.title", { ns: "content" })}
-						</span>
+						<span className="body2 font-bold">{t("content.filter.title")}</span>
 					</div>
 					<Close />
 				</ButtonWithTooltip>

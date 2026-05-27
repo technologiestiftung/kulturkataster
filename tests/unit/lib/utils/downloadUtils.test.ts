@@ -138,19 +138,19 @@ describe("prepareDataForExport", () => {
 				translateFn: (key) =>
 					(
 						({
-							"field_names.name.label": "Name",
-							"field_names.subcategories.label": "Unterkategorien",
-							"institution_status.public": "Öffentlich",
-							"category.theater": "Theater",
-							"category.dance": "Tanz",
-							"field_names.funding_type.options.workspace_program":
+							"enumMap.field_names.name.label": "Name",
+							"enumMap.field_names.subcategories.label": "Unterkategorien",
+							"enumMap.institution_status.public": "Öffentlich",
+							"enumMap.category.theater": "Theater",
+							"enumMap.category.dance": "Tanz",
+							"enumMap.field_names.funding_type.options.workspace_program":
 								"Arbeitsraumprogramm",
-							"field_names.funding_source.options.workspace_program":
+							"enumMap.field_names.funding_source.options.workspace_program":
 								"Arbeitsraumprogramm",
-							"field_names.owner_type.options.federal_property": "Bund",
-							"field_names.utilization_status.options.temporarily_closed":
+							"enumMap.field_names.owner_type.options.federal_property": "Bund",
+							"enumMap.field_names.utilization_status.options.temporarily_closed":
 								"Vorübergehend geschlossen",
-							"field_names.shared_use_allowed.options.yes": "Ja",
+							"enumMap.field_names.shared_use_allowed.options.yes": "Ja",
 						}) as Record<string, string>
 					)[key] ?? key,
 			},
@@ -189,8 +189,10 @@ describe("prepareDataForExport", () => {
 				translateFn: (key) =>
 					(
 						({
-							"field_names.funding_sources.label": "Finanzierungsquellen",
-							"field_names.funding_source.options.state_berlin": "Land Berlin",
+							"enumMap.field_names.funding_sources.label":
+								"Finanzierungsquellen",
+							"enumMap.field_names.funding_source.options.state_berlin":
+								"Land Berlin",
 						}) as Record<string, string>
 					)[key] ?? key,
 			},

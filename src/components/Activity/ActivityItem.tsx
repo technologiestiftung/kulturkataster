@@ -80,8 +80,8 @@ const mapStatusLabel = (
 		"protection_status",
 	] as const;
 	for (const prefix of enumPrefixes) {
-		const key = `${prefix}.${status}`;
-		const translated = tEnum(key, { ns: "enumMap" });
+		const key = `enumMap.${prefix}.${status}`;
+		const translated = tEnum(key);
 		if (translated !== key) return translated;
 	}
 
@@ -93,8 +93,9 @@ const mapStatusLabel = (
 	};
 	const contentKey = contentStatusKeyMap[status];
 	if (contentKey) {
-		const translated = tContent(contentKey, { ns: "content" });
-		if (translated !== contentKey) return translated;
+		const fullContentKey = `content.${contentKey}`;
+		const translated = tContent(fullContentKey);
+		if (translated !== fullContentKey) return translated;
 	}
 
 	const commonStatusKeyMap: Record<string, string> = {
@@ -105,8 +106,9 @@ const mapStatusLabel = (
 	};
 	const commonKey = commonStatusKeyMap[status];
 	if (commonKey) {
-		const translated = tCommon(commonKey, { ns: "common" });
-		if (translated !== commonKey) return translated;
+		const fullCommonKey = `common.${commonKey}`;
+		const translated = tCommon(fullCommonKey);
+		if (translated !== fullCommonKey) return translated;
 	}
 
 	const defaults: Record<string, string> = {
@@ -125,9 +127,9 @@ const mapStatusLabel = (
 };
 
 export function ActivityItem({ activity, index }: ActivityItemProps) {
-	const { t, i18n } = useTranslation("common");
-	const { t: tContent } = useTranslation("content");
-	const { t: tEnum } = useTranslation("enumMap");
+	const { t, i18n } = useTranslation();
+	const { t: tContent } = useTranslation();
+	const { t: tEnum } = useTranslation();
 	const statusLabel = mapStatusLabel(activity.status, t, tContent, tEnum);
 	const dateTimeLabel = formatDateWithLocale(activity.date, {
 		locale: i18n.resolvedLanguage,
@@ -140,27 +142,28 @@ export function ActivityItem({ activity, index }: ActivityItemProps) {
 		},
 	});
 	const fallbackActor =
-		formatUserDisplayName(activity.user) ?? t("auth.account.activity.system");
+		formatUserDisplayName(activity.user) ??
+		t("common.auth.account.activity.system");
 	const actor = activity.actor ?? fallbackActor;
 	const eventType = activity.eventType;
 	const primaryEntity =
 		activity.primaryEntity ??
 		activity.item ??
-		t("auth.account.activity.unknown");
+		t("common.auth.account.activity.unknown");
 	const secondaryEntity = activity.secondaryEntity ?? activity.relation;
 
 	let action = activity.action;
 	if (!action) {
 		if (eventType === "assign") {
-			action = t("auth.account.activity.actions.update", {
+			action = t("common.auth.account.activity.actions.update", {
 				defaultValue: "assigned",
 			});
 		} else if (eventType === "status_change") {
-			action = t("auth.account.activity.actions.update", {
+			action = t("common.auth.account.activity.actions.update", {
 				defaultValue: "changed",
 			});
 		} else {
-			action = t("auth.account.activity.actions.create", {
+			action = t("common.auth.account.activity.actions.create", {
 				defaultValue: "created",
 			});
 		}
@@ -274,7 +277,7 @@ export function ActivityItem({ activity, index }: ActivityItemProps) {
 							"w-4 h-4 rounded-full flex-shrink-0 cursor-help",
 							statusColors[activity.status] ?? "bg-blue-500",
 						)}
-						aria-label={t("auth.account.activity.statusAria", {
+						aria-label={t("common.auth.account.activity.statusAria", {
 							status: statusLabel,
 							defaultValue: `Status: ${statusLabel}`,
 						})}

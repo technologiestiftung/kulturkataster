@@ -34,9 +34,9 @@ function AlertDialog({
 	showCancel = Boolean(cancelLabel && onCancel),
 }: AlertDialogProps) {
 	const hasActions = showConfirm || showCancel;
-	const { t } = useTranslation("common");
+	const { t } = useTranslation();
 	const statusKey = `alert.${status}`;
-	const statusTitle = t(statusKey);
+	const statusTitle = t("common." + statusKey);
 	const resolvedTitle = statusTitle === statusKey ? title : statusTitle;
 
 	return (

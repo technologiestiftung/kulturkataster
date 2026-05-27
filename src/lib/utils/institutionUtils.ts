@@ -68,8 +68,10 @@ export const formatInstitutionBoolean = (
 	value: boolean | null | undefined,
 	t: (key: string) => string,
 ) => {
-	if (value === true) return t("field_names.shared_use_allowed.options.yes");
-	if (value === false) return t("field_names.shared_use_allowed.options.no");
+	if (value === true)
+		return t("enumMap.field_names.shared_use_allowed.options.yes");
+	if (value === false)
+		return t("enumMap.field_names.shared_use_allowed.options.no");
 	return "—";
 };
 
