@@ -2,10 +2,10 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const { enqueueTemplatedEmail, processEmailOutboxBatch, loggerError } =
 	vi.hoisted(() => ({
-	enqueueTemplatedEmail: vi.fn(),
-	processEmailOutboxBatch: vi.fn(),
-	loggerError: vi.fn(),
-}));
+		enqueueTemplatedEmail: vi.fn(),
+		processEmailOutboxBatch: vi.fn(),
+		loggerError: vi.fn(),
+	}));
 
 vi.mock("@/server/email/outbox", () => ({
 	enqueueTemplatedEmail,
