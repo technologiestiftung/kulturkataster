@@ -203,6 +203,43 @@ describe("prepareDataForExport", () => {
 		});
 	});
 
+	it("formats exported date values as dd.mm.yyyy", () => {
+		const rows = prepareDataForExport(
+			[
+				{
+					...makeInstitution(),
+					established_since: "2020-12-01T00:00:00.000Z",
+					established_until: "2025-01-31",
+					rental_contract_end: new Date("2030-06-15T00:00:00.000Z"),
+				} as Institution,
+			],
+			{
+				readablePermissionFields: [
+					"established_since",
+					"established_until",
+					"rental_contract_end",
+				],
+				audience: "internal",
+				translateFn: (key) =>
+					(
+						({
+							"enumMap.field_names.established_since.label":
+								"Bestehen am Standort seit",
+							"enumMap.field_names.established_until.label":
+								"Bestehen am Standort bis",
+							"enumMap.field_names.rental_contract_end.label": "Vertragsende",
+						}) as Record<string, string>
+					)[key] ?? key,
+			},
+		);
+
+		expect(rows[0]).toMatchObject({
+			"Bestehen am Standort seit": "01.12.2020",
+			"Bestehen am Standort bis": "31.01.2025",
+			Vertragsende: "15.06.2030",
+		});
+	});
+
 	it("excludes internal-only metadata and keeps utilization status details ordered", () => {
 		const rows = prepareDataForExport(
 			[
