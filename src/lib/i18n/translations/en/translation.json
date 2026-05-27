@@ -2376,11 +2376,12 @@
 			}
 		},
 		"termsModal": {
-			"body": "*(English translation pending.)*",
 			"date": "As of: {{date}}",
-			"description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. ",
-			"disclaimer": "These terms of use are a preliminary placeholder for technical implementation. A legally binding final version will be created after legal review.",
-			"title": "Terms of Use (AGB) – Berliner Kulturkataster"
+			"disclaimer": "English translation pending. The German version applies.",
+			"title": "Terms of Use",
+			"bodySections": [
+				"*(English translation pending. The German version applies.)*"
+			]
 		},
 		"userClaims": {
 			"approve": "Assume",
