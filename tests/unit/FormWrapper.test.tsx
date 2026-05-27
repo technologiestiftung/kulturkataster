@@ -37,10 +37,18 @@ const toFields = (
 vi.mock("react-i18next", () => ({
 	useTranslation: () => ({
 		t: (key: string, options?: Record<string, unknown>) => {
-			if (key === "form.validation.required") {
+			const normalizedKey = key.replace(/^common\./, "");
+
+			if (normalizedKey === "form.validation.required") {
 				return `${String(options?.field ?? "")} is required`;
 			}
-			return key;
+			if (normalizedKey === "enumMap.field_names.name.errors.required") {
+				return "Name is required";
+			}
+			if (normalizedKey === "enumMap.field_names.agree.errors.required") {
+				return "I agree to terms is required";
+			}
+			return normalizedKey;
 		},
 		i18n: {
 			changeLanguage: () => new Promise(() => {}),

@@ -20,9 +20,10 @@ vi.mock("react-i18next", () => ({
 				author?: string;
 				date?: string;
 			},
-		) =>
-			options?.defaultValue ??
-			(
+		) => {
+			const normalizedKey = key.replace(/^content\./, "");
+			return (
+				options?.defaultValue ??
 				{
 					"institutionFormModal.review.actions.approve": "Genehmigen",
 					"institutionFormModal.review.actions.reject": "Ablehnen",
@@ -30,9 +31,10 @@ vi.mock("react-i18next", () => ({
 					"institutionFormModal.review.previousNotesLabel": "Bisherige Notizen",
 					"institutionFormModal.review.noteMeta":
 						`${options?.author ?? ""} am ${options?.date ?? ""}`.trim(),
-				} as Record<string, string>
-			)[key] ??
-			key,
+				}[normalizedKey] ??
+				normalizedKey
+			);
+		},
 		i18n: { language: "de" },
 	}),
 }));

@@ -63,8 +63,8 @@ describe("LoginForm", () => {
 				"jane@example.com",
 				"password123",
 			);
-			expect(prefetchMock).toHaveBeenCalledWith("/de/account");
-			expect(replaceMock).toHaveBeenCalledWith("/de/account");
+			expect(prefetchMock).toHaveBeenCalledWith("/de/account/activity");
+			expect(replaceMock).toHaveBeenCalledWith("/de/account/activity");
 		});
 	});
 

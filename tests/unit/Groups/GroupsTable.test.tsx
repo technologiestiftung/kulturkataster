@@ -7,15 +7,17 @@ const dataTableMock = vi.fn();
 
 vi.mock("react-i18next", () => ({
 	useTranslation: () => ({
-		t: (key: string, options?: { defaultValue?: string }) =>
-			options?.defaultValue ??
-			(
+		t: (key: string, options?: { defaultValue?: string }) => {
+			const normalizedKey = key.replace(/^content\./, "");
+			return (
+				options?.defaultValue ??
 				{
 					"groupTable.actions.add": "Gruppe erstellen",
 					"groupTable.searchPlaceholder": "Gruppen durchsuchen...",
-				} as Record<string, string>
-			)[key] ??
-			key,
+				}[normalizedKey] ??
+				normalizedKey
+			);
+		},
 	}),
 }));
 
