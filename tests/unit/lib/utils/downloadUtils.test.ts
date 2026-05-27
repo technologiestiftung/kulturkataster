@@ -286,17 +286,55 @@ describe("generateExcelBuffer", () => {
 		const worksheet = workbook.Sheets.Kulturorte;
 
 		expect(worksheet.A1?.v).toBe(
-			"Die Daten stammen vom Berliner Kulturkataster. Bitte benennen Sie bei Verwendung das Kulturkataster als Download-Quelle und beachten Sie die rechtlichen Hinweise. www.kulturkataster.berlin Ein Projekt der Kulturraum Berlin gGmbH",
+			"Die Daten stammen vom Berliner Kulturkataster.",
 		);
+		expect(worksheet.A2?.v).toBe(
+			"Bitte benennen Sie bei Verwendung das Kulturkataster als Download-Quelle und beachten Sie die rechtlichen Hinweise.",
+		);
+		expect(worksheet.A3?.v).toBe("www.kulturkataster.berlin");
+		expect(worksheet.A4?.v).toBe("Ein Projekt der Kulturraum Berlin gGmbH");
 		expect(worksheet.A1?.l?.Target).toBe(
 			"https://www.kulturkataster.berlin/de/download",
 		);
-		expect(worksheet.A3?.v).toBe("Status");
-		expect(worksheet.B3?.v).toBe("ID");
-		expect(worksheet.A4?.v).toBe("Öffentlich");
+		expect(worksheet.A3?.l?.Target).toBe("https://www.kulturkataster.berlin");
+		expect(worksheet.A6?.v).toBe("Status");
+		expect(worksheet.B6?.v).toBe("ID");
+		expect(worksheet.A7?.v).toBe("Öffentlich");
 		expect(worksheet["!merges"]).toEqual(
-			expect.arrayContaining([{ s: { r: 0, c: 0 }, e: { r: 0, c: 3 } }]),
+			expect.arrayContaining([
+				{ s: { r: 0, c: 0 }, e: { r: 0, c: 3 } },
+				{ s: { r: 1, c: 0 }, e: { r: 1, c: 3 } },
+				{ s: { r: 2, c: 0 }, e: { r: 2, c: 3 } },
+				{ s: { r: 3, c: 0 }, e: { r: 3, c: 3 } },
+			]),
 		);
 		expect(worksheet["!cols"]?.[0]?.wch).toBeGreaterThanOrEqual(30);
+	});
+
+	it("uses translated Kulturkataster notice rows when provided", () => {
+		const translateFn = (
+			key: string,
+			options?: Record<string, unknown>,
+		): string => {
+			if (key === "common.download.exportNotice.row1") return "Translated 1";
+			return String(options?.defaultValue ?? key);
+		};
+
+		const buffer = generateExcelBuffer(
+			[
+				{
+					Status: "Public",
+				},
+			],
+			"xlsx",
+			translateFn,
+		);
+		const workbook = XLSX.read(buffer, { type: "array", cellStyles: true });
+		const worksheet = workbook.Sheets.Kulturorte;
+
+		expect(worksheet.A1?.v).toBe("Translated 1");
+		expect(worksheet.A2?.v).toBe(
+			"Bitte benennen Sie bei Verwendung das Kulturkataster als Download-Quelle und beachten Sie die rechtlichen Hinweise.",
+		);
 	});
 });

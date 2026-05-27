@@ -1,19 +1,33 @@
 "use client";
 
-import { OrderedList } from "@/components/Content/OrderedList";
-import type { Element } from "hast";
+import Image from "next/image";
 import ReactMarkdown from "react-markdown";
 import { useTranslation } from "react-i18next";
 import { Modal } from "../Modal";
+
+const TERMS_IMAGE_DIMENSIONS: Record<
+	string,
+	{ width: number; height: number }
+> = {
+	"/resources/terms_1.png": { width: 863, height: 213 },
+	"/resources/terms_2.png": { width: 1158, height: 824 },
+};
+
+const getSectionIndentClassName = (section: string) => {
+	const firstHeading = section.match(/^#{2,5}\s+\d+(?:\.\d+)+/m)?.[0];
+	if (!firstHeading) return "";
+	const level = firstHeading.match(/^#+/)?.[0].length ?? 0;
+	if (level >= 5) return "ml-8";
+	if (level >= 4) return "ml-4";
+	return "";
+};
 
 export function TermsModal({ routePath }: { routePath?: string }) {
 	const { t } = useTranslation();
 	const bodySections = t("content.termsModal.bodySections", {
 		returnObjects: true,
 	}) as string[];
-	const bodyMarkdown = Array.isArray(bodySections)
-		? bodySections.join("\n\n")
-		: "";
+	const markdownSections = Array.isArray(bodySections) ? bodySections : [];
 
 	return (
 		<Modal
@@ -28,52 +42,82 @@ export function TermsModal({ routePath }: { routePath?: string }) {
 			routePath={routePath}
 			hideLinksInModalFooter={["terms"]}
 		>
-			<ReactMarkdown
-				components={{
-					h1: ({ children }) => (
-						<h1 className="text-2xl font-bold mt-6 mb-2">{children}</h1>
-					),
+			<div className="space-y-3">
+				{markdownSections.map((section, index) => (
+					<div
+						key={`${index}-${section.slice(0, 24)}`}
+						className={getSectionIndentClassName(section)}
+					>
+						<ReactMarkdown
+							components={{
+								h1: ({ children }) => (
+									<h1 className="text-2xl font-bold mt-6 mb-2">{children}</h1>
+								),
 
-					h2: ({ children }) => (
-						<h2 className="text-lg font-semibold mt-6 mb-2">{children}</h2>
-					),
-					h3: ({ children }) => (
-						<h3 className="body1 font-semibold mt-5 mb-2">{children}</h3>
-					),
-					h4: ({ children }) => (
-						<h4 className="body1 font-semibold mt-4 mb-2">{children}</h4>
-					),
-					h5: ({ children }) => (
-						<h5 className="body2 font-semibold mt-3 mb-2">{children}</h5>
-					),
+								h2: ({ children }) => (
+									<h2 className="text-lg font-semibold mt-6 mb-2">
+										{children}
+									</h2>
+								),
+								h3: ({ children }) => (
+									<h3 className="body1 font-semibold mt-5 mb-2">{children}</h3>
+								),
+								h4: ({ children }) => (
+									<h4 className="body1 font-semibold mt-4 mb-2">{children}</h4>
+								),
+								h5: ({ children }) => (
+									<h5 className="body2 font-semibold mt-3 mb-2">{children}</h5>
+								),
 
-					p: ({ children }) => <p className="body1 mb-3">{children}</p>,
-					ul: ({ children }) => (
-						<ul className="list-disc pl-6 mb-3 space-y-1">{children}</ul>
-					),
-					ol: ({ node }) => <OrderedList node={node as Element} />,
+								p: ({ children }) => <p className="body1 mb-3">{children}</p>,
+								ul: ({ children }) => (
+									<ul className="list-disc pl-6 mb-3 space-y-1">{children}</ul>
+								),
+								ol: ({ children }) => (
+									<ol className="list-decimal pl-6 mb-3 space-y-3">
+										{children}
+									</ol>
+								),
 
-					li: ({ children }) => <li className="body1">{children}</li>,
-					strong: ({ children }) => (
-						<strong className="font-semibold">{children}</strong>
-					),
+								li: ({ children }) => <li className="body1">{children}</li>,
+								strong: ({ children }) => (
+									<strong className="font-semibold">{children}</strong>
+								),
 
-					em: ({ children }) => <em className="italic">{children}</em>,
-					a: ({ href, children }) => (
-						<a
-							href={href}
-							className="underline underline-offset-2"
-							target={href?.startsWith("http") ? "_blank" : undefined}
-							rel={href?.startsWith("http") ? "noreferrer" : undefined}
+								em: ({ children }) => <em className="italic">{children}</em>,
+								a: ({ href, children }) => (
+									<a
+										href={href}
+										className="underline underline-offset-2"
+										target={href?.startsWith("http") ? "_blank" : undefined}
+										rel={href?.startsWith("http") ? "noreferrer" : undefined}
+									>
+										{children}
+									</a>
+								),
+								img: ({ src, alt }) => {
+									const source = String(src ?? "");
+									const dimensions = TERMS_IMAGE_DIMENSIONS[source];
+									if (!dimensions) return null;
+									return (
+										<Image
+											src={source}
+											alt={alt ?? ""}
+											width={dimensions.width}
+											height={dimensions.height}
+											className="my-6 h-auto w-full rounded-sm border border-border"
+											sizes="(max-width: 768px) 100vw, 768px"
+										/>
+									);
+								},
+								hr: () => <hr className="my-6 border-border" />,
+							}}
 						>
-							{children}
-						</a>
-					),
-					hr: () => <hr className="my-6 border-border" />,
-				}}
-			>
-				{bodyMarkdown}
-			</ReactMarkdown>
+							{section}
+						</ReactMarkdown>
+					</div>
+				))}
+			</div>
 		</Modal>
 	);
 }
