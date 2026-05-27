@@ -203,6 +203,10 @@ type FormWrapperNonSectionFieldConfig = {
 		collapsible?: boolean;
 		defaultCollapsed?: boolean;
 		categorySectionMode?: "filter" | "selection";
+		parentCategorySelectionBehavior?:
+			| "select-all-children"
+			| "parent-only"
+			| "last-child-only";
 		selectionEmptyLabel?: string;
 	};
 	addressMap?: {

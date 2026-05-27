@@ -27,7 +27,7 @@ export function UsersTable() {
 	const users = useAccountStore((state) => state.users);
 	const router = useRouter();
 	const toLocalePath = useLocalePath();
-	const { t } = useTranslation("content");
+	const { t } = useTranslation();
 
 	const [filters, setFilters] = useState<UserFilters>(defaultFilters);
 	const [draftFilters, setDraftFilters] = useState<UserFilters>(defaultFilters);
@@ -38,7 +38,9 @@ export function UsersTable() {
 		).sort((a, b) => a.localeCompare(b));
 		return [
 			{
-				label: t("userTable.filter.allRoles", { defaultValue: "All roles" }),
+				label: t("content.userTable.filter.allRoles", {
+					defaultValue: "All roles",
+				}),
 				value: "all",
 			},
 			...roles.map((role) => ({ label: role, value: role })),
@@ -58,11 +60,12 @@ export function UsersTable() {
 
 	const getStatusLabel = (status: UserStatus) => {
 		if (status === "approval_pending") {
-			return t("userFormModal.status.approvalPending");
+			return t("content.userFormModal.status.approvalPending");
 		}
-		if (status === "active") return t("userFormModal.status.active");
-		if (status === "inactive") return t("userFormModal.status.inactive");
-		if (status === "banned") return t("userFormModal.status.banned");
+		if (status === "active") return t("content.userFormModal.status.active");
+		if (status === "inactive")
+			return t("content.userFormModal.status.inactive");
+		if (status === "banned") return t("content.userFormModal.status.banned");
 		return status;
 	};
 
@@ -121,26 +124,26 @@ export function UsersTable() {
 			},
 			{
 				accessorKey: "email",
-				header: t("userTable.columns.email"),
+				header: t("content.userTable.columns.email"),
 				enableSorting: true,
 				size: 250,
 				meta: { pin: "left", truncate: true },
 			},
 			{
 				accessorKey: "first_name",
-				header: t("userTable.columns.firstName"),
+				header: t("content.userTable.columns.firstName"),
 				enableSorting: true,
 				meta: { truncate: true },
 			},
 			{
 				accessorKey: "last_name",
-				header: t("userTable.columns.lastName"),
+				header: t("content.userTable.columns.lastName"),
 				enableSorting: true,
 				meta: { truncate: true },
 			},
 			{
 				accessorKey: "submissions",
-				header: t("userTable.columns.claims"),
+				header: t("content.userTable.columns.claims"),
 				enableSorting: true,
 				meta: { truncate: true },
 				cell: ({ row }) => {
@@ -152,26 +155,26 @@ export function UsersTable() {
 						<span>
 							{claims > 0
 								? row.original.submissions?.length
-								: t("userTable.emptyValue")}
+								: t("content.userTable.emptyValue")}
 						</span>
 					);
 				},
 			},
 			{
 				id: "role",
-				header: t("userTable.columns.role"),
+				header: t("content.userTable.columns.role"),
 				accessorFn: (row) => row.role?.name ?? "",
 				enableSorting: true,
 				meta: { truncate: true },
 				cell: ({ row }) => (
 					<span className="capitalize">
-						{row.original.role?.name ?? t("userTable.emptyValue")}
+						{row.original.role?.name ?? t("content.userTable.emptyValue")}
 					</span>
 				),
 			},
 			{
 				id: "groups",
-				header: t("userTable.columns.groups"),
+				header: t("content.userTable.columns.groups"),
 				enableSorting: true,
 				sortingFn: (rowA, rowB) => {
 					const a = rowA.original;
@@ -190,13 +193,13 @@ export function UsersTable() {
 							id: group.id,
 							label: group.name,
 						}))}
-						emptyLabel={t("userTable.emptyValue")}
+						emptyLabel={t("content.userTable.emptyValue")}
 					/>
 				),
 			},
 			{
 				id: "access",
-				header: t("userTable.columns.access"),
+				header: t("content.userTable.columns.access"),
 				accessorFn: (row) => row.institutions?.length ?? 0,
 				enableSorting: true,
 				sortingFn: (rowA, rowB) =>
@@ -216,8 +219,8 @@ export function UsersTable() {
 						<div className="flex flex-col gap-1">
 							<span className="body3">
 								{hasInstitutionReadAll
-									? t("userTable.accessAll", { defaultValue: "Alle" })
-									: t("userTable.institutionsCount", {
+									? t("content.userTable.accessAll", { defaultValue: "Alle" })
+									: t("content.userTable.institutionsCount", {
 											count: row.original.institutions?.length ?? 0,
 										})}
 							</span>
@@ -227,7 +230,7 @@ export function UsersTable() {
 			},
 			{
 				id: "compliance",
-				header: t("userTable.columns.compliance"),
+				header: t("content.userTable.columns.compliance"),
 				accessorFn: (row) => Number(row.compliance ?? false),
 				enableSorting: true,
 				sortingFn: (rowA, rowB) =>
@@ -236,34 +239,40 @@ export function UsersTable() {
 					<div className="flex flex-col gap-1">
 						{row.original.compliance ? (
 							<Badge variant="default" className="text-xs">
-								{t("userTable.compliance.accepted")}
+								{t("content.userTable.compliance.accepted")}
 							</Badge>
 						) : (
 							<Badge variant="outline" className="text-xs">
-								{t("userTable.compliance.rejected")}
+								{t("content.userTable.compliance.rejected")}
 							</Badge>
 						)}
 					</div>
 				),
 			},
 		],
+
 		data: filteredUsers,
 		getRowKey: (row) => row.id,
 		searchable: true,
-		searchPlaceholder: t("userTable.searchPlaceholder"),
+		searchPlaceholder: t("content.userTable.searchPlaceholder"),
 		getSearchableValues: (row) => [
 			row.email,
 			row.role?.name ?? "",
 			row.status,
 			...row.groups.map((group) => group.name),
 		],
+
 		filterModal: {
-			triggerLabel: t("userTable.filter.button", { defaultValue: "Filter" }),
-			triggerAriaLabel: t("userTable.filter.button", {
+			triggerLabel: t("content.userTable.filter.button", {
 				defaultValue: "Filter",
 			}),
-			title: t("userTable.filter.title", { defaultValue: "Filter users" }),
-			description: t("userTable.filter.description", {
+			triggerAriaLabel: t("content.userTable.filter.button", {
+				defaultValue: "Filter",
+			}),
+			title: t("content.userTable.filter.title", {
+				defaultValue: "Filter users",
+			}),
+			description: t("content.userTable.filter.description", {
 				defaultValue: "Narrow users by status, role, groups, and compliance.",
 			}),
 			content: ({ close }) => (
@@ -286,40 +295,41 @@ export function UsersTable() {
 			),
 		},
 		primaryButton: {
-			label: t("userTable.actions.add"),
+			label: t("content.userTable.actions.add"),
 			onClick: () => router.push(toLocalePath("/account/users/new")),
 		},
 		emptyState: (
 			<EmptyActionState
-				title={t("userTable.empty.title", {
+				title={t("content.userTable.empty.title", {
 					defaultValue: "Keine Nutzer*innen gefunden.",
 				})}
-				description={t("userTable.empty.description", {
+				description={t("content.userTable.empty.description", {
 					defaultValue: "Legen Sie eine neue Nutzer*in an, um zu starten.",
 				})}
 				actions={[
 					{
 						icon: <Plus className="size-5" />,
-						label: t("userTable.actions.add"),
+						label: t("content.userTable.actions.add"),
 						href: toLocalePath("/account/users/new"),
 					},
 				]}
 			/>
 		),
+
 		onReview: (row) =>
 			router.push(toLocalePath(`/account/users/${row.id}/review`)),
 		onReviewPrefetch: (row) => {
 			void router.prefetch(toLocalePath(`/account/users/${row.id}/review`));
 		},
 		getCanReview: (row) => (row.submissions?.length ?? 0) > 0,
-		reviewAriaLabel: t("userTable.actions.reviewClaims", {
+		reviewAriaLabel: t("content.userTable.actions.reviewClaims", {
 			defaultValue: "Claims prüfen",
 		}),
 		onEdit: (row) => router.push(toLocalePath(`/account/users/${row.id}/edit`)),
 		onEditPrefetch: (row) => {
 			void router.prefetch(toLocalePath(`/account/users/${row.id}/edit`));
 		},
-		emptyMessage: t("userTable.emptyMessage"),
+		emptyMessage: t("content.userTable.emptyMessage"),
 	};
 
 	return (

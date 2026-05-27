@@ -23,7 +23,7 @@ export function InstitutionDraftSelectModal({
 }: {
 	routePath?: string;
 }) {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation();
 	const router = useRouter();
 	const toLocalePath = useLocalePath();
 	const accountCategories = useAccountStore((state) => state.categories);
@@ -61,7 +61,7 @@ export function InstitutionDraftSelectModal({
 				label: institution.name,
 				description: institution.address?.street
 					? `${institution.address.street} ${institution.address.street_number ?? ""}`.trim()
-					: t("institution.editSelectNoAddress", {
+					: t("common.institution.editSelectNoAddress", {
 							defaultValue: "Keine Adresse hinterlegt",
 						}),
 			})),
@@ -149,7 +149,7 @@ export function InstitutionDraftSelectModal({
 
 	return (
 		<Modal
-			title={t("institution.editSelectTitle", {
+			title={t("common.institution.editSelectTitle", {
 				defaultValue: "Bestehenden Kulturort auswählen",
 			})}
 			titleClassName="sr-only"
@@ -164,12 +164,12 @@ export function InstitutionDraftSelectModal({
 			<div className="md:p-4 space-y-6 flex-1 flex-col max-w-5xl mx-auto w-full">
 				<div className="mt-18 space-y-2">
 					<h1 className="font-bold">
-						{t("institution.editSelectTitle", {
+						{t("common.institution.editSelectTitle", {
 							defaultValue: "Bestehenden Kulturort auswählen",
 						})}
 					</h1>
 					<p className="body2">
-						{t("institution.editSelectSubtitle", {
+						{t("common.institution.editSelectSubtitle", {
 							defaultValue:
 								"Wählen Sie einen bestehenden Kulturort aus, den Sie aktualisieren möchten.",
 						})}
@@ -186,7 +186,7 @@ export function InstitutionDraftSelectModal({
 							selectedValues={[]}
 							multiSelect={false}
 							containerClassName="max-h-52 md:max-h-69 overflow-auto"
-							emptyText={t("institution.editSelectEmpty", {
+							emptyText={t("common.institution.editSelectEmpty", {
 								defaultValue: "Keine Kulturorte gefunden.",
 							})}
 							variant="panel"

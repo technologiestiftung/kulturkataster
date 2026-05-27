@@ -12,7 +12,7 @@ import { FC, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 const LayerTreeControl: FC = () => {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation();
 	const layers = useMapStore((state) => state.layers);
 	const isLayerTreeOpen = useAppStore((state) => state.isLayerTreeOpen);
 	const setIsLayerTreeOpen = useAppStore((state) => state.setIsLayerTreeOpen);
@@ -46,7 +46,7 @@ const LayerTreeControl: FC = () => {
 
 	const topVisibleLayerName =
 		topVisibleLayer?.config.service.name?.trim() ||
-		t("map.unnamedLayer", { defaultValue: "Unbenannte Fachkarte" });
+		t("common.map.unnamedLayer", { defaultValue: "Unbenannte Fachkarte" });
 
 	const renderThumbnail = () => {
 		if (topVisibleLayer?.config.service.preview?.src) {
@@ -73,7 +73,7 @@ const LayerTreeControl: FC = () => {
 				radius="full"
 				variant="surface"
 				iconSize="lg"
-				tooltip={t("map.layerTree")}
+				tooltip={t("common.map.layerTree")}
 				tooltipSide="right"
 				onClick={handleLayerTreeOpen}
 				className={`p-0 bg-neutral-80 overflow-hidden cursor-pointer md:hover:bg-accent hover:bg-neutral-70`}

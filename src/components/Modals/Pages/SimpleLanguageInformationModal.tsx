@@ -37,9 +37,12 @@ const RenderContent = ({
 }) => {
 	const institutions = useInstitutionStore((state) => state.allInstitutions);
 	const institutionCount = institutions?.length ?? 0;
-	const translation = t(`simpleLanguageInformation.${type}.${keyValue}`, {
-		returnObjects: true,
-	});
+	const translation = t(
+		`content.simpleLanguageInformation.${type}.${keyValue}`,
+		{
+			returnObjects: true,
+		},
+	);
 	const sortByTitleKeys = (
 		[aKey]: [string, unknown],
 		[bKey]: [string, unknown],
@@ -102,13 +105,13 @@ export function SimpleLanguageInformationModal({
 }: {
 	routePath?: string;
 }) {
-	const { t } = useTranslation("content");
+	const { t } = useTranslation();
 
 	const content = {
-		about: t("simpleLanguageInformation.about", {
+		about: t("content.simpleLanguageInformation.about", {
 			returnObjects: true,
 		}) as { [key: string]: string | ListProps },
-		infosAndServices: t("simpleLanguageInformation.infosAndServices", {
+		infosAndServices: t("content.simpleLanguageInformation.infosAndServices", {
 			returnObjects: true,
 		}) as { [key: string]: string | ListProps },
 	};

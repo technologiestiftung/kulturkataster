@@ -27,7 +27,7 @@ export function InstitutionReview({
 	newData,
 	onEditSection,
 }: InstitutionReviewProps) {
-	const { t } = useTranslation("content");
+	const { t } = useTranslation();
 	const fieldLabel = useFieldLabel();
 	const { isPrivateField } = useInstitutionPrivateFieldResolver();
 	const institutionCategories =
@@ -139,7 +139,7 @@ export function InstitutionReview({
 		<div className="space-y-4 flex flex-col">
 			<div className="flex w-full flex-col items-start gap-4 bg-primary-light/50 px-10 py-6 mt-2">
 				<p className="w-full body2 text-foreground">
-					{t("institutionFormModal.review.previewHint")}
+					{t("content.institutionFormModal.review.previewHint")}
 				</p>
 			</div>
 			<InfoWrapper

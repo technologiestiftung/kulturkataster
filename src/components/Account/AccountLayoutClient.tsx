@@ -77,7 +77,7 @@ export function AccountLayoutClient({
 	currentProfile,
 	allowedTabs,
 }: AccountLayoutClientProps) {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation();
 	const router = useRouter();
 	const [isRefreshing, startRefreshTransition] = useTransition();
 	const toLocalePath = useLocalePath();
@@ -87,7 +87,7 @@ export function AccountLayoutClient({
 		allowedTabs.includes(tab.value),
 	).map((tab) => ({
 		...tab,
-		label: t(tab.labelKey, { defaultValue: tab.defaultLabel }),
+		label: t("common." + tab.labelKey, { defaultValue: tab.defaultLabel }),
 	}));
 
 	useEffect(() => {
@@ -148,14 +148,19 @@ export function AccountLayoutClient({
 		}
 	};
 
-	const profileSettingsLabel = t("auth.account.actions.profileSettings", {
-		defaultValue: "Profile settings",
+	const profileSettingsLabel = t(
+		"common.auth.account.actions.profileSettings",
+		{
+			defaultValue: "Profile settings",
+		},
+	);
+	const faqLabel = t("common.auth.account.actions.faq", {
+		defaultValue: "FAQ",
 	});
-	const faqLabel = t("auth.account.actions.faq", { defaultValue: "FAQ" });
-	const logoutLabel = t("auth.account.actions.logout", {
+	const logoutLabel = t("common.auth.account.actions.logout", {
 		defaultValue: "Logout",
 	});
-	const refreshLabel = t("auth.account.actions.refreshData", {
+	const refreshLabel = t("common.auth.account.actions.refreshData", {
 		defaultValue: "Refresh data",
 	});
 
@@ -174,12 +179,12 @@ export function AccountLayoutClient({
 				<div className="space-y-6 p-10 shrink-0">
 					<div className="mt-16">
 						<h1 className="text-3xl font-bold">
-							{t("auth.account.welcome", {
+							{t("common.auth.account.welcome", {
 								name: `${`${currentProfile?.first_name} ${currentProfile?.last_name}`.trim() || currentProfile?.email || ""}`,
 							})}
 						</h1>
 						<p className="body1 font-bold">
-							{t("auth.account.subtitle", {
+							{t("common.auth.account.subtitle", {
 								defaultValue: "Manage your account settings and preferences.",
 							})}
 						</p>

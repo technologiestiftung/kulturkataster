@@ -13,12 +13,12 @@ export function ResetPasswordModal({
 	routePath?: string;
 	returnTo?: string;
 }) {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation();
 	const closeModal = useRoutedModalClose({ returnTo });
 
 	return (
 		<Modal
-			title={t("auth.reset.title")}
+			title={t("common.auth.reset.title")}
 			titleClassName="sr-only"
 			variant="fullscreen"
 			routePath={routePath}
@@ -29,10 +29,10 @@ export function ResetPasswordModal({
 					onSuccess={() => {
 						closeModal();
 						showSuccessToast(
-							t("auth.reset.successTitle", {
+							t("common.auth.reset.successTitle", {
 								defaultValue: "Password updated",
 							}),
-							t("auth.reset.successMessage", {
+							t("common.auth.reset.successMessage", {
 								defaultValue:
 									"Your password has been updated successfully. Please sign in.",
 							}),

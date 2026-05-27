@@ -20,21 +20,20 @@ type AccordionEntry = {
 };
 
 export function InformationModal({ routePath }: { routePath?: string }) {
-	const { t } = useTranslation("content");
+	const { t } = useTranslation();
 	const toLocalePath = useLocalePath();
 	const institutions = useInstitutionStore((state) => state.allInstitutions);
 	const institutionCount = institutions?.length;
-	const accordionItems = t("infoModal.accordion", {
+	const accordionItems = t("content.infoModal.accordion", {
 		returnObjects: true,
 	}) as AccordionEntry[];
 
 	return (
 		<Modal
-			title={t("infoModal.title")}
+			title={t("content.infoModal.title")}
 			subtitle={
 				<Trans
-					i18nKey="infoModal.simpleLanguageDirect"
-					ns="content"
+					i18nKey="content.infoModal.simpleLanguageDirect"
 					components={{
 						link: (
 							<a
@@ -42,7 +41,7 @@ export function InformationModal({ routePath }: { routePath?: string }) {
 								rel="noopener noreferrer"
 								className="text-primary-dark hover:text-primary underline"
 							>
-								{t("here")}
+								{t("content.here")}
 							</a>
 						),
 					}}
@@ -57,6 +56,7 @@ export function InformationModal({ routePath }: { routePath?: string }) {
 					strong: ({ children }) => (
 						<strong className="font-bold">{children}</strong>
 					),
+
 					a: ({ href, children }) => (
 						<a
 							href={href}
@@ -68,13 +68,19 @@ export function InformationModal({ routePath }: { routePath?: string }) {
 					),
 				}}
 			>
-				{t("infoModal.body")}
+				{t("content.infoModal.body")}
 			</ReactMarkdown>
 			<Tabs defaultValue="tab1" className="w-full mt-10">
 				<TabsList variant="modalTabs">
-					<TabsTrigger value="tab1">{t("infoModal.tabTitles.0")}</TabsTrigger>
-					<TabsTrigger value="tab2">{t("infoModal.tabTitles.1")}</TabsTrigger>
-					<TabsTrigger value="tab3">{t("infoModal.tabTitles.2")}</TabsTrigger>
+					<TabsTrigger value="tab1">
+						{t("content.infoModal.tabTitles.0")}
+					</TabsTrigger>
+					<TabsTrigger value="tab2">
+						{t("content.infoModal.tabTitles.1")}
+					</TabsTrigger>
+					<TabsTrigger value="tab3">
+						{t("content.infoModal.tabTitles.2")}
+					</TabsTrigger>
 				</TabsList>
 				<TabsContent value="tab1">
 					<ReactMarkdown
@@ -83,16 +89,18 @@ export function InformationModal({ routePath }: { routePath?: string }) {
 							strong: ({ children }) => (
 								<strong className="font-bold">{children}</strong>
 							),
+
 							h2: ({ children }) => <h2 className="mb-3 mt-8">{children}</h2>,
 							ul: ({ children }) => (
 								<ul className="list-disc pl-5 space-y-2 body2 mb-3">
 									{children}
 								</ul>
 							),
+
 							li: ({ children }) => <li className="mb-0">{children}</li>,
 						}}
 					>
-						{t("infoModal.tab1", {
+						{t("content.infoModal.tab1", {
 							count: institutionCount ?? 0,
 						})}
 					</ReactMarkdown>
@@ -130,7 +138,7 @@ export function InformationModal({ routePath }: { routePath?: string }) {
 							},
 						}}
 					>
-						{t("infoModal.tab2")}
+						{t("content.infoModal.tab2")}
 					</ReactMarkdown>
 				</TabsContent>
 				<TabsContent value="tab3">
@@ -154,6 +162,7 @@ export function InformationModal({ routePath }: { routePath?: string }) {
 																	p: ({ children: markdownChildren }) => (
 																		<p>{markdownChildren}</p>
 																	),
+
 																	a: ({ href, children: markdownChildren }) => (
 																		<a
 																			href={href}
@@ -163,11 +172,13 @@ export function InformationModal({ routePath }: { routePath?: string }) {
 																			{markdownChildren}
 																		</a>
 																	),
+
 																	strong: ({ children: markdownChildren }) => (
 																		<strong className="font-bold">
 																			{markdownChildren}
 																		</strong>
 																	),
+
 																	h3: ({ children: markdownChildren }) => (
 																		<p className="body2 font-semibold mt-4 mb-1">
 																			{markdownChildren}
@@ -188,7 +199,7 @@ export function InformationModal({ routePath }: { routePath?: string }) {
 							},
 						}}
 					>
-						{t("infoModal.tab3")}
+						{t("content.infoModal.tab3")}
 					</ReactMarkdown>
 					<div className="mt-16">
 						<ReactMarkdown
@@ -196,6 +207,7 @@ export function InformationModal({ routePath }: { routePath?: string }) {
 								p: ({ children: markdownChildren }) => (
 									<p>{markdownChildren}</p>
 								),
+
 								a: ({ href, children: markdownChildren }) => (
 									<a
 										href={href}
@@ -205,12 +217,13 @@ export function InformationModal({ routePath }: { routePath?: string }) {
 										{markdownChildren}
 									</a>
 								),
+
 								strong: ({ children: markdownChildren }) => (
 									<strong className="font-bold">{markdownChildren}</strong>
 								),
 							}}
 						>
-							{t("infoModal.contact")}
+							{t("content.infoModal.contact")}
 						</ReactMarkdown>
 					</div>
 				</TabsContent>

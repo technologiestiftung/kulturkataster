@@ -17,34 +17,34 @@ import ReactMarkdown from "react-markdown";
 import { Modal } from "../Modal";
 
 export function AboutModal({ routePath }: { routePath?: string }) {
-	const { t } = useTranslation("content");
+	const { t } = useTranslation();
 	const toLocalePath = useLocalePath();
 	const afterDivider = { current: false };
-	const teamMembers = t("aboutModal.credits.team.members", {
+	const teamMembers = t("content.aboutModal.credits.team.members", {
 		returnObjects: true,
 	}) as string[];
-	const steeringMembers = t("aboutModal.credits.steering.members", {
+	const steeringMembers = t("content.aboutModal.credits.steering.members", {
 		returnObjects: true,
 	}) as string[];
-	const partnerItems = t("aboutModal.credits.partners.list", {
+	const partnerItems = t("content.aboutModal.credits.partners.list", {
 		returnObjects: true,
 	}) as string[];
-	const contractorItems = t("aboutModal.credits.contractors.items", {
+	const contractorItems = t("content.aboutModal.credits.contractors.items", {
 		returnObjects: true,
 	}) as string[];
 	const contractorAdditionalItems = t(
-		"aboutModal.credits.contractors.additional",
+		"content.aboutModal.credits.contractors.additional",
 		{
 			returnObjects: true,
 		},
 	) as string[];
 	const externalEditorialItems = t(
-		"aboutModal.credits.contractors.editorial.items",
+		"content.aboutModal.credits.contractors.editorial.items",
 		{
 			returnObjects: true,
 		},
 	) as string[];
-	const aboutBodySections = t("aboutModal.bodySections", {
+	const aboutBodySections = t("content.aboutModal.bodySections", {
 		returnObjects: true,
 	}) as string[];
 	const renderMarkdownList = (items: string[]) => (
@@ -68,11 +68,10 @@ export function AboutModal({ routePath }: { routePath?: string }) {
 
 	return (
 		<Modal
-			title={t("aboutModal.title")}
+			title={t("content.aboutModal.title")}
 			subtitle={
 				<Trans
-					i18nKey="aboutModal.simpleLanguageDirect"
-					ns="content"
+					i18nKey="content.aboutModal.simpleLanguageDirect"
 					components={{
 						link: (
 							<a
@@ -80,7 +79,7 @@ export function AboutModal({ routePath }: { routePath?: string }) {
 								rel="noopener noreferrer"
 								className="text-primary-dark hover:text-primary underline"
 							>
-								{t("here")}
+								{t("content.here")}
 							</a>
 						),
 					}}
@@ -102,12 +101,15 @@ export function AboutModal({ routePath }: { routePath?: string }) {
 							h2: ({ children }) => (
 								<h2 className="font-bold mt-6 mb-10">{children}</h2>
 							),
+
 							h3: ({ children }) => (
 								<p className="body2 font-semibold mt-4 mb-1">{children}</p>
 							),
+
 							h4: ({ children }) => (
 								<p className="body2 -mt-2 mb-3">{children}</p>
 							),
+
 							p: ({ children }) => (
 								<p
 									className={`${afterDivider.current ? "body2" : "body1"} mb-3`}
@@ -115,23 +117,26 @@ export function AboutModal({ routePath }: { routePath?: string }) {
 									{children}
 								</p>
 							),
+
 							ul: ({ children }) => (
 								<ul className="list-disc pl-5 space-y-2 body2 mb-3">
 									{children}
 								</ul>
 							),
+
 							ol: ({ node }) => <OrderedList node={node as Element} />,
 							li: ({ children }) => <li>{children}</li>,
 							strong: ({ children }) => (
 								<strong className="font-bold">{children}</strong>
 							),
+
 							code: ({ children }) => {
 								if (children === "versions-card") {
 									return (
 										<VersionsList
-											label={t("aboutModal.versionsLabel")}
+											label={t("content.aboutModal.versionsLabel")}
 											items={
-												t("aboutModal.versionsItems", {
+												t("content.aboutModal.versionsItems", {
 													returnObjects: true,
 												}) as {
 													badge: string;
@@ -146,12 +151,14 @@ export function AboutModal({ routePath }: { routePath?: string }) {
 									return (
 										<div className="flex md:flex-row flex-col items-center gap-6 md:p-6 rounded-sm bg-neutral-5 my-10">
 											<p className="body2 font-bold flex-1">
-												{t("aboutModal.documentation.text")}
+												{t("content.aboutModal.documentation.text")}
 											</p>
 											<DownloadPDFButton
 												className="w-full md:w-auto"
 												fullWidth={true}
-												title={t("aboutModal.documentation.downloadPDF")}
+												title={t(
+													"content.aboutModal.documentation.downloadPDF",
+												)}
 											/>
 										</div>
 									);
@@ -165,21 +172,21 @@ export function AboutModal({ routePath }: { routePath?: string }) {
 				))}
 			</div>
 			<div className="mt-10 space-y-8">
-				<p className="body1">{t("aboutModal.thanks")}</p>
+				<p className="body1">{t("content.aboutModal.thanks")}</p>
 
 				<div className="space-y-0">
 					<p className="body1 font-bold">
-						{t("aboutModal.credits.funding.title")}
+						{t("content.aboutModal.credits.funding.title")}
 					</p>
 					<p className="body2">
-						{t("aboutModal.credits.funding.organization")}
+						{t("content.aboutModal.credits.funding.organization")}
 					</p>
 				</div>
 
 				<div className="relative aspect-[4/3] w-full overflow-hidden rounded-sm">
 					<Image
 						src="/resources/teamfoto-kulturkataster.jpg"
-						alt={t("aboutModal.teamPhotoAlt", {
+						alt={t("content.aboutModal.teamPhotoAlt", {
 							defaultValue: "Projektteam des Berliner Kulturkatasters",
 						})}
 						fill
@@ -190,7 +197,7 @@ export function AboutModal({ routePath }: { routePath?: string }) {
 
 				<div className="space-y-3">
 					<p className="body1 font-bold">
-						{t("aboutModal.credits.team.title")}
+						{t("content.aboutModal.credits.team.title")}
 					</p>
 					{renderMarkdownList(teamMembers)}
 				</div>
@@ -198,7 +205,7 @@ export function AboutModal({ routePath }: { routePath?: string }) {
 				<Accordion type="multiple" className="w-full">
 					<AccordionItem value="steering">
 						<AccordionTrigger>
-							{t("aboutModal.credits.steering.title")}
+							{t("content.aboutModal.credits.steering.title")}
 						</AccordionTrigger>
 						<AccordionContent>
 							{renderMarkdownList(steeringMembers)}
@@ -206,7 +213,7 @@ export function AboutModal({ routePath }: { routePath?: string }) {
 					</AccordionItem>
 					<AccordionItem value="partners">
 						<AccordionTrigger>
-							{t("aboutModal.credits.partners.title")}
+							{t("content.aboutModal.credits.partners.title")}
 						</AccordionTrigger>
 						<AccordionContent>
 							{renderMarkdownList(partnerItems)}
@@ -214,7 +221,7 @@ export function AboutModal({ routePath }: { routePath?: string }) {
 					</AccordionItem>
 					<AccordionItem value="contractors">
 						<AccordionTrigger>
-							{t("aboutModal.credits.contractors.title")}
+							{t("content.aboutModal.credits.contractors.title")}
 						</AccordionTrigger>
 						<AccordionContent>
 							<div className="space-y-6">
@@ -225,7 +232,7 @@ export function AboutModal({ routePath }: { routePath?: string }) {
 					</AccordionItem>
 					<AccordionItem value="external-editorial">
 						<AccordionTrigger>
-							{t("aboutModal.credits.contractors.editorial.title")}
+							{t("content.aboutModal.credits.contractors.editorial.title")}
 						</AccordionTrigger>
 						<AccordionContent>
 							{renderMarkdownList(externalEditorialItems)}

@@ -6,7 +6,10 @@ import { Card } from "@/components/ui/card";
 import { CategorySection } from "@/components/Filter/CategorySection/CategorySection";
 import ChevronDown from "@/icons/chevron-down.svg";
 import ChevronUp from "@/icons/chevron-up.svg";
-import { getSortedCategories } from "@/lib/utils/filterUtils";
+import {
+	getSortedCategories,
+	getSortedSubcategories,
+} from "@/lib/utils/filterUtils";
 import type { Category, ChildCategory, FilterState } from "@/types";
 
 export type CategorySectionListProps = {
@@ -18,6 +21,10 @@ export type CategorySectionListProps = {
 	collapsible?: boolean;
 	defaultCollapsed?: boolean;
 	categorySectionMode?: "filter" | "selection";
+	parentCategorySelectionBehavior?:
+		| "select-all-children"
+		| "parent-only"
+		| "last-child-only";
 	selectionEmptyLabel?: string;
 	showHeader?: boolean;
 };
@@ -31,11 +38,12 @@ export const CategorySectionList: FC<CategorySectionListProps> = ({
 	collapsible = false,
 	defaultCollapsed = false,
 	categorySectionMode = "filter",
+	parentCategorySelectionBehavior = "select-all-children",
 	selectionEmptyLabel,
 	showHeader = false,
 }) => {
-	const { t } = useTranslation(["content"]);
-	const { t: tEnum, i18n } = useTranslation(["enumMap"]);
+	const { t } = useTranslation();
+	const { t: tEnum, i18n } = useTranslation();
 	const [openSections, setOpenSections] = useState<string[]>([]);
 	const [isCollapsed, setIsCollapsed] = useState(
 		collapsible ? defaultCollapsed : false,
@@ -81,6 +89,62 @@ export const CategorySectionList: FC<CategorySectionListProps> = ({
 		onFiltersChange(normalizedFilters);
 	};
 
+	const resolveParentSelectionSubcategoryKeys = (categoryGroup: Category) => {
+		const groupSubcategoryKeys = (categoryGroup.child_categories ?? []).map(
+			(subcategory: ChildCategory) => subcategory.key,
+		);
+		const nextSubcategories = safeFilters?.child_category_keys.filter(
+			(key) => !groupSubcategoryKeys.includes(key),
+		);
+
+		if (!nextSubcategories) return [];
+		if (parentCategorySelectionBehavior === "parent-only") {
+			return nextSubcategories;
+		}
+		if (parentCategorySelectionBehavior === "last-child-only") {
+			const sortedSubcategories = getSortedSubcategories(
+				categoryGroup,
+				collator,
+				tEnum,
+				() => true,
+			);
+			const lastSubcategory = sortedSubcategories.at(-1);
+			return lastSubcategory
+				? [...nextSubcategories, lastSubcategory.key]
+				: nextSubcategories;
+		}
+		return [...nextSubcategories, ...groupSubcategoryKeys];
+	};
+
+	const isParentCategoryToggleActive = (
+		categoryGroup: Category,
+		selectedSubcategoriesInGroup: ChildCategory[],
+		isCategorySelected: boolean,
+		allSubcategoriesSelected: boolean,
+	) => {
+		if (isCategorySelected || allSubcategoriesSelected) {
+			return true;
+		}
+
+		if (parentCategorySelectionBehavior !== "last-child-only") {
+			return false;
+		}
+
+		const lastSubcategory = getSortedSubcategories(
+			categoryGroup,
+			collator,
+			tEnum,
+			() => true,
+		).at(-1);
+
+		return Boolean(
+			lastSubcategory &&
+				selectedSubcategoriesInGroup.some(
+					(subcategory) => subcategory.key === lastSubcategory.key,
+				),
+		);
+	};
+
 	const toggleCategory = (categoryKey: string) => {
 		if (!safeFilters) return;
 
@@ -100,11 +164,14 @@ export const CategorySectionList: FC<CategorySectionListProps> = ({
 			hasSubcategories &&
 			selectedSubcategoriesInGroup.length ===
 				(categoryGroup.child_categories ?? []).length;
+		const isActiveParentToggle = isParentCategoryToggleActive(
+			categoryGroup,
+			selectedSubcategoriesInGroup,
+			isCategorySelected,
+			allSubcategoriesSelected,
+		);
 
-		if (
-			!(isCategorySelected || allSubcategoriesSelected) &&
-			!openSections.includes(categoryKey)
-		) {
+		if (!isActiveParentToggle && !openSections.includes(categoryKey)) {
 			toggleSection(categoryKey);
 		}
 
@@ -113,7 +180,7 @@ export const CategorySectionList: FC<CategorySectionListProps> = ({
 		);
 
 		if (categorySectionMode === "selection") {
-			if (isCategorySelected || allSubcategoriesSelected) {
+			if (isActiveParentToggle) {
 				const newCategories = safeFilters.category_keys.filter(
 					(c) => c !== categoryKey,
 				);
@@ -131,12 +198,8 @@ export const CategorySectionList: FC<CategorySectionListProps> = ({
 			const newCategories = safeFilters.category_keys.includes(categoryKey)
 				? safeFilters.category_keys
 				: [...safeFilters.category_keys, categoryKey];
-			const newSubcategories = [
-				...safeFilters.child_category_keys.filter(
-					(s) => !groupSubcategoryKeys.includes(s),
-				),
-				...groupSubcategoryKeys,
-			];
+			const newSubcategories =
+				resolveParentSelectionSubcategoryKeys(categoryGroup);
 			updateFilters({
 				...safeFilters,
 				category_keys: newCategories,
@@ -145,7 +208,7 @@ export const CategorySectionList: FC<CategorySectionListProps> = ({
 			return;
 		}
 
-		if (isCategorySelected || allSubcategoriesSelected) {
+		if (isActiveParentToggle) {
 			const newCategories = safeFilters.category_keys.filter(
 				(c) => c !== categoryKey,
 			);
@@ -159,12 +222,8 @@ export const CategorySectionList: FC<CategorySectionListProps> = ({
 				child_category_keys: newSubcategories,
 			});
 		} else {
-			const newSubcategories = [
-				...safeFilters.child_category_keys.filter(
-					(s) => !groupSubcategoryKeys.includes(s),
-				),
-				...groupSubcategoryKeys,
-			];
+			const newSubcategories =
+				resolveParentSelectionSubcategoryKeys(categoryGroup);
 
 			updateFilters({
 				...safeFilters,
@@ -301,13 +360,13 @@ export const CategorySectionList: FC<CategorySectionListProps> = ({
 					<div className="p-2 flex justify-start">
 						<button
 							type="button"
-							aria-label={t("filter.showMoreCategories")}
+							aria-label={t("content.filter.showMoreCategories")}
 							className="inline-flex items-center text-primary-dark"
 							onClick={() => setIsCollapsed(false)}
 						>
 							<ChevronDown className="h-4 w-4" />
 							<span className="ml-2 text-primary-dark font-bold body2">
-								{t("filter.showMoreCategories")}
+								{t("content.filter.showMoreCategories")}
 							</span>
 						</button>
 					</div>
@@ -317,7 +376,7 @@ export const CategorySectionList: FC<CategorySectionListProps> = ({
 					{showHeader && (
 						<div className="flex items-center justify-between mb-4">
 							<h3 className="body1 font-bold">
-								{t("filter.categories.title", { ns: "content" })}
+								{t("content.filter.categories.title")}
 							</h3>
 							<button
 								className="body2 font-light underline"
@@ -328,8 +387,8 @@ export const CategorySectionList: FC<CategorySectionListProps> = ({
 								}
 							>
 								{hasActiveCategoryFilters()
-									? t("filter.categories.resetFilters", { ns: "content" })
-									: t("filter.categories.setAllFilters", { ns: "content" })}
+									? t("content.filter.categories.resetFilters")
+									: t("content.filter.categories.setAllFilters")}
 							</button>
 						</div>
 					)}
@@ -356,13 +415,13 @@ export const CategorySectionList: FC<CategorySectionListProps> = ({
 						<div className="p-2">
 							<button
 								type="button"
-								aria-label={t("filter.showSelectedCategories")}
+								aria-label={t("content.filter.showSelectedCategories")}
 								className="inline-flex items-center text-primary-dark"
 								onClick={() => setIsCollapsed(true)}
 							>
 								<ChevronUp className="h-4 w-4" />
 								<span className="ml-2 text-primary-dark font-bold body2">
-									{t("filter.showSelectedCategories")}
+									{t("content.filter.showSelectedCategories")}
 								</span>
 							</button>
 						</div>

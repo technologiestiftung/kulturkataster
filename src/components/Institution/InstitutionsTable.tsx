@@ -1,11 +1,12 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { DataTable } from "@/components/DataTable";
 import type { DataTableConfig } from "@/components/DataTable";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import type { Institution, InstitutionTableRow } from "@/types/institution";
+import type { Category, FilterState } from "@/types";
 import { useAccountStore } from "@/lib/store/accountStore";
 import { StatusDot } from "../ui/status-dot";
 import { InstitutionStatus } from "@/generated/prisma";
@@ -38,6 +39,53 @@ import Edit from "@/icons/edit.svg";
 import { useInstitutionPrivateFieldResolver } from "@/lib/hooks/useInstitutionPrivateFieldResolver";
 import { DownloadModal } from "@/components/Modals/Pages/DownloadModal";
 import { notifyInstitutionDownload } from "@/server/actions/downloads";
+import type { ExportFormat } from "@/lib/utils/downloadUtils";
+
+type InstitutionsFilterPanelProps = {
+	filters: FilterState;
+	categoryGroups: Category[];
+	districts: string[];
+	filteredCount: number;
+	categoryCounts: Record<string, number>;
+	subcategoryCounts: Record<string, number>;
+	loading: boolean;
+	onRetry: () => void;
+	onFiltersChange: (nextFilters: FilterState) => void;
+};
+
+function InstitutionsFilterPanel({
+	filters,
+	categoryGroups,
+	districts,
+	filteredCount,
+	categoryCounts,
+	subcategoryCounts,
+	loading,
+	onRetry,
+	onFiltersChange,
+}: InstitutionsFilterPanelProps) {
+	useEffect(() => {
+		if (categoryGroups.length === 0) {
+			onRetry();
+		}
+	}, [categoryGroups.length, onRetry]);
+
+	return (
+		<FilterPanel
+			filters={filters}
+			categoryGroups={categoryGroups}
+			districts={districts}
+			filteredCount={filteredCount}
+			categoryCounts={categoryCounts}
+			subcategoryCounts={subcategoryCounts}
+			loading={loading}
+			error={null}
+			onRetry={onRetry}
+			onFiltersChange={onFiltersChange}
+			parentCategorySelectionBehavior="last-child-only"
+		/>
+	);
+}
 
 export function InstitutionsTable() {
 	const router = useRouter();
@@ -74,9 +122,9 @@ export function InstitutionsTable() {
 			),
 		[allSubmissions],
 	);
-	const { t } = useTranslation("content");
-	const { t: tCommon } = useTranslation("common");
-	const { t: tEnum } = useTranslation("enumMap");
+	const { t } = useTranslation();
+	const { t: tCommon } = useTranslation();
+	const { t: tEnum } = useTranslation();
 	const { isPrivateField } = useInstitutionPrivateFieldResolver();
 	const {
 		filterCategoryGroups,
@@ -105,11 +153,11 @@ export function InstitutionsTable() {
 		return value.toString();
 	};
 	const getStatusLabel = (status: InstitutionStatus | string) => {
-		const institutionStatus = tEnum(`institution_status.${status}`);
+		const institutionStatus = tEnum(`enumMap.institution_status.${status}`);
 		if (institutionStatus !== `institution_status.${status}`) {
 			return institutionStatus;
 		}
-		const submissionStatus = tEnum(`submission_status.${status}`);
+		const submissionStatus = tEnum(`enumMap.submission_status.${status}`);
 		if (submissionStatus !== `submission_status.${status}`) {
 			return submissionStatus;
 		}
@@ -119,20 +167,23 @@ export function InstitutionsTable() {
 		type: SubmissionType,
 		status?: string | null,
 	) => {
-		const baseTypeLabel = t(`institutionsTable.type.submissionBase.${type}`, {
-			defaultValue: type,
-		});
+		const baseTypeLabel = t(
+			`content.institutionsTable.type.submissionBase.${type}`,
+			{
+				defaultValue: type,
+			},
+		);
 		if (
 			status === "approved" ||
 			status === "rejected" ||
 			status === "needs_changes"
 		) {
-			return t(`institutionsTable.type.submissionStatus.${status}`, {
+			return t(`content.institutionsTable.type.submissionStatus.${status}`, {
 				type: baseTypeLabel,
 				defaultValue: baseTypeLabel,
 			});
 		}
-		return t(`institutionsTable.type.submission.${type}`, {
+		return t(`content.institutionsTable.type.submission.${type}`, {
 			defaultValue: type,
 		});
 	};
@@ -170,22 +221,30 @@ export function InstitutionsTable() {
 		filteredTableRows,
 		categoryCounts,
 		subcategoryCounts,
+		downloadableInstitutions,
 	} = useInstitutionTableFilters(tableRows, filterCategoryGroups);
-	const handleDownloadNotification = useCallback(async () => {
-		await notifyInstitutionDownload({
-			filename: "kulturorte",
-			format: "xlsx",
-			institutionCount: institutions.length,
-			institutionIds: institutions.map((institution) => institution.id),
-		});
-	}, [institutions]);
+	const handleDownloadNotification = useCallback(
+		async (args: {
+			data: Institution[];
+			filename: string;
+			format: ExportFormat;
+		}) => {
+			await notifyInstitutionDownload({
+				filename: args.filename,
+				format: args.format,
+				institutionCount: args.data.length,
+				institutionIds: args.data.map((institution) => institution.id),
+			});
+		},
+		[],
+	);
 	const closeDownloadDialog = useCallback((open: boolean) => {
 		setIsDownloadDialogOpen(open);
 	}, []);
 
 	const tableConfig: DataTableConfig<InstitutionTableRow> = {
 		isPrivateColumn,
-		privateColumnAriaLabel: tCommon("sensitiveInformation", {
+		privateColumnAriaLabel: tCommon("common.sensitiveInformation", {
 			defaultValue: "Sensitive information",
 		}),
 		columns: [
@@ -242,7 +301,7 @@ export function InstitutionsTable() {
 					}
 					return (
 						<p className="capitalize text-wrap self-center text-center flex-wrap ">
-							{t("institutionsTable.type.manage")}
+							{t("content.institutionsTable.type.manage")}
 						</p>
 					);
 				},
@@ -457,7 +516,7 @@ export function InstitutionsTable() {
 										key={cat.id}
 										className="capitalize truncate"
 									>
-										{`${tEnum("category." + cat.key)}`}
+										{`${tEnum("enumMap." + ("category." + cat.key))}`}
 									</Badge>
 								))
 							) : (
@@ -486,7 +545,7 @@ export function InstitutionsTable() {
 										key={cat.id}
 										className="capitalize truncate"
 									>
-										{`${tEnum("category." + cat.key)}`}
+										{`${tEnum("enumMap." + ("category." + cat.key))}`}
 									</Badge>
 								))
 							) : (
@@ -734,6 +793,7 @@ export function InstitutionsTable() {
 					row.original.contact_person?.first_name || (
 						<span className="text-foreground">—</span>
 					),
+
 				accessorFn: (row) => row.contact_person?.first_name || "",
 				meta: { truncate: true, exportKey: "contact_person_first_name" },
 			},
@@ -749,6 +809,7 @@ export function InstitutionsTable() {
 					row.original.contact_person?.last_name || (
 						<span className="text-foreground">—</span>
 					),
+
 				accessorFn: (row) => row.contact_person?.last_name || "",
 				meta: { truncate: true, exportKey: "contact_person_last_name" },
 			},
@@ -833,10 +894,11 @@ export function InstitutionsTable() {
 				accessorFn: (row) => row.updated_at,
 			},
 		],
+
 		data: filteredTableRows,
 		getRowKey: (row) => row.rowKey ?? row.id,
 		searchable: true,
-		searchPlaceholder: t("institutionsTable.search.title", {
+		searchPlaceholder: t("content.institutionsTable.search.title", {
 			defaultValue: "Search institutions...",
 		}),
 		getSearchableValues: (row) => [
@@ -857,17 +919,18 @@ export function InstitutionsTable() {
 			row.contact_person?.email || "",
 			row.owner_name || "",
 		],
+
 		virtualization: {
 			enabled: true,
 			rowHeight: 65,
 			overscan: 8,
 		},
 		filterModal: {
-			triggerLabel: t("filter.title"),
-			triggerAriaLabel: t("filter.title"),
-			title: t("filter.title"),
+			triggerLabel: t("content.filter.title"),
+			triggerAriaLabel: t("content.filter.title"),
+			title: t("content.filter.title"),
 			content: () => (
-				<FilterPanel
+				<InstitutionsFilterPanel
 					filters={filters}
 					categoryGroups={filterCategoryGroups}
 					districts={districts}
@@ -875,7 +938,6 @@ export function InstitutionsTable() {
 					categoryCounts={categoryCounts}
 					subcategoryCounts={subcategoryCounts}
 					loading={isFilterCategoriesLoading}
-					error={null}
 					onRetry={retryInitializeFilterCategories}
 					onFiltersChange={setFilters}
 				/>
@@ -884,7 +946,7 @@ export function InstitutionsTable() {
 		primaryButton:
 			canCreateInstitutionDirect || canCreateInstitutionViaSubmission
 				? {
-						label: t("institutionsTable.actions.addInstitution"),
+						label: t("content.institutionsTable.actions.addInstitution"),
 						onClick: () => {
 							if (!canCreateInstitutionDirect) {
 								resetDraft();
@@ -900,15 +962,18 @@ export function InstitutionsTable() {
 					label: (
 						<span className="inline-flex items-center gap-2">
 							<Send className="size-4" />
-							<span>{t("institutionsTable.actions.claimInstitution")}</span>
+							<span>
+								{t("content.institutionsTable.actions.claimInstitution")}
+							</span>
 						</span>
 					),
+
 					onClick: () =>
 						router.push(toLocalePath("/account/submissions/claim")),
 				}
 			: undefined,
 		rightButton: {
-			label: t("institutionsTable.actions.downloadList", {
+			label: t("content.institutionsTable.actions.downloadList", {
 				defaultValue: "Liste herunterladen",
 			}),
 			onClick: () => setIsDownloadDialogOpen(true),
@@ -1013,10 +1078,10 @@ export function InstitutionsTable() {
 		emptyMessage: "No institutions found.",
 		emptyState: (
 			<EmptyActionState
-				title={t("institutionsTable.empty.title", {
+				title={t("content.institutionsTable.empty.title", {
 					defaultValue: "Keine Kulturorte vorhanden.",
 				})}
-				description={t("institutionsTable.empty.description", {
+				description={t("content.institutionsTable.empty.description", {
 					defaultValue: "Sie können direkt neue Einträge starten.",
 				})}
 				actions={[
@@ -1024,7 +1089,9 @@ export function InstitutionsTable() {
 						? [
 								{
 									icon: <Send />,
-									label: t("institutionsTable.actions.claimInstitution"),
+									label: t(
+										"content.institutionsTable.actions.claimInstitution",
+									),
 									href: toLocalePath("/account/submissions/claim"),
 								},
 							]
@@ -1033,7 +1100,7 @@ export function InstitutionsTable() {
 						? [
 								{
 									icon: <Edit />,
-									label: t("institutionsTable.actions.addInstitution"),
+									label: t("content.institutionsTable.actions.addInstitution"),
 									href: toLocalePath(
 										canCreateInstitutionDirect
 											? "/account/institutions/new"
@@ -1076,14 +1143,14 @@ export function InstitutionsTable() {
 			<DownloadModal
 				open={isDownloadDialogOpen}
 				onCloseRequest={() => closeDownloadDialog(false)}
-				data={institutions}
+				data={downloadableInstitutions}
 				filename="kulturorte"
 				translateFn={tEnum}
 				exportColumnOrder={exportColumnOrder}
-				confirmLabel={t("institutionsTable.actions.downloadList", {
+				confirmLabel={t("content.institutionsTable.actions.downloadList", {
 					defaultValue: "Liste herunterladen",
 				})}
-				cancelLabel={tCommon("cancel", { defaultValue: "Cancel" })}
+				cancelLabel={tCommon("common.cancel", { defaultValue: "Cancel" })}
 				onAfterDownload={handleDownloadNotification}
 			/>
 		</>
