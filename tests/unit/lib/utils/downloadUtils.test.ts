@@ -337,6 +337,8 @@ describe("generateExcelBuffer", () => {
 		expect(worksheet.A6?.v).toBe("Status");
 		expect(worksheet.B6?.v).toBe("ID");
 		expect(worksheet.A7?.v).toBe("Öffentlich");
+		expect(worksheet.D7?.v).toBe("https://example.de");
+		expect(worksheet.D7?.l?.Target).toBe("https://example.de");
 		expect(worksheet["!merges"]).toEqual(
 			expect.arrayContaining([
 				{ s: { r: 0, c: 0 }, e: { r: 0, c: 3 } },
