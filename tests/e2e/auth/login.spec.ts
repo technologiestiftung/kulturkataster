@@ -88,6 +88,10 @@ test.describe("auth login", () => {
 
 	test("valid login redirects to account", async ({ page }) => {
 		test.skip(!hasRealUserCredentials, "E2E credentials not set");
+		const clientErrors: string[] = [];
+		page.on("pageerror", (error) => {
+			clientErrors.push(error.message);
+		});
 
 		await safeGoto(page, "/de/login", /\/de\/login\/?$/);
 		const emailInput = page.locator("input#email");
@@ -119,6 +123,8 @@ test.describe("auth login", () => {
 		await expect(page.getByRole("tab").first()).toBeVisible({
 			timeout: 15_000,
 		});
+		await page.waitForTimeout(250);
+		expect(clientErrors).toEqual([]);
 	});
 
 	test("banned user cannot login", async ({ page }) => {

@@ -134,15 +134,15 @@ const translateUserFormError = (
 ) => {
 	switch (errorCode) {
 		case "emailTaken":
-			return t("userFormModal.errors.emailTaken");
+			return t("content.userFormModal.errors.emailTaken");
 		case "notFound":
-			return t("userFormModal.errors.notFound");
+			return t("content.userFormModal.errors.notFound");
 		case "forbidden":
-			return t("userFormModal.errors.forbidden");
+			return t("content.userFormModal.errors.forbidden");
 		case "invalidInput":
-			return t("userFormModal.errors.invalidInput");
+			return t("content.userFormModal.errors.invalidInput");
 		default:
-			return t("userFormModal.errors.unexpected");
+			return t("content.userFormModal.errors.unexpected");
 	}
 };
 
@@ -152,11 +152,11 @@ const translateUserPasswordResetError = (
 ) => {
 	switch (errorCode) {
 		case "notFound":
-			return t("userFormModal.errors.notFound");
+			return t("content.userFormModal.errors.notFound");
 		case "forbidden":
-			return t("userFormModal.errors.forbidden");
+			return t("content.userFormModal.errors.forbidden");
 		default:
-			return t("userFormModal.passwordReset.error");
+			return t("content.userFormModal.passwordReset.error");
 	}
 };
 
@@ -281,46 +281,52 @@ const buildUserFormConfig = ({
 				fields: [
 					{
 						name: "email",
-						label: t("userFormModal.form.identity.fields.email.label"),
+						label: t("content.userFormModal.form.identity.fields.email.label"),
 						type: "email",
 						required: true,
 						placeholder: t(
-							"userFormModal.form.identity.fields.email.placeholder",
+							"content.userFormModal.form.identity.fields.email.placeholder",
 						),
 						layout: { span: "full" },
 					},
 					{
 						name: "first_name",
-						label: t("userFormModal.form.identity.fields.firstName.label"),
+						label: t(
+							"content.userFormModal.form.identity.fields.firstName.label",
+						),
 						type: "text",
 						placeholder: t(
-							"userFormModal.form.identity.fields.firstName.placeholder",
+							"content.userFormModal.form.identity.fields.firstName.placeholder",
 						),
 						layout: { span: "half" },
 					},
 					{
 						name: "last_name",
-						label: t("userFormModal.form.identity.fields.lastName.label"),
+						label: t(
+							"content.userFormModal.form.identity.fields.lastName.label",
+						),
 						type: "text",
 						placeholder: t(
-							"userFormModal.form.identity.fields.lastName.placeholder",
+							"content.userFormModal.form.identity.fields.lastName.placeholder",
 						),
 						layout: { span: "half" },
 					},
 					{
 						name: "status",
-						label: t("userFormModal.form.identity.fields.status.label"),
+						label: t("content.userFormModal.form.identity.fields.status.label"),
 						type: "select",
 						layout: { span: "half" },
 						options: statusOptions,
 					},
 					{
 						name: "account_type",
-						label: t("userFormModal.form.identity.fields.accountType.label"),
+						label: t(
+							"content.userFormModal.form.identity.fields.accountType.label",
+						),
 						type: "text",
 						layout: { span: "half" },
 						placeholder: t(
-							"userFormModal.form.identity.fields.accountType.placeholder",
+							"content.userFormModal.form.identity.fields.accountType.placeholder",
 						),
 					},
 					{
@@ -329,32 +335,40 @@ const buildUserFormConfig = ({
 							resolvedUser?.meta_info &&
 							typeof resolvedUser.meta_info === "object" &&
 							Object.keys(resolvedUser.meta_info).length > 0
-								? t("userFormModal.form.identity.fields.metaInfo.label")
+								? t("content.userFormModal.form.identity.fields.metaInfo.label")
 								: null,
 						type: "keyValue",
 						layout: { span: "full" },
 						keyValue: {
 							valuePlaceholder: t(
-								"userFormModal.form.identity.fields.metaInfo.valuePlaceholder",
+								"content.userFormModal.form.identity.fields.metaInfo.valuePlaceholder",
 							),
 							allowAdd: false,
 							keyReadOnly: true,
 							keyLabels: {
-								organizationName: tCommon("auth.register.organizationName"),
-								organizationPhone: tCommon("auth.register.organizationPhone"),
-								organizationPosition: tCommon(
-									"auth.register.organizationPosition",
+								organizationName: tCommon(
+									"common.auth.register.organizationName",
 								),
-								districtName: tCommon("auth.register.districtName"),
-								districtOffice: tCommon("auth.register.districtOffice"),
-								districtPhone: tCommon("auth.register.districtPhone"),
-								districtPosition: tCommon("auth.register.districtPosition"),
-								administrationName: tCommon("auth.register.administrationName"),
+								organizationPhone: tCommon(
+									"common.auth.register.organizationPhone",
+								),
+								organizationPosition: tCommon(
+									"common.auth.register.organizationPosition",
+								),
+								districtName: tCommon("common.auth.register.districtName"),
+								districtOffice: tCommon("common.auth.register.districtOffice"),
+								districtPhone: tCommon("common.auth.register.districtPhone"),
+								districtPosition: tCommon(
+									"common.auth.register.districtPosition",
+								),
+								administrationName: tCommon(
+									"common.auth.register.administrationName",
+								),
 								administrationPhone: tCommon(
-									"auth.register.administrationPhone",
+									"common.auth.register.administrationPhone",
 								),
 								administrationPosition: tCommon(
-									"auth.register.administrationPosition",
+									"common.auth.register.administrationPosition",
 								),
 							},
 						},
@@ -364,14 +378,16 @@ const buildUserFormConfig = ({
 			{
 				name: "accessSection",
 				type: "section",
-				title: t("userFormModal.form.access.title"),
+				title: t("content.userFormModal.form.access.title"),
 				fields: [
 					{
 						name: "roleId",
-						label: t("userFormModal.form.access.fields.role.label"),
+						label: t("content.userFormModal.form.access.fields.role.label"),
 						type: "select",
 						required: true,
-						placeholder: t("userFormModal.form.access.fields.role.placeholder"),
+						placeholder: t(
+							"content.userFormModal.form.access.fields.role.placeholder",
+						),
 						options: roles.map((role) => ({
 							value: String(role.id),
 							label: role.name,
@@ -380,16 +396,18 @@ const buildUserFormConfig = ({
 					},
 					{
 						name: "groupIds",
-						label: t("userFormModal.form.access.fields.groups.label"),
+						label: t("content.userFormModal.form.access.fields.groups.label"),
 						type: "multiselect",
 						multiselectVariant: "modal",
 						placeholder: t(
-							"userFormModal.form.access.fields.groups.placeholder",
+							"content.userFormModal.form.access.fields.groups.placeholder",
 						),
 						searchPlaceholder: t(
-							"userFormModal.form.access.fields.groups.searchPlaceholder",
+							"content.userFormModal.form.access.fields.groups.searchPlaceholder",
 						),
-						emptyText: t("userFormModal.form.access.fields.groups.emptyText"),
+						emptyText: t(
+							"content.userFormModal.form.access.fields.groups.emptyText",
+						),
 						options: groups.map((group) => ({
 							value: String(group.id),
 							label: group.name,
@@ -398,17 +416,19 @@ const buildUserFormConfig = ({
 					},
 					{
 						name: "institutionIds",
-						label: t("userFormModal.form.access.fields.institutions.label"),
+						label: t(
+							"content.userFormModal.form.access.fields.institutions.label",
+						),
 						type: "multiselect",
 						multiselectVariant: "modal",
 						placeholder: t(
-							"userFormModal.form.access.fields.institutions.placeholder",
+							"content.userFormModal.form.access.fields.institutions.placeholder",
 						),
 						searchPlaceholder: t(
-							"userFormModal.form.access.fields.institutions.searchPlaceholder",
+							"content.userFormModal.form.access.fields.institutions.searchPlaceholder",
 						),
 						emptyText: t(
-							"userFormModal.form.access.fields.institutions.emptyText",
+							"content.userFormModal.form.access.fields.institutions.emptyText",
 						),
 						previewCount: 3,
 						options: institutionOptions,
@@ -432,11 +452,13 @@ const buildUserFormConfig = ({
 						layout: { span: "full" },
 						condition: accessCondition,
 						actionPanel: {
-							title: t("userFormModal.passwordReset.title"),
-							description: t("userFormModal.passwordReset.description"),
-							actionLabel: t("userFormModal.passwordReset.send"),
-							actionLabelLoading: t("userFormModal.passwordReset.sending"),
-							errorFallback: t("userFormModal.passwordReset.error"),
+							title: t("content.userFormModal.passwordReset.title"),
+							description: t("content.userFormModal.passwordReset.description"),
+							actionLabel: t("content.userFormModal.passwordReset.send"),
+							actionLabelLoading: t(
+								"content.userFormModal.passwordReset.sending",
+							),
+							errorFallback: t("content.userFormModal.passwordReset.error"),
 							icon: <Mail className="h-5 w-5 text-primary-dark" />,
 							onAction: async () => {
 								if (!resolvedUser) return null;
@@ -446,25 +468,26 @@ const buildUserFormConfig = ({
 										translateUserPasswordResetError(t, result.error),
 									);
 								}
-								return t("userFormModal.passwordReset.success");
+								return t("content.userFormModal.passwordReset.success");
 							},
 						},
 					},
 				],
 			},
 		],
+
 		onSubmit,
 		showCancel: true,
-		cancelLabel: t("userFormModal.actions.cancel"),
+		cancelLabel: t("content.userFormModal.actions.cancel"),
 		onCancel,
 		submitLabel: getSubmitLabel(mode, submitting, {
 			create: {
-				default: t("userFormModal.actions.create"),
-				loading: t("userFormModal.actions.creating"),
+				default: t("content.userFormModal.actions.create"),
+				loading: t("content.userFormModal.actions.creating"),
 			},
 			edit: {
-				default: t("userFormModal.actions.save"),
-				loading: t("userFormModal.actions.saving"),
+				default: t("content.userFormModal.actions.save"),
+				loading: t("content.userFormModal.actions.saving"),
 			},
 		}),
 		initialValues: getInitialValues(resolvedUser),
@@ -476,8 +499,8 @@ const getDialogTitle = (
 	t: (key: string) => string,
 ) =>
 	mode === "create"
-		? t("userFormModal.dialog.title.create")
-		: t("userFormModal.dialog.title.edit");
+		? t("content.userFormModal.dialog.title.create")
+		: t("content.userFormModal.dialog.title.edit");
 
 const renderDialogBody = (
 	isWaitingForUser: boolean,
@@ -498,16 +521,23 @@ export function UserFormModal({
 	routePath,
 	returnTo,
 }: UserFormModalProps) {
-	const { t } = useTranslation("content");
-	const { t: tCommon } = useTranslation("common");
-	const { t: tEnum, i18n } = useTranslation("enumMap");
+	const { t } = useTranslation();
+	const { t: tCommon } = useTranslation();
+	const { t: tEnum, i18n } = useTranslation();
 	const users = useAccountStore((state) => state.users);
 	const roles = useAccountStore((state) => state.roles);
 	const groups = useAccountStore((state) => state.groups);
 	const removeUser = useAccountStore((state) => state.removeUser);
-	const institutions =
-		useInstitutionStore((state) => state.allInstitutions) ?? [];
-	const categories = useInstitutionStore((state) => state.categories) ?? [];
+	const allInstitutions = useInstitutionStore((state) => state.allInstitutions);
+	const storeCategories = useInstitutionStore((state) => state.categories);
+	const isInstitutionStoreLoading = useInstitutionStore(
+		(state) => state.isLoading,
+	);
+	const initializePublicData = useInstitutionStore(
+		(state) => state.initializePublicData,
+	);
+	const institutions = allInstitutions ?? [];
+	const categories = storeCategories ?? [];
 	const [isDeleting, setIsDeleting] = useState(false);
 	const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 	const [deleteError, setDeleteError] = useState<{
@@ -525,12 +555,28 @@ export function UserFormModal({
 		users,
 	);
 
+	useEffect(() => {
+		if (allInstitutions !== null && storeCategories !== null) return;
+		if (isInstitutionStoreLoading) return;
+		if (typeof initializePublicData !== "function") return;
+
+		void initializePublicData();
+	}, [
+		allInstitutions,
+		initializePublicData,
+		isInstitutionStoreLoading,
+		storeCategories,
+	]);
+
 	const handleSuccess = (nextMode: UserFormModalProps["mode"]) => {
 		const keyPrefix =
 			nextMode === "create"
 				? "userFormModal.feedback.create"
 				: "userFormModal.feedback.update";
-		showSuccessToast(t(`${keyPrefix}.title`), t(`${keyPrefix}.description`));
+		showSuccessToast(
+			t(`content.${keyPrefix}.title`),
+			t(`content.${keyPrefix}.description`),
+		);
 	};
 	const { handleSubmit, submitting } = useUserSubmit(
 		mode,
@@ -545,11 +591,12 @@ export function UserFormModal({
 		() => [
 			{
 				value: "approval_pending",
-				label: t("userFormModal.status.approvalPending"),
+				label: t("content.userFormModal.status.approvalPending"),
 			},
-			{ value: "active", label: t("userFormModal.status.active") },
-			{ value: "banned", label: t("userFormModal.status.banned") },
+			{ value: "active", label: t("content.userFormModal.status.active") },
+			{ value: "banned", label: t("content.userFormModal.status.banned") },
 		],
+
 		[t],
 	);
 	const { institutionOptions, filteredInstitutionOptions, filterPanel } =
@@ -580,7 +627,7 @@ export function UserFormModal({
 		return {
 			...baseConfig,
 			deleteAction: {
-				label: t("userFormModal.delete.button"),
+				label: t("content.userFormModal.delete.button"),
 				onClick: () => setShowDeleteDialog(true),
 				disabled: isDeleting || submitting,
 				className: "p-0!",
@@ -607,8 +654,8 @@ export function UserFormModal({
 		showNotFound && !isDeleting
 			? {
 					active: true,
-					title: t("userFormModal.dialog.notFound.title"),
-					description: t("userFormModal.dialog.notFound.description"),
+					title: t("content.userFormModal.dialog.notFound.title"),
+					description: t("content.userFormModal.dialog.notFound.description"),
 				}
 			: undefined;
 
@@ -625,15 +672,18 @@ export function UserFormModal({
 					? {
 							open: true,
 							status: "warning",
-							title: t("userFormModal.delete.confirmTitle", {
+							title: t("content.userFormModal.delete.confirmTitle", {
 								defaultValue: "Delete user?",
 							}),
-							description: t("userFormModal.delete.confirmDescription", {
-								defaultValue:
-									"This will permanently remove the user. This action cannot be undone.",
-							}),
-							confirmLabel: t("userFormModal.delete.confirm"),
-							cancelLabel: t("userFormModal.delete.cancel", {
+							description: t(
+								"content.userFormModal.delete.confirmDescription",
+								{
+									defaultValue:
+										"This will permanently remove the user. This action cannot be undone.",
+								},
+							),
+							confirmLabel: t("content.userFormModal.delete.confirm"),
+							cancelLabel: t("content.userFormModal.delete.cancel", {
 								defaultValue: "Cancel",
 							}),
 							onCancel: () => setShowDeleteDialog(false),
@@ -643,7 +693,7 @@ export function UserFormModal({
 								const result = await deleteUser(resolvedUser.id);
 								if (!result.ok) {
 									setDeleteError({
-										title: t("userFormModal.delete.errorTitle", {
+										title: t("content.userFormModal.delete.errorTitle", {
 											defaultValue: "Delete failed",
 										}),
 										description: translateUserFormError(t, result.error),
@@ -658,10 +708,10 @@ export function UserFormModal({
 									queueMicrotask(() => {
 										removeUser(resolvedUser.id);
 										showSuccessToast(
-											t("userFormModal.feedback.delete.title", {
+											t("content.userFormModal.feedback.delete.title", {
 												defaultValue: "User deleted",
 											}),
-											t("userFormModal.feedback.delete.description", {
+											t("content.userFormModal.feedback.delete.description", {
 												defaultValue: "The user has been removed successfully.",
 											}),
 										);
@@ -680,9 +730,9 @@ export function UserFormModal({
 				deleteError || submitError
 					? {
 							open: true,
-							title: deleteError ? deleteError.title : t("error"),
+							title: deleteError ? deleteError.title : t("common.error"),
 							description: deleteError?.description ?? submitError ?? "",
-							confirmLabel: t("close"),
+							confirmLabel: t("common.close"),
 							onConfirm: () => {
 								setDeleteError(null);
 								setSubmitError(null);

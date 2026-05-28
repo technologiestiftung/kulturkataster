@@ -7,7 +7,7 @@ import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import BurgerMenu from "@/icons/burger-menu-icon.svg";
 
 export function ViewModeToggle() {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation();
 	const router = useRouter();
 	const toLocalePath = useLocalePath();
 
@@ -18,9 +18,9 @@ export function ViewModeToggle() {
 					radius="full"
 					variant="surface"
 					iconSize="lg"
-					title={t("mobileMenu.title")}
+					title={t("common.mobileMenu.title")}
 					onClick={() => router.push(toLocalePath("/mobileMenu"))}
-					aria-label={t("mobileMenu.title")}
+					aria-label={t("common.mobileMenu.title")}
 					className="md:hidden"
 				>
 					<BurgerMenu size={14} />

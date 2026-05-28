@@ -29,7 +29,7 @@ function Badges({
 	badgeClassName,
 	emptyClassName,
 }: Badges) {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation();
 
 	const { previewItems, overflowCount } = useMemo(() => {
 		const preview = items.slice(0, previewCount);
@@ -61,7 +61,7 @@ function Badges({
 			))}
 			{overflowCount > 0 && (
 				<Badge variant={badgeVariant} className={cn("text-xs", badgeClassName)}>
-					{t("badges.more", { count: overflowCount })}
+					{t("common.badges.more", { count: overflowCount })}
 				</Badge>
 			)}
 		</div>

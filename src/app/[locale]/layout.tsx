@@ -16,6 +16,7 @@ import { StoreAutoRefresh } from "@/components/StoreAutoRefresh";
 import { ViewModeToggle } from "@/components/Menu/ViewModeToggle";
 import { Toaster } from "@/components/ui/sonner";
 import { getCurrentProfile } from "@/server/actions/auth";
+import { parseHiddenMenuItems } from "@/lib/utils/menuVisibility";
 
 // Initialize axe-core for accessibility testing in development
 // Commented out until @axe-core/react is installed
@@ -66,13 +67,12 @@ export default async function RootLayout({
 	params: Promise<{ locale: Locale }>;
 }>) {
 	const { locale } = await params;
-	const ns: string[] = ["common", "content", "enumMap"]; // namespace used for this page
-	const { resources } = await serverSideTranslation(locale, ns);
+	const { resources } = await serverSideTranslation(locale);
 	const localizedResources = resources as Record<
 		string,
 		Record<string, Record<string, unknown>>
 	>;
-	const localeResources = localizedResources?.[locale] ?? {};
+	const localeResources = localizedResources?.[locale]?.translation ?? {};
 	const commonResources = (localeResources.common ?? {}) as Record<
 		string,
 		unknown
@@ -105,11 +105,12 @@ export default async function RootLayout({
 			: undefined;
 	const shouldLoadMatomo = envHint !== "local";
 	const isLoggedIn = (await getCurrentProfile()) !== null;
+	const hiddenMenuItems = parseHiddenMenuItems(process.env.HIDDEN_MENU_ITEMS);
 
 	return (
 		<html lang={locale} dir={getDirection(locale)}>
 			<body className={`${barlow.className} antialiased`}>
-				<I18NProvider locale={locale} namespaces={ns} resources={resources}>
+				<I18NProvider locale={locale} resources={resources}>
 					<AppPersistenceProvider />
 					<StoreInitializer />
 					<StoreAutoRefresh />
@@ -127,7 +128,11 @@ export default async function RootLayout({
 									aria-label={headerLabel}
 									className="flex-shrink-0 w-auto"
 								>
-									<Menu sidebar={sidebar} isLoggedIn={isLoggedIn} />
+									<Menu
+										sidebar={sidebar}
+										isLoggedIn={isLoggedIn}
+										hiddenMenuItems={hiddenMenuItems}
+									/>
 								</header>
 								<SidebarInset asChild className="min-h-0 flex-1 w-0">
 									<main

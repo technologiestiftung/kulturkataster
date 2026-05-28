@@ -29,7 +29,7 @@ const InstitutionCard = memo(function InstitutionCard({
 	isSelected = false,
 	openDetails = false,
 }: InstitutionCardProps) {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation();
 	const fieldLabel = useFieldLabel();
 	const { isPrivateField } = useInstitutionPrivateFieldResolver();
 
@@ -70,7 +70,7 @@ const InstitutionCard = memo(function InstitutionCard({
 			onKeyDown={onClick ? handleKeyDown : undefined}
 			aria-label={
 				onClick
-					? `${institutionData.name} - ${t("institution.showDetails")}`
+					? `${institutionData.name} - ${t("common.institution.showDetails")}`
 					: undefined
 			}
 		>
@@ -157,13 +157,14 @@ const InstitutionCard = memo(function InstitutionCard({
 								title: (
 									<>
 										<span className="group-data-[state=open]:hidden">
-											{t("institution.moreInfo")}
+											{t("common.institution.moreInfo")}
 										</span>
 										<span className="group-data-[state=closed]:hidden">
-											{t("institution.lessInfo")}
+											{t("common.institution.lessInfo")}
 										</span>
 									</>
 								),
+
 								className: "pt-4",
 								cardVariant: "none",
 								fields: [

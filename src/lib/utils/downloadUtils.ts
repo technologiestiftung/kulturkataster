@@ -81,6 +81,16 @@ type ExportFieldMeta = {
 	permissionField: string | null;
 };
 
+const EXCEL_NOTICE_ROWS = 5;
+const EXCEL_NOTICE_MERGE_END_COLUMN = 3;
+const EXCEL_NOTICE_DEFAULT_ROWS = [
+	"Die Daten stammen vom Berliner Kulturkataster.",
+	"Bitte benennen Sie bei Verwendung das Kulturkataster als Download-Quelle und beachten Sie die rechtlichen Hinweise.",
+	"www.kulturkataster.berlin",
+	"Ein Projekt der Kulturraum Berlin gGmbH",
+] as const;
+const EXCEL_HYPERLINK_FONT_COLOR = "0563C1";
+
 const enumKeyMappings: Record<string, string> = {
 	categories: "category",
 	subcategories: "category",
@@ -104,7 +114,10 @@ const ALWAYS_EXCLUDED_EXPORT_FIELDS: Set<string> = new Set([
 ]);
 
 const isObjectRecord = (value: unknown): value is Record<string, unknown> =>
-	typeof value === "object" && value !== null && !Array.isArray(value);
+	typeof value === "object" &&
+	value !== null &&
+	!Array.isArray(value) &&
+	!(value instanceof Date);
 
 function humanizeFieldKey(key: string) {
 	return key
@@ -120,7 +133,7 @@ function humanizeFieldKey(key: string) {
 function translateColumnName(key: string, translateFn?: TranslateFn): string {
 	if (!translateFn) return humanizeFieldKey(key);
 
-	const translationKey = `field_names.${key}.label`;
+	const translationKey = `enumMap.field_names.${key}.label`;
 	const translated = translateFn(translationKey);
 	return translated !== translationKey ? translated : humanizeFieldKey(key);
 }
@@ -143,17 +156,39 @@ function translateEnumValue(
 	}
 }
 
+function formatDateValue(value: Date): string {
+	const day = String(value.getUTCDate()).padStart(2, "0");
+	const month = String(value.getUTCMonth() + 1).padStart(2, "0");
+	const year = value.getUTCFullYear();
+	return `${day}.${month}.${year}`;
+}
+
+function parseIsoDateValue(value: string): Date | null {
+	if (!/^\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}(?:\.\d{3})?Z)?$/.test(value)) {
+		return null;
+	}
+
+	const date = new Date(value);
+	return Number.isNaN(date.getTime()) ? null : date;
+}
+
 function formatScalarValue(
 	exportKey: string,
 	value: unknown,
 	translateFn?: TranslateFn,
 ): string {
 	if (value === null || value === undefined) return "";
-	if (value instanceof Date) return value.toISOString();
+	if (value instanceof Date) return formatDateValue(value);
 	if (typeof value === "boolean") {
 		return translateEnumValue(exportKey, value ? "yes" : "no", translateFn);
 	}
-	if (typeof value === "string" || typeof value === "number") {
+	if (typeof value === "string") {
+		const date = parseIsoDateValue(value);
+		return date
+			? formatDateValue(date)
+			: translateEnumValue(exportKey, value, translateFn);
+	}
+	if (typeof value === "number") {
 		return translateEnumValue(exportKey, value, translateFn);
 	}
 	return String(value);
@@ -508,45 +543,189 @@ function generateCSV(data: Record<string, string>[]): string {
 	return BOM + [csvHeaders, ...csvRows].join("\r\n");
 }
 
-function generateExcelBuffer(
-	data: Record<string, string>[],
-	format: "xlsx" | "xls",
-): ArrayBuffer {
-	if (data.length === 0) {
-		const wb = XLSX.utils.book_new();
-		const ws = XLSX.utils.json_to_sheet([]);
-		XLSX.utils.book_append_sheet(wb, ws, "Kulturorte");
-		return XLSX.write(wb, { bookType: format, type: "array" });
+const getExcelNoticeRows = (translateFn?: TranslateFn) =>
+	EXCEL_NOTICE_DEFAULT_ROWS.map((defaultValue, index) => {
+		if (!translateFn) return defaultValue;
+		return translateFn(`common.download.exportNotice.row${index + 1}`, {
+			defaultValue,
+		});
+	});
+
+function applyExcelNotice(ws: XLSX.WorkSheet, translateFn?: TranslateFn) {
+	const noticeRows = getExcelNoticeRows(translateFn);
+	ws["!merges"] = [
+		...(ws["!merges"] ?? []),
+		...noticeRows.map((_, rowIndex) => ({
+			s: { r: rowIndex, c: 0 },
+			e: { r: rowIndex, c: EXCEL_NOTICE_MERGE_END_COLUMN },
+		})),
+	];
+
+	noticeRows.forEach((noticeText, rowIndex) => {
+		const cellAddress = XLSX.utils.encode_cell({ r: rowIndex, c: 0 });
+		const linkTarget = getHyperlinkTarget(noticeText);
+		ws[cellAddress] = {
+			t: "s",
+			v: noticeText,
+			s: {
+				font: {
+					name: "Arial",
+					sz: 12,
+					bold: true,
+					color: {
+						rgb: linkTarget ? EXCEL_HYPERLINK_FONT_COLOR : "000000",
+					},
+					underline: Boolean(linkTarget),
+				},
+				alignment: {
+					horizontal: "left",
+					vertical: "top",
+					wrapText: true,
+				},
+			},
+		};
+		if (linkTarget) {
+			ws[cellAddress].l = {
+				Target: linkTarget,
+				Tooltip: linkTarget,
+			};
+		}
+	});
+
+	ws["!rows"] = [
+		{ hpt: 22 },
+		{ hpt: 32 },
+		{ hpt: 22 },
+		{ hpt: 22 },
+		{ hpt: 8 },
+	];
+}
+
+function applyExcelHeaderStyle(ws: XLSX.WorkSheet, headers: string[]) {
+	headers.forEach((_, colIndex) => {
+		const cellAddress = XLSX.utils.encode_cell({
+			r: EXCEL_NOTICE_ROWS,
+			c: colIndex,
+		});
+		if (ws[cellAddress]) {
+			ws[cellAddress].s = {
+				font: {
+					name: "Arial",
+					sz: 11,
+					bold: true,
+				},
+				fill: {
+					patternType: "solid",
+					fgColor: { rgb: "FFFFFF" },
+				},
+				alignment: {
+					horizontal: "center",
+					vertical: "center",
+				},
+				border: {
+					bottom: { style: "thin", color: { rgb: "000000" } },
+				},
+			};
+		}
+	});
+}
+
+function getHyperlinkTarget(value: string): string | null {
+	const trimmedValue = value.trim();
+	if (!trimmedValue) return null;
+
+	if (/^https?:\/\/\S+$/i.test(trimmedValue)) {
+		return trimmedValue;
 	}
 
-	const wb = XLSX.utils.book_new();
-	const ws = XLSX.utils.json_to_sheet(data);
-	if (data.length > 0) {
-		const headers = Object.keys(data[0]);
-		headers.forEach((_, colIndex) => {
-			const cellAddress = XLSX.utils.encode_cell({ r: 0, c: colIndex });
-			if (ws[cellAddress]) {
-				ws[cellAddress].s = {
-					font: {
-						name: "Arial",
-						sz: 11,
-						bold: true,
-					},
-					fill: {
-						patternType: "solid",
-						fgColor: { rgb: "FFFFFF" },
-					},
-					alignment: {
-						horizontal: "center",
-						vertical: "center",
-					},
-					border: {
-						bottom: { style: "thin", color: { rgb: "000000" } },
-					},
-				};
-			}
-		});
+	if (/^mailto:\S+@\S+\.\S+$/i.test(trimmedValue)) {
+		return trimmedValue;
 	}
+
+	if (/^www\.\S+\.\S+$/i.test(trimmedValue)) {
+		return `https://${trimmedValue}`;
+	}
+
+	return null;
+}
+
+function applyExcelHyperlinks(
+	ws: XLSX.WorkSheet,
+	data: Record<string, string>[],
+) {
+	if (data.length === 0) return;
+
+	const headers = Object.keys(data[0]);
+	data.forEach((row, rowIndex) => {
+		headers.forEach((header, colIndex) => {
+			const value = row[header];
+			if (typeof value !== "string") return;
+			const hyperlinkTarget = getHyperlinkTarget(value);
+			if (!hyperlinkTarget) return;
+
+			const cellAddress = XLSX.utils.encode_cell({
+				r: EXCEL_NOTICE_ROWS + 1 + rowIndex,
+				c: colIndex,
+			});
+			const cell = ws[cellAddress];
+			if (!cell) return;
+
+			cell.l = {
+				Target: hyperlinkTarget,
+				Tooltip: hyperlinkTarget,
+			};
+			cell.s = {
+				...(cell.s ?? {}),
+				font: {
+					...((cell.s as XLSX.CellObject["s"])?.font ?? {}),
+					color: { rgb: EXCEL_HYPERLINK_FONT_COLOR },
+					underline: true,
+				},
+			};
+		});
+	});
+}
+
+function applyExcelColumnWidths(
+	ws: XLSX.WorkSheet,
+	data: Record<string, string>[],
+) {
+	if (data.length === 0) {
+		ws["!cols"] = [{ wch: 60 }, { wch: 18 }, { wch: 18 }, { wch: 18 }];
+		return;
+	}
+
+	const headers = Object.keys(data[0]);
+	ws["!cols"] = headers.map((header, colIndex) => {
+		const maxContentLength = Math.max(
+			header.length,
+			...data.map((row) => String(row[header] ?? "").length),
+		);
+		const minimumWidth = colIndex === 0 ? 30 : 14;
+		const maximumWidth = colIndex === 0 ? 42 : 32;
+		return {
+			wch: Math.min(Math.max(maxContentLength + 2, minimumWidth), maximumWidth),
+		};
+	});
+}
+
+export function generateExcelBuffer(
+	data: Record<string, string>[],
+	format: "xlsx" | "xls",
+	translateFn?: TranslateFn,
+): ArrayBuffer {
+	const wb = XLSX.utils.book_new();
+	const ws = XLSX.utils.aoa_to_sheet([]);
+	applyExcelNotice(ws, translateFn);
+
+	if (data.length > 0) {
+		XLSX.utils.sheet_add_json(ws, data, {
+			origin: `A${EXCEL_NOTICE_ROWS + 1}`,
+		});
+		applyExcelHeaderStyle(ws, Object.keys(data[0]));
+		applyExcelHyperlinks(ws, data);
+	}
+	applyExcelColumnWidths(ws, data);
 
 	XLSX.utils.book_append_sheet(wb, ws, "Kulturorte");
 	return XLSX.write(wb, { bookType: format, type: "array" });
@@ -606,7 +785,7 @@ export async function downloadInstitutions({
 			break;
 		}
 		case "xlsx": {
-			const xlsxBuffer = generateExcelBuffer(preparedData, "xlsx");
+			const xlsxBuffer = generateExcelBuffer(preparedData, "xlsx", translateFn);
 			downloadBinaryFile(
 				xlsxBuffer,
 				fullFilename,
@@ -615,7 +794,7 @@ export async function downloadInstitutions({
 			break;
 		}
 		case "xls": {
-			const xlsBuffer = generateExcelBuffer(preparedData, "xls");
+			const xlsBuffer = generateExcelBuffer(preparedData, "xls", translateFn);
 			downloadBinaryFile(xlsBuffer, fullFilename, "application/vnd.ms-excel");
 			break;
 		}

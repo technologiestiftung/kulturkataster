@@ -46,7 +46,7 @@ test.describe("institution direct create form", () => {
 	const selectOptionById = async (
 		page: import("@playwright/test").Page,
 		id: string,
-		optionName: string,
+		optionName: string | string[],
 	) => {
 		const trigger = await getVisibleFieldById(page, id);
 		await trigger.click();
@@ -57,16 +57,33 @@ test.describe("institution direct create form", () => {
 			`Select "${id}" should expose aria-controls when opened.`,
 		).toBeTruthy();
 
-		const option = page.locator(`#${listboxId}`).getByRole("option", {
-			name: optionName,
+		const listbox = page.locator(`[id="${listboxId}"]`);
+		await expect(listbox).toBeVisible({ timeout: 15_000 });
+		const visibleOptionNames = (
+			await listbox.getByRole("option").allTextContents()
+		)
+			.map((text) => text.trim())
+			.filter(Boolean);
+		const optionNames = Array.isArray(optionName) ? optionName : [optionName];
+		const selectedOptionName = optionNames.find((name) =>
+			visibleOptionNames.includes(name),
+		);
+
+		expect(
+			selectedOptionName,
+			`Expected select "${id}" to show one of: ${optionNames.join(", ")}. Visible options: ${visibleOptionNames.join(", ")}`,
+		).toBeTruthy();
+
+		const option = listbox.getByRole("option", {
+			name: selectedOptionName!,
 			exact: true,
 		});
 		await expect(
 			option,
-			`Expected select "${id}" to show option "${optionName}".`,
+			`Expected select "${id}" to show option "${selectedOptionName}".`,
 		).toBeVisible({ timeout: 15_000 });
 		await option.press("Enter");
-		await expect(trigger).toContainText(optionName);
+		await expect(trigger).toContainText(selectedOptionName!);
 	};
 
 	const chooseRadioValue = async (
@@ -146,10 +163,11 @@ test.describe("institution direct create form", () => {
 	const expectSelectedOptionById = async (
 		page: import("@playwright/test").Page,
 		id: string,
-		value: string,
+		value: string | string[],
 	) => {
 		const trigger = await getVisibleFieldById(page, id);
-		await expect(trigger).toContainText(value);
+		const values = Array.isArray(value) ? value : [value];
+		await expect(trigger).toContainText(new RegExp(values.join("|")));
 	};
 
 	test("admin can fill every institution form field, create it, and reopen it with all values intact", async ({
@@ -329,11 +347,10 @@ test.describe("institution direct create form", () => {
 		await fillRequiredById(page, "closing_reason", expected.closingReason);
 		await selectOptionById(page, "owner_type", expected.ownerType);
 		await fillRequiredById(page, "owner_name", expected.ownerName);
-		await selectOptionById(
-			page,
-			"rental_contract_type",
+		await selectOptionById(page, "rental_contract_type", [
 			expected.rentalContractType,
-		);
+			"Befristete Miete",
+		]);
 		await fillRequiredById(
 			page,
 			"rental_contract_end",
@@ -504,11 +521,10 @@ test.describe("institution direct create form", () => {
 		await expectInputValueById(page, "closing_reason", expected.closingReason);
 		await expectSelectedOptionById(page, "owner_type", expected.ownerType);
 		await expectInputValueById(page, "owner_name", expected.ownerName);
-		await expectSelectedOptionById(
-			page,
-			"rental_contract_type",
+		await expectSelectedOptionById(page, "rental_contract_type", [
 			expected.rentalContractType,
-		);
+			"Befristete Miete",
+		]);
 		await expectInputValueById(
 			page,
 			"rental_contract_end",

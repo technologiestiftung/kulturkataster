@@ -12,7 +12,7 @@ const {
 	loggerError,
 	listActive,
 	findActiveByPath,
-	sendTemplatedEmail,
+	enqueueTemplatedEmail,
 } = vi.hoisted(() => ({
 	authorizeTable: vi.fn(),
 	requireAllScope: vi.fn(),
@@ -25,7 +25,7 @@ const {
 	loggerError: vi.fn(),
 	listActive: vi.fn(),
 	findActiveByPath: vi.fn(),
-	sendTemplatedEmail: vi.fn(),
+	enqueueTemplatedEmail: vi.fn(),
 }));
 
 vi.mock("@/server/utils/rbac", () => ({
@@ -92,8 +92,8 @@ vi.mock("@/server/data/emailTemplateRepo", () => ({
 	},
 }));
 
-vi.mock("@/server/email/sendTemplatedEmail", () => ({
-	sendTemplatedEmail,
+vi.mock("@/server/email/outbox", () => ({
+	enqueueTemplatedEmail,
 }));
 
 import {
@@ -243,7 +243,7 @@ describe("sendUserEmailTemplate", () => {
 		requireAllScope.mockResolvedValue(undefined);
 		findById.mockResolvedValue(resolvedUser);
 		findActiveByPath.mockReset();
-		sendTemplatedEmail.mockReset();
+		enqueueTemplatedEmail.mockReset();
 	});
 
 	it("sends the email when template and user exist", async () => {
@@ -253,14 +253,14 @@ describe("sendUserEmailTemplate", () => {
 			name: "Claim bestätigt",
 			subject: "Ihr Claim wurde bestätigt",
 		});
-		sendTemplatedEmail.mockResolvedValue(undefined);
+		enqueueTemplatedEmail.mockResolvedValue(undefined);
 
 		const result = await sendUserEmailTemplate({
 			userId: "user-1",
 			templatePath: "custom/claim_approved.html",
 		});
 
-		expect(sendTemplatedEmail).toHaveBeenCalledWith(
+		expect(enqueueTemplatedEmail).toHaveBeenCalledWith(
 			expect.objectContaining({
 				to: "user@example.com",
 				templatePath: "custom/claim_approved.html",
@@ -277,7 +277,7 @@ describe("sendUserEmailTemplate", () => {
 			templatePath: "custom/nonexistent.html",
 		});
 
-		expect(sendTemplatedEmail).not.toHaveBeenCalled();
+		expect(enqueueTemplatedEmail).not.toHaveBeenCalled();
 		expect(result).toMatchObject({ ok: false });
 	});
 
@@ -295,7 +295,7 @@ describe("sendUserEmailTemplate", () => {
 			templatePath: "custom/claim_approved.html",
 		});
 
-		expect(sendTemplatedEmail).not.toHaveBeenCalled();
+		expect(enqueueTemplatedEmail).not.toHaveBeenCalled();
 		expect(result).toMatchObject({ ok: false });
 	});
 });

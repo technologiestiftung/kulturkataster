@@ -14,21 +14,21 @@ interface Barrier {
 }
 
 export function AccessibilityModal({ routePath }: { routePath?: string }) {
-	const { t } = useTranslation("content");
+	const { t } = useTranslation();
 	const toLocalePath = useLocalePath();
 
-	const barriers = t("accessibilityModal.which.barriers", {
+	const barriers = t("content.accessibilityModal.which.barriers", {
 		returnObjects: true,
 	}) as Barrier[];
 
 	const content = (
 		<div className="space-y-8">
-			<TextBlock text={t("accessibilityModal.description")} />
+			<TextBlock text={t("content.accessibilityModal.description")} />
 			<TextBlock
-				text={t("accessibilityModal.descriptionLink")}
+				text={t("content.accessibilityModal.descriptionLink")}
 				link={{
-					href: t("accessibilityModal.link"),
-					text: t("accessibilityModal.link"),
+					href: t("content.accessibilityModal.link"),
+					text: t("content.accessibilityModal.link"),
 					target: "_blank",
 				}}
 			/>
@@ -36,8 +36,7 @@ export function AccessibilityModal({ routePath }: { routePath?: string }) {
 			<div>
 				<p>
 					<Trans
-						i18nKey="accessibilityModal.simpleLanguageDirect"
-						ns="content"
+						i18nKey="content.accessibilityModal.simpleLanguageDirect"
 						components={{
 							link: (
 								<Link
@@ -45,7 +44,7 @@ export function AccessibilityModal({ routePath }: { routePath?: string }) {
 									rel="noopener noreferrer"
 									className="text-primary-dark hover:text-primary underline bg-transparent border-none p-0 "
 								>
-									{t("here")}
+									{t("common.here")}
 								</Link>
 							),
 						}}
@@ -53,8 +52,7 @@ export function AccessibilityModal({ routePath }: { routePath?: string }) {
 				</p>
 				<p>
 					<Trans
-						i18nKey="accessibilityModal.signLanguageDirect"
-						ns="content"
+						i18nKey="content.accessibilityModal.signLanguageDirect"
 						components={{
 							link: (
 								<Link
@@ -62,7 +60,7 @@ export function AccessibilityModal({ routePath }: { routePath?: string }) {
 									rel="noopener noreferrer"
 									className="text-primary-dark hover:text-primary underline bg-transparent border-none p-0 "
 								>
-									{t("here")}
+									{t("common.here")}
 								</Link>
 							),
 						}}
@@ -73,30 +71,30 @@ export function AccessibilityModal({ routePath }: { routePath?: string }) {
 			<TextBlock
 				titleAs="h1"
 				className="h1"
-				title={t("accessibilityModal.when.title")}
-				text={t("accessibilityModal.when.description")}
+				title={t("content.accessibilityModal.when.title")}
+				text={t("content.accessibilityModal.when.description")}
 			/>
 
 			<TextBlock
 				titleAs="h1"
 				className="h1"
-				title={t("accessibilityModal.how.title")}
-				text={t("accessibilityModal.how.description")}
+				title={t("content.accessibilityModal.how.title")}
+				text={t("content.accessibilityModal.how.description")}
 			/>
 
 			<div className="space-y-4">
 				<TextBlock
 					titleAs="h1"
 					className="h1"
-					title={t("accessibilityModal.which.title")}
-					text={t("accessibilityModal.which.description")}
+					title={t("content.accessibilityModal.which.title")}
+					text={t("content.accessibilityModal.which.description")}
 				/>
 
 				<TextBlock
 					titleAs="h2"
 					className="h2"
-					title={t("accessibilityModal.which.subheading")}
-					text={t("accessibilityModal.which.list_intro")}
+					title={t("content.accessibilityModal.which.subheading")}
+					text={t("content.accessibilityModal.which.list_intro")}
 				/>
 
 				<div className="space-y-6">
@@ -106,19 +104,19 @@ export function AccessibilityModal({ routePath }: { routePath?: string }) {
 							<div className="body2 space-y-2">
 								<p className="body2">
 									<strong>
-										{t("accessibilityModal.which.descriptionLabel")}:
+										{t("content.accessibilityModal.which.descriptionLabel")}:
 									</strong>{" "}
 									{barrier.description}
 								</p>
 								<p>
 									<strong>
-										{t("accessibilityModal.which.measuresLabel")}:
+										{t("content.accessibilityModal.which.measuresLabel")}:
 									</strong>{" "}
 									{barrier.measures}
 								</p>
 								<p>
 									<strong>
-										{t("accessibilityModal.which.timelineLabel")}:
+										{t("content.accessibilityModal.which.timelineLabel")}:
 									</strong>{" "}
 									{barrier.timeline}
 								</p>
@@ -132,24 +130,27 @@ export function AccessibilityModal({ routePath }: { routePath?: string }) {
 				<TextBlock
 					titleAs="h1"
 					className="h1"
-					title={t("accessibilityModal.contact.title")}
-					text={t("accessibilityModal.contact.description")}
+					title={t("content.accessibilityModal.contact.title")}
+					text={t("content.accessibilityModal.contact.description")}
 				/>
+
 				<div className="body1 space-y-1">
 					<p className="body2">
-						<strong>{t("accessibilityModal.contact.name")}</strong>
+						<strong>{t("content.accessibilityModal.contact.name")}</strong>
 					</p>
-					<p className="body2">{t("accessibilityModal.contact.company")}</p>
 					<p className="body2">
-						{t("accessibilityModal.contact.telephone.label")}{" "}
-						{t("accessibilityModal.contact.telephone.number")}
+						{t("content.accessibilityModal.contact.company")}
+					</p>
+					<p className="body2">
+						{t("content.accessibilityModal.contact.telephone.label")}{" "}
+						{t("content.accessibilityModal.contact.telephone.number")}
 					</p>
 					<p>
 						<a
-							href={`mailto:${t("accessibilityModal.contact.email.address")}`}
+							href={`mailto:${t("content.accessibilityModal.contact.email.address")}`}
 							className="body2 text-primary-dark hover:text-primary underline"
 						>
-							{t("accessibilityModal.contact.email.address")}
+							{t("content.accessibilityModal.contact.email.address")}
 						</a>
 					</p>
 				</div>
@@ -159,29 +160,30 @@ export function AccessibilityModal({ routePath }: { routePath?: string }) {
 				<TextBlock
 					titleAs="h1"
 					className="h1"
-					title={t("accessibilityModal.contact_officer.title")}
-					text={t("accessibilityModal.contact_officer.description")}
+					title={t("content.accessibilityModal.contact_officer.title")}
+					text={t("content.accessibilityModal.contact_officer.description")}
 				/>
+
 				<div className="body1 space-y-2">
 					<p className="body2">
 						<a
-							href={t("accessibilityModal.contact_officer.link1.url")}
+							href={t("content.accessibilityModal.contact_officer.link1.url")}
 							className="text-primary-dark hover:text-primary underline"
 							target="_blank"
 							rel="noopener noreferrer"
 						>
-							{t("accessibilityModal.contact_officer.link1.text")}
+							{t("content.accessibilityModal.contact_officer.link1.text")}
 						</a>
 					</p>
 					<p className="body2">
-						{t("accessibilityModal.contact_officer.info_text_link2")}{" "}
+						{t("content.accessibilityModal.contact_officer.info_text_link2")}{" "}
 						<a
-							href={t("accessibilityModal.contact_officer.link2.url")}
+							href={t("content.accessibilityModal.contact_officer.link2.url")}
 							className="text-primary-dark hover:text-primary underline"
 							target="_blank"
 							rel="noopener noreferrer"
 						>
-							{t("accessibilityModal.contact_officer.link2.text")}
+							{t("content.accessibilityModal.contact_officer.link2.text")}
 						</a>
 					</p>
 				</div>
@@ -191,8 +193,8 @@ export function AccessibilityModal({ routePath }: { routePath?: string }) {
 
 	return (
 		<Modal
-			title={t("accessibilityModal.title")}
-			subtitle={t("accessibilityModal.subtitle")}
+			title={t("content.accessibilityModal.title")}
+			subtitle={t("content.accessibilityModal.subtitle")}
 			routePath={routePath}
 			hideLinksInModalFooter={["accessibility"]}
 		>

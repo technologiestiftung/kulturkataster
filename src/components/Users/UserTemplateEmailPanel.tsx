@@ -24,7 +24,7 @@ const getTemplateLabel = (
 	template: UserEmailTemplateOption,
 	t: (key: string, options?: Record<string, unknown>) => string,
 ) =>
-	t(`userFormModal.templateEmail.templates.${template.key}`, {
+	t(`content.userFormModal.templateEmail.templates.${template.key}`, {
 		defaultValue: template.name ?? template.key,
 	});
 
@@ -66,8 +66,8 @@ export function UserTemplateEmailPanel({
 				if (!isMounted) return;
 				if (!result.ok) {
 					showErrorToast(
-						t("userFormModal.templateEmail.title"),
-						t("userFormModal.templateEmail.loadError"),
+						t("content.userFormModal.templateEmail.title"),
+						t("content.userFormModal.templateEmail.loadError"),
 					);
 					setTemplates([]);
 					return;
@@ -82,8 +82,8 @@ export function UserTemplateEmailPanel({
 			.catch(() => {
 				if (!isMounted) return;
 				showErrorToast(
-					t("userFormModal.templateEmail.title"),
-					t("userFormModal.templateEmail.loadError"),
+					t("content.userFormModal.templateEmail.title"),
+					t("content.userFormModal.templateEmail.loadError"),
 				);
 			})
 			.finally(() => {
@@ -106,14 +106,14 @@ export function UserTemplateEmailPanel({
 			});
 			if (!result.ok) {
 				showErrorToast(
-					t("userFormModal.templateEmail.title"),
-					t("userFormModal.templateEmail.error"),
+					t("content.userFormModal.templateEmail.title"),
+					t("content.userFormModal.templateEmail.error"),
 				);
 				return;
 			}
 			showSuccessToast(
-				t("userFormModal.templateEmail.title"),
-				t("userFormModal.templateEmail.success"),
+				t("content.userFormModal.templateEmail.title"),
+				t("content.userFormModal.templateEmail.success"),
 			);
 		} finally {
 			setIsSending(false);
@@ -126,11 +126,11 @@ export function UserTemplateEmailPanel({
 				<div className="flex items-center gap-2">
 					<Mail className="h-5 w-5 text-primary-dark" />
 					<Label className="body2">
-						{t("userFormModal.templateEmail.title")}
+						{t("content.userFormModal.templateEmail.title")}
 					</Label>
 				</div>
 				<p className="body2 text-neutral-80">
-					{t("userFormModal.templateEmail.description")}
+					{t("content.userFormModal.templateEmail.description")}
 				</p>
 				<div className="flex flex-col gap-2">
 					<div className="flex-1 space-y-1">
@@ -145,8 +145,8 @@ export function UserTemplateEmailPanel({
 								<SelectValue
 									placeholder={
 										isLoadingTemplates
-											? t("userFormModal.templateEmail.loading")
-											: t("userFormModal.templateEmail.placeholder")
+											? t("content.userFormModal.templateEmail.loading")
+											: t("content.userFormModal.templateEmail.placeholder")
 									}
 								/>
 							</SelectTrigger>
@@ -169,7 +169,7 @@ export function UserTemplateEmailPanel({
 								window.open(`/api/emails/${selectedTemplatePath}`, "_blank");
 							}}
 						>
-							{t("userFormModal.templateEmail.preview")}
+							{t("content.userFormModal.templateEmail.preview")}
 						</Button>
 						<Button
 							type="button"
@@ -178,7 +178,7 @@ export function UserTemplateEmailPanel({
 							}
 							onClick={() => setShowConfirm(true)}
 						>
-							{t("userFormModal.templateEmail.send")}
+							{t("content.userFormModal.templateEmail.send")}
 						</Button>
 					</div>
 				</div>
@@ -187,12 +187,15 @@ export function UserTemplateEmailPanel({
 				<AlertDialog
 					open
 					status="warning"
-					title={t("userFormModal.templateEmail.confirmTitle")}
-					description={t("userFormModal.templateEmail.confirmDescription", {
-						email: user.email,
-					} as never)}
-					confirmLabel={t("userFormModal.templateEmail.confirmSend")}
-					cancelLabel={t("userFormModal.templateEmail.confirmCancel")}
+					title={t("content.userFormModal.templateEmail.confirmTitle")}
+					description={t(
+						"content.userFormModal.templateEmail.confirmDescription",
+						{
+							email: user.email,
+						} as never,
+					)}
+					confirmLabel={t("content.userFormModal.templateEmail.confirmSend")}
+					cancelLabel={t("content.userFormModal.templateEmail.confirmCancel")}
 					onConfirm={() => {
 						setShowConfirm(false);
 						void handleSendTemplate();

@@ -119,7 +119,6 @@ const footerItems: MenuItem[] = [
 		showInAccount: false,
 		showInMap: false,
 	},
-
 	{
 		id: "language",
 		icon: DEIcon,
@@ -198,13 +197,15 @@ function MobileSheetHeader({
 export function Menu({
 	sidebar,
 	isLoggedIn,
+	hiddenMenuItems,
 	...props
 }: React.ComponentProps<typeof Sidebar> & {
 	sidebar: React.ReactNode;
 	isLoggedIn: boolean;
+	hiddenMenuItems?: string[];
 }) {
 	const { setOpen, setOpenMobile, isMobile } = useSidebar();
-	const { t } = useTranslation("common");
+	const { t } = useTranslation();
 	const router = useRouter();
 	const toLocalePath = useLocalePath();
 	const pathname = usePathname();
@@ -218,9 +219,15 @@ export function Menu({
 		const firstSegment = normalizedPath.split("/").filter(Boolean)[0];
 		return allowedLocales.includes(firstSegment) ? firstSegment : defaultLocale;
 	}, [normalizedPath]);
+	const hiddenMenuItemIds = useMemo(
+		() => new Set(hiddenMenuItems ?? []),
+		[hiddenMenuItems],
+	);
 
 	const currentSidebarInstitutionId = useMemo(() => {
-		const match = normalizedPath.match(/\/(?:map|list)\/institution\/(\d+)$/);
+		const match = normalizedPath.match(
+			/\/(?:map|list)\/institution\/(\d+)(?:\/|$)/,
+		);
 		return match?.[1] ?? null;
 	}, [normalizedPath]);
 
@@ -294,6 +301,10 @@ export function Menu({
 	const setIsLayerTreeOpen = useAppStore((state) => state.setIsLayerTreeOpen);
 
 	const isMobileLayerTreeRoute = isMobile && isLayerTreeOpen && isMapRoute;
+	const isSwitchingInstitutionViewRef = useRef(false);
+	const switchInstitutionViewTimeoutRef = useRef<ReturnType<
+		typeof setTimeout
+	> | null>(null);
 	const dragStartYRef = useRef<number | null>(null);
 	const [mobileLayerTreeDragOffset, setMobileLayerTreeDragOffset] = useState(0);
 	const [isDraggingMobileLayerTree, setIsDraggingMobileLayerTree] =
@@ -304,9 +315,29 @@ export function Menu({
 		router.push(toLocalePath("/welcome"));
 	};
 
+	const markInstitutionViewSwitch = () => {
+		isSwitchingInstitutionViewRef.current = true;
+		if (switchInstitutionViewTimeoutRef.current) {
+			clearTimeout(switchInstitutionViewTimeoutRef.current);
+		}
+		switchInstitutionViewTimeoutRef.current = setTimeout(() => {
+			isSwitchingInstitutionViewRef.current = false;
+			switchInstitutionViewTimeoutRef.current = null;
+		}, 300);
+	};
+
+	useEffect(() => {
+		return () => {
+			if (switchInstitutionViewTimeoutRef.current) {
+				clearTimeout(switchInstitutionViewTimeoutRef.current);
+			}
+		};
+	}, []);
+
 	const handleMobileDetailsOpenChange = (nextOpen: boolean) => {
 		if (nextOpen) return;
 		if (!currentSidebarInstitutionId) return;
+		if (isSwitchingInstitutionViewRef.current) return;
 		router.replace(toLocalePath("/map"));
 	};
 
@@ -405,6 +436,7 @@ export function Menu({
 				(item.id === "map" || item.id === "list") &&
 				currentSidebarInstitutionId
 			) {
+				markInstitutionViewSwitch();
 				router.push(
 					toLocalePath(
 						`/${item.id}/institution/${currentSidebarInstitutionId}`,
@@ -420,7 +452,10 @@ export function Menu({
 
 	return (
 		<>
-			<nav aria-label={t("menu.navigation")} className="pointer-events-auto">
+			<nav
+				aria-label={t("common.menu.navigation")}
+				className="pointer-events-auto"
+			>
 				<Sidebar
 					collapsible="icon"
 					className="relative overflow-visible *:data-[sidebar=sidebar]:flex-row [&_*]:!transition-none"
@@ -436,7 +471,7 @@ export function Menu({
 									<button
 										className=""
 										onClick={handleLogoClick}
-										aria-label={t("kukaLogoButton")}
+										aria-label={t("common.kukaLogoButton")}
 									>
 										<KukaSmallLogo
 											title="Kulturkataster Berlin, Logo"
@@ -455,6 +490,7 @@ export function Menu({
 												.filter((item) =>
 													isAccountRoute ? item.showInAccount : item.showInMap,
 												)
+												.filter((item) => !hiddenMenuItemIds.has(item.id))
 												.map((item) => {
 													const isActive = isMenuItemActive(
 														item,
@@ -466,12 +502,12 @@ export function Menu({
 														<SidebarMenuItem key={item.id}>
 															<SidebarMenuButton
 																tooltip={{
-																	children: t(item.label),
+																	children: t("common." + item.label),
 																	hidden: false,
 																}}
 																onClick={() => handleItemClick(item)}
 																isActive={isActive}
-																aria-label={t(item.label)}
+																aria-label={t("common." + item.label)}
 																aria-current={isActive ? "page" : undefined}
 																className="relative"
 															>
@@ -489,33 +525,35 @@ export function Menu({
 							</SidebarContent>
 							<SidebarFooter>
 								<SidebarMenu>
-									{footerItems.map((item) => {
-										const isActive = isMenuItemActive(
-											item,
-											normalizedPath,
-											toLocalePath,
-										);
-										let Icon = item.icon;
-										if (item.id === "language") {
-											Icon = currentLocale !== "de" ? DEIcon : ENIcon;
-										}
-										return (
-											<SidebarMenuItem key={item.id}>
-												<SidebarMenuButton
-													tooltip={{
-														children: t(item.label),
-														hidden: false,
-													}}
-													onClick={() => handleItemClick(item)}
-													isActive={isActive}
-													aria-label={t(item.label)}
-													aria-current={isActive ? "page" : undefined}
-												>
-													<Icon />
-												</SidebarMenuButton>
-											</SidebarMenuItem>
-										);
-									})}
+									{footerItems
+										.filter((item) => !hiddenMenuItemIds.has(item.id))
+										.map((item) => {
+											const isActive = isMenuItemActive(
+												item,
+												normalizedPath,
+												toLocalePath,
+											);
+											let Icon = item.icon;
+											if (item.id === "language") {
+												Icon = currentLocale !== "de" ? DEIcon : ENIcon;
+											}
+											return (
+												<SidebarMenuItem key={item.id}>
+													<SidebarMenuButton
+														tooltip={{
+															children: t("common." + item.label),
+															hidden: false,
+														}}
+														onClick={() => handleItemClick(item)}
+														isActive={isActive}
+														aria-label={t("common." + item.label)}
+														aria-current={isActive ? "page" : undefined}
+													>
+														<Icon />
+													</SidebarMenuButton>
+												</SidebarMenuItem>
+											);
+										})}
 								</SidebarMenu>
 							</SidebarFooter>
 						</div>
@@ -541,6 +579,7 @@ export function Menu({
 				<SidebarMenu className="flex-row justify-around px-2 py-2">
 					{menuItems
 						.filter((item) => item.showInMobile)
+						.filter((item) => !hiddenMenuItemIds.has(item.id))
 						.map((item) => {
 							const isActive = isMenuItemActive(
 								item,
@@ -553,7 +592,7 @@ export function Menu({
 										onClick={() => handleItemClick(item)}
 										isActive={isActive}
 										className="relative flex-col h-auto py-2 px-3 w-auto size-14"
-										aria-label={t(item.label)}
+										aria-label={t("common." + item.label)}
 										aria-current={isActive ? "page" : undefined}
 									>
 										{item.id === "user" && isLoggedIn && (
@@ -561,7 +600,7 @@ export function Menu({
 										)}
 										<item.icon className="size-6" />
 										<span className="text-xs font-medium hidden">
-											{t(item.label)}
+											{t("common." + item.label)}
 										</span>
 									</SidebarMenuButton>
 								</SidebarMenuItem>
@@ -604,8 +643,8 @@ export function Menu({
 					<MobileSheetHeader
 						title={
 							isMobileInstitutionDetailRoute
-								? t("institution.showDetails")
-								: t("map.layerTreeTitle")
+								? t("common.institution.showDetails")
+								: t("common.map.layerTreeTitle")
 						}
 						onHandlePointerDown={
 							isMobileLayerTreeRoute
@@ -615,6 +654,7 @@ export function Menu({
 								: undefined
 						}
 					/>
+
 					<div
 						className={
 							isMobileInstitutionDetailRoute
