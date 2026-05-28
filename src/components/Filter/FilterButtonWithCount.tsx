@@ -3,6 +3,7 @@
 import FilterIcon from "@/icons/filter.svg";
 import { ButtonWithTooltip } from "@/components/ui/button-with-tooltip";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
+import { cn } from "@/lib/utils";
 
 type FilterButtonWithCountProps = {
 	onClick?: () => void;
@@ -33,17 +34,15 @@ export function FilterButtonWithCount({
 			iconSize="lg"
 			tooltipSide="bottom"
 			tooltip={tooltip}
-			className={className}
+			className={cn("relative overflow-visible!", className)}
 			onClick={onClick}
 		>
-			<div className="relative">
-				<FilterIcon className="size-5!" />
-				{showCount && activeFilterCount > 0 ? (
-					<span className="absolute -top-5 left-4.5 min-w-6 h-6 rounded-full bg-primary text-primary-foreground text-center px-1">
-						{activeFilterCount}
-					</span>
-				) : null}
-			</div>
+			<FilterIcon className="size-5!" />
+			{showCount && activeFilterCount > 0 ? (
+				<span className="absolute right-0 top-0 flex h-6 min-w-6 translate-x-1/4 -translate-y-1/4 items-center justify-center rounded-full bg-primary px-1 text-center text-primary-foreground">
+					{activeFilterCount}
+				</span>
+			) : null}
 		</ButtonWithTooltip>
 	);
 }
