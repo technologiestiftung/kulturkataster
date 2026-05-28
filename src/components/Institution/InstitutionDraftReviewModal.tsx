@@ -249,7 +249,7 @@ export function InstitutionDraftReviewModal({
 							open: true,
 							title: t("content.institutionFormModal.review.errorTitle"),
 							description: reviewError,
-							confirmLabel: t("content.close"),
+							confirmLabel: t("common.close"),
 							onConfirm: () => setReviewError(null),
 							onOpenChange: (open) => {
 								if (!open) setReviewError(null);
@@ -348,7 +348,7 @@ export function InstitutionDraftReviewModal({
 															author:
 																formatUserDisplayName(note.creator) ??
 																note.creator?.email ??
-																t("content.auth.account.activity.system", {
+																t("common.auth.account.activity.system", {
 																	defaultValue: "System",
 																}),
 															date: formatDateWithLocale(note.created_at, {

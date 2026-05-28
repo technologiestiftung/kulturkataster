@@ -83,15 +83,13 @@ type ExportFieldMeta = {
 
 const EXCEL_NOTICE_ROWS = 5;
 const EXCEL_NOTICE_MERGE_END_COLUMN = 3;
-const EXCEL_DOWNLOAD_NOTICE_URL =
-	"https://www.kulturkataster.berlin/de/download";
-const EXCEL_NOTICE_HOME_URL = "https://www.kulturkataster.berlin";
 const EXCEL_NOTICE_DEFAULT_ROWS = [
 	"Die Daten stammen vom Berliner Kulturkataster.",
 	"Bitte benennen Sie bei Verwendung das Kulturkataster als Download-Quelle und beachten Sie die rechtlichen Hinweise.",
 	"www.kulturkataster.berlin",
 	"Ein Projekt der Kulturraum Berlin gGmbH",
 ] as const;
+const EXCEL_HYPERLINK_FONT_COLOR = "0563C1";
 
 const enumKeyMappings: Record<string, string> = {
 	categories: "category",
@@ -565,21 +563,19 @@ function applyExcelNotice(ws: XLSX.WorkSheet, translateFn?: TranslateFn) {
 
 	noticeRows.forEach((noticeText, rowIndex) => {
 		const cellAddress = XLSX.utils.encode_cell({ r: rowIndex, c: 0 });
-		const linkTarget =
-			rowIndex === 2 ? EXCEL_NOTICE_HOME_URL : EXCEL_DOWNLOAD_NOTICE_URL;
+		const linkTarget = getHyperlinkTarget(noticeText);
 		ws[cellAddress] = {
 			t: "s",
 			v: noticeText,
-			l: {
-				Target: linkTarget,
-				Tooltip: linkTarget,
-			},
 			s: {
 				font: {
 					name: "Arial",
 					sz: 12,
 					bold: true,
-					color: { rgb: "000000" },
+					color: {
+						rgb: linkTarget ? EXCEL_HYPERLINK_FONT_COLOR : "000000",
+					},
+					underline: Boolean(linkTarget),
 				},
 				alignment: {
 					horizontal: "left",
@@ -588,6 +584,12 @@ function applyExcelNotice(ws: XLSX.WorkSheet, translateFn?: TranslateFn) {
 				},
 			},
 		};
+		if (linkTarget) {
+			ws[cellAddress].l = {
+				Target: linkTarget,
+				Tooltip: linkTarget,
+			};
+		}
 	});
 
 	ws["!rows"] = [
@@ -628,6 +630,62 @@ function applyExcelHeaderStyle(ws: XLSX.WorkSheet, headers: string[]) {
 	});
 }
 
+function getHyperlinkTarget(value: string): string | null {
+	const trimmedValue = value.trim();
+	if (!trimmedValue) return null;
+
+	if (/^https?:\/\/\S+$/i.test(trimmedValue)) {
+		return trimmedValue;
+	}
+
+	if (/^mailto:\S+@\S+\.\S+$/i.test(trimmedValue)) {
+		return trimmedValue;
+	}
+
+	if (/^www\.\S+\.\S+$/i.test(trimmedValue)) {
+		return `https://${trimmedValue}`;
+	}
+
+	return null;
+}
+
+function applyExcelHyperlinks(
+	ws: XLSX.WorkSheet,
+	data: Record<string, string>[],
+) {
+	if (data.length === 0) return;
+
+	const headers = Object.keys(data[0]);
+	data.forEach((row, rowIndex) => {
+		headers.forEach((header, colIndex) => {
+			const value = row[header];
+			if (typeof value !== "string") return;
+			const hyperlinkTarget = getHyperlinkTarget(value);
+			if (!hyperlinkTarget) return;
+
+			const cellAddress = XLSX.utils.encode_cell({
+				r: EXCEL_NOTICE_ROWS + 1 + rowIndex,
+				c: colIndex,
+			});
+			const cell = ws[cellAddress];
+			if (!cell) return;
+
+			cell.l = {
+				Target: hyperlinkTarget,
+				Tooltip: hyperlinkTarget,
+			};
+			cell.s = {
+				...(cell.s ?? {}),
+				font: {
+					...((cell.s as XLSX.CellObject["s"])?.font ?? {}),
+					color: { rgb: EXCEL_HYPERLINK_FONT_COLOR },
+					underline: true,
+				},
+			};
+		});
+	});
+}
+
 function applyExcelColumnWidths(
 	ws: XLSX.WorkSheet,
 	data: Record<string, string>[],
@@ -665,6 +723,7 @@ export function generateExcelBuffer(
 			origin: `A${EXCEL_NOTICE_ROWS + 1}`,
 		});
 		applyExcelHeaderStyle(ws, Object.keys(data[0]));
+		applyExcelHyperlinks(ws, data);
 	}
 	applyExcelColumnWidths(ws, data);
 

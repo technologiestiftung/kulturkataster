@@ -68,6 +68,7 @@ export async function fetchTraduoraTranslations(
 	}
 
 	const termsRes = await fetch(`${apiUrl}/projects/${projectId}/terms`, {
+		cache: "no-store",
 		headers: {
 			Authorization: `Bearer ${token}`,
 			"Content-Type": "application/json",
@@ -86,6 +87,7 @@ export async function fetchTraduoraTranslations(
 	const translationsRes = await fetch(
 		`${apiUrl}/projects/${projectId}/translations/${locale}`,
 		{
+			cache: "no-store",
 			headers: {
 				Authorization: `Bearer ${token}`,
 				"Content-Type": "application/json",

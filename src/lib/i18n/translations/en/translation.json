@@ -354,6 +354,23 @@
 				"passwordMin": "Password must be at least 8 characters",
 				"passwordMismatch": "Passwords do not match",
 				"passwordRequired": "Password is required"
+			},
+			"newsletter": {
+				"consentRequired": "You must consent to the processing of your email address for the newsletter.",
+				"consentLabel": "Yes, I would like to subscribe to the Berlin Kulturkataster newsletter and consent to my email address being processed for this purpose. I can withdraw my consent at any time with future effect. *",
+				"emailLabel": "Email",
+				"errorFallback": "Newsletter registration failed.",
+				"nameLabel": "First and last name",
+				"privacyLink": "Privacy policy",
+				"submit": "Subscribe",
+				"submitting": "Submitting...",
+				"subtitle": "Our newsletter provides updates about the latest developments in the Berlin Kulturkataster. We are glad you want to subscribe. You can withdraw your consent to receive the newsletter at any time. You can find further information in our <link />.",
+				"successCta": "Done",
+				"successMessageDescription": "You will now receive our news by email.",
+				"successMessageMail": "Please click the link in the email we just sent you to complete your subscription. Please also check your spam folder.",
+				"successMessageTitle": "Your registration was successful",
+				"thankYou": "Thank you!",
+				"title": "Berlin Kulturkataster newsletter"
 			}
 		},
 		"back": "Back",
@@ -371,25 +388,6 @@
 			"error": {
 				"title": "Review failed"
 			}
-		},
-		"categoryTable": {
-			"actions": {
-				"add": "Add category",
-				"editSubcategory": "Edit subcategory"
-			},
-			"columns": {
-				"description": "Description",
-				"icon": "Icon",
-				"key": "Name",
-				"parent": "Parent",
-				"subcategories": "Subcategories"
-			},
-			"empty": {
-				"description": "Create a category to better structure content.",
-				"title": "No categories found."
-			},
-			"emptyMessage": "No categories found.",
-			"searchPlaceholder": "Search categories..."
 		},
 		"close": "Close",
 		"closeSidebar": "Close sidebar",
@@ -964,12 +962,58 @@
 					},
 					"title": "Category details"
 				}
+			},
+			"status": {
+				"active": "Active",
+				"inactive": "Inactive"
 			}
 		},
+		"categorySubmissionReview": {
+			"actions": {
+				"approve": "Approve",
+				"reject": "Reject"
+			},
+			"error": {
+				"description": "The category proposal could not be reviewed.",
+				"title": "Review failed"
+			},
+			"fields": {
+				"key": "Proposed category",
+				"linkedInstitution": "Linked cultural venue submission"
+			},
+			"linkedSubmission": "Submission #{{id}}",
+			"notesLabel": "Internal notes",
+			"success": {
+				"approve": {
+					"description": "The category proposal was applied.",
+					"title": "Category created"
+				},
+				"reject": {
+					"description": "The category proposal was rejected.",
+					"title": "Category proposal rejected"
+				}
+			},
+			"title": "Review category proposal"
+		},
 		"categoryTable": {
+			"actions": {
+				"add": "Add category",
+				"editSubcategory": "Edit subcategory"
+			},
 			"columns": {
-				"status": "status"
-			}
+				"description": "Description",
+				"icon": "Icon",
+				"key": "Name",
+				"parent": "Parent",
+				"status": "status",
+				"subcategories": "Subcategories"
+			},
+			"empty": {
+				"description": "Create a category to better structure content.",
+				"title": "No categories found."
+			},
+			"emptyMessage": "No categories found.",
+			"searchPlaceholder": "Search categories..."
 		},
 		"downloadModal": {
 			"acknowledgement": "I have read and understood the legal notice",
@@ -977,6 +1021,7 @@
 			"acknowledgementPrefix": "I have read and understood the",
 			"acknowledgementSuffix": "",
 			"chooseFormat": "Select file format",
+			"dataUseAgreementConsent": "I agree to the data use agreement",
 			"dataUseAgreementText": "I will not share the data with third parties and will use it exclusively within the limits of legal requirements, in particular the GDPR where personal data is concerned, and only for the purposes of the Kulturkataster. The purposes of the Kulturkataster are non-commercial and comprise the systematic collection, structuring and public provision of data about places of cultural production and use in the State of Berlin, in order to create a reliable data basis for cultural policy decisions, cultural urban development, and collaboration between cultural actors, administration, academia and the public.",
 			"dataUseAgreementTitle": "Data use agreement",
 			"description": "You can download the list of your cultural venues here in different file formats.",
@@ -1560,6 +1605,21 @@
 					"title": "Checking your information"
 				}
 			}
+		},
+		"institution": {
+			"claimSelectDescription": "You can add cultural venues you are authorized for to your profile. For more completeness, a better overview, and faster editing.",
+			"claimSelectSearchLabel": "Name or address of the cultural venue",
+			"claimSelectSubtitle": "Request management rights for cultural venues that belong to your association or company.",
+			"claimSelectTitle": "Claim cultural venue",
+			"claimSubmit": "Submit request",
+			"claimSubmitError": "The claim request could not be submitted. Please try again.",
+			"claimSubmitSuccess": {
+				"description": "Your institution claim request has been submitted for review.",
+				"title": "Claim submitted"
+			},
+			"claimSubmitting": "Submitting...",
+			"editSelectEmpty": "No cultural venues found.",
+			"editSelectNoAddress": "No address provided"
 		},
 		"institutionFormModal": {
 			"actions": {
