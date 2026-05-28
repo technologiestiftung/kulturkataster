@@ -373,6 +373,7 @@
 				"successMessageMail": "Bitte klicken Sie auf den Link in der E-Mail, die wir Ihnen soeben gesendet haben, um Ihre Anmeldung abzuschließen. Kontrollieren Sie am besten auch Ihren Spam Ordner.",
 				"successMessageTitle": "Ihre Anmeldung war erfolgreich",
 				"successMessageDescription": "Ab sofort erhalten Sie unsere Neuigkeiten per E-Mail.",
+				"successCta": "Fertig",
 				"thankYou": "Vielen Dank!",
 				"errorFallback": "Anmeldung zum Newsletter fehlgeschlagen.",
 				"submit": "Anmelden",
@@ -399,25 +400,6 @@
 			"error": {
 				"title": "Überprüfung fehlgeschlagen"
 			}
-		},
-		"categoryTable": {
-			"actions": {
-				"add": "Kategorie hinzufügen",
-				"editSubcategory": "Unterkategorie bearbeiten"
-			},
-			"columns": {
-				"description": "Beschreibung",
-				"icon": "Icon",
-				"key": "Name",
-				"parent": "Übergeordnet",
-				"subcategories": "Unterkategorien"
-			},
-			"empty": {
-				"description": "Erstellen Sie eine Kategorie, um Inhalte besser zu strukturieren.",
-				"title": "Keine Kategorien gefunden."
-			},
-			"emptyMessage": "Keine Kategorien gefunden.",
-			"searchPlaceholder": "Kategorien suchen..."
 		},
 		"close": "Schließen",
 		"closeSidebar": "Seitenleiste schließen",
@@ -1044,12 +1026,58 @@
 					},
 					"title": "Kategoriedetails"
 				}
+			},
+			"status": {
+				"active": "Aktiv",
+				"inactive": "Inaktiv"
 			}
 		},
+		"categorySubmissionReview": {
+			"actions": {
+				"approve": "Annehmen",
+				"reject": "Ablehnen"
+			},
+			"error": {
+				"description": "Der Kategorie-Vorschlag konnte nicht geprüft werden.",
+				"title": "Überprüfung fehlgeschlagen"
+			},
+			"fields": {
+				"key": "Vorgeschlagene Kategorie",
+				"linkedInstitution": "Verknüpfte Kulturort-Einreichung"
+			},
+			"linkedSubmission": "Einreichung #{{id}}",
+			"notesLabel": "Interne Notizen",
+			"success": {
+				"approve": {
+					"description": "Der Kategorie-Vorschlag wurde übernommen.",
+					"title": "Kategorie angelegt"
+				},
+				"reject": {
+					"description": "Der Kategorie-Vorschlag wurde abgelehnt.",
+					"title": "Kategorie-Vorschlag abgelehnt"
+				}
+			},
+			"title": "Kategorie-Vorschlag prüfen"
+		},
 		"categoryTable": {
+			"actions": {
+				"add": "Kategorie hinzufügen",
+				"editSubcategory": "Unterkategorie bearbeiten"
+			},
 			"columns": {
-				"status": "Status"
-			}
+				"description": "Beschreibung",
+				"icon": "Icon",
+				"key": "Name",
+				"parent": "Übergeordnet",
+				"status": "Status",
+				"subcategories": "Unterkategorien"
+			},
+			"empty": {
+				"description": "Erstellen Sie eine Kategorie, um Inhalte besser zu strukturieren.",
+				"title": "Keine Kategorien gefunden."
+			},
+			"emptyMessage": "Keine Kategorien gefunden.",
+			"searchPlaceholder": "Kategorien suchen..."
 		},
 		"downloadModal": {
 			"acknowledgement": "Ich habe die rechtlichen Hinweise gelesen und verstanden",
@@ -1592,6 +1620,21 @@
 					"title": "Prüfung Ihrer Angaben"
 				}
 			}
+		},
+		"institution": {
+			"claimSelectDescription": "Kulturorte, für die Sie berechtigt sind, können Sie Ihrem Profil hinzufügen. Für mehr Vollständigkeit, einen besseren Überblick und die schnellere Bearbeitung.",
+			"claimSelectSearchLabel": "Name oder Adresse des Kulturortes",
+			"claimSelectSubtitle": "Beantragen Sie die Verwaltungs-Rechte für Kulturorte, die zu Ihrem Verband oder Unternehmen gehören.",
+			"claimSelectTitle": "Kulturort beanspruchen",
+			"claimSubmit": "Anfrage senden",
+			"claimSubmitError": "Die Anfrage konnte nicht gesendet werden. Bitte versuchen Sie es erneut.",
+			"claimSubmitSuccess": {
+				"description": "Ihre Anfrage wurde zur Überprüfung eingereicht.",
+				"title": "Anfrage gesendet"
+			},
+			"claimSubmitting": "Wird gesendet...",
+			"editSelectEmpty": "Keine Kulturorte gefunden.",
+			"editSelectNoAddress": "Keine Adresse hinterlegt"
 		},
 		"institutionFormModal": {
 			"actions": {

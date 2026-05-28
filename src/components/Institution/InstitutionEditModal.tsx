@@ -234,7 +234,7 @@ export function InstitutionEditModal({
 					status="error"
 					title={deleteError.title}
 					description={deleteError.description}
-					confirmLabel={t("content.close")}
+					confirmLabel={t("common.close")}
 					onConfirm={() => setDeleteError(null)}
 					onOpenChange={(open) => {
 						if (!open) setDeleteError(null);
