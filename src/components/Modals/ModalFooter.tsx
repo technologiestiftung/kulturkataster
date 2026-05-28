@@ -9,6 +9,7 @@ import KukaSmallLogo from "@/logos/kuka-small.svg";
 import SenateLogo from "@/logos/senate.svg";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
+import { cn } from "@/lib/utils";
 
 interface ModalFooterProps {
 	hideLinks?: string[];
@@ -31,7 +32,12 @@ export function ModalFooter({ hideLinks }: ModalFooterProps) {
 
 	return (
 		<>
-			<div className="ModalFooter-root flex justify-center w-full h-auto bg-secondary p-4 md:p-6 py-12 md:mt-12">
+			<div
+				className={cn(
+					"ModalFooter-root flex justify-center p-8 h-auto bg-secondary py-12 md:mt-12",
+					"-mx-4 w-[calc(100%+2rem)]",
+				)}
+			>
 				<div className="w-full flex flex-col md:flex-row md:items-center md:justify-between">
 					<div className="w-4/11 hidden md:flex items-center justify-center">
 						<KukaLargeLogo
@@ -86,7 +92,7 @@ export function ModalFooter({ hideLinks }: ModalFooterProps) {
 												rel="noopener noreferrer"
 											>
 												{item.id === "signLanguageInformationShort" && isMobile
-													? t(`common.footer.signLanguageInformation`)
+													? t(`common.footer.signLanguageInformationLong`)
 													: t(`common.footer.${item.id}`)}
 											</Link>
 										);
@@ -96,8 +102,13 @@ export function ModalFooter({ hideLinks }: ModalFooterProps) {
 					</div>
 				</div>
 			</div>
-			<div className="w-auto bg-background flex justify-center -mx-4 md:mx-0 px-2 md:px-0">
-				<div className="p-6 mt-4 pb-10 flex-col w-full md:w-auto md:flex md:flex-row md:max-w-5xl space-x-2 md:mb-12 space-y-12 md:space-y-0 items-center">
+			<div
+				className={cn(
+					"w-[calc(100%+2rem)] bg-background flex justify-center",
+					"-mx-4 md:mx-0",
+				)}
+			>
+				<div className="p-6 mt-4 pb-10 flex-col w-full md:flex md:flex-row md:max-w-5xl space-x-2 md:mb-12 space-y-12 md:space-y-0 items-center">
 					<div className="w-full md:w-1/2">
 						<p className="body2 ">{t("common.footer.credit.text")}</p>
 					</div>
