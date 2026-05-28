@@ -157,6 +157,13 @@ describe("DownloadModal", () => {
 				name: /Ich habe den rechtlichen Hinweis gelesen und verstanden/i,
 			}),
 		);
+		expect(downloadButton).toBeDisabled();
+
+		fireEvent.click(
+			screen.getByRole("checkbox", {
+				name: /Ich bin einverstanden mit der Vereinbarung über die Datennutzung/i,
+			}),
+		);
 		expect(downloadButton).toBeEnabled();
 	});
 
@@ -168,6 +175,9 @@ describe("DownloadModal", () => {
 		});
 		const acknowledgementCheckbox = screen.getByRole("checkbox", {
 			name: /Ich habe den rechtlichen Hinweis gelesen und verstanden/i,
+		});
+		const dataUseAgreementCheckbox = screen.getByRole("checkbox", {
+			name: /Ich bin einverstanden mit der Vereinbarung über die Datennutzung/i,
 		});
 		const downloadButton = screen.getByRole("button", {
 			name: "Liste herunterladen",
@@ -181,6 +191,10 @@ describe("DownloadModal", () => {
 		).not.toBeInTheDocument();
 		expect(
 			acknowledgementCheckbox.compareDocumentPosition(downloadButton) &
+				Node.DOCUMENT_POSITION_FOLLOWING,
+		).not.toBe(0);
+		expect(
+			dataUseAgreementCheckbox.compareDocumentPosition(downloadButton) &
 				Node.DOCUMENT_POSITION_FOLLOWING,
 		).not.toBe(0);
 	});
@@ -221,6 +235,11 @@ describe("DownloadModal", () => {
 			}),
 		);
 		fireEvent.click(
+			screen.getByRole("checkbox", {
+				name: /Ich bin einverstanden mit der Vereinbarung über die Datennutzung/i,
+			}),
+		);
+		fireEvent.click(
 			screen.getByRole("button", {
 				name: "Liste herunterladen",
 			}),
@@ -246,6 +265,11 @@ describe("DownloadModal", () => {
 		fireEvent.click(
 			screen.getByRole("checkbox", {
 				name: /Ich habe den rechtlichen Hinweis gelesen und verstanden/i,
+			}),
+		);
+		fireEvent.click(
+			screen.getByRole("checkbox", {
+				name: /Ich bin einverstanden mit der Vereinbarung über die Datennutzung/i,
 			}),
 		);
 		fireEvent.click(
