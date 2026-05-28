@@ -197,9 +197,9 @@ export function InstitutionClaimSelectModal({
 				!isLoading && (submitError || error)
 					? {
 							open: true,
-							title: t("content.error"),
+							title: t("common.error"),
 							description: submitError || error || "",
-							confirmLabel: t("content.close"),
+							confirmLabel: t("common.close"),
 							onConfirm: () => setSubmitError(null),
 							onOpenChange: (open) => {
 								if (!open) setSubmitError(null);
@@ -253,7 +253,7 @@ export function InstitutionClaimSelectModal({
 
 				<div className="flex flex-wrap gap-3 mb-10">
 					<Button variant="outline" onClick={closeModal}>
-						{t("content.actions.cancel", { defaultValue: "Abbrechen" })}
+						{t("common.cancel")}
 					</Button>
 					<Button
 						onClick={handleSubmitClaims}

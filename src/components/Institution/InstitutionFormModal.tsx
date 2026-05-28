@@ -1616,9 +1616,9 @@ export function InstitutionFormModal({
 				submitError
 					? {
 							open: true,
-							title: t("content.error"),
+							title: t("common.error"),
 							description: submitError,
-							confirmLabel: t("content.close"),
+							confirmLabel: t("common.close"),
 							onConfirm: () => setSubmitError(null),
 							onOpenChange: (open) => {
 								if (!open) setSubmitError(null);

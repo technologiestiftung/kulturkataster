@@ -79,7 +79,7 @@ export function AboutModal({ routePath }: { routePath?: string }) {
 								rel="noopener noreferrer"
 								className="text-primary-dark hover:text-primary underline"
 							>
-								{t("content.here")}
+								{t("common.here")}
 							</a>
 						),
 					}}
