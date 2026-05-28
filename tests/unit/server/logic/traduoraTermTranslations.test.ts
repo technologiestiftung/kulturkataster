@@ -6,13 +6,9 @@ import {
 } from "@/server/logic/traduoraTermTranslations";
 
 const fetchTraduoraTokenMock = vi.fn().mockResolvedValue("token");
-const fetchLabelsMock = vi
-	.fn()
-	.mockResolvedValue([{ id: "label-1", value: "enumMap" }]);
 
 vi.mock("@/server/traduora/cached", () => ({
 	fetchTraduoraToken: () => fetchTraduoraTokenMock(),
-	fetchLabels: (...args: unknown[]) => fetchLabelsMock(...args),
 }));
 
 describe("traduoraTermTranslations", () => {
@@ -37,7 +33,7 @@ describe("traduoraTermTranslations", () => {
 			.mockResolvedValueOnce(
 				new Response(
 					JSON.stringify({
-						data: [{ id: "term-1", value: "category.music" }],
+						data: [{ id: "term-1", value: "enumMap.category.music" }],
 					}),
 					{ status: 200 },
 				),
@@ -74,7 +70,7 @@ describe("traduoraTermTranslations", () => {
 			.mockResolvedValueOnce(
 				new Response(
 					JSON.stringify({
-						data: [{ id: "term-1", value: "category.music" }],
+						data: [{ id: "term-1", value: "enumMap.category.music" }],
 					}),
 					{ status: 200 },
 				),
@@ -90,7 +86,8 @@ describe("traduoraTermTranslations", () => {
 			},
 		});
 
-		expect(fetchMock).toHaveBeenCalledTimes(3);
+		expect(fetchMock).toHaveBeenCalledTimes(2);
+		expect(String(fetchMock.mock.calls[0]?.[0])).toContain("/terms");
 		const patchCall = fetchMock.mock.calls.find((call) =>
 			String(call[0]).includes("/translations/de"),
 		);

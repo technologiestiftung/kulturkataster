@@ -39,13 +39,15 @@ describe("ForgotPasswordForm", () => {
 		render(<ForgotPasswordForm />);
 
 		fireEvent.change(
-			screen.getByPlaceholderText("auth.forgot.emailPlaceholder"),
+			screen.getByPlaceholderText("common.auth.forgot.emailPlaceholder"),
 			{
 				target: { value: "jane@example.com" },
 			},
 		);
 
-		fireEvent.click(screen.getByRole("button", { name: "auth.forgot.submit" }));
+		fireEvent.click(
+			screen.getByRole("button", { name: "common.auth.forgot.submit" }),
+		);
 
 		await waitFor(() => {
 			expect(mockedRequest).toHaveBeenCalledWith("jane@example.com");
@@ -53,23 +55,27 @@ describe("ForgotPasswordForm", () => {
 	});
 
 	it("shows error when reset fails", async () => {
-		mockedRequest.mockResolvedValue({ ok: false, error: "Boom" });
+		mockedRequest.mockResolvedValue({ ok: false, error: "generic_error" });
 
 		render(<ForgotPasswordForm />);
 
 		fireEvent.change(
-			screen.getByPlaceholderText("auth.forgot.emailPlaceholder"),
+			screen.getByPlaceholderText("common.auth.forgot.emailPlaceholder"),
 			{
 				target: { value: "jane@example.com" },
 			},
 		);
 
-		fireEvent.click(screen.getByRole("button", { name: "auth.forgot.submit" }));
+		fireEvent.click(
+			screen.getByRole("button", { name: "common.auth.forgot.submit" }),
+		);
 
 		await waitFor(() => {
 			expect(mockedRequest).toHaveBeenCalled();
 		});
 
-		expect(screen.getByText("Boom")).toBeInTheDocument();
+		expect(
+			screen.getByText("common.auth.forgot.errorFallback"),
+		).toBeInTheDocument();
 	});
 });

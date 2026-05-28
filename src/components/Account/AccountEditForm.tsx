@@ -21,6 +21,24 @@ type AccountEditFormProps = {
 	onCancel?: () => void;
 };
 
+const translateAccountEditError = (
+	t: (key: string) => string,
+	errorCode: string,
+) => {
+	switch (errorCode) {
+		case "emailTaken":
+			return t("common.auth.accountEdit.errors.emailTaken");
+		case "notFound":
+			return t("common.auth.accountEdit.errors.notFound");
+		case "forbidden":
+			return t("common.auth.accountEdit.errors.forbidden");
+		case "invalidInput":
+			return t("common.auth.accountEdit.errors.invalidInput");
+		default:
+			return t("common.auth.accountEdit.errors.unexpected");
+	}
+};
+
 export function AccountEditForm({
 	userId,
 	email,
@@ -31,7 +49,7 @@ export function AccountEditForm({
 }: AccountEditFormProps) {
 	const router = useRouter();
 	const toLocalePath = useLocalePath();
-	const { t } = useTranslation("common");
+	const { t } = useTranslation();
 	const [isLoading, setIsLoading] = useState(false);
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 	const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -52,35 +70,35 @@ export function AccountEditForm({
 
 		try {
 			if (password && password !== confirmPassword) {
-				setErrorMessage(t("auth.validation.passwordMismatch"));
+				setErrorMessage(t("common.auth.validation.passwordMismatch"));
 				return;
 			}
 
 			const { firstName: nextFirst, lastName: nextLast } =
 				splitDisplayName(nameValue);
 
-			await updateUser({
+			const result = await updateUser({
 				id: userId,
 				email: nextEmail,
 				first_name: nextFirst ?? "",
 				last_name: nextLast ?? "",
 			});
+			if (!result.ok) {
+				setErrorMessage(translateAccountEditError(t, result.error));
+				return;
+			}
 
 			if (password) {
-				const result = await updateMyPassword(password);
-				if (!result.ok) {
-					setErrorMessage(result.error ?? t("auth.accountEdit.errorFallback"));
+				const passwordResult = await updateMyPassword(password);
+				if (!passwordResult.ok) {
+					setErrorMessage(t("common.auth.accountEdit.errorFallback"));
 					return;
 				}
 			}
 
 			onSuccess?.();
-		} catch (error) {
-			setErrorMessage(
-				error instanceof Error
-					? error.message
-					: t("auth.accountEdit.errorFallback"),
-			);
+		} catch {
+			setErrorMessage(t("common.auth.accountEdit.errorFallback"));
 		} finally {
 			setIsLoading(false);
 		}
@@ -90,14 +108,14 @@ export function AccountEditForm({
 		formId: "account-edit-form",
 		onSubmit: handleSubmit,
 		submitLabel: isLoading
-			? t("auth.accountEdit.submitting")
-			: t("auth.accountEdit.submit"),
+			? t("common.auth.accountEdit.submitting")
+			: t("common.auth.accountEdit.submit"),
 		submitDisabled: isLoading,
 		showCancel: true,
-		cancelLabel: t("cancel"),
+		cancelLabel: t("common.cancel"),
 		onCancel,
 		deleteAction: {
-			label: t("auth.accountEdit.deleteAction"),
+			label: t("common.auth.accountEdit.deleteAction"),
 			onClick: () => setShowDeleteConfirm(true),
 			disabled: isLoading,
 			className: "p-0!",
@@ -115,34 +133,36 @@ export function AccountEditForm({
 				fields: [
 					{
 						name: "name",
-						label: t("auth.accountEdit.nameLabel"),
+						label: t("common.auth.accountEdit.nameLabel"),
 						type: "text",
-						placeholder: t("auth.accountEdit.namePlaceholder"),
+						placeholder: t("common.auth.accountEdit.namePlaceholder"),
 						required: true,
 						disabled: isLoading,
 					},
 					{
 						name: "email",
-						label: t("auth.accountEdit.emailLabel"),
+						label: t("common.auth.accountEdit.emailLabel"),
 						type: "email",
-						placeholder: t("auth.accountEdit.emailPlaceholder"),
+						placeholder: t("common.auth.accountEdit.emailPlaceholder"),
 						required: true,
 						disabled: isLoading,
 					},
 					{
 						name: "password",
-						label: t("auth.accountEdit.passwordLabel"),
+						label: t("common.auth.accountEdit.passwordLabel"),
 						type: "password",
-						afterField: t("auth.accountEdit.passwordRequirements"),
-						placeholder: t("auth.accountEdit.passwordPlaceholder"),
+						afterField: t("common.auth.accountEdit.passwordRequirements"),
+						placeholder: t("common.auth.accountEdit.passwordPlaceholder"),
 						disabled: isLoading,
-						validators: [minLength(8, t("auth.validation.passwordMin"))],
+						validators: [minLength(8, t("common.auth.validation.passwordMin"))],
 					},
 					{
 						name: "confirmPassword",
-						label: t("auth.accountEdit.confirmPasswordLabel"),
+						label: t("common.auth.accountEdit.confirmPasswordLabel"),
 						type: "password",
-						placeholder: t("auth.accountEdit.confirmPasswordPlaceholder"),
+						placeholder: t(
+							"common.auth.accountEdit.confirmPasswordPlaceholder",
+						),
 						disabled: isLoading,
 						validators: [
 							(value, formData) => {
@@ -150,7 +170,7 @@ export function AccountEditForm({
 								if (!passwordValue) return undefined;
 								const confirmValue = String(value ?? "");
 								if (confirmValue !== passwordValue) {
-									return t("auth.validation.passwordMismatch");
+									return t("common.auth.validation.passwordMismatch");
 								}
 								return undefined;
 							},
@@ -165,9 +185,13 @@ export function AccountEditForm({
 		setIsLoading(true);
 		setErrorMessage(null);
 		try {
-			await deleteUser(userId);
-			const result = await logout();
-			if (result.ok) {
+			const deleteResult = await deleteUser(userId);
+			if (!deleteResult.ok) {
+				setErrorMessage(translateAccountEditError(t, deleteResult.error));
+				return;
+			}
+			const logoutResult = await logout();
+			if (logoutResult.ok) {
 				await clearAccountStore();
 			}
 			router.replace(toLocalePath("/"));
@@ -176,7 +200,7 @@ export function AccountEditForm({
 			setErrorMessage(
 				error instanceof Error
 					? error.message
-					: t("auth.accountEdit.deleteError"),
+					: t("common.auth.accountEdit.deleteError"),
 			);
 		} finally {
 			setIsLoading(false);
@@ -187,11 +211,11 @@ export function AccountEditForm({
 	return (
 		<div className="w-full md:max-w-3xl mx-auto">
 			<div className="text-start font-bold mb-10">
-				<h1 className="">{t("auth.accountEdit.title")}</h1>
+				<h1 className="">{t("common.auth.accountEdit.title")}</h1>
 			</div>
 
 			<AlertDialog
-				title={t("error")}
+				title={t("common.error")}
 				status="error"
 				description={errorMessage ?? ""}
 				open={Boolean(errorMessage)}
@@ -200,20 +224,22 @@ export function AccountEditForm({
 						setErrorMessage(null);
 					}
 				}}
-				confirmLabel={t("close")}
+				confirmLabel={t("common.close")}
 				onConfirm={() => setErrorMessage(null)}
 			/>
+
 			<AlertDialog
 				status="warning"
-				title={t("auth.accountEdit.deleteTitle")}
-				description={t("auth.accountEdit.deleteDescription")}
+				title={t("common.auth.accountEdit.deleteTitle")}
+				description={t("common.auth.accountEdit.deleteDescription")}
 				open={showDeleteConfirm}
 				onOpenChange={(open) => setShowDeleteConfirm(open)}
-				confirmLabel={t("auth.accountEdit.deleteConfirm")}
-				cancelLabel={t("cancel")}
+				confirmLabel={t("common.auth.accountEdit.deleteConfirm")}
+				cancelLabel={t("common.cancel")}
 				onCancel={() => setShowDeleteConfirm(false)}
 				onConfirm={handleDelete}
 			/>
+
 			<div className="flex-1 overflow-auto flex flex-col">
 				<FormWrapper config={formConfig} />
 			</div>

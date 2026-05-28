@@ -14,12 +14,18 @@ import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { useInstitutionSubmissionReview } from "@/lib/hooks/useInstitutionSubmissionReview";
 import { useRoutedModalClose } from "@/components/Modals/useRoutedModalClose";
 import { showSuccessToast } from "@/lib/utils/feedbackToast";
+import type { Submission } from "@/types/submission";
 import { formatUserDisplayName } from "@/lib/utils/userName";
 import { formatDateWithLocale } from "@/lib/utils/dateUtils";
 import { Card, CardContent } from "@/components/ui/card";
+import { MultiSelectModal } from "@/components/MultiSelect/MultiSelectModal";
+import { triggerAccountRefresh } from "@/components/Account/AccountAutoRefresh";
+import { InfoItem } from "@/components/InfoWrapper/InfoItem";
 
 type InstitutionDraftReviewModalProps = {
 	submissionId?: number;
+	submission?: Submission | null;
+	didResolveSubmission?: boolean;
 	returnTo?: string;
 	editBasePath?: string;
 	routePath?: string;
@@ -28,13 +34,15 @@ type InstitutionDraftReviewModalProps = {
 
 export function InstitutionDraftReviewModal({
 	submissionId,
+	submission,
+	didResolveSubmission = false,
 	returnTo,
 	editBasePath = "/account/submissions",
 	routePath,
 	shouldRefresh = false,
 }: InstitutionDraftReviewModalProps) {
-	const { t } = useTranslation("content");
-	const { t: tEnum } = useTranslation("enumMap");
+	const { t } = useTranslation();
+	const { t: tEnum } = useTranslation();
 	const { i18n } = useTranslation();
 	const router = useRouter();
 	const toLocalePath = useLocalePath();
@@ -45,6 +53,8 @@ export function InstitutionDraftReviewModal({
 	const institutionPermissions = useAccountStore(
 		(state) => state.institutionPermissions,
 	);
+	const allUsers = useAccountStore((state) => state.users);
+	const allGroups = useAccountStore((state) => state.groups);
 	const upsertSubmission = useAccountStore((state) => state.upsertSubmission);
 	const removeSubmission = useAccountStore((state) => state.removeSubmission);
 	const submissions = useMemo(
@@ -56,16 +66,33 @@ export function InstitutionDraftReviewModal({
 			),
 		[allSubmissions],
 	);
+	const linkedCategorySubmissions = useMemo(
+		() =>
+			allSubmissions.filter((linkedSubmission) => {
+				if (linkedSubmission.entity_type !== "category") return false;
+				const meta =
+					linkedSubmission.meta &&
+					typeof linkedSubmission.meta === "object" &&
+					!Array.isArray(linkedSubmission.meta)
+						? (linkedSubmission.meta as Record<string, unknown>)
+						: {};
+				return meta.institutionSubmissionId === submissionId;
+			}),
+		[allSubmissions, submissionId],
+	);
 
 	const {
 		hasSubmissionId,
 		resolvedSubmissionWithFallback,
-		didFetchSubmission,
 		originalInstitution,
 		internalNotes,
 		setInternalNotes,
 		grantSubmitterAccess,
 		setGrantSubmitterAccess,
+		attachUserIds,
+		setAttachUserIds,
+		attachGroupIds,
+		setAttachGroupIds,
 		submitting,
 		error,
 		handleReview,
@@ -74,13 +101,15 @@ export function InstitutionDraftReviewModal({
 		canReviewCurrentSubmission,
 	} = useInstitutionSubmissionReview({
 		submissionId,
+		submission,
 		submissions,
 		institutionPermissions,
 		removeSubmission,
 		upsertSubmission,
 	});
 	const shouldAutoCloseMissingSubmission =
-		!hasSubmissionId || (didFetchSubmission && !resolvedSubmissionWithFallback);
+		!hasSubmissionId ||
+		(didResolveSubmission && !resolvedSubmissionWithFallback);
 	useEffect(() => {
 		if (!shouldAutoCloseMissingSubmission) return;
 		closeModal();
@@ -91,30 +120,23 @@ export function InstitutionDraftReviewModal({
 			const success = await handleReview(status);
 			if (!success) {
 				setReviewError(
-					error ??
-						t("institutionFormModal.review.errorDescription", {
-							defaultValue:
-								"Please try again or contact support if the issue persists.",
-						}),
+					error ?? t("content.institutionFormModal.review.errorDescription"),
 				);
 				return;
 			}
 			closeModal();
+			triggerAccountRefresh(
+				status === "approved"
+					? ["submissions", "institutions", "users", "groups", "entityAudits"]
+					: ["submissions", "entityAudits"],
+			);
 			showSuccessToast(
 				status === "approved"
-					? t("institutionFormModal.review.success.approve.title", {
-							defaultValue: "Submission approved",
-						})
-					: t("institutionFormModal.review.success.reject.title", {
-							defaultValue: "Submission rejected",
-						}),
+					? t("content.institutionFormModal.review.success.approve.title")
+					: t("content.institutionFormModal.review.success.reject.title"),
 				status === "approved"
-					? t("institutionFormModal.review.success.approve.description", {
-							defaultValue: "The submission has been approved successfully.",
-						})
-					: t("institutionFormModal.review.success.reject.description", {
-							defaultValue: "The submission has been rejected successfully.",
-						}),
+					? t("content.institutionFormModal.review.success.approve.description")
+					: t("content.institutionFormModal.review.success.reject.description"),
 			);
 			if (shouldRefresh) {
 				queueMicrotask(() => router.refresh());
@@ -136,23 +158,37 @@ export function InstitutionDraftReviewModal({
 		const success = await handleSaveNote();
 		if (!success) {
 			setReviewError(
-				error ??
-					t("institutionFormModal.review.errorDescription", {
-						defaultValue:
-							"Please try again or contact support if the issue persists.",
-					}),
+				error ?? t("content.institutionFormModal.review.errorDescription"),
 			);
 			return;
 		}
+		triggerAccountRefresh(["submissions", "entityAudits"]);
 		showSuccessToast(
-			t("institutionFormModal.review.success.saveNotes.title", {
-				defaultValue: "Notes saved",
-			}),
-			t("institutionFormModal.review.success.saveNotes.description", {
-				defaultValue: "Your review notes have been saved.",
-			}),
+			t("content.institutionFormModal.review.success.saveNotes.title"),
+			t("content.institutionFormModal.review.success.saveNotes.description"),
 		);
 	}, [error, handleSaveNote, resolvedSubmissionWithFallback, t]);
+
+	const userOptions = useMemo(
+		() =>
+			allUsers.map((user) => ({
+				value: user.id,
+				label: formatUserDisplayName(user) ?? user.email,
+				searchText: `${formatUserDisplayName(user) ?? ""} ${user.email}`,
+			})),
+		[allUsers],
+	);
+
+	const groupOptions = useMemo(
+		() =>
+			allGroups.map((group) => ({
+				value: String(group.id),
+				label: group.name,
+				searchText: group.name,
+			})),
+		[allGroups],
+	);
+
 	if (shouldAutoCloseMissingSubmission) return null;
 	if (!resolvedSubmissionWithFallback) {
 		return null;
@@ -163,25 +199,33 @@ export function InstitutionDraftReviewModal({
 	const submissionStatusLabel = (() => {
 		if (!submissionStatus) return "";
 		const key = `submission_status.${submissionStatus}`;
-		const translated = tEnum(key);
+		const translated = tEnum("enumMap." + key);
 		return translated === key ? submissionStatus : translated;
 	})();
 	const submissionTypeLabel = t(
-		`institutionsTable.type.submissionBase.${resolvedSubmissionWithFallback.type}`,
+		`content.institutionsTable.type.submissionBase.${resolvedSubmissionWithFallback.type}`,
 		{
 			defaultValue: resolvedSubmissionWithFallback.type,
 		},
 	);
+	const requesterLabel =
+		formatUserDisplayName(resolvedSubmissionWithFallback.creator) ??
+		resolvedSubmissionWithFallback.creator?.email ??
+		resolvedSubmissionWithFallback.created_by ??
+		"—";
 	const submissionTitle =
 		submissionStatus === "approved" ||
 		submissionStatus === "rejected" ||
 		submissionStatus === "needs_changes"
-			? t(`institutionsTable.type.submissionStatus.${submissionStatus}`, {
-					type: submissionTypeLabel,
-					defaultValue: submissionTypeLabel,
-				})
+			? t(
+					`content.institutionsTable.type.submissionStatus.${submissionStatus}`,
+					{
+						type: submissionTypeLabel,
+						defaultValue: submissionTypeLabel,
+					},
+				)
 			: t(
-					`institutionsTable.type.submission.${resolvedSubmissionWithFallback.type}`,
+					`content.institutionsTable.type.submission.${resolvedSubmissionWithFallback.type}`,
 					{
 						defaultValue: resolvedSubmissionWithFallback.type,
 					},
@@ -194,20 +238,18 @@ export function InstitutionDraftReviewModal({
 			returnTo={returnTo}
 			routePath={routePath}
 			closeConfirmation={{
-				title: t("institutionModalCloseConfirmation.title"),
-				description: t("institutionModalCloseConfirmation.description"),
-				confirmLabel: t("institutionModalCloseConfirmation.confirm"),
-				cancelLabel: t("institutionModalCloseConfirmation.cancel"),
+				title: t("content.institutionModalCloseConfirmation.title"),
+				description: t("content.institutionModalCloseConfirmation.description"),
+				confirmLabel: t("content.institutionModalCloseConfirmation.confirm"),
+				cancelLabel: t("content.institutionModalCloseConfirmation.cancel"),
 			}}
 			errorDialog={
 				reviewError
 					? {
 							open: true,
-							title: t("institutionFormModal.review.errorTitle", {
-								defaultValue: "Review failed",
-							}),
+							title: t("content.institutionFormModal.review.errorTitle"),
 							description: reviewError,
-							confirmLabel: t("close"),
+							confirmLabel: t("common.close"),
 							onConfirm: () => setReviewError(null),
 							onOpenChange: (open) => {
 								if (!open) setReviewError(null);
@@ -226,15 +268,60 @@ export function InstitutionDraftReviewModal({
 						);
 					}}
 				/>
+
+				{linkedCategorySubmissions.length > 0 ? (
+					<div className="space-x-3 flex">
+						<div className="body2 font-bold">
+							{t(
+								"content.institutionFormModal.review.linkedCategorySubmissions",
+								{
+									defaultValue: "Verknüpfte Kategorie-Vorschläge",
+								},
+							)}
+						</div>
+						<div className="flex flex-wrap gap-2">
+							{linkedCategorySubmissions.map((categorySubmission) => {
+								const data =
+									categorySubmission.data &&
+									typeof categorySubmission.data === "object" &&
+									!Array.isArray(categorySubmission.data)
+										? (categorySubmission.data as Record<string, unknown>)
+										: {};
+								const label =
+									typeof data.key === "string" && data.key.trim().length > 0
+										? data.key
+										: `#${categorySubmission.id}`;
+								return (
+									<Button
+										key={categorySubmission.id}
+										type="button"
+										variant="tertiary"
+										size="inline"
+										className="underline"
+										onClick={() =>
+											router.push(
+												toLocalePath(
+													`/account/submissions/${categorySubmission.id}`,
+												),
+											)
+										}
+									>
+										{label}
+									</Button>
+								);
+							})}
+						</div>
+					</div>
+				) : null}
 				{canReviewCurrentSubmission && (
 					<div className="space-y-3">
 						<div className="flex items-center justify-between">
 							<span className="body2">
-								{t("institutionFormModal.review.notesLabel")}
+								{t("content.institutionFormModal.review.notesLabel")}
 							</span>
 							{submissionStatus && (
 								<span className="body2">
-									{t("institutionFormModal.review.statusLabel", {
+									{t("content.institutionFormModal.review.statusLabel", {
 										status: submissionStatusLabel,
 									})}
 								</span>
@@ -244,9 +331,9 @@ export function InstitutionDraftReviewModal({
 							{resolvedSubmissionWithFallback.notes?.length ? (
 								<div className="space-y-2">
 									<div className="body2 ">
-										{t("institutionFormModal.review.previousNotesLabel", {
-											defaultValue: "Previous notes",
-										})}
+										{t(
+											"content.institutionFormModal.review.previousNotesLabel",
+										)}
 									</div>
 									<div className="space-y-2">
 										{resolvedSubmissionWithFallback.notes.map((note) => (
@@ -256,12 +343,12 @@ export function InstitutionDraftReviewModal({
 														{note.note}
 													</div>
 													<div className="mt-2 body3 text-muted-foreground">
-														{t("institutionFormModal.review.noteMeta", {
+														{t("content.institutionFormModal.review.noteMeta", {
 															defaultValue: "{{author}} am {{date}}",
 															author:
 																formatUserDisplayName(note.creator) ??
 																note.creator?.email ??
-																t("auth.account.activity.system", {
+																t("common.auth.account.activity.system", {
 																	defaultValue: "System",
 																}),
 															date: formatDateWithLocale(note.created_at, {
@@ -282,10 +369,21 @@ export function InstitutionDraftReviewModal({
 							<Textarea
 								value={internalNotes}
 								onChange={(event) => setInternalNotes(event.target.value)}
-								placeholder={t("institutionFormModal.review.notesPlaceholder")}
+								placeholder={t(
+									"content.institutionFormModal.review.notesPlaceholder",
+								)}
 								rows={4}
 								disabled={submitting}
 							/>
+
+							<InfoItem
+								label={t("content.institutionFormModal.review.requestedBy", {
+									defaultValue: "Requested by",
+								})}
+								alwaysShow
+							>
+								{requesterLabel}
+							</InfoItem>
 							{shouldShowGrantSubmitterAccessToggle ? (
 								<label className="flex items-start gap-3">
 									<Checkbox
@@ -295,14 +393,61 @@ export function InstitutionDraftReviewModal({
 										}
 										disabled={submitting}
 									/>
+
 									<span className="body2">
-										{t("institutionFormModal.review.grantSubmitterAccess", {
-											defaultValue:
-												"Grant the submitter access to this institution after approval.",
-										})}
+										{t(
+											"content.institutionFormModal.review.grantSubmitterAccess",
+										)}
 									</span>
 								</label>
 							) : null}
+							{(userOptions.length > 0 || groupOptions.length > 0) && (
+								<div className="space-y-3">
+									<span className="body2">
+										{t("content.institutionFormModal.review.attachOnApproval")}
+									</span>
+									<div className="flex flex-col gap-3">
+										{userOptions.length > 0 && (
+											<div className="flex-1">
+												<MultiSelectModal
+													title={t(
+														"content.institutionFormModal.review.attachUsers.title",
+													)}
+													placeholder={t(
+														"content.institutionFormModal.review.attachUsers.placeholder",
+													)}
+													searchPlaceholder={t(
+														"content.institutionFormModal.review.attachUsers.searchPlaceholder",
+													)}
+													options={userOptions}
+													selected={attachUserIds}
+													onChange={setAttachUserIds}
+													disabled={submitting}
+												/>
+											</div>
+										)}
+										{groupOptions.length > 0 && (
+											<div className="flex-1">
+												<MultiSelectModal
+													title={t(
+														"content.institutionFormModal.review.attachGroups.title",
+													)}
+													placeholder={t(
+														"content.institutionFormModal.review.attachGroups.placeholder",
+													)}
+													searchPlaceholder={t(
+														"content.institutionFormModal.review.attachGroups.searchPlaceholder",
+													)}
+													options={groupOptions}
+													selected={attachGroupIds.map(String)}
+													onChange={(ids) => setAttachGroupIds(ids.map(Number))}
+													disabled={submitting}
+												/>
+											</div>
+										)}
+									</div>
+								</div>
+							)}
 							<div className="flex items-center justify-end gap-3">
 								<Button
 									type="button"
@@ -310,7 +455,7 @@ export function InstitutionDraftReviewModal({
 									onClick={() => void handleReviewAction("rejected")}
 									disabled={submitting}
 								>
-									{t("institutionFormModal.review.actions.reject")}
+									{t("content.institutionFormModal.review.actions.reject")}
 								</Button>
 								<Button
 									type="button"
@@ -318,7 +463,7 @@ export function InstitutionDraftReviewModal({
 									onClick={() => void handleSaveNoteAction()}
 									disabled={submitting || internalNotes.trim().length === 0}
 								>
-									{t("institutionFormModal.review.actions.saveNotes", {
+									{t("content.institutionFormModal.review.actions.saveNotes", {
 										defaultValue: "Save notes",
 									})}
 								</Button>
@@ -327,7 +472,7 @@ export function InstitutionDraftReviewModal({
 									onClick={() => void handleReviewAction("approved")}
 									disabled={submitting}
 								>
-									{t("institutionFormModal.review.actions.approve")}
+									{t("content.institutionFormModal.review.actions.approve")}
 								</Button>
 							</div>
 						</>

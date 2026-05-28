@@ -1,7 +1,10 @@
-import fs from "node:fs/promises";
-import path from "node:path";
 import nodemailer from "nodemailer";
 import { logger } from "@/server/logging/logger";
+import { loadEmailTemplateBody } from "@/server/email/templates";
+import {
+	isMarkdownTemplate,
+	mdToEmailHtml,
+} from "@/server/email/mdToEmailHtml";
 
 type TemplateData = Record<string, unknown>;
 
@@ -21,7 +24,7 @@ export type EmailTemplateVariables = {
 	FactorType?: string;
 };
 
-type SendTemplatedEmailArgs = {
+export type SendTemplatedEmailArgs = {
 	to: string;
 	subject: string;
 	templatePath: string;
@@ -40,20 +43,6 @@ type EmailRuntimeConfig =
 			from: string;
 			replyTo?: string;
 	  };
-
-const EMAIL_TEMPLATE_ROOT = path.join(process.cwd(), "public", "api", "emails");
-const TEMPLATE_PATH_PATTERN = /^[a-zA-Z0-9/_-]+\.html$/;
-
-const getTemplateAbsolutePath = (templatePath: string) => {
-	if (!TEMPLATE_PATH_PATTERN.test(templatePath)) {
-		throw new Error(`Invalid template path: ${templatePath}`);
-	}
-	const absolutePath = path.resolve(EMAIL_TEMPLATE_ROOT, templatePath);
-	if (!absolutePath.startsWith(EMAIL_TEMPLATE_ROOT)) {
-		throw new Error("Template path traversal is not allowed.");
-	}
-	return absolutePath;
-};
 
 const resolvePath = (value: unknown, keyPath: string): unknown => {
 	const keys = keyPath.split(".");
@@ -157,9 +146,11 @@ export async function sendTemplatedEmail({
 			},
 		},
 		async () => {
-			const absolutePath = getTemplateAbsolutePath(templatePath);
-			const template = await fs.readFile(absolutePath, "utf8");
-			const html = renderTemplate(template, variables);
+			const raw = await loadEmailTemplateBody(templatePath);
+			const rendered = renderTemplate(raw, variables);
+			const html = isMarkdownTemplate(rendered)
+				? await mdToEmailHtml(rendered, subject)
+				: rendered;
 
 			if (emailRuntimeConfig.provider === "noop") {
 				logger.info("email.send.noop", {

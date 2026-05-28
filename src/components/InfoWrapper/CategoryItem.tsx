@@ -23,7 +23,7 @@ export function CategoryItem({
 	action?: React.ReactNode;
 }) {
 	const categories = getParentCategories(data);
-	const { t: tEnum } = useTranslation("enumMap");
+	const { t: tEnum } = useTranslation();
 	if (!categories?.length) return null;
 	return (
 		<div className="flex justify-center gap-2 flex-col">
@@ -53,19 +53,20 @@ export function CategoryItem({
 									categoryKey={category.key}
 									className="mr-1 h-6 w-6"
 								/>
+
 								<div
 									className={`flex items-start flex-1 gap-1 flex-wrap
                             ${variant === "compact" ? "flex-row " : "flex-col"}
                             `}
 								>
 									<strong className="body2">
-										{tEnum(`category.${category.key}`)}
+										{tEnum(`enumMap.category.${category.key}`)}
 									</strong>
 									{variant === "compact" && <span className="body2">•</span>}
 									{subCategories?.length
 										? subCategories.map((sub, index, filteredArray) => (
 												<span className="body2" key={sub.id}>
-													{tEnum(`category.${sub.key}`)}
+													{tEnum(`enumMap.category.${sub.key}`)}
 													{index < filteredArray.length - 1 && ", "}
 												</span>
 											))

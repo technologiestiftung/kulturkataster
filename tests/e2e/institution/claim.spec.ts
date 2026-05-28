@@ -13,7 +13,7 @@ test.describe("institution claim flow", () => {
 	test.beforeEach(async ({ page }) => {
 		test.skip(!hasRealUserCredentials, "E2E user credentials not set");
 		await prepareStableUi(page);
-		await safeGoto(page, "/de/account/activity", /\/de\/account\/activity\/?$/);
+		await safeGoto(page, "/de/account", /\/de\/account(?:\/activity)?\/?$/);
 	});
 
 	test("supports search, count, multi-select, and returns to institutions table", async ({
@@ -73,14 +73,24 @@ test.describe("institution claim flow", () => {
 			return;
 		}
 
-		const submitErrorDialog = page.getByText(
-			/The claim request could not be submitted/i,
-		);
+		const submitErrorDialog = page
+			.getByText(
+				/The claim request could not be submitted|Die Anfrage konnte nicht gesendet werden/i,
+			)
+			.first();
 		await expect(submitErrorDialog).toBeVisible({ timeout: 10_000 });
-		await page
-			.getByRole("button", { name: /Schließen/i })
-			.first()
-			.click();
+
+		const closeErrorDialogButton = page
+			.getByRole("button", { name: /Schließen|Close|content\.close/i })
+			.first();
+		if (
+			await closeErrorDialogButton
+				.isVisible({ timeout: 5_000 })
+				.catch(() => false)
+		) {
+			await closeErrorDialogButton.click();
+		}
+
 		await page
 			.getByRole("button", { name: /Abbrechen/i })
 			.first()

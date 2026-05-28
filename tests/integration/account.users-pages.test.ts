@@ -30,8 +30,9 @@ describe("users pages integration", () => {
 			"@/app/[locale]/account/(dashboard)/users/page"
 		);
 		const result = pageModule.default();
+		const suspense = result.props.children.props.children;
 
-		expect(result.props.children.props.children).toMatchObject({
+		expect(suspense.props.children).toMatchObject({
 			type: UsersTable,
 		});
 	});

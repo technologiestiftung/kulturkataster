@@ -61,6 +61,25 @@ test.describe("institution submission wizard", () => {
 		return submitButton;
 	};
 
+	const serializeOptionValue = (value: string | number | boolean) =>
+		typeof value === "string" ? value : `${typeof value}:${String(value)}`;
+
+	const getVisibleFieldById = async (
+		page: import("@playwright/test").Page,
+		id: string,
+	) => {
+		const field = page.locator(`[id="${id}"]`).first();
+		await expect(field, `Expected wizard field "${id}" to exist.`).toHaveCount(
+			1,
+			{ timeout: 15_000 },
+		);
+		await expect(
+			field,
+			`Expected wizard field "${id}" to be visible.`,
+		).toBeVisible({ timeout: 15_000 });
+		return field;
+	};
+
 	const fillById = async (
 		page: import("@playwright/test").Page,
 		id: string,
@@ -72,42 +91,88 @@ test.describe("institution submission wizard", () => {
 		await field.fill(value);
 	};
 
-	const checkById = async (
+	const fillRequiredById = async (
 		page: import("@playwright/test").Page,
 		id: string,
+		value: string,
 	) => {
-		const checkbox = page.locator(`[id="${id}"]`).first();
-		if ((await checkbox.count()) === 0) return;
-		if (!(await checkbox.isVisible().catch(() => false))) return;
-		const state = await checkbox.getAttribute("data-state");
-		if (state !== "checked") {
-			await checkbox.click();
-		}
+		const field = await getVisibleFieldById(page, id);
+		await field.fill(value);
+		await expect(field).toHaveValue(value);
 	};
 
-	const selectFirstOptionById = async (
+	const selectOptionById = async (
 		page: import("@playwright/test").Page,
 		id: string,
+		optionName: string | string[],
 	) => {
-		const trigger = page.locator(`[id="${id}"]`).first();
-		if ((await trigger.count()) === 0) return;
-		if (!(await trigger.isVisible().catch(() => false))) return;
+		const trigger = await getVisibleFieldById(page, id);
 		await trigger.click();
-		const option = page
-			.locator('[data-slot="select-content"]:visible')
-			.last()
-			.locator('[role="option"]:visible')
+
+		const listboxId = await trigger.getAttribute("aria-controls");
+		expect(
+			listboxId,
+			`Select "${id}" should expose aria-controls when opened.`,
+		).toBeTruthy();
+
+		const listbox = page.locator(`[id="${listboxId}"]`);
+		await expect(listbox).toBeVisible({ timeout: 15_000 });
+		const visibleOptionNames = (
+			await listbox.getByRole("option").allTextContents()
+		)
+			.map((text) => text.trim())
+			.filter(Boolean);
+		const optionNames = Array.isArray(optionName) ? optionName : [optionName];
+		const selectedOptionName = optionNames.find((name) =>
+			visibleOptionNames.includes(name),
+		);
+
+		expect(
+			selectedOptionName,
+			`Expected select "${id}" to show one of: ${optionNames.join(", ")}. Visible options: ${visibleOptionNames.join(", ")}`,
+		).toBeTruthy();
+
+		const option = listbox.getByRole("option", {
+			name: selectedOptionName!,
+			exact: true,
+		});
+		await expect(
+			option,
+			`Expected select "${id}" to show option "${selectedOptionName}".`,
+		).toBeVisible({ timeout: 15_000 });
+		await option.press("Enter");
+		await expect(trigger).toContainText(selectedOptionName!);
+	};
+
+	const chooseRadioValue = async (
+		page: import("@playwright/test").Page,
+		fieldName: string,
+		value: string | number | boolean,
+	) => {
+		const radio = await getVisibleFieldById(
+			page,
+			`${fieldName}-${serializeOptionValue(value)}`,
+		);
+		await radio.click();
+		await expect(radio).toHaveAttribute("data-state", "checked");
+	};
+
+	const expectReviewFieldValue = async (
+		page: import("@playwright/test").Page,
+		label: string,
+		value: string | string[],
+	) => {
+		const row = page
+			.locator("div")
+			.filter({
+				has: page.locator("strong", { hasText: label }),
+			})
 			.first();
-		const hasVisibleOption = await option.isVisible().catch(() => false);
-		if (hasVisibleOption) {
-			await option.scrollIntoViewIfNeeded();
-			await option.click({ force: true });
-			return;
-		}
-		// Fallback for flaky portal rendering: select first item via keyboard.
-		await trigger.focus();
-		await page.keyboard.press("ArrowDown");
-		await page.keyboard.press("Enter");
+		const values = Array.isArray(value) ? value : [value];
+		const escapedValues = values.map((item) =>
+			item.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
+		);
+		await expect(row).toContainText(new RegExp(escapedValues.join("|")));
 	};
 
 	const openAllAccordions = async (
@@ -149,7 +214,7 @@ test.describe("institution submission wizard", () => {
 	}) => {
 		const uniqueName = `E2E LatLng ${Date.now()}`;
 
-		await fillById(page, "name", uniqueName);
+		await fillRequiredById(page, "name", uniqueName);
 		await fillById(page, "address.lat", "52.520008");
 		await fillById(page, "address.lng", "13.404954");
 
@@ -328,29 +393,40 @@ test.describe("institution submission wizard", () => {
 	test("fills every single wizard field and submits for review", async ({
 		page,
 	}) => {
-		const uniqueName = `E2E All Fields ${Date.now()}`;
+		const timestamp = Date.now();
+		const uniqueName = `E2E All Fields ${timestamp}`;
+		let fundingTypeLabel = "";
+		let fundingSourceLabel = "";
+		let ownerTypeLabel = "";
+		let rentalContractTypeLabel = "";
+		let protectionStatusLabel = "";
 
 		await expect(page.getByText(/Schritt 1 \/ 5/)).toBeVisible();
-		await fillById(page, "name", uniqueName);
-		await fillById(page, "address.lat", "52.520008");
-		await fillById(page, "address.lng", "13.404954");
-		await fillById(page, "address.streetLine", "Alexanderplatz 1");
-		await fillById(page, "address.address_suffix", "Aufgang B");
-		await fillById(page, "address.zip", "10178");
-		await fillById(page, "address.city", "Berlin");
-		await fillById(page, "address.neighbourhood", "Mitte");
-		await fillById(page, "address.cultural_area", "Zentrum");
-		await selectFirstOptionById(page, "utilization_status");
-		await fillById(page, "parent_organization", "Kulturverein Berlin");
-		await fillById(page, "email", `all-fields-${Date.now()}@example.com`);
-		await fillById(page, "phone", "+49 30 123456");
-		await fillById(page, "website", "https://example.org/location");
+		await fillRequiredById(page, "name", uniqueName);
+		await fillRequiredById(page, "address.lat", "52.520008");
+		await fillRequiredById(page, "address.lng", "13.404954");
+		await fillRequiredById(page, "address.streetLine", "Alexanderplatz 1");
+		await fillRequiredById(page, "address.address_suffix", "Aufgang B");
+		await fillRequiredById(page, "address.zip", "10178");
+		await fillRequiredById(page, "address.city", "Berlin");
+		await fillRequiredById(page, "address.neighbourhood", "Mitte");
+		await fillRequiredById(page, "address.district", "Berlin-Mitte");
+		await fillRequiredById(page, "address.cultural_area", "Zentrum");
+		await selectOptionById(page, "utilization_status", "In Nutzung");
+		await fillRequiredById(page, "parent_organization", "Kulturverein Berlin");
+		await fillRequiredById(
+			page,
+			"email",
+			`all-fields-${timestamp}@example.com`,
+		);
+		await fillRequiredById(page, "phone", "+49 30 123456");
+		await fillRequiredById(page, "website", "https://example.org/location");
 		await page
 			.locator('form#institution-basic-form button[type="submit"]')
 			.click();
 
 		await expect(page.getByText(/Schritt 2 \/ 5/)).toBeVisible();
-		await fillById(page, "newCategory", `E2E Vollständig ${Date.now()}`);
+		await fillRequiredById(page, "newCategory", `E2E Vollständig ${timestamp}`);
 		await page
 			.locator('form#institution-category-form button[type="submit"]')
 			.click();
@@ -358,66 +434,90 @@ test.describe("institution submission wizard", () => {
 		await expect(page.getByText(/Schritt 3 \/ 5/)).toBeVisible({
 			timeout: 15_000,
 		});
-		await page.locator('[id="shared_use-yes"]').click();
+		await chooseRadioValue(page, "shared_use_allowed", true);
 		await openAllAccordions(page, "form#institution-shared-use-form");
-		await fillById(
+		await fillRequiredById(
 			page,
 			"shared_use_info",
 			"Raum ist grundsätzlich für Dritte nutzbar.",
 		);
-		await fillById(
+		await fillRequiredById(
 			page,
 			"shared_use_equipment",
 			"Tische, Stühle, WLAN, Grundbeleuchtung",
 		);
-		await fillById(
+		await fillRequiredById(
 			page,
 			"shared_use_audience",
 			"Geeignet für Proben, Lesungen, kleinere Veranstaltungen",
 		);
-		await fillById(page, "shared_use_availability", "Mo-Fr 10:00-18:00");
-		await fillById(
+		await fillRequiredById(
 			page,
-			"shared_use_accessibility",
-			"Erdgeschoss, barrierearm",
+			"shared_use_availability",
+			"Mo-Fr 10:00-18:00",
 		);
-		await fillById(page, "shared_use_cost", "80 EUR pro Stunde");
-		await fillById(page, "shared_use_contact_person", "Kontakt: +49 30 222");
-		await fillById(page, "legal_form", "e.V.");
-		await selectFirstOptionById(page, "funding_type");
+		await fillRequiredById(page, "accessibility", "Erdgeschoss, barrierearm");
+		await fillRequiredById(page, "cost", "80 EUR pro Stunde");
+		await fillRequiredById(
+			page,
+			"shared_use_contact_person",
+			"Kontakt: +49 30 222",
+		);
+		await fillRequiredById(page, "legal_form", "e.V.");
+		fundingTypeLabel = "Arbeitsraumprogramm";
+		await selectOptionById(page, "funding_type", fundingTypeLabel);
 		const addFundingSource = page
 			.locator("form#institution-shared-use-form button")
 			.filter({ hasText: /hinzuf|add/i })
 			.first();
 		if ((await addFundingSource.count()) > 0) {
 			await addFundingSource.click();
-			await selectFirstOptionById(page, "funding_sources-0-source");
-			await fillById(page, "funding_sources-0-description", "Landesmittel");
+			fundingSourceLabel = "Kirche";
+			await selectOptionById(
+				page,
+				"funding_sources-0-source",
+				fundingSourceLabel,
+			);
+			await fillRequiredById(
+				page,
+				"funding_sources-0-description",
+				"Landesmittel",
+			);
 		}
-		await fillById(page, "established_since", "2008-01-01");
-		await fillById(page, "established_until", "2035-12-31");
-		await fillById(page, "closing_reason", "Kein Schließungsgrund");
-		await selectFirstOptionById(page, "owner_type");
-		await fillById(page, "owner_name", "Eigentümer GmbH");
-		await selectFirstOptionById(page, "rental_contract_type");
-		await fillById(page, "rental_contract_end", "2030-12-31");
-		await selectFirstOptionById(page, "protection_status");
-		await fillById(
+		await fillRequiredById(page, "established_since", "2008-01-01");
+		await fillRequiredById(page, "established_until", "2035-12-31");
+		await fillRequiredById(page, "closing_reason", "Kein Schließungsgrund");
+		ownerTypeLabel = "Privat";
+		await selectOptionById(page, "owner_type", ownerTypeLabel);
+		await fillRequiredById(page, "owner_name", "Eigentümer GmbH");
+		rentalContractTypeLabel = "Befristeter Mietvertrag";
+		await selectOptionById(page, "rental_contract_type", [
+			rentalContractTypeLabel,
+			"Befristete Miete",
+		]);
+		await fillRequiredById(page, "rental_contract_end", "2030-12-31");
+		protectionStatusLabel = "Langfristig gesichert";
+		await selectOptionById(page, "protection_status", protectionStatusLabel);
+		await fillRequiredById(
 			page,
 			"protection_status_info",
 			"Status laut letzter Abstimmung",
 		);
-		await fillById(
+		await fillRequiredById(
 			page,
 			"protection_status_internal_notes",
 			"Interne Hinweise zur Sicherung",
 		);
-		await fillById(page, "area", "450");
-		await fillById(page, "number_of_rooms", "8");
-		await fillById(page, "capacity", "280");
-		await fillById(page, "accessibility", "Aufzug vorhanden");
-		await fillById(page, "cost", "Miete abhängig von Nutzungsdauer");
-		await fillById(page, "notes", "Zusätzliche Hinweise für Review");
+		await fillRequiredById(page, "area", "451");
+		await fillRequiredById(page, "number_of_rooms", "17");
+		await fillRequiredById(page, "capacity", "283");
+		await fillRequiredById(page, "source", "Eigene Recherche vor Ort");
+		await fillRequiredById(page, "notes", "Zusätzliche Hinweise für Review");
+		await fillRequiredById(
+			page,
+			"internal_notes",
+			"Interne Notiz für die Prüfung dieses Entwurfs",
+		);
 		await page
 			.locator('form#institution-shared-use-form button[type="submit"]')
 			.click();
@@ -425,22 +525,65 @@ test.describe("institution submission wizard", () => {
 		await expect(page.getByText(/Schritt 4 \/ 5/)).toBeVisible({
 			timeout: 15_000,
 		});
-		await checkById(page, "works_for_organization");
-		await checkById(page, "consent_contact_listing");
-		await fillById(page, "contact_person_first_name", "Max");
-		await fillById(page, "contact_person_last_name", "Mustermann");
-		await fillById(
+		await chooseRadioValue(page, "works_for_organization", true);
+		await chooseRadioValue(page, "consent_contact_listing", true);
+		await fillRequiredById(page, "contact_person_first_name", "Max");
+		await fillRequiredById(page, "contact_person_last_name", "Mustermann");
+		await fillRequiredById(
 			page,
 			"contact_person_email",
-			`contact-all-${Date.now()}@example.com`,
+			`contact-all-${timestamp}@example.com`,
 		);
-		await fillById(page, "contact_person_phone", "+49 30 654321");
+		await fillRequiredById(page, "contact_person_phone", "+49 30 654321");
 		await page
 			.locator('form#institution-contact-form button[type="submit"]')
 			.click();
 
 		const submitButton = page.locator("#institution-draft-submit-button");
 		await expect(submitButton).toBeVisible({ timeout: 15_000 });
+		await expectReviewFieldValue(page, "Art der Förderung:", fundingTypeLabel);
+		if (fundingSourceLabel) {
+			await expectReviewFieldValue(
+				page,
+				"Name der Finanzierungsquelle:",
+				`${fundingSourceLabel}: Landesmittel`,
+			);
+		}
+		await expectReviewFieldValue(page, "Eigentümer*innenart:", ownerTypeLabel);
+		await expectReviewFieldValue(page, "Vertragsform:", [
+			rentalContractTypeLabel,
+			"Befristete Miete",
+		]);
+		await expectReviewFieldValue(
+			page,
+			"Sicherungsstatus:",
+			protectionStatusLabel,
+		);
+		await expectReviewFieldValue(page, "Ansprechperson Vorname:", "Max");
+		await expectReviewFieldValue(
+			page,
+			"Ansprechperson Nachname:",
+			"Mustermann",
+		);
+		await expectReviewFieldValue(
+			page,
+			"Ansprechperson E-Mail Adresse:",
+			`contact-all-${timestamp}@example.com`,
+		);
+		await expectReviewFieldValue(
+			page,
+			"Ansprechperson Telefonnummer:",
+			"+49 30 654321",
+		);
+		await expectReviewFieldValue(
+			page,
+			"Barrierefreiheit:",
+			"Erdgeschoss, barrierearm",
+		);
+		await expectReviewFieldValue(page, "Kosten:", "80 EUR pro Stunde");
+		await expectReviewFieldValue(page, "Nutzfläche (m²):", "451");
+		await expectReviewFieldValue(page, "Anzahl der Arbeitsräume:", "17");
+		await expectReviewFieldValue(page, "Kapazität:", "283");
 		await submitButton.click();
 		await waitForPostSubmitOutcome(page);
 	});

@@ -2,7 +2,7 @@
 
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import dynamic from "next/dynamic";
-import { FC } from "react";
+import { FC, useState } from "react";
 import HoverCard from "../HoverCard/HoverCard";
 import { ClickControl, HoverControl, MapControls } from "./Controls";
 import MapNavigationControls from "./Controls/MapNavigation/MapNavigationControls";
@@ -24,14 +24,16 @@ const Map: FC = () => {
 	);
 	const isLayerTreeOpen = useAppStore((state) => state.isLayerTreeOpen);
 	const setIsLayerTreeOpen = useAppStore((state) => state.setIsLayerTreeOpen);
+	const [isSidePanelOpen, setIsSidePanelOpen] = useState(false);
 
 	return (
 		<div className="Map-root w-full h-full relative">
 			<SidePanel
 				isBlocked={isLayerTreeOpen}
 				onPanelOpen={() => setIsLayerTreeOpen(false)}
+				onVisibilityChange={setIsSidePanelOpen}
 			/>
-			{true && <LayerTree />}
+			<LayerTree isSidePanelOpen={isSidePanelOpen} />
 
 			<LazyOlMap>
 				<LayerInitializer />

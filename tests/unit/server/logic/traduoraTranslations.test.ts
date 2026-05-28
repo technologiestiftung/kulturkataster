@@ -1,13 +1,9 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 
 const fetchTraduoraTokenMock = vi.fn().mockResolvedValue("token");
-const fetchLabelsMock = vi
-	.fn()
-	.mockResolvedValue([{ id: "label-1", value: "content" }]);
 
 vi.mock("@/server/traduora/cached", () => ({
 	fetchTraduoraToken: () => fetchTraduoraTokenMock(),
-	fetchLabels: (...args: unknown[]) => fetchLabelsMock(...args),
 }));
 
 const fetchMock = vi.fn();
@@ -28,7 +24,7 @@ describe("fetchTraduoraTranslations", () => {
 			.mockResolvedValueOnce({
 				ok: true,
 				json: async () => ({
-					data: [{ id: "term-1", value: "welcome.title" }],
+					data: [{ id: "term-1", value: "content.welcome.title" }],
 				}),
 			})
 			.mockResolvedValueOnce({
@@ -40,6 +36,13 @@ describe("fetchTraduoraTranslations", () => {
 
 		const result = await fetchTraduoraTranslations("en", "content");
 		expect(result).toHaveProperty("welcome.title", "Hello");
-		expect(fetchLabelsMock).toHaveBeenCalled();
+		expect(fetchMock).toHaveBeenCalledWith(
+			"https://example.test/projects/project-1/terms",
+			expect.objectContaining({ cache: "no-store" }),
+		);
+		expect(fetchMock).toHaveBeenCalledWith(
+			"https://example.test/projects/project-1/translations/en",
+			expect.objectContaining({ cache: "no-store" }),
+		);
 	});
 });

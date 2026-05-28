@@ -16,7 +16,7 @@ export default async function EditInstitutionModal({
 
 	return (
 		<InstitutionEditModal
-			institutionId={String(parsedId)}
+			institutionId={parsedId}
 			shouldRefresh={false}
 			routePath={`/account/institutions/${parsedId}/edit`}
 		/>

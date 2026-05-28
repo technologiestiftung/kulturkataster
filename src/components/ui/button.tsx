@@ -4,7 +4,7 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-	"inline-flex items-center justify-center gap-2 md:whitespace-nowrap rounded-sm button ring-offset-background transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+	"inline-flex max-w-full items-center truncate justify-center gap-2 md:whitespace-nowrap rounded-sm button ring-offset-background transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
 	{
 		variants: {
 			variant: {
@@ -23,6 +23,8 @@ const buttonVariants = cva(
 				icon: "bg-background",
 				action:
 					"border-border border-2 rounded-sm border-neutral-20 shadow-xs border flex-col bg-background hover:bg-neutral-30 flex justify-center items-center text-primary-dark",
+				subaction:
+					"border-border border-2 rounded-sm border-neutral-20 shadow-xs border flex-col bg-neutral-5 hover:bg-neutral-30 flex justify-center items-center",
 				accordion: "gap-2 justify-start text-primary-dark px-4",
 				tag: "bg-neutral-10 font-light flex items-center justify-center px-4 rounded-full",
 			},
@@ -45,7 +47,7 @@ const buttonVariants = cva(
 				full: "rounded-full",
 			},
 			fullWidth: {
-				true: "flex-1",
+				true: "w-full md:flex-1 md:min-w-0",
 				false: "",
 			},
 		},

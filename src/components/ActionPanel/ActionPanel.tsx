@@ -102,7 +102,7 @@ export function ActionPanel({
 								? (secondaryActionLabelLoading ?? actionLabelLoading)
 								: secondaryActionLabel}
 						</Button>
-					)}{" "}
+					)}
 					{onAction && (
 						<Button
 							type="button"

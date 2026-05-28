@@ -10,9 +10,9 @@ const verifyEmailSuccessMessage =
 	"Wenn ein Konto mit den angegebenen Daten erstellt werden kann, erhalten Sie in Kürze eine E-Mail mit einem Bestätigungslink.";
 
 const selectAccountType = async (page: any, label: string) => {
-	const accountTypeTrigger = page.getByLabel(
-		"Arbeiten Sie für eine Organisation oder in der Verwaltung?",
-	);
+	const accountTypeTrigger = page.getByRole("combobox", {
+		name: /Arbeiten Sie für eine Organisation oder in der Verwaltung\?/i,
+	});
 	const triggerVisible = await accountTypeTrigger
 		.waitFor({ state: "visible", timeout: 10_000 })
 		.then(() => true)

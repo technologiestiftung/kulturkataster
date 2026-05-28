@@ -21,42 +21,48 @@ type AuthChoiceContentProps = {
 	onGuestContinue: () => void;
 };
 
-function AuthChoiceContent({ t, onGuestContinue }: AuthChoiceContentProps) {
+function AuthChoiceContent({
+	t,
+	onLogin,
+	onGuestContinue,
+}: AuthChoiceContentProps) {
 	return (
 		<div className="my-18 space-y-10">
 			<div>
-				<h1 className="font-bold">{t("institutionDraftIntroModal.title")}</h1>
+				<h1 className="font-bold">
+					{t("content.institutionDraftIntroModal.title")}
+				</h1>
 				<h2 className="font-bold">
-					{t("institutionDraftIntroModal.choice.title")}
+					{t("content.institutionDraftIntroModal.choice.title")}
 				</h2>
 			</div>
 			<div className="space-y-2">
 				<div>
 					<h3 className="font-bold">
-						{t("institutionDraftIntroModal.choice.login.title")}
+						{t("content.institutionDraftIntroModal.choice.login.title")}
 					</h3>
 					<p className="body2">
-						{t("institutionDraftIntroModal.choice.login.description")}
+						{t("content.institutionDraftIntroModal.choice.login.description")}
 					</p>
 				</div>
-				{/* <div className="flex ">
+				<div className="flex ">
 					<Button variant="primary" onClick={onLogin}>
-						{t("institutionDraftIntroModal.choice.login.cta")}
+						{t("content.institutionDraftIntroModal.choice.login.cta")}
 					</Button>
-				</div> */}
+				</div>
 			</div>
 			<div className="space-y-2">
 				<div>
 					<h3 className="font-bold">
-						{t("institutionDraftIntroModal.choice.guest.title")}
+						{t("content.institutionDraftIntroModal.choice.guest.title")}
 					</h3>
 					<p className="body2">
-						{t("institutionDraftIntroModal.choice.guest.description")}
+						{t("content.institutionDraftIntroModal.choice.guest.description")}
 					</p>
 				</div>
 				<div className="flex">
 					<Button variant="primary" onClick={onGuestContinue}>
-						{t("institutionDraftIntroModal.choice.guest.cta")}
+						{t("content.institutionDraftIntroModal.choice.guest.cta")}
 					</Button>
 				</div>
 			</div>
@@ -100,12 +106,11 @@ function ContributionSetupContent({
 					</div>
 					<div className="motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-1 motion-safe:duration-700">
 						<h1 className="font-extrabold">
-							{t("institutionDraftIntroModal.submitSuccess.title")}
+							{t("content.institutionDraftIntroModal.submitSuccess.title")}
 						</h1>
 						<p className="body2 mt-2">
 							<Trans
-								i18nKey="institutionDraftIntroModal.submitSuccess.description"
-								ns="content"
+								i18nKey="content.institutionDraftIntroModal.submitSuccess.description"
 								components={[
 									<Link
 										key="account-link"
@@ -121,19 +126,19 @@ function ContributionSetupContent({
 				<>
 					<div className="mt-18">
 						<h1 className="font-bold">
-							{t("institutionDraftIntroModal.title")}
+							{t("content.institutionDraftIntroModal.title")}
 						</h1>
 						<p className="font-bold">
-							{t("institutionDraftIntroModal.intro.thankYou")}
+							{t("content.institutionDraftIntroModal.intro.thankYou")}
 						</p>
 					</div>
-					<p>{t("institutionDraftIntroModal.intro.description")}</p>
+					<p>{t("content.institutionDraftIntroModal.intro.description")}</p>
 					<div className="space-y-2">
 						<h2 className="font-bold">
-							{t("institutionDraftIntroModal.intro.sectionTitle")}
+							{t("content.institutionDraftIntroModal.intro.sectionTitle")}
 						</h2>
 						<span className="body2">
-							{t("institutionDraftIntroModal.intro.sectionNote")}
+							{t("content.institutionDraftIntroModal.intro.sectionNote")}
 						</span>
 					</div>
 				</>
@@ -141,10 +146,10 @@ function ContributionSetupContent({
 
 			<div className="space-y-2 my-12 rounded-md bg-primary-light/50 p-12">
 				<p className="font-bold">
-					{t("institutionDraftIntroModal.intro.mode.title")}
+					{t("content.institutionDraftIntroModal.intro.mode.title")}
 				</p>
 				<span className="body2">
-					{t("institutionDraftIntroModal.intro.mode.description")}
+					{t("content.institutionDraftIntroModal.intro.mode.description")}
 				</span>
 				<div className="pt-4">
 					<RadioGroup
@@ -154,47 +159,49 @@ function ContributionSetupContent({
 						}
 						className="flex flex-col gap-4"
 					>
-						<div key="new" className="flex items-center space-x-2">
+						<div key="new" className="flex items-start space-x-2">
 							<RadioGroupItem
 								value="new"
 								className="bg-background border-none"
 								id="new"
 							/>
+
 							<Label
 								htmlFor="new"
 								emphasize={false}
 								className="flex items-center gap-2 cursor-pointer"
 							>
-								{t("institutionDraftIntroModal.intro.mode.new")}
+								{t("content.institutionDraftIntroModal.intro.mode.new")}
 							</Label>
 						</div>
-						<div key="edit" className="flex items-center space-x-2">
+						<div key="edit" className="flex items-start space-x-2">
 							<RadioGroupItem
 								value="edit"
 								className="bg-background border-none"
 								id="edit"
 							/>
+
 							<Label
 								htmlFor="edit"
 								emphasize={false}
 								className="flex items-center gap-2 cursor-pointer"
 							>
-								{t("institutionDraftIntroModal.intro.mode.edit")}
+								{t("content.institutionDraftIntroModal.intro.mode.edit")}
 							</Label>
 						</div>
 					</RadioGroup>
 				</div>
 			</div>
-			<div className="flex items-center gap-3">
+			<div className="flex items-center gap-3 flex-col-reverse md:flex-row flex-col">
 				{showBackButton && onBack ? (
 					<Button variant="outline" onClick={onBack}>
-						{t("institutionDraftIntroModal.intro.back")}
+						{t("content.institutionDraftIntroModal.intro.back")}
 					</Button>
 				) : null}
 				<Button variant="primary" onClick={onContinue}>
 					{showThankYou
-						? t("institutionDraftIntroModal.submitSuccess.cta")
-						: t("institutionDraftIntroModal.intro.cta")}
+						? t("content.institutionDraftIntroModal.submitSuccess.cta")
+						: t("content.institutionDraftIntroModal.intro.cta")}
 				</Button>
 			</div>
 		</>
@@ -212,7 +219,7 @@ export function InstitutionDraftIntroModal({
 }) {
 	const router = useRouter();
 	const toLocalePath = useLocalePath();
-	const { t } = useTranslation("content");
+	const { t } = useTranslation();
 	const [mode, setMode] = useState<DraftMode>("new");
 	const [isGuestSetupVisible, setIsGuestSetupVisible] = useState(showThankYou);
 	const resetDraft = useInstitutionDraftStore((state) => state.resetDraft);
@@ -262,7 +269,7 @@ export function InstitutionDraftIntroModal({
 
 	return (
 		<Modal
-			title={t("institutionDraftIntroModal.title")}
+			title={t("content.institutionDraftIntroModal.title")}
 			titleClassName="sr-only"
 			variant="fullscreen"
 			routePath={routePath}

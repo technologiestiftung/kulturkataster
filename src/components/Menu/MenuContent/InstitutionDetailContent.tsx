@@ -2,10 +2,9 @@
 
 import { Button } from "@/components/ui/button";
 import {
+	detailsInfoConfig,
 	organizationInfoConfig,
-	fundingInfoConfig,
 	facilityInfoConfig,
-	statusInfoConfig,
 	additionalInfoConfig,
 	contactInfoConfig,
 } from "@/components/Institution";
@@ -31,7 +30,7 @@ function InstitutionCard({
 	institutionData: Institution;
 	onCenterMap?: () => void;
 }) {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation();
 	const fieldLabel = useFieldLabel();
 	const { isPrivateField } = useInstitutionPrivateFieldResolver();
 
@@ -139,13 +138,14 @@ function InstitutionCard({
 									title: (
 										<>
 											<span className="group-data-[state=open]:hidden">
-												{t("institution.moreInfo")}
+												{t("common.institution.moreInfo")}
 											</span>
 											<span className="group-data-[state=closed]:hidden">
-												{t("institution.lessInfo")}
+												{t("common.institution.lessInfo")}
 											</span>
 										</>
 									),
+
 									className: "space-y-4",
 									fields: [
 										{
@@ -153,26 +153,20 @@ function InstitutionCard({
 											id: "organization",
 											alwaysShow: false,
 											cardVariant: "tertiary",
-											fields: organizationInfoConfig,
+											fields: detailsInfoConfig,
 										},
 										{
 											type: "section",
 											id: "funding",
 											alwaysShow: false,
 											cardVariant: "tertiary",
-											fields: fundingInfoConfig,
+											fields: organizationInfoConfig,
 										},
 										{
 											type: "section",
 											id: "facility",
 											cardVariant: "tertiary",
 											fields: facilityInfoConfig,
-										},
-										{
-											type: "section",
-											id: "status",
-											cardVariant: "tertiary",
-											fields: statusInfoConfig,
 										},
 										{
 											type: "section",
@@ -192,7 +186,7 @@ function InstitutionCard({
 }
 
 export function InstitutionDetailContent() {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation();
 	const institutions = useInstitutionStore((state) => state.allInstitutions);
 	const isLoading = useInstitutionStore((state) => state.isLoading);
 	const error = useInstitutionStore((state) => state.error);
@@ -249,13 +243,15 @@ export function InstitutionDetailContent() {
 	if (!institutionData) {
 		return (
 			<div className="p-6">
-				<p className="text-foreground">{error ?? t("institution.notFound")}</p>
+				<p className="text-foreground">
+					{error ?? t("common.institution.notFound")}
+				</p>
 				<Button
 					onClick={handleClose}
 					variant="link"
 					className="mt-4 text-primary-dark hover:underline p-0 h-auto"
 				>
-					{t("institution.backToMap")}
+					{t("common.institution.backToMap")}
 				</Button>
 			</div>
 		);

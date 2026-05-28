@@ -36,10 +36,12 @@ vi.mock("@/lib/hooks/useLocalePath", () => ({
 vi.mock("react-i18next", () => ({
 	useTranslation: () => ({
 		t: (key: string, options?: { name?: string; defaultValue?: string }) => {
-			if (key === "auth.account.welcome") {
+			const normalizedKey = key.replace(/^common\./, "");
+
+			if (normalizedKey === "auth.account.welcome") {
 				return `Willkommen, ${options?.name ?? ""}!`;
 			}
-			if (key === "auth.account.subtitle") {
+			if (normalizedKey === "auth.account.subtitle") {
 				return "Meine Profilübersicht";
 			}
 			const dictionary: Record<string, string> = {
@@ -55,7 +57,9 @@ vi.mock("react-i18next", () => ({
 				"auth.account.tabs.roles": "Roles",
 				"auth.account.tabs.categories": "Categories",
 			};
-			return dictionary[key] ?? options?.defaultValue ?? key;
+			return (
+				dictionary[normalizedKey] ?? options?.defaultValue ?? normalizedKey
+			);
 		},
 	}),
 }));

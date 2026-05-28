@@ -10,6 +10,9 @@ const {
 	sendRoleDecisionEmail,
 	revalidateAccount,
 	loggerError,
+	listActive,
+	findActiveByPath,
+	enqueueTemplatedEmail,
 } = vi.hoisted(() => ({
 	authorizeTable: vi.fn(),
 	requireAllScope: vi.fn(),
@@ -20,6 +23,9 @@ const {
 	sendRoleDecisionEmail: vi.fn(),
 	revalidateAccount: vi.fn(),
 	loggerError: vi.fn(),
+	listActive: vi.fn(),
+	findActiveByPath: vi.fn(),
+	enqueueTemplatedEmail: vi.fn(),
 }));
 
 vi.mock("@/server/utils/rbac", () => ({
@@ -79,7 +85,22 @@ vi.mock("@/server/supabase/server", () => ({
 	createClient: vi.fn(),
 }));
 
-import { sendRoleDecisionEmailManual } from "@/server/actions/users";
+vi.mock("@/server/data/emailTemplateRepo", () => ({
+	emailTemplateRepo: {
+		listActive,
+		findActiveByPath,
+	},
+}));
+
+vi.mock("@/server/email/outbox", () => ({
+	enqueueTemplatedEmail,
+}));
+
+import {
+	getUserEmailTemplateOptions,
+	sendRoleDecisionEmailManual,
+	sendUserEmailTemplate,
+} from "@/server/actions/users";
 
 describe("server actions: users", () => {
 	beforeEach(() => {
@@ -129,7 +150,10 @@ describe("server actions: users", () => {
 			}),
 		);
 		expect(update).toHaveBeenCalledWith("user-1", { status: "active" });
-		expect(result.status).toBe("active");
+		expect(result).toMatchObject({
+			ok: true,
+			data: expect.objectContaining({ status: "active" }),
+		});
 		expect(revalidateAccount).toHaveBeenCalledTimes(1);
 	});
 
@@ -157,7 +181,121 @@ describe("server actions: users", () => {
 			}),
 		);
 		expect(update).not.toHaveBeenCalled();
-		expect(result.status).toBe("approval_pending");
+		expect(result).toMatchObject({
+			ok: true,
+			data: expect.objectContaining({ status: "approval_pending" }),
+		});
 		expect(revalidateAccount).toHaveBeenCalledTimes(1);
+	});
+});
+
+describe("getUserEmailTemplateOptions", () => {
+	beforeEach(() => {
+		getCurrentUserId.mockResolvedValue("admin-1");
+		requireAllScope.mockResolvedValue(undefined);
+		listActive.mockReset();
+	});
+
+	it("returns active custom templates", async () => {
+		const templates = [
+			{
+				key: "custom.claim_approved",
+				path: "custom/claim_approved.html",
+				name: "Claim bestätigt",
+				subject: null,
+			},
+			{
+				key: "custom.submission_approved",
+				path: "custom/submission_approved.html",
+				name: "Einreichung bestätigt",
+				subject: null,
+			},
+		];
+		listActive.mockResolvedValue(templates);
+
+		const result = await getUserEmailTemplateOptions();
+
+		expect(result).toMatchObject({ ok: true, data: templates });
+		expect(listActive).toHaveBeenCalledTimes(1);
+	});
+
+	it("throws when unauthorized", async () => {
+		requireAllScope.mockImplementation(() => {
+			throw new Error("forbidden");
+		});
+
+		await expect(getUserEmailTemplateOptions()).rejects.toThrow("forbidden");
+	});
+});
+
+describe("sendUserEmailTemplate", () => {
+	const resolvedUser = {
+		id: "user-1",
+		email: "user@example.com",
+		first_name: "Ada",
+		last_name: "Lovelace",
+		status: "active",
+		meta_info: null,
+	};
+
+	beforeEach(() => {
+		getCurrentUserId.mockResolvedValue("admin-1");
+		requireAllScope.mockResolvedValue(undefined);
+		findById.mockResolvedValue(resolvedUser);
+		findActiveByPath.mockReset();
+		enqueueTemplatedEmail.mockReset();
+	});
+
+	it("sends the email when template and user exist", async () => {
+		findActiveByPath.mockResolvedValue({
+			key: "custom.claim_approved",
+			path: "custom/claim_approved.html",
+			name: "Claim bestätigt",
+			subject: "Ihr Claim wurde bestätigt",
+		});
+		enqueueTemplatedEmail.mockResolvedValue(undefined);
+
+		const result = await sendUserEmailTemplate({
+			userId: "user-1",
+			templatePath: "custom/claim_approved.html",
+		});
+
+		expect(enqueueTemplatedEmail).toHaveBeenCalledWith(
+			expect.objectContaining({
+				to: "user@example.com",
+				templatePath: "custom/claim_approved.html",
+			}),
+		);
+		expect(result).toMatchObject({ ok: true });
+	});
+
+	it("returns not-found when the template does not exist", async () => {
+		findActiveByPath.mockResolvedValue(null);
+
+		const result = await sendUserEmailTemplate({
+			userId: "user-1",
+			templatePath: "custom/nonexistent.html",
+		});
+
+		expect(enqueueTemplatedEmail).not.toHaveBeenCalled();
+		expect(result).toMatchObject({ ok: false });
+	});
+
+	it("returns not-found when the user does not exist", async () => {
+		findById.mockResolvedValue(null);
+		findActiveByPath.mockResolvedValue({
+			key: "custom.claim_approved",
+			path: "custom/claim_approved.html",
+			name: "Claim bestätigt",
+			subject: null,
+		});
+
+		const result = await sendUserEmailTemplate({
+			userId: "user-1",
+			templatePath: "custom/claim_approved.html",
+		});
+
+		expect(enqueueTemplatedEmail).not.toHaveBeenCalled();
+		expect(result).toMatchObject({ ok: false });
 	});
 });

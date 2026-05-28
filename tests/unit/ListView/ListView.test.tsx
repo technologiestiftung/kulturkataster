@@ -52,7 +52,8 @@ vi.mock("@/lib/hooks/useLocalePath", () => ({
 vi.mock("react-i18next", () => ({
 	useTranslation: () => ({
 		t: (key: string, options?: { count?: number }) =>
-			key === "listView.countLabel" && typeof options?.count === "number"
+			key === "content.listView.countLabel" &&
+			typeof options?.count === "number"
 				? `${options.count}`
 				: key,
 	}),
@@ -111,17 +112,36 @@ vi.mock("@/components/ListView/AlphabetFilter", () => ({
 
 vi.mock("@/components/ListView/ListTopbar", () => ({
 	ListTopbar: ({
+		countLabel,
 		query,
 		onQueryChange,
+		activeLetter,
+		onSelectLetter,
+		enabledLetters,
 	}: {
+		countLabel: string;
 		query: string;
 		onQueryChange: (value: string) => void;
+		activeLetter: string | null;
+		onSelectLetter: (letter: string | null) => void;
+		enabledLetters: Set<string>;
 	}) => (
-		<input
-			aria-label="query"
-			value={query}
-			onChange={(event) => onQueryChange(event.target.value)}
-		/>
+		<div>
+			<strong>{countLabel}</strong>
+			<input
+				aria-label="query"
+				value={query}
+				onChange={(event) => onQueryChange(event.target.value)}
+			/>
+			<button
+				type="button"
+				disabled={!enabledLetters.has("A")}
+				aria-pressed={activeLetter === "A"}
+				onClick={() => onSelectLetter(activeLetter === "A" ? null : "A")}
+			>
+				A
+			</button>
+		</div>
 	),
 }));
 
@@ -270,7 +290,7 @@ describe("ListView", () => {
 			vi.advanceTimersByTime(150);
 		});
 
-		const button = screen.getByLabelText("listView.scrollToTop");
+		const button = screen.getByLabelText("common.listView.scrollToTop");
 		fireEvent.click(button);
 
 		expect(window.scrollTo).toHaveBeenCalledWith(

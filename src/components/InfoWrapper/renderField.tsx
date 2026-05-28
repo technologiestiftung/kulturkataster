@@ -82,7 +82,7 @@ const formatCategoryValue = (
 	const categories = getParentCategories(data);
 	if (!categories?.length) return "";
 	return categories
-		.map((category) => tEnum(`category.${category.key}`))
+		.map((category) => tEnum(`enumMap.category.${category.key}`))
 		.join(", ");
 };
 
@@ -195,6 +195,7 @@ function AddressField({
 				isPrivate={isPrivate}
 				action={action}
 			/>
+
 			{(showMapLink || showCopy) && (
 				<div className="flex flex-wrap gap-3">
 					{showMapLink && mapHref && (
@@ -232,7 +233,10 @@ type RenderFieldContentArgs = {
 };
 
 const hasRenderableDisplayValue = (value: unknown) =>
-	value !== 0 && hasDisplayValue(value);
+	typeof value === "boolean" || (value !== 0 && hasDisplayValue(value));
+
+const normalizeDateForDiff = (value: unknown) =>
+	normalizeDateByType(value, "date");
 
 const getContent = (
 	field: InfoWrapperFieldConfig,
@@ -256,6 +260,7 @@ const getContent = (
 					action={action}
 				/>
 			);
+
 		case "status": {
 			return (
 				<StatusItem
@@ -282,6 +287,7 @@ const getContent = (
 					{renderLink(value, resolvedHref, field.type)}
 				</InfoItem>
 			);
+
 		case "category":
 			return (
 				<CategoryItem
@@ -292,6 +298,7 @@ const getContent = (
 					action={action}
 				/>
 			);
+
 		case "fundingSources":
 			return (
 				<FundingSourceItem
@@ -302,6 +309,7 @@ const getContent = (
 					action={action}
 				/>
 			);
+
 		case "title":
 			return (
 				<div className="overflow-hidden">
@@ -310,6 +318,7 @@ const getContent = (
 					</h1>
 				</div>
 			);
+
 		case "text":
 			return (
 				<InfoItem
@@ -321,6 +330,7 @@ const getContent = (
 					{String(value)}
 				</InfoItem>
 			);
+
 		case "enum":
 			return (
 				<InfoItem
@@ -332,6 +342,19 @@ const getContent = (
 					{getFieldOptionLabel(tEnum, String(field.enumKey), String(value))}
 				</InfoItem>
 			);
+
+		case "boolean":
+			return (
+				<InfoItem
+					label={label}
+					description={field.description}
+					isPrivate={isPrivate}
+					action={action}
+				>
+					{tEnum(`enumMap.boolean.${String(value)}`)}
+				</InfoItem>
+			);
+
 		case "date":
 		case "year":
 			return (
@@ -344,6 +367,7 @@ const getContent = (
 					{formatDateByType(value, field.type)}
 				</InfoItem>
 			);
+
 		default:
 			return null;
 	}
@@ -353,9 +377,9 @@ const renderFieldContent = (
 	{ field, data, newData, alwaysShow, isPrivate }: RenderFieldContentArgs,
 	includeLayout = true,
 ) => {
-	const { t: tEnum } = useTranslation("enumMap");
-	const { t: tCommon } = useTranslation("common");
-	const { t: tContent } = useTranslation("content");
+	const { t: tEnum } = useTranslation();
+	const { t: tCommon } = useTranslation();
+	const { t: tContent } = useTranslation();
 	const value = resolveFieldValue(field, data);
 	const resolvedHref = resolveHref(field, value, data);
 	const action = getEditAction({
@@ -363,17 +387,37 @@ const renderFieldContent = (
 		data,
 		defaultAriaLabel: `Edit ${field.id ?? "field"}`,
 	});
-	const newValue = newData ? resolveFieldValue(field, newData) : undefined;
-	const resolvedNewHref = newData
-		? resolveHref(field, newValue, newData)
+	// Check whether the field's key is actually present in newData. If the key
+	// is absent the field was never touched in the draft and should be treated
+	// as unchanged — not as "removed".
+	const isFieldPresentInNewData = (() => {
+		if (!newData) return false;
+		if (
+			field.type === "address" ||
+			field.type === "category" ||
+			field.type === "fundingSources"
+		)
+			return true;
+		const key =
+			typeof field.value === "string" ? field.value.split(".")[0] : undefined;
+		if (!key) return false;
+		return Object.prototype.hasOwnProperty.call(newData, key);
+	})();
+	const effectiveNewData =
+		newData && !isFieldPresentInNewData ? undefined : newData;
+	const newValue = effectiveNewData
+		? resolveFieldValue(field, effectiveNewData)
+		: undefined;
+	const resolvedNewHref = effectiveNewData
+		? resolveHref(field, newValue, effectiveNewData)
 		: undefined;
 
 	const gridClass = getGridClass(field);
 	const translateLabel = (labelKey?: string) => {
 		if (!labelKey) return undefined;
-		const fromEnum = tEnum(labelKey);
+		const fromEnum = tEnum("enumMap." + labelKey);
 		if (fromEnum && fromEnum !== labelKey) return fromEnum;
-		const fromCommon = tCommon(labelKey);
+		const fromCommon = tCommon("common." + labelKey);
 		if (fromCommon && fromCommon !== labelKey) return fromCommon;
 		return labelKey;
 	};
@@ -388,6 +432,7 @@ const renderFieldContent = (
 					Boolean(getParentCategories(data)?.length) ||
 					hasRenderableDisplayValue(newValue)
 				);
+
 			case "link":
 			case "email":
 			case "phone":
@@ -397,9 +442,11 @@ const renderFieldContent = (
 					hasRenderableDisplayValue(newValue) ||
 					hasRenderableDisplayValue(resolvedNewHref)
 				);
+
 			case "status":
 			case "text":
 			case "enum":
+			case "boolean":
 			case "fundingSources":
 			case "date":
 			case "year":
@@ -408,6 +455,7 @@ const renderFieldContent = (
 					hasRenderableDisplayValue(value) ||
 					hasRenderableDisplayValue(newValue)
 				);
+
 			default:
 				return true;
 		}
@@ -463,9 +511,11 @@ const renderFieldContent = (
 					hasRenderableDisplayValue(value) ||
 					hasRenderableDisplayValue(resolvedHref)
 				);
+
 			case "status":
 			case "text":
 			case "enum":
+			case "boolean":
 			case "fundingSources":
 			case "date":
 			case "year":
@@ -478,8 +528,21 @@ const renderFieldContent = (
 
 	const hasNew =
 		newData !== undefined &&
-		(hasRenderableDisplayValue(newValue) ||
-			hasRenderableDisplayValue(resolvedNewHref));
+		(() => {
+			switch (field.type) {
+				case "address":
+					return Boolean(newData.address) && formatAddressValue(newData) !== "";
+				case "category":
+					return Boolean(getParentCategories(newData)?.length);
+				case "fundingSources":
+					return hasRenderableDisplayValue(resolveFieldValue(field, newData));
+				default:
+					return (
+						hasRenderableDisplayValue(newValue) ||
+						hasRenderableDisplayValue(resolvedNewHref)
+					);
+			}
+		})();
 
 	const renderValueDisplay = (
 		displayValue: unknown,
@@ -495,7 +558,7 @@ const renderFieldContent = (
 			const labelKey = `${field.enumKey ?? "utilization_status"}.${String(
 				displayValue,
 			)}`;
-			return tEnum(labelKey);
+			return tEnum("enumMap." + labelKey);
 		}
 		if (field.type === "enum") {
 			return getFieldOptionLabel(
@@ -503,6 +566,9 @@ const renderFieldContent = (
 				String(field.enumKey),
 				String(displayValue),
 			);
+		}
+		if (field.type === "boolean") {
+			return tEnum(`enumMap.boolean.${String(displayValue)}`);
 		}
 		if (field.type === "date" || field.type === "year") {
 			return formatDateByType(displayValue, field.type);
@@ -538,10 +604,7 @@ const renderFieldContent = (
 				return String(originalDisplay) !== String(newDisplay ?? "");
 			}
 			if (field.type === "date" || field.type === "year") {
-				return (
-					normalizeDateByType(value, field.type) !==
-					normalizeDateByType(newValue, field.type)
-				);
+				return normalizeDateForDiff(value) !== normalizeDateForDiff(newValue);
 			}
 			if (
 				field.type === "link" ||
@@ -623,8 +686,8 @@ const renderFieldContent = (
 					<h1 id="institution-title" className="font-bold wrap-anywhere">
 						<span className="bg-primary-light px-1">
 							{hasOriginal
-								? tContent("infoWrapper.diffLabel.edited")
-								: tContent("infoWrapper.diffLabel.addition")}
+								? tContent("content.infoWrapper.diffLabel.edited")
+								: tContent("content.infoWrapper.diffLabel.addition")}
 						</span>
 						<span className="bg-primary-light px-1">{newDisplay}</span>
 					</h1>
@@ -651,10 +714,55 @@ const renderFieldContent = (
 					<span className={cn(hasOriginal ? "block mt-1" : "")}>
 						<span className="bg-primary-light px-1">
 							{hasOriginal
-								? tContent("infoWrapper.diffLabel.edited")
-								: tContent("infoWrapper.diffLabel.addition")}
+								? tContent("content.infoWrapper.diffLabel.edited")
+								: tContent("content.infoWrapper.diffLabel.addition")}
 						</span>
 						<span className="bg-primary-light px-1">{newDisplay}</span>
+					</span>
+				</InfoItem>
+			</div>
+		);
+	}
+
+	if (newData !== undefined && hasOriginal && !hasNew) {
+		if (field.type === "title") {
+			return (
+				<div
+					className={cn(
+						includeLayout && gridClass,
+						includeLayout && field.className,
+					)}
+				>
+					<h1
+						id="institution-title"
+						className="font-bold wrap-anywhere line-through"
+					>
+						{originalDisplay}
+					</h1>
+					<span className="bg-primary-light px-1">
+						{tContent("content.infoWrapper.diffLabel.removed")}
+					</span>
+				</div>
+			);
+		}
+		return (
+			<div
+				className={cn(
+					includeLayout && gridClass,
+					includeLayout && field.className,
+				)}
+			>
+				<InfoItem
+					label={label}
+					description={field.description}
+					isPrivate={isPrivate}
+					action={action}
+				>
+					<span className="line-through">{originalDisplay}</span>
+					<span className="block mt-1">
+						<span className="bg-primary-light px-1">
+							{tContent("content.infoWrapper.diffLabel.removed")}
+						</span>
 					</span>
 				</InfoItem>
 			</div>

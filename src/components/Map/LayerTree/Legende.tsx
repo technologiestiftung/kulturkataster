@@ -31,7 +31,7 @@ type LegendItem = {
 };
 
 const Legende: FC<LegendeProps> = ({ id, serviceName }) => {
-	const { t, i18n } = useTranslation("common");
+	const { t, i18n } = useTranslation();
 	const legenden = (
 		i18n.resolvedLanguage?.startsWith("de") ? rawLegenden : rawLegendenEn
 	) as LegendItem[];
@@ -92,7 +92,7 @@ const Legende: FC<LegendeProps> = ({ id, serviceName }) => {
 						)}
 						{legendItem.type === "wording" && (
 							<span
-								aria-label={t("map.legend.legendValueWordingAriaLabel", {
+								aria-label={t("common.map.legend.legendValueWordingAriaLabel", {
 									serviceName,
 									value: legendItem.text,
 									label: legendItem.label,
@@ -109,7 +109,7 @@ const Legende: FC<LegendeProps> = ({ id, serviceName }) => {
 					{/* Legend Labels */}
 					{legendItem.label && (
 						<span
-							aria-label={t("map.legend.legendValueAriaLabel", {
+							aria-label={t("common.map.legend.legendValueAriaLabel", {
 								serviceName,
 								label: legendItem.label,
 								unit: legendItem.unit ?? "",
