@@ -2,16 +2,16 @@
 
 import ArrowLeft from "@/icons/arrow-narrow-left.svg";
 import Close from "@/icons/close.svg";
+import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
-import { useLocalePath } from "@/lib/hooks/useLocalePath";
 
 export default function SubmenuLayout({
 	children,
 }: {
 	children: React.ReactNode;
 }) {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation();
 	const router = useRouter();
 	const pathname = usePathname();
 	const toLocalePath = useLocalePath();
@@ -30,35 +30,26 @@ export default function SubmenuLayout({
 		router.push(toLocalePath("/map"));
 	};
 
-	const handleClose = () => {
-		handleBack();
-	};
-
 	const title = pathname?.includes("/accessibilitySettings")
-		? t("accessibility.title")
-		: t("institution.details");
+		? t("common.accessibility.title")
+		: t("common.institution.details");
 
 	return (
 		<div className="flex flex-col h-full">
-			<div className="gap-3.5 p-2 md:p-6 h-16 shrink-0 md:h-auto shadow-sm md:shadow-none z-10">
-				<div className="md:hidden flex justify-center pb-2">
-					<div className="w-10 h-1 bg-muted-foreground/90 rounded-full"></div>
-				</div>
-				<div className="md:flex hidden items-center justify-between w-full">
-					<div className="flex items-center gap-2 body1 font-bold ">
-						<button
-							onClick={handleBack}
-							className="flex items-center gap-1"
-							aria-label={t("back")}
-						>
-							<ArrowLeft className="size-6" /> {t("back")}
-						</button>
-						<span className="">{title}</span>
-					</div>
-					<button onClick={handleClose} aria-label={t("closeSidebar")}>
-						<Close />
+			<div className="hidden md:flex items-center justify-between gap-3 p-6 shrink-0">
+				<div className="flex items-center gap-2 body1 font-bold">
+					<button
+						onClick={handleBack}
+						className="flex items-center gap-1"
+						aria-label={t("common.back")}
+					>
+						<ArrowLeft className="size-6" /> {t("common.back")}
 					</button>
+					<span>{title}</span>
 				</div>
+				<button onClick={handleBack} aria-label={t("common.closeSidebar")}>
+					<Close />
+				</button>
 			</div>
 			<div className="flex-1 overflow-auto">{children}</div>
 		</div>

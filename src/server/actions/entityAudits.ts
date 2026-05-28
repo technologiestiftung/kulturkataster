@@ -1,134 +1,84 @@
 "use server";
 
-import { Prisma } from "@/generated/prisma";
 import { getCurrentUserId } from "@/server/actions/auth";
-import { entityAuditRepo } from "@/server/data/entityAuditRepo";
-import {
-	authorizeTable,
-	getAccessContextForUser,
-	getTableScope,
-	requireScopeOrUser,
-} from "@/server/utils/rbac";
+import { type EntityAuditCursor } from "@/server/data/entityAuditRepo";
+import { getAccessContextForUser } from "@/server/utils/rbac";
 import {
 	runWithServerRequestContext,
 	setRequestContext,
 } from "@/server/logging/requestContext";
 import { logger } from "@/server/logging/logger";
+import {
+	loadAccountEntityAuditsPage,
+	DEFAULT_ACCOUNT_ENTITY_AUDIT_PAGE_SIZE,
+} from "@/server/utils/accountEntityAudits";
 
-type EntityAuditRow = Prisma.EntityAuditGetPayload<{ include: { user: true } }>;
+const MAX_ENTITY_AUDIT_PAGE_SIZE = DEFAULT_ACCOUNT_ENTITY_AUDIT_PAGE_SIZE;
 
-const getCorrelationId = (metaInfo: Prisma.JsonValue | null | undefined) => {
-	if (!metaInfo || typeof metaInfo !== "object" || Array.isArray(metaInfo)) {
-		return null;
-	}
-	const correlationId = (metaInfo as Prisma.JsonObject).correlation_id;
-	return typeof correlationId === "string" && correlationId.trim().length > 0
-		? correlationId
-		: null;
+export type GetEntityAuditsPageInput = {
+	beforeChangedAt?: string | null;
+	beforeId?: number | null;
+	take?: number | null;
 };
 
-const redactForeignAudit = (audit: EntityAuditRow): EntityAuditRow => {
-	const metaInfo = audit.meta_info;
-	if (!metaInfo || typeof metaInfo !== "object" || Array.isArray(metaInfo)) {
-		return {
-			...audit,
-			changed_by: null,
-			user: null,
-		};
+const parseEntityAuditCursor = (
+	input?: GetEntityAuditsPageInput,
+): EntityAuditCursor | undefined => {
+	if (
+		!input?.beforeChangedAt ||
+		typeof input.beforeId !== "number" ||
+		!Number.isFinite(input.beforeId)
+	) {
+		return undefined;
 	}
-
-	const redactedMetaInfo: Prisma.JsonObject = {
-		...(metaInfo as Prisma.JsonObject),
-	};
-	if ("reviewed_by" in redactedMetaInfo) {
-		redactedMetaInfo.reviewed_by = null;
-	}
-	redactedMetaInfo.actor_hidden = true;
-
+	const changedAt = new Date(input.beforeChangedAt);
+	if (Number.isNaN(changedAt.getTime())) return undefined;
 	return {
-		...audit,
-		changed_by: null,
-		user: null,
-		meta_info: redactedMetaInfo,
+		changedAt,
+		id: input.beforeId,
 	};
+};
+
+const normalizeTake = (input?: number | null) => {
+	if (typeof input !== "number" || !Number.isFinite(input)) {
+		return 100;
+	}
+	return Math.min(MAX_ENTITY_AUDIT_PAGE_SIZE, Math.max(1, Math.floor(input)));
 };
 
 export async function getEntityAudits() {
+	const result = await getEntityAuditsPage();
+	return result.audits;
+}
+
+export async function getEntityAuditsPage(input?: GetEntityAuditsPageInput) {
 	return runWithServerRequestContext(
 		async () => {
-			const currentUserId = await getCurrentUserId();
-			setRequestContext({ userId: currentUserId });
-			const ctx = await getAccessContextForUser(currentUserId);
-			authorizeTable(ctx, "entity_audit", "read");
-			const scope = getTableScope(ctx, "entity_audit", "read");
-			const ownerId = requireScopeOrUser(
-				scope,
-				currentUserId,
-				"User must be authenticated to access activity logs.",
-			);
-			if (!ownerId) {
-				try {
-					return await entityAuditRepo.list();
-				} catch (error) {
-					logger.error("entity_audit.list.db_failed", error, {
-						subsystem: "audit",
-						db_subsystem: "db",
-						actor_user_id: currentUserId,
-					});
-					throw error;
-				}
-			}
-
-			let ownAudits;
 			try {
-				ownAudits = await entityAuditRepo.list({ changed_by: ownerId });
+				const currentUserId = await getCurrentUserId();
+				setRequestContext({ userId: currentUserId });
+				const ctx = await getAccessContextForUser(currentUserId);
+				return await loadAccountEntityAuditsPage(
+					{
+						ctx,
+						currentUserId,
+					},
+					{
+						before: parseEntityAuditCursor(input),
+						take: normalizeTake(input?.take),
+					},
+				);
 			} catch (error) {
-				logger.error("entity_audit.list_own.db_failed", error, {
+				logger.warn("entity_audit.list.failed", {
 					subsystem: "audit",
-					db_subsystem: "db",
-					actor_user_id: currentUserId,
-					target_user_id: ownerId,
+					error: error instanceof Error ? error.message : String(error),
 				});
-				throw error;
+				return {
+					audits: [],
+					hasMore: false,
+				};
 			}
-			const correlationIds = Array.from(
-				new Set(
-					ownAudits
-						.map((audit) => getCorrelationId(audit.meta_info))
-						.filter((correlationId): correlationId is string =>
-							Boolean(correlationId),
-						),
-				),
-			);
-			if (correlationIds.length === 0) {
-				return ownAudits;
-			}
-
-			let relatedAudits;
-			try {
-				relatedAudits =
-					await entityAuditRepo.listByCorrelationIds(correlationIds);
-			} catch (error) {
-				logger.error("entity_audit.list_related.db_failed", error, {
-					subsystem: "audit",
-					db_subsystem: "db",
-					actor_user_id: currentUserId,
-					target_user_id: ownerId,
-					correlation_ids_count: correlationIds.length,
-				});
-				throw error;
-			}
-			const merged = new Map<number, EntityAuditRow>();
-			for (const audit of [...ownAudits, ...relatedAudits]) {
-				merged.set(audit.id, audit);
-			}
-
-			return Array.from(merged.values())
-				.map((audit) =>
-					audit.changed_by === ownerId ? audit : redactForeignAudit(audit),
-				)
-				.sort((a, b) => b.changed_at.getTime() - a.changed_at.getTime());
 		},
-		{ route: "server_action:entityAudits.getEntityAudits" },
+		{ route: "server_action:entityAudits.getEntityAuditsPage" },
 	);
 }

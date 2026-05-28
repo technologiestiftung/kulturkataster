@@ -1,5 +1,8 @@
 import { Prisma } from "@/generated/prisma";
-import { entityAuditRepo } from "@/server/data/entityAuditRepo";
+import {
+	entityAuditRepo,
+	type EntityAuditCursor,
+} from "@/server/data/entityAuditRepo";
 import {
 	canTable,
 	getTableScope,
@@ -9,6 +12,17 @@ import {
 import type { AccountStoreState } from "@/types/account";
 
 type EntityAuditRow = Awaited<ReturnType<typeof entityAuditRepo.list>>[number];
+export const DEFAULT_ACCOUNT_ENTITY_AUDIT_PAGE_SIZE = 200;
+
+type LoadAccountEntityAuditsPageOptions = {
+	take?: number;
+	before?: EntityAuditCursor;
+};
+
+export type AccountEntityAuditsPage = {
+	audits: AccountStoreState["entityAudits"];
+	hasMore: boolean;
+};
 
 const getCorrelationId = (metaInfo: Prisma.JsonValue | null | undefined) => {
 	if (!metaInfo || typeof metaInfo !== "object" || Array.isArray(metaInfo)) {
@@ -47,13 +61,44 @@ const redactForeignAudit = (audit: EntityAuditRow): EntityAuditRow => {
 	};
 };
 
+const redactAuditsNotChangedByOwner = (
+	audits: EntityAuditRow[],
+	ownerId: string | null,
+) => {
+	if (!ownerId) {
+		return audits;
+	}
+
+	return audits.map((audit) =>
+		audit.changed_by === ownerId ? audit : redactForeignAudit(audit),
+	);
+};
+
 export async function loadAccountEntityAudits(args: {
 	ctx: AccessContext;
-	currentUserId: string;
+	currentUserId: string | null;
 }): Promise<AccountStoreState["entityAudits"]> {
-	const { ctx, currentUserId } = args;
+	const result = await loadAccountEntityAuditsPage(args);
+	return result.audits;
+}
 
-	if (!canTable(ctx, "entity_audit", "read")) return [];
+export async function loadAccountEntityAuditsPage(
+	args: {
+		ctx: AccessContext;
+		currentUserId: string | null;
+	},
+	options: LoadAccountEntityAuditsPageOptions = {},
+): Promise<AccountEntityAuditsPage> {
+	const { ctx, currentUserId } = args;
+	const take = options.take ?? DEFAULT_ACCOUNT_ENTITY_AUDIT_PAGE_SIZE;
+	const fetchTake = take + 1;
+
+	if (!canTable(ctx, "entity_audit", "read")) {
+		return {
+			audits: [],
+			hasMore: false,
+		};
+	}
 
 	const scope = getTableScope(ctx, "entity_audit", "read");
 	const ownerId = requireScopeOrUser(
@@ -62,13 +107,31 @@ export async function loadAccountEntityAudits(args: {
 		"User must be authenticated to access activity logs.",
 	);
 	if (!ownerId) {
-		return entityAuditRepo.list();
+		const audits = await entityAuditRepo.list({
+			before: options.before,
+			take: fetchTake,
+		});
+		return {
+			audits: audits.slice(0, take),
+			hasMore: audits.length > take,
+		};
 	}
 
-	const ownAudits = await entityAuditRepo.list({ changed_by: ownerId });
+	const ownAudits = await entityAuditRepo.list({
+		where: {
+			OR: [
+				{ changed_by: ownerId },
+				{ entity_type: "user", entity_id: ownerId },
+			],
+		},
+		before: options.before,
+		take: fetchTake,
+	});
+	const hasMore = ownAudits.length > take;
+	const pageOwnAudits = ownAudits.slice(0, take);
 	const correlationIds = Array.from(
 		new Set(
-			ownAudits
+			pageOwnAudits
 				.map((audit) => getCorrelationId(audit.meta_info))
 				.filter((correlationId): correlationId is string =>
 					Boolean(correlationId),
@@ -77,19 +140,27 @@ export async function loadAccountEntityAudits(args: {
 	);
 
 	if (correlationIds.length === 0) {
-		return ownAudits;
+		return {
+			audits: redactAuditsNotChangedByOwner(pageOwnAudits, ownerId),
+			hasMore,
+		};
 	}
 
 	const relatedAudits =
 		await entityAuditRepo.listByCorrelationIds(correlationIds);
 	const merged = new Map<number, EntityAuditRow>();
-	for (const audit of [...ownAudits, ...relatedAudits]) {
+	for (const audit of [...pageOwnAudits, ...relatedAudits]) {
 		merged.set(audit.id, audit);
 	}
 
-	return Array.from(merged.values())
-		.map((audit) =>
-			audit.changed_by === ownerId ? audit : redactForeignAudit(audit),
-		)
-		.sort((a, b) => b.changed_at.getTime() - a.changed_at.getTime());
+	return {
+		audits: redactAuditsNotChangedByOwner(
+			Array.from(merged.values()),
+			ownerId,
+		).sort((a, b) => {
+			const changedAtDiff = b.changed_at.getTime() - a.changed_at.getTime();
+			return changedAtDiff !== 0 ? changedAtDiff : b.id - a.id;
+		}),
+		hasMore,
+	};
 }

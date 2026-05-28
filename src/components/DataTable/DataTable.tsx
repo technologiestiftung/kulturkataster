@@ -40,6 +40,7 @@ import ChevronUp from "@/icons/chevron-up.svg";
 import ChevronDown from "@/icons/chevron-down.svg";
 import Edit from "@/icons/edit.svg";
 import Eye from "@/icons/eye.svg";
+import Download from "@/icons/download.svg";
 import ArrowNarrowLeft from "@/icons/arrow-narrow-left.svg";
 import ArrowNarrowRight from "@/icons/arrow-narrow-right.svg";
 import { useWindowVirtualizer } from "@tanstack/react-virtual";
@@ -65,8 +66,10 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 	const [hasOverflow, setHasOverflow] = useState(false);
 	const [scrollbarWidth, setScrollbarWidth] = useState(0);
 	const [scrollMargin, setScrollMargin] = useState(0);
+	const [toolbarHeight, setToolbarHeight] = useState(0);
 	const tableId = useId();
 	const searchInputRef = useRef<HTMLInputElement | null>(null);
+	const toolbarRef = useRef<HTMLDivElement | null>(null);
 	const containerRef = useRef<HTMLDivElement | null>(null);
 	const tableRef = useRef<HTMLTableElement | null>(null);
 	const headerTableRef = useRef<HTMLTableElement | null>(null);
@@ -359,7 +362,28 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 			observer.disconnect();
 			window.removeEventListener("resize", updateScrollMargin);
 		};
-	}, [updateHeaderWidths, columns]);
+	}, [updateHeaderWidths, columns, toolbarHeight]);
+
+	useEffect(() => {
+		const toolbarNode = toolbarRef.current;
+		if (!toolbarNode) {
+			setToolbarHeight(0);
+			return;
+		}
+
+		const updateToolbarHeight = () => {
+			const nextHeight = Math.ceil(toolbarNode.getBoundingClientRect().height);
+			setToolbarHeight((currentHeight) =>
+				currentHeight === nextHeight ? currentHeight : nextHeight,
+			);
+		};
+
+		updateToolbarHeight();
+		const observer = new ResizeObserver(updateToolbarHeight);
+		observer.observe(toolbarNode);
+
+		return () => observer.disconnect();
+	}, []);
 
 	const scrollByColumns = useCallback((direction: "left" | "right") => {
 		const container = containerRef.current;
@@ -444,9 +468,9 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 			: (pinnedOffsets.rightOffsets.get(column.id) ?? 0);
 		return {
 			className: cn(
-				"sticky",
-				isLeft ? "left-0" : "right-0",
-				isHeader ? "z-40 " : "z-30",
+				"md:sticky",
+				isLeft ? "md:left-0" : "md:right-0",
+				isHeader ? "md:z-40" : "md:z-30",
 			),
 			style: { [isLeft ? "left" : "right"]: offset },
 		};
@@ -619,6 +643,10 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 		typeof config.secondaryButton?.label === "string"
 			? config.secondaryButton.label
 			: undefined;
+	const rightButtonAriaLabel =
+		typeof config.rightButton?.label === "string"
+			? config.rightButton.label
+			: undefined;
 	const filterButtonAriaLabel = (() => {
 		if (typeof config.filterModal?.triggerAriaLabel === "string") {
 			return config.filterModal.triggerAriaLabel;
@@ -640,13 +668,17 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 	}, [isSearchOpen]);
 
 	return (
-		<div className="w-full space-y-4">
+		<div className="w-full">
 			{(config.title ||
 				config.searchable ||
 				config.primaryButton ||
 				config.secondaryButton ||
+				config.rightButton ||
 				config.filterModal) && (
-				<div className="flex flex-col gap-4 w-full">
+				<div
+					ref={toolbarRef}
+					className="sticky  pr-18 md:pr-0 top-0 z-50 flex w-full flex-col gap-4 bg-background pt-4 p-2"
+				>
 					{config.title && (
 						<div>
 							<h2>{config.title}</h2>
@@ -663,7 +695,7 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 								radius="full"
 								variant="surface"
 								className="bg-primary shrink-0"
-								iconSize="lg"
+								iconSize="md"
 								aria-label={primaryButtonAriaLabel}
 							>
 								<Plus className="size-6" />
@@ -673,7 +705,7 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 							<Button
 								onClick={config.secondaryButton.onClick}
 								variant="outline"
-								size="lg"
+								size="md"
 								className="bg-primary-light  max-w-56 text-foreground border-primary rounded-full [&_svg]:size-6"
 								aria-label={secondaryButtonAriaLabel}
 							>
@@ -719,7 +751,7 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 											type="button"
 											radius="full"
 											variant="surface"
-											iconSize="lg"
+											iconSize="md"
 											onClick={() => setIsSearchOpen(true)}
 										>
 											<Search className="size-5!" />
@@ -734,7 +766,7 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 											onClick={() => setIsFilterOpen(true)}
 											radius="full"
 											variant="surface"
-											iconSize="lg"
+											iconSize="md"
 											aria-label={filterButtonAriaLabel}
 										>
 											<Filter className="size-5!" />
@@ -744,6 +776,22 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 										</Label>
 									</div>
 								)}
+							</div>
+						)}
+						{!isSearchOpen && config.rightButton && (
+							<div className="gap-2 flex items-center">
+								<Button
+									onClick={config.rightButton.onClick}
+									radius="full"
+									variant="surface"
+									iconSize="md"
+									aria-label={rightButtonAriaLabel}
+								>
+									<Download className="size-5!" />
+								</Button>
+								<Label className="md:block hidden">
+									{config.rightButton.label}
+								</Label>
 							</div>
 						)}
 					</div>
@@ -757,8 +805,8 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 					<div
 						ref={headerScrollRef}
 						onScroll={handleHeaderScroll}
-						className="sticky top-0 z-40 overflow-x-auto bg-neutral-5 no-scrollbar"
-						style={{ paddingRight: scrollbarWidth }}
+						className="sticky z-40 overflow-x-auto bg-neutral-5 no-scrollbar"
+						style={{ paddingRight: scrollbarWidth, top: toolbarHeight }}
 						aria-hidden="true"
 					>
 						<table

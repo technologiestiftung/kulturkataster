@@ -3,10 +3,15 @@ import { FC } from "react";
 import { Button } from "../ui/button";
 
 interface DownloadPDFButtonProps extends React.HTMLAttributes<HTMLDivElement> {
+	fullWidth?: boolean;
 	title: string;
 }
 
-const DownloadPDFButton: FC<DownloadPDFButtonProps> = ({ title, ...props }) => {
+const DownloadPDFButton: FC<DownloadPDFButtonProps> = ({
+	title,
+	fullWidth,
+	...props
+}) => {
 	return (
 		<div className="DownloadPDFButton-root" {...props}>
 			<a
@@ -14,7 +19,7 @@ const DownloadPDFButton: FC<DownloadPDFButtonProps> = ({ title, ...props }) => {
 				target="_blank"
 				rel="noopener noreferrer"
 			>
-				<Button variant={"outline"}>
+				<Button variant={"outline"} className=" w-full" fullWidth={fullWidth}>
 					<Download size={6} viewBox="0 0 24 24" />
 					<span>{title}</span>
 				</Button>

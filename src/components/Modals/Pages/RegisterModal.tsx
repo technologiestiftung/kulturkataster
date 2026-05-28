@@ -8,6 +8,7 @@ import { useEffect, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { Button } from "@/components/ui/button";
+import { NewsletterSubscriptionStatus } from "@/types/newsletter";
 
 export function RegisterModal({
 	routePath,
@@ -16,12 +17,14 @@ export function RegisterModal({
 	routePath?: string;
 	returnTo?: string;
 }) {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation();
 	const router = useRouter();
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
 	const toLocalePath = useLocalePath();
 	const [didRegister, setDidRegister] = useState(false);
+	const [newsletterRegistration, setNewsletterRegistration] =
+		useState<NewsletterSubscriptionStatus>(null);
 	const contentRef = useRef<HTMLDivElement>(null);
 	const didRegisterViaUrl = searchParams.get("registered") === "1";
 	const showSuccess = didRegister || didRegisterViaUrl;
@@ -39,8 +42,11 @@ export function RegisterModal({
 		return () => cancelAnimationFrame(rafId);
 	}, [showSuccess]);
 
-	const handleRegisterSuccess = () => {
+	const handleRegisterSuccess = (
+		newsletterRegistrationState: NewsletterSubscriptionStatus,
+	) => {
 		setDidRegister(true);
+		setNewsletterRegistration(newsletterRegistrationState);
 		const params = new URLSearchParams(searchParams.toString());
 		params.set("registered", "1");
 		const query = params.toString();
@@ -51,7 +57,7 @@ export function RegisterModal({
 
 	return (
 		<Modal
-			title={t("auth.register.title")}
+			title={t("common.auth.register.title")}
 			titleClassName="sr-only"
 			variant="fullscreen"
 			routePath={routePath}
@@ -75,24 +81,41 @@ export function RegisterModal({
 						<div className="p-4 md:p-8 mb-64 mt-14 flex justify-center flex-col gap-8 max-w-3xl mx-auto w-full">
 							<div className="space-y-4">
 								<h1>
-									{t("auth.register.successTitle", {
+									{t("common.auth.register.successTitle", {
 										defaultValue: "Vielen Dank!",
 									})}
 								</h1>
+								<p className="text-foreground font-bold">
+									{t("common.auth.register.register")}
+								</p>
 								<p className="text-foreground">
-									{t("auth.register.successMessage", {
+									{t("common.auth.register.successMessage", {
 										defaultValue:
 											"Wenn ein Konto mit den angegebenen Daten erstellt werden kann, erhalten Sie in Kürze eine E-Mail mit einem Bestätigungslink.",
 									})}
 								</p>
 							</div>
-							<div>
+							{newsletterRegistration === "success" && (
+								<div className="space-y-4">
+									<p className="text-foreground font-bold">
+										{t(
+											"common.auth.register.newsletterSubscriptionSuccessTitle",
+										)}
+									</p>
+									<p className="text-foreground">
+										{t(
+											"common.auth.register.newsletterSubscriptionSuccessDescription",
+										)}
+									</p>
+								</div>
+							)}
+							<div className="w-full">
 								<Button
 									variant="primary"
-									className="w-full"
+									fullWidth
 									onClick={() => router.replace(toLocalePath("/login"))}
 								>
-									{t("auth.register.successCta", {
+									{t("common.auth.register.successCta", {
 										defaultValue: "Fertig",
 									})}
 								</Button>
@@ -101,7 +124,11 @@ export function RegisterModal({
 					</div>
 				) : (
 					<div className="w-full flex flex-1 items-center justify-center">
-						<RegisterForm onSuccess={handleRegisterSuccess} />
+						<RegisterForm
+							onSuccess={(newsletterRegistrationState) =>
+								handleRegisterSuccess(newsletterRegistrationState)
+							}
+						/>
 					</div>
 				)}
 			</div>

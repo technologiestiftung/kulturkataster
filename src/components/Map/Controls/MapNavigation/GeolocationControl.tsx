@@ -23,7 +23,7 @@ const GeolocationControl: FC<GeolocationControlProps> = ({
 	geolocateIcon = <LocationIcon className="h-6 w-6" />,
 	onGeolocate,
 }) => {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation();
 	const map = useMapStore((state) => state.map);
 	const setUserLocation = useMapStore((state) => state.setUserLocation);
 	const userLocationLayerRef = useRef<VectorLayer<VectorSource> | null>(null);
@@ -137,10 +137,10 @@ const GeolocationControl: FC<GeolocationControlProps> = ({
 			radius="full"
 			variant="surface"
 			iconSize="lg"
-			tooltip={t("map.geolocate")}
+			tooltip={t("common.map.geolocate")}
 			onClick={handleGeolocate}
 			className="cursor-pointer"
-			aria-label={t("map.geolocate")}
+			aria-label={t("common.map.geolocate")}
 		>
 			{geolocateIcon}
 		</ButtonWithTooltip>

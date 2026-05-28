@@ -12,6 +12,7 @@ import {
 	getSubcategories,
 	toFeatureCollection,
 } from "../utils/institutionUtils";
+import { areStoreSliceValuesEqual } from "../utils/storeEquality";
 import { getPublicInstitutionData } from "@/server/actions/publicInstitutionData";
 import { reportClientTelemetry } from "@/lib/utils/clientTelemetry";
 
@@ -21,6 +22,49 @@ const defaultFilters: InstitutionStoreState["filters"] = {
 	category_keys: [],
 	child_category_keys: [],
 	include_closed: false,
+};
+
+const applyPublicData = (
+	data: {
+		institutions: Institution[];
+		categories: InstitutionStoreState["categories"];
+		districts: string[];
+	},
+	set: (partial: Partial<InstitutionStoreState>) => void,
+	get: () => InstitutionStoreState,
+) => {
+	const newState = {
+		allInstitutions: data.institutions,
+		categories: data.categories,
+		districts: data.districts,
+	};
+	const currentState = { ...get(), ...newState };
+	const filteredInstitutions = computeFilteredInstitutions(currentState);
+	const allInstitutionsGeoJSON =
+		data.institutions.length > 0
+			? toFeatureCollection(data.institutions)
+			: null;
+	const filteredInstitutionsGeoJSON = filteredInstitutions
+		? toFeatureCollection(filteredInstitutions)
+		: null;
+	const stateWithFiltered = {
+		...currentState,
+		filteredInstitutions,
+		allInstitutionsGeoJSON,
+		filteredInstitutionsGeoJSON,
+	};
+	const { categoryCounts, subcategoryCounts } =
+		computeCounts(stateWithFiltered);
+	set({
+		...newState,
+		filteredInstitutions,
+		allInstitutionsGeoJSON,
+		filteredInstitutionsGeoJSON,
+		categoryCounts,
+		subcategoryCounts,
+		isLoading: false,
+		error: null,
+	});
 };
 
 const applyFilters = (
@@ -135,44 +179,22 @@ export const useInstitutionStore = create<InstitutionStoreState>()(
 			setFilters: (filters) => applyFilters(filters, set, get),
 			resetFilters: () => applyFilters(defaultFilters, set, get),
 			categories: null,
-			setCategories: (categories) => set({ categories }),
-			setDistricts: (districts) => set({ districts }),
+			setCategories: (categories) => {
+				if (areStoreSliceValuesEqual(get().categories, categories)) return;
+				set({ categories });
+			},
+			setDistricts: (districts) => {
+				if (areStoreSliceValuesEqual(get().districts, districts)) return;
+				set({ districts });
+			},
 			clearError: () => set({ error: null }),
+			hydratePublicData: (data) => applyPublicData(data, set, get),
 			initializePublicData: async () => {
 				set({ isLoading: true, error: null });
 				try {
 					const { institutions, categories, districts } =
 						await getPublicInstitutionData();
-					const newState = {
-						allInstitutions: institutions,
-						categories,
-						districts,
-					};
-					const currentState = { ...get(), ...newState };
-					const filteredInstitutions =
-						computeFilteredInstitutions(currentState);
-					const allInstitutionsGeoJSON =
-						institutions.length > 0 ? toFeatureCollection(institutions) : null;
-					const filteredInstitutionsGeoJSON = filteredInstitutions
-						? toFeatureCollection(filteredInstitutions)
-						: null;
-					const stateWithFiltered = {
-						...currentState,
-						filteredInstitutions,
-						allInstitutionsGeoJSON,
-						filteredInstitutionsGeoJSON,
-					};
-					const { categoryCounts, subcategoryCounts } =
-						computeCounts(stateWithFiltered);
-					set({
-						...newState,
-						filteredInstitutions,
-						allInstitutionsGeoJSON,
-						filteredInstitutionsGeoJSON,
-						categoryCounts,
-						subcategoryCounts,
-						isLoading: false,
-					});
+					applyPublicData({ institutions, categories, districts }, set, get);
 				} catch (error) {
 					reportClientTelemetry({
 						level: "error",
@@ -189,6 +211,9 @@ export const useInstitutionStore = create<InstitutionStoreState>()(
 				}
 			},
 			setInstitutions: (institutions) => {
+				if (areStoreSliceValuesEqual(get().allInstitutions, institutions)) {
+					return;
+				}
 				const newState = { allInstitutions: institutions };
 				const currentState = { ...get(), ...newState };
 				const filteredInstitutions = computeFilteredInstitutions(currentState);

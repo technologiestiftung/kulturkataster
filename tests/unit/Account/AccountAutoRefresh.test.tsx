@@ -9,14 +9,7 @@ const pathnameState = {
 	value: "/de/account/activity",
 };
 
-const setUsers = vi.fn();
-const setGroups = vi.fn();
-const setRoles = vi.fn();
-const setCategories = vi.fn();
-const setInstitutions = vi.fn();
-const setSubmissions = vi.fn();
-const setEntityAudits = vi.fn();
-
+const setAccountData = vi.fn();
 const getAccountRefreshDataMock = vi.fn();
 
 vi.mock("next/navigation", () => ({
@@ -25,25 +18,8 @@ vi.mock("next/navigation", () => ({
 
 vi.mock("@/lib/store/accountStore", () => ({
 	useAccountStore: (
-		selector: (state: {
-			setUsers: typeof setUsers;
-			setGroups: typeof setGroups;
-			setRoles: typeof setRoles;
-			setCategories: typeof setCategories;
-			setInstitutions: typeof setInstitutions;
-			setSubmissions: typeof setSubmissions;
-			setEntityAudits: typeof setEntityAudits;
-		}) => unknown,
-	) =>
-		selector({
-			setUsers,
-			setGroups,
-			setRoles,
-			setCategories,
-			setInstitutions,
-			setSubmissions,
-			setEntityAudits,
-		}),
+		selector: (state: { setAccountData: typeof setAccountData }) => unknown,
+	) => selector({ setAccountData }),
 }));
 
 vi.mock("@/server/actions/account", () => ({
@@ -54,14 +30,10 @@ vi.mock("@/server/actions/account", () => ({
 describe("AccountAutoRefresh", () => {
 	beforeEach(() => {
 		vi.useFakeTimers();
+		// Advance past any lastRefreshedAt timestamps set in previous tests
+		vi.advanceTimersByTime(60_000);
 		pathnameState.value = "/de/account/activity";
-		setUsers.mockReset();
-		setGroups.mockReset();
-		setRoles.mockReset();
-		setCategories.mockReset();
-		setInstitutions.mockReset();
-		setSubmissions.mockReset();
-		setEntityAudits.mockReset();
+		setAccountData.mockReset();
 		getAccountRefreshDataMock.mockReset().mockResolvedValue({
 			users: [],
 			groups: [],
@@ -85,18 +57,23 @@ describe("AccountAutoRefresh", () => {
 	it("polls on stable dashboard routes", async () => {
 		render(<AccountAutoRefresh intervalMs={1_000} />);
 
+		// Immediate refresh fires on mount; interval fires after 1000ms → 2 calls total
 		await act(async () => {
 			await vi.advanceTimersByTimeAsync(1_000);
 		});
 
-		expect(getAccountRefreshDataMock).toHaveBeenCalledTimes(1);
-		expect(setUsers).toHaveBeenCalledWith([]);
-		expect(setGroups).toHaveBeenCalledWith([]);
-		expect(setRoles).toHaveBeenCalledWith([]);
-		expect(setCategories).toHaveBeenCalledWith([]);
-		expect(setInstitutions).toHaveBeenCalledWith([]);
-		expect(setSubmissions).toHaveBeenCalledWith([]);
-		expect(setEntityAudits).toHaveBeenCalledWith([]);
+		expect(getAccountRefreshDataMock).toHaveBeenCalledTimes(2);
+		expect(setAccountData).toHaveBeenCalledWith(
+			expect.objectContaining({
+				users: [],
+				groups: [],
+				roles: [],
+				categories: [],
+				institutions: [],
+				submissions: [],
+				entityAudits: [],
+			}),
+		);
 	});
 
 	it("does not poll on institution routes", async () => {
@@ -119,17 +96,13 @@ describe("AccountAutoRefresh", () => {
 
 		render(<AccountAutoRefresh intervalMs={1_000} />);
 
-		await act(async () => {
-			await vi.advanceTimersByTimeAsync(1_000);
-		});
+		// Only let the immediate refresh settle (no interval advance)
+		await act(async () => {});
 
-		expect(setUsers).toHaveBeenCalledWith([{ id: "user-1" }]);
-		expect(setSubmissions).toHaveBeenCalledWith([{ id: 5 }]);
-		expect(setGroups).not.toHaveBeenCalled();
-		expect(setRoles).not.toHaveBeenCalled();
-		expect(setCategories).not.toHaveBeenCalled();
-		expect(setInstitutions).not.toHaveBeenCalled();
-		expect(setEntityAudits).not.toHaveBeenCalled();
+		expect(setAccountData).toHaveBeenCalledWith({
+			users: [{ id: "user-1" }],
+			submissions: [{ id: 5 }],
+		});
 	});
 
 	it("enables polling only for stable account tabs", () => {

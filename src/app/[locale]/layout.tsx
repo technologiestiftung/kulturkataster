@@ -15,6 +15,8 @@ import { StoreInitializer } from "@/components/StoreInitializer";
 import { StoreAutoRefresh } from "@/components/StoreAutoRefresh";
 import { ViewModeToggle } from "@/components/Menu/ViewModeToggle";
 import { Toaster } from "@/components/ui/sonner";
+import { getCurrentProfile } from "@/server/actions/auth";
+import { parseHiddenMenuItems } from "@/lib/utils/menuVisibility";
 
 // Initialize axe-core for accessibility testing in development
 // Commented out until @axe-core/react is installed
@@ -65,13 +67,12 @@ export default async function RootLayout({
 	params: Promise<{ locale: Locale }>;
 }>) {
 	const { locale } = await params;
-	const ns: string[] = ["common", "content", "enumMap"]; // namespace used for this page
-	const { resources } = await serverSideTranslation(locale, ns);
+	const { resources } = await serverSideTranslation(locale);
 	const localizedResources = resources as Record<
 		string,
 		Record<string, Record<string, unknown>>
 	>;
-	const localeResources = localizedResources?.[locale] ?? {};
+	const localeResources = localizedResources?.[locale]?.translation ?? {};
 	const commonResources = (localeResources.common ?? {}) as Record<
 		string,
 		unknown
@@ -97,11 +98,19 @@ export default async function RootLayout({
 		typeof commonResources.footerLandmark === "string"
 			? (commonResources.footerLandmark as string)
 			: "Footer";
+	const supabaseUrl = process.env.SUPABASE_URL ?? "";
+	const envHint =
+		supabaseUrl.includes("127.0.0.1") || supabaseUrl.includes("localhost")
+			? "local"
+			: undefined;
+	const shouldLoadMatomo = envHint !== "local";
+	const isLoggedIn = (await getCurrentProfile()) !== null;
+	const hiddenMenuItems = parseHiddenMenuItems(process.env.HIDDEN_MENU_ITEMS);
 
 	return (
 		<html lang={locale} dir={getDirection(locale)}>
 			<body className={`${barlow.className} antialiased`}>
-				<I18NProvider locale={locale} namespaces={ns} resources={resources}>
+				<I18NProvider locale={locale} resources={resources}>
 					<AppPersistenceProvider />
 					<StoreInitializer />
 					<StoreAutoRefresh />
@@ -111,6 +120,7 @@ export default async function RootLayout({
 					>
 						{skipToContentLabel}
 					</a>
+
 					<div className="flex min-h-dvh flex-col">
 						<SidebarProvider>
 							<div className="flex min-h-0 flex-1 w-full">
@@ -118,7 +128,11 @@ export default async function RootLayout({
 									aria-label={headerLabel}
 									className="flex-shrink-0 w-auto"
 								>
-									<Menu sidebar={sidebar} />
+									<Menu
+										sidebar={sidebar}
+										isLoggedIn={isLoggedIn}
+										hiddenMenuItems={hiddenMenuItems}
+									/>
 								</header>
 								<SidebarInset asChild className="min-h-0 flex-1 w-0">
 									<main
@@ -137,14 +151,15 @@ export default async function RootLayout({
 							</div>
 						</SidebarProvider>
 						<ViewModeToggle />
-						<Footer ariaLabel={footerLabel} />
+						<Footer ariaLabel={footerLabel} envHint={envHint} />
 					</div>
 					<Toaster />
 					{modal}
 				</I18NProvider>
 
-				<Script id="matomo" strategy="afterInteractive">
-					{`
+				{shouldLoadMatomo ? (
+					<Script id="matomo" strategy="afterInteractive">
+						{`
             var _paq = window._paq = window._paq || [];
             _paq.push(['disableCookies']);
             _paq.push(['trackPageView']);
@@ -157,7 +172,8 @@ export default async function RootLayout({
               g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
             })();
           `}
-				</Script>
+					</Script>
+				) : null}
 			</body>
 		</html>
 	);

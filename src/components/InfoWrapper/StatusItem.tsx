@@ -18,7 +18,7 @@ export function StatusItem({
 	isPrivate?: boolean;
 	action?: React.ReactNode;
 }) {
-	const { t: tEnum } = useTranslation("enumMap");
+	const { t: tEnum } = useTranslation();
 
 	if (!value || typeof value !== "string") return null;
 	const showCircle = variant === "plain" || !label;

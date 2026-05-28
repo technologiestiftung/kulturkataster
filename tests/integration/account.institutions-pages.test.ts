@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { InstitutionsTable } from "@/components/Institution";
 import { InstitutionFormModal } from "@/components/Institution/InstitutionFormModal";
 import { InstitutionEditModal } from "@/components/Institution/InstitutionEditModal";
-import { InstitutionDraftReviewModal } from "@/components/Institution/InstitutionDraftReviewModal";
+import { SubmissionReviewModal } from "@/components/Institution/SubmissionReviewModal";
 
 vi.mock("@/components/Institution", () => ({
 	InstitutionsTable: () => null,
@@ -20,14 +20,19 @@ vi.mock("@/components/Institution/InstitutionDraftReviewModal", () => ({
 	InstitutionDraftReviewModal: () => null,
 }));
 
+vi.mock("@/components/Institution/SubmissionReviewModal", () => ({
+	SubmissionReviewModal: () => null,
+}));
+
 describe("institutions pages integration", () => {
 	it("renders institutions dashboard page with InstitutionsTable", async () => {
 		const pageModule = await import(
 			"@/app/[locale]/account/(dashboard)/institutions/page"
 		);
 		const result = pageModule.default();
+		const suspense = result.props.children.props.children;
 
-		expect(result.props.children.props.children).toMatchObject({
+		expect(suspense.props.children).toMatchObject({
 			type: InstitutionsTable,
 		});
 	});
@@ -53,29 +58,29 @@ describe("institutions pages integration", () => {
 			"@/app/[locale]/account/(dashboard)/institutions/[id]/edit/page"
 		);
 		const result = await pageModule.default({
-			params: Promise.resolve({ id: "42" }),
+			params: Promise.resolve({ locale: "de", id: "42" }),
 		});
 
 		expect(result).toMatchObject({
 			type: InstitutionEditModal,
 			props: expect.objectContaining({
-				institutionId: "42",
+				institutionId: 42,
 				routePath: "/account/institutions/42/edit",
 				returnTo: "/account/institutions",
 			}),
 		});
 	});
 
-	it("renders submission review page with InstitutionDraftReviewModal", async () => {
+	it("renders submission review page with SubmissionReviewModal", async () => {
 		const pageModule = await import(
 			"@/app/[locale]/@modal/(.)account/submissions/[id]/page"
 		);
 		const result = await pageModule.default({
-			params: Promise.resolve({ id: "77" }),
+			params: Promise.resolve({ locale: "de", id: "77" }),
 		});
 
 		expect(result).toMatchObject({
-			type: InstitutionDraftReviewModal,
+			type: SubmissionReviewModal,
 			props: expect.objectContaining({
 				submissionId: 77,
 				routePath: "/account/submissions/77",

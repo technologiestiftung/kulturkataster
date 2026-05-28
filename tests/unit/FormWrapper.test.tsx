@@ -37,10 +37,18 @@ const toFields = (
 vi.mock("react-i18next", () => ({
 	useTranslation: () => ({
 		t: (key: string, options?: Record<string, unknown>) => {
-			if (key === "form.validation.required") {
+			const normalizedKey = key.replace(/^common\./, "");
+
+			if (normalizedKey === "form.validation.required") {
 				return `${String(options?.field ?? "")} is required`;
 			}
-			return key;
+			if (normalizedKey === "enumMap.field_names.name.errors.required") {
+				return "Name is required";
+			}
+			if (normalizedKey === "enumMap.field_names.agree.errors.required") {
+				return "I agree to terms is required";
+			}
+			return normalizedKey;
 		},
 		i18n: {
 			changeLanguage: () => new Promise(() => {}),
@@ -459,6 +467,30 @@ describe("FormWrapper", () => {
 
 			await waitFor(() => {
 				expect(onSubmit).toHaveBeenCalledWith({ name: "John Doe" });
+			});
+		});
+
+		it("accepts phone numbers with invisible formatting characters and normalizes them", async () => {
+			const onSubmit = vi.fn();
+			const config: FormWrapperConfig = {
+				fields: toFields([
+					{
+						id: "main",
+						fields: [{ name: "phone", label: "Phone", type: "tel" }],
+					},
+				]),
+				onSubmit,
+			};
+
+			render(<FormWrapper config={config} />);
+
+			const input = screen.getByLabelText("Phone");
+			fireEvent.change(input, { target: { value: "030 23613314‬" } });
+			fireEvent.blur(input);
+			fireEvent.click(screen.getByRole("button", { name: /Submit/i }));
+
+			await waitFor(() => {
+				expect(onSubmit).toHaveBeenCalledWith({ phone: "030 23613314" });
 			});
 		});
 	});

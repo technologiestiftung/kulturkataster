@@ -1,8 +1,93 @@
 import { describe, expect, it } from "vitest";
+import type { Institution } from "@/types/institution";
 import {
 	buildInstitutionForFormFromDraft,
 	buildInstitutionFormInitialValues,
 } from "@/lib/utils/institutionFormAdapter";
+
+const baseInstitution = {
+	categories: [],
+	tags: [],
+	users: [],
+	groups: [],
+	created_at: new Date(),
+	updated_at: new Date(),
+} satisfies Partial<Institution>;
+
+const asInstitution = (value: Partial<Institution>) =>
+	value as unknown as Institution;
+
+describe("buildInstitutionFormInitialValues - shared_use_allowed", () => {
+	it("initialises shared_use_allowed as boolean true when institution has true", () => {
+		const result = buildInstitutionFormInitialValues(
+			asInstitution({
+				...baseInstitution,
+				id: 1,
+				name: "Test",
+				shared_use_allowed: true,
+			}),
+		);
+		expect(result.shared_use_allowed).toBe(true);
+	});
+
+	it("initialises shared_use_allowed as boolean false when institution has false", () => {
+		const result = buildInstitutionFormInitialValues(
+			asInstitution({
+				...baseInstitution,
+				id: 1,
+				name: "Test",
+				shared_use_allowed: false,
+			}),
+		);
+		expect(result.shared_use_allowed).toBe(false);
+	});
+
+	it("initialises shared_use_allowed as false when institution field is missing", () => {
+		const result = buildInstitutionFormInitialValues(
+			asInstitution({
+				...baseInstitution,
+				id: 1,
+				name: "Test",
+			}),
+		);
+		expect(result.shared_use_allowed).toBe(false);
+	});
+
+	it("does not initialise shared_use_allowed as a string", () => {
+		const result = buildInstitutionFormInitialValues(
+			asInstitution({
+				...baseInstitution,
+				id: 1,
+				name: "Test",
+				shared_use_allowed: true,
+			}),
+		);
+		expect(typeof result.shared_use_allowed).toBe("boolean");
+	});
+});
+
+describe("buildInstitutionForFormFromDraft - shared_use_allowed", () => {
+	it("maps boolean true to boolean true", () => {
+		const result = buildInstitutionForFormFromDraft({
+			name: "Draft",
+			shared_use_allowed: true,
+		});
+		expect(result.shared_use_allowed).toBe(true);
+	});
+
+	it("maps boolean false to boolean false", () => {
+		const result = buildInstitutionForFormFromDraft({
+			name: "Draft",
+			shared_use_allowed: false,
+		});
+		expect(result.shared_use_allowed).toBe(false);
+	});
+
+	it("maps missing shared_use_allowed to false", () => {
+		const result = buildInstitutionForFormFromDraft({ name: "Draft" });
+		expect(result.shared_use_allowed).toBe(false);
+	});
+});
 
 describe("buildInstitutionForFormFromDraft", () => {
 	it("keeps Date values for date fields", () => {
@@ -75,6 +160,23 @@ describe("buildInstitutionForFormFromDraft", () => {
 		expect(initialValues["address.district"]).toBe("Friedrichshain-Kreuzberg");
 	});
 
+	it("sanitizes legacy placeholder strings in numeric initial values", () => {
+		const initialValues = buildInstitutionFormInitialValues(
+			asInstitution({
+				...baseInstitution,
+				id: 11,
+				name: "Legacy",
+				area: "-" as never,
+				number_of_rooms: "-" as never,
+				capacity: "25" as never,
+			}),
+		);
+
+		expect(initialValues.area).toBeUndefined();
+		expect(initialValues.number_of_rooms).toBeUndefined();
+		expect(initialValues.capacity).toBe(25);
+	});
+
 	it("maps district from flat draft fields into the draft edit institution", () => {
 		const result = buildInstitutionForFormFromDraft({
 			name: "Draft",
@@ -128,6 +230,56 @@ describe("buildInstitutionForFormFromDraft", () => {
 		expect(
 			result.categories.map((category) => category.id).sort((a, b) => a - b),
 		).toEqual([1, 2]);
+	});
+
+	it("builds category filters from raw categoryIds when categories are not expanded", () => {
+		const now = new Date();
+		const initialValues = buildInstitutionFormInitialValues(
+			{
+				id: 20,
+				name: "Test",
+				categories: [],
+				tags: [],
+				users: [],
+				groups: [],
+				created_at: now,
+				updated_at: now,
+				categoryIds: [1, 2],
+			} as never,
+			[
+				{
+					id: 1,
+					key: "music",
+					description: null,
+					icon: null,
+					status: "active",
+					parent_category_id: null,
+					created_at: now,
+					updated_at: now,
+					child_categories: [
+						{
+							id: 2,
+							key: "club",
+							description: null,
+							icon: null,
+							status: "active",
+							parent_category_id: 1,
+							created_at: now,
+							updated_at: now,
+						},
+					],
+				},
+			] as never,
+		);
+
+		expect(initialValues.categoryIds).toEqual(["1", "2"]);
+		expect(initialValues.categoryFilters).toEqual({
+			district_keys: [],
+			category_keys: ["music"],
+			child_category_keys: ["club"],
+			include_closed: false,
+			status: undefined,
+		});
 	});
 
 	it("hydrates contact person from originalInstitution fallback", () => {

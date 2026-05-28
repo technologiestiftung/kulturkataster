@@ -44,7 +44,7 @@ export function CategorySection({
 	subcategoryCounts: subcategoryCountsOverride,
 	mode = "filter",
 }: CategorySectionProps) {
-	const { t: tEnum, i18n } = useTranslation("enumMap");
+	const { t: tEnum, i18n } = useTranslation();
 
 	const collator = useMemo(
 		() =>
@@ -71,9 +71,11 @@ export function CategorySection({
 	const selectedSubcategoriesInGroup = (group.child_categories || []).filter(
 		(sub) => selectedSubcategories.includes(sub.key),
 	);
+	const hasSubcategories = (group.child_categories || []).length > 0;
 	const allSubcategoriesSelected =
+		hasSubcategories &&
 		selectedSubcategoriesInGroup.length ===
-		(group.child_categories || []).length;
+			(group.child_categories || []).length;
 	const someSubcategoriesSelected = selectedSubcategoriesInGroup.length > 0;
 	const categorySelected = selectedCategories.includes(group.key);
 
@@ -81,7 +83,8 @@ export function CategorySection({
 	const isIndeterminate =
 		!categorySelected && someSubcategoriesSelected && !allSubcategoriesSelected;
 
-	const translatedCategoryName = tEnum(`category.${group.key}`) || group.key;
+	const translatedCategoryName =
+		tEnum(`enumMap.category.${group.key}`) || group.key;
 	const showCounts = mode !== "selection";
 
 	return (
@@ -130,6 +133,7 @@ export function CategorySection({
 							isIndeterminate && "contrast:border-interaction-dark",
 						)}
 					/>
+
 					{isIndeterminate && (
 						<div className="absolute flex items-center justify-center pointer-events-none">
 							<Minus
@@ -145,7 +149,7 @@ export function CategorySection({
 			<CollapsibleContent className="pl-16 pr-2 space-y-1">
 				{sortedSubcategories.map((subcategory) => {
 					const translatedSubcategoryName =
-						tEnum(`category.${subcategory.key}`) || subcategory.key;
+						tEnum(`enumMap.category.${subcategory.key}`) || subcategory.key;
 
 					return (
 						<div

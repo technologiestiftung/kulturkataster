@@ -1,10 +1,13 @@
 import fs from "node:fs/promises";
 import { chromium, type FullConfig } from "@playwright/test";
+import dotenv from "dotenv";
 import {
 	ADMIN_STORAGE_STATE,
 	E2E_AUTH_DIR,
 	USER_STORAGE_STATE,
 } from "../helpers/e2eAuthState";
+
+dotenv.config({ path: process.env.DOTENV_CONFIG_PATH ?? ".env.test" });
 
 const LOGIN_TIMEOUT = 30_000;
 const FIELD_TIMEOUT = 30_000;
@@ -156,6 +159,9 @@ const saveStorageState = async ({
 			const page = await context.newPage();
 			const fields = await ensureLoginFormVisible(page);
 			if (!fields) {
+				console.warn(
+					`[global-setup] No login form found for ${label}, URL: ${page.url()}`,
+				);
 				await context.storageState({ path: statePath });
 				return;
 			}
@@ -166,6 +172,9 @@ const saveStorageState = async ({
 			await passwordInput.waitFor({ state: "visible", timeout: FIELD_TIMEOUT });
 			await passwordInput.fill(password);
 
+			console.log(
+				`[global-setup] Submitting login for ${label} at ${page.url()}`,
+			);
 			const loginButton = page
 				.getByRole("button", { name: /Anmelden/i })
 				.or(page.locator('button[type="submit"]').first());
@@ -173,10 +182,12 @@ const saveStorageState = async ({
 				page.waitForURL(/\/de\/account(\/.*)?$/, { timeout: LOGIN_TIMEOUT }),
 				loginButton.click(),
 			]);
+			console.log(
+				`[global-setup] ${label} login successful, URL: ${page.url()}`,
+			);
 		} catch (error) {
-			console.warn(
-				`[global-setup] Failed to create ${label} auth state, using anonymous state instead.`,
-				error,
+			throw new Error(
+				`[global-setup] Login for "${label}" failed — check E2E credentials in .env.test. Cause: ${error instanceof Error ? error.message : String(error)}`,
 			);
 		}
 

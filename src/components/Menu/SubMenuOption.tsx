@@ -24,7 +24,7 @@ export function SubMenuOption({
 	onSwitchChange,
 	switchKey,
 }: SubMenuOptionProps) {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation();
 
 	const handleClick = () => {
 		if (hasSwitch && onSwitchChange) {
@@ -46,7 +46,9 @@ export function SubMenuOption({
 	};
 
 	const displayLabel =
-		hasSwitch && switchKey && switchChecked ? t(switchKey) : t(titleKey);
+		hasSwitch && switchKey && switchChecked
+			? t("common." + switchKey)
+			: t("common." + titleKey);
 
 	return (
 		<SidebarMenuItem
@@ -66,12 +68,13 @@ export function SubMenuOption({
 						checked={switchChecked}
 						onCheckedChange={onSwitchChange}
 						onClick={(e) => e.stopPropagation()}
-						aria-label={t(titleKey)}
+						aria-label={t("common." + titleKey)}
 					/>
+
 					<p className="body2 font-bold min-w-[2rem]">
 						{switchChecked
-							? t("accessibility.switchOn")
-							: t("accessibility.switchOff")}
+							? t("common.accessibility.switchOn")
+							: t("common.accessibility.switchOff")}
 					</p>
 				</div>
 			)}

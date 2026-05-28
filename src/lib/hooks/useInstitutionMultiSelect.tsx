@@ -110,10 +110,11 @@ const buildInstitutionOption = (
 	const parentCategories = getParentCategories(institution);
 	const subcategories = getSubcategories(institution);
 	const categoryLabels = parentCategories.map(
-		(category) => tEnum(`category.${category.key}`) || category.key,
+		(category) => tEnum(`enumMap.category.${category.key}`) || category.key,
 	);
 	const subcategoryLabels = subcategories.map(
-		(subcategory) => tEnum(`category.${subcategory.key}`) || subcategory.key,
+		(subcategory) =>
+			tEnum(`enumMap.category.${subcategory.key}`) || subcategory.key,
 	);
 	const tagNames =
 		institution.tags?.map((tag) => tag.name).filter(Boolean) ?? [];
@@ -226,6 +227,7 @@ const useInstitutionMultiSelect = ({
 			categoryCounts={categoryCounts}
 			subcategoryCounts={subcategoryCounts}
 			onFiltersChange={setInstitutionFilters}
+			parentCategorySelectionBehavior="last-child-only"
 		/>
 	);
 

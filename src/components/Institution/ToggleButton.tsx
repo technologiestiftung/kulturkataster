@@ -18,7 +18,7 @@ export function ToggleButton({
 	hasInfo = true,
 	className = "",
 }: ToggleButtonProps) {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation();
 
 	if (!hasInfo) return null;
 
@@ -40,7 +40,9 @@ export function ToggleButton({
 					/>
 				)}
 				<span className="body2">
-					{showMore ? t("institution.lessInfo") : t("institution.moreInfo")}
+					{showMore
+						? t("common.institution.lessInfo")
+						: t("common.institution.moreInfo")}
 				</span>
 			</Button>
 		</div>

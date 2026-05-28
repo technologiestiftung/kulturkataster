@@ -37,18 +37,19 @@ const Filter: FC<FilterProps> = ({ onSearchClick, onShowFilter }) => {
 		setFilters(newFilters);
 	};
 
-	const { t } = useTranslation("content");
-	const { t: tCommon } = useTranslation("common");
+	const { t } = useTranslation();
+	const { t: tCommon } = useTranslation();
 
 	return (
-		<>
-			<div className="mb-8 flex w-full items-center gap-2 flex-row">
+		<div className="flex h-full w-full flex-col">
+			<div className="mb-8 flex w-full items-center gap-2 flex-row shrink-0">
 				{onSearchClick && (
 					<ButtonWithTooltip
 						radius="full"
 						variant="surface"
+						tooltipSide="bottom"
 						iconSize="lg"
-						tooltip={tCommon("search.searchButton", {
+						tooltip={tCommon("common.search.searchButton", {
 							defaultValue: "Suchen",
 						})}
 						className="cursor-pointer"
@@ -60,7 +61,8 @@ const Filter: FC<FilterProps> = ({ onSearchClick, onShowFilter }) => {
 				<ButtonWithTooltip
 					radius="full"
 					variant="surface"
-					tooltip={tCommon("filter.title", {
+					tooltipSide="bottom"
+					tooltip={tCommon("common.filter.title", {
 						defaultValue: "Kulturorte filtern",
 					})}
 					className="cursor-pointer h-14 md:mr-0 mr-16 flex-1 justify-between [&_svg]:size-6"
@@ -68,27 +70,26 @@ const Filter: FC<FilterProps> = ({ onSearchClick, onShowFilter }) => {
 				>
 					<div className="flex items-center gap-2">
 						<FilterIcon className="size-5!" />
-						<span className="body2 font-bold">
-							{t("filter.title", { ns: "content" })}
-						</span>
+						<span className="body2 font-bold">{t("content.filter.title")}</span>
 					</div>
 					<Close />
 				</ButtonWithTooltip>
 			</div>
-
-			<FilterPanel
-				filters={filters}
-				categoryGroups={categories ?? []}
-				districts={districts}
-				filteredCount={filteredInstitutions?.length ?? 0}
-				categoryCounts={categoryCounts}
-				subcategoryCounts={subcategoryCounts}
-				loading={loading}
-				error={null}
-				onRetry={retry}
-				onFiltersChange={updateFilters}
-			/>
-		</>
+			<div className="flex-1 overflow-auto mb-20 md:mb-0">
+				<FilterPanel
+					filters={filters}
+					categoryGroups={categories ?? []}
+					districts={districts}
+					filteredCount={filteredInstitutions?.length ?? 0}
+					categoryCounts={categoryCounts}
+					subcategoryCounts={subcategoryCounts}
+					loading={loading}
+					error={null}
+					onRetry={retry}
+					onFiltersChange={updateFilters}
+				/>
+			</div>
+		</div>
 	);
 };
 

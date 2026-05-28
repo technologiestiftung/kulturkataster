@@ -1,10 +1,10 @@
 import { describe, expect, it, vi } from "vitest";
-import { InstitutionDraftReviewModal } from "@/components/Institution/InstitutionDraftReviewModal";
+import { SubmissionReviewModal } from "@/components/Institution/SubmissionReviewModal";
 import { InstitutionDraftWizardModal } from "@/components/Institution/InstitutionDraftWizardModal";
 import { InstitutionDraftEditModal } from "@/components/Institution/InstitutionDraftEditModal";
 
-vi.mock("@/components/Institution/InstitutionDraftReviewModal", () => ({
-	InstitutionDraftReviewModal: () => null,
+vi.mock("@/components/Institution/SubmissionReviewModal", () => ({
+	SubmissionReviewModal: () => null,
 }));
 
 vi.mock("@/components/Institution/InstitutionDraftWizardModal", () => ({
@@ -29,11 +29,10 @@ describe("institution submission pages integration", () => {
 		});
 
 		expect(result).toMatchObject({
-			type: InstitutionDraftReviewModal,
+			type: SubmissionReviewModal,
 			props: expect.objectContaining({
 				submissionId: 123,
 				routePath: "/account/submissions/123",
-				returnTo: "/account/institutions",
 			}),
 		});
 	});

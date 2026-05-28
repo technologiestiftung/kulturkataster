@@ -1,6 +1,17 @@
+vi.mock("@/icons/send.svg", () => ({ default: () => null }));
+vi.mock("@/icons/edit.svg", () => ({ default: () => null }));
+vi.mock("@/icons/filter.svg", () => ({ default: () => null }));
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { fireEvent, render, screen } from "@testing-library/react";
+import {
+	act,
+	fireEvent,
+	render,
+	screen,
+	waitFor,
+	within,
+} from "@testing-library/react";
 import { ActivityList } from "@/components/Activity/ActivityList";
+import { getEntityAuditsPage } from "@/server/actions/entityAudits";
 
 type MockAudit = {
 	id: number;
@@ -35,6 +46,11 @@ type MockState = {
 	}>;
 	entityAudits: MockAudit[];
 	submissions: Array<{ id: number }>;
+	institutionPermissions?: {
+		create?: boolean;
+		update?: boolean;
+		reviewSubmission?: boolean;
+	} | null;
 };
 
 let mockState: MockState = {
@@ -42,7 +58,70 @@ let mockState: MockState = {
 	users: [],
 	entityAudits: [],
 	submissions: [],
+	institutionPermissions: null,
 };
+
+type MockIntersectionObserverEntry = {
+	target: Element;
+	isIntersecting: boolean;
+};
+
+const intersectionObserverCallbacks: Array<
+	(entries: MockIntersectionObserverEntry[]) => void
+> = [];
+
+class MockIntersectionObserver {
+	private callback: (entries: MockIntersectionObserverEntry[]) => void;
+
+	constructor(callback: (entries: MockIntersectionObserverEntry[]) => void) {
+		this.callback = callback;
+		intersectionObserverCallbacks.push(callback);
+	}
+
+	observe() {}
+
+	unobserve() {}
+
+	disconnect() {
+		const index = intersectionObserverCallbacks.indexOf(this.callback);
+		if (index >= 0) {
+			intersectionObserverCallbacks.splice(index, 1);
+		}
+	}
+}
+
+const triggerIntersectionObservers = (isIntersecting = true) => {
+	act(() => {
+		for (const callback of intersectionObserverCallbacks) {
+			callback([{ target: document.body, isIntersecting }]);
+		}
+	});
+};
+
+(
+	globalThis as typeof globalThis & {
+		IntersectionObserver: typeof MockIntersectionObserver;
+	}
+).IntersectionObserver = MockIntersectionObserver;
+
+vi.mock("@/server/actions/entityAudits", () => ({
+	getEntityAuditsPage: vi.fn(),
+}));
+
+vi.mock("@tanstack/react-virtual", () => ({
+	useWindowVirtualizer: ({ count }: { count: number }) => ({
+		getVirtualItems: () =>
+			Array.from({ length: count }, (_, index) => ({
+				index,
+				start: index * 64,
+				size: 64,
+			})),
+		getTotalSize: () => count * 64,
+		measure: vi.fn(),
+		measureElement: vi.fn(),
+		resizeItem: vi.fn(),
+	}),
+}));
 
 vi.mock("react-i18next", () => ({
 	useTranslation: () => ({
@@ -59,20 +138,6 @@ vi.mock("@/lib/store/accountStore", () => ({
 	useAccountStore: (selector: (state: MockState) => unknown) =>
 		selector(mockState),
 }));
-
-import { useAccountStore } from "@/lib/store/accountStore";
-
-(
-	useAccountStore as typeof useAccountStore & {
-		persist: {
-			hasHydrated: () => boolean;
-			onFinishHydration: () => () => void;
-		};
-	}
-).persist = {
-	hasHydrated: () => true,
-	onFinishHydration: () => () => undefined,
-};
 
 vi.mock("@/components/ui/search-input", () => ({
 	SearchInput: ({
@@ -171,6 +236,15 @@ const makeAudit = (overrides: Partial<MockAudit>): MockAudit => ({
 
 describe("ActivityList filters", () => {
 	beforeEach(() => {
+		intersectionObserverCallbacks.splice(
+			0,
+			intersectionObserverCallbacks.length,
+		);
+		vi.mocked(getEntityAuditsPage).mockReset();
+		vi.mocked(getEntityAuditsPage).mockResolvedValue({
+			audits: [],
+			hasMore: false,
+		});
 		const now = new Date();
 		const tenDaysAgo = new Date(now.getTime() - 10 * 24 * 60 * 60 * 1000);
 		const fortyDaysAgo = new Date(now.getTime() - 40 * 24 * 60 * 60 * 1000);
@@ -261,10 +335,169 @@ describe("ActivityList filters", () => {
 		expect(screen.getAllByTestId("activity-row")).toHaveLength(1);
 
 		fireEvent.change(actorSelect, { target: { value: "all" } });
-		fireEvent.change(screen.getByRole("textbox"), {
+		fireEvent.change(screen.getAllByRole("textbox")[0], {
 			target: { value: "Die Etage" },
 		});
 		expect(screen.getAllByTestId("activity-row")).toHaveLength(1);
+	});
+
+	it("does not reapply row entry animations when rerendered with the same activities", () => {
+		const { rerender } = render(<ActivityList />);
+
+		expect(screen.getAllByTestId("activity-row")).toHaveLength(3);
+		for (const row of screen.getAllByTestId("activity-row")) {
+			expect(row.parentElement).toHaveClass("motion-safe:animate-in");
+		}
+
+		rerender(<ActivityList />);
+
+		expect(screen.getAllByTestId("activity-row")).toHaveLength(3);
+		for (const row of screen.getAllByTestId("activity-row")) {
+			expect(row.parentElement).not.toHaveClass("motion-safe:animate-in");
+		}
+	});
+
+	it("falls back to the audit user for download rows with stale unknown requester metadata", () => {
+		mockState.entityAudits = [
+			makeAudit({
+				id: 10,
+				action: "update",
+				entity_type: "user",
+				entity_id: "current-user",
+				status: "completed",
+				user: {
+					first_name: "Ada",
+					last_name: "Lovelace",
+					email: "ada@example.com",
+				},
+				new_data: {
+					format: "xls",
+					institution_count: 12,
+				},
+				meta_info: {
+					download_event: true,
+					download_type: "institution_export",
+					requester_name: "Unknown",
+					requester_email: "",
+				},
+			}),
+		];
+
+		render(<ActivityList />);
+
+		expect(screen.getByTestId("activity-row")).toHaveTextContent(
+			"Ada Lovelace",
+		);
+		expect(screen.getByTestId("activity-row")).not.toHaveTextContent("Unknown");
+	});
+
+	it("keeps submission review bulk helper audits collapsed into one activity", () => {
+		const reviewCorrelationId = "submission:270:review:1777418822127";
+
+		mockState.entityAudits = [
+			makeAudit({
+				id: 100,
+				action: "create",
+				entity_type: "submission",
+				entity_id: "270",
+				status: "approval_pending",
+				user: {
+					first_name: "Ex",
+					last_name: "Am",
+					email: "guest@example.de",
+				},
+				new_data: {
+					id: 270,
+					type: "create",
+					entity_type: "institution",
+					status: "approval_pending",
+					data: { name: "E2E All Fields 1777418822127" },
+				},
+				meta_info: null,
+			}),
+			makeAudit({
+				id: 101,
+				action: "update",
+				entity_type: "submission",
+				entity_id: "270",
+				status: "approval_pending",
+				user: {
+					first_name: "Jo",
+					last_name: "H",
+					email: "admin@example.de",
+				},
+				old_data: {
+					id: 270,
+					type: "create",
+					entity_type: "institution",
+					status: "approval_pending",
+					data: { name: "E2E All Fields 1777418822127" },
+				},
+				new_data: {
+					id: 270,
+					type: "create",
+					entity_type: "institution",
+					status: "rejected",
+					data: { name: "E2E All Fields 1777418822127" },
+				},
+				meta_info: {
+					correlation_id: reviewCorrelationId,
+					root_entity_type: "submission",
+					root_entity_id: "270",
+					intent: "submission_review_rejected",
+				},
+			}),
+			makeAudit({
+				id: 102,
+				action: "update",
+				entity_type: "submission",
+				entity_id: "bulk",
+				status: "approval_pending",
+				user: {
+					first_name: "Jo",
+					last_name: "H",
+					email: "admin@example.de",
+				},
+				old_data: [
+					{
+						id: 270,
+						entity_id: 270,
+						type: "create",
+						entity_type: "institution",
+						status: "approval_pending",
+						data: { name: "E2E All Fields 1777418822127" },
+					},
+				],
+				new_data: {
+					args: { data: { status: "rejected" } },
+					result: { count: 1 },
+				},
+				meta_info: {
+					correlation_id: reviewCorrelationId,
+					root_entity_type: "submission",
+					root_entity_id: "270",
+					intent: "submission_review_rejected",
+				},
+			}),
+		];
+
+		render(<ActivityList />);
+
+		const rows = screen.getAllByTestId("activity-row");
+		expect(rows).toHaveLength(2);
+
+		const guestRow = rows.find((row) =>
+			within(row).queryByText("Ex Am (guest@example.de)"),
+		);
+		const adminRow = rows.find((row) =>
+			within(row).queryByText("Jo H (admin@example.de)"),
+		);
+
+		expect(guestRow).toBeDefined();
+		expect(adminRow).toBeDefined();
+		expect(within(guestRow!).getAllByText("create")).toHaveLength(2);
+		expect(within(guestRow!).queryByText("update")).not.toBeInTheDocument();
+		expect(within(adminRow!).getByText("update")).toBeInTheDocument();
 	});
 
 	it("uses the user entity status for user activities", () => {
@@ -312,6 +545,28 @@ describe("ActivityList filters", () => {
 		).toBeInTheDocument();
 	});
 
+	it("includes the submission type in submission entity labels", () => {
+		mockState.entityAudits = [
+			makeAudit({
+				id: 22,
+				action: "create",
+				entity_type: "submission",
+				entity_id: "172",
+				new_data: {
+					type: "create",
+					entity_type: "institution",
+					data: { name: "Neue Bühne" },
+				},
+			}),
+		];
+
+		render(<ActivityList />);
+
+		expect(
+			screen.getByText("submission (create) [institution] #172: Neue Bühne"),
+		).toBeInTheDocument();
+	});
+
 	it("filters by date presets", () => {
 		render(<ActivityList />);
 
@@ -325,6 +580,47 @@ describe("ActivityList filters", () => {
 
 		fireEvent.change(dateSelect, { target: { value: "last_30_days" } });
 		expect(screen.getAllByTestId("activity-row")).toHaveLength(2);
+	});
+
+	it("shows distinct labels for approved and active in the status filter", () => {
+		mockState.entityAudits = [
+			makeAudit({
+				id: 40,
+				entity_type: "submission",
+				entity_id: "40",
+				status: "approved",
+				new_data: {
+					status: "approved",
+					type: "create",
+					entity_type: "institution",
+					data: { name: "Approved submission" },
+				},
+			}),
+			makeAudit({
+				id: 41,
+				entity_type: "user",
+				entity_id: "user-41",
+				status: "completed",
+				new_data: {
+					status: "active",
+					email: "active@example.com",
+				},
+				user: null,
+			}),
+		];
+
+		render(<ActivityList />);
+
+		const statusSelect = screen.getAllByRole("combobox")[0];
+		const optionLabels = within(statusSelect)
+			.getAllByRole("option")
+			.map((option) => option.textContent);
+
+		expect(optionLabels).toContain("Approved");
+		expect(optionLabels).toContain("Active");
+		expect(optionLabels.filter((label) => label === "Approved")).toHaveLength(
+			1,
+		);
 	});
 
 	it("does not link deleted submission activities", () => {
@@ -441,5 +737,160 @@ describe("ActivityList filters", () => {
 			"href",
 			"/de/account/edit",
 		);
+	});
+
+	it("does not append /edit for category submission links even when canCreateInstitutions is true", () => {
+		mockState = {
+			currentProfile: { id: "current-user", email: "current@example.com" },
+			users: [
+				{
+					id: "current-user",
+					email: "current@example.com",
+					role: {
+						table_permissions: [
+							{ table: "user", action: "read", scope: "all" },
+						],
+					},
+				},
+			],
+			submissions: [{ id: 165 }],
+			institutionPermissions: { create: true, update: true },
+			entityAudits: [
+				makeAudit({
+					id: 30,
+					action: "create",
+					entity_type: "submission",
+					entity_id: "165",
+					status: "approved",
+					new_data: {
+						type: "create",
+						entity_type: "category",
+						data: { key: "musik" },
+					},
+				}),
+			],
+		};
+
+		render(<ActivityList />);
+
+		expect(screen.getByTestId("primary-link-audit:30")).toHaveAttribute(
+			"href",
+			"/de/account/submissions/165",
+		);
+	});
+
+	it("loads and appends older audits when the scroll sentinel intersects", async () => {
+		const now = new Date("2026-05-05T12:00:00.000Z");
+		mockState.entityAudits = Array.from({ length: 200 }, (_, index) =>
+			makeAudit({
+				id: index + 1,
+				changed_at: new Date(now.getTime() - index * 60_000),
+				new_data: { name: `Audit ${index + 1}` },
+				user: {
+					first_name: "Loaded",
+					last_name: "User",
+					email: `loaded-${index + 1}@example.com`,
+				},
+			}),
+		);
+
+		vi.mocked(getEntityAuditsPage).mockResolvedValueOnce({
+			audits: [
+				makeAudit({
+					id: 201,
+					changed_at: new Date(now.getTime() - 201 * 60_000),
+					new_data: { name: "Older audit" },
+					user: {
+						first_name: "Older",
+						last_name: "User",
+						email: "older@example.com",
+					},
+				}) as never,
+			],
+			hasMore: false,
+		});
+
+		render(<ActivityList />);
+
+		triggerIntersectionObservers();
+
+		await waitFor(() => {
+			expect(getEntityAuditsPage).toHaveBeenCalledWith(
+				expect.objectContaining({
+					beforeId: 200,
+					take: 100,
+				}),
+			);
+		});
+
+		await waitFor(() => {
+			expect(screen.getAllByTestId("activity-row")).toHaveLength(201);
+		});
+	});
+
+	it("shows a loading state while older audits are being fetched", async () => {
+		const now = new Date("2026-05-05T12:00:00.000Z");
+		mockState.entityAudits = Array.from({ length: 200 }, (_, index) =>
+			makeAudit({
+				id: index + 1,
+				changed_at: new Date(now.getTime() - index * 60_000),
+			}),
+		);
+
+		let resolveFetch:
+			| ((value: { audits: never[]; hasMore: boolean }) => void)
+			| undefined;
+		vi.mocked(getEntityAuditsPage).mockReturnValueOnce(
+			new Promise((resolve) => {
+				resolveFetch = resolve;
+			}),
+		);
+
+		render(<ActivityList />);
+
+		triggerIntersectionObservers();
+
+		expect(
+			screen.getByText("Weitere Aktivitaeten werden geladen..."),
+		).toBeInTheDocument();
+
+		act(() => {
+			resolveFetch?.({ audits: [], hasMore: false });
+		});
+
+		await waitFor(() => {
+			expect(
+				screen.queryByText("Weitere Aktivitaeten werden geladen..."),
+			).toBeNull();
+		});
+	});
+
+	it("shows an error state and retries loading older audits", async () => {
+		const now = new Date("2026-05-05T12:00:00.000Z");
+		mockState.entityAudits = Array.from({ length: 200 }, (_, index) =>
+			makeAudit({
+				id: index + 1,
+				changed_at: new Date(now.getTime() - index * 60_000),
+			}),
+		);
+
+		vi.mocked(getEntityAuditsPage)
+			.mockRejectedValueOnce(new Error("load failed"))
+			.mockResolvedValueOnce({ audits: [], hasMore: false });
+
+		render(<ActivityList />);
+
+		triggerIntersectionObservers();
+
+		const retryButton = await screen.findByRole("button", {
+			name: "Weitere Aktivitaeten konnten nicht geladen werden.",
+		});
+		expect(retryButton).toBeInTheDocument();
+
+		fireEvent.click(retryButton);
+
+		await waitFor(() => {
+			expect(getEntityAuditsPage).toHaveBeenCalledTimes(2);
+		});
 	});
 });

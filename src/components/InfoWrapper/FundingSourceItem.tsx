@@ -61,7 +61,7 @@ export function FundingSourceItem({
 	isPrivate?: boolean;
 	action?: React.ReactNode;
 }) {
-	const { t: tEnum } = useTranslation("enumMap");
+	const { t: tEnum } = useTranslation();
 	const value = formatFundingSourcesValue(data, tEnum);
 
 	return (

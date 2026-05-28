@@ -12,6 +12,12 @@ export async function getMapBoundingBox(): Promise<string | null> {
 	return bbox ?? null;
 }
 
+export async function getMapStyleUrl(): Promise<string | null> {
+	const apiKey = process.env.MAPTILER_API_KEY;
+	if (!apiKey) return null;
+	return `https://api.maptiler.com/maps/streets/style.json?key=${apiKey}`;
+}
+
 export type ReverseGeocodeResult = {
 	street?: string | null;
 	streetNumber?: string | null;
