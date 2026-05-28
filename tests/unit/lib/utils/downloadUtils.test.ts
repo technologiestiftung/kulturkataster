@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
+import * as XLSX from "xlsx-js-style";
 import {
 	DEFAULT_INSTITUTION_EXPORT_COLUMN_ORDER,
+	generateExcelBuffer,
 	prepareDataForExport,
 } from "@/lib/utils/downloadUtils";
 import type { Institution } from "@/types";
@@ -136,19 +138,19 @@ describe("prepareDataForExport", () => {
 				translateFn: (key) =>
 					(
 						({
-							"field_names.name.label": "Name",
-							"field_names.subcategories.label": "Unterkategorien",
-							"institution_status.public": "Öffentlich",
-							"category.theater": "Theater",
-							"category.dance": "Tanz",
-							"field_names.funding_type.options.workspace_program":
+							"enumMap.field_names.name.label": "Name",
+							"enumMap.field_names.subcategories.label": "Unterkategorien",
+							"enumMap.institution_status.public": "Öffentlich",
+							"enumMap.category.theater": "Theater",
+							"enumMap.category.dance": "Tanz",
+							"enumMap.field_names.funding_type.options.workspace_program":
 								"Arbeitsraumprogramm",
-							"field_names.funding_source.options.workspace_program":
+							"enumMap.field_names.funding_source.options.workspace_program":
 								"Arbeitsraumprogramm",
-							"field_names.owner_type.options.federal_property": "Bund",
-							"field_names.utilization_status.options.temporarily_closed":
+							"enumMap.field_names.owner_type.options.federal_property": "Bund",
+							"enumMap.field_names.utilization_status.options.temporarily_closed":
 								"Vorübergehend geschlossen",
-							"field_names.shared_use_allowed.options.yes": "Ja",
+							"enumMap.field_names.shared_use_allowed.options.yes": "Ja",
 						}) as Record<string, string>
 					)[key] ?? key,
 			},
@@ -187,8 +189,10 @@ describe("prepareDataForExport", () => {
 				translateFn: (key) =>
 					(
 						({
-							"field_names.funding_sources.label": "Finanzierungsquellen",
-							"field_names.funding_source.options.state_berlin": "Land Berlin",
+							"enumMap.field_names.funding_sources.label":
+								"Finanzierungsquellen",
+							"enumMap.field_names.funding_source.options.state_berlin":
+								"Land Berlin",
 						}) as Record<string, string>
 					)[key] ?? key,
 			},
@@ -196,6 +200,43 @@ describe("prepareDataForExport", () => {
 
 		expect(rows[0]).toMatchObject({
 			Finanzierungsquellen: "Land Berlin: Grant",
+		});
+	});
+
+	it("formats exported date values as dd.mm.yyyy", () => {
+		const rows = prepareDataForExport(
+			[
+				{
+					...makeInstitution(),
+					established_since: "2020-12-01T00:00:00.000Z",
+					established_until: "2025-01-31",
+					rental_contract_end: new Date("2030-06-15T00:00:00.000Z"),
+				} as Institution,
+			],
+			{
+				readablePermissionFields: [
+					"established_since",
+					"established_until",
+					"rental_contract_end",
+				],
+				audience: "internal",
+				translateFn: (key) =>
+					(
+						({
+							"enumMap.field_names.established_since.label":
+								"Bestehen am Standort seit",
+							"enumMap.field_names.established_until.label":
+								"Bestehen am Standort bis",
+							"enumMap.field_names.rental_contract_end.label": "Vertragsende",
+						}) as Record<string, string>
+					)[key] ?? key,
+			},
+		);
+
+		expect(rows[0]).toMatchObject({
+			"Bestehen am Standort seit": "01.12.2020",
+			"Bestehen am Standort bis": "31.01.2025",
+			Vertragsende: "15.06.2030",
 		});
 	});
 
@@ -262,5 +303,77 @@ describe("prepareDataForExport", () => {
 			"Contact Person First Name",
 			"Contact Person Last Name",
 		]);
+	});
+});
+
+describe("generateExcelBuffer", () => {
+	it("adds the Kulturkataster notice above the exported table", () => {
+		const buffer = generateExcelBuffer(
+			[
+				{
+					Status: "Öffentlich",
+					ID: "2646",
+					Kulturort: "Alpha",
+					Webseite: "https://example.de",
+				},
+			],
+			"xlsx",
+		);
+		const workbook = XLSX.read(buffer, { type: "array", cellStyles: true });
+		const worksheet = workbook.Sheets.Kulturorte;
+
+		expect(worksheet.A1?.v).toBe(
+			"Die Daten stammen vom Berliner Kulturkataster.",
+		);
+		expect(worksheet.A2?.v).toBe(
+			"Bitte benennen Sie bei Verwendung das Kulturkataster als Download-Quelle und beachten Sie die rechtlichen Hinweise.",
+		);
+		expect(worksheet.A3?.v).toBe("www.kulturkataster.berlin");
+		expect(worksheet.A4?.v).toBe("Ein Projekt der Kulturraum Berlin gGmbH");
+		expect(worksheet.A1?.l).toBeUndefined();
+		expect(worksheet.A2?.l).toBeUndefined();
+		expect(worksheet.A3?.l?.Target).toBe("https://www.kulturkataster.berlin");
+		expect(worksheet.A4?.l).toBeUndefined();
+		expect(worksheet.A6?.v).toBe("Status");
+		expect(worksheet.B6?.v).toBe("ID");
+		expect(worksheet.A7?.v).toBe("Öffentlich");
+		expect(worksheet.D7?.v).toBe("https://example.de");
+		expect(worksheet.D7?.l?.Target).toBe("https://example.de");
+		expect(worksheet["!merges"]).toEqual(
+			expect.arrayContaining([
+				{ s: { r: 0, c: 0 }, e: { r: 0, c: 3 } },
+				{ s: { r: 1, c: 0 }, e: { r: 1, c: 3 } },
+				{ s: { r: 2, c: 0 }, e: { r: 2, c: 3 } },
+				{ s: { r: 3, c: 0 }, e: { r: 3, c: 3 } },
+			]),
+		);
+		expect(worksheet["!cols"]?.[0]?.wch).toBeGreaterThanOrEqual(30);
+	});
+
+	it("uses translated Kulturkataster notice rows when provided", () => {
+		const translateFn = (
+			key: string,
+			options?: Record<string, unknown>,
+		): string => {
+			if (key === "common.download.exportNotice.row1") return "Translated 1";
+			return String(options?.defaultValue ?? key);
+		};
+
+		const buffer = generateExcelBuffer(
+			[
+				{
+					Status: "Public",
+				},
+			],
+			"xlsx",
+			translateFn,
+		);
+		const workbook = XLSX.read(buffer, { type: "array", cellStyles: true });
+		const worksheet = workbook.Sheets.Kulturorte;
+
+		expect(worksheet.A1?.v).toBe("Translated 1");
+		expect(worksheet.A2?.v).toBe(
+			"Bitte benennen Sie bei Verwendung das Kulturkataster als Download-Quelle und beachten Sie die rechtlichen Hinweise.",
+		);
 	});
 });

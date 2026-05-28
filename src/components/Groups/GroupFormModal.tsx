@@ -51,13 +51,13 @@ const translateGroupFormError = (
 ) => {
 	switch (errorCode) {
 		case "nameTaken":
-			return t("groupFormModal.errors.nameTaken");
+			return t("content.groupFormModal.errors.nameTaken");
 		case "notFound":
-			return t("groupFormModal.errors.notFound");
+			return t("content.groupFormModal.errors.notFound");
 		case "forbidden":
-			return t("groupFormModal.errors.forbidden");
+			return t("content.groupFormModal.errors.forbidden");
 		default:
-			return t("groupFormModal.errors.unexpected");
+			return t("content.groupFormModal.errors.unexpected");
 	}
 };
 
@@ -66,8 +66,8 @@ const getDialogTitle = (
 	t: (key: string) => string,
 ) =>
 	mode === "create"
-		? t("groupFormModal.dialog.title.create")
-		: t("groupFormModal.dialog.title.edit");
+		? t("content.groupFormModal.dialog.title.create")
+		: t("content.groupFormModal.dialog.title.edit");
 
 const renderDialogBody = (
 	isWaitingForGroup: boolean,
@@ -256,20 +256,22 @@ const buildGroupFormConfig = ({
 				fields: [
 					{
 						name: "name",
-						label: t("groupFormModal.form.details.fields.name.label"),
+						label: t("content.groupFormModal.form.details.fields.name.label"),
 						type: "text",
 						required: true,
 						placeholder: t(
-							"groupFormModal.form.details.fields.name.placeholder",
+							"content.groupFormModal.form.details.fields.name.placeholder",
 						),
 						layout: { span: "full" },
 					},
 					{
 						name: "description",
-						label: t("groupFormModal.form.details.fields.description.label"),
+						label: t(
+							"content.groupFormModal.form.details.fields.description.label",
+						),
 						type: "textarea",
 						placeholder: t(
-							"groupFormModal.form.details.fields.description.placeholder",
+							"content.groupFormModal.form.details.fields.description.placeholder",
 						),
 						layout: { span: "full" },
 					},
@@ -278,37 +280,41 @@ const buildGroupFormConfig = ({
 			{
 				name: "membersSection",
 				type: "section",
-				title: t("groupFormModal.form.members.title"),
+				title: t("content.groupFormModal.form.members.title"),
 				fields: [
 					{
 						name: "userIds",
-						label: t("groupFormModal.form.members.fields.users.label"),
+						label: t("content.groupFormModal.form.members.fields.users.label"),
 						type: "multiselect",
 						multiselectVariant: "modal",
 						placeholder: t(
-							"groupFormModal.form.members.fields.users.placeholder",
+							"content.groupFormModal.form.members.fields.users.placeholder",
 						),
 						searchPlaceholder: t(
-							"groupFormModal.form.members.fields.users.searchPlaceholder",
+							"content.groupFormModal.form.members.fields.users.searchPlaceholder",
 						),
-						emptyText: t("groupFormModal.form.members.fields.users.emptyText"),
+						emptyText: t(
+							"content.groupFormModal.form.members.fields.users.emptyText",
+						),
 						previewCount: 3,
 						options: userOptions,
 						layout: { span: "full" },
 					},
 					{
 						name: "institutionIds",
-						label: t("groupFormModal.form.members.fields.institutions.label"),
+						label: t(
+							"content.groupFormModal.form.members.fields.institutions.label",
+						),
 						type: "multiselect",
 						multiselectVariant: "modal",
 						placeholder: t(
-							"groupFormModal.form.members.fields.institutions.placeholder",
+							"content.groupFormModal.form.members.fields.institutions.placeholder",
 						),
 						searchPlaceholder: t(
-							"groupFormModal.form.members.fields.institutions.searchPlaceholder",
+							"content.groupFormModal.form.members.fields.institutions.searchPlaceholder",
 						),
 						emptyText: t(
-							"groupFormModal.form.members.fields.institutions.emptyText",
+							"content.groupFormModal.form.members.fields.institutions.emptyText",
 						),
 						previewCount: 3,
 						options: institutionOptions,
@@ -319,18 +325,19 @@ const buildGroupFormConfig = ({
 				],
 			},
 		],
+
 		onSubmit,
 		showCancel: true,
-		cancelLabel: t("groupFormModal.actions.cancel"),
+		cancelLabel: t("content.groupFormModal.actions.cancel"),
 		onCancel,
 		submitLabel: getSubmitLabel(mode, submitting, {
 			create: {
-				default: t("groupFormModal.actions.create"),
-				loading: t("groupFormModal.actions.creating"),
+				default: t("content.groupFormModal.actions.create"),
+				loading: t("content.groupFormModal.actions.creating"),
 			},
 			edit: {
-				default: t("groupFormModal.actions.save"),
-				loading: t("groupFormModal.actions.saving"),
+				default: t("content.groupFormModal.actions.save"),
+				loading: t("content.groupFormModal.actions.saving"),
 			},
 		}),
 		initialValues: getInitialValues(resolvedGroup),
@@ -344,14 +351,21 @@ export function GroupFormModal({
 	routePath,
 	returnTo,
 }: GroupFormModalProps) {
-	const { t } = useTranslation("content");
-	const { t: tEnum, i18n } = useTranslation("enumMap");
+	const { t } = useTranslation();
+	const { t: tEnum, i18n } = useTranslation();
 	const groups = useAccountStore((state) => state.groups);
 	const users = useAccountStore((state) => state.users);
 	const removeGroup = useAccountStore((state) => state.removeGroup);
-	const institutions =
-		useInstitutionStore((state) => state.allInstitutions) ?? [];
-	const categories = useInstitutionStore((state) => state.categories) ?? [];
+	const allInstitutions = useInstitutionStore((state) => state.allInstitutions);
+	const storeCategories = useInstitutionStore((state) => state.categories);
+	const isInstitutionStoreLoading = useInstitutionStore(
+		(state) => state.isLoading,
+	);
+	const initializePublicData = useInstitutionStore(
+		(state) => state.initializePublicData,
+	);
+	const institutions = allInstitutions ?? [];
+	const categories = storeCategories ?? [];
 	const [isDeleting, setIsDeleting] = useState(false);
 	const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 	const [deleteError, setDeleteError] = useState<{
@@ -390,12 +404,29 @@ export function GroupFormModal({
 
 	const { numericGroupId, resolvedGroup, isWaitingForGroup, showNotFound } =
 		useResolvedGroup(mode, groupId, groups);
+
+	useEffect(() => {
+		if (allInstitutions !== null && storeCategories !== null) return;
+		if (isInstitutionStoreLoading) return;
+		if (typeof initializePublicData !== "function") return;
+
+		void initializePublicData();
+	}, [
+		allInstitutions,
+		initializePublicData,
+		isInstitutionStoreLoading,
+		storeCategories,
+	]);
+
 	const handleSuccess = (nextMode: GroupFormModalProps["mode"]) => {
 		const keyPrefix =
 			nextMode === "create"
 				? "groupFormModal.feedback.create"
 				: "groupFormModal.feedback.update";
-		showSuccessToast(t(`${keyPrefix}.title`), t(`${keyPrefix}.description`));
+		showSuccessToast(
+			t(`content.${keyPrefix}.title`),
+			t(`content.${keyPrefix}.description`),
+		);
 	};
 	const { handleSubmit, submitting } = useGroupSubmit(
 		mode,
@@ -430,7 +461,7 @@ export function GroupFormModal({
 		return {
 			...baseConfig,
 			deleteAction: {
-				label: t("groupFormModal.delete.button"),
+				label: t("content.groupFormModal.delete.button"),
 				onClick: () => setShowDeleteDialog(true),
 				disabled: isDeleting || submitting,
 				className: "p-0!",
@@ -455,8 +486,8 @@ export function GroupFormModal({
 		showNotFound && !isDeleting
 			? {
 					active: true,
-					title: t("groupFormModal.dialog.notFound.title"),
-					description: t("groupFormModal.dialog.notFound.description"),
+					title: t("content.groupFormModal.dialog.notFound.title"),
+					description: t("content.groupFormModal.dialog.notFound.description"),
 				}
 			: undefined;
 
@@ -473,15 +504,18 @@ export function GroupFormModal({
 					? {
 							open: true,
 							status: "warning",
-							title: t("groupFormModal.delete.confirmTitle", {
+							title: t("content.groupFormModal.delete.confirmTitle", {
 								defaultValue: "Delete group?",
 							}),
-							description: t("groupFormModal.delete.confirmDescription", {
-								defaultValue:
-									"This will permanently remove the group. This action cannot be undone.",
-							}),
-							confirmLabel: t("groupFormModal.delete.confirm"),
-							cancelLabel: t("groupFormModal.delete.cancel", {
+							description: t(
+								"content.groupFormModal.delete.confirmDescription",
+								{
+									defaultValue:
+										"This will permanently remove the group. This action cannot be undone.",
+								},
+							),
+							confirmLabel: t("content.groupFormModal.delete.confirm"),
+							cancelLabel: t("content.groupFormModal.delete.cancel", {
 								defaultValue: "Cancel",
 							}),
 							onCancel: () => setShowDeleteDialog(false),
@@ -491,7 +525,7 @@ export function GroupFormModal({
 								const result = await deleteGroup(resolvedGroup.id);
 								if (!result.ok) {
 									setDeleteError({
-										title: t("groupFormModal.delete.errorTitle", {
+										title: t("content.groupFormModal.delete.errorTitle", {
 											defaultValue: "Delete failed",
 										}),
 										description: translateGroupFormError(t, result.error),
@@ -506,10 +540,10 @@ export function GroupFormModal({
 									queueMicrotask(() => {
 										removeGroup(resolvedGroup.id);
 										showSuccessToast(
-											t("groupFormModal.feedback.delete.title", {
+											t("content.groupFormModal.feedback.delete.title", {
 												defaultValue: "Group deleted",
 											}),
-											t("groupFormModal.feedback.delete.description", {
+											t("content.groupFormModal.feedback.delete.description", {
 												defaultValue:
 													"The group has been removed successfully.",
 											}),
@@ -529,9 +563,9 @@ export function GroupFormModal({
 				deleteError || submitError
 					? {
 							open: true,
-							title: deleteError ? deleteError.title : t("error"),
+							title: deleteError ? deleteError.title : t("common.error"),
 							description: deleteError?.description ?? submitError ?? "",
-							confirmLabel: t("close"),
+							confirmLabel: t("common.close"),
 							onConfirm: () => {
 								setDeleteError(null);
 								setSubmitError(null);

@@ -212,6 +212,7 @@ function Sidebar({
 						: "group-data-[collapsible=icon]:w-(--sidebar-width-icon)",
 				)}
 			/>
+
 			<div
 				data-slot="sidebar-container"
 				className={cn(
@@ -265,16 +266,16 @@ function SidebarTrigger({
 
 function SidebarRail({ className, ...props }: React.ComponentProps<"button">) {
 	const { toggleSidebar } = useSidebar();
-	const { t } = useTranslation("common");
+	const { t } = useTranslation();
 
 	return (
 		<button
 			data-sidebar="rail"
 			data-slot="sidebar-rail"
-			aria-label={t("toggleSidebar")}
+			aria-label={t("common.toggleSidebar")}
 			tabIndex={-1}
 			onClick={toggleSidebar}
-			title={t("toggleSidebar")}
+			title={t("common.toggleSidebar")}
 			className={cn(
 				"hover:after:bg-sidebar-border absolute inset-y-0 z-20 hidden w-4 -translate-x-1/2 transition-all ease-linear group-data-[side=left]:-right-4 group-data-[side=right]:left-0 after:absolute after:inset-y-0 after:left-1/2 after:w-[2px] sm:flex",
 				"in-data-[side=left]:cursor-w-resize in-data-[side=right]:cursor-e-resize",
@@ -601,9 +602,7 @@ function SidebarMenuSkeleton({
 	className,
 	showIcon = false,
 	...props
-}: React.ComponentProps<"div"> & {
-	showIcon?: boolean;
-}) {
+}: React.ComponentProps<"div"> & { showIcon?: boolean }) {
 	// Random width between 50 to 90%.
 	const [width] = React.useState(() => {
 		return `${Math.floor(Math.random() * 40) + 50}%`;

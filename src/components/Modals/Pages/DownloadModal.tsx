@@ -66,8 +66,8 @@ export function DownloadModal({
 	exportColumnOrder,
 	onAfterDownload,
 }: DownloadModalProps) {
-	const { t } = useTranslation(["content", "common", "enumMap"]);
-	const { t: tEnum } = useTranslation("enumMap");
+	const { t } = useTranslation();
+	const { t: tEnum } = useTranslation();
 	const isModalVisible = open ?? true;
 	const performClose = useRoutedModalClose({ returnTo });
 	const toLocalePath = useLocalePath();
@@ -83,9 +83,11 @@ export function DownloadModal({
 	);
 	const allInstitutions = useInstitutionStore((s) => s.allInstitutions);
 	const isInstitutionStoreLoading = useInstitutionStore((s) => s.isLoading);
-	const resolvedData = data ?? allInstitutions ?? filteredInstitutions ?? [];
+	const resolvedData = data ?? filteredInstitutions ?? allInstitutions ?? [];
 	const institutionCount = resolvedData.length;
 	const isHydratingInstitutions = !data && allInstitutions === null;
+	const [hasAcceptedDataUseAgreement, setHasAcceptedDataUseAgreement] =
+		useState(false);
 	const [hasAcceptedTerms, setHasAcceptedTerms] = useState(false);
 	const [wantsNewsletter, setWantsNewsletter] = useState(false);
 	const [isDownloading, setIsDownloading] = useState(false);
@@ -100,7 +102,10 @@ export function DownloadModal({
 				guestData.datenverwendung,
 		);
 	const canDownload =
-		hasAcceptedTerms && !isDownloading && (isLoggedIn || isGuestFormFilled);
+		hasAcceptedDataUseAgreement &&
+		hasAcceptedTerms &&
+		!isDownloading &&
+		(isLoggedIn || isGuestFormFilled);
 
 	useEffect(() => {
 		if (!isModalVisible) return;
@@ -117,6 +122,7 @@ export function DownloadModal({
 	]);
 
 	const handleClose = () => {
+		setHasAcceptedDataUseAgreement(false);
 		setHasAcceptedTerms(false);
 		setWantsNewsletter(false);
 		setIsDownloading(false);
@@ -179,41 +185,35 @@ export function DownloadModal({
 		fields: [
 			{
 				name: "vorname",
-				label: t("downloadModal.form.vorname", {
-					ns: "content",
+				label: t("content.downloadModal.form.vorname", {
 					defaultValue: "Vorname",
 				}),
 				layout: { span: "half" },
 				type: "text",
-				placeholder: t("downloadModal.form.placeholders.vorname", {
-					ns: "content",
+				placeholder: t("content.downloadModal.form.placeholders.vorname", {
 					defaultValue: "Vorname eingeben",
 				}),
 				required: true,
 			},
 			{
 				name: "nachname",
-				label: t("downloadModal.form.nachname", {
-					ns: "content",
+				label: t("content.downloadModal.form.nachname", {
 					defaultValue: "Nachname",
 				}),
 				layout: { span: "half" },
 				type: "text",
-				placeholder: t("downloadModal.form.placeholders.nachname", {
-					ns: "content",
+				placeholder: t("content.downloadModal.form.placeholders.nachname", {
 					defaultValue: "Nachname eingeben",
 				}),
 				required: true,
 			},
 			{
 				name: "email",
-				label: t("downloadModal.form.email", {
-					ns: "content",
+				label: t("content.downloadModal.form.email", {
 					defaultValue: "Ihre E-Mail-Adresse",
 				}),
 				type: "email",
-				placeholder: t("downloadModal.form.placeholders.email", {
-					ns: "content",
+				placeholder: t("content.downloadModal.form.placeholders.email", {
 					defaultValue: "name@beispiel.de",
 				}),
 				required: true,
@@ -221,15 +221,16 @@ export function DownloadModal({
 			},
 			{
 				name: "datenverwendung",
-				label: t("downloadModal.form.datenverwendung", {
-					ns: "content",
+				label: t("content.downloadModal.form.datenverwendung", {
 					defaultValue: "Wofür verwenden Sie die Daten?",
 				}),
 				type: "textarea",
-				placeholder: t("downloadModal.form.placeholders.datenverwendung", {
-					ns: "content",
-					defaultValue: "Beschreiben Sie kurz den Verwendungszweck",
-				}),
+				placeholder: t(
+					"content.downloadModal.form.placeholders.datenverwendung",
+					{
+						defaultValue: "Beschreiben Sie kurz den Verwendungszweck",
+					},
+				),
 				required: true,
 				layout: { span: "full" },
 			},
@@ -243,13 +244,11 @@ export function DownloadModal({
 		submitDisabled: !canDownload,
 		submitLabel:
 			confirmLabel ??
-			t("institutionsTable.actions.downloadList", {
-				ns: "content",
+			t("content.institutionsTable.actions.downloadList", {
 				defaultValue: "Liste herunterladen",
 			}),
 		showCancel: true,
-		cancelLabel:
-			cancelLabel ?? t("cancel", { ns: "common", defaultValue: "Cancel" }),
+		cancelLabel: cancelLabel ?? t("common.cancel", { defaultValue: "Cancel" }),
 		onCancel: handleClose,
 	};
 
@@ -258,8 +257,7 @@ export function DownloadModal({
 			{!isLoggedIn && (
 				<div className="flex flex-col gap-4">
 					<p className="body1">
-						{t("downloadModal.guestIntro", {
-							ns: "content",
+						{t("content.downloadModal.guestIntro", {
 							defaultValue:
 								"Bevor Sie die Daten herunterladen können, bitten wir Sie noch um ein paar Informationen.",
 						})}
@@ -269,8 +267,7 @@ export function DownloadModal({
 			)}
 			{isLoggedIn && (
 				<p className="body1 mb-12">
-					{t("downloadModal.description", {
-						ns: "content",
+					{t("content.downloadModal.description", {
 						defaultValue:
 							"Die Liste Ihrer Kulturorte können Sie hier in verschiedenen Dateiformaten herunterladen.",
 					})}
@@ -279,8 +276,7 @@ export function DownloadModal({
 			<div className="flex flex-col space-y-4 mt-4">
 				<div className="flex flex-col gap-3">
 					<p className="body2 font-bold">
-						{t("downloadModal.chooseFormat", {
-							ns: "content",
+						{t("content.downloadModal.chooseFormat", {
 							defaultValue: "Dateiformat wählen",
 						})}
 					</p>
@@ -304,6 +300,45 @@ export function DownloadModal({
 					</div>
 				</div>
 				<div className="flex flex-col gap-3">
+					<div className="space-y-6 flex flex-col my-4">
+						<strong>
+							{t("content.downloadModal.dataUseAgreementTitle", {
+								defaultValue: "Vereinbarung über die Datennutzung",
+							})}
+						</strong>
+						<p className="body2">
+							{t("content.downloadModal.dataUseAgreementText", {
+								defaultValue:
+									"Ich werde die Daten nicht an Dritte weitergeben, sie ausschließlich im Rahmen der gesetzlichen Vorgaben, insbesondere der DSGVO soweit personenbezogene Daten betroffen sind, sowie nur für die Zwecke des Kulturkatasters nutzen. Zwecke des Kulturkatasters sind nicht kommerzieller Natur und sind die systematische Erfassung, Strukturierung und öffentliche Bereitstellung von Daten über Orte kultureller Produktion und Nutzung im Land Berlin, um eine belastbare Datengrundlage für kulturpolitische Entscheidungen, kulturelle Stadtentwicklung sowie für die Zusammenarbeit zwischen Kulturakteur*innen, Verwaltung, Wissenschaft und Öffentlichkeit zu schaffen.",
+							})}
+						</p>
+					</div>
+					<div className="flex items-start gap-3">
+						<Checkbox
+							id="download-list-data-use-agreement"
+							checked={hasAcceptedDataUseAgreement}
+							onCheckedChange={(checked) =>
+								setHasAcceptedDataUseAgreement(checked === true)
+							}
+							required
+							aria-required="true"
+							variant="filter"
+							size="default"
+							className="mt-0.5"
+						/>
+
+						<Label
+							htmlFor="download-list-data-use-agreement"
+							emphasize={false}
+							className="body2 cursor-pointer"
+						>
+							{t("content.downloadModal.dataUseAgreementConsent", {
+								defaultValue:
+									"Ich bin einverstanden mit der Vereinbarung über die Datennutzung",
+							})}
+							<span className="ml-1">*</span>
+						</Label>
+					</div>
 					<div className="flex items-start gap-3">
 						<Checkbox
 							id="download-list-acknowledgement"
@@ -317,13 +352,13 @@ export function DownloadModal({
 							size="default"
 							className="mt-0.5"
 						/>
+
 						<Label
 							htmlFor="download-list-acknowledgement"
 							emphasize={false}
 							className="body2 cursor-pointer"
 						>
-							{t("downloadModal.acknowledgementPrefix", {
-								ns: "content",
+							{t("content.downloadModal.acknowledgementPrefix", {
 								defaultValue: "Ich habe den",
 							})}{" "}
 							<Link
@@ -331,13 +366,11 @@ export function DownloadModal({
 								className="text-primary-dark underline"
 								onClick={(event) => event.stopPropagation()}
 							>
-								{t("downloadModal.acknowledgementLink", {
-									ns: "content",
+								{t("content.downloadModal.acknowledgementLink", {
 									defaultValue: "rechtlichen Hinweis",
 								})}
 							</Link>{" "}
-							{t("downloadModal.acknowledgementSuffix", {
-								ns: "content",
+							{t("content.downloadModal.acknowledgementSuffix", {
 								defaultValue: "gelesen und verstanden",
 							})}
 							<span className="ml-1">*</span>
@@ -355,13 +388,13 @@ export function DownloadModal({
 								size="default"
 								className="mt-0.5"
 							/>
+
 							<Label
 								htmlFor="download-list-newsletter"
 								emphasize={false}
 								className="body2 cursor-pointer"
 							>
-								{t("auth.register.newsletterOptInPrefix", {
-									ns: "common",
+								{t("common.auth.register.newsletterOptInPrefix", {
 									defaultValue:
 										"Um auf dem Laufenden zu bleiben, möchte ich auch gleich den",
 								})}{" "}
@@ -370,8 +403,7 @@ export function DownloadModal({
 									className="text-primary-dark underline"
 									onClick={(event) => event.stopPropagation()}
 								>
-									{t("auth.register.newsletterLink", {
-										ns: "common",
+									{t("common.auth.register.newsletterLink", {
 										defaultValue: "Newsletter abonnieren.",
 									})}
 								</Link>
@@ -389,8 +421,7 @@ export function DownloadModal({
 			containerClassName="max-w-3xl"
 			title={
 				title ??
-				t("downloadModal.title", {
-					ns: "content",
+				t("content.downloadModal.title", {
 					defaultValue: "Meine Daten als Liste herunterladen",
 				})
 			}
@@ -399,12 +430,10 @@ export function DownloadModal({
 					<span className="flex items-center gap-1">
 						<ArrowNarrowRight className="size-5 shrink-0" />
 						{isHydratingInstitutions
-							? t("downloadModal.loading", {
-									ns: "content",
+							? t("content.downloadModal.loading", {
 									defaultValue: "Kulturorte werden geladen …",
 								})
-							: t("downloadModal.subtitle", {
-									ns: "content",
+							: t("content.downloadModal.subtitle", {
 									count: institutionCount,
 									defaultValue: "{{count}} Kulturorte zum Herunterladen",
 								})}
@@ -420,8 +449,7 @@ export function DownloadModal({
 			onCloseRequest={handleClose}
 			loadingState={{
 				active: isHydratingInstitutions && isInstitutionStoreLoading,
-				label: t("downloadModal.loading", {
-					ns: "content",
+				label: t("content.downloadModal.loading", {
 					defaultValue: "Kulturorte werden geladen …",
 				}),
 			}}

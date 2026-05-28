@@ -14,37 +14,37 @@ export function GroupsTable() {
 	const groups = useAccountStore((state) => state.groups);
 	const router = useRouter();
 	const toLocalePath = useLocalePath();
-	const { t } = useTranslation("content");
+	const { t } = useTranslation();
 
 	const tableConfig: DataTableConfig<Group> = {
 		columns: [
 			{
 				accessorKey: "name",
-				header: t("groupTable.columns.name"),
+				header: t("content.groupTable.columns.name"),
 				enableSorting: true,
 				meta: { pin: "left", truncate: true },
 			},
 			{
 				accessorKey: "description",
-				header: t("groupTable.columns.description"),
+				header: t("content.groupTable.columns.description"),
 				enableSorting: true,
 				meta: { truncate: true },
 			},
 			{
 				id: "userCount",
-				header: t("groupTable.columns.users"),
+				header: t("content.groupTable.columns.users"),
 				accessorFn: (row) => row.users?.length ?? 0,
 				enableSorting: true,
 			},
 			{
 				id: "institutionCount",
-				header: t("groupTable.columns.institutions"),
+				header: t("content.groupTable.columns.institutions"),
 				accessorFn: (row) => row.institutions?.length ?? 0,
 				enableSorting: true,
 			},
 			{
 				accessorKey: "updated_at",
-				header: t("groupTable.columns.updated"),
+				header: t("content.groupTable.columns.updated"),
 				enableSorting: true,
 				cell: ({ row }) => {
 					const group = row.original;
@@ -53,7 +53,7 @@ export function GroupsTable() {
 			},
 			{
 				accessorKey: "created_at",
-				header: t("groupTable.columns.created"),
+				header: t("content.groupTable.columns.created"),
 				enableSorting: true,
 				cell: ({ row }) => {
 					const group = row.original;
@@ -61,10 +61,11 @@ export function GroupsTable() {
 				},
 			},
 		],
+
 		data: groups,
 		getRowKey: (row) => row.id,
 		searchable: true,
-		searchPlaceholder: t("groupTable.searchPlaceholder"),
+		searchPlaceholder: t("content.groupTable.searchPlaceholder"),
 		getSearchableValues: (row) => [
 			row.name,
 			row.description ?? "",
@@ -72,34 +73,36 @@ export function GroupsTable() {
 			String(row.institutions?.length ?? 0),
 			row.created_at.toLocaleDateString(),
 		],
+
 		primaryButton: {
-			label: t("groupTable.actions.add"),
+			label: t("content.groupTable.actions.add"),
 			onClick: () => router.push(toLocalePath("/account/groups/new")),
 		},
 		emptyState: (
 			<EmptyActionState
-				title={t("groupTable.empty.title", {
+				title={t("content.groupTable.empty.title", {
 					defaultValue: "Keine Gruppen gefunden.",
 				})}
-				description={t("groupTable.empty.description", {
+				description={t("content.groupTable.empty.description", {
 					defaultValue:
 						"Erstellen Sie eine Gruppe, um Mitglieder zu organisieren.",
 				})}
 				actions={[
 					{
 						icon: <Plus className="size-5" />,
-						label: t("groupTable.actions.add"),
+						label: t("content.groupTable.actions.add"),
 						href: toLocalePath("/account/groups/new"),
 					},
 				]}
 			/>
 		),
+
 		onEdit: (row) =>
 			router.push(toLocalePath(`/account/groups/${row.id}/edit`)),
 		onEditPrefetch: (row) => {
 			void router.prefetch(toLocalePath(`/account/groups/${row.id}/edit`));
 		},
-		emptyMessage: t("groupTable.emptyMessage"),
+		emptyMessage: t("content.groupTable.emptyMessage"),
 	};
 
 	return (

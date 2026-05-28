@@ -11,7 +11,7 @@ export default function SubmenuLayout({
 }: {
 	children: React.ReactNode;
 }) {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation();
 	const router = useRouter();
 	const pathname = usePathname();
 	const toLocalePath = useLocalePath();
@@ -31,8 +31,8 @@ export default function SubmenuLayout({
 	};
 
 	const title = pathname?.includes("/accessibilitySettings")
-		? t("accessibility.title")
-		: t("institution.details");
+		? t("common.accessibility.title")
+		: t("common.institution.details");
 
 	return (
 		<div className="flex flex-col h-full">
@@ -41,13 +41,13 @@ export default function SubmenuLayout({
 					<button
 						onClick={handleBack}
 						className="flex items-center gap-1"
-						aria-label={t("back")}
+						aria-label={t("common.back")}
 					>
-						<ArrowLeft className="size-6" /> {t("back")}
+						<ArrowLeft className="size-6" /> {t("common.back")}
 					</button>
 					<span>{title}</span>
 				</div>
-				<button onClick={handleBack} aria-label={t("closeSidebar")}>
+				<button onClick={handleBack} aria-label={t("common.closeSidebar")}>
 					<Close />
 				</button>
 			</div>

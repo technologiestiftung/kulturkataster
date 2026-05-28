@@ -8,7 +8,7 @@ import {
 } from "@/lib/i18n/fieldLabels";
 
 export const useFieldLabel = () => {
-	const { t: tEnum } = useTranslation("enumMap");
+	const { t: tEnum } = useTranslation();
 
 	return useCallback(
 		(key: string, _fallback?: string) => {
@@ -19,7 +19,7 @@ export const useFieldLabel = () => {
 };
 
 export const useFieldMeta = () => {
-	const { t: tEnum } = useTranslation("enumMap");
+	const { t: tEnum } = useTranslation();
 
 	return useCallback(
 		(key: string) => ({

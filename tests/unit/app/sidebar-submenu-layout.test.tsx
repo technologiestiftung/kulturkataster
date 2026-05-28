@@ -25,10 +25,10 @@ vi.mock("react-i18next", () => ({
 		t: (key: string) =>
 			(
 				({
-					back: "Zuruck",
-					closeSidebar: "Seitenleiste schliessen",
-					"institution.details": "Details",
-					"accessibility.title": "Barrierefreiheit",
+					"common.back": "Zuruck",
+					"common.closeSidebar": "Seitenleiste schliessen",
+					"common.institution.details": "Details",
+					"common.accessibility.title": "Barrierefreiheit",
 				}) as const
 			)[key] ?? key,
 	}),

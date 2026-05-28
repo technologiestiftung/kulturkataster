@@ -10,7 +10,7 @@ import { subscribeToNewsletter } from "@/server/actions/newsletter";
 export function NewsletterForm({ onSuccess }: { onSuccess?: () => void }) {
 	const [isLoading, setIsLoading] = useState(false);
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
-	const { t } = useTranslation("common");
+	const { t } = useTranslation();
 
 	const handleSubmit = async (data: Record<string, unknown>) => {
 		const email = String(data.email ?? "");
@@ -29,7 +29,7 @@ export function NewsletterForm({ onSuccess }: { onSuccess?: () => void }) {
 			}
 			onSuccess?.();
 		} catch {
-			setErrorMessage(t("auth.newsletter.errorFallback"));
+			setErrorMessage(t("common.auth.newsletter.errorFallback"));
 		} finally {
 			setIsLoading(false);
 		}
@@ -38,8 +38,8 @@ export function NewsletterForm({ onSuccess }: { onSuccess?: () => void }) {
 	const formConfig: FormWrapperConfig = {
 		onSubmit: handleSubmit,
 		submitLabel: isLoading
-			? t("auth.newsletter.submitting")
-			: t("auth.newsletter.submit"),
+			? t("common.auth.newsletter.submitting")
+			: t("common.auth.newsletter.submit"),
 		submitDisabled: isLoading,
 		layout: { columns: 1 },
 		fields: [
@@ -50,13 +50,13 @@ export function NewsletterForm({ onSuccess }: { onSuccess?: () => void }) {
 				fields: [
 					{
 						name: "name",
-						label: t("auth.newsletter.nameLabel"),
+						label: t("common.auth.newsletter.nameLabel"),
 						type: "text",
 						disabled: isLoading,
 					},
 					{
 						name: "email",
-						label: t("auth.newsletter.emailLabel"),
+						label: t("common.auth.newsletter.emailLabel"),
 						type: "text",
 						required: true,
 						disabled: isLoading,
@@ -70,10 +70,10 @@ export function NewsletterForm({ onSuccess }: { onSuccess?: () => void }) {
 				fields: [
 					{
 						name: "acceptTerms",
-						label: t("auth.newsletter.consentLabel"),
+						label: t("common.auth.newsletter.consentLabel"),
 						type: "checkbox",
 						required: true,
-						requiredMessage: t("auth.newsletter.consentRequired"),
+						requiredMessage: t("common.auth.newsletter.consentRequired"),
 						disabled: isLoading,
 						hideRequiredIndicator: true,
 					},
@@ -85,7 +85,7 @@ export function NewsletterForm({ onSuccess }: { onSuccess?: () => void }) {
 	return (
 		<div>
 			<AlertDialog
-				title={t("alert.errorInput")}
+				title={t("common.alert.errorInput")}
 				status="error"
 				description={errorMessage ?? ""}
 				open={Boolean(errorMessage)}
@@ -94,9 +94,10 @@ export function NewsletterForm({ onSuccess }: { onSuccess?: () => void }) {
 						setErrorMessage(null);
 					}
 				}}
-				confirmLabel={t("close")}
+				confirmLabel={t("common.close")}
 				onConfirm={() => setErrorMessage(null)}
 			/>
+
 			<FormWrapper config={formConfig} />
 		</div>
 	);

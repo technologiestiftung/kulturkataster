@@ -36,15 +36,14 @@ export async function notifyInstitutionDownload(
 			]);
 
 			const actorUserId = currentUser?.id ?? null;
+			const requesterEmail = input.requesterEmail?.trim() || undefined;
+			const requesterFirstName = input.requesterFirstName?.trim() || undefined;
+			const requesterLastName = input.requesterLastName?.trim() || undefined;
+			const usagePurpose = input.usagePurpose?.trim() || undefined;
 			const email =
-				input.requesterEmail ??
-				currentProfile?.email ??
-				currentUser?.email ??
-				"";
-			const firstName =
-				input.requesterFirstName ?? currentProfile?.first_name ?? "";
-			const lastName =
-				input.requesterLastName ?? currentProfile?.last_name ?? "";
+				requesterEmail ?? currentProfile?.email ?? currentUser?.email ?? "";
+			const firstName = requesterFirstName ?? currentProfile?.first_name ?? "";
+			const lastName = requesterLastName ?? currentProfile?.last_name ?? "";
 
 			if (!actorUserId && !email) {
 				return { ok: false as const, error: "unauthorized" as const };
@@ -73,14 +72,14 @@ export async function notifyInstitutionDownload(
 							format: input.format,
 							institution_count: input.institutionCount,
 							institution_ids: shouldListInstitutionIds ? institutionIds : null,
-							usage_purpose: input.usagePurpose ?? null,
+							usage_purpose: usagePurpose ?? null,
 						},
 						meta_info: {
 							download_event: true,
 							download_type: "institution_export",
 							requester_name: requesterName,
 							requester_email: email,
-							usage_purpose: input.usagePurpose ?? null,
+							usage_purpose: usagePurpose ?? null,
 							institution_ids_listed: shouldListInstitutionIds,
 							institution_ids_count: institutionIds.length,
 						},
@@ -107,7 +106,7 @@ export async function notifyInstitutionDownload(
 					format: input.format,
 					institutionCount: input.institutionCount,
 					institutionIds,
-					usagePurpose: input.usagePurpose,
+					usagePurpose,
 				});
 			} catch (error) {
 				logger.error("download.institution_notification.failed", error, {
@@ -118,6 +117,10 @@ export async function notifyInstitutionDownload(
 					export_format: input.format,
 					institution_count: input.institutionCount,
 				});
+				return {
+					ok: false as const,
+					error: "notificationFailed" as const,
+				};
 			}
 
 			return { ok: true as const };

@@ -12,7 +12,7 @@ export function InstitutionDraftSelectSearch({
 	onQueryChange,
 	onLoadingChange,
 }: InstitutionDraftSelectSearchProps) {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation();
 
 	return (
 		<LocationSearch
@@ -20,7 +20,7 @@ export function InstitutionDraftSelectSearch({
 			onLoadingChange={onLoadingChange}
 			showResults={false}
 			searchFunction={async () => []}
-			placeholder={t("institution.editSelectSearchPlaceholder", {
+			placeholder={t("common.institution.editSelectSearchPlaceholder", {
 				defaultValue: "Kulturort suchen...",
 			})}
 		/>
