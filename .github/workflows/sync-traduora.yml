@@ -21,13 +21,18 @@ on:
 jobs:
   sync-translations:
     runs-on: ubuntu-latest
-    environment: ${{ github.ref_name == 'dev' && 'dev' || 'main' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        target_branch: ${{ fromJSON(github.event_name == 'schedule' && '["main","dev"]' || format('["{0}"]', github.ref_name)) }}
+    environment: ${{ matrix.target_branch == 'dev' && 'dev' || 'main' }}
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          ref: ${{ matrix.target_branch }}
           fetch-depth: 0
 
       - name: Setup Node.js
@@ -126,8 +131,8 @@ jobs:
             - [ ] Verify all locales are properly synced
 
             🤖 Generated with [Claude Code](https://claude.ai/code)
-          branch: traduora-sync/pull-${{ github.run_number }}
-          base: ${{ github.ref_name }}
+          branch: traduora-sync/${{ matrix.target_branch }}/pull-${{ github.run_number }}
+          base: ${{ matrix.target_branch }}
           draft: false
           labels: translations,automated
 
@@ -151,7 +156,7 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "- **Action**: ${{ steps.action.outputs.action }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Trigger**: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Branch**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch**: ${{ matrix.target_branch }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           if [ "${{ steps.check_changes.outputs.changes }}" == "true" ]; then
             if [ "${{ steps.action.outputs.action }}" == "pull" ]; then
