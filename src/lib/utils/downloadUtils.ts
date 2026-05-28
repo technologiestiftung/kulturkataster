@@ -83,9 +83,6 @@ type ExportFieldMeta = {
 
 const EXCEL_NOTICE_ROWS = 5;
 const EXCEL_NOTICE_MERGE_END_COLUMN = 3;
-const EXCEL_DOWNLOAD_NOTICE_URL =
-	"https://www.kulturkataster.berlin/de/download";
-const EXCEL_NOTICE_HOME_URL = "https://www.kulturkataster.berlin";
 const EXCEL_NOTICE_DEFAULT_ROWS = [
 	"Die Daten stammen vom Berliner Kulturkataster.",
 	"Bitte benennen Sie bei Verwendung das Kulturkataster als Download-Quelle und beachten Sie die rechtlichen Hinweise.",
@@ -566,22 +563,19 @@ function applyExcelNotice(ws: XLSX.WorkSheet, translateFn?: TranslateFn) {
 
 	noticeRows.forEach((noticeText, rowIndex) => {
 		const cellAddress = XLSX.utils.encode_cell({ r: rowIndex, c: 0 });
-		const linkTarget =
-			rowIndex === 2 ? EXCEL_NOTICE_HOME_URL : EXCEL_DOWNLOAD_NOTICE_URL;
+		const linkTarget = getHyperlinkTarget(noticeText);
 		ws[cellAddress] = {
 			t: "s",
 			v: noticeText,
-			l: {
-				Target: linkTarget,
-				Tooltip: linkTarget,
-			},
 			s: {
 				font: {
 					name: "Arial",
 					sz: 12,
 					bold: true,
-					color: { rgb: EXCEL_HYPERLINK_FONT_COLOR },
-					underline: true,
+					color: {
+						rgb: linkTarget ? EXCEL_HYPERLINK_FONT_COLOR : "000000",
+					},
+					underline: Boolean(linkTarget),
 				},
 				alignment: {
 					horizontal: "left",
@@ -590,6 +584,12 @@ function applyExcelNotice(ws: XLSX.WorkSheet, translateFn?: TranslateFn) {
 				},
 			},
 		};
+		if (linkTarget) {
+			ws[cellAddress].l = {
+				Target: linkTarget,
+				Tooltip: linkTarget,
+			};
+		}
 	});
 
 	ws["!rows"] = [
