@@ -119,7 +119,6 @@ const footerItems: MenuItem[] = [
 		showInAccount: false,
 		showInMap: false,
 	},
-
 	{
 		id: "language",
 		icon: DEIcon,
@@ -198,10 +197,12 @@ function MobileSheetHeader({
 export function Menu({
 	sidebar,
 	isLoggedIn,
+	hiddenMenuItems,
 	...props
 }: React.ComponentProps<typeof Sidebar> & {
 	sidebar: React.ReactNode;
 	isLoggedIn: boolean;
+	hiddenMenuItems?: string[];
 }) {
 	const { setOpen, setOpenMobile, isMobile } = useSidebar();
 	const { t } = useTranslation();
@@ -218,6 +219,10 @@ export function Menu({
 		const firstSegment = normalizedPath.split("/").filter(Boolean)[0];
 		return allowedLocales.includes(firstSegment) ? firstSegment : defaultLocale;
 	}, [normalizedPath]);
+	const hiddenMenuItemIds = useMemo(
+		() => new Set(hiddenMenuItems ?? []),
+		[hiddenMenuItems],
+	);
 
 	const currentSidebarInstitutionId = useMemo(() => {
 		const match = normalizedPath.match(
@@ -485,6 +490,7 @@ export function Menu({
 												.filter((item) =>
 													isAccountRoute ? item.showInAccount : item.showInMap,
 												)
+												.filter((item) => !hiddenMenuItemIds.has(item.id))
 												.map((item) => {
 													const isActive = isMenuItemActive(
 														item,
@@ -519,33 +525,35 @@ export function Menu({
 							</SidebarContent>
 							<SidebarFooter>
 								<SidebarMenu>
-									{footerItems.map((item) => {
-										const isActive = isMenuItemActive(
-											item,
-											normalizedPath,
-											toLocalePath,
-										);
-										let Icon = item.icon;
-										if (item.id === "language") {
-											Icon = currentLocale !== "de" ? DEIcon : ENIcon;
-										}
-										return (
-											<SidebarMenuItem key={item.id}>
-												<SidebarMenuButton
-													tooltip={{
-														children: t("common." + item.label),
-														hidden: false,
-													}}
-													onClick={() => handleItemClick(item)}
-													isActive={isActive}
-													aria-label={t("common." + item.label)}
-													aria-current={isActive ? "page" : undefined}
-												>
-													<Icon />
-												</SidebarMenuButton>
-											</SidebarMenuItem>
-										);
-									})}
+									{footerItems
+										.filter((item) => !hiddenMenuItemIds.has(item.id))
+										.map((item) => {
+											const isActive = isMenuItemActive(
+												item,
+												normalizedPath,
+												toLocalePath,
+											);
+											let Icon = item.icon;
+											if (item.id === "language") {
+												Icon = currentLocale !== "de" ? DEIcon : ENIcon;
+											}
+											return (
+												<SidebarMenuItem key={item.id}>
+													<SidebarMenuButton
+														tooltip={{
+															children: t("common." + item.label),
+															hidden: false,
+														}}
+														onClick={() => handleItemClick(item)}
+														isActive={isActive}
+														aria-label={t("common." + item.label)}
+														aria-current={isActive ? "page" : undefined}
+													>
+														<Icon />
+													</SidebarMenuButton>
+												</SidebarMenuItem>
+											);
+										})}
 								</SidebarMenu>
 							</SidebarFooter>
 						</div>
@@ -571,6 +579,7 @@ export function Menu({
 				<SidebarMenu className="flex-row justify-around px-2 py-2">
 					{menuItems
 						.filter((item) => item.showInMobile)
+						.filter((item) => !hiddenMenuItemIds.has(item.id))
 						.map((item) => {
 							const isActive = isMenuItemActive(
 								item,

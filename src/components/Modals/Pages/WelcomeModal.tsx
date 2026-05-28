@@ -26,7 +26,7 @@ export function WelcomeModal() {
 	const footerItems = [
 		{ id: "accessibility" },
 		{ id: "simpleLanguageInformation" },
-		{ id: "signLanguageInformationLong" },
+		{ id: "signLanguageInformation" },
 	] as const;
 
 	return (
@@ -153,12 +153,12 @@ export function WelcomeModal() {
 				</div>
 				<div className="hidden md:block">
 					<nav
-						aria-label={t("content.footer.navigation")}
+						aria-label={t("common.footer.navigation")}
 						className="bg-neutral-5 py-2 px-4 w-full"
 					>
 						<ul
 							className="flex gap-4 body2 font-bold justify-end"
-							aria-label={t("content.footer.welcomeModalLinkListAriaLabel")}
+							aria-label={t("common.footer.welcomeModalLinkListAriaLabel")}
 						>
 							{footerItems.map((item) => {
 								const link = getModalLink(item.id, toLocalePath);
@@ -170,7 +170,7 @@ export function WelcomeModal() {
 											target={link.target}
 											rel="noopener noreferrer"
 										>
-											{t(`content.footer.${item.id}`)}
+											{t(`common.footer.${item.id}`)}
 										</Link>
 									</li>
 								);
