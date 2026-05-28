@@ -11,22 +11,45 @@ export { allowedLocales, defaultLocale };
 
 type TranslationBundle = Record<string, unknown>;
 const TRANSLATION_NAMESPACE = "translation";
+const DEFAULT_REMOTE_TRANSLATION_CACHE_TTL_MS = 60_000;
+
+type RemoteTranslationCacheEntry = {
+	expiresAt: number;
+	promise: Promise<TranslationBundle>;
+};
 
 const remoteTranslationsByLanguage = new Map<
 	string,
-	Promise<TranslationBundle>
+	RemoteTranslationCacheEntry
 >();
+
+function getRemoteTranslationCacheTtlMs() {
+	const rawValue = process.env.TRADUORA_TRANSLATION_CACHE_TTL_MS;
+	if (!rawValue) return DEFAULT_REMOTE_TRANSLATION_CACHE_TTL_MS;
+
+	const parsedValue = Number(rawValue);
+	return Number.isFinite(parsedValue) && parsedValue >= 0
+		? parsedValue
+		: DEFAULT_REMOTE_TRANSLATION_CACHE_TTL_MS;
+}
 
 function isTranslationBundle(value: unknown): value is TranslationBundle {
 	return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 function fetchRemoteLanguageTranslations(language: string) {
+	const ttlMs = getRemoteTranslationCacheTtlMs();
+	const now = Date.now();
 	const cached = remoteTranslationsByLanguage.get(language);
-	if (cached) return cached;
+	if (cached && cached.expiresAt > now) return cached.promise;
 
 	const translations = fetchTranslations(language);
-	remoteTranslationsByLanguage.set(language, translations);
+	if (ttlMs > 0) {
+		remoteTranslationsByLanguage.set(language, {
+			expiresAt: now + ttlMs,
+			promise: translations,
+		});
+	}
 	return translations;
 }
 

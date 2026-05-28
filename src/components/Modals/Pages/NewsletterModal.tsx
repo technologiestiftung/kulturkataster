@@ -72,7 +72,7 @@ export function NewsletterModal({
 					<h1>{t("common.auth.newsletter.title")}</h1>
 					<div className="mt-4">
 						<Trans
-							i18nKey="content.auth.newsletter.subtitle"
+							i18nKey="common.auth.newsletter.subtitle"
 							components={{
 								link: (
 									<a

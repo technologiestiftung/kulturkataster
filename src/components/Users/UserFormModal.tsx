@@ -528,9 +528,16 @@ export function UserFormModal({
 	const roles = useAccountStore((state) => state.roles);
 	const groups = useAccountStore((state) => state.groups);
 	const removeUser = useAccountStore((state) => state.removeUser);
-	const institutions =
-		useInstitutionStore((state) => state.allInstitutions) ?? [];
-	const categories = useInstitutionStore((state) => state.categories) ?? [];
+	const allInstitutions = useInstitutionStore((state) => state.allInstitutions);
+	const storeCategories = useInstitutionStore((state) => state.categories);
+	const isInstitutionStoreLoading = useInstitutionStore(
+		(state) => state.isLoading,
+	);
+	const initializePublicData = useInstitutionStore(
+		(state) => state.initializePublicData,
+	);
+	const institutions = allInstitutions ?? [];
+	const categories = storeCategories ?? [];
 	const [isDeleting, setIsDeleting] = useState(false);
 	const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 	const [deleteError, setDeleteError] = useState<{
@@ -547,6 +554,19 @@ export function UserFormModal({
 		userId,
 		users,
 	);
+
+	useEffect(() => {
+		if (allInstitutions !== null && storeCategories !== null) return;
+		if (isInstitutionStoreLoading) return;
+		if (typeof initializePublicData !== "function") return;
+
+		void initializePublicData();
+	}, [
+		allInstitutions,
+		initializePublicData,
+		isInstitutionStoreLoading,
+		storeCategories,
+	]);
 
 	const handleSuccess = (nextMode: UserFormModalProps["mode"]) => {
 		const keyPrefix =
@@ -710,9 +730,9 @@ export function UserFormModal({
 				deleteError || submitError
 					? {
 							open: true,
-							title: deleteError ? deleteError.title : t("content.error"),
+							title: deleteError ? deleteError.title : t("common.error"),
 							description: deleteError?.description ?? submitError ?? "",
-							confirmLabel: t("content.close"),
+							confirmLabel: t("common.close"),
 							onConfirm: () => {
 								setDeleteError(null);
 								setSubmitError(null);

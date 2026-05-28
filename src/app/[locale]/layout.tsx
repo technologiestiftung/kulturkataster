@@ -16,6 +16,7 @@ import { StoreAutoRefresh } from "@/components/StoreAutoRefresh";
 import { ViewModeToggle } from "@/components/Menu/ViewModeToggle";
 import { Toaster } from "@/components/ui/sonner";
 import { getCurrentProfile } from "@/server/actions/auth";
+import { parseHiddenMenuItems } from "@/lib/utils/menuVisibility";
 
 // Initialize axe-core for accessibility testing in development
 // Commented out until @axe-core/react is installed
@@ -53,12 +54,6 @@ export const metadata: Metadata = {
 	description:
 		"Die Seite macht Berlins Kulturlandschaft sichtbar: Kulturorte finden, filtern und erkunden – für Planung, Forschung und Öffentlichkeit. Ein Projekt der Kulturraum Berlin gGmbH.",
 };
-
-const parseHiddenMenuItems = (value: string | undefined) =>
-	value
-		?.split(",")
-		.map((item) => item.trim())
-		.filter(Boolean) ?? [];
 
 export default async function RootLayout({
 	children,

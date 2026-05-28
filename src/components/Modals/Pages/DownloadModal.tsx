@@ -86,6 +86,8 @@ export function DownloadModal({
 	const resolvedData = data ?? filteredInstitutions ?? allInstitutions ?? [];
 	const institutionCount = resolvedData.length;
 	const isHydratingInstitutions = !data && allInstitutions === null;
+	const [hasAcceptedDataUseAgreement, setHasAcceptedDataUseAgreement] =
+		useState(false);
 	const [hasAcceptedTerms, setHasAcceptedTerms] = useState(false);
 	const [wantsNewsletter, setWantsNewsletter] = useState(false);
 	const [isDownloading, setIsDownloading] = useState(false);
@@ -100,7 +102,10 @@ export function DownloadModal({
 				guestData.datenverwendung,
 		);
 	const canDownload =
-		hasAcceptedTerms && !isDownloading && (isLoggedIn || isGuestFormFilled);
+		hasAcceptedDataUseAgreement &&
+		hasAcceptedTerms &&
+		!isDownloading &&
+		(isLoggedIn || isGuestFormFilled);
 
 	useEffect(() => {
 		if (!isModalVisible) return;
@@ -117,6 +122,7 @@ export function DownloadModal({
 	]);
 
 	const handleClose = () => {
+		setHasAcceptedDataUseAgreement(false);
 		setHasAcceptedTerms(false);
 		setWantsNewsletter(false);
 		setIsDownloading(false);
@@ -306,6 +312,32 @@ export function DownloadModal({
 									"Ich werde die Daten nicht an Dritte weitergeben, sie ausschließlich im Rahmen der gesetzlichen Vorgaben, insbesondere der DSGVO soweit personenbezogene Daten betroffen sind, sowie nur für die Zwecke des Kulturkatasters nutzen. Zwecke des Kulturkatasters sind nicht kommerzieller Natur und sind die systematische Erfassung, Strukturierung und öffentliche Bereitstellung von Daten über Orte kultureller Produktion und Nutzung im Land Berlin, um eine belastbare Datengrundlage für kulturpolitische Entscheidungen, kulturelle Stadtentwicklung sowie für die Zusammenarbeit zwischen Kulturakteur*innen, Verwaltung, Wissenschaft und Öffentlichkeit zu schaffen.",
 							})}
 						</p>
+					</div>
+					<div className="flex items-start gap-3">
+						<Checkbox
+							id="download-list-data-use-agreement"
+							checked={hasAcceptedDataUseAgreement}
+							onCheckedChange={(checked) =>
+								setHasAcceptedDataUseAgreement(checked === true)
+							}
+							required
+							aria-required="true"
+							variant="filter"
+							size="default"
+							className="mt-0.5"
+						/>
+
+						<Label
+							htmlFor="download-list-data-use-agreement"
+							emphasize={false}
+							className="body2 cursor-pointer"
+						>
+							{t("content.downloadModal.dataUseAgreementConsent", {
+								defaultValue:
+									"Ich bin einverstanden mit der Vereinbarung über die Datennutzung",
+							})}
+							<span className="ml-1">*</span>
+						</Label>
 					</div>
 					<div className="flex items-start gap-3">
 						<Checkbox
