@@ -388,7 +388,7 @@ const ListView: FC = () => {
 	};
 
 	return (
-		<div className="ListView-root w-full h-full flex flex-col items-center bg-neutral-10">
+		<div className="ListView-root w-full h-full flex flex-col items-center overflow-x-clip bg-neutral-10">
 			<div className="h-full w-full max-w-5xl ">
 				<div className="p-4 mt-20">
 					<div className="space-y-6 flex flex-col">
@@ -404,7 +404,7 @@ const ListView: FC = () => {
 							</span>
 						</div>
 
-						<div className="space-y-2">
+						<div className="space-y-2 w-full">
 							<ListTopbar
 								countLabel={tContent("content.listView.countLabel", {
 									count: institutionsList.length,
@@ -514,7 +514,6 @@ const ListView: FC = () => {
 				/>
 			</FilterModalWrapper>
 
-			{/* Floating scroll-to-top button */}
 			{showScrollToTop && (
 				<div className="fixed block z-25 bottom-20 right-0 p-4 overflow-hidden">
 					<Tooltip>

@@ -50,7 +50,7 @@ export function MobileMenuModal() {
 				showCloseButton={false}
 				showBackButton={false}
 			>
-				<DialogHeader className="flex-row shrinkitems-center justify-end p-4 space-y-0">
+				<DialogHeader className="flex-row shrink items-center justify-end p-4 space-y-0">
 					<DialogTitle className="sr-only">
 						{t("common.mobileMenu.title")}
 					</DialogTitle>
