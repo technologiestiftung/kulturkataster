@@ -580,7 +580,8 @@ function applyExcelNotice(ws: XLSX.WorkSheet, translateFn?: TranslateFn) {
 					name: "Arial",
 					sz: 12,
 					bold: true,
-					color: { rgb: "000000" },
+					color: { rgb: EXCEL_HYPERLINK_FONT_COLOR },
+					underline: true,
 				},
 				alignment: {
 					horizontal: "left",
