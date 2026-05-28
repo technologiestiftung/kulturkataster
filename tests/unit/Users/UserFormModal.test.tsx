@@ -1,8 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { UserFormModal } from "@/components/Users/UserFormModal";
-import { createUser, updateUser } from "@/server/actions/users";
-import { showSuccessToast } from "@/lib/utils/feedbackToast";
+import {
+	createUser,
+	getUserEmailTemplateOptions,
+	sendUserEmailTemplate,
+	updateUser,
+} from "@/server/actions/users";
+import { showErrorToast, showSuccessToast } from "@/lib/utils/feedbackToast";
 import { useAccountStore } from "@/lib/store/accountStore";
 
 const closeModalMock = vi.fn();
@@ -29,16 +34,51 @@ vi.mock("@/components/Modals/Modal", () => ({
 }));
 
 vi.mock("@/components/ui/dialog", () => ({
+	Dialog: ({ children }: { children: React.ReactNode }) => (
+		<div>{children}</div>
+	),
+	DialogContent: ({ children }: { children: React.ReactNode }) => (
+		<div>{children}</div>
+	),
 	DialogTitle: ({ children }: { children: React.ReactNode }) => (
 		<div>{children}</div>
 	),
 }));
+
+vi.mock("@/icons/mail.svg", () => ({ default: () => null }));
+
+type MockFieldConfig = {
+	afterField?: React.ReactNode;
+	customField?: React.ReactNode;
+	fields?: MockFieldConfig[];
+};
+
+const collectExtraFields = (
+	fields?: MockFieldConfig[],
+): React.ReactElement[] => {
+	if (!fields) return [];
+	const result: React.ReactElement[] = [];
+	let index = 0;
+	for (const field of fields) {
+		if (field.afterField) {
+			result.push(<div key={`after-${index}`}>{field.afterField}</div>);
+			index += 1;
+		}
+		if (field.customField) {
+			result.push(<div key={`custom-${index}`}>{field.customField}</div>);
+			index += 1;
+		}
+		if (field.fields) result.push(...collectExtraFields(field.fields));
+	}
+	return result;
+};
 
 vi.mock("@/components/FormWrapper", () => ({
 	FormWrapper: ({
 		config,
 	}: {
 		config: {
+			fields?: MockFieldConfig[];
 			onSubmit: (data: Record<string, unknown>) => void | Promise<void>;
 		};
 	}) => (
@@ -61,6 +101,7 @@ vi.mock("@/components/FormWrapper", () => ({
 			>
 				Submit
 			</button>
+			{collectExtraFields(config.fields)}
 		</div>
 	),
 }));
@@ -90,6 +131,10 @@ vi.mock("@/server/actions/users", () => ({
 	sendComplianceResend: vi.fn(),
 	sendPasswordReset: vi.fn(),
 	sendRoleDecisionEmailManual: vi.fn(),
+	getUserEmailTemplateOptions: vi
+		.fn()
+		.mockResolvedValue({ ok: true, data: [] }),
+	sendUserEmailTemplate: vi.fn(),
 }));
 
 vi.mock("@/lib/utils/feedbackToast", () => ({
@@ -100,6 +145,11 @@ vi.mock("@/lib/utils/feedbackToast", () => ({
 const mockedCreateUser = vi.mocked(createUser);
 const mockedUpdateUser = vi.mocked(updateUser);
 const mockedShowSuccessToast = vi.mocked(showSuccessToast);
+const mockedShowErrorToast = vi.mocked(showErrorToast);
+const mockedGetUserEmailTemplateOptions = vi.mocked(
+	getUserEmailTemplateOptions,
+);
+const mockedSendUserEmailTemplate = vi.mocked(sendUserEmailTemplate);
 
 describe("UserFormModal", () => {
 	beforeEach(() => {
@@ -133,19 +183,22 @@ describe("UserFormModal", () => {
 
 	it("creates a user in create mode", async () => {
 		mockedCreateUser.mockResolvedValueOnce({
-			id: "user-created",
-			email: "updated@example.com",
-			first_name: "Ada",
-			last_name: "Lovelace",
-			status: "active",
-			account_type: "org",
-			compliance: true,
-			created_at: new Date("2025-01-01"),
-			updated_at: new Date("2025-01-01"),
-			role: null,
-			groups: [],
-			institutions: [],
-			submissions: [],
+			ok: true,
+			data: {
+				id: "user-created",
+				email: "updated@example.com",
+				first_name: "Ada",
+				last_name: "Lovelace",
+				status: "active",
+				account_type: "org",
+				compliance: true,
+				created_at: new Date("2025-01-01"),
+				updated_at: new Date("2025-01-01"),
+				role: null,
+				groups: [],
+				institutions: [],
+				submissions: [],
+			},
 		} as never);
 
 		render(<UserFormModal mode="create" routePath="/account/users/new" />);
@@ -166,19 +219,22 @@ describe("UserFormModal", () => {
 
 	it("updates a user in edit mode", async () => {
 		mockedUpdateUser.mockResolvedValueOnce({
-			id: "user-1",
-			email: "updated@example.com",
-			first_name: "Ada",
-			last_name: "Lovelace",
-			status: "active",
-			account_type: "org",
-			compliance: true,
-			created_at: new Date("2025-01-01"),
-			updated_at: new Date("2025-01-02"),
-			role: null,
-			groups: [],
-			institutions: [],
-			submissions: [],
+			ok: true,
+			data: {
+				id: "user-1",
+				email: "updated@example.com",
+				first_name: "Ada",
+				last_name: "Lovelace",
+				status: "active",
+				account_type: "org",
+				compliance: true,
+				created_at: new Date("2025-01-01"),
+				updated_at: new Date("2025-01-02"),
+				role: null,
+				groups: [],
+				institutions: [],
+				submissions: [],
+			},
 		} as never);
 
 		render(
@@ -200,5 +256,141 @@ describe("UserFormModal", () => {
 		});
 		expect(mockedShowSuccessToast).toHaveBeenCalledTimes(1);
 		expect(closeModalMock).toHaveBeenCalledTimes(1);
+	});
+});
+
+describe("UserTemplateEmailPanel", () => {
+	const editUser = {
+		id: "user-1",
+		email: "editor@example.com",
+		first_name: "Ada",
+		last_name: "Lovelace",
+		status: "active",
+		account_type: "org",
+		compliance: true,
+		created_at: new Date("2025-01-01"),
+		updated_at: new Date("2025-01-01"),
+		role: null,
+		groups: [],
+		institutions: [],
+		submissions: [],
+	};
+
+	beforeEach(() => {
+		mockedGetUserEmailTemplateOptions.mockReset();
+		mockedSendUserEmailTemplate.mockReset();
+		mockedShowSuccessToast.mockReset();
+		mockedShowErrorToast.mockReset();
+		useAccountStore.setState({
+			users: [editUser],
+			roles: [],
+			groups: [],
+		} as never);
+	});
+
+	it("loads and displays templates in edit mode", async () => {
+		mockedGetUserEmailTemplateOptions.mockResolvedValue({
+			ok: true,
+			data: [
+				{
+					key: "custom.claim_approved",
+					path: "custom/claim_approved.html",
+					name: "Claim bestätigt",
+				},
+				{
+					key: "custom.submission_approved",
+					path: "custom/submission_approved.html",
+					name: "Einreichung bestätigt",
+				},
+			],
+		} as never);
+
+		render(<UserFormModal mode="edit" userId="user-1" />);
+
+		await waitFor(() => {
+			expect(mockedGetUserEmailTemplateOptions).toHaveBeenCalledTimes(1);
+		});
+	});
+
+	it("sends the selected template and shows success toast", async () => {
+		mockedGetUserEmailTemplateOptions.mockResolvedValue({
+			ok: true,
+			data: [
+				{
+					key: "custom.claim_approved",
+					path: "custom/claim_approved.html",
+					name: "Claim bestätigt",
+				},
+			],
+		} as never);
+		mockedSendUserEmailTemplate.mockResolvedValue({ ok: true } as never);
+
+		render(<UserFormModal mode="edit" userId="user-1" />);
+
+		await waitFor(() => {
+			expect(mockedGetUserEmailTemplateOptions).toHaveBeenCalledTimes(1);
+		});
+
+		fireEvent.click(
+			screen.getByRole("button", {
+				name: /userFormModal\.templateEmail\.send/i,
+			}),
+		);
+		fireEvent.click(
+			screen.getByRole("button", {
+				name: /userFormModal\.templateEmail\.confirmSend/i,
+			}),
+		);
+
+		await waitFor(() => {
+			expect(mockedSendUserEmailTemplate).toHaveBeenCalledWith({
+				userId: "user-1",
+				templatePath: "custom/claim_approved.html",
+			});
+			expect(mockedShowSuccessToast).toHaveBeenCalled();
+		});
+	});
+
+	it("shows error toast when sending fails", async () => {
+		mockedGetUserEmailTemplateOptions.mockResolvedValue({
+			ok: true,
+			data: [
+				{
+					key: "custom.claim_approved",
+					path: "custom/claim_approved.html",
+					name: "Claim bestätigt",
+				},
+			],
+		} as never);
+		mockedSendUserEmailTemplate.mockResolvedValue({
+			ok: false,
+			error: "unexpected",
+		} as never);
+
+		render(<UserFormModal mode="edit" userId="user-1" />);
+
+		await waitFor(() => {
+			expect(mockedGetUserEmailTemplateOptions).toHaveBeenCalledTimes(1);
+		});
+
+		fireEvent.click(
+			screen.getByRole("button", {
+				name: /userFormModal\.templateEmail\.send/i,
+			}),
+		);
+		fireEvent.click(
+			screen.getByRole("button", {
+				name: /userFormModal\.templateEmail\.confirmSend/i,
+			}),
+		);
+
+		await waitFor(() => {
+			expect(mockedShowErrorToast).toHaveBeenCalled();
+		});
+	});
+
+	it("does not show the template panel in create mode", () => {
+		render(<UserFormModal mode="create" />);
+		expect(mockedGetUserEmailTemplateOptions).not.toHaveBeenCalled();
 	});
 });

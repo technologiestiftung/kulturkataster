@@ -25,9 +25,11 @@ export type FieldType =
 	| "addressMap"
 	| "filterPanel"
 	| "actionPanel"
+	| "custom"
 	| "tablePermissions"
 	| "fieldPermissions"
 	| "fundingSources"
+	| "keyValue"
 	| "section";
 
 export type PermissionAction = "read" | "create" | "update" | "delete";
@@ -77,10 +79,11 @@ type FormWrapperSectionConfig = {
 type FormWrapperSectionFieldConfig = {
 	name: string;
 	type: "section";
-	label?: string;
+	label?: string | null;
 	labelNode?: ReactNode;
 	required?: boolean;
 	requiredMessage?: string;
+	hideRequiredIndicator?: boolean;
 	disabled?: boolean;
 	afterField?: ReactNode;
 	defaultValue?: unknown;
@@ -110,7 +113,7 @@ type FormWrapperSectionFieldConfig = {
 type FormWrapperNonSectionFieldConfig = {
 	name: string;
 	fieldMetaKey?: string;
-	label?: string;
+	label?: string | null;
 	labelNode?: ReactNode;
 	type: Exclude<FieldType, "section">;
 	fields?: never;
@@ -122,6 +125,7 @@ type FormWrapperNonSectionFieldConfig = {
 	placeholder?: string;
 	required?: boolean;
 	requiredMessage?: string;
+	hideRequiredIndicator?: boolean;
 	errorMessages?: Partial<Record<string, string>>;
 	disabled?: boolean;
 	description?: string;
@@ -183,6 +187,7 @@ type FormWrapperNonSectionFieldConfig = {
 		className?: string;
 		icon?: ReactNode;
 	};
+	customField?: ReactNode;
 	filterPanel?: {
 		categoryGroups: Category[];
 		districts: string[];
@@ -198,6 +203,10 @@ type FormWrapperNonSectionFieldConfig = {
 		collapsible?: boolean;
 		defaultCollapsed?: boolean;
 		categorySectionMode?: "filter" | "selection";
+		parentCategorySelectionBehavior?:
+			| "select-all-children"
+			| "parent-only"
+			| "last-child-only";
 		selectionEmptyLabel?: string;
 	};
 	addressMap?: {
@@ -219,6 +228,15 @@ type FormWrapperNonSectionFieldConfig = {
 		addButtonLabel?: string;
 		removeButtonLabel?: string;
 		maxItems?: number;
+	};
+	keyValue?: {
+		keyPlaceholder?: string;
+		valuePlaceholder?: string;
+		addButtonLabel?: string;
+		removeButtonLabel?: string;
+		allowAdd?: boolean;
+		keyReadOnly?: boolean;
+		keyLabels?: Record<string, string>;
 	};
 
 	// For select, radio, checkbox, multiselect

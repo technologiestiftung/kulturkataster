@@ -33,8 +33,8 @@ const getFeatureData = (feature: any) => {
 
 const HoverCard: FC<HoverCardProps> = ({ features }) => {
 	const [featureProperties, setFeatureProperties] = useState<any>(null);
-	const { t: tEnum } = useTranslation("enumMap");
-	const { t } = useTranslation("common");
+	const { t: tEnum } = useTranslation();
+	const { t } = useTranslation();
 	const fieldLabel = useFieldLabel();
 
 	useEffect(() => {
@@ -73,7 +73,7 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 											/>
 										</div>
 										<span className="text-base font-bold">
-											{tEnum(`category.${category.key}`)}
+											{tEnum(`enumMap.category.${category.key}`)}
 										</span>
 									</div>
 									{featureProperties.subcategories?.length > 0 && (
@@ -86,7 +86,7 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 												.map((subcategory: ChildCategory, index: number) => (
 													<span key={subcategory.id} className="text-base">
 														{index > 0 && ", "}
-														{tEnum(`category.${subcategory.key}`)}
+														{tEnum(`enumMap.category.${subcategory.key}`)}
 													</span>
 												))}
 										</div>
@@ -119,7 +119,7 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 							<span className="text-base font-bold">
 								{fieldLabel("utilization_status")}:
 							</span>
-							<span className="text-base">{t("unknown")}</span>
+							<span className="text-base">{t("common.unknown")}</span>
 						</div>
 					)}
 				</CardFooter>

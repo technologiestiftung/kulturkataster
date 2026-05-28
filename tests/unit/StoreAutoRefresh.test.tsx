@@ -69,7 +69,7 @@ describe("StoreAutoRefresh", () => {
 			await vi.advanceTimersByTimeAsync(1_000);
 		});
 
-		expect(getPublicInstitutionRefreshDataMock).toHaveBeenCalledTimes(1);
+		expect(getPublicInstitutionRefreshDataMock).toHaveBeenCalledTimes(2);
 		expect(setInstitutions).toHaveBeenCalledWith([]);
 		expect(setCategories).toHaveBeenCalledWith([]);
 		expect(setDistricts).toHaveBeenCalledWith([]);
@@ -88,7 +88,7 @@ describe("StoreAutoRefresh", () => {
 	});
 
 	it("applies partial refresh payloads without overwriting missing slices", async () => {
-		getPublicInstitutionRefreshDataMock.mockResolvedValueOnce({
+		getPublicInstitutionRefreshDataMock.mockResolvedValue({
 			institutions: [{ id: 1 }],
 		});
 

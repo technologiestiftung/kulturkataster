@@ -26,6 +26,7 @@ export type PrismaInstitutionWithRelations = Prisma.InstitutionGetPayload<{
 
 export type Institution = PrismaInstitutionWithRelations & {
 	funding_sources?: FundingSource[];
+	categoryIds?: number[] | null;
 };
 
 export type InstitutionTableBase = {
@@ -252,5 +253,10 @@ export interface InstitutionStoreState {
 	setFilters: (filters: FilterState) => void;
 	resetFilters: () => void;
 	clearError: () => void;
+	hydratePublicData: (data: {
+		institutions: Institution[];
+		categories: Category[];
+		districts: string[];
+	}) => void;
 	initializePublicData: () => Promise<void>;
 }

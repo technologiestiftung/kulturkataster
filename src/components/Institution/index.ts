@@ -12,9 +12,9 @@ export { InstitutionsTable } from "./InstitutionsTable";
 export {
 	addressInfoConfig,
 	contactInfoConfig,
+	detailsInfoConfig,
 	organizationInfoConfig,
-	fundingInfoConfig,
 	facilityInfoConfig,
-	statusInfoConfig,
+	sharedUseInfoConfig,
 	additionalInfoConfig,
 } from "../../config/infoConfig/configs";

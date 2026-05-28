@@ -24,14 +24,16 @@ type CategoryTableRow = Category & {
 };
 
 export function CategoriesTable() {
-	const { t: tEnum } = useTranslation("enumMap");
-	const { t } = useTranslation(["content", "common"]);
+	const { t: tEnum } = useTranslation();
+	const { t } = useTranslation();
 	const router = useRouter();
 	const toLocalePath = useLocalePath();
 
 	const getStatusLabel = (status: CategoryStatus | undefined) => {
-		if (status === "active") return t("categoryFormModal.status.active");
-		if (status === "inactive") return t("categoryFormModal.status.inactive");
+		if (status === "active")
+			return t("content.categoryFormModal.status.active");
+		if (status === "inactive")
+			return t("content.categoryFormModal.status.inactive");
 		return status ?? "";
 	};
 	const categories = useAccountStore((state) => state.categories);
@@ -49,9 +51,9 @@ export function CategoriesTable() {
 
 	const parentRows = useMemo<CategoryTableRow[]>(() => {
 		const toParentKey = (key: string) =>
-			tEnum(`category.${key}`, { defaultValue: key });
+			tEnum(`enumMap.category.${key}`, { defaultValue: key });
 		const toChildKey = (key: string) =>
-			tEnum(`category.${key}`, { defaultValue: key });
+			tEnum(`enumMap.category.${key}`, { defaultValue: key });
 		return categories
 			.filter((category) => !category.parent_category_id)
 			.map((parent) => {
@@ -100,7 +102,7 @@ export function CategoriesTable() {
 			},
 			{
 				id: "icon",
-				header: t("categoryTable.columns.icon"),
+				header: t("content.categoryTable.columns.icon"),
 				enableSorting: false,
 				size: 31,
 				meta: { pin: "left" },
@@ -114,7 +116,7 @@ export function CategoriesTable() {
 			},
 			{
 				accessorKey: "displayKey",
-				header: t("categoryTable.columns.key"),
+				header: t("content.categoryTable.columns.key"),
 				enableSorting: true,
 				size: 180,
 				meta: { pin: "left", truncate: true },
@@ -126,7 +128,7 @@ export function CategoriesTable() {
 			},
 			{
 				id: "description",
-				header: t("categoryTable.columns.description"),
+				header: t("content.categoryTable.columns.description"),
 				accessorFn: (row) => row.description ?? "",
 				enableSorting: true,
 				meta: { truncate: true },
@@ -134,7 +136,9 @@ export function CategoriesTable() {
 			},
 			{
 				id: "parent",
-				header: t("categoryTable.columns.parent", { defaultValue: "Parent" }),
+				header: t("content.categoryTable.columns.parent", {
+					defaultValue: "Parent",
+				}),
 				accessorFn: (row) => row.parentDisplay,
 				enableSorting: true,
 				meta: { truncate: true },
@@ -142,7 +146,7 @@ export function CategoriesTable() {
 			},
 			{
 				id: "children",
-				header: t("categoryTable.columns.subcategories", {
+				header: t("content.categoryTable.columns.subcategories", {
 					defaultValue: "Subcategories",
 				}),
 				accessorFn: (row) => row.childRows.length,
@@ -152,10 +156,11 @@ export function CategoriesTable() {
 				),
 			},
 		],
+
 		data: parentRows,
 		getRowKey: (row) => row.id,
 		searchable: true,
-		searchPlaceholder: t("categoryTable.searchPlaceholder"),
+		searchPlaceholder: t("content.categoryTable.searchPlaceholder"),
 		getSearchableValues: (row) => [
 			row.displayKey,
 			row.description ?? "",
@@ -166,6 +171,7 @@ export function CategoriesTable() {
 				child.description ?? "",
 			]),
 		],
+
 		getRowCanExpand: (row) => row.childRows.length > 0,
 		renderExpandedRow: (row) => (
 			<div className="px-4 py-2">
@@ -203,9 +209,12 @@ export function CategoriesTable() {
 											toLocalePath(`/account/categories/${child.id}/edit`),
 										)
 									}
-									aria-label={t("categoryTable.actions.editSubcategory", {
-										defaultValue: "Unterkategorie bearbeiten",
-									})}
+									aria-label={t(
+										"content.categoryTable.actions.editSubcategory",
+										{
+											defaultValue: "Unterkategorie bearbeiten",
+										},
+									)}
 								>
 									<Edit className="h-5 w-5 text-neutral-80" />
 								</Button>
@@ -215,23 +224,26 @@ export function CategoriesTable() {
 				})}
 			</div>
 		),
+
 		primaryButton: {
-			label: t("categoryTable.actions.add", { defaultValue: "Add category" }),
+			label: t("content.categoryTable.actions.add", {
+				defaultValue: "Add category",
+			}),
 			onClick: () => router.push(toLocalePath("/account/categories/new")),
 		},
 		emptyState: (
 			<EmptyActionState
-				title={t("categoryTable.empty.title", {
+				title={t("content.categoryTable.empty.title", {
 					defaultValue: "Keine Kategorien gefunden.",
 				})}
-				description={t("categoryTable.empty.description", {
+				description={t("content.categoryTable.empty.description", {
 					defaultValue:
 						"Erstellen Sie eine Kategorie, um Inhalte besser zu strukturieren.",
 				})}
 				actions={[
 					{
 						icon: <Plus className="size-5" />,
-						label: t("categoryTable.actions.add", {
+						label: t("content.categoryTable.actions.add", {
 							defaultValue: "Add category",
 						}),
 						href: toLocalePath("/account/categories/new"),
@@ -239,12 +251,13 @@ export function CategoriesTable() {
 				]}
 			/>
 		),
+
 		onEdit: (row) =>
 			router.push(toLocalePath(`/account/categories/${row.id}/edit`)),
 		onEditPrefetch: (row) => {
 			void router.prefetch(toLocalePath(`/account/categories/${row.id}/edit`));
 		},
-		emptyMessage: t("categoryTable.emptyMessage", {
+		emptyMessage: t("content.categoryTable.emptyMessage", {
 			defaultValue: "No categories found.",
 		}),
 	};

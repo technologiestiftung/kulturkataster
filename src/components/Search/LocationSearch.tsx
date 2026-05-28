@@ -43,7 +43,7 @@ export function LocationSearch({
 	placeholder?: string;
 	searchFunction?: (query: string) => Promise<SearchResult[]>;
 }) {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation();
 	const inputRef = useRef<HTMLInputElement>(null);
 	const { map } = useMapStore();
 	const resetFilters = useInstitutionStore((state) => state.resetFilters);
@@ -251,16 +251,16 @@ export function LocationSearch({
 	return (
 		<div className="h-full w-full flex flex-col overflow-visible">
 			{/* <SearchMessages
-				hasError={resultErrorMessage}
-				hasResults={searchResults.length > 0}
-				isLoading={isLoading}
-				query={query}
-				className="order-last"
-			/> */}
+        hasError={resultErrorMessage}
+        hasResults={searchResults.length > 0}
+        isLoading={isLoading}
+        query={query}
+        className="order-last"
+        /> */}
 			<div className="mb-8 flex w-full items-center gap-2 flex-row pointer-events-auto">
 				<SearchInput
 					ref={inputRef}
-					placeholder={placeholder ?? t("search.hint")}
+					placeholder={placeholder ?? t("common.search.hint")}
 					value={query}
 					onChange={handleInputChange}
 					onKeyDown={handleKeyDown}
@@ -292,9 +292,10 @@ export function LocationSearch({
 						</div>
 					}
 				/>
+
 				{onFilterClick && (
 					<FilterButtonWithCount
-						tooltip={t("filter.title", {
+						tooltip={t("common.filter.title", {
 							defaultValue: "Kulturorte filtern",
 						})}
 						className="cursor-pointer relative right-16 md:right-0 bg-neutral-80 hover:bg-neutral-70 md:bg-accent md:bg-background md:text-foreground text-popover scale-90 md:scale-100 md:invert-0"
@@ -312,7 +313,7 @@ export function LocationSearch({
 					multiSelect={false}
 					showCheckbox={true}
 					variant="search"
-					headingLabel={t("search.suggestions")}
+					headingLabel={t("common.search.suggestions")}
 					listId={listId}
 					listRef={listRef as React.RefObject<HTMLDivElement | null>}
 					activeIndex={activeIndex}

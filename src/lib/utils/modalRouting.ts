@@ -5,6 +5,11 @@ type ModalLink = {
 	target: ModalLinkTarget;
 };
 
+type PathLocalizer = (path: string) => string;
+type ModalLinkOptions = {
+	isMobile?: boolean;
+};
+
 const MODAL_ROUTE_MAP: Record<string, ModalLink> = {
 	about: { url: "/about", target: "_self" },
 	accessibility: { url: "/accessibility", target: "_self" },
@@ -24,12 +29,34 @@ const MODAL_ROUTE_MAP: Record<string, ModalLink> = {
 		url: "https://dsgvo-info.cortina-consult.de/kulturkataster/",
 		target: "_blank",
 	},
+	terms: { url: "/terms", target: "_self" },
 };
 
-export const getModalLink = (id: string): ModalLink => {
+export const getModalLink = (
+	id: string,
+	localizePath?: PathLocalizer,
+	options?: ModalLinkOptions,
+): ModalLink => {
 	if (!id) {
-		return { url: "/", target: "_self" };
+		return {
+			url: localizePath ? localizePath("/") : "/",
+			target: "_self",
+		};
 	}
 
-	return MODAL_ROUTE_MAP[id] ?? { url: `/${id}`, target: "_self" };
+	const resolvedId =
+		options?.isMobile && id === "accessibilitySettings" ? "mobileMenu" : id;
+	const link = MODAL_ROUTE_MAP[resolvedId] ?? {
+		url: `/${resolvedId}`,
+		target: "_self",
+	};
+
+	if (link.target === "_self" && localizePath) {
+		return {
+			...link,
+			url: localizePath(link.url),
+		};
+	}
+
+	return link;
 };

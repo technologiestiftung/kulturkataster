@@ -22,7 +22,7 @@ const getAllFields = (
 		if (field.type === "section") {
 			if (!field.fields) return;
 			result.push(...getAllFields(field.fields));
-		} else if (field.type !== "actionPanel") {
+		} else if (field.type !== "actionPanel" && field.type !== "custom") {
 			result.push(field);
 		}
 	});
@@ -91,7 +91,7 @@ const collectValidationErrors = (
 		if (field.condition && !field.condition(formData)) {
 			return;
 		}
-		if (field.type === "actionPanel") {
+		if (field.type === "actionPanel" || field.type === "custom") {
 			return;
 		}
 
@@ -113,7 +113,7 @@ const collectValidationErrors = (
 const buildTouchedMap = (fields: FormWrapperFieldConfig[]) => {
 	const allTouched: Record<string, boolean> = {};
 	fields.forEach((field) => {
-		if (field.type === "actionPanel") {
+		if (field.type === "actionPanel" || field.type === "custom") {
 			return;
 		}
 		allTouched[field.name] = true;
@@ -122,8 +122,8 @@ const buildTouchedMap = (fields: FormWrapperFieldConfig[]) => {
 };
 
 export function FormWrapper({ config }: { config: FormWrapperConfig }) {
-	const { t } = useTranslation("common");
-	const { t: tEnum } = useTranslation("enumMap");
+	const { t } = useTranslation();
+	const { t: tEnum } = useTranslation();
 	const onChangeRef = useRef<FormWrapperConfig["onChange"]>(config.onChange);
 	const allFields = useMemo(() => getAllFields(config.fields), [config.fields]);
 	const [formData, setFormData] = useState<Record<string, unknown>>(() =>
@@ -200,7 +200,7 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 		});
 	};
 
-	const validateForm = (): boolean => {
+	const validateForm = (): Record<string, string> => {
 		const normalizedFormData = Object.fromEntries(
 			allFields.map((field) => [
 				field.name,
@@ -215,14 +215,15 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 		);
 		setFormData((prev) => ({ ...prev, ...normalizedFormData }));
 		setErrors(newErrors);
-		return Object.keys(newErrors).length === 0;
+		return newErrors;
 	};
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 
 		setTouched(buildTouchedMap(allFields));
-		if (validateForm()) {
+		const validationErrors = validateForm();
+		if (Object.keys(validationErrors).length === 0) {
 			setFormError(null);
 			const normalizedFormData = Object.fromEntries(
 				allFields.map((field) => [
@@ -231,9 +232,13 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 				]),
 			);
 			setFormData((prev) => ({ ...prev, ...normalizedFormData }));
-			await config.onSubmit({ ...formData, ...normalizedFormData });
-		} else {
-			setFormError(t("alert.errorFixFields"));
+			try {
+				await config.onSubmit({ ...formData, ...normalizedFormData });
+			} catch (error) {
+				setFormError(
+					error instanceof Error ? error.message : t("common.alert.error"),
+				);
+			}
 		}
 	};
 
@@ -270,9 +275,9 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 					{config.fields?.map((field) => renderField(field))}
 				</div>
 				{!config.hideActions && (
-					<div className="flex flex-col">
+					<div className="flex flex-col pb-24 md:pb-0">
 						<AlertDialog
-							title={t("error")}
+							title={t("common.error")}
 							status="error"
 							description={formError ?? ""}
 							open={Boolean(formError)}
@@ -281,20 +286,22 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 									setFormError(null);
 								}
 							}}
-							confirmLabel={t("close")}
+							confirmLabel={t("common.close")}
 							onConfirm={() => setFormError(null)}
 						/>
-						<div className="flex items-center justify-end gap-4 mt-4">
+
+						<div className="flex flex-1 flex-col-reverse items-center w-full justify-center md:justify-end gap-4 mt-4 flex-col md:flex-row">
 							{config.showCancel && (
 								<Button
 									type="button"
 									variant="outline"
+									fullWidth
 									onClick={config.onCancel}
 								>
 									{config.cancelLabel || "Cancel"}
 								</Button>
 							)}
-							<Button type="submit" disabled={config.submitDisabled}>
+							<Button type="submit" disabled={config.submitDisabled} fullWidth>
 								{config.submitLabel || "Submit"}
 							</Button>
 						</div>

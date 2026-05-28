@@ -4,7 +4,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getInstitutionById } from "@/server/actions/institutions";
 import {
-	getSubmissionById,
 	reviewSubmission,
 	saveSubmissionNote,
 } from "@/server/actions/submissions";
@@ -16,6 +15,7 @@ import { reportClientTelemetry } from "@/lib/utils/clientTelemetry";
 
 type UseInstitutionSubmissionReviewParams = {
 	submissionId?: number;
+	submission?: Submission | null;
 	submissions: Submission[];
 	institutionPermissions: InstitutionActionPermissions;
 	removeSubmission: (id: number) => void;
@@ -24,66 +24,34 @@ type UseInstitutionSubmissionReviewParams = {
 
 export function useInstitutionSubmissionReview({
 	submissionId,
+	submission,
 	submissions,
 	institutionPermissions,
 	removeSubmission,
 	upsertSubmission,
 }: UseInstitutionSubmissionReviewParams) {
-	const { t } = useTranslation("content");
+	const { t } = useTranslation();
 	const hasSubmissionId = typeof submissionId === "number";
 	const [internalNotes, setInternalNotes] = useState("");
 	const [grantSubmitterAccess, setGrantSubmitterAccess] = useState(false);
+	const [attachUserIds, setAttachUserIds] = useState<string[]>([]);
+	const [attachGroupIds, setAttachGroupIds] = useState<number[]>([]);
 	const [submitting, setSubmitting] = useState(false);
 	const [error, setError] = useState<string | null>(null);
-	const [fetchedSubmission, setFetchedSubmission] = useState<Submission | null>(
-		null,
-	);
-	const [didFetchSubmission, setDidFetchSubmission] = useState(false);
 	const [originalInstitution, setOriginalInstitution] =
 		useState<Institution | null>(null);
 	const [didFetchInstitution, setDidFetchInstitution] = useState(false);
 
-	const resolvedSubmission = useMemo(() => {
+	const resolvedSubmissionWithFallback = useMemo(() => {
 		if (!hasSubmissionId) return undefined;
-		return submissions.find(
-			(item): item is Submission => item.id === submissionId,
+		return (
+			submissions.find(
+				(item): item is Submission => item.id === submissionId,
+			) ??
+			submission ??
+			undefined
 		);
-	}, [hasSubmissionId, submissions, submissionId]);
-
-	useEffect(() => {
-		if (!hasSubmissionId || resolvedSubmission || didFetchSubmission) return;
-		let active = true;
-		const fetchSubmission = async () => {
-			try {
-				const result = await getSubmissionById(submissionId);
-				if (!active) return;
-				setFetchedSubmission(result ?? null);
-			} catch (_error) {
-				reportClientTelemetry({
-					level: "warn",
-					event: "institution_submission.review.fetch_submission_failed",
-					error: _error,
-					metadata: {
-						submission_id: submissionId,
-					},
-				});
-				if (active) {
-					setFetchedSubmission(null);
-				}
-			} finally {
-				if (active) {
-					setDidFetchSubmission(true);
-				}
-			}
-		};
-		void fetchSubmission();
-		return () => {
-			active = false;
-		};
-	}, [didFetchSubmission, hasSubmissionId, resolvedSubmission, submissionId]);
-
-	const resolvedSubmissionWithFallback =
-		resolvedSubmission ?? fetchedSubmission ?? undefined;
+	}, [hasSubmissionId, submission, submissionId, submissions]);
 
 	const shouldShowGrantSubmitterAccessToggle = useMemo(() => {
 		if (!resolvedSubmissionWithFallback) return false;
@@ -149,6 +117,8 @@ export function useInstitutionSubmissionReview({
 
 	useEffect(() => {
 		setGrantSubmitterAccess(false);
+		setAttachUserIds([]);
+		setAttachGroupIds([]);
 	}, [resolvedSubmissionWithFallback?.id]);
 
 	const formatReviewError = (err: unknown) => {
@@ -170,7 +140,7 @@ export function useInstitutionSubmissionReview({
 				return withMessage.code;
 			}
 		}
-		return t("institutionFormModal.review.errorUnknown");
+		return t("content.institutionFormModal.review.errorUnknown");
 	};
 
 	const handleReview = useCallback(
@@ -183,7 +153,7 @@ export function useInstitutionSubmissionReview({
 				typeof resolvedSubmissionWithFallback.entity_id !== "number"
 			) {
 				setError(
-					t("institutionFormModal.review.error", {
+					t("content.institutionFormModal.review.error", {
 						error: "Update submission is missing institution id.",
 					}),
 				);
@@ -201,6 +171,8 @@ export function useInstitutionSubmissionReview({
 					grantSubmitterAccess: shouldShowGrantSubmitterAccessToggle
 						? grantSubmitterAccess
 						: undefined,
+					attachUserIds: status === "approved" ? attachUserIds : undefined,
+					attachGroupIds: status === "approved" ? attachGroupIds : undefined,
 				});
 				if (status === "approved") {
 					removeSubmission(resolvedSubmissionWithFallback.id);
@@ -222,7 +194,7 @@ export function useInstitutionSubmissionReview({
 				});
 				const errorMessage = formatReviewError(err);
 				setError(
-					t("institutionFormModal.review.error", {
+					t("content.institutionFormModal.review.error", {
 						error: errorMessage,
 					}),
 				);
@@ -232,6 +204,8 @@ export function useInstitutionSubmissionReview({
 			}
 		},
 		[
+			attachGroupIds,
+			attachUserIds,
 			canReviewCurrentSubmission,
 			formatReviewError,
 			grantSubmitterAccess,
@@ -276,7 +250,7 @@ export function useInstitutionSubmissionReview({
 			});
 			const errorMessage = formatReviewError(err);
 			setError(
-				t("institutionFormModal.review.error", {
+				t("content.institutionFormModal.review.error", {
 					error: errorMessage,
 				}),
 			);
@@ -297,12 +271,15 @@ export function useInstitutionSubmissionReview({
 	return {
 		hasSubmissionId,
 		resolvedSubmissionWithFallback,
-		didFetchSubmission,
 		originalInstitution,
 		internalNotes,
 		setInternalNotes,
 		grantSubmitterAccess,
 		setGrantSubmitterAccess,
+		attachUserIds,
+		setAttachUserIds,
+		attachGroupIds,
+		setAttachGroupIds,
 		submitting,
 		error,
 		handleReview,

@@ -1,7 +1,6 @@
 "use client";
 
 import { Institution } from "@/types";
-import { useTranslation } from "react-i18next";
 import { PrivateBadge } from "../shared/PrivateBadge";
 
 interface InstitutionAddressProps {
@@ -19,9 +18,9 @@ export function AddressItem({
 	isPrivate = false,
 	action,
 }: InstitutionAddressProps) {
-	const { t: tEnum } = useTranslation("enumMap");
 	const cityName = institution.address?.city;
 	const districtKey = institution.address?.district;
+	const neighbourhood = institution.address?.neighbourhood;
 
 	return (
 		<div className="flex flex-col gap-2">
@@ -48,9 +47,10 @@ export function AddressItem({
 							</p>
 							<div className="flex flex-wrap space-x-1">
 								<p>{institution.address.zipcode}</p>
+								{neighbourhood && <p>{neighbourhood},</p>}
 								{cityName && districtKey && (
 									<p>
-										{cityName}-{tEnum(`${districtKey}`)}
+										{cityName}-{districtKey}
 									</p>
 								)}
 							</div>

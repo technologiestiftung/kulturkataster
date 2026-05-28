@@ -1,11 +1,12 @@
 "use client";
 
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { DataTable } from "@/components/DataTable";
 import type { DataTableConfig } from "@/components/DataTable";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import type { Institution, InstitutionTableRow } from "@/types/institution";
+import type { Category, FilterState } from "@/types";
 import { useAccountStore } from "@/lib/store/accountStore";
 import { StatusDot } from "../ui/status-dot";
 import { InstitutionStatus } from "@/generated/prisma";
@@ -17,7 +18,6 @@ import {
 	formatInstitutionDate,
 	getParentCategories,
 	getSubcategories,
-	joinInstitutionIds,
 } from "@/lib/utils/institutionUtils";
 import { buildStreetLine } from "@/lib/utils/formUtils";
 import { Badge } from "../ui/badge";
@@ -37,6 +37,55 @@ import { canReviewInstitutionSubmissionType } from "@/lib/utils/submissionReview
 import { EmptyActionState } from "@/components/EmptyActionState";
 import Edit from "@/icons/edit.svg";
 import { useInstitutionPrivateFieldResolver } from "@/lib/hooks/useInstitutionPrivateFieldResolver";
+import { DownloadModal } from "@/components/Modals/Pages/DownloadModal";
+import { notifyInstitutionDownload } from "@/server/actions/downloads";
+import type { ExportFormat } from "@/lib/utils/downloadUtils";
+
+type InstitutionsFilterPanelProps = {
+	filters: FilterState;
+	categoryGroups: Category[];
+	districts: string[];
+	filteredCount: number;
+	categoryCounts: Record<string, number>;
+	subcategoryCounts: Record<string, number>;
+	loading: boolean;
+	onRetry: () => void;
+	onFiltersChange: (nextFilters: FilterState) => void;
+};
+
+function InstitutionsFilterPanel({
+	filters,
+	categoryGroups,
+	districts,
+	filteredCount,
+	categoryCounts,
+	subcategoryCounts,
+	loading,
+	onRetry,
+	onFiltersChange,
+}: InstitutionsFilterPanelProps) {
+	useEffect(() => {
+		if (categoryGroups.length === 0) {
+			onRetry();
+		}
+	}, [categoryGroups.length, onRetry]);
+
+	return (
+		<FilterPanel
+			filters={filters}
+			categoryGroups={categoryGroups}
+			districts={districts}
+			filteredCount={filteredCount}
+			categoryCounts={categoryCounts}
+			subcategoryCounts={subcategoryCounts}
+			loading={loading}
+			error={null}
+			onRetry={onRetry}
+			onFiltersChange={onFiltersChange}
+			parentCategorySelectionBehavior="last-child-only"
+		/>
+	);
+}
 
 export function InstitutionsTable() {
 	const router = useRouter();
@@ -57,6 +106,7 @@ export function InstitutionsTable() {
 	const canCreateInstitutionViaSubmission =
 		!canCreateInstitutionDirect && institutionPermissions.createSubmission;
 	const canClaimInstitution = institutionPermissions.createSubmission;
+	const [isDownloadDialogOpen, setIsDownloadDialogOpen] = useState(false);
 	const canReviewSubmissionType = (type: SubmissionType) => {
 		return canReviewInstitutionSubmissionType(institutionPermissions, type);
 	};
@@ -72,9 +122,9 @@ export function InstitutionsTable() {
 			),
 		[allSubmissions],
 	);
-	const { t } = useTranslation("content");
-	const { t: tCommon } = useTranslation("common");
-	const { t: tEnum } = useTranslation("enumMap");
+	const { t } = useTranslation();
+	const { t: tCommon } = useTranslation();
+	const { t: tEnum } = useTranslation();
 	const { isPrivateField } = useInstitutionPrivateFieldResolver();
 	const {
 		filterCategoryGroups,
@@ -99,14 +149,15 @@ export function InstitutionsTable() {
 	};
 	const renderNumericValue = (value?: number | null) => {
 		if (typeof value !== "number") return renderEmptyValue();
+		if (value === 0) return renderEmptyValue();
 		return value.toString();
 	};
 	const getStatusLabel = (status: InstitutionStatus | string) => {
-		const institutionStatus = tEnum(`institution_status.${status}`);
+		const institutionStatus = tEnum(`enumMap.institution_status.${status}`);
 		if (institutionStatus !== `institution_status.${status}`) {
 			return institutionStatus;
 		}
-		const submissionStatus = tEnum(`submission_status.${status}`);
+		const submissionStatus = tEnum(`enumMap.submission_status.${status}`);
 		if (submissionStatus !== `submission_status.${status}`) {
 			return submissionStatus;
 		}
@@ -116,20 +167,23 @@ export function InstitutionsTable() {
 		type: SubmissionType,
 		status?: string | null,
 	) => {
-		const baseTypeLabel = t(`institutionsTable.type.submissionBase.${type}`, {
-			defaultValue: type,
-		});
+		const baseTypeLabel = t(
+			`content.institutionsTable.type.submissionBase.${type}`,
+			{
+				defaultValue: type,
+			},
+		);
 		if (
 			status === "approved" ||
 			status === "rejected" ||
 			status === "needs_changes"
 		) {
-			return t(`institutionsTable.type.submissionStatus.${status}`, {
+			return t(`content.institutionsTable.type.submissionStatus.${status}`, {
 				type: baseTypeLabel,
 				defaultValue: baseTypeLabel,
 			});
 		}
-		return t(`institutionsTable.type.submission.${type}`, {
+		return t(`content.institutionsTable.type.submission.${type}`, {
 			defaultValue: type,
 		});
 	};
@@ -167,11 +221,30 @@ export function InstitutionsTable() {
 		filteredTableRows,
 		categoryCounts,
 		subcategoryCounts,
+		downloadableInstitutions,
 	} = useInstitutionTableFilters(tableRows, filterCategoryGroups);
+	const handleDownloadNotification = useCallback(
+		async (args: {
+			data: Institution[];
+			filename: string;
+			format: ExportFormat;
+		}) => {
+			await notifyInstitutionDownload({
+				filename: args.filename,
+				format: args.format,
+				institutionCount: args.data.length,
+				institutionIds: args.data.map((institution) => institution.id),
+			});
+		},
+		[],
+	);
+	const closeDownloadDialog = useCallback((open: boolean) => {
+		setIsDownloadDialogOpen(open);
+	}, []);
 
 	const tableConfig: DataTableConfig<InstitutionTableRow> = {
 		isPrivateColumn,
-		privateColumnAriaLabel: tCommon("sensitiveInformation", {
+		privateColumnAriaLabel: tCommon("common.sensitiveInformation", {
 			defaultValue: "Sensitive information",
 		}),
 		columns: [
@@ -179,7 +252,7 @@ export function InstitutionsTable() {
 				accessorKey: "status",
 				header: "",
 				enableSorting: true,
-				meta: { pin: "left" },
+				meta: { pin: "left", exportKey: "status" },
 				size: 50,
 				cell: ({ row }) => {
 					const institution = row.original;
@@ -213,7 +286,7 @@ export function InstitutionsTable() {
 				accessorKey: "type",
 				header: headerLabel("type", "Type"),
 				enableSorting: true,
-				meta: { pin: "left" },
+				meta: { pin: "left", exportKey: "type" },
 				size: 110,
 				cell: ({ row }) => {
 					if (row.original.rowKind === "submission") {
@@ -228,7 +301,7 @@ export function InstitutionsTable() {
 					}
 					return (
 						<p className="capitalize text-wrap self-center text-center flex-wrap ">
-							{t("institutionsTable.type.manage")}
+							{t("content.institutionsTable.type.manage")}
 						</p>
 					);
 				},
@@ -237,15 +310,31 @@ export function InstitutionsTable() {
 				accessorKey: "id",
 				header: headerLabel("id", "Id"),
 				enableSorting: true,
-				meta: { pin: "left" },
+				meta: { pin: "left", exportKey: "id" },
 				size: 65,
+				cell: ({ row }) => {
+					const id = String(row.original.id);
+					if (row.original.rowKind !== "institution") {
+						return id;
+					}
+					return (
+						<Link
+							href={toLocalePath(`/map/institution/${id}`)}
+							target="_blank"
+							rel="noreferrer"
+							className="text-primary-dark underline"
+						>
+							{id}
+						</Link>
+					);
+				},
 			},
 			{
 				accessorKey: "name",
 				header: headerLabel("name", "Name"),
 				enableSorting: true,
-				size: 350,
-				meta: { pin: "left", truncate: true },
+				size: 250,
+				meta: { pin: "left", truncate: true, exportKey: "name" },
 				cell: ({ row }) => {
 					const name = row.original.name || "—";
 					// if (isSubmissionRow(row.original)) {
@@ -264,7 +353,7 @@ export function InstitutionsTable() {
 				header: headerLabel("parent_organization", "Parent Organization"),
 				enableSorting: true,
 				size: 250,
-				meta: { truncate: true },
+				meta: { truncate: true, exportKey: "parent_organization" },
 				cell: ({ row }) => renderTextValue(row.original.parent_organization),
 			},
 			{
@@ -272,7 +361,7 @@ export function InstitutionsTable() {
 				header: headerLabel("email", "Email"),
 				enableSorting: true,
 				size: 250,
-				meta: { truncate: true },
+				meta: { truncate: true, exportKey: "email" },
 				cell: ({ row }) => {
 					const email = row.original.email;
 					if (!email) return "—";
@@ -291,7 +380,7 @@ export function InstitutionsTable() {
 				header: headerLabel("phone", "Phone"),
 				enableSorting: true,
 				size: 150,
-				meta: { truncate: true },
+				meta: { truncate: true, exportKey: "phone" },
 				cell: ({ row }) => {
 					const phone = row.original.phone;
 					if (!phone) return "—";
@@ -307,7 +396,7 @@ export function InstitutionsTable() {
 				header: headerLabel("website", "Website"),
 				enableSorting: true,
 				size: 350,
-				meta: { truncate: true },
+				meta: { truncate: true, exportKey: "website" },
 				cell: ({ row }) => {
 					const url = row.original.website;
 					if (!url) return "—";
@@ -328,7 +417,7 @@ export function InstitutionsTable() {
 				header: headerLabel("cultural_area", "Cultural Area"),
 				enableSorting: true,
 				size: 150,
-				meta: { truncate: true },
+				meta: { truncate: true, exportKey: "cultural_area" },
 				cell: ({ row }) => {
 					const culturalArea = row.original.address?.cultural_area;
 
@@ -340,7 +429,7 @@ export function InstitutionsTable() {
 				header: `${headerLabel("street", "Street")} & ${headerLabel("street_number", "Number")}`,
 				enableSorting: true,
 				size: 200,
-				meta: { truncate: true },
+				meta: { truncate: true, exportKey: "street" },
 				cell: ({ row }) => {
 					const address = row.original.address;
 					if (!address || !address.street || !address.street_number)
@@ -353,7 +442,7 @@ export function InstitutionsTable() {
 				header: headerLabel("address_suffix", "Address Suffix"),
 				enableSorting: true,
 				size: 150,
-				meta: { truncate: true },
+				meta: { truncate: true, exportKey: "address_suffix" },
 				cell: ({ row }) => {
 					const addressSuffix = row.original.address?.address_suffix;
 					return renderTextValue(addressSuffix);
@@ -364,7 +453,7 @@ export function InstitutionsTable() {
 				header: headerLabel("zipcode", "Postal Code"),
 				enableSorting: true,
 				size: 100,
-				meta: { truncate: true },
+				meta: { truncate: true, exportKey: "zipcode" },
 				cell: ({ row }) => {
 					const zipcode = row.original.address?.zipcode;
 					return renderTextValue(zipcode);
@@ -375,7 +464,7 @@ export function InstitutionsTable() {
 				header: headerLabel("city", "City"),
 				enableSorting: true,
 				size: 100,
-				meta: { truncate: true },
+				meta: { truncate: true, exportKey: "city" },
 				cell: ({ row }) => {
 					const city = row.original.address?.city;
 					return renderTextValue(city);
@@ -386,7 +475,7 @@ export function InstitutionsTable() {
 				header: headerLabel("district", "District"),
 				enableSorting: true,
 				size: 150,
-				meta: { truncate: true },
+				meta: { truncate: true, exportKey: "district" },
 				cell: ({ row }) => {
 					const districtValue = row.original.address?.district;
 					const district =
@@ -401,7 +490,7 @@ export function InstitutionsTable() {
 				header: headerLabel("neighbourhood", "Neighbourhood"),
 				enableSorting: true,
 				size: 150,
-				meta: { truncate: true },
+				meta: { truncate: true, exportKey: "neighbourhood" },
 				cell: ({ row }) => {
 					const neighbourhood = row.original.address?.neighbourhood;
 					return renderTextValue(neighbourhood);
@@ -413,6 +502,7 @@ export function InstitutionsTable() {
 				accessorFn: (row) => getParentCategories(row as Partial<Institution>),
 				enableSorting: true,
 				size: 333,
+				meta: { exportKey: ["categories", "subcategories"] },
 				cell: ({ row }) => {
 					const categories = getParentCategories(
 						row.original as Partial<Institution>,
@@ -426,7 +516,7 @@ export function InstitutionsTable() {
 										key={cat.id}
 										className="capitalize truncate"
 									>
-										{`${tEnum("category." + cat.key)}`}
+										{`${tEnum("enumMap." + ("category." + cat.key))}`}
 									</Badge>
 								))
 							) : (
@@ -455,7 +545,7 @@ export function InstitutionsTable() {
 										key={cat.id}
 										className="capitalize truncate"
 									>
-										{`${tEnum("category." + cat.key)}`}
+										{`${tEnum("enumMap." + ("category." + cat.key))}`}
 									</Badge>
 								))
 							) : (
@@ -470,7 +560,7 @@ export function InstitutionsTable() {
 				header: headerLabel("utilization_status", "Utilization Status"),
 				enableSorting: true,
 				size: 160,
-				meta: { truncate: true },
+				meta: { truncate: true, exportKey: "utilization_status" },
 				cell: ({ row }) =>
 					translateEnum("utilization_status", row.original.utilization_status),
 			},
@@ -479,7 +569,7 @@ export function InstitutionsTable() {
 				header: headerLabel("protection_status", "Protection Status"),
 				enableSorting: true,
 				size: 160,
-				meta: { truncate: true },
+				meta: { truncate: true, exportKey: "protection_status" },
 				cell: ({ row }) =>
 					translateEnum("protection_status", row.original.protection_status),
 			},
@@ -488,7 +578,7 @@ export function InstitutionsTable() {
 				header: headerLabel("protection_status_info", "Protection Status Info"),
 				enableSorting: true,
 				size: 200,
-				meta: { truncate: true },
+				meta: { truncate: true, exportKey: "protection_status_info" },
 				cell: ({ row }) => renderTextValue(row.original.protection_status_info),
 			},
 			{
@@ -499,7 +589,7 @@ export function InstitutionsTable() {
 				),
 				enableSorting: true,
 				size: 220,
-				meta: { truncate: true },
+				meta: { truncate: true, exportKey: "protection_status_internal_notes" },
 				cell: ({ row }) =>
 					renderTextValue(row.original.protection_status_internal_notes),
 			},
@@ -508,7 +598,7 @@ export function InstitutionsTable() {
 				header: headerLabel("legal_form", "Legal Form"),
 				enableSorting: true,
 				size: 150,
-				meta: { truncate: true },
+				meta: { truncate: true, exportKey: "legal_form" },
 				cell: ({ row }) => renderTextValue(row.original.legal_form),
 			},
 			{
@@ -518,7 +608,7 @@ export function InstitutionsTable() {
 				header: headerLabel("funding_sources", "Funding Sources"),
 				enableSorting: true,
 				size: 180,
-				meta: { truncate: true },
+				meta: { truncate: true, exportKey: "funding_sources" },
 				cell: ({ row }) =>
 					formatFundingSources(row.original, { translateFundingSource }),
 			},
@@ -527,7 +617,7 @@ export function InstitutionsTable() {
 				header: headerLabel("funding_type", "Funding Type"),
 				enableSorting: true,
 				size: 180,
-				meta: { truncate: true },
+				meta: { truncate: true, exportKey: "funding_type" },
 				cell: ({ row }) =>
 					translateEnum("funding_type", row.original.funding_type),
 			},
@@ -537,7 +627,7 @@ export function InstitutionsTable() {
 				accessorFn: (row) => row.owner_name || "",
 				enableSorting: true,
 				size: 150,
-				meta: { truncate: true },
+				meta: { truncate: true, exportKey: "owner_name" },
 				cell: ({ row }) => renderTextValue(row.original.owner_name),
 			},
 			{
@@ -545,7 +635,7 @@ export function InstitutionsTable() {
 				header: headerLabel("owner_type", "Owner Type"),
 				enableSorting: true,
 				size: 180,
-				meta: { truncate: true },
+				meta: { truncate: true, exportKey: "owner_type" },
 				cell: ({ row }) => translateEnum("owner_type", row.original.owner_type),
 			},
 			{
@@ -553,7 +643,7 @@ export function InstitutionsTable() {
 				header: headerLabel("rental_contract_type", "Rental Contract Type"),
 				enableSorting: true,
 				size: 170,
-				meta: { truncate: true },
+				meta: { truncate: true, exportKey: "rental_contract_type" },
 				cell: ({ row }) =>
 					translateEnum(
 						"rental_contract_type",
@@ -565,6 +655,7 @@ export function InstitutionsTable() {
 				header: headerLabel("rental_contract_end", "Rental Contract End"),
 				enableSorting: true,
 				size: 130,
+				meta: { exportKey: "rental_contract_end" },
 				cell: ({ row }) =>
 					formatInstitutionDate(row.original.rental_contract_end),
 			},
@@ -572,6 +663,7 @@ export function InstitutionsTable() {
 				accessorKey: "established_since",
 				header: headerLabel("established_since", "Established Since"),
 				enableSorting: true,
+				meta: { exportKey: "established_since" },
 				cell: ({ row }) =>
 					formatInstitutionDate(row.original.established_since),
 			},
@@ -579,6 +671,7 @@ export function InstitutionsTable() {
 				accessorKey: "established_until",
 				header: headerLabel("established_until", "Established Until"),
 				enableSorting: true,
+				meta: { exportKey: "established_until" },
 				cell: ({ row }) =>
 					formatInstitutionDate(row.original.established_until),
 			},
@@ -587,7 +680,7 @@ export function InstitutionsTable() {
 				header: headerLabel("closing_reason", "Closing Reason"),
 				enableSorting: true,
 				size: 200,
-				meta: { truncate: true },
+				meta: { truncate: true, exportKey: "closing_reason" },
 				cell: ({ row }) =>
 					translateEnum("closing_reason", row.original.closing_reason),
 			},
@@ -596,7 +689,7 @@ export function InstitutionsTable() {
 				header: headerLabel("area", "Area (m2)"),
 				enableSorting: true,
 				size: 90,
-				meta: { truncate: true },
+				meta: { truncate: true, exportKey: "area" },
 				cell: ({ row }) => renderNumericValue(row.original.area),
 			},
 			{
@@ -604,6 +697,7 @@ export function InstitutionsTable() {
 				header: headerLabel("number_of_rooms", "Rooms"),
 				enableSorting: true,
 				size: 150,
+				meta: { exportKey: "number_of_rooms" },
 				cell: ({ row }) => renderNumericValue(row.original.number_of_rooms),
 			},
 			{
@@ -611,6 +705,7 @@ export function InstitutionsTable() {
 				header: headerLabel("capacity", "Capacity"),
 				enableSorting: true,
 				size: 90,
+				meta: { exportKey: "capacity" },
 				cell: ({ row }) => renderNumericValue(row.original.capacity),
 			},
 			{
@@ -618,15 +713,16 @@ export function InstitutionsTable() {
 				header: headerLabel("shared_use_allowed", "Shared Use Allowed"),
 				enableSorting: true,
 				size: 140,
+				meta: { exportKey: "shared_use_allowed" },
 				cell: ({ row }) =>
-					formatInstitutionBoolean(row.original.shared_use_allowed),
+					formatInstitutionBoolean(row.original.shared_use_allowed, tEnum),
 			},
 			{
 				accessorKey: "shared_use_info",
 				header: headerLabel("shared_use_info", "Shared Use Info"),
 				enableSorting: true,
 				size: 200,
-				meta: { truncate: true },
+				meta: { truncate: true, exportKey: "shared_use_info" },
 				cell: ({ row }) => renderTextValue(row.original.shared_use_info),
 			},
 			{
@@ -634,7 +730,7 @@ export function InstitutionsTable() {
 				header: headerLabel("shared_use_equipment", "Shared Use Equipment"),
 				enableSorting: true,
 				size: 200,
-				meta: { truncate: true },
+				meta: { truncate: true, exportKey: "shared_use_equipment" },
 				cell: ({ row }) => renderTextValue(row.original.shared_use_equipment),
 			},
 			{
@@ -642,7 +738,7 @@ export function InstitutionsTable() {
 				header: headerLabel("shared_use_audience", "Shared Use Audience"),
 				enableSorting: true,
 				size: 200,
-				meta: { truncate: true },
+				meta: { truncate: true, exportKey: "shared_use_audience" },
 				cell: ({ row }) => renderTextValue(row.original.shared_use_audience),
 			},
 			{
@@ -653,7 +749,7 @@ export function InstitutionsTable() {
 				),
 				enableSorting: true,
 				size: 200,
-				meta: { truncate: true },
+				meta: { truncate: true, exportKey: "shared_use_availability" },
 				cell: ({ row }) =>
 					renderTextValue(row.original.shared_use_availability),
 			},
@@ -662,7 +758,7 @@ export function InstitutionsTable() {
 				header: headerLabel("accessibility", "Accessibility"),
 				enableSorting: true,
 				size: 160,
-				meta: { truncate: true },
+				meta: { truncate: true, exportKey: "accessibility" },
 				cell: ({ row }) => renderTextValue(row.original.accessibility),
 			},
 			{
@@ -670,7 +766,7 @@ export function InstitutionsTable() {
 				header: headerLabel("cost", "Cost"),
 				enableSorting: true,
 				size: 140,
-				meta: { truncate: true },
+				meta: { truncate: true, exportKey: "cost" },
 				cell: ({ row }) => renderTextValue(row.original.cost),
 			},
 			{
@@ -681,7 +777,7 @@ export function InstitutionsTable() {
 				),
 				enableSorting: true,
 				size: 220,
-				meta: { truncate: true },
+				meta: { truncate: true, exportKey: "shared_use_contact_person" },
 				cell: ({ row }) =>
 					renderTextValue(row.original.shared_use_contact_person),
 			},
@@ -697,8 +793,9 @@ export function InstitutionsTable() {
 					row.original.contact_person?.first_name || (
 						<span className="text-foreground">—</span>
 					),
+
 				accessorFn: (row) => row.contact_person?.first_name || "",
-				meta: { truncate: true },
+				meta: { truncate: true, exportKey: "contact_person_first_name" },
 			},
 			{
 				accessorKey: "contact_person_last_name",
@@ -712,8 +809,9 @@ export function InstitutionsTable() {
 					row.original.contact_person?.last_name || (
 						<span className="text-foreground">—</span>
 					),
+
 				accessorFn: (row) => row.contact_person?.last_name || "",
-				meta: { truncate: true },
+				meta: { truncate: true, exportKey: "contact_person_last_name" },
 			},
 			{
 				accessorKey: "contact_person_email",
@@ -735,7 +833,7 @@ export function InstitutionsTable() {
 				header: headerLabel("notes", "Notes"),
 				enableSorting: true,
 				size: 200,
-				meta: { truncate: true },
+				meta: { truncate: true, exportKey: "notes" },
 				cell: ({ row }) => renderTextValue(row.original.notes),
 			},
 			{
@@ -743,7 +841,7 @@ export function InstitutionsTable() {
 				header: headerLabel("internal_notes", "Internal Notes"),
 				enableSorting: true,
 				size: 200,
-				meta: { truncate: true },
+				meta: { truncate: true, exportKey: "internal_notes" },
 				cell: ({ row }) => renderTextValue(row.original.internal_notes),
 			},
 			{
@@ -751,25 +849,32 @@ export function InstitutionsTable() {
 				header: headerLabel("source", "Source"),
 				enableSorting: true,
 				size: 160,
-				meta: { truncate: true },
+				meta: { truncate: true, exportKey: "source" },
 				cell: ({ row }) => renderTextValue(row.original.source),
 			},
 			{
-				id: "tagIds",
-				header: `${headerLabel("tags", "Tags")} Ids`,
+				id: "tags",
+				header: headerLabel("tags", "Tags"),
 				accessorFn: (row) =>
-					joinInstitutionIds((row.tags ?? []).map((tag) => tag.id)),
+					(row.tags ?? [])
+						.map((tag) => tag.name)
+						.filter((name): name is string => Boolean(name))
+						.join(", ") || "—",
 				enableSorting: true,
 				size: 180,
 				meta: { truncate: true },
 				cell: ({ row }) =>
-					joinInstitutionIds((row.original.tags ?? []).map((tag) => tag.id)),
+					(row.original.tags ?? [])
+						.map((tag) => tag.name)
+						.filter((name): name is string => Boolean(name))
+						.join(", ") || "—",
 			},
 			{
 				accessorKey: "created_at",
 				header: headerLabel("created_at", "Created"),
 				enableSorting: true,
 				size: 100,
+				meta: { exportKey: "created_at" },
 				cell: ({ row }) => {
 					const createdAt = new Date(row.original.created_at);
 					return createdAt.toLocaleDateString();
@@ -781,6 +886,7 @@ export function InstitutionsTable() {
 				header: headerLabel("updated_at", "Updated"),
 				enableSorting: true,
 				size: 100,
+				meta: { exportKey: "updated_at" },
 				cell: ({ row }) => {
 					const updatedAt = new Date(row.original.updated_at);
 					return updatedAt.toLocaleDateString();
@@ -788,10 +894,11 @@ export function InstitutionsTable() {
 				accessorFn: (row) => row.updated_at,
 			},
 		],
+
 		data: filteredTableRows,
 		getRowKey: (row) => row.rowKey ?? row.id,
 		searchable: true,
-		searchPlaceholder: t("institutionsTable.search.title", {
+		searchPlaceholder: t("content.institutionsTable.search.title", {
 			defaultValue: "Search institutions...",
 		}),
 		getSearchableValues: (row) => [
@@ -812,17 +919,18 @@ export function InstitutionsTable() {
 			row.contact_person?.email || "",
 			row.owner_name || "",
 		],
+
 		virtualization: {
 			enabled: true,
 			rowHeight: 65,
 			overscan: 8,
 		},
 		filterModal: {
-			triggerLabel: t("filter.title"),
-			triggerAriaLabel: t("filter.title"),
-			title: t("filter.title"),
+			triggerLabel: t("content.filter.title"),
+			triggerAriaLabel: t("content.filter.title"),
+			title: t("content.filter.title"),
 			content: () => (
-				<FilterPanel
+				<InstitutionsFilterPanel
 					filters={filters}
 					categoryGroups={filterCategoryGroups}
 					districts={districts}
@@ -830,7 +938,6 @@ export function InstitutionsTable() {
 					categoryCounts={categoryCounts}
 					subcategoryCounts={subcategoryCounts}
 					loading={isFilterCategoriesLoading}
-					error={null}
 					onRetry={retryInitializeFilterCategories}
 					onFiltersChange={setFilters}
 				/>
@@ -839,7 +946,7 @@ export function InstitutionsTable() {
 		primaryButton:
 			canCreateInstitutionDirect || canCreateInstitutionViaSubmission
 				? {
-						label: t("institutionsTable.actions.addInstitution"),
+						label: t("content.institutionsTable.actions.addInstitution"),
 						onClick: () => {
 							if (!canCreateInstitutionDirect) {
 								resetDraft();
@@ -855,13 +962,22 @@ export function InstitutionsTable() {
 					label: (
 						<span className="inline-flex items-center gap-2">
 							<Send className="size-4" />
-							<span>{t("institutionsTable.actions.claimInstitution")}</span>
+							<span className="hidden sm:inline">
+								{t("content.institutionsTable.actions.claimInstitution")}
+							</span>
 						</span>
 					),
+
 					onClick: () =>
 						router.push(toLocalePath("/account/submissions/claim")),
 				}
 			: undefined,
+		rightButton: {
+			label: t("content.institutionsTable.actions.downloadList", {
+				defaultValue: "Liste herunterladen",
+			}),
+			onClick: () => setIsDownloadDialogOpen(true),
+		},
 		onEdit: (row) => {
 			if (isSubmissionRow(row)) {
 				router.push(
@@ -962,10 +1078,10 @@ export function InstitutionsTable() {
 		emptyMessage: "No institutions found.",
 		emptyState: (
 			<EmptyActionState
-				title={t("institutionsTable.empty.title", {
+				title={t("content.institutionsTable.empty.title", {
 					defaultValue: "Keine Kulturorte vorhanden.",
 				})}
-				description={t("institutionsTable.empty.description", {
+				description={t("content.institutionsTable.empty.description", {
 					defaultValue: "Sie können direkt neue Einträge starten.",
 				})}
 				actions={[
@@ -973,7 +1089,9 @@ export function InstitutionsTable() {
 						? [
 								{
 									icon: <Send />,
-									label: t("institutionsTable.actions.claimInstitution"),
+									label: t(
+										"content.institutionsTable.actions.claimInstitution",
+									),
 									href: toLocalePath("/account/submissions/claim"),
 								},
 							]
@@ -982,7 +1100,7 @@ export function InstitutionsTable() {
 						? [
 								{
 									icon: <Edit />,
-									label: t("institutionsTable.actions.addInstitution"),
+									label: t("content.institutionsTable.actions.addInstitution"),
 									href: toLocalePath(
 										canCreateInstitutionDirect
 											? "/account/institutions/new"
@@ -996,9 +1114,45 @@ export function InstitutionsTable() {
 		),
 	};
 
+	const exportColumnOrder = (() => {
+		const order = Array.from(
+			new Set(
+				tableConfig.columns.flatMap((col) => {
+					const key = col.meta?.exportKey;
+					if (!key) return [] as string[];
+					return Array.isArray(key) ? key : [key];
+				}),
+			),
+		);
+
+		const utilizationStatusIndex = order.indexOf("utilization_status");
+		if (utilizationStatusIndex !== -1) {
+			const utilizationStatusDetails = [
+				"utilization_status_info",
+				"utilization_status_internal_notes",
+			].filter((key) => !order.includes(key));
+			order.splice(utilizationStatusIndex + 1, 0, ...utilizationStatusDetails);
+		}
+
+		return order;
+	})();
+
 	return (
 		<>
 			<DataTable config={tableConfig} />
+			<DownloadModal
+				open={isDownloadDialogOpen}
+				onCloseRequest={() => closeDownloadDialog(false)}
+				data={downloadableInstitutions}
+				filename="kulturorte"
+				translateFn={tEnum}
+				exportColumnOrder={exportColumnOrder}
+				confirmLabel={t("content.institutionsTable.actions.downloadList", {
+					defaultValue: "Liste herunterladen",
+				})}
+				cancelLabel={tCommon("common.cancel", { defaultValue: "Cancel" })}
+				onAfterDownload={handleDownloadNotification}
+			/>
 		</>
 	);
 }

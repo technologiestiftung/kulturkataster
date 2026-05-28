@@ -4,9 +4,52 @@ import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { useAccountStore } from "@/lib/store/accountStore";
 import { getAccountRefreshData } from "@/server/actions/account";
-import type { AccountStoreState } from "@/types/account";
+import type { AccountDataPayload } from "@/server/utils/accountData";
 
-const DEFAULT_ACCOUNT_AUTO_REFRESH_INTERVAL_MS = 10_000;
+type RefreshKeys = Array<keyof AccountDataPayload>;
+
+let triggerFn: ((keys?: RefreshKeys) => void) | null = null;
+
+/**
+ * Per-key timestamps of the last successful refresh. Used to skip fetching
+ * keys that were refreshed recently (e.g. by a modal action) when the component
+ * mounts or the user navigates between account tabs.
+ */
+const lastRefreshedAt: Partial<Record<keyof AccountDataPayload, number>> = {};
+
+const ALL_KEYS: ReadonlyArray<keyof AccountDataPayload> = [
+	"users",
+	"groups",
+	"roles",
+	"categories",
+	"institutions",
+	"submissions",
+	"entityAudits",
+];
+
+const markRefreshed = (keys: RefreshKeys) => {
+	const now = Date.now();
+	for (const key of keys) {
+		lastRefreshedAt[key] = now;
+	}
+};
+
+const getStaleKeys = (
+	keys: RefreshKeys,
+	intervalMs: number,
+): RefreshKeys | null => {
+	const now = Date.now();
+	const stale = keys.filter(
+		(key) => now - (lastRefreshedAt[key] ?? 0) >= intervalMs,
+	);
+	return stale.length > 0 ? stale : null;
+};
+
+export function triggerAccountRefresh(keys?: RefreshKeys) {
+	triggerFn?.(keys);
+}
+
+const DEFAULT_ACCOUNT_AUTO_REFRESH_INTERVAL_MS = 30_000;
 const ACCOUNT_AUTO_REFRESH_ENABLED_PATHS = new Set([
 	"/account",
 	"/account/activity",
@@ -25,9 +68,7 @@ const normalizeAccountPathname = (pathname: string | null) => {
 			: pathname;
 	const accountSegmentIndex = normalizedPathname.indexOf("/account");
 
-	if (accountSegmentIndex === -1) {
-		return normalizedPathname;
-	}
+	if (accountSegmentIndex === -1) return null;
 
 	return normalizedPathname.slice(accountSegmentIndex);
 };
@@ -40,56 +81,13 @@ export const isAccountAutoRefreshPathEnabled = (pathname: string | null) => {
 	);
 };
 
-const applyRefreshedAccountData = (
-	refreshedData: Awaited<ReturnType<typeof getAccountRefreshData>>,
-	setters: {
-		setUsers: AccountStoreState["setUsers"];
-		setGroups: AccountStoreState["setGroups"];
-		setRoles: AccountStoreState["setRoles"];
-		setCategories: AccountStoreState["setCategories"];
-		setInstitutions: AccountStoreState["setInstitutions"];
-		setSubmissions: AccountStoreState["setSubmissions"];
-		setEntityAudits: AccountStoreState["setEntityAudits"];
-	},
-) => {
-	if (!refreshedData) return;
-
-	if (refreshedData.users !== undefined) {
-		setters.setUsers(refreshedData.users);
-	}
-	if (refreshedData.groups !== undefined) {
-		setters.setGroups(refreshedData.groups);
-	}
-	if (refreshedData.roles !== undefined) {
-		setters.setRoles(refreshedData.roles);
-	}
-	if (refreshedData.categories !== undefined) {
-		setters.setCategories(refreshedData.categories);
-	}
-	if (refreshedData.institutions !== undefined) {
-		setters.setInstitutions(refreshedData.institutions);
-	}
-	if (refreshedData.submissions !== undefined) {
-		setters.setSubmissions(refreshedData.submissions);
-	}
-	if (refreshedData.entityAudits !== undefined) {
-		setters.setEntityAudits(refreshedData.entityAudits);
-	}
-};
-
 export function AccountAutoRefresh({
 	intervalMs = DEFAULT_ACCOUNT_AUTO_REFRESH_INTERVAL_MS,
 }: {
 	intervalMs?: number;
 }) {
 	const pathname = usePathname();
-	const setUsers = useAccountStore((state) => state.setUsers);
-	const setGroups = useAccountStore((state) => state.setGroups);
-	const setRoles = useAccountStore((state) => state.setRoles);
-	const setCategories = useAccountStore((state) => state.setCategories);
-	const setInstitutions = useAccountStore((state) => state.setInstitutions);
-	const setSubmissions = useAccountStore((state) => state.setSubmissions);
-	const setEntityAudits = useAccountStore((state) => state.setEntityAudits);
+	const setAccountData = useAccountStore((state) => state.setAccountData);
 	const isRefreshingRef = useRef(false);
 	const isPollingEnabledForPath = isAccountAutoRefreshPathEnabled(pathname);
 
@@ -97,25 +95,19 @@ export function AccountAutoRefresh({
 		let cancelled = false;
 		let intervalId: ReturnType<typeof setInterval> | null = null;
 
-		const refresh = async () => {
-			if (cancelled || isRefreshingRef.current || !isPollingEnabledForPath) {
-				return;
-			}
+		const refresh = async (keys?: RefreshKeys) => {
+			if (cancelled || isRefreshingRef.current) return;
+			if (!keys && !isPollingEnabledForPath) return;
 			if (document.visibilityState !== "visible") return;
 
 			isRefreshingRef.current = true;
 			try {
-				const refreshedData = await getAccountRefreshData();
+				const refreshedData = await getAccountRefreshData(keys);
 				if (cancelled) return;
-				applyRefreshedAccountData(refreshedData, {
-					setUsers,
-					setGroups,
-					setRoles,
-					setCategories,
-					setInstitutions,
-					setSubmissions,
-					setEntityAudits,
-				});
+				if (refreshedData) {
+					setAccountData(refreshedData);
+					markRefreshed(keys ?? [...ALL_KEYS]);
+				}
 			} finally {
 				isRefreshingRef.current = false;
 			}
@@ -145,7 +137,15 @@ export function AccountAutoRefresh({
 			stopPolling();
 		};
 
+		triggerFn = (keys) => void refresh(keys);
+
 		if (isPollingEnabledForPath && document.visibilityState === "visible") {
+			const staleKeys = getStaleKeys([...ALL_KEYS], intervalMs);
+			if (staleKeys !== null) {
+				const keysToFetch =
+					staleKeys.length === ALL_KEYS.length ? undefined : staleKeys;
+				void refresh(keysToFetch);
+			}
 			startPolling();
 		} else {
 			stopPolling();
@@ -155,20 +155,11 @@ export function AccountAutoRefresh({
 
 		return () => {
 			cancelled = true;
+			triggerFn = null;
 			stopPolling();
 			document.removeEventListener("visibilitychange", handleVisibilityChange);
 		};
-	}, [
-		setCategories,
-		setEntityAudits,
-		setGroups,
-		setInstitutions,
-		setRoles,
-		setSubmissions,
-		setUsers,
-		intervalMs,
-		isPollingEnabledForPath,
-	]);
+	}, [setAccountData, intervalMs, isPollingEnabledForPath]);
 
 	return null;
 }

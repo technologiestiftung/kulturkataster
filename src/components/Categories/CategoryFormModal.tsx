@@ -27,6 +27,7 @@ import {
 } from "@/lib/utils/formUtils";
 import { getEligibleParentCategories } from "@/lib/utils/categoryUtils";
 import { showSuccessToast } from "@/lib/utils/feedbackToast";
+import { triggerAccountRefresh } from "@/components/Account/AccountAutoRefresh";
 
 type CategoryFormModalProps = {
 	mode: "create" | "edit";
@@ -57,10 +58,10 @@ const getDialogTitle = (
 	t: (key: string, options?: { defaultValue?: string }) => string,
 ) =>
 	mode === "create"
-		? t("categoryFormModal.dialog.title.create", {
+		? t("content.categoryFormModal.dialog.title.create", {
 				defaultValue: "Create category",
 			})
-		: t("categoryFormModal.dialog.title.edit", {
+		: t("content.categoryFormModal.dialog.title.edit", {
 				defaultValue: "Edit category",
 			});
 
@@ -152,6 +153,43 @@ const useResolvedCategory = (
 	};
 };
 
+const translateCategoryFormError = (
+	t: (key: string, options?: { defaultValue?: string }) => string,
+	errorCode: string,
+) => {
+	switch (errorCode) {
+		case "keyTaken":
+			return t("content.categoryFormModal.errors.keyTaken", {
+				defaultValue: "A category with this key already exists.",
+			});
+		case "notFound":
+			return t("content.categoryFormModal.errors.notFound", {
+				defaultValue: "The selected category no longer exists.",
+			});
+		case "keyLocked":
+			return t("content.categoryFormModal.errors.keyLocked", {
+				defaultValue: "The category key cannot be changed.",
+			});
+		case "selfParent":
+			return t("content.categoryFormModal.errors.selfParent", {
+				defaultValue: "A category cannot be its own parent.",
+			});
+		case "hasSubcategories":
+			return t("content.categoryFormModal.errors.hasSubcategories", {
+				defaultValue:
+					"Please remove all subcategories before deleting this category.",
+			});
+		case "forbidden":
+			return t("content.categoryFormModal.errors.forbidden", {
+				defaultValue: "You are not allowed to change this category.",
+			});
+		default:
+			return t("content.categoryFormModal.errors.unexpected", {
+				defaultValue: "The category could not be saved. Please try again.",
+			});
+	}
+};
+
 const useCategorySubmit = (
 	mode: CategoryFormModalProps["mode"],
 	numericCategoryId: number | undefined,
@@ -204,7 +242,7 @@ const useCategorySubmit = (
 				en: toOptionalText(data.labelEn) ?? undefined,
 			};
 			if (mode === "create") {
-				const created = await createCategory({
+				const result = await createCategory({
 					key: String(data.key ?? ""),
 					description,
 					icon,
@@ -212,9 +250,13 @@ const useCategorySubmit = (
 					parentCategoryId: parentCategoryId ?? null,
 					localizedLabels,
 				});
-				addCategory(created);
+				if (!result.ok) {
+					onError(result.error);
+					return;
+				}
+				addCategory(result.data);
 			} else if (numericCategoryId) {
-				const updated = await updateCategory({
+				const result = await updateCategory({
 					id: numericCategoryId,
 					key: String(data.key ?? ""),
 					description,
@@ -223,12 +265,17 @@ const useCategorySubmit = (
 					parentCategoryId: parentCategoryId ?? null,
 					localizedLabels,
 				});
-				if (updated) {
-					upsertCategory(updated);
+				if (!result.ok) {
+					onError(result.error);
+					return;
+				}
+				if (result.data) {
+					upsertCategory(result.data);
 				}
 			}
 
 			onSuccess(mode);
+			triggerAccountRefresh(["categories", "entityAudits"]);
 			if (shouldRefresh) {
 				router.refresh();
 			}
@@ -272,24 +319,24 @@ const buildCategoryFormConfig = ({
 		{
 			name: "detailsSection",
 			type: "section",
-			title: t("categoryFormModal.form.details.title", {
+			title: t("content.categoryFormModal.form.details.title", {
 				defaultValue: "Category details",
 			}),
-			description: t("categoryFormModal.form.details.description", {
+			description: t("content.categoryFormModal.form.details.description", {
 				defaultValue: "Define how this category should appear in the system.",
 			}),
 			layout: { columns: 2 },
 			fields: [
 				{
 					name: "key",
-					label: t("categoryFormModal.form.details.fields.key.label", {
+					label: t("content.categoryFormModal.form.details.fields.key.label", {
 						defaultValue: "Key",
 					}),
 					required: true,
 					type: "text",
 					disabled: mode === "edit",
 					placeholder: t(
-						"categoryFormModal.form.details.fields.key.placeholder",
+						"content.categoryFormModal.form.details.fields.key.placeholder",
 						{ defaultValue: "e.g. museums" },
 					),
 					layout: { span: "full" },
@@ -297,14 +344,14 @@ const buildCategoryFormConfig = ({
 				{
 					name: "labelDe",
 					label: t(
-						"categoryFormModal.form.details.fields.localizedLabelDe.label",
+						"content.categoryFormModal.form.details.fields.localizedLabelDe.label",
 						{
 							defaultValue: "Name (Deutsch)",
 						},
 					),
 					type: "text",
 					placeholder: t(
-						"categoryFormModal.form.details.fields.localizedLabelDe.placeholder",
+						"content.categoryFormModal.form.details.fields.localizedLabelDe.placeholder",
 						{ defaultValue: "z. B. Museen" },
 					),
 					layout: { span: "half" },
@@ -312,23 +359,26 @@ const buildCategoryFormConfig = ({
 				{
 					name: "labelEn",
 					label: t(
-						"categoryFormModal.form.details.fields.localizedLabelEn.label",
+						"content.categoryFormModal.form.details.fields.localizedLabelEn.label",
 						{
 							defaultValue: "Name (Englisch)",
 						},
 					),
 					type: "text",
 					placeholder: t(
-						"categoryFormModal.form.details.fields.localizedLabelEn.placeholder",
+						"content.categoryFormModal.form.details.fields.localizedLabelEn.placeholder",
 						{ defaultValue: "e.g. Museums" },
 					),
 					layout: { span: "half" },
 				},
 				{
 					name: "status",
-					label: t("categoryFormModal.form.details.fields.status.label", {
-						defaultValue: "Status",
-					}),
+					label: t(
+						"content.categoryFormModal.form.details.fields.status.label",
+						{
+							defaultValue: "Status",
+						},
+					),
 					type: "select",
 					options: statusOptions,
 					layout: { span: "half" },
@@ -336,9 +386,12 @@ const buildCategoryFormConfig = ({
 
 				{
 					name: "parentCategoryId",
-					label: t("categoryFormModal.form.details.fields.parent.label", {
-						defaultValue: "Parent category",
-					}),
+					label: t(
+						"content.categoryFormModal.form.details.fields.parent.label",
+						{
+							defaultValue: "Parent category",
+						},
+					),
 					type: "select",
 					options: parentOptions,
 					condition: () => {
@@ -348,16 +401,19 @@ const buildCategoryFormConfig = ({
 						);
 					},
 					placeholder: t(
-						"categoryFormModal.form.details.fields.parent.placeholder",
+						"content.categoryFormModal.form.details.fields.parent.placeholder",
 						{ defaultValue: "Select parent (optional)" },
 					),
 					layout: { span: "half" },
 				},
 				{
 					name: "iconFile",
-					label: t("categoryFormModal.form.details.fields.iconUpload.label", {
-						defaultValue: "SVG Icon Upload",
-					}),
+					label: t(
+						"content.categoryFormModal.form.details.fields.iconUpload.label",
+						{
+							defaultValue: "SVG Icon Upload",
+						},
+					),
 					type: "file",
 					accept: ".svg,image/svg+xml",
 					fileRemoveOption:
@@ -366,7 +422,7 @@ const buildCategoryFormConfig = ({
 							? {
 									fieldName: "removeIcon",
 									label: t(
-										"categoryFormModal.form.details.fields.iconUpload.remove",
+										"content.categoryFormModal.form.details.fields.iconUpload.remove",
 										{
 											defaultValue: "Icon entfernen",
 										},
@@ -387,7 +443,7 @@ const buildCategoryFormConfig = ({
 									className="underline"
 								>
 									{t(
-										"categoryFormModal.form.details.fields.iconUpload.currentFile",
+										"content.categoryFormModal.form.details.fields.iconUpload.currentFile",
 										{
 											defaultValue: "Aktuelle Datei ansehen",
 										},
@@ -399,12 +455,15 @@ const buildCategoryFormConfig = ({
 				},
 				{
 					name: "description",
-					label: t("categoryFormModal.form.details.fields.description.label", {
-						defaultValue: "Description",
-					}),
+					label: t(
+						"content.categoryFormModal.form.details.fields.description.label",
+						{
+							defaultValue: "Description",
+						},
+					),
 					type: "textarea",
 					placeholder: t(
-						"categoryFormModal.form.details.fields.description.placeholder",
+						"content.categoryFormModal.form.details.fields.description.placeholder",
 						{ defaultValue: "Optional description" },
 					),
 					layout: { span: "full" },
@@ -412,36 +471,37 @@ const buildCategoryFormConfig = ({
 			],
 		},
 	],
+
 	initialValues: getInitialValues(resolvedCategory, localizedLabels),
 	onSubmit,
 	submitLabel: getSubmitLabel(mode, submitting, {
 		create: {
-			default: t("categoryFormModal.actions.create", {
+			default: t("content.categoryFormModal.actions.create", {
 				defaultValue: "Create category",
 			}),
-			loading: t("categoryFormModal.actions.createLoading", {
+			loading: t("content.categoryFormModal.actions.createLoading", {
 				defaultValue: "Creating...",
 			}),
 		},
 		edit: {
-			default: t("categoryFormModal.actions.update", {
+			default: t("content.categoryFormModal.actions.update", {
 				defaultValue: "Update category",
 			}),
-			loading: t("categoryFormModal.actions.updateLoading", {
+			loading: t("content.categoryFormModal.actions.updateLoading", {
 				defaultValue: "Saving...",
 			}),
 		},
 		default: {
-			default: t("categoryFormModal.actions.save", {
+			default: t("content.categoryFormModal.actions.save", {
 				defaultValue: "Save",
 			}),
-			loading: t("categoryFormModal.actions.saveLoading", {
+			loading: t("content.categoryFormModal.actions.saveLoading", {
 				defaultValue: "Saving...",
 			}),
 		},
 	}),
 	showCancel: true,
-	cancelLabel: t("categoryFormModal.actions.cancel", {
+	cancelLabel: t("content.categoryFormModal.actions.cancel", {
 		defaultValue: "Cancel",
 	}),
 	onCancel,
@@ -454,8 +514,8 @@ export function CategoryFormModal({
 	routePath,
 	returnTo,
 }: CategoryFormModalProps) {
-	const { t: tEnum } = useTranslation("enumMap");
-	const { t } = useTranslation("content");
+	const { t: tEnum } = useTranslation();
+	const { t } = useTranslation();
 	const categories = useAccountStore((state) => state.categories);
 	const removeCategory = useAccountStore((state) => state.removeCategory);
 	const [isDeleting, setIsDeleting] = useState(false);
@@ -513,17 +573,18 @@ export function CategoryFormModal({
 		() => [
 			{
 				value: "active",
-				label: t("categoryFormModal.status.active", {
+				label: t("content.categoryFormModal.status.active", {
 					defaultValue: "Active",
 				}),
 			},
 			{
 				value: "inactive",
-				label: t("categoryFormModal.status.inactive", {
+				label: t("content.categoryFormModal.status.inactive", {
 					defaultValue: "Inactive",
 				}),
 			},
 		],
+
 		[t],
 	);
 
@@ -535,13 +596,13 @@ export function CategoryFormModal({
 		return [
 			{
 				value: "none",
-				label: t("categoryFormModal.form.details.fields.parent.none", {
+				label: t("content.categoryFormModal.form.details.fields.parent.none", {
 					defaultValue: "No parent",
 				}),
 			},
 			...eligibleParents.map((category) => ({
 				value: String(category.id),
-				label: tEnum(`category.${category.key}`) || category.key,
+				label: tEnum(`enumMap.category.${category.key}`) || category.key,
 			})),
 		];
 	}, [categories, resolvedCategory, tEnum, t]);
@@ -552,11 +613,11 @@ export function CategoryFormModal({
 				? "categoryFormModal.feedback.create"
 				: "categoryFormModal.feedback.update";
 		showSuccessToast(
-			t(`${keyPrefix}.title`, {
+			t(`content.${keyPrefix}.title`, {
 				defaultValue:
 					nextMode === "create" ? "Category created" : "Category updated",
 			}),
-			t(`${keyPrefix}.description`, {
+			t(`content.${keyPrefix}.description`, {
 				defaultValue:
 					nextMode === "create"
 						? "Your category is ready to use."
@@ -572,7 +633,7 @@ export function CategoryFormModal({
 		handleClose,
 		handleSuccess,
 		shouldRefresh,
-		(message) => setSubmitError(message),
+		(errorCode) => setSubmitError(translateCategoryFormError(t, errorCode)),
 	);
 
 	const formConfig = useMemo(() => {
@@ -591,7 +652,7 @@ export function CategoryFormModal({
 		return {
 			...baseConfig,
 			deleteAction: {
-				label: t("categoryFormModal.delete.button", {
+				label: t("content.categoryFormModal.delete.button", {
 					defaultValue: "Delete",
 				}),
 				onClick: () => setShowDeleteDialog(true),
@@ -616,12 +677,15 @@ export function CategoryFormModal({
 		showNotFound && !isDeleting
 			? {
 					active: true,
-					title: t("categoryFormModal.dialog.notFound.title", {
+					title: t("content.categoryFormModal.dialog.notFound.title", {
 						defaultValue: "Category not found",
 					}),
-					description: t("categoryFormModal.dialog.notFound.description", {
-						defaultValue: "We couldn't find that category.",
-					}),
+					description: t(
+						"content.categoryFormModal.dialog.notFound.description",
+						{
+							defaultValue: "We couldn't find that category.",
+						},
+					),
 				}
 			: undefined;
 
@@ -638,50 +702,54 @@ export function CategoryFormModal({
 					? {
 							open: true,
 							status: "warning",
-							title: t("categoryFormModal.delete.confirmTitle", {
+							title: t("content.categoryFormModal.delete.confirmTitle", {
 								defaultValue: "Delete category?",
 							}),
-							description: t("categoryFormModal.delete.confirmDescription", {
-								defaultValue:
-									"This will permanently remove the category. This action cannot be undone.",
-							}),
-							confirmLabel: t("categoryFormModal.delete.confirm"),
-							cancelLabel: t("categoryFormModal.delete.cancel", {
+							description: t(
+								"content.categoryFormModal.delete.confirmDescription",
+								{
+									defaultValue:
+										"This will permanently remove the category. This action cannot be undone.",
+								},
+							),
+							confirmLabel: t("content.categoryFormModal.delete.confirm"),
+							cancelLabel: t("content.categoryFormModal.delete.cancel", {
 								defaultValue: "Cancel",
 							}),
 							onCancel: () => setShowDeleteDialog(false),
 							onConfirm: async () => {
 								if (isDeleting) return;
 								setIsDeleting(true);
+								const result = await deleteCategory(resolvedCategory.id);
+								if (!result.ok) {
+									setDeleteError({
+										title: t("content.categoryFormModal.delete.errorTitle", {
+											defaultValue: "Delete failed",
+										}),
+										description: translateCategoryFormError(t, result.error),
+									});
+									setShowDeleteDialog(false);
+									setIsDeleting(false);
+									return;
+								}
+								handleClose();
+								triggerAccountRefresh(["categories", "entityAudits"]);
 								try {
-									handleClose();
-									await deleteCategory(resolvedCategory.id);
 									queueMicrotask(() => {
 										removeCategory(resolvedCategory.id);
 										showSuccessToast(
-											t("categoryFormModal.feedback.delete.title", {
+											t("content.categoryFormModal.feedback.delete.title", {
 												defaultValue: "Category deleted",
 											}),
-											t("categoryFormModal.feedback.delete.description", {
-												defaultValue:
-													"The category has been removed successfully.",
-											}),
+											t(
+												"content.categoryFormModal.feedback.delete.description",
+												{
+													defaultValue:
+														"The category has been removed successfully.",
+												},
+											),
 										);
 									});
-								} catch {
-									setDeleteError({
-										title: t("categoryFormModal.delete.errorTitle", {
-											defaultValue: "Delete failed",
-										}),
-										description: t(
-											"categoryFormModal.delete.errorDescription",
-											{
-												defaultValue:
-													"Please try again or remove any subcategories first.",
-											},
-										),
-									});
-									setShowDeleteDialog(false);
 								} finally {
 									setIsDeleting(false);
 								}
@@ -696,9 +764,9 @@ export function CategoryFormModal({
 				deleteError || submitError
 					? {
 							open: true,
-							title: deleteError ? deleteError.title : t("error"),
+							title: deleteError ? deleteError.title : t("common.error"),
 							description: deleteError?.description ?? submitError ?? "",
-							confirmLabel: t("close"),
+							confirmLabel: t("common.close"),
 							onConfirm: () => {
 								setDeleteError(null);
 								setSubmitError(null);

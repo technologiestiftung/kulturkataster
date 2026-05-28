@@ -1,13 +1,13 @@
-import { InstitutionDraftReviewModal } from "@/components/Institution/InstitutionDraftReviewModal";
+import { SubmissionReviewModal } from "@/components/Institution/SubmissionReviewModal";
 import { requirePositiveIntParam } from "@/lib/utils/routeParams";
 
-type InstitutionDraftReviewModalProps = {
+type SubmissionReviewModalPageProps = {
 	params: Promise<{ locale: string; id: string }>;
 };
 
-export default async function InstitutionDraftReviewModalPage({
+export default async function SubmissionReviewModalPage({
 	params,
-}: InstitutionDraftReviewModalProps) {
+}: SubmissionReviewModalPageProps) {
 	const { locale, id } = await params;
 	const parsedId = requirePositiveIntParam(
 		id,
@@ -15,7 +15,7 @@ export default async function InstitutionDraftReviewModalPage({
 	);
 
 	return (
-		<InstitutionDraftReviewModal
+		<SubmissionReviewModal
 			submissionId={parsedId}
 			returnTo="/account/institutions"
 			routePath={`/account/submissions/${parsedId}`}

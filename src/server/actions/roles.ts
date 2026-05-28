@@ -1,12 +1,18 @@
 "use server";
 
 import {
+	actionError,
+	actionOk,
+	getActionErrorCode,
+	type ActionResult,
+} from "@/lib/actions/actionResult";
+import {
 	getAccessContextForUser,
 	authorizeTable,
 	requireAllScope,
 } from "@/server/utils/rbac";
 import { roleRepo } from "@/server/data/roleRepo";
-import { RoleInput, RoleUpdateInput } from "@/types";
+import { Role, RoleActionErrorCode, RoleInput, RoleUpdateInput } from "@/types";
 import { getCurrentUserId } from "@/server/actions/auth";
 import { revalidateAccount } from "../utils/actionsUtils";
 import {
@@ -14,6 +20,16 @@ import {
 	setRequestContext,
 } from "@/server/logging/requestContext";
 import { logger } from "../logging/logger";
+
+const classifyRoleActionError = (error: unknown): RoleActionErrorCode => {
+	const errorCode = getActionErrorCode(error);
+	if (errorCode === "P2002") return "nameTaken";
+	if (errorCode === "P2025") return "notFound";
+	if (error instanceof Error && error.name === "RBACError") {
+		return "forbidden";
+	}
+	return "unexpected";
+};
 
 export async function getRoles() {
 	const currentUserId = await getCurrentUserId();
@@ -31,7 +47,9 @@ export async function getRoleById(id: number) {
 	return roleRepo.findById(id);
 }
 
-export async function createRole(input: RoleInput) {
+export async function createRole(
+	input: RoleInput,
+): Promise<ActionResult<Role, RoleActionErrorCode>> {
 	return runWithServerRequestContext(
 		async () => {
 			const currentUserId = await getCurrentUserId();
@@ -49,16 +67,18 @@ export async function createRole(input: RoleInput) {
 					db_subsystem: "db",
 					actor_user_id: currentUserId,
 				});
-				throw error;
+				return actionError(classifyRoleActionError(error));
 			}
 			revalidateAccount();
-			return role;
+			return actionOk(role);
 		},
 		{ route: "server_action:roles.createRole" },
 	);
 }
 
-export async function updateRole(input: RoleUpdateInput) {
+export async function updateRole(
+	input: RoleUpdateInput,
+): Promise<ActionResult<Role, RoleActionErrorCode>> {
 	return runWithServerRequestContext(
 		async () => {
 			const currentUserId = await getCurrentUserId();
@@ -80,10 +100,10 @@ export async function updateRole(input: RoleUpdateInput) {
 						actor_user_id: currentUserId,
 						role_id: input.id,
 					});
-					throw error;
+					return actionError(classifyRoleActionError(error));
 				}
 				revalidateAccount();
-				return role;
+				return actionOk(role);
 			}
 
 			let role;
@@ -96,16 +116,18 @@ export async function updateRole(input: RoleUpdateInput) {
 					actor_user_id: currentUserId,
 					role_id: input.id,
 				});
-				throw error;
+				return actionError(classifyRoleActionError(error));
 			}
 			revalidateAccount();
-			return role;
+			return actionOk(role);
 		},
 		{ route: "server_action:roles.updateRole" },
 	);
 }
 
-export async function deleteRole(id: number) {
+export async function deleteRole(
+	id: number,
+): Promise<ActionResult<{ id: number }, RoleActionErrorCode>> {
 	return runWithServerRequestContext(
 		async () => {
 			const currentUserId = await getCurrentUserId();
@@ -121,7 +143,7 @@ export async function deleteRole(id: number) {
 					role_id: id,
 					role_name: role.name,
 				});
-				throw new Error("Cannot delete a system role");
+				return actionError("systemRole");
 			}
 
 			try {
@@ -133,10 +155,10 @@ export async function deleteRole(id: number) {
 					actor_user_id: currentUserId,
 					role_id: id,
 				});
-				throw error;
+				return actionError(classifyRoleActionError(error));
 			}
 			revalidateAccount();
-			return { id };
+			return actionOk({ id });
 		},
 		{ route: "server_action:roles.deleteRole" },
 	);

@@ -5,22 +5,24 @@ import Map from "ol/Map";
 import View from "ol/View";
 import Feature from "ol/Feature";
 import Point from "ol/geom/Point";
-import TileLayer from "ol/layer/Tile";
+import VectorTileLayer from "ol/layer/VectorTile";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
-import XYZ from "ol/source/XYZ";
 import { Circle as CircleStyle, Fill, Style } from "ol/style";
 import { fromLonLat, toLonLat } from "ol/proj";
+import { applyStyle } from "ol-mapbox-style";
 import "ol/ol.css";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
 import {
 	getMapBoundingBox,
-	getMaptilerKey,
+	getMapStyleUrl,
 	reverseGeocode,
 } from "@/server/actions/maptiler";
 import { Button } from "@/components/ui/button";
 import { reportClientTelemetry } from "@/lib/utils/clientTelemetry";
+import MinusIcon from "@/icons/minus.svg";
+import PlusIcon from "@/icons/plus.svg";
 
 type AddressMapValue = {
 	lat: number | null;
@@ -86,13 +88,13 @@ export function AddressMapField({
 	disabled = false,
 	initialZoom = 15,
 }: AddressMapFieldProps) {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation();
 	const mapRef = useRef<HTMLDivElement | null>(null);
 	const mapInstance = useRef<Map | null>(null);
 	const markerSource = useRef<VectorSource | null>(null);
 	const markerFeature = useRef<Feature<Point> | null>(null);
 	const [mapError, setMapError] = useState<string | null>(null);
-	const [maptilerKey, setMaptilerKey] = useState<string | null>(null);
+	const [mapStyleUrl, setMapStyleUrl] = useState<string | null>(null);
 	const [mapBoundingBox, setMapBoundingBox] = useState<GeoBoundingBox | null>(
 		null,
 	);
@@ -127,12 +129,12 @@ export function AddressMapField({
 		let active = true;
 		const loadMapConfig = async () => {
 			try {
-				const [key, rawBbox] = await Promise.all([
-					getMaptilerKey(),
+				const [styleUrl, rawBbox] = await Promise.all([
+					getMapStyleUrl(),
 					getMapBoundingBox(),
 				]);
 				if (!active) return;
-				if (!key) {
+				if (!styleUrl) {
 					setMapError("MapTiler API key is missing.");
 					return;
 				}
@@ -146,7 +148,7 @@ export function AddressMapField({
 						},
 					});
 				}
-				setMaptilerKey(key);
+				setMapStyleUrl(styleUrl);
 				setMapBoundingBox(parsedBbox);
 			} catch (error) {
 				if (active) {
@@ -159,26 +161,21 @@ export function AddressMapField({
 				});
 			}
 		};
-		if (!maptilerKey && !mapError) {
+		if (!mapStyleUrl && !mapError) {
 			loadMapConfig();
 		}
 		return () => {
 			active = false;
 		};
-	}, [mapError, maptilerKey]);
+	}, [mapError, mapStyleUrl]);
 
 	useEffect(() => {
 		if (!mapRef.current || mapInstance.current) return;
-		if (!maptilerKey) return;
+		if (!mapStyleUrl) return;
 
 		const initMap = () => {
-			const tileLayer = new TileLayer({
-				source: new XYZ({
-					url: `https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=${maptilerKey}`,
-					attributions:
-						'<a href="https://www.maptiler.com/copyright/" target="_blank" rel="noreferrer">MapTiler</a> © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a> contributors',
-				}),
-			});
+			const tileLayer = new VectorTileLayer({ declutter: true });
+			applyStyle(tileLayer, mapStyleUrl);
 
 			markerSource.current = new VectorSource();
 			const markerLayer = new VectorLayer({
@@ -301,7 +298,7 @@ export function AddressMapField({
 			map.setTarget(undefined);
 			mapInstance.current = null;
 		};
-	}, [initialZoom, mapBoundingBox, maptilerKey, setMarker]);
+	}, [initialZoom, mapBoundingBox, mapStyleUrl, setMarker]);
 
 	useEffect(() => {
 		if (!mapInstance.current) return;
@@ -324,6 +321,24 @@ export function AddressMapField({
 		}
 		view.setCenter(nextCenter);
 	}, [mapBoundingBox, setMarker, value.lat, value.lng]);
+
+	const handleZoomIn = useCallback(() => {
+		if (!mapInstance.current) return;
+		const view = mapInstance.current.getView();
+		const zoom = view.getZoom();
+		if (zoom !== undefined) {
+			view.animate({ zoom: zoom + 1, duration: 250 });
+		}
+	}, []);
+
+	const handleZoomOut = useCallback(() => {
+		if (!mapInstance.current) return;
+		const view = mapInstance.current.getView();
+		const zoom = view.getZoom();
+		if (zoom !== undefined) {
+			view.animate({ zoom: zoom - 1, duration: 250 });
+		}
+	}, []);
 
 	const handleApplySelection = useCallback(async () => {
 		if (disabled || !pendingSelection || isApplyingSelection) return;
@@ -365,7 +380,7 @@ export function AddressMapField({
 	return (
 		<div className="space-y-2">
 			<span className="body2 text-foreground mb-1 block">
-				{t("map.addressPickerHint")}
+				{t("common.map.addressPickerHint")}
 			</span>
 			<div
 				className={cn(
@@ -377,6 +392,30 @@ export function AddressMapField({
 				<div className="pointer-events-none absolute inset-0 flex items-center justify-center">
 					<div className="h-2 w-2 rounded-full bg-primary-dark" />
 				</div>
+				<div className="absolute bottom-2 right-2 flex flex-col gap-1">
+					<Button
+						type="button"
+						variant="surface"
+						radius="full"
+						iconSize="sm"
+						onClick={handleZoomIn}
+						disabled={disabled}
+						aria-label={t("common.map.zoomIn")}
+					>
+						<PlusIcon className="size-4" />
+					</Button>
+					<Button
+						type="button"
+						variant="surface"
+						radius="full"
+						iconSize="sm"
+						onClick={handleZoomOut}
+						disabled={disabled}
+						aria-label={t("common.map.zoomOut")}
+					>
+						<MinusIcon className="size-4" />
+					</Button>
+				</div>
 			</div>
 			<div className="flex justify-end">
 				<Button
@@ -386,8 +425,8 @@ export function AddressMapField({
 					disabled={disabled || !pendingSelection || isApplyingSelection}
 				>
 					{isApplyingSelection
-						? t("map.addressPickerApplyLoading")
-						: t("map.addressPickerApply")}
+						? t("common.map.addressPickerApplyLoading")
+						: t("common.map.addressPickerApply")}
 				</Button>
 			</div>
 		</div>

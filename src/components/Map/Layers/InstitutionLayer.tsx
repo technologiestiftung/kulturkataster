@@ -83,7 +83,7 @@ interface InstitutionLayerProps {
 
 const InstitutionLayer: FC<InstitutionLayerProps> = ({
 	zIndex = 10000,
-	distance = 500,
+	distance = 110,
 	minZoomForClustering = 0,
 	maxZoomForClustering = 8,
 	institutions,
@@ -114,6 +114,8 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 			},
 		}),
 	);
+	const selectedVectorSourceRef = useRef<VectorSource | null>(null);
+	const selectedVectorLayerRef = useRef<VectorLayer<any> | null>(null);
 
 	const { isContrastMode, isLargeTextMode } = useAppStore();
 
@@ -414,6 +416,18 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 		const clusterSource = new Cluster({ source: vectorSource, distance });
 		clusterSourceRef.current = clusterSource;
 
+		const selectedVectorSource = new VectorSource();
+		selectedVectorSourceRef.current = selectedVectorSource;
+
+		const selectedVectorLayer = new VectorLayer({
+			source: selectedVectorSource,
+			style: styleFunction,
+			declutter: false,
+			renderBuffer: 200,
+		});
+
+		selectedVectorLayerRef.current = selectedVectorLayer;
+
 		const vectorLayer = new VectorLayer({
 			source: clusterSource,
 			style: styleFunction,
@@ -424,6 +438,11 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 		vectorLayerRef.current = vectorLayer;
 
 		map.addLayer(vectorLayer);
+
+		map.addLayer(selectedVectorLayer);
+		selectedVectorLayer.setZIndex(zIndex + 1);
+		selectedVectorLayer.set("name", "selected-institution");
+		selectedVectorLayer.set("id", "selected-institution");
 
 		vectorLayer.setZIndex(zIndex);
 		vectorLayer.set("name", "institutions");
@@ -439,6 +458,7 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 		return () => {
 			if (map && vectorLayer) {
 				map.removeLayer(vectorLayer);
+				map.removeLayer(selectedVectorLayer);
 				map.getView().un("change:resolution", handleZoomChange);
 				map.un("click", handleClusterClick);
 			}
@@ -466,10 +486,30 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 		});
 
 		const offsetFeatures = processFeaturesForDecluttering(features);
-		vectorSourceRef.current.clear();
-		vectorSourceRef.current.addFeatures(features);
+
+		const offsetSelectedFeature = offsetFeatures.find(
+			(f) =>
+				selectedInstitutionId !== null && f.get("id") === selectedInstitutionId,
+		);
+
+		const offsetClusterableFeatures = offsetFeatures.filter(
+			(f) =>
+				selectedInstitutionId === null || f.get("id") !== selectedInstitutionId,
+		);
+
 		offsetVectorSourceRef.current.clear();
 		offsetVectorSourceRef.current.addFeatures(offsetFeatures);
+
+		vectorSourceRef.current.clear();
+		vectorSourceRef.current.addFeatures(offsetClusterableFeatures);
+
+		selectedVectorSourceRef.current?.clear();
+
+		if (offsetSelectedFeature) {
+			selectedVectorSourceRef.current?.addFeature(
+				offsetSelectedFeature.clone(),
+			);
+		}
 
 		updateLayerSource(map.getView().getZoom() ?? 6);
 	}, [
@@ -478,6 +518,7 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 		map,
 		updateLayerSource,
 		processFeaturesForDecluttering,
+		selectedInstitutionId,
 	]);
 
 	useEffect(() => {
@@ -488,6 +529,8 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 		if (!vectorLayerRef.current) return;
 		vectorLayerRef.current.setStyle(styleFunction);
 		vectorLayerRef.current.changed();
+		selectedVectorLayerRef.current?.setStyle(styleFunction);
+		selectedVectorLayerRef.current?.changed();
 	}, [styleFunction]);
 
 	useEffect(() => {

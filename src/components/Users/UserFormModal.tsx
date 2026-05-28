@@ -22,7 +22,6 @@ import {
 	getUserById,
 	deleteUser,
 	sendPasswordReset,
-	sendRoleDecisionEmailManual,
 	updateUser,
 } from "@/server/actions/users";
 import type { UserStatus } from "@/generated/prisma";
@@ -30,6 +29,8 @@ import type { User } from "@/types/user";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import Mail from "@/icons/mail.svg";
 import { showSuccessToast } from "@/lib/utils/feedbackToast";
+import { triggerAccountRefresh } from "@/components/Account/AccountAutoRefresh";
+import { UserTemplateEmailPanel } from "./UserTemplateEmailPanel";
 
 type UserFormModalProps = {
 	mode: "create" | "edit";
@@ -45,6 +46,7 @@ const getInitialValues = (resolvedUser?: User) => ({
 	last_name: resolvedUser?.last_name ?? "",
 	status: resolvedUser?.status ?? "approval_pending",
 	account_type: resolvedUser?.account_type ?? "",
+	meta_info: resolvedUser?.meta_info ?? {},
 	compliance: resolvedUser?.compliance ?? false,
 	roleId: resolvedUser?.role?.id ? String(resolvedUser.role.id) : "",
 	groupIds: resolvedUser?.groups?.map((group) => String(group.id)) ?? [],
@@ -56,6 +58,7 @@ const getInitialValues = (resolvedUser?: User) => ({
 type UserFormConfigArgs = {
 	mode: UserFormModalProps["mode"];
 	t: (key: string) => string;
+	tCommon: (key: string) => string;
 	statusOptions: { value: string; label: string }[];
 	roles: { id: number; name: string }[];
 	groups: { id: number; name: string }[];
@@ -70,10 +73,6 @@ type UserFormConfigArgs = {
 	submitting: boolean;
 	onSubmit: (data: Record<string, unknown>) => void | Promise<void>;
 	onCancel: () => void;
-	onSendRoleDecision: (
-		target: "district" | "state" | "network",
-		decision: "approved" | "rejected",
-	) => Promise<string | null>;
 };
 
 type UseResolvedUserResult = {
@@ -129,6 +128,38 @@ const useResolvedUser = (
 	return { resolvedUser, isWaitingForUser, showNotFound };
 };
 
+const translateUserFormError = (
+	t: (key: string) => string,
+	errorCode: string,
+) => {
+	switch (errorCode) {
+		case "emailTaken":
+			return t("content.userFormModal.errors.emailTaken");
+		case "notFound":
+			return t("content.userFormModal.errors.notFound");
+		case "forbidden":
+			return t("content.userFormModal.errors.forbidden");
+		case "invalidInput":
+			return t("content.userFormModal.errors.invalidInput");
+		default:
+			return t("content.userFormModal.errors.unexpected");
+	}
+};
+
+const translateUserPasswordResetError = (
+	t: (key: string) => string,
+	errorCode: string,
+) => {
+	switch (errorCode) {
+		case "notFound":
+			return t("content.userFormModal.errors.notFound");
+		case "forbidden":
+			return t("content.userFormModal.errors.forbidden");
+		default:
+			return t("content.userFormModal.passwordReset.error");
+	}
+};
+
 const useUserSubmit = (
 	mode: UserFormModalProps["mode"],
 	userId: string | undefined,
@@ -149,11 +180,15 @@ const useUserSubmit = (
 		const groupIds = toNumberArray(data.groupIds);
 		const institutionIds = toNumberArray(data.institutionIds);
 		const roleId = toOptionalNumber(data.roleId);
+		const rawMetaInfo =
+			data.meta_info && typeof data.meta_info === "object"
+				? JSON.stringify(data.meta_info)
+				: undefined;
 		const status = (data.status || undefined) as UserStatus | undefined;
 
 		try {
 			if (mode === "create") {
-				const created = await createUser({
+				const result = await createUser({
 					email: String(data.email ?? ""),
 					first_name: String(data.first_name ?? ""),
 					last_name: String(data.last_name ?? ""),
@@ -163,14 +198,19 @@ const useUserSubmit = (
 						typeof data.account_type === "string"
 							? data.account_type
 							: undefined,
+					meta_info: rawMetaInfo,
 					roleId,
 					groupIds: groupIds.length > 0 ? groupIds : undefined,
 					institutionIds:
 						institutionIds.length > 0 ? institutionIds : undefined,
 				});
-				addUser(created);
+				if (!result.ok) {
+					onError(result.error);
+					return;
+				}
+				addUser(result.data);
 			} else if (userId) {
-				const updated = await updateUser({
+				const result = await updateUser({
 					id: userId,
 					email: String(data.email ?? ""),
 					first_name: String(data.first_name ?? ""),
@@ -181,16 +221,22 @@ const useUserSubmit = (
 						typeof data.account_type === "string"
 							? data.account_type
 							: undefined,
+					meta_info: rawMetaInfo,
 					roleId,
 					groupIds,
 					institutionIds,
 				});
-				if (updated) {
-					upsertUser(updated);
+				if (!result.ok) {
+					onError(result.error);
+					return;
+				}
+				if (result.data) {
+					upsertUser(result.data);
 				}
 			}
 
 			onSuccess(mode);
+			triggerAccountRefresh(["users", "entityAudits"]);
 			if (shouldRefresh) {
 				router.refresh();
 			}
@@ -212,6 +258,7 @@ const useUserSubmit = (
 const buildUserFormConfig = ({
 	mode,
 	t,
+	tCommon,
 	statusOptions,
 	roles,
 	groups,
@@ -222,7 +269,6 @@ const buildUserFormConfig = ({
 	submitting,
 	onSubmit,
 	onCancel,
-	onSendRoleDecision,
 }: UserFormConfigArgs): FormWrapperConfig => {
 	const accessCondition = () => mode === "edit" && Boolean(resolvedUser);
 
@@ -235,61 +281,113 @@ const buildUserFormConfig = ({
 				fields: [
 					{
 						name: "email",
-						label: t("userFormModal.form.identity.fields.email.label"),
+						label: t("content.userFormModal.form.identity.fields.email.label"),
 						type: "email",
 						required: true,
 						placeholder: t(
-							"userFormModal.form.identity.fields.email.placeholder",
+							"content.userFormModal.form.identity.fields.email.placeholder",
 						),
 						layout: { span: "full" },
 					},
 					{
 						name: "first_name",
-						label: t("userFormModal.form.identity.fields.firstName.label"),
+						label: t(
+							"content.userFormModal.form.identity.fields.firstName.label",
+						),
 						type: "text",
 						placeholder: t(
-							"userFormModal.form.identity.fields.firstName.placeholder",
+							"content.userFormModal.form.identity.fields.firstName.placeholder",
 						),
 						layout: { span: "half" },
 					},
 					{
 						name: "last_name",
-						label: t("userFormModal.form.identity.fields.lastName.label"),
+						label: t(
+							"content.userFormModal.form.identity.fields.lastName.label",
+						),
 						type: "text",
 						placeholder: t(
-							"userFormModal.form.identity.fields.lastName.placeholder",
+							"content.userFormModal.form.identity.fields.lastName.placeholder",
 						),
 						layout: { span: "half" },
 					},
 					{
 						name: "status",
-						label: t("userFormModal.form.identity.fields.status.label"),
+						label: t("content.userFormModal.form.identity.fields.status.label"),
 						type: "select",
 						layout: { span: "half" },
 						options: statusOptions,
 					},
 					{
 						name: "account_type",
-						label: t("userFormModal.form.identity.fields.accountType.label"),
+						label: t(
+							"content.userFormModal.form.identity.fields.accountType.label",
+						),
 						type: "text",
 						layout: { span: "half" },
 						placeholder: t(
-							"userFormModal.form.identity.fields.accountType.placeholder",
+							"content.userFormModal.form.identity.fields.accountType.placeholder",
 						),
+					},
+					{
+						name: "meta_info",
+						label:
+							resolvedUser?.meta_info &&
+							typeof resolvedUser.meta_info === "object" &&
+							Object.keys(resolvedUser.meta_info).length > 0
+								? t("content.userFormModal.form.identity.fields.metaInfo.label")
+								: null,
+						type: "keyValue",
+						layout: { span: "full" },
+						keyValue: {
+							valuePlaceholder: t(
+								"content.userFormModal.form.identity.fields.metaInfo.valuePlaceholder",
+							),
+							allowAdd: false,
+							keyReadOnly: true,
+							keyLabels: {
+								organizationName: tCommon(
+									"common.auth.register.organizationName",
+								),
+								organizationPhone: tCommon(
+									"common.auth.register.organizationPhone",
+								),
+								organizationPosition: tCommon(
+									"common.auth.register.organizationPosition",
+								),
+								districtName: tCommon("common.auth.register.districtName"),
+								districtOffice: tCommon("common.auth.register.districtOffice"),
+								districtPhone: tCommon("common.auth.register.districtPhone"),
+								districtPosition: tCommon(
+									"common.auth.register.districtPosition",
+								),
+								administrationName: tCommon(
+									"common.auth.register.administrationName",
+								),
+								administrationPhone: tCommon(
+									"common.auth.register.administrationPhone",
+								),
+								administrationPosition: tCommon(
+									"common.auth.register.administrationPosition",
+								),
+							},
+						},
 					},
 				],
 			},
 			{
 				name: "accessSection",
 				type: "section",
-				title: t("userFormModal.form.access.title"),
+				title: t("content.userFormModal.form.access.title"),
 				fields: [
 					{
 						name: "roleId",
-						label: t("userFormModal.form.access.fields.role.label"),
+						label: t("content.userFormModal.form.access.fields.role.label"),
 						type: "select",
 						required: true,
-						placeholder: t("userFormModal.form.access.fields.role.placeholder"),
+						placeholder: t(
+							"content.userFormModal.form.access.fields.role.placeholder",
+						),
 						options: roles.map((role) => ({
 							value: String(role.id),
 							label: role.name,
@@ -298,16 +396,18 @@ const buildUserFormConfig = ({
 					},
 					{
 						name: "groupIds",
-						label: t("userFormModal.form.access.fields.groups.label"),
+						label: t("content.userFormModal.form.access.fields.groups.label"),
 						type: "multiselect",
 						multiselectVariant: "modal",
 						placeholder: t(
-							"userFormModal.form.access.fields.groups.placeholder",
+							"content.userFormModal.form.access.fields.groups.placeholder",
 						),
 						searchPlaceholder: t(
-							"userFormModal.form.access.fields.groups.searchPlaceholder",
+							"content.userFormModal.form.access.fields.groups.searchPlaceholder",
 						),
-						emptyText: t("userFormModal.form.access.fields.groups.emptyText"),
+						emptyText: t(
+							"content.userFormModal.form.access.fields.groups.emptyText",
+						),
 						options: groups.map((group) => ({
 							value: String(group.id),
 							label: group.name,
@@ -316,17 +416,19 @@ const buildUserFormConfig = ({
 					},
 					{
 						name: "institutionIds",
-						label: t("userFormModal.form.access.fields.institutions.label"),
+						label: t(
+							"content.userFormModal.form.access.fields.institutions.label",
+						),
 						type: "multiselect",
 						multiselectVariant: "modal",
 						placeholder: t(
-							"userFormModal.form.access.fields.institutions.placeholder",
+							"content.userFormModal.form.access.fields.institutions.placeholder",
 						),
 						searchPlaceholder: t(
-							"userFormModal.form.access.fields.institutions.searchPlaceholder",
+							"content.userFormModal.form.access.fields.institutions.searchPlaceholder",
 						),
 						emptyText: t(
-							"userFormModal.form.access.fields.institutions.emptyText",
+							"content.userFormModal.form.access.fields.institutions.emptyText",
 						),
 						previewCount: 3,
 						options: institutionOptions,
@@ -335,108 +437,57 @@ const buildUserFormConfig = ({
 						layout: { span: "full" },
 					},
 					{
+						name: "templateEmailPanel",
+						type: "custom",
+						layout: { span: "full" },
+						condition: accessCondition,
+						customField: resolvedUser ? (
+							<UserTemplateEmailPanel user={resolvedUser} t={t} />
+						) : null,
+					},
+					{
 						name: "passwordReset",
 						label: "",
 						type: "actionPanel",
 						layout: { span: "full" },
 						condition: accessCondition,
 						actionPanel: {
-							title: t("userFormModal.passwordReset.title"),
-							description: t("userFormModal.passwordReset.description"),
-							actionLabel: t("userFormModal.passwordReset.send"),
-							actionLabelLoading: t("userFormModal.passwordReset.sending"),
-							errorFallback: t("userFormModal.passwordReset.error"),
+							title: t("content.userFormModal.passwordReset.title"),
+							description: t("content.userFormModal.passwordReset.description"),
+							actionLabel: t("content.userFormModal.passwordReset.send"),
+							actionLabelLoading: t(
+								"content.userFormModal.passwordReset.sending",
+							),
+							errorFallback: t("content.userFormModal.passwordReset.error"),
 							icon: <Mail className="h-5 w-5 text-primary-dark" />,
 							onAction: async () => {
 								if (!resolvedUser) return null;
-								await sendPasswordReset(resolvedUser.email);
-								return t("userFormModal.passwordReset.success");
+								const result = await sendPasswordReset(resolvedUser.email);
+								if (!result.ok) {
+									throw new Error(
+										translateUserPasswordResetError(t, result.error),
+									);
+								}
+								return t("content.userFormModal.passwordReset.success");
 							},
-						},
-					},
-					{
-						name: "roleDistrictDecision",
-						label: "",
-						type: "actionPanel",
-						layout: { span: "full" },
-						condition: accessCondition,
-						actionPanel: {
-							title: t("userFormModal.roleEmails.district.title"),
-							description: t("userFormModal.roleEmails.district.description"),
-							actionLabel: t("userFormModal.roleEmails.sendApprove"),
-							actionLabelLoading: t("userFormModal.roleEmails.sendingApprove"),
-							secondaryActionLabel: t("userFormModal.roleEmails.sendReject"),
-							secondaryActionLabelLoading: t(
-								"userFormModal.roleEmails.sendingReject",
-							),
-							errorFallback: t("userFormModal.roleEmails.error"),
-							secondaryErrorFallback: t("userFormModal.roleEmails.error"),
-							icon: <Mail className="h-5 w-5 text-primary-dark" />,
-							onAction: () => onSendRoleDecision("district", "approved"),
-							onSecondaryAction: () =>
-								onSendRoleDecision("district", "rejected"),
-						},
-					},
-					{
-						name: "roleStateDecision",
-						label: "",
-						type: "actionPanel",
-						layout: { span: "full" },
-						condition: accessCondition,
-						actionPanel: {
-							title: t("userFormModal.roleEmails.state.title"),
-							description: t("userFormModal.roleEmails.state.description"),
-							actionLabel: t("userFormModal.roleEmails.sendApprove"),
-							actionLabelLoading: t("userFormModal.roleEmails.sendingApprove"),
-							secondaryActionLabel: t("userFormModal.roleEmails.sendReject"),
-							secondaryActionLabelLoading: t(
-								"userFormModal.roleEmails.sendingReject",
-							),
-							errorFallback: t("userFormModal.roleEmails.error"),
-							secondaryErrorFallback: t("userFormModal.roleEmails.error"),
-							icon: <Mail className="h-5 w-5 text-primary-dark" />,
-							onAction: () => onSendRoleDecision("state", "approved"),
-							onSecondaryAction: () => onSendRoleDecision("state", "rejected"),
-						},
-					},
-					{
-						name: "roleNetworkDecision",
-						label: "",
-						type: "actionPanel",
-						layout: { span: "full" },
-						condition: accessCondition,
-						actionPanel: {
-							title: t("userFormModal.roleEmails.network.title"),
-							description: t("userFormModal.roleEmails.network.description"),
-							actionLabel: t("userFormModal.roleEmails.sendApprove"),
-							actionLabelLoading: t("userFormModal.roleEmails.sendingApprove"),
-							secondaryActionLabel: t("userFormModal.roleEmails.sendReject"),
-							secondaryActionLabelLoading: t(
-								"userFormModal.roleEmails.sendingReject",
-							),
-							errorFallback: t("userFormModal.roleEmails.error"),
-							secondaryErrorFallback: t("userFormModal.roleEmails.error"),
-							icon: <Mail className="h-5 w-5 text-primary-dark" />,
-							onAction: () => onSendRoleDecision("network", "approved"),
-							onSecondaryAction: () =>
-								onSendRoleDecision("network", "rejected"),
 						},
 					},
 				],
 			},
 		],
+
 		onSubmit,
 		showCancel: true,
-		cancelLabel: t("userFormModal.actions.cancel"),
+		cancelLabel: t("content.userFormModal.actions.cancel"),
 		onCancel,
 		submitLabel: getSubmitLabel(mode, submitting, {
 			create: {
-				default: t("userFormModal.actions.create"),
-				loading: t("userFormModal.actions.creating"),
+				default: t("content.userFormModal.actions.create"),
+				loading: t("content.userFormModal.actions.creating"),
 			},
 			edit: {
-				default: t("userFormModal.actions.save"),
-				loading: t("userFormModal.actions.saving"),
+				default: t("content.userFormModal.actions.save"),
+				loading: t("content.userFormModal.actions.saving"),
 			},
 		}),
 		initialValues: getInitialValues(resolvedUser),
@@ -448,8 +499,8 @@ const getDialogTitle = (
 	t: (key: string) => string,
 ) =>
 	mode === "create"
-		? t("userFormModal.dialog.title.create")
-		: t("userFormModal.dialog.title.edit");
+		? t("content.userFormModal.dialog.title.create")
+		: t("content.userFormModal.dialog.title.edit");
 
 const renderDialogBody = (
 	isWaitingForUser: boolean,
@@ -470,16 +521,23 @@ export function UserFormModal({
 	routePath,
 	returnTo,
 }: UserFormModalProps) {
-	const { t } = useTranslation("content");
-	const { t: tEnum, i18n } = useTranslation("enumMap");
+	const { t } = useTranslation();
+	const { t: tCommon } = useTranslation();
+	const { t: tEnum, i18n } = useTranslation();
 	const users = useAccountStore((state) => state.users);
 	const roles = useAccountStore((state) => state.roles);
 	const groups = useAccountStore((state) => state.groups);
 	const removeUser = useAccountStore((state) => state.removeUser);
-	const upsertUser = useAccountStore((state) => state.upsertUser);
-	const institutions =
-		useInstitutionStore((state) => state.allInstitutions) ?? [];
-	const categories = useInstitutionStore((state) => state.categories) ?? [];
+	const allInstitutions = useInstitutionStore((state) => state.allInstitutions);
+	const storeCategories = useInstitutionStore((state) => state.categories);
+	const isInstitutionStoreLoading = useInstitutionStore(
+		(state) => state.isLoading,
+	);
+	const initializePublicData = useInstitutionStore(
+		(state) => state.initializePublicData,
+	);
+	const institutions = allInstitutions ?? [];
+	const categories = storeCategories ?? [];
 	const [isDeleting, setIsDeleting] = useState(false);
 	const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 	const [deleteError, setDeleteError] = useState<{
@@ -496,25 +554,29 @@ export function UserFormModal({
 		userId,
 		users,
 	);
+
+	useEffect(() => {
+		if (allInstitutions !== null && storeCategories !== null) return;
+		if (isInstitutionStoreLoading) return;
+		if (typeof initializePublicData !== "function") return;
+
+		void initializePublicData();
+	}, [
+		allInstitutions,
+		initializePublicData,
+		isInstitutionStoreLoading,
+		storeCategories,
+	]);
+
 	const handleSuccess = (nextMode: UserFormModalProps["mode"]) => {
 		const keyPrefix =
 			nextMode === "create"
 				? "userFormModal.feedback.create"
 				: "userFormModal.feedback.update";
-		showSuccessToast(t(`${keyPrefix}.title`), t(`${keyPrefix}.description`));
-	};
-	const handleSendRoleDecision = async (
-		target: "district" | "state" | "network",
-		decision: "approved" | "rejected",
-	) => {
-		if (!resolvedUser) return null;
-		const updatedUser = await sendRoleDecisionEmailManual({
-			userId: resolvedUser.id,
-			target,
-			decision,
-		});
-		upsertUser(updatedUser);
-		return t("userFormModal.roleEmails.success");
+		showSuccessToast(
+			t(`content.${keyPrefix}.title`),
+			t(`content.${keyPrefix}.description`),
+		);
 	};
 	const { handleSubmit, submitting } = useUserSubmit(
 		mode,
@@ -522,18 +584,19 @@ export function UserFormModal({
 		handleClose,
 		handleSuccess,
 		shouldRefresh,
-		(message) => setSubmitError(message),
+		(errorCode) => setSubmitError(translateUserFormError(t, errorCode)),
 	);
 
 	const statusOptions = useMemo(
 		() => [
 			{
 				value: "approval_pending",
-				label: t("userFormModal.status.approvalPending"),
+				label: t("content.userFormModal.status.approvalPending"),
 			},
-			{ value: "active", label: t("userFormModal.status.active") },
-			{ value: "banned", label: t("userFormModal.status.banned") },
+			{ value: "active", label: t("content.userFormModal.status.active") },
+			{ value: "banned", label: t("content.userFormModal.status.banned") },
 		],
+
 		[t],
 	);
 	const { institutionOptions, filteredInstitutionOptions, filterPanel } =
@@ -548,6 +611,7 @@ export function UserFormModal({
 		const baseConfig = buildUserFormConfig({
 			mode,
 			t,
+			tCommon,
 			statusOptions,
 			roles,
 			groups,
@@ -558,13 +622,12 @@ export function UserFormModal({
 			submitting,
 			onSubmit: handleSubmit,
 			onCancel: handleClose,
-			onSendRoleDecision: handleSendRoleDecision,
 		});
 		if (mode !== "edit" || !resolvedUser) return baseConfig;
 		return {
 			...baseConfig,
 			deleteAction: {
-				label: t("userFormModal.delete.button"),
+				label: t("content.userFormModal.delete.button"),
 				onClick: () => setShowDeleteDialog(true),
 				disabled: isDeleting || submitting,
 				className: "p-0!",
@@ -573,6 +636,7 @@ export function UserFormModal({
 	}, [
 		mode,
 		t,
+		tCommon,
 		statusOptions,
 		roles,
 		groups,
@@ -584,15 +648,14 @@ export function UserFormModal({
 		isDeleting,
 		handleSubmit,
 		handleClose,
-		handleSendRoleDecision,
 	]);
 
 	const autoCloseError =
 		showNotFound && !isDeleting
 			? {
 					active: true,
-					title: t("userFormModal.dialog.notFound.title"),
-					description: t("userFormModal.dialog.notFound.description"),
+					title: t("content.userFormModal.dialog.notFound.title"),
+					description: t("content.userFormModal.dialog.notFound.description"),
 				}
 			: undefined;
 
@@ -609,46 +672,50 @@ export function UserFormModal({
 					? {
 							open: true,
 							status: "warning",
-							title: t("userFormModal.delete.confirmTitle", {
+							title: t("content.userFormModal.delete.confirmTitle", {
 								defaultValue: "Delete user?",
 							}),
-							description: t("userFormModal.delete.confirmDescription", {
-								defaultValue:
-									"This will permanently remove the user. This action cannot be undone.",
-							}),
-							confirmLabel: t("userFormModal.delete.confirm"),
-							cancelLabel: t("userFormModal.delete.cancel", {
+							description: t(
+								"content.userFormModal.delete.confirmDescription",
+								{
+									defaultValue:
+										"This will permanently remove the user. This action cannot be undone.",
+								},
+							),
+							confirmLabel: t("content.userFormModal.delete.confirm"),
+							cancelLabel: t("content.userFormModal.delete.cancel", {
 								defaultValue: "Cancel",
 							}),
 							onCancel: () => setShowDeleteDialog(false),
 							onConfirm: async () => {
 								if (isDeleting) return;
 								setIsDeleting(true);
+								const result = await deleteUser(resolvedUser.id);
+								if (!result.ok) {
+									setDeleteError({
+										title: t("content.userFormModal.delete.errorTitle", {
+											defaultValue: "Delete failed",
+										}),
+										description: translateUserFormError(t, result.error),
+									});
+									setShowDeleteDialog(false);
+									setIsDeleting(false);
+									return;
+								}
+								handleClose();
+								triggerAccountRefresh(["users", "entityAudits"]);
 								try {
-									handleClose();
-									await deleteUser(resolvedUser.id);
 									queueMicrotask(() => {
 										removeUser(resolvedUser.id);
 										showSuccessToast(
-											t("userFormModal.feedback.delete.title", {
+											t("content.userFormModal.feedback.delete.title", {
 												defaultValue: "User deleted",
 											}),
-											t("userFormModal.feedback.delete.description", {
+											t("content.userFormModal.feedback.delete.description", {
 												defaultValue: "The user has been removed successfully.",
 											}),
 										);
 									});
-								} catch {
-									setDeleteError({
-										title: t("userFormModal.delete.errorTitle", {
-											defaultValue: "Delete failed",
-										}),
-										description: t("userFormModal.delete.errorDescription", {
-											defaultValue:
-												"Please try again or contact support if the issue persists.",
-										}),
-									});
-									setShowDeleteDialog(false);
 								} finally {
 									setIsDeleting(false);
 								}
@@ -663,9 +730,9 @@ export function UserFormModal({
 				deleteError || submitError
 					? {
 							open: true,
-							title: deleteError ? deleteError.title : t("error"),
+							title: deleteError ? deleteError.title : t("common.error"),
 							description: deleteError?.description ?? submitError ?? "",
-							confirmLabel: t("close"),
+							confirmLabel: t("common.close"),
 							onConfirm: () => {
 								setDeleteError(null);
 								setSubmitError(null);
@@ -685,7 +752,7 @@ export function UserFormModal({
 					<DialogTitle className="title">{getDialogTitle(mode, t)}</DialogTitle>
 				</div>
 				{autoCloseError ? null : (
-					<div className="flex-1 overflow-auto px-6 py-6 md:px-10 flex flex-col">
+					<div className="flex-1 overflow-auto px-6 py-6 md:px-10 flex flex-col gap-4">
 						{renderDialogBody(isWaitingForUser, formConfig, resolvedUser, mode)}
 					</div>
 				)}

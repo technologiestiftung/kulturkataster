@@ -15,7 +15,7 @@ test.describe("edit routes", () => {
 	test.beforeEach(async ({ page }) => {
 		test.skip(!hasRealUserCredentials, "E2E credentials not set");
 		await prepareStableUi(page);
-		await safeGoto(page, "/de/account/activity", /\/de\/account\/activity\/?$/);
+		await safeGoto(page, "/de/account", /\/de\/account(?:\/activity)?\/?$/);
 	});
 
 	test("institution edit loads", async ({ page }) => {
@@ -32,8 +32,8 @@ test.describe("edit routes", () => {
 		test.skip(!submissionId, "E2E submission id not set");
 		await safeGoto(
 			page,
-			`/de/institution/submission/${submissionId}/edit`,
-			new RegExp(`/de/institution/submission/${submissionId}/edit/?$`),
+			`/de/account/submissions/${submissionId}/edit`,
+			new RegExp(`/de/account/submissions/${submissionId}/edit/?$`),
 		);
 		await expect(page.locator("input#name").first()).toBeVisible();
 	});
