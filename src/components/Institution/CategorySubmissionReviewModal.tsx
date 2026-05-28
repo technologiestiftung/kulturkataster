@@ -170,7 +170,7 @@ export function CategorySubmissionReviewModal({
 							open: true,
 							title: t("content.categorySubmissionReview.error.title"),
 							description: reviewError,
-							confirmLabel: t("content.close"),
+							confirmLabel: t("common.close"),
 							onConfirm: () => setReviewError(null),
 							onOpenChange: (open) => {
 								if (!open) setReviewError(null);
@@ -226,6 +226,7 @@ export function CategorySubmissionReviewModal({
 							>
 								{linkedInstitutionName ??
 									t("content.categorySubmissionReview.linkedSubmission", {
+										id: linkedInstitutionSubmissionId,
 										defaultValue: `Einreichung #${linkedInstitutionSubmissionId}`,
 									})}
 							</Button>

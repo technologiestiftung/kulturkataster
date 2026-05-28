@@ -116,7 +116,7 @@ export function UserClaimReviewModal({
 								defaultValue: "Review failed",
 							}),
 							description: reviewError,
-							confirmLabel: t("content.close"),
+							confirmLabel: t("common.close"),
 							onConfirm: () => setReviewError(null),
 							onOpenChange: (open) => {
 								if (!open) setReviewError(null);
