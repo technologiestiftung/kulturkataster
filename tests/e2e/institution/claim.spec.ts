@@ -74,7 +74,9 @@ test.describe("institution claim flow", () => {
 		}
 
 		const submitErrorDialog = page
-			.getByText(/The claim request could not be submitted/i)
+			.getByText(
+				/The claim request could not be submitted|Die Anfrage konnte nicht gesendet werden/i,
+			)
 			.first();
 		await expect(submitErrorDialog).toBeVisible({ timeout: 10_000 });
 

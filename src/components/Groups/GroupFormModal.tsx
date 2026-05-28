@@ -356,9 +356,16 @@ export function GroupFormModal({
 	const groups = useAccountStore((state) => state.groups);
 	const users = useAccountStore((state) => state.users);
 	const removeGroup = useAccountStore((state) => state.removeGroup);
-	const institutions =
-		useInstitutionStore((state) => state.allInstitutions) ?? [];
-	const categories = useInstitutionStore((state) => state.categories) ?? [];
+	const allInstitutions = useInstitutionStore((state) => state.allInstitutions);
+	const storeCategories = useInstitutionStore((state) => state.categories);
+	const isInstitutionStoreLoading = useInstitutionStore(
+		(state) => state.isLoading,
+	);
+	const initializePublicData = useInstitutionStore(
+		(state) => state.initializePublicData,
+	);
+	const institutions = allInstitutions ?? [];
+	const categories = storeCategories ?? [];
 	const [isDeleting, setIsDeleting] = useState(false);
 	const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 	const [deleteError, setDeleteError] = useState<{
@@ -397,6 +404,20 @@ export function GroupFormModal({
 
 	const { numericGroupId, resolvedGroup, isWaitingForGroup, showNotFound } =
 		useResolvedGroup(mode, groupId, groups);
+
+	useEffect(() => {
+		if (allInstitutions !== null && storeCategories !== null) return;
+		if (isInstitutionStoreLoading) return;
+		if (typeof initializePublicData !== "function") return;
+
+		void initializePublicData();
+	}, [
+		allInstitutions,
+		initializePublicData,
+		isInstitutionStoreLoading,
+		storeCategories,
+	]);
+
 	const handleSuccess = (nextMode: GroupFormModalProps["mode"]) => {
 		const keyPrefix =
 			nextMode === "create"
@@ -542,9 +563,9 @@ export function GroupFormModal({
 				deleteError || submitError
 					? {
 							open: true,
-							title: deleteError ? deleteError.title : t("content.error"),
+							title: deleteError ? deleteError.title : t("common.error"),
 							description: deleteError?.description ?? submitError ?? "",
-							confirmLabel: t("content.close"),
+							confirmLabel: t("common.close"),
 							onConfirm: () => {
 								setDeleteError(null);
 								setSubmitError(null);

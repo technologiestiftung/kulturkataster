@@ -36,5 +36,13 @@ describe("fetchTraduoraTranslations", () => {
 
 		const result = await fetchTraduoraTranslations("en", "content");
 		expect(result).toHaveProperty("welcome.title", "Hello");
+		expect(fetchMock).toHaveBeenCalledWith(
+			"https://example.test/projects/project-1/terms",
+			expect.objectContaining({ cache: "no-store" }),
+		);
+		expect(fetchMock).toHaveBeenCalledWith(
+			"https://example.test/projects/project-1/translations/en",
+			expect.objectContaining({ cache: "no-store" }),
+		);
 	});
 });

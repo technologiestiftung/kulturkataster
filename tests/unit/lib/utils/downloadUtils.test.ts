@@ -330,13 +330,15 @@ describe("generateExcelBuffer", () => {
 		);
 		expect(worksheet.A3?.v).toBe("www.kulturkataster.berlin");
 		expect(worksheet.A4?.v).toBe("Ein Projekt der Kulturraum Berlin gGmbH");
-		expect(worksheet.A1?.l?.Target).toBe(
-			"https://www.kulturkataster.berlin/de/download",
-		);
+		expect(worksheet.A1?.l).toBeUndefined();
+		expect(worksheet.A2?.l).toBeUndefined();
 		expect(worksheet.A3?.l?.Target).toBe("https://www.kulturkataster.berlin");
+		expect(worksheet.A4?.l).toBeUndefined();
 		expect(worksheet.A6?.v).toBe("Status");
 		expect(worksheet.B6?.v).toBe("ID");
 		expect(worksheet.A7?.v).toBe("Öffentlich");
+		expect(worksheet.D7?.v).toBe("https://example.de");
+		expect(worksheet.D7?.l?.Target).toBe("https://example.de");
 		expect(worksheet["!merges"]).toEqual(
 			expect.arrayContaining([
 				{ s: { r: 0, c: 0 }, e: { r: 0, c: 3 } },

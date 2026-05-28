@@ -44,7 +44,7 @@ export function AccessibilityModal({ routePath }: { routePath?: string }) {
 									rel="noopener noreferrer"
 									className="text-primary-dark hover:text-primary underline bg-transparent border-none p-0 "
 								>
-									{t("content.here")}
+									{t("common.here")}
 								</Link>
 							),
 						}}
@@ -60,7 +60,7 @@ export function AccessibilityModal({ routePath }: { routePath?: string }) {
 									rel="noopener noreferrer"
 									className="text-primary-dark hover:text-primary underline bg-transparent border-none p-0 "
 								>
-									{t("content.here")}
+									{t("common.here")}
 								</Link>
 							),
 						}}

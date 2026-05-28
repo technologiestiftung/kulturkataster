@@ -304,12 +304,14 @@ export function MultiSelectModal({
 			<DialogPrimitive.Root open={open} onOpenChange={handleOpenChange}>
 				<DialogContent variant="multi-select" showBackButton={false}>
 					<div className="flex items-center justify-between bg-neutral-5 px-6 py-5">
-						<DialogTitle className="text-lg font-semibold">{title}</DialogTitle>
-						<div className="body3 text-neutral-60">
-							{t("common.multiSelectModal.selectedCount", {
-								count: draftSelected.length,
-							})}
-						</div>
+						<DialogTitle className="text-lg font-semibold">
+							{title}
+							<div className="body3 text-neutral-60">
+								{t("common.multiSelectModal.selectedCount", {
+									count: draftSelected.length,
+								})}
+							</div>
+						</DialogTitle>
 					</div>
 					<div
 						className={cn(

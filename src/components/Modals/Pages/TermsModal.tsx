@@ -55,18 +55,16 @@ export function TermsModal({ routePath }: { routePath?: string }) {
 								),
 
 								h2: ({ children }) => (
-									<h2 className="text-lg font-semibold mt-6 mb-2">
-										{children}
-									</h2>
+									<h2 className="h2 font-semibold mt-6 mb-2">{children}</h2>
 								),
 								h3: ({ children }) => (
-									<h3 className="body1 font-semibold mt-5 mb-2">{children}</h3>
+									<h3 className="body1 mt-5 mb-2">{children}</h3>
 								),
 								h4: ({ children }) => (
-									<h4 className="body1 font-semibold mt-4 mb-2">{children}</h4>
+									<h4 className="body1 mt-4 mb-2">{children}</h4>
 								),
 								h5: ({ children }) => (
-									<h5 className="body2 font-semibold mt-3 mb-2">{children}</h5>
+									<h5 className="body1 mt-3 mb-2">{children}</h5>
 								),
 
 								p: ({ children }) => <p className="body1 mb-3">{children}</p>,
