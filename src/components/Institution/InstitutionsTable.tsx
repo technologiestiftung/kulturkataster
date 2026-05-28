@@ -962,7 +962,7 @@ export function InstitutionsTable() {
 					label: (
 						<span className="inline-flex items-center gap-2">
 							<Send className="size-4" />
-							<span>
+							<span className="hidden sm:inline">
 								{t("content.institutionsTable.actions.claimInstitution")}
 							</span>
 						</span>
