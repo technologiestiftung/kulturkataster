@@ -92,6 +92,7 @@ const EXCEL_NOTICE_DEFAULT_ROWS = [
 	"www.kulturkataster.berlin",
 	"Ein Projekt der Kulturraum Berlin gGmbH",
 ] as const;
+const EXCEL_HYPERLINK_FONT_COLOR = "0563C1";
 
 const enumKeyMappings: Record<string, string> = {
 	categories: "category",
@@ -628,6 +629,62 @@ function applyExcelHeaderStyle(ws: XLSX.WorkSheet, headers: string[]) {
 	});
 }
 
+function getHyperlinkTarget(value: string): string | null {
+	const trimmedValue = value.trim();
+	if (!trimmedValue) return null;
+
+	if (/^https?:\/\/\S+$/i.test(trimmedValue)) {
+		return trimmedValue;
+	}
+
+	if (/^mailto:\S+@\S+\.\S+$/i.test(trimmedValue)) {
+		return trimmedValue;
+	}
+
+	if (/^www\.\S+\.\S+$/i.test(trimmedValue)) {
+		return `https://${trimmedValue}`;
+	}
+
+	return null;
+}
+
+function applyExcelHyperlinks(
+	ws: XLSX.WorkSheet,
+	data: Record<string, string>[],
+) {
+	if (data.length === 0) return;
+
+	const headers = Object.keys(data[0]);
+	data.forEach((row, rowIndex) => {
+		headers.forEach((header, colIndex) => {
+			const value = row[header];
+			if (typeof value !== "string") return;
+			const hyperlinkTarget = getHyperlinkTarget(value);
+			if (!hyperlinkTarget) return;
+
+			const cellAddress = XLSX.utils.encode_cell({
+				r: EXCEL_NOTICE_ROWS + 1 + rowIndex,
+				c: colIndex,
+			});
+			const cell = ws[cellAddress];
+			if (!cell) return;
+
+			cell.l = {
+				Target: hyperlinkTarget,
+				Tooltip: hyperlinkTarget,
+			};
+			cell.s = {
+				...(cell.s ?? {}),
+				font: {
+					...((cell.s as XLSX.CellObject["s"])?.font ?? {}),
+					color: { rgb: EXCEL_HYPERLINK_FONT_COLOR },
+					underline: true,
+				},
+			};
+		});
+	});
+}
+
 function applyExcelColumnWidths(
 	ws: XLSX.WorkSheet,
 	data: Record<string, string>[],
@@ -665,6 +722,7 @@ export function generateExcelBuffer(
 			origin: `A${EXCEL_NOTICE_ROWS + 1}`,
 		});
 		applyExcelHeaderStyle(ws, Object.keys(data[0]));
+		applyExcelHyperlinks(ws, data);
 	}
 	applyExcelColumnWidths(ws, data);
 
