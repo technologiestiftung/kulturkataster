@@ -15,7 +15,7 @@ export function SearchMessages({
 	query,
 	className,
 }: SearchMessagesProps) {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation();
 
 	if (hasError && !isLoading) {
 		return (
@@ -28,7 +28,7 @@ export function SearchMessages({
 	if (query.trim().length === 0) {
 		return (
 			<div className={cn("flex-1", className)}>
-				<p className="body2">{t("search.description")}</p>
+				<p className="body2">{t("common.search.description")}</p>
 			</div>
 		);
 	}

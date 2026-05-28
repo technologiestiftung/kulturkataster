@@ -15,13 +15,13 @@ export function RolesTable() {
 	const roles = useAccountStore((state) => state.roles);
 	const router = useRouter();
 	const toLocalePath = useLocalePath();
-	const { t } = useTranslation(["content", "enumMap"]);
+	const { t } = useTranslation();
 
 	const tableConfig: DataTableConfig<Role> = {
 		columns: [
 			{
 				accessorKey: "name",
-				header: t("roleTable.columns.name"),
+				header: t("content.roleTable.columns.name"),
 				enableSorting: true,
 				meta: { pin: "left", truncate: true },
 				cell: ({ row }) => (
@@ -29,7 +29,9 @@ export function RolesTable() {
 						<span>{row.original.name}</span>
 						{row.original.is_guest ? (
 							<Badge variant="default">
-								{t("roleTable.badges.guest", { defaultValue: "Guest role" })}
+								{t("content.roleTable.badges.guest", {
+									defaultValue: "Guest role",
+								})}
 							</Badge>
 						) : null}
 					</div>
@@ -37,33 +39,34 @@ export function RolesTable() {
 			},
 			{
 				accessorKey: "description",
-				header: t("roleTable.columns.description"),
+				header: t("content.roleTable.columns.description"),
 				enableSorting: true,
 				meta: { truncate: true },
 			},
 			{
 				id: "created_at",
-				header: t("roleTable.columns.createdAt"),
+				header: t("content.roleTable.columns.createdAt"),
 				accessorFn: (row) => new Date(row.created_at).toLocaleDateString(),
 				enableSorting: true,
 			},
 			{
 				id: "updated_at",
-				header: t("roleTable.columns.updatedAt"),
+				header: t("content.roleTable.columns.updatedAt"),
 				accessorFn: (row) => new Date(row.updated_at).toLocaleDateString(),
 				enableSorting: true,
 			},
 			{
 				id: "userCount",
-				header: t("roleTable.columns.users"),
+				header: t("content.roleTable.columns.users"),
 				accessorFn: (row) => row.users.length,
 				enableSorting: true,
 			},
 		],
+
 		data: roles,
 		getRowKey: (row) => row.id,
 		searchable: true,
-		searchPlaceholder: t("roleTable.searchPlaceholder"),
+		searchPlaceholder: t("content.roleTable.searchPlaceholder"),
 		getSearchableValues: (row) => {
 			const values: string[] = [
 				row.name,
@@ -74,32 +77,33 @@ export function RolesTable() {
 			return values;
 		},
 		primaryButton: {
-			label: t("roleTable.actions.add"),
+			label: t("content.roleTable.actions.add"),
 			onClick: () => router.push(toLocalePath("/account/roles/new")),
 		},
 		emptyState: (
 			<EmptyActionState
-				title={t("roleTable.empty.title", {
+				title={t("content.roleTable.empty.title", {
 					defaultValue: "Keine Rollen gefunden.",
 				})}
-				description={t("roleTable.empty.description", {
+				description={t("content.roleTable.empty.description", {
 					defaultValue:
 						"Erstellen Sie eine Rolle, um Berechtigungen zu verwalten.",
 				})}
 				actions={[
 					{
 						icon: <Plus className="size-5" />,
-						label: t("roleTable.actions.add"),
+						label: t("content.roleTable.actions.add"),
 						href: toLocalePath("/account/roles/new"),
 					},
 				]}
 			/>
 		),
+
 		onEdit: (row) => router.push(toLocalePath(`/account/roles/${row.id}/edit`)),
 		onEditPrefetch: (row) => {
 			void router.prefetch(toLocalePath(`/account/roles/${row.id}/edit`));
 		},
-		emptyMessage: t("roleTable.emptyMessage"),
+		emptyMessage: t("content.roleTable.emptyMessage"),
 	};
 
 	return (

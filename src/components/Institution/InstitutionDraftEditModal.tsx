@@ -35,7 +35,7 @@ export function InstitutionDraftEditModal({
 	shouldRefresh = false,
 	routePath,
 }: InstitutionDraftEditModalProps) {
-	const { t } = useTranslation("content");
+	const { t } = useTranslation();
 	const hasSubmissionId = typeof submissionId === "number";
 	const resolvedSubmission = useAccountStore((state) => {
 		if (!hasSubmissionId) return undefined;
@@ -159,10 +159,10 @@ export function InstitutionDraftEditModal({
 			await deleteSubmission(submissionId);
 			removeSubmission(submissionId);
 			showSuccessToast(
-				t("institutionDraftEditModal.delete.successTitle", {
+				t("content.institutionDraftEditModal.delete.successTitle", {
 					defaultValue: "Entwurf gelöscht",
 				}),
-				t("institutionDraftEditModal.delete.successDescription", {
+				t("content.institutionDraftEditModal.delete.successDescription", {
 					defaultValue: "Die Einreichung wurde gelöscht.",
 				}),
 			);
@@ -221,8 +221,10 @@ export function InstitutionDraftEditModal({
 		return (
 			<AlertDialog
 				status="error"
-				title={t("institutionFormModal.dialog.notFound.title")}
-				description={t("institutionFormModal.dialog.notFound.description")}
+				title={t("content.institutionFormModal.dialog.notFound.title")}
+				description={t(
+					"content.institutionFormModal.dialog.notFound.description",
+				)}
 			/>
 		);
 	}
@@ -237,10 +239,10 @@ export function InstitutionDraftEditModal({
 			returnTo={returnTo}
 			routePath={routePath}
 			closeConfirmation={{
-				title: t("institutionModalCloseConfirmation.title"),
-				description: t("institutionModalCloseConfirmation.description"),
-				confirmLabel: t("institutionModalCloseConfirmation.confirm"),
-				cancelLabel: t("institutionModalCloseConfirmation.cancel"),
+				title: t("content.institutionModalCloseConfirmation.title"),
+				description: t("content.institutionModalCloseConfirmation.description"),
+				confirmLabel: t("content.institutionModalCloseConfirmation.confirm"),
+				cancelLabel: t("content.institutionModalCloseConfirmation.cancel"),
 			}}
 			formKey={`draft-${submissionId ?? "new"}-${
 				resolvedSubmissionWithFallback ? "loaded" : "loading"
@@ -249,28 +251,31 @@ export function InstitutionDraftEditModal({
 			onSubmit={({ data }) => handleSubmit(data)}
 			onDelete={handleDeleteDraft}
 			deleteConfig={{
-				buttonLabel: t("institutionDraftEditModal.delete.button", {
+				buttonLabel: t("content.institutionDraftEditModal.delete.button", {
 					defaultValue: "Entwurf löschen",
 				}),
-				confirmTitle: t("institutionDraftEditModal.delete.confirmTitle", {
-					defaultValue: "Entwurf löschen?",
-				}),
+				confirmTitle: t(
+					"content.institutionDraftEditModal.delete.confirmTitle",
+					{
+						defaultValue: "Entwurf löschen?",
+					},
+				),
 				confirmDescription: t(
-					"institutionDraftEditModal.delete.confirmDescription",
+					"content.institutionDraftEditModal.delete.confirmDescription",
 					{
 						defaultValue:
 							"Die Einreichung wird dauerhaft entfernt. Diese Aktion kann nicht rückgängig gemacht werden.",
 					},
 				),
-				confirmLabel: t("institutionDraftEditModal.delete.confirm", {
+				confirmLabel: t("content.institutionDraftEditModal.delete.confirm", {
 					defaultValue: "Löschen",
 				}),
-				cancelLabel: t("institutionDraftEditModal.delete.cancel", {
+				cancelLabel: t("content.institutionDraftEditModal.delete.cancel", {
 					defaultValue: "Abbrechen",
 				}),
 			}}
 			closeOnSubmit
-			submitLabel={t("institutionFormModal.actions.save")}
+			submitLabel={t("content.institutionFormModal.actions.save")}
 			shouldRefresh={shouldRefresh}
 		/>
 	);

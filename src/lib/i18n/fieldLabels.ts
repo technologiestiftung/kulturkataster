@@ -3,17 +3,17 @@ import type { TFunction } from "i18next";
 type Translator = TFunction | ((key: string) => string);
 
 export const getFieldLabel = (tEnum: Translator, key: string) => {
-	return tEnum(`field_names.${key}.label`);
+	return tEnum(`enumMap.field_names.${key}.label`);
 };
 
 export const getFieldDescription = (tEnum: Translator, key: string) => {
-	const translationKey = `field_names.${key}.description`;
+	const translationKey = `enumMap.field_names.${key}.description`;
 	const translated = tEnum(translationKey);
 	return translated === translationKey ? "" : translated;
 };
 
 export const getFieldPlaceholder = (tEnum: Translator, key: string) => {
-	return tEnum(`field_names.${key}.placeholder`);
+	return tEnum(`enumMap.field_names.${key}.placeholder`);
 };
 
 export const getFieldOptionLabel = (
@@ -21,13 +21,13 @@ export const getFieldOptionLabel = (
 	key: string,
 	value: string,
 ) => {
-	const fieldOptionKey = `field_names.${key}.options.${value}`;
+	const fieldOptionKey = `enumMap.field_names.${key}.options.${value}`;
 	const fieldOptionTranslation = tEnum(fieldOptionKey);
 	if (fieldOptionTranslation !== fieldOptionKey) {
 		return fieldOptionTranslation;
 	}
 
-	const legacyKey = `${key}.${value}`;
+	const legacyKey = `enumMap.${key}.${value}`;
 	const legacyTranslation = tEnum(legacyKey);
 	return legacyTranslation === legacyKey ? value : legacyTranslation;
 };
@@ -37,5 +37,5 @@ export const getFieldError = (
 	key: string,
 	errorKey: string,
 ) => {
-	return tEnum(`field_names.${key}.errors.${errorKey}`);
+	return tEnum(`enumMap.field_names.${key}.errors.${errorKey}`);
 };

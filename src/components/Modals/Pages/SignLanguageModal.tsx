@@ -64,16 +64,16 @@ export function VideoWithLoader({ src }: { src: string }) {
 }
 
 export function SignLanguageModal({ routePath }: { routePath?: string }) {
-	const { t } = useTranslation("content");
+	const { t } = useTranslation();
 
-	const content = t("signLanguageModal.content", {
+	const content = t("content.signLanguageModal.content", {
 		returnObjects: true,
 	}) as SignLanguageInformationItem[];
 
 	return (
 		<Modal
-			title={t("signLanguageModal.title")}
-			subtitle={t("signLanguageModal.subtitle")}
+			title={t("content.signLanguageModal.title")}
+			subtitle={t("content.signLanguageModal.subtitle")}
 			routePath={routePath}
 			hideLinksInModalFooter={[
 				"signLanguageInformation",
@@ -81,7 +81,7 @@ export function SignLanguageModal({ routePath }: { routePath?: string }) {
 				"signLanguageInformationShort",
 			]}
 		>
-			<p>{t("signLanguageModal.description")}</p>
+			<p>{t("content.signLanguageModal.description")}</p>
 			<Tabs defaultValue="tab1" className="w-full mt-10">
 				<TabsList variant="modalTabs">
 					{content.map((item, index) => (

@@ -88,7 +88,7 @@ function DialogContent({
 		| "alert"
 		| "editor";
 }) {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation();
 	const focusRef = React.useRef<HTMLDivElement | null>(null);
 	const toLocalePath = useLocalePath();
 	const getVariantStyles = () => {
@@ -99,7 +99,7 @@ function DialogContent({
 			fullscreen:
 				"fixed z-[70] top-0 md:top-[5rem] left-1/2 w-full max-w-314 h-full md:h-[calc(100%-5rem)] -translate-x-1/2 md:rounded-t-lg border",
 			"fullscreen-muted":
-				"fixed z-[70]  top-0 md:top-[5rem] left-1/2 w-full max-w-314 h-full md:h-[calc(100%-5rem)] -translate-x-1/2 md:rounded-t-lg border",
+				"fixed z-[70] top-0 md:top-[5rem] left-1/2 w-full flex justify-center max-w-314 h-full md:h-[calc(100%-5rem)] -translate-x-1/2 md:rounded-t-lg border",
 			centered:
 				"fixed z-[70] top-0 md:top-1/2 left-1/2 w-full max-w-314 h-full md:h-auto md:max-h-[calc(100%-5rem)] -translate-x-1/2 md:-translate-y-1/2 md:rounded-lg border flex flex-col",
 			"mobile-menu": "fixed z-[70] h-full inset-0 w-full border-0 p-0",
@@ -133,6 +133,7 @@ function DialogContent({
 							: ""
 				}
 			/>
+
 			<DialogPrimitive.Content
 				data-slot="dialog-content"
 				className={cn(
@@ -152,7 +153,10 @@ function DialogContent({
 			>
 				{!showBackButton && showLogo && (
 					<div className="absolute top-6 left-4 md:hidden block z-99">
-						<a href={toLocalePath("/welcome")} aria-label={t("kukaLogo")}>
+						<a
+							href={toLocalePath("/welcome")}
+							aria-label={t("common.kukaLogo")}
+						>
 							<KukaSmallLogo
 								title="Kulturkataster Berlin, Logo"
 								className="size-14 cursor-pointer hover:opacity-80 transition-opacity"
@@ -169,7 +173,7 @@ function DialogContent({
 						className={backAndCloseClassNames("back")}
 					>
 						<BackIcon />
-						<span className="sr-only">{t("back")}</span>
+						<span className="sr-only">{t("common.back")}</span>
 					</Button>
 				)}
 				{showCloseButton && (
@@ -185,7 +189,7 @@ function DialogContent({
 							className={backAndCloseClassNames("close")}
 						>
 							<Close />
-							<span className="sr-only">{t("close")}</span>
+							<span className="sr-only">{t("common.close")}</span>
 						</Button>
 					</DialogPrimitive.Close>
 				)}

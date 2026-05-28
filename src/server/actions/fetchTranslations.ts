@@ -10,7 +10,7 @@ import { logger } from "@/server/logging/logger";
 export async function fetchTranslations(
 	locale: string,
 	namespace?: string,
-): Promise<Record<string, string>> {
+): Promise<Record<string, unknown>> {
 	try {
 		return await fetchTraduoraTranslations(locale, namespace);
 	} catch (error) {

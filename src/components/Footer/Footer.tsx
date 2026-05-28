@@ -23,7 +23,7 @@ interface FooterProps {
 }
 
 const Footer: FC<FooterProps> = ({ ariaLabel, envHint }) => {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation();
 	const pathname = usePathname();
 	const toLocalePath = useLocalePath();
 	const isListRoute = pathname?.replace(/\/$/, "").endsWith("/list");
@@ -32,15 +32,15 @@ const Footer: FC<FooterProps> = ({ ariaLabel, envHint }) => {
 
 	return (
 		<footer
-			className="Footer-root z-51 space-x-14 hidden min-w-fit h-8 bg-footer fixed right-0 bottom-0 md:flex justify-between px-2 py-1 ml-20"
+			className="Footer-root z-31 space-x-14 hidden min-w-fit h-8 bg-footer fixed right-0 bottom-0 md:flex justify-between px-2 py-1 ml-20"
 			role="contentinfo"
-			aria-label={ariaLabel ?? t("footerLandmark")}
+			aria-label={ariaLabel ?? t("common.footerLandmark")}
 		>
 			<div className="body2 flex items-center gap-1 text-nowrap truncate">
-				<p>{t("footer.projectBy")}</p>
+				<p>{t("common.footer.projectBy")}</p>
 			</div>
 
-			<nav aria-label={t("footer.navigationAriaLabel")}>
+			<nav aria-label={t("common.footer.navigationAriaLabel")}>
 				<ul className="flex gap-4 body2 font-bold">
 					{footerItems.map((item) => (
 						<li key={item.id}>
@@ -53,7 +53,7 @@ const Footer: FC<FooterProps> = ({ ariaLabel, envHint }) => {
 										target={link.target}
 										rel="noopener noreferrer"
 									>
-										{t(`footer.${item.id}`)}
+										{t(`common.footer.${item.id}`)}
 									</Link>
 								);
 							})()}

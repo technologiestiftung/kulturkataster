@@ -357,6 +357,40 @@ describe("ActivityList filters", () => {
 		}
 	});
 
+	it("falls back to the audit user for download rows with stale unknown requester metadata", () => {
+		mockState.entityAudits = [
+			makeAudit({
+				id: 10,
+				action: "update",
+				entity_type: "user",
+				entity_id: "current-user",
+				status: "completed",
+				user: {
+					first_name: "Ada",
+					last_name: "Lovelace",
+					email: "ada@example.com",
+				},
+				new_data: {
+					format: "xls",
+					institution_count: 12,
+				},
+				meta_info: {
+					download_event: true,
+					download_type: "institution_export",
+					requester_name: "Unknown",
+					requester_email: "",
+				},
+			}),
+		];
+
+		render(<ActivityList />);
+
+		expect(screen.getByTestId("activity-row")).toHaveTextContent(
+			"Ada Lovelace",
+		);
+		expect(screen.getByTestId("activity-row")).not.toHaveTextContent("Unknown");
+	});
+
 	it("keeps submission review bulk helper audits collapsed into one activity", () => {
 		const reviewCorrelationId = "submission:270:review:1777418822127";
 

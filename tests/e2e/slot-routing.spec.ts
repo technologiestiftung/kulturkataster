@@ -45,6 +45,7 @@ test.describe("slot routing", () => {
 	}) => {
 		test.skip(!hasInstitutionData, "E2E institution data not set");
 
+		await page.setViewportSize({ width: 390, height: 844 });
 		await safeGoto(
 			page,
 			`/de/map/institution/${institutionId}`,
@@ -67,7 +68,7 @@ test.describe("slot routing", () => {
 		await expect(listButton).toBeEnabled();
 		await listButton.click({ force: true });
 		await expect(page).toHaveURL(
-			new RegExp(`/de/list(?:/institution/${institutionId})?/?$`),
+			new RegExp(`/de/list/institution/${institutionId}/?$`),
 			{
 				timeout: 30_000,
 			},
@@ -92,7 +93,7 @@ test.describe("slot routing", () => {
 		await expect(mapButton).toBeEnabled();
 		await mapButton.click({ force: true });
 		await expect(page).toHaveURL(
-			new RegExp(`/de/map(?:/institution/${institutionId})?/?$`),
+			new RegExp(`/de/map/institution/${institutionId}/?$`),
 			{
 				timeout: 15_000,
 			},

@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
     inputs:
       action:
-        description: 'Sync action to perform'
+        description: "Sync action to perform"
         required: true
         type: choice
         options:
@@ -13,10 +13,11 @@ on:
           - pull --all
           - push
           - push --all
-        default: 'pull'
+          - push --all --prune
+        default: "pull"
 
   schedule:
-    - cron: '0 2 * * *'
+    - cron: "0 2 * * *"
 
 jobs:
   sync-translations:
@@ -38,8 +39,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: "20"
+          cache: "npm"
 
       - name: Check lockfile sync
         run: |
@@ -72,7 +73,7 @@ jobs:
           TRADUORA_PROJECT_ID: ${{ vars.TRADUORA_PROJECT_ID }}
         run: |
           echo "📥 Pulling translations from Traduora..."
-          npm run traduora:sync ${{ steps.action.outputs.action }}
+          npm run traduora:sync -- ${{ steps.action.outputs.action }}
           npm run format:fix
 
       - name: Push translations to Traduora
@@ -84,7 +85,7 @@ jobs:
           TRADUORA_PROJECT_ID: ${{ vars.TRADUORA_PROJECT_ID }}
         run: |
           echo "📤 Pushing translations to Traduora..."
-          npm run traduora:sync ${{ steps.action.outputs.action }}
+          npm run traduora:sync -- ${{ steps.action.outputs.action }}
 
       - name: Check for changes
         id: check_changes
@@ -107,16 +108,20 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: |
-            feat: sync translations from Traduora
+            Sync translations from Traduora
 
-            🤖 Generated with [Claude Code](https://claude.ai/code)
+            Automated pull from Traduora into the local translation bundle.
 
-            Co-Authored-By: Claude <noreply@anthropic.com>
-          title: 'feat: sync translations from Traduora'
+            Constraint: Traduora stores fully qualified term keys and does not model app namespaces.
+            Confidence: medium
+            Scope-risk: narrow
+            Tested: GitHub workflow sync action
+            Not-tested: Manual translation review
+          title: "feat: sync translations from Traduora"
           body: |
             ## Summary
             - Pulled latest translations from Traduora
-            - Updated local translation files with translator updates
+            - Updated `src/lib/i18n/translations/*/translation.json` with translator updates
             - Mode: ${{ steps.action.outputs.action }}
 
             ## Changes
@@ -142,11 +147,15 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add src/lib/i18n/translations/
-          git commit -m "feat: push local translations to Traduora
+          git commit -m "Push local translations to Traduora
 
-          🤖 Generated with [Claude Code](https://claude.ai/code)
+          Automated push recorded local translation bundle changes after a Traduora sync.
 
-          Co-Authored-By: Claude <noreply@anthropic.com>"
+          Constraint: Traduora stores fully qualified term keys and does not model app namespaces.
+          Confidence: medium
+          Scope-risk: narrow
+          Tested: GitHub workflow sync action
+          Not-tested: Manual translation review"
           echo "Changes committed locally (not pushed to remote)"
 
       - name: Post summary
@@ -159,7 +168,7 @@ jobs:
           echo "- **Branch**: ${{ matrix.target_branch }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           if [ "${{ steps.check_changes.outputs.changes }}" == "true" ]; then
-            if [ "${{ steps.action.outputs.action }}" == "pull" ]; then
+            if [[ "${{ steps.action.outputs.action }}" == pull* ]]; then
               echo "- **Result**: ✅ Translations pulled and PR created" >> $GITHUB_STEP_SUMMARY
             else
               echo "- **Result**: ✅ Translations pushed to Traduora" >> $GITHUB_STEP_SUMMARY
