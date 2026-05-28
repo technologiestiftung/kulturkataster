@@ -645,7 +645,7 @@
 				"clearFiltered": "Alles entfernen",
 				"selectFiltered": "Alles auswählen",
 				"showAll": "Alle anzeigen",
-				"showSelected": "Ausgewählte anzeigen"
+				"showSelected": "Auswahl anzeigen"
 			},
 			"filtersTitle": "Filter",
 			"resultsCount": "{{count}} Ergebnisse",
