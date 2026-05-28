@@ -1085,6 +1085,7 @@
 			"acknowledgementPrefix": "Ich habe den",
 			"acknowledgementSuffix": "gelesen und verstanden",
 			"chooseFormat": "Dateiformat wählen",
+			"dataUseAgreementConsent": "Ich bin einverstanden mit der Vereinbarung über die Datennutzung",
 			"dataUseAgreementText": "Ich werde die Daten nicht an Dritte weitergeben, sie ausschließlich im Rahmen der gesetzlichen Vorgaben, insbesondere der DSGVO soweit personenbezogene Daten betroffen sind, sowie nur für die Zwecke des Kulturkatasters nutzen. Zwecke des Kulturkatasters sind nicht kommerzieller Natur und sind die systematische Erfassung, Strukturierung und öffentliche Bereitstellung von Daten über Orte kultureller Produktion und Nutzung im Land Berlin, um eine belastbare Datengrundlage für kulturpolitische Entscheidungen, kulturelle Stadtentwicklung sowie für die Zusammenarbeit zwischen Kulturakteur*innen, Verwaltung, Wissenschaft und Öffentlichkeit zu schaffen.",
 			"dataUseAgreementTitle": "Vereinbarung über die Datennutzung",
 			"description": "Die Liste Ihrer Kulturorte können Sie hier in verschiedenen Dateiformaten herunterladen.",
