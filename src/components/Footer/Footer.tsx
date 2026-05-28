@@ -32,7 +32,7 @@ const Footer: FC<FooterProps> = ({ ariaLabel, envHint }) => {
 
 	return (
 		<footer
-			className="Footer-root z-51 space-x-14 hidden min-w-fit h-8 bg-footer fixed right-0 bottom-0 md:flex justify-between px-2 py-1 ml-20"
+			className="Footer-root z-31 space-x-14 hidden min-w-fit h-8 bg-footer fixed right-0 bottom-0 md:flex justify-between px-2 py-1 ml-20"
 			role="contentinfo"
 			aria-label={ariaLabel ?? t("common.footerLandmark")}
 		>

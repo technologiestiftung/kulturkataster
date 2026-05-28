@@ -43,7 +43,7 @@ export function ListTopbar({
 	return (
 		<div className="sticky top-0 z-20 -mx-4 w-[calc(100%+2rem)] bg-neutral-10 px-4 pt-2 after:pointer-events-none after:absolute after:left-0 after:right-0 after:top-full after:h-6 after:bg-linear-to-b after:from-neutral-10 after:to-transparent">
 			<div className="flex w-full flex-col p-2 gap-3 md:flex-row md:items-center md:justify-between">
-				<div className="flex gap-3 w-full pr-15">
+				<div className="flex gap-3 w-full pr-15 md:pr-0">
 					<strong
 						className={`${isSearchOpen && "hidden"} body2 self-end text-nowrap text-start md:text-start`}
 					>
