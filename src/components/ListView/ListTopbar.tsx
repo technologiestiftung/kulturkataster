@@ -42,12 +42,14 @@ export function ListTopbar({
 
 	return (
 		<div className="sticky top-0 z-20 -mx-4 w-[calc(100%+2rem)] bg-neutral-10 px-4 pt-2 after:pointer-events-none after:absolute after:left-0 after:right-0 after:top-full after:h-6 after:bg-linear-to-b after:from-neutral-10 after:to-transparent">
-			<div className="flex w-full flex-col gap-3 md:flex-row md:items-center md:justify-between">
-				<strong className="body2 text-nowrap text-end md:text-start">
-					{countLabel}
-				</strong>
-				<div className="flex gap-3 w-full">
-					<div className="relative flex flex-1 justify-end">
+			<div className="flex w-full flex-col p-2 gap-3 md:flex-row md:items-center md:justify-between">
+				<div className="flex gap-3 w-full pr-15 md:pr-0">
+					<strong
+						className={`${isSearchOpen && "hidden"} body2 self-end text-nowrap text-start md:text-start`}
+					>
+						{countLabel}
+					</strong>{" "}
+					<div className="relative flex flex-1 justify-end ">
 						<div
 							className={[
 								"relative flex-1 w-full transition-all duration-200 ease-out origin-left",
@@ -96,7 +98,7 @@ export function ListTopbar({
 								>
 									<SearchIcon className="size-4" />
 								</ButtonWithTooltip>
-								<Label emphasize={false}>
+								<Label emphasize={false} className="hidden md:block">
 									{t("content.listView.searchLabel")}
 								</Label>
 							</div>
@@ -110,7 +112,7 @@ export function ListTopbar({
 								onClick={onOpenFilter}
 							/>
 
-							<Label emphasize={false}>
+							<Label emphasize={false} className="hidden md:block">
 								{t("content.listView.filterButton")}
 							</Label>
 						</div>

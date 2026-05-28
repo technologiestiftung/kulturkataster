@@ -54,6 +54,12 @@ export const metadata: Metadata = {
 		"Die Seite macht Berlins Kulturlandschaft sichtbar: Kulturorte finden, filtern und erkunden – für Planung, Forschung und Öffentlichkeit. Ein Projekt der Kulturraum Berlin gGmbH.",
 };
 
+const parseHiddenMenuItems = (value: string | undefined) =>
+	value
+		?.split(",")
+		.map((item) => item.trim())
+		.filter(Boolean) ?? [];
+
 export default async function RootLayout({
 	children,
 	modal,
@@ -104,6 +110,7 @@ export default async function RootLayout({
 			: undefined;
 	const shouldLoadMatomo = envHint !== "local";
 	const isLoggedIn = (await getCurrentProfile()) !== null;
+	const hiddenMenuItems = parseHiddenMenuItems(process.env.HIDDEN_MENU_ITEMS);
 
 	return (
 		<html lang={locale} dir={getDirection(locale)}>
@@ -126,7 +133,11 @@ export default async function RootLayout({
 									aria-label={headerLabel}
 									className="flex-shrink-0 w-auto"
 								>
-									<Menu sidebar={sidebar} isLoggedIn={isLoggedIn} />
+									<Menu
+										sidebar={sidebar}
+										isLoggedIn={isLoggedIn}
+										hiddenMenuItems={hiddenMenuItems}
+									/>
 								</header>
 								<SidebarInset asChild className="min-h-0 flex-1 w-0">
 									<main
