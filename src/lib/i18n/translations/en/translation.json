@@ -258,6 +258,23 @@
 				"subtitle": "Help shape Berlin's cultural landscape.",
 				"title": "Welcome back."
 			},
+			"newsletter": {
+				"consentLabel": "Yes, I would like to subscribe to the Berlin Kulturkataster newsletter and consent to my email address being processed for this purpose. I can withdraw my consent at any time with future effect. *",
+				"consentRequired": "You must consent to the processing of your email address for the newsletter.",
+				"emailLabel": "Email",
+				"errorFallback": "Newsletter registration failed.",
+				"nameLabel": "First and last name",
+				"privacyLink": "Privacy policy",
+				"submit": "Subscribe",
+				"submitting": "Submitting...",
+				"subtitle": "Our newsletter provides updates about the latest developments in the Berlin Kulturkataster. We are glad you want to subscribe. You can withdraw your consent to receive the newsletter at any time. You can find further information in our <link />.",
+				"successCta": "Done",
+				"successMessageDescription": "You will now receive our news by email.",
+				"successMessageMail": "Please click the link in the email we just sent you to complete your subscription. Please also check your spam folder.",
+				"successMessageTitle": "Your registration was successful",
+				"thankYou": "Thank you!",
+				"title": "Berlin Kulturkataster newsletter"
+			},
 			"password": {
 				"hide": "Hide password",
 				"show": "Show password"
@@ -354,23 +371,6 @@
 				"passwordMin": "Password must be at least 8 characters",
 				"passwordMismatch": "Passwords do not match",
 				"passwordRequired": "Password is required"
-			},
-			"newsletter": {
-				"consentRequired": "You must consent to the processing of your email address for the newsletter.",
-				"consentLabel": "Yes, I would like to subscribe to the Berlin Kulturkataster newsletter and consent to my email address being processed for this purpose. I can withdraw my consent at any time with future effect. *",
-				"emailLabel": "Email",
-				"errorFallback": "Newsletter registration failed.",
-				"nameLabel": "First and last name",
-				"privacyLink": "Privacy policy",
-				"submit": "Subscribe",
-				"submitting": "Submitting...",
-				"subtitle": "Our newsletter provides updates about the latest developments in the Berlin Kulturkataster. We are glad you want to subscribe. You can withdraw your consent to receive the newsletter at any time. You can find further information in our <link />.",
-				"successCta": "Done",
-				"successMessageDescription": "You will now receive our news by email.",
-				"successMessageMail": "Please click the link in the email we just sent you to complete your subscription. Please also check your spam folder.",
-				"successMessageTitle": "Your registration was successful",
-				"thankYou": "Thank you!",
-				"title": "Berlin Kulturkataster newsletter"
 			}
 		},
 		"back": "Back",
@@ -626,6 +626,17 @@
 	},
 	"content": {
 		"aboutModal": {
+			"bodySections": [
+				"In a growing metropolis like Berlin, art and cultural spaces are scarce resources.",
+				"The cultural register is mentioned in the government policy guidelines for this legislative period.",
+				"The framework for the development of the cultural register is formed by four cultural policy guidelines on which the KRB has agreed with the Senate Department for Culture and Social Cohesion:",
+				"1. Evidence-based cultural policy and cultural urban development: The Berlin cultural cadastre creates a comprehensive data base about cultural areas in order to enable fact-based cultural policy and targeted urban development.\n2. Securing and redeveloping spaces for culture: The cultural cadastre serves as an instrument for sustainable monitoring of cultural areas in order to support their preservation and open up new spaces.\n3. Fair distribution of cultural offerings in the urban space and equal opportunities with regard to participation: The cultural register visualizes gaps in cultural offerings and supports city planning in creating a balanced and fair cultural offering for all Berliners.\n4. Improving collaboration between departments, levels and sectors: As a flexible digital planning tool, the cultural cadastre strengthens collaboration within the various areas of responsibility, administrative levels and the entire Berlin cultural scene.",
+				"The aim of the Berlin cultural cadastre is to capture a cultural landscape that is more diverse, dynamic and interdisciplinary than any other.",
+				"A broad concept of culture and a descriptive understanding of culture form the basis of the cultural register.",
+				"`documentation-card`",
+				"The development of Berlin's cultural register takes place as a learning process.",
+				"`versions-card`"
+			],
 			"credits": {
 				"contractors": {
 					"additional": [
@@ -717,23 +728,11 @@
 				"downloadPDF": "Download PDF",
 				"text": "Detailed documentation on the development of the cultural cadastre database can be found here."
 			},
+			"simpleLanguageDirect": "You can find the “About the project” section in simple language <link />.",
+			"subtitle": "",
+			"teamPhotoAlt": "Project team of the Berlin cultural cadastre",
 			"thanks": "The Berlin cultural cadastre owes its successful publication to the enthusiasm, commitment and joint work of all people for whom the Berlin cultural landscape is as important as it is for the project team.",
 			"title": "About the project",
-			"subtitle": "",
-			"simpleLanguageDirect": "You can find the “About the project” section in simple language <link />.",
-			"teamPhotoAlt": "Project team of the Berlin cultural cadastre",
-			"bodySections": [
-				"In a growing metropolis like Berlin, art and cultural spaces are scarce resources.",
-				"The cultural register is mentioned in the government policy guidelines for this legislative period.",
-				"The framework for the development of the cultural register is formed by four cultural policy guidelines on which the KRB has agreed with the Senate Department for Culture and Social Cohesion:",
-				"1. Evidence-based cultural policy and cultural urban development: The Berlin cultural cadastre creates a comprehensive data base about cultural areas in order to enable fact-based cultural policy and targeted urban development.\n2. Securing and redeveloping spaces for culture: The cultural cadastre serves as an instrument for sustainable monitoring of cultural areas in order to support their preservation and open up new spaces.\n3. Fair distribution of cultural offerings in the urban space and equal opportunities with regard to participation: The cultural register visualizes gaps in cultural offerings and supports city planning in creating a balanced and fair cultural offering for all Berliners.\n4. Improving collaboration between departments, levels and sectors: As a flexible digital planning tool, the cultural cadastre strengthens collaboration within the various areas of responsibility, administrative levels and the entire Berlin cultural scene.",
-				"The aim of the Berlin cultural cadastre is to capture a cultural landscape that is more diverse, dynamic and interdisciplinary than any other.",
-				"A broad concept of culture and a descriptive understanding of culture form the basis of the cultural register.",
-				"`documentation-card`",
-				"The development of Berlin's cultural register takes place as a learning process.",
-				"`versions-card`"
-			],
-			"versionsLabel": "The following versions of the cultural register are planned:",
 			"versionsItems": [
 				{
 					"badge": "Version 1",
@@ -750,7 +749,8 @@
 					"label": "Updating and completing data; integrating new specialist maps from the geoportal; publishing threatened cultural venues; expanding the login area",
 					"text": "Publication mid-2026"
 				}
-			]
+			],
+			"versionsLabel": "The following versions of the cultural register are planned:"
 		},
 		"accessibilityModal": {
 			"contact": {
@@ -1050,12 +1050,12 @@
 				"title": "Categories"
 			},
 			"displayedInstitutions": "Displayed cultural locations in Berlin",
-			"districtTagsSwitchAriaLabel": "{{translatedName}} switch on or off",
 			"districts": {
 				"resetFilters": "Reset filter",
 				"setAllFilters": "All filters",
 				"title": "districts"
 			},
+			"districtTagsSwitchAriaLabel": "{{translatedName}} switch on or off",
 			"error": "Error loading filters",
 			"hideClosed": "Hide closed places",
 			"loading": "Loading filters...",
@@ -1258,12 +1258,6 @@
 			"subtitle": "Kulturraum Berlin gGmbH",
 			"title": "imprint"
 		},
-		"infoWrapper": {
-			"diffLabel": {
-				"addition": "Addition: ",
-				"edited": "Edited: "
-			}
-		},
 		"informationModal": {
 			"faq": {
 				"questions": [
@@ -1374,6 +1368,27 @@
 				"introduction": "The Berlin cultural register was designed so that it can be used as intuitively as possible. ",
 				"title": "Service"
 			}
+		},
+		"infoWrapper": {
+			"diffLabel": {
+				"addition": "Addition: ",
+				"edited": "Edited: "
+			}
+		},
+		"institution": {
+			"claimSelectDescription": "You can add cultural venues you are authorized for to your profile. For more completeness, a better overview, and faster editing.",
+			"claimSelectSearchLabel": "Name or address of the cultural venue",
+			"claimSelectSubtitle": "Request management rights for cultural venues that belong to your association or company.",
+			"claimSelectTitle": "Claim cultural venue",
+			"claimSubmit": "Submit request",
+			"claimSubmitError": "The claim request could not be submitted. Please try again.",
+			"claimSubmitSuccess": {
+				"description": "Your institution claim request has been submitted for review.",
+				"title": "Claim submitted"
+			},
+			"claimSubmitting": "Submitting...",
+			"editSelectEmpty": "No cultural venues found.",
+			"editSelectNoAddress": "No address provided"
 		},
 		"institutionDraftIntroModal": {
 			"choice": {
@@ -1605,21 +1620,6 @@
 					"title": "Checking your information"
 				}
 			}
-		},
-		"institution": {
-			"claimSelectDescription": "You can add cultural venues you are authorized for to your profile. For more completeness, a better overview, and faster editing.",
-			"claimSelectSearchLabel": "Name or address of the cultural venue",
-			"claimSelectSubtitle": "Request management rights for cultural venues that belong to your association or company.",
-			"claimSelectTitle": "Claim cultural venue",
-			"claimSubmit": "Submit request",
-			"claimSubmitError": "The claim request could not be submitted. Please try again.",
-			"claimSubmitSuccess": {
-				"description": "Your institution claim request has been submitted for review.",
-				"title": "Claim submitted"
-			},
-			"claimSubmitting": "Submitting...",
-			"editSelectEmpty": "No cultural venues found.",
-			"editSelectNoAddress": "No address provided"
 		},
 		"institutionFormModal": {
 			"actions": {
@@ -2442,12 +2442,12 @@
 			}
 		},
 		"termsModal": {
-			"date": "As of: {{date}}",
-			"disclaimer": "English translation pending. The German version applies.",
-			"title": "Terms of Use",
 			"bodySections": [
 				"*(English translation pending. The German version applies.)*"
-			]
+			],
+			"date": "As of: {{date}}",
+			"disclaimer": "English translation pending. The German version applies.",
+			"title": "Terms of Use"
 		},
 		"userClaims": {
 			"approve": "Assume",
@@ -2601,9 +2601,9 @@
 					"title": "Role Email: Association/Network"
 				},
 				"sendApprove": "Send release email",
-				"sendReject": "Send rejection email",
 				"sendingApprove": "Release is sent…",
 				"sendingReject": "Rejection is sent...",
+				"sendReject": "Send rejection email",
 				"state": {
 					"description": "Send approval or rejection email for state employees.",
 					"title": "Role Email: Country"
@@ -2837,7 +2837,7 @@
 			"ownership_change": "Change of ownership"
 		},
 		"district_id": [
-			null,
+			"",
 			"Treptow-Köpenick",
 			"Pankow",
 			"Lichtenberg",
@@ -3311,14 +3311,6 @@
 				"label": "Shared Use Contact Person",
 				"placeholder": "Specify contact for room requests"
 			},
-			"subcategories": {
-				"description": "Select matching subcategories.",
-				"errors": {
-					"required": "Please provide subcategories."
-				},
-				"label": "Subcategories",
-				"placeholder": "Please select"
-			},
 			"shared_use_equipment": {
 				"description": "",
 				"errors": {
@@ -3357,6 +3349,14 @@
 				},
 				"label": "Street number",
 				"placeholder": "Please enter"
+			},
+			"subcategories": {
+				"description": "Select matching subcategories.",
+				"errors": {
+					"required": "Please provide subcategories."
+				},
+				"label": "Subcategories",
+				"placeholder": "Please select"
 			},
 			"subcategory": {
 				"description": "",
