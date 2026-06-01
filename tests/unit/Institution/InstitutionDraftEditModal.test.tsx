@@ -8,6 +8,8 @@ import {
 
 const institutionFormModalMock = vi.fn();
 const mockSubmissions: Array<Record<string, unknown>> = [];
+const initializePublicDataMock = vi.fn();
+let mockInstitutionCategories: Array<Record<string, unknown>> | null = null;
 
 vi.mock("react-i18next", () => ({
 	useTranslation: () => ({
@@ -76,6 +78,21 @@ vi.mock("@/lib/store/accountStore", () => ({
 		}),
 }));
 
+vi.mock("@/lib/store/institutionStore", () => ({
+	useInstitutionStore: (
+		selector: (state: {
+			categories: Array<Record<string, unknown>> | null;
+			isLoading: boolean;
+			initializePublicData: () => void;
+		}) => unknown,
+	) =>
+		selector({
+			categories: mockInstitutionCategories,
+			isLoading: false,
+			initializePublicData: initializePublicDataMock,
+		}),
+}));
+
 vi.mock("@/server/actions/submissions", () => ({
 	updateSubmission: vi.fn(),
 	getSubmissionById: vi.fn(),
@@ -91,6 +108,8 @@ describe("InstitutionDraftEditModal", () => {
 		mockedUpdateSubmission.mockReset();
 		mockedGetSubmissionById.mockReset();
 		refreshMock.mockReset();
+		initializePublicDataMock.mockReset();
+		mockInstitutionCategories = null;
 		mockSubmissions.length = 0;
 		mockSubmissions.push({
 			id: 11,
@@ -320,5 +339,50 @@ describe("InstitutionDraftEditModal", () => {
 			institution?: Record<string, unknown>;
 		};
 		expect(latestProps.institution?.id).toBe(77);
+	});
+
+	it("hydrates submission categories from the complete public category tree", async () => {
+		mockInstitutionCategories = [
+			{
+				id: 1,
+				key: "cat-a",
+				parent_category_id: null,
+				child_categories: [
+					{
+						id: 2,
+						key: "child-a",
+						parent_category_id: 1,
+					},
+				],
+			},
+		];
+		mockSubmissions.length = 0;
+		mockSubmissions.push({
+			id: 601,
+			entity_type: "institution",
+			type: "create",
+			data: {
+				name: "Draft with child category",
+				categoryIds: [2],
+			},
+		});
+
+		render(
+			<InstitutionDraftEditModal
+				submissionId={601}
+				routePath="/account/submissions/601/edit"
+			/>,
+		);
+
+		await waitFor(() => {
+			expect(institutionFormModalMock).toHaveBeenCalled();
+		});
+
+		const latestProps = institutionFormModalMock.mock.calls.at(-1)?.[0] as {
+			institution?: { categories?: Array<{ id: number }> };
+		};
+		expect(
+			latestProps.institution?.categories?.map((category) => category.id).sort(),
+		).toEqual([1, 2]);
 	});
 });
