@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { fetchTraduoraToken } from "@/server/traduora/cached";
 import { logger } from "@/server/logging/logger";
 
@@ -13,18 +11,80 @@ type TraduoraTranslation = {
 	value: string;
 };
 
+type JsonValue = string | JsonObject | JsonValue[];
+interface JsonObject {
+	[key: string]: JsonValue;
+}
+
+const parseKey = (key: string): Array<string | number> => {
+	const segments: Array<string | number> = [];
+	const matcher = /([^[.\]]+)|\[(\d+)\]/g;
+	let match = matcher.exec(key);
+
+	while (match) {
+		segments.push(match[1] ?? Number(match[2]));
+		match = matcher.exec(key);
+	}
+
+	return segments;
+};
+
+const createChildForSegment = (
+	segment: string | number,
+): JsonObject | JsonValue[] => (typeof segment === "number" ? [] : {});
+
+const getOrCreateChild = (
+	current: JsonObject | JsonValue[],
+	segment: string | number,
+	nextSegment: string | number,
+) => {
+	const child = createChildForSegment(nextSegment);
+
+	if (typeof segment === "number") {
+		if (!Array.isArray(current)) return undefined;
+		current[segment] ??= child;
+		return current[segment] as JsonObject | JsonValue[];
+	}
+
+	const object = current as JsonObject;
+	object[segment] ??= child;
+	return object[segment] as JsonObject | JsonValue[];
+};
+
+const setSegmentValue = (
+	current: JsonObject | JsonValue[],
+	segment: string | number,
+	value: string,
+) => {
+	if (typeof segment === "number" && Array.isArray(current)) {
+		current[segment] = value;
+		return;
+	}
+
+	if (typeof segment === "string") {
+		(current as JsonObject)[segment] = value;
+	}
+};
+
 const unflattenObject = (flat: Record<string, string>) => {
-	const result: Record<string, any> = {};
+	const result: JsonObject = {};
 
 	for (const [key, value] of Object.entries(flat)) {
-		const parts = key.split(".");
-		let current = result;
-		for (let index = 0; index < parts.length - 1; index++) {
-			const part = parts[index];
-			current[part] ??= {};
-			current = current[part];
+		const segments = parseKey(key);
+		if (segments.length === 0) continue;
+
+		let current: JsonObject | JsonValue[] = result;
+		for (let index = 0; index < segments.length - 1; index++) {
+			const next = getOrCreateChild(
+				current,
+				segments[index],
+				segments[index + 1],
+			);
+			if (!next) break;
+			current = next;
 		}
-		current[parts[parts.length - 1]] = value;
+
+		setSegmentValue(current, segments[segments.length - 1], value);
 	}
 
 	return result;

@@ -275,11 +275,11 @@ const useCategorySubmit = (
 			}
 
 			onSuccess(mode);
+			onClose();
 			triggerAccountRefresh(["categories", "entityAudits"]);
 			if (shouldRefresh) {
 				router.refresh();
 			}
-			onClose();
 		} catch (error) {
 			const message =
 				error instanceof Error

@@ -13,6 +13,7 @@ import { useTranslation } from "react-i18next";
 import { getFieldOptionLabel } from "@/lib/i18n/fieldLabels";
 import { useFieldLabel } from "@/lib/hooks/useFieldLabel";
 import { CategoryIcon } from "@/components/shared/CategoryIcon";
+import { getStatusAccentClass } from "@/components/InfoWrapper/statusTone";
 
 interface HoverCardProps {
 	features?: any;
@@ -98,7 +99,7 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 				</CardContent>
 
 				<CardFooter
-					className={`rounded-b-md p-2 ${featureProperties.utilization_status === "in_use" ? "bg-brand-light" : "bg-alert"}`}
+					className={`rounded-b-md p-2 ${getStatusAccentClass(featureProperties.utilization_status)}`}
 				>
 					{featureProperties.utilization_status && (
 						<div className=" flex gap-1 items-center justify-between">

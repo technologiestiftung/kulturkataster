@@ -195,11 +195,11 @@ const useGroupSubmit = (
 			}
 
 			onSuccess(mode);
+			onClose();
 			triggerAccountRefresh(["groups", "entityAudits"]);
 			if (shouldRefresh) {
 				router.refresh();
 			}
-			onClose();
 		} catch (error) {
 			const message =
 				error instanceof Error
