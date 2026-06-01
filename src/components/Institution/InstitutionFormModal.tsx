@@ -182,11 +182,11 @@ const useInstitutionSubmit = (
 			}
 
 			onSuccess(mode);
+			onClose();
 			triggerAccountRefresh(["institutions", "entityAudits"]);
 			if (shouldRefresh) {
 				router.refresh();
 			}
-			onClose();
 		} catch (error) {
 			reportClientTelemetry({
 				level: "error",
