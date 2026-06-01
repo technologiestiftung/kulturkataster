@@ -236,11 +236,11 @@ const useUserSubmit = (
 			}
 
 			onSuccess(mode);
+			onClose();
 			triggerAccountRefresh(["users", "entityAudits"]);
 			if (shouldRefresh) {
 				router.refresh();
 			}
-			onClose();
 		} catch (error) {
 			const message =
 				error instanceof Error
