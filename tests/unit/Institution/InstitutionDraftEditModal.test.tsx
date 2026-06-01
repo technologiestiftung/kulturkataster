@@ -382,7 +382,9 @@ describe("InstitutionDraftEditModal", () => {
 			institution?: { categories?: Array<{ id: number }> };
 		};
 		expect(
-			latestProps.institution?.categories?.map((category) => category.id).sort(),
+			latestProps.institution?.categories
+				?.map((category) => category.id)
+				.sort(),
 		).toEqual([1, 2]);
 	});
 });

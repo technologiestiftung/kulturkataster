@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
-import { StatusLevelMap } from "./types";
 import { PrivateBadge } from "../shared/PrivateBadge";
 import { getFieldOptionLabel } from "@/lib/i18n/fieldLabels";
+import { getStatusAccentClass, getStatusCircleClass } from "./statusTone";
 
 export function StatusItem({
 	value,
@@ -22,27 +22,8 @@ export function StatusItem({
 
 	if (!value || typeof value !== "string") return null;
 	const showCircle = variant === "plain" || !label;
-	const hasKnownStatusLevel = Object.hasOwn(StatusLevelMap, value);
-	const isInUse = value === "in_use";
-	const isPermanentlyClosed = value === "permanently_closed";
-
-	let accentClass = "bg-alert";
-	if (isInUse) {
-		accentClass = "bg-brand-light";
-	} else if (isPermanentlyClosed) {
-		accentClass = "bg-alert";
-	} else if (hasKnownStatusLevel) {
-		accentClass = "bg-chart-2";
-	}
-
-	let circleClass = "bg-alert";
-	if (isInUse) {
-		circleClass = "bg-brand-default";
-	} else if (isPermanentlyClosed) {
-		circleClass = "bg-alert";
-	} else if (hasKnownStatusLevel) {
-		circleClass = "bg-chart-2";
-	}
+	const accentClass = getStatusAccentClass(value);
+	const circleClass = getStatusCircleClass(value);
 
 	const wrapperClassName =
 		variant === "plain"

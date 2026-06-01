@@ -51,7 +51,9 @@ export function InstitutionDraftEditModal({
 	const upsertSubmission = useAccountStore((state) => state.upsertSubmission);
 	const removeSubmission = useAccountStore((state) => state.removeSubmission);
 	const accountCategories = useAccountStore((state) => state.categories);
-	const institutionCategories = useInstitutionStore((state) => state.categories);
+	const institutionCategories = useInstitutionStore(
+		(state) => state.categories,
+	);
 	const isInstitutionStoreLoading = useInstitutionStore(
 		(state) => state.isLoading,
 	);
@@ -112,11 +114,7 @@ export function InstitutionDraftEditModal({
 		if (institutionCategories !== null) return;
 		if (isInstitutionStoreLoading) return;
 		void initializePublicData();
-	}, [
-		initializePublicData,
-		institutionCategories,
-		isInstitutionStoreLoading,
-	]);
+	}, [initializePublicData, institutionCategories, isInstitutionStoreLoading]);
 
 	const handleSubmit = useCallback(
 		async (data: Record<string, unknown>) => {
