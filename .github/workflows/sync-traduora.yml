@@ -1,6 +1,10 @@
 name: Sync Traduora Translations
 
 on:
+  push:
+    branches:
+      - dev
+
   # Trigger on manual workflow dispatch
   workflow_dispatch:
     inputs:
@@ -19,16 +23,25 @@ on:
   schedule:
     - cron: "0 2 * * *"
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   sync-translations:
     runs-on: ubuntu-latest
-    environment: ${{ github.ref_name == 'dev' && 'dev' || 'main' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        target_branch: ${{ fromJSON(github.event_name == 'schedule' && '["main","dev"]' || format('["{0}"]', github.ref_name)) }}
+    environment: ${{ matrix.target_branch == 'dev' && 'dev' || 'main' }}
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          ref: ${{ matrix.target_branch }}
           fetch-depth: 0
 
       - name: Setup Node.js
@@ -51,9 +64,9 @@ jobs:
       - name: Determine sync action
         id: action
         run: |
-          if [ "${{ github.event_name }}" == "schedule" ]; then
+          if [ "${{ github.event_name }}" == "schedule" ] || [ "${{ github.event_name }}" == "push" ]; then
             echo "action=pull --all" >> $GITHUB_OUTPUT
-            echo "Running scheduled pull --all to sync all translator updates"
+            echo "Running ${{ github.event_name }} pull --all to sync all translator updates"
           else
             echo "action=${{ github.event.inputs.action }}" >> $GITHUB_OUTPUT
             echo "Running manual ${{ github.event.inputs.action }}"
@@ -112,7 +125,7 @@ jobs:
             Scope-risk: narrow
             Tested: GitHub workflow sync action
             Not-tested: Manual translation review
-          title: "feat: sync translations from Traduora"
+          title: "feat: sync translations from Traduora into ${{ matrix.target_branch }}"
           body: |
             ## Summary
             - Pulled latest translations from Traduora
@@ -129,8 +142,10 @@ jobs:
             - [ ] Review translation changes for accuracy
             - [ ] Test application with updated translations
             - [ ] Verify all locales are properly synced
-          branch: traduora-sync/pull-${{ github.run_number }}
-          base: ${{ github.ref_name }}
+
+            🤖 Generated with [Claude Code](https://claude.ai/code)
+          branch: traduora-sync/${{ matrix.target_branch }}/pull-${{ github.run_number }}
+          base: ${{ matrix.target_branch }}
           draft: false
           labels: translations,automated
 
@@ -158,7 +173,7 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "- **Action**: ${{ steps.action.outputs.action }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Trigger**: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Branch**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch**: ${{ matrix.target_branch }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           if [ "${{ steps.check_changes.outputs.changes }}" == "true" ]; then
             if [[ "${{ steps.action.outputs.action }}" == pull* ]]; then
