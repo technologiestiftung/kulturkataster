@@ -45,4 +45,48 @@ describe("fetchTraduoraTranslations", () => {
 			expect.objectContaining({ cache: "no-store" }),
 		);
 	});
+
+	it("rebuilds arrays from Traduora bracket notation terms", async () => {
+		process.env.TRADUORA_API_URL = "https://example.test";
+		process.env.TRADUORA_PROJECT_ID = "project-1";
+
+		fetchMock
+			.mockResolvedValueOnce({
+				ok: true,
+				json: async () => ({
+					data: [
+						{
+							id: "term-answer",
+							value: "content.infoModal.accordion[0].answer",
+						},
+						{
+							id: "term-question",
+							value: "content.infoModal.accordion[0].question",
+						},
+					],
+				}),
+			})
+			.mockResolvedValueOnce({
+				ok: true,
+				json: async () => ({
+					data: [
+						{ termId: "term-answer", value: "Answer text" },
+						{ termId: "term-question", value: "Question text" },
+					],
+				}),
+			});
+
+		const result = await fetchTraduoraTranslations("de", "content");
+
+		expect(result).toEqual({
+			infoModal: {
+				accordion: [
+					{
+						answer: "Answer text",
+						question: "Question text",
+					},
+				],
+			},
+		});
+	});
 });

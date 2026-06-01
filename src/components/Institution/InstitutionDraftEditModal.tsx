@@ -21,6 +21,8 @@ import { showSuccessToast } from "@/lib/utils/feedbackToast";
 import { buildInstitutionForFormFromDraft } from "@/lib/utils/institutionFormAdapter";
 import { reportClientTelemetry } from "@/lib/utils/clientTelemetry";
 import { resolveCategoryIdsFromDraft } from "@/lib/utils/institutionCategoryUtils";
+import { useInstitutionStore } from "@/lib/store/institutionStore";
+import { buildCategoryGroups } from "@/lib/utils/categoryUtils";
 
 type InstitutionDraftEditModalProps = {
 	returnTo?: string;
@@ -48,7 +50,23 @@ export function InstitutionDraftEditModal({
 	});
 	const upsertSubmission = useAccountStore((state) => state.upsertSubmission);
 	const removeSubmission = useAccountStore((state) => state.removeSubmission);
-	const categories = useAccountStore((state) => state.categories);
+	const accountCategories = useAccountStore((state) => state.categories);
+	const institutionCategories = useInstitutionStore(
+		(state) => state.categories,
+	);
+	const isInstitutionStoreLoading = useInstitutionStore(
+		(state) => state.isLoading,
+	);
+	const initializePublicData = useInstitutionStore(
+		(state) => state.initializePublicData,
+	);
+	const categories = useMemo(
+		() =>
+			institutionCategories?.length
+				? institutionCategories
+				: buildCategoryGroups(accountCategories),
+		[institutionCategories, accountCategories],
+	);
 	const router = useRouter();
 
 	const [fetchedSubmission, setFetchedSubmission] = useState<Submission | null>(
@@ -91,6 +109,12 @@ export function InstitutionDraftEditModal({
 			active = false;
 		};
 	}, [didFetchSubmission, hasSubmissionId, resolvedSubmission, submissionId]);
+
+	useEffect(() => {
+		if (institutionCategories !== null) return;
+		if (isInstitutionStoreLoading) return;
+		void initializePublicData();
+	}, [initializePublicData, institutionCategories, isInstitutionStoreLoading]);
 
 	const handleSubmit = useCallback(
 		async (data: Record<string, unknown>) => {
