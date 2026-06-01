@@ -12,7 +12,9 @@ type TraduoraTranslation = {
 };
 
 type JsonValue = string | JsonObject | JsonValue[];
-type JsonObject = Record<string, JsonValue>;
+interface JsonObject {
+	[key: string]: JsonValue;
+}
 
 const parseKey = (key: string): Array<string | number> => {
 	const segments: Array<string | number> = [];
