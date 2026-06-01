@@ -1,6 +1,10 @@
 name: Sync Traduora Translations
 
 on:
+  push:
+    branches:
+      - dev
+
   # Trigger on manual workflow dispatch
   workflow_dispatch:
     inputs:
@@ -18,6 +22,10 @@ on:
 
   schedule:
     - cron: "0 2 * * *"
+
+permissions:
+  contents: write
+  pull-requests: write
 
 jobs:
   sync-translations:
@@ -56,9 +64,9 @@ jobs:
       - name: Determine sync action
         id: action
         run: |
-          if [ "${{ github.event_name }}" == "schedule" ]; then
+          if [ "${{ github.event_name }}" == "schedule" ] || [ "${{ github.event_name }}" == "push" ]; then
             echo "action=pull --all" >> $GITHUB_OUTPUT
-            echo "Running scheduled pull --all to sync all translator updates"
+            echo "Running ${{ github.event_name }} pull --all to sync all translator updates"
           else
             echo "action=${{ github.event.inputs.action }}" >> $GITHUB_OUTPUT
             echo "Running manual ${{ github.event.inputs.action }}"
@@ -117,7 +125,7 @@ jobs:
             Scope-risk: narrow
             Tested: GitHub workflow sync action
             Not-tested: Manual translation review
-          title: "feat: sync translations from Traduora"
+          title: "feat: sync translations from Traduora into ${{ matrix.target_branch }}"
           body: |
             ## Summary
             - Pulled latest translations from Traduora

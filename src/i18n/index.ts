@@ -43,7 +43,10 @@ function fetchRemoteLanguageTranslations(language: string) {
 	const cached = remoteTranslationsByLanguage.get(language);
 	if (cached && cached.expiresAt > now) return cached.promise;
 
-	const translations = fetchTranslations(language);
+	const translations = fetchTranslations(language).catch((error) => {
+		remoteTranslationsByLanguage.delete(language);
+		throw error;
+	});
 	if (ttlMs > 0) {
 		remoteTranslationsByLanguage.set(language, {
 			expiresAt: now + ttlMs,
