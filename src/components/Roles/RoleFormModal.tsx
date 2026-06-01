@@ -331,11 +331,11 @@ const useRoleSubmit = (
 			}
 
 			onSuccess(mode);
+			onClose();
 			triggerAccountRefresh(["roles", "entityAudits"]);
 			if (shouldRefresh) {
 				router.refresh();
 			}
-			onClose();
 		} catch {
 			onError("unexpected");
 		} finally {
