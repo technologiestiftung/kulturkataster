@@ -12,6 +12,9 @@ import { useAccountStore } from "@/lib/store/accountStore";
 
 const closeModalMock = vi.fn();
 const refreshMock = vi.fn();
+const { triggerAccountRefreshMock } = vi.hoisted(() => ({
+	triggerAccountRefreshMock: vi.fn(),
+}));
 
 vi.mock("react-i18next", () => ({
 	useTranslation: () => ({
@@ -31,6 +34,10 @@ vi.mock("@/components/Modals/useRoutedModalClose", () => ({
 
 vi.mock("@/components/Modals/Modal", () => ({
 	Modal: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+}));
+
+vi.mock("@/components/Account/AccountAutoRefresh", () => ({
+	triggerAccountRefresh: triggerAccountRefreshMock,
 }));
 
 vi.mock("@/components/ui/dialog", () => ({
@@ -155,6 +162,7 @@ describe("UserFormModal", () => {
 	beforeEach(() => {
 		closeModalMock.mockReset();
 		refreshMock.mockReset();
+		triggerAccountRefreshMock.mockReset();
 		mockedCreateUser.mockReset();
 		mockedUpdateUser.mockReset();
 		mockedShowSuccessToast.mockReset();
@@ -256,6 +264,48 @@ describe("UserFormModal", () => {
 		});
 		expect(mockedShowSuccessToast).toHaveBeenCalledTimes(1);
 		expect(closeModalMock).toHaveBeenCalledTimes(1);
+	});
+
+	it("closes before triggering the background account refresh after update", async () => {
+		mockedUpdateUser.mockResolvedValueOnce({
+			ok: true,
+			data: {
+				id: "user-1",
+				email: "updated@example.com",
+				first_name: "Ada",
+				last_name: "Lovelace",
+				status: "active",
+				account_type: "org",
+				compliance: true,
+				created_at: new Date("2025-01-01"),
+				updated_at: new Date("2025-01-02"),
+				role: null,
+				groups: [],
+				institutions: [],
+				submissions: [],
+			},
+		} as never);
+
+		render(
+			<UserFormModal
+				mode="edit"
+				userId="user-1"
+				routePath="/account/users/user-1/edit"
+			/>,
+		);
+		fireEvent.click(screen.getByRole("button", { name: "Submit" }));
+
+		await waitFor(() => {
+			expect(closeModalMock).toHaveBeenCalledTimes(1);
+		});
+
+		expect(triggerAccountRefreshMock).toHaveBeenCalledWith([
+			"users",
+			"entityAudits",
+		]);
+		expect(closeModalMock.mock.invocationCallOrder[0]).toBeLessThan(
+			triggerAccountRefreshMock.mock.invocationCallOrder[0],
+		);
 	});
 });
 
