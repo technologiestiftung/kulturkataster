@@ -870,6 +870,10 @@ const buildInstitutionFormConfig = ({
 								name: "owner_type",
 								label: fieldLabel("owner_type", "Eigentümer*innenart"),
 								type: "select",
+								allowNullOption: true,
+								nullOptionLabel: tEnum(
+									"enumMap.field_names.owner_type.options.none",
+								),
 								options: [
 									{
 										value: "private",
