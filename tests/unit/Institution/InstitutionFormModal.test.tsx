@@ -37,7 +37,11 @@ const findFieldByName = (
 vi.mock("react-i18next", () => ({
 	useTranslation: () => ({
 		t: (key: string, options?: { defaultValue?: string }) =>
-			options?.defaultValue ?? key,
+			({
+				"enumMap.field_names.owner_type.options.none": "Keine Angabe",
+			})[key] ??
+			options?.defaultValue ??
+			key,
 	}),
 }));
 
@@ -412,6 +416,32 @@ describe("InstitutionFormModal", () => {
 					child_categories: [{ id: 2, key: "cat-b", parent_category_id: 1 }],
 				},
 			],
+		});
+	});
+
+	it("allows clearing owner type through the select null option", () => {
+		render(
+			<InstitutionFormModal
+				mode="edit"
+				institution={
+					{
+						id: 2,
+						name: "Existing",
+						address: { id: 9 },
+						categories: [],
+						owner_type: "private",
+					} as never
+				}
+				routePath="/account/institutions/2/edit"
+			/>,
+		);
+
+		const ownerTypeField = findFieldByName(lastFormConfig?.fields, "owner_type");
+
+		expect(ownerTypeField).toMatchObject({
+			type: "select",
+			allowNullOption: true,
+			nullOptionLabel: "Keine Angabe",
 		});
 	});
 

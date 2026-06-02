@@ -12,7 +12,10 @@ import type { InstitutionStoreState } from "@/types/institution";
 
 vi.mock("react-i18next", () => ({
 	useTranslation: () => ({
-		t: (key: string) => key.replace(/^content\./, ""),
+		t: (key: string) =>
+			({
+				"enumMap.field_names.owner_type.options.none": "Keine Angabe",
+			})[key] ?? key.replace(/^content\./, ""),
 		i18n: { changeLanguage: () => new Promise(() => {}) },
 	}),
 }));
@@ -536,5 +539,23 @@ describe("InstitutionDraftWizardModal submission workflow", () => {
 				type: "textarea",
 			}),
 		);
+	});
+
+	it("allows clearing owner type through the select null option", () => {
+		mockStepperState.currentStepId = "information";
+		mockStepperState.currentStepIndex = 2;
+
+		render(<InstitutionDraftWizardModal routePath="/institution/submission" />);
+
+		const field = findFieldByName(
+			lastFormConfig?.fields as Array<Record<string, unknown>> | undefined,
+			"owner_type",
+		);
+
+		expect(field).toMatchObject({
+			type: "select",
+			allowNullOption: true,
+			nullOptionLabel: "Keine Angabe",
+		});
 	});
 });
