@@ -3,6 +3,7 @@
 import { useCallback, useMemo } from "react";
 import { useAccountStore } from "@/lib/store/accountStore";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
+import { buildCategoryGroups } from "@/lib/utils/categoryUtils";
 import type { Category } from "@/types/category";
 
 export function useInstitutionFilterCategories() {
@@ -18,7 +19,14 @@ export function useInstitutionFilterCategories() {
 		void initializePublicData();
 	}, [initializePublicData]);
 
-	const filterCategoryGroups = filterCategoriesFromInstitutionStore ?? [];
+	const filterCategoryGroups = useMemo(
+		() =>
+			buildCategoryGroups([
+				...(filterCategoriesFromInstitutionStore ?? []),
+				...accountCategories,
+			]),
+		[accountCategories, filterCategoriesFromInstitutionStore],
+	);
 
 	const flattenedCategories = useMemo<Category[]>(() => {
 		const byId = new Map<number, Category>();
@@ -42,7 +50,9 @@ export function useInstitutionFilterCategories() {
 	return {
 		filterCategoryGroups,
 		flattenedCategories,
-		isFilterCategoriesLoading: filterCategoriesFromInstitutionStore === null,
+		isFilterCategoriesLoading:
+			filterCategoriesFromInstitutionStore === null &&
+			accountCategories.length === 0,
 		retryInitializeFilterCategories,
 	};
 }
