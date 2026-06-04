@@ -22,11 +22,13 @@ const questionDefaults = [
 	},
 	{
 		id: "question2",
-		title: "Welche Voraussetzungen gelten für die Freischaltung (wer bekommt Zugang)?",
+		title:
+			"Welche Voraussetzungen gelten für die Freischaltung (wer bekommt Zugang)?",
 	},
 	{
 		id: "question3",
-		title: "Wie funktioniert „Passwort vergessen“ und wie setze ich mein Passwort zurück?",
+		title:
+			"Wie funktioniert „Passwort vergessen“ und wie setze ich mein Passwort zurück?",
 	},
 	{
 		id: "question4",
@@ -34,27 +36,33 @@ const questionDefaults = [
 	},
 	{
 		id: "question5",
-		title: "Wie kann ich meinen Account löschen lassen (und was passiert mit meinen Daten)?",
+		title:
+			"Wie kann ich meinen Account löschen lassen (und was passiert mit meinen Daten)?",
 	},
 	{
 		id: "question6",
-		title: "Wie kann ich eine Institution anlegen oder meinem Account zuordnen?",
+		title:
+			"Wie kann ich eine Institution anlegen oder meinem Account zuordnen?",
 	},
 	{
 		id: "question7",
-		title: "Wie kann ich Nutzer*innen einer Institution hinzufügen, entfernen oder verwalten?",
+		title:
+			"Wie kann ich Nutzer*innen einer Institution hinzufügen, entfernen oder verwalten?",
 	},
 	{
 		id: "question8",
-		title: "Welche Rollen gibt es (z. B. Admin/Redaktion) und welche Berechtigungen haben sie?",
+		title:
+			"Welche Rollen gibt es (z. B. Admin/Redaktion) und welche Berechtigungen haben sie?",
 	},
 	{
 		id: "question9",
-		title: "Wie lege ich Profile für Verweisungsmitarbeitende an und wie verwalte ich diese?",
+		title:
+			"Wie lege ich Profile für Verweisungsmitarbeitende an und wie verwalte ich diese?",
 	},
 	{
 		id: "question10",
-		title: "Wie funktioniert der redaktionelle Workflow (z. B. Entwurf, Prüfung, Freigabe, Veröffentlichung) im User-Bereich?",
+		title:
+			"Wie funktioniert der redaktionelle Workflow (z. B. Entwurf, Prüfung, Freigabe, Veröffentlichung) im User-Bereich?",
 	},
 	{
 		id: "question11",
@@ -74,9 +82,7 @@ function MarkdownContent({ value }: { value: string }) {
 					<ul className="body2 mb-3 list-disc space-y-1 pl-6">{children}</ul>
 				),
 				ol: ({ children }) => (
-					<ol className="body2 mb-3 list-decimal space-y-1 pl-6">
-						{children}
-					</ol>
+					<ol className="body2 mb-3 list-decimal space-y-1 pl-6">{children}</ol>
 				),
 				li: ({ children }) => <li>{children}</li>,
 				strong: ({ children }) => (
