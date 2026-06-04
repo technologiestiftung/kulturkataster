@@ -837,6 +837,10 @@ function InstitutionDraftWizardContent({
 							label: fieldLabel("shared_use_allowed"),
 							type: "radio",
 							radioVariant: "button",
+							allowNullOption: true,
+							nullOptionLabel: tEnum(
+								"enumMap.field_names.shared_use_allowed.options.none",
+							),
 							options: [
 								{
 									value: true,

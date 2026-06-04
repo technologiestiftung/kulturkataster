@@ -70,6 +70,7 @@ describe("UsersTable", () => {
 
 		expect(dataTableMock).toHaveBeenCalledTimes(1);
 		const config = dataTableMock.mock.calls[0][0] as {
+			columns: Array<{ id?: string; accessorKey?: string }>;
 			data: Array<{ id: string; submissions?: Array<{ type: string }> }>;
 			searchable: boolean;
 			searchPlaceholder: string;
@@ -82,6 +83,9 @@ describe("UsersTable", () => {
 
 		expect(config.searchable).toBe(true);
 		expect(config.searchPlaceholder).toBe("Nutzer*innen suchen...");
+		expect(
+			config.columns.map((column) => column.id ?? column.accessorKey),
+		).not.toContain("compliance");
 		expect(config.data).toHaveLength(1);
 		expect(config.primaryButton.label).toBe("Nutzer*in hinzufügen");
 		expect(config.reviewAriaLabel).toBe("Claims prüfen");

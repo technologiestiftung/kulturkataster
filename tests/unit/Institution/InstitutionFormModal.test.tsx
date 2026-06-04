@@ -39,6 +39,7 @@ vi.mock("react-i18next", () => ({
 		t: (key: string, options?: { defaultValue?: string }) =>
 			({
 				"enumMap.field_names.owner_type.options.none": "Keine Angabe",
+				"enumMap.field_names.shared_use_allowed.options.none": "Keine Angabe",
 			})[key] ??
 			options?.defaultValue ??
 			key,
@@ -436,7 +437,10 @@ describe("InstitutionFormModal", () => {
 			/>,
 		);
 
-		const ownerTypeField = findFieldByName(lastFormConfig?.fields, "owner_type");
+		const ownerTypeField = findFieldByName(
+			lastFormConfig?.fields,
+			"owner_type",
+		);
 
 		expect(ownerTypeField).toMatchObject({
 			type: "select",
@@ -540,6 +544,10 @@ describe("InstitutionFormModal", () => {
 		const options = field?.options as Array<{ value: unknown }> | undefined;
 		expect(options).toBeDefined();
 		expect(options?.map((o) => o.value)).toEqual([true, false]);
+		expect(field).toMatchObject({
+			allowNullOption: true,
+			nullOptionLabel: "Keine Angabe",
+		});
 	});
 
 	it("shared_use_allowed condition triggers on boolean true, not string", () => {
