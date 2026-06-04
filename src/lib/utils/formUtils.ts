@@ -524,8 +524,11 @@ const buildInstitutionAddressPayload = (
 	return payload;
 };
 
-const toFormBoolean = (value: unknown): boolean =>
-	value === true || value === "true" || value === "yes";
+const toFormBoolean = (value: unknown): boolean | null => {
+	if (value === true || value === "true" || value === "yes") return true;
+	if (value === false || value === "false" || value === "no") return false;
+	return null;
+};
 
 const buildInstitutionSharedFieldsPayload = (
 	formData: Record<string, unknown>,
