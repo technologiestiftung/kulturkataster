@@ -37,7 +37,12 @@ const findFieldByName = (
 vi.mock("react-i18next", () => ({
 	useTranslation: () => ({
 		t: (key: string, options?: { defaultValue?: string }) =>
-			options?.defaultValue ?? key,
+			({
+				"enumMap.field_names.owner_type.options.none": "Keine Angabe",
+				"enumMap.field_names.shared_use_allowed.options.none": "Keine Angabe",
+			})[key] ??
+			options?.defaultValue ??
+			key,
 	}),
 }));
 
@@ -415,6 +420,35 @@ describe("InstitutionFormModal", () => {
 		});
 	});
 
+	it("allows clearing owner type through the select null option", () => {
+		render(
+			<InstitutionFormModal
+				mode="edit"
+				institution={
+					{
+						id: 2,
+						name: "Existing",
+						address: { id: 9 },
+						categories: [],
+						owner_type: "private",
+					} as never
+				}
+				routePath="/account/institutions/2/edit"
+			/>,
+		);
+
+		const ownerTypeField = findFieldByName(
+			lastFormConfig?.fields,
+			"owner_type",
+		);
+
+		expect(ownerTypeField).toMatchObject({
+			type: "select",
+			allowNullOption: true,
+			nullOptionLabel: "Keine Angabe",
+		});
+	});
+
 	it("does not flag the edited institution itself as duplicate when validator receives partial form data", () => {
 		render(
 			<InstitutionFormModal
@@ -510,6 +544,10 @@ describe("InstitutionFormModal", () => {
 		const options = field?.options as Array<{ value: unknown }> | undefined;
 		expect(options).toBeDefined();
 		expect(options?.map((o) => o.value)).toEqual([true, false]);
+		expect(field).toMatchObject({
+			allowNullOption: true,
+			nullOptionLabel: "Keine Angabe",
+		});
 	});
 
 	it("shared_use_allowed condition triggers on boolean true, not string", () => {

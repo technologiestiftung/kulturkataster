@@ -2,6 +2,18 @@ import { describe, expect, it } from "vitest";
 import { buildInstitutionCreateData } from "@/server/logic/institutionCreateData";
 
 describe("buildInstitutionCreateData", () => {
+	it("persists missing shared_use_allowed as null", () => {
+		const result = buildInstitutionCreateData(
+			{
+				name: "Created institution",
+				address: null,
+			},
+			"user-1",
+		);
+
+		expect(result.shared_use_allowed).toBeNull();
+	});
+
 	it("creates a related contact person from inline contact fields", () => {
 		const result = buildInstitutionCreateData(
 			{
