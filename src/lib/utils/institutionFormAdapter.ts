@@ -139,7 +139,7 @@ export const buildInstitutionFormInitialValues = (
 			toOptionalNumber(resolvedInstitution?.number_of_rooms) ?? undefined,
 		accessibility: resolvedInstitution?.accessibility ?? undefined,
 		cost: resolvedInstitution?.cost ?? undefined,
-		shared_use_allowed: resolvedInstitution?.shared_use_allowed ?? false,
+		shared_use_allowed: resolvedInstitution?.shared_use_allowed ?? null,
 		shared_use_info: resolvedInstitution?.shared_use_info ?? undefined,
 		shared_use_equipment:
 			resolvedInstitution?.shared_use_equipment ?? undefined,

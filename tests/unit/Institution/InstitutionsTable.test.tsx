@@ -6,6 +6,59 @@ const pushMock = vi.fn();
 const prefetchMock = vi.fn();
 const dataTableMock = vi.fn();
 const downloadModalMock = vi.fn();
+const readableInstitutionFields = [
+	"address",
+	"categories",
+	"contact_person",
+	"groups",
+	"tags",
+	"users",
+	"name",
+	"website",
+	"phone",
+	"email",
+	"area",
+	"number_of_rooms",
+	"parent_organization",
+	"legal_form",
+	"capacity",
+	"owner_name",
+	"owner_type",
+	"rental_contract_type",
+	"rental_contract_end",
+	"funding_type",
+	"funding_sources",
+	"utilization_status",
+	"utilization_status_info",
+	"utilization_status_internal_notes",
+	"protection_status",
+	"protection_status_info",
+	"protection_status_internal_notes",
+	"shared_use_allowed",
+	"shared_use_info",
+	"shared_use_equipment",
+	"shared_use_audience",
+	"shared_use_availability",
+	"shared_use_contact_person",
+	"accessibility",
+	"cost",
+	"established_since",
+	"established_until",
+	"closing_reason",
+	"notes",
+	"internal_notes",
+	"status",
+	"import_identifier",
+	"source",
+	"created_at",
+	"updated_at",
+];
+let mockInstitutionFieldPermissions = {
+	read: readableInstitutionFields,
+	create: readableInstitutionFields,
+	update: readableInstitutionFields,
+	delete: [],
+};
 
 vi.mock("react-i18next", () => ({
 	useTranslation: () => ({
@@ -59,6 +112,12 @@ vi.mock("@/lib/store/accountStore", () => ({
 				createSubmission: boolean;
 				reviewSubmission: boolean;
 			};
+			institutionFieldPermissions: {
+				read: string[];
+				create: string[];
+				update: string[];
+				delete: string[];
+			};
 			setActiveInstitutionEdit: (institution: unknown) => void;
 		}) => unknown,
 	) =>
@@ -89,6 +148,7 @@ vi.mock("@/lib/store/accountStore", () => ({
 				createSubmission: true,
 				reviewSubmission: true,
 			},
+			institutionFieldPermissions: mockInstitutionFieldPermissions,
 			setActiveInstitutionEdit: vi.fn(),
 		}),
 }));
@@ -154,6 +214,12 @@ describe("InstitutionsTable", () => {
 		prefetchMock.mockReset();
 		dataTableMock.mockReset();
 		downloadModalMock.mockReset();
+		mockInstitutionFieldPermissions = {
+			read: readableInstitutionFields,
+			create: readableInstitutionFields,
+			update: readableInstitutionFields,
+			delete: [],
+		};
 	});
 
 	it("configures search/filter, add and claim actions plus edit/review routing", () => {
@@ -302,5 +368,42 @@ describe("InstitutionsTable", () => {
 		};
 
 		expect(props.data.map((institution) => institution.id)).toEqual([100]);
+	});
+
+	it("omits table columns for institution fields without read permission", () => {
+		mockInstitutionFieldPermissions = {
+			read: ["name", "status"],
+			create: [],
+			update: [],
+			delete: [],
+		};
+
+		render(<InstitutionsTable />);
+
+		const config = dataTableMock.mock.calls[0][0] as {
+			columns: Array<{
+				id?: string;
+				accessorKey?: string;
+				meta?: { exportKey?: string | string[] };
+			}>;
+		};
+		const columnIds = config.columns.map(
+			(column) => column.id ?? column.accessorKey,
+		);
+
+		expect(columnIds).toEqual(
+			expect.arrayContaining(["status", "type", "id", "name"]),
+		);
+		expect(columnIds).not.toEqual(
+			expect.arrayContaining([
+				"email",
+				"owner_type",
+				"address.street",
+				"category",
+				"subcategory",
+				"tags",
+				"area",
+			]),
+		);
 	});
 });
