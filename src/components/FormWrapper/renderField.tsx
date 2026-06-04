@@ -557,10 +557,18 @@ const renderFieldContent = (
 
 			{field.type === "radio" && (
 				<RadioGroup
-					value={getSerializedSelectedValue(field.options, value)}
-					onValueChange={(val) =>
-						updateField(field.name, deserializeOptionValue(val))
-					}
+					value={getSerializedSelectedValue(
+						field.options,
+						value,
+						allowNullOption,
+					)}
+					onValueChange={(val) => {
+						if (val === SELECT_NULL_SENTINEL) {
+							updateField(field.name, null);
+							return;
+						}
+						updateField(field.name, deserializeOptionValue(val));
+					}}
 					aria-invalid={hasIssue || undefined}
 					className={cn(
 						hasIssue &&
@@ -569,6 +577,26 @@ const renderFieldContent = (
 					variant={field.radioVariant}
 					disabled={field.disabled}
 				>
+					{allowNullOption && (
+						<div className="flex items-start space-x-2">
+							<RadioGroupItem
+								className={cn(
+									"bg-background border-input",
+									hasIssue && "border-destructive-secondary",
+								)}
+								value={SELECT_NULL_SENTINEL}
+								id={`${field.name}-${SELECT_NULL_SENTINEL}`}
+								aria-invalid={hasIssue || undefined}
+							/>
+
+							<Label
+								htmlFor={`${field.name}-${SELECT_NULL_SENTINEL}`}
+								emphasize={false}
+							>
+								{nullOptionLabel}
+							</Label>
+						</div>
+					)}
 					{field.options?.map((option) => (
 						<div
 							key={serializeOptionValue(option.value)}

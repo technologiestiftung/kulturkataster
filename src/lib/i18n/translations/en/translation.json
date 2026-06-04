@@ -3284,6 +3284,7 @@
 				"label": "Shared Use Allowed",
 				"options": {
 					"no": "No",
+					"none": "Keine Angabe",
 					"yes": "Yes"
 				},
 				"placeholder": "Please enter"

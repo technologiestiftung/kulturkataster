@@ -42,7 +42,7 @@ describe("buildInstitutionFormInitialValues - shared_use_allowed", () => {
 		expect(result.shared_use_allowed).toBe(false);
 	});
 
-	it("initialises shared_use_allowed as false when institution field is missing", () => {
+	it("initialises shared_use_allowed as null when institution field is missing", () => {
 		const result = buildInstitutionFormInitialValues(
 			asInstitution({
 				...baseInstitution,
@@ -50,7 +50,19 @@ describe("buildInstitutionFormInitialValues - shared_use_allowed", () => {
 				name: "Test",
 			}),
 		);
-		expect(result.shared_use_allowed).toBe(false);
+		expect(result.shared_use_allowed).toBeNull();
+	});
+
+	it("initialises shared_use_allowed as null when institution has null", () => {
+		const result = buildInstitutionFormInitialValues(
+			asInstitution({
+				...baseInstitution,
+				id: 1,
+				name: "Test",
+				shared_use_allowed: null,
+			}),
+		);
+		expect(result.shared_use_allowed).toBeNull();
 	});
 
 	it("does not initialise shared_use_allowed as a string", () => {
@@ -83,9 +95,17 @@ describe("buildInstitutionForFormFromDraft - shared_use_allowed", () => {
 		expect(result.shared_use_allowed).toBe(false);
 	});
 
-	it("maps missing shared_use_allowed to false", () => {
+	it("maps missing shared_use_allowed to null", () => {
 		const result = buildInstitutionForFormFromDraft({ name: "Draft" });
-		expect(result.shared_use_allowed).toBe(false);
+		expect(result.shared_use_allowed).toBeNull();
+	});
+
+	it("maps null shared_use_allowed to null", () => {
+		const result = buildInstitutionForFormFromDraft({
+			name: "Draft",
+			shared_use_allowed: null,
+		});
+		expect(result.shared_use_allowed).toBeNull();
 	});
 });
 

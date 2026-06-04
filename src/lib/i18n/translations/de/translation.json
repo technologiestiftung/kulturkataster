@@ -3421,6 +3421,7 @@
 				"label": "Offen für Raumanfragen?",
 				"options": {
 					"no": "Nein",
+					"none": "Keine Angabe",
 					"yes": "Ja"
 				},
 				"placeholder": "Bitte eintragen"
