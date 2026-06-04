@@ -113,6 +113,29 @@ describe("CategorySectionList", () => {
 		).toHaveAttribute("aria-checked", "true");
 	});
 
+	it("renders child categories even when no institution count exists", () => {
+		render(
+			<CategorySectionListHarness
+				categoryGroups={[parentCategory]}
+				categorySectionMode="filter"
+			/>,
+		);
+
+		fireEvent.click(
+			screen.getByRole("button", {
+				name: /category.parent_category/,
+			}),
+		);
+
+		expect(
+			screen.getByRole("checkbox", { name: "category.child_category_a" }),
+		).toBeInTheDocument();
+		expect(
+			screen.getByRole("checkbox", { name: "category.child_category_b" }),
+		).toBeInTheDocument();
+		expect(screen.getAllByText("(0)")).toHaveLength(3);
+	});
+
 	it("can keep child categories unselected when a parent category is clicked", () => {
 		render(
 			<CategorySectionListHarness

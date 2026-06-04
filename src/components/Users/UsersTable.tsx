@@ -12,7 +12,6 @@ import { useAccountStore } from "@/lib/store/accountStore";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import type { User } from "@/types/user";
 import { UserFilterPanel, type UserFilters } from "./UserFilterPanel";
-import { Badge } from "../ui/badge";
 import { EmptyActionState } from "@/components/EmptyActionState";
 import Plus from "@/icons/plus.svg";
 
@@ -227,27 +226,6 @@ export function UsersTable() {
 						</div>
 					);
 				},
-			},
-			{
-				id: "compliance",
-				header: t("content.userTable.columns.compliance"),
-				accessorFn: (row) => Number(row.compliance ?? false),
-				enableSorting: true,
-				sortingFn: (rowA, rowB) =>
-					Number(rowB.original.compliance) - Number(rowA.original.compliance),
-				cell: ({ row }) => (
-					<div className="flex flex-col gap-1">
-						{row.original.compliance ? (
-							<Badge variant="default" className="text-xs">
-								{t("content.userTable.compliance.accepted")}
-							</Badge>
-						) : (
-							<Badge variant="outline" className="text-xs">
-								{t("content.userTable.compliance.rejected")}
-							</Badge>
-						)}
-					</div>
-				),
 			},
 		],
 

@@ -37,6 +37,7 @@ import { canReviewInstitutionSubmissionType } from "@/lib/utils/submissionReview
 import { EmptyActionState } from "@/components/EmptyActionState";
 import Edit from "@/icons/edit.svg";
 import { useInstitutionPrivateFieldResolver } from "@/lib/hooks/useInstitutionPrivateFieldResolver";
+import { resolveInstitutionPermissionField } from "@/lib/utils/institutionPermissionField";
 import { DownloadModal } from "@/components/Modals/Pages/DownloadModal";
 import { notifyInstitutionDownload } from "@/server/actions/downloads";
 import type { ExportFormat } from "@/lib/utils/downloadUtils";
@@ -51,6 +52,46 @@ type InstitutionsFilterPanelProps = {
 	loading: boolean;
 	onRetry: () => void;
 	onFiltersChange: (nextFilters: FilterState) => void;
+};
+
+type InstitutionTableColumn =
+	DataTableConfig<InstitutionTableRow>["columns"][number];
+
+const defineInstitutionTableColumns = (
+	columns: DataTableConfig<InstitutionTableRow>["columns"],
+) => columns;
+
+const getColumnKey = (column: InstitutionTableColumn) => {
+	if (column.id) return column.id;
+	if ("accessorKey" in column && typeof column.accessorKey === "string") {
+		return column.accessorKey;
+	}
+	return undefined;
+};
+
+const getColumnExportKeys = (column: InstitutionTableColumn) => {
+	const exportKey = column.meta?.exportKey;
+	if (Array.isArray(exportKey)) return exportKey;
+	if (exportKey) return [exportKey];
+	return [];
+};
+
+const getColumnPermissionField = (column: InstitutionTableColumn) => {
+	if (column.id === "owner") return "owner_name";
+
+	const fieldFromColumnKey = resolveInstitutionPermissionField({
+		value: getColumnKey(column),
+	});
+	if (fieldFromColumnKey) return fieldFromColumnKey;
+
+	for (const key of getColumnExportKeys(column)) {
+		const fieldFromExportKey = resolveInstitutionPermissionField({
+			value: key,
+		});
+		if (fieldFromExportKey) return fieldFromExportKey;
+	}
+
+	return null;
 };
 
 function InstitutionsFilterPanel({
@@ -94,6 +135,9 @@ export function InstitutionsTable() {
 	const allSubmissions = useAccountStore((state) => state.submissions);
 	const institutionPermissions = useAccountStore(
 		(state) => state.institutionPermissions,
+	);
+	const institutionFieldPermissions = useAccountStore(
+		(state) => state.institutionFieldPermissions,
 	);
 	const setActiveInstitutionEdit = useAccountStore(
 		(state) => state.setActiveInstitutionEdit,
@@ -194,6 +238,17 @@ export function InstitutionsTable() {
 		},
 		[isPrivateField],
 	);
+	const readableInstitutionFields = useMemo(
+		() => new Set(institutionFieldPermissions.read),
+		[institutionFieldPermissions.read],
+	);
+	const canReadColumn = useCallback(
+		(column: InstitutionTableColumn) => {
+			const permissionField = getColumnPermissionField(column);
+			return !permissionField || readableInstitutionFields.has(permissionField);
+		},
+		[readableInstitutionFields],
+	);
 
 	const tableRows = useMemo<InstitutionTableRow[]>(() => {
 		const submissionRows = submissions.map((submission) =>
@@ -247,7 +302,7 @@ export function InstitutionsTable() {
 		privateColumnAriaLabel: tCommon("common.sensitiveInformation", {
 			defaultValue: "Sensitive information",
 		}),
-		columns: [
+		columns: defineInstitutionTableColumns([
 			{
 				accessorKey: "status",
 				header: "",
@@ -893,7 +948,7 @@ export function InstitutionsTable() {
 				},
 				accessorFn: (row) => row.updated_at,
 			},
-		],
+		]).filter(canReadColumn),
 
 		data: filteredTableRows,
 		getRowKey: (row) => row.rowKey ?? row.id,
