@@ -45,6 +45,8 @@ const buildInitialFormData = (config: FormWrapperConfig) => {
 			initialData[field.name] = field.defaultValue;
 		} else if (field.type === "checkbox" || field.type === "switch") {
 			initialData[field.name] = false;
+		} else if (field.type === "radio" && field.allowNullOption) {
+			initialData[field.name] = null;
 		} else if (field.type === "multiselect") {
 			initialData[field.name] = [];
 		} else if (field.type === "file") {

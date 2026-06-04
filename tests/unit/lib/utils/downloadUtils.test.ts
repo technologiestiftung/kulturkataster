@@ -331,7 +331,9 @@ describe("generateExcelBuffer", () => {
 		expect(worksheet.A3?.v).toBe("www.kulturkataster.berlin");
 		expect(worksheet.A4?.v).toBe("Ein Projekt der Kulturraum Berlin gGmbH");
 		expect(worksheet.A1?.l).toBeUndefined();
-		expect(worksheet.A2?.l).toBeUndefined();
+		expect(worksheet.A2?.l?.Target).toBe(
+			"https://kulturkataster.berlin/de/download",
+		);
 		expect(worksheet.A3?.l?.Target).toBe("https://www.kulturkataster.berlin");
 		expect(worksheet.A4?.l).toBeUndefined();
 		expect(worksheet.A6?.v).toBe("Status");
@@ -374,6 +376,9 @@ describe("generateExcelBuffer", () => {
 		expect(worksheet.A1?.v).toBe("Translated 1");
 		expect(worksheet.A2?.v).toBe(
 			"Bitte benennen Sie bei Verwendung das Kulturkataster als Download-Quelle und beachten Sie die rechtlichen Hinweise.",
+		);
+		expect(worksheet.A2?.l?.Target).toBe(
+			"https://kulturkataster.berlin/de/download",
 		);
 	});
 });

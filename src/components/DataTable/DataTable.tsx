@@ -706,7 +706,7 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 								onClick={config.secondaryButton.onClick}
 								variant="outline"
 								size="md"
-								className="bg-primary-light  max-w-56 text-foreground border-primary rounded-full [&_svg]:size-6"
+								className="bg-primary-light size-12 shrink-0 rounded-full border-primary p-0 text-foreground sm:h-auto sm:w-auto sm:max-w-56 sm:px-4 sm:py-2 [&_svg]:size-6"
 								aria-label={secondaryButtonAriaLabel}
 							>
 								{config.secondaryButton.label}
