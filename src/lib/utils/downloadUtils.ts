@@ -89,6 +89,7 @@ const EXCEL_NOTICE_DEFAULT_ROWS = [
 	"www.kulturkataster.berlin",
 	"Ein Projekt der Kulturraum Berlin gGmbH",
 ] as const;
+const EXCEL_LEGAL_NOTICE_URL = "https://kulturkataster.berlin/de/download";
 const EXCEL_HYPERLINK_FONT_COLOR = "0563C1";
 
 const enumKeyMappings: Record<string, string> = {
@@ -563,7 +564,8 @@ function applyExcelNotice(ws: XLSX.WorkSheet, translateFn?: TranslateFn) {
 
 	noticeRows.forEach((noticeText, rowIndex) => {
 		const cellAddress = XLSX.utils.encode_cell({ r: rowIndex, c: 0 });
-		const linkTarget = getHyperlinkTarget(noticeText);
+		const linkTarget =
+			rowIndex === 1 ? EXCEL_LEGAL_NOTICE_URL : getHyperlinkTarget(noticeText);
 		ws[cellAddress] = {
 			t: "s",
 			v: noticeText,

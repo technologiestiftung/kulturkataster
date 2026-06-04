@@ -269,6 +269,42 @@ describe("FormWrapper", () => {
 			expect(screen.getByLabelText("Large")).toBeInTheDocument();
 		});
 
+		it("submits null for a nullable radio option", async () => {
+			const onSubmit = vi.fn();
+			const config: FormWrapperConfig = {
+				fields: toFields([
+					{
+						id: "main",
+						fields: [
+							{
+								name: "shared_use_allowed",
+								label: "Offen für Raumanfragen?",
+								type: "radio",
+								allowNullOption: true,
+								nullOptionLabel: "Keine Angabe",
+								options: [
+									{ value: true, label: "Ja" },
+									{ value: false, label: "Nein" },
+								],
+							},
+						],
+					},
+				]),
+				initialValues: { shared_use_allowed: true },
+				onSubmit,
+			};
+
+			render(<FormWrapper config={config} />);
+			fireEvent.click(screen.getByLabelText("Keine Angabe"));
+			fireEvent.click(screen.getByRole("button", { name: /Submit/i }));
+
+			await waitFor(() => {
+				expect(onSubmit).toHaveBeenCalledWith({
+					shared_use_allowed: null,
+				});
+			});
+		});
+
 		it("renders checkbox field", () => {
 			const config: FormWrapperConfig = {
 				fields: toFields([

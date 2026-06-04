@@ -837,6 +837,10 @@ function InstitutionDraftWizardContent({
 							label: fieldLabel("shared_use_allowed"),
 							type: "radio",
 							radioVariant: "button",
+							allowNullOption: true,
+							nullOptionLabel: tEnum(
+								"enumMap.field_names.shared_use_allowed.options.none",
+							),
 							options: [
 								{
 									value: true,
@@ -1180,6 +1184,10 @@ function InstitutionDraftWizardContent({
 									name: "owner_type",
 									label: fieldLabel("owner_type", "Eigentümer*innenart"),
 									type: "select",
+									allowNullOption: true,
+									nullOptionLabel: tEnum(
+										"enumMap.field_names.owner_type.options.none",
+									),
 									options: [
 										{
 											value: "private",

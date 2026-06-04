@@ -49,7 +49,7 @@ export const buildInstitutionCreateData = (
 	protection_status_info: input.protection_status_info ?? null,
 	protection_status_internal_notes:
 		input.protection_status_internal_notes ?? null,
-	shared_use_allowed: input.shared_use_allowed ?? false,
+	shared_use_allowed: input.shared_use_allowed ?? null,
 	shared_use_info: input.shared_use_info ?? null,
 	shared_use_equipment: input.shared_use_equipment ?? null,
 	shared_use_audience: input.shared_use_audience ?? null,
