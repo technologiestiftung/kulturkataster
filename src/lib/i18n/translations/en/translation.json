@@ -55,7 +55,7 @@
 					},
 					"empty": "You don't have any activity yet.",
 					"emptyActions": {
-						"claimLocations": "Request my locations",
+						"claimLocations": "Query My Locations",
 						"contribute": "Contribute"
 					},
 					"emptyHint": "You can perform the following actions here.",
@@ -187,16 +187,16 @@
 					},
 					"title": "Questions & Answers"
 				},
-				"subtitle": "My profile overview",
+				"subtitle": "My Profile Overview",
 				"tabs": {
 					"activity": "Activity",
 					"categories": "Categories",
 					"groups": "Groups",
-					"institutions": "Cultural venues",
+					"institutions": "Cultural Locations",
 					"roles": "Roles",
 					"users": "Users"
 				},
-				"welcome": "Welcome, {{name}}!"
+				"welcome": "Welcome, {{name}}"
 			},
 			"accountEdit": {
 				"confirmPasswordLabel": "Confirm password",
@@ -419,10 +419,10 @@
 			}
 		},
 		"filter": {
-			"title": "Filter cultural venues"
+			"title": "Filter Cultural Locations"
 		},
 		"footer": {
-			"about": "About the project",
+			"about": "About the Project",
 			"accessibility": "Accessibility",
 			"address": {
 				"city": "Berlin",
@@ -467,6 +467,7 @@
 		},
 		"institution": {
 			"backToMap": "Back to map",
+			"categories": "Categories",
 			"claimSelectDescription": "You can add cultural venues you are authorized for to your profile. For more completeness, a better overview, and faster editing.",
 			"claimSelectSearchLabel": "Name or address of the cultural venue",
 			"claimSelectSubtitle": "Request management rights for cultural venues that belong to your association or company.",
@@ -523,7 +524,7 @@
 			"institutionsListLabel": "List of cultural venues",
 			"noResultsFound": "No cultural venues found :(",
 			"scrollToTop": "Scroll to top",
-			"title": "List view",
+			"title": "List View",
 			"tryAdjustingFilters": "Try adjusting the filters. If you are sure this location exists, you can submit it via [this form /institution]."
 		},
 		"loading": "Loading",
@@ -593,7 +594,7 @@
 			"searchButton": "Search",
 			"suggestions": "Suggestions for your search"
 		},
-		"sensitiveInformation": "Sensitive information",
+		"sensitiveInformation": "Protected Information",
 		"siteTitle": "Berlin Kulturkataster",
 		"skipToContent": "Skip to main content",
 		"success": "Success",
@@ -627,55 +628,55 @@
 	"content": {
 		"aboutModal": {
 			"bodySections": [
-				"In a growing metropolis like Berlin, art and cultural spaces are scarce resources.",
-				"The cultural register is mentioned in the government policy guidelines for this legislative period.",
-				"The framework for the development of the cultural register is formed by four cultural policy guidelines on which the KRB has agreed with the Senate Department for Culture and Social Cohesion:",
-				"1. Evidence-based cultural policy and cultural urban development: The Berlin cultural cadastre creates a comprehensive data base about cultural areas in order to enable fact-based cultural policy and targeted urban development.\n2. Securing and redeveloping spaces for culture: The cultural cadastre serves as an instrument for sustainable monitoring of cultural areas in order to support their preservation and open up new spaces.\n3. Fair distribution of cultural offerings in the urban space and equal opportunities with regard to participation: The cultural register visualizes gaps in cultural offerings and supports city planning in creating a balanced and fair cultural offering for all Berliners.\n4. Improving collaboration between departments, levels and sectors: As a flexible digital planning tool, the cultural cadastre strengthens collaboration within the various areas of responsibility, administrative levels and the entire Berlin cultural scene.",
-				"The aim of the Berlin cultural cadastre is to capture a cultural landscape that is more diverse, dynamic and interdisciplinary than any other.",
-				"A broad concept of culture and a descriptive understanding of culture form the basis of the cultural register.",
+				"In a growing metropolis like Berlin, spaces for art and culture are scarce resources. Displacement, competition for spaces and location are a threat to the cultural spaces in Berlin, which play a diverse and critical role for the city. They are a location factor, tourism magnet and motor for innovation, they serve the transfer of knowledge, have a memorial function and support community by forming a framework for identity for a diverse and inclusive civic society. The Kulturkataster, an inventory of Berlin’s cultural landscape on a digital map that is freely accessible online, is a decisive step in the direction of sustainable cultural urban development.",
+				"The Kulturkataster was mentioned in the guidelines of the governmental policy the current legislative period. At the end of 2022, Kulturraum Berlin gGmbH (KRB) was entrusted with the conceptualization by Berlin’s Senate Department for Culture and Community and presented the starting situation and needs as well as a realization concept for the Kulturkataster in two concept papers (realized by the Studio für unendliche Möglichkeiten). The realization in 2024 was also assigned to KRB. KRB, in turn, tasked Technologiestiftung Berlin with the development of the online-based map application.",
+				"The framework for the development of the Kulturkataster is formed by four cultural policy guidelines that KRB has elaborated with Berlin’s Senate Department for Culture and Community:",
+				"1. Evidence-based cultural policy and cultural urban development: The Berlin Kulturkataster creates a comprehensive data basis about cultural spaces in order to allow the creation of fact-based cultural policy and targeted urban development.\n2. The protection as well as new development of spaces for culture: The Kulturkataster serves as an instrument for a sustainable monitoring of cultural areas in order to support their preservation and to develop new spaces.\n3. The fair distribution of cultural offerings throughout the city and equal opportunities in terms of participation: The Kulturkataster visualizes gaps in cultural offerings and supports urban planning in creating balanced and fair cultural offerings for all Berliners.\n4. The improvement of the cooperation between departments, levels and sectors: As a flexible digital planning instrument, the Kulturkataster strengthens the cooperation between the different areas of responsibility, departmental levels as well as Berlin’s entire cultural community.",
+				"The Berlin Kulturkataster has been created to create a record of a cultural landscape that is more diverse, dynamic and interdisciplinary than any other. As much as the editorial team wishes that this was not the case, this process can never be completed. This is why a stated goal of the project is to continuously approximate a current state of Berlin’s cultural landscape on the digital map. This can only be achieved in cooperation with those for whom the Kulturkataster can be an important tool – the administrators on the district and state levels in  Berlin, the numerous advocacy groups for the artistic disciplines, academics, experts, activists and, of course, the cultural locations themselves.",
+				"A broad idea of the term culture and a descriptive understanding of culture form the foundations of the Kulturkataster. The database has registered a large number of locations. Additional categories and cultural locations will follow in the next versions. Instead of assessing cultural forms of expression, these are described and sorted in the Kulturkataster according to numerous criteria. This values the individual contributions that both the individual locations as well entire disciplines contribute to the cultural framework of the city.",
 				"`documentation-card`",
-				"The development of Berlin's cultural register takes place as a learning process.",
+				"The development of Berlin’s Kulturkataster takes place as a learning process. This means that new versions of the Kulturkataster will be published at fixed intervals. The future versions are intended to make new functionalities and updated information available. This process allows the project team to integrate suggestions and criticism into the ongoing development process and invites the users of the Kulturkataster to actively participate in its future orientation.",
 				"`versions-card`"
 			],
 			"credits": {
 				"contractors": {
 					"additional": [
-						"Online editorial team: Lilli Berlin",
-						"Implementation of German sign language:",
-						"Implementation of easy language:",
-						"Testing and advice on digital accessibility: adesso SE",
-						"Advice on data protection: Cortina Consult",
-						"Legal advice: Law Firm Laaser"
+						"Online Editorial Associate: Lilli Berlin",
+						"Realization in German Sign Language: manua GmbH ",
+						"Realization in Plain Language: Übersetzungsbüro Leserlich ",
+						"Assessment and Advisement for Digital Accessibility: adesso SE",
+						"Privacy Advisement: Cortina Consult",
+						"Legal Advisement: Kanzlei Laaser"
 					],
 					"editorial": {
 						"items": [
-							"Ateliers: Studio office in the bbk berlin's cultural work",
-							"Clubs and music venues: Clubcommission - Network of Berlin Club Culture e.V.",
-							"Potential places and places of cultural urban development: Urbane Praxis e.V.",
-							"Places of Berlin dance: Tanzbüro Berlin - Contemporary Dance Berlin e.V.",
-							"Project spaces and initiatives: Network of independent Berlin project spaces and initiatives e.V.",
-							"Socio-cultural places and street art areas: Daniel Schneider (Archive of Youth Cultures e.V.)"
+							"Visual Artist Studios: Atelierbüro im kulturwerk des bbk berlin (Studio Office in the kulturwerk of the bbk berlin)",
+							"Clubs and Music Venues: Clubcommission - Netzwerk der Berliner Clubkultur e.V.",
+							"Potential Locations and Locations for Cultural Urban Development: Urbane Praxis e.V.",
+							"Berlin Dance Locations: Tanzbüro Berlin - Zeitgenössischer Tanz Berlin e.V.",
+							"Project Spaces and Initiatives: Netzwerk freier Berliner Projekträume und -initiativen e.V.",
+							"Sociocultural Locations and Street Art Areas: Daniel Schneider (Archiv der Jugendkulturen e.V.)"
 						],
-						"title": "External data editing"
+						"title": "External Data Editing"
 					},
 					"items": [
-						"Technical implementation: Technology Foundation Berlin, project management Ninett Rosenfeld",
-						"Digital project management: Carsten Hein",
-						"Concept, advice and participation formats: Studio for endless possibilities",
+						"Technical Realization: Technologiestiftung Berlin, Project Management Ninett Rosenfeld",
+						"Digital Project Controlling: Carsten Hein",
+						"Concept, Advisement and Participatory Formats: Studio für unendliche Möglichkeiten",
 						"Design: Common Studio"
 					],
-					"title": "Contractors"
+					"title": "Independent Partners"
 				},
 				"funding": {
-					"organization": "Senate Department for Culture and Social Cohesion",
-					"title": "Financial support"
+					"organization": "Berlin’s Senate Department for Culture and Community",
+					"title": "Funding"
 				},
 				"partners": {
 					"list": [
 						"AG Kino – Gilde deutscher Filmkunsttheater e.V.",
 						"Berliner Museumsverband e.V.",
 						"Berliner Projektfonds Urbane Praxis",
-						"Literaturorte: Netzwerk freie Literaturszene Berlin",
+						"Literature Locations: Netzwerk freie Literaturszene Berlin",
 						"Börsenverein des Deutschen Buchhandels - Landesverband Berlin-Brandenburg",
 						"Bundesverband Soziokultur e.V.",
 						"Deutscher Bibliotheksverband",
@@ -689,68 +690,68 @@
 						"Moabit-Wedding-Kunstfestival - Bezirksamt Mitte",
 						"Musicboard Berlin",
 						"Raumsonde - Kollektiv Spieltrieb",
-						"Schulverzeichnis der Senatsverwaltung für Bildung, Jugend und Familie",
-						"Senatsverwaltung für Stadtentwicklung, Bauen und Wohnen",
-						"Senatsverwaltung für Wirtschaft, Energie und Betriebe",
+						"School Directory of Berlin’s Senate Department for Education, Youth and Family",
+						"Berlin’s Senate Department for Urban Development, Building and Housing",
+						"Berlin’s Senate Department for Economic Affairs, Energy and Public Enterprises",
 						"servicezentrum musikschulen (szm)"
 					],
 					"title": "Partners"
 				},
 				"steering": {
 					"members": [
-						"Tobias Schmidt-Pathenheimer (Senate Department for Culture and Social Cohesion)",
-						"Strategic advice: Henning Roser (Senate Department for Urban Development, Building and Housing)",
-						"Stéphane Bauer (District Office Friedrichshain-Kreuzberg)",
-						"Daniela Bell (Lichtenberg District Office)",
-						"Susanne Roggenhofer (Pankow District Office)",
-						"Sonja Augart (Room Office Free Scene)",
-						"Kai Sachse (Club Commission)",
-						"Sonja Schaudt (Berlin Cultural Conference, State Music Council)",
-						"Julia Brodauf (studio office in the kulturwerk of the bbk berlin)",
-						"Daniel Brunet (LAFT)",
-						"Benedikt Stoll (Urbane Praxis e.V.)"
+						"Tobias Schmidt-Pathenheimer (Berlin’s Senate Department for Culture and Community)",
+						"Strategic Advisement: Henning Roser (Berlin’s Senate Department for Urban Development, Building and Housing)",
+						"Stéphane Bauer (District Office of Friedrichshain-Kreuzberg)",
+						"Daniela Bell (District Office of Lichtenberg)",
+						"Christian Schwerdtner (District Office of Charlottenburg-Wilmersdorf) ",
+						"Daniel Brunet (Koalition der Freien Szene, LAFT)",
+						"Sonja Schaudt (Kulturkonferenz Berlin, Landesmusikrat)",
+						"Julia Brodauf (Atelierbüro im kulturwerk des bbk berlin)",
+						"Florian Falkenhagen (Clubcommission, Cassiopeia)",
+						"Benedikt Stoll (Urbane Praxis e.V.)",
+						"Laila Wiens (Raumbüro Freie Szene)"
 					],
-					"title": "Steering committee"
+					"title": "Steering Committee"
 				},
 				"team": {
 					"members": [
-						"**Project management:** Daniel Jakobson",
-						"**Project management:** Ali Deniz Şensöz",
-						"**Data editor:** Lina Rippel",
-						"**Strategic project coordination:** Laura Raber",
-						"**Allocation and administration:** Doris Antonides-Heidelmeyer",
-						"**Technical project management until 2024:** Metini Krivanish"
+						"**Project Coordinator:** Daniel Jakobson",
+						"**Project Management:** Ali Deniz Şensöz",
+						"**Data Editor:** Lina Rippel",
+						"**Strategic Project Coordination:** Laura Raber",
+						"**Allocation and Administration:** Doris Antonides-Heidelmeyer",
+						"**Technical Project Management Until 2024:** Metini Krivanish"
 					],
-					"title": "Project team"
+					"title": "Project Team"
 				}
 			},
 			"documentation": {
 				"downloadPDF": "Download PDF",
-				"text": "Detailed documentation on the development of the cultural cadastre database can be found here."
+				"text": "You can find comprehensive documentation of the development of the database of the Kulturkataster here."
 			},
-			"simpleLanguageDirect": "You can find the “About the project” section in simple language <link />.",
+			"simpleLanguageDirect": "You can find the area About the Project in plain language <link />.",
 			"subtitle": "",
 			"teamPhotoAlt": "Project team of the Berlin cultural cadastre",
-			"thanks": "The Berlin cultural cadastre owes its successful publication to the enthusiasm, commitment and joint work of all people for whom the Berlin cultural landscape is as important as it is for the project team.",
-			"title": "About the project",
+			"thanks": "The successful publication of Berlin’s Kulturkataster is thanks to the enthusiasm, engagement and joint actions of everyone for whom Berlin’s cultural landscape is just as important as it is for the project team. This deep anchoring within the community forms the basis for this long-term project to fully realize its vision and be further developed dynamically.",
+			"title": "About the Project",
 			"versionsItems": [
 				{
 					"badge": "Version 1",
-					"label": "Inventory of cultural places with basic location information in selected cultural area categories",
-					"text": "Publication September 2025"
+					"label": "published in September 2025",
+					"text": " Inventory of cultural locations with basic location information in selected categories"
 				},
 				{
 					"badge": "Version 2",
-					"label": "Introducing new heritage site categories and updating data; introducing a login area; shared data maintenance and access for cultural venues, associations and administration",
-					"text": "Publication early 2026"
+					"label": "published in April 2026",
+					"text": "Introduction of updated cultural location categories and updated data; introduction of a log-in area; joint data maintenance and access for cultural locations, associations and administrators"
 				},
 				{
 					"badge": "Version 3",
-					"label": "Updating and completing data; integrating new specialist maps from the geoportal; publishing threatened cultural venues; expanding the login area",
-					"text": "Publication mid-2026"
+					"label": "publication in the middle of 2026",
+					"text": "Update and completion of the data; integration of new specialized maps from the geoportal; publications of cultural locations at risk; expansion of the log-in area"
 				}
 			],
-			"versionsLabel": "The following versions of the cultural register are planned:"
+			"versionsLabel": "The following versions of the Kulturkataster are planned:"
 		},
 		"accessibilityModal": {
 			"contact": {
@@ -1045,25 +1046,25 @@
 		},
 		"filter": {
 			"categories": {
-				"resetFilters": "Reset filter",
-				"setAllFilters": "All filters",
+				"resetFilters": "Reset Filter",
+				"setAllFilters": "All Filters",
 				"title": "Categories"
 			},
-			"displayedInstitutions": "Displayed cultural locations in Berlin",
+			"displayedInstitutions": "Displayed Cultural Locations in Berlin",
 			"districts": {
-				"resetFilters": "Reset filter",
-				"setAllFilters": "All filters",
-				"title": "districts"
+				"resetFilters": "Reset Filter",
+				"setAllFilters": "All Filters",
+				"title": "Districts"
 			},
 			"districtTagsSwitchAriaLabel": "{{translatedName}} switch on or off",
 			"error": "Error loading filters",
-			"hideClosed": "Hide closed places",
+			"hideClosed": "Hide Closed Locations",
 			"loading": "Loading filters...",
 			"retry": "Try again",
-			"showClosed": "Show closed locations",
+			"showClosed": "Show Closed Locations",
 			"showMoreCategories": "Show more categories",
 			"showSelectedCategories": "Show selected categories",
-			"title": "Filter cultural venues"
+			"title": "Filter Cultural Locations"
 		},
 		"groupFormModal": {
 			"actions": {
@@ -1133,7 +1134,7 @@
 							"emptyText": "No cultural locations found",
 							"filters": {
 								"categories": "Categories",
-								"districts": "districts",
+								"districts": "Districts",
 								"subcategories": "Subcategories",
 								"tags": "tags"
 							},
@@ -1861,7 +1862,7 @@
 		"institutionsTable": {
 			"actions": {
 				"addInstitution": "Add cultural location",
-				"claimInstitution": "Request my locations"
+				"claimInstitution": "Query My Locations"
 			},
 			"empty": {
 				"description": "You can start new entries directly.",
@@ -1891,14 +1892,14 @@
 		"listView": {
 			"allLoaded": "All cultural locations loaded",
 			"countLabel": "{{count}} Cultural places",
-			"description": "This list shows all the places you have selected in the filters - 1:1 as on the map. ",
+			"description": "This list shows all locations that you have selected in the filters – 1:1 as on the map. It is especially suitable for screen readers.",
 			"filterButton": "filter",
 			"loadMore": "Load more cultural locations",
 			"searchButton": "Seek",
 			"searchClose": "Close search",
-			"searchLabel": "Search list",
+			"searchLabel": "Search List",
 			"searchPlaceholder": "Cultural location, address or district",
-			"subtitle": "Your results at a glance",
+			"subtitle": "Your Results At a Glance",
 			"timeline": "The development of the list view is planned for 2026.",
 			"title": "List view"
 		},
@@ -2029,7 +2030,7 @@
 		"signLanguageModal": {
 			"content": [
 				{
-					"title": "About the project",
+					"title": "About the Project",
 					"videos": [
 						{
 							"src": "https://kulturraeume.berlin/content/uploads/kulturraeume-01awasistkulturkataster.mp4",
@@ -2249,7 +2250,7 @@
 				"text97": "This gives the project strength.",
 				"text98": "This way it can last for a long time.",
 				"text99": "And keep developing.",
-				"title": "About the project"
+				"title": "About the Project"
 			},
 			"infosAndServices": {
 				"list1": {
@@ -2528,7 +2529,7 @@
 							"emptyText": "No cultural locations found",
 							"filters": {
 								"categories": "Categories",
-								"districts": "districts",
+								"districts": "Districts",
 								"subcategories": "Subcategories",
 								"tags": "tags"
 							},
@@ -2696,16 +2697,16 @@
 			"aboutButton": "About the project",
 			"accessibilitySettings": "Accessibility settings",
 			"closeButton": "Close",
-			"description1": "This is the first version of Kulturkataster Berlin",
-			"description2": "Strengthen this project for Berlin culture with us! ",
+			"description1": "The Kulturkataster is a digital map that depicts the diversity of Berlin’s cultural landscape and that systemically registers locations for art and culture. It serves as the central basis for a fact-based approach to cultural urban development. Alongside the public participation function, the new portal with log-in functionality now provides a genuine tool for the practice of collaboratively managing locations.",
+			"description2": "Strengthen this project for Berlin’s culture together with us! We look forward to your support.",
 			"discoverButton": "Discover",
 			"footer": {
 				"credit": "Copyright 2025 - A project by Kulturraum Berlin gGmbH, funded by the Senate Department for Culture and Social Cohesion, with technical implementation by the Technology Foundation Berlin."
 			},
 			"infoButton": "Information & Service",
 			"newsletter": "Sign up for the newsletter",
-			"subtitle": "A project by Kulturraum Berlin gGmbH",
-			"title": "The Berlin cultural register: The city's culture at a glance"
+			"subtitle": "A Project of Kulturraum Berlin gGmbH",
+			"title": "The Berlin Kulturkataster: Culture in the City At a Glance"
 		}
 	},
 	"enumMap": {
@@ -2816,11 +2817,11 @@
 			"social_participation_centers": "Social Participation Centers",
 			"sociocultural_centers": "Sociocultural centers",
 			"sociocultural_centers_other": "Unassigned",
-			"studio_apartments": "Studio Apartments",
-			"studio_houses_free": "Studio Houses Free",
-			"studio_houses_workspace_program": "Studio Houses Workspace Program",
-			"studios": "Studios",
-			"studios_other": "Unassigned",
+			"studio_apartments": "Artist Studio Apartments",
+			"studio_houses_free": "Independent Artist Studio Buildings",
+			"studio_houses_workspace_program": "Artist Studio Buildings in the Work Spaces Program ",
+			"studios": "Artist Studios",
+			"studios_other": "Not Assigned",
 			"theater": "Theater",
 			"urban_art": "Urban art",
 			"variety": "Variety",
