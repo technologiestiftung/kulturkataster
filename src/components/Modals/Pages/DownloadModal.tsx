@@ -1,29 +1,29 @@
 "use client";
 
-import type { ReactNode } from "react";
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import { useTranslation } from "react-i18next";
-import { Modal } from "../Modal";
+import { FormWrapper } from "@/components/FormWrapper/FormWrapper";
+import type { FormWrapperConfig } from "@/components/FormWrapper/types";
+import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
+import ArrowNarrowRight from "@/icons/arrow-narrow-right.svg";
+import { useLocalePath } from "@/lib/hooks/useLocalePath";
+import { useAccountStore } from "@/lib/store/accountStore";
+import { useInstitutionStore } from "@/lib/store/institutionStore";
+import { cn } from "@/lib/utils";
 import {
 	DEFAULT_INSTITUTION_EXPORT_COLUMN_ORDER,
 	downloadInstitutions,
 	type ExportFormat,
 } from "@/lib/utils/downloadUtils";
-import type { Institution } from "@/types";
-import ArrowNarrowRight from "@/icons/arrow-narrow-right.svg";
-import { FormWrapper } from "@/components/FormWrapper/FormWrapper";
-import type { FormWrapperConfig } from "@/components/FormWrapper/types";
-import { useAccountStore } from "@/lib/store/accountStore";
-import { useInstitutionStore } from "@/lib/store/institutionStore";
-import { useRoutedModalClose } from "../useRoutedModalClose";
 import { notifyInstitutionDownload } from "@/server/actions/downloads";
 import { subscribeToNewsletter } from "@/server/actions/newsletter";
-import { useLocalePath } from "@/lib/hooks/useLocalePath";
-import { cn } from "@/lib/utils";
+import type { Institution } from "@/types";
+import Link from "next/link";
+import type { ReactNode } from "react";
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { Modal } from "../Modal";
+import { useRoutedModalClose } from "../useRoutedModalClose";
 
 type DownloadModalProps = {
 	routePath?: string;
