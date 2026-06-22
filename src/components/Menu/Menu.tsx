@@ -1,5 +1,12 @@
 "use client";
 
+import { LayerTreeContent } from "@/components/Map/LayerTree/LayerTree";
+import {
+	Sheet,
+	SheetContent,
+	SheetHeader,
+	SheetTitle,
+} from "@/components/ui/sheet";
 import {
 	Sidebar,
 	SidebarContent,
@@ -12,30 +19,23 @@ import {
 	SidebarMenuItem,
 	useSidebar,
 } from "@/components/ui/sidebar";
-import {
-	Sheet,
-	SheetContent,
-	SheetHeader,
-	SheetTitle,
-} from "@/components/ui/sheet";
+import { allowedLocales, defaultLocale } from "@/i18n/config";
 import Accessibility from "@/icons/accessibility.svg";
+import Download from "@/icons/download.svg";
 import Edit from "@/icons/edit.svg";
 import InfoCircle from "@/icons/info-circle.svg";
-import ListIcon from "@/icons/list.svg";
-import MapIcon from "@/icons/map.svg";
 import DEIcon from "@/icons/lang/de.svg";
 import ENIcon from "@/icons/lang/en.svg";
+import ListIcon from "@/icons/list.svg";
+import MapIcon from "@/icons/map.svg";
 import UserIcon from "@/icons/user.svg";
-import Download from "@/icons/download.svg";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { useAppStore } from "@/lib/store/appStore";
-import { allowedLocales, defaultLocale } from "@/i18n/config";
 import { localePath } from "@/lib/utils/localePath";
 import KukaSmallLogo from "@/logos/kuka-small.svg";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { usePathname, useRouter } from "next/navigation";
-import { LayerTreeContent } from "@/components/Map/LayerTree/LayerTree";
 
 type MenuItem = {
 	id: string;
@@ -409,7 +409,18 @@ export function Menu({
 		}
 	}, [isMobileLayerTreeRoute]);
 
+	// WORKAROUND: Temporary redirect for download button
+	const DOWNLOAD_REDIRECT_URL =
+		"https://form.formcentric.com/form/7dfaf065-24a1-4431-8905-019e123e5dbe";
+
 	const handleItemClick = (item: MenuItem) => {
+		if (item.id === "download") {
+			window.open(DOWNLOAD_REDIRECT_URL, "_blank", "noopener,noreferrer");
+			setOpen(false);
+			setOpenMobile(false);
+			return;
+		}
+
 		if (item.id === "language") {
 			const targetLocale = currentLocale === "de" ? "en" : "de";
 			const toggledPath = buildLocaleToggledPath(
