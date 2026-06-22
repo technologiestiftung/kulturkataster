@@ -1,28 +1,28 @@
 "use client";
 
 import { AccessibilityContent } from "@/components/Menu/MenuContent/AccessibilityContent";
+import { SubMenuOption } from "@/components/Menu/SubMenuOption";
 import {
 	Dialog,
 	DialogContent,
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";
-import { useTranslation } from "react-i18next";
+import { allowedLocales, defaultLocale } from "@/i18n/config";
 import Close from "@/icons/close.svg";
-import KRBLogo from "@/logos/KRB.svg";
+import Download from "@/icons/download.svg";
 import InfoCircle from "@/icons/info-circle.svg";
-import { SubMenuOption } from "@/components/Menu/SubMenuOption";
-import MapIcon from "@/icons/map.svg";
-import ListIcon from "@/icons/list.svg";
 import DEIcon from "@/icons/lang/de.svg";
 import ENIcon from "@/icons/lang/en.svg";
-import { usePathname, useRouter } from "next/navigation";
+import ListIcon from "@/icons/list.svg";
+import MapIcon from "@/icons/map.svg";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
-import Download from "@/icons/download.svg";
-import { ModalFooter } from "../ModalFooter";
-import { allowedLocales, defaultLocale } from "@/i18n/config";
 import { localePath } from "@/lib/utils/localePath";
+import KRBLogo from "@/logos/KRB.svg";
+import { usePathname, useRouter } from "next/navigation";
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import { ModalFooter } from "../ModalFooter";
 
 type MobileMenuItem = {
 	id: string;
@@ -108,7 +108,17 @@ export function MobileMenuModal({
 		}
 	};
 
+	// WORKAROUND: Temporary redirect for download button
+	const DOWNLOAD_REDIRECT_URL =
+		"https://form.formcentric.com/form/7dfaf065-24a1-4431-8905-019e123e5dbe";
+
 	const handleItemClick = (item: MobileMenuItem) => {
+		if (item.id === "download") {
+			window.open(DOWNLOAD_REDIRECT_URL, "_blank", "noopener,noreferrer");
+			closeModal();
+			return;
+		}
+
 		if (item.id === "language") {
 			const targetLocale = currentLocale === "de" ? "en" : "de";
 			const toggledPath = buildLocaleToggledPath(
