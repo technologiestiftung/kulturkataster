@@ -9,14 +9,14 @@
 				"title": "Kontrast anpassen"
 			},
 			"fontSize": {
-				"description": "Sie können die Schriftgröße der Website anpassen, um die Lesbarkeit zu verbessern. Nutzen Sie die Schaltflächen unten, um die Schriftgröße zu vergrößern oder zu verkleinern.",
+				"description": "Sie können die Schriftgröße der Webseite anpassen, um die Lesbarkeit zu verbessern. Nutzen Sie die Schaltflächen unten, um die Schriftgröße zu vergrößern oder zu verkleinern.",
 				"title": "Vergrößerte Schriften"
 			},
 			"motion": {
 				"title": "Reduzierte Animationen"
 			},
 			"signLanguage": {
-				"description": "Dieses Video erklärt die Barrierefreiheit der Website in Gebärdensprache.",
+				"description": "Dieses Video erklärt die Barrierefreiheit der Webseite in Gebärdensprache.",
 				"title": "Deutsche Gebärdensprache"
 			},
 			"simpleLanguage": {
@@ -149,11 +149,7 @@
 						"title": "Wie kann ich meine Kontodaten ändern?"
 					},
 					"question10": {
-						"answer": "Nutzer*innen, die sich registrieren, geben bei der Registrierung an, ob sie Mitarbeiter*innen eines Netzwerks oder Verbandes, eines Berliner Bezirks oder des Landes Berlin sind. Sollte keine dieser Angaben zutreffen, wählen Nutzer*innen „Nein“ aus. Bei der Angabe zur Mitarbeit in den Bezirksverwaltungen und Landesverwaltungen prüft die KRB nach Registrierung, ob ein fachlicher Bezug zu Kultur- oder Stadtentwicklungsthemen besteht. Diese Prüfung erfolgt nach eigenem Ermessen der KRB.\nNetzwerk- und Verbandsmitarbeitende, die nachweisen können, dass sie gewählte Vertreter*innen oder beauftragte Freie Mitarbeiter*innen oder haupt- bzw. nebenberuflich Beschäftigte des betreffenden Netzwerkes oder Verbands sind, erhalten die Einsichts-, Mitwirkungs- oder Downloadrechte auch für sensible Daten. Mindestvorraussetzung ist die Zuordenbarkeit einer entsprechenden E-Mailadresse. Ob ein solcher Bezug vorliegt, prüft die KRB nach eigenem Ermessen.",
-						"title": "Wie funktioniert der redaktionelle Workflow (z. B. Entwurf, Prüfung, Freigabe, Veröffentlichung) im User-Bereich?"
-					},
-					"question11": {
-						"answer": "Sie können über das Pfeilsymbol im linken Menü — zweites Symbol von oben, Pfeil nach unten — eine Liste der Kulturorte herunterladen. Vor dem Download müssen Sie bestätigen, dass Sie die Vereinbarungen über die Datennutzung sowie die rechtlichen Hinweise zur Kenntnis genommen haben und ihnen zustimmen.\nVor dem Download können Sie die angezeigten Daten auf der Karte filtern bzw. sortieren. Wenn Sie anschließend auf das Download-Symbol klicken, wird die aktuell angezeigte Auswahl heruntergeladen. Der Export ist im XLS-, XLSX- oder CSV-Format möglich.\nDie im Download enthaltenen Daten entsprechen jeweils dem sichtbaren Datenstand und den Zugriffsrechten Ihres Nutzerstatus.\nMit dem Download erklären Sie sich damit einverstanden, die Daten nicht an Dritte weiterzugeben, sie ausschließlich im Rahmen der gesetzlichen Vorgaben — insbesondere der DSGVO, soweit personenbezogene Daten betroffen sind — sowie nur für die Zwecke des Kulturkatasters zu nutzen.\nDie Zwecke des Kulturkatasters sind nicht kommerzieller Natur. Sie umfassen die systematische Erfassung, Strukturierung und öffentliche Bereitstellung von Daten über Orte kultureller Produktion und Nutzung im Land Berlin. Ziel ist es, eine belastbare Datengrundlage für kulturpolitische Entscheidungen, kulturelle Stadtentwicklung sowie für die Zusammenarbeit zwischen Kulturakteur*innen, Verwaltung, Wissenschaft und Öffentlichkeit zu schaffen.",
+						"answer": "Sie können über das Pfeilsymbol im linken Menü — zweites Symbol von oben, Pfeil nach unten — eine Liste der Kulturorte herunterladen. Vor dem Download müssen Sie bestätigen, dass Sie die Vereinbarungen über die Datennutzung sowie die rechtlichen Hinweise zur Kenntnis genommen haben und ihnen zustimmen.\nVor dem Download können Sie die angezeigten Daten auf der Karte filtern bzw. sortieren. Wenn Sie anschließend auf das Download-Symbol klicken, wird die aktuell angezeigte Auswahl heruntergeladen. Der Export ist im XLS-, XLSX- oder CSV-Format möglichdd. ///n\nDie im Download enthaltenen Daten entsprechen jeweils dem sichtbaren Datenstand und den Zugriffsrechten Ihres Nutzerstatus.\nMit dem Download erklären Sie sich damit einverstanden, die Daten nicht an Dritte weiterzugeben, sie ausschließlich im Rahmen der gesetzlichen Vorgaben — insbesondere der DSGVO, soweit personenbezogene Daten betroffen sind — sowie nur für die Zwecke des Kulturkatasters zu nutzen.\nDie Zwecke des Kulturkatasters sind nicht kommerzieller Natur. Sie umfassen die systematische Erfassung, Strukturierung und öffentliche Bereitstellung von Daten über Orte kultureller Produktion und Nutzung im Land Berlin. Ziel ist es, eine belastbare Datengrundlage für kulturpolitische Entscheidungen, kulturelle Stadtentwicklung sowie für die Zusammenarbeit zwischen Kulturakteur*innen, Verwaltung, Wissenschaft und Öffentlichkeit zu schaffen.",
 						"title": "Wie funktioniert der Datendownload?"
 					},
 					"question11": {
@@ -189,14 +185,14 @@
 						"title": "Was kann ich tun, wenn ich mein Passwort vergessen habe oder ändern möchte?"
 					},
 					"question9": {
-						"answer": "Nutzer*innen, die sich registrieren, geben bei der Registrierung an, ob sie Mitarbeiter*innen eines Netzwerks oder Verbandes, eines Berliner Bezirks oder des Landes Berlin sind. Sollte keine dieser Angaben zutreffen, wählen Nutzer*innen „Nein“ aus. Bei der Angabe zur Mitarbeit in den Bezirksverwaltungen und Landesverwaltungen prüft die KRB nach Registrierung, ob ein fachlicher Bezug zu Kultur- oder Stadtentwicklungsthemen besteht. Diese Prüfung erfolgt nach eigenem Ermessen der KRB.\nNetzwerk- und Verbandsmitarbeitende, die nachweisen können, dass sie gewählte Vertreter*innen oder beauftragte Freie Mitarbeiter*innen oder haupt- bzw. nebenberuflich Beschäftigte des betreffenden Netzwerkes oder Verbands sind, erhalten die Einsichts-, Mitwirkungs- oder Downloadrechte auch für sensible Daten. Mindestvorraussetzung ist die Zuordenbarkeit einer entsprechenden E-Mailadresse. Ob ein solcher Bezug vorliegt, prüft die KRB nach eigenem Ermessen.",
+						"answer": "Nutzer\\*innen, die sich registrieren, geben bei der Registrierung an, ob sie Mitarbeiter\\*innen eines Netzwerks oder Verbandes, eines Berliner Bezirks oder des Landes Berlin sind. Sollte keine dieser Angaben zutreffen, wählen Nutzer*innen „Nein“ aus. Bei der Angabe zur Mitarbeit in den Bezirksverwaltungen und Landesverwaltungen prüft die KRB nach Registrierung, ob ein fachlicher Bezug zu Kultur- oder Stadtentwicklungsthemen besteht. Diese Prüfung erfolgt nach eigenem Ermessen der KRB.\\\nNetzwerk- und Verbandsmitarbeitende, die nachweisen können, dass sie gewählte Vertreter\\*innen oder beauftragte Freie Mitarbeiter\\*innen oder haupt- bzw. nebenberuflich Beschäftigte des betreffenden Netzwerkes oder Verbands sind, erhalten die Einsichts-, Mitwirkungs- oder Downloadrechte auch für sensible Daten. Mindestvorraussetzung ist die Zuordenbarkeit einer entsprechenden E-Mailadresse. Ob ein solcher Bezug vorliegt, prüft die KRB nach eigenem Ermessen.",
 						"title": "Was sind die Voraussetzungen dafür, dass ich einen Account als Verwaltungsmitarbeiter*in oder als Mitarbeiter*in in einem Netzwerk bzw. Verband erhalte?"
 					},
 					"subtitle": "Häufig gestellte Fragen zum Konto-Bereich.",
 					"technicalSupport": {
 						"emailLabel": "Technischer Support"
 					},
-					"title": "Fragen & Antworten !"
+					"title": "Fragen & Antworten"
 				},
 				"subtitle": "Meine Profilübersicht",
 				"tabs": {
@@ -291,10 +287,10 @@
 				"show": "Passwort anzeigen"
 			},
 			"register": {
-				"accountType": "Arbeiten Sie für eine Organisation oder in der Verwaltung?",
+				"accountType": "Arbeiten Sie für ein Netzwerk, einen Verband oder in der Verwaltung?",
 				"accountTypeAdministration": "Mitarbeiter*in des Landes Berlin",
 				"accountTypeDistrict": "Mitarbeiter*in eines Bezirks",
-				"accountTypeOrganization": "Mitarbeiter*in einer Organisation",
+				"accountTypeOrganization": "Mitarbeiter*in eines Netzwerks oder Verbands",
 				"accountTypePlaceholder": "Optionen auswählen",
 				"administrationName": "Für welche Landesbehörde arbeiten Sie?",
 				"administrationNamePlaceholder": "Name der Verwaltung eingeben",
@@ -307,7 +303,7 @@
 				"confirmPasswordPlaceholder": "Passwort wiederholen",
 				"districtName": "Bitte nennen Sie Ihren Bezirk",
 				"districtNamePlaceholder": "Name des Bezirks eingeben",
-				"districtOffice": "Für welche Dienststelle arbeiten Sie?*",
+				"districtOffice": "Für welche Dienststelle arbeiten Sie?",
 				"districtOfficePlaceholder": "Name der Dienststelle eingeben",
 				"districtPhone": "Telefonnumer für Rückfragen",
 				"districtPhonePlaceholder": "Telefonnummer eingeben",
@@ -327,8 +323,8 @@
 				"newsletterSubscriptionSuccessDescription": "Vielen Dank für die Anmeldung zum Newsletter. Bei erfolgreicher Anmeldung erhalten Sie eine E-Mail mit einem Bestätigungslink. Bitte klicken Sie auf den Link, um Ihre Anmeldung abzuschließen. Kontrollieren Sie am Besten auch Ihren Spam-Ordner.",
 				"newsletterSubscriptionSuccessTitle": "Anmeldung für den Newsletter zum Kulurkataster",
 				"newsletterTitle": "Newsletter des Berliner Kulturkatasters",
-				"organizationName": "Bitte nennen Sie den Namen der Organisation",
-				"organizationNamePlaceholder": "Name der Organisation eingeben",
+				"organizationName": "Bitte nennen Sie den Namen des Netzwerks oder des Verbands",
+				"organizationNamePlaceholder": "Name des Netzwerks oder des Verbands eingeben",
 				"organizationPhone": "Telefonnumer für Rückfragen",
 				"organizationPhonePlaceholder": "Telefonnummer eingeben",
 				"organizationPosition": "Was ist ihre Funktion/Position?",
@@ -456,7 +452,7 @@
 			},
 			"contact": "Kontakt",
 			"credit": {
-				"text": "© 2025 - Ein Projekt der Kulturraum Berlin gGmbH, gefördert durch die Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt, mit der technischen Umsetzung durch die Technologiestiftung Berlin."
+				"text": "© 2026 - Ein Projekt der Kulturraum Berlin gGmbH, gefördert durch die Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt, mit der technischen Umsetzung durch die Technologiestiftung Berlin."
 			},
 			"email": {
 				"address": "info@kulturkataster.berlin",
@@ -556,7 +552,7 @@
 			"unnamed": "Unbenannter Kulturort",
 			"usableAreaSize": "Größe der Nutzflächen (m²)",
 			"utilizationStatus": "Nutzungsstatus",
-			"website": "Website",
+			"website": "Webseite",
 			"workspaceCount": "Anzahl der Arbeitsräume"
 		},
 		"institutionFormModal": {
@@ -690,6 +686,9 @@
 		"user": {
 			"title": "Mein Konto"
 		},
+		"venue": {
+			"website": "Webseite"
+		},
 		"yes": "Ja"
 	},
 	"content": {
@@ -709,8 +708,8 @@
 				"contractors": {
 					"additional": [
 						"Mitarbeit Online-Redaktion: Lilli Berlin",
-						"Umsetzung Deutsche Gebärdensprache:",
-						"Umsetzung Leichte Sprache:",
+						"Umsetzung Deutsche Gebärdensprache: manua GmbH ",
+						"Umsetzung Leichte Sprache: Übersetzungsbüro Leserlich",
 						"Prüfung und Beratung Digitale Barrierefreiheit: adesso SE",
 						"Beratung zum Datenschutz: Cortina Consult",
 						"Rechtliche Beratung: Kanzlei Laaser"
@@ -722,7 +721,7 @@
 							"Potenzialorte und Orte der kulturellen Stadtentwicklung: Urbane Praxis e.V.",
 							"Orte des Berliner Tanzes: Tanzbüro Berlin - Zeitgenössischer Tanz Berlin e.V.",
 							"Projekträume und -initiativen: Netzwerk freier Berliner Projekträume und -initiativen e.V.",
-							"Soziokulturelle Orte und Street-Art-Flächen: Daniel Schneider (Archiv der Jugendkulturen e.V.)"
+							"Soziokulturelle Orte und Legale Graffitiflächen: Daniel Schneider (Archiv der Jugendkulturen e.V.)"
 						],
 						"title": "Externe Datenredaktion"
 					},
@@ -743,7 +742,7 @@
 						"AG Kino – Gilde deutscher Filmkunsttheater e.V.",
 						"Berliner Museumsverband e.V.",
 						"Berliner Projektfonds Urbane Praxis",
-						"Literaturorte: Netzwerk freie Literaturszene Berlin",
+						"Netzwerk freie Literaturszene Berlin",
 						"Börsenverein des Deutschen Buchhandels - Landesverband Berlin-Brandenburg",
 						"Bundesverband Soziokultur e.V.",
 						"Deutscher Bibliotheksverband",
@@ -767,16 +766,16 @@
 				"steering": {
 					"members": [
 						"Tobias Schmidt-Pathenheimer (Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt)",
-						"Strategische Beratung: Henning Roser (Senatsverwaltung für Stadtentwicklung Bauen und Wohnen)",
+						"Strategische Beratung: Henning Roser (Senatsverwaltung für Stadtentwicklung, Bauen und Wohnen)",
 						"Stéphane Bauer (Bezirksamt Friedrichshain-Kreuzberg)",
 						"Daniela Bell (Bezirksamt Lichtenberg)",
-						"Susanne Roggenhofer (Bezirksamt Pankow)",
-						"Sonja Augart (Raumbüro Freie Szene)",
-						"Kai Sachse (Clubcommission)",
+						"Christian Schwerdtner (Bezirksamt Charlottenburg-Wilmersdorf)",
+						"Daniel Brunet (Koalition der Freien Szene, LAFT)",
 						"Sonja Schaudt (Kulturkonferenz Berlin, Landesmusikrat)",
 						"Julia Brodauf (Atelierbüro im kulturwerk des bbk berlin)",
-						"Daniel Brunet (LAFT)",
-						"Benedikt Stoll (Urbane Praxis e.V.)"
+						"Florian Falkenhagen (Clubcommission, Cassiopeia)",
+						"Benedikt Stoll (Urbane Praxis e.V.)",
+						"Laila Wiens (Raumbüro Freie Szene)"
 					],
 					"title": "Steuerungsgremium"
 				},
@@ -799,7 +798,7 @@
 			"simpleLanguageDirect": "Den Bereich „Über das Projekt“ in leichter Sprache finden Sie <link />.",
 			"subtitle": "",
 			"teamPhotoAlt": "Projektteam des Berliner Kulturkatasters",
-			"thanks": "Das Berliner Kulturkataster verdankt seine erfolgreiche Veröffentlichung der Begeisterung, dem Engagement und dem gemeinsamen Wirken aller Personen, für die die Berliner Kulturlandschaft von ebenso großer Bedeutung ist wie für das Projektteam. Diese tiefe Verankerung in der **Szene** bildet die Grundlage dafür, dass das langfristig ausgerichtete Projekt seine Vision in vollem Umfang entfalten und dynamisch weiterentwickeln kann.",
+			"thanks": "Das Berliner Kulturkataster verdankt seine erfolgreiche Veröffentlichung der Begeisterung, dem Engagement und dem gemeinsamen Wirken aller Personen, für die die Berliner Kulturlandschaft von ebenso großer Bedeutung ist wie für das Projektteam. Diese tiefe Verankerung in der Szene bildet die Grundlage dafür, dass das langfristig ausgerichtete Projekt seine Vision in vollem Umfang entfalten und dynamisch weiterentwickeln kann.",
 			"title": "Über das Projekt",
 			"versionsItems": [
 				{
@@ -823,7 +822,7 @@
 		"accessibilityModal": {
 			"contact": {
 				"company": "Kulturraum Berlin gGmbH",
-				"description": "Sie möchten Informationen zur Umsetzung der Barrierefreiheit oder möchten bestehende Barrieren melden? Sie können etwas auf unserer Website nicht ausreichend wahrnehmen, bedienen oder verstehen? Sie benötigen Informationen in einer barrierefreien Form? Dann informieren Sie uns bitte.",
+				"description": "Sie möchten Informationen zur Umsetzung der Barrierefreiheit oder möchten bestehende Barrieren melden? Sie können etwas auf unserer Webseite nicht ausreichend wahrnehmen, bedienen oder verstehen? Sie benötigen Informationen in einer barrierefreien Form? Dann informieren Sie uns bitte.",
 				"email": {
 					"address": "d.jakobson@kulturraum.berlin",
 					"label": "E-Mail"
@@ -866,7 +865,7 @@
 			"which": {
 				"barriers": [
 					{
-						"description": "Die Website bietet derzeit (Stand September 2025) keine Inhalte in Leichter Sprache und keine Videos in Deutscher Gebärdensprache (DGS) an.",
+						"description": "Die Webseite bietet derzeit (Stand September 2025) keine Inhalte in Leichter Sprache und keine Videos in Deutscher Gebärdensprache (DGS) an.",
 						"measures": "Texte in Leichter Sprache sowie Erklärvideos in Deutscher Gebärdensprache (DGS) sind derzeit in Arbeit. Sie beinhalten grundlegende Informationen zum Kulturkataster und zur Nutzung der Plattform.",
 						"timeline": "Die Veröffentlichung der Inhalte in Leichter Sprache und DGS ist für Oktober 2025 geplant.",
 						"title": "Barriere: Inhalte"
@@ -878,14 +877,14 @@
 						"title": "Barriere: Ansicht"
 					},
 					{
-						"description": "Einige der auf der Website bereitgestellten Dokumente, wie z. B. herunterladbare Excel-Tabellen mit gefilterten Kulturstandorten oder einzelne PDF-Dateien, entsprechen nicht den Anforderungen an barrierefreie Dokumente. Diese Dateien sind teilweise nicht mit Screenreadern lesbar oder nicht für die Tastaturnavigation optimiert.",
+						"description": "Einige der auf der Webseite bereitgestellten Dokumente, wie z. B. herunterladbare Excel-Tabellen mit gefilterten Kulturstandorten oder einzelne PDF-Dateien, entsprechen nicht den Anforderungen an barrierefreie Dokumente. Diese Dateien sind teilweise nicht mit Screenreadern lesbar oder nicht für die Tastaturnavigation optimiert.",
 						"measures": "Die Dokumente sollen künftig in barrierefreier Form angeboten werden. Dafür werden barrierearme Dateiformate verwendet und die Inhalte werden entsprechend der Standards für barrierefreie Dokumente überarbeitet.",
 						"timeline": "Die Überarbeitung der bestehenden Dateien ist für 2026 vorgesehen. Neue Dokumente sollen 2026 barrierearm veröffentlicht werden.",
 						"title": "Barriere: Dokumente"
 					},
 					{
-						"description": "Einige interaktive Elemente der Website – insbesondere Filterfunktionen, Kartenelemente oder Navigationspunkte – sind derzeit nicht per Tastatur bedienbar.",
-						"measures": "Die technische Struktur der Website wird überarbeitet, um eine vollständige Tastatursteuerung aller interaktiven Elemente zu gewährleisten.",
+						"description": "Einige interaktive Elemente der Webseite – insbesondere Filterfunktionen, Kartenelemente oder Navigationspunkte – sind derzeit nicht per Tastatur bedienbar.",
+						"measures": "Die technische Struktur der Webseite wird überarbeitet, um eine vollständige Tastatursteuerung aller interaktiven Elemente zu gewährleisten.",
 						"timeline": "Die Umsetzung erfolgt bis Ende 2025.",
 						"title": "Barriere: Tastaturbedienbarkeit"
 					},
@@ -896,13 +895,13 @@
 						"title": "Barriere: Sichtbarer Fokus"
 					},
 					{
-						"description": "Einige Icons oder Buttons auf der Website verfügen nicht über aussagekräftige Alternativtexte.",
+						"description": "Einige Icons oder Buttons auf der Webseite verfügen nicht über aussagekräftige Alternativtexte.",
 						"measures": "Alle grafischen Elemente werden überprüft und mit korrekten Alternativtexten versehen.",
 						"timeline": "Die Umsetzung erfolgt im Laufe des Jahres 2026.",
 						"title": "Barriere: Alternativtexte für Bilder und Symbole"
 					},
 					{
-						"description": "Die semantische Struktur der Website ist nicht vollständig durch ARIA-Rollen und Landmarken definiert. Screenreader können dadurch nicht alle Bereiche der Website korrekt erfassen.",
+						"description": "Die semantische Struktur der Webseite ist nicht vollständig durch ARIA-Rollen und Landmarken definiert. Screenreader können dadurch nicht alle Bereiche der Webseite korrekt erfassen.",
 						"measures": "Die Seitenstruktur wird um semantische HTML-Elemente und ARIA-Rollen ergänzt, um die Orientierung für assistive Technologien zu verbessern.",
 						"timeline": "Die Umsetzung erfolgt bis Ende 2025.",
 						"title": "Barriere: Fehlende ARIA-Rollen und Landmarken"
@@ -1309,7 +1308,7 @@
 				"zipCity": "30659 Hannover"
 			},
 			"link_liability": {
-				"description": "Unser Angebot enthält Links zu externen Websites Dritter, auf deren Inhalte wir keinen Einfluss haben. Die verlinkten Seiten wurden zum Zeitpunkt der Verlinkung auf mögliche Rechtsverstöße überprüft. Rechtswidrige Inhalte waren zum Zeitpunkt der Verlinkung nicht erkennbar. Eine permanente inhaltliche Kontrolle der verlinkten Seiten ist jedoch ohne konkrete Anhaltspunkte einer Rechtsverletzung nicht zumutbar. Bei Bekanntwerden von Rechtsverletzungen werden wir derartige Links umgehend entfernen.",
+				"description": "Unser Angebot enthält Links zu externen Webseiten Dritter, auf deren Inhalte wir keinen Einfluss haben. Die verlinkten Seiten wurden zum Zeitpunkt der Verlinkung auf mögliche Rechtsverstöße überprüft. Rechtswidrige Inhalte waren zum Zeitpunkt der Verlinkung nicht erkennbar. Eine permanente inhaltliche Kontrolle der verlinkten Seiten ist jedoch ohne konkrete Anhaltspunkte einer Rechtsverletzung nicht zumutbar. Bei Bekanntwerden von Rechtsverletzungen werden wir derartige Links umgehend entfernen.",
 				"title": "Haftung für externe Links"
 			},
 			"programming": {
@@ -1370,7 +1369,7 @@
 				},
 				{
 					"answer": "Sie können über das Pfeilsymbol im linken Menü — zweites Symbol von oben, Pfeil nach unten — eine Liste der Kulturorte herunterladen. Vor dem Download müssen Sie bestätigen, dass Sie die Vereinbarungen über die Datennutzung sowie die rechtlichen Hinweise zur Kenntnis genommen haben und ihnen zustimmen.\nVor dem Download können Sie die angezeigten Daten auf der Karte filtern bzw. sortieren. Wenn Sie anschließend auf das Download-Symbol klicken, wird die aktuell angezeigte Auswahl heruntergeladen. Der Export ist im XLS-, XLSX- oder CSV-Format möglich.\nDie im Download enthaltenen Daten entsprechen jeweils dem sichtbaren Datenstand und den Zugriffsrechten Ihres Nutzerstatus.\nMit dem Download erklären Sie sich damit einverstanden, die Daten nicht an Dritte weiterzugeben, sie ausschließlich im Rahmen der gesetzlichen Vorgaben — insbesondere der DSGVO, soweit personenbezogene Daten betroffen sind — sowie nur für die Zwecke des Kulturkatasters zu nutzen.\nDie Zwecke des Kulturkatasters sind nicht kommerzieller Natur. Sie umfassen die systematische Erfassung, Strukturierung und öffentliche Bereitstellung von Daten über Orte kultureller Produktion und Nutzung im Land Berlin. Ziel ist es, eine belastbare Datengrundlage für kulturpolitische Entscheidungen, kulturelle Stadtentwicklung sowie für die Zusammenarbeit zwischen Kulturakteur*innen, Verwaltung, Wissenschaft und Öffentlichkeit zu schaffen.",
-					"question": "Was sind die Voraussetzungen dafür, dass ich einen Account als Verwaltungsmitarbeiter*in oder als Mitarbeiter*in in einem Netzwerk bzw. Verband erhalte?"
+					"question": "Was sind die Voraussetzungen dafür, dass ich einen Account als Verwaltungsmitarbeiter*in oder als Mitarbeiter*in in einem Netzwerk bzw. Verband erhalte??\n"
 				},
 				{
 					"answer": "Sie können über das Pfeilsymbol im linken Menü — zweites Symbol von oben, Pfeil nach unten — eine Liste der Kulturorte herunterladen. Vor dem Download müssen Sie bestätigen, dass Sie die Vereinbarungen über die Datennutzung sowie die rechtlichen Hinweise zur Kenntnis genommen haben und ihnen zustimmen.\nVor dem Download können Sie die angezeigten Daten auf der Karte filtern bzw. sortieren. Wenn Sie anschließend auf das Download-Symbol klicken, wird die aktuell angezeigte Auswahl heruntergeladen. Der Export ist im XLS-, XLSX- oder CSV-Format möglich.\nDie im Download enthaltenen Daten entsprechen jeweils dem sichtbaren Datenstand und den Zugriffsrechten Ihres Nutzerstatus.\nMit dem Download erklären Sie sich damit einverstanden, die Daten nicht an Dritte weiterzugeben, sie ausschließlich im Rahmen der gesetzlichen Vorgaben — insbesondere der DSGVO, soweit personenbezogene Daten betroffen sind — sowie nur für die Zwecke des Kulturkatasters zu nutzen.\nDie Zwecke des Kulturkatasters sind nicht kommerzieller Natur. Sie umfassen die systematische Erfassung, Strukturierung und öffentliche Bereitstellung von Daten über Orte kultureller Produktion und Nutzung im Land Berlin. Ziel ist es, eine belastbare Datengrundlage für kulturpolitische Entscheidungen, kulturelle Stadtentwicklung sowie für die Zusammenarbeit zwischen Kulturakteur*innen, Verwaltung, Wissenschaft und Öffentlichkeit zu schaffen.",
@@ -1380,10 +1379,10 @@
 			"body": "**Seit September 2025 steht Ihnen mit dem Kulturkataster Berlin die erste Version unseres digitalen Werkzeugs zur Verfügung, dass die Berliner Kulturlandschaft systematisch erfasst.**\n\nDas Kulturkataster wächst stetig weiter: Bereits für Anfang 2026 ist Version 2 geplant, und zur Jahresmitte 2026 folgt Version 3. Mit jeder neuen Version nehmen wir weitere Kulturorte auf, ergänzen die Informationen und fügen neue Funktionalitäten hinzu.\\\nSie können uns dabei helfen. Unter diesem [Link](/institution) können Sie fehlende Kulturorte einreichen und Änderungen vorschlagen.\\\n**Für Anregungen und Kritik erreichen Sie uns unter:** [info@kulturkataster.berlin](mailto:info@kulturkataster.berlin)\\\nDie aktuelle Version des Kulturkatasters ist die Version 1.",
 			"contact": "## Sie haben ein anderes Anliegen?\nTreten Sie gern mit uns in Kontakt!\\\n\\\n**Generelle Anfragen** [kontakt@kulturkataster.berlin](mailto:kontakt@kulturkataster.berlin)\\\n**Technischer Support** [support@kulturkataster.berlin](mailto:support@kulturkataster.berlin)\\\n**Telefon** +49 30 3030 444 60",
 			"simpleLanguageDirect": "Den Bereich „Infos and Services“ in leichter Sprache finden Sie <link />.",
-			"tab1": "## Umfang Version 1\n**Veröffentlichung November 2025**\n- {{count}} Kulturorte mit den Grundinformationen (Name, vollständige Adresse, allgemeine Kontaktinformationen, Angaben zu Förderung und Finanzierung)\n- 15 Kategorien und 71 Unterkategorien\n- Einbindung von 12 Fachkarten aus dem Geoportal Berlin\n- Ein Suchfeld, indem Sie nach Adressen und Namen von Kulturorten suchen können.\n- Einen Suchfilter, der es ermöglicht, Orte nach Bezirk sowie Kategorie und Unterkategorie zu filtern. Darüber hinaus ist es möglich, geschlossene Kulturorte einzublenden.\n\n**Folgende Erweiterungen für Version 1 werden bis November 2025 ergänzt**\n- Informationen in Deutscher Gebärdensprache\n- Informationen in Leichter Sprache\n- Barrierearme Listenansicht",
+			"tab1": "## Umfang Version 1\n**Veröffentlichung November 2025**\n- {{count}} Kulturorte mit den Grundinformationen (Name, vollständige Adresse, allgemeine Kontaktinformationen, Angaben zu Förderung und Finanzierung)\n- 15 Kategorien und 71 Unterkategorien\n- Einbindung von 12 Fachkarten aus dem Geoportal Berlin\n- Ein Suchfeld, indem Sie nach Adressen und Namen von Kulturorten suchen können.\n- Einen Suchfilter, der es ermöglicht, Orte nach Bezirk sowie Kategorie und Unterkategorie zu filtern. Darüber hinaus ist es möglich, geschlossene Kulturorte einzublenden.\n\n**Folgende Erweiterungen für Version 1 wurden bis November 2025 ergänzt**\n- Informationen in Deutscher Gebärdensprache\n- Informationen in Leichter Sprache\n- Barrierearme Listenansicht",
 			"tab2": "## Bedienung\n\nDas Kulturkataster Berlin wurde so konzipiert, dass es möglichst intuitiv bedient werden kann. Funktionalitäten orientieren sich an gängigen Kartenanwendungen. Grundlegende Bedienungshinweise haben wir an dieser Stelle für Sie zusammengefasst.\n\n`image-text-card|/resources/bedienung/1_Bewegen.jpg|left|Karte bewegen|Auf dem Computer: Halten Sie die linke Maustaste gedrückt und ziehen die Karte in die gewünschte Richtung.\\nAuf dem Smartphone/Tablet: Berühren Sie den Bildschirm mit einem Finger und wischen Sie über die Karte.`\n\n`image-text-card|/resources/bedienung/2_Zoom.jpg|right|Zoomen|Auf dem Computer: Nutzen Sie das Mausrad oder die Plus- und Minus-Zeichen am unteren rechten Bildschirmrand.\\nAuf dem Smartphone/Tablet: Legen Sie zwei Finger auf den Bildschirm und bewegen Sie diese auseinander, um zu vergrößern. Zum Verkleinern ziehen Sie die Finger wieder zusammen.`\n\n`image-text-card|/resources/bedienung/3_Suche.jpg|left|Einen Ort suchen|Auf dem Computer: Öffnen Sie das Suchfeld, indem Sie auf das Lupensymbol oben links klicken.\\nAuf dem Smartphone/Tablet: Öffnen Sie das Suchfeld, indem Sie auf das Lupensymbol unten tippen. Geben Sie den Namen eines Ortes oder die Adresse ein und bestätigen Sie Ihre Suche.`\n\n`image-text-card|/resources/bedienung/4_Filter.jpg|right|Filterfunktionen verwenden|Sie können nun alle Kulturorte nach Bezirken sowie nach den zugeordneten Kategorien und Unterkategorien filtern.\\nAuf dem Computer: Öffnen Sie die Filterfunktion, indem Sie auf das Symbol mit den drei übereinanderliegenden Strichen oben links klicken.\\nAuf dem Smartphone/Tablet: Öffnen Sie die Filterfunktion, indem Sie auf das Symbol mit den drei übereinanderliegenden Strichen oben links tippen.\\nStandardmäßig werden alle geöffneten Kulturorte auf der Karte dargestellt. Durch einen Klick auf das Bedienfeld “Geschlossene Orte einblenden” können Sie sich zusätzlich vorübergehend und dauerhaft geschlossene Kulturorte anzeigen lassen.`\n\n`image-text-card|/resources/bedienung/5_Download.jpg|left|Eine Auswahl herunterladen|Das Kulturkataster bietet Ihnen die Möglichkeit, Informationen zu einzelnen sowie auch zu allen Kulturorten Ihrer aktuellen Ansicht herunterzuladen.\\nAuf dem Computer: Klicken Sie auf den nach unten zeigenden Pfeil in der Seitennavigation oben links.\\nAuf dem Smartphone/Tablet: Tippen Sie auf den nach unten zeigenden Pfeil in der Navigation unten rechts.`\n\n`image-text-card|/resources/bedienung/6_Mitwirken.jpg|right|Einen Ort eintragen|Auf dem Computer: Öffnen Sie das Mitwirken-Formular, indem sie auf das Stift- Symbol oben links klicken.\\nAuf dem Smartphone/Tablet: Öffnen Sie das Mitwirken-Formular, indem sie auf das Stift-Symbol unten rechts tippen.\\nFolgen Sie den Hinweisen des Formulars und füllen Sie die Datenfelder gewissenhaft aus. Bitte beachten Sie, dass es sich bei den mit einem *Symbol versehenen Feldern um Pflichtfelder handelt.\\nBestätigen Sie die Einverständniserklärung und schicken Sie das Formular ab.\\nDas Redaktionsteam wird Ihren Eintrag prüfen und sich bei Rückfragen gegebenenfalls per E-Mail bei Ihnen melden. Wir bitten Sie um Verständnis, dass dieser Prozess einige Zeit in Anspruch nehmen kann, da wir gegebenenfalls auch Fachexpert\\*innen in den Entscheidungsprozess einbeziehen werden.`\n\n`image-text-card|/resources/bedienung/7_Schrift.jpg|left|Schriftgröße ändern|Auf dem Computer: Öffnen Sie das Menü für die barrierefreie Bedienung der Website, indem Sie auf das Personensymbol unten links klicken.\\nAuf dem Smartphone/Tablet: Öffnen Sie das Menü für die barrierefreie Bedienung der Website, indem Sie auf das Menüsymbol oben rechts tippen und anschließend die Schaltfläche mit dem Personensymbol auswählen.\\nWählen Sie die Schaltfläche mit der Bezeichnung “Schriftgröße ändern” aus.`\n\n`image-text-card|/resources/bedienung/8_Kontrast.jpg|right|Kontrast anpassen|Auf dem Computer: Öffnen Sie das Menü für die barrierefreie Bedienung der Website, indem Sie auf das Personensymbol unten links klicken.\\nAuf dem Handy/Tablet: Öffnen Sie das Menü für die barrierefreie Bedienung der Website, indem Sie auf das Menüsymbol oben rechts tippen und anschließend die Schaltfläche mit dem Personensymbol auswählen.\\nWählen Sie die Schaltfläche mit der Bezeichnung “Kontrast anpassen” aus.`",
-			"tab3": "## Fragen & Antworten !\n\n`accordion`",
-			"tabTitles": ["Über das Projekt", "Bedienung", "Fragen & Antworten !"],
+			"tab3": "## Fragen & Antworten\n\n`accordion`",
+			"tabTitles": ["Über das Projekt", "Bedienung", "Fragen & Antworten"],
 			"title": "Infos & Service"
 		},
 		"infoWrapper": {
@@ -1608,7 +1607,7 @@
 						"costPlaceholder": "Kosten für die Nutzung beschreiben",
 						"detailsLabel": "Details",
 						"equipmentPlaceholder": "Ausstattung beschreiben",
-						"infoPlaceholder": "Beschreibung der Räume/Flächen",
+						"infoPlaceholder": "Räume/Flächen beschreiben",
 						"label": "Offen für Raumanfragen",
 						"options": {
 							"no": "Nein",
@@ -2090,7 +2089,7 @@
 					]
 				},
 				{
-					"title": "Fragen & Antworten !",
+					"title": "Fragen & Antworten",
 					"videos": [
 						{
 							"src": "https://kulturraeume.berlin/content/uploads/kulturraeume-02d1faqwarumnichtverzeichnen.mp4",
@@ -2115,7 +2114,7 @@
 					]
 				}
 			],
-			"description": "Hier finden Sie alle Informationen zum Kulturkataster Berlin in Deutscher Gebärdensprache (DGS). Die Videos erklären die wichtigsten Inhalte der Website – von „Über das Kulturkataster“ über „Info & Service“ bis hin zu den häufig gestellten Fragen (FAQ). Sie können die einzelnen Videos direkt abspielen.",
+			"description": "Hier finden Sie alle Informationen zum Kulturkataster Berlin in Deutscher Gebärdensprache (DGS). Die Videos erklären die wichtigsten Inhalte der Webseite – von „Über das Kulturkataster“ über „Info & Service“ bis hin zu den häufig gestellten Fragen (FAQ). Sie können die einzelnen Videos direkt abspielen.",
 			"subtitle": "Barrierefreie Informationen über das Kulturkataster Berlin",
 			"title": "Gebärdensprache (DGS)"
 		},
@@ -2482,8 +2481,8 @@
 				"### 1.2 Kulturraum Berlin gGmbH (KRB)\n\nDie KRB ist Betreiberin des Kulturkatasters.",
 				"### 1.3 Kulturort\n\nKulturorte sind kulturell genutzte Orte im Land Berlin, an denen kulturelle Produktionen, Präsentationen oder Nutzung stattfindet oder stattfand und die im Kulturkataster erfasst sind oder erfasst werden sollen.",
 				"### 1.4 Sensible und nicht sensible Daten\n\nIm Kulturkataster sind Daten zu Kulturorten erfasst. Es wird unterschieden zwischen\n\n- nicht sensiblen Daten, die für alle Nutzer\\*innen ungeachtet einer Registrierung sichtbar sind, und\n- sensiblen Daten, die erst sichtbar sind nach Registrierung und jeweils nach Zuweisung von Einsichtsrechten (vgl. dazu § 2) durch die KRB.",
-				"#### 1.4.1 Nicht sensible Daten\n\nName des Kulturortes, Dachorganisation, Art der Finanzierung, Art der Förderung, Allgemeine E-Mail-Adresse, Öffentliche Telefonnummer, Website, Kulturareal, Adresse mit Geoposition, Nutzungsstatus, Sicherungsstatus, Eigentümer\\*innenart, Rechtsform, Zeitraum des Bestehens des Kulturortes am Standort, Bereitschaft für Raumanfragen, Beschreibung der Räume/Fläche, Verfügbar für Zielgruppe/Sparte, Kontakt für Raumanfragen, Ausstattung, Zeitliche Verfügbarkeiten, Barrierefreiheit, Kosten, Stand, Datenquelle (woher stammen die Daten), Zusätzliche Informationen, die öffentlich einsehbar sind bzw. die nach Gesetz und Vertrag keiner Beschränkung zur Weitergabe zu unterliegen scheinen.",
-				"#### 1.4.2 Sensible Daten\n\nGröße der Nutzfläche (m²), Anzahl der Arbeitsräume, Kapazität (Personen), Interne Notizen zum Sicherungsstatus, Eigentümer\\*in, Vertragsende, Vertragsform, Schließungsgründe, Private Standortinfos: Ansprechperson Vorname, Ansprechperson Nachname, Ansprechperson E-Mail-Adresse, Ansprechperson Telefonnummer, Interne Notizen.",
+				"#### 1.4.1 Nicht sensible Daten\n\nName des Kulturortes, Dachorganisation, Art der Finanzierung, Art der Förderung, Allgemeine E-Mail-Adresse, Öffentliche Telefonnummer, Webseite, Kulturareal, Adresse mit Geoposition, Nutzungsstatus, Sicherungsstatus, Eigentümer\\*innenart, Rechtsform, Zeitraum des Bestehens des Kulturortes am Standort, Bereitschaft für Raumanfragen, Beschreibung der Räume/Fläche, Verfügbar für Zielgruppe/Sparte, Kontakt für Raumanfragen, Ausstattung, Zeitliche Verfügbarkeiten, Barrierefreiheit, Kosten, Stand, Datenquelle (woher stammen die Daten), Zusätzliche Informationen, die öffentlich einsehbar sind bzw. die nach Gesetz und Vertrag keiner Beschränkung zur Weitergabe zu unterliegen scheinen.",
+				"#### 1.4.2 Sensible Daten\n\nGröße der Nutzflächen (m²), Anzahl der Arbeitsräume, Kapazität (Personen), Interne Notizen zum Sicherungsstatus, Eigentümer\\*in, Vertragsende, Vertragsform, Schließungsgründe, Private Standortinfos: Ansprechperson Vorname, Ansprechperson Nachname, Ansprechperson E-Mail-Adresse, Ansprechperson Telefonnummer, Interne Notizen.",
 				"## Registrierung",
 				"### 2.1 Nutzer\\*innen\n\nNutzer\\*innen sind natürliche Personen, die das Kulturkataster entweder mit oder ohne Registrierung nutzen.",
 				"### 2.2 Registrierung und Ermessensprüfung\n\nNutzer\\*innen, die sich registrieren, geben bei der Registrierung an, ob sie Mitarbeiter\\*innen eines Netzwerks oder Verbandes, eines Berliner Bezirks oder des Landes Berlin sind. Sollte keine dieser Angaben zutreffen, wählen Nutzer\\*innen „Nein“ aus. Bei der Angabe zur Mitarbeit in den Bezirksverwaltungen und Landesverwaltungen prüft die KRB nach Registrierung, ob ein fachlicher Bezug zu Kultur- oder Stadtentwicklungsthemen besteht. Diese Prüfung erfolgt nach eigenem Ermessen der KRB.\n\nNetzwerk- und Verbandsmitarbeitende, die nachweisen können, dass sie gewählte Vertreter\\*innen oder beauftragte Freie Mitarbeiter\\*innen oder haupt- bzw. nebenberuflich Beschäftigte des betreffenden Netzwerkes oder Verbands sind, erhalten die Einsichts-, Mitwirkungs- oder Downloadrechte auch für sensible Daten. Mindestvorraussetzung ist die Zuordenbarkeit einer entsprechenden E-Mailadresse. Ob ein solcher Bezug vorliegt, prüft die KRB nach eigenem Ermessen.",
@@ -2823,8 +2822,8 @@
 			"aboutButton": "Über das Projekt",
 			"accessibilitySettings": "Einstellungen zur Barrierefreiheit",
 			"closeButton": "Schließen",
-			"description1": "Das ist die zweite Version des Berliner Kulturkatasters. Das Kulturkataster ist eine digitale Karte, die die Vielfalt der Kulturlandschaft Berlins abbildet und systematisch Kunst- und Kulturorte erfasst. Es dient als zentrale Grundlage für eine faktenbasierte kulturelle Stadtentwicklung. In den kommenden Monaten werden wir diese Version mit neuen Funktionen und Informationen ausbauen.",
-			"description2": "Stärken Sie mit uns dieses Projekt für die Berliner Kultur! Wir freuen uns auf Ihre Anmerkungen.",
+			"description1": "Das Kulturkataster ist eine digitale Karte, die die Vielfalt der Kulturlandschaft Berlins abbildet und systematisch Kunst- und Kulturorte erfasst. Es dient als zentrale Grundlage für eine faktenbasierte kulturelle Stadtentwicklung.\nNeben der öffentlichen Mitwirken-Funktion bietet das neue Portal mit Log-In nun ein echtes Arbeitsmittel für die Praxis, um Kulturorte gemeinsam zu verwalten. Öffentlich verfügbare Daten können zudem für den nicht-kommerziellen Gebrauch heruntergeladen werden.",
+			"description2": "Stärken Sie mit uns dieses Projekt für die Berliner Kultur! Wir freuen uns auf Ihre Unterstützung.",
 			"discoverButton": "Entdecken",
 			"footer": {
 				"credit": "Copyright 2025 - Ein Projekt der Kulturraum Berlin gGmbH, gefördert durch die Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt, mit der technischen Umsetzung durch die Technologiestiftung Berlin."
@@ -2832,7 +2831,7 @@
 			"infoButton": "Infos & Service",
 			"newsletter": "Zum Newsletter anmelden",
 			"subtitle": "Ein Projekt der Kulturraum Berlin gGmbH",
-			"title": "Das Berliner Kulturkataster: Die Kultur der Stadt auf einen Blick!!!"
+			"title": "Das Berliner Kulturkataster: Die Kultur der Stadt auf einen Blick"
 		}
 	},
 	"enumMap": {
@@ -2865,7 +2864,7 @@
 			"cultural_urban_development_other": "Ohne Unterkategorie",
 			"curated_cinemas": "Kuratierte Kinos",
 			"dance_contemporary_circus": "Zeitgenössischer Zirkus",
-			"dance_festivals": "Tanz Festivals",
+			"dance_festivals": "Tanzfestivals",
 			"dance_performance": "Performance",
 			"dance_rehearsal_rooms": "Tanz",
 			"dance_training": "Training Tanz",
@@ -3073,9 +3072,9 @@
 			"contact_person_email": {
 				"description": "",
 				"errors": {
-					"required": "Bitte Ansprechperson E-Mail Adresse angeben."
+					"required": "Bitte E-Mail-Adresse der Ansprechperson angeben."
 				},
-				"label": "Ansprechperson E-Mail Adresse",
+				"label": "Ansprechperson E-Mail-Adresse",
 				"placeholder": "name@beispiel.de"
 			},
 			"contact_person_first_name": {
@@ -3105,7 +3104,7 @@
 			"contact_person_phone": {
 				"description": "",
 				"errors": {
-					"required": "Bitte Ansprechperson Telefonnummer angeben."
+					"required": "Bitte die Telefonnummer der Ansprechperson angeben."
 				},
 				"label": "Ansprechperson Telefonnummer",
 				"placeholder": "030 ..."
@@ -3161,7 +3160,7 @@
 			"established_since": {
 				"description": "Bitte tragen Sie das Datum der erstmaligen Nutzung oder Eröffnung am Standort ein. Falls das genaue Datum nicht bekannt ist, reicht auch die Angabe des Jahres.",
 				"errors": {
-					"required": "Bitte Bestehen am Standort seit angeben."
+					"required": "Bitte angeben."
 				},
 				"label": "Bestehen am Standort seit",
 				"placeholder": "TT.MM.JJJJ oder JJJJ"
@@ -3169,7 +3168,7 @@
 			"established_until": {
 				"description": "Bitte tragen Sie das Datum ein, bis zu dem die Kultureinrichtung an diesem Standort aktiv war. Diese Angabe betrifft nur bereits geschlossene Orte. Falls das genaue Datum nicht bekannt ist, reicht auch die Angabe des Jahres.",
 				"errors": {
-					"required": "Bitte Bestehen am Standort bis angeben."
+					"required": "Bitte angeben."
 				},
 				"label": "Bestehen am Standort bis",
 				"placeholder": "TT.MM.JJJJ oder JJJJ"
@@ -3203,7 +3202,7 @@
 					"required": "Bitte Beschreibung der Finanzierungsquelle angeben."
 				},
 				"label": "Beschreibung der Finanzierungsquelle",
-				"placeholder": "z. B. Förderung über das Berliner Arbeitsraumprogramm seit 2020"
+				"placeholder": "z. B. Name der fördernden Institution, des Programms oder der Einnahmequelle "
 			},
 			"funding_source_name": {
 				"description": "",
@@ -3421,7 +3420,7 @@
 			"shared_use_allowed": {
 				"description": "",
 				"errors": {
-					"required": "Bitte Offen für Raumanfragen? angeben."
+					"required": "Bitte angeben."
 				},
 				"label": "Offen für Raumanfragen?",
 				"options": {
@@ -3434,7 +3433,7 @@
 			"shared_use_audience": {
 				"description": "",
 				"errors": {
-					"required": "Bitte Verfügbar für Zielgruppe/Sparte angeben."
+					"required": "Bitte Zielgruppe/Sparte angeben."
 				},
 				"label": "Verfügbar für Zielgruppe/Sparte",
 				"placeholder": "Geeignete Zielgruppe/Sparte beschreiben"
@@ -3469,7 +3468,7 @@
 					"required": "Bitte Beschreibung der Räume/Flächen angeben."
 				},
 				"label": "Beschreibung der Räume/Flächen",
-				"placeholder": "Beschreibung der Räume/Flächen"
+				"placeholder": "Räume/Flächen beschreiben"
 			},
 			"source": {
 				"description": "",
@@ -3477,7 +3476,7 @@
 					"required": "Bitte Datenquelle angeben."
 				},
 				"label": "Datenquelle",
-				"placeholder": "Bitte auswählen"
+				"placeholder": "Bitte eintragen"
 			},
 			"street": {
 				"errors": {
