@@ -547,7 +547,7 @@ test.describe("institution submission wizard", () => {
 		if (fundingSourceLabel) {
 			await expectReviewFieldValue(
 				page,
-				"Name der Finanzierungsquelle:",
+				"Art der Finanzierungsquelle:",
 				`${fundingSourceLabel}: Landesmittel`,
 			);
 		}
