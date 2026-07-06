@@ -29,13 +29,38 @@ const buildContactPersonPayload = (
 	phone: input.contact_person_phone ?? null,
 });
 
+const CONTACT_PERSON_FIELD_MAP = {
+	contact_person_first_name: "first_name",
+	contact_person_last_name: "last_name",
+	contact_person_email: "email",
+	contact_person_phone: "phone",
+} as const satisfies Record<
+	(typeof INLINE_CONTACT_PERSON_FIELDS)[number],
+	keyof Prisma.ContactPersonCreateWithoutInstitutions_as_contactInput
+>;
+
+const buildSparseContactPersonPayload = (
+	input: ContactPersonInput,
+): Prisma.ContactPersonCreateWithoutInstitutions_as_contactInput => {
+	const payload: Prisma.ContactPersonCreateWithoutInstitutions_as_contactInput =
+		{};
+	for (const field of INLINE_CONTACT_PERSON_FIELDS) {
+		if (!hasOwn(input, field)) continue;
+		payload[CONTACT_PERSON_FIELD_MAP[field]] = input[field] ?? null;
+	}
+	return payload;
+};
+
 const hasInlineContactPersonFields = (input: ContactPersonInput) =>
 	INLINE_CONTACT_PERSON_FIELDS.some((field) => hasOwn(input, field));
 
 const hasInlineContactPersonValue = (input: ContactPersonInput) => {
-	const payload = buildContactPersonPayload(input);
+	const payload = buildSparseContactPersonPayload(input);
 	return Object.values(payload).some((value) => value !== null);
 };
+
+const hasAllInlineContactPersonFields = (input: ContactPersonInput) =>
+	INLINE_CONTACT_PERSON_FIELDS.every((field) => hasOwn(input, field));
 
 const buildContactPersonConnect = (contactPersonId?: number | null) => {
 	if (typeof contactPersonId === "undefined") return undefined;
@@ -62,10 +87,13 @@ export const buildUpdateContactPersonRelation = (
 		return buildContactPersonConnect(input.contact_person_id);
 	}
 	if (!hasInlineContactPersonFields(input)) return undefined;
-	if (!hasInlineContactPersonValue(input)) {
+	if (
+		hasAllInlineContactPersonFields(input) &&
+		!hasInlineContactPersonValue(input)
+	) {
 		return { disconnect: true } as const;
 	}
-	const payload = buildContactPersonPayload(input);
+	const payload = buildSparseContactPersonPayload(input);
 	return {
 		upsert: {
 			create: payload,

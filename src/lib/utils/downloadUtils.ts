@@ -2,63 +2,13 @@ import { getDownloadReadableFields } from "@/server/actions/permissions";
 import { getFieldOptionLabel } from "@/lib/i18n/fieldLabels";
 import { Institution } from "@/types";
 import { normalizeInstitutionPermissionField } from "@/lib/utils/institutionPermissionField";
+import {
+	getInstitutionExportColumnOrder,
+	type ExportAudience,
+} from "@/lib/utils/institutionExportPolicy";
 import * as XLSX from "xlsx-js-style";
 
 export type ExportFormat = "csv" | "xlsx" | "xls";
-
-export const DEFAULT_INSTITUTION_EXPORT_COLUMN_ORDER = [
-	"status",
-	"type",
-	"id",
-	"name",
-	"parent_organization",
-	"email",
-	"phone",
-	"website",
-	"cultural_area",
-	"street",
-	"address_suffix",
-	"zipcode",
-	"city",
-	"district",
-	"neighbourhood",
-	"categories",
-	"subcategories",
-	"utilization_status",
-	"utilization_status_info",
-	"utilization_status_internal_notes",
-	"protection_status",
-	"protection_status_info",
-	"protection_status_internal_notes",
-	"legal_form",
-	"funding_sources",
-	"funding_type",
-	"owner_name",
-	"owner_type",
-	"rental_contract_type",
-	"rental_contract_end",
-	"established_since",
-	"established_until",
-	"closing_reason",
-	"area",
-	"number_of_rooms",
-	"capacity",
-	"shared_use_allowed",
-	"shared_use_info",
-	"shared_use_equipment",
-	"shared_use_audience",
-	"shared_use_availability",
-	"accessibility",
-	"cost",
-	"shared_use_contact_person",
-	"contact_person_first_name",
-	"contact_person_last_name",
-	"notes",
-	"internal_notes",
-	"source",
-] as const;
-
-type ExportAudience = "guest" | "internal";
 type TranslateFn = (key: string, options?: Record<string, unknown>) => string;
 
 interface DownloadData {
@@ -78,7 +28,7 @@ type PrepareDataForExportOptions = {
 
 type ExportFieldMeta = {
 	exportKey: string;
-	permissionField: string | null;
+	permissionField: string;
 };
 
 const EXCEL_NOTICE_ROWS = 5;
@@ -98,21 +48,6 @@ const enumKeyMappings: Record<string, string> = {
 	funding_sources: "funding_source",
 	status: "institution_status",
 };
-
-// Excluded for guest audience only (visible to logged-in users)
-const GUEST_RESTRICTED_EXPORT_FIELDS: Set<string> = new Set(["email", "phone"]);
-
-// Excluded for all audiences
-const ALWAYS_EXCLUDED_EXPORT_FIELDS: Set<string> = new Set([
-	"contact_person_email",
-	"contact_person_phone",
-	"contact_person_id",
-	"created_at",
-	"updated_at",
-	"groups",
-	"import_identifier",
-	"users",
-]);
 
 const isObjectRecord = (value: unknown): value is Record<string, unknown> =>
 	typeof value === "object" &&
@@ -201,6 +136,22 @@ function extractDisplayValueFromObject(
 	audience: ExportAudience,
 	translateFn?: TranslateFn,
 ): string {
+	if (exportKey === "users") {
+		const firstName =
+			typeof item.first_name === "string" ? item.first_name : "";
+		const lastName = typeof item.last_name === "string" ? item.last_name : "";
+		const fullName = [firstName, lastName]
+			.map((part) => part.trim())
+			.filter(Boolean)
+			.join(" ");
+		if (fullName) return fullName;
+
+		const email = item.email;
+		if (typeof email === "string" && email.trim().length > 0) {
+			return email;
+		}
+	}
+
 	if (exportKey === "funding_sources") {
 		const sourceName = item.source_name;
 		const description = item.description;
@@ -222,7 +173,7 @@ function extractDisplayValueFromObject(
 		subcategories: ["key", "name", "id"],
 		tags: ["name", "key", "id"],
 		groups: ["name", "key", "id"],
-		users: ["name", "key", "id"],
+		users: ["name", "email", "key"],
 		funding_sources: ["source_name", "name", "key", "id"],
 	};
 
@@ -329,42 +280,53 @@ function getExportFieldMeta(path: string[]): ExportFieldMeta | null {
 	if (root === "address") {
 		const leaf = rest[rest.length - 1];
 		if (!leaf) return null;
+		const permissionField = normalizeInstitutionPermissionField(
+			`address.${leaf}`,
+		);
+		if (!permissionField) return null;
 		return {
 			exportKey: leaf,
-			permissionField: normalizeInstitutionPermissionField("address"),
+			permissionField,
 		};
 	}
 
 	if (root === "contact_person") {
 		const leaf = rest[rest.length - 1];
 		if (!leaf) return null;
+		const permissionField = normalizeInstitutionPermissionField(
+			`contact_person.${leaf}`,
+		);
+		if (!permissionField) return null;
 		return {
 			exportKey: `contact_person_${leaf}`,
-			permissionField: normalizeInstitutionPermissionField("contact_person"),
+			permissionField,
 		};
 	}
 
+	const permissionField = normalizeInstitutionPermissionField(root);
+	if (!permissionField) return null;
 	return {
 		exportKey: root,
-		permissionField: normalizeInstitutionPermissionField(root),
+		permissionField,
 	};
 }
 
 function isExportFieldAllowed(
 	meta: ExportFieldMeta,
 	readablePermissionFields: Set<string> | null,
-	audience: ExportAudience,
 ): boolean {
-	if (!meta.permissionField) return false;
-	if (ALWAYS_EXCLUDED_EXPORT_FIELDS.has(meta.exportKey)) return false;
-	if (
-		audience === "guest" &&
-		GUEST_RESTRICTED_EXPORT_FIELDS.has(meta.exportKey)
-	) {
-		return false;
-	}
 	if (!readablePermissionFields) return true;
 	return readablePermissionFields.has(meta.permissionField);
+}
+
+function isExportKeyAllowed(
+	exportKey: string,
+	readablePermissionFields: Set<string> | null,
+): boolean {
+	const permissionField = normalizeInstitutionPermissionField(exportKey);
+	if (!permissionField) return false;
+	if (!readablePermissionFields) return true;
+	return readablePermissionFields.has(permissionField);
 }
 
 function collectExportValues(
@@ -400,13 +362,7 @@ function collectExportValues(
 	if (!meta) return;
 
 	if (Array.isArray(value)) {
-		if (
-			!isExportFieldAllowed(
-				meta,
-				options.readablePermissionFields,
-				options.audience,
-			)
-		) {
+		if (!isExportFieldAllowed(meta, options.readablePermissionFields)) {
 			return;
 		}
 		const entries = formatArrayField(
@@ -416,26 +372,14 @@ function collectExportValues(
 			options.translateFn,
 		);
 		Object.entries(entries).forEach(([key, formattedValue]) => {
-			if (ALWAYS_EXCLUDED_EXPORT_FIELDS.has(key)) return;
-			if (
-				options.audience === "guest" &&
-				GUEST_RESTRICTED_EXPORT_FIELDS.has(key)
-			) {
-				return;
-			}
+			if (!isExportKeyAllowed(key, options.readablePermissionFields)) return;
 			output.set(key, formattedValue);
 		});
 		return;
 	}
 
 	if (isObjectRecord(value)) {
-		if (
-			!isExportFieldAllowed(
-				meta,
-				options.readablePermissionFields,
-				options.audience,
-			)
-		) {
+		if (!isExportFieldAllowed(meta, options.readablePermissionFields)) {
 			return;
 		}
 		output.set(
@@ -450,13 +394,7 @@ function collectExportValues(
 		return;
 	}
 
-	if (
-		!isExportFieldAllowed(
-			meta,
-			options.readablePermissionFields,
-			options.audience,
-		)
-	) {
+	if (!isExportFieldAllowed(meta, options.readablePermissionFields)) {
 		return;
 	}
 	output.set(
@@ -469,12 +407,13 @@ export function prepareDataForExport(
 	institutions: Institution[],
 	options: PrepareDataForExportOptions = {},
 ): Record<string, string>[] {
-	const readablePermissionFields = options.readablePermissionFields
-		? new Set(
-				Array.from(options.readablePermissionFields)
-					.map((field) => normalizeInstitutionPermissionField(field))
-					.filter((field): field is string => Boolean(field)),
-			)
+	const readablePermissionFieldOrder = options.readablePermissionFields
+		? Array.from(options.readablePermissionFields)
+				.map((field) => normalizeInstitutionPermissionField(field))
+				.filter((field): field is string => Boolean(field))
+		: null;
+	const readablePermissionFields = readablePermissionFieldOrder
+		? new Set(readablePermissionFieldOrder)
 		: null;
 	const audience = options.audience ?? "internal";
 	const columnOrder: string[] = [];
@@ -498,14 +437,23 @@ export function prepareDataForExport(
 			return output;
 		});
 
-	const preferredOrder = options.columnOrder ?? [];
-	const orderedColumns =
-		preferredOrder.length > 0
-			? [
-					...preferredOrder.filter((key) => columnOrder.includes(key)),
-					...columnOrder.filter((key) => !preferredOrder.includes(key)),
-				]
-			: columnOrder;
+	const preferredOrder = options.columnOrder
+		? options.columnOrder
+		: readablePermissionFieldOrder
+			? getInstitutionExportColumnOrder(readablePermissionFieldOrder)
+			: [];
+	const orderedColumns = (() => {
+		if (options.columnOrder) {
+			return [
+				...preferredOrder.filter((key) => columnOrder.includes(key)),
+				...columnOrder.filter((key) => !preferredOrder.includes(key)),
+			];
+		}
+		if (preferredOrder.length > 0) {
+			return preferredOrder.filter((key) => columnOrder.includes(key));
+		}
+		return columnOrder;
+	})();
 
 	return rows.map((row) => {
 		const flattened: Record<string, string> = {};

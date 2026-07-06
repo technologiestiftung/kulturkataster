@@ -1,6 +1,17 @@
 import type { Page } from "@playwright/test";
 
 export async function prepareStableUi(page: Page) {
+	await page.route("**/api/wfs-cache**", async (route) => {
+		await route.fulfill({
+			status: 200,
+			contentType: "application/json",
+			body: JSON.stringify({
+				type: "FeatureCollection",
+				features: [],
+			}),
+		});
+	});
+
 	await page.addInitScript(() => {
 		try {
 			const persistedState = {

@@ -2000,8 +2000,14 @@
 				"fields": {
 					"columnLabel": "Feld",
 					"description": "Begrenzen Sie Aktualisierungen auf bestimmte Kulturort-Felder.",
+					"reorderLabel": "Felder sortieren",
+					"sectionShort": {
+						"address": "Adr.",
+						"contact_person": "AP"
+					},
 					"sections": {
-						"address": "Adressfelder",
+						"address": "Adresse",
+						"contact_person": "Ansprechperson",
 						"institution": "Kulturort-Felder",
 						"relations": "Beziehungen"
 					},
@@ -3609,6 +3615,7 @@
 		"institution_action": {
 			"create": "Erstellen",
 			"delete": "Löschen",
+			"download": "Herunterladen",
 			"publish": "Veröffentlichen",
 			"read": "Anzeigen",
 			"request_deletion": "Löschung beantragen",

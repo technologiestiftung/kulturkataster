@@ -6,6 +6,7 @@ type InstitutionFieldPermissions = {
 	create: string[];
 	update: string[];
 	delete: string[];
+	download: string[];
 };
 
 type ResolveAccessParams = {
