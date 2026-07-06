@@ -127,6 +127,7 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 	const { t } = useTranslation();
 	const { t: tEnum } = useTranslation();
 	const onChangeRef = useRef<FormWrapperConfig["onChange"]>(config.onChange);
+	const fieldVersionsRef = useRef<Record<string, number>>({});
 	const allFields = useMemo(() => getAllFields(config.fields), [config.fields]);
 	const [formData, setFormData] = useState<Record<string, unknown>>(() =>
 		buildInitialFormData(config),
@@ -136,7 +137,12 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 	const [touched, setTouched] = useState<Record<string, boolean>>({});
 	const [formError, setFormError] = useState<string | null>(null);
 
+	const bumpFieldVersion = (name: string) => {
+		fieldVersionsRef.current[name] = (fieldVersionsRef.current[name] ?? 0) + 1;
+	};
+
 	const updateField = (name: string, value: unknown) => {
+		bumpFieldVersion(name);
 		setFormData((prev) => ({ ...prev, [name]: value }));
 		setTouched((prev) => ({ ...prev, [name]: true }));
 		if (errors[name]) {
@@ -165,11 +171,25 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 		const nextFormData = { ...formData, [field.name]: normalizedValue };
 		setTouched((prev) => ({ ...prev, [field.name]: true }));
 		if (normalizedValue !== formData[field.name]) {
+			bumpFieldVersion(field.name);
 			setFormData(nextFormData);
 		}
+		const blurFieldVersions = { ...fieldVersionsRef.current };
+		const updateFieldIfUnchanged = (name: string, value: unknown) => {
+			if (
+				(fieldVersionsRef.current[name] ?? 0) !== (blurFieldVersions[name] ?? 0)
+			) {
+				return;
+			}
+			updateField(name, value);
+		};
 		try {
 			if (field.onBlur) {
-				await field.onBlur(normalizedValue, nextFormData, updateField);
+				await field.onBlur(
+					normalizedValue,
+					nextFormData,
+					updateFieldIfUnchanged,
+				);
 			}
 		} catch (error) {
 			reportClientTelemetry({

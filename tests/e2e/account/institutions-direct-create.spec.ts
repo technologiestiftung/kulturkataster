@@ -91,11 +91,14 @@ test.describe("institution direct create form", () => {
 		fieldName: string,
 		value: string | number | boolean,
 	) => {
-		const radio = await getVisibleFieldById(
-			page,
-			`${fieldName}-${serializeOptionValue(value)}`,
-		);
-		await radio.click();
+		const optionId = `${fieldName}-${serializeOptionValue(value)}`;
+		const radio = await getVisibleFieldById(page, optionId);
+		await radio.scrollIntoViewIfNeeded();
+		await page.locator(`label[for="${optionId}"]`).click();
+		if ((await radio.getAttribute("data-state")) !== "checked") {
+			await radio.focus();
+			await page.keyboard.press("Space");
+		}
 		await expect(radio).toHaveAttribute("data-state", "checked");
 	};
 
@@ -213,7 +216,7 @@ test.describe("institution direct create form", () => {
 			source: "Eigene Recherche vor Ort",
 			notes: "E2E komplette Formularprüfung",
 			internalNotes: "Interne Notiz für den Direktanlage-Test",
-			streetLine: "Alexanderplatz 1",
+			streetLine: "Alexanderplatz",
 			addressSuffix: "Haus A",
 			zip: "10178",
 			city: "Berlin",
@@ -382,9 +385,15 @@ test.describe("institution direct create form", () => {
 			.getByRole("button", { name: /Erstellen|Speichern/i })
 			.last();
 		await Promise.all([
-			page.waitForURL(/\/de\/account\/institutions\/?$/, { timeout: 45_000 }),
+			page.waitForURL(/\/de\/account\/institutions\/?$/, {
+				timeout: 45_000,
+				waitUntil: "commit",
+			}),
 			submitButton.click(),
 		]);
+		await expect(
+			page.getByRole("dialog", { name: /Kulturort erstellen/i }),
+		).toBeHidden({ timeout: 15_000 });
 		await expect(page.getByRole("table")).toBeVisible({ timeout: 15_000 });
 		await page.reload();
 		await expect(page.getByRole("table")).toBeVisible({ timeout: 15_000 });
