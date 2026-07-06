@@ -365,12 +365,14 @@ test.describe("institution submission wizard", () => {
 			page.locator('[id="consent_contact_listing-boolean:true"]'),
 		).toBeVisible();
 		await page.locator('[id="consent_contact_listing-boolean:true"]').click();
-		await page.getByLabel("Ansprechperson Vorname").fill("Max");
-		await page.getByLabel("Ansprechperson Nachname").fill("Mustermann");
-		await page
-			.getByLabel("Ansprechperson E-Mail Adresse")
-			.fill(`contact+${Date.now()}@example.com`);
-		await page.getByLabel("Ansprechperson Telefonnummer").fill("+49 30 123456");
+		await fillRequiredById(page, "contact_person_first_name", "Max");
+		await fillRequiredById(page, "contact_person_last_name", "Mustermann");
+		await fillRequiredById(
+			page,
+			"contact_person_email",
+			`contact+${Date.now()}@example.com`,
+		);
+		await fillRequiredById(page, "contact_person_phone", "+49 30 123456");
 
 		await page
 			.locator('form#institution-contact-form button[type="submit"]')
@@ -567,7 +569,7 @@ test.describe("institution submission wizard", () => {
 		);
 		await expectReviewFieldValue(
 			page,
-			"Ansprechperson E-Mail Adresse:",
+			"Ansprechperson E-Mail-Adresse:",
 			`contact-all-${timestamp}@example.com`,
 		);
 		await expectReviewFieldValue(
