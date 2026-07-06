@@ -108,7 +108,7 @@ jobs:
             git diff --stat
           fi
 
-      - name: Create Pull Request
+      - name: Create or update Pull Request
         if: steps.check_changes.outputs.changes == 'true' && startsWith(steps.action.outputs.action, 'pull')
         env:
           HUSKY: 0
@@ -144,10 +144,11 @@ jobs:
             - [ ] Verify all locales are properly synced
 
             🤖 Generated with [Claude Code](https://claude.ai/code)
-          branch: traduora-sync/${{ matrix.target_branch }}/pull-${{ github.run_number }}
+          branch: traduora-sync/${{ matrix.target_branch }}/pull
           base: ${{ matrix.target_branch }}
           draft: false
           labels: translations,automated
+          delete-branch: true
 
       - name: Commit changes (push action)
         if: steps.check_changes.outputs.changes == 'true' && startsWith(steps.action.outputs.action, 'push')
@@ -177,7 +178,7 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           if [ "${{ steps.check_changes.outputs.changes }}" == "true" ]; then
             if [[ "${{ steps.action.outputs.action }}" == pull* ]]; then
-              echo "- **Result**: ✅ Translations pulled and PR created" >> $GITHUB_STEP_SUMMARY
+              echo "- **Result**: ✅ Translations pulled and PR created or updated" >> $GITHUB_STEP_SUMMARY
             else
               echo "- **Result**: ✅ Translations pushed to Traduora" >> $GITHUB_STEP_SUMMARY
             fi
