@@ -1,6 +1,8 @@
 import { Prisma } from "@/generated/prisma";
 import type { AccessContext } from "@/server/utils/rbac";
 
+const activeCategoriesWhere = { status: "active" as const };
+
 const relationDefaults = {
 	address: {
 		id: true,
@@ -45,10 +47,62 @@ const relationDefaults = {
 	} satisfies Prisma.FundingSourceSelect,
 } as const;
 
+const derivedRelationFields = {
+	subcategories: "categories",
+} as const;
+
+const getDefaultRelationField = (field: string) => {
+	const derivedRelation =
+		derivedRelationFields[field as keyof typeof derivedRelationFields];
+	const relationField = derivedRelation ?? field;
+	return relationField in relationDefaults
+		? (relationField as keyof typeof relationDefaults)
+		: null;
+};
+
+type MutableInstitutionSelect = Record<string, unknown>;
+type RelationSelect = {
+	select: Record<string, boolean>;
+	where?: typeof activeCategoriesWhere;
+};
+
+const isRelationSelect = (value: unknown): value is RelationSelect =>
+	typeof value === "object" &&
+	value !== null &&
+	"select" in value &&
+	typeof (value as RelationSelect).select === "object" &&
+	(value as RelationSelect).select !== null;
+
+const selectNestedRelationField = (
+	select: MutableInstitutionSelect,
+	relation: string,
+	childField: string,
+) => {
+	const existing = select[relation];
+	const relationSelect = isRelationSelect(existing)
+		? existing
+		: { select: { id: true } };
+	relationSelect.select[childField] = true;
+	if (relation === "categories") {
+		relationSelect.where = activeCategoriesWhere;
+	}
+	select[relation] = relationSelect;
+};
+
+const selectDefaultRelation = (
+	select: MutableInstitutionSelect,
+	relation: keyof typeof relationDefaults,
+) => {
+	const defaultRelation = relationDefaults[relation];
+	select[relation] =
+		relation === "categories"
+			? { where: activeCategoriesWhere, select: defaultRelation }
+			: { select: defaultRelation };
+};
+
 export const buildInstitutionSelect = (
 	context: AccessContext,
 ): Prisma.InstitutionSelect | null => {
-	const activeCategoriesWhere = { status: "active" as const };
 	const fieldPerms = context.field.institution ?? {};
 	const allowedFields = Object.entries(fieldPerms)
 		.filter(([, actions]) => actions.has("read"))
@@ -68,37 +122,13 @@ export const buildInstitutionSelect = (
 		if (!maybeRelation) continue;
 
 		if (rest.length > 0) {
-			const existing = mutableSelect[maybeRelation];
-			const relationSelect =
-				typeof existing === "object" &&
-				existing !== null &&
-				"select" in existing
-					? (existing as {
-							select: Record<string, boolean>;
-							where?: { status: "active" };
-						})
-					: { select: { id: true } };
-			relationSelect.select[rest.join(".")] = true;
-			if (maybeRelation === "categories") {
-				relationSelect.where = activeCategoriesWhere;
-			}
-			mutableSelect[maybeRelation] = relationSelect;
+			selectNestedRelationField(mutableSelect, maybeRelation, rest.join("."));
 			continue;
 		}
 
-		const defaultRelation =
-			maybeRelation in relationDefaults
-				? relationDefaults[maybeRelation as keyof typeof relationDefaults]
-				: undefined;
-		if (defaultRelation) {
-			if (maybeRelation === "categories") {
-				mutableSelect[maybeRelation] = {
-					where: activeCategoriesWhere,
-					select: defaultRelation,
-				};
-			} else {
-				mutableSelect[maybeRelation] = { select: defaultRelation };
-			}
+		const relationField = getDefaultRelationField(maybeRelation);
+		if (relationField) {
+			selectDefaultRelation(mutableSelect, relationField);
 			continue;
 		}
 

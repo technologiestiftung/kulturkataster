@@ -108,17 +108,7 @@ export function MobileMenuModal({
 		}
 	};
 
-	// WORKAROUND: Temporary redirect for download button
-	const DOWNLOAD_REDIRECT_URL =
-		"https://form.formcentric.com/form/7dfaf065-24a1-4431-8905-019e123e5dbe";
-
 	const handleItemClick = (item: MobileMenuItem) => {
-		if (item.id === "download") {
-			window.open(DOWNLOAD_REDIRECT_URL, "_blank", "noopener,noreferrer");
-			closeModal();
-			return;
-		}
-
 		if (item.id === "language") {
 			const targetLocale = currentLocale === "de" ? "en" : "de";
 			const toggledPath = buildLocaleToggledPath(
