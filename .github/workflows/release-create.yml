@@ -37,7 +37,7 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
 
-      - name: Calculate next version and create release branch
+      - name: Calculate version and prepare release branch
         id: release
         run: |
           SOURCE_BRANCH="${GITHUB_REF_NAME}"
@@ -116,26 +116,56 @@ jobs:
           RELEASE_BRANCH=$(node -e 'const info = JSON.parse(process.argv[1]); process.stdout.write(info.releaseBranch);' "$VERSION_INFO")
           IS_PRERELEASE=$(node -e 'const info = JSON.parse(process.argv[1]); process.stdout.write(String(info.isPrerelease));' "$VERSION_INFO")
 
-          if git ls-remote --exit-code --heads origin "${RELEASE_BRANCH}" >/dev/null 2>&1 || \
-            git show-ref --verify --quiet "refs/heads/${RELEASE_BRANCH}"; then
-            echo "Release branch ${RELEASE_BRANCH} already exists."
-            exit 1
+          BRANCH_EXISTS=false
+          REMOTE_RELEASE_SHA=""
+          if git ls-remote --exit-code --heads origin "${RELEASE_BRANCH}" >/dev/null 2>&1; then
+            BRANCH_EXISTS=true
+            REMOTE_RELEASE_SHA=$(git ls-remote --heads origin "${RELEASE_BRANCH}" | awk '{print $1}')
           fi
 
+          TAG_EXISTS=false
           if git rev-parse "v${NEW_VERSION}" >/dev/null 2>&1; then
-            echo "Tag v${NEW_VERSION} already exists."
+            TAG_EXISTS=true
+          fi
+
+          if [ "${IS_PRERELEASE}" != "true" ] && [ "${BRANCH_EXISTS}" = "true" ]; then
+            echo "Release branch ${RELEASE_BRANCH} already exists. Stable releases are immutable."
             exit 1
           fi
 
-          git checkout -b "${RELEASE_BRANCH}"
+          if [ "${IS_PRERELEASE}" != "true" ] && [ "${TAG_EXISTS}" = "true" ]; then
+            echo "Tag v${NEW_VERSION} already exists. Stable releases are immutable."
+            exit 1
+          fi
+
+          if [ "${IS_PRERELEASE}" = "true" ] && { [ "${BRANCH_EXISTS}" = "true" ] || [ "${TAG_EXISTS}" = "true" ]; }; then
+            echo "Updating existing mutable dev prerelease v${NEW_VERSION}."
+          fi
+
+          git fetch origin "${SOURCE_BRANCH}" --tags
+          git checkout -B "${RELEASE_BRANCH}" "origin/${SOURCE_BRANCH}"
 
           npm version "${NEW_VERSION}" --no-git-tag-version
           git add package.json package-lock.json
-          git commit -m "chore: bump version to ${NEW_VERSION}"
+          if git diff --cached --quiet; then
+            echo "package.json and package-lock.json already contain ${NEW_VERSION}."
+          else
+            git commit -m "chore: bump version to ${NEW_VERSION}"
+          fi
 
-          git push origin "${RELEASE_BRANCH}"
-          git tag "v${NEW_VERSION}"
-          git push origin "v${NEW_VERSION}"
+          if [ "${IS_PRERELEASE}" = "true" ]; then
+            if [ -n "${REMOTE_RELEASE_SHA}" ]; then
+              git push --force-with-lease="refs/heads/${RELEASE_BRANCH}:${REMOTE_RELEASE_SHA}" origin "${RELEASE_BRANCH}"
+            else
+              git push origin "${RELEASE_BRANCH}"
+            fi
+            git tag --force "v${NEW_VERSION}"
+            git push --force origin "v${NEW_VERSION}"
+          else
+            git push origin "${RELEASE_BRANCH}"
+            git tag "v${NEW_VERSION}"
+            git push origin "v${NEW_VERSION}"
+          fi
 
           echo "version=${NEW_VERSION}" >> "$GITHUB_OUTPUT"
           echo "release_branch=${RELEASE_BRANCH}" >> "$GITHUB_OUTPUT"
@@ -154,15 +184,30 @@ jobs:
             RELEASE_ARGS+=(--prerelease)
           fi
 
-          gh release create "v${{ steps.release.outputs.version }}" \
-            --target "${{ steps.release.outputs.release_branch }}" \
-            --title "Release v${{ steps.release.outputs.version }}" \
-            --notes "Release v${{ steps.release.outputs.version }}
+          RELEASE_NOTES="Release v${{ steps.release.outputs.version }}
 
           **Source branch:** ${{ steps.release.outputs.source_branch }}
           **Release branch:** ${{ steps.release.outputs.release_branch }}
-          **Commit:** $(git rev-parse HEAD)" \
-            "${RELEASE_ARGS[@]}"
+          **Commit:** $(git rev-parse HEAD)"
+
+          if gh release view "v${{ steps.release.outputs.version }}" >/dev/null 2>&1; then
+            if [ "${{ steps.release.outputs.is_prerelease }}" != "true" ]; then
+              echo "Release v${{ steps.release.outputs.version }} already exists. Stable releases are immutable."
+              exit 1
+            fi
+
+            gh release edit "v${{ steps.release.outputs.version }}" \
+              --target "${{ steps.release.outputs.release_branch }}" \
+              --title "Release v${{ steps.release.outputs.version }}" \
+              --notes "${RELEASE_NOTES}" \
+              --prerelease
+          else
+            gh release create "v${{ steps.release.outputs.version }}" \
+              --target "${{ steps.release.outputs.release_branch }}" \
+              --title "Release v${{ steps.release.outputs.version }}" \
+              --notes "${RELEASE_NOTES}" \
+              "${RELEASE_ARGS[@]}"
+          fi
 
       - name: Trigger release deploy workflow
         env:
