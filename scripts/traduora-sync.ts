@@ -566,11 +566,10 @@ async function buildLocalePushPlan(params: {
 	return { changes, unchanged };
 }
 
-const logLocalePushPlan = (
-	locale: string,
-	plan: LocalePushPlan,
-) => {
-	const changesByType = plan.changes.reduce<Record<LocalePushChange["type"], number>>(
+const logLocalePushPlan = (locale: string, plan: LocalePushPlan) => {
+	const changesByType = plan.changes.reduce<
+		Record<LocalePushChange["type"], number>
+	>(
 		(counts, change) => {
 			counts[change.type]++;
 			return counts;
@@ -596,7 +595,9 @@ const logLocalePushPlan = (
 			continue;
 		}
 		const marker = change.type === "term_added" ? "+" : "*";
-		console.log(`  ${marker} ${change.type}: ${change.key} = ${JSON.stringify(change.value)}`);
+		console.log(
+			`  ${marker} ${change.type}: ${change.key} = ${JSON.stringify(change.value)}`,
+		);
 	}
 };
 
@@ -613,7 +614,9 @@ async function confirmPush(assumeYes: boolean) {
 
 	const rl = createInterface({ input, output });
 	try {
-		const answer = await rl.question("Push these translation changes to Traduora? [y/N] ");
+		const answer = await rl.question(
+			"Push these translation changes to Traduora? [y/N] ",
+		);
 		if (answer.trim().toLowerCase() !== "y") {
 			throw new Error("Translation push cancelled.");
 		}
