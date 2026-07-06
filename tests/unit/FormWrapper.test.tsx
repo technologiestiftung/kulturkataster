@@ -175,6 +175,59 @@ describe("FormWrapper", () => {
 			expect(passwordInput).toHaveAttribute("type", "text");
 		});
 
+		it("supports drag and drop ordering for field permission rows", () => {
+			const onReorderFields = vi.fn();
+			const dataTransfer = {
+				value: "",
+				effectAllowed: "",
+				dropEffect: "",
+				setData: vi.fn((_type: string, value: string) => {
+					dataTransfer.value = value;
+				}),
+				getData: vi.fn(() => dataTransfer.value),
+			};
+			const config: FormWrapperConfig = {
+				fields: [
+					{
+						name: "fieldPermissions",
+						label: "Field permissions",
+						type: "fieldPermissions",
+						fieldPermissions: {
+							reorderable: true,
+							onReorderFields,
+							sections: [
+								{
+									id: "institution",
+									title: "Institution",
+									fields: [
+										{ key: "name", label: "Name" },
+										{ key: "email", label: "Email" },
+									],
+								},
+							],
+						},
+					},
+				],
+				onSubmit: vi.fn(),
+			};
+
+			render(<FormWrapper config={config} />);
+
+			const nameRow = screen.getByText("Name").closest("tr");
+			const emailRow = screen.getByText("Email").closest("tr");
+			expect(nameRow).not.toBeNull();
+			expect(emailRow).not.toBeNull();
+
+			fireEvent.dragStart(nameRow as HTMLTableRowElement, { dataTransfer });
+			fireEvent.dragOver(emailRow as HTMLTableRowElement, { dataTransfer });
+			fireEvent.drop(emailRow as HTMLTableRowElement, { dataTransfer });
+
+			expect(onReorderFields).toHaveBeenCalledWith("all", [
+				{ key: "email", label: "Email" },
+				{ key: "name", label: "Name" },
+			]);
+		});
+
 		it("renders number input field", () => {
 			const config: FormWrapperConfig = {
 				fields: toFields([

@@ -9,7 +9,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import {
-	DEFAULT_INSTITUTION_EXPORT_COLUMN_ORDER,
 	downloadInstitutions,
 	type ExportFormat,
 } from "@/lib/utils/downloadUtils";
@@ -142,9 +141,7 @@ export function DownloadModal({
 				filename,
 				format: selectedFormat,
 				translateFn: translateFn ?? tEnum,
-				columnOrder: exportColumnOrder ?? [
-					...DEFAULT_INSTITUTION_EXPORT_COLUMN_ORDER,
-				],
+				columnOrder: exportColumnOrder,
 			});
 			await onAfterDownload?.({
 				data: resolvedData,

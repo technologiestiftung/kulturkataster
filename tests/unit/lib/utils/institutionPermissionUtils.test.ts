@@ -3,6 +3,7 @@ import {
 	buildInstitutionPermissionFields,
 	filterInstitutionInputByPermissionFields,
 } from "@/lib/utils/institutionPermissionUtils";
+import { normalizeInstitutionPermissionField } from "@/lib/utils/institutionPermissionField";
 import type { InstitutionForm } from "@/types/institution";
 
 describe("institutionPermissionUtils", () => {
@@ -20,7 +21,8 @@ describe("institutionPermissionUtils", () => {
 		expect(fields).toEqual(
 			expect.arrayContaining([
 				"name",
-				"address",
+				"address.street",
+				"address.city",
 				"categories",
 				"groups",
 				"notes",
@@ -33,7 +35,7 @@ describe("institutionPermissionUtils", () => {
 	it("filters input and keeps only allowed permission fields", () => {
 		const input = {
 			name: "Test Institution",
-			address: { street: "Main", city: "Berlin" },
+			address: { id: 7, street: "Main", city: "Berlin" },
 			categoryIds: [1, 2],
 			notes: "visible",
 			internal_notes: "hidden",
@@ -41,17 +43,23 @@ describe("institutionPermissionUtils", () => {
 
 		const filtered = filterInstitutionInputByPermissionFields(
 			input,
-			new Set(["name", "address", "categories"]),
+			new Set(["name", "address.street", "categories"]),
 		);
 
 		expect(filtered).toEqual(
 			expect.objectContaining({
 				name: "Test Institution",
-				address: { street: "Main", city: "Berlin" },
+				address: { id: 7, street: "Main" },
 				categoryIds: [1, 2],
 			}),
 		);
 		expect(filtered).not.toHaveProperty("notes");
 		expect(filtered).not.toHaveProperty("internal_notes");
+	});
+
+	it("normalizes the subcategory table column to the subcategories permission", () => {
+		expect(normalizeInstitutionPermissionField("subcategory")).toBe(
+			"subcategories",
+		);
 	});
 });

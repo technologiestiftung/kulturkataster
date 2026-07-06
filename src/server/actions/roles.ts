@@ -47,6 +47,14 @@ export async function getRoleById(id: number) {
 	return roleRepo.findById(id);
 }
 
+export async function getRoleFieldOrder(table: string) {
+	const currentUserId = await getCurrentUserId();
+	const ctx = await getAccessContextForUser(currentUserId);
+	authorizeTable(ctx, "role", "read");
+	requireAllScope(ctx, "role", "read");
+	return roleRepo.getFieldOrder(table);
+}
+
 export async function createRole(
 	input: RoleInput,
 ): Promise<ActionResult<Role, RoleActionErrorCode>> {
@@ -86,25 +94,6 @@ export async function updateRole(
 			const ctx = await getAccessContextForUser(currentUserId);
 			authorizeTable(ctx, "role", "update");
 			requireAllScope(ctx, "role", "update");
-
-			const existingRole = await roleRepo.findById(input.id);
-			if (existingRole?.is_system) {
-				const { tablePermissions: _tablePermissions, ...rest } = input;
-				let role;
-				try {
-					role = await roleRepo.update(input.id, rest);
-				} catch (error) {
-					logger.error("role.update.db_failed", error, {
-						subsystem: "rbac",
-						db_subsystem: "db",
-						actor_user_id: currentUserId,
-						role_id: input.id,
-					});
-					return actionError(classifyRoleActionError(error));
-				}
-				revalidateAccount();
-				return actionOk(role);
-			}
 
 			let role;
 			try {
