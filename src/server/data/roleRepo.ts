@@ -47,6 +47,47 @@ const dedupeFieldPermissions = (
 	return [...uniquePermissions.values()];
 };
 
+const normalizeFieldOrder = (fieldOrder?: RoleCreateInput["fieldOrder"]) => {
+	if (!fieldOrder) return undefined;
+	const seen = new Set<string>();
+	return {
+		table: fieldOrder.table,
+		fields: fieldOrder.fields.filter((field) => {
+			if (seen.has(field)) return false;
+			seen.add(field);
+			return true;
+		}),
+	};
+};
+
+const upsertFieldOrder = async (
+	tx: Pick<typeof prisma, "permissionFieldOrder">,
+	fieldOrder?: ReturnType<typeof normalizeFieldOrder>,
+) => {
+	if (!fieldOrder) return;
+
+	await Promise.all(
+		fieldOrder.fields.map((field, sortOrder) =>
+			tx.permissionFieldOrder.upsert({
+				where: {
+					table_field: {
+						table: fieldOrder.table,
+						field,
+					},
+				},
+				create: {
+					table: fieldOrder.table,
+					field,
+					sort_order: sortOrder,
+				},
+				update: {
+					sort_order: sortOrder,
+				},
+			}),
+		),
+	);
+};
+
 export const roleRepo = {
 	list: () => prisma.role.findMany({ include }),
 	findById: (id: number) =>
@@ -54,41 +95,55 @@ export const roleRepo = {
 			where: { id },
 			include,
 		}),
+	getFieldOrder: async (table: string): Promise<string[]> => {
+		const fieldOrder = await prisma.permissionFieldOrder.findMany({
+			where: { table },
+			orderBy: [{ sort_order: "asc" }, { field: "asc" }],
+		});
+		return fieldOrder.map((item) => item.field);
+	},
 	create: (data: RoleCreateInput) => {
 		const tablePermissions = dedupeTablePermissions(data.tablePermissions);
 		const fieldPermissions = dedupeFieldPermissions(data.fieldPermissions);
+		const fieldOrder = normalizeFieldOrder(data.fieldOrder);
 
-		return prisma.role.create({
-			data: {
-				name: data.name,
-				description: data.description ?? null,
-				is_guest: data.is_guest ?? false,
-				table_permissions: tablePermissions
-					? {
-							create: tablePermissions.map((permission) => ({
-								table: permission.table,
-								action: permission.action,
-								scope: permission.scope,
-							})),
-						}
-					: undefined,
-				field_permissions: fieldPermissions
-					? {
-							create: fieldPermissions.map((permission) => ({
-								table: permission.table,
-								field: permission.field,
-								action: permission.action,
-							})),
-						}
-					: undefined,
-			},
-			include,
+		return prisma.$transaction(async (tx) => {
+			await upsertFieldOrder(tx, fieldOrder);
+			return tx.role.create({
+				data: {
+					name: data.name,
+					description: data.description ?? null,
+					is_guest: data.is_guest ?? false,
+					table_permissions: tablePermissions
+						? {
+								create: tablePermissions.map((permission) => ({
+									table: permission.table,
+									action: permission.action,
+									scope: permission.scope,
+								})),
+							}
+						: undefined,
+					field_permissions: fieldPermissions
+						? {
+								create: fieldPermissions.map((permission) => ({
+									table: permission.table,
+									field: permission.field,
+									action: permission.action,
+								})),
+							}
+						: undefined,
+				},
+				include,
+			});
 		});
 	},
 	update: (id: number, data: RoleUpdateInput) => {
 		const tablePermissions = dedupeTablePermissions(data.tablePermissions);
 		const fieldPermissions = dedupeFieldPermissions(data.fieldPermissions);
+		const fieldOrder = normalizeFieldOrder(data.fieldOrder);
 		return prisma.$transaction(async (tx) => {
+			await upsertFieldOrder(tx, fieldOrder);
+
 			await tx.role.update({
 				where: { id },
 				data: {
