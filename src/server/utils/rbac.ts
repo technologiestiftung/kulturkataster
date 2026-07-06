@@ -5,6 +5,7 @@ import {
 	RoleFieldPermission,
 	RoleTablePermission,
 } from "@/generated/prisma";
+import { normalizeInstitutionPermissionField } from "@/lib/utils/institutionPermissionField";
 import { INSTITUTION_PERMISSION_FIELDS } from "@/types";
 import { logger } from "../logging/logger";
 
@@ -84,30 +85,32 @@ const buildTableScopes = (
 	}, {});
 };
 
-const relationPermissionFieldsByLegacyField: Map<string, readonly string[]> =
-	(INSTITUTION_PERMISSION_FIELDS as readonly string[]).reduce(
-		(fieldsByRelation, field) => {
-			const separatorIndex = field.indexOf(".");
-			if (separatorIndex <= 0) return fieldsByRelation;
-			const relation = field.slice(0, separatorIndex);
-			fieldsByRelation.set(relation, [
-				...(fieldsByRelation.get(relation) ?? []),
-				field,
-			]);
-			return fieldsByRelation;
-		},
-		new Map<string, readonly string[]>(),
-	);
+const relationPermissionFieldsByLegacyField: Map<string, readonly string[]> = (
+	INSTITUTION_PERMISSION_FIELDS as readonly string[]
+).reduce((fieldsByRelation, field) => {
+	const separatorIndex = field.indexOf(".");
+	if (separatorIndex <= 0) return fieldsByRelation;
+	const relation = field.slice(0, separatorIndex);
+	fieldsByRelation.set(relation, [
+		...(fieldsByRelation.get(relation) ?? []),
+		field,
+	]);
+	return fieldsByRelation;
+}, new Map<string, readonly string[]>());
+
+const getPermissionFields = (field: string): readonly string[] => {
+	const relationFields = relationPermissionFieldsByLegacyField.get(field);
+	if (relationFields) return relationFields;
+	const normalized = normalizeInstitutionPermissionField(field);
+	return normalized ? [normalized] : [];
+};
 
 const buildFieldPerms = (
 	permissions: RoleFieldPermission[] = [],
 ): FieldPermissionMap => {
 	return permissions.reduce<FieldPermissionMap>((acc, permission) => {
 		if (!acc[permission.table]) acc[permission.table] = {};
-		const fields = relationPermissionFieldsByLegacyField.get(
-			permission.field,
-		) ?? [permission.field];
-		for (const field of fields) {
+		for (const field of getPermissionFields(permission.field)) {
 			if (!acc[permission.table][field]) {
 				acc[permission.table][field] = new Set();
 			}

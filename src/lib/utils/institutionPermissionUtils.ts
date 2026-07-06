@@ -17,10 +17,7 @@ export const RELATION_FIELD_ALIASES: Record<string, string> = {
 	funding_source: "funding_sources",
 };
 
-const INTERNAL_INPUT_FIELDS = new Set([
-	"id",
-	"contact_person_id",
-]);
+const INTERNAL_INPUT_FIELDS = new Set(["id", "contact_person_id"]);
 
 const RELATION_PERMISSION_FIELDS: Map<string, Set<string>> = (
 	INSTITUTION_PERMISSION_FIELDS as readonly string[]
