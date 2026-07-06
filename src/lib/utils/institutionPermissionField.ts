@@ -5,30 +5,51 @@ const permissionFields = new Set<string>(
 );
 
 const permissionFieldAliasMap: Record<string, string> = {
-	street: "address",
-	street_number: "address",
-	address_suffix: "address",
-	zip: "address",
-	zipcode: "address",
-	city: "address",
-	district: "address",
-	neighbourhood: "address",
-	cultural_area: "address",
-	lat: "address",
-	lng: "address",
-	contact_person_name: "contact_person",
-	contact_person_first_name: "contact_person",
-	contact_person_last_name: "contact_person",
-	contact_person_email: "contact_person",
-	contact_person_phone: "contact_person",
-	contact_person_surname: "contact_person",
+	street: "address.street",
+	street_number: "address.street",
+	streetLine: "address.street",
+	"address.streetLine": "address.street",
+	"address.street_number": "address.street",
+	address_suffix: "address.address_suffix",
+	zip: "address.zipcode",
+	"address.zip": "address.zipcode",
+	zipcode: "address.zipcode",
+	city: "address.city",
+	district: "address.district",
+	neighbourhood: "address.neighbourhood",
+	cultural_area: "address.cultural_area",
+	lat: "address.lat",
+	lng: "address.lng",
+	contact_person_name: "contact_person.first_name",
+	contact_person_first_name: "contact_person.first_name",
+	contact_person_last_name: "contact_person.last_name",
+	contact_person_email: "contact_person.email",
+	contact_person_phone: "contact_person.phone",
+	contact_person_surname: "contact_person.last_name",
 	funding_source_name: "funding_sources",
 	funding_source_description: "funding_sources",
 	funding_source: "funding_sources",
 	category: "categories",
-	subcategory: "categories",
-	subcategories: "categories",
+	subcategory: "subcategories",
+	subcategories: "subcategories",
 };
+
+[
+	"address.address_suffix",
+	"address.zipcode",
+	"address.city",
+	"address.district",
+	"address.neighbourhood",
+	"address.cultural_area",
+	"address.lat",
+	"address.lng",
+	"contact_person.first_name",
+	"contact_person.last_name",
+	"contact_person.email",
+	"contact_person.phone",
+].forEach((field) => {
+	permissionFieldAliasMap[field] = field;
+});
 
 export type InstitutionPermissionFieldCandidate = {
 	permissionField?: string;
@@ -59,6 +80,8 @@ export const resolveInstitutionPermissionField = (
 	}
 
 	if (typeof field.value === "string") {
+		const direct = normalizeInstitutionPermissionField(field.value);
+		if (direct) return direct;
 		const topLevelField = field.value.split(".")[0];
 		const normalized = normalizeInstitutionPermissionField(topLevelField);
 		if (normalized) return normalized;
@@ -70,6 +93,8 @@ export const resolveInstitutionPermissionField = (
 	}
 
 	if (field.name) {
+		const direct = normalizeInstitutionPermissionField(field.name);
+		if (direct) return direct;
 		const topLevelField = field.name.split(".")[0];
 		const normalized = normalizeInstitutionPermissionField(topLevelField);
 		if (normalized) return normalized;

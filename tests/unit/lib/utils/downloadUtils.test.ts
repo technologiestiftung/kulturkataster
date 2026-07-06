@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import * as XLSX from "xlsx-js-style";
 import {
-	DEFAULT_INSTITUTION_EXPORT_COLUMN_ORDER,
 	generateExcelBuffer,
 	prepareDataForExport,
 } from "@/lib/utils/downloadUtils";
@@ -46,9 +45,15 @@ describe("prepareDataForExport", () => {
 				"status",
 				"website",
 				"notes",
-				"address",
-				"contact_person",
+				"address.street",
+				"address.zipcode",
+				"address.city",
+				"address.district",
+				"address.neighbourhood",
+				"contact_person.first_name",
+				"contact_person.last_name",
 				"categories",
+				"subcategories",
 				"tags",
 				"funding_sources",
 			],
@@ -74,15 +79,22 @@ describe("prepareDataForExport", () => {
 		});
 	});
 
-	it("filters export fields by guest permissions and excludes email and phone", () => {
+	it("filters guest export fields by download permissions", () => {
 		const rows = prepareDataForExport([makeInstitution()], {
 			readablePermissionFields: [
 				"name",
 				"email",
 				"phone",
 				"website",
-				"address",
-				"contact_person",
+				"address.street",
+				"address.zipcode",
+				"address.city",
+				"address.district",
+				"address.neighbourhood",
+				"contact_person.first_name",
+				"contact_person.last_name",
+				"contact_person.email",
+				"contact_person.phone",
 			],
 			audience: "guest",
 		});
@@ -90,6 +102,8 @@ describe("prepareDataForExport", () => {
 		expect(rows).toHaveLength(1);
 		expect(rows[0]).toMatchObject({
 			Name: "Alpha",
+			Email: "alpha@example.de",
+			Phone: "+49 30 123456",
 			Website: "https://example.de",
 			Street: "Musterstrasse 12",
 			Zipcode: "10115",
@@ -98,11 +112,9 @@ describe("prepareDataForExport", () => {
 			Neighbourhood: "Spandauer Vorstadt",
 			"Contact Person First Name": "Ada",
 			"Contact Person Last Name": "Lovelace",
+			"Contact Person Email": "ada@example.de",
+			"Contact Person Phone": "+49 30 654321",
 		});
-		expect(rows[0]).not.toHaveProperty("Email");
-		expect(rows[0]).not.toHaveProperty("Phone");
-		expect(rows[0]).not.toHaveProperty("Contact Person Email");
-		expect(rows[0]).not.toHaveProperty("Contact Person Phone");
 	});
 
 	it("uses the shared field option translation logic for enums", () => {
@@ -121,13 +133,14 @@ describe("prepareDataForExport", () => {
 							description: "Grant",
 						},
 					],
-				} as Institution,
+				} as unknown as Institution,
 			],
 			{
 				readablePermissionFields: [
 					"name",
 					"status",
 					"categories",
+					"subcategories",
 					"funding_sources",
 					"funding_type",
 					"owner_type",
@@ -211,7 +224,7 @@ describe("prepareDataForExport", () => {
 					established_since: "2020-12-01T00:00:00.000Z",
 					established_until: "2025-01-31",
 					rental_contract_end: new Date("2030-06-15T00:00:00.000Z"),
-				} as Institution,
+				} as unknown as Institution,
 			],
 			{
 				readablePermissionFields: [
@@ -240,7 +253,7 @@ describe("prepareDataForExport", () => {
 		});
 	});
 
-	it("excludes internal-only metadata and keeps utilization status details ordered", () => {
+	it("exports every permitted field and keeps utilization status details ordered", () => {
 		const rows = prepareDataForExport(
 			[
 				{
@@ -249,7 +262,15 @@ describe("prepareDataForExport", () => {
 					utilization_status_info: "Temporarily under renovation",
 					utilization_status_internal_notes: "Internal follow-up",
 					groups: [{ id: 3, name: "Group A" }],
-					users: [{ id: "user-1", name: "User A" }],
+					users: [
+						{
+							id: "user-1",
+							first_name: "User",
+							last_name: "A",
+							email: "user@example.de",
+						},
+					],
+					contact_person_id: 17,
 					contact_person: {
 						id: 17,
 						first_name: "Ada",
@@ -270,13 +291,13 @@ describe("prepareDataForExport", () => {
 					"utilization_status_internal_notes",
 					"groups",
 					"users",
-					"contact_person",
+					"contact_person.first_name",
+					"contact_person.last_name",
 					"import_identifier",
 					"created_at",
 					"updated_at",
 				],
 				audience: "internal",
-				columnOrder: [...DEFAULT_INSTITUTION_EXPORT_COLUMN_ORDER],
 			},
 		);
 
@@ -286,22 +307,54 @@ describe("prepareDataForExport", () => {
 			"Utilization Status": "temporarily_closed",
 			"Utilization Status Info": "Temporarily under renovation",
 			"Utilization Status Internal Notes": "Internal follow-up",
+			Groups: "Group A",
+			Users: "User A",
 			"Contact Person First Name": "Ada",
 			"Contact Person Last Name": "Lovelace",
+			"Import Identifier": "legacy-import-42",
+			"Created At": "01.01.2025",
+			"Updated At": "02.01.2025",
 		});
-		expect(rows[0]).not.toHaveProperty("Groups");
-		expect(rows[0]).not.toHaveProperty("Users");
-		expect(rows[0]).not.toHaveProperty("Contact Person Id");
-		expect(rows[0]).not.toHaveProperty("Import Identifier");
-		expect(rows[0]).not.toHaveProperty("Created At");
-		expect(rows[0]).not.toHaveProperty("Updated At");
 		expect(Object.keys(rows[0])).toEqual([
 			"Status",
 			"Utilization Status",
 			"Utilization Status Info",
 			"Utilization Status Internal Notes",
+			"Groups",
+			"Users",
 			"Contact Person First Name",
 			"Contact Person Last Name",
+			"Import Identifier",
+			"Created At",
+			"Updated At",
+		]);
+		expect(rows[0]).not.toHaveProperty("Contact Person Id");
+		expect(rows[0]).not.toHaveProperty("Contact Person Email");
+		expect(rows[0]).not.toHaveProperty("Contact Person Phone");
+	});
+
+	it("uses permission field order as the default export column order", () => {
+		const rows = prepareDataForExport([makeInstitution()], {
+			readablePermissionFields: [
+				"website",
+				"name",
+				"address.street",
+				"address.zipcode",
+				"address.city",
+				"address.district",
+				"address.neighbourhood",
+			],
+			audience: "internal",
+		});
+
+		expect(Object.keys(rows[0])).toEqual([
+			"Website",
+			"Name",
+			"Street",
+			"Zipcode",
+			"City",
+			"District",
+			"Neighbourhood",
 		]);
 	});
 });

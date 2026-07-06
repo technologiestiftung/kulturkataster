@@ -48,7 +48,7 @@ describe("requireAllScope", () => {
 	it("throws when scope is not all", () => {
 		expect(() =>
 			requireAllScope(
-				{ role: "user", table: {}, tableScope: {}, field: {} },
+				{ role: "user", table: {}, tableScope: {}, field: {}, fieldOrder: {} },
 				"group",
 				"read",
 			),

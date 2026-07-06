@@ -56,6 +56,23 @@ describe("buildInstitutionUpdateData", () => {
 		expect(result.status).toBeUndefined();
 	});
 
+	it("keeps omitted nullable institution fields unchanged", () => {
+		const result = buildInstitutionUpdateData(
+			{
+				id: 1,
+				name: "Updated institution",
+				address: null,
+			},
+			"user-1",
+		);
+
+		expect(result.website).toBeUndefined();
+		expect(result.phone).toBeUndefined();
+		expect(result.email).toBeUndefined();
+		expect(result.parent_organization).toBeUndefined();
+		expect(result.notes).toBeUndefined();
+	});
+
 	it("upserts a related contact person from inline contact fields", () => {
 		const result = buildInstitutionUpdateData(
 			{
@@ -103,5 +120,28 @@ describe("buildInstitutionUpdateData", () => {
 		);
 
 		expect(result.contact_person).toEqual({ disconnect: true });
+	});
+
+	it("updates only provided inline contact fields", () => {
+		const result = buildInstitutionUpdateData(
+			{
+				id: 1,
+				name: "Updated institution",
+				address: null,
+				contact_person_email: "new@example.com",
+			},
+			"user-1",
+		);
+
+		expect(result.contact_person).toEqual({
+			upsert: {
+				create: {
+					email: "new@example.com",
+				},
+				update: {
+					email: "new@example.com",
+				},
+			},
+		});
 	});
 });
