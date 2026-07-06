@@ -28,6 +28,7 @@ const accountStoreInitialState = {
 		create: [],
 		update: [],
 		delete: [],
+		download: [],
 	},
 	selectedUserId: null,
 	selectedGroupId: null,

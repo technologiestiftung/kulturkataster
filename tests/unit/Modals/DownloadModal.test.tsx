@@ -71,7 +71,6 @@ vi.mock("@/components/FormWrapper/FormWrapper", () => ({
 }));
 
 vi.mock("@/lib/utils/downloadUtils", () => ({
-	DEFAULT_INSTITUTION_EXPORT_COLUMN_ORDER: ["name"],
 	downloadInstitutions: (...args: unknown[]) =>
 		downloadInstitutionsMock(...args),
 }));
@@ -248,6 +247,39 @@ describe("DownloadModal", () => {
 		expect(downloadInstitutionsMock).toHaveBeenCalledWith(
 			expect.objectContaining({
 				format: "csv",
+				columnOrder: undefined,
+			}),
+		);
+	});
+
+	it("passes an explicit export column order when provided", () => {
+		render(
+			<DownloadModal
+				routePath="/download"
+				isAuthenticated
+				exportColumnOrder={["email", "name"]}
+			/>,
+		);
+
+		fireEvent.click(
+			screen.getByRole("checkbox", {
+				name: /Ich habe den rechtlichen Hinweis gelesen und verstanden/i,
+			}),
+		);
+		fireEvent.click(
+			screen.getByRole("checkbox", {
+				name: /Ich bin einverstanden mit der Vereinbarung über die Datennutzung/i,
+			}),
+		);
+		fireEvent.click(
+			screen.getByRole("button", {
+				name: "Liste herunterladen",
+			}),
+		);
+
+		expect(downloadInstitutionsMock).toHaveBeenCalledWith(
+			expect.objectContaining({
+				columnOrder: ["email", "name"],
 			}),
 		);
 	});

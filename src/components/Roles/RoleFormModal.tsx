@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { DialogTitle } from "@/components/ui/dialog";
@@ -14,6 +14,7 @@ import {
 	createRole,
 	deleteRole,
 	getRoleById,
+	getRoleFieldOrder,
 	updateRole,
 } from "@/server/actions/roles";
 import type {
@@ -42,8 +43,43 @@ type RoleFormModalProps = {
 
 const INSTITUTION_FIELDS = INSTITUTION_PERMISSION_FIELDS;
 
+const DEFAULT_FIELD_ORDER = [...INSTITUTION_FIELDS];
+
 const formatFieldLabel = (value: string) =>
 	value.replace(/_/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
+
+const getPermissionFieldTranslationKey = (field: string) => {
+	if (field.startsWith("address.")) {
+		return field.replace("address.", "");
+	}
+	if (field.startsWith("contact_person.")) {
+		return field.replace("contact_person.", "contact_person_");
+	}
+	return field;
+};
+
+const getRelationSectionId = (field: string) => {
+	const separatorIndex = field.indexOf(".");
+	return separatorIndex > 0 ? field.slice(0, separatorIndex) : null;
+};
+
+const getRelationShortLabel = (
+	sectionId: string,
+	t: (key: string, options?: { defaultValue?: string }) => string,
+) => {
+	if (sectionId === "address") {
+		return t("content.roleFormModal.permissions.fields.sectionShort.address", {
+			defaultValue: "Adr.",
+		});
+	}
+	if (sectionId === "contact_person") {
+		return t(
+			"content.roleFormModal.permissions.fields.sectionShort.contact_person",
+			{ defaultValue: "AP" },
+		);
+	}
+	return undefined;
+};
 
 const getDialogTitle = (
 	mode: RoleFormModalProps["mode"],
@@ -136,22 +172,71 @@ const getActionLabels = (t: (key: string) => string) => ({
 	create: t("enumMap.institution_action.create"),
 	update: t("enumMap.institution_action.update"),
 	delete: t("enumMap.institution_action.delete"),
+	download: t("enumMap.institution_action.download"),
 });
 
 const buildFieldSections = (
 	t: (key: string, options?: { defaultValue?: string }) => string,
-) => [
-	{
-		id: "institution",
-		title: t("content.roleFormModal.permissions.fields.sections.institution"),
-		fields: INSTITUTION_FIELDS.map((field) => ({
-			key: field,
-			label: t(`enumMap.field_names.${field}.label`, {
-				defaultValue: formatFieldLabel(field),
-			}),
-		})),
-	},
-];
+	fieldOrder: readonly string[],
+) => {
+	const orderByField = new Map(
+		fieldOrder.map((field, index) => [field, index]),
+	);
+	return [
+		{
+			id: "all",
+			title: "",
+			fields: [...INSTITUTION_FIELDS]
+				.sort(
+					(left, right) =>
+						(orderByField.get(left) ?? Number.MAX_SAFE_INTEGER) -
+							(orderByField.get(right) ?? Number.MAX_SAFE_INTEGER) ||
+						left.localeCompare(right),
+				)
+				.map((field) => {
+					const sectionId = getRelationSectionId(field);
+					const isRelationField = Boolean(sectionId);
+					const translationKey = getPermissionFieldTranslationKey(field);
+					return {
+						key: field,
+						label: t(`enumMap.field_names.${translationKey}.label`, {
+							defaultValue: formatFieldLabel(translationKey),
+						}),
+						relationLabel:
+							sectionId && isRelationField
+								? t(
+										`content.roleFormModal.permissions.fields.sections.${sectionId}`,
+										{
+											defaultValue: formatFieldLabel(sectionId),
+										},
+									)
+								: undefined,
+						relationShortLabel:
+							sectionId && isRelationField
+								? getRelationShortLabel(sectionId, t)
+								: undefined,
+						isRelationField,
+					};
+				}),
+		},
+	];
+};
+
+const mergeInstitutionFieldOrder = (fieldOrder: readonly string[]) => {
+	const seen = new Set<string>();
+	const orderedFields = fieldOrder.filter((field) => {
+		if (!(INSTITUTION_FIELDS as readonly string[]).includes(field))
+			return false;
+		if (seen.has(field)) return false;
+		seen.add(field);
+		return true;
+	});
+
+	return [
+		...orderedFields,
+		...DEFAULT_FIELD_ORDER.filter((field) => !seen.has(field)),
+	];
+};
 
 type UseResolvedRoleResult = {
 	numericRoleId?: number;
@@ -286,6 +371,7 @@ const useRoleSubmit = (
 	onSuccess: (mode: RoleFormModalProps["mode"]) => void,
 	shouldRefresh: boolean,
 	onError: (errorCode: RoleActionErrorCode) => void,
+	fieldOrder: readonly string[],
 ) => {
 	const router = useRouter();
 	const [submitting, setSubmitting] = useState(false);
@@ -299,6 +385,10 @@ const useRoleSubmit = (
 		const description = toOptionalText(data.description);
 		const { tablePermissionsInput, fieldPermissionsInput } =
 			buildPermissionInputs(data);
+		const fieldOrderInput = {
+			table: "institution",
+			fields: [...fieldOrder],
+		};
 
 		try {
 			if (mode === "create") {
@@ -307,6 +397,7 @@ const useRoleSubmit = (
 					description,
 					tablePermissions: tablePermissionsInput,
 					fieldPermissions: fieldPermissionsInput,
+					fieldOrder: fieldOrderInput,
 				});
 				if (!result.ok) {
 					onError(result.error);
@@ -320,6 +411,7 @@ const useRoleSubmit = (
 					description,
 					tablePermissions: tablePermissionsInput,
 					fieldPermissions: fieldPermissionsInput,
+					fieldOrder: fieldOrderInput,
 				});
 				if (!result.ok) {
 					onError(result.error);
@@ -429,9 +521,14 @@ const renderDialogBody = (
 	fieldSections: {
 		id: string;
 		title: string;
-		fields: { key: string; label: string }[];
+		fields: {
+			key: string;
+			label: string;
+			relationLabel?: string;
+			isRelationField?: boolean;
+		}[];
 	}[],
-	isSystemRole: boolean,
+	onReorderFields: (fields: { key: string; label: string }[]) => void,
 ) => {
 	if (isWaitingForRole) {
 		return <FormWrapperLoadingSkeleton />;
@@ -456,7 +553,6 @@ const renderDialogBody = (
 									"content.roleFormModal.permissions.table.description",
 								),
 								type: "tablePermissions",
-								disabled: isSystemRole,
 								tablePermissions: {
 									tables: tableTargets,
 									actionLabels,
@@ -492,6 +588,12 @@ const renderDialogBody = (
 									fieldLabel: t(
 										"content.roleFormModal.permissions.fields.columnLabel",
 									),
+									reorderable: true,
+									reorderLabel: t(
+										"content.roleFormModal.permissions.fields.reorderLabel",
+									),
+									onReorderFields: (_sectionId, nextFields) =>
+										onReorderFields(nextFields),
 								},
 								layout: { span: "full" },
 							},
@@ -525,6 +627,24 @@ export function RoleFormModal({
 
 	const { numericRoleId, resolvedRole, isWaitingForRole, showNotFound } =
 		useResolvedRole(mode, roleId, roles);
+	const [fieldOrder, setFieldOrder] = useState<string[]>(DEFAULT_FIELD_ORDER);
+	const isFieldOrderDirtyRef = useRef(false);
+	useEffect(() => {
+		let isMounted = true;
+		void getRoleFieldOrder("institution")
+			.then((order) => {
+				if (!isMounted || isFieldOrderDirtyRef.current) return;
+				setFieldOrder(mergeInstitutionFieldOrder(order));
+			})
+			.catch(() => {
+				if (!isMounted || isFieldOrderDirtyRef.current) return;
+				setFieldOrder(DEFAULT_FIELD_ORDER);
+			});
+
+		return () => {
+			isMounted = false;
+		};
+	}, []);
 	const handleSuccess = (nextMode: RoleFormModalProps["mode"]) => {
 		const keyPrefix =
 			nextMode === "create"
@@ -542,11 +662,15 @@ export function RoleFormModal({
 		handleSuccess,
 		shouldRefresh,
 		(errorCode) => setSubmitError(translateRoleFormError(t, errorCode)),
+		fieldOrder,
 	);
 
 	const tableTargets = useMemo(() => getTableTargets(t), [t]);
 	const actionLabels = useMemo(() => getActionLabels(t), [t]);
-	const fieldSections = useMemo(() => buildFieldSections(t), [t]);
+	const fieldSections = useMemo(
+		() => buildFieldSections(t, fieldOrder),
+		[t, fieldOrder],
+	);
 	const isSystemRole = resolvedRole?.is_system ?? false;
 	const permissionSnapshot = useMemo(
 		() => buildPermissionSnapshot(resolvedRole, tableTargets),
@@ -697,7 +821,15 @@ export function RoleFormModal({
 							tableTargets,
 							actionLabels,
 							fieldSections,
-							isSystemRole,
+							(nextFields) => {
+								isFieldOrderDirtyRef.current = true;
+								setFieldOrder((currentOrder) =>
+									mergeInstitutionFieldOrder([
+										...nextFields.map((field) => field.key),
+										...currentOrder,
+									]),
+								);
+							},
 						)}
 					</div>
 				)}

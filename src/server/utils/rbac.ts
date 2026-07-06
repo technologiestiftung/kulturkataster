@@ -5,6 +5,8 @@ import {
 	RoleFieldPermission,
 	RoleTablePermission,
 } from "@/generated/prisma";
+import { normalizeInstitutionPermissionField } from "@/lib/utils/institutionPermissionField";
+import { INSTITUTION_PERMISSION_FIELDS } from "@/types";
 import { logger } from "../logging/logger";
 
 export type Action = PrismaAction;
@@ -12,12 +14,14 @@ export type Action = PrismaAction;
 type TablePermissionMap = Record<string, Set<Action>>;
 type TableScopeMap = Record<string, Partial<Record<Action, "own" | "all">>>;
 type FieldPermissionMap = Record<string, Record<string, Set<Action>>>;
+type FieldPermissionOrderMap = Record<string, Record<string, number>>;
 
 export interface AccessContext {
 	role: string | null;
 	table: TablePermissionMap;
 	tableScope: TableScopeMap;
 	field: FieldPermissionMap;
+	fieldOrder: FieldPermissionOrderMap;
 }
 
 export type FieldPermissionLists = {
@@ -25,6 +29,7 @@ export type FieldPermissionLists = {
 	create: string[];
 	update: string[];
 	delete: string[];
+	download: string[];
 };
 
 type RBACErrorMeta = {
@@ -47,6 +52,19 @@ const getDefaultRoleWithPermissions = () =>
 		},
 	});
 
+const getPermissionFieldOrderMap =
+	async (): Promise<FieldPermissionOrderMap> => {
+		const orders = await prisma.permissionFieldOrder.findMany({
+			orderBy: [{ table: "asc" }, { sort_order: "asc" }, { field: "asc" }],
+		});
+
+		return orders.reduce<FieldPermissionOrderMap>((acc, order) => {
+			if (!acc[order.table]) acc[order.table] = {};
+			acc[order.table][order.field] = order.sort_order;
+			return acc;
+		}, {});
+	};
+
 const buildTablePerms = (
 	permissions: RoleTablePermission[] = [],
 ): TablePermissionMap => {
@@ -67,24 +85,53 @@ const buildTableScopes = (
 	}, {});
 };
 
+const relationPermissionFieldsByLegacyField: Map<string, readonly string[]> = (
+	INSTITUTION_PERMISSION_FIELDS as readonly string[]
+).reduce((fieldsByRelation, field) => {
+	const separatorIndex = field.indexOf(".");
+	if (separatorIndex <= 0) return fieldsByRelation;
+	const relation = field.slice(0, separatorIndex);
+	fieldsByRelation.set(relation, [
+		...(fieldsByRelation.get(relation) ?? []),
+		field,
+	]);
+	return fieldsByRelation;
+}, new Map<string, readonly string[]>());
+
+const getPermissionFields = (field: string): readonly string[] => {
+	const relationFields = relationPermissionFieldsByLegacyField.get(field);
+	if (relationFields) return relationFields;
+	const normalized = normalizeInstitutionPermissionField(field);
+	return normalized ? [normalized] : [];
+};
+
 const buildFieldPerms = (
 	permissions: RoleFieldPermission[] = [],
 ): FieldPermissionMap => {
 	return permissions.reduce<FieldPermissionMap>((acc, permission) => {
 		if (!acc[permission.table]) acc[permission.table] = {};
-		if (!acc[permission.table][permission.field]) {
-			acc[permission.table][permission.field] = new Set();
+		for (const field of getPermissionFields(permission.field)) {
+			if (!acc[permission.table][field]) {
+				acc[permission.table][field] = new Set();
+			}
+			acc[permission.table][field].add(permission.action);
 		}
-		acc[permission.table][permission.field].add(permission.action);
 		return acc;
 	}, {});
 };
 
+const buildFieldOrders = (
+	orders: FieldPermissionOrderMap = {},
+): FieldPermissionOrderMap => {
+	return orders;
+};
+
 export const buildAccessContext = (
 	role: RoleWithPermissions | null,
+	fieldOrder: FieldPermissionOrderMap = {},
 ): AccessContext => {
 	if (!role) {
-		return { role: null, table: {}, tableScope: {}, field: {} };
+		return { role: null, table: {}, tableScope: {}, field: {}, fieldOrder };
 	}
 
 	return {
@@ -92,6 +139,7 @@ export const buildAccessContext = (
 		table: buildTablePerms(role.table_permissions ?? []),
 		tableScope: buildTableScopes(role.table_permissions ?? []),
 		field: buildFieldPerms(role.field_permissions ?? []),
+		fieldOrder: buildFieldOrders(fieldOrder),
 	};
 };
 
@@ -229,65 +277,93 @@ export const getAccessContextForUser = async (
 	userId: string | null,
 ): Promise<AccessContext> => {
 	if (!userId) {
-		const defaultRole = await getDefaultRoleWithPermissions();
-		return buildAccessContext(defaultRole ?? null);
+		const [defaultRole, fieldOrder] = await Promise.all([
+			getDefaultRoleWithPermissions(),
+			getPermissionFieldOrderMap(),
+		]);
+		return buildAccessContext(defaultRole ?? null, fieldOrder);
 	}
 
-	const user = await prisma.user.findUnique({
-		where: { id: userId },
-		include: {
-			role: {
-				include: {
-					table_permissions: true,
-					field_permissions: true,
+	const [user, fieldOrder] = await Promise.all([
+		prisma.user.findUnique({
+			where: { id: userId },
+			include: {
+				role: {
+					include: {
+						table_permissions: true,
+						field_permissions: true,
+					},
 				},
 			},
-		},
-	});
+		}),
+		getPermissionFieldOrderMap(),
+	]);
 
-	return buildAccessContext(user?.role ?? null);
+	return buildAccessContext(user?.role ?? null, fieldOrder);
 };
 
 export const getSystemRoleReadableFieldsForTable = async (
 	roleName: string,
 	table: string,
 ): Promise<string[]> => {
-	const role = await prisma.role.findFirst({
-		where: {
-			name: roleName,
-			is_system: true,
-		},
-		include: {
-			field_permissions: true,
-		},
-	});
+	const [role, fieldOrder] = await Promise.all([
+		prisma.role.findFirst({
+			where: {
+				name: roleName,
+				is_system: true,
+			},
+			include: {
+				table_permissions: true,
+				field_permissions: true,
+			},
+		}),
+		getPermissionFieldOrderMap(),
+	]);
 	if (!role) return [];
-	const readableFields = role.field_permissions
-		.filter(
-			(permission) =>
-				permission.table === table && permission.action === "read",
-		)
-		.map((permission) => permission.field);
-	return Array.from(new Set(readableFields));
+	return getFieldPermissionListsForTable(
+		buildAccessContext(role, fieldOrder),
+		table,
+	).read;
 };
 
 export const getGuestReadableFieldsForTable = async (
 	table: string,
 ): Promise<string[]> => {
-	const role = await prisma.role.findFirst({
-		where: { is_guest: true },
-		include: {
-			field_permissions: true,
-		},
-	});
+	const [role, fieldOrder] = await Promise.all([
+		prisma.role.findFirst({
+			where: { is_guest: true },
+			include: {
+				table_permissions: true,
+				field_permissions: true,
+			},
+		}),
+		getPermissionFieldOrderMap(),
+	]);
 	if (!role) return [];
-	const readableFields = role.field_permissions
-		.filter(
-			(permission) =>
-				permission.table === table && permission.action === "read",
-		)
-		.map((permission) => permission.field);
-	return Array.from(new Set(readableFields));
+	return getFieldPermissionListsForTable(
+		buildAccessContext(role, fieldOrder),
+		table,
+	).read;
+};
+
+export const getGuestDownloadableFieldsForTable = async (
+	table: string,
+): Promise<string[]> => {
+	const [role, fieldOrder] = await Promise.all([
+		prisma.role.findFirst({
+			where: { is_guest: true },
+			include: {
+				table_permissions: true,
+				field_permissions: true,
+			},
+		}),
+		getPermissionFieldOrderMap(),
+	]);
+	if (!role) return [];
+	return getFieldPermissionListsForTable(
+		buildAccessContext(role, fieldOrder),
+		table,
+	).download;
 };
 
 export const getFieldPermissionListsForTable = (
@@ -295,22 +371,31 @@ export const getFieldPermissionListsForTable = (
 	table: string,
 ): FieldPermissionLists => {
 	const tableFields = context.field[table] ?? {};
+	const tableFieldOrder = context.fieldOrder[table] ?? {};
 	const read = new Set<string>();
 	const create = new Set<string>();
 	const update = new Set<string>();
 	const del = new Set<string>();
+	const download = new Set<string>();
 
 	for (const [field, actions] of Object.entries(tableFields)) {
 		if (actions.has("read")) read.add(field);
 		if (actions.has("create")) create.add(field);
 		if (actions.has("update")) update.add(field);
 		if (actions.has("delete")) del.add(field);
+		if (actions.has("download")) download.add(field);
 	}
 
+	const bySortOrder = (left: string, right: string) =>
+		(tableFieldOrder[left] ?? Number.MAX_SAFE_INTEGER) -
+			(tableFieldOrder[right] ?? Number.MAX_SAFE_INTEGER) ||
+		left.localeCompare(right);
+
 	return {
-		read: Array.from(read),
-		create: Array.from(create),
-		update: Array.from(update),
-		delete: Array.from(del),
+		read: Array.from(read).sort(bySortOrder),
+		create: Array.from(create).sort(bySortOrder),
+		update: Array.from(update).sort(bySortOrder),
+		delete: Array.from(del).sort(bySortOrder),
+		download: Array.from(download).sort(bySortOrder),
 	};
 };

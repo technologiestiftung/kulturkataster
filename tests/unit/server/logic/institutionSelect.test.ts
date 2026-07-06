@@ -53,4 +53,29 @@ describe("buildInstitutionSelect", () => {
 			},
 		});
 	});
+
+	it("selects categories when readable subcategories are requested", () => {
+		const select = buildInstitutionSelect(
+			createContext({
+				subcategories: new Set(["read"]),
+			}),
+		);
+
+		expect(select).toBeTruthy();
+		expect(select).not.toHaveProperty("subcategories");
+		expect(select).toMatchObject({
+			id: true,
+			categories: {
+				where: { status: "active" },
+				select: {
+					id: true,
+					key: true,
+					icon: true,
+					description: true,
+					status: true,
+					parent_category_id: true,
+				},
+			},
+		});
+	});
 });

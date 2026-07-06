@@ -30,7 +30,7 @@ jobs:
           BRANCH="${GITHUB_REF_NAME}"
 
           case "$BRANCH" in
-            release/v*-dev.*)
+            release/v*-dev)
               DEPLOY_TRACK="dev"
               ENVIRONMENT_NAME="dev"
               ENVIRONMENT_LABEL="dev"
@@ -84,8 +84,8 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=raw,value=${{ env.RELEASE_TAG }},enable=${{ env.DEPLOY_TRACK == 'main' }}
-            type=raw,value=${{ env.RELEASE_TAG }},enable=${{ env.DEPLOY_TRACK == 'dev' }}
+            type=raw,value=${{ env.RELEASE_TAG }}
+            type=raw,value=${{ env.RELEASE_TAG }}-main,enable=${{ env.DEPLOY_TRACK == 'main' }}
           flavor: |
             latest=false
 

@@ -165,6 +165,7 @@ vi.mock("@/lib/store/accountStore", () => ({
 				create: string[];
 				update: string[];
 				delete: string[];
+				download: string[];
 			};
 			categories: Array<Record<string, unknown>>;
 		}) => unknown,
@@ -177,6 +178,7 @@ vi.mock("@/lib/store/accountStore", () => ({
 				create: [],
 				update: [],
 				delete: [],
+				download: [],
 			},
 			categories: mockAccountCategories,
 		}),

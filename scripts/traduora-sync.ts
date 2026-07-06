@@ -2,6 +2,8 @@
 
 import * as fs from "fs";
 import * as path from "path";
+import { createInterface } from "readline/promises";
+import { stdin as input, stdout as output } from "process";
 import { config } from "dotenv";
 
 config();
@@ -181,6 +183,19 @@ type ImportResponse = {
 	translations?: {
 		upserted?: number;
 	};
+};
+
+type LocalePushChange = {
+	key: string;
+	value: string;
+	previousValue?: string;
+	termId?: string;
+	type: "term_added" | "translation_added" | "translation_updated";
+};
+
+type LocalePushPlan = {
+	changes: LocalePushChange[];
+	unchanged: number;
 };
 
 async function importTranslations(params: {
@@ -390,44 +405,31 @@ async function ensureRemoteTerm(
 async function pushLocaleWithTerms(params: {
 	token: string;
 	locale: string;
-	localTranslations: Record<string, string>;
 	termByKey: Map<string, TraduoraTerm>;
-	overwriteAll: boolean;
+	plan: LocalePushPlan;
 }) {
-	const remoteTranslations = await fetchTranslations(
-		params.token,
-		params.locale,
-	);
-	const existingByTermId = new Map(
-		remoteTranslations.map((translation) => [
-			translation.termId,
-			translation.value,
-		]),
-	);
-
 	let updated = 0;
-	let skipped = 0;
-	for (const [key, value] of Object.entries(params.localTranslations)) {
-		const termId = await ensureRemoteTerm(params.token, params.termByKey, key);
-		if (!params.overwriteAll && existingByTermId.has(termId)) {
-			skipped++;
-			continue;
-		}
+	for (const change of params.plan.changes) {
+		const termId =
+			change.termId ??
+			(await ensureRemoteTerm(params.token, params.termByKey, change.key));
 		await updateTranslation({
 			token: params.token,
 			locale: params.locale,
 			termId,
-			value,
+			value: change.value,
 		});
 		updated++;
 	}
 
-	return { updated, skipped };
+	return { updated, unchanged: params.plan.unchanged };
 }
 
 async function pushToTraduora(options: {
 	overwriteAll: boolean;
 	pruneMissing: boolean;
+	assumeYes: boolean;
+	bulk: boolean;
 }) {
 	console.log("Starting Traduora push");
 	const token = await getToken();
@@ -445,44 +447,55 @@ async function pushToTraduora(options: {
 	}
 
 	const remoteIndex = await getRemoteIndex(token);
-	let importUnavailable = false;
+	const plansByLocale = new Map<string, LocalePushPlan>();
 
 	for (const [locale, localTranslations] of Object.entries(localByLocale)) {
 		await ensureProjectLocale(token, localesByCode, locale);
-		if (!importUnavailable) {
-			try {
-				const result = await importTranslations({
-					token,
-					locale,
-					filePath: path.join(TRANSLATIONS_DIR, locale, TRANSLATION_FILE),
-				});
-				console.log(
-					`${locale}: imported ${Object.keys(localTranslations).length} keys, ` +
-						`added ${result.terms?.added ?? 0} terms, ` +
-						`skipped ${result.terms?.skipped ?? 0} terms, ` +
-						`upserted ${result.translations?.upserted ?? 0} translations`,
-				);
-				continue;
-			} catch (error) {
-				if (!(error instanceof Error) || !error.message.includes(" 404 ")) {
-					throw error;
-				}
-				importUnavailable = true;
-				console.warn(
-					"Traduora import endpoint is unavailable; falling back to term uploads.",
-				);
-			}
+		const plan = await buildLocalePushPlan({
+			token,
+			locale,
+			localTranslations,
+			termByKey: remoteIndex.termByKey,
+		});
+		plansByLocale.set(locale, plan);
+		logLocalePushPlan(locale, plan);
+	}
+
+	const totalChanges = Array.from(plansByLocale.values()).reduce(
+		(total, plan) => total + plan.changes.length,
+		0,
+	);
+	if (totalChanges === 0) {
+		console.log("No local translation changes to push.");
+		return;
+	}
+
+	await confirmPush(options.assumeYes);
+
+	for (const [locale, localTranslations] of Object.entries(localByLocale)) {
+		if (options.bulk) {
+			const result = await importTranslations({
+				token,
+				locale,
+				filePath: path.join(TRANSLATIONS_DIR, locale, TRANSLATION_FILE),
+			});
+			console.log(
+				`${locale}: bulk imported ${Object.keys(localTranslations).length} keys, ` +
+					`added ${result.terms?.added ?? 0} terms, ` +
+					`skipped ${result.terms?.skipped ?? 0} terms, ` +
+					`upserted ${result.translations?.upserted ?? 0} translations`,
+			);
+			continue;
 		}
 
 		const result = await pushLocaleWithTerms({
 			token,
 			locale,
-			localTranslations,
 			termByKey: remoteIndex.termByKey,
-			overwriteAll: options.overwriteAll,
+			plan: plansByLocale.get(locale) ?? { changes: [], unchanged: 0 },
 		});
 		console.log(
-			`${locale}: uploaded ${result.updated}, skipped ${result.skipped}`,
+			`${locale}: uploaded ${result.updated}, unchanged ${result.unchanged}`,
 		);
 	}
 
@@ -498,6 +511,117 @@ async function pushToTraduora(options: {
 			deleted++;
 		}
 		console.log(`Deleted ${deleted} remote terms missing locally`);
+	}
+}
+
+async function buildLocalePushPlan(params: {
+	token: string;
+	locale: string;
+	localTranslations: Record<string, string>;
+	termByKey: Map<string, TraduoraTerm>;
+}): Promise<LocalePushPlan> {
+	const remoteTranslations = await fetchTranslations(
+		params.token,
+		params.locale,
+	);
+	const existingByTermId = new Map(
+		remoteTranslations.map((translation) => [
+			translation.termId,
+			translation.value,
+		]),
+	);
+
+	const changes: LocalePushChange[] = [];
+	let unchanged = 0;
+	for (const [key, value] of Object.entries(params.localTranslations)) {
+		const term = params.termByKey.get(key);
+		if (!term) {
+			changes.push({ key, value, type: "term_added" });
+			continue;
+		}
+
+		const previousValue = existingByTermId.get(term.id);
+		if (previousValue === undefined) {
+			changes.push({
+				key,
+				value,
+				termId: term.id,
+				type: "translation_added",
+			});
+			continue;
+		}
+		if (previousValue !== value) {
+			changes.push({
+				key,
+				value,
+				previousValue,
+				termId: term.id,
+				type: "translation_updated",
+			});
+			continue;
+		}
+		unchanged++;
+	}
+
+	return { changes, unchanged };
+}
+
+const logLocalePushPlan = (locale: string, plan: LocalePushPlan) => {
+	const changesByType = plan.changes.reduce<
+		Record<LocalePushChange["type"], number>
+	>(
+		(counts, change) => {
+			counts[change.type]++;
+			return counts;
+		},
+		{ term_added: 0, translation_added: 0, translation_updated: 0 },
+	);
+
+	console.log(
+		`${locale}: ${plan.changes.length} change(s), ` +
+			`${changesByType.term_added} new term(s), ` +
+			`${changesByType.translation_added} new translation(s), ` +
+			`${changesByType.translation_updated} updated translation(s), ` +
+			`${plan.unchanged} unchanged`,
+	);
+
+	for (const change of plan.changes) {
+		if (change.type === "translation_updated") {
+			console.log(
+				`  ~ update: ${change.key}\n` +
+					`    remote: ${JSON.stringify(change.previousValue ?? "")}\n` +
+					`    local:  ${JSON.stringify(change.value)}`,
+			);
+			continue;
+		}
+		const marker = change.type === "term_added" ? "+" : "*";
+		console.log(
+			`  ${marker} ${change.type}: ${change.key} = ${JSON.stringify(change.value)}`,
+		);
+	}
+};
+
+async function confirmPush(assumeYes: boolean) {
+	if (assumeYes) {
+		console.log("Confirmation skipped because --yes was provided.");
+		return;
+	}
+	if (!process.stdin.isTTY) {
+		throw new Error(
+			"Translation push requires confirmation. Re-run with --yes in non-interactive environments.",
+		);
+	}
+
+	const rl = createInterface({ input, output });
+	try {
+		const answer = await rl.question(
+			"Push these translation changes to Traduora? [y/N] ",
+		);
+		if (answer.trim().toLowerCase() !== "y") {
+			throw new Error("Translation push cancelled.");
+		}
+	} finally {
+		rl.close();
 	}
 }
 
@@ -534,28 +658,34 @@ async function pullFromTraduora(overwriteAll: boolean) {
 
 async function main() {
 	const [command, ...flags] = process.argv.slice(2);
-	const supportedFlags = new Set(["--all", "--prune"]);
+	const supportedFlags = new Set(["--all", "--prune", "--yes", "--bulk"]);
 	const unknownFlags = flags.filter((flag) => !supportedFlags.has(flag));
 	if (unknownFlags.length > 0) {
 		console.error(`Unknown flag(s): ${unknownFlags.join(", ")}`);
-		console.error("Usage: npm run traduora:sync <push|pull> [--all] [--prune]");
+		console.error(
+			"Usage: npm run traduora:sync <push|pull> [--all] [--prune] [--yes] [--bulk]",
+		);
 		process.exit(1);
 	}
 
 	const overwriteAll = flags.includes("--all");
 	const pruneMissing = flags.includes("--prune");
+	const assumeYes = flags.includes("--yes");
+	const bulk = flags.includes("--bulk");
 
 	try {
 		assertConfig();
 		if (command === "push") {
-			await pushToTraduora({ overwriteAll, pruneMissing });
+			await pushToTraduora({ overwriteAll, pruneMissing, assumeYes, bulk });
 			return;
 		}
 		if (command === "pull") {
 			await pullFromTraduora(overwriteAll);
 			return;
 		}
-		console.log("Usage: npm run traduora:sync <push|pull> [--all] [--prune]");
+		console.log(
+			"Usage: npm run traduora:sync <push|pull> [--all] [--prune] [--yes] [--bulk]",
+		);
 		process.exit(1);
 	} catch (error) {
 		console.error(error instanceof Error ? error.message : error);
