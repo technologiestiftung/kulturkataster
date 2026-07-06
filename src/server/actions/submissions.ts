@@ -600,9 +600,9 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 											const createdInstitution = await tx.institution.create({
 												data: buildInstitutionCreateData(
 													{
-														...draftWithInternalNotes,
 														...sanitizedDraft,
 														name,
+														address: sanitizedDraft.address ?? null,
 													},
 													currentUserId,
 												),
@@ -717,10 +717,10 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 													? sanitizedDraft.name
 													: authorizedInstitution.name;
 											const updateInput = {
-												...draftWithInternalNotes,
 												...sanitizedDraft,
 												id: submission.entity_id,
 												name: resolvedName,
+												address: sanitizedDraft.address ?? null,
 											};
 											await tx.institution.update({
 												where: { id: submission.entity_id },

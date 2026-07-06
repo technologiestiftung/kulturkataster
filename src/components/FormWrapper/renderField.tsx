@@ -51,6 +51,7 @@ const AddressMapField = dynamic(
 );
 import { FundingSourceField } from "./FundingSourceField";
 import { KeyValueField } from "./KeyValueField";
+import { FieldPermissionsField } from "./FieldPermissionsField";
 import { defaultFilterState } from "./constants";
 import Eye from "@/icons/eye.svg";
 import EyeOff from "@/icons/eye-off.svg";
@@ -162,28 +163,6 @@ const toggleTablePermissionValue = (
 	return nextValue;
 };
 
-const toggleFieldPermissionValue = (
-	currentValue: Record<string, PermissionAction[]>,
-	key: string,
-	action: PermissionAction,
-) => {
-	const currentActions = new Set(currentValue[key] ?? []);
-	if (currentActions.has(action)) {
-		currentActions.delete(action);
-	} else {
-		currentActions.add(action);
-	}
-
-	const nextValue = { ...currentValue };
-	if (currentActions.size === 0) {
-		delete nextValue[key];
-	} else {
-		nextValue[key] = Array.from(currentActions);
-	}
-
-	return nextValue;
-};
-
 const setTablePermissionScope = (
 	currentValue: Record<string, TablePermissionValue | PermissionAction[]>,
 	key: string,
@@ -192,33 +171,6 @@ const setTablePermissionScope = (
 	const nextValue = normalizeTablePermissionValue(currentValue);
 	const current = nextValue[key] ?? { actions: [], scope };
 	nextValue[key] = { actions: [...current.actions], scope };
-	return nextValue;
-};
-
-const toggleSectionPermissionValue = (
-	permissionValue: Record<string, PermissionAction[]>,
-	sectionKeys: string[],
-	action: PermissionAction,
-) => {
-	const nextValue = { ...permissionValue };
-	const isAllChecked = sectionKeys.every((key) =>
-		(nextValue[key] ?? []).includes(action),
-	);
-
-	sectionKeys.forEach((key) => {
-		const current = new Set(nextValue[key] ?? []);
-		if (isAllChecked) {
-			current.delete(action);
-		} else {
-			current.add(action);
-		}
-		if (current.size === 0) {
-			delete nextValue[key];
-		} else {
-			nextValue[key] = Array.from(current);
-		}
-	});
-
 	return nextValue;
 };
 
@@ -999,107 +951,14 @@ const renderFieldContent = (
 			)}
 
 			{field.type === "fieldPermissions" && field.fieldPermissions && (
-				<div className="flex flex-col gap-1">
-					<div className="flex items-center justify-between gap-2">
-						<Label className="">{field.label}</Label>
-						{isPrivate ? (
-							<PrivateBadge hoverDescription={resolvedPrivateDescription} />
-						) : null}
-					</div>
-					<div className="mt-4 grid gap-4">
-						{field.fieldPermissions.sections.map((section) => {
-							const permissionValue =
-								(value as Record<string, PermissionAction[]>) ?? {};
-							const actions = field.fieldPermissions?.actions ?? [
-								"read",
-								"create",
-								"update",
-								"delete",
-							];
-
-							const sectionKeys = section.fields.map((item) => item.key);
-
-							const toggleSectionAction = (action: PermissionAction) => {
-								if (field.disabled) return;
-								updateField(
-									field.name,
-									toggleSectionPermissionValue(
-										permissionValue,
-										sectionKeys,
-										action,
-									),
-								);
-							};
-
-							return (
-								<div key={section.id} className="w-full overflow-x-auto">
-									<div className="overflow-x-auto rounded-md border border-input bg-background">
-										<table className="border-collapse w-full">
-											<thead className="bg-neutral-5 text-foreground">
-												<tr className="text-left">
-													<th className="border-b border-input px-3 py-2">
-														{field.fieldPermissions?.fieldLabel ?? "Field"}
-													</th>
-													{actions.map((action) => (
-														<th
-															key={action}
-															className="border-b border-input px-3 py-2 capitalize text-center cursor-pointer"
-															onClick={() => toggleSectionAction(action)}
-														>
-															{field.fieldPermissions?.actionLabels?.[action]}
-														</th>
-													))}
-												</tr>
-											</thead>
-											<tbody className="[&>tr:last-child>td]:border-b-0 [&>tr:nth-child(even)]:bg-neutral-5/60">
-												{section.fields.map((fieldItem) => {
-													return (
-														<tr key={fieldItem.key} className="border-input">
-															<td className="border-b border-input px-3 py-2 text-neutral-80">
-																{fieldItem.label}
-															</td>
-															{actions.map((action) => {
-																const checkboxId = `${field.name}-${section.id}-${fieldItem.key}-${action}`;
-																const isChecked =
-																	permissionValue[fieldItem.key]?.includes(
-																		action,
-																	) ?? false;
-																return (
-																	<td
-																		key={action}
-																		className="border-b border-input px-3 py-2 text-center"
-																	>
-																		<div className="flex items-center justify-center">
-																			<Checkbox
-																				id={checkboxId}
-																				checked={isChecked}
-																				onCheckedChange={() =>
-																					updateField(
-																						field.name,
-																						toggleFieldPermissionValue(
-																							permissionValue,
-																							fieldItem.key,
-																							action,
-																						),
-																					)
-																				}
-																				disabled={field.disabled}
-																			/>
-																		</div>
-																	</td>
-																);
-															})}
-														</tr>
-													);
-												})}
-											</tbody>
-										</table>
-									</div>
-								</div>
-							);
-						})}
-					</div>
-				</div>
+				<FieldPermissionsField
+					field={field}
+					fieldPermissions={field.fieldPermissions}
+					value={value}
+					updateField={updateField}
+					isPrivate={isPrivate}
+					resolvedPrivateDescription={resolvedPrivateDescription}
+				/>
 			)}
 
 			{error && <p className="body3 text-destructive-secondary">{error}</p>}
