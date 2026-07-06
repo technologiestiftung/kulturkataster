@@ -91,4 +91,30 @@ describe("rbac field permission lists", () => {
 			"contact_person.phone",
 		]);
 	});
+
+	it("normalizes legacy flat contact person field permissions", () => {
+		const context = buildAccessContext({
+			id: 1,
+			name: "admin",
+			description: null,
+			is_system: true,
+			is_guest: false,
+			created_at: new Date("2025-01-01"),
+			updated_at: new Date("2025-01-01"),
+			table_permissions: [],
+			field_permissions: [
+				{
+					id: 1,
+					role_id: 1,
+					table: "institution",
+					field: "contact_person_email",
+					action: "create",
+				},
+			],
+		});
+
+		expect(
+			getFieldPermissionListsForTable(context, "institution").create,
+		).toEqual(["contact_person.email"]);
+	});
 });
