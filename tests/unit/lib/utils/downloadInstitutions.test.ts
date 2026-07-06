@@ -67,7 +67,14 @@ describe("downloadInstitutions permission resolution", () => {
 
 	it("uses internal readable fields for logged-in downloads", async () => {
 		getDownloadReadableFieldsMock.mockResolvedValue({
-			readableFields: ["name", "email", "phone", "address"],
+			readableFields: [
+				"name",
+				"email",
+				"phone",
+				"address.street",
+				"address.zipcode",
+				"address.city",
+			],
 			audience: "internal",
 		});
 
@@ -97,7 +104,7 @@ describe("downloadInstitutions permission resolution", () => {
 
 	it("still restricts guest downloads to guest-readable fields", async () => {
 		getDownloadReadableFieldsMock.mockResolvedValue({
-			readableFields: ["name", "address"],
+			readableFields: ["name", "address.street"],
 			audience: "guest",
 		});
 

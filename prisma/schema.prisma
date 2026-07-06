@@ -118,6 +118,7 @@ enum Action {
   create
   update
   delete
+  download
 }
 
 enum PermissionScope {
@@ -373,6 +374,17 @@ model RoleFieldPermission {
   @@index([table])
   @@index([field])
   @@map("role_field_permission")
+}
+
+model PermissionFieldOrder {
+  id         Int    @id @default(autoincrement())
+  table      String
+  field      String
+  sort_order Int
+
+  @@unique([table, field])
+  @@index([table])
+  @@map("permission_field_order")
 }
 
 model Group {

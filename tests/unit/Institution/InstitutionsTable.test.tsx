@@ -1,63 +1,19 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { InstitutionsTable } from "@/components/Institution/InstitutionsTable";
+import { INSTITUTION_PERMISSION_FIELDS } from "@/types/institution";
 
 const pushMock = vi.fn();
 const prefetchMock = vi.fn();
 const dataTableMock = vi.fn();
 const downloadModalMock = vi.fn();
-const readableInstitutionFields = [
-	"address",
-	"categories",
-	"contact_person",
-	"groups",
-	"tags",
-	"users",
-	"name",
-	"website",
-	"phone",
-	"email",
-	"area",
-	"number_of_rooms",
-	"parent_organization",
-	"legal_form",
-	"capacity",
-	"owner_name",
-	"owner_type",
-	"rental_contract_type",
-	"rental_contract_end",
-	"funding_type",
-	"funding_sources",
-	"utilization_status",
-	"utilization_status_info",
-	"utilization_status_internal_notes",
-	"protection_status",
-	"protection_status_info",
-	"protection_status_internal_notes",
-	"shared_use_allowed",
-	"shared_use_info",
-	"shared_use_equipment",
-	"shared_use_audience",
-	"shared_use_availability",
-	"shared_use_contact_person",
-	"accessibility",
-	"cost",
-	"established_since",
-	"established_until",
-	"closing_reason",
-	"notes",
-	"internal_notes",
-	"status",
-	"import_identifier",
-	"source",
-	"created_at",
-	"updated_at",
-];
+const readableInstitutionFields = [...INSTITUTION_PERMISSION_FIELDS];
 let mockInstitutionFieldPermissions = {
 	read: readableInstitutionFields,
 	create: readableInstitutionFields,
 	update: readableInstitutionFields,
 	delete: [],
+	download: readableInstitutionFields,
 };
 
 vi.mock("react-i18next", () => ({
@@ -117,6 +73,7 @@ vi.mock("@/lib/store/accountStore", () => ({
 				create: string[];
 				update: string[];
 				delete: string[];
+				download: string[];
 			};
 			setActiveInstitutionEdit: (institution: unknown) => void;
 		}) => unknown,
@@ -219,6 +176,7 @@ describe("InstitutionsTable", () => {
 			create: readableInstitutionFields,
 			update: readableInstitutionFields,
 			delete: [],
+			download: readableInstitutionFields,
 		};
 	});
 
@@ -330,33 +288,28 @@ describe("InstitutionsTable", () => {
 		expect(screen.getByText("barrier-free, late-night")).toBeInTheDocument();
 	});
 
-	it("inserts utilization status detail fields into the table-owned export order", () => {
-		render(<InstitutionsTable />);
-
-		expect(downloadModalMock).toHaveBeenCalledTimes(1);
-		const props = downloadModalMock.mock.calls[0][0] as {
-			exportColumnOrder: string[];
+	it("orders table columns by readable field permission order", () => {
+		mockInstitutionFieldPermissions = {
+			read: ["email", "name", "status"],
+			create: [],
+			update: [],
+			delete: [],
+			download: [],
 		};
 
-		expect(props.exportColumnOrder).toEqual(
-			expect.arrayContaining([
-				"utilization_status",
-				"utilization_status_info",
-				"utilization_status_internal_notes",
-				"protection_status",
-			]),
+		render(<InstitutionsTable />);
+
+		const config = dataTableMock.mock.calls[0][0] as {
+			columns: Array<{
+				id?: string;
+				accessorKey?: string;
+			}>;
+		};
+		const columnIds = config.columns.map(
+			(column) => column.id ?? column.accessorKey,
 		);
-		expect(
-			props.exportColumnOrder.indexOf("utilization_status_info"),
-		).toBeGreaterThan(props.exportColumnOrder.indexOf("utilization_status"));
-		expect(
-			props.exportColumnOrder.indexOf("utilization_status_info"),
-		).toBeLessThan(props.exportColumnOrder.indexOf("protection_status"));
-		expect(
-			props.exportColumnOrder.indexOf("utilization_status_internal_notes"),
-		).toBeGreaterThan(
-			props.exportColumnOrder.indexOf("utilization_status_info"),
-		);
+
+		expect(columnIds).toEqual(["email", "name", "status"]);
 	});
 
 	it("passes only downloadable filtered institutions to the download modal", () => {
@@ -376,6 +329,7 @@ describe("InstitutionsTable", () => {
 			create: [],
 			update: [],
 			delete: [],
+			download: [],
 		};
 
 		render(<InstitutionsTable />);
@@ -391,9 +345,8 @@ describe("InstitutionsTable", () => {
 			(column) => column.id ?? column.accessorKey,
 		);
 
-		expect(columnIds).toEqual(
-			expect.arrayContaining(["status", "type", "id", "name"]),
-		);
+		expect(columnIds).toEqual(expect.arrayContaining(["status", "name"]));
+		expect(columnIds).not.toEqual(expect.arrayContaining(["type", "id"]));
 		expect(columnIds).not.toEqual(
 			expect.arrayContaining([
 				"email",

@@ -22,12 +22,18 @@ export type RoleFieldPermissionInput = {
 	action: Action;
 };
 
+export type RoleFieldOrderInput = {
+	table: string;
+	fields: string[];
+};
+
 export type RoleCreatePayload = {
 	name: string;
 	description?: string | null;
 	is_guest?: boolean;
 	tablePermissions?: RoleTablePermissionInput[];
 	fieldPermissions?: RoleFieldPermissionInput[];
+	fieldOrder?: RoleFieldOrderInput;
 };
 
 export type RoleUpdatePayload = {
@@ -36,6 +42,7 @@ export type RoleUpdatePayload = {
 	is_guest?: boolean;
 	tablePermissions?: RoleTablePermissionInput[];
 	fieldPermissions?: RoleFieldPermissionInput[];
+	fieldOrder?: RoleFieldOrderInput;
 };
 
 export type RoleInput = RoleCreatePayload;

@@ -32,7 +32,12 @@ export type FieldType =
 	| "keyValue"
 	| "section";
 
-export type PermissionAction = "read" | "create" | "update" | "delete";
+export type PermissionAction =
+	| "read"
+	| "create"
+	| "update"
+	| "delete"
+	| "download";
 export type PermissionScope = "own" | "all";
 
 export type TablePermissionValue = {
@@ -167,11 +172,29 @@ type FormWrapperNonSectionFieldConfig = {
 		sections: {
 			id: string;
 			title: string;
-			fields: { key: string; label: string }[];
+			fields: {
+				key: string;
+				label: string;
+				relationLabel?: string;
+				relationShortLabel?: string;
+				isRelationField?: boolean;
+			}[];
 		}[];
 		actions?: PermissionAction[];
 		actionLabels?: Partial<Record<PermissionAction, string>>;
 		fieldLabel?: string;
+		reorderable?: boolean;
+		reorderLabel?: string;
+		onReorderFields?: (
+			sectionId: string,
+			fields: {
+				key: string;
+				label: string;
+				relationLabel?: string;
+				relationShortLabel?: string;
+				isRelationField?: boolean;
+			}[],
+		) => void;
 	};
 	actionPanel?: {
 		title: string;

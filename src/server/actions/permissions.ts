@@ -5,7 +5,10 @@ import {
 	getAccessContextForUser,
 	getFieldPermissionListsForTable,
 } from "@/server/utils/rbac";
-import { getGuestReadableFieldsForTable } from "@/server/utils/rbac";
+import {
+	getGuestDownloadableFieldsForTable,
+	getGuestReadableFieldsForTable,
+} from "@/server/utils/rbac";
 
 export async function getGuestReadableFields(table: string): Promise<string[]> {
 	if (!table || table.trim().length === 0) return [];
@@ -23,14 +26,14 @@ export async function getDownloadReadableFields(table: string): Promise<{
 	const userId = await getCurrentUserId();
 	if (!userId) {
 		return {
-			readableFields: await getGuestReadableFieldsForTable(table),
+			readableFields: await getGuestDownloadableFieldsForTable(table),
 			audience: "guest",
 		};
 	}
 
 	const ctx = await getAccessContextForUser(userId);
 	return {
-		readableFields: getFieldPermissionListsForTable(ctx, table).read,
+		readableFields: getFieldPermissionListsForTable(ctx, table).download,
 		audience: "internal",
 	};
 }
