@@ -102,14 +102,7 @@ jobs:
             process.exit(0);
           }
 
-          const prereleasePattern = new RegExp(`^v${baseVersion.replace(/\./g, "\\.")}-dev\\.(\\d+)$`);
-          const nextPrereleaseNumber = tags.reduce((max, tag) => {
-            const match = prereleasePattern.exec(tag);
-            if (!match) return max;
-            return Math.max(max, Number(match[1]));
-          }, 0) + 1;
-
-          const prereleaseVersion = `${baseVersion}-dev.${nextPrereleaseNumber}`;
+          const prereleaseVersion = `${baseVersion}-dev`;
 
           process.stdout.write(JSON.stringify({
             version: prereleaseVersion,

@@ -27,7 +27,7 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
 
-      - name: Derive next dev prerelease version
+      - name: Derive next dev version
         id: release
         run: |
           SOURCE_BRANCH="${GITHUB_REF_NAME}"
@@ -45,15 +45,13 @@ jobs:
             .map((tag) => tag.trim())
             .filter(Boolean);
 
-          const prereleaseTags = tags
+          const releaseTags = tags
             .map((tag) => {
-              const match = /^v(\d+)\.(\d+)\.(\d+)-dev\.(\d+)$/.exec(tag);
+              const match = /^v(\d+)\.(\d+)\.(\d+)(?:-dev)?$/.exec(tag);
               if (!match) return null;
               return {
                 tag,
                 version: [Number(match[1]), Number(match[2]), Number(match[3])],
-                devNum: Number(match[4]),
-                baseVersion: `${match[1]}.${match[2]}.${match[3]}`,
               };
             })
             .filter(Boolean)
@@ -61,19 +59,20 @@ jobs:
               for (let i = 0; i < 3; i++) {
                 if (a.version[i] !== b.version[i]) return b.version[i] - a.version[i];
               }
-              return b.devNum - a.devNum;
+              return 0;
             });
 
-          const latest = prereleaseTags[0];
+          const latest = releaseTags[0];
           if (!latest) {
             process.stderr.write(
-              "No dev prerelease tag found. Use release-create.yml with patch/minor/major to start a new prerelease series.\n"
+              "No release tag found. Use release-create.yml with patch/minor/major to start a release series.\n"
             );
             process.exit(1);
           }
 
-          const nextDevNum = latest.devNum + 1;
-          const version = `${latest.baseVersion}-dev.${nextDevNum}`;
+          const nextVersion = [...latest.version];
+          nextVersion[2] += 1;
+          const version = `${nextVersion.join(".")}-dev`;
           const releaseBranch = `release/v${version}`;
 
           process.stdout.write(JSON.stringify({ version, releaseBranch }));
