@@ -47,9 +47,6 @@ const gotoWithRetry = async (
 				waitUntil: "domcontentloaded",
 				timeout: Math.min(10_000, Math.max(1_000, deadline - Date.now())),
 			});
-			await page.waitForLoadState("domcontentloaded", {
-				timeout: Math.min(10_000, Math.max(1_000, deadline - Date.now())),
-			});
 			return;
 		} catch (error) {
 			lastError = error;
@@ -93,45 +90,34 @@ const findLoginFields = async (page: import("@playwright/test").Page) => {
 	return null;
 };
 
+const waitForLoginFields = async (
+	page: import("@playwright/test").Page,
+	deadline: number,
+) => {
+	while (Date.now() < deadline) {
+		const fields = await findLoginFields(page);
+		if (fields) return fields;
+		await sleep(500);
+	}
+	return null;
+};
+
 const ensureLoginFormVisible = async (
 	page: import("@playwright/test").Page,
 ) => {
 	const deadline = Date.now() + SERVER_WAIT_TIMEOUT;
-	const routeAttempts = ["/de/login", "/de/account", "/de/map"];
+	const routeAttempts = ["/de/login", "/de/account"];
 	for (const route of routeAttempts) {
 		await gotoWithRetry(page, route, deadline);
-		await page.waitForLoadState("networkidle", {
-			timeout: Math.min(LOGIN_TIMEOUT, Math.max(2_000, deadline - Date.now())),
-		});
+		const routeDeadline = Math.min(Date.now() + FIELD_TIMEOUT, deadline);
 
 		// If the session is already valid and we are on account, skip login form lookup.
 		if (/\/de\/account(?:\/.*)?$/.test(page.url())) {
 			return null;
 		}
 
-		let fields = await findLoginFields(page);
+		const fields = await waitForLoginFields(page, routeDeadline);
 		if (fields) return fields;
-
-		if (route === "/de/map") {
-			const userButton = page
-				.locator(
-					'button[aria-label="user.title"], button[aria-label*="Konto"], button[aria-label*="user"]',
-				)
-				.first();
-			const canOpenUser = await userButton
-				.isVisible({ timeout: 3_000 })
-				.catch(() => false);
-			if (canOpenUser) {
-				await userButton.click({ force: true });
-				await page
-					.waitForURL(/\/[a-z]{2}\/(?:login|account)(?:\/.*)?$/, {
-						timeout: 10_000,
-					})
-					.catch(() => undefined);
-				fields = await findLoginFields(page);
-				if (fields) return fields;
-			}
-		}
 	}
 
 	throw new Error(
@@ -148,6 +134,22 @@ const saveStorageState = async ({
 }: SaveStorageOptions) => {
 	const browser = await chromium.launch();
 	const context = await browser.newContext({ baseURL });
+	await context.addInitScript(() => {
+		window.localStorage.setItem(
+			"app-storage",
+			JSON.stringify({
+				state: {
+					firstTimeUser: false,
+					viewMode: "map",
+					isContrastMode: false,
+					isLargeTextMode: false,
+					isReducedMotion: false,
+					baseFontSize: 16,
+				},
+				version: 0,
+			}),
+		);
+	});
 
 	try {
 		if (!email || !password) {
@@ -178,10 +180,11 @@ const saveStorageState = async ({
 			const loginButton = page
 				.getByRole("button", { name: /Anmelden/i })
 				.or(page.locator('button[type="submit"]').first());
-			await Promise.all([
-				page.waitForURL(/\/de\/account(\/.*)?$/, { timeout: LOGIN_TIMEOUT }),
-				loginButton.click(),
-			]);
+			await loginButton.click({ noWaitAfter: true });
+			await page.waitForURL(/\/de\/account(\/.*)?$/, {
+				timeout: LOGIN_TIMEOUT,
+				waitUntil: "commit",
+			});
 			console.log(
 				`[global-setup] ${label} login successful, URL: ${page.url()}`,
 			);
