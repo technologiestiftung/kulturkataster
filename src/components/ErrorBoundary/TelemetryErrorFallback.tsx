@@ -13,6 +13,10 @@ type TelemetryErrorFallbackProps = {
 	scope: string;
 };
 
+function getReactErrorCode(message?: string) {
+	return message?.match(/Minified React error #(\d+)/)?.[1];
+}
+
 export function TelemetryErrorFallback({
 	error,
 	reset,
@@ -28,6 +32,8 @@ export function TelemetryErrorFallback({
 			metadata: {
 				error_boundary_scope: scope,
 				error_digest: error.digest,
+				error_name: error.name,
+				react_error_code: getReactErrorCode(error.message),
 			},
 		});
 	}, [error, scope]);

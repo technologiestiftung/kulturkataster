@@ -23,11 +23,11 @@ import {
 import { type InfoWrapperConfig, type InfoWrapperFieldConfig } from "./types";
 import { StatusItem } from "./StatusItem";
 import { CategoryItem } from "./CategoryItem";
-import { useTranslation } from "react-i18next";
 import { getGridClass } from "../shared/sectionLayout";
 import { getEditAction } from "./getEditAction";
 import { ScrollReveal } from "@/components/shared/ScrollReveal";
 import { getFieldOptionLabel } from "@/lib/i18n/fieldLabels";
+import type { TFunction } from "i18next";
 
 const resolveFieldValue = (
 	field: InfoWrapperFieldConfig,
@@ -77,12 +77,12 @@ const formatAddressValue = (data: Partial<Institution>) => {
 
 const formatCategoryValue = (
 	data: Partial<Institution>,
-	tEnum: (key: string) => string,
+	t: (key: string) => string,
 ) => {
 	const categories = getParentCategories(data);
 	if (!categories?.length) return "";
 	return categories
-		.map((category) => tEnum(`enumMap.category.${category.key}`))
+		.map((category) => t(`enumMap.category.${category.key}`))
 		.join(", ");
 };
 
@@ -234,6 +234,7 @@ type RenderFieldContentArgs = {
 	alwaysShow?: boolean;
 	layoutColumns?: 1 | 2;
 	isPrivate: boolean;
+	t: TFunction;
 };
 
 const hasRenderableDisplayValue = (value: unknown) =>
@@ -247,7 +248,7 @@ const getContent = (
 	label: string | undefined,
 	value: unknown,
 	resolvedHref: string | undefined,
-	tEnum: (key: string) => string,
+	t: (key: string) => string,
 	data: Partial<Institution>,
 	isPrivate: boolean,
 	action: React.ReactNode,
@@ -343,7 +344,7 @@ const getContent = (
 					isPrivate={isPrivate}
 					action={action}
 				>
-					{getFieldOptionLabel(tEnum, String(field.enumKey), String(value))}
+					{getFieldOptionLabel(t, String(field.enumKey), String(value))}
 				</InfoItem>
 			);
 
@@ -355,7 +356,7 @@ const getContent = (
 					isPrivate={isPrivate}
 					action={action}
 				>
-					{tEnum(`enumMap.boolean.${String(value)}`)}
+					{t(`enumMap.boolean.${String(value)}`)}
 				</InfoItem>
 			);
 
@@ -378,12 +379,9 @@ const getContent = (
 };
 
 const renderFieldContent = (
-	{ field, data, newData, alwaysShow, isPrivate }: RenderFieldContentArgs,
+	{ field, data, newData, alwaysShow, isPrivate, t }: RenderFieldContentArgs,
 	includeLayout = true,
 ) => {
-	const { t: tEnum } = useTranslation();
-	const { t: tCommon } = useTranslation();
-	const { t: tContent } = useTranslation();
 	const value = resolveFieldValue(field, data);
 	const resolvedHref = resolveHref(field, value, data);
 	const action = getEditAction({
@@ -419,9 +417,9 @@ const renderFieldContent = (
 	const gridClass = getGridClass(field);
 	const translateLabel = (labelKey?: string) => {
 		if (!labelKey) return undefined;
-		const fromEnum = tEnum("enumMap." + labelKey);
+		const fromEnum = t("enumMap." + labelKey);
 		if (fromEnum && fromEnum !== labelKey) return fromEnum;
-		const fromCommon = tCommon("common." + labelKey);
+		const fromCommon = t("common." + labelKey);
 		if (fromCommon && fromCommon !== labelKey) return fromCommon;
 		return labelKey;
 	};
@@ -554,25 +552,24 @@ const renderFieldContent = (
 		sourceData: Partial<Institution>,
 	) => {
 		if (field.type === "address") return formatAddressValue(sourceData);
-		if (field.type === "category")
-			return formatCategoryValue(sourceData, tEnum);
+		if (field.type === "category") return formatCategoryValue(sourceData, t);
 		if (field.type === "fundingSources")
-			return formatFundingSourcesValue(sourceData, tEnum);
+			return formatFundingSourcesValue(sourceData, t);
 		if (field.type === "status") {
 			const labelKey = `${field.enumKey ?? "utilization_status"}.${String(
 				displayValue,
 			)}`;
-			return tEnum("enumMap." + labelKey);
+			return t("enumMap." + labelKey);
 		}
 		if (field.type === "enum") {
 			return getFieldOptionLabel(
-				tEnum,
+				t,
 				String(field.enumKey),
 				String(displayValue),
 			);
 		}
 		if (field.type === "boolean") {
-			return tEnum(`enumMap.boolean.${String(displayValue)}`);
+			return t(`enumMap.boolean.${String(displayValue)}`);
 		}
 		if (field.type === "date" || field.type === "year") {
 			return formatDateByType(displayValue, field.type);
@@ -632,7 +629,7 @@ const renderFieldContent = (
 				label,
 				value,
 				resolvedHref,
-				tEnum,
+				t,
 				data,
 				isPrivate,
 				action,
@@ -690,8 +687,8 @@ const renderFieldContent = (
 					<h1 id="institution-title" className="font-bold wrap-anywhere">
 						<span className="bg-primary-light px-1">
 							{hasOriginal
-								? tContent("content.infoWrapper.diffLabel.edited")
-								: tContent("content.infoWrapper.diffLabel.addition")}
+								? t("content.infoWrapper.diffLabel.edited")
+								: t("content.infoWrapper.diffLabel.addition")}
 						</span>
 						<span className="bg-primary-light px-1">{newDisplay}</span>
 					</h1>
@@ -718,8 +715,8 @@ const renderFieldContent = (
 					<span className={cn(hasOriginal ? "block mt-1" : "")}>
 						<span className="bg-primary-light px-1">
 							{hasOriginal
-								? tContent("content.infoWrapper.diffLabel.edited")
-								: tContent("content.infoWrapper.diffLabel.addition")}
+								? t("content.infoWrapper.diffLabel.edited")
+								: t("content.infoWrapper.diffLabel.addition")}
 						</span>
 						<span className="bg-primary-light px-1">{newDisplay}</span>
 					</span>
@@ -744,7 +741,7 @@ const renderFieldContent = (
 						{originalDisplay}
 					</h1>
 					<span className="bg-primary-light px-1">
-						{tContent("content.infoWrapper.diffLabel.removed")}
+						{t("content.infoWrapper.diffLabel.removed")}
 					</span>
 				</div>
 			);
@@ -765,7 +762,7 @@ const renderFieldContent = (
 					<span className="line-through">{originalDisplay}</span>
 					<span className="block mt-1">
 						<span className="bg-primary-light px-1">
-							{tContent("content.infoWrapper.diffLabel.removed")}
+							{t("content.infoWrapper.diffLabel.removed")}
 						</span>
 					</span>
 				</InfoItem>
@@ -778,7 +775,7 @@ const renderFieldContent = (
 		label,
 		value,
 		resolvedHref,
-		tEnum,
+		t,
 		data,
 		isPrivate,
 		action,
@@ -822,6 +819,7 @@ type BuildRenderFieldArgs = {
 	config: InfoWrapperConfig;
 	showPrivateBadge: boolean;
 	isPrivateField?: (field: InfoWrapperFieldConfig) => boolean;
+	t: TFunction;
 };
 
 export const buildRenderField = ({
@@ -830,6 +828,7 @@ export const buildRenderField = ({
 	config,
 	showPrivateBadge,
 	isPrivateField,
+	t,
 }: BuildRenderFieldArgs) => {
 	return (
 		field: InfoWrapperFieldConfig,
@@ -854,6 +853,7 @@ export const buildRenderField = ({
 			alwaysShow: field.alwaysShow ?? config.alwaysShow,
 			layoutColumns,
 			isPrivate,
+			t,
 		});
 		if (!content) return null;
 		return (
