@@ -1,6 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import {
+	render,
+	screen,
+	fireEvent,
+	waitFor,
+	within,
+} from "@testing-library/react";
 import { RegisterForm } from "@/components/Auth/RegisterForm";
 import { registerWithEmailPassword } from "@/server/actions/auth";
 
@@ -47,6 +53,16 @@ const mockedRegister = vi.mocked(registerWithEmailPassword);
 describe("RegisterForm", () => {
 	beforeEach(() => {
 		mockedRegister.mockReset();
+	});
+
+	it("uses the translated null option for account type", () => {
+		render(<RegisterForm />);
+
+		expect(
+			within(screen.getByRole("combobox")).getByRole("option", {
+				name: "common.selectPlaceholder",
+			}),
+		).toBeInTheDocument();
 	});
 
 	it("shows validation errors for invalid email and password mismatch", async () => {

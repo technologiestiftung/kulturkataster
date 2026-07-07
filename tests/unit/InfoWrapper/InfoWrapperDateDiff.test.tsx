@@ -41,6 +41,31 @@ const config: InfoWrapperConfig = {
 };
 
 describe("InfoWrapper date review diffs", () => {
+	it("renders address fields when only permitted address subfields are present", () => {
+		render(
+			<InfoWrapper
+				data={{
+					address: {
+						street: "Main Street",
+						city: "Berlin",
+					},
+				}}
+				config={{
+					fields: [
+						{
+							id: "address",
+							label: "Address",
+							type: "address",
+						},
+					],
+				}}
+			/>,
+		);
+
+		expect(screen.getByText("Main Street")).toBeInTheDocument();
+		expect(screen.getByText("Berlin")).toBeInTheDocument();
+	});
+
 	it("marks date and year fields as edited when the underlying date changes", () => {
 		render(
 			<InfoWrapper
