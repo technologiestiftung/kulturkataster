@@ -1680,6 +1680,23 @@
 				"additional": {
 					"title": "Zusätzliche Informationen"
 				},
+				"assignment": {
+					"fields": {
+						"groups": {
+							"emptyText": "Keine Gruppen gefunden.",
+							"label": "Gruppen",
+							"placeholder": "Gruppen auswählen",
+							"searchPlaceholder": "Gruppen suchen..."
+						},
+						"users": {
+							"emptyText": "Keine Nutzer*innen gefunden.",
+							"label": "Nutzer*innen",
+							"placeholder": "Nutzer*innen auswählen",
+							"searchPlaceholder": "Nutzer*innen suchen..."
+						}
+					},
+					"title": "Zuordnungen"
+				},
 				"basic": {
 					"sectionTitle": "Grundinformationen"
 				},
