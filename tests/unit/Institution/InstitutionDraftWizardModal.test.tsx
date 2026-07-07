@@ -221,6 +221,21 @@ describe("InstitutionDraftWizardModal submission workflow", () => {
 		expect(mockedShowSuccessToast).toHaveBeenCalledTimes(1);
 	});
 
+	it("uses the translated cancel label on the first step", () => {
+		mockStepperState.currentStepId = "basic";
+		mockStepperState.currentStepIndex = 0;
+		const draftState = useInstitutionDraftStore.getState();
+		draftState.setStepId("basic");
+
+		render(<InstitutionDraftWizardModal routePath="/institution/submission" />);
+
+		expect(lastFormConfig).toEqual(
+			expect.objectContaining({
+				cancelLabel: "common.cancel",
+			}),
+		);
+	});
+
 	it("creates separate category submissions for proposed new categories", async () => {
 		const draftState = useInstitutionDraftStore.getState();
 		draftState.setDraft({

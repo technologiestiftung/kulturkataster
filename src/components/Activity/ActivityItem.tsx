@@ -201,7 +201,7 @@ export function ActivityItem({ activity, index }: ActivityItemProps) {
 		if (eventType === "assign") {
 			return (
 				<Trans
-					i18nKey="auth.account.activity.templates.assignBasedOn"
+					i18nKey="common.auth.account.activity.templates.assignBasedOn"
 					defaults="<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> auf Basis von <secondary>{{secondaryEntity}}</secondary> {{action}}"
 					values={{ actor, action, secondaryEntity, primaryEntity }}
 					components={{
@@ -217,7 +217,7 @@ export function ActivityItem({ activity, index }: ActivityItemProps) {
 			if (secondaryEntity) {
 				return (
 					<Trans
-						i18nKey="auth.account.activity.templates.statusChangeBasedOnSecondaryNoDiff"
+						i18nKey="common.auth.account.activity.templates.statusChangeBasedOnSecondaryNoDiff"
 						defaults="<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> auf Basis von <secondary>{{secondaryEntity}}</secondary> {{action}}"
 						values={{
 							actor,
@@ -235,7 +235,7 @@ export function ActivityItem({ activity, index }: ActivityItemProps) {
 			}
 			return (
 				<Trans
-					i18nKey="auth.account.activity.templates.statusChangeNoDiff"
+					i18nKey="common.auth.account.activity.templates.statusChangeNoDiff"
 					defaults="<actor>{{actor}}</actor> hat <primary>{{primaryEntity}}</primary> {{action}}"
 					values={{
 						actor,
@@ -252,7 +252,7 @@ export function ActivityItem({ activity, index }: ActivityItemProps) {
 
 		return (
 			<Trans
-				i18nKey="auth.account.activity.templates.create"
+				i18nKey="common.auth.account.activity.templates.create"
 				defaults="<actor>{{actor}}</actor> {{action}} <primary>{{primaryEntity}}</primary>"
 				values={{ actor, action, primaryEntity }}
 				components={{

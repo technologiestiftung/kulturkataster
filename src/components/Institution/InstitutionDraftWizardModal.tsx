@@ -701,6 +701,7 @@ function InstitutionDraftWizardContent({
 			onChange: handleStepChange,
 			onSubmit: handleStepSubmit,
 			onCancel: handleCancel,
+			cancelLabel: t("common.cancel"),
 			submitLabel: t("content.institutionDraftWizardModal.actions.next"),
 			showCancel: true,
 			isPrivateField: isPrivateFormField,
