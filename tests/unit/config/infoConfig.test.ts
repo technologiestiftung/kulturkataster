@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+	contactInfoConfig,
 	detailsInfoConfig,
 	facilityInfoConfig,
 	organizationInfoConfig,
@@ -18,6 +19,18 @@ describe("detailsInfoConfig", () => {
 			]),
 		);
 	});
+
+	it("reads cultural area from the nested address relation", () => {
+		expect(detailsInfoConfig).toEqual(
+			expect.arrayContaining([
+				expect.objectContaining({
+					value: "address.cultural_area",
+					permissionField: "address.cultural_area",
+					type: "text",
+				}),
+			]),
+		);
+	});
 });
 
 describe("sharedUseInfoConfig", () => {
@@ -32,6 +45,32 @@ describe("sharedUseInfoConfig", () => {
 			"cost",
 			"shared_use_contact_person",
 		]);
+	});
+});
+
+describe("contactInfoConfig", () => {
+	it("reads contact person values from the nested relation", () => {
+		const contactFields = contactInfoConfig.slice(3);
+		const data = {
+			contact_person: {
+				first_name: "Ada",
+				last_name: "Lovelace",
+				email: "ada@example.com",
+				phone: "+49 30 123456",
+			},
+		};
+
+		expect(contactFields.map((field) => field.permissionField)).toEqual([
+			"contact_person.first_name",
+			"contact_person.last_name",
+			"contact_person.email",
+			"contact_person.phone",
+		]);
+		expect(
+			contactFields.map((field) =>
+				typeof field.value === "function" ? field.value(data as never) : null,
+			),
+		).toEqual(["Ada", "Lovelace", "ada@example.com", "+49 30 123456"]);
 	});
 });
 
