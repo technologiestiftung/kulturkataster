@@ -7,6 +7,7 @@ import {
 	facilityInfoConfig,
 	additionalInfoConfig,
 	contactInfoConfig,
+	sharedUseInfoConfig,
 } from "@/components/Institution";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
@@ -167,6 +168,12 @@ function InstitutionCard({
 											id: "facility",
 											cardVariant: "tertiary",
 											fields: facilityInfoConfig,
+										},
+										{
+											type: "section",
+											id: "shared_use",
+											cardVariant: "tertiary",
+											fields: sharedUseInfoConfig,
 										},
 										{
 											type: "section",

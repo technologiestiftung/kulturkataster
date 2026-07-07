@@ -1,4 +1,13 @@
 import { InfoWrapperFieldConfig } from "@/components/InfoWrapper/types";
+import type { Institution } from "@/types";
+
+const getFlatInstitutionValue = (data: Institution, key: string) =>
+	(data as unknown as Record<string, unknown>)[key];
+
+const contactPersonValue =
+	(field: "first_name" | "last_name" | "email" | "phone", flatKey: string) =>
+	(data: Institution) =>
+		data.contact_person?.[field] ?? getFlatInstitutionValue(data, flatKey);
 
 export const addressInfoConfig: InfoWrapperFieldConfig[] = [
 	{
@@ -42,22 +51,26 @@ export const contactInfoConfig: InfoWrapperFieldConfig[] = [
 		type: "phone",
 	},
 	{
-		value: "contact_person_first_name",
+		value: contactPersonValue("first_name", "contact_person_first_name"),
+		permissionField: "contact_person.first_name",
 		labelKey: "field_names.contact_person_first_name.label",
 		type: "text",
 	},
 	{
-		value: "contact_person_last_name",
+		value: contactPersonValue("last_name", "contact_person_last_name"),
+		permissionField: "contact_person.last_name",
 		labelKey: "field_names.contact_person_last_name.label",
 		type: "text",
 	},
 	{
-		value: "contact_person_email",
+		value: contactPersonValue("email", "contact_person_email"),
+		permissionField: "contact_person.email",
 		labelKey: "field_names.contact_person_email.label",
 		type: "email",
 	},
 	{
-		value: "contact_person_phone",
+		value: contactPersonValue("phone", "contact_person_phone"),
+		permissionField: "contact_person.phone",
 		labelKey: "field_names.contact_person_phone.label",
 		type: "phone",
 	},
@@ -86,9 +99,10 @@ export const detailsInfoConfig: InfoWrapperFieldConfig[] = [
 		enumKey: "closing_reason",
 	},
 	{
-		value: "cultural_area",
+		value: "address.cultural_area",
+		permissionField: "address.cultural_area",
 		labelKey: "field_names.cultural_area.label",
-		type: "nested",
+		type: "text",
 	},
 	{
 		value: "owner_type",
