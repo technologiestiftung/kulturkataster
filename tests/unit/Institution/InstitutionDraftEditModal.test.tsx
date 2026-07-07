@@ -175,6 +175,36 @@ describe("InstitutionDraftEditModal", () => {
 		});
 	});
 
+	it("does not mount the form before a directly loaded submission resolves", async () => {
+		mockSubmissions.length = 0;
+		mockedGetSubmissionById.mockResolvedValueOnce({
+			id: 702,
+			entity_type: "institution",
+			type: "create",
+			data: {
+				name: "Directly loaded draft",
+				categoryIds: [1],
+			},
+		} as never);
+
+		render(
+			<InstitutionDraftEditModal
+				submissionId={702}
+				routePath="/account/submissions/702/edit"
+			/>,
+		);
+
+		expect(institutionFormModalMock).not.toHaveBeenCalled();
+
+		await waitFor(() => {
+			expect(institutionFormModalMock).toHaveBeenCalledTimes(1);
+		});
+		const latestProps = institutionFormModalMock.mock.calls.at(-1)?.[0] as {
+			institution?: Record<string, unknown>;
+		};
+		expect(latestProps.institution?.name).toBe("Directly loaded draft");
+	});
+
 	it("prefills all review-visible fields in edit modal for submission 343", async () => {
 		mockSubmissions.length = 0;
 		mockSubmissions.push({
