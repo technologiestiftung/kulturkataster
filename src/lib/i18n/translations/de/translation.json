@@ -2808,10 +2808,6 @@
 				"status": "Status",
 				"updatedAt": "Aktualisiert am"
 			},
-			"compliance": {
-				"accepted": "DSGVO akzeptiert",
-				"rejected": "DSGVO nicht akzeptiert"
-			},
 			"empty": {
 				"description": "Legen Sie eine neue Nutzer*in an, um zu starten.",
 				"title": "Keine Nutzer*innen gefunden."
@@ -2823,11 +2819,10 @@
 				"allStatuses": "Alle Status",
 				"apply": "Anwenden",
 				"button": "Filter",
-				"description": "Nutzer*innen nach Status, Rolle, Gruppen und Compliance eingrenzen.",
+				"description": "Nutzer*innen nach Status, Rolle und Gruppen eingrenzen.",
 				"reset": "Zurücksetzen",
 				"title": "Nutzer*innen filtern"
 			},
-			"allCompliance": "Alle Compliance-Status",
 			"institutionsCount_one": "{{count}} Kulturort",
 			"institutionsCount_other": "{{count}} Kulturorte",
 			"searchPlaceholder": "Nutzer*innen suchen..."
