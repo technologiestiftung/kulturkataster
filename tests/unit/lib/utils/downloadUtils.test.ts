@@ -182,6 +182,20 @@ describe("prepareDataForExport", () => {
 		});
 	});
 
+	it("normalizes website values to absolute URLs", () => {
+		const exportWebsite = (website: string) =>
+			prepareDataForExport([{ ...makeInstitution(), website } as Institution], {
+				readablePermissionFields: ["website"],
+				audience: "internal",
+			})[0].Website;
+
+		expect(exportWebsite("example.de")).toBe("https://example.de");
+		expect(exportWebsite("//example.de")).toBe("https://example.de");
+		expect(exportWebsite("/example.de")).toBe("https://example.de");
+		expect(exportWebsite("http://example.de")).toBe("http://example.de");
+		expect(exportWebsite("https://example.de")).toBe("https://example.de");
+	});
+
 	it("translates funding source option values like state_berlin", () => {
 		const rows = prepareDataForExport(
 			[
