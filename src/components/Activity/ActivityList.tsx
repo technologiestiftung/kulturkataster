@@ -337,7 +337,7 @@ const formatEntityLabel = (
 			: userLabel;
 	}
 	const translatedType = t(
-		`auth.account.activity.entities.${audit.entity_type}`,
+		`common.auth.account.activity.entities.${audit.entity_type}`,
 		{
 			defaultValue: audit.entity_type,
 		},

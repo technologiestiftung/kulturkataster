@@ -78,4 +78,23 @@ describe("buildInstitutionSelect", () => {
 			},
 		});
 	});
+
+	it("selects street number with readable street for address display", () => {
+		const select = buildInstitutionSelect(
+			createContext({
+				"address.street": new Set(["read"]),
+			}),
+		);
+
+		expect(select).toMatchObject({
+			id: true,
+			address: {
+				select: {
+					id: true,
+					street: true,
+					street_number: true,
+				},
+			},
+		});
+	});
 });

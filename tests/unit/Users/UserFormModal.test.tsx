@@ -221,6 +221,11 @@ describe("UserFormModal", () => {
 				}),
 			);
 		});
+		expect(mockedCreateUser).toHaveBeenCalledWith(
+			expect.not.objectContaining({
+				compliance: expect.anything(),
+			}),
+		);
 		expect(mockedShowSuccessToast).toHaveBeenCalledTimes(1);
 		expect(closeModalMock).toHaveBeenCalledTimes(1);
 	});
@@ -262,6 +267,11 @@ describe("UserFormModal", () => {
 				}),
 			);
 		});
+		expect(mockedUpdateUser).toHaveBeenCalledWith(
+			expect.not.objectContaining({
+				compliance: expect.anything(),
+			}),
+		);
 		expect(mockedShowSuccessToast).toHaveBeenCalledTimes(1);
 		expect(closeModalMock).toHaveBeenCalledTimes(1);
 	});

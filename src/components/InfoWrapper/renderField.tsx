@@ -121,8 +121,12 @@ const buildAddressLines = (data: Partial<Institution>) => {
 	if (address.address_suffix) {
 		lines.push(address.address_suffix);
 	}
-	if (address.street && address.street_number) {
-		lines.push(`${address.street.trim()} ${address.street_number.trim()}`);
+	const streetLine = [address.street, address.street_number]
+		.map((part) => (typeof part === "string" ? part.trim() : ""))
+		.filter(Boolean)
+		.join(" ");
+	if (streetLine) {
+		lines.push(streetLine);
 	}
 	const cityLineParts: string[] = [];
 	if (address.zipcode) cityLineParts.push(address.zipcode);

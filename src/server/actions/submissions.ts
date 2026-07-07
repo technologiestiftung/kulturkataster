@@ -66,6 +66,25 @@ type ClaimInstitutionRow = Prisma.InstitutionGetPayload<{
 	};
 }>;
 
+const withExistingAddressId = <T extends { address?: unknown }>(
+	draft: T,
+	addressId?: number | null,
+): T => {
+	if (!addressId || typeof draft.address !== "object" || !draft.address) {
+		return draft;
+	}
+	return {
+		...draft,
+		address: {
+			...(draft.address as Record<string, unknown>),
+			id:
+				typeof (draft.address as Record<string, unknown>).id === "number"
+					? (draft.address as Record<string, unknown>).id
+					: addressId,
+		},
+	};
+};
+
 const sanitizeCategoryKey = (value: string) =>
 	value
 		.toLowerCase()
@@ -690,7 +709,7 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 											const authorizedInstitution = institutionWhere
 												? await tx.institution.findFirst({
 														where: institutionWhere,
-														select: { id: true, name: true },
+														select: { id: true, name: true, address_id: true },
 													})
 												: null;
 											if (!authorizedInstitution) {
@@ -698,9 +717,12 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 													"Not authorized to update this institution.",
 												);
 											}
-											const fields = buildInstitutionPermissionFields(
+											const draftWithAddressId = withExistingAddressId(
 												draftWithInternalNotes,
+												authorizedInstitution.address_id,
 											);
+											const fields =
+												buildInstitutionPermissionFields(draftWithAddressId);
 											const allowedFields = new Set(
 												fields.filter((field) =>
 													canFields(ctx, "institution", [field], "update"),
@@ -708,7 +730,7 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 											);
 											const sanitizedDraft =
 												filterInstitutionInputByPermissionFields(
-													draftWithInternalNotes,
+													draftWithAddressId,
 													allowedFields,
 												);
 											const resolvedName =

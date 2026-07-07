@@ -47,7 +47,6 @@ const getInitialValues = (resolvedUser?: User) => ({
 	status: resolvedUser?.status ?? "approval_pending",
 	account_type: resolvedUser?.account_type ?? "",
 	meta_info: resolvedUser?.meta_info ?? {},
-	compliance: resolvedUser?.compliance ?? false,
 	roleId: resolvedUser?.role?.id ? String(resolvedUser.role.id) : "",
 	groupIds: resolvedUser?.groups?.map((group) => String(group.id)) ?? [],
 	institutionIds:
@@ -193,7 +192,6 @@ const useUserSubmit = (
 					first_name: String(data.first_name ?? ""),
 					last_name: String(data.last_name ?? ""),
 					status,
-					compliance: Boolean(data.compliance),
 					account_type:
 						typeof data.account_type === "string"
 							? data.account_type
@@ -216,7 +214,6 @@ const useUserSubmit = (
 					first_name: String(data.first_name ?? ""),
 					last_name: String(data.last_name ?? ""),
 					status,
-					compliance: Boolean(data.compliance),
 					account_type:
 						typeof data.account_type === "string"
 							? data.account_type
