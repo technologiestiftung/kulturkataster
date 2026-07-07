@@ -41,6 +41,61 @@ const config: InfoWrapperConfig = {
 };
 
 describe("InfoWrapper date review diffs", () => {
+	it("keeps hook order stable when fields appear after rerender", () => {
+		const { rerender } = render(
+			<InfoWrapper
+				data={{}}
+				config={{
+					fields: [
+						{
+							id: "name",
+							label: "Name",
+							value: "name",
+							type: "text",
+						},
+						{
+							id: "address",
+							label: "Address",
+							type: "address",
+						},
+					],
+				}}
+			/>,
+		);
+
+		rerender(
+			<InfoWrapper
+				data={{
+					name: "Directly loaded submission",
+					address: {
+						street: "Main Street",
+						city: "Berlin",
+					},
+				}}
+				config={{
+					fields: [
+						{
+							id: "name",
+							label: "Name",
+							value: "name",
+							type: "text",
+						},
+						{
+							id: "address",
+							label: "Address",
+							type: "address",
+						},
+					],
+				}}
+			/>,
+		);
+
+		expect(
+			screen.getAllByText("Directly loaded submission").length,
+		).toBeGreaterThan(0);
+		expect(screen.getByText("Main Street")).toBeInTheDocument();
+	});
+
 	it("renders address fields when only permitted address subfields are present", () => {
 		render(
 			<InfoWrapper

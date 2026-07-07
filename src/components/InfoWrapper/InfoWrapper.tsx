@@ -12,6 +12,7 @@ import {
 } from "@/components/shared/sectionLayout";
 import { getEditAction } from "./getEditAction";
 import { ScrollReveal } from "@/components/shared/ScrollReveal";
+import { useTranslation } from "react-i18next";
 
 export function InfoWrapper({
 	data,
@@ -22,12 +23,14 @@ export function InfoWrapper({
 	newData?: Partial<Institution>;
 	config: InfoWrapperConfig;
 }) {
+	const { t } = useTranslation();
 	const renderField = buildRenderField({
 		data,
 		newData,
 		config,
 		showPrivateBadge: config.showPrivateBadge ?? true,
 		isPrivateField: config.isPrivateField,
+		t,
 	});
 	const isCardField = (field: InfoWrapperFieldConfig) =>
 		field.type === "section";
