@@ -2001,15 +2001,15 @@
 					"columnLabel": "Feld",
 					"description": "Begrenzen Sie Aktualisierungen auf bestimmte Kulturort-Felder.",
 					"reorderLabel": "Felder sortieren",
-					"sectionShort": {
-						"address": "Adr.",
-						"contact_person": "AP"
-					},
 					"sections": {
-						"address": "Adresse",
+						"address": "Adressfelder",
 						"contact_person": "Ansprechperson",
 						"institution": "Kulturort-Felder",
 						"relations": "Beziehungen"
+					},
+					"sectionShort": {
+						"address": "Adr.",
+						"contact_person": "AP"
 					},
 					"title": "Feldberechtigungen"
 				},

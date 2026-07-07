@@ -2008,15 +2008,15 @@
 					"columnLabel": "Field",
 					"description": "Limit updates to specific culture location fields.",
 					"reorderLabel": "Reorder fields",
-					"sectionShort": {
-						"address": "Adr.",
-						"contact_person": "CP"
-					},
 					"sections": {
-						"address": "Address",
+						"address": "Address fields",
 						"contact_person": "Contact person",
 						"institution": "Cultural site fields",
 						"relations": "relationships"
+					},
+					"sectionShort": {
+						"address": "Adr.",
+						"contact_person": "CP"
 					},
 					"title": "Field permissions"
 				},
