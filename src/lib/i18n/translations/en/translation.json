@@ -421,6 +421,11 @@
 			"label": "Email"
 		},
 		"error": "Error",
+		"errorBoundary": {
+			"description": "The error has been logged. Please try again.",
+			"retry": "Try again",
+			"title": "Something went wrong."
+		},
 		"field_names": {
 			"funding_type": {
 				"options": {

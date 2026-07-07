@@ -421,6 +421,11 @@
 			"label": "E-Mail"
 		},
 		"error": "Fehler",
+		"errorBoundary": {
+			"description": "Der Fehler wurde protokolliert. Bitte versuchen Sie es erneut.",
+			"retry": "Erneut versuchen",
+			"title": "Etwas ist schiefgelaufen."
+		},
 		"field_names": {
 			"funding_type": {
 				"options": {
