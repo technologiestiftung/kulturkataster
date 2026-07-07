@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { CategorySubmissionReviewModal } from "@/components/Institution/CategorySubmissionReviewModal";
 import { InstitutionDraftReviewModal } from "@/components/Institution/InstitutionDraftReviewModal";
+import { Modal } from "@/components/Modals/Modal";
 import { useAccountStore } from "@/lib/store/accountStore";
 import { getSubmissionById } from "@/server/actions/submissions";
 import type { Submission } from "@/types/submission";
@@ -20,6 +22,7 @@ export function SubmissionReviewModal({
 	routePath,
 	shouldRefresh,
 }: SubmissionReviewModalProps) {
+	const { t } = useTranslation();
 	const submissions = useAccountStore((state) => state.submissions);
 	const [fetchedSubmission, setFetchedSubmission] = useState<Submission | null>(
 		null,
@@ -55,6 +58,25 @@ export function SubmissionReviewModal({
 			isMounted = false;
 		};
 	}, [submission, submissionId]);
+
+	if (!didResolveSubmission && !submission) {
+		return (
+			<Modal
+				title={t("content.institutionFormModal.review.loadingTitle", {
+					defaultValue: "Einreichung wird geladen",
+				})}
+				variant="fullscreen"
+				returnTo={returnTo}
+				routePath={routePath}
+				loadingState={{
+					active: true,
+					label: t("content.institutionFormModal.review.loadingLabel", {
+						defaultValue: "Einreichung wird geladen...",
+					}),
+				}}
+			/>
+		);
+	}
 
 	if (submission?.entity_type === "category") {
 		return (

@@ -421,6 +421,11 @@
 			"label": "E-Mail"
 		},
 		"error": "Fehler",
+		"errorBoundary": {
+			"description": "Der Fehler wurde protokolliert. Bitte versuchen Sie es erneut.",
+			"retry": "Erneut versuchen",
+			"title": "Etwas ist schiefgelaufen."
+		},
 		"field_names": {
 			"funding_type": {
 				"options": {
@@ -1680,6 +1685,23 @@
 				"additional": {
 					"title": "Zusätzliche Informationen"
 				},
+				"assignment": {
+					"fields": {
+						"groups": {
+							"emptyText": "Keine Gruppen gefunden.",
+							"label": "Gruppen",
+							"placeholder": "Gruppen auswählen",
+							"searchPlaceholder": "Gruppen suchen..."
+						},
+						"users": {
+							"emptyText": "Keine Nutzer*innen gefunden.",
+							"label": "Nutzer*innen",
+							"placeholder": "Nutzer*innen auswählen",
+							"searchPlaceholder": "Nutzer*innen suchen..."
+						}
+					},
+					"title": "Zuordnungen"
+				},
 				"basic": {
 					"sectionTitle": "Grundinformationen"
 				},
@@ -1832,6 +1854,8 @@
 				"errorUnknown": "Unbekannter Fehler.",
 				"grantSubmitterAccess": "Der einreichenden Person nach Genehmigung Zugriff auf diesen Kulturort geben.",
 				"linkedCategorySubmissions": "Neuer Kategorie-Vorschlag",
+				"loadingLabel": "Einreichung wird geladen...",
+				"loadingTitle": "Einreichung wird geladen",
 				"noteMeta": "{{author}} am {{date}}",
 				"notesLabel": "Prüfnotizen",
 				"notesPlaceholder": "Optionale Notizen für die Einreichung",
@@ -2808,10 +2832,6 @@
 				"status": "Status",
 				"updatedAt": "Aktualisiert am"
 			},
-			"compliance": {
-				"accepted": "DSGVO akzeptiert",
-				"rejected": "DSGVO nicht akzeptiert"
-			},
 			"empty": {
 				"description": "Legen Sie eine neue Nutzer*in an, um zu starten.",
 				"title": "Keine Nutzer*innen gefunden."
@@ -2823,11 +2843,10 @@
 				"allStatuses": "Alle Status",
 				"apply": "Anwenden",
 				"button": "Filter",
-				"description": "Nutzer*innen nach Status, Rolle, Gruppen und Compliance eingrenzen.",
+				"description": "Nutzer*innen nach Status, Rolle und Gruppen eingrenzen.",
 				"reset": "Zurücksetzen",
 				"title": "Nutzer*innen filtern"
 			},
-			"allCompliance": "Alle Compliance-Status",
 			"institutionsCount_one": "{{count}} Kulturort",
 			"institutionsCount_other": "{{count}} Kulturorte",
 			"searchPlaceholder": "Nutzer*innen suchen..."

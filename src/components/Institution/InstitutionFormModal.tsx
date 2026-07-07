@@ -8,7 +8,11 @@ import { Modal } from "@/components/Modals/Modal";
 import { useRoutedModalClose } from "@/components/Modals/useRoutedModalClose";
 import { FormWrapper } from "@/components/FormWrapper";
 import { FormWrapperLoadingSkeleton } from "@/components/FormWrapper/FormWrapperLoadingSkeleton";
-import type { FormWrapperConfig, FieldConfig } from "@/components/FormWrapper";
+import type {
+	FormWrapperConfig,
+	FieldConfig,
+	SelectOption,
+} from "@/components/FormWrapper";
 import { useAccountStore } from "@/lib/store/accountStore";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import {
@@ -16,13 +20,14 @@ import {
 	buildInstitutionSharedFieldsPayload,
 	getSubmitLabel,
 	handleAddressBlur,
+	toNumberArray,
 } from "@/lib/utils/formUtils";
 import {
 	createInstitution,
 	updateInstitution,
 } from "@/server/actions/institutions";
 import { geocodeAddress, reverseGeocode } from "@/server/actions/maptiler";
-import type { Category } from "@/types";
+import type { Category, Group, User } from "@/types";
 import type { Institution } from "@/types/institution";
 import { useRouter } from "next/navigation";
 import { resolveCategoryIdsFromDraft } from "@/lib/utils/institutionCategoryUtils";
@@ -124,6 +129,41 @@ const renderDialogBody = (
 		<FormWrapper key={formKey} config={formConfig} />
 	);
 
+type AssignmentSubmitAccess = {
+	users: boolean;
+	groups: boolean;
+};
+
+type AssignmentReadAccess = AssignmentSubmitAccess;
+
+const toStringArray = (value: unknown): string[] => {
+	if (!Array.isArray(value)) return [];
+	return value
+		.filter((item): item is string => typeof item === "string")
+		.map((item) => item.trim())
+		.filter(Boolean);
+};
+
+const buildUserOptions = (users: User[]): SelectOption[] =>
+	users.map((user) => {
+		const displayName = [user.first_name, user.last_name]
+			.filter(Boolean)
+			.join(" ")
+			.trim();
+		const label = displayName || user.email;
+		return {
+			value: user.id,
+			label,
+			searchText: [label, user.email].filter(Boolean).join(" "),
+		};
+	});
+
+const buildGroupOptions = (groups: Group[]): SelectOption[] =>
+	groups.map((group) => ({
+		value: String(group.id),
+		label: group.name,
+	}));
+
 const useInstitutionSubmit = (
 	mode: InstitutionFormModalProps["mode"],
 	institutionId: number | undefined,
@@ -134,6 +174,7 @@ const useInstitutionSubmit = (
 	shouldRefresh: boolean,
 	onError: (message: string) => void,
 	permissionContext: InstitutionFormModalProps["permissionContext"],
+	assignmentSubmitAccess: AssignmentSubmitAccess,
 ) => {
 	const [submitting, setSubmitting] = useState(false);
 	const addInstitution = useAccountStore((state) => state.addInstitution);
@@ -150,6 +191,14 @@ const useInstitutionSubmit = (
 		);
 		const address = buildInstitutionAddressPayload(data, { addressId });
 		const sharedPayload = buildInstitutionSharedFieldsPayload(data);
+		const assignmentPayload = {
+			...(assignmentSubmitAccess.users
+				? { userIds: toStringArray(data.userIds) }
+				: {}),
+			...(assignmentSubmitAccess.groups
+				? { groupIds: toNumberArray(data.groupIds) }
+				: {}),
+		};
 
 		try {
 			if (mode === "create") {
@@ -158,6 +207,7 @@ const useInstitutionSubmit = (
 					address,
 					categoryIds: categoryIds.length > 0 ? categoryIds : [],
 					...sharedPayload,
+					...assignmentPayload,
 				});
 				if (!result.ok) {
 					onError(result.error);
@@ -171,6 +221,7 @@ const useInstitutionSubmit = (
 					address,
 					categoryIds,
 					...sharedPayload,
+					...assignmentPayload,
 				});
 				if (!result.ok) {
 					onError(result.error);
@@ -218,6 +269,9 @@ type InstitutionFormConfigArgs = {
 	t: TFunction;
 	tEnum: TFunction;
 	categoryGroups: Category[];
+	userOptions: SelectOption[];
+	groupOptions: SelectOption[];
+	assignmentReadAccess: AssignmentReadAccess;
 	resolvedInstitution?: Institution;
 	submitting: boolean;
 	submitLabel?: string;
@@ -241,6 +295,9 @@ const buildInstitutionFormConfig = ({
 	t,
 	tEnum,
 	categoryGroups,
+	userOptions,
+	groupOptions,
+	assignmentReadAccess,
 	resolvedInstitution,
 	submitting,
 	submitLabel,
@@ -1176,6 +1233,66 @@ const buildInstitutionFormConfig = ({
 					},
 				],
 			},
+			...(assignmentReadAccess.users || assignmentReadAccess.groups
+				? ([
+						{
+							name: "assignment_section",
+							type: "section",
+							title: t("content.institutionFormModal.form.assignment.title"),
+							fields: [
+								...(assignmentReadAccess.groups
+									? ([
+											{
+												name: "groupIds",
+												fieldMetaKey: "groups",
+												label: t(
+													"content.institutionFormModal.form.assignment.fields.groups.label",
+												),
+												type: "multiselect",
+												multiselectVariant: "modal",
+												placeholder: t(
+													"content.institutionFormModal.form.assignment.fields.groups.placeholder",
+												),
+												searchPlaceholder: t(
+													"content.institutionFormModal.form.assignment.fields.groups.searchPlaceholder",
+												),
+												emptyText: t(
+													"content.institutionFormModal.form.assignment.fields.groups.emptyText",
+												),
+												options: groupOptions,
+												layout: { span: "full" },
+											},
+										] satisfies FieldConfig[])
+									: []),
+								...(assignmentReadAccess.users
+									? ([
+											{
+												name: "userIds",
+												fieldMetaKey: "users",
+												label: t(
+													"content.institutionFormModal.form.assignment.fields.users.label",
+												),
+												type: "multiselect",
+												multiselectVariant: "modal",
+												placeholder: t(
+													"content.institutionFormModal.form.assignment.fields.users.placeholder",
+												),
+												searchPlaceholder: t(
+													"content.institutionFormModal.form.assignment.fields.users.searchPlaceholder",
+												),
+												emptyText: t(
+													"content.institutionFormModal.form.assignment.fields.users.emptyText",
+												),
+												options: userOptions,
+												previewCount: 3,
+												layout: { span: "full" },
+											},
+										] satisfies FieldConfig[])
+									: []),
+							],
+						},
+					] satisfies FieldConfig[])
+				: []),
 		],
 
 		onSubmit,
@@ -1232,6 +1349,8 @@ export function InstitutionFormModal({
 	const institutionCategories = useInstitutionStore(
 		(state) => state.categories,
 	);
+	const users = useAccountStore((state) => state.users);
+	const groups = useAccountStore((state) => state.groups);
 	const categoryGroups = useMemo(
 		() =>
 			institutionCategories?.length
@@ -1326,6 +1445,35 @@ export function InstitutionFormModal({
 		setCurrentFormData(initialFormValues);
 	}, [initialFormValues]);
 
+	const assignmentReadAccess = useMemo(() => {
+		if (permissionContext !== "institution") {
+			return { users: false, groups: false };
+		}
+		const readableFields = new Set(institutionFieldPermissions.read ?? []);
+		return {
+			users: readableFields.has("users"),
+			groups: readableFields.has("groups"),
+		};
+	}, [institutionFieldPermissions.read, permissionContext]);
+
+	const assignmentSubmitAccess = useMemo(() => {
+		if (!assignmentReadAccess.users && !assignmentReadAccess.groups) {
+			return { users: false, groups: false };
+		}
+		if (mode === "create") {
+			const creatableFields = new Set(institutionFieldPermissions.create ?? []);
+			return {
+				users: assignmentReadAccess.users && creatableFields.has("users"),
+				groups: assignmentReadAccess.groups && creatableFields.has("groups"),
+			};
+		}
+		const updatableFields = new Set(institutionFieldPermissions.update ?? []);
+		return {
+			users: assignmentReadAccess.users && updatableFields.has("users"),
+			groups: assignmentReadAccess.groups && updatableFields.has("groups"),
+		};
+	}, [assignmentReadAccess, institutionFieldPermissions, mode]);
+
 	const handleSuccess = (nextMode: InstitutionFormModalProps["mode"]) => {
 		const keyPrefix =
 			nextMode === "create"
@@ -1350,6 +1498,7 @@ export function InstitutionFormModal({
 		shouldRefresh,
 		(errorCode) => setSubmitError(translateInstitutionFormError(t, errorCode)),
 		permissionContext,
+		assignmentSubmitAccess,
 	);
 
 	const handleCustomSubmit = useCallback(
@@ -1477,6 +1626,8 @@ export function InstitutionFormModal({
 	);
 
 	const canShowDeleteAction = Boolean(onDelete);
+	const userOptions = useMemo(() => buildUserOptions(users), [users]);
+	const groupOptions = useMemo(() => buildGroupOptions(groups), [groups]);
 
 	const formConfig = useMemo(
 		() =>
@@ -1485,6 +1636,9 @@ export function InstitutionFormModal({
 				t,
 				tEnum,
 				categoryGroups,
+				userOptions,
+				groupOptions,
+				assignmentReadAccess,
 				resolvedInstitution: resolvedInstitutionWithFallback,
 				submitting: resolvedSubmitting,
 				submitLabel,
@@ -1501,6 +1655,9 @@ export function InstitutionFormModal({
 			t,
 			tEnum,
 			categoryGroups,
+			userOptions,
+			groupOptions,
+			assignmentReadAccess,
 			resolvedInstitutionWithFallback,
 			resolvedSubmitting,
 			submitLabel,
