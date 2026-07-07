@@ -22,6 +22,8 @@ interface DownloadData {
 type PrepareDataForExportOptions = {
 	translateFn?: TranslateFn;
 	readablePermissionFields?: Iterable<string>;
+	getReadablePermissionFields?: (institution: Institution) => Iterable<string>;
+	getAudience?: (institution: Institution) => ExportAudience;
 	audience?: ExportAudience;
 	columnOrder?: string[];
 };
@@ -48,6 +50,8 @@ const enumKeyMappings: Record<string, string> = {
 	funding_sources: "funding_source",
 	status: "institution_status",
 };
+
+const URL_EXPORT_KEYS = new Set(["website"]);
 
 const isObjectRecord = (value: unknown): value is Record<string, unknown> =>
 	typeof value === "object" &&
@@ -108,6 +112,14 @@ function parseIsoDateValue(value: string): Date | null {
 	return Number.isNaN(date.getTime()) ? null : date;
 }
 
+function normalizeUrlValue(value: string): string {
+	const trimmedValue = value.trim();
+	if (!trimmedValue) return "";
+	if (/^[a-z][a-z\d+.-]*:\/\//i.test(trimmedValue)) return trimmedValue;
+	if (trimmedValue.startsWith("//")) return `https:${trimmedValue}`;
+	return `https://${trimmedValue.replace(/^\/+/, "")}`;
+}
+
 function formatScalarValue(
 	exportKey: string,
 	value: unknown,
@@ -119,6 +131,9 @@ function formatScalarValue(
 		return translateEnumValue(exportKey, value ? "yes" : "no", translateFn);
 	}
 	if (typeof value === "string") {
+		if (URL_EXPORT_KEYS.has(exportKey)) {
+			return normalizeUrlValue(value);
+		}
 		const date = parseIsoDateValue(value);
 		return date
 			? formatDateValue(date)
@@ -407,10 +422,12 @@ export function prepareDataForExport(
 	institutions: Institution[],
 	options: PrepareDataForExportOptions = {},
 ): Record<string, string>[] {
+	const normalizePermissionFields = (fields: Iterable<string>) =>
+		Array.from(fields)
+			.map((field) => normalizeInstitutionPermissionField(field))
+			.filter((field): field is string => Boolean(field));
 	const readablePermissionFieldOrder = options.readablePermissionFields
-		? Array.from(options.readablePermissionFields)
-				.map((field) => normalizeInstitutionPermissionField(field))
-				.filter((field): field is string => Boolean(field))
+		? normalizePermissionFields(options.readablePermissionFields)
 		: null;
 	const readablePermissionFields = readablePermissionFieldOrder
 		? new Set(readablePermissionFieldOrder)
@@ -422,11 +439,21 @@ export function prepareDataForExport(
 		.sort((a, b) => a.id - b.id)
 		.map((institution) => {
 			const output = new Map<string, string>();
+			const rowReadablePermissionFields = options.getReadablePermissionFields
+				? new Set(
+						normalizePermissionFields(
+							options.getReadablePermissionFields(institution),
+						),
+					)
+				: readablePermissionFields;
+			const rowAudience = options.getAudience
+				? options.getAudience(institution)
+				: audience;
 			Object.entries(institution).forEach(([key, value]) => {
 				collectExportValues(value, [key], output, {
 					translateFn: options.translateFn,
-					readablePermissionFields,
-					audience,
+					readablePermissionFields: rowReadablePermissionFields,
+					audience: rowAudience,
 				});
 			});
 			output.forEach((_, key) => {
@@ -716,11 +743,32 @@ export async function downloadInstitutions({
 	translateFn,
 	columnOrder,
 }: DownloadData) {
-	const { readableFields, audience } =
-		await getDownloadReadableFields("institution");
+	const institutionIds = data.map((institution) => institution.id);
+	const {
+		readableFields,
+		guestReadableFields,
+		columnFields,
+		audience,
+		internalInstitutionIds,
+	} = await getDownloadReadableFields("institution", institutionIds);
+	const internalInstitutionIdSet = Array.isArray(internalInstitutionIds)
+		? new Set(internalInstitutionIds)
+		: null;
+	const isInternalInstitution = (institution: Institution) => {
+		if (audience === "guest") return false;
+		if (!internalInstitutionIdSet) return true;
+		return internalInstitutionIdSet.has(institution.id);
+	};
 	const preparedData = prepareDataForExport(data, {
 		translateFn,
-		readablePermissionFields: readableFields,
+		readablePermissionFields: columnFields,
+		getReadablePermissionFields: (institution) => {
+			return isInternalInstitution(institution)
+				? readableFields
+				: guestReadableFields;
+		},
+		getAudience: (institution) =>
+			isInternalInstitution(institution) ? "internal" : "guest",
 		audience,
 		columnOrder,
 	});
