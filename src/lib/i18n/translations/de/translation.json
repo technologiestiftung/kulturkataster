@@ -1849,6 +1849,8 @@
 				"errorUnknown": "Unbekannter Fehler.",
 				"grantSubmitterAccess": "Der einreichenden Person nach Genehmigung Zugriff auf diesen Kulturort geben.",
 				"linkedCategorySubmissions": "Neuer Kategorie-Vorschlag",
+				"loadingLabel": "Einreichung wird geladen...",
+				"loadingTitle": "Einreichung wird geladen",
 				"noteMeta": "{{author}} am {{date}}",
 				"notesLabel": "Prüfnotizen",
 				"notesPlaceholder": "Optionale Notizen für die Einreichung",

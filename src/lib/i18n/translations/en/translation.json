@@ -1843,6 +1843,8 @@
 				"errorUnknown": "Unknown error.",
 				"grantSubmitterAccess": "After approval, give the submitter access to this cultural location.",
 				"linkedCategorySubmissions": "New category proposal",
+				"loadingLabel": "Loading submission...",
+				"loadingTitle": "Loading submission",
 				"noteMeta": "{{author}} on {{date}}",
 				"notesLabel": "Inspection Notes",
 				"notesPlaceholder": "Optional notes for submission",
