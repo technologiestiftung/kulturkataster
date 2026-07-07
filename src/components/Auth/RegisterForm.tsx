@@ -111,7 +111,7 @@ export function RegisterForm({
 						disabled: isLoading,
 						allowNullOption: true,
 						nullOptionLabel: t("common.selectPlaceholder", {
-							defaultValue: "Select an option",
+							defaultValue: "No",
 						}),
 						placeholder: t("common.auth.register.accountTypePlaceholder"),
 						options: [

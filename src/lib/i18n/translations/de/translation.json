@@ -4,35 +4,28 @@
 		"accessibility": {
 			"contrast": {
 				"darkMode": "Dunkler Modus",
-				"description": "Aktivieren Sie den Kontrastmodus, um die Lesbarkeit zu verbessern. Dieser Modus erhöht den Kontrast zwischen Text und Hintergrund.",
-				"lightMode": "Heller Modus",
-				"title": "Kontrast anpassen"
+				"lightMode": "Heller Modus"
 			},
 			"fontSize": {
-				"description": "Sie können die Schriftgröße der Webseite anpassen, um die Lesbarkeit zu verbessern. Nutzen Sie die Schaltflächen unten, um die Schriftgröße zu vergrößern oder zu verkleinern.",
 				"title": "Vergrößerte Schriften"
 			},
 			"motion": {
 				"title": "Reduzierte Animationen"
 			},
 			"signLanguage": {
-				"description": "Dieses Video erklärt die Barrierefreiheit der Webseite in Gebärdensprache.",
 				"title": "Deutsche Gebärdensprache"
 			},
 			"simpleLanguage": {
-				"description": "Diese Seite bietet Informationen zur Barrierefreiheit in einfacher Sprache.",
 				"title": "Leichte Sprache"
 			},
 			"switchOff": "Aus",
 			"switchOn": "An",
 			"title": "Barrierefreiheit",
 			"viewMode": {
-				"description": "Wechseln Sie zwischen der Kartenansicht und der Listenansicht, um die Kulturorte auf die für Sie angenehmste Weise zu erkunden.",
 				"title": "Listenansicht der Kulturorte"
 			}
 		},
 		"add": {
-			"description": "Fügen Sie einen neuen Kulturort hinzu, indem Sie das Formular ausfüllen. Wir prüfen Ihre Angaben und veröffentlichen den Ort nach Freigabe.",
 			"title": "Mitwirken"
 		},
 		"alert": {
@@ -58,7 +51,15 @@
 						"submission_review_approved": "genehmigt",
 						"submission_review_completed": "abgeschlossen",
 						"submission_review_rejected": "abgelehnt",
-						"update": "aktualisiert"
+						"update": "aktualisiert",
+						"withAccountType": "{{action}} ({{accountType}})"
+					},
+					"download": {
+						"action": "heruntergeladen",
+						"institutionCount_one": "{{count}} Kulturort",
+						"institutionCount_other": "{{count}} Kulturorte",
+						"institutionExport": "Kulturorte-Export",
+						"institutionExportWithFormat": "Kulturorte-Export ({{format}})"
 					},
 					"empty": "Sie haben noch keine Aktivitäten.",
 					"emptyActions": {
@@ -95,7 +96,9 @@
 							"today": "Heute"
 						},
 						"empty": "Keine Aktivitäten für die aktuellen Filter.",
+						"open": "Filter öffnen",
 						"search": "Aktivität durchsuchen",
+						"title": "Filter",
 						"typeValue": {
 							"assign": "Zuweisung",
 							"create": "Erstellt/Aktualisiert",
@@ -314,7 +317,6 @@
 				"errorFallback": "Registrierung fehlgeschlagen.",
 				"firstName": "Vorname",
 				"firstNamePlaceholder": "Vorname",
-				"form": "Anmeldeformular",
 				"lastName": "Nachname",
 				"lastNamePlaceholder": "Nachname",
 				"metaTitle": "Registrieren – Kulturkataster",
@@ -322,7 +324,6 @@
 				"newsletterOptInPrefix": "Um auf dem Laufenden zu bleiben, möchte ich auch gleich den",
 				"newsletterSubscriptionSuccessDescription": "Vielen Dank für die Anmeldung zum Newsletter. Bei erfolgreicher Anmeldung erhalten Sie eine E-Mail mit einem Bestätigungslink. Bitte klicken Sie auf den Link, um Ihre Anmeldung abzuschließen. Kontrollieren Sie am Besten auch Ihren Spam-Ordner.",
 				"newsletterSubscriptionSuccessTitle": "Anmeldung für den Newsletter zum Kulurkataster",
-				"newsletterTitle": "Newsletter des Berliner Kulturkatasters",
 				"organizationName": "Bitte nennen Sie den Namen des Netzwerks oder des Verbands",
 				"organizationNamePlaceholder": "Name des Netzwerks oder des Verbands eingeben",
 				"organizationPhone": "Telefonnumer für Rückfragen",
@@ -403,15 +404,9 @@
 		},
 		"close": "Schließen",
 		"closeSidebar": "Seitenleiste schließen",
-		"common": {
-			"selectPlaceholder": "Nein"
-		},
 		"confirm": "Schließen",
 		"delete": "Löschen",
 		"download": {
-			"description": "Laden Sie die Daten der Kulturorte im JSON-Format herunter. Diese Daten können für eigene Anwendungen oder Analysen verwendet werden.",
-			"downloadButton": "Daten herunterladen",
-			"downloading": "Daten werden heruntergeladen...",
 			"exportNotice": {
 				"row1": "Die Daten stammen vom Berliner Kulturkataster.",
 				"row2": "Bitte benennen Sie bei Verwendung das Kulturkataster als Download-Quelle und beachten Sie die rechtlichen Hinweise.",
@@ -432,11 +427,6 @@
 					"unknown": "Keine"
 				}
 			}
-		},
-		"fileFormat": {
-			"csv": "CSV",
-			"xls": "XLS",
-			"xlsx": "XLSX"
 		},
 		"filter": {
 			"title": "Kulturorte filtern"
@@ -491,7 +481,6 @@
 		"hello": "",
 		"here": "hier",
 		"info": {
-			"open": "Infos öffnen",
 			"title": "Info"
 		},
 		"information": {
@@ -499,18 +488,13 @@
 		},
 		"institution": {
 			"additionalInfo": "Zusätzliche Informationen",
-			"address": "Adresse",
 			"backToMap": "Zurück zur Karte",
-			"basicInfoHeading": "Grundinformationen",
 			"categories": "Kategorien",
 			"claimSelectDescription": "Kulturorte, für die Sie berechtigt sind, können Sie Ihrem Profil hinzufügen. Für mehr Vollständigkeit, einen besseren Überblick und die schnellere Bearbeitung.",
 			"claimSelectSearchLabel": "Name oder Adresse des Kulturortes",
 			"claimSelectSubtitle": "Beantragen Sie die Verwaltungs-Rechte für Kulturorte, die zu Ihrem Verband oder Unternehmen gehören.",
 			"claimSelectTitle": "Kulturort beanspruchen",
-			"closingReason": "Schließungsgrund",
-			"contact": "Kontakt",
 			"culturalArea": "Kulturareal",
-			"description": "Beschreibung",
 			"details": "Kulturort Details",
 			"district": "Bezirk",
 			"editSelectEmpty": "Keine Kulturorte gefunden.",
@@ -518,24 +502,17 @@
 			"editSelectSearchPlaceholder": "Kulturort suchen...",
 			"editSelectSubtitle": "Wählen Sie einen bestehenden Kulturort aus, den Sie aktualisieren möchten.",
 			"editSelectTitle": "Bestehenden Kulturort auswählen",
-			"email": "E-Mail",
 			"emailAddress": "E-Mail-Adresse",
 			"establishedSince": "Bestehen am Standort seit",
 			"establishedUntil": "Bestehen am Standort bis",
 			"funding": "Finanzierung",
 			"fundingType": "Art der Finanzierung",
 			"lessInfo": "Weniger Informationen",
-			"loading": "Laden...",
 			"moreInfo": "Mehr Informationen",
 			"multipleUse": "Offen für Raumanfragen?",
-			"multipleUseDescription": "Beschreibung Räume/Flächen für Mehrfachnutzung",
-			"multipleUseNotPossible": "Nein",
-			"multipleUsePossible": "Ja",
 			"notFound": "Kulturort nicht gefunden",
-			"organization": "Organisation",
 			"owner": "Eigentümer*in",
 			"ownerType": "Eigentümer*innenart",
-			"parent": "Träger",
 			"parentOrganization": "Dachorganisation",
 			"phone": "Telefon",
 			"phoneNumber": "Telefonnummer",
@@ -543,13 +520,9 @@
 			"sharedUseContactPerson": "Kontakt für Raumanfragen",
 			"showDetails": "Details anzeigen",
 			"source": "Datenquelle",
-			"status": "Stand",
 			"subcategories": "Unterkategorien",
 			"subcategory": "Unterkategorie",
-			"subtitle": "Subtitle",
-			"support": "Förderung",
 			"supportType": "Art der Förderung",
-			"unnamed": "Unbenannter Kulturort",
 			"usableAreaSize": "Größe der Nutzflächen (m²)",
 			"utilizationStatus": "Nutzungsstatus",
 			"website": "Webseite",
@@ -596,7 +569,6 @@
 			"institutionsListLabel": "Liste der Kulturorte",
 			"noResultsFound": "Keine Kulturorte gefunden :(",
 			"scrollToTop": "Nach oben scrollen",
-			"show": "Zur Listenansicht",
 			"title": "Listenansicht",
 			"tryAdjustingFilters": "Versuchen Sie, die Filter anzupassen. Wenn Sie sicher sind, dass dieser Ort existiert, können Sie ihn über [dieses Formular /institution] einreichen."
 		},
@@ -624,14 +596,12 @@
 			},
 			"lookAtLegend": "Legende ansehen",
 			"noLayersAvailable": "Keine Fachkarten verfügbar",
-			"show": "Zur Kartenansicht",
 			"title": "Kartenansicht",
 			"unnamedLayer": "Unbenannte Fachkarte",
 			"zoomIn": "Vergrößern",
 			"zoomOut": "Verkleinern"
 		},
 		"menu": {
-			"backTo": "Zurück zu {{page}}",
 			"navigation": "Hauptmenü"
 		},
 		"mobileMenu": {
@@ -661,20 +631,20 @@
 		"no": "Nein",
 		"privateFieldDescription": "Diese Information wird ausschließlich für befugte Nutzer*innen im geschützten Bereich des Kulturkatasters zugänglich und nicht öffentlich einsehbar sein.",
 		"save": "Speichern",
+		"selectPlaceholder": "Nein",
+		"select": "Auswählen...",
 		"search": {
 			"description": "Ganz einfach die Berliner Kulturlandschaft entdecken: Geben Sie einen Kulturortnamen, eine Adresse, einen Bezirk oder Ortsteil in die Suchfunktion ein und wählen Sie das Ergebnis aus den angezeigten Vorschlägen aus. Ihre Auswahl wird direkt auf der Karte angezeigt.",
-			"error": "Fehler bei der Suche. Bitte versuchen Sie es später erneut.",
 			"hint": "Adresse oder Kulturort eingeben",
 			"noResults": "Keine Kulturorte gefunden.",
 			"noResultsFound": "Zu Ihrer Eingabe konnte kein Kulturort oder Adresse gefunden werden. Bitte überprüfen Sie die Angaben und versuchen Sie es erneut.",
-			"placeholder": "Kulturort, Adresse oder Kategorie",
 			"searchButton": "Suchen",
-			"suggestions": "Vorschläge für Ihre Suche",
-			"title": "Suche"
+			"suggestions": "Vorschläge für Ihre Suche"
 		},
 		"sensitiveInformation": "Geschützte Informationen",
 		"siteTitle": "Berliner Kulturkataster",
 		"skipToContent": "Zum Hauptinhalt springen",
+		"submit": "Absenden",
 		"success": "Erfolg",
 		"telephone": {
 			"label": "Telefon",
@@ -1171,6 +1141,10 @@
 					"description": "Die Gruppe wurde erfolgreich erstellt.",
 					"title": "Gruppe erstellt"
 				},
+				"delete": {
+					"description": "Die Gruppe wurde erfolgreich entfernt.",
+					"title": "Gruppe gelöscht"
+				},
 				"update": {
 					"description": "Die Änderungen wurden erfolgreich gespeichert.",
 					"title": "Gruppe aktualisiert"
@@ -1441,6 +1415,17 @@
 				"title": "Vielen Dank für Ihre Einreichung"
 			},
 			"title": "Mitwirken beim Kulturkataster Berlin"
+		},
+		"institutionDraftEditModal": {
+			"delete": {
+				"button": "Entwurf löschen",
+				"cancel": "Abbrechen",
+				"confirm": "Löschen",
+				"confirmDescription": "Die Einreichung wird dauerhaft entfernt. Diese Aktion kann nicht rückgängig gemacht werden.",
+				"confirmTitle": "Entwurf löschen?",
+				"successDescription": "Die Einreichung wurde gelöscht.",
+				"successTitle": "Entwurf gelöscht"
+			}
 		},
 		"institutionDraftWizardModal": {
 			"actions": {
@@ -1880,14 +1865,12 @@
 		"institutionsTable": {
 			"actions": {
 				"addInstitution": "Kulturort hinzufügen",
-				"claimInstitution": "Meine Orte anfragen"
+				"claimInstitution": "Meine Orte anfragen",
+				"downloadList": "Liste herunterladen"
 			},
 			"empty": {
 				"description": "Sie können direkt neue Einträge starten.",
 				"title": "Keine Kulturorte vorhanden."
-			},
-			"filter": {
-				"title": "Kulturorte filtern"
 			},
 			"search": {
 				"title": "Kulturorte suchen"
@@ -1971,6 +1954,10 @@
 				"create": {
 					"description": "Die Rolle wurde erfolgreich erstellt.",
 					"title": "Rolle erstellt"
+				},
+				"delete": {
+					"description": "Die Rolle wurde erfolgreich entfernt.",
+					"title": "Rolle gelöscht"
 				},
 				"update": {
 					"description": "Die Änderungen wurden erfolgreich gespeichert.",
@@ -2586,6 +2573,12 @@
 			"claimDate": "Datum der Anfrage",
 			"currentUsers": "Aktuelle Nutzer",
 			"empty": "Keine offenen Anfragen vorhanden.",
+			"feedback": {
+				"error": {
+					"description": "Bitte versuchen Sie es erneut oder kontaktieren Sie den Support, falls das Problem weiterhin besteht.",
+					"title": "Prüfung fehlgeschlagen"
+				}
+			},
 			"institutionAddress": "Adresse",
 			"reject": "Ablehnen",
 			"requestedBy": "Angefragt von",
@@ -2641,6 +2634,10 @@
 				"create": {
 					"description": "Die Nutzer*in wurde erfolgreich erstellt.",
 					"title": "Nutzer*in erstellt"
+				},
+				"delete": {
+					"description": "Die Nutzer*in wurde erfolgreich entfernt.",
+					"title": "Nutzer*in gelöscht"
 				},
 				"update": {
 					"description": "Die Änderungen wurden erfolgreich gespeichert.",
@@ -2795,7 +2792,8 @@
 		"userTable": {
 			"accessAll": "Alle",
 			"actions": {
-				"add": "Nutzer*in hinzufügen"
+				"add": "Nutzer*in hinzufügen",
+				"reviewClaims": "Anfragen prüfen"
 			},
 			"columns": {
 				"access": "Zugriff auf Kulturorte",
@@ -2820,6 +2818,16 @@
 			},
 			"emptyMessage": "Keine Nutzer*innen gefunden.",
 			"emptyValue": "—",
+			"filter": {
+				"allRoles": "Alle Rollen",
+				"allStatuses": "Alle Status",
+				"apply": "Anwenden",
+				"button": "Filter",
+				"description": "Nutzer*innen nach Status, Rolle, Gruppen und Compliance eingrenzen.",
+				"reset": "Zurücksetzen",
+				"title": "Nutzer*innen filtern"
+			},
+			"allCompliance": "Alle Compliance-Status",
 			"institutionsCount_one": "{{count}} Kulturort",
 			"institutionsCount_other": "{{count}} Kulturorte",
 			"searchPlaceholder": "Nutzer*innen suchen..."
@@ -3678,7 +3686,6 @@
 		},
 		"utilization_status": {
 			"in_use": "In Nutzung",
-			"none": "Keine Angabe",
 			"permanently_closed": "Dauerhaft geschlossen",
 			"placeholder": "Nutzungsstatus auswählen",
 			"planned_use": "Geplante Nutzung",

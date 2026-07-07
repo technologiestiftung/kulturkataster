@@ -37,9 +37,7 @@ export function UsersTable() {
 		).sort((a, b) => a.localeCompare(b));
 		return [
 			{
-				label: t("content.userTable.filter.allRoles", {
-					defaultValue: "All roles",
-				}),
+				label: t("content.userTable.filter.allRoles"),
 				value: "all",
 			},
 			...roles.map((role) => ({ label: role, value: role })),

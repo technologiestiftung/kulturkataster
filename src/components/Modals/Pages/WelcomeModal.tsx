@@ -22,6 +22,10 @@ export function WelcomeModal() {
 	const router = useRouter();
 	const toLocalePath = useLocalePath();
 	const isMobile = useIsMobile();
+	const closeWelcomeAndNavigate = (url: string) => {
+		setFirstTimeUser(false);
+		router.replace(url);
+	};
 
 	const footerItems = [
 		{ id: "accessibility" },
@@ -103,14 +107,18 @@ export function WelcomeModal() {
 									<Button
 										variant="outline"
 										className="w-1/2 md:w-auto cursor-pointer"
-										onClick={() => router.push(toLocalePath("/about"))}
+										onClick={() =>
+											closeWelcomeAndNavigate(toLocalePath("/about"))
+										}
 									>
 										{t("content.welcomeModal.aboutButton")}
 									</Button>
 									<Button
 										variant="outline"
 										className="w-1/2 md:w-auto cursor-pointer"
-										onClick={() => router.push(toLocalePath("/info"))}
+										onClick={() =>
+											closeWelcomeAndNavigate(toLocalePath("/info"))
+										}
 									>
 										{t("content.welcomeModal.infoButton")}
 									</Button>
@@ -120,7 +128,7 @@ export function WelcomeModal() {
 								<Button
 									variant="link"
 									onClick={() =>
-										router.push(
+										closeWelcomeAndNavigate(
 											getModalLink("accessibilitySettings", toLocalePath, {
 												isMobile,
 											}).url,
@@ -169,6 +177,8 @@ export function WelcomeModal() {
 											href={link.url}
 											target={link.target}
 											rel="noopener noreferrer"
+											replace
+											onClick={() => setFirstTimeUser(false)}
 										>
 											{t(`common.footer.${item.id}`)}
 										</Link>
