@@ -73,6 +73,25 @@ describe("buildInstitutionUpdateData", () => {
 		expect(result.notes).toBeUndefined();
 	});
 
+	it("updates an existing address with only provided subfields", () => {
+		const result = buildInstitutionUpdateData(
+			{
+				id: 1,
+				name: "Updated institution",
+				address: {
+					id: 12,
+					street: "Updated Street",
+				},
+			},
+			"user-1",
+		);
+
+		expect(result.address).toEqual({
+			update: { street: "Updated Street" },
+			create: { street: "Updated Street" },
+		});
+	});
+
 	it("upserts a related contact person from inline contact fields", () => {
 		const result = buildInstitutionUpdateData(
 			{

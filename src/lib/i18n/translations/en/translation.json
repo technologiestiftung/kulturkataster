@@ -51,7 +51,15 @@
 						"submission_review_approved": "approved",
 						"submission_review_completed": "completed",
 						"submission_review_rejected": "rejected",
-						"update": "updated"
+						"update": "updated",
+						"withAccountType": "{{action}} ({{accountType}})"
+					},
+					"download": {
+						"action": "downloaded",
+						"institutionCount_one": "{{count}} cultural venue",
+						"institutionCount_other": "{{count}} cultural venues",
+						"institutionExport": "Cultural venues export",
+						"institutionExportWithFormat": "Cultural venues export ({{format}})"
 					},
 					"empty": "You don't have any activity yet.",
 					"emptyActions": {
@@ -88,7 +96,9 @@
 							"today": "Today"
 						},
 						"empty": "No activity for the current filters.",
+						"open": "Open filters",
 						"search": "Search activity",
+						"title": "Filters",
 						"typeValue": {
 							"assign": "Assignment",
 							"create": "Created/Updated",
@@ -312,6 +322,8 @@
 				"metaTitle": "Register – Kulturkataster",
 				"newsletterLink": "Subscribe to the newsletter.",
 				"newsletterOptInPrefix": "To stay up to date, I would also like to",
+				"newsletterSubscriptionSuccessDescription": "Thank you for subscribing to the newsletter. If the subscription is successful, you will receive an email with a confirmation link. Please click the link to complete your subscription. Please also check your spam folder.",
+				"newsletterSubscriptionSuccessTitle": "Newsletter subscription for the Kulturkataster",
 				"organizationName": "Please name the network or association",
 				"organizationNamePlaceholder": "Enter the name of the network or association",
 				"organizationPhone": "Telephone Number for inquiries",
@@ -322,6 +334,7 @@
 				"passwordPlaceholder": "Create password",
 				"privacyLink": "Privacy Policy",
 				"privacySuffix": "have been acknowledged.",
+				"register": "Registration for the Kulturkataster",
 				"signIn": "Sign in here.",
 				"submit": "Create account",
 				"submitting": "Creating account...",
@@ -391,9 +404,6 @@
 		},
 		"close": "Close",
 		"closeSidebar": "Close sidebar",
-		"common": {
-			"selectPlaceholder": "No"
-		},
 		"confirm": "Close",
 		"delete": "Delete",
 		"download": {
@@ -440,6 +450,7 @@
 			"privacy": "Privacy Policy",
 			"projectBy": "A Project of Kulturraum Berlin gGmbH",
 			"signLanguageInformation": "German Sign Language",
+			"signLanguageInformationLong": "Information in German Sign Language",
 			"signLanguageInformationShort": "DGS",
 			"simpleLanguageInformation": "Plain Language",
 			"telephone": {
@@ -614,6 +625,8 @@
 		"no": "No",
 		"privateFieldDescription": "This information will be accessible exclusively to authorized users in the protected area of the Kulturkataster and will not be publicly visible.",
 		"save": "Save",
+		"select": "Select...",
+		"selectPlaceholder": "No",
 		"search": {
 			"description": "Discover Berlin's cultural landscape easily: Enter a cultural venue name, address, district, or neighborhood into the search function and select the result from the suggestions displayed. Your selection will be shown directly on the map.",
 			"hint": "Enter address or cultural venue",
@@ -625,6 +638,7 @@
 		"sensitiveInformation": "Protected Information",
 		"siteTitle": "Berlin Kulturkataster",
 		"skipToContent": "Skip to main content",
+		"submit": "Submit",
 		"success": "Success",
 		"telephone": {
 			"label": "Telephone",
@@ -637,18 +651,6 @@
 			"title": "My Account"
 		},
 		"venue": {
-			"address": "Address",
-			"backToMap": "Back to Map",
-			"contact": "Contact",
-			"details": "Venue Details",
-			"email": "Email",
-			"funding": "Funding Type",
-			"notFound": "Venue not found",
-			"organization": "Organization",
-			"parent": "Parent Organization",
-			"phone": "Phone",
-			"support": "Support Type",
-			"unnamed": "Unnamed Venue",
 			"website": "Website"
 		},
 		"yes": "Yes"
@@ -1133,6 +1135,10 @@
 					"description": "The group was created successfully.",
 					"title": "Group created"
 				},
+				"delete": {
+					"description": "The group has been removed successfully.",
+					"title": "Group deleted"
+				},
 				"update": {
 					"description": "The changes were saved successfully.",
 					"title": "Group updated"
@@ -1287,121 +1293,71 @@
 			"subtitle": "Kulturraum Berlin gGmbH",
 			"title": "imprint"
 		},
-		"informationModal": {
-			"faq": {
-				"questions": [
-					{
-						"answer": "The editorial team strives to show all of Berlin's cultural locations on the map. ",
-						"question": "Why is my cultural location not listed in the cultural register?"
-					},
-					{
-						"answer": "In version 1, collaboration on the contents of the cultural register is only provided via a form. ",
-						"question": "How can I add or correct information about a cultural location?"
-					},
-					{
-						"answer": "Please understand that entries in the cultural register are not automatically published. ",
-						"question": "I have submitted my cultural location to the cultural register, but it still does not appear on the map. "
-					},
-					{
-						"answer": "The cultural register grows with each version. ",
-						"question": "Why are there only a handful of specialist maps from the geoportal in the cultural register?"
-					},
-					{
-						"answer": "Unfortunately, in this version we cannot offer you independent management of your data. ",
-						"question": "How can I have my cultural location deleted from the cultural register?"
-					}
-				],
-				"title": "Questions & Answers"
-			},
-			"featuresListAriaLabel": "List of available project features",
-			"introduction": [
-				"Since September 2025, the Berlin Cultural Cadastre, the first version of our digital tool that systematically records Berlin's cultural landscape, has been available to you.",
-				"The cultural cadastre continues to grow: Version 2 is planned for the beginning of 2026, and version 3 will follow in mid-2026. With each new version, we include more cultural locations, supplement the information and add new functionalities.",
-				"You can help us with this. ",
-				"The current version of the cultural register is version 1."
-			],
-			"scope": {
-				"features": [
-					"{{count}} Cultural locations with basic information (name, full address, general contact information, information on funding and financing)",
-					"15 categories and 71 subcategories",
-					"Integration of 12 specialist maps from the Geoportal Berlin",
-					"A search field where you can search for addresses and names of cultural places.",
-					"A search filter that allows you to filter places by district as well as category and subcategory. "
-				],
-				"title": "Scope version 1",
-				"upcomingEnhancements": {
-					"items": [
-						"Information in German sign language",
-						"Information in plain language",
-						"Accessible list view"
-					],
-					"title": "The following extensions for version 1 have been added in November 2025"
+		"infoModal": {
+			"accordion": [
+				{
+					"answer": "The editorial team aims to show all Berlin cultural venues on the map. This is an ongoing process. Some categories and individual places have not yet been fully recorded. If you are missing a venue, you can submit it via the contribution form.",
+					"question": "Why is my cultural venue not listed in the Kulturkataster?"
+				},
+				{
+					"answer": "You can add or correct information about existing cultural venues and suggest new venues for inclusion. This is possible with guest access or with your own account. All submitted information is reviewed by the editorial team before publication.",
+					"question": "How can I add or correct information about a cultural venue?"
+				},
+				{
+					"answer": "Entries in the Kulturkataster are not published automatically. The editorial team reviews every entry individually. This can take some time, and we may contact you by email if we have questions.",
+					"question": "I submitted my cultural venue, but it still does not appear on the map. What is happening?"
+				},
+				{
+					"answer": "The Kulturkataster grows with every version. The project team started with a small selection of specialist maps from the Geoportal and will add further maps based on user feedback. You can send suggestions to [info@kulturkataster.berlin](mailto:info@kulturkataster.berlin).",
+					"question": "Why does the Kulturkataster include only a few specialist maps from the Geoportal?"
+				},
+				{
+					"answer": "This version does not yet offer independent data management. If you want your venue removed, please contact the editorial team at [info@kulturkataster.berlin](mailto:info@kulturkataster.berlin).",
+					"question": "How can I have my cultural venue removed from the Kulturkataster?"
+				},
+				{
+					"answer": "In principle, interested people aged 18 or older can create an account in the Kulturkataster.",
+					"question": "Who can create an account and which account types are available?"
+				},
+				{
+					"answer": "After registering, you will receive an email to confirm your email address. Once confirmed, your account is active. If you state that you work for a Berlin district, the State of Berlin, a network, or an association, the editorial team will review this information before assigning the relevant access and contribution rights.",
+					"question": "When will my account be activated?"
+				},
+				{
+					"answer": "When logged in, you will find the “My cultural venues” section in the Kulturkataster portal. You can suggest a new cultural venue or request that an existing venue be assigned to your account. After assignment, it appears in your personal overview and you can suggest changes or additions.",
+					"question": "How can I add a new cultural venue or assign an existing venue to my account?"
+				},
+				{
+					"answer": "All data submitted through a user account or guest access is reviewed by the Kulturkataster editorial team before publication. This applies to new venues as well as changes or additions to existing entries.",
+					"question": "When and how is data I entered published?"
+				},
+				{
+					"answer": "If you forgot your password, click “Forgot password” in the login area. You will receive an email with a link to set a new password. If you are already logged in, you can change your password in the Kulturkataster portal settings.",
+					"question": "What can I do if I forgot my password or want to change it?"
+				},
+				{
+					"answer": "You can download a list of cultural venues using the downward arrow in the navigation. Before downloading, you must confirm that you have read and agree to the data-use agreements and legal notices.",
+					"question": "What are the requirements for receiving an account as an administration employee or as an employee of a network or association?"
+				},
+				{
+					"answer": "You can download a list of cultural venues using the downward arrow in the navigation. Before downloading, you can filter or sort the data shown on the map. The export is available in XLS, XLSX, or CSV format. The downloaded data corresponds to the visible data state and your access rights.",
+					"question": "How does the data download work?"
 				}
-			},
-			"simpleLanguageDirect": "You can find the “Info & Service” section in simple language <link />.",
-			"subtitle": "Here you can find further information about the Berlin cultural register.",
-			"title": "Information & Service",
-			"upcomingEnhancementsListAriaLabel": "List of planned enhancements and improvements",
-			"usage": {
-				"guides": [
-					{
-						"desktop": "On the computer: Hold down the left mouse button and drag the map in the desired direction.",
-						"mobile": "On smartphone/tablet: Touch the screen with one finger and swipe across the map.",
-						"title": "Move map"
-					},
-					{
-						"desktop": "On the computer: Use the mouse wheel or the plus and minus signs at the bottom right of the screen.",
-						"mobile": "On smartphone/tablet: Place two fingers on the screen and move them apart to zoom in. ",
-						"title": "Zoom"
-					},
-					{
-						"action": "Enter the name of a place or address and confirm your search.",
-						"desktop": "On computer: Open the search box by clicking the magnifying glass icon in the top left.",
-						"mobile": "On smartphone/tablet: Open the search field by tapping the magnifying glass icon at the bottom.",
-						"title": "Find a place"
-					},
-					{
-						"closedPlaces": "By default, all open cultural locations are displayed on the map. ",
-						"description": "You can now filter all cultural locations by district and by the assigned categories and subcategories.",
-						"desktop": "On the computer: Open the filter function by clicking on the icon with three lines on top of each other in the top left.",
-						"mobile": "On the smartphone/tablet: Open the filter function by tapping the symbol with the three lines one above the other at the top left.",
-						"title": "Use filter functions"
-					},
-					{
-						"description": "The cultural cadastre offers you the opportunity to download information about individual and all cultural locations in your current view.",
-						"desktop": "On computer: Click the down arrow in the top left side navigation.",
-						"mobile": "On smartphone/tablet: Tap the downward-pointing arrow in the navigation at the bottom right.",
-						"title": "Download a selection"
-					},
-					{
-						"desktop": "On computer: Open the Contribute form by clicking the pencil icon in the top left.",
-						"instructions": "Follow the instructions on the form and fill out the data fields carefully. ",
-						"mobile": "On smartphone/tablet: Open the contribute form by tapping the pencil icon at the bottom right.",
-						"review": "The editorial team will check your entry and, if necessary, contact you by email if you have any questions. ",
-						"submit": "Confirm the declaration of consent and submit the form.",
-						"title": "Enter a location"
-					},
-					{
-						"action": "Select the button labeled “Change Font Size.”",
-						"desktop": "On computer: Open the website accessibility menu by clicking the person icon at the bottom left.",
-						"mobile": "On smartphone/tablet: Open the website accessibility menu by tapping the menu icon in the top right and then selecting the button with the person icon.",
-						"title": "Change font size"
-					},
-					{
-						"action": "Select the button labeled “Adjust Contrast.”",
-						"desktop": "On computer: Open the website accessibility menu by clicking the person icon at the bottom left.",
-						"mobile": "On mobile/tablet: Open the website accessibility menu by tapping the menu icon in the top right and then selecting the people icon button.",
-						"title": "Adjust contrast"
-					}
-				],
-				"introduction": "The Berlin cultural register was designed so that it can be used as intuitively as possible. ",
-				"title": "Service"
-			}
+			],
+			"body": "**Since September 2025, the Kulturkataster Berlin has provided the first version of our digital tool for systematically recording Berlin's cultural landscape.**\n\nThe Kulturkataster continues to grow: version 2 is planned for early 2026, and version 3 will follow in mid-2026. With every new version, we add more cultural venues, enrich the information, and add new features.\\\nYou can help us. Use this [link](/institution) to submit missing cultural venues and suggest changes.\\\n**For suggestions and feedback, contact us at:** [info@kulturkataster.berlin](mailto:info@kulturkataster.berlin)\\\nThe current version of the Kulturkataster is version 1.",
+			"contact": "## Do you have another request?\nPlease get in touch with us!\\\n\\\n**General enquiries** [kontakt@kulturkataster.berlin](mailto:kontakt@kulturkataster.berlin)\\\n**Technical support** [support@kulturkataster.berlin](mailto:support@kulturkataster.berlin)\\\n**Phone** +49 30 3030 444 60",
+			"simpleLanguageDirect": "You can find the “Info & Service” section in plain language <link />.",
+			"tab1": "## Scope version 1\n**Published November 2025**\n- {{count}} cultural venues with basic information (name, full address, general contact information, funding and financing information)\n- 15 categories and 71 subcategories\n- Integration of 12 specialist maps from Geoportal Berlin\n- A search field for addresses and names of cultural venues\n- A search filter for district, category, and subcategory. Closed cultural venues can also be displayed.\n\n**The following extensions for version 1 were added by November 2025**\n- Information in German Sign Language\n- Information in plain language\n- Accessible list view",
+			"tab2": "## How to use\n\nThe Kulturkataster Berlin is designed to be as intuitive as possible. Its functions follow common map applications. We have summarized the basic controls here.\n\n`image-text-card|/resources/bedienung/1_Bewegen.jpg|left|Move the map|On a computer: hold the left mouse button and drag the map in the desired direction.\\nOn a smartphone/tablet: touch the screen with one finger and swipe across the map.`\n\n`image-text-card|/resources/bedienung/2_Zoom.jpg|right|Zoom|On a computer: use the mouse wheel or the plus and minus buttons at the bottom right of the screen.\\nOn a smartphone/tablet: place two fingers on the screen and move them apart to zoom in. Move them together to zoom out.`\n\n`image-text-card|/resources/bedienung/3_Suche.jpg|left|Search for a venue|On a computer: open the search field with the magnifying glass icon at the top left.\\nOn a smartphone/tablet: open the search field with the magnifying glass icon at the bottom. Enter the name of a venue or an address and confirm your search.`\n\n`image-text-card|/resources/bedienung/4_Filter.jpg|right|Use filters|You can filter cultural venues by district and by assigned categories and subcategories.\\nOn a computer: open the filter with the icon showing three stacked lines at the top left.\\nOn a smartphone/tablet: tap the icon with three stacked lines at the top left.\\nBy default, all open cultural venues are shown on the map. Use “Show closed venues” to also display temporarily or permanently closed cultural venues.`\n\n`image-text-card|/resources/bedienung/5_Download.jpg|left|Download a selection|The Kulturkataster lets you download information about individual cultural venues or all venues in your current view.\\nOn a computer: click the downward arrow in the side navigation at the top left.\\nOn a smartphone/tablet: tap the downward arrow in the navigation at the bottom right.`\n\n`image-text-card|/resources/bedienung/6_Mitwirken.jpg|right|Submit a venue|On a computer: open the contribution form with the pencil icon at the top left.\\nOn a smartphone/tablet: open the contribution form with the pencil icon at the bottom right.\\nFollow the form instructions and fill in the data fields carefully. Required fields are marked with an asterisk.\\nConfirm the consent statement and submit the form.\\nThe editorial team will review your entry and contact you by email if there are questions.`\n\n`image-text-card|/resources/bedienung/7_Schrift.jpg|left|Change font size|On a computer: open the accessibility menu with the person icon at the bottom left.\\nOn a smartphone/tablet: open the menu at the top right and then select the button with the person icon.\\nSelect “Change font size”.`\n\n`image-text-card|/resources/bedienung/8_Kontrast.jpg|right|Adjust contrast|On a computer: open the accessibility menu with the person icon at the bottom left.\\nOn a smartphone/tablet: open the menu at the top right and then select the button with the person icon.\\nSelect “Adjust contrast”.`",
+			"tab3": "## Questions & Answers\n\n`accordion`",
+			"tabTitles": ["About the project", "How to use", "Questions & Answers"],
+			"title": "Info & Service"
 		},
 		"infoWrapper": {
 			"diffLabel": {
 				"addition": "Addition: ",
-				"edited": "Edited: "
+				"edited": "Edited: ",
+				"removed": "Removed"
 			}
 		},
 		"institution": {
@@ -1454,6 +1410,17 @@
 			},
 			"title": "Contribute to the Berlin cultural register"
 		},
+		"institutionDraftEditModal": {
+			"delete": {
+				"button": "Delete draft",
+				"cancel": "Cancel",
+				"confirm": "Delete",
+				"confirmDescription": "The submission will be permanently removed. This action cannot be undone.",
+				"confirmTitle": "Delete draft?",
+				"successDescription": "The submission has been deleted.",
+				"successTitle": "Draft deleted"
+			}
+		},
 		"institutionDraftWizardModal": {
 			"actions": {
 				"back": "Back",
@@ -1479,7 +1446,9 @@
 			},
 			"feedback": {
 				"submit": {
-					"pendingConflict": "You have already submitted an open submission for this cultural venue."
+					"description": "Thank you for your submission! The editorial team will review your entry and contact you by email if there are any questions. Please understand that this process may take some time because subject-matter experts may be involved in the decision.",
+					"pendingConflict": "You have already submitted an open submission for this cultural venue.",
+					"title": "Submission successful"
 				}
 			},
 			"form": {
@@ -1890,7 +1859,8 @@
 		"institutionsTable": {
 			"actions": {
 				"addInstitution": "Add cultural location",
-				"claimInstitution": "Claim My Locations"
+				"claimInstitution": "Claim My Locations",
+				"downloadList": "Download list"
 			},
 			"empty": {
 				"description": "You can start new entries directly.",
@@ -1978,6 +1948,10 @@
 				"create": {
 					"description": "The role was created successfully.",
 					"title": "Role created"
+				},
+				"delete": {
+					"description": "The role has been removed successfully.",
+					"title": "Role deleted"
 				},
 				"update": {
 					"description": "The changes were saved successfully.",
@@ -2492,6 +2466,12 @@
 			"claimDate": "Date of request",
 			"currentUsers": "Current users",
 			"empty": "No open requests available.",
+			"feedback": {
+				"error": {
+					"description": "Please try again or contact support if the issue persists.",
+					"title": "Review failed"
+				}
+			},
 			"institutionAddress": "address",
 			"reject": "Refuse",
 			"requestedBy": "Requested by",
@@ -2547,6 +2527,10 @@
 				"create": {
 					"description": "The user was created successfully.",
 					"title": "User created"
+				},
+				"delete": {
+					"description": "The user has been removed successfully.",
+					"title": "User deleted"
 				},
 				"update": {
 					"description": "The changes were saved successfully.",
@@ -2701,7 +2685,8 @@
 		"userTable": {
 			"accessAll": "All",
 			"actions": {
-				"add": "Add user"
+				"add": "Add user",
+				"reviewClaims": "Review claims"
 			},
 			"columns": {
 				"access": "Access to cultural sites",
@@ -2726,6 +2711,16 @@
 			},
 			"emptyMessage": "No users found.",
 			"emptyValue": "—",
+			"filter": {
+				"allRoles": "All roles",
+				"allStatuses": "All statuses",
+				"apply": "Apply",
+				"button": "Filter",
+				"description": "Narrow users by status, role, groups, and compliance.",
+				"reset": "Reset",
+				"title": "Filter users"
+			},
+			"allCompliance": "All compliance statuses",
 			"institutionsCount_one": "{{count}} Cultural place",
 			"institutionsCount_other": "{{count}} Cultural places",
 			"searchPlaceholder": "Search users..."
@@ -3275,6 +3270,7 @@
 					"acutely_threatened": "Acutely Threatened",
 					"long_term_secured": "Long-Term Protection ",
 					"medium_term_secured": "Medium-Term Protection",
+					"none": "Not specified",
 					"not_yet_secured": "Not Protected Yet",
 					"permanently_closed": "Permanently Closed",
 					"uncertain": "Uncertain",
@@ -3449,6 +3445,7 @@
 				"label": "Usage Status",
 				"options": {
 					"in_use": "In Use",
+					"none": "Not specified",
 					"permanently_closed": "Permanently Closed",
 					"planned_use": "Planned Usage",
 					"potential_space": "Potential Location",
@@ -3526,7 +3523,6 @@
 			"public": "Public",
 			"removal_pending": "Removal Pending"
 		},
-		"none": "No information",
 		"owner_type": {
 			"district_property": "District Property",
 			"federal_property": "Federal Property",

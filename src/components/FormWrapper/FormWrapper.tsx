@@ -267,6 +267,7 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 	const renderField = buildRenderField({
 		tEnum,
 		tCommon: t,
+		selectPlaceholder: t("common.select"),
 		formData,
 		errors,
 		touched,
@@ -320,11 +321,11 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 									fullWidth
 									onClick={config.onCancel}
 								>
-									{config.cancelLabel || "Cancel"}
+									{config.cancelLabel || t("common.cancel")}
 								</Button>
 							)}
 							<Button type="submit" disabled={config.submitDisabled} fullWidth>
-								{config.submitLabel || "Submit"}
+								{config.submitLabel || t("common.submit")}
 							</Button>
 						</div>
 						{config.deleteAction && (

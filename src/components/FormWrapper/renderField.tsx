@@ -218,6 +218,7 @@ type RenderFieldContentArgs = {
 	field: FormWrapperFieldConfig;
 	tEnum: TFunction;
 	tCommon: TFunction;
+	selectPlaceholder: string;
 	formData: Record<string, unknown>;
 	errors: Record<string, string>;
 	touched: Record<string, boolean>;
@@ -235,6 +236,7 @@ const renderFieldContent = (
 		field,
 		tEnum,
 		tCommon,
+		selectPlaceholder,
 		formData,
 		errors,
 		touched,
@@ -478,7 +480,9 @@ const renderFieldContent = (
 									"bg-destructive-secondary/20 border-destructive-secondary pr-12",
 							)}
 						>
-							<SelectValue placeholder={resolvedPlaceholder || "Select..."} />
+							<SelectValue
+								placeholder={resolvedPlaceholder || selectPlaceholder}
+							/>
 						</SelectTrigger>
 						<SelectContent className="px-3">
 							{allowNullOption && (
@@ -970,6 +974,7 @@ const renderFieldContent = (
 type BuildRenderFieldArgs = {
 	tEnum: TFunction;
 	tCommon: TFunction;
+	selectPlaceholder: string;
 	formData: Record<string, unknown>;
 	errors: Record<string, string>;
 	touched: Record<string, boolean>;
@@ -985,6 +990,7 @@ type BuildRenderFieldArgs = {
 export const buildRenderField = ({
 	tEnum,
 	tCommon,
+	selectPlaceholder,
 	formData,
 	errors,
 	touched,
@@ -1083,6 +1089,7 @@ export const buildRenderField = ({
 							field,
 							tEnum,
 							tCommon,
+							selectPlaceholder,
 							formData,
 							errors,
 							touched,
@@ -1132,6 +1139,7 @@ export const buildRenderField = ({
 									field,
 									tEnum,
 									tCommon,
+									selectPlaceholder,
 									formData,
 									errors,
 									touched,
