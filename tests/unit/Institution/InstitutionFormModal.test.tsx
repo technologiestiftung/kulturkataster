@@ -11,12 +11,28 @@ const closeModalMock = vi.fn();
 const addInstitutionMock = vi.fn();
 const upsertInstitutionMock = vi.fn();
 let mockAccountCategories: Array<Record<string, unknown>> = [];
+let mockUsers: Array<Record<string, unknown>> = [];
+let mockGroups: Array<Record<string, unknown>> = [];
+let mockInstitutionFieldPermissions: {
+	read: string[];
+	create: string[];
+	update: string[];
+	delete: string[];
+	download: string[];
+} = {
+	read: [],
+	create: [],
+	update: [],
+	delete: [],
+	download: [],
+};
 let mockInstitutionStoreCategories: Array<Record<string, unknown>> | null =
 	null;
 let lastFormConfig: {
 	onSubmit: (data: Record<string, unknown>) => void | Promise<void>;
 	onChange?: (data: Record<string, unknown>) => void;
 	fields?: Array<Record<string, unknown>>;
+	initialValues?: Record<string, unknown>;
 } | null = null;
 
 const findFieldByName = (
@@ -68,6 +84,7 @@ vi.mock("@/components/FormWrapper", () => ({
 			onSubmit: (data: Record<string, unknown>) => void | Promise<void>;
 			onChange?: (data: Record<string, unknown>) => void;
 			fields?: Array<Record<string, unknown>>;
+			initialValues?: Record<string, unknown>;
 		};
 	}) => {
 		lastFormConfig = config;
@@ -80,6 +97,8 @@ vi.mock("@/components/FormWrapper", () => ({
 							name: "New Institution",
 							parent_organization: "Kultur Trägerverein",
 							source: "Bezirksamt Mitte",
+							groupIds: ["10"],
+							userIds: ["user-1"],
 							categoryIds: ["1"],
 							utilization_status: "in_use",
 							"address.streetLine": "Main 1",
@@ -160,6 +179,8 @@ vi.mock("@/lib/store/accountStore", () => ({
 		selector: (state: {
 			addInstitution: (item: unknown) => void;
 			upsertInstitution: (item: unknown) => void;
+			users: Array<Record<string, unknown>>;
+			groups: Array<Record<string, unknown>>;
 			institutionFieldPermissions: {
 				read: string[];
 				create: string[];
@@ -173,13 +194,9 @@ vi.mock("@/lib/store/accountStore", () => ({
 		selector({
 			addInstitution: addInstitutionMock,
 			upsertInstitution: upsertInstitutionMock,
-			institutionFieldPermissions: {
-				read: [],
-				create: [],
-				update: [],
-				delete: [],
-				download: [],
-			},
+			users: mockUsers,
+			groups: mockGroups,
+			institutionFieldPermissions: mockInstitutionFieldPermissions,
 			categories: mockAccountCategories,
 		}),
 }));
@@ -212,6 +229,28 @@ describe("InstitutionFormModal", () => {
 			{ id: 1, key: "cat-a", parent_category_id: null },
 			{ id: 2, key: "cat-b", parent_category_id: 1 },
 		];
+		mockUsers = [
+			{
+				id: "user-1",
+				first_name: "Ada",
+				last_name: "Lovelace",
+				email: "ada@example.com",
+			},
+			{
+				id: "user-2",
+				first_name: null,
+				last_name: null,
+				email: "mail-only@example.com",
+			},
+		];
+		mockGroups = [{ id: 10, name: "Admin Gruppe" }];
+		mockInstitutionFieldPermissions = {
+			read: [],
+			create: [],
+			update: [],
+			delete: [],
+			download: [],
+		};
 		mockInstitutionStoreCategories = [
 			{
 				id: 1,
@@ -308,6 +347,144 @@ describe("InstitutionFormModal", () => {
 		expect(addInstitutionMock).toHaveBeenCalledTimes(1);
 		expect(mockedShowSuccessToast).toHaveBeenCalledTimes(1);
 		expect(closeModalMock).toHaveBeenCalledTimes(1);
+	});
+
+	it("shows user and group assignment fields in institution forms", () => {
+		mockInstitutionFieldPermissions = {
+			read: ["groups", "users"],
+			create: [],
+			update: [],
+			delete: [],
+			download: [],
+		};
+
+		render(
+			<InstitutionFormModal
+				mode="create"
+				routePath="/account/institutions/new"
+			/>,
+		);
+
+		expect(findFieldByName(lastFormConfig?.fields, "groupIds")).toMatchObject({
+			fieldMetaKey: "groups",
+			type: "multiselect",
+			options: [{ value: "10", label: "Admin Gruppe" }],
+		});
+		expect(findFieldByName(lastFormConfig?.fields, "userIds")).toMatchObject({
+			fieldMetaKey: "users",
+			type: "multiselect",
+			options: expect.arrayContaining([
+				expect.objectContaining({
+					value: "user-1",
+					label: "Ada Lovelace",
+				}),
+				expect.objectContaining({
+					value: "user-2",
+					label: "mail-only@example.com",
+				}),
+			]),
+		});
+	});
+
+	it("builds the assignment section when one assignment field is readable", () => {
+		mockInstitutionFieldPermissions = {
+			read: ["users"],
+			create: [],
+			update: [],
+			delete: [],
+			download: [],
+		};
+
+		render(
+			<InstitutionFormModal
+				mode="create"
+				routePath="/account/institutions/new"
+			/>,
+		);
+
+		expect(findFieldByName(lastFormConfig?.fields, "userIds")).toBeDefined();
+		expect(findFieldByName(lastFormConfig?.fields, "groupIds")).toBeUndefined();
+	});
+
+	it("does not show assignment fields in submission forms", () => {
+		mockInstitutionFieldPermissions = {
+			read: ["groups", "users"],
+			create: ["groups", "users"],
+			update: [],
+			delete: [],
+			download: [],
+		};
+
+		render(
+			<InstitutionFormModal
+				mode="create"
+				permissionContext="submission"
+				routePath="/account/institutions/new"
+			/>,
+		);
+
+		expect(findFieldByName(lastFormConfig?.fields, "groupIds")).toBeUndefined();
+		expect(findFieldByName(lastFormConfig?.fields, "userIds")).toBeUndefined();
+	});
+
+	it("submits assignments when the current action can change those fields", async () => {
+		mockInstitutionFieldPermissions = {
+			read: ["groups", "users"],
+			create: ["groups", "users"],
+			update: [],
+			delete: [],
+			download: [],
+		};
+
+		render(
+			<InstitutionFormModal
+				mode="create"
+				routePath="/account/institutions/new"
+			/>,
+		);
+
+		fireEvent.click(screen.getByRole("button", { name: "submit-form" }));
+
+		await waitFor(() => {
+			expect(mockedCreateInstitution).toHaveBeenCalledWith(
+				expect.objectContaining({
+					groupIds: [10],
+					userIds: ["user-1"],
+				}),
+			);
+		});
+	});
+
+	it("does not submit unreadable assignment fields even when the action permission exists", async () => {
+		mockInstitutionFieldPermissions = {
+			read: ["users"],
+			create: ["groups", "users"],
+			update: [],
+			delete: ["groups"],
+			download: [],
+		};
+
+		render(
+			<InstitutionFormModal
+				mode="create"
+				routePath="/account/institutions/new"
+			/>,
+		);
+
+		fireEvent.click(screen.getByRole("button", { name: "submit-form" }));
+
+		await waitFor(() => {
+			expect(mockedCreateInstitution).toHaveBeenCalledWith(
+				expect.objectContaining({
+					userIds: ["user-1"],
+				}),
+			);
+		});
+		expect(mockedCreateInstitution).toHaveBeenCalledWith(
+			expect.not.objectContaining({
+				groupIds: expect.anything(),
+			}),
+		);
 	});
 
 	it("updates an existing institution", async () => {

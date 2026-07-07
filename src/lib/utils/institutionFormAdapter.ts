@@ -89,6 +89,9 @@ export const buildInstitutionFormInitialValues = (
 		categoryIds: categoryIdsFromInstitution.map((categoryId) =>
 			String(categoryId),
 		),
+		groupIds:
+			resolvedInstitution?.groups?.map((group) => String(group.id)) ?? [],
+		userIds: resolvedInstitution?.users?.map((user) => user.id) ?? [],
 		categoryFilters: resolvedInstitution?.categories?.length
 			? buildInstitutionCategoryFilterState(resolvedInstitution.categories)
 			: buildCategoryFilterStateFromIds(

@@ -421,6 +421,11 @@
 			"label": "Email"
 		},
 		"error": "Error",
+		"errorBoundary": {
+			"description": "The error has been logged. Please try again.",
+			"retry": "Try again",
+			"title": "Something went wrong."
+		},
 		"field_names": {
 			"funding_type": {
 				"options": {
@@ -1674,6 +1679,23 @@
 				"additional": {
 					"title": "Additional Information"
 				},
+				"assignment": {
+					"fields": {
+						"groups": {
+							"emptyText": "No groups found.",
+							"label": "Groups",
+							"placeholder": "Select groups",
+							"searchPlaceholder": "Search groups..."
+						},
+						"users": {
+							"emptyText": "No users found.",
+							"label": "Users",
+							"placeholder": "Select users",
+							"searchPlaceholder": "Search users..."
+						}
+					},
+					"title": "Assignments"
+				},
 				"basic": {
 					"sectionTitle": "Basic information"
 				},
@@ -1826,6 +1848,8 @@
 				"errorUnknown": "Unknown error.",
 				"grantSubmitterAccess": "After approval, give the submitter access to this cultural location.",
 				"linkedCategorySubmissions": "New category proposal",
+				"loadingLabel": "Loading submission...",
+				"loadingTitle": "Loading submission",
 				"noteMeta": "{{author}} on {{date}}",
 				"notesLabel": "Inspection Notes",
 				"notesPlaceholder": "Optional notes for submission",
@@ -2701,10 +2725,6 @@
 				"status": "status",
 				"updatedAt": "Updated On"
 			},
-			"compliance": {
-				"accepted": "GDPR accepted",
-				"rejected": "GDPR not accepted"
-			},
 			"empty": {
 				"description": "Create a new user to get started.",
 				"title": "No users found."
@@ -2716,11 +2736,10 @@
 				"allStatuses": "All statuses",
 				"apply": "Apply",
 				"button": "Filter",
-				"description": "Narrow users by status, role, groups, and compliance.",
+				"description": "Narrow users by status, role, and groups.",
 				"reset": "Reset",
 				"title": "Filter users"
 			},
-			"allCompliance": "All compliance statuses",
 			"institutionsCount_one": "{{count}} Cultural place",
 			"institutionsCount_other": "{{count}} Cultural places",
 			"searchPlaceholder": "Search users..."
