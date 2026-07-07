@@ -36,4 +36,33 @@ describe("buildInstitutionCreateData", () => {
 			},
 		});
 	});
+
+	it("creates address and contact person from permitted subfields", () => {
+		const result = buildInstitutionCreateData(
+			{
+				name: "Created institution",
+				address: {
+					street: "Main",
+					cultural_area: "Zentrum",
+				},
+				contact_person_email: "anna@example.com",
+			},
+			"user-1",
+		);
+
+		expect(result.address).toEqual({
+			create: {
+				street: "Main",
+				cultural_area: "Zentrum",
+			},
+		});
+		expect(result.contact_person).toEqual({
+			create: {
+				first_name: null,
+				last_name: null,
+				email: "anna@example.com",
+				phone: null,
+			},
+		});
+	});
 });
