@@ -1674,6 +1674,23 @@
 				"additional": {
 					"title": "Additional Information"
 				},
+				"assignment": {
+					"fields": {
+						"groups": {
+							"emptyText": "No groups found.",
+							"label": "Groups",
+							"placeholder": "Select groups",
+							"searchPlaceholder": "Search groups..."
+						},
+						"users": {
+							"emptyText": "No users found.",
+							"label": "Users",
+							"placeholder": "Select users",
+							"searchPlaceholder": "Search users..."
+						}
+					},
+					"title": "Assignments"
+				},
 				"basic": {
 					"sectionTitle": "Basic information"
 				},
