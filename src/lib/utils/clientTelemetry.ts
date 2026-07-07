@@ -11,14 +11,46 @@ type ClientTelemetryPayload = {
 	error?: unknown;
 };
 
+type SerializedClientError = {
+	name?: string;
+	message: string;
+	stack?: string;
+	code?: string;
+	details?: Record<string, unknown>;
+};
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+	return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function serializeErrorRecord(
+	error: Record<string, unknown>,
+): SerializedClientError {
+	const message =
+		typeof error.message === "string" && error.message.length > 0
+			? error.message
+			: "Non-Error object thrown";
+	const serializable: SerializedClientError = { message };
+
+	if (typeof error.name === "string") {
+		serializable.name = error.name;
+	}
+	if (typeof error.stack === "string") {
+		serializable.stack = error.stack;
+	}
+	if (typeof error.code === "string") {
+		serializable.code = error.code;
+	}
+	if (message === "Non-Error object thrown") {
+		serializable.details = error;
+	}
+
+	return serializable;
+}
+
 function serializeClientError(error: unknown) {
 	if (error instanceof Error) {
-		const serializable: {
-			name?: string;
-			message: string;
-			stack?: string;
-			code?: string;
-		} = {
+		const serializable: SerializedClientError = {
 			name: error.name,
 			message: error.message,
 		};
@@ -35,11 +67,8 @@ function serializeClientError(error: unknown) {
 		return serializable;
 	}
 
-	if (error && typeof error === "object") {
-		return {
-			message: "Non-Error object thrown",
-			details: error as Record<string, unknown>,
-		};
+	if (isRecord(error)) {
+		return serializeErrorRecord(error);
 	}
 
 	return {
