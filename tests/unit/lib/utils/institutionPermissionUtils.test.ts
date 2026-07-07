@@ -57,6 +57,54 @@ describe("institutionPermissionUtils", () => {
 		expect(filtered).not.toHaveProperty("internal_notes");
 	});
 
+	it("filters address and contact person subfields independently", () => {
+		const input = {
+			name: "Test Institution",
+			address: {
+				id: 7,
+				street: "Main",
+				city: "Berlin",
+				cultural_area: "Zentrum",
+			},
+			contact_person_first_name: "Ada",
+			contact_person_last_name: "Lovelace",
+			contact_person_email: "ada@example.com",
+			contact_person_phone: "+49 30 123456",
+		} as unknown as InstitutionForm;
+
+		const fields = buildInstitutionPermissionFields(input);
+		const filtered = filterInstitutionInputByPermissionFields(
+			input,
+			new Set([
+				"name",
+				"address.street",
+				"address.cultural_area",
+				"contact_person.email",
+			]),
+		);
+
+		expect(fields).toEqual(
+			expect.arrayContaining([
+				"address.street",
+				"address.city",
+				"address.cultural_area",
+				"contact_person.first_name",
+				"contact_person.last_name",
+				"contact_person.email",
+				"contact_person.phone",
+			]),
+		);
+		expect(filtered).toEqual({
+			name: "Test Institution",
+			address: {
+				id: 7,
+				street: "Main",
+				cultural_area: "Zentrum",
+			},
+			contact_person_email: "ada@example.com",
+		});
+	});
+
 	it("normalizes the subcategory table column to the subcategories permission", () => {
 		expect(normalizeInstitutionPermissionField("subcategory")).toBe(
 			"subcategories",

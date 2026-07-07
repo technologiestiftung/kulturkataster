@@ -6,6 +6,7 @@ import {
 	facilityInfoConfig,
 	sharedUseInfoConfig,
 	contactInfoConfig,
+	additionalInfoConfig,
 } from "@/components/Institution";
 import { Institution } from "@/types";
 import { memo } from "react";
@@ -195,6 +196,13 @@ const InstitutionCard = memo(function InstitutionCard({
 										layout: { span: "half" },
 										cardVariant: "tertiary",
 										fields: detailsInfoConfig,
+									},
+									{
+										type: "section",
+										id: "additional",
+										layout: { span: "half" },
+										cardVariant: "tertiary",
+										fields: additionalInfoConfig,
 									},
 								],
 							},
