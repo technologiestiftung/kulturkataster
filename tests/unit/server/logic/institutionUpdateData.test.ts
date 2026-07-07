@@ -163,4 +163,41 @@ describe("buildInstitutionUpdateData", () => {
 			},
 		});
 	});
+
+	it("updates address and contact person with only permitted subfields", () => {
+		const result = buildInstitutionUpdateData(
+			{
+				id: 1,
+				name: "Updated institution",
+				address: {
+					id: 12,
+					street: "Updated Street",
+					cultural_area: "Zentrum",
+				},
+				contact_person_email: "new@example.com",
+			},
+			"user-1",
+		);
+
+		expect(result.address).toEqual({
+			update: {
+				street: "Updated Street",
+				cultural_area: "Zentrum",
+			},
+			create: {
+				street: "Updated Street",
+				cultural_area: "Zentrum",
+			},
+		});
+		expect(result.contact_person).toEqual({
+			upsert: {
+				create: {
+					email: "new@example.com",
+				},
+				update: {
+					email: "new@example.com",
+				},
+			},
+		});
+	});
 });
