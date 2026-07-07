@@ -2701,10 +2701,6 @@
 				"status": "status",
 				"updatedAt": "Updated On"
 			},
-			"compliance": {
-				"accepted": "GDPR accepted",
-				"rejected": "GDPR not accepted"
-			},
 			"empty": {
 				"description": "Create a new user to get started.",
 				"title": "No users found."
@@ -2716,11 +2712,10 @@
 				"allStatuses": "All statuses",
 				"apply": "Apply",
 				"button": "Filter",
-				"description": "Narrow users by status, role, groups, and compliance.",
+				"description": "Narrow users by status, role, and groups.",
 				"reset": "Reset",
 				"title": "Filter users"
 			},
-			"allCompliance": "All compliance statuses",
 			"institutionsCount_one": "{{count}} Cultural place",
 			"institutionsCount_other": "{{count}} Cultural places",
 			"searchPlaceholder": "Search users..."

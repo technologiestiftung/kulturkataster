@@ -8,13 +8,10 @@ import type { FormWrapperConfig } from "@/components/FormWrapper";
 import type { SelectOption } from "@/components/FormWrapper/types";
 import { Card } from "@/components/ui/card";
 
-export type ComplianceFilter = "all" | "accepted" | "rejected";
-
 export type UserFilters = {
 	status: "all" | UserStatus;
 	role: "all" | string;
 	groups: string[];
-	compliance: ComplianceFilter;
 };
 
 type UserFilterPanelProps = {
@@ -79,25 +76,6 @@ export function UserFilterPanel({
 					options: groupOptions,
 					emptyText: t("content.userTable.emptyValue"),
 				},
-				{
-					name: "compliance",
-					label: t("content.userTable.columns.compliance"),
-					type: "select",
-					options: [
-						{
-							label: t("content.userTable.allCompliance"),
-							value: "all",
-						},
-						{
-							label: t("content.userTable.compliance.accepted"),
-							value: "accepted",
-						},
-						{
-							label: t("content.userTable.compliance.rejected"),
-							value: "rejected",
-						},
-					],
-				},
 			],
 
 			initialValues: value,
@@ -116,10 +94,6 @@ export function UserFilterPanel({
 								(item) => typeof item === "string",
 							) as string[])
 						: [],
-					compliance:
-						typeof data.compliance === "string"
-							? (data.compliance as ComplianceFilter)
-							: "all",
 				});
 			},
 			onSubmit: () => {

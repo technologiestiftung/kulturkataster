@@ -19,7 +19,6 @@ const defaultFilters: UserFilters = {
 	status: "all",
 	role: "all",
 	groups: [],
-	compliance: "all",
 };
 
 export function UsersTable() {
@@ -83,14 +82,7 @@ export function UsersTable() {
 							user.groups.some((group) => group.name === groupName),
 						);
 
-			let matchesCompliance = true;
-			if (filters.compliance === "accepted") {
-				matchesCompliance = Boolean(user.compliance);
-			} else if (filters.compliance === "rejected") {
-				matchesCompliance = !Boolean(user.compliance);
-			}
-
-			return matchesStatus && matchesRole && matchesGroups && matchesCompliance;
+			return matchesStatus && matchesRole && matchesGroups;
 		});
 	}, [filters, users]);
 
@@ -249,7 +241,7 @@ export function UsersTable() {
 				defaultValue: "Filter users",
 			}),
 			description: t("content.userTable.filter.description", {
-				defaultValue: "Narrow users by status, role, groups, and compliance.",
+				defaultValue: "Narrow users by status, role, and groups.",
 			}),
 			content: ({ close }) => (
 				<UserFilterPanel
