@@ -108,4 +108,28 @@ describe("SubmissionReviewModal", () => {
 		expect(institutionReviewMock).toHaveBeenCalled();
 		expect(categoryReviewMock).not.toHaveBeenCalled();
 	});
+
+	it("keeps loading mounted until a fetched institution submission is available", async () => {
+		mockedGetSubmissionById.mockResolvedValue({
+			id: 11,
+			entity_type: "institution",
+		} as never);
+
+		render(
+			<SubmissionReviewModal
+				submissionId={11}
+				routePath="/account/submissions/11"
+			/>,
+		);
+
+		expect(screen.getByText("Einreichung wird geladen...")).toBeInTheDocument();
+		expect(institutionReviewMock).not.toHaveBeenCalled();
+		expect(categoryReviewMock).not.toHaveBeenCalled();
+
+		await waitFor(() => {
+			expect(screen.getByText("institution-review")).toBeInTheDocument();
+		});
+		expect(institutionReviewMock).toHaveBeenCalledTimes(1);
+		expect(categoryReviewMock).not.toHaveBeenCalled();
+	});
 });
