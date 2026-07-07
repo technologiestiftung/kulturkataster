@@ -49,15 +49,11 @@ export function UserFilterPanel({
 			fields: [
 				{
 					name: "status",
-					label: t("content.userTable.columns.status", {
-						defaultValue: "Status",
-					}),
+					label: t("content.userTable.columns.status"),
 					type: "select",
 					options: [
 						{
-							label: t("content.userTable.filter.allStatuses", {
-								defaultValue: "All statuses",
-							}),
+							label: t("content.userTable.filter.allStatuses"),
 							value: "all",
 						},
 						{ label: getStatusLabel("active"), value: "active" },
@@ -89,9 +85,7 @@ export function UserFilterPanel({
 					type: "select",
 					options: [
 						{
-							label: t("content.userTable.filter.allCompliance", {
-								defaultValue: "All compliance states",
-							}),
+							label: t("content.userTable.allCompliance"),
 							value: "all",
 						},
 						{

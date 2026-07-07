@@ -83,6 +83,9 @@ const selectNestedRelationField = (
 		? existing
 		: { select: { id: true } };
 	relationSelect.select[childField] = true;
+	if (relation === "address" && childField === "street") {
+		relationSelect.select.street_number = true;
+	}
 	if (relation === "categories") {
 		relationSelect.where = activeCategoriesWhere;
 	}
