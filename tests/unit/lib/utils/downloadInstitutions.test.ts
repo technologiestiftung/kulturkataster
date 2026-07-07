@@ -11,7 +11,7 @@ vi.mock("@/server/actions/permissions", () => ({
 import { downloadInstitutions } from "@/lib/utils/downloadUtils";
 import type { Institution } from "@/types";
 
-const makeInstitution = (): Institution =>
+const makeInstitution = (overrides: Partial<Institution> = {}): Institution =>
 	({
 		id: 2646,
 		name: "Alpha",
@@ -24,6 +24,7 @@ const makeInstitution = (): Institution =>
 			zipcode: "10115",
 			city: "Berlin",
 		},
+		...overrides,
 	}) as unknown as Institution;
 
 describe("downloadInstitutions permission resolution", () => {
@@ -75,7 +76,17 @@ describe("downloadInstitutions permission resolution", () => {
 				"address.zipcode",
 				"address.city",
 			],
+			guestReadableFields: ["name"],
+			columnFields: [
+				"name",
+				"email",
+				"phone",
+				"address.street",
+				"address.zipcode",
+				"address.city",
+			],
 			audience: "internal",
+			internalInstitutionIds: null,
 		});
 
 		await downloadInstitutions({
@@ -95,7 +106,9 @@ describe("downloadInstitutions permission resolution", () => {
 				)[key] ?? key,
 		});
 
-		expect(getDownloadReadableFieldsMock).toHaveBeenCalledWith("institution");
+		expect(getDownloadReadableFieldsMock).toHaveBeenCalledWith("institution", [
+			2646,
+		]);
 		const csv = await blobArg?.text();
 		expect(csv).toContain("E-Mail");
 		expect(csv).toContain("Telefon");
@@ -105,7 +118,10 @@ describe("downloadInstitutions permission resolution", () => {
 	it("still restricts guest downloads to guest-readable fields", async () => {
 		getDownloadReadableFieldsMock.mockResolvedValue({
 			readableFields: ["name", "address.street"],
+			guestReadableFields: ["name", "address.street"],
+			columnFields: ["name", "address.street"],
 			audience: "guest",
+			internalInstitutionIds: [],
 		});
 
 		await downloadInstitutions({
@@ -129,5 +145,47 @@ describe("downloadInstitutions permission resolution", () => {
 		expect(csv).not.toContain("E-Mail");
 		expect(csv).not.toContain("Telefon");
 		expect(csv).not.toContain("alpha@example.de");
+	});
+
+	it("falls back to guest fields for institutions outside the user's scope", async () => {
+		getDownloadReadableFieldsMock.mockResolvedValue({
+			readableFields: ["name", "email"],
+			guestReadableFields: ["name"],
+			columnFields: ["name", "email"],
+			audience: "internal",
+			internalInstitutionIds: [2646],
+		});
+
+		await downloadInstitutions({
+			data: [
+				makeInstitution(),
+				makeInstitution({
+					id: 9999,
+					name: "Beta",
+					email: "beta@example.de",
+				} as Partial<Institution>),
+			],
+			filename: "kulturorte",
+			format: "csv",
+			translateFn: (key) =>
+				(
+					({
+						"enumMap.field_names.name.label": "Name",
+						"enumMap.field_names.email.label": "E-Mail",
+					}) as Record<string, string>
+				)[key] ?? key,
+		});
+
+		expect(getDownloadReadableFieldsMock).toHaveBeenCalledWith(
+			"institution",
+			[2646, 9999],
+		);
+		const csv = await blobArg?.text();
+		expect(csv?.replace(/^\uFEFF/, "").split("\r\n")[0]).toBe(
+			'"Name","E-Mail"',
+		);
+		expect(csv).toContain('"Alpha","alpha@example.de"');
+		expect(csv).toContain('"Beta",""');
+		expect(csv).not.toContain("beta@example.de");
 	});
 });
