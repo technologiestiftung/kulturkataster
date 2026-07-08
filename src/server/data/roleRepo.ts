@@ -1,5 +1,9 @@
 import { prisma } from "@/server/prisma";
-import { RoleUpdateInput, RoleCreateInput } from "@/types/role";
+import {
+	RoleUpdateInput,
+	RoleCreateInput,
+	type RoleFieldOrderState,
+} from "@/types/role";
 
 const include = {
 	table_permissions: true,
@@ -66,8 +70,25 @@ const upsertFieldOrder = async (
 ) => {
 	if (!fieldOrder) return;
 
+	const existingOrders = await tx.permissionFieldOrder.findMany({
+		where: { table: fieldOrder.table },
+		orderBy: [{ sort_order: "asc" }, { field: "asc" }],
+	});
+	const pinnedFields = new Set(
+		existingOrders
+			.filter((order) => order.is_pinned)
+			.map((order) => order.field),
+	);
+	const pinnedOrder = existingOrders
+		.filter((order) => order.is_pinned)
+		.map((order) => order.field);
+	const mutableFields = fieldOrder.fields.filter(
+		(field) => !pinnedFields.has(field),
+	);
+	const orderedFields = Array.from(new Set([...pinnedOrder, ...mutableFields]));
+
 	await Promise.all(
-		fieldOrder.fields.map((field, sortOrder) =>
+		orderedFields.map((field, sortOrder) =>
 			tx.permissionFieldOrder.upsert({
 				where: {
 					table_field: {
@@ -79,6 +100,7 @@ const upsertFieldOrder = async (
 					table: fieldOrder.table,
 					field,
 					sort_order: sortOrder,
+					is_pinned: pinnedFields.has(field),
 				},
 				update: {
 					sort_order: sortOrder,
@@ -95,12 +117,17 @@ export const roleRepo = {
 			where: { id },
 			include,
 		}),
-	getFieldOrder: async (table: string): Promise<string[]> => {
+	getFieldOrder: async (table: string): Promise<RoleFieldOrderState> => {
 		const fieldOrder = await prisma.permissionFieldOrder.findMany({
 			where: { table },
 			orderBy: [{ sort_order: "asc" }, { field: "asc" }],
 		});
-		return fieldOrder.map((item) => item.field);
+		return {
+			fields: fieldOrder.map((item) => item.field),
+			pinnedFields: fieldOrder
+				.filter((item) => item.is_pinned)
+				.map((item) => item.field),
+		};
 	},
 	create: (data: RoleCreateInput) => {
 		const tablePermissions = dedupeTablePermissions(data.tablePermissions);

@@ -66,6 +66,7 @@ describe("permissions server actions", () => {
 					email: 1,
 				},
 			},
+			fieldPins: {},
 		});
 
 		await expect(
@@ -100,6 +101,7 @@ describe("permissions server actions", () => {
 					email: 1,
 				},
 			},
+			fieldPins: {},
 		});
 		institutionFindManyMock.mockResolvedValue([{ id: 1 }]);
 

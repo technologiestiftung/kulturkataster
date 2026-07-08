@@ -19,12 +19,14 @@ let mockInstitutionFieldPermissions: {
 	update: string[];
 	delete: string[];
 	download: string[];
+	pinned: string[];
 } = {
 	read: [],
 	create: [],
 	update: [],
 	delete: [],
 	download: [],
+	pinned: [],
 };
 let mockInstitutionStoreCategories: Array<Record<string, unknown>> | null =
 	null;
@@ -187,6 +189,7 @@ vi.mock("@/lib/store/accountStore", () => ({
 				update: string[];
 				delete: string[];
 				download: string[];
+				pinned: string[];
 			};
 			categories: Array<Record<string, unknown>>;
 		}) => unknown,

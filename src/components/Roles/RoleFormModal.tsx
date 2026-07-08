@@ -20,6 +20,7 @@ import {
 import type {
 	Role,
 	RoleActionErrorCode,
+	RoleFieldOrderState,
 	RoleTablePermissionInput,
 } from "@/types/role";
 import { INSTITUTION_PERMISSION_FIELDS } from "@/types/institution";
@@ -44,6 +45,7 @@ type RoleFormModalProps = {
 const INSTITUTION_FIELDS = INSTITUTION_PERMISSION_FIELDS;
 
 const DEFAULT_FIELD_ORDER = [...INSTITUTION_FIELDS];
+const DEFAULT_PINNED_FIELDS = ["status", "id", "name"] as const;
 
 const formatFieldLabel = (value: string) =>
 	value.replace(/_/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
@@ -178,6 +180,7 @@ const getActionLabels = (t: (key: string) => string) => ({
 const buildFieldSections = (
 	t: (key: string, options?: { defaultValue?: string }) => string,
 	fieldOrder: readonly string[],
+	pinnedFields: ReadonlySet<string>,
 ) => {
 	const orderByField = new Map(
 		fieldOrder.map((field, index) => [field, index]),
@@ -216,6 +219,7 @@ const buildFieldSections = (
 								? getRelationShortLabel(sectionId, t)
 								: undefined,
 						isRelationField,
+						isPinned: pinnedFields.has(field),
 					};
 				}),
 		},
@@ -236,6 +240,20 @@ const mergeInstitutionFieldOrder = (fieldOrder: readonly string[]) => {
 		...orderedFields,
 		...DEFAULT_FIELD_ORDER.filter((field) => !seen.has(field)),
 	];
+};
+
+const normalizeRoleFieldOrderState = (
+	fieldOrderState: RoleFieldOrderState,
+): RoleFieldOrderState => {
+	const fields = mergeInstitutionFieldOrder(fieldOrderState.fields);
+	const pinnedFields = fieldOrderState.pinnedFields.filter((field) =>
+		fields.includes(field),
+	);
+	return {
+		fields,
+		pinnedFields:
+			pinnedFields.length > 0 ? pinnedFields : [...DEFAULT_PINNED_FIELDS],
+	};
 };
 
 type UseResolvedRoleResult = {
@@ -525,7 +543,9 @@ const renderDialogBody = (
 			key: string;
 			label: string;
 			relationLabel?: string;
+			relationShortLabel?: string;
 			isRelationField?: boolean;
+			isPinned?: boolean;
 		}[];
 	}[],
 	onReorderFields: (fields: { key: string; label: string }[]) => void,
@@ -628,17 +648,23 @@ export function RoleFormModal({
 	const { numericRoleId, resolvedRole, isWaitingForRole, showNotFound } =
 		useResolvedRole(mode, roleId, roles);
 	const [fieldOrder, setFieldOrder] = useState<string[]>(DEFAULT_FIELD_ORDER);
+	const [pinnedFields, setPinnedFields] = useState<string[]>([
+		...DEFAULT_PINNED_FIELDS,
+	]);
 	const isFieldOrderDirtyRef = useRef(false);
 	useEffect(() => {
 		let isMounted = true;
 		void getRoleFieldOrder("institution")
-			.then((order) => {
+			.then((orderState) => {
 				if (!isMounted || isFieldOrderDirtyRef.current) return;
-				setFieldOrder(mergeInstitutionFieldOrder(order));
+				const normalizedOrderState = normalizeRoleFieldOrderState(orderState);
+				setFieldOrder(normalizedOrderState.fields);
+				setPinnedFields(normalizedOrderState.pinnedFields);
 			})
 			.catch(() => {
 				if (!isMounted || isFieldOrderDirtyRef.current) return;
 				setFieldOrder(DEFAULT_FIELD_ORDER);
+				setPinnedFields([...DEFAULT_PINNED_FIELDS]);
 			});
 
 		return () => {
@@ -667,9 +693,10 @@ export function RoleFormModal({
 
 	const tableTargets = useMemo(() => getTableTargets(t), [t]);
 	const actionLabels = useMemo(() => getActionLabels(t), [t]);
+	const pinnedFieldSet = useMemo(() => new Set(pinnedFields), [pinnedFields]);
 	const fieldSections = useMemo(
-		() => buildFieldSections(t, fieldOrder),
-		[t, fieldOrder],
+		() => buildFieldSections(t, fieldOrder, pinnedFieldSet),
+		[t, fieldOrder, pinnedFieldSet],
 	);
 	const isSystemRole = resolvedRole?.is_system ?? false;
 	const permissionSnapshot = useMemo(
@@ -823,12 +850,23 @@ export function RoleFormModal({
 							fieldSections,
 							(nextFields) => {
 								isFieldOrderDirtyRef.current = true;
-								setFieldOrder((currentOrder) =>
-									mergeInstitutionFieldOrder([
-										...nextFields.map((field) => field.key),
-										...currentOrder,
-									]),
-								);
+								const nextFieldKeys = nextFields.map((field) => field.key);
+								setFieldOrder((currentOrder) => {
+									const pinnedFieldsForReorder = new Set(pinnedFields);
+									return mergeInstitutionFieldOrder([
+										...currentOrder.filter((field) =>
+											pinnedFieldsForReorder.has(field),
+										),
+										...nextFieldKeys.filter(
+											(field) => !pinnedFieldsForReorder.has(field),
+										),
+										...currentOrder.filter(
+											(field) =>
+												!pinnedFieldsForReorder.has(field) &&
+												!nextFieldKeys.includes(field),
+										),
+									]);
+								});
 							},
 						)}
 					</div>
