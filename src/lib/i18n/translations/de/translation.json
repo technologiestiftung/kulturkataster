@@ -601,6 +601,7 @@
 			},
 			"lookAtLegend": "Legende ansehen",
 			"noLayersAvailable": "Keine Fachkarten verfügbar",
+			"show": "Zur Kartenansicht",
 			"title": "Kartenansicht",
 			"unnamedLayer": "Unbenannte Fachkarte",
 			"zoomIn": "Vergrößern",
@@ -636,8 +637,6 @@
 		"no": "Nein",
 		"privateFieldDescription": "Diese Information wird ausschließlich für befugte Nutzer*innen im geschützten Bereich des Kulturkatasters zugänglich und nicht öffentlich einsehbar sein.",
 		"save": "Speichern",
-		"selectPlaceholder": "Nein",
-		"select": "Auswählen...",
 		"search": {
 			"description": "Ganz einfach die Berliner Kulturlandschaft entdecken: Geben Sie einen Kulturortnamen, eine Adresse, einen Bezirk oder Ortsteil in die Suchfunktion ein und wählen Sie das Ergebnis aus den angezeigten Vorschlägen aus. Ihre Auswahl wird direkt auf der Karte angezeigt.",
 			"hint": "Adresse oder Kulturort eingeben",
@@ -646,6 +645,8 @@
 			"searchButton": "Suchen",
 			"suggestions": "Vorschläge für Ihre Suche"
 		},
+		"select": "Auswählen...",
+		"selectPlaceholder": "Nein",
 		"sensitiveInformation": "Geschützte Informationen",
 		"siteTitle": "Berliner Kulturkataster",
 		"skipToContent": "Zum Hauptinhalt springen",
@@ -1386,6 +1387,17 @@
 			"editSelectEmpty": "Keine Kulturorte gefunden.",
 			"editSelectNoAddress": "Keine Adresse hinterlegt"
 		},
+		"institutionDraftEditModal": {
+			"delete": {
+				"button": "Entwurf löschen",
+				"cancel": "Abbrechen",
+				"confirm": "Löschen",
+				"confirmDescription": "Die Einreichung wird dauerhaft entfernt. Diese Aktion kann nicht rückgängig gemacht werden.",
+				"confirmTitle": "Entwurf löschen?",
+				"successDescription": "Die Einreichung wurde gelöscht.",
+				"successTitle": "Entwurf gelöscht"
+			}
+		},
 		"institutionDraftIntroModal": {
 			"choice": {
 				"guest": {
@@ -1420,17 +1432,6 @@
 				"title": "Vielen Dank für Ihre Einreichung"
 			},
 			"title": "Mitwirken beim Kulturkataster Berlin"
-		},
-		"institutionDraftEditModal": {
-			"delete": {
-				"button": "Entwurf löschen",
-				"cancel": "Abbrechen",
-				"confirm": "Löschen",
-				"confirmDescription": "Die Einreichung wird dauerhaft entfernt. Diese Aktion kann nicht rückgängig gemacht werden.",
-				"confirmTitle": "Entwurf löschen?",
-				"successDescription": "Die Einreichung wurde gelöscht.",
-				"successTitle": "Entwurf gelöscht"
-			}
 		},
 		"institutionDraftWizardModal": {
 			"actions": {
@@ -1896,6 +1897,9 @@
 				"description": "Sie können direkt neue Einträge starten.",
 				"title": "Keine Kulturorte vorhanden."
 			},
+			"filter": {
+				"title": "Kulturorte filtern"
+			},
 			"search": {
 				"title": "Kulturorte suchen"
 			},
@@ -2012,15 +2016,15 @@
 					"columnLabel": "Feld",
 					"description": "Begrenzen Sie Aktualisierungen auf bestimmte Kulturort-Felder.",
 					"reorderLabel": "Felder sortieren",
-					"sectionShort": {
-						"address": "Adr.",
-						"contact_person": "AP"
-					},
 					"sections": {
 						"address": "Adresse",
 						"contact_person": "Ansprechperson",
 						"institution": "Kulturort-Felder",
 						"relations": "Beziehungen"
+					},
+					"sectionShort": {
+						"address": "Adr.",
+						"contact_person": "AP"
 					},
 					"title": "Feldberechtigungen"
 				},
@@ -2819,6 +2823,7 @@
 				"add": "Nutzer*in hinzufügen",
 				"reviewClaims": "Anfragen prüfen"
 			},
+			"allCompliance": "Alle Compliance-Status",
 			"columns": {
 				"access": "Zugriff auf Kulturorte",
 				"claims": "Kulturort Anfragen",
@@ -2832,6 +2837,10 @@
 				"status": "Status",
 				"updatedAt": "Aktualisiert am"
 			},
+			"compliance": {
+				"accepted": "DSGVO akzeptiert",
+				"rejected": "DSGVO nicht akzeptiert"
+			},
 			"empty": {
 				"description": "Legen Sie eine neue Nutzer*in an, um zu starten.",
 				"title": "Keine Nutzer*innen gefunden."
@@ -2839,11 +2848,12 @@
 			"emptyMessage": "Keine Nutzer*innen gefunden.",
 			"emptyValue": "—",
 			"filter": {
+				"allCompliance": "Alle Status",
 				"allRoles": "Alle Rollen",
 				"allStatuses": "Alle Status",
 				"apply": "Anwenden",
 				"button": "Filter",
-				"description": "Nutzer*innen nach Status, Rolle und Gruppen eingrenzen.",
+				"description": "Nutzer*innen nach Status, Rolle, Gruppen und Compliance eingrenzen.",
 				"reset": "Zurücksetzen",
 				"title": "Nutzer*innen filtern"
 			},
@@ -3383,6 +3393,11 @@
 				},
 				"label": "Dachorganisation",
 				"placeholder": "Bitte eintragen"
+			},
+			"password": {
+				"errors": {
+					"required": "Passwort ist erforderlich"
+				}
 			},
 			"phone": {
 				"description": "Bitte nach Möglichkeit eine allgemeine Telefonnummer der Kultureinrichtung angeben (z. B. Empfangskontakt).",
