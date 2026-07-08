@@ -674,6 +674,7 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 				config.primaryButton ||
 				config.secondaryButton ||
 				config.rightButton ||
+				config.toolbarContent ||
 				config.filterModal) && (
 				<div
 					ref={toolbarRef}
@@ -712,6 +713,9 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 								{config.secondaryButton.label}
 							</Button>
 						)}
+						{!isSearchOpen && config.toolbarContent ? (
+							<div className="shrink-0">{config.toolbarContent}</div>
+						) : null}
 						{config.searchable && (
 							<div className="relative flex flex-1 items-center gap-2">
 								<div
