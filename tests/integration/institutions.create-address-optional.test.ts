@@ -80,7 +80,7 @@ describe("createInstitution integration", () => {
 			createInstitution({
 				name: "Full Payload Institution",
 				website: "https://kultur.example",
-				phone: "+49 30 123456",
+				phone: "+49 30 000000",
 				email: "kontakt@kultur.example",
 				area: 150,
 				number_of_rooms: 5,
@@ -149,7 +149,7 @@ describe("createInstitution integration", () => {
 			expect.objectContaining({
 				name: "Full Payload Institution",
 				website: "https://kultur.example",
-				phone: "+49 30 123456",
+				phone: "+49 30 000000",
 				email: "kontakt@kultur.example",
 				area: 150,
 				number_of_rooms: 5,

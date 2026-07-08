@@ -91,6 +91,8 @@ vi.mock("@/components/Modals/Modal", () => ({
 
 const closeModalMock = vi.fn();
 const institutionReviewMock = vi.fn();
+const institutionFormModalMock = vi.fn();
+let mockSectionEditSubmitData: Record<string, unknown> = {};
 vi.mock("@/components/Modals/useRoutedModalClose", () => ({
 	useRoutedModalClose: () => closeModalMock,
 }));
@@ -107,7 +109,22 @@ vi.mock("@/components/Institution/InstitutionReview", () => ({
 }));
 
 vi.mock("@/components/Institution/InstitutionFormModal", () => ({
-	InstitutionFormModal: () => null,
+	InstitutionFormModal: (props: Record<string, unknown>) => {
+		institutionFormModalMock(props);
+		return (
+			<button
+				type="button"
+				onClick={() => {
+					const onSubmit = props.onSubmit as
+						| ((args: { data: Record<string, unknown> }) => void)
+						| undefined;
+					onSubmit?.({ data: mockSectionEditSubmitData });
+				}}
+			>
+				mock-section-edit-submit
+			</button>
+		);
+	},
 }));
 
 vi.mock("@/server/actions/submissions", () => ({
@@ -116,8 +133,26 @@ vi.mock("@/server/actions/submissions", () => ({
 
 vi.mock("@/lib/utils/formUtils", () => ({
 	buildAddressFromFormData: vi.fn(() => ({ street: "Mock Street" })),
+	buildStreetLine: vi.fn((street?: string, streetNumber?: string) =>
+		[street, streetNumber].filter(Boolean).join(" "),
+	),
 	handleAddressBlur: () => vi.fn(),
 	handleLatLngBlur: () => vi.fn(),
+	normalizeFundingSources: vi.fn((value) =>
+		Array.isArray(value) ? value : [],
+	),
+	splitStreetLine: vi.fn((value: string) => ({
+		street: value,
+		streetNumber: "",
+	})),
+	toDate: vi.fn((value) => (value instanceof Date ? value : undefined)),
+	toFormBoolean: vi.fn((value) => (typeof value === "boolean" ? value : null)),
+	toOptionalNumber: vi.fn((value) =>
+		typeof value === "number" && Number.isFinite(value) ? value : undefined,
+	),
+	toOptionalText: vi.fn((value) =>
+		typeof value === "string" && value.trim().length > 0 ? value : undefined,
+	),
 }));
 
 vi.mock("@/lib/utils/institutionCategoryUtils", () => ({
@@ -140,6 +175,7 @@ describe("InstitutionDraftWizardModal submission workflow", () => {
 		replaceMock.mockReset();
 		closeModalMock.mockReset();
 		institutionReviewMock.mockReset();
+		institutionFormModalMock.mockReset();
 		mockedCreateSubmission.mockReset();
 		mockedCreateSubmission.mockResolvedValue({} as any);
 		mockedBuildAddressFromFormData.mockClear();
@@ -147,6 +183,7 @@ describe("InstitutionDraftWizardModal submission workflow", () => {
 		mockedShowSuccessToast.mockReset();
 
 		mockFormSubmitData = {};
+		mockSectionEditSubmitData = {};
 		lastFormConfig = null;
 		mockStepperState = {
 			currentStepId: "review",
@@ -290,10 +327,20 @@ describe("InstitutionDraftWizardModal submission workflow", () => {
 			entityId: 55,
 			name: "Updated Institution Name",
 			website: "https://unchanged.example",
+			contact_person_first_name: "Changed",
+			contact_person_last_name: "Person",
+			contact_person_email: "changed@example.com",
+			contact_person_phone: "+49 30 999999",
 			originalInstitution: {
 				id: 55,
 				name: "Original Institution Name",
 				website: "https://unchanged.example",
+				contact_person: {
+					first_name: "Existing",
+					last_name: "Contact",
+					email: "existing@example.com",
+					phone: "+49 30 111111",
+				},
 				address: {
 					street: "Old Street",
 					street_number: "2",
@@ -319,6 +366,12 @@ describe("InstitutionDraftWizardModal submission workflow", () => {
 				entityType: "institution",
 				entityId: 55,
 				type: "update",
+				data: expect.objectContaining({
+					contact_person_first_name: "Changed",
+					contact_person_last_name: "Person",
+					contact_person_email: "changed@example.com",
+					contact_person_phone: "+49 30 999999",
+				}),
 				diff: expect.objectContaining({
 					name: "Updated Institution Name",
 				}),
@@ -457,7 +510,7 @@ describe("InstitutionDraftWizardModal submission workflow", () => {
 		expect(validationFn?.()).toBe(true);
 	});
 
-	it("does not pre-fill contact fields with profile data when consent_contact_listing is not set", () => {
+	it("prepares profile defaults for contact fields even before consent is stored in the draft", () => {
 		mockStepperState.currentStepId = "contact";
 		mockStepperState.currentStepIndex = 3;
 
@@ -487,8 +540,8 @@ describe("InstitutionDraftWizardModal submission workflow", () => {
 			"contact_person_email",
 		);
 
-		expect(firstNameField?.defaultValue).toBe("");
-		expect(emailField?.defaultValue).toBe("");
+		expect(firstNameField?.defaultValue).toBe("Anna");
+		expect(emailField?.defaultValue).toBe("anna@example.com");
 	});
 
 	it("pre-fills contact fields with profile data when consent_contact_listing is true", () => {
@@ -536,6 +589,106 @@ describe("InstitutionDraftWizardModal submission workflow", () => {
 		expect(lastNameField?.defaultValue).toBe("Beispiel");
 		expect(emailField?.defaultValue).toBe("anna@example.com");
 		expect(phoneField?.defaultValue).toBe("+49 30 123");
+	});
+
+	it("does not submit profile contact defaults without contact listing consent", async () => {
+		mockStepperState.currentStepId = "contact";
+		mockStepperState.currentStepIndex = 3;
+		useInstitutionDraftStore.getState().setDraft({
+			contact_person_first_name: "Anna",
+			contact_person_last_name: "Beispiel",
+			contact_person_email: "anna@example.com",
+			contact_person_phone: "+49 30 123",
+		});
+		mockFormSubmitData = {
+			name: "Draft Name",
+			consent_contact_listing: false,
+			contact_person_first_name: "Anna",
+			contact_person_last_name: "Beispiel",
+			contact_person_email: "anna@example.com",
+			contact_person_phone: "+49 30 123",
+		};
+
+		render(
+			<InstitutionDraftWizardModal
+				routePath="/institution/submission"
+				profile={
+					{
+						first_name: "Anna",
+						last_name: "Beispiel",
+						email: "anna@example.com",
+						phone: "+49 30 123",
+					} as any
+				}
+			/>,
+		);
+
+		fireEvent.click(screen.getByText("mock-form-submit"));
+
+		await waitFor(() => {
+			expect(useInstitutionDraftStore.getState().draft).toEqual(
+				expect.not.objectContaining({
+					contact_person_first_name: "Anna",
+					contact_person_last_name: "Beispiel",
+					contact_person_email: "anna@example.com",
+					contact_person_phone: "+49 30 123",
+				}),
+			);
+		});
+	});
+
+	it("keeps changed contact person fields from update review section edits without contact listing consent", async () => {
+		mockStepperState.currentStepId = "review";
+		mockStepperState.currentStepIndex = 4;
+		useInstitutionDraftStore.getState().setMode("update");
+		useInstitutionDraftStore.getState().setDraft({
+			entityId: 55,
+			name: "Draft Name",
+			contact_person_first_name: "Existing",
+			contact_person_last_name: "Contact",
+			contact_person_email: "existing@example.com",
+			contact_person_phone: "+49 30 111111",
+			originalInstitution: {
+				id: 55,
+				name: "Draft Name",
+				contact_person: {
+					first_name: "Existing",
+					last_name: "Contact",
+					email: "existing@example.com",
+					phone: "+49 30 111111",
+				},
+			},
+		});
+		mockSectionEditSubmitData = {
+			contact_person_first_name: "Changed",
+			contact_person_last_name: "Person",
+			contact_person_email: "changed@example.com",
+			contact_person_phone: "+49 30 999999",
+		};
+
+		render(<InstitutionDraftWizardModal routePath="/institution/submission" />);
+
+		const reviewProps = institutionReviewMock.mock.calls.at(-1)?.[0] as {
+			onEditSection?: (sectionId: string) => void;
+		};
+		reviewProps.onEditSection?.("contact");
+
+		await waitFor(() => {
+			expect(institutionFormModalMock).toHaveBeenCalled();
+		});
+
+		fireEvent.click(screen.getByText("mock-section-edit-submit"));
+
+		await waitFor(() => {
+			expect(useInstitutionDraftStore.getState().draft).toEqual(
+				expect.objectContaining({
+					contact_person_first_name: "Changed",
+					contact_person_last_name: "Person",
+					contact_person_email: "changed@example.com",
+					contact_person_phone: "+49 30 999999",
+				}),
+			);
+		});
 	});
 
 	it("includes protection status internal notes in the information step form config", () => {

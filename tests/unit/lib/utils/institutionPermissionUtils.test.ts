@@ -69,7 +69,7 @@ describe("institutionPermissionUtils", () => {
 			contact_person_first_name: "Ada",
 			contact_person_last_name: "Lovelace",
 			contact_person_email: "ada@example.com",
-			contact_person_phone: "+49 30 123456",
+			contact_person_phone: "+49 30 000000",
 		} as unknown as InstitutionForm;
 
 		const fields = buildInstitutionPermissionFields(input);
@@ -102,6 +102,91 @@ describe("institutionPermissionUtils", () => {
 				cultural_area: "Zentrum",
 			},
 			contact_person_email: "ada@example.com",
+		});
+	});
+
+	it("filters each address subfield independently while preserving the address id", () => {
+		const input = {
+			address: {
+				id: 7,
+				street: "Main",
+				address_suffix: "Haus A",
+				zipcode: "10115",
+				city: "Berlin",
+				district: "Mitte",
+				neighbourhood: "Moabit",
+				cultural_area: "Zentrum",
+				lat: 52.52,
+				lng: 13.405,
+			},
+		} as unknown as InstitutionForm;
+
+		const fields = buildInstitutionPermissionFields(input);
+		const filtered = filterInstitutionInputByPermissionFields(
+			input,
+			new Set([
+				"address.address_suffix",
+				"address.zipcode",
+				"address.city",
+				"address.district",
+				"address.neighbourhood",
+				"address.lat",
+				"address.lng",
+			]),
+		);
+
+		expect(fields).toEqual(
+			expect.arrayContaining([
+				"address.street",
+				"address.address_suffix",
+				"address.zipcode",
+				"address.city",
+				"address.district",
+				"address.neighbourhood",
+				"address.cultural_area",
+				"address.lat",
+				"address.lng",
+			]),
+		);
+		expect(filtered).toEqual({
+			address: {
+				id: 7,
+				address_suffix: "Haus A",
+				zipcode: "10115",
+				city: "Berlin",
+				district: "Mitte",
+				neighbourhood: "Moabit",
+				lat: 52.52,
+				lng: 13.405,
+			},
+		});
+	});
+
+	it("filters each contact person subfield independently", () => {
+		const input = {
+			contact_person_first_name: "Ada",
+			contact_person_last_name: "Lovelace",
+			contact_person_email: "ada@example.com",
+			contact_person_phone: "+49 30 000000",
+		} as unknown as InstitutionForm;
+
+		const fields = buildInstitutionPermissionFields(input);
+		const filtered = filterInstitutionInputByPermissionFields(
+			input,
+			new Set(["contact_person.first_name", "contact_person.phone"]),
+		);
+
+		expect(fields).toEqual(
+			expect.arrayContaining([
+				"contact_person.first_name",
+				"contact_person.last_name",
+				"contact_person.email",
+				"contact_person.phone",
+			]),
+		);
+		expect(filtered).toEqual({
+			contact_person_first_name: "Ada",
+			contact_person_phone: "+49 30 000000",
 		});
 	});
 

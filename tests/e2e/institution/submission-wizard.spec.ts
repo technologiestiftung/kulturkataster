@@ -372,7 +372,7 @@ test.describe("institution submission wizard", () => {
 			"contact_person_email",
 			`contact+${Date.now()}@example.com`,
 		);
-		await fillRequiredById(page, "contact_person_phone", "+49 30 123456");
+		await fillRequiredById(page, "contact_person_phone", "+49 30 000000");
 
 		await page
 			.locator('form#institution-contact-form button[type="submit"]')
@@ -421,7 +421,7 @@ test.describe("institution submission wizard", () => {
 			"email",
 			`all-fields-${timestamp}@example.com`,
 		);
-		await fillRequiredById(page, "phone", "+49 30 123456");
+		await fillRequiredById(page, "phone", "+49 30 000000");
 		await fillRequiredById(page, "website", "https://example.org/location");
 		await page
 			.locator('form#institution-basic-form button[type="submit"]')

@@ -67,7 +67,7 @@ describe("ActivityItem", () => {
 				activity={{
 					date: "2026-06-01T15:06:00.000Z",
 					user: null,
-					actor: "Lina Rippel",
+					actor: "Test User",
 					primaryEntity: "Kulturort #636: Stadtteilbibliothek Mahlsdorf",
 					action: "aktualisiert",
 					status: "completed",
@@ -75,7 +75,7 @@ describe("ActivityItem", () => {
 			/>,
 		);
 
-		expect(screen.getByText(/Lina Rippel hat/)).toBeInTheDocument();
+		expect(screen.getByText(/Test User hat/)).toBeInTheDocument();
 		expect(screen.getByText(/Kulturort #636/)).toBeInTheDocument();
 		expect(screen.getByText(/aktualisiert/)).toBeInTheDocument();
 	});

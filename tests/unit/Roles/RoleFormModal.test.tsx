@@ -126,7 +126,10 @@ describe("RoleFormModal", () => {
 		mockedCreateRole.mockReset();
 		mockedUpdateRole.mockReset();
 		mockedGetRoleFieldOrder.mockReset();
-		mockedGetRoleFieldOrder.mockResolvedValue([]);
+		mockedGetRoleFieldOrder.mockResolvedValue({
+			fields: [],
+			pinnedFields: ["status", "id", "name"],
+		});
 		mockedShowSuccessToast.mockReset();
 		lastFormConfig = null;
 		useAccountStore.setState({
@@ -326,6 +329,11 @@ describe("RoleFormModal", () => {
 				relationShortLabel: "AP",
 			}),
 		);
+		expect(fields.slice(0, 3)).toEqual([
+			expect.objectContaining({ key: "status", isPinned: true }),
+			expect.objectContaining({ key: "id", isPinned: true }),
+			expect.objectContaining({ key: "name", isPinned: true }),
+		]);
 	});
 
 	it("submits updated global field order after field permission rows are reordered", async () => {
@@ -363,6 +371,7 @@ describe("RoleFormModal", () => {
 			fieldPermissionsField?.fieldPermissions?.onReorderFields?.(
 				"institution",
 				[
+					{ key: "phone", label: "Phone" },
 					{ key: "email", label: "Email" },
 					{ key: "name", label: "Name" },
 				],
@@ -375,6 +384,7 @@ describe("RoleFormModal", () => {
 			fieldPermissions: {
 				name: ["read"],
 				email: ["download"],
+				phone: ["download"],
 			},
 		});
 
@@ -390,16 +400,24 @@ describe("RoleFormModal", () => {
 							field: "name",
 							action: "read",
 						}),
+						expect.objectContaining({
+							field: "phone",
+							action: "download",
+						}),
 					]),
 					fieldOrder: expect.objectContaining({
 						table: "institution",
-						fields: expect.arrayContaining(["email", "name"]),
+						fields: expect.arrayContaining(["phone", "email", "name"]),
 					}),
 				}),
 			);
 			const submittedFieldOrder =
 				mockedCreateRole.mock.calls[0]?.[0]?.fieldOrder?.fields ?? [];
-			expect(submittedFieldOrder.indexOf("email")).toBeLessThan(
+			expect(submittedFieldOrder.slice(0, 3)).toEqual(["status", "id", "name"]);
+			expect(submittedFieldOrder.indexOf("phone")).toBeLessThan(
+				submittedFieldOrder.indexOf("email"),
+			);
+			expect(submittedFieldOrder.indexOf("email")).toBeGreaterThan(
 				submittedFieldOrder.indexOf("name"),
 			);
 		});

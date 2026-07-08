@@ -15,6 +15,7 @@ type TablePermissionMap = Record<string, Set<Action>>;
 type TableScopeMap = Record<string, Partial<Record<Action, "own" | "all">>>;
 type FieldPermissionMap = Record<string, Record<string, Set<Action>>>;
 type FieldPermissionOrderMap = Record<string, Record<string, number>>;
+type FieldPermissionPinMap = Record<string, Record<string, boolean>>;
 
 export interface AccessContext {
 	role: string | null;
@@ -22,6 +23,7 @@ export interface AccessContext {
 	tableScope: TableScopeMap;
 	field: FieldPermissionMap;
 	fieldOrder: FieldPermissionOrderMap;
+	fieldPins: FieldPermissionPinMap;
 }
 
 export type FieldPermissionLists = {
@@ -30,6 +32,7 @@ export type FieldPermissionLists = {
 	update: string[];
 	delete: string[];
 	download: string[];
+	pinned: string[];
 };
 
 type RBACErrorMeta = {
@@ -52,18 +55,26 @@ const getDefaultRoleWithPermissions = () =>
 		},
 	});
 
-const getPermissionFieldOrderMap =
-	async (): Promise<FieldPermissionOrderMap> => {
-		const orders = await prisma.permissionFieldOrder.findMany({
-			orderBy: [{ table: "asc" }, { sort_order: "asc" }, { field: "asc" }],
-		});
+const getPermissionFieldMetadata = async (): Promise<{
+	fieldOrder: FieldPermissionOrderMap;
+	fieldPins: FieldPermissionPinMap;
+}> => {
+	const orders = await prisma.permissionFieldOrder.findMany({
+		orderBy: [{ table: "asc" }, { sort_order: "asc" }, { field: "asc" }],
+	});
 
-		return orders.reduce<FieldPermissionOrderMap>((acc, order) => {
-			if (!acc[order.table]) acc[order.table] = {};
-			acc[order.table][order.field] = order.sort_order;
-			return acc;
-		}, {});
-	};
+	const fieldOrder: FieldPermissionOrderMap = {};
+	const fieldPins: FieldPermissionPinMap = {};
+
+	for (const order of orders) {
+		if (!fieldOrder[order.table]) fieldOrder[order.table] = {};
+		if (!fieldPins[order.table]) fieldPins[order.table] = {};
+		fieldOrder[order.table][order.field] = order.sort_order;
+		fieldPins[order.table][order.field] = order.is_pinned;
+	}
+
+	return { fieldOrder, fieldPins };
+};
 
 const buildTablePerms = (
 	permissions: RoleTablePermission[] = [],
@@ -129,9 +140,17 @@ const buildFieldOrders = (
 export const buildAccessContext = (
 	role: RoleWithPermissions | null,
 	fieldOrder: FieldPermissionOrderMap = {},
+	fieldPins: FieldPermissionPinMap = {},
 ): AccessContext => {
 	if (!role) {
-		return { role: null, table: {}, tableScope: {}, field: {}, fieldOrder };
+		return {
+			role: null,
+			table: {},
+			tableScope: {},
+			field: {},
+			fieldOrder,
+			fieldPins,
+		};
 	}
 
 	return {
@@ -140,6 +159,7 @@ export const buildAccessContext = (
 		tableScope: buildTableScopes(role.table_permissions ?? []),
 		field: buildFieldPerms(role.field_permissions ?? []),
 		fieldOrder: buildFieldOrders(fieldOrder),
+		fieldPins,
 	};
 };
 
@@ -277,14 +297,18 @@ export const getAccessContextForUser = async (
 	userId: string | null,
 ): Promise<AccessContext> => {
 	if (!userId) {
-		const [defaultRole, fieldOrder] = await Promise.all([
+		const [defaultRole, fieldMetadata] = await Promise.all([
 			getDefaultRoleWithPermissions(),
-			getPermissionFieldOrderMap(),
+			getPermissionFieldMetadata(),
 		]);
-		return buildAccessContext(defaultRole ?? null, fieldOrder);
+		return buildAccessContext(
+			defaultRole ?? null,
+			fieldMetadata.fieldOrder,
+			fieldMetadata.fieldPins,
+		);
 	}
 
-	const [user, fieldOrder] = await Promise.all([
+	const [user, fieldMetadata] = await Promise.all([
 		prisma.user.findUnique({
 			where: { id: userId },
 			include: {
@@ -296,17 +320,21 @@ export const getAccessContextForUser = async (
 				},
 			},
 		}),
-		getPermissionFieldOrderMap(),
+		getPermissionFieldMetadata(),
 	]);
 
-	return buildAccessContext(user?.role ?? null, fieldOrder);
+	return buildAccessContext(
+		user?.role ?? null,
+		fieldMetadata.fieldOrder,
+		fieldMetadata.fieldPins,
+	);
 };
 
 export const getSystemRoleReadableFieldsForTable = async (
 	roleName: string,
 	table: string,
 ): Promise<string[]> => {
-	const [role, fieldOrder] = await Promise.all([
+	const [role, fieldMetadata] = await Promise.all([
 		prisma.role.findFirst({
 			where: {
 				name: roleName,
@@ -317,11 +345,11 @@ export const getSystemRoleReadableFieldsForTable = async (
 				field_permissions: true,
 			},
 		}),
-		getPermissionFieldOrderMap(),
+		getPermissionFieldMetadata(),
 	]);
 	if (!role) return [];
 	return getFieldPermissionListsForTable(
-		buildAccessContext(role, fieldOrder),
+		buildAccessContext(role, fieldMetadata.fieldOrder, fieldMetadata.fieldPins),
 		table,
 	).read;
 };
@@ -329,7 +357,7 @@ export const getSystemRoleReadableFieldsForTable = async (
 export const getGuestReadableFieldsForTable = async (
 	table: string,
 ): Promise<string[]> => {
-	const [role, fieldOrder] = await Promise.all([
+	const [role, fieldMetadata] = await Promise.all([
 		prisma.role.findFirst({
 			where: { is_guest: true },
 			include: {
@@ -337,11 +365,11 @@ export const getGuestReadableFieldsForTable = async (
 				field_permissions: true,
 			},
 		}),
-		getPermissionFieldOrderMap(),
+		getPermissionFieldMetadata(),
 	]);
 	if (!role) return [];
 	return getFieldPermissionListsForTable(
-		buildAccessContext(role, fieldOrder),
+		buildAccessContext(role, fieldMetadata.fieldOrder, fieldMetadata.fieldPins),
 		table,
 	).read;
 };
@@ -349,7 +377,7 @@ export const getGuestReadableFieldsForTable = async (
 export const getGuestDownloadableFieldsForTable = async (
 	table: string,
 ): Promise<string[]> => {
-	const [role, fieldOrder] = await Promise.all([
+	const [role, fieldMetadata] = await Promise.all([
 		prisma.role.findFirst({
 			where: { is_guest: true },
 			include: {
@@ -357,11 +385,11 @@ export const getGuestDownloadableFieldsForTable = async (
 				field_permissions: true,
 			},
 		}),
-		getPermissionFieldOrderMap(),
+		getPermissionFieldMetadata(),
 	]);
 	if (!role) return [];
 	return getFieldPermissionListsForTable(
-		buildAccessContext(role, fieldOrder),
+		buildAccessContext(role, fieldMetadata.fieldOrder, fieldMetadata.fieldPins),
 		table,
 	).download;
 };
@@ -372,6 +400,7 @@ export const getFieldPermissionListsForTable = (
 ): FieldPermissionLists => {
 	const tableFields = context.field[table] ?? {};
 	const tableFieldOrder = context.fieldOrder[table] ?? {};
+	const tableFieldPins = context.fieldPins[table] ?? {};
 	const read = new Set<string>();
 	const create = new Set<string>();
 	const update = new Set<string>();
@@ -397,5 +426,9 @@ export const getFieldPermissionListsForTable = (
 		update: Array.from(update).sort(bySortOrder),
 		delete: Array.from(del).sort(bySortOrder),
 		download: Array.from(download).sort(bySortOrder),
+		pinned: Object.entries(tableFieldPins)
+			.filter(([, isPinned]) => isPinned)
+			.map(([field]) => field)
+			.sort(bySortOrder),
 	};
 };

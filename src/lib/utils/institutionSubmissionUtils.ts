@@ -15,6 +15,10 @@ import {
 	RentalContractType,
 	UtilizationStatus,
 } from "@/generated/prisma";
+import {
+	isRecord,
+	normalizeInstitutionRelationFields,
+} from "@/lib/utils/institutionRelationFields";
 
 type SubmissionLike =
 	| Submission
@@ -23,11 +27,16 @@ type SubmissionLike =
 export const institutionSubmissionToDraft = (
 	submission: SubmissionLike,
 ): InstitutionForm => {
-	const data = (submission.data ?? {}) as Record<string, unknown>;
+	const data = normalizeInstitutionRelationFields(
+		(submission.data ?? {}) as Record<string, unknown>,
+	);
 	const address =
 		typeof data.address === "object" && data.address
 			? (data.address as InstitutionForm["address"])
 			: buildAddressFromFormData(data);
+	const contactPerson = isRecord(data.contact_person)
+		? data.contact_person
+		: {};
 
 	const toString = (value: unknown): string | undefined =>
 		typeof value === "string" ? value : undefined;
@@ -90,11 +99,12 @@ export const institutionSubmissionToDraft = (
 		import_identifier: toString(data.import_identifier),
 		source: toString(data.source),
 		shared_use_contact_person: toString(data.shared_use_contact_person),
-		contact_person_first_name: toString(data.contact_person_first_name),
-		contact_person_last_name: toString(data.contact_person_last_name),
-		contact_person_email: toString(data.contact_person_email),
-		contact_person_phone: toString(data.contact_person_phone),
-		contact_person_id: toNumber(data.contact_person_id),
+		contact_person_first_name: toString(contactPerson.first_name),
+		contact_person_last_name: toString(contactPerson.last_name),
+		contact_person_email: toString(contactPerson.email),
+		contact_person_phone: toString(contactPerson.phone),
+		contact_person_id:
+			toNumber(data.contact_person_id) ?? toNumber(contactPerson.id),
 		address: address ?? null,
 		categoryIds: toOptionalNumberArray(data.categoryIds),
 		tagIds: toOptionalNumberArray(data.tagIds),

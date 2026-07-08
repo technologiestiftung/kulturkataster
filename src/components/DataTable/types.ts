@@ -45,6 +45,8 @@ export interface DataTableConfig<T> {
 		onClick: () => void;
 	};
 
+	toolbarContent?: ReactNode;
+
 	filterModal?: {
 		triggerLabel?: ReactNode;
 		triggerAriaLabel?: string;

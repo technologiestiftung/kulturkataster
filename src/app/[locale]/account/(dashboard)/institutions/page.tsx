@@ -1,6 +1,7 @@
 import { InstitutionsTable } from "@/components/Institution";
 import { TableSkeleton } from "@/components/ui/table-skeleton";
 import { AccountStoreGate } from "@/components/Account/AccountStoreGate";
+import { isInstitutionTableRowKindFilterEnabled } from "@/server/utils/featureFlags";
 
 export default function InstitutionsPage() {
 	return (
@@ -9,7 +10,9 @@ export default function InstitutionsPage() {
 				<AccountStoreGate
 					fallback={<TableSkeleton columnCount={6} rowCount={10} />}
 				>
-					<InstitutionsTable />
+					<InstitutionsTable
+						showRowKindFilter={isInstitutionTableRowKindFilterEnabled()}
+					/>
 				</AccountStoreGate>
 			</div>
 		</div>
