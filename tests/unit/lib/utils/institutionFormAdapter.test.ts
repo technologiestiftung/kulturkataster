@@ -321,4 +321,47 @@ describe("buildInstitutionForFormFromDraft", () => {
 		expect(result.contact_person?.email).toBe("ada@example.com");
 		expect(result.contact_person?.phone).toBe("030123456");
 	});
+
+	it("hydrates relation subfields from nested data while flat draft edits take precedence", () => {
+		const result = buildInstitutionForFormFromDraft({
+			name: "Draft",
+			address: {
+				id: 11,
+				street: "Nested Street",
+				street_number: "5",
+				zipcode: "10115",
+				city: "Berlin",
+				cultural_area: "Zentrum",
+				lat: 52.52,
+				lng: 13.405,
+			},
+			contact_person: {
+				id: 22,
+				first_name: "Ada",
+				last_name: "Lovelace",
+				email: "ada@example.com",
+				phone: "+49 30 000000",
+			},
+			"address.city": "Potsdam",
+			contact_person_email: "updated@example.com",
+		});
+
+		expect(result.address).toMatchObject({
+			id: 11,
+			street: "Nested Street",
+			street_number: "5",
+			zipcode: "10115",
+			city: "Potsdam",
+			cultural_area: "Zentrum",
+			lat: 52.52,
+			lng: 13.405,
+		});
+		expect(result.contact_person).toMatchObject({
+			id: 22,
+			first_name: "Ada",
+			last_name: "Lovelace",
+			email: "updated@example.com",
+			phone: "+49 30 000000",
+		});
+	});
 });

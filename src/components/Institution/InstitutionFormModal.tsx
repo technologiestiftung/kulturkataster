@@ -27,7 +27,7 @@ import {
 	updateInstitution,
 } from "@/server/actions/institutions";
 import { geocodeAddress, reverseGeocode } from "@/server/actions/maptiler";
-import type { Category, Group, User } from "@/types";
+import type { Category, Group, Profile, User } from "@/types";
 import type { Institution } from "@/types/institution";
 import { useRouter } from "next/navigation";
 import { resolveCategoryIdsFromDraft } from "@/lib/utils/institutionCategoryUtils";
@@ -45,6 +45,7 @@ import {
 } from "@/lib/utils/institutionDuplicateUtils";
 import { reportClientTelemetry } from "@/lib/utils/clientTelemetry";
 import { buildCategoryGroups } from "@/lib/utils/categoryUtils";
+import { withProfileContactFallback } from "@/lib/utils/institutionRelationFields";
 type InstitutionFormModalProps = {
 	mode: "create" | "edit";
 	institution?: Institution | null;
@@ -79,6 +80,7 @@ type InstitutionFormModalProps = {
 		cancelLabel?: string;
 	};
 	permissionContext?: "institution" | "submission";
+	profile?: Profile | null;
 };
 
 const translateInstitutionFormError = (t: TFunction, errorCode: string) => {
@@ -272,7 +274,6 @@ type InstitutionFormConfigArgs = {
 	userOptions: SelectOption[];
 	groupOptions: SelectOption[];
 	assignmentReadAccess: AssignmentReadAccess;
-	resolvedInstitution?: Institution;
 	submitting: boolean;
 	submitLabel?: string;
 	onSubmit: (data: Record<string, unknown>) => void | Promise<void>;
@@ -288,6 +289,7 @@ type InstitutionFormConfigArgs = {
 	) => string | undefined;
 	duplicateWarningText?: ReactNode;
 	isPrivateField?: (field: FieldConfig) => boolean;
+	initialValues: Record<string, unknown>;
 };
 
 const buildInstitutionFormConfig = ({
@@ -298,7 +300,6 @@ const buildInstitutionFormConfig = ({
 	userOptions,
 	groupOptions,
 	assignmentReadAccess,
-	resolvedInstitution,
 	submitting,
 	submitLabel,
 	onSubmit,
@@ -308,6 +309,7 @@ const buildInstitutionFormConfig = ({
 	validateDuplicateInstitution,
 	duplicateWarningText,
 	isPrivateField,
+	initialValues,
 }: InstitutionFormConfigArgs): FormWrapperConfig => {
 	const fieldLabel = (key: string, _fallback?: string) =>
 		getFieldLabel(tEnum, key);
@@ -1313,10 +1315,7 @@ const buildInstitutionFormConfig = ({
 					loading: t("content.institutionFormModal.actions.saving"),
 				},
 			}),
-		initialValues: buildInstitutionFormInitialValues(
-			resolvedInstitution,
-			categoryGroups,
-		),
+		initialValues,
 	};
 };
 
@@ -1338,6 +1337,7 @@ export function InstitutionFormModal({
 	deleteConfig,
 	closeConfirmation,
 	permissionContext = "institution",
+	profile,
 }: InstitutionFormModalProps) {
 	const { t, i18n } = useTranslation();
 	const { t: tEnum } = useTranslation();
@@ -1425,14 +1425,20 @@ export function InstitutionFormModal({
 	const resolvedInstitutionWithFallback = institution ?? undefined;
 	const resolvedCurrentInstitutionId =
 		currentInstitutionId ?? resolvedInstitutionWithFallback?.id;
-	const initialFormValues = useMemo(
-		() =>
-			buildInstitutionFormInitialValues(
-				resolvedInstitutionWithFallback,
-				categoryGroups,
-			),
-		[resolvedInstitutionWithFallback, categoryGroups],
-	);
+	const initialFormValues = useMemo(() => {
+		const values = buildInstitutionFormInitialValues(
+			resolvedInstitutionWithFallback,
+			categoryGroups,
+		);
+		return permissionContext === "submission"
+			? withProfileContactFallback(values, profile)
+			: values;
+	}, [
+		resolvedInstitutionWithFallback,
+		categoryGroups,
+		permissionContext,
+		profile,
+	]);
 	const [currentFormData, setCurrentFormData] =
 		useState<Record<string, unknown>>(initialFormValues);
 	const showNotFoundWithFallback =
@@ -1639,7 +1645,6 @@ export function InstitutionFormModal({
 				userOptions,
 				groupOptions,
 				assignmentReadAccess,
-				resolvedInstitution: resolvedInstitutionWithFallback,
 				submitting: resolvedSubmitting,
 				submitLabel,
 				onSubmit: resolvedSubmitHandler,
@@ -1649,6 +1654,7 @@ export function InstitutionFormModal({
 				validateDuplicateInstitution,
 				duplicateWarningText,
 				isPrivateField: isPrivateFormField,
+				initialValues: initialFormValues,
 			}),
 		[
 			mode,
@@ -1668,6 +1674,7 @@ export function InstitutionFormModal({
 			validateDuplicateInstitution,
 			duplicateWarningText,
 			isPrivateFormField,
+			initialFormValues,
 		],
 	);
 

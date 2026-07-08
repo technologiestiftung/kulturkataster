@@ -70,6 +70,46 @@ describe("institutionSubmissionToDraft", () => {
 		expect(result.contact_person_id).toBe(7);
 	});
 
+	it("maps nested contact person subfields back into draft fields", () => {
+		const result = institutionSubmissionToDraft({
+			data: {
+				contact_person: {
+					id: 9,
+					first_name: "Ada",
+					last_name: "Lovelace",
+					email: "ada@example.com",
+					phone: "+49 30 000000",
+				},
+			},
+		});
+
+		expect(result.contact_person_id).toBe(9);
+		expect(result.contact_person_first_name).toBe("Ada");
+		expect(result.contact_person_last_name).toBe("Lovelace");
+		expect(result.contact_person_email).toBe("ada@example.com");
+		expect(result.contact_person_phone).toBe("+49 30 000000");
+	});
+
+	it("prefers explicit flat contact person subfields over nested submission data", () => {
+		const result = institutionSubmissionToDraft({
+			data: {
+				contact_person: {
+					first_name: "Nested",
+					last_name: "Contact",
+					email: "nested@example.com",
+					phone: "+49 30 111",
+				},
+				contact_person_first_name: "Flat",
+				contact_person_email: "flat@example.com",
+			},
+		});
+
+		expect(result.contact_person_first_name).toBe("Flat");
+		expect(result.contact_person_last_name).toBe("Contact");
+		expect(result.contact_person_email).toBe("flat@example.com");
+		expect(result.contact_person_phone).toBe("+49 30 111");
+	});
+
 	it("normalizes tagged DateTime objects from submission JSON", () => {
 		const result = institutionSubmissionToDraft({
 			data: {

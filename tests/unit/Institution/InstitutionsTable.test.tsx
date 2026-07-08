@@ -359,4 +359,50 @@ describe("InstitutionsTable", () => {
 			]),
 		);
 	});
+
+	it("shows only readable address and contact person subfield columns", () => {
+		mockInstitutionFieldPermissions = {
+			read: [
+				"name",
+				"address.city",
+				"address.cultural_area",
+				"contact_person.email",
+			],
+			create: [],
+			update: [],
+			delete: [],
+			download: [],
+		};
+
+		render(<InstitutionsTable />);
+
+		const config = dataTableMock.mock.calls[0][0] as {
+			columns: Array<{
+				id?: string;
+				accessorKey?: string;
+			}>;
+		};
+		const columnIds = config.columns.map(
+			(column) => column.id ?? column.accessorKey,
+		);
+
+		expect(columnIds).toEqual(
+			expect.arrayContaining([
+				"name",
+				"address.city",
+				"address.cultural_area",
+				"contact_person_email",
+			]),
+		);
+		expect(columnIds).not.toEqual(
+			expect.arrayContaining([
+				"address.street",
+				"address.zipcode",
+				"address.district",
+				"phone",
+				"contact_person_name",
+				"contact_person_phone",
+			]),
+		);
+	});
 });

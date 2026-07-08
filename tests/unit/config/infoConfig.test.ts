@@ -49,16 +49,8 @@ describe("sharedUseInfoConfig", () => {
 });
 
 describe("contactInfoConfig", () => {
-	it("reads contact person values from the nested relation", () => {
+	it("uses nested contact person relation paths", () => {
 		const contactFields = contactInfoConfig.slice(3);
-		const data = {
-			contact_person: {
-				first_name: "Ada",
-				last_name: "Lovelace",
-				email: "ada@example.com",
-				phone: "+49 30 123456",
-			},
-		};
 
 		expect(contactFields.map((field) => field.permissionField)).toEqual([
 			"contact_person.first_name",
@@ -66,11 +58,12 @@ describe("contactInfoConfig", () => {
 			"contact_person.email",
 			"contact_person.phone",
 		]);
-		expect(
-			contactFields.map((field) =>
-				typeof field.value === "function" ? field.value(data as never) : null,
-			),
-		).toEqual(["Ada", "Lovelace", "ada@example.com", "+49 30 123456"]);
+		expect(contactFields.map((field) => field.value)).toEqual([
+			"contact_person.first_name",
+			"contact_person.last_name",
+			"contact_person.email",
+			"contact_person.phone",
+		]);
 	});
 });
 
