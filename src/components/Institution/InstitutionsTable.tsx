@@ -41,6 +41,10 @@ import { resolveInstitutionPermissionField } from "@/lib/utils/institutionPermis
 import { DownloadModal } from "@/components/Modals/Pages/DownloadModal";
 import { notifyInstitutionDownload } from "@/server/actions/downloads";
 import type { ExportFormat } from "@/lib/utils/downloadUtils";
+import {
+	InstitutionRowKindFilterToggle,
+	type InstitutionRowKindFilter,
+} from "@/components/Institution/InstitutionRowKindFilterToggle";
 
 type InstitutionsFilterPanelProps = {
 	filters: FilterState;
@@ -56,6 +60,8 @@ type InstitutionsFilterPanelProps = {
 
 type InstitutionTableColumn =
 	DataTableConfig<InstitutionTableRow>["columns"][number];
+
+const TABLE_ONLY_COLUMN_KEYS = new Set(["type"]);
 
 const defineInstitutionTableColumns = (
 	columns: DataTableConfig<InstitutionTableRow>["columns"],
@@ -94,6 +100,11 @@ const getColumnPermissionField = (column: InstitutionTableColumn) => {
 	return null;
 };
 
+const isTableOnlyColumn = (column: InstitutionTableColumn) => {
+	const columnKey = getColumnKey(column);
+	return Boolean(columnKey && TABLE_ONLY_COLUMN_KEYS.has(columnKey));
+};
+
 function InstitutionsFilterPanel({
 	filters,
 	categoryGroups,
@@ -128,7 +139,11 @@ function InstitutionsFilterPanel({
 	);
 }
 
-export function InstitutionsTable() {
+export function InstitutionsTable({
+	showRowKindFilter = false,
+}: {
+	showRowKindFilter?: boolean;
+}) {
 	const router = useRouter();
 	const toLocalePath = useLocalePath();
 	const institutions = useAccountStore((state) => state.institutions);
@@ -151,6 +166,8 @@ export function InstitutionsTable() {
 		!canCreateInstitutionDirect && institutionPermissions.createSubmission;
 	const canClaimInstitution = institutionPermissions.createSubmission;
 	const [isDownloadDialogOpen, setIsDownloadDialogOpen] = useState(false);
+	const [rowKindFilter, setRowKindFilter] =
+		useState<InstitutionRowKindFilter>("all");
 	const canReviewSubmissionType = (type: SubmissionType) => {
 		return canReviewInstitutionSubmissionType(institutionPermissions, type);
 	};
@@ -256,6 +273,11 @@ export function InstitutionsTable() {
 					column,
 					index,
 					sortOrder: (() => {
+						if (isTableOnlyColumn(column)) {
+							const statusOrder =
+								readableInstitutionFieldOrder.get("status") ?? 0;
+							return statusOrder + 0.5;
+						}
 						const permissionField = getColumnPermissionField(column);
 						if (!permissionField) return null;
 						return readableInstitutionFieldOrder.get(permissionField) ?? null;
@@ -272,6 +294,7 @@ export function InstitutionsTable() {
 	);
 	const canReadColumn = useCallback(
 		(column: InstitutionTableColumn) => {
+			if (isTableOnlyColumn(column)) return true;
 			const permissionField = getColumnPermissionField(column);
 			return Boolean(
 				permissionField && readableInstitutionFields.has(permissionField),
@@ -291,6 +314,13 @@ export function InstitutionsTable() {
 		}));
 		return [...submissionRows, ...institutionRows];
 	}, [flattenedCategories, institutions, submissions]);
+	const rowKindFilteredTableRows = useMemo(() => {
+		if (!showRowKindFilter || rowKindFilter === "all") return tableRows;
+		if (rowKindFilter === "submissions") {
+			return tableRows.filter(isSubmissionRow);
+		}
+		return tableRows.filter((row) => !isSubmissionRow(row));
+	}, [rowKindFilter, showRowKindFilter, tableRows]);
 
 	const canEditInstitutionRow = (row: InstitutionTableRow) =>
 		!isSubmissionRow(row) && institutionPermissions.update;
@@ -307,7 +337,10 @@ export function InstitutionsTable() {
 		categoryCounts,
 		subcategoryCounts,
 		downloadableInstitutions,
-	} = useInstitutionTableFilters(tableRows, filterCategoryGroups);
+	} = useInstitutionTableFilters(
+		rowKindFilteredTableRows,
+		filterCategoryGroups,
+	);
 	const handleDownloadNotification = useCallback(
 		async (args: {
 			data: Institution[];
@@ -918,7 +951,7 @@ export function InstitutionsTable() {
 					accessorKey: "contact_person_email",
 					header: headerLabel("contact_person_email", "Contact Person Email"),
 					enableSorting: true,
-					size: 130,
+					size: 230,
 					cell: ({ row }) =>
 						renderTextValue(row.original.contact_person?.email),
 				},
@@ -927,7 +960,7 @@ export function InstitutionsTable() {
 					accessorKey: "contact_person_phone",
 					header: headerLabel("contact_person_phone", "Contact Person Phone"),
 					enableSorting: true,
-					size: 130,
+					size: 180,
 					cell: ({ row }) =>
 						renderTextValue(row.original.contact_person?.phone),
 				},
@@ -1082,6 +1115,12 @@ export function InstitutionsTable() {
 			}),
 			onClick: () => setIsDownloadDialogOpen(true),
 		},
+		toolbarContent: showRowKindFilter ? (
+			<InstitutionRowKindFilterToggle
+				value={rowKindFilter}
+				onChange={setRowKindFilter}
+			/>
+		) : undefined,
 		onEdit: (row) => {
 			if (isSubmissionRow(row)) {
 				router.push(
