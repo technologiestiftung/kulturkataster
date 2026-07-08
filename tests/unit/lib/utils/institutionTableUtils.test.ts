@@ -64,4 +64,57 @@ describe("institutionTableUtils", () => {
 		expect(row.address?.lat).toBe(52.52);
 		expect(row.address?.lng).toBe(13.405);
 	});
+
+	it("maps nested contact person fields onto submission rows", () => {
+		const row = buildSubmissionRow(
+			{
+				...submission,
+				id: 12,
+				data: {
+					name: "With Contact Person",
+					contact_person: {
+						id: 99,
+						first_name: "Ada",
+						last_name: "Lovelace",
+						email: "ada@example.com",
+						phone: "+49 30 123456",
+					},
+				},
+			} as unknown as Submission,
+			categories,
+		);
+
+		expect(row.contact_person_id).toBe(99);
+		expect(row.contact_person).toMatchObject({
+			id: 99,
+			first_name: "Ada",
+			last_name: "Lovelace",
+			email: "ada@example.com",
+			phone: "+49 30 123456",
+		});
+	});
+
+	it("maps flat contact person fields onto submission rows", () => {
+		const row = buildSubmissionRow(
+			{
+				...submission,
+				id: 13,
+				data: {
+					name: "With Flat Contact Person",
+					contact_person_first_name: "Grace",
+					contact_person_last_name: "Hopper",
+					contact_person_email: "grace@example.com",
+					contact_person_phone: "+49 30 654321",
+				},
+			} as unknown as Submission,
+			categories,
+		);
+
+		expect(row.contact_person).toMatchObject({
+			first_name: "Grace",
+			last_name: "Hopper",
+			email: "grace@example.com",
+			phone: "+49 30 654321",
+		});
+	});
 });

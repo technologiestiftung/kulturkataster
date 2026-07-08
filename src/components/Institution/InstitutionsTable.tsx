@@ -266,6 +266,15 @@ export function InstitutionsTable({
 			),
 		[institutionFieldPermissions.read],
 	);
+	const pinnedInstitutionFields = useMemo(
+		() => new Set(institutionFieldPermissions.pinned),
+		[institutionFieldPermissions.pinned],
+	);
+	const getPermissionFieldPin = useCallback(
+		(field: string) =>
+			pinnedInstitutionFields.has(field) ? ("left" as const) : undefined,
+		[pinnedInstitutionFields],
+	);
 	const sortColumnsByFieldOrder = useCallback(
 		(columns: InstitutionTableColumn[]) =>
 			columns
@@ -371,7 +380,7 @@ export function InstitutionsTable({
 					accessorKey: "status",
 					header: "",
 					enableSorting: true,
-					meta: { pin: "left", exportKey: "status" },
+					meta: { pin: getPermissionFieldPin("status"), exportKey: "status" },
 					size: 50,
 					cell: ({ row }) => {
 						const institution = row.original;
@@ -429,7 +438,7 @@ export function InstitutionsTable({
 					accessorKey: "id",
 					header: headerLabel("id", "Id"),
 					enableSorting: true,
-					meta: { pin: "left", exportKey: "id" },
+					meta: { pin: getPermissionFieldPin("id"), exportKey: "id" },
 					size: 65,
 					cell: ({ row }) => {
 						const id = String(row.original.id);
@@ -453,7 +462,11 @@ export function InstitutionsTable({
 					header: headerLabel("name", "Name"),
 					enableSorting: true,
 					size: 250,
-					meta: { pin: "left", truncate: true, exportKey: "name" },
+					meta: {
+						pin: getPermissionFieldPin("name"),
+						truncate: true,
+						exportKey: "name",
+					},
 					cell: ({ row }) => {
 						const name = row.original.name || "—";
 						// if (isSubmissionRow(row.original)) {

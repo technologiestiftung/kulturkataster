@@ -63,6 +63,7 @@ vi.mock("@/lib/store/accountStore", () => ({
 				update: string[];
 				delete: string[];
 				download: string[];
+				pinned: string[];
 			};
 			categories: Array<Record<string, unknown>>;
 		}) => unknown,
@@ -78,6 +79,7 @@ vi.mock("@/lib/store/accountStore", () => ({
 				update: [],
 				delete: [],
 				download: [],
+				pinned: [],
 			},
 			categories: mockAccountCategories,
 		}),

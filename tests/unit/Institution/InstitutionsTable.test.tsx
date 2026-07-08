@@ -16,6 +16,7 @@ let mockInstitutionFieldPermissions = {
 	update: readableInstitutionFields,
 	delete: [],
 	download: readableInstitutionFields,
+	pinned: ["status", "id", "name"],
 };
 
 vi.mock("react-i18next", () => ({
@@ -76,6 +77,7 @@ vi.mock("@/lib/store/accountStore", () => ({
 				update: string[];
 				delete: string[];
 				download: string[];
+				pinned: string[];
 			};
 			setActiveInstitutionEdit: (institution: unknown) => void;
 		}) => unknown,
@@ -180,6 +182,7 @@ describe("InstitutionsTable", () => {
 			update: readableInstitutionFields,
 			delete: [],
 			download: readableInstitutionFields,
+			pinned: ["status", "id", "name"],
 		};
 	});
 
@@ -374,6 +377,7 @@ describe("InstitutionsTable", () => {
 			update: [],
 			delete: [],
 			download: [],
+			pinned: ["status", "name"],
 		};
 
 		render(<InstitutionsTable />);
@@ -391,6 +395,39 @@ describe("InstitutionsTable", () => {
 		expect(columnIds).toEqual(["email", "name", "status", "type"]);
 	});
 
+	it("pins permission columns from the RBAC pinned field list", () => {
+		mockInstitutionFieldPermissions = {
+			read: ["status", "id", "name", "email"],
+			create: [],
+			update: [],
+			delete: [],
+			download: [],
+			pinned: ["status", "id"],
+		};
+
+		render(<InstitutionsTable />);
+
+		const config = dataTableMock.mock.calls[0][0] as {
+			columns: Array<{
+				id?: string;
+				accessorKey?: string;
+				meta?: { pin?: "left" };
+			}>;
+		};
+		const pinByColumn = Object.fromEntries(
+			config.columns.map((column) => [
+				column.id ?? column.accessorKey,
+				column.meta?.pin,
+			]),
+		);
+
+		expect(pinByColumn.status).toBe("left");
+		expect(pinByColumn.type).toBe("left");
+		expect(pinByColumn.id).toBe("left");
+		expect(pinByColumn.name).toBeUndefined();
+		expect(pinByColumn.email).toBeUndefined();
+	});
+
 	it("keeps the synthetic type column without requiring institution field permission", () => {
 		mockInstitutionFieldPermissions = {
 			read: ["status", "name"],
@@ -398,6 +435,7 @@ describe("InstitutionsTable", () => {
 			update: [],
 			delete: [],
 			download: [],
+			pinned: ["status", "name"],
 		};
 
 		render(<InstitutionsTable />);
