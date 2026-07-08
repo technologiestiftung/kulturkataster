@@ -26,14 +26,24 @@ vi.mock("@/components/Institution/SubmissionReviewModal", () => ({
 
 describe("institutions pages integration", () => {
 	it("renders institutions dashboard page with InstitutionsTable", async () => {
+		const previousFlag = process.env.INSTITUTION_TABLE_ROW_KIND_FILTER_ENABLED;
+		process.env.INSTITUTION_TABLE_ROW_KIND_FILTER_ENABLED = "true";
 		const pageModule = await import(
 			"@/app/[locale]/account/(dashboard)/institutions/page"
 		);
 		const result = pageModule.default();
 		const suspense = result.props.children.props.children;
+		if (previousFlag === undefined) {
+			delete process.env.INSTITUTION_TABLE_ROW_KIND_FILTER_ENABLED;
+		} else {
+			process.env.INSTITUTION_TABLE_ROW_KIND_FILTER_ENABLED = previousFlag;
+		}
 
 		expect(suspense.props.children).toMatchObject({
 			type: InstitutionsTable,
+			props: expect.objectContaining({
+				showRowKindFilter: true,
+			}),
 		});
 	});
 
