@@ -27,6 +27,11 @@ export type RoleFieldOrderInput = {
 	fields: string[];
 };
 
+export type RoleFieldOrderState = {
+	fields: string[];
+	pinnedFields: string[];
+};
+
 export type RoleCreatePayload = {
 	name: string;
 	description?: string | null;

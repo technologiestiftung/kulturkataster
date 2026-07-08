@@ -1,13 +1,4 @@
 import { InfoWrapperFieldConfig } from "@/components/InfoWrapper/types";
-import type { Institution } from "@/types";
-
-const getFlatInstitutionValue = (data: Institution, key: string) =>
-	(data as unknown as Record<string, unknown>)[key];
-
-const contactPersonValue =
-	(field: "first_name" | "last_name" | "email" | "phone", flatKey: string) =>
-	(data: Institution) =>
-		data.contact_person?.[field] ?? getFlatInstitutionValue(data, flatKey);
 
 export const addressInfoConfig: InfoWrapperFieldConfig[] = [
 	{
@@ -51,25 +42,25 @@ export const contactInfoConfig: InfoWrapperFieldConfig[] = [
 		type: "phone",
 	},
 	{
-		value: contactPersonValue("first_name", "contact_person_first_name"),
+		value: "contact_person.first_name",
 		permissionField: "contact_person.first_name",
 		labelKey: "field_names.contact_person_first_name.label",
 		type: "text",
 	},
 	{
-		value: contactPersonValue("last_name", "contact_person_last_name"),
+		value: "contact_person.last_name",
 		permissionField: "contact_person.last_name",
 		labelKey: "field_names.contact_person_last_name.label",
 		type: "text",
 	},
 	{
-		value: contactPersonValue("email", "contact_person_email"),
+		value: "contact_person.email",
 		permissionField: "contact_person.email",
 		labelKey: "field_names.contact_person_email.label",
 		type: "email",
 	},
 	{
-		value: contactPersonValue("phone", "contact_person_phone"),
+		value: "contact_person.phone",
 		permissionField: "contact_person.phone",
 		labelKey: "field_names.contact_person_phone.label",
 		type: "phone",

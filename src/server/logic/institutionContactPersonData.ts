@@ -1,5 +1,9 @@
 import type { Prisma } from "@/generated/prisma";
 import type { InstitutionForm, InstitutionUpdateForm } from "@/types";
+import {
+	CONTACT_PERSON_FLAT_FIELD_MAP,
+	CONTACT_PERSON_FLAT_FIELDS,
+} from "@/lib/utils/institutionRelationFields";
 
 type ContactPersonInput = Pick<
 	InstitutionForm,
@@ -10,12 +14,11 @@ type ContactPersonInput = Pick<
 	| "contact_person_phone"
 >;
 
-const INLINE_CONTACT_PERSON_FIELDS = [
-	"contact_person_first_name",
-	"contact_person_last_name",
-	"contact_person_email",
-	"contact_person_phone",
-] as const satisfies readonly (keyof ContactPersonInput)[];
+type InlineContactPersonField = keyof typeof CONTACT_PERSON_FLAT_FIELD_MAP &
+	keyof ContactPersonInput;
+
+const INLINE_CONTACT_PERSON_FIELDS =
+	CONTACT_PERSON_FLAT_FIELDS as readonly InlineContactPersonField[];
 
 const hasOwn = (input: object, key: string) =>
 	Object.prototype.hasOwnProperty.call(input, key);
@@ -29,26 +32,20 @@ const buildContactPersonPayload = (
 	phone: input.contact_person_phone ?? null,
 });
 
-const CONTACT_PERSON_FIELD_MAP = {
-	contact_person_first_name: "first_name",
-	contact_person_last_name: "last_name",
-	contact_person_email: "email",
-	contact_person_phone: "phone",
-} as const satisfies Record<
-	(typeof INLINE_CONTACT_PERSON_FIELDS)[number],
+const CONTACT_PERSON_FIELD_MAP = CONTACT_PERSON_FLAT_FIELD_MAP as Record<
+	InlineContactPersonField,
 	keyof Prisma.ContactPersonCreateWithoutInstitutions_as_contactInput
 >;
 
 const buildSparseContactPersonPayload = (
 	input: ContactPersonInput,
 ): Prisma.ContactPersonCreateWithoutInstitutions_as_contactInput => {
-	const payload: Prisma.ContactPersonCreateWithoutInstitutions_as_contactInput =
-		{};
+	const payload: Record<string, string | null> = {};
 	for (const field of INLINE_CONTACT_PERSON_FIELDS) {
 		if (!hasOwn(input, field)) continue;
 		payload[CONTACT_PERSON_FIELD_MAP[field]] = input[field] ?? null;
 	}
-	return payload;
+	return payload as Prisma.ContactPersonCreateWithoutInstitutions_as_contactInput;
 };
 
 const hasInlineContactPersonFields = (input: ContactPersonInput) =>

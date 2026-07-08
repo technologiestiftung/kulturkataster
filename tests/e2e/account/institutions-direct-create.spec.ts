@@ -182,7 +182,7 @@ test.describe("institution direct create form", () => {
 			parentOrganization: "Kultur Trägerverein",
 			website: "https://example.org/institution",
 			email: `direct-${timestamp}@example.com`,
-			phone: "+49 30 123456",
+			phone: "+49 30 000000",
 			contactFirstName: "Anna",
 			contactLastName: "Beispiel",
 			contactEmail: `contact-${timestamp}@example.com`,

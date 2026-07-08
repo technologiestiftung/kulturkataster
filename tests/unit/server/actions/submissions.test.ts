@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
 	createSubmission,
+	reviewSubmission,
 	saveSubmissionNote,
 	updateSubmission,
 } from "@/server/actions/submissions";
@@ -17,6 +18,7 @@ vi.mock("@/server/utils/actionsUtils", () => ({
 
 const getTableScopeMock = vi.fn();
 const requireScopeOrUserMock = vi.fn();
+const canFieldsMock = vi.fn();
 
 vi.mock("@/server/utils/rbac", () => ({
 	getAccessContextForUser: vi.fn().mockResolvedValue({
@@ -27,8 +29,67 @@ vi.mock("@/server/utils/rbac", () => ({
 		},
 	}),
 	authorizeTable: vi.fn(),
+	canFields: (...args: unknown[]) => canFieldsMock(...args),
 	getTableScope: () => getTableScopeMock(),
+	requireAllScope: vi.fn(),
 	requireScopeOrUser: (...args: unknown[]) => requireScopeOrUserMock(...args),
+}));
+
+const {
+	prismaTransactionMock,
+	prismaInstitutionFindFirstMock,
+	prismaInstitutionFindUniqueMock,
+	prismaUserFindUniqueMock,
+	txInstitutionCreateMock,
+	txInstitutionUpdateMock,
+	txInstitutionFindFirstMock,
+	txSubmissionDeleteMock,
+	txSubmissionUpdateMock,
+	txSubmissionNoteCreateMock,
+	txInstitutionDeleteMock,
+} = vi.hoisted(() => ({
+	prismaTransactionMock: vi.fn(),
+	prismaInstitutionFindFirstMock: vi.fn(),
+	prismaInstitutionFindUniqueMock: vi.fn(),
+	prismaUserFindUniqueMock: vi.fn(),
+	txInstitutionCreateMock: vi.fn(),
+	txInstitutionUpdateMock: vi.fn(),
+	txInstitutionFindFirstMock: vi.fn(),
+	txSubmissionDeleteMock: vi.fn(),
+	txSubmissionUpdateMock: vi.fn(),
+	txSubmissionNoteCreateMock: vi.fn(),
+	txInstitutionDeleteMock: vi.fn(),
+}));
+
+vi.mock("@/server/prisma", () => ({
+	prisma: {
+		$transaction: (...args: unknown[]) => prismaTransactionMock(...args),
+		institution: {
+			findFirst: (...args: unknown[]) =>
+				prismaInstitutionFindFirstMock(...args),
+			findUnique: (...args: unknown[]) =>
+				prismaInstitutionFindUniqueMock(...args),
+		},
+		user: {
+			findUnique: (...args: unknown[]) => prismaUserFindUniqueMock(...args),
+		},
+	},
+}));
+
+vi.mock("@/server/logic/submissionAudit", () => ({
+	updateSubmissionAuditStatus: vi.fn(),
+}));
+
+vi.mock("@/server/email/dispatcher", () => ({
+	sendClaimDecisionEmail: vi.fn(),
+	sendSubmissionDecisionEmail: vi.fn(),
+}));
+
+const buildInstitutionScopedWhereMock = vi.fn();
+
+vi.mock("@/server/logic/institutionAccess", () => ({
+	buildInstitutionScopedWhere: (...args: unknown[]) =>
+		buildInstitutionScopedWhereMock(...args),
 }));
 
 const updateWhereMock = vi.fn();
@@ -52,11 +113,45 @@ describe("server actions: submissions", () => {
 	beforeEach(() => {
 		getTableScopeMock.mockReset();
 		requireScopeOrUserMock.mockReset();
+		canFieldsMock.mockReset();
 		updateWhereMock.mockReset();
 		createMock.mockReset();
 		createNoteMock.mockReset();
 		findByIdMock.mockReset();
 		findFirstMock.mockReset();
+		prismaTransactionMock.mockReset();
+		prismaInstitutionFindFirstMock.mockReset();
+		prismaInstitutionFindUniqueMock.mockReset();
+		prismaUserFindUniqueMock.mockReset();
+		txInstitutionCreateMock.mockReset();
+		txInstitutionUpdateMock.mockReset();
+		txInstitutionFindFirstMock.mockReset();
+		txSubmissionDeleteMock.mockReset();
+		txSubmissionUpdateMock.mockReset();
+		txSubmissionNoteCreateMock.mockReset();
+		txInstitutionDeleteMock.mockReset();
+		buildInstitutionScopedWhereMock.mockReset();
+		canFieldsMock.mockReturnValue(true);
+		buildInstitutionScopedWhereMock.mockImplementation(
+			(_scope, _userId, where) => where,
+		);
+		prismaTransactionMock.mockImplementation(async (callback: unknown) =>
+			(callback as (tx: unknown) => Promise<unknown>)({
+				institution: {
+					create: txInstitutionCreateMock,
+					update: txInstitutionUpdateMock,
+					findFirst: txInstitutionFindFirstMock,
+					delete: txInstitutionDeleteMock,
+				},
+				submission: {
+					delete: txSubmissionDeleteMock,
+					update: txSubmissionUpdateMock,
+				},
+				submissionNote: {
+					create: txSubmissionNoteCreateMock,
+				},
+			}),
+		);
 	});
 
 	it("createSubmission checks pending duplicates only for the current user", async () => {
@@ -189,6 +284,117 @@ describe("server actions: submissions", () => {
 		await expect(
 			updateSubmission({ id: 999, data: { foo: "bar" } }),
 		).rejects.toThrow("Submission no longer exists.");
+	});
+
+	it("reviewSubmission approval creates an institution with address and contact person subfields", async () => {
+		getTableScopeMock.mockReturnValue("all");
+		requireScopeOrUserMock.mockReturnValue(null);
+		findByIdMock.mockResolvedValue({
+			id: 10,
+			entity_type: SubmissionEntityType.institution,
+			entity_id: null,
+			type: SubmissionType.create,
+			status: "approval_pending",
+			created_by: null,
+			meta: null,
+			data: {
+				name: "Submitted Institution",
+				"address.streetLine": "Main 12",
+				"address.zip": "10115",
+				"address.city": "Berlin",
+				"address.cultural_area": "Zentrum",
+				contact_person: {
+					first_name: "Ada",
+					last_name: "Lovelace",
+					email: "ada@example.com",
+					phone: "+49 30 000000",
+				},
+			},
+		});
+		txInstitutionCreateMock.mockResolvedValue({ id: 123 });
+
+		await reviewSubmission({ id: 10, status: "approved" });
+
+		expect(txInstitutionCreateMock).toHaveBeenCalledWith(
+			expect.objectContaining({
+				data: expect.objectContaining({
+					name: "Submitted Institution",
+					address: {
+						create: expect.objectContaining({
+							street: "Main",
+							street_number: "12",
+							zipcode: "10115",
+							city: "Berlin",
+							cultural_area: "Zentrum",
+						}),
+					},
+					contact_person: {
+						create: {
+							first_name: "Ada",
+							last_name: "Lovelace",
+							email: "ada@example.com",
+							phone: "+49 30 000000",
+						},
+					},
+				}),
+			}),
+		);
+		expect(txSubmissionDeleteMock).toHaveBeenCalledWith({ where: { id: 10 } });
+	});
+
+	it("reviewSubmission approval updates only submitted address and contact person subfields", async () => {
+		getTableScopeMock.mockReturnValue("all");
+		requireScopeOrUserMock.mockReturnValue(null);
+		prismaInstitutionFindFirstMock.mockResolvedValue({ id: 55 });
+		txInstitutionFindFirstMock.mockResolvedValue({
+			id: 55,
+			name: "Existing Institution",
+			address_id: 77,
+		});
+		findByIdMock.mockResolvedValue({
+			id: 11,
+			entity_type: SubmissionEntityType.institution,
+			entity_id: 55,
+			type: SubmissionType.update,
+			status: "approval_pending",
+			created_by: null,
+			meta: null,
+			data: {
+				"address.city": "Potsdam",
+				contact_person_email: "updated@example.com",
+			},
+		});
+		txInstitutionUpdateMock.mockResolvedValue({ id: 55 });
+
+		await reviewSubmission({ id: 11, status: "approved" });
+
+		expect(txInstitutionUpdateMock).toHaveBeenCalledWith({
+			where: { id: 55 },
+			data: expect.objectContaining({
+				name: "Existing Institution",
+				address: {
+					update: expect.objectContaining({
+						city: "Potsdam",
+					}),
+					create: expect.objectContaining({
+						city: "Potsdam",
+					}),
+				},
+				contact_person: {
+					upsert: {
+						create: { email: "updated@example.com" },
+						update: { email: "updated@example.com" },
+					},
+				},
+			}),
+		});
+		const updateData = txInstitutionUpdateMock.mock.calls[0][0].data;
+		expect(updateData.address.update).not.toHaveProperty("street");
+		expect(updateData.contact_person.upsert.update).not.toHaveProperty(
+			"first_name",
+		);
+		expect(updateData.contact_person.upsert.update).not.toHaveProperty("phone");
+		expect(txSubmissionDeleteMock).toHaveBeenCalledWith({ where: { id: 11 } });
 	});
 
 	it("saveSubmissionNote creates a note and returns the refreshed submission", async () => {

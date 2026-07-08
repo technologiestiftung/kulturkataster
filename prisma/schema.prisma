@@ -381,6 +381,7 @@ model PermissionFieldOrder {
   table      String
   field      String
   sort_order Int
+  is_pinned  Boolean @default(false)
 
   @@unique([table, field])
   @@index([table])
