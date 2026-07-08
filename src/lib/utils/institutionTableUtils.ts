@@ -28,6 +28,24 @@ const resolveSubmissionCategories = (
 		.filter((category): category is Category => Boolean(category));
 };
 
+const buildSubmissionContactPerson = (
+	draft: ReturnType<typeof institutionSubmissionToDraft>,
+) => {
+	const contactPerson = {
+		id: draft.contact_person_id ?? undefined,
+		first_name: draft.contact_person_first_name ?? null,
+		last_name: draft.contact_person_last_name ?? null,
+		email: draft.contact_person_email ?? null,
+		phone: draft.contact_person_phone ?? null,
+	};
+	const hasContactPersonValue = Object.values(contactPerson).some(
+		(value) => value !== null && typeof value !== "undefined" && value !== "",
+	);
+	return hasContactPersonValue
+		? (contactPerson as Institution["contact_person"])
+		: null;
+};
+
 export const isSubmissionRow = (
 	row: InstitutionTableRow,
 ): row is SubmissionRow => row.rowKind === "submission";
@@ -89,6 +107,7 @@ export const buildSubmissionRow = (
 		draft.categoryIds ?? data.categoryIds,
 		categories,
 	);
+	const contactPerson = buildSubmissionContactPerson(draft);
 
 	return {
 		rowKind: "submission",
@@ -106,6 +125,8 @@ export const buildSubmissionRow = (
 		tags: [],
 		users: [],
 		groups: [],
+		contact_person: contactPerson,
+		contact_person_id: draft.contact_person_id ?? null,
 		created_at: submission.created_at,
 		updated_at: submission.updated_at,
 		submissionType: submission.type,

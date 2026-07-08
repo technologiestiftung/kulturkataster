@@ -62,6 +62,46 @@ const STEP_IDS = [
 	"review",
 ] as const;
 
+const CONTACT_PERSON_FIELDS = [
+	"contact_person_first_name",
+	"contact_person_last_name",
+	"contact_person_email",
+	"contact_person_phone",
+] as const;
+
+const removeUnconsentedContactPersonFields = (
+	data: Record<string, unknown>,
+) => {
+	if (data.consent_contact_listing === true) return data;
+	const sanitized = { ...data };
+	for (const field of CONTACT_PERSON_FIELDS) {
+		delete sanitized[field];
+	}
+	return sanitized;
+};
+
+const filterContactPersonFieldsByConsent = (
+	data: Record<string, unknown>,
+	canShareContactPerson: boolean,
+) => {
+	if (canShareContactPerson) return data;
+	const sanitized = { ...data };
+	for (const field of CONTACT_PERSON_FIELDS) {
+		delete sanitized[field];
+	}
+	return sanitized;
+};
+
+const getContactPersonClearPatch = () =>
+	Object.fromEntries(
+		CONTACT_PERSON_FIELDS.map((field) => [field, undefined]),
+	) as Record<string, undefined>;
+
+const canKeepContactPersonFields = (
+	draftMode: "create" | "update",
+	data: Record<string, unknown>,
+) => draftMode === "update" || data.consent_contact_listing === true;
+
 const getStepValidatableFields = (
 	fields: FormWrapperFieldConfig[],
 	formData: Record<string, unknown>,
@@ -157,6 +197,7 @@ function InstitutionDraftWizardContent({
 	const setDraft = useInstitutionDraftStore((state) => state.setDraft);
 	const setStepId = useInstitutionDraftStore((state) => state.setStepId);
 	const draftMode = useInstitutionDraftStore((state) => state.mode);
+	const contactProfile = draftMode === "create" ? profile : null;
 	const isUpdateReviewOnly = draftMode === "update";
 	const [editSectionId, setEditSectionId] = useState<string | null>(null);
 	const [editModalOpen, setEditModalOpen] = useState(false);
@@ -288,10 +329,23 @@ function InstitutionDraftWizardContent({
 	const handleStepChange = useCallback(
 		(data: Record<string, unknown>) => {
 			const nextDraft = { ...draftRef.current, ...data };
-			draftRef.current = nextDraft;
-			setDraft(data);
+			const canShareContactPerson = canKeepContactPersonFields(
+				draftMode,
+				nextDraft,
+			);
+			const sanitizedNextDraft =
+				removeUnconsentedContactPersonFields(nextDraft);
+			const sanitizedData = filterContactPersonFieldsByConsent(
+				data,
+				canShareContactPerson,
+			);
+			draftRef.current = sanitizedNextDraft;
+			setDraft({
+				...sanitizedData,
+				...(canShareContactPerson ? {} : getContactPersonClearPatch()),
+			});
 		},
-		[setDraft],
+		[draftMode, setDraft],
 	);
 
 	const handleFinalSubmit = useCallback(
@@ -308,17 +362,13 @@ function InstitutionDraftWizardContent({
 				typeof entityId === "number" && Number.isFinite(entityId)
 					? entityId
 					: null;
-			const canShareContactPerson = data.consent_contact_listing === true;
+			const canShareContactPerson = canKeepContactPersonFields(draftMode, data);
 			if (draftMode === "update" && !resolvedEntityId) {
 				throw new Error("Missing institution for update submission.");
 			}
-			const sanitizedRest = { ...rest } as Record<string, unknown>;
-			if (!canShareContactPerson) {
-				delete sanitizedRest.contact_person_first_name;
-				delete sanitizedRest.contact_person_last_name;
-				delete sanitizedRest.contact_person_email;
-				delete sanitizedRest.contact_person_phone;
-			}
+			const sanitizedRest = canShareContactPerson
+				? ({ ...rest } as Record<string, unknown>)
+				: removeUnconsentedContactPersonFields(rest as Record<string, unknown>);
 			const payload: Record<string, unknown> = {
 				...sanitizedRest,
 				address: buildAddressFromFormData(data),
@@ -386,8 +436,21 @@ function InstitutionDraftWizardContent({
 		(data: Record<string, unknown>) => {
 			const nextData = { ...draft, ...data };
 			const address = buildAddressFromFormData(nextData);
-			draftRef.current = { ...nextData, address };
-			setDraft({ ...data, address });
+			const canShareContactPerson = canKeepContactPersonFields(
+				draftMode,
+				nextData,
+			);
+			const sanitizedData = filterContactPersonFieldsByConsent(
+				data,
+				canShareContactPerson,
+			);
+			const sanitizedNextData = removeUnconsentedContactPersonFields(nextData);
+			draftRef.current = { ...sanitizedNextData, address };
+			setDraft({
+				...sanitizedData,
+				...(canShareContactPerson ? {} : getContactPersonClearPatch()),
+				address,
+			});
 			nextStep();
 		},
 		[draft, nextStep, setDraft],
@@ -454,11 +517,26 @@ function InstitutionDraftWizardContent({
 
 	const handleSectionEditSubmit = useCallback(
 		(data: Record<string, unknown>) => {
+			const nextData = { ...draftRef.current, ...data };
 			const address = buildAddressFromFormData(data);
-			setDraft({ ...data, address });
+			const canShareContactPerson = canKeepContactPersonFields(
+				draftMode,
+				nextData,
+			);
+			const sanitizedData = filterContactPersonFieldsByConsent(
+				data,
+				canShareContactPerson,
+			);
+			const sanitizedNextData = removeUnconsentedContactPersonFields(nextData);
+			draftRef.current = { ...sanitizedNextData, address };
+			setDraft({
+				...sanitizedData,
+				...(canShareContactPerson ? {} : getContactPersonClearPatch()),
+				address,
+			});
 			closeSectionEditModal();
 		},
-		[closeSectionEditModal, setDraft],
+		[closeSectionEditModal, draftMode, setDraft],
 	);
 
 	useEffect(() => {
@@ -1586,10 +1664,7 @@ function InstitutionDraftWizardContent({
 							name: "contact_person_first_name",
 							label: fieldLabel("contact_person_first_name"),
 							type: "text",
-							defaultValue:
-								draft.consent_contact_listing === true
-									? profile?.first_name || ""
-									: "",
+							defaultValue: contactProfile?.first_name || "",
 							placeholder: fieldPlaceholder("contact_person_first_name"),
 							layout: { span: "half" },
 						},
@@ -1597,10 +1672,7 @@ function InstitutionDraftWizardContent({
 							name: "contact_person_last_name",
 							label: fieldLabel("contact_person_last_name"),
 							type: "text",
-							defaultValue:
-								draft.consent_contact_listing === true
-									? profile?.last_name || ""
-									: "",
+							defaultValue: contactProfile?.last_name || "",
 							placeholder: fieldPlaceholder("contact_person_last_name"),
 							layout: { span: "half" },
 						},
@@ -1608,10 +1680,7 @@ function InstitutionDraftWizardContent({
 							name: "contact_person_email",
 							label: fieldLabel("contact_person_email"),
 							type: "email",
-							defaultValue:
-								draft.consent_contact_listing === true
-									? profile?.email || ""
-									: "",
+							defaultValue: contactProfile?.email || "",
 							placeholder: fieldPlaceholder("contact_person_email"),
 							layout: { span: "full" },
 						},
@@ -1619,10 +1688,7 @@ function InstitutionDraftWizardContent({
 							name: "contact_person_phone",
 							label: fieldLabel("contact_person_phone"),
 							type: "tel",
-							defaultValue:
-								draft.consent_contact_listing === true
-									? profile?.phone || ""
-									: "",
+							defaultValue: contactProfile?.phone || "",
 							placeholder: fieldPlaceholder("contact_person_phone"),
 							layout: { span: "full" },
 						},
@@ -1645,7 +1711,7 @@ function InstitutionDraftWizardContent({
 			handleStepChange,
 			handleStepSubmit,
 			isPrivateFormField,
-			profile,
+			contactProfile,
 			t,
 		],
 	);
@@ -1778,6 +1844,7 @@ function InstitutionDraftWizardContent({
 					mode={draftMode === "update" ? "edit" : "create"}
 					permissionContext="submission"
 					institution={buildInstitutionForFormFromDraft(draft, categoryGroups)}
+					profile={contactProfile}
 					onClose={closeSectionEditModal}
 					onSubmit={({ data }) => {
 						handleSectionEditSubmit(data as Record<string, unknown>);

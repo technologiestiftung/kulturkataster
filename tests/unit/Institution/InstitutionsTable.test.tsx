@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { act, render, screen } from "@testing-library/react";
+import type { ReactElement } from "react";
 import { InstitutionsTable } from "@/components/Institution/InstitutionsTable";
 import { INSTITUTION_PERMISSION_FIELDS } from "@/types/institution";
 
@@ -8,12 +9,14 @@ const prefetchMock = vi.fn();
 const dataTableMock = vi.fn();
 const downloadModalMock = vi.fn();
 const readableInstitutionFields = [...INSTITUTION_PERMISSION_FIELDS];
+let mockSubmissions: Array<Record<string, unknown>> = [];
 let mockInstitutionFieldPermissions = {
 	read: readableInstitutionFields,
 	create: readableInstitutionFields,
 	update: readableInstitutionFields,
 	delete: [],
 	download: readableInstitutionFields,
+	pinned: ["status", "id", "name"],
 };
 
 vi.mock("react-i18next", () => ({
@@ -74,6 +77,7 @@ vi.mock("@/lib/store/accountStore", () => ({
 				update: string[];
 				delete: string[];
 				download: string[];
+				pinned: string[];
 			};
 			setActiveInstitutionEdit: (institution: unknown) => void;
 		}) => unknown,
@@ -97,7 +101,7 @@ vi.mock("@/lib/store/accountStore", () => ({
 					updated_at: new Date("2025-01-01"),
 				},
 			],
-			submissions: [],
+			submissions: mockSubmissions,
 			institutionPermissions: {
 				create: true,
 				update: true,
@@ -171,12 +175,14 @@ describe("InstitutionsTable", () => {
 		prefetchMock.mockReset();
 		dataTableMock.mockReset();
 		downloadModalMock.mockReset();
+		mockSubmissions = [];
 		mockInstitutionFieldPermissions = {
 			read: readableInstitutionFields,
 			create: readableInstitutionFields,
 			update: readableInstitutionFields,
 			delete: [],
 			download: readableInstitutionFields,
+			pinned: ["status", "id", "name"],
 		};
 	});
 
@@ -221,6 +227,82 @@ describe("InstitutionsTable", () => {
 		expect(
 			config.getCanReview({ rowKind: "submission", submissionType: "update" }),
 		).toBe(true);
+	});
+
+	it("hides the row kind filter unless the feature flag is enabled", () => {
+		render(<InstitutionsTable />);
+
+		const config = dataTableMock.mock.calls[0][0] as {
+			toolbarContent?: unknown;
+			data: Array<{ rowKind: string }>;
+		};
+
+		expect(config.toolbarContent).toBeUndefined();
+		expect(config.data.map((row) => row.rowKind)).toEqual(["institution"]);
+	});
+
+	it("filters table rows by submissions, institutions, or both when enabled", () => {
+		mockSubmissions = [
+			{
+				id: 55,
+				entity_type: "institution",
+				type: "update",
+				status: "approval_pending",
+				data: { name: "Submission Beta" },
+				created_at: new Date("2025-01-02"),
+				updated_at: new Date("2025-01-02"),
+			},
+		];
+
+		render(<InstitutionsTable showRowKindFilter />);
+
+		const initialConfig = dataTableMock.mock.calls.at(-1)?.[0] as {
+			toolbarContent: ReactElement;
+			data: Array<{ rowKind: string; id: number; name?: string }>;
+		};
+
+		expect(initialConfig.toolbarContent).toBeDefined();
+		expect(initialConfig.data.map((row) => row.rowKind)).toEqual([
+			"submission",
+			"institution",
+		]);
+
+		act(() => {
+			initialConfig.toolbarContent.props.onChange("submissions");
+		});
+
+		const submissionConfig = dataTableMock.mock.calls.at(-1)?.[0] as {
+			data: Array<{ rowKind: string; id: number; name?: string }>;
+			toolbarContent: ReactElement;
+		};
+		expect(submissionConfig.data.map((row) => row.rowKind)).toEqual([
+			"submission",
+		]);
+		expect(submissionConfig.data[0]?.name).toBe("Submission Beta");
+
+		act(() => {
+			submissionConfig.toolbarContent.props.onChange("institutions");
+		});
+
+		const institutionConfig = dataTableMock.mock.calls.at(-1)?.[0] as {
+			data: Array<{ rowKind: string; id: number; name?: string }>;
+		};
+		expect(institutionConfig.data.map((row) => row.rowKind)).toEqual([
+			"institution",
+		]);
+		expect(institutionConfig.data[0]?.name).toBe("Institution Alpha");
+
+		act(() => {
+			submissionConfig.toolbarContent.props.onChange("all");
+		});
+
+		const allConfig = dataTableMock.mock.calls.at(-1)?.[0] as {
+			data: Array<{ rowKind: string }>;
+		};
+		expect(allConfig.data.map((row) => row.rowKind)).toEqual([
+			"submission",
+			"institution",
+		]);
 	});
 
 	it("renders zero numeric table values as a dash", () => {
@@ -295,6 +377,7 @@ describe("InstitutionsTable", () => {
 			update: [],
 			delete: [],
 			download: [],
+			pinned: ["status", "name"],
 		};
 
 		render(<InstitutionsTable />);
@@ -309,7 +392,65 @@ describe("InstitutionsTable", () => {
 			(column) => column.id ?? column.accessorKey,
 		);
 
-		expect(columnIds).toEqual(["email", "name", "status"]);
+		expect(columnIds).toEqual(["email", "name", "status", "type"]);
+	});
+
+	it("pins permission columns from the RBAC pinned field list", () => {
+		mockInstitutionFieldPermissions = {
+			read: ["status", "id", "name", "email"],
+			create: [],
+			update: [],
+			delete: [],
+			download: [],
+			pinned: ["status", "id"],
+		};
+
+		render(<InstitutionsTable />);
+
+		const config = dataTableMock.mock.calls[0][0] as {
+			columns: Array<{
+				id?: string;
+				accessorKey?: string;
+				meta?: { pin?: "left" };
+			}>;
+		};
+		const pinByColumn = Object.fromEntries(
+			config.columns.map((column) => [
+				column.id ?? column.accessorKey,
+				column.meta?.pin,
+			]),
+		);
+
+		expect(pinByColumn.status).toBe("left");
+		expect(pinByColumn.type).toBe("left");
+		expect(pinByColumn.id).toBe("left");
+		expect(pinByColumn.name).toBeUndefined();
+		expect(pinByColumn.email).toBeUndefined();
+	});
+
+	it("keeps the synthetic type column without requiring institution field permission", () => {
+		mockInstitutionFieldPermissions = {
+			read: ["status", "name"],
+			create: [],
+			update: [],
+			delete: [],
+			download: [],
+			pinned: ["status", "name"],
+		};
+
+		render(<InstitutionsTable />);
+
+		const config = dataTableMock.mock.calls[0][0] as {
+			columns: Array<{
+				id?: string;
+				accessorKey?: string;
+			}>;
+		};
+		const columnIds = config.columns.map(
+			(column) => column.id ?? column.accessorKey,
+		);
+
+		expect(columnIds).toEqual(expect.arrayContaining(["status", "type"]));
 	});
 
 	it("passes only downloadable filtered institutions to the download modal", () => {
@@ -356,6 +497,52 @@ describe("InstitutionsTable", () => {
 				"subcategory",
 				"tags",
 				"area",
+			]),
+		);
+	});
+
+	it("shows only readable address and contact person subfield columns", () => {
+		mockInstitutionFieldPermissions = {
+			read: [
+				"name",
+				"address.city",
+				"address.cultural_area",
+				"contact_person.email",
+			],
+			create: [],
+			update: [],
+			delete: [],
+			download: [],
+		};
+
+		render(<InstitutionsTable />);
+
+		const config = dataTableMock.mock.calls[0][0] as {
+			columns: Array<{
+				id?: string;
+				accessorKey?: string;
+			}>;
+		};
+		const columnIds = config.columns.map(
+			(column) => column.id ?? column.accessorKey,
+		);
+
+		expect(columnIds).toEqual(
+			expect.arrayContaining([
+				"name",
+				"address.city",
+				"address.cultural_area",
+				"contact_person_email",
+			]),
+		);
+		expect(columnIds).not.toEqual(
+			expect.arrayContaining([
+				"address.street",
+				"address.zipcode",
+				"address.district",
+				"phone",
+				"contact_person_name",
+				"contact_person_phone",
 			]),
 		);
 	});

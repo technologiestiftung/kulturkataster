@@ -12,7 +12,7 @@ const makeInstitution = (): Institution =>
 		name: "Alpha",
 		status: "public",
 		email: "alpha@example.de",
-		phone: "+49 30 123456",
+		phone: "+49 30 000000",
 		website: "https://example.de",
 		notes: "Some notes",
 		address: {
@@ -22,6 +22,9 @@ const makeInstitution = (): Institution =>
 			city: "Berlin",
 			district: "Mitte",
 			neighbourhood: "Spandauer Vorstadt",
+			cultural_area: "Zentrum",
+			lat: 52.52,
+			lng: 13.405,
 		},
 		contact_person: {
 			first_name: "Ada",
@@ -103,7 +106,7 @@ describe("prepareDataForExport", () => {
 		expect(rows[0]).toMatchObject({
 			Name: "Alpha",
 			Email: "alpha@example.de",
-			Phone: "+49 30 123456",
+			Phone: "+49 30 000000",
 			Website: "https://example.de",
 			Street: "Musterstrasse 12",
 			Zipcode: "10115",
@@ -115,6 +118,76 @@ describe("prepareDataForExport", () => {
 			"Contact Person Email": "ada@example.de",
 			"Contact Person Phone": "+49 30 654321",
 		});
+	});
+
+	it("exports only the permitted relation subfields", () => {
+		const rows = prepareDataForExport([makeInstitution()], {
+			readablePermissionFields: [
+				"address.cultural_area",
+				"address.lat",
+				"contact_person.email",
+			],
+			audience: "internal",
+		});
+
+		expect(rows).toHaveLength(1);
+		expect(rows[0]).toEqual({
+			"Cultural Area": "Zentrum",
+			Lat: "52.52",
+			"Contact Person Email": "ada@example.de",
+		});
+		expect(rows[0]).not.toHaveProperty("Street");
+		expect(rows[0]).not.toHaveProperty("Lng");
+		expect(rows[0]).not.toHaveProperty("Contact Person First Name");
+		expect(rows[0]).not.toHaveProperty("Contact Person Phone");
+	});
+
+	it("keeps permitted relation subfield columns even when some rows are blanked by row permissions", () => {
+		const rows = prepareDataForExport(
+			[
+				makeInstitution(),
+				{
+					...makeInstitution(),
+					id: 3000,
+					contact_person: {
+						first_name: "Grace",
+						last_name: "Hopper",
+						email: "grace@example.de",
+						phone: "+49 30 999",
+					},
+					address: {
+						...makeInstitution().address,
+						cultural_area: "Rand",
+					},
+				} as Institution,
+			],
+			{
+				readablePermissionFields: [
+					"name",
+					"address.cultural_area",
+					"contact_person.email",
+				],
+				getReadablePermissionFields: (institution) =>
+					institution.id === 2646
+						? ["name", "address.cultural_area", "contact_person.email"]
+						: ["name"],
+				getAudience: (institution) =>
+					institution.id === 2646 ? "internal" : "guest",
+			},
+		);
+
+		expect(rows).toEqual([
+			{
+				Name: "Alpha",
+				"Cultural Area": "Zentrum",
+				"Contact Person Email": "ada@example.de",
+			},
+			{
+				Name: "Alpha",
+				"Cultural Area": "",
+				"Contact Person Email": "",
+			},
+		]);
 	});
 
 	it("uses the shared field option translation logic for enums", () => {

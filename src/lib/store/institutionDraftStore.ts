@@ -20,7 +20,13 @@ export const useInstitutionDraftStore = create<InstitutionDraftStoreState>()(
 				mode: "create",
 				setDraft: (partial) =>
 					set((state) => {
-						Object.assign(state.draft, partial);
+						for (const [key, value] of Object.entries(partial)) {
+							if (value === undefined) {
+								delete state.draft[key];
+							} else {
+								state.draft[key] = value;
+							}
+						}
 					}),
 				setStepId: (stepId) =>
 					set((state) => {

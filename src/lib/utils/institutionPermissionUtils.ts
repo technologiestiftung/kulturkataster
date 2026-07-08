@@ -4,16 +4,17 @@ import {
 	type InstitutionUpdateForm,
 } from "@/types";
 import { normalizeInstitutionPermissionField } from "@/lib/utils/institutionPermissionField";
+import {
+	CONTACT_PERSON_PERMISSION_FIELD_MAP,
+	isRecord,
+} from "@/lib/utils/institutionRelationFields";
 
 export const RELATION_FIELD_ALIASES: Record<string, string> = {
 	categoryIds: "categories",
 	tagIds: "tags",
 	userIds: "users",
 	groupIds: "groups",
-	contact_person_first_name: "contact_person.first_name",
-	contact_person_last_name: "contact_person.last_name",
-	contact_person_email: "contact_person.email",
-	contact_person_phone: "contact_person.phone",
+	...CONTACT_PERSON_PERMISSION_FIELD_MAP,
 	funding_source: "funding_sources",
 };
 
@@ -41,9 +42,6 @@ const addFieldIfValueIsPresent = (
 	if (Array.isArray(value) && value.length === 0) return;
 	fields.add(field);
 };
-
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-	typeof value === "object" && value !== null && !Array.isArray(value);
 
 const getRelationPermissionField = (
 	relationKey: string,

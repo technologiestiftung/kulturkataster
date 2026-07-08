@@ -19,12 +19,14 @@ let mockInstitutionFieldPermissions: {
 	update: string[];
 	delete: string[];
 	download: string[];
+	pinned: string[];
 } = {
 	read: [],
 	create: [],
 	update: [],
 	delete: [],
 	download: [],
+	pinned: [],
 };
 let mockInstitutionStoreCategories: Array<Record<string, unknown>> | null =
 	null;
@@ -187,6 +189,7 @@ vi.mock("@/lib/store/accountStore", () => ({
 				update: string[];
 				delete: string[];
 				download: string[];
+				pinned: string[];
 			};
 			categories: Array<Record<string, unknown>>;
 		}) => unknown,
@@ -278,6 +281,71 @@ describe("InstitutionFormModal", () => {
 				name: "Updated Institution",
 			},
 		} as never);
+	});
+
+	it("uses profile contact details as submission contact fallback", () => {
+		render(
+			<InstitutionFormModal
+				mode="create"
+				permissionContext="submission"
+				routePath="/account/submissions/11/edit"
+				profile={
+					{
+						first_name: "Test",
+						last_name: "User",
+						email: "test.user@example.com",
+						phone: "+49 30 000000",
+					} as never
+				}
+			/>,
+		);
+
+		expect(lastFormConfig?.initialValues).toEqual(
+			expect.objectContaining({
+				contact_person_first_name: "Test",
+				contact_person_last_name: "User",
+				contact_person_email: "test.user@example.com",
+				contact_person_phone: "+49 30 000000",
+			}),
+		);
+	});
+
+	it("does not overwrite existing submission contact details with profile fallback", () => {
+		render(
+			<InstitutionFormModal
+				mode="create"
+				permissionContext="submission"
+				routePath="/account/submissions/11/edit"
+				institution={
+					{
+						name: "Draft Institution",
+						contact_person: {
+							first_name: "Existing",
+							last_name: "Contact",
+							email: "existing@example.com",
+							phone: "+49 30 654321",
+						},
+					} as never
+				}
+				profile={
+					{
+						first_name: "Test",
+						last_name: "User",
+						email: "test.user@example.com",
+						phone: "+49 30 000000",
+					} as never
+				}
+			/>,
+		);
+
+		expect(lastFormConfig?.initialValues).toEqual(
+			expect.objectContaining({
+				contact_person_first_name: "Existing",
+				contact_person_last_name: "Contact",
+				contact_person_email: "existing@example.com",
+				contact_person_phone: "+49 30 654321",
+			}),
+		);
 	});
 
 	it("creates a new institution", async () => {
