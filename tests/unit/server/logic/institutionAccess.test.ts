@@ -48,7 +48,14 @@ describe("requireAllScope", () => {
 	it("throws when scope is not all", () => {
 		expect(() =>
 			requireAllScope(
-				{ role: "user", table: {}, tableScope: {}, field: {}, fieldOrder: {} },
+				{
+					role: "user",
+					table: {},
+					tableScope: {},
+					field: {},
+					fieldOrder: {},
+					fieldPins: {},
+				},
 				"group",
 				"read",
 			),
@@ -63,6 +70,8 @@ describe("requireAllScope", () => {
 					table: {},
 					tableScope: { group: { read: "all" } },
 					field: {},
+					fieldOrder: {},
+					fieldPins: {},
 				},
 				"group",
 				"read",

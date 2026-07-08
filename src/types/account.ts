@@ -20,6 +20,7 @@ export type InstitutionFieldPermissions = {
 	update: string[];
 	delete: string[];
 	download: string[];
+	pinned: string[];
 };
 
 export type AccountStoreState = {

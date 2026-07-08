@@ -25,6 +25,7 @@ describe("rbac field permission lists", () => {
 					phone: 2,
 				},
 			},
+			fieldPins: {},
 		};
 
 		expect(getFieldPermissionListsForTable(context, "institution")).toEqual({
@@ -33,6 +34,7 @@ describe("rbac field permission lists", () => {
 			update: [],
 			delete: [],
 			download: ["email", "phone"],
+			pinned: [],
 		});
 	});
 
@@ -71,6 +73,7 @@ describe("rbac field permission lists", () => {
 					"contact_person.email": 2,
 				},
 			},
+			{},
 		);
 
 		expect(
@@ -116,5 +119,40 @@ describe("rbac field permission lists", () => {
 		expect(
 			getFieldPermissionListsForTable(context, "institution").create,
 		).toEqual(["contact_person.email"]);
+	});
+
+	it("sorts pinned fields by the global field order", () => {
+		const context = buildAccessContext(
+			{
+				id: 1,
+				name: "admin",
+				description: null,
+				is_system: true,
+				is_guest: false,
+				created_at: new Date("2025-01-01"),
+				updated_at: new Date("2025-01-01"),
+				table_permissions: [],
+				field_permissions: [],
+			},
+			{
+				institution: {
+					status: 0,
+					id: 1,
+					name: 2,
+				},
+			},
+			{
+				institution: {
+					name: true,
+					status: true,
+					id: true,
+					email: false,
+				},
+			},
+		);
+
+		expect(
+			getFieldPermissionListsForTable(context, "institution").pinned,
+		).toEqual(["status", "id", "name"]);
 	});
 });

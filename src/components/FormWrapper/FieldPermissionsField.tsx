@@ -25,6 +25,7 @@ type FieldPermissionRow = {
 	relationLabel?: string;
 	relationShortLabel?: string;
 	isRelationField?: boolean;
+	isPinned?: boolean;
 };
 
 type FieldPermissionsConfig = {
@@ -108,6 +109,9 @@ const reorderFieldPermissionRows = (
 	const sourceIndex = fields.findIndex((field) => field.key === sourceKey);
 	const targetIndex = fields.findIndex((field) => field.key === targetKey);
 	if (sourceIndex === -1 || targetIndex === -1) return fields;
+	if (fields[sourceIndex].isPinned || fields[targetIndex].isPinned) {
+		return fields;
+	}
 
 	const nextFields = [...fields];
 	const [movedField] = nextFields.splice(sourceIndex, 1);
@@ -138,7 +142,7 @@ const flattenFieldPermissionRows = (
 	);
 
 const toFieldPermissionRows = (fields: FieldPermissionRow[]) =>
-	fields.map(({ key, label }) => ({ key, label }));
+	fields.map(({ key, label, isPinned }) => ({ key, label, isPinned }));
 
 const permissionActionIcons = {
 	read: EyeIcon,
@@ -233,19 +237,19 @@ export function FieldPermissionsField({
 							<tr
 								key={fieldItem.key}
 								className="border-input"
-								draggable={canReorder}
+								draggable={canReorder && !fieldItem.isPinned}
 								onDragStart={(event) => {
-									if (!canReorder) return;
+									if (!canReorder || fieldItem.isPinned) return;
 									event.dataTransfer.setData("text/plain", fieldItem.key);
 									event.dataTransfer.effectAllowed = "move";
 								}}
 								onDragOver={(event) => {
-									if (!canReorder) return;
+									if (!canReorder || fieldItem.isPinned) return;
 									event.preventDefault();
 									event.dataTransfer.dropEffect = "move";
 								}}
 								onDrop={(event) => {
-									if (!canReorder) return;
+									if (!canReorder || fieldItem.isPinned) return;
 									event.preventDefault();
 									const sourceKey = event.dataTransfer.getData("text/plain");
 									const reorderedFields = reorderFieldPermissionRows(
@@ -260,8 +264,17 @@ export function FieldPermissionsField({
 								}}
 							>
 								{canReorder && (
-									<td className="border-b border-input px-3 py-2 text-center text-neutral-70 cursor-grab">
-										::
+									<td className="border-b border-input px-3 py-2 text-center text-neutral-70">
+										<span
+											className={
+												fieldItem.isPinned
+													? "cursor-not-allowed opacity-40"
+													: "cursor-grab"
+											}
+											aria-hidden="true"
+										>
+											::
+										</span>
 									</td>
 								)}
 								<td className="border-b border-input px-3 py-2 text-neutral-80">
