@@ -17,7 +17,7 @@ const makeInstitution = (overrides: Partial<Institution> = {}): Institution =>
 		name: "Alpha",
 		status: "public",
 		email: "alpha@example.de",
-		phone: "+49 30 123456",
+		phone: "+49 30 000000",
 		address: {
 			street: "Musterstrasse",
 			street_number: "12",
@@ -113,6 +113,48 @@ describe("downloadInstitutions permission resolution", () => {
 		expect(csv).toContain("E-Mail");
 		expect(csv).toContain("Telefon");
 		expect(csv).toContain("alpha@example.de");
+	});
+
+	it("resolves address and contact person subfields independently for downloads", async () => {
+		getDownloadReadableFieldsMock.mockResolvedValue({
+			readableFields: ["name", "address.city", "contact_person.email"],
+			guestReadableFields: ["name"],
+			columnFields: ["name", "address.city", "contact_person.email"],
+			audience: "internal",
+			internalInstitutionIds: null,
+		});
+
+		await downloadInstitutions({
+			data: [
+				makeInstitution({
+					contact_person: {
+						first_name: "Ada",
+						last_name: "Lovelace",
+						email: "ada@example.de",
+						phone: "+49 30 654321",
+					},
+				} as Partial<Institution>),
+			],
+			filename: "kulturorte",
+			format: "csv",
+			translateFn: (key) =>
+				(
+					({
+						"enumMap.field_names.name.label": "Name",
+						"enumMap.field_names.city.label": "Ort",
+						"enumMap.field_names.contact_person_email.label":
+							"Ansprechperson E-Mail",
+					}) as Record<string, string>
+				)[key] ?? key,
+		});
+
+		const csv = await blobArg?.text();
+		expect(csv?.replace(/^\uFEFF/, "").split("\r\n")[0]).toBe(
+			'"Name","Ort","Ansprechperson E-Mail"',
+		);
+		expect(csv).toContain('"Alpha","Berlin","ada@example.de"');
+		expect(csv).not.toContain("Musterstrasse");
+		expect(csv).not.toContain("+49 30 654321");
 	});
 
 	it("still restricts guest downloads to guest-readable fields", async () => {

@@ -1,31 +1,19 @@
 import { INSTITUTION_PERMISSION_FIELDS } from "@/types/institution";
+import {
+	ADDRESS_PERMISSION_FIELD_MAP,
+	ADDRESS_PERMISSION_FIELDS,
+	CONTACT_PERSON_PERMISSION_FIELD_MAP,
+} from "@/lib/utils/institutionRelationFields";
 
 const permissionFields = new Set<string>(
 	INSTITUTION_PERMISSION_FIELDS as readonly string[],
 );
 
 const permissionFieldAliasMap: Record<string, string> = {
-	street: "address.street",
-	street_number: "address.street",
-	streetLine: "address.street",
-	"address.streetLine": "address.street",
-	"address.street_number": "address.street",
-	address_suffix: "address.address_suffix",
-	zip: "address.zipcode",
-	"address.zip": "address.zipcode",
-	zipcode: "address.zipcode",
-	city: "address.city",
-	district: "address.district",
-	neighbourhood: "address.neighbourhood",
-	cultural_area: "address.cultural_area",
-	lat: "address.lat",
-	lng: "address.lng",
+	...ADDRESS_PERMISSION_FIELD_MAP,
 	contact_person_name: "contact_person.first_name",
-	contact_person_first_name: "contact_person.first_name",
-	contact_person_last_name: "contact_person.last_name",
-	contact_person_email: "contact_person.email",
-	contact_person_phone: "contact_person.phone",
 	contact_person_surname: "contact_person.last_name",
+	...CONTACT_PERSON_PERMISSION_FIELD_MAP,
 	funding_source_name: "funding_sources",
 	funding_source_description: "funding_sources",
 	funding_source: "funding_sources",
@@ -35,14 +23,7 @@ const permissionFieldAliasMap: Record<string, string> = {
 };
 
 [
-	"address.address_suffix",
-	"address.zipcode",
-	"address.city",
-	"address.district",
-	"address.neighbourhood",
-	"address.cultural_area",
-	"address.lat",
-	"address.lng",
+	...ADDRESS_PERMISSION_FIELDS,
 	"contact_person.first_name",
 	"contact_person.last_name",
 	"contact_person.email",

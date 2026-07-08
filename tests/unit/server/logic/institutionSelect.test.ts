@@ -97,4 +97,41 @@ describe("buildInstitutionSelect", () => {
 			},
 		});
 	});
+
+	it("selects only requested address and contact person subfields", () => {
+		const select = buildInstitutionSelect(
+			createContext({
+				"address.cultural_area": new Set(["read"]),
+				"contact_person.email": new Set(["read"]),
+			}),
+		);
+
+		expect(select).toMatchObject({
+			id: true,
+			address: {
+				select: {
+					id: true,
+					cultural_area: true,
+				},
+			},
+			contact_person: {
+				select: {
+					id: true,
+					email: true,
+				},
+			},
+		});
+		expect(select?.address).not.toMatchObject({
+			select: {
+				street: true,
+				city: true,
+			},
+		});
+		expect(select?.contact_person).not.toMatchObject({
+			select: {
+				first_name: true,
+				phone: true,
+			},
+		});
+	});
 });

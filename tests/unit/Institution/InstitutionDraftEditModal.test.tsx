@@ -10,6 +10,7 @@ const institutionFormModalMock = vi.fn();
 const mockSubmissions: Array<Record<string, unknown>> = [];
 const initializePublicDataMock = vi.fn();
 let mockInstitutionCategories: Array<Record<string, unknown>> | null = null;
+let mockSubmitData: Record<string, unknown>;
 
 vi.mock("react-i18next", () => ({
 	useTranslation: () => ({
@@ -35,18 +36,7 @@ vi.mock("@/components/Institution/InstitutionFormModal", () => ({
 							| ((args: { data: Record<string, unknown> }) => void)
 							| undefined;
 						onSubmit?.({
-							data: {
-								name: "Updated draft",
-								"address.streetLine": "Main 1",
-								"address.city": "Berlin",
-								"address.zip": "10115",
-								categoryFilters: {
-									district_keys: [],
-									category_keys: ["cat-a"],
-									child_category_keys: [],
-									include_closed: false,
-								},
-							},
+							data: mockSubmitData,
 						});
 					}}
 				>
@@ -66,6 +56,7 @@ vi.mock("@/lib/store/accountStore", () => ({
 		selector: (state: {
 			submissions: Array<Record<string, unknown>>;
 			categories: Array<Record<string, unknown>>;
+			currentProfile: Record<string, unknown> | null;
 			upsertSubmission: (submission: unknown) => void;
 			removeSubmission: (id: number) => void;
 		}) => unknown,
@@ -73,6 +64,13 @@ vi.mock("@/lib/store/accountStore", () => ({
 		selector({
 			submissions: mockSubmissions,
 			categories: [{ id: 1, key: "cat-a", parent_category_id: null }],
+			currentProfile: {
+				id: "user-1",
+				first_name: "Test",
+				last_name: "User",
+				email: "test.user@example.com",
+				phone: "+49 30 000000",
+			},
 			upsertSubmission: vi.fn(),
 			removeSubmission: vi.fn(),
 		}),
@@ -110,6 +108,18 @@ describe("InstitutionDraftEditModal", () => {
 		refreshMock.mockReset();
 		initializePublicDataMock.mockReset();
 		mockInstitutionCategories = null;
+		mockSubmitData = {
+			name: "Updated draft",
+			"address.streetLine": "Main 1",
+			"address.city": "Berlin",
+			"address.zip": "10115",
+			categoryFilters: {
+				district_keys: [],
+				category_keys: ["cat-a"],
+				child_category_keys: [],
+				include_closed: false,
+			},
+		};
 		mockSubmissions.length = 0;
 		mockSubmissions.push({
 			id: 11,
@@ -137,10 +147,12 @@ describe("InstitutionDraftEditModal", () => {
 			routePath: string;
 			closeOnSubmit: boolean;
 			submitLabel: string;
+			profile?: Record<string, unknown>;
 		};
 		expect(props.routePath).toBe("/account/submissions/11/edit");
 		expect(props.closeOnSubmit).toBe(true);
 		expect(props.submitLabel).toBe("institutionFormModal.actions.save");
+		expect(props.profile).toBeUndefined();
 
 		fireEvent.click(screen.getByRole("button", { name: "submit-draft" }));
 
@@ -153,6 +165,41 @@ describe("InstitutionDraftEditModal", () => {
 			expect.objectContaining({
 				data: expect.objectContaining({
 					categoryIds: [1],
+				}),
+			}),
+		);
+	});
+
+	it("persists changed contact person fields when editing a submission", async () => {
+		mockSubmitData = {
+			...mockSubmitData,
+			contact_person_first_name: "Changed",
+			contact_person_last_name: "Contact",
+			contact_person_email: "changed@example.com",
+			contact_person_phone: "+49 30 999999",
+		};
+
+		render(
+			<InstitutionDraftEditModal
+				submissionId={11}
+				routePath="/account/submissions/11/edit"
+			/>,
+		);
+
+		fireEvent.click(screen.getByRole("button", { name: "submit-draft" }));
+
+		await waitFor(() => {
+			expect(mockedUpdateSubmission).toHaveBeenCalledWith(
+				expect.objectContaining({ id: 11 }),
+			);
+		});
+		expect(mockedUpdateSubmission).toHaveBeenCalledWith(
+			expect.objectContaining({
+				data: expect.objectContaining({
+					contact_person_first_name: "Changed",
+					contact_person_last_name: "Contact",
+					contact_person_email: "changed@example.com",
+					contact_person_phone: "+49 30 999999",
 				}),
 			}),
 		);
@@ -215,7 +262,7 @@ describe("InstitutionDraftEditModal", () => {
 				name: "All Fields Institution",
 				parent_organization: "Kulturverein Berlin",
 				email: "allfields@example.com",
-				phone: "+49 30 123456",
+				phone: "+49 30 000000",
 				website: "https://example.org/location",
 				utilization_status: "in_use",
 				utilization_status_info: "Nutzung werktags mit wechselnden Formaten",
@@ -284,7 +331,7 @@ describe("InstitutionDraftEditModal", () => {
 		expect(institution.name).toBe("All Fields Institution");
 		expect(institution.parent_organization).toBe("Kulturverein Berlin");
 		expect(institution.email).toBe("allfields@example.com");
-		expect(institution.phone).toBe("+49 30 123456");
+		expect(institution.phone).toBe("+49 30 000000");
 		expect(institution.website).toBe("https://example.org/location");
 		expect(institution.utilization_status).toBe("in_use");
 		expect(institution.utilization_status_info).toBe(

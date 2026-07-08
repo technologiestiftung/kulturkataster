@@ -16,6 +16,10 @@ import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useAccountStore } from "@/lib/store/accountStore";
 import { resolveCategoriesFromDraft } from "@/lib/utils/institutionCategoryUtils";
 import { useInstitutionPrivateFieldResolver } from "@/lib/hooks/useInstitutionPrivateFieldResolver";
+import {
+	inheritInstitutionRelationFields,
+	normalizeInstitutionRelationFields,
+} from "@/lib/utils/institutionRelationFields";
 type InstitutionReviewProps = {
 	data: Record<string, unknown>;
 	newData?: Record<string, unknown>;
@@ -122,18 +126,23 @@ export function InstitutionReview({
 
 	const resolvedData = useMemo(() => {
 		const categoriesForData = resolveCategoriesForData(data);
-		return categoriesForData
+		const dataWithCategories = categoriesForData
 			? { ...data, categories: categoriesForData }
 			: data;
+		return normalizeInstitutionRelationFields(dataWithCategories);
 	}, [data, resolveCategoriesForData]);
 
 	const resolvedNewData = useMemo(() => {
 		if (!newData) return undefined;
 		const categoriesForNewData = resolveCategoriesForData(newData);
-		return categoriesForNewData
+		const dataWithCategories = categoriesForNewData
 			? { ...newData, categories: categoriesForNewData }
 			: newData;
-	}, [newData, resolveCategoriesForData]);
+		return inheritInstitutionRelationFields(
+			normalizeInstitutionRelationFields(dataWithCategories),
+			resolvedData,
+		);
+	}, [newData, resolveCategoriesForData, resolvedData]);
 
 	return (
 		<div className="space-y-4 flex flex-col">
