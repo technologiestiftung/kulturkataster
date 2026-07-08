@@ -1,4 +1,5 @@
 import { normalizeInstitutionPermissionField } from "@/lib/utils/institutionPermissionField";
+import { CONTACT_PERSON_PERMISSION_FIELD_MAP } from "@/lib/utils/institutionRelationFields";
 
 export type ExportAudience = "guest" | "internal";
 
@@ -12,10 +13,11 @@ const EXPORT_KEYS_BY_PERMISSION_FIELD: Record<string, readonly string[]> = {
 	"address.cultural_area": ["cultural_area"],
 	"address.lat": ["lat"],
 	"address.lng": ["lng"],
-	"contact_person.first_name": ["contact_person_first_name"],
-	"contact_person.last_name": ["contact_person_last_name"],
-	"contact_person.email": ["contact_person_email"],
-	"contact_person.phone": ["contact_person_phone"],
+	...Object.fromEntries(
+		Object.entries(CONTACT_PERSON_PERMISSION_FIELD_MAP).map(
+			([exportKey, permissionField]) => [permissionField, [exportKey]],
+		),
+	),
 };
 
 export const getInstitutionExportColumnOrder = (

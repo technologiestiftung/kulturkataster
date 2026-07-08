@@ -20,6 +20,7 @@ import {
 	getCoordinatesFromAddress,
 	getParentCategories,
 } from "@/lib/utils/institutionUtils";
+import { normalizeAddressForDiff } from "@/lib/utils/institutionRelationFields";
 import { type InfoWrapperConfig, type InfoWrapperFieldConfig } from "./types";
 import { StatusItem } from "./StatusItem";
 import { CategoryItem } from "./CategoryItem";
@@ -382,6 +383,25 @@ const renderFieldContent = (
 	{ field, data, newData, alwaysShow, isPrivate, t }: RenderFieldContentArgs,
 	includeLayout = true,
 ) => {
+	const mergeAddressForDiff = (
+		currentData: Partial<Institution>,
+		nextData?: Partial<Institution>,
+	) => {
+		if (
+			field.type !== "address" ||
+			!nextData?.address ||
+			!currentData.address
+		) {
+			return nextData;
+		}
+		return {
+			...nextData,
+			address: {
+				...currentData.address,
+				...nextData.address,
+			},
+		};
+	};
 	const value = resolveFieldValue(field, data);
 	const resolvedHref = resolveHref(field, value, data);
 	const action = getEditAction({
@@ -407,11 +427,12 @@ const renderFieldContent = (
 	})();
 	const effectiveNewData =
 		newData && !isFieldPresentInNewData ? undefined : newData;
-	const newValue = effectiveNewData
-		? resolveFieldValue(field, effectiveNewData)
+	const comparableNewData = mergeAddressForDiff(data, effectiveNewData);
+	const newValue = comparableNewData
+		? resolveFieldValue(field, comparableNewData)
 		: undefined;
-	const resolvedNewHref = effectiveNewData
-		? resolveHref(field, newValue, effectiveNewData)
+	const resolvedNewHref = comparableNewData
+		? resolveHref(field, newValue, comparableNewData)
 		: undefined;
 
 	const gridClass = getGridClass(field);
@@ -529,15 +550,20 @@ const renderFieldContent = (
 	})();
 
 	const hasNew =
-		newData !== undefined &&
+		comparableNewData !== undefined &&
 		(() => {
 			switch (field.type) {
 				case "address":
-					return Boolean(newData.address) && formatAddressValue(newData) !== "";
+					return (
+						Boolean(comparableNewData.address) &&
+						formatAddressValue(comparableNewData) !== ""
+					);
 				case "category":
-					return Boolean(getParentCategories(newData)?.length);
+					return Boolean(getParentCategories(comparableNewData)?.length);
 				case "fundingSources":
-					return hasRenderableDisplayValue(resolveFieldValue(field, newData));
+					return hasRenderableDisplayValue(
+						resolveFieldValue(field, comparableNewData),
+					);
 				default:
 					return (
 						hasRenderableDisplayValue(newValue) ||
@@ -592,13 +618,21 @@ const renderFieldContent = (
 	};
 
 	const originalDisplay = renderValueDisplay(value, resolvedHref, data);
-	const newDisplay = newData
-		? renderValueDisplay(newValue, resolvedNewHref, newData)
+	const newDisplay = comparableNewData
+		? renderValueDisplay(newValue, resolvedNewHref, comparableNewData)
 		: null;
 	const hasDiff =
 		newData !== undefined &&
 		(() => {
 			if (field.type === "address" || field.type === "category") {
+				if (field.type === "address") {
+					return (
+						normalizeAddressForDiff(data as Record<string, unknown>) !==
+						normalizeAddressForDiff(
+							comparableNewData as Record<string, unknown>,
+						)
+					);
+				}
 				return String(originalDisplay) !== String(newDisplay ?? "");
 			}
 			if (field.type === "fundingSources") {

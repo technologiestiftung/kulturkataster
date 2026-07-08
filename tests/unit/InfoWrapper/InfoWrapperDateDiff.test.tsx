@@ -121,6 +121,44 @@ describe("InfoWrapper date review diffs", () => {
 		expect(screen.getByText("Berlin")).toBeInTheDocument();
 	});
 
+	it("does not show an edited address when new data omits unchanged district", () => {
+		render(
+			<InfoWrapper
+				data={{
+					name: "Wolf Kino",
+					address: {
+						street: "Weserstraße",
+						street_number: "12",
+						zipcode: "12047",
+						city: "Berlin",
+						district: "Neukölln",
+					},
+				}}
+				newData={{
+					name: "Wolf Kino",
+					address: {
+						street: "Weserstraße",
+						street_number: "12",
+						zipcode: "12047",
+						city: "Berlin",
+					},
+				}}
+				config={{
+					fields: [
+						{
+							id: "address",
+							label: "Address",
+							type: "address",
+						},
+					],
+				}}
+			/>,
+		);
+
+		expect(screen.queryByText("edited")).not.toBeInTheDocument();
+		expect(screen.getByText("Berlin-Neukölln")).toBeInTheDocument();
+	});
+
 	it("marks date and year fields as edited when the underlying date changes", () => {
 		render(
 			<InfoWrapper
