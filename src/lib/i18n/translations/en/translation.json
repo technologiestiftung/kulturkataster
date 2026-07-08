@@ -630,8 +630,6 @@
 		"no": "No",
 		"privateFieldDescription": "This information will be accessible exclusively to authorized users in the protected area of the Kulturkataster and will not be publicly visible.",
 		"save": "Save",
-		"select": "Select...",
-		"selectPlaceholder": "No",
 		"search": {
 			"description": "Discover Berlin's cultural landscape easily: Enter a cultural venue name, address, district, or neighborhood into the search function and select the result from the suggestions displayed. Your selection will be shown directly on the map.",
 			"hint": "Enter address or cultural venue",
@@ -640,6 +638,8 @@
 			"searchButton": "Search",
 			"suggestions": "Suggestions for your search"
 		},
+		"select": "Select...",
+		"selectPlaceholder": "No",
 		"sensitiveInformation": "Protected Information",
 		"siteTitle": "Berlin Kulturkataster",
 		"skipToContent": "Skip to main content",
@@ -656,6 +656,18 @@
 			"title": "My Account"
 		},
 		"venue": {
+			"address": "Address",
+			"backToMap": "Back to Map",
+			"contact": "Contact",
+			"details": "Venue Details",
+			"email": "Email",
+			"funding": "Funding Type",
+			"notFound": "Venue not found",
+			"organization": "Organization",
+			"parent": "Parent Organization",
+			"phone": "Phone",
+			"support": "Support Type",
+			"unnamed": "Unnamed Venue",
 			"website": "Website"
 		},
 		"yes": "Yes"
@@ -1380,6 +1392,17 @@
 			"editSelectEmpty": "No cultural venues found.",
 			"editSelectNoAddress": "No address provided"
 		},
+		"institutionDraftEditModal": {
+			"delete": {
+				"button": "Delete draft",
+				"cancel": "Cancel",
+				"confirm": "Delete",
+				"confirmDescription": "The submission will be permanently removed. This action cannot be undone.",
+				"confirmTitle": "Delete draft?",
+				"successDescription": "The submission has been deleted.",
+				"successTitle": "Draft deleted"
+			}
+		},
 		"institutionDraftIntroModal": {
 			"choice": {
 				"guest": {
@@ -1414,17 +1437,6 @@
 				"title": "Thank you for your submission"
 			},
 			"title": "Contribute to the Berlin cultural register"
-		},
-		"institutionDraftEditModal": {
-			"delete": {
-				"button": "Delete draft",
-				"cancel": "Cancel",
-				"confirm": "Delete",
-				"confirmDescription": "The submission will be permanently removed. This action cannot be undone.",
-				"confirmTitle": "Delete draft?",
-				"successDescription": "The submission has been deleted.",
-				"successTitle": "Draft deleted"
-			}
 		},
 		"institutionDraftWizardModal": {
 			"actions": {
@@ -2006,15 +2018,15 @@
 					"columnLabel": "Field",
 					"description": "Limit updates to specific culture location fields.",
 					"reorderLabel": "Reorder fields",
-					"sectionShort": {
-						"address": "Adr.",
-						"contact_person": "CP"
-					},
 					"sections": {
 						"address": "Address",
 						"contact_person": "Contact person",
 						"institution": "Cultural site fields",
 						"relations": "relationships"
+					},
+					"sectionShort": {
+						"address": "Adr.",
+						"contact_person": "CP"
 					},
 					"title": "Field permissions"
 				},
@@ -2712,6 +2724,7 @@
 				"add": "Add user",
 				"reviewClaims": "Review claims"
 			},
+			"allCompliance": "All compliance statuses",
 			"columns": {
 				"access": "Access to cultural sites",
 				"claims": "Cultural venue inquiries",
@@ -2725,6 +2738,10 @@
 				"status": "status",
 				"updatedAt": "Updated On"
 			},
+			"compliance": {
+				"accepted": "GDPR accepted",
+				"rejected": "GDPR not accepted"
+			},
 			"empty": {
 				"description": "Create a new user to get started.",
 				"title": "No users found."
@@ -2736,7 +2753,7 @@
 				"allStatuses": "All statuses",
 				"apply": "Apply",
 				"button": "Filter",
-				"description": "Narrow users by status, role, and groups.",
+				"description": "Narrow users by status, role, groups, and compliance.",
 				"reset": "Reset",
 				"title": "Filter users"
 			},
@@ -3271,6 +3288,11 @@
 				"label": "Umbrella Organization",
 				"placeholder": "Please enter"
 			},
+			"password": {
+				"errors": {
+					"required": "Password is required"
+				}
+			},
 			"phone": {
 				"description": "",
 				"errors": {
@@ -3542,6 +3564,7 @@
 			"public": "Public",
 			"removal_pending": "Removal Pending"
 		},
+		"none": "No information",
 		"owner_type": {
 			"district_property": "District Property",
 			"federal_property": "Federal Property",
