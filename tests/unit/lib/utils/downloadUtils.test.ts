@@ -1,3 +1,4 @@
+import { inflateRawSync } from "node:zlib";
 import { describe, expect, it } from "vitest";
 import * as XLSX from "xlsx-js-style";
 import {
@@ -39,6 +40,69 @@ const makeInstitution = (): Institution =>
 		tags: [{ id: 10, name: "barrier-free" }],
 		funding_sources: [{ id: 20, source_name: "state", description: "Grant" }],
 	}) as unknown as Institution;
+
+function readZipEntryText(buffer: ArrayBuffer, entryName: string) {
+	const bytes = Buffer.from(buffer);
+	let endOfCentralDirectoryOffset = -1;
+
+	for (let offset = bytes.length - 22; offset >= 0; offset -= 1) {
+		if (bytes.readUInt32LE(offset) === 0x06054b50) {
+			endOfCentralDirectoryOffset = offset;
+			break;
+		}
+	}
+
+	if (endOfCentralDirectoryOffset === -1) {
+		throw new Error("Could not find XLSX central directory");
+	}
+
+	const entryCount = bytes.readUInt16LE(endOfCentralDirectoryOffset + 10);
+	let centralDirectoryOffset = bytes.readUInt32LE(
+		endOfCentralDirectoryOffset + 16,
+	);
+
+	for (let index = 0; index < entryCount; index += 1) {
+		if (bytes.readUInt32LE(centralDirectoryOffset) !== 0x02014b50) {
+			throw new Error("Invalid XLSX central directory entry");
+		}
+
+		const compressionMethod = bytes.readUInt16LE(centralDirectoryOffset + 10);
+		const compressedSize = bytes.readUInt32LE(centralDirectoryOffset + 20);
+		const fileNameLength = bytes.readUInt16LE(centralDirectoryOffset + 28);
+		const extraFieldLength = bytes.readUInt16LE(centralDirectoryOffset + 30);
+		const fileCommentLength = bytes.readUInt16LE(centralDirectoryOffset + 32);
+		const localHeaderOffset = bytes.readUInt32LE(centralDirectoryOffset + 42);
+		const fileName = bytes
+			.subarray(
+				centralDirectoryOffset + 46,
+				centralDirectoryOffset + 46 + fileNameLength,
+			)
+			.toString("utf8");
+
+		if (fileName === entryName) {
+			const localFileNameLength = bytes.readUInt16LE(localHeaderOffset + 26);
+			const localExtraFieldLength = bytes.readUInt16LE(localHeaderOffset + 28);
+			const dataOffset =
+				localHeaderOffset + 30 + localFileNameLength + localExtraFieldLength;
+			const compressed = bytes.subarray(
+				dataOffset,
+				dataOffset + compressedSize,
+			);
+
+			if (compressionMethod === 0) return compressed.toString("utf8");
+			if (compressionMethod === 8)
+				return inflateRawSync(compressed).toString("utf8");
+			throw new Error(
+				`Unsupported XLSX compression method ${compressionMethod}`,
+			);
+		}
+
+		centralDirectoryOffset +=
+			46 + fileNameLength + extraFieldLength + fileCommentLength;
+	}
+
+	throw new Error(`Could not find XLSX entry ${entryName}`);
+}
 
 describe("prepareDataForExport", () => {
 	it("flattens the nested prisma institution shape for export", () => {
@@ -190,6 +254,37 @@ describe("prepareDataForExport", () => {
 		]);
 	});
 
+	it("keeps permitted scalar columns even when every exported value is empty", () => {
+		const rows = prepareDataForExport(
+			[
+				{
+					...makeInstitution(),
+					rental_contract_end: null,
+					protection_status: null,
+					utilization_status_internal_notes: null,
+				} as Institution,
+			],
+			{
+				readablePermissionFields: [
+					"name",
+					"utilization_status_internal_notes",
+					"protection_status",
+					"rental_contract_end",
+				],
+				audience: "internal",
+			},
+		);
+
+		expect(rows).toEqual([
+			{
+				Name: "Alpha",
+				"Utilization Status Internal Notes": "",
+				"Protection Status": "",
+				"Rental Contract End": "",
+			},
+		]);
+	});
+
 	it("uses the shared field option translation logic for enums", () => {
 		const rows = prepareDataForExport(
 			[
@@ -252,6 +347,36 @@ describe("prepareDataForExport", () => {
 			"Owner Type": "Bund",
 			"Utilization Status": "Vorübergehend geschlossen",
 			"Shared Use Allowed": "Ja",
+		});
+	});
+
+	it("does not translate free-text values that contain colons", () => {
+		const rows = prepareDataForExport(
+			[
+				{
+					...makeInstitution(),
+					notes: "Betreiber Projektraum: Supergroup",
+					name: "Wolf Kino: Projektraum",
+				} as Institution,
+			],
+			{
+				readablePermissionFields: ["name", "notes"],
+				audience: "internal",
+				translateFn: (key) => {
+					if (key === "enumMap.field_names.notes.label") {
+						return "Zusätzliche Informationen";
+					}
+					if (key.includes(":")) {
+						return key.split(":").at(-1)?.trim() ?? key;
+					}
+					return key;
+				},
+			},
+		);
+
+		expect(rows[0]).toMatchObject({
+			Name: "Wolf Kino: Projektraum",
+			"Zusätzliche Informationen": "Betreiber Projektraum: Supergroup",
 		});
 	});
 
@@ -520,5 +645,30 @@ describe("generateExcelBuffer", () => {
 		expect(worksheet.A2?.l?.Target).toBe(
 			"https://kulturkataster.berlin/de/download",
 		);
+	});
+
+	it("wraps exported data cells so multiline notes stay visible from the top", () => {
+		const note = [
+			"Erster Teil der Notiz",
+			"Zweiter Teil der Notiz",
+			"Dritter Teil der Notiz",
+		].join("\n");
+		const buffer = generateExcelBuffer(
+			[
+				{
+					ID: "189",
+					"Zusätzliche Informationen": note,
+				},
+			],
+			"xlsx",
+		);
+		const workbook = XLSX.read(buffer, { type: "array", cellStyles: true });
+		const worksheet = workbook.Sheets.Kulturorte;
+		const stylesXml = readZipEntryText(buffer, "xl/styles.xml");
+		const sheetXml = readZipEntryText(buffer, "xl/worksheets/sheet1.xml");
+
+		expect(worksheet.B7?.v).toBe(note);
+		expect(sheetXml).toMatch(/<c r="B7" s="\d+" t="str"/);
+		expect(stylesXml).toContain('<alignment vertical="top" wrapText="true"/>');
 	});
 });

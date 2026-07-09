@@ -58,6 +58,10 @@ export const institutionRepo = {
 		prisma.institution.deleteMany({ where }),
 	findFirstWithInclude: (where: Prisma.InstitutionWhereInput) =>
 		prisma.institution.findFirst({ where, include: institutionInclude }),
+	findFirstWithSelect: (
+		where: Prisma.InstitutionWhereInput,
+		select: Prisma.InstitutionSelect,
+	) => prisma.institution.findFirst({ where, select }),
 	search: (where: InstitutionWhereInput, take = 50) =>
 		prisma.institution.findMany({
 			where,

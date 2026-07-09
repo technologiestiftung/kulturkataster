@@ -81,8 +81,14 @@ export async function getInstitutionById(id: number) {
 	const currentUserId = await getCurrentUserId();
 	const ctx = await getAccessContextForUser(currentUserId);
 	authorizeTable(ctx, "institution", "read");
-	const baseWhere = { id: validatedId };
-	return institutionRepo.findFirstWithInclude(baseWhere);
+	const select = buildInstitutionSelect(ctx);
+	if (!select) return null;
+	const scope = getTableScope(ctx, "institution", "read");
+	const where = buildInstitutionScopedWhere(scope, currentUserId, {
+		id: validatedId,
+	});
+	if (!where) return null;
+	return institutionRepo.findFirstWithSelect(where, select);
 }
 
 const buildInstitutionFieldList = (

@@ -51,7 +51,23 @@ const enumKeyMappings: Record<string, string> = {
 	status: "institution_status",
 };
 
+const TRANSLATED_VALUE_EXPORT_KEYS = new Set([
+	"categories",
+	"subcategories",
+	"funding_sources",
+	"funding_type",
+	"owner_type",
+	"protection_status",
+	"rental_contract_type",
+	"shared_use_allowed",
+	"status",
+	"utilization_status",
+]);
+
 const URL_EXPORT_KEYS = new Set(["website"]);
+
+const shouldTranslateExportValue = (exportKey: string) =>
+	TRANSLATED_VALUE_EXPORT_KEYS.has(exportKey);
 
 const isObjectRecord = (value: unknown): value is Record<string, unknown> =>
 	typeof value === "object" &&
@@ -137,10 +153,12 @@ function formatScalarValue(
 		const date = parseIsoDateValue(value);
 		return date
 			? formatDateValue(date)
-			: translateEnumValue(exportKey, value, translateFn);
+			: shouldTranslateExportValue(exportKey)
+				? translateEnumValue(exportKey, value, translateFn)
+				: value;
 	}
 	if (typeof value === "number") {
-		return translateEnumValue(exportKey, value, translateFn);
+		return String(value);
 	}
 	return String(value);
 }
@@ -200,7 +218,9 @@ function extractDisplayValueFromObject(
 	for (const preferredKey of preferredKeys) {
 		const rawValue = item[preferredKey];
 		if (typeof rawValue === "string" || typeof rawValue === "number") {
-			return translateEnumValue(exportKey, rawValue, translateFn);
+			return shouldTranslateExportValue(exportKey)
+				? translateEnumValue(exportKey, rawValue, translateFn)
+				: String(rawValue);
 		}
 	}
 
@@ -223,9 +243,12 @@ function formatArrayField(
 	if (typeof firstItem === "string" || typeof firstItem === "number") {
 		return {
 			[exportKey]: value
-				.map((item) =>
-					translateEnumValue(exportKey, item as string | number, translateFn),
-				)
+				.map((item) => {
+					const _value = item as string | number;
+					return shouldTranslateExportValue(exportKey)
+						? translateEnumValue(exportKey, _value, translateFn)
+						: String(_value);
+				})
 				.join("; "),
 		};
 	}
@@ -477,7 +500,10 @@ export function prepareDataForExport(
 			];
 		}
 		if (preferredOrder.length > 0) {
-			return preferredOrder.filter((key) => columnOrder.includes(key));
+			return [
+				...preferredOrder,
+				...columnOrder.filter((key) => !preferredOrder.includes(key)),
+			];
 		}
 		return columnOrder;
 	})();
@@ -607,6 +633,34 @@ function applyExcelHeaderStyle(ws: XLSX.WorkSheet, headers: string[]) {
 	});
 }
 
+function applyExcelDataCellStyle(
+	ws: XLSX.WorkSheet,
+	data: Record<string, string>[],
+) {
+	if (data.length === 0) return;
+
+	const headers = Object.keys(data[0]);
+	data.forEach((_row, rowIndex) => {
+		headers.forEach((_header, colIndex) => {
+			const cellAddress = XLSX.utils.encode_cell({
+				r: EXCEL_NOTICE_ROWS + 1 + rowIndex,
+				c: colIndex,
+			});
+			const cell = ws[cellAddress];
+			if (!cell) return;
+
+			cell.s = {
+				...(cell.s ?? {}),
+				alignment: {
+					...((cell.s as XLSX.CellObject["s"])?.alignment ?? {}),
+					vertical: "top",
+					wrapText: true,
+				},
+			};
+		});
+	});
+}
+
 function getHyperlinkTarget(value: string): string | null {
 	const trimmedValue = value.trim();
 	if (!trimmedValue) return null;
@@ -700,6 +754,7 @@ export function generateExcelBuffer(
 			origin: `A${EXCEL_NOTICE_ROWS + 1}`,
 		});
 		applyExcelHeaderStyle(ws, Object.keys(data[0]));
+		applyExcelDataCellStyle(ws, data);
 		applyExcelHyperlinks(ws, data);
 	}
 	applyExcelColumnWidths(ws, data);
