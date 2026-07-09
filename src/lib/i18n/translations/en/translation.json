@@ -3,17 +3,17 @@
 		"about": "About",
 		"accessibility": {
 			"contrast": {
-				"darkMode": "Dark mode",
+				"darkMode": "Dark Mode",
 				"lightMode": "Light mode"
 			},
 			"fontSize": {
-				"title": "Increased font size"
+				"title": "Larger Text"
 			},
 			"motion": {
-				"title": "Reduced motion"
+				"title": "Reduced Motion"
 			},
 			"signLanguage": {
-				"title": "German Sign Language"
+				"title": "German Sign Language (DGS)"
 			},
 			"simpleLanguage": {
 				"title": "Plain Language"
@@ -22,7 +22,7 @@
 			"switchOn": "On",
 			"title": "Accessibility",
 			"viewMode": {
-				"title": "List view of cultural venues"
+				"title": "List view of cultural locations"
 			}
 		},
 		"add": {
@@ -56,10 +56,10 @@
 					},
 					"download": {
 						"action": "downloaded",
-						"institutionCount_one": "{{count}} cultural venue",
-						"institutionCount_other": "{{count}} cultural venues",
-						"institutionExport": "Cultural venues export",
-						"institutionExportWithFormat": "Cultural venues export ({{format}})"
+						"institutionCount_one": "{{count}} cultural location",
+						"institutionCount_other": "{{count}} cultural locations",
+						"institutionExport": "Cultural locations export",
+						"institutionExportWithFormat": "Cultural locations export ({{format}})"
 					},
 					"empty": "You don't have any activity yet.",
 					"emptyActions": {
@@ -73,7 +73,7 @@
 						"contact_person": "Contact person",
 						"funding_source": "Financial Source",
 						"group": "Group",
-						"institution": "Cultural venue",
+						"institution": "Cultural Location",
 						"role": "Role",
 						"role_field_permission": "Role field permission",
 						"role_table_permission": "Role table permission",
@@ -269,7 +269,7 @@
 				"title": "Welcome back."
 			},
 			"newsletter": {
-				"consentLabel": "Yes, I would like to subscribe to the Berlin Kulturkataster newsletter and consent to my email address being processed for this purpose. I can withdraw my consent at any time with future effect. *",
+				"consentLabel": "Yes, I would like to subscribe to the Berlin Kulturkataster newsletter and agree that my email address may be processed for this purpose. I can withdraw my consent at any time with effect for the future. *",
 				"consentRequired": "You must consent to the processing of your email address for the newsletter.",
 				"emailLabel": "Email",
 				"errorFallback": "Newsletter registration failed.",
@@ -277,13 +277,13 @@
 				"privacyLink": "Privacy Policy",
 				"submit": "Subscribe",
 				"submitting": "Submitting...",
-				"subtitle": "Our newsletter provides updates about the latest developments in the Berlin Kulturkataster. We are glad you want to subscribe. You can withdraw your consent to receive the newsletter at any time. You can find further information in our <link />.",
+				"subtitle": "Our newsletter keeps you informed about the latest developments regarding the Berlin Kulturkataster. We are pleased that you would like to subscribe. Please note that you can withdraw your consent to receive the newsletter at any time. Further information can be found in our <link />.",
 				"successCta": "Done",
 				"successMessageDescription": "You will now receive our news by email.",
 				"successMessageMail": "Please click the link in the email we just sent you to complete your subscription. Please also check your spam folder.",
 				"successMessageTitle": "Your registration was successful",
 				"thankYou": "Thank you!",
-				"title": "Berlin Kulturkataster newsletter"
+				"title": "Berlin Kulturkataster Newsletter"
 			},
 			"password": {
 				"hide": "Hide password",
@@ -447,11 +447,12 @@
 			},
 			"contact": "Contact",
 			"credit": {
-				"text": "© 2025 - A Project of Kulturraum Berlin gGmbH, funded by Berlin’s Senate Department for Culture and Community (Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt), with technical implementation by Technologiestiftung Berlin."
+				"text": "© 2025 - A project of Kulturraum Berlin gGmbH, funded by Berlin’s Senate Department for Culture and Community (Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt), with technical implementation by Technologiestiftung Berlin."
 			},
 			"imprint": "Imprint",
 			"navigation": "Footer navigation",
 			"navigationAriaLabel": "Footer navigation",
+			"newsletter": "Newsletter",
 			"privacy": "Privacy Policy",
 			"projectBy": "A Project of Kulturraum Berlin gGmbH",
 			"signLanguageInformation": "German Sign Language",
@@ -489,18 +490,18 @@
 			"additionalInfo": "Additional Information",
 			"backToMap": "Back to map",
 			"categories": "Categories",
-			"claimSelectDescription": "You can add cultural venues you are authorized for to your profile. For more completeness, a better overview, and faster editing.",
+			"claimSelectDescription": "You can add cultural locations you are authorized for to your profile. For more completeness, a better overview, and faster editing.",
 			"claimSelectSearchLabel": "Name or address of the Cultural Organization",
-			"claimSelectSubtitle": "Request management rights for cultural venues that belong to your association or company.",
+			"claimSelectSubtitle": "Request management rights for cultural locations that belong to your association or company.",
 			"claimSelectTitle": "Claim Cultural Organization",
 			"culturalArea": "Cultural Area",
-			"details": "Cultural venue details",
+			"details": "Cultural Location Details",
 			"district": "District",
 			"editSelectEmpty": "No Cultural Locations found.",
 			"editSelectNoAddress": "No address provided",
 			"editSelectSearchPlaceholder": "Search Cultural Locations...",
-			"editSelectSubtitle": "Select an existing cultural venue you would like to update.",
-			"editSelectTitle": "Select existing cultural venue",
+			"editSelectSubtitle": "Select an existing cultural location you would like to update.",
+			"editSelectTitle": "Select existing cultural location",
 			"emailAddress": "Email Address",
 			"establishedSince": "At the Location Since",
 			"establishedUntil": "At the Location Until",
@@ -509,7 +510,7 @@
 			"lessInfo": "Less information",
 			"moreInfo": "More information",
 			"multipleUse": "Available for Space Requests?",
-			"notFound": "Cultural venue not found",
+			"notFound": "Cultural location not found",
 			"owner": "Owner of the Property",
 			"ownerType": "Type of Owner",
 			"parentOrganization": "Umbrella Organization",
@@ -565,8 +566,8 @@
 			"title": "Language"
 		},
 		"listView": {
-			"institutionsListLabel": "List of cultural venues",
-			"noResultsFound": "No cultural venues found :(",
+			"institutionsListLabel": "List of cultural locations",
+			"noResultsFound": "No cultural locations found :(",
 			"scrollToTop": "Scroll to top",
 			"title": "List View",
 			"tryAdjustingFilters": "Try adjusting the filters. If you are sure this location exists, you can submit it via [this form /institution]."
@@ -631,10 +632,10 @@
 		"privateFieldDescription": "This information will be accessible exclusively to authorized users in the protected area of the Kulturkataster and will not be publicly visible.",
 		"save": "Save",
 		"search": {
-			"description": "Discover Berlin's cultural landscape easily: Enter a cultural venue name, address, district, or neighborhood into the search function and select the result from the suggestions displayed. Your selection will be shown directly on the map.",
-			"hint": "Enter address or cultural venue",
-			"noResults": "No cultural venues found.",
-			"noResultsFound": "No cultural venue or address could be found for your input. Please check the details and try again.",
+			"description": "Discover Berlin's cultural landscape easily: Enter a cultural location, address, district, or neighborhood into the search function and select the result from the suggestions displayed. Your selection will be shown directly on the map.",
+			"hint": "Enter address or cultural location",
+			"noResults": "No cultural locations found.",
+			"noResultsFound": "No cultural location or address could be found for your input. Please check the details and try again.",
 			"searchButton": "Search",
 			"suggestions": "Suggestions for your search"
 		},
@@ -847,7 +848,7 @@
 				"barriers": [
 					{
 						"description": "The website currently (as of September 2025) does not offer any content in plain language or videos in German Sign Language (DGS).",
-						"measures": "Texts in easy language and explanatory videos in German Sign Language (DGS) are currently in progress. ",
+						"measures": "Texts in plain language and explanatory videos in German Sign Language (DGS) are currently in progress. ",
 						"timeline": "The content is scheduled to be published in plain language and DGS in October 2025.",
 						"title": "Barrier: Content"
 					},
@@ -911,7 +912,7 @@
 		},
 		"accessibilitySettingsModal": {
 			"subtitle": "Here you will find all settings relating to accessibility on the website.",
-			"title": "Accessibility settings"
+			"title": "Accessibility Settings"
 		},
 		"categoryFormModal": {
 			"actions": {
@@ -1027,7 +1028,7 @@
 			},
 			"fields": {
 				"key": "Proposed category",
-				"linkedInstitution": "Linked cultural venue submission"
+				"linkedInstitution": "Linked cultural location submission"
 			},
 			"linkedSubmission": "Submission #{{id}}",
 			"notesLabel": "Internal Notes",
@@ -1072,7 +1073,7 @@
 			"dataUseAgreementConsent": "I agree to the data use agreement",
 			"dataUseAgreementText": "I will not share the data with third parties and will use it exclusively within the limits of legal requirements, in particular the GDPR where personal data is concerned, and only for the purposes of the Kulturkataster. The purposes of the Kulturkataster are non-commercial and comprise the systematic collection, structuring and public provision of data about places of cultural production and use in the State of Berlin, in order to create a reliable data basis for cultural policy decisions, cultural urban development, and collaboration between cultural actors, administration, academia and the public.",
 			"dataUseAgreementTitle": "Data use agreement",
-			"description": "You can download the list of your cultural venues here in different file formats.",
+			"description": "You can download the list of your cultural locations here in different file formats.",
 			"form": {
 				"datenverwendung": "What will you use the data for?",
 				"email": "Your email address",
@@ -1086,10 +1087,10 @@
 				"vorname": "First name"
 			},
 			"guestIntro": "Before you can download the data, we need a few details from you.",
-			"loading": "Loading cultural venues …",
+			"loading": "Loading cultural locations …",
 			"selectedFilters": "The selection consists of the following filters:",
-			"subtitle": "{{count}} cultural venues available for download",
-			"title": "Download my data as a list"
+			"subtitle": "{{count}} cultural locations available for download",
+			"title": "Download Data as a List"
 		},
 		"filter": {
 			"categories": {
@@ -1104,13 +1105,13 @@
 				"title": "Districts"
 			},
 			"districtTagsSwitchAriaLabel": "{{translatedName}} switch on or off",
-			"error": "Error loading filters",
+			"error": "Error loading Filters",
 			"hideClosed": "Hide Closed Locations",
-			"loading": "Loading filters...",
+			"loading": "Loading Filters...",
 			"retry": "Try again",
 			"showClosed": "Show Closed Locations",
-			"showMoreCategories": "Show more categories",
-			"showSelectedCategories": "Show selected categories",
+			"showMoreCategories": "Show more Categories",
+			"showSelectedCategories": "Show selected Categories",
 			"title": "Filter Cultural Locations"
 		},
 		"groupFormModal": {
@@ -1196,7 +1197,7 @@
 						"users": {
 							"emptyText": "No users found",
 							"filters": {
-								"role": "role"
+								"role": "Role"
 							},
 							"label": "users",
 							"placeholder": "Select users",
@@ -1229,16 +1230,16 @@
 		},
 		"imprintModal": {
 			"chairman": {
-				"name": "Cerstin Richter-Kotowski, State Secretary of the Senate Department for Culture and Social Cohesion",
-				"title": "Chairwoman of the Supervisory Board"
+				"name": "Cerstin Richter-Kotowski, State Secretary at the Senate Department for Culture and Community",
+				"title": "Chair of the Supervisory Board:"
 			},
 			"company": {
-				"address": "Spandau Dam 19",
-				"court": "Registration court: Berlin Charlottenburg District Court",
-				"registration": "Commercial register: HRB 217341 B",
-				"taxNumber": "VAT ID number: DE154218985",
+				"address": "Spandauer Damm 19",
+				"court": "Register Court: Amtsgericht Berlin-Charlottenburg",
+				"registration": "Commercial Register: HRB 217341 B",
+				"taxNumber": "VAT ID No.: DE154218985",
 				"title": "Kulturraum Berlin gGmbH",
-				"zip": "14059 Berlin"
+				"zip": "14059 Berlin, Germany"
 			},
 			"conception": {
 				"link1": {
@@ -1247,22 +1248,22 @@
 				},
 				"link2": {
 					"href": "https://unendlichemoeglichkeiten.de/en",
-					"text": "Studio for endless possibilities"
+					"text": "Studio für unendliche Möglichkeiten"
 				},
-				"title": "Conception"
+				"title": "Concept"
 			},
 			"contact": {
 				"email": "Email: kontakt@kulturraum.berlin",
 				"phone": "Telephone: +49 (0)30 30 30 444-60",
-				"title": "contact"
+				"title": "Contact"
 			},
 			"content_liability": {
-				"description": "As a service provider, we are responsible for our own content on these pages in accordance with applicable legal regulations. ",
-				"title": "Liability for content"
+				"description": "As a service provider, we are responsible for our own content on these pages in accordance with the applicable statutory provisions. However, as a service provider we are not obliged to monitor transmitted or stored third-party information or to investigate circumstances that indicate illegal activity. Obligations to remove or block the use of information under the general laws remain unaffected. Liability in this regard is only possible from the time we become aware of a specific infringement. Upon becoming aware of any such infringements, we will remove the content in question without undue delay.",
+				"title": "Liability for Content"
 			},
 			"copyright": {
-				"description": "The content and works on these pages created by the site operators are subject to German copyright law. ",
-				"title": "copyright"
+				"description": "The content and works created by the website operators on these pages are subject to German copyright law. Any reproduction, editing, distribution, or any kind of exploitation outside the limits of copyright law requires the prior written consent of the respective author or creator. Downloads and copies of this website are permitted for private, non-commercial use only. Insofar as content on this website was not created by the operator, the copyrights of third parties are respected. In particular, third-party content is identified as such. Should you nevertheless become aware of a copyright infringement, please inform us accordingly. Upon becoming aware of any infringements, we will remove such content without undue delay.",
+				"title": "Copyright"
 			},
 			"design": {
 				"link": {
@@ -1272,16 +1273,16 @@
 				"title": "Design"
 			},
 			"dispute_resolution": {
-				"description": "We are not willing or obliged to take part in dispute resolution proceedings before a consumer arbitration board. ",
+				"description": "We are neither willing nor obliged to participate in dispute resolution proceedings before a consumer arbitration board. The European Commission provides a platform for online dispute resolution (ODR), which you can find here:",
 				"link": "https://ec.europa.eu/consumers/odr/",
-				"title": "Consumer dispute resolution/universal arbitration board"
+				"title": "Consumer Dispute Resolution / Universal Arbitration Board"
 			},
 			"editor": {
-				"address": "Spandau Dam 19",
+				"address": "Spandauer Damm 19",
 				"name": "Daniel Jakobson",
-				"role": "Speaker for communication and participation",
-				"title": "Editorially responsible",
-				"zipCity": "14059 Berlin"
+				"role": "Communications and Participation Officer",
+				"title": "Responsible for Editorial Content",
+				"zipCity": "14059 Berlin, Germany"
 			},
 			"insurance": {
 				"address": "HDI place 1",
@@ -1293,36 +1294,36 @@
 				"zipCity": "30659 Hanover"
 			},
 			"link_liability": {
-				"description": "Our offer contains links to external third-party websites over whose content we have no influence. ",
-				"title": "Liability for external links"
+				"description": "Our website contains links to external third-party websites over whose content we have no influence. The linked pages were checked for possible legal infringements at the time the links were created. No unlawful content was identifiable at the time of linking. However, permanent monitoring of the content of the linked pages is not reasonable without concrete indications of an infringement. If we become aware of any legal infringements, we will remove such links without undue delay.",
+				"title": "Liability for External Links"
 			},
 			"programming": {
 				"link": {
 					"href": "https://www.technologiestiftung-berlin.de/",
-					"text": "Technology Foundation Berlin"
+					"text": "Technologiestiftung Berlin"
 				},
-				"title": "programming"
+				"title": "Development"
 			},
 			"representatives": {
-				"management": "Dirk Förster, management",
+				"management": "Dirk Förster, Managing Director",
 				"title": "Represented by:"
 			},
-			"subtitle": "Kulturraum Berlin gGmbH",
-			"title": "imprint"
+			"subtitle": "Notice: This English version is provided for convenience only. In case of discrepancies, the German version shall prevail.",
+			"title": "Legal Notice (Imprint)"
 		},
 		"infoModal": {
 			"accordion": [
 				{
-					"answer": "The editorial team aims to show all Berlin cultural venues on the map. This is an ongoing process. Some categories and individual places have not yet been fully recorded. If you are missing a venue, you can submit it via the contribution form.",
-					"question": "Why is my cultural venue not listed in the Kulturkataster?"
+					"answer": "The editorial team aims to show all Berlin cultural locations on the map. This is an ongoing process. Some categories and individual places have not yet been fully recorded. If you are missing a location, you can submit it via the contribution form.",
+					"question": "Why is my cultural location not listed in the Kulturkataster?"
 				},
 				{
-					"answer": "You can add or correct information about existing cultural venues and suggest new venues for inclusion. This is possible with guest access or with your own account. All submitted information is reviewed by the editorial team before publication.",
-					"question": "How can I add or correct information about a cultural venue?"
+					"answer": "You can add or correct information about existing cultural locations and suggest new locations for inclusion. This is possible with guest access or with your own account. All submitted information is reviewed by the editorial team before publication.",
+					"question": "How can I add or correct information about a cultural location?"
 				},
 				{
 					"answer": "Entries in the Kulturkataster are not published automatically. The editorial team reviews every entry individually. This can take some time, and we may contact you by email if we have questions.",
-					"question": "I submitted my cultural venue, but it still does not appear on the map. What is happening?"
+					"question": "I submitted my cultural location, but it still does not appear on the map. What is happening?"
 				},
 				{
 					"answer": "The Kulturkataster grows with every version. The project team started with a small selection of specialist maps from the Geoportal and will add further maps based on user feedback. You can send suggestions to [info@kulturkataster.berlin](mailto:info@kulturkataster.berlin).",
@@ -1330,7 +1331,7 @@
 				},
 				{
 					"answer": "This version does not yet offer independent data management. If you want your venue removed, please contact the editorial team at [info@kulturkataster.berlin](mailto:info@kulturkataster.berlin).",
-					"question": "How can I have my cultural venue removed from the Kulturkataster?"
+					"question": "How can I have my cultural location removed from the Kulturkataster?"
 				},
 				{
 					"answer": "In principle, interested people aged 18 or older can create an account in the Kulturkataster.",
@@ -1341,8 +1342,8 @@
 					"question": "When will my account be activated?"
 				},
 				{
-					"answer": "When logged in, you will find the “My cultural venues” section in the Kulturkataster portal. You can suggest a new cultural venue or request that an existing venue be assigned to your account. After assignment, it appears in your personal overview and you can suggest changes or additions.",
-					"question": "How can I add a new cultural venue or assign an existing venue to my account?"
+					"answer": "When logged in, you will find the “My cultural locations” section in the Kulturkataster portal. You can suggest a new cultural location or request that an existing location be assigned to your account. After assignment, it appears in your personal overview and you can suggest changes or additions.",
+					"question": "How can I add a new cultural location or assign an existing location to my account?"
 				},
 				{
 					"answer": "All data submitted through a user account or guest access is reviewed by the Kulturkataster editorial team before publication. This applies to new venues as well as changes or additions to existing entries.",
@@ -1353,11 +1354,11 @@
 					"question": "What can I do if I forgot my password or want to change it?"
 				},
 				{
-					"answer": "You can download a list of cultural venues using the downward arrow in the navigation. Before downloading, you must confirm that you have read and agree to the data-use agreements and legal notices.",
+					"answer": "You can download a list of cultural locations using the downward arrow in the navigation. Before downloading, you must confirm that you have read and agree to the data-use agreements and legal notices.",
 					"question": "What are the requirements for receiving an account as an administration employee or as an employee of a network or association?"
 				},
 				{
-					"answer": "You can download a list of cultural venues using the downward arrow in the navigation. Before downloading, you can filter or sort the data shown on the map. The export is available in XLS, XLSX, or CSV format. The downloaded data corresponds to the visible data state and your access rights.",
+					"answer": "You can download a list of cultural locations using the downward arrow in the navigation. Before downloading, you can filter or sort the data shown on the map. The export is available in XLS, XLSX, or CSV format. The downloaded data corresponds to the visible data state and your access rights.",
 					"question": "How does the data download work?"
 				}
 			],
@@ -1378,10 +1379,10 @@
 			}
 		},
 		"institution": {
-			"claimSelectDescription": "You can add cultural venues you are authorized for to your profile. For more completeness, a better overview, and faster editing.",
-			"claimSelectSearchLabel": "Name or address of the cultural venue",
-			"claimSelectSubtitle": "Request management rights for cultural venues that belong to your association or company.",
-			"claimSelectTitle": "Claim cultural venue",
+			"claimSelectDescription": "You can add cultural locations you are authorized for to your profile. For more completeness, a better overview, and faster editing.",
+			"claimSelectSearchLabel": "Name or address of the cultural location",
+			"claimSelectSubtitle": "Request management rights for cultural locations that belong to your association or company.",
+			"claimSelectTitle": "Claim cultural location",
 			"claimSubmit": "Submit request",
 			"claimSubmitError": "The claim request could not be submitted. Please try again.",
 			"claimSubmitSuccess": {
@@ -1389,7 +1390,7 @@
 				"title": "Claim submitted"
 			},
 			"claimSubmitting": "Submitting...",
-			"editSelectEmpty": "No cultural venues found.",
+			"editSelectEmpty": "No cultural locations found.",
 			"editSelectNoAddress": "No address provided"
 		},
 		"institutionDraftEditModal": {
@@ -1464,7 +1465,7 @@
 			"feedback": {
 				"submit": {
 					"description": "Thank you for your submission! The editorial team will review your entry and contact you by email if there are any questions. Please understand that this process may take some time because subject-matter experts may be involved in the decision.",
-					"pendingConflict": "You have already submitted an open submission for this cultural venue.",
+					"pendingConflict": "You have already submitted an open submission for this cultural location.",
 					"title": "Submission successful"
 				}
 			},
@@ -1472,7 +1473,7 @@
 				"basic": {
 					"sectionTitle": "Basic information",
 					"validation": {
-						"duplicateInstitution": "A cultural venue with this name and address already exists.",
+						"duplicateInstitution": "A cultural location with this name and address already exists.",
 						"duplicatePossible": "Possible duplicate entry found. "
 					}
 				},
@@ -1489,7 +1490,7 @@
 				"contact": {
 					"consent": {
 						"contactListing": "I agree to be named as a contact person in the password-protected area of ​​the cultural register using my contact details.",
-						"requestAdminRights": "I am responsible for this cultural venue and would like to add it to the list in my profile and obtain administration rights for it.",
+						"requestAdminRights": "I am responsible for this cultural location and would like to add it to the list in my profile and obtain administration rights for it.",
 						"title": "Final information",
 						"worksForOrganization": "I work for this cultural organization."
 					}
@@ -1664,14 +1665,14 @@
 				}
 			},
 			"errors": {
-				"forbidden": "You are not allowed to change this cultural venue.",
+				"forbidden": "You are not allowed to change this cultural location.",
 				"invalidInput": "Please check the entered data and try again.",
-				"notFound": "The selected cultural venue no longer exists.",
-				"unexpected": "The cultural venue could not be saved. Please try again."
+				"notFound": "The selected cultural location no longer exists.",
+				"unexpected": "The cultural location could not be saved. Please try again."
 			},
 			"feedback": {
 				"create": {
-					"description": "The cultural venue was successfully created.",
+					"description": "The cultural location was successfully created.",
 					"title": "Cultural site created"
 				},
 				"delete": {
@@ -1740,7 +1741,7 @@
 					},
 					"title": "Detailed Information of the Cultural Organization",
 					"validation": {
-						"duplicateInstitution": "A cultural venue with this name and address already exists.",
+						"duplicateInstitution": "A cultural location with this name and address already exists.",
 						"duplicatePossible": "Possible duplicate entry found. Please verify before submitting."
 					}
 				},
@@ -1865,7 +1866,7 @@
 				"noteMeta": "{{author}} on {{date}}",
 				"notesLabel": "Inspection Notes",
 				"notesPlaceholder": "Optional notes for submission",
-				"previewHint": "You can add and/or correct further information about the cultural venue by clicking the pencil to switch to edit mode.",
+				"previewHint": "You can add and/or correct further information about the cultural location by clicking the pencil to switch to edit mode.",
 				"previousNotesLabel": "Previous notes",
 				"requestedBy": "Requested by",
 				"statusLabel": "Status: {{status}}",
@@ -1930,9 +1931,9 @@
 			"allLoaded": "All cultural locations loaded",
 			"countLabel": "{{count}} Cultural places",
 			"description": "This list shows all locations that you have selected in the filters – 1:1 as on the map. It is especially suitable for screen readers.",
-			"filterButton": "filter",
+			"filterButton": "Filter",
 			"loadMore": "Load more cultural locations",
-			"searchButton": "Seek",
+			"searchButton": "Search",
 			"searchClose": "Close search",
 			"searchLabel": "Search List",
 			"searchPlaceholder": "Cultural location, address or district",
@@ -2047,7 +2048,7 @@
 					"group": "groups",
 					"institution": "Cultural places",
 					"role": "Roll",
-					"submission": "Cultural venue inquiries",
+					"submission": "Cultural location inquiries",
 					"user": "users"
 				},
 				"title": "Permissions"
@@ -2081,15 +2082,15 @@
 					"videos": [
 						{
 							"src": "https://kulturraeume.berlin/content/uploads/kulturraeume-01awasistkulturkataster.mp4",
-							"title": "What is the Berlin cultural cadastre?"
+							"title": "What is the Berlin Kulturkataster?"
 						},
 						{
 							"src": "https://kulturraeume.berlin/content/uploads/kulturraeume-01barbeitbeteilige.mp4",
-							"title": "Mission, participants and goals of the cultural cadastre"
+							"title": "Commission, stakeholders, and objectives of the Kulturkataster"
 						},
 						{
 							"src": "https://kulturraeume.berlin/content/uploads/kulturraeume-01cwieentlassen.mp4",
-							"title": "How the cultural register is created and changes"
+							"title": " How the Kulturkataster is created and how it changes"
 						}
 					]
 				},
@@ -2098,16 +2099,16 @@
 					"videos": [
 						{
 							"src": "https://kulturraeume.berlin/content/uploads/kulturraeume-02akulturkatasterwieunterstuezen.mp4",
-							"sub": "[\"To the participation form\" /institution]",
-							"title": "A complete cultural register - here's how you can support it"
+							"sub": "[Go to the \"Contribute\" Form](/institution)",
+							"title": "A complete Kulturkataster – how you can support it"
 						},
 						{
 							"src": "https://kulturraeume.berlin/content/uploads/kulturraeume-02bwasenthaeltersteversion.mp4",
-							"title": "What does the first version of the cultural register contain?"
+							"title": "What does the first version of the Kulturkataster include?"
 						},
 						{
 							"src": "https://kulturraeume.berlin/content/uploads/kulturraeume-02cwiekannichdiekartebenutzen.mp4",
-							"title": "How can I use the card?"
+							"title": "How can I use the map?"
 						}
 					]
 				},
@@ -2116,7 +2117,7 @@
 					"videos": [
 						{
 							"src": "https://kulturraeume.berlin/content/uploads/kulturraeume-02d1faqwarumnichtverzeichen.mp4",
-							"title": "Why is my cultural location not listed in the cultural register?"
+							"title": "Why is my cultural location not listed in the Kulturkataster?"
 						},
 						{
 							"src": "https://kulturraeume.berlin/content/uploads/kulturraeume-02d2faqwieinformationenergaenzen.mp4",
@@ -2124,22 +2125,22 @@
 						},
 						{
 							"src": "https://kulturraeume.berlin/content/uploads/kulturraeume-02d3faqkartenichterscheinen.mp4",
-							"title": "I have submitted my cultural location to the cultural register, but it still does not appear on the map. "
+							"title": "I submitted my cultural location to the Kulturkataster, but it still does not appear on the map. What is happening?"
 						},
 						{
 							"src": "https://kulturraeume.berlin/content/uploads/kulturraeume-02d4faqwenigefachkarten.mp4",
-							"title": "Why are there only a handful of specialist maps from the geoportal in the cultural register?"
+							"title": "Why does the Kulturkataster include only a handful of specialist maps from the Geoportal?"
 						},
 						{
 							"src": "https://kulturraeume.berlin/content/uploads/kulturraeume-02d5faqwieloeschen.mp4",
-							"title": "How can I have my cultural location deleted from the cultural register?"
+							"title": "How can I have my cultural location removed from the Kulturkataster?"
 						}
 					]
 				}
 			],
-			"description": "Here you will find all information about the Berlin cultural register in German Sign Language (DGS). ",
-			"subtitle": "Barrier-free information about the Berlin cultural cadastre",
-			"title": "Sign Language (DGS)"
+			"description": "Here you will find all information about the Berlin Kulturkataster in German Sign Language (Deutsche Gebärdensprache, DGS). The videos explain the most important content of the website – from “About the Kulturkataster” and “Info & Services” to the frequently asked questions (FAQ). You can play each video directly.",
+			"subtitle": "Accessible information about the Berlin Kulturkataster ",
+			"title": "German Sign Language (Deutsche Gebärdensprache, DGS)"
 		},
 		"simpleLanguageInformation": {
 			"about": {
@@ -2315,7 +2316,7 @@
 						"15 categories and 71 subcategories.",
 						"12 compartment cards\n",
 						"A search field.\n",
-						"Search filter.\n ",
+						"Search Filter.\n ",
 						"Information in German sign language",
 						"Information in easy language",
 						"Low-barrier list view"
@@ -2328,8 +2329,8 @@
 				},
 				"list5": {
 					"content": [
-						"Cultural venues only closed for a short time",
-						"Cultural venues closed forever"
+						"Cultural locations only closed for a short time",
+						"Cultural locations closed forever"
 					],
 					"title": "Then you will also see:"
 				},
@@ -2477,7 +2478,7 @@
 				"textBold1": "Move map",
 				"textBold10": "How can I change or add information?",
 				"textBold11": "I have submitted my cultural location. ",
-				"textBold12": "Why are there only a few specialist cards?",
+				"textBold12": "Why are there only a few specialist maps?",
 				"textBold13": "How can I have my cultural location deleted?",
 				"textBold2": "Make map bigger and smaller",
 				"textBold3": "Find a place",
@@ -2588,7 +2589,7 @@
 								"categories": "Categories",
 								"districts": "Districts",
 								"subcategories": "Subcategories",
-								"tags": "tags"
+								"tags": "Tags"
 							},
 							"label": "Cultural places",
 							"placeholder": "Select cultural locations",
@@ -2727,7 +2728,7 @@
 			"allCompliance": "All compliance statuses",
 			"columns": {
 				"access": "Access to cultural sites",
-				"claims": "Cultural venue inquiries",
+				"claims": "Cultural location inquiries",
 				"compliance": "Compliance",
 				"createdAt": "Created On",
 				"email": "e-mail",
@@ -2749,13 +2750,13 @@
 			"emptyMessage": "No users found.",
 			"emptyValue": "—",
 			"filter": {
-				"allRoles": "All roles",
-				"allStatuses": "All statuses",
+				"allRoles": "All Roles",
+				"allStatuses": "All Statuses",
 				"apply": "Apply",
 				"button": "Filter",
 				"description": "Narrow users by status, role, groups, and compliance.",
 				"reset": "Reset",
-				"title": "Filter users"
+				"title": "Filter Users"
 			},
 			"institutionsCount_one": "{{count}} Cultural place",
 			"institutionsCount_other": "{{count}} Cultural places",
@@ -2763,13 +2764,13 @@
 		},
 		"welcomeModal": {
 			"aboutButton": "About the Project",
-			"accessibilitySettings": "Accessibility settings",
+			"accessibilitySettings": "Accessibility Settings",
 			"closeButton": "Close",
 			"description1": "The Kulturkataster is a digital map that depicts the diversity of Berlin’s cultural landscape and that systemically registers locations for art and culture. It serves as the central basis for a fact-based approach to cultural urban development. Alongside the public participation function, the new portal with log-in functionality now provides a genuine tool for the practice of collaboratively managing locations.",
 			"description2": "Strengthen this project for Berlin’s culture together with us! We look forward to your support.",
 			"discoverButton": "Discover",
 			"footer": {
-				"credit": "Copyright 2025 - A project by Kulturraum Berlin gGmbH, funded by the Senate Department for Culture and Social Cohesion, with technical implementation by the Technology Foundation Berlin."
+				"credit": "Copyright 2025 - A project of Kulturraum Berlin gGmbH, funded by Berlin´s Senate Department for Culture and Community (Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt), with technical implementation by Technologiestiftung Berlin."
 			},
 			"infoButton": "Information & Service",
 			"newsletter": "Sign up for the newsletter",
