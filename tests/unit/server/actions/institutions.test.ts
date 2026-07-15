@@ -3,6 +3,7 @@ import type { Prisma } from "@/generated/prisma";
 import { getCategoriesWithSubcategories } from "@/server/actions/categories";
 import { getDistricts } from "@/server/actions/addresses";
 import { searchInstitutions } from "@/server/actions/institutions";
+import { getTableScope } from "@/server/utils/rbac";
 
 vi.mock("@/server/actions/auth", () => ({
 	getCurrentUserId: vi.fn().mockResolvedValue("user-1"),
@@ -21,7 +22,9 @@ vi.mock("@/server/utils/rbac", () => ({
 	authorizeFields: vi.fn(),
 	getTableScope: vi.fn().mockReturnValue("all"),
 	requireAllScope: vi.fn(),
-	getScopeUserId: vi.fn().mockReturnValue(null),
+	getScopeUserId: vi.fn((scope: "own" | "all", userId: string | null) =>
+		scope === "all" ? null : userId,
+	),
 }));
 
 const listMock = vi.fn().mockResolvedValue([]);
@@ -62,6 +65,7 @@ describe("server actions: institutions", () => {
 		searchMock.mockClear();
 		listWithChildrenMock.mockClear();
 		listDistinctMock.mockClear();
+		vi.mocked(getTableScope).mockReturnValue("all");
 	});
 
 	it("searchInstitutions returns [] for empty query", async () => {
@@ -73,6 +77,35 @@ describe("server actions: institutions", () => {
 	it("searchInstitutions uses repo search for valid query", async () => {
 		await searchInstitutions("museum");
 		expect(searchMock).toHaveBeenCalledTimes(1);
+	});
+
+	it("searchInstitutions restricts own-scope results to assigned institutions", async () => {
+		vi.mocked(getTableScope).mockReturnValue("own");
+
+		await searchInstitutions("museum");
+
+		expect(searchMock).toHaveBeenCalledWith({
+			AND: [
+				expect.objectContaining({
+					AND: [
+						expect.objectContaining({
+							AND: expect.any(Array),
+						}),
+						{ status: { in: ["public", "private", "archived"] } },
+					],
+				}),
+				{
+					OR: [
+						{ users: { some: { id: "user-1" } } },
+						{
+							groups: {
+								some: { users: { some: { id: "user-1" } } },
+							},
+						},
+					],
+				},
+			],
+		});
 	});
 
 	it("getCategoriesWithSubcategories calls repo", async () => {

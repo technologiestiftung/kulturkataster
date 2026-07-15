@@ -298,8 +298,15 @@ export async function searchInstitutions(query: string) {
 
 	const select = buildInstitutionSelect(ctx);
 	if (!select) return [];
-	const where: Prisma.InstitutionWhereInput = {
+	const scope = getTableScope(ctx, "institution", "read");
+	const searchAndStatusWhere: Prisma.InstitutionWhereInput = {
 		AND: [searchWhere, { status: { in: ["public", "private", "archived"] } }],
 	};
+	const where = buildInstitutionScopedWhere(
+		scope,
+		currentUserId,
+		searchAndStatusWhere,
+	);
+	if (!where) return [];
 	return institutionRepo.searchWithSelect(where, select);
 }
