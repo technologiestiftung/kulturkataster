@@ -2,7 +2,31 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { AccessContext } from "@/server/utils/rbac";
 import { loadPublicInstitutionData } from "@/server/utils/publicInstitutionData";
 
-const institutionListWithSelectWhereMock = vi.fn().mockResolvedValue([]);
+vi.mock("@/server/utils/rbac", async (importOriginal) => {
+	const actual = await importOriginal<typeof import("@/server/utils/rbac")>();
+	return {
+		...actual,
+		authorizeTable: vi.fn(),
+		getGuestReadableFieldsForTable: vi.fn().mockResolvedValue(["name"]),
+	};
+});
+
+const institutionListWithSelectWhereMock = vi.fn().mockResolvedValue([
+	{
+		id: 1,
+		name: "Owned",
+		email: "owned@example.test",
+		users: [{ id: "user-1" }],
+		groups: [],
+	},
+	{
+		id: 2,
+		name: "Public",
+		email: "public@example.test",
+		users: [],
+		groups: [],
+	},
+]);
 vi.mock("@/server/data/institutionRepo", () => ({
 	institutionRepo: {
 		listWithSelectWhere: (where: unknown, select: unknown) =>
@@ -39,6 +63,7 @@ const buildContext = (institutionScope: "own" | "all"): AccessContext => ({
 	field: {
 		institution: {
 			name: new Set(["read"]),
+			email: new Set(["read"]),
 		},
 	},
 	fieldOrder: {},
@@ -52,15 +77,15 @@ describe("public institution data loader", () => {
 		addressListDistinctMock.mockClear();
 	});
 
-	it("restricts own-scope institution preloads to assigned institutions", async () => {
-		await loadPublicInstitutionData({
+	it("includes public preloads and redacts unowned internal fields", async () => {
+		const result = await loadPublicInstitutionData({
 			ctx: buildContext("own"),
 			currentUserId: "user-1",
 		});
 
 		expect(institutionListWithSelectWhereMock).toHaveBeenCalledWith(
 			{
-				AND: [
+				OR: [
 					{ status: { in: ["public", "private", "archived"] } },
 					{
 						OR: [
@@ -74,7 +99,36 @@ describe("public institution data loader", () => {
 					},
 				],
 			},
-			{ id: true, name: true },
+			{
+				id: true,
+				name: true,
+				email: true,
+				users: { select: { id: true } },
+				groups: { select: { id: true, users: { select: { id: true } } } },
+			},
+		);
+		expect(result.institutions).toEqual([
+			expect.objectContaining({
+				id: 1,
+				name: "Owned",
+				email: "owned@example.test",
+			}),
+			{
+				id: 2,
+				name: "Public",
+			},
+		]);
+	});
+
+	it("keeps anonymous public institution preloads unscoped", async () => {
+		await loadPublicInstitutionData({
+			ctx: buildContext("own"),
+			currentUserId: null,
+		});
+
+		expect(institutionListWithSelectWhereMock).toHaveBeenCalledWith(
+			{ status: { in: ["public", "private", "archived"] } },
+			{ id: true, name: true, email: true },
 		);
 	});
 });
