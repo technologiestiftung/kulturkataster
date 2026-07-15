@@ -103,14 +103,9 @@ const selectDefaultRelation = (
 			: { select: defaultRelation };
 };
 
-export const buildInstitutionSelect = (
-	context: AccessContext,
+export const buildInstitutionSelectFromFields = (
+	allowedFields: string[],
 ): Prisma.InstitutionSelect | null => {
-	const fieldPerms = context.field.institution ?? {};
-	const allowedFields = Object.entries(fieldPerms)
-		.filter(([, actions]) => actions.has("read"))
-		.map(([field]) => field);
-
 	if (allowedFields.length === 0) {
 		return null;
 	}
@@ -140,3 +135,17 @@ export const buildInstitutionSelect = (
 
 	return select;
 };
+
+export const getReadableInstitutionFields = (
+	context: AccessContext,
+): string[] => {
+	const fieldPerms = context.field.institution ?? {};
+	return Object.entries(fieldPerms)
+		.filter(([, actions]) => actions.has("read"))
+		.map(([field]) => field);
+};
+
+export const buildInstitutionSelect = (
+	context: AccessContext,
+): Prisma.InstitutionSelect | null =>
+	buildInstitutionSelectFromFields(getReadableInstitutionFields(context));
