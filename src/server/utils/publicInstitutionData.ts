@@ -23,6 +23,7 @@ type PublicInstitutionDataLoaderArgs = {
 
 const loadInstitutions = async ({
 	ctx,
+	currentUserId,
 }: PublicInstitutionDataLoaderArgs): Promise<
 	PublicInstitutionDataPayload["institutions"]
 > => {
@@ -31,12 +32,13 @@ const loadInstitutions = async ({
 	const select = buildInstitutionSelect(ctx);
 	if (!select) return [];
 
-	return institutionRepo.listWithSelectWhere(
-		{
-			status: { in: ["public", "private", "archived"] },
-		},
-		select,
-	);
+	const scope = getTableScope(ctx, "institution", "read");
+	const where = buildInstitutionScopedWhere(scope, currentUserId, {
+		status: { in: ["public", "private", "archived"] },
+	});
+	if (!where) return [];
+
+	return institutionRepo.listWithSelectWhere(where, select);
 };
 
 const loadCategories = async ({
