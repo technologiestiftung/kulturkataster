@@ -1,8 +1,10 @@
 import { addressRepo } from "@/server/data/addressRepo";
 import { categoryRepo } from "@/server/data/categoryRepo";
 import { institutionRepo } from "@/server/data/institutionRepo";
-import { buildInstitutionScopedWhere } from "@/server/logic/institutionAccess";
-import { buildInstitutionSelect } from "@/server/logic/institutionSelect";
+import {
+	buildVisibleInstitutionWhere,
+	loadInstitutionVisibility,
+} from "@/server/logic/institutionVisibility";
 import {
 	authorizeTable,
 	getTableScope,
@@ -23,20 +25,19 @@ type PublicInstitutionDataLoaderArgs = {
 
 const loadInstitutions = async ({
 	ctx,
+	currentUserId,
 }: PublicInstitutionDataLoaderArgs): Promise<
 	PublicInstitutionDataPayload["institutions"]
 > => {
 	authorizeTable(ctx, "institution", "read");
 
-	const select = buildInstitutionSelect(ctx);
+	const visibility = await loadInstitutionVisibility(ctx, currentUserId);
+	const select = visibility.select;
 	if (!select) return [];
 
-	return institutionRepo.listWithSelectWhere(
-		{
-			status: { in: ["public", "private", "archived"] },
-		},
-		select,
-	);
+	const where = buildVisibleInstitutionWhere(visibility.scope, currentUserId);
+	const institutions = await institutionRepo.listWithSelectWhere(where, select);
+	return visibility.redactInstitutions(institutions);
 };
 
 const loadCategories = async ({
@@ -59,7 +60,7 @@ const loadDistricts = async ({
 	authorizeTable(ctx, "address", "read");
 
 	const scope = getTableScope(ctx, "address", "read");
-	const institutionWhere = buildInstitutionScopedWhere(scope, currentUserId);
+	const institutionWhere = buildVisibleInstitutionWhere(scope, currentUserId);
 	const where = institutionWhere
 		? { institutions: { some: institutionWhere } }
 		: undefined;

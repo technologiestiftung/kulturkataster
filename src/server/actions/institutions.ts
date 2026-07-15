@@ -1,6 +1,4 @@
 "use server";
-
-import type { Prisma } from "@/generated/prisma";
 import {
 	actionError,
 	actionOk,
@@ -19,6 +17,10 @@ import { institutionRepo } from "@/server/data/institutionRepo";
 import { buildInstitutionSearchWhere } from "@/server/logic/institutionSearch";
 import { buildInstitutionSelect } from "@/server/logic/institutionSelect";
 import { buildInstitutionScopedWhere } from "@/server/logic/institutionAccess";
+import {
+	buildVisibleInstitutionWhere,
+	loadInstitutionVisibility,
+} from "@/server/logic/institutionVisibility";
 import { buildInstitutionCreateData } from "@/server/logic/institutionCreateData";
 import { buildInstitutionUpdateData } from "@/server/logic/institutionUpdateData";
 import { buildInstitutionPermissionFields } from "@/lib/utils/institutionPermissionUtils";
@@ -296,10 +298,15 @@ export async function searchInstitutions(query: string) {
 	const searchWhere = buildInstitutionSearchWhere(normalizedQuery);
 	if (!searchWhere) return [];
 
-	const select = buildInstitutionSelect(ctx);
+	const visibility = await loadInstitutionVisibility(ctx, currentUserId);
+	const select = visibility.select;
 	if (!select) return [];
-	const where: Prisma.InstitutionWhereInput = {
-		AND: [searchWhere, { status: { in: ["public", "private", "archived"] } }],
-	};
-	return institutionRepo.searchWithSelect(where, select);
+	const where = buildVisibleInstitutionWhere(
+		visibility.scope,
+		currentUserId,
+		searchWhere,
+	);
+	if (!where) return [];
+	const institutions = await institutionRepo.searchWithSelect(where, select);
+	return visibility.redactInstitutions(institutions);
 }
