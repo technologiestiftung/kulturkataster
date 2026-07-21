@@ -44,12 +44,18 @@ export function AboutModal({ routePath }: { routePath?: string }) {
 			returnObjects: true,
 		},
 	) as string[];
+	const externalEditorialAdditionalItems = t(
+		"content.aboutModal.credits.contractors.editorial.additionalItems",
+		{
+			returnObjects: true,
+		},
+	) as string[];
 	const aboutBodySections = t("content.aboutModal.bodySections", {
 		returnObjects: true,
 	}) as string[];
 	const renderMarkdownList = (items: string[]) => (
 		<ul className="body2">
-			{items.map((item, index) => (
+			{items.filter(Boolean).map((item, index) => (
 				<li key={`${item}-${index}`}>
 					<ReactMarkdown
 						components={{
@@ -235,7 +241,10 @@ export function AboutModal({ routePath }: { routePath?: string }) {
 							{t("content.aboutModal.credits.contractors.editorial.title")}
 						</AccordionTrigger>
 						<AccordionContent>
-							{renderMarkdownList(externalEditorialItems)}
+							<div className="space-y-6">
+								{renderMarkdownList(externalEditorialItems)}
+								{renderMarkdownList(externalEditorialAdditionalItems)}
+							</div>
 						</AccordionContent>
 					</AccordionItem>
 				</Accordion>

@@ -5,12 +5,12 @@
 			{
 				"type": "line",
 				"background": "bg-[#6201e0]",
-				"label": "District boundary"
+				"label": "District Borders"
 			},
 			{
 				"type": "wording",
 				"color": "text-neutral-80",
-				"label": "District name",
+				"label": "District Name",
 				"text": "Mitte"
 			}
 		]
@@ -21,12 +21,12 @@
 			{
 				"type": "line",
 				"background": "bg-[#6201e0]",
-				"label": "Locality boundary"
+				"label": "Localities"
 			},
 			{
 				"type": "wording",
 				"color": "text-neutral-80",
-				"label": "Locality name",
+				"label": "Name of Locality",
 				"text": "Mitte"
 			}
 		]
@@ -38,7 +38,7 @@
 				"type": "circle",
 				"background": "bg-[#BBC2DB]",
 				"borderColor": "border-[#343591]",
-				"label": "Development plan, in process"
+				"label": "Development Plans, in Process"
 			}
 		]
 	},
@@ -49,7 +49,7 @@
 				"type": "circle",
 				"background": "bg-[#E9BEBA]",
 				"borderColor": "border-[#B02D23]",
-				"label": "Development plan, adopted"
+				"label": "Development Plans, Fixed"
 			}
 		]
 	},
@@ -60,7 +60,7 @@
 				"type": "circle",
 				"background": "bg-[#CBCBCB]",
 				"borderColor": "border-[#6A6A6A]",
-				"label": "Development plan, adopted"
+				"label": "Development Plans, Suspended"
 			}
 		]
 	},
@@ -71,7 +71,7 @@
 			{
 				"type": "line",
 				"background": "bg-[#3C89CB]",
-				"label": "Planning area boundary (PLR)"
+				"label": "Borders of Planning Areas"
 			},
 			{
 				"type": "wording",
@@ -138,7 +138,7 @@
 			{
 				"type": "line",
 				"background": "bg-[#D72E74]",
-				"label": "Action areas of the joint initiative"
+				"label": "Areas of Action of Joint Initiatives"
 			}
 		]
 	},
@@ -147,13 +147,13 @@
 		"items": [
 			{
 				"type": "title",
-				"label": "Population change compared with the previous year"
+				"label": "Population Development in Comparison to the Previous Year"
 			},
 			{
 				"type": "circle",
 				"background": "bg-[#D6FE7D]",
 				"borderColor": "border-neutral-80",
-				"label": "Decrease of > 10"
+				"label": "Reduction of > 10"
 			},
 			{
 				"type": "circle",
@@ -241,14 +241,14 @@
 		"items": [
 			{
 				"type": "intro",
-				"label": "Area-based overlay of the status index (4 classes) and dynamics index (3 classes) at planning area level (542 PLR) for the overall social inequality index (status/dynamics index) in 12 groups"
+				"label": "Area-Based Superimposition of the Status Index (4 Classes) with the Dynamic Index (3 Classes) on the Level of Planning Areas (542 PLR) to the Overall Index of Social Inequality (Status/Dynamic Index) in 12 Groups"
 			},
 			{
 				"type": "table"
 			},
 			{
 				"type": "intro",
-				"label": "(Index: 1st position = status, 2nd position = dynamics; box value: number of PLR)"
+				"label": "(Index: 1st position status, 2nd position dynamic; values in boxes: number of PLRs)"
 			},
 			{
 				"type": "spacer"
@@ -256,19 +256,19 @@
 			{
 				"type": "wording",
 				"color": "text-black contrast:text-white",
-				"label": "high status and positive dynamics",
+				"label": "High Status and Positive Dynamic",
 				"text": "1+"
 			},
 			{
 				"type": "wording",
 				"color": "text-black contrast:text-white",
-				"label": "high status and stable dynamics",
+				"label": "High Status and Stable Dynamic",
 				"text": "1+/-"
 			},
 			{
 				"type": "wording",
 				"color": "text-black contrast:text-white",
-				"label": "high status and negative dynamics",
+				"label": "High Status and Negative Dynamic",
 				"text": "1-"
 			},
 			{
@@ -277,19 +277,19 @@
 			{
 				"type": "wording",
 				"color": "text-black contrast:text-white",
-				"label": "medium status and positive dynamics",
+				"label": "Medium Status and Positive Dynamic",
 				"text": "2+"
 			},
 			{
 				"type": "wording",
 				"color": "text-black contrast:text-white",
-				"label": "medium status and stable dynamics",
+				"label": "Medium Status and Stable Dynamic",
 				"text": "2+/-"
 			},
 			{
 				"type": "wording",
 				"color": "text-black contrast:text-white",
-				"label": "medium status and negative dynamics",
+				"label": "Medium Status and Negative Dynamic",
 				"text": "2-"
 			},
 			{
@@ -298,19 +298,19 @@
 			{
 				"type": "wording",
 				"color": "text-black contrast:text-white",
-				"label": "low status and positive dynamics",
+				"label": "Low Status and Positive Dynamic",
 				"text": "3+"
 			},
 			{
 				"type": "wording",
 				"color": "text-black contrast:text-white",
-				"label": "low status and stable dynamics",
+				"label": "Low Status and Stable Dynamic",
 				"text": "3+/-"
 			},
 			{
 				"type": "wording",
 				"color": "text-black contrast:text-white",
-				"label": "low status and negative dynamics",
+				"label": "Low Status and Negative Dynamic",
 				"text": "3-"
 			},
 			{
@@ -319,19 +319,19 @@
 			{
 				"type": "wording",
 				"color": "text-black contrast:text-white",
-				"label": "very low status and positive dynamics",
+				"label": "Very Low Status and Positive Dynamic",
 				"text": "4+"
 			},
 			{
 				"type": "wording",
 				"color": "text-black contrast:text-white",
-				"label": "very low status and stable dynamics",
+				"label": "Very Low Status and Stable Dynamic",
 				"text": "4+/-"
 			},
 			{
 				"type": "wording",
 				"color": "text-black contrast:text-white",
-				"label": "very low status and negative dynamics",
+				"label": "Very Low Status and Negative Dynamic",
 				"text": "4-"
 			},
 			{
@@ -341,7 +341,7 @@
 				"type": "circle",
 				"background": "bg-[#C0C0C0]",
 				"borderColor": "border-[#555B54]",
-				"label": "Planning area without assignment",
+				"label": "Planning Space Without Assignment",
 				"textInCircle": "6"
 			}
 		]
