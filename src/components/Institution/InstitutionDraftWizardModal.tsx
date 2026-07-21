@@ -467,6 +467,11 @@ function InstitutionDraftWizardContent({
 				metadata: {
 					step_id: currentStepId,
 					draft_mode: draftMode,
+					error_digest:
+						error instanceof Error &&
+						typeof (error as Error & { digest?: unknown }).digest === "string"
+							? (error as Error & { digest: string }).digest
+							: undefined,
 				},
 			});
 			const message =
