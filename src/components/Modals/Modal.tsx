@@ -54,6 +54,7 @@ type ModalLoadingState = {
 
 interface PageModalProps {
 	title: string;
+	beforeTitle?: React.ReactNode;
 	subtitle?: React.ReactNode;
 	variant?: "fullscreen" | "fullscreen-muted" | "centered" | "editor";
 	hasFooter?: boolean;
@@ -80,6 +81,7 @@ interface PageModalProps {
 
 export function Modal({
 	title,
+	beforeTitle,
 	subtitle,
 	variant = "fullscreen",
 	hasFooter = true,
@@ -235,6 +237,7 @@ export function Modal({
 							containerClassName,
 						)}
 					>
+						{beforeTitle}
 						{title && (
 							<DialogTitle asChild className={cn(titleClassName)}>
 								<h1>{title}</h1>
