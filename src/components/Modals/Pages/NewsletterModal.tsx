@@ -6,7 +6,7 @@ import { Modal } from "@/components/Modals/Modal";
 import { NewsletterForm } from "@/components/Auth/NewsletterForm";
 import { Button } from "@/components/ui/button";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 export function NewsletterModal({
 	routePath,
@@ -19,7 +19,11 @@ export function NewsletterModal({
 }) {
 	const { t } = useTranslation();
 	const router = useRouter();
+	const pathname = usePathname();
 	const toLocalePath = useLocalePath();
+	const privacyUrl = pathname?.startsWith("/en")
+		? "https://dsgvo-info.cortina-consult.de/kulturkataster-en/"
+		: "https://dsgvo-info.cortina-consult.de/kulturkataster/";
 	const [didSubscribe, setDidSubscribe] = useState(false);
 	let content: React.ReactNode;
 
@@ -76,7 +80,7 @@ export function NewsletterModal({
 							components={{
 								link: (
 									<a
-										href="https://dsgvo-info.cortina-consult.de/kulturkataster/"
+										href={privacyUrl}
 										target="_blank"
 										rel="noopener noreferrer"
 										className="text-primary-dark hover:text-primary underline"

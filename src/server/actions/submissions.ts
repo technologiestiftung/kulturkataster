@@ -93,6 +93,20 @@ const sanitizeCategoryKey = (value: string) =>
 		.replace(/_+/g, "_")
 		.replace(/^_|_$/g, "");
 
+const getSubmissionCreateLogContext = (
+	input: Partial<SubmissionCreatePayload>,
+	currentUserId?: string | null,
+) => ({
+	subsystem: "submission",
+	actor_user_id: currentUserId ?? null,
+	entity_type: input.entityType ?? null,
+	entity_id: input.entityId ?? null,
+	submission_type: input.type ?? null,
+	has_data: input.data !== undefined && input.data !== null,
+	has_diff: input.diff !== undefined && input.diff !== null,
+	has_meta: input.meta !== undefined && input.meta !== null,
+});
+
 export async function getSubmissions(filter: SubmissionFilter = {}) {
 	const currentUserId = await getCurrentUserId();
 	const ctx = await getAccessContextForUser(currentUserId);
@@ -214,30 +228,32 @@ export async function getSubmissionById(id: number) {
 export async function createSubmission(input: SubmissionCreatePayload) {
 	return runWithServerRequestContext(
 		async () => {
-			const validatedInput = validateSubmissionCreateInput(input);
-			const currentUserId = await getCurrentUserId();
-			setRequestContext({ userId: currentUserId });
-			const ctx = await getAccessContextForUser(currentUserId);
-			authorizeTable(ctx, "submission", "create");
-
-			const nextStatus = "approval_pending";
-
-			if (currentUserId && typeof validatedInput.entityId === "number") {
-				const existingPending = await submissionRepo.findFirst({
-					entity_type: validatedInput.entityType,
-					entity_id: validatedInput.entityId,
-					type: validatedInput.type,
-					status: "approval_pending",
-					created_by: currentUserId,
-				});
-				if (existingPending) {
-					throw new Error(
-						"You already have a pending submission for this entity and submission type.",
-					);
-				}
-			}
-
+			let currentUserId: string | null = null;
+			let validatedInput: SubmissionCreatePayload | undefined;
 			try {
+				validatedInput = validateSubmissionCreateInput(input);
+				currentUserId = await getCurrentUserId();
+				setRequestContext({ userId: currentUserId });
+				const ctx = await getAccessContextForUser(currentUserId);
+				authorizeTable(ctx, "submission", "create");
+
+				const nextStatus = "approval_pending";
+
+				if (currentUserId && typeof validatedInput.entityId === "number") {
+					const existingPending = await submissionRepo.findFirst({
+						entity_type: validatedInput.entityType,
+						entity_id: validatedInput.entityId,
+						type: validatedInput.type,
+						status: "approval_pending",
+						created_by: currentUserId,
+					});
+					if (existingPending) {
+						throw new Error(
+							"You already have a pending submission for this entity and submission type.",
+						);
+					}
+				}
+
 				return await submissionRepo.create({
 					entity_type: validatedInput.entityType,
 					entity_id: validatedInput.entityId ?? null,
@@ -251,14 +267,11 @@ export async function createSubmission(input: SubmissionCreatePayload) {
 						: undefined,
 				});
 			} catch (error) {
-				logger.error("submission.create.db_failed", error, {
-					subsystem: "submission",
-					db_subsystem: "db",
-					actor_user_id: currentUserId,
-					entity_type: validatedInput.entityType,
-					entity_id: validatedInput.entityId ?? null,
-					submission_type: validatedInput.type,
-				});
+				logger.error(
+					"submission.create.failed",
+					error,
+					getSubmissionCreateLogContext(validatedInput ?? input, currentUserId),
+				);
 				throw error;
 			}
 		},
