@@ -16,46 +16,60 @@ import { Trans, useTranslation } from "react-i18next";
 import ReactMarkdown from "react-markdown";
 import { Modal } from "../Modal";
 
+const toStringArray = (value: unknown): string[] => {
+	if (!Array.isArray(value)) return [];
+	return value.filter(
+		(item): item is string => typeof item === "string" && item.length > 0,
+	);
+};
+
 export function AboutModal({ routePath }: { routePath?: string }) {
 	const { t } = useTranslation();
 	const toLocalePath = useLocalePath();
 	const afterDivider = { current: false };
-	const teamMembers = t("content.aboutModal.credits.team.members", {
-		returnObjects: true,
-	}) as string[];
-	const steeringMembers = t("content.aboutModal.credits.steering.members", {
-		returnObjects: true,
-	}) as string[];
-	const partnerItems = t("content.aboutModal.credits.partners.list", {
-		returnObjects: true,
-	}) as string[];
-	const contractorItems = t("content.aboutModal.credits.contractors.items", {
-		returnObjects: true,
-	}) as string[];
-	const contractorAdditionalItems = t(
-		"content.aboutModal.credits.contractors.additional",
-		{
+	const teamMembers = toStringArray(
+		t("content.aboutModal.credits.team.members", {
 			returnObjects: true,
-		},
-	) as string[];
-	const externalEditorialItems = t(
-		"content.aboutModal.credits.contractors.editorial.items",
-		{
+		}),
+	);
+	const steeringMembers = toStringArray(
+		t("content.aboutModal.credits.steering.members", {
 			returnObjects: true,
-		},
-	) as string[];
-	const externalEditorialAdditionalItems = t(
-		"content.aboutModal.credits.contractors.editorial.additionalItems",
-		{
+		}),
+	);
+	const partnerItems = toStringArray(
+		t("content.aboutModal.credits.partners.list", {
 			returnObjects: true,
-		},
-	) as string[];
-	const aboutBodySections = t("content.aboutModal.bodySections", {
-		returnObjects: true,
-	}) as string[];
+		}),
+	);
+	const contractorItems = toStringArray(
+		t("content.aboutModal.credits.contractors.items", {
+			returnObjects: true,
+		}),
+	);
+	const contractorAdditionalItems = toStringArray(
+		t("content.aboutModal.credits.contractors.additional", {
+			returnObjects: true,
+		}),
+	);
+	const externalEditorialItems = toStringArray(
+		t("content.aboutModal.credits.contractors.editorial.items", {
+			returnObjects: true,
+		}),
+	);
+	const externalEditorialAdditionalItems = toStringArray(
+		t("content.aboutModal.credits.contractors.editorial.additionalItems", {
+			returnObjects: true,
+		}),
+	);
+	const aboutBodySections = toStringArray(
+		t("content.aboutModal.bodySections", {
+			returnObjects: true,
+		}),
+	);
 	const renderMarkdownList = (items: string[]) => (
 		<ul className="body2">
-			{items.filter(Boolean).map((item, index) => (
+			{items.map((item, index) => (
 				<li key={`${item}-${index}`}>
 					<ReactMarkdown
 						components={{
