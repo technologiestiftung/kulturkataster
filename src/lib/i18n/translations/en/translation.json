@@ -592,7 +592,22 @@
 				"legendGesamtIndexAriaLabel": "Table in the overall index legend",
 				"legendGesamtIndexDecriptionSR": "Overall index legend. The rows show {{yAxisLabel}}, the columns show {{xAxisLabel}}. The colored circles contain the index values, and the information next to them shows the range.",
 				"legendValueAriaLabel": "Specialist Map {{serviceName}}, Map Key Entry {{label}} {{unit}}",
-				"legendValueWordingAriaLabel": "Specialist Map {{serviceName}}, Value {{value}}, Map Key Entry {{label}}"
+				"legendValueWordingAriaLabel": "Specialist Map {{serviceName}}, Value {{value}}, Map Key Entry {{label}}",
+				"overallIndexTable": {
+					"columns": {
+						"high": "High",
+						"low": "Low",
+						"medium": "Medium",
+						"veryLow": "Very Low"
+					},
+					"rows": {
+						"negative": "Negative",
+						"positive": "Positive",
+						"stable": "Stable"
+					},
+					"xAxisLabel": "Dynamic",
+					"yAxisLabel": "Status"
+				}
 			},
 			"lookAtLegend": "See Map Key",
 			"noLayersAvailable": "No Specialist Maps available",
@@ -656,21 +671,6 @@
 		"user": {
 			"title": "My Account"
 		},
-		"venue": {
-			"address": "Address",
-			"backToMap": "Back to Map",
-			"contact": "Contact",
-			"details": "Venue Details",
-			"email": "Email",
-			"funding": "Funding Type",
-			"notFound": "Venue not found",
-			"organization": "Organization",
-			"parent": "Parent Organization",
-			"phone": "Phone",
-			"support": "Support Type",
-			"unnamed": "Unnamed Venue",
-			"website": "Website"
-		},
 		"yes": "Yes"
 	},
 	"content": {
@@ -697,6 +697,11 @@
 						"Legal Advisement: Kanzlei Laaser"
 					],
 					"editorial": {
+						"additionalItems": [
+							"Placeholder 1",
+							"Placeholder 2",
+							"Placeholder 3"
+						],
 						"items": [
 							"Visual Artist Studios: Atelierbüro im kulturwerk des bbk berlin (Studio Office in the kulturwerk of the bbk berlin)",
 							"Clubs and Music Venues: Clubcommission - Netzwerk der Berliner Clubkultur e.V.",
@@ -847,28 +852,10 @@
 			"which": {
 				"barriers": [
 					{
-						"description": "The website currently (as of September 2025) does not provide content in Plain Language and does not offer videos in German Sign Language (DGS).",
-						"measures": "Texts in Plain Language and explanatory videos in German Sign Language (DGS) are currently being prepared. They provide basic information about the Kulturkataster and how to use the platform.",
-						"timeline": "Publication of the Plain Language content and the DGS content is planned for October 2025.",
-						"title": "Barrier: Content"
-					},
-					{
-						"description": " Cultural locations in the Kulturkataster are currently displayed exclusively via an interactive map view.",
-						"measures": "An additional list view of cultural locations is planned. It will be fully operable by keyboard and compatible with screen readers. This list view is intended as an alternative way of navigating to the map and will enable more accessible use.",
-						"timeline": "Implementation of the list view is planned by December 2025.",
-						"title": "Barrier: View"
-					},
-					{
 						"description": "Some documents provided on the website, such as downloadable Excel tables with filtered cultural locations or individual PDF files, do not meet the requirements for accessible documents. These files are partly not readable with screen readers or are not optimized for keyboard navigation.",
 						"measures": "In the future, documents will be provided in an accessible format. For this purpose, accessible file formats will be used and the content will be revised in accordance with the standards for accessible documents.",
 						"timeline": "The revision of existing files is planned for 2026. New documents are to be published in an accessible format in 2026.",
 						"title": "Barrier: Documents"
-					},
-					{
-						"description": " Some interactive elements of the website - in particular filter functions, map elements or navigation items - are currently not operable via the keyboard.",
-						"measures": "The technical structure of the website will be revised to ensure full keyboard control of all interactive elements.",
-						"timeline": "Implementation will be completed by the end of 2025.",
-						"title": "Barrier: Keyboard operability"
 					},
 					{
 						"description": "When navigating with the keyboard, the visible focus is not clearly recognisable on all interactive elements. This affects the navigation buttons \"Zoom out\", \"Zoom in\" and \"Find my Location\".",
@@ -881,12 +868,6 @@
 						"measures": "All graphical elements will be reviewed and provided with correct alternative text.",
 						"timeline": "Implementation will take place during 2026.",
 						"title": "Barrier: Alternative text for images and icons"
-					},
-					{
-						"description": "The semantic structure of the website is not fully defined by ARIA roles and landmarks. As a result, screen readers cannot correctly identify all areas of the website.",
-						"measures": "The page structure will be extended with semantic HTML elements and ARIA roles in order to improve orientation for assistive technologies.",
-						"timeline": "Implementation will be completed by the end of 2025.",
-						"title": "Barrier: Missing ARIA roles and landmarks"
 					},
 					{
 						"description": "The hierarchical heading structure is not correctly implemented on all pages. This can make navigation with screen readers more difficult.",
@@ -2491,6 +2472,10 @@
 			}
 		},
 		"termsModal": {
+			"authoritativeNotice": {
+				"description": "This document is an English translation of the German “Nutzungsvereinbarung” for the Kulturkataster. It is provided for convenience and information purposes only. The legally binding version is the German original. In the event of any discrepancy, ambiguity or conflict between this English translation and the German version, the German version shall prevail.",
+				"title": "Important notice on the authoritative language version"
+			},
 			"bodySections": [
 				"## Preamble\n\nKulturraum Berlin gGmbH, represented by Dirk Förster (Managing Director), Spandauer Damm 19, 14059 Berlin (hereinafter “KRB”), implements the Kulturkataster project, a platform containing data on cultural locations. The project is funded by Berlin’s Senate Department for Culture and Community.",
 				"## Definitions",
@@ -2503,7 +2488,7 @@
 				"## Registration",
 				"### 2.1 Users \n\nUsers are natural persons who use the Kulturkataster either with or without registration.",
 				"### 2.2 Registration and Discretionary Review\n\nUsers who register state during registration whether they are staff members of a network or association, a Berlin district administration or the State of Berlin. If none of these options apply, users select “No”.\nWhen information is provided regarding work for district administrations or state administrations, KRB checks after registration whether there is a professional connection to cultural or urban development matters. This review is carried out at KRB’s own discretion.\n\nStaff members of networks and associations who can prove that they are elected representatives, commissioned freelancers or full-time or part-time employees of the relevant network or association are also granted access, participation or download rights for sensitive data. At a minimum, a corresponding email address must be attributable to the relevant network or association. Whether such a connection exists is reviewed by KRB at its own discretion.",
-				"### 2.3 Confirmation Prior to Submission\n\nBefore submitting the registration request, the user confirms that they have taken note of these KRB Terms of Use and decides whether to subscribe voluntarily to the newsletter (double opt-in procedure).\n\n![Registrierungsformular mit Bestätigung der Nutzungsbedingungen und Newsletter-Auswahl](/resources/terms_1.png)",
+				"### 2.3 Confirmation Prior to Submission\n\nBefore submitting the registration request, the user confirms that they have taken note of these KRB Terms of Use and decides whether to subscribe voluntarily to the newsletter (double opt-in procedure).\n\n![Registration form with confirmation of the Terms of Use and newsletter selection](/resources/terms_en_1.png)",
 				"## Access Rights, Contributions, Download",
 				"### 3.1 Access Rights to Non-Sensitive Data\n\nNon-sensitive data are visible to all users, with or without registration.",
 				"### 3.2 Access Rights to Sensitive Data\n\nAfter registration, KRB assigns registered users access rights in relation to sensitive data of cultural locations. This assignment is based on the information on affiliation provided during registration. If “no” affiliation is indicated, KRB does not initially assign any access rights in relation to sensitive data of cultural locations.\n\nKRB distinguishes between the following access rights that may be assigned to users:",
@@ -2518,7 +2503,7 @@
 				"## Data Collection and Maintenance",
 				"### 7.1 Collection of the Data\n\nThe collection of data in the Kulturkataster is based on data researched by KRB itself or provided through contributions by users.",
 				"#### 7.1.1 KRB Data and Research by the KRB Editorial Team\n\nKRB may independently create and maintain data on cultural locations. For this purpose, the KRB editorial team may research data from generally accessible sources as well as from other sources and include them in the Kulturkataster.",
-				"#### 7.1.2 Data from Contributions by Users\n\nUsers may submit suggestions for changes or additions via the “Contribute” button in the left-hand bar or in their own account, as illustrated below.\n\n![Mitwirken-Schaltfläche im Kulturkataster](/resources/terms_2.png)\n\nContributions may relate to the following content:",
+				"#### 7.1.2 Data from Contributions by Users\n\nUsers may submit suggestions for changes or additions via the “Contribute” button in the left-hand bar or in their own account, as illustrated below.\n\n![Contribute button in the Kulturkataster](/resources/terms_en_2.png)\n\nContributions may relate to the following content:",
 				"##### 7.1.2.1 Additions to Existing Data\n\nUsers may propose additions or changes to existing data, in particular to non-sensitive data or - where access rights have been assigned - to sensitive data of cultural locations.",
 				"##### 7.1.2.2 Submission of New Cultural Locations\n\nUsers may submit suggestions for including new cultural locations in the Kulturkataster by transmitting the data provided for this purpose via the Kulturkataster.",
 				"##### 7.1.2.3 Submission of Sensitive Data\n\nUsers may submit sensitive data on cultural locations.",

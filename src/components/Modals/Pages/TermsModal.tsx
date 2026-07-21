@@ -11,6 +11,8 @@ const TERMS_IMAGE_DIMENSIONS: Record<
 > = {
 	"/resources/terms_1.png": { width: 863, height: 213 },
 	"/resources/terms_2.png": { width: 1158, height: 824 },
+	"/resources/terms_en_1.png": { width: 1600, height: 518 },
+	"/resources/terms_en_2.png": { width: 1378, height: 836 },
 };
 
 const getSectionIndentClassName = (section: string) => {
@@ -23,7 +25,8 @@ const getSectionIndentClassName = (section: string) => {
 };
 
 export function TermsModal({ routePath }: { routePath?: string }) {
-	const { t } = useTranslation();
+	const { i18n, t } = useTranslation();
+	const isEnglish = i18n.resolvedLanguage === "en" || i18n.language === "en";
 	const bodySections = t("content.termsModal.bodySections", {
 		returnObjects: true,
 	}) as string[];
@@ -32,6 +35,18 @@ export function TermsModal({ routePath }: { routePath?: string }) {
 	return (
 		<Modal
 			title={t("content.termsModal.title")}
+			beforeTitle={
+				isEnglish ? (
+					<div className="rounded-sm border border-border bg-neutral-5 p-4">
+						<p className="body1 font-semibold">
+							{t("content.termsModal.authoritativeNotice.title")}
+						</p>
+						<p className="body2 mt-2">
+							{t("content.termsModal.authoritativeNotice.description")}
+						</p>
+					</div>
+				) : null
+			}
 			subtitle={
 				<>
 					<span className="block">
