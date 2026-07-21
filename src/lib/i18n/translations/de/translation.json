@@ -677,6 +677,9 @@
 		"user": {
 			"title": "Mein Konto"
 		},
+		"venue": {
+			"website": "Webseite"
+		},
 		"yes": "Ja"
 	},
 	"content": {
