@@ -13,7 +13,7 @@ export function register() {
 	});
 }
 
-const isStaleServerActionError = (error: unknown) =>
+const isStaleServerActionError = (error: unknown): error is Error =>
 	error instanceof Error &&
 	error.message.includes("Failed to find Server Action");
 
