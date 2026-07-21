@@ -1418,8 +1418,8 @@
 				"description": "Zum Mitwirken tragen Sie bitte die benötigten Angaben in die jeweiligen Felder ein und klicken Sie am Ende des Formulars auf „Daten übermitteln“. Unser Redaktionsteam prüft jede Einsendung vor der Veröffentlichung und meldet sich ggfs. bei Rückfragen.",
 				"mode": {
 					"description": "Wählen Sie die passende Kategorie für die Kultureinrichtung aus. Falls mehrere Kategorien zutreffen, wählen Sie die primäre Kategorie aus.",
-					"edit": "Ergänzung oder Änderung eines oder mehrere bestehender Kulturorte",
-					"new": "Neue/n Kulturort/e eintragen",
+					"edit": "Ergänzung oder Änderung eines bestehenden Kulturortes",
+					"new": "Neuen Kulturort eintragen",
 					"title": "Möchten Sie eine neue Kultureinrichtung eintragen oder einen bestehenden Datensatz ergänzen bzw. korrigieren? *"
 				},
 				"sectionNote": "Bitte beachten Sie, dass Sie Angaben nur dann machen sollten, wenn Sie sich der Richtigkeit sicher sind und einer Einwilligung zur Veröffentlichung im Kulturkataster zustimmen. Sollten Informationen nur für befugte Nutzer*innen im geschützten Bereich des Kulturkatasters zugänglich und nicht öffentlich einsehbar sein, haben wir dies am jeweiligen Datenfeld gekennzeichnet.",
@@ -2519,7 +2519,7 @@
 				"#### 3.3.1 einen neuen Kulturort zur Eintragung vorzuschlagen",
 				"#### 3.3.2 Ergänzungen oder Änderungen in Bezug auf einen bestehenden Kulturort vorzuschlagen.\n\nKRB prüft jegliche Mitwirkung von Nutzer\\*innen und entscheidet nach der Prüfung über die Veröffentlichung der Mitwirkung im Kulturkataster.",
 				"### 3.4 Datendownload\n\nRegistrierte Nutzer\\*innen können die Daten, die ihren zugewiesenen Einsichtsrechten entsprechen, d.h. nicht sensible Daten und sensible Daten, die sie einsehen können, downloaden.\n\nDie zum Download bereitgestellt Daten, dürfen Nutzer\\*innen für nicht kommerzielle Veröffentlichungen verarbeiten, nutzen und bearbeiten und nur ausschließlich im Rahmen der gesetzlichen Vorgaben, insbesondere der DSGVO soweit personenbezogene Daten betroffen sind, sowie entsprechend der in diesen Nutzungsbedingungen beschriebenen Zwecke (vgl. Begriffsbestimmungen Ziffer 1.1.) verwendet werden.\n\nPersonenbezogene Daten dürfen insbesondere nicht ohne rechtliche Grundlage weiterverarbeitet, veröffentlicht oder an Dritte weitergegeben werden.",
-				"## Herkunft der Datensammlung und Datenpflege",
+				"## Datensammlung und Datenpflege",
 				"### 7.1 Sammlung der Daten\n\nDie Sammlung der Daten im Kulturkataster basiert auf Daten, die durch die KRB selbst recherchiert oder durch Mitwirkungen von Nutzer\\*innen bereitgestellt werden.",
 				"#### 7.1.1 Daten der KRB und Recherche durch Redaktion der KRB\n\nDie KRB kann Daten zu Kulturorten eigenständig erstellen und pflegen. Hierzu kann die Redaktion der KRB Daten sowohl aus allgemein zugänglichen als auch aus anderen Quellen recherchieren und in das Kulturkataster aufnehmen.",
 				"#### 7.1.2 Daten über Mitwirkungen durch Nutzer\\*innen\n\nNutzer\\*innen können über die Schaltfläche „Mitwirken“ links in der Leiste oder im eigenen Account wie nachfolgend abgebildet Vorschläge zur Änderung oder Ergänzung einreichen.\n\n![Mitwirken-Schaltfläche im Kulturkataster](/resources/terms_2.png)\n\nMitwirkungen können folgende Inhalte betreffen:",

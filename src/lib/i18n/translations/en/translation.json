@@ -40,9 +40,9 @@
 			"account": {
 				"actions": {
 					"faq": "FAQ",
-					"logout": "Log out",
-					"profileSettings": "Profile settings",
-					"refreshData": "Refresh data"
+					"logout": "Log Out",
+					"profileSettings": "Profile Settings",
+					"refreshData": "Refresh Data"
 				},
 				"activity": {
 					"actions": {
@@ -211,11 +211,11 @@
 			"accountEdit": {
 				"confirmPasswordLabel": "Confirm password",
 				"confirmPasswordPlaceholder": "Confirm password",
-				"deleteAction": "Delete profile",
-				"deleteConfirm": "Delete profile",
+				"deleteAction": "Delete Profile",
+				"deleteConfirm": "Delete Profile",
 				"deleteDescription": "Are you sure you want to delete your profile? This action cannot be undone.",
 				"deleteError": "Could not delete profile.",
-				"deleteTitle": "Delete profile",
+				"deleteTitle": "Delete Profile",
 				"emailLabel": "Email Address",
 				"emailPlaceholder": "name@example.com",
 				"errorFallback": "Changes could not be saved.",
@@ -320,7 +320,7 @@
 				"lastName": "Last name",
 				"lastNamePlaceholder": "Last name",
 				"metaTitle": "Register – Kulturkataster",
-				"newsletterLink": "Subscribe to the newsletter.",
+				"newsletterLink": "Subscribe to the Newsletter.",
 				"newsletterOptInPrefix": "To stay up to date, I would also like to",
 				"newsletterSubscriptionSuccessDescription": "Thank you for subscribing to the newsletter. If the subscription is successful, you will receive an email with a confirmation link. Please click the link to complete your subscription. Please also check your spam folder.",
 				"newsletterSubscriptionSuccessTitle": "Newsletter subscription for the Kulturkataster",
@@ -336,7 +336,7 @@
 				"privacySuffix": "have been acknowledged.",
 				"register": "Registration for the Kulturkataster",
 				"signIn": "Sign in here.",
-				"submit": "Create account",
+				"submit": "Create Account",
 				"submitting": "Creating account...",
 				"subtitle": "Help shape Berlin's cultural landscape.",
 				"successCta": "Done",
@@ -501,7 +501,7 @@
 			"editSelectNoAddress": "No address provided",
 			"editSelectSearchPlaceholder": "Search Cultural Locations...",
 			"editSelectSubtitle": "Select an existing cultural location you would like to update.",
-			"editSelectTitle": "Select existing cultural location",
+			"editSelectTitle": "Select Existing Cultural Location",
 			"emailAddress": "Email Address",
 			"establishedSince": "At the Location Since",
 			"establishedUntil": "At the Location Until",
@@ -575,8 +575,8 @@
 		"loading": "Loading",
 		"mainContent": "Main content",
 		"map": {
-			"addressPickerApply": "Apply position",
-			"addressPickerApplyLoading": "Applying position...",
+			"addressPickerApply": "Apply Position",
+			"addressPickerApplyLoading": "Applying Position...",
 			"addressPickerHint": "Move the map to position the pin. Then apply the position to the form.",
 			"availableLayers": "Available layers",
 			"closeLayerTree": "Close Specialist Maps",
@@ -804,7 +804,7 @@
 		"accessibilityModal": {
 			"contact": {
 				"company": "Kulturraum Berlin gGmbH",
-				"description": "Would you like information about implementing accessibility or would you like to report existing barriers? ",
+				"description": "Would you like information about the implementation of accessibility, or would you like to report existing barriers? Are you unable to perceive, operate or understand something on our website sufficiently? Do you need information in an accessible format? If so, please inform us.",
 				"email": {
 					"address": "d.jakobson@kulturraum.berlin",
 					"label": "e-mail"
@@ -814,100 +814,100 @@
 					"label": "T",
 					"number": "+49 (0)30 3030 444 76"
 				},
-				"title": "Report barriers"
+				"title": "Report Barriers"
 			},
 			"contact_officer": {
-				"description": "If your contact with us was unsuccessful, you have not received a response within one month, or the response was inadequate, you can contact the State Commissioner for Digital Accessibility and initiate enforcement proceedings. ",
-				"info_text_link2": "You can find further information about the enforcement process and the state representative for digital accessibility ",
+				"description": "If your contact with us was not successful, if you have not received a response within one month, or if the response was inadequate, you can contact the Berlin State Commissioner for Digital Accessibility (Landesbeauftragte für digitale Barrierefreiheit) and seek an enforcement procedure. Please always contact us first.",
+				"info_text_link2": "Further information about the enforcement procedure and the Berlin State Commissioner for Digital Accessibility (Landesbeauftragte für digitale Barrierefreiheit) can be found",
 				"link1": {
-					"text": "To the contact form",
+					"text": "Contact Form",
 					"url": "https://www.berlin.de/lb/digitale-Barrierfreiheit/includes/formular.1326107.php"
 				},
 				"link2": {
 					"text": "here.",
 					"url": "https://www.berlin.de/lb/digitale-Barrierfreiheit/fragen/durchstellungverfahren/durchstellungverfahren-1305830.php"
 				},
-				"title": "Contact the State Commissioner for Digital Accessibility (enforcement proceedings)"
+				"title": "Contact the Berlin State Commissioner for Digital Accessibility (Landesbeauftragte für digitale Barrierefreiheit - enforcement procedure)"
 			},
-			"description": "We strive to make our website “Kulturkataster Berlin” and its mobile application barrier-free. ",
-			"descriptionLink": "This declaration on digital accessibility applies to the website:",
+			"description": "We strive to make our website \"Kulturkataster Berlin\" and its mobile application accessible. This accessibility statement is required under the Berlin Act on Accessible Information and Communication Technology (Gesetz über die barrierefreie Informations- und Kommunikationstechnik Berlin, Barrierefreie-IKT-Gesetz Berlin - BIKTG Bln). The technical accessibility requirements are set out in Germany's Barrier-free Information Technology Ordinance (Barrierefreie-Informationstechnik-Verordnung - BITV 2.0).",
+			"descriptionLink": "This digital accessibility statement applies to the website:",
 			"how": {
-				"description": "This website is partially barrier-free. ",
-				"title": "How barrier-free is the Berlin cultural register?"
+				"description": "This website is partially accessible. Only some of the requirements of BITV 2.0 are met.",
+				"title": "How accessible is the Berlin Kulturkataster?"
 			},
 			"link": "https://kulturkataster.berlin",
-			"signLanguageDirect": "German Sign Language (DGS) can be found <link />.",
-			"simpleLanguageDirect": "You can find explanations in simple language <link />.",
+			"signLanguageDirect": "German Sign Language (Deutsche Gebärdensprache, DGS) is available <link />.",
+			"simpleLanguageDirect": "Explanations in Plain Language (Leichte Sprache) are available <link />.",
 			"subtitle": "Kulturraum Berlin gGmbH",
 			"title": "Digital Accessibility Statement",
 			"when": {
-				"description": "This statement was created on August 5, 2025. ",
-				"title": "Creation of this accessibility statement"
+				"description": "This statement was prepared on 5 August 2025. The information in this statement was last reviewed on 5 August 2025. The review of digital accessibility was carried out by Kulturraum Berlin gGmbH as a self-assessment.",
+				"title": "Preparation of this Accessibility Statement"
 			},
 			"which": {
 				"barriers": [
 					{
-						"description": "The website currently (as of September 2025) does not offer any content in plain language or videos in German Sign Language (DGS).",
-						"measures": "Texts in plain language and explanatory videos in German Sign Language (DGS) are currently in progress. ",
-						"timeline": "The content is scheduled to be published in plain language and DGS in October 2025.",
+						"description": "The website currently (as of September 2025) does not provide content in Plain Language and does not offer videos in German Sign Language (DGS).",
+						"measures": "Texts in Plain Language and explanatory videos in German Sign Language (DGS) are currently being prepared. They provide basic information about the Kulturkataster and how to use the platform.",
+						"timeline": "Publication of the Plain Language content and the DGS content is planned for October 2025.",
 						"title": "Barrier: Content"
 					},
 					{
-						"description": "The cultural locations in the cultural cadastre are currently only displayed via an interactive map view.",
-						"measures": "It is planned to provide a supplementary list view of cultural locations that is fully keyboard and screen reader friendly. ",
-						"timeline": "The list view is expected to be implemented by December 2025.",
+						"description": " Cultural locations in the Kulturkataster are currently displayed exclusively via an interactive map view.",
+						"measures": "An additional list view of cultural locations is planned. It will be fully operable by keyboard and compatible with screen readers. This list view is intended as an alternative way of navigating to the map and will enable more accessible use.",
+						"timeline": "Implementation of the list view is planned by December 2025.",
 						"title": "Barrier: View"
 					},
 					{
-						"description": "Some of the documents provided on the website, such as: ",
-						"measures": "In the future, the documents will be offered in a barrier-free form. ",
-						"timeline": "The revision of the existing files is planned for 2026. ",
-						"title": "Barrier: documents"
+						"description": "Some documents provided on the website, such as downloadable Excel tables with filtered cultural locations or individual PDF files, do not meet the requirements for accessible documents. These files are partly not readable with screen readers or are not optimized for keyboard navigation.",
+						"measures": "In the future, documents will be provided in an accessible format. For this purpose, accessible file formats will be used and the content will be revised in accordance with the standards for accessible documents.",
+						"timeline": "The revision of existing files is planned for 2026. New documents are to be published in an accessible format in 2026.",
+						"title": "Barrier: Documents"
 					},
 					{
-						"description": "Some interactive elements of the website - in particular filter functions, map elements or navigation points - cannot currently be operated via keyboard.",
-						"measures": "The technical structure of the website is being revised to ensure full keyboard control of all interactive elements.",
-						"timeline": "Implementation will take place by the end of 2025.",
+						"description": " Some interactive elements of the website - in particular filter functions, map elements or navigation items - are currently not operable via the keyboard.",
+						"measures": "The technical structure of the website will be revised to ensure full keyboard control of all interactive elements.",
+						"timeline": "Implementation will be completed by the end of 2025.",
 						"title": "Barrier: Keyboard operability"
 					},
 					{
-						"description": "When navigating with the keyboard, the visible focus is not clearly visible on all interactive elements. ",
-						"measures": "The visual focus design is overhauled so that interactive elements are clearly highlighted as you scroll through.",
-						"timeline": "Implementation will take place by the end of 2025.",
+						"description": "When navigating with the keyboard, the visible focus is not clearly recognisable on all interactive elements. This affects the navigation buttons \"Zoom out\", \"Zoom in\" and \"Find my Location\".",
+						"measures": "The visual focus design will be revised so that interactive elements are clearly highlighted when moving through them.",
+						"timeline": "Implementation will be completed by the end of 2025.",
 						"title": "Barrier: Visible focus"
 					},
 					{
 						"description": "Some icons or buttons on the website do not have meaningful alternative text.",
-						"measures": "All graphic elements are checked and provided with correct alternative texts.",
+						"measures": "All graphical elements will be reviewed and provided with correct alternative text.",
 						"timeline": "Implementation will take place during 2026.",
-						"title": "Barrier: Alternative texts for images and symbols"
+						"title": "Barrier: Alternative text for images and icons"
 					},
 					{
-						"description": "The semantic structure of the website is not fully defined by ARIA roles and landmarks. ",
-						"measures": "The page structure is supplemented with semantic HTML elements and ARIA roles to improve orientation for assistive technologies.",
-						"timeline": "Implementation will take place by the end of 2025.",
+						"description": "The semantic structure of the website is not fully defined by ARIA roles and landmarks. As a result, screen readers cannot correctly identify all areas of the website.",
+						"measures": "The page structure will be extended with semantic HTML elements and ARIA roles in order to improve orientation for assistive technologies.",
+						"timeline": "Implementation will be completed by the end of 2025.",
 						"title": "Barrier: Missing ARIA roles and landmarks"
 					},
 					{
-						"description": "The hierarchical structure of the headings is not implemented correctly on all pages. ",
-						"measures": "The HTML structure is revised to ensure a consistent and logical heading structure.",
+						"description": "The hierarchical heading structure is not correctly implemented on all pages. This can make navigation with screen readers more difficult.",
+						"measures": "The HTML structure will be revised to ensure a consistent and logical heading structure.",
 						"timeline": "The correction will take place during 2026.",
-						"title": "Barrier: Unstructured headings (h1–h6)"
+						"title": "Barrier: Unstructured headings (h1-h6)"
 					},
 					{
-						"description": "Dynamic content, such as ",
-						"measures": "The interactions are technically checked and supplemented to provide feedback to screen readers.",
-						"timeline": "Implementation is scheduled for 2026.",
-						"title": "Barrier: Lack of feedback during interactions"
+						"description": "Dynamic content - for example applying filters or displaying a location - is not accompanied by status messages or notifications for screen readers.",
+						"measures": "Interactions will be reviewed technically and updated so that they provide feedback to screen readers.",
+						"timeline": "Implementation is planned for 2026.",
+						"title": "Barrier: Missing feedback for interactions"
 					}
 				],
-				"description": "The areas listed below are not barrier-free for the following reasons:",
+				"description": "The areas listed below are not accessible for the following reasons:",
 				"descriptionLabel": "Description",
-				"list_intro": "Areas that are not barrier-free:",
+				"list_intro": "Sections that are not accessible:",
 				"measuresLabel": "Measures",
-				"subheading": "Incompatibility with BITV 2.0",
-				"timelineLabel": "Period",
-				"title": "Which areas are not barrier-free?"
+				"subheading": "Non-compliance with BITV 2.0",
+				"timelineLabel": "Timeframe",
+				"title": "Which areas are not accessible?"
 			}
 		},
 		"accessibilitySettingsModal": {
@@ -1407,56 +1407,56 @@
 		"institutionDraftIntroModal": {
 			"choice": {
 				"guest": {
-					"cta": "Continue as a guest",
-					"description": "Of course, you are also welcome to participate without registering with us.",
-					"title": "Continue without registering"
+					"cta": "Continue as a Guest",
+					"description": "You are also welcome to contribute without logging in.",
+					"title": "Continue without logging in."
 				},
 				"login": {
-					"cta": "To register",
-					"description": "For faster processing of your entries and an overview, we recommend that you log in or register in the cultural cadastre portal.",
+					"cta": "Log in / Register",
+					"description": "For faster processing of your entries and for a better overview, we recommend that you log in to or register for the Kulturkataster portal.",
 					"title": "Log in or register to continue."
 				},
 				"title": "How would you like to proceed?"
 			},
 			"intro": {
 				"back": "Back",
-				"cta": "Further",
-				"description": "To participate, please enter the required information in the relevant fields and click on “Submit data” at the end of the form. ",
+				"cta": "Next",
+				"description": "To contribute, please enter the required information in the relevant fields and click “Submit Data” at the end of the form. Our editorial team reviews each submission before publication and will contact you if it has any questions.",
 				"mode": {
-					"description": "Select the appropriate category for the cultural institution. ",
-					"edit": "Addition or modification of one or more existing cultural sites",
-					"new": "Enter new cultural location(s).",
-					"title": "Would you like to enter a new cultural institution or add or correct an existing data record? "
+					"description": "Select the appropriate category for the cultural location. ",
+					"edit": "Add to or correct an existing cultural location",
+					"new": "Enter a new cultural location",
+					"title": "Would you like to enter a new cultural location or add to/correct an existing data record?"
 				},
-				"sectionNote": "Please note that you should only provide information if you are sure of its accuracy and agree to its publication in the cultural register. ",
-				"sectionTitle": "Basic information about the Cultural Organization",
-				"thankYou": "Thank you for supporting the Berlin Cultural Cadastre with your contribution!"
+				"sectionNote": "Please note that you should only provide information if you are sure that it is correct and agree to its publication in the Kulturkataster. If information is only accessible to authorized users in the protected area of the Kulturkataster and is not publicly visible, this is indicated at the respective data field.",
+				"sectionTitle": "Basic Information About the Cultural Location",
+				"thankYou": "Thank you for supporting the Berlin Kulturkataster with your contribution!"
 			},
 			"submitSuccess": {
 				"cta": "Start another submission",
 				"description": "Thanks to your input, the Berlin cultural cadastre continues to grow, giving many people access to new cultural locations.  {{ link }} view and manage.",
 				"title": "Thank you for your submission"
 			},
-			"title": "Contribute to the Berlin cultural register"
+			"title": "Contribute to the Berlin Kulturkataster"
 		},
 		"institutionDraftWizardModal": {
 			"actions": {
 				"back": "Back",
-				"next": "Further",
+				"next": "Next",
 				"review": "Check",
-				"submit": "Submit cultural location"
+				"submit": "Submit Cultural Location"
 			},
 			"dialog": {
 				"create": {
 					"subtitle": "Complete the following steps to register a new cultural location.",
-					"title": "Enter a new cultural location"
+					"title": "Enter a New Cultural Location"
 				},
 				"edit": {
 					"subtitle": "Check and update cultural location information.",
 					"title": "Edit cultural location"
 				},
 				"submissionCreate": {
-					"title": "Submit cultural location"
+					"title": "Submit Cultural Location"
 				},
 				"submissionEdit": {
 					"title": "Edit submission"
@@ -1471,7 +1471,7 @@
 			},
 			"form": {
 				"basic": {
-					"sectionTitle": "Basic information",
+					"sectionTitle": "Basic Information",
 					"validation": {
 						"duplicateInstitution": "A cultural location with this name and address already exists.",
 						"duplicatePossible": "Possible duplicate entry found. "
@@ -1480,7 +1480,7 @@
 				"category": {
 					"newCategory": {
 						"description": "Please separate multiple categories with a comma.",
-						"label": "Suggest new category(s).",
+						"label": "Suggest new categories",
 						"placeholder": "e.g. "
 					},
 					"validation": {
@@ -1511,7 +1511,7 @@
 						},
 						"establishment": {
 							"description": "Period of use or opening at the location.",
-							"title": "Period at the location"
+							"title": "Period At the Location"
 						},
 						"funding": {
 							"description": "Information about Funding.",
@@ -1526,7 +1526,7 @@
 							"title": "Organizational Form"
 						},
 						"ownership": {
-							"description": "This information will only be accessible to authorized users in the protected area of ​​the cultural register and will not be publicly viewable.",
+							"description": "This information will be accessible exclusively to authorized users in the protected area of the Kulturkataster and will not be publicly visible.",
 							"title": "Ownership"
 						},
 						"protection": {
@@ -1534,8 +1534,8 @@
 							"title": "Protection Status"
 						},
 						"rental": {
-							"description": "This information will only be accessible to authorized users in the protected area of ​​the cultural register and will not be publicly viewable.",
-							"title": "Rental and usage relationships"
+							"description": "This information will be accessible exclusively to authorized users in the protected area of the Kulturkataster and will not be publicly visible.",
+							"title": "Rental and Usage Arrangements"
 						},
 						"sharedUseAccessibility": {
 							"description": "Is the room barrier-free accessible? ",
@@ -1579,7 +1579,7 @@
 						"sinceDescription": "Please enter the date of first use or opening at the location. ",
 						"untilDescription": "Please enter the date until which the cultural institution was active at this location. "
 					},
-					"internalNotesPrivateDescription": "This information will only be accessible to authorized users in the protected area of ​​the cultural register and will not be publicly viewable.",
+					"internalNotesPrivateDescription": "This information will be accessible exclusively to authorized users in the protected area of the Kulturkataster and will not be publicly visible.",
 					"notesDescription": "Please note that this field is visible to the public. ",
 					"organization": {
 						"legalFormPlaceholder": "e.g., e.V., gGmbH, GbR"
@@ -1616,20 +1616,20 @@
 			"stepLabel": "Step {{current}} / {{total}}",
 			"steps": {
 				"basic": {
-					"subtitle": "Every field you fill out in the form helps us to add this place to the cultural register. ",
-					"title": "Enter a new cultural location"
+					"subtitle": "Every field you complete in the form helps us add this location to the Kulturkataster. Most fields are optional.",
+					"title": "Enter a New Cultural Location"
 				},
 				"category": {
-					"subtitle": "Select the appropriate categories for the cultural location. ",
-					"title": "Assign category"
+					"subtitle": "Select the appropriate categories for the cultural location. If something is missing, you can suggest new categories.",
+					"title": "Assign Categories"
 				},
 				"contact": {
 					"subtitle": "Enter a contact person so that our editorial team can contact you if you have any questions.",
 					"title": "Contact Person for Questions"
 				},
 				"information": {
-					"subtitle": "The cultural cadastre promotes a solidarity-based, resilient cultural landscape by connecting places with free capacity with organizations that are looking for space. ",
-					"title": "Room requests and further information"
+					"subtitle": "The Kulturkataster promotes a solidarity-based, resilient cultural landscape by connecting places with free capacity with organizations that are looking for space. This reduces vacancies and makes optimal use of resources. All information is voluntary.",
+					"title": "Space Requests and Further Information"
 				},
 				"review": {
 					"subtitle": "Here you can view all the information again and correct it if necessary.",
@@ -1710,12 +1710,12 @@
 					"title": "Assignments"
 				},
 				"basic": {
-					"sectionTitle": "Basic information"
+					"sectionTitle": "Basic Information"
 				},
 				"category": {
 					"newCategory": {
 						"description": "Separate multiple categories with commas.",
-						"label": "Suggest new category(s)",
+						"label": "Suggest new categories",
 						"placeholder": "e.g. New category"
 					},
 					"validation": {
@@ -1759,7 +1759,7 @@
 						},
 						"establishment": {
 							"description": "Period of use or opening at the location.",
-							"title": "Period at the location"
+							"title": "Period At the Location"
 						},
 						"funding": {
 							"description": "Information about funding.",
@@ -1774,7 +1774,7 @@
 							"title": "Organizational Form"
 						},
 						"ownership": {
-							"description": "This information will only be accessible to authorized users in the protected area of ​​the cultural register and will not be publicly viewable.",
+							"description": "This information will be accessible exclusively to authorized users in the protected area of the Kulturkataster and will not be publicly visible.",
 							"title": "Ownership"
 						},
 						"protection": {
@@ -1782,8 +1782,8 @@
 							"title": "Protection Status"
 						},
 						"rental": {
-							"description": "This information will only be accessible to authorized users in the protected area of ​​the cultural register and will not be publicly viewable.",
-							"title": "Rental and usage relationships"
+							"description": "This information will be accessible exclusively to authorized users in the protected area of the Kulturkataster and will not be publicly visible.",
+							"title": "Rental and Usage Arrangements"
 						},
 						"sharedUseAccessibility": {
 							"description": "Is the room barrier-free accessible? ",
@@ -1818,7 +1818,7 @@
 							"title": "Premises"
 						}
 					},
-					"internalNotesPrivateDescription": "This information will only be accessible to authorized users in the protected area of ​​the cultural register and will not be publicly viewable.",
+					"internalNotesPrivateDescription": "This information will be accessible exclusively to authorized users in the protected area of the Kulturkataster and will not be publicly visible.",
 					"sharedUse": {
 						"detailsLabel": "Details"
 					}
@@ -1895,13 +1895,13 @@
 		},
 		"institutionsTable": {
 			"actions": {
-				"addInstitution": "Add cultural location",
+				"addInstitution": "Add Cultural Location",
 				"claimInstitution": "Claim My Locations",
-				"downloadList": "Download list"
+				"downloadList": "Download List"
 			},
 			"empty": {
 				"description": "You can start new entries directly.",
-				"title": "No cultural sites available."
+				"title": "No cultural locations available."
 			},
 			"search": {
 				"title": "Search Cultural Locations"
@@ -2492,11 +2492,105 @@
 		},
 		"termsModal": {
 			"bodySections": [
-				"*(English translation pending. The German version applies.)*"
+				"## Preamble\n\nKulturraum Berlin gGmbH, represented by Dirk Förster (Managing Director), Spandauer Damm 19, 14059 Berlin (hereinafter “KRB”), implements the Kulturkataster project, a platform containing data on cultural locations. The project is funded by Berlin’s Senate Department for Culture and Community.",
+				"## Definitions",
+				"### 1.1 Kulturkataster\n\nThe Kulturkataster is a browser-based platform containing data on places relevant to cultural urban development. The purpose of the Kulturkataster is the systematic collection, structuring and public provision of data on places of cultural production and use in the State of Berlin, in order to create a reliable data basis for cultural policy decisions, cultural urban development and cooperation between cultural actors, administration, academia and the public. The Kulturkataster is openly accessible, records places of cultural production and use, makes them publicly visible and supports cultural actors, administration and policymakers in developing and safeguarding cultural locations.\n",
+				"### 1.2 Kulturraum Berlin gGmbH (KRB)\n\nKRB is the operator of the Kulturkataster.\n",
+				"### 1.3 Cultural Location\n\nCultural locations are places used for cultural purposes in the State of Berlin at which cultural productions, presentations or uses take place or have taken place and which are recorded, or are intended to be recorded, in the Kulturkataster.\n",
+				"### 1.4 Sensitive and Non-Sensitive Data\n\nThe Kulturkataster records data on cultural locations. A distinction is made between\n\n- non-sensitive data, which are visible to all users regardless of registration, and\n- sensitive data, which become visible only after registration and only after KRB has assigned the respective access rights (see Section 2).",
+				"#### 1.4.1 Non-Sensitive Data\n\nName of the cultural location, umbrella organization, type of financing, type of funding, general email address, public telephone number, website, cultural area, address with geoposition, usage status, protection status, type of owner, organizational form, period during which the cultural venue has existed at the location, willingness to receive space requests, description of spaces/areas, available for target group/discipline, contact information for space requests, equipment, time availability, accessibility, costs, status, data source (where the data comes from), additional information that is publicly accessible or that does not appear to be subject to any restriction on disclosure under law or contract.",
+				"#### 1.4.2 Sensitive Data\n\nSize of the usable area (m²), number of work spaces, capacity (persons), detailed information on protection status, owner of the property, end of contract, form of contract, reasons for closing, private location information: contact person’s first name, contact person’s last name, contact person’s email address, contact person’s telephone number, internal notes.",
+				"## Registration",
+				"### 2.1 Users \n\nUsers are natural persons who use the Kulturkataster either with or without registration.",
+				"### 2.2 Registration and Discretionary Review\n\nUsers who register state during registration whether they are staff members of a network or association, a Berlin district administration or the State of Berlin. If none of these options apply, users select “No”.\nWhen information is provided regarding work for district administrations or state administrations, KRB checks after registration whether there is a professional connection to cultural or urban development matters. This review is carried out at KRB’s own discretion.\n\nStaff members of networks and associations who can prove that they are elected representatives, commissioned freelancers or full-time or part-time employees of the relevant network or association are also granted access, participation or download rights for sensitive data. At a minimum, a corresponding email address must be attributable to the relevant network or association. Whether such a connection exists is reviewed by KRB at its own discretion.",
+				"### 2.3 Confirmation Prior to Submission\n\nBefore submitting the registration request, the user confirms that they have taken note of these KRB Terms of Use and decides whether to subscribe voluntarily to the newsletter (double opt-in procedure).\n\n![Registrierungsformular mit Bestätigung der Nutzungsbedingungen und Newsletter-Auswahl](/resources/terms_1.png)",
+				"## Access Rights, Contributions, Download",
+				"### 3.1 Access Rights to Non-Sensitive Data\n\nNon-sensitive data are visible to all users, with or without registration.",
+				"### 3.2 Access Rights to Sensitive Data\n\nAfter registration, KRB assigns registered users access rights in relation to sensitive data of cultural locations. This assignment is based on the information on affiliation provided during registration. If “no” affiliation is indicated, KRB does not initially assign any access rights in relation to sensitive data of cultural locations.\n\nKRB distinguishes between the following access rights that may be assigned to users:",
+				"#### 3.2.1 Access Rights in Relation to Sensitive Data of All Cultural Locations in a District",
+				"#### 3.2.2 Access Rights in Relation to Sensitive Data of All Cultural Locations in the State of Berlin\n\nWithin district administrations and state administrations, administrative staff are granted access, participation or download rights for sensitive data by KRB only if there is a professional connection to cultural or urban development matters. Whether such a connection exists is reviewed by KRB at its own discretion.",
+				"#### 3.2.3 Access Rights in Relation to Sensitive Data of Cultural Locations Individually Assigned by KRB to an Arts-Sector Association",
+				"#### 3.2.4 Access Rights in Relation to Sensitive Data of Cultural Locations Individually Assigned by KRB to Registered Users\n\nUsers who indicate “no” affiliation during registration (see Section 2 above) may use the “Claim My Locations” button to apply to KRB for an individual assignment of a cultural location. KRB reviews the application and decides whether to assign the cultural location to the user. \n\nIf a cultural location has been individually assigned to a user in this way, the user has access to the sensitive data of that cultural location. Without such individual assignment, users who have not indicated an affiliation have no access to sensitive data of cultural locations. Like unregistered users, they may view the non-sensitive data of all cultural locations.",
+				"### 3.3 Contributions by Users\n\nRegistered and unregistered users may contribute to the Kulturkataster. They have the option, via the “Contribute” button, to\n",
+				"#### 3.3.1 Propose a New Cultural Location for Entry,",
+				"#### 3.3.2 Propose Additions or Changes in Relation to an Existing Cultural Location.\n\nKRB reviews every contribution by users and, following its review, decides on publication of the contribution in the Kulturkataster.",
+				"### 3.4 Data Download\n\nRegistered users may download the data corresponding to their assigned access rights, i.e. non-sensitive data and sensitive data that they are able to view.\n\nThe data made available for download may be processed, used and edited by users for non-commercial publications and may be used only in accordance with legal requirements, in particular the GDPR where personal data are concerned, and only in line with the purposes described in these Terms of Use (see Definitions, Section 1.1).\n\nIn particular, personal data may not be further processed, published or passed on to third parties without a legal basis.",
+				"## Data Collection and Maintenance",
+				"### 7.1 Collection of the Data\n\nThe collection of data in the Kulturkataster is based on data researched by KRB itself or provided through contributions by users.",
+				"#### 7.1.1 KRB Data and Research by the KRB Editorial Team\n\nKRB may independently create and maintain data on cultural locations. For this purpose, the KRB editorial team may research data from generally accessible sources as well as from other sources and include them in the Kulturkataster.",
+				"#### 7.1.2 Data from Contributions by Users\n\nUsers may submit suggestions for changes or additions via the “Contribute” button in the left-hand bar or in their own account, as illustrated below.\n\n![Mitwirken-Schaltfläche im Kulturkataster](/resources/terms_2.png)\n\nContributions may relate to the following content:",
+				"##### 7.1.2.1 Additions to Existing Data\n\nUsers may propose additions or changes to existing data, in particular to non-sensitive data or - where access rights have been assigned - to sensitive data of cultural locations.",
+				"##### 7.1.2.2 Submission of New Cultural Locations\n\nUsers may submit suggestions for including new cultural locations in the Kulturkataster by transmitting the data provided for this purpose via the Kulturkataster.",
+				"##### 7.1.2.3 Submission of Sensitive Data\n\nUsers may submit sensitive data on cultural locations.",
+				"KRB reviews all contributions as part of editorial data maintenance (see the following section) and decides on publication.",
+				"### 7.2 Editorial Maintenance of the Data by the KRB Editorial Team\n\nSuggestions are not published automatically, but only after a decision by KRB.",
+				"#### 7.2.1 Editorial Review and Decision on Publication or Rejection\n\nAll details concerning cultural locations and all submissions by users are reviewed by the KRB editorial team and included in the Kulturkataster only after a corresponding decision. \n\nKRB reserves the right to edit, supplement or refrain from publishing data where this is necessary to ensure the quality and reliability of the data. KRB is responsible for the substantive concept, operation and editorial management of the Kulturkataster.",
+				"#### 7.2.2 Documentation of Changes\n\nTo ensure the traceability and quality of the data collection, KRB documents changes to data in the Kulturkataster. Documentation is carried out within the technical capabilities of the Kulturkataster and serves in particular the internal editorial traceability of data maintenance processes.",
+				"##### 7.2.2.1 Logging of Changes\n\nChanges and additions to data as well as other relevant actions in connection with data maintenance are logged in the system. The logging includes in particular information on which changes were made, by which user, and at what time.",
+				"##### 7.2.2.2 Change History\n\nThe logged changes may be stored in the form of a change history and made traceable for editorial purposes. KRB uses this documentation in particular for quality assurance and for the traceability of data changes.",
+				"##### 7.2.2.3 Anonymisation After Account Deletion\n\nIf a user account is deleted, the account’s personal data are removed in accordance with data protection requirements. However, the changes stored in the system remain part of the change history, but are no longer associated with an identifiable person.",
+				"## Obligations of Users, Warranty, Grant of Rights",
+				"### 8.1 Responsibility for Data Submitted Through Contributions\n\nUsers are responsible for the data submitted to the Kulturkataster through contributions. This applies in particular to contributions involving data to be newly added or amended and cultural locations to be newly recorded. Users are prohibited from submitting contributions to the Kulturkataster that violate applicable law or infringe third-party rights.",
+				"#### 8.1.1 Accuracy of Submitted Data\n\nUsers ensure that the data they submit are accurate and complete to the best of their knowledge. In particular, it is not permitted to submit data that are knowingly or grossly negligently inaccurate or misleading.",
+				"#### 8.1.2 Authorisation to Use the Submitted Data (Disclosure to Third Parties, Publication, etc.)\n\nUsers ensure that they are authorised to disclose and publish the data they submit. This also applies in particular to data that are subject to statutory confidentiality provisions, especially the protection of trade secrets, or that must be treated confidentially on the basis of contractual agreements. Users may submit such data to the Kulturkataster only if they are authorised to disclose and pass them on.\n\nUsers ensure that, when submitted to the Kulturkataster, data are free from third-party rights and do not infringe any statutory rights or other legitimate interests of third parties.",
+				"### 8.2 Permission\n\nWhere users propose data for inclusion in the Kulturkataster, they grant KRB permission to store, structure, edit editorially, link with other data, display in the Kulturkataster, make accessible and keep available for download by users such data within the scope of operating and further developing the Kulturkataster. \n\nThis includes in particular the inclusion of data on cultural locations, their presentation in the digital map application, access by users in accordance with their respective access rights and - to the same extent - provision for download and download by users.\n\nThe permission also includes the use of the submitted data by KRB for the purposes of documentation, analysis and further development of the Kulturkataster as well as for evaluations, reports, statistical presentations and publications in connection with cultural policy issues and cultural urban development. For this purpose, the data may in particular be aggregated, evaluated and published in an appropriate form or transmitted to competent public bodies.",
+				"### 8.3 Warranty, Indemnification\n\nBy submitting the data, users warrant that use of the data by KRB to the extent described above does not violate statutory confidentiality provisions, in particular the protection of trade secrets, or contractual confidentiality obligations, and does not otherwise infringe any rights or legitimate interests of third parties. \n\nThis includes in particular that the submitted data do not disseminate inaccurate or misleading information about companies or institutions that would infringe their corporate personality rights or violate provisions of unfair competition law.\n\nUsers indemnify KRB against all third-party claims asserted on the basis of data that users have entered into the Kulturkataster or whose inclusion they have proposed, provided that these claims are based on a breach of the obligations set out in Section 5.1.\n\nThe indemnification includes in particular claims arising from the infringement of third-party rights, including claims under the protection of trade secrets, contractual confidentiality obligations, corporate personality rights and provisions of unfair competition law.",
+				"## Procedure in the Event of Legal Infringements",
+				"### 9.1 Reporting Legal Infringements\n\nPersons or institutions that believe their rights are infringed by data published in the Kulturkataster may notify KRB using the contact options provided for this purpose in the Kulturkataster. The report should contain a description of the affected data that is as precise as possible as well as a justification of the alleged legal infringement.",
+				"### 9.2 KRB Review Procedure\n\nKRB reviews notices of possible legal infringements within the scope of its editorial responsibility. For this purpose, KRB may in particular request additional data from the reporting persons or from users who submitted the relevant data. During the review, KRB may temporarily restrict the visibility of the affected data to the extent this appears necessary to avoid possible legal infringements.",
+				"### 9.3 Notice-and-Takedown Procedure\n\nKRB is not obliged to review all content submitted by users for possible legal infringements before publication. However, if KRB receives a specific notice that data may infringe third-party rights or violate statutory provisions, KRB will review the notice within the scope of its editorial responsibility.",
+				"#### 9.3.1 Content of the Notice and Possible Measures\n\nThe notice should identify the relevant data as precisely as possible and set out the alleged legal infringement in a comprehensible manner. Where this appears necessary for the review, KRB may",
+				"##### 9.3.1.1 Temporarily Restrict the Visibility of the Relevant Data,",
+				"##### 9.3.1.2 Request Additional Data from the Users Involved, or",
+				"##### 9.3.1.3 Take Further Appropriate Measures to Prevent a Possible Legal Infringement.",
+				"#### 9.3.2 Consequences of an Established Legal Infringement\n\nIf the review shows that a legal infringement has occurred, KRB may in particular",
+				"##### 9.3.2.1 Delete or Correct the Relevant Data,",
+				"##### 9.3.2.2 Restrict Publication, or",
+				"##### 9.3.2.3 Temporarily or Permanently Block User Accounts.",
+				"## Liability",
+				"### 10.1 Liability of Users\n\nUsers are themselves responsible for the contributions they submit. In particular, they warrant that the submitted data are accurate, do not infringe third-party rights and do not violate statutory provisions.",
+				"### 10.2 Liability of KRB\n\nKRB manages the Kulturkataster editorially. KRB reviews and decides on the publication of data submitted by users through contributions. Nevertheless, a complete review of the accuracy, completeness and legal admissibility of all data cannot be guaranteed. Insofar as KRB processes data submitted by users, it is liable for such third-party data in accordance with statutory provisions.",
+				"#### 10.2.1 The statutory liability limitations for hosting services apply to the storage and making available of data provided by users, in particular under the German Digital Services Act (Digitale-Dienste-Gesetz) and Regulation (EU) 2022/2065. Accordingly, a provider is generally not responsible for data transmitted or stored by users, provided that it has no actual knowledge of unlawful content or, after obtaining such knowledge, acts without delay to remove access to the relevant data or restrict their visibility. \n\nThere is no general obligation actively to monitor or search for unlawful content.",
+				"#### 10.2.2 The limitation of liability does not apply if KRB has actual knowledge of unlawful content. After obtaining such knowledge, KRB will act without delay to block access to or remove such content. The foregoing limitation of liability also does not apply to content that KRB itself creates, researches or is responsible for in terms of content.",
+				"KRB gives no warranty for the continuing accuracy, completeness and up-to-dateness of all data submitted by users.",
+				"## Deletion Requests by Cultural Organizations",
+				"### 11.1 Right to Deletion\n\nCultural locations affected by published data may request from KRB the deletion of data or restriction of their visibility to the extent that their publication infringes legally protected rights.",
+				"#### 11.1.1 Trade Secrets\n\nA claim for removal or restriction of visibility may be asserted in particular if data are made publicly accessible that constitute trade secrets within the meaning of statutory provisions and whose disclosure was unauthorised. To the extent that corresponding data were entered into the Kulturkataster by users, a claim is initially directed against the person who entered the data. \n\nResponsibility of KRB as operator of the Kulturkataster comes into consideration in particular if KRB obtains knowledge of possible unauthorised disclosure and nevertheless continues to keep the relevant data publicly accessible.",
+				"#### 11.1.2 Inaccurate or Reputation-Damaging Information\n\nA deletion claim may also exist if published data are inaccurate or are capable of infringing legitimate interests of an organization, in particular its corporate personality rights or protected positions under unfair competition law.",
+				"### 11.2 Procedure\n\nNotices of possible legal infringements or deletion requests may be communicated to KRB using the contact options provided in the Kulturkataster. The notice should identify the relevant data as precisely as possible and provide reasons for the alleged legal infringement.\n\nAfter receiving such a notice, KRB reviews the alleged circumstances within the scope of its editorial responsibility. Where necessary for this purpose, KRB may request additional data from the reporting organization or from users who submitted the relevant data.\n\nIf the notice provides sufficient indications of a possible legal infringement, KRB may temporarily restrict the visibility of the affected data until the review has been completed. If a legal infringement is established, KRB may in particular delete, correct or otherwise adapt the data.",
+				"## Term and Termination of Use for Users",
+				"### 12.1 Use of the Kulturkataster via a registered account is made possible for an indefinite period.",
+				"### 12.2  Termination by Notice",
+				"Users may terminate their account at any time without giving reasons. Termination may take place in particular through the corresponding function within the account or by notifying KRB.",
+				"KRB may terminate the user agreement by ordinary notice with a notice period of 30 days.\n\nThe right to extraordinary termination for good cause remains unaffected. Good cause exists for KRB in particular if users",
+				"#### 12.2.1 Breach These Terms of Use,",
+				"#### 12.2.2 Submit Unlawful or Repeatedly Inaccurate Data,",
+				"#### 12.2.3 Infringe Third-Party Rights, or",
+				"#### 12.2.4 Impair the Functionality or Security of the Kulturkataster.",
+				"In these cases, KRB may temporarily or permanently block or delete the relevant account.",
+				"### 12.3 Following Termination\n\nAfter termination of use, the relevant account is deleted. Personal data assigned exclusively to the user account are deleted in accordance with data protection requirements.\n\nData submitted by users and incorporated by KRB into the Kulturkataster may remain in the Kulturkataster’s data set even after an account has been deleted, provided that their storage and publication are necessary for the operation and documentation of the Kulturkataster and no statutory deletion claims conflict with this.\n\nThe change processes documented in the system may continue to exist in anonymised form for reasons of traceability and quality assurance.",
+				"## Changes to the Terms of Use",
+				"### 13.1 Changes\n\nKRB may amend or supplement these Terms of Use to the extent this is necessary",
+				"#### 13.1.1 To Implement Changes in the Statutory or Regulatory Framework,",
+				"#### 13.1.2 To Take Account of Technical Developments or New Functions of the Kulturkataster,",
+				"#### 13.1.3 To Adapt Security Requirements, or",
+				"#### 13.1.4 To Close Regulatory Gaps.",
+				"Changes may not alter the fundamental structure of the user relationship or unreasonably disadvantage users.",
+				"### 13.2 Information, Consent and Entry Into Force\n\nKRB informs registered users of planned changes to the Terms of Use in good time before they enter into force, in an appropriate form by notice in the user account or by email.",
+				"Upon the next login after information about the changes has been provided, registered users are asked to consent to them.",
+				"Consent is given by active confirmation as part of the login process. The amended Terms of Use enter into force upon consent.",
+				"### 13.3 If consent is not given, the account can no longer be used. Users are free to terminate their use of the Kulturkataster at any time in accordance with Section 9 of these Terms of Use.",
+				"## Data Protection for Natural Persons",
+				"### 14.1 KRB processes the personal data received from users within the framework of this contractual relationship, such as name and address, in accordance with statutory provisions, in particular the GDPR and the German Federal Data Protection Act (Bundesdatenschutzgesetz, BDSG).",
+				"### 14.2 Further information (right of access, rectification, withdrawal of consent, erasure, etc.) can be found in KRB’s Privacy Policy at [https://dsgvo-info.cortina-consult.de/kulturkataster-en/](https://dsgvo-info.cortina-consult.de/kulturkataster-en/). ",
+				"## Final Provisions",
+				"### 15.1 Should individual provisions of this agreement be or become unenforceable after conclusion of the agreement, the validity of the agreement shall remain unaffected. The unenforceable provision shall be replaced by the provision whose effects come closest to the economic purpose pursued by the contracting parties with the unenforceable provision. Should the agreement contain or develop gaps, it shall otherwise remain valid.",
+				"### 15.2 In the event that at least one of the contracting parties has no general place of jurisdiction in Germany, the parties agree that the agreement shall be governed by the law of the Federal Republic of Germany.",
+				"### 15.3 If both parties are merchants within the meaning of the German Commercial Code or if at least one of the contracting parties has no general place of jurisdiction in Germany, the parties agree that the registered office of KRB shall be the exclusive place of jurisdiction for all disputes arising from and in connection with this agreement."
 			],
 			"date": "As of: {{date}}",
 			"disclaimer": "English translation pending. The German version applies.",
-			"title": "Terms of Use"
+			"title": "User Agreement"
 		},
 		"userClaims": {
 			"approve": "Assume",
@@ -2964,7 +3058,7 @@
 				"errors": {
 					"required": "Please provide area."
 				},
-				"label": "Area",
+				"label": "Size of the Usable Area (m²)",
 				"placeholder": "Please enter"
 			},
 			"capacity": {
@@ -2973,7 +3067,7 @@
 					"required": "Please provide Capacity."
 				},
 				"label": "Capacity",
-				"placeholder": "Please select"
+				"placeholder": "e.g. 10"
 			},
 			"categories": {
 				"description": "Select matching categories.",
@@ -3104,7 +3198,7 @@
 				"placeholder": "DD.MM.YYYY or YYYY"
 			},
 			"established_until": {
-				"description": "Please enter the date until which the cultural institution was active at this location. This only applies to places that are already closed. If the exact date is not known, the year alone is sufficient.",
+				"description": "Please enter the date until which the cultural organization was active at this location. This only applies to places that are already closed. If the exact date is not known, the year alone is sufficient.",
 				"errors": {
 					"required": "Please provide."
 				},
@@ -3145,9 +3239,9 @@
 			"funding_source_name": {
 				"description": "",
 				"errors": {
-					"required": "Please provide Type of Funding Source."
+					"required": "Please provide Type of Financial Source"
 				},
-				"label": "Type of Funding Source",
+				"label": "Type of Financial Source",
 				"placeholder": "Please select"
 			},
 			"funding_sources": {
@@ -3155,11 +3249,11 @@
 					"add": "Add Financial Source",
 					"remove": "Remove Financial Source"
 				},
-				"description": "Indicate the sources of funding for your cultural institution.",
+				"description": "Indicate the financial sources for your cultural organization.",
 				"errors": {
 					"required": "Please provide funding sources."
 				},
-				"label": "Funding sources",
+				"label": "Financial Sources",
 				"placeholder": "Please select"
 			},
 			"funding_type": {
@@ -3235,7 +3329,7 @@
 				"placeholder": "Please select"
 			},
 			"notes": {
-				"description": "Please note that this field is visible to the public. If you want to enter information that should only be visible to authorized users, please use the \"Internal notes\" field directly below.",
+				"description": "Please note that this field is visible to the public. If you want to enter information that should only be visible to authorized users, please use the “Internal Notes” field directly below.",
 				"errors": {
 					"required": "Please provide Additional Information."
 				},
@@ -3248,7 +3342,7 @@
 					"required": "Please provide Number of Work Spaces."
 				},
 				"label": "Number of Work Spaces",
-				"placeholder": "Please enter"
+				"placeholder": "e.g. 10"
 			},
 			"owner_name": {
 				"description": "",
@@ -3268,7 +3362,7 @@
 					"district_property": "District Property",
 					"federal_property": "Federal Property",
 					"municipal_housing_company": "Municipal Housing Development Company",
-					"none": "Keine Angabe",
+					"none": "Not specified",
 					"other": "Sonstige",
 					"other_public_property": "Other Public Property",
 					"private": "Private",
@@ -3318,7 +3412,7 @@
 					"uncertain": "Uncertain",
 					"unknown": "Unknown"
 				},
-				"placeholder": "Please enter"
+				"placeholder": "Please select"
 			},
 			"protection_status_info": {
 				"description": "",
@@ -3367,7 +3461,7 @@
 				"label": "Available for Space Requests?",
 				"options": {
 					"no": "No",
-					"none": "Keine Angabe",
+					"none": "Not specified",
 					"yes": "Yes"
 				},
 				"placeholder": "Please enter"
@@ -3425,7 +3519,7 @@
 					"required": "Please provide Street."
 				},
 				"label": "Street",
-				"placeholder": "e.g. 123 Example Street"
+				"placeholder": "e.g. Example Street 1"
 			},
 			"street_number": {
 				"description": "",
@@ -3513,7 +3607,7 @@
 				"placeholder": "Please enter"
 			},
 			"website": {
-				"description": "If possible, please provide the cultural institution's main website rather than the websites of individual projects or subunits.",
+				"description": "If possible, please provide the cultural organization’s main website rather than the websites of individual projects or subunits.",
 				"errors": {
 					"required": "Please provide website."
 				},
