@@ -3,17 +3,12 @@
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
 
-const titles = {
-	yAxisLabel: "Status",
-	xAxisLabel: "Dynamik",
-};
-
 const columns = [
-	{ key: "-", label: "-", index: 0 },
-	{ key: "hoch", label: "hoch", index: 1 },
-	{ key: "mittel", label: "mittel", index: 2 },
-	{ key: "niedrig", label: "niedrig", index: 3 },
-	{ key: "sehrNiedrig", label: "sehr niedrig", index: 4 },
+	{ key: "-", labelKey: "", index: 0 },
+	{ key: "high", labelKey: "high", index: 1 },
+	{ key: "medium", labelKey: "medium", index: 2 },
+	{ key: "low", labelKey: "low", index: 3 },
+	{ key: "veryLow", labelKey: "veryLow", index: 4 },
 ];
 
 type Cell = {
@@ -23,12 +18,12 @@ type Cell = {
 };
 
 const rows: {
-	label: string;
+	labelKey: string;
 	subLabel: string;
 	cells: Cell[];
 }[] = [
 	{
-		label: "positiv",
+		labelKey: "positive",
 		subLabel: "+",
 		cells: [
 			{ value: 3, suffix: "1+", color: "bg-[#DBF9C0]" },
@@ -38,7 +33,7 @@ const rows: {
 		],
 	},
 	{
-		label: "stabil",
+		labelKey: "stable",
 		subLabel: "+/-",
 		cells: [
 			{ value: 66, suffix: "1+/-", color: "bg-[#B5C994]" },
@@ -48,7 +43,7 @@ const rows: {
 		],
 	},
 	{
-		label: "negativ",
+		labelKey: "negative",
 		subLabel: "-",
 		cells: [
 			{ value: 17, suffix: "1-", color: "bg-[#6F904F]" },
@@ -60,6 +55,8 @@ const rows: {
 ];
 
 const ColumnHeader = () => {
+	const { t } = useTranslation();
+
 	return (
 		<tr className="align-center">
 			{columns.map((columHead) => {
@@ -77,7 +74,9 @@ const ColumnHeader = () => {
 				return (
 					<th key={columHead.key} className={columHeadClasses} scope="col">
 						<span className="font-normal text-[#000000]">
-							{columHead.label}
+							{t(
+								`common.map.legend.overallIndexTable.columns.${columHead.labelKey}`,
+							)}
 							<br />
 							<span className="font-bold text-[#000000]">
 								{columHead.index}
@@ -91,6 +90,7 @@ const ColumnHeader = () => {
 };
 
 const TableRows = ({ index }: { index: number }) => {
+	const { t } = useTranslation();
 	const findRow = rows.find((_, rowIndex) => rowIndex === index);
 	if (!findRow) {
 		return null;
@@ -99,7 +99,9 @@ const TableRows = ({ index }: { index: number }) => {
 		<tr>
 			<th className="py-3 text-right align-middle" scope="row">
 				<div className="flex flex-col items-center leading-tight">
-					<span className="text-[#000000]">{findRow.label}</span>
+					<span className="text-[#000000]">
+						{t(`common.map.legend.overallIndexTable.rows.${findRow.labelKey}`)}
+					</span>
 					<span className="font-bold text-[#000000]">{findRow.subLabel}</span>
 				</div>
 			</th>
@@ -127,18 +129,20 @@ const TableRows = ({ index }: { index: number }) => {
 export default function GesamtIndexTabelle() {
 	const { t } = useTranslation();
 	const descriptionId = "gesamtindex-beschreibung";
+	const yAxisLabel = t("common.map.legend.overallIndexTable.yAxisLabel");
+	const xAxisLabel = t("common.map.legend.overallIndexTable.xAxisLabel");
 	return (
 		<div className="relative">
 			<div className="absolute transform rotate-[-90deg] -translate-x-[1rem] left-0 top-1/2 -translate-y-1/2">
-				<span className="font-bold ">{titles.xAxisLabel}</span>
+				<span className="font-bold ">{xAxisLabel}</span>
 			</div>
 			<div className="ml-[1.5rem] w-full text-center mb-1.5">
-				<span className="font-bold">{titles.yAxisLabel}</span>
+				<span className="font-bold">{yAxisLabel}</span>
 			</div>
 			<p id={descriptionId} className="sr-only">
 				{t("common.map.legend.legendGesamtIndexDecriptionSR", {
-					yAxisLabel: titles.yAxisLabel,
-					xAxisLabel: titles.xAxisLabel,
+					yAxisLabel,
+					xAxisLabel,
 				})}
 			</p>
 			<div className="inline-block rounded border border-[#E2DFDB] bg-background body3 w-[calc(100%-1.5rem)] ml-[1.5rem]">

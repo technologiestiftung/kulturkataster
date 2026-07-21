@@ -597,7 +597,22 @@
 				"legendGesamtIndexAriaLabel": "Tabelle in der Legende des Gesamtindex",
 				"legendGesamtIndexDecriptionSR": "Legende des Gesamtindex. Die Zeilen zeigen {{yAxisLabel}}, die Spalten {{xAxisLabel}}. Die farbigen Kreise enthalten die Indexwerte und die daneben stehenden Angaben die Spannweite.",
 				"legendValueAriaLabel": "Fachkarte {{serviceName}}, Legenden Eintrag {{label}} {{unit}}",
-				"legendValueWordingAriaLabel": "Fachkarte {{serviceName}}, Wert {{value}}, Legenden Eintrag {{label}}"
+				"legendValueWordingAriaLabel": "Fachkarte {{serviceName}}, Wert {{value}}, Legenden Eintrag {{label}}",
+				"overallIndexTable": {
+					"columns": {
+						"high": "hoch",
+						"low": "niedrig",
+						"medium": "mittel",
+						"veryLow": "sehr niedrig"
+					},
+					"rows": {
+						"negative": "negativ",
+						"positive": "positiv",
+						"stable": "stabil"
+					},
+					"xAxisLabel": "Dynamik",
+					"yAxisLabel": "Status"
+				}
 			},
 			"lookAtLegend": "Legende ansehen",
 			"noLayersAvailable": "Keine Fachkarten verfügbar",
@@ -662,9 +677,6 @@
 		"user": {
 			"title": "Mein Konto"
 		},
-		"venue": {
-			"website": "Webseite"
-		},
 		"yes": "Ja"
 	},
 	"content": {
@@ -691,6 +703,11 @@
 						"Rechtliche Beratung: Kanzlei Laaser"
 					],
 					"editorial": {
+						"additionalItems": [
+							"Platzhalter 1",
+							"Platzhalter 2",
+							"Platzhalter 3"
+						],
 						"items": [
 							"Ateliers: Atelierbüro im kulturwerk des bbk berlin",
 							"Clubs und Musikspielstätten: Clubcommission - Netzwerk der Berliner Clubkultur e.V.",
@@ -841,28 +858,10 @@
 			"which": {
 				"barriers": [
 					{
-						"description": "Die Webseite bietet derzeit (Stand September 2025) keine Inhalte in Leichter Sprache und keine Videos in Deutscher Gebärdensprache (DGS) an.",
-						"measures": "Texte in Leichter Sprache sowie Erklärvideos in Deutscher Gebärdensprache (DGS) sind derzeit in Arbeit. Sie beinhalten grundlegende Informationen zum Kulturkataster und zur Nutzung der Plattform.",
-						"timeline": "Die Veröffentlichung der Inhalte in Leichter Sprache und DGS ist für Oktober 2025 geplant.",
-						"title": "Barriere: Inhalte"
-					},
-					{
-						"description": "Darstellung der Kulturstandorte im Kulturkataster erfolgt derzeit ausschließlich über eine interaktive Kartenansicht.",
-						"measures": "Es ist geplant, eine ergänzende Listenansicht der Kulturstandorte, die vollständig tastaturbedienbar und screenreaderfreundlich ist, bereitzustellen. Diese Listenansicht soll als alternative Navigationsmöglichkeit zur Karte dienen und so eine barriereärmere Nutzung ermöglichen.",
-						"timeline": "Die Umsetzung der Listenansicht ist bis Dezember 2025 vorgesehen.",
-						"title": "Barriere: Ansicht"
-					},
-					{
 						"description": "Einige der auf der Webseite bereitgestellten Dokumente, wie z. B. herunterladbare Excel-Tabellen mit gefilterten Kulturstandorten oder einzelne PDF-Dateien, entsprechen nicht den Anforderungen an barrierefreie Dokumente. Diese Dateien sind teilweise nicht mit Screenreadern lesbar oder nicht für die Tastaturnavigation optimiert.",
 						"measures": "Die Dokumente sollen künftig in barrierefreier Form angeboten werden. Dafür werden barrierearme Dateiformate verwendet und die Inhalte werden entsprechend der Standards für barrierefreie Dokumente überarbeitet.",
 						"timeline": "Die Überarbeitung der bestehenden Dateien ist für 2026 vorgesehen. Neue Dokumente sollen 2026 barrierearm veröffentlicht werden.",
 						"title": "Barriere: Dokumente"
-					},
-					{
-						"description": "Einige interaktive Elemente der Webseite – insbesondere Filterfunktionen, Kartenelemente oder Navigationspunkte – sind derzeit nicht per Tastatur bedienbar.",
-						"measures": "Die technische Struktur der Webseite wird überarbeitet, um eine vollständige Tastatursteuerung aller interaktiven Elemente zu gewährleisten.",
-						"timeline": "Die Umsetzung erfolgt bis Ende 2025.",
-						"title": "Barriere: Tastaturbedienbarkeit"
 					},
 					{
 						"description": "Beim Navigieren mit der Tastatur ist der sichtbare Fokus nicht an allen interaktiven Elementen deutlich erkennbar. Die betrifft die Navigationsschaltflächen „Verkleinern“, „Vergrößern“ und „Meinen Standort finden“.",
@@ -875,12 +874,6 @@
 						"measures": "Alle grafischen Elemente werden überprüft und mit korrekten Alternativtexten versehen.",
 						"timeline": "Die Umsetzung erfolgt im Laufe des Jahres 2026.",
 						"title": "Barriere: Alternativtexte für Bilder und Symbole"
-					},
-					{
-						"description": "Die semantische Struktur der Webseite ist nicht vollständig durch ARIA-Rollen und Landmarken definiert. Screenreader können dadurch nicht alle Bereiche der Webseite korrekt erfassen.",
-						"measures": "Die Seitenstruktur wird um semantische HTML-Elemente und ARIA-Rollen ergänzt, um die Orientierung für assistive Technologien zu verbessern.",
-						"timeline": "Die Umsetzung erfolgt bis Ende 2025.",
-						"title": "Barriere: Fehlende ARIA-Rollen und Landmarken"
 					},
 					{
 						"description": "Die hierarchische Struktur der Überschriften ist nicht auf allen Seiten korrekt umgesetzt. Dies kann die Navigation mit Screenreadern erschweren.",

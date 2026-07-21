@@ -32,6 +32,13 @@ const MODAL_ROUTE_MAP: Record<string, ModalLink> = {
 	terms: { url: "/terms", target: "_self" },
 };
 
+const getPrivacyUrl = (localizePath?: PathLocalizer) => {
+	const localizedRoot = localizePath?.("/") ?? "";
+	return localizedRoot.startsWith("/en")
+		? "https://dsgvo-info.cortina-consult.de/kulturkataster-en/"
+		: "https://dsgvo-info.cortina-consult.de/kulturkataster/";
+};
+
 export const getModalLink = (
 	id: string,
 	localizePath?: PathLocalizer,
@@ -46,6 +53,13 @@ export const getModalLink = (
 
 	const resolvedId =
 		options?.isMobile && id === "accessibilitySettings" ? "mobileMenu" : id;
+	if (resolvedId === "privacy") {
+		return {
+			url: getPrivacyUrl(localizePath),
+			target: "_blank",
+		};
+	}
+
 	const link = MODAL_ROUTE_MAP[resolvedId] ?? {
 		url: `/${resolvedId}`,
 		target: "_self",

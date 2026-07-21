@@ -16,6 +16,7 @@ type SerializedClientError = {
 	message: string;
 	stack?: string;
 	code?: string;
+	digest?: string;
 	details?: Record<string, unknown>;
 };
 
@@ -23,23 +24,57 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 	return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
+function getNestedErrorRecord(error: Record<string, unknown>) {
+	const details = error.details;
+	return isRecord(details) ? details : undefined;
+}
+
+function getRecordString(
+	error: Record<string, unknown>,
+	nestedError: Record<string, unknown> | undefined,
+	key: "code" | "digest" | "message" | "name" | "stack",
+) {
+	const directValue = error[key];
+	if (typeof directValue === "string" && directValue.length > 0) {
+		return directValue;
+	}
+
+	const nestedValue = nestedError?.[key];
+	return typeof nestedValue === "string" && nestedValue.length > 0
+		? nestedValue
+		: undefined;
+}
+
+function getErrorDigest(
+	error: Record<string, unknown>,
+	nestedError?: Record<string, unknown>,
+) {
+	return getRecordString(error, nestedError, "digest");
+}
+
 function serializeErrorRecord(
 	error: Record<string, unknown>,
 ): SerializedClientError {
+	const nestedError = getNestedErrorRecord(error);
 	const message =
-		typeof error.message === "string" && error.message.length > 0
-			? error.message
-			: "Non-Error object thrown";
+		getRecordString(error, nestedError, "message") ?? "Non-Error object thrown";
 	const serializable: SerializedClientError = { message };
+	const name = getRecordString(error, nestedError, "name");
+	const stack = getRecordString(error, nestedError, "stack");
+	const code = getRecordString(error, nestedError, "code");
+	const digest = getErrorDigest(error, nestedError);
 
-	if (typeof error.name === "string") {
-		serializable.name = error.name;
+	if (name) {
+		serializable.name = name;
 	}
-	if (typeof error.stack === "string") {
-		serializable.stack = error.stack;
+	if (stack) {
+		serializable.stack = stack;
 	}
-	if (typeof error.code === "string") {
-		serializable.code = error.code;
+	if (code) {
+		serializable.code = code;
+	}
+	if (digest) {
+		serializable.digest = digest;
 	}
 	if (message === "Non-Error object thrown") {
 		serializable.details = error;
@@ -62,6 +97,10 @@ function serializeClientError(error: unknown) {
 		const code = (error as { code?: unknown }).code;
 		if (typeof code === "string") {
 			serializable.code = code;
+		}
+		const digest = (error as { digest?: unknown }).digest;
+		if (typeof digest === "string") {
+			serializable.digest = digest;
 		}
 
 		return serializable;
