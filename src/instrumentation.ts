@@ -13,6 +13,24 @@ export function register() {
 	});
 }
 
+const isStaleServerActionError = (error: unknown): error is Error =>
+	error instanceof Error &&
+	error.message.includes("Failed to find Server Action");
+
+const getNextRequestErrorContext = (
+	request: Parameters<Instrumentation.onRequestError>[1],
+	context: Parameters<Instrumentation.onRequestError>[2],
+) => ({
+	subsystem: "next",
+	request_pathname: request.path,
+	request_method: request.method,
+	route: context.routePath,
+	router_kind: context.routerKind,
+	route_type: context.routeType,
+	render_source: context.renderSource,
+	revalidate_reason: context.revalidateReason,
+});
+
 export const onRequestError: Instrumentation.onRequestError = async (
 	error,
 	request,
@@ -23,14 +41,17 @@ export const onRequestError: Instrumentation.onRequestError = async (
 		return;
 	}
 	const { logger } = await import("@/server/logging/logger");
-	logger.error("next.request_error", error, {
-		subsystem: "next",
-		request_pathname: request.path,
-		request_method: request.method,
-		route: context.routePath,
-		router_kind: context.routerKind,
-		route_type: context.routeType,
-		render_source: context.renderSource,
-		revalidate_reason: context.revalidateReason,
-	});
+	const requestErrorContext = getNextRequestErrorContext(request, context);
+	if (isStaleServerActionError(error)) {
+		logger.warn("next.stale_server_action", {
+			...requestErrorContext,
+			expected_cause: "client_server_action_manifest_mismatch",
+			error_name: error.name,
+			error_message: error.message,
+			error_stack: error.stack,
+		});
+		return;
+	}
+
+	logger.error("next.request_error", error, requestErrorContext);
 };
