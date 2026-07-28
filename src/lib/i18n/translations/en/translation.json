@@ -210,7 +210,7 @@
 			},
 			"accountEdit": {
 				"confirmPasswordLabel": "Confirm password",
-				"confirmPasswordPlaceholder": "Confirm password",
+				"confirmPasswordPlaceholder": "Confirm Password",
 				"deleteAction": "Delete Profile",
 				"deleteConfirm": "Delete Profile",
 				"deleteDescription": "Are you sure you want to delete your profile? This action cannot be undone.",
@@ -228,9 +228,9 @@
 				},
 				"metaTitle": "Edit Personal Information – Kulturkataster",
 				"nameLabel": "Your name",
-				"namePlaceholder": "First and last name",
+				"namePlaceholder": "First and Last Name",
 				"passwordLabel": "Password",
-				"passwordPlaceholder": "New password",
+				"passwordPlaceholder": "New Password",
 				"passwordRequirements": "Password must be at least 8 characters long.",
 				"submit": "Save",
 				"submitting": "Saving...",
@@ -261,7 +261,7 @@
 				"metaTitle": "Login – Kulturkataster",
 				"noAccount": "Don't have an account with Kulturkataster yet? ",
 				"passwordLabel": "Password",
-				"passwordPlaceholder": "Enter your password",
+				"passwordPlaceholder": "Enter Your Password",
 				"signUp": "Register here.",
 				"submit": "Login",
 				"submitting": "Logging in...",
@@ -280,7 +280,7 @@
 				"subtitle": "Our newsletter keeps you informed about the latest developments regarding the Berlin Kulturkataster. We are pleased that you would like to subscribe. Please note that you can withdraw your consent to receive the newsletter at any time. Further information can be found in our <link />.",
 				"successCta": "Done",
 				"successMessageDescription": "You will now receive our news by email.",
-				"successMessageMail": "Please click the link in the email we just sent you to complete your subscription. Please also check your spam folder.",
+				"successMessageMail": "Please click the link in the email we just sent you to confirm your subscription. Please also check your spam folder.",
 				"successMessageTitle": "Your registration was successful",
 				"thankYou": "Thank you!",
 				"title": "Berlin Kulturkataster Newsletter"
@@ -294,44 +294,44 @@
 				"accountTypeAdministration": "Employee of the State of Berlin",
 				"accountTypeDistrict": "Employee of a district",
 				"accountTypeOrganization": "Staff or representatives of a network or an association",
-				"accountTypePlaceholder": "Select options",
+				"accountTypePlaceholder": "Select Options",
 				"administrationName": "Which state authority do you work for?",
-				"administrationNamePlaceholder": "Enter administration name",
+				"administrationNamePlaceholder": "Enter Administration Name",
 				"administrationPhone": "Telephone Number for inquiries",
 				"administrationPhonePlaceholder": "Enter Telephone Number",
 				"administrationPosition": "What is your function/position?",
-				"administrationPositionPlaceholder": "Enter your position",
+				"administrationPositionPlaceholder": "Enter Your Position",
 				"alreadyAccount": "Do you already have an account with Kulturkataster? ",
 				"confirmPassword": "Repeat password",
-				"confirmPasswordPlaceholder": "Repeat password",
+				"confirmPasswordPlaceholder": "Repeat Password",
 				"districtName": "Please name your district",
-				"districtNamePlaceholder": "Enter district name",
+				"districtNamePlaceholder": "Enter District Name",
 				"districtOffice": "Which department do you work for?",
-				"districtOfficePlaceholder": "Enter department name",
+				"districtOfficePlaceholder": "Enter Department Name",
 				"districtPhone": "Telephone Number for inquiries",
 				"districtPhonePlaceholder": "Enter Telephone Number",
 				"districtPosition": "What is your function/position?",
-				"districtPositionPlaceholder": "Enter your position",
+				"districtPositionPlaceholder": "Enter Your Position",
 				"emailLabel": "Your email address",
 				"emailPlaceholder": "name@example.com",
 				"errorFallback": "Registration failed.",
 				"firstName": "First name",
-				"firstNamePlaceholder": "First name",
+				"firstNamePlaceholder": "First Name",
 				"lastName": "Last name",
-				"lastNamePlaceholder": "Last name",
+				"lastNamePlaceholder": "Last Name",
 				"metaTitle": "Register – Kulturkataster",
 				"newsletterLink": "Subscribe to the Newsletter.",
 				"newsletterOptInPrefix": "To stay up to date, I would also like to",
 				"newsletterSubscriptionSuccessDescription": "Thank you for subscribing to the newsletter. If the subscription is successful, you will receive an email with a confirmation link. Please click the link to complete your subscription. Please also check your spam folder.",
 				"newsletterSubscriptionSuccessTitle": "Newsletter subscription for the Kulturkataster",
 				"organizationName": "Please name the network or association",
-				"organizationNamePlaceholder": "Enter the name of the network or association",
+				"organizationNamePlaceholder": "Enter the Name of the Network or Association",
 				"organizationPhone": "Telephone Number for inquiries",
 				"organizationPhonePlaceholder": "Enter Telephone Number",
 				"organizationPosition": "What is your function/position?",
-				"organizationPositionPlaceholder": "Enter your position",
+				"organizationPositionPlaceholder": "Enter Your Position",
 				"passwordLabel": "Enter password",
-				"passwordPlaceholder": "Create password",
+				"passwordPlaceholder": "Create Password",
 				"privacyLink": "Privacy Policy",
 				"privacySuffix": "have been acknowledged.",
 				"register": "Registration for the Kulturkataster",
@@ -351,12 +351,12 @@
 			"reset": {
 				"backToLogin": "Back to login",
 				"confirmPasswordLabel": "Confirm password",
-				"confirmPasswordPlaceholder": "Confirm password",
+				"confirmPasswordPlaceholder": "Confirm Password",
 				"errorFallback": "Password could not be updated.",
 				"metaTitle": "Reset Password – Kulturkataster",
 				"missingToken": "This link is invalid or expired. Please request a new invitation.",
 				"newPasswordLabel": "New password",
-				"newPasswordPlaceholder": "Create password",
+				"newPasswordPlaceholder": "Create Password",
 				"passwordRequirements": "Password must be at least 8 characters long.",
 				"submit": "Set password",
 				"submitting": "Setting password...",
@@ -378,7 +378,7 @@
 				"emailInvalid": "Invalid Email Address",
 				"emailRequired": "Email is required",
 				"firstNameRequired": "First name is required",
-				"organizationNameRequired": "Name of organization is required",
+				"organizationNameRequired": "Organization Name is required.",
 				"organizationPhoneRequired": "Telephone Number is required",
 				"organizationPositionRequired": "Position is required",
 				"passwordMin": "Password must be at least 8 characters",
@@ -698,7 +698,7 @@
 					],
 					"editorial": {
 						"additionalItems": [
-							"Placeholder 1",
+							"Literature Locations: Netzwerk freie Literaturszene Berlin",
 							"Placeholder 2",
 							"Placeholder 3"
 						],
@@ -971,20 +971,20 @@
 						},
 						"key": {
 							"label": "Key",
-							"placeholder": "e.g. "
+							"placeholder": "e.g. Museums"
 						},
 						"localizedLabelDe": {
 							"label": "Name (German)",
-							"placeholder": "e.g. "
+							"placeholder": "e.g. Museums"
 						},
 						"localizedLabelEn": {
 							"label": "Name (English)",
-							"placeholder": "e.g. "
+							"placeholder": "e.g. Museums"
 						},
 						"parent": {
 							"label": "Parent category",
 							"none": "No overarching category",
-							"placeholder": "Select parent category (optional)"
+							"placeholder": "Select Parent Category (Optional)"
 						},
 						"status": {
 							"label": "status"
@@ -1043,7 +1043,7 @@
 				"title": "No categories found."
 			},
 			"emptyMessage": "No categories found.",
-			"searchPlaceholder": "Search categories..."
+			"searchPlaceholder": "Search Categories..."
 		},
 		"downloadModal": {
 			"acknowledgement": "I have read and understood the legal notice",
@@ -1060,10 +1060,10 @@
 				"email": "Your email address",
 				"nachname": "Last name",
 				"placeholders": {
-					"datenverwendung": "Briefly describe the intended use",
+					"datenverwendung": "Briefly Describe the Intended Use",
 					"email": "name@example.com",
-					"nachname": "Enter last name",
-					"vorname": "Enter first name"
+					"nachname": "Enter Last Name",
+					"vorname": "Enter First Name"
 				},
 				"vorname": "First name"
 			},
@@ -1152,11 +1152,11 @@
 					"fields": {
 						"description": {
 							"label": "Description",
-							"placeholder": "Optional description"
+							"placeholder": "Optional Description"
 						},
 						"name": {
 							"label": "name",
-							"placeholder": "Group name"
+							"placeholder": "Group Name"
 						}
 					},
 					"title": "Group details"
@@ -1172,7 +1172,7 @@
 								"tags": "Tags"
 							},
 							"label": "Cultural places",
-							"placeholder": "Select cultural locations",
+							"placeholder": "Select Cultural Locations",
 							"searchPlaceholder": "Search Cultural Locations..."
 						},
 						"users": {
@@ -1181,8 +1181,8 @@
 								"role": "Role"
 							},
 							"label": "users",
-							"placeholder": "Select users",
-							"searchPlaceholder": "Search users..."
+							"placeholder": "Select Users",
+							"searchPlaceholder": "Search Users..."
 						}
 					},
 					"title": "members"
@@ -1207,7 +1207,7 @@
 				"title": "No groups found."
 			},
 			"emptyMessage": "No groups found.",
-			"searchPlaceholder": "Browse groups..."
+			"searchPlaceholder": "Browse Groups..."
 		},
 		"imprintModal": {
 			"chairman": {
@@ -1462,7 +1462,7 @@
 					"newCategory": {
 						"description": "Please separate multiple categories with a comma.",
 						"label": "Suggest new categories",
-						"placeholder": "e.g. "
+						"placeholder": "e.g. Archives"
 					},
 					"validation": {
 						"minSelection": "Please select at least one category."
@@ -1547,12 +1547,12 @@
 							"title": "Descriptions of the Spaces/Areas"
 						},
 						"space": {
-							"description": "Information on area, rooms and capacity.",
+							"description": "Information on Area, Spaces and Capacity",
 							"title": "Premises"
 						}
 					},
 					"closingReason": {
-						"placeholder": "Provide reasons for closure"
+						"placeholder": "Provide Reasons for Closing"
 					},
 					"datePlaceholder": "DD.MM.YYYY",
 					"datePlaceholderWithYear": "DD.MM.YYYY or YYYY",
@@ -1576,10 +1576,10 @@
 					"rentalContract": {
 						"hereditaryBuildingRight": "Hereditary Building Right (Leasehold)"
 					},
-					"selectPlaceholder": "Please select",
+					"selectPlaceholder": "Please Select",
 					"sharedUse": {
 						"accessibilityPlaceholder": "Describe Accessibility",
-						"audiencePlaceholder": "Describe suitable Target Group/Discipline",
+						"audiencePlaceholder": "Describe Target Group/Discipline",
 						"availabilityPlaceholder": "Describe Time Availability",
 						"contactPersonPlaceholder": "Specify Contact Information for Space Requests",
 						"costPlaceholder": "Describe Costs for Usage",
@@ -1678,14 +1678,14 @@
 						"groups": {
 							"emptyText": "No groups found.",
 							"label": "Groups",
-							"placeholder": "Select groups",
-							"searchPlaceholder": "Search groups..."
+							"placeholder": "Select Groups",
+							"searchPlaceholder": "Search Groups..."
 						},
 						"users": {
 							"emptyText": "No users found.",
 							"label": "Users",
-							"placeholder": "Select users",
-							"searchPlaceholder": "Search users..."
+							"placeholder": "Select Users",
+							"searchPlaceholder": "Search Users..."
 						}
 					},
 					"title": "Assignments"
@@ -1697,7 +1697,7 @@
 					"newCategory": {
 						"description": "Separate multiple categories with commas.",
 						"label": "Suggest new categories",
-						"placeholder": "e.g. New category"
+						"placeholder": "e.g. Archives"
 					},
 					"validation": {
 						"minSelection": "Please select at least one category."
@@ -1713,7 +1713,7 @@
 							"yes": "Yes"
 						}
 					},
-					"title": "contact"
+					"title": "Contact"
 				},
 				"details": {
 					"description": {
@@ -1795,7 +1795,7 @@
 							"title": "Descriptions of the Spaces/Areas"
 						},
 						"space": {
-							"description": "Information on area, rooms and capacity.",
+							"description": "Information on Area, Spaces and Capacity",
 							"title": "Premises"
 						}
 					},
@@ -1827,13 +1827,13 @@
 				},
 				"attachGroups": {
 					"placeholder": "Groups",
-					"searchPlaceholder": "Search groups...",
+					"searchPlaceholder": "Search Groups...",
 					"title": "Select groups"
 				},
 				"attachOnApproval": "Attach on approval",
 				"attachUsers": {
 					"placeholder": "Users",
-					"searchPlaceholder": "Search users...",
+					"searchPlaceholder": "Search Users...",
 					"title": "Select users"
 				},
 				"error": "Verification failed. {{error}}",
@@ -1846,7 +1846,7 @@
 				"loadingTitle": "Loading submission",
 				"noteMeta": "{{author}} on {{date}}",
 				"notesLabel": "Inspection Notes",
-				"notesPlaceholder": "Optional notes for submission",
+				"notesPlaceholder": "Optional Notes for Submission",
 				"previewHint": "You can add and/or correct further information about the cultural location by clicking the pencil to switch to edit mode.",
 				"previousNotesLabel": "Previous notes",
 				"requestedBy": "Requested by",
@@ -1910,14 +1910,14 @@
 		},
 		"listView": {
 			"allLoaded": "All cultural locations loaded",
-			"countLabel": "{{count}} Cultural places",
+			"countLabel": "{{count}} Cultural Locations",
 			"description": "This list shows all locations that you have selected in the filters – 1:1 as on the map. It is especially suitable for screen readers.",
 			"filterButton": "Filter",
 			"loadMore": "Load more cultural locations",
 			"searchButton": "Search",
 			"searchClose": "Close search",
 			"searchLabel": "Search List",
-			"searchPlaceholder": "Cultural location, address or district",
+			"searchPlaceholder": "Cultural Location, Address or District",
 			"subtitle": "Your Results At a Glance",
 			"timeline": "The development of the list view is planned for 2026.",
 			"title": "List view"
@@ -1985,11 +1985,11 @@
 					"fields": {
 						"description": {
 							"label": "Description",
-							"placeholder": "Optional description"
+							"placeholder": "Optional Description"
 						},
 						"name": {
 							"label": "name",
-							"placeholder": "Role name"
+							"placeholder": "Role Name"
 						}
 					},
 					"title": "Role details"
@@ -2002,7 +2002,7 @@
 					"reorderLabel": "Reorder fields",
 					"sections": {
 						"address": "Address",
-						"contact_person": "Contact person",
+						"contact_person": "Contact Person",
 						"institution": "Cultural site fields",
 						"relations": "relationships"
 					},
@@ -2054,7 +2054,7 @@
 				"title": "No roles found."
 			},
 			"emptyMessage": "No roles found.",
-			"searchPlaceholder": "Browse roles..."
+			"searchPlaceholder": "Browse Roles..."
 		},
 		"signLanguageModal": {
 			"content": [
@@ -2131,7 +2131,7 @@
 						"A reason for tourists to come",
 						"A source for new ideas",
 						"A place to learn and remember",
-						"A place for cohe·sion in society"
+						"A place for cohesion in society"
 					],
 					"title": "They are:"
 				},
@@ -2139,42 +2139,42 @@
 					"content": [
 						"What is the situation?",
 						"What does Berlin need?",
-						"How can we create the Kultur·kataster?"
+						"How can we create the Kulturkataster?"
 					],
-					"title1": "At the end of 2022, Kultur·raum Berlin gGmbH got the task.",
+					"title1": "At the end of 2022, Kulturraum Berlin gGmbH got the task.",
 					"title2": "They had to think about:"
 				},
 				"list3": {
 					"content": [
-						"The Kultur·kataster collects a lot of data.",
+						"The Kulturkataster collects a lot of data.",
 						"This helps to make better policy.",
 						"This helps to develop the city in a targeted way."
 					],
-					"title": "1. Make culture·policy with facts"
+					"title": "1. Make cultural policy with facts"
 				},
 				"list4": {
 					"content": [
-						"The Kultur·kataster shows free culture·areas.",
-						"It helps to protect culture·places.",
+						"The Kulturkataster shows free culture areas.",
+						"It helps to protect cultural locations.",
 						"It helps to find new places."
 					],
 					"title": "2. Secure spaces for culture and find new ones"
 				},
 				"list5": {
 					"content": [
-						"The Kultur·kataster shows gaps in what is available.",
-						"This helps to plan culture·places better.",
+						"The Kulturkataster shows gaps in what is available.",
+						"This helps to plan cultural locations better.",
 						"Goal: All people in Berlin should experience culture."
 					],
 					"title": "3. Fair distribution of culture"
 				},
 				"list6": {
 					"content": [
-						"The Kultur·kataster is a digital plan·ning tool.",
-						"It helps authorities and politics to work together.",
-						"It also helps the whole Berlin culture·scene."
+						"The Kulturkataster is a digital planning tool.",
+						"It helps authorities and policymakers to work together.",
+						"It also helps the whole Berlin cultural scene."
 					],
-					"title": "4. Improve co·operation"
+					"title": "4. Improve cooperation"
 				},
 				"list7": {
 					"content": [
@@ -2190,7 +2190,7 @@
 						"Researchers",
 						"Experts",
 						"Activists",
-						"The culture·places themselves"
+						"The cultural locations themselves"
 					],
 					"title": "This only works together with:"
 				},
@@ -2198,35 +2198,35 @@
 					"content": [
 						"There are new versions regularly.",
 						"Each version has new functions.",
-						"Each version has current infor·mation."
+						"Each version has current information."
 					],
-					"title1": "The Kultur·kataster is a learning·process.",
+					"title1": "The Kulturkataster is a learning process.",
 					"title2": "That means:"
 				},
 				"subTitle1": "Version 1",
 				"subTitle2": "Version 2",
 				"subTitle3": "Version 3",
 				"text1": "Berlin is a big city.",
-				"text11": "The Kultur·kataster is a digital map.",
-				"text12": "It shows all culture·places in Berlin.",
-				"text13": "It is free on the inter·net.",
-				"text15": "The Kultur·kataster supports good culture·policy.",
-				"text16": "The Kultur·kataster is part of the government rules.",
+				"text11": "The Kulturkataster is a digital map.",
+				"text12": "It shows many cultural locations in Berlin.",
+				"text13": "It is free on the internet.",
+				"text15": "The Kulturkataster supports good cultural policy.",
+				"text16": "The Kulturkataster is part of the government rules.",
 				"text18": "The \"Studio für unendliche Möglichkeiten\"",
 				"text19": "wrote two papers about this.",
-				"text2": "Culture·places are rare there.",
+				"text2": "Cultural locations are rare there.",
 				"text21": "Since 2024, ",
-				"text22": "Kultur·raum Berlin gGmbH",
+				"text22": "Kulturraum Berlin gGmbH",
 				"text23": " has been implementing it.",
-				"text25": "The technology for the Kultur·kataster",
-				"text26": "is made by the Technologie·stiftung Berlin.",
-				"text28": "There are 4 important rules for the Kultur·kataster.",
-				"text29": "Kultur·raum Berlin gGmbH",
-				"text30": "and the Senats·verwaltung",
-				"text31": "agreed on them:",
-				"text32": "Platzhalter",
-				"text34": "The  Berlin Kultur·kataster collects ",
-				"text35": "infor·mation about culture in Berlin.",
+				"text25": "The technology for the Kulturkataster",
+				"text26": "is made by the Technologiestiftung Berlin.",
+				"text28": "There are 4 important rules",
+				"text29": "for the Kulturkataster.",
+				"text30": "Kulturraum Berlin gGmbH",
+				"text31": "and the Berlin Senate Department",
+				"text32": "agreed on these rules:",
+				"text34": "The  Berlin Kulturkataster collects ",
+				"text35": "information about culture in Berlin.",
 				"text37": "Culture in Berlin is very diverse.",
 				"text38": "It changes quickly.",
 				"text39": "It has many different areas.",
@@ -2240,83 +2240,87 @@
 				"text5": "And there are conflicts about rooms.",
 				"text50": "Culture can be many things.",
 				"text51": "This makes diversity visible.",
-				"text52": "Every culture·place is important.",
-				"text53": "Every culture·field is important.",
-				"text55": "The data·base shows many culture·places.",
+				"text52": "Every cultural location is important.",
+				"text53": "Every cultural field is important.",
+				"text55": "The database shows many cultural locations.",
 				"text56": "With each version, new places are added.",
 				"text57": "And new categories.",
 				"text59": "There is also an explanation",
 				"text60": "of how the program was written.",
 				"text62": "The team listens to feedback and ideas.",
 				"text63": "Users can help shape the future.",
-				"text65": "Planned versions of the Kultur·kataster:",
-				"text67": "List of cultural places.",
+				"text65": "Planned versions of the Kulturkataster:",
+				"text67": "List of cultural locations.",
 				"text68": "With basic information about the places",
 				"text69": "in certain cultural categories.",
-				"text7": "But culture·places are important for Berlin.",
+				"text7": "But cultural locations are important for Berlin.",
 				"text71": "Start: September 2025",
 				"text73": "New cultural categories are added.",
-				"text74": "Data is renewed.",
-				"text75": "There is a log-in area.",
-				"text76": "Cultural locations and associations and administration",
+				"text74": "Data is updated.",
+				"text75": "There is a login area.",
+				"text76": "Cultural locations, associations, and administration",
 				"text77": "can maintain data together.",
 				"text79": "Start: early 2026",
-				"text8": "Culture·places give Berlin an identity.",
-				"text80": "Data is renewed.",
+				"text8": "Cultural locations give Berlin an identity.",
+				"text80": "Data is updated.",
 				"text81": "Missing data is added.",
-				"text82": "There are new specialist maps from the Geo portal.",
-				"text83": "Threatened cultural sites are shown.",
-				"text84": "Log-in area is getting bigger.",
+				"text82": "There are new specialist maps from the Geoportal.",
+				"text83": "Threatened cultural locations are shown.",
+				"text84": "The login area becomes larger.",
 				"text86": "Start: mid-2026",
-				"text88": "The Berlin cultural cadastre is possible",
+				"text88": "The Berlin Kulturkataster is possible",
 				"text89": "because a lot of people are taking part.",
 				"text9": "And they make Berlin colorful and open.",
 				"text91": "Many have helped.",
-				"text92": "And gets excited.",
-				"text94": "All of these people love the culture in Berlin.",
-				"text95": "This connects you with the project team.",
-				"text96": "That's why the project is firmly anchored in the cultural scene.",
+				"text92": "And they were enthusiastic.",
+				"text94": "All these people love culture in Berlin.",
+				"text95": "This connects them with the project team.",
+				"text96": "That is why the project is firmly rooted in the cultural scene.",
 				"text97": "This gives the project strength.",
-				"text98": "This way it can last for a long time.",
+				"text98": "So it can last a long time.",
 				"text99": "And keep developing.",
 				"title": "About the Project"
 			},
 			"infosAndServices": {
 				"list1": {
-					"content": ["Early 2026 version 2", "Mid-2026 version 3"],
-					"title1": "The cultural register continues to grow.",
+					"content": ["Early 2026 Version 2", "Mid-2026 Version 3"],
+					"title1": "The Kulturkataster keeps growing.",
 					"title2": "In 2026 there will be 2 new versions:"
 				},
 				"list2": {
-					"content": ["More cultural location", "More info", "More features"],
-					"title": "With each version there is:"
+					"content": [
+						"More cultural locations",
+						"More information",
+						"More functions"
+					],
+					"title": "With each version there will be:"
 				},
 				"list3": {
 					"content": [
-						"{{count}} Cultural places\n",
+						"{{count}} cultural locations, all with information like name, address, and contact.",
 						"15 categories and 71 subcategories.",
-						"12 compartment cards\n",
-						"A search field.\n",
-						"Search Filter.\n ",
-						"Information in German sign language",
-						"Information in easy language",
-						"Low-barrier list view"
+						"12 specialist maps from the Geoportal Berlin.",
+						"A search field. You can search for names and addresses.",
+						"Search filters. You can search by district and category. And you can also see closed cultural locations. ",
+						"Information in German Sign Language",
+						"Information in plain language",
+						"Barrier-free list view"
 					]
 				},
 				"list4": {
-					"content": ["By districts.", "By categories.", "By subcategories."],
+					"content": ["By districts", "By categories", "By subcategories"],
 					"title": "You can filter cultural locations:",
 					"titleBold": "Filter"
 				},
 				"list5": {
 					"content": [
-						"Cultural locations only closed for a short time",
+						"Cultural locations closed only for a short time",
 						"Cultural locations closed forever"
 					],
 					"title": "Then you will also see:"
 				},
 				"list6": {
-					"content": ["Tick ​​declaration of consent", "Submit form"],
+					"content": ["Check the consent statement", "Send the form"],
 					"title": "Then you must:"
 				},
 				"list7": {
@@ -2324,157 +2328,157 @@
 						"Archives",
 						"Art in public spaces",
 						"Artist residencies",
-						"cultural organizations"
+						"Cultural organizations"
 					],
 					"title1": "Many categories are still missing.",
 					"title2": "For example:"
 				},
 				"list8": {
-					"content": ["Private Galleries", "Private art schools"],
+					"content": ["Private galleries", "Private art schools"],
 					"title1": "Places are also missing in existing categories.",
 					"title2": "For example:"
 				},
 				"list9": {
 					"content": [
-						"On the computer: click on the pen symbol on the left",
-						"On your cell phone or tablet: tap the pen symbol at the bottom right",
-						"Then follow the instructions"
+						"On a computer: Click the pen icon on the left.",
+						"On a phone or tablet: Tap the pen icon at the bottom right.",
+						"Then follow the instructions."
 					],
 					"title": "This is how it works:"
 				},
-				"subTitle1": "What's in version 1?",
-				"subTitle2": "Service",
-				"subTitle3": "questions and answers",
-				"text1": "The Berlin cultural cadastre has been in existence since September 2025.",
+				"subTitle1": "What Is Included in Version 1",
+				"subTitle2": "Using the Map",
+				"subTitle3": "Questions and Answers",
+				"text1": "Since September 2025, the Berlin Kulturkataster has existed.",
 				"text10": "Do you have any ideas or criticism?",
-				"text100": "Sometimes experts have to have a say",
+				"text100": "Sometimes experts must also decide.",
 				"text102": "Open the menu",
-				"text103": "for barrier-free operation.",
-				"text105": "On the computer:",
-				"text106": "Click to do so",
-				"text107": "on the male at the bottom left.",
-				"text109": "On your smartphone or tablet:",
+				"text103": "for accessibility.",
+				"text105": "On a computer:",
+				"text106": "To do this,",
+				"text107": "click the person icon at the bottom left.",
+				"text109": "On a phone or tablet:",
 				"text11": "Then write to:",
 				"text110": "Tap the menu at the top right.",
-				"text111": "And then onto the male.",
-				"text113": "Then select “Change font size”",
+				"text111": "And then tap the person icon.",
+				"text113": "Then choose “Larger Text”.",
 				"text115": "Open the menu",
-				"text116": "for barrier-free operation.",
-				"text118": "On the computer:",
-				"text119": "Click to do so",
+				"text116": "for accessibility.",
+				"text118": "On a computer:",
+				"text119": "To do this,",
 				"text12": "info@kulturkataster.berlin",
-				"text120": "on the male at the bottom left.",
-				"text122": "On your smartphone or tablet:",
+				"text120": "click the person icon at the bottom left.",
+				"text122": "On a phone or tablet:",
 				"text123": "Tap the menu at the top right.",
-				"text124": "And then onto the male.",
-				"text126": "Then select “Adjust Contrast”",
-				"text128": "We would like to show all cultural locations in Berlin.",
-				"text129": "But that takes a long time.",
+				"text124": "And then tap the person icon.",
+				"text126": "Then choose “Dark Mode”.",
+				"text128": "We want to show all cultural locations in Berlin.",
+				"text129": "But this takes a long time.",
 				"text130": "There are always new places.",
-				"text132": "If your location is missing:",
-				"text133": "You can submit the location via a form.",
-				"text135": "It goes like this:",
-				"text136": "On the computer: click on the pen symbol on the left.",
-				"text137": "On your cell phone or tablet: tap the pen symbol at the bottom right.",
+				"text132": "If your place is missing:",
+				"text133": "You can submit the location using a form.",
+				"text135": "This is how it works:",
+				"text136": "On a computer: Click the pen icon on the left.",
+				"text137": "On a phone or tablet: Tap the pen icon at the bottom right.",
 				"text139": "Then follow the instructions.",
-				"text14": "Now there is version 1.",
-				"text142": "In version 1 this is only possible with a form.",
+				"text14": "Now there is Version 1.",
+				"text142": "In Version 1, this is only possible with a form.",
 				"text143": "You can add information about cultural locations.",
 				"text144": "Or correct mistakes.",
-				"text148": "This will take some time.",
+				"text148": "It still takes some time.",
 				"text149": "Because we check every entry.",
-				"text15": "The Berlin cultural cadastre is easy to use.",
-				"text151": "Sometimes experts have to have a say.",
-				"text152": "If there are any questions",
-				"text153": "you will receive an email.",
-				"text156": "Because we'll see first",
-				"text157": "which cards users want.",
+				"text15": "The Berlin Kulturkataster is easy to use.",
+				"text151": "Sometimes experts must also decide.",
+				"text152": "If there are questions",
+				"text153": "you will get an email.",
+				"text156": "Because first we want to see",
+				"text157": "which maps users want.",
 				"text158": "You can send us suggestions.",
 				"text159": "Email: info@kulturkataster.berlin",
-				"text16": "It works similarly to other cards.",
-				"text162": "We do that for you.",
+				"text16": "It works like other maps.",
+				"text162": "We will do that for you.",
 				"text163": "Write to us: info@kulturkataster.berlin",
-				"text17": "Here are tips for operation:",
-				"text2": "This is a new computer tool.",
-				"text20": "At the computer:",
+				"text17": "Here are tips for using it:",
+				"text2": "It is a new computer tool.",
+				"text20": "On a computer:",
 				"text21": "Hold down the left mouse button.",
-				"text22": "Then draw the card",
-				"text24": "On your cell phone or tablet:",
-				"text25": "Place your finger on the screen.",
-				"text26": "Then swipe across the map",
-				"text29": "At the computer:",
+				"text22": "Then drag the map.",
+				"text24": "On a phone or tablet:",
+				"text25": "Put your finger on the screen.",
+				"text26": "Then swipe across the map.",
+				"text29": "On a computer:",
 				"text3": "It collects information about culture in Berlin.",
-				"text30": "Rotate the mouse wheel.",
-				"text31": "Or click on the plus and minus signs at the bottom right.",
-				"text33": "On your cell phone or tablet:",
-				"text34": "Place two fingers on the screen.",
-				"text35": "Spread your fingers apart to enlarge.",
-				"text36": "Pinch fingers together to zoom out.",
-				"text39": "At the computer:",
-				"text40": "Click on the magnifying glass symbol at the top left.",
+				"text30": "Turn the mouse wheel.",
+				"text31": "Or click the plus and minus signs at the bottom right.",
+				"text33": "On a phone or tablet:",
+				"text34": "Put two fingers on the screen.",
+				"text35": "Move fingers apart to zoom in.",
+				"text36": "Move fingers together to zoom out.",
+				"text39": "On a computer:",
+				"text40": "Click the magnifier icon at the top left.",
 				"text41": "Then open the search field.",
-				"text43": "On your cell phone or tablet:",
-				"text44": "Tap the magnifying glass icon below.",
+				"text43": "On a phone or tablet:",
+				"text44": "Tap the magnifier icon at the bottom.",
 				"text45": "Then open the search field.",
-				"text47": "On all devices",
-				"text48": "give after that",
+				"text47": "On all devices:",
+				"text48": "Then enter",
 				"text49": "the name of the place.",
 				"text5": "You can help us.",
 				"text51": "Then confirm the search.",
-				"text53": "It works like this on the computer:",
-				"text54": "Click on the symbol with 3 lines at the top left",
-				"text56": "This is how it works on a cell phone or tablet:",
-				"text57": "Tap the symbol with 3 lines at the top left.",
-				"text59": "If you don't filter anything:",
-				"text6": "Here is the [link /institution].",
-				"text60": "Then all open cultural locations will be shown.",
-				"text62": "You can too",
-				"text63": "show closed places.",
-				"text64": "To do this, click on “Show closed places”",
+				"text53": "On a computer:",
+				"text54": "Click the icon with 3 lines at the top left.",
+				"text56": "On a phone or tablet:",
+				"text57": "Tap the icon with 3 lines at the top left.",
+				"text59": "If you do not filter:",
+				"text6": "Here is the link: [Link/institution].",
+				"text60": "Then all open cultural locations are shown.",
+				"text62": "You can also",
+				"text63": "show closed locations.",
+				"text64": "To do this, click “Show Closed Locations”.",
 				"text66": "You can download information about the cultural locations.",
-				"text68": "On the computer:",
+				"text68": "On a computer:",
 				"text69": "Click the down arrow.",
-				"text7": "You can report cultural locations there.",
-				"text70": "This is in the top left of the page navigation.",
-				"text72": "On your smartphone or tablet:",
+				"text7": "There you can report cultural locations.",
+				"text70": "It is in the side navigation at the top left.",
+				"text72": "On a phone or tablet:",
 				"text73": "Tap the down arrow.",
-				"text74": "This is in the navigation at the bottom right.",
-				"text77": "On the computer:",
+				"text74": "It is in the navigation at the bottom right.",
+				"text77": "On a computer:",
 				"text78": "Open the Contribute form.",
-				"text79": "Click to do so",
+				"text79": "To do this,",
 				"text8": "And suggest changes.",
-				"text80": "click on the pen symbol at the top left.",
-				"text82": "On your smartphone or tablet:",
+				"text80": "click the pen icon at the top left.",
+				"text82": "On a phone or tablet:",
 				"text83": "Open the Contribute form.",
 				"text84": "To do this, tap",
-				"text85": "the pen symbol at the bottom right.",
+				"text85": "the pen icon at the bottom right.",
 				"text87": "Please follow the instructions in the form.",
-				"text88": "Fill out all fields.",
-				"text90": "Fields with an asterisk are mandatory.",
+				"text88": "Fill in all fields.",
+				"text90": "Fields with a star are required fields.",
 				"text93": "We check your entry.",
-				"text95": "If there are any questions",
-				"text96": "you will receive an email.",
+				"text95": "If there are questions",
+				"text96": "you will get an email.",
 				"text98": "Please be patient.",
-				"text99": "The exam may take longer.",
-				"textBold1": "Move map",
+				"text99": "The check can take longer.",
+				"textBold1": "Move the map",
 				"textBold10": "How can I change or add information?",
-				"textBold11": "I have submitted my cultural location. ",
+				"textBold11": "I submitted my cultural location. Why do I not see it on the map?",
 				"textBold12": "Why are there only a few specialist maps?",
-				"textBold13": "How can I have my cultural location deleted?",
-				"textBold2": "Make map bigger and smaller",
-				"textBold3": "Find a place",
+				"textBold13": "How can I have my cultural location removed?",
+				"textBold2": "Zoom in and out",
+				"textBold3": "Search for a place",
 				"textBold5": "Download a selection",
-				"textBold6": "Enter a location",
-				"textBold7": "Make font bigger",
+				"textBold6": "Add a place",
+				"textBold7": "Make the text bigger",
 				"textBold8": "Improve colors",
-				"textBold9": "Why is my cultural location not in the cultural register?",
+				"textBold9": "Why is my cultural location not in the Kulturkataster?",
 				"title": "Information & Services"
 			}
 		},
 		"termsModal": {
 			"authoritativeNotice": {
 				"description": "This document is an English translation of the German “Nutzungsvereinbarung” for the Kulturkataster. It is provided for convenience and information purposes only. The legally binding version is the German original. In the event of any discrepancy, ambiguity or conflict between this English translation and the German version, the German version shall prevail.",
-				"title": "Important notice on the authoritative language version"
+				"title": "Important Notice on the Authoritative Language Version"
 			},
 			"bodySections": [
 				"## Preamble\n\nKulturraum Berlin gGmbH, represented by Dirk Förster (Managing Director), Spandauer Damm 19, 14059 Berlin (hereinafter “KRB”), implements the Kulturkataster project, a platform containing data on cultural locations. The project is funded by Berlin’s Senate Department for Culture and Community.",
@@ -2659,8 +2663,8 @@
 						"groups": {
 							"emptyText": "No groups found",
 							"label": "groups",
-							"placeholder": "Select groups",
-							"searchPlaceholder": "Search for groups..."
+							"placeholder": "Select Groups",
+							"searchPlaceholder": "Search for Groups..."
 						},
 						"institutions": {
 							"emptyText": "No cultural locations found",
@@ -2671,12 +2675,12 @@
 								"tags": "Tags"
 							},
 							"label": "Cultural places",
-							"placeholder": "Select cultural locations",
+							"placeholder": "Select Cultural Locations",
 							"searchPlaceholder": "Search Cultural Locations..."
 						},
 						"role": {
 							"label": "role",
-							"placeholder": "Select role"
+							"placeholder": "Select Role"
 						}
 					},
 					"title": "Access & Memberships"
@@ -2689,7 +2693,7 @@
 					"fields": {
 						"accountType": {
 							"label": "Account type/role",
-							"placeholder": "organization, district, ..."
+							"placeholder": "Organization, District, ..."
 						},
 						"compliance": {
 							"label": "Compliance released"
@@ -2763,7 +2767,7 @@
 				"error": "Email could not be sent.",
 				"loadError": "Email templates could not be loaded.",
 				"loading": "Loading templates…",
-				"placeholder": "Select template",
+				"placeholder": "Select Template",
 				"preview": "Preview",
 				"selectLabel": "Template",
 				"send": "Send template",
@@ -2838,8 +2842,8 @@
 				"title": "Filter Users"
 			},
 			"institutionsCount_one": "{{count}} Cultural place",
-			"institutionsCount_other": "{{count}} Cultural places",
-			"searchPlaceholder": "Search users..."
+			"institutionsCount_other": "{{count}} Cultural Locations",
+			"searchPlaceholder": "Search Users..."
 		},
 		"welcomeModal": {
 			"aboutButton": "About the Project",
@@ -3017,15 +3021,15 @@
 			"address": {
 				"description": "",
 				"errors": {
-					"required": "Please provide address."
+					"required": "Please provide Address."
 				},
 				"label": "Address",
-				"placeholder": "Please enter"
+				"placeholder": "Please Enter"
 			},
 			"address_map": {
 				"description": "Check or adjust the location on the map.",
 				"errors": {
-					"required": "Please provide address map."
+					"required": "Please provide Address Map."
 				},
 				"label": "Address Map",
 				"placeholder": ""
@@ -3041,10 +3045,10 @@
 			"area": {
 				"description": "",
 				"errors": {
-					"required": "Please provide area."
+					"required": "Please provide Area."
 				},
 				"label": "Size of the Usable Area (m²)",
-				"placeholder": "Please enter"
+				"placeholder": "Please Enter"
 			},
 			"capacity": {
 				"description": "",
@@ -3057,18 +3061,18 @@
 			"categories": {
 				"description": "Select matching categories.",
 				"errors": {
-					"required": "Please provide categories."
+					"required": "Please provide Categories."
 				},
 				"label": "Categories",
-				"placeholder": "Please select"
+				"placeholder": "Please Select"
 			},
 			"category": {
 				"description": "",
 				"errors": {
-					"required": "Please provide category."
+					"required": "Please provide Category."
 				},
 				"label": "Category",
-				"placeholder": "Please select"
+				"placeholder": "Please Select"
 			},
 			"city": {
 				"description": "",
@@ -3084,7 +3088,7 @@
 					"required": "Please provide Reason(s) for Closing."
 				},
 				"label": "Reason(s) for Closing",
-				"placeholder": "Provide reasons for closure"
+				"placeholder": "Provide Reasons for Closing"
 			},
 			"contact_person_email": {
 				"description": "",
@@ -3100,7 +3104,7 @@
 					"required": "Please provide Contact Person First Name."
 				},
 				"label": "Contact Person First Name",
-				"placeholder": "Please enter"
+				"placeholder": "Please Enter"
 			},
 			"contact_person_last_name": {
 				"description": "",
@@ -3108,15 +3112,15 @@
 					"required": "Please provide Contact Person Last Name."
 				},
 				"label": "Contact Person Last Name",
-				"placeholder": "Please enter"
+				"placeholder": "Please Enter"
 			},
 			"contact_person_name": {
 				"description": "",
 				"errors": {
-					"required": "Please provide contact person name."
+					"required": "Please provide Contact Person Name."
 				},
 				"label": "Contact person name",
-				"placeholder": "Please enter"
+				"placeholder": "Please Enter"
 			},
 			"contact_person_phone": {
 				"description": "",
@@ -3132,7 +3136,7 @@
 					"required": "Please provide Costs."
 				},
 				"label": "Costs",
-				"placeholder": "Please enter"
+				"placeholder": "Please Enter"
 			},
 			"created_at": {
 				"description": "",
@@ -3148,7 +3152,7 @@
 					"required": "Please provide Cultural Area."
 				},
 				"label": "Cultural Area",
-				"placeholder": "Please select"
+				"placeholder": "Please Select"
 			},
 			"description": {
 				"description": "",
@@ -3156,7 +3160,7 @@
 					"required": "Please provide Additional Information."
 				},
 				"label": "Additional Information",
-				"placeholder": "Please enter"
+				"placeholder": "Please Enter"
 			},
 			"district": {
 				"description": "",
@@ -3164,12 +3168,12 @@
 					"required": "Please provide District."
 				},
 				"label": "District",
-				"placeholder": "Please select"
+				"placeholder": "Please Select"
 			},
 			"email": {
 				"description": "",
 				"errors": {
-					"required": "Please provide email."
+					"required": "Please provide Email."
 				},
 				"label": "Email Address",
 				"placeholder": "name@example.com"
@@ -3206,12 +3210,12 @@
 					"eu": "EU",
 					"federal": "German Federal Government",
 					"foundation": "Foundation",
-					"none": "No Information",
+					"none": "Not Specified",
 					"other": "Other",
 					"private": "Private",
 					"state_berlin": "State of Berlin"
 				},
-				"placeholder": "Please select"
+				"placeholder": "Please Select"
 			},
 			"funding_source_description": {
 				"description": "",
@@ -3219,7 +3223,7 @@
 					"required": "Please provide Description of the Financial Source."
 				},
 				"label": "Description of the Financial Source",
-				"placeholder": "Placeholder"
+				"placeholder": "e.g. Name of the Funding Institution, Program or Source of Income"
 			},
 			"funding_source_name": {
 				"description": "",
@@ -3227,7 +3231,7 @@
 					"required": "Please provide Type of Financial Source"
 				},
 				"label": "Type of Financial Source",
-				"placeholder": "Please select"
+				"placeholder": "Please Select"
 			},
 			"funding_sources": {
 				"actions": {
@@ -3236,10 +3240,10 @@
 				},
 				"description": "Indicate the financial sources for your cultural organization.",
 				"errors": {
-					"required": "Please provide funding sources."
+					"required": "Please provide Financial Sources."
 				},
 				"label": "Financial Sources",
-				"placeholder": "Please select"
+				"placeholder": "Please Select"
 			},
 			"funding_type": {
 				"description": "",
@@ -3250,20 +3254,20 @@
 				"options": {
 					"institutional_funding": "Institutionally Funded",
 					"no_funding": "Unfunded",
-					"none": "No Information",
+					"none": "Not Specified",
 					"temporary_project_funding": "Temporary Project Funding",
 					"unknown": "Unknown",
 					"workspace_program": "Work Spaces Program"
 				},
-				"placeholder": "Please select"
+				"placeholder": "Please Select"
 			},
 			"id": {
 				"description": "",
 				"errors": {
-					"required": "Please provide id."
+					"required": "Please provide ID."
 				},
 				"label": "ID",
-				"placeholder": "Please enter"
+				"placeholder": "Please Enter"
 			},
 			"internal_notes": {
 				"description": "",
@@ -3271,15 +3275,15 @@
 					"required": "Please provide Internal Notes."
 				},
 				"label": "Internal Notes",
-				"placeholder": "Please enter"
+				"placeholder": "Please Enter"
 			},
 			"lat": {
 				"description": "",
 				"errors": {
-					"required": "Please provide latitude."
+					"required": "Please provide Latitude."
 				},
 				"label": "Latitude",
-				"placeholder": "Please enter"
+				"placeholder": "Please Enter"
 			},
 			"legal_form": {
 				"description": "",
@@ -3292,10 +3296,10 @@
 			"lng": {
 				"description": "",
 				"errors": {
-					"required": "Please provide longitude."
+					"required": "Please provide Longitude."
 				},
 				"label": "Longitude",
-				"placeholder": "Please enter"
+				"placeholder": "Please Enter"
 			},
 			"name": {
 				"description": "",
@@ -3303,7 +3307,7 @@
 					"required": "Please provide Name of the Cultural Organization."
 				},
 				"label": "Cultural Organization",
-				"placeholder": "Please enter"
+				"placeholder": "Please Enter"
 			},
 			"neighbourhood": {
 				"description": "",
@@ -3311,7 +3315,7 @@
 					"required": "Please provide Neighborhood."
 				},
 				"label": "Neighborhood",
-				"placeholder": "Please select"
+				"placeholder": "Please Select"
 			},
 			"notes": {
 				"description": "Please note that this field is visible to the public. If you want to enter information that should only be visible to authorized users, please use the “Internal Notes” field directly below.",
@@ -3319,7 +3323,7 @@
 					"required": "Please provide Additional Information."
 				},
 				"label": "Additional Information",
-				"placeholder": "Please enter"
+				"placeholder": "Please Enter"
 			},
 			"number_of_rooms": {
 				"description": "",
@@ -3335,7 +3339,7 @@
 					"required": "Please provide Owner of the Property."
 				},
 				"label": "Owner of the Property",
-				"placeholder": "Please enter"
+				"placeholder": "Please Enter"
 			},
 			"owner_type": {
 				"description": "",
@@ -3347,8 +3351,8 @@
 					"district_property": "District Property",
 					"federal_property": "Federal Property",
 					"municipal_housing_company": "Municipal Housing Development Company",
-					"none": "Not specified",
-					"other": "Sonstige",
+					"none": "Not Specified",
+					"other": "Other",
 					"other_public_property": "Other Public Property",
 					"private": "Private",
 					"state_property": "State Property",
@@ -3358,7 +3362,7 @@
 					"state_property_soda": "State Property (SODA)",
 					"state_property_specialized": "State Property (Infrastructural Property)"
 				},
-				"placeholder": "Please select"
+				"placeholder": "Please Select"
 			},
 			"parent_organization": {
 				"description": "",
@@ -3366,11 +3370,11 @@
 					"required": "Please provide Umbrella Organization."
 				},
 				"label": "Umbrella Organization",
-				"placeholder": "Please enter"
+				"placeholder": "Please Enter"
 			},
 			"password": {
 				"errors": {
-					"required": "Password is required"
+					"required": "Password is required."
 				}
 			},
 			"phone": {
@@ -3391,13 +3395,13 @@
 					"acutely_threatened": "Acutely Threatened",
 					"long_term_secured": "Long-Term Protection ",
 					"medium_term_secured": "Medium-Term Protection",
-					"none": "Not specified",
+					"none": "Not Specified",
 					"not_yet_secured": "Not Protected Yet",
 					"permanently_closed": "Permanently Closed",
 					"uncertain": "Uncertain",
 					"unknown": "Unknown"
 				},
-				"placeholder": "Please select"
+				"placeholder": "Please Select"
 			},
 			"protection_status_info": {
 				"description": "",
@@ -3405,15 +3409,15 @@
 					"required": "Please provide Additional Information."
 				},
 				"label": "Additional Information (Protection Status)",
-				"placeholder": "Please enter"
+				"placeholder": "Please Enter"
 			},
 			"protection_status_internal_notes": {
 				"description": "",
 				"errors": {
-					"required": "Please provide Internal Notes."
+					"required": "Please provide Internal Notes on the Protection Status."
 				},
 				"label": "Internal Notes (Protection Status)",
-				"placeholder": "Please enter"
+				"placeholder": "Please Enter"
 			},
 			"rental_contract_end": {
 				"description": "",
@@ -3433,10 +3437,11 @@
 					"hereditary_building_right": "Hereditary Building Right (Leasehold)",
 					"leasehold": "Hereditary Building Right (Leasehold)",
 					"limited_lease": "Limited Rental Contract",
+					"none": "Not Specified",
 					"organization_ownership": "Property of the Organization",
 					"unlimited_lease": "Unlimited Rental Contract"
 				},
-				"placeholder": "Please select"
+				"placeholder": "Please Select"
 			},
 			"shared_use_allowed": {
 				"description": "",
@@ -3446,10 +3451,10 @@
 				"label": "Available for Space Requests?",
 				"options": {
 					"no": "No",
-					"none": "Not specified",
+					"none": "Not Specified",
 					"yes": "Yes"
 				},
-				"placeholder": "Please enter"
+				"placeholder": "Please Enter"
 			},
 			"shared_use_audience": {
 				"description": "",
@@ -3457,7 +3462,7 @@
 					"required": "Please provide Target Group/Discipline."
 				},
 				"label": "Available for Target Group/Discipline",
-				"placeholder": "Describe suitable Target Group/Discipline"
+				"placeholder": "Describe Target Group/Discipline"
 			},
 			"shared_use_availability": {
 				"description": "",
@@ -3497,7 +3502,7 @@
 					"required": "Please provide Data Source."
 				},
 				"label": "Data Source",
-				"placeholder": "Please enter"
+				"placeholder": "Please Enter"
 			},
 			"street": {
 				"errors": {
@@ -3512,23 +3517,23 @@
 					"required": "Please provide Building Number."
 				},
 				"label": "Building Number",
-				"placeholder": "Please enter"
+				"placeholder": "Please Enter"
 			},
 			"subcategories": {
 				"description": "Select matching subcategories.",
 				"errors": {
-					"required": "Please provide subcategories."
+					"required": "Please provide Subcategories."
 				},
 				"label": "Subcategories",
-				"placeholder": "Please select"
+				"placeholder": "Please Select"
 			},
 			"subcategory": {
 				"description": "",
 				"errors": {
-					"required": "Please provide subcategory."
+					"required": "Please provide Subcategory."
 				},
 				"label": "Subcategory",
-				"placeholder": "Please select"
+				"placeholder": "Please Select"
 			},
 			"tags": {
 				"actions": {
@@ -3537,18 +3542,18 @@
 				},
 				"description": "",
 				"errors": {
-					"required": "Please provide tags."
+					"required": "Please provide Tags."
 				},
 				"label": "Tags",
-				"placeholder": "Please enter"
+				"placeholder": "Please Enter"
 			},
 			"type": {
 				"description": "",
 				"errors": {
-					"required": "Please provide type."
+					"required": "Please provide Type."
 				},
 				"label": "Type",
-				"placeholder": "Please enter"
+				"placeholder": "Please Enter"
 			},
 			"updated_at": {
 				"description": "",
@@ -3566,22 +3571,22 @@
 				"label": "Usage Status",
 				"options": {
 					"in_use": "In Use",
-					"none": "Not specified",
+					"none": "Not Specified",
 					"permanently_closed": "Permanently Closed",
 					"planned_use": "Planned Usage",
 					"potential_space": "Potential Location",
 					"temporarily_closed": "Temporarily Closed",
 					"unknown": "Unknown"
 				},
-				"placeholder": "Please enter"
+				"placeholder": "Please Enter"
 			},
 			"utilization_status_info": {
 				"description": "",
 				"errors": {
-					"required": "Please provide utilization status info."
+					"required": "Please provide Usage Status Details."
 				},
-				"label": "Utilization status info",
-				"placeholder": "Please enter"
+				"label": "Usage Status Details",
+				"placeholder": "Please Enter"
 			},
 			"utilization_status_internal_notes": {
 				"description": "",
@@ -3589,12 +3594,12 @@
 					"required": "Please provide Internal Notes."
 				},
 				"label": "Internal Notes (Usage Status)",
-				"placeholder": "Please enter"
+				"placeholder": "Please Enter"
 			},
 			"website": {
 				"description": "If possible, please provide the cultural organization’s main website rather than the websites of individual projects or subunits.",
 				"errors": {
-					"required": "Please provide website."
+					"required": "Please provide Website."
 				},
 				"label": "Website",
 				"placeholder": "https://..."
@@ -3605,7 +3610,7 @@
 					"required": "Please provide Postal Code."
 				},
 				"label": "Postal Code",
-				"placeholder": "Please enter"
+				"placeholder": "Please Enter"
 			}
 		},
 		"funding_source": {
@@ -3614,7 +3619,7 @@
 			"eu": "EU",
 			"federal": "German Federal Government",
 			"foundation": "Foundation",
-			"none": "No Information",
+			"none": "Not Specified",
 			"other": "Other",
 			"private": "Private",
 			"state_berlin": "State of Berlin"
@@ -3622,7 +3627,7 @@
 		"funding_type": {
 			"institutional_funding": "Institutionally Funded",
 			"no_funding": "Unfunded",
-			"none": "No Information",
+			"none": "Not Specified",
 			"placeholder": "Select Type of Funding",
 			"temporary_project_funding": "Temporary Project Funding",
 			"workspace_program": "Work Spaces Program"
@@ -3644,7 +3649,7 @@
 			"public": "Public",
 			"removal_pending": "Removal Pending"
 		},
-		"none": "No information",
+		"none": "Not Specified",
 		"owner_type": {
 			"district_property": "District Property",
 			"federal_property": "Federal Property",
@@ -3666,7 +3671,7 @@
 			"medium_term_secured": "Medium-Term Protection",
 			"not_yet_secured": "Not Protected Yet",
 			"permanently_closed": "Permanently Closed",
-			"placeholder": "Placeholder",
+			"placeholder": "Select Protection Status",
 			"uncertain": "Uncertain"
 		},
 		"rental_contract_type": {
