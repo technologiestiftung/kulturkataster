@@ -1431,7 +1431,8 @@
 				"back": "Zurück",
 				"next": "Weiter",
 				"review": "Prüfen",
-				"submit": "Kulturort einreichen"
+				"submit": "Kulturort einreichen",
+				"submitUpdate": "Änderung einreichen"
 			},
 			"dialog": {
 				"create": {
