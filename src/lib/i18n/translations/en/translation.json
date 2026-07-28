@@ -1425,7 +1425,8 @@
 				"back": "Back",
 				"next": "Next",
 				"review": "Check",
-				"submit": "Submit Cultural Location"
+				"submit": "Submit Cultural Location",
+				"submitUpdate": "Submit change"
 			},
 			"dialog": {
 				"create": {
