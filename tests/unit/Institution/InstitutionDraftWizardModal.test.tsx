@@ -353,7 +353,7 @@ describe("InstitutionDraftWizardModal submission workflow", () => {
 
 		fireEvent.click(
 			screen.getByRole("button", {
-				name: "institutionDraftWizardModal.actions.submit",
+				name: "institutionDraftWizardModal.actions.submitUpdate",
 			}),
 		);
 

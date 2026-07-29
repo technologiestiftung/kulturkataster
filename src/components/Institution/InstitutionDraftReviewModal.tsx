@@ -48,6 +48,7 @@ export function InstitutionDraftReviewModal({
 	const toLocalePath = useLocalePath();
 	const closeModal = useRoutedModalClose({ returnTo });
 	const [reviewError, setReviewError] = useState<string | null>(null);
+	const [notifySubmitter, setNotifySubmitter] = useState(true);
 
 	const allSubmissions = useAccountStore((state) => state.submissions);
 	const institutionPermissions = useAccountStore(
@@ -117,7 +118,7 @@ export function InstitutionDraftReviewModal({
 	const handleReviewAction = useCallback(
 		async (status: "approved" | "rejected") => {
 			if (!resolvedSubmissionWithFallback) return;
-			const success = await handleReview(status);
+			const success = await handleReview(status, { notifySubmitter });
 			if (!success) {
 				setReviewError(
 					error ?? t("content.institutionFormModal.review.errorDescription"),
@@ -146,6 +147,7 @@ export function InstitutionDraftReviewModal({
 			closeModal,
 			error,
 			handleReview,
+			notifySubmitter,
 			resolvedSubmissionWithFallback,
 			router,
 			shouldRefresh,
@@ -401,6 +403,19 @@ export function InstitutionDraftReviewModal({
 									</span>
 								</label>
 							) : null}
+							<label className="flex items-start gap-3">
+								<Checkbox
+									checked={notifySubmitter}
+									onCheckedChange={(checked) =>
+										setNotifySubmitter(checked === true)
+									}
+									disabled={submitting}
+								/>
+
+								<span className="body2">
+									{t("content.institutionFormModal.review.notifySubmitter")}
+								</span>
+							</label>
 							{(userOptions.length > 0 || groupOptions.length > 0) && (
 								<div className="space-y-3">
 									<span className="body2">
