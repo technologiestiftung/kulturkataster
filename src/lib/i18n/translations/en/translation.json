@@ -1848,6 +1848,7 @@
 				"noteMeta": "{{author}} on {{date}}",
 				"notesLabel": "Inspection Notes",
 				"notesPlaceholder": "Optional notes for submission",
+				"notifySubmitter": "Email the submitter about the decision.",
 				"previewHint": "You can add and/or correct further information about the cultural location by clicking the pencil to switch to edit mode.",
 				"previousNotesLabel": "Previous notes",
 				"requestedBy": "Requested by",

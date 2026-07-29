@@ -438,6 +438,7 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 			const sendStandardSubmissionDecisionEmail = async (
 				decision: "approved" | "rejected",
 			) => {
+				if (!validatedInput.notifySubmitter) return;
 				if (!standardSubmissionCreatorId) return;
 				const recipient = await prisma.user.findUnique({
 					where: { id: standardSubmissionCreatorId },
