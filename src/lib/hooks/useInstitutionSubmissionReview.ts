@@ -144,7 +144,10 @@ export function useInstitutionSubmissionReview({
 	};
 
 	const handleReview = useCallback(
-		async (status: "approved" | "rejected"): Promise<boolean> => {
+		async (
+			status: "approved" | "rejected",
+			options: { notifySubmitter?: boolean } = {},
+		): Promise<boolean> => {
 			if (!resolvedSubmissionWithFallback) return false;
 			if (!canReviewCurrentSubmission) return false;
 			if (submitting) return false;
@@ -171,6 +174,7 @@ export function useInstitutionSubmissionReview({
 					grantSubmitterAccess: shouldShowGrantSubmitterAccessToggle
 						? grantSubmitterAccess
 						: undefined,
+					notifySubmitter: options.notifySubmitter,
 					attachUserIds: status === "approved" ? attachUserIds : undefined,
 					attachGroupIds: status === "approved" ? attachGroupIds : undefined,
 				});

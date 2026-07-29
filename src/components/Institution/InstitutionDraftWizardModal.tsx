@@ -199,6 +199,10 @@ function InstitutionDraftWizardContent({
 	const draftMode = useInstitutionDraftStore((state) => state.mode);
 	const contactProfile = draftMode === "create" ? profile : null;
 	const isUpdateReviewOnly = draftMode === "update";
+	const submitActionLabelKey =
+		draftMode === "update"
+			? "content.institutionDraftWizardModal.actions.submitUpdate"
+			: "content.institutionDraftWizardModal.actions.submit";
 	const [editSectionId, setEditSectionId] = useState<string | null>(null);
 	const [editModalOpen, setEditModalOpen] = useState(false);
 	const hasOpenedFromHash = useRef(false);
@@ -1837,7 +1841,7 @@ function InstitutionDraftWizardContent({
 							id="institution-draft-submit-button"
 							onClick={() => void handleReviewSubmit()}
 						>
-							{t("content.institutionDraftWizardModal.actions.submit")}
+							{t(submitActionLabelKey)}
 						</Button>
 					</div>
 				</div>
