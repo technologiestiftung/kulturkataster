@@ -28,6 +28,8 @@ vi.mock("react-i18next", () => ({
 					"institutionFormModal.review.actions.approve": "Genehmigen",
 					"institutionFormModal.review.actions.reject": "Ablehnen",
 					"institutionFormModal.review.actions.saveNotes": "Notizen speichern",
+					"institutionFormModal.review.notifySubmitter":
+						"Einreichende Person per E-Mail über die Entscheidung informieren.",
 					"institutionFormModal.review.previousNotesLabel": "Bisherige Notizen",
 					"institutionFormModal.review.noteMeta":
 						`${options?.author ?? ""} am ${options?.date ?? ""}`.trim(),
@@ -172,10 +174,34 @@ describe("InstitutionDraftReviewModal", () => {
 		fireEvent.click(screen.getByRole("button", { name: "Genehmigen" }));
 
 		await waitFor(() => {
-			expect(handleReviewMock).toHaveBeenCalledWith("approved");
+			expect(handleReviewMock).toHaveBeenCalledWith("approved", {
+				notifySubmitter: true,
+			});
 		});
 		expect(closeModalMock).toHaveBeenCalledTimes(1);
 		expect(mockedShowSuccessToast).toHaveBeenCalledTimes(1);
+	});
+
+	it("allows approving without emailing the submitter", async () => {
+		render(
+			<InstitutionDraftReviewModal
+				submissionId={11}
+				routePath="/account/submissions/11"
+			/>,
+		);
+
+		fireEvent.click(
+			screen.getByRole("checkbox", {
+				name: "Einreichende Person per E-Mail über die Entscheidung informieren.",
+			}),
+		);
+		fireEvent.click(screen.getByRole("button", { name: "Genehmigen" }));
+
+		await waitFor(() => {
+			expect(handleReviewMock).toHaveBeenCalledWith("approved", {
+				notifySubmitter: false,
+			});
+		});
 	});
 
 	it("allows rejecting a submission", async () => {
@@ -189,7 +215,9 @@ describe("InstitutionDraftReviewModal", () => {
 		fireEvent.click(screen.getByRole("button", { name: "Ablehnen" }));
 
 		await waitFor(() => {
-			expect(handleReviewMock).toHaveBeenCalledWith("rejected");
+			expect(handleReviewMock).toHaveBeenCalledWith("rejected", {
+				notifySubmitter: true,
+			});
 		});
 		expect(closeModalMock).toHaveBeenCalledTimes(1);
 		expect(mockedShowSuccessToast).toHaveBeenCalledTimes(1);

@@ -75,6 +75,7 @@ const submissionReviewSchema = z
 		}),
 		internalNotes: optionalTextSchema().transform((value) => value ?? null),
 		grantSubmitterAccess: z.boolean().optional().default(false),
+		notifySubmitter: z.boolean().optional().default(true),
 		attachUserIds: z.array(z.string().uuid()).optional().default([]),
 		attachGroupIds: z
 			.array(positiveIntegerSchema("Group id must be positive."))

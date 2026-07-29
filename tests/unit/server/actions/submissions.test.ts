@@ -19,6 +19,7 @@ vi.mock("@/server/utils/actionsUtils", () => ({
 const getTableScopeMock = vi.fn();
 const requireScopeOrUserMock = vi.fn();
 const canFieldsMock = vi.fn();
+const sendSubmissionDecisionEmailMock = vi.hoisted(() => vi.fn());
 
 vi.mock("@/server/utils/rbac", () => ({
 	getAccessContextForUser: vi.fn().mockResolvedValue({
@@ -82,7 +83,7 @@ vi.mock("@/server/logic/submissionAudit", () => ({
 
 vi.mock("@/server/email/dispatcher", () => ({
 	sendClaimDecisionEmail: vi.fn(),
-	sendSubmissionDecisionEmail: vi.fn(),
+	sendSubmissionDecisionEmail: sendSubmissionDecisionEmailMock,
 }));
 
 const buildInstitutionScopedWhereMock = vi.fn();
@@ -130,6 +131,7 @@ describe("server actions: submissions", () => {
 		txSubmissionUpdateMock.mockReset();
 		txSubmissionNoteCreateMock.mockReset();
 		txInstitutionDeleteMock.mockReset();
+		sendSubmissionDecisionEmailMock.mockReset();
 		buildInstitutionScopedWhereMock.mockReset();
 		canFieldsMock.mockReturnValue(true);
 		buildInstitutionScopedWhereMock.mockImplementation(
@@ -340,6 +342,34 @@ describe("server actions: submissions", () => {
 			}),
 		);
 		expect(txSubmissionDeleteMock).toHaveBeenCalledWith({ where: { id: 10 } });
+	});
+
+	it("reviewSubmission skips the submitter decision email when disabled", async () => {
+		getTableScopeMock.mockReturnValue("all");
+		requireScopeOrUserMock.mockReturnValue(null);
+		findByIdMock.mockResolvedValue({
+			id: 12,
+			entity_type: SubmissionEntityType.institution,
+			entity_id: null,
+			type: SubmissionType.create,
+			status: "approval_pending",
+			created_by: "submitter-1",
+			meta: null,
+			data: {
+				name: "Submitted Institution",
+			},
+		});
+		txInstitutionCreateMock.mockResolvedValue({ id: 124 });
+
+		await reviewSubmission({
+			id: 12,
+			status: "approved",
+			notifySubmitter: false,
+		});
+
+		expect(txInstitutionCreateMock).toHaveBeenCalled();
+		expect(prismaUserFindUniqueMock).not.toHaveBeenCalled();
+		expect(sendSubmissionDecisionEmailMock).not.toHaveBeenCalled();
 	});
 
 	it("reviewSubmission approval updates only submitted address and contact person subfields", async () => {
