@@ -100,6 +100,7 @@ export type SubmissionReviewPayload = {
 	status: Exclude<SubmissionStatus, "draft">;
 	internalNotes?: string | null;
 	grantSubmitterAccess?: boolean;
+	notifySubmitter?: boolean;
 	attachUserIds?: string[];
 	attachGroupIds?: number[];
 };
