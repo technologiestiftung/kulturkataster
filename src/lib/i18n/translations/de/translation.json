@@ -1854,6 +1854,7 @@
 				"noteMeta": "{{author}} am {{date}}",
 				"notesLabel": "Prüfnotizen",
 				"notesPlaceholder": "Optionale Notizen für die Einreichung",
+				"notifySubmitter": "Einreichende Person per E-Mail über die Entscheidung informieren.",
 				"previewHint": "Sie können weitere Informationen zum Kulturort ergänzen und/oder korrigieren, wenn Sie durch Klick auf den Stift in den Bearbeitungsmodus wechseln.",
 				"previousNotesLabel": "Bisherige Notizen",
 				"requestedBy": "Angefragt von",

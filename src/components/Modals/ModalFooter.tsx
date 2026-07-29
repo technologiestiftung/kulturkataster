@@ -104,7 +104,7 @@ export function ModalFooter({ hideLinks }: ModalFooterProps) {
 			</div>
 			<div
 				className={cn(
-					"w-[calc(100%+2rem)] bg-background flex justify-center",
+					"w-[calc(100%+2rem)] bg-background flex justify-center max-w-full",
 					"-mx-4 md:mx-0",
 				)}
 			>
