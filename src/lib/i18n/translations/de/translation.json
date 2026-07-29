@@ -197,7 +197,7 @@
 					},
 					"title": "Fragen & Antworten"
 				},
-				"subtitle": "Meine Profilübersicht",
+				"subtitle": "Mein Kulturkataster-Portal",
 				"tabs": {
 					"activity": "Aktivität",
 					"categories": "Kategorien",
@@ -338,7 +338,7 @@
 				"signIn": "Melden Sie sich hier an.",
 				"submit": "Konto erstellen",
 				"submitting": "Konto wird erstellt...",
-				"subtitle": "Wirken Sie mit, Berlins Kulturlandschaft zu gestalten.",
+				"subtitle": "Nutzen Sie die Vorteile unseres Portals und verwalten Sie Ihre Kulturorte jederzeit und dauerhaft. Empfohlen für Mitarbeitende aus Verwaltungen, Verbänden und Kulturorten.",
 				"successCta": "Fertig",
 				"successMessage": "Wenn ein Konto mit den angegebenen Daten erstellt werden kann, erhalten Sie in Kürze eine E-Mail mit einem Bestätigungslink.",
 				"successTitle": "Vielen Dank!",
@@ -383,7 +383,7 @@
 				"organizationPositionRequired": "Position ist erforderlich",
 				"passwordMin": "Passwort muss mindestens 8 Zeichen haben",
 				"passwordMismatch": "Passwörter stimmen nicht überein",
-				"passwordRequired": "Passwort ist erforderlich"
+				"passwordRequired": "Passwort ist erforderlich."
 			}
 		},
 		"back": "Zurück",
@@ -495,10 +495,10 @@
 			"additionalInfo": "Zusätzliche Informationen",
 			"backToMap": "Zurück zur Karte",
 			"categories": "Kategorien",
-			"claimSelectDescription": "Kulturorte, für die Sie berechtigt sind, können Sie Ihrem Profil hinzufügen. Für mehr Vollständigkeit, einen besseren Überblick und die schnellere Bearbeitung.",
+			"claimSelectDescription": "Kulturorte, für die Sie berechtigt sind, sehen Sie nach Freigabe durch die Redaktion unter “Meine Kulturorte”.",
 			"claimSelectSearchLabel": "Name oder Adresse des Kulturortes",
-			"claimSelectSubtitle": "Beantragen Sie die Verwaltungs-Rechte für Kulturorte, die zu Ihrem Verband oder Unternehmen gehören.",
-			"claimSelectTitle": "Kulturort beanspruchen",
+			"claimSelectSubtitle": "Beantragen Sie die Verwaltungs-Rechte für Ihre Kulturorte",
+			"claimSelectTitle": "Kulturort verwalten",
 			"culturalArea": "Kulturareal",
 			"details": "Kulturort Details",
 			"district": "Bezirk",
@@ -704,7 +704,7 @@
 					],
 					"editorial": {
 						"additionalItems": [
-							"Platzhalter 1",
+							"Literaturorte: Netzwerk freie Literaturszene Berlin",
 							"Platzhalter 2",
 							"Platzhalter 3"
 						],
@@ -977,7 +977,7 @@
 						},
 						"key": {
 							"label": "Schlüssel",
-							"placeholder": "z. B. museen"
+							"placeholder": "z. B. Museen"
 						},
 						"localizedLabelDe": {
 							"label": "Name (Deutsch)",
@@ -1350,10 +1350,10 @@
 				}
 			],
 			"body": "**Seit September 2025 steht Ihnen mit dem Kulturkataster Berlin die erste Version unseres digitalen Werkzeugs zur Verfügung, dass die Berliner Kulturlandschaft systematisch erfasst.**\n\nDas Kulturkataster wächst stetig weiter: Bereits für Anfang 2026 ist Version 2 geplant, und zur Jahresmitte 2026 folgt Version 3. Mit jeder neuen Version nehmen wir weitere Kulturorte auf, ergänzen die Informationen und fügen neue Funktionalitäten hinzu.\\\nSie können uns dabei helfen. Unter diesem [Link](/institution) können Sie fehlende Kulturorte einreichen und Änderungen vorschlagen.\\\n**Für Anregungen und Kritik erreichen Sie uns unter:** [info@kulturkataster.berlin](mailto:info@kulturkataster.berlin)\\\nDie aktuelle Version des Kulturkatasters ist die Version 1.",
-			"contact": "## Sie haben ein anderes Anliegen?\nTreten Sie gern mit uns in Kontakt!\\\n\\\n**Generelle Anfragen** [kontakt@kulturkataster.berlin](mailto:kontakt@kulturkataster.berlin)\\\n**Technischer Support** [support@kulturkataster.berlin](mailto:support@kulturkataster.berlin)\\\n**Telefon** +49 30 3030 444 60",
+			"contact": "## Sie haben ein anderes Anliegen?\nTreten Sie gern mit uns in Kontakt!\\\n\\\n**Allgemeine Anfragen und technischer Support** [info@kulturkataster.berlin](mailto:info@kulturkataster.berlin)",
 			"simpleLanguageDirect": "Den Bereich „Infos and Services“ in leichter Sprache finden Sie <link />.",
 			"tab1": "## Umfang Version 1\n**Veröffentlichung November 2025**\n- {{count}} Kulturorte mit den Grundinformationen (Name, vollständige Adresse, allgemeine Kontaktinformationen, Angaben zu Förderung und Finanzierung)\n- 15 Kategorien und 71 Unterkategorien\n- Einbindung von 12 Fachkarten aus dem Geoportal Berlin\n- Ein Suchfeld, indem Sie nach Adressen und Namen von Kulturorten suchen können.\n- Einen Suchfilter, der es ermöglicht, Orte nach Bezirk sowie Kategorie und Unterkategorie zu filtern. Darüber hinaus ist es möglich, geschlossene Kulturorte einzublenden.\n\n**Folgende Erweiterungen für Version 1 wurden bis November 2025 ergänzt**\n- Informationen in Deutscher Gebärdensprache\n- Informationen in Leichter Sprache\n- Barrierearme Listenansicht",
-			"tab2": "## Bedienung\n\nDas Kulturkataster Berlin wurde so konzipiert, dass es möglichst intuitiv bedient werden kann. Funktionalitäten orientieren sich an gängigen Kartenanwendungen. Grundlegende Bedienungshinweise haben wir an dieser Stelle für Sie zusammengefasst.\n\n`image-text-card|/resources/bedienung/1_Bewegen.jpg|left|Karte bewegen|Auf dem Computer: Halten Sie die linke Maustaste gedrückt und ziehen die Karte in die gewünschte Richtung.\\nAuf dem Smartphone/Tablet: Berühren Sie den Bildschirm mit einem Finger und wischen Sie über die Karte.`\n\n`image-text-card|/resources/bedienung/2_Zoom.jpg|right|Zoomen|Auf dem Computer: Nutzen Sie das Mausrad oder die Plus- und Minus-Zeichen am unteren rechten Bildschirmrand.\\nAuf dem Smartphone/Tablet: Legen Sie zwei Finger auf den Bildschirm und bewegen Sie diese auseinander, um zu vergrößern. Zum Verkleinern ziehen Sie die Finger wieder zusammen.`\n\n`image-text-card|/resources/bedienung/3_Suche.jpg|left|Einen Ort suchen|Auf dem Computer: Öffnen Sie das Suchfeld, indem Sie auf das Lupensymbol oben links klicken.\\nAuf dem Smartphone/Tablet: Öffnen Sie das Suchfeld, indem Sie auf das Lupensymbol unten tippen. Geben Sie den Namen eines Ortes oder die Adresse ein und bestätigen Sie Ihre Suche.`\n\n`image-text-card|/resources/bedienung/4_Filter.jpg|right|Filterfunktionen verwenden|Sie können nun alle Kulturorte nach Bezirken sowie nach den zugeordneten Kategorien und Unterkategorien filtern.\\nAuf dem Computer: Öffnen Sie die Filterfunktion, indem Sie auf das Symbol mit den drei übereinanderliegenden Strichen oben links klicken.\\nAuf dem Smartphone/Tablet: Öffnen Sie die Filterfunktion, indem Sie auf das Symbol mit den drei übereinanderliegenden Strichen oben links tippen.\\nStandardmäßig werden alle geöffneten Kulturorte auf der Karte dargestellt. Durch einen Klick auf das Bedienfeld “Geschlossene Orte einblenden” können Sie sich zusätzlich vorübergehend und dauerhaft geschlossene Kulturorte anzeigen lassen.`\n\n`image-text-card|/resources/bedienung/5_Download.jpg|left|Eine Auswahl herunterladen|Das Kulturkataster bietet Ihnen die Möglichkeit, Informationen zu einzelnen sowie auch zu allen Kulturorten Ihrer aktuellen Ansicht herunterzuladen.\\nAuf dem Computer: Klicken Sie auf den nach unten zeigenden Pfeil in der Seitennavigation oben links.\\nAuf dem Smartphone/Tablet: Tippen Sie auf den nach unten zeigenden Pfeil in der Navigation unten rechts.`\n\n`image-text-card|/resources/bedienung/6_Mitwirken.jpg|right|Einen Ort eintragen|Auf dem Computer: Öffnen Sie das Mitwirken-Formular, indem sie auf das Stift- Symbol oben links klicken.\\nAuf dem Smartphone/Tablet: Öffnen Sie das Mitwirken-Formular, indem sie auf das Stift-Symbol unten rechts tippen.\\nFolgen Sie den Hinweisen des Formulars und füllen Sie die Datenfelder gewissenhaft aus. Bitte beachten Sie, dass es sich bei den mit einem *Symbol versehenen Feldern um Pflichtfelder handelt.\\nBestätigen Sie die Einverständniserklärung und schicken Sie das Formular ab.\\nDas Redaktionsteam wird Ihren Eintrag prüfen und sich bei Rückfragen gegebenenfalls per E-Mail bei Ihnen melden. Wir bitten Sie um Verständnis, dass dieser Prozess einige Zeit in Anspruch nehmen kann, da wir gegebenenfalls auch Fachexpert\\*innen in den Entscheidungsprozess einbeziehen werden.`\n\n`image-text-card|/resources/bedienung/7_Schrift.jpg|left|Schriftgröße ändern|Auf dem Computer: Öffnen Sie das Menü für die barrierefreie Bedienung der Website, indem Sie auf das Personensymbol unten links klicken.\\nAuf dem Smartphone/Tablet: Öffnen Sie das Menü für die barrierefreie Bedienung der Website, indem Sie auf das Menüsymbol oben rechts tippen und anschließend die Schaltfläche mit dem Personensymbol auswählen.\\nWählen Sie die Schaltfläche mit der Bezeichnung “Schriftgröße ändern” aus.`\n\n`image-text-card|/resources/bedienung/8_Kontrast.jpg|right|Kontrast anpassen|Auf dem Computer: Öffnen Sie das Menü für die barrierefreie Bedienung der Website, indem Sie auf das Personensymbol unten links klicken.\\nAuf dem Handy/Tablet: Öffnen Sie das Menü für die barrierefreie Bedienung der Website, indem Sie auf das Menüsymbol oben rechts tippen und anschließend die Schaltfläche mit dem Personensymbol auswählen.\\nWählen Sie die Schaltfläche mit der Bezeichnung “Kontrast anpassen” aus.`",
+			"tab2": "## Bedienung\n\nDas Kulturkataster Berlin wurde so konzipiert, dass es möglichst intuitiv bedient werden kann. Funktionalitäten orientieren sich an gängigen Kartenanwendungen. Grundlegende Bedienungshinweise haben wir an dieser Stelle für Sie zusammengefasst.\n\n`image-text-card|/resources/bedienung/1_Bewegen.jpg|left|Karte bewegen|Auf dem Computer: Halten Sie die linke Maustaste gedrückt und ziehen die Karte in die gewünschte Richtung.\\nAuf dem Smartphone/Tablet: Berühren Sie den Bildschirm mit einem Finger und wischen Sie über die Karte.`\n\n`image-text-card|/resources/bedienung/2_Zoom.jpg|right|Zoomen|Auf dem Computer: Nutzen Sie das Mausrad oder die Plus- und Minus-Zeichen am unteren rechten Bildschirmrand.\\nAuf dem Smartphone/Tablet: Legen Sie zwei Finger auf den Bildschirm und bewegen Sie diese auseinander, um zu vergrößern. Zum Verkleinern ziehen Sie die Finger wieder zusammen.`\n\n`image-text-card|/resources/bedienung/3_Suche.jpg|left|Einen Ort suchen|Auf dem Computer: Öffnen Sie das Suchfeld, indem Sie auf das Lupensymbol oben links klicken.\\nAuf dem Smartphone/Tablet: Öffnen Sie das Suchfeld, indem Sie auf das Lupensymbol unten tippen. Geben Sie den Namen eines Ortes oder die Adresse ein und bestätigen Sie Ihre Suche.`\n\n`image-text-card|/resources/bedienung/4_Filter.jpg|right|Filterfunktionen verwenden|Sie können nun alle Kulturorte nach Bezirken sowie nach den zugeordneten Kategorien und Unterkategorien filtern.\\nAuf dem Computer: Öffnen Sie die Filterfunktion, indem Sie auf das Symbol mit den drei übereinanderliegenden Strichen oben links klicken.\\nAuf dem Smartphone/Tablet: Öffnen Sie die Filterfunktion, indem Sie auf das Symbol mit den drei übereinanderliegenden Strichen oben links tippen.\\nStandardmäßig werden alle geöffneten Kulturorte auf der Karte dargestellt. Durch einen Klick auf das Bedienfeld “Geschlossene Orte einblenden” können Sie sich zusätzlich vorübergehend und dauerhaft geschlossene Kulturorte anzeigen lassen.`\n\n`image-text-card|/resources/bedienung/5_Download.jpg|left|Eine Auswahl herunterladen|Das Kulturkataster bietet Ihnen die Möglichkeit, Informationen zu einzelnen sowie auch zu allen Kulturorten Ihrer aktuellen Ansicht herunterzuladen.\\nAuf dem Computer: Klicken Sie auf den nach unten zeigenden Pfeil in der Seitennavigation oben links.\\nAuf dem Smartphone/Tablet: Tippen Sie auf den nach unten zeigenden Pfeil in der Navigation unten rechts.`\n\n`image-text-card|/resources/bedienung/6_Mitwirken.jpg|right|Einen Ort eintragen|Auf dem Computer: Öffnen Sie das Mitwirken-Formular, indem sie auf das Stift- Symbol oben links klicken.\\nAuf dem Smartphone/Tablet: Öffnen Sie das Mitwirken-Formular, indem sie auf das Stift-Symbol unten rechts tippen.\\nFolgen Sie den Hinweisen des Formulars und füllen Sie die Datenfelder gewissenhaft aus. Bitte beachten Sie, dass es sich bei den mit einem *Symbol versehenen Feldern um Pflichtfelder handelt.\\nBestätigen Sie die Einverständniserklärung und schicken Sie das Formular ab.\\nDas Redaktionsteam wird Ihren Eintrag prüfen und sich bei Rückfragen gegebenenfalls per E-Mail bei Ihnen melden. Wir bitten Sie um Verständnis, dass dieser Prozess einige Zeit in Anspruch nehmen kann, da wir gegebenenfalls auch Fachexpert\\*innen in den Entscheidungsprozess einbeziehen werden.`\n\n`image-text-card|/resources/bedienung/7_Schrift.jpg|left|Schriftgröße ändern|Auf dem Computer: Öffnen Sie das Menü für die barrierefreie Bedienung der Website, indem Sie auf das Personensymbol unten links klicken.\\nAuf dem Smartphone/Tablet: Öffnen Sie das Menü für die barrierefreie Bedienung der Website, indem Sie auf das Menüsymbol oben rechts tippen und anschließend die Schaltfläche mit dem Personensymbol auswählen.\\nWählen Sie die Schaltfläche mit der Bezeichnung “Vergrößerte Schriften” aus.`\n\n`image-text-card|/resources/bedienung/8_Kontrast.jpg|right|Kontrast anpassen|Auf dem Computer: Öffnen Sie das Menü für die barrierefreie Bedienung der Website, indem Sie auf das Personensymbol unten links klicken.\\nAuf dem Handy/Tablet: Öffnen Sie das Menü für die barrierefreie Bedienung der Website, indem Sie auf das Menüsymbol oben rechts tippen und anschließend die Schaltfläche mit dem Personensymbol auswählen.\\nWählen Sie die Schaltfläche mit der Bezeichnung “Dunkler Modus” aus.`",
 			"tab3": "## Fragen & Antworten\n\n`accordion`",
 			"tabTitles": ["Über das Projekt", "Bedienung", "Fragen & Antworten"],
 			"title": "Infos & Service"
@@ -1366,10 +1366,10 @@
 			}
 		},
 		"institution": {
-			"claimSelectDescription": "Kulturorte, für die Sie berechtigt sind, können Sie Ihrem Profil hinzufügen. Für mehr Vollständigkeit, einen besseren Überblick und die schnellere Bearbeitung.",
+			"claimSelectDescription": "Kulturorte, für die Sie berechtigt sind, sehen Sie nach Freigabe durch die Redaktion unter “Meine Kulturorte”.",
 			"claimSelectSearchLabel": "Name oder Adresse des Kulturortes",
-			"claimSelectSubtitle": "Beantragen Sie die Verwaltungs-Rechte für Kulturorte, die zu Ihrem Verband oder Unternehmen gehören.",
-			"claimSelectTitle": "Kulturort beanspruchen",
+			"claimSelectSubtitle": "Beantragen Sie die Verwaltungs-Rechte für Ihre Kulturorte",
+			"claimSelectTitle": "Kulturort verwalten",
 			"claimSubmit": "Anfrage senden",
 			"claimSubmitError": "Die Anfrage konnte nicht gesendet werden. Bitte versuchen Sie es erneut.",
 			"claimSubmitSuccess": {
@@ -1395,15 +1395,15 @@
 			"choice": {
 				"guest": {
 					"cta": "Weiter als Gast",
-					"description": "Sie können natürlich auch gern mitwirken, ohne sich bei uns anzumelden.",
-					"title": "Fortfahren ohne Anmeldung"
+					"description": "Legen Sie direkt los – ganz ohne Passwort und Registrierung. Um Vorschläge einzureichen, brauchen Sie keinen Account.",
+					"title": "Mitwirken ohne Account"
 				},
 				"login": {
-					"cta": "Zur Anmeldung",
-					"description": "Für die schnellere Bearbeitung Ihrer Einträge und die Übersicht empfehlen wir Ihnen, sich im Kulturkatasterportal anzumelden oder zu registrieren.",
-					"title": "Melden Sie sich an oder registrieren Sie sich, um fortzufahren."
+					"cta": "Jetzt anmelden oder registrieren",
+					"description": "Nutzen Sie die Vorteile unseres Portals und verwalten Sie Ihre Kulturorte jederzeit und dauerhaft. Empfohlen für Mitarbeitende aus Verwaltungen, Verbänden und Kulturorten.",
+					"title": "Für alle, die mit dem Kulturkataster arbeiten möchten"
 				},
-				"title": "Wie möchten Sie fortfahren?"
+				"title": "Wählen Sie Ihren Weg:"
 			},
 			"intro": {
 				"back": "Zurück",
@@ -1421,7 +1421,7 @@
 			},
 			"submitSuccess": {
 				"cta": "Weitere Einreichung starten",
-				"description": "Dank Ihrer Eingabe wächst das Kulturkataster Berlin immer weiter und weiter und ermöglicht so vielen Menschen den Zugang zu neuen Kulturstandorten. Alle Ihre Einträge können Sie in Ihrem <0>Account</0> einsehen und verwalten.",
+				"description": "Dank Ihrer Mitarbeit wächst das Kulturkataster Berlin kontinuierlich weiter. Alle Ihre Einträge können Sie in Ihrem <0>Account</0> einsehen und verwalten.",
 				"title": "Vielen Dank für Ihre Einreichung"
 			},
 			"title": "Mitwirken beim Kulturkataster Berlin"
@@ -1469,7 +1469,7 @@
 					"newCategory": {
 						"description": "Mehrere Kategorien bitte durch Komma trennen.",
 						"label": "Neue Kategorie(n) vorschlagen",
-						"placeholder": "z. B. neue Kategorie"
+						"placeholder": "z. B. Archive"
 					},
 					"validation": {
 						"minSelection": "Bitte wählen Sie mindestens eine Kategorie aus."
@@ -1550,7 +1550,7 @@
 							"title": "Ausstattung"
 						},
 						"sharedUseInfo": {
-							"description": "Beschreiben, welche Informationen hier eingetragen werden sollen, evtl. mit Aufzählung von Beispielen",
+							"description": "Um was für einen Raum bzw. Fläche handelt es sich (z.B. Proberaum, Grünfläche,...) ? Kurze und prägnante Informationen können Sie hier hinterlegen.",
 							"title": "Beschreibung der Räume/Flächen"
 						},
 						"space": {
@@ -1704,7 +1704,7 @@
 					"newCategory": {
 						"description": "Mehrere Kategorien bitte durch Komma trennen.",
 						"label": "Neue Kategorie(n) vorschlagen",
-						"placeholder": "z. B. neue Kategorie"
+						"placeholder": "z. B. Archive"
 					},
 					"validation": {
 						"minSelection": "Bitte wählen Sie mindestens eine Kategorie aus."
@@ -1798,7 +1798,7 @@
 							"title": "Ausstattung"
 						},
 						"sharedUseInfo": {
-							"description": "Beschreiben, welche Informationen hier eingetragen werden sollen, evtl. mit Aufzählung von Beispielen",
+							"description": "Um was für einen Raum bzw. Fläche handelt es sich (z.B. Proberaum, Grünfläche,...) ? Kurze und prägnante Informationen können Sie hier hinterlegen.",
 							"title": "Beschreibung der Räume/Flächen"
 						},
 						"space": {
@@ -2219,7 +2219,7 @@
 				"subTitle3": "Version 3",
 				"text1": "Berlin ist eine große Stadt.",
 				"text11": "Das Kultur·kataster ist eine digitale Karte.",
-				"text12": "Sie zeigt alle Kultur·orte von Berlin.",
+				"text12": "Sie zeigt viele Kultur·orte von Berlin.",
 				"text13": "Sie ist kostenlos im Internet.",
 				"text15": "Das Kultur·kataster hilft einer guten Kultur·politik.",
 				"text16": "Das Kultur·kataster steht in den Regeln der Regierung.",
@@ -2304,7 +2304,7 @@
 				},
 				"list3": {
 					"content": [
-						"{{count}} Kulturorte\nAlle mit Infos wie Name und Adresse und Kontakt.",
+						"{{count}} Kulturorte - Alle mit Infos wie Name und Adresse und Kontakt.",
 						"15 Kategorien und 71 Unter·kategorien.",
 						"12 Fach·karten\naus dem Geo·portal Berlin.",
 						"Ein Such·feld.\nDa können sie nach Namen und Adressen suchen.",
@@ -2375,7 +2375,7 @@
 				"text11": "Dann schreiben Sie an:",
 				"text110": "Tippen Sie auf das Menü oben rechts.",
 				"text111": "Und danach auf das Männchen.",
-				"text113": "Wählen Sie dann \"Schrift·größe ändern\"",
+				"text113": "Wählen Sie dann \"Vergrößerte Schriften\"",
 				"text115": "Öffnen Sie das Menü",
 				"text116": "für die barriere·freie Bedienung.",
 				"text118": "Auf dem Computer:",
@@ -2385,7 +2385,7 @@
 				"text122": "Auf dem Smartphone oder Tablet:",
 				"text123": "Tippen Sie auf das Menü oben rechts.",
 				"text124": "Und danach auf das Männchen.",
-				"text126": "Wählen Sie dann \"Kontrast anpassen\"",
+				"text126": "Wählen Sie dann \"Dunkler Modus\"",
 				"text128": "Wir möchten alle Kultur·orte in Berlin zeigen.",
 				"text129": "Aber das dauert lange.",
 				"text130": "Es gibt immer wieder neue Orte.",
@@ -3391,7 +3391,7 @@
 			},
 			"password": {
 				"errors": {
-					"required": "Passwort ist erforderlich"
+					"required": "Passwort ist erforderlich."
 				}
 			},
 			"phone": {
@@ -3666,6 +3666,7 @@
 			"public": "Öffentlich",
 			"removal_pending": "Löschung beantragt"
 		},
+		"none": "Keine Angabe",
 		"owner_type": {
 			"district_property": "Bezirkliche Liegenschaft",
 			"federal_property": "Bundesliegenschaft",
