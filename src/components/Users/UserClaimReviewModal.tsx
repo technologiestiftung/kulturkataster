@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/navigation";
@@ -11,6 +12,8 @@ import type { ClaimSubmissionDetail } from "@/types/submission";
 import { formatDateWithLocale } from "@/lib/utils/dateUtils";
 import { ActionPanel } from "@/components/ActionPanel";
 import { formatUserDisplayName } from "@/lib/utils/userName";
+import { Button } from "@/components/ui/button";
+import { useLocalePath } from "@/lib/hooks/useLocalePath";
 
 type UserClaimReviewModalProps = {
 	claims: ClaimSubmissionDetail[];
@@ -25,6 +28,7 @@ export function UserClaimReviewModal({
 }: UserClaimReviewModalProps) {
 	const { t, i18n } = useTranslation();
 	const router = useRouter();
+	const toLocalePath = useLocalePath();
 	const [items, setItems] = useState(claims);
 	const [busyIds, setBusyIds] = useState<number[]>([]);
 	const [reviewError, setReviewError] = useState<string | null>(null);
@@ -163,6 +167,19 @@ export function UserClaimReviewModal({
 									await handleDecision(submission.id, "rejected");
 									return null;
 								}}
+								middleAction={
+									<Button asChild type="button" variant="outline">
+										<Link
+											href={toLocalePath(
+												`/account/submissions/${submission.id}`,
+											)}
+										>
+											{t("content.userClaims.openReview", {
+												defaultValue: "Prüfen",
+											})}
+										</Link>
+									</Button>
+								}
 								errorFallback={t(
 									"content.userClaims.feedback.error.description",
 									{

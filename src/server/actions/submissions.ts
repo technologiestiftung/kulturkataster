@@ -4,6 +4,10 @@ import { Prisma } from "@/generated/prisma";
 import { getCurrentUserId } from "@/server/actions/auth";
 import { buildInstitutionCreateData } from "@/server/logic/institutionCreateData";
 import { submissionRepo } from "@/server/data/submissionRepo";
+import {
+	emailTemplateRepo,
+	type EmailTemplateOption,
+} from "@/server/data/emailTemplateRepo";
 import { buildInstitutionUpdateData } from "@/server/logic/institutionUpdateData";
 import { prisma } from "@/server/prisma";
 import { institutionSubmissionToDraft } from "@/lib/utils/institutionSubmissionUtils";
@@ -27,6 +31,7 @@ import type { AuditContext } from "@/server/utils/auditContext";
 import {
 	ClaimReviewPayload,
 	SubmissionCreatePayload,
+	SubmissionDecisionEmailTemplate,
 	SubmissionNoteCreatePayload,
 	SubmissionFilter,
 	SubmissionReviewPayload,
@@ -54,6 +59,14 @@ import {
 	runWithServerRequestContext,
 	setRequestContext,
 } from "@/server/logging/requestContext";
+
+const SUBMISSION_DECISION_EMAIL_TEMPLATE_PATHS = [
+	"custom/submission_create_approved.html",
+	"custom/submission_update_approved.html",
+	"custom/submission_rejected.html",
+	"custom/claim_approved.html",
+	"custom/claim_rejected.html",
+] as const;
 
 type ClaimInstitutionRow = Prisma.InstitutionGetPayload<{
 	include: {
@@ -84,6 +97,37 @@ const withExistingAddressId = <T extends { address?: unknown }>(
 		},
 	};
 };
+
+export async function getSubmissionDecisionEmailTemplateOptions(): Promise<
+	EmailTemplateOption[]
+> {
+	return runWithServerRequestContext(
+		async () => {
+			const currentUserId = await getCurrentUserId();
+			setRequestContext({ userId: currentUserId });
+			const ctx = await getAccessContextForUser(currentUserId);
+			authorizeTable(ctx, "submission", "update");
+
+			try {
+				const allowedPaths = new Set<string>(
+					SUBMISSION_DECISION_EMAIL_TEMPLATE_PATHS,
+				);
+				const templates = await emailTemplateRepo.listActive();
+				return templates.filter((template) => allowedPaths.has(template.path));
+			} catch (error) {
+				logger.error("submission.email_templates.list_failed", error, {
+					subsystem: "email",
+					actor_user_id: currentUserId,
+				});
+				return [];
+			}
+		},
+		{
+			route:
+				"server_action:submissions.getSubmissionDecisionEmailTemplateOptions",
+		},
+	);
+}
 
 const sanitizeCategoryKey = (value: string) =>
 	value
@@ -434,6 +478,42 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 							})
 						)?.name?.trim() ?? "")
 					: "";
+			const submissionMeta =
+				submission.meta &&
+				typeof submission.meta === "object" &&
+				!Array.isArray(submission.meta)
+					? (submission.meta as Record<string, unknown>)
+					: null;
+			const shouldSendClaimApprovalEmail =
+				submission.type === "create" &&
+				submissionMeta?.request_claim_on_approval === true &&
+				validatedInput.grantSubmitterAccess === true;
+
+			const getStandardSubmissionEmailTemplate = (
+				decision: "approved" | "rejected",
+			): SubmissionDecisionEmailTemplate => {
+				const selectedTemplate = validatedInput.submitterEmailTemplate;
+				if (
+					decision === "rejected" &&
+					(selectedTemplate === "submission_rejected" ||
+						selectedTemplate === "claim_rejected")
+				) {
+					return selectedTemplate;
+				}
+				if (decision === "rejected") return "submission_rejected";
+				if (
+					selectedTemplate === "submission_create_approved" ||
+					selectedTemplate === "submission_update_approved" ||
+					selectedTemplate === "claim_approved"
+				) {
+					return selectedTemplate;
+				}
+				return shouldSendClaimApprovalEmail
+					? "claim_approved"
+					: submission.type === "update"
+						? "submission_update_approved"
+						: "submission_create_approved";
+			};
 
 			const sendStandardSubmissionDecisionEmail = async (
 				decision: "approved" | "rejected",
@@ -453,6 +533,7 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 					firstName: recipient.first_name,
 					lastName: recipient.last_name,
 					institutionName,
+					template: getStandardSubmissionEmailTemplate(decision),
 				});
 			};
 
@@ -641,12 +722,6 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 												),
 												select: { id: true },
 											});
-											const submissionMeta =
-												submission.meta &&
-												typeof submission.meta === "object" &&
-												!Array.isArray(submission.meta)
-													? (submission.meta as Record<string, unknown>)
-													: null;
 											const requestClaimOnApproval =
 												submissionMeta?.request_claim_on_approval === true;
 											const shouldGrantSubmitterAccess =
@@ -901,12 +976,21 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 										}),
 									]);
 									if (claimant?.email && institution?.name) {
-										await sendClaimDecisionEmail({
+										await sendSubmissionDecisionEmail({
 											decision: "approved",
 											email: claimant.email,
 											firstName: claimant.first_name,
 											lastName: claimant.last_name,
 											institutionName: institution.name,
+											template:
+												validatedInput.submitterEmailTemplate ===
+													"submission_create_approved" ||
+												validatedInput.submitterEmailTemplate ===
+													"submission_update_approved" ||
+												validatedInput.submitterEmailTemplate ===
+													"claim_approved"
+													? validatedInput.submitterEmailTemplate
+													: "claim_approved",
 										});
 									}
 								}
@@ -985,12 +1069,18 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 									}),
 								]);
 								if (claimant?.email && institution?.name) {
-									await sendClaimDecisionEmail({
+									await sendSubmissionDecisionEmail({
 										decision: "rejected",
 										email: claimant.email,
 										firstName: claimant.first_name,
 										lastName: claimant.last_name,
 										institutionName: institution.name,
+										template:
+											validatedInput.submitterEmailTemplate ===
+												"submission_rejected" ||
+											validatedInput.submitterEmailTemplate === "claim_rejected"
+												? validatedInput.submitterEmailTemplate
+												: "claim_rejected",
 									});
 								}
 							}
