@@ -193,7 +193,7 @@ describe("InstitutionDraftReviewModal", () => {
 
 		await waitFor(() => {
 			expect(handleReviewMock).toHaveBeenCalledWith("approved", {
-				notifySubmitter: true,
+				notifySubmitter: false,
 				submitterEmailTemplate: "submission_update_approved",
 			});
 		});
@@ -201,7 +201,7 @@ describe("InstitutionDraftReviewModal", () => {
 		expect(mockedShowSuccessToast).toHaveBeenCalledTimes(1);
 	});
 
-	it("allows approving without emailing the submitter", async () => {
+	it("allows approving with an email to the submitter", async () => {
 		render(
 			<InstitutionDraftReviewModal
 				submissionId={11}
@@ -209,18 +209,18 @@ describe("InstitutionDraftReviewModal", () => {
 			/>,
 		);
 
-		fireEvent.click(
-			screen.getByRole("checkbox", {
-				name: "Einreichende Person per E-Mail über die Entscheidung informieren.",
-			}),
-		);
+		const notifyCheckbox = screen.getByRole("checkbox", {
+			name: "Einreichende Person per E-Mail über die Entscheidung informieren.",
+		});
+		await waitFor(() => expect(notifyCheckbox).not.toBeChecked());
+		fireEvent.click(notifyCheckbox);
 		const approveButton = screen.getByRole("button", { name: "Genehmigen" });
 		await waitFor(() => expect(approveButton).toBeEnabled());
 		fireEvent.click(approveButton);
 
 		await waitFor(() => {
 			expect(handleReviewMock).toHaveBeenCalledWith("approved", {
-				notifySubmitter: false,
+				notifySubmitter: true,
 				submitterEmailTemplate: "submission_update_approved",
 			});
 		});
@@ -239,6 +239,11 @@ describe("InstitutionDraftReviewModal", () => {
 			/>,
 		);
 
+		const notifyCheckbox = screen.getByRole("checkbox", {
+			name: "Einreichende Person per E-Mail über die Entscheidung informieren.",
+		});
+		await waitFor(() => expect(notifyCheckbox).not.toBeChecked());
+		fireEvent.click(notifyCheckbox);
 		const approveButton = screen.getByRole("button", { name: "Genehmigen" });
 		await waitFor(() => expect(approveButton).toBeEnabled());
 		fireEvent.click(approveButton);
@@ -265,7 +270,7 @@ describe("InstitutionDraftReviewModal", () => {
 
 		await waitFor(() => {
 			expect(handleReviewMock).toHaveBeenCalledWith("rejected", {
-				notifySubmitter: true,
+				notifySubmitter: false,
 				submitterEmailTemplate: "submission_rejected",
 			});
 		});
