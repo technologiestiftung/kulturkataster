@@ -289,7 +289,10 @@ export function UsersTable() {
 		onReviewPrefetch: (row) => {
 			void router.prefetch(toLocalePath(`/account/users/${row.id}/review`));
 		},
-		getCanReview: (row) => (row.submissions?.length ?? 0) > 0,
+		getCanReview: (row) =>
+			Boolean(
+				row.submissions?.some((submission) => submission.type === "claim"),
+			),
 		reviewAriaLabel: t("content.userTable.actions.reviewClaims", {
 			defaultValue: "Claims prüfen",
 		}),

@@ -36,6 +36,19 @@ vi.mock("@/lib/store/accountStore", () => ({
 }));
 
 describe("InstitutionReview", () => {
+	it("can hide the edit preview hint", () => {
+		render(
+			<InstitutionReview
+				data={{ name: "Claimed Institution" }}
+				showPreviewHint={false}
+			/>,
+		);
+
+		expect(
+			screen.queryByText("institutionFormModal.review.previewHint"),
+		).not.toBeInTheDocument();
+	});
+
 	it("normalizes flat draft address fields for address display", () => {
 		render(
 			<InstitutionReview

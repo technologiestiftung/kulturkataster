@@ -372,6 +372,127 @@ describe("server actions: submissions", () => {
 		expect(sendSubmissionDecisionEmailMock).not.toHaveBeenCalled();
 	});
 
+	it("reviewSubmission uses the claim approval email when granting requested access", async () => {
+		getTableScopeMock.mockReturnValue("all");
+		requireScopeOrUserMock.mockReturnValue(null);
+		findByIdMock.mockResolvedValue({
+			id: 13,
+			entity_type: SubmissionEntityType.institution,
+			entity_id: null,
+			type: SubmissionType.create,
+			status: "approval_pending",
+			created_by: "submitter-1",
+			meta: { request_claim_on_approval: true },
+			data: {
+				name: "Submitted Institution",
+			},
+		});
+		txInstitutionCreateMock.mockResolvedValue({ id: 125 });
+		prismaUserFindUniqueMock.mockResolvedValue({
+			email: "submitter@example.com",
+			first_name: "Ada",
+			last_name: "Lovelace",
+		});
+
+		await reviewSubmission({
+			id: 13,
+			status: "approved",
+			grantSubmitterAccess: true,
+			submitterEmailTemplate: "claim_approved",
+		});
+
+		expect(txInstitutionUpdateMock).toHaveBeenCalledWith({
+			where: { id: 125 },
+			data: {
+				users: { connect: { id: "submitter-1" } },
+			},
+		});
+		expect(sendSubmissionDecisionEmailMock).toHaveBeenCalledWith(
+			expect.objectContaining({
+				decision: "approved",
+				email: "submitter@example.com",
+				institutionName: "Submitted Institution",
+				template: "claim_approved",
+			}),
+		);
+	});
+
+	it("reviewSubmission uses the new-institution approval email for create submissions", async () => {
+		getTableScopeMock.mockReturnValue("all");
+		requireScopeOrUserMock.mockReturnValue(null);
+		findByIdMock.mockResolvedValue({
+			id: 14,
+			entity_type: SubmissionEntityType.institution,
+			entity_id: null,
+			type: SubmissionType.create,
+			status: "approval_pending",
+			created_by: "submitter-2",
+			meta: null,
+			data: {
+				name: "New Institution",
+			},
+		});
+		txInstitutionCreateMock.mockResolvedValue({ id: 126 });
+		prismaUserFindUniqueMock.mockResolvedValue({
+			email: "submitter2@example.com",
+			first_name: "Grace",
+			last_name: "Hopper",
+		});
+
+		await reviewSubmission({ id: 14, status: "approved" });
+
+		expect(sendSubmissionDecisionEmailMock).toHaveBeenCalledWith(
+			expect.objectContaining({
+				decision: "approved",
+				email: "submitter2@example.com",
+				institutionName: "New Institution",
+				template: "submission_create_approved",
+			}),
+		);
+	});
+
+	it("reviewSubmission uses the change-request approval email for update submissions", async () => {
+		getTableScopeMock.mockReturnValue("all");
+		requireScopeOrUserMock.mockReturnValue(null);
+		prismaInstitutionFindFirstMock.mockResolvedValue({ id: 56 });
+		prismaInstitutionFindUniqueMock.mockResolvedValue({
+			name: "Existing Venue",
+		});
+		txInstitutionFindFirstMock.mockResolvedValue({
+			id: 56,
+			name: "Existing Venue",
+			address_id: 78,
+		});
+		findByIdMock.mockResolvedValue({
+			id: 15,
+			entity_type: SubmissionEntityType.institution,
+			entity_id: 56,
+			type: SubmissionType.update,
+			status: "approval_pending",
+			created_by: "submitter-3",
+			meta: null,
+			data: {
+				email: "updated@example.com",
+			},
+		});
+		prismaUserFindUniqueMock.mockResolvedValue({
+			email: "submitter3@example.com",
+			first_name: "Katherine",
+			last_name: "Johnson",
+		});
+
+		await reviewSubmission({ id: 15, status: "approved" });
+
+		expect(sendSubmissionDecisionEmailMock).toHaveBeenCalledWith(
+			expect.objectContaining({
+				decision: "approved",
+				email: "submitter3@example.com",
+				institutionName: "Existing Venue",
+				template: "submission_update_approved",
+			}),
+		);
+	});
+
 	it("reviewSubmission approval updates only submitted address and contact person subfields", async () => {
 		getTableScopeMock.mockReturnValue("all");
 		requireScopeOrUserMock.mockReturnValue(null);

@@ -1001,7 +1001,8 @@
 		"categorySubmissionReview": {
 			"actions": {
 				"approve": "Approve",
-				"reject": "Reject"
+				"reject": "Reject",
+				"saveNotes": "Save Notes"
 			},
 			"error": {
 				"description": "The category proposal could not be reviewed.",
@@ -1021,6 +1022,10 @@
 				"reject": {
 					"description": "The category proposal was rejected.",
 					"title": "Category proposal rejected"
+				},
+				"saveNotes": {
+					"description": "The review notes have been saved.",
+					"title": "Notes saved"
 				}
 			},
 			"title": "Review category proposal"
@@ -1841,6 +1846,18 @@
 				"errorDescription": "Please try again or contact support if the issue persists.",
 				"errorTitle": "Review failed",
 				"errorUnknown": "Unknown error.",
+				"approvalEmailTemplateLabel": "Email on approval",
+				"emailPanelDescription": "Choose which template is used when the submission is approved or rejected.",
+				"emailPanelTitle": "Email notification",
+				"emailTemplateLabel": "Email on approval",
+				"emailTemplates": {
+					"claim_approved": "Claim approved",
+					"claim_rejected": "Claim rejected",
+					"submission_approved": "Submission approved",
+					"submission_create_approved": "Confirmation for “suggest new cultural location”",
+					"submission_rejected": "Rejection for “suggest cultural location/changes”",
+					"submission_update_approved": "Confirmation for “suggest changes”"
+				},
 				"grantSubmitterAccess": "After approval, give the submitter access to this cultural location.",
 				"linkedCategorySubmissions": "New category proposal",
 				"loadingLabel": "Loading submission...",
@@ -1849,9 +1866,13 @@
 				"notesLabel": "Inspection Notes",
 				"notesPlaceholder": "Optional notes for submission",
 				"notifySubmitter": "Email the submitter about the decision.",
+				"previewApprovalEmail": "Preview approval email",
 				"previewHint": "You can add and/or correct further information about the cultural location by clicking the pencil to switch to edit mode.",
+				"previewRejectionEmail": "Preview rejection email",
 				"previousNotesLabel": "Previous notes",
 				"requestedBy": "Requested by",
+				"rejectionEmailTemplateLabel": "Email on rejection",
+				"reviewPanelTitle": "Review submission",
 				"statusLabel": "Status: {{status}}",
 				"success": {
 					"approve": {
@@ -2585,6 +2606,8 @@
 		},
 		"userClaims": {
 			"approve": "Assume",
+			"approveAll": "Approve all",
+			"approveAllLoading": "Approving...",
 			"claimDate": "Date of request",
 			"currentUsers": "Current users",
 			"empty": "No open requests available.",
@@ -2594,9 +2617,14 @@
 					"title": "Review failed"
 				}
 			},
+			"institutionId": "Institution",
 			"institutionAddress": "address",
+			"openReview": "Review",
 			"reject": "Refuse",
+			"rejectAll": "Reject all",
+			"rejectAllLoading": "Rejecting...",
 			"requestedBy": "Requested by",
+			"submissionId": "Submission",
 			"subtitle": "Review institutional affiliation inquiries.",
 			"title": "Check institutional requests",
 			"unknownInstitution": "Unknown institution",
@@ -2798,6 +2826,8 @@
 						"role_state_approved": "State Role Approved",
 						"role_state_rejected": "State Role Rejected",
 						"submission_approved": "Submission Approved",
+						"submission_create_approved": "New Institution Approved",
+						"submission_update_approved": "Change Request Approved",
 						"submission_rejected": "Submission Rejected"
 					}
 				},
