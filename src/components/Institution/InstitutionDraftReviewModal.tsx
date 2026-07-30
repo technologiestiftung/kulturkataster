@@ -205,6 +205,13 @@ export function InstitutionDraftReviewModal({
 		resolvedSubmissionWithFallback?.type,
 		shouldShowGrantSubmitterAccessToggle,
 	]);
+	useEffect(() => {
+		if (!resolvedSubmissionWithFallback) return;
+		setNotifySubmitter(resolvedSubmissionWithFallback.type === "claim");
+	}, [
+		resolvedSubmissionWithFallback?.id,
+		resolvedSubmissionWithFallback?.type,
+	]);
 	const shouldAutoCloseMissingSubmission =
 		!hasSubmissionId ||
 		(didResolveSubmission && !resolvedSubmissionWithFallback);
