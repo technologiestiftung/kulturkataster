@@ -22,6 +22,7 @@ import {
 	sendClaimDecisionEmail,
 	sendComplianceResendEmail,
 	sendInstitutionDownloadNotificationEmail,
+	sendSubmissionDecisionEmail,
 } from "@/server/email/dispatcher";
 
 describe("email dispatcher", () => {
@@ -51,6 +52,26 @@ describe("email dispatcher", () => {
 					Email: "person@example.com",
 					SiteURL: "https://example.test",
 				}),
+			}),
+		);
+	});
+
+	it("queues distinct submission approval templates", async () => {
+		enqueueTemplatedEmail.mockResolvedValue({ id: "email-1" });
+
+		await sendSubmissionDecisionEmail({
+			decision: "approved",
+			email: "person@example.com",
+			firstName: "Ada",
+			lastName: "Lovelace",
+			institutionName: "Die Etage",
+			template: "submission_update_approved",
+		});
+
+		expect(enqueueTemplatedEmail).toHaveBeenCalledWith(
+			expect.objectContaining({
+				to: "person@example.com",
+				templatePath: "custom/submission_update_approved.html",
 			}),
 		);
 	});

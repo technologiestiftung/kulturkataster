@@ -288,7 +288,7 @@ export function ActivityItem({ activity, index }: ActivityItemProps) {
 
 			<div className="flex-1 min-w-0">
 				<div className="body3 flex items-baseline gap-1 text-wrap flex-wrap">
-					<span className="font-bold cursor-help">{dateTimeLabel}</span>
+					<span className="font-bold">{dateTimeLabel}</span>
 					<span className="">•</span>
 					{renderEventMessage()}
 				</div>

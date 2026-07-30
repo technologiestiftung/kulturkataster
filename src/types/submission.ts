@@ -101,9 +101,17 @@ export type SubmissionReviewPayload = {
 	internalNotes?: string | null;
 	grantSubmitterAccess?: boolean;
 	notifySubmitter?: boolean;
+	submitterEmailTemplate?: SubmissionDecisionEmailTemplate;
 	attachUserIds?: string[];
 	attachGroupIds?: number[];
 };
+
+export type SubmissionDecisionEmailTemplate =
+	| "submission_create_approved"
+	| "submission_update_approved"
+	| "submission_rejected"
+	| "claim_approved"
+	| "claim_rejected";
 
 export type SubmissionNoteCreatePayload = {
 	submissionId: number;

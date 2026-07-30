@@ -14,6 +14,7 @@ type ActionPanelProps = {
 	secondaryActionLabel?: string;
 	secondaryActionLabelLoading?: string;
 	onSecondaryAction?: () => Promise<string | null | undefined>;
+	middleAction?: ReactNode;
 	errorFallback?: string;
 	secondaryErrorFallback?: string;
 	className?: string;
@@ -29,6 +30,7 @@ export function ActionPanel({
 	secondaryActionLabel,
 	secondaryActionLabelLoading,
 	onSecondaryAction,
+	middleAction,
 	errorFallback,
 	secondaryErrorFallback,
 	className,
@@ -103,6 +105,7 @@ export function ActionPanel({
 								: secondaryActionLabel}
 						</Button>
 					)}
+					{middleAction}
 					{onAction && (
 						<Button
 							type="button"

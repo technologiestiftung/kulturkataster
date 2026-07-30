@@ -24,12 +24,14 @@ type InstitutionReviewProps = {
 	data: Record<string, unknown>;
 	newData?: Record<string, unknown>;
 	onEditSection?: (sectionId: string) => void;
+	showPreviewHint?: boolean;
 };
 
 export function InstitutionReview({
 	data,
 	newData,
 	onEditSection,
+	showPreviewHint = true,
 }: InstitutionReviewProps) {
 	const { t } = useTranslation();
 	const fieldLabel = useFieldLabel();
@@ -146,11 +148,13 @@ export function InstitutionReview({
 
 	return (
 		<div className="space-y-4 flex flex-col">
-			<div className="flex w-full flex-col items-start gap-4 bg-primary-light/50 px-10 py-6 mt-2">
-				<p className="w-full body2 text-foreground">
-					{t("content.institutionFormModal.review.previewHint")}
-				</p>
-			</div>
+			{showPreviewHint ? (
+				<div className="flex w-full flex-col items-start gap-4 bg-primary-light/50 px-10 py-6 mt-2">
+					<p className="w-full body2 text-foreground">
+						{t("content.institutionFormModal.review.previewHint")}
+					</p>
+				</div>
+			) : null}
 			<InfoWrapper
 				data={resolvedData}
 				newData={resolvedNewData}
