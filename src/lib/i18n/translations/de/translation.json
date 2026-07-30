@@ -1007,7 +1007,8 @@
 		"categorySubmissionReview": {
 			"actions": {
 				"approve": "Annehmen",
-				"reject": "Ablehnen"
+				"reject": "Ablehnen",
+				"saveNotes": "Notizen speichern"
 			},
 			"error": {
 				"description": "Der Kategorie-Vorschlag konnte nicht geprüft werden.",
@@ -1027,6 +1028,10 @@
 				"reject": {
 					"description": "Der Kategorie-Vorschlag wurde abgelehnt.",
 					"title": "Kategorie-Vorschlag abgelehnt"
+				},
+				"saveNotes": {
+					"description": "Die Prüfnotizen wurden gespeichert.",
+					"title": "Notizen gespeichert"
 				}
 			},
 			"title": "Kategorie-Vorschlag prüfen"
@@ -1847,6 +1852,18 @@
 				"errorDescription": "Bitte versuchen Sie es erneut oder kontaktieren Sie den Support, falls das Problem weiterhin besteht.",
 				"errorTitle": "Überprüfung fehlgeschlagen",
 				"errorUnknown": "Unbekannter Fehler.",
+				"approvalEmailTemplateLabel": "E-Mail bei Genehmigung",
+				"emailPanelDescription": "Wählen Sie aus, welche Vorlage bei Genehmigung oder Ablehnung verwendet wird.",
+				"emailPanelTitle": "E-Mail-Benachrichtigung",
+				"emailTemplateLabel": "E-Mail bei Genehmigung",
+				"emailTemplates": {
+					"claim_approved": "Bestätigung für \"Kulturort beanspruchen\"",
+					"claim_rejected": "Ablehnung für \"Kulturort beanspruchen\"",
+					"submission_approved": "Einreichung bestätigt",
+					"submission_create_approved": "Bestätigung für “Neuen Kulturort vorschlagen”",
+					"submission_rejected": "Ablehnung für “Kulturort vorschlagen/ändern”",
+					"submission_update_approved": "Bestätigung für “Änderung vorschlagen”"
+				},
 				"grantSubmitterAccess": "Der einreichenden Person nach Genehmigung Zugriff auf diesen Kulturort geben.",
 				"linkedCategorySubmissions": "Neuer Kategorie-Vorschlag",
 				"loadingLabel": "Einreichung wird geladen...",
@@ -1855,9 +1872,13 @@
 				"notesLabel": "Prüfnotizen",
 				"notesPlaceholder": "Optionale Notizen für die Einreichung",
 				"notifySubmitter": "Einreichende Person per E-Mail über die Entscheidung informieren.",
+				"previewApprovalEmail": "Genehmigungs-E-Mail anzeigen",
 				"previewHint": "Sie können weitere Informationen zum Kulturort ergänzen und/oder korrigieren, wenn Sie durch Klick auf den Stift in den Bearbeitungsmodus wechseln.",
+				"previewRejectionEmail": "Ablehnungs-E-Mail anzeigen",
 				"previousNotesLabel": "Bisherige Notizen",
 				"requestedBy": "Angefragt von",
+				"rejectionEmailTemplateLabel": "E-Mail bei Ablehnung",
+				"reviewPanelTitle": "Einreichung prüfen",
 				"statusLabel": "Status: {{status}}",
 				"success": {
 					"approve": {
@@ -2593,6 +2614,8 @@
 		},
 		"userClaims": {
 			"approve": "Annehmen",
+			"approveAll": "Alle annehmen",
+			"approveAllLoading": "Wird angenommen...",
 			"claimDate": "Datum der Anfrage",
 			"currentUsers": "Aktuelle Nutzer",
 			"empty": "Keine offenen Anfragen vorhanden.",
@@ -2602,9 +2625,14 @@
 					"title": "Prüfung fehlgeschlagen"
 				}
 			},
+			"institutionId": "Kulturort",
 			"institutionAddress": "Adresse",
+			"openReview": "Prüfen",
 			"reject": "Ablehnen",
+			"rejectAll": "Alle ablehnen",
+			"rejectAllLoading": "Wird abgelehnt...",
 			"requestedBy": "Angefragt von",
+			"submissionId": "Einreichung",
 			"subtitle": "Überprüfen Sie die Anfragen zur Institutionen-Zugehörigkeit.",
 			"title": "Institutionen-Anfragen prüfen",
 			"unknownInstitution": "Unbekannte Institution",
@@ -2806,6 +2834,8 @@
 						"role_state_approved": "Landes-Rolle bestätigt",
 						"role_state_rejected": "Landes-Rolle abgelehnt",
 						"submission_approved": "Einreichung bestätigt",
+						"submission_create_approved": "Neuer Kulturort bestätigt",
+						"submission_update_approved": "Änderung bestätigt",
 						"submission_rejected": "Einreichung abgelehnt"
 					}
 				},
