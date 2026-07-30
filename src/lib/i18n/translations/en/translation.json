@@ -58,8 +58,8 @@
 						"action": "downloaded",
 						"institutionCount_one": "{{count}} cultural location",
 						"institutionCount_other": "{{count}} cultural locations",
-						"institutionExport": "Cultural locations export",
-						"institutionExportWithFormat": "Cultural locations export ({{format}})"
+						"institutionExport": "Cultural Locations Export",
+						"institutionExportWithFormat": "Cultural Locations Export ({{format}})"
 					},
 					"empty": "You don't have any activity yet.",
 					"emptyActions": {
@@ -259,21 +259,21 @@
 				"inactive": "Your account is not yet activated. Please contact support.",
 				"invalidCredentials": "Invalid login credentials. Please check your email address and password.",
 				"metaTitle": "Login – Kulturkataster",
-				"noAccount": "Don't have an account with Kulturkataster yet? ",
+				"noAccount": "Don’t have a Kulturkataster account yet?",
 				"passwordLabel": "Password",
 				"passwordPlaceholder": "Enter Your Password",
-				"signUp": "Register here.",
-				"submit": "Login",
+				"signUp": "Register Here",
+				"submit": "Log In",
 				"submitting": "Logging in...",
 				"subtitle": "Help shape Berlin's cultural landscape.",
-				"title": "Welcome back."
+				"title": "Welcome Back"
 			},
 			"newsletter": {
 				"consentLabel": "Yes, I would like to subscribe to the Berlin Kulturkataster newsletter and agree that my email address may be processed for this purpose. I can withdraw my consent at any time with effect for the future. *",
 				"consentRequired": "You must consent to the processing of your email address for the newsletter.",
 				"emailLabel": "Email",
 				"errorFallback": "Newsletter registration failed.",
-				"nameLabel": "First and last name",
+				"nameLabel": "First and Last Name",
 				"privacyLink": "Privacy Policy",
 				"submit": "Subscribe",
 				"submitting": "Submitting...",
@@ -290,19 +290,19 @@
 				"show": "Show password"
 			},
 			"register": {
-				"accountType": "Do you work for a network, an association or in the administration?",
+				"accountType": "Do you work for a network, an association, or in public administration?",
 				"accountTypeAdministration": "Employee of the State of Berlin",
-				"accountTypeDistrict": "Employee of a district",
-				"accountTypeOrganization": "Staff or representatives of a network or an association",
-				"accountTypePlaceholder": "Select Options",
+				"accountTypeDistrict": "Employee of a Berlin District",
+				"accountTypeOrganization": "Staff Member or Representative of a Network or Association",
+				"accountTypePlaceholder": "Select an Option",
 				"administrationName": "Which state authority do you work for?",
 				"administrationNamePlaceholder": "Enter Administration Name",
 				"administrationPhone": "Telephone Number for inquiries",
 				"administrationPhonePlaceholder": "Enter Telephone Number",
 				"administrationPosition": "What is your function/position?",
 				"administrationPositionPlaceholder": "Enter Your Position",
-				"alreadyAccount": "Do you already have an account with Kulturkataster? ",
-				"confirmPassword": "Repeat password",
+				"alreadyAccount": "Do you already have a Kulturkataster account?",
+				"confirmPassword": "Repeat Password",
 				"confirmPasswordPlaceholder": "Repeat Password",
 				"districtName": "Please name your district",
 				"districtNamePlaceholder": "Enter District Name",
@@ -312,15 +312,15 @@
 				"districtPhonePlaceholder": "Enter Telephone Number",
 				"districtPosition": "What is your function/position?",
 				"districtPositionPlaceholder": "Enter Your Position",
-				"emailLabel": "Your email address",
+				"emailLabel": "Your Email Address",
 				"emailPlaceholder": "name@example.com",
 				"errorFallback": "Registration failed.",
-				"firstName": "First name",
+				"firstName": "First Name",
 				"firstNamePlaceholder": "First Name",
-				"lastName": "Last name",
+				"lastName": "Last Name",
 				"lastNamePlaceholder": "Last Name",
 				"metaTitle": "Register – Kulturkataster",
-				"newsletterLink": "Subscribe to the Newsletter.",
+				"newsletterLink": "Subscribe to the Newsletter",
 				"newsletterOptInPrefix": "To stay up to date, I would also like to",
 				"newsletterSubscriptionSuccessDescription": "Thank you for subscribing to the newsletter. If the subscription is successful, you will receive an email with a confirmation link. Please click the link to complete your subscription. Please also check your spam folder.",
 				"newsletterSubscriptionSuccessTitle": "Newsletter subscription for the Kulturkataster",
@@ -330,12 +330,12 @@
 				"organizationPhonePlaceholder": "Enter Telephone Number",
 				"organizationPosition": "What is your function/position?",
 				"organizationPositionPlaceholder": "Enter Your Position",
-				"passwordLabel": "Enter password",
+				"passwordLabel": "Password",
 				"passwordPlaceholder": "Create Password",
 				"privacyLink": "Privacy Policy",
 				"privacySuffix": "have been acknowledged.",
 				"register": "Registration for the Kulturkataster",
-				"signIn": "Sign in here.",
+				"signIn": "Sign In Here",
 				"submit": "Create Account",
 				"submitting": "Creating account...",
 				"subtitle": "Help shape Berlin's cultural landscape.",
@@ -345,7 +345,7 @@
 				"termsIntro": "I accept the",
 				"termsLink": "Terms and Conditions",
 				"termsSeparator": "and have",
-				"title": "Register here.",
+				"title": "Register Here",
 				"unavailable": "Registration is currently unavailable."
 			},
 			"reset": {
@@ -409,7 +409,7 @@
 		"download": {
 			"exportNotice": {
 				"row1": "The data comes from the Berlin Kulturkataster.",
-				"row2": "When using it, please name the Kulturkataster as the download source and observe the legal notices.",
+				"row2": "When using the data, please cite the Berlin Kulturkataster as the download source and observe the legal notices.",
 				"row3": "www.kulturkataster.berlin",
 				"row4": "A Project of Kulturraum Berlin gGmbH"
 			},
@@ -917,7 +917,7 @@
 				"title": "Delete category"
 			},
 			"dialog": {
-				"loading": "Loading category...",
+				"loading": "Loading Category...",
 				"notFound": {
 					"description": "This category could not be found.",
 					"title": "Category not found"
@@ -1050,27 +1050,27 @@
 			"acknowledgementLink": "legal notice",
 			"acknowledgementPrefix": "I have read and understood the",
 			"acknowledgementSuffix": "",
-			"chooseFormat": "Select file format",
+			"chooseFormat": "Select File Format",
 			"dataUseAgreementConsent": "I agree to the data use agreement",
-			"dataUseAgreementText": "I will not share the data with third parties and will use it exclusively within the limits of legal requirements, in particular the GDPR where personal data is concerned, and only for the purposes of the Kulturkataster. The purposes of the Kulturkataster are non-commercial and comprise the systematic collection, structuring and public provision of data about places of cultural production and use in the State of Berlin, in order to create a reliable data basis for cultural policy decisions, cultural urban development, and collaboration between cultural actors, administration, academia and the public.",
-			"dataUseAgreementTitle": "Data use agreement",
+			"dataUseAgreementText": "I will not share the data with third parties. I will use the data exclusively in accordance with legal requirements, in particular the GDPR where personal data is concerned, and only for the purposes of the Kulturkataster. The purposes of the Kulturkataster are non-commercial and include the systematic collection, structuring and public provision of data on places of cultural production and use in the State of Berlin. This is intended to create a reliable data basis for cultural policy decisions, cultural urban development and cooperation between cultural actors, administration, academia and the public.",
+			"dataUseAgreementTitle": "Data Use Agreement",
 			"description": "You can download the list of your cultural locations here in different file formats.",
 			"form": {
-				"datenverwendung": "What will you use the data for?",
-				"email": "Your email address",
-				"nachname": "Last name",
+				"datenverwendung": "What Will You Use the Data For?",
+				"email": "Your Email Address",
+				"nachname": "Last Name",
 				"placeholders": {
-					"datenverwendung": "Briefly Describe the Intended Use",
+					"datenverwendung": "Briefly describe the intended use",
 					"email": "name@example.com",
-					"nachname": "Enter Last Name",
-					"vorname": "Enter First Name"
+					"nachname": "Enter your last name",
+					"vorname": "Enter your first name"
 				},
-				"vorname": "First name"
+				"vorname": "First Name"
 			},
-			"guestIntro": "Before you can download the data, we need a few details from you.",
-			"loading": "Loading cultural locations …",
+			"guestIntro": "Before you can download the data, please provide a few details.",
+			"loading": "Loading Cultural Locations …",
 			"selectedFilters": "The selection consists of the following filters:",
-			"subtitle": "{{count}} cultural locations available for download",
+			"subtitle": "{{count}} Cultural Locations Available for Download",
 			"title": "Download Data as a List"
 		},
 		"filter": {
@@ -1113,7 +1113,7 @@
 				"errorTitle": "Delete failed"
 			},
 			"dialog": {
-				"loading": "Loading group...",
+				"loading": "Loading Group...",
 				"notFound": {
 					"description": "The selected group could not be loaded.",
 					"title": "Group not found"
@@ -1364,7 +1364,7 @@
 			"claimSelectSearchLabel": "Name or address of the cultural location",
 			"claimSelectSubtitle": "Request management rights for cultural locations that belong to your association or company.",
 			"claimSelectTitle": "Claim cultural location",
-			"claimSubmit": "Submit request",
+			"claimSubmit": "Submit Request",
 			"claimSubmitError": "The claim request could not be submitted. Please try again.",
 			"claimSubmitSuccess": {
 				"description": "Your institution claim request has been submitted for review.",
@@ -1393,7 +1393,7 @@
 					"title": "Continue without logging in."
 				},
 				"login": {
-					"cta": "Log in / Register",
+					"cta": "Log In / Register",
 					"description": "For faster processing of your entries and for a better overview, we recommend that you log in to or register for the Kulturkataster portal.",
 					"title": "Log in or register to continue."
 				},
@@ -1404,7 +1404,7 @@
 				"cta": "Next",
 				"description": "To contribute, please enter the required information in the relevant fields and click “Submit Data” at the end of the form. Our editorial team reviews each submission before publication and will contact you if it has any questions.",
 				"mode": {
-					"description": "Select the appropriate category for the cultural location. ",
+					"description": "Select the appropriate category for the cultural location.",
 					"edit": "Add to or correct an existing cultural location",
 					"new": "Enter a new cultural location",
 					"title": "Would you like to enter a new cultural location or add to/correct an existing data record?"
@@ -1414,9 +1414,9 @@
 				"thankYou": "Thank you for supporting the Berlin Kulturkataster with your contribution!"
 			},
 			"submitSuccess": {
-				"cta": "Start another submission",
-				"description": "Thanks to your input, the Berlin cultural cadastre continues to grow, giving many people access to new cultural locations.  {{ link }} view and manage.",
-				"title": "Thank you for your submission"
+				"cta": "Start Another Submission",
+				"description": " Thanks to your input, the Berlin Kulturkataster continues to grow and gives many people access to new cultural locations. You can view and manage all your entries in your <0>account</0>.",
+				"title": "Thank You for Your Submission"
 			},
 			"title": "Contribute to the Berlin Kulturkataster"
 		},
@@ -1471,9 +1471,9 @@
 				},
 				"contact": {
 					"consent": {
-						"contactListing": "I agree to be named as a contact person in the password-protected area of ​​the cultural register using my contact details.",
+						"contactListing": "I agree to be named as a contact person with my contact details in the password-protected area of the Kulturkataster.",
 						"requestAdminRights": "I am responsible for this cultural location and would like to add it to the list in my profile and obtain administration rights for it.",
-						"title": "Final information",
+						"title": "Final Information",
 						"worksForOrganization": "I work for this cultural organization."
 					}
 				},
@@ -1520,31 +1520,31 @@
 							"title": "Rental and Usage Arrangements"
 						},
 						"sharedUseAccessibility": {
-							"description": "Is the room barrier-free accessible? ",
+							"description": "Is the space accessible without barriers? What barriers are there?",
 							"title": "Accessibility"
 						},
 						"sharedUseAudience": {
-							"description": "What type of activities is the room suitable for? ",
+							"description": "What kind of activities is the space suitable for? For example: “Suitable for dance rehearsals and workshops” or “Ideal for readings and small concerts.”",
 							"title": "Target Group/Discipline"
 						},
 						"sharedUseAvailability": {
-							"description": "When can the room be used? ",
+							"description": "When can the space be used? Are there specific days, times of day, or periods?",
 							"title": "Time Availability"
 						},
 						"sharedUseContactPerson": {
-							"description": "Please provide a contact by email and/or telephone here. ",
+							"description": "Please provide an email address and/or telephone number for contact. If there is a contact person, you can also provide their name. If you enter personal data here, please note that by submitting the form, you agree to the publication of this data in the Kulturkataster.",
 							"title": "Contact Information for Space Requests"
 						},
 						"sharedUseCost": {
-							"description": "How much does it cost to use it? ",
+							"description": "How much does it cost to use the space? Is there an hourly, daily, or weekly price? Are the costs negotiable?",
 							"title": "Costs"
 						},
 						"sharedUseEquipment": {
-							"description": "What infrastructure is available? ",
+							"description": "What infrastructure is available? Are there tables, chairs, a kitchen, Wi-Fi, lighting, or sound equipment? Every detail can be important.",
 							"title": "Equipment"
 						},
 						"sharedUseInfo": {
-							"description": "Describe what information should be entered here, possibly with a list of examples",
+							"description": "What kind of space or area is it (for example, a rehearsal room or green space) ? You can provide short and clear information here.",
 							"title": "Descriptions of the Spaces/Areas"
 						},
 						"space": {
@@ -1582,7 +1582,7 @@
 						"accessibilityPlaceholder": "Describe Accessibility",
 						"audiencePlaceholder": "Describe Target Group/Discipline",
 						"availabilityPlaceholder": "Describe Time Availability",
-						"contactPersonPlaceholder": "Specify Contact Information for Space Requests",
+						"contactPersonPlaceholder": "Provide Contact Information for Space Requests",
 						"costPlaceholder": "Describe Costs for Usage",
 						"detailsLabel": "Details",
 						"equipmentPlaceholder": "Describe Equipment",
@@ -1606,7 +1606,7 @@
 					"title": "Assign Categories"
 				},
 				"contact": {
-					"subtitle": "Enter a contact person so that our editorial team can contact you if you have any questions.",
+					"subtitle": "Enter a contact person so that our editorial team can contact them if it has any questions.",
 					"title": "Contact Person for Questions"
 				},
 				"information": {
@@ -1615,7 +1615,7 @@
 				},
 				"review": {
 					"subtitle": "Here you can view all the information again and correct it if necessary.",
-					"title": "Checking your information"
+					"title": "Review Your Information"
 				}
 			}
 		},
@@ -1706,8 +1706,8 @@
 				},
 				"contact": {
 					"consent": {
-						"contactListing": "I agree to be named as a contact person in the password-protected area of the cultural register using my contact details.",
-						"title": "Final information",
+						"contactListing": "I agree to be named as a contact person with my contact details in the password-protected area of the Kulturkataster.",
+						"title": "Final Information",
 						"worksForOrganization": "I work for this cultural organization.",
 						"worksForOrganizationOptions": {
 							"no": "No",
@@ -1768,31 +1768,31 @@
 							"title": "Rental and Usage Arrangements"
 						},
 						"sharedUseAccessibility": {
-							"description": "Is the room barrier-free accessible? ",
+							"description": "Is the space accessible without barriers? What barriers are there?",
 							"title": "Accessibility"
 						},
 						"sharedUseAudience": {
-							"description": "What type of activities is the room suitable for? ",
+							"description": "What kind of activities is the space suitable for? For example: “Suitable for dance rehearsals and workshops” or “Ideal for readings and small concerts.”",
 							"title": "Target Group/Discipline"
 						},
 						"sharedUseAvailability": {
-							"description": "When can the room be used? ",
+							"description": "When can the space be used? Are there specific days, times of day, or periods?",
 							"title": "Time Availability"
 						},
 						"sharedUseContactPerson": {
-							"description": "Please provide a contact by email and/or telephone here. ",
+							"description": "Please provide an email address and/or telephone number for contact. If there is a contact person, you can also provide their name. If you enter personal data here, please note that by submitting the form, you agree to the publication of this data in the Kulturkataster.",
 							"title": "Contact Information for Space Requests"
 						},
 						"sharedUseCost": {
-							"description": "How much does it cost to use it? ",
+							"description": "How much does it cost to use the space? Is there an hourly, daily, or weekly price? Are the costs negotiable?",
 							"title": "Costs"
 						},
 						"sharedUseEquipment": {
-							"description": "What infrastructure is available? ",
+							"description": "What infrastructure is available? Are there tables, chairs, a kitchen, Wi-Fi, lighting, or sound equipment? Every detail can be important.",
 							"title": "Equipment"
 						},
 						"sharedUseInfo": {
-							"description": "Describe what information should be entered here, possibly with a list of examples",
+							"description": "What kind of space or area is it (for example, a rehearsal room or green space) ? You can provide short and clear information here.",
 							"title": "Descriptions of the Spaces/Areas"
 						},
 						"space": {
@@ -1843,11 +1843,11 @@
 				"errorUnknown": "Unknown error.",
 				"grantSubmitterAccess": "After approval, give the submitter access to this cultural location.",
 				"linkedCategorySubmissions": "New category proposal",
-				"loadingLabel": "Loading submission...",
-				"loadingTitle": "Loading submission",
+				"loadingLabel": "Loading Submission...",
+				"loadingTitle": "Loading Submission",
 				"noteMeta": "{{author}} on {{date}}",
 				"notesLabel": "Inspection Notes",
-				"notesPlaceholder": "Optional notes for submission",
+				"notesPlaceholder": "Optional Notes for Submission",
 				"notifySubmitter": "Email the submitter about the decision.",
 				"previewHint": "You can add and/or correct further information about the cultural location by clicking the pencil to switch to edit mode.",
 				"previousNotesLabel": "Previous notes",
@@ -2628,7 +2628,7 @@
 				"errorTitle": "Delete failed"
 			},
 			"dialog": {
-				"loading": "Loading user…",
+				"loading": "Loading User…",
 				"notFound": {
 					"description": "The dataset is currently unavailable. ",
 					"title": "User not found"
@@ -2705,11 +2705,11 @@
 							"placeholder": "name@example.de"
 						},
 						"firstName": {
-							"label": "First name",
+							"label": "First Name",
 							"placeholder": "Max"
 						},
 						"lastName": {
-							"label": "Last name",
+							"label": "Last Name",
 							"placeholder": "Mustermann"
 						},
 						"metaInfo": {
@@ -2768,7 +2768,7 @@
 				"description": "Choose a database template and send it to this user.",
 				"error": "Email could not be sent.",
 				"loadError": "Email templates could not be loaded.",
-				"loading": "Loading templates…",
+				"loading": "Loading Templates…",
 				"placeholder": "Select Template",
 				"preview": "Preview",
 				"selectLabel": "Template",
@@ -2817,9 +2817,9 @@
 				"compliance": "Compliance",
 				"createdAt": "Created On",
 				"email": "e-mail",
-				"firstName": "First name",
+				"firstName": "First Name",
 				"groups": "groups",
-				"lastName": "Last name",
+				"lastName": "Last Name",
 				"role": "role",
 				"status": "status",
 				"updatedAt": "Updated On"
@@ -3050,7 +3050,7 @@
 					"required": "Please provide Area."
 				},
 				"label": "Size of the Usable Area (m²)",
-				"placeholder": "Please Enter"
+				"placeholder": "e.g. 10"
 			},
 			"capacity": {
 				"description": "",
@@ -3175,7 +3175,7 @@
 			"email": {
 				"description": "",
 				"errors": {
-					"required": "Please provide Email."
+					"required": "Please enter your email address."
 				},
 				"label": "Email Address",
 				"placeholder": "name@example.com"
@@ -3376,7 +3376,7 @@
 			},
 			"password": {
 				"errors": {
-					"required": "Password is required."
+					"required": "Please enter your password."
 				}
 			},
 			"phone": {
@@ -3477,10 +3477,10 @@
 			"shared_use_contact_person": {
 				"description": "",
 				"errors": {
-					"required": "Please provide Contact Information for Space Requests."
+					"required": "Please provide contact information for space requests."
 				},
 				"label": "Contact Information for Space Requests",
-				"placeholder": "Specify Contact Information for Space Requests"
+				"placeholder": "Provide Contact Information for Space Requests"
 			},
 			"shared_use_equipment": {
 				"description": "",
@@ -3580,7 +3580,7 @@
 					"temporarily_closed": "Temporarily Closed",
 					"unknown": "Unknown"
 				},
-				"placeholder": "Please Enter"
+				"placeholder": "Please Select"
 			},
 			"utilization_status_info": {
 				"description": "",
