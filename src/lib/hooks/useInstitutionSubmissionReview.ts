@@ -9,7 +9,10 @@ import {
 } from "@/server/actions/submissions";
 import type { Institution } from "@/types/institution";
 import type { InstitutionActionPermissions } from "@/types/account";
-import type { Submission } from "@/types/submission";
+import type {
+	Submission,
+	SubmissionDecisionEmailTemplate,
+} from "@/types/submission";
 import { canReviewInstitutionSubmissionType } from "@/lib/utils/submissionReviewPermissions";
 import { reportClientTelemetry } from "@/lib/utils/clientTelemetry";
 
@@ -146,7 +149,10 @@ export function useInstitutionSubmissionReview({
 	const handleReview = useCallback(
 		async (
 			status: "approved" | "rejected",
-			options: { notifySubmitter?: boolean } = {},
+			options: {
+				notifySubmitter?: boolean;
+				submitterEmailTemplate?: SubmissionDecisionEmailTemplate;
+			} = {},
 		): Promise<boolean> => {
 			if (!resolvedSubmissionWithFallback) return false;
 			if (!canReviewCurrentSubmission) return false;
@@ -175,6 +181,7 @@ export function useInstitutionSubmissionReview({
 						? grantSubmitterAccess
 						: undefined,
 					notifySubmitter: options.notifySubmitter,
+					submitterEmailTemplate: options.submitterEmailTemplate,
 					attachUserIds: status === "approved" ? attachUserIds : undefined,
 					attachGroupIds: status === "approved" ? attachGroupIds : undefined,
 				});
@@ -288,6 +295,7 @@ export function useInstitutionSubmissionReview({
 		error,
 		handleReview,
 		handleSaveNote,
+		didFetchInstitution,
 		shouldShowGrantSubmitterAccessToggle,
 		canReviewCurrentSubmission,
 	};

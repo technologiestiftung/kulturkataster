@@ -132,4 +132,32 @@ describe("SubmissionReviewModal", () => {
 		expect(institutionReviewMock).toHaveBeenCalledTimes(1);
 		expect(categoryReviewMock).not.toHaveBeenCalled();
 	});
+
+	it("renders claim submissions with the institution review modal", () => {
+		mockSubmissions = [
+			{
+				id: 13,
+				entity_type: "institution",
+				type: "claim",
+			},
+		];
+
+		render(
+			<SubmissionReviewModal
+				submissionId={13}
+				routePath="/account/submissions/13"
+			/>,
+		);
+
+		expect(screen.getByText("institution-review")).toBeInTheDocument();
+		expect(institutionReviewMock).toHaveBeenCalledWith(
+			expect.objectContaining({
+				submission: expect.objectContaining({
+					id: 13,
+					type: "claim",
+				}),
+			}),
+		);
+		expect(categoryReviewMock).not.toHaveBeenCalled();
+	});
 });
