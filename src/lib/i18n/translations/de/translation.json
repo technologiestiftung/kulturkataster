@@ -170,19 +170,19 @@
 						"title": "Können mehrere Nutzende einen Kulturort verwalten?"
 					},
 					"question4": {
-						"answer": "Grundsätzlich können Interessierte ab 18 Jahren einen Account im Kulturkataster anlegen.",
-						"title": "Wer kann einen Account anlegen und welche Account-Typen gibt es?"
+						"answer": "Grundsätzlich können Interessierte ab 18 Jahren einen Account im Kulturkataster anlegen. Accounts lohnen sich vor allem für Mitarbeitende von Kulturorten, der Verwaltung oder von Netzwerken/Verbänden, die regelmäßig an Daten mitarbeiten wollen. Wenn Sie nur einmalig oder sporadisch Änderungs- bzw. Ergänzungsvorschläge einreichen möchten, dann ist der Gastaccount eine gute Wahl.",
+						"title": "Wer kann einen Account anlegen und was sind die Vorteile eines Accounts im Vergleich zum Gastzugang?"
 					},
 					"question5": {
-						"answer": "Nach der Registrierung erhalten Sie eine E-Mail zur Bestätigung Ihrer E-Mail-Adresse. Sobald Sie diese bestätigt haben, ist Ihr Account aktiv und Sie können sich im Kulturkataster-Portal einloggen. Wenn Sie bei der Registrierung angeben, dass Sie für einen Berliner Bezirk, das Land Berlin oder ein Netzwerk bzw. einen Verband tätig sind, prüft die Redaktion diese Angabe. Erst nach dieser Prüfung können Ihnen die entsprechenden Einsichts- und Mitwirkungsrechte zugewiesen werden. Die Redaktion bemüht sich um eine schnelle Bearbeitung; in Einzelfällen kann die Prüfung einige Tage dauern.",
+						"answer": "Nach der Registrierung erhalten Sie eine E-Mail zur Bestätigung Ihrer E-Mail-Adresse. Sobald Sie diese bestätigt haben, ist Ihr Account aktiv und Sie können sich im Kulturkataster-Portal einloggen. Wenn Sie bei der Registrierung angeben, dass Sie für einen Berliner Bezirk, das Land Berlin oder ein Netzwerk bzw. einen Verband tätig sind, prüft die Redaktion diese Angabe. Erst nach dieser Prüfung können Ihnen die entsprechenden Einsichts- und Mitwirkungsrechte zugewiesen werden. Die Redaktion bemüht sich um eine schnelle Bearbeitung.",
 						"title": "Wann wird mein Account freigeschaltet?"
 					},
 					"question6": {
-						"answer": "Wenn Sie eingeloggt sind, finden Sie im Kulturkataster-Portal den Bereich „Meine Kulturorte“. Über das Plus-Symbol können Sie einen neuen Kulturort zur Aufnahme in das Kulturkataster vorschlagen. Wenn ein Kulturort bereits im Kulturkataster erfasst ist, können Sie über „Meine Orte anfragen“ beantragen, dass dieser Kulturort Ihrem Account zugeordnet wird. Nach der Zuordnung erscheint der Kulturort in Ihrer persönlichen Übersicht und Sie können Änderungen oder Ergänzungen vorschlagen. Alle neuen Einträge und Änderungsvorschläge werden vor der Veröffentlichung durch die Redaktion geprüft.",
+						"answer": "Wenn Sie eingeloggt sind, finden Sie im Kulturkataster-Portal den Bereich „Meine Kulturorte“. Über das Plus-Symbol können Sie einen neuen Kulturort zur Aufnahme in das Kulturkataster vorschlagen. Wenn ein Kulturort bereits im Kulturkataster erfasst ist, können Sie über „Meine Orte anfragen“ beantragen, dass dieser Kulturort Ihrem Account zugeordnet wird. Nach der Zuordnung erscheint der Kulturort in Ihrer persönlichen Übersicht und Sie haben Einsicht in zusätzliche Daten. Alle neuen Einträge und Änderungsvorschläge werden vor der Veröffentlichung durch die Redaktion geprüft.",
 						"title": "Wie kann ich einen neuen Kulturort anlegen oder einen bestehenden Kulturort meinem Account zuordnen?"
 					},
 					"question7": {
-						"answer": "Alle Daten, die über einen Nutzer*innen-Account oder über den Gastzugang eingereicht werden, werden vor einer Veröffentlichung durch die Redaktion des Kulturkatasters geprüft. Das gilt für neue Kulturorte ebenso wie für Änderungen oder Ergänzungen bestehender Einträge – unabhängig davon, ob die Einreichung von Nutzer*innen, Mitarbeiter*innen eines Bezirks, des Landes Berlin oder eines Netzwerks bzw. Verbands kommt. Die Veröffentlichung erfolgt nicht automatisch, sondern erst nach redaktioneller Prüfung. Die Redaktion bemüht sich um eine schnelle Bearbeitung; in Einzelfällen kann die Prüfung einige Tage dauern.",
+						"answer": "Alle Daten, die über einen Nutzer\\*innen-Account oder über den Gastzugang eingereicht werden, werden vor einer Veröffentlichung durch die Redaktion des Kulturkatasters geprüft. Das gilt für neue Kulturorte ebenso wie für Änderungen oder Ergänzungen bestehender Einträge – unabhängig davon, ob die Einreichung von Nutzer*\\innen, Mitarbeiter*\\innen eines Bezirks, des Landes Berlin oder eines Netzwerks bzw. Verbands kommt. Die Veröffentlichung erfolgt nicht automatisch, sondern erst nach redaktioneller Prüfung. Die Redaktion bemüht sich um eine schnelle Bearbeitung.",
 						"title": "Wann und wie werden Daten veröffentlicht, die ich eingegeben habe?"
 					},
 					"question8": {
@@ -1316,7 +1316,7 @@
 					"question": "Warum ist mein Kulturort nicht im Kulturkataster verzeichnet?"
 				},
 				{
-					"answer": "Sie können Informationen zu bestehenden Kulturorten ergänzen oder korrigieren und auch neue Kulturorte zur Aufnahme in das Kulturkataster vorschlagen. Das ist sowohl über den Gastzugang ohne Account als auch über einen eigenen Account möglich. Wenn Sie regelmäßig Daten zu einem oder mehreren Kulturorten pflegen möchten, empfehlen wir Ihnen, einen Account anzulegen und sich die entsprechenden Kulturorte Ihrem Kulturkataster-Portal zuordnen zu lassen. So behalten Sie langfristig eine bessere Übersicht. Auch aus dem Account heraus können Sie Änderungen zu bestehenden Kulturorten vorschlagen oder neue Kulturorte anlegen. Alle eingereichten Informationen werden vor der Veröffentlichung durch die Redaktion geprüft und gegebenenfalls korrigiert.",
+					"answer": "Sie können Informationen zu bestehenden Kulturorten ergänzen oder korrigieren und auch neue Kulturorte zur Aufnahme in das Kulturkataster vorschlagen. Das ist sowohl über den Gastzugang ohne Account als auch über einen eigenen Account möglich. Sie finden den Bereich zum Mitarbeiten über das Stiftsymbol im Menü auf der linken Seite.",
 					"question": "Wie kann ich Informationen zu einem Kulturort ergänzen oder korrigieren?"
 				},
 				{
@@ -1332,19 +1332,19 @@
 					"question": "Wie kann ich meinen Kulturort aus dem Kulturkataster löschen lassen?"
 				},
 				{
-					"answer": "Grundsätzlich können Interessierte ab 18 Jahren einen Account im Kulturkataster anlegen.",
-					"question": "Wer kann einen Account anlegen und welche Account-Typen gibt es?"
+					"answer": "Grundsätzlich können Interessierte ab 18 Jahren einen Account im Kulturkataster anlegen. Accounts lohnen sich vor allem für Mitarbeitende von Kulturorten, der Verwaltung oder von Netzwerken/Verbänden, die regelmäßig an Daten mitarbeiten wollen. Wenn Sie nur einmalig oder sporadisch Änderungs- bzw. Ergänzungsvorschläge einreichen möchten, dann ist der Gastaccount eine gute Wahl.",
+					"question": "Wer kann einen Account anlegen und was sind die Vorteile eines Accounts im Vergleich zum Gastzugang?"
 				},
 				{
-					"answer": "Nach der Registrierung erhalten Sie eine E-Mail zur Bestätigung Ihrer E-Mail-Adresse. Sobald Sie diese bestätigt haben, ist Ihr Account aktiv und Sie können sich im Kulturkataster-Portal einloggen. Wenn Sie bei der Registrierung angeben, dass Sie für einen Berliner Bezirk, das Land Berlin oder ein Netzwerk bzw. einen Verband tätig sind, prüft die Redaktion diese Angabe. Erst nach dieser Prüfung können Ihnen die entsprechenden Einsichts- und Mitwirkungsrechte zugewiesen werden. Die Redaktion bemüht sich um eine schnelle Bearbeitung; in Einzelfällen kann die Prüfung einige Tage dauern.",
+					"answer": "Nach der Registrierung erhalten Sie eine E-Mail zur Bestätigung Ihrer E-Mail-Adresse. Sobald Sie diese bestätigt haben, ist Ihr Account aktiv und Sie können sich im Kulturkataster-Portal einloggen. Wenn Sie bei der Registrierung angeben, dass Sie für einen Berliner Bezirk, das Land Berlin oder ein Netzwerk bzw. einen Verband tätig sind, prüft die Redaktion diese Angabe. Erst nach dieser Prüfung können Ihnen die entsprechenden Einsichts- und Mitwirkungsrechte zugewiesen werden. Die Redaktion bemüht sich um eine schnelle Bearbeitung.",
 					"question": "Wann wird mein Account freigeschaltet?"
 				},
 				{
-					"answer": "Wenn Sie eingeloggt sind, finden Sie im Kulturkataster-Portal den Bereich „Meine Kulturorte“. Über das Plus-Symbol können Sie einen neuen Kulturort zur Aufnahme in das Kulturkataster vorschlagen. Wenn ein Kulturort bereits im Kulturkataster erfasst ist, können Sie über „Meine Orte anfragen“ beantragen, dass dieser Kulturort Ihrem Account zugeordnet wird. Nach der Zuordnung erscheint der Kulturort in Ihrer persönlichen Übersicht und Sie können Änderungen oder Ergänzungen vorschlagen. Alle neuen Einträge und Änderungsvorschläge werden vor der Veröffentlichung durch die Redaktion geprüft",
+					"answer": "Wenn Sie eingeloggt sind, finden Sie im Kulturkataster-Portal den Bereich „Meine Kulturorte“. Über das Plus-Symbol können Sie einen neuen Kulturort zur Aufnahme in das Kulturkataster vorschlagen. Wenn ein Kulturort bereits im Kulturkataster erfasst ist, können Sie über „Meine Orte anfragen“ beantragen, dass dieser Kulturort Ihrem Account zugeordnet wird. Nach der Zuordnung erscheint der Kulturort in Ihrer persönlichen Übersicht und Sie haben Einsicht in zusätzliche Daten. Alle neuen Einträge und Änderungsvorschläge werden vor der Veröffentlichung durch die Redaktion geprüft",
 					"question": "Wie kann ich einen neuen Kulturort anlegen oder einen bestehenden Kulturort meinem Account zuordnen?"
 				},
 				{
-					"answer": "Alle Daten, die über einen Nutzer\\*innen-Account oder über den Gastzugang eingereicht werden, werden vor einer Veröffentlichung durch die Redaktion des Kulturkatasters geprüft. Das gilt für neue Kulturorte ebenso wie für Änderungen oder Ergänzungen bestehender Einträge – unabhängig davon, ob die Einreichung von Nutzer\\*innen, Mitarbeiter\\*innen eines Bezirks, des Landes Berlin oder eines Netzwerks bzw. Verbands kommt. Die Veröffentlichung erfolgt nicht automatisch, sondern erst nach redaktioneller Prüfung. Die Redaktion bemüht sich um eine schnelle Bearbeitung; in Einzelfällen kann die Prüfung einige Tage dauern.",
+					"answer": "Alle Daten, die über einen Nutzer\\*innen-Account oder über den Gastzugang eingereicht werden, werden vor einer Veröffentlichung durch die Redaktion des Kulturkatasters geprüft. Das gilt für neue Kulturorte ebenso wie für Änderungen oder Ergänzungen bestehender Einträge – unabhängig davon, ob die Einreichung von Nutzer\\*innen, Mitarbeiter\\*innen eines Bezirks, des Landes Berlin oder eines Netzwerks bzw. Verbands kommt. Die Veröffentlichung erfolgt nicht automatisch, sondern erst nach redaktioneller Prüfung. Die Redaktion bemüht sich um eine schnelle Bearbeitung.",
 					"question": "Wann und wie werden Daten veröffentlicht, die ich eingegeben habe?"
 				},
 				{
@@ -1442,7 +1442,7 @@
 				"back": "Zurück",
 				"next": "Weiter",
 				"review": "Prüfen",
-				"submit": "Kulturort einreichen",
+				"submit": "Einreichen",
 				"submitUpdate": "Änderung einreichen"
 			},
 			"dialog": {
