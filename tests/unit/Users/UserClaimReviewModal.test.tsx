@@ -13,6 +13,7 @@ vi.mock("react-i18next", () => ({
 
 const refreshMock = vi.fn();
 vi.mock("next/navigation", () => ({
+	usePathname: () => "/de/account/users/1/review",
 	useRouter: () => ({ refresh: refreshMock }),
 }));
 
@@ -79,7 +80,7 @@ describe("UserClaimReviewModal", () => {
 		mockedShowSuccessToast.mockReset();
 	});
 
-	it("renders claim details and approves a claim", async () => {
+	it("renders claim details, review link, and approves a claim", async () => {
 		render(
 			<UserClaimReviewModal
 				routePath="/account/users/1/review"
@@ -116,6 +117,10 @@ describe("UserClaimReviewModal", () => {
 		expect(
 			screen.getByText("user@example.com", { exact: false }),
 		).toBeInTheDocument();
+		expect(screen.getByRole("link", { name: /prüfen/i })).toHaveAttribute(
+			"href",
+			"/de/account/submissions/12",
+		);
 
 		fireEvent.click(screen.getByRole("button", { name: /annehmen/i }));
 
@@ -173,7 +178,7 @@ describe("UserClaimReviewModal", () => {
 		await waitFor(() => {
 			expect(
 				screen.queryByText("Institution Beta", { exact: false }),
-			).toBeNull();
+			).not.toBeInTheDocument();
 		});
 		expect(mockedShowSuccessToast).toHaveBeenCalledTimes(1);
 	});

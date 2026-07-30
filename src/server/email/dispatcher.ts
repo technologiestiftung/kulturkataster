@@ -200,16 +200,28 @@ export async function sendSubmissionDecisionEmail(params: {
 	firstName?: string | null;
 	lastName?: string | null;
 	institutionName: string;
+	template?:
+		| "submission_create_approved"
+		| "submission_update_approved"
+		| "submission_rejected"
+		| "claim_approved"
+		| "claim_rejected";
 }) {
 	const { siteUrl, portalUrl, faqUrl, faqUrlEn } = getBaseUrls();
-	const templatePath =
-		params.decision === "approved"
-			? "custom/submission_approved.html"
-			: "custom/submission_rejected.html";
+	const template =
+		params.template ??
+		(params.decision === "approved"
+			? "submission_create_approved"
+			: "submission_rejected");
+	const templatePath = `custom/${template}.html`;
 	const subject =
-		params.decision === "approved"
+		template === "submission_create_approved"
 			? `Ihr Kulturort ${params.institutionName} wurde Ihrem Kulturkatasterportal hinzugefügt`
-			: `Ihre Anfrage zur Pflege des Kulturorts ${params.institutionName}`;
+			: template === "submission_update_approved"
+				? `Ihre Änderung zum Kulturort ${params.institutionName} wurde übernommen`
+				: template === "claim_approved"
+					? `Ihr Kulturort ${params.institutionName} wurde Ihrem Kulturkatasterportal hinzugefügt / Your venue ${params.institutionName} has been added to your Kulturkataster dashboard`
+					: `Ihre Anfrage zur Pflege des Kulturorts ${params.institutionName}`;
 
 	await queueEmail({
 		event: "email.submission_decision.enqueue_failed",

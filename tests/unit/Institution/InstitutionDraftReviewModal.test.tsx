@@ -10,6 +10,7 @@ const setInternalNotesMock = vi.fn();
 const refreshMock = vi.fn();
 const pushMock = vi.fn();
 const institutionReviewMock = vi.fn();
+const getSubmissionDecisionEmailTemplateOptionsMock = vi.hoisted(() => vi.fn());
 
 vi.mock("react-i18next", () => ({
 	useTranslation: () => ({
@@ -69,6 +70,8 @@ vi.mock("@/components/Institution/InstitutionReview", () => ({
 vi.mock("@/components/Modals/useRoutedModalClose", () => ({
 	useRoutedModalClose: () => closeModalMock,
 }));
+
+vi.mock("@/icons/mail.svg", () => ({ default: () => null }));
 
 vi.mock("@/lib/store/accountStore", () => ({
 	useAccountStore: (
@@ -139,6 +142,11 @@ vi.mock("@/lib/hooks/useInstitutionSubmissionReview", () => ({
 	}),
 }));
 
+vi.mock("@/server/actions/submissions", () => ({
+	getSubmissionDecisionEmailTemplateOptions: () =>
+		getSubmissionDecisionEmailTemplateOptionsMock(),
+}));
+
 vi.mock("@/components/Account/AccountAutoRefresh", () => ({
 	triggerAccountRefresh: vi.fn(),
 }));
@@ -161,6 +169,14 @@ describe("InstitutionDraftReviewModal", () => {
 		pushMock.mockReset();
 		institutionReviewMock.mockReset();
 		mockedShowSuccessToast.mockReset();
+		getSubmissionDecisionEmailTemplateOptionsMock.mockReset();
+		getSubmissionDecisionEmailTemplateOptionsMock.mockResolvedValue([
+			{ path: "custom/submission_create_approved.html" },
+			{ path: "custom/submission_update_approved.html" },
+			{ path: "custom/submission_rejected.html" },
+			{ path: "custom/claim_approved.html" },
+			{ path: "custom/claim_rejected.html" },
+		]);
 	});
 
 	it("allows approving a submission", async () => {
@@ -171,11 +187,14 @@ describe("InstitutionDraftReviewModal", () => {
 			/>,
 		);
 
-		fireEvent.click(screen.getByRole("button", { name: "Genehmigen" }));
+		const approveButton = screen.getByRole("button", { name: "Genehmigen" });
+		await waitFor(() => expect(approveButton).toBeEnabled());
+		fireEvent.click(approveButton);
 
 		await waitFor(() => {
 			expect(handleReviewMock).toHaveBeenCalledWith("approved", {
 				notifySubmitter: true,
+				submitterEmailTemplate: "submission_update_approved",
 			});
 		});
 		expect(closeModalMock).toHaveBeenCalledTimes(1);
@@ -195,11 +214,39 @@ describe("InstitutionDraftReviewModal", () => {
 				name: "Einreichende Person per E-Mail über die Entscheidung informieren.",
 			}),
 		);
-		fireEvent.click(screen.getByRole("button", { name: "Genehmigen" }));
+		const approveButton = screen.getByRole("button", { name: "Genehmigen" });
+		await waitFor(() => expect(approveButton).toBeEnabled());
+		fireEvent.click(approveButton);
 
 		await waitFor(() => {
 			expect(handleReviewMock).toHaveBeenCalledWith("approved", {
 				notifySubmitter: false,
+				submitterEmailTemplate: "submission_update_approved",
+			});
+		});
+	});
+
+	it("uses only active database templates for submitter emails", async () => {
+		getSubmissionDecisionEmailTemplateOptionsMock.mockResolvedValueOnce([
+			{ path: "custom/submission_create_approved.html" },
+			{ path: "custom/submission_rejected.html" },
+		]);
+
+		render(
+			<InstitutionDraftReviewModal
+				submissionId={11}
+				routePath="/account/submissions/11"
+			/>,
+		);
+
+		const approveButton = screen.getByRole("button", { name: "Genehmigen" });
+		await waitFor(() => expect(approveButton).toBeEnabled());
+		fireEvent.click(approveButton);
+
+		await waitFor(() => {
+			expect(handleReviewMock).toHaveBeenCalledWith("approved", {
+				notifySubmitter: true,
+				submitterEmailTemplate: "submission_create_approved",
 			});
 		});
 	});
@@ -212,11 +259,14 @@ describe("InstitutionDraftReviewModal", () => {
 			/>,
 		);
 
-		fireEvent.click(screen.getByRole("button", { name: "Ablehnen" }));
+		const rejectButton = screen.getByRole("button", { name: "Ablehnen" });
+		await waitFor(() => expect(rejectButton).toBeEnabled());
+		fireEvent.click(rejectButton);
 
 		await waitFor(() => {
 			expect(handleReviewMock).toHaveBeenCalledWith("rejected", {
 				notifySubmitter: true,
+				submitterEmailTemplate: "submission_rejected",
 			});
 		});
 		expect(closeModalMock).toHaveBeenCalledTimes(1);

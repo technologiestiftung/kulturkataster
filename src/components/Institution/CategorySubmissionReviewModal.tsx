@@ -10,7 +10,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useAccountStore } from "@/lib/store/accountStore";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { showSuccessToast } from "@/lib/utils/feedbackToast";
-import { reviewSubmission } from "@/server/actions/submissions";
+import {
+	reviewSubmission,
+	saveSubmissionNote,
+} from "@/server/actions/submissions";
 import type { Submission } from "@/types/submission";
 import { triggerAccountRefresh } from "@/components/Account/AccountAutoRefresh";
 import { InfoItem } from "@/components/InfoWrapper/InfoItem";
@@ -158,6 +161,51 @@ export function CategorySubmissionReviewModal({
 		],
 	);
 
+	const handleSaveNotes = useCallback(async () => {
+		const note = internalNotes.trim();
+		if (submitting || !canManageCategorySubmission || note.length === 0) return;
+		setSubmitting(true);
+		setReviewError(null);
+		try {
+			await saveSubmissionNote({
+				submissionId: submission.id,
+				note,
+			});
+			setInternalNotes("");
+			triggerAccountRefresh(["submissions", "entityAudits"]);
+			showSuccessToast(
+				t("content.categorySubmissionReview.success.saveNotes.title", {
+					defaultValue: "Notizen gespeichert",
+				}),
+				t("content.categorySubmissionReview.success.saveNotes.description", {
+					defaultValue: "Die Prüfnotizen wurden gespeichert.",
+				}),
+			);
+			if (shouldRefresh) {
+				queueMicrotask(() => router.refresh());
+			}
+		} catch (error) {
+			setReviewError(
+				error instanceof Error
+					? error.message
+					: t("content.categorySubmissionReview.error.description", {
+							defaultValue:
+								"Der Kategorie-Vorschlag konnte nicht geprüft werden.",
+						}),
+			);
+		} finally {
+			setSubmitting(false);
+		}
+	}, [
+		canManageCategorySubmission,
+		internalNotes,
+		router,
+		shouldRefresh,
+		submission.id,
+		submitting,
+		t,
+	]);
+
 	return (
 		<Modal
 			title={title}
@@ -181,7 +229,7 @@ export function CategorySubmissionReviewModal({
 		>
 			<div className="space-y-6">
 				<Card variant="tertiary">
-					<CardContent variant="tertiary" className="space-y-4 p-4">
+					<CardContent variant="tertiary" className="space-y-3 p-3">
 						<InfoItem
 							label={t("content.categorySubmissionReview.fields.key", {
 								defaultValue: "Vorgeschlagene Kategorie",
@@ -192,75 +240,90 @@ export function CategorySubmissionReviewModal({
 						</InfoItem>
 					</CardContent>
 				</Card>
-				<div className="space-y-4">
-					<InfoItem
-						label={t("content.institutionFormModal.review.requestedBy", {
-							defaultValue: "Requested by",
-						})}
-						alwaysShow
-					>
-						{requesterLabel}
-					</InfoItem>
-					<InfoItem
-						label={t(
-							"content.categorySubmissionReview.fields.linkedInstitution",
-							{
-								defaultValue: "Verknüpfte Kulturort-Einreichung",
-							},
-						)}
-						alwaysShow
-					>
-						{linkedInstitutionSubmissionId ? (
-							<Button
-								type="button"
-								variant="tertiary"
-								size="inline"
-								className="underline"
-								onClick={() =>
-									router.push(
-										toLocalePath(
-											`/account/submissions/${linkedInstitutionSubmissionId}`,
-										),
-									)
-								}
-							>
-								{linkedInstitutionName ??
-									t("content.categorySubmissionReview.linkedSubmission", {
-										id: linkedInstitutionSubmissionId,
-										defaultValue: `Einreichung #${linkedInstitutionSubmissionId}`,
-									})}
-							</Button>
-						) : (
-							"—"
-						)}
-					</InfoItem>
-				</div>
+				<Card variant="tertiary">
+					<CardContent variant="tertiary" className="space-y-3 p-3">
+						<InfoItem
+							label={t("content.institutionFormModal.review.requestedBy", {
+								defaultValue: "Requested by",
+							})}
+							alwaysShow
+						>
+							{requesterLabel}
+						</InfoItem>
+						<InfoItem
+							label={t(
+								"content.categorySubmissionReview.fields.linkedInstitution",
+								{
+									defaultValue: "Verknüpfte Kulturort-Einreichung",
+								},
+							)}
+							alwaysShow
+						>
+							{linkedInstitutionSubmissionId ? (
+								<Button
+									type="button"
+									variant="tertiary"
+									size="inline"
+									fullWidth={false}
+									className="underline"
+									onClick={() =>
+										router.push(
+											toLocalePath(
+												`/account/submissions/${linkedInstitutionSubmissionId}`,
+											),
+										)
+									}
+								>
+									{linkedInstitutionName ??
+										t("content.categorySubmissionReview.linkedSubmission", {
+											id: linkedInstitutionSubmissionId,
+											defaultValue: `Einreichung #${linkedInstitutionSubmissionId}`,
+										})}
+								</Button>
+							) : (
+								"—"
+							)}
+						</InfoItem>
+					</CardContent>
+				</Card>
 				{canManageCategorySubmission ? (
 					<>
-						<div className="space-y-2">
-							<label className="body2" htmlFor="category-review-notes">
-								{t("content.categorySubmissionReview.notesLabel", {
-									defaultValue: "Interne Notizen",
-								})}
-							</label>
-							<Textarea
-								id="category-review-notes"
-								value={internalNotes}
-								onChange={(event) => setInternalNotes(event.target.value)}
-								rows={4}
-								disabled={submitting}
-							/>
-						</div>
+						<Card variant="tertiary">
+							<CardContent variant="tertiary" className="space-y-3 p-3">
+								<div className="body2">
+									{t("content.categorySubmissionReview.notesLabel", {
+										defaultValue: "Interne Notizen",
+									})}
+								</div>
+								<Textarea
+									id="category-review-notes"
+									value={internalNotes}
+									onChange={(event) => setInternalNotes(event.target.value)}
+									rows={4}
+									disabled={submitting}
+								/>
+							</CardContent>
+						</Card>
 
-						<div className="flex flex-wrap gap-3">
+						<div className="flex flex-wrap items-center justify-end gap-3">
 							<Button
 								type="button"
-								variant="outline"
+								variant="destructive"
 								disabled={submitting}
 								onClick={() => void handleReview("rejected")}
 							>
 								{t("content.categorySubmissionReview.actions.reject", {
 									defaultValue: "Ablehnen",
+								})}
+							</Button>
+							<Button
+								type="button"
+								variant="outline"
+								onClick={() => void handleSaveNotes()}
+								disabled={submitting || internalNotes.trim().length === 0}
+							>
+								{t("content.categorySubmissionReview.actions.saveNotes", {
+									defaultValue: "Notizen speichern",
 								})}
 							</Button>
 							<Button

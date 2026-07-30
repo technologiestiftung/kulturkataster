@@ -21,6 +21,17 @@ import { Card, CardContent } from "@/components/ui/card";
 import { MultiSelectModal } from "@/components/MultiSelect/MultiSelectModal";
 import { triggerAccountRefresh } from "@/components/Account/AccountAutoRefresh";
 import { InfoItem } from "@/components/InfoWrapper/InfoItem";
+import { getSubmissionDecisionEmailTemplateOptions } from "@/server/actions/submissions";
+import {
+	APPROVAL_EMAIL_TEMPLATES,
+	type ApprovalSubmitterEmailTemplate,
+	getDecisionEmailTemplatePath,
+	pickAvailableTemplate,
+	REJECTION_EMAIL_TEMPLATES,
+	type RejectionSubmitterEmailTemplate,
+	SubmissionDecisionEmailPanel,
+	type VisibleSubmitterEmailTemplate,
+} from "@/components/Institution/SubmissionDecisionEmailPanel";
 
 type InstitutionDraftReviewModalProps = {
 	submissionId?: number;
@@ -49,6 +60,14 @@ export function InstitutionDraftReviewModal({
 	const closeModal = useRoutedModalClose({ returnTo });
 	const [reviewError, setReviewError] = useState<string | null>(null);
 	const [notifySubmitter, setNotifySubmitter] = useState(true);
+	const [approvalEmailTemplate, setApprovalEmailTemplate] =
+		useState<ApprovalSubmitterEmailTemplate>("submission_create_approved");
+	const [rejectionEmailTemplate, setRejectionEmailTemplate] =
+		useState<RejectionSubmitterEmailTemplate>("submission_rejected");
+	const [
+		availableDecisionEmailTemplatePaths,
+		setAvailableDecisionEmailTemplatePaths,
+	] = useState<string[] | null>(null);
 
 	const allSubmissions = useAccountStore((state) => state.submissions);
 	const institutionPermissions = useAccountStore(
@@ -98,6 +117,7 @@ export function InstitutionDraftReviewModal({
 		error,
 		handleReview,
 		handleSaveNote,
+		didFetchInstitution,
 		shouldShowGrantSubmitterAccessToggle,
 		canReviewCurrentSubmission,
 	} = useInstitutionSubmissionReview({
@@ -108,6 +128,83 @@ export function InstitutionDraftReviewModal({
 		removeSubmission,
 		upsertSubmission,
 	});
+	useEffect(() => {
+		let isMounted = true;
+		void getSubmissionDecisionEmailTemplateOptions()
+			.then((templates) => {
+				if (!isMounted) return;
+				setAvailableDecisionEmailTemplatePaths(
+					templates.map((template) => template.path),
+				);
+			})
+			.catch(() => {
+				if (!isMounted) return;
+				setAvailableDecisionEmailTemplatePaths([]);
+			});
+
+		return () => {
+			isMounted = false;
+		};
+	}, []);
+	useEffect(() => {
+		if (resolvedSubmissionWithFallback?.type === "claim") {
+			setApprovalEmailTemplate(
+				pickAvailableTemplate(
+					["claim_approved", ...APPROVAL_EMAIL_TEMPLATES],
+					availableDecisionEmailTemplatePaths,
+					"claim_approved",
+				),
+			);
+			setRejectionEmailTemplate(
+				pickAvailableTemplate(
+					["claim_rejected", ...REJECTION_EMAIL_TEMPLATES],
+					availableDecisionEmailTemplatePaths,
+					"claim_rejected",
+				),
+			);
+			return;
+		}
+		if (shouldShowGrantSubmitterAccessToggle && grantSubmitterAccess) {
+			setApprovalEmailTemplate(
+				pickAvailableTemplate(
+					["claim_approved", ...APPROVAL_EMAIL_TEMPLATES],
+					availableDecisionEmailTemplatePaths,
+					"claim_approved",
+				),
+			);
+			setRejectionEmailTemplate(
+				pickAvailableTemplate(
+					REJECTION_EMAIL_TEMPLATES,
+					availableDecisionEmailTemplatePaths,
+					"submission_rejected",
+				),
+			);
+			return;
+		}
+		const defaultApprovalTemplate =
+			resolvedSubmissionWithFallback?.type === "update"
+				? "submission_update_approved"
+				: "submission_create_approved";
+		setApprovalEmailTemplate(
+			pickAvailableTemplate(
+				[defaultApprovalTemplate, ...APPROVAL_EMAIL_TEMPLATES],
+				availableDecisionEmailTemplatePaths,
+				defaultApprovalTemplate,
+			),
+		);
+		setRejectionEmailTemplate(
+			pickAvailableTemplate(
+				REJECTION_EMAIL_TEMPLATES,
+				availableDecisionEmailTemplatePaths,
+				"submission_rejected",
+			),
+		);
+	}, [
+		availableDecisionEmailTemplatePaths,
+		grantSubmitterAccess,
+		resolvedSubmissionWithFallback?.type,
+		shouldShowGrantSubmitterAccessToggle,
+	]);
 	const shouldAutoCloseMissingSubmission =
 		!hasSubmissionId ||
 		(didResolveSubmission && !resolvedSubmissionWithFallback);
@@ -118,7 +215,18 @@ export function InstitutionDraftReviewModal({
 	const handleReviewAction = useCallback(
 		async (status: "approved" | "rejected") => {
 			if (!resolvedSubmissionWithFallback) return;
-			const success = await handleReview(status, { notifySubmitter });
+			const selectedEmailTemplate =
+				status === "approved" ? approvalEmailTemplate : rejectionEmailTemplate;
+			const canUseSelectedEmailTemplate =
+				availableDecisionEmailTemplatePaths?.includes(
+					getDecisionEmailTemplatePath(selectedEmailTemplate),
+				) ?? false;
+			const success = await handleReview(status, {
+				notifySubmitter: notifySubmitter && canUseSelectedEmailTemplate,
+				submitterEmailTemplate: canUseSelectedEmailTemplate
+					? selectedEmailTemplate
+					: undefined,
+			});
 			if (!success) {
 				setReviewError(
 					error ?? t("content.institutionFormModal.review.errorDescription"),
@@ -148,6 +256,9 @@ export function InstitutionDraftReviewModal({
 			error,
 			handleReview,
 			notifySubmitter,
+			approvalEmailTemplate,
+			availableDecisionEmailTemplatePaths,
+			rejectionEmailTemplate,
 			resolvedSubmissionWithFallback,
 			router,
 			shouldRefresh,
@@ -197,6 +308,30 @@ export function InstitutionDraftReviewModal({
 	}
 
 	const draft = institutionSubmissionToDraft(resolvedSubmissionWithFallback);
+	const isClaimSubmission = resolvedSubmissionWithFallback.type === "claim";
+	const shouldWaitForClaimInstitution =
+		isClaimSubmission &&
+		typeof resolvedSubmissionWithFallback.entity_id === "number" &&
+		!didFetchInstitution &&
+		!originalInstitution;
+	if (shouldWaitForClaimInstitution) {
+		return (
+			<Modal
+				title={t("content.institutionFormModal.review.loadingTitle", {
+					defaultValue: "Einreichung wird geladen",
+				})}
+				variant="fullscreen"
+				returnTo={returnTo}
+				routePath={routePath}
+				loadingState={{
+					active: true,
+					label: t("content.institutionFormModal.review.loadingLabel", {
+						defaultValue: "Einreichung wird geladen...",
+					}),
+				}}
+			/>
+		);
+	}
 	const submissionStatus = resolvedSubmissionWithFallback.status;
 	const submissionStatusLabel = (() => {
 		if (!submissionStatus) return "";
@@ -215,6 +350,37 @@ export function InstitutionDraftReviewModal({
 		resolvedSubmissionWithFallback.creator?.email ??
 		resolvedSubmissionWithFallback.created_by ??
 		"—";
+	const isTemplateAvailable = (template: VisibleSubmitterEmailTemplate) =>
+		availableDecisionEmailTemplatePaths?.includes(
+			getDecisionEmailTemplatePath(template),
+		) ?? false;
+	const approvalEmailTemplateOptions: Array<{
+		value: ApprovalSubmitterEmailTemplate;
+		label: string;
+	}> = APPROVAL_EMAIL_TEMPLATES.filter(isTemplateAvailable).map((template) => ({
+		value: template,
+		label: t(`content.institutionFormModal.review.emailTemplates.${template}`, {
+			defaultValue: template,
+		}),
+	}));
+	const rejectionEmailTemplateOptions: Array<{
+		value: RejectionSubmitterEmailTemplate;
+		label: string;
+	}> = REJECTION_EMAIL_TEMPLATES.filter(isTemplateAvailable).map(
+		(template) => ({
+			value: template,
+			label: t(
+				`content.institutionFormModal.review.emailTemplates.${template}`,
+				{
+					defaultValue: template,
+				},
+			),
+		}),
+	);
+	const isLoadingDecisionEmailTemplates =
+		availableDecisionEmailTemplatePaths === null;
+	const hasApprovalEmailTemplate = approvalEmailTemplateOptions.length > 0;
+	const hasRejectionEmailTemplate = rejectionEmailTemplateOptions.length > 0;
 	const submissionTitle =
 		submissionStatus === "approved" ||
 		submissionStatus === "rejected" ||
@@ -232,6 +398,12 @@ export function InstitutionDraftReviewModal({
 						defaultValue: resolvedSubmissionWithFallback.type,
 					},
 				);
+	const reviewData =
+		isClaimSubmission && originalInstitution
+			? originalInstitution
+			: (originalInstitution ?? draft);
+	const reviewNewData =
+		isClaimSubmission || !originalInstitution ? undefined : draft;
 
 	return (
 		<Modal
@@ -262,65 +434,30 @@ export function InstitutionDraftReviewModal({
 		>
 			<div className="space-y-6">
 				<InstitutionReview
-					data={originalInstitution ?? draft}
-					newData={originalInstitution ? draft : undefined}
-					onEditSection={(sectionId) => {
-						router.push(
-							toLocalePath(`${editBasePath}/${submissionId}/edit#${sectionId}`),
-						);
-					}}
+					data={reviewData}
+					newData={reviewNewData}
+					showPreviewHint={!isClaimSubmission}
+					onEditSection={
+						isClaimSubmission
+							? undefined
+							: (sectionId) => {
+									router.push(
+										toLocalePath(
+											`${editBasePath}/${submissionId}/edit#${sectionId}`,
+										),
+									);
+								}
+					}
 				/>
 
-				{linkedCategorySubmissions.length > 0 ? (
-					<div className="space-x-3 flex">
-						<div className="body2 font-bold">
-							{t(
-								"content.institutionFormModal.review.linkedCategorySubmissions",
-								{
-									defaultValue: "Verknüpfte Kategorie-Vorschläge",
-								},
-							)}
-						</div>
-						<div className="flex flex-wrap gap-2">
-							{linkedCategorySubmissions.map((categorySubmission) => {
-								const data =
-									categorySubmission.data &&
-									typeof categorySubmission.data === "object" &&
-									!Array.isArray(categorySubmission.data)
-										? (categorySubmission.data as Record<string, unknown>)
-										: {};
-								const label =
-									typeof data.key === "string" && data.key.trim().length > 0
-										? data.key
-										: `#${categorySubmission.id}`;
-								return (
-									<Button
-										key={categorySubmission.id}
-										type="button"
-										variant="tertiary"
-										size="inline"
-										className="underline"
-										onClick={() =>
-											router.push(
-												toLocalePath(
-													`/account/submissions/${categorySubmission.id}`,
-												),
-											)
-										}
-									>
-										{label}
-									</Button>
-								);
-							})}
-						</div>
-					</div>
-				) : null}
 				{canReviewCurrentSubmission && (
-					<div className="space-y-3">
+					<div className="space-y-4">
 						<div className="flex items-center justify-between">
-							<span className="body2">
-								{t("content.institutionFormModal.review.notesLabel")}
-							</span>
+							<h2>
+								{t("content.institutionFormModal.review.reviewPanelTitle", {
+									defaultValue: "Einreichung prüfen",
+								})}
+							</h2>
 							{submissionStatus && (
 								<span className="body2">
 									{t("content.institutionFormModal.review.statusLabel", {
@@ -329,168 +466,250 @@ export function InstitutionDraftReviewModal({
 								</span>
 							)}
 						</div>
-						<>
-							{resolvedSubmissionWithFallback.notes?.length ? (
-								<div className="space-y-2">
-									<div className="body2 ">
+						{linkedCategorySubmissions.length > 0 ? (
+							<Card variant="tertiary">
+								<CardContent variant="tertiary" className="space-y-3 p-3">
+									<div className="body2 font-bold">
 										{t(
-											"content.institutionFormModal.review.previousNotesLabel",
+											"content.institutionFormModal.review.linkedCategorySubmissions",
+											{
+												defaultValue: "Verknüpfte Kategorie-Vorschläge",
+											},
 										)}
 									</div>
-									<div className="space-y-2">
-										{resolvedSubmissionWithFallback.notes.map((note) => (
-											<Card key={note.id} variant="tertiary">
-												<CardContent variant="tertiary" className="p-3">
-													<div className="body3 whitespace-pre-wrap">
-														{note.note}
-													</div>
-													<div className="mt-2 body3 text-muted-foreground">
-														{t("content.institutionFormModal.review.noteMeta", {
-															defaultValue: "{{author}} am {{date}}",
-															author:
-																formatUserDisplayName(note.creator) ??
-																note.creator?.email ??
-																t("common.auth.account.activity.system", {
-																	defaultValue: "System",
-																}),
-															date: formatDateWithLocale(note.created_at, {
-																locale: i18n.language,
-																format: {
-																	dateStyle: "medium",
-																	timeStyle: "short",
-																},
-															}),
-														})}
-													</div>
-												</CardContent>
-											</Card>
-										))}
+									<div className="flex flex-wrap gap-2">
+										{linkedCategorySubmissions.map((categorySubmission) => {
+											const data =
+												categorySubmission.data &&
+												typeof categorySubmission.data === "object" &&
+												!Array.isArray(categorySubmission.data)
+													? (categorySubmission.data as Record<string, unknown>)
+													: {};
+											const label =
+												typeof data.key === "string" &&
+												data.key.trim().length > 0
+													? data.key
+													: `#${categorySubmission.id}`;
+											return (
+												<Button
+													key={categorySubmission.id}
+													type="button"
+													variant="tertiary"
+													size="inline"
+													fullWidth={false}
+													className="underline"
+													onClick={() =>
+														router.push(
+															toLocalePath(
+																`/account/submissions/${categorySubmission.id}`,
+															),
+														)
+													}
+												>
+													{label}
+												</Button>
+											);
+										})}
 									</div>
+								</CardContent>
+							</Card>
+						) : null}
+						<Card variant="tertiary">
+							<CardContent variant="tertiary" className="space-y-3 p-3">
+								<div className="body2">
+									{t("content.institutionFormModal.review.notesLabel")}
 								</div>
-							) : null}
-							<Textarea
-								value={internalNotes}
-								onChange={(event) => setInternalNotes(event.target.value)}
-								placeholder={t(
-									"content.institutionFormModal.review.notesPlaceholder",
-								)}
-								rows={4}
-								disabled={submitting}
-							/>
-
-							<InfoItem
-								label={t("content.institutionFormModal.review.requestedBy", {
-									defaultValue: "Requested by",
-								})}
-								alwaysShow
-							>
-								{requesterLabel}
-							</InfoItem>
-							{shouldShowGrantSubmitterAccessToggle ? (
-								<label className="flex items-start gap-3">
-									<Checkbox
-										checked={grantSubmitterAccess}
-										onCheckedChange={(checked) =>
-											setGrantSubmitterAccess(checked === true)
-										}
-										disabled={submitting}
-									/>
-
-									<span className="body2">
-										{t(
-											"content.institutionFormModal.review.grantSubmitterAccess",
-										)}
-									</span>
-								</label>
-							) : null}
-							<label className="flex items-start gap-3">
-								<Checkbox
-									checked={notifySubmitter}
-									onCheckedChange={(checked) =>
-										setNotifySubmitter(checked === true)
-									}
+								{resolvedSubmissionWithFallback.notes?.length ? (
+									<div className="space-y-2">
+										<div className="body2">
+											{t(
+												"content.institutionFormModal.review.previousNotesLabel",
+											)}
+										</div>
+										<div className="space-y-2">
+											{resolvedSubmissionWithFallback.notes.map((note) => (
+												<Card key={note.id} variant="tertiary">
+													<CardContent variant="tertiary" className="p-3">
+														<div className="body3 whitespace-pre-wrap font-bold">
+															{note.note}
+														</div>
+														<div className="mt-2 body3 text-muted-foreground">
+															{t(
+																"content.institutionFormModal.review.noteMeta",
+																{
+																	defaultValue: "{{author}} am {{date}}",
+																	author:
+																		formatUserDisplayName(note.creator) ??
+																		note.creator?.email ??
+																		t("common.auth.account.activity.system", {
+																			defaultValue: "System",
+																		}),
+																	date: formatDateWithLocale(note.created_at, {
+																		locale: i18n.language,
+																		format: {
+																			dateStyle: "medium",
+																			timeStyle: "short",
+																		},
+																	}),
+																},
+															)}
+														</div>
+													</CardContent>
+												</Card>
+											))}
+										</div>
+									</div>
+								) : null}
+								<Textarea
+									value={internalNotes}
+									onChange={(event) => setInternalNotes(event.target.value)}
+									placeholder={t(
+										"content.institutionFormModal.review.notesPlaceholder",
+									)}
+									rows={4}
 									disabled={submitting}
 								/>
-
-								<span className="body2">
-									{t("content.institutionFormModal.review.notifySubmitter")}
-								</span>
-							</label>
-							{(userOptions.length > 0 || groupOptions.length > 0) && (
-								<div className="space-y-3">
-									<span className="body2">
-										{t("content.institutionFormModal.review.attachOnApproval")}
-									</span>
-									<div className="flex flex-col gap-3">
-										{userOptions.length > 0 && (
-											<div className="flex-1">
-												<MultiSelectModal
-													title={t(
-														"content.institutionFormModal.review.attachUsers.title",
-													)}
-													placeholder={t(
-														"content.institutionFormModal.review.attachUsers.placeholder",
-													)}
-													searchPlaceholder={t(
-														"content.institutionFormModal.review.attachUsers.searchPlaceholder",
-													)}
-													options={userOptions}
-													selected={attachUserIds}
-													onChange={setAttachUserIds}
-													disabled={submitting}
-												/>
-											</div>
-										)}
-										{groupOptions.length > 0 && (
-											<div className="flex-1">
-												<MultiSelectModal
-													title={t(
-														"content.institutionFormModal.review.attachGroups.title",
-													)}
-													placeholder={t(
-														"content.institutionFormModal.review.attachGroups.placeholder",
-													)}
-													searchPlaceholder={t(
-														"content.institutionFormModal.review.attachGroups.searchPlaceholder",
-													)}
-													options={groupOptions}
-													selected={attachGroupIds.map(String)}
-													onChange={(ids) => setAttachGroupIds(ids.map(Number))}
-													disabled={submitting}
-												/>
-											</div>
-										)}
-									</div>
-								</div>
-							)}
-							<div className="flex items-center justify-end gap-3">
-								<Button
-									type="button"
-									variant="destructive"
-									onClick={() => void handleReviewAction("rejected")}
-									disabled={submitting}
-								>
-									{t("content.institutionFormModal.review.actions.reject")}
-								</Button>
-								<Button
-									type="button"
-									variant="outline"
-									onClick={() => void handleSaveNoteAction()}
-									disabled={submitting || internalNotes.trim().length === 0}
-								>
-									{t("content.institutionFormModal.review.actions.saveNotes", {
-										defaultValue: "Save notes",
+							</CardContent>
+						</Card>
+						<Card variant="tertiary">
+							<CardContent variant="tertiary" className="space-y-3 p-3">
+								<InfoItem
+									label={t("content.institutionFormModal.review.requestedBy", {
+										defaultValue: "Requested by",
 									})}
-								</Button>
-								<Button
-									type="button"
-									onClick={() => void handleReviewAction("approved")}
-									disabled={submitting}
+									alwaysShow
 								>
-									{t("content.institutionFormModal.review.actions.approve")}
-								</Button>
-							</div>
-						</>
+									{requesterLabel}
+								</InfoItem>
+
+								{!isClaimSubmission &&
+								(userOptions.length > 0 ||
+									groupOptions.length > 0 ||
+									shouldShowGrantSubmitterAccessToggle) ? (
+									<div className="space-y-3">
+										{shouldShowGrantSubmitterAccessToggle ? (
+											<label className="flex items-start gap-3">
+												<Checkbox
+													checked={grantSubmitterAccess}
+													onCheckedChange={(checked) =>
+														setGrantSubmitterAccess(checked === true)
+													}
+													disabled={submitting}
+												/>
+
+												<span className="body2">
+													{t(
+														"content.institutionFormModal.review.grantSubmitterAccess",
+													)}
+												</span>
+											</label>
+										) : null}
+										{userOptions.length > 0 || groupOptions.length > 0 ? (
+											<div className="space-y-3">
+												<span className="body2">
+													{t(
+														"content.institutionFormModal.review.attachOnApproval",
+													)}
+												</span>
+												<div className="flex flex-col gap-3">
+													{userOptions.length > 0 && (
+														<div className="flex-1">
+															<MultiSelectModal
+																title={t(
+																	"content.institutionFormModal.review.attachUsers.title",
+																)}
+																placeholder={t(
+																	"content.institutionFormModal.review.attachUsers.placeholder",
+																)}
+																searchPlaceholder={t(
+																	"content.institutionFormModal.review.attachUsers.searchPlaceholder",
+																)}
+																options={userOptions}
+																selected={attachUserIds}
+																onChange={setAttachUserIds}
+																disabled={submitting}
+															/>
+														</div>
+													)}
+													{groupOptions.length > 0 && (
+														<div className="flex-1">
+															<MultiSelectModal
+																title={t(
+																	"content.institutionFormModal.review.attachGroups.title",
+																)}
+																placeholder={t(
+																	"content.institutionFormModal.review.attachGroups.placeholder",
+																)}
+																searchPlaceholder={t(
+																	"content.institutionFormModal.review.attachGroups.searchPlaceholder",
+																)}
+																options={groupOptions}
+																selected={attachGroupIds.map(String)}
+																onChange={(ids) =>
+																	setAttachGroupIds(ids.map(Number))
+																}
+																disabled={submitting}
+															/>
+														</div>
+													)}
+												</div>
+											</div>
+										) : null}
+									</div>
+								) : null}
+							</CardContent>
+						</Card>
+						<SubmissionDecisionEmailPanel
+							t={t}
+							notifySubmitter={notifySubmitter}
+							onNotifySubmitterChange={setNotifySubmitter}
+							approvalEmailTemplate={approvalEmailTemplate}
+							onApprovalEmailTemplateChange={setApprovalEmailTemplate}
+							approvalEmailTemplateOptions={approvalEmailTemplateOptions}
+							rejectionEmailTemplate={rejectionEmailTemplate}
+							onRejectionEmailTemplateChange={setRejectionEmailTemplate}
+							rejectionEmailTemplateOptions={rejectionEmailTemplateOptions}
+							isLoadingDecisionEmailTemplates={isLoadingDecisionEmailTemplates}
+							submitting={submitting}
+							isTemplateAvailable={isTemplateAvailable}
+						/>
+						<div className="flex flex-wrap items-center justify-end gap-3">
+							<Button
+								type="button"
+								variant="destructive"
+								onClick={() => void handleReviewAction("rejected")}
+								disabled={
+									submitting ||
+									(notifySubmitter &&
+										(isLoadingDecisionEmailTemplates ||
+											!hasRejectionEmailTemplate))
+								}
+							>
+								{t("content.institutionFormModal.review.actions.reject")}
+							</Button>
+							<Button
+								type="button"
+								variant="outline"
+								onClick={() => void handleSaveNoteAction()}
+								disabled={submitting || internalNotes.trim().length === 0}
+							>
+								{t("content.institutionFormModal.review.actions.saveNotes", {
+									defaultValue: "Save notes",
+								})}
+							</Button>
+							<Button
+								type="button"
+								onClick={() => void handleReviewAction("approved")}
+								disabled={
+									submitting ||
+									(notifySubmitter &&
+										(isLoadingDecisionEmailTemplates ||
+											!hasApprovalEmailTemplate))
+								}
+							>
+								{t("content.institutionFormModal.review.actions.approve")}
+							</Button>
+						</div>
 					</div>
 				)}
 			</div>
