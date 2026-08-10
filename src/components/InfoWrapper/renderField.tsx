@@ -93,7 +93,11 @@ const resolveEnumDisplay = (
 	sourceData: Partial<Institution>,
 	t: (key: string) => string,
 ) => {
-	const baseLabel = getFieldOptionLabel(t, String(field.enumKey), String(value));
+	const baseLabel = getFieldOptionLabel(
+		t,
+		String(field.enumKey),
+		String(value),
+	);
 	if (
 		!field.freeTextKey ||
 		field.freeTextValue === undefined ||
