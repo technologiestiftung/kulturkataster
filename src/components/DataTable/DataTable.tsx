@@ -41,6 +41,7 @@ import ChevronDown from "@/icons/chevron-down.svg";
 import Edit from "@/icons/edit.svg";
 import Eye from "@/icons/eye.svg";
 import Download from "@/icons/download.svg";
+import DownloadSurvey from "@/icons/download-survey.svg";
 import ArrowNarrowLeft from "@/icons/arrow-narrow-left.svg";
 import ArrowNarrowRight from "@/icons/arrow-narrow-right.svg";
 import { useWindowVirtualizer } from "@tanstack/react-virtual";
@@ -1060,6 +1061,26 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 																							aria-label="Edit"
 																						>
 																							<Edit className="h-5 w-5 text-neutral-80" />
+																						</Button>
+																					) : null}
+																					{config.canDownloadSurvey &&
+																					config.onDownloadSurvey ? (
+																						<Button
+																							iconSize="sm"
+																							variant="surface"
+																							radius="full"
+																							onClick={(event) => {
+																								event.stopPropagation();
+																								config.onDownloadSurvey?.(
+																									row.original,
+																								);
+																							}}
+																							aria-label={
+																								config.downloadSurveyAriaLabel ??
+																								"Download survey"
+																							}
+																						>
+																							<DownloadSurvey className="h-5 w-5 text-neutral-80" />
 																						</Button>
 																					) : null}
 																				</div>

@@ -1901,7 +1901,8 @@
 			"actions": {
 				"addInstitution": "Add Cultural Location",
 				"claimInstitution": "Claim My Locations",
-				"downloadList": "Download List"
+				"downloadList": "Download List",
+				"downloadSurvey": "Download survey"
 			},
 			"empty": {
 				"description": "You can start new entries directly.",
@@ -1909,6 +1910,15 @@
 			},
 			"search": {
 				"title": "Search Cultural Locations"
+			},
+			"surveyDownload": {
+				"error": {
+					"forbidden": "You are not authorized to download this survey.",
+					"noAnswers": "No answers are available for this cultural location.",
+					"noOpenQuestionnaire": "No active survey is available.",
+					"unexpected": "The survey could not be downloaded."
+				},
+				"title": "Download survey"
 			},
 			"type": {
 				"manage": "Administer",
@@ -2047,6 +2057,7 @@
 				},
 				"tables": {
 					"address": "Addresses",
+					"answer": "Survey answers",
 					"category": "Categories",
 					"entity_audit": "activity",
 					"group": "groups",
