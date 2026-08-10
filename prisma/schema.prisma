@@ -85,6 +85,13 @@ enum CategoryStatus {
   inactive
 }
 
+enum QuestionnaireStatus {
+  draft
+  open
+  closed
+  archived
+}
+
 enum SubmissionEntityType {
   institution
   category
@@ -213,6 +220,7 @@ model Institution {
   closing_reason          String?
   notes                   String?
   internal_notes          String?
+  culture_index           Float?
   status                  InstitutionStatus   @default(public)
   import_identifier       String?
   source                  String?
@@ -234,6 +242,7 @@ model Institution {
   users           User[]
   creator         User?           @relation("InstitutionCreator", fields: [created_by], references: [id])
   updater         User?           @relation("InstitutionUpdater", fields: [updated_by], references: [id])
+  answers         Answer[]
 
   @@index([status])
   @@index([address_id])
@@ -321,6 +330,9 @@ model User {
   reviewed_submissions Submission[]     @relation("SubmissionReviewer")
   submission_notes     SubmissionNote[] @relation("SubmissionNoteCreator")
   entity_audits        EntityAudit[]    @relation("EntityAuditUser")
+  created_questionnaires Questionnaire[] @relation("QuestionnaireCreator")
+  updated_questionnaires Questionnaire[] @relation("QuestionnaireUpdater")
+  submitted_answers      Answer[]        @relation("AnswerCreator")
 
   @@index([email])
   @@index([role_id])
@@ -515,6 +527,77 @@ model SubmissionNote {
   @@index([created_by])
   @@index([created_at])
   @@map("submission_note")
+}
+
+// ============================================
+// SURVEY / QUESTIONNAIRE SYSTEM
+// ============================================
+
+model Questionnaire {
+  id          Int                 @id @default(autoincrement())
+  title       String
+  description String?
+  status      QuestionnaireStatus @default(draft)
+  meta_data   Json?
+  created_by  String?             @db.Uuid
+  updated_by  String?             @db.Uuid
+  created_at  DateTime            @default(now())
+  updated_at  DateTime            @updatedAt
+
+  questions Question[]
+  answers   Answer[]
+  creator   User? @relation("QuestionnaireCreator", fields: [created_by], references: [id])
+  updater   User? @relation("QuestionnaireUpdater", fields: [updated_by], references: [id])
+
+  @@index([status])
+  @@index([created_by])
+  @@index([updated_by])
+  @@map("questionnaire")
+}
+
+model Question {
+  id               Int      @id @default(autoincrement())
+  questionnaire_id Int
+  key              String
+  label            String
+  description      String?
+  field_type       String
+  required         Boolean  @default(false)
+  step             Int      @default(1)
+  order            Int      @default(0)
+  config           Json?
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
+
+  questionnaire Questionnaire @relation(fields: [questionnaire_id], references: [id], onDelete: Cascade)
+  answers       Answer[]
+
+  @@unique([questionnaire_id, key])
+  @@index([questionnaire_id, step, order])
+  @@map("question")
+}
+
+model Answer {
+  id               Int      @id @default(autoincrement())
+  questionnaire_id Int
+  question_id      Int
+  institution_id   Int
+  value            Json
+  created_by       String?  @db.Uuid
+  submitter_name   String?
+  submitter_email  String?
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
+
+  questionnaire Questionnaire @relation(fields: [questionnaire_id], references: [id], onDelete: Cascade)
+  question      Question      @relation(fields: [question_id], references: [id], onDelete: Cascade)
+  institution   Institution   @relation(fields: [institution_id], references: [id], onDelete: Cascade)
+  creator       User?         @relation("AnswerCreator", fields: [created_by], references: [id])
+
+  @@index([questionnaire_id, institution_id, question_id, created_at])
+  @@index([question_id])
+  @@index([institution_id])
+  @@map("answer")
 }
 
 // ============================================
