@@ -271,6 +271,7 @@ export function buildInstitutionForFormFromDraft(
 		closing_reason: toOptionalText(draft.closing_reason),
 		notes: toOptionalText(draft.notes),
 		internal_notes: toOptionalText(draft.internal_notes),
+		culture_index: null,
 		import_identifier: null,
 		source: toOptionalText(draft.source),
 		contact_person_id: toOptionalNumber(draft.contact_person_id) ?? null,
