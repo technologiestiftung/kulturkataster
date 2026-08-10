@@ -1907,7 +1907,8 @@
 			"actions": {
 				"addInstitution": "Kulturort hinzufügen",
 				"claimInstitution": "Meine Orte anfragen",
-				"downloadList": "Liste herunterladen"
+				"downloadList": "Liste herunterladen",
+				"downloadSurvey": "Umfrage herunterladen"
 			},
 			"empty": {
 				"description": "Sie können direkt neue Einträge starten.",
@@ -1918,6 +1919,15 @@
 			},
 			"search": {
 				"title": "Kulturorte suchen"
+			},
+			"surveyDownload": {
+				"error": {
+					"forbidden": "Sie sind nicht berechtigt, diese Umfrage herunterzuladen.",
+					"noAnswers": "Für diesen Kulturort liegen keine Antworten vor.",
+					"noOpenQuestionnaire": "Keine aktive Umfrage vorhanden.",
+					"unexpected": "Umfrage konnte nicht heruntergeladen werden."
+				},
+				"title": "Umfrage herunterladen"
 			},
 			"type": {
 				"manage": "Verwalten",
@@ -2056,6 +2066,7 @@
 				},
 				"tables": {
 					"address": "Adressen",
+					"answer": "Umfrageantworten",
 					"category": "Kategorien",
 					"entity_audit": "Aktivität",
 					"group": "Gruppen",
