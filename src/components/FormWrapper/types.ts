@@ -19,6 +19,7 @@ export type FieldType =
 	| "textarea"
 	| "select"
 	| "radio"
+	| "likert"
 	| "checkbox"
 	| "switch"
 	| "multiselect"

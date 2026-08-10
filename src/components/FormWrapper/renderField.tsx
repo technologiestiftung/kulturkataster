@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { LikertScale } from "@/components/ui/likert-scale";
 import {
 	Select,
 	SelectContent,
@@ -577,6 +578,28 @@ const renderFieldContent = (
 						</div>
 					))}
 				</RadioGroup>
+			)}
+
+			{field.type === "likert" && (
+				<LikertScale
+					value={getSerializedSelectedValue(field.options, value)}
+					onValueChange={(val) =>
+						updateField(field.name, deserializeOptionValue(val))
+					}
+					options={
+						field.options?.map((option) => ({
+							value: serializeOptionValue(option.value),
+							label: option.label,
+						})) ?? []
+					}
+					aria-invalid={hasIssue || undefined}
+					className={cn(
+						hasIssue &&
+							"rounded-sm border border-destructive-secondary bg-destructive-secondary/10 p-3",
+					)}
+					itemClassName={cn(hasIssue && "border-destructive-secondary")}
+					disabled={field.disabled}
+				/>
 			)}
 
 			{field.type === "checkbox" && (
