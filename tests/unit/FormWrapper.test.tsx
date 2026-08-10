@@ -358,6 +358,67 @@ describe("FormWrapper", () => {
 			});
 		});
 
+		it("renders likert scale with options", () => {
+			const config: FormWrapperConfig = {
+				fields: toFields([
+					{
+						id: "main",
+						fields: [
+							{
+								name: "stability",
+								label: "Stability",
+								type: "likert",
+								options: [
+									{ value: "1", label: "sehr instabil" },
+									{ value: "2", label: "eher instabil" },
+									{ value: "3", label: "teils/teils" },
+									{ value: "4", label: "eher stabil" },
+									{ value: "5", label: "sehr stabil" },
+								],
+							},
+						],
+					},
+				]),
+				onSubmit: vi.fn(),
+			};
+
+			render(<FormWrapper config={config} />);
+			expect(screen.getByLabelText("sehr instabil")).toBeInTheDocument();
+			expect(screen.getByLabelText("teils/teils")).toBeInTheDocument();
+			expect(screen.getByLabelText("sehr stabil")).toBeInTheDocument();
+		});
+
+		it("submits the selected likert value", async () => {
+			const onSubmit = vi.fn();
+			const config: FormWrapperConfig = {
+				fields: toFields([
+					{
+						id: "main",
+						fields: [
+							{
+								name: "stability",
+								label: "Stability",
+								type: "likert",
+								options: [1, 2, 3, 4, 5].map((n) => ({
+									value: n,
+									label: `Option ${n}`,
+								})),
+							},
+						],
+					},
+				]),
+				onSubmit,
+			};
+
+			render(<FormWrapper config={config} />);
+			fireEvent.click(screen.getByLabelText("Option 4"));
+			fireEvent.click(screen.getByRole("button", { name: /Submit/i }));
+
+			await waitFor(() => {
+				expect(onSubmit).toHaveBeenCalledWith({ stability: 4 });
+			});
+		});
+
 		it("renders checkbox field", () => {
 			const config: FormWrapperConfig = {
 				fields: toFields([
