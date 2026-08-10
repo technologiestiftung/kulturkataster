@@ -57,21 +57,15 @@ describe("LikertScale", () => {
 	});
 
 	it("does not render a connecting line for a single option", () => {
-		const { container } = render(
-			<LikertScale options={[scaleOptions[0]!]} />,
-		);
+		const { container } = render(<LikertScale options={[scaleOptions[0]!]} />);
 
-		expect(container.querySelectorAll('[aria-hidden="true"]')).toHaveLength(
-			0,
-		);
+		expect(container.querySelectorAll('[aria-hidden="true"]')).toHaveLength(0);
 	});
 
 	it("renders a connecting line spanning the options", () => {
 		const { container } = render(<LikertScale options={scaleOptions} />);
 
-		expect(container.querySelectorAll('[aria-hidden="true"]')).toHaveLength(
-			1,
-		);
+		expect(container.querySelectorAll('[aria-hidden="true"]')).toHaveLength(1);
 	});
 
 	it("disables every option when disabled", () => {
