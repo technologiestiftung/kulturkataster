@@ -389,9 +389,7 @@ describe("FormWrapper", () => {
 			).not.toBeInTheDocument();
 
 			fireEvent.click(screen.getByLabelText("Other"));
-			expect(
-				screen.getByPlaceholderText("Please specify"),
-			).toBeInTheDocument();
+			expect(screen.getByPlaceholderText("Please specify")).toBeInTheDocument();
 
 			fireEvent.click(screen.getByLabelText("Friend"));
 			expect(
