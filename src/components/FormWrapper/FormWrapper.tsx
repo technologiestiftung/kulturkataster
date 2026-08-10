@@ -76,6 +76,13 @@ const buildInitialFormData = (config: FormWrapperConfig) => {
 		} else {
 			initialData[field.name] = "";
 		}
+
+		if (field.type === "radio" && field.freeTextOption) {
+			const freeTextFieldName =
+				field.freeTextOption.fieldName ?? `${field.name}FreeText`;
+			initialData[freeTextFieldName] =
+				config.initialValues?.[freeTextFieldName] ?? "";
+		}
 	});
 
 	return initialData;

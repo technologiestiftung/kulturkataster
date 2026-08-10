@@ -42,6 +42,7 @@ import type {
 	FormWrapperConfig,
 	PermissionAction,
 	PermissionScope,
+	SelectOption,
 	TablePermissionValue,
 } from "./types";
 
@@ -124,6 +125,48 @@ function PasswordField({
 				<Warning className="pointer-events-none absolute right-11 top-1/2 h-5 w-5 -translate-y-1/2 text-destructive-secondary" />
 			)}
 		</div>
+	);
+}
+
+function RadioFreeTextField({
+	field,
+	option,
+	isSelected,
+	formData,
+	updateField,
+}: {
+	field: FormWrapperFieldConfig;
+	option: SelectOption;
+	isSelected: boolean;
+	formData: Record<string, unknown>;
+	updateField: (name: string, value: unknown) => void;
+}) {
+	if (field.type !== "radio" || !field.freeTextOption || !isSelected) {
+		return null;
+	}
+	if (
+		serializeOptionValue(field.freeTextOption.value) !==
+		serializeOptionValue(option.value)
+	) {
+		return null;
+	}
+
+	const freeTextFieldName =
+		field.freeTextOption.fieldName ?? `${field.name}FreeText`;
+
+	return (
+		<Input
+			id={`${field.name}-freeText`}
+			value={(formData[freeTextFieldName] as string) ?? ""}
+			onChange={(e) => updateField(freeTextFieldName, e.target.value)}
+			placeholder={field.freeTextOption.placeholder}
+			aria-label={
+				field.freeTextOption.label ??
+				(typeof option.label === "string" ? option.label : undefined)
+			}
+			disabled={field.disabled}
+			className="h-9 max-w-48"
+		/>
 	);
 }
 
@@ -554,29 +597,47 @@ const renderFieldContent = (
 							</Label>
 						</div>
 					)}
-					{field.options?.map((option) => (
-						<div
-							key={serializeOptionValue(option.value)}
-							className="flex items-start space-x-2"
-						>
-							<RadioGroupItem
-								className={cn(
-									"bg-background border-input",
-									hasIssue && "border-destructive-secondary",
-								)}
-								value={serializeOptionValue(option.value)}
-								id={`${field.name}-${serializeOptionValue(option.value)}`}
-								aria-invalid={hasIssue || undefined}
-							/>
+					{field.options?.map((option) => {
+						const serializedOptionValue = serializeOptionValue(option.value);
+						const isSelected =
+							getSerializedSelectedValue(
+								field.options,
+								value,
+								allowNullOption,
+							) === serializedOptionValue;
 
-							<Label
-								htmlFor={`${field.name}-${serializeOptionValue(option.value)}`}
-								emphasize={false}
+						return (
+							<div
+								key={serializedOptionValue}
+								className="flex items-start space-x-2"
 							>
-								{option.label}
-							</Label>
-						</div>
-					))}
+								<RadioGroupItem
+									className={cn(
+										"bg-background border-input",
+										hasIssue && "border-destructive-secondary",
+									)}
+									value={serializedOptionValue}
+									id={`${field.name}-${serializedOptionValue}`}
+									aria-invalid={hasIssue || undefined}
+								/>
+
+								<Label
+									htmlFor={`${field.name}-${serializedOptionValue}`}
+									emphasize={false}
+								>
+									{option.label}
+								</Label>
+
+								<RadioFreeTextField
+									field={field}
+									option={option}
+									isSelected={isSelected}
+									formData={formData}
+									updateField={updateField}
+								/>
+							</div>
+						);
+					})}
 				</RadioGroup>
 			)}
 
