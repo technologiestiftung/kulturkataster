@@ -358,6 +358,89 @@ describe("FormWrapper", () => {
 			});
 		});
 
+		it("only shows the radio free-text input while its option is selected", () => {
+			const config: FormWrapperConfig = {
+				fields: toFields([
+					{
+						id: "main",
+						fields: [
+							{
+								name: "referral",
+								label: "How did you hear about us?",
+								type: "radio",
+								options: [
+									{ value: "friend", label: "Friend" },
+									{ value: "other", label: "Other" },
+								],
+								freeTextOption: {
+									value: "other",
+									placeholder: "Please specify",
+								},
+							},
+						],
+					},
+				]),
+				onSubmit: vi.fn(),
+			};
+
+			render(<FormWrapper config={config} />);
+			expect(
+				screen.queryByPlaceholderText("Please specify"),
+			).not.toBeInTheDocument();
+
+			fireEvent.click(screen.getByLabelText("Other"));
+			expect(
+				screen.getByPlaceholderText("Please specify"),
+			).toBeInTheDocument();
+
+			fireEvent.click(screen.getByLabelText("Friend"));
+			expect(
+				screen.queryByPlaceholderText("Please specify"),
+			).not.toBeInTheDocument();
+		});
+
+		it("submits the typed free text alongside the selected radio option", async () => {
+			const onSubmit = vi.fn();
+			const config: FormWrapperConfig = {
+				fields: toFields([
+					{
+						id: "main",
+						fields: [
+							{
+								name: "referral",
+								label: "How did you hear about us?",
+								type: "radio",
+								options: [
+									{ value: "friend", label: "Friend" },
+									{ value: "other", label: "Other" },
+								],
+								freeTextOption: {
+									value: "other",
+									fieldName: "referralOther",
+									placeholder: "Please specify",
+								},
+							},
+						],
+					},
+				]),
+				onSubmit,
+			};
+
+			render(<FormWrapper config={config} />);
+			fireEvent.click(screen.getByLabelText("Other"));
+			fireEvent.change(screen.getByPlaceholderText("Please specify"), {
+				target: { value: "Newsletter" },
+			});
+			fireEvent.click(screen.getByRole("button", { name: /Submit/i }));
+
+			await waitFor(() => {
+				expect(onSubmit).toHaveBeenCalledWith({
+					referral: "other",
+					referralOther: "Newsletter",
+				});
+			});
+		});
+
 		it("renders likert scale with options", () => {
 			const config: FormWrapperConfig = {
 				fields: toFields([

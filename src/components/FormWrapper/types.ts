@@ -138,6 +138,12 @@ type FormWrapperNonSectionFieldConfig = {
 	privateDescription?: string;
 	defaultValue?: unknown;
 	radioVariant?: "default" | "button";
+	freeTextOption?: {
+		value: string | number | boolean;
+		fieldName?: string;
+		placeholder?: string;
+		label?: string;
+	};
 	multiselectVariant?: "list" | "modal";
 	searchPlaceholder?: string;
 	emptyText?: string;
