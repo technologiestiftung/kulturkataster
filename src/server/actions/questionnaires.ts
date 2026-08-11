@@ -22,7 +22,7 @@ import {
 } from "@/server/logging/requestContext";
 import { logger } from "@/server/logging/logger";
 
-export type SurveyExportErrorCode =
+export type QuestionnaireExportErrorCode =
 	| "forbidden"
 	| "noOpenQuestionnaire"
 	| "noAnswers"
@@ -32,7 +32,7 @@ type AnswerWithQuestion = Prisma.AnswerGetPayload<{
 	include: { question: true; institution: true };
 }>;
 
-export type SurveyAnswerExportRow = {
+export type QuestionnaireAnswerExportRow = {
 	questionKey: string;
 	questionLabel: string;
 	value: unknown;
@@ -41,21 +41,25 @@ export type SurveyAnswerExportRow = {
 	answeredAt: Date;
 };
 
-export type InstitutionSurveyExport = {
+export type InstitutionQuestionnaireExport = {
 	questionnaireTitle: string;
 	institutionName: string;
-	rows: SurveyAnswerExportRow[];
+	rows: QuestionnaireAnswerExportRow[];
 };
 
-const classifySurveyExportError = (error: unknown): SurveyExportErrorCode => {
+const classifyQuestionnaireExportError = (
+	error: unknown,
+): QuestionnaireExportErrorCode => {
 	if (error instanceof Error && error.name === "RBACError") return "forbidden";
 	return "unexpected";
 };
 
-export async function getInstitutionSurveyAnswersForExport(
+export async function getInstitutionQuestionnaireAnswersForExport(
 	institutionId: number,
 	questionnaireId?: number,
-): Promise<ActionResult<InstitutionSurveyExport, SurveyExportErrorCode>> {
+): Promise<
+	ActionResult<InstitutionQuestionnaireExport, QuestionnaireExportErrorCode>
+> {
 	return runWithServerRequestContext(
 		async () => {
 			let validatedInstitutionId: number;
@@ -65,7 +69,7 @@ export async function getInstitutionSurveyAnswersForExport(
 					"Institution id must be positive.",
 				);
 			} catch (error) {
-				return actionError(classifySurveyExportError(error));
+				return actionError(classifyQuestionnaireExportError(error));
 			}
 
 			const currentUserId = await getCurrentUserId();
@@ -94,7 +98,7 @@ export async function getInstitutionSurveyAnswersForExport(
 				}
 				institutionName = institution.name;
 			} catch (error) {
-				return actionError(classifySurveyExportError(error));
+				return actionError(classifyQuestionnaireExportError(error));
 			}
 
 			try {
@@ -136,14 +140,17 @@ export async function getInstitutionSurveyAnswersForExport(
 					rows,
 				});
 			} catch (error) {
-				logger.error("survey.export.fetch_failed", error, {
-					subsystem: "survey",
+				logger.error("questionnaire.export.fetch_failed", error, {
+					subsystem: "questionnaire",
 					actor_user_id: currentUserId,
 					institution_id: validatedInstitutionId,
 				});
-				return actionError(classifySurveyExportError(error));
+				return actionError(classifyQuestionnaireExportError(error));
 			}
 		},
-		{ route: "server_action:surveys.getInstitutionSurveyAnswersForExport" },
+		{
+			route:
+				"server_action:questionnaires.getInstitutionQuestionnaireAnswersForExport",
+		},
 	);
 }

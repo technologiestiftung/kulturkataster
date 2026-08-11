@@ -1,12 +1,12 @@
 import * as XLSX from "xlsx-js-style";
 import {
-	getInstitutionSurveyAnswersForExport,
-	type SurveyExportErrorCode,
-} from "@/server/actions/surveys";
+	getInstitutionQuestionnaireAnswersForExport,
+	type QuestionnaireExportErrorCode,
+} from "@/server/actions/questionnaires";
 
-export type SurveyDownloadFormat = "csv" | "xlsx";
+export type QuestionnaireDownloadFormat = "csv" | "xlsx";
 
-type SurveyExportRow = {
+type QuestionnaireExportRow = {
 	Frage: string;
 	Antwort: string;
 	Name: string;
@@ -38,9 +38,9 @@ function escapeCSVValue(value: string): string {
 	return `"${cleanValue}"`;
 }
 
-function generateSurveyCSV(rows: SurveyExportRow[]): string {
+function generateQuestionnaireCSV(rows: QuestionnaireExportRow[]): string {
 	if (rows.length === 0) return "";
-	const headers = Object.keys(rows[0]) as (keyof SurveyExportRow)[];
+	const headers = Object.keys(rows[0]) as (keyof QuestionnaireExportRow)[];
 	const csvHeaders = headers.map((header) => escapeCSVValue(header)).join(",");
 	const csvRows = rows.map((row) =>
 		headers.map((header) => escapeCSVValue(row[header])).join(","),
@@ -49,10 +49,12 @@ function generateSurveyCSV(rows: SurveyExportRow[]): string {
 	return BOM + [csvHeaders, ...csvRows].join("\r\n");
 }
 
-function generateSurveyExcelBuffer(rows: SurveyExportRow[]): ArrayBuffer {
+function generateQuestionnaireExcelBuffer(
+	rows: QuestionnaireExportRow[],
+): ArrayBuffer {
 	const wb = XLSX.utils.book_new();
 	const ws = XLSX.utils.json_to_sheet(rows);
-	XLSX.utils.book_append_sheet(wb, ws, "Umfrage");
+	XLSX.utils.book_append_sheet(wb, ws, "Fragebogen");
 	return XLSX.write(wb, { bookType: "xlsx", type: "array" });
 }
 
@@ -75,21 +77,22 @@ function triggerBrowserDownload(
 const sanitizeFilenameBase = (value: string) =>
 	value.replace(/[^a-zA-Z0-9-_]+/g, "_");
 
-export async function downloadInstitutionSurveyAnswers({
+export async function downloadInstitutionQuestionnaireAnswers({
 	institutionId,
 	filenameBase,
 	format,
 }: {
 	institutionId: number;
 	filenameBase: string;
-	format: SurveyDownloadFormat;
-}): Promise<{ ok: true } | { ok: false; error: SurveyExportErrorCode }> {
-	const result = await getInstitutionSurveyAnswersForExport(institutionId);
+	format: QuestionnaireDownloadFormat;
+}): Promise<{ ok: true } | { ok: false; error: QuestionnaireExportErrorCode }> {
+	const result =
+		await getInstitutionQuestionnaireAnswersForExport(institutionId);
 	if (!result.ok) {
 		return { ok: false, error: result.error };
 	}
 
-	const rows: SurveyExportRow[] = result.data.rows.map((row) => ({
+	const rows: QuestionnaireExportRow[] = result.data.rows.map((row) => ({
 		Frage: row.questionLabel,
 		Antwort: formatAnswerValue(row.value),
 		Name: row.submitterName ?? "",
@@ -102,13 +105,13 @@ export async function downloadInstitutionSurveyAnswers({
 
 	if (format === "csv") {
 		triggerBrowserDownload(
-			generateSurveyCSV(rows),
+			generateQuestionnaireCSV(rows),
 			fullFilename,
 			"text/csv;charset=utf-8;",
 		);
 	} else {
 		triggerBrowserDownload(
-			generateSurveyExcelBuffer(rows),
+			generateQuestionnaireExcelBuffer(rows),
 			fullFilename,
 			"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
 		);

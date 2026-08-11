@@ -57,7 +57,7 @@ export default async function AccountLayout({
 		delete: canTable(ctx, "institution", "delete"),
 		createSubmission: canTable(ctx, "submission", "create"),
 		reviewSubmission: canTable(ctx, "submission", "update"),
-		downloadSurvey: canTable(ctx, "answer", "read"),
+		downloadQuestionnaire: canTable(ctx, "answer", "read"),
 	};
 	const canReadActivity = canTable(ctx, "entity_audit", "read");
 

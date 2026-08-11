@@ -12,7 +12,7 @@ export type InstitutionActionPermissions = {
 	delete: boolean;
 	createSubmission: boolean;
 	reviewSubmission: boolean;
-	downloadSurvey: boolean;
+	downloadQuestionnaire: boolean;
 };
 
 export type InstitutionFieldPermissions = {

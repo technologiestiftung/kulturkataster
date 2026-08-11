@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { getInstitutionSurveyAnswersForExport } from "@/server/actions/surveys";
+import { getInstitutionQuestionnaireAnswersForExport } from "@/server/actions/questionnaires";
 
 const {
 	getCurrentUserIdMock,
@@ -76,7 +76,7 @@ const rbacError = () => {
 	return error;
 };
 
-describe("getInstitutionSurveyAnswersForExport", () => {
+describe("getInstitutionQuestionnaireAnswersForExport", () => {
 	beforeEach(() => {
 		getCurrentUserIdMock.mockReset().mockResolvedValue("user-1");
 		authorizeTableMock.mockReset();
@@ -88,7 +88,7 @@ describe("getInstitutionSurveyAnswersForExport", () => {
 		questionnaireFindByIdMock.mockReset();
 		questionnaireListOpenMock
 			.mockReset()
-			.mockResolvedValue([{ id: 7, title: "Jahresumfrage 2026" }]);
+			.mockResolvedValue([{ id: 7, title: "Jahresfragebogen 2026" }]);
 		listLatestByQuestionnaireAndInstitutionMock.mockReset().mockResolvedValue([
 			{
 				question: { key: "capacity", label: "Kapazität", step: 1, order: 2 },
@@ -109,13 +109,13 @@ describe("getInstitutionSurveyAnswersForExport", () => {
 	});
 
 	it("returns rows for the open questionnaire, sorted by question order", async () => {
-		const result = await getInstitutionSurveyAnswersForExport(42);
+		const result = await getInstitutionQuestionnaireAnswersForExport(42);
 
 		expect(authorizeTableMock).toHaveBeenCalledWith({}, "answer", "read");
 		expect(result).toEqual({
 			ok: true,
 			data: {
-				questionnaireTitle: "Jahresumfrage 2026",
+				questionnaireTitle: "Jahresfragebogen 2026",
 				institutionName: "Kulturort A",
 				rows: [
 					expect.objectContaining({ questionKey: "name" }),
@@ -128,15 +128,17 @@ describe("getInstitutionSurveyAnswersForExport", () => {
 	it("uses an explicit questionnaireId when provided instead of the open questionnaire", async () => {
 		questionnaireFindByIdMock.mockResolvedValue({
 			id: 9,
-			title: "Sonderumfrage",
+			title: "Sonderfragebogen",
 		});
 
-		const result = await getInstitutionSurveyAnswersForExport(42, 9);
+		const result = await getInstitutionQuestionnaireAnswersForExport(42, 9);
 
 		expect(questionnaireFindByIdMock).toHaveBeenCalledWith(9);
 		expect(questionnaireListOpenMock).not.toHaveBeenCalled();
 		expect(result.ok).toBe(true);
-		expect(result.ok && result.data.questionnaireTitle).toBe("Sonderumfrage");
+		expect(result.ok && result.data.questionnaireTitle).toBe(
+			"Sonderfragebogen",
+		);
 	});
 
 	it("returns forbidden when the caller lacks the answer/download permission", async () => {
@@ -144,7 +146,7 @@ describe("getInstitutionSurveyAnswersForExport", () => {
 			throw rbacError();
 		});
 
-		const result = await getInstitutionSurveyAnswersForExport(42);
+		const result = await getInstitutionQuestionnaireAnswersForExport(42);
 
 		expect(result).toEqual({ ok: false, error: "forbidden" });
 	});
@@ -153,7 +155,7 @@ describe("getInstitutionSurveyAnswersForExport", () => {
 		getTableScopeMock.mockReturnValue("own");
 		findFirstWithSelectMock.mockResolvedValue(null);
 
-		const result = await getInstitutionSurveyAnswersForExport(42);
+		const result = await getInstitutionQuestionnaireAnswersForExport(42);
 
 		expect(result).toEqual({ ok: false, error: "forbidden" });
 	});
@@ -161,7 +163,7 @@ describe("getInstitutionSurveyAnswersForExport", () => {
 	it("returns noOpenQuestionnaire when there is no open questionnaire", async () => {
 		questionnaireListOpenMock.mockResolvedValue([]);
 
-		const result = await getInstitutionSurveyAnswersForExport(42);
+		const result = await getInstitutionQuestionnaireAnswersForExport(42);
 
 		expect(result).toEqual({ ok: false, error: "noOpenQuestionnaire" });
 	});
@@ -169,7 +171,7 @@ describe("getInstitutionSurveyAnswersForExport", () => {
 	it("returns noAnswers when the institution has not answered the questionnaire", async () => {
 		listLatestByQuestionnaireAndInstitutionMock.mockResolvedValue([]);
 
-		const result = await getInstitutionSurveyAnswersForExport(42);
+		const result = await getInstitutionQuestionnaireAnswersForExport(42);
 
 		expect(result).toEqual({ ok: false, error: "noAnswers" });
 	});
@@ -179,11 +181,11 @@ describe("getInstitutionSurveyAnswersForExport", () => {
 			new Error("db down"),
 		);
 
-		const result = await getInstitutionSurveyAnswersForExport(42);
+		const result = await getInstitutionQuestionnaireAnswersForExport(42);
 
 		expect(result).toEqual({ ok: false, error: "unexpected" });
 		expect(loggerErrorMock).toHaveBeenCalledWith(
-			"survey.export.fetch_failed",
+			"questionnaire.export.fetch_failed",
 			expect.any(Error),
 			expect.objectContaining({ institution_id: 42 }),
 		);
