@@ -3,12 +3,15 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { Question } from "@/generated/prisma";
-import { HorizontalStepper, type StepConfig } from "@/components/HorizontalStepper";
+import {
+	HorizontalStepper,
+	type StepConfig,
+} from "@/components/HorizontalStepper";
 import { Modal } from "@/components/Modals/Modal";
 import { useRoutedModalClose } from "@/components/Modals/useRoutedModalClose";
 import { groupQuestionsByStep } from "@/lib/utils/questionnaireFormAdapter";
 import { QuestionnaireWizardContent } from "@/components/Questionnaire/QuestionnaireWizardContent";
-import type { Profile } from "@/types";
+import type { Category } from "@/types";
 
 type QuestionnaireWithQuestions = {
 	id: number;
@@ -20,11 +23,11 @@ type QuestionnaireWithQuestions = {
 export function QuestionnaireWizardModal({
 	routePath,
 	questionnaire,
-	profile,
+	categoryGroups,
 }: {
 	routePath?: string;
 	questionnaire: QuestionnaireWithQuestions;
-	profile: Profile | null;
+	categoryGroups: Category[];
 }) {
 	const { t } = useTranslation();
 	const closeModal = useRoutedModalClose({});
@@ -44,7 +47,6 @@ export function QuestionnaireWizardModal({
 				icon: null,
 				title: `block-${group.step}`,
 			})),
-			{ id: "review", icon: null, title: "review" },
 		],
 		[stepGroups],
 	);
@@ -78,7 +80,7 @@ export function QuestionnaireWizardModal({
 				<HorizontalStepper steps={steps}>
 					<QuestionnaireWizardContent
 						questionnaire={questionnaire}
-						isLoggedIn={Boolean(profile)}
+						categoryGroups={categoryGroups}
 						onSubmitError={setSubmitError}
 					/>
 				</HorizontalStepper>

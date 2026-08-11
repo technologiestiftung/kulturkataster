@@ -2,37 +2,60 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import Link from "next/link";
+import { AlertDialog } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { LocationSearch } from "@/components/Search/LocationSearch";
 import { SelectableOptionsList } from "@/components/MultiSelect/SelectableOptionsList";
-import { useLocalePath } from "@/lib/hooks/useLocalePath";
+import { QuestionnaireInstitutionCreateForm } from "@/components/Questionnaire/QuestionnaireInstitutionCreateForm";
 import { searchInstitutions } from "@/server/actions/institutions";
+import { checkQuestionnaireCompletion } from "@/server/actions/questionnaires";
 import type { Institution } from "@/types/institution";
+import type { Category } from "@/types";
 
 export function QuestionnaireInstitutionLinkStep({
-	isRegistered,
+	questionnaireId,
+	isInstitutionRegistered,
 	institutionId,
+	categoryGroups,
 	onChange,
 	onBack,
 	onNext,
 }: {
-	isRegistered: boolean | null;
+	questionnaireId: number;
+	isInstitutionRegistered: boolean | null;
 	institutionId: number | null;
+	categoryGroups: Category[];
 	onChange: (patch: {
-		isRegistered?: boolean | null;
+		isInstitutionRegistered?: boolean | null;
 		institutionId?: number | null;
+		submissionId?: number | null;
 	}) => void;
 	onBack: () => void;
 	onNext: () => void;
 }) {
 	const { t } = useTranslation();
-	const toLocalePath = useLocalePath();
 	const [query, setQuery] = useState("");
 	const [searchResults, setSearchResults] = useState<Institution[]>([]);
+	const [alreadySubmitted, setAlreadySubmitted] = useState(false);
+
+	useEffect(() => {
+		if (institutionId === null) {
+			setAlreadySubmitted(false);
+			return;
+		}
+		let active = true;
+		void checkQuestionnaireCompletion({ questionnaireId, institutionId }).then(
+			(result) => {
+				if (active) setAlreadySubmitted(result.ok && result.alreadySubmitted);
+			},
+		);
+		return () => {
+			active = false;
+		};
+	}, [questionnaireId, institutionId]);
 
 	useEffect(() => {
 		if (!query.trim()) {
@@ -55,11 +78,6 @@ export function QuestionnaireInstitutionLinkStep({
 		};
 	}, [query]);
 
-	const selectedInstitution = useMemo(
-		() => searchResults.find((institution) => institution.id === institutionId),
-		[searchResults, institutionId],
-	);
-
 	const options = useMemo(
 		() =>
 			searchResults.map((institution) => ({
@@ -76,10 +94,13 @@ export function QuestionnaireInstitutionLinkStep({
 		[onChange],
 	);
 
-	const canProceed = isRegistered === true && institutionId !== null;
+	const canProceed =
+		isInstitutionRegistered === true &&
+		institutionId !== null &&
+		!alreadySubmitted;
 	let radioValue = "";
-	if (isRegistered === true) radioValue = "yes";
-	else if (isRegistered === false) radioValue = "no";
+	if (isInstitutionRegistered === true) radioValue = "yes";
+	else if (isInstitutionRegistered === false) radioValue = "no";
 
 	return (
 		<div className="space-y-6">
@@ -100,14 +121,15 @@ export function QuestionnaireInstitutionLinkStep({
 			<Card variant="secondary" className="space-y-4">
 				<Label className="text-neutral-80">
 					{t("content.questionnaireWizard.institutionLink.question", {
-						defaultValue: "Ist der Kulturort bereits im Kulturkataster erfasst?",
+						defaultValue:
+							"Ist der Kulturort bereits im Kulturkataster erfasst?",
 					})}
 				</Label>
 				<RadioGroup
 					value={radioValue}
 					onValueChange={(value) =>
 						onChange({
-							isRegistered: value === "yes",
+							isInstitutionRegistered: value === "yes",
 							institutionId: value === "yes" ? institutionId : null,
 						})
 					}
@@ -134,36 +156,33 @@ export function QuestionnaireInstitutionLinkStep({
 					</div>
 				</RadioGroup>
 
-				{isRegistered === true && (
+				{isInstitutionRegistered === true && (
 					<div className="space-y-2 rounded-sm bg-neutral-10 p-4">
-						<Label className="text-neutral-80">
-							{t("content.questionnaireWizard.institutionLink.searchLabel", {
-								defaultValue: "Name des Kulturortes",
-							})}
-						</Label>
-						{selectedInstitution ? (
-							<div className="flex items-center justify-between rounded-full bg-background px-4 py-2 body2">
-								<span>{selectedInstitution.name}</span>
-								<button
-									type="button"
-									className="text-primary-dark underline"
-									onClick={() => onChange({ institutionId: null })}
-								>
-									{t("common.change", { defaultValue: "Ändern" })}
-								</button>
-							</div>
-						) : (
-							<>
-								<LocationSearch
-									onQueryChange={setQuery}
-									showResults={false}
-									searchFunction={async () => []}
-									placeholder={t(
-										"content.questionnaireWizard.institutionLink.searchPlaceholder",
-										{ defaultValue: "Adresse oder Ort eingeben" },
-									)}
-								/>
-								{options.length > 0 && (
+						<>
+							<Label className="text-neutral-80">
+								{t("content.questionnaireWizard.institutionLink.searchLabel", {
+									defaultValue: "Name des Kulturortes",
+								})}
+							</Label>
+							<LocationSearch
+								onQueryChange={setQuery}
+								showResults={false}
+								searchFunction={async () => []}
+								placeholder={t(
+									"content.questionnaireWizard.institutionLink.searchPlaceholder",
+									{ defaultValue: "Adresse oder Ort eingeben" },
+								)}
+							/>
+							{options.length > 0 && (
+								<>
+									<Label className="text-neutral-80">
+										{t(
+											"content.questionnaireWizard.institutionLink.resultsLabel",
+											{
+												defaultValue: "Ausgewählter Kulturort",
+											},
+										)}
+									</Label>
 									<SelectableOptionsList
 										options={options}
 										selectedValues={
@@ -172,45 +191,72 @@ export function QuestionnaireInstitutionLinkStep({
 										multiSelect={false}
 										variant="panel"
 										showCheckbox={true}
+										containerClassName="overflow-hidden"
+										listClassName="max-h-72"
 										emptyText={t(
 											"content.questionnaireWizard.institutionLink.searchEmpty",
 											{ defaultValue: "Keine Kulturorte gefunden." },
 										)}
 										onToggle={handleSelect}
 									/>
-								)}
-							</>
-						)}
+								</>
+							)}
+						</>
 					</div>
 				)}
 
-				{isRegistered === false && (
-					<p className="body2 rounded-sm bg-neutral-10 p-4">
-						{t("content.questionnaireWizard.institutionLink.notRegistered", {
+				<AlertDialog
+					open={alreadySubmitted}
+					status="info"
+					title={t(
+						"content.questionnaireWizard.institutionLink.alreadySubmittedTitle",
+						{ defaultValue: "Bereits ausgefüllt" },
+					)}
+					description={t(
+						"content.questionnaireWizard.institutionLink.alreadySubmitted",
+						{
 							defaultValue:
-								"Bitte erfassen Sie den Kulturort zunächst über die Einreichung eines Kulturortes, bevor Sie die Befragung zu diesem Ort ausfüllen können.",
-						})}{" "}
-						<Link
-							href={toLocalePath("/institution")}
-							className="text-primary-dark underline"
-						>
-							{t(
-								"content.questionnaireWizard.institutionLink.notRegisteredCta",
-								{ defaultValue: "Kulturort einreichen" },
-							)}
-						</Link>
-					</p>
-				)}
+								"Für diesen Kulturort wurde diese Befragung bereits ausgefüllt.",
+						},
+					)}
+					confirmLabel={t("common.close", { defaultValue: "Schließen" })}
+					onConfirm={() => onChange({ institutionId: null })}
+					onOpenChange={(open) => {
+						if (!open) onChange({ institutionId: null });
+					}}
+				/>
 			</Card>
 
-			<div className="flex flex-col-reverse gap-4 md:flex-row md:justify-end">
-				<Button type="button" variant="outline" fullWidth onClick={onBack}>
-					{t("common.back", { defaultValue: "Zurück" })}
-				</Button>
-				<Button type="button" fullWidth disabled={!canProceed} onClick={onNext}>
-					{t("common.next", { defaultValue: "Weiter" })}
-				</Button>
-			</div>
+			{isInstitutionRegistered === false && (
+				<Card variant="secondary">
+					<QuestionnaireInstitutionCreateForm
+						categoryGroups={categoryGroups}
+						onCreated={(submissionId) => {
+							onChange({ submissionId });
+							onNext();
+						}}
+						onBack={onBack}
+						backLabel={t("common.back", { defaultValue: "Zurück" })}
+						submitLabel={t("common.next", { defaultValue: "Weiter" })}
+					/>
+				</Card>
+			)}
+
+			{isInstitutionRegistered !== false && (
+				<div className="flex flex-col-reverse gap-4 md:flex-row md:justify-end">
+					<Button type="button" variant="outline" fullWidth onClick={onBack}>
+						{t("common.back", { defaultValue: "Zurück" })}
+					</Button>
+					<Button
+						type="button"
+						fullWidth
+						disabled={!canProceed}
+						onClick={onNext}
+					>
+						{t("common.next", { defaultValue: "Weiter" })}
+					</Button>
+				</div>
+			)}
 		</div>
 	);
 }

@@ -6,25 +6,31 @@ vi.mock("@/server/prisma", () => ({
 	prisma: {
 		answer: {
 			findMany: vi.fn(),
+			findFirst: vi.fn(),
 			create: vi.fn(),
 			createMany: vi.fn(),
+			updateMany: vi.fn(),
 			delete: vi.fn(),
 		},
 	},
 }));
 
 const findManyMock = vi.mocked(prisma.answer.findMany);
+const findFirstMock = vi.mocked(prisma.answer.findFirst);
 const createMock = vi.mocked(prisma.answer.create);
 const createManyMock = vi.mocked(prisma.answer.createMany);
+const updateManyMock = vi.mocked(prisma.answer.updateMany);
 const deleteMock = vi.mocked(prisma.answer.delete);
 
-const answerInclude = { question: true, institution: true };
+const answerInclude = { question: true, institution: true, submission: true };
 
 describe("answerRepo", () => {
 	beforeEach(() => {
 		findManyMock.mockReset();
+		findFirstMock.mockReset();
 		createMock.mockReset();
 		createManyMock.mockReset();
+		updateManyMock.mockReset();
 		deleteMock.mockReset();
 	});
 
@@ -117,6 +123,23 @@ describe("answerRepo", () => {
 		});
 	});
 
+	describe("listBySubmission", () => {
+		it("lists all answers linked to a submission ordered oldest first", async () => {
+			const answers = [{ id: 1, value: "first" }];
+			findManyMock.mockResolvedValue(answers as never);
+
+			await expect(answerRepo.listBySubmission(9)).resolves.toEqual(answers);
+
+			expect(findManyMock).toHaveBeenCalledWith(
+				expect.objectContaining({
+					where: { submission_id: 9 },
+					orderBy: { created_at: "asc" },
+					include: answerInclude,
+				}),
+			);
+		});
+	});
+
 	describe("remove", () => {
 		it("deletes an answer by id", async () => {
 			deleteMock.mockResolvedValue({ id: 1 } as never);
@@ -124,6 +147,62 @@ describe("answerRepo", () => {
 			await answerRepo.remove(1);
 
 			expect(deleteMock).toHaveBeenCalledWith({ where: { id: 1 } });
+		});
+	});
+
+	describe("relink", () => {
+		it("points answers at an institution and clears submission_id", async () => {
+			updateManyMock.mockResolvedValue({ count: 3 } as never);
+
+			await expect(
+				answerRepo.relink({ fromSubmissionId: 9, toInstitutionId: 42 }),
+			).resolves.toEqual({ count: 3 });
+
+			expect(updateManyMock).toHaveBeenCalledWith({
+				where: { submission_id: 9 },
+				data: { institution_id: 42, submission_id: null },
+			});
+		});
+
+		it("points answers at a different submission and clears institution_id", async () => {
+			updateManyMock.mockResolvedValue({ count: 2 } as never);
+
+			await expect(
+				answerRepo.relink({ fromSubmissionId: 9, toSubmissionId: 11 }),
+			).resolves.toEqual({ count: 2 });
+
+			expect(updateManyMock).toHaveBeenCalledWith({
+				where: { submission_id: 9 },
+				data: { institution_id: null, submission_id: 11 },
+			});
+		});
+	});
+
+	describe("hasAnswered", () => {
+		it("returns true when an answer already exists for the institution", async () => {
+			findFirstMock.mockResolvedValue({ id: 1 } as never);
+
+			await expect(
+				answerRepo.hasAnswered({ questionnaireId: 1, institutionId: 3 }),
+			).resolves.toBe(true);
+
+			expect(findFirstMock).toHaveBeenCalledWith({
+				where: { questionnaire_id: 1, institution_id: 3 },
+				select: { id: true },
+			});
+		});
+
+		it("returns false when no answer exists for the submission", async () => {
+			findFirstMock.mockResolvedValue(null);
+
+			await expect(
+				answerRepo.hasAnswered({ questionnaireId: 1, submissionId: 9 }),
+			).resolves.toBe(false);
+
+			expect(findFirstMock).toHaveBeenCalledWith({
+				where: { questionnaire_id: 1, submission_id: 9 },
+				select: { id: true },
+			});
 		});
 	});
 });
