@@ -20,6 +20,7 @@ type SelectableOptionsListProps = {
 	activeIndex?: number;
 	getItemProps?: (index: number) => HTMLAttributes<HTMLElement>;
 	containerClassName?: string;
+	listClassName?: string;
 	itemClassName?: string;
 	descriptionClassName?: string;
 	showHeaderCount?: boolean;
@@ -40,6 +41,7 @@ export function SelectableOptionsList({
 	activeIndex,
 	getItemProps,
 	containerClassName,
+	listClassName,
 	itemClassName,
 	descriptionClassName,
 	showHeaderCount = true,
@@ -53,9 +55,10 @@ export function SelectableOptionsList({
 				containerClassName,
 			)
 		: cn("h-full space-y-1 pointer-events-auto", containerClassName);
-	const listClassName = isPanel
-		? "h-full w-full overflow-auto"
-		: "h-full w-full overflow-auto";
+	const resolvedListClassName = cn(
+		"h-full w-full overflow-auto",
+		listClassName,
+	);
 	const emptyClassName = isPanel
 		? "px-4 py-6 body3 text-foreground"
 		: "body3 text-foreground px-2";
@@ -71,7 +74,7 @@ export function SelectableOptionsList({
 		<div className={wrapperClassName}>
 			<div
 				ref={listRef}
-				className={listClassName}
+				className={resolvedListClassName}
 				role={isPanel ? undefined : "listbox"}
 				aria-labelledby={!isPanel && headingLabel ? headingId : undefined}
 				id={!isPanel ? listId : undefined}
