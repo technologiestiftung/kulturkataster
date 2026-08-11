@@ -111,7 +111,7 @@ describe("getInstitutionSurveyAnswersForExport", () => {
 	it("returns rows for the open questionnaire, sorted by question order", async () => {
 		const result = await getInstitutionSurveyAnswersForExport(42);
 
-		expect(authorizeTableMock).toHaveBeenCalledWith({}, "answer", "download");
+		expect(authorizeTableMock).toHaveBeenCalledWith({}, "answer", "read");
 		expect(result).toEqual({
 			ok: true,
 			data: {

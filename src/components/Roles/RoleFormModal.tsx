@@ -170,7 +170,7 @@ const getTableTargets = (t: (key: string) => string) => [
 	{
 		key: "answer",
 		label: t("content.roleFormModal.permissions.tables.answer"),
-		actions: ["download"] as PermissionAction[],
+		actions: ["read"] as PermissionAction[],
 	},
 ];
 
