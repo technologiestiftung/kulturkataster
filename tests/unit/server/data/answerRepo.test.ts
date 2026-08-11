@@ -7,6 +7,7 @@ vi.mock("@/server/prisma", () => ({
 		answer: {
 			findMany: vi.fn(),
 			create: vi.fn(),
+			createMany: vi.fn(),
 			delete: vi.fn(),
 		},
 	},
@@ -14,6 +15,7 @@ vi.mock("@/server/prisma", () => ({
 
 const findManyMock = vi.mocked(prisma.answer.findMany);
 const createMock = vi.mocked(prisma.answer.create);
+const createManyMock = vi.mocked(prisma.answer.createMany);
 const deleteMock = vi.mocked(prisma.answer.delete);
 
 const answerInclude = { question: true, institution: true };
@@ -22,7 +24,24 @@ describe("answerRepo", () => {
 	beforeEach(() => {
 		findManyMock.mockReset();
 		createMock.mockReset();
+		createManyMock.mockReset();
 		deleteMock.mockReset();
+	});
+
+	describe("createMany", () => {
+		it("bulk-creates answers in a single call", async () => {
+			const data = [
+				{ questionnaire_id: 1, question_id: 2, institution_id: 3, value: "a" },
+				{ questionnaire_id: 1, question_id: 4, institution_id: 3, value: "b" },
+			];
+			createManyMock.mockResolvedValue({ count: 2 } as never);
+
+			await expect(answerRepo.createMany(data as never)).resolves.toEqual({
+				count: 2,
+			});
+
+			expect(createManyMock).toHaveBeenCalledWith({ data });
+		});
 	});
 
 	describe("create", () => {
