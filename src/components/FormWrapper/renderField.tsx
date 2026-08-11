@@ -874,7 +874,9 @@ const renderFieldContent = (
 											const currentValue = (value as string[]) || [];
 											const newValue = checked
 												? [...currentValue, option.value]
-												: currentValue.filter((v: string) => v !== option.value);
+												: currentValue.filter(
+														(v: string) => v !== option.value,
+													);
 											updateField(field.name, newValue);
 										}}
 										disabled={field.disabled}
