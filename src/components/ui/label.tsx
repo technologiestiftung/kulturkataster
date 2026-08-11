@@ -24,11 +24,16 @@ function Label({
 			)}
 			{...props}
 		>
-			{emphasize ? <strong>{children}</strong> : children}
-			{required && (
-				<span className="" aria-hidden="true">
-					*
-				</span>
+			{emphasize ? (
+				<strong>
+					{children}
+					{required && <span aria-hidden="true"> *</span>}
+				</strong>
+			) : (
+				<>
+					{children}
+					{required && <span aria-hidden="true"> *</span>}
+				</>
 			)}
 		</LabelPrimitive.Root>
 	);

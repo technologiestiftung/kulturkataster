@@ -87,6 +87,36 @@ const formatCategoryValue = (
 		.join(", ");
 };
 
+const resolveEnumDisplay = (
+	field: InfoWrapperFieldConfig,
+	value: unknown,
+	sourceData: Partial<Institution>,
+	t: (key: string) => string,
+) => {
+	const baseLabel = getFieldOptionLabel(
+		t,
+		String(field.enumKey),
+		String(value),
+	);
+	if (
+		!field.freeTextKey ||
+		field.freeTextValue === undefined ||
+		String(value) !== String(field.freeTextValue)
+	) {
+		return baseLabel;
+	}
+
+	const freeTextValue = getNestedValue(
+		sourceData as unknown as Record<string, unknown>,
+		field.freeTextKey,
+	);
+	if (typeof freeTextValue !== "string" || freeTextValue.trim() === "") {
+		return baseLabel;
+	}
+
+	return `${baseLabel}: ${freeTextValue}`;
+};
+
 const renderLink = (
 	value: unknown,
 	href: string | undefined,
@@ -345,7 +375,7 @@ const getContent = (
 					isPrivate={isPrivate}
 					action={action}
 				>
-					{getFieldOptionLabel(t, String(field.enumKey), String(value))}
+					{resolveEnumDisplay(field, value, data, t)}
 				</InfoItem>
 			);
 
@@ -588,11 +618,7 @@ const renderFieldContent = (
 			return t("enumMap." + labelKey);
 		}
 		if (field.type === "enum") {
-			return getFieldOptionLabel(
-				t,
-				String(field.enumKey),
-				String(displayValue),
-			);
+			return resolveEnumDisplay(field, displayValue, sourceData, t);
 		}
 		if (field.type === "boolean") {
 			return t(`enumMap.boolean.${String(displayValue)}`);

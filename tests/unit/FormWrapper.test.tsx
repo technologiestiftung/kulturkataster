@@ -36,11 +36,11 @@ const toFields = (
 // Mock i18next
 vi.mock("react-i18next", () => ({
 	useTranslation: () => ({
-		t: (key: string, options?: Record<string, unknown>) => {
+		t: (key: string) => {
 			const normalizedKey = key.replace(/^common\./, "");
 
 			if (normalizedKey === "form.validation.required") {
-				return `${String(options?.field ?? "")} is required`;
+				return "Required";
 			}
 			if (normalizedKey === "enumMap.field_names.name.errors.required") {
 				return "Name is required";
@@ -358,6 +358,385 @@ describe("FormWrapper", () => {
 			});
 		});
 
+		it("only shows the radio free-text input while its option is selected", () => {
+			const config: FormWrapperConfig = {
+				fields: toFields([
+					{
+						id: "main",
+						fields: [
+							{
+								name: "referral",
+								label: "How did you hear about us?",
+								type: "radio",
+								options: [
+									{ value: "friend", label: "Friend" },
+									{ value: "other", label: "Other" },
+								],
+								freeTextOption: {
+									value: "other",
+									placeholder: "Please specify",
+								},
+							},
+						],
+					},
+				]),
+				onSubmit: vi.fn(),
+			};
+
+			render(<FormWrapper config={config} />);
+			expect(
+				screen.queryByPlaceholderText("Please specify"),
+			).not.toBeInTheDocument();
+
+			fireEvent.click(screen.getByLabelText("Other"));
+			expect(screen.getByPlaceholderText("Please specify")).toBeInTheDocument();
+
+			fireEvent.click(screen.getByLabelText("Friend"));
+			expect(
+				screen.queryByPlaceholderText("Please specify"),
+			).not.toBeInTheDocument();
+		});
+
+		it("centers the row only for the option whose free-text input is showing", () => {
+			const config: FormWrapperConfig = {
+				fields: toFields([
+					{
+						id: "main",
+						fields: [
+							{
+								name: "referral",
+								label: "How did you hear about us?",
+								type: "radio",
+								options: [
+									{ value: "friend", label: "Friend" },
+									{ value: "other", label: "Other" },
+								],
+								freeTextOption: {
+									value: "other",
+									placeholder: "Please specify",
+								},
+							},
+						],
+					},
+				]),
+				onSubmit: vi.fn(),
+			};
+
+			render(<FormWrapper config={config} />);
+			const friendRadio = screen.getByRole("radio", { name: "Friend" });
+			const otherRadio = screen.getByRole("radio", { name: "Other" });
+			expect(friendRadio.closest("div")?.className).toContain("items-start");
+			expect(otherRadio.closest("div")?.className).toContain("items-start");
+
+			fireEvent.click(otherRadio);
+
+			expect(friendRadio.closest("div")?.className).toContain("items-start");
+			expect(otherRadio.closest("div")?.className).toContain("items-center");
+		});
+
+		it("submits the typed free text alongside the selected radio option", async () => {
+			const onSubmit = vi.fn();
+			const config: FormWrapperConfig = {
+				fields: toFields([
+					{
+						id: "main",
+						fields: [
+							{
+								name: "referral",
+								label: "How did you hear about us?",
+								type: "radio",
+								options: [
+									{ value: "friend", label: "Friend" },
+									{ value: "other", label: "Other" },
+								],
+								freeTextOption: {
+									value: "other",
+									fieldName: "referralOther",
+									placeholder: "Please specify",
+								},
+							},
+						],
+					},
+				]),
+				onSubmit,
+			};
+
+			render(<FormWrapper config={config} />);
+			fireEvent.click(screen.getByLabelText("Other"));
+			fireEvent.change(screen.getByPlaceholderText("Please specify"), {
+				target: { value: "Newsletter" },
+			});
+			fireEvent.click(screen.getByRole("button", { name: /Submit/i }));
+
+			await waitFor(() => {
+				expect(onSubmit).toHaveBeenCalledWith({
+					referral: "other",
+					referralOther: "Newsletter",
+				});
+			});
+		});
+
+		it("renders likert scale with options", () => {
+			const config: FormWrapperConfig = {
+				fields: toFields([
+					{
+						id: "main",
+						fields: [
+							{
+								name: "stability",
+								label: "Stability",
+								type: "likert",
+								options: [
+									{ value: "1", label: "sehr instabil" },
+									{ value: "2", label: "eher instabil" },
+									{ value: "3", label: "teils/teils" },
+									{ value: "4", label: "eher stabil" },
+									{ value: "5", label: "sehr stabil" },
+								],
+							},
+						],
+					},
+				]),
+				onSubmit: vi.fn(),
+			};
+
+			render(<FormWrapper config={config} />);
+			expect(screen.getByLabelText("sehr instabil")).toBeInTheDocument();
+			expect(screen.getByLabelText("teils/teils")).toBeInTheDocument();
+			expect(screen.getByLabelText("sehr stabil")).toBeInTheDocument();
+		});
+
+		it("wraps rather than restyles the RadioGroup on error, so the connecting line stays aligned", async () => {
+			const config: FormWrapperConfig = {
+				fields: toFields([
+					{
+						id: "main",
+						fields: [
+							{
+								name: "stability",
+								label: "Stability",
+								type: "likert",
+								required: true,
+								options: [
+									{ value: "1", label: "sehr instabil" },
+									{ value: "2", label: "sehr stabil" },
+								],
+							},
+						],
+					},
+				]),
+				onSubmit: vi.fn(),
+			};
+
+			render(<FormWrapper config={config} />);
+			fireEvent.click(screen.getByRole("button", { name: /Submit/i }));
+
+			const radioGroup = await screen.findByRole("radiogroup");
+			await waitFor(() => {
+				expect(radioGroup).toHaveAttribute("aria-invalid", "true");
+			});
+			// The error border/padding must live on a wrapper, not on the RadioGroup
+			// itself — LikertScale's connecting line is absolutely positioned relative
+			// to the RadioGroup's own (unpadded) box, so padding added directly to it
+			// shifts the radio buttons without moving the line.
+			expect(radioGroup.className).not.toContain("p-3");
+			expect(radioGroup.parentElement?.className).toContain("p-3");
+		});
+
+		it("submits the selected likert value", async () => {
+			const onSubmit = vi.fn();
+			const config: FormWrapperConfig = {
+				fields: toFields([
+					{
+						id: "main",
+						fields: [
+							{
+								name: "stability",
+								label: "Stability",
+								type: "likert",
+								options: [1, 2, 3, 4, 5].map((n) => ({
+									value: n,
+									label: `Option ${n}`,
+								})),
+							},
+						],
+					},
+				]),
+				onSubmit,
+			};
+
+			render(<FormWrapper config={config} />);
+			fireEvent.click(screen.getByLabelText("Option 4"));
+			fireEvent.click(screen.getByRole("button", { name: /Submit/i }));
+
+			await waitFor(() => {
+				expect(onSubmit).toHaveBeenCalledWith({ stability: 4 });
+			});
+		});
+
+		it("renders one likert scale per row for a likertMatrix field", () => {
+			const config: FormWrapperConfig = {
+				fields: toFields([
+					{
+						id: "main",
+						fields: [
+							{
+								name: "funding_importance",
+								label: "Bedeutung der Finanzierungsquellen",
+								type: "likertMatrix",
+								options: [
+									{ value: "5", label: "hohe Bedeutung" },
+									{ value: "1", label: "keine Bedeutung" },
+								],
+								likertMatrix: {
+									rows: [
+										{ key: "public_funding", label: "öffentliche Förderung" },
+										{ key: "donations", label: "Spenden" },
+									],
+								},
+							},
+						],
+					},
+				]),
+				onSubmit: vi.fn(),
+			};
+
+			render(<FormWrapper config={config} />);
+			expect(screen.getByText("öffentliche Förderung")).toBeInTheDocument();
+			expect(screen.getByText("Spenden")).toBeInTheDocument();
+			expect(screen.getAllByText("hohe Bedeutung")).toHaveLength(2);
+		});
+
+		it("submits an object keyed by row for a likertMatrix field", async () => {
+			const onSubmit = vi.fn();
+			const config: FormWrapperConfig = {
+				fields: toFields([
+					{
+						id: "main",
+						fields: [
+							{
+								name: "funding_importance",
+								label: "Bedeutung der Finanzierungsquellen",
+								type: "likertMatrix",
+								options: [
+									{ value: "5", label: "hohe Bedeutung" },
+									{ value: "1", label: "keine Bedeutung" },
+								],
+								likertMatrix: {
+									rows: [
+										{ key: "public_funding", label: "öffentliche Förderung" },
+										{ key: "donations", label: "Spenden" },
+									],
+								},
+							},
+						],
+					},
+				]),
+				onSubmit,
+			};
+
+			render(<FormWrapper config={config} />);
+			const highValueOptions = screen.getAllByLabelText("hohe Bedeutung");
+			fireEvent.click(highValueOptions[0]);
+			const lowValueOptions = screen.getAllByLabelText("keine Bedeutung");
+			fireEvent.click(lowValueOptions[1]);
+			fireEvent.click(screen.getByRole("button", { name: /Submit/i }));
+
+			await waitFor(() => {
+				expect(onSubmit).toHaveBeenCalledWith({
+					funding_importance: { public_funding: "5", donations: "1" },
+				});
+			});
+		});
+
+		it("prevents submit for a required likertMatrix field until every row is answered", async () => {
+			const onSubmit = vi.fn();
+			const config: FormWrapperConfig = {
+				fields: toFields([
+					{
+						id: "main",
+						fields: [
+							{
+								name: "funding_importance",
+								label: "Bedeutung der Finanzierungsquellen",
+								type: "likertMatrix",
+								required: true,
+								options: [
+									{ value: "5", label: "hohe Bedeutung" },
+									{ value: "1", label: "keine Bedeutung" },
+								],
+								likertMatrix: {
+									rows: [
+										{ key: "public_funding", label: "öffentliche Förderung" },
+										{ key: "donations", label: "Spenden" },
+									],
+								},
+							},
+						],
+					},
+				]),
+				onSubmit,
+			};
+
+			render(<FormWrapper config={config} />);
+			fireEvent.click(screen.getByRole("button", { name: /Submit/i }));
+			expect(onSubmit).not.toHaveBeenCalled();
+			expect(screen.getByText("Required")).toBeInTheDocument();
+
+			fireEvent.click(screen.getAllByLabelText("hohe Bedeutung")[0]);
+			fireEvent.click(screen.getByRole("button", { name: /Submit/i }));
+			expect(onSubmit).not.toHaveBeenCalled();
+
+			fireEvent.click(screen.getAllByLabelText("keine Bedeutung")[1]);
+			fireEvent.click(screen.getByRole("button", { name: /Submit/i }));
+
+			await waitFor(() => {
+				expect(onSubmit).toHaveBeenCalledWith({
+					funding_importance: { public_funding: "5", donations: "1" },
+				});
+			});
+		});
+
+		it("shows a free-text input for a checked multiselect option with freeTextOption", () => {
+			const config: FormWrapperConfig = {
+				fields: toFields([
+					{
+						id: "main",
+						fields: [
+							{
+								name: "channels",
+								label: "Digitale Kanäle",
+								type: "multiselect",
+								options: [
+									{ value: "website", label: "eigene Webseite" },
+									{ value: "other", label: "Sonstige" },
+								],
+								freeTextOption: {
+									value: "other",
+									placeholder: "Bitte angeben",
+								},
+							},
+						],
+					},
+				]),
+				onSubmit: vi.fn(),
+			};
+
+			render(<FormWrapper config={config} />);
+			expect(
+				screen.queryByPlaceholderText("Bitte angeben"),
+			).not.toBeInTheDocument();
+
+			const checkbox = screen.getByRole("checkbox", { name: "Sonstige" });
+			fireEvent.click(checkbox);
+			expect(screen.getByPlaceholderText("Bitte angeben")).toBeInTheDocument();
+
+			fireEvent.click(checkbox);
+			expect(
+				screen.queryByPlaceholderText("Bitte angeben"),
+			).not.toBeInTheDocument();
+		});
+
 		it("renders checkbox field", () => {
 			const config: FormWrapperConfig = {
 				fields: toFields([
@@ -452,6 +831,39 @@ describe("FormWrapper", () => {
 				expect(screen.getByText(/Name is required/i)).toBeInTheDocument();
 			});
 
+			expect(onSubmit).not.toHaveBeenCalled();
+		});
+
+		it("falls back to the generic required message when no enumMap entry exists for the field", async () => {
+			const onSubmit = vi.fn();
+			const config: FormWrapperConfig = {
+				fields: toFields([
+					{
+						id: "main",
+						fields: [
+							{
+								name: "since_location_year",
+								label:
+									"Seit wann befindet sich die Einrichtung am aktuellen Standort?",
+								type: "text",
+								required: true,
+							},
+						],
+					},
+				]),
+				onSubmit,
+			};
+
+			render(<FormWrapper config={config} />);
+
+			fireEvent.click(screen.getByRole("button", { name: /Submit/i }));
+
+			await waitFor(() => {
+				expect(screen.getByText(/^Required$/i)).toBeInTheDocument();
+			});
+			expect(
+				screen.queryByText(/enumMap\.field_names/),
+			).not.toBeInTheDocument();
 			expect(onSubmit).not.toHaveBeenCalled();
 		});
 

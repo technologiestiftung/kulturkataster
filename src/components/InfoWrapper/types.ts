@@ -42,6 +42,8 @@ interface InfoWrapperBaseFieldConfig {
 	label?: string;
 	labelKey?: string;
 	enumKey?: string;
+	freeTextKey?: string;
+	freeTextValue?: string | number | boolean;
 	render?: (value: unknown, data: Institution) => ReactNode;
 	condition?: (data: Institution) => boolean;
 	description?: string;
