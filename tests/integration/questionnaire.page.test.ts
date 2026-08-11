@@ -19,6 +19,14 @@ vi.mock("@/server/actions/questionnaires", () => ({
 	getOpenQuestionnaire: getOpenQuestionnaireMock,
 }));
 
+const categoryGroups = [{ id: 1, key: "museums" }];
+const getCategoriesWithSubcategoriesMock = vi
+	.fn()
+	.mockResolvedValue(categoryGroups);
+vi.mock("@/server/actions/categories", () => ({
+	getCategoriesWithSubcategories: getCategoriesWithSubcategoriesMock,
+}));
+
 describe("questionnaire page integration", () => {
 	it("renders the wizard modal when a questionnaire is open", async () => {
 		getOpenQuestionnaireMock.mockResolvedValue({
@@ -34,6 +42,7 @@ describe("questionnaire page integration", () => {
 			props: expect.objectContaining({
 				routePath: "/questionnaire",
 				questionnaire: { id: 1, title: "Survey", questions: [] },
+				categoryGroups,
 			}),
 		});
 	});
@@ -63,7 +72,10 @@ describe("questionnaire page integration", () => {
 
 		expect(result).toMatchObject({
 			type: QuestionnaireWizardModal,
-			props: expect.objectContaining({ routePath: "/questionnaire" }),
+			props: expect.objectContaining({
+				routePath: "/questionnaire",
+				categoryGroups,
+			}),
 		});
 	});
 });
