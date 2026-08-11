@@ -41,7 +41,7 @@ import { resolveInstitutionPermissionField } from "@/lib/utils/institutionPermis
 import { DownloadModal } from "@/components/Modals/Pages/DownloadModal";
 import { notifyInstitutionDownload } from "@/server/actions/downloads";
 import type { ExportFormat } from "@/lib/utils/downloadUtils";
-import { downloadInstitutionSurveyAnswers } from "@/lib/utils/surveyDownloadUtils";
+import { downloadInstitutionQuestionnaireAnswers } from "@/lib/utils/questionnaireDownloadUtils";
 import { showErrorToast } from "@/lib/utils/feedbackToast";
 import {
 	InstitutionRowKindFilterToggle,
@@ -167,7 +167,7 @@ export function InstitutionsTable({
 	const canCreateInstitutionViaSubmission =
 		!canCreateInstitutionDirect && institutionPermissions.createSubmission;
 	const canClaimInstitution = institutionPermissions.createSubmission;
-	const canDownloadSurvey = institutionPermissions.downloadSurvey;
+	const canDownloadQuestionnaire = institutionPermissions.downloadQuestionnaire;
 	const [isDownloadDialogOpen, setIsDownloadDialogOpen] = useState(false);
 	const [rowKindFilter, setRowKindFilter] =
 		useState<InstitutionRowKindFilter>("all");
@@ -204,18 +204,20 @@ export function InstitutionsTable({
 		getFieldOptionLabel(tEnum, "funding_source", value);
 	const headerLabel = (key: string, _fallback?: string) =>
 		getFieldLabel(tEnum, key);
-	const handleDownloadSurvey = useCallback(
+	const handleDownloadQuestionnaire = useCallback(
 		async (row: InstitutionTableRow) => {
 			if (isSubmissionRow(row)) return;
-			const result = await downloadInstitutionSurveyAnswers({
+			const result = await downloadInstitutionQuestionnaireAnswers({
 				institutionId: row.id,
-				filenameBase: `umfrage_${row.name ?? row.id}`,
+				filenameBase: `fragebogen_${row.name ?? row.id}`,
 				format: "xlsx",
 			});
 			if (!result.ok) {
 				showErrorToast(
-					t("content.institutionsTable.surveyDownload.title"),
-					t(`content.institutionsTable.surveyDownload.error.${result.error}`),
+					t("content.institutionsTable.questionnaireDownload.title"),
+					t(
+						`content.institutionsTable.questionnaireDownload.error.${result.error}`,
+					),
 				);
 			}
 		},
@@ -1148,10 +1150,10 @@ export function InstitutionsTable({
 			}),
 			onClick: () => setIsDownloadDialogOpen(true),
 		},
-		canDownloadSurvey,
-		onDownloadSurvey: handleDownloadSurvey,
-		downloadSurveyAriaLabel: t(
-			"content.institutionsTable.actions.downloadSurvey",
+		canDownloadQuestionnaire,
+		onDownloadQuestionnaire: handleDownloadQuestionnaire,
+		downloadQuestionnaireAriaLabel: t(
+			"content.institutionsTable.actions.downloadQuestionnaire",
 		),
 		toolbarContent: showRowKindFilter ? (
 			<InstitutionRowKindFilterToggle

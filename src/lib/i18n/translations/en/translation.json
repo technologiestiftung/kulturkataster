@@ -1902,23 +1902,23 @@
 				"addInstitution": "Add Cultural Location",
 				"claimInstitution": "Claim My Locations",
 				"downloadList": "Download List",
-				"downloadSurvey": "Download survey"
+				"downloadQuestionnaire": "Download questionnaire"
 			},
 			"empty": {
 				"description": "You can start new entries directly.",
 				"title": "No cultural locations available."
 			},
+			"questionnaireDownload": {
+				"error": {
+					"forbidden": "You are not authorized to download this questionnaire.",
+					"noAnswers": "No answers are available for this cultural location.",
+					"noOpenQuestionnaire": "No active questionnaire is available.",
+					"unexpected": "The questionnaire could not be downloaded."
+				},
+				"title": "Download questionnaire"
+			},
 			"search": {
 				"title": "Search Cultural Locations"
-			},
-			"surveyDownload": {
-				"error": {
-					"forbidden": "You are not authorized to download this survey.",
-					"noAnswers": "No answers are available for this cultural location.",
-					"noOpenQuestionnaire": "No active survey is available.",
-					"unexpected": "The survey could not be downloaded."
-				},
-				"title": "Download survey"
 			},
 			"type": {
 				"manage": "Administer",
@@ -2057,7 +2057,7 @@
 				},
 				"tables": {
 					"address": "Addresses",
-					"answer": "Survey answers",
+					"answer": "Questionnaire answers",
 					"category": "Categories",
 					"entity_audit": "activity",
 					"group": "groups",
