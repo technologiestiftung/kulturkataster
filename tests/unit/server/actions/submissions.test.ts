@@ -48,6 +48,8 @@ const {
 	txSubmissionUpdateMock,
 	txSubmissionNoteCreateMock,
 	txInstitutionDeleteMock,
+	txAnswerUpdateManyMock,
+	txAnswerCountMock,
 } = vi.hoisted(() => ({
 	prismaTransactionMock: vi.fn(),
 	prismaInstitutionFindFirstMock: vi.fn(),
@@ -60,6 +62,8 @@ const {
 	txSubmissionUpdateMock: vi.fn(),
 	txSubmissionNoteCreateMock: vi.fn(),
 	txInstitutionDeleteMock: vi.fn(),
+	txAnswerUpdateManyMock: vi.fn(),
+	txAnswerCountMock: vi.fn(),
 }));
 
 vi.mock("@/server/prisma", () => ({
@@ -131,6 +135,9 @@ describe("server actions: submissions", () => {
 		txSubmissionUpdateMock.mockReset();
 		txSubmissionNoteCreateMock.mockReset();
 		txInstitutionDeleteMock.mockReset();
+		txAnswerUpdateManyMock.mockReset();
+		txAnswerCountMock.mockReset();
+		txAnswerCountMock.mockResolvedValue(0);
 		sendSubmissionDecisionEmailMock.mockReset();
 		buildInstitutionScopedWhereMock.mockReset();
 		canFieldsMock.mockReturnValue(true);
@@ -151,6 +158,10 @@ describe("server actions: submissions", () => {
 				},
 				submissionNote: {
 					create: txSubmissionNoteCreateMock,
+				},
+				answer: {
+					updateMany: txAnswerUpdateManyMock,
+					count: txAnswerCountMock,
 				},
 			}),
 		);
@@ -342,6 +353,58 @@ describe("server actions: submissions", () => {
 			}),
 		);
 		expect(txSubmissionDeleteMock).toHaveBeenCalledWith({ where: { id: 10 } });
+	});
+
+	it("reviewSubmission relinks answers to the newly created institution before deleting a create submission", async () => {
+		getTableScopeMock.mockReturnValue("all");
+		requireScopeOrUserMock.mockReturnValue(null);
+		findByIdMock.mockResolvedValue({
+			id: 10,
+			entity_type: SubmissionEntityType.institution,
+			entity_id: null,
+			type: SubmissionType.create,
+			status: "approval_pending",
+			created_by: null,
+			meta: null,
+			data: { name: "Submitted Institution" },
+		});
+		txInstitutionCreateMock.mockResolvedValue({ id: 123 });
+
+		await reviewSubmission({ id: 10, status: "approved" });
+
+		expect(txAnswerUpdateManyMock).toHaveBeenCalledWith({
+			where: { submission_id: 10 },
+			data: { institution_id: 123, submission_id: null },
+		});
+		expect(txSubmissionDeleteMock).toHaveBeenCalledWith({ where: { id: 10 } });
+	});
+
+	it("reviewSubmission keeps the submission row instead of deleting it when answers are still linked", async () => {
+		getTableScopeMock.mockReturnValue("all");
+		requireScopeOrUserMock.mockReturnValue(null);
+		findByIdMock.mockResolvedValue({
+			id: 10,
+			entity_type: SubmissionEntityType.institution,
+			entity_id: null,
+			type: SubmissionType.create,
+			status: "approval_pending",
+			created_by: null,
+			meta: null,
+			data: { name: "Submitted Institution" },
+		});
+		txInstitutionCreateMock.mockResolvedValue({ id: 123 });
+		// Simulates the defensive fallback: some answer is still linked to this
+		// submission (unexpected once the relink above runs, but a real safety net
+		// for any other path) even after the relink attempt.
+		txAnswerCountMock.mockResolvedValue(1);
+
+		await reviewSubmission({ id: 10, status: "approved" });
+
+		expect(txSubmissionDeleteMock).not.toHaveBeenCalled();
+		expect(txSubmissionUpdateMock).toHaveBeenCalledWith({
+			where: { id: 10 },
+			data: expect.objectContaining({ status: "approved" }),
+		});
 	});
 
 	it("reviewSubmission skips the submitter decision email when disabled", async () => {

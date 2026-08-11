@@ -1,49 +1,62 @@
 "use client";
 
+import { useTranslation } from "react-i18next";
 import type { Question } from "@/generated/prisma";
 import { Card } from "@/components/ui/card";
 import { FormWrapper } from "@/components/FormWrapper";
-import { QuestionnaireBlockDots } from "@/components/Questionnaire/QuestionnaireBlockDots";
+import { StepDots } from "@/components/HorizontalStepper";
 import {
 	buildQuestionnaireStepFormConfig,
 	getBlockMeta,
+	type QuestionnaireLocale,
 } from "@/lib/utils/questionnaireFormAdapter";
 
 export function QuestionnaireBlockStep({
 	questionnaire,
 	step,
 	questions,
+	locale,
 	blockIndex,
 	totalBlocks,
+	blockStepIds,
+	onNavigateToStep,
 	initialValues,
 	onChange,
 	onSubmit,
 	onBack,
 	nextLabel,
 	backLabel,
+	submitDisabled,
 }: {
 	questionnaire: { meta_data?: unknown };
 	step: number;
 	questions: Question[];
+	locale: QuestionnaireLocale;
 	blockIndex: number;
 	totalBlocks: number;
+	blockStepIds: string[];
+	onNavigateToStep: (stepId: string) => void;
 	initialValues: Record<string, unknown>;
 	onChange: (data: Record<string, unknown>) => void;
 	onSubmit: (data: Record<string, unknown>) => void;
 	onBack: () => void;
 	nextLabel: string;
 	backLabel: string;
+	submitDisabled?: boolean;
 }) {
-	const { title, description } = getBlockMeta(questionnaire, step);
+	const { t } = useTranslation();
+	const { title, description } = getBlockMeta(questionnaire, step, locale);
 
 	const config = buildQuestionnaireStepFormConfig({
 		questions,
+		locale,
 		initialValues,
 		onChange,
 		onSubmit,
 		onCancel: onBack,
 		submitLabel: nextLabel,
 		cancelLabel: backLabel,
+		submitDisabled,
 	});
 
 	return (
@@ -54,8 +67,18 @@ export function QuestionnaireBlockStep({
 			</div>
 
 			<div className="mb-8 flex flex-col items-center space-y-2 md:mx-24">
-				<QuestionnaireBlockDots total={totalBlocks} currentIndex={blockIndex} />
-				<span className="body2">{`Themenblock ${blockIndex + 1}/${totalBlocks}`}</span>
+				<StepDots
+					total={totalBlocks}
+					currentIndex={blockIndex}
+					onDotClick={(index) => onNavigateToStep(blockStepIds[index])}
+				/>
+				<span className="body2">
+					{t("content.questionnaireWizard.block.stepLabel", {
+						defaultValue: "Themenblock {{current}}/{{total}}",
+						current: blockIndex + 1,
+						total: totalBlocks,
+					})}
+				</span>
 			</div>
 
 			<Card variant="secondary" className="space-y-6">

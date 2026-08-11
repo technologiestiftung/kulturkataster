@@ -1,12 +1,12 @@
-import { getCurrentProfile } from "@/server/actions/auth";
 import { getOpenQuestionnaire } from "@/server/actions/questionnaires";
+import { getCategoriesWithSubcategories } from "@/server/actions/categories";
 import { QuestionnaireWizardModal } from "@/components/Questionnaire/QuestionnaireWizardModal";
 import { QuestionnaireUnavailable } from "@/components/Questionnaire/QuestionnaireUnavailable";
 
 export default async function QuestionnairePage() {
-	const [profile, result] = await Promise.all([
-		getCurrentProfile(),
+	const [result, categoryGroups] = await Promise.all([
 		getOpenQuestionnaire(),
+		getCategoriesWithSubcategories(),
 	]);
 
 	if (!result.ok) {
@@ -17,7 +17,7 @@ export default async function QuestionnairePage() {
 		<QuestionnaireWizardModal
 			routePath="/questionnaire"
 			questionnaire={result.questionnaire}
-			profile={profile}
+			categoryGroups={categoryGroups}
 		/>
 	);
 }
