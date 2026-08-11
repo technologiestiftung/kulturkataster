@@ -722,6 +722,18 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 												),
 												select: { id: true },
 											});
+											// Answer.submission_id has onDelete: Cascade, and this
+											// submission is deleted below — any questionnaire
+											// answers linked to it (e.g. answered inline while
+											// proposing this institution) must move to the new
+											// institution first or they'd be silently destroyed.
+											await tx.answer.updateMany({
+												where: { submission_id: submission.id },
+												data: {
+													institution_id: createdInstitution.id,
+													submission_id: null,
+												},
+											});
 											const requestClaimOnApproval =
 												submissionMeta?.request_claim_on_approval === true;
 											const shouldGrantSubmitterAccess =
@@ -935,9 +947,33 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 											});
 										}
 
-										await tx.submission.delete({
-											where: { id: validatedInput.id },
+										// Safety net: Answer.submission_id has onDelete: Cascade, so
+										// deleting a submission that still has linked answers would
+										// silently destroy real survey data. The "create" branch
+										// above already relinks its own answers to the new
+										// institution, so this should only ever fire for other
+										// submission types that unexpectedly still have answers
+										// attached — in that case, keep the row (mark it approved
+										// instead of deleting) rather than lose the answers.
+										const remainingLinkedAnswers = await tx.answer.count({
+											where: { submission_id: validatedInput.id },
 										});
+										if (remainingLinkedAnswers > 0) {
+											await tx.submission.update({
+												where: { id: validatedInput.id },
+												data: {
+													status: "approved",
+													reviewer: currentUserId
+														? { connect: { id: currentUserId } }
+														: undefined,
+													reviewed_at: new Date(),
+												},
+											});
+										} else {
+											await tx.submission.delete({
+												where: { id: validatedInput.id },
+											});
+										}
 										await updateSubmissionAuditStatus(
 											{
 												submissionId: validatedInput.id,

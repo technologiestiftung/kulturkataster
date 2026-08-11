@@ -49,6 +49,8 @@ const buildInitialFormData = (config: FormWrapperConfig) => {
 			initialData[field.name] = null;
 		} else if (field.type === "multiselect") {
 			initialData[field.name] = [];
+		} else if (field.type === "likertMatrix") {
+			initialData[field.name] = {};
 		} else if (field.type === "file") {
 			initialData[field.name] = null;
 		} else if (field.type === "fundingSources") {
@@ -77,7 +79,10 @@ const buildInitialFormData = (config: FormWrapperConfig) => {
 			initialData[field.name] = "";
 		}
 
-		if (field.type === "radio" && field.freeTextOption) {
+		if (
+			(field.type === "radio" || field.type === "multiselect") &&
+			field.freeTextOption
+		) {
 			const freeTextFieldName =
 				field.freeTextOption.fieldName ?? `${field.name}FreeText`;
 			initialData[freeTextFieldName] =

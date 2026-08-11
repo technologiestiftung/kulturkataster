@@ -45,7 +45,7 @@ const LikertScale = React.forwardRef<
 				id={groupId}
 				name={name}
 				orientation={orientation}
-				className={cn("relative flex w-full items-start gap-0", className)}
+				className={cn("relative flex w-full items-start gap-0 my-2", className)}
 				{...props}
 			>
 				{options.length > 1 && (

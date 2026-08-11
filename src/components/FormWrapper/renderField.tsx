@@ -165,6 +165,52 @@ function RadioFreeTextField({
 				(typeof option.label === "string" ? option.label : undefined)
 			}
 			disabled={field.disabled}
+			className="h-9 max-w-128"
+		/>
+	);
+}
+
+function MultiSelectFreeTextField({
+	field,
+	option,
+	value,
+	formData,
+	updateField,
+}: {
+	field: FormWrapperFieldConfig;
+	option: SelectOption;
+	value: unknown;
+	formData: Record<string, unknown>;
+	updateField: (name: string, value: unknown) => void;
+}) {
+	if (field.type !== "multiselect" || !field.freeTextOption) {
+		return null;
+	}
+	if (
+		serializeOptionValue(field.freeTextOption.value) !==
+		serializeOptionValue(option.value)
+	) {
+		return null;
+	}
+	const isChecked = ((value as string[]) ?? []).includes(
+		option.value as string,
+	);
+	if (!isChecked) return null;
+
+	const freeTextFieldName =
+		field.freeTextOption.fieldName ?? `${field.name}FreeText`;
+
+	return (
+		<Input
+			id={`${field.name}-freeText`}
+			value={(formData[freeTextFieldName] as string) ?? ""}
+			onChange={(e) => updateField(freeTextFieldName, e.target.value)}
+			placeholder={field.freeTextOption.placeholder}
+			aria-label={
+				field.freeTextOption.label ??
+				(typeof option.label === "string" ? option.label : undefined)
+			}
+			disabled={field.disabled}
 			className="h-9 max-w-48"
 		/>
 	);
@@ -605,11 +651,22 @@ const renderFieldContent = (
 								value,
 								allowNullOption,
 							) === serializedOptionValue;
+						// items-start keeps the radio dot aligned to a wrapping multi-line
+						// label's first line — but once this option's free-text input
+						// renders inline (taller than the label), centering looks right.
+						const showsFreeText =
+							isSelected &&
+							field.freeTextOption &&
+							serializeOptionValue(field.freeTextOption.value) ===
+								serializedOptionValue;
 
 						return (
 							<div
 								key={serializedOptionValue}
-								className="flex items-start space-x-2"
+								className={cn(
+									"flex space-x-2",
+									showsFreeText ? "items-center" : "items-start",
+								)}
 							>
 								<RadioGroupItem
 									className={cn(
@@ -642,25 +699,66 @@ const renderFieldContent = (
 			)}
 
 			{field.type === "likert" && (
-				<LikertScale
-					value={getSerializedSelectedValue(field.options, value)}
-					onValueChange={(val) =>
-						updateField(field.name, deserializeOptionValue(val))
-					}
-					options={
-						field.options?.map((option) => ({
-							value: serializeOptionValue(option.value),
-							label: option.label,
-						})) ?? []
-					}
-					aria-invalid={hasIssue || undefined}
+				<div
 					className={cn(
 						hasIssue &&
 							"rounded-sm border border-destructive-secondary bg-destructive-secondary/10 p-3",
 					)}
-					itemClassName={cn(hasIssue && "border-destructive-secondary")}
-					disabled={field.disabled}
-				/>
+				>
+					<LikertScale
+						value={getSerializedSelectedValue(field.options, value)}
+						onValueChange={(val) =>
+							updateField(field.name, deserializeOptionValue(val))
+						}
+						options={
+							field.options?.map((option) => ({
+								value: serializeOptionValue(option.value),
+								label: option.label,
+							})) ?? []
+						}
+						aria-invalid={hasIssue || undefined}
+						itemClassName={cn(hasIssue && "border-destructive-secondary")}
+						disabled={field.disabled}
+					/>
+				</div>
+			)}
+
+			{field.type === "likertMatrix" && field.likertMatrix && (
+				<div
+					className={cn(
+						"space-y-6",
+						hasIssue &&
+							"rounded-sm border border-destructive-secondary bg-destructive-secondary/10 p-3",
+					)}
+				>
+					{field.likertMatrix.rows.map((row) => {
+						const rowValue =
+							(value as Record<string, unknown> | undefined)?.[row.key] ?? "";
+						return (
+							<div key={row.key} className="space-y-2">
+								<Label className="text-neutral-80">{row.label}</Label>
+								<LikertScale
+									value={getSerializedSelectedValue(field.options, rowValue)}
+									onValueChange={(val) =>
+										updateField(field.name, {
+											...(value as Record<string, unknown> | undefined),
+											[row.key]: deserializeOptionValue(val),
+										})
+									}
+									options={
+										field.options?.map((option) => ({
+											value: serializeOptionValue(option.value),
+											label: option.label,
+										})) ?? []
+									}
+									aria-invalid={hasIssue || undefined}
+									itemClassName={cn(hasIssue && "border-destructive-secondary")}
+									disabled={field.disabled}
+								/>
+							</div>
+						);
+					})}
+				</div>
 			)}
 
 			{field.type === "checkbox" && (
@@ -752,36 +850,54 @@ const renderFieldContent = (
 							disabled={field.disabled}
 						/>
 					) : (
-						field.options?.map((option) => (
-							<div
-								key={option.value as string}
-								className="flex items-start space-x-2"
-							>
-								<Checkbox
-									id={`${field.name}-${option.value}`}
-									checked={
-										(value as string[])?.includes(option.value as string) ??
-										false
-									}
-									onCheckedChange={(checked) => {
-										const currentValue = (value as string[]) || [];
-										const newValue = checked
-											? [...currentValue, option.value]
-											: currentValue.filter((v: string) => v !== option.value);
-										updateField(field.name, newValue);
-									}}
-									disabled={field.disabled}
-								/>
+						field.options?.map((option) => {
+							const isChecked =
+								(value as string[])?.includes(option.value as string) ?? false;
+							const showsFreeText =
+								isChecked &&
+								field.freeTextOption &&
+								serializeOptionValue(field.freeTextOption.value) ===
+									serializeOptionValue(option.value);
 
-								<Label
-									htmlFor={`${field.name}-${option.value}`}
-									className="font-normal"
-									emphasize={false}
+							return (
+								<div
+									key={option.value as string}
+									className={cn(
+										"flex space-x-2",
+										showsFreeText ? "items-center" : "items-start",
+									)}
 								>
-									{option.label}
-								</Label>
-							</div>
-						))
+									<Checkbox
+										id={`${field.name}-${option.value}`}
+										checked={isChecked}
+										onCheckedChange={(checked) => {
+											const currentValue = (value as string[]) || [];
+											const newValue = checked
+												? [...currentValue, option.value]
+												: currentValue.filter((v: string) => v !== option.value);
+											updateField(field.name, newValue);
+										}}
+										disabled={field.disabled}
+									/>
+
+									<Label
+										htmlFor={`${field.name}-${option.value}`}
+										className="font-normal"
+										emphasize={false}
+									>
+										{option.label}
+									</Label>
+
+									<MultiSelectFreeTextField
+										field={field}
+										option={option}
+										value={value}
+										formData={formData}
+										updateField={updateField}
+									/>
+								</div>
+							);
+						})
 					)}
 				</div>
 			)}
