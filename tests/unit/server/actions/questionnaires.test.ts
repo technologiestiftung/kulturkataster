@@ -220,7 +220,10 @@ describe("server actions: questionnaires", () => {
 			).resolves.toEqual({ ok: true });
 
 			expect(createManyMock).toHaveBeenCalledWith([
-				expect.objectContaining({ institution_id: undefined, submission_id: 7 }),
+				expect.objectContaining({
+					institution_id: undefined,
+					submission_id: 7,
+				}),
 			]);
 		});
 
@@ -349,7 +352,10 @@ describe("server actions: questionnaires", () => {
 			});
 
 			await expect(
-				relinkQuestionnaireAnswers({ fromSubmissionId: 9, toInstitutionId: 42 }),
+				relinkQuestionnaireAnswers({
+					fromSubmissionId: 9,
+					toInstitutionId: 42,
+				}),
 			).resolves.toEqual({ ok: false, error: "unexpected" });
 			expect(relinkMock).not.toHaveBeenCalled();
 			expect(loggerError).toHaveBeenCalled();
@@ -359,7 +365,10 @@ describe("server actions: questionnaires", () => {
 			relinkMock.mockRejectedValue(new Error("db down"));
 
 			await expect(
-				relinkQuestionnaireAnswers({ fromSubmissionId: 9, toInstitutionId: 42 }),
+				relinkQuestionnaireAnswers({
+					fromSubmissionId: 9,
+					toInstitutionId: 42,
+				}),
 			).resolves.toEqual({ ok: false, error: "unexpected" });
 			expect(loggerError).toHaveBeenCalled();
 		});
@@ -369,9 +378,10 @@ describe("server actions: questionnaires", () => {
 		it("returns the number of answers linked to a submission after authorizing", async () => {
 			listBySubmissionMock.mockResolvedValue([{ id: 1 }, { id: 2 }]);
 
-			await expect(
-				getLinkedQuestionnaireAnswersCount(9),
-			).resolves.toEqual({ ok: true, count: 2 });
+			await expect(getLinkedQuestionnaireAnswersCount(9)).resolves.toEqual({
+				ok: true,
+				count: 2,
+			});
 			expect(authorizeTableMock).toHaveBeenCalledWith(
 				{ role: "admin" },
 				"submission",
@@ -385,18 +395,20 @@ describe("server actions: questionnaires", () => {
 				throw new Error("Role lacks update on submission");
 			});
 
-			await expect(
-				getLinkedQuestionnaireAnswersCount(9),
-			).resolves.toEqual({ ok: false, error: "unexpected" });
+			await expect(getLinkedQuestionnaireAnswersCount(9)).resolves.toEqual({
+				ok: false,
+				error: "unexpected",
+			});
 			expect(listBySubmissionMock).not.toHaveBeenCalled();
 		});
 
 		it("returns unexpected on repo failure", async () => {
 			listBySubmissionMock.mockRejectedValue(new Error("db down"));
 
-			await expect(
-				getLinkedQuestionnaireAnswersCount(9),
-			).resolves.toEqual({ ok: false, error: "unexpected" });
+			await expect(getLinkedQuestionnaireAnswersCount(9)).resolves.toEqual({
+				ok: false,
+				error: "unexpected",
+			});
 			expect(loggerError).toHaveBeenCalled();
 		});
 	});
