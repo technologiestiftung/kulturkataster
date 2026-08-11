@@ -74,7 +74,7 @@ export async function getInstitutionSurveyAnswersForExport(
 			let institutionName: string;
 			try {
 				const ctx = await getAccessContextForUser(currentUserId);
-				authorizeTable(ctx, "answer", "download");
+				authorizeTable(ctx, "answer", "read");
 
 				const institutionScope = getTableScope(ctx, "institution", "read");
 				const accessWhere = buildInstitutionScopedWhere(
