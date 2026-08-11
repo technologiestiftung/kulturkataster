@@ -9,6 +9,8 @@ const answerInclude = {
 export const answerRepo = {
 	create: (data: Prisma.AnswerCreateInput) =>
 		prisma.answer.create({ data, include: answerInclude }),
+	createMany: (data: Prisma.AnswerCreateManyInput[]) =>
+		prisma.answer.createMany({ data }),
 	listByQuestionnaireAndInstitution: (
 		questionnaireId: number,
 		institutionId: number,
