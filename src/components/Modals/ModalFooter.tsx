@@ -34,8 +34,7 @@ export function ModalFooter({ hideLinks }: ModalFooterProps) {
 		<>
 			<div
 				className={cn(
-					"ModalFooter-root flex justify-center p-8 h-auto bg-secondary py-12 md:mt-12",
-					"-mx-4 w-[calc(100%+2rem)]",
+					"ModalFooter-root flex h-auto w-full self-stretch justify-center bg-secondary p-8 py-12 md:mt-12",
 				)}
 			>
 				<div className="w-full flex flex-col md:flex-row md:items-center md:justify-between">
@@ -104,8 +103,7 @@ export function ModalFooter({ hideLinks }: ModalFooterProps) {
 			</div>
 			<div
 				className={cn(
-					"w-[calc(100%+2rem)] bg-background flex justify-center max-w-full",
-					"-mx-4 md:mx-0",
+					"flex w-full max-w-full self-stretch justify-center bg-background",
 				)}
 			>
 				<div className="p-6 mt-4 pb-10 flex-col w-full md:flex md:flex-row md:max-w-5xl space-x-2 md:mb-12 space-y-12 md:space-y-0 items-center">
