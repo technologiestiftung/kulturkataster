@@ -19,6 +19,8 @@ export type FieldType =
 	| "textarea"
 	| "select"
 	| "radio"
+	| "likert"
+	| "likertMatrix"
 	| "checkbox"
 	| "switch"
 	| "multiselect"
@@ -137,6 +139,15 @@ type FormWrapperNonSectionFieldConfig = {
 	privateDescription?: string;
 	defaultValue?: unknown;
 	radioVariant?: "default" | "button";
+	likertMatrix?: {
+		rows: { key: string; label: string }[];
+	};
+	freeTextOption?: {
+		value: string | number | boolean;
+		fieldName?: string;
+		placeholder?: string;
+		label?: string;
+	};
 	multiselectVariant?: "list" | "modal";
 	searchPlaceholder?: string;
 	emptyText?: string;

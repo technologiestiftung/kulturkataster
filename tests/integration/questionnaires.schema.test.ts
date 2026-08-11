@@ -136,6 +136,87 @@ describeIfEnv("questionnaire schema integration", () => {
 		}
 	});
 
+	it("cascades deletes from Submission to Answer", async () => {
+		const questionnaire = await prisma.questionnaire.create({
+			data: { title: "Submission Cascade Questionnaire" },
+		});
+		const submission = await prisma.submission.create({
+			data: { entity_type: "institution", type: "create", data: {} },
+		});
+
+		try {
+			const question = await prisma.question.create({
+				data: {
+					questionnaire_id: questionnaire.id,
+					key: "q1",
+					label: "Question 1",
+					field_type: "text",
+				},
+			});
+			const answer = await prisma.answer.create({
+				data: {
+					questionnaire_id: questionnaire.id,
+					question_id: question.id,
+					submission_id: submission.id,
+					value: "hi",
+				},
+			});
+
+			await prisma.submission.delete({ where: { id: submission.id } });
+
+			expect(
+				await prisma.answer.findUnique({ where: { id: answer.id } }),
+			).toBeNull();
+		} finally {
+			await prisma.questionnaire.delete({ where: { id: questionnaire.id } });
+		}
+	});
+
+	it("enforces exactly one of institution_id/submission_id via a CHECK constraint", async () => {
+		const questionnaire = await prisma.questionnaire.create({
+			data: { title: "XOR Check Questionnaire" },
+		});
+		const submission = await prisma.submission.create({
+			data: { entity_type: "institution", type: "create", data: {} },
+		});
+
+		try {
+			const question = await prisma.question.create({
+				data: {
+					questionnaire_id: questionnaire.id,
+					key: "q1",
+					label: "Question 1",
+					field_type: "text",
+				},
+			});
+
+			await expect(
+				prisma.answer.create({
+					data: {
+						questionnaire_id: questionnaire.id,
+						question_id: question.id,
+						value: "neither set",
+					},
+				}),
+			).rejects.toThrow();
+
+			await expect(
+				prisma.answer.create({
+					data: {
+						questionnaire_id: questionnaire.id,
+						question_id: question.id,
+						institution_id: institutionId,
+						submission_id: submission.id,
+						value: "both set",
+					},
+				}),
+			).rejects.toThrow();
+		} finally {
+			await prisma.submission.delete({ where: { id: submission.id } });
+			await prisma.questionnaire.delete({ where: { id: questionnaire.id } });
+		}
+	});
+
 	it("allows multiple historical answers for the same question without a unique constraint", async () => {
 		const questionnaire = await prisma.questionnaire.create({
 			data: { title: "History Test Questionnaire" },
