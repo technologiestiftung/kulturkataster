@@ -1,156 +1,151 @@
 "use server";
-import {
-	actionError,
-	actionOk,
-	type ActionResult,
-} from "@/lib/actions/actionResult";
-import {
-	authorizeTable,
-	getAccessContextForUser,
-	getTableScope,
-} from "@/server/utils/rbac";
+
+import type { Prisma } from "@/generated/prisma";
 import { getCurrentUserId } from "@/server/actions/auth";
-import { buildInstitutionScopedWhere } from "@/server/logic/institutionAccess";
-import { institutionRepo } from "@/server/data/institutionRepo";
 import { questionnaireRepo } from "@/server/data/questionnaireRepo";
 import { answerRepo } from "@/server/data/answerRepo";
-import type { Prisma } from "@/generated/prisma";
-import { assertPositiveInteger } from "@/server/validation/common";
-import {
-	runWithServerRequestContext,
-	setRequestContext,
-} from "@/server/logging/requestContext";
 import { logger } from "@/server/logging/logger";
+import { authorizeTable, getAccessContextForUser } from "@/server/utils/rbac";
 
-export type QuestionnaireExportErrorCode =
-	| "forbidden"
-	| "noOpenQuestionnaire"
-	| "noAnswers"
-	| "unexpected";
+export async function getOpenQuestionnaire() {
+	try {
+		const openQuestionnaires = await questionnaireRepo.listOpen();
+		if (openQuestionnaires.length === 0) {
+			return { ok: false as const, error: "not_found" as const };
+		}
+		if (openQuestionnaires.length > 1) {
+			logger.warn("questionnaire.multiple_open", {
+				subsystem: "questionnaire",
+				count: openQuestionnaires.length,
+			});
+		}
 
-type AnswerWithQuestion = Prisma.AnswerGetPayload<{
-	include: { question: true; institution: true };
-}>;
+		const questionnaire = await questionnaireRepo.findById(
+			openQuestionnaires[0].id,
+		);
+		if (!questionnaire) {
+			return { ok: false as const, error: "not_found" as const };
+		}
 
-export type QuestionnaireAnswerExportRow = {
-	questionKey: string;
-	questionLabel: string;
-	value: unknown;
-	submitterName: string | null;
-	submitterEmail: string | null;
-	answeredAt: Date;
-};
+		return { ok: true as const, questionnaire };
+	} catch (error) {
+		logger.error("questionnaire.get_open.failed", error, {
+			subsystem: "questionnaire",
+		});
+		return { ok: false as const, error: "unexpected" as const };
+	}
+}
 
-export type InstitutionQuestionnaireExport = {
-	questionnaireTitle: string;
-	institutionName: string;
-	rows: QuestionnaireAnswerExportRow[];
-};
+export async function checkQuestionnaireCompletion(params: {
+	questionnaireId: number;
+	institutionId?: number;
+	submissionId?: number;
+}) {
+	try {
+		const alreadySubmitted = await answerRepo.hasAnswered(params);
+		return { ok: true as const, alreadySubmitted };
+	} catch (error) {
+		logger.error("questionnaire.check_completion.failed", error, {
+			subsystem: "questionnaire",
+			questionnaire_id: params.questionnaireId,
+		});
+		return { ok: false as const, error: "unexpected" as const };
+	}
+}
 
-const classifyQuestionnaireExportError = (
-	error: unknown,
-): QuestionnaireExportErrorCode => {
-	if (error instanceof Error && error.name === "RBACError") return "forbidden";
-	return "unexpected";
-};
+export async function submitQuestionnaireAnswers(params: {
+	questionnaireId: number;
+	institutionId?: number;
+	submissionId?: number;
+	answers: { questionId: number; value: Prisma.InputJsonValue }[];
+	submitterName?: string;
+	submitterEmail?: string;
+}) {
+	const { institutionId, submissionId } = params;
+	if ((institutionId === undefined) === (submissionId === undefined)) {
+		return { ok: false as const, error: "invalid_target" as const };
+	}
 
-export async function getInstitutionQuestionnaireAnswersForExport(
-	institutionId: number,
-	questionnaireId?: number,
-): Promise<
-	ActionResult<InstitutionQuestionnaireExport, QuestionnaireExportErrorCode>
-> {
-	return runWithServerRequestContext(
-		async () => {
-			let validatedInstitutionId: number;
-			try {
-				validatedInstitutionId = assertPositiveInteger(
-					institutionId,
-					"Institution id must be positive.",
-				);
-			} catch (error) {
-				return actionError(classifyQuestionnaireExportError(error));
-			}
+	try {
+		const alreadySubmitted = await answerRepo.hasAnswered({
+			questionnaireId: params.questionnaireId,
+			institutionId,
+			submissionId,
+		});
+		if (alreadySubmitted) {
+			return { ok: false as const, error: "already_submitted" as const };
+		}
 
-			const currentUserId = await getCurrentUserId();
-			setRequestContext({ userId: currentUserId });
+		const currentUserId = await getCurrentUserId();
 
-			let institutionName: string;
-			try {
-				const ctx = await getAccessContextForUser(currentUserId);
-				authorizeTable(ctx, "answer", "read");
+		await answerRepo.createMany(
+			params.answers.map((answer) => ({
+				questionnaire_id: params.questionnaireId,
+				question_id: answer.questionId,
+				institution_id: institutionId,
+				submission_id: submissionId,
+				value: answer.value,
+				created_by: currentUserId,
+				submitter_name: params.submitterName,
+				submitter_email: params.submitterEmail,
+			})),
+		);
 
-				const institutionScope = getTableScope(ctx, "institution", "read");
-				const accessWhere = buildInstitutionScopedWhere(
-					institutionScope,
-					currentUserId,
-					{ id: validatedInstitutionId },
-				);
-				if (!accessWhere) {
-					return actionError("forbidden");
-				}
-				const institution = await institutionRepo.findFirstWithSelect(
-					accessWhere,
-					{ id: true, name: true },
-				);
-				if (!institution) {
-					return actionError("forbidden");
-				}
-				institutionName = institution.name;
-			} catch (error) {
-				return actionError(classifyQuestionnaireExportError(error));
-			}
+		return { ok: true as const };
+	} catch (error) {
+		logger.error("questionnaire.submit_answers.failed", error, {
+			subsystem: "questionnaire",
+			questionnaire_id: params.questionnaireId,
+		});
+		return { ok: false as const, error: "unexpected" as const };
+	}
+}
 
-			try {
-				const questionnaire = questionnaireId
-					? await questionnaireRepo.findById(questionnaireId)
-					: (await questionnaireRepo.listOpen())[0];
-				if (!questionnaire) {
-					return actionError("noOpenQuestionnaire");
-				}
+// Admin-only: how many questionnaire answers are currently linked to a pending
+// submission — drives whether the review UI shows the re-link section at all.
+export async function getLinkedQuestionnaireAnswersCount(submissionId: number) {
+	try {
+		const currentUserId = await getCurrentUserId();
+		const ctx = await getAccessContextForUser(currentUserId);
+		authorizeTable(ctx, "submission", "update");
 
-				const answers =
-					await answerRepo.listLatestByQuestionnaireAndInstitution(
-						questionnaire.id,
-						validatedInstitutionId,
-					);
-				if (answers.length === 0) {
-					return actionError("noAnswers");
-				}
+		const answers = await answerRepo.listBySubmission(submissionId);
+		return { ok: true as const, count: answers.length };
+	} catch (error) {
+		logger.error("questionnaire.linked_answers_count.failed", error, {
+			subsystem: "questionnaire",
+			submission_id: submissionId,
+		});
+		return { ok: false as const, error: "unexpected" as const };
+	}
+}
 
-				const rows = answers
-					.slice()
-					.sort(
-						(a: AnswerWithQuestion, b: AnswerWithQuestion) =>
-							a.question.step - b.question.step ||
-							a.question.order - b.question.order,
-					)
-					.map((answer: AnswerWithQuestion) => ({
-						questionKey: answer.question.key,
-						questionLabel: answer.question.label,
-						value: answer.value,
-						submitterName: answer.submitter_name,
-						submitterEmail: answer.submitter_email,
-						answeredAt: answer.created_at,
-					}));
+// Admin-only: re-point a pending submission's linked answers at a different
+// submission or an approved institution — e.g. the proposed venue turns out to be
+// a duplicate of an existing one. Gated the same way reviewSubmission gates
+// reviewing a submission, since this is a submission-management operation.
+export async function relinkQuestionnaireAnswers(params: {
+	fromSubmissionId: number;
+	toInstitutionId?: number;
+	toSubmissionId?: number;
+}) {
+	const { toInstitutionId, toSubmissionId } = params;
+	if ((toInstitutionId === undefined) === (toSubmissionId === undefined)) {
+		return { ok: false as const, error: "invalid_target" as const };
+	}
 
-				return actionOk({
-					questionnaireTitle: questionnaire.title,
-					institutionName,
-					rows,
-				});
-			} catch (error) {
-				logger.error("questionnaire.export.fetch_failed", error, {
-					subsystem: "questionnaire",
-					actor_user_id: currentUserId,
-					institution_id: validatedInstitutionId,
-				});
-				return actionError(classifyQuestionnaireExportError(error));
-			}
-		},
-		{
-			route:
-				"server_action:questionnaires.getInstitutionQuestionnaireAnswersForExport",
-		},
-	);
+	try {
+		const currentUserId = await getCurrentUserId();
+		const ctx = await getAccessContextForUser(currentUserId);
+		authorizeTable(ctx, "submission", "update");
+
+		const result = await answerRepo.relink(params);
+		return { ok: true as const, count: result.count };
+	} catch (error) {
+		logger.error("questionnaire.relink_answers.failed", error, {
+			subsystem: "questionnaire",
+			from_submission_id: params.fromSubmissionId,
+		});
+		return { ok: false as const, error: "unexpected" as const };
+	}
 }

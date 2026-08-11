@@ -1,0 +1,304 @@
+"use client";
+
+import { useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+import type { Prisma } from "@/generated/prisma";
+import { SubmissionEntityType, SubmissionType } from "@/generated/prisma";
+import { FormWrapper } from "@/components/FormWrapper";
+import type { FormWrapperConfig } from "@/components/FormWrapper/types";
+import { getFieldLabel, getFieldPlaceholder } from "@/lib/i18n/fieldLabels";
+import {
+	buildAddressFromFormData,
+	handleAddressBlur,
+} from "@/lib/utils/formUtils";
+import { resolveCategoryIdsFromDraft } from "@/lib/utils/institutionCategoryUtils";
+import { geocodeAddress, reverseGeocode } from "@/server/actions/maptiler";
+import { createSubmission } from "@/server/actions/submissions";
+import type { Category } from "@/types";
+
+const splitFreeTextList = (value: unknown): string[] =>
+	typeof value === "string"
+		? Array.from(
+				new Set(
+					value
+						.split(",")
+						.map((item) => item.trim())
+						.filter((item) => item.length > 0),
+				),
+			)
+		: [];
+
+const hasSelectedOrProposedCategory = (
+	value: unknown,
+	formData: Record<string, unknown>,
+): boolean => {
+	const filters = value as
+		| { category_keys?: string[]; child_category_keys?: string[] }
+		| undefined;
+	const hasSelectedCategories =
+		(filters?.category_keys?.length ?? 0) > 0 ||
+		(filters?.child_category_keys?.length ?? 0) > 0;
+	if (hasSelectedCategories) return true;
+
+	return splitFreeTextList(formData.newCategory).length > 0;
+};
+
+// A deliberately compact subset of InstitutionFormModal/InstitutionDraftWizardModal's
+// full institution form — just enough to identify a venue that isn't in the
+// Kulturkataster yet, embedded inline in the questionnaire wizard instead of sending
+// respondents to the separate /institution flow. Reuses the same addressMap field
+// and submission-creation pattern as the full wizard.
+export function QuestionnaireInstitutionCreateForm({
+	categoryGroups,
+	onCreated,
+	onBack,
+	backLabel,
+	submitLabel,
+}: {
+	categoryGroups: Category[];
+	onCreated: (submissionId: number) => void;
+	onBack: () => void;
+	backLabel: string;
+	submitLabel: string;
+}) {
+	const { t } = useTranslation();
+	const [isSubmitting, setIsSubmitting] = useState(false);
+	const addressGeocodeState = useRef({ lastQuery: "", inflight: false });
+	const onAddressBlur = handleAddressBlur(addressGeocodeState, geocodeAddress, {
+		reverseGeocode,
+	});
+
+	const fieldLabel = (key: string) => getFieldLabel(t, key);
+	const fieldPlaceholder = (key: string) => getFieldPlaceholder(t, key);
+
+	const handleSubmit = async (data: Record<string, unknown>) => {
+		setIsSubmitting(true);
+		try {
+			const address = buildAddressFromFormData(data);
+			const categoryIds = resolveCategoryIdsFromDraft(data, categoryGroups);
+			const institutionSubmission = await createSubmission({
+				entityType: SubmissionEntityType.institution,
+				entityId: null,
+				type: SubmissionType.create,
+				data: {
+					name: data.name,
+					address,
+					categoryIds,
+					established_since: data.established_since,
+				} as Prisma.InputJsonValue,
+			});
+
+			const proposedCategories = splitFreeTextList(data.newCategory);
+			if (proposedCategories.length > 0) {
+				await Promise.allSettled(
+					proposedCategories.map((key) =>
+						createSubmission({
+							entityType: SubmissionEntityType.category,
+							entityId: null,
+							type: SubmissionType.create,
+							data: { key },
+							meta: {
+								source: "questionnaire",
+								institutionSubmissionId:
+									typeof institutionSubmission?.id === "number"
+										? institutionSubmission.id
+										: undefined,
+							},
+						}),
+					),
+				);
+			}
+
+			if (typeof institutionSubmission?.id === "number") {
+				onCreated(institutionSubmission.id);
+			}
+		} finally {
+			setIsSubmitting(false);
+		}
+	};
+
+	const config: FormWrapperConfig = {
+		cardVariant: "none",
+		fields: [
+			{
+				name: "basicSection",
+				type: "section",
+				cardVariant: "none",
+				layout: { columns: 2 },
+				fields: [
+					{
+						name: "name",
+						label: fieldLabel("name"),
+						type: "text",
+						layout: { span: "full" },
+						placeholder: fieldPlaceholder("name"),
+						required: true,
+					},
+					{
+						name: "address.map",
+						fieldMetaKey: "address_map",
+						label: fieldLabel("address_map"),
+						type: "addressMap",
+						layout: { span: "full" },
+						addressMap: {
+							latField: "address.lat",
+							lngField: "address.lng",
+							streetField: "address.streetLine",
+							cityField: "address.city",
+							zipField: "address.zip",
+							districtField: "address.district",
+							neighbourhoodField: "address.neighbourhood",
+						},
+					},
+					{
+						name: "address.lng",
+						fieldMetaKey: "lng",
+						label: fieldLabel("lng"),
+						type: "number",
+						layout: { span: "half" },
+					},
+					{
+						name: "address.lat",
+						fieldMetaKey: "lat",
+						label: fieldLabel("lat"),
+						type: "number",
+						layout: { span: "half" },
+					},
+					{
+						name: "address.streetLine",
+						fieldMetaKey: "street",
+						label: `${fieldLabel("street")} & ${fieldLabel("street_number")}`,
+						type: "text",
+						layout: { span: "full" },
+						placeholder: fieldPlaceholder("street"),
+						onBlur: onAddressBlur,
+					},
+					{
+						name: "address.address_suffix",
+						fieldMetaKey: "address_suffix",
+						label: fieldLabel("address_suffix"),
+						type: "text",
+						layout: { span: "full" },
+						placeholder: fieldPlaceholder("address_suffix"),
+					},
+					{
+						name: "address.zip",
+						fieldMetaKey: "zipcode",
+						label: fieldLabel("zipcode"),
+						type: "text",
+						layout: { span: "half" },
+						placeholder: fieldPlaceholder("zipcode"),
+						onBlur: onAddressBlur,
+					},
+					{
+						name: "address.city",
+						fieldMetaKey: "city",
+						label: fieldLabel("city"),
+						type: "text",
+						layout: { span: "half" },
+						placeholder: fieldPlaceholder("city"),
+						onBlur: onAddressBlur,
+					},
+					{
+						name: "address.neighbourhood",
+						fieldMetaKey: "neighbourhood",
+						label: fieldLabel("neighbourhood"),
+						type: "text",
+						layout: { span: "half" },
+						placeholder: fieldPlaceholder("neighbourhood"),
+					},
+					{
+						name: "address.district",
+						fieldMetaKey: "district",
+						label: fieldLabel("district"),
+						type: "text",
+						layout: { span: "half" },
+						placeholder: fieldPlaceholder("district"),
+					},
+					{
+						name: "address.cultural_area",
+						fieldMetaKey: "cultural_area",
+						label: fieldLabel("cultural_area"),
+						type: "text",
+						layout: { span: "full" },
+						placeholder: fieldPlaceholder("cultural_area"),
+					},
+					{
+						name: "established_since",
+						label:
+							"Seit wann befindet sich die Einrichtung am aktuellen Standort?",
+						type: "date",
+						required: true,
+						layout: { span: "full" },
+					},
+				],
+			},
+			{
+				name: "categorySection",
+				type: "section",
+				cardVariant: "none",
+				required: true,
+				layout: { span: "full" },
+				fields: [
+					{
+						name: "categoryFilters",
+						fieldMetaKey: "categories",
+						label: fieldLabel("categories"),
+						type: "filterPanel",
+						required: true,
+						validators: [
+							(value, formData) =>
+								hasSelectedOrProposedCategory(value, formData)
+									? undefined
+									: t(
+											"content.institutionFormModal.form.category.validation.minSelection",
+										),
+						],
+						layout: { span: "full" },
+						filterPanel: {
+							categoryGroups,
+							districts: [],
+							categorySectionMode: "selection",
+							parentCategorySelectionBehavior: "last-child-only",
+							showSummary: false,
+							showDistricts: false,
+							showClosedToggle: false,
+							selectionEmptyLabel: fieldPlaceholder("categories"),
+						},
+					},
+				],
+			},
+			{
+				name: "newCategorySection",
+				type: "section",
+				cardVariant: "none",
+				layout: { span: "full" },
+				fields: [
+					{
+						name: "newCategory",
+						label: t(
+							"content.institutionFormModal.form.category.newCategory.label",
+						),
+						description: t(
+							"content.institutionFormModal.form.category.newCategory.description",
+						),
+						className: "mt-4",
+						type: "text",
+						placeholder: t(
+							"content.institutionFormModal.form.category.newCategory.placeholder",
+						),
+						layout: { span: "full" },
+					},
+				],
+			},
+		],
+		onSubmit: handleSubmit,
+		onCancel: onBack,
+		submitLabel,
+		cancelLabel: backLabel,
+		showCancel: true,
+		submitDisabled: isSubmitting,
+	};
+
+	return <FormWrapper config={config} />;
+}

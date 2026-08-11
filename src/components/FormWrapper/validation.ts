@@ -1,5 +1,5 @@
 import type { TFunction } from "i18next";
-import { getFieldError, getFieldLabel } from "@/lib/i18n/fieldLabels";
+import { getFieldError } from "@/lib/i18n/fieldLabels";
 import { normalizeUrl } from "@/lib/utils/sanitizerUtils";
 import { isValidPhoneValue, normalizePhoneInput } from "@/lib/utils/phoneUtils";
 import type {
@@ -26,6 +26,21 @@ const isEmptyValue = (value: unknown) =>
 	value === null ||
 	value === "" ||
 	(Array.isArray(value) && value.length === 0);
+
+const hasValue = (value: unknown) => !isEmptyValue(value);
+
+const isLikertMatrixComplete = (
+	field: FormWrapperFieldConfig,
+	value: unknown,
+): boolean => {
+	if (field.type !== "likertMatrix") return false;
+	const matrixValue =
+		value && typeof value === "object"
+			? (value as Record<string, unknown>)
+			: {};
+	const rows = field.likertMatrix?.rows ?? [];
+	return rows.length > 0 && rows.every((row) => hasValue(matrixValue[row.key]));
+};
 
 const isValidUrlHostname = (hostname: string) => {
 	if (hostname === "localhost") return true;
@@ -93,22 +108,22 @@ const buildRequiredValidator = (
 	tEnum: TFunction,
 ) => {
 	const fieldMetaKey = getFieldMetaKey(field);
-	const fieldLabel = field.label ?? getFieldLabel(tEnum, fieldMetaKey);
-	const requiredDefault = t("common.form.validation.required", {
-		field: fieldLabel,
-	});
+	const requiredDefault = t("common.form.validation.required");
 	const requiredMessageRaw =
 		field.requiredMessage ??
 		(field.type !== "section" ? field.errorMessages?.required : undefined) ??
 		getFieldError(tEnum, fieldMetaKey, "required");
 	const requiredMessage =
-		requiredMessageRaw === `field_names.${fieldMetaKey}.errors.required`
+		requiredMessageRaw === `enumMap.field_names.${fieldMetaKey}.errors.required`
 			? requiredDefault
 			: requiredMessageRaw;
 
 	return withNormalizer((value) => {
 		if (field.type === "checkbox" && value !== true) {
 			return requiredMessage;
+		}
+		if (field.type === "likertMatrix") {
+			return isLikertMatrixComplete(field, value) ? undefined : requiredMessage;
 		}
 		return isEmptyValue(value) ? requiredMessage : undefined;
 	});

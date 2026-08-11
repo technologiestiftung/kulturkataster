@@ -474,7 +474,7 @@
 				"invalidNumber": "Invalid number",
 				"invalidPhone": "Invalid Telephone Number ",
 				"invalidUrl": "Invalid URL",
-				"required": "{{field}} is required"
+				"required": "Required"
 			}
 		},
 		"headerLandmark": "Site navigation",
@@ -643,6 +643,7 @@
 			"sortBy": "Sort by",
 			"subcategoryHint": "Select a category first."
 		},
+		"next": "Next",
 		"no": "No",
 		"privateFieldDescription": "This information will be accessible exclusively to authorized users in the protected area of the Kulturkataster and will not be publicly visible.",
 		"save": "Save",
@@ -1859,6 +1860,7 @@
 					"submission_update_approved": "Confirmation for “suggest changes”"
 				},
 				"grantSubmitterAccess": "After approval, give the submitter access to this cultural location.",
+				"linkedAnswers": "{{count}} questionnaire answers are linked to this submission.",
 				"linkedCategorySubmissions": "New category proposal",
 				"loadingLabel": "Loading submission...",
 				"loadingTitle": "Loading submission",
@@ -1872,6 +1874,8 @@
 				"previousNotesLabel": "Previous notes",
 				"requestedBy": "Requested by",
 				"rejectionEmailTemplateLabel": "Email on rejection",
+				"relinkAnswers": "Change link",
+				"relinkAnswersSearchLabel": "Select a different cultural location",
 				"reviewPanelTitle": "Review submission",
 				"statusLabel": "Status: {{status}}",
 				"success": {
@@ -1959,6 +1963,53 @@
 			"description": "Placeholder",
 			"subtitle": "Here comes the data protection text.",
 			"title": "Data protection"
+		},
+		"questionnaireWizard": {
+			"block": {
+				"stepLabel": "Topic block {{current}}/{{total}}"
+			},
+			"consent": {
+				"checkboxHeading": "Declaration of consent",
+				"checkboxLabel": "I have read the information about this survey and agree to voluntary participation as well as to the processing of my data for scientific purposes within the scope of this project.",
+				"cta": "Take part in the survey",
+				"paragraph1": "This survey is part of a scientific project to develop a risk score for Berlin's cultural institutions. The aim of the project is to systematically capture various structural, spatial, financial, and organizational conditions in order to make the risks, burdens, and support needs of cultural institutions in Berlin more visible.",
+				"paragraph2Prefix": "For the purposes of this survey, we define ",
+				"paragraph2Suffix": " as \"permanently or repeatedly used venues and organizations for cultural production, presentation, education, or encounter\", such as theaters, music venues, studios, galleries, socio-cultural centers, literature venues, dance and performance venues, or comparable institutions.",
+				"paragraph2Term": "cultural institutions",
+				"paragraph3Bold": "about 15 to 20 minutes.",
+				"paragraph3Prefix": "Completing the questionnaire is expected to take ",
+				"paragraph4": "Your information will be treated confidentially and evaluated exclusively for scientific purposes within the scope of the project. Publication will only take place in aggregated form, so that no conclusions can be drawn about individual persons. Should results be considered at the level of individual institutions later in the project, this will only happen within the intended project framework and in compliance with data protection requirements.",
+				"paragraph5": "The questionnaire contains questions about the space and location situation, the financial situation, organizational conditions, and the public visibility of the institution. Please answer the questionnaire from the perspective of the institution as a whole wherever possible. Ideally, it should be completed by a person who has a good overview of the institution's space, organizational, and financial situation.",
+				"paragraph6Bold": "Participation in this survey is voluntary.",
+				"paragraph6Suffix": "By checking the box, you confirm that you have read the information about this survey and agree to the processing of your data for scientific purposes within the scope of this project.",
+				"thankYouClosing": "Thank you for your support.",
+				"thanks": "Thank you for taking the time to take part in this survey.",
+				"title": "Survey on the Risk Radar for Berlin's Cultural Venues"
+			},
+			"institutionLink": {
+				"alreadySubmitted": "This cultural venue has already completed this survey.",
+				"alreadySubmittedTitle": "Already completed",
+				"description": "Help us strengthen Berlin's cultural landscape by adding the details of an existing cultural venue you are responsible for.\nIf you are not already logged in, you can do so at the end of the survey or register afterwards in order to save your responses.",
+				"notRegistered": "Please briefly enter the cultural venue so we can match your responses to it.",
+				"question": "Is the cultural venue already listed in the Kulturkataster?",
+				"resultsLabel": "Selected cultural venue",
+				"searchEmpty": "No cultural venues found.",
+				"searchLabel": "Name of the cultural venue",
+				"searchPlaceholder": "Enter an address or place",
+				"title": "General information about the cultural venue"
+			},
+			"review": {
+				"registerCta": "Register now",
+				"registerHint": "Register now to save your responses.",
+				"submit": "Submit",
+				"submitError": "An error occurred while submitting. Please try again.",
+				"thanksDescription": "Your responses were submitted successfully.",
+				"thanksTitle": "Thank you for taking part!"
+			},
+			"unavailable": {
+				"description": "Please check back later or follow a valid survey link.",
+				"title": "No survey is currently available"
+			}
 		},
 		"roleFormModal": {
 			"actions": {

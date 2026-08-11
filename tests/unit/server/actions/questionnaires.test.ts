@@ -1,26 +1,45 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { getInstitutionQuestionnaireAnswersForExport } from "@/server/actions/questionnaires";
 
 const {
+	listOpenMock,
+	findByIdMock,
+	createManyMock,
+	hasAnsweredMock,
+	relinkMock,
+	listBySubmissionMock,
 	getCurrentUserIdMock,
-	authorizeTableMock,
 	getAccessContextForUserMock,
-	getTableScopeMock,
-	findFirstWithSelectMock,
-	questionnaireFindByIdMock,
-	questionnaireListOpenMock,
-	listLatestByQuestionnaireAndInstitutionMock,
-	loggerErrorMock,
+	authorizeTableMock,
+	loggerWarn,
+	loggerError,
 } = vi.hoisted(() => ({
+	listOpenMock: vi.fn(),
+	findByIdMock: vi.fn(),
+	createManyMock: vi.fn(),
+	hasAnsweredMock: vi.fn(),
+	relinkMock: vi.fn(),
+	listBySubmissionMock: vi.fn(),
 	getCurrentUserIdMock: vi.fn(),
-	authorizeTableMock: vi.fn(),
 	getAccessContextForUserMock: vi.fn(),
-	getTableScopeMock: vi.fn(),
-	findFirstWithSelectMock: vi.fn(),
-	questionnaireFindByIdMock: vi.fn(),
-	questionnaireListOpenMock: vi.fn(),
-	listLatestByQuestionnaireAndInstitutionMock: vi.fn(),
-	loggerErrorMock: vi.fn(),
+	authorizeTableMock: vi.fn(),
+	loggerWarn: vi.fn(),
+	loggerError: vi.fn(),
+}));
+
+vi.mock("@/server/data/questionnaireRepo", () => ({
+	questionnaireRepo: {
+		listOpen: listOpenMock,
+		findById: findByIdMock,
+	},
+}));
+
+vi.mock("@/server/data/answerRepo", () => ({
+	answerRepo: {
+		createMany: createManyMock,
+		hasAnswered: hasAnsweredMock,
+		relink: relinkMock,
+		listBySubmission: listBySubmissionMock,
+	},
 }));
 
 vi.mock("@/server/actions/auth", () => ({
@@ -28,166 +47,369 @@ vi.mock("@/server/actions/auth", () => ({
 }));
 
 vi.mock("@/server/utils/rbac", () => ({
-	authorizeTable: authorizeTableMock,
 	getAccessContextForUser: getAccessContextForUserMock,
-	getTableScope: getTableScopeMock,
-	getScopeUserId: (scope: "own" | "all", userId: string | null) =>
-		scope === "all" ? null : userId,
-	createNoAccessWhere: <T extends Record<string, unknown>>(baseWhere?: T) => {
-		const noAccessWhere = { id: { equals: -1 } } as unknown as T;
-		if (!baseWhere) return noAccessWhere;
-		return { AND: [baseWhere, noAccessWhere] } as unknown as T;
-	},
-}));
-
-vi.mock("@/server/data/institutionRepo", () => ({
-	institutionRepo: {
-		findFirstWithSelect: findFirstWithSelectMock,
-	},
-}));
-
-vi.mock("@/server/data/questionnaireRepo", () => ({
-	questionnaireRepo: {
-		findById: questionnaireFindByIdMock,
-		listOpen: questionnaireListOpenMock,
-	},
-}));
-
-vi.mock("@/server/data/answerRepo", () => ({
-	answerRepo: {
-		listLatestByQuestionnaireAndInstitution:
-			listLatestByQuestionnaireAndInstitutionMock,
-	},
+	authorizeTable: authorizeTableMock,
 }));
 
 vi.mock("@/server/logging/logger", () => ({
-	logger: { error: loggerErrorMock },
+	logger: {
+		warn: loggerWarn,
+		error: loggerError,
+	},
 }));
 
-vi.mock("@/server/logging/requestContext", () => ({
-	runWithServerRequestContext: async <T>(fn: () => Promise<T>): Promise<T> =>
-		fn(),
-	setRequestContext: vi.fn(),
-}));
+import {
+	checkQuestionnaireCompletion,
+	getLinkedQuestionnaireAnswersCount,
+	getOpenQuestionnaire,
+	relinkQuestionnaireAnswers,
+	submitQuestionnaireAnswers,
+} from "@/server/actions/questionnaires";
 
-const rbacError = () => {
-	const error = new Error("forbidden") as Error & { name: string };
-	error.name = "RBACError";
-	return error;
-};
-
-describe("getInstitutionQuestionnaireAnswersForExport", () => {
+describe("server actions: questionnaires", () => {
 	beforeEach(() => {
-		getCurrentUserIdMock.mockReset().mockResolvedValue("user-1");
+		listOpenMock.mockReset();
+		findByIdMock.mockReset();
+		createManyMock.mockReset();
+		hasAnsweredMock.mockReset();
+		hasAnsweredMock.mockResolvedValue(false);
+		relinkMock.mockReset();
+		listBySubmissionMock.mockReset();
+		getCurrentUserIdMock.mockReset();
+		getAccessContextForUserMock.mockReset();
+		getAccessContextForUserMock.mockResolvedValue({ role: "admin" });
 		authorizeTableMock.mockReset();
-		getAccessContextForUserMock.mockReset().mockResolvedValue({});
-		getTableScopeMock.mockReset().mockReturnValue("all");
-		findFirstWithSelectMock
-			.mockReset()
-			.mockResolvedValue({ id: 42, name: "Kulturort A" });
-		questionnaireFindByIdMock.mockReset();
-		questionnaireListOpenMock
-			.mockReset()
-			.mockResolvedValue([{ id: 7, title: "Jahresfragebogen 2026" }]);
-		listLatestByQuestionnaireAndInstitutionMock.mockReset().mockResolvedValue([
-			{
-				question: { key: "capacity", label: "Kapazität", step: 1, order: 2 },
-				value: 120,
-				submitter_name: "Ada Lovelace",
-				submitter_email: "ada@example.test",
-				created_at: new Date("2026-01-05T00:00:00.000Z"),
-			},
-			{
-				question: { key: "name", label: "Name", step: 1, order: 1 },
-				value: "Kulturort A",
-				submitter_name: "Ada Lovelace",
-				submitter_email: "ada@example.test",
-				created_at: new Date("2026-01-05T00:00:00.000Z"),
-			},
-		]);
-		loggerErrorMock.mockReset();
+		loggerWarn.mockReset();
+		loggerError.mockReset();
 	});
 
-	it("returns rows for the open questionnaire, sorted by question order", async () => {
-		const result = await getInstitutionQuestionnaireAnswersForExport(42);
+	describe("getOpenQuestionnaire", () => {
+		it("returns the open questionnaire with its questions", async () => {
+			listOpenMock.mockResolvedValue([{ id: 1, title: "Survey" }]);
+			findByIdMock.mockResolvedValue({
+				id: 1,
+				title: "Survey",
+				questions: [{ id: 1, key: "q1" }],
+			});
 
-		expect(authorizeTableMock).toHaveBeenCalledWith({}, "answer", "read");
-		expect(result).toEqual({
-			ok: true,
-			data: {
-				questionnaireTitle: "Jahresfragebogen 2026",
-				institutionName: "Kulturort A",
-				rows: [
-					expect.objectContaining({ questionKey: "name" }),
-					expect.objectContaining({ questionKey: "capacity" }),
-				],
-			},
+			const result = await getOpenQuestionnaire();
+
+			expect(result).toEqual({
+				ok: true,
+				questionnaire: {
+					id: 1,
+					title: "Survey",
+					questions: [{ id: 1, key: "q1" }],
+				},
+			});
+			expect(findByIdMock).toHaveBeenCalledWith(1);
+		});
+
+		it("returns not_found when no questionnaire is open", async () => {
+			listOpenMock.mockResolvedValue([]);
+
+			await expect(getOpenQuestionnaire()).resolves.toEqual({
+				ok: false,
+				error: "not_found",
+			});
+			expect(findByIdMock).not.toHaveBeenCalled();
+		});
+
+		it("warns and uses the first questionnaire when more than one is open", async () => {
+			listOpenMock.mockResolvedValue([{ id: 1 }, { id: 2 }]);
+			findByIdMock.mockResolvedValue({ id: 1, title: "Survey", questions: [] });
+
+			await getOpenQuestionnaire();
+
+			expect(findByIdMock).toHaveBeenCalledWith(1);
+			expect(loggerWarn).toHaveBeenCalledWith(
+				"questionnaire.multiple_open",
+				expect.objectContaining({ count: 2 }),
+			);
+		});
+
+		it("returns unexpected on repo failure", async () => {
+			listOpenMock.mockRejectedValue(new Error("db down"));
+
+			await expect(getOpenQuestionnaire()).resolves.toEqual({
+				ok: false,
+				error: "unexpected",
+			});
+			expect(loggerError).toHaveBeenCalled();
 		});
 	});
 
-	it("uses an explicit questionnaireId when provided instead of the open questionnaire", async () => {
-		questionnaireFindByIdMock.mockResolvedValue({
-			id: 9,
-			title: "Sonderfragebogen",
+	describe("submitQuestionnaireAnswers", () => {
+		const baseParams = {
+			questionnaireId: 1,
+			institutionId: 2,
+			answers: [
+				{ questionId: 10, value: "yes" },
+				{ questionId: 11, value: 5 },
+			],
+		};
+
+		it("stores created_by from the logged-in user and no submitter fields", async () => {
+			getCurrentUserIdMock.mockResolvedValue("user-1");
+			createManyMock.mockResolvedValue({ count: 2 });
+
+			await expect(submitQuestionnaireAnswers(baseParams)).resolves.toEqual({
+				ok: true,
+			});
+
+			expect(createManyMock).toHaveBeenCalledWith([
+				{
+					questionnaire_id: 1,
+					question_id: 10,
+					institution_id: 2,
+					submission_id: undefined,
+					value: "yes",
+					created_by: "user-1",
+					submitter_name: undefined,
+					submitter_email: undefined,
+				},
+				{
+					questionnaire_id: 1,
+					question_id: 11,
+					institution_id: 2,
+					submission_id: undefined,
+					value: 5,
+					created_by: "user-1",
+					submitter_name: undefined,
+					submitter_email: undefined,
+				},
+			]);
 		});
 
-		const result = await getInstitutionQuestionnaireAnswersForExport(42, 9);
+		it("stores submitter_name/email and null created_by for a guest", async () => {
+			getCurrentUserIdMock.mockResolvedValue(null);
+			createManyMock.mockResolvedValue({ count: 1 });
 
-		expect(questionnaireFindByIdMock).toHaveBeenCalledWith(9);
-		expect(questionnaireListOpenMock).not.toHaveBeenCalled();
-		expect(result.ok).toBe(true);
-		expect(result.ok && result.data.questionnaireTitle).toBe(
-			"Sonderfragebogen",
-		);
-	});
+			await submitQuestionnaireAnswers({
+				questionnaireId: 1,
+				institutionId: 2,
+				answers: [{ questionId: 10, value: "yes" }],
+				submitterName: "Jane Doe",
+				submitterEmail: "jane@example.test",
+			});
 
-	it("returns forbidden when the caller lacks the answer/download permission", async () => {
-		authorizeTableMock.mockImplementation(() => {
-			throw rbacError();
+			expect(createManyMock).toHaveBeenCalledWith([
+				{
+					questionnaire_id: 1,
+					question_id: 10,
+					institution_id: 2,
+					submission_id: undefined,
+					value: "yes",
+					created_by: null,
+					submitter_name: "Jane Doe",
+					submitter_email: "jane@example.test",
+				},
+			]);
 		});
 
-		const result = await getInstitutionQuestionnaireAnswersForExport(42);
+		it("stores submission_id instead of institution_id when submitting for a pending submission", async () => {
+			getCurrentUserIdMock.mockResolvedValue(null);
+			createManyMock.mockResolvedValue({ count: 1 });
 
-		expect(result).toEqual({ ok: false, error: "forbidden" });
+			await expect(
+				submitQuestionnaireAnswers({
+					questionnaireId: 1,
+					submissionId: 7,
+					answers: [{ questionId: 10, value: "yes" }],
+				}),
+			).resolves.toEqual({ ok: true });
+
+			expect(createManyMock).toHaveBeenCalledWith([
+				expect.objectContaining({
+					institution_id: undefined,
+					submission_id: 7,
+				}),
+			]);
+		});
+
+		it("rejects when neither institutionId nor submissionId is given", async () => {
+			await expect(
+				submitQuestionnaireAnswers({
+					questionnaireId: 1,
+					answers: [{ questionId: 10, value: "yes" }],
+				}),
+			).resolves.toEqual({ ok: false, error: "invalid_target" });
+			expect(createManyMock).not.toHaveBeenCalled();
+		});
+
+		it("rejects when both institutionId and submissionId are given", async () => {
+			await expect(
+				submitQuestionnaireAnswers({
+					questionnaireId: 1,
+					institutionId: 2,
+					submissionId: 7,
+					answers: [{ questionId: 10, value: "yes" }],
+				}),
+			).resolves.toEqual({ ok: false, error: "invalid_target" });
+			expect(createManyMock).not.toHaveBeenCalled();
+		});
+
+		it("returns already_submitted without inserting when the entity already completed it", async () => {
+			hasAnsweredMock.mockResolvedValue(true);
+
+			await expect(submitQuestionnaireAnswers(baseParams)).resolves.toEqual({
+				ok: false,
+				error: "already_submitted",
+			});
+			expect(createManyMock).not.toHaveBeenCalled();
+		});
+
+		it("returns unexpected on repo failure", async () => {
+			getCurrentUserIdMock.mockResolvedValue(null);
+			createManyMock.mockRejectedValue(new Error("db down"));
+
+			await expect(submitQuestionnaireAnswers(baseParams)).resolves.toEqual({
+				ok: false,
+				error: "unexpected",
+			});
+			expect(loggerError).toHaveBeenCalled();
+		});
 	});
 
-	it("returns forbidden when the institution is outside the caller's scope", async () => {
-		getTableScopeMock.mockReturnValue("own");
-		findFirstWithSelectMock.mockResolvedValue(null);
+	describe("checkQuestionnaireCompletion", () => {
+		it("returns alreadySubmitted from the repo", async () => {
+			hasAnsweredMock.mockResolvedValue(true);
 
-		const result = await getInstitutionQuestionnaireAnswersForExport(42);
+			await expect(
+				checkQuestionnaireCompletion({ questionnaireId: 1, institutionId: 2 }),
+			).resolves.toEqual({ ok: true, alreadySubmitted: true });
+			expect(hasAnsweredMock).toHaveBeenCalledWith({
+				questionnaireId: 1,
+				institutionId: 2,
+			});
+		});
 
-		expect(result).toEqual({ ok: false, error: "forbidden" });
+		it("returns unexpected on repo failure", async () => {
+			hasAnsweredMock.mockRejectedValue(new Error("db down"));
+
+			await expect(
+				checkQuestionnaireCompletion({ questionnaireId: 1, institutionId: 2 }),
+			).resolves.toEqual({ ok: false, error: "unexpected" });
+			expect(loggerError).toHaveBeenCalled();
+		});
 	});
 
-	it("returns noOpenQuestionnaire when there is no open questionnaire", async () => {
-		questionnaireListOpenMock.mockResolvedValue([]);
+	describe("relinkQuestionnaireAnswers", () => {
+		it("relinks answers to an institution after authorizing the admin", async () => {
+			relinkMock.mockResolvedValue({ count: 3 });
 
-		const result = await getInstitutionQuestionnaireAnswersForExport(42);
+			await expect(
+				relinkQuestionnaireAnswers({
+					fromSubmissionId: 9,
+					toInstitutionId: 42,
+				}),
+			).resolves.toEqual({ ok: true, count: 3 });
 
-		expect(result).toEqual({ ok: false, error: "noOpenQuestionnaire" });
+			expect(authorizeTableMock).toHaveBeenCalledWith(
+				{ role: "admin" },
+				"submission",
+				"update",
+			);
+			expect(relinkMock).toHaveBeenCalledWith({
+				fromSubmissionId: 9,
+				toInstitutionId: 42,
+			});
+		});
+
+		it("relinks answers to a different submission", async () => {
+			relinkMock.mockResolvedValue({ count: 1 });
+
+			await expect(
+				relinkQuestionnaireAnswers({ fromSubmissionId: 9, toSubmissionId: 11 }),
+			).resolves.toEqual({ ok: true, count: 1 });
+			expect(relinkMock).toHaveBeenCalledWith({
+				fromSubmissionId: 9,
+				toSubmissionId: 11,
+			});
+		});
+
+		it("rejects when neither toInstitutionId nor toSubmissionId is given", async () => {
+			await expect(
+				relinkQuestionnaireAnswers({ fromSubmissionId: 9 }),
+			).resolves.toEqual({ ok: false, error: "invalid_target" });
+			expect(relinkMock).not.toHaveBeenCalled();
+		});
+
+		it("rejects when both toInstitutionId and toSubmissionId are given", async () => {
+			await expect(
+				relinkQuestionnaireAnswers({
+					fromSubmissionId: 9,
+					toInstitutionId: 42,
+					toSubmissionId: 11,
+				}),
+			).resolves.toEqual({ ok: false, error: "invalid_target" });
+			expect(relinkMock).not.toHaveBeenCalled();
+		});
+
+		it("returns unexpected when the user isn't authorized", async () => {
+			authorizeTableMock.mockImplementation(() => {
+				throw new Error("Role lacks update on submission");
+			});
+
+			await expect(
+				relinkQuestionnaireAnswers({
+					fromSubmissionId: 9,
+					toInstitutionId: 42,
+				}),
+			).resolves.toEqual({ ok: false, error: "unexpected" });
+			expect(relinkMock).not.toHaveBeenCalled();
+			expect(loggerError).toHaveBeenCalled();
+		});
+
+		it("returns unexpected on repo failure", async () => {
+			relinkMock.mockRejectedValue(new Error("db down"));
+
+			await expect(
+				relinkQuestionnaireAnswers({
+					fromSubmissionId: 9,
+					toInstitutionId: 42,
+				}),
+			).resolves.toEqual({ ok: false, error: "unexpected" });
+			expect(loggerError).toHaveBeenCalled();
+		});
 	});
 
-	it("returns noAnswers when the institution has not answered the questionnaire", async () => {
-		listLatestByQuestionnaireAndInstitutionMock.mockResolvedValue([]);
+	describe("getLinkedQuestionnaireAnswersCount", () => {
+		it("returns the number of answers linked to a submission after authorizing", async () => {
+			listBySubmissionMock.mockResolvedValue([{ id: 1 }, { id: 2 }]);
 
-		const result = await getInstitutionQuestionnaireAnswersForExport(42);
+			await expect(getLinkedQuestionnaireAnswersCount(9)).resolves.toEqual({
+				ok: true,
+				count: 2,
+			});
+			expect(authorizeTableMock).toHaveBeenCalledWith(
+				{ role: "admin" },
+				"submission",
+				"update",
+			);
+			expect(listBySubmissionMock).toHaveBeenCalledWith(9);
+		});
 
-		expect(result).toEqual({ ok: false, error: "noAnswers" });
-	});
+		it("returns unexpected when the user isn't authorized", async () => {
+			authorizeTableMock.mockImplementation(() => {
+				throw new Error("Role lacks update on submission");
+			});
 
-	it("returns unexpected and logs when the answer lookup throws", async () => {
-		listLatestByQuestionnaireAndInstitutionMock.mockRejectedValue(
-			new Error("db down"),
-		);
+			await expect(getLinkedQuestionnaireAnswersCount(9)).resolves.toEqual({
+				ok: false,
+				error: "unexpected",
+			});
+			expect(listBySubmissionMock).not.toHaveBeenCalled();
+		});
 
-		const result = await getInstitutionQuestionnaireAnswersForExport(42);
+		it("returns unexpected on repo failure", async () => {
+			listBySubmissionMock.mockRejectedValue(new Error("db down"));
 
-		expect(result).toEqual({ ok: false, error: "unexpected" });
-		expect(loggerErrorMock).toHaveBeenCalledWith(
-			"questionnaire.export.fetch_failed",
-			expect.any(Error),
-			expect.objectContaining({ institution_id: 42 }),
-		);
+			await expect(getLinkedQuestionnaireAnswersCount(9)).resolves.toEqual({
+				ok: false,
+				error: "unexpected",
+			});
+			expect(loggerError).toHaveBeenCalled();
+		});
 	});
 });
