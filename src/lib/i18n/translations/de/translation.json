@@ -1917,7 +1917,8 @@
 				"addInstitution": "Kulturort hinzufügen",
 				"claimInstitution": "Meine Orte anfragen",
 				"downloadList": "Liste herunterladen",
-				"downloadQuestionnaire": "Fragebogen Antworten herunterladen"
+				"downloadQuestionnaire": "Fragebogen Antworten herunterladen",
+				"downloadQuestionnaireAll": "Alle Fragebögen herunterladen"
 			},
 			"empty": {
 				"description": "Sie können direkt neue Einträge starten.",
