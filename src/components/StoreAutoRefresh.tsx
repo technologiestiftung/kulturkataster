@@ -7,7 +7,15 @@ import { getPublicInstitutionRefreshData } from "@/server/actions/publicInstitut
 import type { Category, Institution, InstitutionStoreState } from "@/types";
 
 const DEFAULT_PUBLIC_AUTO_REFRESH_INTERVAL_MS = 60_000;
-const PUBLIC_AUTO_REFRESH_ENABLED_PATHS = new Set(["/map", "/list"]);
+const PUBLIC_AUTO_REFRESH_ROUTE_NAMES = [
+	"/map",
+	"/list",
+	"/info",
+	"/simpleLanguage",
+];
+const PUBLIC_AUTO_REFRESH_ENABLED_PATHS = new Set(
+	PUBLIC_AUTO_REFRESH_ROUTE_NAMES,
+);
 
 /**
  * Tracks the timestamp of the last successful refresh so that navigating to
@@ -23,23 +31,26 @@ const normalizePublicPathname = (pathname: string | null) => {
 		pathname.length > 1 && pathname.endsWith("/")
 			? pathname.slice(0, -1)
 			: pathname;
-	const publicRouteIndex =
-		trimmedPathname.indexOf("/map") >= 0
-			? trimmedPathname.indexOf("/map")
-			: trimmedPathname.indexOf("/list");
+	const publicRouteIndex = PUBLIC_AUTO_REFRESH_ROUTE_NAMES.reduce(
+		(earliest, routeName) => {
+			const index = trimmedPathname.indexOf(routeName);
+			if (index < 0) return earliest;
+			return earliest < 0 ? index : Math.min(earliest, index);
+		},
+		-1,
+	);
 	const normalizedPathname =
 		publicRouteIndex >= 0
 			? trimmedPathname.slice(publicRouteIndex)
 			: trimmedPathname;
 
-	if (normalizedPathname === "/map" || normalizedPathname.startsWith("/map/")) {
-		return "/map";
-	}
-	if (
-		normalizedPathname === "/list" ||
-		normalizedPathname.startsWith("/list/")
-	) {
-		return "/list";
+	for (const routeName of PUBLIC_AUTO_REFRESH_ROUTE_NAMES) {
+		if (
+			normalizedPathname === routeName ||
+			normalizedPathname.startsWith(`${routeName}/`)
+		) {
+			return routeName;
+		}
 	}
 
 	return normalizedPathname;

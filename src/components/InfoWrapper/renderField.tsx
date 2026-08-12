@@ -349,9 +349,9 @@ const getContent = (
 		case "title":
 			return (
 				<div className="overflow-hidden">
-					<h1 id="institution-title" className="font-extrabold wrap-anywhere">
+					<h2 id="institution-title" className="font-extrabold wrap-anywhere">
 						{String(value)}
-					</h1>
+					</h2>
 				</div>
 			);
 

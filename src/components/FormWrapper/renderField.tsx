@@ -419,11 +419,14 @@ const renderFieldContent = (
 				field.type === "number" ||
 				field.type === "tel" ||
 				field.type === "url" ||
-				field.type === "date") && (
+				field.type === "date" ||
+				field.type === "year") && (
 				<div className="relative">
 					<Input
 						id={field.name}
-						type={field.type}
+						type={field.type === "year" ? "number" : field.type}
+						inputMode={field.type === "year" ? "numeric" : undefined}
+						maxLength={field.type === "year" ? 4 : undefined}
 						value={value === undefined || value === null ? "" : String(value)}
 						onChange={(e) => updateField(field.name, e.target.value)}
 						onBlur={(e) => {

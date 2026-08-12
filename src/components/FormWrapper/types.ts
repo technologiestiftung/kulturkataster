@@ -15,6 +15,7 @@ export type FieldType =
 	| "tel"
 	| "url"
 	| "date"
+	| "year"
 	| "file"
 	| "textarea"
 	| "select"

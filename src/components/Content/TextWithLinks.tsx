@@ -10,7 +10,7 @@ const TextWithLinks: FC<TextWithLinkProps> = ({
 	textVariant = "body2",
 }) => {
 	const emailRegex = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi;
-	const urlRegex = /\[([^\]]+?)\s+(https:\/\/[^\]]+)\]/gi;
+	const urlRegex = /\[([^\]]+?)\s+((?:https:\/\/|\/)[^\]]+)\]/gi;
 
 	// First replace the URL pattern
 	const processedText = text.replace(urlRegex, (match, linkText, url) => {
@@ -40,13 +40,16 @@ const TextWithLinks: FC<TextWithLinkProps> = ({
 					const urlMatch = part.match(/__URL__(.+?)__LINKTEXT__(.+?)__URL__/);
 					if (urlMatch) {
 						const [, url, linkText] = urlMatch;
+						const isInternal = url.startsWith("/");
 						return (
 							<a
 								key={index}
 								href={url}
 								tabIndex={0}
-								target="_blank"
-								rel="noopener noreferrer"
+								{...(!isInternal && {
+									target: "_blank",
+									rel: "noopener noreferrer",
+								})}
 								className="text-primary-dark hover:text-primary underline"
 							>
 								{linkText}
