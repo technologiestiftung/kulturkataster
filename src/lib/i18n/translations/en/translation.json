@@ -1911,7 +1911,8 @@
 				"addInstitution": "Add Cultural Location",
 				"claimInstitution": "Claim My Locations",
 				"downloadList": "Download List",
-				"downloadQuestionnaire": "Download questionnaire answers"
+				"downloadQuestionnaire": "Download questionnaire answers",
+				"downloadQuestionnaireAll": "Download all questionnaire answers"
 			},
 			"empty": {
 				"description": "You can start new entries directly.",

@@ -43,6 +43,16 @@ export const answerRepo = {
 			orderBy: { created_at: "asc" },
 			include: answerInclude,
 		}),
+	listLatestByQuestionnaireAllInstitutions: (questionnaireId: number) =>
+		prisma.answer.findMany({
+			where: {
+				questionnaire_id: questionnaireId,
+				institution_id: { not: null },
+			},
+			distinct: ["institution_id", "question_id"],
+			orderBy: { created_at: "desc" },
+			include: answerInclude,
+		}),
 	listBySubmission: (submissionId: number) =>
 		prisma.answer.findMany({
 			where: { submission_id: submissionId },

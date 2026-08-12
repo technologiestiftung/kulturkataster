@@ -46,7 +46,10 @@ import {
 	type InstitutionRowKindFilter,
 } from "@/components/Institution/InstitutionRowKindFilterToggle";
 import { showErrorToast } from "@/lib/utils/feedbackToast";
-import { downloadInstitutionQuestionnaireAnswers } from "@/lib/utils/questionnaireAnswersDownloadUtils";
+import {
+	downloadInstitutionQuestionnaireAnswers,
+	downloadInstitutionQuestionnaireAnswersAll,
+} from "@/lib/utils/questionnaireAnswersDownloadUtils";
 
 type InstitutionsFilterPanelProps = {
 	filters: FilterState;
@@ -223,6 +226,20 @@ export function InstitutionsTable({
 		},
 		[t],
 	);
+	const handleDownloadQuestionnaireAnswersAll = useCallback(async () => {
+		const result = await downloadInstitutionQuestionnaireAnswersAll({
+			filenameBase: "Fragebogen_Alle_Kulturorte",
+			format: "xlsx",
+		});
+		if (!result.ok) {
+			showErrorToast(
+				t("content.institutionsTable.questionnaireAnswersDownload.title"),
+				t(
+					`content.institutionsTable.questionnaireAnswersDownload.error.${result.error}`,
+				),
+			);
+		}
+	}, [t]);
 	const renderEmptyValue = () => <span className="text-foreground">—</span>;
 	const renderTextValue = (value?: string | null) => {
 		if (typeof value !== "string" || value.trim().length === 0) {
@@ -1154,6 +1171,13 @@ export function InstitutionsTable({
 		onDownloadQuestionnaireAnswers: handleDownloadQuestionnaireAnswers,
 		downloadQuestionnaireAnswersAriaLabel: t(
 			"content.institutionsTable.actions.downloadQuestionnaire",
+		),
+		onDownloadQuestionnaireAnswersAll: handleDownloadQuestionnaireAnswersAll,
+		downloadQuestionnaireAnswersAllLabel: t(
+			"content.institutionsTable.actions.downloadQuestionnaireAll",
+		),
+		downloadQuestionnaireAnswersAllAriaLabel: t(
+			"content.institutionsTable.actions.downloadQuestionnaireAll",
 		),
 		toolbarContent: showRowKindFilter ? (
 			<InstitutionRowKindFilterToggle
