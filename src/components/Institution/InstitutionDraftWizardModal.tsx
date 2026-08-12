@@ -1216,8 +1216,6 @@ function InstitutionDraftWizardContent({
 									),
 									description: fieldDescription("established_since"),
 									type: "year",
-									min: 1500,
-									max: new Date().getFullYear(),
 									placeholder: fieldPlaceholder("established_since") || "JJJJ",
 								},
 								{
@@ -1228,8 +1226,6 @@ function InstitutionDraftWizardContent({
 									),
 									description: fieldDescription("established_until"),
 									type: "year",
-									min: 1800,
-									max: new Date().getFullYear(),
 									placeholder: fieldPlaceholder("established_until") || "JJJJ",
 								},
 							],

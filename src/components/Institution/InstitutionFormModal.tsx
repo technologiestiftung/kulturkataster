@@ -877,8 +877,6 @@ const buildInstitutionFormConfig = ({
 								),
 								description: fieldDescription("established_since"),
 								type: "year",
-								min: 1800,
-								max: new Date().getFullYear(),
 								placeholder: fieldPlaceholder("established_since") || "JJJJ",
 							},
 							{
@@ -889,8 +887,6 @@ const buildInstitutionFormConfig = ({
 								),
 								description: fieldDescription("established_until"),
 								type: "year",
-								min: 1800,
-								max: new Date().getFullYear(),
 								placeholder: fieldPlaceholder("established_until") || "JJJJ",
 							},
 						],
