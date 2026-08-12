@@ -167,6 +167,11 @@ const getTableTargets = (t: (key: string) => string) => [
 		key: "category",
 		label: t("content.roleFormModal.permissions.tables.category"),
 	},
+	{
+		key: "answer",
+		label: t("content.roleFormModal.permissions.tables.answer"),
+		actions: ["read"] as PermissionAction[],
+	},
 ];
 
 const getActionLabels = (t: (key: string) => string) => ({
