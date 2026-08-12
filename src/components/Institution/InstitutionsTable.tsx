@@ -45,6 +45,8 @@ import {
 	InstitutionRowKindFilterToggle,
 	type InstitutionRowKindFilter,
 } from "@/components/Institution/InstitutionRowKindFilterToggle";
+import { showErrorToast } from "@/lib/utils/feedbackToast";
+import { downloadInstitutionQuestionnaireAnswers } from "@/lib/utils/questionnaireAnswersDownloadUtils";
 
 type InstitutionsFilterPanelProps = {
 	filters: FilterState;
@@ -165,6 +167,8 @@ export function InstitutionsTable({
 	const canCreateInstitutionViaSubmission =
 		!canCreateInstitutionDirect && institutionPermissions.createSubmission;
 	const canClaimInstitution = institutionPermissions.createSubmission;
+	const canDownloadQuestionnaireAnswers =
+		institutionPermissions.downloadQuestionnaireAnswers;
 	const [isDownloadDialogOpen, setIsDownloadDialogOpen] = useState(false);
 	const [rowKindFilter, setRowKindFilter] =
 		useState<InstitutionRowKindFilter>("all");
@@ -201,6 +205,24 @@ export function InstitutionsTable({
 		getFieldOptionLabel(tEnum, "funding_source", value);
 	const headerLabel = (key: string, _fallback?: string) =>
 		getFieldLabel(tEnum, key);
+	const handleDownloadQuestionnaireAnswers = useCallback(
+		async (row: InstitutionTableRow) => {
+			const result = await downloadInstitutionQuestionnaireAnswers({
+				institutionId: row.id,
+				filenameBase: `fragebogen_${row.name ?? row.id}`,
+				format: "xlsx",
+			});
+			if (!result.ok) {
+				showErrorToast(
+					t("content.institutionsTable.questionnaireAnswersDownload.title"),
+					t(
+						`content.institutionsTable.questionnaireAnswersDownload.error.${result.error}`,
+					),
+				);
+			}
+		},
+		[t],
+	);
 	const renderEmptyValue = () => <span className="text-foreground">—</span>;
 	const renderTextValue = (value?: string | null) => {
 		if (typeof value !== "string" || value.trim().length === 0) {
@@ -1128,6 +1150,11 @@ export function InstitutionsTable({
 			}),
 			onClick: () => setIsDownloadDialogOpen(true),
 		},
+		canDownloadQuestionnaireAnswers,
+		onDownloadQuestionnaireAnswers: handleDownloadQuestionnaireAnswers,
+		downloadQuestionnaireAnswersAriaLabel: t(
+			"content.institutionsTable.actions.downloadQuestionnaire",
+		),
 		toolbarContent: showRowKindFilter ? (
 			<InstitutionRowKindFilterToggle
 				value={rowKindFilter}

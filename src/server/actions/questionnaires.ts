@@ -328,6 +328,65 @@ export async function getLinkedQuestionnaireAnswersCount(submissionId: number) {
 	}
 }
 
+export type QuestionnaireAnswersExportErrorCode =
+	| "forbidden"
+	| "noAnswers"
+	| "noOpenQuestionnaireAnswers"
+	| "unexpected";
+
+// Admin-only: builds the rows behind the "download questionnaire answers"
+// button on an institution — one row per answered question, using the
+// latest answer per question in case a submitter re-answered.
+export async function downloadQuestionnaireAnswers(institutionId: number) {
+	try {
+		const currentUserId = await getCurrentUserId();
+		const ctx = await getAccessContextForUser(currentUserId);
+		authorizeTable(ctx, "answer", "read");
+
+		const openQuestionnaires = await questionnaireRepo.listOpen();
+		if (openQuestionnaires.length === 0) {
+			return {
+				ok: false as const,
+				error: "noOpenQuestionnaireAnswers" as const,
+			};
+		}
+
+		const answers = await answerRepo.listLatestByQuestionnaireAndInstitution(
+			openQuestionnaires[0].id,
+			institutionId,
+		);
+		if (answers.length === 0) {
+			return { ok: false as const, error: "noAnswers" as const };
+		}
+
+		return {
+			ok: true as const,
+			data: {
+				rows: answers.map((answer) => ({
+					questionLabel: answer.question.label,
+					value: answer.value,
+					submitterName: answer.submitter_name,
+					submitterEmail: answer.submitter_email,
+					answeredAt: answer.created_at,
+				})),
+			},
+		};
+	} catch (error) {
+		if (error instanceof Error && error.name === "RBACError") {
+			return { ok: false as const, error: "forbidden" as const };
+		}
+		logger.error("questionnaire.export_for_institution.failed", error, {
+			subsystem: "questionnaire",
+			institution_id: institutionId,
+		});
+		return { ok: false as const, error: "unexpected" as const };
+	}
+}
+
+// Admin-only: re-point a pending submission's linked answers at a different
+// submission or an approved institution — e.g. the proposed venue turns out to be
+// a duplicate of an existing one. Gated the same way reviewSubmission gates
+// reviewing a submission, since this is a submission-management operation.
 export async function relinkQuestionnaireAnswers(params: {
 	fromSubmissionId: number;
 	toInstitutionId?: number;
