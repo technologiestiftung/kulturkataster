@@ -1910,11 +1910,21 @@
 			"actions": {
 				"addInstitution": "Add Cultural Location",
 				"claimInstitution": "Claim My Locations",
-				"downloadList": "Download List"
+				"downloadList": "Download List",
+				"downloadQuestionnaire": "Download questionnaire answers"
 			},
 			"empty": {
 				"description": "You can start new entries directly.",
 				"title": "No cultural locations available."
+			},
+			"questionnaireAnswersDownload": {
+				"error": {
+					"forbidden": "You are not authorized to download this questionnaire.",
+					"noAnswers": "No answers are available for this cultural location.",
+					"noOpenQuestionnaire": "No active questionnaire is available.",
+					"unexpected": "The questionnaire could not be downloaded."
+				},
+				"title": "Download questionnaire answers"
 			},
 			"search": {
 				"title": "Search Cultural Locations"
@@ -2099,6 +2109,7 @@
 				},
 				"tables": {
 					"address": "Addresses",
+					"answer": "Questionnaire answers",
 					"category": "Categories",
 					"entity_audit": "activity",
 					"group": "groups",
