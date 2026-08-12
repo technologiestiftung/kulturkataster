@@ -1,6 +1,7 @@
 import * as XLSX from "xlsx-js-style";
 import {
 	downloadQuestionnaireAnswers,
+	downloadAllQuestionnaireAnswers,
 	type QuestionnaireAnswersExportErrorCode,
 } from "@/server/actions/questionnaires";
 
@@ -96,6 +97,49 @@ function generateQuestionnaireExcelBuffer(
 	return XLSX.write(wb, { bookType: "xlsx", type: "array" });
 }
 
+function generateQuestionnaireAllCSV(
+	headerRow: string[],
+	answeredAtRow: string[],
+	questionRows: string[][],
+): string {
+	const lines = [
+		"",
+		answeredAtRow.map(escapeCSVValue).join(","),
+		"",
+		headerRow.map(escapeCSVValue).join(","),
+		...questionRows.map((row) => row.map(escapeCSVValue).join(",")),
+	];
+	const BOM = "﻿";
+	return BOM + lines.join("\r\n");
+}
+
+function generateQuestionnaireAllExcelBuffer(
+	headerRow: string[],
+	answeredAtRow: string[],
+	questionRows: string[][],
+): ArrayBuffer {
+	const aoa: string[][] = [[], answeredAtRow, [], headerRow, ...questionRows];
+	const ws = XLSX.utils.aoa_to_sheet(aoa);
+	const columnCount = headerRow.length;
+	[1, 3].forEach((r) => {
+		for (let c = 0; c < columnCount; c++) {
+			const cellAddress = XLSX.utils.encode_cell({ r, c });
+			if (ws[cellAddress]) {
+				ws[cellAddress].s = { font: { bold: true } };
+			}
+		}
+	});
+	const measureTextWidth = createTextWidthMeasurer();
+	ws["!cols"] = Array.from({ length: columnCount }, (_, colIndex) => ({
+		wch: Math.max(
+			...aoa.map((row) => measureTextWidth(String(row[colIndex] ?? ""))),
+		),
+	}));
+	const wb = XLSX.utils.book_new();
+	XLSX.utils.book_append_sheet(wb, ws, "Fragebogen");
+	return XLSX.write(wb, { bookType: "xlsx", type: "array" });
+}
+
 function triggerBrowserDownload(
 	content: string | ArrayBuffer,
 	filename: string,
@@ -159,6 +203,62 @@ export async function downloadInstitutionQuestionnaireAnswers({
 	} else {
 		triggerBrowserDownload(
 			generateQuestionnaireExcelBuffer(rows, answeredAtLabel),
+			fullFilename,
+			"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+		);
+	}
+
+	return { ok: true };
+}
+
+export async function downloadInstitutionQuestionnaireAnswersAll({
+	filenameBase,
+	format,
+}: {
+	filenameBase: string;
+	format: QuestionnaireDownloadFormat;
+}): Promise<
+	{ ok: true } | { ok: false; error: QuestionnaireAnswersExportErrorCode }
+> {
+	const result = await downloadAllQuestionnaireAnswers();
+	if (!result.ok) {
+		return { ok: false, error: result.error };
+	}
+
+	const { questions, institutions } = result.data;
+	const headerRow = [
+		"Frage",
+		...institutions.map((institution) => institution.name),
+	];
+	const answeredAtRow = [
+		"Beantwortet am",
+		...institutions.map((institution) =>
+			formatAnsweredAt(institution.answeredAt),
+		),
+	];
+	const questionRows = questions.map((question) => [
+		question.label,
+		...institutions.map((institution) =>
+			formatAnswerValue(institution.answers[question.id]),
+		),
+	]);
+
+	const timestamp = new Date().toISOString().split("T")[0];
+	const fullFilename = `${timestamp}_${sanitizeFilenameBase(filenameBase)}.${format}`;
+
+	if (format === "csv") {
+		triggerBrowserDownload(
+			generateQuestionnaireAllCSV(headerRow, answeredAtRow, questionRows),
+			fullFilename,
+			"text/csv;charset=utf-8;",
+		);
+	} else {
+		triggerBrowserDownload(
+			generateQuestionnaireAllExcelBuffer(
+				headerRow,
+				answeredAtRow,
+				questionRows,
+			),
 			fullFilename,
 			"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
 		);
