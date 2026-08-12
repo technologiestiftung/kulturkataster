@@ -9,9 +9,6 @@ export type QuestionnaireDownloadFormat = "csv" | "xlsx";
 type QuestionnaireExportRow = {
 	Frage: string;
 	Antwort: string;
-	Name: string;
-	"E-Mail": string;
-	"Beantwortet am": string;
 };
 
 function formatAnswerValue(value: unknown): string {
@@ -29,6 +26,17 @@ function formatAnsweredAt(value: Date): string {
 	return `${day}.${month}.${year}`;
 }
 
+function createTextWidthMeasurer(): (text: string) => number {
+	const ctx =
+		typeof document === "undefined"
+			? null
+			: document.createElement("canvas").getContext("2d");
+	if (!ctx) return (text) => text.length;
+	ctx.font = "11pt Calibri, Arial, sans-serif";
+	const digitWidthPx = ctx.measureText("0").width || 1;
+	return (text) => ctx.measureText(text).width / digitWidthPx;
+}
+
 function escapeCSVValue(value: string): string {
 	const cleanValue = value
 		.replace(/"/g, '""')
@@ -38,22 +46,52 @@ function escapeCSVValue(value: string): string {
 	return `"${cleanValue}"`;
 }
 
-function generateQuestionnaireCSV(rows: QuestionnaireExportRow[]): string {
-	if (rows.length === 0) return "";
-	const headers = Object.keys(rows[0]) as (keyof QuestionnaireExportRow)[];
-	const csvHeaders = headers.map((header) => escapeCSVValue(header)).join(",");
-	const csvRows = rows.map((row) =>
-		headers.map((header) => escapeCSVValue(row[header])).join(","),
-	);
+function generateQuestionnaireCSV(
+	rows: QuestionnaireExportRow[],
+	answeredAtLabel: string,
+): string {
+	const lines = [
+		"",
+		`${escapeCSVValue("Beantwortet am")},${escapeCSVValue(answeredAtLabel)}`,
+		"",
+		`${escapeCSVValue("Frage")},${escapeCSVValue("Antworten")}`,
+		...rows.map(
+			(row) => `${escapeCSVValue(row.Frage)},${escapeCSVValue(row.Antwort)}`,
+		),
+	];
 	const BOM = "﻿";
-	return BOM + [csvHeaders, ...csvRows].join("\r\n");
+	return BOM + lines.join("\r\n");
 }
 
 function generateQuestionnaireExcelBuffer(
 	rows: QuestionnaireExportRow[],
+	answeredAtLabel: string,
 ): ArrayBuffer {
+	const aoa: string[][] = [
+		[],
+		["Beantwortet am", answeredAtLabel],
+		[],
+		["Frage", "Antworten"],
+		...rows.map((row) => [row.Frage, row.Antwort]),
+	];
+	const ws = XLSX.utils.aoa_to_sheet(aoa);
+	[
+		{ r: 1, c: 0 }, // "Beantwortet am"
+		{ r: 3, c: 0 }, // "Frage"
+		{ r: 3, c: 1 }, // "Antworten"
+	].forEach(({ r, c }) => {
+		const cellAddress = XLSX.utils.encode_cell({ r, c });
+		if (ws[cellAddress]) {
+			ws[cellAddress].s = { font: { bold: true } };
+		}
+	});
+	const measureTextWidth = createTextWidthMeasurer();
+	ws["!cols"] = [0, 1].map((colIndex) => ({
+		wch: Math.max(
+			...aoa.map((row) => measureTextWidth(String(row[colIndex] ?? ""))),
+		),
+	}));
 	const wb = XLSX.utils.book_new();
-	const ws = XLSX.utils.json_to_sheet(rows);
 	XLSX.utils.book_append_sheet(wb, ws, "Fragebogen");
 	return XLSX.write(wb, { bookType: "xlsx", type: "array" });
 }
@@ -93,26 +131,32 @@ export async function downloadInstitutionQuestionnaireAnswers({
 		return { ok: false, error: result.error };
 	}
 
+	const answeredAtLabel =
+		result.data.rows.length > 0
+			? formatAnsweredAt(
+					new Date(
+						Math.max(...result.data.rows.map((row) => row.answeredAt.getTime())),
+					),
+				)
+			: "";
+
 	const rows: QuestionnaireExportRow[] = result.data.rows.map((row) => ({
 		Frage: row.questionLabel,
 		Antwort: formatAnswerValue(row.value),
-		Name: row.submitterName ?? "",
-		"E-Mail": row.submitterEmail ?? "",
-		"Beantwortet am": formatAnsweredAt(row.answeredAt),
 	}));
 
 	const timestamp = new Date().toISOString().split("T")[0];
-	const fullFilename = `${sanitizeFilenameBase(filenameBase)}_${timestamp}.${format}`;
+	const fullFilename = `${timestamp}_${sanitizeFilenameBase(filenameBase)}.${format}`;
 
 	if (format === "csv") {
 		triggerBrowserDownload(
-			generateQuestionnaireCSV(rows),
+			generateQuestionnaireCSV(rows, answeredAtLabel),
 			fullFilename,
 			"text/csv;charset=utf-8;",
 		);
 	} else {
 		triggerBrowserDownload(
-			generateQuestionnaireExcelBuffer(rows),
+			generateQuestionnaireExcelBuffer(rows, answeredAtLabel),
 			fullFilename,
 			"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
 		);
