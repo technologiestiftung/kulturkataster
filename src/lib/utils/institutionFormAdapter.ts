@@ -25,6 +25,11 @@ const dateToInputValue = (value: unknown): string => {
 	return `${year}-${month}-${day}`;
 };
 
+export const dateToYearInputValue = (value: unknown): string => {
+	const parsed = toDate(value);
+	return parsed ? String(parsed.getFullYear()) : "";
+};
+
 export const buildInstitutionCategoryFilterState = (
 	categories: Category[] | undefined,
 ): FilterState => {
@@ -133,8 +138,12 @@ export const buildInstitutionFormInitialValues = (
 		rental_contract_end: dateToInputValue(
 			resolvedInstitution?.rental_contract_end,
 		),
-		established_since: dateToInputValue(resolvedInstitution?.established_since),
-		established_until: dateToInputValue(resolvedInstitution?.established_until),
+		established_since: dateToYearInputValue(
+			resolvedInstitution?.established_since,
+		),
+		established_until: dateToYearInputValue(
+			resolvedInstitution?.established_until,
+		),
 		closing_reason: resolvedInstitution?.closing_reason ?? undefined,
 		area: toOptionalNumber(resolvedInstitution?.area) ?? undefined,
 		capacity: toOptionalNumber(resolvedInstitution?.capacity) ?? undefined,

@@ -1437,7 +1437,7 @@
 				"next": "Next",
 				"review": "Check",
 				"submit": "Submit",
-				"submitUpdate": "Submit change"
+				"submitUpdate": "Submit Changes"
 			},
 			"dialog": {
 				"create": {
@@ -2153,11 +2153,11 @@
 							"title": "What is the Berlin Kulturkataster?"
 						},
 						{
-							"src": "https://kulturraeume.berlin/content/uploads/kulturraeume-01barbeitbeteilige.mp4",
+							"src": "https://kulturraeume.berlin/content/uploads/kulturraeume-01bauftragbeteiligte.mp4",
 							"title": "Commission, stakeholders, and objectives of the Kulturkataster"
 						},
 						{
-							"src": "https://kulturraeume.berlin/content/uploads/kulturraeume-01cwieentlassen.mp4",
+							"src": "https://kulturraeume.berlin/content/uploads/kulturraeume-01cwieentstehen.mp4",
 							"title": " How the Kulturkataster is created and how it changes"
 						}
 					]
@@ -2184,7 +2184,7 @@
 					"title": "Questions & Answers",
 					"videos": [
 						{
-							"src": "https://kulturraeume.berlin/content/uploads/kulturraeume-02d1faqwarumnichtverzeichen.mp4",
+							"src": "https://kulturraeume.berlin/content/uploads/kulturraeume-02d1faqwarumnichtverzeichnen.mp4",
 							"title": "Why is my cultural location not listed in the Kulturkataster?"
 						},
 						{
@@ -2517,7 +2517,7 @@
 				"text56": "On a phone or tablet:",
 				"text57": "Tap the icon with 3 lines at the top left.",
 				"text59": "If you do not filter:",
-				"text6": "Here is the link: [Link/institution].",
+				"text6": "Here is the link: [Link /institution].",
 				"text60": "Then all open cultural locations are shown.",
 				"text62": "You can also",
 				"text63": "show closed locations.",
@@ -3251,6 +3251,14 @@
 				"label": "Cultural Area",
 				"placeholder": "Please Select"
 			},
+			"datenverwendung": {
+				"description": "",
+				"errors": {
+					"required": "Please provide the intended use."
+				},
+				"label": "Intended Use",
+				"placeholder": "Please Enter"
+			},
 			"description": {
 				"description": "",
 				"errors": {
@@ -3374,6 +3382,14 @@
 				"label": "Internal Notes",
 				"placeholder": "Please Enter"
 			},
+			"lastName": {
+				"description": "",
+				"errors": {
+					"required": "Last name is required."
+				},
+				"label": "Last Name",
+				"placeholder": "Please Enter"
+			},
 			"lat": {
 				"description": "",
 				"errors": {
@@ -3396,6 +3412,14 @@
 					"required": "Please provide longitude."
 				},
 				"label": "Longitude",
+				"placeholder": "Please Enter"
+			},
+			"nachname": {
+				"description": "",
+				"errors": {
+					"required": "Last name is required."
+				},
+				"label": "Last Name",
 				"placeholder": "Please Enter"
 			},
 			"name": {
@@ -3691,6 +3715,14 @@
 					"required": "Please provide internal notes."
 				},
 				"label": "Internal Notes (Usage Status)",
+				"placeholder": "Please Enter"
+			},
+			"vorname": {
+				"description": "",
+				"errors": {
+					"required": "First name is required."
+				},
+				"label": "First Name",
 				"placeholder": "Please Enter"
 			},
 			"website": {

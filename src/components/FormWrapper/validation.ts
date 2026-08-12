@@ -151,6 +151,13 @@ const buildTypeValidator = (
 			normalize: true,
 		});
 	}
+	if (field.type === "year") {
+		return year(
+			getTypeValidationMessage(field, t, tEnum, "invalidNumber"),
+			field.min,
+			field.max,
+		);
+	}
 
 	return undefined;
 };
@@ -180,6 +187,23 @@ export const numeric = (message: string): FieldValidator =>
 			return undefined;
 		}
 		return Number.isFinite(Number(value.trim())) ? undefined : message;
+	});
+
+export const year = (
+	message: string,
+	min?: number,
+	max?: number,
+): FieldValidator =>
+	withNormalizer((value) => {
+		if (typeof value !== "string" || value.trim().length === 0) {
+			return undefined;
+		}
+		const trimmed = value.trim();
+		if (!/^\d{4}$/.test(trimmed)) return message;
+		const yearValue = Number(trimmed);
+		if (min !== undefined && yearValue < min) return message;
+		if (max !== undefined && yearValue > max) return message;
+		return undefined;
 	});
 
 export const tel = (message: string): FieldValidator =>

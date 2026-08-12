@@ -1443,7 +1443,7 @@
 				"next": "Weiter",
 				"review": "Prüfen",
 				"submit": "Einreichen",
-				"submitUpdate": "Änderung einreichen"
+				"submitUpdate": "Änderungen abschicken"
 			},
 			"dialog": {
 				"create": {
@@ -3266,6 +3266,14 @@
 				"label": "Kulturareal",
 				"placeholder": "Bitte auswählen"
 			},
+			"datenverwendung": {
+				"description": "",
+				"errors": {
+					"required": "Bitte geben Sie den Verwendungszweck an."
+				},
+				"label": "Verwendungszweck",
+				"placeholder": "Bitte eintragen"
+			},
 			"description": {
 				"description": "",
 				"errors": {
@@ -3389,6 +3397,14 @@
 				"label": "Interne Notizen",
 				"placeholder": "Bitte eintragen"
 			},
+			"lastName": {
+				"description": "",
+				"errors": {
+					"required": "Nachname ist erforderlich."
+				},
+				"label": "Nachname",
+				"placeholder": "Bitte eintragen"
+			},
 			"lat": {
 				"description": "",
 				"errors": {
@@ -3411,6 +3427,14 @@
 					"required": "Bitte Längengrad angeben."
 				},
 				"label": "Längengrad",
+				"placeholder": "Bitte eintragen"
+			},
+			"nachname": {
+				"description": "",
+				"errors": {
+					"required": "Nachname ist erforderlich."
+				},
+				"label": "Nachname",
 				"placeholder": "Bitte eintragen"
 			},
 			"name": {
@@ -3706,6 +3730,14 @@
 					"required": "Bitte interne Notizen zum Nutzungsstatus angeben."
 				},
 				"label": "Interne Notizen (Nutzungsstatus)",
+				"placeholder": "Bitte eintragen"
+			},
+			"vorname": {
+				"description": "",
+				"errors": {
+					"required": "Vorname ist erforderlich."
+				},
+				"label": "Vorname",
 				"placeholder": "Bitte eintragen"
 			},
 			"website": {
