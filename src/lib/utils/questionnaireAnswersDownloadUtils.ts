@@ -135,7 +135,9 @@ export async function downloadInstitutionQuestionnaireAnswers({
 		result.data.rows.length > 0
 			? formatAnsweredAt(
 					new Date(
-						Math.max(...result.data.rows.map((row) => row.answeredAt.getTime())),
+						Math.max(
+							...result.data.rows.map((row) => row.answeredAt.getTime()),
+						),
 					),
 				)
 			: "";
