@@ -61,15 +61,25 @@ const asObject = (value: unknown): Record<string, unknown> | null =>
 		? (value as Record<string, unknown>)
 		: null;
 
+type AuditIntent =
+	| "submission_review_approved"
+	| "submission_review_rejected"
+	| "submission_review_completed"
+	| "questionnaire_submitted";
+
 type AuditRelationMeta = {
 	correlationId?: string;
 	rootEntityType?: string;
 	rootEntityId?: string;
-	intent?:
-		| "submission_review_approved"
-		| "submission_review_rejected"
-		| "submission_review_completed";
+	intent?: AuditIntent;
 };
+
+const AUDIT_INTENTS: readonly AuditIntent[] = [
+	"submission_review_approved",
+	"submission_review_rejected",
+	"submission_review_completed",
+	"questionnaire_submitted",
+];
 
 const getAuditRelationMeta = (audit: EntityAudit): AuditRelationMeta => {
 	const meta = asObject(audit.meta_info);
@@ -86,12 +96,9 @@ const getAuditRelationMeta = (audit: EntityAudit): AuditRelationMeta => {
 		typeof meta.root_entity_id === "string" && meta.root_entity_id
 			? meta.root_entity_id
 			: undefined;
-	const intent =
-		meta.intent === "submission_review_approved" ||
-		meta.intent === "submission_review_rejected" ||
-		meta.intent === "submission_review_completed"
-			? meta.intent
-			: undefined;
+	const intent = AUDIT_INTENTS.includes(meta.intent as AuditIntent)
+		? (meta.intent as AuditIntent)
+		: undefined;
 	return { correlationId, rootEntityType, rootEntityId, intent };
 };
 
@@ -138,24 +145,12 @@ const formatAuditActor = (
 	return t("common.auth.account.activity.system");
 };
 
-const getAuditIntent = (
-	audit: EntityAudit,
-):
-	| "submission_review_approved"
-	| "submission_review_rejected"
-	| "submission_review_completed"
-	| null => {
+const getAuditIntent = (audit: EntityAudit): AuditIntent | null => {
 	const meta = asObject(audit.meta_info);
 	if (!meta) return null;
-	const intent = meta.intent;
-	if (
-		intent === "submission_review_approved" ||
-		intent === "submission_review_rejected" ||
-		intent === "submission_review_completed"
-	) {
-		return intent;
-	}
-	return null;
+	return AUDIT_INTENTS.includes(meta.intent as AuditIntent)
+		? (meta.intent as AuditIntent)
+		: null;
 };
 
 const hasSubmissionReviewIntent = (audit: EntityAudit) =>
@@ -212,6 +207,13 @@ const getEntityName = (audit: EntityAudit): string | null => {
 		if (entityType === "category") {
 			return pickString(submissionData, "key");
 		}
+	}
+
+	if (audit.entity_type === "questionnaire") {
+		const title = pickString(newData, "questionnaireTitle");
+		const entityName = pickString(newData, "entityName");
+		if (title && entityName) return `${title} – ${entityName}`;
+		return title ?? entityName;
 	}
 
 	return null;
@@ -523,6 +525,14 @@ const mapEntityLink = (
 		}
 		case "institution":
 			return toLocalePath(`/map/institution/${id}`);
+		case "questionnaire": {
+			const payload = asObject(audit.new_data);
+			const institutionId =
+				typeof payload?.institutionId === "number" ? payload.institutionId : null;
+			return institutionId
+				? toLocalePath(`/map/institution/${institutionId}`)
+				: undefined;
+		}
 		case "category":
 			return toLocalePath(`/account/categories/${id}/edit`);
 		case "group":

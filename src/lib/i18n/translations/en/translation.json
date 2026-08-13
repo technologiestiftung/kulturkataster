@@ -48,6 +48,7 @@
 					"actions": {
 						"create": "created",
 						"delete": "deleted",
+						"questionnaire_submitted": "answered",
 						"submission_review_approved": "approved",
 						"submission_review_completed": "completed",
 						"submission_review_rejected": "rejected",
@@ -74,6 +75,7 @@
 						"funding_source": "Financial Source",
 						"group": "Group",
 						"institution": "Cultural Location",
+						"questionnaire": "Questionnaire",
 						"role": "Role",
 						"role_field_permission": "Role field permission",
 						"role_table_permission": "Role table permission",

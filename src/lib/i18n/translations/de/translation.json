@@ -48,6 +48,7 @@
 					"actions": {
 						"create": "erstellt",
 						"delete": "gelöscht",
+						"questionnaire_submitted": "beantwortet",
 						"submission_review_approved": "genehmigt",
 						"submission_review_completed": "abgeschlossen",
 						"submission_review_rejected": "abgelehnt",
@@ -74,6 +75,7 @@
 						"funding_source": "Förderquelle",
 						"group": "Gruppe",
 						"institution": "Kulturort",
+						"questionnaire": "Fragebogen",
 						"role": "Rolle",
 						"role_field_permission": "Rollenfeld-Berechtigung",
 						"role_table_permission": "Rollentabellen-Berechtigung",
