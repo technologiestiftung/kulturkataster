@@ -21,7 +21,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { MultiSelectModal } from "@/components/MultiSelect/MultiSelectModal";
 import { triggerAccountRefresh } from "@/components/Account/AccountAutoRefresh";
 import { InfoItem } from "@/components/InfoWrapper/InfoItem";
-import { QuestionnaireAnswerRelinkPanel } from "@/components/Institution/QuestionnaireAnswerRelinkPanel";
 import { getSubmissionDecisionEmailTemplateOptions } from "@/server/actions/submissions";
 import {
 	APPROVAL_EMAIL_TEMPLATES,
@@ -522,10 +521,6 @@ export function InstitutionDraftReviewModal({
 								</CardContent>
 							</Card>
 						) : null}
-						{resolvedSubmissionWithFallback.type === "create" &&
-							typeof submissionId === "number" && (
-								<QuestionnaireAnswerRelinkPanel submissionId={submissionId} />
-							)}
 						<Card variant="tertiary">
 							<CardContent variant="tertiary" className="space-y-3 p-3">
 								<div className="body2">

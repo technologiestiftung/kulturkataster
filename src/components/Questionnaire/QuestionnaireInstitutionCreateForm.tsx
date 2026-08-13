@@ -1,19 +1,12 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { useTranslation } from "react-i18next";
-import type { Prisma } from "@/generated/prisma";
-import { SubmissionEntityType, SubmissionType } from "@/generated/prisma";
 import { FormWrapper } from "@/components/FormWrapper";
 import type { FormWrapperConfig } from "@/components/FormWrapper/types";
 import { getFieldLabel, getFieldPlaceholder } from "@/lib/i18n/fieldLabels";
-import {
-	buildAddressFromFormData,
-	handleAddressBlur,
-} from "@/lib/utils/formUtils";
-import { resolveCategoryIdsFromDraft } from "@/lib/utils/institutionCategoryUtils";
+import { handleAddressBlur } from "@/lib/utils/formUtils";
 import { geocodeAddress, reverseGeocode } from "@/server/actions/maptiler";
-import { createSubmission } from "@/server/actions/submissions";
 import type { Category } from "@/types";
 
 const splitFreeTextList = (value: unknown): string[] =>
@@ -47,22 +40,27 @@ const hasSelectedOrProposedCategory = (
 // full institution form — just enough to identify a venue that isn't in the
 // Kulturkataster yet, embedded inline in the questionnaire wizard instead of sending
 // respondents to the separate /institution flow. Reuses the same addressMap field
-// and submission-creation pattern as the full wizard.
+// as the full wizard. Purely a client-side data collector: it does not create any
+// Submission itself — the raw form data is handed to the caller, which stores it in
+// the draft and only turns it into a real Submission (together with the answers,
+// atomically) when the whole questionnaire is submitted. This is what lets an
+// abandoned session leave nothing behind in the database.
 export function QuestionnaireInstitutionCreateForm({
 	categoryGroups,
+	initialValues,
 	onCreated,
 	onBack,
 	backLabel,
 	submitLabel,
 }: {
 	categoryGroups: Category[];
-	onCreated: (submissionId: number) => void;
+	initialValues?: Record<string, unknown>;
+	onCreated: (data: Record<string, unknown>) => void;
 	onBack: () => void;
 	backLabel: string;
 	submitLabel: string;
 }) {
 	const { t } = useTranslation();
-	const [isSubmitting, setIsSubmitting] = useState(false);
 	const addressGeocodeState = useRef({ lastQuery: "", inflight: false });
 	const onAddressBlur = handleAddressBlur(addressGeocodeState, geocodeAddress, {
 		reverseGeocode,
@@ -71,54 +69,13 @@ export function QuestionnaireInstitutionCreateForm({
 	const fieldLabel = (key: string) => getFieldLabel(t, key);
 	const fieldPlaceholder = (key: string) => getFieldPlaceholder(t, key);
 
-	const handleSubmit = async (data: Record<string, unknown>) => {
-		setIsSubmitting(true);
-		try {
-			const address = buildAddressFromFormData(data);
-			const categoryIds = resolveCategoryIdsFromDraft(data, categoryGroups);
-			const institutionSubmission = await createSubmission({
-				entityType: SubmissionEntityType.institution,
-				entityId: null,
-				type: SubmissionType.create,
-				data: {
-					name: data.name,
-					address,
-					categoryIds,
-					established_since: data.established_since,
-				} as Prisma.InputJsonValue,
-			});
-
-			const proposedCategories = splitFreeTextList(data.newCategory);
-			if (proposedCategories.length > 0) {
-				await Promise.allSettled(
-					proposedCategories.map((key) =>
-						createSubmission({
-							entityType: SubmissionEntityType.category,
-							entityId: null,
-							type: SubmissionType.create,
-							data: { key },
-							meta: {
-								source: "questionnaire",
-								institutionSubmissionId:
-									typeof institutionSubmission?.id === "number"
-										? institutionSubmission.id
-										: undefined,
-							},
-						}),
-					),
-				);
-			}
-
-			if (typeof institutionSubmission?.id === "number") {
-				onCreated(institutionSubmission.id);
-			}
-		} finally {
-			setIsSubmitting(false);
-		}
+	const handleSubmit = (data: Record<string, unknown>) => {
+		onCreated(data);
 	};
 
 	const config: FormWrapperConfig = {
 		cardVariant: "none",
+		initialValues,
 		fields: [
 			{
 				name: "basicSection",
@@ -297,7 +254,6 @@ export function QuestionnaireInstitutionCreateForm({
 		submitLabel,
 		cancelLabel: backLabel,
 		showCancel: true,
-		submitDisabled: isSubmitting,
 	};
 
 	return <FormWrapper config={config} />;

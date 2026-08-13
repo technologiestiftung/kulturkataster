@@ -19,6 +19,7 @@ export function QuestionnaireInstitutionLinkStep({
 	questionnaireId,
 	isInstitutionRegistered,
 	institutionId,
+	pendingInstitutionData,
 	categoryGroups,
 	onChange,
 	onBack,
@@ -27,11 +28,13 @@ export function QuestionnaireInstitutionLinkStep({
 	questionnaireId: number;
 	isInstitutionRegistered: boolean | null;
 	institutionId: number | null;
+	pendingInstitutionData: Record<string, unknown> | null;
 	categoryGroups: Category[];
 	onChange: (patch: {
 		isInstitutionRegistered?: boolean | null;
 		institutionId?: number | null;
 		submissionId?: number | null;
+		pendingInstitutionData?: Record<string, unknown> | null;
 	}) => void;
 	onBack: () => void;
 	onNext: () => void;
@@ -231,8 +234,9 @@ export function QuestionnaireInstitutionLinkStep({
 				<Card variant="secondary">
 					<QuestionnaireInstitutionCreateForm
 						categoryGroups={categoryGroups}
-						onCreated={(submissionId) => {
-							onChange({ submissionId });
+						initialValues={pendingInstitutionData ?? undefined}
+						onCreated={(data) => {
+							onChange({ pendingInstitutionData: data });
 							onNext();
 						}}
 						onBack={onBack}

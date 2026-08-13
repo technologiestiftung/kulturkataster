@@ -12,6 +12,12 @@ const {
 	authorizeTableMock,
 	loggerWarn,
 	loggerError,
+	prismaTransactionMock,
+	txSubmissionCreateMock,
+	txAnswerCreateManyMock,
+	createSubmissionMock,
+	validateSubmissionCreateInputMock,
+	normalizeSubmissionJsonMock,
 } = vi.hoisted(() => ({
 	listOpenMock: vi.fn(),
 	findByIdMock: vi.fn(),
@@ -24,6 +30,12 @@ const {
 	authorizeTableMock: vi.fn(),
 	loggerWarn: vi.fn(),
 	loggerError: vi.fn(),
+	prismaTransactionMock: vi.fn(),
+	txSubmissionCreateMock: vi.fn(),
+	txAnswerCreateManyMock: vi.fn(),
+	createSubmissionMock: vi.fn(),
+	validateSubmissionCreateInputMock: vi.fn((input: unknown) => input),
+	normalizeSubmissionJsonMock: vi.fn((value: unknown) => value),
 }));
 
 vi.mock("@/server/data/questionnaireRepo", () => ({
@@ -44,6 +56,24 @@ vi.mock("@/server/data/answerRepo", () => ({
 
 vi.mock("@/server/actions/auth", () => ({
 	getCurrentUserId: getCurrentUserIdMock,
+}));
+
+vi.mock("@/server/actions/submissions", () => ({
+	createSubmission: createSubmissionMock,
+}));
+
+vi.mock("@/server/prisma", () => ({
+	prisma: {
+		$transaction: (...args: unknown[]) => prismaTransactionMock(...args),
+	},
+}));
+
+vi.mock("@/server/validation/submissions", () => ({
+	validateSubmissionCreateInput: validateSubmissionCreateInputMock,
+}));
+
+vi.mock("@/lib/utils/submissionJsonUtils", () => ({
+	normalizeSubmissionJson: normalizeSubmissionJsonMock,
 }));
 
 vi.mock("@/server/utils/rbac", () => ({
@@ -81,6 +111,32 @@ describe("server actions: questionnaires", () => {
 		authorizeTableMock.mockReset();
 		loggerWarn.mockReset();
 		loggerError.mockReset();
+
+		prismaTransactionMock.mockReset();
+		txSubmissionCreateMock.mockReset();
+		txAnswerCreateManyMock.mockReset();
+		createSubmissionMock.mockReset();
+		validateSubmissionCreateInputMock.mockClear();
+		validateSubmissionCreateInputMock.mockImplementation(
+			(input: unknown) => input,
+		);
+		normalizeSubmissionJsonMock.mockClear();
+		normalizeSubmissionJsonMock.mockImplementation((value: unknown) => value);
+
+		prismaTransactionMock.mockImplementation(
+			async (
+				callback: (tx: {
+					submission: { create: typeof txSubmissionCreateMock };
+					answer: { createMany: typeof txAnswerCreateManyMock };
+				}) => unknown,
+			) =>
+				callback({
+					submission: { create: txSubmissionCreateMock },
+					answer: { createMany: txAnswerCreateManyMock },
+				}),
+		);
+		txSubmissionCreateMock.mockResolvedValue({ id: 99 });
+		txAnswerCreateManyMock.mockResolvedValue({ count: 1 });
 	});
 
 	describe("getOpenQuestionnaire", () => {
@@ -268,6 +324,146 @@ describe("server actions: questionnaires", () => {
 				error: "unexpected",
 			});
 			expect(loggerError).toHaveBeenCalled();
+		});
+
+		it("rejects when newInstitution is given together with institutionId", async () => {
+			await expect(
+				submitQuestionnaireAnswers({
+					questionnaireId: 1,
+					institutionId: 2,
+					newInstitution: {
+						name: "New Place",
+						address: {},
+						categoryIds: [],
+						newCategoryKeys: [],
+					},
+					answers: [{ questionId: 10, value: "yes" }],
+				}),
+			).resolves.toEqual({ ok: false, error: "invalid_target" });
+			expect(prismaTransactionMock).not.toHaveBeenCalled();
+		});
+
+		describe("with newInstitution", () => {
+			const newInstitutionParams = {
+				questionnaireId: 1,
+				newInstitution: {
+					name: "New Place",
+					address: { city: "Berlin" },
+					categoryIds: [5, 6],
+					established_since: "2020-01-01",
+					newCategoryKeys: ["Archiv", "Werkstatt"],
+				},
+				answers: [
+					{ questionId: 10, value: "yes" },
+					{ questionId: 11, value: 5 },
+				],
+			};
+
+			it("creates the submission and answers atomically, then best-effort category submissions", async () => {
+				getCurrentUserIdMock.mockResolvedValue("user-1");
+				createSubmissionMock.mockResolvedValue({ id: 123 });
+
+				await expect(
+					submitQuestionnaireAnswers(newInstitutionParams),
+				).resolves.toEqual({ ok: true });
+
+				expect(getAccessContextForUserMock).toHaveBeenCalledWith("user-1");
+				expect(authorizeTableMock).toHaveBeenCalledWith(
+					{ role: "admin" },
+					"submission",
+					"create",
+				);
+				expect(txSubmissionCreateMock).toHaveBeenCalledWith(
+					expect.objectContaining({
+						data: expect.objectContaining({
+							entity_type: "institution",
+							type: "create",
+							status: "approval_pending",
+							data: expect.objectContaining({
+								name: "New Place",
+								address: { city: "Berlin" },
+								categoryIds: [5, 6],
+							}),
+							creator: { connect: { id: "user-1" } },
+						}),
+					}),
+				);
+				expect(txAnswerCreateManyMock).toHaveBeenCalledWith({
+					data: [
+						expect.objectContaining({
+							questionnaire_id: 1,
+							question_id: 10,
+							submission_id: 99,
+							value: "yes",
+							created_by: "user-1",
+						}),
+						expect.objectContaining({
+							questionnaire_id: 1,
+							question_id: 11,
+							submission_id: 99,
+							value: 5,
+							created_by: "user-1",
+						}),
+					],
+				});
+				// hasAnswered is skipped entirely — a submission that doesn't exist
+				// yet cannot already have answers.
+				expect(hasAnsweredMock).not.toHaveBeenCalled();
+
+				expect(createSubmissionMock).toHaveBeenCalledWith(
+					expect.objectContaining({
+						entityType: "category",
+						type: "create",
+						data: { key: "Archiv" },
+						meta: {
+							source: "questionnaire",
+							institutionSubmissionId: 99,
+						},
+					}),
+				);
+				expect(createSubmissionMock).toHaveBeenCalledWith(
+					expect.objectContaining({
+						entityType: "category",
+						data: { key: "Werkstatt" },
+					}),
+				);
+			});
+
+			it("skips category submissions when none were suggested", async () => {
+				await submitQuestionnaireAnswers({
+					...newInstitutionParams,
+					newInstitution: {
+						...newInstitutionParams.newInstitution,
+						newCategoryKeys: [],
+					},
+				});
+
+				expect(createSubmissionMock).not.toHaveBeenCalled();
+			});
+
+			it("returns unexpected and never creates category submissions if the transaction fails (rollback)", async () => {
+				prismaTransactionMock.mockRejectedValue(new Error("db down"));
+
+				await expect(
+					submitQuestionnaireAnswers(newInstitutionParams),
+				).resolves.toEqual({ ok: false, error: "unexpected" });
+
+				expect(createSubmissionMock).not.toHaveBeenCalled();
+				expect(loggerError).toHaveBeenCalled();
+			});
+
+			it("returns unexpected when not authorized to create a submission", async () => {
+				authorizeTableMock.mockImplementation(() => {
+					throw new Error("Role lacks create on submission");
+				});
+
+				await expect(
+					submitQuestionnaireAnswers(newInstitutionParams),
+				).resolves.toEqual({ ok: false, error: "unexpected" });
+
+				expect(prismaTransactionMock).not.toHaveBeenCalled();
+				expect(createSubmissionMock).not.toHaveBeenCalled();
+			});
 		});
 	});
 
