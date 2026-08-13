@@ -107,6 +107,26 @@ describe("answerRepo", () => {
 		});
 	});
 
+	describe("listLatestByQuestionnaireAllInstitutions", () => {
+		it("returns one row per (institution, question) via distinct + newest-first ordering, excluding submission-only answers", async () => {
+			const answers = [{ id: 5, value: "latest" }];
+			findManyMock.mockResolvedValue(answers as never);
+
+			await expect(
+				answerRepo.listLatestByQuestionnaireAllInstitutions(1),
+			).resolves.toEqual(answers);
+
+			expect(findManyMock).toHaveBeenCalledWith(
+				expect.objectContaining({
+					where: { questionnaire_id: 1, institution_id: { not: null } },
+					distinct: ["institution_id", "question_id"],
+					orderBy: { created_at: "desc" },
+					include: answerInclude,
+				}),
+			);
+		});
+	});
+
 	describe("listByQuestionnaire", () => {
 		it("lists all answers across institutions for export", async () => {
 			findManyMock.mockResolvedValue([] as never);

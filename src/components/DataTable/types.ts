@@ -62,6 +62,12 @@ export interface DataTableConfig<T> {
 	onReviewPrefetch?: (row: T) => void;
 	getCanReview?: (row: T) => boolean;
 	reviewAriaLabel?: string;
+	canDownloadQuestionnaireAnswers?: boolean;
+	onDownloadQuestionnaireAnswers?: (row: T) => void;
+	downloadQuestionnaireAnswersAriaLabel?: string;
+	onDownloadQuestionnaireAnswersAll?: () => void;
+	downloadQuestionnaireAnswersAllLabel?: ReactNode;
+	downloadQuestionnaireAnswersAllAriaLabel?: string;
 	rowActions?: (row: T) => React.ReactNode;
 	actionsColumnSize?: number;
 
