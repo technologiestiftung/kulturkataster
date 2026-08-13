@@ -1,11 +1,16 @@
 "use server";
 
 import type { Prisma } from "@/generated/prisma";
+import { SubmissionEntityType, SubmissionType } from "@/generated/prisma";
 import { getCurrentUserId } from "@/server/actions/auth";
+import { createSubmission } from "@/server/actions/submissions";
 import { questionnaireRepo } from "@/server/data/questionnaireRepo";
 import { answerRepo } from "@/server/data/answerRepo";
 import { logger } from "@/server/logging/logger";
+import { prisma } from "@/server/prisma";
 import { authorizeTable, getAccessContextForUser } from "@/server/utils/rbac";
+import { validateSubmissionCreateInput } from "@/server/validation/submissions";
+import { normalizeSubmissionJson } from "@/lib/utils/submissionJsonUtils";
 
 export async function getOpenQuestionnaire() {
 	try {
@@ -53,20 +58,131 @@ export async function checkQuestionnaireCompletion(params: {
 	}
 }
 
+type NewInstitutionInput = {
+	name: unknown;
+	address: unknown;
+	categoryIds: number[];
+	established_since?: unknown;
+	newCategoryKeys: string[];
+};
+
+// Creates the institution Submission and the Answer rows linked to it in a single
+// transaction, then (best-effort, outside that transaction) any suggested new
+// categories — mirrors what the questionnaire's compact institution-create form
+// used to do itself via createSubmission at the moment that one step was filled
+// in. Doing it here instead, atomically with the answers, means an abandoned
+// session (never reaching this final submit) leaves nothing in the database.
+//
+// Bypasses submissionRepo/createSubmission for the submission+answers write on
+// purpose: those go through the plain prisma client, so calling them inside a
+// transaction callback wouldn't actually participate in it. Same reasoning as
+// reviewSubmission's own tx.institution.create/tx.answer.updateMany
+// (src/server/actions/submissions.ts).
+async function submitAnswersForNewInstitution(params: {
+	questionnaireId: number;
+	newInstitution: NewInstitutionInput;
+	answers: { questionId: number; value: Prisma.InputJsonValue }[];
+	submitterName?: string;
+	submitterEmail?: string;
+	currentUserId: string | null;
+}) {
+	const ctx = await getAccessContextForUser(params.currentUserId);
+	authorizeTable(ctx, "submission", "create");
+
+	const validatedSubmissionInput = validateSubmissionCreateInput({
+		entityType: SubmissionEntityType.institution,
+		entityId: null,
+		type: SubmissionType.create,
+		data: {
+			name: params.newInstitution.name,
+			address: params.newInstitution.address,
+			categoryIds: params.newInstitution.categoryIds,
+			established_since: params.newInstitution.established_since,
+		} as Prisma.InputJsonValue,
+	});
+
+	const createdSubmission = await prisma.$transaction(async (tx) => {
+		const submission = await tx.submission.create({
+			data: {
+				entity_type: validatedSubmissionInput.entityType,
+				entity_id: validatedSubmissionInput.entityId ?? null,
+				type: validatedSubmissionInput.type,
+				status: "approval_pending",
+				data: normalizeSubmissionJson(validatedSubmissionInput.data),
+				creator: params.currentUserId
+					? { connect: { id: params.currentUserId } }
+					: undefined,
+			},
+			select: { id: true },
+		});
+
+		await tx.answer.createMany({
+			data: params.answers.map((answer) => ({
+				questionnaire_id: params.questionnaireId,
+				question_id: answer.questionId,
+				submission_id: submission.id,
+				value: answer.value,
+				created_by: params.currentUserId,
+				submitter_name: params.submitterName,
+				submitter_email: params.submitterEmail,
+			})),
+		});
+
+		return submission;
+	});
+
+	if (params.newInstitution.newCategoryKeys.length > 0) {
+		await Promise.allSettled(
+			params.newInstitution.newCategoryKeys.map((key) =>
+				createSubmission({
+					entityType: SubmissionEntityType.category,
+					entityId: null,
+					type: SubmissionType.create,
+					data: { key },
+					meta: {
+						source: "questionnaire",
+						institutionSubmissionId: createdSubmission.id,
+					},
+				}),
+			),
+		);
+	}
+}
+
 export async function submitQuestionnaireAnswers(params: {
 	questionnaireId: number;
 	institutionId?: number;
 	submissionId?: number;
+	newInstitution?: NewInstitutionInput;
 	answers: { questionId: number; value: Prisma.InputJsonValue }[];
 	submitterName?: string;
 	submitterEmail?: string;
 }) {
-	const { institutionId, submissionId } = params;
-	if ((institutionId === undefined) === (submissionId === undefined)) {
+	const { institutionId, submissionId, newInstitution } = params;
+	const targetCount = [institutionId, submissionId, newInstitution].filter(
+		(value) => value !== undefined,
+	).length;
+	if (targetCount !== 1) {
 		return { ok: false as const, error: "invalid_target" as const };
 	}
 
 	try {
+		const currentUserId = await getCurrentUserId();
+
+		if (newInstitution) {
+			// A submission that doesn't exist yet cannot already have answers, so
+			// there's no "already submitted" case to guard against here.
+			await submitAnswersForNewInstitution({
+				questionnaireId: params.questionnaireId,
+				newInstitution,
+				answers: params.answers,
+				submitterName: params.submitterName,
+				submitterEmail: params.submitterEmail,
+				currentUserId,
+			});
+			return { ok: true as const };
+		}
+
 		const alreadySubmitted = await answerRepo.hasAnswered({
 			questionnaireId: params.questionnaireId,
 			institutionId,
@@ -75,8 +191,6 @@ export async function submitQuestionnaireAnswers(params: {
 		if (alreadySubmitted) {
 			return { ok: false as const, error: "already_submitted" as const };
 		}
-
-		const currentUserId = await getCurrentUserId();
 
 		await answerRepo.createMany(
 			params.answers.map((answer) => ({

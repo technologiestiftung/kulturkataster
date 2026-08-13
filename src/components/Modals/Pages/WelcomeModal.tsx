@@ -77,6 +77,15 @@ export function WelcomeModal() {
 								<ArrowNarrowRight className="stroke-primary-dark size-6" />
 								<a
 									className="underline body2 text-primary-dark font-semibold"
+									href="/questionnaire"
+								>
+									{t("content.welcomeModal.questionnaire")}
+								</a>
+							</div>
+							<div className="text-primary-dark flex space-x-2 cursor-pointer">
+								<ArrowNarrowRight className="stroke-primary-dark size-6" />
+								<a
+									className="underline body2 text-primary-dark font-semibold"
 									href="/newsletter"
 								>
 									{t("content.welcomeModal.newsletter")}

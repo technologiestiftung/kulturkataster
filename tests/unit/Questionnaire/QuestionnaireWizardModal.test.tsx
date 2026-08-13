@@ -49,6 +49,7 @@ type MockStepperState = {
 };
 
 let mockStepperState: MockStepperState;
+let lastHorizontalStepperProps: { initialStepId?: string } | null = null;
 
 vi.mock("@/components/HorizontalStepper", async () => {
 	const actual = await vi.importActual<
@@ -56,9 +57,16 @@ vi.mock("@/components/HorizontalStepper", async () => {
 	>("@/components/HorizontalStepper");
 	return {
 		...actual,
-		HorizontalStepper: ({ children }: { children: React.ReactNode }) => (
-			<div>{children}</div>
-		),
+		HorizontalStepper: ({
+			children,
+			initialStepId,
+		}: {
+			children: React.ReactNode;
+			initialStepId?: string;
+		}) => {
+			lastHorizontalStepperProps = { initialStepId };
+			return <div>{children}</div>;
+		},
 		StepIndicator: () => <div>step-indicator</div>,
 		useHorizontalStepper: () => mockStepperState,
 	};
@@ -156,6 +164,7 @@ describe("QuestionnaireWizardModal", () => {
 			setStepValidation: vi.fn(),
 		};
 		lastFormConfig = null;
+		lastHorizontalStepperProps = null;
 		mockFormSubmitData = {};
 		vi.mocked(submitQuestionnaireAnswers).mockReset();
 		vi.mocked(searchInstitutions).mockReset();
@@ -275,9 +284,8 @@ describe("QuestionnaireWizardModal", () => {
 		).not.toBeInTheDocument();
 	});
 
-	it("advances to the next step once the compact institution-create form creates a submission", async () => {
+	it("advances to the next step once the compact institution-create form is filled in, without creating anything yet", async () => {
 		mockStepperState.currentStepId = "institution-link";
-		vi.mocked(createSubmission).mockResolvedValue({ id: 77 } as any);
 
 		render(
 			<QuestionnaireWizardModal
@@ -293,10 +301,13 @@ describe("QuestionnaireWizardModal", () => {
 		await Promise.resolve();
 		await Promise.resolve();
 
-		expect(createSubmission).toHaveBeenCalledWith(
-			expect.objectContaining({ entityType: "institution", type: "create" }),
-		);
-		expect(useQuestionnaireDraftStore.getState().submissionId).toBe(77);
+		// Nothing is written to the DB just from filling out this step — the
+		// Submission only gets created atomically with the answers at the final
+		// "Absenden". createSubmission isn't even mocked here to prove that.
+		expect(useQuestionnaireDraftStore.getState().submissionId).toBeNull();
+		expect(useQuestionnaireDraftStore.getState().pendingInstitutionData).toEqual({
+			name: "Neuer Kulturort",
+		});
 		expect(mockStepperState.nextStep).toHaveBeenCalled();
 	});
 
@@ -451,5 +462,132 @@ describe("QuestionnaireWizardModal", () => {
 		expect(useQuestionnaireDraftStore.getState().institutionId).toBeNull();
 		expect(useQuestionnaireDraftStore.getState().submissionId).toBeNull();
 		expect(useQuestionnaireDraftStore.getState().answers).toEqual({});
+	});
+
+	it("seeds institutionId from the initialInstitutionId prop on mount", () => {
+		render(
+			<QuestionnaireWizardModal
+				routePath="/questionnaire"
+				questionnaire={buildQuestionnaire() as any}
+				categoryGroups={[]}
+				initialInstitutionId={42}
+			/>,
+		);
+
+		expect(useQuestionnaireDraftStore.getState().institutionId).toBe(42);
+		expect(useQuestionnaireDraftStore.getState().isInstitutionRegistered).toBe(
+			true,
+		);
+	});
+
+	it("seeds submissionId from the initialSubmissionId prop on mount", () => {
+		render(
+			<QuestionnaireWizardModal
+				routePath="/questionnaire"
+				questionnaire={buildQuestionnaire() as any}
+				categoryGroups={[]}
+				initialSubmissionId={99}
+			/>,
+		);
+
+		expect(useQuestionnaireDraftStore.getState().submissionId).toBe(99);
+		expect(useQuestionnaireDraftStore.getState().isInstitutionRegistered).toBe(
+			false,
+		);
+	});
+
+	it("passes a real step id through to HorizontalStepper's initialStepId", () => {
+		render(
+			<QuestionnaireWizardModal
+				routePath="/questionnaire"
+				questionnaire={buildQuestionnaire() as any}
+				categoryGroups={[]}
+				initialStepId="institution-link"
+			/>,
+		);
+
+		expect(lastHorizontalStepperProps?.initialStepId).toBe("institution-link");
+	});
+
+	it("renders the thank-you screen directly when initialShowThankYou is true, without a submission", () => {
+		render(
+			<QuestionnaireWizardModal
+				routePath="/questionnaire"
+				questionnaire={buildQuestionnaire() as any}
+				categoryGroups={[]}
+				initialShowThankYou
+			/>,
+		);
+
+		expect(
+			screen.getByText("Vielen Dank für Ihre Teilnahme!"),
+		).toBeInTheDocument();
+		expect(submitQuestionnaireAnswers).not.toHaveBeenCalled();
+	});
+
+	it("ignores an unknown step id instead of forwarding it to HorizontalStepper", () => {
+		render(
+			<QuestionnaireWizardModal
+				routePath="/questionnaire"
+				questionnaire={buildQuestionnaire() as any}
+				categoryGroups={[]}
+				initialStepId="not-a-real-step"
+			/>,
+		);
+
+		expect(lastHorizontalStepperProps?.initialStepId).toBeUndefined();
+	});
+
+	it("keeps the URL in sync with the current step and selected institution", () => {
+		mockStepperState.currentStepId = "institution-link";
+		const replaceStateSpy = vi.spyOn(window.history, "replaceState");
+
+		render(
+			<QuestionnaireWizardModal
+				routePath="/questionnaire"
+				questionnaire={buildQuestionnaire() as any}
+				categoryGroups={[]}
+			/>,
+		);
+
+		act(() => {
+			useQuestionnaireDraftStore.getState().setInstitutionId(5);
+		});
+
+		const lastCallUrl = replaceStateSpy.mock.calls.at(-1)?.[2] as URL;
+		expect(lastCallUrl.searchParams.get("step")).toBe("institution-link");
+		expect(lastCallUrl.searchParams.get("institutionId")).toBe("5");
+		expect(lastCallUrl.searchParams.get("submissionId")).toBeNull();
+
+		replaceStateSpy.mockRestore();
+	});
+
+	it("updates the URL to thankyou=1 and clears step/institution/submission ids after a successful submission", async () => {
+		mockStepperState.currentStepId = "block-1";
+		vi.mocked(submitQuestionnaireAnswers).mockResolvedValue({ ok: true });
+		const replaceStateSpy = vi.spyOn(window.history, "replaceState");
+
+		render(
+			<QuestionnaireWizardModal
+				routePath="/questionnaire"
+				questionnaire={buildQuestionnaire() as any}
+				categoryGroups={[]}
+			/>,
+		);
+		act(() => {
+			useQuestionnaireDraftStore.getState().setInstitutionId(5);
+		});
+
+		mockFormSubmitData = { q1: "my answer" };
+		fireEvent.click(screen.getByText("mock-form-submit"));
+		await screen.findByText("Vielen Dank für Ihre Teilnahme!");
+
+		const lastCallUrl = replaceStateSpy.mock.calls.at(-1)?.[2] as URL;
+		expect(lastCallUrl.searchParams.get("thankyou")).toBe("1");
+		expect(lastCallUrl.searchParams.get("step")).toBeNull();
+		expect(lastCallUrl.searchParams.get("institutionId")).toBeNull();
+		expect(lastCallUrl.searchParams.get("submissionId")).toBeNull();
+
+		replaceStateSpy.mockRestore();
 	});
 });

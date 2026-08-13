@@ -140,6 +140,7 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 	const { t: tEnum } = useTranslation();
 	const onChangeRef = useRef<FormWrapperConfig["onChange"]>(config.onChange);
 	const fieldVersionsRef = useRef<Record<string, number>>({});
+	const isSubmittingRef = useRef(false);
 	const allFields = useMemo(() => getAllFields(config.fields), [config.fields]);
 	const [formData, setFormData] = useState<Record<string, unknown>>(() =>
 		buildInitialFormData(config),
@@ -254,6 +255,7 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
+		if (isSubmittingRef.current) return;
 
 		setTouched(buildTouchedMap(allFields));
 		const validationErrors = validateForm();
@@ -266,12 +268,15 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 				]),
 			);
 			setFormData((prev) => ({ ...prev, ...normalizedFormData }));
+			isSubmittingRef.current = true;
 			try {
 				await config.onSubmit({ ...formData, ...normalizedFormData });
 			} catch (error) {
 				setFormError(
 					error instanceof Error ? error.message : t("common.alert.error"),
 				);
+			} finally {
+				isSubmittingRef.current = false;
 			}
 		}
 	};
