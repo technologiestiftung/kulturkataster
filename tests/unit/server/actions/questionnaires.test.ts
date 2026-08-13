@@ -165,7 +165,9 @@ describe("server actions: questionnaires", () => {
 		institutionFindUniqueMock.mockReset();
 		institutionFindUniqueMock.mockResolvedValue({ name: "Café Sibylle" });
 		submissionFindUniqueMock.mockReset();
-		submissionFindUniqueMock.mockResolvedValue({ data: { name: "Pending Place" } });
+		submissionFindUniqueMock.mockResolvedValue({
+			data: { name: "Pending Place" },
+		});
 	});
 
 	describe("getOpenQuestionnaire", () => {
