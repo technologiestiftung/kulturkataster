@@ -528,7 +528,9 @@ const mapEntityLink = (
 		case "questionnaire": {
 			const payload = asObject(audit.new_data);
 			const institutionId =
-				typeof payload?.institutionId === "number" ? payload.institutionId : null;
+				typeof payload?.institutionId === "number"
+					? payload.institutionId
+					: null;
 			return institutionId
 				? toLocalePath(`/map/institution/${institutionId}`)
 				: undefined;
