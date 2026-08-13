@@ -598,6 +598,55 @@ describe("buildQuestionnaireStepFormConfig", () => {
 			label: "1. Next step's first question",
 		});
 	});
+
+	it("does not number checkbox questions (freestanding agree/disagree statements, not a numbered sequence)", () => {
+		const questions = [
+			asQuestion({
+				...baseQuestion,
+				id: 1,
+				key: "q1",
+				label: "First question",
+				field_type: "text",
+				step: 7,
+				order: 0,
+			}),
+			asQuestion({
+				...baseQuestion,
+				id: 2,
+				key: "publish_named_consent",
+				label: "Ich stimme zu, dass ...",
+				field_type: "checkbox",
+				step: 7,
+				order: 1,
+			}),
+			asQuestion({
+				...baseQuestion,
+				id: 3,
+				key: "publish_anonymous_consent",
+				label: "Ich stimme einer Veröffentlichung ...",
+				field_type: "checkbox",
+				step: 7,
+				order: 2,
+			}),
+		];
+
+		const config = buildQuestionnaireStepFormConfig({
+			questions,
+			onChange: vi.fn(),
+			onSubmit: vi.fn(),
+			onCancel: vi.fn(),
+			submitLabel: "Absenden",
+			cancelLabel: "Zurück",
+		});
+
+		expect(
+			config.fields?.map((f) => (f.type === "section" ? undefined : f.label)),
+		).toEqual([
+			"1. First question",
+			"Ich stimme zu, dass ...",
+			"Ich stimme einer Veröffentlichung ...",
+		]);
+	});
 });
 
 describe("buildAnswerRowsFromDraft", () => {
