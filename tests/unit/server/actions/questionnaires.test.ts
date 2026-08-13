@@ -7,6 +7,9 @@ const {
 	hasAnsweredMock,
 	relinkMock,
 	listBySubmissionMock,
+	listLatestByQuestionnaireAndInstitutionMock,
+	listLatestByQuestionnaireAllInstitutionsMock,
+	listByQuestionnaireMock,
 	getCurrentUserIdMock,
 	getAccessContextForUserMock,
 	authorizeTableMock,
@@ -29,6 +32,9 @@ const {
 	hasAnsweredMock: vi.fn(),
 	relinkMock: vi.fn(),
 	listBySubmissionMock: vi.fn(),
+	listLatestByQuestionnaireAndInstitutionMock: vi.fn(),
+	listLatestByQuestionnaireAllInstitutionsMock: vi.fn(),
+	listByQuestionnaireMock: vi.fn(),
 	getCurrentUserIdMock: vi.fn(),
 	getAccessContextForUserMock: vi.fn(),
 	authorizeTableMock: vi.fn(),
@@ -53,12 +59,22 @@ vi.mock("@/server/data/questionnaireRepo", () => ({
 	},
 }));
 
+vi.mock("@/server/data/questionRepo", () => ({
+	questionRepo: {
+		listByQuestionnaire: listByQuestionnaireMock,
+	},
+}));
+
 vi.mock("@/server/data/answerRepo", () => ({
 	answerRepo: {
 		createMany: createManyMock,
 		hasAnswered: hasAnsweredMock,
 		relink: relinkMock,
 		listBySubmission: listBySubmissionMock,
+		listLatestByQuestionnaireAndInstitution:
+			listLatestByQuestionnaireAndInstitutionMock,
+		listLatestByQuestionnaireAllInstitutions:
+			listLatestByQuestionnaireAllInstitutionsMock,
 	},
 }));
 
@@ -110,6 +126,8 @@ vi.mock("@/server/logging/logger", () => ({
 
 import {
 	checkQuestionnaireCompletion,
+	downloadAllQuestionnaireAnswers,
+	downloadQuestionnaireAnswers,
 	getLinkedQuestionnaireAnswersCount,
 	getOpenQuestionnaire,
 	relinkQuestionnaireAnswers,
@@ -125,6 +143,9 @@ describe("server actions: questionnaires", () => {
 		hasAnsweredMock.mockResolvedValue(false);
 		relinkMock.mockReset();
 		listBySubmissionMock.mockReset();
+		listLatestByQuestionnaireAndInstitutionMock.mockReset();
+		listLatestByQuestionnaireAllInstitutionsMock.mockReset();
+		listByQuestionnaireMock.mockReset();
 		getCurrentUserIdMock.mockReset();
 		getAccessContextForUserMock.mockReset();
 		getAccessContextForUserMock.mockResolvedValue({ role: "admin" });
@@ -734,6 +755,226 @@ describe("server actions: questionnaires", () => {
 			listBySubmissionMock.mockRejectedValue(new Error("db down"));
 
 			await expect(getLinkedQuestionnaireAnswersCount(9)).resolves.toEqual({
+				ok: false,
+				error: "unexpected",
+			});
+			expect(loggerError).toHaveBeenCalled();
+		});
+	});
+
+	describe("downloadQuestionnaireAnswers", () => {
+		it("returns the mapped rows for the institution's latest answers", async () => {
+			listOpenMock.mockResolvedValue([{ id: 1 }]);
+			const answeredAt = new Date("2026-01-01T00:00:00.000Z");
+			listLatestByQuestionnaireAndInstitutionMock.mockResolvedValue([
+				{
+					question: { label: "Wie hoch ist die Miete?" },
+					value: "1200",
+					submitter_name: "Jane Doe",
+					submitter_email: "jane@example.test",
+					created_at: answeredAt,
+				},
+			]);
+
+			await expect(downloadQuestionnaireAnswers(2)).resolves.toEqual({
+				ok: true,
+				data: {
+					rows: [
+						{
+							questionLabel: "Wie hoch ist die Miete?",
+							value: "1200",
+							submitterName: "Jane Doe",
+							submitterEmail: "jane@example.test",
+							answeredAt,
+						},
+					],
+				},
+			});
+			expect(listLatestByQuestionnaireAndInstitutionMock).toHaveBeenCalledWith(
+				1,
+				2,
+			);
+		});
+
+		it("returns noOpenQuestionnaireAnswers when no questionnaire is open", async () => {
+			listOpenMock.mockResolvedValue([]);
+
+			await expect(downloadQuestionnaireAnswers(2)).resolves.toEqual({
+				ok: false,
+				error: "noOpenQuestionnaireAnswers",
+			});
+			expect(
+				listLatestByQuestionnaireAndInstitutionMock,
+			).not.toHaveBeenCalled();
+		});
+
+		it("returns noAnswers when the institution hasn't answered", async () => {
+			listOpenMock.mockResolvedValue([{ id: 1 }]);
+			listLatestByQuestionnaireAndInstitutionMock.mockResolvedValue([]);
+
+			await expect(downloadQuestionnaireAnswers(2)).resolves.toEqual({
+				ok: false,
+				error: "noAnswers",
+			});
+		});
+
+		it("returns forbidden when the user isn't authorized", async () => {
+			authorizeTableMock.mockImplementation(() => {
+				const error = new Error("Role lacks read on answer");
+				error.name = "RBACError";
+				throw error;
+			});
+
+			await expect(downloadQuestionnaireAnswers(2)).resolves.toEqual({
+				ok: false,
+				error: "forbidden",
+			});
+			expect(listOpenMock).not.toHaveBeenCalled();
+		});
+
+		it("returns unexpected on repo failure", async () => {
+			listOpenMock.mockResolvedValue([{ id: 1 }]);
+			listLatestByQuestionnaireAndInstitutionMock.mockRejectedValue(
+				new Error("db down"),
+			);
+
+			await expect(downloadQuestionnaireAnswers(2)).resolves.toEqual({
+				ok: false,
+				error: "unexpected",
+			});
+			expect(loggerError).toHaveBeenCalled();
+		});
+	});
+
+	describe("downloadAllQuestionnaireAnswers", () => {
+		it("groups the latest answers by institution and sorts institutions by name", async () => {
+			listOpenMock.mockResolvedValue([{ id: 1 }]);
+			listByQuestionnaireMock.mockResolvedValue([
+				{ id: 10, label: "Wie hoch ist die Miete?" },
+				{ id: 11, label: "Wie viele Mitarbeitende?" },
+			]);
+			const olderAnswer = new Date("2026-01-01T00:00:00.000Z");
+			const newerAnswer = new Date("2026-01-02T00:00:00.000Z");
+			listLatestByQuestionnaireAllInstitutionsMock.mockResolvedValue([
+				{
+					institution: { id: 2, name: "Zebra Kulturhaus" },
+					question_id: 10,
+					value: "1200",
+					created_at: olderAnswer,
+				},
+				{
+					institution: { id: 2, name: "Zebra Kulturhaus" },
+					question_id: 11,
+					value: "5",
+					created_at: newerAnswer,
+				},
+				{
+					institution: { id: 3, name: "Atelier Anders" },
+					question_id: 10,
+					value: "900",
+					created_at: olderAnswer,
+				},
+			]);
+
+			await expect(downloadAllQuestionnaireAnswers()).resolves.toEqual({
+				ok: true,
+				data: {
+					questions: [
+						{ id: 10, label: "Wie hoch ist die Miete?" },
+						{ id: 11, label: "Wie viele Mitarbeitende?" },
+					],
+					institutions: [
+						{
+							id: 3,
+							name: "Atelier Anders",
+							answeredAt: olderAnswer,
+							answers: { 10: "900" },
+						},
+						{
+							id: 2,
+							name: "Zebra Kulturhaus",
+							// answeredAt tracks the latest of this institution's own
+							// answers, not a global latest — must stay newerAnswer.
+							answeredAt: newerAnswer,
+							answers: { 10: "1200", 11: "5" },
+						},
+					],
+				},
+			});
+		});
+
+		it("skips answers that are only linked to a pending submission, not an institution", async () => {
+			listOpenMock.mockResolvedValue([{ id: 1 }]);
+			listByQuestionnaireMock.mockResolvedValue([
+				{ id: 10, label: "Wie hoch ist die Miete?" },
+			]);
+			listLatestByQuestionnaireAllInstitutionsMock.mockResolvedValue([
+				{
+					institution: null,
+					question_id: 10,
+					value: "should be excluded",
+					created_at: new Date(),
+				},
+				{
+					institution: { id: 2, name: "Zebra Kulturhaus" },
+					question_id: 10,
+					value: "1200",
+					created_at: new Date(),
+				},
+			]);
+
+			const result = await downloadAllQuestionnaireAnswers();
+
+			expect(result.ok).toBe(true);
+			if (result.ok) {
+				expect(result.data.institutions).toHaveLength(1);
+				expect(result.data.institutions[0].id).toBe(2);
+			}
+		});
+
+		it("returns noOpenQuestionnaireAnswers when no questionnaire is open", async () => {
+			listOpenMock.mockResolvedValue([]);
+
+			await expect(downloadAllQuestionnaireAnswers()).resolves.toEqual({
+				ok: false,
+				error: "noOpenQuestionnaireAnswers",
+			});
+			expect(listByQuestionnaireMock).not.toHaveBeenCalled();
+		});
+
+		it("returns noAnswers when nobody has answered yet", async () => {
+			listOpenMock.mockResolvedValue([{ id: 1 }]);
+			listByQuestionnaireMock.mockResolvedValue([]);
+			listLatestByQuestionnaireAllInstitutionsMock.mockResolvedValue([]);
+
+			await expect(downloadAllQuestionnaireAnswers()).resolves.toEqual({
+				ok: false,
+				error: "noAnswers",
+			});
+		});
+
+		it("returns forbidden when the user isn't authorized", async () => {
+			authorizeTableMock.mockImplementation(() => {
+				const error = new Error("Role lacks read on answer");
+				error.name = "RBACError";
+				throw error;
+			});
+
+			await expect(downloadAllQuestionnaireAnswers()).resolves.toEqual({
+				ok: false,
+				error: "forbidden",
+			});
+			expect(listOpenMock).not.toHaveBeenCalled();
+		});
+
+		it("returns unexpected on repo failure", async () => {
+			listOpenMock.mockResolvedValue([{ id: 1 }]);
+			listByQuestionnaireMock.mockResolvedValue([]);
+			listLatestByQuestionnaireAllInstitutionsMock.mockRejectedValue(
+				new Error("db down"),
+			);
+
+			await expect(downloadAllQuestionnaireAnswers()).resolves.toEqual({
 				ok: false,
 				error: "unexpected",
 			});
