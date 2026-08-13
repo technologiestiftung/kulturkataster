@@ -41,6 +41,7 @@ import ChevronDown from "@/icons/chevron-down.svg";
 import Edit from "@/icons/edit.svg";
 import Eye from "@/icons/eye.svg";
 import Download from "@/icons/download.svg";
+import DownloadQuestionnaireAnswers from "@/icons/download-questionnaire-answers.svg";
 import ArrowNarrowLeft from "@/icons/arrow-narrow-left.svg";
 import ArrowNarrowRight from "@/icons/arrow-narrow-right.svg";
 import { useWindowVirtualizer } from "@tanstack/react-virtual";
@@ -647,6 +648,11 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 		typeof config.rightButton?.label === "string"
 			? config.rightButton.label
 			: undefined;
+	const downloadQuestionnaireAnswersAllAriaLabel =
+		config.downloadQuestionnaireAnswersAllAriaLabel ??
+		(typeof config.downloadQuestionnaireAnswersAllLabel === "string"
+			? config.downloadQuestionnaireAnswersAllLabel
+			: undefined);
 	const filterButtonAriaLabel = (() => {
 		if (typeof config.filterModal?.triggerAriaLabel === "string") {
 			return config.filterModal.triggerAriaLabel;
@@ -783,7 +789,7 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 							</div>
 						)}
 						{!isSearchOpen && config.rightButton && (
-							<div className="gap-2 flex items-center">
+							<div className="gap-2 flex items-center mr-2">
 								<Button
 									onClick={config.rightButton.onClick}
 									radius="full"
@@ -798,6 +804,24 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 								</Label>
 							</div>
 						)}
+						{!isSearchOpen &&
+							config.canDownloadQuestionnaireAnswers &&
+							config.onDownloadQuestionnaireAnswersAll && (
+								<div className="gap-2 flex items-center">
+									<Button
+										onClick={config.onDownloadQuestionnaireAnswersAll}
+										radius="full"
+										variant="surface"
+										iconSize="md"
+										aria-label={downloadQuestionnaireAnswersAllAriaLabel}
+									>
+										<DownloadQuestionnaireAnswers className="h-5 w-5 fill-neutral-80" />
+									</Button>
+									<Label className="md:block hidden">
+										{config.downloadQuestionnaireAnswersAllLabel}
+									</Label>
+								</div>
+							)}
 					</div>
 				</div>
 			)}
@@ -1060,6 +1084,26 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 																							aria-label="Edit"
 																						>
 																							<Edit className="h-5 w-5 text-neutral-80" />
+																						</Button>
+																					) : null}
+																					{config.canDownloadQuestionnaireAnswers &&
+																					config.onDownloadQuestionnaireAnswers ? (
+																						<Button
+																							iconSize="sm"
+																							variant="surface"
+																							radius="full"
+																							onClick={(event) => {
+																								event.stopPropagation();
+																								config.onDownloadQuestionnaireAnswers?.(
+																									row.original,
+																								);
+																							}}
+																							aria-label={
+																								config.downloadQuestionnaireAnswersAriaLabel ??
+																								"Download questionnaire answers"
+																							}
+																						>
+																							<DownloadQuestionnaireAnswers className="h-5 w-5 fill-neutral-80" />
 																						</Button>
 																					) : null}
 																				</div>

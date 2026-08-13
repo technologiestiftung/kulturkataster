@@ -5,6 +5,7 @@ import { SubmissionEntityType, SubmissionType } from "@/generated/prisma";
 import { getCurrentUserId } from "@/server/actions/auth";
 import { createSubmission } from "@/server/actions/submissions";
 import { questionnaireRepo } from "@/server/data/questionnaireRepo";
+import { questionRepo } from "@/server/data/questionRepo";
 import { answerRepo } from "@/server/data/answerRepo";
 import { logger } from "@/server/logging/logger";
 import { prisma } from "@/server/prisma";
@@ -328,6 +329,148 @@ export async function getLinkedQuestionnaireAnswersCount(submissionId: number) {
 	}
 }
 
+export type QuestionnaireAnswersExportErrorCode =
+	| "forbidden"
+	| "noAnswers"
+	| "noOpenQuestionnaireAnswers"
+	| "unexpected";
+
+// Admin-only: builds the rows behind the "download questionnaire answers"
+// button on an institution — one row per answered question, using the
+// latest answer per question in case a submitter re-answered.
+export async function downloadQuestionnaireAnswers(institutionId: number) {
+	try {
+		const currentUserId = await getCurrentUserId();
+		const ctx = await getAccessContextForUser(currentUserId);
+		authorizeTable(ctx, "answer", "read");
+
+		const openQuestionnaires = await questionnaireRepo.listOpen();
+		if (openQuestionnaires.length === 0) {
+			return {
+				ok: false as const,
+				error: "noOpenQuestionnaireAnswers" as const,
+			};
+		}
+
+		const answers = await answerRepo.listLatestByQuestionnaireAndInstitution(
+			openQuestionnaires[0].id,
+			institutionId,
+		);
+		if (answers.length === 0) {
+			return { ok: false as const, error: "noAnswers" as const };
+		}
+
+		return {
+			ok: true as const,
+			data: {
+				rows: answers.map((answer) => ({
+					questionLabel: answer.question.label,
+					value: answer.value,
+					submitterName: answer.submitter_name,
+					submitterEmail: answer.submitter_email,
+					answeredAt: answer.created_at,
+				})),
+			},
+		};
+	} catch (error) {
+		if (error instanceof Error && error.name === "RBACError") {
+			return { ok: false as const, error: "forbidden" as const };
+		}
+		logger.error("questionnaire.export_for_institution.failed", error, {
+			subsystem: "questionnaire",
+			institution_id: institutionId,
+		});
+		return { ok: false as const, error: "unexpected" as const };
+	}
+}
+
+// Admin-only: builds the rows behind the "download all questionnaire answers"
+// button — one row per question, one column per institution, using the latest
+// answer per (institution, question) in case a submitter re-answered.
+export async function downloadAllQuestionnaireAnswers() {
+	try {
+		const currentUserId = await getCurrentUserId();
+		const ctx = await getAccessContextForUser(currentUserId);
+		authorizeTable(ctx, "answer", "read");
+
+		const openQuestionnaires = await questionnaireRepo.listOpen();
+		if (openQuestionnaires.length === 0) {
+			return {
+				ok: false as const,
+				error: "noOpenQuestionnaireAnswers" as const,
+			};
+		}
+		const questionnaireId = openQuestionnaires[0].id;
+
+		const [questions, answers] = await Promise.all([
+			questionRepo.listByQuestionnaire(questionnaireId),
+			answerRepo.listLatestByQuestionnaireAllInstitutions(questionnaireId),
+		]);
+		if (answers.length === 0) {
+			return { ok: false as const, error: "noAnswers" as const };
+		}
+
+		const institutionsById = new Map<
+			number,
+			{
+				id: number;
+				name: string;
+				answeredAt: Date;
+				answers: Map<number, unknown>;
+			}
+		>();
+		for (const answer of answers) {
+			if (!answer.institution) continue;
+			const existing = institutionsById.get(answer.institution.id);
+			if (existing) {
+				existing.answers.set(answer.question_id, answer.value);
+				if (answer.created_at > existing.answeredAt) {
+					existing.answeredAt = answer.created_at;
+				}
+			} else {
+				institutionsById.set(answer.institution.id, {
+					id: answer.institution.id,
+					name: answer.institution.name,
+					answeredAt: answer.created_at,
+					answers: new Map([[answer.question_id, answer.value]]),
+				});
+			}
+		}
+
+		const institutions = Array.from(institutionsById.values()).sort((a, b) =>
+			a.name.localeCompare(b.name),
+		);
+
+		return {
+			ok: true as const,
+			data: {
+				questions: questions.map((question) => ({
+					id: question.id,
+					label: question.label,
+				})),
+				institutions: institutions.map((institution) => ({
+					id: institution.id,
+					name: institution.name,
+					answeredAt: institution.answeredAt,
+					answers: Object.fromEntries(institution.answers),
+				})),
+			},
+		};
+	} catch (error) {
+		if (error instanceof Error && error.name === "RBACError") {
+			return { ok: false as const, error: "forbidden" as const };
+		}
+		logger.error("questionnaire.export_all.failed", error, {
+			subsystem: "questionnaire",
+		});
+		return { ok: false as const, error: "unexpected" as const };
+	}
+}
+
+// Admin-only: re-point a pending submission's linked answers at a different
+// submission or an approved institution — e.g. the proposed venue turns out to be
+// a duplicate of an existing one. Gated the same way reviewSubmission gates
+// reviewing a submission, since this is a submission-management operation.
 export async function relinkQuestionnaireAnswers(params: {
 	fromSubmissionId: number;
 	toInstitutionId?: number;

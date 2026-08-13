@@ -1916,7 +1916,9 @@
 			"actions": {
 				"addInstitution": "Kulturort hinzufügen",
 				"claimInstitution": "Meine Orte anfragen",
-				"downloadList": "Liste herunterladen"
+				"downloadList": "Liste herunterladen",
+				"downloadQuestionnaire": "Fragebogen Antworten herunterladen",
+				"downloadQuestionnaireAll": "Alle Fragebögen herunterladen"
 			},
 			"empty": {
 				"description": "Sie können direkt neue Einträge starten.",
@@ -1924,6 +1926,15 @@
 			},
 			"filter": {
 				"title": "Kulturorte filtern"
+			},
+			"questionnaireAnswersDownload": {
+				"error": {
+					"forbidden": "Sie sind nicht berechtigt, diesen Fragebogen herunterzuladen.",
+					"noAnswers": "Für diesen Kulturort liegen keine Antworten vor.",
+					"noOpenQuestionnaireAnswers": "Kein aktiver Fragebogen vorhanden.",
+					"unexpected": "Fragebogen konnte nicht heruntergeladen werden."
+				},
+				"title": "Fragebogen Antworten herunterladen"
 			},
 			"search": {
 				"title": "Kulturorte suchen"
@@ -2108,6 +2119,7 @@
 				},
 				"tables": {
 					"address": "Adressen",
+					"answer": "Fragebogen Antworten",
 					"category": "Kategorien",
 					"entity_audit": "Aktivität",
 					"group": "Gruppen",
