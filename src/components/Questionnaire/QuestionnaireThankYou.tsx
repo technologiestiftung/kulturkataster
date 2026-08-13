@@ -8,7 +8,7 @@ export function QuestionnaireThankYou() {
 
 	return (
 		<div className="motion-safe:animate-in motion-safe:fade-in-0 motion-safe:zoom-in-95 motion-safe:slide-in-from-bottom-2 motion-safe:duration-500">
-			<div className="h-50 relative -my-4 -mt-16 left-1/2 w-screen -translate-x-1/2 overflow-hidden mb-16">
+			<div className="h-50 relative -my-4 -mt-[7.5rem] left-1/2 w-screen -translate-x-1/2 overflow-hidden mb-16">
 				<Image
 					src="/resources/thankyou.png"
 					alt="Thank you background"

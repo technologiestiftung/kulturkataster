@@ -24,10 +24,18 @@ export function QuestionnaireWizardModal({
 	routePath,
 	questionnaire,
 	categoryGroups,
+	initialInstitutionId,
+	initialSubmissionId,
+	initialStepId,
+	initialShowThankYou,
 }: {
 	routePath?: string;
 	questionnaire: QuestionnaireWithQuestions;
 	categoryGroups: Category[];
+	initialInstitutionId?: number;
+	initialSubmissionId?: number;
+	initialStepId?: string;
+	initialShowThankYou?: boolean;
 }) {
 	const { t } = useTranslation();
 	const closeModal = useRoutedModalClose({});
@@ -50,6 +58,11 @@ export function QuestionnaireWizardModal({
 		],
 		[stepGroups],
 	);
+
+	const initialWizardStepId =
+		initialStepId && steps.some((step) => step.id === initialStepId)
+			? initialStepId
+			: undefined;
 
 	return (
 		<Modal
@@ -77,11 +90,14 @@ export function QuestionnaireWizardModal({
 			}
 		>
 			<div className="flex min-h-full flex-col space-y-10 py-10 md:bg-background">
-				<HorizontalStepper steps={steps}>
+				<HorizontalStepper steps={steps} initialStepId={initialWizardStepId}>
 					<QuestionnaireWizardContent
 						questionnaire={questionnaire}
 						categoryGroups={categoryGroups}
 						onSubmitError={setSubmitError}
+						initialInstitutionId={initialInstitutionId}
+						initialSubmissionId={initialSubmissionId}
+						initialShowThankYou={initialShowThankYou}
 					/>
 				</HorizontalStepper>
 			</div>

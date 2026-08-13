@@ -2,17 +2,12 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { QuestionnaireInstitutionCreateForm } from "@/components/Questionnaire/QuestionnaireInstitutionCreateForm";
-import { createSubmission } from "@/server/actions/submissions";
 
 vi.mock("react-i18next", () => ({
 	useTranslation: () => ({
 		t: (key: string, options?: Record<string, unknown>) =>
 			(options?.defaultValue as string) ?? key,
 	}),
-}));
-
-vi.mock("@/server/actions/submissions", () => ({
-	createSubmission: vi.fn(),
 }));
 
 vi.mock("@/server/actions/maptiler", () => ({
@@ -22,8 +17,8 @@ vi.mock("@/server/actions/maptiler", () => ({
 
 let lastFormConfig: {
 	fields?: Array<Record<string, unknown>>;
+	initialValues?: Record<string, unknown>;
 	onSubmit?: (data: Record<string, unknown>) => void | Promise<void>;
-	submitDisabled?: boolean;
 } | null = null;
 
 vi.mock("@/components/FormWrapper", () => ({
@@ -48,11 +43,12 @@ describe("QuestionnaireInstitutionCreateForm", () => {
 	beforeEach(() => {
 		lastFormConfig = null;
 		lastSubmitData = {};
-		vi.mocked(createSubmission).mockReset();
 	});
 
-	it("creates an institution submission with questionnaire institution details and full address", async () => {
-		vi.mocked(createSubmission).mockResolvedValue({ id: 42 } as any);
+	// This component no longer creates anything itself (no createSubmission call) —
+	// it's a pure client-side data collector. The Submission gets created later,
+	// atomically with the answers, at the final questionnaire submit.
+	it("hands the raw form data to onCreated without writing anything itself", async () => {
 		const onCreated = vi.fn();
 
 		render(
@@ -69,50 +65,23 @@ describe("QuestionnaireInstitutionCreateForm", () => {
 			name: "Test Kulturort",
 			categoryFilters: { category_keys: ["museums"] },
 			established_since: "2015-01-01",
-			"address.lat": "52.5",
-			"address.lng": "13.4",
+			newCategory: "Archiv, Werkstatt",
 			"address.streetLine": "Musterstraße 1",
-			"address.address_suffix": "Hinterhof",
 			"address.zip": "12345",
 			"address.city": "Berlin",
-			"address.neighbourhood": "Kreuzberg",
-			"address.district": "Friedrichshain-Kreuzberg",
-			"address.cultural_area": "Wrangelkiez",
 		};
 		screen.getByText("mock-form-submit").click();
-		await Promise.resolve();
-		await Promise.resolve();
 
-		expect(createSubmission).toHaveBeenCalledWith(
-			expect.objectContaining({
-				entityType: "institution",
-				entityId: null,
-				type: "create",
-				data: expect.objectContaining({
-					name: "Test Kulturort",
-					established_since: "2015-01-01",
-					address: expect.objectContaining({
-						lat: 52.5,
-						lng: 13.4,
-						address_suffix: "Hinterhof",
-						zipcode: "12345",
-						city: "Berlin",
-						neighbourhood: "Kreuzberg",
-						district: "Friedrichshain-Kreuzberg",
-						cultural_area: "Wrangelkiez",
-					}),
-				}),
-			}),
-		);
-		expect(onCreated).toHaveBeenCalledWith(42);
+		expect(onCreated).toHaveBeenCalledWith(lastSubmitData);
 	});
 
-	it("creates a separate category submission for each suggested new category", async () => {
-		vi.mocked(createSubmission).mockResolvedValue({ id: 7 } as any);
+	it("pre-fills the form from the initialValues prop (e.g. after going back and forward again)", () => {
+		const initialValues = { name: "Previously typed name" };
 
 		render(
 			<QuestionnaireInstitutionCreateForm
 				categoryGroups={[]}
+				initialValues={initialValues}
 				onCreated={vi.fn()}
 				onBack={vi.fn()}
 				backLabel="Zurück"
@@ -120,28 +89,7 @@ describe("QuestionnaireInstitutionCreateForm", () => {
 			/>,
 		);
 
-		lastSubmitData = {
-			name: "Test Kulturort",
-			newCategory: "Archiv, Werkstatt",
-		};
-		screen.getByText("mock-form-submit").click();
-		await Promise.resolve();
-		await Promise.resolve();
-		await Promise.resolve();
-
-		expect(createSubmission).toHaveBeenCalledWith(
-			expect.objectContaining({
-				entityType: "category",
-				data: { key: "Archiv" },
-				meta: expect.objectContaining({ institutionSubmissionId: 7 }),
-			}),
-		);
-		expect(createSubmission).toHaveBeenCalledWith(
-			expect.objectContaining({
-				entityType: "category",
-				data: { key: "Werkstatt" },
-			}),
-		);
+		expect(lastFormConfig?.initialValues).toBe(initialValues);
 	});
 
 	it("renders the new-institution questionnaire and full address fields", () => {
@@ -176,19 +124,5 @@ describe("QuestionnaireInstitutionCreateForm", () => {
 			"address.cultural_area",
 			"established_since",
 		]);
-	});
-
-	it("disables the submit button while submitting", () => {
-		render(
-			<QuestionnaireInstitutionCreateForm
-				categoryGroups={[]}
-				onCreated={vi.fn()}
-				onBack={vi.fn()}
-				backLabel="Zurück"
-				submitLabel="Weiter"
-			/>,
-		);
-
-		expect(lastFormConfig?.submitDisabled).toBe(false);
 	});
 });

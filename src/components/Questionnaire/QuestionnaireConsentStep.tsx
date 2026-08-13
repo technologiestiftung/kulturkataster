@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -41,29 +41,18 @@ export function QuestionnaireConsentStep({
 					})}
 				</p>
 				<p>
-					{t("content.questionnaireWizard.consent.paragraph2Prefix", {
-						defaultValue: "Unter ",
-					})}
-					<strong>
-						{t("content.questionnaireWizard.consent.paragraph2Term", {
-							defaultValue: "Kultureinrichtungen",
-						})}
-					</strong>
-					{t("content.questionnaireWizard.consent.paragraph2Suffix", {
-						defaultValue:
-							" verstehen wir im Rahmen dieser Befragung „dauerhaft oder wiederkehrend genutzte Orte und Organisationen kultureller Produktion, Präsentation, Vermittlung oder Begegnung“, beispielsweise Theater, Musikspielstätten, Ateliers, Galerien, soziokulturelle Zentren, Literaturorte, Tanz- und Performanceorte oder vergleichbare Einrichtungen.",
-					})}
+					<Trans
+						i18nKey="content.questionnaireWizard.consent.paragraph2"
+						components={[<strong key="term" />, <strong key="quote" />]}
+						defaults="Unter <0>Kultureinrichtungen</0> verstehen wir im Rahmen dieser Befragung <1>„dauerhaft oder wiederkehrend genutzte Orte und Organisationen kultureller Produktion, Präsentation, Vermittlung oder Begegnung“</1>, beispielsweise Theater, Musikspielstätten, Ateliers, Galerien, soziokulturelle Zentren, Literaturorte, Tanz- und Performanceorte oder vergleichbare Einrichtungen."
+					/>
 				</p>
 				<p>
-					{t("content.questionnaireWizard.consent.paragraph3Prefix", {
-						defaultValue:
-							"Die Beantwortung des Fragebogens dauert voraussichtlich ",
-					})}
-					<strong>
-						{t("content.questionnaireWizard.consent.paragraph3Bold", {
-							defaultValue: "etwa 15 bis 20 Minuten.",
-						})}
-					</strong>
+					<Trans
+						i18nKey="content.questionnaireWizard.consent.paragraph3"
+						components={[<strong key="duration" />]}
+						defaults="Die Beantwortung des Fragebogens dauert voraussichtlich <0>etwa 15 bis 20 Minuten.</0>"
+					/>
 				</p>
 				<p>
 					{t("content.questionnaireWizard.consent.paragraph4", {
@@ -78,15 +67,11 @@ export function QuestionnaireConsentStep({
 					})}
 				</p>
 				<p>
-					<strong>
-						{t("content.questionnaireWizard.consent.paragraph6Bold", {
-							defaultValue: "Die Teilnahme an der Befragung ist freiwillig.",
-						})}
-					</strong>{" "}
-					{t("content.questionnaireWizard.consent.paragraph6Suffix", {
-						defaultValue:
-							"Mit dem Setzen des Häkchens bestätigen Sie, dass Sie die Informationen zur Befragung zur Kenntnis genommen haben und mit der Verarbeitung Ihrer Angaben zu wissenschaftlichen Zwecken im Rahmen dieses Projekts einverstanden sind.",
-					})}
+					<Trans
+						i18nKey="content.questionnaireWizard.consent.paragraph6"
+						components={[<strong key="voluntary" />]}
+						defaults="<0>Die Teilnahme an der Befragung ist freiwillig.</0> Mit dem Setzen des Häkchens bestätigen Sie, dass Sie die Informationen zur Befragung zur Kenntnis genommen haben und mit der Verarbeitung Ihrer Angaben zu wissenschaftlichen Zwecken im Rahmen dieses Projekts einverstanden sind."
+					/>
 				</p>
 				<p>
 					{t("content.questionnaireWizard.consent.thankYouClosing", {
