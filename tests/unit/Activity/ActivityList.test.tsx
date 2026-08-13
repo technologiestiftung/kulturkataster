@@ -893,4 +893,75 @@ describe("ActivityList filters", () => {
 			expect(getEntityAuditsPage).toHaveBeenCalledTimes(2);
 		});
 	});
+
+	it("renders a questionnaire-completion audit with the questionnaire title, the institution's name, and a link to the institution", () => {
+		mockState.entityAudits = [
+			makeAudit({
+				id: 500,
+				action: "create",
+				entity_type: "questionnaire",
+				entity_id: "65",
+				status: "completed",
+				user: null,
+				new_data: {
+					questionnaireId: 65,
+					questionnaireTitle: "Gefährdungsradar Umfrage",
+					entityName: "Café Sibylle",
+					institutionId: 42,
+					submissionId: null,
+					answerCount: 12,
+				},
+				meta_info: {
+					intent: "questionnaire_submitted",
+					submitter_name: null,
+					submitter_email: null,
+				},
+			}),
+		];
+
+		render(<ActivityList />);
+
+		const row = screen.getByTestId("activity-row");
+		expect(row).toHaveTextContent("Gefährdungsradar Umfrage");
+		expect(row).toHaveTextContent("Café Sibylle");
+		expect(screen.getByTestId("primary-link-audit:500")).toHaveAttribute(
+			"href",
+			"/de/map/institution/42",
+		);
+	});
+
+	it("falls back to just the questionnaire title when no institution/submission name is known", () => {
+		mockState.entityAudits = [
+			makeAudit({
+				id: 501,
+				action: "create",
+				entity_type: "questionnaire",
+				entity_id: "65",
+				status: "completed",
+				user: null,
+				new_data: {
+					questionnaireId: 65,
+					questionnaireTitle: "Gefährdungsradar Umfrage",
+					entityName: null,
+					institutionId: null,
+					submissionId: null,
+					answerCount: 5,
+				},
+				meta_info: {
+					intent: "questionnaire_submitted",
+					submitter_name: null,
+					submitter_email: null,
+				},
+			}),
+		];
+
+		render(<ActivityList />);
+
+		expect(screen.getByTestId("activity-row")).toHaveTextContent(
+			"Gefährdungsradar Umfrage",
+		);
+		expect(
+			screen.queryByTestId("primary-link-audit:501"),
+		).not.toBeInTheDocument();
+	});
 });

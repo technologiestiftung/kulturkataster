@@ -291,6 +291,7 @@ export function buildQuestionnaireStepFormConfig(params: {
 	return {
 		fields: questions.map((question, index) => {
 			const field = buildFieldConfigFromQuestion(question, locale);
+			if (field.type === "checkbox") return field;
 			return { ...field, label: `${index + 1}. ${field.label}` };
 		}),
 		initialValues,
