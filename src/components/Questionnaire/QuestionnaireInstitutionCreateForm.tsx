@@ -184,9 +184,10 @@ export function QuestionnaireInstitutionCreateForm({
 						name: "established_since",
 						label:
 							"Seit wann befindet sich die Einrichtung am aktuellen Standort?",
-						type: "date",
+						type: "year",
 						required: true,
 						layout: { span: "full" },
+						placeholder: fieldPlaceholder("established_since") || "JJJJ",
 					},
 				],
 			},

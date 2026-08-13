@@ -148,41 +148,41 @@
 						"phoneLabel": "Telefon",
 						"title": "Kontakt"
 					},
-					"description": "Diese FAQs beziehen sich ausschließlich auf den User-Bereich des Kulturkatasters, also auf Themen rund um Konto/Account, Rollen- und Rechteverwaltung (Administrationsrechte), das Verwalten von Institutionen sowie redaktionelle Workflows (z. B. Anlegen und Pflegen von Profilen). Allgemeine Fragen zum Auftrag und Nutzen des Kulturkatasters, zu den Umfängen der verschiedenen Versionen sowie zur methodischen Vorgehensweise finden Sie im Bereich „Infos & Services“ auf dem Kulturkataster. Die FAQs werden stetig erweitert; falls Ihre Frage hier noch nicht auftaucht, schreiben Sie der Redaktion gern per E-Mail an info@kulturkataster.berlin.",
+					"description": "Diese FAQs beziehen sich ausschließlich auf den User\\*innen-Bereich des Kulturkatasters, also auf Themen rund um Konto/Account und das Pflegen von Daten. \nAllgemeine Fragen zum Auftrag und Nutzen des Kulturkatasters, zu den Umfängen der verschiedenen Versionen sowie zur methodischen Vorgehensweise finden Sie im Bereich „Infos & Service“ auf dem Kulturkataster. \nDie FAQs werden stetig erweitert; falls Ihre Frage hier noch nicht auftaucht, schreiben Sie der Redaktion gern per E-Mail an info@kulturkataster.berlin.",
 					"question1": {
 						"answer": "Wenn Sie eingeloggt sind, können Sie Ihre Kontodaten im Kulturkataster-Portal über das Zahnrad-Symbol oben links ändern. Dort können Sie zum Beispiel Ihren Namen, Ihre E-Mail-Adresse oder Ihr Passwort anpassen. Wenn Sie Ihr Passwort ändern möchten, müssen Sie zunächst Ihr bisheriges Passwort eingeben und können anschließend ein neues Passwort festlegen.",
 						"title": "Wie kann ich meine Kontodaten ändern?"
 					},
 					"question10": {
-						"answer": "Sie können über das Pfeilsymbol im linken Menü — zweites Symbol von oben, Pfeil nach unten — eine Liste der Kulturorte herunterladen. Vor dem Download müssen Sie bestätigen, dass Sie die Vereinbarungen über die Datennutzung sowie die rechtlichen Hinweise zur Kenntnis genommen haben und ihnen zustimmen.\nVor dem Download können Sie die angezeigten Daten auf der Karte filtern bzw. sortieren. Wenn Sie anschließend auf das Download-Symbol klicken, wird die aktuell angezeigte Auswahl heruntergeladen. Der Export ist im XLS-, XLSX- oder CSV-Format möglichdd. ///n\nDie im Download enthaltenen Daten entsprechen jeweils dem sichtbaren Datenstand und den Zugriffsrechten Ihres Nutzerstatus.\nMit dem Download erklären Sie sich damit einverstanden, die Daten nicht an Dritte weiterzugeben, sie ausschließlich im Rahmen der gesetzlichen Vorgaben — insbesondere der DSGVO, soweit personenbezogene Daten betroffen sind — sowie nur für die Zwecke des Kulturkatasters zu nutzen.\nDie Zwecke des Kulturkatasters sind nicht kommerzieller Natur. Sie umfassen die systematische Erfassung, Strukturierung und öffentliche Bereitstellung von Daten über Orte kultureller Produktion und Nutzung im Land Berlin. Ziel ist es, eine belastbare Datengrundlage für kulturpolitische Entscheidungen, kulturelle Stadtentwicklung sowie für die Zusammenarbeit zwischen Kulturakteur*innen, Verwaltung, Wissenschaft und Öffentlichkeit zu schaffen.",
+						"answer": "Sie können über das Pfeilsymbol im linken Menü — zweites Symbol von oben, Pfeil nach unten — eine Liste der Kulturorte herunterladen. Vor dem Download müssen Sie bestätigen, dass Sie die Vereinbarungen über die Datennutzung sowie die rechtlichen Hinweise zur Kenntnis genommen haben und ihnen zustimmen.\nVor dem Download können Sie die angezeigten Daten auf der Karte filtern bzw. sortieren. Wenn Sie anschließend auf das Download-Symbol klicken, wird die aktuell angezeigte Auswahl heruntergeladen. Der Export ist im XLS-, XLSX- oder CSV-Format möglich. Die im Download enthaltenen Daten entsprechen jeweils dem sichtbaren Datenstand und den Zugriffsrechten Ihres Nutzerstatus.\nMit dem Download erklären Sie sich damit einverstanden, die Daten nicht an Dritte weiterzugeben, sie ausschließlich im Rahmen der gesetzlichen Vorgaben — insbesondere der DSGVO, soweit personenbezogene Daten betroffen sind — sowie nur für die Zwecke des Kulturkatasters zu nutzen.\nDie Zwecke des Kulturkatasters sind nicht kommerzieller Natur. Sie umfassen die systematische Erfassung, Strukturierung und öffentliche Bereitstellung von Daten über Orte kultureller Produktion und Nutzung im Land Berlin. Ziel ist es, eine belastbare Datengrundlage für kulturpolitische Entscheidungen, kulturelle Stadtentwicklung sowie für die Zusammenarbeit zwischen Kulturakteur\\*innen, Verwaltung, Wissenschaft und Öffentlichkeit zu schaffen.",
 						"title": "Wie funktioniert der Datendownload?"
 					},
 					"question11": {
-						"answer": "Kontakt\nBei Fragen können Sie uns direkt kontaktieren.\n\nE-Mail: info@kulturkataster.berlin",
-						"title": "Ich habe immer noch eine Frage!"
+						"answer": "Die FAQs werden stetig erweitert. Falls Ihre Frage hier noch nicht beantwortet wird, schreiben Sie der Redaktion gerne eine E-Mail an: info@kulturkataster.berlin.",
+						"title": "Ich habe noch eine Frage. An wen kann ich mich wenden?"
 					},
 					"question2": {
-						"answer": "Sie können Ihren Nutzer*innen-Account jederzeit selbst im Kulturkataster-Portal löschen. Wenn Sie eingeloggt sind, finden Sie diese Möglichkeit über das Zahnrad-Symbol oben links. Nach der Löschung werden die personenbezogenen Daten Ihres Accounts aus dem System entfernt. Änderungen, Ergänzungen oder neue Kulturorte, die Sie zur Aufnahme in das Kulturkataster eingereicht haben und die bereits redaktionell übernommen wurden, werden dadurch jedoch nicht automatisch gelöscht. Wenn Sie möchten, dass ein Kulturort oder bestimmte Daten zu einem Kulturort aus dem Kulturkataster entfernt werden, schreiben Sie bitte eine E-Mail mit einer kurzen Begründung an: info@kulturkataster.berlin. Die Redaktion prüft Ihr Anliegen und meldet sich anschließend bei Ihnen zurück.",
+						"answer": "Sie können Ihren Nutzer\\*innen-Account jederzeit selbst im Kulturkataster-Portal löschen. Wenn Sie eingeloggt sind, finden Sie diese Möglichkeit über das Zahnrad-Symbol oben links. Nach der Löschung werden die personenbezogenen Daten Ihres Accounts aus dem System entfernt. Änderungen, Ergänzungen oder neue Kulturorte, die Sie zur Aufnahme in das Kulturkataster eingereicht haben und die bereits redaktionell übernommen wurden, werden dadurch jedoch nicht automatisch gelöscht. Wenn Sie möchten, dass ein Kulturort oder bestimmte Daten zu einem Kulturort aus dem Kulturkataster entfernt werden, schreiben Sie bitte eine E-Mail mit einer kurzen Begründung an: info@kulturkataster.berlin. Die Redaktion prüft Ihr Anliegen und meldet sich anschließend bei Ihnen zurück.",
 						"title": "Wie kann ich meinen Account löschen lassen und was passiert mit meinen Daten?"
 					},
 					"question3": {
-						"answer": "Ja, ein Kulturort kann mehreren Nutzer*innen im Kulturkataster-Portal zugeordnet sein. So können zum Beispiel mehrere Personen, die offiziell für denselben Kulturort tätig oder zuständig sind, Zugriff auf den Kulturort erhalten und Änderungsvorschläge einreichen. Darüber hinaus können auch berechtigte Mitarbeiter*innen eines Netzwerks oder Verbands, eines Berliner Bezirks oder des Landes Berlin Einsichts- und Mitwirkungsrechte für Kulturorte erhalten. Die Zusammenarbeit im Kulturkataster ist damit bewusst kooperativ angelegt. Alle Änderungen werden vor der Veröffentlichung durch die Redaktion geprüft.",
+						"answer": "Ja, ein Kulturort kann mehreren Nutzer\\*innen im Kulturkataster-Portal zugeordnet sein. So können zum Beispiel mehrere Personen, die offiziell für denselben Kulturort tätig oder zuständig sind, Zugriff auf den Kulturort erhalten und Änderungsvorschläge einreichen. Darüber hinaus können auch berechtigte Mitarbeiter\\*innen eines Netzwerks oder Verbands, eines Berliner Bezirks oder des Landes Berlin Einsichts- und Mitwirkungsrechte für Kulturorte erhalten. Die Zusammenarbeit im Kulturkataster ist damit bewusst kooperativ angelegt. Alle Änderungen werden vor der Veröffentlichung durch die Redaktion geprüft.",
 						"title": "Können mehrere Nutzende einen Kulturort verwalten?"
 					},
 					"question4": {
-						"answer": "Grundsätzlich können Interessierte ab 18 Jahren einen Account im Kulturkataster anlegen.",
-						"title": "Wer kann einen Account anlegen und welche Account-Typen gibt es?"
+						"answer": "Grundsätzlich können Interessierte ab 18 Jahren einen Account im Kulturkataster anlegen. Accounts lohnen sich vor allem für Mitarbeitende von Kulturorten, der Verwaltung oder von Netzwerken/Verbänden, die regelmäßig an Daten mitarbeiten wollen. Wenn Sie nur einmalig oder sporadisch Änderungs- bzw. Ergänzungsvorschläge einreichen möchten, dann ist der Gastaccount eine gute Wahl.",
+						"title": "Wer kann einen Account anlegen und was sind die Vorteile eines Accounts im Vergleich zum Gastzugang?"
 					},
 					"question5": {
-						"answer": "Nach der Registrierung erhalten Sie eine E-Mail zur Bestätigung Ihrer E-Mail-Adresse. Sobald Sie diese bestätigt haben, ist Ihr Account aktiv und Sie können sich im Kulturkataster-Portal einloggen. Wenn Sie bei der Registrierung angeben, dass Sie für einen Berliner Bezirk, das Land Berlin oder ein Netzwerk bzw. einen Verband tätig sind, prüft die Redaktion diese Angabe. Erst nach dieser Prüfung können Ihnen die entsprechenden Einsichts- und Mitwirkungsrechte zugewiesen werden. Die Redaktion bemüht sich um eine schnelle Bearbeitung; in Einzelfällen kann die Prüfung einige Tage dauern.",
+						"answer": "Nach der Registrierung erhalten Sie eine E-Mail zur Bestätigung Ihrer E-Mail-Adresse. Sobald Sie diese bestätigt haben, ist Ihr Account aktiv und Sie können sich im Kulturkataster-Portal einloggen. Wenn Sie bei der Registrierung angeben, dass Sie für einen Berliner Bezirk, das Land Berlin oder ein Netzwerk bzw. einen Verband tätig sind, prüft die Redaktion diese Angabe. Erst nach dieser Prüfung können Ihnen die entsprechenden Einsichts- und Mitwirkungsrechte zugewiesen werden. Die Redaktion bemüht sich um eine schnelle Bearbeitung.",
 						"title": "Wann wird mein Account freigeschaltet?"
 					},
 					"question6": {
-						"answer": "Wenn Sie eingeloggt sind, finden Sie im Kulturkataster-Portal den Bereich „Meine Kulturorte“. Über das Plus-Symbol können Sie einen neuen Kulturort zur Aufnahme in das Kulturkataster vorschlagen. Wenn ein Kulturort bereits im Kulturkataster erfasst ist, können Sie über „Meine Orte anfragen“ beantragen, dass dieser Kulturort Ihrem Account zugeordnet wird. Nach der Zuordnung erscheint der Kulturort in Ihrer persönlichen Übersicht und Sie können Änderungen oder Ergänzungen vorschlagen. Alle neuen Einträge und Änderungsvorschläge werden vor der Veröffentlichung durch die Redaktion geprüft.",
+						"answer": "Wenn Sie eingeloggt sind, finden Sie im Kulturkataster-Portal den Bereich „Kulturorte“. Über das Plus-Symbol können Sie einen neuen Kulturort zur Aufnahme in das Kulturkataster vorschlagen. Wenn ein Kulturort bereits im Kulturkataster erfasst ist, können Sie über „Meine Orte anfragen“ beantragen, dass dieser Kulturort Ihrem Account zugeordnet wird. Nach der Zuordnung erscheint der Kulturort in Ihrer persönlichen Übersicht und Sie haben Einsicht in zusätzliche Daten. Alle neuen Einträge und Änderungsvorschläge werden vor der Veröffentlichung durch die Redaktion geprüft.",
 						"title": "Wie kann ich einen neuen Kulturort anlegen oder einen bestehenden Kulturort meinem Account zuordnen?"
 					},
 					"question7": {
-						"answer": "Alle Daten, die über einen Nutzer*innen-Account oder über den Gastzugang eingereicht werden, werden vor einer Veröffentlichung durch die Redaktion des Kulturkatasters geprüft. Das gilt für neue Kulturorte ebenso wie für Änderungen oder Ergänzungen bestehender Einträge – unabhängig davon, ob die Einreichung von Nutzer*innen, Mitarbeiter*innen eines Bezirks, des Landes Berlin oder eines Netzwerks bzw. Verbands kommt. Die Veröffentlichung erfolgt nicht automatisch, sondern erst nach redaktioneller Prüfung. Die Redaktion bemüht sich um eine schnelle Bearbeitung; in Einzelfällen kann die Prüfung einige Tage dauern.",
+						"answer": "Alle Daten, die über einen Nutzer\\*innen-Account oder über den Gastzugang eingereicht werden, werden vor einer Veröffentlichung durch die Redaktion des Kulturkatasters geprüft. Das gilt für neue Kulturorte ebenso wie für Änderungen oder Ergänzungen bestehender Einträge – unabhängig davon, ob die Einreichung von Nutzer\\*innen, Mitarbeiter\\*innen eines Bezirks, des Landes Berlin oder eines Netzwerks bzw. Verbands kommt. Die Veröffentlichung erfolgt nicht automatisch, sondern erst nach redaktioneller Prüfung. Die Redaktion bemüht sich um eine schnelle Bearbeitung.",
 						"title": "Wann und wie werden Daten veröffentlicht, die ich eingegeben habe?"
 					},
 					"question8": {
@@ -190,7 +190,7 @@
 						"title": "Was kann ich tun, wenn ich mein Passwort vergessen habe oder ändern möchte?"
 					},
 					"question9": {
-						"answer": "Nutzer\\*innen, die sich registrieren, geben bei der Registrierung an, ob sie Mitarbeiter\\*innen eines Netzwerks oder Verbandes, eines Berliner Bezirks oder des Landes Berlin sind. Sollte keine dieser Angaben zutreffen, wählen Nutzer*innen „Nein“ aus. Bei der Angabe zur Mitarbeit in den Bezirksverwaltungen und Landesverwaltungen prüft die KRB nach Registrierung, ob ein fachlicher Bezug zu Kultur- oder Stadtentwicklungsthemen besteht. Diese Prüfung erfolgt nach eigenem Ermessen der KRB.\\\nNetzwerk- und Verbandsmitarbeitende, die nachweisen können, dass sie gewählte Vertreter\\*innen oder beauftragte Freie Mitarbeiter\\*innen oder haupt- bzw. nebenberuflich Beschäftigte des betreffenden Netzwerkes oder Verbands sind, erhalten die Einsichts-, Mitwirkungs- oder Downloadrechte auch für sensible Daten. Mindestvorraussetzung ist die Zuordenbarkeit einer entsprechenden E-Mailadresse. Ob ein solcher Bezug vorliegt, prüft die KRB nach eigenem Ermessen.",
+						"answer": "Nutzer\\*innen, die sich registrieren, geben bei der Registrierung an, ob sie Mitarbeiter\\*innen eines Netzwerks oder Verbandes, eines Berliner Bezirks oder des Landes Berlin sind. Sollte keine dieser Angaben zutreffen, wählen Nutzer\\*innen „Nein“ aus. Bei der Angabe zur Mitarbeit in den Bezirksverwaltungen und Landesverwaltungen prüft die KRB nach Registrierung, ob ein fachlicher Bezug zu Kultur- oder Stadtentwicklungsthemen besteht. Diese Prüfung erfolgt nach eigenem Ermessen der KRB.\\\nNetzwerk- und Verbandsmitarbeitende, die nachweisen können, dass sie gewählte Vertreter\\*innen oder beauftragte Freie Mitarbeiter\\*innen oder haupt- bzw. nebenberuflich Beschäftigte des betreffenden Netzwerkes oder Verbands sind, erhalten die Einsichts-, Mitwirkungs- oder Downloadrechte auch für sensible Daten. Mindestvoraussetzung ist die Zuordenbarkeit einer entsprechenden E-Mailadresse. Ob ein solcher Bezug vorliegt, prüft die KRB nach eigenem Ermessen.",
 						"title": "Was sind die Voraussetzungen dafür, dass ich einen Account als Verwaltungsmitarbeiter*in oder als Mitarbeiter*in in einem Netzwerk bzw. Verband erhalte?"
 					},
 					"subtitle": "Häufig gestellte Fragen zum Konto-Bereich.",
@@ -497,7 +497,7 @@
 			"additionalInfo": "Zusätzliche Informationen",
 			"backToMap": "Zurück zur Karte",
 			"categories": "Kategorien",
-			"claimSelectDescription": "Kulturorte, für die Sie berechtigt sind, sehen Sie nach Freigabe durch die Redaktion unter “Meine Kulturorte”.",
+			"claimSelectDescription": "Kulturorte, für die Sie berechtigt sind, sehen Sie nach Freigabe durch die Redaktion unter “Kulturorte”.",
 			"claimSelectSearchLabel": "Name oder Adresse des Kulturortes",
 			"claimSelectSubtitle": "Beantragen Sie die Verwaltungs-Rechte für Ihre Kulturorte",
 			"claimSelectTitle": "Kulturort verwalten",
@@ -692,7 +692,7 @@
 				"Das Kulturkataster findet in den Richtlinien der Regierungspolitik dieser Legislaturperiode Erwähnung. Ende 2022 wird die Kulturraum Berlin gGmbH von der Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt mit der Konzeption betraut und stellt in zwei Konzeptpapieren (ausgeführt durch das Studio für unendliche Möglichkeiten) die Ausgangssituation und Bedarfe sowie ein Umsetzungskonzept für das Kulturkataster vor. Auch die Umsetzung wird 2024 zur Aufgabe der KRB. Mit der Entwicklung der online-basierten Kartenanwendung beauftragte die KRB die Technologiestiftung Berlin.",
 				"## Den Rahmen für die Entwicklung des Kulturkatasters bilden vier kulturpolitische Leitlinien, auf die sich die KRB mit der Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt verständigt hat:",
 				"1. Evidenzbasierte Kulturpolitik und kulturelle Stadtentwicklung: Das Kulturkataster Berlin schafft eine umfassende Datengrundlage über Kulturräume, um eine faktengestützte Kulturpolitik und eine gezielte Stadtentwicklung zu ermöglichen.\n2. Sicherung sowie Neuerschließung von Räumen für Kultur: Das Kulturkataster dient als Instrument für ein nachhaltiges Monitoring von Kulturflächen, um deren Erhalt zu unterstützen und neue Räume zu erschließen.\n3. Gerechte Verteilung von Kulturangeboten im Stadtraum und Chancengerechtigkeit im Hinblick auf Teilhabe: Das Kulturkataster visualisiert Lücken im Kulturangebot und unterstützt die Stadtplanung dabei, ein ausgewogenes und gerechtes Kulturangebot für alle Berliner*innen zu schaffen.\n4. Verbesserung der Zusammenarbeit zwischen Ressorts, Ebenen und Sektoren: Als flexibles digitales Planungsinstrument stärkt das Kulturkataster die Zusammenarbeit innerhalb der verschiedenen Zuständigkeitsbereiche, Verwaltungsebenen sowie der gesamten Berliner Kulturszene.",
-				"Für das Kulturkataster Berlin gilt es, eine Kulturlandschaft zu erfassen, die so vielfältig, dynamisch und interdisziplinär, wie keine andere ist. So sehr sich die Redaktion auch bemühen wird, dieser Prozess wird niemals abgeschlossen sein. Deshalb ist es erklärtes Ziel des Projekts, sich dem Ist-Zustand der Berliner Kulturlandschaft auf der digitalen Karte kontinuierlich anzunähern. Dies gelingt jedoch nur mit denjenigen, für die das Kulturkataster eine wichtige Arbeitshilfe darstellen kann – den Verwaltungen auf Bezirks- und Landesebene, den zahlreichen Interessen- und Spartenverbänden, Wissenschaftler:innen, Expert:innen, Aktivist:innen und natürlich den Kulturorten selbst.",
+				"Für das Kulturkataster Berlin gilt es, eine Kulturlandschaft zu erfassen, die so vielfältig, dynamisch und interdisziplinär, wie keine andere ist. So sehr sich die Redaktion auch bemühen wird, dieser Prozess wird niemals abgeschlossen sein. Deshalb ist es erklärtes Ziel des Projekts, sich dem Ist-Zustand der Berliner Kulturlandschaft auf der digitalen Karte kontinuierlich anzunähern. Dies gelingt jedoch nur mit denjenigen, für die das Kulturkataster eine wichtige Arbeitshilfe darstellen kann – den Verwaltungen auf Bezirks- und Landesebene, den zahlreichen Interessen- und Spartenverbänden, Wissenschaftler\\*innen, Expert\\*innen, Aktivist\\*innen und natürlich den Kulturorten selbst.",
 				"Ein weit gefasster Kulturbegriff und ein deskriptives Kulturverständnis bilden die Grundlage des Kulturkatasters. Die Datenbank erfasst eine Vielzahl von Orten. Weitere Kategorien und Kulturorte folgen in den nächsten Versionen. Anstatt kulturelle Ausdrucksformen zu bewerten, werden diese im Kulturkataster anhand zahlreicher Kriterien beschrieben und eingeordnet. Dies würdigt den individuellen Beitrag, den sowohl einzelne Orte als auch ganze Sparten zum kulturellen Gefüge der Stadt beitragen.",
 				"`documentation-card`",
 				"Die Entwicklung Berliner Kulturkatasters erfolgt als lernender Prozess. Das bedeutet, dass in festgelegten zeitlichen Abständen neue Versionen des Kulturkatasters veröffentlicht werden. Zukünftige Versionen sollen neue Funktionalitäten und aktualisierte Informationen zur Verfügung stellen. Dieser Prozess ermöglicht es dem Projektteam, Anmerkungen und Kritik in den fortlaufenden Entwicklungsprozess zu integrieren und lädt die Nutzenden des Kulturkatasters dazu ein, die zukünftige Ausrichtung aktiv mitzugestalten.",
@@ -808,7 +808,7 @@
 				{
 					"badge": "Version 2",
 					"label": "Veröffentlichung Juli 2026",
-					"text": "Einführung eines Log-in-Bereichs; gemeinsame Datenpflege und Zugang für Kulturorte, Netzwerke, Verbände und Verwaltung; Aktualisierung der Download-Funktion für öffentlich verfügbare Daten"
+					"text": "Einführung eines Log-in-Bereichs; gemeinsame Datenpflege und Zugang für Kulturorte, Netzwerke, Verbände und Verwaltung; Aktualisierung der Download-Funktion für öffentlich verfügbare Daten; englischsprachige Benutzeroberfläche und Inhalte"
 				},
 				{
 					"badge": "Version 3",
@@ -1316,7 +1316,7 @@
 					"question": "Warum ist mein Kulturort nicht im Kulturkataster verzeichnet?"
 				},
 				{
-					"answer": "Sie können Informationen zu bestehenden Kulturorten ergänzen oder korrigieren und auch neue Kulturorte zur Aufnahme in das Kulturkataster vorschlagen. Das ist sowohl über den Gastzugang ohne Account als auch über einen eigenen Account möglich. Wenn Sie regelmäßig Daten zu einem oder mehreren Kulturorten pflegen möchten, empfehlen wir Ihnen, einen Account anzulegen und sich die entsprechenden Kulturorte Ihrem Kulturkataster-Portal zuordnen zu lassen. So behalten Sie langfristig eine bessere Übersicht. Auch aus dem Account heraus können Sie Änderungen zu bestehenden Kulturorten vorschlagen oder neue Kulturorte anlegen. Alle eingereichten Informationen werden vor der Veröffentlichung durch die Redaktion geprüft und gegebenenfalls korrigiert.",
+					"answer": "Sie können Informationen zu bestehenden Kulturorten ergänzen oder korrigieren und auch neue Kulturorte zur Aufnahme in das Kulturkataster vorschlagen. Das ist sowohl über den Gastzugang ohne Account als auch über einen eigenen Account möglich. Sie finden den Bereich zum Mitarbeiten über das Stiftsymbol im Menü auf der linken Seite.",
 					"question": "Wie kann ich Informationen zu einem Kulturort ergänzen oder korrigieren?"
 				},
 				{
@@ -1332,19 +1332,19 @@
 					"question": "Wie kann ich meinen Kulturort aus dem Kulturkataster löschen lassen?"
 				},
 				{
-					"answer": "Grundsätzlich können Interessierte ab 18 Jahren einen Account im Kulturkataster anlegen.",
-					"question": "Wer kann einen Account anlegen und welche Account-Typen gibt es?"
+					"answer": "Grundsätzlich können Interessierte ab 18 Jahren einen Account im Kulturkataster anlegen. Accounts lohnen sich vor allem für Mitarbeitende von Kulturorten, der Verwaltung oder von Netzwerken/Verbänden, die regelmäßig an Daten mitarbeiten wollen. Wenn Sie nur einmalig oder sporadisch Änderungs- bzw. Ergänzungsvorschläge einreichen möchten, dann ist der Gastaccount eine gute Wahl.",
+					"question": "Wer kann einen Account anlegen und was sind die Vorteile eines Accounts im Vergleich zum Gastzugang?"
 				},
 				{
-					"answer": "Nach der Registrierung erhalten Sie eine E-Mail zur Bestätigung Ihrer E-Mail-Adresse. Sobald Sie diese bestätigt haben, ist Ihr Account aktiv und Sie können sich im Kulturkataster-Portal einloggen. Wenn Sie bei der Registrierung angeben, dass Sie für einen Berliner Bezirk, das Land Berlin oder ein Netzwerk bzw. einen Verband tätig sind, prüft die Redaktion diese Angabe. Erst nach dieser Prüfung können Ihnen die entsprechenden Einsichts- und Mitwirkungsrechte zugewiesen werden. Die Redaktion bemüht sich um eine schnelle Bearbeitung; in Einzelfällen kann die Prüfung einige Tage dauern.",
+					"answer": "Nach der Registrierung erhalten Sie eine E-Mail zur Bestätigung Ihrer E-Mail-Adresse. Sobald Sie diese bestätigt haben, ist Ihr Account aktiv und Sie können sich im Kulturkataster-Portal einloggen. Wenn Sie bei der Registrierung angeben, dass Sie für einen Berliner Bezirk, das Land Berlin oder ein Netzwerk bzw. einen Verband tätig sind, prüft die Redaktion diese Angabe. Erst nach dieser Prüfung können Ihnen die entsprechenden Einsichts- und Mitwirkungsrechte zugewiesen werden. Die Redaktion bemüht sich um eine schnelle Bearbeitung.",
 					"question": "Wann wird mein Account freigeschaltet?"
 				},
 				{
-					"answer": "Wenn Sie eingeloggt sind, finden Sie im Kulturkataster-Portal den Bereich „Meine Kulturorte“. Über das Plus-Symbol können Sie einen neuen Kulturort zur Aufnahme in das Kulturkataster vorschlagen. Wenn ein Kulturort bereits im Kulturkataster erfasst ist, können Sie über „Meine Orte anfragen“ beantragen, dass dieser Kulturort Ihrem Account zugeordnet wird. Nach der Zuordnung erscheint der Kulturort in Ihrer persönlichen Übersicht und Sie können Änderungen oder Ergänzungen vorschlagen. Alle neuen Einträge und Änderungsvorschläge werden vor der Veröffentlichung durch die Redaktion geprüft",
+					"answer": "Wenn Sie eingeloggt sind, finden Sie im Kulturkataster-Portal den Bereich „Kulturorte“. Über das Plus-Symbol können Sie einen neuen Kulturort zur Aufnahme in das Kulturkataster vorschlagen. Wenn ein Kulturort bereits im Kulturkataster erfasst ist, können Sie über „Meine Orte anfragen“ beantragen, dass dieser Kulturort Ihrem Account zugeordnet wird. Nach der Zuordnung erscheint der Kulturort in Ihrer persönlichen Übersicht und Sie haben Einsicht in zusätzliche Daten. Alle neuen Einträge und Änderungsvorschläge werden vor der Veröffentlichung durch die Redaktion geprüft",
 					"question": "Wie kann ich einen neuen Kulturort anlegen oder einen bestehenden Kulturort meinem Account zuordnen?"
 				},
 				{
-					"answer": "Alle Daten, die über einen Nutzer\\*innen-Account oder über den Gastzugang eingereicht werden, werden vor einer Veröffentlichung durch die Redaktion des Kulturkatasters geprüft. Das gilt für neue Kulturorte ebenso wie für Änderungen oder Ergänzungen bestehender Einträge – unabhängig davon, ob die Einreichung von Nutzer\\*innen, Mitarbeiter\\*innen eines Bezirks, des Landes Berlin oder eines Netzwerks bzw. Verbands kommt. Die Veröffentlichung erfolgt nicht automatisch, sondern erst nach redaktioneller Prüfung. Die Redaktion bemüht sich um eine schnelle Bearbeitung; in Einzelfällen kann die Prüfung einige Tage dauern.",
+					"answer": "Alle Daten, die über einen Nutzer\\*innen-Account oder über den Gastzugang eingereicht werden, werden vor einer Veröffentlichung durch die Redaktion des Kulturkatasters geprüft. Das gilt für neue Kulturorte ebenso wie für Änderungen oder Ergänzungen bestehender Einträge – unabhängig davon, ob die Einreichung von Nutzer\\*innen, Mitarbeiter\\*innen eines Bezirks, des Landes Berlin oder eines Netzwerks bzw. Verbands kommt. Die Veröffentlichung erfolgt nicht automatisch, sondern erst nach redaktioneller Prüfung. Die Redaktion bemüht sich um eine schnelle Bearbeitung.",
 					"question": "Wann und wie werden Daten veröffentlicht, die ich eingegeben habe?"
 				},
 				{
@@ -1352,7 +1352,7 @@
 					"question": "Was kann ich tun, wenn ich mein Passwort vergessen habe oder ändern möchte?"
 				},
 				{
-					"answer": "Sie können über das Pfeilsymbol im linken Menü — zweites Symbol von oben, Pfeil nach unten — eine Liste der Kulturorte herunterladen. Vor dem Download müssen Sie bestätigen, dass Sie die Vereinbarungen über die Datennutzung sowie die rechtlichen Hinweise zur Kenntnis genommen haben und ihnen zustimmen.\nVor dem Download können Sie die angezeigten Daten auf der Karte filtern bzw. sortieren. Wenn Sie anschließend auf das Download-Symbol klicken, wird die aktuell angezeigte Auswahl heruntergeladen. Der Export ist im XLS-, XLSX- oder CSV-Format möglich.\nDie im Download enthaltenen Daten entsprechen jeweils dem sichtbaren Datenstand und den Zugriffsrechten Ihres Nutzerstatus.\nMit dem Download erklären Sie sich damit einverstanden, die Daten nicht an Dritte weiterzugeben, sie ausschließlich im Rahmen der gesetzlichen Vorgaben — insbesondere der DSGVO, soweit personenbezogene Daten betroffen sind — sowie nur für die Zwecke des Kulturkatasters zu nutzen.\nDie Zwecke des Kulturkatasters sind nicht kommerzieller Natur. Sie umfassen die systematische Erfassung, Strukturierung und öffentliche Bereitstellung von Daten über Orte kultureller Produktion und Nutzung im Land Berlin. Ziel ist es, eine belastbare Datengrundlage für kulturpolitische Entscheidungen, kulturelle Stadtentwicklung sowie für die Zusammenarbeit zwischen Kulturakteur*innen, Verwaltung, Wissenschaft und Öffentlichkeit zu schaffen.",
+					"answer": "Nutzer\\*innen, die sich registrieren, geben bei der Registrierung an, ob sie Mitarbeiter\\*innen eines Netzwerks oder Verbandes, eines Berliner Bezirks oder des Landes Berlin sind. Sollte keine dieser Angaben zutreffen, wählen Nutzer\\*innen „Nein“ aus. Bei der Angabe zur Mitarbeit in den Bezirksverwaltungen und Landesverwaltungen prüft die KRB nach Registrierung, ob ein fachlicher Bezug zu Kultur- oder Stadtentwicklungsthemen besteht. Diese Prüfung erfolgt nach eigenem Ermessen der KRB.\nNetzwerk- und Verbandsmitarbeitende, die nachweisen können, dass sie gewählte Vertreter\\*innen oder beauftragte Freie Mitarbeiter\\*innen oder haupt- bzw. nebenberuflich Beschäftigte des betreffenden Netzwerkes oder Verbands sind, erhalten die Einsichts-, Mitwirkungs- oder Downloadrechte auch für sensible Daten. Mindestvorraussetzung ist die Zuordenbarkeit einer entsprechenden E-Mailadresse. Ob ein solcher Bezug vorliegt, prüft die KRB nach eigenem Ermessen.",
 					"question": "Was sind die Voraussetzungen dafür, dass ich einen Account als Verwaltungsmitarbeiter*in oder als Mitarbeiter*in in einem Netzwerk bzw. Verband erhalte??\n"
 				},
 				{
@@ -1360,10 +1360,10 @@
 					"question": "Wie funktioniert der Datendownload?"
 				}
 			],
-			"body": "**Seit September 2025 steht Ihnen mit dem Kulturkataster Berlin die erste Version unseres digitalen Werkzeugs zur Verfügung, dass die Berliner Kulturlandschaft systematisch erfasst.**\n\nDas Kulturkataster wächst stetig weiter: Bereits für Anfang 2026 ist Version 2 geplant, und zur Jahresmitte 2026 folgt Version 3. Mit jeder neuen Version nehmen wir weitere Kulturorte auf, ergänzen die Informationen und fügen neue Funktionalitäten hinzu.\\\nSie können uns dabei helfen. Unter diesem [Link](/institution) können Sie fehlende Kulturorte einreichen und Änderungen vorschlagen.\\\n**Für Anregungen und Kritik erreichen Sie uns unter:** [info@kulturkataster.berlin](mailto:info@kulturkataster.berlin)\\\nDie aktuelle Version des Kulturkatasters ist die Version 1.",
+			"body": "**Seit Juli 2026 steht Ihnen mit der zweiten Version des Kulturkatasters Berlin eine erweiterte Fassung unseres digitalen Werkzeugs zur Verfügung – eine gemeinsame Arbeitsoberfläche für Kulturorte, Verbände und Verwaltung. Das Kulturkataster erfasst die Berliner Kulturlandschaft systematisch und wird kontinuierlich weiterentwickelt.**\n\nDie wichtigsten Funktionen und Inhalte der aktuellen Version finden Sie unten im Überblick. Die nächste Ausbaustufe ist für Ende 2026 geplant und wird das Kulturkataster um weitere Kulturortkategorien, aktualisierte Daten sowie einen wissenschaftlich basierten Kulturort-Index ergänzen.\\\nSie können uns dabei helfen. Unter diesem [Link](/institution) können Sie fehlende Kulturorte einreichen und Änderungen vorschlagen.\\\n**Für Anregungen und Kritik erreichen Sie uns unter:** [info@kulturkataster.berlin](mailto:info@kulturkataster.berlin)\\\nDie aktuelle Version des Kulturkatasters ist die Version 2.",
 			"contact": "## Sie haben ein anderes Anliegen?\nTreten Sie gern mit uns in Kontakt!\\\n\\\n**Allgemeine Anfragen und technischer Support** [info@kulturkataster.berlin](mailto:info@kulturkataster.berlin)",
-			"simpleLanguageDirect": "Den Bereich „Infos and Services“ in leichter Sprache finden Sie <link />.",
-			"tab1": "## Umfang Version 1\n**Veröffentlichung November 2025**\n- {{count}} Kulturorte mit den Grundinformationen (Name, vollständige Adresse, allgemeine Kontaktinformationen, Angaben zu Förderung und Finanzierung)\n- 15 Kategorien und 71 Unterkategorien\n- Einbindung von 12 Fachkarten aus dem Geoportal Berlin\n- Ein Suchfeld, indem Sie nach Adressen und Namen von Kulturorten suchen können.\n- Einen Suchfilter, der es ermöglicht, Orte nach Bezirk sowie Kategorie und Unterkategorie zu filtern. Darüber hinaus ist es möglich, geschlossene Kulturorte einzublenden.\n\n**Folgende Erweiterungen für Version 1 wurden bis November 2025 ergänzt**\n- Informationen in Deutscher Gebärdensprache\n- Informationen in Leichter Sprache\n- Barrierearme Listenansicht",
+			"simpleLanguageDirect": "Den Bereich „Infos und Service“ in leichter Sprache finden Sie <link />.",
+			"tab1": "## Umfang Version 2\n**Bereits enthaltene Funktionen aus Version 1**\n- {{count}} Kulturorte mit den Grundinformationen (Name, vollständige Adresse, allgemeine Kontaktinformationen, Angaben zu Förderung und Finanzierung)\n- 16 Kategorien und 76 Unterkategorien\n- Einbindung von 12 Fachkarten aus dem Geoportal Berlin\n- Ein Suchfeld, indem Sie nach Adressen und Namen von Kulturorten suchen können.\n- Einen Suchfilter, der es ermöglicht, Orte nach Bezirk sowie Kategorie und Unterkategorie zu filtern. Darüber hinaus ist es möglich, geschlossene Kulturorte einzublenden.\n- Informationen in Deutscher Gebärdensprache und Leichter Sprache \n- Barrierearme Listenansicht \n\n**Neue Funktionen in Version 2**\n- Log-in-Bereich für registrierte Nutzer*innen \n- Gemeinsame Datenpflege durch Kulturorte, Netzwerke, Verbände und die Verwaltung über die integrierte Mitwirken-Funktion\n- Bearbeitung und Aktualisierung von Kulturortdaten durch berechtigte Nutzer*innen \n- Aktualisierte Download-Funktion für öffentlich verfügbare Daten \n- Englischsprachige Benutzeroberfläche und Inhalte \n\n**Geplante Ergänzungen bis Ende 2026**\n- Aktualisierung der Inhalte in Deutscher Gebärdensprache \n- Aktualisierung der Inhalte in Leichter Sprache \n- Weitere Kulturortkategorien \n- Wissenschaftlich basierter Kulturort-Index",
 			"tab2": "## Bedienung\n\nDas Kulturkataster Berlin wurde so konzipiert, dass es möglichst intuitiv bedient werden kann. Funktionalitäten orientieren sich an gängigen Kartenanwendungen. Grundlegende Bedienungshinweise haben wir an dieser Stelle für Sie zusammengefasst.\n\n`image-text-card|/resources/bedienung/1_Bewegen.jpg|left|Karte bewegen|Auf dem Computer: Halten Sie die linke Maustaste gedrückt und ziehen die Karte in die gewünschte Richtung.\\nAuf dem Smartphone/Tablet: Berühren Sie den Bildschirm mit einem Finger und wischen Sie über die Karte.`\n\n`image-text-card|/resources/bedienung/2_Zoom.jpg|right|Zoomen|Auf dem Computer: Nutzen Sie das Mausrad oder die Plus- und Minus-Zeichen am unteren rechten Bildschirmrand.\\nAuf dem Smartphone/Tablet: Legen Sie zwei Finger auf den Bildschirm und bewegen Sie diese auseinander, um zu vergrößern. Zum Verkleinern ziehen Sie die Finger wieder zusammen.`\n\n`image-text-card|/resources/bedienung/3_Suche.jpg|left|Einen Ort suchen|Auf dem Computer: Öffnen Sie das Suchfeld, indem Sie auf das Lupensymbol oben links klicken.\\nAuf dem Smartphone/Tablet: Öffnen Sie das Suchfeld, indem Sie auf das Lupensymbol unten tippen. Geben Sie den Namen eines Ortes oder die Adresse ein und bestätigen Sie Ihre Suche.`\n\n`image-text-card|/resources/bedienung/4_Filter.jpg|right|Filterfunktionen verwenden|Sie können nun alle Kulturorte nach Bezirken sowie nach den zugeordneten Kategorien und Unterkategorien filtern.\\nAuf dem Computer: Öffnen Sie die Filterfunktion, indem Sie auf das Symbol mit den drei übereinanderliegenden Strichen oben links klicken.\\nAuf dem Smartphone/Tablet: Öffnen Sie die Filterfunktion, indem Sie auf das Symbol mit den drei übereinanderliegenden Strichen oben links tippen.\\nStandardmäßig werden alle geöffneten Kulturorte auf der Karte dargestellt. Durch einen Klick auf das Bedienfeld “Geschlossene Orte einblenden” können Sie sich zusätzlich vorübergehend und dauerhaft geschlossene Kulturorte anzeigen lassen.`\n\n`image-text-card|/resources/bedienung/5_Download.jpg|left|Eine Auswahl herunterladen|Das Kulturkataster bietet Ihnen die Möglichkeit, Informationen zu einzelnen sowie auch zu allen Kulturorten Ihrer aktuellen Ansicht herunterzuladen.\\nAuf dem Computer: Klicken Sie auf den nach unten zeigenden Pfeil in der Seitennavigation oben links.\\nAuf dem Smartphone/Tablet: Tippen Sie auf den nach unten zeigenden Pfeil in der Navigation unten rechts.`\n\n`image-text-card|/resources/bedienung/6_Mitwirken.jpg|right|Einen Ort eintragen|Auf dem Computer: Öffnen Sie das Mitwirken-Formular, indem sie auf das Stift- Symbol oben links klicken.\\nAuf dem Smartphone/Tablet: Öffnen Sie das Mitwirken-Formular, indem sie auf das Stift-Symbol unten rechts tippen.\\nFolgen Sie den Hinweisen des Formulars und füllen Sie die Datenfelder gewissenhaft aus. Bitte beachten Sie, dass es sich bei den mit einem *Symbol versehenen Feldern um Pflichtfelder handelt.\\nBestätigen Sie die Einverständniserklärung und schicken Sie das Formular ab.\\nDas Redaktionsteam wird Ihren Eintrag prüfen und sich bei Rückfragen gegebenenfalls per E-Mail bei Ihnen melden. Wir bitten Sie um Verständnis, dass dieser Prozess einige Zeit in Anspruch nehmen kann, da wir gegebenenfalls auch Fachexpert\\*innen in den Entscheidungsprozess einbeziehen werden.`\n\n`image-text-card|/resources/bedienung/7_Schrift.jpg|left|Schriftgröße ändern|Auf dem Computer: Öffnen Sie das Menü für die barrierefreie Bedienung der Website, indem Sie auf das Personensymbol unten links klicken.\\nAuf dem Smartphone/Tablet: Öffnen Sie das Menü für die barrierefreie Bedienung der Website, indem Sie auf das Menüsymbol oben rechts tippen und anschließend die Schaltfläche mit dem Personensymbol auswählen.\\nWählen Sie die Schaltfläche mit der Bezeichnung “Vergrößerte Schriften” aus.`\n\n`image-text-card|/resources/bedienung/8_Kontrast.jpg|right|Kontrast anpassen|Auf dem Computer: Öffnen Sie das Menü für die barrierefreie Bedienung der Website, indem Sie auf das Personensymbol unten links klicken.\\nAuf dem Handy/Tablet: Öffnen Sie das Menü für die barrierefreie Bedienung der Website, indem Sie auf das Menüsymbol oben rechts tippen und anschließend die Schaltfläche mit dem Personensymbol auswählen.\\nWählen Sie die Schaltfläche mit der Bezeichnung “Dunkler Modus” aus.`",
 			"tab3": "## Fragen & Antworten\n\n`accordion`",
 			"tabTitles": ["Über das Projekt", "Bedienung", "Fragen & Antworten"],
@@ -1377,7 +1377,7 @@
 			}
 		},
 		"institution": {
-			"claimSelectDescription": "Kulturorte, für die Sie berechtigt sind, sehen Sie nach Freigabe durch die Redaktion unter “Meine Kulturorte”.",
+			"claimSelectDescription": "Kulturorte, für die Sie berechtigt sind, sehen Sie nach Freigabe durch die Redaktion unter “Kulturorte”.",
 			"claimSelectSearchLabel": "Name oder Adresse des Kulturortes",
 			"claimSelectSubtitle": "Beantragen Sie die Verwaltungs-Rechte für Ihre Kulturorte",
 			"claimSelectTitle": "Kulturort verwalten",
@@ -1442,8 +1442,8 @@
 				"back": "Zurück",
 				"next": "Weiter",
 				"review": "Prüfen",
-				"submit": "Kulturort einreichen",
-				"submitUpdate": "Änderung einreichen"
+				"submit": "Einreichen",
+				"submitUpdate": "Änderungen abschicken"
 			},
 			"dialog": {
 				"create": {
@@ -1843,6 +1843,7 @@
 					"reject": "Ablehnen",
 					"saveNotes": "Notizen speichern"
 				},
+				"approvalEmailTemplateLabel": "E-Mail bei Genehmigung",
 				"attachGroups": {
 					"placeholder": "Gruppen",
 					"searchPlaceholder": "Gruppen suchen...",
@@ -1854,11 +1855,6 @@
 					"searchPlaceholder": "Nutzer*innen suchen...",
 					"title": "Nutzer*innen auswählen"
 				},
-				"error": "Überprüfung fehlgeschlagen. {{error}}",
-				"errorDescription": "Bitte versuchen Sie es erneut oder kontaktieren Sie den Support, falls das Problem weiterhin besteht.",
-				"errorTitle": "Überprüfung fehlgeschlagen",
-				"errorUnknown": "Unbekannter Fehler.",
-				"approvalEmailTemplateLabel": "E-Mail bei Genehmigung",
 				"emailPanelDescription": "Wählen Sie aus, welche Vorlage bei Genehmigung oder Ablehnung verwendet wird.",
 				"emailPanelTitle": "E-Mail-Benachrichtigung",
 				"emailTemplateLabel": "E-Mail bei Genehmigung",
@@ -1870,6 +1866,10 @@
 					"submission_rejected": "Ablehnung für “Kulturort vorschlagen/ändern”",
 					"submission_update_approved": "Bestätigung für “Änderung vorschlagen”"
 				},
+				"error": "Überprüfung fehlgeschlagen. {{error}}",
+				"errorDescription": "Bitte versuchen Sie es erneut oder kontaktieren Sie den Support, falls das Problem weiterhin besteht.",
+				"errorTitle": "Überprüfung fehlgeschlagen",
+				"errorUnknown": "Unbekannter Fehler.",
 				"grantSubmitterAccess": "Der einreichenden Person nach Genehmigung Zugriff auf diesen Kulturort geben.",
 				"linkedAnswers": "{{count}} Fragebogen-Antworten sind mit dieser Einreichung verknüpft.",
 				"linkedCategorySubmissions": "Neuer Kategorie-Vorschlag",
@@ -1883,10 +1883,10 @@
 				"previewHint": "Sie können weitere Informationen zum Kulturort ergänzen und/oder korrigieren, wenn Sie durch Klick auf den Stift in den Bearbeitungsmodus wechseln.",
 				"previewRejectionEmail": "Ablehnungs-E-Mail anzeigen",
 				"previousNotesLabel": "Bisherige Notizen",
-				"requestedBy": "Angefragt von",
 				"rejectionEmailTemplateLabel": "E-Mail bei Ablehnung",
 				"relinkAnswers": "Verknüpfung ändern",
 				"relinkAnswersSearchLabel": "Anderen Kulturort auswählen",
+				"requestedBy": "Angefragt von",
 				"reviewPanelTitle": "Einreichung prüfen",
 				"statusLabel": "Status: {{status}}",
 				"success": {
@@ -2354,16 +2354,16 @@
 				"text73": "Neue Kultur·kategorien kommen dazu.",
 				"text74": "Daten werden erneuert.",
 				"text75": "Es gibt einen Log-in-Bereich.",
-				"text76": "Kultur·orte und Verbände und Verwaltung",
-				"text77": "können Daten gemeinsam pflegen.",
-				"text79": "Start: Anfang 2026",
+				"text76": "Kultur·orte und Verbände und Verwaltung\nkönnen Daten gemeinsam pflegen.",
+				"text77": "Es gibt die Website jetzt auch auf Englisch.",
+				"text79": "Start: Mitte 2026",
 				"text8": "Kultur·orte geben Berlin eine Identität.",
 				"text80": "Daten werden erneuert.",
 				"text81": "Fehlende Daten kommen dazu.",
 				"text82": "Es gibt neue Fach·karten aus dem Geo·portal.",
 				"text83": "Bedrohte Kultur·orte werden gezeigt.",
 				"text84": "Log-in-Bereich wird größer.",
-				"text86": "Start: Mitte 2026",
+				"text86": "Start: Ende 2026",
 				"text88": "Das Kultur·kataster Berlin ist möglich",
 				"text89": "weil viele Menschen mitmachen.",
 				"text9": "Und sie machen Berlin bunt und offen.",
@@ -2379,7 +2379,7 @@
 			},
 			"infosAndServices": {
 				"list1": {
-					"content": ["Anfang 2026 Version 2", "Mitte 2026 Version 3"],
+					"content": ["Mitte 2026 Version 2", "Ende 2026 Version 3"],
 					"title1": "Das Kultur·kataster wächst immer weiter.",
 					"title2": "Im Jahr 2026 gibt es 2 neue Versionen:"
 				},
@@ -2480,7 +2480,7 @@
 				"text136": "Am Computer: Stift·symbol links anklicken.",
 				"text137": "Am Handy oder Tablet: Stift·symbol unten rechts antippen.",
 				"text139": "Dann den Anweisungen folgen.",
-				"text14": "Jetzt gibt es Version 1.",
+				"text14": "Jetzt gibt es Version 2.",
 				"text142": "In Version 1 geht das nur mit einem Formular.",
 				"text143": "Sie können Infos zu Kultur·orten ergänzen.",
 				"text144": "Oder Fehler korrigieren.",
@@ -2571,7 +2571,7 @@
 				"textBold7": "Schrift größer machen",
 				"textBold8": "Farben verbessern",
 				"textBold9": "Warum ist mein Kultur·ort nicht im Kultur·kataster?",
-				"title": "Infos & Services"
+				"title": "Infos & Service"
 			}
 		},
 		"termsModal": {
@@ -2689,8 +2689,8 @@
 					"title": "Prüfung fehlgeschlagen"
 				}
 			},
-			"institutionId": "Kulturort",
 			"institutionAddress": "Adresse",
+			"institutionId": "Kulturort",
 			"openReview": "Prüfen",
 			"reject": "Ablehnen",
 			"rejectAll": "Alle ablehnen",
@@ -2899,8 +2899,8 @@
 						"role_state_rejected": "Landes-Rolle abgelehnt",
 						"submission_approved": "Einreichung bestätigt",
 						"submission_create_approved": "Neuer Kulturort bestätigt",
-						"submission_update_approved": "Änderung bestätigt",
-						"submission_rejected": "Einreichung abgelehnt"
+						"submission_rejected": "Einreichung abgelehnt",
+						"submission_update_approved": "Änderung bestätigt"
 					}
 				},
 				"title": "E-Mail-Vorlage senden"
@@ -3266,6 +3266,14 @@
 				"label": "Kulturareal",
 				"placeholder": "Bitte auswählen"
 			},
+			"datenverwendung": {
+				"description": "",
+				"errors": {
+					"required": "Bitte geben Sie den Verwendungszweck an."
+				},
+				"label": "Verwendungszweck",
+				"placeholder": "Bitte eintragen"
+			},
 			"description": {
 				"description": "",
 				"errors": {
@@ -3291,20 +3299,20 @@
 				"placeholder": "name@beispiel.de"
 			},
 			"established_since": {
-				"description": "Bitte tragen Sie das Datum der erstmaligen Nutzung oder Eröffnung am Standort ein. Falls das genaue Datum nicht bekannt ist, reicht auch die Angabe des Jahres.",
+				"description": "Bitte tragen Sie das Jahr der erstmaligen Nutzung oder Eröffnung am Standort an.",
 				"errors": {
 					"required": "Bitte angeben."
 				},
 				"label": "Bestehen am Standort seit",
-				"placeholder": "TT.MM.JJJJ oder JJJJ"
+				"placeholder": "JJJJ"
 			},
 			"established_until": {
-				"description": "Bitte tragen Sie das Datum ein, bis zu dem die Kultureinrichtung an diesem Standort aktiv war. Diese Angabe betrifft nur bereits geschlossene Orte. Falls das genaue Datum nicht bekannt ist, reicht auch die Angabe des Jahres.",
+				"description": "Bitte geben Sie das Jahr an, bis zu dem die Kultureinrichtung an diesem Standort aktiv war. Diese Angabe betrifft nur bereits geschlossene Orte.",
 				"errors": {
 					"required": "Bitte angeben."
 				},
 				"label": "Bestehen am Standort bis",
-				"placeholder": "TT.MM.JJJJ oder JJJJ"
+				"placeholder": "JJJJ"
 			},
 			"funding_source": {
 				"actions": {
@@ -3389,6 +3397,14 @@
 				"label": "Interne Notizen",
 				"placeholder": "Bitte eintragen"
 			},
+			"lastName": {
+				"description": "",
+				"errors": {
+					"required": "Nachname ist erforderlich."
+				},
+				"label": "Nachname",
+				"placeholder": "Bitte eintragen"
+			},
 			"lat": {
 				"description": "",
 				"errors": {
@@ -3411,6 +3427,14 @@
 					"required": "Bitte Längengrad angeben."
 				},
 				"label": "Längengrad",
+				"placeholder": "Bitte eintragen"
+			},
+			"nachname": {
+				"description": "",
+				"errors": {
+					"required": "Nachname ist erforderlich."
+				},
+				"label": "Nachname",
 				"placeholder": "Bitte eintragen"
 			},
 			"name": {
@@ -3706,6 +3730,14 @@
 					"required": "Bitte interne Notizen zum Nutzungsstatus angeben."
 				},
 				"label": "Interne Notizen (Nutzungsstatus)",
+				"placeholder": "Bitte eintragen"
+			},
+			"vorname": {
+				"description": "",
+				"errors": {
+					"required": "Vorname ist erforderlich."
+				},
+				"label": "Vorname",
 				"placeholder": "Bitte eintragen"
 			},
 			"website": {
