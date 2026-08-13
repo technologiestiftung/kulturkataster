@@ -305,7 +305,9 @@ describe("QuestionnaireWizardModal", () => {
 		// Submission only gets created atomically with the answers at the final
 		// "Absenden". createSubmission isn't even mocked here to prove that.
 		expect(useQuestionnaireDraftStore.getState().submissionId).toBeNull();
-		expect(useQuestionnaireDraftStore.getState().pendingInstitutionData).toEqual({
+		expect(
+			useQuestionnaireDraftStore.getState().pendingInstitutionData,
+		).toEqual({
 			name: "Neuer Kulturort",
 		});
 		expect(mockStepperState.nextStep).toHaveBeenCalled();
