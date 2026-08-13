@@ -486,8 +486,8 @@ test.describe("institution submission wizard", () => {
 				"Landesmittel",
 			);
 		}
-		await fillRequiredById(page, "established_since", "2008-01-01");
-		await fillRequiredById(page, "established_until", "2035-12-31");
+		await fillRequiredById(page, "established_since", "2008");
+		await fillRequiredById(page, "established_until", "2035");
 		await fillRequiredById(page, "closing_reason", "Kein Schließungsgrund");
 		ownerTypeLabel = "Privat";
 		await selectOptionById(page, "owner_type", ownerTypeLabel);
