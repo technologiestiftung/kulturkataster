@@ -50,9 +50,9 @@ describe("questionnaireDraftStore", () => {
 		setInstitutionId(5);
 		setPendingInstitutionData({ name: "Neuer Kulturort" });
 
-		expect(useQuestionnaireDraftStore.getState().pendingInstitutionData).toEqual(
-			{ name: "Neuer Kulturort" },
-		);
+		expect(
+			useQuestionnaireDraftStore.getState().pendingInstitutionData,
+		).toEqual({ name: "Neuer Kulturort" });
 		expect(useQuestionnaireDraftStore.getState().institutionId).toBeNull();
 		expect(useQuestionnaireDraftStore.getState().submissionId).toBeNull();
 	});
