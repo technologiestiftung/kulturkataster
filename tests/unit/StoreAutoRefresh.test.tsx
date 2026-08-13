@@ -75,8 +75,8 @@ describe("StoreAutoRefresh", () => {
 		expect(setDistricts).toHaveBeenCalledWith([]);
 	});
 
-	it("does not poll outside map/list routes", async () => {
-		pathnameState.value = "/de/info";
+	it("does not poll outside map/list/info/simpleLanguage routes", async () => {
+		pathnameState.value = "/de/welcome";
 
 		render(<StoreAutoRefresh intervalMs={1_000} />);
 
@@ -109,6 +109,8 @@ describe("StoreAutoRefresh", () => {
 		expect(isPublicAutoRefreshPathEnabled("/de/map/institution/12")).toBe(true);
 		expect(isPublicAutoRefreshPathEnabled("/de/list")).toBe(true);
 		expect(isPublicAutoRefreshPathEnabled("/de/list/")).toBe(true);
-		expect(isPublicAutoRefreshPathEnabled("/de/info")).toBe(false);
+		expect(isPublicAutoRefreshPathEnabled("/de/info")).toBe(true);
+		expect(isPublicAutoRefreshPathEnabled("/de/simpleLanguage")).toBe(true);
+		expect(isPublicAutoRefreshPathEnabled("/de/welcome")).toBe(false);
 	});
 });
