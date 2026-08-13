@@ -1931,7 +1931,7 @@
 				"error": {
 					"forbidden": "Sie sind nicht berechtigt, diesen Fragebogen herunterzuladen.",
 					"noAnswers": "Für diesen Kulturort liegen keine Antworten vor.",
-					"noOpenQuestionnaire": "Kein aktiver Fragebogen vorhanden.",
+					"noOpenQuestionnaireAnswers": "Kein aktiver Fragebogen vorhanden.",
 					"unexpected": "Fragebogen konnte nicht heruntergeladen werden."
 				},
 				"title": "Fragebogen Antworten herunterladen"
