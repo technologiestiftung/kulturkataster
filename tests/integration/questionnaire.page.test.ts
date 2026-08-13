@@ -35,7 +35,9 @@ describe("questionnaire page integration", () => {
 		});
 
 		const pageModule = await import("@/app/[locale]/questionnaire/page");
-		const result = await pageModule.default({ searchParams: Promise.resolve({}) });
+		const result = await pageModule.default({
+			searchParams: Promise.resolve({}),
+		});
 
 		expect(result).toMatchObject({
 			type: QuestionnaireWizardModal,
@@ -156,7 +158,9 @@ describe("questionnaire page integration", () => {
 		});
 
 		const pageModule = await import("@/app/[locale]/questionnaire/page");
-		const result = await pageModule.default({ searchParams: Promise.resolve({}) });
+		const result = await pageModule.default({
+			searchParams: Promise.resolve({}),
+		});
 
 		expect(result).toMatchObject({ type: QuestionnaireUnavailable });
 	});
