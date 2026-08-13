@@ -65,19 +65,92 @@ type NewInstitutionInput = {
 	established_since?: unknown;
 	newCategoryKeys: string[];
 };
+// Resolves the institution/submission name to show alongside the questionnaire
+// title in the Activity feed ("Fragebogen: <title> – <entity name>"). The
+// new-institution path already has this name in hand (the compact form's own
+// input) and passes it straight through instead of hitting this lookup.
+async function resolveQuestionnaireEntityName(params: {
+	institutionId?: number;
+	submissionId?: number;
+}): Promise<string | null> {
+	if (params.institutionId !== undefined) {
+		const institution = await prisma.institution.findUnique({
+			where: { id: params.institutionId },
+			select: { name: true },
+		});
+		return institution?.name ?? null;
+	}
+	if (params.submissionId !== undefined) {
+		const submission = await prisma.submission.findUnique({
+			where: { id: params.submissionId },
+			select: { data: true },
+		});
+		const data = submission?.data;
+		const name =
+			data && typeof data === "object" && !Array.isArray(data)
+				? (data as Record<string, unknown>).name
+				: undefined;
+		return typeof name === "string" ? name : null;
+	}
+	return null;
+}
 
-// Creates the institution Submission and the Answer rows linked to it in a single
-// transaction, then (best-effort, outside that transaction) any suggested new
-// categories — mirrors what the questionnaire's compact institution-create form
-// used to do itself via createSubmission at the moment that one step was filled
-// in. Doing it here instead, atomically with the answers, means an abandoned
-// session (never reaching this final submit) leaves nothing in the database.
-//
-// Bypasses submissionRepo/createSubmission for the submission+answers write on
-// purpose: those go through the plain prisma client, so calling them inside a
-// transaction callback wouldn't actually participate in it. Same reasoning as
-// reviewSubmission's own tx.institution.create/tx.answer.updateMany
-// (src/server/actions/submissions.ts).
+async function logQuestionnaireCompletionAudit(params: {
+	questionnaireId: number;
+	currentUserId: string | null;
+	institutionId?: number;
+	submissionId?: number;
+	entityName?: string | null;
+	answerCount: number;
+	submitterName?: string;
+	submitterEmail?: string;
+}) {
+	try {
+		const questionnaire = await prisma.questionnaire.findUnique({
+			where: { id: params.questionnaireId },
+			select: { title: true },
+		});
+		const entityName =
+			params.entityName !== undefined
+				? params.entityName
+				: await resolveQuestionnaireEntityName(params);
+
+		await prisma.entityAudit.create({
+			data: {
+				entity_id: String(params.questionnaireId),
+				entity_type: "questionnaire",
+				action: "create",
+				status: "completed",
+				changed_by: params.currentUserId,
+				new_data: {
+					questionnaireId: params.questionnaireId,
+					questionnaireTitle: questionnaire?.title ?? null,
+					entityName,
+					institutionId: params.institutionId ?? null,
+					submissionId: params.submissionId ?? null,
+					answerCount: params.answerCount,
+				},
+				// "intent" reuses the same meta_info-driven action-label override the
+				// submission-review flow already relies on (src/audit.ts / ActivityList),
+				// so this renders as "beantwortet"/"answered" instead of the generic
+				// "erstellt"/"created" label for action: "create" — no AuditAction enum
+				// change needed. submitter_name/email mirror how notifyInstitutionDownload
+				// surfaces a guest's identity instead of a bare "System" actor.
+				meta_info: {
+					intent: "questionnaire_submitted",
+					submitter_name: params.submitterName ?? null,
+					submitter_email: params.submitterEmail ?? null,
+				},
+			},
+		});
+	} catch (error) {
+		logger.error("questionnaire.completion_audit.failed", error, {
+			subsystem: "questionnaire",
+			questionnaire_id: params.questionnaireId,
+		});
+	}
+}
+
 async function submitAnswersForNewInstitution(params: {
 	questionnaireId: number;
 	newInstitution: NewInstitutionInput;
@@ -131,6 +204,19 @@ async function submitAnswersForNewInstitution(params: {
 		return submission;
 	});
 
+	await logQuestionnaireCompletionAudit({
+		questionnaireId: params.questionnaireId,
+		currentUserId: params.currentUserId,
+		submissionId: createdSubmission.id,
+		entityName:
+			typeof params.newInstitution.name === "string"
+				? params.newInstitution.name
+				: null,
+		answerCount: params.answers.length,
+		submitterName: params.submitterName,
+		submitterEmail: params.submitterEmail,
+	});
+
 	if (params.newInstitution.newCategoryKeys.length > 0) {
 		await Promise.allSettled(
 			params.newInstitution.newCategoryKeys.map((key) =>
@@ -170,8 +256,6 @@ export async function submitQuestionnaireAnswers(params: {
 		const currentUserId = await getCurrentUserId();
 
 		if (newInstitution) {
-			// A submission that doesn't exist yet cannot already have answers, so
-			// there's no "already submitted" case to guard against here.
 			await submitAnswersForNewInstitution({
 				questionnaireId: params.questionnaireId,
 				newInstitution,
@@ -205,6 +289,16 @@ export async function submitQuestionnaireAnswers(params: {
 			})),
 		);
 
+		await logQuestionnaireCompletionAudit({
+			questionnaireId: params.questionnaireId,
+			currentUserId,
+			institutionId,
+			submissionId,
+			answerCount: params.answers.length,
+			submitterName: params.submitterName,
+			submitterEmail: params.submitterEmail,
+		});
+
 		return { ok: true as const };
 	} catch (error) {
 		logger.error("questionnaire.submit_answers.failed", error, {
@@ -234,10 +328,6 @@ export async function getLinkedQuestionnaireAnswersCount(submissionId: number) {
 	}
 }
 
-// Admin-only: re-point a pending submission's linked answers at a different
-// submission or an approved institution — e.g. the proposed venue turns out to be
-// a duplicate of an existing one. Gated the same way reviewSubmission gates
-// reviewing a submission, since this is a submission-management operation.
 export async function relinkQuestionnaireAnswers(params: {
 	fromSubmissionId: number;
 	toInstitutionId?: number;

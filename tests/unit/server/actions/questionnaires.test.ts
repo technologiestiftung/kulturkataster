@@ -18,6 +18,10 @@ const {
 	createSubmissionMock,
 	validateSubmissionCreateInputMock,
 	normalizeSubmissionJsonMock,
+	questionnaireFindUniqueMock,
+	entityAuditCreateMock,
+	institutionFindUniqueMock,
+	submissionFindUniqueMock,
 } = vi.hoisted(() => ({
 	listOpenMock: vi.fn(),
 	findByIdMock: vi.fn(),
@@ -36,6 +40,10 @@ const {
 	createSubmissionMock: vi.fn(),
 	validateSubmissionCreateInputMock: vi.fn((input: unknown) => input),
 	normalizeSubmissionJsonMock: vi.fn((value: unknown) => value),
+	questionnaireFindUniqueMock: vi.fn(),
+	entityAuditCreateMock: vi.fn(),
+	institutionFindUniqueMock: vi.fn(),
+	submissionFindUniqueMock: vi.fn(),
 }));
 
 vi.mock("@/server/data/questionnaireRepo", () => ({
@@ -65,6 +73,18 @@ vi.mock("@/server/actions/submissions", () => ({
 vi.mock("@/server/prisma", () => ({
 	prisma: {
 		$transaction: (...args: unknown[]) => prismaTransactionMock(...args),
+		questionnaire: {
+			findUnique: (...args: unknown[]) => questionnaireFindUniqueMock(...args),
+		},
+		entityAudit: {
+			create: (...args: unknown[]) => entityAuditCreateMock(...args),
+		},
+		institution: {
+			findUnique: (...args: unknown[]) => institutionFindUniqueMock(...args),
+		},
+		submission: {
+			findUnique: (...args: unknown[]) => submissionFindUniqueMock(...args),
+		},
 	},
 }));
 
@@ -137,6 +157,15 @@ describe("server actions: questionnaires", () => {
 		);
 		txSubmissionCreateMock.mockResolvedValue({ id: 99 });
 		txAnswerCreateManyMock.mockResolvedValue({ count: 1 });
+
+		questionnaireFindUniqueMock.mockReset();
+		questionnaireFindUniqueMock.mockResolvedValue({ title: "Test Survey" });
+		entityAuditCreateMock.mockReset();
+		entityAuditCreateMock.mockResolvedValue({ id: 1 });
+		institutionFindUniqueMock.mockReset();
+		institutionFindUniqueMock.mockResolvedValue({ name: "Café Sibylle" });
+		submissionFindUniqueMock.mockReset();
+		submissionFindUniqueMock.mockResolvedValue({ data: { name: "Pending Place" } });
 	});
 
 	describe("getOpenQuestionnaire", () => {
@@ -326,6 +355,85 @@ describe("server actions: questionnaires", () => {
 			expect(loggerError).toHaveBeenCalled();
 		});
 
+		it("logs a questionnaire-completion audit entry with the institution's name after the answers are saved", async () => {
+			getCurrentUserIdMock.mockResolvedValue("user-1");
+			createManyMock.mockResolvedValue({ count: 2 });
+
+			await submitQuestionnaireAnswers(baseParams);
+
+			expect(questionnaireFindUniqueMock).toHaveBeenCalledWith({
+				where: { id: 1 },
+				select: { title: true },
+			});
+			expect(institutionFindUniqueMock).toHaveBeenCalledWith({
+				where: { id: 2 },
+				select: { name: true },
+			});
+			expect(submissionFindUniqueMock).not.toHaveBeenCalled();
+			expect(entityAuditCreateMock).toHaveBeenCalledWith({
+				data: {
+					entity_id: "1",
+					entity_type: "questionnaire",
+					action: "create",
+					status: "completed",
+					changed_by: "user-1",
+					new_data: {
+						questionnaireId: 1,
+						questionnaireTitle: "Test Survey",
+						entityName: "Café Sibylle",
+						institutionId: 2,
+						submissionId: null,
+						answerCount: 2,
+					},
+					meta_info: {
+						intent: "questionnaire_submitted",
+						submitter_name: null,
+						submitter_email: null,
+					},
+				},
+			});
+		});
+
+		it("looks up the pending submission's name instead of an institution's when answering for a submission", async () => {
+			getCurrentUserIdMock.mockResolvedValue(null);
+			createManyMock.mockResolvedValue({ count: 1 });
+
+			await submitQuestionnaireAnswers({
+				questionnaireId: 1,
+				submissionId: 7,
+				answers: [{ questionId: 10, value: "yes" }],
+			});
+
+			expect(submissionFindUniqueMock).toHaveBeenCalledWith({
+				where: { id: 7 },
+				select: { data: true },
+			});
+			expect(institutionFindUniqueMock).not.toHaveBeenCalled();
+			expect(entityAuditCreateMock).toHaveBeenCalledWith({
+				data: expect.objectContaining({
+					new_data: expect.objectContaining({
+						entityName: "Pending Place",
+						submissionId: 7,
+					}),
+				}),
+			});
+		});
+
+		it("does not fail the submission when the completion-audit write itself fails", async () => {
+			getCurrentUserIdMock.mockResolvedValue("user-1");
+			createManyMock.mockResolvedValue({ count: 2 });
+			entityAuditCreateMock.mockRejectedValue(new Error("audit db down"));
+
+			await expect(submitQuestionnaireAnswers(baseParams)).resolves.toEqual({
+				ok: true,
+			});
+			expect(loggerError).toHaveBeenCalledWith(
+				"questionnaire.completion_audit.failed",
+				expect.any(Error),
+				expect.objectContaining({ questionnaire_id: 1 }),
+			);
+		});
+
 		it("rejects when newInstitution is given together with institutionId", async () => {
 			await expect(
 				submitQuestionnaireAnswers({
@@ -427,6 +535,28 @@ describe("server actions: questionnaires", () => {
 						data: { key: "Werkstatt" },
 					}),
 				);
+			});
+
+			it("logs a questionnaire-completion audit entry using the newly created submission's id and the name already in hand (no extra lookup)", async () => {
+				getCurrentUserIdMock.mockResolvedValue("user-1");
+				createSubmissionMock.mockResolvedValue({ id: 123 });
+
+				await submitQuestionnaireAnswers(newInstitutionParams);
+
+				expect(entityAuditCreateMock).toHaveBeenCalledWith({
+					data: expect.objectContaining({
+						entity_id: "1",
+						entity_type: "questionnaire",
+						new_data: expect.objectContaining({
+							entityName: "New Place",
+							institutionId: null,
+							submissionId: 99,
+							answerCount: 2,
+						}),
+					}),
+				});
+				expect(institutionFindUniqueMock).not.toHaveBeenCalled();
+				expect(submissionFindUniqueMock).not.toHaveBeenCalled();
 			});
 
 			it("skips category submissions when none were suggested", async () => {

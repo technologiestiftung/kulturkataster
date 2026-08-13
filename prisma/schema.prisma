@@ -641,6 +641,7 @@ enum AuditEntityType {
   submission_note
   role_table_permission
   role_field_permission
+  questionnaire
 }
 
 model EntityAudit {
