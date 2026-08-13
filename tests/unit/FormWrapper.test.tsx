@@ -834,6 +834,39 @@ describe("FormWrapper", () => {
 			expect(onSubmit).not.toHaveBeenCalled();
 		});
 
+		it("ignores a second submit fired while the first onSubmit call is still pending", async () => {
+			let resolveSubmit: (() => void) | undefined;
+			const onSubmit = vi.fn(
+				() =>
+					new Promise<void>((resolve) => {
+						resolveSubmit = resolve;
+					}),
+			);
+			const config: FormWrapperConfig = {
+				fields: toFields([
+					{
+						id: "main",
+						fields: [{ name: "name", label: "Name", type: "text" }],
+					},
+				]),
+				onSubmit,
+			};
+
+			render(<FormWrapper config={config} />);
+
+			const submitButton = screen.getByRole("button", { name: /Submit/i });
+			fireEvent.click(submitButton);
+			fireEvent.click(submitButton);
+
+			await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+
+			resolveSubmit?.();
+			await waitFor(() => {});
+
+			fireEvent.click(submitButton);
+			await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(2));
+		});
+
 		it("falls back to the generic required message when no enumMap entry exists for the field", async () => {
 			const onSubmit = vi.fn();
 			const config: FormWrapperConfig = {

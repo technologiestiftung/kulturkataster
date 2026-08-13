@@ -35,7 +35,9 @@ describe("questionnaire page integration", () => {
 		});
 
 		const pageModule = await import("@/app/[locale]/questionnaire/page");
-		const result = await pageModule.default();
+		const result = await pageModule.default({
+			searchParams: Promise.resolve({}),
+		});
 
 		expect(result).toMatchObject({
 			type: QuestionnaireWizardModal,
@@ -43,6 +45,108 @@ describe("questionnaire page integration", () => {
 				routePath: "/questionnaire",
 				questionnaire: { id: 1, title: "Survey", questions: [] },
 				categoryGroups,
+				initialInstitutionId: undefined,
+				initialSubmissionId: undefined,
+				initialStepId: undefined,
+				initialShowThankYou: false,
+			}),
+		});
+	});
+
+	it("parses ?thankyou=1 the same way /institution does", async () => {
+		getOpenQuestionnaireMock.mockResolvedValue({
+			ok: true,
+			questionnaire: { id: 1, title: "Survey", questions: [] },
+		});
+
+		const pageModule = await import("@/app/[locale]/questionnaire/page");
+		const result = await pageModule.default({
+			searchParams: Promise.resolve({ thankyou: "1" }),
+		});
+
+		expect(result).toMatchObject({
+			type: QuestionnaireWizardModal,
+			props: expect.objectContaining({ initialShowThankYou: true }),
+		});
+	});
+
+	it("also accepts ?thankyou=true", async () => {
+		getOpenQuestionnaireMock.mockResolvedValue({
+			ok: true,
+			questionnaire: { id: 1, title: "Survey", questions: [] },
+		});
+
+		const pageModule = await import("@/app/[locale]/questionnaire/page");
+		const result = await pageModule.default({
+			searchParams: Promise.resolve({ thankyou: "true" }),
+		});
+
+		expect(result).toMatchObject({
+			type: QuestionnaireWizardModal,
+			props: expect.objectContaining({ initialShowThankYou: true }),
+		});
+	});
+
+	it("parses institutionId/submissionId/step search params through to the wizard modal", async () => {
+		getOpenQuestionnaireMock.mockResolvedValue({
+			ok: true,
+			questionnaire: { id: 1, title: "Survey", questions: [] },
+		});
+
+		const pageModule = await import("@/app/[locale]/questionnaire/page");
+		const result = await pageModule.default({
+			searchParams: Promise.resolve({
+				institutionId: "42",
+				step: "block-1",
+			}),
+		});
+
+		expect(result).toMatchObject({
+			type: QuestionnaireWizardModal,
+			props: expect.objectContaining({
+				initialInstitutionId: 42,
+				initialSubmissionId: undefined,
+				initialStepId: "block-1",
+			}),
+		});
+	});
+
+	it("ignores a non-numeric institutionId search param", async () => {
+		getOpenQuestionnaireMock.mockResolvedValue({
+			ok: true,
+			questionnaire: { id: 1, title: "Survey", questions: [] },
+		});
+
+		const pageModule = await import("@/app/[locale]/questionnaire/page");
+		const result = await pageModule.default({
+			searchParams: Promise.resolve({ institutionId: "not-a-number" }),
+		});
+
+		expect(result).toMatchObject({
+			type: QuestionnaireWizardModal,
+			props: expect.objectContaining({ initialInstitutionId: undefined }),
+		});
+	});
+
+	it("takes the first value when a search param is repeated (Next.js hands back an array)", async () => {
+		getOpenQuestionnaireMock.mockResolvedValue({
+			ok: true,
+			questionnaire: { id: 1, title: "Survey", questions: [] },
+		});
+
+		const pageModule = await import("@/app/[locale]/questionnaire/page");
+		const result = await pageModule.default({
+			searchParams: Promise.resolve({
+				institutionId: ["42", "43"],
+				step: ["block-1", "block-2"],
+			}),
+		});
+
+		expect(result).toMatchObject({
+			type: QuestionnaireWizardModal,
+			props: expect.objectContaining({
+				initialInstitutionId: 42,
+				initialStepId: "block-1",
 			}),
 		});
 	});
@@ -54,7 +158,9 @@ describe("questionnaire page integration", () => {
 		});
 
 		const pageModule = await import("@/app/[locale]/questionnaire/page");
-		const result = await pageModule.default();
+		const result = await pageModule.default({
+			searchParams: Promise.resolve({}),
+		});
 
 		expect(result).toMatchObject({ type: QuestionnaireUnavailable });
 	});
@@ -68,13 +174,17 @@ describe("questionnaire page integration", () => {
 		const pageModule = await import(
 			"@/app/[locale]/@modal/(.)questionnaire/page"
 		);
-		const result = await pageModule.default();
+		const result = await pageModule.default({
+			searchParams: Promise.resolve({ submissionId: "7", thankyou: "1" }),
+		});
 
 		expect(result).toMatchObject({
 			type: QuestionnaireWizardModal,
 			props: expect.objectContaining({
 				routePath: "/questionnaire",
 				categoryGroups,
+				initialSubmissionId: 7,
+				initialShowThankYou: true,
 			}),
 		});
 	});

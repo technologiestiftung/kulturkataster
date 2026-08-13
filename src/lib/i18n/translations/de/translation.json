@@ -48,6 +48,7 @@
 					"actions": {
 						"create": "erstellt",
 						"delete": "gelöscht",
+						"questionnaire_submitted": "beantwortet",
 						"submission_review_approved": "genehmigt",
 						"submission_review_completed": "abgeschlossen",
 						"submission_review_rejected": "abgelehnt",
@@ -74,6 +75,7 @@
 						"funding_source": "Förderquelle",
 						"group": "Gruppe",
 						"institution": "Kulturort",
+						"questionnaire": "Fragebogen",
 						"role": "Rolle",
 						"role_field_permission": "Rollenfeld-Berechtigung",
 						"role_table_permission": "Rollentabellen-Berechtigung",
@@ -652,6 +654,9 @@
 		"next": "Weiter",
 		"no": "Nein",
 		"privateFieldDescription": "Diese Information wird ausschließlich für befugte Nutzer*innen im geschützten Bereich des Kulturkatasters zugänglich und nicht öffentlich einsehbar sein.",
+		"questionnaire": {
+			"title": "Umfrage zum Gefährdungsindex"
+		},
 		"save": "Speichern",
 		"search": {
 			"description": "Ganz einfach die Berliner Kulturlandschaft entdecken: Geben Sie einen Kulturortnamen, eine Adresse, einen Bezirk oder Ortsteil in die Suchfunktion ein und wählen Sie das Ergebnis aus den angezeigten Vorschlägen aus. Ihre Auswahl wird direkt auf der Karte angezeigt.",
@@ -1972,15 +1977,11 @@
 				"checkboxLabel": "Ich habe die Informationen zur Befragung gelesen und erkläre mich mit der freiwilligen Teilnahme sowie der Verarbeitung meiner Angaben zu wissenschaftlichen Zwecken im Rahmen dieses Projekts einverstanden.",
 				"cta": "An der Befragung teilnehmen",
 				"paragraph1": "Die Befragung ist Teil eines wissenschaftlichen Projekts zur Entwicklung eines Gefährdungsscores für Berliner Kultureinrichtungen. Ziel des Projekts ist es, unterschiedliche strukturelle, räumliche, finanzielle und organisationale Rahmenbedingungen systematisch zu erfassen, um Risiken, Belastungen und Unterstützungsbedarfe von Kultureinrichtungen in Berlin besser sichtbar machen zu können.",
-				"paragraph2Prefix": "Unter ",
-				"paragraph2Suffix": " verstehen wir im Rahmen dieser Befragung „dauerhaft oder wiederkehrend genutzte Orte und Organisationen kultureller Produktion, Präsentation, Vermittlung oder Begegnung“, beispielsweise Theater, Musikspielstätten, Ateliers, Galerien, soziokulturelle Zentren, Literaturorte, Tanz- und Performanceorte oder vergleichbare Einrichtungen.",
-				"paragraph2Term": "Kultureinrichtungen",
-				"paragraph3Bold": "etwa 15 bis 20 Minuten.",
-				"paragraph3Prefix": "Die Beantwortung des Fragebogens dauert voraussichtlich ",
+				"paragraph2": "Unter <0>Kultureinrichtungen</0> verstehen wir im Rahmen dieser Befragung <1>„dauerhaft oder wiederkehrend genutzte Orte und Organisationen kultureller Produktion, Präsentation, Vermittlung oder Begegnung“</1>, beispielsweise Theater, Musikspielstätten, Ateliers, Galerien, soziokulturelle Zentren, Literaturorte, Tanz- und Performanceorte oder vergleichbare Einrichtungen.",
+				"paragraph3": "Die Beantwortung des Fragebogens dauert voraussichtlich <0>etwa 15 bis 20 Minuten.</0>",
 				"paragraph4": "Ihre Angaben werden vertraulich behandelt und ausschließlich für wissenschaftliche Zwecke im Rahmen des Projekts ausgewertet. Eine Veröffentlichung erfolgt nur in zusammengefasster Form, sodass keine Rückschlüsse auf einzelne Personen möglich sind. Sofern im weiteren Projektverlauf Ergebnisse auf Ebene einzelner Einrichtungen betrachtet werden, erfolgt dies ausschließlich im dafür vorgesehenen Projektrahmen und unter Beachtung der datenschutzrechtlichen Vorgaben.",
 				"paragraph5": "Der Fragebogen enthält Fragen zur Raum- und Standortsituation, zur finanziellen Lage, zu organisatorischen Rahmenbedingungen sowie zur öffentlichen Sichtbarkeit der Einrichtung. Bitte beantworten Sie den Fragebogen möglichst aus Sicht der Einrichtung insgesamt. Idealerweise wird er von einer Person ausgefüllt, die einen guten Überblick über die Raum-, Organisations- und Finanzsituation der Einrichtung hat.",
-				"paragraph6Bold": "Die Teilnahme an der Befragung ist freiwillig.",
-				"paragraph6Suffix": "Mit dem Setzen des Häkchens bestätigen Sie, dass Sie die Informationen zur Befragung zur Kenntnis genommen haben und mit der Verarbeitung Ihrer Angaben zu wissenschaftlichen Zwecken im Rahmen dieses Projekts einverstanden sind.",
+				"paragraph6": "<0>Die Teilnahme an der Befragung ist freiwillig.</0> Mit dem Setzen des Häkchens bestätigen Sie, dass Sie die Informationen zur Befragung zur Kenntnis genommen haben und mit der Verarbeitung Ihrer Angaben zu wissenschaftlichen Zwecken im Rahmen dieses Projekts einverstanden sind.",
 				"thankYouClosing": "Vielen Dank für Ihre Unterstützung.",
 				"thanks": "Vielen Dank, dass Sie sich die Zeit nehmen, an dieser Befragung teilzunehmen.",
 				"title": "Befragung zum Gefährdungsradar von Berliner Kulturorten"
@@ -2948,6 +2949,7 @@
 				"credit": "Copyright 2025 - Ein Projekt der Kulturraum Berlin gGmbH, gefördert durch die Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt, mit der technischen Umsetzung durch die Technologiestiftung Berlin."
 			},
 			"infoButton": "Infos & Service",
+			"questionnaire": "Zur Umfrage",
 			"newsletter": "Zum Newsletter anmelden",
 			"subtitle": "Ein Projekt der Kulturraum Berlin gGmbH",
 			"title": "Das Berliner Kulturkataster: Die Kultur der Stadt auf einen Blick"

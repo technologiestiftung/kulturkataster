@@ -42,4 +42,51 @@ describe("questionnaireDraftStore", () => {
 		expect(useQuestionnaireDraftStore.getState().submissionId).toBeNull();
 		expect(useQuestionnaireDraftStore.getState().institutionId).toBeNull();
 	});
+
+	it("clears institutionId and submissionId when pendingInstitutionData is set", () => {
+		const { setInstitutionId, setPendingInstitutionData } =
+			useQuestionnaireDraftStore.getState();
+
+		setInstitutionId(5);
+		setPendingInstitutionData({ name: "Neuer Kulturort" });
+
+		expect(
+			useQuestionnaireDraftStore.getState().pendingInstitutionData,
+		).toEqual({ name: "Neuer Kulturort" });
+		expect(useQuestionnaireDraftStore.getState().institutionId).toBeNull();
+		expect(useQuestionnaireDraftStore.getState().submissionId).toBeNull();
+	});
+
+	it("clears pendingInstitutionData when institutionId or submissionId is set", () => {
+		const { setPendingInstitutionData, setInstitutionId, setSubmissionId } =
+			useQuestionnaireDraftStore.getState();
+
+		setPendingInstitutionData({ name: "Neuer Kulturort" });
+		setInstitutionId(5);
+		expect(
+			useQuestionnaireDraftStore.getState().pendingInstitutionData,
+		).toBeNull();
+
+		setPendingInstitutionData({ name: "Neuer Kulturort" });
+		setSubmissionId(7);
+		expect(
+			useQuestionnaireDraftStore.getState().pendingInstitutionData,
+		).toBeNull();
+	});
+
+	it("clears pendingInstitutionData when a different questionnaire loads", () => {
+		const { ensureQuestionnaire, setPendingInstitutionData } =
+			useQuestionnaireDraftStore.getState();
+
+		ensureQuestionnaire(1);
+		setPendingInstitutionData({ name: "Neuer Kulturort" });
+		expect(
+			useQuestionnaireDraftStore.getState().pendingInstitutionData,
+		).toEqual({ name: "Neuer Kulturort" });
+
+		ensureQuestionnaire(2);
+		expect(
+			useQuestionnaireDraftStore.getState().pendingInstitutionData,
+		).toBeNull();
+	});
 });
