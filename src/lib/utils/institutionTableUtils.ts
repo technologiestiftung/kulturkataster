@@ -130,5 +130,6 @@ export const buildSubmissionRow = (
 		created_at: submission.created_at,
 		updated_at: submission.updated_at,
 		submissionType: submission.type,
+		hasQuestionnaireAnswers: (submission._count?.answers ?? 0) > 0,
 	};
 };
