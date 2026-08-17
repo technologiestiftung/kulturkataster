@@ -11,6 +11,9 @@ const submissionInclude = {
 			created_at: "desc",
 		},
 	},
+	_count: {
+		select: { answers: true },
+	},
 } satisfies Prisma.SubmissionInclude;
 
 export const submissionRepo = {

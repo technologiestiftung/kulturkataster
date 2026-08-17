@@ -64,6 +64,7 @@ export interface DataTableConfig<T> {
 	reviewAriaLabel?: string;
 	canDownloadQuestionnaireAnswers?: boolean;
 	onDownloadQuestionnaireAnswers?: (row: T) => void;
+	getCanDownloadQuestionnaireAnswers?: (row: T) => boolean;
 	downloadQuestionnaireAnswersAriaLabel?: string;
 	onDownloadQuestionnaireAnswersAll?: () => void;
 	downloadQuestionnaireAnswersAllLabel?: ReactNode;
