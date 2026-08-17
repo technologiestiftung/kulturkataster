@@ -109,7 +109,10 @@ export const buildInstitutionSelectFromFields = (
 	if (allowedFields.length === 0) {
 		return null;
 	}
-	const select = { id: true } as Prisma.InstitutionSelect;
+	const select = {
+		id: true,
+		_count: { select: { answers: true } },
+	} as Prisma.InstitutionSelect;
 	const mutableSelect: Record<string, unknown> = select as Record<
 		string,
 		unknown

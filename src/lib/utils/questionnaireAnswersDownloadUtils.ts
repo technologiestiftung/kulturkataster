@@ -4,19 +4,109 @@ import {
 	downloadAllQuestionnaireAnswers,
 	type QuestionnaireAnswersExportErrorCode,
 } from "@/server/actions/questionnaires";
+import { getBlockMeta } from "@/lib/utils/questionnaireFormAdapter";
 
 export type QuestionnaireDownloadFormat = "csv" | "xlsx";
 
-type QuestionnaireExportRow = {
-	Frage: string;
-	Antwort: string;
+type QuestionOption = {
+	value: string | number | boolean;
+	label: string;
 };
 
-function formatAnswerValue(value: unknown): string {
-	if (value === null || value === undefined) return "";
-	if (Array.isArray(value)) return value.map((item) => String(item)).join("; ");
-	if (typeof value === "object") return JSON.stringify(value);
-	return String(value);
+type QuestionConfigShape = {
+	options?: QuestionOption[];
+	freeTextOption?: { value: string | number | boolean; label?: string };
+	likertMatrix?: { rows: { key: string; label: string }[] };
+};
+
+const getConfig = (config: unknown): QuestionConfigShape =>
+	(config as QuestionConfigShape | null) ?? {};
+
+const resolveOptionLabel = (
+	options: QuestionOption[] | undefined,
+	rawValue: unknown,
+): string | null => {
+	const match = options?.find(
+		(option) => String(option.value) === String(rawValue),
+	);
+	return match ? match.label : null;
+};
+
+function formatScalarValue(config: QuestionConfigShape, rawValue: unknown): string {
+	if (rawValue === null || rawValue === undefined || rawValue === "") return "";
+	if (typeof rawValue === "boolean") return rawValue ? "Ja" : "Nein";
+	const optionLabel = resolveOptionLabel(config.options, rawValue);
+	if (optionLabel) return optionLabel;
+	if (
+		config.freeTextOption &&
+		String(config.freeTextOption.value) === String(rawValue)
+	) {
+		return config.freeTextOption.label ?? String(rawValue);
+	}
+	return String(rawValue);
+}
+
+const isFreeTextCombo = (
+	value: unknown,
+): value is { selected: unknown; freeText: unknown } =>
+	typeof value === "object" &&
+	value !== null &&
+	!Array.isArray(value) &&
+	"selected" in value &&
+	"freeText" in value;
+
+function formatFreeTextCombo(
+	config: QuestionConfigShape,
+	combo: { selected: unknown; freeText: unknown },
+): string {
+	const selectedLabel = formatScalarValue(config, combo.selected);
+	const freeText = typeof combo.freeText === "string" ? combo.freeText : "";
+	if (!freeText) return selectedLabel;
+	return selectedLabel ? `${selectedLabel}: ${freeText}` : freeText;
+}
+
+function formatLikertMatrixValue(
+	config: QuestionConfigShape,
+	value: Record<string, unknown>,
+): string {
+	const rows = config.likertMatrix?.rows ?? [];
+	return rows
+		.map((row) => {
+			const rowValue = value[row.key];
+			if (rowValue === undefined || rowValue === null || rowValue === "") {
+				return null;
+			}
+			return `${row.label}: ${formatScalarValue(config, rowValue)}`;
+		})
+		.filter((line): line is string => line !== null)
+		.join("; ");
+}
+
+function formatAnswerValue(
+	fieldType: string,
+	rawConfig: unknown,
+	value: unknown,
+): string {
+	if (value === null || value === undefined || value === "") return "";
+	const config = getConfig(rawConfig);
+
+	if (
+		fieldType === "likertMatrix" &&
+		typeof value === "object" &&
+		!Array.isArray(value)
+	) {
+		return formatLikertMatrixValue(config, value as Record<string, unknown>);
+	}
+	if (isFreeTextCombo(value)) {
+		return formatFreeTextCombo(config, value);
+	}
+	if (Array.isArray(value)) {
+		return value.map((item) => formatScalarValue(config, item)).join("; ");
+	}
+	if (typeof value === "object") {
+		return JSON.stringify(value);
+	}
+	return formatScalarValue(config, value);
 }
 
 function formatAnsweredAt(value: Date): string {
@@ -47,94 +137,74 @@ function escapeCSVValue(value: string): string {
 	return `"${cleanValue}"`;
 }
 
-function generateQuestionnaireCSV(
-	rows: QuestionnaireExportRow[],
-	answeredAtLabel: string,
-): string {
-	const lines = [
-		"",
-		`${escapeCSVValue("Beantwortet am")},${escapeCSVValue(answeredAtLabel)}`,
-		"",
-		`${escapeCSVValue("Frage")},${escapeCSVValue("Antworten")}`,
-		...rows.map(
-			(row) => `${escapeCSVValue(row.Frage)},${escapeCSVValue(row.Antwort)}`,
-		),
-	];
-	const BOM = "﻿";
-	return BOM + lines.join("\r\n");
-}
+type AoaRowKind = "blank" | "date" | "blockTitle" | "header" | "data";
+type AoaRow = { kind: AoaRowKind; cells: string[] };
 
-function generateQuestionnaireExcelBuffer(
-	rows: QuestionnaireExportRow[],
-	answeredAtLabel: string,
-): ArrayBuffer {
-	const aoa: string[][] = [
-		[],
-		["Beantwortet am", answeredAtLabel],
-		[],
-		["Frage", "Antworten"],
-		...rows.map((row) => [row.Frage, row.Antwort]),
+// Groups question rows into their survey block (Block A-F, plus the trailing
+// consent step), inserting a block-title row and a repeated column header
+// row whenever the step changes. Block titles come from
+// Questionnaire.meta_data.blocks[step], always resolved in German.
+function buildExportRows(
+	items: { step: number; cells: string[] }[],
+	metaData: unknown,
+	answeredAtRow: string[],
+	headerRow: string[],
+): AoaRow[] {
+	const rows: AoaRow[] = [
+		{ kind: "blank", cells: [] },
+		{ kind: "date", cells: answeredAtRow },
 	];
-	const ws = XLSX.utils.aoa_to_sheet(aoa);
-	[
-		{ r: 1, c: 0 }, // "Beantwortet am"
-		{ r: 3, c: 0 }, // "Frage"
-		{ r: 3, c: 1 }, // "Antworten"
-	].forEach(({ r, c }) => {
-		const cellAddress = XLSX.utils.encode_cell({ r, c });
-		if (ws[cellAddress]) {
-			ws[cellAddress].s = { font: { bold: true } };
+
+	let currentStep: number | null = null;
+	items.forEach((item) => {
+		if (item.step !== currentStep) {
+			rows.push({ kind: "blank", cells: [] });
+			const { title } = getBlockMeta({ meta_data: metaData }, item.step, "de");
+			rows.push({ kind: "blockTitle", cells: [title] });
+			rows.push({ kind: "header", cells: headerRow });
+			currentStep = item.step;
 		}
+		rows.push({ kind: "data", cells: item.cells });
 	});
-	const measureTextWidth = createTextWidthMeasurer();
-	ws["!cols"] = [0, 1].map((colIndex) => ({
-		wch: Math.max(
-			...aoa.map((row) => measureTextWidth(String(row[colIndex] ?? ""))),
-		),
-	}));
-	const wb = XLSX.utils.book_new();
-	XLSX.utils.book_append_sheet(wb, ws, "Fragebogen");
-	return XLSX.write(wb, { bookType: "xlsx", type: "array" });
+
+	return rows;
 }
 
-function generateQuestionnaireAllCSV(
-	headerRow: string[],
-	answeredAtRow: string[],
-	questionRows: string[][],
-): string {
-	const lines = [
-		"",
-		answeredAtRow.map(escapeCSVValue).join(","),
-		"",
-		headerRow.map(escapeCSVValue).join(","),
-		...questionRows.map((row) => row.map(escapeCSVValue).join(",")),
-	];
+function generateExportCSV(rows: AoaRow[]): string {
+	const lines = rows.map((row) => row.cells.map(escapeCSVValue).join(","));
 	const BOM = "﻿";
 	return BOM + lines.join("\r\n");
 }
 
-function generateQuestionnaireAllExcelBuffer(
-	headerRow: string[],
-	answeredAtRow: string[],
-	questionRows: string[][],
-): ArrayBuffer {
-	const aoa: string[][] = [[], answeredAtRow, [], headerRow, ...questionRows];
+function generateExportExcelBuffer(rows: AoaRow[]): ArrayBuffer {
+	const aoa = rows.map((row) => row.cells);
 	const ws = XLSX.utils.aoa_to_sheet(aoa);
-	const columnCount = headerRow.length;
-	[1, 3].forEach((r) => {
-		for (let c = 0; c < columnCount; c++) {
-			const cellAddress = XLSX.utils.encode_cell({ r, c });
+
+	rows.forEach((row, r) => {
+		if (row.kind === "date" || row.kind === "blockTitle") {
+			const cellAddress = XLSX.utils.encode_cell({ r, c: 0 });
 			if (ws[cellAddress]) {
 				ws[cellAddress].s = { font: { bold: true } };
 			}
 		}
+		if (row.kind === "header") {
+			row.cells.forEach((_, c) => {
+				const cellAddress = XLSX.utils.encode_cell({ r, c });
+				if (ws[cellAddress]) {
+					ws[cellAddress].s = { font: { bold: true } };
+				}
+			});
+		}
 	});
+
 	const measureTextWidth = createTextWidthMeasurer();
+	const columnCount = Math.max(1, ...aoa.map((row) => row.length));
 	ws["!cols"] = Array.from({ length: columnCount }, (_, colIndex) => ({
 		wch: Math.max(
 			...aoa.map((row) => measureTextWidth(String(row[colIndex] ?? ""))),
 		),
 	}));
+
 	const wb = XLSX.utils.book_new();
 	XLSX.utils.book_append_sheet(wb, ws, "Fragebogen");
 	return XLSX.write(wb, { bookType: "xlsx", type: "array" });
@@ -186,23 +256,33 @@ export async function downloadInstitutionQuestionnaireAnswers({
 				)
 			: "";
 
-	const rows: QuestionnaireExportRow[] = result.data.rows.map((row) => ({
-		Frage: row.questionLabel,
-		Antwort: formatAnswerValue(row.value),
+	const items = result.data.rows.map((row) => ({
+		step: row.step,
+		cells: [
+			row.questionLabel,
+			formatAnswerValue(row.fieldType, row.config, row.value),
+		],
 	}));
+
+	const rows = buildExportRows(
+		items,
+		result.data.metaData,
+		["Beantwortet am", answeredAtLabel],
+		["Frage", "Antworten"],
+	);
 
 	const timestamp = new Date().toISOString().split("T")[0];
 	const fullFilename = `${timestamp}_${sanitizeFilenameBase(filenameBase)}.${format}`;
 
 	if (format === "csv") {
 		triggerBrowserDownload(
-			generateQuestionnaireCSV(rows, answeredAtLabel),
+			generateExportCSV(rows),
 			fullFilename,
 			"text/csv;charset=utf-8;",
 		);
 	} else {
 		triggerBrowserDownload(
-			generateQuestionnaireExcelBuffer(rows, answeredAtLabel),
+			generateExportExcelBuffer(rows),
 			fullFilename,
 			"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
 		);
@@ -225,40 +305,40 @@ export async function downloadInstitutionQuestionnaireAnswersAll({
 		return { ok: false, error: result.error };
 	}
 
-	const { questions, institutions } = result.data;
-	const headerRow = [
-		"Frage",
-		...institutions.map((institution) => institution.name),
-	];
+	const { metaData, questions, institutions } = result.data;
+	const headerRow = ["Frage", ...institutions.map((i) => i.name)];
 	const answeredAtRow = [
 		"Beantwortet am",
-		...institutions.map((institution) =>
-			formatAnsweredAt(institution.answeredAt),
-		),
+		...institutions.map((i) => formatAnsweredAt(i.answeredAt)),
 	];
-	const questionRows = questions.map((question) => [
-		question.label,
-		...institutions.map((institution) =>
-			formatAnswerValue(institution.answers[question.id]),
-		),
-	]);
+	const items = questions.map((question) => ({
+		step: question.step,
+		cells: [
+			question.label,
+			...institutions.map((institution) =>
+				formatAnswerValue(
+					question.fieldType,
+					question.config,
+					institution.answers[question.id],
+				),
+			),
+		],
+	}));
+
+	const rows = buildExportRows(items, metaData, answeredAtRow, headerRow);
 
 	const timestamp = new Date().toISOString().split("T")[0];
 	const fullFilename = `${timestamp}_${sanitizeFilenameBase(filenameBase)}.${format}`;
 
 	if (format === "csv") {
 		triggerBrowserDownload(
-			generateQuestionnaireAllCSV(headerRow, answeredAtRow, questionRows),
+			generateExportCSV(rows),
 			fullFilename,
 			"text/csv;charset=utf-8;",
 		);
 	} else {
 		triggerBrowserDownload(
-			generateQuestionnaireAllExcelBuffer(
-				headerRow,
-				answeredAtRow,
-				questionRows,
-			),
+			generateExportExcelBuffer(rows),
 			fullFilename,
 			"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
 		);

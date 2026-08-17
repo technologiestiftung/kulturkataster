@@ -763,12 +763,32 @@ describe("server actions: questionnaires", () => {
 	});
 
 	describe("downloadQuestionnaireAnswers", () => {
-		it("returns the mapped rows for the institution's latest answers", async () => {
-			listOpenMock.mockResolvedValue([{ id: 1 }]);
+		it("returns the mapped rows for the institution's latest answers, sorted by step/order", async () => {
+			const metaData = { blocks: { "1": { title: "Block A: Test" } } };
+			listOpenMock.mockResolvedValue([{ id: 1, meta_data: metaData }]);
 			const answeredAt = new Date("2026-01-01T00:00:00.000Z");
 			listLatestByQuestionnaireAndInstitutionMock.mockResolvedValue([
 				{
-					question: { label: "Wie hoch ist die Miete?" },
+					question: {
+						label: "Wie viele Mitarbeitende?",
+						step: 2,
+						order: 0,
+						field_type: "text",
+						config: null,
+					},
+					value: "5",
+					submitter_name: "Jane Doe",
+					submitter_email: "jane@example.test",
+					created_at: answeredAt,
+				},
+				{
+					question: {
+						label: "Wie hoch ist die Miete?",
+						step: 1,
+						order: 0,
+						field_type: "text",
+						config: null,
+					},
 					value: "1200",
 					submitter_name: "Jane Doe",
 					submitter_email: "jane@example.test",
@@ -779,10 +799,24 @@ describe("server actions: questionnaires", () => {
 			await expect(downloadQuestionnaireAnswers(2)).resolves.toEqual({
 				ok: true,
 				data: {
+					metaData,
 					rows: [
 						{
 							questionLabel: "Wie hoch ist die Miete?",
+							step: 1,
+							fieldType: "text",
+							config: null,
 							value: "1200",
+							submitterName: "Jane Doe",
+							submitterEmail: "jane@example.test",
+							answeredAt,
+						},
+						{
+							questionLabel: "Wie viele Mitarbeitende?",
+							step: 2,
+							fieldType: "text",
+							config: null,
+							value: "5",
 							submitterName: "Jane Doe",
 							submitterEmail: "jane@example.test",
 							answeredAt,
@@ -848,10 +882,23 @@ describe("server actions: questionnaires", () => {
 
 	describe("downloadAllQuestionnaireAnswers", () => {
 		it("groups the latest answers by institution and sorts institutions by name", async () => {
-			listOpenMock.mockResolvedValue([{ id: 1 }]);
+			const metaData = { blocks: { "1": { title: "Block A: Test" } } };
+			listOpenMock.mockResolvedValue([{ id: 1, meta_data: metaData }]);
 			listByQuestionnaireMock.mockResolvedValue([
-				{ id: 10, label: "Wie hoch ist die Miete?" },
-				{ id: 11, label: "Wie viele Mitarbeitende?" },
+				{
+					id: 10,
+					label: "Wie hoch ist die Miete?",
+					step: 1,
+					field_type: "text",
+					config: null,
+				},
+				{
+					id: 11,
+					label: "Wie viele Mitarbeitende?",
+					step: 1,
+					field_type: "text",
+					config: null,
+				},
 			]);
 			const olderAnswer = new Date("2026-01-01T00:00:00.000Z");
 			const newerAnswer = new Date("2026-01-02T00:00:00.000Z");
@@ -879,9 +926,22 @@ describe("server actions: questionnaires", () => {
 			await expect(downloadAllQuestionnaireAnswers()).resolves.toEqual({
 				ok: true,
 				data: {
+					metaData,
 					questions: [
-						{ id: 10, label: "Wie hoch ist die Miete?" },
-						{ id: 11, label: "Wie viele Mitarbeitende?" },
+						{
+							id: 10,
+							label: "Wie hoch ist die Miete?",
+							step: 1,
+							fieldType: "text",
+							config: null,
+						},
+						{
+							id: 11,
+							label: "Wie viele Mitarbeitende?",
+							step: 1,
+							fieldType: "text",
+							config: null,
+						},
 					],
 					institutions: [
 						{

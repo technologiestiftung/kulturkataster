@@ -23,7 +23,9 @@ export type Submission = Prisma.SubmissionGetPayload<{
 			};
 		};
 	};
-}>;
+}> & {
+	_count?: { answers: number };
+};
 
 export type ClaimSubmission = Prisma.SubmissionGetPayload<{
 	include: {
