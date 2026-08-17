@@ -88,6 +88,14 @@ const matchesCondition = (
 	return condition.equals === actual;
 };
 
+const isQuestionVisible = (
+	question: Question,
+	formData: Record<string, unknown>,
+): boolean => {
+	const condition = getQuestionConfig(question).condition;
+	return !condition || matchesCondition(condition, formData);
+};
+
 // Question.step is just a number — there's no dedicated "block title" column in the
 // schema. Convention (not dictated by the schema, documented here): a block's
 // display title/description are looked up from Questionnaire.meta_data.blocks[step],
@@ -288,11 +296,16 @@ export function buildQuestionnaireStepFormConfig(params: {
 		submitDisabled,
 	} = params;
 
+	const formData = initialValues ?? {};
+	let visibleQuestionNumber = 0;
+
 	return {
-		fields: questions.map((question, index) => {
+		fields: questions.map((question) => {
 			const field = buildFieldConfigFromQuestion(question, locale);
 			if (field.type === "checkbox") return field;
-			return { ...field, label: `${index + 1}. ${field.label}` };
+			if (!isQuestionVisible(question, formData)) return field;
+			visibleQuestionNumber += 1;
+			return { ...field, label: `${visibleQuestionNumber}. ${field.label}` };
 		}),
 		initialValues,
 		onChange,
