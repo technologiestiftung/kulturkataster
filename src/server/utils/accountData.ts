@@ -76,15 +76,23 @@ const loadInstitutions = async ({
 
 	const select = buildInstitutionSelect(ctx);
 	if (!select) return [];
+	// The institutions table needs to know whether an institution has
+	// submitted questionnaire answers (to show/hide the download icon) — add
+	// it here rather than in buildInstitutionSelectFromFields, since that
+	// builder is shared with the public/anonymous institution data loader.
+	const selectWithAnswerCount = {
+		...select,
+		_count: { select: { answers: true } },
+	};
 
 	const scope = getTableScope(ctx, "institution", "read");
 	if (scope === "all") {
-		return institutionRepo.listWithSelect(select);
+		return institutionRepo.listWithSelect(selectWithAnswerCount);
 	}
 
 	const where = buildInstitutionScopedWhere(scope, currentUserId);
 	if (!where) return [];
-	return institutionRepo.listWithSelectWhere(where, select);
+	return institutionRepo.listWithSelectWhere(where, selectWithAnswerCount);
 };
 
 const loadSubmissions = async ({
