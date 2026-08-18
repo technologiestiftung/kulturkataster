@@ -360,11 +360,23 @@ export async function downloadQuestionnaireAnswers(institutionId: number) {
 			return { ok: false as const, error: "noAnswers" as const };
 		}
 
+		const sortedAnswers = [...answers].sort((a, b) => {
+			if (a.question.step !== b.question.step) {
+				return a.question.step - b.question.step;
+			}
+			return a.question.order - b.question.order;
+		});
+
 		return {
 			ok: true as const,
 			data: {
-				rows: answers.map((answer) => ({
+				institutionName: sortedAnswers[0]?.institution?.name ?? "",
+				metaData: openQuestionnaires[0].meta_data,
+				rows: sortedAnswers.map((answer) => ({
 					questionLabel: answer.question.label,
+					step: answer.question.step,
+					fieldType: answer.question.field_type,
+					config: answer.question.config,
 					value: answer.value,
 					submitterName: answer.submitter_name,
 					submitterEmail: answer.submitter_email,
@@ -444,9 +456,13 @@ export async function downloadAllQuestionnaireAnswers() {
 		return {
 			ok: true as const,
 			data: {
+				metaData: openQuestionnaires[0].meta_data,
 				questions: questions.map((question) => ({
 					id: question.id,
 					label: question.label,
+					step: question.step,
+					fieldType: question.field_type,
+					config: question.config,
 				})),
 				institutions: institutions.map((institution) => ({
 					id: institution.id,
