@@ -213,7 +213,6 @@ export function InstitutionsTable({
 		async (row: InstitutionTableRow) => {
 			const result = await downloadInstitutionQuestionnaireAnswers({
 				institutionId: row.id,
-				institutionName: row.name ?? String(row.id),
 				filenameBase: `Fragebogen_${row.name ?? row.id}`,
 				format: "xlsx",
 			});
