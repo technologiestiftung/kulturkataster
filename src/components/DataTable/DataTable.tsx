@@ -1087,7 +1087,11 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 																						</Button>
 																					) : null}
 																					{config.canDownloadQuestionnaireAnswers &&
-																					config.onDownloadQuestionnaireAnswers ? (
+																					config.onDownloadQuestionnaireAnswers &&
+																					(config.getCanDownloadQuestionnaireAnswers?.(
+																						row.original,
+																					) ??
+																						true) ? (
 																						<Button
 																							iconSize="sm"
 																							variant="surface"

@@ -360,6 +360,7 @@ export function InstitutionsTable({
 			...institution,
 			rowKind: "institution" as const,
 			rowKey: `institution-${institution.id}`,
+			hasQuestionnaireAnswers: (institution._count?.answers ?? 0) > 0,
 		}));
 		return [...submissionRows, ...institutionRows];
 	}, [flattenedCategories, institutions, submissions]);
@@ -1169,6 +1170,7 @@ export function InstitutionsTable({
 			onClick: () => setIsDownloadDialogOpen(true),
 		},
 		canDownloadQuestionnaireAnswers,
+		getCanDownloadQuestionnaireAnswers: (row) => row.hasQuestionnaireAnswers,
 		onDownloadQuestionnaireAnswers: handleDownloadQuestionnaireAnswers,
 		downloadQuestionnaireAnswersAriaLabel: t(
 			"content.institutionsTable.actions.downloadQuestionnaire",

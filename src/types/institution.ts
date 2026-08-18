@@ -27,6 +27,7 @@ export type PrismaInstitutionWithRelations = Prisma.InstitutionGetPayload<{
 export type Institution = PrismaInstitutionWithRelations & {
 	funding_sources?: FundingSource[];
 	categoryIds?: number[] | null;
+	_count?: { answers: number };
 };
 
 export type InstitutionTableBase = {
@@ -76,6 +77,7 @@ export type InstitutionTableBase = {
 	capacity?: Institution["capacity"];
 	created_at: Institution["created_at"];
 	updated_at: Institution["updated_at"];
+	hasQuestionnaireAnswers: boolean;
 };
 
 export type InstitutionRow = InstitutionTableBase & {
