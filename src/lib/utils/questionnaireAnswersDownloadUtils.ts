@@ -67,17 +67,19 @@ function generateQuestionnaireCSV(
 function generateQuestionnaireExcelBuffer(
 	rows: QuestionnaireExportRow[],
 	answeredAtLabel: string,
-	institutionName: string,
 ): ArrayBuffer {
 	const aoa: string[][] = [
-		[institutionName],
+		[],
 		["Beantwortet am", answeredAtLabel],
+		[],
+		["Frage", "Antworten"],
 		...rows.map((row) => [row.Frage, row.Antwort]),
 	];
 	const ws = XLSX.utils.aoa_to_sheet(aoa);
 	[
-		{ r: 0, c: 0 }, // institution name
 		{ r: 1, c: 0 }, // "Beantwortet am"
+		{ r: 3, c: 0 }, // "Frage"
+		{ r: 3, c: 1 }, // "Antworten"
 	].forEach(({ r, c }) => {
 		const cellAddress = XLSX.utils.encode_cell({ r, c });
 		if (ws[cellAddress]) {
@@ -112,18 +114,14 @@ function generateQuestionnaireAllCSV(
 }
 
 function generateQuestionnaireAllExcelBuffer(
-	institutionNames: string[],
+	headerRow: string[],
 	answeredAtRow: string[],
 	questionRows: string[][],
 ): ArrayBuffer {
-	const aoa: string[][] = [
-		["", ...institutionNames],
-		answeredAtRow,
-		...questionRows,
-	];
+	const aoa: string[][] = [[], answeredAtRow, [], headerRow, ...questionRows];
 	const ws = XLSX.utils.aoa_to_sheet(aoa);
-	const columnCount = institutionNames.length + 1;
-	[0, 1].forEach((r) => {
+	const columnCount = headerRow.length;
+	[1, 3].forEach((r) => {
 		for (let c = 0; c < columnCount; c++) {
 			const cellAddress = XLSX.utils.encode_cell({ r, c });
 			if (ws[cellAddress]) {
@@ -163,12 +161,10 @@ const sanitizeFilenameBase = (value: string) =>
 
 export async function downloadInstitutionQuestionnaireAnswers({
 	institutionId,
-	institutionName,
 	filenameBase,
 	format,
 }: {
 	institutionId: number;
-	institutionName: string;
 	filenameBase: string;
 	format: QuestionnaireDownloadFormat;
 }): Promise<
@@ -206,7 +202,7 @@ export async function downloadInstitutionQuestionnaireAnswers({
 		);
 	} else {
 		triggerBrowserDownload(
-			generateQuestionnaireExcelBuffer(rows, answeredAtLabel, institutionName),
+			generateQuestionnaireExcelBuffer(rows, answeredAtLabel),
 			fullFilename,
 			"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
 		);
@@ -259,7 +255,7 @@ export async function downloadInstitutionQuestionnaireAnswersAll({
 	} else {
 		triggerBrowserDownload(
 			generateQuestionnaireAllExcelBuffer(
-				headerRow.slice(1),
+				headerRow,
 				answeredAtRow,
 				questionRows,
 			),
