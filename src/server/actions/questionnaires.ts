@@ -370,6 +370,7 @@ export async function downloadQuestionnaireAnswers(institutionId: number) {
 		return {
 			ok: true as const,
 			data: {
+				institutionName: sortedAnswers[0]?.institution?.name ?? "",
 				metaData: openQuestionnaires[0].meta_data,
 				rows: sortedAnswers.map((answer) => ({
 					questionLabel: answer.question.label,

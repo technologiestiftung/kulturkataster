@@ -137,21 +137,22 @@ function escapeCSVValue(value: string): string {
 	return `"${cleanValue}"`;
 }
 
-type AoaRowKind = "blank" | "date" | "blockTitle" | "header" | "data";
+type AoaRowKind = "blank" | "name" | "date" | "blockTitle" | "data";
 type AoaRow = { kind: AoaRowKind; cells: string[] };
 
-// Groups question rows into their survey block (Block A-F, plus the trailing
-// consent step), inserting a block-title row and a repeated column header
-// row whenever the step changes. Block titles come from
-// Questionnaire.meta_data.blocks[step], always resolved in German.
+// Leads with the institution name(s) and answered-at date, then groups
+// question rows into their survey block (Block A-F, plus the trailing
+// consent step), inserting a block-title row whenever the step changes.
+// Block titles come from Questionnaire.meta_data.blocks[step], always
+// resolved in German.
 function buildExportRows(
 	items: { step: number; cells: string[] }[],
 	metaData: unknown,
+	nameRow: string[],
 	answeredAtRow: string[],
-	headerRow: string[],
 ): AoaRow[] {
 	const rows: AoaRow[] = [
-		{ kind: "blank", cells: [] },
+		{ kind: "name", cells: nameRow },
 		{ kind: "date", cells: answeredAtRow },
 	];
 
@@ -161,7 +162,6 @@ function buildExportRows(
 			rows.push({ kind: "blank", cells: [] });
 			const { title } = getBlockMeta({ meta_data: metaData }, item.step, "de");
 			rows.push({ kind: "blockTitle", cells: [title] });
-			rows.push({ kind: "header", cells: headerRow });
 			currentStep = item.step;
 		}
 		rows.push({ kind: "data", cells: item.cells });
@@ -187,7 +187,7 @@ function generateExportExcelBuffer(rows: AoaRow[]): ArrayBuffer {
 				ws[cellAddress].s = { font: { bold: true } };
 			}
 		}
-		if (row.kind === "header") {
+		if (row.kind === "name") {
 			row.cells.forEach((_, c) => {
 				const cellAddress = XLSX.utils.encode_cell({ r, c });
 				if (ws[cellAddress]) {
@@ -267,8 +267,8 @@ export async function downloadInstitutionQuestionnaireAnswers({
 	const rows = buildExportRows(
 		items,
 		result.data.metaData,
+		[result.data.institutionName],
 		["Beantwortet am", answeredAtLabel],
-		["Frage", "Antworten"],
 	);
 
 	const timestamp = new Date().toISOString().split("T")[0];
@@ -306,7 +306,7 @@ export async function downloadInstitutionQuestionnaireAnswersAll({
 	}
 
 	const { metaData, questions, institutions } = result.data;
-	const headerRow = ["Frage", ...institutions.map((i) => i.name)];
+	const nameRow = ["", ...institutions.map((i) => i.name)];
 	const answeredAtRow = [
 		"Beantwortet am",
 		...institutions.map((i) => formatAnsweredAt(i.answeredAt)),
@@ -325,7 +325,7 @@ export async function downloadInstitutionQuestionnaireAnswersAll({
 		],
 	}));
 
-	const rows = buildExportRows(items, metaData, answeredAtRow, headerRow);
+	const rows = buildExportRows(items, metaData, nameRow, answeredAtRow);
 
 	const timestamp = new Date().toISOString().split("T")[0];
 	const fullFilename = `${timestamp}_${sanitizeFilenameBase(filenameBase)}.${format}`;
