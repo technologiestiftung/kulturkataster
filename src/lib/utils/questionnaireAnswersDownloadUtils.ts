@@ -117,15 +117,8 @@ function formatAnsweredAt(value: Date): string {
 	return `${day}.${month}.${year}`;
 }
 
-function createTextWidthMeasurer(): (text: string) => number {
-	const ctx =
-		typeof document === "undefined"
-			? null
-			: document.createElement("canvas").getContext("2d");
-	if (!ctx) return (text) => text.length;
-	ctx.font = "11pt Calibri, Arial, sans-serif";
-	const digitWidthPx = ctx.measureText("0").width || 1;
-	return (text) => ctx.measureText(text).width / digitWidthPx;
+function pxToExcelWidth(px: number): number {
+	return (px - 5) / 7;
 }
 
 function escapeCSVValue(value: string): string {
@@ -197,12 +190,9 @@ function generateExportExcelBuffer(rows: AoaRow[]): ArrayBuffer {
 		}
 	});
 
-	const measureTextWidth = createTextWidthMeasurer();
 	const columnCount = Math.max(1, ...aoa.map((row) => row.length));
 	ws["!cols"] = Array.from({ length: columnCount }, (_, colIndex) => ({
-		wch: Math.max(
-			...aoa.map((row) => measureTextWidth(String(row[colIndex] ?? ""))),
-		),
+		wch: pxToExcelWidth(colIndex === 0 ? 780 : 170),
 	}));
 
 	const wb = XLSX.utils.book_new();
