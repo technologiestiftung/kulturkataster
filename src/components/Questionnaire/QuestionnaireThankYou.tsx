@@ -2,6 +2,7 @@
 
 import { useTranslation } from "react-i18next";
 import Image from "next/image";
+import TextWithLinks from "@/components/Content/TextWithLinks";
 
 export function QuestionnaireThankYou() {
 	const { t } = useTranslation();
@@ -23,11 +24,13 @@ export function QuestionnaireThankYou() {
 						defaultValue: "Vielen Dank für Ihre Teilnahme!",
 					})}
 				</h1>
-				<p className="body2 mt-2">
-					{t("content.questionnaireWizard.review.thanksDescription", {
-						defaultValue: "Ihre Antworten wurden erfolgreich übermittelt.",
+				<TextWithLinks
+					text={t("content.questionnaireWizard.review.thanksDescription", {
+						defaultValue:
+							"Vielen Dank für Ihre Teilnahme! Bei Fragen bezüglich des Projekts oder dieser Erhebung wenden Sie sich gerne an: info@kulturkataster.berlin",
 					})}
-				</p>
+					textVariant="body2 mt-2"
+				/>
 			</div>
 		</div>
 	);
