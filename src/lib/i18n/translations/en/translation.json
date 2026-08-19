@@ -476,7 +476,7 @@
 				"invalidNumber": "Invalid number",
 				"invalidPhone": "Invalid Telephone Number ",
 				"invalidUrl": "Invalid URL",
-				"required": "{{field}} is required"
+				"required": "This is a required field. A response is required."
 			}
 		},
 		"headerLandmark": "Site navigation",
