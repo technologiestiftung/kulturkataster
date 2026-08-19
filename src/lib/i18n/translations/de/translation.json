@@ -481,7 +481,7 @@
 				"invalidNumber": "Ungültige Zahl",
 				"invalidPhone": "Ungültige Telefonnummer",
 				"invalidUrl": "Ungültige URL",
-				"required": "{{field}} ist erforderlich"
+				"required": "Dies ist ein Pflichtfeld. Eine Antwort ist erforderlich."
 			}
 		},
 		"headerLandmark": "Seitennavigation",
