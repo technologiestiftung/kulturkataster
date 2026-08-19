@@ -33,51 +33,19 @@ export function QuestionnaireConsentStep({
 				</p>
 			</div>
 
-			<div className="body2 space-y-4">
-				<p>
-					{t("content.questionnaireWizard.consent.paragraph1", {
-						defaultValue:
-							"Die Befragung ist Teil eines wissenschaftlichen Projekts zur Entwicklung eines Gefährdungsscores für Berliner Kultureinrichtungen. Ziel des Projekts ist es, unterschiedliche strukturelle, räumliche, finanzielle und organisationale Rahmenbedingungen systematisch zu erfassen, um Risiken, Belastungen und Unterstützungsbedarfe von Kultureinrichtungen in Berlin besser sichtbar machen zu können.",
-					})}
-				</p>
-				<p>
-					<Trans
-						i18nKey="content.questionnaireWizard.consent.paragraph2"
-						components={[<strong key="term" />, <strong key="quote" />]}
-						defaults="Unter <0>Kultureinrichtungen</0> verstehen wir im Rahmen dieser Befragung <1>„dauerhaft oder wiederkehrend genutzte Orte und Organisationen kultureller Produktion, Präsentation, Vermittlung oder Begegnung“</1>, beispielsweise Theater, Musikspielstätten, Ateliers, Galerien, soziokulturelle Zentren, Literaturorte, Tanz- und Performanceorte oder vergleichbare Einrichtungen."
-					/>
-				</p>
-				<p>
-					<Trans
-						i18nKey="content.questionnaireWizard.consent.paragraph3"
-						components={[<strong key="duration" />]}
-						defaults="Die Beantwortung des Fragebogens dauert voraussichtlich <0>etwa 15 bis 20 Minuten.</0>"
-					/>
-				</p>
-				<p>
-					{t("content.questionnaireWizard.consent.paragraph4", {
-						defaultValue:
-							"Ihre Angaben werden vertraulich behandelt und ausschließlich für wissenschaftliche Zwecke im Rahmen des Projekts ausgewertet. Eine Veröffentlichung erfolgt nur in zusammengefasster Form, sodass keine Rückschlüsse auf einzelne Personen möglich sind. Sofern im weiteren Projektverlauf Ergebnisse auf Ebene einzelner Einrichtungen betrachtet werden, erfolgt dies ausschließlich im dafür vorgesehenen Projektrahmen und unter Beachtung der datenschutzrechtlichen Vorgaben.",
-					})}
-				</p>
-				<p>
-					{t("content.questionnaireWizard.consent.paragraph5", {
-						defaultValue:
-							"Der Fragebogen enthält Fragen zur Raum- und Standortsituation, zur finanziellen Lage, zu organisatorischen Rahmenbedingungen sowie zur öffentlichen Sichtbarkeit der Einrichtung. Bitte beantworten Sie den Fragebogen möglichst aus Sicht der Einrichtung insgesamt. Idealerweise wird er von einer Person ausgefüllt, die einen guten Überblick über die Raum-, Organisations- und Finanzsituation der Einrichtung hat.",
-					})}
-				</p>
-				<p>
-					<Trans
-						i18nKey="content.questionnaireWizard.consent.paragraph6"
-						components={[<strong key="voluntary" />]}
-						defaults="<0>Die Teilnahme an der Befragung ist freiwillig.</0> Mit dem Setzen des Häkchens bestätigen Sie, dass Sie die Informationen zur Befragung zur Kenntnis genommen haben und mit der Verarbeitung Ihrer Angaben zu wissenschaftlichen Zwecken im Rahmen dieses Projekts einverstanden sind."
-					/>
-				</p>
-				<p>
-					{t("content.questionnaireWizard.consent.thankYouClosing", {
-						defaultValue: "Vielen Dank für Ihre Unterstützung.",
-					})}
-				</p>
+			<div className="body2 whitespace-pre-line">
+				<Trans
+					i18nKey="content.questionnaireWizard.consent.body"
+					components={[
+						<strong key="term" />,
+						<strong key="quote" />,
+						<strong key="duration" />,
+						<strong key="voluntary" />,
+					]}
+					defaults={
+						"Die Befragung ist Teil eines wissenschaftlichen Projekts zur Entwicklung eines Gefährdungsscores für Berliner Kultureinrichtungen. Ziel des Projekts ist es, unterschiedliche strukturelle, räumliche, finanzielle und organisationale Rahmenbedingungen systematisch zu erfassen, um Risiken, Belastungen und Unterstützungsbedarfe von Kultureinrichtungen in Berlin besser sichtbar machen zu können.\n\nUnter <0>Kultureinrichtungen</0> verstehen wir im Rahmen dieser Befragung <1>„dauerhaft oder wiederkehrend genutzte Orte und Organisationen kultureller Produktion, Präsentation, Vermittlung oder Begegnung“</1>, beispielsweise Theater, Musikspielstätten, Ateliers, Galerien, soziokulturelle Zentren, Literaturorte, Tanz- und Performanceorte oder vergleichbare Einrichtungen.\n\nDie Beantwortung des Fragebogens dauert voraussichtlich <2>etwa 15 bis 20 Minuten.</2>\n\nIhre Angaben werden vertraulich behandelt und ausschließlich für wissenschaftliche Zwecke im Rahmen des Projekts ausgewertet. Eine Veröffentlichung erfolgt nur in zusammengefasster Form, sodass keine Rückschlüsse auf einzelne Personen möglich sind. Sofern im weiteren Projektverlauf Ergebnisse auf Ebene einzelner Einrichtungen betrachtet werden, erfolgt dies ausschließlich im dafür vorgesehenen Projektrahmen und unter Beachtung der datenschutzrechtlichen Vorgaben.\n\nDer Fragebogen enthält Fragen zur Raum- und Standortsituation, zur finanziellen Lage, zu organisatorischen Rahmenbedingungen sowie zur öffentlichen Sichtbarkeit der Einrichtung. Bitte beantworten Sie den Fragebogen möglichst aus Sicht der Einrichtung insgesamt. Idealerweise wird er von einer Person ausgefüllt, die einen guten Überblick über die Raum-, Organisations- und Finanzsituation der Einrichtung hat.\n\n<3>Die Teilnahme an der Befragung ist freiwillig.</3> Mit dem Setzen des Häkchens bestätigen Sie, dass Sie die Informationen zur Befragung zur Kenntnis genommen haben und mit der Verarbeitung Ihrer Angaben zu wissenschaftlichen Zwecken im Rahmen dieses Projekts einverstanden sind.\n\nVielen Dank für Ihre Unterstützung."
+					}
+				/>
 			</div>
 
 			<div className="space-y-3">
