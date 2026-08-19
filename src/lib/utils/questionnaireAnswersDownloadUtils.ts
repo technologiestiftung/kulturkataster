@@ -32,7 +32,10 @@ const resolveOptionLabel = (
 	return match ? match.label : null;
 };
 
-function formatScalarValue(config: QuestionConfigShape, rawValue: unknown): string {
+function formatScalarValue(
+	config: QuestionConfigShape,
+	rawValue: unknown,
+): string {
 	if (rawValue === null || rawValue === undefined || rawValue === "") return "";
 	if (typeof rawValue === "boolean") return rawValue ? "Ja" : "Nein";
 	const optionLabel = resolveOptionLabel(config.options, rawValue);
