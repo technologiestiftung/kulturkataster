@@ -21,7 +21,6 @@ import {
 } from "@/components/ui/sidebar";
 import { allowedLocales, defaultLocale } from "@/i18n/config";
 import Accessibility from "@/icons/accessibility.svg";
-import Clipboard from "@/icons/clipboard.svg";
 import Download from "@/icons/download.svg";
 import Edit from "@/icons/edit.svg";
 import InfoCircle from "@/icons/info-circle.svg";
@@ -86,15 +85,6 @@ const menuItems: MenuItem[] = [
 		label: "user.title",
 		route: "/account",
 		matchPattern: /^\/[^/]+\/account/,
-	},
-	{
-		id: "questionnaire",
-		icon: Clipboard,
-		label: "questionnaire.title",
-		route: "/questionnaire",
-		showInMobile: true,
-		showInAccount: true,
-		showInMap: true,
 	},
 ];
 
