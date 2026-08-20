@@ -133,69 +133,127 @@ function escapeCSVValue(value: string): string {
 	return `"${cleanValue}"`;
 }
 
-type AoaRowKind = "blank" | "name" | "date" | "blockTitle" | "data";
-type AoaRow = { kind: AoaRowKind; cells: string[] };
+type BlockRange = { title: string; startColumn: number; endColumn: number };
 
-// Leads with the institution name(s) and answered-at date, then groups
-// question rows into their survey block (Block A-F, plus the trailing
-// consent step), inserting a block-title row whenever the step changes.
-// Block titles come from Questionnaire.meta_data.blocks[step], always
-// resolved in German.
+// Name row and date row always precede the per-question data rows, so once
+// transposed they occupy exactly the first two columns.
+const LEADING_COLUMNS = 2;
+
+// Leads with the institution name(s) and answered-at date, then one row per
+// question, in survey order.
 function buildExportRows(
 	items: { step: number; cells: string[] }[],
-	metaData: unknown,
 	nameRow: string[],
 	answeredAtRow: string[],
-): AoaRow[] {
-	const rows: AoaRow[] = [
-		{ kind: "name", cells: nameRow },
-		{ kind: "date", cells: answeredAtRow },
-	];
-
-	let currentStep: number | null = null;
-	items.forEach((item) => {
-		if (item.step !== currentStep) {
-			rows.push({ kind: "blank", cells: [] });
-			const { title } = getBlockMeta({ meta_data: metaData }, item.step, "de");
-			rows.push({ kind: "blockTitle", cells: [title] });
-			currentStep = item.step;
-		}
-		rows.push({ kind: "data", cells: item.cells });
-	});
-
-	return rows;
+): string[][] {
+	return [nameRow, answeredAtRow, ...items.map((item) => item.cells)];
 }
 
-function generateExportCSV(rows: AoaRow[]): string {
-	const lines = rows.map((row) => row.cells.map(escapeCSVValue).join(","));
+// Groups consecutive questions sharing the same survey step (Block A-F, plus
+// the trailing consent step) and records which columns that block spans once
+// transposed, so its title can be rendered as a single merged, centered
+// header cell above them. Block titles come from Questionnaire.meta_data
+// .blocks[step], always resolved in German.
+function computeBlockRanges(
+	items: { step: number }[],
+	metaData: unknown,
+): BlockRange[] {
+	const ranges: (BlockRange & { step: number })[] = [];
+
+	items.forEach((item, index) => {
+		const column = LEADING_COLUMNS + index;
+		const previous = ranges[ranges.length - 1];
+		if (previous && previous.step === item.step) {
+			previous.endColumn = column;
+			return;
+		}
+		const { title } = getBlockMeta({ meta_data: metaData }, item.step, "de");
+		ranges.push({ step: item.step, title, startColumn: column, endColumn: column });
+	});
+
+	return ranges.map(({ title, startColumn, endColumn }) => ({
+		title,
+		startColumn,
+		endColumn,
+	}));
+}
+
+// Transposes the question-major row list (one row per question/meta row, one
+// column per cultural place) into a place-major grid: one row per cultural
+// place, one column per question.
+function transposeRows(rows: string[][]): string[][] {
+	const rowCount = rows.length;
+	const colCount = Math.max(1, ...rows.map((row) => row.length));
+	return Array.from({ length: colCount }, (_outer, c) =>
+		Array.from({ length: rowCount }, (_inner, r) => rows[r][c] ?? ""),
+	);
+}
+
+// Prepends a row holding each block's title, left as an empty cell in
+// columns that don't belong to any block (the name/date columns). In Excel
+// these title cells get merged across their block's column range; CSV has
+// no merge concept, so the title there only appears in the range's first
+// cell.
+function prependBlockHeaderRow(
+	aoa: string[][],
+	blockRanges: BlockRange[],
+): string[][] {
+	const columnCount = aoa[0]?.length ?? 0;
+	const blockHeaderRow = Array.from({ length: columnCount }, () => "");
+	blockRanges.forEach((block) => {
+		blockHeaderRow[block.startColumn] = block.title;
+	});
+	return [blockHeaderRow, ...aoa];
+}
+
+function generateExportCSV(aoa: string[][]): string {
+	const lines = aoa.map((row) => row.map(escapeCSVValue).join(","));
 	const BOM = "﻿";
 	return BOM + lines.join("\r\n");
 }
 
-function generateExportExcelBuffer(rows: AoaRow[]): ArrayBuffer {
-	const aoa = rows.map((row) => row.cells);
+function generateExportExcelBuffer(
+	aoa: string[][],
+	blockRanges: BlockRange[],
+): ArrayBuffer {
 	const ws = XLSX.utils.aoa_to_sheet(aoa);
+	const columnCount = Math.max(1, ...aoa.map((row) => row.length));
 
-	rows.forEach((row, r) => {
-		if (row.kind === "date" || row.kind === "blockTitle") {
-			const cellAddress = XLSX.utils.encode_cell({ r, c: 0 });
-			if (ws[cellAddress]) {
-				ws[cellAddress].s = { font: { bold: true } };
-			}
+	// Row 0 is the prepended block-title row; the column-label row (place
+	// name, "Beantwortet am", question labels) sits right below it and
+	// renders bold throughout.
+	const columnHeaderRow = 1;
+	for (let c = 0; c < columnCount; c++) {
+		const cellAddress = XLSX.utils.encode_cell({ r: columnHeaderRow, c });
+		if (ws[cellAddress]) {
+			ws[cellAddress].s = { font: { bold: true } };
 		}
-		if (row.kind === "name") {
-			row.cells.forEach((_, c) => {
-				const cellAddress = XLSX.utils.encode_cell({ r, c });
-				if (ws[cellAddress]) {
-					ws[cellAddress].s = { font: { bold: true } };
-				}
-			});
+	}
+	aoa.forEach((_, r) => {
+		const cellAddress = XLSX.utils.encode_cell({ r, c: 0 });
+		if (ws[cellAddress]) {
+			ws[cellAddress].s = { font: { bold: true } };
 		}
 	});
 
-	const columnCount = Math.max(1, ...aoa.map((row) => row.length));
-	ws["!cols"] = Array.from({ length: columnCount }, (_, colIndex) => ({
-		wch: pxToExcelWidth(colIndex === 0 ? 780 : 170),
+	ws["!merges"] = blockRanges
+		.filter((block) => block.endColumn > block.startColumn)
+		.map((block) => ({
+			s: { r: 0, c: block.startColumn },
+			e: { r: 0, c: block.endColumn },
+		}));
+	blockRanges.forEach((block) => {
+		const cellAddress = XLSX.utils.encode_cell({ r: 0, c: block.startColumn });
+		if (ws[cellAddress]) {
+			ws[cellAddress].s = {
+				font: { bold: true },
+				alignment: { horizontal: "center", vertical: "center" },
+			};
+		}
+	});
+
+	ws["!cols"] = Array.from({ length: columnCount }, () => ({
+		wch: pxToExcelWidth(170),
 	}));
 
 	const wb = XLSX.utils.book_new();
@@ -259,23 +317,26 @@ export async function downloadInstitutionQuestionnaireAnswers({
 
 	const rows = buildExportRows(
 		items,
-		result.data.metaData,
-		[result.data.institutionName],
+		["", result.data.institutionName],
 		["Beantwortet am", answeredAtLabel],
 	);
+	const blockRanges = computeBlockRanges(items, result.data.metaData);
 
 	const timestamp = new Date().toISOString().split("T")[0];
 	const fullFilename = `${timestamp}_${sanitizeFilenameBase(filenameBase)}.${format}`;
 
+	const transposedAoa = transposeRows(rows);
+	const aoa = prependBlockHeaderRow(transposedAoa, blockRanges);
+
 	if (format === "csv") {
 		triggerBrowserDownload(
-			generateExportCSV(rows),
+			generateExportCSV(aoa),
 			fullFilename,
 			"text/csv;charset=utf-8;",
 		);
 	} else {
 		triggerBrowserDownload(
-			generateExportExcelBuffer(rows),
+			generateExportExcelBuffer(aoa, blockRanges),
 			fullFilename,
 			"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
 		);
@@ -318,20 +379,24 @@ export async function downloadInstitutionQuestionnaireAnswersAll({
 		],
 	}));
 
-	const rows = buildExportRows(items, metaData, nameRow, answeredAtRow);
+	const rows = buildExportRows(items, nameRow, answeredAtRow);
+	const blockRanges = computeBlockRanges(items, metaData);
 
 	const timestamp = new Date().toISOString().split("T")[0];
 	const fullFilename = `${timestamp}_${sanitizeFilenameBase(filenameBase)}.${format}`;
 
+	const transposedAoa = transposeRows(rows);
+	const aoa = prependBlockHeaderRow(transposedAoa, blockRanges);
+
 	if (format === "csv") {
 		triggerBrowserDownload(
-			generateExportCSV(rows),
+			generateExportCSV(aoa),
 			fullFilename,
 			"text/csv;charset=utf-8;",
 		);
 	} else {
 		triggerBrowserDownload(
-			generateExportExcelBuffer(rows),
+			generateExportExcelBuffer(aoa, blockRanges),
 			fullFilename,
 			"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
 		);
