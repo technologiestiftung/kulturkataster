@@ -168,7 +168,12 @@ function computeBlockRanges(
 			return;
 		}
 		const { title } = getBlockMeta({ meta_data: metaData }, item.step, "de");
-		ranges.push({ step: item.step, title, startColumn: column, endColumn: column });
+		ranges.push({
+			step: item.step,
+			title,
+			startColumn: column,
+			endColumn: column,
+		});
 	});
 
 	return ranges.map(({ title, startColumn, endColumn }) => ({
