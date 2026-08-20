@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import BurgerMenu from "@/icons/burger-menu-icon.svg";
+import Clipboard from "@/icons/clipboard.svg";
 
 export function ViewModeToggle() {
 	const { t } = useTranslation();
@@ -14,6 +15,14 @@ export function ViewModeToggle() {
 	return (
 		<div className="fixed block z-65 top-0 right-0 p-4 overflow-hidden">
 			<div className="flex gap-2 items-center">
+				<Button
+					variant="secondary"
+					className="hidden md:flex text-interaction-dark [&_svg]:size-6"
+					onClick={() => router.push(toLocalePath("/questionnaire"))}
+				>
+					<Clipboard />
+					<p>{t("content.welcomeModal.questionnaire")}</p>
+				</Button>
 				<Button
 					radius="full"
 					variant="surface"

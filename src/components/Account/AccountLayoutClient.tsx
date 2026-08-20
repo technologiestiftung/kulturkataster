@@ -8,7 +8,6 @@ import { usePathname, useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import Setting from "@/icons/settings.svg";
 import Info from "@/icons/info-circle.svg";
-import Clipboard from "@/icons/clipboard.svg";
 import { logout } from "@/server/actions/auth";
 import Image from "next/image";
 import { LogOut } from "lucide-react";
@@ -20,7 +19,6 @@ import {
 	devTimings,
 	installModalNavigationTiming,
 } from "@/lib/utils/devTimings";
-import { Button } from "../ui/button";
 
 type TabConfig = {
 	value: string;
@@ -176,16 +174,6 @@ export function AccountLayoutClient({
 					className="object-cover object-top-left contrast:invert-90"
 					priority
 				/>
-			</div>
-			<div className="absolute top-5 right-5 z-50">
-				<Button
-					variant="secondary"
-					className="text-interaction-dark [&_svg]:size-6"
-					onClick={() => router.push(toLocalePath("/questionnaire"))}
-				>
-					<Clipboard />
-					<p>{t("content.welcomeModal.questionnaire")}</p>
-				</Button>
 			</div>
 			<div className="absolute flex h-full w-full flex-col">
 				<div className="space-y-6 p-10 shrink-0">

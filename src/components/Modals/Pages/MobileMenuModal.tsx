@@ -9,6 +9,7 @@ import {
 	DialogTitle,
 } from "@/components/ui/dialog";
 import { allowedLocales, defaultLocale } from "@/i18n/config";
+import Clipboard from "@/icons/clipboard.svg";
 import Close from "@/icons/close.svg";
 import Download from "@/icons/download.svg";
 import InfoCircle from "@/icons/info-circle.svg";
@@ -55,6 +56,12 @@ const mobileMenuItems: MobileMenuItem[] = [
 		icon: InfoCircle,
 		label: "information.title",
 		route: "/info",
+	},
+	{
+		id: "questionnaire",
+		icon: Clipboard,
+		label: "questionnaire.title",
+		route: "/questionnaire",
 	},
 	{
 		id: "language",
