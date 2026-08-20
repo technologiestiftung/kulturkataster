@@ -63,7 +63,7 @@ const LikertScale = React.forwardRef<
 					return (
 						<div
 							key={option.value}
-							className="relative flex flex-[1_0_0] flex-col items-center gap-1"
+							className="relative flex flex-[1_0_0] flex-col items-center gap-1 px-2"
 						>
 							<RadioGroupItem
 								id={itemId}
