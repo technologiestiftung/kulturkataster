@@ -764,7 +764,8 @@ export function InstitutionsTable({
 					enableSorting: true,
 					size: 200,
 					meta: { truncate: true, exportKey: "culture_index" },
-					cell: ({ row }) => renderCultureIndexValue(row.original.culture_index),
+					cell: ({ row }) =>
+						renderCultureIndexValue(row.original.culture_index),
 				},
 				{
 					accessorKey: "protection_status",

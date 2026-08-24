@@ -119,10 +119,7 @@ const getCultureIndexRangeCounts = (
 	institutions: Institution[],
 	filters: Pick<
 		FilterState,
-		| "include_closed"
-		| "district_keys"
-		| "category_keys"
-		| "child_category_keys"
+		"include_closed" | "district_keys" | "category_keys" | "child_category_keys"
 	>,
 ): Record<CultureIndexRangeKey, number> => {
 	const counts = createEmptyCultureIndexRangeCounts();
