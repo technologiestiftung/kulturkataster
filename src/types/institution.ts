@@ -12,6 +12,7 @@ import type {
 import type { Category } from "@/types/category";
 import { FeatureCollection, GeoJsonProperties, Geometry } from "geojson";
 import { OwnerType, RentalContractType } from "@/generated/prisma";
+import type { CultureIndexRangeKey } from "@/lib/constants/cultureIndexRanges";
 
 export type PrismaInstitutionWithRelations = Prisma.InstitutionGetPayload<{
 	include: {
@@ -65,6 +66,7 @@ export type InstitutionTableBase = {
 	established_since?: Institution["established_since"];
 	established_until?: Institution["established_until"];
 	closing_reason?: Institution["closing_reason"];
+	culture_index?: Institution["culture_index"];
 	notes?: Institution["notes"];
 	internal_notes?: Institution["internal_notes"];
 	source?: Institution["source"];
@@ -201,6 +203,7 @@ export const INSTITUTION_PERMISSION_FIELDS = [
 	"established_since",
 	"established_until",
 	"closing_reason",
+	"culture_index",
 	"area",
 	"number_of_rooms",
 	"capacity",
@@ -243,6 +246,7 @@ export interface FilterState {
 	district_keys: string[];
 	category_keys: string[];
 	child_category_keys: string[];
+	culture_index_ranges: CultureIndexRangeKey[];
 	include_closed: boolean;
 	status: string | undefined; // e.g., "open", "closed", etc.
 }
@@ -257,6 +261,7 @@ export interface InstitutionStoreState {
 	> | null;
 	categoryCounts: Record<string, number>;
 	subcategoryCounts: Record<string, number>;
+	cultureIndexRangeCounts: Record<CultureIndexRangeKey, number>;
 	filters: FilterState;
 	categories: Category[] | null;
 	districts: string[];

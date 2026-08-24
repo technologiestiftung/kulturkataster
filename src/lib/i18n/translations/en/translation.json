@@ -1096,6 +1096,19 @@
 				"setAllFilters": "All Filters",
 				"title": "Districts"
 			},
+			"cultureIndex": {
+				"resetFilters": "Reset Filter",
+				"setAllFilters": "All Filters",
+				"title": "Cultural Hub Index",
+				"ranges": {
+					"81-100": "long-term secured",
+					"61-80": "largely secured",
+					"41-60": "conditionally secured",
+					"21-40": "increasingly at risk",
+					"0-20": "acutely at risk"
+				}
+			},
+			"cultureIndexTagsSwitchAriaLabel": "{{translatedName}} switch on or off",
 			"districtTagsSwitchAriaLabel": "{{translatedName}} switch on or off",
 			"error": "Error loading Filters",
 			"hideClosed": "Hide Closed Locations",
@@ -3244,6 +3257,9 @@
 				},
 				"label": "Cultural Area",
 				"placeholder": "Please Select"
+			},
+			"culture_index": {
+				"label": "Cultural Hub Index"
 			},
 			"datenverwendung": {
 				"description": "",

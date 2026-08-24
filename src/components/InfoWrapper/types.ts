@@ -22,6 +22,8 @@ export type InfoWrapperFieldType =
 	| "category"
 	| "fundingSources"
 	| "address"
+	| "culture_index"
+	| "statusCultureIndexGroup"
 	| "link"
 	| "section";
 
@@ -61,6 +63,7 @@ interface InfoWrapperBaseFieldConfig {
 	};
 	categoryVariant?: "default" | "compact";
 	statusVariant?: "default" | "plain";
+	cultureIndexVariant?: "default" | "plain";
 	onClick?: (data: Institution) => void;
 	onClickAriaLabel?: string;
 	edit?: InfoWrapperEditConfig;
