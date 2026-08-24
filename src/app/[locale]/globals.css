@@ -138,6 +138,12 @@
 	--color-chart-4: var(--fachfarben-blue);
 	--color-chart-5: var(--fachfarben-green);
 
+	--color-fachfarben-dark-green: var(--fachfarben-dark-green);
+	--color-fachfarben-green: var(--fachfarben-green);
+	--color-fachfarben-yellow: var(--fachfarben-yellow);
+	--color-fachfarben-orange: var(--fachfarben-orange);
+	--color-fachfarben-pink: var(--fachfarben-pink);
+
 	--color-sidebar: var(--neutral-5);
 	--color-sidebar-foreground: var(--black);
 	--color-sidebar-primary: var(--white);
