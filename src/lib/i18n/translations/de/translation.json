@@ -1102,6 +1102,19 @@
 				"setAllFilters": "Alle Filter",
 				"title": "Bezirke"
 			},
+			"cultureIndex": {
+				"resetFilters": "Filter zurücksetzen",
+				"setAllFilters": "Alle Filter",
+				"title": "Kulturort-Index",
+				"ranges": {
+					"81-100": "langfristig gesichert",
+					"61-80": "überwiegend gesichert",
+					"41-60": "bedingt gesichert",
+					"21-40": "zunehmend gefährdet",
+					"0-20": "akut gefährdet"
+				}
+			},
+			"cultureIndexTagsSwitchAriaLabel": "{{translatedName}} ein- oder ausschalten",
 			"districtTagsSwitchAriaLabel": "{{translatedName}} ein- oder ausschalten",
 			"error": "Fehler beim Laden der Filter",
 			"hideClosed": "Geschlossene Orte ausblenden",
@@ -3259,6 +3272,9 @@
 				},
 				"label": "Kulturareal",
 				"placeholder": "Bitte auswählen"
+			},
+			"culture_index": {
+				"label": "Kulturort-Index"
 			},
 			"datenverwendung": {
 				"description": "",

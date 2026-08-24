@@ -63,6 +63,7 @@ const ListView: FC = () => {
 		filters,
 		categoryCounts,
 		subcategoryCounts,
+		cultureIndexRangeCounts,
 		categories,
 		districts,
 		initializePublicData,
@@ -507,6 +508,7 @@ const ListView: FC = () => {
 					filteredCount={institutions?.length ?? 0}
 					categoryCounts={categoryCounts}
 					subcategoryCounts={subcategoryCounts}
+					cultureIndexRangeCounts={cultureIndexRangeCounts}
 					loading={loadingFilters}
 					error={null}
 					onRetry={handleFilterRetry}

@@ -11,6 +11,19 @@ import {
 import { defaultTableFilterState } from "@/components/FormWrapper/constants";
 import { useAccountStore } from "@/lib/store/accountStore";
 import { isSubmissionRow } from "@/lib/utils/institutionTableUtils";
+import {
+	createEmptyCultureIndexRangeCounts,
+	getCultureIndexRangeForValue,
+} from "@/lib/constants/cultureIndexRanges";
+
+const matchesCultureIndexRangeFilter = (
+	value: number | null | undefined,
+	rangeKeys: FilterState["culture_index_ranges"],
+): boolean => {
+	if (rangeKeys.length === 0) return true;
+	const range = getCultureIndexRangeForValue(value);
+	return range !== null && rangeKeys.includes(range);
+};
 
 export function useInstitutionTableFilters(
 	tableRows: InstitutionTableRow[],
@@ -46,6 +59,15 @@ export function useInstitutionTableFilters(
 				filters.district_keys.length > 0 &&
 				(!row.address?.district ||
 					!filters.district_keys.includes(row.address.district))
+			) {
+				return false;
+			}
+
+			if (
+				!matchesCultureIndexRangeFilter(
+					row.culture_index,
+					filters.culture_index_ranges,
+				)
 			) {
 				return false;
 			}
@@ -103,6 +125,15 @@ export function useInstitutionTableFilters(
 				return;
 			}
 
+			if (
+				!matchesCultureIndexRangeFilter(
+					row.culture_index,
+					filters.culture_index_ranges,
+				)
+			) {
+				return;
+			}
+
 			getParentCategories(row as Partial<Institution>).forEach((category) => {
 				if (
 					Object.prototype.hasOwnProperty.call(
@@ -131,6 +162,55 @@ export function useInstitutionTableFilters(
 		filterCategoryGroups,
 		filters.district_keys,
 		filters.include_closed,
+		filters.culture_index_ranges,
+		tableRows,
+	]);
+
+	const cultureIndexRangeCounts = useMemo(() => {
+		const counts = createEmptyCultureIndexRangeCounts();
+
+		tableRows.forEach((row) => {
+			if (
+				!filters.include_closed &&
+				row.utilization_status === "permanently_closed"
+			) {
+				return;
+			}
+
+			if (
+				filters.district_keys.length > 0 &&
+				(!row.address?.district ||
+					!filters.district_keys.includes(row.address.district))
+			) {
+				return;
+			}
+
+			const hasCategoryFilters =
+				filters.category_keys.length > 0 ||
+				filters.child_category_keys.length > 0;
+
+			if (hasCategoryFilters) {
+				const parentMatches = getParentCategories(
+					row as Partial<Institution>,
+				).some((category) => filters.category_keys.includes(category.key));
+				const subcategoryMatches = getSubcategories(
+					row as Partial<Institution>,
+				).some((subcategory) =>
+					filters.child_category_keys.includes(subcategory.key),
+				);
+				if (!parentMatches && !subcategoryMatches) return;
+			}
+
+			const range = getCultureIndexRangeForValue(row.culture_index);
+			if (range) counts[range] += 1;
+		});
+
+		return counts;
+	}, [
+		filters.district_keys,
+		filters.include_closed,
+		filters.category_keys,
+		filters.child_category_keys,
 		tableRows,
 	]);
 
@@ -153,6 +233,7 @@ export function useInstitutionTableFilters(
 		filteredTableRows,
 		categoryCounts,
 		subcategoryCounts,
+		cultureIndexRangeCounts,
 		downloadableInstitutions,
 	};
 }
