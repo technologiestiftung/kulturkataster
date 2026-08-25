@@ -145,6 +145,7 @@ export type InstitutionForm = {
 	established_since?: Date | string | null;
 	established_until?: Date | string | null;
 	closing_reason?: string | null;
+	culture_index?: number | null;
 	notes?: string | null;
 	internal_notes?: string | null;
 	status?: InstitutionStatus | null;

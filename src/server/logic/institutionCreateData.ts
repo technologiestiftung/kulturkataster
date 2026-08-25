@@ -25,6 +25,7 @@ export const buildInstitutionCreateData = (
 	parent_organization: input.parent_organization ?? null,
 	legal_form: input.legal_form ?? null,
 	capacity: input.capacity ?? null,
+	culture_index: input.culture_index ?? null,
 	owner_name: input.owner_name ?? null,
 	owner_type: input.owner_type ?? undefined,
 	rental_contract_type: input.rental_contract_type ?? undefined,

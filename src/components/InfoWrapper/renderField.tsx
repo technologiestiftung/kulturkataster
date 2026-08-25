@@ -277,6 +277,9 @@ type RenderFieldContentArgs = {
 const hasRenderableDisplayValue = (value: unknown) =>
 	typeof value === "boolean" || (value !== 0 && hasDisplayValue(value));
 
+const isRenderableCultureIndexValue = (value: unknown): boolean =>
+	typeof value === "number" && Number.isFinite(value);
+
 const normalizeDateForDiff = (value: unknown) =>
 	normalizeDateByType(value, "date");
 
@@ -550,10 +553,15 @@ const renderFieldContent = (
 			case "date":
 			case "year":
 			case "title":
-			case "culture_index":
 				return (
 					hasRenderableDisplayValue(value) ||
 					hasRenderableDisplayValue(newValue)
+				);
+
+			case "culture_index":
+				return (
+					isRenderableCultureIndexValue(value) ||
+					isRenderableCultureIndexValue(newValue)
 				);
 
 			default:
@@ -621,6 +629,8 @@ const renderFieldContent = (
 			case "year":
 			case "title":
 				return hasRenderableDisplayValue(value);
+			case "culture_index":
+				return isRenderableCultureIndexValue(value);
 			default:
 				return hasRenderableDisplayValue(value);
 		}
@@ -641,6 +651,8 @@ const renderFieldContent = (
 					return hasRenderableDisplayValue(
 						resolveFieldValue(field, comparableNewData),
 					);
+				case "culture_index":
+					return isRenderableCultureIndexValue(newValue);
 				default:
 					return (
 						hasRenderableDisplayValue(newValue) ||

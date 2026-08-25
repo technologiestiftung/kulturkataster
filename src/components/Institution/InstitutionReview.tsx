@@ -67,6 +67,13 @@ export function InstitutionReview({
 						enabled: true,
 					}
 				: undefined,
+			culture_index: onEditSection
+				? {
+						ariaLabel: "Edit",
+						onClick: () => onEditSection("culture_index"),
+						enabled: true,
+					}
+				: undefined,
 			address: onEditSection
 				? {
 						ariaLabel: "Edit",
@@ -205,6 +212,16 @@ export function InstitutionReview({
 							type: "status",
 							value: "protection_status",
 							enumKey: "protection_status",
+						},
+						{
+							id: "culture_index",
+							alwaysShow: false,
+							label: fieldLabel("culture_index"),
+							edit: editConfig.culture_index,
+							className: "mb-2",
+							type: "culture_index",
+							cultureIndexVariant: "plain",
+							value: "culture_index",
 						},
 						{
 							type: "section",
