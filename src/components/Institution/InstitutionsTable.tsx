@@ -759,15 +759,6 @@ export function InstitutionsTable({
 						),
 				},
 				{
-					accessorKey: "culture_index",
-					header: headerLabel("culture_index", "Culture Index"),
-					enableSorting: true,
-					size: 200,
-					meta: { truncate: true, exportKey: "culture_index" },
-					cell: ({ row }) =>
-						renderCultureIndexValue(row.original.culture_index),
-				},
-				{
 					accessorKey: "protection_status",
 					header: headerLabel("protection_status", "Protection Status"),
 					enableSorting: true,
@@ -894,6 +885,15 @@ export function InstitutionsTable({
 					meta: { truncate: true, exportKey: "closing_reason" },
 					cell: ({ row }) =>
 						translateEnum("closing_reason", row.original.closing_reason),
+				},
+				{
+					accessorKey: "culture_index",
+					header: headerLabel("culture_index", "Culture Index"),
+					enableSorting: true,
+					size: 200,
+					meta: { truncate: true, exportKey: "culture_index" },
+					cell: ({ row }) =>
+						renderCultureIndexValue(row.original.culture_index),
 				},
 				{
 					accessorKey: "area",
