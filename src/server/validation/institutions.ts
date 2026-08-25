@@ -63,7 +63,8 @@ const institutionBaseSchema = z.object({
 	culture_index: optionalNumberSchema(
 		"Culture index must be a valid number.",
 	).refine(
-		(value) => value === null || value === undefined || (value >= 0 && value <= 100),
+		(value) =>
+			value === null || value === undefined || (value >= 0 && value <= 100),
 		{ message: "Culture index must be between 0 and 100." },
 	),
 	owner_name: optionalTextSchema(),
