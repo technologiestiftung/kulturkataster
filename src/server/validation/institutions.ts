@@ -60,6 +60,12 @@ const institutionBaseSchema = z.object({
 	parent_organization: optionalTextSchema(),
 	legal_form: optionalTextSchema(),
 	capacity: optionalNumberSchema("Capacity must be a valid number."),
+	culture_index: optionalNumberSchema(
+		"Culture index must be a valid number.",
+	).refine(
+		(value) => value === null || value === undefined || (value >= 0 && value <= 100),
+		{ message: "Culture index must be between 0 and 100." },
+	),
 	owner_name: optionalTextSchema(),
 	owner_type: z.nativeEnum(OwnerType).nullable().optional(),
 	rental_contract_type: z.nativeEnum(RentalContractType).nullable().optional(),

@@ -754,6 +754,16 @@ function InstitutionDraftWizardContent({
 							],
 						},
 						{
+							name: "culture_index",
+							label: fieldLabel("culture_index", "Culture Index"),
+							description: fieldDescription("culture_index"),
+							type: "number",
+							min: 0,
+							max: 100,
+							step: 1,
+							placeholder: fieldPlaceholder("culture_index"),
+						},
+						{
 							name: "parent_organization",
 							label: fieldLabel("parent_organization", "Parent Organization"),
 							description: fieldDescription("parent_organization"),

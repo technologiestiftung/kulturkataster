@@ -3274,7 +3274,9 @@
 				"placeholder": "Bitte auswählen"
 			},
 			"culture_index": {
-				"label": "Kulturort-Index"
+				"description": "Bewertet, wie langfristig der Kulturort an seinem Standort gesichert ist, auf einer Skala von 0 (akut gefährdet) bis 100 (langfristig gesichert).",
+				"label": "Kulturort-Index",
+				"placeholder": "z. B. 75"
 			},
 			"datenverwendung": {
 				"description": "",

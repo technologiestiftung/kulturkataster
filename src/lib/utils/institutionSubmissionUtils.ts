@@ -93,6 +93,7 @@ export const institutionSubmissionToDraft = (
 		established_since: toDate(data.established_since) ?? undefined,
 		established_until: toDate(data.established_until) ?? undefined,
 		closing_reason: toString(data.closing_reason),
+		culture_index: toNumber(data.culture_index),
 		notes: toString(data.notes),
 		internal_notes: toString(data.internal_notes),
 		status: (data.status as InstitutionStatus | undefined) || undefined,

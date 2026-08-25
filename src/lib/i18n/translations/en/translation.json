@@ -3259,7 +3259,9 @@
 				"placeholder": "Please Select"
 			},
 			"culture_index": {
-				"label": "Cultural Hub Index"
+				"description": "Rates how long-term secure the cultural venue is at its current location, on a scale from 0 (acutely at risk) to 100 (long-term secured).",
+				"label": "Cultural Hub Index",
+				"placeholder": "e.g. 75"
 			},
 			"datenverwendung": {
 				"description": "",

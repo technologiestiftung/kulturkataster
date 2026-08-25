@@ -255,6 +255,12 @@
 	.no-scrollbar::-webkit-scrollbar {
 		display: none;
 	}
+	/* Keeps hash-linked jumps (e.g. #utilization_status, #culture_index) from
+	   landing the input flush under the institution form modal's header. */
+	#utilization_status,
+	#culture_index {
+		scroll-margin-top: 12rem;
+	}
 }
 
 @layer components {

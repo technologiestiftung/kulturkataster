@@ -590,6 +590,7 @@ const buildInstitutionSharedFieldsPayload = (
 		area: toOptionalNumber(formData.area),
 		number_of_rooms: toOptionalNumber(formData.number_of_rooms),
 		capacity: toOptionalNumber(formData.capacity),
+		culture_index: toOptionalNumber(formData.culture_index),
 	}) satisfies Partial<InstitutionForm>;
 
 export {
