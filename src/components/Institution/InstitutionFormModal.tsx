@@ -415,6 +415,16 @@ const buildInstitutionFormConfig = ({
 						],
 					},
 					{
+						name: "culture_index",
+						label: fieldLabel("culture_index", "Culture Index"),
+						type: "number",
+						min: 0,
+						max: 100,
+						step: 1,
+						description: fieldDescription("culture_index"),
+						placeholder: fieldPlaceholder("culture_index"),
+					},
+					{
 						name: "address.map",
 						fieldMetaKey: "address_map",
 						label: fieldLabel("address_map"),
