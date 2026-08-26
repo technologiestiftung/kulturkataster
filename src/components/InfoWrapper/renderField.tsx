@@ -24,6 +24,7 @@ import { normalizeAddressForDiff } from "@/lib/utils/institutionRelationFields";
 import { type InfoWrapperConfig, type InfoWrapperFieldConfig } from "./types";
 import { StatusItem } from "./StatusItem";
 import { StatusCultureIndexGroup } from "./StatusCultureIndexGroup";
+import { CultureIndexProtectedInfo } from "./CultureIndexProtectedInfo";
 import { CategoryItem } from "./CategoryItem";
 import { getGridClass } from "../shared/sectionLayout";
 import { getEditAction } from "./getEditAction";
@@ -357,6 +358,9 @@ const getContent = (
 
 		case "statusCultureIndexGroup":
 			return <StatusCultureIndexGroup data={data} t={t} />;
+
+		case "cultureIndexProtectedInfo":
+			return <CultureIndexProtectedInfo data={data} t={t} />;
 
 		case "link":
 		case "url":

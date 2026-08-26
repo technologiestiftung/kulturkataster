@@ -502,6 +502,14 @@
 			"claimSelectSubtitle": "Beantragen Sie die Verwaltungs-Rechte für Ihre Kulturorte",
 			"claimSelectTitle": "Kulturort verwalten",
 			"culturalArea": "Kulturareal",
+			"cultureIndexDimensions": {
+				"location": "Standort und Vertragsdimension",
+				"property": "Immobilien- und Gebäudedimension",
+				"financial": "Finanz- und Betriebsdimension",
+				"socialSpatial": "Sozialräumliche und nachfragebezogene Dimension",
+				"visibility": "Sichtbarkeits- und Öffentlichkeitsdimension",
+				"global": "Globale Einschätzungen"
+			},
 			"details": "Kulturort Details",
 			"district": "Bezirk",
 			"editSelectEmpty": "Keine Kulturorte gefunden.",
