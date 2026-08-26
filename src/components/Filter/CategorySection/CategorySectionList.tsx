@@ -54,6 +54,7 @@ export const CategorySectionList: FC<CategorySectionListProps> = ({
 		district_keys: input.district_keys ?? [],
 		category_keys: input.category_keys ?? [],
 		child_category_keys: input.child_category_keys ?? [],
+		culture_index_ranges: input.culture_index_ranges ?? [],
 		include_closed: input.include_closed ?? false,
 		status: input.status ?? undefined,
 	});
