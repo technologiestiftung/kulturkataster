@@ -14,6 +14,11 @@ import { getFieldOptionLabel } from "@/lib/i18n/fieldLabels";
 import { useFieldLabel } from "@/lib/hooks/useFieldLabel";
 import { CategoryIcon } from "@/components/shared/CategoryIcon";
 import { getStatusAccentClass } from "@/components/InfoWrapper/statusTone";
+import {
+	getCultureIndexRangeBgClass,
+	getCultureIndexRangeForValue,
+} from "@/lib/constants/cultureIndexRanges";
+import { cn } from "@/lib/utils";
 
 interface HoverCardProps {
 	features?: any;
@@ -50,6 +55,12 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 	if (!features || !featureProperties) {
 		return null;
 	}
+
+	const cultureIndexValue: number | null =
+		typeof featureProperties.culture_index === "number"
+			? featureProperties.culture_index
+			: null;
+	const cultureIndexRange = getCultureIndexRangeForValue(cultureIndexValue);
 
 	return (
 		<div className="HoverCard-root">
@@ -99,7 +110,11 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 				</CardContent>
 
 				<CardFooter
-					className={`rounded-b-md p-2 ${getStatusAccentClass(featureProperties.utilization_status)}`}
+					className={cn(
+						"p-2",
+						!cultureIndexRange && "rounded-b-md",
+						getStatusAccentClass(featureProperties.utilization_status),
+					)}
 				>
 					{featureProperties.utilization_status && (
 						<div className=" flex gap-1 items-center justify-between">
@@ -124,6 +139,24 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 						</div>
 					)}
 				</CardFooter>
+				{cultureIndexRange && (
+					<CardFooter
+						className={cn(
+							"rounded-b-md p-2",
+							getCultureIndexRangeBgClass(cultureIndexRange),
+						)}
+					>
+						<div className="flex gap-1 items-center justify-between">
+							<span className="text-base font-bold">
+								{fieldLabel("culture_index")}:
+							</span>
+							<span className="text-base">
+								{cultureIndexValue} -{" "}
+								{t(`content.filter.cultureIndex.ranges.${cultureIndexRange}`)}
+							</span>
+						</div>
+					</CardFooter>
+				)}
 			</Card>
 		</div>
 	);

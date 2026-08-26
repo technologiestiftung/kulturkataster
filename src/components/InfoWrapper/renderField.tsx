@@ -23,11 +23,17 @@ import {
 import { normalizeAddressForDiff } from "@/lib/utils/institutionRelationFields";
 import { type InfoWrapperConfig, type InfoWrapperFieldConfig } from "./types";
 import { StatusItem } from "./StatusItem";
+import { StatusCultureIndexGroup } from "./StatusCultureIndexGroup";
 import { CategoryItem } from "./CategoryItem";
 import { getGridClass } from "../shared/sectionLayout";
 import { getEditAction } from "./getEditAction";
 import { ScrollReveal } from "@/components/shared/ScrollReveal";
 import { getFieldOptionLabel } from "@/lib/i18n/fieldLabels";
+import { PrivateBadge } from "@/components/shared/PrivateBadge";
+import {
+	getCultureIndexRangeBgClass,
+	getCultureIndexRangeForValue,
+} from "@/lib/constants/cultureIndexRanges";
 import type { TFunction } from "i18next";
 
 const resolveFieldValue = (
@@ -271,6 +277,9 @@ type RenderFieldContentArgs = {
 const hasRenderableDisplayValue = (value: unknown) =>
 	typeof value === "boolean" || (value !== 0 && hasDisplayValue(value));
 
+const isRenderableCultureIndexValue = (value: unknown): boolean =>
+	typeof value === "number" && Number.isFinite(value);
+
 const normalizeDateForDiff = (value: unknown) =>
 	normalizeDateByType(value, "date");
 
@@ -309,6 +318,46 @@ const getContent = (
 				/>
 			);
 		}
+
+		case "culture_index": {
+			const cultureIndexValue =
+				typeof value === "number" && Number.isFinite(value) ? value : null;
+			const cultureIndexRange = getCultureIndexRangeForValue(cultureIndexValue);
+			const displayValue =
+				cultureIndexValue !== null && cultureIndexRange
+					? `${cultureIndexValue} - ${t(`content.filter.cultureIndex.ranges.${cultureIndexRange}`)}`
+					: "—";
+			const isPlain = field.cultureIndexVariant === "plain";
+			return (
+				<div
+					className={cn(
+						"flex items-center w-full gap-2 p-4 flex-wrap",
+						isPlain || !cultureIndexRange
+							? "bg-secondary"
+							: getCultureIndexRangeBgClass(cultureIndexRange),
+					)}
+				>
+					{isPlain && (
+						<div
+							className={cn(
+								"w-4 h-4 rounded-full",
+								cultureIndexRange
+									? getCultureIndexRangeBgClass(cultureIndexRange)
+									: "bg-alert",
+							)}
+						/>
+					)}
+					{label && <strong className="body2">{label}:</strong>}
+					<span className="body2 font-medium">{displayValue}</span>
+					{isPrivate ? <PrivateBadge /> : null}
+					<div className="ml-auto flex items-center gap-2">{action}</div>
+				</div>
+			);
+		}
+
+		case "statusCultureIndexGroup":
+			return <StatusCultureIndexGroup data={data} t={t} />;
+
 		case "link":
 		case "url":
 		case "email":
@@ -509,6 +558,12 @@ const renderFieldContent = (
 					hasRenderableDisplayValue(newValue)
 				);
 
+			case "culture_index":
+				return (
+					isRenderableCultureIndexValue(value) ||
+					isRenderableCultureIndexValue(newValue)
+				);
+
 			default:
 				return true;
 		}
@@ -574,6 +629,8 @@ const renderFieldContent = (
 			case "year":
 			case "title":
 				return hasRenderableDisplayValue(value);
+			case "culture_index":
+				return isRenderableCultureIndexValue(value);
 			default:
 				return hasRenderableDisplayValue(value);
 		}
@@ -594,6 +651,8 @@ const renderFieldContent = (
 					return hasRenderableDisplayValue(
 						resolveFieldValue(field, comparableNewData),
 					);
+				case "culture_index":
+					return isRenderableCultureIndexValue(newValue);
 				default:
 					return (
 						hasRenderableDisplayValue(newValue) ||

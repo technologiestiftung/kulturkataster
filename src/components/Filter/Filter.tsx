@@ -22,6 +22,7 @@ const Filter: FC<FilterProps> = ({ onSearchClick, onShowFilter }) => {
 		filteredInstitutions,
 		categoryCounts,
 		subcategoryCounts,
+		cultureIndexRangeCounts,
 		categories,
 		districts,
 		initializePublicData,
@@ -83,6 +84,7 @@ const Filter: FC<FilterProps> = ({ onSearchClick, onShowFilter }) => {
 					filteredCount={filteredInstitutions?.length ?? 0}
 					categoryCounts={categoryCounts}
 					subcategoryCounts={subcategoryCounts}
+					cultureIndexRangeCounts={cultureIndexRangeCounts}
 					loading={loading}
 					error={null}
 					onRetry={retry}

@@ -39,6 +39,10 @@ import { EmptyActionState } from "@/components/EmptyActionState";
 import Edit from "@/icons/edit.svg";
 import { useInstitutionPrivateFieldResolver } from "@/lib/hooks/useInstitutionPrivateFieldResolver";
 import { resolveInstitutionPermissionField } from "@/lib/utils/institutionPermissionField";
+import {
+	getCultureIndexRangeForValue,
+	type CultureIndexRangeKey,
+} from "@/lib/constants/cultureIndexRanges";
 import { DownloadModal } from "@/components/Modals/Pages/DownloadModal";
 import { notifyInstitutionDownload } from "@/server/actions/downloads";
 import type { ExportFormat } from "@/lib/utils/downloadUtils";
@@ -59,6 +63,7 @@ type InstitutionsFilterPanelProps = {
 	filteredCount: number;
 	categoryCounts: Record<string, number>;
 	subcategoryCounts: Record<string, number>;
+	cultureIndexRangeCounts: Record<CultureIndexRangeKey, number>;
 	loading: boolean;
 	onRetry: () => void;
 	onFiltersChange: (nextFilters: FilterState) => void;
@@ -118,6 +123,7 @@ function InstitutionsFilterPanel({
 	filteredCount,
 	categoryCounts,
 	subcategoryCounts,
+	cultureIndexRangeCounts,
 	loading,
 	onRetry,
 	onFiltersChange,
@@ -136,6 +142,7 @@ function InstitutionsFilterPanel({
 			filteredCount={filteredCount}
 			categoryCounts={categoryCounts}
 			subcategoryCounts={subcategoryCounts}
+			cultureIndexRangeCounts={cultureIndexRangeCounts}
 			loading={loading}
 			error={null}
 			onRetry={onRetry}
@@ -252,6 +259,12 @@ export function InstitutionsTable({
 		if (typeof value !== "number") return renderEmptyValue();
 		if (value === 0) return renderEmptyValue();
 		return value.toString();
+	};
+	const renderCultureIndexValue = (value?: number | null) => {
+		if (typeof value !== "number") return renderEmptyValue();
+		const range = getCultureIndexRangeForValue(value);
+		if (!range) return renderEmptyValue();
+		return `${value} - ${t(`content.filter.cultureIndex.ranges.${range}`)}`;
 	};
 	const getStatusLabel = (status: InstitutionStatus | string) => {
 		const institutionStatus = tEnum(`enumMap.institution_status.${status}`);
@@ -386,6 +399,7 @@ export function InstitutionsTable({
 		filteredTableRows,
 		categoryCounts,
 		subcategoryCounts,
+		cultureIndexRangeCounts,
 		downloadableInstitutions,
 	} = useInstitutionTableFilters(
 		rowKindFilteredTableRows,
@@ -873,6 +887,15 @@ export function InstitutionsTable({
 						translateEnum("closing_reason", row.original.closing_reason),
 				},
 				{
+					accessorKey: "culture_index",
+					header: headerLabel("culture_index", "Culture Index"),
+					enableSorting: true,
+					size: 200,
+					meta: { truncate: true, exportKey: "culture_index" },
+					cell: ({ row }) =>
+						renderCultureIndexValue(row.original.culture_index),
+				},
+				{
 					accessorKey: "area",
 					header: headerLabel("area", "Area (m2)"),
 					enableSorting: true,
@@ -1128,6 +1151,7 @@ export function InstitutionsTable({
 					filteredCount={filteredTableRows.length}
 					categoryCounts={categoryCounts}
 					subcategoryCounts={subcategoryCounts}
+					cultureIndexRangeCounts={cultureIndexRangeCounts}
 					loading={isFilterCategoriesLoading}
 					onRetry={retryInitializeFilterCategories}
 					onFiltersChange={setFilters}

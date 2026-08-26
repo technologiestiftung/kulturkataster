@@ -1,5 +1,9 @@
 /* eslint-disable max-params */
 import { Category, ChildCategory, FilterState, Institution } from "@/types";
+import {
+	CultureIndexRangeKey,
+	getCultureIndexRangeForValue,
+} from "@/lib/constants/cultureIndexRanges";
 import { getParentCategories, getSubcategories } from "./institutionUtils";
 
 export const hasActiveFilters = (filters: FilterState | null): boolean => {
@@ -8,6 +12,7 @@ export const hasActiveFilters = (filters: FilterState | null): boolean => {
 		filters.district_keys.length > 0 ||
 		filters.category_keys.length > 0 ||
 		filters.child_category_keys.length > 0 ||
+		filters.culture_index_ranges.length > 0 ||
 		filters.include_closed !== undefined
 	);
 };
@@ -18,6 +23,7 @@ export const getFilterCount = (filters: FilterState | null): number => {
 	filterCount += filters.district_keys.length;
 	filterCount += filters.category_keys.length;
 	filterCount += filters.child_category_keys.length;
+	filterCount += filters.culture_index_ranges.length;
 	if (!filters.include_closed) {
 		filterCount += 1;
 	}
@@ -66,6 +72,16 @@ export const matchesDistrictFilter = (
 	if (!properties.address?.district) return false;
 
 	return districtKeys.includes(properties.address.district);
+};
+
+export const matchesCultureIndexFilter = (
+	properties: Institution,
+	rangeKeys: CultureIndexRangeKey[],
+): boolean => {
+	if (rangeKeys.length === 0) return true;
+
+	const range = getCultureIndexRangeForValue(properties.culture_index);
+	return range !== null && rangeKeys.includes(range);
 };
 
 export const matchesCategoryFilter = (

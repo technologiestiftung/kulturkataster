@@ -6,6 +6,7 @@ import { FilterPanel } from "@/components/Filter/FilterPanel";
 import type { Category, FilterState, Institution } from "@/types";
 import {
 	matchesCategoryFilter,
+	matchesCultureIndexFilter,
 	matchesDistrictFilter,
 	matchesStatusFilter,
 	matchesSubcategoryFilter,
@@ -14,12 +15,18 @@ import {
 	getParentCategories,
 	getSubcategories,
 } from "@/lib/utils/institutionUtils";
+import {
+	createEmptyCultureIndexRangeCounts,
+	getCultureIndexRangeForValue,
+	type CultureIndexRangeKey,
+} from "@/lib/constants/cultureIndexRanges";
 
 const DEFAULT_INSTITUTION_FILTERS: FilterState = {
 	status: undefined,
 	district_keys: [],
 	category_keys: [],
 	child_category_keys: [],
+	culture_index_ranges: [],
 	include_closed: false,
 };
 
@@ -29,7 +36,8 @@ const filterInstitutions = (
 ) => {
 	const matchesBaseFilters = (institution: Institution) =>
 		matchesStatusFilter(institution, filters.include_closed) &&
-		matchesDistrictFilter(institution, filters.district_keys);
+		matchesDistrictFilter(institution, filters.district_keys) &&
+		matchesCultureIndexFilter(institution, filters.culture_index_ranges);
 
 	const matchesCategoryFilters = (institution: Institution) => {
 		const hasCategoryFilters =
@@ -51,7 +59,10 @@ const filterInstitutions = (
 const getCategoryCounts = (
 	categories: Category[],
 	institutions: Institution[],
-	filters: Pick<FilterState, "include_closed" | "district_keys">,
+	filters: Pick<
+		FilterState,
+		"include_closed" | "district_keys" | "culture_index_ranges"
+	>,
 ) => {
 	const counts = {
 		categoryCounts: {} as Record<string, number>,
@@ -72,7 +83,8 @@ const getCategoryCounts = (
 	institutions.forEach((institution) => {
 		if (
 			!matchesStatusFilter(institution, filters.include_closed) ||
-			!matchesDistrictFilter(institution, filters.district_keys)
+			!matchesDistrictFilter(institution, filters.district_keys) ||
+			!matchesCultureIndexFilter(institution, filters.culture_index_ranges)
 		) {
 			return;
 		}
@@ -98,6 +110,39 @@ const getCategoryCounts = (
 				counts.subcategoryCounts[subcategory.key] += 1;
 			}
 		});
+	});
+
+	return counts;
+};
+
+const getCultureIndexRangeCounts = (
+	institutions: Institution[],
+	filters: Pick<
+		FilterState,
+		"include_closed" | "district_keys" | "category_keys" | "child_category_keys"
+	>,
+): Record<CultureIndexRangeKey, number> => {
+	const counts = createEmptyCultureIndexRangeCounts();
+
+	institutions.forEach((institution) => {
+		const hasCategoryFilters =
+			filters.category_keys.length > 0 ||
+			filters.child_category_keys.length > 0;
+		const matchesCategoryFilters =
+			!hasCategoryFilters ||
+			matchesCategoryFilter(institution, filters.category_keys) ||
+			matchesSubcategoryFilter(institution, filters.child_category_keys);
+
+		if (
+			!matchesStatusFilter(institution, filters.include_closed) ||
+			!matchesDistrictFilter(institution, filters.district_keys) ||
+			!matchesCategoryFilters
+		) {
+			return;
+		}
+
+		const range = getCultureIndexRangeForValue(institution.culture_index);
+		if (range) counts[range] += 1;
 	});
 
 	return counts;
@@ -161,6 +206,7 @@ type UseInstitutionMultiSelectResult = {
 	districts: string[];
 	categoryCounts: Record<string, number>;
 	subcategoryCounts: Record<string, number>;
+	cultureIndexRangeCounts: Record<CultureIndexRangeKey, number>;
 };
 
 const useInstitutionMultiSelect = ({
@@ -199,8 +245,18 @@ const useInstitutionMultiSelect = ({
 		return getCategoryCounts(categories, institutions, {
 			include_closed: institutionFilters.include_closed,
 			district_keys: institutionFilters.district_keys,
+			culture_index_ranges: institutionFilters.culture_index_ranges,
 		});
 	}, [categories, institutions, institutionFilters]);
+
+	const cultureIndexRangeCounts = useMemo(() => {
+		return getCultureIndexRangeCounts(institutions, {
+			include_closed: institutionFilters.include_closed,
+			district_keys: institutionFilters.district_keys,
+			category_keys: institutionFilters.category_keys,
+			child_category_keys: institutionFilters.child_category_keys,
+		});
+	}, [institutions, institutionFilters]);
 
 	const institutionOptions = useMemo(
 		() =>
@@ -226,6 +282,7 @@ const useInstitutionMultiSelect = ({
 			filteredCount={filteredInstitutions.length}
 			categoryCounts={categoryCounts}
 			subcategoryCounts={subcategoryCounts}
+			cultureIndexRangeCounts={cultureIndexRangeCounts}
 			onFiltersChange={setInstitutionFilters}
 			parentCategorySelectionBehavior="last-child-only"
 		/>
@@ -241,6 +298,7 @@ const useInstitutionMultiSelect = ({
 		districts,
 		categoryCounts,
 		subcategoryCounts,
+		cultureIndexRangeCounts,
 	};
 };
 
