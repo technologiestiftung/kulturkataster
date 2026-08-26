@@ -159,6 +159,11 @@ const InstitutionCard = memo(function InstitutionCard({
 								cardVariant: "none",
 								fields: [
 									{
+										id: "culture_index_protected_info",
+										layout: { span: "half" },
+										type: "cultureIndexProtectedInfo",
+									},
+									{
 										type: "section",
 										id: "funding",
 										layout: { span: "half" },
