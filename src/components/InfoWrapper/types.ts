@@ -24,6 +24,7 @@ export type InfoWrapperFieldType =
 	| "address"
 	| "culture_index"
 	| "statusCultureIndexGroup"
+	| "cultureIndexProtectedInfo"
 	| "link"
 	| "section";
 
