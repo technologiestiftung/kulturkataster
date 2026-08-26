@@ -497,6 +497,14 @@
 			"claimSelectSubtitle": "Request Management Rights for Your Cultural Locations",
 			"claimSelectTitle": "Manage Cultural Locations",
 			"culturalArea": "Cultural Area",
+			"cultureIndexDimensions": {
+				"location": "Location and Contract Dimension",
+				"property": "Real Estate and Building Dimension",
+				"financial": "Financial and Operational Dimension",
+				"socialSpatial": "Socio-Spatial and Demand-Related Dimension",
+				"visibility": "Visibility and Public Relations Dimension",
+				"global": "Global Assessments"
+			},
 			"details": "Cultural Location Details",
 			"district": "District",
 			"editSelectEmpty": "No Cultural Locations found.",
