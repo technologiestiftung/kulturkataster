@@ -40,47 +40,60 @@ const LikertScale = React.forwardRef<
 		const groupId = id ?? name ?? generatedId;
 
 		return (
-			<RadioGroup
-				ref={ref}
-				id={groupId}
-				name={name}
-				orientation={orientation}
-				className={cn("relative flex w-full items-start gap-0 my-2", className)}
-				{...props}
-			>
-				{options.length > 1 && (
-					<div
-						aria-hidden="true"
-						className="pointer-events-none absolute top-3.5 h-px bg-border md:top-3"
-						style={{
-							left: `${50 / options.length}%`,
-							right: `${50 / options.length}%`,
-						}}
-					/>
-				)}
-				{options.map((option) => {
-					const itemId = `${groupId}-${option.value}`;
-					return (
-						<div
-							key={option.value}
-							className="relative flex flex-[1_0_0] flex-col items-center gap-1 px-2"
-						>
-							<RadioGroupItem
-								id={itemId}
-								value={option.value}
-								className={cn("z-10 border-input bg-background", itemClassName)}
-							/>
-							<Label
-								htmlFor={itemId}
-								emphasize={false}
-								className={cn("text-center", labelClassName)}
+			<div className="overflow-x-auto px-1">
+				<RadioGroup
+					ref={ref}
+					id={groupId}
+					name={name}
+					orientation={orientation}
+					className={cn(
+						"relative flex min-w-full items-start gap-4 my-2",
+						className,
+					)}
+					{...props}
+				>
+					{options.map((option, index) => {
+						const itemId = `${groupId}-${option.value}`;
+						const isFirst = index === 0;
+						const isLast = index === options.length - 1;
+						return (
+							<div
+								key={option.value}
+								className="relative flex min-w-16 flex-[1_0_auto] md:flex-[1_0_0] flex-col items-center gap-1 px-2"
 							>
-								{option.label}
-							</Label>
-						</div>
-					);
-				})}
-			</RadioGroup>
+								{options.length > 1 && (
+									<div
+										aria-hidden="true"
+										className={cn(
+											"pointer-events-none absolute top-3.5 h-px bg-border md:top-3",
+											isFirst ? "left-1/2" : "-left-2",
+											isLast ? "right-1/2" : "-right-2",
+										)}
+									/>
+								)}
+								<RadioGroupItem
+									id={itemId}
+									value={option.value}
+									className={cn(
+										"z-10 border-input bg-background",
+										itemClassName,
+									)}
+								/>
+								<Label
+									htmlFor={itemId}
+									emphasize={false}
+									className={cn(
+										"max-md:max-w-[110px] justify-center text-center",
+										labelClassName,
+									)}
+								>
+									{option.label}
+								</Label>
+							</div>
+						);
+					})}
+				</RadioGroup>
+			</div>
 		);
 	},
 );
