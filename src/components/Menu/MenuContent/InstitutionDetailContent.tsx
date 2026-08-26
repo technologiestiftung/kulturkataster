@@ -138,6 +138,10 @@ function InstitutionCard({
 									fields: contactInfoConfig,
 								},
 								{
+									id: "culture_index_protected_info",
+									type: "cultureIndexProtectedInfo",
+								},
+								{
 									type: "section",
 									id: "collapsible-details",
 									cardVariant: "none",
