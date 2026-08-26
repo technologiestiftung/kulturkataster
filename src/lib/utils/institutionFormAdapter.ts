@@ -57,6 +57,7 @@ export const buildInstitutionCategoryFilterState = (
 		district_keys: [],
 		category_keys: Array.from(category_keys),
 		child_category_keys: Array.from(child_category_keys),
+		culture_index_ranges: [],
 		include_closed: false,
 		status: undefined,
 	};
@@ -149,6 +150,8 @@ export const buildInstitutionFormInitialValues = (
 		capacity: toOptionalNumber(resolvedInstitution?.capacity) ?? undefined,
 		number_of_rooms:
 			toOptionalNumber(resolvedInstitution?.number_of_rooms) ?? undefined,
+		culture_index:
+			toOptionalNumber(resolvedInstitution?.culture_index) ?? undefined,
 		accessibility: resolvedInstitution?.accessibility ?? undefined,
 		cost: resolvedInstitution?.cost ?? undefined,
 		shared_use_allowed: resolvedInstitution?.shared_use_allowed ?? null,
@@ -280,7 +283,7 @@ export function buildInstitutionForFormFromDraft(
 		closing_reason: toOptionalText(draft.closing_reason),
 		notes: toOptionalText(draft.notes),
 		internal_notes: toOptionalText(draft.internal_notes),
-		culture_index: null,
+		culture_index: toOptionalNumber(draft.culture_index) ?? null,
 		import_identifier: null,
 		source: toOptionalText(draft.source),
 		contact_person_id: toOptionalNumber(draft.contact_person_id) ?? null,

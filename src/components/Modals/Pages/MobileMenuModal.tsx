@@ -52,16 +52,16 @@ const mobileMenuItems: MobileMenuItem[] = [
 		route: "/download",
 	},
 	{
-		id: "info",
-		icon: InfoCircle,
-		label: "information.title",
-		route: "/info",
-	},
-	{
 		id: "questionnaire",
 		icon: Clipboard,
 		label: "questionnaire.title",
 		route: "/questionnaire",
+	},
+	{
+		id: "info",
+		icon: InfoCircle,
+		label: "information.title",
+		route: "/info",
 	},
 	{
 		id: "language",

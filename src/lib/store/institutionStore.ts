@@ -2,7 +2,12 @@ import { Institution, InstitutionStoreState } from "@/types";
 import { create } from "zustand";
 import { devtools, subscribeWithSelector } from "zustand/middleware";
 import {
+	createEmptyCultureIndexRangeCounts,
+	getCultureIndexRangeForValue,
+} from "@/lib/constants/cultureIndexRanges";
+import {
 	matchesCategoryFilter,
+	matchesCultureIndexFilter,
 	matchesDistrictFilter,
 	matchesStatusFilter,
 	matchesSubcategoryFilter,
@@ -21,6 +26,7 @@ const defaultFilters: InstitutionStoreState["filters"] = {
 	district_keys: [],
 	category_keys: [],
 	child_category_keys: [],
+	culture_index_ranges: [],
 	include_closed: false,
 };
 
@@ -53,7 +59,7 @@ const applyPublicData = (
 		allInstitutionsGeoJSON,
 		filteredInstitutionsGeoJSON,
 	};
-	const { categoryCounts, subcategoryCounts } =
+	const { categoryCounts, subcategoryCounts, cultureIndexRangeCounts } =
 		computeCounts(stateWithFiltered);
 	set({
 		...newState,
@@ -62,6 +68,7 @@ const applyPublicData = (
 		filteredInstitutionsGeoJSON,
 		categoryCounts,
 		subcategoryCounts,
+		cultureIndexRangeCounts,
 		isLoading: false,
 		error: null,
 	});
@@ -75,7 +82,8 @@ const applyFilters = (
 	const newState = { filters };
 	const currentState = { ...get(), ...newState };
 	const filteredInstitutions = computeFilteredInstitutions(currentState);
-	const { categoryCounts, subcategoryCounts } = computeCounts(currentState);
+	const { categoryCounts, subcategoryCounts, cultureIndexRangeCounts } =
+		computeCounts(currentState);
 	const filteredInstitutionsGeoJSON = filteredInstitutions
 		? toFeatureCollection(filteredInstitutions)
 		: null;
@@ -85,6 +93,7 @@ const applyFilters = (
 		filteredInstitutionsGeoJSON,
 		categoryCounts,
 		subcategoryCounts,
+		cultureIndexRangeCounts,
 	});
 };
 
@@ -94,7 +103,8 @@ const matchesBaseFilters = (
 ): boolean => {
 	return (
 		matchesStatusFilter(institution, filters.include_closed) &&
-		matchesDistrictFilter(institution, filters.district_keys)
+		matchesDistrictFilter(institution, filters.district_keys) &&
+		matchesCultureIndexFilter(institution, filters.culture_index_ranges)
 	);
 };
 
@@ -113,14 +123,23 @@ const matchesCategoryFilters = (
 	);
 };
 
+const matchesFiltersExcludingCultureIndex = (
+	institution: Institution,
+	filters: InstitutionStoreState["filters"],
+): boolean =>
+	matchesStatusFilter(institution, filters.include_closed) &&
+	matchesDistrictFilter(institution, filters.district_keys) &&
+	matchesCategoryFilters(institution, filters);
+
 const computeCounts = (state: InstitutionStoreState) => {
 	const { allInstitutions, categories, filters } = state;
 
 	const categoryCounts: Record<string, number> = {};
 	const subcategoryCounts: Record<string, number> = {};
+	const cultureIndexRangeCounts = createEmptyCultureIndexRangeCounts();
 
 	if (!allInstitutions || !categories) {
-		return { categoryCounts, subcategoryCounts };
+		return { categoryCounts, subcategoryCounts, cultureIndexRangeCounts };
 	}
 
 	categories.forEach((category) => {
@@ -131,6 +150,11 @@ const computeCounts = (state: InstitutionStoreState) => {
 	});
 
 	allInstitutions.forEach((institution) => {
+		if (matchesFiltersExcludingCultureIndex(institution, filters)) {
+			const range = getCultureIndexRangeForValue(institution.culture_index);
+			if (range) cultureIndexRangeCounts[range]++;
+		}
+
 		if (!matchesBaseFilters(institution, filters)) return;
 
 		getParentCategories(institution).forEach((cat) => {
@@ -146,7 +170,7 @@ const computeCounts = (state: InstitutionStoreState) => {
 		});
 	});
 
-	return { categoryCounts, subcategoryCounts };
+	return { categoryCounts, subcategoryCounts, cultureIndexRangeCounts };
 };
 
 const computeFilteredInstitutions = (
@@ -172,6 +196,7 @@ export const useInstitutionStore = create<InstitutionStoreState>()(
 			filteredInstitutionsGeoJSON: null,
 			categoryCounts: {},
 			subcategoryCounts: {},
+			cultureIndexRangeCounts: createEmptyCultureIndexRangeCounts(),
 			districts: [],
 			isLoading: false,
 			error: null,
@@ -229,7 +254,7 @@ export const useInstitutionStore = create<InstitutionStoreState>()(
 					allInstitutionsGeoJSON,
 					filteredInstitutionsGeoJSON,
 				};
-				const { categoryCounts, subcategoryCounts } =
+				const { categoryCounts, subcategoryCounts, cultureIndexRangeCounts } =
 					computeCounts(stateWithFiltered);
 				set({
 					...newState,
@@ -238,6 +263,7 @@ export const useInstitutionStore = create<InstitutionStoreState>()(
 					filteredInstitutionsGeoJSON,
 					categoryCounts,
 					subcategoryCounts,
+					cultureIndexRangeCounts,
 				});
 			},
 		})),

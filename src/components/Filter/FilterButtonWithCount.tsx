@@ -24,6 +24,7 @@ export function FilterButtonWithCount({
 		(filters.district_keys?.length ?? 0) +
 		(filters.category_keys?.length ?? 0) +
 		(filters.child_category_keys?.length ?? 0) +
+		(filters.culture_index_ranges?.length ?? 0) +
 		(filters.status ? 1 : 0) +
 		(filters.include_closed ? 1 : 0);
 

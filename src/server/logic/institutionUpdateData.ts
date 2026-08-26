@@ -78,6 +78,7 @@ export const buildInstitutionUpdateData = (
 	parent_organization: preserveNullableUpdate(input.parent_organization),
 	legal_form: preserveNullableUpdate(input.legal_form),
 	capacity: preserveNullableNumberUpdate(input.capacity),
+	culture_index: preserveNullableNumberUpdate(input.culture_index),
 	owner_name: preserveNullableUpdate(input.owner_name),
 	owner_type: preserveNullableUpdate(input.owner_type),
 	rental_contract_type: preserveNullableUpdate(input.rental_contract_type),

@@ -115,20 +115,9 @@ const InstitutionCard = memo(function InstitutionCard({
 												type: "category",
 											},
 											{
-												id: "utilization_status",
-												type: "status",
-												label: fieldLabel("utilization_status"),
-												statusVariant: "plain",
-												value: "utilization_status",
-												enumKey: "utilization_status",
-											},
-											{
-												id: "protection_status",
-												type: "status",
-												label: fieldLabel("protection_status"),
-												statusVariant: "plain",
-												value: "protection_status",
-												enumKey: "protection_status",
+												id: "status_culture_index_group",
+												alwaysShow: false,
+												type: "statusCultureIndexGroup",
 											},
 											{
 												id: "address",

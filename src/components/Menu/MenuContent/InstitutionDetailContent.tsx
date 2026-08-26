@@ -104,6 +104,13 @@ function InstitutionCard({
 									value: "protection_status",
 									enumKey: "protection_status",
 								},
+								{
+									id: "culture_index",
+									alwaysShow: false,
+									label: fieldLabel("culture_index"),
+									type: "culture_index",
+									value: "culture_index",
+								},
 							],
 						},
 						{
