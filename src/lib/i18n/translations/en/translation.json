@@ -1996,6 +1996,20 @@
 				"stepLabel": "Topic block {{current}}/{{total}}"
 			},
 			"consent": {
+				"accordion": [
+					{
+						"answer": "By cultural institutions, we mean, in the context of this survey, \"permanently or repeatedly used places and organizations of cultural production, presentation, mediation, or encounter\" — for example theaters, music venues, studios, galleries, socio-cultural centers, literary venues, dance and performance venues, or comparable institutions.\n\nPlease answer the questionnaire as much as possible from the perspective of the institution as a whole. Ideally, it should be completed by a person who has a good overview of the institution's spatial, organizational, and financial situation.",
+						"question": "Who should fill out the questionnaire?"
+					},
+					{
+						"answer": "Results will only be published in aggregated form, so that no conclusions can be drawn about individual persons. Should results be examined at the level of individual institutions later in the project, this will take place exclusively within the intended project framework and in compliance with data protection requirements.",
+						"question": "What happens with the results?"
+					},
+					{
+						"answer": "Your information will be treated confidentially and evaluated exclusively for scientific purposes within the scope of the project. The data will be stored for comparability with later surveys, but is only visible to employees of Kulturraum Berlin gGmbH. You may request deletion of your data at any time, even later on.",
+						"question": "What happens with my data?"
+					}
+				],
 				"checkboxHeading": "Declaration of consent",
 				"checkboxLabel": "I have read the information about this survey and agree to voluntary participation as well as to the processing of my data for scientific purposes within the scope of this project.",
 				"cta": "Take part in the survey",
