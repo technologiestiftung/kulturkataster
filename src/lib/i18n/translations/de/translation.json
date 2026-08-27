@@ -2005,6 +2005,20 @@
 				"stepLabel": "Themenblock {{current}}/{{total}}"
 			},
 			"consent": {
+				"accordion": [
+					{
+						"answer": "Unter Kultureinrichtungen verstehen wir im Rahmen dieser Befragung „dauerhaft oder wiederkehrend genutzte Orte und Organisationen kultureller Produktion, Präsentation, Vermittlung oder Begegnung“, beispielsweise Theater, Musikspielstätten, Ateliers, Galerien, soziokulturelle Zentren, Literaturorte, Tanz- und Performanceorte oder vergleichbare Einrichtungen.\n\nBitte beantworten Sie den Fragebogen möglichst aus Sicht der Einrichtung insgesamt. Idealerweise wird er von einer Person ausgefüllt, die einen guten Überblick über die Raum-, Organisations- und Finanzsituation der Einrichtung hat.",
+						"question": "Wer sollte den Fragebogen ausfüllen?"
+					},
+					{
+						"answer": "Eine Veröffentlichung erfolgt nur in zusammengefasster Form, sodass keine Rückschlüsse auf einzelne Personen möglich sind. Sofern im weiteren Projektverlauf Ergebnisse auf Ebene einzelner Einrichtungen betrachtet werden, erfolgt dies ausschließlich im dafür vorgesehenen Projektrahmen und unter Beachtung der datenschutzrechtlichen Vorgaben.",
+						"question": "Was wird mit den Ergebnissen gemacht?"
+					},
+					{
+						"answer": "Ihre Angaben werden vertraulich behandelt und ausschließlich für wissenschaftliche Zwecke im Rahmen des Projekts ausgewertet. Die Daten werden für die Vergleichbarkeurt mit späteren Umfragen gespeichert, sind aber nur Mitarbeitenden der Kulturraum Berlin gGmbh sichtbar. Sie können die Löschung Ihrer Daten auch später jederzeit beantragen.",
+						"question": "Was passiert mit meinen Angaben?"
+					}
+				],
 				"checkboxHeading": "Einverständniserklärung",
 				"checkboxLabel": "Ich habe die Informationen zur Befragung gelesen und erkläre mich mit der freiwilligen Teilnahme sowie der Verarbeitung meiner Angaben zu wissenschaftlichen Zwecken im Rahmen dieses Projekts einverstanden.",
 				"cta": "An der Befragung teilnehmen",

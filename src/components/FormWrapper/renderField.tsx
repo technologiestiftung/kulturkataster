@@ -606,6 +606,7 @@ const renderFieldContent = (
 
 			{field.type === "radio" && (
 				<RadioGroup
+					id={field.name}
 					value={getSerializedSelectedValue(
 						field.options,
 						value,
@@ -703,6 +704,7 @@ const renderFieldContent = (
 
 			{field.type === "likert" && (
 				<div
+					id={field.name}
 					className={cn(
 						hasIssue &&
 							"rounded-sm border border-destructive-secondary bg-destructive-secondary/10 p-3",
@@ -728,6 +730,7 @@ const renderFieldContent = (
 
 			{field.type === "likertMatrix" && field.likertMatrix && (
 				<div
+					id={field.name}
 					className={cn(
 						"space-y-6",
 						hasIssue &&
@@ -822,6 +825,7 @@ const renderFieldContent = (
 
 			{field.type === "multiselect" && (
 				<div
+					id={field.name}
 					className={cn(
 						"space-y-2",
 						hasIssue &&

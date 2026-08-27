@@ -1,9 +1,21 @@
 "use client";
 
 import { Trans, useTranslation } from "react-i18next";
+import ReactMarkdown from "react-markdown";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import {
+	Accordion,
+	AccordionContent,
+	AccordionItem,
+	AccordionTrigger,
+} from "@/components/ui/accordion";
+
+type AccordionEntry = {
+	question: string;
+	answer: string;
+};
 
 export function QuestionnaireConsentStep({
 	consentGiven,
@@ -15,6 +27,9 @@ export function QuestionnaireConsentStep({
 	onNext: () => void;
 }) {
 	const { t } = useTranslation();
+	const accordionItems = t("content.questionnaireWizard.consent.accordion", {
+		returnObjects: true,
+	}) as AccordionEntry[];
 
 	return (
 		<div className="space-y-6">
@@ -47,6 +62,48 @@ export function QuestionnaireConsentStep({
 					}
 				/>
 			</div>
+
+			{accordionItems.length > 0 && (
+				<Accordion type="single" className="w-full">
+					{accordionItems.map((item, index) => (
+						<AccordionItem key={item.question} value={`item-${index}`}>
+							<AccordionTrigger>{item.question}</AccordionTrigger>
+							<AccordionContent>
+								<div className="pl-10">
+									<ReactMarkdown
+										components={{
+											p: ({ children: markdownChildren }) => (
+												<p>{markdownChildren}</p>
+											),
+											a: ({ href, children: markdownChildren }) => (
+												<a
+													href={href}
+													rel="noopener noreferrer"
+													className="text-primary-dark hover:text-primary underline"
+												>
+													{markdownChildren}
+												</a>
+											),
+											strong: ({ children: markdownChildren }) => (
+												<strong className="font-bold">
+													{markdownChildren}
+												</strong>
+											),
+											h3: ({ children: markdownChildren }) => (
+												<p className="body2 font-semibold mt-4 mb-1">
+													{markdownChildren}
+												</p>
+											),
+										}}
+									>
+										{item.answer}
+									</ReactMarkdown>
+								</div>
+							</AccordionContent>
+						</AccordionItem>
+					))}
+				</Accordion>
+			)}
 
 			<div className="space-y-3">
 				<p className="body2 font-bold">
