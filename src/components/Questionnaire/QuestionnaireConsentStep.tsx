@@ -64,7 +64,7 @@ export function QuestionnaireConsentStep({
 			</div>
 
 			{accordionItems.length > 0 && (
-				<Accordion type="single" className="w-full">
+				<Accordion type="single" collapsible className="w-full">
 					{accordionItems.map((item, index) => (
 						<AccordionItem key={item.question} value={`item-${index}`}>
 							<AccordionTrigger>{item.question}</AccordionTrigger>

@@ -222,7 +222,7 @@ export function AboutModal({ routePath }: { routePath?: string }) {
 					{renderMarkdownList(teamMembers)}
 				</div>
 
-				<Accordion type="single" className="w-full">
+				<Accordion type="single" collapsible className="w-full">
 					<AccordionItem value="steering">
 						<AccordionTrigger>
 							{t("content.aboutModal.credits.steering.title")}
