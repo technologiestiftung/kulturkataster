@@ -12,6 +12,7 @@ import { AlertDialog } from "@/components/ui/alert-dialog";
 import { useTranslation } from "react-i18next";
 import { normalizeFieldValue, validateFieldValue } from "./validation";
 import { reportClientTelemetry } from "@/lib/utils/clientTelemetry";
+import { getAccessibleScrollBehavior } from "@/lib/utils/motion";
 
 const getAllFields = (
 	fields: FormWrapperFieldConfig[],
@@ -259,6 +260,18 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 
 		setTouched(buildTouchedMap(allFields));
 		const validationErrors = validateForm();
+		if (Object.keys(validationErrors).length > 0) {
+			const firstErrorName = allFields.find(
+				(field) => validationErrors[field.name],
+			)?.name;
+			const firstErrorElement = firstErrorName
+				? document.getElementById(firstErrorName)
+				: null;
+			firstErrorElement?.scrollIntoView({
+				behavior: getAccessibleScrollBehavior(),
+				block: "center",
+			});
+		}
 		if (Object.keys(validationErrors).length === 0) {
 			setFormError(null);
 			const normalizedFormData = Object.fromEntries(
