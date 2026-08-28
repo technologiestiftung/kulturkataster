@@ -59,7 +59,7 @@ const LikertScale = React.forwardRef<
 						return (
 							<div
 								key={option.value}
-								className="relative flex min-w-16 flex-[1_0_auto] md:flex-[1_0_0] flex-col items-center gap-1 px-2"
+								className="relative flex min-w-16 flex-[1_0_auto] flex-col items-center gap-1 px-2"
 							>
 								{options.length > 1 && (
 									<div
@@ -83,7 +83,7 @@ const LikertScale = React.forwardRef<
 									htmlFor={itemId}
 									emphasize={false}
 									className={cn(
-										"max-md:max-w-[110px] justify-center text-center",
+										"max-w-[110px] justify-center text-center",
 										labelClassName,
 									)}
 								>
