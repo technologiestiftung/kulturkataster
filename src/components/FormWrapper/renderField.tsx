@@ -735,6 +735,7 @@ const renderFieldContent = (
 						"space-y-6",
 						hasIssue &&
 							"rounded-sm border border-destructive-secondary bg-destructive-secondary/10 p-3",
+						field.name === "funding_source_importance" && "p-8",
 					)}
 				>
 					{field.likertMatrix.rows.map((row) => {
