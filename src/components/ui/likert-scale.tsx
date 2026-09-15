@@ -15,6 +15,7 @@ export type LikertScaleProps = Omit<
 	"variant" | "children"
 > & {
 	options: LikertScaleOption[];
+	containerClassName?: string;
 	itemClassName?: string;
 	labelClassName?: string;
 };
@@ -27,6 +28,7 @@ const LikertScale = React.forwardRef<
 		{
 			options,
 			className,
+			containerClassName,
 			itemClassName,
 			labelClassName,
 			name,
@@ -40,7 +42,7 @@ const LikertScale = React.forwardRef<
 		const groupId = id ?? name ?? generatedId;
 
 		return (
-			<div className="overflow-x-auto px-1">
+			<div className={cn("overflow-x-auto px-1", containerClassName)}>
 				<RadioGroup
 					ref={ref}
 					id={groupId}
@@ -52,25 +54,19 @@ const LikertScale = React.forwardRef<
 					)}
 					{...props}
 				>
-					{options.map((option, index) => {
+					{options.length > 1 && (
+						<div
+							aria-hidden="true"
+							className="pointer-events-none absolute left-10 right-10 top-3.5 h-px bg-border md:top-3"
+						/>
+					)}
+					{options.map((option) => {
 						const itemId = `${groupId}-${option.value}`;
-						const isFirst = index === 0;
-						const isLast = index === options.length - 1;
 						return (
 							<div
 								key={option.value}
 								className="relative flex min-w-16 flex-[1_0_auto] flex-col items-center gap-1 px-2"
 							>
-								{options.length > 1 && (
-									<div
-										aria-hidden="true"
-										className={cn(
-											"pointer-events-none absolute top-3.5 h-px bg-border md:top-3",
-											isFirst ? "left-1/2" : "-left-2",
-											isLast ? "right-1/2" : "-right-2",
-										)}
-									/>
-								)}
 								<RadioGroupItem
 									id={itemId}
 									value={option.value}

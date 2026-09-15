@@ -27,9 +27,15 @@ export function QuestionnaireConsentStep({
 	onNext: () => void;
 }) {
 	const { t } = useTranslation();
-	const accordionItems = t("content.questionnaireWizard.consent.accordion", {
-		returnObjects: true,
-	}) as AccordionEntry[];
+	const translatedAccordionItems = t(
+		"content.questionnaireWizard.consent.accordion",
+		{
+			returnObjects: true,
+		},
+	);
+	const accordionItems = Array.isArray(translatedAccordionItems)
+		? (translatedAccordionItems as AccordionEntry[])
+		: [];
 
 	return (
 		<div className="space-y-6">
