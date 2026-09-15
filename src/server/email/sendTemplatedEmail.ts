@@ -212,15 +212,14 @@ const getEmailRuntimeConfig = (): EmailRuntimeConfig => {
 	return getSmtpRuntimeConfig();
 };
 
-// Fail fast during module initialization when SMTP is enabled but misconfigured.
-const emailRuntimeConfig = getEmailRuntimeConfig();
-
 export async function sendTemplatedEmail({
 	to,
 	subject,
 	templatePath,
 	variables = {},
 }: SendTemplatedEmailArgs): Promise<SendTemplatedEmailResult> {
+	const emailRuntimeConfig = getEmailRuntimeConfig();
+
 	return logger.time(
 		{
 			level: "info",
