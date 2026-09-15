@@ -5,7 +5,12 @@ import type {
 	SendTemplatedEmailArgs,
 } from "@/server/email/sendTemplatedEmail";
 
-export type EmailOutboxStatus = "pending" | "sending" | "sent" | "failed";
+export type EmailOutboxStatus =
+	| "pending"
+	| "sending"
+	| "accepted"
+	| "sent"
+	| "failed";
 
 export type EmailOutboxItem = {
 	id: string;
@@ -22,6 +27,8 @@ export type EmailOutboxItem = {
 	lockedBy: string | null;
 	lastError: string | null;
 	providerMessageId: string | null;
+	providerResponse: string | null;
+	smtpAcceptedAt: Date | null;
 	sentAt: Date | null;
 	createdAt: Date;
 	updatedAt: Date;
@@ -42,6 +49,8 @@ type EmailOutboxRow = {
 	locked_by: string | null;
 	last_error: string | null;
 	provider_message_id: string | null;
+	provider_response: string | null;
+	smtp_accepted_at: Date | null;
 	sent_at: Date | null;
 	created_at: Date;
 	updated_at: Date;
@@ -75,6 +84,8 @@ const mapRow = (row: EmailOutboxRow): EmailOutboxItem => ({
 	lockedBy: row.locked_by,
 	lastError: row.last_error,
 	providerMessageId: row.provider_message_id,
+	providerResponse: row.provider_response,
+	smtpAcceptedAt: row.smtp_accepted_at,
 	sentAt: row.sent_at,
 	createdAt: row.created_at,
 	updatedAt: row.updated_at,
@@ -161,16 +172,18 @@ export const emailOutboxRepo = {
 		return rows[0] ? mapRow(rows[0]) : null;
 	},
 
-	async markSent(args: {
+	async markAccepted(args: {
 		id: string;
 		providerMessageId: string | null;
+		providerResponse?: string;
 	}): Promise<void> {
 		await prisma.$executeRaw`
 			UPDATE "email_outbox"
 			SET
-				"status" = 'sent',
+				"status" = 'accepted',
 				"provider_message_id" = ${args.providerMessageId},
-				"sent_at" = CURRENT_TIMESTAMP,
+				"provider_response" = ${args.providerResponse ?? null},
+				"smtp_accepted_at" = CURRENT_TIMESTAMP,
 				"locked_at" = NULL,
 				"locked_by" = NULL,
 				"updated_at" = CURRENT_TIMESTAMP

@@ -38,16 +38,21 @@ const sendOutboxItem = async (item: EmailOutboxItem) => {
 		templatePath: item.templatePath,
 		variables: item.variables,
 	});
-	await emailOutboxRepo.markSent({
+	await emailOutboxRepo.markAccepted({
 		id: item.id,
 		providerMessageId: result.id,
+		providerResponse: result.response,
 	});
-	logger.info("email.outbox.sent", {
+	logger.info("email.outbox.accepted", {
 		subsystem: "email",
 		email_outbox_id: item.id,
 		email_to: item.to,
 		template: item.templatePath,
 		attempts: item.attempts,
+		provider_message_id: result.id,
+		smtp_accepted_count: result.accepted?.length,
+		smtp_rejected_count: result.rejected?.length,
+		smtp_pending_count: result.pending?.length,
 	});
 };
 
@@ -84,7 +89,7 @@ export async function processEmailOutboxBatch(
 	);
 	const workerId = options.workerId ?? `email-worker-${randomUUID()}`;
 	const lockTimeoutMs = options.lockTimeoutMs ?? DEFAULT_LOCK_TIMEOUT_MS;
-	let sent = 0;
+	let accepted = 0;
 	let failed = 0;
 	let claimed = 0;
 
@@ -98,7 +103,7 @@ export async function processEmailOutboxBatch(
 
 		try {
 			await sendOutboxItem(item);
-			sent += 1;
+			accepted += 1;
 		} catch (error) {
 			failed += 1;
 			const errorMessage = getErrorMessage(error);
@@ -120,7 +125,7 @@ export async function processEmailOutboxBatch(
 
 	return {
 		claimed,
-		sent,
+		accepted,
 		failed,
 	};
 }
