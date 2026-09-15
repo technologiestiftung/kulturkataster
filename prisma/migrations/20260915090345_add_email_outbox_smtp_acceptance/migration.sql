@@ -1,0 +1,10 @@
+-- AlterTable
+ALTER TABLE "email_outbox" ADD COLUMN     "provider_response" TEXT,
+ADD COLUMN     "smtp_accepted_at" TIMESTAMP(3);
+
+ALTER TABLE "email_outbox"
+	DROP CONSTRAINT IF EXISTS "email_outbox_status_check";
+
+ALTER TABLE "email_outbox"
+	ADD CONSTRAINT "email_outbox_status_check"
+	CHECK ("status" IN ('pending', 'sending', 'accepted', 'sent', 'failed'));

@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const {
 	claimNext,
 	enqueue,
-	markSent,
+	markAccepted,
 	markFailed,
 	sendTemplatedEmail,
 	loggerInfo,
@@ -11,7 +11,7 @@ const {
 } = vi.hoisted(() => ({
 	claimNext: vi.fn(),
 	enqueue: vi.fn(),
-	markSent: vi.fn(),
+	markAccepted: vi.fn(),
 	markFailed: vi.fn(),
 	sendTemplatedEmail: vi.fn(),
 	loggerInfo: vi.fn(),
@@ -22,7 +22,7 @@ vi.mock("@/server/data/emailOutboxRepo", () => ({
 	emailOutboxRepo: {
 		enqueue,
 		claimNext,
-		markSent,
+		markAccepted,
 		markFailed,
 	},
 }));
@@ -58,6 +58,8 @@ const makeItem = (id: string) => ({
 	lockedBy: "worker-1",
 	lastError: null,
 	providerMessageId: null,
+	providerResponse: null,
+	smtpAcceptedAt: null,
 	sentAt: null,
 	createdAt: new Date("2026-01-01T10:00:00Z"),
 	updatedAt: new Date("2026-01-01T10:00:00Z"),
@@ -67,7 +69,7 @@ describe("processEmailOutboxBatch", () => {
 	beforeEach(() => {
 		claimNext.mockReset();
 		enqueue.mockReset();
-		markSent.mockReset();
+		markAccepted.mockReset();
 		markFailed.mockReset();
 		sendTemplatedEmail.mockReset();
 		loggerInfo.mockReset();
@@ -75,11 +77,14 @@ describe("processEmailOutboxBatch", () => {
 		vi.useRealTimers();
 	});
 
-	it("sends claimed outbox rows and marks them sent", async () => {
+	it("sends claimed outbox rows and records SMTP acceptance", async () => {
 		claimNext
 			.mockResolvedValueOnce(makeItem("email-1"))
 			.mockResolvedValue(null);
-		sendTemplatedEmail.mockResolvedValue({ id: "smtp-1" });
+		sendTemplatedEmail.mockResolvedValue({
+			id: "smtp-1",
+			response: "250 queued",
+		});
 
 		const result = await processEmailOutboxBatch({
 			take: 5,
@@ -92,11 +97,12 @@ describe("processEmailOutboxBatch", () => {
 				templatePath: "custom/example.html",
 			}),
 		);
-		expect(markSent).toHaveBeenCalledWith({
+		expect(markAccepted).toHaveBeenCalledWith({
 			id: "email-1",
 			providerMessageId: "smtp-1",
+			providerResponse: "250 queued",
 		});
-		expect(result).toEqual({ claimed: 1, sent: 1, failed: 0 });
+		expect(result).toEqual({ claimed: 1, accepted: 1, failed: 0 });
 	});
 
 	it("records delivery failures for retry", async () => {
@@ -126,7 +132,7 @@ describe("processEmailOutboxBatch", () => {
 				attempts: 1,
 			}),
 		);
-		expect(result).toEqual({ claimed: 1, sent: 0, failed: 1 });
+		expect(result).toEqual({ claimed: 1, accepted: 0, failed: 1 });
 	});
 
 	it("schedules a non-blocking drain after enqueue", async () => {
