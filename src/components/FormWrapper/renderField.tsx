@@ -703,13 +703,7 @@ const renderFieldContent = (
 			)}
 
 			{field.type === "likert" && (
-				<div
-					id={field.name}
-					className={cn(
-						hasIssue &&
-							"rounded-sm border border-destructive-secondary bg-destructive-secondary/10 p-3",
-					)}
-				>
+				<div id={field.name}>
 					<LikertScale
 						value={getSerializedSelectedValue(field.options, value)}
 						onValueChange={(val) =>
@@ -722,6 +716,10 @@ const renderFieldContent = (
 							})) ?? []
 						}
 						aria-invalid={hasIssue || undefined}
+						containerClassName={cn(
+							hasIssue &&
+								"rounded-sm border border-destructive-secondary bg-destructive-secondary/10 p-3",
+						)}
 						itemClassName={cn(hasIssue && "border-destructive-secondary")}
 						disabled={field.disabled}
 					/>
