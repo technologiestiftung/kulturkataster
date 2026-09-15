@@ -31,6 +31,14 @@ export type SendTemplatedEmailArgs = {
 	variables?: EmailTemplateVariables;
 };
 
+export type SendTemplatedEmailResult = {
+	id: string | null;
+	accepted?: string[];
+	rejected?: string[];
+	pending?: string[];
+	response?: string;
+};
+
 type EmailRuntimeConfig =
 	| { provider: "noop" }
 	| {
@@ -40,9 +48,15 @@ type EmailRuntimeConfig =
 			secure: boolean;
 			user?: string;
 			pass?: string;
-			from: string;
+			from: EmailSender;
 			replyTo?: string;
 	  };
+
+type SmtpEmailRuntimeConfig = Extract<EmailRuntimeConfig, { provider: "smtp" }>;
+
+type EmailSender = string | { name: string; address: string };
+
+const DEFAULT_SENDER_NAME = "Kulturkataster";
 
 const resolvePath = (value: unknown, keyPath: string): unknown => {
 	const keys = keyPath.split(".");
@@ -67,8 +81,125 @@ const renderTemplate = (
 	});
 };
 
+const stringArrayOrUndefined = (value: unknown) =>
+	Array.isArray(value) && value.every((item) => typeof item === "string")
+		? value
+		: undefined;
+
+const getSmtpResultDetails = (result: unknown): SendTemplatedEmailResult => {
+	if (!result || typeof result !== "object") {
+		return { id: null };
+	}
+
+	const info = result as Record<string, unknown>;
+	return {
+		id: typeof info.messageId === "string" ? info.messageId : null,
+		accepted: stringArrayOrUndefined(info.accepted),
+		rejected: stringArrayOrUndefined(info.rejected),
+		pending: stringArrayOrUndefined(info.pending),
+		response: typeof info.response === "string" ? info.response : undefined,
+	};
+};
+
+const trimQuotes = (value: string) => value.trim().replace(/^"|"$/g, "");
+
+const parseSenderMailbox = (value: string): EmailSender | null => {
+	const match = value.match(/^\s*(.*?)\s*<([^<>\s@]+@[^<>\s@]+)>\s*$/);
+	if (!match) return null;
+
+	return {
+		name: trimQuotes(match[1]) || DEFAULT_SENDER_NAME,
+		address: match[2].trim(),
+	};
+};
+
+const resolveSender = ({
+	senderName,
+	senderEmail,
+	user,
+}: {
+	senderName?: string;
+	senderEmail?: string;
+	user?: string;
+}): EmailSender => {
+	const name = senderName?.trim();
+	const email = senderEmail?.trim();
+
+	if (email) {
+		return { name: name || DEFAULT_SENDER_NAME, address: email };
+	}
+
+	if (name) {
+		const mailbox = parseSenderMailbox(name);
+		if (mailbox) return mailbox;
+
+		if (name.includes("@")) {
+			return { name: DEFAULT_SENDER_NAME, address: name };
+		}
+	}
+
+	if (user) {
+		return { name: name || DEFAULT_SENDER_NAME, address: user };
+	}
+
+	throw new Error(
+		'Missing SMTP sender config. Required: SMTP_SENDER_EMAIL or SMTP_SENDER_NAME as "Name <email>".',
+	);
+};
+
+const getEmailProvider = () =>
+	(process.env.EMAIL_PROVIDER ?? "noop").toLowerCase();
+
+const parseSmtpPort = (portRaw: string) => {
+	const port = Number(portRaw);
+	if (!Number.isFinite(port) || port <= 0) {
+		throw new Error(`Invalid SMTP_PORT: ${portRaw}`);
+	}
+	return port;
+};
+
+const optionalTrimmed = (value: string | undefined) => {
+	const trimmed = value?.trim();
+	return trimmed ? trimmed : undefined;
+};
+
+const getSmtpEndpoint = () => {
+	const host = process.env.SMTP_HOST;
+	const portRaw = process.env.SMTP_PORT;
+
+	if (!host || !portRaw) {
+		throw new Error("Missing SMTP config. Required: SMTP_HOST, SMTP_PORT");
+	}
+
+	return { host, portRaw };
+};
+
+const getSmtpRuntimeConfig = (): SmtpEmailRuntimeConfig => {
+	const { host, portRaw } = getSmtpEndpoint();
+	const user = optionalTrimmed(process.env.SMTP_USER);
+	const pass = optionalTrimmed(
+		process.env.SMTP_PASSWORD ?? process.env.SMTP_PASS,
+	);
+	const secure = (process.env.SMTP_SECURE ?? "false").toLowerCase() === "true";
+
+	return {
+		provider: "smtp",
+		host,
+		port: parseSmtpPort(portRaw),
+		secure,
+		user,
+		pass,
+		from: resolveSender({
+			senderName: process.env.SMTP_SENDER_NAME,
+			senderEmail: process.env.SMTP_SENDER_EMAIL,
+			user,
+		}),
+		replyTo: optionalTrimmed(process.env.SMTP_REPLY_TO),
+	};
+};
+
 const getEmailRuntimeConfig = (): EmailRuntimeConfig => {
-	const provider = (process.env.EMAIL_PROVIDER ?? "noop").toLowerCase();
+	const provider = getEmailProvider();
 	if (provider === "noop") {
 		return { provider: "noop" };
 	}
@@ -78,34 +209,7 @@ const getEmailRuntimeConfig = (): EmailRuntimeConfig => {
 		);
 	}
 
-	const host = process.env.SMTP_HOST;
-	const portRaw = process.env.SMTP_PORT;
-	const user = process.env.SMTP_USER?.trim();
-	const pass = (process.env.SMTP_PASSWORD ?? process.env.SMTP_PASS)?.trim();
-	const from = process.env.SMTP_SENDER_NAME;
-	const replyTo = process.env.SMTP_REPLY_TO;
-
-	if (!host || !portRaw) {
-		throw new Error("Missing SMTP config. Required: SMTP_HOST, SMTP_PORT");
-	}
-
-	const port = Number(portRaw);
-	if (!Number.isFinite(port) || port <= 0) {
-		throw new Error(`Invalid SMTP_PORT: ${portRaw}`);
-	}
-
-	const secure = (process.env.SMTP_SECURE ?? "false").toLowerCase() === "true";
-
-	return {
-		provider: "smtp",
-		host,
-		port,
-		secure,
-		user: user || undefined,
-		pass: pass || undefined,
-		from: from || "",
-		replyTo: replyTo || undefined,
-	};
+	return getSmtpRuntimeConfig();
 };
 
 // Fail fast during module initialization when SMTP is enabled but misconfigured.
@@ -116,7 +220,7 @@ export async function sendTemplatedEmail({
 	subject,
 	templatePath,
 	variables = {},
-}: SendTemplatedEmailArgs) {
+}: SendTemplatedEmailArgs): Promise<SendTemplatedEmailResult> {
 	return logger.time(
 		{
 			level: "info",
@@ -182,7 +286,7 @@ export async function sendTemplatedEmail({
 				html,
 				replyTo: emailRuntimeConfig.replyTo,
 			});
-			return { id: result.messageId ?? null };
+			return getSmtpResultDetails(result);
 		},
 	);
 }
