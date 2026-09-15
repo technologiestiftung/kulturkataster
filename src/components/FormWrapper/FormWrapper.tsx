@@ -267,7 +267,7 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 			const firstErrorElement = firstErrorName
 				? document.getElementById(firstErrorName)
 				: null;
-			firstErrorElement?.scrollIntoView({
+			firstErrorElement?.scrollIntoView?.({
 				behavior: getAccessibleScrollBehavior(),
 				block: "center",
 			});
