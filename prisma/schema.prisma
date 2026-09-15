@@ -473,6 +473,8 @@ model EmailOutbox {
   locked_by           String?
   last_error          String?
   provider_message_id String?
+  provider_response   String?
+  smtp_accepted_at    DateTime?
   sent_at             DateTime?
   created_at          DateTime  @default(now())
   updated_at          DateTime  @updatedAt

@@ -104,7 +104,7 @@ describe("email dispatcher", () => {
 		enqueueTemplatedEmail.mockResolvedValue({ id: "email-1" });
 		processEmailOutboxBatch.mockResolvedValue({
 			claimed: 1,
-			sent: 1,
+			accepted: 1,
 			failed: 0,
 		});
 
