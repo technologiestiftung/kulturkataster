@@ -225,6 +225,41 @@ describe("QuestionnaireWizardModal", () => {
 		expect(screen.getByRole("button", { name: "Weiter" })).not.toBeDisabled();
 	});
 
+	it("shows each institution-link search result's address, or a fallback when it has no street", async () => {
+		mockStepperState.currentStepId = "institution-link";
+		vi.mocked(searchInstitutions).mockResolvedValue([
+			{
+				id: 5,
+				name: "Test Institution",
+				address: { street: "Hauptstraße", street_number: "12a" },
+			} as any,
+			{
+				id: 6,
+				name: "Without Number",
+				address: { street: "Nebenweg", street_number: null },
+			} as any,
+			{ id: 7, name: "No Address Institution", address: null } as any,
+		]);
+
+		render(
+			<QuestionnaireWizardModal
+				routePath="/questionnaire"
+				questionnaire={buildQuestionnaire() as any}
+				categoryGroups={[]}
+			/>,
+		);
+
+		fireEvent.click(screen.getByLabelText("Ja"));
+		fireEvent.change(screen.getByPlaceholderText("Adresse oder Ort eingeben"), {
+			target: { value: "Test" },
+		});
+
+		await screen.findByText("Test Institution");
+		expect(screen.getByText("Hauptstraße 12a")).toBeInTheDocument();
+		expect(screen.getByText("Nebenweg")).toBeInTheDocument();
+		expect(screen.getByText("Keine Adresse hinterlegt")).toBeInTheDocument();
+	});
+
 	it("shows an alert dialog and resets the selection when the institution already completed this questionnaire", async () => {
 		mockStepperState.currentStepId = "institution-link";
 		vi.mocked(searchInstitutions).mockResolvedValue([
