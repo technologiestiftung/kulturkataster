@@ -1901,7 +1901,8 @@
 			"actions": {
 				"addInstitution": "Add Cultural Location",
 				"claimInstitution": "Claim My Locations",
-				"downloadList": "Download List"
+				"downloadList": "Download List",
+				"importList": "Import CSV"
 			},
 			"empty": {
 				"description": "You can start new entries directly.",
@@ -2891,6 +2892,44 @@
 			"newsletter": "Sign Up for the Newsletter",
 			"subtitle": "A Project of Kulturraum Berlin gGmbH",
 			"title": "The Berlin Kulturkataster: Culture in the City At a Glance"
+		},
+		"importModal": {
+			"title": "Import cultural places from CSV",
+			"description": "Upload a CSV file previously exported from the Kulturkataster. Places with an ID are updated, rows without an ID are created as new places. Empty cells overwrite existing values.",
+			"fileLabel": "Choose CSV file",
+			"submit": "Import",
+			"importing": "Importing …",
+			"success": {
+				"title": "Import completed",
+				"summary": "{{updated}} places updated, {{created}} places created, {{unchanged}} unchanged."
+			},
+			"issue": "Row {{row}}, column “{{column}}”: {{message}}",
+			"moreIssues": "… and {{count}} more errors.",
+			"errors": {
+				"unauthorized": "Please sign in to import data.",
+				"forbidden": "You are not allowed to import data.",
+				"invalidFile": "Please choose a CSV file.",
+				"fileTooLarge": "The file is too large (maximum 10 MB).",
+				"emptyFile": "The file does not contain any data rows.",
+				"unknownColumns": "The file contains unknown columns. Please use a CSV file from the export:",
+				"missingColumns": "The file is missing required columns:",
+				"validationFailed": "The import was not carried out: {{count}} errors found. No data was changed.",
+				"writeFailed": "The import was aborted. Up to that point {{updated}} places were updated and {{created}} places were created.",
+				"unexpected": "The import failed. Please try again."
+			},
+			"issueCodes": {
+				"emptyRequired": "required field is empty",
+				"invalidNumber": "not a valid number",
+				"invalidInteger": "not a valid whole number",
+				"invalidDate": "not a valid date (DD.MM.YYYY)",
+				"invalidOption": "unknown option",
+				"unknownCategory": "unknown category",
+				"unknownTag": "unknown tag",
+				"unknownGroup": "unknown group",
+				"invalidValue": "invalid value",
+				"unknownId": "no place with this ID exists",
+				"duplicateId": "ID appears more than once"
+			}
 		}
 	},
 	"enumMap": {
