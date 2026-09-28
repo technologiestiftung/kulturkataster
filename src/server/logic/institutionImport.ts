@@ -233,7 +233,9 @@ const buildRowPatch = (
 			)
 			.map((category) => category.id);
 	}
-	if (keys.includes("subcategories")) {
+	const categoryColumnsTouched =
+		keys.includes("categories") || keys.includes("subcategories");
+	if (categoryColumnsTouched && cells.has("subcategories")) {
 		const subcategories = parsers.parseSubcategories(
 			cells.get("subcategories") ?? "",
 			parentIds,
@@ -243,6 +245,15 @@ const buildRowPatch = (
 		} else {
 			patch.subcategories = subcategories.value;
 		}
+	} else if (keys.includes("categories") && existing && parentIds) {
+		patch.subcategories = existing.categories
+			.filter(
+				(category) =>
+					isActiveCategory(category) &&
+					category.parent_category_id !== null &&
+					parentIds.includes(category.parent_category_id),
+			)
+			.map((category) => category.id);
 	}
 	keys.forEach((key) => {
 		if (
