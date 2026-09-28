@@ -273,7 +273,15 @@ test.describe("institution submission wizard", () => {
 
 		const optionRows = page
 			.locator('[role="button"]')
-			.filter({ has: page.locator('[data-slot="checkbox"]') });
+			// Panel rows render a hidden native checkbox instead of the checkbox component
+			.filter({
+				has: page.locator('[data-slot="checkbox"], input[type="checkbox"]'),
+			});
+		// Institutions load into the store asynchronously
+		await optionRows
+			.first()
+			.waitFor({ state: "visible", timeout: 15_000 })
+			.catch(() => {});
 		const optionCount = await optionRows.count();
 		test.skip(
 			optionCount < 1,
@@ -294,11 +302,15 @@ test.describe("institution submission wizard", () => {
 		const editButtons = page.getByRole("button", { name: "Edit" });
 		if ((await editButtons.count()) > 0) {
 			await editButtons.first().click();
-			const nameInput = page.getByLabel("Name");
+			const nameInput = page.getByRole("textbox", {
+				name: /^(Name|Kultureinrichtung)\*?$/,
+			});
 			await expect(nameInput).toBeVisible({ timeout: 15_000 });
 			const updatedName = `${originalName} (E2E Update)`;
 			await nameInput.fill(updatedName);
-			await page.getByRole("button", { name: "Änderungen speichern" }).click();
+			await page
+				.getByRole("button", { name: /^(Änderungen speichern|Speichern)$/ })
+				.click();
 			await expect(
 				page.getByText(originalName, { exact: false }).first(),
 			).toBeVisible();

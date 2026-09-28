@@ -22,6 +22,7 @@
 		"data:migrate": "node --import tsx ./scripts/run-data-migrations.ts",
 		"data:migrate:dry-run": "node --import tsx ./scripts/run-data-migrations.ts --dry-run",
 		"data:migrate:local": "dotenv -e .env.local -- node --import tsx ./scripts/run-data-migrations.ts",
+		"seed:e2e": "tsx scripts/seed-e2e.ts",
 		"traduora:sync": "tsx scripts/traduora-sync.ts",
 		"traduora:push": "tsx scripts/traduora-sync.ts push",
 		"traduora:pull": "tsx scripts/traduora-sync.ts pull && npm run format:fix",

@@ -11,7 +11,7 @@ const verifyEmailSuccessMessage =
 
 const selectAccountType = async (page: any, label: string) => {
 	const accountTypeTrigger = page.getByRole("combobox", {
-		name: /Arbeiten Sie für eine Organisation oder in der Verwaltung\?/i,
+		name: /Arbeiten Sie für ein Netzwerk, einen Verband oder in der Verwaltung\?/i,
 	});
 	const triggerVisible = await accountTypeTrigger
 		.waitFor({ state: "visible", timeout: 10_000 })
@@ -31,7 +31,7 @@ const selectAccountType = async (page: any, label: string) => {
 
 const fillOrganizationFields = async (page: any) => {
 	await page
-		.getByLabel("Bitte nennen Sie den Namen der Organisation")
+		.getByLabel("Bitte nennen Sie den Namen des Netzwerks oder des Verbands")
 		.fill("Org");
 	await page.getByLabel("Was ist ihre Funktion/Position?").first().fill("Lead");
 	await page.getByLabel("Telefonnumer für Rückfragen").fill("123456");
@@ -52,7 +52,10 @@ test.describe("Auth registration", () => {
 		test.skip(!registerEmail, "E2E_REGISTER_EMAIL not set");
 
 		await safeGoto(page, "/de/register", /\/de\/register\/?$/);
-		await selectAccountType(page, "Mitarbeiter*in einer Organisation");
+		await selectAccountType(
+			page,
+			"Mitarbeiter*in eines Netzwerks oder Verbands",
+		);
 		await fillOrganizationFields(page);
 		await page.getByLabel("Vorname").fill("Jane");
 		await page.getByLabel("Nachname").fill("Doe");
@@ -94,7 +97,10 @@ test.describe("Auth registration", () => {
 		test.skip(!hasRealExistingEmail, "E2E_USER_EMAIL not set");
 
 		await safeGoto(page, "/de/register", /\/de\/register\/?$/);
-		await selectAccountType(page, "Mitarbeiter*in einer Organisation");
+		await selectAccountType(
+			page,
+			"Mitarbeiter*in eines Netzwerks oder Verbands",
+		);
 		await fillOrganizationFields(page);
 		await page.getByLabel("Vorname").fill("Jane");
 		await page.getByLabel("Nachname").fill("Doe");
@@ -126,7 +132,10 @@ test.describe("Auth registration", () => {
 		page,
 	}) => {
 		await safeGoto(page, "/de/register", /\/de\/register\/?$/);
-		await selectAccountType(page, "Mitarbeiter*in einer Organisation");
+		await selectAccountType(
+			page,
+			"Mitarbeiter*in eines Netzwerks oder Verbands",
+		);
 		await fillOrganizationFields(page);
 		await page.getByLabel("Vorname").fill("Jane");
 		await page.getByLabel("Nachname").fill("Doe");
