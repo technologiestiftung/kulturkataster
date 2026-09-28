@@ -39,7 +39,6 @@ const addFieldIfValueIsPresent = (
 	value: unknown,
 ) => {
 	if (typeof value === "undefined") return;
-	if (Array.isArray(value) && value.length === 0) return;
 	fields.add(field);
 };
 
