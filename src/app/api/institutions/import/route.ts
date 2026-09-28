@@ -134,7 +134,12 @@ const readCsvRows = async (
 	if (file.size > INSTITUTION_IMPORT_MAX_FILE_BYTES) {
 		return { error: respond({ ok: false, error: "fileTooLarge" }, 413) };
 	}
-	const rows = parseCsv(await file.text());
+	let rows: string[][];
+	try {
+		rows = parseCsv(await file.text());
+	} catch {
+		return { error: respond({ ok: false, error: "invalidFile" }, 400) };
+	}
 	if (rows.length < 2) {
 		return { error: respond({ ok: false, error: "emptyFile" }, 400) };
 	}

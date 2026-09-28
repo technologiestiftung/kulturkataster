@@ -556,6 +556,14 @@ export function planInstitutionImport({
 
 	rows.forEach((row, rowIndex) => {
 		// Row 1 is the header, so data rows start at 2 like in a spreadsheet.
+		if (row.length !== headers.length) {
+			plan.issues.push({
+				row: rowIndex + 2,
+				column: headers[0] ?? translateColumnName(ID_KEY, t),
+				code: "columnCountMismatch",
+			});
+			return;
+		}
 		const outcome = planRow(row, rowIndex + 2, context);
 		if (outcome.kind === "create") plan.creates.push(outcome.entry);
 		else if (outcome.kind === "update") plan.updates.push(outcome.entry);

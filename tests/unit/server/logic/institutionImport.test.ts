@@ -238,6 +238,22 @@ describe("planInstitutionImport", () => {
 		]);
 	});
 
+	it("rejects data rows whose column count differs from the header", () => {
+		const institution = makeInstitution();
+		const [headers, row] = exportCsv([institution]);
+		const { plan } = planFromCsv(
+			[headers, row.slice(0, 2), [...row, "extra"]],
+			[institution],
+		);
+
+		expect(plan.creates).toEqual([]);
+		expect(plan.updates).toEqual([]);
+		expect(plan.issues).toEqual([
+			{ row: 2, column: "ID", code: "columnCountMismatch" },
+			{ row: 3, column: "ID", code: "columnCountMismatch" },
+		]);
+	});
+
 	it("rejects an empty status for updates and creates", () => {
 		const institution = makeInstitution();
 		const updateRows = exportCsv([institution]);
