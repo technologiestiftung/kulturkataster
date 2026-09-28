@@ -15,6 +15,10 @@ const lookups = {
 	categories: [
 		{ id: 1, key: "theater", parent_category_id: null },
 		{ id: 2, key: "dance", parent_category_id: 1 },
+		{ id: 3, key: "cinemas", parent_category_id: null },
+		{ id: 4, key: "clubs_music_venues", parent_category_id: null },
+		{ id: 5, key: "cinemas_other", parent_category_id: 3 },
+		{ id: 6, key: "clubs_music_venues_other", parent_category_id: 4 },
 	],
 	tags: [
 		{ id: 10, name: "barrier-free" },
@@ -276,6 +280,43 @@ describe("planInstitutionImport", () => {
 		const { plan } = planFromCsv(csvRows, [institution]);
 
 		expect(plan.updates[0]?.permissionFields).toEqual(["tags"]);
+	});
+
+	it("resolves duplicate subcategory labels within the selected parent", () => {
+		const csvRows = exportCsv([makeInstitution()]);
+		setCell(csvRows, "ID", "");
+		setCell(csvRows, "Kategorien", "Kinos");
+		setCell(csvRows, "Unterkategorien", "Ohne Unterkategorie");
+
+		const { plan } = planFromCsv(csvRows, []);
+
+		expect(plan.issues).toEqual([]);
+		expect(plan.creates[0]?.form.categoryIds).toEqual([3, 5]);
+	});
+
+	it("reports a subcategory label that remains ambiguous", () => {
+		const csvRows = exportCsv([makeInstitution()]);
+		setCell(csvRows, "ID", "");
+		const categoriesIndex = csvRows[0].indexOf("Kategorien");
+		const subcategoriesIndex = csvRows[0].indexOf("Unterkategorien");
+		csvRows[0].splice(categoriesIndex, 1);
+		csvRows[1].splice(categoriesIndex, 1);
+		const shiftedSubcategoriesIndex =
+			subcategoriesIndex > categoriesIndex
+				? subcategoriesIndex - 1
+				: subcategoriesIndex;
+		csvRows[1][shiftedSubcategoriesIndex] = "Ohne Unterkategorie";
+
+		const { plan } = planFromCsv(csvRows, []);
+
+		expect(plan.creates).toEqual([]);
+		expect(plan.issues).toEqual([
+			{
+				row: 2,
+				column: "Unterkategorien",
+				code: "unknownCategory",
+			},
+		]);
 	});
 
 	it("keeps links to inactive categories that the export does not list", () => {
