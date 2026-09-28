@@ -6,8 +6,8 @@ const scrollToTopButtonSelector = '[data-testid="list-scroll-top"]';
 
 test.describe("ListView Selection Behavior", () => {
 	test.beforeEach(async ({ page }) => {
+		// No networkidle: background requests keep the network busy on CI
 		await page.goto("/de/list");
-		await page.waitForLoadState("networkidle");
 		await expect(page.locator('[role="list"]').first()).toBeVisible();
 	});
 
@@ -62,12 +62,12 @@ test.describe("ListView Selection Behavior", () => {
 		page,
 	}) => {
 		await page.goto("/de/list/institution/5");
-		await page.waitForLoadState("networkidle");
+		await expect(page.locator('[role="list"]').first()).toBeVisible();
 
 		const selectedCard = page.locator(
 			'[data-institution-card-id="5"][aria-selected="true"]',
 		);
-		await expect(selectedCard).toBeVisible({ timeout: 3000 });
+		await expect(selectedCard).toBeVisible({ timeout: 15_000 });
 	});
 
 	test("4. Scroll to top button works", async ({ page }) => {
@@ -87,7 +87,7 @@ test.describe("ListView Selection Behavior", () => {
 		page,
 	}) => {
 		await page.goto("/de/list/institution/30");
-		await page.waitForLoadState("networkidle");
+		await expect(page.locator('[role="list"]').first()).toBeVisible();
 		await page.waitForTimeout(400);
 
 		const scrollToTopButton = page.locator(scrollToTopButtonSelector).first();
