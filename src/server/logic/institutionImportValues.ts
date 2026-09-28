@@ -124,16 +124,15 @@ export const createValueParsers = (
 	);
 	const categoryMap = new Map<string, ImportCategory[]>();
 	lookups.categories.forEach((category) => {
-		[
-			category.key,
-			translateEnumValue("categories", category.key, t),
-		].forEach((label) => {
-			const key = normalizeLookupKey(label);
-			const matches = categoryMap.get(key) ?? [];
-			if (!matches.some(({ id }) => id === category.id)) {
-				categoryMap.set(key, [...matches, category]);
-			}
-		});
+		[category.key, translateEnumValue("categories", category.key, t)].forEach(
+			(label) => {
+				const key = normalizeLookupKey(label);
+				const matches = categoryMap.get(key) ?? [];
+				if (!matches.some(({ id }) => id === category.id)) {
+					categoryMap.set(key, [...matches, category]);
+				}
+			},
+		);
 	});
 	const tagMap = new Map(
 		lookups.tags.map((tag) => [normalizeLookupKey(tag.name), tag.id]),
@@ -237,8 +236,7 @@ export const createValueParsers = (
 					parent_category_id !== null &&
 					(parentIds === undefined || parentIds.includes(parent_category_id)),
 			),
-		parseTags: (cell: string) =>
-			parseNamedIdList(cell, tagMap, "unknownTag"),
+		parseTags: (cell: string) => parseNamedIdList(cell, tagMap, "unknownTag"),
 		parseGroups: (cell: string) =>
 			parseNamedIdList(cell, groupMap, "unknownGroup"),
 		parseFundingSources: (cell: string): CellResult<FundingSourceInput[]> =>
