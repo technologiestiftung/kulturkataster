@@ -68,20 +68,10 @@ const collectRowIds = (rows: string[][], idColumnIndex: number) =>
 
 const authorizePlanFields = (ctx: AccessContext, plan: ImportPlan) => {
 	plan.creates.forEach(({ permissionFields }) =>
-		authorizeFields(
-			ctx,
-			"institution",
-			permissionFields,
-			"create",
-		),
+		authorizeFields(ctx, "institution", permissionFields, "create"),
 	);
 	plan.updates.forEach(({ permissionFields }) =>
-		authorizeFields(
-			ctx,
-			"institution",
-			permissionFields,
-			"update",
-		),
+		authorizeFields(ctx, "institution", permissionFields, "update"),
 	);
 };
 

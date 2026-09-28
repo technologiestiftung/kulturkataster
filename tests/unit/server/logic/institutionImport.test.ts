@@ -183,11 +183,7 @@ describe("planInstitutionImport", () => {
 		});
 		expect(update).not.toHaveProperty("notes");
 		expect(update.categoryIds).toBeUndefined();
-		expect(permissionFields).toEqual([
-			"capacity",
-			"address.street",
-			"tags",
-		]);
+		expect(permissionFields).toEqual(["capacity", "address.street", "tags"]);
 	});
 
 	it("creates rows without an ID and maps translated values back", () => {
