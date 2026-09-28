@@ -157,6 +157,9 @@ const parseCell = (
 	cell: string,
 	parsers: ValueParsers,
 ): CellResult<unknown> => {
+	if (key === "status" && !cell.trim()) {
+		return { ok: false, code: "emptyRequired" };
+	}
 	if (ENUM_VALUES_BY_KEY[key]) return parsers.parseEnum(key, cell);
 	if (DATE_KEYS.has(key)) return parseDate(cell);
 	if (NUMBER_KEYS[key]) return parseNumber(cell, NUMBER_KEYS[key]);

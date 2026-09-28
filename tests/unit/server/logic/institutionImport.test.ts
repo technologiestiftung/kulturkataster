@@ -4,6 +4,7 @@ import de from "@/lib/i18n/translations/de/translation.json";
 import en from "@/lib/i18n/translations/en/translation.json";
 import { parseCsv } from "@/lib/utils/csvUtils";
 import { generateCSV, prepareDataForExport } from "@/lib/utils/downloadUtils";
+import { buildInstitutionPermissionFields } from "@/lib/utils/institutionPermissionUtils";
 import {
 	planInstitutionImport,
 	resolveImportColumns,
@@ -19,8 +20,9 @@ const lookups = {
 	tags: [
 		{ id: 10, name: "barrier-free" },
 		{ id: 11, name: "outdoor" },
+		{ id: 12, name: "music; dance" },
 	],
-	groups: [],
+	groups: [{ id: 20, name: "public; private" }],
 };
 
 const makeInstitution = (): Institution =>
@@ -225,6 +227,59 @@ describe("planInstitutionImport", () => {
 		]);
 		expect(emptyNamePlan.issues).toEqual([
 			{ row: 2, column: "Kultureinrichtung", code: "emptyRequired" },
+		]);
+	});
+
+	it("rejects an empty status for updates and creates", () => {
+		const institution = makeInstitution();
+		const updateRows = exportCsv([institution]);
+		setCell(updateRows, "Status", "");
+		expect(planFromCsv(updateRows, [institution]).plan.issues).toEqual([
+			{ row: 2, column: "Status", code: "emptyRequired" },
+		]);
+
+		const createRows = exportCsv([institution]);
+		setCell(createRows, "ID", "");
+		setCell(createRows, "Status", "");
+		expect(planFromCsv(createRows, []).plan.issues).toEqual([
+			{ row: 2, column: "Status", code: "emptyRequired" },
+		]);
+	});
+
+	it("round-trips tag and group names containing semicolons", () => {
+		const institution = {
+			...makeInstitution(),
+			tags: [{ id: 12, name: "music; dance" }],
+			groups: [{ id: 20, name: "public; private" }],
+		} as Institution;
+		const csvRows = exportCsv([institution]);
+		setCell(csvRows, "ID", "");
+
+		const { plan } = planFromCsv(csvRows, []);
+
+		expect(plan.issues).toEqual([]);
+		expect(plan.creates[0]).toMatchObject({
+			tagIds: [12],
+			groupIds: [20],
+		});
+	});
+
+	it("authorizes cleared relation fields", () => {
+		expect(
+			buildInstitutionPermissionFields({
+				id: 2646,
+				name: "Alpha",
+				categoryIds: [],
+				tagIds: [],
+				groupIds: [],
+				funding_sources: [],
+			} as never),
+		).toEqual([
+			"name",
+			"categories",
+			"tags",
+			"groups",
+			"funding_sources",
 		]);
 	});
 
