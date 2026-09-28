@@ -157,6 +157,29 @@ export const createValueParsers = (
 		}
 		return ok(ids);
 	};
+	const parseNamedIdList = (
+		cell: string,
+		map: Map<string, number>,
+		code: ImportIssueCode,
+	): CellResult<number[]> => {
+		const remainingItems = cell.trim();
+		if (!remainingItems) return ok([]);
+		const names = Array.from(map.keys()).sort((a, b) => b.length - a.length);
+		const ids: number[] = [];
+		let remaining = remainingItems;
+		while (remaining) {
+			const normalizedRemaining = normalizeLookupKey(remaining);
+			const name = names.find(
+				(candidate) =>
+					normalizedRemaining === candidate ||
+					normalizedRemaining.startsWith(`${candidate};`),
+			);
+			if (!name) return fail(code);
+			ids.push(map.get(name) as number);
+			remaining = remaining.slice(name.length).replace(/^\s*;\s*/, "");
+		}
+		return ok(ids);
+	};
 
 	return {
 		parseEnum: (key: string, cell: string): CellResult<string | null> => {
@@ -174,8 +197,10 @@ export const createValueParsers = (
 		},
 		parseCategories: (cell: string) =>
 			parseIdList(cell, categoryMap, "unknownCategory"),
-		parseTags: (cell: string) => parseIdList(cell, tagMap, "unknownTag"),
-		parseGroups: (cell: string) => parseIdList(cell, groupMap, "unknownGroup"),
+		parseTags: (cell: string) =>
+			parseNamedIdList(cell, tagMap, "unknownTag"),
+		parseGroups: (cell: string) =>
+			parseNamedIdList(cell, groupMap, "unknownGroup"),
 		parseFundingSources: (cell: string): CellResult<FundingSourceInput[]> =>
 			ok(
 				splitList(cell).map((item) => {
