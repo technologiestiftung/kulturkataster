@@ -35,12 +35,13 @@ test.describe("roles management", () => {
 			firstRoleName.slice(0, Math.min(4, firstRoleName.length)),
 		);
 		await expect(page.locator("tbody tr").first()).toBeVisible();
-		await page.keyboard.press("Escape");
+		// The toolbar hides the create button while search is open
+		await page.getByRole("button", { name: "Close search" }).click();
 
 		const uniqueName = `E2E Rolle ${Date.now()}`;
+		// Icon-only toolbar button: the label lives in aria-label
 		const createRoleButton = page
-			.getByRole("button")
-			.filter({ hasText: /Rolle.*(?:erstellen|hinzuf|add)/i })
+			.getByRole("button", { name: /Rolle.*(?:erstellen|hinzuf|add)/i })
 			.first();
 		test.skip(
 			(await createRoleButton.count()) === 0,
@@ -51,8 +52,11 @@ test.describe("roles management", () => {
 		await expect(page).toHaveURL(/\/de\/account\/roles\/new\/?$/, {
 			timeout: 15_000,
 		});
+		// The dialog renders an sr-only title plus the visible one
 		await expect(
-			page.getByRole("heading", { name: /Rolle.*(?:erstellen|hinzuf)/i }),
+			page
+				.getByRole("heading", { name: /Rolle.*(?:erstellen|hinzuf)/i })
+				.last(),
 		).toBeVisible();
 		await page.getByLabel("Name").fill(uniqueName);
 		await page.getByLabel("Beschreibung").fill("Rolle fuer E2E Test");
@@ -74,7 +78,7 @@ test.describe("roles management", () => {
 			timeout: 15_000,
 		});
 		await expect(
-			page.getByRole("heading", { name: "Rolle bearbeiten", level: 1 }),
+			page.getByRole("heading", { name: "Rolle bearbeiten" }).last(),
 		).toBeVisible();
 
 		const updatedDescription = `Updated ${Date.now()}`;
