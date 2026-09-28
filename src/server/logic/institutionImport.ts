@@ -173,9 +173,6 @@ const parseCell = (
 	switch (key) {
 		case "shared_use_allowed":
 			return parsers.parseBoolean(cell);
-		case "categories":
-		case "subcategories":
-			return parsers.parseCategories(cell);
 		case "tags":
 			return parsers.parseTags(cell);
 		case "groups":
@@ -199,8 +196,6 @@ const applyValue = (
 		patch.address.street_number = streetNumber || null;
 	} else if (ADDRESS_TEXT_KEYS.has(key) || ADDRESS_NUMBER_KEYS.has(key)) {
 		patch.address[key] = value;
-	} else if (key === "categories" || key === "subcategories") {
-		patch[key] = value as number[];
 	} else if (key === "tags") {
 		patch.form.tagIds = value;
 	} else if (key === "groups") {
@@ -215,10 +210,47 @@ const buildRowPatch = (
 	cells: Map<string, string>,
 	parsers: ValueParsers,
 	reportIssue: (key: string, code: ImportIssueCode) => void,
+	existing?: ExistingInstitution,
 ): RowPatch => {
 	const patch: RowPatch = { form: {}, address: {} };
+	let parentIds: number[] | undefined;
+	if (
+		(keys.includes("categories") || keys.includes("subcategories")) &&
+		cells.has("categories")
+	) {
+		const categories = parsers.parseCategories(cells.get("categories") ?? "");
+		if (!categories.ok) {
+			reportIssue("categories", categories.code);
+		} else {
+			parentIds = categories.value;
+			if (keys.includes("categories")) patch.categories = categories.value;
+		}
+	} else if (existing) {
+		parentIds = existing.categories
+			.filter(
+				(category) =>
+					isActiveCategory(category) && category.parent_category_id === null,
+			)
+			.map((category) => category.id);
+	}
+	if (keys.includes("subcategories")) {
+		const subcategories = parsers.parseSubcategories(
+			cells.get("subcategories") ?? "",
+			parentIds,
+		);
+		if (!subcategories.ok) {
+			reportIssue("subcategories", subcategories.code);
+		} else {
+			patch.subcategories = subcategories.value;
+		}
+	}
 	keys.forEach((key) => {
-		if (READ_ONLY_KEYS.has(key)) return;
+		if (
+			READ_ONLY_KEYS.has(key) ||
+			key === "categories" ||
+			key === "subcategories"
+		)
+			return;
 		const cell = cells.get(key) ?? "";
 		const result = parseCell(key, cell, parsers);
 		if (!result.ok) {
@@ -431,7 +463,13 @@ const planRow = (
 		: keys;
 	if (existing && keysToApply.length === 0) return { kind: "unchanged" };
 
-	const patch = buildRowPatch(keysToApply, cells, context.parsers, reportIssue);
+	const patch = buildRowPatch(
+		keysToApply,
+		cells,
+		context.parsers,
+		reportIssue,
+		existing,
+	);
 	if (issues.length > 0) return invalid();
 
 	if (existing) {

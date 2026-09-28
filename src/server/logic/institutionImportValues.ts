@@ -21,6 +21,8 @@ export type ImportLookups = {
 	groups: { id: number; name: string }[];
 };
 
+type ImportCategory = ImportLookups["categories"][number];
+
 export type CellResult<T> =
 	| { ok: true; value: T }
 	| { ok: false; code: ImportIssueCode };
@@ -120,13 +122,18 @@ export const createValueParsers = (
 	const booleanMap = buildReverseLabelMap(["yes", "no", "none"], (value) =>
 		translateEnumValue("shared_use_allowed", value, t),
 	);
-	const categoryMap = new Map<string, number>();
+	const categoryMap = new Map<string, ImportCategory[]>();
 	lookups.categories.forEach((category) => {
-		categoryMap.set(normalizeLookupKey(category.key), category.id);
-		categoryMap.set(
-			normalizeLookupKey(translateEnumValue("categories", category.key, t)),
-			category.id,
-		);
+		[
+			category.key,
+			translateEnumValue("categories", category.key, t),
+		].forEach((label) => {
+			const key = normalizeLookupKey(label);
+			const matches = categoryMap.get(key) ?? [];
+			if (!matches.some(({ id }) => id === category.id)) {
+				categoryMap.set(key, [...matches, category]);
+			}
+		});
 	});
 	const tagMap = new Map(
 		lookups.tags.map((tag) => [normalizeLookupKey(tag.name), tag.id]),
@@ -144,16 +151,17 @@ export const createValueParsers = (
 		translateEnumValue("funding_sources", name, t),
 	);
 
-	const parseIdList = (
+	const parseCategoryList = (
 		cell: string,
-		map: Map<string, number>,
-		code: ImportIssueCode,
+		isCandidate: (category: ImportCategory) => boolean,
 	): CellResult<number[]> => {
 		const ids: number[] = [];
 		for (const item of splitList(cell)) {
-			const id = map.get(normalizeLookupKey(item));
-			if (typeof id === "undefined") return fail(code);
-			ids.push(id);
+			const matches = (categoryMap.get(normalizeLookupKey(item)) ?? []).filter(
+				isCandidate,
+			);
+			if (matches.length !== 1) return fail("unknownCategory");
+			ids.push(matches[0].id);
 		}
 		return ok(ids);
 	};
@@ -196,7 +204,17 @@ export const createValueParsers = (
 			return ok(value === "none" ? null : value === "yes");
 		},
 		parseCategories: (cell: string) =>
-			parseIdList(cell, categoryMap, "unknownCategory"),
+			parseCategoryList(
+				cell,
+				({ parent_category_id }) => parent_category_id === null,
+			),
+		parseSubcategories: (cell: string, parentIds?: number[]) =>
+			parseCategoryList(
+				cell,
+				({ parent_category_id }) =>
+					parent_category_id !== null &&
+					(parentIds === undefined || parentIds.includes(parent_category_id)),
+			),
 		parseTags: (cell: string) =>
 			parseNamedIdList(cell, tagMap, "unknownTag"),
 		parseGroups: (cell: string) =>
