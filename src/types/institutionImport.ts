@@ -9,7 +9,8 @@ export type ImportIssueCode =
 	| "unknownGroup"
 	| "invalidValue"
 	| "unknownId"
-	| "duplicateId";
+	| "duplicateId"
+	| "columnCountMismatch";
 
 export type ImportIssue = {
 	row: number;

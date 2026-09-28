@@ -24,4 +24,10 @@ describe("parseCsv", () => {
 			["1", "line one\nline two"],
 		]);
 	});
+
+	it("rejects an unterminated quoted field", () => {
+		expect(() => parseCsv('ID,Notes\n1,"unfinished')).toThrow(
+			"Unterminated quoted CSV field",
+		);
+	});
 });
