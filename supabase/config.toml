@@ -1,0 +1,59 @@
+# Local Supabase for tests (CI e2e job and local runs). Only auth is used by the
+# app — all data goes through Prisma — so everything else is switched off.
+# Start: `supabase start`, then `npm run prisma:migrate:deploy` and `npm run seed:e2e`.
+project_id = "kulturkataster-frontend"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public"]
+
+[db]
+port = 54322
+shadow_port = 54320
+major_version = 17
+
+[db.seed]
+enabled = false
+
+[auth]
+enabled = true
+site_url = "http://127.0.0.1:3010"
+additional_redirect_urls = [
+  "http://127.0.0.1:3010/login",
+  "http://127.0.0.1:3010/resetPassword",
+]
+enable_signup = true
+minimum_password_length = 6
+
+[auth.email]
+enable_signup = true
+# Must stay on: register.spec expects no session after sign-up
+enable_confirmations = true
+max_frequency = "1s"
+
+[auth.rate_limit]
+# Every e2e run sends sign-up, reset and invite mails
+email_sent = 1000
+sign_in_sign_ups = 1000
+token_verifications = 1000
+
+# Catches auth mails locally (http://127.0.0.1:54324)
+[inbucket]
+enabled = true
+port = 54324
+
+[studio]
+enabled = false
+
+[realtime]
+enabled = false
+
+[storage]
+enabled = false
+
+[edge_runtime]
+enabled = false
+
+[analytics]
+enabled = false

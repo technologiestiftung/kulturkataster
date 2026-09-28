@@ -1,0 +1,188 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - dev
+      - "release/v*"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  MAPTILER_API_KEY: ci-maptiler-key
+  MAP_BOUNDING_BOX: 13.091992716067702,52.33488609760638,13.742786470433,52.67626223889507
+  EMAIL_PROVIDER: noop
+  SMTP_SENDER_NAME: Kulturkataster
+  SMTP_SENDER_EMAIL: no-reply@example.com
+  SMTP_REPLY_TO: info@example.com
+  TRADUORA_API_URL: https://traduora.example.test/api/v1
+  TRADUORA_CLIENT_ID: ci-client-id
+  TRADUORA_CLIENT_SECRET: ci-client-secret
+  TRADUORA_PROJECT_ID: ci-project-id
+  NEXT_PUBLIC_BRANCH: ci
+
+jobs:
+  # No DATABASE_URL/SUPABASE_*: tests that need a live instance skip here and run in e2e
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma client
+        run: npx prisma generate
+
+      - name: Check formatting
+        run: npm run format
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Run unit tests
+        run: npm run test:unit
+
+      - name: Run integration tests
+        run: npm run test:integration
+
+  build:
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
+      SUPABASE_URL: http://127.0.0.1:54321
+      SUPABASE_ANON_KEY: ci-anon-key
+      SUPABASE_SERVICE_ROLE_KEY: ci-service-role-key
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Apply Prisma migrations
+        run: npx prisma migrate deploy
+
+      - name: Build
+        run: npm run build
+
+  # Runs against a throwaway local Supabase (supabase/config.toml) seeded with
+  # synthetic data (scripts/seed-e2e.ts) — no hosted instance or secrets needed.
+  e2e:
+    runs-on: ubuntu-latest
+    env:
+      PLAYWRIGHT_BASE_URL: http://127.0.0.1:3010
+      SITE_URL: http://127.0.0.1:3010
+      MAPTILER_API_KEY: ${{ secrets.CI_E2E_MAPTILER_API_KEY || 'ci-maptiler-key' }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: 2.58.5
+
+      # Only auth, Postgres, Kong and Mailpit are needed (see supabase/config.toml)
+      - name: Start Supabase
+        run: |
+          supabase start -x postgres-meta,vector,imgproxy
+          eval "$(supabase status -o env)"
+          {
+            echo "SUPABASE_URL=$API_URL"
+            echo "DATABASE_URL=$DB_URL"
+            echo "SUPABASE_ANON_KEY=$ANON_KEY"
+            echo "SUPABASE_SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY"
+          } >> "$GITHUB_ENV"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Get Playwright version
+        id: playwright
+        run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
+
+      - name: Install Playwright browser
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps chromium
+
+      - name: Install Playwright system dependencies
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
+
+      - name: Cache Next.js build
+        uses: actions/cache@v4
+        with:
+          path: .next/cache
+          key: nextjs-${{ runner.os }}-${{ hashFiles('package-lock.json') }}-${{ hashFiles('src/**') }}
+          restore-keys: nextjs-${{ runner.os }}-${{ hashFiles('package-lock.json') }}-
+
+      - name: Apply Prisma migrations
+        run: npx prisma migrate deploy
+
+      - name: Run data migrations
+        run: npm run data:migrate
+
+      - name: Seed synthetic test data
+        run: npm run seed:e2e
+
+      # Needs the seeded guest role; cleans up the user it registers
+      - name: Run auth integration test
+        run: npx vitest run --config vitest.integration.config.ts tests/integration/auth.register.test.ts
+
+      - name: Run E2E tests
+        run: npm run test:e2e
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          if-no-files-found: ignore
