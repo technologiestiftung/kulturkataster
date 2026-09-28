@@ -66,13 +66,14 @@ test.describe("slot routing", () => {
 			test.skip(true, "List view switch button was not visible.");
 		}
 		await expect(listButton).toBeEnabled();
-		await listButton.click({ force: true });
-		await expect(page).toHaveURL(
-			new RegExp(`/de/list/institution/${institutionId}/?$`),
-			{
-				timeout: 30_000,
-			},
-		);
+		// A click before hydration is lost on slow CI runners; retry until the route changes
+		await expect(async () => {
+			await listButton.click({ force: true });
+			await expect(page).toHaveURL(
+				new RegExp(`/de/list/institution/${institutionId}/?$`),
+				{ timeout: 3_000 },
+			);
+		}).toPass({ timeout: 30_000 });
 		await expect(page.locator("#institution-title").first()).toBeVisible({
 			timeout: 15_000,
 		});
