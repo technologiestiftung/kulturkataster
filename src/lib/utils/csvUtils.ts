@@ -60,6 +60,7 @@ export function parseCsv(input: string): string[][] {
 		}
 	}
 
+	if (inQuotes) throw new Error("Unterminated quoted CSV field");
 	if (field.length > 0 || row.length > 0) pushRow();
 	return rows;
 }

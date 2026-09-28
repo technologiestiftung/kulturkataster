@@ -2928,7 +2928,8 @@
 				"unknownGroup": "unknown group",
 				"invalidValue": "invalid value",
 				"unknownId": "no place with this ID exists",
-				"duplicateId": "ID appears more than once"
+				"duplicateId": "ID appears more than once",
+				"columnCountMismatch": "row has the wrong number of columns"
 			}
 		}
 	},

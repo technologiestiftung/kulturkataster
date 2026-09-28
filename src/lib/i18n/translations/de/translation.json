@@ -2937,7 +2937,8 @@
 				"unknownGroup": "unbekannte Gruppe",
 				"invalidValue": "ungültiger Wert",
 				"unknownId": "kein Ort mit dieser ID vorhanden",
-				"duplicateId": "ID kommt mehrfach vor"
+				"duplicateId": "ID kommt mehrfach vor",
+				"columnCountMismatch": "Zeile hat die falsche Anzahl an Spalten"
 			}
 		}
 	},
