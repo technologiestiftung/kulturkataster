@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { allowedLocales, serverSideTranslation } from "@/i18n";
 import { parseCsv } from "@/lib/utils/csvUtils";
-import { buildInstitutionPermissionFields } from "@/lib/utils/institutionPermissionUtils";
 import { getCurrentUserId } from "@/server/actions/auth";
 import { institutionRepo } from "@/server/data/institutionRepo";
 import { logger } from "@/server/logging/logger";
@@ -68,19 +67,19 @@ const collectRowIds = (rows: string[][], idColumnIndex: number) =>
 		.filter((id) => Number.isInteger(id) && id > 0);
 
 const authorizePlanFields = (ctx: AccessContext, plan: ImportPlan) => {
-	plan.creates.forEach((form) =>
+	plan.creates.forEach(({ permissionFields }) =>
 		authorizeFields(
 			ctx,
 			"institution",
-			buildInstitutionPermissionFields(form),
+			permissionFields,
 			"create",
 		),
 	);
-	plan.updates.forEach((form) =>
+	plan.updates.forEach(({ permissionFields }) =>
 		authorizeFields(
 			ctx,
 			"institution",
-			buildInstitutionPermissionFields(form),
+			permissionFields,
 			"update",
 		),
 	);
@@ -90,14 +89,14 @@ const authorizePlanFields = (ctx: AccessContext, plan: ImportPlan) => {
 const writePlan = async (plan: ImportPlan, currentUserId: string) => {
 	const counts = { created: 0, updated: 0 };
 	try {
-		for (const form of plan.updates) {
+		for (const { form } of plan.updates) {
 			await institutionRepo.update(
 				form.id,
 				buildInstitutionUpdateData(form, currentUserId),
 			);
 			counts.updated++;
 		}
-		for (const form of plan.creates) {
+		for (const { form } of plan.creates) {
 			await institutionRepo.create(
 				buildInstitutionCreateData(form, currentUserId),
 			);

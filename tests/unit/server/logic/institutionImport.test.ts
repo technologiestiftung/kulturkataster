@@ -4,7 +4,6 @@ import de from "@/lib/i18n/translations/de/translation.json";
 import en from "@/lib/i18n/translations/en/translation.json";
 import { parseCsv } from "@/lib/utils/csvUtils";
 import { generateCSV, prepareDataForExport } from "@/lib/utils/downloadUtils";
-import { buildInstitutionPermissionFields } from "@/lib/utils/institutionPermissionUtils";
 import {
 	planInstitutionImport,
 	resolveImportColumns,
@@ -164,7 +163,7 @@ describe("planInstitutionImport", () => {
 
 		expect(plan.issues).toEqual([]);
 		expect(plan.updates).toHaveLength(1);
-		const [update] = plan.updates;
+		const [{ form: update, permissionFields }] = plan.updates;
 		expect(update).toMatchObject({
 			id: 2646,
 			name: "Alpha",
@@ -180,6 +179,11 @@ describe("planInstitutionImport", () => {
 		});
 		expect(update).not.toHaveProperty("notes");
 		expect(update.categoryIds).toBeUndefined();
+		expect(permissionFields).toEqual([
+			"capacity",
+			"address.street",
+			"tags",
+		]);
 	});
 
 	it("creates rows without an ID and maps translated values back", () => {
@@ -191,7 +195,7 @@ describe("planInstitutionImport", () => {
 
 		expect(plan.issues).toEqual([]);
 		expect(plan.creates).toHaveLength(1);
-		expect(plan.creates[0]).toMatchObject({
+		expect(plan.creates[0].form).toMatchObject({
 			name: "Beta",
 			owner_type: "private",
 			shared_use_allowed: true,
@@ -201,7 +205,7 @@ describe("planInstitutionImport", () => {
 			funding_sources: [{ source_name: "state_berlin", description: "Grant" }],
 			contact_person_first_name: "Ada",
 		});
-		expect(plan.creates[0].established_since).toEqual(
+		expect(plan.creates[0].form.established_since).toEqual(
 			new Date(Date.UTC(1999, 4, 1)),
 		);
 	});
@@ -258,29 +262,20 @@ describe("planInstitutionImport", () => {
 		const { plan } = planFromCsv(csvRows, []);
 
 		expect(plan.issues).toEqual([]);
-		expect(plan.creates[0]).toMatchObject({
+		expect(plan.creates[0].form).toMatchObject({
 			tagIds: [12],
 			groupIds: [20],
 		});
 	});
 
-	it("authorizes cleared relation fields", () => {
-		expect(
-			buildInstitutionPermissionFields({
-				id: 2646,
-				name: "Alpha",
-				categoryIds: [],
-				tagIds: [],
-				groupIds: [],
-				funding_sources: [],
-			} as never),
-		).toEqual([
-			"name",
-			"categories",
-			"tags",
-			"groups",
-			"funding_sources",
-		]);
+	it("authorizes cleared relation columns on updates", () => {
+		const institution = makeInstitution();
+		const csvRows = exportCsv([institution]);
+		setCell(csvRows, "Tags", "");
+
+		const { plan } = planFromCsv(csvRows, [institution]);
+
+		expect(plan.updates[0]?.permissionFields).toEqual(["tags"]);
 	});
 
 	it("keeps links to inactive categories that the export does not list", () => {
@@ -303,6 +298,6 @@ describe("planInstitutionImport", () => {
 
 		setCell(csvRows, "Unterkategorien", "dance");
 		const { plan } = planFromCsv(csvRows, [institution]);
-		expect(plan.updates[0]?.categoryIds).toEqual([1, 2, 3]);
+		expect(plan.updates[0]?.form.categoryIds).toEqual([1, 2, 3]);
 	});
 });

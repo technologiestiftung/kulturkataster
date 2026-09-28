@@ -4,6 +4,7 @@ import {
 } from "@/lib/utils/downloadUtils";
 import { splitStreetLine } from "@/lib/utils/formUtils";
 import { getInstitutionExportColumnOrder } from "@/lib/utils/institutionExportPolicy";
+import { normalizeInstitutionPermissionField } from "@/lib/utils/institutionPermissionField";
 import {
 	CONTACT_PERSON_FLAT_FIELD_MAP,
 	CONTACT_PERSON_FLAT_FIELDS,
@@ -43,10 +44,15 @@ export type ImportColumnsResult =
 	  };
 
 export type ImportPlan = {
-	creates: InstitutionForm[];
-	updates: InstitutionUpdateForm[];
+	creates: ImportPlanEntry<InstitutionForm>[];
+	updates: ImportPlanEntry<InstitutionUpdateForm>[];
 	unchangedCount: number;
 	issues: ImportIssue[];
+};
+
+type ImportPlanEntry<T> = {
+	form: T;
+	permissionFields: string[];
 };
 
 type ExistingInstitution = Institution & {
@@ -358,8 +364,8 @@ type RowContext = {
 };
 
 type RowOutcome =
-	| { kind: "create"; form: InstitutionForm }
-	| { kind: "update"; form: InstitutionUpdateForm }
+	| { kind: "create"; entry: ImportPlanEntry<InstitutionForm> }
+	| { kind: "update"; entry: ImportPlanEntry<InstitutionUpdateForm> }
 	| { kind: "unchanged" }
 	| { kind: "invalid"; issues: ImportIssue[] };
 
@@ -375,6 +381,24 @@ const resolveExistingInstitution = (
 	const existing = context.existingById.get(id.value);
 	return existing ? { existing } : { issue: "unknownId" };
 };
+
+const getImportPermissionFields = (
+	keys: string[],
+	cells: Map<string, string>,
+	isCreate: boolean,
+) =>
+	Array.from(
+		new Set(
+			keys
+				.filter(
+					(key) =>
+						!READ_ONLY_KEYS.has(key) &&
+						(!isCreate || Boolean(cells.get(key)?.trim())),
+				)
+				.map(normalizeInstitutionPermissionField)
+				.filter((field): field is string => field !== null),
+		),
+	);
 
 const planRow = (
 	row: string[],
@@ -416,7 +440,19 @@ const planRow = (
 			() => validateInstitutionUpdateInput(form),
 			reportIssue,
 		);
-		return validated ? { kind: "update", form: validated } : invalid();
+		return validated
+			? {
+					kind: "update",
+					entry: {
+						form: validated,
+						permissionFields: getImportPermissionFields(
+							keysToApply,
+							cells,
+							false,
+						),
+					},
+				}
+			: invalid();
 	}
 
 	const form = buildCreateForm(patch);
@@ -424,7 +460,15 @@ const planRow = (
 		() => validateInstitutionCreateInput(form),
 		reportIssue,
 	);
-	return validated ? { kind: "create", form: validated } : invalid();
+	return validated
+		? {
+				kind: "create",
+				entry: {
+					form: validated,
+					permissionFields: getImportPermissionFields(keysToApply, cells, true),
+				},
+			}
+		: invalid();
 };
 
 /**
@@ -464,8 +508,8 @@ export function planInstitutionImport({
 	rows.forEach((row, rowIndex) => {
 		// Row 1 is the header, so data rows start at 2 like in a spreadsheet.
 		const outcome = planRow(row, rowIndex + 2, context);
-		if (outcome.kind === "create") plan.creates.push(outcome.form);
-		else if (outcome.kind === "update") plan.updates.push(outcome.form);
+		if (outcome.kind === "create") plan.creates.push(outcome.entry);
+		else if (outcome.kind === "update") plan.updates.push(outcome.entry);
 		else if (outcome.kind === "unchanged") plan.unchangedCount++;
 		else plan.issues.push(...outcome.issues);
 	});
