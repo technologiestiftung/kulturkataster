@@ -150,6 +150,9 @@ export const createValueParsers = (
 	const fundingSourceMap = buildReverseLabelMap(fundingSourceNames, (name) =>
 		translateEnumValue("funding_sources", name, t),
 	);
+	const fundingSourceLabels = Array.from(fundingSourceMap.keys()).sort(
+		(a, b) => b.length - a.length,
+	);
 
 	const parseCategoryList = (
 		cell: string,
@@ -188,6 +191,25 @@ export const createValueParsers = (
 		}
 		return ok(ids);
 	};
+	const splitFundingSources = (cell: string) => {
+		const items: string[] = [];
+		let itemStart = 0;
+		let separatorIndex = cell.indexOf("; ");
+		while (separatorIndex >= 0) {
+			const remainder = cell.slice(separatorIndex + 2).toLowerCase();
+			const startsKnownSource = fundingSourceLabels.some(
+				(label) => remainder === label || remainder.startsWith(`${label}: `),
+			);
+			if (startsKnownSource) {
+				items.push(cell.slice(itemStart, separatorIndex).trim());
+				itemStart = separatorIndex + 2;
+			}
+			separatorIndex = cell.indexOf("; ", separatorIndex + 2);
+		}
+		const finalItem = cell.slice(itemStart).trim();
+		if (finalItem) items.push(finalItem);
+		return items;
+	};
 
 	return {
 		parseEnum: (key: string, cell: string): CellResult<string | null> => {
@@ -221,7 +243,7 @@ export const createValueParsers = (
 			parseNamedIdList(cell, groupMap, "unknownGroup"),
 		parseFundingSources: (cell: string): CellResult<FundingSourceInput[]> =>
 			ok(
-				splitList(cell).map((item) => {
+				splitFundingSources(cell).map((item) => {
 					const separatorIndex = item.indexOf(
 						FUNDING_SOURCE_DESCRIPTION_SEPARATOR,
 					);

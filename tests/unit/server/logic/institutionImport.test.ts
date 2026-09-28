@@ -319,6 +319,61 @@ describe("planInstitutionImport", () => {
 		]);
 	});
 
+	it("rejects an unchanged child after its parent changes", () => {
+		const institution = makeInstitution();
+		const csvRows = exportCsv([institution]);
+		setCell(csvRows, "Kategorien", "Kinos");
+
+		const { plan } = planFromCsv(csvRows, [institution]);
+
+		expect(plan.updates).toEqual([]);
+		expect(plan.issues).toEqual([
+			{
+				row: 2,
+				column: "Unterkategorien",
+				code: "unknownCategory",
+			},
+		]);
+	});
+
+	it("keeps semicolons inside funding descriptions", () => {
+		const institution = {
+			...makeInstitution(),
+			funding_sources: [
+				{ id: 20, source_name: "state_berlin", description: "Grant; phase 2" },
+			],
+		} as Institution;
+		const csvRows = exportCsv([institution]);
+		setCell(csvRows, "ID", "");
+
+		const { plan } = planFromCsv(csvRows, []);
+
+		expect(plan.issues).toEqual([]);
+		expect(plan.creates[0]?.form.funding_sources).toEqual([
+			{ source_name: "state_berlin", description: "Grant; phase 2" },
+		]);
+	});
+
+	it("splits multiple known funding sources", () => {
+		const institution = {
+			...makeInstitution(),
+			funding_sources: [
+				{ id: 20, source_name: "state_berlin", description: "Grant" },
+				{ id: 21, source_name: "federal", description: null },
+			],
+		} as Institution;
+		const csvRows = exportCsv([institution]);
+		setCell(csvRows, "ID", "");
+
+		const { plan } = planFromCsv(csvRows, []);
+
+		expect(plan.issues).toEqual([]);
+		expect(plan.creates[0]?.form.funding_sources).toEqual([
+			{ source_name: "state_berlin", description: "Grant" },
+			{ source_name: "federal", description: null },
+		]);
+	});
+
 	it("keeps links to inactive categories that the export does not list", () => {
 		const institution = {
 			...makeInstitution(),
