@@ -41,11 +41,6 @@ export const institutionRepo = {
 			distinct: ["id"],
 			include: institutionInclude,
 		}),
-	listByIds: (ids: number[]) =>
-		prisma.institution.findMany({
-			where: { id: { in: ids } },
-			include: institutionInclude,
-		}),
 	create: (data: InstitutionCreateInput) =>
 		prisma.institution.create({ data, include: institutionInclude }),
 	update: (id: number, data: InstitutionUpdateInput) =>

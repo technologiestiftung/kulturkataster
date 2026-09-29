@@ -14,7 +14,6 @@ export type {
 	FormWrapperFieldConfig as FieldConfig,
 	FieldType,
 	FieldNormalizer,
-	MultiSelectCreateOption,
 	SelectOption,
 	Layout,
 } from "./types";
