@@ -854,6 +854,7 @@ const renderFieldContent = (
 							}))}
 							sortOptions={field.multiselectSortOptions}
 							disabled={field.disabled}
+							createOption={field.multiselectCreateOption}
 						/>
 					) : (
 						field.options?.map((option) => {

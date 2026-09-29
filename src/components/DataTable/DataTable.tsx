@@ -42,6 +42,7 @@ import Edit from "@/icons/edit.svg";
 import Eye from "@/icons/eye.svg";
 import Download from "@/icons/download.svg";
 import DownloadQuestionnaireAnswers from "@/icons/download-questionnaire-answers.svg";
+import { Upload } from "lucide-react";
 import ArrowNarrowLeft from "@/icons/arrow-narrow-left.svg";
 import ArrowNarrowRight from "@/icons/arrow-narrow-right.svg";
 import { useWindowVirtualizer } from "@tanstack/react-virtual";
@@ -680,6 +681,7 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 				config.primaryButton ||
 				config.secondaryButton ||
 				config.rightButton ||
+				config.importButton ||
 				config.toolbarContent ||
 				config.filterModal) && (
 				<div
@@ -786,6 +788,22 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 										</Label>
 									</div>
 								)}
+							</div>
+						)}
+						{!isSearchOpen && config.importButton && (
+							<div className="gap-2 flex items-center">
+								<Button
+									onClick={config.importButton.onClick}
+									radius="full"
+									variant="surface"
+									iconSize="md"
+									aria-label={config.importButton.label}
+								>
+									<Upload className="size-5!" />
+								</Button>
+								<Label className="md:block hidden">
+									{config.importButton.label}
+								</Label>
 							</div>
 						)}
 						{!isSearchOpen && config.rightButton && (
