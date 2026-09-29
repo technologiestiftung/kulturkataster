@@ -40,12 +40,6 @@ export type PermissionAction =
 	| "download";
 export type PermissionScope = "own" | "all";
 
-// Lets users add an entry that is not in the list yet; the parent adds the returned value to `options`.
-export type MultiSelectCreateOption = {
-	getLabel: (term: string) => string;
-	onCreate: (term: string) => string;
-};
-
 export type TablePermissionValue = {
 	actions: PermissionAction[];
 	scope: PermissionScope;
@@ -162,7 +156,6 @@ type FormWrapperNonSectionFieldConfig = {
 		label: string;
 		compare?: (a: SelectOption, b: SelectOption) => number;
 	}[];
-	multiselectCreateOption?: MultiSelectCreateOption;
 	tablePermissions?: {
 		tables: {
 			key: string;
