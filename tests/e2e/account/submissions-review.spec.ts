@@ -26,6 +26,11 @@ test.describe("submission review", () => {
 		);
 
 		const reviewButtons = page.getByRole("button", { name: "Review" });
+		// The institutions table renders after client-side data loading
+		await reviewButtons
+			.first()
+			.waitFor({ state: "visible", timeout: 15_000 })
+			.catch(() => {});
 		const reviewCount = await reviewButtons.count();
 		test.skip(
 			reviewCount < 1,
