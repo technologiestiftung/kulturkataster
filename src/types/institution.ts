@@ -155,8 +155,6 @@ export type InstitutionForm = {
 	address: AddressInput | null;
 	categoryIds?: number[];
 	tagIds?: number[];
-	// Tags typed in the form that do not exist yet; created on save, reusing names that differ only in case.
-	newTagNames?: string[];
 	userIds?: string[];
 	groupIds?: number[];
 };
