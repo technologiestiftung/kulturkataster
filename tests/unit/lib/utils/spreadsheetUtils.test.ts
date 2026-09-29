@@ -23,7 +23,7 @@ describe("parseSpreadsheet", () => {
 		]);
 
 		expect(parseSpreadsheet(toXlsx(sheet))).toEqual({
-			headerRowNumber: 3,
+			rowNumbers: [3, 4, 6],
 			rows: [
 				["ID", "Name", "Notizen"],
 				["1", "Alpha", ""],

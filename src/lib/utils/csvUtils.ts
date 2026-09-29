@@ -1,3 +1,9 @@
+export type ParsedRows = {
+	rows: string[][];
+	// 1-based source row of each entry in rows, so issues point at the real row after dropped blank rows.
+	rowNumbers: number[];
+};
+
 const CSV_DELIMITER_CANDIDATES = [",", ";"] as const;
 
 const stripBom = (text: string) =>
@@ -16,10 +22,12 @@ const detectDelimiter = (text: string) => {
  * Parses RFC 4180 style CSV (quoted fields, escaped quotes, CRLF/LF line breaks).
  * Rows that contain only empty cells are dropped.
  */
-export function parseCsv(input: string): string[][] {
+export function parseCsv(input: string): ParsedRows {
 	const text = stripBom(input);
 	const delimiter = detectDelimiter(text);
 	const rows: string[][] = [];
+	const rowNumbers: number[] = [];
+	let rowNumber = 0;
 	let row: string[] = [];
 	let field = "";
 	let inQuotes = false;
@@ -30,7 +38,11 @@ export function parseCsv(input: string): string[][] {
 	};
 	const pushRow = () => {
 		pushField();
-		if (row.some((cell) => cell.trim().length > 0)) rows.push(row);
+		rowNumber++;
+		if (row.some((cell) => cell.trim().length > 0)) {
+			rows.push(row);
+			rowNumbers.push(rowNumber);
+		}
 		row = [];
 	};
 
@@ -62,5 +74,5 @@ export function parseCsv(input: string): string[][] {
 
 	if (inQuotes) throw new Error("Unterminated quoted CSV field");
 	if (field.length > 0 || row.length > 0) pushRow();
-	return rows;
+	return { rows, rowNumbers };
 }

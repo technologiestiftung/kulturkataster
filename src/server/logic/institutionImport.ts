@@ -542,7 +542,7 @@ export function planInstitutionImport({
 	t,
 	lookups,
 	existingById,
-	firstDataRowNumber = 2,
+	rowNumbers,
 }: {
 	headers: string[];
 	keys: string[];
@@ -550,8 +550,8 @@ export function planInstitutionImport({
 	t: ImportTranslateFn;
 	lookups: ImportLookups;
 	existingById: Map<number, ExistingInstitution>;
-	// Sheet row of the first data row; Excel exports carry notice rows above the header.
-	firstDataRowNumber?: number;
+	// Source row of each data row; notice rows and dropped blank rows make them non-contiguous.
+	rowNumbers: number[];
 }): ImportPlan {
 	const context: RowContext = {
 		headers,
@@ -569,7 +569,7 @@ export function planInstitutionImport({
 	};
 
 	rows.forEach((row, rowIndex) => {
-		const rowNumber = firstDataRowNumber + rowIndex;
+		const rowNumber = rowNumbers[rowIndex];
 		if (row.length !== headers.length) {
 			plan.issues.push({
 				row: rowNumber,

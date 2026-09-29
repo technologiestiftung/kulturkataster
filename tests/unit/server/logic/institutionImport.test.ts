@@ -106,7 +106,7 @@ const exportCsv = (institutions: Institution[], locale = "de") =>
 		generateCSV(
 			prepareDataForExport(institutions, { translateFn: translators[locale] }),
 		),
-	);
+	).rows;
 
 const exportSpreadsheet = (institutions: Institution[], format: "xlsx") =>
 	parseSpreadsheet(
@@ -120,7 +120,7 @@ const exportSpreadsheet = (institutions: Institution[], format: "xlsx") =>
 const planFromCsv = (
 	csvRows: string[][],
 	existing: Institution[],
-	firstDataRowNumber?: number,
+	rowNumbers = csvRows.slice(1).map((_, index) => index + 2),
 ) => {
 	const [headers, ...rows] = csvRows;
 	const columns = resolveImportColumns(headers, translators);
@@ -134,7 +134,7 @@ const planFromCsv = (
 			t: translators[columns.locale],
 			lookups,
 			existingById: new Map(existing.map((item) => [item.id, item])),
-			firstDataRowNumber,
+			rowNumbers,
 		}),
 	};
 };
@@ -186,14 +186,33 @@ describe("planInstitutionImport", () => {
 
 	it("reports spreadsheet issues at the Excel row below the notice", () => {
 		const institution = makeInstitution();
-		const { rows, headerRowNumber } = exportSpreadsheet([institution], "xlsx");
+		const { rows, rowNumbers } = exportSpreadsheet([institution], "xlsx");
 		setCell(rows, "Kapazität", "viele");
 
-		const { plan } = planFromCsv(rows, [institution], headerRowNumber + 1);
+		const { plan } = planFromCsv(rows, [institution], rowNumbers.slice(1));
 
-		expect(headerRowNumber).toBe(6);
+		expect(rowNumbers[0]).toBe(6);
 		expect(plan.issues).toEqual([
 			{ row: 7, column: "Kapazität", code: "invalidNumber" },
+		]);
+	});
+
+	it("reports issues at the source row after a blank row between data rows", () => {
+		const alpha = makeInstitution();
+		const beta = { ...makeInstitution(), id: alpha.id + 1, name: "Beta" };
+		const [header, alphaRow, betaRow] = exportCsv([alpha, beta]);
+		const text = [header, alphaRow, [], betaRow]
+			.map((row) =>
+				row.map((cell) => `"${cell.replace(/"/g, '""')}"`).join(","),
+			)
+			.join("\n");
+		const { rows, rowNumbers } = parseCsv(text);
+		rows[2][rows[0].indexOf("Kapazität")] = "viele";
+
+		const { plan } = planFromCsv(rows, [alpha, beta], rowNumbers.slice(1));
+
+		expect(plan.issues).toEqual([
+			{ row: 4, column: "Kapazität", code: "invalidNumber" },
 		]);
 	});
 

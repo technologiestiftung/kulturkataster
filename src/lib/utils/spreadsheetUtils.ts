@@ -1,10 +1,5 @@
 import * as XLSX from "xlsx";
-
-type ParsedSpreadsheet = {
-	rows: string[][];
-	// 1-based sheet row of the header, so issues can point at the real Excel row.
-	headerRowNumber: number;
-};
+import type { ParsedRows } from "@/lib/utils/csvUtils";
 
 // SSF ships untyped; only the two helpers needed for date cells are declared here.
 const ssf = XLSX.SSF as {
@@ -52,7 +47,7 @@ const findHeaderIndex = (rows: string[][]) =>
  * Reads the first sheet of an .xlsx file as text rows, starting at the header.
  * Rows that contain only empty cells are dropped; shorter rows are padded to the header width.
  */
-export function parseSpreadsheet(data: ArrayBuffer): ParsedSpreadsheet {
+export function parseSpreadsheet(data: ArrayBuffer): ParsedRows {
 	const workbook = XLSX.read(new Uint8Array(data), {
 		type: "array",
 		dense: true,
@@ -67,16 +62,19 @@ export function parseSpreadsheet(data: ArrayBuffer): ParsedSpreadsheet {
 
 	const allRows = readSheetRows(sheet);
 	const headerIndex = findHeaderIndex(allRows);
-	if (headerIndex === -1) return { rows: [], headerRowNumber: 1 };
+	if (headerIndex === -1) return { rows: [], rowNumbers: [] };
 
 	const width = allRows[headerIndex].length;
-	const rows = allRows
+	const kept = allRows
+		.map((row, index) => ({ row, rowNumber: index + 1 }))
 		.slice(headerIndex)
-		.filter((row) => row.some((cell) => cell.trim().length > 0))
-		.map((row) =>
+		.filter(({ row }) => row.some((cell) => cell.trim().length > 0));
+	return {
+		rows: kept.map(({ row }) =>
 			row.length < width
 				? [...row, ...Array<string>(width - row.length).fill("")]
 				: row,
-		);
-	return { rows, headerRowNumber: headerIndex + 1 };
+		),
+		rowNumbers: kept.map(({ rowNumber }) => rowNumber),
+	};
 }
