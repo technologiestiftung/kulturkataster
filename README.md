@@ -123,6 +123,16 @@ docker run -p 3000:3000 \
 
 ## CI/CD and Deployment
 
+### Continuous Integration
+
+`.github/workflows/ci.yml` runs on every pull request and on pushes to `main`, `dev` and `release/v*`:
+
+- **test**: format check, lint, unit and integration tests
+- **build**: production build
+- **e2e**: starts a throwaway local Supabase (`supabase/config.toml`), applies migrations, seeds synthetic data, then runs the integration and Playwright suites
+
+To reproduce the e2e setup locally, see [E2E Seed](scripts/README.md#e2e-seed).
+
 ### GitHub Container Registry
 
 The project uses GitHub Actions for automated building and publishing to GitHub Container Registry (GHCR). The workflow is triggered on pushes to `main`, `dev`, and `release/*` branches.

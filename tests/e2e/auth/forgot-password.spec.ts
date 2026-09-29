@@ -45,24 +45,14 @@ test.describe("auth forgot password", () => {
 		}
 		await emailInput.fill(resetEmail!);
 		const sendResetButton = page.getByRole("button", {
-			name: /Link senden|Send reset link/i,
+			name: /Passwort zurücksetzen|Reset password/i,
 		});
 		await expect(sendResetButton).toBeVisible();
 		await expect(sendResetButton).toBeEnabled();
 		await sendResetButton.click();
 
-		const successDialog = page.getByRole("dialog", {
-			name: /E-Mail gesendet|Email sent/i,
-		});
-		await expect(successDialog).toBeVisible();
-		const backToLoginButton = successDialog.getByRole("button", {
-			name: /Zur Anmeldung|Back to login/i,
-		});
-		await expect(backToLoginButton).toBeVisible();
-		await expect(backToLoginButton).toBeEnabled();
-		await Promise.all([
-			page.waitForURL(/\/de\/login\/?$/, { timeout: 15_000 }),
-			backToLoginButton.click(),
-		]);
+		// Success closes the modal and shows a toast
+		await expect(page.getByText(/E-Mail gesendet|Email sent/i)).toBeVisible();
+		await expect(page).toHaveURL(/\/de\/login\/?$/, { timeout: 15_000 });
 	});
 });
