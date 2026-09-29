@@ -25,12 +25,14 @@ type ImportCategory = ImportLookups["categories"][number];
 
 export type CellResult<T> =
 	| { ok: true; value: T }
-	| { ok: false; code: ImportIssueCode };
+	// `values` names the list items that could not be matched, so users can find them in the file.
+	| { ok: false; code: ImportIssueCode; values?: string[] };
 
 const ok = <T>(value: T): CellResult<T> => ({ ok: true, value });
-const fail = (code: ImportIssueCode): CellResult<never> => ({
+const fail = (code: ImportIssueCode, values?: string[]): CellResult<never> => ({
 	ok: false,
 	code,
+	...(values?.length ? { values } : {}),
 });
 
 const LIST_SEPARATOR = /\s*;\s*/;
@@ -107,6 +109,31 @@ export const parseDate = (cell: string): CellResult<Date | null> => {
 	return isRealDate ? ok(date) : fail("invalidDate");
 };
 
+type NamedEntry = { id: number; name: string };
+
+// Longest names first, so "Kunst im öffentlichen Raum" wins over "Kunst".
+const toNamedEntries = (items: NamedEntry[]): NamedEntry[] =>
+	items
+		.map(({ id, name }) => ({ id, name: name.trim() }))
+		.filter(({ name }) => name.length > 0)
+		.sort((a, b) => b.name.length - a.name.length);
+
+const stripLeadingSeparators = (value: string) => value.replace(/^[\s;]+/, "");
+
+const startsWithName = (text: string, name: string, ignoreCase: boolean) => {
+	const head = text.slice(0, name.length);
+	const isSameName = ignoreCase
+		? head.toLowerCase() === name.toLowerCase()
+		: head === name;
+	return isSameName && /^\s*(;|$)/.test(text.slice(name.length));
+};
+
+// Tags like "urbane Praxis" and "Urbane Praxis" coexist, so the exact spelling wins
+// and case is only ignored when no name matches exactly.
+const findNamedEntryAt = (text: string, entries: NamedEntry[]) =>
+	entries.find(({ name }) => startsWithName(text, name, false)) ??
+	entries.find(({ name }) => startsWithName(text, name, true));
+
 export const createValueParsers = (
 	t: ImportTranslateFn,
 	lookups: ImportLookups,
@@ -134,12 +161,8 @@ export const createValueParsers = (
 			},
 		);
 	});
-	const tagMap = new Map(
-		lookups.tags.map((tag) => [normalizeLookupKey(tag.name), tag.id]),
-	);
-	const groupMap = new Map(
-		lookups.groups.map((group) => [normalizeLookupKey(group.name), group.id]),
-	);
+	const tagNames = toNamedEntries(lookups.tags);
+	const groupNames = toNamedEntries(lookups.groups);
 	const fundingSourceNames = Object.keys(
 		(t("enumMap.funding_source", { returnObjects: true }) as unknown as Record<
 			string,
@@ -158,37 +181,37 @@ export const createValueParsers = (
 		isCandidate: (category: ImportCategory) => boolean,
 	): CellResult<number[]> => {
 		const ids: number[] = [];
+		const unknownItems: string[] = [];
 		for (const item of splitList(cell)) {
 			const matches = (categoryMap.get(normalizeLookupKey(item)) ?? []).filter(
 				isCandidate,
 			);
-			if (matches.length !== 1) return fail("unknownCategory");
-			ids.push(matches[0].id);
+			if (matches.length === 1) ids.push(matches[0].id);
+			else unknownItems.push(item);
 		}
-		return ok(ids);
+		return unknownItems.length > 0
+			? fail("unknownCategory", unknownItems)
+			: ok(ids);
 	};
 	const parseNamedIdList = (
 		cell: string,
-		map: Map<string, number>,
+		entries: NamedEntry[],
 		code: ImportIssueCode,
 	): CellResult<number[]> => {
-		const remainingItems = cell.trim();
-		if (!remainingItems) return ok([]);
-		const names = Array.from(map.keys()).sort((a, b) => b.length - a.length);
 		const ids: number[] = [];
-		let remaining = remainingItems;
+		const unknownItems: string[] = [];
+		let remaining = stripLeadingSeparators(cell.trim());
 		while (remaining) {
-			const normalizedRemaining = normalizeLookupKey(remaining);
-			const name = names.find(
-				(candidate) =>
-					normalizedRemaining === candidate ||
-					normalizedRemaining.startsWith(`${candidate};`),
-			);
-			if (!name) return fail(code);
-			ids.push(map.get(name) as number);
-			remaining = remaining.slice(name.length).replace(/^\s*;\s*/, "");
+			const match = findNamedEntryAt(remaining, entries);
+			// Names may contain ";", so an unknown item only runs up to the next separator.
+			const consumedLength = match
+				? match.name.length
+				: (splitList(remaining)[0] ?? remaining).length;
+			if (match) ids.push(match.id);
+			else unknownItems.push(remaining.slice(0, consumedLength));
+			remaining = stripLeadingSeparators(remaining.slice(consumedLength));
 		}
-		return ok(ids);
+		return unknownItems.length > 0 ? fail(code, unknownItems) : ok(ids);
 	};
 	const splitFundingSources = (cell: string) => {
 		const items: string[] = [];
@@ -236,9 +259,9 @@ export const createValueParsers = (
 					parent_category_id !== null &&
 					(parentIds === undefined || parentIds.includes(parent_category_id)),
 			),
-		parseTags: (cell: string) => parseNamedIdList(cell, tagMap, "unknownTag"),
+		parseTags: (cell: string) => parseNamedIdList(cell, tagNames, "unknownTag"),
 		parseGroups: (cell: string) =>
-			parseNamedIdList(cell, groupMap, "unknownGroup"),
+			parseNamedIdList(cell, groupNames, "unknownGroup"),
 		parseFundingSources: (cell: string): CellResult<FundingSourceInput[]> =>
 			ok(
 				splitFundingSources(cell).map((item) => {

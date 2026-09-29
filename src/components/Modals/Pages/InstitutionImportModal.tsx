@@ -4,6 +4,7 @@ import { triggerAccountRefresh } from "@/components/Account/AccountAutoRefresh";
 import { FormWrapper } from "@/components/FormWrapper/FormWrapper";
 import type { FormWrapperConfig } from "@/components/FormWrapper/types";
 import {
+	INSTITUTION_IMPORT_ACCEPT,
 	INSTITUTION_IMPORT_ENDPOINT,
 	INSTITUTION_IMPORT_MAX_FILE_BYTES,
 	type InstitutionImportResponse,
@@ -20,11 +21,15 @@ type InstitutionImportModalProps = {
 
 const uploadImportFile = async (
 	file: File,
+	isDryRun: boolean,
 ): Promise<InstitutionImportResponse> => {
 	const body = new FormData();
 	body.append("file", file);
+	const url = isDryRun
+		? `${INSTITUTION_IMPORT_ENDPOINT}?dryRun=true`
+		: INSTITUTION_IMPORT_ENDPOINT;
 	try {
-		const response = await fetch(INSTITUTION_IMPORT_ENDPOINT, {
+		const response = await fetch(url, {
 			method: "POST",
 			body,
 		});
@@ -50,17 +55,38 @@ export function InstitutionImportModal({
 		onCloseRequest();
 	};
 
-	const handleImport = async () => {
+	// Every file is checked with a dry run first; only a successful check unlocks the import.
+	const isChecked = result?.ok === true && result.dryRun;
+	const isImported = result?.ok === true && !result.dryRun;
+
+	const handleSubmit = async () => {
 		if (!file) return;
+		const isDryRun = !isChecked;
 		setIsImporting(true);
-		const response = await uploadImportFile(file);
+		const response = await uploadImportFile(file, isDryRun);
 		setResult(response);
 		setIsImporting(false);
+		if (isDryRun) return;
 		const hasWrittenRows =
 			response.ok || Boolean(response.created || response.updated);
 		if (hasWrittenRows) {
 			triggerAccountRefresh(["institutions", "entityAudits"]);
 		}
+	};
+
+	const getSubmitLabel = () => {
+		if (isImporting) {
+			return isChecked
+				? t("content.importModal.importing", {
+						defaultValue: "Import läuft …",
+					})
+				: t("content.importModal.checking", {
+						defaultValue: "Prüfung läuft …",
+					});
+		}
+		return isChecked || isImported
+			? t("content.importModal.submit", { defaultValue: "Importieren" })
+			: t("content.importModal.check", { defaultValue: "Prüfen" });
 	};
 
 	const actionFormConfig: FormWrapperConfig = {
@@ -69,10 +95,10 @@ export function InstitutionImportModal({
 			{
 				name: "file",
 				label: t("content.importModal.fileLabel", {
-					defaultValue: "CSV-Datei auswählen",
+					defaultValue: "Datei auswählen",
 				}),
 				type: "file",
-				accept: ".csv,text/csv",
+				accept: INSTITUTION_IMPORT_ACCEPT,
 				required: true,
 				disabled: isImporting,
 				validators: [
@@ -97,17 +123,11 @@ export function InstitutionImportModal({
 			setFile(nextFile);
 			setResult(null);
 		},
-		onSubmit: () => handleImport(),
-		submitDisabled: !file || isImporting,
-		submitLabel: isImporting
-			? t("content.importModal.importing", {
-					defaultValue: "Import läuft …",
-				})
-			: t("content.importModal.submit", {
-					defaultValue: "Importieren",
-				}),
+		onSubmit: () => handleSubmit(),
+		submitDisabled: !file || isImporting || isImported,
+		submitLabel: getSubmitLabel(),
 		showCancel: true,
-		cancelLabel: result?.ok
+		cancelLabel: isImported
 			? t("common.close", { defaultValue: "Schließen" })
 			: t("common.cancel", { defaultValue: "Abbrechen" }),
 		onCancel: handleClose,
@@ -117,7 +137,7 @@ export function InstitutionImportModal({
 		<Modal
 			containerClassName="max-w-3xl"
 			title={t("content.importModal.title", {
-				defaultValue: "Kulturorte aus CSV importieren",
+				defaultValue: "Kulturorte importieren",
 			})}
 			open={open}
 			variant="centered"
@@ -129,7 +149,7 @@ export function InstitutionImportModal({
 				<p className="body1">
 					{t("content.importModal.description", {
 						defaultValue:
-							"Laden Sie eine zuvor aus dem Kulturkataster exportierte CSV-Datei hoch. Orte mit ID werden aktualisiert, Zeilen ohne ID werden als neue Orte angelegt. Leere Zellen überschreiben bestehende Werte.",
+							"Laden Sie eine zuvor aus dem Kulturkataster exportierte Datei (CSV oder XLSX) hoch. Orte mit ID werden aktualisiert, Zeilen ohne ID werden als neue Orte angelegt. Leere Zellen überschreiben bestehende Werte.",
 					})}
 				</p>
 				<FormWrapper config={actionFormConfig} />

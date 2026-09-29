@@ -205,11 +205,17 @@ const applyValue = (
 	}
 };
 
+type ReportIssue = (
+	key: string,
+	code: ImportIssueCode,
+	values?: string[],
+) => void;
+
 const buildRowPatch = (
 	keys: string[],
 	cells: Map<string, string>,
 	parsers: ValueParsers,
-	reportIssue: (key: string, code: ImportIssueCode) => void,
+	reportIssue: ReportIssue,
 	existing?: ExistingInstitution,
 ): RowPatch => {
 	const patch: RowPatch = { form: {}, address: {} };
@@ -220,7 +226,7 @@ const buildRowPatch = (
 	) {
 		const categories = parsers.parseCategories(cells.get("categories") ?? "");
 		if (!categories.ok) {
-			reportIssue("categories", categories.code);
+			reportIssue("categories", categories.code, categories.values);
 		} else {
 			parentIds = categories.value;
 			if (keys.includes("categories")) patch.categories = categories.value;
@@ -241,7 +247,7 @@ const buildRowPatch = (
 			parentIds,
 		);
 		if (!subcategories.ok) {
-			reportIssue("subcategories", subcategories.code);
+			reportIssue("subcategories", subcategories.code, subcategories.values);
 		} else {
 			patch.subcategories = subcategories.value;
 		}
@@ -265,7 +271,7 @@ const buildRowPatch = (
 		const cell = cells.get(key) ?? "";
 		const result = parseCell(key, cell, parsers);
 		if (!result.ok) {
-			reportIssue(key, result.code);
+			reportIssue(key, result.code, result.values);
 			return;
 		}
 		applyValue(patch, key, cell, result.value);
@@ -450,10 +456,15 @@ const planRow = (
 ): RowOutcome => {
 	const { headers, keys, t } = context;
 	const issues: ImportIssue[] = [];
-	const reportIssue = (key: string, code: ImportIssueCode) => {
+	const reportIssue: ReportIssue = (key, code, values) => {
 		const column = headers[keys.indexOf(key)] ?? translateColumnName(key, t);
 		if (issues.some((issue) => issue.column === column)) return;
-		issues.push({ row: rowNumber, column, code });
+		issues.push({
+			row: rowNumber,
+			column,
+			code,
+			...(values ? { values } : {}),
+		});
 	};
 	const invalid = (): RowOutcome => ({ kind: "invalid", issues });
 	const cells = new Map(
@@ -531,6 +542,7 @@ export function planInstitutionImport({
 	t,
 	lookups,
 	existingById,
+	firstDataRowNumber = 2,
 }: {
 	headers: string[];
 	keys: string[];
@@ -538,6 +550,8 @@ export function planInstitutionImport({
 	t: ImportTranslateFn;
 	lookups: ImportLookups;
 	existingById: Map<number, ExistingInstitution>;
+	// Sheet row of the first data row; Excel exports carry notice rows above the header.
+	firstDataRowNumber?: number;
 }): ImportPlan {
 	const context: RowContext = {
 		headers,
@@ -555,16 +569,16 @@ export function planInstitutionImport({
 	};
 
 	rows.forEach((row, rowIndex) => {
-		// Row 1 is the header, so data rows start at 2 like in a spreadsheet.
+		const rowNumber = firstDataRowNumber + rowIndex;
 		if (row.length !== headers.length) {
 			plan.issues.push({
-				row: rowIndex + 2,
+				row: rowNumber,
 				column: headers[0] ?? translateColumnName(ID_KEY, t),
 				code: "columnCountMismatch",
 			});
 			return;
 		}
-		const outcome = planRow(row, rowIndex + 2, context);
+		const outcome = planRow(row, rowNumber, context);
 		if (outcome.kind === "create") plan.creates.push(outcome.entry);
 		else if (outcome.kind === "update") plan.updates.push(outcome.entry);
 		else if (outcome.kind === "unchanged") plan.unchangedCount++;
