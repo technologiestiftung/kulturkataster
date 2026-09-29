@@ -45,6 +45,11 @@ export interface DataTableConfig<T> {
 		onClick: () => void;
 	};
 
+	importButton?: {
+		label: string;
+		onClick: () => void;
+	};
+
 	toolbarContent?: ReactNode;
 
 	filterModal?: {
