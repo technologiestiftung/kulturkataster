@@ -1133,7 +1133,7 @@ export function InstitutionsTable({
 		importButton: institutionPermissions.import
 			? {
 					label: t("content.institutionsTable.actions.importList", {
-						defaultValue: "CSV importieren",
+						defaultValue: "Liste importieren",
 					}),
 					onClick: () => setIsImportDialogOpen(true),
 				}

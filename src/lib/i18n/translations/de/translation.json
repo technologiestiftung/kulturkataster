@@ -1908,7 +1908,7 @@
 				"addInstitution": "Kulturort hinzufügen",
 				"claimInstitution": "Meine Orte anfragen",
 				"downloadList": "Liste herunterladen",
-				"importList": "CSV importieren"
+				"importList": "Liste importieren"
 			},
 			"empty": {
 				"description": "Sie können direkt neue Einträge starten.",
@@ -2903,24 +2903,34 @@
 			"title": "Das Berliner Kulturkataster: Die Kultur der Stadt auf einen Blick"
 		},
 		"importModal": {
-			"title": "Kulturorte aus CSV importieren",
-			"description": "Laden Sie eine zuvor aus dem Kulturkataster exportierte CSV-Datei hoch. Orte mit ID werden aktualisiert, Zeilen ohne ID werden als neue Orte angelegt. Leere Zellen überschreiben bestehende Werte.",
-			"fileLabel": "CSV-Datei auswählen",
+			"title": "Kulturorte importieren",
+			"description": "Laden Sie eine zuvor aus dem Kulturkataster exportierte Datei (CSV oder XLSX) hoch. Orte mit ID werden aktualisiert, Zeilen ohne ID werden als neue Orte angelegt. Leere Zellen überschreiben bestehende Werte.",
+			"fileLabel": "Datei auswählen",
 			"submit": "Importieren",
 			"importing": "Import läuft …",
+			"check": "Prüfen",
+			"checking": "Prüfung läuft …",
+			"preview": {
+				"title": "Prüfung erfolgreich",
+				"summary": "Beim Import werden {{updated}} Orte aktualisiert und {{created}} Orte neu angelegt, {{unchanged}} bleiben unverändert. Es wurde noch nichts gespeichert."
+			},
 			"success": {
 				"title": "Import abgeschlossen",
 				"summary": "{{updated}} Orte aktualisiert, {{created}} Orte neu angelegt, {{unchanged}} unverändert."
 			},
-			"issue": "Zeile {{row}}, Spalte „{{column}}“: {{message}}",
+			"issueGroup_one": "Spalte „{{column}}“: {{message}} (Zeile {{rows}})",
+			"issueGroup_other": "Spalte „{{column}}“: {{message}} (Zeilen {{rows}})",
+			"issueValue": "{{message}} „{{value}}“",
+			"moreRows": "{{rows}} und {{count}} weitere",
 			"moreIssues": "… und {{count}} weitere Fehler.",
 			"errors": {
 				"unauthorized": "Bitte melden Sie sich an, um Daten zu importieren.",
 				"forbidden": "Sie haben keine Berechtigung für den Import.",
-				"invalidFile": "Bitte wählen Sie eine CSV-Datei aus.",
+				"invalidFile": "Bitte wählen Sie eine gültige CSV- oder XLSX-Datei aus.",
+				"legacyExcelFile": "XLS-Dateien kürzen Texte auf 255 Zeichen und können deshalb nicht importiert werden. Bitte exportieren Sie die Liste als XLSX oder CSV.",
 				"fileTooLarge": "Die Datei ist zu groß (maximal 10 MB).",
 				"emptyFile": "Die Datei enthält keine Datenzeilen.",
-				"unknownColumns": "Die Datei enthält unbekannte Spalten. Bitte verwenden Sie eine CSV-Datei aus dem Export:",
+				"unknownColumns": "Die Datei enthält unbekannte Spalten. Bitte verwenden Sie eine Datei aus dem Export:",
 				"missingColumns": "In der Datei fehlen Pflichtspalten:",
 				"validationFailed": "Der Import wurde nicht durchgeführt: {{count}} Fehler gefunden. Es wurden keine Daten geändert.",
 				"writeFailed": "Der Import wurde abgebrochen. Bis dahin wurden {{updated}} Orte aktualisiert und {{created}} Orte neu angelegt.",
