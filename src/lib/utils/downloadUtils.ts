@@ -86,10 +86,7 @@ function humanizeFieldKey(key: string) {
 		.join(" ");
 }
 
-export function translateColumnName(
-	key: string,
-	translateFn?: TranslateFn,
-): string {
+function translateColumnName(key: string, translateFn?: TranslateFn): string {
 	if (!translateFn) return humanizeFieldKey(key);
 
 	const translationKey = `enumMap.field_names.${key}.label`;
@@ -97,7 +94,7 @@ export function translateColumnName(
 	return translated !== translationKey ? translated : humanizeFieldKey(key);
 }
 
-export function translateEnumValue(
+function translateEnumValue(
 	key: string,
 	value: string | number,
 	translateFn?: TranslateFn,
@@ -521,7 +518,7 @@ export function prepareDataForExport(
 	});
 }
 
-export function generateCSV(data: Record<string, string>[]): string {
+function generateCSV(data: Record<string, string>[]): string {
 	if (data.length === 0) return "";
 
 	const headers = Object.keys(data[0]);
