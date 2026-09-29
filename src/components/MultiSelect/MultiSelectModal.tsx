@@ -19,7 +19,7 @@ import ChevronDown from "@/icons/chevron-down.svg";
 import { SelectableOptionsList } from "@/components/MultiSelect/SelectableOptionsList";
 import { cn } from "@/lib/utils";
 import { Checkbox } from "../ui/checkbox";
-import { SelectOption } from "../FormWrapper";
+import type { MultiSelectCreateOption, SelectOption } from "../FormWrapper";
 
 export type MultiSelectFilterConfig = {
 	id: string;
@@ -48,6 +48,7 @@ interface MultiSelectModalProps {
 	sortOptions?: MultiSelectSortOption[];
 	filterPanel?: ReactNode;
 	disabled?: boolean;
+	createOption?: MultiSelectCreateOption;
 }
 
 const hasAnyValue = (values: string[] | undefined) =>
@@ -71,6 +72,7 @@ export function MultiSelectModal({
 	sortOptions = [],
 	filterPanel,
 	disabled = false,
+	createOption,
 }: MultiSelectModalProps) {
 	const { t } = useTranslation();
 	const [open, setOpen] = useState(false);
@@ -197,6 +199,25 @@ export function MultiSelectModal({
 			visibleOptions.forEach((item) => next.add(item.value as string));
 			setDraftSelected(Array.from(next));
 		}
+	};
+
+	const trimmedSearchTerm = searchTerm.trim();
+	const canCreateOption =
+		Boolean(createOption) &&
+		trimmedSearchTerm.length > 0 &&
+		!options.some(
+			(option) =>
+				getOptionText(option.label).trim().toLowerCase() ===
+				trimmedSearchTerm.toLowerCase(),
+		);
+
+	const handleCreateOption = () => {
+		if (!createOption || !canCreateOption) return;
+		const value = createOption.onCreate(trimmedSearchTerm);
+		setDraftSelected((current) =>
+			current.includes(value) ? current : [...current, value],
+		);
+		setSearchTerm("");
 	};
 
 	const handleClear = () => {
@@ -403,6 +424,16 @@ export function MultiSelectModal({
 									placeholder={searchPlaceholder}
 									className="h-11 rounded-sm"
 								/>
+								{canCreateOption && createOption && (
+									<Button
+										type="button"
+										variant="outline"
+										className="self-start"
+										onClick={handleCreateOption}
+									>
+										{createOption.getLabel(trimmedSearchTerm)}
+									</Button>
+								)}
 
 								<div className="flex flex-wrap gap-2">
 									<Button

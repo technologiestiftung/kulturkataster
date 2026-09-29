@@ -12,6 +12,7 @@ import {
 export const RELATION_FIELD_ALIASES: Record<string, string> = {
 	categoryIds: "categories",
 	tagIds: "tags",
+	newTagNames: "tags",
 	userIds: "users",
 	groupIds: "groups",
 	...CONTACT_PERSON_PERMISSION_FIELD_MAP,
