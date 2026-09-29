@@ -1062,6 +1062,7 @@
 			"acknowledgementPrefix": "Ich habe den",
 			"acknowledgementSuffix": "gelesen und verstanden",
 			"chooseFormat": "Dateiformat wählen",
+			"xlsWarning": "Das XLS-Format kürzt Texte auf 255 Zeichen, z. B. lange Notizen oder Tag-Listen. Für vollständige Daten und für den Import wählen Sie XLSX oder CSV.",
 			"dataUseAgreementConsent": "Ich bin einverstanden mit der Vereinbarung über die Datennutzung",
 			"dataUseAgreementText": "Ich werde die Daten nicht an Dritte weitergeben, sie ausschließlich im Rahmen der gesetzlichen Vorgaben, insbesondere der DSGVO soweit personenbezogene Daten betroffen sind, sowie nur für die Zwecke des Kulturkatasters nutzen. Zwecke des Kulturkatasters sind nicht kommerzieller Natur und sind die systematische Erfassung, Strukturierung und öffentliche Bereitstellung von Daten über Orte kultureller Produktion und Nutzung im Land Berlin, um eine belastbare Datengrundlage für kulturpolitische Entscheidungen, kulturelle Stadtentwicklung sowie für die Zusammenarbeit zwischen Kulturakteur*innen, Verwaltung, Wissenschaft und Öffentlichkeit zu schaffen.",
 			"dataUseAgreementTitle": "Vereinbarung über die Datennutzung",
