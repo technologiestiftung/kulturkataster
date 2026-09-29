@@ -62,3 +62,22 @@ Required in `.env`:
 - `TRADUORA_CLIENT_ID`
 - `TRADUORA_CLIENT_SECRET`
 - `TRADUORA_PROJECT_ID`
+
+# E2E Seed
+
+`seed-e2e.ts` fills a local Supabase (auth) and Postgres with synthetic test data:
+three users (active, admin, banned), guest/member/admin roles with permissions,
+120 public institutions, and two submissions. All data is invented — never copy
+real records into it. It wipes the tables it fills and refuses to run unless
+`SUPABASE_URL` and `DATABASE_URL` point to localhost.
+
+```bash
+supabase start                      # uses supabase/config.toml
+eval "$(supabase status -o env)"
+export SUPABASE_URL=$API_URL DATABASE_URL=$DB_URL \
+  SUPABASE_ANON_KEY=$ANON_KEY SUPABASE_SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY
+npx prisma migrate deploy && npm run data:migrate
+eval "$(npm run -s seed:e2e)"      # seeds and exports the E2E_* values
+```
+
+CI runs the same steps in the `e2e` job of `.github/workflows/ci.yml`.
