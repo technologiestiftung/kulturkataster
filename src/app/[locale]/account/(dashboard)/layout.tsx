@@ -2,7 +2,6 @@ import type { ReactNode } from "react";
 import { AccountLayoutClient } from "@/components/Account/AccountLayoutClient";
 import { AccountAutoRefresh } from "@/components/Account/AccountAutoRefresh";
 import { AccountStoreInitializer } from "@/components/Account/AccountStoreInitializer";
-import { canImportInstitutions } from "@/server/logic/institutionAccess";
 import { canTable, getTableScope } from "@/server/utils/rbac";
 import { getAccountBootstrapData } from "@/server/utils/accountBootstrap";
 import { redirect } from "next/navigation";
@@ -58,7 +57,6 @@ export default async function AccountLayout({
 		delete: canTable(ctx, "institution", "delete"),
 		createSubmission: canTable(ctx, "submission", "create"),
 		reviewSubmission: canTable(ctx, "submission", "update"),
-		import: canImportInstitutions(ctx),
 	};
 	const canReadActivity = canTable(ctx, "entity_audit", "read");
 

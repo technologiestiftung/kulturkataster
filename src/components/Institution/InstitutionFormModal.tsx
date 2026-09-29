@@ -11,12 +11,9 @@ import { FormWrapperLoadingSkeleton } from "@/components/FormWrapper/FormWrapper
 import type {
 	FormWrapperConfig,
 	FieldConfig,
-	MultiSelectCreateOption,
 	SelectOption,
 } from "@/components/FormWrapper";
 import { useAccountStore } from "@/lib/store/accountStore";
-import { useTagOptions } from "@/lib/hooks/useTagOptions";
-import { splitTagSelection } from "@/lib/utils/institutionTagSelection";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import {
 	buildInstitutionAddressPayload,
@@ -137,7 +134,6 @@ const renderDialogBody = (
 type AssignmentSubmitAccess = {
 	users: boolean;
 	groups: boolean;
-	tags: boolean;
 };
 
 type AssignmentReadAccess = AssignmentSubmitAccess;
@@ -204,7 +200,6 @@ const useInstitutionSubmit = (
 			...(assignmentSubmitAccess.groups
 				? { groupIds: toNumberArray(data.groupIds) }
 				: {}),
-			...(assignmentSubmitAccess.tags ? splitTagSelection(data.tagIds) : {}),
 		};
 
 		try {
@@ -278,8 +273,6 @@ type InstitutionFormConfigArgs = {
 	categoryGroups: Category[];
 	userOptions: SelectOption[];
 	groupOptions: SelectOption[];
-	tagOptions: SelectOption[];
-	tagCreateOption?: MultiSelectCreateOption;
 	assignmentReadAccess: AssignmentReadAccess;
 	submitting: boolean;
 	submitLabel?: string;
@@ -306,8 +299,6 @@ const buildInstitutionFormConfig = ({
 	categoryGroups,
 	userOptions,
 	groupOptions,
-	tagOptions,
-	tagCreateOption,
 	assignmentReadAccess,
 	submitting,
 	submitLabel,
@@ -373,30 +364,6 @@ const buildInstitutionFormConfig = ({
 							selectionEmptyLabel: fieldPlaceholder("categories"),
 						},
 					},
-					...(assignmentReadAccess.tags
-						? ([
-								{
-									name: "tagIds",
-									fieldMetaKey: "tags",
-									label: fieldLabel("tags"),
-									type: "multiselect",
-									multiselectVariant: "modal",
-									placeholder: fieldPlaceholder("tags"),
-									searchPlaceholder: t(
-										"content.institutionFormModal.form.tags.searchPlaceholder",
-										{ defaultValue: "Tags suchen..." },
-									),
-									emptyText: t(
-										"content.institutionFormModal.form.tags.emptyText",
-										{ defaultValue: "Keine Tags gefunden." },
-									),
-									options: tagOptions,
-									multiselectCreateOption: tagCreateOption,
-									disabled: !tagCreateOption,
-									layout: { span: "full" },
-								},
-							] satisfies FieldConfig[])
-						: []),
 					{
 						name: "utilization_status",
 						label: fieldLabel("utilization_status", "Utilization Status"),
@@ -1486,33 +1453,30 @@ export function InstitutionFormModal({
 
 	const assignmentReadAccess = useMemo(() => {
 		if (permissionContext !== "institution") {
-			return { users: false, groups: false, tags: false };
+			return { users: false, groups: false };
 		}
 		const readableFields = new Set(institutionFieldPermissions.read ?? []);
 		return {
 			users: readableFields.has("users"),
 			groups: readableFields.has("groups"),
-			tags: readableFields.has("tags"),
 		};
 	}, [institutionFieldPermissions.read, permissionContext]);
 
 	const assignmentSubmitAccess = useMemo(() => {
-		if (
-			!assignmentReadAccess.users &&
-			!assignmentReadAccess.groups &&
-			!assignmentReadAccess.tags
-		) {
-			return { users: false, groups: false, tags: false };
+		if (!assignmentReadAccess.users && !assignmentReadAccess.groups) {
+			return { users: false, groups: false };
 		}
-		const writableFields = new Set(
-			(mode === "create"
-				? institutionFieldPermissions.create
-				: institutionFieldPermissions.update) ?? [],
-		);
+		if (mode === "create") {
+			const creatableFields = new Set(institutionFieldPermissions.create ?? []);
+			return {
+				users: assignmentReadAccess.users && creatableFields.has("users"),
+				groups: assignmentReadAccess.groups && creatableFields.has("groups"),
+			};
+		}
+		const updatableFields = new Set(institutionFieldPermissions.update ?? []);
 		return {
-			users: assignmentReadAccess.users && writableFields.has("users"),
-			groups: assignmentReadAccess.groups && writableFields.has("groups"),
-			tags: assignmentReadAccess.tags && writableFields.has("tags"),
+			users: assignmentReadAccess.users && updatableFields.has("users"),
+			groups: assignmentReadAccess.groups && updatableFields.has("groups"),
 		};
 	}, [assignmentReadAccess, institutionFieldPermissions, mode]);
 
@@ -1670,27 +1634,6 @@ export function InstitutionFormModal({
 	const canShowDeleteAction = Boolean(onDelete);
 	const userOptions = useMemo(() => buildUserOptions(users), [users]);
 	const groupOptions = useMemo(() => buildGroupOptions(groups), [groups]);
-	const { tagOptions, createTagOption } = useTagOptions(
-		assignmentReadAccess.tags,
-		t("content.institutionFormModal.form.tags.newSuffix", {
-			defaultValue: "neu",
-		}),
-	);
-	// Only users who may change the tags field can pick or add tags; others see them read-only.
-	const tagCreateOption = useMemo<MultiSelectCreateOption | undefined>(
-		() =>
-			assignmentSubmitAccess.tags
-				? {
-						getLabel: (name) =>
-							t("content.institutionFormModal.form.tags.create", {
-								name,
-								defaultValue: "„{{name}}“ als neuen Tag hinzufügen",
-							}),
-						onCreate: createTagOption,
-					}
-				: undefined,
-		[assignmentSubmitAccess.tags, createTagOption, t],
-	);
 
 	const formConfig = useMemo(
 		() =>
@@ -1701,8 +1644,6 @@ export function InstitutionFormModal({
 				categoryGroups,
 				userOptions,
 				groupOptions,
-				tagOptions,
-				tagCreateOption,
 				assignmentReadAccess,
 				submitting: resolvedSubmitting,
 				submitLabel,
@@ -1722,8 +1663,6 @@ export function InstitutionFormModal({
 			categoryGroups,
 			userOptions,
 			groupOptions,
-			tagOptions,
-			tagCreateOption,
 			assignmentReadAccess,
 			resolvedInstitutionWithFallback,
 			resolvedSubmitting,

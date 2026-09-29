@@ -22,7 +22,6 @@ const accountStoreInitialState = {
 		delete: false,
 		createSubmission: false,
 		reviewSubmission: false,
-		import: false,
 	},
 	institutionFieldPermissions: {
 		read: [],
