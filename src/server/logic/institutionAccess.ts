@@ -1,5 +1,12 @@
 import { Prisma } from "@/generated/prisma";
-import { createNoAccessWhere, getScopeUserId } from "@/server/utils/rbac";
+import {
+	canTable,
+	createNoAccessWhere,
+	getScopeUserId,
+	getTableScope,
+	type AccessContext,
+	type Action,
+} from "@/server/utils/rbac";
 
 export const buildInstitutionAccessWhere = (
 	userId: string,
@@ -24,3 +31,12 @@ export const buildInstitutionScopedWhere = (
 	if (!baseWhere) return accessWhere;
 	return { AND: [baseWhere, accessWhere] };
 };
+
+const hasGlobalInstitutionAccess = (ctx: AccessContext, action: Action) =>
+	canTable(ctx, "institution", action) &&
+	getTableScope(ctx, "institution", action) === "all";
+
+// CSV import creates and overwrites arbitrary places, so it is limited to admins with global access.
+export const canImportInstitutions = (ctx: AccessContext) =>
+	hasGlobalInstitutionAccess(ctx, "create") &&
+	hasGlobalInstitutionAccess(ctx, "update");

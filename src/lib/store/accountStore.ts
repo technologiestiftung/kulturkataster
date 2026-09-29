@@ -23,6 +23,7 @@ const accountStoreInitialState = {
 		createSubmission: false,
 		reviewSubmission: false,
 		downloadQuestionnaireAnswers: false,
+		import: false,
 	},
 	institutionFieldPermissions: {
 		read: [],
