@@ -1902,7 +1902,7 @@
 				"addInstitution": "Add Cultural Location",
 				"claimInstitution": "Claim My Locations",
 				"downloadList": "Download List",
-				"importList": "Import CSV"
+				"importList": "Import List"
 			},
 			"empty": {
 				"description": "You can start new entries directly.",
@@ -2894,24 +2894,34 @@
 			"title": "The Berlin Kulturkataster: Culture in the City At a Glance"
 		},
 		"importModal": {
-			"title": "Import cultural places from CSV",
-			"description": "Upload a CSV file previously exported from the Kulturkataster. Places with an ID are updated, rows without an ID are created as new places. Empty cells overwrite existing values.",
-			"fileLabel": "Choose CSV file",
+			"title": "Import cultural places",
+			"description": "Upload a file (CSV or XLSX) previously exported from the Kulturkataster. Places with an ID are updated, rows without an ID are created as new places. Empty cells overwrite existing values.",
+			"fileLabel": "Choose file",
 			"submit": "Import",
 			"importing": "Importing …",
+			"check": "Check",
+			"checking": "Checking …",
+			"preview": {
+				"title": "Check passed",
+				"summary": "The import will update {{updated}} places and create {{created}} new places; {{unchanged}} stay unchanged. Nothing has been saved yet."
+			},
 			"success": {
 				"title": "Import completed",
 				"summary": "{{updated}} places updated, {{created}} places created, {{unchanged}} unchanged."
 			},
-			"issue": "Row {{row}}, column “{{column}}”: {{message}}",
+			"issueGroup_one": "Column “{{column}}”: {{message}} (row {{rows}})",
+			"issueGroup_other": "Column “{{column}}”: {{message}} (rows {{rows}})",
+			"issueValue": "{{message}} “{{value}}”",
+			"moreRows": "{{rows}} and {{count}} more",
 			"moreIssues": "… and {{count}} more errors.",
 			"errors": {
 				"unauthorized": "Please sign in to import data.",
 				"forbidden": "You are not allowed to import data.",
-				"invalidFile": "Please choose a CSV file.",
+				"invalidFile": "Please choose a valid CSV or XLSX file.",
+				"legacyExcelFile": "XLS files cut text to 255 characters and therefore cannot be imported. Please export the list as XLSX or CSV.",
 				"fileTooLarge": "The file is too large (maximum 10 MB).",
 				"emptyFile": "The file does not contain any data rows.",
-				"unknownColumns": "The file contains unknown columns. Please use a CSV file from the export:",
+				"unknownColumns": "The file contains unknown columns. Please use a file from the export:",
 				"missingColumns": "The file is missing required columns:",
 				"validationFailed": "The import was not carried out: {{count}} errors found. No data was changed.",
 				"writeFailed": "The import was aborted. Up to that point {{updated}} places were updated and {{created}} places were created.",

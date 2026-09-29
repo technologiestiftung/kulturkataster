@@ -3,7 +3,12 @@ import { beforeAll, describe, expect, it } from "vitest";
 import de from "@/lib/i18n/translations/de/translation.json";
 import en from "@/lib/i18n/translations/en/translation.json";
 import { parseCsv } from "@/lib/utils/csvUtils";
-import { generateCSV, prepareDataForExport } from "@/lib/utils/downloadUtils";
+import {
+	generateCSV,
+	generateExcelBuffer,
+	prepareDataForExport,
+} from "@/lib/utils/downloadUtils";
+import { parseSpreadsheet } from "@/lib/utils/spreadsheetUtils";
 import {
 	planInstitutionImport,
 	resolveImportColumns,
@@ -24,6 +29,8 @@ const lookups = {
 		{ id: 10, name: "barrier-free" },
 		{ id: 11, name: "outdoor" },
 		{ id: 12, name: "music; dance" },
+		{ id: 13, name: "Urbane Praxis" },
+		{ id: 14, name: "urbane Praxis" },
 	],
 	groups: [{ id: 20, name: "public; private" }],
 };
@@ -101,7 +108,20 @@ const exportCsv = (institutions: Institution[], locale = "de") =>
 		),
 	);
 
-const planFromCsv = (csvRows: string[][], existing: Institution[]) => {
+const exportSpreadsheet = (institutions: Institution[], format: "xlsx") =>
+	parseSpreadsheet(
+		generateExcelBuffer(
+			prepareDataForExport(institutions, { translateFn: translators.de }),
+			format,
+			translators.de,
+		),
+	);
+
+const planFromCsv = (
+	csvRows: string[][],
+	existing: Institution[],
+	firstDataRowNumber?: number,
+) => {
 	const [headers, ...rows] = csvRows;
 	const columns = resolveImportColumns(headers, translators);
 	if (!columns.ok) throw new Error(`Unexpected column error: ${columns.error}`);
@@ -114,6 +134,7 @@ const planFromCsv = (csvRows: string[][], existing: Institution[]) => {
 			t: translators[columns.locale],
 			lookups,
 			existingById: new Map(existing.map((item) => [item.id, item])),
+			firstDataRowNumber,
 		}),
 	};
 };
@@ -154,6 +175,26 @@ describe("planInstitutionImport", () => {
 			unchangedCount: 1,
 			issues: [],
 		});
+	});
+
+	it("treats an unmodified xlsx export as unchanged", () => {
+		const institution = { ...makeInstitution(), notes: "x".repeat(300) };
+		const { rows } = exportSpreadsheet([institution], "xlsx");
+		const { plan } = planFromCsv(rows, [institution]);
+		expect(plan).toMatchObject({ unchangedCount: 1, issues: [] });
+	});
+
+	it("reports spreadsheet issues at the Excel row below the notice", () => {
+		const institution = makeInstitution();
+		const { rows, headerRowNumber } = exportSpreadsheet([institution], "xlsx");
+		setCell(rows, "Kapazität", "viele");
+
+		const { plan } = planFromCsv(rows, [institution], headerRowNumber + 1);
+
+		expect(headerRowNumber).toBe(6);
+		expect(plan.issues).toEqual([
+			{ row: 7, column: "Kapazität", code: "invalidNumber" },
+		]);
 	});
 
 	it("only updates the columns that changed", () => {
@@ -294,6 +335,29 @@ describe("planInstitutionImport", () => {
 		expect(plan.updates[0]?.permissionFields).toEqual(["tags"]);
 	});
 
+	it("keeps the exact spelling when tags differ only in case", () => {
+		const institution = makeInstitution();
+		const csvRows = exportCsv([institution]);
+		setCell(csvRows, "Tags", "urbane Praxis; Urbane Praxis");
+
+		const { plan } = planFromCsv(csvRows, [institution]);
+
+		expect(plan.issues).toEqual([]);
+		expect(plan.updates[0]?.form.tagIds).toEqual([14, 13]);
+	});
+
+	it("names every tag in a cell that does not exist", () => {
+		const institution = makeInstitution();
+		const csvRows = exportCsv([institution]);
+		setCell(csvRows, "Tags", "Jazz; barrier-free; music; dance; Folk");
+
+		const { plan } = planFromCsv(csvRows, [institution]);
+
+		expect(plan.issues).toEqual([
+			{ row: 2, column: "Tags", code: "unknownTag", values: ["Jazz", "Folk"] },
+		]);
+	});
+
 	it("resolves duplicate subcategory labels within the selected parent", () => {
 		const csvRows = exportCsv([makeInstitution()]);
 		setCell(csvRows, "ID", "");
@@ -327,6 +391,7 @@ describe("planInstitutionImport", () => {
 				row: 2,
 				column: "Unterkategorien",
 				code: "unknownCategory",
+				values: ["Ohne Unterkategorie"],
 			},
 		]);
 	});
@@ -344,6 +409,7 @@ describe("planInstitutionImport", () => {
 				row: 2,
 				column: "Unterkategorien",
 				code: "unknownCategory",
+				values: ["dance"],
 			},
 		]);
 	});

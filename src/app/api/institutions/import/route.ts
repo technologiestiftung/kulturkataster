@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { allowedLocales, serverSideTranslation } from "@/i18n";
 import { parseCsv } from "@/lib/utils/csvUtils";
+import { parseSpreadsheet } from "@/lib/utils/spreadsheetUtils";
 import { getCurrentUserId } from "@/server/actions/auth";
 import { institutionRepo } from "@/server/data/institutionRepo";
 import { logger } from "@/server/logging/logger";
@@ -29,15 +30,35 @@ import {
 	type InstitutionImportResponse,
 } from "@/types/institutionImport";
 
-const MAX_REPORTED_ISSUES = 20;
+// Every issue is reported so users can fix a file in one pass; the cap only bounds the response size.
+const MAX_REPORTED_ISSUES = 2000;
 const MULTIPART_OVERHEAD_BYTES = 64 * 1024;
 
 const respond = (body: InstitutionImportResponse, status = 200) =>
 	NextResponse.json(body, { status });
 
-const isCsvFile = (file: File) =>
-	file.name.toLowerCase().endsWith(".csv") ||
-	["text/csv", "application/vnd.ms-excel"].includes(file.type);
+type ImportRows = { rows: string[][]; headerRowNumber: number };
+
+const readCsvFile = async (file: File): Promise<ImportRows> => ({
+	rows: parseCsv(await file.text()),
+	headerRowNumber: 1,
+});
+
+const readSpreadsheetFile = async (file: File): Promise<ImportRows> =>
+	parseSpreadsheet(await file.arrayBuffer());
+
+// Legacy .xls exports cut every text cell at 255 characters, so importing them would overwrite
+// longer values (notes, tag lists) with truncated ones.
+const isLegacyExcelFile = (file: File) =>
+	file.name.toLowerCase().endsWith(".xls");
+
+// Matched by extension: browsers report CSV files as "application/vnd.ms-excel" on Windows.
+const getFileReader = (file: File) => {
+	const name = file.name.toLowerCase();
+	if (name.endsWith(".csv") || file.type === "text/csv") return readCsvFile;
+	if (name.endsWith(".xlsx")) return readSpreadsheetFile;
+	return null;
+};
 
 const loadTranslators = async () => {
 	const entries = await Promise.all(
@@ -105,9 +126,9 @@ const writePlan = async (plan: ImportPlan, currentUserId: string) => {
 	}
 };
 
-const readCsvRows = async (
+const readImportRows = async (
 	request: NextRequest,
-): Promise<{ rows: string[][] } | { error: NextResponse }> => {
+): Promise<ImportRows | { error: NextResponse }> => {
 	// Reject oversized uploads before the body is buffered; multipart adds some overhead.
 	const contentLength = Number(request.headers.get("content-length") ?? 0);
 	if (
@@ -118,28 +139,33 @@ const readCsvRows = async (
 	}
 	const formData = await request.formData().catch(() => null);
 	const file = formData?.get("file");
-	if (!(file instanceof File) || !isCsvFile(file)) {
+	if (file instanceof File && isLegacyExcelFile(file)) {
+		return { error: respond({ ok: false, error: "legacyExcelFile" }, 400) };
+	}
+	const readFile = file instanceof File ? getFileReader(file) : null;
+	if (!(file instanceof File) || !readFile) {
 		return { error: respond({ ok: false, error: "invalidFile" }, 400) };
 	}
 	if (file.size > INSTITUTION_IMPORT_MAX_FILE_BYTES) {
 		return { error: respond({ ok: false, error: "fileTooLarge" }, 413) };
 	}
-	let rows: string[][];
+	let importRows: ImportRows;
 	try {
-		rows = parseCsv(await file.text());
+		importRows = await readFile(file);
 	} catch {
 		return { error: respond({ ok: false, error: "invalidFile" }, 400) };
 	}
-	if (rows.length < 2) {
+	if (importRows.rows.length < 2) {
 		return { error: respond({ ok: false, error: "emptyFile" }, 400) };
 	}
-	return { rows };
+	return importRows;
 };
 
-const buildImportPlan = async (
-	csvRows: string[][],
-): Promise<{ plan: ImportPlan } | { error: NextResponse }> => {
-	const [headers, ...rows] = csvRows;
+const buildImportPlan = async ({
+	rows: fileRows,
+	headerRowNumber,
+}: ImportRows): Promise<{ plan: ImportPlan } | { error: NextResponse }> => {
+	const [headers, ...rows] = fileRows;
 	const translators = await loadTranslators();
 	const columns = resolveImportColumns(headers, translators);
 	if (!columns.ok) {
@@ -165,6 +191,7 @@ const buildImportPlan = async (
 		existingById: new Map(
 			existingInstitutions.map((institution) => [institution.id, institution]),
 		),
+		firstDataRowNumber: headerRowNumber + 1,
 	});
 	if (plan.issues.length > 0) {
 		return {
@@ -192,9 +219,9 @@ const importInstitutions = async (request: NextRequest) => {
 		return respond({ ok: false, error: "forbidden" }, 403);
 	}
 
-	const csv = await readCsvRows(request);
-	if ("error" in csv) return csv.error;
-	const planned = await buildImportPlan(csv.rows);
+	const importRows = await readImportRows(request);
+	if ("error" in importRows) return importRows.error;
+	const planned = await buildImportPlan(importRows);
 	if ("error" in planned) return planned.error;
 	const { plan } = planned;
 
@@ -202,6 +229,17 @@ const importInstitutions = async (request: NextRequest) => {
 		authorizePlanFields(ctx, plan);
 	} catch {
 		return respond({ ok: false, error: "forbidden" }, 403);
+	}
+
+	// A dry run goes through the same parsing, validation and authorization, but writes nothing.
+	if (request.nextUrl.searchParams.get("dryRun") === "true") {
+		return respond({
+			ok: true,
+			dryRun: true,
+			created: plan.creates.length,
+			updated: plan.updates.length,
+			unchanged: plan.unchangedCount,
+		});
 	}
 
 	const result = await writePlan(plan, currentUserId);
@@ -227,6 +265,7 @@ const importInstitutions = async (request: NextRequest) => {
 	});
 	return respond({
 		ok: true,
+		dryRun: false,
 		created: result.created,
 		updated: result.updated,
 		unchanged: plan.unchangedCount,
