@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { allowedLocales, serverSideTranslation } from "@/i18n";
-import { parseCsv } from "@/lib/utils/csvUtils";
+import { parseCsv, type ParsedRows } from "@/lib/utils/csvUtils";
 import { parseSpreadsheet } from "@/lib/utils/spreadsheetUtils";
 import { getCurrentUserId } from "@/server/actions/auth";
 import { institutionRepo } from "@/server/data/institutionRepo";
@@ -37,14 +37,10 @@ const MULTIPART_OVERHEAD_BYTES = 64 * 1024;
 const respond = (body: InstitutionImportResponse, status = 200) =>
 	NextResponse.json(body, { status });
 
-type ImportRows = { rows: string[][]; headerRowNumber: number };
+const readCsvFile = async (file: File): Promise<ParsedRows> =>
+	parseCsv(await file.text());
 
-const readCsvFile = async (file: File): Promise<ImportRows> => ({
-	rows: parseCsv(await file.text()),
-	headerRowNumber: 1,
-});
-
-const readSpreadsheetFile = async (file: File): Promise<ImportRows> =>
+const readSpreadsheetFile = async (file: File): Promise<ParsedRows> =>
 	parseSpreadsheet(await file.arrayBuffer());
 
 // Legacy .xls exports cut every text cell at 255 characters, so importing them would overwrite
@@ -128,7 +124,7 @@ const writePlan = async (plan: ImportPlan, currentUserId: string) => {
 
 const readImportRows = async (
 	request: NextRequest,
-): Promise<ImportRows | { error: NextResponse }> => {
+): Promise<ParsedRows | { error: NextResponse }> => {
 	// Reject oversized uploads before the body is buffered; multipart adds some overhead.
 	const contentLength = Number(request.headers.get("content-length") ?? 0);
 	if (
@@ -149,7 +145,7 @@ const readImportRows = async (
 	if (file.size > INSTITUTION_IMPORT_MAX_FILE_BYTES) {
 		return { error: respond({ ok: false, error: "fileTooLarge" }, 413) };
 	}
-	let importRows: ImportRows;
+	let importRows: ParsedRows;
 	try {
 		importRows = await readFile(file);
 	} catch {
@@ -163,8 +159,8 @@ const readImportRows = async (
 
 const buildImportPlan = async ({
 	rows: fileRows,
-	headerRowNumber,
-}: ImportRows): Promise<{ plan: ImportPlan } | { error: NextResponse }> => {
+	rowNumbers,
+}: ParsedRows): Promise<{ plan: ImportPlan } | { error: NextResponse }> => {
 	const [headers, ...rows] = fileRows;
 	const translators = await loadTranslators();
 	const columns = resolveImportColumns(headers, translators);
@@ -191,7 +187,7 @@ const buildImportPlan = async ({
 		existingById: new Map(
 			existingInstitutions.map((institution) => [institution.id, institution]),
 		),
-		firstDataRowNumber: headerRowNumber + 1,
+		rowNumbers: rowNumbers.slice(1),
 	});
 	if (plan.issues.length > 0) {
 		return {
