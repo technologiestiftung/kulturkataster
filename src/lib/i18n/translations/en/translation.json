@@ -1680,6 +1680,12 @@
 				"additional": {
 					"title": "Additional Information"
 				},
+				"tags": {
+					"create": "Add “{{name}}” as a new tag",
+					"emptyText": "No tags found.",
+					"newSuffix": "new",
+					"searchPlaceholder": "Search tags..."
+				},
 				"assignment": {
 					"fields": {
 						"groups": {

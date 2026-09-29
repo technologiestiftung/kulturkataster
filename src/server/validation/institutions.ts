@@ -19,6 +19,7 @@ import {
 	positiveIntegerSchema,
 	requiredTextSchema,
 	stringIdArraySchema,
+	tagNameArraySchema,
 	z,
 } from "./common";
 
@@ -116,18 +117,32 @@ const institutionBaseSchema = z.object({
 		"Category ids must be positive integers.",
 	),
 	tagIds: positiveIntegerArraySchema("Tag ids must be positive integers."),
+	newTagNames: tagNameArraySchema(
+		"New tag names must be 1 to 100 characters, at most 50 per save.",
+	),
 	userIds: stringIdArraySchema("User ids must be non-empty strings."),
 	groupIds: positiveIntegerArraySchema("Group ids must be positive integers."),
 });
 
-const institutionCreateSchema = institutionBaseSchema.transform(
-	(value): InstitutionForm => value,
-);
+// New tags are added to the submitted selection, so they need tagIds to avoid replacing all tags.
+const requiresTagIdsWithNewTags = (value: {
+	tagIds?: number[];
+	newTagNames?: string[];
+}) => !value.newTagNames?.length || value.tagIds !== undefined;
+const newTagsWithoutTagIdsMessage = {
+	message: "New tag names require tagIds.",
+	path: ["newTagNames"],
+};
+
+const institutionCreateSchema = institutionBaseSchema
+	.refine(requiresTagIdsWithNewTags, newTagsWithoutTagIdsMessage)
+	.transform((value): InstitutionForm => value);
 
 const institutionUpdateSchema = institutionBaseSchema
 	.extend({
 		id: positiveIntegerSchema("Institution id must be positive."),
 	})
+	.refine(requiresTagIdsWithNewTags, newTagsWithoutTagIdsMessage)
 	.transform((value): InstitutionUpdateForm => value);
 
 export const validateInstitutionCreateInput = (input: InstitutionForm) =>
