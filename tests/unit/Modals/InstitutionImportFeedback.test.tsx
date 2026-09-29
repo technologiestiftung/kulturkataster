@@ -2,6 +2,9 @@ import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { InstitutionImportFeedback } from "@/components/Modals/Pages/InstitutionImportFeedback";
 
+vi.mock("@/icons/check-circle.svg", () => ({ default: () => null }));
+vi.mock("@/icons/warning.svg", () => ({ default: () => null }));
+
 vi.mock("react-i18next", () => ({
 	useTranslation: () => ({
 		t: (key: string, options?: Record<string, unknown>) => {
