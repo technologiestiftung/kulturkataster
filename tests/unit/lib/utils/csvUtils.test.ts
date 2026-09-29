@@ -4,14 +4,14 @@ import { parseCsv } from "@/lib/utils/csvUtils";
 describe("parseCsv", () => {
 	it("parses quoted fields with escaped quotes, delimiters and a BOM", () => {
 		const csv = '﻿"ID","Name"\r\n"1","Theater ""Alpha"", Berlin"\r\n';
-		expect(parseCsv(csv)).toEqual([
+		expect(parseCsv(csv).rows).toEqual([
 			["ID", "Name"],
 			["1", 'Theater "Alpha", Berlin'],
 		]);
 	});
 
 	it("detects semicolon separated files as saved by spreadsheet apps", () => {
-		expect(parseCsv("ID;Name\n1;Alpha\n2;")).toEqual([
+		expect(parseCsv("ID;Name\n1;Alpha\n2;").rows).toEqual([
 			["ID", "Name"],
 			["1", "Alpha"],
 			["2", ""],
@@ -19,10 +19,24 @@ describe("parseCsv", () => {
 	});
 
 	it("keeps line breaks inside quoted fields and drops blank rows", () => {
-		expect(parseCsv('ID,Notes\n1,"line one\nline two"\n\n,\n')).toEqual([
-			["ID", "Notes"],
-			["1", "line one\nline two"],
-		]);
+		expect(parseCsv('ID,Notes\n1,"line one\nline two"\n\n,\n')).toEqual({
+			rows: [
+				["ID", "Notes"],
+				["1", "line one\nline two"],
+			],
+			rowNumbers: [1, 2],
+		});
+	});
+
+	it("keeps the source row number of rows after dropped blank rows", () => {
+		expect(parseCsv('ID,Notes\n1,"a\nb"\n\n,\n2,Beta\n')).toEqual({
+			rows: [
+				["ID", "Notes"],
+				["1", "a\nb"],
+				["2", "Beta"],
+			],
+			rowNumbers: [1, 2, 5],
+		});
 	});
 
 	it("rejects an unterminated quoted field", () => {
