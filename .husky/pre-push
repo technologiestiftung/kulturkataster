@@ -1,2 +1,4 @@
-npm run test
+# e2e runs in CI (seeded Supabase); locally it needs a free port and a fresh build.
+npm run test:unit
+npm run test:integration
 npm run build

@@ -39,6 +39,7 @@ import Edit from "@/icons/edit.svg";
 import { useInstitutionPrivateFieldResolver } from "@/lib/hooks/useInstitutionPrivateFieldResolver";
 import { resolveInstitutionPermissionField } from "@/lib/utils/institutionPermissionField";
 import { DownloadModal } from "@/components/Modals/Pages/DownloadModal";
+import { InstitutionImportModal } from "@/components/Modals/Pages/InstitutionImportModal";
 import { notifyInstitutionDownload } from "@/server/actions/downloads";
 import type { ExportFormat } from "@/lib/utils/downloadUtils";
 import {
@@ -166,6 +167,7 @@ export function InstitutionsTable({
 		!canCreateInstitutionDirect && institutionPermissions.createSubmission;
 	const canClaimInstitution = institutionPermissions.createSubmission;
 	const [isDownloadDialogOpen, setIsDownloadDialogOpen] = useState(false);
+	const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
 	const [rowKindFilter, setRowKindFilter] =
 		useState<InstitutionRowKindFilter>("all");
 	const canReviewSubmissionType = (type: SubmissionType) => {
@@ -1128,6 +1130,14 @@ export function InstitutionsTable({
 			}),
 			onClick: () => setIsDownloadDialogOpen(true),
 		},
+		importButton: institutionPermissions.import
+			? {
+					label: t("content.institutionsTable.actions.importList", {
+						defaultValue: "Liste importieren",
+					}),
+					onClick: () => setIsImportDialogOpen(true),
+				}
+			: undefined,
 		toolbarContent: showRowKindFilter ? (
 			<InstitutionRowKindFilterToggle
 				value={rowKindFilter}
@@ -1285,6 +1295,12 @@ export function InstitutionsTable({
 				cancelLabel={tCommon("common.cancel", { defaultValue: "Cancel" })}
 				onAfterDownload={handleDownloadNotification}
 			/>
+			{institutionPermissions.import && (
+				<InstitutionImportModal
+					open={isImportDialogOpen}
+					onCloseRequest={() => setIsImportDialogOpen(false)}
+				/>
+			)}
 		</>
 	);
 }
