@@ -1,5 +1,8 @@
 "use client";
 
+import { ActionPanel } from "@/components/ActionPanel";
+import CheckCircle from "@/icons/check-circle.svg";
+import Warning from "@/icons/warning.svg";
 import type {
 	ImportIssue,
 	InstitutionImportResponse,
@@ -18,16 +21,15 @@ export function InstitutionImportFeedback({
 
 	if (result.ok) {
 		return (
-			<div
-				role="status"
-				className="rounded-md border border-neutral-20 bg-neutral-5 p-4 body2"
-			>
-				<p className="font-bold">
-					{t("content.importModal.success.title", {
+			<div role="status">
+				<ActionPanel
+					title={t("content.importModal.success.title", {
 						defaultValue: "Import abgeschlossen",
 					})}
-				</p>
-				<p>
+					icon={<CheckCircle className="size-5" />}
+					actionLabel=""
+					actionLabelLoading=""
+				>
 					{t("content.importModal.success.summary", {
 						created: result.created,
 						updated: result.updated,
@@ -35,7 +37,7 @@ export function InstitutionImportFeedback({
 						defaultValue:
 							"{{updated}} Orte aktualisiert, {{created}} Orte neu angelegt, {{unchanged}} unverändert.",
 					})}
-				</p>
+				</ActionPanel>
 			</div>
 		);
 	}
@@ -53,12 +55,9 @@ export function InstitutionImportFeedback({
 		(result.issueCount ?? 0) - (result.issues?.length ?? 0);
 
 	return (
-		<div
-			role="alert"
-			className="rounded-md border border-destructive bg-neutral-5 p-4 body2"
-		>
-			<p className="font-bold">
-				{t(`content.importModal.errors.${result.error}`, {
+		<div role="alert">
+			<ActionPanel
+				title={t(`content.importModal.errors.${result.error}`, {
 					count: result.issueCount ?? 0,
 					created: result.created ?? 0,
 					updated: result.updated ?? 0,
@@ -66,25 +65,30 @@ export function InstitutionImportFeedback({
 						defaultValue: "Der Import ist fehlgeschlagen.",
 					}),
 				})}
-			</p>
-			{result.columns && result.columns.length > 0 && (
-				<p>{result.columns.join(", ")}</p>
-			)}
-			{result.issues && result.issues.length > 0 && (
-				<ul className="mt-2 list-disc pl-5">
-					{result.issues.map((issue) => (
-						<li key={`${issue.row}-${issue.column}`}>{formatIssue(issue)}</li>
-					))}
-				</ul>
-			)}
-			{hiddenIssueCount > 0 && (
-				<p className="mt-2">
-					{t("content.importModal.moreIssues", {
-						count: hiddenIssueCount,
-						defaultValue: "… und {{count}} weitere Fehler.",
-					})}
-				</p>
-			)}
+				icon={<Warning className="size-5 text-destructive-secondary" />}
+				className="border-destructive-secondary"
+				actionLabel=""
+				actionLabelLoading=""
+			>
+				{result.columns && result.columns.length > 0 && (
+					<p>{result.columns.join(", ")}</p>
+				)}
+				{result.issues && result.issues.length > 0 && (
+					<ul className="mt-2 list-disc pl-5">
+						{result.issues.map((issue) => (
+							<li key={`${issue.row}-${issue.column}`}>{formatIssue(issue)}</li>
+						))}
+					</ul>
+				)}
+				{hiddenIssueCount > 0 && (
+					<p className="mt-2">
+						{t("content.importModal.moreIssues", {
+							count: hiddenIssueCount,
+							defaultValue: "… und {{count}} weitere Fehler.",
+						})}
+					</p>
+				)}
+			</ActionPanel>
 		</div>
 	);
 }
