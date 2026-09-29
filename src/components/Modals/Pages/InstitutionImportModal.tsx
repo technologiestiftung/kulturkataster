@@ -3,13 +3,12 @@
 import { triggerAccountRefresh } from "@/components/Account/AccountAutoRefresh";
 import { FormWrapper } from "@/components/FormWrapper/FormWrapper";
 import type { FormWrapperConfig } from "@/components/FormWrapper/types";
-import { Label } from "@/components/ui/label";
 import {
 	INSTITUTION_IMPORT_ENDPOINT,
 	INSTITUTION_IMPORT_MAX_FILE_BYTES,
 	type InstitutionImportResponse,
 } from "@/types/institutionImport";
-import { useId, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Modal } from "../Modal";
 import { InstitutionImportFeedback } from "./InstitutionImportFeedback";
@@ -40,7 +39,6 @@ export function InstitutionImportModal({
 	onCloseRequest,
 }: InstitutionImportModalProps) {
 	const { t } = useTranslation();
-	const fileInputId = useId();
 	const [file, setFile] = useState<File | null>(null);
 	const [isImporting, setIsImporting] = useState(false);
 	const [result, setResult] = useState<InstitutionImportResponse | null>(null);
@@ -50,16 +48,6 @@ export function InstitutionImportModal({
 		setResult(null);
 		setIsImporting(false);
 		onCloseRequest();
-	};
-
-	const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		const selectedFile = event.target.files?.[0] ?? null;
-		setResult(
-			selectedFile && selectedFile.size > INSTITUTION_IMPORT_MAX_FILE_BYTES
-				? { ok: false, error: "fileTooLarge" }
-				: null,
-		);
-		setFile(selectedFile);
 	};
 
 	const handleImport = async () => {
@@ -75,13 +63,42 @@ export function InstitutionImportModal({
 		}
 	};
 
-	const isFileTooLarge =
-		result?.ok === false && result.error === "fileTooLarge";
 	const actionFormConfig: FormWrapperConfig = {
-		formId: "institution-import-actions-form",
-		fields: [],
+		formId: "institution-import-form",
+		fields: [
+			{
+				name: "file",
+				label: t("content.importModal.fileLabel", {
+					defaultValue: "CSV-Datei auswählen",
+				}),
+				type: "file",
+				accept: ".csv,text/csv",
+				required: true,
+				disabled: isImporting,
+				validators: [
+					(value) =>
+						value instanceof File &&
+						value.size > INSTITUTION_IMPORT_MAX_FILE_BYTES
+							? t("content.importModal.errors.fileTooLarge", {
+									defaultValue: "Die Datei ist zu groß (maximal 10 MB).",
+								})
+							: undefined,
+				],
+			},
+			{
+				name: "result",
+				type: "custom",
+				customField: <InstitutionImportFeedback result={result} />,
+			},
+		],
+		onChange: (data) => {
+			const nextFile = data.file instanceof File ? data.file : null;
+			if (nextFile === file) return;
+			setFile(nextFile);
+			setResult(null);
+		},
 		onSubmit: () => handleImport(),
-		submitDisabled: !file || isImporting || isFileTooLarge,
+		submitDisabled: !file || isImporting,
 		submitLabel: isImporting
 			? t("content.importModal.importing", {
 					defaultValue: "Import läuft …",
@@ -115,22 +132,6 @@ export function InstitutionImportModal({
 							"Laden Sie eine zuvor aus dem Kulturkataster exportierte CSV-Datei hoch. Orte mit ID werden aktualisiert, Zeilen ohne ID werden als neue Orte angelegt. Leere Zellen überschreiben bestehende Werte.",
 					})}
 				</p>
-				<div className="flex flex-col gap-2">
-					<Label htmlFor={fileInputId} className="body2 font-bold">
-						{t("content.importModal.fileLabel", {
-							defaultValue: "CSV-Datei auswählen",
-						})}
-					</Label>
-					<input
-						id={fileInputId}
-						type="file"
-						accept=".csv,text/csv"
-						onChange={handleFileChange}
-						disabled={isImporting}
-						className="body2 file:mr-4 file:rounded-full file:border file:border-neutral-20 file:bg-neutral-5 file:px-4 file:py-2 file:font-bold"
-					/>
-				</div>
-				<InstitutionImportFeedback result={result} />
 				<FormWrapper config={actionFormConfig} />
 			</div>
 		</Modal>
