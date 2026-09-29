@@ -1686,6 +1686,12 @@
 				"additional": {
 					"title": "Zusätzliche Informationen"
 				},
+				"tags": {
+					"create": "„{{name}}“ als neuen Tag hinzufügen",
+					"emptyText": "Keine Tags gefunden.",
+					"newSuffix": "neu",
+					"searchPlaceholder": "Tags suchen..."
+				},
 				"assignment": {
 					"fields": {
 						"groups": {

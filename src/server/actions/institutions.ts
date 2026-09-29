@@ -23,6 +23,7 @@ import {
 } from "@/server/logic/institutionVisibility";
 import { buildInstitutionCreateData } from "@/server/logic/institutionCreateData";
 import { buildInstitutionUpdateData } from "@/server/logic/institutionUpdateData";
+import { withNewTagsResolved } from "@/server/logic/institutionTags";
 import { buildInstitutionPermissionFields } from "@/lib/utils/institutionPermissionUtils";
 import { revalidateAccount } from "../utils/actionsUtils";
 import {
@@ -127,7 +128,10 @@ export async function createInstitution(
 			let institution;
 			try {
 				institution = await institutionRepo.create(
-					buildInstitutionCreateData(validatedInput, currentUserId),
+					buildInstitutionCreateData(
+						await withNewTagsResolved(validatedInput),
+						currentUserId,
+					),
 				);
 			} catch (error) {
 				logger.error("institution.create.db_failed", error, {
@@ -170,12 +174,20 @@ export async function updateInstitution(
 				authorizeFields(ctx, "institution", fields, "update");
 			}
 
-			const data = buildInstitutionUpdateData(validatedInput, currentUserId);
+			// New tags are only created once every permission check has passed.
+			const buildData = async () =>
+				buildInstitutionUpdateData(
+					await withNewTagsResolved(validatedInput),
+					currentUserId,
+				);
 
 			if (scope === "all") {
 				let institution;
 				try {
-					institution = await institutionRepo.update(validatedInput.id, data);
+					institution = await institutionRepo.update(
+						validatedInput.id,
+						await buildData(),
+					);
 				} catch (error) {
 					logger.error("institution.update.db_failed", error, {
 						subsystem: "institution",
@@ -204,7 +216,7 @@ export async function updateInstitution(
 			try {
 				institution = await institutionRepo.update(
 					authorizedInstitution.id,
-					data,
+					await buildData(),
 				);
 			} catch (error) {
 				logger.error("institution.update.db_failed", error, {

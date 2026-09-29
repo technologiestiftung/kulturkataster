@@ -144,6 +144,12 @@ export const stringIdArraySchema = (message: string) =>
 		.optional()
 		.transform((value) => (value ? Array.from(new Set(value)) : value));
 
+export const tagNameArraySchema = (message: string) =>
+	z
+		.array(z.string().trim().min(1, message).max(100, message), { message })
+		.max(50, message)
+		.optional();
+
 export const recordSchema = (message: string) =>
 	z.record(z.string(), z.unknown(), { message });
 
