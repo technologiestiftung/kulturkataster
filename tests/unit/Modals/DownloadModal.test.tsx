@@ -139,16 +139,17 @@ describe("DownloadModal", () => {
 		expect(initializePublicDataMock).toHaveBeenCalledTimes(1);
 	});
 
-	it("preselects xls and keeps the download button disabled until acknowledged", () => {
+	it("preselects xlsx and keeps the download button disabled until acknowledged", () => {
 		render(<DownloadModal routePath="/download" isAuthenticated />);
 
 		const downloadButton = screen.getByRole("button", {
 			name: "Liste herunterladen",
 		});
-		expect(screen.getByRole("button", { name: "XLS" })).toHaveAttribute(
+		expect(screen.getByRole("button", { name: "XLSX" })).toHaveAttribute(
 			"aria-pressed",
 			"true",
 		);
+		expect(screen.queryByRole("status")).not.toBeInTheDocument();
 		expect(downloadButton).toBeDisabled();
 
 		fireEvent.click(
@@ -212,15 +213,18 @@ describe("DownloadModal", () => {
 	it("allows changing the selected format", () => {
 		render(<DownloadModal routePath="/download" isAuthenticated />);
 
-		fireEvent.click(screen.getByRole("button", { name: "XLSX" }));
+		fireEvent.click(screen.getByRole("button", { name: "XLS" }));
 
-		expect(screen.getByRole("button", { name: "XLSX" })).toHaveAttribute(
+		expect(screen.getByRole("button", { name: "XLS" })).toHaveAttribute(
 			"aria-pressed",
 			"true",
 		);
-		expect(screen.getByRole("button", { name: "XLS" })).toHaveAttribute(
+		expect(screen.getByRole("button", { name: "XLSX" })).toHaveAttribute(
 			"aria-pressed",
 			"false",
+		);
+		expect(screen.getByRole("status")).toHaveTextContent(
+			"Das XLS-Format kürzt Texte auf 255 Zeichen",
 		);
 	});
 
