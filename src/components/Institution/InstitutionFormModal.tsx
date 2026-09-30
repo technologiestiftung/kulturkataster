@@ -920,7 +920,9 @@ const buildInstitutionFormConfig = ({
 								),
 								description: fieldDescription("established_since"),
 								type: "partialDate",
-								placeholder: fieldPlaceholder("established_since") || "TT.MM.JJJJ, MM.JJJJ oder JJJJ",
+								placeholder:
+									fieldPlaceholder("established_since") ||
+									"TT.MM.JJJJ, MM.JJJJ oder JJJJ",
 							},
 							{
 								name: "established_until",
@@ -930,7 +932,9 @@ const buildInstitutionFormConfig = ({
 								),
 								description: fieldDescription("established_until"),
 								type: "partialDate",
-								placeholder: fieldPlaceholder("established_until") || "TT.MM.JJJJ, MM.JJJJ oder JJJJ",
+								placeholder:
+									fieldPlaceholder("established_until") ||
+									"TT.MM.JJJJ, MM.JJJJ oder JJJJ",
 							},
 						],
 					},

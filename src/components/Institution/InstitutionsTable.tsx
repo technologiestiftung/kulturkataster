@@ -1328,8 +1328,12 @@ export function InstitutionsTable({
 						baseDraft.contact_person_email ?? contactPerson?.email ?? "",
 					contact_person_phone:
 						baseDraft.contact_person_phone ?? contactPerson?.phone ?? "",
-					established_since: dateToPartialDateInputValue(baseDraft.established_since),
-					established_until: dateToPartialDateInputValue(baseDraft.established_until),
+					established_since: dateToPartialDateInputValue(
+						baseDraft.established_since,
+					),
+					established_until: dateToPartialDateInputValue(
+						baseDraft.established_until,
+					),
 				});
 				router.push(toLocalePath("/institution/submission"));
 			}
