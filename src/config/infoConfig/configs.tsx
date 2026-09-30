@@ -76,12 +76,12 @@ export const detailsInfoConfig: InfoWrapperFieldConfig[] = [
 	{
 		value: "established_since",
 		labelKey: "field_names.established_since.label",
-		type: "year",
+		type: "partialDate",
 	},
 	{
 		value: "established_until",
 		labelKey: "field_names.established_until.label",
-		type: "year",
+		type: "partialDate",
 	},
 	{
 		value: "closing_reason",

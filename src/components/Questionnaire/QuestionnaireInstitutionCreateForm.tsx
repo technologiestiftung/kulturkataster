@@ -152,9 +152,11 @@ export function QuestionnaireInstitutionCreateForm({
 						name: "established_since",
 						label:
 							"Seit wann befindet sich die Einrichtung am aktuellen Standort?",
-						type: "year",
+						type: "partialDate",
 						layout: { span: "full" },
-						placeholder: fieldPlaceholder("established_since") || "JJJJ",
+						placeholder:
+							fieldPlaceholder("established_since") ||
+							"TT.MM.JJJJ, MM.JJJJ oder JJJJ",
 					},
 				],
 			},
