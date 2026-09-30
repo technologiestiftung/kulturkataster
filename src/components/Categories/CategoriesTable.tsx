@@ -15,6 +15,7 @@ import Plus from "@/icons/plus.svg";
 import Edit from "@/icons/edit.svg";
 import { CategoryIcon } from "@/components/shared/CategoryIcon";
 import { CategoryStatus } from "@/generated/prisma";
+import { getCategoryLabel } from "@/lib/i18n/fieldLabels";
 
 type CategoryTableRow = Category & {
 	rowKind: "parent" | "child";
@@ -50,10 +51,8 @@ export function CategoriesTable() {
 	}, [categories]);
 
 	const parentRows = useMemo<CategoryTableRow[]>(() => {
-		const toParentKey = (key: string) =>
-			tEnum(`enumMap.category.${key}`, { defaultValue: key });
-		const toChildKey = (key: string) =>
-			tEnum(`enumMap.category.${key}`, { defaultValue: key });
+		const toParentKey = (key: string) => getCategoryLabel(tEnum, key);
+		const toChildKey = (key: string) => getCategoryLabel(tEnum, key);
 		return categories
 			.filter((category) => !category.parent_category_id)
 			.map((parent) => {
