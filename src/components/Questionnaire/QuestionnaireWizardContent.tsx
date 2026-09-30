@@ -20,6 +20,8 @@ import { QuestionnaireInstitutionLinkStep } from "@/components/Questionnaire/Que
 import { QuestionnaireBlockStep } from "@/components/Questionnaire/QuestionnaireBlockStep";
 import { QuestionnaireThankYou } from "@/components/Questionnaire/QuestionnaireThankYou";
 import type { Category } from "@/types";
+import type { CaptchaWidgetConfig } from "@/types/captcha";
+import { useGuestCaptcha } from "@/components/Captcha/useGuestCaptcha";
 
 type QuestionnaireWithQuestions = {
 	id: number;
@@ -160,6 +162,7 @@ export function QuestionnaireWizardContent({
 	initialInstitutionId,
 	initialSubmissionId,
 	initialShowThankYou,
+	captchaConfig = null,
 }: {
 	questionnaire: QuestionnaireWithQuestions;
 	categoryGroups: Category[];
@@ -167,8 +170,10 @@ export function QuestionnaireWizardContent({
 	initialInstitutionId?: number;
 	initialSubmissionId?: number;
 	initialShowThankYou?: boolean;
+	captchaConfig?: CaptchaWidgetConfig | null;
 }) {
 	const { t, i18n } = useTranslation();
+	const captcha = useGuestCaptcha(captchaConfig);
 	const locale: QuestionnaireLocale = i18n.language?.startsWith("en")
 		? "en"
 		: "de";
@@ -295,6 +300,10 @@ export function QuestionnaireWizardContent({
 				categoryGroups,
 			});
 			if (!target) return;
+			if (!captcha.isSolved) {
+				onSubmitError?.(t("common.captcha.hint"));
+				return;
+			}
 			setIsSubmitting(true);
 
 			const rows = buildAnswerRowsFromDraft(
@@ -305,23 +314,27 @@ export function QuestionnaireWizardContent({
 				questionnaireId: questionnaire.id,
 				...target,
 				answers: rows,
+				captchaToken: captcha.token,
 			});
 
 			setIsSubmitting(false);
+			captcha.reset();
 			if (!result.ok) {
 				const message =
-					result.error === "already_submitted"
-						? t(
-								"content.questionnaireWizard.institutionLink.alreadySubmitted",
-								{
+					result.error === "captcha_failed"
+						? t("common.captcha.failed")
+						: result.error === "already_submitted"
+							? t(
+									"content.questionnaireWizard.institutionLink.alreadySubmitted",
+									{
+										defaultValue:
+											"Für diesen Kulturort wurde diese Befragung bereits ausgefüllt.",
+									},
+								)
+							: t("content.questionnaireWizard.review.submitError", {
 									defaultValue:
-										"Für diesen Kulturort wurde diese Befragung bereits ausgefüllt.",
-								},
-							)
-						: t("content.questionnaireWizard.review.submitError", {
-								defaultValue:
-									"Beim Absenden ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
-							});
+										"Beim Absenden ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
+								});
 				onSubmitError?.(message);
 				return;
 			}
@@ -339,6 +352,9 @@ export function QuestionnaireWizardContent({
 			t,
 			onSubmitError,
 			resetDraft,
+			captcha.isSolved,
+			captcha.token,
+			captcha.reset,
 		],
 	);
 
@@ -421,6 +437,7 @@ export function QuestionnaireWizardContent({
 			}
 			backLabel={t("common.back", { defaultValue: "Zurück" })}
 			submitDisabled={isLastBlock ? isSubmitting : undefined}
+			footerContent={isLastBlock ? captcha.widget : null}
 		/>
 	);
 }

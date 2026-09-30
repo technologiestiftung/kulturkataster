@@ -1,5 +1,6 @@
 import { getOpenQuestionnaire } from "@/server/actions/questionnaires";
 import { getCategoriesWithSubcategories } from "@/server/actions/categories";
+import { getGuestCaptchaWidgetConfig } from "@/server/captcha/cap";
 import { QuestionnaireWizardModal } from "@/components/Questionnaire/QuestionnaireWizardModal";
 import { QuestionnaireUnavailable } from "@/components/Questionnaire/QuestionnaireUnavailable";
 import {
@@ -17,11 +18,13 @@ export default async function QuestionnairePage({
 		thankyou?: string | string[];
 	}>;
 }) {
-	const [result, categoryGroups, resolvedSearchParams] = await Promise.all([
-		getOpenQuestionnaire(),
-		getCategoriesWithSubcategories(),
-		searchParams,
-	]);
+	const [result, categoryGroups, resolvedSearchParams, captchaConfig] =
+		await Promise.all([
+			getOpenQuestionnaire(),
+			getCategoriesWithSubcategories(),
+			searchParams,
+			getGuestCaptchaWidgetConfig(),
+		]);
 
 	if (!result.ok) {
 		return <QuestionnaireUnavailable routePath="/questionnaire" />;
@@ -46,6 +49,7 @@ export default async function QuestionnairePage({
 			)}
 			initialStepId={parseOptionalStringParam(resolvedSearchParams.step)}
 			initialShowThankYou={showThankYou}
+			captchaConfig={captchaConfig}
 		/>
 	);
 }
