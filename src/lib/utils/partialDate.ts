@@ -5,7 +5,12 @@ const FULL_DATE = /^(\d{1,2})\.(\d{1,2})\.(\d{4})$/;
 const MONTH_YEAR = /^(\d{1,2})\.(\d{4})$/;
 const YEAR_ONLY = /^(\d{4})$/;
 
-const toUtcDate = (year: number, month: number, day: number): Date | null => {
+// Returns null unless year/month/day form a real calendar date.
+export const toUtcDate = (
+	year: number,
+	month: number,
+	day: number,
+): Date | null => {
 	const date = new Date(Date.UTC(year, month - 1, day));
 	const isRealDate =
 		date.getUTCFullYear() === year &&

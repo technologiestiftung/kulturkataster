@@ -7,6 +7,7 @@ import {
 	UtilizationStatus,
 } from "@/generated/prisma";
 import { translateEnumValue } from "@/lib/utils/downloadUtils";
+import { toUtcDate } from "@/lib/utils/partialDate";
 import type { FundingSourceInput } from "@/types";
 import type { ImportIssueCode } from "@/types/institutionImport";
 
@@ -101,12 +102,8 @@ export const parseDate = (cell: string): CellResult<Date | null> => {
 	const parts = parseDateParts(trimmed);
 	if (!parts) return fail("invalidDate");
 	const [year, month, day] = parts;
-	const date = new Date(Date.UTC(year, month - 1, day));
-	const isRealDate =
-		date.getUTCFullYear() === year &&
-		date.getUTCMonth() === month - 1 &&
-		date.getUTCDate() === day;
-	return isRealDate ? ok(date) : fail("invalidDate");
+	const date = toUtcDate(year, month, day);
+	return date ? ok(date) : fail("invalidDate");
 };
 
 type NamedEntry = { id: number; name: string };

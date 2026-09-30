@@ -71,9 +71,22 @@ export function QuestionnaireInstitutionCreateForm({
 
 	// District/neighbourhood have no visible field here (they're filled by the map
 	// and geocoding), so FormWrapper doesn't restore them from initialValues when
-	// the respondent comes back to this step — carry them over explicitly.
+	// the respondent comes back to this step. Carry them over only while the
+	// location is unchanged; a moved pin must not keep the old Bezirk/Stadtteil.
 	const handleSubmit = (data: Record<string, unknown>) => {
-		onCreated({ ...initialValues, ...data });
+		const isSameLocation =
+			initialValues !== undefined &&
+			data["address.lat"] === initialValues["address.lat"] &&
+			data["address.lng"] === initialValues["address.lng"];
+		if (!isSameLocation) {
+			onCreated(data);
+			return;
+		}
+		onCreated({
+			"address.district": initialValues["address.district"],
+			"address.neighbourhood": initialValues["address.neighbourhood"],
+			...data,
+		});
 	};
 
 	const config: FormWrapperConfig = {
