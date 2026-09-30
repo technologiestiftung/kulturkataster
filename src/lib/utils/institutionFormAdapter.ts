@@ -153,6 +153,23 @@ export const buildInstitutionFormInitialValues = (
 			toOptionalNumber(resolvedInstitution?.number_of_rooms) ?? undefined,
 		culture_index:
 			toOptionalNumber(resolvedInstitution?.culture_index) ?? undefined,
+		culture_index_location:
+			toOptionalNumber(resolvedInstitution?.culture_index_location) ??
+			undefined,
+		culture_index_property:
+			toOptionalNumber(resolvedInstitution?.culture_index_property) ??
+			undefined,
+		culture_index_financial:
+			toOptionalNumber(resolvedInstitution?.culture_index_financial) ??
+			undefined,
+		culture_index_social_spatial:
+			toOptionalNumber(resolvedInstitution?.culture_index_social_spatial) ??
+			undefined,
+		culture_index_visibility:
+			toOptionalNumber(resolvedInstitution?.culture_index_visibility) ??
+			undefined,
+		culture_index_global:
+			resolvedInstitution?.culture_index_global ?? undefined,
 		accessibility: resolvedInstitution?.accessibility ?? undefined,
 		cost: resolvedInstitution?.cost ?? undefined,
 		shared_use_allowed: resolvedInstitution?.shared_use_allowed ?? null,
@@ -285,6 +302,17 @@ export function buildInstitutionForFormFromDraft(
 		notes: toOptionalText(draft.notes),
 		internal_notes: toOptionalText(draft.internal_notes),
 		culture_index: toOptionalNumber(draft.culture_index) ?? null,
+		culture_index_location:
+			toOptionalNumber(draft.culture_index_location) ?? null,
+		culture_index_property:
+			toOptionalNumber(draft.culture_index_property) ?? null,
+		culture_index_financial:
+			toOptionalNumber(draft.culture_index_financial) ?? null,
+		culture_index_social_spatial:
+			toOptionalNumber(draft.culture_index_social_spatial) ?? null,
+		culture_index_visibility:
+			toOptionalNumber(draft.culture_index_visibility) ?? null,
+		culture_index_global: toOptionalText(draft.culture_index_global),
 		import_identifier: null,
 		source: toOptionalText(draft.source),
 		contact_person_id: toOptionalNumber(draft.contact_person_id) ?? null,

@@ -7,6 +7,7 @@ import { InfoWrapper } from "@/components/InfoWrapper";
 import {
 	additionalInfoConfig,
 	contactInfoConfig,
+	cultureIndexDimensionsInfoConfig,
 	detailsInfoConfig,
 	facilityInfoConfig,
 	organizationInfoConfig,
@@ -223,6 +224,11 @@ export function InstitutionReview({
 							cultureIndexVariant: "plain",
 							value: "culture_index",
 						},
+						...cultureIndexDimensionsInfoConfig.map((field) => ({
+							...field,
+							alwaysShow: false,
+							edit: editConfig.culture_index,
+						})),
 						{
 							type: "section",
 							id: "details",
