@@ -591,10 +591,7 @@ function applyExcelNotice(ws: XLSX.WorkSheet, translateFn?: TranslateFn) {
 			},
 		};
 		if (linkTarget) {
-			ws[cellAddress].l = {
-				Target: linkTarget,
-				Tooltip: linkTarget,
-			};
+			ws[cellAddress].l = { Target: linkTarget };
 		}
 	});
 
@@ -664,20 +661,31 @@ function applyExcelDataCellStyle(
 	});
 }
 
+// The xlsx writer double-encodes non-ASCII characters in hyperlink targets,
+// so umlaut domains and paths are converted to punycode/percent-encoding.
+function toAsciiUrl(url: string): string | null {
+	if (!/[^\x00-\x7F]/.test(url)) return url;
+	try {
+		return new URL(url).href;
+	} catch {
+		return null;
+	}
+}
+
 function getHyperlinkTarget(value: string): string | null {
 	const trimmedValue = value.trim();
 	if (!trimmedValue) return null;
 
 	if (/^https?:\/\/\S+$/i.test(trimmedValue)) {
-		return trimmedValue;
+		return toAsciiUrl(trimmedValue);
 	}
 
 	if (/^mailto:\S+@\S+\.\S+$/i.test(trimmedValue)) {
-		return trimmedValue;
+		return toAsciiUrl(trimmedValue);
 	}
 
 	if (/^www\.\S+\.\S+$/i.test(trimmedValue)) {
-		return `https://${trimmedValue}`;
+		return toAsciiUrl(`https://${trimmedValue}`);
 	}
 
 	return null;
@@ -704,10 +712,9 @@ function applyExcelHyperlinks(
 			const cell = ws[cellAddress];
 			if (!cell) return;
 
-			cell.l = {
-				Target: hyperlinkTarget,
-				Tooltip: hyperlinkTarget,
-			};
+			// No tooltip: Excel rejects tooltips over 255 characters as corrupt
+			// content, and it already shows the link target on hover.
+			cell.l = { Target: hyperlinkTarget };
 			cell.s = {
 				...(cell.s ?? {}),
 				font: {
