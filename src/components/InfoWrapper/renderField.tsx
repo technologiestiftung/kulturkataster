@@ -29,7 +29,7 @@ import { CategoryItem } from "./CategoryItem";
 import { getGridClass } from "../shared/sectionLayout";
 import { getEditAction } from "./getEditAction";
 import { ScrollReveal } from "@/components/shared/ScrollReveal";
-import { getFieldOptionLabel } from "@/lib/i18n/fieldLabels";
+import { getCategoryLabel, getFieldOptionLabel } from "@/lib/i18n/fieldLabels";
 import { PrivateBadge } from "@/components/shared/PrivateBadge";
 import {
 	getCultureIndexRangeBgClass,
@@ -90,7 +90,7 @@ const formatCategoryValue = (
 	const categories = getParentCategories(data);
 	if (!categories?.length) return "";
 	return categories
-		.map((category) => t(`enumMap.category.${category.key}`))
+		.map((category) => getCategoryLabel(t, category.key))
 		.join(", ");
 };
 
