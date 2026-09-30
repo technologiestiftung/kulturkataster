@@ -2,6 +2,7 @@ import { renderHook } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { useInstitutionTableFilters } from "@/lib/hooks/useInstitutionTableFilters";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
+import type { Category } from "@/types/category";
 import type { InstitutionTableRow } from "@/types/institution";
 
 const initialInstitutionState = useInstitutionStore.getState();
@@ -37,5 +38,22 @@ describe("useInstitutionTableFilters", () => {
 		);
 
 		expect(result.current.districts).toEqual(["Mitte", "Spandau"]);
+	});
+
+	it("reports zero category counts when the user has no rows", () => {
+		const categoryGroups = [
+			{
+				id: 1,
+				key: "cinemas",
+				child_categories: [{ id: 2, key: "arthouse", parent_category_id: 1 }],
+			},
+		] as unknown as Category[];
+
+		const { result } = renderHook(() =>
+			useInstitutionTableFilters([], categoryGroups),
+		);
+
+		expect(result.current.categoryCounts).toEqual({ cinemas: 0 });
+		expect(result.current.subcategoryCounts).toEqual({ arthouse: 0 });
 	});
 });
