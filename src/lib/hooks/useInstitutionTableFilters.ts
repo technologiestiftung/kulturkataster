@@ -103,7 +103,7 @@ export function useInstitutionTableFilters(
 			subcategoryCounts: {} as Record<string, number>,
 		};
 
-		if (filterCategoryGroups.length === 0 || tableRows.length === 0) {
+		if (filterCategoryGroups.length === 0) {
 			return counts;
 		}
 
