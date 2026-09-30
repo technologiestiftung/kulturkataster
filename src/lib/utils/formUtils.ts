@@ -1,5 +1,10 @@
 import { useCallback } from "react";
 import type { InstitutionForm } from "@/types/institution";
+import {
+	formatPartialDate,
+	isPartialDateInput,
+	parsePartialDate,
+} from "@/lib/utils/partialDate";
 
 type SubmitLabelText = {
 	default: string;
@@ -62,6 +67,9 @@ const toDate = (value: unknown): Date | null => {
 			return Number.isNaN(parsed.getTime()) ? null : parsed;
 		}
 	}
+	if (typeof value === "string" && isPartialDateInput(value)) {
+		return parsePartialDate(value);
+	}
 	if (typeof value === "string" || typeof value === "number") {
 		const parsed = new Date(value);
 		return Number.isNaN(parsed.getTime()) ? null : parsed;
@@ -69,16 +77,19 @@ const toDate = (value: unknown): Date | null => {
 	return null;
 };
 
-const formatDateByType = (value: unknown, type: "date" | "year"): string => {
+const formatDateByType = (
+	value: unknown,
+	type: "date" | "partialDate",
+): string => {
 	const date = toDate(value);
 	if (!date) return String(value ?? "");
-	if (type === "year") return String(date.getFullYear());
+	if (type === "partialDate") return formatPartialDate(date);
 	return date.toLocaleDateString();
 };
 
 const normalizeDateByType = (
 	value: unknown,
-	type: "date" | "year",
+	type: "date" | "partialDate",
 ): string | null => {
 	const date = toDate(value);
 	if (!date) {
@@ -86,7 +97,7 @@ const normalizeDateByType = (
 		if (typeof value === "string") return value.trim();
 		return String(value);
 	}
-	if (type === "year") return String(date.getFullYear());
+	if (type === "partialDate") return formatPartialDate(date);
 	return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
 };
 

@@ -420,13 +420,12 @@ const renderFieldContent = (
 				field.type === "tel" ||
 				field.type === "url" ||
 				field.type === "date" ||
-				field.type === "year") && (
+				field.type === "partialDate") && (
 				<div className="relative">
 					<Input
 						id={field.name}
-						type={field.type === "year" ? "number" : field.type}
-						inputMode={field.type === "year" ? "numeric" : undefined}
-						maxLength={field.type === "year" ? 4 : undefined}
+						type={field.type === "partialDate" ? "text" : field.type}
+						maxLength={field.type === "partialDate" ? 10 : undefined}
 						value={value === undefined || value === null ? "" : String(value)}
 						onChange={(e) => updateField(field.name, e.target.value)}
 						onBlur={(e) => {
