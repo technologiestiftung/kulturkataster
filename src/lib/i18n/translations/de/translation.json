@@ -479,6 +479,7 @@
 			"validation": {
 				"invalidEmail": "Ungültige E-Mail-Adresse",
 				"invalidNumber": "Ungültige Zahl",
+				"invalidPartialDate": "Bitte als TT.MM.JJJJ, MM.JJJJ oder JJJJ angeben",
 				"invalidPhone": "Ungültige Telefonnummer",
 				"invalidUrl": "Ungültige URL",
 				"required": "Dies ist ein Pflichtfeld. Eine Antwort ist erforderlich."
@@ -1597,8 +1598,8 @@
 					"datePlaceholder": "DD.MM.YYYY",
 					"datePlaceholderWithYear": "DD.MM.YYYY oder YYYY",
 					"establishment": {
-						"sinceDescription": "Bitte tragen Sie das Datum der erstmaligen Nutzung oder Eröffnung am Standort ein. Falls das genaue Datum nicht bekannt ist, reicht auch die Angabe des Jahres.",
-						"untilDescription": "Bitte tragen Sie das Datum ein, bis zu dem der Kulturort an diesem Standort aktiv war. Diese Angabe betrifft nur bereits geschlossene Orte. Falls das genaue Datum nicht bekannt ist, reicht auch die Angabe des Jahres."
+						"sinceDescription": "Bitte tragen Sie das Datum der erstmaligen Nutzung oder Eröffnung am Standort ein. Falls das genaue Datum nicht bekannt ist, reicht auch die Angabe von Monat und Jahr oder nur des Jahres.",
+						"untilDescription": "Bitte tragen Sie das Datum ein, bis zu dem der Kulturort an diesem Standort aktiv war. Diese Angabe betrifft nur bereits geschlossene Orte. Falls das genaue Datum nicht bekannt ist, reicht auch die Angabe von Monat und Jahr oder nur des Jahres."
 					},
 					"internalNotesPrivateDescription": "Diese Information wird ausschließlich für befugte Nutzer*innen im geschützten Bereich des Kulturkataster zugänglich und nicht öffentlich einsehbar sein.",
 					"notesDescription": "Bitte beachten Sie, dass dieses Feld für die Öffentlichkeit einsehbar ist. Wenn Sie Informationen eintragen möchten, die nur für befugte Nutzer*innen einsehbar sind, tragen Sie diese bitte im Feld \"Interne Notizen\" direkt darunter ein.",
@@ -3390,20 +3391,20 @@
 				"placeholder": "name@beispiel.de"
 			},
 			"established_since": {
-				"description": "Bitte tragen Sie das Datum der erstmaligen Nutzung oder Eröffnung am Standort ein. Falls das genaue Datum nicht bekannt ist, reicht auch die Angabe des Jahres.",
+				"description": "Bitte tragen Sie das Datum der erstmaligen Nutzung oder Eröffnung am Standort ein. Falls das genaue Datum nicht bekannt ist, reicht auch die Angabe von Monat und Jahr oder nur des Jahres.",
 				"errors": {
 					"required": "Bitte angeben."
 				},
 				"label": "Bestehen am Standort seit",
-				"placeholder": "TT.MM.JJJJ oder JJJJ"
+				"placeholder": "TT.MM.JJJJ, MM.JJJJ oder JJJJ"
 			},
 			"established_until": {
-				"description": "Bitte tragen Sie das Datum ein, bis zu dem die Kultureinrichtung an diesem Standort aktiv war. Diese Angabe betrifft nur bereits geschlossene Orte. Falls das genaue Datum nicht bekannt ist, reicht auch die Angabe des Jahres.",
+				"description": "Bitte tragen Sie das Datum ein, bis zu dem die Kultureinrichtung an diesem Standort aktiv war. Diese Angabe betrifft nur bereits geschlossene Orte. Falls das genaue Datum nicht bekannt ist, reicht auch die Angabe von Monat und Jahr oder nur des Jahres.",
 				"errors": {
 					"required": "Bitte angeben."
 				},
 				"label": "Bestehen am Standort bis",
-				"placeholder": "TT.MM.JJJJ oder JJJJ"
+				"placeholder": "TT.MM.JJJJ, MM.JJJJ oder JJJJ"
 			},
 			"funding_source": {
 				"actions": {
