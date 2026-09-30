@@ -149,16 +149,20 @@ describe("QuestionnaireInstitutionCreateForm", () => {
 		]);
 	});
 
-	it("keeps map-derived address values from initialValues that have no visible field", () => {
+	const draftWithLocation = {
+		"address.lat": 52.52,
+		"address.lng": 13.405,
+		"address.district": "Mitte",
+		"address.neighbourhood": "Mitte",
+	};
+
+	it("keeps map-derived district/neighbourhood from initialValues while the location is unchanged", () => {
 		const onCreated = vi.fn();
 
 		render(
 			<QuestionnaireInstitutionCreateForm
 				categoryGroups={[]}
-				initialValues={{
-					"address.district": "Mitte",
-					"address.neighbourhood": "Mitte",
-				}}
+				initialValues={draftWithLocation}
 				onCreated={onCreated}
 				onBack={vi.fn()}
 				backLabel="Zurück"
@@ -166,7 +170,12 @@ describe("QuestionnaireInstitutionCreateForm", () => {
 			/>,
 		);
 
-		lastSubmitData = { name: "Test Kulturort", "address.city": "Berlin" };
+		lastSubmitData = {
+			name: "Test Kulturort",
+			"address.city": "Berlin",
+			"address.lat": 52.52,
+			"address.lng": 13.405,
+		};
 		screen.getByText("mock-form-submit").click();
 
 		expect(onCreated).toHaveBeenCalledWith({
@@ -174,6 +183,33 @@ describe("QuestionnaireInstitutionCreateForm", () => {
 			"address.neighbourhood": "Mitte",
 			name: "Test Kulturort",
 			"address.city": "Berlin",
+			"address.lat": 52.52,
+			"address.lng": 13.405,
 		});
+	});
+
+	it("drops the draft's district/neighbourhood once the location has changed", () => {
+		const onCreated = vi.fn();
+
+		render(
+			<QuestionnaireInstitutionCreateForm
+				categoryGroups={[]}
+				initialValues={draftWithLocation}
+				onCreated={onCreated}
+				onBack={vi.fn()}
+				backLabel="Zurück"
+				submitLabel="Weiter"
+			/>,
+		);
+
+		lastSubmitData = {
+			name: "Test Kulturort",
+			"address.city": "Potsdam",
+			"address.lat": 52.39,
+			"address.lng": 13.06,
+		};
+		screen.getByText("mock-form-submit").click();
+
+		expect(onCreated).toHaveBeenCalledWith(lastSubmitData);
 	});
 });
