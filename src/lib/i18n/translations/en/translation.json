@@ -497,14 +497,6 @@
 			"claimSelectSubtitle": "Request Management Rights for Your Cultural Locations",
 			"claimSelectTitle": "Manage Cultural Locations",
 			"culturalArea": "Cultural Area",
-			"cultureIndexDimensions": {
-				"location": "Location and Contract Dimension",
-				"property": "Real Estate and Building Dimension",
-				"financial": "Financial and Operational Dimension",
-				"socialSpatial": "Socio-Spatial and Demand-Related Dimension",
-				"visibility": "Visibility and Public Relations Dimension",
-				"global": "Global Assessments"
-			},
 			"details": "Cultural Location Details",
 			"district": "District",
 			"editSelectEmpty": "No Cultural Locations found.",
@@ -3341,6 +3333,36 @@
 				"description": "Rates how long-term secure the cultural venue is at its current location, on a scale from 0 (acutely at risk) to 100 (long-term secured).",
 				"label": "Cultural Hub Index",
 				"placeholder": "e.g. 75"
+			},
+			"culture_index_location": {
+				"description": "",
+				"label": "Location and Contract Dimension",
+				"placeholder": "e.g. 75"
+			},
+			"culture_index_property": {
+				"description": "",
+				"label": "Real Estate and Building Dimension",
+				"placeholder": "e.g. 75"
+			},
+			"culture_index_financial": {
+				"description": "",
+				"label": "Financial and Operational Dimension",
+				"placeholder": "e.g. 75"
+			},
+			"culture_index_social_spatial": {
+				"description": "",
+				"label": "Socio-Spatial and Demand-Related Dimension",
+				"placeholder": "e.g. 75"
+			},
+			"culture_index_visibility": {
+				"description": "",
+				"label": "Visibility and Public Relations Dimension",
+				"placeholder": "e.g. 75"
+			},
+			"culture_index_global": {
+				"description": "",
+				"label": "Global Assessments",
+				"placeholder": "Please Enter"
 			},
 			"datenverwendung": {
 				"description": "",

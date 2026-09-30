@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
+import type { Institution } from "@/types";
+import { resolveInstitutionPermissionField } from "@/lib/utils/institutionPermissionField";
 import {
 	contactInfoConfig,
+	cultureIndexDimensionsInfoConfig,
 	detailsInfoConfig,
 	facilityInfoConfig,
 	organizationInfoConfig,
@@ -88,5 +91,33 @@ describe("organizationInfoConfig", () => {
 			"funding_type",
 			"funding_sources",
 		]);
+	});
+});
+
+describe("cultureIndexDimensionsInfoConfig", () => {
+	it("gates every dimension by its own permission field", () => {
+		expect(
+			cultureIndexDimensionsInfoConfig.map(resolveInstitutionPermissionField),
+		).toEqual([
+			"culture_index_location",
+			"culture_index_property",
+			"culture_index_financial",
+			"culture_index_social_spatial",
+			"culture_index_visibility",
+			"culture_index_global",
+		]);
+	});
+
+	it("keeps a score of 0 and text assessments, and drops missing values", () => {
+		const institution = {
+			culture_index_location: 0,
+			culture_index_property: 72.5,
+			culture_index_financial: null,
+			culture_index_global: "Stable",
+		} as Institution;
+		const values = cultureIndexDimensionsInfoConfig.map((field) =>
+			typeof field.value === "function" ? field.value(institution) : undefined,
+		);
+		expect(values).toEqual(["0", "72.5", null, null, null, "Stable"]);
 	});
 });

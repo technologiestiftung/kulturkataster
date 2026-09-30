@@ -23,6 +23,13 @@ import {
 	z,
 } from "./common";
 
+const cultureIndexScoreSchema = (label: string) =>
+	optionalNumberSchema(`${label} must be a valid number.`).refine(
+		(value) =>
+			value === null || value === undefined || (value >= 0 && value <= 100),
+		{ message: `${label} must be between 0 and 100.` },
+	);
+
 const addressSchema = z
 	.object({
 		id: positiveIntegerSchema("Address id must be positive.").optional(),
@@ -61,13 +68,23 @@ const institutionBaseSchema = z.object({
 	parent_organization: optionalTextSchema(),
 	legal_form: optionalTextSchema(),
 	capacity: optionalNumberSchema("Capacity must be a valid number."),
-	culture_index: optionalNumberSchema(
-		"Culture index must be a valid number.",
-	).refine(
-		(value) =>
-			value === null || value === undefined || (value >= 0 && value <= 100),
-		{ message: "Culture index must be between 0 and 100." },
+	culture_index: cultureIndexScoreSchema("Culture index"),
+	culture_index_location: cultureIndexScoreSchema(
+		"Culture index location dimension",
 	),
+	culture_index_property: cultureIndexScoreSchema(
+		"Culture index property dimension",
+	),
+	culture_index_financial: cultureIndexScoreSchema(
+		"Culture index financial dimension",
+	),
+	culture_index_social_spatial: cultureIndexScoreSchema(
+		"Culture index social-spatial dimension",
+	),
+	culture_index_visibility: cultureIndexScoreSchema(
+		"Culture index visibility dimension",
+	),
+	culture_index_global: optionalTextSchema(),
 	owner_name: optionalTextSchema(),
 	owner_type: z.nativeEnum(OwnerType).nullable().optional(),
 	rental_contract_type: z.nativeEnum(RentalContractType).nullable().optional(),

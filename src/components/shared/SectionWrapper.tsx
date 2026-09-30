@@ -10,6 +10,14 @@ import {
 } from "@/components/ui/accordion";
 import { cn } from "@/lib/utils";
 
+export type SectionCardVariant =
+	| "default"
+	| "secondary"
+	| "tertiary"
+	| "muted"
+	| "none"
+	| "hero";
+
 type SectionWrapperProps = {
 	wrapperId?: string;
 	wrapperClassName?: string;
@@ -22,7 +30,7 @@ type SectionWrapperProps = {
 	accordionTitle?: ReactNode;
 	accordionAction?: ReactNode;
 	accordionContentClassName?: string;
-	cardVariant?: "default" | "secondary" | "tertiary" | "none" | "hero";
+	cardVariant?: SectionCardVariant;
 	cardClassName?: string;
 	bodyContent: ReactNode;
 	onClick?: () => void;
