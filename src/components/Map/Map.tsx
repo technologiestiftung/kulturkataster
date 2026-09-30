@@ -2,6 +2,7 @@
 
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import dynamic from "next/dynamic";
+import { usePathname } from "next/navigation";
 import { FC, useState } from "react";
 import HoverCard from "../HoverCard/HoverCard";
 import { ClickControl, HoverControl, MapControls } from "./Controls";
@@ -18,7 +19,12 @@ const LazyOlMap = dynamic(() => import("./OlMap/OlMap"), {
 	loading: () => <MapSkeleton />,
 });
 
+// Routes that render the fixed secondary sidebar (see Menu) over the map.
+const SECONDARY_SIDEBAR_ROUTE =
+	/\/(?:map\/institution\/\d+|accessibilitySettings)(?:\/|$)/;
+
 const Map: FC = () => {
+	const pathname = usePathname();
 	const filteredInstitutionsGeoJSON = useInstitutionStore(
 		(state) => state.filteredInstitutionsGeoJSON,
 	);
@@ -33,7 +39,11 @@ const Map: FC = () => {
 				onPanelOpen={() => setIsLayerTreeOpen(false)}
 				onVisibilityChange={setIsSidePanelOpen}
 			/>
-			<LayerTree isSidePanelOpen={isSidePanelOpen} />
+			<LayerTree
+				isSidePanelOpen={
+					isSidePanelOpen || SECONDARY_SIDEBAR_ROUTE.test(pathname ?? "")
+				}
+			/>
 
 			<LazyOlMap>
 				<LayerInitializer />
