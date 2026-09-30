@@ -23,8 +23,7 @@ import {
 import { normalizeAddressForDiff } from "@/lib/utils/institutionRelationFields";
 import { type InfoWrapperConfig, type InfoWrapperFieldConfig } from "./types";
 import { StatusItem } from "./StatusItem";
-import { StatusCultureIndexGroup } from "./StatusCultureIndexGroup";
-import { CultureIndexProtectedInfo } from "./CultureIndexProtectedInfo";
+import { StatusGroup } from "./StatusGroup";
 import { CategoryItem } from "./CategoryItem";
 import { getGridClass } from "../shared/sectionLayout";
 import { getEditAction } from "./getEditAction";
@@ -328,6 +327,28 @@ const getContent = (
 				cultureIndexValue !== null && cultureIndexRange
 					? `${cultureIndexValue} - ${t(`content.filter.cultureIndex.ranges.${cultureIndexRange}`)}`
 					: "—";
+			if (field.cultureIndexVariant === "item") {
+				return (
+					<InfoItem
+						label={label}
+						description={field.description}
+						isPrivate={isPrivate}
+						action={action}
+					>
+						<span className="inline-flex items-center gap-2">
+							<span
+								className={cn(
+									"w-4 h-4 rounded-full shrink-0",
+									cultureIndexRange
+										? getCultureIndexRangeBgClass(cultureIndexRange)
+										: "bg-alert",
+								)}
+							/>
+							{displayValue}
+						</span>
+					</InfoItem>
+				);
+			}
 			const isPlain = field.cultureIndexVariant === "plain";
 			return (
 				<div
@@ -356,11 +377,8 @@ const getContent = (
 			);
 		}
 
-		case "statusCultureIndexGroup":
-			return <StatusCultureIndexGroup data={data} t={t} />;
-
-		case "cultureIndexProtectedInfo":
-			return <CultureIndexProtectedInfo data={data} t={t} />;
+		case "statusGroup":
+			return <StatusGroup data={data} t={t} />;
 
 		case "link":
 		case "url":

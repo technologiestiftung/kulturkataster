@@ -67,6 +67,12 @@ export type InstitutionTableBase = {
 	established_until?: Institution["established_until"];
 	closing_reason?: Institution["closing_reason"];
 	culture_index?: Institution["culture_index"];
+	culture_index_location?: Institution["culture_index_location"];
+	culture_index_property?: Institution["culture_index_property"];
+	culture_index_financial?: Institution["culture_index_financial"];
+	culture_index_social_spatial?: Institution["culture_index_social_spatial"];
+	culture_index_visibility?: Institution["culture_index_visibility"];
+	culture_index_global?: Institution["culture_index_global"];
 	notes?: Institution["notes"];
 	internal_notes?: Institution["internal_notes"];
 	source?: Institution["source"];
@@ -146,6 +152,12 @@ export type InstitutionForm = {
 	established_until?: Date | string | null;
 	closing_reason?: string | null;
 	culture_index?: number | null;
+	culture_index_location?: number | null;
+	culture_index_property?: number | null;
+	culture_index_financial?: number | null;
+	culture_index_social_spatial?: number | null;
+	culture_index_visibility?: number | null;
+	culture_index_global?: string | null;
 	notes?: string | null;
 	internal_notes?: string | null;
 	status?: InstitutionStatus | null;
@@ -207,6 +219,12 @@ export const INSTITUTION_PERMISSION_FIELDS = [
 	"established_until",
 	"closing_reason",
 	"culture_index",
+	"culture_index_location",
+	"culture_index_property",
+	"culture_index_financial",
+	"culture_index_social_spatial",
+	"culture_index_visibility",
+	"culture_index_global",
 	"area",
 	"number_of_rooms",
 	"capacity",

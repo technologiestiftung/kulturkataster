@@ -40,6 +40,7 @@ import Edit from "@/icons/edit.svg";
 import { useInstitutionPrivateFieldResolver } from "@/lib/hooks/useInstitutionPrivateFieldResolver";
 import { resolveInstitutionPermissionField } from "@/lib/utils/institutionPermissionField";
 import {
+	CULTURE_INDEX_DIMENSION_FIELDS,
 	getCultureIndexRangeForValue,
 	type CultureIndexRangeKey,
 } from "@/lib/constants/cultureIndexRanges";
@@ -261,6 +262,10 @@ export function InstitutionsTable({
 		if (typeof value !== "number") return renderEmptyValue();
 		if (value === 0) return renderEmptyValue();
 		return value.toString();
+	};
+	const renderDimensionValue = (value?: number | string | null) => {
+		if (typeof value === "number") return value.toString();
+		return renderTextValue(value);
 	};
 	const renderCultureIndexValue = (value?: number | null) => {
 		if (typeof value !== "number") return renderEmptyValue();
@@ -897,54 +902,15 @@ export function InstitutionsTable({
 					cell: ({ row }) =>
 						renderCultureIndexValue(row.original.culture_index),
 				},
-				{
-					id: "culture_index_dimension_location",
-					header: t("common.institution.cultureIndexDimensions.location"),
-					enableSorting: false,
+				...CULTURE_INDEX_DIMENSION_FIELDS.map((field) => ({
+					accessorKey: field,
+					header: headerLabel(field),
+					enableSorting: true,
 					size: 180,
-					meta: { exportKey: "culture_index" },
-					cell: () => renderEmptyValue(),
-				},
-				{
-					id: "culture_index_dimension_property",
-					header: t("common.institution.cultureIndexDimensions.property"),
-					enableSorting: false,
-					size: 180,
-					meta: { exportKey: "culture_index" },
-					cell: () => renderEmptyValue(),
-				},
-				{
-					id: "culture_index_dimension_financial",
-					header: t("common.institution.cultureIndexDimensions.financial"),
-					enableSorting: false,
-					size: 180,
-					meta: { exportKey: "culture_index" },
-					cell: () => renderEmptyValue(),
-				},
-				{
-					id: "culture_index_dimension_social_spatial",
-					header: t("common.institution.cultureIndexDimensions.socialSpatial"),
-					enableSorting: false,
-					size: 180,
-					meta: { exportKey: "culture_index" },
-					cell: () => renderEmptyValue(),
-				},
-				{
-					id: "culture_index_dimension_visibility",
-					header: t("common.institution.cultureIndexDimensions.visibility"),
-					enableSorting: false,
-					size: 180,
-					meta: { exportKey: "culture_index" },
-					cell: () => renderEmptyValue(),
-				},
-				{
-					id: "culture_index_dimension_global",
-					header: t("common.institution.cultureIndexDimensions.global"),
-					enableSorting: false,
-					size: 180,
-					meta: { exportKey: "culture_index" },
-					cell: () => renderEmptyValue(),
-				},
+					meta: { truncate: true, exportKey: field },
+					cell: ({ row }: { row: { original: InstitutionTableRow } }) =>
+						renderDimensionValue(row.original[field]),
+				})),
 				{
 					accessorKey: "area",
 					header: headerLabel("area", "Area (m2)"),

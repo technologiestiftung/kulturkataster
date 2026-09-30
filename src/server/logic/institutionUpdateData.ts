@@ -79,6 +79,22 @@ export const buildInstitutionUpdateData = (
 	legal_form: preserveNullableUpdate(input.legal_form),
 	capacity: preserveNullableNumberUpdate(input.capacity),
 	culture_index: preserveNullableNumberUpdate(input.culture_index),
+	culture_index_location: preserveNullableNumberUpdate(
+		input.culture_index_location,
+	),
+	culture_index_property: preserveNullableNumberUpdate(
+		input.culture_index_property,
+	),
+	culture_index_financial: preserveNullableNumberUpdate(
+		input.culture_index_financial,
+	),
+	culture_index_social_spatial: preserveNullableNumberUpdate(
+		input.culture_index_social_spatial,
+	),
+	culture_index_visibility: preserveNullableNumberUpdate(
+		input.culture_index_visibility,
+	),
+	culture_index_global: preserveNullableUpdate(input.culture_index_global),
 	owner_name: preserveNullableUpdate(input.owner_name),
 	owner_type: preserveNullableUpdate(input.owner_type),
 	rental_contract_type: preserveNullableUpdate(input.rental_contract_type),

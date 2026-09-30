@@ -49,6 +49,7 @@ import {
 import { reportClientTelemetry } from "@/lib/utils/clientTelemetry";
 import { buildCategoryGroups } from "@/lib/utils/categoryUtils";
 import { withProfileContactFallback } from "@/lib/utils/institutionRelationFields";
+import { CULTURE_INDEX_SCORE_FIELDS } from "@/lib/constants/cultureIndexRanges";
 type InstitutionFormModalProps = {
 	mode: "create" | "edit";
 	institution?: Institution | null;
@@ -456,6 +457,23 @@ const buildInstitutionFormConfig = ({
 						step: 1,
 						description: fieldDescription("culture_index"),
 						placeholder: fieldPlaceholder("culture_index"),
+					},
+					...CULTURE_INDEX_SCORE_FIELDS.map((name) => ({
+						name,
+						label: fieldLabel(name),
+						description: fieldDescription(name),
+						type: "number" as const,
+						min: 0,
+						max: 100,
+						step: 1,
+						placeholder: fieldPlaceholder(name),
+					})),
+					{
+						name: "culture_index_global",
+						label: fieldLabel("culture_index_global"),
+						description: fieldDescription("culture_index_global"),
+						type: "textarea",
+						placeholder: fieldPlaceholder("culture_index_global"),
 					},
 					{
 						name: "address.map",

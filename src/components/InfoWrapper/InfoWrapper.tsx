@@ -67,6 +67,7 @@ export function InfoWrapper({
 
 		fields.forEach((field, fieldIndex) => {
 			if (isCardField(field)) {
+				if (field.condition && !field.condition(data as Institution)) return;
 				hasSectionNodes = true;
 				flushFields();
 				const useAccordion = field.collapsible ?? config.useAccordion;
