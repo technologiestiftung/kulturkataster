@@ -34,6 +34,21 @@ const getFeatureData = (feature: any) => {
 	return properties;
 };
 
+// Single line: long values are truncated, the full text is in the filter and detail view.
+const HoverCardRow: FC<{ label: string; value: string }> = ({
+	label,
+	value,
+}) => (
+	<div className="flex min-w-0 items-center gap-1">
+		<span className="shrink-0 whitespace-nowrap text-base font-bold">
+			{label}:
+		</span>
+		<span className="truncate text-base" title={value}>
+			{value}
+		</span>
+	</div>
+);
+
 // TODO: add fonts
 // TODO: add names categories and status
 
@@ -116,45 +131,30 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 						getStatusAccentClass(featureProperties.utilization_status),
 					)}
 				>
-					{featureProperties.utilization_status && (
-						<div className=" flex gap-1 items-center justify-between">
-							<span className="text-base font-bold">
-								{fieldLabel("utilization_status")}:
-							</span>
-							<span className="text-base">
-								{getFieldOptionLabel(
-									tEnum,
-									"utilization_status",
-									featureProperties.utilization_status,
-								)}
-							</span>
-						</div>
-					)}
-					{!featureProperties.utilization_status && (
-						<div className=" flex gap-1 items-center justify-between">
-							<span className="text-base font-bold">
-								{fieldLabel("utilization_status")}:
-							</span>
-							<span className="text-base">{t("common.unknown")}</span>
-						</div>
-					)}
+					<HoverCardRow
+						label={fieldLabel("utilization_status")}
+						value={
+							featureProperties.utilization_status
+								? getFieldOptionLabel(
+										tEnum,
+										"utilization_status",
+										featureProperties.utilization_status,
+									)
+								: t("common.unknown")
+						}
+					/>
 				</CardFooter>
 				{cultureIndexRange && (
 					<CardFooter
 						className={cn(
-							"rounded-b-md p-2",
+							"mt-px rounded-b-md p-2",
 							getCultureIndexRangeBgClass(cultureIndexRange),
 						)}
 					>
-						<div className="flex gap-1 items-center justify-between">
-							<span className="text-base font-bold">
-								{fieldLabel("culture_index")}:
-							</span>
-							<span className="text-base">
-								{cultureIndexValue} -{" "}
-								{t(`content.filter.cultureIndex.ranges.${cultureIndexRange}`)}
-							</span>
-						</div>
+						<HoverCardRow
+							label={fieldLabel("culture_index")}
+							value={`${cultureIndexValue} - ${t(`content.filter.cultureIndex.ranges.${cultureIndexRange}`)}`}
+						/>
 					</CardFooter>
 				)}
 			</Card>
