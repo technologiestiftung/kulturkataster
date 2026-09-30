@@ -130,10 +130,10 @@ function InstitutionsFilterPanel({
 	onFiltersChange,
 }: InstitutionsFilterPanelProps) {
 	useEffect(() => {
-		if (categoryGroups.length === 0) {
+		if (categoryGroups.length === 0 || districts.length === 0) {
 			onRetry();
 		}
-	}, [categoryGroups.length, onRetry]);
+	}, [categoryGroups.length, districts.length, onRetry]);
 
 	return (
 		<FilterPanel
