@@ -98,7 +98,7 @@ const NUMBER_KEYS: Record<string, { integer: boolean }> = {
 	area: { integer: false },
 	number_of_rooms: { integer: true },
 	capacity: { integer: true },
-	culture_index: { integer: false },
+	culture_index: { integer: true },
 	...Object.fromEntries(
 		CULTURE_INDEX_SCORE_FIELDS.map((field) => [field, { integer: false }]),
 	),

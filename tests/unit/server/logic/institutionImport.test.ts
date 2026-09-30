@@ -271,6 +271,18 @@ describe("planInstitutionImport", () => {
 		]);
 	});
 
+	it("reports a culture index that is not a whole number", () => {
+		const institution = makeInstitutionWithCultureIndex();
+		const csvRows = exportCsv([institution]);
+		setCell(csvRows, "Kulturort-Index", "20,5");
+
+		const { plan } = planFromCsv(csvRows, [institution]);
+
+		expect(plan.issues).toEqual([
+			{ row: 2, column: "Kulturort-Index", code: "invalidInteger" },
+		]);
+	});
+
 	it("only updates the columns that changed", () => {
 		const institution = makeInstitution();
 		const csvRows = exportCsv([institution]);
