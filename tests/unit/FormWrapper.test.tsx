@@ -539,8 +539,8 @@ describe("FormWrapper", () => {
 			// itself — LikertScale's connecting line is absolutely positioned relative
 			// to the RadioGroup's own (unpadded) box, so padding added directly to it
 			// shifts the radio buttons without moving the line.
-			expect(radioGroup.className).not.toContain("p-3");
-			expect(radioGroup.parentElement?.className).toContain("p-3");
+			expect(radioGroup).not.toHaveClass("p-3");
+			expect(radioGroup.parentElement).toHaveClass("p-3");
 		});
 
 		it("submits the selected likert value", async () => {
