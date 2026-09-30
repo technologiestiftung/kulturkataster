@@ -113,16 +113,67 @@ describe("QuestionnaireInstitutionCreateForm", () => {
 		expect(getFieldNames(0)).toEqual([
 			"name",
 			"address.map",
-			"address.lng",
-			"address.lat",
 			"address.streetLine",
 			"address.address_suffix",
 			"address.zip",
 			"address.city",
-			"address.neighbourhood",
-			"address.district",
-			"address.cultural_area",
 			"established_since",
 		]);
+	});
+
+	it("requires street, zip and city but not established_since", () => {
+		render(
+			<QuestionnaireInstitutionCreateForm
+				categoryGroups={[]}
+				onCreated={vi.fn()}
+				onBack={vi.fn()}
+				backLabel="Zurück"
+				submitLabel="Weiter"
+			/>,
+		);
+
+		const basicFields = (
+			lastFormConfig?.fields?.[0] as {
+				fields: Array<{ name: string; required?: boolean }>;
+			}
+		).fields;
+		const requiredNames = basicFields
+			.filter((field) => field.required)
+			.map((field) => field.name);
+
+		expect(requiredNames).toEqual([
+			"name",
+			"address.streetLine",
+			"address.zip",
+			"address.city",
+		]);
+	});
+
+	it("keeps map-derived address values from initialValues that have no visible field", () => {
+		const onCreated = vi.fn();
+
+		render(
+			<QuestionnaireInstitutionCreateForm
+				categoryGroups={[]}
+				initialValues={{
+					"address.district": "Mitte",
+					"address.neighbourhood": "Mitte",
+				}}
+				onCreated={onCreated}
+				onBack={vi.fn()}
+				backLabel="Zurück"
+				submitLabel="Weiter"
+			/>,
+		);
+
+		lastSubmitData = { name: "Test Kulturort", "address.city": "Berlin" };
+		screen.getByText("mock-form-submit").click();
+
+		expect(onCreated).toHaveBeenCalledWith({
+			"address.district": "Mitte",
+			"address.neighbourhood": "Mitte",
+			name: "Test Kulturort",
+			"address.city": "Berlin",
+		});
 	});
 });
