@@ -86,8 +86,13 @@ export function QuestionnaireInstitutionLinkStep({
 			searchResults.map((institution) => ({
 				value: String(institution.id),
 				label: institution.name,
+				description: institution.address?.street
+					? `${institution.address.street} ${institution.address.street_number ?? ""}`.trim()
+					: t("content.institution.editSelectNoAddress", {
+							defaultValue: "Keine Adresse hinterlegt",
+						}),
 			})),
-		[searchResults],
+		[searchResults, t],
 	);
 
 	const handleSelect = useCallback(
