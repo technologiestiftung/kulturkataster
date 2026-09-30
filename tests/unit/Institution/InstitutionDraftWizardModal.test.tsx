@@ -2,7 +2,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { InstitutionDraftWizardModal } from "@/components/Institution/InstitutionDraftWizardModal";
-import { createSubmission } from "@/server/actions/submissions";
+import { submitInstitutionDraft } from "@/server/actions/submissions";
 import { useInstitutionDraftStore } from "@/lib/store/institutionDraftStore";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { buildAddressFromFormData } from "@/lib/utils/formUtils";
@@ -86,8 +86,38 @@ vi.mock("@/components/HorizontalStepper", () => ({
 }));
 
 vi.mock("@/components/Modals/Modal", () => ({
-	Modal: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+	Modal: ({
+		children,
+		errorDialog,
+	}: {
+		children: React.ReactNode;
+		errorDialog?: { open: boolean; description?: string };
+	}) => (
+		<div>
+			{errorDialog?.open ? <p role="alert">{errorDialog.description}</p> : null}
+			{children}
+		</div>
+	),
 }));
+
+// The real widget solves a proof-of-work challenge against the Cap server.
+vi.mock("@/components/Captcha/CaptchaWidget", () => ({
+	CaptchaWidget: ({
+		onTokenChange,
+	}: {
+		onTokenChange: (token: string | null) => void;
+	}) => (
+		<button type="button" onClick={() => onTokenChange("cap-token-1")}>
+			mock-captcha-solve
+		</button>
+	),
+}));
+
+const captchaConfig = {
+	apiEndpoint: "https://cap.example.org/a1b2c3d4e5/",
+	wasmUrl: "https://cap.example.org/assets/cap_wasm_bg.wasm",
+	hashwxUrl: "https://cap.example.org/assets/hashwx.wasm",
+};
 
 const closeModalMock = vi.fn();
 const institutionReviewMock = vi.fn();
@@ -128,7 +158,7 @@ vi.mock("@/components/Institution/InstitutionFormModal", () => ({
 }));
 
 vi.mock("@/server/actions/submissions", () => ({
-	createSubmission: vi.fn(),
+	submitInstitutionDraft: vi.fn(),
 }));
 
 vi.mock("@/lib/utils/formUtils", () => ({
@@ -159,7 +189,7 @@ vi.mock("@/lib/utils/institutionCategoryUtils", () => ({
 	resolveCategoryIdsFromDraft: vi.fn(() => [101, 202]),
 }));
 
-const mockedCreateSubmission = vi.mocked(createSubmission);
+const mockedSubmitInstitutionDraft = vi.mocked(submitInstitutionDraft);
 const mockedBuildAddressFromFormData = vi.mocked(buildAddressFromFormData);
 const mockedResolveCategoryIdsFromDraft = vi.mocked(
 	resolveCategoryIdsFromDraft,
@@ -176,8 +206,8 @@ describe("InstitutionDraftWizardModal submission workflow", () => {
 		closeModalMock.mockReset();
 		institutionReviewMock.mockReset();
 		institutionFormModalMock.mockReset();
-		mockedCreateSubmission.mockReset();
-		mockedCreateSubmission.mockResolvedValue({} as any);
+		mockedSubmitInstitutionDraft.mockReset();
+		mockedSubmitInstitutionDraft.mockResolvedValue({ ok: true });
 		mockedBuildAddressFromFormData.mockClear();
 		mockedResolveCategoryIdsFromDraft.mockClear();
 		mockedShowSuccessToast.mockReset();
@@ -231,13 +261,13 @@ describe("InstitutionDraftWizardModal submission workflow", () => {
 		);
 
 		await waitFor(() => {
-			expect(mockedCreateSubmission).toHaveBeenCalledTimes(1);
+			expect(mockedSubmitInstitutionDraft).toHaveBeenCalledTimes(1);
 		});
 
 		expect(mockedResolveCategoryIdsFromDraft).toHaveBeenCalled();
 		expect(mockedBuildAddressFromFormData).toHaveBeenCalled();
-		expect(mockedCreateSubmission).toHaveBeenCalledWith(
-			expect.objectContaining({
+		expect(mockedSubmitInstitutionDraft).toHaveBeenCalledWith({
+			submission: expect.objectContaining({
 				entityType: "institution",
 				entityId: null,
 				type: "create",
@@ -247,8 +277,12 @@ describe("InstitutionDraftWizardModal submission workflow", () => {
 					categoryIds: [101, 202],
 				}),
 			}),
-		);
-		expect(mockedCreateSubmission.mock.calls[0]?.[0]).not.toEqual(
+			proposedCategoryKeys: [],
+			captchaToken: null,
+		});
+		expect(
+			mockedSubmitInstitutionDraft.mock.calls[0]?.[0].submission,
+		).not.toEqual(
 			expect.objectContaining({
 				data: expect.objectContaining({ newCategory: expect.anything() }),
 			}),
@@ -256,6 +290,61 @@ describe("InstitutionDraftWizardModal submission workflow", () => {
 		expect(replaceMock).toHaveBeenCalledWith("/de/institution?thankyou=1");
 		expect(closeModalMock).not.toHaveBeenCalled();
 		expect(mockedShowSuccessToast).toHaveBeenCalledTimes(1);
+	});
+
+	it("asks guests to solve the captcha before submitting and sends the token", async () => {
+		render(
+			<InstitutionDraftWizardModal
+				routePath="/institution/submission"
+				profile={null}
+				captchaConfig={captchaConfig}
+			/>,
+		);
+		const submitButton = screen.getByRole("button", {
+			name: "institutionDraftWizardModal.actions.submit",
+		});
+
+		fireEvent.click(submitButton);
+
+		expect(await screen.findByRole("alert")).toHaveTextContent(
+			"common.captcha.hint",
+		);
+		expect(mockedSubmitInstitutionDraft).not.toHaveBeenCalled();
+
+		fireEvent.click(screen.getByRole("button", { name: "mock-captcha-solve" }));
+		fireEvent.click(submitButton);
+
+		await waitFor(() => {
+			expect(mockedSubmitInstitutionDraft).toHaveBeenCalledWith(
+				expect.objectContaining({ captchaToken: "cap-token-1" }),
+			);
+		});
+	});
+
+	it("shows the captcha error when the server rejects the token", async () => {
+		mockedSubmitInstitutionDraft.mockResolvedValue({
+			ok: false,
+			error: "captcha_failed",
+		});
+		render(
+			<InstitutionDraftWizardModal
+				routePath="/institution/submission"
+				profile={null}
+				captchaConfig={captchaConfig}
+			/>,
+		);
+
+		fireEvent.click(screen.getByRole("button", { name: "mock-captcha-solve" }));
+		fireEvent.click(
+			screen.getByRole("button", {
+				name: "institutionDraftWizardModal.actions.submit",
+			}),
+		);
+
+		expect(await screen.findByRole("alert")).toHaveTextContent(
+			"common.captcha.failed",
+		);
+		expect(replaceMock).not.toHaveBeenCalled();
 	});
 
 	it("uses the translated cancel label on the first step", () => {
@@ -273,16 +362,12 @@ describe("InstitutionDraftWizardModal submission workflow", () => {
 		);
 	});
 
-	it("creates separate category submissions for proposed new categories", async () => {
+	it("sends proposed new categories along with the institution submission", async () => {
 		const draftState = useInstitutionDraftStore.getState();
 		draftState.setDraft({
 			name: "Draft With New Category",
 			newCategory: "Atelier,  Probe , Atelier,",
 		});
-
-		mockedCreateSubmission
-			.mockResolvedValueOnce({ id: 321 } as any)
-			.mockResolvedValue({} as any);
 
 		render(<InstitutionDraftWizardModal routePath="/institution/submission" />);
 
@@ -293,29 +378,16 @@ describe("InstitutionDraftWizardModal submission workflow", () => {
 		);
 
 		await waitFor(() => {
-			expect(mockedCreateSubmission).toHaveBeenCalledTimes(3);
+			expect(mockedSubmitInstitutionDraft).toHaveBeenCalledTimes(1);
 		});
 
-		expect(mockedCreateSubmission.mock.calls[0]?.[0]).toEqual(
+		expect(mockedSubmitInstitutionDraft).toHaveBeenCalledWith(
 			expect.objectContaining({
-				entityType: "institution",
-				type: "create",
-			}),
-		);
-		expect(mockedCreateSubmission.mock.calls[1]?.[0]).toEqual(
-			expect.objectContaining({
-				entityType: "category",
-				entityId: null,
-				type: "create",
-				data: { key: "Atelier" },
-			}),
-		);
-		expect(mockedCreateSubmission.mock.calls[2]?.[0]).toEqual(
-			expect.objectContaining({
-				entityType: "category",
-				entityId: null,
-				type: "create",
-				data: { key: "Probe" },
+				submission: expect.objectContaining({
+					entityType: "institution",
+					type: "create",
+				}),
+				proposedCategoryKeys: ["Atelier", "Probe"],
 			}),
 		);
 	});
@@ -358,10 +430,10 @@ describe("InstitutionDraftWizardModal submission workflow", () => {
 		);
 
 		await waitFor(() => {
-			expect(mockedCreateSubmission).toHaveBeenCalledTimes(1);
+			expect(mockedSubmitInstitutionDraft).toHaveBeenCalledTimes(1);
 		});
 
-		expect(mockedCreateSubmission).toHaveBeenCalledWith(
+		expect(mockedSubmitInstitutionDraft.mock.calls[0]?.[0].submission).toEqual(
 			expect.objectContaining({
 				entityType: "institution",
 				entityId: 55,
@@ -426,7 +498,7 @@ describe("InstitutionDraftWizardModal submission workflow", () => {
 		await waitFor(() => {
 			expect(mockStepperState.nextStep).toHaveBeenCalledTimes(1);
 		});
-		expect(mockedCreateSubmission).not.toHaveBeenCalled();
+		expect(mockedSubmitInstitutionDraft).not.toHaveBeenCalled();
 	});
 
 	it("moves to next step from non-review submit without creating submission", async () => {
@@ -451,7 +523,7 @@ describe("InstitutionDraftWizardModal submission workflow", () => {
 			expect(mockStepperState.nextStep).toHaveBeenCalledTimes(1);
 		});
 
-		expect(mockedCreateSubmission).not.toHaveBeenCalled();
+		expect(mockedSubmitInstitutionDraft).not.toHaveBeenCalled();
 	});
 
 	it("registers step validation and blocks progression for missing required name", async () => {

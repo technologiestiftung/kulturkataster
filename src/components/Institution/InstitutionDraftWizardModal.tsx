@@ -36,7 +36,9 @@ import { useAccountStore } from "@/lib/store/accountStore";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useInstitutionDraftStore } from "@/lib/store/institutionDraftStore";
 import { InstitutionReview } from "@/components/Institution/InstitutionReview";
-import { createSubmission } from "@/server/actions/submissions";
+import { submitInstitutionDraft } from "@/server/actions/submissions";
+import { useGuestCaptcha } from "@/components/Captcha/useGuestCaptcha";
+import type { CaptchaWidgetConfig } from "@/types/captcha";
 import type { Prisma } from "@/generated/prisma";
 import { SubmissionEntityType, SubmissionType } from "@/generated/prisma";
 import { resolveCategoryIdsFromDraft } from "@/lib/utils/institutionCategoryUtils";
@@ -153,6 +155,7 @@ type InstitutionDraftWizardContentProps = {
 	onSubmitted?: () => void;
 	onCloseRequest?: () => void;
 	onSubmitError?: (message: string) => void;
+	captchaConfig?: CaptchaWidgetConfig | null;
 };
 
 function InstitutionDraftWizardContent({
@@ -162,8 +165,10 @@ function InstitutionDraftWizardContent({
 	onSubmitted,
 	onCloseRequest,
 	onSubmitError,
+	captchaConfig = null,
 }: InstitutionDraftWizardContentProps) {
 	const { t, i18n } = useTranslation();
+	const captcha = useGuestCaptcha(captchaConfig);
 	const { t: tEnum } = useTranslation();
 	const { isPrivateField } = useInstitutionPrivateFieldResolver();
 
@@ -390,18 +395,7 @@ function InstitutionDraftWizardContent({
 				draftMode === "create" && data.works_for_organization === true
 					? { request_claim_on_approval: true }
 					: undefined;
-			const institutionSubmission = await createSubmission({
-				entityType: SubmissionEntityType.institution,
-				entityId: draftMode === "update" ? resolvedEntityId : null,
-				type:
-					draftMode === "update"
-						? SubmissionType.update
-						: SubmissionType.create,
-				data: payload as Prisma.InputJsonValue,
-				diff: submissionDiff as Prisma.InputJsonValue | undefined,
-				meta: submissionMeta,
-			});
-			const proposedCategories =
+			const proposedCategoryKeys =
 				typeof newCategory === "string"
 					? Array.from(
 							new Set(
@@ -412,28 +406,28 @@ function InstitutionDraftWizardContent({
 							),
 						)
 					: [];
-			if (proposedCategories.length > 0) {
-				await Promise.allSettled(
-					proposedCategories.map((key) =>
-						createSubmission({
-							entityType: SubmissionEntityType.category,
-							entityId: null,
-							type: SubmissionType.create,
-							data: { key },
-							meta: {
-								source: "institution_draft",
-								institutionSubmissionId:
-									typeof institutionSubmission?.id === "number"
-										? institutionSubmission.id
-										: undefined,
-							},
-						}),
-					),
-				);
+			const result = await submitInstitutionDraft({
+				submission: {
+					entityType: SubmissionEntityType.institution,
+					entityId: draftMode === "update" ? resolvedEntityId : null,
+					type:
+						draftMode === "update"
+							? SubmissionType.update
+							: SubmissionType.create,
+					data: payload as Prisma.InputJsonValue,
+					diff: submissionDiff as Prisma.InputJsonValue | undefined,
+					meta: submissionMeta,
+				},
+				proposedCategoryKeys,
+				captchaToken: captcha.token,
+			});
+			if (!result.ok) {
+				onSubmitError?.(t("common.captcha.failed"));
+				return;
 			}
 			onSubmitted?.();
 		},
-		[categoryGroups, draftMode, onSubmitted],
+		[categoryGroups, draftMode, onSubmitted, onSubmitError, t, captcha.token],
 	);
 
 	const handleStepSubmit = useCallback(
@@ -461,6 +455,10 @@ function InstitutionDraftWizardContent({
 	);
 
 	const handleReviewSubmit = useCallback(async () => {
+		if (!captcha.isSolved) {
+			onSubmitError?.(t("common.captcha.hint"));
+			return;
+		}
 		try {
 			await handleFinalSubmit(draft);
 		} catch (error) {
@@ -491,8 +489,19 @@ function InstitutionDraftWizardContent({
 						)
 					: message,
 			);
+		} finally {
+			captcha.reset();
 		}
-	}, [currentStepId, draft, draftMode, handleFinalSubmit, onSubmitError, t]);
+	}, [
+		currentStepId,
+		draft,
+		draftMode,
+		handleFinalSubmit,
+		onSubmitError,
+		t,
+		captcha.isSolved,
+		captcha.reset,
+	]);
 
 	const handleCancel = useCallback(() => {
 		if (canGoPrevious) {
@@ -1846,6 +1855,9 @@ function InstitutionDraftWizardContent({
 							}}
 						/>
 					</section>
+					{captcha.widget ? (
+						<div className="flex justify-end">{captcha.widget}</div>
+					) : null}
 					<div className="flex items-center justify-end">
 						<Button
 							id="institution-draft-submit-button"
@@ -1881,10 +1893,12 @@ export function InstitutionDraftWizardModal({
 	initialStepId,
 	routePath,
 	profile,
+	captchaConfig = null,
 }: {
 	initialStepId?: string;
 	routePath?: string;
 	profile: Profile | null;
+	captchaConfig?: CaptchaWidgetConfig | null;
 }) {
 	const router = useRouter();
 	const toLocalePath = useLocalePath();
@@ -1988,6 +2002,7 @@ export function InstitutionDraftWizardModal({
 						onCloseRequest={closeModal}
 						profile={profile}
 						onSubmitError={(message) => setSubmitError(message)}
+						captchaConfig={captchaConfig}
 					/>
 				</HorizontalStepper>
 			</div>
