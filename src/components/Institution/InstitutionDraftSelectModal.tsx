@@ -142,8 +142,12 @@ export function InstitutionDraftSelectModal({
 				"address.cultural_area": address?.cultural_area ?? "",
 				"address.lat": address?.lat ?? "",
 				"address.lng": address?.lng ?? "",
-				established_since: dateToPartialDateInputValue(baseDraft.established_since),
-				established_until: dateToPartialDateInputValue(baseDraft.established_until),
+				established_since: dateToPartialDateInputValue(
+					baseDraft.established_since,
+				),
+				established_until: dateToPartialDateInputValue(
+					baseDraft.established_until,
+				),
 			});
 			router.replace(toLocalePath("/institution/submission"));
 		},
