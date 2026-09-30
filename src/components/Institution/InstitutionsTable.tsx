@@ -8,6 +8,7 @@ import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import type { Institution, InstitutionTableRow } from "@/types/institution";
 import type { Category, FilterState } from "@/types";
 import { useAccountStore } from "@/lib/store/accountStore";
+import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { StatusDot } from "../ui/status-dot";
 import { InstitutionStatus } from "@/generated/prisma";
 import type { SubmissionType } from "@/generated/prisma";
@@ -129,11 +130,15 @@ function InstitutionsFilterPanel({
 	onRetry,
 	onFiltersChange,
 }: InstitutionsFilterPanelProps) {
+	const publicDistrictCount = useInstitutionStore(
+		(state) => state.districts.length,
+	);
+
 	useEffect(() => {
-		if (categoryGroups.length === 0 || districts.length === 0) {
+		if (categoryGroups.length === 0 || publicDistrictCount === 0) {
 			onRetry();
 		}
-	}, [categoryGroups.length, districts.length, onRetry]);
+	}, [categoryGroups.length, publicDistrictCount, onRetry]);
 
 	return (
 		<FilterPanel
