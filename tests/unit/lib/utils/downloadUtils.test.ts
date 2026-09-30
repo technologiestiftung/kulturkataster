@@ -647,6 +647,25 @@ describe("generateExcelBuffer", () => {
 		);
 	});
 
+	it("writes hyperlinks Excel accepts for long and non-ASCII URLs", () => {
+		const longUrl = `https://example.de/${"a".repeat(280)}`;
+		const buffer = generateExcelBuffer(
+			[{ Webseite: longUrl }, { Webseite: "https://mädchentreff.de/über" }],
+			"xlsx",
+		);
+		const sheetXml = readZipEntryText(buffer, "xl/worksheets/sheet1.xml");
+		const relsXml = readZipEntryText(
+			buffer,
+			"xl/worksheets/_rels/sheet1.xml.rels",
+		);
+
+		expect(sheetXml).not.toContain("tooltip=");
+		expect(relsXml).toContain(`Target="${longUrl}"`);
+		expect(relsXml).toContain(
+			'Target="https://xn--mdchentreff-l8a.de/%C3%BCber"',
+		);
+	});
+
 	it("wraps exported data cells so multiline notes stay visible from the top", () => {
 		const note = [
 			"Erster Teil der Notiz",
