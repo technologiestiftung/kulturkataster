@@ -278,6 +278,7 @@ The application supports different environment configurations:
 - `TRADUORA_CLIENT_SECRET`
 - `TRADUORA_PROJECT_ID`
 - `SUPABASE_SERVICE_ROLE_KEY` (if needed for server actions)
+- `CAP_URL`, `CAP_SITE_KEY`, `CAP_SECRET_KEY` (optional; Cap captcha for guest submissions, off when unset)
 
 ## Contributing
 
