@@ -3,7 +3,8 @@
 import type { Prisma } from "@/generated/prisma";
 import { SubmissionEntityType, SubmissionType } from "@/generated/prisma";
 import { getCurrentUserId } from "@/server/actions/auth";
-import { createSubmission } from "@/server/actions/submissions";
+import { isGuestCaptchaSatisfied } from "@/server/captcha/cap";
+import { createSubmissionAsUser } from "@/server/logic/submissionCreate";
 import { questionnaireRepo } from "@/server/data/questionnaireRepo";
 import { questionRepo } from "@/server/data/questionRepo";
 import { answerRepo } from "@/server/data/answerRepo";
@@ -221,16 +222,19 @@ async function submitAnswersForNewInstitution(params: {
 	if (params.newInstitution.newCategoryKeys.length > 0) {
 		await Promise.allSettled(
 			params.newInstitution.newCategoryKeys.map((key) =>
-				createSubmission({
-					entityType: SubmissionEntityType.category,
-					entityId: null,
-					type: SubmissionType.create,
-					data: { key },
-					meta: {
-						source: "questionnaire",
-						institutionSubmissionId: createdSubmission.id,
+				createSubmissionAsUser(
+					{
+						entityType: SubmissionEntityType.category,
+						entityId: null,
+						type: SubmissionType.create,
+						data: { key },
+						meta: {
+							source: "questionnaire",
+							institutionSubmissionId: createdSubmission.id,
+						},
 					},
-				}),
+					params.currentUserId,
+				),
 			),
 		);
 	}
@@ -244,6 +248,7 @@ export async function submitQuestionnaireAnswers(params: {
 	answers: { questionId: number; value: Prisma.InputJsonValue }[];
 	submitterName?: string;
 	submitterEmail?: string;
+	captchaToken?: string | null;
 }) {
 	const { institutionId, submissionId, newInstitution } = params;
 	const targetCount = [institutionId, submissionId, newInstitution].filter(
@@ -255,6 +260,9 @@ export async function submitQuestionnaireAnswers(params: {
 
 	try {
 		const currentUserId = await getCurrentUserId();
+		if (!(await isGuestCaptchaSatisfied(currentUserId, params.captchaToken))) {
+			return { ok: false as const, error: "captcha_failed" as const };
+		}
 
 		if (newInstitution) {
 			await submitAnswersForNewInstitution({
