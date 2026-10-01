@@ -6,6 +6,7 @@ import { Institution } from "@/types";
 import { useTranslation } from "react-i18next";
 import { PrivateBadge } from "../shared/PrivateBadge";
 import { CategoryIcon } from "@/components/shared/CategoryIcon";
+import { getCategoryLabel } from "@/lib/i18n/fieldLabels";
 
 export function CategoryItem({
 	data,
@@ -60,13 +61,13 @@ export function CategoryItem({
                             `}
 								>
 									<strong className="body2">
-										{tEnum(`enumMap.category.${category.key}`)}
+										{getCategoryLabel(tEnum, category.key)}
 									</strong>
 									{variant === "compact" && <span className="body2">•</span>}
 									{subCategories?.length
 										? subCategories.map((sub, index, filteredArray) => (
 												<span className="body2" key={sub.id}>
-													{tEnum(`enumMap.category.${sub.key}`)}
+													{getCategoryLabel(tEnum, sub.key)}
 													{index < filteredArray.length - 1 && ", "}
 												</span>
 											))
