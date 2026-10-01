@@ -113,16 +113,103 @@ describe("QuestionnaireInstitutionCreateForm", () => {
 		expect(getFieldNames(0)).toEqual([
 			"name",
 			"address.map",
-			"address.lng",
-			"address.lat",
 			"address.streetLine",
 			"address.address_suffix",
 			"address.zip",
 			"address.city",
-			"address.neighbourhood",
-			"address.district",
-			"address.cultural_area",
 			"established_since",
 		]);
+	});
+
+	it("requires street, zip and city but not established_since", () => {
+		render(
+			<QuestionnaireInstitutionCreateForm
+				categoryGroups={[]}
+				onCreated={vi.fn()}
+				onBack={vi.fn()}
+				backLabel="Zurück"
+				submitLabel="Weiter"
+			/>,
+		);
+
+		const basicFields = (
+			lastFormConfig?.fields?.[0] as {
+				fields: Array<{ name: string; required?: boolean }>;
+			}
+		).fields;
+		const requiredNames = basicFields
+			.filter((field) => field.required)
+			.map((field) => field.name);
+
+		expect(requiredNames).toEqual([
+			"name",
+			"address.streetLine",
+			"address.zip",
+			"address.city",
+		]);
+	});
+
+	const draftWithLocation = {
+		"address.lat": 52.52,
+		"address.lng": 13.405,
+		"address.district": "Mitte",
+		"address.neighbourhood": "Mitte",
+	};
+
+	it("keeps map-derived district/neighbourhood from initialValues while the location is unchanged", () => {
+		const onCreated = vi.fn();
+
+		render(
+			<QuestionnaireInstitutionCreateForm
+				categoryGroups={[]}
+				initialValues={draftWithLocation}
+				onCreated={onCreated}
+				onBack={vi.fn()}
+				backLabel="Zurück"
+				submitLabel="Weiter"
+			/>,
+		);
+
+		lastSubmitData = {
+			name: "Test Kulturort",
+			"address.city": "Berlin",
+			"address.lat": 52.52,
+			"address.lng": 13.405,
+		};
+		screen.getByText("mock-form-submit").click();
+
+		expect(onCreated).toHaveBeenCalledWith({
+			"address.district": "Mitte",
+			"address.neighbourhood": "Mitte",
+			name: "Test Kulturort",
+			"address.city": "Berlin",
+			"address.lat": 52.52,
+			"address.lng": 13.405,
+		});
+	});
+
+	it("drops the draft's district/neighbourhood once the location has changed", () => {
+		const onCreated = vi.fn();
+
+		render(
+			<QuestionnaireInstitutionCreateForm
+				categoryGroups={[]}
+				initialValues={draftWithLocation}
+				onCreated={onCreated}
+				onBack={vi.fn()}
+				backLabel="Zurück"
+				submitLabel="Weiter"
+			/>,
+		);
+
+		lastSubmitData = {
+			name: "Test Kulturort",
+			"address.city": "Potsdam",
+			"address.lat": 52.39,
+			"address.lng": 13.06,
+		};
+		screen.getByText("mock-form-submit").click();
+
+		expect(onCreated).toHaveBeenCalledWith(lastSubmitData);
 	});
 });
