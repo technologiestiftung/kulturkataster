@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { InstitutionReview } from "@/components/Institution/InstitutionReview";
 
 vi.mock("react-i18next", () => ({
@@ -27,15 +27,45 @@ vi.mock("@/lib/store/institutionStore", () => ({
 	) => selector({ categories: [] }),
 }));
 
+const accountState = vi.hoisted(() => ({
+	categories: [] as Array<Record<string, unknown>>,
+	institutionFieldPermissions: { read: [] as string[] },
+}));
+
 vi.mock("@/lib/store/accountStore", () => ({
-	useAccountStore: (
-		selector: (state: {
-			categories: Array<Record<string, unknown>>;
-		}) => unknown,
-	) => selector({ categories: [] }),
+	useAccountStore: (selector: (state: typeof accountState) => unknown) =>
+		selector(accountState),
 }));
 
 describe("InstitutionReview", () => {
+	afterEach(() => {
+		accountState.institutionFieldPermissions.read = [];
+	});
+
+	it("hides the culture index and its dimensions without read permission", () => {
+		render(
+			<InstitutionReview
+				data={{
+					name: "Institution",
+					culture_index: 42,
+					culture_index_location: 30,
+				}}
+			/>,
+		);
+
+		expect(screen.queryByText(/culture_index/)).not.toBeInTheDocument();
+		expect(screen.queryByText(/^30$/)).not.toBeInTheDocument();
+	});
+
+	it("shows the culture index to users who can read it", () => {
+		accountState.institutionFieldPermissions.read = ["culture_index"];
+		render(
+			<InstitutionReview data={{ name: "Institution", culture_index: 42 }} />,
+		);
+
+		expect(screen.getByText(/culture_index/)).toBeInTheDocument();
+	});
+
 	it("can hide the edit preview hint", () => {
 		render(
 			<InstitutionReview
