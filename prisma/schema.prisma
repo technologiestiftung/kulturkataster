@@ -221,6 +221,12 @@ model Institution {
   notes                             String?
   internal_notes                    String?
   culture_index                     Float?
+  culture_index_location            Float?
+  culture_index_property            Float?
+  culture_index_financial           Float?
+  culture_index_social_spatial      Float?
+  culture_index_visibility          Float?
+  culture_index_global              String?
   status                            InstitutionStatus   @default(public)
   import_identifier                 String?
   source                            String?

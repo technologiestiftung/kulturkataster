@@ -7,6 +7,7 @@ import ArrowNarrowRight from "@/icons/arrow-narrow-right.svg";
 import KRBLogo from "@/logos/KRB.svg";
 import KukaLargeLogo from "@/logos/kuka-large.svg";
 import SenateLogo from "@/logos/senate.svg";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ModalFooter } from "../ModalFooter";
 import { useRouter } from "next/navigation";
@@ -22,7 +23,11 @@ export function WelcomeModal() {
 	const router = useRouter();
 	const toLocalePath = useLocalePath();
 	const isMobile = useIsMobile();
+	// Routes without an @modal intercept (e.g. /accessibilitySettings) keep this
+	// slot mounted on soft navigation, so the dialog must close itself first.
+	const [isOpen, setIsOpen] = useState(true);
 	const closeWelcomeAndNavigate = (url: string) => {
+		setIsOpen(false);
 		setFirstTimeUser(false);
 		router.replace(url);
 	};
@@ -35,7 +40,7 @@ export function WelcomeModal() {
 
 	return (
 		<Dialog
-			open
+			open={isOpen}
 			onOpenChange={(open) => {
 				if (!open) {
 					setFirstTimeUser(false);

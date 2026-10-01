@@ -518,14 +518,6 @@
 			"claimSelectSubtitle": "Beantragen Sie die Verwaltungs-Rechte für Ihre Kulturorte",
 			"claimSelectTitle": "Kulturort verwalten",
 			"culturalArea": "Kulturareal",
-			"cultureIndexDimensions": {
-				"location": "Standort und Vertragsdimension",
-				"property": "Immobilien- und Gebäudedimension",
-				"financial": "Finanz- und Betriebsdimension",
-				"socialSpatial": "Sozialräumliche und nachfragebezogene Dimension",
-				"visibility": "Sichtbarkeits- und Öffentlichkeitsdimension",
-				"global": "Globale Einschätzungen"
-			},
 			"details": "Kulturort Details",
 			"district": "Bezirk",
 			"editSelectEmpty": "Keine Kulturorte gefunden.",
@@ -3372,6 +3364,36 @@
 				"description": "Bewertet, wie langfristig der Kulturort an seinem Standort gesichert ist, auf einer Skala von 0 (akut gefährdet) bis 100 (langfristig gesichert).",
 				"label": "Kulturort-Index",
 				"placeholder": "z. B. 75"
+			},
+			"culture_index_location": {
+				"description": "",
+				"label": "Standort und Vertragsdimension",
+				"placeholder": "z. B. 75"
+			},
+			"culture_index_property": {
+				"description": "",
+				"label": "Immobilien- und Gebäudedimension",
+				"placeholder": "z. B. 75"
+			},
+			"culture_index_financial": {
+				"description": "",
+				"label": "Finanz- und Betriebsdimension",
+				"placeholder": "z. B. 75"
+			},
+			"culture_index_social_spatial": {
+				"description": "",
+				"label": "Sozialräumliche und nachfragebezogene Dimension",
+				"placeholder": "z. B. 75"
+			},
+			"culture_index_visibility": {
+				"description": "",
+				"label": "Sichtbarkeits- und Öffentlichkeitsdimension",
+				"placeholder": "z. B. 75"
+			},
+			"culture_index_global": {
+				"description": "",
+				"label": "Globale Einschätzungen",
+				"placeholder": "Bitte eintragen"
 			},
 			"datenverwendung": {
 				"description": "",

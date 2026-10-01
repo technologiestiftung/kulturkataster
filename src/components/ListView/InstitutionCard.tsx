@@ -7,6 +7,8 @@ import {
 	sharedUseInfoConfig,
 	contactInfoConfig,
 	additionalInfoConfig,
+	cultureIndexInfoConfig,
+	hasCultureIndex,
 } from "@/components/Institution";
 import { Institution } from "@/types";
 import { memo } from "react";
@@ -115,9 +117,9 @@ const InstitutionCard = memo(function InstitutionCard({
 												type: "category",
 											},
 											{
-												id: "status_culture_index_group",
+												id: "status_group",
 												alwaysShow: false,
-												type: "statusCultureIndexGroup",
+												type: "statusGroup",
 											},
 											{
 												id: "address",
@@ -159,43 +161,46 @@ const InstitutionCard = memo(function InstitutionCard({
 								cardVariant: "none",
 								fields: [
 									{
-										id: "culture_index_protected_info",
+										type: "section",
+										id: "culture_index_section",
 										layout: { span: "half" },
-										type: "cultureIndexProtectedInfo",
+										cardVariant: "muted",
+										condition: hasCultureIndex,
+										fields: cultureIndexInfoConfig,
 									},
 									{
 										type: "section",
 										id: "funding",
 										layout: { span: "half" },
-										cardVariant: "tertiary",
+										cardVariant: "muted",
 										fields: organizationInfoConfig,
 									},
 									{
 										type: "section",
 										id: "facility",
 										layout: { span: "half" },
-										cardVariant: "tertiary",
+										cardVariant: "muted",
 										fields: facilityInfoConfig,
 									},
 									{
 										type: "section",
 										id: "shared_use",
 										layout: { span: "half" },
-										cardVariant: "tertiary",
+										cardVariant: "muted",
 										fields: sharedUseInfoConfig,
 									},
 									{
 										type: "section",
 										id: "organization",
 										layout: { span: "half" },
-										cardVariant: "tertiary",
+										cardVariant: "muted",
 										fields: detailsInfoConfig,
 									},
 									{
 										type: "section",
 										id: "additional",
 										layout: { span: "half" },
-										cardVariant: "tertiary",
+										cardVariant: "muted",
 										fields: additionalInfoConfig,
 									},
 								],
