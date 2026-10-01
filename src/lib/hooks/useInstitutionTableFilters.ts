@@ -10,6 +10,7 @@ import {
 } from "@/lib/utils/institutionUtils";
 import { defaultTableFilterState } from "@/components/FormWrapper/constants";
 import { useAccountStore } from "@/lib/store/accountStore";
+import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { isSubmissionRow } from "@/lib/utils/institutionTableUtils";
 import {
 	createEmptyCultureIndexRangeCounts,
@@ -31,19 +32,23 @@ export function useInstitutionTableFilters(
 ) {
 	const [filters, setFilters] = useState<FilterState>(defaultTableFilterState);
 
+	// Public districts keep the filter populated for roles that only see their
+	// own rows (e.g. guests); row districts cover drafts and private places.
+	const publicDistricts = useInstitutionStore((state) => state.districts);
 	const districts = useMemo(
 		() =>
 			Array.from(
 				new Set(
-					tableRows
-						.map((row) => row.address?.district)
-						.filter(
-							(district): district is string =>
-								typeof district === "string" && district.trim().length > 0,
-						),
+					[
+						...publicDistricts,
+						...tableRows.map((row) => row.address?.district),
+					].filter(
+						(district): district is string =>
+							typeof district === "string" && district.trim().length > 0,
+					),
 				),
-			).sort((a, b) => a?.localeCompare(b)),
-		[tableRows],
+			).sort((a, b) => a.localeCompare(b)),
+		[publicDistricts, tableRows],
 	);
 
 	const filteredTableRows = useMemo(() => {
@@ -98,7 +103,7 @@ export function useInstitutionTableFilters(
 			subcategoryCounts: {} as Record<string, number>,
 		};
 
-		if (filterCategoryGroups.length === 0 || tableRows.length === 0) {
+		if (filterCategoryGroups.length === 0) {
 			return counts;
 		}
 
