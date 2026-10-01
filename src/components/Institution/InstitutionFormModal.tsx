@@ -37,7 +37,10 @@ import { resolveCategoryIdsFromDraft } from "@/lib/utils/institutionCategoryUtil
 import { TFunction } from "i18next";
 import type { ReactNode } from "react";
 import { useInstitutionPrivateFieldResolver } from "@/lib/hooks/useInstitutionPrivateFieldResolver";
-import { applyInstitutionFieldAccess } from "@/lib/utils/institutionFieldAccess";
+import {
+	applyInstitutionFieldAccess,
+	omitInstitutionFields,
+} from "@/lib/utils/institutionFieldAccess";
 import { showSuccessToast } from "@/lib/utils/feedbackToast";
 import { triggerAccountRefresh } from "@/components/Account/AccountAutoRefresh";
 import { buildInstitutionFormInitialValues } from "@/lib/utils/institutionFormAdapter";
@@ -49,7 +52,11 @@ import {
 import { reportClientTelemetry } from "@/lib/utils/clientTelemetry";
 import { buildCategoryGroups } from "@/lib/utils/categoryUtils";
 import { withProfileContactFallback } from "@/lib/utils/institutionRelationFields";
-import { CULTURE_INDEX_SCORE_FIELDS } from "@/lib/constants/cultureIndexRanges";
+import {
+	CULTURE_INDEX_FIELDS,
+	CULTURE_INDEX_SCORE_FIELDS,
+	canReadCultureIndex,
+} from "@/lib/constants/cultureIndexRanges";
 type InstitutionFormModalProps = {
 	mode: "create" | "edit";
 	institution?: Institution | null;
@@ -1778,9 +1785,12 @@ export function InstitutionFormModal({
 			permissions:
 				permissionContext === "submission" ? null : institutionFieldPermissions,
 		});
+		// Submissions skip field permissions, but the culture index stays admin-only.
 		return {
 			...formConfig,
-			fields: filteredFields,
+			fields: canReadCultureIndex(institutionFieldPermissions.read)
+				? filteredFields
+				: omitInstitutionFields(filteredFields, CULTURE_INDEX_FIELDS),
 		};
 	}, [formConfig, institutionFieldPermissions, mode, permissionContext]);
 

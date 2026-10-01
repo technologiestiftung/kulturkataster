@@ -494,6 +494,7 @@
 			"validation": {
 				"invalidEmail": "Ungültige E-Mail-Adresse",
 				"invalidNumber": "Ungültige Zahl",
+				"numberRange": "Bitte eine Zahl zwischen {{min}} und {{max}} angeben",
 				"invalidPartialDate": "Bitte als TT.MM.JJJJ, MM.JJJJ oder JJJJ angeben",
 				"invalidPhone": "Ungültige Telefonnummer",
 				"invalidUrl": "Ungültige URL",

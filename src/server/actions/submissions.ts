@@ -43,6 +43,7 @@ import {
 } from "@/types/submission";
 import { updateSubmissionAuditStatus } from "@/server/logic/submissionAudit";
 import { createSubmissionAsUser } from "@/server/logic/submissionCreate";
+import { stripUnreadableCultureIndex } from "@/server/logic/submissionCultureIndex";
 import { isGuestCaptchaSatisfied } from "@/server/captcha/cap";
 import {
 	normalizeOptionalSubmissionJson,
@@ -328,11 +329,12 @@ export async function submitInstitutionDraft(params: {
 export async function updateSubmission(input: SubmissionUpdatePayload) {
 	return runWithServerRequestContext(
 		async () => {
-			const validatedInput = validateSubmissionUpdateInput(input);
+			const parsedInput = validateSubmissionUpdateInput(input);
 			const currentUserId = await getCurrentUserId();
 			setRequestContext({ userId: currentUserId });
 			const ctx = await getAccessContextForUser(currentUserId);
 			authorizeTable(ctx, "submission", "update");
+			const validatedInput = stripUnreadableCultureIndex(ctx, parsedInput);
 			const scope = getTableScope(ctx, "submission", "update");
 			const ownerId = requireScopeOrUser(scope, currentUserId);
 			const where: Prisma.SubmissionWhereInput = ownerId
