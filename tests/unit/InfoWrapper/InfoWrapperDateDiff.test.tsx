@@ -35,7 +35,7 @@ const config: InfoWrapperConfig = {
 			id: "established_since",
 			label: "Established since",
 			value: "established_since",
-			type: "year",
+			type: "partialDate",
 		},
 	],
 };

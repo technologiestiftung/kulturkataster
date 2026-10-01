@@ -1,5 +1,6 @@
 import type { TFunction } from "i18next";
 import { getFieldError } from "@/lib/i18n/fieldLabels";
+import { parsePartialDate } from "@/lib/utils/partialDate";
 import { normalizeUrl } from "@/lib/utils/sanitizerUtils";
 import { isValidPhoneValue, normalizePhoneInput } from "@/lib/utils/phoneUtils";
 import type {
@@ -84,7 +85,12 @@ const getTypeValidationMessage = (
 	field: FormWrapperFieldConfig,
 	t: (key: string, options?: Record<string, unknown>) => string,
 	tEnum: TFunction,
-	fallbackKey: "invalidEmail" | "invalidNumber" | "invalidPhone" | "invalidUrl",
+	fallbackKey:
+		| "invalidEmail"
+		| "invalidNumber"
+		| "invalidPartialDate"
+		| "invalidPhone"
+		| "invalidUrl",
 ) => {
 	const fieldMetaKey = getFieldMetaKey(field);
 	const fieldMessage =
@@ -151,11 +157,9 @@ const buildTypeValidator = (
 			normalize: true,
 		});
 	}
-	if (field.type === "year") {
-		return year(
-			getTypeValidationMessage(field, t, tEnum, "invalidNumber"),
-			field.min,
-			field.max,
+	if (field.type === "partialDate") {
+		return partialDate(
+			getTypeValidationMessage(field, t, tEnum, "invalidPartialDate"),
 		);
 	}
 
@@ -189,21 +193,12 @@ export const numeric = (message: string): FieldValidator =>
 		return Number.isFinite(Number(value.trim())) ? undefined : message;
 	});
 
-export const year = (
-	message: string,
-	min?: number,
-	max?: number,
-): FieldValidator =>
+export const partialDate = (message: string): FieldValidator =>
 	withNormalizer((value) => {
 		if (typeof value !== "string" || value.trim().length === 0) {
 			return undefined;
 		}
-		const trimmed = value.trim();
-		if (!/^\d{4}$/.test(trimmed)) return message;
-		const yearValue = Number(trimmed);
-		if (min !== undefined && yearValue < min) return message;
-		if (max !== undefined && yearValue > max) return message;
-		return undefined;
+		return parsePartialDate(value) ? undefined : message;
 	});
 
 export const tel = (message: string): FieldValidator =>

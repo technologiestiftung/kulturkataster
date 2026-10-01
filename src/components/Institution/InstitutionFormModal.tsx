@@ -919,8 +919,10 @@ const buildInstitutionFormConfig = ({
 									"Bestehen am Standort seit",
 								),
 								description: fieldDescription("established_since"),
-								type: "year",
-								placeholder: fieldPlaceholder("established_since") || "JJJJ",
+								type: "partialDate",
+								placeholder:
+									fieldPlaceholder("established_since") ||
+									"TT.MM.JJJJ, MM.JJJJ oder JJJJ",
 							},
 							{
 								name: "established_until",
@@ -929,8 +931,10 @@ const buildInstitutionFormConfig = ({
 									"Bestehen am Standort bis",
 								),
 								description: fieldDescription("established_until"),
-								type: "year",
-								placeholder: fieldPlaceholder("established_until") || "JJJJ",
+								type: "partialDate",
+								placeholder:
+									fieldPlaceholder("established_until") ||
+									"TT.MM.JJJJ, MM.JJJJ oder JJJJ",
 							},
 						],
 					},

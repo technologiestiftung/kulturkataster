@@ -69,8 +69,24 @@ export function QuestionnaireInstitutionCreateForm({
 	const fieldLabel = (key: string) => getFieldLabel(t, key);
 	const fieldPlaceholder = (key: string) => getFieldPlaceholder(t, key);
 
+	// District/neighbourhood have no visible field here (they're filled by the map
+	// and geocoding), so FormWrapper doesn't restore them from initialValues when
+	// the respondent comes back to this step. Carry them over only while the
+	// location is unchanged; a moved pin must not keep the old Bezirk/Stadtteil.
 	const handleSubmit = (data: Record<string, unknown>) => {
-		onCreated(data);
+		const isSameLocation =
+			initialValues !== undefined &&
+			data["address.lat"] === initialValues["address.lat"] &&
+			data["address.lng"] === initialValues["address.lng"];
+		if (!isSameLocation) {
+			onCreated(data);
+			return;
+		}
+		onCreated({
+			"address.district": initialValues["address.district"],
+			"address.neighbourhood": initialValues["address.neighbourhood"],
+			...data,
+		});
 	};
 
 	const config: FormWrapperConfig = {
@@ -108,24 +124,11 @@ export function QuestionnaireInstitutionCreateForm({
 						},
 					},
 					{
-						name: "address.lng",
-						fieldMetaKey: "lng",
-						label: fieldLabel("lng"),
-						type: "number",
-						layout: { span: "half" },
-					},
-					{
-						name: "address.lat",
-						fieldMetaKey: "lat",
-						label: fieldLabel("lat"),
-						type: "number",
-						layout: { span: "half" },
-					},
-					{
 						name: "address.streetLine",
 						fieldMetaKey: "street",
 						label: `${fieldLabel("street")} & ${fieldLabel("street_number")}`,
 						type: "text",
+						required: true,
 						layout: { span: "full" },
 						placeholder: fieldPlaceholder("street"),
 						onBlur: onAddressBlur,
@@ -143,6 +146,7 @@ export function QuestionnaireInstitutionCreateForm({
 						fieldMetaKey: "zipcode",
 						label: fieldLabel("zipcode"),
 						type: "text",
+						required: true,
 						layout: { span: "half" },
 						placeholder: fieldPlaceholder("zipcode"),
 						onBlur: onAddressBlur,
@@ -152,42 +156,20 @@ export function QuestionnaireInstitutionCreateForm({
 						fieldMetaKey: "city",
 						label: fieldLabel("city"),
 						type: "text",
+						required: true,
 						layout: { span: "half" },
 						placeholder: fieldPlaceholder("city"),
 						onBlur: onAddressBlur,
 					},
 					{
-						name: "address.neighbourhood",
-						fieldMetaKey: "neighbourhood",
-						label: fieldLabel("neighbourhood"),
-						type: "text",
-						layout: { span: "half" },
-						placeholder: fieldPlaceholder("neighbourhood"),
-					},
-					{
-						name: "address.district",
-						fieldMetaKey: "district",
-						label: fieldLabel("district"),
-						type: "text",
-						layout: { span: "half" },
-						placeholder: fieldPlaceholder("district"),
-					},
-					{
-						name: "address.cultural_area",
-						fieldMetaKey: "cultural_area",
-						label: fieldLabel("cultural_area"),
-						type: "text",
-						layout: { span: "full" },
-						placeholder: fieldPlaceholder("cultural_area"),
-					},
-					{
 						name: "established_since",
 						label:
 							"Seit wann befindet sich die Einrichtung am aktuellen Standort?",
-						type: "year",
-						required: true,
+						type: "partialDate",
 						layout: { span: "full" },
-						placeholder: fieldPlaceholder("established_since") || "JJJJ",
+						placeholder:
+							fieldPlaceholder("established_since") ||
+							"TT.MM.JJJJ, MM.JJJJ oder JJJJ",
 					},
 				],
 			},

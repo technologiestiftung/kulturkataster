@@ -445,7 +445,7 @@ const getContent = (
 			);
 
 		case "date":
-		case "year":
+		case "partialDate":
 			return (
 				<InfoItem
 					label={label}
@@ -555,7 +555,7 @@ const renderFieldContent = (
 			case "boolean":
 			case "fundingSources":
 			case "date":
-			case "year":
+			case "partialDate":
 			case "title":
 				return (
 					hasRenderableDisplayValue(value) ||
@@ -630,7 +630,7 @@ const renderFieldContent = (
 			case "boolean":
 			case "fundingSources":
 			case "date":
-			case "year":
+			case "partialDate":
 			case "title":
 				return hasRenderableDisplayValue(value);
 			case "culture_index":
@@ -686,7 +686,7 @@ const renderFieldContent = (
 		if (field.type === "boolean") {
 			return t(`enumMap.boolean.${String(displayValue)}`);
 		}
-		if (field.type === "date" || field.type === "year") {
+		if (field.type === "date" || field.type === "partialDate") {
 			return formatDateByType(displayValue, field.type);
 		}
 		if (
@@ -727,7 +727,7 @@ const renderFieldContent = (
 			if (field.type === "fundingSources") {
 				return String(originalDisplay) !== String(newDisplay ?? "");
 			}
-			if (field.type === "date" || field.type === "year") {
+			if (field.type === "date" || field.type === "partialDate") {
 				return normalizeDateForDiff(value) !== normalizeDateForDiff(newValue);
 			}
 			if (

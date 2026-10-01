@@ -15,6 +15,7 @@ import {
 	buildCategoryFilterStateFromIds,
 	resolveCategoryIdsFromDraft,
 } from "@/lib/utils/institutionCategoryUtils";
+import { formatPartialDate } from "@/lib/utils/partialDate";
 
 const dateToInputValue = (value: unknown): string => {
 	const parsed = toDate(value);
@@ -25,9 +26,9 @@ const dateToInputValue = (value: unknown): string => {
 	return `${year}-${month}-${day}`;
 };
 
-export const dateToYearInputValue = (value: unknown): string => {
+export const dateToPartialDateInputValue = (value: unknown): string => {
 	const parsed = toDate(value);
-	return parsed ? String(parsed.getFullYear()) : "";
+	return parsed ? formatPartialDate(parsed) : "";
 };
 
 export const buildInstitutionCategoryFilterState = (
@@ -140,10 +141,10 @@ export const buildInstitutionFormInitialValues = (
 		rental_contract_end: dateToInputValue(
 			resolvedInstitution?.rental_contract_end,
 		),
-		established_since: dateToYearInputValue(
+		established_since: dateToPartialDateInputValue(
 			resolvedInstitution?.established_since,
 		),
-		established_until: dateToYearInputValue(
+		established_until: dateToPartialDateInputValue(
 			resolvedInstitution?.established_until,
 		),
 		closing_reason: resolvedInstitution?.closing_reason ?? undefined,

@@ -13,7 +13,7 @@ import {
 	groupQuestionsByStep,
 	type QuestionnaireLocale,
 } from "@/lib/utils/questionnaireFormAdapter";
-import { buildAddressFromFormData } from "@/lib/utils/formUtils";
+import { buildAddressFromFormData, toDate } from "@/lib/utils/formUtils";
 import { resolveCategoryIdsFromDraft } from "@/lib/utils/institutionCategoryUtils";
 import { QuestionnaireConsentStep } from "@/components/Questionnaire/QuestionnaireConsentStep";
 import { QuestionnaireInstitutionLinkStep } from "@/components/Questionnaire/QuestionnaireInstitutionLinkStep";
@@ -51,7 +51,8 @@ const buildNewInstitutionPayload = (
 	name: data.name,
 	address: buildAddressFromFormData(data),
 	categoryIds: resolveCategoryIdsFromDraft(data, categoryGroups),
-	established_since: data.established_since,
+	// Typed as TT.MM.JJJJ / MM.JJJJ / JJJJ — store the resolved date, not the raw text.
+	established_since: toDate(data.established_since)?.toISOString(),
 	newCategoryKeys: splitFreeTextList(data.newCategory),
 });
 
