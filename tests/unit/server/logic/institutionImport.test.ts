@@ -150,6 +150,9 @@ const makeInstitutionWithCultureIndex = (): Institution => ({
 	culture_index_global: "Offen",
 });
 
+// Headers come from the real translations, which Traduora can rename.
+const NAME_HEADER = de.enumMap.field_names.name.label;
+
 const setCell = (csvRows: string[][], header: string, value: string) => {
 	const index = csvRows[0].indexOf(header);
 	expect(index).toBeGreaterThanOrEqual(0);
@@ -316,7 +319,7 @@ describe("planInstitutionImport", () => {
 	it("creates rows without an ID and maps translated values back", () => {
 		const csvRows = exportCsv([makeInstitution()]);
 		setCell(csvRows, "ID", "");
-		setCell(csvRows, "Kultureinrichtung", "Beta");
+		setCell(csvRows, NAME_HEADER, "Beta");
 
 		const { plan } = planFromCsv(csvRows, []);
 
@@ -340,7 +343,7 @@ describe("planInstitutionImport", () => {
 	it("reports empty required cells, type errors and unknown IDs", () => {
 		const institution = makeInstitution();
 		const csvRows = exportCsv([institution, { ...institution, id: 3000 }]);
-		setCell(csvRows, "Kultureinrichtung", "");
+		setCell(csvRows, NAME_HEADER, "");
 		setCell(csvRows, "Kapazität", "viele");
 
 		const { plan } = planFromCsv(csvRows, [institution]);
@@ -357,7 +360,7 @@ describe("planInstitutionImport", () => {
 			institution,
 		]);
 		expect(emptyNamePlan.issues).toEqual([
-			{ row: 2, column: "Kultureinrichtung", code: "emptyRequired" },
+			{ row: 2, column: NAME_HEADER, code: "emptyRequired" },
 		]);
 	});
 
