@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
 	createSubmission,
 	reviewSubmission,
+	submitInstitutionDraft,
 	saveSubmissionNote,
 	updateSubmission,
 } from "@/server/actions/submissions";
@@ -10,6 +11,12 @@ import { getCurrentUserId } from "@/server/actions/auth";
 
 vi.mock("@/server/actions/auth", () => ({
 	getCurrentUserId: vi.fn().mockResolvedValue("user-1"),
+}));
+
+const isGuestCaptchaSatisfiedMock = vi.hoisted(() => vi.fn());
+
+vi.mock("@/server/captcha/cap", () => ({
+	isGuestCaptchaSatisfied: isGuestCaptchaSatisfiedMock,
 }));
 
 vi.mock("@/server/utils/actionsUtils", () => ({
@@ -121,6 +128,8 @@ describe("server actions: submissions", () => {
 		canFieldsMock.mockReset();
 		updateWhereMock.mockReset();
 		createMock.mockReset();
+		isGuestCaptchaSatisfiedMock.mockReset();
+		isGuestCaptchaSatisfiedMock.mockResolvedValue(true);
 		createNoteMock.mockReset();
 		findByIdMock.mockReset();
 		findFirstMock.mockReset();
@@ -191,6 +200,82 @@ describe("server actions: submissions", () => {
 			}),
 		);
 		expect(createMock).toHaveBeenCalled();
+	});
+
+	it("createSubmission rejects a guest whose captcha fails and writes nothing", async () => {
+		vi.mocked(getCurrentUserId).mockResolvedValueOnce(null);
+		isGuestCaptchaSatisfiedMock.mockResolvedValue(false);
+
+		await expect(
+			createSubmission(
+				{
+					entityType: SubmissionEntityType.institution,
+					entityId: null,
+					type: SubmissionType.create,
+					data: { name: "Spam" },
+				},
+				"bad-token",
+			),
+		).rejects.toThrow("Captcha verification failed.");
+
+		expect(isGuestCaptchaSatisfiedMock).toHaveBeenCalledWith(null, "bad-token");
+		expect(createMock).not.toHaveBeenCalled();
+	});
+
+	it("submitInstitutionDraft returns captcha_failed for a failed guest captcha and writes nothing", async () => {
+		vi.mocked(getCurrentUserId).mockResolvedValueOnce(null);
+		isGuestCaptchaSatisfiedMock.mockResolvedValue(false);
+
+		const result = await submitInstitutionDraft({
+			submission: {
+				entityType: SubmissionEntityType.institution,
+				entityId: null,
+				type: SubmissionType.create,
+				data: { name: "Spam" },
+			},
+			proposedCategoryKeys: ["Archiv"],
+			captchaToken: "bad-token",
+		});
+
+		expect(result).toEqual({ ok: false, error: "captcha_failed" });
+		expect(createMock).not.toHaveBeenCalled();
+	});
+
+	it("submitInstitutionDraft checks the captcha once for the institution and its proposed categories", async () => {
+		vi.mocked(getCurrentUserId).mockResolvedValueOnce(null);
+		getTableScopeMock.mockReturnValue("all");
+		requireScopeOrUserMock.mockReturnValue(null);
+		createMock.mockResolvedValueOnce({ id: 321 }).mockResolvedValue({ id: 1 });
+
+		const result = await submitInstitutionDraft({
+			submission: {
+				entityType: SubmissionEntityType.institution,
+				entityId: null,
+				type: SubmissionType.create,
+				data: { name: "Neuer Ort" },
+			},
+			proposedCategoryKeys: ["Atelier", " Atelier ", "", "Probe"],
+			captchaToken: "token-1",
+		});
+
+		expect(result).toEqual({ ok: true });
+		expect(isGuestCaptchaSatisfiedMock).toHaveBeenCalledTimes(1);
+		expect(isGuestCaptchaSatisfiedMock).toHaveBeenCalledWith(null, "token-1");
+		expect(createMock).toHaveBeenCalledTimes(3);
+		expect(createMock.mock.calls.map(([data]) => data)).toEqual([
+			expect.objectContaining({
+				entity_type: SubmissionEntityType.institution,
+			}),
+			expect.objectContaining({
+				entity_type: SubmissionEntityType.category,
+				data: { key: "Atelier" },
+				meta: { source: "institution_draft", institutionSubmissionId: 321 },
+			}),
+			expect.objectContaining({
+				entity_type: SubmissionEntityType.category,
+				data: { key: "Probe" },
+			}),
+		]);
 	});
 
 	it("createSubmission does not run pending duplicate check for anonymous users", async () => {

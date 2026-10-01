@@ -1,5 +1,20 @@
 {
 	"common": {
+		"captcha": {
+			"error": "Fehler – bitte erneut versuchen",
+			"errorAriaLabel": "Ein Fehler ist aufgetreten, bitte erneut versuchen",
+			"failed": "Die Sicherheitsprüfung ist fehlgeschlagen oder abgelaufen. Bitte bestätigen Sie erneut, dass Sie kein Roboter sind, und senden Sie noch einmal ab.",
+			"hint": "Bitte bestätigen Sie vor dem Absenden, dass Sie kein Roboter sind.",
+			"initial": "Ich bin kein Roboter",
+			"required": "Bitte bestätigen Sie, dass Sie kein Roboter sind",
+			"solved": "Geprüft",
+			"troubleshooting": "Hilfe",
+			"verifiedAriaLabel": "Geprüft",
+			"verifyAriaLabel": "Klicken, um zu bestätigen, dass Sie kein Roboter sind",
+			"verifying": "Wird geprüft …",
+			"verifyingAriaLabel": "Wird geprüft, bitte warten",
+			"wasmDisabled": "Aktivieren Sie WebAssembly für eine schnellere Prüfung"
+		},
 		"about": "Über",
 		"accessibility": {
 			"contrast": {

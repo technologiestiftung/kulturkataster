@@ -1,5 +1,20 @@
 {
 	"common": {
+		"captcha": {
+			"error": "Error – please try again",
+			"errorAriaLabel": "An error occurred, please try again",
+			"failed": "The security check failed or expired. Please verify again that you're not a robot and resubmit.",
+			"hint": "Please verify you're not a robot before submitting.",
+			"initial": "I'm not a robot",
+			"required": "Please verify you're not a robot",
+			"solved": "Verified",
+			"troubleshooting": "Help",
+			"verifiedAriaLabel": "Verified",
+			"verifyAriaLabel": "Click to verify you're not a robot",
+			"verifying": "Verifying…",
+			"verifyingAriaLabel": "Verifying, please wait",
+			"wasmDisabled": "Enable WebAssembly for faster verification"
+		},
 		"about": "About",
 		"accessibility": {
 			"contrast": {
