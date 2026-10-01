@@ -1,6 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { act, fireEvent, render, screen } from "@testing-library/react";
+import type { ReactElement } from "react";
+import {
+	act,
+	fireEvent,
+	render,
+	screen,
+	waitFor,
+} from "@testing-library/react";
 import { QuestionnaireWizardModal } from "@/components/Questionnaire/QuestionnaireWizardModal";
 import {
 	checkQuestionnaireCompletion,
@@ -469,7 +476,55 @@ describe("QuestionnaireWizardModal", () => {
 			questionnaireId: 1,
 			institutionId: 5,
 			answers: [{ questionId: 10, value: "my answer" }],
+			captchaToken: null,
 		});
+	});
+
+	it("requires guests to solve the captcha on the last block and sends the token", async () => {
+		mockStepperState.currentStepId = "block-1";
+		vi.mocked(submitQuestionnaireAnswers).mockResolvedValue({ ok: true });
+
+		render(
+			<QuestionnaireWizardModal
+				routePath="/questionnaire"
+				questionnaire={buildQuestionnaire() as any}
+				categoryGroups={[]}
+				captchaConfig={{
+					apiEndpoint: "https://cap.example.org/a1b2c3d4e5/",
+					wasmUrl: "https://cap.example.org/assets/cap_wasm_bg.wasm",
+					hashwxUrl: "https://cap.example.org/assets/hashwx.wasm",
+				}}
+			/>,
+		);
+		act(() => {
+			useQuestionnaireDraftStore.getState().setInstitutionId(5);
+		});
+
+		const captchaField = lastFormConfig?.fields?.find(
+			(field) => field.name === "footerContent",
+		) as {
+			type: string;
+			customField: ReactElement<{
+				onTokenChange: (token: string | null) => void;
+			}>;
+		};
+		expect(captchaField.type).toBe("custom");
+
+		mockFormSubmitData = { q1: "my answer" };
+		fireEvent.click(screen.getByText("mock-form-submit"));
+		await waitFor(() => {
+			expect(submitQuestionnaireAnswers).not.toHaveBeenCalled();
+		});
+
+		act(() => {
+			captchaField.customField.props.onTokenChange("cap-token-1");
+		});
+		fireEvent.click(screen.getByText("mock-form-submit"));
+
+		await screen.findByText("Vielen Dank für Ihre Teilnahme!");
+		expect(submitQuestionnaireAnswers).toHaveBeenCalledWith(
+			expect.objectContaining({ captchaToken: "cap-token-1" }),
+		);
 	});
 
 	it("clears the persisted draft after a successful submission, so a later visit doesn't carry over the old institutionId", async () => {

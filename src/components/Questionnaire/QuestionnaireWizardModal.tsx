@@ -11,6 +11,7 @@ import { Modal } from "@/components/Modals/Modal";
 import { useRoutedModalClose } from "@/components/Modals/useRoutedModalClose";
 import { groupQuestionsByStep } from "@/lib/utils/questionnaireFormAdapter";
 import { QuestionnaireWizardContent } from "@/components/Questionnaire/QuestionnaireWizardContent";
+import type { CaptchaWidgetConfig } from "@/types/captcha";
 import type { Category } from "@/types";
 
 type QuestionnaireWithQuestions = {
@@ -28,6 +29,7 @@ export function QuestionnaireWizardModal({
 	initialSubmissionId,
 	initialStepId,
 	initialShowThankYou,
+	captchaConfig = null,
 }: {
 	routePath?: string;
 	questionnaire: QuestionnaireWithQuestions;
@@ -36,6 +38,7 @@ export function QuestionnaireWizardModal({
 	initialSubmissionId?: number;
 	initialStepId?: string;
 	initialShowThankYou?: boolean;
+	captchaConfig?: CaptchaWidgetConfig | null;
 }) {
 	const { t } = useTranslation();
 	const closeModal = useRoutedModalClose({});
@@ -98,6 +101,7 @@ export function QuestionnaireWizardModal({
 						initialInstitutionId={initialInstitutionId}
 						initialSubmissionId={initialSubmissionId}
 						initialShowThankYou={initialShowThankYou}
+						captchaConfig={captchaConfig}
 					/>
 				</HorizontalStepper>
 			</div>

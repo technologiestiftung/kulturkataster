@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { QuestionnaireWizardModal } from "@/components/Questionnaire/QuestionnaireWizardModal";
 import { QuestionnaireUnavailable } from "@/components/Questionnaire/QuestionnaireUnavailable";
 
@@ -10,8 +10,10 @@ vi.mock("@/components/Questionnaire/QuestionnaireUnavailable", () => ({
 	QuestionnaireUnavailable: () => null,
 }));
 
+const getCurrentUserIdMock = vi.fn().mockResolvedValue(null);
 vi.mock("@/server/actions/auth", () => ({
 	getCurrentProfile: vi.fn().mockResolvedValue(null),
+	getCurrentUserId: getCurrentUserIdMock,
 }));
 
 const getOpenQuestionnaireMock = vi.fn();
@@ -28,6 +30,11 @@ vi.mock("@/server/actions/categories", () => ({
 }));
 
 describe("questionnaire page integration", () => {
+	afterEach(() => {
+		vi.unstubAllEnvs();
+		getCurrentUserIdMock.mockResolvedValue(null);
+	});
+
 	it("renders the wizard modal when a questionnaire is open", async () => {
 		getOpenQuestionnaireMock.mockResolvedValue({
 			ok: true,
@@ -49,6 +56,7 @@ describe("questionnaire page integration", () => {
 				initialSubmissionId: undefined,
 				initialStepId: undefined,
 				initialShowThankYou: false,
+				captchaConfig: null,
 			}),
 		});
 	});
@@ -185,7 +193,34 @@ describe("questionnaire page integration", () => {
 				categoryGroups,
 				initialSubmissionId: 7,
 				initialShowThankYou: true,
+				captchaConfig: null,
 			}),
 		});
+	});
+
+	it("passes the public captcha config to guests only when Cap is configured", async () => {
+		vi.stubEnv("CAP_URL", "https://cap.example.org/");
+		vi.stubEnv("CAP_SITE_KEY", "site-key");
+		vi.stubEnv("CAP_SECRET_KEY", "secret-key");
+		getOpenQuestionnaireMock.mockResolvedValue({
+			ok: true,
+			questionnaire: { id: 1, title: "Survey", questions: [] },
+		});
+		const pageModule = await import("@/app/[locale]/questionnaire/page");
+
+		const guestResult = await pageModule.default({
+			searchParams: Promise.resolve({}),
+		});
+		expect(guestResult.props.captchaConfig).toEqual({
+			apiEndpoint: "https://cap.example.org/site-key/",
+			wasmUrl: "https://cap.example.org/assets/cap_wasm_bg.wasm",
+			hashwxUrl: "https://cap.example.org/assets/hashwx.wasm",
+		});
+
+		getCurrentUserIdMock.mockResolvedValue("user-1");
+		const userResult = await pageModule.default({
+			searchParams: Promise.resolve({}),
+		});
+		expect(userResult.props.captchaConfig).toBeNull();
 	});
 });
