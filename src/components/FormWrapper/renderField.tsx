@@ -721,6 +721,7 @@ const renderFieldContent = (
 						)}
 						itemClassName={cn(hasIssue && "border-destructive-secondary")}
 						disabled={field.disabled}
+						stackOnMobile
 					/>
 				</div>
 			)}
