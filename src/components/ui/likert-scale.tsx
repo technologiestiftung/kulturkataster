@@ -18,6 +18,8 @@ export type LikertScaleProps = Omit<
 	containerClassName?: string;
 	itemClassName?: string;
 	labelClassName?: string;
+	/** Below `md`, list the options vertically instead of a horizontal scroll row. */
+	stackOnMobile?: boolean;
 };
 
 const LikertScale = React.forwardRef<
@@ -33,7 +35,9 @@ const LikertScale = React.forwardRef<
 			labelClassName,
 			name,
 			id,
-			orientation = "horizontal",
+			stackOnMobile = false,
+			// Stacked on mobile, arrow keys must work in both directions.
+			orientation = stackOnMobile ? undefined : "horizontal",
 			...props
 		},
 		ref,
@@ -50,6 +54,7 @@ const LikertScale = React.forwardRef<
 					orientation={orientation}
 					className={cn(
 						"relative flex min-w-full items-start gap-4 my-2",
+						stackOnMobile && "flex-col gap-3 md:flex-row md:gap-4",
 						className,
 					)}
 					{...props}
@@ -57,7 +62,10 @@ const LikertScale = React.forwardRef<
 					{options.length > 1 && (
 						<div
 							aria-hidden="true"
-							className="pointer-events-none absolute left-10 right-10 top-3.5 h-px bg-border md:top-3"
+							className={cn(
+								"pointer-events-none absolute left-10 right-10 top-3.5 h-px bg-border md:top-3",
+								stackOnMobile && "hidden md:block",
+							)}
 						/>
 					)}
 					{options.map((option) => {
@@ -65,7 +73,10 @@ const LikertScale = React.forwardRef<
 						return (
 							<div
 								key={option.value}
-								className="relative flex min-w-16 flex-[1_0_auto] flex-col items-center gap-1 px-2"
+								className={cn(
+									"relative flex min-w-16 flex-[1_0_auto] flex-col items-center gap-1 px-2",
+									stackOnMobile && "flex-row gap-3 md:flex-col md:gap-1",
+								)}
 							>
 								<RadioGroupItem
 									id={itemId}
@@ -80,6 +91,8 @@ const LikertScale = React.forwardRef<
 									emphasize={false}
 									className={cn(
 										"max-w-[110px] justify-center text-center",
+										stackOnMobile &&
+											"max-w-none justify-start text-left md:max-w-[110px] md:justify-center md:text-center",
 										labelClassName,
 									)}
 								>
