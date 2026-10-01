@@ -82,8 +82,14 @@ vi.mock("@/server/actions/auth", () => ({
 	getCurrentUserId: getCurrentUserIdMock,
 }));
 
-vi.mock("@/server/actions/submissions", () => ({
-	createSubmission: createSubmissionMock,
+const isGuestCaptchaSatisfiedMock = vi.hoisted(() => vi.fn());
+
+vi.mock("@/server/captcha/cap", () => ({
+	isGuestCaptchaSatisfied: isGuestCaptchaSatisfiedMock,
+}));
+
+vi.mock("@/server/logic/submissionCreate", () => ({
+	createSubmissionAsUser: createSubmissionMock,
 }));
 
 vi.mock("@/server/prisma", () => ({
@@ -157,6 +163,8 @@ describe("server actions: questionnaires", () => {
 		txSubmissionCreateMock.mockReset();
 		txAnswerCreateManyMock.mockReset();
 		createSubmissionMock.mockReset();
+		isGuestCaptchaSatisfiedMock.mockReset();
+		isGuestCaptchaSatisfiedMock.mockResolvedValue(true);
 		validateSubmissionCreateInputMock.mockClear();
 		validateSubmissionCreateInputMock.mockImplementation(
 			(input: unknown) => input,
@@ -256,6 +264,23 @@ describe("server actions: questionnaires", () => {
 				{ questionId: 11, value: 5 },
 			],
 		};
+
+		it("rejects a guest whose captcha fails before writing any answers", async () => {
+			getCurrentUserIdMock.mockResolvedValue(null);
+			isGuestCaptchaSatisfiedMock.mockResolvedValue(false);
+
+			const result = await submitQuestionnaireAnswers({
+				...baseParams,
+				captchaToken: "bad-token",
+			});
+
+			expect(result).toEqual({ ok: false, error: "captcha_failed" });
+			expect(isGuestCaptchaSatisfiedMock).toHaveBeenCalledWith(
+				null,
+				"bad-token",
+			);
+			expect(createManyMock).not.toHaveBeenCalled();
+		});
 
 		it("stores created_by from the logged-in user and no submitter fields", async () => {
 			getCurrentUserIdMock.mockResolvedValue("user-1");
@@ -551,12 +576,14 @@ describe("server actions: questionnaires", () => {
 							institutionSubmissionId: 99,
 						},
 					}),
+					"user-1",
 				);
 				expect(createSubmissionMock).toHaveBeenCalledWith(
 					expect.objectContaining({
 						entityType: "category",
 						data: { key: "Werkstatt" },
 					}),
+					"user-1",
 				);
 			});
 

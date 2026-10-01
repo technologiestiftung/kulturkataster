@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import type { Question } from "@/generated/prisma";
 import { Card } from "@/components/ui/card";
@@ -27,6 +28,7 @@ export function QuestionnaireBlockStep({
 	nextLabel,
 	backLabel,
 	submitDisabled,
+	footerContent,
 }: {
 	questionnaire: { meta_data?: unknown };
 	step: number;
@@ -43,6 +45,8 @@ export function QuestionnaireBlockStep({
 	nextLabel: string;
 	backLabel: string;
 	submitDisabled?: boolean;
+	// Rendered after the questions, above the actions (e.g. the guest captcha).
+	footerContent?: ReactNode;
 }) {
 	const { t } = useTranslation();
 	const { title, description } = getBlockMeta(questionnaire, step, locale);
@@ -58,6 +62,17 @@ export function QuestionnaireBlockStep({
 		cancelLabel: backLabel,
 		submitDisabled,
 	});
+	if (footerContent) {
+		config.fields = [
+			...config.fields,
+			{
+				name: "footerContent",
+				type: "custom",
+				customField: footerContent,
+				layout: { span: "full" },
+			},
+		];
+	}
 
 	return (
 		<div className="space-y-6">
