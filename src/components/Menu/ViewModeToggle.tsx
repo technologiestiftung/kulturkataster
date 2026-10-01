@@ -17,7 +17,7 @@ export function ViewModeToggle() {
 			<div className="flex gap-2 items-center">
 				<Button
 					variant="secondary"
-					className="hidden md:flex text-interaction-dark [&_svg]:size-6"
+					className="hidden md:flex text-interaction-dark shadow [&_svg]:size-6"
 					onClick={() => router.push(toLocalePath("/questionnaire"))}
 				>
 					<Clipboard />
