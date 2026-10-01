@@ -1,20 +1,5 @@
 {
 	"common": {
-		"captcha": {
-			"error": "Error – please try again",
-			"errorAriaLabel": "An error occurred, please try again",
-			"failed": "The security check failed or expired. Please verify again that you're not a robot and resubmit.",
-			"hint": "Please verify you're not a robot before submitting.",
-			"initial": "I'm not a robot",
-			"required": "Please verify you're not a robot",
-			"solved": "Verified",
-			"troubleshooting": "Help",
-			"verifiedAriaLabel": "Verified",
-			"verifyAriaLabel": "Click to verify you're not a robot",
-			"verifying": "Verifying…",
-			"verifyingAriaLabel": "Verifying, please wait",
-			"wasmDisabled": "Enable WebAssembly for faster verification"
-		},
 		"about": "About",
 		"accessibility": {
 			"contrast": {
@@ -408,6 +393,21 @@
 			"more": "+{{count}} more"
 		},
 		"cancel": "Cancel",
+		"captcha": {
+			"error": "Error – please try again",
+			"errorAriaLabel": "An error occurred, please try again",
+			"failed": "The security check failed or expired. Please verify again that you're not a robot and resubmit.",
+			"hint": "Please verify you're not a robot before submitting.",
+			"initial": "I'm not a robot",
+			"required": "Please verify you're not a robot",
+			"solved": "Verified",
+			"troubleshooting": "Help",
+			"verifiedAriaLabel": "Verified",
+			"verifyAriaLabel": "Click to verify you're not a robot",
+			"verifying": "Verifying…",
+			"verifyingAriaLabel": "Verifying, please wait",
+			"wasmDisabled": "Enable WebAssembly for faster verification"
+		},
 		"categoryFormModal": {
 			"status": {
 				"active": "Active",
@@ -513,6 +513,14 @@
 			"claimSelectSubtitle": "Request Management Rights for Your Cultural Locations",
 			"claimSelectTitle": "Manage Cultural Locations",
 			"culturalArea": "Cultural Area",
+			"cultureIndexDimensions": {
+				"financial": "Financial and Operational Dimension",
+				"global": "Global Assessments",
+				"location": "Location and Contract Dimension",
+				"property": "Real Estate and Building Dimension",
+				"socialSpatial": "Socio-Spatial and Demand-Related Dimension",
+				"visibility": "Visibility and Public Relations Dimension"
+			},
 			"details": "Cultural Location Details",
 			"district": "District",
 			"editSelectEmpty": "No Cultural Locations found.",
@@ -1078,7 +1086,6 @@
 			"acknowledgementPrefix": "I have read and understood the",
 			"acknowledgementSuffix": "",
 			"chooseFormat": "Select File Format",
-			"xlsWarning": "The XLS format cuts text to 255 characters, e.g. long notes or tag lists. For complete data and for importing, choose XLSX or CSV.",
 			"dataUseAgreementConsent": "I agree to the data use agreement",
 			"dataUseAgreementText": "I will not share the data with third parties. I will use the data exclusively in accordance with legal requirements, in particular the GDPR where personal data is concerned, and only for the purposes of the Kulturkataster. The purposes of the Kulturkataster are non-commercial and include the systematic collection, structuring and public provision of data on places of cultural production and use in the State of Berlin. This is intended to create a reliable data basis for cultural policy decisions, cultural urban development and cooperation between cultural actors, administration, academia and the public.",
 			"dataUseAgreementTitle": "Data Use Agreement",
@@ -1099,7 +1106,8 @@
 			"loading": "Loading Cultural Locations …",
 			"selectedFilters": "The selection consists of the following filters:",
 			"subtitle": "{{count}} Cultural Locations Available for Download",
-			"title": "Download Data as a List"
+			"title": "Download Data as a List",
+			"xlsWarning": "The XLS format cuts text to 255 characters, e.g. long notes or tag lists. For complete data and for importing, choose XLSX or CSV."
 		},
 		"filter": {
 			"categories": {
@@ -1107,25 +1115,25 @@
 				"setAllFilters": "All Filters",
 				"title": "Categories"
 			},
+			"cultureIndex": {
+				"ranges": {
+					"0-20": "acutely at risk",
+					"21-40": "increasingly at risk",
+					"41-60": "conditionally secured",
+					"61-80": "largely secured",
+					"81-100": "long-term secured"
+				},
+				"resetFilters": "Reset Filter",
+				"setAllFilters": "All Filters",
+				"title": "Cultural Hub Index"
+			},
+			"cultureIndexTagsSwitchAriaLabel": "{{translatedName}} switch on or off",
 			"displayedInstitutions": "Displayed Cultural Locations in Berlin",
 			"districts": {
 				"resetFilters": "Reset Filter",
 				"setAllFilters": "All Filters",
 				"title": "Districts"
 			},
-			"cultureIndex": {
-				"resetFilters": "Reset Filter",
-				"setAllFilters": "All Filters",
-				"title": "Cultural Hub Index",
-				"ranges": {
-					"81-100": "long-term secured",
-					"61-80": "largely secured",
-					"41-60": "conditionally secured",
-					"21-40": "increasingly at risk",
-					"0-20": "acutely at risk"
-				}
-			},
-			"cultureIndexTagsSwitchAriaLabel": "{{translatedName}} switch on or off",
 			"districtTagsSwitchAriaLabel": "{{translatedName}} switch on or off",
 			"error": "Error loading Filters",
 			"hideClosed": "Hide Closed Locations",
@@ -1249,6 +1257,55 @@
 			},
 			"emptyMessage": "No groups found.",
 			"searchPlaceholder": "Browse Groups..."
+		},
+		"importModal": {
+			"check": "Check",
+			"checking": "Checking …",
+			"description": "Upload a file (CSV or XLSX) previously exported from the Kulturkataster. Places with an ID are updated, rows without an ID are created as new places. Empty cells overwrite existing values.",
+			"errors": {
+				"emptyFile": "The file does not contain any data rows.",
+				"fileTooLarge": "The file is too large (maximum 10 MB).",
+				"forbidden": "You are not allowed to import data.",
+				"invalidFile": "Please choose a valid CSV or XLSX file.",
+				"legacyExcelFile": "XLS files cut text to 255 characters and therefore cannot be imported. Please export the list as XLSX or CSV.",
+				"missingColumns": "The file is missing required columns:",
+				"unauthorized": "Please sign in to import data.",
+				"unexpected": "The import failed. Please try again.",
+				"unknownColumns": "The file contains unknown columns. Please use a file from the export:",
+				"validationFailed": "The import was not carried out: {{count}} errors found. No data was changed.",
+				"writeFailed": "The import was aborted. Up to that point {{updated}} places were updated and {{created}} places were created."
+			},
+			"fileLabel": "Choose file",
+			"importing": "Importing …",
+			"issueCodes": {
+				"columnCountMismatch": "row has the wrong number of columns",
+				"duplicateId": "ID appears more than once",
+				"emptyRequired": "required field is empty",
+				"invalidDate": "not a valid date (DD.MM.YYYY)",
+				"invalidInteger": "not a valid whole number",
+				"invalidNumber": "not a valid number",
+				"invalidOption": "unknown option",
+				"invalidValue": "invalid value",
+				"unknownCategory": "unknown category",
+				"unknownGroup": "unknown group",
+				"unknownId": "no place with this ID exists",
+				"unknownTag": "unknown tag"
+			},
+			"issueGroup_one": "Column “{{column}}”: {{message}} (row {{rows}})",
+			"issueGroup_other": "Column “{{column}}”: {{message}} (rows {{rows}})",
+			"issueValue": "{{message}} “{{value}}”",
+			"moreIssues": "… and {{count}} more errors.",
+			"moreRows": "{{rows}} and {{count}} more",
+			"preview": {
+				"summary": "The import will update {{updated}} places and create {{created}} new places; {{unchanged}} stay unchanged. Nothing has been saved yet.",
+				"title": "Check passed"
+			},
+			"submit": "Import",
+			"success": {
+				"summary": "{{updated}} places updated, {{created}} places created, {{unchanged}} unchanged.",
+				"title": "Import completed"
+			},
+			"title": "Import cultural places"
 		},
 		"imprintModal": {
 			"chairman": {
@@ -1715,12 +1772,6 @@
 				"additional": {
 					"title": "Additional Information"
 				},
-				"tags": {
-					"create": "Add “{{name}}” as a new tag",
-					"emptyText": "No tags found.",
-					"newSuffix": "new",
-					"searchPlaceholder": "Search tags..."
-				},
 				"assignment": {
 					"fields": {
 						"groups": {
@@ -1865,6 +1916,12 @@
 				},
 				"status": {
 					"title": "Status"
+				},
+				"tags": {
+					"create": "Add “{{name}}” as a new tag",
+					"emptyText": "No tags found.",
+					"newSuffix": "new",
+					"searchPlaceholder": "Search tags..."
 				}
 			},
 			"review": {
@@ -2026,11 +2083,18 @@
 						"question": "What happens with my data?"
 					}
 				],
+				"body": "This survey is part of a research project aimed at developing a risk assessment score for cultural institutions in Berlin. Information about the sender/sponsor can be found here.\n\nThe goal of the project is to systematically document various structural, spatial, financial, and organizational conditions in order to better highlight the risks, challenges, and support needs of cultural institutions in Berlin.\n\n<0>It is expected to take about 15 to 20 minutes to complete the questionnaire. Participation in the survey is voluntary.</0>",
 				"checkboxHeading": "Declaration of consent",
 				"checkboxLabel": "I have read the information about this survey and agree to voluntary participation as well as to the processing of my data for scientific purposes within the scope of this project.",
 				"cta": "Take part in the survey",
-				"body": "This survey is part of a scientific project to develop a risk score for Berlin's cultural institutions. The aim of the project is to systematically capture various structural, spatial, financial, and organizational conditions in order to make the risks, burdens, and support needs of cultural institutions in Berlin more visible.\n\nFor the purposes of this survey, we define <0>cultural institutions</0> as <1>\"permanently or repeatedly used venues and organizations for cultural production, presentation, education, or encounter\"</1>, such as theaters, music venues, studios, galleries, socio-cultural centers, literature venues, dance and performance venues, or comparable institutions.\n\nCompleting the questionnaire is expected to take <2>about 15 to 20 minutes.</2>\n\nYour information will be treated confidentially and evaluated exclusively for scientific purposes within the scope of the project. Publication will only take place in aggregated form, so that no conclusions can be drawn about individual persons. Should results be considered at the level of individual institutions later in the project, this will only happen within the intended project framework and in compliance with data protection requirements.\n\nThe questionnaire contains questions about the space and location situation, the financial situation, organizational conditions, and the public visibility of the institution. Please answer the questionnaire from the perspective of the institution as a whole wherever possible. Ideally, it should be completed by a person who has a good overview of the institution's space, organizational, and financial situation.\n\n<3>Participation in this survey is voluntary.</3> By checking the box, you confirm that you have read the information about this survey and agree to the processing of your data for scientific purposes within the scope of this project.\n\nThank you for your support.",
+				"paragraph1": "This survey is part of a scientific project to develop a risk score for Berlin's cultural institutions. The aim of the project is to systematically capture various structural, spatial, financial, and organizational conditions in order to make the risks, burdens, and support needs of cultural institutions in Berlin more visible.",
+				"paragraph2": "For the purposes of this survey, we define <0>cultural institutions</0> as <1>\"permanently or repeatedly used venues and organizations for cultural production, presentation, education, or encounter\"</1>, such as theaters, music venues, studios, galleries, socio-cultural centers, literature venues, dance and performance venues, or comparable institutions.",
+				"paragraph3": "Completing the questionnaire is expected to take <0>about 15 to 20 minutes.</0>",
+				"paragraph4": "Your information will be treated confidentially and evaluated exclusively for scientific purposes within the scope of the project. Publication will only take place in aggregated form, so that no conclusions can be drawn about individual persons. Should results be considered at the level of individual institutions later in the project, this will only happen within the intended project framework and in compliance with data protection requirements.",
+				"paragraph5": "The questionnaire contains questions about the space and location situation, the financial situation, organizational conditions, and the public visibility of the institution. Please answer the questionnaire from the perspective of the institution as a whole wherever possible. Ideally, it should be completed by a person who has a good overview of the institution's space, organizational, and financial situation.",
+				"paragraph6": "<0>Participation in this survey is voluntary.</0> By checking the box, you confirm that you have read the information about this survey and agree to the processing of your data for scientific purposes within the scope of this project.",
 				"thanks": "Thank you for taking the time to take part in this survey.",
+				"thankYouClosing": "Thank you for your support.",
 				"title": "Survey on the Risk Radar for Berlin's Cultural Venues"
 			},
 			"institutionLink": {
@@ -3001,55 +3065,6 @@
 			"questionnaire": "Participate in the survey",
 			"subtitle": "A Project of Kulturraum Berlin gGmbH",
 			"title": "The Berlin Kulturkataster: Culture in the City At a Glance"
-		},
-		"importModal": {
-			"title": "Import cultural places",
-			"description": "Upload a file (CSV or XLSX) previously exported from the Kulturkataster. Places with an ID are updated, rows without an ID are created as new places. Empty cells overwrite existing values.",
-			"fileLabel": "Choose file",
-			"submit": "Import",
-			"importing": "Importing …",
-			"check": "Check",
-			"checking": "Checking …",
-			"preview": {
-				"title": "Check passed",
-				"summary": "The import will update {{updated}} places and create {{created}} new places; {{unchanged}} stay unchanged. Nothing has been saved yet."
-			},
-			"success": {
-				"title": "Import completed",
-				"summary": "{{updated}} places updated, {{created}} places created, {{unchanged}} unchanged."
-			},
-			"issueGroup_one": "Column “{{column}}”: {{message}} (row {{rows}})",
-			"issueGroup_other": "Column “{{column}}”: {{message}} (rows {{rows}})",
-			"issueValue": "{{message}} “{{value}}”",
-			"moreRows": "{{rows}} and {{count}} more",
-			"moreIssues": "… and {{count}} more errors.",
-			"errors": {
-				"unauthorized": "Please sign in to import data.",
-				"forbidden": "You are not allowed to import data.",
-				"invalidFile": "Please choose a valid CSV or XLSX file.",
-				"legacyExcelFile": "XLS files cut text to 255 characters and therefore cannot be imported. Please export the list as XLSX or CSV.",
-				"fileTooLarge": "The file is too large (maximum 10 MB).",
-				"emptyFile": "The file does not contain any data rows.",
-				"unknownColumns": "The file contains unknown columns. Please use a file from the export:",
-				"missingColumns": "The file is missing required columns:",
-				"validationFailed": "The import was not carried out: {{count}} errors found. No data was changed.",
-				"writeFailed": "The import was aborted. Up to that point {{updated}} places were updated and {{created}} places were created.",
-				"unexpected": "The import failed. Please try again."
-			},
-			"issueCodes": {
-				"emptyRequired": "required field is empty",
-				"invalidNumber": "not a valid number",
-				"invalidInteger": "not a valid whole number",
-				"invalidDate": "not a valid date (DD.MM.YYYY)",
-				"invalidOption": "unknown option",
-				"unknownCategory": "unknown category",
-				"unknownTag": "unknown tag",
-				"unknownGroup": "unknown group",
-				"invalidValue": "invalid value",
-				"unknownId": "no place with this ID exists",
-				"duplicateId": "ID appears more than once",
-				"columnCountMismatch": "row has the wrong number of columns"
-			}
 		}
 	},
 	"enumMap": {
@@ -3350,6 +3365,16 @@
 				"label": "Cultural Hub Index",
 				"placeholder": "e.g. 75"
 			},
+			"culture_index_financial": {
+				"description": "",
+				"label": "Financial and Operational Dimension",
+				"placeholder": "e.g. 75"
+			},
+			"culture_index_global": {
+				"description": "",
+				"label": "Global Assessments",
+				"placeholder": "Please Enter"
+			},
 			"culture_index_location": {
 				"description": "",
 				"label": "Location and Contract Dimension",
@@ -3358,11 +3383,6 @@
 			"culture_index_property": {
 				"description": "",
 				"label": "Real Estate and Building Dimension",
-				"placeholder": "e.g. 75"
-			},
-			"culture_index_financial": {
-				"description": "",
-				"label": "Financial and Operational Dimension",
 				"placeholder": "e.g. 75"
 			},
 			"culture_index_social_spatial": {
@@ -3374,11 +3394,6 @@
 				"description": "",
 				"label": "Visibility and Public Relations Dimension",
 				"placeholder": "e.g. 75"
-			},
-			"culture_index_global": {
-				"description": "",
-				"label": "Global Assessments",
-				"placeholder": "Please Enter"
 			},
 			"datenverwendung": {
 				"description": "",
@@ -3413,20 +3428,20 @@
 				"placeholder": "name@example.com"
 			},
 			"established_since": {
-				"description": "Please enter the date of first use or opening at the location. If the exact date is not known, month and year or just the year are sufficient.",
+				"description": "Please enter the date of first use or opening at the location. If the exact date is not known, the year alone is sufficient.",
 				"errors": {
 					"required": "Please provide."
 				},
 				"label": "At the Location Since",
-				"placeholder": "DD.MM.YYYY, MM.YYYY or YYYY"
+				"placeholder": "DD.MM.YYYY or YYYY"
 			},
 			"established_until": {
-				"description": "Please enter the date until which the cultural organization was active at this location. This only applies to places that are already closed. If the exact date is not known, month and year or just the year are sufficient.",
+				"description": "Please enter the date until which the cultural organization was active at this location. This only applies to places that are already closed. If the exact date is not known, the year alone is sufficient.",
 				"errors": {
 					"required": "Please provide."
 				},
 				"label": "At the Location Until",
-				"placeholder": "DD.MM.YYYY, MM.YYYY or YYYY"
+				"placeholder": "DD.MM.YYYY or YYYY"
 			},
 			"funding_source": {
 				"actions": {
