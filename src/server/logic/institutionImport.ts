@@ -2,6 +2,7 @@ import {
 	prepareDataForExport,
 	translateColumnName,
 } from "@/lib/utils/downloadUtils";
+import { CULTURE_INDEX_SCORE_FIELDS } from "@/lib/constants/cultureIndexRanges";
 import { splitStreetLine } from "@/lib/utils/formUtils";
 import { getInstitutionExportColumnOrder } from "@/lib/utils/institutionExportPolicy";
 import { normalizeInstitutionPermissionField } from "@/lib/utils/institutionPermissionField";
@@ -97,6 +98,10 @@ const NUMBER_KEYS: Record<string, { integer: boolean }> = {
 	area: { integer: false },
 	number_of_rooms: { integer: true },
 	capacity: { integer: true },
+	culture_index: { integer: true },
+	...Object.fromEntries(
+		CULTURE_INDEX_SCORE_FIELDS.map((field) => [field, { integer: false }]),
+	),
 };
 const VALIDATION_PATH_TO_KEY: Record<string, string> = {
 	categoryIds: "categories",

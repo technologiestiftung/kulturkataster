@@ -139,6 +139,17 @@ const planFromCsv = (
 	};
 };
 
+const makeInstitutionWithCultureIndex = (): Institution => ({
+	...makeInstitution(),
+	culture_index: 60,
+	culture_index_location: 50,
+	culture_index_property: null,
+	culture_index_financial: 40,
+	culture_index_social_spatial: null,
+	culture_index_visibility: 30,
+	culture_index_global: "Offen",
+});
+
 const setCell = (csvRows: string[][], header: string, value: string) => {
 	const index = csvRows[0].indexOf(header);
 	expect(index).toBeGreaterThanOrEqual(0);
@@ -213,6 +224,62 @@ describe("planInstitutionImport", () => {
 
 		expect(plan.issues).toEqual([
 			{ row: 4, column: "Kapazität", code: "invalidNumber" },
+		]);
+	});
+
+	it("imports culture index dimensions as scores and text", () => {
+		const institution = makeInstitutionWithCultureIndex();
+		const csvRows = exportCsv([institution]);
+		setCell(csvRows, "Standort und Vertragsdimension", "72,5");
+		setCell(csvRows, "Sichtbarkeits- und Öffentlichkeitsdimension", "0");
+		setCell(csvRows, "Globale Einschätzungen", "Stabil");
+
+		const { plan: unchanged } = planFromCsv(exportCsv([institution]), [
+			institution,
+		]);
+		expect(unchanged).toMatchObject({ unchangedCount: 1, issues: [] });
+
+		const { plan } = planFromCsv(csvRows, [institution]);
+
+		expect(plan.issues).toEqual([]);
+		const [{ form: update, permissionFields }] = plan.updates;
+		expect(update).toMatchObject({
+			culture_index_location: 72.5,
+			culture_index_visibility: 0,
+			culture_index_global: "Stabil",
+		});
+		expect(permissionFields).toEqual([
+			"culture_index_location",
+			"culture_index_visibility",
+			"culture_index_global",
+		]);
+	});
+
+	it("reports culture index dimension scores that are not numbers", () => {
+		const institution = makeInstitutionWithCultureIndex();
+		const csvRows = exportCsv([institution]);
+		setCell(csvRows, "Finanz- und Betriebsdimension", "hoch");
+
+		const { plan } = planFromCsv(csvRows, [institution]);
+
+		expect(plan.issues).toEqual([
+			{
+				row: 2,
+				column: "Finanz- und Betriebsdimension",
+				code: "invalidNumber",
+			},
+		]);
+	});
+
+	it("reports a culture index that is not a whole number", () => {
+		const institution = makeInstitutionWithCultureIndex();
+		const csvRows = exportCsv([institution]);
+		setCell(csvRows, "Kulturort-Index", "20,5");
+
+		const { plan } = planFromCsv(csvRows, [institution]);
+
+		expect(plan.issues).toEqual([
+			{ row: 2, column: "Kulturort-Index", code: "invalidInteger" },
 		]);
 	});
 
