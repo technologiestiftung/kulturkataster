@@ -76,6 +76,23 @@ describe("LikertScale", () => {
 		});
 	});
 
+	it("stays a horizontal radio group by default", () => {
+		render(<LikertScale options={scaleOptions} />);
+
+		expect(screen.getByRole("radiogroup")).toHaveAttribute(
+			"aria-orientation",
+			"horizontal",
+		);
+	});
+
+	it("drops the horizontal orientation when stacked on mobile", () => {
+		render(<LikertScale options={scaleOptions} stackOnMobile />);
+
+		expect(screen.getByRole("radiogroup")).not.toHaveAttribute(
+			"aria-orientation",
+		);
+	});
+
 	it("forwards aria-invalid to the radio group", () => {
 		render(<LikertScale options={scaleOptions} aria-invalid />);
 
