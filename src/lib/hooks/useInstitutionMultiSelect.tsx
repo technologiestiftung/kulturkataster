@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import { FilterPanel } from "@/components/Filter/FilterPanel";
 import type { Category, FilterState, Institution } from "@/types";
+import { getCategoryLabel } from "@/lib/i18n/fieldLabels";
 import {
 	matchesCategoryFilter,
 	matchesCultureIndexFilter,
@@ -154,12 +155,11 @@ const buildInstitutionOption = (
 ) => {
 	const parentCategories = getParentCategories(institution);
 	const subcategories = getSubcategories(institution);
-	const categoryLabels = parentCategories.map(
-		(category) => tEnum(`enumMap.category.${category.key}`) || category.key,
+	const categoryLabels = parentCategories.map((category) =>
+		getCategoryLabel(tEnum, category.key),
 	);
-	const subcategoryLabels = subcategories.map(
-		(subcategory) =>
-			tEnum(`enumMap.category.${subcategory.key}`) || subcategory.key,
+	const subcategoryLabels = subcategories.map((subcategory) =>
+		getCategoryLabel(tEnum, subcategory.key),
 	);
 	const tagNames =
 		institution.tags?.map((tag) => tag.name).filter(Boolean) ?? [];

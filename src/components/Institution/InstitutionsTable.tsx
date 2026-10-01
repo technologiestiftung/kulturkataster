@@ -13,7 +13,11 @@ import { StatusDot } from "../ui/status-dot";
 import { InstitutionStatus } from "@/generated/prisma";
 import type { SubmissionType } from "@/generated/prisma";
 import { useTranslation } from "react-i18next";
-import { getFieldLabel, getFieldOptionLabel } from "@/lib/i18n/fieldLabels";
+import {
+	getCategoryLabel,
+	getFieldLabel,
+	getFieldOptionLabel,
+} from "@/lib/i18n/fieldLabels";
 import {
 	formatInstitutionBoolean,
 	formatInstitutionDate,
@@ -714,7 +718,7 @@ export function InstitutionsTable({
 											key={cat.id}
 											className="capitalize truncate"
 										>
-											{`${tEnum("enumMap." + ("category." + cat.key))}`}
+											{getCategoryLabel(tEnum, cat.key)}
 										</Badge>
 									))
 								) : (
@@ -743,7 +747,7 @@ export function InstitutionsTable({
 											key={cat.id}
 											className="capitalize truncate"
 										>
-											{`${tEnum("enumMap." + ("category." + cat.key))}`}
+											{getCategoryLabel(tEnum, cat.key)}
 										</Badge>
 									))
 								) : (

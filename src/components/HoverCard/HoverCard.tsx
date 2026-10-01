@@ -10,7 +10,7 @@ import {
 import { Category, ChildCategory } from "@/types";
 import { FC, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { getFieldOptionLabel } from "@/lib/i18n/fieldLabels";
+import { getCategoryLabel, getFieldOptionLabel } from "@/lib/i18n/fieldLabels";
 import { useFieldLabel } from "@/lib/hooks/useFieldLabel";
 import { CategoryIcon } from "@/components/shared/CategoryIcon";
 import { getStatusAccentClass } from "@/components/InfoWrapper/statusTone";
@@ -100,7 +100,7 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 											/>
 										</div>
 										<span className="text-base font-bold">
-											{tEnum(`enumMap.category.${category.key}`)}
+											{getCategoryLabel(tEnum, category.key)}
 										</span>
 									</div>
 									{featureProperties.subcategories?.length > 0 && (
@@ -113,7 +113,7 @@ const HoverCard: FC<HoverCardProps> = ({ features }) => {
 												.map((subcategory: ChildCategory, index: number) => (
 													<span key={subcategory.id} className="text-base">
 														{index > 0 && ", "}
-														{tEnum(`enumMap.category.${subcategory.key}`)}
+														{getCategoryLabel(tEnum, subcategory.key)}
 													</span>
 												))}
 										</div>
