@@ -489,10 +489,10 @@
 			"validation": {
 				"invalidEmail": "Invalid Email Address",
 				"invalidNumber": "Invalid number",
-				"numberRange": "Please enter a number between {{min}} and {{max}}",
 				"invalidPartialDate": "Please use DD.MM.YYYY, MM.YYYY or YYYY",
 				"invalidPhone": "Invalid Telephone Number ",
 				"invalidUrl": "Invalid URL",
+				"numberRange": "Please enter a number between {{min}} and {{max}}",
 				"required": "This is a required field. A response is required."
 			}
 		},
