@@ -602,6 +602,16 @@ const buildInstitutionSharedFieldsPayload = (
 		number_of_rooms: toOptionalNumber(formData.number_of_rooms),
 		capacity: toOptionalNumber(formData.capacity),
 		culture_index: toOptionalNumber(formData.culture_index),
+		culture_index_location: toOptionalNumber(formData.culture_index_location),
+		culture_index_property: toOptionalNumber(formData.culture_index_property),
+		culture_index_financial: toOptionalNumber(formData.culture_index_financial),
+		culture_index_social_spatial: toOptionalNumber(
+			formData.culture_index_social_spatial,
+		),
+		culture_index_visibility: toOptionalNumber(
+			formData.culture_index_visibility,
+		),
+		culture_index_global: toOptionalText(formData.culture_index_global),
 	}) satisfies Partial<InstitutionForm>;
 
 export {

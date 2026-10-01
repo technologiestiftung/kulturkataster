@@ -17,4 +17,7 @@ export {
 	facilityInfoConfig,
 	sharedUseInfoConfig,
 	additionalInfoConfig,
+	cultureIndexDimensionsInfoConfig,
+	cultureIndexInfoConfig,
+	hasCultureIndex,
 } from "../../config/infoConfig/configs";
