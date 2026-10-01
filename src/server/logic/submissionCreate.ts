@@ -6,6 +6,7 @@ import {
 } from "@/server/logging/requestContext";
 import { authorizeTable, getAccessContextForUser } from "@/server/utils/rbac";
 import { validateSubmissionCreateInput } from "@/server/validation/submissions";
+import { stripUnreadableCultureIndex } from "@/server/logic/submissionCultureIndex";
 import {
 	normalizeOptionalSubmissionJson,
 	normalizeSubmissionJson,
@@ -41,6 +42,7 @@ export async function createSubmissionAsUser(
 				setRequestContext({ userId: currentUserId });
 				const ctx = await getAccessContextForUser(currentUserId);
 				authorizeTable(ctx, "submission", "create");
+				validatedInput = stripUnreadableCultureIndex(ctx, validatedInput);
 
 				const nextStatus = "approval_pending";
 
