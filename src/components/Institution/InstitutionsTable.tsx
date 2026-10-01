@@ -28,7 +28,7 @@ import {
 	isSubmissionRow,
 } from "@/lib/utils/institutionTableUtils";
 import { institutionSubmissionToDraft } from "@/lib/utils/institutionSubmissionUtils";
-import { dateToYearInputValue } from "@/lib/utils/institutionFormAdapter";
+import { dateToPartialDateInputValue } from "@/lib/utils/institutionFormAdapter";
 import Send from "@/icons/send.svg";
 import { FilterPanel } from "@/components/Filter/FilterPanel";
 import { useInstitutionFilterCategories } from "@/lib/hooks/useInstitutionFilterCategories";
@@ -1328,8 +1328,12 @@ export function InstitutionsTable({
 						baseDraft.contact_person_email ?? contactPerson?.email ?? "",
 					contact_person_phone:
 						baseDraft.contact_person_phone ?? contactPerson?.phone ?? "",
-					established_since: dateToYearInputValue(baseDraft.established_since),
-					established_until: dateToYearInputValue(baseDraft.established_until),
+					established_since: dateToPartialDateInputValue(
+						baseDraft.established_since,
+					),
+					established_until: dateToPartialDateInputValue(
+						baseDraft.established_until,
+					),
 				});
 				router.push(toLocalePath("/institution/submission"));
 			}

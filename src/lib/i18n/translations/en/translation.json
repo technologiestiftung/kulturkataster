@@ -474,6 +474,7 @@
 			"validation": {
 				"invalidEmail": "Invalid Email Address",
 				"invalidNumber": "Invalid number",
+				"invalidPartialDate": "Please use DD.MM.YYYY, MM.YYYY or YYYY",
 				"invalidPhone": "Invalid Telephone Number ",
 				"invalidUrl": "Invalid URL",
 				"required": "This is a required field. A response is required."
@@ -3375,20 +3376,20 @@
 				"placeholder": "name@example.com"
 			},
 			"established_since": {
-				"description": "Please enter the date of first use or opening at the location. If the exact date is not known, the year alone is sufficient.",
+				"description": "Please enter the date of first use or opening at the location. If the exact date is not known, month and year or just the year are sufficient.",
 				"errors": {
 					"required": "Please provide."
 				},
 				"label": "At the Location Since",
-				"placeholder": "DD.MM.YYYY or YYYY"
+				"placeholder": "DD.MM.YYYY, MM.YYYY or YYYY"
 			},
 			"established_until": {
-				"description": "Please enter the date until which the cultural organization was active at this location. This only applies to places that are already closed. If the exact date is not known, the year alone is sufficient.",
+				"description": "Please enter the date until which the cultural organization was active at this location. This only applies to places that are already closed. If the exact date is not known, month and year or just the year are sufficient.",
 				"errors": {
 					"required": "Please provide."
 				},
 				"label": "At the Location Until",
-				"placeholder": "DD.MM.YYYY or YYYY"
+				"placeholder": "DD.MM.YYYY, MM.YYYY or YYYY"
 			},
 			"funding_source": {
 				"actions": {

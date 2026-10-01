@@ -15,7 +15,7 @@ export type InfoWrapperFieldType =
 	| "enum"
 	| "nested"
 	| "date"
-	| "year"
+	| "partialDate"
 	| "boolean"
 	| "status"
 	| "url"
