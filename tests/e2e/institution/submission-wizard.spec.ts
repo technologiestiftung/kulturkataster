@@ -303,7 +303,7 @@ test.describe("institution submission wizard", () => {
 		if ((await editButtons.count()) > 0) {
 			await editButtons.first().click();
 			const nameInput = page.getByRole("textbox", {
-				name: /^(Name|Kultureinrichtung)\*?$/,
+				name: /^(Name|(Name der )?Kultureinrichtung)\*?$/,
 			});
 			await expect(nameInput).toBeVisible({ timeout: 15_000 });
 			const updatedName = `${originalName} (E2E Update)`;
