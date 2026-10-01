@@ -177,7 +177,10 @@ vi.mock("@/lib/hooks/useInstitutionPrivateFieldResolver", () => ({
 	}),
 }));
 
-vi.mock("@/lib/utils/institutionFieldAccess", () => ({
+vi.mock("@/lib/utils/institutionFieldAccess", async (importOriginal) => ({
+	...(await importOriginal<
+		typeof import("@/lib/utils/institutionFieldAccess")
+	>()),
 	applyInstitutionFieldAccess: ({ fields }: { fields: unknown }) => fields,
 }));
 

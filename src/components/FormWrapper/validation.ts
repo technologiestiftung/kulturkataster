@@ -193,6 +193,40 @@ export const numeric = (message: string): FieldValidator =>
 		return Number.isFinite(Number(value.trim())) ? undefined : message;
 	});
 
+export const numberRange = ({
+	min,
+	max,
+	message,
+}: {
+	min?: number;
+	max?: number;
+	message: string;
+}): FieldValidator =>
+	withNormalizer((value) => {
+		if (isEmptyValue(value)) return undefined;
+		const number = Number(typeof value === "string" ? value.trim() : value);
+		if (!Number.isFinite(number)) return undefined;
+		if (min !== undefined && number < min) return message;
+		if (max !== undefined && number > max) return message;
+		return undefined;
+	});
+
+const buildNumberRangeValidator = (
+	field: FormWrapperFieldConfig,
+	t: (key: string, options?: Record<string, unknown>) => string,
+) => {
+	if (field.type !== "number") return undefined;
+	if (field.min === undefined && field.max === undefined) return undefined;
+	return numberRange({
+		min: field.min,
+		max: field.max,
+		message: t("common.form.validation.numberRange", {
+			min: field.min ?? "−∞",
+			max: field.max ?? "∞",
+		}),
+	});
+};
+
 export const partialDate = (message: string): FieldValidator =>
 	withNormalizer((value) => {
 		if (typeof value !== "string" || value.trim().length === 0) {
@@ -248,9 +282,11 @@ const getFieldValidators = (
 	tEnum: TFunction,
 ) => {
 	const typeValidator = buildTypeValidator(field, t, tEnum);
+	const rangeValidator = buildNumberRangeValidator(field, t);
 	const validators = [
 		...(field.required ? [buildRequiredValidator(field, t, tEnum)] : []),
 		...(typeValidator ? [typeValidator] : []),
+		...(rangeValidator ? [rangeValidator] : []),
 		...(field.type !== "section" && field.validators ? field.validators : []),
 	];
 

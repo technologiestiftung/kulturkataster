@@ -46,7 +46,7 @@ const LikertScale = React.forwardRef<
 		const groupId = id ?? name ?? generatedId;
 
 		return (
-			<div className={cn("overflow-x-auto px-1", containerClassName)}>
+			<div className={cn("overflow-x-auto md:px-1", containerClassName)}>
 				<RadioGroup
 					ref={ref}
 					id={groupId}
@@ -54,7 +54,7 @@ const LikertScale = React.forwardRef<
 					orientation={orientation}
 					className={cn(
 						"relative flex min-w-full items-start gap-4 my-2",
-						stackOnMobile && "flex-col gap-3 md:flex-row md:gap-4",
+						stackOnMobile && "flex-col gap-2 md:flex-row md:gap-4",
 						className,
 					)}
 					{...props}
@@ -74,7 +74,7 @@ const LikertScale = React.forwardRef<
 							<div
 								key={option.value}
 								className={cn(
-									"relative flex min-w-16 flex-[1_0_auto] flex-col items-center gap-1 px-2",
+									"relative flex min-w-16 flex-[1_0_auto] flex-col items-center gap-1 md:px-2",
 									stackOnMobile && "flex-row gap-3 md:flex-col md:gap-1",
 								)}
 							>

@@ -65,3 +65,13 @@ export const CULTURE_INDEX_DIMENSION_FIELDS = [
 
 export type CultureIndexDimensionField =
 	(typeof CULTURE_INDEX_DIMENSION_FIELDS)[number];
+
+export const CULTURE_INDEX_FIELDS = [
+	"culture_index",
+	...CULTURE_INDEX_DIMENSION_FIELDS,
+] as const;
+
+// The dimensions inherit culture_index's permissions (see the
+// add_institution_culture_index_dimensions migration), so one check covers all.
+export const canReadCultureIndex = (readableFields: string[] | undefined) =>
+	readableFields?.includes("culture_index") ?? false;
