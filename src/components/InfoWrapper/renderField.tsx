@@ -338,7 +338,7 @@ const getContent = (
 						<span className="inline-flex items-center gap-2">
 							<span
 								className={cn(
-									"w-4 h-4 rounded-full shrink-0",
+									"hidden w-4 h-4 rounded-full shrink-0",
 									cultureIndexRange
 										? getCultureIndexRangeBgClass(cultureIndexRange)
 										: "bg-alert",
