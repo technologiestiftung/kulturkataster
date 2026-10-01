@@ -17,6 +17,7 @@ import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { useAccountStore } from "@/lib/store/accountStore";
 import { resolveCategoriesFromDraft } from "@/lib/utils/institutionCategoryUtils";
 import { useInstitutionPrivateFieldResolver } from "@/lib/hooks/useInstitutionPrivateFieldResolver";
+import { canReadCultureIndex } from "@/lib/constants/cultureIndexRanges";
 import {
 	inheritInstitutionRelationFields,
 	normalizeInstitutionRelationFields,
@@ -40,6 +41,9 @@ export function InstitutionReview({
 	const institutionCategories =
 		useInstitutionStore((state) => state.categories) ?? [];
 	const accountCategories = useAccountStore((state) => state.categories) ?? [];
+	const showCultureIndex = useAccountStore((state) =>
+		canReadCultureIndex(state.institutionFieldPermissions.read),
+	);
 	const categories =
 		institutionCategories.length > 0
 			? institutionCategories
@@ -214,21 +218,25 @@ export function InstitutionReview({
 							value: "protection_status",
 							enumKey: "protection_status",
 						},
-						{
-							id: "culture_index",
-							alwaysShow: false,
-							label: fieldLabel("culture_index"),
-							edit: editConfig.culture_index,
-							className: "mb-2",
-							type: "culture_index",
-							cultureIndexVariant: "plain",
-							value: "culture_index",
-						},
-						...cultureIndexDimensionsInfoConfig.map((field) => ({
-							...field,
-							alwaysShow: false,
-							edit: editConfig.culture_index,
-						})),
+						...(showCultureIndex
+							? [
+									{
+										id: "culture_index",
+										alwaysShow: false,
+										label: fieldLabel("culture_index"),
+										edit: editConfig.culture_index,
+										className: "mb-2",
+										type: "culture_index" as const,
+										cultureIndexVariant: "plain" as const,
+										value: "culture_index",
+									},
+									...cultureIndexDimensionsInfoConfig.map((field) => ({
+										...field,
+										alwaysShow: false,
+										edit: editConfig.culture_index,
+									})),
+								]
+							: []),
 						{
 							type: "section",
 							id: "details",

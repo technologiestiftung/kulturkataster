@@ -2,6 +2,10 @@ import { cn } from "@/lib/utils";
 import type { Institution } from "@/types";
 import { getFieldLabel, getFieldOptionLabel } from "@/lib/i18n/fieldLabels";
 import { getStatusCircleClass } from "./statusTone";
+import {
+	getCultureIndexRangeBgClass,
+	getCultureIndexRangeForValue,
+} from "@/lib/constants/cultureIndexRanges";
 
 type StatusGroupProps = {
 	data: Partial<Institution>;
@@ -41,6 +45,19 @@ export function StatusGroup({ data, t }: StatusGroupProps) {
 				"protection_status",
 				data.protection_status,
 			),
+		});
+	}
+
+	const cultureIndexRange =
+		typeof data.culture_index === "number"
+			? getCultureIndexRangeForValue(data.culture_index)
+			: null;
+	if (cultureIndexRange) {
+		rows.push({
+			key: "culture_index",
+			circleClass: getCultureIndexRangeBgClass(cultureIndexRange),
+			label: getFieldLabel(t, "culture_index"),
+			value: `${data.culture_index} - ${t(`content.filter.cultureIndex.ranges.${cultureIndexRange}`)}`,
 		});
 	}
 
