@@ -12,6 +12,15 @@ export const getFieldDescription = (tEnum: Translator, key: string) => {
 	return translated === translationKey ? "" : translated;
 };
 
+// Falls back to the raw key when a category has no translation yet (e.g. a
+// newly created category whose labels have not synced), instead of showing
+// the "enumMap.category.<key>" path.
+export const getCategoryLabel = (tEnum: Translator, key: string) => {
+	const translationKey = `enumMap.category.${key}`;
+	const translated = tEnum(translationKey);
+	return translated === translationKey || !translated ? key : translated;
+};
+
 export const getFieldPlaceholder = (tEnum: Translator, key: string) => {
 	return tEnum(`enumMap.field_names.${key}.placeholder`);
 };

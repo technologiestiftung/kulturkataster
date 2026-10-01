@@ -5,6 +5,7 @@ import {
 	getCultureIndexRangeForValue,
 } from "@/lib/constants/cultureIndexRanges";
 import { getParentCategories, getSubcategories } from "./institutionUtils";
+import { getCategoryLabel } from "@/lib/i18n/fieldLabels";
 
 export const hasActiveFilters = (filters: FilterState | null): boolean => {
 	if (!filters) return false;
@@ -42,8 +43,8 @@ export const getSortedSubcategories = (
 		if (a.key.includes("other") && !b.key.includes("other")) return 1;
 		if (b.key.includes("other") && !a.key.includes("other")) return -1;
 		return collator.compare(
-			translateFn(`category.${a.key}`),
-			translateFn(`category.${b.key}`),
+			getCategoryLabel(translateFn, a.key),
+			getCategoryLabel(translateFn, b.key),
 		);
 	});
 };
@@ -57,8 +58,8 @@ export const getSortedCategories = (
 		if (a.key.includes("other") && !b.key.includes("other")) return 1;
 		if (b.key.includes("other") && !a.key.includes("other")) return -1;
 		return collator.compare(
-			translateFn(`category.${a.key}`),
-			translateFn(`category.${b.key}`),
+			getCategoryLabel(translateFn, a.key),
+			getCategoryLabel(translateFn, b.key),
 		);
 	});
 };
