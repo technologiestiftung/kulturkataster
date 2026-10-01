@@ -1,0 +1,16 @@
+# Per-repo no-mistakes overrides. Test settings are only honored from the
+# default-branch (main) copy of this file.
+
+# Local gate runs unit tests only. Integration tests (real Supabase) and
+# Playwright e2e run in GitHub CI (.github/workflows/ci.yml); running them
+# locally needs a Supabase stack and regularly exceeds the test agent budget.
+commands:
+  test: "npm ci --no-audit --no-fund && npx prisma generate && npm run test:unit"
+
+test:
+  instructions: |
+    Validate with unit tests (vitest, tests/unit) only.
+    Do not start Supabase, the Next.js dev server or a browser, and do not run
+    Playwright e2e (npm run test:e2e) or integration tests (npm run test:integration).
+    Both run in GitHub CI on every pull request.
+    If a change needs coverage, add or extend unit tests instead.
