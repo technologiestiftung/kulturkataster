@@ -474,7 +474,7 @@
 				"invalidNumber": "Invalid number",
 				"invalidPhone": "Invalid Telephone Number ",
 				"invalidUrl": "Invalid URL",
-				"required": "{{field}} is required"
+				"required": "Required"
 			}
 		},
 		"headerLandmark": "Site navigation",
@@ -698,17 +698,17 @@
 					],
 					"editorial": {
 						"additionalItems": [
-							"Literature Locations: Netzwerk freie Literaturszene Berlin",
-							"Placeholder 2",
-							"Placeholder 3"
+							"Potential Locations: Urbane Praxis e.V.",
+							"Project Spaces and Initiatives: Netzwerk freier Berliner Projekträume und -initiativen e.V.",
+							"Sociocultural Locations: Daniel Schneider (Archiv der Jugendkulturen e.V.)"
 						],
 						"items": [
 							"Visual Artist Studios: Atelierbüro im kulturwerk des bbk berlin (Studio Office in the kulturwerk of the bbk berlin)",
 							"Clubs and Music Venues: Clubcommission - Netzwerk der Berliner Clubkultur e.V.",
-							"Potential Locations and Locations for Cultural Urban Development: Urbane Praxis e.V.",
-							"Berlin Dance Locations: Tanzbüro Berlin - Zeitgenössischer Tanz Berlin e.V.",
-							"Project Spaces and Initiatives: Netzwerk freier Berliner Projekträume und -initiativen e.V.",
-							"Sociocultural Locations and Legal Areas for Graffiti: Daniel Schneider (Archiv der Jugendkulturen e.V.)"
+							"Legal Areas for Graffiti: Daniel Schneider (Archiv der Jugendkulturen e.V.)",
+							"Literature Locations: Netzwerk freie Literaturszene Berlin",
+							"Locations for Cultural Urban Development: Urbane Praxis e.V.",
+							"Berlin Dance Locations: Tanzbüro Berlin - Zeitgenössischer Tanz Berlin e.V."
 						],
 						"title": "External Data Editing"
 					},
@@ -729,14 +729,14 @@
 						"AG Kino – Gilde deutscher Filmkunsttheater e.V.",
 						"Berliner Museumsverband e.V.",
 						"Berliner Projektfonds Urbane Praxis",
-						"Netzwerk freie Literaturszene Berlin",
 						"Börsenverein des Deutschen Buchhandels - Landesverband Berlin-Brandenburg",
 						"Bundesverband Soziokultur e.V.",
 						"Deutscher Bibliotheksverband",
+						"Department of Geography at the University of Bonn",
 						"IG Jazz Berlin e.V.",
+						"Institut für Kulturelle Teilhabeforschung (IKTf)",
 						"Internationale Gesellschaft der Bildenden Künste (IGBK)",
 						"IT-Dienstleistungszentrum Berlin (ITDZ)",
-						"Institut für Kulturelle Teilhabeforschung (IKTf)",
 						"Kulturerbenetz Berlin",
 						"Landesverband freie darstellende Künste Berlin e.V. (LAFT Berlin)",
 						"Lettrétage e.V.",
@@ -1950,6 +1950,13 @@
 			"subtitle": "Here comes the data protection text.",
 			"title": "Data protection"
 		},
+		"questionnaireWizard": {
+			"consent": {
+				"paragraph2": "For the purposes of this survey, we define <0>cultural institutions</0> as <1>\"permanently or repeatedly used venues and organizations for cultural production, presentation, education, or encounter\"</1>, such as theaters, music venues, studios, galleries, socio-cultural centers, literature venues, dance and performance venues, or comparable institutions.",
+				"paragraph3": "Completing the questionnaire is expected to take <0>about 15 to 20 minutes.</0>",
+				"paragraph6": "<0>Participation in this survey is voluntary.</0> By checking the box, you confirm that you have read the information about this survey and agree to the processing of your data for scientific purposes within the scope of this project."
+			}
+		},
 		"roleFormModal": {
 			"actions": {
 				"cancel": "Cancel",
@@ -2089,11 +2096,11 @@
 							"title": "What is the Berlin Kulturkataster?"
 						},
 						{
-							"src": "https://kulturraeume.berlin/content/uploads/kulturraeume-01barbeitbeteilige.mp4",
+							"src": "https://kulturraeume.berlin/content/uploads/kulturraeume-01bauftragbeteiligte.mp4",
 							"title": "Commission, stakeholders, and objectives of the Kulturkataster"
 						},
 						{
-							"src": "https://kulturraeume.berlin/content/uploads/kulturraeume-01cwieentlassen.mp4",
+							"src": "https://kulturraeume.berlin/content/uploads/kulturraeume-01cwieentstehen.mp4",
 							"title": " How the Kulturkataster is created and how it changes"
 						}
 					]
@@ -2120,7 +2127,7 @@
 					"title": "Questions & Answers",
 					"videos": [
 						{
-							"src": "https://kulturraeume.berlin/content/uploads/kulturraeume-02d1faqwarumnichtverzeichen.mp4",
+							"src": "https://kulturraeume.berlin/content/uploads/kulturraeume-02d1faqwarumnichtverzeichnen.mp4",
 							"title": "Why is my cultural location not listed in the Kulturkataster?"
 						},
 						{
@@ -2278,16 +2285,16 @@
 				"text69": "in certain cultural categories.",
 				"text7": "But cultural locations are important for Berlin.",
 				"text71": "Start: September 2025",
-				"text73": "New cultural categories are added.",
-				"text74": "Data is updated.",
-				"text75": "There is a login area.",
-				"text76": "Cultural locations, associations, and administration\ncan maintain data together.",
+				"text73": "There is a login area.",
+				"text74": "Cultural locations, associations, and administration ",
+				"text75": "can maintain data together.",
+				"text76": "Public data is easier to download.",
 				"text77": "There is an English version of the website.",
 				"text79": "Start: mid-2026",
 				"text8": "Cultural locations give Berlin an identity.",
-				"text80": "Data is updated.",
-				"text81": "Missing data is added.",
-				"text82": "There are new specialist maps from the Geoportal.",
+				"text80": "New cultural categories are added.",
+				"text81": "Data is updated.",
+				"text82": "Missing data is added.",
 				"text83": "Threatened cultural locations are shown.",
 				"text84": "The login area becomes larger.",
 				"text86": "Start: late 2026",
@@ -2321,13 +2328,13 @@
 				"list3": {
 					"content": [
 						"{{count}} cultural locations, all with information like name, address, and contact.",
-						"15 categories and 71 subcategories.",
+						"16 categories and 76 subcategories.",
 						"12 specialist maps from the Geoportal Berlin.",
 						"A search field. You can search for names and addresses.",
 						"Search filters. You can search by district and category. And you can also see closed cultural locations. ",
-						"Information in German Sign Language",
-						"Information in plain language",
-						"Barrier-free list view"
+						"Information in German Sign Language and in Plain Language.",
+						"Barrier-free list view.",
+						"Log-in area for registered users."
 					]
 				},
 				"list4": {
@@ -2369,7 +2376,7 @@
 					],
 					"title": "This is how it works:"
 				},
-				"subTitle1": "What Is Included in Version 1",
+				"subTitle1": "What Is Included in Version 2",
 				"subTitle2": "Using the Map",
 				"subTitle3": "Questions and Answers",
 				"text1": "Since September 2025, the Berlin Kulturkataster has existed.",
@@ -2453,7 +2460,7 @@
 				"text56": "On a phone or tablet:",
 				"text57": "Tap the icon with 3 lines at the top left.",
 				"text59": "If you do not filter:",
-				"text6": "Here is the link: [Link/institution].",
+				"text6": "Here is the link: [Link /institution].",
 				"text60": "Then all open cultural locations are shown.",
 				"text62": "You can also",
 				"text63": "show closed locations.",
