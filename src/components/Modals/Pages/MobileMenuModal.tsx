@@ -19,6 +19,7 @@ import ListIcon from "@/icons/list.svg";
 import MapIcon from "@/icons/map.svg";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { localePath } from "@/lib/utils/localePath";
+import { getMobileMenuOrigin } from "@/lib/utils/mobileMenuOrigin";
 import KRBLogo from "@/logos/KRB.svg";
 import { usePathname, useRouter } from "next/navigation";
 import { useMemo } from "react";
@@ -117,14 +118,15 @@ export function MobileMenuModal({
 
 	const handleItemClick = (item: MobileMenuItem) => {
 		if (item.id === "language") {
+			// Toggling the menu's own URL only re-renders the intercepted modal
+			// slot and keeps the old locale, so switch the page underneath instead.
 			const targetLocale = currentLocale === "de" ? "en" : "de";
-			const toggledPath = buildLocaleToggledPath(
-				normalizedPath || `/${currentLocale}`,
-				targetLocale,
+			const origin = getMobileMenuOrigin() ?? `/${currentLocale}/map`;
+			const [originPath, originSearch] = origin.split("?");
+			const toggledPath = buildLocaleToggledPath(originPath, targetLocale);
+			router.push(
+				originSearch ? `${toggledPath}?${originSearch}` : toggledPath,
 			);
-			const search =
-				typeof window !== "undefined" ? window.location.search : "";
-			router.push(`${toggledPath}${search}`);
 			return;
 		}
 
