@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
+import { rememberMobileMenuOrigin } from "@/lib/utils/mobileMenuOrigin";
 import BurgerMenu from "@/icons/burger-menu-icon.svg";
 import Clipboard from "@/icons/clipboard.svg";
 
@@ -28,7 +29,12 @@ export function ViewModeToggle() {
 					variant="surface"
 					iconSize="lg"
 					title={t("common.mobileMenu.title")}
-					onClick={() => router.push(toLocalePath("/mobileMenu"))}
+					onClick={() => {
+						rememberMobileMenuOrigin(
+							`${window.location.pathname}${window.location.search}`,
+						);
+						router.push(toLocalePath("/mobileMenu"));
+					}}
 					aria-label={t("common.mobileMenu.title")}
 					className="md:hidden"
 				>
