@@ -55,6 +55,7 @@ import { FundingSourceField } from "./FundingSourceField";
 import { KeyValueField } from "./KeyValueField";
 import { FieldPermissionsField } from "./FieldPermissionsField";
 import { defaultFilterState } from "./constants";
+import { isEmptyValue } from "./validation";
 import Eye from "@/icons/eye.svg";
 import EyeOff from "@/icons/eye-off.svg";
 import Warning from "@/icons/warning.svg";
@@ -731,16 +732,23 @@ const renderFieldContent = (
 					id={field.name}
 					className={cn(
 						"space-y-6",
-						hasIssue &&
-							"rounded-sm border border-destructive-secondary bg-destructive-secondary/10 p-3",
 						field.name === "funding_source_importance" && "p-8",
 					)}
 				>
 					{field.likertMatrix.rows.map((row) => {
 						const rowValue =
 							(value as Record<string, unknown> | undefined)?.[row.key] ?? "";
+						// Only the unanswered rows are the problem, so only they turn red.
+						const rowHasIssue = hasIssue && isEmptyValue(rowValue);
 						return (
-							<div key={row.key} className="space-y-2">
+							<div
+								key={row.key}
+								className={cn(
+									"space-y-2",
+									rowHasIssue &&
+										"rounded-sm border border-destructive-secondary bg-destructive-secondary/10 p-3",
+								)}
+							>
 								<Label className="text-neutral-80">{row.label}</Label>
 								<LikertScale
 									value={getSerializedSelectedValue(field.options, rowValue)}
@@ -756,8 +764,10 @@ const renderFieldContent = (
 											label: option.label,
 										})) ?? []
 									}
-									aria-invalid={hasIssue || undefined}
-									itemClassName={cn(hasIssue && "border-destructive-secondary")}
+									aria-invalid={rowHasIssue || undefined}
+									itemClassName={cn(
+										rowHasIssue && "border-destructive-secondary",
+									)}
 									disabled={field.disabled}
 								/>
 							</div>
