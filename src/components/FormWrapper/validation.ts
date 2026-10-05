@@ -22,7 +22,7 @@ const withNormalizer = (
 	normalize?: FieldNormalizer,
 ): FieldValidator => Object.assign(validate, normalize ? { normalize } : {});
 
-const isEmptyValue = (value: unknown) =>
+export const isEmptyValue = (value: unknown) =>
 	value === undefined ||
 	value === null ||
 	value === "" ||
