@@ -697,6 +697,43 @@ describe("FormWrapper", () => {
 			});
 		});
 
+		it("marks only the unanswered rows of a required likertMatrix field as invalid", () => {
+			const config: FormWrapperConfig = {
+				fields: toFields([
+					{
+						id: "main",
+						fields: [
+							{
+								name: "funding_importance",
+								label: "Bedeutung der Finanzierungsquellen",
+								type: "likertMatrix",
+								required: true,
+								options: [
+									{ value: "5", label: "hohe Bedeutung" },
+									{ value: "1", label: "keine Bedeutung" },
+								],
+								likertMatrix: {
+									rows: [
+										{ key: "public_funding", label: "öffentliche Förderung" },
+										{ key: "donations", label: "Spenden" },
+									],
+								},
+							},
+						],
+					},
+				]),
+				onSubmit: vi.fn(),
+			};
+
+			render(<FormWrapper config={config} />);
+			fireEvent.click(screen.getAllByLabelText("hohe Bedeutung")[0]);
+			fireEvent.click(screen.getByRole("button", { name: /Submit/i }));
+
+			const [answeredRow, unansweredRow] = screen.getAllByRole("radiogroup");
+			expect(answeredRow).not.toHaveAttribute("aria-invalid");
+			expect(unansweredRow).toHaveAttribute("aria-invalid", "true");
+		});
+
 		it("shows a free-text input for a checked multiselect option with freeTextOption", () => {
 			const config: FormWrapperConfig = {
 				fields: toFields([
