@@ -732,7 +732,7 @@ const renderFieldContent = (
 					id={field.name}
 					className={cn(
 						"space-y-6",
-						field.name === "funding_source_importance" && "p-8",
+						field.name === "funding_source_importance" && "md:p-8",
 					)}
 				>
 					{field.likertMatrix.rows.map((row) => {
@@ -769,6 +769,7 @@ const renderFieldContent = (
 										rowHasIssue && "border-destructive-secondary",
 									)}
 									disabled={field.disabled}
+									stackOnMobile
 								/>
 							</div>
 						);
