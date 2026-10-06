@@ -605,6 +605,11 @@ describe("FormWrapper", () => {
 			expect(screen.getByText("öffentliche Förderung")).toBeInTheDocument();
 			expect(screen.getByText("Spenden")).toBeInTheDocument();
 			expect(screen.getAllByText("hohe Bedeutung")).toHaveLength(2);
+			// Each row stacks on mobile like a single likert field, so its radio
+			// group is not locked to horizontal arrow-key navigation.
+			for (const row of screen.getAllByRole("radiogroup")) {
+				expect(row).not.toHaveAttribute("aria-orientation");
+			}
 		});
 
 		it("submits an object keyed by row for a likertMatrix field", async () => {
