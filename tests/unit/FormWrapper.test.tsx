@@ -852,6 +852,41 @@ describe("FormWrapper", () => {
 			expect(screen.queryByText("Name is required")).not.toBeInTheDocument();
 		});
 
+		it("clears only the fixed field's error after a failed submit and then submits", async () => {
+			const onSubmit = vi.fn();
+			const config: FormWrapperConfig = {
+				fields: toFields([
+					{
+						id: "main",
+						fields: [
+							{ name: "name", label: "Name", type: "text", required: true },
+							{ name: "agree", label: "Agree", type: "checkbox", required: true },
+						],
+					},
+				]),
+				onSubmit,
+			};
+
+			render(<FormWrapper config={config} />);
+			fireEvent.click(screen.getByRole("button", { name: /Submit/i }));
+			expect(screen.getByText("Name is required")).toBeInTheDocument();
+			expect(screen.getByText("I agree to terms is required")).toBeInTheDocument();
+
+			fireEvent.change(screen.getByRole("textbox"), {
+				target: { value: "Kulturhaus" },
+			});
+			expect(screen.queryByText("Name is required")).not.toBeInTheDocument();
+			expect(screen.getByText("I agree to terms is required")).toBeInTheDocument();
+			expect(onSubmit).not.toHaveBeenCalled();
+
+			fireEvent.click(screen.getByRole("checkbox"));
+			expect(
+				screen.queryByText("I agree to terms is required"),
+			).not.toBeInTheDocument();
+			fireEvent.click(screen.getByRole("button", { name: /Submit/i }));
+			await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+		});
+
 		it("shows a free-text input for a checked multiselect option with freeTextOption", () => {
 			const config: FormWrapperConfig = {
 				fields: toFields([
