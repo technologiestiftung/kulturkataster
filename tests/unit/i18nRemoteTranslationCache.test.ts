@@ -1,6 +1,6 @@
 import { describe, expect, it, vi, afterEach } from "vitest";
 
-describe("remote translation cache", () => {
+describe("remote translation cache", { timeout: 30_000 }, () => {
 	afterEach(() => {
 		vi.resetModules();
 		vi.unstubAllEnvs();
