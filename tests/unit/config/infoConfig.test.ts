@@ -99,10 +99,10 @@ describe("cultureIndexDimensionsInfoConfig", () => {
 		expect(
 			cultureIndexDimensionsInfoConfig.map(resolveInstitutionPermissionField),
 		).toEqual([
+			"culture_index_social_spatial",
 			"culture_index_location",
 			"culture_index_property",
 			"culture_index_financial",
-			"culture_index_social_spatial",
 			"culture_index_visibility",
 			"culture_index_global",
 		]);
@@ -118,6 +118,6 @@ describe("cultureIndexDimensionsInfoConfig", () => {
 		const values = cultureIndexDimensionsInfoConfig.map((field) =>
 			typeof field.value === "function" ? field.value(institution) : undefined,
 		);
-		expect(values).toEqual(["0", "72.5", null, null, null, "Stable"]);
+		expect(values).toEqual([null, "0", "72.5", null, null, "Stable"]);
 	});
 });
