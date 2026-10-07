@@ -821,6 +821,37 @@ describe("FormWrapper", () => {
 			);
 		});
 
+		it("does not live-validate after a successful submit", async () => {
+			const onSubmit = vi.fn();
+			const config: FormWrapperConfig = {
+				fields: toFields([
+					{
+						id: "main",
+						fields: [
+							{
+								name: "name",
+								label: "Name",
+								type: "text",
+								required: true,
+							},
+						],
+					},
+				]),
+				onSubmit,
+			};
+
+			render(<FormWrapper config={config} />);
+			const input = screen.getByRole("textbox");
+			fireEvent.change(input, { target: { value: "Kulturhaus" } });
+			fireEvent.click(screen.getByRole("button", { name: /Submit/i }));
+			await waitFor(() => expect(onSubmit).toHaveBeenCalled());
+
+			fireEvent.change(input, { target: { value: "" } });
+
+			expect(input).not.toHaveAttribute("aria-invalid");
+			expect(screen.queryByText("Name is required")).not.toBeInTheDocument();
+		});
+
 		it("shows a free-text input for a checked multiselect option with freeTextOption", () => {
 			const config: FormWrapperConfig = {
 				fields: toFields([
