@@ -49,3 +49,24 @@ describe("ViewModeToggle questionnaire button", () => {
 		expect(pushMock).toHaveBeenCalledWith("/de/questionnaire");
 	});
 });
+
+describe("ViewModeToggle mobile menu button", () => {
+	beforeEach(() => {
+		pushMock.mockReset();
+	});
+
+	it("keeps its own styling and opens the mobile menu when clicked", () => {
+		render(<ViewModeToggle />);
+		const burger = screen.getByRole("button", {
+			name: "common.mobileMenu.title",
+		});
+
+		expect(burger.classList).toContain("md:hidden");
+		expect(burger.classList).not.toContain("border-muted-foreground");
+		expect(burger.classList).not.toContain("hover:bg-neutral-5");
+
+		fireEvent.click(burger);
+
+		expect(pushMock).toHaveBeenCalledWith("/de/mobileMenu");
+	});
+});
