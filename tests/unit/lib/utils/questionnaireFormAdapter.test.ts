@@ -247,6 +247,27 @@ describe("buildFieldConfigFromQuestion", () => {
 		warnSpy.mockRestore();
 	});
 
+	it("maps a number question with its min/max range", () => {
+		const question = asQuestion({
+			...baseQuestion,
+			key: "founded_year",
+			label: "Seit wann besteht die Einrichtung insgesamt?",
+			field_type: "number",
+			required: true,
+			step: 0,
+			order: 2,
+			config: { min: 1000, max: 2100, placeholder: "z. B. 1998" },
+		});
+
+		const result = buildFieldConfigFromQuestion(question);
+		expect(result.type).toBe("number");
+		expect(result).toMatchObject({
+			min: 1000,
+			max: 2100,
+			placeholder: "z. B. 1998",
+		});
+	});
+
 	it("passes through radioVariant, placeholder, and allowNullOption from config", () => {
 		const question = asQuestion({
 			...baseQuestion,

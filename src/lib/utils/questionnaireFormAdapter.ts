@@ -7,6 +7,7 @@ import type {
 const SUPPORTED_QUESTION_FIELD_TYPES = [
 	"text",
 	"textarea",
+	"number",
 	"radio",
 	"likert",
 	"likertMatrix",
@@ -51,6 +52,8 @@ type QuestionConfig = {
 	placeholder?: string;
 	placeholder_en?: string;
 	allowNullOption?: boolean;
+	min?: number;
+	max?: number;
 	likertMatrix?: { rows: { key: string; label: string; label_en?: string }[] };
 	condition?: {
 		dependsOnKey: string;
@@ -61,6 +64,12 @@ type QuestionConfig = {
 
 const getQuestionConfig = (question: Question): QuestionConfig =>
 	(question.config as QuestionConfig | null) ?? {};
+
+// Only set min/max when seeded, so the field config stays free of undefined keys.
+const resolveNumberRange = ({ min, max }: QuestionConfig) => ({
+	...(min !== undefined ? { min } : {}),
+	...(max !== undefined ? { max } : {}),
+});
 
 const resolveLocalizedText = (
 	de: string,
@@ -263,6 +272,7 @@ export function buildFieldConfigFromQuestion(
 		...(config.allowNullOption !== undefined
 			? { allowNullOption: config.allowNullOption }
 			: {}),
+		...resolveNumberRange(config),
 		...(localizedLikertMatrix ? { likertMatrix: localizedLikertMatrix } : {}),
 		...(config.condition
 			? {
