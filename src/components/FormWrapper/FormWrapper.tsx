@@ -150,7 +150,7 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 	const [errors, setErrors] = useState<Record<string, string>>({});
 	const [touched, setTouched] = useState<Record<string, boolean>>({});
 	const [formError, setFormError] = useState<string | null>(null);
-	// After the first submit attempt, errors follow the data live (see effect
+	// After a failed submit attempt, errors follow the data live (see effect
 	// below), so a half-answered field and newly shown required fields keep
 	// their errors instead of being cleared on the next change.
 	const [hasSubmitAttempt, setHasSubmitAttempt] = useState(false);
@@ -266,8 +266,8 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 		if (isSubmittingRef.current) return;
 
 		setTouched(buildTouchedMap(allFields));
-		setHasSubmitAttempt(true);
 		const validationErrors = validateForm();
+		setHasSubmitAttempt(Object.keys(validationErrors).length > 0);
 		if (Object.keys(validationErrors).length > 0) {
 			const firstErrorName = allFields.find(
 				(field) => validationErrors[field.name],
