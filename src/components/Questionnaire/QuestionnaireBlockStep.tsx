@@ -97,7 +97,7 @@ export function QuestionnaireBlockStep({
 			</div>
 
 			<Card variant="secondary" className="space-y-6">
-				<FormWrapper config={config} />
+				<FormWrapper key={`block-${step}`} config={config} />
 			</Card>
 		</div>
 	);
