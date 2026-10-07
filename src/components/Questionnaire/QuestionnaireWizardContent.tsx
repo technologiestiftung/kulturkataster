@@ -22,6 +22,11 @@ import { QuestionnaireThankYou } from "@/components/Questionnaire/QuestionnaireT
 import type { Category } from "@/types";
 import type { CaptchaWidgetConfig } from "@/types/captcha";
 import { useGuestCaptcha } from "@/components/Captcha/useGuestCaptcha";
+import {
+	isEmptyValue,
+	numberRange,
+	numeric,
+} from "@/components/FormWrapper/validation";
 
 type QuestionnaireWithQuestions = {
 	id: number;
@@ -108,6 +113,19 @@ const isLikertMatrixComplete = (
 	);
 };
 
+const isValidNumber = (
+	field: ReturnType<typeof buildFieldConfigFromQuestion>,
+	value: unknown,
+	formData: Record<string, unknown>,
+) =>
+	field.type !== "number" ||
+	isEmptyValue(value) ||
+	(numeric("invalid")(value, formData) === undefined &&
+		numberRange({ min: field.min, max: field.max, message: "invalid" })(
+			value,
+			formData,
+		) === undefined);
+
 const isBlockStepValid = (
 	fields: ReturnType<typeof buildFieldConfigFromQuestion>[],
 	formData: Record<string, unknown>,
@@ -115,8 +133,9 @@ const isBlockStepValid = (
 	fields
 		.filter((field) => !field.condition || field.condition(formData))
 		.every((field) => {
-			if (!field.required) return true;
 			const value = formData[field.name];
+			if (!isValidNumber(field, value, formData)) return false;
+			if (!field.required) return true;
 			if (field.type === "checkbox") return value === true;
 			if (field.type === "likertMatrix") {
 				return isLikertMatrixComplete(field, value);

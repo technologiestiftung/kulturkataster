@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import { QuestionnaireWizardModal } from "@/components/Questionnaire/QuestionnaireWizardModal";
 import {
 	checkQuestionnaireCompletion,
@@ -219,5 +219,59 @@ describe("QuestionnaireWizardContent step advancement (real stepper)", () => {
 				}),
 			}),
 		);
+	});
+	it("blocks a step-dot jump forward when a revisited block's number answer is outside its configured range (regression: range was only enforced by the block's own submit)", async () => {
+		const questionnaire = buildQuestionnaire();
+		questionnaire.questions[0] = {
+			...questionnaire.questions[0],
+			key: "founded_year",
+			field_type: "number",
+			required: false,
+			config: { min: 1000, max: 2100 } as any,
+		};
+
+		render(
+			<QuestionnaireWizardModal
+				routePath="/questionnaire"
+				questionnaire={questionnaire as any}
+				categoryGroups={[]}
+			/>,
+		);
+
+		advanceThroughConsent();
+		fireEvent.click(screen.getByLabelText("Nein"));
+		mockFormSubmitData = { name: "Neuer Kulturort" };
+		fireEvent.click(screen.getByText("mock-form-submit"));
+		await flushMicrotasks();
+
+		mockFormSubmitData = { founded_year: "1990" };
+		fireEvent.click(screen.getByText("mock-form-submit"));
+		await flushMicrotasks();
+		expect(lastFormConfig?.fields?.map((f) => f.name)).toEqual(["q2"]);
+
+		fireEvent.click(screen.getByLabelText("Go to step 1"));
+		expect(lastFormConfig?.fields?.map((f) => f.name)).toEqual([
+			"founded_year",
+		]);
+
+		for (const outOfRange of ["99", "3000", "abc"]) {
+			act(() => {
+				useQuestionnaireDraftStore
+					.getState()
+					.setAnswers({ founded_year: outOfRange });
+			});
+			fireEvent.click(screen.getByLabelText("Go to step 2"));
+			expect(lastFormConfig?.fields?.map((f) => f.name)).toEqual([
+				"founded_year",
+			]);
+		}
+
+		act(() => {
+			useQuestionnaireDraftStore
+				.getState()
+				.setAnswers({ founded_year: "2000" });
+		});
+		fireEvent.click(screen.getByLabelText("Go to step 2"));
+		expect(lastFormConfig?.fields?.map((f) => f.name)).toEqual(["q2"]);
 	});
 });
