@@ -739,6 +739,192 @@ describe("FormWrapper", () => {
 			expect(unansweredRow).toHaveAttribute("aria-invalid", "true");
 		});
 
+		it("keeps the remaining rows invalid when one row is answered after a failed submit", () => {
+			const config: FormWrapperConfig = {
+				fields: toFields([
+					{
+						id: "main",
+						fields: [
+							{
+								name: "funding_importance",
+								label: "Bedeutung der Finanzierungsquellen",
+								type: "likertMatrix",
+								required: true,
+								options: [
+									{ value: "5", label: "hohe Bedeutung" },
+									{ value: "1", label: "keine Bedeutung" },
+								],
+								likertMatrix: {
+									rows: [
+										{ key: "public_funding", label: "öffentliche Förderung" },
+										{ key: "donations", label: "Spenden" },
+										{ key: "sponsoring", label: "Sponsoring" },
+									],
+								},
+							},
+						],
+					},
+				]),
+				onSubmit: vi.fn(),
+			};
+
+			render(<FormWrapper config={config} />);
+			fireEvent.click(screen.getByRole("button", { name: /Submit/i }));
+			fireEvent.click(screen.getAllByLabelText("hohe Bedeutung")[0]);
+
+			const [answeredRow, ...unansweredRows] =
+				screen.getAllByRole("radiogroup");
+			expect(answeredRow).not.toHaveAttribute("aria-invalid");
+			for (const row of unansweredRows) {
+				expect(row).toHaveAttribute("aria-invalid", "true");
+			}
+			expect(screen.getByText("Required")).toBeInTheDocument();
+		});
+
+		it("flags a required field that only appears after a failed submit", () => {
+			const config: FormWrapperConfig = {
+				fields: toFields([
+					{
+						id: "main",
+						fields: [
+							{
+								name: "room_usage",
+								label: "Raumnutzung",
+								type: "radio",
+								required: true,
+								options: [
+									{ value: "ownership", label: "Eigentum" },
+									{ value: "rent", label: "Miete" },
+								],
+							},
+							{
+								name: "notice_period",
+								label: "Kündigungsfrist",
+								type: "text",
+								required: true,
+								condition: (formData: Record<string, unknown>) =>
+									formData.room_usage === "rent",
+							},
+						],
+					},
+				]),
+				onSubmit: vi.fn(),
+			};
+
+			render(<FormWrapper config={config} />);
+			fireEvent.click(screen.getByRole("button", { name: /Submit/i }));
+			fireEvent.click(screen.getByLabelText("Miete"));
+
+			expect(screen.getByRole("textbox")).toHaveAttribute(
+				"aria-invalid",
+				"true",
+			);
+		});
+
+		it("does not live-validate after a successful submit", async () => {
+			const onSubmit = vi.fn();
+			const config: FormWrapperConfig = {
+				fields: toFields([
+					{
+						id: "main",
+						fields: [
+							{
+								name: "name",
+								label: "Name",
+								type: "text",
+								required: true,
+							},
+						],
+					},
+				]),
+				onSubmit,
+			};
+
+			render(<FormWrapper config={config} />);
+			const input = screen.getByRole("textbox");
+			fireEvent.change(input, { target: { value: "Kulturhaus" } });
+			fireEvent.click(screen.getByRole("button", { name: /Submit/i }));
+			await waitFor(() => expect(onSubmit).toHaveBeenCalled());
+
+			fireEvent.change(input, { target: { value: "" } });
+
+			expect(input).not.toHaveAttribute("aria-invalid");
+			expect(screen.queryByText("Name is required")).not.toBeInTheDocument();
+		});
+
+		it("clears a blurred field's error on change before any submit", () => {
+			const config: FormWrapperConfig = {
+				fields: toFields([
+					{
+						id: "main",
+						fields: [
+							{ name: "email", label: "Email", type: "email" },
+							{ name: "name", label: "Name", type: "text", required: true },
+						],
+					},
+				]),
+				onSubmit: vi.fn(),
+			};
+
+			render(<FormWrapper config={config} />);
+			const emailInput = screen.getByLabelText("Email");
+			fireEvent.change(emailInput, { target: { value: "kultur" } });
+			fireEvent.blur(emailInput);
+			expect(emailInput).toHaveAttribute("aria-invalid", "true");
+
+			fireEvent.change(emailInput, { target: { value: "kultur@" } });
+			expect(emailInput).not.toHaveAttribute("aria-invalid");
+
+			const nameInput = screen.getByLabelText(/Name/);
+			fireEvent.change(nameInput, { target: { value: "x" } });
+			fireEvent.change(nameInput, { target: { value: "" } });
+			expect(nameInput).not.toHaveAttribute("aria-invalid");
+		});
+
+		it("clears only the fixed field's error after a failed submit and then submits", async () => {
+			const onSubmit = vi.fn();
+			const config: FormWrapperConfig = {
+				fields: toFields([
+					{
+						id: "main",
+						fields: [
+							{ name: "name", label: "Name", type: "text", required: true },
+							{
+								name: "agree",
+								label: "Agree",
+								type: "checkbox",
+								required: true,
+							},
+						],
+					},
+				]),
+				onSubmit,
+			};
+
+			render(<FormWrapper config={config} />);
+			fireEvent.click(screen.getByRole("button", { name: /Submit/i }));
+			expect(screen.getByText("Name is required")).toBeInTheDocument();
+			expect(
+				screen.getByText("I agree to terms is required"),
+			).toBeInTheDocument();
+
+			fireEvent.change(screen.getByRole("textbox"), {
+				target: { value: "Kulturhaus" },
+			});
+			expect(screen.queryByText("Name is required")).not.toBeInTheDocument();
+			expect(
+				screen.getByText("I agree to terms is required"),
+			).toBeInTheDocument();
+			expect(onSubmit).not.toHaveBeenCalled();
+
+			fireEvent.click(screen.getByRole("checkbox"));
+			expect(
+				screen.queryByText("I agree to terms is required"),
+			).not.toBeInTheDocument();
+			fireEvent.click(screen.getByRole("button", { name: /Submit/i }));
+			await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+		});
+
 		it("shows a free-text input for a checked multiselect option with freeTextOption", () => {
 			const config: FormWrapperConfig = {
 				fields: toFields([

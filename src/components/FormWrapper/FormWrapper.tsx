@@ -150,6 +150,10 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 	const [errors, setErrors] = useState<Record<string, string>>({});
 	const [touched, setTouched] = useState<Record<string, boolean>>({});
 	const [formError, setFormError] = useState<string | null>(null);
+	// After a failed submit attempt, errors follow the data live (see effect
+	// below), so a half-answered field and newly shown required fields keep
+	// their errors instead of being cleared on the next change.
+	const [hasSubmitAttempt, setHasSubmitAttempt] = useState(false);
 
 	const bumpFieldVersion = (name: string) => {
 		fieldVersionsRef.current[name] = (fieldVersionsRef.current[name] ?? 0) + 1;
@@ -159,7 +163,7 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 		bumpFieldVersion(name);
 		setFormData((prev) => ({ ...prev, [name]: value }));
 		setTouched((prev) => ({ ...prev, [name]: true }));
-		if (errors[name]) {
+		if (!hasSubmitAttempt && errors[name]) {
 			setErrors((prev) => {
 				const newErrors = { ...prev };
 				delete newErrors[name];
@@ -236,13 +240,16 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 		});
 	};
 
-	const validateForm = (): Record<string, string> => {
-		const normalizedFormData = Object.fromEntries(
+	const normalizeFormData = (data: Record<string, unknown>) =>
+		Object.fromEntries(
 			allFields.map((field) => [
 				field.name,
-				normalizeFieldValue(field, formData[field.name], formData, t, tEnum),
+				normalizeFieldValue(field, data[field.name], data, t, tEnum),
 			]),
 		);
+
+	const validateForm = (): Record<string, string> => {
+		const normalizedFormData = normalizeFormData(formData);
 		const newErrors = collectValidationErrors(
 			allFields,
 			normalizedFormData,
@@ -260,6 +267,7 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 
 		setTouched(buildTouchedMap(allFields));
 		const validationErrors = validateForm();
+		setHasSubmitAttempt(Object.keys(validationErrors).length > 0);
 		if (Object.keys(validationErrors).length > 0) {
 			const firstErrorName = allFields.find(
 				(field) => validationErrors[field.name],
@@ -314,6 +322,22 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 	useEffect(() => {
 		onChangeRef.current?.(formData);
 	}, [formData]);
+
+	useEffect(() => {
+		if (!hasSubmitAttempt) return;
+		const liveErrors = collectValidationErrors(
+			allFields,
+			normalizeFormData(formData),
+			t,
+			tEnum,
+		);
+		setErrors(liveErrors);
+		if (Object.keys(liveErrors).length === 0) {
+			setFormError(null);
+		}
+		// Only data changes re-validate: callers like the questionnaire rebuild
+		// their field config on every render, which would otherwise loop.
+	}, [formData, hasSubmitAttempt]);
 
 	return (
 		<form id={config.formId} onSubmit={handleSubmit} noValidate>
