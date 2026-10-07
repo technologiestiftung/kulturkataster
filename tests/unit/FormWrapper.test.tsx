@@ -852,6 +852,35 @@ describe("FormWrapper", () => {
 			expect(screen.queryByText("Name is required")).not.toBeInTheDocument();
 		});
 
+		it("clears a blurred field's error on change before any submit", () => {
+			const config: FormWrapperConfig = {
+				fields: toFields([
+					{
+						id: "main",
+						fields: [
+							{ name: "email", label: "Email", type: "email" },
+							{ name: "name", label: "Name", type: "text", required: true },
+						],
+					},
+				]),
+				onSubmit: vi.fn(),
+			};
+
+			render(<FormWrapper config={config} />);
+			const emailInput = screen.getByLabelText("Email");
+			fireEvent.change(emailInput, { target: { value: "kultur" } });
+			fireEvent.blur(emailInput);
+			expect(emailInput).toHaveAttribute("aria-invalid", "true");
+
+			fireEvent.change(emailInput, { target: { value: "kultur@" } });
+			expect(emailInput).not.toHaveAttribute("aria-invalid");
+
+			const nameInput = screen.getByLabelText(/Name/);
+			fireEvent.change(nameInput, { target: { value: "x" } });
+			fireEvent.change(nameInput, { target: { value: "" } });
+			expect(nameInput).not.toHaveAttribute("aria-invalid");
+		});
+
 		it("clears only the fixed field's error after a failed submit and then submits", async () => {
 			const onSubmit = vi.fn();
 			const config: FormWrapperConfig = {
@@ -860,7 +889,12 @@ describe("FormWrapper", () => {
 						id: "main",
 						fields: [
 							{ name: "name", label: "Name", type: "text", required: true },
-							{ name: "agree", label: "Agree", type: "checkbox", required: true },
+							{
+								name: "agree",
+								label: "Agree",
+								type: "checkbox",
+								required: true,
+							},
 						],
 					},
 				]),
@@ -870,13 +904,17 @@ describe("FormWrapper", () => {
 			render(<FormWrapper config={config} />);
 			fireEvent.click(screen.getByRole("button", { name: /Submit/i }));
 			expect(screen.getByText("Name is required")).toBeInTheDocument();
-			expect(screen.getByText("I agree to terms is required")).toBeInTheDocument();
+			expect(
+				screen.getByText("I agree to terms is required"),
+			).toBeInTheDocument();
 
 			fireEvent.change(screen.getByRole("textbox"), {
 				target: { value: "Kulturhaus" },
 			});
 			expect(screen.queryByText("Name is required")).not.toBeInTheDocument();
-			expect(screen.getByText("I agree to terms is required")).toBeInTheDocument();
+			expect(
+				screen.getByText("I agree to terms is required"),
+			).toBeInTheDocument();
 			expect(onSubmit).not.toHaveBeenCalled();
 
 			fireEvent.click(screen.getByRole("checkbox"));
