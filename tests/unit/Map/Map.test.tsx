@@ -1,9 +1,15 @@
-import { render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import Map from "@/components/Map/Map";
+import { useAppStore } from "@/lib/store/appStore";
 
-const { pathnameMock } = vi.hoisted(() => ({
+const { pathnameMock, isMobileMock } = vi.hoisted(() => ({
 	pathnameMock: vi.fn(() => "/de/map"),
+	isMobileMock: vi.fn(() => false),
+}));
+
+vi.mock("@/hooks/use-mobile", () => ({
+	useIsMobile: isMobileMock,
 }));
 
 vi.mock("next/navigation", () => ({
@@ -27,8 +33,22 @@ vi.mock("@/components/Map/LayerTree/LayerTree", () => ({
 }));
 
 // The filter/search side panel stays closed, as after picking a search result.
+// It only exposes whether it is blocked and a way to open it.
 vi.mock("@/components/Menu/MenuContent/SidePanel", () => ({
-	SidePanel: () => null,
+	SidePanel: ({
+		isBlocked,
+		onPanelOpen,
+	}: {
+		isBlocked?: boolean;
+		onPanelOpen?: () => void;
+	}) => (
+		<button
+			type="button"
+			data-testid="side-panel"
+			data-blocked={String(isBlocked)}
+			onClick={onPanelOpen}
+		/>
+	),
 }));
 
 vi.mock("@/components/Map/Controls", () => ({
@@ -59,6 +79,8 @@ const isLayerTreeShiftedRight = () =>
 describe("Map", () => {
 	beforeEach(() => {
 		pathnameMock.mockReturnValue("/de/map");
+		isMobileMock.mockReturnValue(false);
+		act(() => useAppStore.getState().setIsLayerTreeOpen(false));
 	});
 
 	it("keeps the layer tree at the left edge when no sidebar is open", () => {
@@ -81,5 +103,24 @@ describe("Map", () => {
 		render(<Map />);
 
 		expect(isLayerTreeShiftedRight()).toBe(true);
+	});
+
+	it("keeps the filter panel and Fachkarten open together on desktop", () => {
+		act(() => useAppStore.getState().setIsLayerTreeOpen(true));
+		render(<Map />);
+
+		expect(screen.getByTestId("side-panel").dataset.blocked).toBe("false");
+		fireEvent.click(screen.getByTestId("side-panel"));
+		expect(useAppStore.getState().isLayerTreeOpen).toBe(true);
+	});
+
+	it("allows only one of filter panel and Fachkarten on mobile", () => {
+		isMobileMock.mockReturnValue(true);
+		act(() => useAppStore.getState().setIsLayerTreeOpen(true));
+		render(<Map />);
+
+		expect(screen.getByTestId("side-panel").dataset.blocked).toBe("true");
+		fireEvent.click(screen.getByTestId("side-panel"));
+		expect(useAppStore.getState().isLayerTreeOpen).toBe(false);
 	});
 });
