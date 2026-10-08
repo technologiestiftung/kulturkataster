@@ -7,12 +7,15 @@ import { cn } from "@/lib/utils";
 type ScrollRevealProps = {
 	children: React.ReactNode;
 	className?: string;
+	/** Classes for the inner wrapper around `children`, e.g. to pass a subgrid through. */
+	contentClassName?: string;
 	disabled?: boolean;
 };
 
 export function ScrollReveal({
 	children,
 	className,
+	contentClassName,
 	disabled = false,
 }: ScrollRevealProps) {
 	const ref = useRef<HTMLDivElement>(null);
@@ -90,6 +93,7 @@ export function ScrollReveal({
 			<div
 				className={cn(
 					"motion-safe:transition-all motion-safe:duration-500 motion-safe:ease-out",
+					contentClassName,
 					isVisible
 						? "motion-safe:opacity-100 motion-safe:translate-y-0"
 						: "motion-safe:opacity-0 motion-safe:translate-y-3",

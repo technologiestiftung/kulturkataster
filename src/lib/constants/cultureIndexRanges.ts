@@ -51,10 +51,10 @@ export const createEmptyCultureIndexRangeCounts = (): Record<
 // The six dimensions the culture index is manually derived from. All but the
 // global assessment are scores from 0 to 100; the global assessment is free text.
 export const CULTURE_INDEX_SCORE_FIELDS = [
-	"culture_index_social_spatial",
 	"culture_index_location",
 	"culture_index_property",
 	"culture_index_financial",
+	"culture_index_social_spatial",
 	"culture_index_visibility",
 ] as const;
 

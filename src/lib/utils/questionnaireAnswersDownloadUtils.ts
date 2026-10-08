@@ -62,10 +62,19 @@ function formatFreeTextCombo(
 	config: QuestionConfigShape,
 	combo: { selected: unknown; freeText: unknown },
 ): string {
-	const selectedLabel = formatScalarValue(config, combo.selected);
+	const selectedValues = Array.isArray(combo.selected)
+		? combo.selected
+		: [combo.selected];
 	const freeText = typeof combo.freeText === "string" ? combo.freeText : "";
-	if (!freeText) return selectedLabel;
-	return selectedLabel ? `${selectedLabel}: ${freeText}` : freeText;
+	return selectedValues
+		.map((item) => {
+			const label = formatScalarValue(config, item).replace(/\s*:\s*$/, "");
+			const isFreeTextOption =
+				String(item) === String(config.freeTextOption?.value);
+			return isFreeTextOption && freeText ? `${label}: ${freeText}` : label;
+		})
+		.filter(Boolean)
+		.join("; ");
 }
 
 function formatLikertMatrixValue(
