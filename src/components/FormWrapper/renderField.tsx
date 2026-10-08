@@ -275,7 +275,8 @@ const SELECT_NULL_SENTINEL = "__FORMWRAPPER_SELECT_NULL__";
 // Each field spans two rows of its section grid: label/description, then the
 // input. Passed down as a subgrid, so in multi-column sections the inputs of a
 // row start at the same height even when one label wraps onto two lines.
-const FIELD_SUBGRID_CLASS = "grid grid-rows-subgrid row-span-2 gap-y-1";
+const FIELD_SUBGRID_CLASS =
+	"grid min-w-0 grid-cols-1 grid-rows-subgrid row-span-2 gap-y-1";
 
 const deserializeOptionValue = (value: string): string | number | boolean => {
 	if (value.startsWith("boolean:")) {
