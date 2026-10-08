@@ -18,7 +18,7 @@ export type LikertScaleProps = Omit<
 	containerClassName?: string;
 	itemClassName?: string;
 	labelClassName?: string;
-	/** Below `md`, list the options vertically instead of a horizontal scroll row. */
+	/** Below `md`, list the options vertically instead of a horizontal row. */
 	stackOnMobile?: boolean;
 };
 
