@@ -93,6 +93,24 @@ describe("LikertScale", () => {
 		);
 	});
 
+	it("lists more than five options vertically on every screen size", () => {
+		const sixOptions = [
+			...scaleOptions,
+			{ value: "6", label: "kann nicht eingeschätzt werden" },
+		];
+		render(<LikertScale options={sixOptions} />);
+
+		// Vertical list: arrow keys work in both directions and every option
+		// is still selectable.
+		expect(screen.getByRole("radiogroup")).not.toHaveAttribute(
+			"aria-orientation",
+		);
+		fireEvent.click(screen.getByLabelText("kann nicht eingeschätzt werden"));
+		expect(
+			screen.getByLabelText("kann nicht eingeschätzt werden"),
+		).toBeChecked();
+	});
+
 	it("forwards aria-invalid to the radio group", () => {
 		render(<LikertScale options={scaleOptions} aria-invalid />);
 
