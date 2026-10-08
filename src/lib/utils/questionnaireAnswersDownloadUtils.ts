@@ -74,7 +74,7 @@ function formatFreeTextCombo(
 			return isFreeTextOption && freeText ? `${label}: ${freeText}` : label;
 		})
 		.filter(Boolean)
-		.join(", ");
+		.join("; ");
 }
 
 function formatLikertMatrixValue(
