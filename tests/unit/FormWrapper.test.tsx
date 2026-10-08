@@ -1006,6 +1006,59 @@ describe("FormWrapper", () => {
 			render(<FormWrapper config={config} />);
 			expect(screen.getByText("Enable notifications")).toBeInTheDocument();
 		});
+
+		it("renders no empty header cell for a field without label, description or private note", () => {
+			const config: FormWrapperConfig = {
+				fields: toFields([
+					{
+						id: "main",
+						fields: [
+							{ name: "city", label: "City", type: "text" },
+							{ name: "agree", label: "I agree to terms", type: "checkbox" },
+						],
+					},
+				]),
+				onSubmit: vi.fn(),
+			};
+
+			render(<FormWrapper config={config} />);
+
+			const cityRoot = screen
+				.getByRole("textbox")
+				.closest(".grid-rows-subgrid");
+			expect(cityRoot?.children).toHaveLength(2);
+			expect(cityRoot?.children[0]?.className).toContain("self-end");
+			expect(cityRoot?.children[1]?.className).not.toContain("row-span-2");
+
+			const checkboxRoot = screen
+				.getByRole("checkbox")
+				.closest(".grid-rows-subgrid");
+			expect(checkboxRoot?.children).toHaveLength(1);
+			expect(checkboxRoot?.children[0]?.className).toContain("row-span-2");
+		});
+
+		it("holds every field subgrid wrapper to a single shrinkable column", () => {
+			const config: FormWrapperConfig = {
+				fields: toFields([
+					{
+						id: "main",
+						fields: [{ name: "city", label: "City", type: "text" }],
+					},
+				]),
+				onSubmit: vi.fn(),
+			};
+
+			const { container } = render(<FormWrapper config={config} />);
+
+			const wrappers = Array.from(
+				container.querySelectorAll(".grid-rows-subgrid"),
+			).filter((element) => element.contains(screen.getByRole("textbox")));
+			expect(wrappers).toHaveLength(3);
+			for (const wrapper of wrappers) {
+				expect(wrapper.classList).toContain("grid-cols-1");
+				expect(wrapper.classList).toContain("min-w-0");
+			}
+		});
 	});
 
 	describe("Form Validation", () => {
