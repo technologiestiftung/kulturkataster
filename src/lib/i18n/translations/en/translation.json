@@ -770,7 +770,7 @@
 					"members": [
 						"**Project Coordinator:** Daniel Jakobson",
 						"**Project Management:** Ali Deniz Şensöz",
-						"**Data Editor:** Lina Rippel",
+						"**Data Editor:** Pegah Abed, Lina Rippel",
 						"**Strategic Project Coordination:** Laura Raber",
 						"**Allocation and Administration:** Doris Antonides-Heidelmeyer",
 						"**Technical Project Management Until 2024:** Metini Krivanish"
@@ -2904,6 +2904,7 @@
 		"category": {
 			"acrobatics": "Acrobatics",
 			"adult_education_centers": "Adult Education Centers",
+			"archives": "Archives",
 			"art_house_cinemas": "Art House Cinemas",
 			"art_universities": "Art Academies",
 			"bookmobile_libraries": "Mobile Libraries",
@@ -2941,6 +2942,7 @@
 			"exhibition_spaces_museums": "Exhibition Spaces",
 			"family_centers": "Family Centers",
 			"film_festivals": "Film Festivals",
+			"film_media_archives": "Film and Media Archives",
 			"galleries": "Galleries",
 			"galleries_other": "Without Subcategory",
 			"graffiti_areas": "Graffiti Areas",
