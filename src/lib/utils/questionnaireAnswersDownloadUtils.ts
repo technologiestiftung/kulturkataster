@@ -65,13 +65,16 @@ function formatFreeTextCombo(
 	const selectedValues = Array.isArray(combo.selected)
 		? combo.selected
 		: [combo.selected];
-	const selectedLabel = selectedValues
-		.map((item) => formatScalarValue(config, item).replace(/\s*:\s*$/, ""))
+	const freeText = typeof combo.freeText === "string" ? combo.freeText : "";
+	return selectedValues
+		.map((item) => {
+			const label = formatScalarValue(config, item).replace(/\s*:\s*$/, "");
+			const isFreeTextOption =
+				String(item) === String(config.freeTextOption?.value);
+			return isFreeTextOption && freeText ? `${label}: ${freeText}` : label;
+		})
 		.filter(Boolean)
 		.join(", ");
-	const freeText = typeof combo.freeText === "string" ? combo.freeText : "";
-	if (!freeText) return selectedLabel;
-	return selectedLabel ? `${selectedLabel}: ${freeText}` : freeText;
 }
 
 function formatLikertMatrixValue(

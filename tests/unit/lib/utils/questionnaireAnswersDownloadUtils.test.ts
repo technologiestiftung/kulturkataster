@@ -96,6 +96,14 @@ describe("downloadInstitutionQuestionnaireAnswers free-text options", () => {
 						},
 						{ selected: ["website", "other"], freeText: "Podcast" },
 					),
+					makeRow(
+						"Datenerhebung",
+						{
+							options: [{ value: "survey", label: "Umfragen" }],
+							freeTextOption: { value: "other", label: "Sonstiges:" },
+						},
+						{ selected: ["other", "survey"], freeText: "Zählung" },
+					),
 				],
 			},
 		});
@@ -111,6 +119,7 @@ describe("downloadInstitutionQuestionnaireAnswers free-text options", () => {
 		expect(csv).toContain('"Sonstiges: Zirkus"');
 		expect(csv).toContain('"Ja, folgende: Neubau"');
 		expect(csv).toContain('"Eigene Webseite, Sonstiges: Podcast"');
+		expect(csv).toContain('"Sonstiges: Zählung, Umfragen"');
 		expect(csv).not.toContain("::");
 	});
 });
