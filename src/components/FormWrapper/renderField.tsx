@@ -378,6 +378,18 @@ const renderFieldContent = (
 			? undefined
 			: (field.placeholder ?? getFieldPlaceholder(tEnum, fieldMetaKey));
 
+	const isPermissionsField =
+		field.type === "tablePermissions" || field.type === "fieldPermissions";
+	const showLabel =
+		Boolean(resolvedLabel || field.labelNode) &&
+		!isPermissionsField &&
+		field.type !== "checkbox" &&
+		field.type !== "switch" &&
+		field.type !== "custom";
+	const showDescription = Boolean(resolvedDescription) && !isPermissionsField;
+	const showPrivateNote = isPrivate && !isPermissionsField;
+	const hasHeader = showLabel || showDescription || showPrivateNote;
+
 	const gridClass = getGridClass(field);
 
 	return (
@@ -388,15 +400,11 @@ const renderFieldContent = (
 				includeLayout && field.className,
 			)}
 		>
-			{/* self-end: a shorter label sits right above its input; the extra
-			    height from a wrapping neighbour label goes above it instead. */}
-			<div className="space-y-1 self-end">
-				{(resolvedLabel || field.labelNode) &&
-					field.type !== "checkbox" &&
-					field.type !== "switch" &&
-					field.type !== "tablePermissions" &&
-					field.type !== "fieldPermissions" &&
-					field.type !== "custom" && (
+			{hasHeader && (
+				/* self-end: a shorter label sits right above its input; the extra
+				   height from a wrapping neighbour label goes above it instead. */
+				<div className="space-y-1 self-end">
+					{showLabel && (
 						<div className="flex items-center justify-between gap-2">
 							<Label htmlFor={field.name} className="text-neutral-80">
 								{field.labelNode ?? resolvedLabel}
@@ -409,22 +417,18 @@ const renderFieldContent = (
 							) : null}
 						</div>
 					)}
-
-				{resolvedDescription &&
-					field.type !== "tablePermissions" &&
-					field.type !== "fieldPermissions" && (
+					{showDescription && (
 						<p className="body2 text-neutral-80 mb-2">{resolvedDescription}</p>
 					)}
-				{isPrivate &&
-					field.type !== "tablePermissions" &&
-					field.type !== "fieldPermissions" && (
+					{showPrivateNote && (
 						<p className="body3 text-neutral-80 mb-2 italic">
 							{resolvedPrivateDescription}
 						</p>
 					)}
-			</div>
+				</div>
+			)}
 
-			<div className="space-y-1">
+			<div className={cn("space-y-1", !hasHeader && "row-span-2")}>
 				{(field.type === "text" ||
 					field.type === "email" ||
 					field.type === "number" ||

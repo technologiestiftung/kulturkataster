@@ -85,6 +85,17 @@ describe("downloadInstitutionQuestionnaireAnswers free-text options", () => {
 						},
 						{ selected: "yes", freeText: "Neubau" },
 					),
+					makeRow(
+						"Digitale Kanäle",
+						{
+							options: [
+								{ value: "website", label: "Eigene Webseite" },
+								{ value: "newsletter", label: "Newsletter" },
+							],
+							freeTextOption: { value: "other", label: "Sonstiges:" },
+						},
+						{ selected: ["website", "other"], freeText: "Podcast" },
+					),
 				],
 			},
 		});
@@ -99,6 +110,7 @@ describe("downloadInstitutionQuestionnaireAnswers free-text options", () => {
 		const csv = (await blobArg?.text()) ?? "";
 		expect(csv).toContain('"Sonstiges: Zirkus"');
 		expect(csv).toContain('"Ja, folgende: Neubau"');
+		expect(csv).toContain('"Eigene Webseite, Sonstiges: Podcast"');
 		expect(csv).not.toContain("::");
 	});
 });
