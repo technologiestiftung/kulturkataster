@@ -62,10 +62,13 @@ function formatFreeTextCombo(
 	config: QuestionConfigShape,
 	combo: { selected: unknown; freeText: unknown },
 ): string {
-	const selectedLabel = formatScalarValue(config, combo.selected).replace(
-		/\s*:\s*$/,
-		"",
-	);
+	const selectedValues = Array.isArray(combo.selected)
+		? combo.selected
+		: [combo.selected];
+	const selectedLabel = selectedValues
+		.map((item) => formatScalarValue(config, item).replace(/\s*:\s*$/, ""))
+		.filter(Boolean)
+		.join(", ");
 	const freeText = typeof combo.freeText === "string" ? combo.freeText : "";
 	if (!freeText) return selectedLabel;
 	return selectedLabel ? `${selectedLabel}: ${freeText}` : freeText;
