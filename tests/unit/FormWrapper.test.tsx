@@ -1036,6 +1036,29 @@ describe("FormWrapper", () => {
 			expect(checkboxRoot?.children).toHaveLength(1);
 			expect(checkboxRoot?.children[0]?.className).toContain("row-span-2");
 		});
+
+		it("holds every field subgrid wrapper to a single shrinkable column", () => {
+			const config: FormWrapperConfig = {
+				fields: toFields([
+					{
+						id: "main",
+						fields: [{ name: "city", label: "City", type: "text" }],
+					},
+				]),
+				onSubmit: vi.fn(),
+			};
+
+			const { container } = render(<FormWrapper config={config} />);
+
+			const wrappers = Array.from(
+				container.querySelectorAll(".grid-rows-subgrid"),
+			).filter((element) => element.contains(screen.getByRole("textbox")));
+			expect(wrappers).toHaveLength(3);
+			for (const wrapper of wrappers) {
+				expect(wrapper.classList).toContain("grid-cols-1");
+				expect(wrapper.classList).toContain("min-w-0");
+			}
+		});
 	});
 
 	describe("Form Validation", () => {
