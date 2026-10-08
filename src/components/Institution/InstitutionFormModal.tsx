@@ -460,6 +460,7 @@ const buildInstitutionFormConfig = ({
 						label: fieldLabel("culture_index", "Culture Index"),
 						type: "number",
 						min: 0,
+						layout: { span: "full" },
 						max: 100,
 						step: 1,
 						description: fieldDescription("culture_index"),
