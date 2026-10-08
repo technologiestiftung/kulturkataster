@@ -272,6 +272,11 @@ const serializeOptionValue = (value: string | number | boolean): string => {
 
 const SELECT_NULL_SENTINEL = "__FORMWRAPPER_SELECT_NULL__";
 
+// Each field spans two rows of its section grid: label/description, then the
+// input. Passed down as a subgrid, so in multi-column sections the inputs of a
+// row start at the same height even when one label wraps onto two lines.
+const FIELD_SUBGRID_CLASS = "grid grid-rows-subgrid row-span-2 gap-y-1";
+
 const deserializeOptionValue = (value: string): string | number | boolean => {
 	if (value.startsWith("boolean:")) {
 		return value.slice("boolean:".length) === "true";
@@ -378,97 +383,70 @@ const renderFieldContent = (
 	return (
 		<div
 			className={cn(
-				"space-y-1",
+				includeLayout ? "space-y-1" : FIELD_SUBGRID_CLASS,
 				includeLayout && gridClass,
 				includeLayout && field.className,
 			)}
 		>
-			{(resolvedLabel || field.labelNode) &&
-				field.type !== "checkbox" &&
-				field.type !== "switch" &&
-				field.type !== "tablePermissions" &&
-				field.type !== "fieldPermissions" &&
-				field.type !== "custom" && (
-					<div className="flex items-center justify-between gap-2">
-						<Label htmlFor={field.name} className="text-neutral-80">
-							{field.labelNode ?? resolvedLabel}
-							{field.required && !field.hideRequiredIndicator && (
-								<span className="ml-1">*</span>
-							)}
-						</Label>
-						{isPrivate ? (
-							<PrivateBadge hoverDescription={resolvedPrivateDescription} />
-						) : null}
-					</div>
-				)}
-
-			{resolvedDescription &&
-				field.type !== "tablePermissions" &&
-				field.type !== "fieldPermissions" && (
-					<p className="body2 text-neutral-80 mb-2">{resolvedDescription}</p>
-				)}
-			{isPrivate &&
-				field.type !== "tablePermissions" &&
-				field.type !== "fieldPermissions" && (
-					<p className="body3 text-neutral-80 mb-2 italic">
-						{resolvedPrivateDescription}
-					</p>
-				)}
-
-			{(field.type === "text" ||
-				field.type === "email" ||
-				field.type === "number" ||
-				field.type === "tel" ||
-				field.type === "url" ||
-				field.type === "date" ||
-				field.type === "partialDate") && (
-				<div className="relative">
-					<Input
-						id={field.name}
-						type={field.type === "partialDate" ? "text" : field.type}
-						maxLength={field.type === "partialDate" ? 10 : undefined}
-						value={value === undefined || value === null ? "" : String(value)}
-						onChange={(e) => updateField(field.name, e.target.value)}
-						onBlur={(e) => {
-							void handleFieldBlur(field, e.target.value);
-						}}
-						placeholder={resolvedPlaceholder}
-						disabled={field.disabled}
-						min={field.min}
-						max={field.max}
-						step={field.step}
-						aria-invalid={hasIssue || undefined}
-						className={cn(
-							hasIssue &&
-								"bg-destructive-secondary/20 border-destructive-secondary pr-10",
-						)}
-					/>
-
-					{hasIssue && (
-						<Warning className="pointer-events-none absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-destructive-secondary" />
+			{/* self-end: a shorter label sits right above its input; the extra
+			    height from a wrapping neighbour label goes above it instead. */}
+			<div className="space-y-1 self-end">
+				{(resolvedLabel || field.labelNode) &&
+					field.type !== "checkbox" &&
+					field.type !== "switch" &&
+					field.type !== "tablePermissions" &&
+					field.type !== "fieldPermissions" &&
+					field.type !== "custom" && (
+						<div className="flex items-center justify-between gap-2">
+							<Label htmlFor={field.name} className="text-neutral-80">
+								{field.labelNode ?? resolvedLabel}
+								{field.required && !field.hideRequiredIndicator && (
+									<span className="ml-1">*</span>
+								)}
+							</Label>
+							{isPrivate ? (
+								<PrivateBadge hoverDescription={resolvedPrivateDescription} />
+							) : null}
+						</div>
 					)}
-				</div>
-			)}
 
-			{field.type === "file" && (
-				<div className="space-y-2">
+				{resolvedDescription &&
+					field.type !== "tablePermissions" &&
+					field.type !== "fieldPermissions" && (
+						<p className="body2 text-neutral-80 mb-2">{resolvedDescription}</p>
+					)}
+				{isPrivate &&
+					field.type !== "tablePermissions" &&
+					field.type !== "fieldPermissions" && (
+						<p className="body3 text-neutral-80 mb-2 italic">
+							{resolvedPrivateDescription}
+						</p>
+					)}
+			</div>
+
+			<div className="space-y-1">
+				{(field.type === "text" ||
+					field.type === "email" ||
+					field.type === "number" ||
+					field.type === "tel" ||
+					field.type === "url" ||
+					field.type === "date" ||
+					field.type === "partialDate") && (
 					<div className="relative">
 						<Input
 							id={field.name}
-							type="file"
-							accept={field.accept}
-							multiple={field.multiple}
-							onChange={(event) => {
-								const nextValue = field.multiple
-									? Array.from(event.target.files ?? [])
-									: (event.target.files?.[0] ?? null);
-								updateField(field.name, nextValue);
-								if (field.fileRemoveOption?.fieldName && nextValue) {
-									updateField(field.fileRemoveOption.fieldName, false);
-								}
-								void handleFieldBlur(field, nextValue);
+							type={field.type === "partialDate" ? "text" : field.type}
+							maxLength={field.type === "partialDate" ? 10 : undefined}
+							value={value === undefined || value === null ? "" : String(value)}
+							onChange={(e) => updateField(field.name, e.target.value)}
+							onBlur={(e) => {
+								void handleFieldBlur(field, e.target.value);
 							}}
+							placeholder={resolvedPlaceholder}
 							disabled={field.disabled}
+							min={field.min}
+							max={field.max}
+							step={field.step}
 							aria-invalid={hasIssue || undefined}
 							className={cn(
 								hasIssue &&
@@ -480,77 +458,167 @@ const renderFieldContent = (
 							<Warning className="pointer-events-none absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-destructive-secondary" />
 						)}
 					</div>
-					{field.fileRemoveOption ? (
-						<div className="flex items-start space-x-2">
-							<Checkbox
-								id={`${field.name}-remove`}
-								checked={formData[field.fileRemoveOption.fieldName] as boolean}
-								aria-invalid={hasIssue || undefined}
-								onCheckedChange={(checked) =>
-									updateField(field.fileRemoveOption!.fieldName, checked)
-								}
+				)}
+
+				{field.type === "file" && (
+					<div className="space-y-2">
+						<div className="relative">
+							<Input
+								id={field.name}
+								type="file"
+								accept={field.accept}
+								multiple={field.multiple}
+								onChange={(event) => {
+									const nextValue = field.multiple
+										? Array.from(event.target.files ?? [])
+										: (event.target.files?.[0] ?? null);
+									updateField(field.name, nextValue);
+									if (field.fileRemoveOption?.fieldName && nextValue) {
+										updateField(field.fileRemoveOption.fieldName, false);
+									}
+									void handleFieldBlur(field, nextValue);
+								}}
 								disabled={field.disabled}
+								aria-invalid={hasIssue || undefined}
+								className={cn(
+									hasIssue &&
+										"bg-destructive-secondary/20 border-destructive-secondary pr-10",
+								)}
 							/>
 
-							<Label htmlFor={`${field.name}-remove`} emphasize={false}>
-								{field.fileRemoveOption.label}
-							</Label>
+							{hasIssue && (
+								<Warning className="pointer-events-none absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-destructive-secondary" />
+							)}
 						</div>
-					) : null}
-					{value instanceof File ? (
-						<p className="body3 text-muted-foreground">{value.name}</p>
-					) : null}
-					{Array.isArray(value) &&
-					value.every((item) => item instanceof File) ? (
-						<p className="body3 text-muted-foreground">
-							{value.map((file) => file.name).join(", ")}
-						</p>
-					) : null}
-				</div>
-			)}
+						{field.fileRemoveOption ? (
+							<div className="flex items-start space-x-2">
+								<Checkbox
+									id={`${field.name}-remove`}
+									checked={
+										formData[field.fileRemoveOption.fieldName] as boolean
+									}
+									aria-invalid={hasIssue || undefined}
+									onCheckedChange={(checked) =>
+										updateField(field.fileRemoveOption!.fieldName, checked)
+									}
+									disabled={field.disabled}
+								/>
 
-			{field.type === "password" && (
-				<PasswordField
-					id={field.name}
-					value={(value as string) ?? ""}
-					onChange={(val) => updateField(field.name, val)}
-					onBlur={(val) => {
-						void handleFieldBlur(field, val);
-					}}
-					placeholder={resolvedPlaceholder}
-					disabled={field.disabled}
-					hasIssue={hasIssue}
-				/>
-			)}
+								<Label htmlFor={`${field.name}-remove`} emphasize={false}>
+									{field.fileRemoveOption.label}
+								</Label>
+							</div>
+						) : null}
+						{value instanceof File ? (
+							<p className="body3 text-muted-foreground">{value.name}</p>
+						) : null}
+						{Array.isArray(value) &&
+						value.every((item) => item instanceof File) ? (
+							<p className="body3 text-muted-foreground">
+								{value.map((file) => file.name).join(", ")}
+							</p>
+						) : null}
+					</div>
+				)}
 
-			{field.type === "textarea" && (
-				<div className="relative">
-					<Textarea
+				{field.type === "password" && (
+					<PasswordField
 						id={field.name}
-						value={value === undefined || value === null ? "" : String(value)}
-						onChange={(e) => updateField(field.name, e.target.value)}
-						onBlur={(e) => {
-							void handleFieldBlur(field, e.target.value);
+						value={(value as string) ?? ""}
+						onChange={(val) => updateField(field.name, val)}
+						onBlur={(val) => {
+							void handleFieldBlur(field, val);
 						}}
 						placeholder={resolvedPlaceholder}
 						disabled={field.disabled}
-						aria-invalid={hasIssue || undefined}
-						rows={4}
-						className={cn(
-							hasIssue &&
-								"bg-destructive-secondary/20 border-destructive-secondary pr-10",
-						)}
+						hasIssue={hasIssue}
 					/>
+				)}
 
-					{hasIssue && (
-						<Warning className="pointer-events-none absolute right-3 top-3 h-5 w-5 text-destructive-secondary" />
-					)}
-				</div>
-			)}
+				{field.type === "textarea" && (
+					<div className="relative">
+						<Textarea
+							id={field.name}
+							value={value === undefined || value === null ? "" : String(value)}
+							onChange={(e) => updateField(field.name, e.target.value)}
+							onBlur={(e) => {
+								void handleFieldBlur(field, e.target.value);
+							}}
+							placeholder={resolvedPlaceholder}
+							disabled={field.disabled}
+							aria-invalid={hasIssue || undefined}
+							rows={4}
+							className={cn(
+								hasIssue &&
+									"bg-destructive-secondary/20 border-destructive-secondary pr-10",
+							)}
+						/>
 
-			{field.type === "select" && (
-				<div className="relative">
-					<Select
+						{hasIssue && (
+							<Warning className="pointer-events-none absolute right-3 top-3 h-5 w-5 text-destructive-secondary" />
+						)}
+					</div>
+				)}
+
+				{field.type === "select" && (
+					<div className="relative">
+						<Select
+							value={getSerializedSelectedValue(
+								field.options,
+								value,
+								allowNullOption,
+							)}
+							onValueChange={(val) => {
+								if (val === SELECT_NULL_SENTINEL) {
+									updateField(field.name, null);
+									return;
+								}
+								updateField(field.name, deserializeOptionValue(val));
+							}}
+							disabled={field.disabled}
+						>
+							<SelectTrigger
+								id={field.name}
+								aria-invalid={hasIssue || undefined}
+								className={cn(
+									hasIssue &&
+										"bg-destructive-secondary/20 border-destructive-secondary pr-12",
+								)}
+							>
+								<SelectValue
+									placeholder={resolvedPlaceholder || selectPlaceholder}
+								/>
+							</SelectTrigger>
+							<SelectContent className="px-3">
+								{allowNullOption && (
+									<>
+										<SelectItem value={SELECT_NULL_SENTINEL}>
+											{nullOptionLabel}
+										</SelectItem>
+										{(field.options?.length ?? 0) > 0 && <SelectSeparator />}
+									</>
+								)}
+								{field.options?.map((option, index) => (
+									<Fragment key={serializeOptionValue(option.value)}>
+										<SelectItem value={serializeOptionValue(option.value)}>
+											{option.label}
+										</SelectItem>
+										{index < (field.options?.length || 0) - 1 && (
+											<SelectSeparator />
+										)}
+									</Fragment>
+								))}
+							</SelectContent>
+						</Select>
+						{hasIssue && (
+							<Warning className="pointer-events-none absolute right-8 top-1/2 h-4 w-4 -translate-y-1/2 text-destructive-secondary" />
+						)}
+					</div>
+				)}
+
+				{field.type === "radio" && (
+					<RadioGroup
+						id={field.name}
 						value={getSerializedSelectedValue(
 							field.options,
 							value,
@@ -563,630 +631,591 @@ const renderFieldContent = (
 							}
 							updateField(field.name, deserializeOptionValue(val));
 						}}
+						aria-invalid={hasIssue || undefined}
+						className={cn(
+							hasIssue &&
+								"rounded-sm border border-destructive-secondary bg-destructive-secondary/10 p-3",
+						)}
+						variant={field.radioVariant}
 						disabled={field.disabled}
 					>
-						<SelectTrigger
-							id={field.name}
-							aria-invalid={hasIssue || undefined}
-							className={cn(
-								hasIssue &&
-									"bg-destructive-secondary/20 border-destructive-secondary pr-12",
-							)}
-						>
-							<SelectValue
-								placeholder={resolvedPlaceholder || selectPlaceholder}
-							/>
-						</SelectTrigger>
-						<SelectContent className="px-3">
-							{allowNullOption && (
-								<>
-									<SelectItem value={SELECT_NULL_SENTINEL}>
-										{nullOptionLabel}
-									</SelectItem>
-									{(field.options?.length ?? 0) > 0 && <SelectSeparator />}
-								</>
-							)}
-							{field.options?.map((option, index) => (
-								<Fragment key={serializeOptionValue(option.value)}>
-									<SelectItem value={serializeOptionValue(option.value)}>
-										{option.label}
-									</SelectItem>
-									{index < (field.options?.length || 0) - 1 && (
-										<SelectSeparator />
-									)}
-								</Fragment>
-							))}
-						</SelectContent>
-					</Select>
-					{hasIssue && (
-						<Warning className="pointer-events-none absolute right-8 top-1/2 h-4 w-4 -translate-y-1/2 text-destructive-secondary" />
-					)}
-				</div>
-			)}
-
-			{field.type === "radio" && (
-				<RadioGroup
-					id={field.name}
-					value={getSerializedSelectedValue(
-						field.options,
-						value,
-						allowNullOption,
-					)}
-					onValueChange={(val) => {
-						if (val === SELECT_NULL_SENTINEL) {
-							updateField(field.name, null);
-							return;
-						}
-						updateField(field.name, deserializeOptionValue(val));
-					}}
-					aria-invalid={hasIssue || undefined}
-					className={cn(
-						hasIssue &&
-							"rounded-sm border border-destructive-secondary bg-destructive-secondary/10 p-3",
-					)}
-					variant={field.radioVariant}
-					disabled={field.disabled}
-				>
-					{allowNullOption && (
-						<div className="flex items-start space-x-2">
-							<RadioGroupItem
-								className={cn(
-									"bg-background border-input",
-									hasIssue && "border-destructive-secondary",
-								)}
-								value={SELECT_NULL_SENTINEL}
-								id={`${field.name}-${SELECT_NULL_SENTINEL}`}
-								aria-invalid={hasIssue || undefined}
-							/>
-
-							<Label
-								htmlFor={`${field.name}-${SELECT_NULL_SENTINEL}`}
-								emphasize={false}
-							>
-								{nullOptionLabel}
-							</Label>
-						</div>
-					)}
-					{field.options?.map((option) => {
-						const serializedOptionValue = serializeOptionValue(option.value);
-						const isSelected =
-							getSerializedSelectedValue(
-								field.options,
-								value,
-								allowNullOption,
-							) === serializedOptionValue;
-						// items-start keeps the radio dot aligned to a wrapping multi-line
-						// label's first line — but once this option's free-text input
-						// renders inline (taller than the label), centering looks right.
-						const showsFreeText =
-							isSelected &&
-							field.freeTextOption &&
-							serializeOptionValue(field.freeTextOption.value) ===
-								serializedOptionValue;
-
-						return (
-							<div
-								key={serializedOptionValue}
-								className={cn(
-									"flex space-x-2",
-									showsFreeText ? "items-center" : "items-start",
-								)}
-							>
+						{allowNullOption && (
+							<div className="flex items-start space-x-2">
 								<RadioGroupItem
 									className={cn(
 										"bg-background border-input",
 										hasIssue && "border-destructive-secondary",
 									)}
-									value={serializedOptionValue}
-									id={`${field.name}-${serializedOptionValue}`}
+									value={SELECT_NULL_SENTINEL}
+									id={`${field.name}-${SELECT_NULL_SENTINEL}`}
 									aria-invalid={hasIssue || undefined}
 								/>
 
 								<Label
-									htmlFor={`${field.name}-${serializedOptionValue}`}
+									htmlFor={`${field.name}-${SELECT_NULL_SENTINEL}`}
 									emphasize={false}
 								>
-									{option.label}
+									{nullOptionLabel}
 								</Label>
-
-								<RadioFreeTextField
-									field={field}
-									option={option}
-									isSelected={isSelected}
-									formData={formData}
-									updateField={updateField}
-								/>
 							</div>
-						);
-					})}
-				</RadioGroup>
-			)}
-
-			{field.type === "likert" && (
-				<div id={field.name}>
-					<LikertScale
-						value={getSerializedSelectedValue(field.options, value)}
-						onValueChange={(val) =>
-							updateField(field.name, deserializeOptionValue(val))
-						}
-						options={
-							field.options?.map((option) => ({
-								value: serializeOptionValue(option.value),
-								label: option.label,
-							})) ?? []
-						}
-						aria-invalid={hasIssue || undefined}
-						containerClassName={cn(
-							hasIssue &&
-								"rounded-sm border border-destructive-secondary bg-destructive-secondary/10 p-3",
 						)}
-						itemClassName={cn(hasIssue && "border-destructive-secondary")}
-						disabled={field.disabled}
-						stackOnMobile
-					/>
-				</div>
-			)}
-
-			{field.type === "likertMatrix" && field.likertMatrix && (
-				<div
-					id={field.name}
-					className={cn(
-						"space-y-6",
-						field.name === "funding_source_importance" && "md:p-8",
-					)}
-				>
-					{field.likertMatrix.rows.map((row) => {
-						const rowValue =
-							(value as Record<string, unknown> | undefined)?.[row.key] ?? "";
-						// Only the unanswered rows are the problem, so only they turn red.
-						const rowHasIssue = hasIssue && isEmptyValue(rowValue);
-						return (
-							<div
-								key={row.key}
-								className={cn(
-									"space-y-2",
-									rowHasIssue &&
-										"rounded-sm border border-destructive-secondary bg-destructive-secondary/10 p-3",
-								)}
-							>
-								<Label className="text-neutral-80">{row.label}</Label>
-								<LikertScale
-									value={getSerializedSelectedValue(field.options, rowValue)}
-									onValueChange={(val) =>
-										updateField(field.name, {
-											...(value as Record<string, unknown> | undefined),
-											[row.key]: deserializeOptionValue(val),
-										})
-									}
-									options={
-										field.options?.map((option) => ({
-											value: serializeOptionValue(option.value),
-											label: option.label,
-										})) ?? []
-									}
-									aria-invalid={rowHasIssue || undefined}
-									itemClassName={cn(
-										rowHasIssue && "border-destructive-secondary",
-									)}
-									disabled={field.disabled}
-									stackOnMobile
-								/>
-							</div>
-						);
-					})}
-				</div>
-			)}
-
-			{field.type === "checkbox" && (
-				<div
-					className={cn(
-						"flex items-start space-x-2",
-						hasIssue &&
-							"rounded-sm border border-destructive-secondary bg-destructive-secondary/10 p-2",
-					)}
-				>
-					<Checkbox
-						id={field.name}
-						checked={value as boolean}
-						aria-invalid={hasIssue || undefined}
-						onCheckedChange={(checked) => updateField(field.name, checked)}
-						disabled={field.disabled}
-					/>
-
-					<Label htmlFor={field.name} emphasize={false}>
-						{field.labelNode ?? resolvedLabel}
-						{field.required && !field.hideRequiredIndicator && (
-							<span className=" ml-1">*</span>
-						)}
-					</Label>
-					{isPrivate ? (
-						<PrivateBadge hoverDescription={resolvedPrivateDescription} />
-					) : null}
-				</div>
-			)}
-
-			{field.type === "switch" && (
-				<div
-					className={cn(
-						"flex items-center justify-between",
-						hasIssue &&
-							"rounded-sm border border-destructive-secondary bg-destructive-secondary/10 p-2",
-					)}
-				>
-					<Label htmlFor={field.name} className="font-normal">
-						{field.labelNode ?? resolvedLabel}
-						{field.required && !field.hideRequiredIndicator && (
-							<span className=" ml-1">*</span>
-						)}
-					</Label>
-					{isPrivate ? (
-						<PrivateBadge hoverDescription={resolvedPrivateDescription} />
-					) : null}
-					<Switch
-						id={field.name}
-						checked={value as boolean}
-						aria-invalid={hasIssue || undefined}
-						className={cn(hasIssue && "border-destructive-secondary")}
-						onCheckedChange={(checked) => updateField(field.name, checked)}
-						disabled={field.disabled}
-					/>
-				</div>
-			)}
-
-			{field.type === "multiselect" && (
-				<div
-					id={field.name}
-					className={cn(
-						"space-y-2",
-						hasIssue &&
-							"rounded-sm border border-destructive-secondary bg-destructive-secondary/10 p-2",
-					)}
-				>
-					{field.multiselectVariant === "modal" ? (
-						<MultiSelectModal
-							title={resolvedLabel || "Select Items"}
-							options={field.options ?? []}
-							filteredOptions={field.multiselectFilteredOptions}
-							selected={(value as string[]) ?? []}
-							onChange={(selected) => updateField(field.name, selected)}
-							placeholder={resolvedPlaceholder}
-							searchPlaceholder={field.searchPlaceholder}
-							emptyText={field.emptyText}
-							previewCount={field.previewCount}
-							filterPanel={field.multiselectFilterPanel}
-							filters={field.multiselectFilters?.map((filter) => ({
-								...filter,
-								options: filter.options.map((option) => ({
-									value: option.value,
-									description: option.description,
-									label: option.label,
-									parentValue: option.parentValue,
-								})),
-							}))}
-							sortOptions={field.multiselectSortOptions}
-							disabled={field.disabled}
-							createOption={field.multiselectCreateOption}
-						/>
-					) : (
-						field.options?.map((option) => {
-							const isChecked =
-								(value as string[])?.includes(option.value as string) ?? false;
+						{field.options?.map((option) => {
+							const serializedOptionValue = serializeOptionValue(option.value);
+							const isSelected =
+								getSerializedSelectedValue(
+									field.options,
+									value,
+									allowNullOption,
+								) === serializedOptionValue;
+							// items-start keeps the radio dot aligned to a wrapping multi-line
+							// label's first line — but once this option's free-text input
+							// renders inline (taller than the label), centering looks right.
 							const showsFreeText =
-								isChecked &&
+								isSelected &&
 								field.freeTextOption &&
 								serializeOptionValue(field.freeTextOption.value) ===
-									serializeOptionValue(option.value);
+									serializedOptionValue;
 
 							return (
 								<div
-									key={option.value as string}
+									key={serializedOptionValue}
 									className={cn(
 										"flex space-x-2",
 										showsFreeText ? "items-center" : "items-start",
 									)}
 								>
-									<Checkbox
-										id={`${field.name}-${option.value}`}
-										checked={isChecked}
-										onCheckedChange={(checked) => {
-											const currentValue = (value as string[]) || [];
-											const newValue = checked
-												? [...currentValue, option.value]
-												: currentValue.filter(
-														(v: string) => v !== option.value,
-													);
-											updateField(field.name, newValue);
-										}}
-										disabled={field.disabled}
+									<RadioGroupItem
+										className={cn(
+											"bg-background border-input",
+											hasIssue && "border-destructive-secondary",
+										)}
+										value={serializedOptionValue}
+										id={`${field.name}-${serializedOptionValue}`}
+										aria-invalid={hasIssue || undefined}
 									/>
 
 									<Label
-										htmlFor={`${field.name}-${option.value}`}
-										className="font-normal"
+										htmlFor={`${field.name}-${serializedOptionValue}`}
 										emphasize={false}
 									>
 										{option.label}
 									</Label>
 
-									<MultiSelectFreeTextField
+									<RadioFreeTextField
 										field={field}
 										option={option}
-										value={value}
+										isSelected={isSelected}
 										formData={formData}
 										updateField={updateField}
 									/>
 								</div>
 							);
-						})
-					)}
-				</div>
-			)}
+						})}
+					</RadioGroup>
+				)}
 
-			{field.type === "filterPanel" && field.filterPanel && (
-				<CategorySectionList
-					filters={(value as FilterState) ?? defaultFilterState}
-					categoryGroups={field.filterPanel.categoryGroups}
-					categoryCounts={field.filterPanel.categoryCounts}
-					subcategoryCounts={field.filterPanel.subcategoryCounts}
-					onFiltersChange={(nextFilters) =>
-						updateField(field.name, nextFilters)
-					}
-					collapsible={field.filterPanel.collapsible}
-					defaultCollapsed={field.filterPanel.defaultCollapsed}
-					categorySectionMode={field.filterPanel.categorySectionMode}
-					parentCategorySelectionBehavior={
-						field.filterPanel.parentCategorySelectionBehavior
-					}
-					selectionEmptyLabel={field.filterPanel.selectionEmptyLabel}
-				/>
-			)}
-
-			{field.type === "addressMap" && field.addressMap && (
-				<AddressMapField
-					initialZoom={field.addressMap.initialZoom}
-					disabled={field.disabled}
-					value={{
-						lat: toOptionalNumber(formData[field.addressMap.latField]) ?? null,
-						lng: toOptionalNumber(formData[field.addressMap.lngField]) ?? null,
-					}}
-					onChange={({ lat, lng, address }) => {
-						if (!field.addressMap) return;
-						updateField(field.addressMap.latField, lat);
-						updateField(field.addressMap.lngField, lng);
-
-						if (address) {
-							if (field.addressMap.streetField) {
-								if (field.addressMap.streetNumberField) {
-									if (address.street !== undefined) {
-										updateField(field.addressMap.streetField, address.street);
-									}
-									if (address.streetNumber !== undefined) {
-										updateField(
-											field.addressMap.streetNumberField,
-											address.streetNumber,
-										);
-									}
-								} else {
-									updateField(
-										field.addressMap.streetField,
-										buildStreetLine(address.street, address.streetNumber),
-									);
-								}
+				{field.type === "likert" && (
+					<div id={field.name}>
+						<LikertScale
+							value={getSerializedSelectedValue(field.options, value)}
+							onValueChange={(val) =>
+								updateField(field.name, deserializeOptionValue(val))
 							}
-							if (field.addressMap.cityField && address.city !== undefined) {
-								updateField(field.addressMap.cityField, address.city);
+							options={
+								field.options?.map((option) => ({
+									value: serializeOptionValue(option.value),
+									label: option.label,
+								})) ?? []
 							}
-							if (field.addressMap.zipField && address.zipcode !== undefined) {
-								updateField(field.addressMap.zipField, address.zipcode);
-							}
-							if (
-								field.addressMap.districtField &&
-								address.district !== undefined
-							) {
-								updateField(field.addressMap.districtField, address.district);
-							}
-							if (
-								field.addressMap.neighbourhoodField &&
-								address.neighbourhood !== undefined
-							) {
-								updateField(
-									field.addressMap.neighbourhoodField,
-									address.neighbourhood,
-								);
-							}
-						}
-					}}
-				/>
-			)}
+							aria-invalid={hasIssue || undefined}
+							containerClassName={cn(
+								hasIssue &&
+									"rounded-sm border border-destructive-secondary bg-destructive-secondary/10 p-3",
+							)}
+							itemClassName={cn(hasIssue && "border-destructive-secondary")}
+							disabled={field.disabled}
+							stackOnMobile
+						/>
+					</div>
+				)}
 
-			{field.type === "fundingSources" && (
-				<FundingSourceField
-					field={field}
-					value={value}
-					updateField={updateField}
-				/>
-			)}
+				{field.type === "likertMatrix" && field.likertMatrix && (
+					<div
+						id={field.name}
+						className={cn(
+							"space-y-6",
+							field.name === "funding_source_importance" && "md:p-8",
+						)}
+					>
+						{field.likertMatrix.rows.map((row) => {
+							const rowValue =
+								(value as Record<string, unknown> | undefined)?.[row.key] ?? "";
+							// Only the unanswered rows are the problem, so only they turn red.
+							const rowHasIssue = hasIssue && isEmptyValue(rowValue);
+							return (
+								<div
+									key={row.key}
+									className={cn(
+										"space-y-2",
+										rowHasIssue &&
+											"rounded-sm border border-destructive-secondary bg-destructive-secondary/10 p-3",
+									)}
+								>
+									<Label className="text-neutral-80">{row.label}</Label>
+									<LikertScale
+										value={getSerializedSelectedValue(field.options, rowValue)}
+										onValueChange={(val) =>
+											updateField(field.name, {
+												...(value as Record<string, unknown> | undefined),
+												[row.key]: deserializeOptionValue(val),
+											})
+										}
+										options={
+											field.options?.map((option) => ({
+												value: serializeOptionValue(option.value),
+												label: option.label,
+											})) ?? []
+										}
+										aria-invalid={rowHasIssue || undefined}
+										itemClassName={cn(
+											rowHasIssue && "border-destructive-secondary",
+										)}
+										disabled={field.disabled}
+										stackOnMobile
+									/>
+								</div>
+							);
+						})}
+					</div>
+				)}
 
-			{field.type === "keyValue" && (
-				<KeyValueField field={field} value={value} updateField={updateField} />
-			)}
+				{field.type === "checkbox" && (
+					<div
+						className={cn(
+							"flex items-start space-x-2",
+							hasIssue &&
+								"rounded-sm border border-destructive-secondary bg-destructive-secondary/10 p-2",
+						)}
+					>
+						<Checkbox
+							id={field.name}
+							checked={value as boolean}
+							aria-invalid={hasIssue || undefined}
+							onCheckedChange={(checked) => updateField(field.name, checked)}
+							disabled={field.disabled}
+						/>
 
-			{field.type === "actionPanel" && field.actionPanel && (
-				<ActionPanel
-					title={field.actionPanel.title}
-					actionLabel={field.actionPanel.actionLabel}
-					actionLabelLoading={field.actionPanel.actionLabelLoading}
-					onAction={field.actionPanel.onAction}
-					secondaryActionLabel={field.actionPanel.secondaryActionLabel}
-					secondaryActionLabelLoading={
-						field.actionPanel.secondaryActionLabelLoading
-					}
-					onSecondaryAction={field.actionPanel.onSecondaryAction}
-					errorFallback={field.actionPanel.errorFallback}
-					secondaryErrorFallback={field.actionPanel.secondaryErrorFallback}
-					icon={field.actionPanel.icon}
-					className={field.actionPanel.className}
-				>
-					{field.actionPanel.description}
-				</ActionPanel>
-			)}
-
-			{field.type === "custom" && field.customField}
-
-			{field.type === "tablePermissions" && field.tablePermissions && (
-				<div className="flex flex-col gap-1">
-					<div className="flex items-center justify-between gap-2">
-						<Label className="">{field.label}</Label>
+						<Label htmlFor={field.name} emphasize={false}>
+							{field.labelNode ?? resolvedLabel}
+							{field.required && !field.hideRequiredIndicator && (
+								<span className=" ml-1">*</span>
+							)}
+						</Label>
 						{isPrivate ? (
 							<PrivateBadge hoverDescription={resolvedPrivateDescription} />
 						) : null}
 					</div>
-					<div className="mt-4 grid gap-4">
-						{field.tablePermissions.tables.map((table) => (
-							<div
-								key={table.key}
-								className="rounded-sm border border-input bg-background p-4"
-							>
-								{(() => {
-									const permissionValue =
-										(value as Record<
-											string,
-											TablePermissionValue | PermissionAction[]
-										>) ?? {};
-									const normalizedValue =
-										normalizeTablePermissionValue(permissionValue);
-									const currentTable = normalizedValue[table.key];
-									const actions = table.actions ??
-										field.tablePermissions?.actions ?? [
-											"read",
-											"create",
-											"update",
-											"delete",
-										];
+				)}
 
-									return (
-										<>
-											<p className="body3 ">{table.label}</p>
-											<div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
-												{actions.map((action) => {
-													const checkboxId = `${field.name}-${table.key}-${action}`;
-													const isChecked = Boolean(
-														currentTable?.actions?.includes(action),
-													);
-													return (
-														<div
-															key={action}
-															className="flex items-center gap-2"
-														>
-															<Checkbox
-																id={checkboxId}
-																checked={isChecked}
-																onCheckedChange={() =>
-																	updateField(
-																		field.name,
-																		toggleTablePermissionValue(
-																			permissionValue,
-																			table.key,
-																			action,
-																		),
-																	)
-																}
-																disabled={field.disabled}
-															/>
-
-															<Label
-																htmlFor={checkboxId}
-																className="capitalize"
-															>
-																{field.tablePermissions?.actionLabels?.[action]}
-															</Label>
-														</div>
-													);
-												})}
-											</div>
-											{field.tablePermissions?.scopeOptions && (
-												<div className="mt-4 flex flex-wrap items-center gap-2 justify-end">
-													<Label
-														htmlFor={`${field.name}-${table.key}-scope`}
-														className="body3 text-neutral-80"
-													>
-														{field.tablePermissions.scopeLabel}
-													</Label>
-													{field.tablePermissions.scopeDescription && (
-														<span
-															id={`${field.name}-${table.key}-scope-description`}
-															className="body3 text-neutral-60"
-														>
-															{field.tablePermissions.scopeDescription}
-														</span>
-													)}
-													<Select
-														value={currentTable?.scope ?? "own"}
-														onValueChange={(nextScope) =>
-															updateField(
-																field.name,
-																setTablePermissionScope(
-																	permissionValue,
-																	table.key,
-																	nextScope as PermissionScope,
-																),
-															)
-														}
-														disabled={
-															field.disabled ||
-															!(currentTable?.actions?.length ?? 0)
-														}
-													>
-														<SelectTrigger
-															id={`${field.name}-${table.key}-scope`}
-															aria-describedby={
-																field.tablePermissions.scopeDescription
-																	? `${field.name}-${table.key}-scope-description`
-																	: undefined
-															}
-															className="h-8 w-[140px]"
-														>
-															<SelectValue
-																placeholder={field.tablePermissions?.scopeLabel}
-															/>
-														</SelectTrigger>
-														<SelectContent>
-															{field.tablePermissions.scopeOptions.map(
-																(option) => (
-																	<SelectItem
-																		key={option.value}
-																		value={option.value}
-																	>
-																		{option.label}
-																	</SelectItem>
-																),
-															)}
-														</SelectContent>
-													</Select>
-												</div>
-											)}
-										</>
-									);
-								})()}
-							</div>
-						))}
+				{field.type === "switch" && (
+					<div
+						className={cn(
+							"flex items-center justify-between",
+							hasIssue &&
+								"rounded-sm border border-destructive-secondary bg-destructive-secondary/10 p-2",
+						)}
+					>
+						<Label htmlFor={field.name} className="font-normal">
+							{field.labelNode ?? resolvedLabel}
+							{field.required && !field.hideRequiredIndicator && (
+								<span className=" ml-1">*</span>
+							)}
+						</Label>
+						{isPrivate ? (
+							<PrivateBadge hoverDescription={resolvedPrivateDescription} />
+						) : null}
+						<Switch
+							id={field.name}
+							checked={value as boolean}
+							aria-invalid={hasIssue || undefined}
+							className={cn(hasIssue && "border-destructive-secondary")}
+							onCheckedChange={(checked) => updateField(field.name, checked)}
+							disabled={field.disabled}
+						/>
 					</div>
-				</div>
-			)}
+				)}
 
-			{field.type === "fieldPermissions" && field.fieldPermissions && (
-				<FieldPermissionsField
-					field={field}
-					fieldPermissions={field.fieldPermissions}
-					value={value}
-					updateField={updateField}
-					isPrivate={isPrivate}
-					resolvedPrivateDescription={resolvedPrivateDescription}
-				/>
-			)}
+				{field.type === "multiselect" && (
+					<div
+						id={field.name}
+						className={cn(
+							"space-y-2",
+							hasIssue &&
+								"rounded-sm border border-destructive-secondary bg-destructive-secondary/10 p-2",
+						)}
+					>
+						{field.multiselectVariant === "modal" ? (
+							<MultiSelectModal
+								title={resolvedLabel || "Select Items"}
+								options={field.options ?? []}
+								filteredOptions={field.multiselectFilteredOptions}
+								selected={(value as string[]) ?? []}
+								onChange={(selected) => updateField(field.name, selected)}
+								placeholder={resolvedPlaceholder}
+								searchPlaceholder={field.searchPlaceholder}
+								emptyText={field.emptyText}
+								previewCount={field.previewCount}
+								filterPanel={field.multiselectFilterPanel}
+								filters={field.multiselectFilters?.map((filter) => ({
+									...filter,
+									options: filter.options.map((option) => ({
+										value: option.value,
+										description: option.description,
+										label: option.label,
+										parentValue: option.parentValue,
+									})),
+								}))}
+								sortOptions={field.multiselectSortOptions}
+								disabled={field.disabled}
+								createOption={field.multiselectCreateOption}
+							/>
+						) : (
+							field.options?.map((option) => {
+								const isChecked =
+									(value as string[])?.includes(option.value as string) ??
+									false;
+								const showsFreeText =
+									isChecked &&
+									field.freeTextOption &&
+									serializeOptionValue(field.freeTextOption.value) ===
+										serializeOptionValue(option.value);
 
-			{error && <p className="body3 text-destructive-secondary">{error}</p>}
-			{field.afterField}
+								return (
+									<div
+										key={option.value as string}
+										className={cn(
+											"flex space-x-2",
+											showsFreeText ? "items-center" : "items-start",
+										)}
+									>
+										<Checkbox
+											id={`${field.name}-${option.value}`}
+											checked={isChecked}
+											onCheckedChange={(checked) => {
+												const currentValue = (value as string[]) || [];
+												const newValue = checked
+													? [...currentValue, option.value]
+													: currentValue.filter(
+															(v: string) => v !== option.value,
+														);
+												updateField(field.name, newValue);
+											}}
+											disabled={field.disabled}
+										/>
+
+										<Label
+											htmlFor={`${field.name}-${option.value}`}
+											className="font-normal"
+											emphasize={false}
+										>
+											{option.label}
+										</Label>
+
+										<MultiSelectFreeTextField
+											field={field}
+											option={option}
+											value={value}
+											formData={formData}
+											updateField={updateField}
+										/>
+									</div>
+								);
+							})
+						)}
+					</div>
+				)}
+
+				{field.type === "filterPanel" && field.filterPanel && (
+					<CategorySectionList
+						filters={(value as FilterState) ?? defaultFilterState}
+						categoryGroups={field.filterPanel.categoryGroups}
+						categoryCounts={field.filterPanel.categoryCounts}
+						subcategoryCounts={field.filterPanel.subcategoryCounts}
+						onFiltersChange={(nextFilters) =>
+							updateField(field.name, nextFilters)
+						}
+						collapsible={field.filterPanel.collapsible}
+						defaultCollapsed={field.filterPanel.defaultCollapsed}
+						categorySectionMode={field.filterPanel.categorySectionMode}
+						parentCategorySelectionBehavior={
+							field.filterPanel.parentCategorySelectionBehavior
+						}
+						selectionEmptyLabel={field.filterPanel.selectionEmptyLabel}
+					/>
+				)}
+
+				{field.type === "addressMap" && field.addressMap && (
+					<AddressMapField
+						initialZoom={field.addressMap.initialZoom}
+						disabled={field.disabled}
+						value={{
+							lat:
+								toOptionalNumber(formData[field.addressMap.latField]) ?? null,
+							lng:
+								toOptionalNumber(formData[field.addressMap.lngField]) ?? null,
+						}}
+						onChange={({ lat, lng, address }) => {
+							if (!field.addressMap) return;
+							updateField(field.addressMap.latField, lat);
+							updateField(field.addressMap.lngField, lng);
+
+							if (address) {
+								if (field.addressMap.streetField) {
+									if (field.addressMap.streetNumberField) {
+										if (address.street !== undefined) {
+											updateField(field.addressMap.streetField, address.street);
+										}
+										if (address.streetNumber !== undefined) {
+											updateField(
+												field.addressMap.streetNumberField,
+												address.streetNumber,
+											);
+										}
+									} else {
+										updateField(
+											field.addressMap.streetField,
+											buildStreetLine(address.street, address.streetNumber),
+										);
+									}
+								}
+								if (field.addressMap.cityField && address.city !== undefined) {
+									updateField(field.addressMap.cityField, address.city);
+								}
+								if (
+									field.addressMap.zipField &&
+									address.zipcode !== undefined
+								) {
+									updateField(field.addressMap.zipField, address.zipcode);
+								}
+								if (
+									field.addressMap.districtField &&
+									address.district !== undefined
+								) {
+									updateField(field.addressMap.districtField, address.district);
+								}
+								if (
+									field.addressMap.neighbourhoodField &&
+									address.neighbourhood !== undefined
+								) {
+									updateField(
+										field.addressMap.neighbourhoodField,
+										address.neighbourhood,
+									);
+								}
+							}
+						}}
+					/>
+				)}
+
+				{field.type === "fundingSources" && (
+					<FundingSourceField
+						field={field}
+						value={value}
+						updateField={updateField}
+					/>
+				)}
+
+				{field.type === "keyValue" && (
+					<KeyValueField
+						field={field}
+						value={value}
+						updateField={updateField}
+					/>
+				)}
+
+				{field.type === "actionPanel" && field.actionPanel && (
+					<ActionPanel
+						title={field.actionPanel.title}
+						actionLabel={field.actionPanel.actionLabel}
+						actionLabelLoading={field.actionPanel.actionLabelLoading}
+						onAction={field.actionPanel.onAction}
+						secondaryActionLabel={field.actionPanel.secondaryActionLabel}
+						secondaryActionLabelLoading={
+							field.actionPanel.secondaryActionLabelLoading
+						}
+						onSecondaryAction={field.actionPanel.onSecondaryAction}
+						errorFallback={field.actionPanel.errorFallback}
+						secondaryErrorFallback={field.actionPanel.secondaryErrorFallback}
+						icon={field.actionPanel.icon}
+						className={field.actionPanel.className}
+					>
+						{field.actionPanel.description}
+					</ActionPanel>
+				)}
+
+				{field.type === "custom" && field.customField}
+
+				{field.type === "tablePermissions" && field.tablePermissions && (
+					<div className="flex flex-col gap-1">
+						<div className="flex items-center justify-between gap-2">
+							<Label className="">{field.label}</Label>
+							{isPrivate ? (
+								<PrivateBadge hoverDescription={resolvedPrivateDescription} />
+							) : null}
+						</div>
+						<div className="mt-4 grid gap-4">
+							{field.tablePermissions.tables.map((table) => (
+								<div
+									key={table.key}
+									className="rounded-sm border border-input bg-background p-4"
+								>
+									{(() => {
+										const permissionValue =
+											(value as Record<
+												string,
+												TablePermissionValue | PermissionAction[]
+											>) ?? {};
+										const normalizedValue =
+											normalizeTablePermissionValue(permissionValue);
+										const currentTable = normalizedValue[table.key];
+										const actions = table.actions ??
+											field.tablePermissions?.actions ?? [
+												"read",
+												"create",
+												"update",
+												"delete",
+											];
+
+										return (
+											<>
+												<p className="body3 ">{table.label}</p>
+												<div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
+													{actions.map((action) => {
+														const checkboxId = `${field.name}-${table.key}-${action}`;
+														const isChecked = Boolean(
+															currentTable?.actions?.includes(action),
+														);
+														return (
+															<div
+																key={action}
+																className="flex items-center gap-2"
+															>
+																<Checkbox
+																	id={checkboxId}
+																	checked={isChecked}
+																	onCheckedChange={() =>
+																		updateField(
+																			field.name,
+																			toggleTablePermissionValue(
+																				permissionValue,
+																				table.key,
+																				action,
+																			),
+																		)
+																	}
+																	disabled={field.disabled}
+																/>
+
+																<Label
+																	htmlFor={checkboxId}
+																	className="capitalize"
+																>
+																	{
+																		field.tablePermissions?.actionLabels?.[
+																			action
+																		]
+																	}
+																</Label>
+															</div>
+														);
+													})}
+												</div>
+												{field.tablePermissions?.scopeOptions && (
+													<div className="mt-4 flex flex-wrap items-center gap-2 justify-end">
+														<Label
+															htmlFor={`${field.name}-${table.key}-scope`}
+															className="body3 text-neutral-80"
+														>
+															{field.tablePermissions.scopeLabel}
+														</Label>
+														{field.tablePermissions.scopeDescription && (
+															<span
+																id={`${field.name}-${table.key}-scope-description`}
+																className="body3 text-neutral-60"
+															>
+																{field.tablePermissions.scopeDescription}
+															</span>
+														)}
+														<Select
+															value={currentTable?.scope ?? "own"}
+															onValueChange={(nextScope) =>
+																updateField(
+																	field.name,
+																	setTablePermissionScope(
+																		permissionValue,
+																		table.key,
+																		nextScope as PermissionScope,
+																	),
+																)
+															}
+															disabled={
+																field.disabled ||
+																!(currentTable?.actions?.length ?? 0)
+															}
+														>
+															<SelectTrigger
+																id={`${field.name}-${table.key}-scope`}
+																aria-describedby={
+																	field.tablePermissions.scopeDescription
+																		? `${field.name}-${table.key}-scope-description`
+																		: undefined
+																}
+																className="h-8 w-[140px]"
+															>
+																<SelectValue
+																	placeholder={
+																		field.tablePermissions?.scopeLabel
+																	}
+																/>
+															</SelectTrigger>
+															<SelectContent>
+																{field.tablePermissions.scopeOptions.map(
+																	(option) => (
+																		<SelectItem
+																			key={option.value}
+																			value={option.value}
+																		>
+																			{option.label}
+																		</SelectItem>
+																	),
+																)}
+															</SelectContent>
+														</Select>
+													</div>
+												)}
+											</>
+										);
+									})()}
+								</div>
+							))}
+						</div>
+					</div>
+				)}
+
+				{field.type === "fieldPermissions" && field.fieldPermissions && (
+					<FieldPermissionsField
+						field={field}
+						fieldPermissions={field.fieldPermissions}
+						value={value}
+						updateField={updateField}
+						isPrivate={isPrivate}
+						resolvedPrivateDescription={resolvedPrivateDescription}
+					/>
+				)}
+
+				{error && <p className="body3 text-destructive-secondary">{error}</p>}
+				{field.afterField}
+			</div>
 		</div>
 	);
 };
@@ -1301,7 +1330,8 @@ export const buildRenderField = ({
 			return (
 				<ScrollReveal
 					key={field.name}
-					className={cn(gridClass, field.className)}
+					className={cn(gridClass, FIELD_SUBGRID_CLASS, field.className)}
+					contentClassName={FIELD_SUBGRID_CLASS}
 					disabled={isWithinAccordion}
 				>
 					{renderFieldContent(
