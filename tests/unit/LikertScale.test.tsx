@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { LikertScale } from "@/components/ui/likert-scale";
 
 const scaleOptions = [
@@ -109,6 +109,45 @@ describe("LikertScale", () => {
 		expect(
 			screen.getByLabelText("kann nicht eingeschätzt werden"),
 		).toBeChecked();
+	});
+
+	it("moves between more than five options with the down arrow key", async () => {
+		const sevenOptions = [
+			...scaleOptions,
+			{ value: "6", label: "extra" },
+			{ value: "7", label: "extra 2" },
+		];
+		render(<LikertScale options={sevenOptions} />);
+
+		const first = screen.getByLabelText("sehr instabil");
+		first.focus();
+		fireEvent.keyDown(first, { key: "ArrowDown" });
+
+		await waitFor(() =>
+			expect(screen.getByLabelText("eher instabil")).toHaveFocus(),
+		);
+	});
+
+	it("drops the connecting line for more than five options, even when stacked on mobile", () => {
+		const sixOptions = [...scaleOptions, { value: "6", label: "extra" }];
+		const { container } = render(
+			<LikertScale options={sixOptions} stackOnMobile />,
+		);
+
+		expect(container.querySelectorAll('[aria-hidden="true"]')).toHaveLength(0);
+		expect(screen.getByRole("radiogroup")).not.toHaveAttribute(
+			"aria-orientation",
+		);
+	});
+
+	it("keeps exactly five options as a horizontal scale with a connecting line", () => {
+		const { container } = render(<LikertScale options={scaleOptions} />);
+
+		expect(screen.getByRole("radiogroup")).toHaveAttribute(
+			"aria-orientation",
+			"horizontal",
+		);
+		expect(container.querySelectorAll('[aria-hidden="true"]')).toHaveLength(1);
 	});
 
 	it("forwards aria-invalid to the radio group", () => {
