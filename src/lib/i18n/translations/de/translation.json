@@ -776,7 +776,7 @@
 					"members": [
 						"**Projektleitung:** Daniel Jakobson",
 						"**Projektmanagement:** Ali Deniz Şensöz",
-						"**Datenredaktion:** Lina Rippel",
+						"**Datenredaktion:** Pegah Abed, Lina Rippel",
 						"**Strategische Projektkoordination:** Laura Raber",
 						"**Vergabe und Administration:** Doris Antonides-Heidelmeyer",
 						"**Technische Projektleitung bis 2024:** Metini Krivanish"
@@ -2917,6 +2917,7 @@
 		"category": {
 			"acrobatics": "Akrobatik",
 			"adult_education_centers": "Volkshochschulen",
+			"archives": "Archive",
 			"art_house_cinemas": "Programmkinos",
 			"art_universities": "Kunsthochschulen",
 			"bookmobile_libraries": "Fahrbibliotheken",
@@ -2955,6 +2956,7 @@
 			"family_centers": "Familienzentren",
 			"festival_venues": "Festivalorte",
 			"film_festivals": "Filmfestivals",
+			"film_media_archives": "Film- und Medienarchive",
 			"fine_arts_festivals": "Bildende Kunst Festivals",
 			"galleries": "Galerien",
 			"galleries_other": "Ohne Unterkategorie",
