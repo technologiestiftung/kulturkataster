@@ -118,8 +118,8 @@ describe("downloadInstitutionQuestionnaireAnswers free-text options", () => {
 		const csv = (await blobArg?.text()) ?? "";
 		expect(csv).toContain('"Sonstiges: Zirkus"');
 		expect(csv).toContain('"Ja, folgende: Neubau"');
-		expect(csv).toContain('"Eigene Webseite, Sonstiges: Podcast"');
-		expect(csv).toContain('"Sonstiges: Zählung, Umfragen"');
+		expect(csv).toContain('"Eigene Webseite; Sonstiges: Podcast"');
+		expect(csv).toContain('"Sonstiges: Zählung; Umfragen"');
 		expect(csv).not.toContain("::");
 	});
 });
