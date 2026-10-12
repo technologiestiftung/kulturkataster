@@ -161,16 +161,6 @@ export function QuestionnaireInstitutionCreateForm({
 						placeholder: fieldPlaceholder("city"),
 						onBlur: onAddressBlur,
 					},
-					{
-						name: "established_since",
-						label:
-							"Seit wann befindet sich die Einrichtung am aktuellen Standort?",
-						type: "partialDate",
-						layout: { span: "full" },
-						placeholder:
-							fieldPlaceholder("established_since") ||
-							"TT.MM.JJJJ, MM.JJJJ oder JJJJ",
-					},
 				],
 			},
 			{
