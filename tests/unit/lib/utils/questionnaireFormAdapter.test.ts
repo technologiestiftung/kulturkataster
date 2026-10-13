@@ -870,6 +870,40 @@ describe("buildAnswerRowsFromDraft", () => {
 		expect(rows).toEqual([{ questionId: 1, value: ["website"] }]);
 	});
 
+	it("wraps a legacy single-string multiselect draft value in an array", () => {
+		const questions = [
+			asQuestion({
+				...baseQuestion,
+				id: 1,
+				key: "operator_type",
+				label: "Trägerschaft",
+				field_type: "multiselect",
+				required: false,
+				step: 1,
+				order: 0,
+				config: {
+					options: [
+						{ value: "public", label: "Öffentlich" },
+						{ value: "other", label: "Sonstige" },
+					],
+					freeTextOption: { value: "other", fieldName: "operator_typeFreeText" },
+				},
+			}),
+		];
+
+		expect(
+			buildAnswerRowsFromDraft(questions, { operator_type: "public" }),
+		).toEqual([{ questionId: 1, value: ["public"] }]);
+		expect(
+			buildAnswerRowsFromDraft(questions, {
+				operator_type: "other",
+				operator_typeFreeText: "Verein",
+			}),
+		).toEqual([
+			{ questionId: 1, value: { selected: ["other"], freeText: "Verein" } },
+		]);
+	});
+
 	it("skips an empty likertMatrix answer", () => {
 		const questions = [
 			asQuestion({

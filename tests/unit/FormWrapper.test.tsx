@@ -574,6 +574,41 @@ describe("FormWrapper", () => {
 			});
 		});
 
+		it("treats a legacy single-string multiselect value as one selected option", async () => {
+			const onSubmit = vi.fn();
+			const config: FormWrapperConfig = {
+				fields: toFields([
+					{
+						id: "main",
+						fields: [
+							{
+								name: "operator_type",
+								label: "Operator",
+								type: "multiselect",
+								options: [
+									{ value: "public", label: "Public" },
+									{ value: "church", label: "Church" },
+								],
+							},
+						],
+					},
+				]),
+				initialValues: { operator_type: "public" },
+				onSubmit,
+			};
+
+			render(<FormWrapper config={config} />);
+			expect(screen.getByLabelText("Public")).toBeChecked();
+			fireEvent.click(screen.getByLabelText("Church"));
+			fireEvent.click(screen.getByRole("button", { name: /Submit/i }));
+
+			await waitFor(() => {
+				expect(onSubmit).toHaveBeenCalledWith({
+					operator_type: ["public", "church"],
+				});
+			});
+		});
+
 		it("renders one likert scale per row for a likertMatrix field", () => {
 			const config: FormWrapperConfig = {
 				fields: toFields([
