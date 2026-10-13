@@ -33,7 +33,6 @@ const Footer: FC<FooterProps> = ({ ariaLabel, envHint }) => {
 	return (
 		<footer
 			className="Footer-root z-31 space-x-14 hidden min-w-fit h-8 bg-footer fixed right-0 bottom-0 md:flex justify-between px-2 py-1 ml-20"
-			role="contentinfo"
 			aria-label={ariaLabel ?? t("common.footerLandmark")}
 		>
 			<div className="body2 flex items-center gap-1 text-nowrap truncate">
@@ -46,14 +45,20 @@ const Footer: FC<FooterProps> = ({ ariaLabel, envHint }) => {
 						<li key={item.id}>
 							{(() => {
 								const link = getModalLink(item.id, toLocalePath);
+								const opensInNewTab = link.target === "_blank";
 								return (
 									<Link
 										className="body2 font-bold"
 										href={link.url}
 										target={link.target}
-										rel="noopener noreferrer"
+										rel={opensInNewTab ? "noopener noreferrer" : undefined}
 									>
 										{t(`common.footer.${item.id}`)}
+										{opensInNewTab && (
+											<span className="sr-only">
+												{` (${t("common.a11y.shell.opensInNewTab")})`}
+											</span>
+										)}
 									</Link>
 								);
 							})()}

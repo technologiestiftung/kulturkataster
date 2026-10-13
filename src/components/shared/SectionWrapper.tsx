@@ -35,7 +35,6 @@ type SectionWrapperProps = {
 	bodyContent: ReactNode;
 	onClick?: () => void;
 	onClickAriaLabel?: string;
-	onClickAsButton?: boolean;
 	shouldRender?: boolean;
 };
 
@@ -55,7 +54,6 @@ export function SectionWrapper({
 	bodyContent,
 	onClick,
 	onClickAriaLabel,
-	onClickAsButton = true,
 	shouldRender = true,
 }: SectionWrapperProps) {
 	if (!shouldRender) return null;
@@ -70,7 +68,6 @@ export function SectionWrapper({
 				content: wrappedContent,
 				onClick,
 				onClickAriaLabel,
-				onClickAsButton,
 			})
 		: wrappedContent;
 
@@ -116,41 +113,27 @@ type ClickableContentArgs = {
 	content: ReactNode;
 	onClick: () => void;
 	onClickAriaLabel?: string;
-	onClickAsButton?: boolean;
 };
 
+// A full-size button sits behind the content, so the content keeps its
+// semantics (headings, links) and nested controls stay separately operable.
 const renderClickableContent = ({
 	content,
 	onClick,
 	onClickAriaLabel,
-	onClickAsButton = true,
-}: ClickableContentArgs) =>
-	onClickAsButton ? (
+}: ClickableContentArgs) => (
+	<div className="relative w-full text-left rounded-lg has-[>button:focus-visible]:ring-2 has-[>button:focus-visible]:ring-interaction-dark">
 		<button
 			type="button"
-			className="w-full text-left"
+			className="absolute inset-0 z-0 cursor-pointer focus-visible:outline-none"
 			onClick={onClick}
 			aria-label={onClickAriaLabel}
-		>
-			{content}
-		</button>
-	) : (
-		<div
-			role="button"
-			tabIndex={0}
-			className="w-full text-left"
-			onClick={onClick}
-			onKeyDown={(event) => {
-				if (event.key === "Enter" || event.key === " ") {
-					event.preventDefault();
-					onClick();
-				}
-			}}
-			aria-label={onClickAriaLabel}
-		>
+		/>
+		<div className="relative z-10 pointer-events-none [&_a]:pointer-events-auto [&_button]:pointer-events-auto [&_[role=button]]:pointer-events-auto">
 			{content}
 		</div>
-	);
+	</div>
+);
 
 type AccordionContentArgs = {
 	value?: string;

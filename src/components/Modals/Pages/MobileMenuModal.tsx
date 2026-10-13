@@ -183,14 +183,20 @@ export function MobileMenuModal({
 								})}
 
 							{hiddenMenuItemIds.has("accessibility") ? null : (
-								<div className="space-y-4 flex flex-col">
-									<span className="body2">
+								<section
+									className="space-y-4 flex flex-col"
+									aria-labelledby="mobile-menu-accessibility-heading"
+								>
+									<h2
+										id="mobile-menu-accessibility-heading"
+										className="body2 font-normal"
+									>
 										{t("common.accessibility.title")}
-									</span>
+									</h2>
 									<div className="">
 										<AccessibilityContent />
 									</div>
-								</div>
+								</section>
 							)}
 
 							<ModalFooter />

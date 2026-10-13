@@ -1,6 +1,6 @@
 "use client";
 
-import { FC } from "react";
+import { FC, useId } from "react";
 import { useTranslation } from "react-i18next";
 import { Card } from "@/components/ui/card";
 import { CategorySectionList } from "@/components/Filter/CategorySection/CategorySectionList";
@@ -66,6 +66,8 @@ export const FilterPanel: FC<FilterPanelProps> = ({
 	selectionEmptyLabel,
 }) => {
 	const { t } = useTranslation();
+	const cultureIndexHeadingId = useId();
+	const districtsHeadingId = useId();
 	const showCategoryHeader = categorySectionMode !== "selection";
 
 	const updateFilters = (nextFilters: FilterState) => {
@@ -190,13 +192,14 @@ export const FilterPanel: FC<FilterPanelProps> = ({
 					</h2>
 					{showClosedToggle && (
 						<button
+							type="button"
 							className="flex items-center gap-2 transition-opacity body2 text-primary-dark"
 							onClick={toggleClosedInstitutions}
 						>
 							{filters?.include_closed ? (
-								<EyeOff className="size-6" />
+								<EyeOff className="size-6" aria-hidden="true" />
 							) : (
-								<Eye className="size-6" />
+								<Eye className="size-6" aria-hidden="true" />
 							)}
 							<strong className="body2 font-bold">
 								{filters?.include_closed
@@ -211,10 +214,14 @@ export const FilterPanel: FC<FilterPanelProps> = ({
 			{showCultureIndex && (
 				<Card variant="filter">
 					<div className="flex items-center justify-between mb-4">
-						<h3 className="body1 font-bold capitalize">
+						<h3
+							id={cultureIndexHeadingId}
+							className="body1 font-bold capitalize"
+						>
 							{t("content.filter.cultureIndex.title")}
 						</h3>
 						<button
+							type="button"
 							className="body2 font-light underline"
 							onClick={
 								hasActiveCultureIndexFilters()
@@ -231,16 +238,18 @@ export const FilterPanel: FC<FilterPanelProps> = ({
 						selected={filters?.culture_index_ranges || []}
 						onChange={toggleCultureIndexRange}
 						counts={cultureIndexRangeCounts}
+						labelledBy={cultureIndexHeadingId}
 					/>
 				</Card>
 			)}
 			{showDistricts && (
 				<Card variant="filter">
 					<div className="flex items-center justify-between mb-4">
-						<h3 className="body1 font-bold capitalize">
+						<h3 id={districtsHeadingId} className="body1 font-bold capitalize">
 							{t("content.filter.districts.title")}
 						</h3>
 						<button
+							type="button"
 							className="body2 font-light underline"
 							onClick={
 								hasActiveDistrictFilters()
@@ -257,6 +266,7 @@ export const FilterPanel: FC<FilterPanelProps> = ({
 						districts={districts}
 						selected={filters?.district_keys || []}
 						onChange={toggleDistrict}
+						labelledBy={districtsHeadingId}
 					/>
 				</Card>
 			)}

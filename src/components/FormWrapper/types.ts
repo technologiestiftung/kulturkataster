@@ -137,6 +137,8 @@ type FormWrapperNonSectionFieldConfig = {
 	accordionTitle?: ReactNode;
 	accordionDescription?: string;
 	placeholder?: string;
+	/** HTML autocomplete token for inputs asking for the user's own data (WCAG 1.3.5). */
+	autoComplete?: string;
 	required?: boolean;
 	requiredMessage?: string;
 	hideRequiredIndicator?: boolean;

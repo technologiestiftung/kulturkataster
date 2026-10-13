@@ -97,6 +97,18 @@
 	scroll-behavior: auto !important;
 }
 
+/* Same as above for users who asked for less motion in their OS/browser. */
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0s !important;
+		scroll-behavior: auto !important;
+	}
+}
+
 @theme {
 	--animate-accordion-down: accordion-down 0.28s ease-out;
 	--animate-accordion-up: accordion-up 0.24s ease-in;
