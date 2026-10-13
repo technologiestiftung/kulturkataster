@@ -12,14 +12,14 @@ export function QuestionnaireThankYou() {
 			<div className="h-50 relative -my-4 -mt-[7.5rem] left-1/2 w-screen -translate-x-1/2 overflow-hidden mb-16">
 				<Image
 					src="/resources/thankyou.png"
-					alt="Thank you background"
+					alt=""
 					fill
 					className="object-cover contrast:invert-90"
 					priority
 				/>
 			</div>
 			<div className="motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-1 motion-safe:duration-700">
-				<h1 className="font-extrabold">
+				<h1 tabIndex={-1} className="font-extrabold outline-none">
 					{t("content.questionnaireWizard.review.thanksTitle", {
 						defaultValue: "Vielen Dank für Ihre Teilnahme!",
 					})}

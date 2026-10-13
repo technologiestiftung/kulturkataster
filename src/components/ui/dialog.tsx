@@ -137,7 +137,7 @@ function DialogContent({
 			<DialogPrimitive.Content
 				data-slot="dialog-content"
 				className={cn(
-					"bg-secondary md:bg-background motion-safe:data-[state=open]:animate-in motion-safe:data-[state=closed]:animate-out motion-safe:data-[state=closed]:fade-out-0 motion-safe:data-[state=open]:fade-in-0 motion-safe:data-[state=closed]:zoom-out-95 motion-safe:data-[state=open]:zoom-in-95 z-[61] shadow-lg duration-200 relative",
+					"bg-secondary md:bg-background outline-none motion-safe:data-[state=open]:animate-in motion-safe:data-[state=closed]:animate-out motion-safe:data-[state=closed]:fade-out-0 motion-safe:data-[state=open]:fade-in-0 motion-safe:data-[state=closed]:zoom-out-95 motion-safe:data-[state=open]:zoom-in-95 z-[61] shadow-lg duration-200 relative",
 					getVariantStyles(),
 					variant === "fullscreen-muted" && "bg-neutral-10 md:bg-neutral-10",
 					className,
@@ -145,9 +145,11 @@ function DialogContent({
 				aria-describedby={undefined}
 				ref={focusRef}
 				onOpenAutoFocus={(event) => {
+					// Focus the dialog container instead of its first control (the
+					// close button) so no focus ring flashes on open. Focus must stay
+					// inside the dialog for screen reader and keyboard users.
 					event.preventDefault();
-					focusRef.current?.focus();
-					setTimeout(() => focusRef.current?.blur(), 100);
+					focusRef.current?.focus({ preventScroll: true });
 				}}
 				{...props}
 			>

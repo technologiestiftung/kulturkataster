@@ -148,11 +148,13 @@ describe("AccountLayoutClient", () => {
 			</AccountLayoutClient>,
 		);
 
-		fireEvent.click(screen.getByRole("button", { name: "Profile settings" }));
-		expect(pushMock).toHaveBeenCalledWith("/de/account/edit");
-
-		fireEvent.click(screen.getByRole("button", { name: "FAQ" }));
-		expect(pushMock).toHaveBeenCalledWith("/de/account/faq");
+		expect(
+			screen.getByRole("link", { name: "Profile settings" }),
+		).toHaveAttribute("href", "/de/account/edit");
+		expect(screen.getByRole("link", { name: "FAQ" })).toHaveAttribute(
+			"href",
+			"/de/account/faq",
+		);
 
 		fireEvent.click(screen.getByRole("button", { name: "Refresh data" }));
 		expect(refreshMock).toHaveBeenCalled();

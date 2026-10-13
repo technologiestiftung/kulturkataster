@@ -46,7 +46,11 @@ const eslintConfig = [
 			"jsx-a11y/no-interactive-element-to-noninteractive-role": "warn",
 			"jsx-a11y/no-noninteractive-element-interactions": "warn",
 			"jsx-a11y/no-noninteractive-element-to-interactive-role": "warn",
-			"jsx-a11y/no-noninteractive-tabindex": "warn",
+			// Scrollable regions must be keyboard-focusable (WCAG 2.1.1).
+			"jsx-a11y/no-noninteractive-tabindex": [
+				"warn",
+				{ roles: ["tabpanel", "region"] },
+			],
 			"jsx-a11y/no-redundant-roles": "warn",
 			"jsx-a11y/no-static-element-interactions": "warn",
 			"jsx-a11y/role-has-required-aria-props": "warn",

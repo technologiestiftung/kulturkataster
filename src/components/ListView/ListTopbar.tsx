@@ -46,9 +46,14 @@ export function ListTopbar({
 				<div className="flex gap-3 w-full pr-15 md:pr-0">
 					<strong
 						className={`${isSearchOpen && "hidden"} body2 self-end text-nowrap text-start md:text-start`}
+						aria-hidden="true"
 					>
 						{countLabel}
 					</strong>{" "}
+					{/* Stays mounted while searching so count changes are announced. */}
+					<p className="sr-only" role="status">
+						{countLabel}
+					</p>
 					<div className="relative flex flex-1 justify-end ">
 						<div
 							className={[
@@ -59,6 +64,7 @@ export function ListTopbar({
 							]
 								.filter(Boolean)
 								.join(" ")}
+							inert={!isSearchOpen}
 						>
 							<SearchInput
 								ref={inputRef}
@@ -78,7 +84,7 @@ export function ListTopbar({
 										className="absolute right-4 top-1/2 -translate-y-1/2 text-foreground hover:text-foreground transition-colors"
 										aria-label={t("content.listView.searchClose")}
 									>
-										<Close className="size-4" />
+										<Close aria-hidden="true" className="size-4" />
 									</button>
 								}
 							/>
@@ -91,14 +97,20 @@ export function ListTopbar({
 									variant="surface"
 									iconSize="lg"
 									tooltip={t("content.listView.searchButton")}
+									aria-label={t("content.listView.searchButton")}
+									aria-expanded={false}
 									onClick={() => {
 										setIsSearchOpen(true);
 										requestAnimationFrame(handleSearchClick);
 									}}
 								>
-									<SearchIcon className="size-4" />
+									<SearchIcon aria-hidden="true" className="size-4" />
 								</ButtonWithTooltip>
-								<Label emphasize={false} className="hidden md:block">
+								<Label
+									emphasize={false}
+									className="hidden md:block"
+									aria-hidden="true"
+								>
 									{t("content.listView.searchLabel")}
 								</Label>
 							</div>
@@ -112,7 +124,11 @@ export function ListTopbar({
 								onClick={onOpenFilter}
 							/>
 
-							<Label emphasize={false} className="hidden md:block">
+							<Label
+								emphasize={false}
+								className="hidden md:block"
+								aria-hidden="true"
+							>
 								{t("content.listView.filterButton")}
 							</Label>
 						</div>

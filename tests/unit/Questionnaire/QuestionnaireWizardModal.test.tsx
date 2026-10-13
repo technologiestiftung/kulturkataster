@@ -20,7 +20,10 @@ import { useQuestionnaireDraftStore } from "@/lib/store/questionnaireDraftStore"
 vi.mock("react-i18next", () => ({
 	useTranslation: () => ({
 		t: (key: string, options?: Record<string, unknown>) =>
-			(options?.defaultValue as string) ?? key,
+			((options?.defaultValue as string) ?? key).replace(
+				/\{\{(\w+)\}\}/g,
+				(_, name: string) => String(options?.[name] ?? ""),
+			),
 		i18n: { changeLanguage: () => new Promise(() => {}) },
 	}),
 	Trans: ({ children }: { children: React.ReactNode }) => <>{children}</>,
@@ -375,7 +378,9 @@ describe("QuestionnaireWizardModal", () => {
 			/>,
 		);
 
-		fireEvent.click(screen.getByRole("button", { name: "Go to step 2" }));
+		fireEvent.click(
+			screen.getByRole("button", { name: "Themenblock 2 von 2" }),
+		);
 
 		expect(mockStepperState.goToStep).toHaveBeenCalledWith("block-2");
 	});

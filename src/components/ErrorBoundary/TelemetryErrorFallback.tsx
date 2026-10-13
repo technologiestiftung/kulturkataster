@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import InfoCircle from "@/icons/info-circle.svg";
@@ -23,6 +23,13 @@ export function TelemetryErrorFallback({
 	scope,
 }: TelemetryErrorFallbackProps) {
 	const { t } = useTranslation();
+	const headingRef = useRef<HTMLHeadingElement>(null);
+
+	// Move focus to the message so keyboard and screen reader users notice
+	// that the page content was replaced by an error.
+	useEffect(() => {
+		headingRef.current?.focus();
+	}, []);
 
 	useEffect(() => {
 		reportClientTelemetry({
@@ -44,11 +51,15 @@ export function TelemetryErrorFallback({
 				<CardContent variant="secondary" className="space-y-4 p-6 md:p-8">
 					<div className="rounded-sm border border-border bg-background p-4">
 						<div className="flex items-start gap-3">
-							<span className="mt-0.5 text-primary-dark">
+							<span className="mt-0.5 text-primary-dark" aria-hidden="true">
 								<InfoCircle className="size-5" />
 							</span>
 							<div className="space-y-2">
-								<h1 className="body1 font-bold">
+								<h1
+									ref={headingRef}
+									tabIndex={-1}
+									className="body1 font-bold focus:outline-none"
+								>
 									{t("common.errorBoundary.title")}
 								</h1>
 								<p className="body2">{t("common.errorBoundary.description")}</p>

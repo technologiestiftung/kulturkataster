@@ -43,12 +43,13 @@ export default function SubmenuLayout({
 						className="flex items-center gap-1"
 						aria-label={t("common.back")}
 					>
-						<ArrowLeft className="size-6" /> {t("common.back")}
+						<ArrowLeft className="size-6" aria-hidden="true" />{" "}
+						{t("common.back")}
 					</button>
-					<span>{title}</span>
+					<h2 className="body1 font-bold">{title}</h2>
 				</div>
 				<button onClick={handleBack} aria-label={t("common.closeSidebar")}>
-					<Close />
+					<Close aria-hidden="true" />
 				</button>
 			</div>
 			<div className="flex-1 overflow-auto">{children}</div>
