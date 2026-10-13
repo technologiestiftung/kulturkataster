@@ -163,7 +163,6 @@ export function InfoWrapper({
 									: undefined
 							}
 							onClickAriaLabel={field.onClickAriaLabel}
-							onClickAsButton={!showEditButtonInBody}
 						/>
 					</ScrollReveal>
 				);

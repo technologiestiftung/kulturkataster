@@ -1,5 +1,75 @@
 {
 	"common": {
+		"a11y": {
+			"dataTable": {
+				"actions": "Aktionen",
+				"add": "Hinzufügen",
+				"closeSearch": "Suche schließen",
+				"downloadAnswers": "Fragebogen-Antworten herunterladen",
+				"filter": "Filter",
+				"noData": "Keine Daten gefunden.",
+				"notSorted": "nicht sortiert",
+				"openFilters": "Filter öffnen",
+				"resultCount_one": "{{count}} Ergebnis",
+				"resultCount_other": "{{count}} Ergebnisse",
+				"review": "Prüfen",
+				"scrollLeft": "Nach links scrollen",
+				"scrollRight": "Nach rechts scrollen",
+				"searchPlaceholder": "Suchen...",
+				"sortedAscending": "aufsteigend sortiert",
+				"sortedDescending": "absteigend sortiert",
+				"tableLabel": "Tabelle",
+				"toggleRow": "Zeile auf- oder zuklappen"
+			},
+			"forms": {
+				"blockOf": "Themenblock {{current}} von {{total}}",
+				"noResults": "Keine Einträge gefunden",
+				"required": "Pflichtfeld",
+				"searchOptions": "Optionen durchsuchen",
+				"selectItems": "Einträge auswählen",
+				"stepNavigation": "Fortschritt",
+				"stepOf": "Schritt {{current}} von {{total}}"
+			},
+			"institution": {
+				"showOnMap": "Auf der Karte zeigen"
+			},
+			"list": {
+				"letterFilter": "Kulturorte nach Anfangsbuchstabe filtern"
+			},
+			"map": {
+				"clearSearch": "Suche löschen",
+				"filterButtonActive": "{{label}}, {{count}} aktiv",
+				"keyboardHint": "Karte mit den Pfeiltasten verschieben, mit Plus und Minus zoomen.",
+				"searchError": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
+				"searchResultSelected": "{{name}} ausgewählt.",
+				"searchResultsFound_one": "{{count}} Ergebnis gefunden.",
+				"searchResultsFound_other": "{{count}} Ergebnisse gefunden.",
+				"skipToList": "Zur Listenansicht",
+				"viewportLabel": "Interaktive Karte"
+			},
+			"shell": {
+				"loggedIn": "angemeldet",
+				"metaDescription": "Die Seite macht Berlins Kulturlandschaft sichtbar: Kulturorte finden, filtern und erkunden – für Planung, Forschung und Öffentlichkeit. Ein Projekt der Kulturraum Berlin gGmbH.",
+				"metaTitleDefault": "Berliner Kulturkataster – Karte & Daten zu Kulturorten",
+				"opensInNewTab": "öffnet in neuem Tab",
+				"pageTitle": {
+					"about": "Über das Kulturkataster",
+					"accessibility": "Barrierefreiheit",
+					"accessibilitySettings": "Einstellungen zur Barrierefreiheit",
+					"accountActivity": "Aktivität",
+					"accountFaq": "FAQ",
+					"download": "Download",
+					"imprint": "Impressum",
+					"info": "Infos und Services",
+					"mobileMenu": "Mobiles Menü",
+					"newsletter": "Newsletter des Berliner Kulturkatasters",
+					"signLanguage": "Gebärdensprache (DGS)",
+					"simpleLanguage": "Leichte Sprache",
+					"terms": "AGB",
+					"welcome": "Willkommen im Kulturkataster"
+				}
+			}
+		},
 		"about": "Über",
 		"accessibility": {
 			"contrast": {

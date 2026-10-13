@@ -14,17 +14,24 @@ interface CultureIndexTagsProps {
 	selected: CultureIndexRangeKey[];
 	onChange: (key: CultureIndexRangeKey) => void;
 	counts?: Record<CultureIndexRangeKey, number>;
+	/** Id of the heading that names this group of checkboxes. */
+	labelledBy?: string;
 }
 
 const CultureIndexTags: FC<CultureIndexTagsProps> = ({
 	selected,
 	onChange,
 	counts,
+	labelledBy,
 }) => {
 	const { t } = useTranslation();
 
 	return (
-		<div className="flex flex-col mb-4">
+		<div
+			className="flex flex-col mb-4"
+			role="group"
+			aria-labelledby={labelledBy}
+		>
 			{CULTURE_INDEX_RANGES.map((range) => {
 				const isSelected = selected.includes(range.key);
 				const label = t(`content.filter.cultureIndex.ranges.${range.key}`);

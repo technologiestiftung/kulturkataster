@@ -77,7 +77,9 @@ export function QuestionnaireBlockStep({
 	return (
 		<div className="space-y-6">
 			<div className="space-y-2">
-				<h1 className="font-bold">{title}</h1>
+				<h1 tabIndex={-1} className="font-bold outline-none">
+					{title}
+				</h1>
 				{description && <p className="body2">{description}</p>}
 			</div>
 
@@ -86,6 +88,13 @@ export function QuestionnaireBlockStep({
 					total={totalBlocks}
 					currentIndex={blockIndex}
 					onDotClick={(index) => onNavigateToStep(blockStepIds[index])}
+					getDotLabel={(index, total) =>
+						t("common.a11y.forms.blockOf", {
+							current: index + 1,
+							total,
+							defaultValue: "Themenblock {{current}} von {{total}}",
+						})
+					}
 				/>
 				<span className="body2">
 					{t("content.questionnaireWizard.block.stepLabel", {

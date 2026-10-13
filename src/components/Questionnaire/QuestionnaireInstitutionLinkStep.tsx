@@ -113,7 +113,7 @@ export function QuestionnaireInstitutionLinkStep({
 	return (
 		<div className="space-y-6">
 			<div className="space-y-2">
-				<h1 className="font-bold">
+				<h1 tabIndex={-1} className="font-bold outline-none">
 					{t("content.questionnaireWizard.institutionLink.title", {
 						defaultValue: "Allgemeine Angaben zum Kulturort",
 					})}

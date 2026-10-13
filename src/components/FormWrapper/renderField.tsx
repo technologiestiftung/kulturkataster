@@ -56,6 +56,13 @@ import { KeyValueField } from "./KeyValueField";
 import { FieldPermissionsField } from "./FieldPermissionsField";
 import { defaultFilterState } from "./constants";
 import { isEmptyValue } from "./validation";
+import {
+	RequiredMark,
+	getFieldA11yIds,
+	isLabelableType,
+	joinIds,
+	supportsAriaRequired,
+} from "./fieldA11y";
 import Eye from "@/icons/eye.svg";
 import EyeOff from "@/icons/eye-off.svg";
 import Warning from "@/icons/warning.svg";
@@ -75,6 +82,9 @@ function PasswordField({
 	placeholder,
 	disabled,
 	hasIssue,
+	autoComplete,
+	required,
+	describedBy,
 }: {
 	id: string;
 	value: string;
@@ -83,6 +93,9 @@ function PasswordField({
 	placeholder?: string;
 	disabled?: boolean;
 	hasIssue?: boolean;
+	autoComplete?: string;
+	required?: boolean;
+	describedBy?: string;
 }) {
 	const [showPassword, setShowPassword] = useState(false);
 	const { t } = useTranslation();
@@ -97,7 +110,10 @@ function PasswordField({
 				onBlur={(e) => onBlur(e.target.value)}
 				placeholder={placeholder}
 				disabled={disabled}
+				autoComplete={autoComplete}
 				aria-invalid={hasIssue || undefined}
+				aria-required={required || undefined}
+				aria-describedby={describedBy}
 				className={cn(
 					"pr-12",
 					hasIssue &&
@@ -107,7 +123,7 @@ function PasswordField({
 
 			<button
 				type="button"
-				className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-80 hover:text-neutral-100"
+				className="absolute right-1 top-1/2 flex size-10 -translate-y-1/2 items-center justify-center rounded-sm text-neutral-80 hover:text-neutral-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
 				aria-label={
 					showPassword
 						? t("common.auth.password.hide")
@@ -117,13 +133,16 @@ function PasswordField({
 				disabled={disabled}
 			>
 				{showPassword ? (
-					<EyeOff className="h-5 w-5" />
+					<EyeOff aria-hidden="true" className="h-5 w-5" />
 				) : (
-					<Eye className="h-5 w-5" />
+					<Eye aria-hidden="true" className="h-5 w-5" />
 				)}
 			</button>
 			{hasIssue && (
-				<Warning className="pointer-events-none absolute right-11 top-1/2 h-5 w-5 -translate-y-1/2 text-destructive-secondary" />
+				<Warning
+					aria-hidden="true"
+					className="pointer-events-none absolute right-11 top-1/2 h-5 w-5 -translate-y-1/2 text-destructive-secondary"
+				/>
 			)}
 		</div>
 	);
@@ -393,6 +412,33 @@ const renderFieldContent = (
 
 	const gridClass = getGridClass(field);
 
+	// Accessible names and descriptions: the label names the control (or group),
+	// description, private note, format hint and error describe it.
+	const ids = getFieldA11yIds(field.name);
+	const labelId = showLabel ? ids.labelId : undefined;
+	const showFormatHint = field.type === "partialDate";
+	const describedBy = joinIds(
+		showDescription && ids.descriptionId,
+		showPrivateNote && ids.privateNoteId,
+		showFormatHint && ids.formatHintId,
+		error && ids.errorId,
+	);
+	const isRequired = Boolean(field.required);
+	const controlA11yProps = {
+		"aria-describedby": describedBy,
+		"aria-required": isRequired || undefined,
+	};
+	const requiredMark =
+		isRequired && !field.hideRequiredIndicator ? (
+			<RequiredMark
+				srText={
+					supportsAriaRequired(field.type)
+						? undefined
+						: tCommon("common.a11y.forms.required")
+				}
+			/>
+		) : null;
+
 	return (
 		<div
 			className={cn(
@@ -407,11 +453,13 @@ const renderFieldContent = (
 				<div className="space-y-1 self-end">
 					{showLabel && (
 						<div className="flex items-center justify-between gap-2">
-							<Label htmlFor={field.name} className="text-neutral-80">
+							<Label
+								id={labelId}
+								htmlFor={isLabelableType(field.type) ? field.name : undefined}
+								className="text-neutral-80"
+							>
 								{field.labelNode ?? resolvedLabel}
-								{field.required && !field.hideRequiredIndicator && (
-									<span className="ml-1">*</span>
-								)}
+								{requiredMark}
 							</Label>
 							{isPrivate ? (
 								<PrivateBadge hoverDescription={resolvedPrivateDescription} />
@@ -419,10 +467,15 @@ const renderFieldContent = (
 						</div>
 					)}
 					{showDescription && (
-						<p className="body2 text-neutral-80 mb-2">{resolvedDescription}</p>
+						<p id={ids.descriptionId} className="body2 text-neutral-80 mb-2">
+							{resolvedDescription}
+						</p>
 					)}
 					{showPrivateNote && (
-						<p className="body3 text-neutral-80 mb-2 italic">
+						<p
+							id={ids.privateNoteId}
+							className="body3 text-neutral-80 mb-2 italic"
+						>
 							{resolvedPrivateDescription}
 						</p>
 					)}
@@ -449,10 +502,12 @@ const renderFieldContent = (
 							}}
 							placeholder={resolvedPlaceholder}
 							disabled={field.disabled}
+							autoComplete={field.autoComplete}
 							min={field.min}
 							max={field.max}
 							step={field.step}
 							aria-invalid={hasIssue || undefined}
+							{...controlA11yProps}
 							className={cn(
 								hasIssue &&
 									"bg-destructive-secondary/20 border-destructive-secondary pr-10",
@@ -460,7 +515,15 @@ const renderFieldContent = (
 						/>
 
 						{hasIssue && (
-							<Warning className="pointer-events-none absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-destructive-secondary" />
+							<Warning
+								aria-hidden="true"
+								className="pointer-events-none absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-destructive-secondary"
+							/>
+						)}
+						{showFormatHint && (
+							<span id={ids.formatHintId} className="sr-only">
+								{tCommon("common.form.validation.invalidPartialDate")}
+							</span>
 						)}
 					</div>
 				)}
@@ -485,6 +548,7 @@ const renderFieldContent = (
 								}}
 								disabled={field.disabled}
 								aria-invalid={hasIssue || undefined}
+								{...controlA11yProps}
 								className={cn(
 									hasIssue &&
 										"bg-destructive-secondary/20 border-destructive-secondary pr-10",
@@ -492,7 +556,10 @@ const renderFieldContent = (
 							/>
 
 							{hasIssue && (
-								<Warning className="pointer-events-none absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-destructive-secondary" />
+								<Warning
+									aria-hidden="true"
+									className="pointer-events-none absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-destructive-secondary"
+								/>
 							)}
 						</div>
 						{field.fileRemoveOption ? (
@@ -537,6 +604,9 @@ const renderFieldContent = (
 						placeholder={resolvedPlaceholder}
 						disabled={field.disabled}
 						hasIssue={hasIssue}
+						autoComplete={field.autoComplete}
+						required={isRequired}
+						describedBy={describedBy}
 					/>
 				)}
 
@@ -551,7 +621,9 @@ const renderFieldContent = (
 							}}
 							placeholder={resolvedPlaceholder}
 							disabled={field.disabled}
+							autoComplete={field.autoComplete}
 							aria-invalid={hasIssue || undefined}
+							{...controlA11yProps}
 							rows={4}
 							className={cn(
 								hasIssue &&
@@ -560,7 +632,10 @@ const renderFieldContent = (
 						/>
 
 						{hasIssue && (
-							<Warning className="pointer-events-none absolute right-3 top-3 h-5 w-5 text-destructive-secondary" />
+							<Warning
+								aria-hidden="true"
+								className="pointer-events-none absolute right-3 top-3 h-5 w-5 text-destructive-secondary"
+							/>
 						)}
 					</div>
 				)}
@@ -585,6 +660,7 @@ const renderFieldContent = (
 							<SelectTrigger
 								id={field.name}
 								aria-invalid={hasIssue || undefined}
+								{...controlA11yProps}
 								className={cn(
 									hasIssue &&
 										"bg-destructive-secondary/20 border-destructive-secondary pr-12",
@@ -616,7 +692,10 @@ const renderFieldContent = (
 							</SelectContent>
 						</Select>
 						{hasIssue && (
-							<Warning className="pointer-events-none absolute right-8 top-1/2 h-4 w-4 -translate-y-1/2 text-destructive-secondary" />
+							<Warning
+								aria-hidden="true"
+								className="pointer-events-none absolute right-8 top-1/2 h-4 w-4 -translate-y-1/2 text-destructive-secondary"
+							/>
 						)}
 					</div>
 				)}
@@ -637,6 +716,8 @@ const renderFieldContent = (
 							updateField(field.name, deserializeOptionValue(val));
 						}}
 						aria-invalid={hasIssue || undefined}
+						aria-labelledby={labelId}
+						{...controlA11yProps}
 						className={cn(
 							hasIssue &&
 								"rounded-sm border border-destructive-secondary bg-destructive-secondary/10 p-3",
@@ -733,6 +814,8 @@ const renderFieldContent = (
 								})) ?? []
 							}
 							aria-invalid={hasIssue || undefined}
+							aria-labelledby={labelId}
+							{...controlA11yProps}
 							containerClassName={cn(
 								hasIssue &&
 									"rounded-sm border border-destructive-secondary bg-destructive-secondary/10 p-3",
@@ -753,6 +836,7 @@ const renderFieldContent = (
 						)}
 					>
 						{field.likertMatrix.rows.map((row) => {
+							const rowLabelId = `${field.name}-${row.key}-label`;
 							const rowValue =
 								(value as Record<string, unknown> | undefined)?.[row.key] ?? "";
 							// Only the unanswered rows are the problem, so only they turn red.
@@ -766,7 +850,9 @@ const renderFieldContent = (
 											"rounded-sm border border-destructive-secondary bg-destructive-secondary/10 p-3",
 									)}
 								>
-									<Label className="text-neutral-80">{row.label}</Label>
+									<Label id={rowLabelId} className="text-neutral-80">
+										{row.label}
+									</Label>
 									<LikertScale
 										value={getSerializedSelectedValue(field.options, rowValue)}
 										onValueChange={(val) =>
@@ -782,6 +868,8 @@ const renderFieldContent = (
 											})) ?? []
 										}
 										aria-invalid={rowHasIssue || undefined}
+										aria-labelledby={joinIds(labelId, rowLabelId)}
+										{...controlA11yProps}
 										itemClassName={cn(
 											rowHasIssue && "border-destructive-secondary",
 										)}
@@ -806,15 +894,14 @@ const renderFieldContent = (
 							id={field.name}
 							checked={value as boolean}
 							aria-invalid={hasIssue || undefined}
+							{...controlA11yProps}
 							onCheckedChange={(checked) => updateField(field.name, checked)}
 							disabled={field.disabled}
 						/>
 
 						<Label htmlFor={field.name} emphasize={false}>
 							{field.labelNode ?? resolvedLabel}
-							{field.required && !field.hideRequiredIndicator && (
-								<span className=" ml-1">*</span>
-							)}
+							{requiredMark}
 						</Label>
 						{isPrivate ? (
 							<PrivateBadge hoverDescription={resolvedPrivateDescription} />
@@ -832,9 +919,7 @@ const renderFieldContent = (
 					>
 						<Label htmlFor={field.name} className="font-normal">
 							{field.labelNode ?? resolvedLabel}
-							{field.required && !field.hideRequiredIndicator && (
-								<span className=" ml-1">*</span>
-							)}
+							{requiredMark}
 						</Label>
 						{isPrivate ? (
 							<PrivateBadge hoverDescription={resolvedPrivateDescription} />
@@ -843,6 +928,7 @@ const renderFieldContent = (
 							id={field.name}
 							checked={value as boolean}
 							aria-invalid={hasIssue || undefined}
+							{...controlA11yProps}
 							className={cn(hasIssue && "border-destructive-secondary")}
 							onCheckedChange={(checked) => updateField(field.name, checked)}
 							disabled={field.disabled}
@@ -853,6 +939,13 @@ const renderFieldContent = (
 				{field.type === "multiselect" && (
 					<div
 						id={field.name}
+						role={field.multiselectVariant === "modal" ? undefined : "group"}
+						aria-labelledby={
+							field.multiselectVariant === "modal" ? undefined : labelId
+						}
+						aria-describedby={
+							field.multiselectVariant === "modal" ? undefined : describedBy
+						}
 						className={cn(
 							"space-y-2",
 							hasIssue &&
@@ -861,7 +954,12 @@ const renderFieldContent = (
 					>
 						{field.multiselectVariant === "modal" ? (
 							<MultiSelectModal
-								title={resolvedLabel || "Select Items"}
+								title={
+									resolvedLabel || tCommon("common.a11y.forms.selectItems")
+								}
+								labelId={labelId}
+								describedBy={describedBy}
+								invalid={hasIssue}
 								options={field.options ?? []}
 								filteredOptions={field.multiselectFilteredOptions}
 								selected={(value as string[]) ?? []}
@@ -1093,8 +1191,17 @@ const renderFieldContent = (
 
 										return (
 											<>
-												<p className="body3 ">{table.label}</p>
-												<div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
+												<p
+													id={`${field.name}-${table.key}-label`}
+													className="body3 "
+												>
+													{table.label}
+												</p>
+												<div
+													role="group"
+													aria-labelledby={`${field.name}-${table.key}-label`}
+													className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4"
+												>
 													{actions.map((action) => {
 														const checkboxId = `${field.name}-${table.key}-${action}`;
 														const isChecked = Boolean(
@@ -1218,7 +1325,11 @@ const renderFieldContent = (
 					/>
 				)}
 
-				{error && <p className="body3 text-destructive-secondary">{error}</p>}
+				{error && (
+					<p id={ids.errorId} className="body3 text-destructive-secondary">
+						{error}
+					</p>
+				)}
 				{field.afterField}
 			</div>
 		</div>

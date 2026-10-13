@@ -53,10 +53,13 @@ const Filter: FC<FilterProps> = ({ onSearchClick, onShowFilter }) => {
 						tooltip={tCommon("common.search.searchButton", {
 							defaultValue: "Suchen",
 						})}
+						aria-label={tCommon("common.search.searchButton", {
+							defaultValue: "Suchen",
+						})}
 						className="cursor-pointer"
 						onClick={onSearchClick}
 					>
-						<Search className="size-5!" />
+						<Search className="size-5!" aria-hidden="true" />
 					</ButtonWithTooltip>
 				)}
 				<ButtonWithTooltip

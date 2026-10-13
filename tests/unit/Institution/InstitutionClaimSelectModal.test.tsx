@@ -127,8 +127,12 @@ describe("InstitutionClaimSelectModal", () => {
 
 		expect(screen.getByText("2 Ergebnisse")).toBeInTheDocument();
 
-		fireEvent.click(screen.getByRole("button", { name: /institution alpha/i }));
-		fireEvent.click(screen.getByRole("button", { name: /institution beta/i }));
+		fireEvent.click(
+			screen.getByRole("checkbox", { name: /institution alpha/i }),
+		);
+		fireEvent.click(
+			screen.getByRole("checkbox", { name: /institution beta/i }),
+		);
 		fireEvent.click(screen.getByRole("button", { name: /anfrage senden/i }));
 
 		await waitFor(() => {
@@ -205,10 +209,10 @@ describe("InstitutionClaimSelectModal", () => {
 		});
 
 		expect(
-			screen.queryByRole("button", { name: /institution alpha/i }),
+			screen.queryByRole("checkbox", { name: /institution alpha/i }),
 		).toBeNull();
 		expect(
-			screen.getByRole("button", { name: /institution gamma/i }),
+			screen.getByRole("checkbox", { name: /institution gamma/i }),
 		).toBeInTheDocument();
 	});
 
@@ -239,24 +243,24 @@ describe("InstitutionClaimSelectModal", () => {
 		});
 
 		expect(
-			screen.getByRole("button", { name: /institution gamma/i }),
+			screen.getByRole("checkbox", { name: /institution gamma/i }),
 		).toBeInTheDocument();
 		expect(
-			screen.queryByRole("button", { name: /institution alpha/i }),
+			screen.queryByRole("checkbox", { name: /institution alpha/i }),
 		).toBeNull();
 
 		fireEvent.change(searchInput, { target: { value: "" } });
 
 		await waitFor(() => {
 			expect(
-				screen.getByRole("button", { name: /institution alpha/i }),
+				screen.getByRole("checkbox", { name: /institution alpha/i }),
 			).toBeInTheDocument();
 		});
 		expect(
-			screen.getByRole("button", { name: /institution beta/i }),
+			screen.getByRole("checkbox", { name: /institution beta/i }),
 		).toBeInTheDocument();
 		expect(
-			screen.queryByRole("button", { name: /institution gamma/i }),
+			screen.queryByRole("checkbox", { name: /institution gamma/i }),
 		).toBeNull();
 	});
 });

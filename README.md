@@ -100,6 +100,8 @@ npm run start        # Start production server
 npm run lint         # Run ESLint
 npm run format       # Format code with Prettier
 npm run format:fix   # Auto-fix formatting issues
+npm test             # Unit and integration tests (e2e runs in GitHub CI)
+npm run test:e2e     # Playwright e2e, only when needed locally
 ```
 
 ## Docker Deployment
@@ -279,6 +281,47 @@ The application supports different environment configurations:
 - `TRADUORA_PROJECT_ID`
 - `SUPABASE_SERVICE_ROLE_KEY` (if needed for server actions)
 - `CAP_URL`, `CAP_SITE_KEY`, `CAP_SECRET_KEY` (optional; Cap captcha for guest submissions, off when unset)
+
+## Accessibility
+
+The Kulturkataster is a public-sector service. We build to **WCAG 2.1 level AA**, the
+standard that BITV 2.0 references via EN 301 549, and treat it as the minimum. The legal
+obligations for the project (including the accessibility statement) are confirmed with
+the responsible person at the Technologiestiftung Berlin.
+
+**Built in for users:**
+
+- Accessibility settings (`/accessibilitySettings`): dark mode, larger fonts, reduced
+  animations (the OS setting `prefers-reduced-motion` is respected as well)
+- Information in German Sign Language (`/signLanguage`) and Leichte Sprache (`/simpleLanguage`)
+- A list view (`/list`) with search and filters as the non-map alternative to the map
+- Skip link to the main content, keyboard-operable navigation, dialogs and filters
+
+**When building UI:**
+
+- Use the native element: links navigate (`<Link>`), buttons act (`<button>`). No
+  clickable `div`s; for clickable cards use a full-size button behind the content
+  (see `InstitutionCard`) instead of `role="button"` on the card.
+- Every control has an accessible name: icon-only buttons need an `aria-label`
+  (`ButtonWithTooltip` uses the tooltip text by default), inputs need a label.
+- Keep the visible focus ring (`focus-visible:ring-2` / `.tab-ring`); never only
+  `outline-none`.
+- Link form errors to their field with `aria-describedby`, mark required fields with
+  `aria-required`, and give radio and checkbox groups a group label.
+- Announce dynamic changes (result counts, empty states) through a `role="status"` region.
+- Never convey meaning by colour alone; text needs 4.5:1 contrast, UI borders 3:1.
+- Put all user-visible and screen-reader texts in the translation files; accessibility
+  strings live under `common.a11y.*`.
+- Wrap non-essential animation in `motion-safe:` and use `getAccessibleScrollBehavior()`
+  for scrolling.
+
+**Testing:**
+
+- `npm run lint` includes `eslint-plugin-jsx-a11y`; treat its warnings as bugs.
+- For every UI change, complete the flow with the keyboard only (`Tab`, `Enter`, `Space`,
+  arrow keys, `Escape`) and check it at 200% zoom and 320px width.
+- Test significant features with a screen reader (VoiceOver on macOS, NVDA on Windows).
+  Automated checks find only part of the issues.
 
 ## Contributing
 

@@ -97,7 +97,7 @@ vi.mock("@/components/ListView/InstitutionCard", () => ({
 			type="button"
 			data-testid={`institution-card-${institutionData.id}`}
 			data-institution-card-id={String(institutionData.id)}
-			aria-selected={isSelected}
+			aria-current={isSelected || undefined}
 			data-open-details={openDetails}
 			onClick={() => onClick(institutionData)}
 		>
@@ -261,7 +261,7 @@ describe("ListView", () => {
 		rerender(<ListView />);
 
 		const selectedCard = screen.getByTestId("institution-card-1");
-		expect(selectedCard).toHaveAttribute("aria-selected", "true");
+		expect(selectedCard).toHaveAttribute("aria-current", "true");
 		expect(selectedCard).toHaveAttribute("data-open-details", "true");
 
 		fireEvent.click(selectedCard);
