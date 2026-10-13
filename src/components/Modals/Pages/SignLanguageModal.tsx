@@ -48,6 +48,7 @@ export function VideoWithLoader({ src }: { src: string }) {
 					<Loading />
 				</div>
 			)}
+			{/* eslint-disable-next-line jsx-a11y/media-has-caption -- DGS videos are themselves the accessible alternative to the written site text */}
 			<video
 				ref={videoRef}
 				src={src}
