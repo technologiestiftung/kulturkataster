@@ -247,6 +247,10 @@ export function LocationSearch({
 	);
 
 	const messageId = useId();
+	// Only reference the message while SearchMessages renders it: the
+	// server-rendered id can differ from the client's after hydration.
+	const hasMessage =
+		showResults && !!resultErrorMessage && !isLoading && query.trim() !== "";
 
 	const resultByValue = useMemo(
 		() =>
@@ -272,7 +276,7 @@ export function LocationSearch({
 					onKeyDown={handleKeyDown}
 					aria-label={placeholder ?? t("common.search.hint")}
 					aria-invalid={!!resultErrorMessage}
-					aria-describedby={messageId}
+					aria-describedby={hasMessage ? messageId : undefined}
 					role="combobox"
 					containerClassName="flex-1"
 					type="search"

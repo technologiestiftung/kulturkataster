@@ -1,4 +1,5 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { renderToString } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 import { LocationSearch } from "@/components/Search/LocationSearch";
 import type { SearchResult } from "@/types/institution";
@@ -48,6 +49,19 @@ describe("LocationSearch", () => {
 		expect(
 			screen.getByRole("combobox", { name: "common.search.hint" }),
 		).toBeInTheDocument();
+	});
+
+	it("server-renders no aria-describedby before a message exists", () => {
+		// The server id can differ from the client id after hydration, so the
+		// input must not reference a message that is not rendered yet.
+		const container = document.createElement("div");
+		container.innerHTML = renderToString(
+			<LocationSearch searchFunction={async () => []} />,
+		);
+
+		expect(container.querySelector("input")).not.toHaveAttribute(
+			"aria-describedby",
+		);
 	});
 
 	it("renders a named clear button that empties the query", async () => {
