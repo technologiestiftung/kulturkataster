@@ -161,12 +161,12 @@ export function WelcomeModal() {
 								<div className="flex md:w-1/2 md:justify-end justify-around gap-2 space-x-4 md:mx-4">
 									<KRBLogo
 										title="Kulturraum Berlin gGmbH, Logo"
-										className="w-20 md:w-24 h-auto bg-background"
+										className="w-20 md:w-24 h-auto bg-background contrast:bg-foreground"
 									/>
 
 									<SenateLogo
 										title="Logo der Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt, Logo"
-										className="w-32 md:w-42 h-auto bg-background"
+										className="w-32 md:w-42 h-auto bg-background contrast:bg-foreground"
 									/>
 								</div>
 							</div>
