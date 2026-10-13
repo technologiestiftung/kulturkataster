@@ -1,6 +1,10 @@
 # Per-repo no-mistakes overrides. Test settings are only honored from the
 # default-branch (main) copy of this file.
 
+# Rebase onto and open pull requests against dev instead of main.
+pr:
+  base_branch: dev
+
 # Local gate runs unit tests only. Integration tests (real Supabase) and
 # Playwright e2e run in GitHub CI (.github/workflows/ci.yml); running them
 # locally needs a Supabase stack and regularly exceeds the test agent budget.
