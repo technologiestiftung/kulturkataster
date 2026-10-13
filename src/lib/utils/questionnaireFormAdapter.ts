@@ -60,6 +60,8 @@ type QuestionConfig = {
 		equals: string | number | boolean | (string | number | boolean)[];
 	};
 	onlyWhenNotRegistered?: boolean;
+	// Show the question without a number; it doesn't count towards the numbering.
+	hideNumber?: boolean;
 };
 
 const getQuestionConfig = (question: Question): QuestionConfig =>
@@ -313,6 +315,7 @@ export function buildQuestionnaireStepFormConfig(params: {
 		fields: questions.map((question) => {
 			const field = buildFieldConfigFromQuestion(question, locale);
 			if (field.type === "checkbox") return field;
+			if (getQuestionConfig(question).hideNumber) return field;
 			if (!isQuestionVisible(question, formData)) return field;
 			visibleQuestionNumber += 1;
 			return { ...field, label: `${visibleQuestionNumber}. ${field.label}` };

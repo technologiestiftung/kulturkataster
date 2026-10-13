@@ -205,7 +205,7 @@ export function MobileMenuModal({
 							<p className="body2">{t("common.footer.projectBy")}</p>
 							<KRBLogo
 								title="Kulturraum Berlin gGmbH, Logo"
-								className="w-12 h-auto"
+								className="w-12 h-auto contrast:bg-foreground"
 							/>
 						</div>
 					</div>

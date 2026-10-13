@@ -668,6 +668,53 @@ describe("buildQuestionnaireStepFormConfig", () => {
 			"Ich stimme einer Veröffentlichung ...",
 		]);
 	});
+
+	it("does not number questions with config.hideNumber and keeps the sequence gapless", () => {
+		const questions = [
+			asQuestion({
+				...baseQuestion,
+				id: 1,
+				key: "q1",
+				label: "First question",
+				field_type: "text",
+				order: 0,
+			}),
+			asQuestion({
+				...baseQuestion,
+				id: 2,
+				key: "q2",
+				label: "Unnumbered question",
+				field_type: "text",
+				order: 1,
+				config: { hideNumber: true },
+			}),
+			asQuestion({
+				...baseQuestion,
+				id: 3,
+				key: "q3",
+				label: "Second question",
+				field_type: "text",
+				order: 2,
+			}),
+		];
+
+		const config = buildQuestionnaireStepFormConfig({
+			questions,
+			onChange: vi.fn(),
+			onSubmit: vi.fn(),
+			onCancel: vi.fn(),
+			submitLabel: "Absenden",
+			cancelLabel: "Zurück",
+		});
+
+		expect(
+			config.fields?.map((f) => (f.type === "section" ? undefined : f.label)),
+		).toEqual([
+			"1. First question",
+			"Unnumbered question",
+			"2. Second question",
+		]);
+	});
 });
 
 describe("buildAnswerRowsFromDraft", () => {
