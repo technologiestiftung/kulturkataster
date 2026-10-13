@@ -1,5 +1,75 @@
 {
 	"common": {
+		"a11y": {
+			"dataTable": {
+				"actions": "Actions",
+				"add": "Add",
+				"closeSearch": "Close search",
+				"downloadAnswers": "Download questionnaire answers",
+				"filter": "Filter",
+				"noData": "No data found.",
+				"notSorted": "not sorted",
+				"openFilters": "Open filters",
+				"resultCount_one": "{{count}} result",
+				"resultCount_other": "{{count}} results",
+				"review": "Review",
+				"scrollLeft": "Scroll left",
+				"scrollRight": "Scroll right",
+				"searchPlaceholder": "Search...",
+				"sortedAscending": "sorted ascending",
+				"sortedDescending": "sorted descending",
+				"tableLabel": "Table",
+				"toggleRow": "Expand or collapse row"
+			},
+			"forms": {
+				"blockOf": "Section {{current}} of {{total}}",
+				"noResults": "No items found",
+				"required": "required",
+				"searchOptions": "Search options",
+				"selectItems": "Select items",
+				"stepNavigation": "Progress",
+				"stepOf": "Step {{current}} of {{total}}"
+			},
+			"institution": {
+				"showOnMap": "Show on map"
+			},
+			"list": {
+				"letterFilter": "Filter cultural venues by first letter"
+			},
+			"map": {
+				"clearSearch": "Clear search",
+				"filterButtonActive": "{{label}}, {{count}} active",
+				"keyboardHint": "Use the arrow keys to pan the map and plus and minus to zoom.",
+				"searchError": "An error occurred. Please try again.",
+				"searchResultSelected": "{{name}} selected.",
+				"searchResultsFound_one": "{{count}} result found.",
+				"searchResultsFound_other": "{{count}} results found.",
+				"skipToList": "Skip to list view",
+				"viewportLabel": "Interactive map"
+			},
+			"shell": {
+				"loggedIn": "signed in",
+				"metaDescription": "This site makes Berlin's cultural landscape visible: find, filter and explore cultural venues – for planning, research and the public. A project of Kulturraum Berlin gGmbH.",
+				"metaTitleDefault": "Berlin Kulturkataster – Map & data on cultural venues",
+				"opensInNewTab": "opens in a new tab",
+				"pageTitle": {
+					"about": "About the Kulturkataster",
+					"accessibility": "Accessibility",
+					"accessibilitySettings": "Accessibility settings",
+					"accountActivity": "Activity",
+					"accountFaq": "FAQ",
+					"download": "Download",
+					"imprint": "Imprint",
+					"info": "Information and services",
+					"mobileMenu": "Mobile menu",
+					"newsletter": "Berlin Kulturkataster newsletter",
+					"signLanguage": "German Sign Language (DGS)",
+					"simpleLanguage": "Easy Read",
+					"terms": "Terms and conditions",
+					"welcome": "Welcome to the Kulturkataster"
+				}
+			}
+		},
 		"about": "About",
 		"accessibility": {
 			"contrast": {

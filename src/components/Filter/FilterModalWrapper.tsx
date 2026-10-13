@@ -27,8 +27,7 @@ export function FilterModalWrapper({
 		<Dialog open={open} onOpenChange={onOpenChange}>
 			<DialogContent variant="fullscreen-muted" className="p-4">
 				<div className="max-w-3xl space-y-4 w-full place-self-center">
-					<DialogTitle className="sr-only">{title}</DialogTitle>
-					<h2>{title}</h2>
+					<DialogTitle>{title}</DialogTitle>
 					{description ? (
 						<DialogDescription>{description}</DialogDescription>
 					) : null}

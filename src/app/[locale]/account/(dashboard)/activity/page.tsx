@@ -1,11 +1,11 @@
 import { ActivityList } from "@/components/Activity";
 import { ActivityListSkeleton } from "@/components/Activity/ActivityListSkeleton";
 import { AccountStoreGate } from "@/components/Account/AccountStoreGate";
-import type { Metadata } from "next";
+import { createPageMetadata } from "@/app/[locale]/_lib/pageMetadata";
 
-export const metadata: Metadata = {
-	title: "Activity – Kulturkataster",
-};
+export const generateMetadata = createPageMetadata(
+	"common.a11y.shell.pageTitle.accountActivity",
+);
 
 export default function ActivityPage() {
 	return (

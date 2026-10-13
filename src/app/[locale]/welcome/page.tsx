@@ -1,9 +1,12 @@
 import { WelcomeModal } from "@/components/Modals/Pages/WelcomeModal";
-import type { Metadata } from "next";
+import { createPageMetadata } from "@/app/[locale]/_lib/pageMetadata";
 
-export const metadata: Metadata = {
-	title: "Willkommen im Kulturkataster",
-};
+export const generateMetadata = createPageMetadata(
+	"common.a11y.shell.pageTitle.welcome",
+	{
+		absolute: true,
+	},
+);
 
 export default function WelcomeModalPage() {
 	return <WelcomeModal />;

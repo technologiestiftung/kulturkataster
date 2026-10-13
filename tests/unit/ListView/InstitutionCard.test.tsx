@@ -1,4 +1,4 @@
-import { render } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { InstitutionCard } from "@/components/ListView/InstitutionCard";
 import type {
@@ -89,5 +89,29 @@ describe("InstitutionCard", () => {
 				"cultural_area",
 			]),
 		);
+	});
+
+	it("opens details through a named button without hiding the card content", () => {
+		const onClick = vi.fn();
+		const institution = { id: 7, name: "Alpha" } as Institution;
+		const { container } = render(
+			<InstitutionCard
+				institutionData={institution}
+				onClick={onClick}
+				isSelected
+			/>,
+		);
+
+		const card = container.querySelector("article");
+		const button = screen.getByRole("button", {
+			name: "Alpha - common.institution.showDetails",
+		});
+
+		expect(card).toHaveAttribute("aria-labelledby", "institution-card-title-7");
+		expect(button).toHaveAttribute("aria-current", "true");
+		expect(button).toBeEmptyDOMElement();
+
+		fireEvent.click(button);
+		expect(onClick).toHaveBeenCalledWith(institution);
 	});
 });

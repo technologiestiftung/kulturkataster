@@ -277,14 +277,17 @@ export function ActivityItem({ activity, index }: ActivityItemProps) {
 							"w-4 h-4 rounded-full flex-shrink-0 cursor-help",
 							statusColors[activity.status] ?? "bg-blue-500",
 						)}
-						aria-label={t("common.auth.account.activity.statusAria", {
-							status: statusLabel,
-							defaultValue: `Status: ${statusLabel}`,
-						})}
+						aria-hidden="true"
 					/>
 				</TooltipTrigger>
 				<TooltipContent side="top">{statusLabel}</TooltipContent>
 			</Tooltip>
+			<span className="sr-only">
+				{t("common.auth.account.activity.statusAria", {
+					status: statusLabel,
+					defaultValue: `Status: ${statusLabel}`,
+				})}
+			</span>
 
 			<div className="flex-1 min-w-0">
 				<div className="body3 flex items-baseline gap-1 text-wrap flex-wrap">

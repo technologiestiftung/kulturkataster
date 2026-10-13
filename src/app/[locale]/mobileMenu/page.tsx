@@ -1,10 +1,10 @@
 import { MobileMenuModal } from "@/components/Modals/Pages/MobileMenuModal";
 import { parseHiddenMenuItems } from "@/lib/utils/menuVisibility";
-import type { Metadata } from "next";
+import { createPageMetadata } from "@/app/[locale]/_lib/pageMetadata";
 
-export const metadata: Metadata = {
-	title: "Mobiles Menü – Kulturkataster",
-};
+export const generateMetadata = createPageMetadata(
+	"common.a11y.shell.pageTitle.mobileMenu",
+);
 
 export default function MobileMenuModalPage() {
 	return (

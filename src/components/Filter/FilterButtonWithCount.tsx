@@ -4,6 +4,7 @@ import FilterIcon from "@/icons/filter.svg";
 import { ButtonWithTooltip } from "@/components/ui/button-with-tooltip";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 type FilterButtonWithCountProps = {
 	onClick?: () => void;
@@ -19,6 +20,7 @@ export function FilterButtonWithCount({
 	className,
 	showCount = true,
 }: FilterButtonWithCountProps) {
+	const { t } = useTranslation();
 	const filters = useInstitutionStore((state) => state.filters);
 	const activeFilterCount =
 		(filters.district_keys?.length ?? 0) +
@@ -27,6 +29,15 @@ export function FilterButtonWithCount({
 		(filters.culture_index_ranges?.length ?? 0) +
 		(filters.status ? 1 : 0) +
 		(filters.include_closed ? 1 : 0);
+
+	const isCountVisible = showCount && activeFilterCount > 0;
+	// The tooltip is not an accessible name; the count badge is folded into it.
+	const ariaLabel = isCountVisible
+		? t("common.a11y.map.filterButtonActive", {
+				label: tooltip,
+				count: activeFilterCount,
+			})
+		: tooltip;
 
 	return (
 		<ButtonWithTooltip
@@ -37,10 +48,14 @@ export function FilterButtonWithCount({
 			tooltip={tooltip}
 			className={cn("relative overflow-visible!", className)}
 			onClick={onClick}
+			aria-label={ariaLabel}
 		>
-			<FilterIcon className="size-5!" />
-			{showCount && activeFilterCount > 0 ? (
-				<span className="absolute right-0 top-0 flex h-6 min-w-6 translate-x-1/4 -translate-y-1/4 items-center justify-center rounded-full bg-primary px-1 text-center text-primary-foreground">
+			<FilterIcon className="size-5!" aria-hidden="true" />
+			{isCountVisible ? (
+				<span
+					aria-hidden="true"
+					className="absolute right-0 top-0 flex h-6 min-w-6 translate-x-1/4 -translate-y-1/4 items-center justify-center rounded-full bg-primary px-1 text-center text-primary-foreground"
+				>
 					{activeFilterCount}
 				</span>
 			) : null}

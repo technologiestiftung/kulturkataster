@@ -13,6 +13,7 @@ import { useTranslation } from "react-i18next";
 import { normalizeFieldValue, validateFieldValue } from "./validation";
 import { reportClientTelemetry } from "@/lib/utils/clientTelemetry";
 import { getAccessibleScrollBehavior } from "@/lib/utils/motion";
+import { findFocusableTarget } from "./fieldA11y";
 
 const getAllFields = (
 	fields: FormWrapperFieldConfig[],
@@ -125,6 +126,20 @@ const collectValidationErrors = (
 	return newErrors;
 };
 
+// Moves keyboard/screen-reader focus to the first invalid control (WCAG 3.3.1)
+// and scrolls it into view. Group fields (radio, likert, multiselect) use a
+// wrapper div as anchor, so the first focusable descendant is focused.
+const focusFirstInvalidField = (name: string) => {
+	const anchor = document.getElementById(name);
+	if (!anchor) return;
+	const target = findFocusableTarget(anchor);
+	target?.focus({ preventScroll: true });
+	anchor.scrollIntoView?.({
+		behavior: getAccessibleScrollBehavior(),
+		block: "center",
+	});
+};
+
 const buildTouchedMap = (fields: FormWrapperFieldConfig[]) => {
 	const allTouched: Record<string, boolean> = {};
 	fields.forEach((field) => {
@@ -142,6 +157,7 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 	const onChangeRef = useRef<FormWrapperConfig["onChange"]>(config.onChange);
 	const fieldVersionsRef = useRef<Record<string, number>>({});
 	const isSubmittingRef = useRef(false);
+	const pendingErrorFocusRef = useRef<string | null>(null);
 	const allFields = useMemo(() => getAllFields(config.fields), [config.fields]);
 	const [formData, setFormData] = useState<Record<string, unknown>>(() =>
 		buildInitialFormData(config),
@@ -269,16 +285,9 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 		const validationErrors = validateForm();
 		setHasSubmitAttempt(Object.keys(validationErrors).length > 0);
 		if (Object.keys(validationErrors).length > 0) {
-			const firstErrorName = allFields.find(
-				(field) => validationErrors[field.name],
-			)?.name;
-			const firstErrorElement = firstErrorName
-				? document.getElementById(firstErrorName)
-				: null;
-			firstErrorElement?.scrollIntoView?.({
-				behavior: getAccessibleScrollBehavior(),
-				block: "center",
-			});
+			// Focused after the errors render, so the linked error text is read.
+			pendingErrorFocusRef.current =
+				allFields.find((field) => validationErrors[field.name])?.name ?? null;
 		}
 		if (Object.keys(validationErrors).length === 0) {
 			setFormError(null);
@@ -316,6 +325,12 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 	});
 
 	useEffect(() => {
+		if (!pendingErrorFocusRef.current) return;
+		focusFirstInvalidField(pendingErrorFocusRef.current);
+		pendingErrorFocusRef.current = null;
+	}, [errors]);
+
+	useEffect(() => {
 		onChangeRef.current = config.onChange;
 	}, [config.onChange]);
 
@@ -339,8 +354,15 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 		// their field config on every render, which would otherwise loop.
 	}, [formData, hasSubmitAttempt]);
 
+	const hasErrors = Object.keys(errors).length > 0;
+
 	return (
 		<form id={config.formId} onSubmit={handleSubmit} noValidate>
+			{/* Polite summary after a failed submit; focus moves to the first
+			    invalid field, whose error is linked via aria-describedby. */}
+			<p role="status" className="sr-only">
+				{hasSubmitAttempt && hasErrors ? t("common.alert.errorFixFields") : ""}
+			</p>
 			<div className="flex flex-col gap-6 max-w-3xl mx-auto">
 				<div
 					className={cn(

@@ -14,13 +14,14 @@ import {
 import { GeoFeature, Institution, SearchResult } from "@/types/institution";
 import { boundingExtent } from "ol/extent";
 import { fromLonLat } from "ol/proj";
-import { ChangeEvent, useEffect, useMemo, useRef } from "react";
+import { ChangeEvent, useEffect, useId, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { getCoordinatesFromAddress } from "@/lib/utils/institutionUtils";
 import { usePathname, useRouter } from "next/navigation";
 import Close from "@/icons/close.svg";
 import { SelectableOptionsList } from "@/components/MultiSelect/SelectableOptionsList";
 import { FilterButtonWithCount } from "@/components/Filter/FilterButtonWithCount";
+import { SearchMessages } from "@/components/Search/SearchMessages";
 
 export const isGeoFeature = (result: SearchResult): result is GeoFeature => {
 	return "place_name" in result && "center" in result;
@@ -144,7 +145,12 @@ export function LocationSearch({
 		}
 
 		if (statusRef.current) {
-			statusRef.current.textContent = `${result.place_name} ausgewählt.`;
+			statusRef.current.textContent = t(
+				"common.a11y.map.searchResultSelected",
+				{
+					name: result.place_name,
+				},
+			);
 		}
 	};
 
@@ -161,7 +167,12 @@ export function LocationSearch({
 		router.push(`${baseRoute}/institution/${result.id}`);
 
 		if (statusRef.current) {
-			statusRef.current.textContent = `${result.name} ausgewählt.`;
+			statusRef.current.textContent = t(
+				"common.a11y.map.searchResultSelected",
+				{
+					name: result.name,
+				},
+			);
 		}
 	};
 
@@ -235,6 +246,8 @@ export function LocationSearch({
 		[searchResults, query],
 	);
 
+	const messageId = useId();
+
 	const resultByValue = useMemo(
 		() =>
 			new Map(
@@ -250,13 +263,6 @@ export function LocationSearch({
 
 	return (
 		<div className="h-full w-full flex flex-col overflow-visible">
-			{/* <SearchMessages
-        hasError={resultErrorMessage}
-        hasResults={searchResults.length > 0}
-        isLoading={isLoading}
-        query={query}
-        className="order-last"
-        /> */}
 			<div className="mb-8 flex w-full items-center gap-2 flex-row pointer-events-auto">
 				<SearchInput
 					ref={inputRef}
@@ -264,7 +270,9 @@ export function LocationSearch({
 					value={query}
 					onChange={handleInputChange}
 					onKeyDown={handleKeyDown}
+					aria-label={placeholder ?? t("common.search.hint")}
 					aria-invalid={!!resultErrorMessage}
+					aria-describedby={messageId}
 					role="combobox"
 					containerClassName="flex-1"
 					type="search"
@@ -280,14 +288,18 @@ export function LocationSearch({
 								<div className="w-5 h-5 border-2 border-neutral-20 border-t-accent rounded-full motion-safe:animate-spin" />
 							)}
 							{!isLoading && searchResults.length > 0 && (
-								<Close
+								<button
+									type="button"
 									onClick={() => {
 										updateQuery("");
 										clearResults();
 										inputRef.current?.focus();
 									}}
-									className="w-5 h-5"
-								/>
+									aria-label={t("common.a11y.map.clearSearch")}
+									className="flex size-8 items-center justify-center rounded-full cursor-pointer tab-ring"
+								>
+									<Close className="w-5 h-5" aria-hidden="true" />
+								</button>
 							)}
 						</div>
 					}
@@ -305,6 +317,17 @@ export function LocationSearch({
 
 				<div ref={statusRef} className="sr-only" aria-live="polite"></div>
 			</div>
+
+			{/* Embedded inputs (showResults=false) filter elsewhere and get no message. */}
+			{showResults ? (
+				<SearchMessages
+					id={messageId}
+					message={resultErrorMessage}
+					isLoading={isLoading}
+					query={query}
+					className="-mt-6 mb-4"
+				/>
+			) : null}
 
 			{showResults && searchResults.length > 0 ? (
 				<SelectableOptionsList

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { setPasswordWithTokens } from "@/server/actions/auth";
@@ -8,6 +9,7 @@ import { FormWrapper, minLength } from "@/components/FormWrapper";
 import type { FormWrapperConfig } from "@/components/FormWrapper";
 import { AlertDialog } from "@/components/ui/alert-dialog";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
+import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
 
 export function ResetPasswordForm({ onSuccess }: { onSuccess?: () => void }) {
@@ -104,6 +106,7 @@ export function ResetPasswordForm({ onSuccess }: { onSuccess?: () => void }) {
 							name: "password",
 							label: t("common.auth.reset.newPasswordLabel"),
 							type: "password",
+							autoComplete: "new-password",
 							placeholder: t("common.auth.reset.newPasswordPlaceholder"),
 							required: true,
 							afterField: t("common.auth.reset.passwordRequirements"),
@@ -116,6 +119,7 @@ export function ResetPasswordForm({ onSuccess }: { onSuccess?: () => void }) {
 							name: "confirmPassword",
 							label: t("common.auth.reset.confirmPasswordLabel"),
 							type: "password",
+							autoComplete: "new-password",
 							placeholder: t("common.auth.reset.confirmPasswordPlaceholder"),
 							required: true,
 							disabled: isLoading || !isReady || !hasToken,
@@ -150,14 +154,21 @@ export function ResetPasswordForm({ onSuccess }: { onSuccess?: () => void }) {
 
 			<div className="flex flex-col items-center text-center">
 				<Button
-					type="button"
+					asChild
 					variant="tertiary"
 					size="inline"
-					className="underline body2"
-					onClick={() => router.push(toLocalePath("/login"))}
-					disabled={isLoading}
+					className={cn(
+						"underline body2",
+						isLoading && "pointer-events-none opacity-50",
+					)}
 				>
-					{t("common.auth.reset.backToLogin")}
+					<Link
+						href={toLocalePath("/login")}
+						aria-disabled={isLoading || undefined}
+						tabIndex={isLoading ? -1 : undefined}
+					>
+						{t("common.auth.reset.backToLogin")}
+					</Link>
 				</Button>
 			</div>
 		</div>

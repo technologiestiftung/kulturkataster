@@ -17,7 +17,10 @@ const checkboxVariants = cva(
 			},
 			size: {
 				default: "size-8 md:size-6",
-				filter: "h-8 w-8 md:h-4 md:w-4",
+				// The ::after pseudo element keeps the 16px desktop box but extends
+				// the hit area to 24px (WCAG 2.5.8).
+				filter:
+					"relative h-8 w-8 md:h-4 md:w-4 after:absolute after:-inset-1 after:content-['']",
 			},
 		},
 		defaultVariants: {

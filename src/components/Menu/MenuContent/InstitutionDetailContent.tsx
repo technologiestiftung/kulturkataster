@@ -69,6 +69,7 @@ function InstitutionCard({
 									className: "mb-0",
 									heroStatus: getHeroStatus(),
 									onClick: onCenterMap,
+									onClickAriaLabel: t("common.a11y.institution.showOnMap"),
 									fields: [
 										{
 											id: "parent_organization",

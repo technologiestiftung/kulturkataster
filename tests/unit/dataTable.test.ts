@@ -71,10 +71,19 @@ describe("DataTable", () => {
 		expect(truncateMatches.length).toBe(1);
 	});
 
-	it("only makes sortable headers keyboard focusable", () => {
+	it("renders only sortable headers as sort buttons", () => {
 		const markup = buildMarkup();
-		const tabIndexMatches = markup.match(/tabindex="0"/g) ?? [];
-		expect(tabIndexMatches.length).toBe(1);
+		const sortButtons = markup.match(/<button type="button"[^>]*>Name/g) ?? [];
+
+		expect(sortButtons).toHaveLength(1);
+		expect(markup).not.toMatch(/<button type="button"[^>]*>Status/);
+	});
+
+	it("exposes the sort state only on the accessible table header", () => {
+		const markup = buildMarkup();
+
+		expect(markup.match(/aria-sort="none"/g) ?? []).toHaveLength(1);
+		expect(markup).not.toMatch(/<th[^>]*tabindex/);
 	});
 
 	it("includes row ids in the global search index", () => {
@@ -97,6 +106,7 @@ describe("DataTable", () => {
 			getRowKey: (row) => row.id,
 			getSearchableValues: (row) => [row.name, row.status],
 			searchable: true,
+			searchPlaceholder: "Search...",
 		};
 
 		render(React.createElement(DataTable<Row>, { config }));

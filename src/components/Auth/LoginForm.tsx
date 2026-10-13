@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { loginWithEmailPassword } from "@/server/actions/auth";
@@ -8,6 +9,7 @@ import { FormWrapper } from "@/components/FormWrapper";
 import { AlertDialog } from "@/components/ui/alert-dialog";
 import type { FormWrapperConfig } from "@/components/FormWrapper";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
+import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
 
 export function LoginForm() {
@@ -76,6 +78,7 @@ export function LoginForm() {
 						name: "email",
 						label: t("common.auth.login.emailLabel"),
 						type: "email",
+						autoComplete: "email",
 						placeholder: t("common.auth.login.emailPlaceholder"),
 						required: true,
 						disabled: isBusy,
@@ -84,21 +87,29 @@ export function LoginForm() {
 						name: "password",
 						label: t("common.auth.login.passwordLabel"),
 						type: "password",
+						autoComplete: "current-password",
 						placeholder: t("common.auth.login.passwordPlaceholder"),
 						required: true,
 						disabled: isBusy,
 						afterField: (
 							<div className="flex justify-end">
 								<Button
-									type="button"
+									asChild
 									variant="tertiary"
 									fullWidth={false}
 									size="inline"
-									className="underline body2"
-									onClick={() => router.push(toLocalePath("/forgotPassword"))}
-									disabled={isBusy}
+									className={cn(
+										"underline body2",
+										isBusy && "pointer-events-none opacity-50",
+									)}
 								>
-									{t("common.auth.login.forgotPassword")}
+									<Link
+										href={toLocalePath("/forgotPassword")}
+										aria-disabled={isBusy || undefined}
+										tabIndex={isBusy ? -1 : undefined}
+									>
+										{t("common.auth.login.forgotPassword")}
+									</Link>
 								</Button>
 							</div>
 						),
@@ -134,14 +145,21 @@ export function LoginForm() {
 			<div className="flex flex-col items-center text-center mt-2">
 				<span className="">{t("common.auth.login.noAccount")} </span>
 				<Button
-					type="button"
+					asChild
 					variant="tertiary"
 					size="inline"
-					className="underline body2"
-					onClick={() => router.push(toLocalePath("/register"))}
-					disabled={isBusy}
+					className={cn(
+						"underline body2",
+						isBusy && "pointer-events-none opacity-50",
+					)}
 				>
-					{t("common.auth.login.signUp")}
+					<Link
+						href={toLocalePath("/register")}
+						aria-disabled={isBusy || undefined}
+						tabIndex={isBusy ? -1 : undefined}
+					>
+						{t("common.auth.login.signUp")}
+					</Link>
 				</Button>
 			</div>
 		</div>

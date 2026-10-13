@@ -25,6 +25,7 @@ import {
 	memo,
 	useCallback,
 	useEffect,
+	useId,
 	useMemo,
 	useRef,
 	useState,
@@ -321,9 +322,7 @@ const FloatingLayerButton = memo(
 						<Badge
 							variant="default"
 							className="absolute -top-2 -right-2 w-6 h-6 p-0 rounded-full border-2 border-white text-xs font-bold"
-							aria-label={t("common.map.layerTreeVisibleCountAriaLabel", {
-								visibleCount,
-							})}
+							aria-hidden="true"
 						>
 							{visibleCount}
 						</Badge>
@@ -348,6 +347,9 @@ const LayerTree: FC<{
 	const isLargeTextMode = useAppStore((state) => state.isLargeTextMode);
 	const [isOpen, setIsOpen] = useState(false);
 	const floatingButtonRef = useRef<HTMLButtonElement>(null);
+	const panelRef = useRef<HTMLDivElement>(null);
+	const closeButtonRef = useRef<HTMLButtonElement>(null);
+	const titleId = useId();
 	const offsetClass = getLayerTreeOffset(isSidePanelOpen, isLargeTextMode);
 
 	const handleOpen = useCallback(() => {
@@ -365,12 +367,32 @@ const LayerTree: FC<{
 		setIsOpen(isLayerTreeOpen);
 	}, [isLayerTreeOpen]);
 
-	// Handle Escape key to close the dialog
+	// The floating button unmounts when the panel opens; move focus into the
+	// panel so keyboard users don't lose their position.
+	useEffect(() => {
+		if (!isOpen || isMobile) return;
+		const activeElement = document.activeElement;
+		if (!activeElement || activeElement === document.body) {
+			closeButtonRef.current?.focus();
+		}
+	}, [isOpen, isMobile]);
+
+	// Escape closes the panel only while focus is inside it (or nowhere), and
+	// never while a modal dialog is open on top of it.
 	useEffect(() => {
 		if (!isOpen) return;
 
 		const handleKeyDown = (event: KeyboardEvent) => {
-			if (event.key === "Escape") {
+			if (event.key !== "Escape") return;
+			if (document.querySelector('[role="dialog"][data-state="open"]')) {
+				return;
+			}
+			const activeElement = document.activeElement;
+			const isFocusInPanel =
+				!activeElement ||
+				activeElement === document.body ||
+				panelRef.current?.contains(activeElement);
+			if (isFocusInPanel) {
 				handleClose();
 			}
 		};
@@ -393,16 +415,23 @@ const LayerTree: FC<{
 
 	return (
 		<Card
+			ref={panelRef}
 			className={`flex w-full md:w-[400px] max-h-[70vh] absolute bottom-4 z-50 flex-col bg-neutral-5 transition-all duration-200 ${offsetClass}`}
-			role="dialog"
-			aria-label={t("common.map.layerTreeTitle")}
+			role="region"
+			aria-labelledby={titleId}
 		>
 			<CardHeader className="shadow-sm p-1 pl-6">
 				<div className="flex items-center h-14 justify-between">
-					<CardTitle className="body1 font-bold">
+					<CardTitle
+						id={titleId}
+						role="heading"
+						aria-level={2}
+						className="body1 font-bold"
+					>
 						{t("common.map.layerTreeTitle")}
 					</CardTitle>
 					<Button
+						ref={closeButtonRef}
 						variant="ghost"
 						onClick={handleClose}
 						iconSize="lg"

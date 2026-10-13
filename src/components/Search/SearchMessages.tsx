@@ -1,37 +1,37 @@
 import { cn } from "@/lib/utils";
-import { useTranslation } from "react-i18next";
 
 interface SearchMessagesProps {
-	hasError: string | null;
-	hasResults: boolean;
+	id?: string;
+	message: string | null;
 	isLoading: boolean;
 	query: string;
 	className?: string;
 }
 
+/**
+ * Visible error / "no results" message for a search. Screen readers get the
+ * same text via the search's polite live region (see useSearch).
+ */
 export function SearchMessages({
-	hasError,
+	id,
+	message,
 	isLoading,
 	query,
 	className,
 }: SearchMessagesProps) {
-	const { t } = useTranslation();
-
-	if (hasError && !isLoading) {
-		return (
-			<div className={cn("flex-1", className)}>
-				<p className="body2">{hasError}</p>
-			</div>
-		);
+	if (!message || isLoading || query.trim().length === 0) {
+		return null;
 	}
 
-	if (query.trim().length === 0) {
-		return (
-			<div className={cn("flex-1", className)}>
-				<p className="body2">{t("common.search.description")}</p>
-			</div>
-		);
-	}
-
-	return null;
+	return (
+		<p
+			id={id}
+			className={cn(
+				"body2 rounded-lg bg-background p-4 shadow-sm pointer-events-auto",
+				className,
+			)}
+		>
+			{message}
+		</p>
+	);
 }

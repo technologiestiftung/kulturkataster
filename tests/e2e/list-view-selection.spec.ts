@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
-const cardSelector = '[role="button"][data-institution-card-id]';
-const selectedCardSelector = `${cardSelector}[aria-selected="true"]`;
+const cardSelector = "article[data-institution-card-id]";
+const selectedCardSelector = `${cardSelector}[data-selected="true"]`;
 const scrollToTopButtonSelector = '[data-testid="list-scroll-top"]';
 
 test.describe("ListView Selection Behavior", () => {
@@ -53,7 +53,7 @@ test.describe("ListView Selection Behavior", () => {
 		await page.waitForURL(new RegExp(`/list/institution/${secondId}`));
 		await expect(
 			page.locator(
-				`[data-institution-card-id="${secondId}"][aria-selected="true"]`,
+				`[data-institution-card-id="${secondId}"][data-selected="true"]`,
 			),
 		).toBeVisible();
 	});
@@ -65,7 +65,7 @@ test.describe("ListView Selection Behavior", () => {
 		await expect(page.locator('[role="list"]').first()).toBeVisible();
 
 		const selectedCard = page.locator(
-			'[data-institution-card-id="5"][aria-selected="true"]',
+			'[data-institution-card-id="5"][data-selected="true"]',
 		);
 		await expect(selectedCard).toBeVisible({ timeout: 15_000 });
 	});
@@ -117,7 +117,7 @@ test.describe("ListView Selection Behavior", () => {
 		await page.waitForURL(new RegExp(`/list/institution/${cardId}`));
 
 		const selectedCard = page.locator(
-			`[data-institution-card-id="${cardId}"][aria-selected="true"]`,
+			`[data-institution-card-id="${cardId}"][data-selected="true"]`,
 		);
 		await expect(selectedCard).toBeVisible();
 		await selectedCard.click();
@@ -126,7 +126,7 @@ test.describe("ListView Selection Behavior", () => {
 	});
 
 	test("Keyboard navigation works with selection", async ({ page }) => {
-		const focusCard = page.locator(cardSelector).first();
+		const focusCard = page.locator(`${cardSelector} > button`).first();
 		await focusCard.focus();
 		await expect(focusCard).toBeFocused();
 		await page.keyboard.press("Enter");
