@@ -31,8 +31,8 @@ export function EmptyActionState({
 		<div
 			className={`w-full flex h-full flex-col text-center items-center justify-center py-8 ${className ?? ""}`}
 		>
-			<span className="body1 font-bold">{title}</span>
-			{description ? <span className="body1">{description}</span> : null}
+			<p className="body1 font-bold">{title}</p>
+			{description ? <p className="body1">{description}</p> : null}
 			{actions.length > 0 ? (
 				<div className="mt-10 flex justify-center gap-4">
 					{actions.map((action, index) => (

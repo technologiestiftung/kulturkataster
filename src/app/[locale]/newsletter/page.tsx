@@ -1,9 +1,12 @@
 import { NewsletterModal } from "@/components/Modals/Pages/NewsletterModal";
-import type { Metadata } from "next";
+import { createPageMetadata } from "@/app/[locale]/_lib/pageMetadata";
 
-export const metadata: Metadata = {
-	title: "Newsletter des Berliner Kulturkatasters",
-};
+export const generateMetadata = createPageMetadata(
+	"common.a11y.shell.pageTitle.newsletter",
+	{
+		absolute: true,
+	},
+);
 
 export default async function NewsletterPage({
 	searchParams,

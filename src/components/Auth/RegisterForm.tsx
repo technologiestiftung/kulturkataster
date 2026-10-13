@@ -141,6 +141,7 @@ export function RegisterForm({
 								name: "organizationName",
 								label: t("common.auth.register.organizationName"),
 								type: "text",
+								autoComplete: "organization",
 								requiredMessage: t(
 									"common.auth.validation.organizationNameRequired",
 								),
@@ -153,6 +154,7 @@ export function RegisterForm({
 								name: "organizationPosition",
 								label: t("common.auth.register.organizationPosition"),
 								type: "text",
+								autoComplete: "organization-title",
 								requiredMessage: t(
 									"common.auth.validation.organizationPositionRequired",
 								),
@@ -165,6 +167,7 @@ export function RegisterForm({
 								name: "organizationPhone",
 								label: t("common.auth.register.organizationPhone"),
 								type: "text",
+								autoComplete: "tel",
 								requiredMessage: t(
 									"common.auth.validation.organizationPhoneRequired",
 								),
@@ -209,6 +212,7 @@ export function RegisterForm({
 								name: "districtPosition",
 								label: t("common.auth.register.districtPosition"),
 								type: "text",
+								autoComplete: "organization-title",
 								requiredMessage: t(
 									"common.auth.validation.districtPositionRequired",
 								),
@@ -221,6 +225,7 @@ export function RegisterForm({
 								name: "districtPhone",
 								label: t("common.auth.register.districtPhone"),
 								type: "text",
+								autoComplete: "tel",
 								requiredMessage: t(
 									"common.auth.validation.districtPhoneRequired",
 								),
@@ -241,6 +246,7 @@ export function RegisterForm({
 								name: "administrationName",
 								label: t("common.auth.register.administrationName"),
 								type: "text",
+								autoComplete: "organization",
 								requiredMessage: t(
 									"common.auth.validation.administrationNameRequired",
 								),
@@ -253,6 +259,7 @@ export function RegisterForm({
 								name: "administrationPosition",
 								label: t("common.auth.register.administrationPosition"),
 								type: "text",
+								autoComplete: "organization-title",
 								requiredMessage: t(
 									"common.auth.validation.administrationPositionRequired",
 								),
@@ -265,6 +272,7 @@ export function RegisterForm({
 								name: "administrationPhone",
 								label: t("common.auth.register.administrationPhone"),
 								type: "text",
+								autoComplete: "tel",
 								requiredMessage: t(
 									"common.auth.validation.administrationPhoneRequired",
 								),
@@ -279,6 +287,7 @@ export function RegisterForm({
 						name: "firstName",
 						label: t("common.auth.register.firstName"),
 						type: "text",
+						autoComplete: "given-name",
 						required: true,
 						requiredMessage: t("common.auth.validation.firstNameRequired"),
 						disabled: isLoading,
@@ -289,6 +298,7 @@ export function RegisterForm({
 						name: "lastName",
 						label: t("common.auth.register.lastName"),
 						type: "text",
+						autoComplete: "family-name",
 						required: true,
 						disabled: isLoading,
 						placeholder: t("common.auth.register.lastNamePlaceholder"),
@@ -298,6 +308,7 @@ export function RegisterForm({
 						name: "email",
 						label: t("common.auth.register.emailLabel"),
 						type: "email",
+						autoComplete: "email",
 						required: true,
 						requiredMessage: t("common.auth.validation.emailRequired"),
 						disabled: isLoading,
@@ -311,6 +322,7 @@ export function RegisterForm({
 						name: "password",
 						label: t("common.auth.register.passwordLabel"),
 						type: "password",
+						autoComplete: "new-password",
 						required: true,
 						requiredMessage: t("common.auth.validation.passwordRequired"),
 						disabled: isLoading,
@@ -323,6 +335,7 @@ export function RegisterForm({
 						name: "confirmPassword",
 						label: t("common.auth.register.confirmPassword"),
 						type: "password",
+						autoComplete: "new-password",
 						required: true,
 						layout: { span: "full" },
 						requiredMessage: t("common.auth.validation.passwordRequired"),

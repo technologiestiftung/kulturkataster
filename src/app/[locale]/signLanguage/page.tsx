@@ -1,9 +1,9 @@
 import { SignLanguageModal } from "@/components/Modals/Pages/SignLanguageModal";
-import type { Metadata } from "next";
+import { createPageMetadata } from "@/app/[locale]/_lib/pageMetadata";
 
-export const metadata: Metadata = {
-	title: "Gebärdensprache (DGS) – Kulturkataster",
-};
+export const generateMetadata = createPageMetadata(
+	"common.a11y.shell.pageTitle.signLanguage",
+);
 
 export default function SignLanguageModalPage() {
 	return <SignLanguageModal routePath="/signLanguage" />;

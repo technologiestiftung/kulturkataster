@@ -6,7 +6,8 @@ import View from "ol/View";
 import { transform } from "ol/proj";
 import { register } from "ol/proj/proj4";
 import proj4 from "proj4";
-import React, { FC, useEffect, useRef } from "react";
+import React, { FC, useEffect, useId, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import "../../../../node_modules/ol/ol.css";
 import { useMapStore } from "../../../lib/store/mapStore";
 import { reportClientTelemetry } from "@/lib/utils/clientTelemetry";
@@ -58,6 +59,8 @@ const OlMap: FC<OlMapProps> = ({ children }) => {
 	const config = useMapStore((state) => state.config);
 	const mapId = useRef<HTMLDivElement>(null);
 	const isMobile = useIsMobile();
+	const { t } = useTranslation();
+	const keyboardHintId = useId();
 
 	useEffect(() => {
 		if (!config) return;
@@ -166,7 +169,19 @@ const OlMap: FC<OlMapProps> = ({ children }) => {
 	}, [config, destroyMap, isMobile, setMap]);
 
 	return (
-		<div ref={mapId} className="map w-full h-full bg-slate-300">
+		// Focusable so OpenLayers' keyboard pan (arrow keys) and zoom (+/-) work;
+		// OpenLayers listens for key events on this target element.
+		<div
+			ref={mapId}
+			className="map w-full h-full bg-slate-300 focus-visible:outline focus-visible:outline-4 focus-visible:outline-offset-[-4px] focus-visible:outline-interaction-dark"
+			tabIndex={0}
+			role="region"
+			aria-label={t("common.a11y.map.viewportLabel")}
+			aria-describedby={keyboardHintId}
+		>
+			<span id={keyboardHintId} className="sr-only">
+				{t("common.a11y.map.keyboardHint")}
+			</span>
 			{children}
 		</div>
 	);
