@@ -68,6 +68,8 @@ interface InfoWrapperBaseFieldConfig {
 	onClick?: (data: Institution) => void;
 	onClickAriaLabel?: string;
 	edit?: InfoWrapperEditConfig;
+	/** Id of a `title` field's heading; must be unique when several are on a page. */
+	headingId?: string;
 }
 
 type InfoWrapperSectionFieldConfig = InfoWrapperBaseFieldConfig & {

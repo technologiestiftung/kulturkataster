@@ -1,10 +1,10 @@
 import { DownloadModal } from "@/components/Modals/Pages/DownloadModal";
 import { getCurrentProfile } from "@/server/actions/auth";
-import type { Metadata } from "next";
+import { createPageMetadata } from "@/app/[locale]/_lib/pageMetadata";
 
-export const metadata: Metadata = {
-	title: "Download – Kulturkataster",
-};
+export const generateMetadata = createPageMetadata(
+	"common.a11y.shell.pageTitle.download",
+);
 
 export default async function DownloadPage() {
 	const isAuthenticated = (await getCurrentProfile()) !== null;

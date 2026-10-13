@@ -83,44 +83,56 @@ export function KeyValueField({
 
 	return (
 		<div className="space-y-2">
-			{entries.map((entry, index) => (
-				<div
-					key={index}
-					className={`${keyReadOnly ? "flex-col items-start" : ""} flex gap-2 items-center`}
-				>
-					{keyReadOnly ? (
-						<Label className="body2 text-neutral-80">
-							{keyLabels[entry.key] ?? entry.key}
-						</Label>
-					) : (
+			{entries.map((entry, index) => {
+				// Placeholders vanish on input, so each input gets a persistent name
+				// that includes its row (WCAG 1.3.1 / 4.1.2).
+				const rowLabel = `(${index + 1})`;
+				const keyLabelId = `${field.name}-${index}-key-label`;
+				return (
+					<div
+						key={index}
+						className={`${keyReadOnly ? "flex-col items-start" : ""} flex gap-2 items-center`}
+					>
+						{keyReadOnly ? (
+							<Label id={keyLabelId} className="body2 text-neutral-80">
+								{keyLabels[entry.key] ?? entry.key}
+							</Label>
+						) : (
+							<Input
+								className="w-2/5"
+								aria-label={`${keyPlaceholder} ${rowLabel}`}
+								placeholder={keyPlaceholder}
+								value={entry.key}
+								disabled={field.disabled}
+								onChange={(e) => updateEntry(index, "key", e.target.value)}
+							/>
+						)}
 						<Input
-							className="w-2/5"
-							placeholder={keyPlaceholder}
-							value={entry.key}
+							className={keyReadOnly ? "" : "w-2/5"}
+							aria-labelledby={keyReadOnly ? keyLabelId : undefined}
+							aria-label={
+								keyReadOnly ? undefined : `${valuePlaceholder} ${rowLabel}`
+							}
+							placeholder={valuePlaceholder}
+							value={entry.value}
 							disabled={field.disabled}
-							onChange={(e) => updateEntry(index, "key", e.target.value)}
+							onChange={(e) => updateEntry(index, "value", e.target.value)}
 						/>
-					)}
-					<Input
-						className={keyReadOnly ? "" : "w-2/5"}
-						placeholder={valuePlaceholder}
-						value={entry.value}
-						disabled={field.disabled}
-						onChange={(e) => updateEntry(index, "value", e.target.value)}
-					/>
-					{!keyReadOnly && (
-						<Button
-							type="button"
-							variant="outline"
-							disabled={field.disabled}
-							className="w-1/5"
-							onClick={() => removeEntry(index)}
-						>
-							{removeButtonLabel}
-						</Button>
-					)}
-				</div>
-			))}
+						{!keyReadOnly && (
+							<Button
+								type="button"
+								variant="outline"
+								disabled={field.disabled}
+								className="w-1/5"
+								aria-label={`${removeButtonLabel} ${rowLabel}`}
+								onClick={() => removeEntry(index)}
+							>
+								{removeButtonLabel}
+							</Button>
+						)}
+					</div>
+				);
+			})}
 			{allowAdd && (
 				<Button
 					type="button"

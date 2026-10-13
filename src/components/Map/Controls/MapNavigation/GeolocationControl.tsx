@@ -13,6 +13,7 @@ import { Icon, Style } from "ol/style";
 import { FC, ReactNode, useCallback, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { reportClientTelemetry } from "@/lib/utils/clientTelemetry";
+import { isReducedMotionEnabled } from "@/lib/utils/motion";
 
 interface GeolocationControlProps {
 	geolocateIcon?: ReactNode;
@@ -96,7 +97,7 @@ const GeolocationControl: FC<GeolocationControlProps> = ({
 					view.animate({
 						center: coords,
 						zoom: 16,
-						duration: 1000,
+						duration: isReducedMotionEnabled() ? 0 : 1000,
 					});
 				},
 				(error) => {

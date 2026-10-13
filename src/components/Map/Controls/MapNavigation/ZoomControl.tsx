@@ -2,10 +2,16 @@
 
 import { ButtonWithTooltip } from "@/components/ui/button-with-tooltip";
 import { useMapStore } from "@/lib/store/mapStore";
+import { isReducedMotionEnabled } from "@/lib/utils/motion";
 import { FC, ReactNode, useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import MinusIcon from "@/icons/minus.svg";
 import PlusIcon from "@/icons/plus.svg";
+
+const ZOOM_ANIMATION_MS = 250;
+
+const getZoomDuration = () =>
+	isReducedMotionEnabled() ? 0 : ZOOM_ANIMATION_MS;
 
 interface ZoomControlProps {
 	zoomInIcon?: ReactNode;
@@ -24,7 +30,7 @@ const ZoomControl: FC<ZoomControlProps> = ({
 		const view = map.getView();
 		const zoom = view.getZoom();
 		if (zoom !== undefined) {
-			view.animate({ zoom: zoom + 1, duration: 250 });
+			view.animate({ zoom: zoom + 1, duration: getZoomDuration() });
 		}
 	}, [map]);
 
@@ -33,7 +39,7 @@ const ZoomControl: FC<ZoomControlProps> = ({
 		const view = map.getView();
 		const zoom = view.getZoom();
 		if (zoom !== undefined) {
-			view.animate({ zoom: zoom - 1, duration: 250 });
+			view.animate({ zoom: zoom - 1, duration: getZoomDuration() });
 		}
 	}, [map]);
 

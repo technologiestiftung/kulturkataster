@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { Question } from "@/generated/prisma";
 import { useHorizontalStepper } from "@/components/HorizontalStepper";
@@ -165,6 +165,22 @@ const syncQuestionnaireStepUrl = (
 	window.history.replaceState(null, "", url);
 };
 
+// After a step change the activating button has unmounted, so focus would
+// fall back to <body>. Move it to the new step's heading (tabIndex={-1})
+// so keyboard and screen-reader users continue at the top of the new step.
+const useFocusStepHeading = (stepKey: string) => {
+	const containerRef = useRef<HTMLDivElement>(null);
+	const previousKeyRef = useRef(stepKey);
+	useEffect(() => {
+		if (previousKeyRef.current === stepKey) return;
+		previousKeyRef.current = stepKey;
+		containerRef.current
+			?.querySelector<HTMLElement>("h1")
+			?.focus({ preventScroll: true });
+	}, [stepKey]);
+	return containerRef;
+};
+
 const syncQuestionnaireThankYouUrl = () => {
 	if (typeof window === "undefined") return;
 	const url = new URL(window.location.href);
@@ -229,6 +245,9 @@ export function QuestionnaireWizardContent({
 
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [isSubmitted, setIsSubmitted] = useState(initialShowThankYou ?? false);
+	const stepContainerRef = useFocusStepHeading(
+		isSubmitted ? "thank-you" : currentStepId,
+	);
 
 	useEffect(() => {
 		ensureQuestionnaire(questionnaire.id);
@@ -378,86 +397,90 @@ export function QuestionnaireWizardContent({
 		],
 	);
 
-	if (isSubmitted) {
-		return <QuestionnaireThankYou />;
-	}
+	return <div ref={stepContainerRef}>{renderStep()}</div>;
 
-	if (currentStepId === "consent") {
-		return (
-			<QuestionnaireConsentStep
-				consentGiven={consentGiven}
-				onConsentChange={setConsent}
-				onNext={nextStep}
-			/>
-		);
-	}
+	function renderStep() {
+		if (isSubmitted) {
+			return <QuestionnaireThankYou />;
+		}
 
-	if (currentStepId === "institution-link") {
+		if (currentStepId === "consent") {
+			return (
+				<QuestionnaireConsentStep
+					consentGiven={consentGiven}
+					onConsentChange={setConsent}
+					onNext={nextStep}
+				/>
+			);
+		}
+
+		if (currentStepId === "institution-link") {
+			return (
+				<QuestionnaireInstitutionLinkStep
+					questionnaireId={questionnaire.id}
+					isInstitutionRegistered={isInstitutionRegistered}
+					institutionId={institutionId}
+					pendingInstitutionData={pendingInstitutionData}
+					categoryGroups={categoryGroups}
+					onChange={(patch) => {
+						if (patch.isInstitutionRegistered !== undefined) {
+							setIsInstitutionRegistered(patch.isInstitutionRegistered);
+						}
+						if (patch.institutionId !== undefined) {
+							setInstitutionId(patch.institutionId);
+						}
+						if (patch.submissionId !== undefined) {
+							setSubmissionId(patch.submissionId);
+						}
+						if (patch.pendingInstitutionData !== undefined) {
+							setPendingInstitutionData(patch.pendingInstitutionData);
+						}
+					}}
+					onBack={previousStep}
+					onNext={nextStep}
+				/>
+			);
+		}
+
+		const step = Number(currentStepId.replace("block-", ""));
+		const blockIndex = stepGroups.findIndex((group) => group.step === step);
+		const group = stepGroups[blockIndex];
+		if (!group) return null;
+
+		const isLastBlock = blockIndex === stepGroups.length - 1;
+
 		return (
-			<QuestionnaireInstitutionLinkStep
-				questionnaireId={questionnaire.id}
-				isInstitutionRegistered={isInstitutionRegistered}
-				institutionId={institutionId}
-				pendingInstitutionData={pendingInstitutionData}
-				categoryGroups={categoryGroups}
-				onChange={(patch) => {
-					if (patch.isInstitutionRegistered !== undefined) {
-						setIsInstitutionRegistered(patch.isInstitutionRegistered);
+			<QuestionnaireBlockStep
+				questionnaire={questionnaire}
+				step={group.step}
+				questions={group.questions}
+				locale={locale}
+				blockIndex={blockIndex}
+				totalBlocks={stepGroups.length}
+				blockStepIds={stepGroups.map((g) => `block-${g.step}`)}
+				onNavigateToStep={goToStep}
+				initialValues={answers}
+				onChange={setAnswers}
+				onSubmit={(data) => {
+					setAnswers(data);
+					if (isLastBlock) {
+						void handleSubmit({ ...answers, ...data });
+						return;
 					}
-					if (patch.institutionId !== undefined) {
-						setInstitutionId(patch.institutionId);
-					}
-					if (patch.submissionId !== undefined) {
-						setSubmissionId(patch.submissionId);
-					}
-					if (patch.pendingInstitutionData !== undefined) {
-						setPendingInstitutionData(patch.pendingInstitutionData);
-					}
+					nextStep();
 				}}
 				onBack={previousStep}
-				onNext={nextStep}
+				nextLabel={
+					isLastBlock
+						? t("content.questionnaireWizard.review.submit", {
+								defaultValue: "Absenden",
+							})
+						: t("common.next", { defaultValue: "Weiter" })
+				}
+				backLabel={t("common.back", { defaultValue: "Zurück" })}
+				submitDisabled={isLastBlock ? isSubmitting : undefined}
+				footerContent={isLastBlock ? captcha.widget : null}
 			/>
 		);
 	}
-
-	const step = Number(currentStepId.replace("block-", ""));
-	const blockIndex = stepGroups.findIndex((group) => group.step === step);
-	const group = stepGroups[blockIndex];
-	if (!group) return null;
-
-	const isLastBlock = blockIndex === stepGroups.length - 1;
-
-	return (
-		<QuestionnaireBlockStep
-			questionnaire={questionnaire}
-			step={group.step}
-			questions={group.questions}
-			locale={locale}
-			blockIndex={blockIndex}
-			totalBlocks={stepGroups.length}
-			blockStepIds={stepGroups.map((g) => `block-${g.step}`)}
-			onNavigateToStep={goToStep}
-			initialValues={answers}
-			onChange={setAnswers}
-			onSubmit={(data) => {
-				setAnswers(data);
-				if (isLastBlock) {
-					void handleSubmit({ ...answers, ...data });
-					return;
-				}
-				nextStep();
-			}}
-			onBack={previousStep}
-			nextLabel={
-				isLastBlock
-					? t("content.questionnaireWizard.review.submit", {
-							defaultValue: "Absenden",
-						})
-					: t("common.next", { defaultValue: "Weiter" })
-			}
-			backLabel={t("common.back", { defaultValue: "Zurück" })}
-			submitDisabled={isLastBlock ? isSubmitting : undefined}
-			footerContent={isLastBlock ? captcha.widget : null}
-		/>
-	);
 }

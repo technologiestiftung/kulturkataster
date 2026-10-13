@@ -283,6 +283,9 @@ const isRenderableCultureIndexValue = (value: unknown): boolean =>
 const normalizeDateForDiff = (value: unknown) =>
 	normalizeDateByType(value, "date");
 
+const getTitleHeadingId = (field: InfoWrapperFieldConfig) =>
+	field.headingId ?? "institution-title";
+
 const getContent = (
 	field: InfoWrapperFieldConfig,
 	label: string | undefined,
@@ -420,7 +423,10 @@ const getContent = (
 		case "title":
 			return (
 				<div className="overflow-hidden">
-					<h2 id="institution-title" className="font-extrabold wrap-anywhere">
+					<h2
+						id={getTitleHeadingId(field)}
+						className="font-extrabold wrap-anywhere"
+					>
 						{String(value)}
 					</h2>
 				</div>
@@ -602,7 +608,10 @@ const renderFieldContent = (
 					)}
 				>
 					<div className="overflow-hidden">
-						<h1 id="institution-title" className="font-bold wrap-anywhere">
+						<h1
+							id={getTitleHeadingId(field)}
+							className="font-bold wrap-anywhere"
+						>
 							—
 						</h1>
 					</div>
@@ -818,14 +827,11 @@ const renderFieldContent = (
 					)}
 				>
 					{hasOriginal && (
-						<h1
-							id="institution-title"
-							className="font-bold wrap-anywhere line-through"
-						>
+						<h1 className="font-bold wrap-anywhere line-through">
 							{oldDisplay}
 						</h1>
 					)}
-					<h1 id="institution-title" className="font-bold wrap-anywhere">
+					<h1 id={getTitleHeadingId(field)} className="font-bold wrap-anywhere">
 						<span className="bg-primary-light px-1">
 							{hasOriginal
 								? t("content.infoWrapper.diffLabel.edited")
@@ -876,7 +882,7 @@ const renderFieldContent = (
 					)}
 				>
 					<h1
-						id="institution-title"
+						id={getTitleHeadingId(field)}
 						className="font-bold wrap-anywhere line-through"
 					>
 						{originalDisplay}

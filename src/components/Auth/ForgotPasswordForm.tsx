@@ -59,6 +59,7 @@ export function ForgotPasswordForm({ onSuccess }: { onSuccess?: () => void }) {
 						name: "email",
 						label: t("common.auth.forgot.emailLabel"),
 						type: "email",
+						autoComplete: "email",
 						placeholder: t("common.auth.forgot.emailPlaceholder"),
 						required: true,
 						disabled: isLoading,

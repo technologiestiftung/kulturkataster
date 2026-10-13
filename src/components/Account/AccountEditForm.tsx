@@ -133,6 +133,7 @@ export function AccountEditForm({
 				fields: [
 					{
 						name: "name",
+						autoComplete: "name",
 						label: t("common.auth.accountEdit.nameLabel"),
 						type: "text",
 						placeholder: t("common.auth.accountEdit.namePlaceholder"),
@@ -141,6 +142,7 @@ export function AccountEditForm({
 					},
 					{
 						name: "email",
+						autoComplete: "email",
 						label: t("common.auth.accountEdit.emailLabel"),
 						type: "email",
 						placeholder: t("common.auth.accountEdit.emailPlaceholder"),
@@ -149,6 +151,7 @@ export function AccountEditForm({
 					},
 					{
 						name: "password",
+						autoComplete: "new-password",
 						label: t("common.auth.accountEdit.passwordLabel"),
 						type: "password",
 						afterField: t("common.auth.accountEdit.passwordRequirements"),
@@ -158,6 +161,7 @@ export function AccountEditForm({
 					},
 					{
 						name: "confirmPassword",
+						autoComplete: "new-password",
 						label: t("common.auth.accountEdit.confirmPasswordLabel"),
 						type: "password",
 						placeholder: t(

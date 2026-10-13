@@ -16,7 +16,10 @@ import { useQuestionnaireDraftStore } from "@/lib/store/questionnaireDraftStore"
 vi.mock("react-i18next", () => ({
 	useTranslation: () => ({
 		t: (key: string, options?: Record<string, unknown>) =>
-			(options?.defaultValue as string) ?? key,
+			((options?.defaultValue as string) ?? key).replace(
+				/\{\{(\w+)\}\}/g,
+				(_, name: string) => String(options?.[name] ?? ""),
+			),
 		i18n: { changeLanguage: () => new Promise(() => {}), language: "de" },
 	}),
 	Trans: () => null,
@@ -249,7 +252,7 @@ describe("QuestionnaireWizardContent step advancement (real stepper)", () => {
 		await flushMicrotasks();
 		expect(lastFormConfig?.fields?.map((f) => f.name)).toEqual(["q2"]);
 
-		fireEvent.click(screen.getByLabelText("Go to step 1"));
+		fireEvent.click(screen.getByLabelText("Themenblock 1 von 2"));
 		expect(lastFormConfig?.fields?.map((f) => f.name)).toEqual([
 			"founded_year",
 		]);
@@ -260,7 +263,7 @@ describe("QuestionnaireWizardContent step advancement (real stepper)", () => {
 					.getState()
 					.setAnswers({ founded_year: outOfRange });
 			});
-			fireEvent.click(screen.getByLabelText("Go to step 2"));
+			fireEvent.click(screen.getByLabelText("Themenblock 2 von 2"));
 			expect(lastFormConfig?.fields?.map((f) => f.name)).toEqual([
 				"founded_year",
 			]);
@@ -271,7 +274,26 @@ describe("QuestionnaireWizardContent step advancement (real stepper)", () => {
 				.getState()
 				.setAnswers({ founded_year: "2000" });
 		});
-		fireEvent.click(screen.getByLabelText("Go to step 2"));
+		fireEvent.click(screen.getByLabelText("Themenblock 2 von 2"));
 		expect(lastFormConfig?.fields?.map((f) => f.name)).toEqual(["q2"]);
+	});
+
+	it("moves focus to the new step's heading after a step change", () => {
+		render(
+			<QuestionnaireWizardModal
+				routePath="/questionnaire"
+				questionnaire={buildQuestionnaire() as any}
+				categoryGroups={[]}
+			/>,
+		);
+
+		advanceThroughConsent();
+
+		expect(
+			screen.getByRole("heading", {
+				level: 1,
+				name: "Allgemeine Angaben zum Kulturort",
+			}),
+		).toHaveFocus();
 	});
 });
