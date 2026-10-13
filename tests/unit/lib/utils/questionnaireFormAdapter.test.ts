@@ -886,7 +886,10 @@ describe("buildAnswerRowsFromDraft", () => {
 						{ value: "public", label: "Öffentlich" },
 						{ value: "other", label: "Sonstige" },
 					],
-					freeTextOption: { value: "other", fieldName: "operator_typeFreeText" },
+					freeTextOption: {
+						value: "other",
+						fieldName: "operator_typeFreeText",
+					},
 				},
 			}),
 		];
