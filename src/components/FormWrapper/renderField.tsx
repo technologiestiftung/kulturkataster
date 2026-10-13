@@ -190,6 +190,12 @@ function RadioFreeTextField({
 	);
 }
 
+const toSelectedValues = (value: unknown): string[] => {
+	if (Array.isArray(value)) return value;
+	if (value === undefined || value === null || value === "") return [];
+	return [value as string];
+};
+
 function MultiSelectFreeTextField({
 	field,
 	option,
@@ -212,9 +218,7 @@ function MultiSelectFreeTextField({
 	) {
 		return null;
 	}
-	const isChecked = ((value as string[]) ?? []).includes(
-		option.value as string,
-	);
+	const isChecked = toSelectedValues(value).includes(option.value as string);
 	if (!isChecked) return null;
 
 	const freeTextFieldName =
@@ -962,7 +966,7 @@ const renderFieldContent = (
 								invalid={hasIssue}
 								options={field.options ?? []}
 								filteredOptions={field.multiselectFilteredOptions}
-								selected={(value as string[]) ?? []}
+								selected={toSelectedValues(value)}
 								onChange={(selected) => updateField(field.name, selected)}
 								placeholder={resolvedPlaceholder}
 								searchPlaceholder={field.searchPlaceholder}
@@ -984,9 +988,9 @@ const renderFieldContent = (
 							/>
 						) : (
 							field.options?.map((option) => {
-								const isChecked =
-									(value as string[])?.includes(option.value as string) ??
-									false;
+								const isChecked = toSelectedValues(value).includes(
+									option.value as string,
+								);
 								const showsFreeText =
 									isChecked &&
 									field.freeTextOption &&
@@ -1005,7 +1009,7 @@ const renderFieldContent = (
 											id={`${field.name}-${option.value}`}
 											checked={isChecked}
 											onCheckedChange={(checked) => {
-												const currentValue = (value as string[]) || [];
+												const currentValue = toSelectedValues(value);
 												const newValue = checked
 													? [...currentValue, option.value]
 													: currentValue.filter(

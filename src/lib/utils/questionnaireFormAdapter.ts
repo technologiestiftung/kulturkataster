@@ -368,8 +368,12 @@ export function buildAnswerRowsFromDraft(
 			return;
 		}
 
-		const rawValue = draft[question.key];
-		if (isEmptyAnswerValue(rawValue)) {
+		const draftValue = draft[question.key];
+		const rawValue =
+			question.field_type === "multiselect" && !Array.isArray(draftValue)
+				? [draftValue]
+				: draftValue;
+		if (isEmptyAnswerValue(draftValue)) {
 			return;
 		}
 
