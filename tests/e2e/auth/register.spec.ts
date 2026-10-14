@@ -81,6 +81,11 @@ test.describe("Auth registration", () => {
 		await expect(
 			page.getByText(verifyEmailSuccessMessage).last(),
 		).toBeVisible();
+		// Success sets ?registered=1 via router.replace; clicking "Fertig" while
+		// that navigation is still pending lets it override the login redirect.
+		await expect(page).toHaveURL(/\/de\/register\?registered=1$/, {
+			timeout: 15_000,
+		});
 
 		const doneButton = page.getByRole("button", { name: "Fertig" });
 		await expect(doneButton).toBeVisible();
