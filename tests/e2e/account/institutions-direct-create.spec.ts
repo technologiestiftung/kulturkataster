@@ -406,7 +406,9 @@ test.describe("institution direct create form", () => {
 			.filter({ hasText: uniqueName })
 			.first();
 		await expect(createdRow).toBeVisible({ timeout: 15_000 });
-		await createdRow.getByRole("button", { name: "Edit" }).click();
+		await createdRow
+			.getByRole("button", { name: "Bearbeiten", exact: true })
+			.click();
 		await expect(page).toHaveURL(/\/de\/account\/institutions\/\d+\/edit\/?$/, {
 			timeout: 45_000,
 		});
