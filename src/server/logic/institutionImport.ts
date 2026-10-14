@@ -54,6 +54,8 @@ export type ImportPlan = {
 type ImportPlanEntry<T> = {
 	form: T;
 	permissionFields: string[];
+	// Set when the address needs coordinates from the geocoder before it is written.
+	geocodeQuery?: string;
 };
 
 type ExistingInstitution = Institution & {
@@ -87,6 +89,17 @@ const ADDRESS_FIELDS = [
 	...ADDRESS_TEXT_FIELDS,
 	...ADDRESS_NUMBER_FIELDS,
 ] as const;
+// Columns that move a place, so its old coordinates no longer fit.
+const ADDRESS_LOCATION_FIELDS = [
+	"street",
+	"street_number",
+	"address_suffix",
+	"zipcode",
+	"city",
+] as const;
+// About 1 cm; spreadsheet apps may round the exported coordinates.
+const COORDINATE_TOLERANCE = 1e-7;
+const GEOCODE_BATCH_SIZE = 10;
 const ADDRESS_TEXT_KEYS = new Set<string>(ADDRESS_TEXT_FIELDS);
 const ADDRESS_NUMBER_KEYS = new Set<string>(ADDRESS_NUMBER_FIELDS);
 const DATE_KEYS = new Set([
@@ -387,6 +400,47 @@ const validateForm = <T>(
 	}
 };
 
+const isCoordinateChanged = (cell: string, current?: number | null) => {
+	// An empty cell keeps the saved coordinate, so a file without positions cannot erase
+	// positions that were corrected by hand.
+	if (!cell) return false;
+	const parsed = parseNumber(cell);
+	// Invalid cells go through so validation reports them.
+	if (!parsed.ok || parsed.value === null) return true;
+	if (current === null || current === undefined) return true;
+	return Math.abs(parsed.value - current) > COORDINATE_TOLERANCE;
+};
+
+// A new address without new coordinates must not keep the old position.
+const isAddressRelocated = (patch: RowPatch) =>
+	ADDRESS_LOCATION_FIELDS.some((field) => field in patch.address) &&
+	!ADDRESS_NUMBER_FIELDS.some((field) => field in patch.address);
+
+const getGeocodeQuery = (
+	address: InstitutionForm["address"] | undefined,
+	isRelocated: boolean,
+) => {
+	if (!address) return undefined;
+	const hasCoordinates =
+		address.lat !== null &&
+		address.lat !== undefined &&
+		address.lng !== null &&
+		address.lng !== undefined;
+	if (hasCoordinates && !isRelocated) return undefined;
+	const streetLine = [address.street, address.street_number]
+		.filter(Boolean)
+		.join(" ");
+	const query = [
+		streetLine,
+		address.address_suffix,
+		address.zipcode,
+		address.city,
+	]
+		.filter(Boolean)
+		.join(", ");
+	return query || undefined;
+};
+
 const getChangedKeys = (
 	keys: string[],
 	cells: Map<string, string>,
@@ -403,6 +457,12 @@ const getChangedKeys = (
 	});
 	return keys.filter((key) => {
 		if (READ_ONLY_KEYS.has(key)) return false;
+		if (ADDRESS_NUMBER_KEYS.has(key)) {
+			return isCoordinateChanged(
+				normalizeCell(cells.get(key) ?? ""),
+				existing.address?.[key as (typeof ADDRESS_NUMBER_FIELDS)[number]],
+			);
+		}
 		const currentValue = currentRow[translateColumnName(key, t)] ?? "";
 		return normalizeCell(cells.get(key) ?? "") !== normalizeCell(currentValue);
 	});
@@ -515,6 +575,10 @@ const planRow = (
 							cells,
 							false,
 						),
+						geocodeQuery: getGeocodeQuery(
+							validated.address,
+							isAddressRelocated(patch),
+						),
 					},
 				}
 			: invalid();
@@ -531,6 +595,7 @@ const planRow = (
 				entry: {
 					form: validated,
 					permissionFields: getImportPermissionFields(keysToApply, cells, true),
+					geocodeQuery: getGeocodeQuery(validated.address, false),
 				},
 			}
 		: invalid();
@@ -591,4 +656,28 @@ export function planInstitutionImport({
 	});
 
 	return plan;
+}
+
+/**
+ * Fills in coordinates for planned addresses that need them. A failed lookup leaves the
+ * address as it is.
+ */
+export async function geocodeImportPlan(
+	plan: ImportPlan,
+	geocode: (query: string) => Promise<{ lat: number; lng: number } | null>,
+) {
+	const entries = [...plan.creates, ...plan.updates].filter(
+		(entry) => entry.geocodeQuery && entry.form.address,
+	);
+	// shortcut: batches of 10 keep large files within the function timeout; queue the lookups
+	// in the background if imports grow to thousands of new addresses.
+	for (let start = 0; start < entries.length; start += GEOCODE_BATCH_SIZE) {
+		const batch = entries.slice(start, start + GEOCODE_BATCH_SIZE);
+		await Promise.all(
+			batch.map(async (entry) => {
+				const result = await geocode(entry.geocodeQuery as string);
+				if (result) entry.form.address = { ...entry.form.address, ...result };
+			}),
+		);
+	}
 }

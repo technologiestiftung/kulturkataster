@@ -199,6 +199,8 @@ type AddressBlurOptions = {
 	addressSuffixKey?: string;
 	latKey?: string;
 	lngKey?: string;
+	// Values the form was opened with; their address is not geocoded again.
+	initialFormData?: Record<string, unknown>;
 	reverseGeocode?: (
 		lat: number,
 		lng: number,
@@ -260,6 +262,31 @@ const applyReverseGeocodeFields = (
 	});
 };
 
+const buildAddressQuery = (
+	formData: Record<string, unknown>,
+	options: AddressBlurOptions,
+) =>
+	[
+		formData[options.streetLineKey ?? "address.streetLine"],
+		formData[options.addressSuffixKey ?? "address.address_suffix"],
+		formData[options.zipKey ?? "address.zip"],
+		formData[options.cityKey ?? "address.city"],
+	]
+		.map(toOptionalText)
+		.filter((item): item is string => Boolean(item))
+		.join(", ");
+
+// The address a record was opened with, if it already has coordinates. Leaving an unchanged
+// address field must not replace coordinates that were placed by hand.
+const getSavedAddressQuery = (options: AddressBlurOptions) => {
+	const initial = options.initialFormData;
+	if (!initial) return "";
+	const lat = toOptionalNumber(initial[options.latKey ?? "address.lat"]);
+	const lng = toOptionalNumber(initial[options.lngKey ?? "address.lng"]);
+	if (lat === undefined || lng === undefined) return "";
+	return buildAddressQuery(initial, options);
+};
+
 const handleAddressBlur = (
 	addressGeocodeState: React.MutableRefObject<{
 		lastQuery: string;
@@ -276,21 +303,12 @@ const handleAddressBlur = (
 			formData: Record<string, unknown>,
 			updateField: (name: string, value: unknown) => void,
 		) => {
-			const streetLine = toOptionalText(
-				formData[options.streetLineKey ?? "address.streetLine"],
-			);
-			const zip = toOptionalText(formData[options.zipKey ?? "address.zip"]);
-			const city = toOptionalText(formData[options.cityKey ?? "address.city"]);
-			const addressSuffix = toOptionalText(
-				formData[options.addressSuffixKey ?? "address.address_suffix"],
-			);
-			const queryParts = [streetLine, addressSuffix, zip, city].filter(
-				(item): item is string => Boolean(item),
-			);
-			if (queryParts.length === 0) return;
-			const query = queryParts.join(", ");
+			const query = buildAddressQuery(formData, options);
+			if (!query) return;
+			const lastQuery =
+				addressGeocodeState.current.lastQuery || getSavedAddressQuery(options);
 			if (addressGeocodeState.current.inflight) return;
-			if (addressGeocodeState.current.lastQuery === query) return;
+			if (lastQuery === query) return;
 
 			addressGeocodeState.current.inflight = true;
 			try {
@@ -321,6 +339,7 @@ const handleAddressBlur = (
 			options.addressSuffixKey,
 			options.cityKey,
 			options.districtKey,
+			options.initialFormData,
 			options.latKey,
 			options.lngKey,
 			options.neighbourhoodKey,
