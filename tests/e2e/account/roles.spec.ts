@@ -36,7 +36,7 @@ test.describe("roles management", () => {
 		);
 		await expect(page.locator("tbody tr").first()).toBeVisible();
 		// The toolbar hides the create button while search is open
-		await page.getByRole("button", { name: "Close search" }).click();
+		await page.getByRole("button", { name: "Suche schließen" }).click();
 
 		const uniqueName = `E2E Rolle ${Date.now()}`;
 		// Icon-only toolbar button: the label lives in aria-label
@@ -73,7 +73,7 @@ test.describe("roles management", () => {
 		});
 
 		const row = page.locator("tbody tr", { hasText: uniqueName }).first();
-		await row.getByRole("button", { name: "Edit" }).click();
+		await row.getByRole("button", { name: "Bearbeiten", exact: true }).click();
 		await expect(page).toHaveURL(/\/de\/account\/roles\/\d+\/edit\/?$/, {
 			timeout: 15_000,
 		});
