@@ -397,6 +397,8 @@ test.describe("institution direct create form", () => {
 		await expect(page.getByRole("table")).toBeVisible({ timeout: 15_000 });
 		await page.reload();
 		await expect(page.getByRole("table")).toBeVisible({ timeout: 15_000 });
+		// The closed search field is inert, so open it before typing.
+		await page.getByRole("button", { name: /Kulturorte suchen/i }).click();
 		await page
 			.getByRole("textbox", { name: /Kulturorte suchen/i })
 			.fill(uniqueName);
