@@ -1,5 +1,5 @@
 import { createInstance } from "i18next";
-import { beforeAll, describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 import de from "@/lib/i18n/translations/de/translation.json";
 import en from "@/lib/i18n/translations/en/translation.json";
 import { parseCsv } from "@/lib/utils/csvUtils";
@@ -10,6 +10,7 @@ import {
 } from "@/lib/utils/downloadUtils";
 import { parseSpreadsheet } from "@/lib/utils/spreadsheetUtils";
 import {
+	geocodeImportPlan,
 	planInstitutionImport,
 	resolveImportColumns,
 	type ImportTranslateFn,
@@ -562,5 +563,91 @@ describe("planInstitutionImport", () => {
 		setCell(csvRows, "Unterkategorien", "dance");
 		const { plan } = planFromCsv(csvRows, [institution]);
 		expect(plan.updates[0]?.form.categoryIds).toEqual([1, 2, 3]);
+	});
+});
+
+describe("import coordinates", () => {
+	const LAT_HEADER = de.enumMap.field_names.lat.label;
+	const LNG_HEADER = de.enumMap.field_names.lng.label;
+
+	it("keeps saved coordinates when the coordinate cells are empty", () => {
+		const institution = makeInstitution();
+		const csvRows = exportCsv([institution]);
+		setCell(csvRows, LAT_HEADER, "");
+		setCell(csvRows, LNG_HEADER, "");
+
+		const { plan } = planFromCsv(csvRows, [institution]);
+
+		expect(plan.issues).toEqual([]);
+		expect(plan.unchangedCount).toBe(1);
+	});
+
+	it("treats coordinates written with a decimal comma as unchanged", () => {
+		const institution = makeInstitution();
+		const csvRows = exportCsv([institution]);
+		setCell(csvRows, LAT_HEADER, "52,52");
+		setCell(csvRows, LNG_HEADER, "13,40500000001");
+
+		const { plan } = planFromCsv(csvRows, [institution]);
+
+		expect(plan.unchangedCount).toBe(1);
+	});
+
+	it("does not geocode an update that leaves the address as it is", () => {
+		const institution = makeInstitution();
+		const csvRows = exportCsv([institution]);
+		setCell(csvRows, "Kapazität", "95");
+
+		const { plan } = planFromCsv(csvRows, [institution]);
+
+		expect(plan.updates[0].geocodeQuery).toBeUndefined();
+	});
+
+	it("geocodes a moved address that comes without new coordinates", () => {
+		const institution = makeInstitution();
+		const csvRows = exportCsv([institution]);
+		setCell(csvRows, "Straße", "Neue Strasse 7a");
+
+		const { plan } = planFromCsv(csvRows, [institution]);
+
+		expect(plan.updates[0].geocodeQuery).toBe("Neue Strasse 7a, 10115, Berlin");
+	});
+
+	it("uses new coordinates from the file instead of geocoding", () => {
+		const institution = makeInstitution();
+		const csvRows = exportCsv([institution]);
+		setCell(csvRows, "Straße", "Neue Strasse 7a");
+		setCell(csvRows, LAT_HEADER, "52.6");
+
+		const { plan } = planFromCsv(csvRows, [institution]);
+
+		expect(plan.updates[0].geocodeQuery).toBeUndefined();
+		expect(plan.updates[0].form.address).toMatchObject({ lat: 52.6 });
+	});
+
+	it("geocodes new places without coordinates and keeps given ones", async () => {
+		const csvRows = exportCsv([makeInstitution(), makeInstitution()]);
+		csvRows.forEach((row, index) => {
+			if (index === 0) return;
+			row[csvRows[0].indexOf("ID")] = "";
+			row[csvRows[0].indexOf(NAME_HEADER)] = `Neu ${index}`;
+		});
+		csvRows[1][csvRows[0].indexOf(LAT_HEADER)] = "";
+		csvRows[1][csvRows[0].indexOf(LNG_HEADER)] = "";
+		const { plan } = planFromCsv(csvRows, []);
+		const geocode = vi.fn().mockResolvedValue({ lat: 52.5, lng: 13.4 });
+
+		await geocodeImportPlan(plan, geocode);
+
+		expect(geocode).toHaveBeenCalledTimes(1);
+		expect(geocode).toHaveBeenCalledWith("Musterstrasse 12, 10115, Berlin");
+		expect(plan.creates[0].form.address).toMatchObject({
+			lat: 52.5,
+			lng: 13.4,
+		});
+		expect(plan.creates[1].form.address).toMatchObject({
+			lat: 52.52,
+			lng: 13.405,
+		});
 	});
 });

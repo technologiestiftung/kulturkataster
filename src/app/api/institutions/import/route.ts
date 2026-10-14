@@ -11,7 +11,9 @@ import {
 } from "@/server/logging/requestContext";
 import { canImportInstitutions } from "@/server/logic/institutionAccess";
 import { buildInstitutionCreateData } from "@/server/logic/institutionCreateData";
+import { geocodeAddress } from "@/server/actions/maptiler";
 import {
+	geocodeImportPlan,
 	planInstitutionImport,
 	resolveImportColumns,
 	type ImportPlan,
@@ -238,6 +240,7 @@ const importInstitutions = async (request: NextRequest) => {
 		});
 	}
 
+	await geocodeImportPlan(plan, geocodeAddress);
 	const result = await writePlan(plan, currentUserId);
 	if (result.created > 0 || result.updated > 0) revalidateAccount();
 	if (!result.ok) {
