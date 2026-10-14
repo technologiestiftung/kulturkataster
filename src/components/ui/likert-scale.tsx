@@ -26,6 +26,14 @@ export type LikertScaleProps = Omit<
 // scale is listed vertically at every screen size.
 const MAX_HORIZONTAL_OPTIONS = 5;
 
+// Must match the `gap-2` between options on the radio group.
+const OPTION_GAP_REM = 0.5;
+
+// Columns share the row evenly, so each radio sits at the center of its column.
+// Insetting the line by half a column makes it run from the first to the last radio.
+const getLineInset = (optionCount: number) =>
+	`calc((100% - ${(optionCount - 1) * OPTION_GAP_REM}rem) / ${optionCount * 2})`;
+
 type LikertLayout = "horizontal" | "stackedOnMobile" | "stacked";
 
 const getLikertLayout = (
@@ -109,9 +117,13 @@ const LikertScale = React.forwardRef<
 						<div
 							aria-hidden="true"
 							className={cn(
-								"pointer-events-none absolute left-10 right-10 top-3.5 h-px bg-border md:top-3",
+								"pointer-events-none absolute top-3.5 h-px bg-border md:top-3",
 								layout.line,
 							)}
+							style={{
+								left: getLineInset(options.length),
+								right: getLineInset(options.length),
+							}}
 						/>
 					)}
 					{options.map((option) => {

@@ -64,7 +64,6 @@ describe("QuestionnaireInstitutionCreateForm", () => {
 		lastSubmitData = {
 			name: "Test Kulturort",
 			categoryFilters: { category_keys: ["museums"] },
-			established_since: "2015-01-01",
 			newCategory: "Archiv, Werkstatt",
 			"address.streetLine": "Musterstraße 1",
 			"address.zip": "12345",
@@ -117,11 +116,10 @@ describe("QuestionnaireInstitutionCreateForm", () => {
 			"address.address_suffix",
 			"address.zip",
 			"address.city",
-			"established_since",
 		]);
 	});
 
-	it("requires street, zip and city but not established_since", () => {
+	it("requires name, street, zip and city", () => {
 		render(
 			<QuestionnaireInstitutionCreateForm
 				categoryGroups={[]}
