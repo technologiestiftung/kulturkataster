@@ -197,15 +197,15 @@ test.describe("institution submission wizard", () => {
 	}) => {
 		await expect(page.getByText(/Schritt 1 \/ 5/)).toBeVisible();
 
-		await page.getByRole("button", { name: "Go to step 2" }).click();
+		await page.getByRole("button", { name: /^Schritt 2 von / }).click();
 		await expect(page.getByText(/Schritt 1 \/ 5/)).toBeVisible();
 
 		// Even with valid current step, jumping multiple steps ahead is blocked.
 		await fillById(page, "name", "E2E Validation Institution");
-		await page.getByRole("button", { name: "Go to step 5" }).click();
+		await page.getByRole("button", { name: /^Schritt 5 von / }).click();
 		await expect(page.getByText(/Schritt 1 \/ 5/)).toBeVisible();
 
-		await page.getByRole("button", { name: "Go to step 2" }).click();
+		await page.getByRole("button", { name: /^Schritt 2 von / }).click();
 		await expect(page.getByText(/Schritt 2 \/ 5/)).toBeVisible();
 	});
 
@@ -299,7 +299,10 @@ test.describe("institution submission wizard", () => {
 		const submitButton = await getWizardSubmitButton(page);
 		await expect(submitButton).toBeVisible({ timeout: 15_000 });
 
-		const editButtons = page.getByRole("button", { name: "Edit" });
+		const editButtons = page.getByRole("button", {
+			name: "Bearbeiten",
+			exact: true,
+		});
 		if ((await editButtons.count()) > 0) {
 			await editButtons.first().click();
 			const nameInput = page.getByRole("textbox", {

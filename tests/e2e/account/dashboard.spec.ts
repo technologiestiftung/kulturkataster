@@ -85,11 +85,12 @@ test.describe("dashboard routing, tabs, greeting, and menu actions", () => {
 	test("shows dashboard menu actions and executes their routing", async ({
 		page,
 	}) => {
-		const navigateViaMenuAction = async (buttonName: string) => {
+		// Profile and FAQ navigate, so they are links, not buttons.
+		const navigateViaMenuAction = async (linkName: string) => {
 			await safeGoto(page, "/de/account", /\/de\/account(?:\/activity)?\/?$/);
-			const button = page.getByRole("button", { name: buttonName });
-			await expect(button).toBeVisible();
-			await button.click();
+			const link = page.getByRole("link", { name: linkName, exact: true });
+			await expect(link).toBeVisible();
+			await link.click();
 		};
 
 		await navigateViaMenuAction("Profileinstellungen");
