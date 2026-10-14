@@ -68,6 +68,15 @@ describe("LikertScale", () => {
 		expect(container.querySelectorAll('[aria-hidden="true"]')).toHaveLength(1);
 	});
 
+	it("starts and ends the connecting line at the outer radios", () => {
+		const { container } = render(<LikertScale options={scaleOptions} />);
+		const line = container.querySelector<HTMLElement>('[aria-hidden="true"]');
+
+		// Half of one of five columns sharing the row minus four 0.5rem gaps.
+		expect(line?.style.left).toBe("calc(0.1 * (100% - 2rem))");
+		expect(line?.style.right).toBe(line?.style.left);
+	});
+
 	it("disables every option when disabled", () => {
 		render(<LikertScale options={scaleOptions} disabled />);
 
