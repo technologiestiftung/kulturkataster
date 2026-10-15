@@ -592,3 +592,69 @@ describe("import coordinates", () => {
 		expect(plan.unchangedCount).toBe(1);
 	});
 });
+
+describe("import coordinates: guards", () => {
+	const LAT_HEADER = de.enumMap.field_names.lat.label;
+	const LNG_HEADER = de.enumMap.field_names.lng.label;
+
+	it("writes a coordinate that moved beyond the tolerance", () => {
+		const institution = makeInstitution();
+		const csvRows = exportCsv([institution]);
+		setCell(csvRows, LAT_HEADER, "52,5201");
+
+		const { plan } = planFromCsv(csvRows, [institution]);
+
+		expect(plan.issues).toEqual([]);
+		expect(plan.updates).toHaveLength(1);
+		expect(plan.updates[0]?.form.address).toMatchObject({ lat: 52.5201 });
+		expect(plan.updates[0]?.permissionFields).toEqual(["address.lat"]);
+	});
+
+	it("writes coordinates for a saved place that had none", () => {
+		const institution = makeInstitution();
+		const withoutCoords = {
+			...institution,
+			address: { ...institution.address, lat: null, lng: null },
+		} as unknown as Institution;
+		// The export drops all-empty columns, so start from a file that has them.
+		const csvRows = exportCsv([institution]);
+		setCell(csvRows, LAT_HEADER, "52.5");
+		setCell(csvRows, LNG_HEADER, "13.4");
+
+		const { plan } = planFromCsv(csvRows, [withoutCoords]);
+
+		expect(plan.updates).toHaveLength(1);
+		expect(plan.updates[0]?.form.address).toMatchObject({
+			lat: 52.5,
+			lng: 13.4,
+		});
+	});
+
+	it("reports an unparsable coordinate instead of ignoring it", () => {
+		const institution = makeInstitution();
+		const csvRows = exportCsv([institution]);
+		setCell(csvRows, LAT_HEADER, "north");
+
+		const { plan } = planFromCsv(csvRows, [institution]);
+
+		expect(plan.updates).toHaveLength(0);
+		expect(plan.issues.length).toBeGreaterThan(0);
+	});
+
+	it("keeps saved coordinates when only the address changes and cells are empty", () => {
+		const institution = makeInstitution();
+		const csvRows = exportCsv([institution]);
+		setCell(csvRows, "Straße", "Neue Strasse 7a");
+		setCell(csvRows, LAT_HEADER, "");
+		setCell(csvRows, LNG_HEADER, "");
+
+		const { plan } = planFromCsv(csvRows, [institution]);
+
+		expect(plan.updates).toHaveLength(1);
+		expect(plan.updates[0]?.permissionFields).toEqual(["address.street"]);
+		expect(plan.updates[0]?.form.address).toMatchObject({
+			lat: 52.52,
+			lng: 13.405,
+		});
+	});
+});
