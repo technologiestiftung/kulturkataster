@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
 
 type AlphabetFilterProps = {
@@ -15,11 +16,12 @@ export function AlphabetFilter({
 	onSelectLetter,
 	enabledLetters,
 }: AlphabetFilterProps) {
+	const { t } = useTranslation();
 	return (
 		<div
 			className="w-full overflow-x-auto"
 			role="group"
-			aria-label="Filter institutions by first letter"
+			aria-label={t("common.a11y.list.letterFilter")}
 		>
 			<div className="inline-flex min-w-full items-center py-1">
 				{LETTERS.map((letter) => {
@@ -38,7 +40,7 @@ export function AlphabetFilter({
 								isActive && "bg-foreground text-background",
 								!isActive &&
 									isEnabled &&
-									"bg-background text-foreground hover:bg-foreground/50 hover:text-background",
+									"bg-background text-foreground hover:bg-neutral-20",
 								!isActive &&
 									!isEnabled &&
 									"bg-neutral-5 text-neutral-40 cursor-not-allowed",

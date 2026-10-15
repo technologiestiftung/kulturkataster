@@ -1,5 +1,75 @@
 {
 	"common": {
+		"a11y": {
+			"dataTable": {
+				"actions": "Aktionen",
+				"add": "Hinzufügen",
+				"closeSearch": "Suche schließen",
+				"downloadAnswers": "Fragebogen-Antworten herunterladen",
+				"filter": "Filter",
+				"noData": "Keine Daten gefunden.",
+				"notSorted": "nicht sortiert",
+				"openFilters": "Filter öffnen",
+				"resultCount_one": "{{count}} Ergebnis",
+				"resultCount_other": "{{count}} Ergebnisse",
+				"review": "Prüfen",
+				"scrollLeft": "Nach links scrollen",
+				"scrollRight": "Nach rechts scrollen",
+				"searchPlaceholder": "Suchen...",
+				"sortedAscending": "aufsteigend sortiert",
+				"sortedDescending": "absteigend sortiert",
+				"tableLabel": "Tabelle",
+				"toggleRow": "Zeile auf- oder zuklappen"
+			},
+			"forms": {
+				"blockOf": "Themenblock {{current}} von {{total}}",
+				"noResults": "Keine Einträge gefunden",
+				"required": "Pflichtfeld",
+				"searchOptions": "Optionen durchsuchen",
+				"selectItems": "Einträge auswählen",
+				"stepNavigation": "Fortschritt",
+				"stepOf": "Schritt {{current}} von {{total}}"
+			},
+			"institution": {
+				"showOnMap": "Auf der Karte zeigen"
+			},
+			"list": {
+				"letterFilter": "Kulturorte nach Anfangsbuchstabe filtern"
+			},
+			"map": {
+				"clearSearch": "Suche löschen",
+				"filterButtonActive": "{{label}}, {{count}} aktiv",
+				"keyboardHint": "Karte mit den Pfeiltasten verschieben, mit Plus und Minus zoomen.",
+				"searchError": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
+				"searchResultSelected": "{{name}} ausgewählt.",
+				"searchResultsFound_one": "{{count}} Ergebnis gefunden.",
+				"searchResultsFound_other": "{{count}} Ergebnisse gefunden.",
+				"skipToList": "Zur Listenansicht",
+				"viewportLabel": "Interaktive Karte"
+			},
+			"shell": {
+				"loggedIn": "angemeldet",
+				"metaDescription": "Die Seite macht Berlins Kulturlandschaft sichtbar: Kulturorte finden, filtern und erkunden – für Planung, Forschung und Öffentlichkeit. Ein Projekt der Kulturraum Berlin gGmbH.",
+				"metaTitleDefault": "Berliner Kulturkataster – Karte & Daten zu Kulturorten",
+				"opensInNewTab": "öffnet in neuem Tab",
+				"pageTitle": {
+					"about": "Über das Kulturkataster",
+					"accessibility": "Barrierefreiheit",
+					"accessibilitySettings": "Einstellungen zur Barrierefreiheit",
+					"accountActivity": "Aktivität",
+					"accountFaq": "FAQ",
+					"download": "Download",
+					"imprint": "Impressum",
+					"info": "Infos und Services",
+					"mobileMenu": "Mobiles Menü",
+					"newsletter": "Newsletter des Berliner Kulturkatasters",
+					"signLanguage": "Gebärdensprache (DGS)",
+					"simpleLanguage": "Leichte Sprache",
+					"terms": "AGB",
+					"welcome": "Willkommen im Kulturkataster"
+				}
+			}
+		},
 		"about": "Über",
 		"accessibility": {
 			"contrast": {
@@ -48,6 +118,7 @@
 					"actions": {
 						"create": "erstellt",
 						"delete": "gelöscht",
+						"questionnaire_submitted": "beantwortet",
 						"submission_review_approved": "genehmigt",
 						"submission_review_completed": "abgeschlossen",
 						"submission_review_rejected": "abgelehnt",
@@ -74,6 +145,7 @@
 						"funding_source": "Förderquelle",
 						"group": "Gruppe",
 						"institution": "Kulturort",
+						"questionnaire": "Fragebogen",
 						"role": "Rolle",
 						"role_field_permission": "Rollenfeld-Berechtigung",
 						"role_table_permission": "Rollentabellen-Berechtigung",
@@ -391,6 +463,21 @@
 			"more": "+{{count}} weitere"
 		},
 		"cancel": "Abbrechen",
+		"captcha": {
+			"error": "Fehler – bitte erneut versuchen",
+			"errorAriaLabel": "Ein Fehler ist aufgetreten, bitte erneut versuchen",
+			"failed": "Die Sicherheitsprüfung ist fehlgeschlagen oder abgelaufen. Bitte bestätigen Sie erneut, dass Sie kein Roboter sind, und senden Sie noch einmal ab.",
+			"hint": "Bitte bestätigen Sie vor dem Absenden, dass Sie kein Roboter sind.",
+			"initial": "Ich bin kein Roboter",
+			"required": "Bitte bestätigen Sie, dass Sie kein Roboter sind",
+			"solved": "Geprüft",
+			"troubleshooting": "Hilfe",
+			"verifiedAriaLabel": "Geprüft",
+			"verifyAriaLabel": "Klicken, um zu bestätigen, dass Sie kein Roboter sind",
+			"verifying": "Wird geprüft …",
+			"verifyingAriaLabel": "Wird geprüft, bitte warten",
+			"wasmDisabled": "Aktivieren Sie WebAssembly für eine schnellere Prüfung"
+		},
 		"categoryFormModal": {
 			"status": {
 				"active": "Aktiv",
@@ -477,8 +564,10 @@
 			"validation": {
 				"invalidEmail": "Ungültige E-Mail-Adresse",
 				"invalidNumber": "Ungültige Zahl",
+				"invalidPartialDate": "Bitte als TT.MM.JJJJ, MM.JJJJ oder JJJJ angeben",
 				"invalidPhone": "Ungültige Telefonnummer",
 				"invalidUrl": "Ungültige URL",
+				"numberRange": "Bitte eine Zahl zwischen {{min}} und {{max}} angeben",
 				"required": "Erforderlich"
 			}
 		},
@@ -500,6 +589,14 @@
 			"claimSelectSubtitle": "Beantragen Sie die Verwaltungs-Rechte für Ihre Kulturorte",
 			"claimSelectTitle": "Kulturort verwalten",
 			"culturalArea": "Kulturareal",
+			"cultureIndexDimensions": {
+				"financial": "Finanz- und Betriebsdimension",
+				"global": "Globale Einschätzungen",
+				"location": "Standort- und Vertragsdimension",
+				"property": "Immobilien- und Gebäudedimension",
+				"socialSpatial": "Sozialräumliche und nachfragebezogene Dimension",
+				"visibility": "Sichtbarkeits- und Öffentlichkeitsdimension"
+			},
 			"details": "Kulturort Details",
 			"district": "Bezirk",
 			"editSelectEmpty": "Keine Kulturorte gefunden.",
@@ -649,8 +746,12 @@
 			"sortBy": "Sortieren nach",
 			"subcategoryHint": "Wählen Sie zuerst eine Kategorie aus."
 		},
+		"next": "Weiter",
 		"no": "Nein",
 		"privateFieldDescription": "Diese Information wird ausschließlich für befugte Nutzer*innen im geschützten Bereich des Kulturkatasters zugänglich und nicht öffentlich einsehbar sein.",
+		"questionnaire": {
+			"title": "Umfrage zum Gefährdungsindex"
+		},
 		"save": "Speichern",
 		"search": {
 			"description": "Ganz einfach die Berliner Kulturlandschaft entdecken: Geben Sie einen Kulturortnamen, eine Adresse, einen Bezirk oder Ortsteil in die Suchfunktion ein und wählen Sie das Ergebnis aus den angezeigten Vorschlägen aus. Ihre Auswahl wird direkt auf der Karte angezeigt.",
@@ -1082,7 +1183,8 @@
 			"loading": "Kulturorte werden geladen …",
 			"selectedFilters": "Die Auswahl setzt sich zusammen aus folgenden Filtern:",
 			"subtitle": "{{count}} Kulturorte zum Herunterladen",
-			"title": "Meine Daten als Liste herunterladen"
+			"title": "Meine Daten als Liste herunterladen",
+			"xlsWarning": "Das XLS-Format kürzt Texte auf 255 Zeichen, z. B. lange Notizen oder Tag-Listen. Für vollständige Daten und für den Import wählen Sie XLSX oder CSV."
 		},
 		"filter": {
 			"categories": {
@@ -1090,6 +1192,19 @@
 				"setAllFilters": "Alle Filter",
 				"title": "Kategorien"
 			},
+			"cultureIndex": {
+				"ranges": {
+					"0-20": "akut gefährdet",
+					"21-40": "zunehmend gefährdet",
+					"41-60": "bedingt gesichert",
+					"61-80": "überwiegend gesichert",
+					"81-100": "langfristig gesichert"
+				},
+				"resetFilters": "Filter zurücksetzen",
+				"setAllFilters": "Alle Filter",
+				"title": "Kulturort-Index"
+			},
+			"cultureIndexTagsSwitchAriaLabel": "{{translatedName}} ein- oder ausschalten",
 			"displayedInstitutions": "Angezeigte Kulturorte in Berlin",
 			"districts": {
 				"resetFilters": "Filter zurücksetzen",
@@ -1219,6 +1334,55 @@
 			},
 			"emptyMessage": "Keine Gruppen gefunden.",
 			"searchPlaceholder": "Gruppen durchsuchen..."
+		},
+		"importModal": {
+			"check": "Prüfen",
+			"checking": "Prüfung läuft …",
+			"description": "Laden Sie eine zuvor aus dem Kulturkataster exportierte Datei (CSV oder XLSX) hoch. Orte mit ID werden aktualisiert, Zeilen ohne ID werden als neue Orte angelegt. Leere Zellen überschreiben bestehende Werte, nur leere Breiten- und Längengrade behalten die gespeicherten Koordinaten.",
+			"errors": {
+				"emptyFile": "Die Datei enthält keine Datenzeilen.",
+				"fileTooLarge": "Die Datei ist zu groß (maximal 10 MB).",
+				"forbidden": "Sie haben keine Berechtigung für den Import.",
+				"invalidFile": "Bitte wählen Sie eine gültige CSV- oder XLSX-Datei aus.",
+				"legacyExcelFile": "XLS-Dateien kürzen Texte auf 255 Zeichen und können deshalb nicht importiert werden. Bitte exportieren Sie die Liste als XLSX oder CSV.",
+				"missingColumns": "In der Datei fehlen Pflichtspalten:",
+				"unauthorized": "Bitte melden Sie sich an, um Daten zu importieren.",
+				"unexpected": "Der Import ist fehlgeschlagen. Bitte versuchen Sie es erneut.",
+				"unknownColumns": "Die Datei enthält unbekannte Spalten. Bitte verwenden Sie eine Datei aus dem Export:",
+				"validationFailed": "Der Import wurde nicht durchgeführt: {{count}} Fehler gefunden. Es wurden keine Daten geändert.",
+				"writeFailed": "Der Import wurde abgebrochen. Bis dahin wurden {{updated}} Orte aktualisiert und {{created}} Orte neu angelegt."
+			},
+			"fileLabel": "Datei auswählen",
+			"importing": "Import läuft …",
+			"issueCodes": {
+				"columnCountMismatch": "Zeile hat die falsche Anzahl an Spalten",
+				"duplicateId": "ID kommt mehrfach vor",
+				"emptyRequired": "Pflichtfeld ist leer",
+				"invalidDate": "kein gültiges Datum (TT.MM.JJJJ)",
+				"invalidInteger": "keine gültige ganze Zahl",
+				"invalidNumber": "keine gültige Zahl",
+				"invalidOption": "unbekannter Auswahlwert",
+				"invalidValue": "ungültiger Wert",
+				"unknownCategory": "unbekannte Kategorie",
+				"unknownGroup": "unbekannte Gruppe",
+				"unknownId": "kein Ort mit dieser ID vorhanden",
+				"unknownTag": "unbekanntes Schlagwort"
+			},
+			"issueGroup_one": "Spalte „{{column}}“: {{message}} (Zeile {{rows}})",
+			"issueGroup_other": "Spalte „{{column}}“: {{message}} (Zeilen {{rows}})",
+			"issueValue": "{{message}} „{{value}}“",
+			"moreIssues": "… und {{count}} weitere Fehler.",
+			"moreRows": "{{rows}} und {{count}} weitere",
+			"preview": {
+				"summary": "Beim Import werden {{updated}} Orte aktualisiert und {{created}} Orte neu angelegt, {{unchanged}} bleiben unverändert. Es wurde noch nichts gespeichert.",
+				"title": "Prüfung erfolgreich"
+			},
+			"submit": "Importieren",
+			"success": {
+				"summary": "{{updated}} Orte aktualisiert, {{created}} Orte neu angelegt, {{unchanged}} unverändert.",
+				"title": "Import abgeschlossen"
+			},
+			"title": "Kulturorte importieren"
 		},
 		"imprintModal": {
 			"chairman": {
@@ -1437,7 +1601,7 @@
 				"next": "Weiter",
 				"review": "Prüfen",
 				"submit": "Einreichen",
-				"submitUpdate": "Änderung einreichen"
+				"submitUpdate": "Änderungen abschicken"
 			},
 			"dialog": {
 				"create": {
@@ -1829,6 +1993,12 @@
 				},
 				"status": {
 					"title": "Status"
+				},
+				"tags": {
+					"create": "„{{name}}“ als neuen Tag hinzufügen",
+					"emptyText": "Keine Tags gefunden.",
+					"newSuffix": "neu",
+					"searchPlaceholder": "Tags suchen..."
 				}
 			},
 			"review": {
@@ -1865,6 +2035,7 @@
 				"errorTitle": "Überprüfung fehlgeschlagen",
 				"errorUnknown": "Unbekannter Fehler.",
 				"grantSubmitterAccess": "Der einreichenden Person nach Genehmigung Zugriff auf diesen Kulturort geben.",
+				"linkedAnswers": "{{count}} Fragebogen-Antworten sind mit dieser Einreichung verknüpft.",
 				"linkedCategorySubmissions": "Neuer Kategorie-Vorschlag",
 				"loadingLabel": "Einreichung wird geladen...",
 				"loadingTitle": "Einreichung wird geladen",
@@ -1877,6 +2048,8 @@
 				"previewRejectionEmail": "Ablehnungs-E-Mail anzeigen",
 				"previousNotesLabel": "Bisherige Notizen",
 				"rejectionEmailTemplateLabel": "E-Mail bei Ablehnung",
+				"relinkAnswers": "Verknüpfung ändern",
+				"relinkAnswersSearchLabel": "Anderen Kulturort auswählen",
 				"requestedBy": "Eingereicht von",
 				"reviewPanelTitle": "Einreichung prüfen",
 				"statusLabel": "Status: {{status}}",
@@ -1907,7 +2080,10 @@
 			"actions": {
 				"addInstitution": "Kulturort hinzufügen",
 				"claimInstitution": "Meine Orte anfragen",
-				"downloadList": "Liste herunterladen"
+				"downloadList": "Liste herunterladen",
+				"downloadQuestionnaire": "Fragebogen Antworten herunterladen",
+				"downloadQuestionnaireAll": "Alle Fragebögen herunterladen",
+				"importList": "Liste importieren"
 			},
 			"empty": {
 				"description": "Sie können direkt neue Einträge starten.",
@@ -1915,6 +2091,15 @@
 			},
 			"filter": {
 				"title": "Kulturorte filtern"
+			},
+			"questionnaireAnswersDownload": {
+				"error": {
+					"forbidden": "Sie sind nicht berechtigt, diesen Fragebogen herunterzuladen.",
+					"noAnswers": "Für diesen Kulturort liegen keine Antworten vor.",
+					"noOpenQuestionnaireAnswers": "Kein aktiver Fragebogen vorhanden.",
+					"unexpected": "Fragebogen konnte nicht heruntergeladen werden."
+				},
+				"title": "Fragebogen Antworten herunterladen"
 			},
 			"search": {
 				"title": "Kulturorte suchen"
@@ -1960,10 +2145,61 @@
 			"title": "Datenschutz"
 		},
 		"questionnaireWizard": {
+			"block": {
+				"stepLabel": "Themenblock {{current}}/{{total}}"
+			},
 			"consent": {
+				"accordion": [
+					{
+						"answer": "Angesprochen sind Berliner Kultureinrichtungen – darunter verstehen wir dauerhaft oder wiederkehrend genutzte Orte und Organisationen kultureller Produktion, Präsentation, Vermittlung oder Begegnung. Ein guter erster Anhaltspunkt ist das Kulturkataster selbst: Wenn Ihre Einrichtung dort verzeichnet ist, sind Sie gemeint. Aber auch, wenn Sie sich dort (noch) nicht finden und sich nach dieser Definition als Kultureinrichtung verstehen, ist Ihre Teilnahme ausdrücklich erwünscht.\\\n\\\nAusfüllen sollte den Fragebogen idealerweise eine Person, die Ihre Einrichtung gut überblickt – insbesondere die Raum-, Organisations- und Finanzsituation. Bitte antworten Sie aus Sicht der Einrichtung insgesamt.\n",
+						"question": "Wer sollte den Fragebogen ausfüllen?"
+					},
+					{
+						"answer": "Aus allen Antworten entsteht der Kulturort-Index – für jeden Kulturort ein Wert auf einer Skala von 0 bis 100, der zeigt, wie sicher er an seinem Standort steht. Nach der wissenschaftlichen Auswertung wird er hier veröffentlicht und im Kulturkataster sichtbar.\\\n\\\nSo entsteht zum ersten Mal ein Gesamtbild der Standortsicherheit der Berliner Kulturlandschaft. Es soll Gefährdungen früh erkennbar machen, eine faire Verteilung von Kulturangeboten über die ganze Stadt unterstützen und der Verwaltung wie der Politik eine belastbare Grundlage geben – für den Schutz bestehender Orte, die Entwicklung neuer Räume und Entscheidungen, die bisher oft auf Vermutungen beruhen. Kurz: Ihre Teilnahme macht Berlins Kulturlandschaft sichtbarer und handlungsfähiger.",
+						"question": "Was wird mit den Ergebnissen gemacht?"
+					},
+					{
+						"answer": "Ihre Angaben werden vertraulich behandelt und ausschließlich wissenschaftlich ausgewertet. Veröffentlicht wird immer nur der zusammengefasste Wert je Kulturort – Ihre einzelnen Antworten werden nicht öffentlich gemacht; Rückschlüsse auf einzelne Personen sind ausgeschlossen.\\\n\\\nWir speichern Ihre Angaben, um sie mit späteren Befragungen vergleichen zu können. Einsehbar sind sie ausschließlich für das Projektteam der Kulturraum Berlin gGmbH und für die wissenschaftliche Auswertung am Geographischen Institut der Universität Bonn. Sie können jederzeit beantragen, dass wir Ihre Angaben und den daraus errechneten Wert für Ihre Einrichtung löschen.",
+						"question": "Was passiert mit meinen Angaben?"
+					}
+				],
+				"body": "Diese Befragung entwickelt den Kulturort-Index. Zum ersten Mal entsteht damit ein Gesamtbild der Standortsicherheit der Berliner Kulturlandschaft – möglich nur mit den Angaben, die Sie über Ihren Kulturort machen. Selbstverständlich behandeln wir Ihre Angaben vertraulich und werten diese ausschließlich wissenschaftlich aus.\n\nHinter dem Kulturort-Index steht ein wissenschaftliches Vorhaben der Kulturraum Berlin gGmbH in Kooperation mit dem Geographischen Institut der Universität Bonn. Es setzt einen Auftrag des Landes Berlin um und wird von der Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt gefördert und fachlich begleitet.\n\nAm Ende steht ein Wert je Kulturort – der Kulturort-Index. Nach der wissenschaftlichen Auswertung wird dieser hier auf der Webseite veröffentlicht. Sichtbar wird immer nur der zusammengefasste Wert auf einer Skala von 0 bis 100. Ihre individuelle Antwort auf eine Frage veröffentlichen wir nicht. Die Beantwortung des Fragebogens dauert etwa 15 bis 20 Minuten.\n\n<0>Vielen Dank für Ihre Teilnahme an der Befragung!</0>",
+				"checkboxHeading": "Einverständniserklärung",
+				"checkboxLabel": "Ich habe die Informationen zur Befragung gelesen und erkläre mich mit der freiwilligen Teilnahme sowie der Verarbeitung meiner Angaben zu wissenschaftlichen Zwecken im Rahmen dieses Projekts einverstanden.",
+				"cta": "An der Befragung teilnehmen",
+				"paragraph1": "Die Befragung ist Teil eines wissenschaftlichen Projekts zur Entwicklung eines  Gefährdungsscores für Berliner Kultureinrichtungen. Ziel des Projekts ist es, unterschiedliche strukturelle, räumliche, finanzielle und organisationale Rahmenbedingungen systematisch zu erfassen, um Risiken, Belastungen und Unterstützungsbedarfe von Kultureinrichtungen in Berlin besser sichtbar machen zu können. ",
 				"paragraph2": "Unter <0>Kultureinrichtungen</0> verstehen wir im Rahmen dieser Befragung <1>„dauerhaft oder wiederkehrend genutzte Orte und Organisationen kultureller Produktion, Präsentation, Vermittlung oder Begegnung“</1>, beispielsweise Theater, Musikspielstätten, Ateliers, Galerien, soziokulturelle Zentren, Literaturorte, Tanz- und Performanceorte oder vergleichbare Einrichtungen.",
 				"paragraph3": "Die Beantwortung des Fragebogens dauert voraussichtlich <0>etwa 15 bis 20 Minuten.</0>",
-				"paragraph6": "<0>Die Teilnahme an der Befragung ist freiwillig.</0> Mit dem Setzen des Häkchens bestätigen Sie, dass Sie die Informationen zur Befragung zur Kenntnis genommen haben und mit der Verarbeitung Ihrer Angaben zu wissenschaftlichen Zwecken im Rahmen dieses Projekts einverstanden sind."
+				"paragraph4": "Ihre Angaben werden vertraulich behandelt und ausschließlich für wissenschaftliche Zwecke im Rahmen des Projekts ausgewertet. Eine Veröffentlichung erfolgt nur in zusammengefasster Form, sodass keine Rückschlüsse auf einzelne Personen möglich sind. Sofern im weiteren Projektverlauf Ergebnisse auf Ebene einzelner Einrichtungen betrachtet werden, erfolgt dies ausschließlich im dafür vorgesehenen Projektrahmen und unter Beachtung der datenschutzrechtlichen Vorgaben.",
+				"paragraph5": "Der Fragebogen enthält Fragen zur Raum- und Standortsituation, zur finanziellen Lage, zu organisatorischen Rahmenbedingungen sowie zur öffentlichen Sichtbarkeit der Einrichtung. Bitte beantworten Sie den Fragebogen möglichst aus Sicht der Einrichtung insgesamt. Idealerweise wird er von einer Person ausgefüllt, die einen guten Überblick über die Raum-, Organisations- und Finanzsituation der Einrichtung hat.",
+				"paragraph6": "<0>Die Teilnahme an der Befragung ist freiwillig.</0> Mit dem Setzen des Häkchens bestätigen Sie, dass Sie die Informationen zur Befragung zur Kenntnis genommen haben und mit der Verarbeitung Ihrer Angaben zu wissenschaftlichen Zwecken im Rahmen dieses Projekts einverstanden sind.",
+				"thanks": "Mit Ihrer Stimme helfen Sie uns dabei, Berlins Kulturlandschaft handlungsfähig zu machen.",
+				"thankYouClosing": "Vielen Dank für Ihre Unterstützung.",
+				"title": "Befragung zum Berliner Kulturort-Index"
+			},
+			"institutionLink": {
+				"alreadySubmitted": "Für diesen Kulturort wurde diese Befragung bereits ausgefüllt.",
+				"alreadySubmittedTitle": "Bereits ausgefüllt",
+				"description": "Suchen Sie zunächst Ihren Kulturort im Kulturkataster. Ist er bereits verzeichnet, können Sie ihn auswählen und direkt mit der Befragung starten. Ist er noch nicht dabei, können Sie ihn mit wenigen Angaben zur Aufnahme einreichen und im Anschluss an der Befragung teilnehmen.",
+				"notRegistered": "Bitte tragen Sie den Kulturort kurz ein, damit wir Ihre Antworten zuordnen können.",
+				"question": "Ist Ihre Kultureinrichtung bereits im Kulturkataster aufgeführt?",
+				"resultsLabel": "Ausgewählter Kulturort",
+				"searchEmpty": "Keine Kulturorte gefunden.",
+				"searchLabel": "Name der Kultureinrichtung",
+				"searchPlaceholder": "Adresse oder Ort eingeben",
+				"title": "Allgemeine Angaben"
+			},
+			"review": {
+				"registerCta": "Jetzt registrieren",
+				"registerHint": "Registrieren Sie sich jetzt, um Ihre Angaben zu speichern.",
+				"submit": "Absenden",
+				"submitError": "Beim Absenden ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
+				"thanksDescription": "Bei Fragen bezüglich des Projekts oder dieser Erhebung wenden Sie sich gerne an: info@kulturkataster.berlin",
+				"thanksTitle": "Vielen Dank für Ihre Teilnahme!"
+			},
+			"unavailable": {
+				"description": "Bitte schauen Sie später erneut vorbei oder folgen Sie einem gültigen Befragungslink.",
+				"title": "Aktuell ist keine Befragung verfügbar"
 			}
 		},
 		"roleFormModal": {
@@ -2063,6 +2299,7 @@
 				},
 				"tables": {
 					"address": "Adressen",
+					"answer": "Fragebogen Antworten",
 					"category": "Kategorien",
 					"entity_audit": "Aktivität",
 					"group": "Gruppen",
@@ -2905,6 +3142,7 @@
 			},
 			"infoButton": "Infos & Service",
 			"newsletter": "Zum Newsletter anmelden",
+			"questionnaire": "Zur Umfrage",
 			"subtitle": "Ein Projekt der Kulturraum Berlin gGmbH",
 			"title": "Das Berliner Kulturkataster: Die Kultur der Stadt auf einen Blick"
 		}
@@ -3115,7 +3353,7 @@
 				"placeholder": "z. B. 10"
 			},
 			"categories": {
-				"description": "Passende Kategorien auswählen.",
+				"description": "Welche der folgenden Kategorien beschreibt die Einrichtung am besten?",
 				"errors": {
 					"required": "Bitte Kategorien angeben."
 				},
@@ -3209,6 +3447,49 @@
 				},
 				"label": "Kulturareal",
 				"placeholder": "Bitte auswählen"
+			},
+			"culture_index": {
+				"description": "Bewertet, wie langfristig der Kulturort an seinem Standort gesichert ist, auf einer Skala von 0 (akut gefährdet) bis 100 (langfristig gesichert).",
+				"label": "Kulturort-Index",
+				"placeholder": "z. B. 75"
+			},
+			"culture_index_financial": {
+				"description": "",
+				"label": "Finanz- und Betriebsdimension",
+				"placeholder": "z. B. 75"
+			},
+			"culture_index_global": {
+				"description": "",
+				"label": "Globale Einschätzungen",
+				"placeholder": "Bitte eintragen"
+			},
+			"culture_index_location": {
+				"description": "",
+				"label": "Standort und Vertragsdimension",
+				"placeholder": "z. B. 75"
+			},
+			"culture_index_property": {
+				"description": "",
+				"label": "Immobilien- und Gebäudedimension",
+				"placeholder": "z. B. 75"
+			},
+			"culture_index_social_spatial": {
+				"description": "",
+				"label": "Sozialräumliche und nachfragebezogene Dimension",
+				"placeholder": "z. B. 75"
+			},
+			"culture_index_visibility": {
+				"description": "",
+				"label": "Sichtbarkeits- und Öffentlichkeitsdimension",
+				"placeholder": "z. B. 75"
+			},
+			"datenverwendung": {
+				"description": "",
+				"errors": {
+					"required": "Bitte geben Sie den Verwendungszweck an."
+				},
+				"label": "Verwendungszweck",
+				"placeholder": "Bitte eintragen"
 			},
 			"description": {
 				"description": "",
@@ -3333,6 +3614,14 @@
 				"label": "Interne Notizen",
 				"placeholder": "Bitte eintragen"
 			},
+			"lastName": {
+				"description": "",
+				"errors": {
+					"required": "Nachname ist erforderlich."
+				},
+				"label": "Nachname",
+				"placeholder": "Bitte eintragen"
+			},
 			"lat": {
 				"description": "",
 				"errors": {
@@ -3357,12 +3646,20 @@
 				"label": "Längengrad",
 				"placeholder": "Bitte eintragen"
 			},
+			"nachname": {
+				"description": "",
+				"errors": {
+					"required": "Nachname ist erforderlich."
+				},
+				"label": "Nachname",
+				"placeholder": "Bitte eintragen"
+			},
 			"name": {
 				"description": "",
 				"errors": {
 					"required": "Bitte Kultureinrichtung angeben."
 				},
-				"label": "Kultureinrichtung",
+				"label": "Name der Kultureinrichtung",
 				"placeholder": "Bitte eintragen"
 			},
 			"neighbourhood": {
@@ -3650,6 +3947,14 @@
 					"required": "Bitte interne Notizen zum Nutzungsstatus angeben."
 				},
 				"label": "Interne Notizen (Nutzungsstatus)",
+				"placeholder": "Bitte eintragen"
+			},
+			"vorname": {
+				"description": "",
+				"errors": {
+					"required": "Vorname ist erforderlich."
+				},
+				"label": "Vorname",
 				"placeholder": "Bitte eintragen"
 			},
 			"website": {

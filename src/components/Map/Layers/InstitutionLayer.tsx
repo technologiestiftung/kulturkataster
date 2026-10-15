@@ -4,6 +4,11 @@
 "use client";
 
 import { useMapStore } from "@/lib/store/mapStore";
+import { useInstitutionStore } from "@/lib/store/institutionStore";
+import {
+	getCultureIndexRangeColor,
+	getCultureIndexRangeForValue,
+} from "@/lib/constants/cultureIndexRanges";
 import {
 	getTailwindColor,
 	remToPx,
@@ -92,6 +97,9 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 	const fixedProximityThreshold = remToPx(3.5);
 	const map = useMapStore((state: MapStoreState) => state.map);
 	const config = useMapStore((state) => state.config);
+	const cultureIndexFilterActive = useInstitutionStore(
+		(state) => state.filters.culture_index_ranges.length > 0,
+	);
 	const pathname = usePathname();
 	const selectedInstitutionId = useMemo(() => {
 		const normalizedPath = pathname?.replace(/\/$/, "");
@@ -222,6 +230,7 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 			isPermanentlyClosed = false,
 			hasOverlapping = false,
 			downIsContrastMode = false,
+			cultureIndexRangeColor: string | null = null,
 		) => {
 			const state = isSelected
 				? "selected"
@@ -230,7 +239,13 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 					: "default";
 
 			const mode = downIsContrastMode ? "contrast" : "normal";
-			const fillColor = getTailwindColor(fillColors[state][mode]);
+			// The selected highlight always wins; a culture-index range color only
+			// applies to non-selected pins while a range filter is active.
+			const fillColorToken =
+				!isSelected && cultureIndexRangeColor
+					? cultureIndexRangeColor
+					: fillColors[state][mode];
+			const fillColor = getTailwindColor(fillColorToken);
 
 			const strokeColor = getTailwindColor(
 				strokeColors[isPermanentlyClosed ? "closed" : "default"],
@@ -305,7 +320,13 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 				singleFeature.get("utilization_status") === "permanently_closed";
 			const { categoryKey, iconHref } = getCategoryVisual(singleFeature);
 			const iconVersion = iconResolverRef.current.getIconVersion(iconHref);
-			const styleCacheKey = `${categoryKey}_${iconHref ?? "fallback"}_${iconVersion}_${isSelected}_${hasOverlapping}_${isPermanentlyClosed}_${isContrastMode}_${isLargeTextMode}`;
+			const cultureIndexRange = cultureIndexFilterActive
+				? getCultureIndexRangeForValue(singleFeature.get("culture_index"))
+				: null;
+			const cultureIndexRangeColor = cultureIndexRange
+				? getCultureIndexRangeColor(cultureIndexRange)
+				: null;
+			const styleCacheKey = `${categoryKey}_${iconHref ?? "fallback"}_${iconVersion}_${isSelected}_${hasOverlapping}_${isPermanentlyClosed}_${isContrastMode}_${isLargeTextMode}_${cultureIndexRangeColor ?? "none"}`;
 
 			if (!styleCache[styleCacheKey])
 				styleCache[styleCacheKey] = createSingleFeatureStyle(
@@ -315,12 +336,14 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 					isPermanentlyClosed,
 					hasOverlapping,
 					isContrastMode,
+					cultureIndexRangeColor,
 				);
 
 			return styleCache[styleCacheKey];
 		},
 		[
 			createClusterStyle,
+			cultureIndexFilterActive,
 			getCategoryVisual,
 			createSingleFeatureStyle,
 			isContrastMode,

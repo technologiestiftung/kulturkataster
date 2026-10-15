@@ -1,9 +1,9 @@
 import { ImprintModal } from "@/components/Modals/Pages/ImprintModal";
-import type { Metadata } from "next";
+import { createPageMetadata } from "@/app/[locale]/_lib/pageMetadata";
 
-export const metadata: Metadata = {
-	title: "Impressum – Kulturkataster",
-};
+export const generateMetadata = createPageMetadata(
+	"common.a11y.shell.pageTitle.imprint",
+);
 
 export default function ImprintModalPage() {
 	return <ImprintModal routePath="/imprint" />;

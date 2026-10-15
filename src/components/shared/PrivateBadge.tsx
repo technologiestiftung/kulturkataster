@@ -20,9 +20,8 @@ export function PrivateBadge({ hoverDescription }: PrivateBadgeProps) {
 		<span
 			className="body3 italic inline-block truncate"
 			title={resolvedHoverDescription}
-			aria-label={resolvedHoverDescription}
 		>
-			<LockIcon className="inline w-3 h-3 mr-1" />
+			<LockIcon aria-hidden="true" className="inline w-3 h-3 mr-1" />
 			{t("common.sensitiveInformation", {
 				defaultValue: "Sensitive information",
 			})}

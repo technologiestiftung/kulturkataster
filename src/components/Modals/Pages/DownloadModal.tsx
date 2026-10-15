@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import ArrowNarrowRight from "@/icons/arrow-narrow-right.svg";
+import Warning from "@/icons/warning.svg";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { useAccountStore } from "@/lib/store/accountStore";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
@@ -58,7 +59,7 @@ export function DownloadModal({
 	subtitle,
 	data,
 	filename = "kulturorte",
-	format = "xls",
+	format = "xlsx",
 	translateFn,
 	confirmLabel,
 	cancelLabel,
@@ -278,7 +279,7 @@ export function DownloadModal({
 						})}
 					</p>
 					<div className="flex flex-wrap gap-4">
-						{(["xls", "xlsx", "csv"] as const).map((exportFormat) => (
+						{(["xlsx", "csv", "xls"] as const).map((exportFormat) => (
 							<Button
 								key={exportFormat}
 								type="button"
@@ -295,6 +296,18 @@ export function DownloadModal({
 							</Button>
 						))}
 					</div>
+					{selectedFormat === "xls" && (
+						<p role="status" className="body2 flex items-start gap-2">
+							<Warning
+								aria-hidden="true"
+								className="mt-0.5 size-5 shrink-0 text-destructive-secondary"
+							/>
+							{t("content.downloadModal.xlsWarning", {
+								defaultValue:
+									"Das XLS-Format kürzt Texte auf 255 Zeichen, z. B. lange Notizen oder Tag-Listen. Für vollständige Daten und für den Import wählen Sie XLSX oder CSV.",
+							})}
+						</p>
+					)}
 				</div>
 				<div className="flex flex-col gap-3">
 					<div className="space-y-6 flex flex-col my-4">

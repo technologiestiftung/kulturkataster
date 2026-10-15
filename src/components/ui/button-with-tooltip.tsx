@@ -31,11 +31,17 @@ export const ButtonWithTooltip = React.forwardRef<
 		const tooltipProps =
 			typeof tooltip === "string" ? { children: tooltip } : tooltip;
 
+		// A tooltip only describes its trigger, so icon-only buttons also need
+		// the tooltip text as their accessible name.
+		const ariaLabel =
+			buttonProps["aria-label"] ??
+			(typeof tooltip === "string" ? tooltip : undefined);
+
 		return (
 			<TooltipProvider delayDuration={delayDuration}>
 				<Tooltip>
 					<TooltipTrigger asChild>
-						<Button ref={ref} {...buttonProps}>
+						<Button ref={ref} {...buttonProps} aria-label={ariaLabel}>
 							{children}
 						</Button>
 					</TooltipTrigger>

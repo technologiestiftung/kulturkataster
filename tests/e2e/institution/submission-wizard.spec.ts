@@ -197,15 +197,15 @@ test.describe("institution submission wizard", () => {
 	}) => {
 		await expect(page.getByText(/Schritt 1 \/ 5/)).toBeVisible();
 
-		await page.getByRole("button", { name: "Go to step 2" }).click();
+		await page.getByRole("button", { name: /^Schritt 2 von / }).click();
 		await expect(page.getByText(/Schritt 1 \/ 5/)).toBeVisible();
 
 		// Even with valid current step, jumping multiple steps ahead is blocked.
 		await fillById(page, "name", "E2E Validation Institution");
-		await page.getByRole("button", { name: "Go to step 5" }).click();
+		await page.getByRole("button", { name: /^Schritt 5 von / }).click();
 		await expect(page.getByText(/Schritt 1 \/ 5/)).toBeVisible();
 
-		await page.getByRole("button", { name: "Go to step 2" }).click();
+		await page.getByRole("button", { name: /^Schritt 2 von / }).click();
 		await expect(page.getByText(/Schritt 2 \/ 5/)).toBeVisible();
 	});
 
@@ -273,7 +273,15 @@ test.describe("institution submission wizard", () => {
 
 		const optionRows = page
 			.locator('[role="button"]')
-			.filter({ has: page.locator('[data-slot="checkbox"]') });
+			// Panel rows render a hidden native checkbox instead of the checkbox component
+			.filter({
+				has: page.locator('[data-slot="checkbox"], input[type="checkbox"]'),
+			});
+		// Institutions load into the store asynchronously
+		await optionRows
+			.first()
+			.waitFor({ state: "visible", timeout: 15_000 })
+			.catch(() => {});
 		const optionCount = await optionRows.count();
 		test.skip(
 			optionCount < 1,
@@ -291,14 +299,21 @@ test.describe("institution submission wizard", () => {
 		const submitButton = await getWizardSubmitButton(page);
 		await expect(submitButton).toBeVisible({ timeout: 15_000 });
 
-		const editButtons = page.getByRole("button", { name: "Edit" });
+		const editButtons = page.getByRole("button", {
+			name: "Bearbeiten",
+			exact: true,
+		});
 		if ((await editButtons.count()) > 0) {
 			await editButtons.first().click();
-			const nameInput = page.getByLabel("Name");
+			const nameInput = page.getByRole("textbox", {
+				name: /^(Name|(Name der )?Kultureinrichtung)\*?$/,
+			});
 			await expect(nameInput).toBeVisible({ timeout: 15_000 });
 			const updatedName = `${originalName} (E2E Update)`;
 			await nameInput.fill(updatedName);
-			await page.getByRole("button", { name: "Änderungen speichern" }).click();
+			await page
+				.getByRole("button", { name: /^(Änderungen speichern|Speichern)$/ })
+				.click();
 			await expect(
 				page.getByText(originalName, { exact: false }).first(),
 			).toBeVisible();
@@ -486,8 +501,8 @@ test.describe("institution submission wizard", () => {
 				"Landesmittel",
 			);
 		}
-		await fillRequiredById(page, "established_since", "2008-01-01");
-		await fillRequiredById(page, "established_until", "2035-12-31");
+		await fillRequiredById(page, "established_since", "2008");
+		await fillRequiredById(page, "established_until", "2035");
 		await fillRequiredById(page, "closing_reason", "Kein Schließungsgrund");
 		ownerTypeLabel = "Privat";
 		await selectOptionById(page, "owner_type", ownerTypeLabel);

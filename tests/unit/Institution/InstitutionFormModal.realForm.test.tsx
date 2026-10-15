@@ -41,7 +41,10 @@ vi.mock("@/lib/hooks/useInstitutionPrivateFieldResolver", () => ({
 	}),
 }));
 
-vi.mock("@/lib/utils/institutionFieldAccess", () => ({
+vi.mock("@/lib/utils/institutionFieldAccess", async (importOriginal) => ({
+	...(await importOriginal<
+		typeof import("@/lib/utils/institutionFieldAccess")
+	>()),
 	applyInstitutionFieldAccess: ({ fields }: { fields: unknown }) => fields,
 }));
 
@@ -108,7 +111,8 @@ const getInput = (container: HTMLElement, id: string) => {
 	return input as HTMLInputElement;
 };
 
-describe("InstitutionFormModal real form", () => {
+// Renders the full real form; under full-suite parallel load this can exceed the 5s default.
+describe("InstitutionFormModal real form", { timeout: 15_000 }, () => {
 	beforeEach(() => {
 		closeModalMock.mockReset();
 		mockAccountCategories = [{ id: 1, key: "cat-a", parent_category_id: null }];

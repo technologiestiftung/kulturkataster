@@ -28,6 +28,7 @@ import {
 import { getEligibleParentCategories } from "@/lib/utils/categoryUtils";
 import { showSuccessToast } from "@/lib/utils/feedbackToast";
 import { triggerAccountRefresh } from "@/components/Account/AccountAutoRefresh";
+import { getCategoryLabel } from "@/lib/i18n/fieldLabels";
 
 type CategoryFormModalProps = {
 	mode: "create" | "edit";
@@ -602,7 +603,7 @@ export function CategoryFormModal({
 			},
 			...eligibleParents.map((category) => ({
 				value: String(category.id),
-				label: tEnum(`enumMap.category.${category.key}`) || category.key,
+				label: getCategoryLabel(tEnum, category.key),
 			})),
 		];
 	}, [categories, resolvedCategory, tEnum, t]);

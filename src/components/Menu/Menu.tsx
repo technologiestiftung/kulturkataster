@@ -409,6 +409,13 @@ export function Menu({
 		}
 	}, [isMobileLayerTreeRoute]);
 
+	const getItemAriaLabel = (item: MenuItem) => {
+		const label = t("common." + item.label);
+		return item.id === "user" && isLoggedIn
+			? `${label} (${t("common.a11y.shell.loggedIn")})`
+			: label;
+	};
+
 	const handleItemClick = (item: MenuItem) => {
 		if (item.id === "language") {
 			const targetLocale = currentLocale === "de" ? "en" : "de";
@@ -507,12 +514,15 @@ export function Menu({
 																}}
 																onClick={() => handleItemClick(item)}
 																isActive={isActive}
-																aria-label={t("common." + item.label)}
+																aria-label={getItemAriaLabel(item)}
 																aria-current={isActive ? "page" : undefined}
 																className="relative"
 															>
 																{item.id === "user" && isLoggedIn && (
-																	<div className="absolute top-9.5 right-4 bg-brand-default rounded-full size-2.5 flex items-center justify-center" />
+																	<div
+																		aria-hidden="true"
+																		className="absolute top-9.5 right-4 bg-brand-default rounded-full size-2.5 flex items-center justify-center"
+																	/>
 																)}
 																<item.icon />
 															</SidebarMenuButton>
@@ -561,7 +571,7 @@ export function Menu({
 
 					{isSecondarySidebarMounted && (
 						<div
-							className={`hidden md:block pointer-events-none fixed left-[var(--sidebar-width-icon)] top-0 z-50 h-svh w-[calc(100vw-var(--sidebar-width-icon))] md:max-w-[var(--sidebar-width)] transition-all duration-200 ease-out ${
+							className={`hidden md:block pointer-events-none fixed left-[var(--sidebar-width-icon)] top-0 z-50 h-svh w-[calc(100vw-var(--sidebar-width-icon))] md:max-w-[var(--sidebar-width)] transition-all duration-200 ease-out motion-reduce:transition-none ${
 								isSecondarySidebarVisible
 									? "translate-x-0 opacity-100"
 									: "translate-x-2 opacity-0"
@@ -575,7 +585,10 @@ export function Menu({
 				</Sidebar>
 			</nav>
 
-			<div className="fixed bottom-0 left-0 right-0 z-51 bg-sidebar border-t md:hidden h-20 pointer-events-auto">
+			<nav
+				aria-label={t("common.menu.navigation")}
+				className="fixed bottom-0 left-0 right-0 z-51 bg-sidebar border-t md:hidden h-20 pointer-events-auto"
+			>
 				<SidebarMenu className="flex-row justify-around px-2 py-2">
 					{menuItems
 						.filter((item) => item.showInMobile)
@@ -592,11 +605,14 @@ export function Menu({
 										onClick={() => handleItemClick(item)}
 										isActive={isActive}
 										className="relative flex-col h-auto py-2 px-3 w-auto size-14"
-										aria-label={t("common." + item.label)}
+										aria-label={getItemAriaLabel(item)}
 										aria-current={isActive ? "page" : undefined}
 									>
 										{item.id === "user" && isLoggedIn && (
-											<div className="absolute bottom-2.5 right-2.5 bg-brand-default rounded-full size-2.5 flex items-center justify-center" />
+											<div
+												aria-hidden="true"
+												className="absolute bottom-2.5 right-2.5 bg-brand-default rounded-full size-2.5 flex items-center justify-center"
+											/>
 										)}
 										<item.icon className="size-6" />
 										<span className="text-xs font-medium hidden">
@@ -607,7 +623,7 @@ export function Menu({
 							);
 						})}
 				</SidebarMenu>
-			</div>
+			</nav>
 
 			<Sheet
 				open={isMobileInstitutionDetailRoute || isMobileLayerTreeRoute}

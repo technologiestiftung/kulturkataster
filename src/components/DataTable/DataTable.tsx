@@ -41,11 +41,14 @@ import ChevronDown from "@/icons/chevron-down.svg";
 import Edit from "@/icons/edit.svg";
 import Eye from "@/icons/eye.svg";
 import Download from "@/icons/download.svg";
+import DownloadQuestionnaireAnswers from "@/icons/download-questionnaire-answers.svg";
+import { Upload } from "lucide-react";
 import ArrowNarrowLeft from "@/icons/arrow-narrow-left.svg";
 import ArrowNarrowRight from "@/icons/arrow-narrow-right.svg";
 import { useWindowVirtualizer } from "@tanstack/react-virtual";
 import { compareItems, rankItem } from "@tanstack/match-sorter-utils";
 import { PrivateBadge } from "@/components/shared/PrivateBadge";
+import { useTranslation } from "react-i18next";
 
 const getNestedValue = (obj: Record<string, unknown>, path: string): unknown =>
 	path
@@ -57,6 +60,7 @@ const getNestedValue = (obj: Record<string, unknown>, path: string): unknown =>
 		);
 
 export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
+	const { t } = useTranslation();
 	const [isSearchOpen, setIsSearchOpen] = useState(false);
 	const [isFilterOpen, setIsFilterOpen] = useState(false);
 	const [sorting, setSorting] = useState<SortingState>([]);
@@ -183,9 +187,11 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 						type="button"
 						onClick={row.getToggleExpandedHandler()}
 						className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-neutral-20 bg-background hover:bg-neutral-5"
-						aria-label={row.getIsExpanded() ? "Collapse row" : "Expand row"}
+						aria-label={t("common.a11y.dataTable.toggleRow")}
+						aria-expanded={row.getIsExpanded()}
 					>
 						<ChevronDown
+							aria-hidden="true"
 							className={cn(
 								"size-4 text-neutral-80 transition-transform",
 								row.getIsExpanded() ? "rotate-180" : "rotate-0",
@@ -194,7 +200,7 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 					</button>
 				) : null,
 		};
-	}, [expandColumnId, hasExpandedRow]);
+	}, [expandColumnId, hasExpandedRow, t]);
 
 	const renderEmptyValue = () => <span className="text-foreground">—</span>;
 
@@ -478,18 +484,77 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 
 	const renderSortIndicator = (direction: false | "asc" | "desc") => {
 		if (direction === "asc") {
-			return <ChevronUp className="size-4 text-foreground" />;
+			return (
+				<ChevronUp aria-hidden="true" className="size-4 text-foreground" />
+			);
 		}
 		if (direction === "desc") {
-			return <ChevronDown className="size-4 text-foreground" />;
+			return (
+				<ChevronDown aria-hidden="true" className="size-4 text-foreground" />
+			);
 		}
-		return <ChevronUp className="size-4 text-foreground opacity-0" />;
+		return (
+			<ChevronUp
+				aria-hidden="true"
+				className="size-4 text-foreground opacity-0"
+			/>
+		);
+	};
+
+	const getSortStateLabel = (direction: false | "asc" | "desc") => {
+		if (direction === "asc") return t("common.a11y.dataTable.sortedAscending");
+		if (direction === "desc")
+			return t("common.a11y.dataTable.sortedDescending");
+		return t("common.a11y.dataTable.notSorted");
 	};
 
 	const getAriaSort = (direction: false | "asc" | "desc") => {
 		if (direction === "asc") return "ascending";
 		if (direction === "desc") return "descending";
 		return "none";
+	};
+
+	const renderActionsHeader = (interactive: boolean) => {
+		if (!interactive) {
+			return (
+				<span className="sr-only">{t("common.a11y.dataTable.actions")}</span>
+			);
+		}
+		return (
+			<div
+				className={cn(
+					"flex items-center justify-center gap-2",
+					!hasOverflow && "invisible",
+				)}
+			>
+				<button
+					type="button"
+					onClick={(event) => {
+						event.stopPropagation();
+						scrollByColumns("left");
+					}}
+					aria-label={t("common.a11y.dataTable.scrollLeft")}
+				>
+					<ArrowNarrowLeft
+						aria-hidden="true"
+						className="text-primary-dark size-6"
+					/>
+				</button>
+				<button
+					type="button"
+					onClick={(event) => {
+						event.stopPropagation();
+						scrollByColumns("right");
+					}}
+					aria-label={t("common.a11y.dataTable.scrollRight")}
+				>
+					<ArrowNarrowRight
+						aria-hidden="true"
+						className="text-primary-dark size-6"
+					/>
+				</button>
+			</div>
+		);
 	};
 
 	const renderHeaderRows = useCallback(
@@ -547,7 +612,6 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 								isPinnedLeft && "bg-neutral-20",
 								isPinnedRight && isFirstRightColumn && "border-l",
 								pinning.className,
-								canSort && "cursor-pointer select-none",
 							);
 							return (
 								<th
@@ -557,57 +621,39 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 									className={baseClassName}
 									style={pinning.style}
 									scope="col"
-									aria-sort={canSort ? getAriaSort(sorted) : undefined}
-									onClick={interactive && canSort ? toggleSorting : undefined}
-									onKeyDown={
-										interactive && canSort
-											? (event) => {
-													if (event.key === "Enter" || event.key === " ") {
-														event.preventDefault();
-														toggleSorting?.(event);
-													}
-												}
-											: undefined
+									aria-sort={
+										!interactive && canSort ? getAriaSort(sorted) : undefined
 									}
-									tabIndex={interactive && canSort ? 0 : undefined}
 								>
 									{isActions ? (
-										<div
-											className={cn(
-												"flex items-center justify-center gap-2",
-												hasOverflow
-													? "opacity-100"
-													: "opacity-0 pointer-events-none",
-											)}
-										>
-											<button
-												type="button"
-												onClick={(event) => {
-													event.stopPropagation();
-													scrollByColumns("left");
-												}}
-												aria-label="Scroll left"
-											>
-												<ArrowNarrowLeft className="text-primary-dark size-6" />
-											</button>
-											<button
-												type="button"
-												onClick={(event) => {
-													event.stopPropagation();
-													scrollByColumns("right");
-												}}
-												aria-label="Scroll right"
-											>
-												<ArrowNarrowRight className="text-primary-dark size-6" />
-											</button>
-										</div>
+										renderActionsHeader(interactive)
 									) : (
 										<div className="flex flex-col">
-											<div className="flex items-center gap-2">
-												{headerContent}
-												{canSort ? renderSortIndicator(sorted) : null}
-											</div>
-											<div className="flex items-center text-neutral-80 gap-2 font-medium">
+											{interactive && canSort ? (
+												<button
+													type="button"
+													onClick={toggleSorting}
+													className="flex items-center gap-2 rounded-sm text-left select-none"
+												>
+													{headerContent}
+													{renderSortIndicator(sorted)}
+													<span className="sr-only">
+														{getSortStateLabel(sorted)}
+													</span>
+												</button>
+											) : (
+												<div
+													className="flex items-center gap-2"
+													aria-hidden={interactive || undefined}
+												>
+													{headerContent}
+													{canSort ? renderSortIndicator(sorted) : null}
+												</div>
+											)}
+											<div
+												className="flex items-center text-neutral-80 gap-2 font-medium"
+												aria-hidden={interactive || undefined}
+											>
 												{privateColumnIndicator}
 											</div>
 										</div>
@@ -623,22 +669,24 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 			actionsColumnId,
 			getAriaSort,
 			getHeaderId,
+			getSortStateLabel,
 			getPinningStyles,
-			hasOverflow,
 			hasPinnedLeft,
 			hasPinnedRight,
+			renderActionsHeader,
 			renderSortIndicator,
-			scrollByColumns,
+			t,
 			table,
 		],
 	);
 
-	const searchPlaceholder = config.searchPlaceholder || "Search...";
+	const searchPlaceholder =
+		config.searchPlaceholder || t("common.a11y.dataTable.searchPlaceholder");
 	const searchLabel = searchPlaceholder.replace(/\.\.\.$/, "");
 	const primaryButtonAriaLabel =
 		typeof config.primaryButton?.label === "string"
 			? config.primaryButton.label
-			: undefined;
+			: t("common.a11y.dataTable.add");
 	const secondaryButtonAriaLabel =
 		typeof config.secondaryButton?.label === "string"
 			? config.secondaryButton.label
@@ -647,6 +695,11 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 		typeof config.rightButton?.label === "string"
 			? config.rightButton.label
 			: undefined;
+	const downloadQuestionnaireAnswersAllAriaLabel =
+		config.downloadQuestionnaireAnswersAllAriaLabel ??
+		(typeof config.downloadQuestionnaireAnswersAllLabel === "string"
+			? config.downloadQuestionnaireAnswersAllLabel
+			: undefined);
 	const filterButtonAriaLabel = (() => {
 		if (typeof config.filterModal?.triggerAriaLabel === "string") {
 			return config.filterModal.triggerAriaLabel;
@@ -654,9 +707,11 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 		if (typeof config.filterModal?.triggerLabel === "string") {
 			return config.filterModal.triggerLabel;
 		}
-		return "Open filters";
+		return t("common.a11y.dataTable.openFilters");
 	})();
-	const hasRows = table.getRowModel().rows.length > 0;
+	const rowCount = table.getRowModel().rows.length;
+	const hasRows = rowCount > 0;
+	const titleId = `${tableId}-title`;
 	const showStandaloneEmptyState = !hasRows && Boolean(config.emptyState);
 
 	useEffect(() => {
@@ -674,6 +729,7 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 				config.primaryButton ||
 				config.secondaryButton ||
 				config.rightButton ||
+				config.importButton ||
 				config.toolbarContent ||
 				config.filterModal) && (
 				<div
@@ -682,7 +738,7 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 				>
 					{config.title && (
 						<div>
-							<h2>{config.title}</h2>
+							<h2 id={titleId}>{config.title}</h2>
 							{config.subtitle && (
 								<p className="text-foreground">{config.subtitle}</p>
 							)}
@@ -699,7 +755,7 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 								iconSize="md"
 								aria-label={primaryButtonAriaLabel}
 							>
-								<Plus className="size-6" />
+								<Plus aria-hidden="true" className="size-6" />
 							</Button>
 						)}
 						{!isSearchOpen && config.secondaryButton && (
@@ -727,10 +783,12 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 									]
 										.filter(Boolean)
 										.join(" ")}
+									inert={!isSearchOpen}
 								>
 									<SearchInput
 										ref={searchInputRef}
 										placeholder={searchPlaceholder}
+										aria-label={searchLabel}
 										value={globalFilter}
 										onChange={(e) => setGlobalFilter(e.target.value)}
 										icon={<Search className="size-4 text-foreground" />}
@@ -742,9 +800,9 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 													setIsSearchOpen(false);
 												}}
 												className="absolute right-6 top-1/2 -translate-y-1/2 text-foreground hover:text-foreground transition-colors"
-												aria-label="Close search"
+												aria-label={t("common.a11y.dataTable.closeSearch")}
 											>
-												<Close className="size-4" />
+												<Close aria-hidden="true" className="size-4" />
 											</button>
 										}
 									/>
@@ -757,10 +815,13 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 											variant="surface"
 											iconSize="md"
 											onClick={() => setIsSearchOpen(true)}
+											aria-label={searchLabel}
 										>
-											<Search className="size-5!" />
+											<Search aria-hidden="true" className="size-5!" />
 										</Button>
-										<Label className="md:block hidden">{searchLabel}</Label>
+										<Label aria-hidden="true" className="md:block hidden">
+											{searchLabel}
+										</Label>
 									</div>
 								)}
 								{!isSearchOpen && config.filterModal && (
@@ -773,17 +834,34 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 											iconSize="md"
 											aria-label={filterButtonAriaLabel}
 										>
-											<Filter className="size-5!" />
+											<Filter aria-hidden="true" className="size-5!" />
 										</Button>
-										<Label className="md:block hidden">
-											{config.filterModal.triggerLabel ?? "Filter"}
+										<Label aria-hidden="true" className="md:block hidden">
+											{config.filterModal.triggerLabel ??
+												t("common.a11y.dataTable.filter")}
 										</Label>
 									</div>
 								)}
 							</div>
 						)}
-						{!isSearchOpen && config.rightButton && (
+						{!isSearchOpen && config.importButton && (
 							<div className="gap-2 flex items-center">
+								<Button
+									onClick={config.importButton.onClick}
+									radius="full"
+									variant="surface"
+									iconSize="md"
+									aria-label={config.importButton.label}
+								>
+									<Upload aria-hidden="true" className="size-5!" />
+								</Button>
+								<Label aria-hidden="true" className="md:block hidden">
+									{config.importButton.label}
+								</Label>
+							</div>
+						)}
+						{!isSearchOpen && config.rightButton && (
+							<div className="gap-2 flex items-center mr-2">
 								<Button
 									onClick={config.rightButton.onClick}
 									radius="full"
@@ -791,16 +869,43 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 									iconSize="md"
 									aria-label={rightButtonAriaLabel}
 								>
-									<Download className="size-5!" />
+									<Download aria-hidden="true" className="size-5!" />
 								</Button>
-								<Label className="md:block hidden">
+								<Label aria-hidden="true" className="md:block hidden">
 									{config.rightButton.label}
 								</Label>
 							</div>
 						)}
+						{!isSearchOpen &&
+							config.canDownloadQuestionnaireAnswers &&
+							config.onDownloadQuestionnaireAnswersAll && (
+								<div className="gap-2 flex items-center">
+									<Button
+										onClick={config.onDownloadQuestionnaireAnswersAll}
+										radius="full"
+										variant="surface"
+										iconSize="md"
+										aria-label={downloadQuestionnaireAnswersAllAriaLabel}
+									>
+										<DownloadQuestionnaireAnswers
+											aria-hidden="true"
+											className="h-5 w-5 fill-neutral-80"
+										/>
+									</Button>
+									<Label aria-hidden="true" className="md:block hidden">
+										{config.downloadQuestionnaireAnswersAllLabel}
+									</Label>
+								</div>
+							)}
 					</div>
 				</div>
 			)}
+
+			<p className="sr-only" role="status">
+				{globalFilter
+					? t("common.a11y.dataTable.resultCount", { count: rowCount })
+					: ""}
+			</p>
 
 			{showStandaloneEmptyState ? (
 				<div className="w-full h-full">{config.emptyState}</div>
@@ -811,7 +916,6 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 						onScroll={handleHeaderScroll}
 						className="sticky z-40 overflow-x-auto bg-neutral-5 no-scrollbar"
 						style={{ paddingRight: scrollbarWidth, top: toolbarHeight }}
-						aria-hidden="true"
 					>
 						<table
 							ref={headerTableRef}
@@ -845,11 +949,18 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 					<div
 						ref={containerRef}
 						onScroll={handleBodyScroll}
-						className="overflow-x-auto"
+						className="overflow-x-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+						role="region"
+						aria-labelledby={config.title ? titleId : undefined}
+						aria-label={
+							config.title ? undefined : t("common.a11y.dataTable.tableLabel")
+						}
+						tabIndex={hasOverflow ? 0 : undefined}
 					>
 						<table
 							ref={tableRef}
 							className="w-full table-fixed caption-bottom body3 border-separate border-spacing-0"
+							aria-labelledby={config.title ? titleId : undefined}
 						>
 							<colgroup>
 								{table.getVisibleLeafColumns().map((column) => {
@@ -1025,7 +1136,9 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 																							}}
 																							aria-label={
 																								config.reviewAriaLabel ??
-																								"Review"
+																								t(
+																									"common.a11y.dataTable.review",
+																								)
 																							}
 																						>
 																							<Eye />
@@ -1057,9 +1170,38 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 																								event.stopPropagation();
 																								config.onEdit?.(row.original);
 																							}}
-																							aria-label="Edit"
+																							aria-label={t("common.edit")}
 																						>
-																							<Edit className="h-5 w-5 text-neutral-80" />
+																							<Edit
+																								aria-hidden="true"
+																								className="h-5 w-5 text-neutral-80"
+																							/>
+																						</Button>
+																					) : null}
+																					{config.canDownloadQuestionnaireAnswers &&
+																					config.onDownloadQuestionnaireAnswers &&
+																					(config.getCanDownloadQuestionnaireAnswers?.(
+																						row.original,
+																					) ??
+																						true) ? (
+																						<Button
+																							iconSize="sm"
+																							variant="surface"
+																							radius="full"
+																							onClick={(event) => {
+																								event.stopPropagation();
+																								config.onDownloadQuestionnaireAnswers?.(
+																									row.original,
+																								);
+																							}}
+																							aria-label={
+																								config.downloadQuestionnaireAnswersAriaLabel ??
+																								t(
+																									"common.a11y.dataTable.downloadAnswers",
+																								)
+																							}
+																						>
+																							<DownloadQuestionnaireAnswers className="h-5 w-5 fill-neutral-80" />
 																						</Button>
 																					) : null}
 																				</div>
@@ -1115,7 +1257,7 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 											colSpan={table.getVisibleLeafColumns().length}
 											className="h-24 text-center border-b border-r border-neutral-20 first:border-l"
 										>
-											{config.emptyMessage ?? "No data found."}
+											{config.emptyMessage ?? t("common.a11y.dataTable.noData")}
 										</td>
 									</tr>
 								)}
@@ -1131,7 +1273,7 @@ export function DataTable<T>({ config }: { config: DataTableConfig<T> }) {
 					title={
 						config.filterModal.title ??
 						config.filterModal.triggerLabel ??
-						"Filter"
+						t("common.a11y.dataTable.filter")
 					}
 					description={config.filterModal.description}
 				>

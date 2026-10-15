@@ -1,9 +1,9 @@
 import { AccountFaqModal } from "@/components/Modals/Pages/AccountFaqModal";
-import type { Metadata } from "next";
+import { createPageMetadata } from "@/app/[locale]/_lib/pageMetadata";
 
-export const metadata: Metadata = {
-	title: "FAQ – Kulturkataster",
-};
+export const generateMetadata = createPageMetadata(
+	"common.a11y.shell.pageTitle.accountFaq",
+);
 
 export default function AccountFaqPage() {
 	return (

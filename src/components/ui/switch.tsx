@@ -13,7 +13,8 @@ function Switch({
 		<SwitchPrimitive.Root
 			data-slot="switch"
 			className={cn(
-				"peer data-[state=checked]:bg-black contrast:data-[state=checked]:bg-background ring-offset-1 focus-visible:ring-ring/100 dark:data-[state=unchecked]:bg-input/80 inline-flex h-[1.15rem] w-8 shrink-0 items-center rounded-full border-2 border-foreground shadow-xs transition-all outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50",
+				// The ::after pseudo element extends the hit area to >= 24px height (WCAG 2.5.8).
+				"relative after:absolute after:inset-x-0 after:-inset-y-1 after:content-[''] peer data-[state=checked]:bg-black contrast:data-[state=checked]:bg-background ring-offset-1 focus-visible:ring-ring/100 dark:data-[state=unchecked]:bg-input/80 inline-flex h-[1.15rem] w-8 shrink-0 items-center rounded-full border-2 border-foreground shadow-xs transition-all outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50",
 				className,
 			)}
 			{...props}

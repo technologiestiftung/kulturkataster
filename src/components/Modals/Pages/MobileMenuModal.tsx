@@ -9,6 +9,7 @@ import {
 	DialogTitle,
 } from "@/components/ui/dialog";
 import { allowedLocales, defaultLocale } from "@/i18n/config";
+import Clipboard from "@/icons/clipboard.svg";
 import Close from "@/icons/close.svg";
 import Download from "@/icons/download.svg";
 import InfoCircle from "@/icons/info-circle.svg";
@@ -18,6 +19,7 @@ import ListIcon from "@/icons/list.svg";
 import MapIcon from "@/icons/map.svg";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { localePath } from "@/lib/utils/localePath";
+import { getMobileMenuOrigin } from "@/lib/utils/mobileMenuOrigin";
 import KRBLogo from "@/logos/KRB.svg";
 import { usePathname, useRouter } from "next/navigation";
 import { useMemo } from "react";
@@ -49,6 +51,12 @@ const mobileMenuItems: MobileMenuItem[] = [
 		icon: Download,
 		label: "download.title",
 		route: "/download",
+	},
+	{
+		id: "questionnaire",
+		icon: Clipboard,
+		label: "questionnaire.title",
+		route: "/questionnaire",
 	},
 	{
 		id: "info",
@@ -110,14 +118,15 @@ export function MobileMenuModal({
 
 	const handleItemClick = (item: MobileMenuItem) => {
 		if (item.id === "language") {
+			// Toggling the menu's own URL only re-renders the intercepted modal
+			// slot and keeps the old locale, so switch the page underneath instead.
 			const targetLocale = currentLocale === "de" ? "en" : "de";
-			const toggledPath = buildLocaleToggledPath(
-				normalizedPath || `/${currentLocale}`,
-				targetLocale,
+			const origin = getMobileMenuOrigin() ?? `/${currentLocale}/map`;
+			const [originPath, originSearch] = origin.split("?");
+			const toggledPath = buildLocaleToggledPath(originPath, targetLocale);
+			router.push(
+				originSearch ? `${toggledPath}?${originSearch}` : toggledPath,
 			);
-			const search =
-				typeof window !== "undefined" ? window.location.search : "";
-			router.push(`${toggledPath}${search}`);
 			return;
 		}
 
@@ -174,14 +183,20 @@ export function MobileMenuModal({
 								})}
 
 							{hiddenMenuItemIds.has("accessibility") ? null : (
-								<div className="space-y-4 flex flex-col">
-									<span className="body2">
+								<section
+									className="space-y-4 flex flex-col"
+									aria-labelledby="mobile-menu-accessibility-heading"
+								>
+									<h2
+										id="mobile-menu-accessibility-heading"
+										className="body2 font-normal"
+									>
 										{t("common.accessibility.title")}
-									</span>
+									</h2>
 									<div className="">
 										<AccessibilityContent />
 									</div>
-								</div>
+								</section>
 							)}
 
 							<ModalFooter />
@@ -190,7 +205,7 @@ export function MobileMenuModal({
 							<p className="body2">{t("common.footer.projectBy")}</p>
 							<KRBLogo
 								title="Kulturraum Berlin gGmbH, Logo"
-								className="w-12 h-auto"
+								className="w-12 h-auto contrast:bg-foreground"
 							/>
 						</div>
 					</div>
