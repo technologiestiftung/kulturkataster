@@ -112,3 +112,17 @@ export const applyInstitutionFieldAccess = ({
 		.map((field) => shapeField(field, mode, permissions))
 		.filter((item): item is FieldConfig => item !== null);
 };
+
+export const omitInstitutionFields = (
+	fields: FieldConfig[],
+	names: readonly string[],
+): FieldConfig[] =>
+	fields
+		.map((field): FieldConfig | null => {
+			if (field.type === "section") {
+				const nested = omitInstitutionFields(field.fields ?? [], names);
+				return nested.length > 0 ? { ...field, fields: nested } : null;
+			}
+			return names.includes(field.name) ? null : field;
+		})
+		.filter((field): field is FieldConfig => field !== null);

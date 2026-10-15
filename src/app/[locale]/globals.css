@@ -97,6 +97,18 @@
 	scroll-behavior: auto !important;
 }
 
+/* Same as above for users who asked for less motion in their OS/browser. */
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0s !important;
+		scroll-behavior: auto !important;
+	}
+}
+
 @theme {
 	--animate-accordion-down: accordion-down 0.28s ease-out;
 	--animate-accordion-up: accordion-up 0.24s ease-in;
@@ -137,6 +149,12 @@
 	--color-chart-3: var(--fachfarben-pink);
 	--color-chart-4: var(--fachfarben-blue);
 	--color-chart-5: var(--fachfarben-green);
+
+	--color-fachfarben-dark-green: var(--fachfarben-dark-green);
+	--color-fachfarben-green: var(--fachfarben-green);
+	--color-fachfarben-yellow: var(--fachfarben-yellow);
+	--color-fachfarben-orange: var(--fachfarben-orange);
+	--color-fachfarben-pink: var(--fachfarben-pink);
 
 	--color-sidebar: var(--neutral-5);
 	--color-sidebar-foreground: var(--black);
@@ -248,6 +266,12 @@
 	}
 	.no-scrollbar::-webkit-scrollbar {
 		display: none;
+	}
+	/* Keeps hash-linked jumps (e.g. #utilization_status, #culture_index) from
+	   landing the input flush under the institution form modal's header. */
+	#utilization_status,
+	#culture_index {
+		scroll-margin-top: 18rem;
 	}
 }
 

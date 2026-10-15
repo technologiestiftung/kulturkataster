@@ -85,6 +85,13 @@ enum CategoryStatus {
   inactive
 }
 
+enum QuestionnaireStatus {
+  draft
+  open
+  closed
+  archived
+}
+
 enum SubmissionEntityType {
   institution
   category
@@ -145,8 +152,8 @@ model Address {
   district       String?
   neighbourhood  String?
   cultural_area  String?
-  lat            Float?    @db.DoublePrecision
-  lng            Float?    @db.DoublePrecision
+  lat            Float?   @db.DoublePrecision
+  lng            Float?   @db.DoublePrecision
   created_at     DateTime @default(now())
   updated_at     DateTime @updatedAt
 
@@ -172,60 +179,67 @@ model ContactPerson {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  institutions_as_contact        Institution[] @relation("InstitutionContact")
+  institutions_as_contact Institution[] @relation("InstitutionContact")
 
   @@index([email])
   @@map("contact_person")
 }
 
 model Institution {
-  id                      Int                 @id @default(autoincrement())
-  name                    String
-  website                 String?
-  phone                   String?
-  email                   String?
-  area                    Float?
-  number_of_rooms         Int?
-  parent_organization     String?
-  legal_form              String?
-  capacity                Int?
-  owner_name              String?
-  owner_type              OwnerType?
-  rental_contract_type    RentalContractType?
-  rental_contract_end     DateTime?
-  funding_type            FundingType?
-  utilization_status      UtilizationStatus?
-  utilization_status_info  String?
-  utilization_status_internal_notes  String?
-  protection_status       ProtectionStatus?
-  protection_status_info   String?
-  shared_use_allowed      Boolean?
-  protection_status_internal_notes String?
-  shared_use_info         String?
-  shared_use_equipment    String?
-  shared_use_audience     String?
-  shared_use_availability String?
-  shared_use_contact_person String?
-  accessibility           String?
-  cost                    String?
-  established_since       DateTime?
-  established_until       DateTime?
-  closing_reason          String?
-  notes                   String?
-  internal_notes          String?
-  status                  InstitutionStatus   @default(public)
-  import_identifier       String?
-  source                  String?
-  created_by              String?             @db.Uuid
-  updated_by              String?             @db.Uuid
-  created_at              DateTime            @default(now())
-  updated_at              DateTime            @updatedAt
+  id                                Int                 @id @default(autoincrement())
+  name                              String
+  website                           String?
+  phone                             String?
+  email                             String?
+  area                              Float?
+  number_of_rooms                   Int?
+  parent_organization               String?
+  legal_form                        String?
+  capacity                          Int?
+  owner_name                        String?
+  owner_type                        OwnerType?
+  rental_contract_type              RentalContractType?
+  rental_contract_end               DateTime?
+  funding_type                      FundingType?
+  utilization_status                UtilizationStatus?
+  utilization_status_info           String?
+  utilization_status_internal_notes String?
+  protection_status                 ProtectionStatus?
+  protection_status_info            String?
+  shared_use_allowed                Boolean?
+  protection_status_internal_notes  String?
+  shared_use_info                   String?
+  shared_use_equipment              String?
+  shared_use_audience               String?
+  shared_use_availability           String?
+  shared_use_contact_person         String?
+  accessibility                     String?
+  cost                              String?
+  established_since                 DateTime?
+  established_until                 DateTime?
+  closing_reason                    String?
+  notes                             String?
+  internal_notes                    String?
+  culture_index                     Float?
+  culture_index_location            Float?
+  culture_index_property            Float?
+  culture_index_financial           Float?
+  culture_index_social_spatial      Float?
+  culture_index_visibility          Float?
+  culture_index_global              String?
+  status                            InstitutionStatus   @default(public)
+  import_identifier                 String?
+  source                            String?
+  created_by                        String?             @db.Uuid
+  updated_by                        String?             @db.Uuid
+  created_at                        DateTime            @default(now())
+  updated_at                        DateTime            @updatedAt
 
-  address_id                   Int?
-  contact_person_id            Int?
+  address_id        Int?
+  contact_person_id Int?
 
-  address                   Address?       @relation(fields: [address_id], references: [id])
-  contact_person            ContactPerson? @relation("InstitutionContact", fields: [contact_person_id], references: [id])
+  address        Address?       @relation(fields: [address_id], references: [id])
+  contact_person ContactPerson? @relation("InstitutionContact", fields: [contact_person_id], references: [id])
 
   funding_sources FundingSource[]
   categories      Category[]
@@ -234,6 +248,7 @@ model Institution {
   users           User[]
   creator         User?           @relation("InstitutionCreator", fields: [created_by], references: [id])
   updater         User?           @relation("InstitutionUpdater", fields: [updated_by], references: [id])
+  answers         Answer[]
 
   @@index([status])
   @@index([address_id])
@@ -297,30 +312,33 @@ model Tag {
 // ============================================
 
 model User {
-  id                 String     @id @db.Uuid
-  email              String     @unique
-  first_name         String?
-  last_name          String?
-  phone              String?
-  avatar_url         String?
-  notes              String?
-  account_type       String?
-  meta_info         Json?
-  role_id            Int?
-  status             UserStatus @default(approval_pending)
-  compliance         Boolean    @default(false)
-  created_at         DateTime   @default(now())
-  updated_at         DateTime   @updatedAt
+  id           String     @id @db.Uuid
+  email        String     @unique
+  first_name   String?
+  last_name    String?
+  phone        String?
+  avatar_url   String?
+  notes        String?
+  account_type String?
+  meta_info    Json?
+  role_id      Int?
+  status       UserStatus @default(approval_pending)
+  compliance   Boolean    @default(false)
+  created_at   DateTime   @default(now())
+  updated_at   DateTime   @updatedAt
 
-  role                 Role?         @relation(fields: [role_id], references: [id])
-  groups               Group[]
-  institutions         Institution[]
-  created_institutions Institution[]    @relation("InstitutionCreator")
-  updated_institutions Institution[]    @relation("InstitutionUpdater")
-  submissions          Submission[]     @relation("SubmissionCreator")
-  reviewed_submissions Submission[]     @relation("SubmissionReviewer")
-  submission_notes     SubmissionNote[] @relation("SubmissionNoteCreator")
-  entity_audits        EntityAudit[]    @relation("EntityAuditUser")
+  role                   Role?            @relation(fields: [role_id], references: [id])
+  groups                 Group[]
+  institutions           Institution[]
+  created_institutions   Institution[]    @relation("InstitutionCreator")
+  updated_institutions   Institution[]    @relation("InstitutionUpdater")
+  submissions            Submission[]     @relation("SubmissionCreator")
+  reviewed_submissions   Submission[]     @relation("SubmissionReviewer")
+  submission_notes       SubmissionNote[] @relation("SubmissionNoteCreator")
+  entity_audits          EntityAudit[]    @relation("EntityAuditUser")
+  created_questionnaires Questionnaire[]  @relation("QuestionnaireCreator")
+  updated_questionnaires Questionnaire[]  @relation("QuestionnaireUpdater")
+  submitted_answers      Answer[]         @relation("AnswerCreator")
 
   @@index([email])
   @@index([role_id])
@@ -334,8 +352,8 @@ model Role {
   description String?
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
-  is_system  Boolean  @default(false)
-  is_guest  Boolean  @default(false)
+  is_system   Boolean  @default(false)
+  is_guest    Boolean  @default(false)
 
   users                    User[]
   table_permissions        RoleTablePermission[]
@@ -346,7 +364,7 @@ model Role {
 }
 
 model RoleTablePermission {
-  id      Int    @id @default(autoincrement())
+  id      Int             @id @default(autoincrement())
   role_id Int
   table   String
   action  Action
@@ -377,7 +395,7 @@ model RoleFieldPermission {
 }
 
 model PermissionFieldOrder {
-  id         Int    @id @default(autoincrement())
+  id         Int     @id @default(autoincrement())
   table      String
   field      String
   sort_order Int
@@ -474,23 +492,24 @@ model EmailOutbox {
 }
 
 model Submission {
-  id           Int                  @id @default(autoincrement())
-  entity_type  SubmissionEntityType
-  entity_id    Int?
-  status       SubmissionStatus     @default(draft)
-  type         SubmissionType
-  data         Json
-  diff         Json?
-  meta         Json?
-  created_by   String?              @db.Uuid
-  reviewed_by  String?              @db.Uuid
-  created_at   DateTime             @default(now())
-  updated_at   DateTime             @updatedAt
-  reviewed_at  DateTime?
+  id          Int                  @id @default(autoincrement())
+  entity_type SubmissionEntityType
+  entity_id   Int?
+  status      SubmissionStatus     @default(draft)
+  type        SubmissionType
+  data        Json
+  diff        Json?
+  meta        Json?
+  created_by  String?              @db.Uuid
+  reviewed_by String?              @db.Uuid
+  created_at  DateTime             @default(now())
+  updated_at  DateTime             @updatedAt
+  reviewed_at DateTime?
 
-  creator  User? @relation("SubmissionCreator", fields: [created_by], references: [id])
-  reviewer User? @relation("SubmissionReviewer", fields: [reviewed_by], references: [id])
+  creator  User?            @relation("SubmissionCreator", fields: [created_by], references: [id])
+  reviewer User?            @relation("SubmissionReviewer", fields: [reviewed_by], references: [id])
   notes    SubmissionNote[]
+  answers  Answer[]
 
   @@index([entity_type])
   @@index([entity_id])
@@ -520,6 +539,93 @@ model SubmissionNote {
 }
 
 // ============================================
+// SURVEY / QUESTIONNAIRE SYSTEM
+// ============================================
+
+model Questionnaire {
+  id             Int                 @id @default(autoincrement())
+  title          String
+  title_en       String?
+  description    String?
+  description_en String?
+  status         QuestionnaireStatus @default(draft)
+  meta_data      Json?
+  created_by     String?             @db.Uuid
+  updated_by     String?             @db.Uuid
+  created_at     DateTime            @default(now())
+  updated_at     DateTime            @updatedAt
+
+  questions Question[]
+  answers   Answer[]
+  creator   User?      @relation("QuestionnaireCreator", fields: [created_by], references: [id])
+  updater   User?      @relation("QuestionnaireUpdater", fields: [updated_by], references: [id])
+
+  @@index([status])
+  @@index([created_by])
+  @@index([updated_by])
+  @@map("questionnaire")
+}
+
+model Question {
+  id               Int      @id @default(autoincrement())
+  questionnaire_id Int
+  key              String
+  label            String
+  label_en         String?
+  description      String?
+  description_en   String?
+  field_type       String
+  required         Boolean  @default(false)
+  step             Int      @default(1)
+  order            Int      @default(0)
+  config           Json?
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
+
+  questionnaire Questionnaire @relation(fields: [questionnaire_id], references: [id], onDelete: Cascade)
+  answers       Answer[]
+
+  @@unique([questionnaire_id, key])
+  @@index([questionnaire_id, step, order])
+  @@map("question")
+}
+
+model Answer {
+  id               Int      @id @default(autoincrement())
+  questionnaire_id Int
+  question_id      Int
+  // Exactly one of institution_id/submission_id is set (enforced by a hand-added
+  // CHECK constraint in the add_answer_submission_link migration — Prisma has no
+  // native @@check attribute). institution_id targets an already-approved
+  // Institution; submission_id targets a still-pending Submission (e.g. someone
+  // answering the questionnaire for an institution they just proposed).
+  institution_id   Int?
+  submission_id    Int?
+  value            Json
+  created_by       String?  @db.Uuid
+  submitter_name   String?
+  submitter_email  String?
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
+
+  questionnaire Questionnaire @relation(fields: [questionnaire_id], references: [id], onDelete: Cascade)
+  question      Question      @relation(fields: [question_id], references: [id], onDelete: Cascade)
+  institution   Institution?  @relation(fields: [institution_id], references: [id], onDelete: Cascade)
+  submission    Submission?   @relation(fields: [submission_id], references: [id], onDelete: Cascade)
+  creator       User?         @relation("AnswerCreator", fields: [created_by], references: [id])
+
+  // "One completed questionnaire per institution/submission" is enforced in the
+  // server action (answerRepo.hasAnswered), not here — deliberately no unique
+  // constraint, so this stays a plain query index.
+  @@index([questionnaire_id, institution_id, question_id, created_at])
+  @@index([questionnaire_id, submission_id, question_id, created_at])
+  @@index([question_id])
+  @@index([institution_id])
+  @@index([submission_id])
+  @@map("answer")
+}
+
+// ============================================
 // AUDIT SYSTEM
 // ============================================
 
@@ -543,19 +649,20 @@ enum AuditEntityType {
   submission_note
   role_table_permission
   role_field_permission
+  questionnaire
 }
 
 model EntityAudit {
-  id          Int               @id @default(autoincrement())
+  id          Int             @id @default(autoincrement())
   entity_id   String
   entity_type AuditEntityType
   action      AuditAction
   old_data    Json?
   new_data    Json?
   meta_info   Json?
-  status      ActivityStatus @default(approval_pending)
-  changed_by  String?           @db.Uuid
-  changed_at  DateTime          @default(now())
+  status      ActivityStatus  @default(approval_pending)
+  changed_by  String?         @db.Uuid
+  changed_at  DateTime        @default(now())
 
   user User? @relation("EntityAuditUser", fields: [changed_by], references: [id])
 

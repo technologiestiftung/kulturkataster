@@ -8,11 +8,16 @@ import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import type { Institution, InstitutionTableRow } from "@/types/institution";
 import type { Category, FilterState } from "@/types";
 import { useAccountStore } from "@/lib/store/accountStore";
+import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { StatusDot } from "../ui/status-dot";
 import { InstitutionStatus } from "@/generated/prisma";
 import type { SubmissionType } from "@/generated/prisma";
 import { useTranslation } from "react-i18next";
-import { getFieldLabel, getFieldOptionLabel } from "@/lib/i18n/fieldLabels";
+import {
+	getCategoryLabel,
+	getFieldLabel,
+	getFieldOptionLabel,
+} from "@/lib/i18n/fieldLabels";
 import {
 	formatInstitutionBoolean,
 	formatInstitutionDate,
@@ -28,6 +33,7 @@ import {
 	isSubmissionRow,
 } from "@/lib/utils/institutionTableUtils";
 import { institutionSubmissionToDraft } from "@/lib/utils/institutionSubmissionUtils";
+import { dateToPartialDateInputValue } from "@/lib/utils/institutionFormAdapter";
 import Send from "@/icons/send.svg";
 import { FilterPanel } from "@/components/Filter/FilterPanel";
 import { useInstitutionFilterCategories } from "@/lib/hooks/useInstitutionFilterCategories";
@@ -38,13 +44,24 @@ import { EmptyActionState } from "@/components/EmptyActionState";
 import Edit from "@/icons/edit.svg";
 import { useInstitutionPrivateFieldResolver } from "@/lib/hooks/useInstitutionPrivateFieldResolver";
 import { resolveInstitutionPermissionField } from "@/lib/utils/institutionPermissionField";
+import {
+	CULTURE_INDEX_DIMENSION_FIELDS,
+	getCultureIndexRangeForValue,
+	type CultureIndexRangeKey,
+} from "@/lib/constants/cultureIndexRanges";
 import { DownloadModal } from "@/components/Modals/Pages/DownloadModal";
+import { InstitutionImportModal } from "@/components/Modals/Pages/InstitutionImportModal";
 import { notifyInstitutionDownload } from "@/server/actions/downloads";
 import type { ExportFormat } from "@/lib/utils/downloadUtils";
 import {
 	InstitutionRowKindFilterToggle,
 	type InstitutionRowKindFilter,
 } from "@/components/Institution/InstitutionRowKindFilterToggle";
+import { showErrorToast } from "@/lib/utils/feedbackToast";
+import {
+	downloadInstitutionQuestionnaireAnswers,
+	downloadInstitutionQuestionnaireAnswersAll,
+} from "@/lib/utils/questionnaireAnswersDownloadUtils";
 
 type InstitutionsFilterPanelProps = {
 	filters: FilterState;
@@ -53,6 +70,7 @@ type InstitutionsFilterPanelProps = {
 	filteredCount: number;
 	categoryCounts: Record<string, number>;
 	subcategoryCounts: Record<string, number>;
+	cultureIndexRangeCounts: Record<CultureIndexRangeKey, number>;
 	loading: boolean;
 	onRetry: () => void;
 	onFiltersChange: (nextFilters: FilterState) => void;
@@ -112,15 +130,20 @@ function InstitutionsFilterPanel({
 	filteredCount,
 	categoryCounts,
 	subcategoryCounts,
+	cultureIndexRangeCounts,
 	loading,
 	onRetry,
 	onFiltersChange,
 }: InstitutionsFilterPanelProps) {
+	const publicDistrictCount = useInstitutionStore(
+		(state) => state.districts.length,
+	);
+
 	useEffect(() => {
-		if (categoryGroups.length === 0) {
+		if (categoryGroups.length === 0 || publicDistrictCount === 0) {
 			onRetry();
 		}
-	}, [categoryGroups.length, onRetry]);
+	}, [categoryGroups.length, publicDistrictCount, onRetry]);
 
 	return (
 		<FilterPanel
@@ -130,6 +153,7 @@ function InstitutionsFilterPanel({
 			filteredCount={filteredCount}
 			categoryCounts={categoryCounts}
 			subcategoryCounts={subcategoryCounts}
+			cultureIndexRangeCounts={cultureIndexRangeCounts}
 			loading={loading}
 			error={null}
 			onRetry={onRetry}
@@ -165,7 +189,10 @@ export function InstitutionsTable({
 	const canCreateInstitutionViaSubmission =
 		!canCreateInstitutionDirect && institutionPermissions.createSubmission;
 	const canClaimInstitution = institutionPermissions.createSubmission;
+	const canDownloadQuestionnaireAnswers =
+		institutionPermissions.downloadQuestionnaireAnswers;
 	const [isDownloadDialogOpen, setIsDownloadDialogOpen] = useState(false);
+	const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
 	const [rowKindFilter, setRowKindFilter] =
 		useState<InstitutionRowKindFilter>("all");
 	const canReviewSubmissionType = (type: SubmissionType) => {
@@ -201,6 +228,38 @@ export function InstitutionsTable({
 		getFieldOptionLabel(tEnum, "funding_source", value);
 	const headerLabel = (key: string, _fallback?: string) =>
 		getFieldLabel(tEnum, key);
+	const handleDownloadQuestionnaireAnswers = useCallback(
+		async (row: InstitutionTableRow) => {
+			const result = await downloadInstitutionQuestionnaireAnswers({
+				institutionId: row.id,
+				filenameBase: `Fragebogen_${row.name ?? row.id}`,
+				format: "xlsx",
+			});
+			if (!result.ok) {
+				showErrorToast(
+					t("content.institutionsTable.questionnaireAnswersDownload.title"),
+					t(
+						`content.institutionsTable.questionnaireAnswersDownload.error.${result.error}`,
+					),
+				);
+			}
+		},
+		[t],
+	);
+	const handleDownloadQuestionnaireAnswersAll = useCallback(async () => {
+		const result = await downloadInstitutionQuestionnaireAnswersAll({
+			filenameBase: "Fragebogen_Alle_Kulturorte",
+			format: "xlsx",
+		});
+		if (!result.ok) {
+			showErrorToast(
+				t("content.institutionsTable.questionnaireAnswersDownload.title"),
+				t(
+					`content.institutionsTable.questionnaireAnswersDownload.error.${result.error}`,
+				),
+			);
+		}
+	}, [t]);
 	const renderEmptyValue = () => <span className="text-foreground">—</span>;
 	const renderTextValue = (value?: string | null) => {
 		if (typeof value !== "string" || value.trim().length === 0) {
@@ -212,6 +271,16 @@ export function InstitutionsTable({
 		if (typeof value !== "number") return renderEmptyValue();
 		if (value === 0) return renderEmptyValue();
 		return value.toString();
+	};
+	const renderDimensionValue = (value?: number | string | null) => {
+		if (typeof value === "number") return value.toString();
+		return renderTextValue(value);
+	};
+	const renderCultureIndexValue = (value?: number | null) => {
+		if (typeof value !== "number") return renderEmptyValue();
+		const range = getCultureIndexRangeForValue(value);
+		if (!range) return renderEmptyValue();
+		return `${value} - ${t(`content.filter.cultureIndex.ranges.${range}`)}`;
 	};
 	const getStatusLabel = (status: InstitutionStatus | string) => {
 		const institutionStatus = tEnum(`enumMap.institution_status.${status}`);
@@ -320,6 +389,7 @@ export function InstitutionsTable({
 			...institution,
 			rowKind: "institution" as const,
 			rowKey: `institution-${institution.id}`,
+			hasQuestionnaireAnswers: (institution._count?.answers ?? 0) > 0,
 		}));
 		return [...submissionRows, ...institutionRows];
 	}, [flattenedCategories, institutions, submissions]);
@@ -345,6 +415,7 @@ export function InstitutionsTable({
 		filteredTableRows,
 		categoryCounts,
 		subcategoryCounts,
+		cultureIndexRangeCounts,
 		downloadableInstitutions,
 	} = useInstitutionTableFilters(
 		rowKindFilteredTableRows,
@@ -652,7 +723,7 @@ export function InstitutionsTable({
 											key={cat.id}
 											className="capitalize truncate"
 										>
-											{`${tEnum("enumMap." + ("category." + cat.key))}`}
+											{getCategoryLabel(tEnum, cat.key)}
 										</Badge>
 									))
 								) : (
@@ -681,7 +752,7 @@ export function InstitutionsTable({
 											key={cat.id}
 											className="capitalize truncate"
 										>
-											{`${tEnum("enumMap." + ("category." + cat.key))}`}
+											{getCategoryLabel(tEnum, cat.key)}
 										</Badge>
 									))
 								) : (
@@ -831,6 +902,24 @@ export function InstitutionsTable({
 					cell: ({ row }) =>
 						translateEnum("closing_reason", row.original.closing_reason),
 				},
+				{
+					accessorKey: "culture_index",
+					header: headerLabel("culture_index", "Culture Index"),
+					enableSorting: true,
+					size: 200,
+					meta: { truncate: true, exportKey: "culture_index" },
+					cell: ({ row }) =>
+						renderCultureIndexValue(row.original.culture_index),
+				},
+				...CULTURE_INDEX_DIMENSION_FIELDS.map((field) => ({
+					accessorKey: field,
+					header: headerLabel(field),
+					enableSorting: true,
+					size: 180,
+					meta: { truncate: true, exportKey: field },
+					cell: ({ row }: { row: { original: InstitutionTableRow } }) =>
+						renderDimensionValue(row.original[field]),
+				})),
 				{
 					accessorKey: "area",
 					header: headerLabel("area", "Area (m2)"),
@@ -1087,6 +1176,7 @@ export function InstitutionsTable({
 					filteredCount={filteredTableRows.length}
 					categoryCounts={categoryCounts}
 					subcategoryCounts={subcategoryCounts}
+					cultureIndexRangeCounts={cultureIndexRangeCounts}
 					loading={isFilterCategoriesLoading}
 					onRetry={retryInitializeFilterCategories}
 					onFiltersChange={setFilters}
@@ -1128,6 +1218,27 @@ export function InstitutionsTable({
 			}),
 			onClick: () => setIsDownloadDialogOpen(true),
 		},
+		canDownloadQuestionnaireAnswers,
+		getCanDownloadQuestionnaireAnswers: (row) => row.hasQuestionnaireAnswers,
+		onDownloadQuestionnaireAnswers: handleDownloadQuestionnaireAnswers,
+		downloadQuestionnaireAnswersAriaLabel: t(
+			"content.institutionsTable.actions.downloadQuestionnaire",
+		),
+		onDownloadQuestionnaireAnswersAll: handleDownloadQuestionnaireAnswersAll,
+		downloadQuestionnaireAnswersAllLabel: t(
+			"content.institutionsTable.actions.downloadQuestionnaireAll",
+		),
+		downloadQuestionnaireAnswersAllAriaLabel: t(
+			"content.institutionsTable.actions.downloadQuestionnaireAll",
+		),
+		importButton: institutionPermissions.import
+			? {
+					label: t("content.institutionsTable.actions.importList", {
+						defaultValue: "Liste importieren",
+					}),
+					onClick: () => setIsImportDialogOpen(true),
+				}
+			: undefined,
 		toolbarContent: showRowKindFilter ? (
 			<InstitutionRowKindFilterToggle
 				value={rowKindFilter}
@@ -1192,6 +1303,12 @@ export function InstitutionsTable({
 						baseDraft.contact_person_email ?? contactPerson?.email ?? "",
 					contact_person_phone:
 						baseDraft.contact_person_phone ?? contactPerson?.phone ?? "",
+					established_since: dateToPartialDateInputValue(
+						baseDraft.established_since,
+					),
+					established_until: dateToPartialDateInputValue(
+						baseDraft.established_until,
+					),
 				});
 				router.push(toLocalePath("/institution/submission"));
 			}
@@ -1285,6 +1402,12 @@ export function InstitutionsTable({
 				cancelLabel={tCommon("common.cancel", { defaultValue: "Cancel" })}
 				onAfterDownload={handleDownloadNotification}
 			/>
+			{institutionPermissions.import && (
+				<InstitutionImportModal
+					open={isImportDialogOpen}
+					onCloseRequest={() => setIsImportDialogOpen(false)}
+				/>
+			)}
 		</>
 	);
 }

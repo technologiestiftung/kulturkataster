@@ -148,7 +148,7 @@ export function InformationModal({ routePath }: { routePath?: string }) {
 							code: ({ children }) => {
 								if (children === "accordion") {
 									return (
-										<Accordion type="single" className="w-full">
+										<Accordion type="single" collapsible className="w-full">
 											{accordionItems.map((item, index) => (
 												<AccordionItem
 													key={item.question}

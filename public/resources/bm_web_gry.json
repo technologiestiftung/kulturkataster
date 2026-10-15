@@ -1004,6 +1004,592 @@
 			}
 		},
 		{
+			"id": "Bruecke_Bundesstr_getrennt_Fahrbahnachse_Decker",
+			"type": "line",
+			"source": "smarttiles_de",
+			"source-layer": "Verkehrslinie",
+			"minzoom": 14,
+			"maxzoom": 22,
+			"filter": [
+				"all",
+				["==", "klasse", "Bundesstraße"],
+				["==", "fahrbahnachse", 1],
+				[
+					"in",
+					"bauwerk",
+					"Brücke",
+					"Drehbrücke",
+					"Hebebrücke",
+					"Bogenbrücke",
+					"Fachwerkbrücke",
+					"Hochbahn, Hochstraße",
+					"Hängebrücke",
+					"Mehrstöckige Brücke",
+					"Pontonbrücke",
+					"Zugbrücke",
+					"Staudamm",
+					"Staumauer",
+					"Sperrwerk"
+				],
+				["!has", "zustand"]
+			],
+			"layout": { "visibility": "visible", "line-cap": "round" },
+			"paint": {
+				"line-color": "rgb(216,216,216)",
+				"line-opacity": 1,
+				"line-width": {
+					"stops": [
+						[11, 1.2],
+						[12, 1.5],
+						[13, 3],
+						[14, 5],
+						[16, 8],
+						[20, 33]
+					]
+				}
+			}
+		},
+		{
+			"id": "Bruecke_Autobahn_getrennt_Decker",
+			"type": "line",
+			"source": "smarttiles_de",
+			"source-layer": "Verkehrslinie",
+			"minzoom": 11,
+			"maxzoom": 14,
+			"filter": [
+				"all",
+				["==", "klasse", "Bundesautobahn"],
+				["==", "fahrbahn", "Getrennt"],
+				[
+					"in",
+					"bauwerk",
+					"Brücke",
+					"Drehbrücke",
+					"Hebebrücke",
+					"Bogenbrücke",
+					"Fachwerkbrücke",
+					"Hochbahn, Hochstraße",
+					"Hängebrücke",
+					"Mehrstöckige Brücke",
+					"Pontonbrücke",
+					"Zugbrücke",
+					"Staudamm",
+					"Staumauer",
+					"Sperrwerk"
+				],
+				["!has", "zustand"]
+			],
+			"layout": { "visibility": "visible", "line-cap": "butt" },
+			"paint": {
+				"line-color": "rgba(255, 255, 255, 1)",
+				"line-opacity": 1,
+				"line-width": {
+					"stops": [
+						[10, 2.5],
+						[12, 5.5],
+						[13, 7.5],
+						[14, 10.5],
+						[20, 33.5]
+					]
+				}
+			}
+		},
+		{
+			"id": "Bruecke_Autobahn_getrennt_Fahrbahnachse_Decker",
+			"type": "line",
+			"source": "smarttiles_de",
+			"source-layer": "Verkehrslinie",
+			"minzoom": 14,
+			"maxzoom": 22,
+			"filter": [
+				"all",
+				["==", "klasse", "Bundesautobahn"],
+				["==", "fahrbahnachse", 1],
+				[
+					"in",
+					"bauwerk",
+					"Brücke",
+					"Drehbrücke",
+					"Hebebrücke",
+					"Bogenbrücke",
+					"Fachwerkbrücke",
+					"Hochbahn, Hochstraße",
+					"Hängebrücke",
+					"Mehrstöckige Brücke",
+					"Pontonbrücke",
+					"Zugbrücke",
+					"Staudamm",
+					"Staumauer",
+					"Sperrwerk"
+				],
+				["!has", "zustand"]
+			],
+			"layout": { "visibility": "visible", "line-cap": "butt" },
+			"paint": {
+				"line-color": "rgba(255, 255, 255, 1)",
+				"line-opacity": 1,
+				"line-width": {
+					"stops": [
+						[14, 5],
+						[20, 33]
+					]
+				}
+			}
+		},
+		{
+			"id": "Bruecke_Mittellinie_Autobahn",
+			"type": "line",
+			"source": "smarttiles_de",
+			"source-layer": "Verkehrslinie",
+			"minzoom": 11,
+			"maxzoom": 16,
+			"filter": [
+				"all",
+				["==", "fahrbahn", "Getrennt"],
+				["!has", "fahrbahnachse"],
+				["==", "klasse", "Bundesautobahn"],
+				[
+					"in",
+					"bauwerk",
+					"Brücke",
+					"Drehbrücke",
+					"Hebebrücke",
+					"Bogenbrücke",
+					"Fachwerkbrücke",
+					"Hochbahn, Hochstraße",
+					"Hängebrücke",
+					"Mehrstöckige Brücke",
+					"Pontonbrücke",
+					"Zugbrücke",
+					"Staudamm",
+					"Staumauer",
+					"Sperrwerk"
+				]
+			],
+			"layout": {
+				"visibility": "none",
+				"line-cap": "butt",
+				"line-join": "round"
+			},
+			"paint": {
+				"line-color": "rgb(102,102,102)",
+				"line-opacity": 1,
+				"line-width": {
+					"base": 1.2,
+					"stops": [
+						[9, 0.2],
+						[13, 0.5]
+					]
+				}
+			}
+		},
+		{
+			"id": "Bruecke_Mittellinie_ausser_Autobahn",
+			"type": "line",
+			"source": "smarttiles_de",
+			"source-layer": "Verkehrslinie",
+			"minzoom": 12,
+			"maxzoom": 14,
+			"filter": [
+				"all",
+				["==", "fahrbahn", "Getrennt"],
+				["!has", "fahrbahnachse"],
+				["!=", "klasse", "Bundesautobahn"],
+				[
+					"in",
+					"bauwerk",
+					"Brücke",
+					"Drehbrücke",
+					"Hebebrücke",
+					"Bogenbrücke",
+					"Fachwerkbrücke",
+					"Hochbahn, Hochstraße",
+					"Hängebrücke",
+					"Mehrstöckige Brücke",
+					"Pontonbrücke",
+					"Zugbrücke",
+					"Staudamm",
+					"Staumauer",
+					"Sperrwerk"
+				]
+			],
+			"layout": {
+				"visibility": "none",
+				"line-cap": "butt",
+				"line-join": "round"
+			},
+			"paint": {
+				"line-color": "rgb(102,102,102)",
+				"line-opacity": 1,
+				"line-width": {
+					"base": 1.2,
+					"stops": [
+						[9, 0.2],
+						[13, 0.5]
+					]
+				}
+			}
+		},
+		{
+			"id": "Bruecke_Bahnstrecke_Kontur",
+			"type": "line",
+			"source": "smarttiles_de",
+			"source-layer": "Verkehrslinie",
+			"minzoom": 11,
+			"maxzoom": 22,
+			"filter": [
+				"all",
+				[
+					"any",
+					["==", "klasse", "Eisenbahn"],
+					["==", "klasse", "Güterverkehr"],
+					["==", "klasse", "Personenverkehr"],
+					["==", "klasse", "Standseilbahn"],
+					["==", "klasse", "Museumsbahn"],
+					["==", "klasse", "Magnetschwebebahn"],
+					["==", "klasse", "Bahn im Freizeitpark"],
+					["==", "klasse", "Seilbahn, Bergbahn"],
+					["==", "klasse", "Zahnradbahn"],
+					["==", "klasse", "S-Bahn"],
+					["==", "klasse", "U-Bahn"],
+					["==", "klasse", "Stadtbahn"],
+					["==", "klasse", "Straßenbahn"]
+				],
+				[
+					"any",
+					["==", "bauwerk", "Brücke"],
+					["==", "bauwerk", "Drehbrücke"],
+					["==", "bauwerk", "Hebebrücke"],
+					["==", "bauwerk", "Bogenbrücke"],
+					["==", "bauwerk", "Fachwerkbrücke"],
+					["==", "bauwerk", "Hochbahn, Hochstraße"],
+					["==", "bauwerk", "Hängebrücke"],
+					["==", "bauwerk", "Mehrstöckige Brücke"],
+					["==", "bauwerk", "Pontonbrücke"],
+					["==", "bauwerk", "Zugbrücke"],
+					["==", "bauwerk", "Staudamm"],
+					["==", "bauwerk", "Staumauer"]
+				]
+			],
+			"layout": {
+				"visibility": "none",
+				"line-cap": "butt",
+				"line-join": "round"
+			},
+			"paint": {
+				"line-color": "rgb(102,102,102)",
+				"line-width": {
+					"stops": [
+						[10, 4.5],
+						[12, 5],
+						[13, 6.5],
+						[14, 7],
+						[20, 10.5]
+					]
+				}
+			}
+		},
+		{
+			"id": "Bruecke_Bahnstrecke_Decker",
+			"type": "line",
+			"source": "smarttiles_de",
+			"source-layer": "Verkehrslinie",
+			"minzoom": 13,
+			"maxzoom": 22,
+			"filter": [
+				"all",
+				[
+					"any",
+					["==", "klasse", "Eisenbahn"],
+					["==", "klasse", "Güterverkehr"],
+					["==", "klasse", "Personenverkehr"],
+					["==", "klasse", "Standseilbahn"],
+					["==", "klasse", "Museumsbahn"],
+					["==", "klasse", "Magnetschwebebahn"],
+					["==", "klasse", "Bahn im Freizeitpark"],
+					["==", "klasse", "Seilbahn, Bergbahn"],
+					["==", "klasse", "Zahnradbahn"],
+					["==", "klasse", "S-Bahn"],
+					["==", "klasse", "U-Bahn"],
+					["==", "klasse", "Stadtbahn"],
+					["==", "klasse", "Straßenbahn"]
+				],
+				[
+					"any",
+					["==", "bauwerk", "Brücke"],
+					["==", "bauwerk", "Drehbrücke"],
+					["==", "bauwerk", "Hebebrücke"],
+					["==", "bauwerk", "Bogenbrücke"],
+					["==", "bauwerk", "Fachwerkbrücke"],
+					["==", "bauwerk", "Hochbahn, Hochstraße"],
+					["==", "bauwerk", "Hängebrücke"],
+					["==", "bauwerk", "Mehrstöckige Brücke"],
+					["==", "bauwerk", "Pontonbrücke"],
+					["==", "bauwerk", "Zugbrücke"],
+					["==", "bauwerk", "Staudamm"],
+					["==", "bauwerk", "Staumauer"]
+				]
+			],
+			"layout": {
+				"visibility": "visible",
+				"line-cap": "butt",
+				"line-join": "round"
+			},
+			"paint": {
+				"line-color": "rgba(195, 189, 189, 1)",
+				"line-width": {
+					"stops": [
+						[10, 3],
+						[12, 3.5],
+						[13, 5],
+						[14, 5.5],
+						[20, 9]
+					]
+				}
+			}
+		},
+		{
+			"id": "Bruecke_Bahnstrecke_Eisenbahn",
+			"type": "line",
+			"source": "smarttiles_de",
+			"source-layer": "Verkehrslinie",
+			"minzoom": 11,
+			"maxzoom": 22,
+			"filter": [
+				"all",
+				[
+					"any",
+					["==", "klasse", "Eisenbahn"],
+					["==", "klasse", "Güterverkehr"],
+					["==", "klasse", "Personenverkehr"],
+					["==", "klasse", "Standseilbahn"],
+					["==", "klasse", "Museumsbahn"],
+					["==", "klasse", "Magnetschwebebahn"],
+					["==", "klasse", "Bahn im Freizeitpark"],
+					["==", "klasse", "Seilbahn, Bergbahn"],
+					["==", "klasse", "Zahnradbahn"]
+				],
+				[
+					"any",
+					["==", "bauwerk", "Brücke"],
+					["==", "bauwerk", "Drehbrücke"],
+					["==", "bauwerk", "Hebebrücke"],
+					["==", "bauwerk", "Bogenbrücke"],
+					["==", "bauwerk", "Fachwerkbrücke"],
+					["==", "bauwerk", "Hochbahn, Hochstraße"],
+					["==", "bauwerk", "Hängebrücke"],
+					["==", "bauwerk", "Mehrstöckige Brücke"],
+					["==", "bauwerk", "Pontonbrücke"],
+					["==", "bauwerk", "Zugbrücke"],
+					["==", "bauwerk", "Staudamm"],
+					["==", "bauwerk", "Staumauer"]
+				],
+				["!has", "zustand"]
+			],
+			"layout": {
+				"visibility": "none",
+				"line-cap": "butt",
+				"line-join": "round"
+			},
+			"paint": {
+				"line-color": "rgb(51,51,51)",
+				"line-width": {
+					"stops": [
+						[11, 1],
+						[12, 1.5],
+						[13, 2],
+						[14, 2],
+						[20, 4]
+					]
+				}
+			}
+		},
+		{
+			"id": "Bruecke_Bahnstrecke_Stadtbahn",
+			"type": "line",
+			"source": "smarttiles_de",
+			"source-layer": "Verkehrslinie",
+			"minzoom": 13,
+			"maxzoom": 22,
+			"filter": [
+				"all",
+				["any", ["==", "klasse", "Stadtbahn"], ["==", "klasse", "Straßenbahn"]],
+				[
+					"any",
+					["==", "bauwerk", "Brücke"],
+					["==", "bauwerk", "Drehbrüke"],
+					["==", "bauwerk", "Hebebrücke"],
+					["==", "bauwerk", "Bogenbrücke"],
+					["==", "bauwerk", "Fachwerkbrücke"],
+					["==", "bauwerk", "Hochbahn, Hochstraße"],
+					["==", "bauwerk", "Hängebrücke"],
+					["==", "bauwerk", "Mehrstöckige Brücke"],
+					["==", "bauwerk", "Pontonbrücke"],
+					["==", "bauwerk", "Zugbrücke"],
+					["==", "bauwerk", "Staudamm"],
+					["==", "bauwerk", "Staumauer"]
+				]
+			],
+			"layout": {
+				"visibility": "none",
+				"line-cap": "butt",
+				"line-join": "round"
+			},
+			"paint": {
+				"line-color": "rgb(0,0,0)",
+				"line-width": {
+					"stops": [
+						[13, 1],
+						[14, 1.5],
+						[20, 3]
+					]
+				}
+			}
+		},
+		{
+			"id": "Bruecke_Bahnstrecke_U_Bahn",
+			"type": "line",
+			"source": "smarttiles_de",
+			"source-layer": "Verkehrslinie",
+			"minzoom": 13,
+			"maxzoom": 22,
+			"filter": [
+				"all",
+				["==", "klasse", "U-Bahn"],
+				[
+					"any",
+					["==", "bauwerk", "Brücke"],
+					["==", "bauwerk", "Drehbrücke"],
+					["==", "bauwerk", "Hebebrücke"],
+					["==", "bauwerk", "Bogenbrücke"],
+					["==", "bauwerk", "Fachwerkbrücke"],
+					["==", "bauwerk", "Hochbahn, Hochstraße"],
+					["==", "bauwerk", "Hängebrücke"],
+					["==", "bauwerk", "Mehrstöckige Brücke"],
+					["==", "bauwerk", "Pontonbrücke"],
+					["==", "bauwerk", "Zugbrücke"],
+					["==", "bauwerk", "Staudamm"],
+					["==", "bauwerk", "Staumauer"]
+				]
+			],
+			"layout": {
+				"visibility": "none",
+				"line-cap": "butt",
+				"line-join": "round"
+			},
+			"paint": {
+				"line-color": "rgb(0,0,0)",
+				"line-width": {
+					"stops": [
+						[13, 1],
+						[14, 1.5],
+						[20, 3]
+					]
+				}
+			}
+		},
+		{
+			"id": "Bruecke_Bahnstrecke_S_Bahn",
+			"type": "line",
+			"source": "smarttiles_de",
+			"source-layer": "Verkehrslinie",
+			"minzoom": 11,
+			"maxzoom": 22,
+			"filter": [
+				"all",
+				["==", "klasse", "S-Bahn"],
+				[
+					"any",
+					["==", "bauwerk", "Brücke"],
+					["==", "bauwerk", "Drehbrücke"],
+					["==", "bauwerk", "Hebebrücke"],
+					["==", "bauwerk", "Bogenbrücke"],
+					["==", "bauwerk", "Fachwerkbrücke"],
+					["==", "bauwerk", "Hochbahn, Hochstraße"],
+					["==", "bauwerk", "Hängebrücke"],
+					["==", "bauwerk", "Mehrstöckige Brücke"],
+					["==", "bauwerk", "Pontonbrücke"],
+					["==", "bauwerk", "Zugbrücke"],
+					["==", "bauwerk", "Staudamm"],
+					["==", "bauwerk", "Staumauer"]
+				],
+				["!has", "zustand"]
+			],
+			"layout": {
+				"visibility": "none",
+				"line-cap": "butt",
+				"line-join": "round"
+			},
+			"paint": {
+				"line-color": "rgb(0,0,0)",
+				"line-width": {
+					"stops": [
+						[10, 1],
+						[12, 1.5],
+						[13, 2],
+						[14, 2.5],
+						[20, 4]
+					]
+				}
+			}
+		},
+		{
+			"id": "Bruecke_Fussgaengerzone_Gemeindestr_Sonstige_Str_Decker",
+			"type": "line",
+			"source": "smarttiles_de",
+			"source-layer": "Verkehrslinie",
+			"minzoom": 12,
+			"maxzoom": 22,
+			"filter": [
+				"all",
+				[
+					"in",
+					"klasse",
+					"Gemeindestraße",
+					"Nicht öffentliche Straße",
+					"Sonstige öffentliche Straße"
+				],
+				["!has", "fahrbahn"],
+				[
+					"in",
+					"bauwerk",
+					"Brücke",
+					"Drehbrücke",
+					"Hebebrücke",
+					"Bogenbrücke",
+					"Fachwerkbrücke",
+					"Hochbahn, Hochstraße",
+					"Hängebrücke",
+					"Mehrstöckige Brücke",
+					"Pontonbrücke",
+					"Zugbrücke",
+					"Staudamm",
+					"Staumauer",
+					"Sperrwerk"
+				],
+				["==", "funktion", "Fußgängerzone"]
+			],
+			"layout": { "visibility": "visible", "line-cap": "round" },
+			"paint": {
+				"line-color": "rgb(238,238,238)",
+				"line-opacity": {
+					"stops": [
+						[12, 0.5],
+						[13, 1]
+					]
+				},
+				"line-width": {
+					"stops": [
+						[12, 0.8],
+						[13, 2],
+						[14, 3],
+						[16, 6],
+						[20, 18]
+					]
+				}
+			}
+		},
+		{
 			"id": "Tunnel_Strasse",
 			"type": "line",
 			"source": "smarttiles_de",

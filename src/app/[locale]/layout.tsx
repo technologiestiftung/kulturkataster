@@ -17,6 +17,7 @@ import { ViewModeToggle } from "@/components/Menu/ViewModeToggle";
 import { Toaster } from "@/components/ui/sonner";
 import { getCurrentProfile } from "@/server/actions/auth";
 import { parseHiddenMenuItems } from "@/lib/utils/menuVisibility";
+import { RouteFocusManager } from "./_components/RouteFocusManager";
 
 // Initialize axe-core for accessibility testing in development
 // Commented out until @axe-core/react is installed
@@ -49,11 +50,21 @@ const barlow = Barlow({
 	variable: "--font-barlow",
 });
 
-export const metadata: Metadata = {
-	title: "Berliner Kulturkataster – Karte & Daten zu Kulturorten",
-	description:
-		"Die Seite macht Berlins Kulturlandschaft sichtbar: Kulturorte finden, filtern und erkunden – für Planung, Forschung und Öffentlichkeit. Ein Projekt der Kulturraum Berlin gGmbH.",
-};
+export async function generateMetadata({
+	params,
+}: {
+	params: Promise<{ locale: Locale }>;
+}): Promise<Metadata> {
+	const { locale } = await params;
+	const { t } = await serverSideTranslation(locale);
+	return {
+		title: {
+			default: t("common.a11y.shell.metaTitleDefault"),
+			template: `%s – ${t("common.siteTitle")}`,
+		},
+		description: t("common.a11y.shell.metaDescription"),
+	};
+}
 
 export default async function RootLayout({
 	children,
@@ -86,10 +97,6 @@ export default async function RootLayout({
 		typeof commonResources.mainContent === "string"
 			? (commonResources.mainContent as string)
 			: "Main content";
-	const siteHeading =
-		typeof commonResources.siteTitle === "string"
-			? (commonResources.siteTitle as string)
-			: "Berliner Kulturkataster";
 	const headerLabel =
 		typeof commonResources.headerLandmark === "string"
 			? (commonResources.headerLandmark as string)
@@ -141,7 +148,6 @@ export default async function RootLayout({
 										tabIndex={-1}
 										aria-label={mainContentLabel}
 									>
-										<h1 className="sr-only">{siteHeading}</h1>
 										<div className="flex min-h-0 flex-1 flex-col">
 											<MapListShell />
 											{children}
@@ -154,6 +160,7 @@ export default async function RootLayout({
 						<Footer ariaLabel={footerLabel} envHint={envHint} />
 					</div>
 					<Toaster />
+					<RouteFocusManager />
 					{modal}
 				</I18NProvider>
 

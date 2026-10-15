@@ -1,5 +1,75 @@
 {
 	"common": {
+		"a11y": {
+			"dataTable": {
+				"actions": "Actions",
+				"add": "Add",
+				"closeSearch": "Close search",
+				"downloadAnswers": "Download questionnaire answers",
+				"filter": "Filter",
+				"noData": "No data found.",
+				"notSorted": "not sorted",
+				"openFilters": "Open filters",
+				"resultCount_one": "{{count}} result",
+				"resultCount_other": "{{count}} results",
+				"review": "Review",
+				"scrollLeft": "Scroll left",
+				"scrollRight": "Scroll right",
+				"searchPlaceholder": "Search...",
+				"sortedAscending": "sorted ascending",
+				"sortedDescending": "sorted descending",
+				"tableLabel": "Table",
+				"toggleRow": "Expand or collapse row"
+			},
+			"forms": {
+				"blockOf": "Section {{current}} of {{total}}",
+				"noResults": "No items found",
+				"required": "required",
+				"searchOptions": "Search options",
+				"selectItems": "Select items",
+				"stepNavigation": "Progress",
+				"stepOf": "Step {{current}} of {{total}}"
+			},
+			"institution": {
+				"showOnMap": "Show on map"
+			},
+			"list": {
+				"letterFilter": "Filter cultural venues by first letter"
+			},
+			"map": {
+				"clearSearch": "Clear search",
+				"filterButtonActive": "{{label}}, {{count}} active",
+				"keyboardHint": "Use the arrow keys to pan the map and plus and minus to zoom.",
+				"searchError": "An error occurred. Please try again.",
+				"searchResultSelected": "{{name}} selected.",
+				"searchResultsFound_one": "{{count}} result found.",
+				"searchResultsFound_other": "{{count}} results found.",
+				"skipToList": "Skip to list view",
+				"viewportLabel": "Interactive map"
+			},
+			"shell": {
+				"loggedIn": "signed in",
+				"metaDescription": "This site makes Berlin's cultural landscape visible: find, filter and explore cultural venues – for planning, research and the public. A project of Kulturraum Berlin gGmbH.",
+				"metaTitleDefault": "Berlin Kulturkataster – Map & data on cultural venues",
+				"opensInNewTab": "opens in a new tab",
+				"pageTitle": {
+					"about": "About the Kulturkataster",
+					"accessibility": "Accessibility",
+					"accessibilitySettings": "Accessibility settings",
+					"accountActivity": "Activity",
+					"accountFaq": "FAQ",
+					"download": "Download",
+					"imprint": "Imprint",
+					"info": "Information and services",
+					"mobileMenu": "Mobile menu",
+					"newsletter": "Berlin Kulturkataster newsletter",
+					"signLanguage": "German Sign Language (DGS)",
+					"simpleLanguage": "Easy Read",
+					"terms": "Terms and conditions",
+					"welcome": "Welcome to the Kulturkataster"
+				}
+			}
+		},
 		"about": "About",
 		"accessibility": {
 			"contrast": {
@@ -48,6 +118,7 @@
 					"actions": {
 						"create": "created",
 						"delete": "deleted",
+						"questionnaire_submitted": "answered",
 						"submission_review_approved": "approved",
 						"submission_review_completed": "completed",
 						"submission_review_rejected": "rejected",
@@ -74,6 +145,7 @@
 						"funding_source": "Financial Source",
 						"group": "Group",
 						"institution": "Cultural Location",
+						"questionnaire": "Questionnaire",
 						"role": "Role",
 						"role_field_permission": "Role Field Permission",
 						"role_table_permission": "Role Table Permission",
@@ -391,6 +463,21 @@
 			"more": "+{{count}} more"
 		},
 		"cancel": "Cancel",
+		"captcha": {
+			"error": "Error – please try again",
+			"errorAriaLabel": "An error occurred, please try again",
+			"failed": "The security check failed or expired. Please verify again that you're not a robot and resubmit.",
+			"hint": "Please verify you're not a robot before submitting.",
+			"initial": "I'm not a robot",
+			"required": "Please verify you're not a robot",
+			"solved": "Verified",
+			"troubleshooting": "Help",
+			"verifiedAriaLabel": "Verified",
+			"verifyAriaLabel": "Click to verify you're not a robot",
+			"verifying": "Verifying…",
+			"verifyingAriaLabel": "Verifying, please wait",
+			"wasmDisabled": "Enable WebAssembly for faster verification"
+		},
 		"categoryFormModal": {
 			"status": {
 				"active": "Active",
@@ -472,8 +559,10 @@
 			"validation": {
 				"invalidEmail": "Invalid Email Address",
 				"invalidNumber": "Invalid number",
+				"invalidPartialDate": "Please use DD.MM.YYYY, MM.YYYY or YYYY",
 				"invalidPhone": "Invalid Telephone Number ",
 				"invalidUrl": "Invalid URL",
+				"numberRange": "Please enter a number between {{min}} and {{max}}",
 				"required": "Required"
 			}
 		},
@@ -495,6 +584,14 @@
 			"claimSelectSubtitle": "Request Management Rights for Your Cultural Locations",
 			"claimSelectTitle": "Manage Cultural Locations",
 			"culturalArea": "Cultural Area",
+			"cultureIndexDimensions": {
+				"financial": "Financial and Operational Dimension",
+				"global": "Global Assessments",
+				"location": "Location and Contract Dimension",
+				"property": "Real Estate and Building Dimension",
+				"socialSpatial": "Socio-Spatial and Demand-Related Dimension",
+				"visibility": "Visibility and Public Relations Dimension"
+			},
 			"details": "Cultural Location Details",
 			"district": "District",
 			"editSelectEmpty": "No Cultural Locations found.",
@@ -643,8 +740,12 @@
 			"sortBy": "Sort by",
 			"subcategoryHint": "Select a category first."
 		},
+		"next": "Next",
 		"no": "No",
 		"privateFieldDescription": "This information will be accessible exclusively to authorized users in the protected area of the Kulturkataster and will not be publicly visible.",
+		"questionnaire": {
+			"title": "Risk Index Survey"
+		},
 		"save": "Save",
 		"search": {
 			"description": "Discover Berlin's cultural landscape easily: Enter a cultural location, address, district, or neighborhood into the search function and select the result from the suggestions displayed. Your selection will be shown directly on the map.",
@@ -1076,7 +1177,8 @@
 			"loading": "Loading Cultural Locations …",
 			"selectedFilters": "The selection consists of the following filters:",
 			"subtitle": "{{count}} Cultural Locations Available for Download",
-			"title": "Download Data as a List"
+			"title": "Download Data as a List",
+			"xlsWarning": "The XLS format cuts text to 255 characters, e.g. long notes or tag lists. For complete data and for importing, choose XLSX or CSV."
 		},
 		"filter": {
 			"categories": {
@@ -1084,6 +1186,19 @@
 				"setAllFilters": "All Filters",
 				"title": "Categories"
 			},
+			"cultureIndex": {
+				"ranges": {
+					"0-20": "acutely at risk",
+					"21-40": "increasingly at risk",
+					"41-60": "conditionally secured",
+					"61-80": "largely secured",
+					"81-100": "long-term secured"
+				},
+				"resetFilters": "Reset Filter",
+				"setAllFilters": "All Filters",
+				"title": "Cultural Hub Index"
+			},
+			"cultureIndexTagsSwitchAriaLabel": "{{translatedName}} switch on or off",
 			"displayedInstitutions": "Displayed Cultural Locations in Berlin",
 			"districts": {
 				"resetFilters": "Reset Filter",
@@ -1213,6 +1328,55 @@
 			},
 			"emptyMessage": "No groups found.",
 			"searchPlaceholder": "Browse Groups..."
+		},
+		"importModal": {
+			"check": "Check",
+			"checking": "Checking …",
+			"description": "Upload a file (CSV or XLSX) previously exported from the Kulturkataster. Places with an ID are updated, rows without an ID are created as new places. Empty cells overwrite existing values, except empty latitude and longitude cells, which keep the saved coordinates.",
+			"errors": {
+				"emptyFile": "The file does not contain any data rows.",
+				"fileTooLarge": "The file is too large (maximum 10 MB).",
+				"forbidden": "You are not allowed to import data.",
+				"invalidFile": "Please choose a valid CSV or XLSX file.",
+				"legacyExcelFile": "XLS files cut text to 255 characters and therefore cannot be imported. Please export the list as XLSX or CSV.",
+				"missingColumns": "The file is missing required columns:",
+				"unauthorized": "Please sign in to import data.",
+				"unexpected": "The import failed. Please try again.",
+				"unknownColumns": "The file contains unknown columns. Please use a file from the export:",
+				"validationFailed": "The import was not carried out: {{count}} errors found. No data was changed.",
+				"writeFailed": "The import was aborted. Up to that point {{updated}} places were updated and {{created}} places were created."
+			},
+			"fileLabel": "Choose file",
+			"importing": "Importing …",
+			"issueCodes": {
+				"columnCountMismatch": "row has the wrong number of columns",
+				"duplicateId": "ID appears more than once",
+				"emptyRequired": "required field is empty",
+				"invalidDate": "not a valid date (DD.MM.YYYY)",
+				"invalidInteger": "not a valid whole number",
+				"invalidNumber": "not a valid number",
+				"invalidOption": "unknown option",
+				"invalidValue": "invalid value",
+				"unknownCategory": "unknown category",
+				"unknownGroup": "unknown group",
+				"unknownId": "no place with this ID exists",
+				"unknownTag": "unknown tag"
+			},
+			"issueGroup_one": "Column “{{column}}”: {{message}} (row {{rows}})",
+			"issueGroup_other": "Column “{{column}}”: {{message}} (rows {{rows}})",
+			"issueValue": "{{message}} “{{value}}”",
+			"moreIssues": "… and {{count}} more errors.",
+			"moreRows": "{{rows}} and {{count}} more",
+			"preview": {
+				"summary": "The import will update {{updated}} places and create {{created}} new places; {{unchanged}} stay unchanged. Nothing has been saved yet.",
+				"title": "Check passed"
+			},
+			"submit": "Import",
+			"success": {
+				"summary": "{{updated}} places updated, {{created}} places created, {{unchanged}} unchanged.",
+				"title": "Import completed"
+			},
+			"title": "Import cultural places"
 		},
 		"imprintModal": {
 			"chairman": {
@@ -1431,7 +1595,7 @@
 				"next": "Next",
 				"review": "Check",
 				"submit": "Submit",
-				"submitUpdate": "Submit change"
+				"submitUpdate": "Submit Changes"
 			},
 			"dialog": {
 				"create": {
@@ -1823,6 +1987,12 @@
 				},
 				"status": {
 					"title": "Status"
+				},
+				"tags": {
+					"create": "Add “{{name}}” as a new tag",
+					"emptyText": "No tags found.",
+					"newSuffix": "new",
+					"searchPlaceholder": "Search tags..."
 				}
 			},
 			"review": {
@@ -1859,6 +2029,7 @@
 				"errorTitle": "Review failed",
 				"errorUnknown": "Unknown error.",
 				"grantSubmitterAccess": "After approval, give the submitter access to this cultural location.",
+				"linkedAnswers": "{{count}} questionnaire answers are linked to this submission.",
 				"linkedCategorySubmissions": "New category proposal",
 				"loadingLabel": "Loading Submission...",
 				"loadingTitle": "Loading Submission",
@@ -1871,6 +2042,8 @@
 				"previewRejectionEmail": "Preview rejection email",
 				"previousNotesLabel": "Previous notes",
 				"rejectionEmailTemplateLabel": "Email on rejection",
+				"relinkAnswers": "Change link",
+				"relinkAnswersSearchLabel": "Select a different cultural location",
 				"requestedBy": "Requested by",
 				"reviewPanelTitle": "Review submission",
 				"statusLabel": "Status: {{status}}",
@@ -1901,11 +2074,23 @@
 			"actions": {
 				"addInstitution": "Add Cultural Location",
 				"claimInstitution": "Claim My Locations",
-				"downloadList": "Download List"
+				"downloadList": "Download List",
+				"downloadQuestionnaire": "Download questionnaire answers",
+				"downloadQuestionnaireAll": "Download all questionnaire answers",
+				"importList": "Import List"
 			},
 			"empty": {
 				"description": "You can start new entries directly.",
 				"title": "No cultural locations available."
+			},
+			"questionnaireAnswersDownload": {
+				"error": {
+					"forbidden": "You are not authorized to download this questionnaire.",
+					"noAnswers": "No answers are available for this cultural location.",
+					"noOpenQuestionnaireAnswers": "No active questionnaire is available.",
+					"unexpected": "The questionnaire could not be downloaded."
+				},
+				"title": "Download questionnaire answers"
 			},
 			"search": {
 				"title": "Search Cultural Locations"
@@ -1951,10 +2136,61 @@
 			"title": "Data protection"
 		},
 		"questionnaireWizard": {
+			"block": {
+				"stepLabel": "Topic block {{current}}/{{total}}"
+			},
 			"consent": {
+				"accordion": [
+					{
+						"answer": "By cultural institutions, we mean, in the context of this survey, \"permanently or repeatedly used places and organizations of cultural production, presentation, mediation, or encounter\" — for example theaters, music venues, studios, galleries, socio-cultural centers, literary venues, dance and performance venues, or comparable institutions.\n\nPlease answer the questionnaire as much as possible from the perspective of the institution as a whole. Ideally, it should be completed by a person who has a good overview of the institution's spatial, organizational, and financial situation.",
+						"question": "Who should fill out the questionnaire?"
+					},
+					{
+						"answer": "Results will only be published in aggregated form, so that no conclusions can be drawn about individual persons. Should results be examined at the level of individual institutions later in the project, this will take place exclusively within the intended project framework and in compliance with data protection requirements.",
+						"question": "What happens with the results?"
+					},
+					{
+						"answer": "Your information will be treated confidentially and evaluated exclusively for scientific purposes within the scope of the project. The data will be stored for comparability with later surveys, but is only visible to employees of Kulturraum Berlin gGmbH. You may request deletion of your data at any time, even later on.",
+						"question": "What happens with my data?"
+					}
+				],
+				"body": "This survey is part of a research project aimed at developing a risk assessment score for cultural institutions in Berlin. Information about the sender/sponsor can be found here.\n\nThe goal of the project is to systematically document various structural, spatial, financial, and organizational conditions in order to better highlight the risks, challenges, and support needs of cultural institutions in Berlin.\n\n<0>It is expected to take about 15 to 20 minutes to complete the questionnaire. Participation in the survey is voluntary.</0>",
+				"checkboxHeading": "Declaration of consent",
+				"checkboxLabel": "I have read the information about this survey and agree to voluntary participation as well as to the processing of my data for scientific purposes within the scope of this project.",
+				"cta": "Take part in the survey",
+				"paragraph1": "This survey is part of a scientific project to develop a risk score for Berlin's cultural institutions. The aim of the project is to systematically capture various structural, spatial, financial, and organizational conditions in order to make the risks, burdens, and support needs of cultural institutions in Berlin more visible.",
 				"paragraph2": "For the purposes of this survey, we define <0>cultural institutions</0> as <1>\"permanently or repeatedly used venues and organizations for cultural production, presentation, education, or encounter\"</1>, such as theaters, music venues, studios, galleries, socio-cultural centers, literature venues, dance and performance venues, or comparable institutions.",
 				"paragraph3": "Completing the questionnaire is expected to take <0>about 15 to 20 minutes.</0>",
-				"paragraph6": "<0>Participation in this survey is voluntary.</0> By checking the box, you confirm that you have read the information about this survey and agree to the processing of your data for scientific purposes within the scope of this project."
+				"paragraph4": "Your information will be treated confidentially and evaluated exclusively for scientific purposes within the scope of the project. Publication will only take place in aggregated form, so that no conclusions can be drawn about individual persons. Should results be considered at the level of individual institutions later in the project, this will only happen within the intended project framework and in compliance with data protection requirements.",
+				"paragraph5": "The questionnaire contains questions about the space and location situation, the financial situation, organizational conditions, and the public visibility of the institution. Please answer the questionnaire from the perspective of the institution as a whole wherever possible. Ideally, it should be completed by a person who has a good overview of the institution's space, organizational, and financial situation.",
+				"paragraph6": "<0>Participation in this survey is voluntary.</0> By checking the box, you confirm that you have read the information about this survey and agree to the processing of your data for scientific purposes within the scope of this project.",
+				"thanks": "Thank you for taking the time to take part in this survey.",
+				"thankYouClosing": "Thank you for your support.",
+				"title": "Survey on the Risk Radar for Berlin's Cultural Venues"
+			},
+			"institutionLink": {
+				"alreadySubmitted": "This cultural venue has already completed this survey.",
+				"alreadySubmittedTitle": "Already completed",
+				"description": "Help us strengthen Berlin's cultural landscape by adding the details of an existing cultural venue you are responsible for.\nIf you are not already logged in, you can do so at the end of the survey or register afterwards in order to save your responses.",
+				"notRegistered": "Please briefly enter the cultural venue so we can match your responses to it.",
+				"question": "Is the cultural venue already listed in the Kulturkataster?",
+				"resultsLabel": "Selected cultural venue",
+				"searchEmpty": "No cultural venues found.",
+				"searchLabel": "Name of the cultural venue",
+				"searchPlaceholder": "Enter an address or place",
+				"title": "General information about the cultural venue"
+			},
+			"review": {
+				"registerCta": "Register now",
+				"registerHint": "Register now to save your responses.",
+				"submit": "Submit",
+				"submitError": "An error occurred while submitting. Please try again.",
+				"thanksDescription": "Thank you for taking part! If you have questions about the project or this survey, feel free to contact us at: info@kulturkataster.berlin",
+				"thanksTitle": "Thank you for taking part!"
+			},
+			"unavailable": {
+				"description": "Please check back later or follow a valid survey link.",
+				"title": "No survey is currently available"
 			}
 		},
 		"roleFormModal": {
@@ -2054,6 +2290,7 @@
 				},
 				"tables": {
 					"address": "Addresses",
+					"answer": "Questionnaire answers",
 					"category": "Categories",
 					"entity_audit": "Activity",
 					"group": "Groups",
@@ -2896,6 +3133,7 @@
 			},
 			"infoButton": "Information & Service",
 			"newsletter": "Sign Up for the Newsletter",
+			"questionnaire": "Participate in the survey",
 			"subtitle": "A Project of Kulturraum Berlin gGmbH",
 			"title": "The Berlin Kulturkataster: Culture in the City At a Glance"
 		}
@@ -3195,6 +3433,49 @@
 				"label": "Cultural Area",
 				"placeholder": "Please Select"
 			},
+			"culture_index": {
+				"description": "Rates how long-term secure the cultural venue is at its current location, on a scale from 0 (acutely at risk) to 100 (long-term secured).",
+				"label": "Cultural Hub Index",
+				"placeholder": "e.g. 75"
+			},
+			"culture_index_financial": {
+				"description": "",
+				"label": "Financial and Operational Dimension",
+				"placeholder": "e.g. 75"
+			},
+			"culture_index_global": {
+				"description": "",
+				"label": "Global Assessments",
+				"placeholder": "Please Enter"
+			},
+			"culture_index_location": {
+				"description": "",
+				"label": "Location and Contract Dimension",
+				"placeholder": "e.g. 75"
+			},
+			"culture_index_property": {
+				"description": "",
+				"label": "Real Estate and Building Dimension",
+				"placeholder": "e.g. 75"
+			},
+			"culture_index_social_spatial": {
+				"description": "",
+				"label": "Socio-Spatial and Demand-Related Dimension",
+				"placeholder": "e.g. 75"
+			},
+			"culture_index_visibility": {
+				"description": "",
+				"label": "Visibility and Public Relations Dimension",
+				"placeholder": "e.g. 75"
+			},
+			"datenverwendung": {
+				"description": "",
+				"errors": {
+					"required": "Please provide the intended use."
+				},
+				"label": "Intended Use",
+				"placeholder": "Please Enter"
+			},
 			"description": {
 				"description": "",
 				"errors": {
@@ -3318,6 +3599,14 @@
 				"label": "Internal Notes",
 				"placeholder": "Please Enter"
 			},
+			"lastName": {
+				"description": "",
+				"errors": {
+					"required": "Last name is required."
+				},
+				"label": "Last Name",
+				"placeholder": "Please Enter"
+			},
 			"lat": {
 				"description": "",
 				"errors": {
@@ -3340,6 +3629,14 @@
 					"required": "Please provide longitude."
 				},
 				"label": "Longitude",
+				"placeholder": "Please Enter"
+			},
+			"nachname": {
+				"description": "",
+				"errors": {
+					"required": "Last name is required."
+				},
+				"label": "Last Name",
 				"placeholder": "Please Enter"
 			},
 			"name": {
@@ -3635,6 +3932,14 @@
 					"required": "Please provide internal notes."
 				},
 				"label": "Internal Notes (Usage Status)",
+				"placeholder": "Please Enter"
+			},
+			"vorname": {
+				"description": "",
+				"errors": {
+					"required": "First name is required."
+				},
+				"label": "First Name",
 				"placeholder": "Please Enter"
 			},
 			"website": {

@@ -7,6 +7,8 @@ import {
 	facilityInfoConfig,
 	additionalInfoConfig,
 	contactInfoConfig,
+	cultureIndexInfoConfig,
+	hasCultureIndex,
 	sharedUseInfoConfig,
 } from "@/components/Institution";
 import { useInstitutionStore } from "@/lib/store/institutionStore";
@@ -67,6 +69,7 @@ function InstitutionCard({
 									className: "mb-0",
 									heroStatus: getHeroStatus(),
 									onClick: onCenterMap,
+									onClickAriaLabel: t("common.a11y.institution.showOnMap"),
 									fields: [
 										{
 											id: "parent_organization",
@@ -103,6 +106,13 @@ function InstitutionCard({
 									type: "status",
 									value: "protection_status",
 									enumKey: "protection_status",
+								},
+								{
+									id: "culture_index",
+									alwaysShow: false,
+									label: fieldLabel("culture_index"),
+									type: "culture_index",
+									value: "culture_index",
 								},
 							],
 						},
@@ -151,34 +161,41 @@ function InstitutionCard({
 									fields: [
 										{
 											type: "section",
+											id: "culture_index_section",
+											cardVariant: "muted",
+											condition: hasCultureIndex,
+											fields: cultureIndexInfoConfig,
+										},
+										{
+											type: "section",
 											id: "organization",
 											alwaysShow: false,
-											cardVariant: "tertiary",
+											cardVariant: "muted",
 											fields: detailsInfoConfig,
 										},
 										{
 											type: "section",
 											id: "funding",
 											alwaysShow: false,
-											cardVariant: "tertiary",
+											cardVariant: "muted",
 											fields: organizationInfoConfig,
 										},
 										{
 											type: "section",
 											id: "facility",
-											cardVariant: "tertiary",
+											cardVariant: "muted",
 											fields: facilityInfoConfig,
 										},
 										{
 											type: "section",
 											id: "shared_use",
-											cardVariant: "tertiary",
+											cardVariant: "muted",
 											fields: sharedUseInfoConfig,
 										},
 										{
 											type: "section",
 											id: "additional",
-											cardVariant: "tertiary",
+											cardVariant: "muted",
 											fields: additionalInfoConfig,
 										},
 									],

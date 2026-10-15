@@ -23,11 +23,17 @@ import {
 import { normalizeAddressForDiff } from "@/lib/utils/institutionRelationFields";
 import { type InfoWrapperConfig, type InfoWrapperFieldConfig } from "./types";
 import { StatusItem } from "./StatusItem";
+import { StatusGroup } from "./StatusGroup";
 import { CategoryItem } from "./CategoryItem";
 import { getGridClass } from "../shared/sectionLayout";
 import { getEditAction } from "./getEditAction";
 import { ScrollReveal } from "@/components/shared/ScrollReveal";
-import { getFieldOptionLabel } from "@/lib/i18n/fieldLabels";
+import { getCategoryLabel, getFieldOptionLabel } from "@/lib/i18n/fieldLabels";
+import { PrivateBadge } from "@/components/shared/PrivateBadge";
+import {
+	getCultureIndexRangeBgClass,
+	getCultureIndexRangeForValue,
+} from "@/lib/constants/cultureIndexRanges";
 import type { TFunction } from "i18next";
 
 const resolveFieldValue = (
@@ -83,8 +89,38 @@ const formatCategoryValue = (
 	const categories = getParentCategories(data);
 	if (!categories?.length) return "";
 	return categories
-		.map((category) => t(`enumMap.category.${category.key}`))
+		.map((category) => getCategoryLabel(t, category.key))
 		.join(", ");
+};
+
+const resolveEnumDisplay = (
+	field: InfoWrapperFieldConfig,
+	value: unknown,
+	sourceData: Partial<Institution>,
+	t: (key: string) => string,
+) => {
+	const baseLabel = getFieldOptionLabel(
+		t,
+		String(field.enumKey),
+		String(value),
+	);
+	if (
+		!field.freeTextKey ||
+		field.freeTextValue === undefined ||
+		String(value) !== String(field.freeTextValue)
+	) {
+		return baseLabel;
+	}
+
+	const freeTextValue = getNestedValue(
+		sourceData as unknown as Record<string, unknown>,
+		field.freeTextKey,
+	);
+	if (typeof freeTextValue !== "string" || freeTextValue.trim() === "") {
+		return baseLabel;
+	}
+
+	return `${baseLabel}: ${freeTextValue}`;
 };
 
 const renderLink = (
@@ -241,8 +277,14 @@ type RenderFieldContentArgs = {
 const hasRenderableDisplayValue = (value: unknown) =>
 	typeof value === "boolean" || (value !== 0 && hasDisplayValue(value));
 
+const isRenderableCultureIndexValue = (value: unknown): boolean =>
+	typeof value === "number" && Number.isFinite(value);
+
 const normalizeDateForDiff = (value: unknown) =>
 	normalizeDateByType(value, "date");
+
+const getTitleHeadingId = (field: InfoWrapperFieldConfig) =>
+	field.headingId ?? "institution-title";
 
 const getContent = (
 	field: InfoWrapperFieldConfig,
@@ -279,6 +321,68 @@ const getContent = (
 				/>
 			);
 		}
+
+		case "culture_index": {
+			const cultureIndexValue =
+				typeof value === "number" && Number.isFinite(value) ? value : null;
+			const cultureIndexRange = getCultureIndexRangeForValue(cultureIndexValue);
+			const displayValue =
+				cultureIndexValue !== null && cultureIndexRange
+					? `${cultureIndexValue} - ${t(`content.filter.cultureIndex.ranges.${cultureIndexRange}`)}`
+					: "—";
+			if (field.cultureIndexVariant === "item") {
+				return (
+					<InfoItem
+						label={label}
+						description={field.description}
+						isPrivate={isPrivate}
+						action={action}
+					>
+						<span className="inline-flex items-center gap-2">
+							<span
+								className={cn(
+									"hidden w-4 h-4 rounded-full shrink-0",
+									cultureIndexRange
+										? getCultureIndexRangeBgClass(cultureIndexRange)
+										: "bg-alert",
+								)}
+							/>
+							{displayValue}
+						</span>
+					</InfoItem>
+				);
+			}
+			const isPlain = field.cultureIndexVariant === "plain";
+			return (
+				<div
+					className={cn(
+						"flex items-center w-full gap-2 p-4 flex-wrap",
+						isPlain || !cultureIndexRange
+							? "bg-secondary"
+							: getCultureIndexRangeBgClass(cultureIndexRange),
+					)}
+				>
+					{isPlain && (
+						<div
+							className={cn(
+								"w-4 h-4 rounded-full",
+								cultureIndexRange
+									? getCultureIndexRangeBgClass(cultureIndexRange)
+									: "bg-alert",
+							)}
+						/>
+					)}
+					{label && <strong className="body2">{label}:</strong>}
+					<span className="body2 font-medium">{displayValue}</span>
+					{isPrivate ? <PrivateBadge /> : null}
+					<div className="ml-auto flex items-center gap-2">{action}</div>
+				</div>
+			);
+		}
+
+		case "statusGroup":
+			return <StatusGroup data={data} t={t} />;
+
 		case "link":
 		case "url":
 		case "email":
@@ -319,9 +423,12 @@ const getContent = (
 		case "title":
 			return (
 				<div className="overflow-hidden">
-					<h1 id="institution-title" className="font-extrabold wrap-anywhere">
+					<h2
+						id={getTitleHeadingId(field)}
+						className="font-extrabold wrap-anywhere"
+					>
 						{String(value)}
-					</h1>
+					</h2>
 				</div>
 			);
 
@@ -345,7 +452,7 @@ const getContent = (
 					isPrivate={isPrivate}
 					action={action}
 				>
-					{getFieldOptionLabel(t, String(field.enumKey), String(value))}
+					{resolveEnumDisplay(field, value, data, t)}
 				</InfoItem>
 			);
 
@@ -362,7 +469,7 @@ const getContent = (
 			);
 
 		case "date":
-		case "year":
+		case "partialDate":
 			return (
 				<InfoItem
 					label={label}
@@ -472,11 +579,17 @@ const renderFieldContent = (
 			case "boolean":
 			case "fundingSources":
 			case "date":
-			case "year":
+			case "partialDate":
 			case "title":
 				return (
 					hasRenderableDisplayValue(value) ||
 					hasRenderableDisplayValue(newValue)
+				);
+
+			case "culture_index":
+				return (
+					isRenderableCultureIndexValue(value) ||
+					isRenderableCultureIndexValue(newValue)
 				);
 
 			default:
@@ -495,7 +608,10 @@ const renderFieldContent = (
 					)}
 				>
 					<div className="overflow-hidden">
-						<h1 id="institution-title" className="font-bold wrap-anywhere">
+						<h1
+							id={getTitleHeadingId(field)}
+							className="font-bold wrap-anywhere"
+						>
 							—
 						</h1>
 					</div>
@@ -541,9 +657,11 @@ const renderFieldContent = (
 			case "boolean":
 			case "fundingSources":
 			case "date":
-			case "year":
+			case "partialDate":
 			case "title":
 				return hasRenderableDisplayValue(value);
+			case "culture_index":
+				return isRenderableCultureIndexValue(value);
 			default:
 				return hasRenderableDisplayValue(value);
 		}
@@ -564,6 +682,8 @@ const renderFieldContent = (
 					return hasRenderableDisplayValue(
 						resolveFieldValue(field, comparableNewData),
 					);
+				case "culture_index":
+					return isRenderableCultureIndexValue(newValue);
 				default:
 					return (
 						hasRenderableDisplayValue(newValue) ||
@@ -588,16 +708,12 @@ const renderFieldContent = (
 			return t("enumMap." + labelKey);
 		}
 		if (field.type === "enum") {
-			return getFieldOptionLabel(
-				t,
-				String(field.enumKey),
-				String(displayValue),
-			);
+			return resolveEnumDisplay(field, displayValue, sourceData, t);
 		}
 		if (field.type === "boolean") {
 			return t(`enumMap.boolean.${String(displayValue)}`);
 		}
-		if (field.type === "date" || field.type === "year") {
+		if (field.type === "date" || field.type === "partialDate") {
 			return formatDateByType(displayValue, field.type);
 		}
 		if (
@@ -638,7 +754,7 @@ const renderFieldContent = (
 			if (field.type === "fundingSources") {
 				return String(originalDisplay) !== String(newDisplay ?? "");
 			}
-			if (field.type === "date" || field.type === "year") {
+			if (field.type === "date" || field.type === "partialDate") {
 				return normalizeDateForDiff(value) !== normalizeDateForDiff(newValue);
 			}
 			if (
@@ -711,14 +827,11 @@ const renderFieldContent = (
 					)}
 				>
 					{hasOriginal && (
-						<h1
-							id="institution-title"
-							className="font-bold wrap-anywhere line-through"
-						>
+						<h1 className="font-bold wrap-anywhere line-through">
 							{oldDisplay}
 						</h1>
 					)}
-					<h1 id="institution-title" className="font-bold wrap-anywhere">
+					<h1 id={getTitleHeadingId(field)} className="font-bold wrap-anywhere">
 						<span className="bg-primary-light px-1">
 							{hasOriginal
 								? t("content.infoWrapper.diffLabel.edited")
@@ -769,7 +882,7 @@ const renderFieldContent = (
 					)}
 				>
 					<h1
-						id="institution-title"
+						id={getTitleHeadingId(field)}
 						className="font-bold wrap-anywhere line-through"
 					>
 						{originalDisplay}

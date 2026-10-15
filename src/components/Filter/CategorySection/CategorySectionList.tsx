@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useMemo, useState } from "react";
+import { FC, useId, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Card } from "@/components/ui/card";
 import { CategorySection } from "@/components/Filter/CategorySection/CategorySection";
@@ -48,12 +48,14 @@ export const CategorySectionList: FC<CategorySectionListProps> = ({
 	const [isCollapsed, setIsCollapsed] = useState(
 		collapsible ? defaultCollapsed : false,
 	);
+	const headingId = useId();
 
 	const normalizeFilters = (input: FilterState): FilterState => ({
 		...input,
 		district_keys: input.district_keys ?? [],
 		category_keys: input.category_keys ?? [],
 		child_category_keys: input.child_category_keys ?? [],
+		culture_index_ranges: input.culture_index_ranges ?? [],
 		include_closed: input.include_closed ?? false,
 		status: input.status ?? undefined,
 	});
@@ -375,10 +377,11 @@ export const CategorySectionList: FC<CategorySectionListProps> = ({
 				<div className="flex flex-col gap-2">
 					{showHeader && (
 						<div className="flex items-center justify-between mb-4">
-							<h3 className="body1 font-bold">
+							<h3 id={headingId} className="body1 font-bold">
 								{t("content.filter.categories.title")}
 							</h3>
 							<button
+								type="button"
 								className="body2 font-light underline"
 								onClick={
 									hasActiveCategoryFilters()
@@ -392,7 +395,11 @@ export const CategorySectionList: FC<CategorySectionListProps> = ({
 							</button>
 						</div>
 					)}
-					<div className="space-y-2">
+					<div
+						className="space-y-2"
+						role={showHeader ? "group" : undefined}
+						aria-labelledby={showHeader ? headingId : undefined}
+					>
 						{getSortedCategories(categoryGroups, collator, tEnum).map(
 							(category) => (
 								<CategorySection

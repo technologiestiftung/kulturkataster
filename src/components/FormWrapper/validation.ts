@@ -1,5 +1,6 @@
 import type { TFunction } from "i18next";
-import { getFieldError, getFieldLabel } from "@/lib/i18n/fieldLabels";
+import { getFieldError } from "@/lib/i18n/fieldLabels";
+import { parsePartialDate } from "@/lib/utils/partialDate";
 import { normalizeUrl } from "@/lib/utils/sanitizerUtils";
 import { isValidPhoneValue, normalizePhoneInput } from "@/lib/utils/phoneUtils";
 import type {
@@ -21,11 +22,26 @@ const withNormalizer = (
 	normalize?: FieldNormalizer,
 ): FieldValidator => Object.assign(validate, normalize ? { normalize } : {});
 
-const isEmptyValue = (value: unknown) =>
+export const isEmptyValue = (value: unknown) =>
 	value === undefined ||
 	value === null ||
 	value === "" ||
 	(Array.isArray(value) && value.length === 0);
+
+const hasValue = (value: unknown) => !isEmptyValue(value);
+
+const isLikertMatrixComplete = (
+	field: FormWrapperFieldConfig,
+	value: unknown,
+): boolean => {
+	if (field.type !== "likertMatrix") return false;
+	const matrixValue =
+		value && typeof value === "object"
+			? (value as Record<string, unknown>)
+			: {};
+	const rows = field.likertMatrix?.rows ?? [];
+	return rows.length > 0 && rows.every((row) => hasValue(matrixValue[row.key]));
+};
 
 const isValidUrlHostname = (hostname: string) => {
 	if (hostname === "localhost") return true;
@@ -69,7 +85,12 @@ const getTypeValidationMessage = (
 	field: FormWrapperFieldConfig,
 	t: (key: string, options?: Record<string, unknown>) => string,
 	tEnum: TFunction,
-	fallbackKey: "invalidEmail" | "invalidNumber" | "invalidPhone" | "invalidUrl",
+	fallbackKey:
+		| "invalidEmail"
+		| "invalidNumber"
+		| "invalidPartialDate"
+		| "invalidPhone"
+		| "invalidUrl",
 ) => {
 	const fieldMetaKey = getFieldMetaKey(field);
 	const fieldMessage =
@@ -93,22 +114,22 @@ const buildRequiredValidator = (
 	tEnum: TFunction,
 ) => {
 	const fieldMetaKey = getFieldMetaKey(field);
-	const fieldLabel = field.label ?? getFieldLabel(tEnum, fieldMetaKey);
-	const requiredDefault = t("common.form.validation.required", {
-		field: fieldLabel,
-	});
+	const requiredDefault = t("common.form.validation.required");
 	const requiredMessageRaw =
 		field.requiredMessage ??
 		(field.type !== "section" ? field.errorMessages?.required : undefined) ??
 		getFieldError(tEnum, fieldMetaKey, "required");
 	const requiredMessage =
-		requiredMessageRaw === `field_names.${fieldMetaKey}.errors.required`
+		requiredMessageRaw === `enumMap.field_names.${fieldMetaKey}.errors.required`
 			? requiredDefault
 			: requiredMessageRaw;
 
 	return withNormalizer((value) => {
 		if (field.type === "checkbox" && value !== true) {
 			return requiredMessage;
+		}
+		if (field.type === "likertMatrix") {
+			return isLikertMatrixComplete(field, value) ? undefined : requiredMessage;
 		}
 		return isEmptyValue(value) ? requiredMessage : undefined;
 	});
@@ -135,6 +156,11 @@ const buildTypeValidator = (
 			message: getTypeValidationMessage(field, t, tEnum, "invalidUrl"),
 			normalize: true,
 		});
+	}
+	if (field.type === "partialDate") {
+		return partialDate(
+			getTypeValidationMessage(field, t, tEnum, "invalidPartialDate"),
+		);
 	}
 
 	return undefined;
@@ -165,6 +191,48 @@ export const numeric = (message: string): FieldValidator =>
 			return undefined;
 		}
 		return Number.isFinite(Number(value.trim())) ? undefined : message;
+	});
+
+export const numberRange = ({
+	min,
+	max,
+	message,
+}: {
+	min?: number;
+	max?: number;
+	message: string;
+}): FieldValidator =>
+	withNormalizer((value) => {
+		if (isEmptyValue(value)) return undefined;
+		const number = Number(typeof value === "string" ? value.trim() : value);
+		if (!Number.isFinite(number)) return undefined;
+		if (min !== undefined && number < min) return message;
+		if (max !== undefined && number > max) return message;
+		return undefined;
+	});
+
+const buildNumberRangeValidator = (
+	field: FormWrapperFieldConfig,
+	t: (key: string, options?: Record<string, unknown>) => string,
+) => {
+	if (field.type !== "number") return undefined;
+	if (field.min === undefined && field.max === undefined) return undefined;
+	return numberRange({
+		min: field.min,
+		max: field.max,
+		message: t("common.form.validation.numberRange", {
+			min: field.min ?? "−∞",
+			max: field.max ?? "∞",
+		}),
+	});
+};
+
+export const partialDate = (message: string): FieldValidator =>
+	withNormalizer((value) => {
+		if (typeof value !== "string" || value.trim().length === 0) {
+			return undefined;
+		}
+		return parsePartialDate(value) ? undefined : message;
 	});
 
 export const tel = (message: string): FieldValidator =>
@@ -214,9 +282,11 @@ const getFieldValidators = (
 	tEnum: TFunction,
 ) => {
 	const typeValidator = buildTypeValidator(field, t, tEnum);
+	const rangeValidator = buildNumberRangeValidator(field, t);
 	const validators = [
 		...(field.required ? [buildRequiredValidator(field, t, tEnum)] : []),
 		...(typeValidator ? [typeValidator] : []),
+		...(rangeValidator ? [rangeValidator] : []),
 		...(field.type !== "section" && field.validators ? field.validators : []),
 	];
 

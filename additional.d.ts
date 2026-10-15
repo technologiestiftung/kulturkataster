@@ -27,3 +27,15 @@ declare module "@tanstack/react-table" {
 		truncate?: boolean;
 	}
 }
+
+// Cap's captcha web component (cap-widget), see src/components/Captcha.
+declare module "react" {
+	namespace JSX {
+		interface IntrinsicElements {
+			"cap-widget": React.DetailedHTMLProps<
+				React.HTMLAttributes<HTMLElement>,
+				HTMLElement
+			>;
+		}
+	}
+}

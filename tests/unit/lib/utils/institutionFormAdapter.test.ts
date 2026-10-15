@@ -297,6 +297,7 @@ describe("buildInstitutionForFormFromDraft", () => {
 			district_keys: [],
 			category_keys: ["music"],
 			child_category_keys: ["club"],
+			culture_index_ranges: [],
 			include_closed: false,
 			status: undefined,
 		});

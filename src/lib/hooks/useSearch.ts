@@ -78,10 +78,12 @@ export function useSearch<T>({
 
 				// Announce results to screen readers
 				if (statusRef.current) {
-					const resultCount = data.length;
-					statusRef.current.textContent = `${resultCount} ${
-						resultCount === 1 ? "Ergebnis" : "Ergebnisse"
-					} gefunden.`;
+					statusRef.current.textContent =
+						data.length === 0
+							? t("common.search.noResultsFound")
+							: t("common.a11y.map.searchResultsFound", {
+									count: data.length,
+								});
 				}
 			}
 		} catch (error) {
@@ -95,9 +97,11 @@ export function useSearch<T>({
 					},
 				});
 				setResults([]);
-				setResultErrorMessage(
-					"Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
-				);
+				const errorMessage = t("common.a11y.map.searchError");
+				setResultErrorMessage(errorMessage);
+				if (statusRef.current) {
+					statusRef.current.textContent = errorMessage;
+				}
 			}
 		} finally {
 			if (currentRequestId === requestId + 1) {

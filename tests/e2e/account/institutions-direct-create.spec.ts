@@ -200,8 +200,8 @@ test.describe("institution direct create form", () => {
 			fundingType: "Arbeitsraumprogramm",
 			fundingSource: "Kirche",
 			fundingSourceDescription: "Landesmittel",
-			establishedSince: "2008-01-01",
-			establishedUntil: "2035-12-31",
+			establishedSince: "2008",
+			establishedUntil: "2035",
 			closingReason: "Kein Schließungsgrund",
 			ownerType: "Privat",
 			ownerName: "Eigentümer GmbH",
@@ -397,6 +397,8 @@ test.describe("institution direct create form", () => {
 		await expect(page.getByRole("table")).toBeVisible({ timeout: 15_000 });
 		await page.reload();
 		await expect(page.getByRole("table")).toBeVisible({ timeout: 15_000 });
+		// The closed search field is inert, so open it before typing.
+		await page.getByRole("button", { name: /Kulturorte suchen/i }).click();
 		await page
 			.getByRole("textbox", { name: /Kulturorte suchen/i })
 			.fill(uniqueName);
@@ -406,7 +408,9 @@ test.describe("institution direct create form", () => {
 			.filter({ hasText: uniqueName })
 			.first();
 		await expect(createdRow).toBeVisible({ timeout: 15_000 });
-		await createdRow.getByRole("button", { name: "Edit" }).click();
+		await createdRow
+			.getByRole("button", { name: "Bearbeiten", exact: true })
+			.click();
 		await expect(page).toHaveURL(/\/de\/account\/institutions\/\d+\/edit\/?$/, {
 			timeout: 45_000,
 		});

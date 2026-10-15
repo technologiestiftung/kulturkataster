@@ -1,6 +1,11 @@
 /* eslint-disable max-params */
 import { Category, ChildCategory, FilterState, Institution } from "@/types";
+import {
+	CultureIndexRangeKey,
+	getCultureIndexRangeForValue,
+} from "@/lib/constants/cultureIndexRanges";
 import { getParentCategories, getSubcategories } from "./institutionUtils";
+import { getCategoryLabel } from "@/lib/i18n/fieldLabels";
 
 export const hasActiveFilters = (filters: FilterState | null): boolean => {
 	if (!filters) return false;
@@ -8,6 +13,7 @@ export const hasActiveFilters = (filters: FilterState | null): boolean => {
 		filters.district_keys.length > 0 ||
 		filters.category_keys.length > 0 ||
 		filters.child_category_keys.length > 0 ||
+		filters.culture_index_ranges.length > 0 ||
 		filters.include_closed !== undefined
 	);
 };
@@ -18,6 +24,7 @@ export const getFilterCount = (filters: FilterState | null): number => {
 	filterCount += filters.district_keys.length;
 	filterCount += filters.category_keys.length;
 	filterCount += filters.child_category_keys.length;
+	filterCount += filters.culture_index_ranges.length;
 	if (!filters.include_closed) {
 		filterCount += 1;
 	}
@@ -36,8 +43,8 @@ export const getSortedSubcategories = (
 		if (a.key.includes("other") && !b.key.includes("other")) return 1;
 		if (b.key.includes("other") && !a.key.includes("other")) return -1;
 		return collator.compare(
-			translateFn(`category.${a.key}`),
-			translateFn(`category.${b.key}`),
+			getCategoryLabel(translateFn, a.key),
+			getCategoryLabel(translateFn, b.key),
 		);
 	});
 };
@@ -51,8 +58,8 @@ export const getSortedCategories = (
 		if (a.key.includes("other") && !b.key.includes("other")) return 1;
 		if (b.key.includes("other") && !a.key.includes("other")) return -1;
 		return collator.compare(
-			translateFn(`category.${a.key}`),
-			translateFn(`category.${b.key}`),
+			getCategoryLabel(translateFn, a.key),
+			getCategoryLabel(translateFn, b.key),
 		);
 	});
 };
@@ -66,6 +73,16 @@ export const matchesDistrictFilter = (
 	if (!properties.address?.district) return false;
 
 	return districtKeys.includes(properties.address.district);
+};
+
+export const matchesCultureIndexFilter = (
+	properties: Institution,
+	rangeKeys: CultureIndexRangeKey[],
+): boolean => {
+	if (rangeKeys.length === 0) return true;
+
+	const range = getCultureIndexRangeForValue(properties.culture_index);
+	return range !== null && rangeKeys.includes(range);
 };
 
 export const matchesCategoryFilter = (

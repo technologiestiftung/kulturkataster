@@ -6,7 +6,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import Circle from "@/icons/circle.svg";
 import { cn } from "@/lib/utils";
 
-const radioGroupVariants = cva("gap-2", {
+const radioGroupVariants = cva("gap-2 my-2", {
 	variants: {
 		variant: {
 			default: "grid",

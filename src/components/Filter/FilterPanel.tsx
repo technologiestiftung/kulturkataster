@@ -1,15 +1,20 @@
 "use client";
 
-import { FC } from "react";
+import { FC, useId } from "react";
 import { useTranslation } from "react-i18next";
 import { Card } from "@/components/ui/card";
 import { CategorySectionList } from "@/components/Filter/CategorySection/CategorySectionList";
 import DistrictTags from "@/components/Filter/DistrictTags/DistrictTags";
+import CultureIndexTags from "@/components/Filter/CultureIndexTags/CultureIndexTags";
 import { Button } from "@/components/ui/button";
 import { FilterPanelSkeleton } from "@/components/Filter/FilterPanelSkeleton";
 import EyeOff from "@/icons/eye-off.svg";
 import Eye from "@/icons/eye.svg";
 import type { Category, FilterState } from "@/types";
+import {
+	CULTURE_INDEX_RANGES,
+	type CultureIndexRangeKey,
+} from "@/lib/constants/cultureIndexRanges";
 import { cn } from "@/lib/utils";
 
 export type FilterPanelProps = {
@@ -19,11 +24,13 @@ export type FilterPanelProps = {
 	filteredCount?: number;
 	categoryCounts?: Record<string, number>;
 	subcategoryCounts?: Record<string, number>;
+	cultureIndexRangeCounts?: Record<CultureIndexRangeKey, number>;
 	loading?: boolean;
 	error?: string | null;
 	onRetry?: () => void;
 	onFiltersChange: (nextFilters: FilterState) => void;
 	showSummary?: boolean;
+	showCultureIndex?: boolean;
 	showDistricts?: boolean;
 	showClosedToggle?: boolean;
 	collapsible?: boolean;
@@ -43,11 +50,13 @@ export const FilterPanel: FC<FilterPanelProps> = ({
 	filteredCount = 0,
 	categoryCounts,
 	subcategoryCounts,
+	cultureIndexRangeCounts,
 	loading = false,
 	error,
 	onRetry,
 	onFiltersChange,
 	showSummary = true,
+	showCultureIndex = true,
 	showDistricts = true,
 	showClosedToggle = true,
 	collapsible = false,
@@ -57,6 +66,8 @@ export const FilterPanel: FC<FilterPanelProps> = ({
 	selectionEmptyLabel,
 }) => {
 	const { t } = useTranslation();
+	const cultureIndexHeadingId = useId();
+	const districtsHeadingId = useId();
 	const showCategoryHeader = categorySectionMode !== "selection";
 
 	const updateFilters = (nextFilters: FilterState) => {
@@ -105,6 +116,40 @@ export const FilterPanel: FC<FilterPanelProps> = ({
 		return filters?.district_keys && filters.district_keys.length > 0;
 	};
 
+	const toggleCultureIndexRange = (rangeKey: CultureIndexRangeKey) => {
+		if (!filters) return;
+
+		const isSelected = filters.culture_index_ranges.includes(rangeKey);
+		const newRanges = isSelected
+			? filters.culture_index_ranges.filter((r) => r !== rangeKey)
+			: [...filters.culture_index_ranges, rangeKey];
+
+		updateFilters({ ...filters, culture_index_ranges: newRanges });
+	};
+
+	const resetCultureIndexFilters = () => {
+		if (!filters) return;
+		updateFilters({
+			...filters,
+			culture_index_ranges: [],
+		});
+	};
+
+	const setAllCultureIndexFilters = () => {
+		if (!filters) return;
+
+		updateFilters({
+			...filters,
+			culture_index_ranges: CULTURE_INDEX_RANGES.map((range) => range.key),
+		});
+	};
+
+	const hasActiveCultureIndexFilters = () => {
+		return (
+			filters?.culture_index_ranges && filters.culture_index_ranges.length > 0
+		);
+	};
+
 	if (loading) {
 		return (
 			<FilterPanelSkeleton
@@ -147,13 +192,14 @@ export const FilterPanel: FC<FilterPanelProps> = ({
 					</h2>
 					{showClosedToggle && (
 						<button
+							type="button"
 							className="flex items-center gap-2 transition-opacity body2 text-primary-dark"
 							onClick={toggleClosedInstitutions}
 						>
 							{filters?.include_closed ? (
-								<EyeOff className="size-6" />
+								<EyeOff className="size-6" aria-hidden="true" />
 							) : (
-								<Eye className="size-6" />
+								<Eye className="size-6" aria-hidden="true" />
 							)}
 							<strong className="body2 font-bold">
 								{filters?.include_closed
@@ -165,13 +211,45 @@ export const FilterPanel: FC<FilterPanelProps> = ({
 				</Card>
 			)}
 
+			{showCultureIndex && (
+				<Card variant="filter">
+					<div className="flex items-center justify-between mb-4">
+						<h3
+							id={cultureIndexHeadingId}
+							className="body1 font-bold capitalize"
+						>
+							{t("content.filter.cultureIndex.title")}
+						</h3>
+						<button
+							type="button"
+							className="body2 font-light underline"
+							onClick={
+								hasActiveCultureIndexFilters()
+									? resetCultureIndexFilters
+									: setAllCultureIndexFilters
+							}
+						>
+							{hasActiveCultureIndexFilters()
+								? t("content.filter.cultureIndex.resetFilters")
+								: t("content.filter.cultureIndex.setAllFilters")}
+						</button>
+					</div>
+					<CultureIndexTags
+						selected={filters?.culture_index_ranges || []}
+						onChange={toggleCultureIndexRange}
+						counts={cultureIndexRangeCounts}
+						labelledBy={cultureIndexHeadingId}
+					/>
+				</Card>
+			)}
 			{showDistricts && (
 				<Card variant="filter">
 					<div className="flex items-center justify-between mb-4">
-						<h3 className="body1 font-bold capitalize">
+						<h3 id={districtsHeadingId} className="body1 font-bold capitalize">
 							{t("content.filter.districts.title")}
 						</h3>
 						<button
+							type="button"
 							className="body2 font-light underline"
 							onClick={
 								hasActiveDistrictFilters()
@@ -188,6 +266,7 @@ export const FilterPanel: FC<FilterPanelProps> = ({
 						districts={districts}
 						selected={filters?.district_keys || []}
 						onChange={toggleDistrict}
+						labelledBy={districtsHeadingId}
 					/>
 				</Card>
 			)}

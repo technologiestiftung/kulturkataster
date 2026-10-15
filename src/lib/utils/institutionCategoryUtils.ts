@@ -84,6 +84,7 @@ export const buildCategoryFilterStateFromIds = (
 		district_keys: [],
 		category_keys: Array.from(category_keys),
 		child_category_keys: Array.from(child_category_keys),
+		culture_index_ranges: [],
 		include_closed: false,
 		status: undefined,
 	};

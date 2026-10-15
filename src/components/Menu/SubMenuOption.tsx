@@ -1,9 +1,8 @@
 "use client";
 
-import { SidebarMenuItem } from "@/components/ui/sidebar";
 import { Switch } from "@/components/ui/switch";
+import { useId } from "react";
 import { useTranslation } from "react-i18next";
-import type { KeyboardEvent } from "react";
 
 interface SubMenuOptionProps {
 	icon: React.ComponentType<{ className?: string }>;
@@ -15,6 +14,9 @@ interface SubMenuOptionProps {
 	switchKey?: string;
 }
 
+const rowClassName =
+	"flex w-full items-center justify-between gap-2 bg-background p-2 rounded-md h-20 text-left hover:bg-background hover:shadow hover:text-accent-foreground cursor-pointer tab-ring";
+
 export function SubMenuOption({
 	icon: Icon,
 	titleKey,
@@ -25,59 +27,46 @@ export function SubMenuOption({
 	switchKey,
 }: SubMenuOptionProps) {
 	const { t } = useTranslation();
-
-	const handleClick = () => {
-		if (hasSwitch && onSwitchChange) {
-			onSwitchChange(!switchChecked);
-		} else if (onClick) {
-			onClick();
-		}
-	};
-
-	const handleKeyDown = (event: KeyboardEvent<HTMLLIElement>) => {
-		if (hasSwitch) {
-			return;
-		}
-
-		if (event.key === "Enter" || event.key === " ") {
-			event.preventDefault();
-			handleClick();
-		}
-	};
+	const switchId = useId();
 
 	const displayLabel =
 		hasSwitch && switchKey && switchChecked
 			? t("common." + switchKey)
 			: t("common." + titleKey);
 
-	return (
-		<SidebarMenuItem
-			onClick={handleClick}
-			onKeyDown={handleKeyDown}
-			tabIndex={hasSwitch ? undefined : 0}
-			role={hasSwitch ? undefined : "button"}
-			className="flex items-center justify-between gap-2 bg-background p-2 rounded-md h-20 hover:bg-background hover:shadow hover:text-accent-foreground cursor-pointer tab-ring"
-		>
-			<div className="flex items-center gap-2">
-				<Icon className="size-8" />
-				<span className="body2 font-bold">{displayLabel}</span>
-			</div>
-			{hasSwitch && (
-				<div className="flex items-center gap-1">
-					<Switch
-						checked={switchChecked}
-						onCheckedChange={onSwitchChange}
-						onClick={(e) => e.stopPropagation()}
-						aria-label={t("common." + titleKey)}
-					/>
+	const content = (
+		<span className="flex items-center gap-2">
+			<Icon className="size-8" />
+			<span className="body2 font-bold">{displayLabel}</span>
+		</span>
+	);
 
-					<p className="body2 font-bold min-w-[2rem]">
-						{switchChecked
-							? t("common.accessibility.switchOn")
-							: t("common.accessibility.switchOff")}
-					</p>
-				</div>
-			)}
-		</SidebarMenuItem>
+	if (!hasSwitch) {
+		return (
+			<button type="button" onClick={onClick} className={rowClassName}>
+				{content}
+			</button>
+		);
+	}
+
+	// The whole row is the switch's <label>, so clicking anywhere toggles it
+	// without nesting the switch inside another interactive element.
+	return (
+		<label htmlFor={switchId} className={rowClassName}>
+			{content}
+			<span className="flex items-center gap-1">
+				<Switch
+					id={switchId}
+					checked={switchChecked}
+					onCheckedChange={onSwitchChange}
+					aria-label={t("common." + titleKey)}
+				/>
+				<span className="body2 font-bold min-w-[2rem]" aria-hidden="true">
+					{switchChecked
+						? t("common.accessibility.switchOn")
+						: t("common.accessibility.switchOff")}
+				</span>
+			</span>
+		</label>
 	);
 }

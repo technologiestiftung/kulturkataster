@@ -1,6 +1,10 @@
 "use server";
 
-import { Prisma } from "@/generated/prisma";
+import {
+	Prisma,
+	SubmissionEntityType,
+	SubmissionType,
+} from "@/generated/prisma";
 import { getCurrentUserId } from "@/server/actions/auth";
 import { buildInstitutionCreateData } from "@/server/logic/institutionCreateData";
 import { submissionRepo } from "@/server/data/submissionRepo";
@@ -38,6 +42,9 @@ import {
 	SubmissionUpdatePayload,
 } from "@/types/submission";
 import { updateSubmissionAuditStatus } from "@/server/logic/submissionAudit";
+import { createSubmissionAsUser } from "@/server/logic/submissionCreate";
+import { stripUnreadableCultureIndex } from "@/server/logic/submissionCultureIndex";
+import { isGuestCaptchaSatisfied } from "@/server/captcha/cap";
 import {
 	normalizeOptionalSubmissionJson,
 	normalizeSubmissionJson,
@@ -48,7 +55,6 @@ import {
 } from "@/server/email/dispatcher";
 import {
 	validateClaimReviewInput,
-	validateSubmissionCreateInput,
 	validateSubmissionId,
 	validateSubmissionNoteCreateInput,
 	validateSubmissionReviewInput,
@@ -136,20 +142,6 @@ const sanitizeCategoryKey = (value: string) =>
 		.replace(/[^a-z0-9]+/g, "_")
 		.replace(/_+/g, "_")
 		.replace(/^_|_$/g, "");
-
-const getSubmissionCreateLogContext = (
-	input: Partial<SubmissionCreatePayload>,
-	currentUserId?: string | null,
-) => ({
-	subsystem: "submission",
-	actor_user_id: currentUserId ?? null,
-	entity_type: input.entityType ?? null,
-	entity_id: input.entityId ?? null,
-	submission_type: input.type ?? null,
-	has_data: input.data !== undefined && input.data !== null,
-	has_diff: input.diff !== undefined && input.diff !== null,
-	has_meta: input.meta !== undefined && input.meta !== null,
-});
 
 export async function getSubmissions(filter: SubmissionFilter = {}) {
 	const currentUserId = await getCurrentUserId();
@@ -269,68 +261,80 @@ export async function getSubmissionById(id: number) {
 	return submissionRepo.findFirst({ id: validatedId, created_by: ownerId });
 }
 
-export async function createSubmission(input: SubmissionCreatePayload) {
-	return runWithServerRequestContext(
-		async () => {
-			let currentUserId: string | null = null;
-			let validatedInput: SubmissionCreatePayload | undefined;
-			try {
-				validatedInput = validateSubmissionCreateInput(input);
-				currentUserId = await getCurrentUserId();
-				setRequestContext({ userId: currentUserId });
-				const ctx = await getAccessContextForUser(currentUserId);
-				authorizeTable(ctx, "submission", "create");
+export async function createSubmission(
+	input: SubmissionCreatePayload,
+	captchaToken?: string | null,
+) {
+	const currentUserId = await getCurrentUserId();
+	if (!(await isGuestCaptchaSatisfied(currentUserId, captchaToken))) {
+		throw new Error("Captcha verification failed.");
+	}
+	return createSubmissionAsUser(input, currentUserId);
+}
 
-				const nextStatus = "approval_pending";
+const MAX_PROPOSED_CATEGORIES = 20;
 
-				if (currentUserId && typeof validatedInput.entityId === "number") {
-					const existingPending = await submissionRepo.findFirst({
-						entity_type: validatedInput.entityType,
-						entity_id: validatedInput.entityId,
-						type: validatedInput.type,
-						status: "approval_pending",
-						created_by: currentUserId,
-					});
-					if (existingPending) {
-						throw new Error(
-							"You already have a pending submission for this entity and submission type.",
-						);
-					}
-				}
+const normalizeProposedCategoryKeys = (keys: unknown): string[] =>
+	Array.isArray(keys)
+		? Array.from(
+				new Set(
+					keys
+						.filter((key): key is string => typeof key === "string")
+						.map((key) => key.trim())
+						.filter((key) => key.length > 0),
+				),
+			).slice(0, MAX_PROPOSED_CATEGORIES)
+		: [];
 
-				return await submissionRepo.create({
-					entity_type: validatedInput.entityType,
-					entity_id: validatedInput.entityId ?? null,
-					type: validatedInput.type,
-					status: nextStatus,
-					data: normalizeSubmissionJson(validatedInput.data),
-					diff: normalizeOptionalSubmissionJson(validatedInput.diff),
-					meta: normalizeOptionalSubmissionJson(validatedInput.meta),
-					creator: currentUserId
-						? { connect: { id: currentUserId } }
-						: undefined,
-				});
-			} catch (error) {
-				logger.error(
-					"submission.create.failed",
-					error,
-					getSubmissionCreateLogContext(validatedInput ?? input, currentUserId),
-				);
-				throw error;
-			}
-		},
-		{ route: "server_action:submissions.createSubmission" },
+// The institution draft wizard's final submit: the institution submission plus
+// any proposed categories, behind a single captcha check for guests (tokens are
+// single-use, so one check has to cover all submissions of one user action).
+export async function submitInstitutionDraft(params: {
+	submission: SubmissionCreatePayload;
+	proposedCategoryKeys?: string[];
+	captchaToken?: string | null;
+}): Promise<{ ok: true } | { ok: false; error: "captcha_failed" }> {
+	const currentUserId = await getCurrentUserId();
+	if (!(await isGuestCaptchaSatisfied(currentUserId, params.captchaToken))) {
+		return { ok: false, error: "captcha_failed" };
+	}
+
+	const institutionSubmission = await createSubmissionAsUser(
+		params.submission,
+		currentUserId,
 	);
+	const proposedCategoryKeys = normalizeProposedCategoryKeys(
+		params.proposedCategoryKeys,
+	);
+	await Promise.allSettled(
+		proposedCategoryKeys.map((key) =>
+			createSubmissionAsUser(
+				{
+					entityType: SubmissionEntityType.category,
+					entityId: null,
+					type: SubmissionType.create,
+					data: { key },
+					meta: {
+						source: "institution_draft",
+						institutionSubmissionId: institutionSubmission.id,
+					},
+				},
+				currentUserId,
+			),
+		),
+	);
+	return { ok: true };
 }
 
 export async function updateSubmission(input: SubmissionUpdatePayload) {
 	return runWithServerRequestContext(
 		async () => {
-			const validatedInput = validateSubmissionUpdateInput(input);
+			const parsedInput = validateSubmissionUpdateInput(input);
 			const currentUserId = await getCurrentUserId();
 			setRequestContext({ userId: currentUserId });
 			const ctx = await getAccessContextForUser(currentUserId);
 			authorizeTable(ctx, "submission", "update");
+			const validatedInput = stripUnreadableCultureIndex(ctx, parsedInput);
 			const scope = getTableScope(ctx, "submission", "update");
 			const ownerId = requireScopeOrUser(scope, currentUserId);
 			const where: Prisma.SubmissionWhereInput = ownerId
@@ -722,6 +726,18 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 												),
 												select: { id: true },
 											});
+											// Answer.submission_id has onDelete: Cascade, and this
+											// submission is deleted below — any questionnaire
+											// answers linked to it (e.g. answered inline while
+											// proposing this institution) must move to the new
+											// institution first or they'd be silently destroyed.
+											await tx.answer.updateMany({
+												where: { submission_id: submission.id },
+												data: {
+													institution_id: createdInstitution.id,
+													submission_id: null,
+												},
+											});
 											const requestClaimOnApproval =
 												submissionMeta?.request_claim_on_approval === true;
 											const shouldGrantSubmitterAccess =
@@ -935,9 +951,33 @@ export async function reviewSubmission(input: SubmissionReviewPayload) {
 											});
 										}
 
-										await tx.submission.delete({
-											where: { id: validatedInput.id },
+										// Safety net: Answer.submission_id has onDelete: Cascade, so
+										// deleting a submission that still has linked answers would
+										// silently destroy real survey data. The "create" branch
+										// above already relinks its own answers to the new
+										// institution, so this should only ever fire for other
+										// submission types that unexpectedly still have answers
+										// attached — in that case, keep the row (mark it approved
+										// instead of deleting) rather than lose the answers.
+										const remainingLinkedAnswers = await tx.answer.count({
+											where: { submission_id: validatedInput.id },
 										});
+										if (remainingLinkedAnswers > 0) {
+											await tx.submission.update({
+												where: { id: validatedInput.id },
+												data: {
+													status: "approved",
+													reviewer: currentUserId
+														? { connect: { id: currentUserId } }
+														: undefined,
+													reviewed_at: new Date(),
+												},
+											});
+										} else {
+											await tx.submission.delete({
+												where: { id: validatedInput.id },
+											});
+										}
 										await updateSubmissionAuditStatus(
 											{
 												submissionId: validatedInput.id,
