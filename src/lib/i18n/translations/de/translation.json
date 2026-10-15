@@ -1338,7 +1338,7 @@
 		"importModal": {
 			"check": "Prüfen",
 			"checking": "Prüfung läuft …",
-			"description": "Laden Sie eine zuvor aus dem Kulturkataster exportierte Datei (CSV oder XLSX) hoch. Orte mit ID werden aktualisiert, Zeilen ohne ID werden als neue Orte angelegt. Leere Zellen überschreiben bestehende Werte.",
+			"description": "Laden Sie eine zuvor aus dem Kulturkataster exportierte Datei (CSV oder XLSX) hoch. Orte mit ID werden aktualisiert, Zeilen ohne ID werden als neue Orte angelegt. Leere Zellen überschreiben bestehende Werte, nur leere Breiten- und Längengrade behalten die gespeicherten Koordinaten.",
 			"errors": {
 				"emptyFile": "Die Datei enthält keine Datenzeilen.",
 				"fileTooLarge": "Die Datei ist zu groß (maximal 10 MB).",
