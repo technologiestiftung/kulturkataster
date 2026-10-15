@@ -534,7 +534,11 @@ describe("planInstitutionImport", () => {
 	it("mixes qualified and plain subcategory labels in one cell", () => {
 		const csvRows = exportCsv([makeInstitution()]);
 		setCell(csvRows, "ID", "");
-		setCell(csvRows, "Kategorien", "Theater; Kinos; Clubs und Musikspielstätten");
+		setCell(
+			csvRows,
+			"Kategorien",
+			"Theater; Kinos; Clubs und Musikspielstätten",
+		);
 		setCell(
 			csvRows,
 			"Unterkategorien",

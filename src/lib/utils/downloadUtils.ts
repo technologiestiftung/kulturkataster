@@ -309,8 +309,8 @@ function formatArrayField(
 					const parent = parentCategories.find(
 						(parentItem) =>
 							isObjectRecord(parentItem) &&
-							parentItem.id === (item as Record<string, unknown>)
-								.parent_category_id,
+							parentItem.id ===
+								(item as Record<string, unknown>).parent_category_id,
 					);
 					if (!label || !parent || !sharedLabels.has(label)) return label;
 					// A label used under several parents names its parent so the import can tell them apart.
