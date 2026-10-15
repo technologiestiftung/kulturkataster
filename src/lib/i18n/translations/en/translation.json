@@ -1332,7 +1332,7 @@
 		"importModal": {
 			"check": "Check",
 			"checking": "Checking …",
-			"description": "Upload a file (CSV or XLSX) previously exported from the Kulturkataster. Places with an ID are updated, rows without an ID are created as new places. Empty cells overwrite existing values.",
+			"description": "Upload a file (CSV or XLSX) previously exported from the Kulturkataster. Places with an ID are updated, rows without an ID are created as new places. Empty cells overwrite existing values, except empty latitude and longitude cells, which keep the saved coordinates.",
 			"errors": {
 				"emptyFile": "The file does not contain any data rows.",
 				"fileTooLarge": "The file is too large (maximum 10 MB).",
