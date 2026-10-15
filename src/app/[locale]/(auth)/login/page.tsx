@@ -12,7 +12,7 @@ export async function generateMetadata({
 	const { locale } = await params;
 	const { t } = await serverSideTranslation(locale);
 	return {
-		title: t("common.auth.login.metaTitle"),
+		title: { absolute: t("common.auth.login.metaTitle") },
 	};
 }
 

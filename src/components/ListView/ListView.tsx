@@ -63,6 +63,7 @@ const ListView: FC = () => {
 		filters,
 		categoryCounts,
 		subcategoryCounts,
+		cultureIndexRangeCounts,
 		categories,
 		districts,
 		initializePublicData,
@@ -288,7 +289,7 @@ const ListView: FC = () => {
 			attempts += 1;
 			rafId = requestAnimationFrame(() => {
 				const selectedCard = document.querySelector(
-					`[data-institution-card-id="${selectedInstitutionId}"]`,
+					`[data-institution-card-id="${selectedInstitutionId}"] > button`,
 				) as HTMLElement | null;
 				if (!selectedCard) {
 					if (attempts < 10) {
@@ -442,11 +443,7 @@ const ListView: FC = () => {
 									const totalSize = rowVirtualizer.getTotalSize();
 
 									return (
-										<div
-											aria-hidden={institutionsList.length === 0}
-											className="relative"
-											style={{ height: totalSize }}
-										>
+										<div className="relative" style={{ height: totalSize }}>
 											{virtualRows.map((virtualRow) => {
 												const institution = institutionsList[virtualRow.index];
 												if (!institution) return null;
@@ -467,6 +464,9 @@ const ListView: FC = () => {
 															}
 															rowElementMapRef.current.delete(institutionId);
 														}}
+														role="listitem"
+														aria-setsize={institutionsList.length}
+														aria-posinset={virtualRow.index + 1}
 														className="absolute left-0 top-0 w-full py-1"
 														style={{
 															transform: `translateY(${virtualRow.start - listScrollMargin}px)`,
@@ -507,6 +507,7 @@ const ListView: FC = () => {
 					filteredCount={institutions?.length ?? 0}
 					categoryCounts={categoryCounts}
 					subcategoryCounts={subcategoryCounts}
+					cultureIndexRangeCounts={cultureIndexRangeCounts}
 					loading={loadingFilters}
 					error={null}
 					onRetry={handleFilterRetry}

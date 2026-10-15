@@ -81,7 +81,10 @@ test.describe("institutions dashboard", () => {
 			await page.keyboard.press("Escape");
 		}
 
-		const editButtons = page.getByRole("button", { name: "Edit" });
+		const editButtons = page.getByRole("button", {
+			name: "Bearbeiten",
+			exact: true,
+		});
 		if ((await editButtons.count()) > 0) {
 			await editButtons.first().click();
 			const editDialog = page.locator('[data-slot="dialog-content"]').first();

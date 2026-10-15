@@ -43,12 +43,12 @@ test.describe("account edit", () => {
 			timeout: 5_000,
 		});
 		await expect(
-			page.getByRole("button", { name: "Profileinstellungen" }),
+			page.getByRole("link", { name: "Profileinstellungen", exact: true }),
 		).toBeVisible();
 		await Promise.all([
 			page.waitForURL(/\/de\/account\/edit\/?$/, { timeout: 15_000 }),
 			page
-				.getByRole("button", { name: "Profileinstellungen" })
+				.getByRole("link", { name: "Profileinstellungen", exact: true })
 				.first()
 				.click({ delay: 100 }),
 		]);

@@ -100,6 +100,7 @@ vi.mock("@/components/FormWrapper", () => ({
 							parent_organization: "Kultur Trägerverein",
 							source: "Bezirksamt Mitte",
 							groupIds: ["10"],
+							tagIds: ["7", "new:Jazz"],
 							userIds: ["user-1"],
 							categoryIds: ["1"],
 							utilization_status: "in_use",
@@ -162,6 +163,10 @@ vi.mock("@/server/actions/institutions", () => ({
 	updateInstitution: vi.fn(),
 }));
 
+vi.mock("@/server/actions/tags", () => ({
+	getTags: vi.fn(async () => [{ id: 7, name: "Kunst" }]),
+}));
+
 vi.mock("@/lib/utils/feedbackToast", () => ({
 	showSuccessToast: vi.fn(),
 }));
@@ -172,7 +177,10 @@ vi.mock("@/lib/hooks/useInstitutionPrivateFieldResolver", () => ({
 	}),
 }));
 
-vi.mock("@/lib/utils/institutionFieldAccess", () => ({
+vi.mock("@/lib/utils/institutionFieldAccess", async (importOriginal) => ({
+	...(await importOriginal<
+		typeof import("@/lib/utils/institutionFieldAccess")
+	>()),
 	applyInstitutionFieldAccess: ({ fields }: { fields: unknown }) => fields,
 }));
 
@@ -553,6 +561,74 @@ describe("InstitutionFormModal", () => {
 				groupIds: expect.anything(),
 			}),
 		);
+	});
+
+	it("shows tags read-only without the tags change permission and does not submit them", async () => {
+		mockInstitutionFieldPermissions = {
+			read: ["tags"],
+			create: [],
+			update: [],
+			delete: [],
+			download: [],
+			pinned: [],
+		};
+
+		render(
+			<InstitutionFormModal
+				mode="create"
+				routePath="/account/institutions/new"
+			/>,
+		);
+
+		await waitFor(() => {
+			expect(findFieldByName(lastFormConfig?.fields, "tagIds")).toMatchObject({
+				fieldMetaKey: "tags",
+				type: "multiselect",
+				disabled: true,
+				multiselectCreateOption: undefined,
+				options: [{ value: "7", label: "Kunst" }],
+			});
+		});
+
+		fireEvent.click(screen.getByRole("button", { name: "submit-form" }));
+
+		await waitFor(() => expect(mockedCreateInstitution).toHaveBeenCalled());
+		expect(mockedCreateInstitution).toHaveBeenCalledWith(
+			expect.not.objectContaining({ tagIds: expect.anything() }),
+		);
+	});
+
+	it("lets users with the tags permission pick and add tags", async () => {
+		mockInstitutionFieldPermissions = {
+			read: ["tags"],
+			create: ["tags"],
+			update: [],
+			delete: [],
+			download: [],
+			pinned: [],
+		};
+
+		render(
+			<InstitutionFormModal
+				mode="create"
+				routePath="/account/institutions/new"
+			/>,
+		);
+
+		expect(findFieldByName(lastFormConfig?.fields, "tagIds")).toMatchObject({
+			disabled: false,
+			multiselectCreateOption: expect.objectContaining({
+				onCreate: expect.any(Function),
+			}),
+		});
+
+		fireEvent.click(screen.getByRole("button", { name: "submit-form" }));
+
+		await waitFor(() => {
+			expect(mockedCreateInstitution).toHaveBeenCalledWith(
+				expect.objectContaining({ tagIds: [7], newTagNames: ["Jazz"] }),
+			);
+		});
 	});
 
 	it("updates an existing institution", async () => {

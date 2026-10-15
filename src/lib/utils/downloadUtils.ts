@@ -86,7 +86,10 @@ function humanizeFieldKey(key: string) {
 		.join(" ");
 }
 
-function translateColumnName(key: string, translateFn?: TranslateFn): string {
+export function translateColumnName(
+	key: string,
+	translateFn?: TranslateFn,
+): string {
 	if (!translateFn) return humanizeFieldKey(key);
 
 	const translationKey = `enumMap.field_names.${key}.label`;
@@ -94,7 +97,7 @@ function translateColumnName(key: string, translateFn?: TranslateFn): string {
 	return translated !== translationKey ? translated : humanizeFieldKey(key);
 }
 
-function translateEnumValue(
+export function translateEnumValue(
 	key: string,
 	value: string | number,
 	translateFn?: TranslateFn,
@@ -231,6 +234,20 @@ function extractDisplayValueFromObject(
 	return JSON.stringify(item);
 }
 
+// Translated category labels used by more than one category, e.g. "Zeitgenössischer Zirkus".
+function getSharedCategoryLabels(translateFn?: TranslateFn): Set<string> {
+	const labels = translateFn?.("enumMap.category", { returnObjects: true });
+	if (!isObjectRecord(labels)) return new Set();
+	const seen = new Set<string>();
+	const shared = new Set<string>();
+	Object.values(labels).forEach((label) => {
+		if (typeof label !== "string") return;
+		if (seen.has(label)) shared.add(label);
+		seen.add(label);
+	});
+	return shared;
+}
+
 function formatArrayField(
 	exportKey: string,
 	value: unknown[],
@@ -268,6 +285,7 @@ function formatArrayField(
 			(item) =>
 				isObjectRecord(item) && typeof item.parent_category_id === "number",
 		);
+		const sharedLabels = getSharedCategoryLabels(translateFn);
 		return {
 			categories: parentCategories
 				.map((item) =>
@@ -281,14 +299,29 @@ function formatArrayField(
 				.filter(Boolean)
 				.join("; "),
 			subcategories: childCategories
-				.map((item) =>
-					extractDisplayValueFromObject(
+				.map((item) => {
+					const label = extractDisplayValueFromObject(
 						item as Record<string, unknown>,
 						"subcategories",
 						audience,
 						translateFn,
-					),
-				)
+					);
+					const parent = parentCategories.find(
+						(parentItem) =>
+							isObjectRecord(parentItem) &&
+							parentItem.id ===
+								(item as Record<string, unknown>).parent_category_id,
+					);
+					if (!label || !parent || !sharedLabels.has(label)) return label;
+					// A label used under several parents names its parent so the import can tell them apart.
+					const parentLabel = extractDisplayValueFromObject(
+						parent as Record<string, unknown>,
+						"categories",
+						audience,
+						translateFn,
+					);
+					return parentLabel ? `${label} (${parentLabel})` : label;
+				})
 				.filter(Boolean)
 				.join("; "),
 		};
@@ -518,7 +551,7 @@ export function prepareDataForExport(
 	});
 }
 
-function generateCSV(data: Record<string, string>[]): string {
+export function generateCSV(data: Record<string, string>[]): string {
 	if (data.length === 0) return "";
 
 	const headers = Object.keys(data[0]);
@@ -588,10 +621,7 @@ function applyExcelNotice(ws: XLSX.WorkSheet, translateFn?: TranslateFn) {
 			},
 		};
 		if (linkTarget) {
-			ws[cellAddress].l = {
-				Target: linkTarget,
-				Tooltip: linkTarget,
-			};
+			ws[cellAddress].l = { Target: linkTarget };
 		}
 	});
 
@@ -661,20 +691,31 @@ function applyExcelDataCellStyle(
 	});
 }
 
+// The xlsx writer double-encodes non-ASCII characters in hyperlink targets,
+// so umlaut domains and paths are converted to punycode/percent-encoding.
+function toAsciiUrl(url: string): string | null {
+	if (!/[^\x00-\x7F]/.test(url)) return url;
+	try {
+		return new URL(url).href;
+	} catch {
+		return null;
+	}
+}
+
 function getHyperlinkTarget(value: string): string | null {
 	const trimmedValue = value.trim();
 	if (!trimmedValue) return null;
 
 	if (/^https?:\/\/\S+$/i.test(trimmedValue)) {
-		return trimmedValue;
+		return toAsciiUrl(trimmedValue);
 	}
 
 	if (/^mailto:\S+@\S+\.\S+$/i.test(trimmedValue)) {
-		return trimmedValue;
+		return toAsciiUrl(trimmedValue);
 	}
 
 	if (/^www\.\S+\.\S+$/i.test(trimmedValue)) {
-		return `https://${trimmedValue}`;
+		return toAsciiUrl(`https://${trimmedValue}`);
 	}
 
 	return null;
@@ -701,10 +742,9 @@ function applyExcelHyperlinks(
 			const cell = ws[cellAddress];
 			if (!cell) return;
 
-			cell.l = {
-				Target: hyperlinkTarget,
-				Tooltip: hyperlinkTarget,
-			};
+			// No tooltip: Excel rejects tooltips over 255 characters as corrupt
+			// content, and it already shows the link target on hover.
+			cell.l = { Target: hyperlinkTarget };
 			cell.s = {
 				...(cell.s ?? {}),
 				font: {

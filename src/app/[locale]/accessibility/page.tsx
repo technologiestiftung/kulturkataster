@@ -1,9 +1,9 @@
 import { AccessibilityModal } from "@/components/Modals/Pages/AccessibilityModal";
-import { Metadata } from "next";
+import { createPageMetadata } from "@/app/[locale]/_lib/pageMetadata";
 
-export const metadata: Metadata = {
-	title: "Barrierefreiheit – Kulturkataster",
-};
+export const generateMetadata = createPageMetadata(
+	"common.a11y.shell.pageTitle.accessibility",
+);
 
 export default function AccessibilityModalPage() {
 	return <AccessibilityModal routePath="/accessibility" />;

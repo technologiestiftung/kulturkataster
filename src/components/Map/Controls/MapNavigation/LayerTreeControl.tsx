@@ -76,6 +76,8 @@ const LayerTreeControl: FC = () => {
 				tooltip={t("common.map.layerTree")}
 				tooltipSide="right"
 				onClick={handleLayerTreeOpen}
+				aria-label={t("common.map.layerTreeAriaLabel", { visibleCount })}
+				aria-expanded={isLayerTreeOpen}
 				className={`p-0 bg-neutral-80 overflow-hidden cursor-pointer md:hover:bg-accent hover:bg-neutral-70`}
 			>
 				<div className="w-full h-full flex items-center justify-center">
@@ -95,6 +97,7 @@ const LayerTreeControl: FC = () => {
 			{visibleCount > 0 && (
 				<Badge
 					variant="default"
+					aria-hidden="true"
 					className="pointer-events-none absolute -top-2 -right-2 w-6 h-6 p-0 rounded-full text-xs font-bold"
 				>
 					{visibleCount}

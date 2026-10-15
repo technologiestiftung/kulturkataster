@@ -1,4 +1,6 @@
 import { InfoWrapperFieldConfig } from "@/components/InfoWrapper/types";
+import { CULTURE_INDEX_DIMENSION_FIELDS } from "@/lib/constants/cultureIndexRanges";
+import type { Institution } from "@/types";
 
 export const addressInfoConfig: InfoWrapperFieldConfig[] = [
 	{
@@ -76,12 +78,12 @@ export const detailsInfoConfig: InfoWrapperFieldConfig[] = [
 	{
 		value: "established_since",
 		labelKey: "field_names.established_since.label",
-		type: "year",
+		type: "partialDate",
 	},
 	{
 		value: "established_until",
 		labelKey: "field_names.established_until.label",
-		type: "year",
+		type: "partialDate",
 	},
 	{
 		value: "closing_reason",
@@ -248,4 +250,32 @@ export const additionalInfoConfig: InfoWrapperFieldConfig[] = [
 		labelKey: "field_names.internal_notes.label",
 		type: "text",
 	},
+];
+
+export const cultureIndexDimensionsInfoConfig: InfoWrapperFieldConfig[] =
+	CULTURE_INDEX_DIMENSION_FIELDS.map((field) => ({
+		id: field,
+		permissionField: field,
+		labelKey: `field_names.${field}.label`,
+		type: "text",
+		// Stringify so a score of 0 is not treated as empty.
+		value: (institution) => {
+			const value = institution[field];
+			return value === null || value === undefined ? null : String(value);
+		},
+	}));
+
+export const hasCultureIndex = (institution: Institution) =>
+	typeof institution.culture_index === "number" &&
+	Number.isFinite(institution.culture_index);
+
+export const cultureIndexInfoConfig: InfoWrapperFieldConfig[] = [
+	{
+		id: "culture_index",
+		value: "culture_index",
+		labelKey: "field_names.culture_index.label",
+		type: "culture_index",
+		cultureIndexVariant: "item",
+	},
+	...cultureIndexDimensionsInfoConfig,
 ];

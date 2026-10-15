@@ -12,6 +12,8 @@ import { AlertDialog } from "@/components/ui/alert-dialog";
 import { useTranslation } from "react-i18next";
 import { normalizeFieldValue, validateFieldValue } from "./validation";
 import { reportClientTelemetry } from "@/lib/utils/clientTelemetry";
+import { getAccessibleScrollBehavior } from "@/lib/utils/motion";
+import { findFocusableTarget } from "./fieldA11y";
 
 const getAllFields = (
 	fields: FormWrapperFieldConfig[],
@@ -49,6 +51,8 @@ const buildInitialFormData = (config: FormWrapperConfig) => {
 			initialData[field.name] = null;
 		} else if (field.type === "multiselect") {
 			initialData[field.name] = [];
+		} else if (field.type === "likertMatrix") {
+			initialData[field.name] = {};
 		} else if (field.type === "file") {
 			initialData[field.name] = null;
 		} else if (field.type === "fundingSources") {
@@ -75,6 +79,16 @@ const buildInitialFormData = (config: FormWrapperConfig) => {
 			}
 		} else {
 			initialData[field.name] = "";
+		}
+
+		if (
+			(field.type === "radio" || field.type === "multiselect") &&
+			field.freeTextOption
+		) {
+			const freeTextFieldName =
+				field.freeTextOption.fieldName ?? `${field.name}FreeText`;
+			initialData[freeTextFieldName] =
+				config.initialValues?.[freeTextFieldName] ?? "";
 		}
 	});
 
@@ -112,6 +126,20 @@ const collectValidationErrors = (
 	return newErrors;
 };
 
+// Moves keyboard/screen-reader focus to the first invalid control (WCAG 3.3.1)
+// and scrolls it into view. Group fields (radio, likert, multiselect) use a
+// wrapper div as anchor, so the first focusable descendant is focused.
+const focusFirstInvalidField = (name: string) => {
+	const anchor = document.getElementById(name);
+	if (!anchor) return;
+	const target = findFocusableTarget(anchor);
+	target?.focus({ preventScroll: true });
+	anchor.scrollIntoView?.({
+		behavior: getAccessibleScrollBehavior(),
+		block: "center",
+	});
+};
+
 const buildTouchedMap = (fields: FormWrapperFieldConfig[]) => {
 	const allTouched: Record<string, boolean> = {};
 	fields.forEach((field) => {
@@ -128,6 +156,8 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 	const { t: tEnum } = useTranslation();
 	const onChangeRef = useRef<FormWrapperConfig["onChange"]>(config.onChange);
 	const fieldVersionsRef = useRef<Record<string, number>>({});
+	const isSubmittingRef = useRef(false);
+	const pendingErrorFocusRef = useRef<string | null>(null);
 	const allFields = useMemo(() => getAllFields(config.fields), [config.fields]);
 	const [formData, setFormData] = useState<Record<string, unknown>>(() =>
 		buildInitialFormData(config),
@@ -136,6 +166,10 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 	const [errors, setErrors] = useState<Record<string, string>>({});
 	const [touched, setTouched] = useState<Record<string, boolean>>({});
 	const [formError, setFormError] = useState<string | null>(null);
+	// After a failed submit attempt, errors follow the data live (see effect
+	// below), so a half-answered field and newly shown required fields keep
+	// their errors instead of being cleared on the next change.
+	const [hasSubmitAttempt, setHasSubmitAttempt] = useState(false);
 
 	const bumpFieldVersion = (name: string) => {
 		fieldVersionsRef.current[name] = (fieldVersionsRef.current[name] ?? 0) + 1;
@@ -145,7 +179,7 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 		bumpFieldVersion(name);
 		setFormData((prev) => ({ ...prev, [name]: value }));
 		setTouched((prev) => ({ ...prev, [name]: true }));
-		if (errors[name]) {
+		if (!hasSubmitAttempt && errors[name]) {
 			setErrors((prev) => {
 				const newErrors = { ...prev };
 				delete newErrors[name];
@@ -222,13 +256,16 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 		});
 	};
 
-	const validateForm = (): Record<string, string> => {
-		const normalizedFormData = Object.fromEntries(
+	const normalizeFormData = (data: Record<string, unknown>) =>
+		Object.fromEntries(
 			allFields.map((field) => [
 				field.name,
-				normalizeFieldValue(field, formData[field.name], formData, t, tEnum),
+				normalizeFieldValue(field, data[field.name], data, t, tEnum),
 			]),
 		);
+
+	const validateForm = (): Record<string, string> => {
+		const normalizedFormData = normalizeFormData(formData);
 		const newErrors = collectValidationErrors(
 			allFields,
 			normalizedFormData,
@@ -242,9 +279,16 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
+		if (isSubmittingRef.current) return;
 
 		setTouched(buildTouchedMap(allFields));
 		const validationErrors = validateForm();
+		setHasSubmitAttempt(Object.keys(validationErrors).length > 0);
+		if (Object.keys(validationErrors).length > 0) {
+			// Focused after the errors render, so the linked error text is read.
+			pendingErrorFocusRef.current =
+				allFields.find((field) => validationErrors[field.name])?.name ?? null;
+		}
 		if (Object.keys(validationErrors).length === 0) {
 			setFormError(null);
 			const normalizedFormData = Object.fromEntries(
@@ -254,12 +298,15 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 				]),
 			);
 			setFormData((prev) => ({ ...prev, ...normalizedFormData }));
+			isSubmittingRef.current = true;
 			try {
 				await config.onSubmit({ ...formData, ...normalizedFormData });
 			} catch (error) {
 				setFormError(
 					error instanceof Error ? error.message : t("common.alert.error"),
 				);
+			} finally {
+				isSubmittingRef.current = false;
 			}
 		}
 	};
@@ -278,6 +325,12 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 	});
 
 	useEffect(() => {
+		if (!pendingErrorFocusRef.current) return;
+		focusFirstInvalidField(pendingErrorFocusRef.current);
+		pendingErrorFocusRef.current = null;
+	}, [errors]);
+
+	useEffect(() => {
 		onChangeRef.current = config.onChange;
 	}, [config.onChange]);
 
@@ -285,12 +338,35 @@ export function FormWrapper({ config }: { config: FormWrapperConfig }) {
 		onChangeRef.current?.(formData);
 	}, [formData]);
 
+	useEffect(() => {
+		if (!hasSubmitAttempt) return;
+		const liveErrors = collectValidationErrors(
+			allFields,
+			normalizeFormData(formData),
+			t,
+			tEnum,
+		);
+		setErrors(liveErrors);
+		if (Object.keys(liveErrors).length === 0) {
+			setFormError(null);
+		}
+		// Only data changes re-validate: callers like the questionnaire rebuild
+		// their field config on every render, which would otherwise loop.
+	}, [formData, hasSubmitAttempt]);
+
+	const hasErrors = Object.keys(errors).length > 0;
+
 	return (
 		<form id={config.formId} onSubmit={handleSubmit} noValidate>
+			{/* Polite summary after a failed submit; focus moves to the first
+			    invalid field, whose error is linked via aria-describedby. */}
+			<p role="status" className="sr-only">
+				{hasSubmitAttempt && hasErrors ? t("common.alert.errorFixFields") : ""}
+			</p>
 			<div className="flex flex-col gap-6 max-w-3xl mx-auto">
 				<div
 					className={cn(
-						"grid gap-4",
+						"grid gap-8",
 						getResponsiveGridClass(config.layout?.columns),
 						config.className,
 					)}

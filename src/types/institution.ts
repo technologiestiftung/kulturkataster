@@ -12,6 +12,7 @@ import type {
 import type { Category } from "@/types/category";
 import { FeatureCollection, GeoJsonProperties, Geometry } from "geojson";
 import { OwnerType, RentalContractType } from "@/generated/prisma";
+import type { CultureIndexRangeKey } from "@/lib/constants/cultureIndexRanges";
 
 export type PrismaInstitutionWithRelations = Prisma.InstitutionGetPayload<{
 	include: {
@@ -27,6 +28,7 @@ export type PrismaInstitutionWithRelations = Prisma.InstitutionGetPayload<{
 export type Institution = PrismaInstitutionWithRelations & {
 	funding_sources?: FundingSource[];
 	categoryIds?: number[] | null;
+	_count?: { answers: number };
 };
 
 export type InstitutionTableBase = {
@@ -64,6 +66,13 @@ export type InstitutionTableBase = {
 	established_since?: Institution["established_since"];
 	established_until?: Institution["established_until"];
 	closing_reason?: Institution["closing_reason"];
+	culture_index?: Institution["culture_index"];
+	culture_index_location?: Institution["culture_index_location"];
+	culture_index_property?: Institution["culture_index_property"];
+	culture_index_financial?: Institution["culture_index_financial"];
+	culture_index_social_spatial?: Institution["culture_index_social_spatial"];
+	culture_index_visibility?: Institution["culture_index_visibility"];
+	culture_index_global?: Institution["culture_index_global"];
 	notes?: Institution["notes"];
 	internal_notes?: Institution["internal_notes"];
 	source?: Institution["source"];
@@ -76,6 +85,7 @@ export type InstitutionTableBase = {
 	capacity?: Institution["capacity"];
 	created_at: Institution["created_at"];
 	updated_at: Institution["updated_at"];
+	hasQuestionnaireAnswers: boolean;
 };
 
 export type InstitutionRow = InstitutionTableBase & {
@@ -141,6 +151,13 @@ export type InstitutionForm = {
 	established_since?: Date | string | null;
 	established_until?: Date | string | null;
 	closing_reason?: string | null;
+	culture_index?: number | null;
+	culture_index_location?: number | null;
+	culture_index_property?: number | null;
+	culture_index_financial?: number | null;
+	culture_index_social_spatial?: number | null;
+	culture_index_visibility?: number | null;
+	culture_index_global?: string | null;
 	notes?: string | null;
 	internal_notes?: string | null;
 	status?: InstitutionStatus | null;
@@ -155,6 +172,8 @@ export type InstitutionForm = {
 	address: AddressInput | null;
 	categoryIds?: number[];
 	tagIds?: number[];
+	// Tags typed in the form that do not exist yet; created on save, reusing names that differ only in case.
+	newTagNames?: string[];
 	userIds?: string[];
 	groupIds?: number[];
 };
@@ -199,6 +218,13 @@ export const INSTITUTION_PERMISSION_FIELDS = [
 	"established_since",
 	"established_until",
 	"closing_reason",
+	"culture_index",
+	"culture_index_location",
+	"culture_index_property",
+	"culture_index_financial",
+	"culture_index_social_spatial",
+	"culture_index_visibility",
+	"culture_index_global",
 	"area",
 	"number_of_rooms",
 	"capacity",
@@ -241,6 +267,7 @@ export interface FilterState {
 	district_keys: string[];
 	category_keys: string[];
 	child_category_keys: string[];
+	culture_index_ranges: CultureIndexRangeKey[];
 	include_closed: boolean;
 	status: string | undefined; // e.g., "open", "closed", etc.
 }
@@ -255,6 +282,7 @@ export interface InstitutionStoreState {
 	> | null;
 	categoryCounts: Record<string, number>;
 	subcategoryCounts: Record<string, number>;
+	cultureIndexRangeCounts: Record<CultureIndexRangeKey, number>;
 	filters: FilterState;
 	categories: Category[] | null;
 	districts: string[];

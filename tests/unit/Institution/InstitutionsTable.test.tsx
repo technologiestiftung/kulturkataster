@@ -3,11 +3,15 @@ import { act, render, screen } from "@testing-library/react";
 import type { ReactElement } from "react";
 import { InstitutionsTable } from "@/components/Institution/InstitutionsTable";
 import { INSTITUTION_PERMISSION_FIELDS } from "@/types/institution";
+import { useInstitutionStore } from "@/lib/store/institutionStore";
 
 const pushMock = vi.fn();
 const prefetchMock = vi.fn();
 const dataTableMock = vi.fn();
 const downloadModalMock = vi.fn();
+const retryInitializeFilterCategoriesMock = vi.fn();
+let mockTableDistricts: string[] = [];
+let mockFilterCategoryGroups: Array<Record<string, unknown>> = [];
 const readableInstitutionFields = [...INSTITUTION_PERMISSION_FIELDS];
 let mockSubmissions: Array<Record<string, unknown>> = [];
 let mockInstitutionFieldPermissions = {
@@ -133,18 +137,22 @@ vi.mock("@/lib/store/institutionDraftStore", () => ({
 
 vi.mock("@/lib/hooks/useInstitutionFilterCategories", () => ({
 	useInstitutionFilterCategories: () => ({
-		filterCategoryGroups: [],
+		filterCategoryGroups: mockFilterCategoryGroups,
 		flattenedCategories: [],
 		isFilterCategoriesLoading: false,
-		retryInitializeFilterCategories: vi.fn(),
+		retryInitializeFilterCategories: retryInitializeFilterCategoriesMock,
 	}),
+}));
+
+vi.mock("@/components/Filter/FilterPanel", () => ({
+	FilterPanel: () => null,
 }));
 
 vi.mock("@/lib/hooks/useInstitutionTableFilters", () => ({
 	useInstitutionTableFilters: (tableRows: unknown[]) => ({
 		filters: {},
 		setFilters: vi.fn(),
-		districts: [],
+		districts: mockTableDistricts,
 		filteredTableRows: tableRows,
 		categoryCounts: {},
 		subcategoryCounts: {},
@@ -169,12 +177,18 @@ vi.mock("@/lib/hooks/useInstitutionTableFilters", () => ({
 	}),
 }));
 
+const initialInstitutionState = useInstitutionStore.getState();
+
 describe("InstitutionsTable", () => {
 	beforeEach(() => {
 		pushMock.mockReset();
 		prefetchMock.mockReset();
 		dataTableMock.mockReset();
 		downloadModalMock.mockReset();
+		retryInitializeFilterCategoriesMock.mockReset();
+		mockTableDistricts = [];
+		mockFilterCategoryGroups = [];
+		useInstitutionStore.setState(initialInstitutionState, true);
 		mockSubmissions = [];
 		mockInstitutionFieldPermissions = {
 			read: readableInstitutionFields,
@@ -227,6 +241,20 @@ describe("InstitutionsTable", () => {
 		expect(
 			config.getCanReview({ rowKind: "submission", submissionType: "update" }),
 		).toBe(true);
+	});
+
+	it("loads public districts when only the user's own row districts are known", () => {
+		mockTableDistricts = ["Pankow"];
+		mockFilterCategoryGroups = [{ id: 1, key: "cinema", child_categories: [] }];
+		render(<InstitutionsTable />);
+
+		const config = dataTableMock.mock.calls[0][0] as {
+			filterModal?: { content: () => ReactElement };
+		};
+		const content = config.filterModal?.content();
+		if (content) render(content);
+
+		expect(retryInitializeFilterCategoriesMock).toHaveBeenCalled();
 	});
 
 	it("hides the row kind filter unless the feature flag is enabled", () => {

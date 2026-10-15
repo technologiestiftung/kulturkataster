@@ -18,6 +18,7 @@ import { useInstitutionStore } from "@/lib/store/institutionStore";
 import { getSortedSubcategories } from "@/lib/utils/filterUtils";
 import { useMemo } from "react";
 import { cn } from "@/lib/utils";
+import { getCategoryLabel } from "@/lib/i18n/fieldLabels";
 
 interface CategorySectionProps {
 	group: Category;
@@ -83,8 +84,7 @@ export function CategorySection({
 	const isIndeterminate =
 		!categorySelected && someSubcategoriesSelected && !allSubcategoriesSelected;
 
-	const translatedCategoryName =
-		tEnum(`enumMap.category.${group.key}`) || group.key;
+	const translatedCategoryName = getCategoryLabel(tEnum, group.key);
 	const showCounts = mode !== "selection";
 
 	return (
@@ -148,8 +148,10 @@ export function CategorySection({
 
 			<CollapsibleContent className="pl-16 pr-2 space-y-1">
 				{sortedSubcategories.map((subcategory) => {
-					const translatedSubcategoryName =
-						tEnum(`enumMap.category.${subcategory.key}`) || subcategory.key;
+					const translatedSubcategoryName = getCategoryLabel(
+						tEnum,
+						subcategory.key,
+					);
 
 					return (
 						<div

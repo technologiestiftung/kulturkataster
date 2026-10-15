@@ -13,6 +13,7 @@ import { searchInstitutions } from "@/server/actions/institutions";
 import type { Institution } from "@/types/institution";
 import { buildStreetLine } from "@/lib/utils/formUtils";
 import { institutionSubmissionToDraft } from "@/lib/utils/institutionSubmissionUtils";
+import { dateToPartialDateInputValue } from "@/lib/utils/institutionFormAdapter";
 import { SelectableOptionsList } from "@/components/MultiSelect/SelectableOptionsList";
 import { buildCategoryFilterStateFromIds } from "@/lib/utils/institutionCategoryUtils";
 import { buildCategoryGroups } from "@/lib/utils/categoryUtils";
@@ -141,6 +142,12 @@ export function InstitutionDraftSelectModal({
 				"address.cultural_area": address?.cultural_area ?? "",
 				"address.lat": address?.lat ?? "",
 				"address.lng": address?.lng ?? "",
+				established_since: dateToPartialDateInputValue(
+					baseDraft.established_since,
+				),
+				established_until: dateToPartialDateInputValue(
+					baseDraft.established_until,
+				),
 			});
 			router.replace(toLocalePath("/institution/submission"));
 		},

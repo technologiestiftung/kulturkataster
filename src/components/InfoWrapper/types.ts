@@ -1,5 +1,6 @@
 import type { Institution } from "@/types";
 import type { ReactNode } from "react";
+import type { SectionCardVariant } from "@/components/shared/SectionWrapper";
 
 export interface Layout {
 	columns?: 1 | 2;
@@ -15,13 +16,15 @@ export type InfoWrapperFieldType =
 	| "enum"
 	| "nested"
 	| "date"
-	| "year"
+	| "partialDate"
 	| "boolean"
 	| "status"
 	| "url"
 	| "category"
 	| "fundingSources"
 	| "address"
+	| "culture_index"
+	| "statusGroup"
 	| "link"
 	| "section";
 
@@ -42,6 +45,8 @@ interface InfoWrapperBaseFieldConfig {
 	label?: string;
 	labelKey?: string;
 	enumKey?: string;
+	freeTextKey?: string;
+	freeTextValue?: string | number | boolean;
 	render?: (value: unknown, data: Institution) => ReactNode;
 	condition?: (data: Institution) => boolean;
 	description?: string;
@@ -59,9 +64,12 @@ interface InfoWrapperBaseFieldConfig {
 	};
 	categoryVariant?: "default" | "compact";
 	statusVariant?: "default" | "plain";
+	cultureIndexVariant?: "default" | "plain" | "item";
 	onClick?: (data: Institution) => void;
 	onClickAriaLabel?: string;
 	edit?: InfoWrapperEditConfig;
+	/** Id of a `title` field's heading; must be unique when several are on a page. */
+	headingId?: string;
 }
 
 type InfoWrapperSectionFieldConfig = InfoWrapperBaseFieldConfig & {
@@ -69,7 +77,7 @@ type InfoWrapperSectionFieldConfig = InfoWrapperBaseFieldConfig & {
 	title?: ReactNode;
 	description?: string;
 	fields: InfoWrapperFieldConfig[];
-	cardVariant?: "default" | "secondary" | "tertiary" | "none" | "hero";
+	cardVariant?: SectionCardVariant;
 	accordionVariant?: "default" | "secondary";
 	heroStatus?: "in_use" | "not_in_use" | "unknown";
 	onClick?: (data: Institution) => void;
@@ -95,7 +103,7 @@ export interface InfoWrapperConfig {
 	fields: InfoWrapperFieldConfig[];
 	infoId?: string;
 	className?: string;
-	cardVariant?: "default" | "secondary" | "tertiary" | "none" | "hero";
+	cardVariant?: SectionCardVariant;
 	accordionVariant?: "default" | "secondary";
 	alwaysShow?: boolean;
 	useAccordion?: boolean;

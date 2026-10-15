@@ -85,7 +85,7 @@ describe("account data loader", () => {
 					},
 				],
 			},
-			{ id: true, name: true },
+			{ id: true, name: true, _count: { select: { answers: true } } },
 		);
 	});
 });

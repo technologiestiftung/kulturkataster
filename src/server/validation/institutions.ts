@@ -19,8 +19,16 @@ import {
 	positiveIntegerSchema,
 	requiredTextSchema,
 	stringIdArraySchema,
+	tagNameArraySchema,
 	z,
 } from "./common";
+
+const cultureIndexScoreSchema = (label: string) =>
+	optionalNumberSchema(`${label} must be a valid number.`).refine(
+		(value) =>
+			value === null || value === undefined || (value >= 0 && value <= 100),
+		{ message: `${label} must be between 0 and 100.` },
+	);
 
 const addressSchema = z
 	.object({
@@ -60,6 +68,23 @@ const institutionBaseSchema = z.object({
 	parent_organization: optionalTextSchema(),
 	legal_form: optionalTextSchema(),
 	capacity: optionalNumberSchema("Capacity must be a valid number."),
+	culture_index: cultureIndexScoreSchema("Culture index"),
+	culture_index_location: cultureIndexScoreSchema(
+		"Culture index location dimension",
+	),
+	culture_index_property: cultureIndexScoreSchema(
+		"Culture index property dimension",
+	),
+	culture_index_financial: cultureIndexScoreSchema(
+		"Culture index financial dimension",
+	),
+	culture_index_social_spatial: cultureIndexScoreSchema(
+		"Culture index social-spatial dimension",
+	),
+	culture_index_visibility: cultureIndexScoreSchema(
+		"Culture index visibility dimension",
+	),
+	culture_index_global: optionalTextSchema(),
 	owner_name: optionalTextSchema(),
 	owner_type: z.nativeEnum(OwnerType).nullable().optional(),
 	rental_contract_type: z.nativeEnum(RentalContractType).nullable().optional(),
@@ -116,18 +141,32 @@ const institutionBaseSchema = z.object({
 		"Category ids must be positive integers.",
 	),
 	tagIds: positiveIntegerArraySchema("Tag ids must be positive integers."),
+	newTagNames: tagNameArraySchema(
+		"New tag names must be 1 to 100 characters, at most 50 per save.",
+	),
 	userIds: stringIdArraySchema("User ids must be non-empty strings."),
 	groupIds: positiveIntegerArraySchema("Group ids must be positive integers."),
 });
 
-const institutionCreateSchema = institutionBaseSchema.transform(
-	(value): InstitutionForm => value,
-);
+// New tags are added to the submitted selection, so they need tagIds to avoid replacing all tags.
+const requiresTagIdsWithNewTags = (value: {
+	tagIds?: number[];
+	newTagNames?: string[];
+}) => !value.newTagNames?.length || value.tagIds !== undefined;
+const newTagsWithoutTagIdsMessage = {
+	message: "New tag names require tagIds.",
+	path: ["newTagNames"],
+};
+
+const institutionCreateSchema = institutionBaseSchema
+	.refine(requiresTagIdsWithNewTags, newTagsWithoutTagIdsMessage)
+	.transform((value): InstitutionForm => value);
 
 const institutionUpdateSchema = institutionBaseSchema
 	.extend({
 		id: positiveIntegerSchema("Institution id must be positive."),
 	})
+	.refine(requiresTagIdsWithNewTags, newTagsWithoutTagIdsMessage)
 	.transform((value): InstitutionUpdateForm => value);
 
 export const validateInstitutionCreateInput = (input: InstitutionForm) =>

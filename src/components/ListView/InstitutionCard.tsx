@@ -7,6 +7,8 @@ import {
 	sharedUseInfoConfig,
 	contactInfoConfig,
 	additionalInfoConfig,
+	cultureIndexInfoConfig,
+	hasCultureIndex,
 } from "@/components/Institution";
 import { Institution } from "@/types";
 import { memo } from "react";
@@ -34,48 +36,38 @@ const InstitutionCard = memo(function InstitutionCard({
 	const fieldLabel = useFieldLabel();
 	const { isPrivateField } = useInstitutionPrivateFieldResolver();
 
-	const handleCardClick = (e: React.MouseEvent | React.KeyboardEvent) => {
-		// Don't trigger card click if clicking on interactive elements inside
-		const target = e.target as HTMLElement;
-		const currentTarget = e.currentTarget as HTMLElement;
-		const interactiveAncestor = target.closest(
-			"button, a, [role='button']",
-		) as HTMLElement | null;
-		if (interactiveAncestor && interactiveAncestor !== currentTarget) {
-			return;
-		}
-		onClick?.(institutionData);
-	};
-
-	const handleKeyDown = (e: React.KeyboardEvent) => {
-		if (e.key === "Enter" || e.key === " ") {
-			e.preventDefault();
-			handleCardClick(e);
-		}
-	};
-
-	const cardClassName = `tab-ring hover:scale-102 transition duration-500 ease-out transform-gpu will-change-transform w-full rounded-lg overflow-hidden text-left ${
+	const titleId = `institution-card-title-${institutionData.id}`;
+	const cardClassName = `relative hover:scale-102 transition duration-500 ease-out transform-gpu will-change-transform w-full rounded-lg overflow-hidden text-left has-[>button:focus-visible]:ring-2 has-[>button:focus-visible]:ring-interaction-dark ${
 		isSelected
 			? "shadow-md ring-2 ring-primary border border-primary"
 			: "shadow-sm border border-transparent"
 	} ${onClick ? "cursor-pointer hover:shadow-md" : ""}`;
 
+	// The whole card is clickable through a full-size button behind the
+	// content; links and buttons inside the card stay separately operable.
 	return (
-		<div
+		<article
 			className={cardClassName}
-			role={onClick ? "button" : "listitem"}
-			tabIndex={onClick ? 0 : undefined}
 			data-institution-card-id={String(institutionData.id)}
-			aria-selected={isSelected || undefined}
-			onClick={onClick ? handleCardClick : undefined}
-			onKeyDown={onClick ? handleKeyDown : undefined}
-			aria-label={
-				onClick
-					? `${institutionData.name} - ${t("common.institution.showDetails")}`
-					: undefined
-			}
+			data-selected={isSelected || undefined}
+			aria-labelledby={titleId}
 		>
-			<div className="">
+			{onClick && (
+				<button
+					type="button"
+					className="absolute inset-0 z-0 cursor-pointer focus-visible:outline-none"
+					aria-label={`${institutionData.name} - ${t("common.institution.showDetails")}`}
+					aria-current={isSelected || undefined}
+					onClick={() => onClick(institutionData)}
+				/>
+			)}
+			<div
+				className={
+					onClick
+						? "relative z-10 pointer-events-none [&_a]:pointer-events-auto [&_button]:pointer-events-auto [&_[role=button]]:pointer-events-auto"
+						: undefined
+				}
+			>
 				<InfoWrapper
 					key={`${institutionData.id}-${openDetails ? "open" : "closed"}`}
 					data={institutionData}
@@ -115,20 +107,9 @@ const InstitutionCard = memo(function InstitutionCard({
 												type: "category",
 											},
 											{
-												id: "utilization_status",
-												type: "status",
-												label: fieldLabel("utilization_status"),
-												statusVariant: "plain",
-												value: "utilization_status",
-												enumKey: "utilization_status",
-											},
-											{
-												id: "protection_status",
-												type: "status",
-												label: fieldLabel("protection_status"),
-												statusVariant: "plain",
-												value: "protection_status",
-												enumKey: "protection_status",
+												id: "status_group",
+												alwaysShow: false,
+												type: "statusGroup",
 											},
 											{
 												id: "address",
@@ -171,37 +152,45 @@ const InstitutionCard = memo(function InstitutionCard({
 								fields: [
 									{
 										type: "section",
+										id: "culture_index_section",
+										layout: { span: "half" },
+										cardVariant: "muted",
+										condition: hasCultureIndex,
+										fields: cultureIndexInfoConfig,
+									},
+									{
+										type: "section",
 										id: "funding",
 										layout: { span: "half" },
-										cardVariant: "tertiary",
+										cardVariant: "muted",
 										fields: organizationInfoConfig,
 									},
 									{
 										type: "section",
 										id: "facility",
 										layout: { span: "half" },
-										cardVariant: "tertiary",
+										cardVariant: "muted",
 										fields: facilityInfoConfig,
 									},
 									{
 										type: "section",
 										id: "shared_use",
 										layout: { span: "half" },
-										cardVariant: "tertiary",
+										cardVariant: "muted",
 										fields: sharedUseInfoConfig,
 									},
 									{
 										type: "section",
 										id: "organization",
 										layout: { span: "half" },
-										cardVariant: "tertiary",
+										cardVariant: "muted",
 										fields: detailsInfoConfig,
 									},
 									{
 										type: "section",
 										id: "additional",
 										layout: { span: "half" },
-										cardVariant: "tertiary",
+										cardVariant: "muted",
 										fields: additionalInfoConfig,
 									},
 								],
@@ -210,7 +199,7 @@ const InstitutionCard = memo(function InstitutionCard({
 					}}
 				/>
 			</div>
-		</div>
+		</article>
 	);
 });
 

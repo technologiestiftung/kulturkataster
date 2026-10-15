@@ -15,6 +15,7 @@ import {
 	buildCategoryFilterStateFromIds,
 	resolveCategoryIdsFromDraft,
 } from "@/lib/utils/institutionCategoryUtils";
+import { formatPartialDate } from "@/lib/utils/partialDate";
 
 const dateToInputValue = (value: unknown): string => {
 	const parsed = toDate(value);
@@ -23,6 +24,11 @@ const dateToInputValue = (value: unknown): string => {
 	const month = String(parsed.getMonth() + 1).padStart(2, "0");
 	const day = String(parsed.getDate()).padStart(2, "0");
 	return `${year}-${month}-${day}`;
+};
+
+export const dateToPartialDateInputValue = (value: unknown): string => {
+	const parsed = toDate(value);
+	return parsed ? formatPartialDate(parsed) : "";
 };
 
 export const buildInstitutionCategoryFilterState = (
@@ -52,6 +58,7 @@ export const buildInstitutionCategoryFilterState = (
 		district_keys: [],
 		category_keys: Array.from(category_keys),
 		child_category_keys: Array.from(child_category_keys),
+		culture_index_ranges: [],
 		include_closed: false,
 		status: undefined,
 	};
@@ -91,6 +98,7 @@ export const buildInstitutionFormInitialValues = (
 		),
 		groupIds:
 			resolvedInstitution?.groups?.map((group) => String(group.id)) ?? [],
+		tagIds: resolvedInstitution?.tags?.map((tag) => String(tag.id)) ?? [],
 		userIds: resolvedInstitution?.users?.map((user) => user.id) ?? [],
 		categoryFilters: resolvedInstitution?.categories?.length
 			? buildInstitutionCategoryFilterState(resolvedInstitution.categories)
@@ -133,13 +141,36 @@ export const buildInstitutionFormInitialValues = (
 		rental_contract_end: dateToInputValue(
 			resolvedInstitution?.rental_contract_end,
 		),
-		established_since: dateToInputValue(resolvedInstitution?.established_since),
-		established_until: dateToInputValue(resolvedInstitution?.established_until),
+		established_since: dateToPartialDateInputValue(
+			resolvedInstitution?.established_since,
+		),
+		established_until: dateToPartialDateInputValue(
+			resolvedInstitution?.established_until,
+		),
 		closing_reason: resolvedInstitution?.closing_reason ?? undefined,
 		area: toOptionalNumber(resolvedInstitution?.area) ?? undefined,
 		capacity: toOptionalNumber(resolvedInstitution?.capacity) ?? undefined,
 		number_of_rooms:
 			toOptionalNumber(resolvedInstitution?.number_of_rooms) ?? undefined,
+		culture_index:
+			toOptionalNumber(resolvedInstitution?.culture_index) ?? undefined,
+		culture_index_location:
+			toOptionalNumber(resolvedInstitution?.culture_index_location) ??
+			undefined,
+		culture_index_property:
+			toOptionalNumber(resolvedInstitution?.culture_index_property) ??
+			undefined,
+		culture_index_financial:
+			toOptionalNumber(resolvedInstitution?.culture_index_financial) ??
+			undefined,
+		culture_index_social_spatial:
+			toOptionalNumber(resolvedInstitution?.culture_index_social_spatial) ??
+			undefined,
+		culture_index_visibility:
+			toOptionalNumber(resolvedInstitution?.culture_index_visibility) ??
+			undefined,
+		culture_index_global:
+			resolvedInstitution?.culture_index_global ?? undefined,
 		accessibility: resolvedInstitution?.accessibility ?? undefined,
 		cost: resolvedInstitution?.cost ?? undefined,
 		shared_use_allowed: resolvedInstitution?.shared_use_allowed ?? null,
@@ -271,6 +302,18 @@ export function buildInstitutionForFormFromDraft(
 		closing_reason: toOptionalText(draft.closing_reason),
 		notes: toOptionalText(draft.notes),
 		internal_notes: toOptionalText(draft.internal_notes),
+		culture_index: toOptionalNumber(draft.culture_index) ?? null,
+		culture_index_location:
+			toOptionalNumber(draft.culture_index_location) ?? null,
+		culture_index_property:
+			toOptionalNumber(draft.culture_index_property) ?? null,
+		culture_index_financial:
+			toOptionalNumber(draft.culture_index_financial) ?? null,
+		culture_index_social_spatial:
+			toOptionalNumber(draft.culture_index_social_spatial) ?? null,
+		culture_index_visibility:
+			toOptionalNumber(draft.culture_index_visibility) ?? null,
+		culture_index_global: toOptionalText(draft.culture_index_global),
 		import_identifier: null,
 		source: toOptionalText(draft.source),
 		contact_person_id: toOptionalNumber(draft.contact_person_id) ?? null,

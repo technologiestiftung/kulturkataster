@@ -15,10 +15,13 @@ export type FieldType =
 	| "tel"
 	| "url"
 	| "date"
+	| "partialDate"
 	| "file"
 	| "textarea"
 	| "select"
 	| "radio"
+	| "likert"
+	| "likertMatrix"
 	| "checkbox"
 	| "switch"
 	| "multiselect"
@@ -39,6 +42,12 @@ export type PermissionAction =
 	| "delete"
 	| "download";
 export type PermissionScope = "own" | "all";
+
+// Lets users add an entry that is not in the list yet; the parent adds the returned value to `options`.
+export type MultiSelectCreateOption = {
+	getLabel: (term: string) => string;
+	onCreate: (term: string) => string;
+};
 
 export type TablePermissionValue = {
 	actions: PermissionAction[];
@@ -128,6 +137,8 @@ type FormWrapperNonSectionFieldConfig = {
 	accordionTitle?: ReactNode;
 	accordionDescription?: string;
 	placeholder?: string;
+	/** HTML autocomplete token for inputs asking for the user's own data (WCAG 1.3.5). */
+	autoComplete?: string;
 	required?: boolean;
 	requiredMessage?: string;
 	hideRequiredIndicator?: boolean;
@@ -137,6 +148,15 @@ type FormWrapperNonSectionFieldConfig = {
 	privateDescription?: string;
 	defaultValue?: unknown;
 	radioVariant?: "default" | "button";
+	likertMatrix?: {
+		rows: { key: string; label: string }[];
+	};
+	freeTextOption?: {
+		value: string | number | boolean;
+		fieldName?: string;
+		placeholder?: string;
+		label?: string;
+	};
 	multiselectVariant?: "list" | "modal";
 	searchPlaceholder?: string;
 	emptyText?: string;
@@ -156,6 +176,7 @@ type FormWrapperNonSectionFieldConfig = {
 		label: string;
 		compare?: (a: SelectOption, b: SelectOption) => number;
 	}[];
+	multiselectCreateOption?: MultiSelectCreateOption;
 	tablePermissions?: {
 		tables: {
 			key: string;

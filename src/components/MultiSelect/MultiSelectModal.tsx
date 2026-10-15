@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useId, useMemo, useState } from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { useTranslation } from "react-i18next";
 import { Badge } from "@/components/ui/badge";
@@ -19,7 +19,7 @@ import ChevronDown from "@/icons/chevron-down.svg";
 import { SelectableOptionsList } from "@/components/MultiSelect/SelectableOptionsList";
 import { cn } from "@/lib/utils";
 import { Checkbox } from "../ui/checkbox";
-import { SelectOption } from "../FormWrapper";
+import type { MultiSelectCreateOption, SelectOption } from "../FormWrapper";
 
 export type MultiSelectFilterConfig = {
 	id: string;
@@ -48,6 +48,12 @@ interface MultiSelectModalProps {
 	sortOptions?: MultiSelectSortOption[];
 	filterPanel?: ReactNode;
 	disabled?: boolean;
+	createOption?: MultiSelectCreateOption;
+	/** id of the visible field label; names the trigger together with its value. */
+	labelId?: string;
+	/** ids of description/error text describing the trigger. */
+	describedBy?: string;
+	invalid?: boolean;
 }
 
 const hasAnyValue = (values: string[] | undefined) =>
@@ -63,16 +69,23 @@ export function MultiSelectModal({
 	filteredOptions,
 	selected,
 	onChange,
-	placeholder = "Select items...",
-	searchPlaceholder = "Search...",
-	emptyText = "No items found",
+	placeholder,
+	searchPlaceholder,
+	emptyText,
 	previewCount = 3,
 	filters = [],
 	sortOptions = [],
 	filterPanel,
 	disabled = false,
+	createOption,
+	labelId,
+	describedBy,
+	invalid,
 }: MultiSelectModalProps) {
 	const { t } = useTranslation();
+	const baseId = useId();
+	const triggerId = `${baseId}-trigger`;
+	const searchLabel = searchPlaceholder ?? t("common.a11y.forms.searchOptions");
 	const [open, setOpen] = useState(false);
 	const [searchTerm, setSearchTerm] = useState("");
 	const [draftSelected, setDraftSelected] = useState<string[]>(selected);
@@ -199,6 +212,25 @@ export function MultiSelectModal({
 		}
 	};
 
+	const trimmedSearchTerm = searchTerm.trim();
+	const canCreateOption =
+		Boolean(createOption) &&
+		trimmedSearchTerm.length > 0 &&
+		!options.some(
+			(option) =>
+				getOptionText(option.label).trim().toLowerCase() ===
+				trimmedSearchTerm.toLowerCase(),
+		);
+
+	const handleCreateOption = () => {
+		if (!createOption || !canCreateOption) return;
+		const value = createOption.onCreate(trimmedSearchTerm);
+		setDraftSelected((current) =>
+			current.includes(value) ? current : [...current, value],
+		);
+		setSearchTerm("");
+	};
+
 	const handleClear = () => {
 		setDraftSelected([]);
 		setShowSelectedOnly(false);
@@ -285,9 +317,14 @@ export function MultiSelectModal({
 			)}
 
 			<Button
+				id={triggerId}
 				type="button"
 				variant="outline"
-				role="combobox"
+				aria-haspopup="dialog"
+				aria-expanded={open}
+				aria-labelledby={labelId ? `${labelId} ${triggerId}` : undefined}
+				aria-describedby={describedBy}
+				aria-invalid={invalid || undefined}
 				disabled={disabled}
 				onClick={() => setOpen(true)}
 				className={cn(
@@ -296,9 +333,14 @@ export function MultiSelectModal({
 				)}
 			>
 				{selectedOptions.length > 0
-					? `${selectedOptions.length} selected`
-					: placeholder}
-				<ChevronDown className="ml-2 h-4 w-4 shrink-0 text-neutral-60" />
+					? t("common.multiSelectModal.selectedCount", {
+							count: selectedOptions.length,
+						})
+					: (placeholder ?? t("common.select"))}
+				<ChevronDown
+					aria-hidden="true"
+					className="ml-2 h-4 w-4 shrink-0 text-neutral-60"
+				/>
 			</Button>
 
 			<DialogPrimitive.Root open={open} onOpenChange={handleOpenChange}>
@@ -330,8 +372,16 @@ export function MultiSelectModal({
 												{t("common.multiSelectModal.filtersTitle")}
 											</p>
 											{filters.map((filter) => (
-												<div key={filter.id} className="space-y-2">
-													<p className="text-xs font-semibold text-neutral-80">
+												<div
+													key={filter.id}
+													role="group"
+													aria-labelledby={`${baseId}-filter-${filter.id}`}
+													className="space-y-2"
+												>
+													<p
+														id={`${baseId}-filter-${filter.id}`}
+														className="text-xs font-semibold text-neutral-80"
+													>
 														{filter.label}
 													</p>
 													<div className="max-h-48 space-y-2 overflow-y-auto pr-2">
@@ -400,9 +450,20 @@ export function MultiSelectModal({
 								<Input
 									value={searchTerm}
 									onChange={(event) => setSearchTerm(event.target.value)}
-									placeholder={searchPlaceholder}
+									placeholder={searchLabel}
+									aria-label={searchLabel}
 									className="h-11 rounded-sm"
 								/>
+								{canCreateOption && createOption && (
+									<Button
+										type="button"
+										variant="outline"
+										className="self-start"
+										onClick={handleCreateOption}
+									>
+										{createOption.getLabel(trimmedSearchTerm)}
+									</Button>
+								)}
 
 								<div className="flex flex-wrap gap-2">
 									<Button
@@ -436,7 +497,7 @@ export function MultiSelectModal({
 								</div>
 							</div>
 							<div className="flex flex-col gap-3 ">
-								<div className="body3 text-foreground">
+								<div role="status" className="body3 text-foreground">
 									{t("common.multiSelectModal.resultsCount", {
 										count: visibleOptions.length,
 									})}
@@ -462,7 +523,7 @@ export function MultiSelectModal({
 								containerClassName="max-h-60 md:max-h-180"
 								onToggle={handleToggleOption}
 								showCheckbox={true}
-								emptyText={emptyText}
+								emptyText={emptyText ?? t("common.a11y.forms.noResults")}
 								variant="panel"
 							/>
 

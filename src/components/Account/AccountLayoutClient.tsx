@@ -10,6 +10,7 @@ import Setting from "@/icons/settings.svg";
 import Info from "@/icons/info-circle.svg";
 import { logout } from "@/server/actions/auth";
 import Image from "next/image";
+import Link from "next/link";
 import { LogOut } from "lucide-react";
 import { RefreshCw } from "lucide-react";
 import { Profile } from "@/types";
@@ -198,9 +199,11 @@ export function AccountLayoutClient({
 							tooltipSide="bottom"
 							className="h-14 w-14"
 							aria-label={profileSettingsLabel}
-							onClick={() => router.push(toLocalePath("/account/edit"))}
+							asChild
 						>
-							<Setting />
+							<Link href={toLocalePath("/account/edit")}>
+								<Setting aria-hidden="true" />
+							</Link>
 						</ButtonWithTooltip>
 						<ButtonWithTooltip
 							radius="full"
@@ -210,9 +213,11 @@ export function AccountLayoutClient({
 							tooltip={faqLabel}
 							className="h-14 w-14"
 							aria-label={faqLabel}
-							onClick={() => router.push(toLocalePath("/account/faq"))}
+							asChild
 						>
-							<Info />
+							<Link href={toLocalePath("/account/faq")}>
+								<Info aria-hidden="true" />
+							</Link>
 						</ButtonWithTooltip>
 						<ButtonWithTooltip
 							radius="full"

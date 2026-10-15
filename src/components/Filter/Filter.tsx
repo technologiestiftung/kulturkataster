@@ -22,6 +22,7 @@ const Filter: FC<FilterProps> = ({ onSearchClick, onShowFilter }) => {
 		filteredInstitutions,
 		categoryCounts,
 		subcategoryCounts,
+		cultureIndexRangeCounts,
 		categories,
 		districts,
 		initializePublicData,
@@ -52,10 +53,13 @@ const Filter: FC<FilterProps> = ({ onSearchClick, onShowFilter }) => {
 						tooltip={tCommon("common.search.searchButton", {
 							defaultValue: "Suchen",
 						})}
+						aria-label={tCommon("common.search.searchButton", {
+							defaultValue: "Suchen",
+						})}
 						className="cursor-pointer"
 						onClick={onSearchClick}
 					>
-						<Search className="size-5!" />
+						<Search className="size-5!" aria-hidden="true" />
 					</ButtonWithTooltip>
 				)}
 				<ButtonWithTooltip
@@ -83,6 +87,7 @@ const Filter: FC<FilterProps> = ({ onSearchClick, onShowFilter }) => {
 					filteredCount={filteredInstitutions?.length ?? 0}
 					categoryCounts={categoryCounts}
 					subcategoryCounts={subcategoryCounts}
+					cultureIndexRangeCounts={cultureIndexRangeCounts}
 					loading={loading}
 					error={null}
 					onRetry={retry}

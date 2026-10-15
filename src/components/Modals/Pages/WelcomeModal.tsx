@@ -7,6 +7,7 @@ import ArrowNarrowRight from "@/icons/arrow-narrow-right.svg";
 import KRBLogo from "@/logos/KRB.svg";
 import KukaLargeLogo from "@/logos/kuka-large.svg";
 import SenateLogo from "@/logos/senate.svg";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ModalFooter } from "../ModalFooter";
 import { useRouter } from "next/navigation";
@@ -22,7 +23,11 @@ export function WelcomeModal() {
 	const router = useRouter();
 	const toLocalePath = useLocalePath();
 	const isMobile = useIsMobile();
+	// Routes without an @modal intercept (e.g. /accessibilitySettings) keep this
+	// slot mounted on soft navigation, so the dialog must close itself first.
+	const [isOpen, setIsOpen] = useState(true);
 	const closeWelcomeAndNavigate = (url: string) => {
+		setIsOpen(false);
 		setFirstTimeUser(false);
 		router.replace(url);
 	};
@@ -35,7 +40,7 @@ export function WelcomeModal() {
 
 	return (
 		<Dialog
-			open
+			open={isOpen}
 			onOpenChange={(open) => {
 				if (!open) {
 					setFirstTimeUser(false);
@@ -72,6 +77,15 @@ export function WelcomeModal() {
 								<p className="body1">
 									{t("content.welcomeModal.description2")}
 								</p>
+							</div>
+							<div className="text-primary-dark flex space-x-2 cursor-pointer">
+								<ArrowNarrowRight className="stroke-primary-dark size-6" />
+								<a
+									className="underline body2 text-primary-dark font-semibold"
+									href="/questionnaire"
+								>
+									{t("content.welcomeModal.questionnaire")}
+								</a>
 							</div>
 							<div className="text-primary-dark flex space-x-2 cursor-pointer">
 								<ArrowNarrowRight className="stroke-primary-dark size-6" />
@@ -147,12 +161,12 @@ export function WelcomeModal() {
 								<div className="flex md:w-1/2 md:justify-end justify-around gap-2 space-x-4 md:mx-4">
 									<KRBLogo
 										title="Kulturraum Berlin gGmbH, Logo"
-										className="w-20 md:w-24 h-auto bg-background"
+										className="w-20 md:w-24 h-auto bg-background contrast:bg-foreground"
 									/>
 
 									<SenateLogo
 										title="Logo der Senatsverwaltung für Kultur und Gesellschaftlichen Zusammenhalt, Logo"
-										className="w-32 md:w-42 h-auto bg-background"
+										className="w-32 md:w-42 h-auto bg-background contrast:bg-foreground"
 									/>
 								</div>
 							</div>

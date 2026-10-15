@@ -64,7 +64,7 @@ test.describe("users management", () => {
 		).toBeVisible();
 
 		const row = page.locator("tbody tr", { hasText: uniqueEmail }).first();
-		await row.getByRole("button", { name: "Edit" }).click();
+		await row.getByRole("button", { name: "Bearbeiten", exact: true }).click();
 		await expect(page).toHaveURL(/\/de\/account\/users\/[^/]+\/edit\/?$/, {
 			timeout: 15_000,
 		});

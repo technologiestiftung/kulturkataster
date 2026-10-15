@@ -153,8 +153,7 @@ const HoverControl: FC<HoverControlProps> = ({
 			}
 
 			const pixel = evt.pixel;
-			const coordinate = evt.coordinate;
-			let matchedFeature = null;
+			let matchedFeature: any = null;
 
 			const newPositioning = calculatePositioning(pixel);
 			if (newPositioning !== cardPosition) {
@@ -174,7 +173,16 @@ const HoverControl: FC<HoverControlProps> = ({
 			});
 
 			if (matchedFeature) {
-				showOverlay(overlay, coordinate, matchedFeature);
+				// Anchor to the pin's own coordinate, not the pointer's — the pointer
+				// can be a few screen pixels off the pin's anchor point (icons extend
+				// upward from it), which is invisible at low zoom but becomes a large
+				// visible offset once a click zooms the map in on the pin.
+				const geometry = (matchedFeature as any).getGeometry?.();
+				const featureCoordinate =
+					geometry && typeof geometry.getCoordinates === "function"
+						? geometry.getCoordinates()
+						: evt.coordinate;
+				showOverlay(overlay, featureCoordinate, matchedFeature);
 			} else {
 				hideOverlay(overlay);
 			}
@@ -227,13 +235,15 @@ const HoverControl: FC<HoverControlProps> = ({
 	}, []);
 
 	return (
+		// Pointer-only preview; the detail page carries the same content, so the
+		// floating card is hidden from assistive technology.
 		<div
-			className="HoverControl-root"
+			className="HoverControl-root motion-safe:transition-opacity motion-safe:duration-200 motion-safe:ease-out"
 			ref={overlayRef}
+			aria-hidden="true"
 			style={{
 				visibility: overlayReady ? "visible" : "hidden",
 				opacity: isVisible ? 1 : 0,
-				transition: "opacity 200ms ease-out",
 			}}
 		>
 			{features &&

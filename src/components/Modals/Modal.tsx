@@ -2,7 +2,13 @@
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { ModalFooter } from "./ModalFooter";
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+	useCallback,
+	useEffect,
+	useLayoutEffect,
+	useRef,
+	useState,
+} from "react";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { AlertDialog } from "@/components/ui/alert-dialog";
@@ -122,6 +128,7 @@ export function Modal({
 		}
 		performClose();
 	}, [onCloseRequest, performClose]);
+	const returnFocusRef = useRef<HTMLElement | null>(null);
 	const [showCloseConfirmation, setShowCloseConfirmation] = useState(false);
 	const [hasHandledAutoCloseError, setHasHandledAutoCloseError] =
 		useState(false);
@@ -172,15 +179,41 @@ export function Modal({
 	}, [resolvedCloseConfirmation, resolvedPerformClose]);
 
 	const isEditorVariant = variant === "editor";
-	const resolvedContentClassName = contentClassName ?? "body2";
-	const dialogContentClassName = isEditorVariant
-		? cn("p-0", contentClassName)
-		: "flex flex-col gap-4 items-start space-y-4";
 	const isRouteMatch = routePath
 		? Boolean(
 				pathname && normalizePath(pathname).endsWith(normalizePath(routePath)),
 			)
 		: Boolean(open);
+
+	// Remember the trigger before the dialog moves focus into itself
+	// (layout effects run before Radix's focus scope effect).
+	useLayoutEffect(() => {
+		if (!isRouteMatch) return;
+		const activeElement = document.activeElement;
+		returnFocusRef.current =
+			activeElement instanceof HTMLElement && activeElement !== document.body
+				? activeElement
+				: null;
+	}, [isRouteMatch]);
+
+	const handleCloseAutoFocus = useCallback((event: Event) => {
+		event.preventDefault();
+		// Another dialog (e.g. the next routed modal) owns focus now.
+		if (document.querySelector('[role="dialog"], [role="alertdialog"]')) {
+			return;
+		}
+		const trigger = returnFocusRef.current;
+		returnFocusRef.current = null;
+		if (trigger?.isConnected) {
+			trigger.focus();
+			return;
+		}
+		document.getElementById("main-content")?.focus({ preventScroll: true });
+	}, []);
+	const resolvedContentClassName = contentClassName ?? "body2";
+	const dialogContentClassName = isEditorVariant
+		? cn("p-0", contentClassName)
+		: "flex flex-col gap-4 items-start space-y-4";
 	if (!isRouteMatch) {
 		return null;
 	}
@@ -216,6 +249,7 @@ export function Modal({
 						event.preventDefault();
 					}
 				}}
+				onCloseAutoFocus={handleCloseAutoFocus}
 			>
 				{isEditorVariant ? (
 					<>
