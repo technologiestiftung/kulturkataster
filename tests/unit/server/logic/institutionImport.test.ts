@@ -485,6 +485,22 @@ describe("planInstitutionImport", () => {
 		]);
 	});
 
+	it("resolves a subcategory label shared by two selected parents", () => {
+		const csvRows = exportCsv([makeInstitution()]);
+		setCell(csvRows, "ID", "");
+		setCell(csvRows, "Kategorien", "Kinos; Clubs und Musikspielstätten");
+		setCell(
+			csvRows,
+			"Unterkategorien",
+			"Ohne Unterkategorie; Ohne Unterkategorie",
+		);
+
+		const { plan } = planFromCsv(csvRows, []);
+
+		expect(plan.issues).toEqual([]);
+		expect(plan.creates[0]?.form.categoryIds).toEqual([3, 4, 5, 6]);
+	});
+
 	it("rejects an unchanged child after its parent changes", () => {
 		const institution = makeInstitution();
 		const csvRows = exportCsv([institution]);
