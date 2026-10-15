@@ -37,6 +37,7 @@ const fail = (code: ImportIssueCode, values?: string[]): CellResult<never> => ({
 });
 
 const LIST_SEPARATOR = /\s*;\s*/;
+const QUALIFIED_CATEGORY = /^(.+?)\s*\(([^()]+)\)$/;
 const FUNDING_SOURCE_DESCRIPTION_SEPARATOR = ": ";
 
 export const ENUM_VALUES_BY_KEY: Record<string, readonly string[]> = {
@@ -179,12 +180,41 @@ export const createValueParsers = (
 	): CellResult<number[]> => {
 		const ids: number[] = [];
 		const unknownItems: string[] = [];
-		for (const item of splitList(cell)) {
-			const matches = (categoryMap.get(normalizeLookupKey(item)) ?? []).filter(
-				isCandidate,
-			);
+		const items = splitList(cell);
+		const counts = new Map<string, number>();
+		items.forEach((item) => {
+			const key = normalizeLookupKey(item);
+			counts.set(key, (counts.get(key) ?? 0) + 1);
+		});
+		const usedCounts = new Map<string, number>();
+		for (const item of items) {
+			const key = normalizeLookupKey(item);
+			const qualified = QUALIFIED_CATEGORY.exec(item);
+			if (qualified) {
+				// "Label (Parent label)" names the parent of a label shared by several parents.
+				const parentIds = (
+					categoryMap.get(normalizeLookupKey(qualified[2])) ?? []
+				).map(({ id }) => id);
+				const match = (
+					categoryMap.get(normalizeLookupKey(qualified[1])) ?? []
+				).find(
+					(category) =>
+						isCandidate(category) &&
+						category.parent_category_id !== null &&
+						parentIds.includes(category.parent_category_id),
+				);
+				if (match) ids.push(match.id);
+				else unknownItems.push(item);
+				continue;
+			}
+			const matches = (categoryMap.get(key) ?? []).filter(isCandidate);
+			const used = usedCounts.get(key) ?? 0;
+			usedCounts.set(key, used + 1);
 			if (matches.length === 1) ids.push(matches[0].id);
-			else unknownItems.push(item);
+			// The export lists a label shared by several selected parents once per parent.
+			else if (matches.length > 1 && matches.length === counts.get(key)) {
+				ids.push(matches[used].id);
+			} else unknownItems.push(item);
 		}
 		return unknownItems.length > 0
 			? fail("unknownCategory", unknownItems)
