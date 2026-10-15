@@ -501,6 +501,71 @@ describe("planInstitutionImport", () => {
 		expect(plan.creates[0]?.form.categoryIds).toEqual([3, 4, 5, 6]);
 	});
 
+	it("round-trips a shared subcategory label qualified with its parent", () => {
+		const institution = {
+			...makeInstitution(),
+			categories: [
+				{ id: 3, key: "cinemas", parent_category_id: null },
+				{ id: 4, key: "clubs_music_venues", parent_category_id: null },
+				{ id: 5, key: "cinemas_other", parent_category_id: 3 },
+			],
+		} as Institution;
+		const csvRows = exportCsv([institution]);
+		const subcategoriesIndex = csvRows[0].indexOf("Unterkategorien");
+		expect(csvRows[1][subcategoriesIndex]).toBe("Ohne Unterkategorie (Kinos)");
+		expect(planFromCsv(csvRows, [institution]).plan).toMatchObject({
+			unchangedCount: 1,
+			issues: [],
+		});
+
+		setCell(csvRows, "ID", "");
+		const { plan } = planFromCsv(csvRows, []);
+
+		expect(plan.issues).toEqual([]);
+		expect(plan.creates[0]?.form.categoryIds).toEqual([3, 4, 5]);
+	});
+
+	it("keeps unique subcategory labels plain in the export", () => {
+		const csvRows = exportCsv([makeInstitution()]);
+		const subcategoriesIndex = csvRows[0].indexOf("Unterkategorien");
+		expect(csvRows[1][subcategoriesIndex]).toBe("dance");
+	});
+
+	it("mixes qualified and plain subcategory labels in one cell", () => {
+		const csvRows = exportCsv([makeInstitution()]);
+		setCell(csvRows, "ID", "");
+		setCell(csvRows, "Kategorien", "Theater; Kinos; Clubs und Musikspielstätten");
+		setCell(
+			csvRows,
+			"Unterkategorien",
+			"ohne unterkategorie (clubs und musikspielstätten); dance",
+		);
+
+		const { plan } = planFromCsv(csvRows, []);
+
+		expect(plan.issues).toEqual([]);
+		expect(plan.creates[0]?.form.categoryIds).toEqual([1, 3, 4, 6, 2]);
+	});
+
+	it("reports a qualified subcategory label with an unknown parent", () => {
+		const csvRows = exportCsv([makeInstitution()]);
+		setCell(csvRows, "ID", "");
+		setCell(csvRows, "Kategorien", "Kinos; Clubs und Musikspielstätten");
+		setCell(csvRows, "Unterkategorien", "Ohne Unterkategorie (Oper)");
+
+		const { plan } = planFromCsv(csvRows, []);
+
+		expect(plan.creates).toEqual([]);
+		expect(plan.issues).toEqual([
+			{
+				row: 2,
+				column: "Unterkategorien",
+				code: "unknownCategory",
+				values: ["Ohne Unterkategorie (Oper)"],
+			},
+		]);
+	});
+
 	it("rejects an unchanged child after its parent changes", () => {
 		const institution = makeInstitution();
 		const csvRows = exportCsv([institution]);
