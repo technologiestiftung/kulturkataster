@@ -1624,6 +1624,7 @@ export function InstitutionFormModal({
 
 	const onAddressBlur = handleAddressBlur(addressGeocodeState, geocodeAddress, {
 		reverseGeocode,
+		initialFormData: initialFormValues,
 		districtKey: "address.district",
 		neighbourhoodKey: "address.neighbourhood",
 	});

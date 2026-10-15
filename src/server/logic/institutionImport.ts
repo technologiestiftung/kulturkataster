@@ -87,6 +87,8 @@ const ADDRESS_FIELDS = [
 	...ADDRESS_TEXT_FIELDS,
 	...ADDRESS_NUMBER_FIELDS,
 ] as const;
+// About 1 cm; spreadsheet apps may round the exported coordinates.
+const COORDINATE_TOLERANCE = 1e-7;
 const ADDRESS_TEXT_KEYS = new Set<string>(ADDRESS_TEXT_FIELDS);
 const ADDRESS_NUMBER_KEYS = new Set<string>(ADDRESS_NUMBER_FIELDS);
 const DATE_KEYS = new Set([
@@ -387,6 +389,17 @@ const validateForm = <T>(
 	}
 };
 
+const isCoordinateChanged = (cell: string, current?: number | null) => {
+	// An empty cell keeps the saved coordinate, so a file without positions cannot erase
+	// positions that were corrected by hand.
+	if (!cell) return false;
+	const parsed = parseNumber(cell);
+	// Invalid cells go through so validation reports them.
+	if (!parsed.ok || parsed.value === null) return true;
+	if (current === null || current === undefined) return true;
+	return Math.abs(parsed.value - current) > COORDINATE_TOLERANCE;
+};
+
 const getChangedKeys = (
 	keys: string[],
 	cells: Map<string, string>,
@@ -403,6 +416,12 @@ const getChangedKeys = (
 	});
 	return keys.filter((key) => {
 		if (READ_ONLY_KEYS.has(key)) return false;
+		if (ADDRESS_NUMBER_KEYS.has(key)) {
+			return isCoordinateChanged(
+				normalizeCell(cells.get(key) ?? ""),
+				existing.address?.[key as (typeof ADDRESS_NUMBER_FIELDS)[number]],
+			);
+		}
 		const currentValue = currentRow[translateColumnName(key, t)] ?? "";
 		return normalizeCell(cells.get(key) ?? "") !== normalizeCell(currentValue);
 	});
