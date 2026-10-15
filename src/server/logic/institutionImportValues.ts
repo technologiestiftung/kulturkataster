@@ -37,6 +37,7 @@ const fail = (code: ImportIssueCode, values?: string[]): CellResult<never> => ({
 });
 
 const LIST_SEPARATOR = /\s*;\s*/;
+const QUALIFIED_CATEGORY = /^(.+?)\s*\(([^()]+)\)$/;
 const FUNDING_SOURCE_DESCRIPTION_SEPARATOR = ": ";
 
 export const ENUM_VALUES_BY_KEY: Record<string, readonly string[]> = {
@@ -188,6 +189,24 @@ export const createValueParsers = (
 		const usedCounts = new Map<string, number>();
 		for (const item of items) {
 			const key = normalizeLookupKey(item);
+			const qualified = QUALIFIED_CATEGORY.exec(item);
+			if (qualified) {
+				// "Label (Parent label)" names the parent of a label shared by several parents.
+				const parentIds = (
+					categoryMap.get(normalizeLookupKey(qualified[2])) ?? []
+				).map(({ id }) => id);
+				const match = (
+					categoryMap.get(normalizeLookupKey(qualified[1])) ?? []
+				).find(
+					(category) =>
+						isCandidate(category) &&
+						category.parent_category_id !== null &&
+						parentIds.includes(category.parent_category_id),
+				);
+				if (match) ids.push(match.id);
+				else unknownItems.push(item);
+				continue;
+			}
 			const matches = (categoryMap.get(key) ?? []).filter(isCandidate);
 			const used = usedCounts.get(key) ?? 0;
 			usedCounts.set(key, used + 1);

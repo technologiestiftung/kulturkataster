@@ -234,6 +234,20 @@ function extractDisplayValueFromObject(
 	return JSON.stringify(item);
 }
 
+// Translated category labels used by more than one category, e.g. "Zeitgenössischer Zirkus".
+function getSharedCategoryLabels(translateFn?: TranslateFn): Set<string> {
+	const labels = translateFn?.("enumMap.category", { returnObjects: true });
+	if (!isObjectRecord(labels)) return new Set();
+	const seen = new Set<string>();
+	const shared = new Set<string>();
+	Object.values(labels).forEach((label) => {
+		if (typeof label !== "string") return;
+		if (seen.has(label)) shared.add(label);
+		seen.add(label);
+	});
+	return shared;
+}
+
 function formatArrayField(
 	exportKey: string,
 	value: unknown[],
@@ -271,6 +285,7 @@ function formatArrayField(
 			(item) =>
 				isObjectRecord(item) && typeof item.parent_category_id === "number",
 		);
+		const sharedLabels = getSharedCategoryLabels(translateFn);
 		return {
 			categories: parentCategories
 				.map((item) =>
@@ -284,14 +299,29 @@ function formatArrayField(
 				.filter(Boolean)
 				.join("; "),
 			subcategories: childCategories
-				.map((item) =>
-					extractDisplayValueFromObject(
+				.map((item) => {
+					const label = extractDisplayValueFromObject(
 						item as Record<string, unknown>,
 						"subcategories",
 						audience,
 						translateFn,
-					),
-				)
+					);
+					const parent = parentCategories.find(
+						(parentItem) =>
+							isObjectRecord(parentItem) &&
+							parentItem.id === (item as Record<string, unknown>)
+								.parent_category_id,
+					);
+					if (!label || !parent || !sharedLabels.has(label)) return label;
+					// A label used under several parents names its parent so the import can tell them apart.
+					const parentLabel = extractDisplayValueFromObject(
+						parent as Record<string, unknown>,
+						"categories",
+						audience,
+						translateFn,
+					);
+					return parentLabel ? `${label} (${parentLabel})` : label;
+				})
 				.filter(Boolean)
 				.join("; "),
 		};
