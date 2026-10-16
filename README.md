@@ -18,6 +18,8 @@ Frontend application for the Kulturkataster, a platform for mapping and managing
 
 The Kulturkataster Frontend is a Next.js application with an interactive map and a list view of Berlin's cultural places. Registered users maintain place data in an account area, and guests can suggest new places.
 
+There is no separate backend: Next.js serves the UI, server actions and API routes, and Supabase provides the Postgres database, authentication and file storage.
+
 **Key Features:**
 
 - Interactive map and an accessible list view with search and filters
@@ -354,7 +356,3 @@ Texts and content available as [CC BY](https://creativecommons.org/licenses/by/3
     </td>
   </tr>
 </table>
-
-## Related Projects
-
-- [Kulturkataster Backend](https://github.com/technologiestiftung/kulturkataster-backend) - Database and API backend (currently private)
