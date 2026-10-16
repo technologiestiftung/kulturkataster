@@ -3353,7 +3353,7 @@
 				"placeholder": "z. B. 10"
 			},
 			"categories": {
-				"description": "Welche der folgenden Kategorien beschreibt die Einrichtung am besten?",
+				"description": "Passende Kategorien auswählen.",
 				"errors": {
 					"required": "Bitte Kategorien angeben."
 				},
@@ -3659,7 +3659,7 @@
 				"errors": {
 					"required": "Bitte Kultureinrichtung angeben."
 				},
-				"label": "Name der Kultureinrichtung",
+				"label": "Kultureinrichtung",
 				"placeholder": "Bitte eintragen"
 			},
 			"neighbourhood": {
