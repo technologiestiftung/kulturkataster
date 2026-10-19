@@ -1,6 +1,7 @@
 "use client";
 
 import { useInstitutionStore } from "@/lib/store/institutionStore";
+import { hasReadableCultureIndex } from "@/lib/constants/cultureIndexRanges";
 import { FC, useCallback } from "react";
 import { FilterState } from "@/types";
 import { FilterPanel } from "./FilterPanel";
@@ -26,6 +27,7 @@ const Filter: FC<FilterProps> = ({ onSearchClick, onShowFilter }) => {
 		categories,
 		districts,
 		initializePublicData,
+		allInstitutions,
 	} = useInstitutionStore();
 
 	const loading = categories === null || districts.length === 0;
@@ -88,6 +90,7 @@ const Filter: FC<FilterProps> = ({ onSearchClick, onShowFilter }) => {
 					categoryCounts={categoryCounts}
 					subcategoryCounts={subcategoryCounts}
 					cultureIndexRangeCounts={cultureIndexRangeCounts}
+					showCultureIndex={hasReadableCultureIndex(allInstitutions)}
 					loading={loading}
 					error={null}
 					onRetry={retry}
