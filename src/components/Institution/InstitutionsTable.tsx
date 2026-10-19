@@ -46,6 +46,7 @@ import { useInstitutionPrivateFieldResolver } from "@/lib/hooks/useInstitutionPr
 import { resolveInstitutionPermissionField } from "@/lib/utils/institutionPermissionField";
 import {
 	CULTURE_INDEX_DIMENSION_FIELDS,
+	canReadCultureIndex,
 	getCultureIndexRangeForValue,
 	type CultureIndexRangeKey,
 } from "@/lib/constants/cultureIndexRanges";
@@ -71,6 +72,7 @@ type InstitutionsFilterPanelProps = {
 	categoryCounts: Record<string, number>;
 	subcategoryCounts: Record<string, number>;
 	cultureIndexRangeCounts: Record<CultureIndexRangeKey, number>;
+	showCultureIndex: boolean;
 	loading: boolean;
 	onRetry: () => void;
 	onFiltersChange: (nextFilters: FilterState) => void;
@@ -131,6 +133,7 @@ function InstitutionsFilterPanel({
 	categoryCounts,
 	subcategoryCounts,
 	cultureIndexRangeCounts,
+	showCultureIndex,
 	loading,
 	onRetry,
 	onFiltersChange,
@@ -154,6 +157,7 @@ function InstitutionsFilterPanel({
 			categoryCounts={categoryCounts}
 			subcategoryCounts={subcategoryCounts}
 			cultureIndexRangeCounts={cultureIndexRangeCounts}
+			showCultureIndex={showCultureIndex}
 			loading={loading}
 			error={null}
 			onRetry={onRetry}
@@ -1177,6 +1181,9 @@ export function InstitutionsTable({
 					categoryCounts={categoryCounts}
 					subcategoryCounts={subcategoryCounts}
 					cultureIndexRangeCounts={cultureIndexRangeCounts}
+					showCultureIndex={canReadCultureIndex(
+						institutionFieldPermissions.read,
+					)}
 					loading={isFilterCategoriesLoading}
 					onRetry={retryInitializeFilterCategories}
 					onFiltersChange={setFilters}

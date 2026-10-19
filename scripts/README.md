@@ -17,15 +17,19 @@ npm run traduora:pull -- --all
 
 ## Flags
 
-- `--all`: with `--prune`, reset remote terms before importing local files.
+- `--all`: on pull, remote values overwrite local ones (by default local values are kept).
+  On push with `--prune`, reset remote terms before importing local files.
 - `--prune`: on push, delete remote terms that no longer exist locally. Combined
   with `--all`, deletes all remote terms first, then imports the local files.
+- `--yes`: skip the confirmation before a push. Required where there is no terminal,
+  such as CI.
+- `--bulk`: push through a single `jsonflat` import instead of term by term.
 
 ## Data Model
 
 Traduora terms are fully qualified i18n keys. Push uploads local files through
-Traduora's `jsonflat` import format, because this deployment returns 404 for
-`jsonnested` imports.
+Traduora's `jsonflat` import format, because some Traduora instances return 404
+for `jsonnested` imports.
 
 ```text
 common.auth.login
@@ -81,3 +85,12 @@ eval "$(npm run -s seed:e2e)"      # seeds and exports the E2E_* values
 ```
 
 CI runs the same steps in the `e2e` job of `.github/workflows/ci.yml`.
+
+# Other Scripts
+
+- `npm run data:migrate` (`run-data-migrations.ts`): applies data migrations, see
+  [`data-migrations/README.md`](../data-migrations/README.md).
+- `npm run i18n:audit` (`i18n-audit.ts`): reports keys used in the code but missing in
+  the translation files, keys that differ between locales, and unused keys.
+- `npm run email:dispatch` (`process-email-outbox.ts`): sends queued transactional emails
+  from the email outbox.

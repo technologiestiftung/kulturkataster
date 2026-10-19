@@ -31,7 +31,7 @@ describe("ViewModeToggle questionnaire button", () => {
 	});
 
 	it("renders a bordered button whose background overrides the secondary variant", () => {
-		render(<ViewModeToggle />);
+		render(<ViewModeToggle showQuestionnaire />);
 		const classes = getQuestionnaireButton().classList;
 
 		expect(classes).toContain("bg-background");
@@ -43,10 +43,20 @@ describe("ViewModeToggle questionnaire button", () => {
 	});
 
 	it("navigates to the questionnaire when clicked", () => {
-		render(<ViewModeToggle />);
+		render(<ViewModeToggle showQuestionnaire />);
 		fireEvent.click(getQuestionnaireButton());
 
 		expect(pushMock).toHaveBeenCalledWith("/de/questionnaire");
+	});
+
+	it("is hidden while no questionnaire is open", () => {
+		render(<ViewModeToggle showQuestionnaire={false} />);
+
+		expect(
+			screen.queryByRole("button", {
+				name: "content.welcomeModal.questionnaire",
+			}),
+		).toBeNull();
 	});
 });
 
@@ -56,7 +66,7 @@ describe("ViewModeToggle mobile menu button", () => {
 	});
 
 	it("keeps its own styling and opens the mobile menu when clicked", () => {
-		render(<ViewModeToggle />);
+		render(<ViewModeToggle showQuestionnaire />);
 		const burger = screen.getByRole("button", {
 			name: "common.mobileMenu.title",
 		});
