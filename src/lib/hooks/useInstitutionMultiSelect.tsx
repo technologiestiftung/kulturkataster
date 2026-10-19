@@ -19,6 +19,7 @@ import {
 import {
 	createEmptyCultureIndexRangeCounts,
 	getCultureIndexRangeForValue,
+	hasReadableCultureIndex,
 	type CultureIndexRangeKey,
 } from "@/lib/constants/cultureIndexRanges";
 
@@ -283,6 +284,7 @@ const useInstitutionMultiSelect = ({
 			categoryCounts={categoryCounts}
 			subcategoryCounts={subcategoryCounts}
 			cultureIndexRangeCounts={cultureIndexRangeCounts}
+			showCultureIndex={hasReadableCultureIndex(institutions)}
 			onFiltersChange={setInstitutionFilters}
 			parentCategorySelectionBehavior="last-child-only"
 		/>
