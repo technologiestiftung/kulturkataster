@@ -75,3 +75,10 @@ export const CULTURE_INDEX_FIELDS = [
 // add_institution_culture_index_dimensions migration), so one check covers all.
 export const canReadCultureIndex = (readableFields: string[] | undefined) =>
 	readableFields?.includes("culture_index") ?? false;
+
+// Public institution data only carries culture_index when the viewer may read it
+// (see redactInstitutionToFields), so its presence reflects the read permission.
+export const hasReadableCultureIndex = (
+	institutions: ReadonlyArray<object> | null | undefined,
+) =>
+	institutions?.some((institution) => "culture_index" in institution) ?? false;

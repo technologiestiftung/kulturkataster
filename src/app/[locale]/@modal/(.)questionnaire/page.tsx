@@ -1,4 +1,6 @@
+import { redirect } from "next/navigation";
 import { getOpenQuestionnaire } from "@/server/actions/questionnaires";
+import { localePath } from "@/lib/utils/localePath";
 import { getCategoriesWithSubcategories } from "@/server/actions/categories";
 import { getGuestCaptchaWidgetConfig } from "@/server/captcha/cap";
 import { QuestionnaireWizardModal } from "@/components/Questionnaire/QuestionnaireWizardModal";
@@ -9,8 +11,10 @@ import {
 } from "@/lib/utils/routeParams";
 
 export default async function QuestionnaireModalIntercepted({
+	params,
 	searchParams,
 }: {
+	params: Promise<{ locale: string }>;
 	searchParams: Promise<{
 		institutionId?: string | string[];
 		submissionId?: string | string[];
@@ -26,6 +30,10 @@ export default async function QuestionnaireModalIntercepted({
 			getGuestCaptchaWidgetConfig(),
 		]);
 
+	// Without an open questionnaire there is nothing to show; the entry points are hidden too.
+	if (!result.ok && result.error === "not_found") {
+		redirect(localePath((await params).locale, "/map"));
+	}
 	if (!result.ok) {
 		return <QuestionnaireUnavailable routePath="/questionnaire" />;
 	}

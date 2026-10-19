@@ -12,6 +12,8 @@ export const questionnaireRepo = {
 			take,
 			orderBy: { created_at: "desc" },
 		}),
+	hasOpen: async () =>
+		(await prisma.questionnaire.count({ where: { status: "open" } })) > 0,
 	listOpen: () =>
 		prisma.questionnaire.findMany({
 			where: { status: "open" },
