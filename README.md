@@ -12,38 +12,42 @@
 
 # Kulturkataster Frontend
 
-Frontend application for the Kulturkataster project - a comprehensive platform for mapping and managing cultural institutions in Berlin.
+Frontend application for the Kulturkataster, a platform for mapping and managing cultural places in Berlin.
 
 ## Overview
 
-The Kulturkataster Frontend is a Next.js application that provides an interactive map interface for exploring Berlin's cultural landscape. Built with modern web technologies, it offers multilingual support, responsive design, and advanced mapping capabilities.
+The Kulturkataster Frontend is a Next.js application with an interactive map and a list view of Berlin's cultural places. Registered users maintain place data in an account area, and guests can suggest new places.
+
+There is no separate backend: Next.js serves the UI, server actions and API routes, and Supabase provides the Postgres database, authentication and file storage.
 
 **Key Features:**
 
-- Interactive map with cultural institution visualization
-- Multilingual support (currently only German implemented) with i18next
-- Responsive design optimized for desktop and mobile
-- Advanced filtering and search functionality
-- Docker deployment with GitHub Container Registry integration
-- Modern tech stack: Next.js 15, React 19, TypeScript, Tailwind CSS
+- Interactive map and an accessible list view with search and filters
+- German and English, with translations managed in Traduora
+- Account area to edit places, categories, tags, groups, users and roles (role-based access)
+- Suggestions and updates from guests, reviewed before they go live
+- CSV/XLSX export and import of places
+- Questionnaire for the Kulturort-Index
+- Responsive design, built to WCAG 2.1 AA (see [Accessibility](#accessibility))
 
 ## Tech Stack
 
-- **Framework**: Next.js 15.2.2 with App Router
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS v4 with custom design system
+- **Framework**: Next.js 16 (App Router), React 19, TypeScript
+- **Styling**: Tailwind CSS v4 with a custom design system
 - **UI Components**: Radix UI primitives
-- **Mapping**: OpenLayers (ol) with MapTiler integration
+- **Mapping**: OpenLayers with MapTiler
 - **State Management**: Zustand
-- **Internationalization**: i18next with next-i18n-router
-- **Database**: Supabase integration
-- **Deployment**: Docker with GitHub Actions
+- **Internationalization**: i18next with next-i18n-router, synced with Traduora
+- **Database and Auth**: Supabase (Postgres, Auth, Storage) with Prisma
+- **Testing**: Vitest (unit and integration), Playwright (e2e)
+- **Deployment**: Docker images built with GitHub Actions
 
 ## Prerequisites
 
-- Node.js >= 18
-- npm or similar package manager
-- Docker (for containerized deployment)
+- Node.js 24 (the version used in CI and the Docker image)
+- npm
+- [Supabase CLI](https://supabase.com/docs/guides/cli) and Docker, for a local database
+- A MapTiler API key for the map
 
 ## Installation
 
@@ -64,23 +68,26 @@ The Kulturkataster Frontend is a Next.js application that provides an interactiv
 
 3. **Environment Configuration**
 
-   Create a `.env` file with the required environment variables:
+   Copy the example file and fill in your values:
 
    ```bash
-   MAP_BOUNDING_BOX=13.091992716067702,52.33488609760638,13.742786470433,52.67626223889507
-   MAPTILER_API_KEY=your_maptiler_api_key
-
-   SUPABASE_URL=your_supabase_url
-   SUPABASE_ANON_KEY=your_supabase_anon_key
-   DATABASE_URL=postgresql://prisma:your_password@127.0.0.1:54522/postgres
-
-   FILE_STORAGE_BUCKET=icons
-
-   TRADUORA_API_URL=your_traduora_api_url
-   TRADUORA_CLIENT_ID=your_traduora_client_id
-   TRADUORA_CLIENT_SECRET=your_traduora_client_secret
-   TRADUORA_PROJECT_ID=your_traduora_project_id
+   cp .env.example .env
    ```
+
+   `.env.example` lists every variable with a short comment. See [Environment Variables](#environment-variables) for what is required.
+
+4. **Database**
+
+   Start a local Supabase (uses `supabase/config.toml`), then apply the schema and data migrations:
+
+   ```bash
+   supabase start
+   npm run prisma:generate
+   npx prisma migrate deploy
+   npm run data:migrate
+   ```
+
+   See [`prisma/README.md`](prisma/README.md) and [`data-migrations/README.md`](data-migrations/README.md) for details.
 
 ## Running the Project
 
@@ -95,16 +102,20 @@ The application will be available at `http://localhost:3000`.
 ### Other Development Commands
 
 ```bash
-npm run build        # Build for production
-npm run start        # Start production server
-npm run lint         # Run ESLint
-npm run format       # Format code with Prettier
-npm run format:fix   # Auto-fix formatting issues
-npm test             # Unit and integration tests (e2e runs in GitHub CI)
-npm run test:e2e     # Playwright e2e, only when needed locally
+npm run build             # Build for production
+npm run start             # Start production server
+npm run lint              # Run ESLint
+npm run format            # Check formatting with Prettier
+npm run format:fix        # Fix formatting
+npm test                  # Unit and integration tests (e2e runs in GitHub CI)
+npm run test:unit         # Unit tests only
+npm run test:integration  # Integration tests, need a database configured in .env.test
+npm run test:e2e          # Playwright e2e, only when needed locally
 ```
 
-## Docker Deployment
+Copy `.env.test.example` to `.env.test` for the integration and e2e tests. To seed a local database with synthetic test data, see [E2E Seed](scripts/README.md#e2e-seed).
+
+## Docker
 
 ### Building the Docker Image
 
@@ -114,13 +125,10 @@ docker build -t kulturkataster-frontend .
 
 ### Running with Docker
 
+The server reads its configuration at runtime, so pass your `.env` file:
+
 ```bash
-docker run -p 3000:3000 \
-  -e NEXT_PUBLIC_SUPABASE_URL=your_supabase_url \
-  -e NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key \
-  -e NEXT_PUBLIC_MAPTILER_API_KEY=your_maptiler_api_key \
-  -e NEXT_PUBLIC_MAP_BOUNDING_BOX=13.091992716067702,52.33488609760638,13.742786470433,52.67626223889507 \
-  kulturkataster-frontend
+docker run -p 3000:3000 --env-file .env kulturkataster-frontend
 ```
 
 ## CI/CD and Deployment
@@ -133,75 +141,45 @@ docker run -p 3000:3000 \
 - **build**: production build
 - **e2e**: starts a throwaway local Supabase (`supabase/config.toml`), applies migrations, seeds synthetic data, then runs the integration and Playwright suites
 
-To reproduce the e2e setup locally, see [E2E Seed](scripts/README.md#e2e-seed).
+### Releases
 
-### GitHub Container Registry
+1. **Create Release Branch** (`release-create.yml`, started manually from `main` or `dev`) bumps the version (patch, minor or major), creates a `release/v*` branch and a GitHub release.
+2. **Deploy App (Release)** (`deploy-release.yml`) runs on pushes to `release/v*`. It builds the Docker image and publishes it to the GitHub Container Registry (`ghcr.io/technologiestiftung/kulturkataster-frontend`, tagged with the version), backs up the database, applies the Prisma schema migrations and deploys. Release branches from `dev` deploy to the dev environment, the others to production.
 
-The project uses GitHub Actions for automated building and publishing to GitHub Container Registry (GHCR). The workflow is triggered on pushes to `main`, `dev`, and `release/*` branches.
+Data migrations (`npm run data:migrate`) are not part of the release workflow yet and are applied separately after a deployment.
 
-**Docker Images Available At:**
-
-- `ghcr.io/technologiestiftung/kulturkataster-frontend:latest`
-- `ghcr.io/technologiestiftung/kulturkataster-frontend:main`
-- `ghcr.io/technologiestiftung/kulturkataster-frontend:dev`
-- `ghcr.io/technologiestiftung/kulturkataster-frontend:release-*`
-
-### Deployment Workflow
-
-1. **Code pushed to repository**
-2. **GitHub Actions triggered** based on branch
-3. **Docker image built** with appropriate environment variables
-4. **Image published** to GitHub Container Registry
-5. **Automatic release created** (for main branch pushes)
-
-Environment-specific configurations are managed through GitHub environments (`main` and `dev`) with appropriate secrets and variables.
+Environment-specific configuration is managed through the GitHub environments `main` and `dev`.
 
 ## Internationalization (i18n)
 
-This project leverages `i18next` for internationalization and localization support, enabling seamless language detection, switching, and modular translation management.
-
-### Features
-
-- **Language Detection and Switching**: Automatically detects and switches between supported languages
-- **Modular Translation Files**: Translations are organized into namespaces for better maintainability
-- **URL-based Routing**: Language-specific routes (e.g., `/en/`, `/de/`)
-
-### Supported Languages
-
-- **German (de)** - Primary language
-- **English (en)** - Secondary language
+The project uses `i18next` with URL-based locales (`/de/…`, `/en/…`). German is the primary language, English the secondary one.
 
 ### Translation Structure
 
+Each locale has one file:
+
 ```
 src/lib/i18n/translations/
-├── de/
-│   ├── common.json     # General UI labels
-│   ├── content.json    # Content and descriptions
-│   └── enumMap.json    # Category and subcategory mappings
-└── en/
-    └── common.json     # English translations
+├── de/translation.json
+└── en/translation.json
 ```
 
-### Working with Translations
-
-1. Add new translation keys to the appropriate JSON files
-2. Use the `useTranslation` hook in components:
+Each file is grouped into `common` (general UI labels), `content` (page and modal content) and `enumMap` (field labels, options, categories). The app uses the single namespace `translation`, so keys include the group:
 
 ```tsx
 import { useTranslation } from "react-i18next";
 
 function MyComponent() {
-	const { t } = useTranslation("common");
-	return <h1>{t("welcome")}</h1>;
+	const { t } = useTranslation();
+	return <h1>{t("common.auth.login")}</h1>;
 }
 ```
 
+Add every user-visible text to both files.
+
 ### Traduora Sync
 
-The project includes automated translation synchronization with Traduora. See [`scripts/README.md`](scripts/README.md) for details.
-
-**Quick commands:**
+Translations are maintained in [Traduora](https://traduora.co/). A GitHub workflow (`sync-traduora.yml`) pulls them every night and opens a pull request with the changes. See [`scripts/README.md`](scripts/README.md) for details.
 
 ```bash
 npm run traduora:push  # Upload local translations to Traduora
@@ -214,73 +192,71 @@ npm run traduora:pull  # Download translations from Traduora
 
 ```
 src/
-├── app/                    # Next.js App Router
-│   ├── [locale]/          # Internationalized routes
-│   └── api/               # API routes
+├── app/                   # Next.js App Router
+│   ├── [locale]/          # Localized routes, with parallel routes for modals and the sidebar
+│   └── api/               # API routes (e.g. import)
 ├── components/            # React components
 │   ├── ui/                # Reusable UI components
-│   ├── Map/               # Map-related components
-│   ├── Filter/            # Filtering functionality
+│   ├── Map/               # Map components
+│   ├── Filter/            # Filters
 │   └── ...
-├── lib/                   # Utility functions and configurations
-│   ├── supabase/          # Database integration
-│   ├── store/             # Zustand state management
-│   └── i18n/              # Internationalization setup
-├── types/                 # TypeScript type definitions
-└── logos/                 # Project logos and assets
+├── server/                # Server-only code
+│   ├── actions/           # Server actions
+│   ├── data/              # Database access (Prisma repositories)
+│   ├── logic/             # Business logic, e.g. import and submissions
+│   └── validation/        # Input validation (Zod)
+├── lib/                   # Shared utilities, hooks, stores and translations
+├── generated/             # Generated Prisma client
+├── types/                 # TypeScript types
+└── logos/                 # Logos
 ```
-
-### Key Components
-
-- **Map Component**: OpenLayers-based interactive map with custom styling
-- **Filter System**: Advanced filtering with categories, districts, and search
-- **Modal System**: Responsive modals for detailed information display
-- **Navigation**: Multi-level navigation with mobile optimization
 
 ### State Management
 
-The application uses Zustand for state management with separate stores for:
+Client state lives in Zustand stores in `src/lib/store/`, for example:
 
-- **App State**: General application state and UI preferences
-- **Map State**: Map interactions, layers, and geographic data
-- **Institution State**: Cultural institution data and filtering
-- **Modal State**: Modal visibility and content management
+- **App and map state**: UI preferences, map interactions and layers
+- **Institutions**: cultural places and filters
+- **Account**: data for the account area
+- **Drafts**: suggestions for places and questionnaire answers in progress
 
 ## Development
 
 ### Code Standards
 
-- **TypeScript**: Strict mode enabled with comprehensive type checking
-- **ESLint**: Extended Next.js configuration with custom rules
-- **Prettier**: Consistent code formatting
-- **Husky**: Pre-commit hooks for code quality
+- **TypeScript**: strict mode
+- **ESLint**: Next.js configuration with custom rules, including `eslint-plugin-jsx-a11y`
+- **Prettier**: formatting
+- **Husky**: pre-commit (format, lint, tests) and commit-msg (Conventional Commits) hooks
 
 ### Adding New Features
 
-1. Create feature branch from `dev`
-2. Implement changes with proper TypeScript typing
-3. Add translations for new text content
-4. Test locally and ensure Docker build works
-5. Create pull request to `dev` branch
+1. Write an issue so we can discuss the change
+2. Create a feature branch from `dev`
+3. Add translations for new text in German and English
+4. Test locally (`npm run lint`, `npm test`)
+5. Create a pull request to `dev`
 
 ### Environment Variables
 
-The application supports different environment configurations:
+All variables are listed in `.env.example`. They are read on the server at runtime.
 
-**Runtime Variables** (server-side only):
+**Required:**
 
-- `MAP_BOUNDING_BOX`
-- `MAPTILER_API_KEY`
-- `SUPABASE_URL`
-- `SUPABASE_ANON_KEY`
+- `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`
 - `DATABASE_URL`
-- `FILE_STORAGE_BUCKET`
-- `TRADUORA_API_URL`
-- `TRADUORA_CLIENT_ID`
-- `TRADUORA_CLIENT_SECRET`
-- `TRADUORA_PROJECT_ID`
-- `SUPABASE_SERVICE_ROLE_KEY` (if needed for server actions)
-- `CAP_URL`, `CAP_SITE_KEY`, `CAP_SECRET_KEY` (optional; Cap captcha for guest submissions, off when unset)
+- `MAPTILER_API_KEY`, `MAP_BOUNDING_BOX`
+- `SITE_URL`
+
+**Optional:**
+
+- `TRADUORA_*`: load translations from Traduora at runtime; without them the bundled files are used
+- `FILE_STORAGE_BUCKET`, `SUPABASE_CATEGORY_ICONS_BUCKET`: storage buckets
+- `EMAIL_PROVIDER` and `SMTP_*`: transactional emails (`noop` sends nothing)
+- `CLEVERREACH_*`: newsletter sign-up
+- `OTEL_*`: telemetry export
+- `CAP_URL`, `CAP_SITE_KEY`, `CAP_SECRET_KEY`: Cap captcha for guest submissions, off when unset
+- `HIDDEN_MENU_ITEMS`, `ACCOUNT_AUTO_REFRESH_INTERVAL_MS`: UI settings
 
 ## Accessibility
 
@@ -380,7 +356,3 @@ Texts and content available as [CC BY](https://creativecommons.org/licenses/by/3
     </td>
   </tr>
 </table>
-
-## Related Projects
-
-- [Kulturkataster Backend](https://github.com/technologiestiftung/kulturkataster-backend) - Database and API backend

@@ -19,8 +19,13 @@ Execution:
 
 ```bash
 npm run prisma:generate
-npx prisma migrate deploy
-npm run data:migrate
+npx prisma migrate deploy   # also creates the app_data_migrations tracking table
+npm run data:migrate        # uses DATABASE_URL; data:migrate:local reads .env.local
 ```
 
-The runner automatically creates and maintains the `app_data_migrations` tracking table.
+- Each applied migration is recorded in `app_data_migrations` and skipped on later runs.
+  The ID is the file name without its extension, so renaming a file makes it run again.
+- `npm run data:migrate:dry-run` only lists the migration files. It does not connect to
+  the database, so it does not show which ones are still pending.
+- A `.ts` migration exports a module with an `up(prisma)` function, see `types.ts`.
+- The release workflow does not run data migrations yet; apply them after a deployment.
