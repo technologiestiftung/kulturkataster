@@ -4,6 +4,7 @@ import { devtools, subscribeWithSelector } from "zustand/middleware";
 import {
 	createEmptyCultureIndexRangeCounts,
 	getCultureIndexRangeForValue,
+	hasReadableCultureIndex,
 } from "@/lib/constants/cultureIndexRanges";
 import {
 	matchesCategoryFilter,
@@ -30,6 +31,16 @@ const defaultFilters: InstitutionStoreState["filters"] = {
 	include_closed: false,
 };
 
+// The culture index filter is hidden when the data lacks culture_index, so it must not stay active.
+const filtersForInstitutions = (
+	filters: InstitutionStoreState["filters"],
+	institutions: Institution[] | null,
+): InstitutionStoreState["filters"] =>
+	filters.culture_index_ranges.length > 0 &&
+	!hasReadableCultureIndex(institutions)
+		? { ...filters, culture_index_ranges: [] }
+		: filters;
+
 const applyPublicData = (
 	data: {
 		institutions: Institution[];
@@ -43,6 +54,7 @@ const applyPublicData = (
 		allInstitutions: data.institutions,
 		categories: data.categories,
 		districts: data.districts,
+		filters: filtersForInstitutions(get().filters, data.institutions),
 	};
 	const currentState = { ...get(), ...newState };
 	const filteredInstitutions = computeFilteredInstitutions(currentState);
@@ -239,7 +251,10 @@ export const useInstitutionStore = create<InstitutionStoreState>()(
 				if (areStoreSliceValuesEqual(get().allInstitutions, institutions)) {
 					return;
 				}
-				const newState = { allInstitutions: institutions };
+				const newState = {
+					allInstitutions: institutions,
+					filters: filtersForInstitutions(get().filters, institutions),
+				};
 				const currentState = { ...get(), ...newState };
 				const filteredInstitutions = computeFilteredInstitutions(currentState);
 				const allInstitutionsGeoJSON = institutions
