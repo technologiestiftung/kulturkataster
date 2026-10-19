@@ -17,7 +17,11 @@ import { useAppStore } from "@/lib/store/appStore";
 import { useLocalePath } from "@/lib/hooks/useLocalePath";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-export function WelcomeModal() {
+export function WelcomeModal({
+	showQuestionnaire,
+}: {
+	showQuestionnaire: boolean;
+}) {
 	const { t } = useTranslation();
 	const { setFirstTimeUser } = useAppStore();
 	const router = useRouter();
@@ -78,15 +82,17 @@ export function WelcomeModal() {
 									{t("content.welcomeModal.description2")}
 								</p>
 							</div>
-							<div className="text-primary-dark flex space-x-2 cursor-pointer">
-								<ArrowNarrowRight className="stroke-primary-dark size-6" />
-								<a
-									className="underline body2 text-primary-dark font-semibold"
-									href="/questionnaire"
-								>
-									{t("content.welcomeModal.questionnaire")}
-								</a>
-							</div>
+							{showQuestionnaire && (
+								<div className="text-primary-dark flex space-x-2 cursor-pointer">
+									<ArrowNarrowRight className="stroke-primary-dark size-6" />
+									<a
+										className="underline body2 text-primary-dark font-semibold"
+										href="/questionnaire"
+									>
+										{t("content.welcomeModal.questionnaire")}
+									</a>
+								</div>
+							)}
 							<div className="text-primary-dark flex space-x-2 cursor-pointer">
 								<ArrowNarrowRight className="stroke-primary-dark size-6" />
 								<a
