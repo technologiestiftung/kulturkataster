@@ -10,6 +10,11 @@ vi.mock("@/components/Questionnaire/QuestionnaireUnavailable", () => ({
 	QuestionnaireUnavailable: () => null,
 }));
 
+const redirectMock = vi.fn((url: string) => {
+	throw new Error(`NEXT_REDIRECT ${url}`);
+});
+vi.mock("next/navigation", () => ({ redirect: redirectMock }));
+
 const getCurrentUserIdMock = vi.fn().mockResolvedValue(null);
 vi.mock("@/server/actions/auth", () => ({
 	getCurrentProfile: vi.fn().mockResolvedValue(null),
@@ -43,6 +48,7 @@ describe("questionnaire page integration", () => {
 
 		const pageModule = await import("@/app/[locale]/questionnaire/page");
 		const result = await pageModule.default({
+			params: Promise.resolve({ locale: "de" }),
 			searchParams: Promise.resolve({}),
 		});
 
@@ -69,6 +75,7 @@ describe("questionnaire page integration", () => {
 
 		const pageModule = await import("@/app/[locale]/questionnaire/page");
 		const result = await pageModule.default({
+			params: Promise.resolve({ locale: "de" }),
 			searchParams: Promise.resolve({ thankyou: "1" }),
 		});
 
@@ -86,6 +93,7 @@ describe("questionnaire page integration", () => {
 
 		const pageModule = await import("@/app/[locale]/questionnaire/page");
 		const result = await pageModule.default({
+			params: Promise.resolve({ locale: "de" }),
 			searchParams: Promise.resolve({ thankyou: "true" }),
 		});
 
@@ -103,6 +111,7 @@ describe("questionnaire page integration", () => {
 
 		const pageModule = await import("@/app/[locale]/questionnaire/page");
 		const result = await pageModule.default({
+			params: Promise.resolve({ locale: "de" }),
 			searchParams: Promise.resolve({
 				institutionId: "42",
 				step: "block-1",
@@ -127,6 +136,7 @@ describe("questionnaire page integration", () => {
 
 		const pageModule = await import("@/app/[locale]/questionnaire/page");
 		const result = await pageModule.default({
+			params: Promise.resolve({ locale: "de" }),
 			searchParams: Promise.resolve({ institutionId: "not-a-number" }),
 		});
 
@@ -144,6 +154,7 @@ describe("questionnaire page integration", () => {
 
 		const pageModule = await import("@/app/[locale]/questionnaire/page");
 		const result = await pageModule.default({
+			params: Promise.resolve({ locale: "de" }),
 			searchParams: Promise.resolve({
 				institutionId: ["42", "43"],
 				step: ["block-1", "block-2"],
@@ -159,14 +170,33 @@ describe("questionnaire page integration", () => {
 		});
 	});
 
-	it("renders the unavailable screen when no questionnaire is open", async () => {
+	it.each([
+		"@/app/[locale]/questionnaire/page",
+		"@/app/[locale]/@modal/(.)questionnaire/page",
+	])("redirects %s to the map when no questionnaire is open", async (path) => {
 		getOpenQuestionnaireMock.mockResolvedValue({
 			ok: false,
 			error: "not_found",
 		});
 
+		const pageModule = await import(path);
+		await expect(
+			pageModule.default({
+				params: Promise.resolve({ locale: "en" }),
+				searchParams: Promise.resolve({}),
+			}),
+		).rejects.toThrow("NEXT_REDIRECT /en/map");
+	});
+
+	it("renders the unavailable screen when loading the questionnaire fails", async () => {
+		getOpenQuestionnaireMock.mockResolvedValue({
+			ok: false,
+			error: "unexpected",
+		});
+
 		const pageModule = await import("@/app/[locale]/questionnaire/page");
 		const result = await pageModule.default({
+			params: Promise.resolve({ locale: "de" }),
 			searchParams: Promise.resolve({}),
 		});
 
@@ -183,6 +213,7 @@ describe("questionnaire page integration", () => {
 			"@/app/[locale]/@modal/(.)questionnaire/page"
 		);
 		const result = await pageModule.default({
+			params: Promise.resolve({ locale: "de" }),
 			searchParams: Promise.resolve({ submissionId: "7", thankyou: "1" }),
 		});
 
@@ -209,6 +240,7 @@ describe("questionnaire page integration", () => {
 		const pageModule = await import("@/app/[locale]/questionnaire/page");
 
 		const guestResult = await pageModule.default({
+			params: Promise.resolve({ locale: "de" }),
 			searchParams: Promise.resolve({}),
 		});
 		expect(guestResult.props.captchaConfig).toEqual({
@@ -219,6 +251,7 @@ describe("questionnaire page integration", () => {
 
 		getCurrentUserIdMock.mockResolvedValue("user-1");
 		const userResult = await pageModule.default({
+			params: Promise.resolve({ locale: "de" }),
 			searchParams: Promise.resolve({}),
 		});
 		expect(userResult.props.captchaConfig).toBeNull();

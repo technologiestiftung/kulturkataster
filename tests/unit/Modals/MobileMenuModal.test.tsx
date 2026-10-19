@@ -53,7 +53,7 @@ describe("MobileMenuModal language toggle", () => {
 
 	it("switches the language of the page the menu was opened from", () => {
 		window.history.pushState({}, "", "/de/list?view=compact");
-		render(<ViewModeToggle />);
+		render(<ViewModeToggle showQuestionnaire />);
 		fireEvent.click(
 			screen.getByRole("button", { name: "common.mobileMenu.title" }),
 		);
@@ -71,7 +71,7 @@ describe("MobileMenuModal language toggle", () => {
 	it("switches back from English to German on the origin page", () => {
 		navigationState.locale = "en";
 		window.history.pushState({}, "", "/en/list");
-		render(<ViewModeToggle />);
+		render(<ViewModeToggle showQuestionnaire />);
 		fireEvent.click(
 			screen.getByRole("button", { name: "common.mobileMenu.title" }),
 		);
