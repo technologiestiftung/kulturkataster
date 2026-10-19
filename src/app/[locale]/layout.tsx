@@ -16,7 +16,10 @@ import { StoreAutoRefresh } from "@/components/StoreAutoRefresh";
 import { ViewModeToggle } from "@/components/Menu/ViewModeToggle";
 import { Toaster } from "@/components/ui/sonner";
 import { getCurrentProfile } from "@/server/actions/auth";
-import { parseHiddenMenuItems } from "@/lib/utils/menuVisibility";
+import {
+	getHiddenMenuItems,
+	QUESTIONNAIRE_MENU_ITEM,
+} from "@/server/utils/menuVisibility";
 import { RouteFocusManager } from "./_components/RouteFocusManager";
 
 // Initialize axe-core for accessibility testing in development
@@ -112,7 +115,7 @@ export default async function RootLayout({
 			: undefined;
 	const shouldLoadMatomo = envHint !== "local";
 	const isLoggedIn = (await getCurrentProfile()) !== null;
-	const hiddenMenuItems = parseHiddenMenuItems(process.env.HIDDEN_MENU_ITEMS);
+	const hiddenMenuItems = await getHiddenMenuItems();
 
 	return (
 		<html lang={locale} dir={getDirection(locale)}>
@@ -156,7 +159,11 @@ export default async function RootLayout({
 								</SidebarInset>
 							</div>
 						</SidebarProvider>
-						<ViewModeToggle />
+						<ViewModeToggle
+							showQuestionnaire={
+								!hiddenMenuItems.includes(QUESTIONNAIRE_MENU_ITEM)
+							}
+						/>
 						<Footer ariaLabel={footerLabel} envHint={envHint} />
 					</div>
 					<Toaster />

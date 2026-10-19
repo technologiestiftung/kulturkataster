@@ -28,6 +28,7 @@ import ArrowNarrowUp from "@/icons/arrow-narrow-up.svg";
 import TextWithLinks from "../Content/TextWithLinks";
 import { FilterModalWrapper } from "@/components/Filter/FilterModalWrapper";
 import { FilterPanel } from "@/components/Filter/FilterPanel";
+import { hasReadableCultureIndex } from "@/lib/constants/cultureIndexRanges";
 import { ListViewSkeleton } from "./ListViewSkeleton";
 import { useWindowVirtualizer } from "@tanstack/react-virtual";
 
@@ -67,6 +68,7 @@ const ListView: FC = () => {
 		categories,
 		districts,
 		initializePublicData,
+		allInstitutions,
 	} = useInstitutionStore();
 	const router = useRouter();
 	const pathname = usePathname();
@@ -508,6 +510,7 @@ const ListView: FC = () => {
 					categoryCounts={categoryCounts}
 					subcategoryCounts={subcategoryCounts}
 					cultureIndexRangeCounts={cultureIndexRangeCounts}
+					showCultureIndex={hasReadableCultureIndex(allInstitutions)}
 					loading={loadingFilters}
 					error={null}
 					onRetry={handleFilterRetry}
