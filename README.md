@@ -10,13 +10,13 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-# Kulturkataster Frontend
+# Kulturkataster
 
-Frontend application for the Kulturkataster, a platform for mapping and managing cultural places in Berlin.
+Web Application for the Kulturkataster, a platform for mapping and managing cultural places in Berlin.
 
 ## Overview
 
-The Kulturkataster Frontend is a Next.js application with an interactive map and a list view of Berlin's cultural places. Registered users maintain place data in an account area, and guests can suggest new places.
+The Kulturkataster is a Next.js application with an interactive map and a list view of Berlin's cultural places. Registered users maintain place data in an account area, and guests can suggest new places.
 
 There is no separate backend: Next.js serves the UI, server actions and API routes, and Supabase provides the Postgres database, authentication and file storage.
 
@@ -56,8 +56,8 @@ There is no separate backend: Next.js serves the UI, server actions and API rout
 1. **Clone the Repository**
 
    ```bash
-   git clone https://github.com/technologiestiftung/kulturkataster-frontend
-   cd kulturkataster-frontend
+   git clone https://github.com/technologiestiftung/kulturkataster
+   cd kulturkataster
    ```
 
 2. **Install Dependencies**
@@ -120,7 +120,7 @@ Copy `.env.test.example` to `.env.test` for the integration and e2e tests. To se
 ### Building the Docker Image
 
 ```bash
-docker build -t kulturkataster-frontend .
+docker build -t kulturkataster .
 ```
 
 ### Running with Docker
@@ -128,7 +128,7 @@ docker build -t kulturkataster-frontend .
 The server reads its configuration at runtime, so pass your `.env` file:
 
 ```bash
-docker run -p 3000:3000 --env-file .env kulturkataster-frontend
+docker run -p 3000:3000 --env-file .env kulturkataster
 ```
 
 ## CI/CD and Deployment
@@ -144,7 +144,7 @@ docker run -p 3000:3000 --env-file .env kulturkataster-frontend
 ### Releases
 
 1. **Create Release Branch** (`release-create.yml`, started manually from `main` or `dev`) bumps the version (patch, minor or major), creates a `release/v*` branch and a GitHub release.
-2. **Deploy App (Release)** (`deploy-release.yml`) runs on pushes to `release/v*`. It builds the Docker image and publishes it to the GitHub Container Registry (`ghcr.io/technologiestiftung/kulturkataster-frontend`, tagged with the version), backs up the database, applies the Prisma schema migrations and deploys. Release branches from `dev` deploy to the dev environment, the others to production.
+2. **Deploy App (Release)** (`deploy-release.yml`) runs on pushes to `release/v*`. It builds the Docker image and publishes it to the GitHub Container Registry (`ghcr.io/technologiestiftung/kulturkataster`, tagged with the version), backs up the database, applies the Prisma schema migrations and deploys. Release branches from `dev` deploy to the dev environment, the others to production.
 
 Data migrations (`npm run data:migrate`) are not part of the release workflow yet and are applied separately after a deployment.
 
@@ -313,8 +313,8 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <table>
   <tbody>
     <tr>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/LuiseBrandenburger"><img src="https://avatars.githubusercontent.com/u/61413319?v=4?s=64" width="64px;" alt="Luise Brandenburger"/><br /><sub><b>Luise Brandenburger</b></sub></a><br /><a href="https://github.com/technologiestiftung/kulturkataster-frontend/commits?author=LuiseBrandenburger" title="Code">💻</a> <a href="#design-LuiseBrandenburger" title="Design">🎨</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/JonathanHaudenschild"><img src="https://avatars.githubusercontent.com/u/15103380?v=4?s=64" width="64px;" alt="Jonathan Haudenschild"/><br /><sub><b>Jonathan Haudenschild</b></sub></a><br /><a href="https://github.com/technologiestiftung/kulturkataster-frontend/commits?author=JonathanHaudenschild" title="Code">💻</a> <a href="#infra-JonathanHaudenschild" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="https://github.com/technologiestiftung/kulturkataster-frontend/commits?author=JonathanHaudenschild" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/LuiseBrandenburger"><img src="https://avatars.githubusercontent.com/u/61413319?v=4?s=64" width="64px;" alt="Luise Brandenburger"/><br /><sub><b>Luise Brandenburger</b></sub></a><br /><a href="https://github.com/technologiestiftung/kulturkataster/commits?author=LuiseBrandenburger" title="Code">💻</a> <a href="#design-LuiseBrandenburger" title="Design">🎨</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/JonathanHaudenschild"><img src="https://avatars.githubusercontent.com/u/15103380?v=4?s=64" width="64px;" alt="Jonathan Haudenschild"/><br /><sub><b>Jonathan Haudenschild</b></sub></a><br /><a href="https://github.com/technologiestiftung/kulturkataster/commits?author=JonathanHaudenschild" title="Code">💻</a> <a href="#infra-JonathanHaudenschild" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="https://github.com/technologiestiftung/kulturkataster/commits?author=JonathanHaudenschild" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>
