@@ -135,7 +135,7 @@ describe("QuestionnaireWizardContent step advancement (real stepper)", () => {
 	it("advances past institution-link on the FIRST submit of the compact create form, without writing anything to the DB yet (regression: previously required a second click and created a duplicate submission)", async () => {
 		render(
 			<QuestionnaireWizardModal
-				routePath="/questionnaire"
+				routePath="/index"
 				questionnaire={buildQuestionnaire() as any}
 				categoryGroups={[]}
 			/>,
@@ -160,7 +160,7 @@ describe("QuestionnaireWizardContent step advancement (real stepper)", () => {
 	it("advances past a non-last block on the FIRST submit (regression: same stale-validator race affected block-to-block navigation)", async () => {
 		render(
 			<QuestionnaireWizardModal
-				routePath="/questionnaire"
+				routePath="/index"
 				questionnaire={buildQuestionnaire() as any}
 				categoryGroups={[]}
 			/>,
@@ -188,7 +188,7 @@ describe("QuestionnaireWizardContent step advancement (real stepper)", () => {
 
 		render(
 			<QuestionnaireWizardModal
-				routePath="/questionnaire"
+				routePath="/index"
 				questionnaire={buildQuestionnaire() as any}
 				categoryGroups={[]}
 			/>,
@@ -235,7 +235,7 @@ describe("QuestionnaireWizardContent step advancement (real stepper)", () => {
 
 		render(
 			<QuestionnaireWizardModal
-				routePath="/questionnaire"
+				routePath="/index"
 				questionnaire={questionnaire as any}
 				categoryGroups={[]}
 			/>,
@@ -281,7 +281,7 @@ describe("QuestionnaireWizardContent step advancement (real stepper)", () => {
 	it("moves focus to the new step's heading after a step change", () => {
 		render(
 			<QuestionnaireWizardModal
-				routePath="/questionnaire"
+				routePath="/index"
 				questionnaire={buildQuestionnaire() as any}
 				categoryGroups={[]}
 			/>,
