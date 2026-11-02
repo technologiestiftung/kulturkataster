@@ -202,7 +202,7 @@ function transposeRows(rows: string[][]): string[][] {
 }
 
 // Prepends a row holding each block's title, left as an empty cell in
-// columns that don't belong to any block (the name/date columns). In Excel
+// columns that don't belong to any block (the meta columns). In Excel
 // these title cells get merged across their block's column range; CSV has
 // no merge concept, so the title there only appears in the range's first
 // cell.
