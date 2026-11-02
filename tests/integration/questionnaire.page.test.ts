@@ -170,23 +170,23 @@ describe("questionnaire page integration", () => {
 		});
 	});
 
-	it.each([
-		"@/app/[locale]/index/page",
-		"@/app/[locale]/@modal/(.)index/page",
-	])("redirects %s to the map when no questionnaire is open", async (path) => {
-		getOpenQuestionnaireMock.mockResolvedValue({
-			ok: false,
-			error: "not_found",
-		});
+	it.each(["@/app/[locale]/index/page", "@/app/[locale]/@modal/(.)index/page"])(
+		"redirects %s to the map when no questionnaire is open",
+		async (path) => {
+			getOpenQuestionnaireMock.mockResolvedValue({
+				ok: false,
+				error: "not_found",
+			});
 
-		const pageModule = await import(path);
-		await expect(
-			pageModule.default({
-				params: Promise.resolve({ locale: "en" }),
-				searchParams: Promise.resolve({}),
-			}),
-		).rejects.toThrow("NEXT_REDIRECT /en/map");
-	});
+			const pageModule = await import(path);
+			await expect(
+				pageModule.default({
+					params: Promise.resolve({ locale: "en" }),
+					searchParams: Promise.resolve({}),
+				}),
+			).rejects.toThrow("NEXT_REDIRECT /en/map");
+		},
+	);
 
 	it("renders the unavailable screen when loading the questionnaire fails", async () => {
 		getOpenQuestionnaireMock.mockResolvedValue({
@@ -209,9 +209,7 @@ describe("questionnaire page integration", () => {
 			questionnaire: { id: 1, title: "Survey", questions: [] },
 		});
 
-		const pageModule = await import(
-			"@/app/[locale]/@modal/(.)index/page"
-		);
+		const pageModule = await import("@/app/[locale]/@modal/(.)index/page");
 		const result = await pageModule.default({
 			params: Promise.resolve({ locale: "de" }),
 			searchParams: Promise.resolve({ submissionId: "7", thankyou: "1" }),
