@@ -144,18 +144,13 @@ function escapeCSVValue(value: string): string {
 
 type BlockRange = { title: string; startColumn: number; endColumn: number };
 
-// Name row and date row always precede the per-question data rows, so once
-// transposed they occupy exactly the first two columns.
-const LEADING_COLUMNS = 2;
-
-// Leads with the institution name(s) and answered-at date, then one row per
+// Leads with the meta rows (place name, answered-at date, …), then one row per
 // question, in survey order.
 function buildExportRows(
 	items: { step: number; cells: string[] }[],
-	nameRow: string[],
-	answeredAtRow: string[],
+	leadingRows: string[][],
 ): string[][] {
-	return [nameRow, answeredAtRow, ...items.map((item) => item.cells)];
+	return [...leadingRows, ...items.map((item) => item.cells)];
 }
 
 // Groups consecutive questions sharing the same survey step (Block A-F, plus
@@ -163,14 +158,17 @@ function buildExportRows(
 // transposed, so its title can be rendered as a single merged, centered
 // header cell above them. Block titles come from Questionnaire.meta_data
 // .blocks[step], always resolved in German.
+// The meta rows precede the question rows, so once transposed they occupy the
+// first `leadingColumns` columns.
 function computeBlockRanges(
 	items: { step: number }[],
 	metaData: unknown,
+	leadingColumns: number,
 ): BlockRange[] {
 	const ranges: (BlockRange & { step: number })[] = [];
 
 	items.forEach((item, index) => {
-		const column = LEADING_COLUMNS + index;
+		const column = leadingColumns + index;
 		const previous = ranges[ranges.length - 1];
 		if (previous && previous.step === item.step) {
 			previous.endColumn = column;
@@ -204,7 +202,7 @@ function transposeRows(rows: string[][]): string[][] {
 }
 
 // Prepends a row holding each block's title, left as an empty cell in
-// columns that don't belong to any block (the name/date columns). In Excel
+// columns that don't belong to any block (the meta columns). In Excel
 // these title cells get merged across their block's column range; CSV has
 // no merge concept, so the title there only appears in the range's first
 // cell.
@@ -291,6 +289,9 @@ function triggerBrowserDownload(
 	URL.revokeObjectURL(url);
 }
 
+const EXISTING_PLACE_STATUS = "Bestehender Ort";
+const SUBMISSION_STATUS = "Einreichung";
+
 const sanitizeFilenameBase = (value: string) =>
 	value.replace(/[^a-zA-Z0-9-_]+/g, "_");
 
@@ -329,12 +330,16 @@ export async function downloadInstitutionQuestionnaireAnswers({
 		],
 	}));
 
-	const rows = buildExportRows(
-		items,
+	const leadingRows = [
 		["", result.data.institutionName],
 		["Beantwortet am", answeredAtLabel],
+	];
+	const rows = buildExportRows(items, leadingRows);
+	const blockRanges = computeBlockRanges(
+		items,
+		result.data.metaData,
+		leadingRows.length,
 	);
-	const blockRanges = computeBlockRanges(items, result.data.metaData);
 
 	const timestamp = new Date().toISOString().split("T")[0];
 	const fullFilename = `${timestamp}_${sanitizeFilenameBase(filenameBase)}.${format}`;
@@ -379,6 +384,12 @@ export async function downloadInstitutionQuestionnaireAnswersAll({
 		"Beantwortet am",
 		...institutions.map((i) => formatAnsweredAt(i.answeredAt)),
 	];
+	const statusRow = [
+		"Status",
+		...institutions.map((i) =>
+			i.isPendingSubmission ? SUBMISSION_STATUS : EXISTING_PLACE_STATUS,
+		),
+	];
 	const items = questions.map((question) => ({
 		step: question.step,
 		cells: [
@@ -393,8 +404,9 @@ export async function downloadInstitutionQuestionnaireAnswersAll({
 		],
 	}));
 
-	const rows = buildExportRows(items, nameRow, answeredAtRow);
-	const blockRanges = computeBlockRanges(items, metaData);
+	const leadingRows = [nameRow, answeredAtRow, statusRow];
+	const rows = buildExportRows(items, leadingRows);
+	const blockRanges = computeBlockRanges(items, metaData, leadingRows.length);
 
 	const timestamp = new Date().toISOString().split("T")[0];
 	const fullFilename = `${timestamp}_${sanitizeFilenameBase(filenameBase)}.${format}`;

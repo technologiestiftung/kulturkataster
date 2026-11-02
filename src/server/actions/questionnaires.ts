@@ -404,9 +404,36 @@ export async function downloadQuestionnaireAnswers(institutionId: number) {
 	}
 }
 
+// An answer belongs either to an existing institution or — for a place newly
+// proposed during the survey — to its not-yet-approved submission.
+function resolveAnswerPlace(answer: {
+	institution: { id: number; name: string } | null;
+	submission: { id: number; data: Prisma.JsonValue } | null;
+}) {
+	if (answer.institution) {
+		return {
+			key: `institution:${answer.institution.id}`,
+			id: answer.institution.id,
+			name: answer.institution.name,
+			isPendingSubmission: false,
+		};
+	}
+	if (answer.submission) {
+		const data = answer.submission.data as { name?: unknown } | null;
+		return {
+			key: `submission:${answer.submission.id}`,
+			id: answer.submission.id,
+			name: typeof data?.name === "string" ? data.name : "",
+			isPendingSubmission: true,
+		};
+	}
+	return null;
+}
+
 // Admin-only: builds the rows behind the "download all questionnaire answers"
-// button — one row per question, one column per institution, using the latest
-// answer per (institution, question) in case a submitter re-answered.
+// button — one row per question, one column per place (institution or pending
+// submission), using the latest answer per (place, question) in case a
+// submitter re-answered.
 export async function downloadAllQuestionnaireAnswers() {
 	try {
 		const currentUserId = await getCurrentUserId();
@@ -424,40 +451,43 @@ export async function downloadAllQuestionnaireAnswers() {
 
 		const [questions, answers] = await Promise.all([
 			questionRepo.listByQuestionnaire(questionnaireId),
-			answerRepo.listLatestByQuestionnaireAllInstitutions(questionnaireId),
+			answerRepo.listLatestByQuestionnaireAllPlaces(questionnaireId),
 		]);
 		if (answers.length === 0) {
 			return { ok: false as const, error: "noAnswers" as const };
 		}
 
-		const institutionsById = new Map<
-			number,
+		const placesByKey = new Map<
+			string,
 			{
 				id: number;
 				name: string;
+				isPendingSubmission: boolean;
 				answeredAt: Date;
 				answers: Map<number, unknown>;
 			}
 		>();
 		for (const answer of answers) {
-			if (!answer.institution) continue;
-			const existing = institutionsById.get(answer.institution.id);
+			const place = resolveAnswerPlace(answer);
+			if (!place) continue;
+			const existing = placesByKey.get(place.key);
 			if (existing) {
 				existing.answers.set(answer.question_id, answer.value);
 				if (answer.created_at > existing.answeredAt) {
 					existing.answeredAt = answer.created_at;
 				}
 			} else {
-				institutionsById.set(answer.institution.id, {
-					id: answer.institution.id,
-					name: answer.institution.name,
+				placesByKey.set(place.key, {
+					id: place.id,
+					name: place.name,
+					isPendingSubmission: place.isPendingSubmission,
 					answeredAt: answer.created_at,
 					answers: new Map([[answer.question_id, answer.value]]),
 				});
 			}
 		}
 
-		const institutions = Array.from(institutionsById.values()).sort((a, b) =>
+		const institutions = Array.from(placesByKey.values()).sort((a, b) =>
 			a.name.localeCompare(b.name),
 		);
 
@@ -475,6 +505,7 @@ export async function downloadAllQuestionnaireAnswers() {
 				institutions: institutions.map((institution) => ({
 					id: institution.id,
 					name: institution.name,
+					isPendingSubmission: institution.isPendingSubmission,
 					answeredAt: institution.answeredAt,
 					answers: Object.fromEntries(institution.answers),
 				})),
