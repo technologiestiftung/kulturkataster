@@ -289,8 +289,8 @@ function triggerBrowserDownload(
 	URL.revokeObjectURL(url);
 }
 
-const IN_KUKA_STATUS = "In Kuka";
-const PENDING_SUBMISSION_STATUS = "Neu eingereicht (noch nicht in Kuka)";
+const EXISTING_PLACE_STATUS = "Bestehender Ort";
+const SUBMISSION_STATUS = "Einreichung";
 
 const sanitizeFilenameBase = (value: string) =>
 	value.replace(/[^a-zA-Z0-9-_]+/g, "_");
@@ -387,7 +387,7 @@ export async function downloadInstitutionQuestionnaireAnswersAll({
 	const statusRow = [
 		"Status",
 		...institutions.map((i) =>
-			i.isPendingSubmission ? PENDING_SUBMISSION_STATUS : IN_KUKA_STATUS,
+			i.isPendingSubmission ? SUBMISSION_STATUS : EXISTING_PLACE_STATUS,
 		),
 	];
 	const items = questions.map((question) => ({
