@@ -46,7 +46,7 @@ describe("ViewModeToggle questionnaire button", () => {
 		render(<ViewModeToggle showQuestionnaire />);
 		fireEvent.click(getQuestionnaireButton());
 
-		expect(pushMock).toHaveBeenCalledWith("/de/questionnaire");
+		expect(pushMock).toHaveBeenCalledWith("/de/index");
 	});
 
 	it("is hidden while no questionnaire is open", () => {
