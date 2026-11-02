@@ -96,4 +96,16 @@ describe("MobileMenuModal language toggle", () => {
 		expect(pushMock).toHaveBeenLastCalledWith("/en/map");
 		expect(pushMock).not.toHaveBeenCalledWith("/en/mobileMenu");
 	});
+
+	it.each(["de", "en"])("opens the questionnaire under /%s/index", (locale) => {
+		navigationState.locale = locale;
+		navigationState.pathname = `/${locale}/mobileMenu`;
+		render(<MobileMenuModal />);
+		fireEvent.click(
+			screen.getByRole("button", { name: /questionnaire\.title/ }),
+		);
+
+		expect(pushMock).toHaveBeenLastCalledWith(`/${locale}/index`);
+		expect(pushMock).not.toHaveBeenCalledWith(`/${locale}/questionnaire`);
+	});
 });
