@@ -24,8 +24,8 @@ vi.mock("@/server/captcha/cap", () => ({
 }));
 
 const routes = [
-	"@/app/[locale]/questionnaire/page",
-	"@/app/[locale]/@modal/(.)questionnaire/page",
+	"@/app/[locale]/index/page",
+	"@/app/[locale]/@modal/(.)index/page",
 ];
 
 const renderRoute = async (path: string, locale = "de") =>
@@ -34,7 +34,7 @@ const renderRoute = async (path: string, locale = "de") =>
 		searchParams: Promise.resolve({}),
 	});
 
-describe("/questionnaire without an open questionnaire", () => {
+describe("/index without an open questionnaire", () => {
 	it.each(routes)("%s redirects to the localized map", async (path) => {
 		getOpenQuestionnaireMock.mockResolvedValue({
 			ok: false,
