@@ -80,8 +80,6 @@ const strokeColors = {
 interface InstitutionLayerProps {
 	zIndex?: number;
 	distance?: number;
-	minZoomForClustering?: number;
-	maxZoomForClustering?: number;
 	institutions: FeatureCollection<Geometry, GeoJsonProperties> | null;
 	proximityThreshold?: number;
 }
@@ -89,8 +87,6 @@ interface InstitutionLayerProps {
 const InstitutionLayer: FC<InstitutionLayerProps> = ({
 	zIndex = 10000,
 	distance = 110,
-	minZoomForClustering = 0,
-	maxZoomForClustering = 8,
 	institutions,
 	proximityThreshold = 40,
 }) => {
@@ -352,23 +348,20 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 		],
 	);
 
+	// Cluster at every zoom except the closest one, where overlapping places are fanned out instead.
 	const shouldCluster = useCallback(
-		(zoomLevel: number) =>
-			zoomLevel >= minZoomForClustering && zoomLevel <= maxZoomForClustering,
-		[minZoomForClustering, maxZoomForClustering],
+		(zoomLevel: number) => !map || zoomLevel < map.getView().getMaxZoom(),
+		[map],
 	);
 
 	const getClusterDistance = useCallback(
 		(zoomLevel: number) => {
-			if (!shouldCluster(zoomLevel)) return 0;
-			const factor = Math.max(
-				0.1,
-				(maxZoomForClustering - zoomLevel) /
-					(maxZoomForClustering - minZoomForClustering),
-			);
-			return distance * factor;
+			const maxZoom = map?.getView().getMaxZoom() ?? zoomLevel + 1;
+			const factor = Math.max(0, (maxZoom - zoomLevel) / maxZoom);
+			// Never closer than one pin width (2.5rem, see createPoiSvg), so markers cannot overlap.
+			return Math.max(remToPx(2.5), distance * factor);
 		},
-		[distance, minZoomForClustering, maxZoomForClustering, shouldCluster],
+		[distance, map],
 	);
 
 	const updateLayerSource = useCallback(
@@ -421,7 +414,7 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 					map.getView().fit(extent, {
 						padding: [50, 50, 50, 50],
 						duration: 500,
-						maxZoom: map.getView().getMaxZoom() - 1,
+						maxZoom: map.getView().getMaxZoom(),
 					});
 				}
 			}
@@ -454,7 +447,8 @@ const InstitutionLayer: FC<InstitutionLayerProps> = ({
 		const vectorLayer = new VectorLayer({
 			source: clusterSource,
 			style: styleFunction,
-			declutter: true,
+			// No decluttering: it silently hid pins and cluster bubbles that touched each other.
+			declutter: false,
 			renderBuffer: 200,
 		});
 
