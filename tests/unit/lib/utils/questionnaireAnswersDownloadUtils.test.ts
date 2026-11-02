@@ -166,8 +166,10 @@ describe("downloadInstitutionQuestionnaireAnswers free-text options", () => {
 		const lines = ((await blobArg?.text()) ?? "").split("\r\n");
 		expect(lines[1]).toBe('"","Beantwortet am","Status","Miete"');
 		expect(lines[2]).toBe(
-			'"Archiv der Jugendkulturen","08.10.2026","Neu eingereicht (noch nicht in Kuka)","800"',
+			'"Archiv der Jugendkulturen","08.10.2026","Einreichung","800"',
 		);
-		expect(lines[3]).toBe('"Zebra Kulturhaus","08.10.2026","In Kuka","1200"');
+		expect(lines[3]).toBe(
+			'"Zebra Kulturhaus","08.10.2026","Bestehender Ort","1200"',
+		);
 	});
 });
