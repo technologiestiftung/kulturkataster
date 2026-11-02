@@ -1,15 +1,22 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-const { downloadQuestionnaireAnswersMock } = vi.hoisted(() => ({
+const {
+	downloadQuestionnaireAnswersMock,
+	downloadAllQuestionnaireAnswersMock,
+} = vi.hoisted(() => ({
 	downloadQuestionnaireAnswersMock: vi.fn(),
+	downloadAllQuestionnaireAnswersMock: vi.fn(),
 }));
 
 vi.mock("@/server/actions/questionnaires", () => ({
 	downloadQuestionnaireAnswers: downloadQuestionnaireAnswersMock,
-	downloadAllQuestionnaireAnswers: vi.fn(),
+	downloadAllQuestionnaireAnswers: downloadAllQuestionnaireAnswersMock,
 }));
 
-import { downloadInstitutionQuestionnaireAnswers } from "@/lib/utils/questionnaireAnswersDownloadUtils";
+import {
+	downloadInstitutionQuestionnaireAnswers,
+	downloadInstitutionQuestionnaireAnswersAll,
+} from "@/lib/utils/questionnaireAnswersDownloadUtils";
 
 const makeRow = (questionLabel: string, config: unknown, value: unknown) => ({
 	questionLabel,
@@ -121,5 +128,46 @@ describe("downloadInstitutionQuestionnaireAnswers free-text options", () => {
 		expect(csv).toContain('"Eigene Webseite; Sonstiges: Podcast"');
 		expect(csv).toContain('"Sonstiges: Zählung; Umfragen"');
 		expect(csv).not.toContain("::");
+	});
+
+	it("marks places that only exist as a pending submission in the status column", async () => {
+		downloadAllQuestionnaireAnswersMock.mockResolvedValue({
+			ok: true,
+			data: {
+				metaData: null,
+				questions: [
+					{ id: 10, label: "Miete", step: 0, fieldType: "text", config: null },
+				],
+				institutions: [
+					{
+						id: 2,
+						name: "Archiv der Jugendkulturen",
+						isPendingSubmission: true,
+						answeredAt: new Date("2026-10-08T00:00:00Z"),
+						answers: { 10: "800" },
+					},
+					{
+						id: 2,
+						name: "Zebra Kulturhaus",
+						isPendingSubmission: false,
+						answeredAt: new Date("2026-10-08T00:00:00Z"),
+						answers: { 10: "1200" },
+					},
+				],
+			},
+		});
+
+		const result = await downloadInstitutionQuestionnaireAnswersAll({
+			filenameBase: "all",
+			format: "csv",
+		});
+
+		expect(result).toEqual({ ok: true });
+		const lines = ((await blobArg?.text()) ?? "").split("\r\n");
+		expect(lines[1]).toBe('"","Beantwortet am","Status","Miete"');
+		expect(lines[2]).toBe(
+			'"Archiv der Jugendkulturen","08.10.2026","Neu eingereicht (noch nicht in Kuka)","800"',
+		);
+		expect(lines[3]).toBe('"Zebra Kulturhaus","08.10.2026","In Kuka","1200"');
 	});
 });

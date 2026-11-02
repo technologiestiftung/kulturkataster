@@ -8,7 +8,7 @@ const {
 	relinkMock,
 	listBySubmissionMock,
 	listLatestByQuestionnaireAndInstitutionMock,
-	listLatestByQuestionnaireAllInstitutionsMock,
+	listLatestByQuestionnaireAllPlacesMock,
 	listByQuestionnaireMock,
 	getCurrentUserIdMock,
 	getAccessContextForUserMock,
@@ -33,7 +33,7 @@ const {
 	relinkMock: vi.fn(),
 	listBySubmissionMock: vi.fn(),
 	listLatestByQuestionnaireAndInstitutionMock: vi.fn(),
-	listLatestByQuestionnaireAllInstitutionsMock: vi.fn(),
+	listLatestByQuestionnaireAllPlacesMock: vi.fn(),
 	listByQuestionnaireMock: vi.fn(),
 	getCurrentUserIdMock: vi.fn(),
 	getAccessContextForUserMock: vi.fn(),
@@ -73,8 +73,7 @@ vi.mock("@/server/data/answerRepo", () => ({
 		listBySubmission: listBySubmissionMock,
 		listLatestByQuestionnaireAndInstitution:
 			listLatestByQuestionnaireAndInstitutionMock,
-		listLatestByQuestionnaireAllInstitutions:
-			listLatestByQuestionnaireAllInstitutionsMock,
+		listLatestByQuestionnaireAllPlaces: listLatestByQuestionnaireAllPlacesMock,
 	},
 }));
 
@@ -150,7 +149,7 @@ describe("server actions: questionnaires", () => {
 		relinkMock.mockReset();
 		listBySubmissionMock.mockReset();
 		listLatestByQuestionnaireAndInstitutionMock.mockReset();
-		listLatestByQuestionnaireAllInstitutionsMock.mockReset();
+		listLatestByQuestionnaireAllPlacesMock.mockReset();
 		listByQuestionnaireMock.mockReset();
 		getCurrentUserIdMock.mockReset();
 		getAccessContextForUserMock.mockReset();
@@ -930,7 +929,7 @@ describe("server actions: questionnaires", () => {
 			]);
 			const olderAnswer = new Date("2026-01-01T00:00:00.000Z");
 			const newerAnswer = new Date("2026-01-02T00:00:00.000Z");
-			listLatestByQuestionnaireAllInstitutionsMock.mockResolvedValue([
+			listLatestByQuestionnaireAllPlacesMock.mockResolvedValue([
 				{
 					institution: { id: 2, name: "Zebra Kulturhaus" },
 					question_id: 10,
@@ -975,12 +974,204 @@ describe("server actions: questionnaires", () => {
 						{
 							id: 3,
 							name: "Atelier Anders",
+							isPendingSubmission: false,
 							answeredAt: olderAnswer,
 							answers: { 10: "900" },
 						},
 						{
 							id: 2,
 							name: "Zebra Kulturhaus",
+							isPendingSubmission: false,
+							// answeredAt tracks the latest of this institution's own
+							// answers, not a global latest — must stay newerAnswer.
+							answeredAt: newerAnswer,
+							answers: { 10: "1200", 11: "5" },
+						},
+					],
+				},
+			});
+		});
+
+		it("includes places newly proposed during the survey via their pending submission", async () => {
+			listOpenMock.mockResolvedValue([{ id: 1 }]);
+			listByQuestionnaireMock.mockResolvedValue([
+				{ id: 10, label: "Wie hoch ist die Miete?" },
+			]);
+			listLatestByQuestionnaireAllPlacesMock.mockResolvedValue([
+				{
+					institution: null,
+					submission: { id: 2, data: { name: "Archiv der Jugendkulturen" } },
+					question_id: 10,
+					value: "800",
+					created_at: new Date(),
+				},
+				{
+					// Same numeric id as the submission — must not merge with it.
+					institution: { id: 2, name: "Zebra Kulturhaus" },
+					submission: null,
+					question_id: 10,
+					value: "1200",
+					created_at: new Date(),
+				},
+				{
+					institution: null,
+					submission: null,
+					question_id: 10,
+					value: "orphaned, skipped",
+					created_at: new Date(),
+				},
+			]);
+
+			const result = await downloadAllQuestionnaireAnswers();
+
+			expect(result.ok).toBe(true);
+			if (result.ok) {
+				expect(
+					result.data.institutions.map((place) => ({
+						name: place.name,
+						isPendingSubmission: place.isPendingSubmission,
+						answers: place.answers,
+					})),
+				).toEqual([
+					{
+						name: "Archiv der Jugendkulturen",
+						isPendingSubmission: true,
+						answers: { 10: "800" },
+					},
+					{
+						name: "Zebra Kulturhaus",
+						isPendingSubmission: false,
+						answers: { 10: "1200" },
+					},
+				]);
+			}
+		});
+
+		it("returns noOpenQuestionnaireAnswers when no questionnaire is open", async () => {
+			listOpenMock.mockResolvedValue([]);
+
+			await expect(downloadQuestionnaireAnswers(2)).resolves.toEqual({
+				ok: false,
+				error: "noOpenQuestionnaireAnswers",
+			});
+			expect(
+				listLatestByQuestionnaireAndInstitutionMock,
+			).not.toHaveBeenCalled();
+		});
+
+		it("returns noAnswers when the institution hasn't answered", async () => {
+			listOpenMock.mockResolvedValue([{ id: 1 }]);
+			listLatestByQuestionnaireAndInstitutionMock.mockResolvedValue([]);
+
+			await expect(downloadQuestionnaireAnswers(2)).resolves.toEqual({
+				ok: false,
+				error: "noAnswers",
+			});
+		});
+
+		it("returns forbidden when the user isn't authorized", async () => {
+			authorizeTableMock.mockImplementation(() => {
+				const error = new Error("Role lacks read on answer");
+				error.name = "RBACError";
+				throw error;
+			});
+
+			await expect(downloadQuestionnaireAnswers(2)).resolves.toEqual({
+				ok: false,
+				error: "forbidden",
+			});
+			expect(listOpenMock).not.toHaveBeenCalled();
+		});
+
+		it("returns unexpected on repo failure", async () => {
+			listOpenMock.mockResolvedValue([{ id: 1 }]);
+			listLatestByQuestionnaireAndInstitutionMock.mockRejectedValue(
+				new Error("db down"),
+			);
+
+			await expect(downloadQuestionnaireAnswers(2)).resolves.toEqual({
+				ok: false,
+				error: "unexpected",
+			});
+			expect(loggerError).toHaveBeenCalled();
+		});
+	});
+
+	describe("downloadAllQuestionnaireAnswers", () => {
+		it("groups the latest answers by institution and sorts institutions by name", async () => {
+			const metaData = { blocks: { "1": { title: "Block A: Test" } } };
+			listOpenMock.mockResolvedValue([{ id: 1, meta_data: metaData }]);
+			listByQuestionnaireMock.mockResolvedValue([
+				{
+					id: 10,
+					label: "Wie hoch ist die Miete?",
+					step: 1,
+					field_type: "text",
+					config: null,
+				},
+				{
+					id: 11,
+					label: "Wie viele Mitarbeitende?",
+					step: 1,
+					field_type: "text",
+					config: null,
+				},
+			]);
+			const olderAnswer = new Date("2026-01-01T00:00:00.000Z");
+			const newerAnswer = new Date("2026-01-02T00:00:00.000Z");
+			listLatestByQuestionnaireAllPlacesMock.mockResolvedValue([
+				{
+					institution: { id: 2, name: "Zebra Kulturhaus" },
+					question_id: 10,
+					value: "1200",
+					created_at: olderAnswer,
+				},
+				{
+					institution: { id: 2, name: "Zebra Kulturhaus" },
+					question_id: 11,
+					value: "5",
+					created_at: newerAnswer,
+				},
+				{
+					institution: { id: 3, name: "Atelier Anders" },
+					question_id: 10,
+					value: "900",
+					created_at: olderAnswer,
+				},
+			]);
+
+			await expect(downloadAllQuestionnaireAnswers()).resolves.toEqual({
+				ok: true,
+				data: {
+					metaData,
+					questions: [
+						{
+							id: 10,
+							label: "Wie hoch ist die Miete?",
+							step: 1,
+							fieldType: "text",
+							config: null,
+						},
+						{
+							id: 11,
+							label: "Wie viele Mitarbeitende?",
+							step: 1,
+							fieldType: "text",
+							config: null,
+						},
+					],
+					institutions: [
+						{
+							id: 3,
+							name: "Atelier Anders",
+							isPendingSubmission: false,
+							answeredAt: olderAnswer,
+							answers: { 10: "900" },
+						},
+						{
+							id: 2,
+							name: "Zebra Kulturhaus",
+							isPendingSubmission: false,
 							// answeredAt tracks the latest of this institution's own
 							// answers, not a global latest — must stay newerAnswer.
 							answeredAt: newerAnswer,
@@ -996,7 +1187,7 @@ describe("server actions: questionnaires", () => {
 			listByQuestionnaireMock.mockResolvedValue([
 				{ id: 10, label: "Wie hoch ist die Miete?" },
 			]);
-			listLatestByQuestionnaireAllInstitutionsMock.mockResolvedValue([
+			listLatestByQuestionnaireAllPlacesMock.mockResolvedValue([
 				{
 					institution: null,
 					question_id: 10,
@@ -1033,7 +1224,7 @@ describe("server actions: questionnaires", () => {
 		it("returns noAnswers when nobody has answered yet", async () => {
 			listOpenMock.mockResolvedValue([{ id: 1 }]);
 			listByQuestionnaireMock.mockResolvedValue([]);
-			listLatestByQuestionnaireAllInstitutionsMock.mockResolvedValue([]);
+			listLatestByQuestionnaireAllPlacesMock.mockResolvedValue([]);
 
 			await expect(downloadAllQuestionnaireAnswers()).resolves.toEqual({
 				ok: false,
@@ -1058,7 +1249,7 @@ describe("server actions: questionnaires", () => {
 		it("returns unexpected on repo failure", async () => {
 			listOpenMock.mockResolvedValue([{ id: 1 }]);
 			listByQuestionnaireMock.mockResolvedValue([]);
-			listLatestByQuestionnaireAllInstitutionsMock.mockRejectedValue(
+			listLatestByQuestionnaireAllPlacesMock.mockRejectedValue(
 				new Error("db down"),
 			);
 
