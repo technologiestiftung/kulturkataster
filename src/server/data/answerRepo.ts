@@ -43,13 +43,12 @@ export const answerRepo = {
 			orderBy: { created_at: "asc" },
 			include: answerInclude,
 		}),
-	listLatestByQuestionnaireAllInstitutions: (questionnaireId: number) =>
+	// Covers both existing institutions and places proposed during the survey
+	// whose answers still hang off a not-yet-approved submission.
+	listLatestByQuestionnaireAllPlaces: (questionnaireId: number) =>
 		prisma.answer.findMany({
-			where: {
-				questionnaire_id: questionnaireId,
-				institution_id: { not: null },
-			},
-			distinct: ["institution_id", "question_id"],
+			where: { questionnaire_id: questionnaireId },
+			distinct: ["institution_id", "submission_id", "question_id"],
 			orderBy: { created_at: "desc" },
 			include: answerInclude,
 		}),
