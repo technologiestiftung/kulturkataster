@@ -87,7 +87,7 @@ export function WelcomeModal({
 									<ArrowNarrowRight className="stroke-primary-dark size-6" />
 									<a
 										className="underline body2 text-primary-dark font-semibold"
-										href="/questionnaire"
+										href="/index"
 									>
 										{t("content.welcomeModal.questionnaire")}
 									</a>

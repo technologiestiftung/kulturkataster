@@ -46,7 +46,7 @@ describe("questionnaire page integration", () => {
 			questionnaire: { id: 1, title: "Survey", questions: [] },
 		});
 
-		const pageModule = await import("@/app/[locale]/questionnaire/page");
+		const pageModule = await import("@/app/[locale]/index/page");
 		const result = await pageModule.default({
 			params: Promise.resolve({ locale: "de" }),
 			searchParams: Promise.resolve({}),
@@ -55,7 +55,7 @@ describe("questionnaire page integration", () => {
 		expect(result).toMatchObject({
 			type: QuestionnaireWizardModal,
 			props: expect.objectContaining({
-				routePath: "/questionnaire",
+				routePath: "/index",
 				questionnaire: { id: 1, title: "Survey", questions: [] },
 				categoryGroups,
 				initialInstitutionId: undefined,
@@ -73,7 +73,7 @@ describe("questionnaire page integration", () => {
 			questionnaire: { id: 1, title: "Survey", questions: [] },
 		});
 
-		const pageModule = await import("@/app/[locale]/questionnaire/page");
+		const pageModule = await import("@/app/[locale]/index/page");
 		const result = await pageModule.default({
 			params: Promise.resolve({ locale: "de" }),
 			searchParams: Promise.resolve({ thankyou: "1" }),
@@ -91,7 +91,7 @@ describe("questionnaire page integration", () => {
 			questionnaire: { id: 1, title: "Survey", questions: [] },
 		});
 
-		const pageModule = await import("@/app/[locale]/questionnaire/page");
+		const pageModule = await import("@/app/[locale]/index/page");
 		const result = await pageModule.default({
 			params: Promise.resolve({ locale: "de" }),
 			searchParams: Promise.resolve({ thankyou: "true" }),
@@ -109,7 +109,7 @@ describe("questionnaire page integration", () => {
 			questionnaire: { id: 1, title: "Survey", questions: [] },
 		});
 
-		const pageModule = await import("@/app/[locale]/questionnaire/page");
+		const pageModule = await import("@/app/[locale]/index/page");
 		const result = await pageModule.default({
 			params: Promise.resolve({ locale: "de" }),
 			searchParams: Promise.resolve({
@@ -134,7 +134,7 @@ describe("questionnaire page integration", () => {
 			questionnaire: { id: 1, title: "Survey", questions: [] },
 		});
 
-		const pageModule = await import("@/app/[locale]/questionnaire/page");
+		const pageModule = await import("@/app/[locale]/index/page");
 		const result = await pageModule.default({
 			params: Promise.resolve({ locale: "de" }),
 			searchParams: Promise.resolve({ institutionId: "not-a-number" }),
@@ -152,7 +152,7 @@ describe("questionnaire page integration", () => {
 			questionnaire: { id: 1, title: "Survey", questions: [] },
 		});
 
-		const pageModule = await import("@/app/[locale]/questionnaire/page");
+		const pageModule = await import("@/app/[locale]/index/page");
 		const result = await pageModule.default({
 			params: Promise.resolve({ locale: "de" }),
 			searchParams: Promise.resolve({
@@ -171,8 +171,8 @@ describe("questionnaire page integration", () => {
 	});
 
 	it.each([
-		"@/app/[locale]/questionnaire/page",
-		"@/app/[locale]/@modal/(.)questionnaire/page",
+		"@/app/[locale]/index/page",
+		"@/app/[locale]/@modal/(.)index/page",
 	])("redirects %s to the map when no questionnaire is open", async (path) => {
 		getOpenQuestionnaireMock.mockResolvedValue({
 			ok: false,
@@ -194,7 +194,7 @@ describe("questionnaire page integration", () => {
 			error: "unexpected",
 		});
 
-		const pageModule = await import("@/app/[locale]/questionnaire/page");
+		const pageModule = await import("@/app/[locale]/index/page");
 		const result = await pageModule.default({
 			params: Promise.resolve({ locale: "de" }),
 			searchParams: Promise.resolve({}),
@@ -210,7 +210,7 @@ describe("questionnaire page integration", () => {
 		});
 
 		const pageModule = await import(
-			"@/app/[locale]/@modal/(.)questionnaire/page"
+			"@/app/[locale]/@modal/(.)index/page"
 		);
 		const result = await pageModule.default({
 			params: Promise.resolve({ locale: "de" }),
@@ -220,7 +220,7 @@ describe("questionnaire page integration", () => {
 		expect(result).toMatchObject({
 			type: QuestionnaireWizardModal,
 			props: expect.objectContaining({
-				routePath: "/questionnaire",
+				routePath: "/index",
 				categoryGroups,
 				initialSubmissionId: 7,
 				initialShowThankYou: true,
@@ -237,7 +237,7 @@ describe("questionnaire page integration", () => {
 			ok: true,
 			questionnaire: { id: 1, title: "Survey", questions: [] },
 		});
-		const pageModule = await import("@/app/[locale]/questionnaire/page");
+		const pageModule = await import("@/app/[locale]/index/page");
 
 		const guestResult = await pageModule.default({
 			params: Promise.resolve({ locale: "de" }),

@@ -31,7 +31,7 @@ vi.mock("react-i18next", () => ({
 
 vi.mock("next/navigation", () => ({
 	useRouter: () => ({ push: vi.fn(), replace: vi.fn(), back: vi.fn() }),
-	usePathname: () => "/de/questionnaire",
+	usePathname: () => "/de/index",
 }));
 
 vi.mock("@/lib/hooks/useLocalePath", () => ({
@@ -189,7 +189,7 @@ describe("QuestionnaireWizardModal", () => {
 	it("keeps the consent CTA disabled until the checkbox is checked", () => {
 		render(
 			<QuestionnaireWizardModal
-				routePath="/questionnaire"
+				routePath="/index"
 				questionnaire={buildQuestionnaire() as any}
 				categoryGroups={[]}
 			/>,
@@ -215,7 +215,7 @@ describe("QuestionnaireWizardModal", () => {
 
 		render(
 			<QuestionnaireWizardModal
-				routePath="/questionnaire"
+				routePath="/index"
 				questionnaire={buildQuestionnaire() as any}
 				categoryGroups={[]}
 			/>,
@@ -253,7 +253,7 @@ describe("QuestionnaireWizardModal", () => {
 
 		render(
 			<QuestionnaireWizardModal
-				routePath="/questionnaire"
+				routePath="/index"
 				questionnaire={buildQuestionnaire() as any}
 				categoryGroups={[]}
 			/>,
@@ -282,7 +282,7 @@ describe("QuestionnaireWizardModal", () => {
 
 		render(
 			<QuestionnaireWizardModal
-				routePath="/questionnaire"
+				routePath="/index"
 				questionnaire={buildQuestionnaire() as any}
 				categoryGroups={[]}
 			/>,
@@ -312,7 +312,7 @@ describe("QuestionnaireWizardModal", () => {
 
 		render(
 			<QuestionnaireWizardModal
-				routePath="/questionnaire"
+				routePath="/index"
 				questionnaire={buildQuestionnaire() as any}
 				categoryGroups={[]}
 			/>,
@@ -334,7 +334,7 @@ describe("QuestionnaireWizardModal", () => {
 
 		render(
 			<QuestionnaireWizardModal
-				routePath="/questionnaire"
+				routePath="/index"
 				questionnaire={buildQuestionnaire() as any}
 				categoryGroups={[]}
 			/>,
@@ -372,7 +372,7 @@ describe("QuestionnaireWizardModal", () => {
 
 		render(
 			<QuestionnaireWizardModal
-				routePath="/questionnaire"
+				routePath="/index"
 				questionnaire={questionnaire as any}
 				categoryGroups={[]}
 			/>,
@@ -398,7 +398,7 @@ describe("QuestionnaireWizardModal", () => {
 
 		render(
 			<QuestionnaireWizardModal
-				routePath="/questionnaire"
+				routePath="/index"
 				questionnaire={questionnaire as any}
 				categoryGroups={[]}
 			/>,
@@ -431,7 +431,7 @@ describe("QuestionnaireWizardModal", () => {
 
 		render(
 			<QuestionnaireWizardModal
-				routePath="/questionnaire"
+				routePath="/index"
 				questionnaire={questionnaire as any}
 				categoryGroups={[]}
 			/>,
@@ -453,7 +453,7 @@ describe("QuestionnaireWizardModal", () => {
 
 		render(
 			<QuestionnaireWizardModal
-				routePath="/questionnaire"
+				routePath="/index"
 				questionnaire={buildQuestionnaire() as any}
 				categoryGroups={[]}
 			/>,
@@ -491,7 +491,7 @@ describe("QuestionnaireWizardModal", () => {
 
 		render(
 			<QuestionnaireWizardModal
-				routePath="/questionnaire"
+				routePath="/index"
 				questionnaire={buildQuestionnaire() as any}
 				categoryGroups={[]}
 				captchaConfig={{
@@ -535,7 +535,7 @@ describe("QuestionnaireWizardModal", () => {
 	it("clears the persisted draft after a successful submission, so a later visit doesn't carry over the old institutionId", async () => {
 		// Regression test: the draft store persists to localStorage, but the
 		// stepper's own position does not — so without clearing institutionId on
-		// success, revisiting /questionnaire later restarts at "consent" while
+		// success, revisiting /index later restarts at "consent" while
 		// still holding the just-submitted institution, wrongly triggering the
 		// "already submitted" dialog the moment institution-link is reached again.
 		mockStepperState.currentStepId = "block-1";
@@ -543,7 +543,7 @@ describe("QuestionnaireWizardModal", () => {
 
 		render(
 			<QuestionnaireWizardModal
-				routePath="/questionnaire"
+				routePath="/index"
 				questionnaire={buildQuestionnaire() as any}
 				categoryGroups={[]}
 			/>,
@@ -564,7 +564,7 @@ describe("QuestionnaireWizardModal", () => {
 	it("seeds institutionId from the initialInstitutionId prop on mount", () => {
 		render(
 			<QuestionnaireWizardModal
-				routePath="/questionnaire"
+				routePath="/index"
 				questionnaire={buildQuestionnaire() as any}
 				categoryGroups={[]}
 				initialInstitutionId={42}
@@ -580,7 +580,7 @@ describe("QuestionnaireWizardModal", () => {
 	it("seeds submissionId from the initialSubmissionId prop on mount", () => {
 		render(
 			<QuestionnaireWizardModal
-				routePath="/questionnaire"
+				routePath="/index"
 				questionnaire={buildQuestionnaire() as any}
 				categoryGroups={[]}
 				initialSubmissionId={99}
@@ -596,7 +596,7 @@ describe("QuestionnaireWizardModal", () => {
 	it("passes a real step id through to HorizontalStepper's initialStepId", () => {
 		render(
 			<QuestionnaireWizardModal
-				routePath="/questionnaire"
+				routePath="/index"
 				questionnaire={buildQuestionnaire() as any}
 				categoryGroups={[]}
 				initialStepId="institution-link"
@@ -609,7 +609,7 @@ describe("QuestionnaireWizardModal", () => {
 	it("renders the thank-you screen directly when initialShowThankYou is true, without a submission", () => {
 		render(
 			<QuestionnaireWizardModal
-				routePath="/questionnaire"
+				routePath="/index"
 				questionnaire={buildQuestionnaire() as any}
 				categoryGroups={[]}
 				initialShowThankYou
@@ -625,7 +625,7 @@ describe("QuestionnaireWizardModal", () => {
 	it("ignores an unknown step id instead of forwarding it to HorizontalStepper", () => {
 		render(
 			<QuestionnaireWizardModal
-				routePath="/questionnaire"
+				routePath="/index"
 				questionnaire={buildQuestionnaire() as any}
 				categoryGroups={[]}
 				initialStepId="not-a-real-step"
@@ -641,7 +641,7 @@ describe("QuestionnaireWizardModal", () => {
 
 		render(
 			<QuestionnaireWizardModal
-				routePath="/questionnaire"
+				routePath="/index"
 				questionnaire={buildQuestionnaire() as any}
 				categoryGroups={[]}
 			/>,
@@ -666,7 +666,7 @@ describe("QuestionnaireWizardModal", () => {
 
 		render(
 			<QuestionnaireWizardModal
-				routePath="/questionnaire"
+				routePath="/index"
 				questionnaire={buildQuestionnaire() as any}
 				categoryGroups={[]}
 			/>,

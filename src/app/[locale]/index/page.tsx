@@ -10,7 +10,7 @@ import {
 	parseOptionalStringParam,
 } from "@/lib/utils/routeParams";
 
-export default async function QuestionnaireModalIntercepted({
+export default async function QuestionnairePage({
 	params,
 	searchParams,
 }: {
@@ -35,9 +35,10 @@ export default async function QuestionnaireModalIntercepted({
 		redirect(localePath((await params).locale, "/map"));
 	}
 	if (!result.ok) {
-		return <QuestionnaireUnavailable routePath="/questionnaire" />;
+		return <QuestionnaireUnavailable routePath="/index" />;
 	}
 
+	// Same "?thankyou=1"/"true" shape as /institution's InstitutionDraftIntroModal.
 	const thankyouParam = resolvedSearchParams.thankyou;
 	const showThankYou = Array.isArray(thankyouParam)
 		? thankyouParam.includes("1") || thankyouParam.includes("true")
@@ -45,7 +46,7 @@ export default async function QuestionnaireModalIntercepted({
 
 	return (
 		<QuestionnaireWizardModal
-			routePath="/questionnaire"
+			routePath="/index"
 			questionnaire={result.questionnaire}
 			categoryGroups={categoryGroups}
 			initialInstitutionId={parseOptionalPositiveIntParam(

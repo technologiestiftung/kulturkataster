@@ -24,7 +24,7 @@ export function ViewModeToggle({
 					<Button
 						variant="secondary"
 						className="hidden bg-background md:flex border border-muted-foreground text-interaction-dark shadow [&_svg]:size-6 hover:bg-neutral-5"
-						onClick={() => router.push(toLocalePath("/questionnaire"))}
+						onClick={() => router.push(toLocalePath("/index"))}
 					>
 						<Clipboard />
 						<p>{t("content.welcomeModal.questionnaire")}</p>
