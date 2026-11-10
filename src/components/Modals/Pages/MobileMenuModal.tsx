@@ -56,7 +56,7 @@ const mobileMenuItems: MobileMenuItem[] = [
 		id: "questionnaire",
 		icon: Clipboard,
 		label: "questionnaire.title",
-		route: "/questionnaire",
+		route: "/index",
 	},
 	{
 		id: "info",

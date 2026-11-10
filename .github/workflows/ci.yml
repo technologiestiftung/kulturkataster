@@ -101,7 +101,9 @@ jobs:
   # Runs against a throwaway local Supabase (supabase/config.toml) seeded with
   # synthetic data (scripts/seed-e2e.ts) — no hosted instance or secrets needed.
   e2e:
-    runs-on: ubuntu-latest
+    # Pinned: Playwright 1.58 cannot install browsers on ubuntu-latest (26.04).
+    # Unpin after upgrading @playwright/test to a version that supports 26.04.
+    runs-on: ubuntu-24.04
     env:
       PLAYWRIGHT_BASE_URL: http://127.0.0.1:3010
       SITE_URL: http://127.0.0.1:3010

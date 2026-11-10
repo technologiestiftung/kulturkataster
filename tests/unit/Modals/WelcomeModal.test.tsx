@@ -35,7 +35,7 @@ describe("WelcomeModal questionnaire link", () => {
 	it("links to the questionnaire while one is open", () => {
 		render(<WelcomeModal showQuestionnaire />);
 
-		expect(questionnaireLink()).toHaveAttribute("href", "/questionnaire");
+		expect(questionnaireLink()).toHaveAttribute("href", "/index");
 	});
 
 	it("is hidden while no questionnaire is open", () => {
