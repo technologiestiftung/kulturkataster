@@ -328,7 +328,7 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 
 ## License
 
-The source code is licensed under the [GNU General Public License v3.0](LICENSE).
+The source code is licensed under the [GNU Affero General Public License v3.0](LICENSE) (AGPL-3.0).
 
 ## Content Licensing
 
