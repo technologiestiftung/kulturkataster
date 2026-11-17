@@ -15,6 +15,9 @@ npm run traduora:push -- --all --prune
 npm run traduora:pull -- --all
 ```
 
+`npm run traduora:sync -- <push|pull>` runs the same script with the action as an
+argument; the nightly `sync-traduora.yml` workflow uses it.
+
 ## Flags
 
 - `--all`: on pull, remote values overwrite local ones (by default local values are kept).
