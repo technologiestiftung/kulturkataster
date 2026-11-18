@@ -103,23 +103,24 @@ describe("server actions: institutions", () => {
 
 		const result = await searchInstitutions("museum");
 
+		// The search terms apply to own institutions too, not only public ones.
 		expect(searchMock).toHaveBeenCalledWith({
-			OR: [
-				{
-					AND: [
-						expect.objectContaining({
-							AND: expect.any(Array),
-						}),
-						{ status: { in: ["public", "private", "archived"] } },
-					],
-				},
+			AND: [
+				expect.objectContaining({
+					AND: expect.any(Array),
+				}),
 				{
 					OR: [
-						{ users: { some: { id: "user-1" } } },
+						{ status: { in: ["public", "private", "archived"] } },
 						{
-							groups: {
-								some: { users: { some: { id: "user-1" } } },
-							},
+							OR: [
+								{ users: { some: { id: "user-1" } } },
+								{
+									groups: {
+										some: { users: { some: { id: "user-1" } } },
+									},
+								},
+							],
 						},
 					],
 				},

@@ -110,15 +110,17 @@ export const buildVisibleInstitutionWhere = (
 	userId: string | null,
 	baseWhere?: Prisma.InstitutionWhereInput,
 ): Prisma.InstitutionWhereInput => {
-	const publicWhere = baseWhere
-		? { AND: [baseWhere, publicInstitutionStatusWhere] }
-		: publicInstitutionStatusWhere;
+	const visibleWhere: Prisma.InstitutionWhereInput =
+		!userId || scope === "all"
+			? publicInstitutionStatusWhere
+			: {
+					OR: [
+						publicInstitutionStatusWhere,
+						buildInstitutionAccessWhere(userId),
+					],
+				};
 
-	if (!userId || scope === "all") return publicWhere;
-
-	return {
-		OR: [publicWhere, buildInstitutionAccessWhere(userId)],
-	};
+	return baseWhere ? { AND: [baseWhere, visibleWhere] } : visibleWhere;
 };
 
 export const loadInstitutionVisibility = async (
