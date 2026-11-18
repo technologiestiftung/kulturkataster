@@ -184,6 +184,7 @@ Translations are maintained in [Traduora](https://traduora.co/). A GitHub workfl
 ```bash
 npm run traduora:push  # Upload local translations to Traduora
 npm run traduora:pull  # Download translations from Traduora
+npm run traduora:sync -- <push|pull>  # Same, with the action as argument (used by the nightly workflow)
 ```
 
 ## Architecture
@@ -253,6 +254,8 @@ All variables are listed in `.env.example`. They are read on the server at runti
 - `TRADUORA_*`: load translations from Traduora at runtime; without them the bundled files are used
 - `FILE_STORAGE_BUCKET`, `SUPABASE_CATEGORY_ICONS_BUCKET`: storage buckets
 - `EMAIL_PROVIDER` and `SMTP_*`: transactional emails (`noop` sends nothing)
+- `DOWNLOAD_NOTIFICATION_EMAIL`: recipient of institution download notifications (default `info@kulturkataster.berlin`)
+- `EMAIL_OUTBOX_BATCH_SIZE`, `EMAIL_OUTBOX_WORKER_ID`: batch size (default 25, max 100) and worker ID for `npm run email:dispatch`
 - `CLEVERREACH_*`: newsletter sign-up
 - `OTEL_*`: telemetry export
 - `CAP_URL`, `CAP_SITE_KEY`, `CAP_SECRET_KEY`: Cap captcha for guest submissions, off when unset
